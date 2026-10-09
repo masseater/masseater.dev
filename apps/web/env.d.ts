@@ -5,3 +5,7 @@ declare module "cloudflare:workers" {
     interface Env extends WebEnv {}
   }
 }
+
+declare module "react" {
+  interface CSSProperties extends Partial<Record<`--${string}`, number | string>> {}
+}

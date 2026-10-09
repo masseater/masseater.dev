@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@fontsource-variable/roboto-flex/standard.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -65,6 +66,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --font-display: "Roboto Flex Variable", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -76,5 +78,98 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .stage {
+    --mx: 0.5;
+    --my: 0.5;
+    --tx: calc(var(--mx) - 0.5);
+    --ty: calc(var(--my) - 0.5);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .stage-backdrop {
+    inset: -8%;
+    transform: translate3d(calc(var(--tx) * -6%), calc(var(--ty) * -6%), 0)
+      scale(calc(1.04 + max(var(--tx), -1 * var(--tx)) * 0.06));
+    transition: transform 1.6s var(--ease);
+  }
+
+  .stage-backdrop-still {
+    background:
+      radial-gradient(circle at 20% 25%, var(--secondary), transparent 60%),
+      radial-gradient(circle at 80% 75%, var(--accent), transparent 55%), var(--background);
+  }
+
+  .stage-spotlight {
+    width: 70vmax;
+    height: 70vmax;
+    background: radial-gradient(
+      circle,
+      color-mix(in oklch, var(--background) 85%, transparent),
+      transparent 65%
+    );
+    mix-blend-mode: soft-light;
+    transform: translate3d(calc(var(--mx) * 100vw - 50%), calc(var(--my) * 100dvh - 50%), 0);
+    transition: transform 0.9s var(--ease);
+  }
+
+  .stage-title {
+    transform: perspective(60rem) rotateX(calc(var(--ty) * -14deg)) rotateY(calc(var(--tx) * 18deg))
+      translate3d(calc(var(--tx) * 1.5rem), calc(var(--ty) * 1.5rem), 0);
+    transition: transform 1.2s var(--ease);
+  }
+
+  .stage-letter {
+    --dx: calc(((var(--i) + 0.5) / var(--n) - 0.5) * 0.6 + 0.5 - var(--mx));
+    --near: max(0, 1 - max(var(--dx), -1 * var(--dx)) * 3.2 - max(var(--ty), -1 * var(--ty)) * 1.2);
+    font-variation-settings: "wght" calc(320 + 430 * var(--near));
+    transition: font-variation-settings 0.6s var(--ease);
+  }
+
+  .stage:not([data-pointer]) .stage-letter {
+    animation: stage-wave 6s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.2s - 6s);
+  }
+
+  .stage-links {
+    transform: translate3d(calc(var(--tx) * 2rem), calc(var(--ty) * 2rem), 0);
+    transition: transform 1.4s var(--ease);
+  }
+
+  @keyframes stage-wave {
+    0%,
+    100% {
+      font-variation-settings: "wght" 320;
+    }
+    50% {
+      font-variation-settings: "wght" 640;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stage-backdrop,
+    .stage-spotlight,
+    .stage-title,
+    .stage-letter,
+    .stage:not([data-pointer]) .stage-letter {
+      animation: stage-wave 6s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 0.2s - 6s);
+    }
+
+    .stage-links {
+      transition: none;
+      transform: none;
+    }
+
+    .stage-letter {
+      animation: none;
+    }
+
+    .stage-backdrop canvas {
+      display: none;
+    }
   }
 }
