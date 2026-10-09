@@ -11,9 +11,9 @@ const links = [
 ] as const;
 
 const ProfileHeader = (): ReactNode => (
-  <header className="flex flex-col gap-4">
-    <h1 className="text-3xl font-bold tracking-tight">{NAME}</h1>
-    <ul className="flex flex-wrap gap-x-5 gap-y-2">
+  <header className="flex flex-col items-center gap-6">
+    <h1 className="text-5xl font-bold tracking-tight">{NAME}</h1>
+    <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2">
       {links.map(({ label, href }) => (
         <ProfileLink href={href} key={href} label={label} />
       ))}

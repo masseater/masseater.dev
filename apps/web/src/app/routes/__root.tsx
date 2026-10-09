@@ -12,7 +12,7 @@ const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "masseater" },
       { name: "description", content: "masseater のポートフォリオ" },
-      { name: "color-scheme", content: "light dark" },
+      { name: "color-scheme", content: "light" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
