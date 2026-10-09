@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<defs>
+<radialGradient id="p" cx="18%" cy="20%" r="70%"><stop offset="0" stop-color="#fbcfe8"/><stop offset="1" stop-color="#fbcfe8" stop-opacity="0"/></radialGradient>
+<radialGradient id="g" cx="88%" cy="12%" r="65%"><stop offset="0" stop-color="#d1fae5"/><stop offset="1" stop-color="#d1fae5" stop-opacity="0"/></radialGradient>
+<radialGradient id="b" cx="75%" cy="95%" r="70%"><stop offset="0" stop-color="#c7d2fe"/><stop offset="1" stop-color="#c7d2fe" stop-opacity="0"/></radialGradient>
+<radialGradient id="y" cx="10%" cy="90%" r="55%"><stop offset="0" stop-color="#fef3c7"/><stop offset="1" stop-color="#fef3c7" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="64" height="64" rx="14" fill="#f8f8fb"/>
+<rect width="64" height="64" rx="14" fill="url(#p)"/>
+<rect width="64" height="64" rx="14" fill="url(#g)"/>
+<rect width="64" height="64" rx="14" fill="url(#b)"/>
+<rect width="64" height="64" rx="14" fill="url(#y)"/>
+<path transform="translate(10.18 43.54) scale(0.02456 -0.02456)" fill="#18181b" d="M74.2 -0.6H465V555.8Q483.8 598.4 515.1 627Q546.4 655.6 589.2 655.6Q638.4 655.6 665.1 629.1Q691.8 602.6 691.8 536V-0.6H1084.2V556.4Q1103.2 599.4 1134.8 627.5Q1166.4 655.6 1209.6 655.6Q1258.2 655.6 1284.4 629.3Q1310.6 603 1310.6 536V-0.6H1703V609Q1703 787.2 1619.1 863.9Q1535.2 940.6 1396 940.6Q1283.8 940.6 1194.2 896Q1104.6 851.4 1051 773.8H1048.8Q1021.4 855.2 947.8 897.3Q874.2 939.4 772 939.4Q664.4 939.4 586.4 896.1Q508.4 852.8 461 778.2H458.2V913.4H74.2Z"/>
+</svg>
