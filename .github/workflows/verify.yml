@@ -140,7 +140,7 @@ jobs:
           cache: true
           run-install: |
             - args: ['--frozen-lockfile']
-      - run: vp run web#deploy --yes
+      - run: vp exec --filter web alchemy deploy --yes
         env:
           ALCHEMY_STAGE: prod
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
