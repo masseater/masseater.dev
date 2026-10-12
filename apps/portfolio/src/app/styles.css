@@ -213,6 +213,16 @@
 
 @utility vt-match {
   view-transition-name: match-element;
+  view-transition-class: page;
+}
+
+@utility vt-nav-indicator {
+  view-transition-name: nav-indicator;
+}
+
+@utility entry-rise {
+  animation: entry-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(min(sibling-index(), 8) * 70ms);
 }
 
 @utility stage-link {
@@ -251,6 +261,76 @@
   display: none;
 }
 
+html:active-view-transition-type(forward) ::view-transition-old(.page) {
+  animation: slide-out-left 0.5s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+html:active-view-transition-type(forward) ::view-transition-new(.page) {
+  animation: slide-in-right 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+html:active-view-transition-type(backward) ::view-transition-old(.page) {
+  animation: slide-out-right 0.5s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+html:active-view-transition-type(backward) ::view-transition-new(.page) {
+  animation: slide-in-left 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+::view-transition-group(nav-indicator) {
+  animation-duration: 0.8s;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+::view-transition-old(nav-indicator),
+::view-transition-new(nav-indicator) {
+  animation: none;
+}
+
+::view-transition-old(nav-indicator) {
+  display: none;
+}
+
+@keyframes slide-out-left {
+  to {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateX(-3rem);
+  }
+}
+
+@keyframes slide-out-right {
+  to {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateX(3rem);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateX(3rem);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateX(-3rem);
+  }
+}
+
+@keyframes entry-rise {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(1rem);
+  }
+}
+
 @keyframes drift-fade-out {
   to {
     opacity: 0;
@@ -285,6 +365,10 @@
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
+    animation: none;
+  }
+
+  .entry-rise {
     animation: none;
   }
 }

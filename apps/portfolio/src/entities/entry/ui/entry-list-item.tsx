@@ -6,7 +6,7 @@ import type { Entry } from "#/entities/entry/model/entry";
 import { EntryMeta } from "./entry-meta";
 
 const EntryListItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
-  <li className="flex flex-col gap-2 py-6">
+  <li className="entry-rise flex flex-col gap-2 py-6">
     <Link
       className="font-display text-2xl font-light underline-offset-8 hover:underline focus-visible:underline"
       params={entry}
