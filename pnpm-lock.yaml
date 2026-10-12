@@ -192,7 +192,7 @@ catalogs:
       specifier: 0.66.1
       version: 0.66.1
     '@mdx-js/mdx':
-      specifier: ^3.1.1
+      specifier: 3.1.1
       version: 3.1.1
     '@mdx-js/rollup':
       specifier: 3.1.1
@@ -258,7 +258,7 @@ catalogs:
       specifier: 0.7.0
       version: 0.7.0
     rehype-raw:
-      specifier: ^7.0.0
+      specifier: 7.0.0
       version: 7.0.0
     remark-breaks:
       specifier: 4.0.0
