@@ -50,6 +50,7 @@ release. Add a tool name to select part of the graph. For example, run
 - `.php` や `.env` を総当たりする脆弱性スキャンは、ゾーンの WAF カスタムルールで block する。`/.env` と `/wp-login.php` だけはハニーポットの Worker が受け、404 を返して Analytics Engine に 1 件ずつ記録する。どちらも `apps/portfolio/edge-guard.ts` にある。block した分は Security Events に残り、Worker に届かないので普段の Workers Logs やトレースには混ざらない。
 - ゾーンの WAF カスタムルールは、1 つのゾーンにつき 1 つのスタックだけが持つ。このリポジトリが masseater.dev ゾーンの持ち主なので、`apps/portfolio/alchemy.run.ts` の `OWNED_ZONE` にゾーン名を入れ、prod ステージでだけ作る。masseater.dev のサブドメインで動くほかのリポジトリは入れず、このリポジトリのルールで守られる。
 - Bot Fight Mode は、GitHub Actions からの送信や MCP クライアントのような正当な自動アクセスまで止めるので使わない。
+- Workers のログは Workers Logpush で R2 に 90 日残す（`apps/portfolio/log-archive.ts`）。Outcome が ok でないものは全件、それ以外は 1% だけ残す。ジョブとバケットはアカウントに 1 つで、このリポが持つ。
 
 ## ライブラリの型
 

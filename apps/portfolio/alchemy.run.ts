@@ -5,6 +5,7 @@ import { Config, Effect, Option, Schema } from "effect";
 
 import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts";
 import { edgeGuard } from "./edge-guard.ts";
+import { logArchive } from "./log-archive.ts";
 import { site } from "./src/shared/config/site.ts";
 
 const DOMAIN = new URL(site.url).hostname;
@@ -32,6 +33,7 @@ const ciTelemetry = Effect.gen(function* ciTelemetry() {
     name: CI_TELEMETRY_AUDIENCE,
     main: "./ci-telemetry.worker.ts",
     compatibility: COMPATIBILITY,
+    logpush: true,
     env: { GITHUB_REPOSITORY },
     observability: {
       enabled: true,
@@ -53,6 +55,7 @@ export default Stack(
         onNone: () => Effect.void,
         onSome: (zone) => edgeGuard(zone, COMPATIBILITY),
       });
+      yield* logArchive;
     }
     yield* ciTelemetry;
     yield* requireAppPrefix;
