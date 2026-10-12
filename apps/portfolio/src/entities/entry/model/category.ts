@@ -11,16 +11,28 @@ const categoryMeta = {
     title: "Projects",
     description: "作ったもの",
     titleTransition: "vt-category-projects",
+    columns: "single",
   },
-  blogs: { title: "Blogs", description: "まとまった文章", titleTransition: "vt-category-blogs" },
+  blogs: {
+    title: "Blogs",
+    description: "まとまった文章",
+    titleTransition: "vt-category-blogs",
+    columns: "grid",
+  },
   scraps: {
     title: "Scraps",
     description: "短いメモや作業ログ",
     titleTransition: "vt-category-scraps",
+    columns: "grid",
   },
 } as const satisfies Record<
   Category,
-  Readonly<{ title: string; description: string; titleTransition: string }>
+  Readonly<{
+    title: string;
+    description: string;
+    titleTransition: string;
+    columns: "single" | "grid";
+  }>
 >;
 
 type CategoryInfo = Readonly<{ category: Category; title: string; description: string }>;
