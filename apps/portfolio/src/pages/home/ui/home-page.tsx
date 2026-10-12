@@ -1,24 +1,9 @@
-import type { PointerEventHandler, ReactNode } from "react";
+import type { ReactNode } from "react";
 
+import { followPointer, releasePointer } from "#/shared/lib";
 import { Backdrop } from "#/shared/ui";
 
 import { ProfileHeader } from "./profile-header";
-
-const CENTER = "0.5";
-const POINTER_ATTRIBUTE = "data-pointer";
-
-const followPointer: PointerEventHandler<HTMLElement> = ({ currentTarget, clientX, clientY }) => {
-  const { left, top, width, height } = currentTarget.getBoundingClientRect();
-  currentTarget.toggleAttribute(POINTER_ATTRIBUTE, true);
-  currentTarget.style.setProperty("--mx", String((clientX - left) / width));
-  currentTarget.style.setProperty("--my", String((clientY - top) / height));
-};
-
-const releasePointer: PointerEventHandler<HTMLElement> = ({ currentTarget }) => {
-  currentTarget.toggleAttribute(POINTER_ATTRIBUTE, false);
-  currentTarget.style.setProperty("--mx", CENTER);
-  currentTarget.style.setProperty("--my", CENTER);
-};
 
 const HomePage = (): ReactNode => (
   <main

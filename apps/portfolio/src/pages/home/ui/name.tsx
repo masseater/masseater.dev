@@ -1,16 +1,13 @@
 import type { CSSProperties, ReactNode } from "react";
 
+import { toWavyLetters } from "#/shared/lib";
+import { WavyLetters } from "#/shared/ui";
+
 const NAME = "masseater";
 
+const letters = toWavyLetters(NAME);
+
 const titleStyle: CSSProperties = { "--n": NAME.length };
-
-const letterStyle = (index: number): CSSProperties => ({ "--i": index });
-
-const letters = Array.from(NAME, (letter, index) => ({
-  key: `${letter}-${index}`,
-  letter,
-  style: letterStyle(index),
-}));
 
 const Name = (): ReactNode => (
   <h1
@@ -18,11 +15,7 @@ const Name = (): ReactNode => (
     className="vt-site-name stage-title font-display text-7xl select-none sm:text-9xl"
     style={titleStyle}
   >
-    {letters.map(({ key, letter, style }) => (
-      <span aria-hidden className="stage-letter inline-block" key={key} style={style}>
-        {letter}
-      </span>
-    ))}
+    <WavyLetters letters={letters} />
   </h1>
 );
 
