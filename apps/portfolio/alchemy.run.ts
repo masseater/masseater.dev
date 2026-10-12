@@ -1,6 +1,14 @@
 import { Stack, Stage } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
-import { Ruleset, Website, Workers, Zone, providers, state } from "alchemy/Cloudflare";
+import {
+  AnalyticsEngine,
+  Ruleset,
+  Website,
+  Workers,
+  Zone,
+  providers,
+  state,
+} from "alchemy/Cloudflare";
 import type { InferEnv } from "alchemy/Cloudflare";
 import { Config, Effect, Schema } from "effect";
 
@@ -9,6 +17,7 @@ import { site } from "./src/shared/config/site.ts";
 
 const DOMAIN = new URL(site.url).hostname;
 const PRODUCTION_STAGE = "prod";
+const COMPATIBILITY = { date: "2026-08-25" } as const;
 
 const SCANNER_PATH_FRAGMENTS = [
   ".php",
@@ -24,12 +33,16 @@ const SCANNER_PATH_FRAGMENTS = [
   "/vendor/",
 ] as const;
 
+const HONEYPOT_PATHS = ["/.env", "/wp-login.php"] as const;
+
 const PATH = "lower(http.request.uri.path)";
 
-const SCANNER_EXPRESSION = [
+const HONEYPOT_EXPRESSION = `(http.host eq "${DOMAIN}" and http.request.uri.path in {${HONEYPOT_PATHS.map((path) => `"${path}"`).join(" ")}})`;
+
+const SCANNER_EXPRESSION = `(${[
   ...SCANNER_PATH_FRAGMENTS.map((fragment) => `${PATH} contains "${fragment}"`),
   `(${PATH} contains "/." and not starts_with(${PATH}, "/.well-known/"))`,
-].join(" or ");
+].join(" or ")}) and not ${HONEYPOT_EXPRESSION}`;
 
 const scannerBlock = Effect.gen(function* scannerBlock() {
   const zone = yield* Zone.Zone("Zone", { name: DOMAIN }).pipe(adopt(true));
@@ -44,6 +57,19 @@ const scannerBlock = Effect.gen(function* scannerBlock() {
         action: "block",
       },
     ],
+  });
+});
+
+const honeypot = Effect.gen(function* honeypot() {
+  const HONEYPOT = yield* AnalyticsEngine.Dataset("Honeypot", {
+    dataset: `${APP_NAME.replaceAll("-", "_")}_honeypot`,
+  });
+  return yield* Workers.Worker("Honeypot", {
+    name: `${APP_NAME}-honeypot`,
+    main: "./honeypot.worker.ts",
+    compatibility: COMPATIBILITY,
+    env: { HONEYPOT },
+    routes: HONEYPOT_PATHS.map((path) => ({ pattern: `${DOMAIN}${path}`, zoneName: DOMAIN })),
   });
 });
 
@@ -65,7 +91,7 @@ const ciTelemetry = Effect.gen(function* ciTelemetry() {
   return yield* Workers.Worker("CiTelemetry", {
     name: CI_TELEMETRY_AUDIENCE,
     main: "./ci-telemetry.worker.ts",
-    compatibility: { date: "2026-08-25" },
+    compatibility: COMPATIBILITY,
     env: { GITHUB_REPOSITORY },
     observability: {
       enabled: true,
@@ -75,8 +101,9 @@ const ciTelemetry = Effect.gen(function* ciTelemetry() {
 });
 
 type CiTelemetryEnv = InferEnv<typeof ciTelemetry>;
+type HoneypotEnv = InferEnv<typeof honeypot>;
 
-export type { CiTelemetryEnv };
+export type { CiTelemetryEnv, HoneypotEnv };
 export default Stack(
   APP_NAME,
   { providers: providers(), state: state() },
@@ -84,6 +111,7 @@ export default Stack(
     const { url } = yield* web;
     if ((yield* Stage) === PRODUCTION_STAGE) {
       yield* scannerBlock;
+      yield* honeypot;
     }
     yield* ciTelemetry;
     yield* requireAppPrefix;
