@@ -1,3 +1,3 @@
-type Direction = "row" | "column";
+type Direction = "row" | "compact";
 
 export type { Direction };
