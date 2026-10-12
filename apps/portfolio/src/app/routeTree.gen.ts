@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SiteRouteImport } from './routes/_site'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SiteCategoryIndexRouteImport } from './routes/_site/$category/index'
 import { Route as SiteCategorySlugRouteImport } from './routes/_site/$category/$slug'
 
@@ -29,6 +30,11 @@ const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
   path: '/feed.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SiteCategoryIndexRoute = SiteCategoryIndexRouteImport.update({
   id: '/$category/',
   path: '/$category/',
@@ -43,12 +49,14 @@ const SiteCategorySlugRoute = SiteCategorySlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/$category/$slug': typeof SiteCategorySlugRoute
   '/$category/': typeof SiteCategoryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/$category/$slug': typeof SiteCategorySlugRoute
   '/$category': typeof SiteCategoryIndexRoute
 }
@@ -57,19 +65,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_site': typeof SiteRouteWithChildren
   '/feed.xml': typeof FeedDotxmlRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/_site/$category/$slug': typeof SiteCategorySlugRoute
   '/_site/$category/': typeof SiteCategoryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/feed.xml' | '/$category/$slug' | '/$category/'
+  fullPaths:
+    '/' | '/feed.xml' | '/robots.txt' | '/$category/$slug' | '/$category/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/feed.xml' | '/$category/$slug' | '/$category'
+  to: '/' | '/feed.xml' | '/robots.txt' | '/$category/$slug' | '/$category'
   id:
     | '__root__'
     | '/'
     | '/_site'
     | '/feed.xml'
+    | '/robots.txt'
     | '/_site/$category/$slug'
     | '/_site/$category/'
   fileRoutesById: FileRoutesById
@@ -78,6 +89,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SiteRoute: typeof SiteRouteWithChildren
   FeedDotxmlRoute: typeof FeedDotxmlRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -101,6 +113,13 @@ declare module '@tanstack/react-router' {
       path: '/feed.xml'
       fullPath: '/feed.xml'
       preLoaderRoute: typeof FeedDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_site/$category/': {
@@ -136,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SiteRoute: SiteRouteWithChildren,
   FeedDotxmlRoute: FeedDotxmlRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
