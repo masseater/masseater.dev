@@ -54,7 +54,9 @@ published: true
 
 ## Zenn
 
-Zenn に投稿する記事は `apps/zenn-articles/` の `articles/`、本は `books/`、画像は `images/` に置き、Zenn の GitHub 連携で公開する。
+Zenn に投稿する記事は `apps/zenn-articles/` の `articles/`、本は `books/`、画像は `images/` に置く。
+Zenn の GitHub 連携はリポジトリ直下しか読まないため、main の verify が通ると `apps/zenn-articles/` の中身を `zenn` ブランチの直下にコミットする。
+Zenn のデプロイ対象ブランチは `zenn` にする。
 サイトには表示しない。
 
 ## 起動とデプロイ
