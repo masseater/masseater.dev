@@ -47,6 +47,9 @@ release. Add a tool name to select part of the graph. For example, run
 ## Cloudflare
 
 - Cloudflare は Workers Paid プランを契約している前提でよい。Paid プランでしか使えない機能や上限を前提に設計してよい。
+- `.php` や `.env` を総当たりする脆弱性スキャンは、ゾーンの WAF カスタムルールで block する。`/.env` と `/wp-login.php` だけはハニーポットの Worker が受け、404 を返して Analytics Engine に 1 件ずつ記録する。どちらも `apps/portfolio/edge-guard.ts` にある。block した分は Security Events に残り、Worker に届かないので普段の Workers Logs やトレースには混ざらない。
+- ゾーンの WAF カスタムルールは、1 つのゾーンにつき 1 つのスタックだけが持つ。このリポジトリが masseater.dev ゾーンの持ち主なので、`apps/portfolio/alchemy.run.ts` の `OWNED_ZONE` にゾーン名を入れ、prod ステージでだけ作る。masseater.dev のサブドメインで動くほかのリポジトリは入れず、このリポジトリのルールで守られる。
+- Bot Fight Mode は、GitHub Actions からの送信や MCP クライアントのような正当な自動アクセスまで止めるので使わない。
 
 ## ライブラリの型
 
@@ -92,6 +95,13 @@ Effect から外部 API や SaaS を呼ぶクライアントは手で包まず�
 ## スキル
 
 - 複数のリポジトリで共通に使う自作のスキルは https://github.com/masseater/skills に置き、skills CLI で `skills-lock.json` に追加する。リポジトリにコピーしない。
+
+## 脆弱性スキャン
+
+- OWASP ZAP のベースラインスキャンを `.github/workflows/zap.yml` に置く。verify とは別のワークフローで、毎週と手動で動く。
+- 既定では動かない。リポジトリの Variables に `ZAP_TARGET_URL`（本番の URL）を設定すると有効になる。
+- 警告を含め、ZAP のアラートが 1 件でもあればジョブを失敗にし、すぐ直す。レポートはワークフローの成果物 `zap_scan` に残る。誤検知だけを `.github/zap/rules.tsv` に `ルールID<TAB>IGNORE<TAB>(ルール名)` で書く。
+- 依存パッケージの既知の脆弱性は、verify の `audit` タスク（`vp pm audit`）が落とす。直すときは `vp pm audit --fix` で `pnpm-workspace.yaml` の overrides に修正版を足す。修正版が出ていない勧告だけを、`auditConfig.ignoreGhsas` に GHSA の ID で載せ、理由をコミットメッセージに書く。
 
 ## ベース
 

@@ -230,6 +230,7 @@ export default defineConfig({
           "steiger-all",
           "fallow-all",
           "gitleaks",
+          "audit",
         ],
       },
       "test-all": "vp run -r test",
@@ -237,6 +238,10 @@ export default defineConfig({
       syncpack: "syncpack lint",
       "steiger-all": "vp run -r steiger",
       "fallow-all": "vp run -r fallow",
+      audit: {
+        command: "vp pm audit",
+        cache: false,
+      },
       gitleaks: {
         command: "go run github.com/zricethezav/gitleaks/v8@v8.30.1 git --redact --no-banner",
         cache: false,

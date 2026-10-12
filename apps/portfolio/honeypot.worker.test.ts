@@ -1,6 +1,6 @@
 import { expect, test } from "vite-plus/test";
 
-import type { HoneypotEnv } from "./alchemy.run.ts";
+import type { HoneypotEnv } from "./edge-guard.ts";
 import worker from "./honeypot.worker.ts";
 
 const recorder = (): Readonly<{ points: AnalyticsEngineDataPoint[]; env: HoneypotEnv }> => {
