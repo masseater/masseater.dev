@@ -6,16 +6,16 @@ import type { Entry } from "#/entities/entry/model/entry";
 import { EntryMeta } from "./entry-meta";
 
 const EntryListItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
-  <li className="flex flex-col gap-2 py-6">
+  <li className="entry-rise flex">
     <Link
-      className="font-display text-2xl font-light underline-offset-8 hover:underline focus-visible:underline"
+      className="entry-tile flex w-full flex-col gap-3 p-6"
       params={entry}
       to="/$category/$slug"
     >
-      {entry.title}
+      <span className="font-display text-xl font-light">{entry.title}</span>
+      <span className="text-foreground/70 flex-1 text-sm">{entry.description}</span>
+      <EntryMeta entry={entry} />
     </Link>
-    <p className="text-foreground/70">{entry.description}</p>
-    <EntryMeta entry={entry} />
   </li>
 );
 

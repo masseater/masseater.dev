@@ -6,6 +6,7 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 import { NotFound } from "#/widgets/not-found";
 
 import { routeTree } from "./routeTree.gen";
+import { transitionTypes } from "./transition-types";
 
 type AppRouter = Router<typeof routeTree>;
 
@@ -24,7 +25,7 @@ const getRouter = (): AppRouter => {
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
     defaultNotFoundComponent: NotFound,
-    defaultViewTransition: true,
+    defaultViewTransition: { types: transitionTypes },
   });
   setupRouterSsrQueryIntegration({ router, queryClient });
   return router;
