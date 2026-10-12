@@ -7,7 +7,7 @@ https://masseater.dev のポートフォリオ。mainへのpushでverifyが通�
 ```sh
 vp install
 cp .env.example .env
-vp exec --filter web alchemy profile edit --add Cloudflare
+vp exec --filter portfolio alchemy profile edit --add Cloudflare
 vp run verify
 ```
 
@@ -38,10 +38,8 @@ release-pleaseと自動修正がPRを作るためである。
 
 ## コンテンツ
 
-記事は `apps/web/content/<カテゴリ>/<slug>.md` に置き、`/<カテゴリ>/<slug>` で公開される。
-カテゴリは `projects`・`blogs`・`scraps`・`zenn` の4つである。
-
-`projects`・`blogs`・`scraps` の frontmatter は次のとおり。
+記事は `apps/portfolio/content/<カテゴリ>/<slug>.md` に置き、`/<カテゴリ>/<slug>` で公開される。
+カテゴリは `projects`・`blogs`・`scraps` の3つである。frontmatter は次のとおり。
 
 ```yaml
 title: タイトル
@@ -51,14 +49,18 @@ tags: [tag]
 published: true
 ```
 
-`zenn` は Zenn の frontmatter（`title`・`emoji`・`type`・`topics`・`published`）をそのまま使う。`published: true` の記事には `published_at` が必須で、下書きには要らない。
 `published: false` の記事は開発サーバーでだけ表示される。
-画像は `apps/web/public/images/` に置き、`/images/...` で参照する。
+画像は `apps/portfolio/public/` に置く。
+
+## Zenn
+
+Zenn に投稿する記事は `apps/zenn-articles/` の `articles/`、本は `books/`、画像は `images/` に置き、Zenn の GitHub 連携で公開する。
+サイトには表示しない。
 
 ## 起動とデプロイ
 
 ```sh
-cd apps/web
+cd apps/portfolio
 vp run dev
 vp run deploy
 ```

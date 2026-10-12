@@ -1,8 +1,7 @@
 const site = {
   url: "https://masseater.dev",
   name: "masseater",
-  description:
-    "masseater のポートフォリオ。作ったもの、ブログ、スクラップ、Zenn の記事を置いている。",
+  description: "masseater のポートフォリオ。作ったもの、ブログ、スクラップを置いている。",
   ogImage: "https://masseater.dev/og.png",
   xHandle: "@r_masseater",
   links: [

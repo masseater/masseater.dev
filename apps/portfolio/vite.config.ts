@@ -17,7 +17,7 @@ export default defineConfig({
       srcDirectory: "src/app",
       rsc: { enabled: true },
       prerender: { enabled: true, crawlLinks: true },
-      pages: ["/", "/projects", "/blogs", "/scraps", "/zenn", "/feed.xml"].map((path) => ({
+      pages: ["/", "/projects", "/blogs", "/scraps", "/feed.xml"].map((path) => ({
         path,
       })),
       spa: {

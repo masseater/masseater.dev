@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "portfolio",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -39,7 +39,6 @@
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.0",
-    "@mdx-js/mdx": "catalog:",
     "@mdx-js/rollup": "catalog:",
     "@shikijs/rehype": "catalog:",
     "@tailwindcss/vite": "4.3.3",
@@ -51,8 +50,6 @@
     "@vitejs/plugin-react": "catalog:",
     "@vitejs/plugin-rsc": "catalog:",
     "alchemy": "catalog:stack",
-    "rehype-raw": "catalog:",
-    "remark-breaks": "catalog:",
     "remark-frontmatter": "catalog:",
     "remark-gfm": "catalog:",
     "remark-mdx-frontmatter": "catalog:",

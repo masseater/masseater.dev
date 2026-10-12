@@ -2,4 +2,4 @@ AGENTS.md
 .agents/skills/**
 .claude/worktrees/**
 CHANGELOG.md
-apps/web/content/zenn/**
+apps/zenn-articles/**
