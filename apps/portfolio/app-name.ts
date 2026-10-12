@@ -1,4 +1,5 @@
 import { Stack } from "alchemy";
+import { Zone } from "alchemy/Cloudflare";
 import { Array as Arr, Effect, Option, Schema } from "effect";
 
 const APP_NAME = "masseater-dev";
@@ -11,9 +12,11 @@ const decodeNamed = Schema.decodeUnknownOption(Schema.Struct({ name: Schema.Stri
 
 const describeUnprefixed = ({
   FQN,
+  Type,
   Props,
-}: Readonly<{ FQN: string; Props: unknown }>): readonly string[] =>
+}: Readonly<{ FQN: string; Type: string; Props: unknown }>): readonly string[] =>
   decodeNamed(Props).pipe(
+    Option.filter(() => Type !== Zone.Zone.Type),
     Option.filter(({ name }) => !name.startsWith(PREFIX)),
     Option.map(({ name }) => `${FQN}: ${name}`),
     Option.toArray,
