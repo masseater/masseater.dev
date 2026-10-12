@@ -36,6 +36,25 @@ Cloudflare の認証情報は環境変数ではなく Alchemy のプロファイ
 Settings → Actions → General で「Allow GitHub Actions to create and approve pull requests」を有効にする。
 release-pleaseと自動修正がPRを作るためである。
 
+## コンテンツ
+
+記事は `apps/web/content/<カテゴリ>/<slug>.md` に置き、`/<カテゴリ>/<slug>` で公開される。
+カテゴリは `projects`・`blogs`・`scraps`・`zenn` の4つである。
+
+`projects`・`blogs`・`scraps` の frontmatter は次のとおり。
+
+```yaml
+title: タイトル
+description: 一覧と OGP に出す説明
+date: 2026-10-12
+tags: [tag]
+published: true
+```
+
+`zenn` は Zenn の frontmatter（`title`・`emoji`・`type`・`topics`・`published`）をそのまま使う。`published: true` の記事には `published_at` が必須で、下書きには要らない。
+`published: false` の記事は開発サーバーでだけ表示される。
+画像は `apps/web/public/images/` に置き、`/images/...` で参照する。
+
 ## 起動とデプロイ
 
 ```sh

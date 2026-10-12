@@ -1,34 +1,23 @@
-import type { PointerEventHandler, ReactNode } from "react";
+import { getRouteApi } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
-import { Backdrop } from "./backdrop";
-import { ProfileHeader } from "./profile-header";
+import { categoryInfos } from "#/entities/entry";
+import { site } from "#/shared/config";
 
-const CENTER = "0.5";
-const POINTER_ATTRIBUTE = "data-pointer";
+import { CategorySection } from "./category-section";
 
-const followPointer: PointerEventHandler<HTMLElement> = ({ currentTarget, clientX, clientY }) => {
-  const { left, top, width, height } = currentTarget.getBoundingClientRect();
-  currentTarget.toggleAttribute(POINTER_ATTRIBUTE, true);
-  currentTarget.style.setProperty("--mx", String((clientX - left) / width));
-  currentTarget.style.setProperty("--my", String((clientY - top) / height));
+const route = getRouteApi("/");
+
+const HomePage = (): ReactNode => {
+  const entries = route.useLoaderData();
+  return (
+    <div className="flex flex-col gap-12">
+      <h1 className="sr-only">{site.name}</h1>
+      {categoryInfos.map((info) => (
+        <CategorySection entries={entries} info={info} key={info.category} />
+      ))}
+    </div>
+  );
 };
-
-const releasePointer: PointerEventHandler<HTMLElement> = ({ currentTarget }) => {
-  currentTarget.toggleAttribute(POINTER_ATTRIBUTE, false);
-  currentTarget.style.setProperty("--mx", CENTER);
-  currentTarget.style.setProperty("--my", CENTER);
-};
-
-const HomePage = (): ReactNode => (
-  <main
-    className="stage relative isolate grid min-h-dvh place-items-center overflow-hidden px-4"
-    onPointerCancel={releasePointer}
-    onPointerLeave={releasePointer}
-    onPointerMove={followPointer}
-  >
-    <Backdrop />
-    <ProfileHeader />
-  </main>
-);
 
 export { HomePage };

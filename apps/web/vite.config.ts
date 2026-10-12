@@ -5,13 +5,26 @@ import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import { defineConfig } from "vite-plus";
 
+import mdx from "./mdx.config.ts";
+
 export default defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools(),
+    mdx,
     tailwindcss(),
-    tanstackStart({ srcDirectory: "src/app", rsc: { enabled: true } }),
+    tanstackStart({
+      srcDirectory: "src/app",
+      rsc: { enabled: true },
+      prerender: { enabled: true, crawlLinks: true },
+      pages: [{ path: "/" }, { path: "/feed.xml" }],
+      spa: {
+        enabled: true,
+        maskPath: "/404",
+        prerender: { outputPath: "/404", crawlLinks: false },
+      },
+    }),
     rsc(),
-    viteReact(),
+    viteReact({ include: /\.(?:md|tsx?)$/u }),
   ],
 });
