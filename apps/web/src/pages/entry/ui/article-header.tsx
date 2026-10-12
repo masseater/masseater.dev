@@ -5,15 +5,11 @@ import { categoryMeta, EntryMeta } from "#/entities/entry";
 import type { Entry } from "#/entities/entry";
 
 const ArticleHeader = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
-  <header className="flex flex-col gap-3">
-    <Link
-      className="text-muted-foreground hover:text-foreground focus-visible:text-foreground text-sm transition-colors"
-      params={entry}
-      to="/$category"
-    >
+  <header className="flex flex-col gap-4">
+    <Link className="stage-link self-start" params={entry} to="/$category">
       {categoryMeta[entry.category].title}
     </Link>
-    <h1 className="text-3xl font-bold">{entry.title}</h1>
+    <h1 className="font-display text-4xl font-light sm:text-5xl">{entry.title}</h1>
     <EntryMeta entry={entry} />
   </header>
 );

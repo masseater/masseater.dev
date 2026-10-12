@@ -19,6 +19,7 @@
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
     "@fontsource-variable/roboto-flex": "catalog:",
+    "@paper-design/shaders-react": "catalog:",
     "@tailwindcss/typography": "catalog:",
     "@tanstack/react-devtools": "0.10.13",
     "@tanstack/react-query": "catalog:stack",

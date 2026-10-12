@@ -10,13 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SiteRouteImport } from './routes/_site'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
-import { Route as CategoryIndexRouteImport } from './routes/$category/index'
-import { Route as CategorySlugRouteImport } from './routes/$category/$slug'
+import { Route as SiteCategoryIndexRouteImport } from './routes/_site/$category/index'
+import { Route as SiteCategorySlugRouteImport } from './routes/_site/$category/$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SiteRoute = SiteRouteImport.update({
+  id: '/_site',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
@@ -24,49 +29,55 @@ const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
   path: '/feed.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CategoryIndexRoute = CategoryIndexRouteImport.update({
+const SiteCategoryIndexRoute = SiteCategoryIndexRouteImport.update({
   id: '/$category/',
   path: '/$category/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => SiteRoute,
 } as any)
-const CategorySlugRoute = CategorySlugRouteImport.update({
+const SiteCategorySlugRoute = SiteCategorySlugRouteImport.update({
   id: '/$category/$slug',
   path: '/$category/$slug',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => SiteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
-  '/$category/$slug': typeof CategorySlugRoute
-  '/$category/': typeof CategoryIndexRoute
+  '/$category/$slug': typeof SiteCategorySlugRoute
+  '/$category/': typeof SiteCategoryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
-  '/$category/$slug': typeof CategorySlugRoute
-  '/$category': typeof CategoryIndexRoute
+  '/$category/$slug': typeof SiteCategorySlugRoute
+  '/$category': typeof SiteCategoryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_site': typeof SiteRouteWithChildren
   '/feed.xml': typeof FeedDotxmlRoute
-  '/$category/$slug': typeof CategorySlugRoute
-  '/$category/': typeof CategoryIndexRoute
+  '/_site/$category/$slug': typeof SiteCategorySlugRoute
+  '/_site/$category/': typeof SiteCategoryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/feed.xml' | '/$category/$slug' | '/$category/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/feed.xml' | '/$category/$slug' | '/$category'
-  id: '__root__' | '/' | '/feed.xml' | '/$category/$slug' | '/$category/'
+  id:
+    | '__root__'
+    | '/'
+    | '/_site'
+    | '/feed.xml'
+    | '/_site/$category/$slug'
+    | '/_site/$category/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SiteRoute: typeof SiteRouteWithChildren
   FeedDotxmlRoute: typeof FeedDotxmlRoute
-  CategorySlugRoute: typeof CategorySlugRoute
-  CategoryIndexRoute: typeof CategoryIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -78,6 +89,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_site': {
+      id: '/_site'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof SiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/feed.xml': {
       id: '/feed.xml'
       path: '/feed.xml'
@@ -85,28 +103,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$category/': {
-      id: '/$category/'
+    '/_site/$category/': {
+      id: '/_site/$category/'
       path: '/$category'
       fullPath: '/$category/'
-      preLoaderRoute: typeof CategoryIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof SiteCategoryIndexRouteImport
+      parentRoute: typeof SiteRoute
     }
-    '/$category/$slug': {
-      id: '/$category/$slug'
+    '/_site/$category/$slug': {
+      id: '/_site/$category/$slug'
       path: '/$category/$slug'
       fullPath: '/$category/$slug'
-      preLoaderRoute: typeof CategorySlugRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof SiteCategorySlugRouteImport
+      parentRoute: typeof SiteRoute
     }
   }
 }
 
+interface SiteRouteChildren {
+  SiteCategorySlugRoute: typeof SiteCategorySlugRoute
+  SiteCategoryIndexRoute: typeof SiteCategoryIndexRoute
+}
+
+const SiteRouteChildren: SiteRouteChildren = {
+  SiteCategorySlugRoute: SiteCategorySlugRoute,
+  SiteCategoryIndexRoute: SiteCategoryIndexRoute,
+}
+
+const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SiteRoute: SiteRouteWithChildren,
   FeedDotxmlRoute: FeedDotxmlRoute,
-  CategorySlugRoute: CategorySlugRoute,
-  CategoryIndexRoute: CategoryIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
