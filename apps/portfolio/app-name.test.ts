@@ -1,5 +1,6 @@
 import { Stack } from "alchemy";
-import { D1 } from "alchemy/Cloudflare";
+import { D1, Zone } from "alchemy/Cloudflare";
+import type { Providers } from "alchemy/Cloudflare";
 import { Stage } from "alchemy/Stage";
 import { inMemoryState } from "alchemy/State";
 import { Effect, Exit, Layer } from "effect";
@@ -7,13 +8,16 @@ import { expect, test } from "vite-plus/test";
 
 import { APP_NAME, requireAppPrefix } from "./app-name.ts";
 
-const deploys = (stackName: string, props: Readonly<{ name?: string }>): Promise<boolean> =>
+const deploysWith = (
+  stackName: string,
+  resource: Effect.Effect<unknown, never, Providers>,
+): Promise<boolean> =>
   Effect.runPromise(
     Stack(
       stackName,
       { providers: Layer.empty, state: inMemoryState() },
       Effect.gen(function* stack() {
-        yield* D1.Database("DB", props);
+        yield* resource;
         yield* requireAppPrefix;
       }),
     ).pipe(
@@ -24,6 +28,9 @@ const deploys = (stackName: string, props: Readonly<{ name?: string }>): Promise
     ),
   );
 
+const deploys = (stackName: string, props: Readonly<{ name?: string }>): Promise<boolean> =>
+  deploysWith(stackName, D1.Database("DB", props));
+
 test.each([
   { stackName: APP_NAME, props: {}, expected: true },
   { stackName: APP_NAME, props: { name: `${APP_NAME}-db` }, expected: true },
@@ -32,3 +39,6 @@ test.each([
 ])("stack $stackName with $props deploys: $expected", ({ stackName, props, expected }) =>
   expect(deploys(stackName, props)).resolves.toBe(expected),
 );
+
+test("zone keeps its domain name", () =>
+  expect(deploysWith(APP_NAME, Zone.Zone("Zone", { name: "example.com" }))).resolves.toBe(true));
