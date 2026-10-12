@@ -8,7 +8,7 @@ const LABEL = "カテゴリ";
 
 const CategoryNav = (): ReactNode => (
   <nav aria-label={LABEL}>
-    <ul className="flex flex-wrap gap-x-4">
+    <ul className="flex flex-wrap justify-center gap-x-4">
       {categoryInfos.map((info) => (
         <CategoryNavItem info={info} key={info.category} />
       ))}
