@@ -6,6 +6,8 @@ const CategorySchema = Schema.Literals(categories);
 
 type Category = typeof CategorySchema.Type;
 
+type Columns = "single" | "grid";
+
 const categoryMeta = {
   projects: {
     title: "Projects",
@@ -31,7 +33,7 @@ const categoryMeta = {
     title: string;
     description: string;
     titleTransition: string;
-    columns: "single" | "grid";
+    columns: Columns;
   }>
 >;
 
@@ -43,5 +45,7 @@ const categoryInfos: readonly CategoryInfo[] = categories.map((category) => ({
   description: categoryMeta[category].description,
 }));
 
-export type { Category, CategoryInfo };
-export { CategorySchema, categoryInfos, categoryMeta };
+const categoryPath = (category: Category): string => `/${category}`;
+
+export type { Category, CategoryInfo, Columns };
+export { categories, CategorySchema, categoryInfos, categoryMeta, categoryPath };

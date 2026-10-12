@@ -6,6 +6,8 @@ import rsc from "@vitejs/plugin-rsc";
 import { defineConfig } from "vite-plus";
 
 import mdx from "./mdx.config.ts";
+import { categories, categoryPath } from "./src/entities/entry/model/category.ts";
+import { site } from "./src/shared/config/site.ts";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
@@ -23,9 +25,9 @@ export default defineConfig({
       srcDirectory: "src/app",
       rsc: { enabled: true },
       prerender: { enabled: true, crawlLinks: true },
-      pages: ["/", "/projects", "/blogs", "/scraps", "/feed.xml"].map((path) => ({
-        path,
-      })),
+      pages: ["/", ...categories.map((category) => categoryPath(category)), site.feedPath].map(
+        (path) => ({ path }),
+      ),
       spa: {
         enabled: true,
         maskPath: "/404",

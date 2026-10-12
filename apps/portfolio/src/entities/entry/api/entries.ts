@@ -2,24 +2,11 @@ import { Array, Effect, Option, Schema } from "effect";
 
 import { CategorySchema } from "#/entities/entry/model/category";
 import type { Category } from "#/entities/entry/model/category";
+import { contentLocation } from "#/entities/entry/model/content";
+import { Frontmatter } from "#/entities/entry/model/entry";
 import type { CollectionResult, Entry, EntryResult, Missing } from "#/entities/entry/model/entry";
 
-const CONTENT_ROOT = "/content/";
-const EXTENSION = ".md";
-
-const DateString = Schema.String.check(Schema.isPattern(/^\d{4}-\d{2}-\d{2}$/u));
-
-const Tags = Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([])));
-
-const decodeFrontmatter = Schema.decodeUnknownEffect(
-  Schema.Struct({
-    title: Schema.String,
-    description: Schema.String,
-    date: DateString,
-    tags: Tags,
-    published: Schema.Boolean,
-  }),
-);
+const decodeFrontmatter = Schema.decodeUnknownEffect(Frontmatter);
 
 const decodeLocation = Schema.decodeUnknownEffect(Schema.Tuple([CategorySchema, Schema.String]));
 
@@ -53,7 +40,7 @@ const decodeEntry = ([path, frontmatter]: readonly [string, unknown]): Effect.Ef
   Entry,
   Schema.SchemaError
 > =>
-  decodeLocation(path.slice(CONTENT_ROOT.length, -EXTENSION.length).split("/")).pipe(
+  decodeLocation(contentLocation(path)).pipe(
     Effect.flatMap(([category, slug]) => ownEntry(category, slug, frontmatter)),
   );
 

@@ -4,8 +4,9 @@ import type { InferEnv } from "alchemy/Cloudflare";
 import { Config, Effect, Schema } from "effect";
 
 import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts";
+import { site } from "./src/shared/config/site.ts";
 
-const DOMAIN = "masseater.dev";
+const DOMAIN = new URL(site.url).hostname;
 const PRODUCTION_STAGE = "prod";
 
 const web = Effect.gen(function* web() {

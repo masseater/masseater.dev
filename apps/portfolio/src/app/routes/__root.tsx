@@ -26,7 +26,7 @@ const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
       { rel: "icon", href: "/favicon.ico", sizes: "32x32" },
       { rel: "icon", href: "/icon.svg", type: "image/svg+xml" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-      { rel: "alternate", type: "application/rss+xml", title: site.name, href: "/feed.xml" },
+      { rel: "alternate", type: "application/rss+xml", title: site.name, href: site.feedPath },
     ],
   }),
   shellComponent: RootDocument,

@@ -1,6 +1,6 @@
 import { Option } from "effect";
 
-import { categoryMeta } from "#/entities/entry";
+import { categoryMeta, categoryPath } from "#/entities/entry";
 import type { FoundCollection } from "#/pages/collection/api/load-collection";
 import { notFoundHead, pageTitle, seo } from "#/shared/lib";
 import type { Head } from "#/shared/lib";
@@ -12,7 +12,7 @@ const collectionHead = (loaded: FoundCollection | undefined): Head =>
       seo({
         title: pageTitle(categoryMeta[category].title),
         description: categoryMeta[category].description,
-        path: `/${category}`,
+        path: categoryPath(category),
         type: "website",
       }),
   });

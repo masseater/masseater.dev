@@ -3,6 +3,7 @@ import type { MDXContent, MDXModule } from "mdx/types";
 import { lazy } from "react";
 import type { LazyExoticComponent } from "react";
 
+import { contentPath } from "./content";
 import type { Entry } from "./entry";
 
 const bodies = new Map(
@@ -12,10 +13,9 @@ const bodies = new Map(
   ]),
 );
 
-const findBody = ({
-  category,
-  slug,
-}: Readonly<Pick<Entry, "category" | "slug">>): Option.Option<LazyExoticComponent<MDXContent>> =>
-  Option.fromUndefinedOr(bodies.get(`/content/${category}/${slug}.md`));
+const findBody = (
+  location: Readonly<Pick<Entry, "category" | "slug">>,
+): Option.Option<LazyExoticComponent<MDXContent>> =>
+  Option.fromUndefinedOr(bodies.get(contentPath(location)));
 
 export { findBody };

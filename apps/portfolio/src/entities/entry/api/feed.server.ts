@@ -8,18 +8,16 @@ import { site } from "#/shared/config";
 
 import { allEntries } from "./entries";
 
-const FEED_PATH = "/feed.xml";
-
 const toFeed = (entries: readonly Entry[]): string => {
   const feed = new Feed({
     title: site.name,
     description: site.description,
     id: site.url,
     link: site.url,
-    language: "ja",
+    language: site.locale,
     image: site.ogImage,
     copyright: `© ${site.name}`,
-    feedLinks: { rss: `${site.url}${FEED_PATH}` },
+    feedLinks: { rss: `${site.url}${site.feedPath}` },
     author: { name: site.name, link: site.url },
   });
   for (const entry of entries.filter(({ status }) => status === "published")) {
