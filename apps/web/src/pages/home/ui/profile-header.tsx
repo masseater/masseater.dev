@@ -1,13 +1,15 @@
 import type { ReactNode } from "react";
 
+import { categoryInfos } from "#/entities/entry";
+import { site } from "#/shared/config";
+
 import { Name } from "./name";
 import { ProfileLink } from "./profile-link";
 
 const links = [
-  { label: "GitHub", href: "https://github.com/masseater" },
-  { label: "X", href: "https://x.com/r_masseater" },
-  { label: "Zenn", href: "https://zenn.dev/masseater" },
-] as const;
+  ...categoryInfos.map(({ category, title }) => ({ label: title, href: `/${category}` })),
+  ...site.links,
+];
 
 const ProfileHeader = (): ReactNode => (
   <header className="flex flex-col items-center gap-8">
