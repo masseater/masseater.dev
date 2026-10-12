@@ -13,6 +13,7 @@ import type { InferEnv } from "alchemy/Cloudflare";
 import { Config, Effect, Schema } from "effect";
 
 import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts";
+import { logArchive } from "./log-archive.ts";
 import { site } from "./src/shared/config/site.ts";
 
 const DOMAIN = new URL(site.url).hostname;
@@ -68,6 +69,7 @@ const honeypot = Effect.gen(function* honeypot() {
     name: `${APP_NAME}-honeypot`,
     main: "./honeypot.worker.ts",
     compatibility: COMPATIBILITY,
+    logpush: true,
     env: { HONEYPOT },
     routes: HONEYPOT_PATHS.map((path) => ({ pattern: `${DOMAIN}${path}`, zoneName: DOMAIN })),
   });
@@ -92,6 +94,7 @@ const ciTelemetry = Effect.gen(function* ciTelemetry() {
     name: CI_TELEMETRY_AUDIENCE,
     main: "./ci-telemetry.worker.ts",
     compatibility: COMPATIBILITY,
+    logpush: true,
     env: { GITHUB_REPOSITORY },
     observability: {
       enabled: true,
@@ -112,6 +115,7 @@ export default Stack(
     if ((yield* Stage) === PRODUCTION_STAGE) {
       yield* scannerBlock;
       yield* honeypot;
+      yield* logArchive;
     }
     yield* ciTelemetry;
     yield* requireAppPrefix;

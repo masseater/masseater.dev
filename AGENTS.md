@@ -47,6 +47,8 @@ release. Add a tool name to select part of the graph. For example, run
 ## Cloudflare
 
 - Cloudflare は Workers Paid プランを契約している前提でよい。Paid プランでしか使えない機能や上限を前提に設計してよい。
+- `.php` や `.env` を総当たりする脆弱性スキャンは、masseater.dev ゾーンの WAF カスタムルールで block する（`apps/portfolio/alchemy.run.ts`）。`/.env` と `/wp-login.php` はハニーポットの Worker が 404 を返して Analytics Engine に記録する。ゾーンのルールは 1 スタックしか持てず、このリポが持ち主である。サブドメインで動くほかのリポもこのルールで守られる。
+- Workers のログは Workers Logpush で R2 に 90 日残す（`apps/portfolio/log-archive.ts`）。Outcome が ok でないものは全件、それ以外は 1% だけ残す。ジョブとバケットはアカウントに 1 つで、このリポが持つ。
 
 ## ライブラリの型
 
