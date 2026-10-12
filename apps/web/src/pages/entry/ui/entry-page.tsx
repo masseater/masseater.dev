@@ -18,7 +18,7 @@ const EntryPage = (): ReactNode => {
   return (
     <article className="flex flex-col gap-8">
       <ArticleHeader entry={data.entry} />
-      <div className="prose prose-zinc max-w-none">
+      <div className="prose prose-zinc prose-code:before:content-none prose-code:after:content-none max-w-none">
         <EntryBody entry={data.entry} />
       </div>
     </article>

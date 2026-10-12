@@ -1,5 +1,7 @@
+import { nodeTypes } from "@mdx-js/mdx";
 import mdx from "@mdx-js/rollup";
 import rehypeShiki from "@shikijs/rehype";
+import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -9,6 +11,9 @@ export default {
   enforce: "pre",
   ...mdx({
     remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm, remarkBreaks],
-    rehypePlugins: [[rehypeShiki, { theme: "github-light" }]],
+    rehypePlugins: [
+      [rehypeRaw, { passThrough: nodeTypes }],
+      [rehypeShiki, { theme: "github-light" }],
+    ],
   }),
 } as const;

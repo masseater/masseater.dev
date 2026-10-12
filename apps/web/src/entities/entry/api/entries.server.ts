@@ -22,16 +22,26 @@ const decodeFrontmatter = Schema.decodeUnknownEffect(
   }),
 );
 
-const decodeZennFrontmatter = Schema.decodeUnknownEffect(
-  Schema.Struct({
-    title: Schema.String,
-    emoji: Schema.String,
-    type: Schema.Literals(["tech", "idea"]),
-    topics: Schema.Array(Schema.String),
-    published: Schema.Boolean,
-    published_at: DateString,
-  }),
-);
+const ZennCommon = {
+  title: Schema.String,
+  emoji: Schema.String,
+  type: Schema.Literals(["tech", "idea"]),
+  topics: Schema.Array(Schema.String),
+};
+
+const PublishedZenn = Schema.Struct({
+  ...ZennCommon,
+  published: Schema.Literal(true),
+  published_at: DateString,
+});
+
+const DraftZenn = Schema.Struct({
+  ...ZennCommon,
+  published: Schema.Literal(false),
+  published_at: Schema.optionalKey(DateString),
+});
+
+const decodeZennFrontmatter = Schema.decodeUnknownEffect(Schema.Union([PublishedZenn, DraftZenn]));
 
 const decodeLocation = Schema.decodeUnknownEffect(Schema.Tuple([CategorySchema, Schema.String]));
 
@@ -46,7 +56,7 @@ const toStatus = (published: boolean): Entry["status"] => {
 
 const zennEntry = (slug: string, frontmatter: unknown): Effect.Effect<Entry, Schema.SchemaError> =>
   decodeZennFrontmatter(frontmatter).pipe(
-    Effect.map(({ title, topics, published, published_at: publishedAt }) => ({
+    Effect.map(({ title, topics, published, published_at: publishedAt = "" }) => ({
       category: "zenn",
       slug,
       title,

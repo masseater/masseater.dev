@@ -22,7 +22,7 @@ const toFeed = (entries: readonly Entry[]): string => {
     feedLinks: { rss: `${site.url}${FEED_PATH}` },
     author: { name: site.name, link: site.url },
   });
-  for (const entry of entries) {
+  for (const entry of entries.filter(({ status }) => status === "published")) {
     const link = `${site.url}${entryPath(entry)}`;
     feed.addItem({
       title: entry.title,
