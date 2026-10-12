@@ -10,7 +10,7 @@ const CollectionView = ({
   <div className="flex flex-col gap-6">
     <header className="flex flex-col gap-2">
       <h1 className="sr-only">{categoryMeta[category].title}</h1>
-      <p className="text-foreground/70">{categoryMeta[category].description}</p>
+      <p className="text-foreground/70 text-center">{categoryMeta[category].description}</p>
     </header>
     <EntryList entries={entries} />
   </div>

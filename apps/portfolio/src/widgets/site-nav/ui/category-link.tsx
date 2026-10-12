@@ -7,12 +7,12 @@ import { NavLabel } from "./nav-label";
 
 const ACTIVE_PROPS = { className: "text-foreground" } as const;
 
-const CategoryNavItem = ({ info }: Readonly<{ info: CategoryInfo }>): ReactNode => (
+const CategoryLink = ({ info }: Readonly<{ info: CategoryInfo }>): ReactNode => (
   <li>
-    <Link activeProps={ACTIVE_PROPS} className="stage-link py-3" params={info} to="/$category">
+    <Link activeProps={ACTIVE_PROPS} className="stage-link px-2 py-3" params={info} to="/$category">
       {({ isActive }) => <NavLabel active={isActive} info={info} />}
     </Link>
   </li>
 );
 
-export { CategoryNavItem };
+export { CategoryLink };

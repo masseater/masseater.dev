@@ -130,13 +130,11 @@
     transition: font-variation-settings 0.6s var(--ease);
   }
 
-  .stage:not([data-pointer]) .stage-letter {
-    animation: stage-wave 6s ease-in-out infinite;
-    animation-delay: calc(var(--i) * 0.2s - 6s);
-  }
-
-  .stage[data-pointer] .stage-letter {
-    animation: none;
+  @scope (.stage:not([data-pointer])) to (.stage) {
+    .stage-letter {
+      animation: stage-wave 6s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 0.2s - 6s);
+    }
   }
 
   .stage-links {
@@ -183,14 +181,6 @@
   view-transition-name: site-name;
 }
 
-@utility vt-site-header {
-  view-transition-name: site-header;
-}
-
-@utility vt-site-footer {
-  view-transition-name: site-footer;
-}
-
 @utility vt-backdrop {
   view-transition-name: backdrop;
 }
@@ -211,6 +201,10 @@
   view-transition-name: category-scraps;
 }
 
+@utility vt-named {
+  view-transition-name: var(--vt);
+}
+
 @utility vt-match {
   view-transition-name: match-element;
   view-transition-class: page;
@@ -223,6 +217,10 @@
 @utility entry-rise {
   animation: entry-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: calc(min(sibling-index(), 8) * 70ms);
+}
+
+@utility entry-tile {
+  @apply bg-background/35 ring-foreground/5 hover:bg-background/60 focus-visible:bg-background/60 rounded-3xl ring-1 backdrop-blur-md transition duration-700 ease-(--ease) hover:-translate-y-1 focus-visible:-translate-y-1;
 }
 
 @utility stage-link {

@@ -1,20 +1,20 @@
 import type { ReactNode } from "react";
 
-import { Backdrop } from "#/shared/ui";
-import { SiteFooter } from "#/widgets/site-footer";
-import { SiteHeader } from "#/widgets/site-header";
+import { SiteLinks, SiteLogo } from "#/widgets/site-nav";
 
+import { FeedLink } from "./feed-link";
 import { SiteMain } from "./site-main";
+import { SiteStage } from "./site-stage";
 
 const SiteLayout = (): ReactNode => (
-  <div className="stage relative isolate flex min-h-dvh flex-col">
-    <div className="fixed inset-0 -z-10">
-      <Backdrop />
-    </div>
-    <SiteHeader />
+  <SiteStage>
+    <header className="flex flex-col items-center gap-4 px-4 pt-14">
+      <SiteLogo size="large" />
+      <SiteLinks direction="row" />
+    </header>
     <SiteMain />
-    <SiteFooter />
-  </div>
+    <FeedLink />
+  </SiteStage>
 );
 
 export { SiteLayout };
