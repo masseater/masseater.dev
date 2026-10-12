@@ -7,10 +7,21 @@ const CategorySchema = Schema.Literals(categories);
 type Category = typeof CategorySchema.Type;
 
 const categoryMeta = {
-  projects: { title: "Projects", description: "作ったもの" },
-  blogs: { title: "Blogs", description: "まとまった文章" },
-  scraps: { title: "Scraps", description: "短いメモや作業ログ" },
-} as const satisfies Record<Category, Readonly<{ title: string; description: string }>>;
+  projects: {
+    title: "Projects",
+    description: "作ったもの",
+    titleTransition: "vt-category-projects",
+  },
+  blogs: { title: "Blogs", description: "まとまった文章", titleTransition: "vt-category-blogs" },
+  scraps: {
+    title: "Scraps",
+    description: "短いメモや作業ログ",
+    titleTransition: "vt-category-scraps",
+  },
+} as const satisfies Record<
+  Category,
+  Readonly<{ title: string; description: string; titleTransition: string }>
+>;
 
 type CategoryInfo = Readonly<{ category: Category; title: string; description: string }>;
 
