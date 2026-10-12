@@ -1,4 +1,4 @@
-export { allEntries, collectionOf, entryOf } from "./api/entries";
+export { collectionOf, entryOf } from "./api/entries";
 export { categoryInfos, categoryMeta } from "./model/category";
 export type { Category, CategoryInfo } from "./model/category";
 export { entryPath } from "./model/entry";

@@ -5,7 +5,7 @@ import { EntryBody } from "#/entities/entry";
 
 import { ArticleHeader } from "./article-header";
 
-const route = getRouteApi("/$category/$slug");
+const route = getRouteApi("/_site/$category/$slug");
 
 const EntryPage = (): ReactNode => {
   const { entry } = route.useLoaderData();

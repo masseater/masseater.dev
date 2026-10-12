@@ -7,9 +7,9 @@ const BACK = "トップへ戻る";
 
 const NotFound = (): ReactNode => (
   <div className="flex flex-col gap-4">
-    <h1 className="font-display text-3xl font-bold">{TITLE}</h1>
-    <p className="text-muted-foreground">{MESSAGE}</p>
-    <Link className="underline underline-offset-4" to="/">
+    <h1 className="font-display text-4xl font-light">{TITLE}</h1>
+    <p className="text-foreground/70">{MESSAGE}</p>
+    <Link className="stage-link self-start" to="/">
       {BACK}
     </Link>
   </div>
