@@ -29,6 +29,7 @@
     "@tanstack/react-router-ssr-query": "1.167.3",
     "effect": "catalog:stack",
     "feed": "catalog:",
+    "jose": "catalog:",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "scheduler": "0.28.0",
