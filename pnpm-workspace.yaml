@@ -8,7 +8,7 @@ packages:
 catalogMode: prefer
 
 catalog:
-  "@ast-grep/cli": 0.45.3
+  "@ast-grep/cli": 0.50.0
   "@cloudflare/workers-types": 5.20261009.1
   "@effect/platform-node": 4.0.0
   "@eslint-react/eslint-plugin": 5.24.10
@@ -17,7 +17,7 @@ catalog:
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/eslint-plugin-start": 0.1.0
   "@typescript-eslint/parser": 8.71.1
-  "@types/node": 26.6.4
+  "@types/node": 26.6.5
   eslint: 10.12.0
   eslint-plugin-drizzle: 0.2.3
   eslint-plugin-react-hooks: 7.1.1
@@ -33,7 +33,7 @@ catalog:
   "@tanstack/react-query-devtools": 5.104.1
   "@vitejs/plugin-react": 6.1.2
   "@vitejs/plugin-rsc": 0.5.36
-  skills: 1.7.1
+  skills: 1.7.2
   "@tanstack/intent": 0.5.5
   "@fontsource-variable/roboto-flex": 5.3.0
   "@paper-design/shaders-react": 0.0.81
