@@ -18,23 +18,14 @@ Cloudflare の認証情報は環境変数ではなく Alchemy のプロファイ
 
 ルートの `.env` に書く。
 
-| 名前                 | 用途                          |
-| -------------------- | ----------------------------- |
-| `OPENROUTER_API_KEY` | push 前に走る jev-lint の判定 |
+| 名前                 | 用途                                            |
+| -------------------- | ----------------------------------------------- |
+| `OPENROUTER_API_KEY` | `vp check` で走る oxlint-plugin-decision の判定 |
 
 ## GitHub の設定
 
-リポジトリの Actions secrets に次を登録する。
-
-| 名前                      | 用途                                       |
-| ------------------------- | ------------------------------------------ |
-| `OPENROUTER_API_KEY`      | verify ワークフローの jev-lint             |
-| `CLAUDE_CODE_OAUTH_TOKEN` | verify 失敗時に Claude Code が自動修正する |
-| `CLOUDFLARE_API_TOKEN`    | deploy ジョブの Cloudflare 認証            |
-| `CLOUDFLARE_ACCOUNT_ID`   | deploy ジョブのデプロイ先アカウント        |
-
-Settings → Actions → General で「Allow GitHub Actions to create and approve pull requests」を有効にする。
-release-pleaseと自動修正がPRを作るためである。
+Actions の secrets、Actions による PR 作成の許可、PR を作れる人の制限、既定ブランチのルールセットを gh で設定する。
+手順は `setup-github` スキル（`docs/skills/setup-github/SKILL.md`）にある。
 
 ## コンテンツ
 

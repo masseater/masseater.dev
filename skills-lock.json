@@ -62,12 +62,24 @@
       "skillPath": "skills/modern-web-guidance/SKILL.md",
       "computedHash": "dbd30d9c331c8957e065270150ffe44b4ba11ad5259cc9144240f63c45b05f1c"
     },
+    "setup-github": {
+      "source": "./docs/skills/setup-github",
+      "sourceType": "local",
+      "computedHash": "e199a98e6b64b4ae47924863b78b7635aca269bd93d566863cb6adfdb72888df"
+    },
     "shadcn": {
       "source": "shadcn-ui/ui",
       "ref": "993eb2c3151997ce08a49635c10fd8c8ef3713c7",
       "sourceType": "github",
       "skillPath": "skills/shadcn/SKILL.md",
       "computedHash": "da388f632cd83783c02967446e21941c9ee8291ccb43ba74c23f7d4e9b7c298c"
+    },
+    "stop-describing-ui": {
+      "source": "artouc/stop-describe-ui",
+      "ref": "21c33a7d5fb2b9d1987a15fdfe5202bbaa51a70b",
+      "sourceType": "github",
+      "skillPath": "skills/stop-describing-ui/SKILL.md",
+      "computedHash": "ad8da9645ed5b9f01398582e1b9388250f900b73a8960be3a4bd1be183761005"
     },
     "systematic-debugging": {
       "source": "obra/superpowers",

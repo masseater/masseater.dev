@@ -3,17 +3,16 @@
   "env": {
     "CLAUDE_CODE_ENABLE_FUNCTION_HOOKS": "1"
   },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "permissions": {
     "deny": ["Bash(pnpm *)", "Bash(pnpx *)", "Bash(pn *)", "Bash(pnx *)"]
   },
   "enabledMcpjsonServers": ["fallow"],
   "extraKnownMarketplaces": {
-    "jev-lint": {
-      "source": {
-        "source": "github",
-        "repo": "mizchi/jev-lint"
-      }
-    },
     "cc-jev-teacher": {
       "source": {
         "source": "github",
@@ -22,7 +21,6 @@
     }
   },
   "enabledPlugins": {
-    "jev-lint@jev-lint": true,
     "cc-jev-teacher@cc-jev-teacher": true
   },
   "hooks": {
@@ -30,6 +28,13 @@
       {
         "matcher": "Bash",
         "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/block-pnpm.ts"],
+            "timeout": 10,
+            "statusMessage": "pnpm の直接実行を確認中"
+          },
           {
             "type": "command",
             "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/fallow-gate.sh"

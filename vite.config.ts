@@ -30,6 +30,12 @@ const eslintReactRules = asErrors(
   ),
 );
 
+const decisionRules = asErrors(
+  ["exclusive-status", "server-state-tanstack-query", "ui-state-effect-atom"].map(
+    (id) => `stack/${id}`,
+  ),
+);
+
 const effectRules = asErrors(
   Object.values(effectPresets).flatMap((preset) => Object.keys(preset.rules ?? {})),
 );
@@ -80,6 +86,7 @@ export default defineConfig({
       { name: "no-comments", specifier: "eslint-plugin-no-comments" },
       { name: "baseline-js", specifier: "eslint-plugin-baseline-js" },
       { name: "@html-eslint/react", specifier: "@html-eslint/eslint-plugin-react" },
+      { name: "stack", specifier: "./decision-rules.ts" },
     ],
     rules: {
       "vite-plus/prefer-vite-plus-imports": "error",
@@ -136,13 +143,7 @@ export default defineConfig({
       "eslint/new-cap": [
         "error",
         {
-          capIsNewExceptions: [
-            "CloudflareApiLive",
-            "PullRequestCreationPolicy",
-            "Resource",
-            "Ruleset",
-            "Stack",
-          ],
+          capIsNewExceptions: ["CloudflareApiLive", "Stack"],
           capIsNewExceptionPattern: "^(Config|Context|Data|Schema|D1|Website)\\.",
         },
       ],
@@ -153,14 +154,25 @@ export default defineConfig({
     },
     overrides: [
       {
-        files: ["**/*.config.ts", "**/alchemy.run.ts"],
+        files: ["**/*.config.ts", "**/alchemy.run.ts", "decision-rules.ts"],
         rules: { "import/no-default-export": "off" },
       },
       {
         files: ["**/shared/ui/**"],
         rules: { "shadcn/no-restyle": "off", "react/jsx-props-no-spreading": "off" },
       },
+      {
+        files: ["apps/portfolio/src/**/*.{ts,tsx}"],
+        rules: decisionRules,
+      },
+      {
+        files: ["**/*.test.ts"],
+        rules: Object.fromEntries(Object.keys(decisionRules).map((name) => [name, "off"] as const)),
+      },
     ],
+    settings: {
+      stack: { model: "openrouter/perplexity/pplx-decider-v1.1-27b" },
+    },
     options: {
       typeAware: true,
       typeCheck: true,
@@ -173,11 +185,11 @@ export default defineConfig({
     tasks: {
       "actions-lint": {
         command:
-          "uvx --from actionlint-py@1.7.12.25 actionlint && uvx zizmor@1.30.1 .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows",
+          'uvx --from actionlint-py@1.7.12.25 actionlint && uvx zizmor@1.30.1 $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
         cache: {
+          env: ["CLAUDE_CODE_REMOTE"],
           untrackedEnv: [
             "GH_TOKEN",
-            "ZIZMOR_NO_ONLINE_AUDITS",
             "HTTPS_PROXY",
             "https_proxy",
             "NO_PROXY",
@@ -186,8 +198,40 @@ export default defineConfig({
           ],
         },
       },
-      "jev-lint": {
-        command: "jev-lint review --base origin/main",
+      verify: {
+        command: "vp check",
+        cache: {
+          env: ["OPENROUTER_API_KEY"],
+          untrackedEnv: [
+            "CLAUDECODE",
+            "CLAUDE_CODE_REMOTE",
+            "HTTPS_PROXY",
+            "https_proxy",
+            "NO_PROXY",
+            "no_proxy",
+            "SSL_CERT_FILE",
+            "NODE_EXTRA_CA_CERTS",
+          ],
+        },
+        dependsOn: [
+          "test-all",
+          "eslint",
+          "syncpack",
+          "markdown-lint",
+          "renovate",
+          "actions-lint",
+          "steiger-all",
+          "fallow-all",
+          "gitleaks",
+        ],
+      },
+      "test-all": "vp run -r test",
+      eslint: "NODE_OPTIONS=--max-old-space-size=4096 eslint --max-warnings 0 .",
+      syncpack: "syncpack lint",
+      "steiger-all": "vp run -r steiger",
+      "fallow-all": "vp run -r fallow",
+      gitleaks: {
+        command: "go run github.com/zricethezav/gitleaks/v8@v8.30.1 git --redact --no-banner",
         cache: false,
       },
     },

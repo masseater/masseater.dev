@@ -8,11 +8,11 @@
   },
   "scripts": {
     "dev": "alchemy dev",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc",
     "test": "vp test run --passWithNoTests",
     "steiger": "steiger ./src",
     "prepare": "effect-tsgo patch --typescript --oxlint",
-    "fallow": "fallow --production --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
+    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
     "deploy": "alchemy deploy",
     "destroy": "alchemy destroy"
   },
