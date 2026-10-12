@@ -1,4 +1,4 @@
-import type { HoneypotEnv } from "./alchemy.run.ts";
+import type { HoneypotEnv } from "./edge-guard.ts";
 
 const header = (request: Request, name: string): string => request.headers.get(name) ?? "";
 
