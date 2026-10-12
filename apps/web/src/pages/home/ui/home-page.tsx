@@ -1,18 +1,20 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { categoryInfos, entryQueries } from "#/entities/entry";
+import { categoryInfos } from "#/entities/entry";
+import { site } from "#/shared/config";
 
 import { CategorySection } from "./category-section";
-import { Profile } from "./profile";
+
+const route = getRouteApi("/");
 
 const HomePage = (): ReactNode => {
-  const { data } = useSuspenseQuery(entryQueries.all());
+  const entries = route.useLoaderData();
   return (
     <div className="flex flex-col gap-12">
-      <Profile />
+      <h1 className="sr-only">{site.name}</h1>
       {categoryInfos.map((info) => (
-        <CategorySection entries={data} info={info} key={info.category} />
+        <CategorySection entries={entries} info={info} key={info.category} />
       ))}
     </div>
   );

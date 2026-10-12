@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
-import { allEntries } from "./entries.server";
+import { allEntries } from "./entries";
 
 const NONE = 0;
 

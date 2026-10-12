@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Effect } from "effect";
 
-import { entryQueries } from "#/entities/entry";
+import { allEntries } from "#/entities/entry";
 import { homeHead, HomePage } from "#/pages/home";
 
 const Route = createFileRoute("/")({
-  loader: ({ context: { queryClient } }) => queryClient.query(entryQueries.all()),
+  loader: () => Effect.runPromise(allEntries),
   head: () => homeHead,
   component: HomePage,
 });

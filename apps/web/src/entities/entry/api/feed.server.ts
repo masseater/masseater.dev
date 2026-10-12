@@ -6,7 +6,7 @@ import type { Entry } from "#/entities/entry/model/entry";
 import { entryPath } from "#/entities/entry/model/entry";
 import { site } from "#/shared/config";
 
-import { allEntries } from "./entries.server";
+import { allEntries } from "./entries";
 
 const FEED_PATH = "/feed.xml";
 

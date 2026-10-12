@@ -1,9 +1,8 @@
-import type { QueryClient } from "@tanstack/react-query";
 import { notFound } from "@tanstack/react-router";
 import type { NotFoundError } from "@tanstack/react-router";
 import { Effect } from "effect";
 
-import { entryQueries } from "#/entities/entry";
+import { entryOf } from "#/entities/entry";
 import type { EntryResult } from "#/entities/entry";
 
 type FoundEntry = Extract<EntryResult, Readonly<{ status: "found" }>>;
@@ -15,18 +14,8 @@ const foundOrNotFound = (result: EntryResult): Effect.Effect<FoundEntry, NotFoun
   return Effect.succeed(result);
 };
 
-const loadEntry = ({
-  queryClient,
-  params: { category, slug },
-}: Readonly<{
-  queryClient: QueryClient;
-  params: Readonly<{ category: string; slug: string }>;
-}>): Promise<FoundEntry> =>
-  Effect.runPromise(
-    Effect.promise(() => queryClient.query(entryQueries.detail(category, slug))).pipe(
-      Effect.flatMap(foundOrNotFound),
-    ),
-  );
+const loadEntry = (params: Readonly<{ category: string; slug: string }>): Promise<FoundEntry> =>
+  Effect.runPromise(entryOf(params).pipe(Effect.flatMap(foundOrNotFound)));
 
 export type { FoundEntry };
 export { loadEntry };
