@@ -9,6 +9,12 @@ import mdx from "./mdx.config.ts";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
+  test: {
+    projects: [
+      { extends: true, test: { name: "app", include: ["src/**/*.test.{ts,tsx}"] } },
+      { extends: false, test: { name: "alchemy", include: ["*.test.ts"] } },
+    ],
+  },
   plugins: [
     devtools(),
     mdx,

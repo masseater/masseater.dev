@@ -2,6 +2,8 @@ import { Stack, Stage } from "alchemy";
 import { Website, providers, state } from "alchemy/Cloudflare";
 import { Effect } from "effect";
 
+import { APP_NAME, requireAppPrefix } from "./app-name.ts";
+
 const DOMAIN = "masseater.dev";
 const PRODUCTION_STAGE = "prod";
 
@@ -17,10 +19,11 @@ const web = Effect.gen(function* web() {
 });
 
 export default Stack(
-  "masseater-dev",
+  APP_NAME,
   { providers: providers(), state: state() },
   Effect.gen(function* stack() {
     const { url } = yield* web;
+    yield* requireAppPrefix;
     return { url };
   }),
 );
