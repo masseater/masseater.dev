@@ -8,7 +8,7 @@ const CONTENT_ROOT = "/content/";
 const EXTENSION = ".md";
 const DATE_LENGTH = "YYYY-MM-DD".length;
 
-const DateString = Schema.String.check(Schema.isPattern(/^\d{4}-\d{2}-\d{2}/u));
+const DateString = Schema.String.check(Schema.isPattern(/^\d{4}-\d{2}-\d{2}(?: \d{2}:\d{2})?$/u));
 
 const Tags = Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([])));
 

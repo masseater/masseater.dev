@@ -51,7 +51,7 @@ tags: [tag]
 published: true
 ```
 
-`zenn` は Zenn の frontmatter（`title`・`emoji`・`type`・`topics`・`published`）に `published_at` を必須で加える。
+`zenn` は Zenn の frontmatter（`title`・`emoji`・`type`・`topics`・`published`）をそのまま使う。`published: true` の記事には `published_at` が必須で、下書きには要らない。
 `published: false` の記事は開発サーバーでだけ表示される。
 画像は `apps/web/public/images/` に置き、`/images/...` で参照する。
 
