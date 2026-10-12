@@ -106,6 +106,37 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+  zenn:
+    needs: verify
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: zenn
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+        run: |
+          gh auth setup-git
+          tree="$(git rev-parse HEAD:apps/zenn-articles)"
+          parent=()
+          if git fetch --no-tags --depth=1 origin zenn; then
+            if [ "$(git rev-parse 'FETCH_HEAD^{tree}')" = "$tree" ]; then
+              exit 0
+            fi
+            parent=(-p FETCH_HEAD)
+          fi
+          commit="$(git commit-tree "$tree" "${parent[@]}" -m "deploy: $GITHUB_SHA")"
+          git push origin "$commit:refs/heads/zenn"
+
   release:
     needs: verify
     if: github.event_name == 'push' && github.repository == 'masseater/typescript-template'
