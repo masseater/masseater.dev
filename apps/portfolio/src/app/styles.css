@@ -135,6 +135,10 @@
     animation-delay: calc(var(--i) * 0.2s - 6s);
   }
 
+  .stage[data-pointer] .stage-letter {
+    animation: none;
+  }
+
   .stage-links {
     transform: translate3d(calc(var(--tx) * 2rem), calc(var(--ty) * 2rem), 0);
     transition: transform 1.4s var(--ease);
