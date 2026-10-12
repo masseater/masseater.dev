@@ -5,13 +5,16 @@ import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import { defineConfig } from "vite-plus";
 
+import mdx from "./mdx.config.ts";
+
 export default defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools(),
+    mdx,
     tailwindcss(),
     tanstackStart({ srcDirectory: "src/app", rsc: { enabled: true } }),
     rsc(),
-    viteReact(),
+    viteReact({ include: /\.(?:md|tsx?)$/u }),
   ],
 });

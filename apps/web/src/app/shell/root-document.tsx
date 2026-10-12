@@ -1,9 +1,10 @@
-import { RegistryProvider } from "@effect/atom-react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
+
+import { SiteLayout } from "./site-layout";
 
 const devtoolsPlugins = [
   { name: "TanStack Router", render: <TanStackRouterDevtoolsPanel /> },
@@ -15,8 +16,8 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>): ReactNod
     <head>
       <HeadContent />
     </head>
-    <body>
-      <RegistryProvider>{children}</RegistryProvider>
+    <body className="flex min-h-dvh flex-col">
+      <SiteLayout>{children}</SiteLayout>
       <TanStackDevtools plugins={devtoolsPlugins} />
       <Scripts />
     </body>

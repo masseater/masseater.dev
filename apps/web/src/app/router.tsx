@@ -3,6 +3,8 @@ import { createRouter } from "@tanstack/react-router";
 import type { Router } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 
+import { NotFound } from "#/widgets/not-found";
+
 import { routeTree } from "./routeTree.gen";
 
 type AppRouter = Router<typeof routeTree>;
@@ -21,6 +23,7 @@ const getRouter = (): AppRouter => {
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
+    defaultNotFoundComponent: NotFound,
   });
   setupRouterSsrQueryIntegration({ router, queryClient });
   return router;

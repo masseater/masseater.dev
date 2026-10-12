@@ -1,34 +1,21 @@
-import type { PointerEventHandler, ReactNode } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 
-import { Backdrop } from "./backdrop";
-import { ProfileHeader } from "./profile-header";
+import { categoryInfos, entryQueries } from "#/entities/entry";
 
-const CENTER = "0.5";
-const POINTER_ATTRIBUTE = "data-pointer";
+import { CategorySection } from "./category-section";
+import { Profile } from "./profile";
 
-const followPointer: PointerEventHandler<HTMLElement> = ({ currentTarget, clientX, clientY }) => {
-  const { left, top, width, height } = currentTarget.getBoundingClientRect();
-  currentTarget.toggleAttribute(POINTER_ATTRIBUTE, true);
-  currentTarget.style.setProperty("--mx", String((clientX - left) / width));
-  currentTarget.style.setProperty("--my", String((clientY - top) / height));
+const HomePage = (): ReactNode => {
+  const { data } = useSuspenseQuery(entryQueries.all());
+  return (
+    <div className="flex flex-col gap-12">
+      <Profile />
+      {categoryInfos.map((info) => (
+        <CategorySection entries={data} info={info} key={info.category} />
+      ))}
+    </div>
+  );
 };
-
-const releasePointer: PointerEventHandler<HTMLElement> = ({ currentTarget }) => {
-  currentTarget.toggleAttribute(POINTER_ATTRIBUTE, false);
-  currentTarget.style.setProperty("--mx", CENTER);
-  currentTarget.style.setProperty("--my", CENTER);
-};
-
-const HomePage = (): ReactNode => (
-  <main
-    className="stage relative isolate grid min-h-dvh place-items-center overflow-hidden px-4"
-    onPointerCancel={releasePointer}
-    onPointerLeave={releasePointer}
-    onPointerMove={followPointer}
-  >
-    <Backdrop />
-    <ProfileHeader />
-  </main>
-);
 
 export { HomePage };
