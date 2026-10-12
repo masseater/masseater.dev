@@ -5,13 +5,15 @@ import { HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 
+import { site } from "#/shared/config";
+
 const devtoolsPlugins = [
   { name: "TanStack Router", render: <TanStackRouterDevtoolsPanel /> },
   { name: "TanStack Query", render: <ReactQueryDevtoolsPanel /> },
 ];
 
 const RootDocument = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
-  <html lang="ja">
+  <html lang={site.locale}>
     <head>
       <HeadContent />
     </head>

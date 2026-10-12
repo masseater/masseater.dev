@@ -1,5 +1,6 @@
 export { collectionOf, entryOf } from "./api/entries";
-export { categoryInfos, categoryMeta } from "./model/category";
+export { foundOrNotFound } from "./api/found-or-not-found";
+export { categoryInfos, categoryMeta, categoryPath } from "./model/category";
 export type { Category, CategoryInfo } from "./model/category";
 export { entryPath } from "./model/entry";
 export type { CollectionResult, Entry, EntryResult } from "./model/entry";
