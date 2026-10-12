@@ -1,14 +1,13 @@
-import { Array, Effect, Option, Schema, String } from "effect";
+import { Array, Effect, Option, Schema } from "effect";
 
-import { categoryMeta, CategorySchema } from "#/entities/entry/model/category";
+import { CategorySchema } from "#/entities/entry/model/category";
 import type { Category } from "#/entities/entry/model/category";
 import type { CollectionResult, Entry, EntryResult, Missing } from "#/entities/entry/model/entry";
 
 const CONTENT_ROOT = "/content/";
 const EXTENSION = ".md";
-const DATE_LENGTH = "YYYY-MM-DD".length;
 
-const DateString = Schema.String.check(Schema.isPattern(/^\d{4}-\d{2}-\d{2}(?: \d{2}:\d{2})?$/u));
+const DateString = Schema.String.check(Schema.isPattern(/^\d{4}-\d{2}-\d{2}$/u));
 
 const Tags = Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([])));
 
@@ -22,27 +21,6 @@ const decodeFrontmatter = Schema.decodeUnknownEffect(
   }),
 );
 
-const ZennCommon = {
-  title: Schema.String,
-  emoji: Schema.String,
-  type: Schema.Literals(["tech", "idea"]),
-  topics: Schema.Array(Schema.String),
-};
-
-const PublishedZenn = Schema.Struct({
-  ...ZennCommon,
-  published: Schema.Literal(true),
-  published_at: DateString,
-});
-
-const DraftZenn = Schema.Struct({
-  ...ZennCommon,
-  published: Schema.Literal(false),
-  published_at: Schema.optionalKey(DateString),
-});
-
-const decodeZennFrontmatter = Schema.decodeUnknownEffect(Schema.Union([PublishedZenn, DraftZenn]));
-
 const decodeLocation = Schema.decodeUnknownEffect(Schema.Tuple([CategorySchema, Schema.String]));
 
 const decodeCategory = Schema.decodeUnknownOption(CategorySchema);
@@ -53,19 +31,6 @@ const toStatus = (published: boolean): Entry["status"] => {
   }
   return "draft";
 };
-
-const zennEntry = (slug: string, frontmatter: unknown): Effect.Effect<Entry, Schema.SchemaError> =>
-  decodeZennFrontmatter(frontmatter).pipe(
-    Effect.map(({ title, topics, published, published_at: publishedAt = "" }) => ({
-      category: "zenn",
-      slug,
-      title,
-      description: categoryMeta.zenn.description,
-      date: String.takeLeft(publishedAt, DATE_LENGTH),
-      tags: topics,
-      status: toStatus(published),
-    })),
-  );
 
 const ownEntry = (
   category: Category,
@@ -89,12 +54,7 @@ const decodeEntry = ([path, frontmatter]: readonly [string, unknown]): Effect.Ef
   Schema.SchemaError
 > =>
   decodeLocation(path.slice(CONTENT_ROOT.length, -EXTENSION.length).split("/")).pipe(
-    Effect.flatMap(([category, slug]) => {
-      if (category === "zenn") {
-        return zennEntry(slug, frontmatter);
-      }
-      return ownEntry(category, slug, frontmatter);
-    }),
+    Effect.flatMap(([category, slug]) => ownEntry(category, slug, frontmatter)),
   );
 
 const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.forEach(
