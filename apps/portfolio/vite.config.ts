@@ -25,9 +25,12 @@ export default defineConfig({
       srcDirectory: "src/app",
       rsc: { enabled: true },
       prerender: { enabled: true, crawlLinks: true },
-      pages: ["/", ...categories.map((category) => categoryPath(category)), site.feedPath].map(
-        (path) => ({ path }),
-      ),
+      pages: [
+        ...["/", ...categories.map((category) => categoryPath(category))].map((path) => ({ path })),
+        ...[site.feedPath, site.robotsPath].map((path) => ({ path, sitemap: { exclude: true } })),
+        ...site.externalPaths.map((path) => ({ path, prerender: { enabled: false } })),
+      ],
+      sitemap: { host: site.url, outputPath: site.sitemapFile },
       spa: {
         enabled: true,
         maskPath: "/404",

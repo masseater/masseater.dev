@@ -9,6 +9,9 @@ const site = {
   locale: "ja",
   ogImage: new URL("/og.png", url).href,
   feedPath: "/feed.xml",
+  robotsPath: "/robots.txt",
+  sitemapFile: "sitemap.xml",
+  externalPaths: ["/decision-bench/"],
   xHandle: `@${xUser}`,
   links: [
     { label: "GitHub", href: "https://github.com/masseater" },
