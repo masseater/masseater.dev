@@ -24,6 +24,7 @@ const getRouter = (): AppRouter => {
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
     defaultNotFoundComponent: NotFound,
+    defaultViewTransition: true,
   });
   setupRouterSsrQueryIntegration({ router, queryClient });
   return router;

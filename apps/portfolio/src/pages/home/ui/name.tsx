@@ -15,7 +15,7 @@ const letters = Array.from(NAME, (letter, index) => ({
 const Name = (): ReactNode => (
   <h1
     aria-label={NAME}
-    className="stage-title font-display text-7xl select-none sm:text-9xl"
+    className="vt-site-name stage-title font-display text-7xl select-none sm:text-9xl"
     style={titleStyle}
   >
     {letters.map(({ key, letter, style }) => (

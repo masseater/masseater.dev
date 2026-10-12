@@ -9,7 +9,9 @@ const CollectionView = ({
 }: Readonly<{ category: Category; entries: readonly Entry[] }>): ReactNode => (
   <div className="flex flex-col gap-6">
     <header className="flex flex-col gap-2">
-      <h1 className="font-display text-5xl font-light sm:text-7xl">
+      <h1
+        className={`${categoryMeta[category].titleTransition} font-display w-fit text-5xl font-light sm:text-7xl`}
+      >
         {categoryMeta[category].title}
       </h1>
       <p className="text-foreground/70">{categoryMeta[category].description}</p>
