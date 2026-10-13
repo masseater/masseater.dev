@@ -104,6 +104,10 @@ Effect から外部 API や SaaS を呼ぶクライアントは手で包まず�
 - 警告を含め、ZAP のアラートが 1 件でもあればジョブを失敗にし、すぐ直す。レポートはワークフローの成果物 `zap_scan` に残る。誤検知だけを `.github/zap/rules.tsv` に `ルールID<TAB>IGNORE<TAB>(ルール名)` で書く。
 - 依存パッケージの既知の脆弱性は、verify の `audit` タスク（`vp pm audit`）が落とす。直すときは `vp pm audit --fix` で `pnpm-workspace.yaml` の overrides に修正版を足す。修正版が出ていない勧告だけを、`auditConfig.ignoreGhsas` に GHSA の ID で載せ、理由をコミットメッセージに書く。
 
+## 公開先
+
+- デプロイ先や外部公開しているもの（サイト、API、npm パッケージなど）があれば、その URL を README に一覧で載せる。
+
 ## ベース
 
 - このリポジトリのベースは https://github.com/masseater/typescript-template である。テンプレート由来の構成・方針はテンプレートに従う。

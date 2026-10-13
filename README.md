@@ -2,6 +2,11 @@
 
 https://masseater.dev のポートフォリオ。mainへのpushでverifyが通ると、`ALCHEMY_STAGE=prod` でCloudflareにデプロイされる。
 
+## 公開先
+
+- ポートフォリオ: https://masseater.dev
+- Zenn: https://zenn.dev/masseater
+
 ## セットアップ
 
 ```sh
