@@ -38,6 +38,19 @@ release. Add a tool name to select part of the graph. For example, run
 
 <!--VITE PLUS END-->
 
+## コマンド
+
+- `vp run verify` は `vp check` と、`vite.config.ts` の `verify` タスクの `dependsOn` に並ぶ検査をすべて動かす。pre-push フックも同じものを動かす。
+- `vp check` の decision ルールは `apps/portfolio/src` だけに掛かり、`OPENROUTER_API_KEY` で判定する。
+- 1 つのテストは `apps/portfolio` で `vp test run <ファイル>` で動かす。`src/` のテストは `app`、直下の Alchemy まわりのテストは `alchemy` のプロジェクトで動く。
+
+## 構成
+
+- `apps/portfolio` は TanStack Start（RSC）で全ページをプリレンダーし、`Website.StaticSite` で静的サイトとして Cloudflare に置く。記事は `apps/portfolio/content/` の Markdown を `import.meta.glob` で読む。
+- `alchemy.run.ts` は prod ステージでだけ `edge-guard.ts` と `log-archive.ts` を作る。前者はスキャナーを弾く WAF ルールとハニーポットの Worker を、後者は全 Worker のログを R2 に送る Logpush を持つ。
+- `ci-telemetry.worker.ts` は、`.github/scripts/ci-telemetry.sh` が送るジョブとステップの時間を GitHub の OIDC トークンで確かめ、ログに出す。
+- `apps/zenn-articles` はパッケージではない。main の verify が通ると、中身が `zenn` ブランチの直下へ写される。
+
 ## 環境変数
 
 - 環境変数は環境ごとに変わる値だけにする。変わらない値はコードか Alchemy の設定に、ツールにフラグがあればフラグにする。
