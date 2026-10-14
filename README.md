@@ -1,41 +1,19 @@
 # masseater.dev
 
-https://masseater.dev のポートフォリオ。mainへのpushでverifyが通ると、`ALCHEMY_STAGE=prod` でCloudflareにデプロイされる。
+masseater が作ったものと書いた文章を載せる個人サイトである。
 
 ## 公開先
 
-- ポートフォリオ: https://masseater.dev
+- サイト: https://masseater.dev
+- RSS: https://masseater.dev/feed.xml
 - Zenn: https://zenn.dev/masseater
 
-## セットアップ
+## 記事を書く
 
-```sh
-vp install
-cp .env.example .env
-vp exec --filter portfolio alchemy profile edit --add Cloudflare
-vp run verify
-```
+記事は `apps/portfolio/content/<カテゴリ>/<slug>.md` に置くと、`https://masseater.dev/<カテゴリ>/<slug>` で公開される。
+カテゴリは、作ったものを載せる `projects`、まとまった文章の `blogs`、短いメモの `scraps` から選ぶ。
 
-Cloudflare の認証情報は環境変数ではなく Alchemy のプロファイル（`~/.alchemy`）で管理する。
-デプロイと `.mcp.json` の Cloudflare MCP は、どちらもこのプロファイルの認証情報を使う。
-
-## 環境変数
-
-ルートの `.env` に書く。
-
-| 名前                 | 用途                                            |
-| -------------------- | ----------------------------------------------- |
-| `OPENROUTER_API_KEY` | `vp check` で走る oxlint-plugin-decision の判定 |
-
-## GitHub の設定
-
-Actions の secrets、Actions による PR 作成の許可、PR を作れる人の制限、既定ブランチのルールセットを gh で設定する。
-手順は `setup-template` スキル（[masseater/skills](https://github.com/masseater/skills)）にある。
-
-## コンテンツ
-
-記事は `apps/portfolio/content/<カテゴリ>/<slug>.md` に置き、`/<カテゴリ>/<slug>` で公開される。
-カテゴリは `projects`・`blogs`・`scraps` の3つである。frontmatter は次のとおり。
+先頭の frontmatter には次を書く。
 
 ```yaml
 title: タイトル
@@ -45,20 +23,34 @@ tags: [tag]
 published: true
 ```
 
-`published: false` の記事は開発サーバーでだけ表示される。
+`published: false` にした記事は、開発サーバーでだけ表示される。
 画像は `apps/portfolio/public/` に置く。
 
-## Zenn
+main に入ると、verify が通ったあとに本番へデプロイされる。
 
-Zenn に投稿する記事は `apps/zenn-articles/` の `articles/`、本は `books/`、画像は `images/` に置く。
-Zenn の GitHub 連携はリポジトリ直下しか読まないため、main の verify が通ると `apps/zenn-articles/` の中身を `zenn` ブランチの直下にコミットする。
-Zenn のデプロイ対象ブランチは `zenn` にする。
-サイトには表示しない。
+## Zenn に出す
 
-## 起動とデプロイ
+Zenn の記事は `apps/zenn-articles/articles/`、本は `books/`、画像は `images/` に置く。
+main の verify が通ると、中身が `zenn` ブランチの直下へ写され、Zenn がそのブランチから取り込む。
+masseater.dev のサイトには表示されない。
+
+## 手元で確かめる
+
+前提として、Vite+ の `vp` と Cloudflare のアカウントが要る。
+Cloudflare の認証情報は Alchemy のプロファイルに入れる。
 
 ```sh
+vp install
+cp .env.example .env
+vp exec --filter portfolio alchemy profile edit --add Cloudflare
 cd apps/portfolio
 vp run dev
-vp run deploy
 ```
+
+`.env` の `OPENROUTER_API_KEY` には、`vp check` の判定に使う OpenRouter のキーを書く。
+開発サーバーが表示する URL を開き、書いた記事がカテゴリの一覧に出れば確かめは終わる。
+
+## 最初に一度だけ行う設定
+
+- GitHub の secrets とルールセットは、[masseater/skills](https://github.com/masseater/skills) の `setup-template` スキルの手順で入れる
+- Zenn の GitHub 連携では、デプロイ対象のブランチを `zenn` にする
