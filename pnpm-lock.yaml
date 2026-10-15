@@ -168,8 +168,8 @@ catalogs:
       specifier: 0.50.0
       version: 0.50.0
     '@cloudflare/workers-types':
-      specifier: 5.20261009.1
-      version: 5.20261009.1
+      specifier: 5.20261012.1
+      version: 5.20261012.1
     '@commitlint/cli':
       specifier: 21.2.3
       version: 21.2.3
@@ -515,7 +515,7 @@ importers:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 5.20261009.1
+        version: 5.20261012.1
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.51.1
@@ -934,6 +934,9 @@ packages:
 
   '@cloudflare/workers-types@5.20261009.1':
     resolution: {integrity: sha512-Oa/7pS2upeCKG0lEvPSGHLK8B8sx3lPanEaXDlOj13H6HfZV5agBeHq5A1VtJj+/x9dXuMJpHTg7U7kTYt4xDA==}
+
+  '@cloudflare/workers-types@5.20261012.1':
+    resolution: {integrity: sha512-5Y0NrKXG9CZaNUZ6Dt3TLRE4UQe2/DGuxIhTEVYHUl0jAlv1TpQtI59YBAszRpSaZAMzbM8nqGc1n9Z2q4TVyA==}
 
   '@commitlint/cli@21.2.3':
     resolution: {integrity: sha512-5yOX6IRjcrIReCxpyAd04hgI/yhUMpVBJ/ouwFV0wk9yx5+fYRDWZWJ5h55Tbedgfol+5m2mU5nqzbB8g3v0vQ==}
@@ -9719,6 +9722,8 @@ snapshots:
     optional: true
 
   '@cloudflare/workers-types@5.20261009.1': {}
+
+  '@cloudflare/workers-types@5.20261012.1': {}
 
   '@commitlint/cli@21.2.3(@types/node@26.6.5)(conventional-commits-parser@7.1.2)(typescript@5.9.3)':
     dependencies:
