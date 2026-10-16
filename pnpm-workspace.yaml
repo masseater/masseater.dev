@@ -49,7 +49,7 @@ catalog:
   jose: 6.2.12
 catalogs:
   stack:
-    "@distilled.cloud/cloudflare": 1.0.0-rc.13
+    "@distilled.cloud/cloudflare": 1.0.0-rc.15
     "@effect/atom-react": 4.0.2
     "@effect/tsgo": 0.51.1
     "@tanstack/react-query": 5.104.2
