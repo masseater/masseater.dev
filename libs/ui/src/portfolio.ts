@@ -1,6 +1,7 @@
 const xUser = "r_masseater";
 
 const portfolio = {
+  url: "https://masseater.dev",
   name: "masseater",
   xUser,
   links: [

@@ -1,6 +1,6 @@
 import { portfolio } from "@masseater.dev/ui/portfolio";
 
-const url = "https://masseater.dev";
+const { url } = portfolio;
 
 const site = {
   url,
