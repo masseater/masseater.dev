@@ -133,20 +133,12 @@
   animation-timing-function: cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
-::view-transition-old(*) {
-  animation: drift-fade-out 0.25s cubic-bezier(0.4, 0, 1, 1) both;
-}
-
-::view-transition-new(*) {
-  animation: drift-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
 ::view-transition-old(*):only-child {
   animation: drift-out 0.25s cubic-bezier(0.4, 0, 1, 1) both;
 }
 
 ::view-transition-new(*):only-child {
-  animation: drift-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+  animation: drift-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 ::view-transition-old(root),
@@ -163,29 +155,13 @@
 @keyframes entry-rise {
   from {
     opacity: 0;
-    filter: blur(6px);
     transform: translateY(1rem);
-  }
-}
-
-@keyframes drift-fade-out {
-  to {
-    opacity: 0;
-    filter: blur(6px);
-  }
-}
-
-@keyframes drift-fade-in {
-  from {
-    opacity: 0;
-    filter: blur(6px);
   }
 }
 
 @keyframes drift-out {
   to {
     opacity: 0;
-    filter: blur(12px);
     transform: translateY(-1.5rem) scale(0.98);
   }
 }
@@ -193,7 +169,6 @@
 @keyframes drift-in {
   from {
     opacity: 0;
-    filter: blur(12px);
     transform: translateY(2rem) scale(1.02);
   }
 }

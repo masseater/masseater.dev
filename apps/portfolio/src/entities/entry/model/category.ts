@@ -6,26 +6,26 @@ const CategorySchema = Schema.Literals(categories);
 
 type Category = typeof CategorySchema.Type;
 
-type Columns = "single" | "grid";
+type Layout = "index" | "grid";
 
 const categoryMeta = {
   projects: {
     title: "Projects",
     description: "作ったもの",
     titleTransition: "vt-category-projects",
-    columns: "single",
+    layout: "index",
   },
   blogs: {
     title: "Blogs",
     description: "まとまった文章",
     titleTransition: "vt-category-blogs",
-    columns: "grid",
+    layout: "grid",
   },
   scraps: {
     title: "Scraps",
     description: "短いメモや作業ログ",
     titleTransition: "vt-category-scraps",
-    columns: "grid",
+    layout: "grid",
   },
 } as const satisfies Record<
   Category,
@@ -33,7 +33,7 @@ const categoryMeta = {
     title: string;
     description: string;
     titleTransition: string;
-    columns: Columns;
+    layout: Layout;
   }>
 >;
 
@@ -47,5 +47,5 @@ const categoryInfos: readonly CategoryInfo[] = categories.map((category) => ({
 
 const categoryPath = (category: Category): string => `/${category}`;
 
-export type { Category, CategoryInfo, Columns };
+export type { Category, CategoryInfo, Layout };
 export { categories, CategorySchema, categoryInfos, categoryMeta, categoryPath };
