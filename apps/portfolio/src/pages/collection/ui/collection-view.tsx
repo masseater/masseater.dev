@@ -9,7 +9,7 @@ const CollectionView = ({
 }: Readonly<{ category: Category; entries: readonly Entry[] }>): ReactNode => (
   <div>
     <h1 className="sr-only">{categoryMeta[category].title}</h1>
-    <EntryList columns={categoryMeta[category].columns} entries={entries} />
+    <EntryList entries={entries} layout={categoryMeta[category].layout} />
   </div>
 );
 
