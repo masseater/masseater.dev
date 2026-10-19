@@ -15,10 +15,12 @@
   },
   "devDependencies": {
     "@types/react": "19.3.0",
+    "effect": "catalog:stack",
     "react": "19.3.1",
     "tailwindcss": "catalog:stack"
   },
   "peerDependencies": {
+    "effect": "^4.0.0",
     "react": "^19.0.0",
     "tailwindcss": "^4.0.0"
   }

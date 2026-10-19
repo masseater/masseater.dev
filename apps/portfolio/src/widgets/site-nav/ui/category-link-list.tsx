@@ -1,3 +1,4 @@
+import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { categoryInfos } from "#/entities/entry";
@@ -11,9 +12,10 @@ const LABEL = "カテゴリ";
 const CategoryLinkList = ({ direction }: Readonly<{ direction: Direction }>): ReactNode => (
   <nav aria-label={LABEL}>
     <LinkList direction={direction}>
-      {categoryInfos.map((info) => (
-        <CategoryLink info={info} key={info.category} />
-      ))}
+      {pipe(
+        categoryInfos,
+        Arr.map((info) => <CategoryLink info={info} key={info.category} />),
+      )}
     </LinkList>
   </nav>
 );

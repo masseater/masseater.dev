@@ -1,5 +1,5 @@
 import { portfolio } from "@masseater.dev/ui/portfolio";
-import { Schema } from "effect";
+import { Array as Arr, Schema, pipe } from "effect";
 
 const categories = ["projects", "blogs", "scraps"] as const;
 
@@ -40,11 +40,14 @@ const categoryMeta = {
 
 type CategoryInfo = Readonly<{ category: Category; title: string; description: string }>;
 
-const categoryInfos: readonly CategoryInfo[] = categories.map((category) => ({
-  category,
-  title: categoryMeta[category].title,
-  description: categoryMeta[category].description,
-}));
+const categoryInfos: readonly CategoryInfo[] = pipe(
+  categories,
+  Arr.map((category) => ({
+    category,
+    title: categoryMeta[category].title,
+    description: categoryMeta[category].description,
+  })),
+);
 
 const categoryPath = (category: Category): string => `/${category}`;
 

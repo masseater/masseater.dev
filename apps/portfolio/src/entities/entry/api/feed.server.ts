@@ -1,4 +1,4 @@
-import { DateTime, Effect } from "effect";
+import { Array as Arr, DateTime, Effect, pipe } from "effect";
 import { Feed } from "feed";
 
 import { categoryMeta } from "#/entities/entry/model/category";
@@ -20,7 +20,10 @@ const toFeed = (entries: readonly Entry[]): string => {
     feedLinks: { rss: `${site.url}${site.feedPath}` },
     author: { name: site.name, link: site.url },
   });
-  for (const entry of entries.filter(({ status }) => status === "published")) {
+  for (const entry of pipe(
+    entries,
+    Arr.filter(({ status }) => status === "published"),
+  )) {
     const link = `${site.url}${entryPath(entry)}`;
     feed.addItem({
       title: entry.title,

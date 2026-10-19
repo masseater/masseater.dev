@@ -1,6 +1,6 @@
 import { Stack } from "alchemy";
 import { Zone } from "alchemy/Cloudflare";
-import { Array as Arr, Effect, Option, Schema } from "effect";
+import { Array as Arr, Effect, Option, Record as Rec, Schema } from "effect";
 
 const APP_NAME = "masseater-dev";
 
@@ -26,12 +26,12 @@ const requireAppPrefix = Effect.gen(function* requireAppPrefix() {
   const { name, resources } = yield* Stack;
   const offenders = [
     ...Arr.filter([`Stack: ${name}`], () => name !== APP_NAME),
-    ...Object.values(resources).flatMap((resource) => describeUnprefixed(resource)),
+    ...Arr.flatMap(Rec.values(resources), (resource) => describeUnprefixed(resource)),
   ];
   if (Arr.isReadonlyArrayNonEmpty(offenders)) {
     return yield* Effect.die(
       new Error(
-        `Alchemy のスタック名は "${APP_NAME}"、リソース名は "${PREFIX}" で始める: ${offenders.join(", ")}`,
+        `Alchemy のスタック名は "${APP_NAME}"、リソース名は "${PREFIX}" で始める: ${Arr.join(offenders, ", ")}`,
       ),
     );
   }

@@ -1,8 +1,11 @@
-import { Array, Option } from "effect";
+import { Array, Option, pipe } from "effect";
 
 import { categoryInfos, categoryPath } from "#/entities/entry";
 
-const categoryPaths = categoryInfos.map(({ category }) => categoryPath(category));
+const categoryPaths = pipe(
+  categoryInfos,
+  Array.map(({ category }) => categoryPath(category)),
+);
 
 const categoryIndex = (pathname: string): Option.Option<number> =>
   Array.findFirstIndex(
