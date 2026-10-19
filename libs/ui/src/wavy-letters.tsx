@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { WavyLetter } from "#/shared/lib";
+import type { WavyLetter } from "./to-wavy-letters.ts";
 
 const WavyLetters = ({ letters }: Readonly<{ letters: readonly WavyLetter[] }>): ReactNode =>
   letters.map(({ key, letter, style }) => (

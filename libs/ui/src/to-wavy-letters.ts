@@ -1,4 +1,6 @@
-type WavyLetter = Readonly<{ key: string; letter: string; style: Readonly<{ "--i": number }> }>;
+import type { CssVariables } from "./css-variables.ts";
+
+type WavyLetter = Readonly<{ key: string; letter: string; style: CssVariables }>;
 
 const toWavyLetters = (text: string): readonly WavyLetter[] =>
   Array.from(text, (letter, index) => ({

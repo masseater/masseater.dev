@@ -1,7 +1,5 @@
+import { Backdrop, followPointer, releasePointer } from "@masseater.dev/ui";
 import type { ReactNode } from "react";
-
-import { followPointer, releasePointer } from "#/shared/lib";
-import { Backdrop } from "#/shared/ui";
 
 import { ProfileHeader } from "./profile-header";
 
