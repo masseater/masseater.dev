@@ -35,8 +35,6 @@ catalog:
   "@vitejs/plugin-rsc": 0.5.38
   skills: 1.7.2
   "@tanstack/intent": 0.5.5
-  "@fontsource-variable/roboto-flex": 5.3.0
-  "@paper-design/shaders-react": 0.0.81
   "@mdx-js/rollup": 3.1.1
   "@shikijs/rehype": 4.5.0
   "@tailwindcss/typography": 0.5.20
@@ -49,7 +47,7 @@ catalog:
   jose: 6.2.12
 catalogs:
   stack:
-    "@distilled.cloud/cloudflare": 1.0.0-rc.15
+    "@distilled.cloud/cloudflare": 1.0.0-rc.13
     "@effect/atom-react": 4.0.2
     "@effect/tsgo": 0.51.1
     "@tanstack/react-query": 5.104.3

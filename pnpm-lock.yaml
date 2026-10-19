@@ -185,18 +185,12 @@ catalogs:
     '@eslint/config-helpers':
       specifier: 0.7.0
       version: 0.7.0
-    '@fontsource-variable/roboto-flex':
-      specifier: 5.3.0
-      version: 5.3.0
     '@html-eslint/eslint-plugin-react':
       specifier: 0.67.0
       version: 0.67.0
     '@mdx-js/rollup':
       specifier: 3.1.1
       version: 3.1.1
-    '@paper-design/shaders-react':
-      specifier: 0.0.81
-      version: 0.0.81
     '@r_masseater/oxlint-plugin-decision':
       specifier: 0.0.4
       version: 0.0.4
@@ -283,8 +277,8 @@ catalogs:
       version: 1.1.0
   stack:
     '@distilled.cloud/cloudflare':
-      specifier: 1.0.0-rc.15
-      version: 1.0.0-rc.15
+      specifier: 1.0.0-rc.13
+      version: 1.0.0-rc.13
     '@effect/atom-react':
       specifier: 4.0.2
       version: 4.0.2
@@ -438,7 +432,7 @@ importers:
     dependencies:
       '@distilled.cloud/cloudflare':
         specifier: catalog:stack
-        version: 1.0.0-rc.15(effect@4.0.2)
+        version: 1.0.0-rc.13(effect@4.0.2)
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.0.2(effect@4.0.2)(redis@6.2.1(@opentelemetry/api@1.9.1))
@@ -461,12 +455,9 @@ importers:
       '@effect/atom-react':
         specifier: catalog:stack
         version: 4.0.2(effect@4.0.2)(react@19.3.1)(scheduler@0.28.0)
-      '@fontsource-variable/roboto-flex':
-        specifier: 'catalog:'
-        version: 5.3.0
-      '@paper-design/shaders-react':
-        specifier: 'catalog:'
-        version: 0.0.81(@types/react@19.3.0)(react@19.3.1)
+      '@masseater.dev/ui':
+        specifier: workspace:*
+        version: link:../../libs/ui
       '@tailwindcss/typography':
         specifier: 'catalog:'
         version: 0.5.20(tailwindcss@4.3.3)
@@ -509,9 +500,6 @@ importers:
       tailwindcss:
         specifier: catalog:stack
         version: 4.3.3
-      tw-animate-css:
-        specifier: 1.4.0
-        version: 1.4.0
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
@@ -576,6 +564,28 @@ importers:
       vite-plus:
         specifier: catalog:stack
         version: 1.1.0(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/ui@5.0.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(yaml@2.9.1)
+
+  libs/ui:
+    dependencies:
+      '@fontsource-variable/roboto-flex':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@paper-design/shaders-react':
+        specifier: 0.0.81
+        version: 0.0.81(@types/react@19.3.0)(react@19.3.1)
+      tw-animate-css:
+        specifier: 1.4.0
+        version: 1.4.0
+    devDependencies:
+      '@types/react':
+        specifier: 19.3.0
+        version: 19.3.0
+      react:
+        specifier: 19.3.1
+        version: 19.3.1
+      tailwindcss:
+        specifier: catalog:stack
+        version: 4.3.3
 
 packages:
 
@@ -1057,18 +1067,8 @@ packages:
     peerDependencies:
       effect: 4.0.2
 
-  '@distilled.cloud/cloudflare@1.0.0-rc.15':
-    resolution: {integrity: sha512-UBnEpZGkf+lnMF33IJXcu7DD99vC+3314N01pnWNuKxLtsVNNLF/DxFbPxBU1Cb+aLE3Cs35aSiHZrYO7EiR0g==}
-    peerDependencies:
-      effect: 4.0.2
-
   '@distilled.cloud/core@1.0.0-rc.13':
     resolution: {integrity: sha512-RYyrxW+F5zrTuu1UWV/JoycholBCIkXIusYJdDniDwCdmbjdKGl07KlkkeeY774uBawNGf+pt1ESNGeLVnNHsg==}
-    peerDependencies:
-      effect: 4.0.2
-
-  '@distilled.cloud/core@1.0.0-rc.15':
-    resolution: {integrity: sha512-TPXxuwcxQ85Pvm0g7ZQSLTQkPc1Wmcb6p6KOk+Be2fP14Xpj5a+7HOSUyPNwbqOP+vPK5Sj0ZLN7M6spKnO2LA==}
     peerDependencies:
       effect: 4.0.2
 
@@ -9866,19 +9866,10 @@ snapshots:
       '@distilled.cloud/core': 1.0.0-rc.13(effect@4.0.2)
       effect: 4.0.2
 
-  '@distilled.cloud/cloudflare@1.0.0-rc.15(effect@4.0.2)':
-    dependencies:
-      '@distilled.cloud/core': 1.0.0-rc.15(effect@4.0.2)
-      effect: 4.0.2
-
   '@distilled.cloud/core@1.0.0-rc.13(effect@4.0.2)':
     dependencies:
       effect: 4.0.2
       graphql: 16.11.0
-
-  '@distilled.cloud/core@1.0.0-rc.15(effect@4.0.2)':
-    dependencies:
-      effect: 4.0.2
 
   '@distilled.cloud/doppler@1.0.0-rc.13(effect@4.0.2)':
     dependencies:

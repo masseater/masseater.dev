@@ -1,9 +1,8 @@
+import { followPointer, releasePointer, toWavyLetters, WavyLetters } from "@masseater.dev/ui";
 import { Link } from "@tanstack/react-router";
 import type { CSSProperties, ReactNode } from "react";
 
 import { site } from "#/shared/config";
-import { followPointer, releasePointer, toWavyLetters } from "#/shared/lib";
-import { WavyLetters } from "#/shared/ui";
 
 const letters = toWavyLetters(site.name);
 

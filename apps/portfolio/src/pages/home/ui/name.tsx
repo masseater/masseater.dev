@@ -1,8 +1,7 @@
+import { toWavyLetters, WavyLetters } from "@masseater.dev/ui";
 import type { CSSProperties, ReactNode } from "react";
 
 import { site } from "#/shared/config";
-import { toWavyLetters } from "#/shared/lib";
-import { WavyLetters } from "#/shared/ui";
 
 const letters = toWavyLetters(site.name);
 

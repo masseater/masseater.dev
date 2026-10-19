@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { followViewportPointer, releasePointer } from "#/shared/lib";
-import { Backdrop } from "#/shared/ui";
+import { Backdrop } from "./backdrop.tsx";
+import { followViewportPointer, releasePointer } from "./pointer.ts";
 
 const SiteStage = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
   <div
