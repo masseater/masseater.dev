@@ -1,3 +1,4 @@
+import { portfolio } from "@masseater.dev/ui/portfolio";
 import { Schema } from "effect";
 
 const categories = ["projects", "blogs", "scraps"] as const;
@@ -10,19 +11,19 @@ type Layout = "index" | "grid";
 
 const categoryMeta = {
   projects: {
-    title: "Projects",
+    title: portfolio.sections.projects,
     description: "作ったもの",
     titleTransition: "vt-category-projects",
     layout: "index",
   },
   blogs: {
-    title: "Blogs",
+    title: portfolio.sections.blogs,
     description: "まとまった文章",
     titleTransition: "vt-category-blogs",
     layout: "grid",
   },
   scraps: {
-    title: "Scraps",
+    title: portfolio.sections.scraps,
     description: "短いメモや作業ログ",
     titleTransition: "vt-category-scraps",
     layout: "grid",

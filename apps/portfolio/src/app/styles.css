@@ -79,10 +79,6 @@
   }
 }
 
-@utility vt-site-name {
-  view-transition-name: site-name;
-}
-
 @utility vt-page-home {
   view-transition-name: page-home;
 }
@@ -127,10 +123,6 @@
     --n: sibling-count();
     display: inline;
   }
-}
-
-@utility vt-attr {
-  view-transition-name: attr(data-vt type(<custom-ident>));
 }
 
 @utility vt-named {

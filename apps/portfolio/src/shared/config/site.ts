@@ -1,10 +1,10 @@
-const url = "https://masseater.dev";
+import { portfolio } from "@masseater.dev/ui/portfolio";
 
-const xUser = "r_masseater";
+const url = "https://masseater.dev";
 
 const site = {
   url,
-  name: "masseater",
+  name: portfolio.name,
   description: "masseater のポートフォリオ。作ったもの、ブログ、スクラップを置いている。",
   locale: "ja",
   ogImage: new URL("/og.png", url).href,
@@ -12,12 +12,8 @@ const site = {
   robotsPath: "/robots.txt",
   sitemapFile: "sitemap.xml",
   externalPaths: ["/decision-bench/"],
-  xHandle: `@${xUser}`,
-  links: [
-    { label: "GitHub", href: "https://github.com/masseater" },
-    { label: "X", href: `https://x.com/${xUser}` },
-    { label: "Zenn", href: "https://zenn.dev/masseater" },
-  ],
+  xHandle: `@${portfolio.xUser}`,
+  links: portfolio.links,
 } as const;
 
 export { site };
