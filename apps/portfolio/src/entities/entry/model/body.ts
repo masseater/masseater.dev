@@ -1,4 +1,4 @@
-import { Effect, Option } from "effect";
+import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 import type { MDXModule } from "mdx/types";
 
 import { contentPath } from "./content";
@@ -14,11 +14,13 @@ const once = <Value>(load: () => Promise<Value>): (() => Promise<Value>) => {
     });
 };
 
+const loaders = Rec.toEntries(import.meta.glob<MDXModule>("/content/*/*.md"));
+
 const bodies = new Map(
-  Object.entries(import.meta.glob<MDXModule>("/content/*/*.md")).map(([path, load]) => [
-    path,
-    once(load),
-  ]),
+  pipe(
+    loaders,
+    Arr.map(([path, load]) => [path, once(load)] as const),
+  ),
 );
 
 const findBody = (

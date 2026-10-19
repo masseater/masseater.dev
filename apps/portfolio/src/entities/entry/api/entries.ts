@@ -1,4 +1,4 @@
-import { Array, Effect, Option, Schema } from "effect";
+import { Array, Effect, Option, Order, Record as Rec, Schema, pipe } from "effect";
 
 import { CategorySchema } from "#/entities/entry/model/category";
 import type { Category } from "#/entities/entry/model/category";
@@ -45,15 +45,17 @@ const decodeEntry = ([path, frontmatter]: readonly [string, unknown]): Effect.Ef
   );
 
 const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.forEach(
-  Object.entries(
+  Rec.toEntries(
     import.meta.glob<unknown>("/content/*/*.md", { eager: true, import: "frontmatter" }),
   ),
   decodeEntry,
 ).pipe(
   Effect.map((entries) =>
-    entries
-      .filter(({ status }) => import.meta.env.DEV || status === "published")
-      .toSorted((left, right) => right.date.localeCompare(left.date)),
+    pipe(
+      entries,
+      Array.filter(({ status }) => import.meta.env.DEV || status === "published"),
+      Array.sortWith(({ date }) => date, Order.flip(Order.String)),
+    ),
   ),
 );
 
@@ -67,7 +69,10 @@ const collectionOf = (category: string): Effect.Effect<CollectionResult, Schema.
         Effect.map((entries) => ({
           status: "found",
           category: found,
-          entries: entries.filter((entry) => entry.category === found),
+          entries: pipe(
+            entries,
+            Array.filter((entry) => entry.category === found),
+          ),
         })),
       ),
   });

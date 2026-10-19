@@ -1,4 +1,4 @@
-import { Array } from "effect";
+import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import type { Layout } from "#/entities/entry/model/category";
@@ -19,17 +19,23 @@ const EntryList = ({
   if (layout === "index") {
     return (
       <ol className="divide-foreground/10 border-foreground/10 flex flex-col divide-y border-y">
-        {entries.map((entry) => (
-          <EntryIndexItem entry={entry} key={`${entry.category}/${entry.slug}`} />
-        ))}
+        {pipe(
+          entries,
+          Array.map((entry) => (
+            <EntryIndexItem entry={entry} key={`${entry.category}/${entry.slug}`} />
+          )),
+        )}
       </ol>
     );
   }
   return (
     <ul className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-      {entries.map((entry) => (
-        <EntryListItem entry={entry} key={`${entry.category}/${entry.slug}`} />
-      ))}
+      {pipe(
+        entries,
+        Array.map((entry) => (
+          <EntryListItem entry={entry} key={`${entry.category}/${entry.slug}`} />
+        )),
+      )}
     </ul>
   );
 };

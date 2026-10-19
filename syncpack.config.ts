@@ -1,10 +1,11 @@
+import { Array as Arr, Record as Rec } from "effect";
 import type { RcFile } from "syncpack";
 
 import { requiredStack } from "./lint.config.ts";
 
 const config: RcFile = {
   versionGroups: [
-    ...Object.entries(requiredStack).map(([label, dependencies]) => ({
+    ...Arr.map(Rec.toEntries(requiredStack), ([label, dependencies]) => ({
       label,
       dependencies: [...dependencies],
       isBanned: true,

@@ -1,14 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Array as Arr } from "effect";
 
 import { site } from "#/shared/config";
 
-const body = [
-  "User-agent: *",
-  "Allow: /",
-  "",
-  `Sitemap: ${new URL(site.sitemapFile, site.url).href}`,
-  "",
-].join("\n");
+const body = Arr.join(
+  ["User-agent: *", "Allow: /", "", `Sitemap: ${new URL(site.sitemapFile, site.url).href}`, ""],
+  "\n",
+);
 
 const Route = createFileRoute("/robots.txt")({
   server: {

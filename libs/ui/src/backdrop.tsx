@@ -1,4 +1,5 @@
 import { MeshGradient } from "@paper-design/shaders-react";
+import { Record as Rec } from "effect";
 import type { ReactNode } from "react";
 
 import type { CssVariables } from "./css-variables.ts";
@@ -12,7 +13,7 @@ const PALETTE = {
   mint: "#d1fae5",
 } as const;
 
-const COLORS = Object.values(PALETTE);
+const COLORS = Rec.values(PALETTE);
 
 const STILL_COLORS: CssVariables = {
   "--still-base": PALETTE.base,
