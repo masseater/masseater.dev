@@ -11,7 +11,7 @@ const IDEA_LABEL = "アイデア";
 
 const EntryMeta = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
   <div
-    className="vt-attr vt-entry text-foreground/70 font-display flex flex-wrap items-center gap-x-4 gap-y-1 text-xs tracking-widest uppercase"
+    className="vt-attr vt-entry text-foreground/70 font-display flex flex-wrap items-center gap-x-4 gap-y-1 self-start text-xs tracking-widest uppercase"
     data-vt={entryMetaTransition(entry)}
   >
     {entry.date !== "" && <time dateTime={entry.date}>{entry.date}</time>}

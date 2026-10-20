@@ -14,7 +14,7 @@ const EntryListItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
       to="/$category/$slug"
     >
       <span
-        className="vt-attr vt-entry font-display text-xl font-light"
+        className="vt-attr vt-entry font-display self-start text-xl font-light"
         data-vt={entryTitleTransition(entry)}
       >
         {entry.title}

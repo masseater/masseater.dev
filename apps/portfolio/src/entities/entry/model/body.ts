@@ -26,15 +26,25 @@ const loadBodies = (): Map<string, () => Promise<MDXModule>> => {
 
 const bodies = once(loadBodies);
 
+const loaded = new Map<string, MDXModule>();
+
 const findBody = (
   location: Readonly<Pick<Entry, "category" | "slug">>,
 ): Option.Option<() => Promise<MDXModule>> =>
   Option.fromUndefinedOr(bodies().get(contentPath(location)));
 
+const findLoadedBody = (
+  location: Readonly<Pick<Entry, "category" | "slug">>,
+): Option.Option<MDXModule> => Option.fromUndefinedOr(loaded.get(contentPath(location)));
+
 const preloadBody = (location: Readonly<Pick<Entry, "category" | "slug">>): Effect.Effect<void> =>
   Option.match(findBody(location), {
     onNone: () => Effect.void,
-    onSome: (load) => Effect.asVoid(Effect.promise(load)),
+    onSome: (load) =>
+      Effect.promise(load).pipe(
+        Effect.map((body) => loaded.set(contentPath(location), body)),
+        Effect.asVoid,
+      ),
   });
 
-export { findBody, preloadBody };
+export { findBody, findLoadedBody, preloadBody };
