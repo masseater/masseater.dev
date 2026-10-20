@@ -10,7 +10,7 @@ const ArticleHeader = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
       {categoryMeta[entry.category].title}
     </Link>
     <h1
-      className="vt-attr font-display self-start text-4xl font-light sm:text-5xl"
+      className="vt-attr vt-entry font-display self-start text-4xl font-light sm:text-5xl"
       data-vt={entryTitleTransition(entry)}
     >
       {entry.title}

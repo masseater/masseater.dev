@@ -1,5 +1,5 @@
-import { Stack, Stage } from "alchemy";
-import { Website, Workers, providers, state } from "alchemy/Cloudflare";
+import { Stack, Stage, makeRandom } from "alchemy";
+import { D1, Website, Workers, providers, state } from "alchemy/Cloudflare";
 import type { InferEnv } from "alchemy/Cloudflare";
 import { Config, Effect, Option, Schema } from "effect";
 
@@ -16,11 +16,26 @@ const OWNED_ZONE = Option.some(DOMAIN);
 
 const web = Effect.gen(function* web() {
   const production = (yield* Stage) === PRODUCTION_STAGE;
+  const STARS = yield* D1.Database("Stars", { migrations: "./drizzle" });
+  const VISITOR_SALT = yield* makeRandom("VisitorSalt");
   return yield* Website.StaticSite("Web", {
     ...(production && { domain: { name: DOMAIN, redirects: [`www.${DOMAIN}`] } }),
     command: "vp build",
     outdir: "dist/client",
-    assets: { htmlHandling: "auto-trailing-slash", notFoundHandling: "404-page" },
+    main: "./site.worker.ts",
+    compatibility: COMPATIBILITY,
+    logpush: true,
+    env: { STARS, VISITOR_SALT },
+    observability: {
+      enabled: true,
+      logs: { enabled: true, invocationLogs: false, persist: true },
+      traces: { enabled: true, persist: true },
+    },
+    assets: {
+      htmlHandling: "auto-trailing-slash",
+      notFoundHandling: "404-page",
+      runWorkerFirst: [`${site.starsApiPath}/*`],
+    },
     dev: { command: "vp dev" },
   });
 });
@@ -43,8 +58,9 @@ const ciTelemetry = Effect.gen(function* ciTelemetry() {
 });
 
 type CiTelemetryEnv = InferEnv<typeof ciTelemetry>;
+type WebEnv = InferEnv<typeof web>;
 
-export type { CiTelemetryEnv };
+export type { CiTelemetryEnv, WebEnv };
 export default Stack(
   APP_NAME,
   { providers: providers(), state: state() },

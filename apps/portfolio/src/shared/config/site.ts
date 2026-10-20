@@ -9,6 +9,7 @@ const site = {
   locale: "ja",
   ogImage: new URL("/og.png", url).href,
   feedPath: "/feed.xml",
+  starsApiPath: "/api/stars",
   robotsPath: "/robots.txt",
   sitemapFile: "sitemap.xml",
   externalPaths: ["/decision-bench/"],

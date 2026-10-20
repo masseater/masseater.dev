@@ -12,11 +12,17 @@ const decodeLocation = Schema.decodeUnknownEffect(Schema.Tuple([CategorySchema, 
 
 const decodeCategory = Schema.decodeUnknownOption(CategorySchema);
 
-const toStatus = (published: boolean): Entry["status"] => {
-  if (published) {
-    return "published";
+const toStatus = ({
+  published,
+  stage,
+}: Readonly<Pick<typeof Frontmatter.Type, "published" | "stage">>): Entry["status"] => {
+  if (!published) {
+    return "draft";
   }
-  return "draft";
+  if (stage === "idea") {
+    return "idea";
+  }
+  return "published";
 };
 
 const ownEntry = (
@@ -25,14 +31,14 @@ const ownEntry = (
   frontmatter: unknown,
 ): Effect.Effect<Entry, Schema.SchemaError> =>
   decodeFrontmatter(frontmatter).pipe(
-    Effect.map(({ title, description, date, tags, published }) => ({
+    Effect.map(({ title, description, date, tags, published, stage }) => ({
       category,
       slug,
       title,
       description,
       date,
       tags,
-      status: toStatus(published),
+      status: toStatus({ published, stage }),
     })),
   );
 
@@ -53,7 +59,7 @@ const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.f
   Effect.map((entries) =>
     pipe(
       entries,
-      Array.filter(({ status }) => import.meta.env.DEV || status === "published"),
+      Array.filter(({ status }) => import.meta.env.DEV || status !== "draft"),
       Array.sortWith(({ date }) => date, Order.flip(Order.String)),
     ),
   ),
