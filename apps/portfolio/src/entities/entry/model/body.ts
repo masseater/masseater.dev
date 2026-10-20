@@ -4,29 +4,32 @@ import type { MDXModule } from "mdx/types";
 import { contentPath } from "./content";
 import type { Entry } from "./entry";
 
-const once = <Value>(load: () => Promise<Value>): (() => Promise<Value>) => {
-  let started: Option.Option<Promise<Value>> = Option.none();
+const once = <Value>(make: () => Value): (() => Value) => {
+  let made: Option.Option<Value> = Option.none();
   return () =>
-    Option.getOrElse(started, () => {
-      const loading = load();
-      started = Option.some(loading);
-      return loading;
+    Option.getOrElse(made, () => {
+      const value = make();
+      made = Option.some(value);
+      return value;
     });
 };
 
-const loaders = Rec.toEntries(import.meta.glob<MDXModule>("/content/*/*.md"));
+const loadBodies = (): Map<string, () => Promise<MDXModule>> => {
+  const loaders = Rec.toEntries(import.meta.glob<MDXModule>("/content/*/*.md"));
+  return new Map(
+    pipe(
+      loaders,
+      Arr.map(([path, load]) => [path, once(load)] as const),
+    ),
+  );
+};
 
-const bodies = new Map(
-  pipe(
-    loaders,
-    Arr.map(([path, load]) => [path, once(load)] as const),
-  ),
-);
+const bodies = once(loadBodies);
 
 const findBody = (
   location: Readonly<Pick<Entry, "category" | "slug">>,
 ): Option.Option<() => Promise<MDXModule>> =>
-  Option.fromUndefinedOr(bodies.get(contentPath(location)));
+  Option.fromUndefinedOr(bodies().get(contentPath(location)));
 
 const preloadBody = (location: Readonly<Pick<Entry, "category" | "slug">>): Effect.Effect<void> =>
   Option.match(findBody(location), {
