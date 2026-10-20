@@ -6,6 +6,4 @@ tags: ["セキュリティ"]
 published: true
 ---
 
-隠蔽によるセキュリティは、仕組みを隠すことで安全を保とうとする考え方である。Kerckhoffs の原則は仕組みが知られても鍵さえ守れば安全であるべきだとし、NIST SP 800-123 もシステムの安全を実装の秘密に頼るべきではないとしている。単独では防御にならないが、多層防御の一層としてなら意味がある。
-
-<https://en.wikipedia.org/wiki/Security_through_obscurity>
+[隠蔽によるセキュリティ](https://en.wikipedia.org/wiki/Security_through_obscurity)は、仕組みを隠すことで安全を保とうとする考え方である。Kerckhoffs の原則は仕組みが知られても鍵さえ守れば安全であるべきだとし、NIST SP 800-123 もシステムの安全を実装の秘密に頼るべきではないとしている。単独では防御にならないが、多層防御の一層としてなら意味がある。

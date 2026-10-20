@@ -47,9 +47,16 @@ release. Add a tool name to select part of the graph. For example, run
 ## 構成
 
 - `apps/portfolio` は TanStack Start（RSC）で全ページをプリレンダーし、`Website.StaticSite` で静的サイトとして Cloudflare に置く。記事は `apps/portfolio/content/` の Markdown を `import.meta.glob` で読む。
+- 静的サイトの Worker（`site.worker.ts`）は `/api/stars/*` だけを先に受け、blogs と scraps の star を D1 に数える。同じ IP からの star は 1 記事 1 つで、IP は `VISITOR_SALT` を混ぜたハッシュで持つ。ほかのリクエストは静的アセットに渡す。
 - `alchemy.run.ts` は prod ステージでだけ `edge-guard.ts` と `log-archive.ts` を作る。前者はスキャナーを弾く WAF ルールとハニーポットの Worker を、後者は全 Worker のログを R2 に送る Logpush を持つ。
 - `ci-telemetry.worker.ts` は、`.github/scripts/ci-telemetry.sh` が送るジョブとステップの時間を GitHub の OIDC トークンで確かめ、ログに出す。
 - `apps/zenn-articles` はパッケージではない。main の verify が通ると、中身が `zenn` ブランチの直下へ写される。
+
+## 記事
+
+- 本文のリンクは `[文言](URL)` の埋め込みリンクにする。むき出しの URL を置いたり、末尾に出典としてまとめたりしない。blogs・scraps・projects のどれも同じである。
+- 中身の薄いアイデア段階の blog は、frontmatter に `stage: idea` を付ける。一覧では折りたたみの中に入り、フィードには出ない。
+- scrap は personal-space の MCP の `post_scrap` からも PR で足される。blog を投稿するツールは MCP に意図して足さない。blog は持ち主が推敲してから出すまとまった文章で、思いつきをそのまま出せる経路は scrap だけにしておくためである。
 
 ## 環境変数
 

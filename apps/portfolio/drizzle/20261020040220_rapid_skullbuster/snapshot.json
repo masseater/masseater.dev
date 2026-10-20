@@ -1,0 +1,56 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "0d628de2-652a-4ab7-ae31-73234878ab61",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "ddl": [
+    {
+      "name": "star",
+      "entityType": "tables"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "category",
+      "entityType": "columns",
+      "table": "star"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "slug",
+      "entityType": "columns",
+      "table": "star"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "visitor",
+      "entityType": "columns",
+      "table": "star"
+    },
+    {
+      "columns": [
+        "category",
+        "slug",
+        "visitor"
+      ],
+      "nameExplicit": false,
+      "name": "star_pk",
+      "entityType": "pks",
+      "table": "star"
+    }
+  ],
+  "renames": []
+}

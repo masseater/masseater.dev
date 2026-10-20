@@ -1,9 +1,10 @@
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { EntryBody } from "#/entities/entry";
+import { categoryMeta, EntryBody } from "#/entities/entry";
 
 import { ArticleHeader } from "./article-header";
+import { EntryReactions } from "./entry-reactions";
 
 const route = getRouteApi("/_site/$category/$slug");
 
@@ -15,6 +16,7 @@ const EntryPage = (): ReactNode => {
       <div className="prose prose-zinc prose-code:before:content-none prose-code:after:content-none max-w-none">
         <EntryBody entry={entry} />
       </div>
+      {categoryMeta[entry.category].reactions && <EntryReactions entry={entry} />}
     </article>
   );
 };
