@@ -50,11 +50,13 @@ const decodeEntry = ([path, frontmatter]: readonly [string, unknown]): Effect.Ef
     Effect.flatMap(([category, slug]) => ownEntry(category, slug, frontmatter)),
   );
 
-const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.forEach(
-  Rec.toEntries(
-    import.meta.glob<unknown>("/content/*/*.md", { eager: true, import: "frontmatter" }),
+const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.suspend(() =>
+  Effect.forEach(
+    Rec.toEntries(
+      import.meta.glob<unknown>("/content/*/*.md", { eager: true, import: "frontmatter" }),
+    ),
+    decodeEntry,
   ),
-  decodeEntry,
 ).pipe(
   Effect.map((entries) =>
     pipe(
