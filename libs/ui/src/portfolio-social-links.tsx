@@ -1,6 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
+import { nameTransition } from "./name-transition.ts";
 import { portfolio } from "./portfolio.ts";
 
 const PortfolioSocialLinks = (): ReactNode => (
@@ -10,8 +11,9 @@ const PortfolioSocialLinks = (): ReactNode => (
       Arr.map(({ label, href }) => (
         <li key={href}>
           <a
-            className="stage-link vt-attr px-2 py-3"
+            className="stage-link px-2 py-3"
             data-vt={`social-${label.toLowerCase()}`}
+            ref={nameTransition}
             href={href}
           >
             {label}

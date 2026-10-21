@@ -1,3 +1,4 @@
+import { nameTransition } from "@masseater.dev/ui";
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
@@ -14,8 +15,9 @@ const EntryListItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
       to="/$category/$slug"
     >
       <span
-        className="vt-attr vt-entry font-display self-start text-xl font-light"
+        className="vt-entry font-display self-start text-xl font-light"
         data-vt={entryTitleTransition(entry)}
+        ref={nameTransition}
       >
         {entry.title}
       </span>

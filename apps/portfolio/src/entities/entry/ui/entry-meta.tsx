@@ -1,3 +1,4 @@
+import { nameTransition } from "@masseater.dev/ui";
 import type { ReactNode } from "react";
 
 import type { Entry } from "#/entities/entry/model/entry";
@@ -11,8 +12,9 @@ const IDEA_LABEL = "アイデア";
 
 const EntryMeta = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
   <div
-    className="vt-attr vt-entry text-foreground/70 font-display flex flex-wrap items-center gap-x-4 gap-y-1 self-start text-xs tracking-widest uppercase"
+    className="vt-entry text-foreground/70 font-display flex flex-wrap items-center gap-x-4 gap-y-1 self-start text-xs tracking-widest uppercase"
     data-vt={entryMetaTransition(entry)}
+    ref={nameTransition}
   >
     {entry.date !== "" && <time dateTime={entry.date}>{entry.date}</time>}
     {entry.status === "draft" && <span className="text-destructive">{DRAFT_LABEL}</span>}
