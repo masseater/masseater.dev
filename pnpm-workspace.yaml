@@ -83,6 +83,9 @@ overrides:
   shell-quote@>=1.8.4 <1.11.0: ^1.11.0
   source-map-js@>=1.0.0 <1.2.2: ^1.2.2
   valibot@<=1.4.1: ^1.4.2
+  "@modelcontextprotocol/server@>=2.0.0 <2.3.0": ^2.3.0
+  launch-editor@<=2.14.1: ^2.14.2
+  markdown-it@>=15.0.0 <15.0.3: ^15.0.3
 peerDependencyRules:
   allowAny:
     - vite
