@@ -90,7 +90,7 @@ export default defineConfig({
         {
           ignoreInferredTypes: true,
           allow: [
-            { from: "lib", name: "Request" },
+            { from: "lib", name: ["HTMLElement", "Request"] },
             {
               from: "package",
               package: "@cloudflare/workers-types",

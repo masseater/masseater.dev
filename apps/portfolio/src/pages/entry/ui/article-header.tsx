@@ -1,3 +1,4 @@
+import { nameTransition } from "@masseater.dev/ui";
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
@@ -10,8 +11,9 @@ const ArticleHeader = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
       {categoryMeta[entry.category].title}
     </Link>
     <h1
-      className="vt-attr vt-entry font-display self-start text-4xl font-light sm:text-5xl"
+      className="vt-entry font-display self-start text-4xl font-light sm:text-5xl"
       data-vt={entryTitleTransition(entry)}
+      ref={nameTransition}
     >
       {entry.title}
     </h1>
