@@ -29,6 +29,13 @@
       "skillPath": "security/SKILL.md",
       "computedHash": "7a230edf3a24ce18162cb4379f59b6a19b8d24ca04db530609d0f15cede556dc"
     },
+    "blog-writing": {
+      "source": "masseater/skills",
+      "ref": "c3f2fd1638ba5cfaac6cfb333bf4334002573d5b",
+      "sourceType": "github",
+      "skillPath": "skills/blog-writing/SKILL.md",
+      "computedHash": "53473cab7b65e0f8d25885ab73f60e2cfa2c4b4788b506a34a23a7fe27740882"
+    },
     "cloudflare": {
       "source": "cloudflare/skills",
       "ref": "86505e44f87d801aa1864a3c4109e9a8ae5c409f",
@@ -147,6 +154,13 @@
       "sourceType": "github",
       "skillPath": "skills/how-to-use-react/SKILL.md",
       "computedHash": "20d34daf5ebe6ec894d1fe77f2e22a0feb48ca5868d3d7e34b69864f1e5f1400"
+    },
+    "humanity-and-humanness": {
+      "source": "masseater/skills",
+      "ref": "c3f2fd1638ba5cfaac6cfb333bf4334002573d5b",
+      "sourceType": "github",
+      "skillPath": "skills/humanity-and-humanness/SKILL.md",
+      "computedHash": "a8289ec03ddeb6c2a14a613279be0ed4a6415cd7976bb3815f9d69e66101cdfd"
     },
     "integrate": {
       "source": "masseater/skills",
@@ -301,6 +315,13 @@
       "sourceType": "github",
       "skillPath": "skills/workers-best-practices/SKILL.md",
       "computedHash": "e12970301753ed7eaa5ca375d4b98e0e36c9554e8f2809cb4b543c2ea7d9b4b8"
+    },
+    "writing": {
+      "source": "masseater/skills",
+      "ref": "c3f2fd1638ba5cfaac6cfb333bf4334002573d5b",
+      "sourceType": "github",
+      "skillPath": "skills/writing/SKILL.md",
+      "computedHash": "4348accb08d48b89cc8711da88d615878dfaae027c1f4796cfdd36cf431d34fa"
     },
     "yomiyasu": {
       "source": "nanaism/yomiyasu",
