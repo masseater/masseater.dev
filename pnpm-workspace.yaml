@@ -39,12 +39,15 @@ catalog:
   "@shikijs/rehype": 4.5.0
   "@tailwindcss/typography": 0.5.20
   "@types/mdx": 2.0.14
+  "@types/hast": 3.0.5
+  mdast-util-mdx-jsx: 3.2.0
   remark-frontmatter: 5.0.0
   remark-gfm: 4.0.1
   remark-mdx-frontmatter: 6.0.0
   feed: 6.0.0
   "@yarnpkg/parsers": 3.1.0
   jose: 6.2.13
+  radix-ui: 1.8.1
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.13

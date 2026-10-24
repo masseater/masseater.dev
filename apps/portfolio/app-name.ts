@@ -1,6 +1,6 @@
 import { Stack } from "alchemy";
 import { Zone } from "alchemy/Cloudflare";
-import { Array as Arr, Effect, Option, Record as Rec, Schema } from "effect";
+import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str } from "effect";
 
 const APP_NAME = "masseater-dev";
 
@@ -17,7 +17,7 @@ const describeUnprefixed = ({
 }: Readonly<{ FQN: string; Type: string; Props: unknown }>): readonly string[] =>
   decodeNamed(Props).pipe(
     Option.filter(() => Type !== Zone.Zone.Type),
-    Option.filter(({ name }) => !name.startsWith(PREFIX)),
+    Option.filter(({ name }) => !Str.startsWith(PREFIX)(name)),
     Option.map(({ name }) => `${FQN}: ${name}`),
     Option.toArray,
   );
