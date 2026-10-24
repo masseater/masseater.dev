@@ -31,10 +31,10 @@
     },
     "blog-writing": {
       "source": "masseater/skills",
-      "ref": "bdfacfc68a96f3144770f80de906f5152c008616",
+      "ref": "c3f2fd1638ba5cfaac6cfb333bf4334002573d5b",
       "sourceType": "github",
       "skillPath": "skills/blog-writing/SKILL.md",
-      "computedHash": "da108ada5615108e463095d94325476d979aca1c9579d3d88757e02d959d4db0"
+      "computedHash": "53473cab7b65e0f8d25885ab73f60e2cfa2c4b4788b506a34a23a7fe27740882"
     },
     "cloudflare": {
       "source": "cloudflare/skills",
@@ -157,7 +157,7 @@
     },
     "humanity-and-humanness": {
       "source": "masseater/skills",
-      "ref": "bdfacfc68a96f3144770f80de906f5152c008616",
+      "ref": "c3f2fd1638ba5cfaac6cfb333bf4334002573d5b",
       "sourceType": "github",
       "skillPath": "skills/humanity-and-humanness/SKILL.md",
       "computedHash": "a8289ec03ddeb6c2a14a613279be0ed4a6415cd7976bb3815f9d69e66101cdfd"
@@ -318,7 +318,7 @@
     },
     "writing": {
       "source": "masseater/skills",
-      "ref": "bdfacfc68a96f3144770f80de906f5152c008616",
+      "ref": "c3f2fd1638ba5cfaac6cfb333bf4334002573d5b",
       "sourceType": "github",
       "skillPath": "skills/writing/SKILL.md",
       "computedHash": "4348accb08d48b89cc8711da88d615878dfaae027c1f4796cfdd36cf431d34fa"
