@@ -1,14 +1,18 @@
 import { Option } from "effect";
-import type { MDXModule } from "mdx/types";
+import type { MDXComponents, MDXModule } from "mdx/types";
 import { Suspense, use } from "react";
 import type { ReactNode } from "react";
 
 import { findBody, findLoadedBody } from "#/entities/entry/model/body";
 import type { Entry } from "#/entities/entry/model/entry";
 
+import { FootnoteRef } from "./footnote-ref";
+
+const components: MDXComponents = { FootnoteRef };
+
 const LoadedBody = ({ load }: Readonly<{ load: () => Promise<MDXModule> }>): ReactNode => {
   const { default: Body } = use(load());
-  return <Body />;
+  return <Body components={components} />;
 };
 
 const PendingBody = ({ entry }: Readonly<{ entry: Entry }>): ReactNode =>
@@ -24,7 +28,7 @@ const PendingBody = ({ entry }: Readonly<{ entry: Entry }>): ReactNode =>
 const EntryBody = ({ entry }: Readonly<{ entry: Entry }>): ReactNode =>
   Option.match(findLoadedBody(entry), {
     onNone: () => <PendingBody entry={entry} />,
-    onSome: ({ default: Body }) => <Body />,
+    onSome: ({ default: Body }) => <Body components={components} />,
   });
 
 export { EntryBody };
