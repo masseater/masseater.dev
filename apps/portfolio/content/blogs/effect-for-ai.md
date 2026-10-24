@@ -36,12 +36,12 @@ Effect（effect-ts）の `Effect<A, E, R>` は次の3つを表す。
 
 Result型は実行済みの結果を表す。Effectは遅延評価されるプログラムの記述で、runtime が実行する。そのため実行の仕方をコンビネータとして合成できる。
 
-| 欠陥 | Effectでの書き方 |
-| --- | --- |
-| timeout がない | `Effect.timeout` |
-| 並列数が無制限 | `{ concurrency: 5 }` |
-| retry が壊れている | `Effect.retry` に `Schedule` を渡す |
-| 失敗時にリソースが残る | `Effect.acquireRelease` |
+| 欠陥                   | Effectでの書き方                      |
+| ---------------------- | ------------------------------------- |
+| timeout がない         | `Effect.timeout`                      |
+| 並列数が無制限         | `{ concurrency: 5 }`                  |
+| retry が壊れている     | `Effect.retry` に `Schedule` を渡す   |
+| 失敗時にリソースが残る | `Effect.acquireRelease`               |
 | キャンセルが伝わらない | Fiber への interrupt が自動で伝搬する |
 
 冒頭の欠陥は、どれもこれらで書ける処理を手書きして壊したものだ。
@@ -64,9 +64,9 @@ yield せず代入もしていない Effect は実行されない。
 
 ```ts
 const program = Effect.gen(function* () {
-  saveUser(user) // yield* がないので保存は実行されない
-  yield* sendWelcomeMail(user)
-})
+  saveUser(user); // yield* がないので保存は実行されない
+  yield* sendWelcomeMail(user);
+});
 ```
 
 これは型エラーにならない。Promise の await 忘れと違い、処理自体が起きない。
@@ -110,5 +110,7 @@ CLIや小さなスクリプトだけResult型とlintにすると、次の問題�
 - effect-tsgo には `typescript` 7以上のネイティブ版が必要で、素の tsgo と language server を併用すると診断が重複する[^effect-tsgo]
 
 [^effect-docs]: [Effect v4 docs](https://effect.website/docs/v4/)
+
 [^effect-tsgo]: [Effect-TS/tsgo](https://github.com/Effect-TS/tsgo)
+
 [^effect-devtools]: [Effect v4 Devtools](https://effect.website/docs/v4/getting-started/devtools)
