@@ -16,11 +16,11 @@ AIエージェントが書いたTypeScriptには、`fetch` に timeout がない
 
 Effect（effect-ts）の `Effect<A, E, R>` は3つの型引数を持つ。
 
-| 型引数 | 表すもの |
-| --- | --- |
-| `A` | 成功時の値 |
-| `E` | 起こりうるエラー |
-| `R` | 実行に必要な依存 |
+| 型引数 | 表すもの         |
+| ------ | ---------------- |
+| `A`    | 成功時の値       |
+| `E`    | 起こりうるエラー |
+| `R`    | 実行に必要な依存 |
 
 2026年10月時点の既定はv4で、HTTP、SQL、CLI、AI、Schema、Config、Stream が同じコアの上にあり、依存は単一パッケージになった[^effect-docs]。
 
@@ -32,12 +32,12 @@ Effect（effect-ts）の `Effect<A, E, R>` は3つの型引数を持つ。
 
 Result型は実行済みの結果を表す。Effectは遅延評価されるプログラムの記述で、runtime が実行する。そのため実行の仕方をコンビネータとして合成できる。
 
-| 欠陥 | Effectでの書き方 |
-| --- | --- |
-| timeout がない | `Effect.timeout` |
-| 並列数が無制限 | `{ concurrency: 5 }` |
-| retry が壊れている | `Effect.retry` に `Schedule` を渡す |
-| 失敗時にリソースが残る | `Effect.acquireRelease` |
+| 欠陥                   | Effectでの書き方                      |
+| ---------------------- | ------------------------------------- |
+| timeout がない         | `Effect.timeout`                      |
+| 並列数が無制限         | `{ concurrency: 5 }`                  |
+| retry が壊れている     | `Effect.retry` に `Schedule` を渡す   |
+| 失敗時にリソースが残る | `Effect.acquireRelease`               |
 | キャンセルが伝わらない | Fiber への interrupt が自動で伝搬する |
 
 冒頭の欠陥は、どれもこれらで書ける処理を手書きして壊したものだ。
@@ -69,19 +69,19 @@ const program = Effect.gen(function* () {
 
 パッケージ名は `@effect/tsgo` で、Go製のTypeScriptコンパイラ TypeScript-Go に Effect Language Service を組み込んだビルドである[^effect-tsgo]。
 
-| 機能 | 内容 |
-| --- | --- |
-| 診断 | floating Effect、処理されていないエラー型、満たされていない依存など50種類以上 |
-| refactor | async/await から Effect への変換、`Effect.gen` と `Effect.fn` の相互変換など |
+| 機能     | 内容                                                                          |
+| -------- | ----------------------------------------------------------------------------- |
+| 診断     | floating Effect、処理されていないエラー型、満たされていない依存など50種類以上 |
+| refactor | async/await から Effect への変換、`Effect.gen` と `Effect.fn` の相互変換など  |
 
 ### lintとの違い
 
 診断は通常のTypeScriptの診断として出力される[^effect-devtools]。
 
-| | 実行される工程 | 回避できるか |
-| --- | --- | --- |
+|                            | 実行される工程        | 回避できるか                       |
+| -------------------------- | --------------------- | ---------------------------------- |
 | `eslint-plugin-neverthrow` | 型チェックと別の lint | 設定から外せるし、実行し忘れもある |
-| effect-tsgo | 型チェックそのもの | 型チェックを通す限り避けられない |
+| effect-tsgo                | 型チェックそのもの    | 型チェックを通す限り避けられない   |
 
 エディタ、CI、エージェントの実行のどこでも同じ診断が出る。ライブラリは使われなければ意味がないが、Effectは正しく使わせる手段を公式が提供している。
 
@@ -93,11 +93,11 @@ CLIや小さなスクリプトだけResult型とlintにすると、エラー処�
 
 ## コスト
 
-| 項目 | 内容 |
-| --- | --- |
-| API | 大きく、v3からv4でも変わっている。LLMの学習データの大半はv3以前なので、存在しないAPIや古い書き方が出やすい |
-| 型エラー | 長く、コンテキストを消費する |
-| 成熟度 | effect-tsgo はまだAlphaで、リリース間の破壊的変更が想定されている |
+| 項目     | 内容                                                                                                            |
+| -------- | --------------------------------------------------------------------------------------------------------------- |
+| API      | 大きく、v3からv4でも変わっている。LLMの学習データの大半はv3以前なので、存在しないAPIや古い書き方が出やすい      |
+| 型エラー | 長く、コンテキストを消費する                                                                                    |
+| 成熟度   | effect-tsgo はまだAlphaで、リリース間の破壊的変更が想定されている                                               |
 | 導入条件 | `typescript` 7以上のネイティブ版が必要で、素の tsgo と language server を併用すると診断が重複する[^effect-tsgo] |
 
 [^effect-docs]: [Effect v4 docs](https://effect.website/docs/v4/)
