@@ -45,7 +45,7 @@ export default defineConfig({
     tanstackStart({
       srcDirectory: "src/app",
       rsc: { enabled: true },
-      prerender: { enabled: true, crawlLinks: true },
+      prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: false },
       pages,
       sitemap: { host: site.url, outputPath: site.sitemapFile },
       spa: {

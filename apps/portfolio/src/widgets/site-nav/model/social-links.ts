@@ -1,4 +1,4 @@
-import { Array as Arr, pipe } from "effect";
+import { Array as Arr, String as Str, pipe } from "effect";
 
 import { site } from "#/shared/config";
 
@@ -13,7 +13,7 @@ const socialLinks: readonly SocialLink[] = pipe(
   Arr.map(({ label, href }) => ({
     label,
     href,
-    style: { "--vt": `social-${label.toLowerCase()}` },
+    style: { "--vt": `social-${Str.toLowerCase(label)}` },
   })),
 );
 
