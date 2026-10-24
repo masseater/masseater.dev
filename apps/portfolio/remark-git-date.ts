@@ -29,7 +29,13 @@ const emptyYaml = (): Yaml => ({ type: "yaml", value: "" });
 
 const withDate = (yaml: Yaml, date: string): Yaml => ({
   ...yaml,
-  value: `${yaml.value.replace(DATE_LINE, "").trimEnd()}\ndate: ${date}`.trim(),
+  value: pipe(
+    yaml.value,
+    Str.replace(DATE_LINE, ""),
+    Str.trimEnd,
+    (rest) => `${rest}\ndate: ${date}`,
+    Str.trim,
+  ),
 });
 
 const dated = (tree: Root, date: string): Root => ({
