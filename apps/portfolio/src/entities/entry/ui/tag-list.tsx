@@ -4,10 +4,14 @@ import type { ReactNode } from "react";
 const LABEL = "タグ";
 
 const TagList = ({ tags }: Readonly<{ tags: readonly string[] }>): ReactNode => (
-  <ul aria-label={LABEL} className="flex flex-wrap gap-x-3">
+  <ul aria-label={LABEL} className="flex flex-wrap gap-1.5">
     {pipe(
       tags,
-      Arr.map((tag) => <li key={tag}>{tag}</li>),
+      Arr.map((tag) => (
+        <li className="ring-foreground/10 rounded-full px-2 py-0.5 ring-1" key={tag}>
+          {tag}
+        </li>
+      )),
     )}
   </ul>
 );

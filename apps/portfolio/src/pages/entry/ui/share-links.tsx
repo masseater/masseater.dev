@@ -29,9 +29,9 @@ const shareTargets = (entry: Entry): readonly Readonly<{ label: string; href: st
 };
 
 const ShareLinks = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
-  <div className="flex items-center gap-4">
+  <div className="flex flex-wrap items-center gap-3">
     <span>{SHARE_LABEL}</span>
-    <ul className="flex items-center gap-4">
+    <ul className="flex flex-wrap items-center gap-2">
       {pipe(
         shareTargets(entry),
         Arr.map(({ label, href }) => <ShareLink href={href} key={label} label={label} />),

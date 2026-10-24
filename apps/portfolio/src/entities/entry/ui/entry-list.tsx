@@ -9,20 +9,30 @@ import { EntryListItem } from "./entry-list-item";
 
 const EMPTY_MESSAGE = "まだ何もない。";
 
+const FIRST_ORDER = 1;
+
 const EntryList = ({
   layout,
   entries,
 }: Readonly<{ layout: Layout; entries: readonly Entry[] }>): ReactNode => {
   if (!Array.isReadonlyArrayNonEmpty(entries)) {
-    return <p className="text-foreground/70 py-6 text-center">{EMPTY_MESSAGE}</p>;
+    return (
+      <p className="glass-surface text-foreground/70 font-display px-6 py-16 text-center text-sm tracking-widest">
+        {EMPTY_MESSAGE}
+      </p>
+    );
   }
   if (layout === "index") {
     return (
       <ol className="divide-foreground/10 border-foreground/10 flex flex-col divide-y border-y">
         {pipe(
           entries,
-          Array.map((entry) => (
-            <EntryIndexItem entry={entry} key={`${entry.category}/${entry.slug}`} />
+          Array.map((entry, index) => (
+            <EntryIndexItem
+              entry={entry}
+              key={`${entry.category}/${entry.slug}`}
+              order={index + FIRST_ORDER}
+            />
           )),
         )}
       </ol>

@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { categoryMeta, EntryList } from "#/entities/entry";
 import type { Category, Entry } from "#/entities/entry";
 
+import { CollectionHeader } from "./collection-header";
 import { IdeaList } from "./idea-list";
 
 const CollectionView = ({
@@ -21,8 +22,10 @@ const CollectionView = ({
   const { layout, title } = categoryMeta[category];
   return (
     <div className="flex flex-col gap-16">
-      <h1 className="sr-only">{title}</h1>
-      <EntryList entries={listed} layout={layout} />
+      <div className="flex flex-col gap-10">
+        <CollectionHeader count={listed.length} title={title} />
+        <EntryList entries={listed} layout={layout} />
+      </div>
       {Array.isReadonlyArrayNonEmpty(ideas) && <IdeaList ideas={ideas} layout={layout} />}
     </div>
   );

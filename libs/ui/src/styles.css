@@ -124,8 +124,20 @@
   animation-delay: calc(min(sibling-index(), 8) * 40ms);
 }
 
+@utility glass-surface {
+  @apply bg-background/35 ring-foreground/5 rounded-3xl ring-1 backdrop-blur-md;
+}
+
 @utility entry-tile {
-  @apply bg-background/35 ring-foreground/5 hover:bg-background/60 focus-visible:bg-background/60 rounded-3xl ring-1 backdrop-blur-md transition duration-700 ease-(--ease) hover:-translate-y-1 focus-visible:-translate-y-1;
+  @apply glass-surface hover:bg-background/60 focus-visible:bg-background/60 transition duration-700 ease-(--ease) hover:-translate-y-1 focus-visible:-translate-y-1;
+}
+
+@utility nudge-forward {
+  @apply transition-transform duration-700 ease-(--ease) group-hover:translate-x-1 group-focus-visible:translate-x-1;
+}
+
+@utility nudge-back {
+  @apply transition-transform duration-700 ease-(--ease) group-hover:-translate-x-1 group-focus-visible:-translate-x-1;
 }
 
 @utility stage-link {
