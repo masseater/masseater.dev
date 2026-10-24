@@ -27,10 +27,7 @@ const TagFilter = ({
     [navigate],
   );
   return (
-    <ul
-      aria-label={LABEL}
-      className="text-foreground/50 font-display flex flex-wrap gap-2 text-xs uppercase"
-    >
+    <ul aria-label={LABEL} className="text-foreground/50 font-display flex flex-wrap gap-2 text-xs">
       <TagFilterButton active={Option.isNone(activeTag)} onSelect={select} search={allTags}>
         {ALL_LABEL}
       </TagFilterButton>
