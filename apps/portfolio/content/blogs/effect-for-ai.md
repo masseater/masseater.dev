@@ -26,7 +26,7 @@ Effect（effect-ts）の `Effect<A, E, R>` は次の三つを表す。
 - `E`：起こりうるエラー
 - `R`：実行に必要な依存
 
-2026年10月時点の既定はv4で、HTTP、SQL、CLI、AI、Schema、Config、Stream が同じコアの上にあり、依存は単一パッケージになった（[Effect v4 docs](https://effect.website/docs/v4/)）。
+2026年10月時点の既定はv4で、HTTP、SQL、CLI、AI、Schema、Config、Stream が同じコアの上にあり、依存は単一パッケージになった[^effect-docs]。
 
 ## Result型ライブラリとの違い
 
@@ -56,7 +56,7 @@ Result型には依存を表す場所がない。Effectでは、データベー�
 - エラーの種類を追加すると、処理漏れの箇所が型エラーとしてすべて出る
 - 型エラーはテストや実行時例外と違って決定的ですぐ返るので、修正ループが確実に回る
 
-公式ドキュメントもこの点を強みに挙げている（[Effect v4 docs](https://effect.website/docs/v4/)）。
+公式ドキュメントもこの点を強みに挙げている[^effect-docs]。
 
 ## 遅延評価の落とし穴
 
@@ -75,14 +75,14 @@ const program = Effect.gen(function* () {
 
 ### 正体
 
-パッケージ名は `@effect/tsgo` で、Go製のTypeScriptコンパイラ TypeScript-Go に Effect Language Service を組み込んだビルドである（[Effect-TS/tsgo](https://github.com/Effect-TS/tsgo)）。tsgo の型チェックに加えて、次を提供する。
+パッケージ名は `@effect/tsgo` で、Go製のTypeScriptコンパイラ TypeScript-Go に Effect Language Service を組み込んだビルドである[^effect-tsgo]。tsgo の型チェックに加えて、次を提供する。
 
 - 50種類以上の診断：floating Effect、処理されていないエラー型、満たされていない依存など
 - refactor：async/await から Effect への変換、`Effect.gen` と `Effect.fn` の相互変換など
 
 ### lintとの違い
 
-診断は通常のTypeScriptの診断として出力される（[Effect v4 Devtools](https://effect.website/docs/v4/getting-started/devtools)）。
+診断は通常のTypeScriptの診断として出力される[^effect-devtools]。
 
 - neverthrow の `eslint-plugin-neverthrow` は型チェックと別の工程なので、外すことも実行し忘れることもできる
 - effect-tsgo は型チェックそのものなので、エディタでもCIでもエージェントの実行でも同じ診断が出る
@@ -107,4 +107,8 @@ CLIや小さなスクリプトだけResult型とlintにすると、次の問題�
 - APIが大きく、v3からv4でも変わっている。LLMの学習データの大半はv3以前なので、存在しないAPIや古い書き方が出やすい
 - Effectの型エラーは長く、コンテキストを消費する
 - effect-tsgo はまだAlphaで、リリース間の破壊的変更が想定されている
-- effect-tsgo には `typescript` 7以上のネイティブ版が必要で、素の tsgo と language server を併用すると診断が重複する（[Effect-TS/tsgo](https://github.com/Effect-TS/tsgo)）
+- effect-tsgo には `typescript` 7以上のネイティブ版が必要で、素の tsgo と language server を併用すると診断が重複する[^effect-tsgo]
+
+[^effect-docs]: [Effect v4 docs](https://effect.website/docs/v4/)
+[^effect-tsgo]: [Effect-TS/tsgo](https://github.com/Effect-TS/tsgo)
+[^effect-devtools]: [Effect v4 Devtools](https://effect.website/docs/v4/getting-started/devtools)
