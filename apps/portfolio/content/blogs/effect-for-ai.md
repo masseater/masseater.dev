@@ -1,7 +1,6 @@
 ---
 title: "AIにコードを書かせるならEffectを全面採用する"
 description: "Effectは失敗と依存を型に載せ、effect-tsgoがその正しい使い方を型チェックで強制する。AIエージェントに書かせるなら、CLIや小さなスクリプトも例外にせず全面採用する。"
-date: 2026-10-24
 tags: ["Effect", "effect-tsgo", "TypeScript"]
 published: true
 ---

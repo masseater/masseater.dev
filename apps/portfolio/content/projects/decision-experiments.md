@@ -1,7 +1,6 @@
 ---
 title: decision-experiments
 description: decision モデルで文書の中身を安く速く判定できるかを試す実験の置き場
-date: 2026-10-14
 tags: [decision-model, openrouter, effect]
 published: true
 ---

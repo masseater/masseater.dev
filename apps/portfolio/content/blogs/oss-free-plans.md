@@ -1,7 +1,6 @@
 ---
 title: "public リポジトリと OSS に開放されている無償プラン（2026年10月）"
 description: "GitHub Actions の CI 代をはじめ、リポジトリを public にすると無料になるもの、メンテナ個人に付く無償プラン、他社の OSS プログラムを 2026年10月時点の公式ページで確認してまとめた。"
-date: 2026-10-24
 tags: ["GitHub Actions", "OSS", "CI"]
 published: false
 ---

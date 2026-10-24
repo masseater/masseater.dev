@@ -7,6 +7,8 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 
+import { remarkGitDate } from "./remark-git-date.ts";
+
 type Transform<Input, Output> = (input: Input) => Output;
 
 type Definitions = ReadonlyMap<string, readonly ElementContent[]>;
@@ -139,7 +141,7 @@ const rehypeFootnotePreview = (): Transform<Root, Root> => (tree) => {
 export default {
   enforce: "pre",
   ...mdx({
-    remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
+    remarkPlugins: [remarkFrontmatter, remarkGitDate, remarkMdxFrontmatter, remarkGfm],
     rehypePlugins: [[rehypeShiki, { theme: "github-light" }], rehypeFootnotePreview],
     remarkRehypeOptions: {
       footnoteLabel: "出典",

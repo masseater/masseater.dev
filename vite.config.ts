@@ -103,6 +103,8 @@ export default defineConfig({
               name: ["ReactNode", "ButtonHTMLAttributes", "ClassAttributes"],
             },
             { from: "package", package: "clsx", name: "ClassValue" },
+            { from: "package", package: "mdast", name: ["Root", "RootContent", "Yaml"] },
+            { from: "package", package: "vfile", name: "VFile" },
             {
               from: "package",
               package: "effect",
