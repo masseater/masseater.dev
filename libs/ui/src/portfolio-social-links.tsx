@@ -1,4 +1,4 @@
-import { Array as Arr, pipe } from "effect";
+import { Array as Arr, pipe, String as Str } from "effect";
 import type { ReactNode } from "react";
 
 import { nameTransition } from "./name-transition.ts";
@@ -12,7 +12,7 @@ const PortfolioSocialLinks = (): ReactNode => (
         <li key={href}>
           <a
             className="stage-link px-2 py-3"
-            data-vt={`social-${label.toLowerCase()}`}
+            data-vt={`social-${Str.toLowerCase(label)}`}
             ref={nameTransition}
             href={href}
           >

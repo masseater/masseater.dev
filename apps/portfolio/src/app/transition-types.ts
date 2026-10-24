@@ -1,4 +1,4 @@
-import { Array, Option, pipe } from "effect";
+import { Array, Option, pipe, String as Str } from "effect";
 
 import { categoryInfos, categoryPath } from "#/entities/entry";
 
@@ -10,7 +10,7 @@ const categoryPaths = pipe(
 const categoryIndex = (pathname: string): Option.Option<number> =>
   Array.findFirstIndex(
     categoryPaths,
-    (path) => pathname === path || pathname.startsWith(`${path}/`),
+    (path) => pathname === path || Str.startsWith(`${path}/`)(pathname),
   );
 
 const direction = (from: number, to: number): string => {

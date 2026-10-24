@@ -1,4 +1,4 @@
-import { Effect, Logger, ManagedRuntime, Schema, pipe } from "effect";
+import { Effect, Logger, ManagedRuntime, pipe, Schema, String as Str } from "effect";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
 import type { CiTelemetryEnv } from "./alchemy.run.ts";
@@ -50,7 +50,7 @@ const runtime = ManagedRuntime.make(
 );
 
 const bearer = (request: Request): string =>
-  (request.headers.get("authorization") ?? "").replace(/^Bearer /u, "");
+  Str.replace(/^Bearer /u, "")(request.headers.get("authorization") ?? "");
 
 const verify = (
   request: Request,
