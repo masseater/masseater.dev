@@ -49,6 +49,7 @@
     "@tailwindcss/vite": "4.3.3",
     "@tanstack/devtools-vite": "0.8.5",
     "@tanstack/react-start": "catalog:stack",
+    "@types/mdast": "catalog:",
     "@types/mdx": "catalog:",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
@@ -59,8 +60,11 @@
     "remark-frontmatter": "catalog:",
     "remark-gfm": "catalog:",
     "remark-mdx-frontmatter": "catalog:",
+    "simple-git": "catalog:",
     "steiger": "catalog:stack",
     "typescript": "catalog:stack",
+    "unified": "catalog:",
+    "vfile": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"
   }

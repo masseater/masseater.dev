@@ -54,6 +54,7 @@ release. Add a tool name to select part of the graph. For example, run
 
 ## 記事
 
+- 記事の日付は frontmatter に書かない。`apps/portfolio/remark-git-date.ts` がビルド時に、そのファイルを最初に追加したコミットの日付を `date` として入れる。未コミットのファイルは当日の日付になる。
 - 出典は `[^1]` の脚注で書く。remark-gfm が本文の末尾に出典の一覧としてまとめるので、手で末尾に一覧を書かない。
 - 出典でないリンクは `[文言](URL)` の埋め込みリンクにし、むき出しの URL を置かない。blogs・scraps・projects のどれも同じである。
 - 中身の薄いアイデア段階の blog は、frontmatter に `stage: idea` を付ける。一覧では折りたたみの中に入り、フィードには出ない。
