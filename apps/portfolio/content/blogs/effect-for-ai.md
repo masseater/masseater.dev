@@ -8,23 +8,19 @@ published: true
 
 ## AIが書くコードに繰り返し出る欠陥
 
-AIエージェントが書いたTypeScriptには、次のような欠陥が繰り返し出てくる。
-
-- `fetch` に timeout がない
-- `Promise.all` に数千件の配列をそのまま渡す
-- `catch (e) {}` でエラーを握りつぶす
-- AbortSignal を途中で渡し忘れる
-- 手書きの retry が止まらない
+AIエージェントが書いたTypeScriptには、`fetch` に timeout がない、`Promise.all` に数千件の配列をそのまま渡す、`catch (e) {}` でエラーを握りつぶす、AbortSignal を途中で渡し忘れる、手書きの retry が止まらない、といった欠陥が繰り返し出てくる。
 
 どれも、関数が何で失敗するか、何に依存するか、リソースをいつ解放するかが型に現れないため、型チェックを通ってしまう。
 
 ## Effectは失敗と依存を型に載せる
 
-Effect（effect-ts）の `Effect<A, E, R>` は次の3つを表す。
+Effect（effect-ts）の `Effect<A, E, R>` は3つの型引数を持つ。
 
-- `A`：成功時の値
-- `E`：起こりうるエラー
-- `R`：実行に必要な依存
+| 型引数 | 表すもの |
+| --- | --- |
+| `A` | 成功時の値 |
+| `E` | 起こりうるエラー |
+| `R` | 実行に必要な依存 |
 
 2026年10月時点の既定はv4で、HTTP、SQL、CLI、AI、Schema、Config、Stream が同じコアの上にあり、依存は単一パッケージになった[^effect-docs]。
 
@@ -52,11 +48,7 @@ Result型には依存を表す場所がない。Effectでは、データベー�
 
 ## AIにとっての利点
 
-- 失敗と依存を、実装を読まずにシグネチャから知れる
-- エラーの種類を追加すると、処理漏れの箇所が型エラーとしてすべて出る
-- 型エラーはテストや実行時例外と違って決定的ですぐ返るので、修正ループが確実に回る
-
-公式ドキュメントもこの点を強みに挙げている[^effect-docs]。
+エージェントは、失敗と依存を、実装を読まずにシグネチャから知れる。エラーの種類を追加すれば、処理漏れの箇所が型エラーとしてすべて出る。型エラーはテストや実行時例外と違って決定的ですぐ返るので、修正ループが確実に回る。公式ドキュメントもこの点を強みに挙げている[^effect-docs]。
 
 ## 遅延評価の落とし穴
 
@@ -75,39 +67,38 @@ const program = Effect.gen(function* () {
 
 ### 正体
 
-パッケージ名は `@effect/tsgo` で、Go製のTypeScriptコンパイラ TypeScript-Go に Effect Language Service を組み込んだビルドである[^effect-tsgo]。tsgo の型チェックに加えて、次を提供する。
+パッケージ名は `@effect/tsgo` で、Go製のTypeScriptコンパイラ TypeScript-Go に Effect Language Service を組み込んだビルドである[^effect-tsgo]。
 
-- 50種類以上の診断：floating Effect、処理されていないエラー型、満たされていない依存など
-- refactor：async/await から Effect への変換、`Effect.gen` と `Effect.fn` の相互変換など
+| 機能 | 内容 |
+| --- | --- |
+| 診断 | floating Effect、処理されていないエラー型、満たされていない依存など50種類以上 |
+| refactor | async/await から Effect への変換、`Effect.gen` と `Effect.fn` の相互変換など |
 
 ### lintとの違い
 
 診断は通常のTypeScriptの診断として出力される[^effect-devtools]。
 
-- neverthrow の `eslint-plugin-neverthrow` は型チェックと別の工程なので、外したり実行し忘れたりできる
-- effect-tsgo は型チェックそのものなので、エディタ、CI、エージェントの実行のどこでも同じ診断が出る
+| | 実行される工程 | 回避できるか |
+| --- | --- | --- |
+| `eslint-plugin-neverthrow` | 型チェックと別の lint | 設定から外せるし、実行し忘れもある |
+| effect-tsgo | 型チェックそのもの | 型チェックを通す限り避けられない |
 
-ライブラリは使われなければ意味がないが、Effectは正しく使わせる手段を公式が提供している。
+エディタ、CI、エージェントの実行のどこでも同じ診断が出る。ライブラリは使われなければ意味がないが、Effectは正しく使わせる手段を公式が提供している。
 
 ## 例外を作らない
 
-CLIや小さなスクリプトだけResult型とlintにすると、次の問題が起きる。
+CLIや小さなスクリプトだけResult型とlintにすると、エラー処理の書き方が2つになる。エージェントはどちらで書くかを毎回判断して誤る。両者の境界では型が途切れ、そこは effect-tsgo の診断の外になる。
 
-- エラー処理の書き方が2つになり、エージェントはどちらで書くかを毎回判断して誤る
-- 両者の境界で型が途切れ、そこは effect-tsgo の診断の外になる
-
-全面採用は維持しやすい。
-
-- Effectを返す関数を呼ぶ側はEffectで受けないと値を取り出せない
-- `R` を満たすには Layer を書く必要がある
-- 既存の async/await は effect-tsgo の refactor で移行できる
+全面採用は維持しやすい。Effectを返す関数を呼ぶ側は、Effectで受けないと値を取り出せない。`R` を満たすには Layer を書く必要がある。既存の async/await は effect-tsgo の refactor で移行できる。
 
 ## コスト
 
-- APIが大きく、v3からv4でも変わっている。LLMの学習データの大半はv3以前なので、存在しないAPIや古い書き方が出やすい
-- Effectの型エラーは長く、コンテキストを消費する
-- effect-tsgo はまだAlphaで、リリース間の破壊的変更が想定されている
-- effect-tsgo には `typescript` 7以上のネイティブ版が必要で、素の tsgo と language server を併用すると診断が重複する[^effect-tsgo]
+| 項目 | 内容 |
+| --- | --- |
+| API | 大きく、v3からv4でも変わっている。LLMの学習データの大半はv3以前なので、存在しないAPIや古い書き方が出やすい |
+| 型エラー | 長く、コンテキストを消費する |
+| 成熟度 | effect-tsgo はまだAlphaで、リリース間の破壊的変更が想定されている |
+| 導入条件 | `typescript` 7以上のネイティブ版が必要で、素の tsgo と language server を併用すると診断が重複する[^effect-tsgo] |
 
 [^effect-docs]: [Effect v4 docs](https://effect.website/docs/v4/)
 [^effect-tsgo]: [Effect-TS/tsgo](https://github.com/Effect-TS/tsgo)
