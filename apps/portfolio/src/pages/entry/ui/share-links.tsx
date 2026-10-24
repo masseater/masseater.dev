@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { entryPath } from "#/entities/entry";
 import type { Entry } from "#/entities/entry";
+import type { Direction } from "#/pages/entry/model/direction";
 import { site } from "#/shared/config";
 
 import { ShareLink } from "./share-link";
@@ -28,10 +29,23 @@ const shareTargets = (entry: Entry): readonly Readonly<{ label: string; href: st
   ];
 };
 
-const ShareLinks = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
-  <div className="flex flex-wrap items-center gap-3">
+const SHARE_CLASS = {
+  row: "flex flex-wrap items-center gap-3",
+  column: "flex flex-col items-center gap-3",
+} as const;
+
+const LIST_CLASS = {
+  row: "flex flex-wrap items-center gap-2",
+  column: "flex flex-col items-center gap-2",
+} as const;
+
+const ShareLinks = ({
+  entry,
+  direction,
+}: Readonly<{ entry: Entry; direction: Direction }>): ReactNode => (
+  <div className={SHARE_CLASS[direction]}>
     <span>{SHARE_LABEL}</span>
-    <ul className="flex flex-wrap items-center gap-2">
+    <ul className={LIST_CLASS[direction]}>
       {pipe(
         shareTargets(entry),
         Arr.map(({ label, href }) => <ShareLink href={href} key={label} label={label} />),

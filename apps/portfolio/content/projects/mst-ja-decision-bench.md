@@ -1,7 +1,6 @@
 ---
 title: mst-ja-decision-bench
 description: decision model が日本語のタスクをどれだけ正しく判定できるかを測るベンチマーク
-date: 2026-10-11
 tags: [decision-model, benchmark, openrouter]
 published: true
 ---

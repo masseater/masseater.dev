@@ -1,9 +1,8 @@
 ---
 title: "public リポジトリと OSS に開放されている無償プラン（2026年10月）"
 description: "GitHub Actions の CI 代をはじめ、リポジトリを public にすると無料になるもの、メンテナ個人に付く無償プラン、他社の OSS プログラムを 2026年10月時点の公式ページで確認してまとめた。"
-date: 2026-10-24
 tags: ["GitHub Actions", "OSS", "CI"]
-published: false
+published: true
 ---
 
 AI エージェントに開発をさせると、PR 1 本ごとにテスト・lint・ビルド・AI レビューが走る。CI の消費量は人が書いていた頃と桁で変わる。この CI 代を含めて、リポジトリを public にすると何が無料になるのか。メンテナ個人には何が付くのか。GitHub 以外の OSS プログラムは何を出しているのか。2026年10月23日時点の各社公式ページで確認した。
