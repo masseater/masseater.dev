@@ -1,7 +1,7 @@
 import { presets as effectPresets } from "@effect/tsgo/oxlint-presets";
 import eslintReact from "@eslint-react/eslint-plugin";
 import htmlReact from "@html-eslint/eslint-plugin-react";
-import { Array as Arr, Record as Rec, Struct, pipe } from "effect";
+import { Array as Arr, Record as Rec, String as Str, Struct, pipe } from "effect";
 import reactHooks from "eslint-plugin-react-hooks";
 
 import decisionPlugin from "./decision-rules.ts";
@@ -147,7 +147,7 @@ const requiredStackEntries = Arr.flatMap(Rec.toEntries(requiredStack), ([message
 const requiredStackPaths: readonly Readonly<{ name: string; message: string }>[] = Arr.map(
   pipe(
     requiredStackEntries,
-    Arr.filter(({ module }) => !module.includes("*")),
+    Arr.filter(({ module }) => !Str.includes("*")(module)),
   ),
   ({ message, module }) => ({ name: module, message }),
 );
@@ -156,7 +156,7 @@ const requiredStackPatterns: readonly Readonly<{ group: readonly string[]; messa
   pipe(
     requiredStackEntries,
     Arr.map(({ message, module }) => {
-      if (module.includes("*")) {
+      if (Str.includes("*")(module)) {
         return { group: [module, `${module}/**`], message };
       }
       return { group: [`${module}/**`], message };
@@ -212,14 +212,16 @@ const allRulesOf = ({
 
 const reactHooksRuleNames = pipe(
   Struct.keys(reactHooks.configs["recommended-latest"].rules),
-  Arr.map((name) => name.replace("react-hooks/", "react-hooks-js/")),
+  Arr.map(Str.replace("react-hooks/", "react-hooks-js/")),
 );
 
 const reactHooksRules = asErrors(reactHooksRuleNames);
 
 const eslintReactRuleNames = pipe(
   Rec.keys(eslintReact.configs["strict-typescript"].rules ?? {}),
-  Arr.filter((name) => !(name.replace("@eslint-react/", "react-hooks-js/") in reactHooksRules)),
+  Arr.filter(
+    (name) => !(Str.replace("@eslint-react/", "react-hooks-js/")(name) in reactHooksRules),
+  ),
 );
 
 const effectRuleNames = pipe(
