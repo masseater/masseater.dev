@@ -9,8 +9,6 @@ import { EntryListItem } from "./entry-list-item";
 
 const EMPTY_MESSAGE = "まだ何もない。";
 
-const FIRST_ORDER = 1;
-
 const EntryList = ({
   layout,
   entries,
@@ -27,19 +25,15 @@ const EntryList = ({
       <ol className="divide-foreground/10 border-foreground/10 flex flex-col divide-y border-y">
         {pipe(
           entries,
-          Array.map((entry, index) => (
-            <EntryIndexItem
-              entry={entry}
-              key={`${entry.category}/${entry.slug}`}
-              order={index + FIRST_ORDER}
-            />
+          Array.map((entry) => (
+            <EntryIndexItem entry={entry} key={`${entry.category}/${entry.slug}`} />
           )),
         )}
       </ol>
     );
   }
   return (
-    <ul className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+    <ul className="grid gap-x-8 sm:grid-cols-2 md:grid-cols-3">
       {pipe(
         entries,
         Array.map((entry) => (
