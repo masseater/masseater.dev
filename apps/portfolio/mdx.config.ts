@@ -9,5 +9,10 @@ export default {
   ...mdx({
     remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
     rehypePlugins: [[rehypeShiki, { theme: "github-light" }]],
+    remarkRehypeOptions: {
+      footnoteLabel: "出典",
+      footnoteLabelProperties: {},
+      footnoteBackLabel: "本文に戻る",
+    },
   }),
 } as const;
