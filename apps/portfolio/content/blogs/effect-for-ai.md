@@ -20,7 +20,7 @@ AIエージェントが書いたTypeScriptには、次のような欠陥が繰�
 
 ## Effectは失敗と依存を型に載せる
 
-Effect（effect-ts）の `Effect<A, E, R>` は次の三つを表す。
+Effect（effect-ts）の `Effect<A, E, R>` は次の3つを表す。
 
 - `A`：成功時の値
 - `E`：起こりうるエラー
@@ -30,7 +30,7 @@ Effect（effect-ts）の `Effect<A, E, R>` は次の三つを表す。
 
 ## Result型ライブラリとの違い
 
-エラーを型に載せるだけなら、neverthrow や ts-results などのResult型ライブラリでもできる。違いは二つある。
+エラーを型に載せるだけなら、neverthrow や ts-results などのResult型ライブラリでもできる。違いは2つある。
 
 ### 遅延評価とruntime
 
@@ -60,7 +60,7 @@ Result型には依存を表す場所がない。Effectでは、データベー�
 
 ## 遅延評価の落とし穴
 
-yield も代入もしていない Effect は実行されない。
+yield せず代入もしていない Effect は実行されない。
 
 ```ts
 const program = Effect.gen(function* () {
@@ -84,8 +84,8 @@ const program = Effect.gen(function* () {
 
 診断は通常のTypeScriptの診断として出力される[^effect-devtools]。
 
-- neverthrow の `eslint-plugin-neverthrow` は型チェックと別の工程なので、外すことも実行し忘れることもできる
-- effect-tsgo は型チェックそのものなので、エディタでもCIでもエージェントの実行でも同じ診断が出る
+- neverthrow の `eslint-plugin-neverthrow` は型チェックと別の工程なので、外したり実行し忘れたりできる
+- effect-tsgo は型チェックそのものなので、エディタ、CI、エージェントの実行のどこでも同じ診断が出る
 
 ライブラリは使われなければ意味がないが、Effectは正しく使わせる手段を公式が提供している。
 
@@ -93,7 +93,7 @@ const program = Effect.gen(function* () {
 
 CLIや小さなスクリプトだけResult型とlintにすると、次の問題が起きる。
 
-- エラー処理の書き方が二つになり、エージェントはどちらで書くかを毎回判断して誤る
+- エラー処理の書き方が2つになり、エージェントはどちらで書くかを毎回判断して誤る
 - 両者の境界で型が途切れ、そこは effect-tsgo の診断の外になる
 
 全面採用は維持しやすい。
