@@ -10,12 +10,12 @@ AI エージェントに開発をさせると、PR 1 本ごとにテスト・lin
 
 ## まず結論
 
-- public 化と OSI ライセンスだけで、申請なしで無料になるもの
-  - GitHub 本体: Actions の標準ランナー、ghcr.io、CodeQL、secret scanning、Dependabot
-  - 外部サービス: Codecov、SonarQube Cloud、CodeRabbit
-- 本人の実績で判定される無償プラン: Copilot Pro、Claude Max 20x（6 か月）、JetBrains All Products Pack
-- public にしても増えないもの: Codespaces
-- 残る費目は AI レビューの推論代だけになる
+| 分類                                                       | 内容                                                                                                              |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| public 化と OSI ライセンスだけで、申請なしで無料になるもの | GitHub Actions の標準ランナー、ghcr.io、CodeQL、secret scanning、Dependabot、Codecov、SonarQube Cloud、CodeRabbit |
+| 本人の実績で判定される無償プラン                           | Copilot Pro、Claude Max 20x（6 か月）、JetBrains All Products Pack                                                |
+| public にしても増えないもの                                | Codespaces                                                                                                        |
+| 残る費目                                                   | AI レビューの推論代                                                                                               |
 
 ## GitHub 本体で public なら無料になるもの
 
@@ -47,10 +47,12 @@ private で枠を超えたときの単価[^2]は次の通り。
 
 上限[^3]は public と private で区別がなく、プランだけで決まる。
 
-- 同時実行ジョブ: Free 20、Pro 40、Team 60、Enterprise 500
-- うち macOS: Free〜Team は 5、Enterprise は 50
-- 1 ジョブの実行時間: 6 時間（セルフホストは 5 日）
-- matrix: 1 実行あたり 256 ジョブ
+| 上限               | 値                                       |
+| ------------------ | ---------------------------------------- |
+| 同時実行ジョブ     | Free 20、Pro 40、Team 60、Enterprise 500 |
+| うち macOS         | Free〜Team は 5、Enterprise は 50        |
+| 1 ジョブの実行時間 | 6 時間（セルフホストは 5 日）            |
+| matrix             | 1 実行あたり 256 ジョブ                  |
 
 ### GitHub Packages と ghcr.io
 
@@ -96,10 +98,7 @@ Codespaces の課金[^8]は、個人 Free で月 120 コア時間と 15 GB 月�
 
 通常月 10 ドルの Copilot Pro は、人気のある OSS リポジトリのメンテナに無料[^9]で提供される。
 
-- 基準は非公開
-- Copilot 設定画面を開いて「GitHub Copilot Pro」のページが表示されれば対象
-- 毎月再判定され、外れると有料プランか Copilot Free に戻る
-- 申請手続きはない
+基準は非公開で、申請手続きもない。Copilot 設定画面を開いて「GitHub Copilot Pro」のページが表示されれば対象である。毎月再判定され、外れると有料プランか Copilot Free に戻る。
 
 ### Claude for Open Source
 
@@ -177,16 +176,20 @@ CI 代の次に大きい費目で、推論代を誰が持つかで分かれる�
 
 ## 自分の環境でやること
 
-1. リポジトリを public にし、OSI ライセンスを置く
-2. Copilot 設定画面で Pro 無料の対象かを確認する
-3. Claude for Open Source の条件のうち、他人のリポジトリへのマージ済み PR 100 本、または自分のリポジトリの外部コントリビューター 20 人に届いているか数える
-4. macOS ビルドが重ければ CircleCI の OSS プランを申請する
+| 順  | やること                                                                                                                                                |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | リポジトリを public にし、OSI ライセンスを置く                                                                                                          |
+| 2   | Copilot 設定画面で Pro 無料の対象かを確認する                                                                                                           |
+| 3   | Claude for Open Source の条件のうち、他人のリポジトリへのマージ済み PR 100 本、または自分のリポジトリの外部コントリビューター 20 人に届いているか数える |
+| 4   | macOS ビルドが重ければ CircleCI の OSS プランを申請する                                                                                                 |
 
 ## 未確認
 
-- 1Password for Open Source は公式ページを取得できなかった
-- Depot の OSS 割引は問い合わせベースで公開情報がない
-- Copilot Pro 無料の「人気」の基準は非公開
+| 項目                             | 状態                             |
+| -------------------------------- | -------------------------------- |
+| 1Password for Open Source        | 公式ページを取得できなかった     |
+| Depot の OSS 割引                | 問い合わせベースで公開情報がない |
+| Copilot Pro 無料の「人気」の基準 | 非公開                           |
 
 [^1]: [課金ドキュメント](https://docs.github.com/en/billing/managing-billing-for-your-products/about-billing-for-github-actions)
 
