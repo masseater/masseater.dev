@@ -29,7 +29,6 @@
     "@tanstack/react-router": "1.170.45",
     "@tanstack/react-router-devtools": "1.167.2",
     "@tanstack/react-router-ssr-query": "1.167.3",
-    "cn": "catalog:",
     "drizzle-orm": "catalog:stack",
     "eden-tanstack-react-query": "catalog:stack",
     "effect": "catalog:stack",
