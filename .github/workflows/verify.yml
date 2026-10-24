@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          fetch-depth: 0
+      - run: git fetch --unshallow --filter=blob:none origin
       - uses: voidzero-dev/setup-vp@68f39c78aaf39be468cabd2afb09c162574c84af # v1.21.2
         with:
           cache: true
@@ -94,7 +94,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          fetch-depth: 0
+      - if: steps.head.outputs.latest == 'true'
+        run: git fetch --unshallow --filter=blob:none origin
       - if: steps.head.outputs.latest == 'true'
         uses: voidzero-dev/setup-vp@68f39c78aaf39be468cabd2afb09c162574c84af # v1.21.2
         with:
