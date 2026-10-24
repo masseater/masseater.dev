@@ -1,7 +1,6 @@
 ---
 title: "typescript-template の中身（2026年10月24日時点）: Cloudflare で動く TypeScript アプリを検査と CI がそろった状態から始める"
 description: "Cloudflare で動く TypeScript の Web アプリを、検査・CI・デプロイ・AI エージェントとの作業の決まりがそろった状態から始めるための GitHub テンプレート。2026年10月24日時点の v0.0.10 について、何が入っていて、それぞれどう動いているかをコードの抜粋とともに紹介する。"
-date: 2026-10-24
 tags: ["TypeScript", "Cloudflare", "Claude Code"]
 published: true
 ---
