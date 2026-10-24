@@ -61,7 +61,7 @@ const instructions = (current: string, release: typeof Release.Type): string => 
 
 runHook(
   Effect.gen(function* templateRelease() {
-    if ((yield* projectDir).includes(WORKTREE_SEGMENT)) {
+    if (Str.includes(WORKTREE_SEGMENT)(yield* projectDir)) {
       return;
     }
     const current = yield* currentVersion;
