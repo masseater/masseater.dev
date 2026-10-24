@@ -6,6 +6,7 @@ export { entryPath } from "./model/entry";
 export type { CollectionResult, Entry, EntryResult } from "./model/entry";
 export { preloadBody } from "./model/body";
 export { EntryBody } from "./ui/entry-body";
+export { EntryToc } from "./ui/entry-toc";
 export { EntryList } from "./ui/entry-list";
 export { EntryMeta } from "./ui/entry-meta";
 export { entryTitleTransition } from "./ui/entry-transition";
