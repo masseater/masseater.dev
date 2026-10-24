@@ -10,13 +10,13 @@ published: true
 
 AIエージェントが書いたTypeScriptには、次の欠陥が繰り返し出てくる。
 
-| 欠陥                     | コード                                |
-| ------------------------ | ------------------------------------- |
-| timeout がない           | `fetch` を時間制限なしで呼ぶ          |
-| 並列数が無制限           | `Promise.all` に数千件の配列を渡す    |
-| エラーを握りつぶす       | `catch (e) {}`                        |
-| キャンセルが伝わらない   | AbortSignal を途中で渡し忘れる        |
-| retry が壊れている       | 手書きの retry ループが止まらない     |
+| 欠陥                   | コード                             |
+| ---------------------- | ---------------------------------- |
+| timeout がない         | `fetch` を時間制限なしで呼ぶ       |
+| 並列数が無制限         | `Promise.all` に数千件の配列を渡す |
+| エラーを握りつぶす     | `catch (e) {}`                     |
+| キャンセルが伝わらない | AbortSignal を途中で渡し忘れる     |
+| retry が壊れている     | 手書きの retry ループが止まらない  |
 
 どれも、関数が何で失敗するか、何に依存するか、リソースをいつ解放するかが型に現れないため、型チェックを通ってしまう。
 
@@ -64,9 +64,9 @@ yield せず代入もしていない Effect は実行されない。
 
 ```ts
 const program = Effect.gen(function* () {
-  saveUser(user) // yield* がないので保存は実行されない
-  yield* sendWelcomeMail(user)
-})
+  saveUser(user); // yield* がないので保存は実行されない
+  yield* sendWelcomeMail(user);
+});
 ```
 
 これは型エラーにならない。Promise の await 忘れと違い、処理自体が起きない。
@@ -109,5 +109,7 @@ CLIや小さなスクリプトだけResult型とlintにすると、エラー処�
 | 導入条件 | `typescript` 7以上のネイティブ版が必要で、素の tsgo と language server を併用すると診断が重複する[^effect-tsgo] |
 
 [^effect-docs]: [Effect v4 docs](https://effect.website/docs/v4/)
+
 [^effect-tsgo]: [Effect-TS/tsgo](https://github.com/Effect-TS/tsgo)
+
 [^effect-devtools]: [Effect v4 Devtools](https://effect.website/docs/v4/getting-started/devtools)
