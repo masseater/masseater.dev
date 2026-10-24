@@ -6,8 +6,9 @@ import type { Entry } from "#/entities/entry/model/entry";
 import { EntryModule } from "./entry-module";
 import type { Render } from "./entry-module";
 import { FootnoteRef } from "./footnote-ref";
+import { Speech } from "./speech";
 
-const components: MDXComponents = { FootnoteRef };
+const components: MDXComponents = { FootnoteRef, Speech };
 
 const renderBody: Render = ({ default: Body }) => <Body components={components} />;
 

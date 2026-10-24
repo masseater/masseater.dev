@@ -3,17 +3,14 @@ import rehypeShiki from "@shikijs/rehype";
 import rehypeExtractToc from "@stefanprobst/rehype-extract-toc";
 import rehypeExportToc from "@stefanprobst/rehype-extract-toc/mdx";
 import rehypeSlug from "rehype-slug";
-import remarkFrontmatter from "remark-frontmatter";
-import remarkGfm from "remark-gfm";
-import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 
 import { rehypeFootnotePreview } from "./rehype-footnote-preview.ts";
-import { remarkGitDate } from "./remark-git-date.ts";
+import { remarkPlugins } from "./remark-plugins.ts";
 
 export default {
   enforce: "pre",
   ...mdx({
-    remarkPlugins: [remarkFrontmatter, remarkGitDate, remarkMdxFrontmatter, remarkGfm],
+    remarkPlugins: [...remarkPlugins],
     rehypePlugins: [
       rehypeSlug,
       rehypeExtractToc,
