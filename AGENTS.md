@@ -54,7 +54,7 @@ release. Add a tool name to select part of the graph. For example, run
 
 ## 記事
 
-- 出典は `[^1]` の脚注で書く。remark-gfm が本文の末尾に出典の一覧としてまとめるので、手で末尾に一覧を書かない。
+- 出典は `[^codmon-retrospective]` のような名前のラベルの脚注で書く。remark-gfm が出現順に番号を振って本文の末尾に出典の一覧としてまとめるので、番号も一覧も手で書かない。
 - 出典でないリンクは `[文言](URL)` の埋め込みリンクにし、むき出しの URL を置かない。blogs・scraps・projects のどれも同じである。
 - 中身の薄いアイデア段階の blog は、frontmatter に `stage: idea` を付ける。一覧では折りたたみの中に入り、フィードには出ない。
 - scrap は personal-space の MCP の `post_scrap` からも PR で足される。blog を投稿するツールは MCP に意図して足さない。blog は持ち主が推敲してから出すまとまった文章で、思いつきをそのまま出せる経路は scrap だけにしておくためである。
