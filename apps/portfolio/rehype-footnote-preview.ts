@@ -1,6 +1,10 @@
 import { Array as Arr, Option, Predicate, String as Str, pipe } from "effect";
 import type { Element, ElementContent, Root, RootContent, Text } from "hast";
-import type { MdxJsxAttribute, MdxJsxTextElementHast } from "mdast-util-mdx-jsx";
+import type {
+  MdxJsxAttribute,
+  MdxJsxFlowElementHast,
+  MdxJsxTextElementHast,
+} from "mdast-util-mdx-jsx";
 
 type Transform<Input, Output> = (input: Input) => Output;
 
@@ -104,6 +108,9 @@ const previewOf: Transform<Definitions, Transform<Element, Option.Option<MdxJsxT
       ),
     );
 
+const isMdxFlow: Predicate.Refinement<RootContent, MdxJsxFlowElementHast> = (node) =>
+  node.type === "mdxJsxFlowElement";
+
 const onElements =
   <Node extends RootContent>(
     transform: Transform<Element, ElementContent>,
@@ -113,6 +120,16 @@ const onElements =
       node,
       Option.liftPredicate(isElement),
       Option.map(transform),
+      Option.orElse(() =>
+        pipe(
+          node,
+          Option.liftPredicate(isMdxFlow),
+          Option.map((flow): MdxJsxFlowElementHast => ({
+            ...flow,
+            children: pipe(flow.children, Arr.map(onElements<ElementContent>(transform))),
+          })),
+        ),
+      ),
       Option.getOrElse((): ElementContent | Node => node),
     );
 
