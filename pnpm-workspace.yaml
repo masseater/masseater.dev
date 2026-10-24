@@ -47,7 +47,6 @@ catalog:
   feed: 6.0.0
   "@yarnpkg/parsers": 3.1.0
   jose: 6.2.13
-  cn: 0.5.0
   radix-ui: 1.8.1
 catalogs:
   stack:
