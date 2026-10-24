@@ -4,11 +4,13 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 
+import { rehypeFootnotePreview } from "./rehype-footnote-preview.ts";
+
 export default {
   enforce: "pre",
   ...mdx({
     remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
-    rehypePlugins: [[rehypeShiki, { theme: "github-light" }]],
+    rehypePlugins: [[rehypeShiki, { theme: "github-light" }], rehypeFootnotePreview],
     remarkRehypeOptions: {
       footnoteLabel: "出典",
       footnoteLabelProperties: {},
