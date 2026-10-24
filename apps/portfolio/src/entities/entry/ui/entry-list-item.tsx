@@ -4,13 +4,13 @@ import type { ReactNode } from "react";
 
 import type { Entry } from "#/entities/entry/model/entry";
 
-import { EntryTileFooter } from "./entry-tile-footer";
+import { EntryListFooter } from "./entry-list-footer";
 import { entryTitleTransition } from "./entry-transition";
 
 const EntryListItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
-  <li className="entry-rise flex">
+  <li className="entry-rise border-foreground/10 flex border-t">
     <Link
-      className="entry-tile group flex w-full flex-col gap-4 p-6"
+      className="group flex w-full flex-col gap-4 pt-6 pb-10"
       params={entry}
       to="/$category/$slug"
     >
@@ -24,7 +24,7 @@ const EntryListItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
       <span className="text-foreground/70 line-clamp-4 flex-1 text-sm leading-relaxed">
         {entry.description}
       </span>
-      <EntryTileFooter entry={entry} />
+      <EntryListFooter entry={entry} />
     </Link>
   </li>
 );
