@@ -1,3 +1,5 @@
+import { String as Str, pipe } from "effect";
+
 import type { Entry } from "./entry";
 
 const CONTENT_ROOT = "/content/";
@@ -7,6 +9,6 @@ const contentPath = ({ category, slug }: Readonly<Pick<Entry, "category" | "slug
   `${CONTENT_ROOT}${category}/${slug}${EXTENSION}`;
 
 const contentLocation = (path: string): readonly string[] =>
-  path.slice(CONTENT_ROOT.length, -EXTENSION.length).split("/");
+  pipe(path, Str.slice(CONTENT_ROOT.length, -EXTENSION.length), Str.split("/"));
 
 export { contentLocation, contentPath };
