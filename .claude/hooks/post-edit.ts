@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Schema, pipe } from "effect";
+import { Array as Arr, Effect, Schema, String as Str, pipe } from "effect";
 
 import {
   blockWhen,
@@ -26,7 +26,7 @@ const PostToolUseOutput = Schema.Struct({
 const locate = Effect.fn("locate")(function* locate(filePath: string) {
   const platform = yield* HookPlatform;
   const root = yield* projectRoot;
-  const [scope = "", name = ""] = platform.relative(root, filePath).split(platform.sep);
+  const [scope, name = ""] = Str.split(platform.sep)(platform.relative(root, filePath));
   const candidates = Arr.filter([scope, platform.join(scope, name)], (dir) => dir !== "");
   return { candidates, root };
 });
@@ -76,8 +76,8 @@ const reportDuplication = (
 ): Effect.Effect<void, never, HookPlatform> => {
   const duplication = pipe(
     runs,
-    Arr.flatMap((run) => run.stdout.split("\n")),
-    Arr.filter((line) => line.startsWith("code-duplication:")),
+    Arr.flatMap((run) => Str.split("\n")(run.stdout)),
+    Arr.filter(Str.startsWith("code-duplication:")),
     Arr.dedupe,
   );
   if (!Arr.isArrayNonEmpty(duplication)) {
