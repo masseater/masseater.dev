@@ -31,7 +31,7 @@ const StarToggle = ({
     <button
       aria-label={STAR_LABEL}
       aria-pressed={starred}
-      className="hover:text-foreground focus-visible:text-foreground aria-pressed:text-foreground flex cursor-pointer items-center gap-1.5 transition-colors disabled:cursor-wait"
+      className="glass-surface hover:bg-background/60 hover:text-foreground focus-visible:text-foreground aria-pressed:text-foreground flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 transition-colors disabled:cursor-wait"
       disabled={pending}
       onClick={onClick}
       type="button"
