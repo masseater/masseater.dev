@@ -15,7 +15,7 @@ const SiteMain = (): ReactNode => {
   });
   return (
     <main
-      className="vt-match mx-auto w-full max-w-5xl flex-1 px-4 py-12 has-data-wide:max-w-6xl"
+      className="vt-match mx-auto w-full max-w-5xl flex-1 px-4 py-12 has-data-wide:max-w-400"
       key={pathname}
     >
       <Outlet />
