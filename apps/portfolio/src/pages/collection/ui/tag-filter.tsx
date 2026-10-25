@@ -29,7 +29,7 @@ const TagFilter = ({
   return (
     <ul
       aria-label={LABEL}
-      className="text-foreground/50 font-display flex flex-wrap gap-2 text-xs lg:sticky lg:top-8 lg:order-last lg:w-48 lg:shrink-0 lg:flex-col lg:items-start"
+      className="text-foreground/50 font-display -mx-4 flex scrollbar-none gap-2 overflow-x-auto mask-r-from-85% px-4 py-1 text-xs xl:sticky xl:top-8 xl:col-start-3 xl:row-start-1 xl:mx-0 xl:flex-col xl:items-end xl:overflow-visible xl:mask-none xl:px-0"
     >
       <TagFilterButton active={Option.isNone(activeTag)} onSelect={select} search={allTags}>
         {ALL_LABEL}

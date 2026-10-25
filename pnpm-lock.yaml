@@ -302,6 +302,9 @@ catalogs:
     simple-git:
       specifier: 4.0.2
       version: 4.0.2
+    simple-icons:
+      specifier: 16.35.0
+      version: 16.35.0
     skills:
       specifier: 1.7.4
       version: 1.7.4
@@ -401,7 +404,7 @@ overrides:
   fast-uri@>=3.0.0 <3.1.9: ^4.0.0
   undici@>=8.0.0 <8.12.2: ^8.12.2
   zod@>=4.0.0 <4.6.6: ^4.6.6
-  fflate@>=0.7.0 <0.7.5: ^0.7.5
+  fflate@>=0.7.0 <0.7.5: ^0.8.0
 
 packageExtensionsChecksum: sha256-+VMdP1PtirSQ7Lhy8zZaF5Ha03FJIIM31JqoRyxSKXQ=
 
@@ -584,6 +587,9 @@ importers:
       scheduler:
         specifier: 0.28.0
         version: 0.28.0
+      simple-icons:
+        specifier: 'catalog:'
+        version: 16.35.0
       tailwindcss:
         specifier: catalog:stack
         version: 4.3.3
@@ -7063,9 +7069,6 @@ packages:
   fetchdts@0.2.0:
     resolution: {integrity: sha512-PJb4ZTGT2/wK78RmVrxZITStWabhZlKBsL52VOgq+c7clEkdHdEB+0rtzrXCbZJqeYJj+IwNWYqB5/G6vouA6A==}
 
-  fflate@0.7.5:
-    resolution: {integrity: sha512-QieYf//cis6ywHNi5qW1+PXPQ4bC+XVJAtS4AXIML8P76GroEiOxm/oQtn1f02UkJY1+KsXMJcC+R2v/Eg4G3g==}
-
   fflate@0.8.3:
     resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
 
@@ -9409,6 +9412,10 @@ packages:
 
   simple-git@4.0.2:
     resolution: {integrity: sha512-l0sIsv9VrPwovKELFDBOj/lhmIcbMvxBk2B+hRhsMM4/VL3gKtuZvYnBNixVo+N/0HnqQx2cBdLvxnAbygHpqA==}
+
+  simple-icons@16.35.0:
+    resolution: {integrity: sha512-TCfl/2+GTrx0nCo4pEWGvxhOb8c6NsqOU1OpwjtF4lwJAthB8IYVD0fuIMjLMg6JFuG1YBO0t1iETQqJLqkoJA==}
+    engines: {node: '>=0.12.18'}
 
   sirv@3.0.2:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
@@ -13930,7 +13937,7 @@ snapshots:
 
   '@shuding/opentype.js@1.4.0-beta.0':
     dependencies:
-      fflate: 0.7.5
+      fflate: 0.8.3
       string.prototype.codepointat: 0.2.1
 
   '@simple-git/args-pathspec@1.0.4': {}
@@ -17074,8 +17081,6 @@ snapshots:
 
   fetchdts@0.2.0: {}
 
-  fflate@0.7.5: {}
-
   fflate@0.8.3: {}
 
   figures@6.1.0:
@@ -20114,7 +20119,7 @@ snapshots:
       css-to-react-native: 3.2.0
       emoji-regex-xs: 2.0.1
       escape-html: 1.0.3
-      fflate: 0.7.5
+      fflate: 0.8.3
       harfbuzzjs: 0.10.0
       linebreak: 1.1.0
       parse-css-color: 0.2.1
@@ -20281,6 +20286,8 @@ snapshots:
       debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
+
+  simple-icons@16.35.0: {}
 
   sirv@3.0.2:
     dependencies:

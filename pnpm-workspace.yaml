@@ -60,6 +60,7 @@ catalog:
   yaml: 2.9.1
   mdast-util-directive: ^3.1.1
   remark-directive: ^4.0.0
+  simple-icons: 16.35.0
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.15
@@ -106,7 +107,7 @@ overrides:
   fast-uri@>=3.0.0 <3.1.9: ^4.0.0
   undici@>=8.0.0 <8.12.2: ^8.12.2
   zod@>=4.0.0 <4.6.6: ^4.6.6
-  fflate@>=0.7.0 <0.7.5: ^0.7.5
+  fflate@>=0.7.0 <0.7.5: ^0.8.0
 peerDependencyRules:
   allowAny:
     - vite
