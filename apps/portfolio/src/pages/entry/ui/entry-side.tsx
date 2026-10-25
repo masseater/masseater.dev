@@ -6,7 +6,7 @@ import { EntryReactions } from "./entry-reactions";
 
 const EntrySide = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
   <aside className="hidden w-20 shrink-0 lg:block">
-    <div className="sticky top-8">
+    <div className="below-entry-title-bar sticky">
       <EntryReactions direction="column" entry={entry} />
     </div>
   </aside>

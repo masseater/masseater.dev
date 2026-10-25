@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { String as Str } from "effect";
 
-import { starRoutes } from "#/pages/entry/index.server";
+import { starRoutes } from "#/features/star/index.server";
 import { site } from "#/shared/config";
 
 const worker = {

@@ -4,6 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --site-header-height: 5.5rem;
+  --entry-title-bar-height: 2.5rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
@@ -70,12 +72,24 @@
   --radius-lg: var(--radius);
 }
 
+@media (width >= 40rem) {
+  :root {
+    --site-header-height: 3.75rem;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   html {
     overflow-y: scroll;
+  }
+  html:has([data-site-header]) {
+    scroll-padding-top: calc(var(--site-header-height) + 1rem);
+  }
+  html:has([data-entry-title-bar]) {
+    scroll-padding-top: calc(var(--site-header-height) + var(--entry-title-bar-height) + 1rem);
   }
   html:has([data-snap-pages]) {
     scroll-snap-type: y mandatory;
@@ -108,6 +122,48 @@
 
 @utility hover-card-beside-trigger {
   margin-left: var(--radix-hover-card-trigger-width);
+}
+
+@utility site-header {
+  height: var(--site-header-height);
+  @supports (animation-timeline: scroll()) {
+    animation: site-header-surface linear both;
+    animation-timeline: scroll();
+    animation-range: 0 4rem;
+  }
+}
+
+@utility below-site-header {
+  top: var(--site-header-height);
+}
+
+@utility below-site-header-gap {
+  top: calc(var(--site-header-height) + 2rem);
+}
+
+@utility entry-title-scope {
+  timeline-scope: --entry-title;
+}
+
+@utility entry-title-timeline {
+  view-timeline: --entry-title block;
+  view-timeline-inset: var(--site-header-height) 0;
+}
+
+@utility entry-title-bar {
+  height: var(--entry-title-bar-height);
+  display: none;
+  @supports (animation-timeline: view()) {
+    display: flex;
+    animation: entry-title-bar-in linear both;
+    animation-timeline: --entry-title;
+    animation-range: exit 0% exit 100%;
+  }
+}
+
+@utility below-entry-title-bar {
+  top: calc(var(--site-header-height) + var(--entry-title-bar-height) + 1rem);
+  max-height: calc(100dvh - var(--site-header-height) - var(--entry-title-bar-height) - 2rem);
 }
 
 @utility vt-page-home {
@@ -207,6 +263,21 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 
 ::view-transition-old(nav-indicator) {
   display: none;
+}
+
+@keyframes site-header-surface {
+  from {
+    background-color: transparent;
+    backdrop-filter: none;
+  }
+}
+
+@keyframes entry-title-bar-in {
+  from {
+    visibility: hidden;
+    opacity: 0;
+    translate: 0 -0.5rem;
+  }
 }
 
 @keyframes slide-out-left {

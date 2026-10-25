@@ -1,21 +1,25 @@
 import { env } from "cloudflare:workers";
-import { and, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
-import { Array as Arr, Effect, Logger, ManagedRuntime, Option, Schema, pipe } from "effect";
+import { Array as Arr, Effect, Logger, ManagedRuntime, Option, Record, Schema, pipe } from "effect";
 import { Hex } from "effect/encoding";
 import { Elysia } from "elysia";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 
 import { categories, categoryMeta } from "#/entities/entry";
 import type { Entry } from "#/entities/entry";
-import { star } from "#/pages/entry/model/star.table";
+import { star } from "#/features/star/model/star.table";
 import { site } from "#/shared/config";
 
 type Target = Readonly<Pick<Entry, "category" | "slug">>;
 
 type Stars =
   | Readonly<{ status: "found"; count: number; starred: boolean }>
+  | Readonly<{ status: "missing" }>;
+
+type Counts =
+  | Readonly<{ status: "found"; counts: Record.ReadonlyRecord<string, number> }>
   | Readonly<{ status: "missing" }>;
 
 type Change = (target: Target, visitor: string) => Effect.Effect<void>;
@@ -36,6 +40,10 @@ const Slug = Schema.String.check(Schema.isPattern(/^[\w-]+$/u));
 const TargetSchema = Schema.Struct({ category: Schema.Literals(starrable), slug: Slug });
 
 const decodeTarget = Schema.decodeUnknownOption(TargetSchema);
+
+const decodeCategory = Schema.decodeUnknownOption(
+  Schema.Struct({ category: Schema.Literals(starrable) }),
+);
 
 const missing: Stars = { status: "missing" };
 
@@ -61,6 +69,25 @@ const read = Effect.fn("stars.read")(function* read(target: Target, visitor: str
       Arr.some((row) => row.visitor === visitor),
     ),
   } satisfies Stars;
+});
+
+const readCounts = Effect.fn("stars.counts")(function* readCounts(category: Target["category"]) {
+  const rows = yield* Effect.promise(() =>
+    db
+      .select({ slug: star.slug, count: count() })
+      .from(star)
+      .where(eq(star.category, category))
+      .groupBy(star.slug),
+  );
+  return {
+    status: "found",
+    counts: Record.fromEntries(
+      pipe(
+        rows,
+        Arr.map((row) => [row.slug, row.count] as const),
+      ),
+    ),
+  } satisfies Counts;
 });
 
 const exists = Effect.fn("stars.exists")(function* exists(request: Request, target: Target) {
@@ -108,7 +135,18 @@ const respond = (
     }),
   );
 
+const missingCounts: Counts = { status: "missing" };
+
+const respondCounts = (params: unknown): Promise<Counts> =>
+  runtime.runPromise(
+    Option.match(decodeCategory(params), {
+      onNone: () => Effect.succeed<Counts>(missingCounts),
+      onSome: ({ category }) => readCounts(category),
+    }),
+  );
+
 const starRoutes = new Elysia({ prefix: site.starsApiPath, adapter: CloudflareAdapter, aot: false })
+  .get("/:category", ({ params }) => respondCounts(params))
   .get("/:category/:slug", ({ request, params }) =>
     respond(
       (target) => visitorOf(request).pipe(Effect.flatMap((visitor) => read(target, visitor))),
