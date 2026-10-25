@@ -16,7 +16,7 @@ const EntryIndexBody = ({
     <p className="text-foreground/70 max-w-xl text-sm">{entry.description}</p>
     <div className="flex flex-wrap items-center gap-4">
       <EntryMeta entry={entry} />
-      {Option.isSome(stars) && <EntryStars count={stars.value} />}
+      <EntryStars count={Option.getOrUndefined(stars)} />
     </div>
   </div>
 );

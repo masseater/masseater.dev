@@ -1,6 +1,6 @@
 import { expect, test } from "vite-plus/test";
 
-import { toggleStar } from "./toggle-star";
+import { toggleStar } from "./star-state";
 
 test("スターを付けると数が増える", () => {
   expect(toggleStar(true)({ status: "found", count: 2, starred: false })).toStrictEqual({

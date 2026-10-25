@@ -11,7 +11,7 @@ const EntryIndexItem = ({
   entry,
   stars,
 }: Readonly<{ entry: Entry; stars: Option.Option<number> }>): ReactNode => (
-  <li className="entry-rise">
+  <li>
     <Link
       className="group flex gap-8 py-8 sm:py-12"
       params={entry}

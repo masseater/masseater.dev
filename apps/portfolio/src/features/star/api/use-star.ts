@@ -3,9 +3,10 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import { Effect, Option, pipe } from "effect";
 
 import type { Entry } from "#/entities/entry";
-import { starQueries } from "#/features/star";
-import { toggleStar } from "#/pages/entry/model/toggle-star";
-import type { StarState } from "#/pages/entry/model/toggle-star";
+import { toggleStar } from "#/features/star/model/star-state";
+import type { StarState } from "#/features/star/model/star-state";
+
+import { starQueries } from "./star-queries";
 
 const ONLY_THIS_MUTATION = 1;
 

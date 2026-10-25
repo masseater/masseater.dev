@@ -3,7 +3,8 @@ import { Option } from "effect";
 import type { Record } from "effect";
 
 import type { Category } from "#/entities/entry";
-import { starQueries } from "#/features/star";
+
+import { starQueries } from "./star-queries";
 
 const useStarCounts = (
   category: Category,

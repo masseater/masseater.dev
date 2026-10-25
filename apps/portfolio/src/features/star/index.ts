@@ -1,1 +1,2 @@
-export { starQueries } from "./api/star-queries";
+export { useStarCounts } from "./api/use-star-counts";
+export { StarButton } from "./ui/star-button";

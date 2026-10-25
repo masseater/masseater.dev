@@ -1,4 +1,4 @@
-import { Backdrop, followPointer, releasePointer } from "@masseater.dev/ui";
+import { followPointer, releasePointer } from "@masseater.dev/ui";
 import type { ReactNode } from "react";
 
 import { AboutCue } from "./about-cue";
@@ -11,7 +11,6 @@ const HeroSection = (): ReactNode => (
     onPointerLeave={releasePointer}
     onPointerMove={followPointer}
   >
-    <Backdrop />
     <ProfileHeader />
     <AboutCue />
   </section>
