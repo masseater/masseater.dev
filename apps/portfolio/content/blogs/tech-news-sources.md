@@ -245,9 +245,6 @@ published: true
 * [Andrej Karpathy blog](https://karpathy.bearblog.dev/)
   * Andrej Karpathy の個人ブログ。長文は旧ブログの [karpathy.github.io](https://karpathy.github.io/) に置く。
   * LLM の 1 年の振り返り、microgpt のような最小実装の解説が中心で、理論寄り。
-* [Lil'Log](https://lilianweng.github.io/)
-  * Lilian Weng の個人ブログ。
-  * 強化学習、拡散モデル、エージェントなどの手法を網羅的に解説する長文記事で、理論寄り。
 * [Ahead of AI](https://magazine.sebastianraschka.com/)
   * Sebastian Raschka のニュースレター。
   * 論文の読み解きと LLM の構造の比較が中心で、理論・研究寄り。
