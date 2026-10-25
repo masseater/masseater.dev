@@ -1,14 +1,22 @@
 import type { ReactNode } from "react";
 
-const ShareLink = ({ label, href }: Readonly<{ label: string; href: string }>): ReactNode => (
+import { BrandIcon } from "./brand-icon";
+
+const ShareLink = ({
+  label,
+  href,
+  iconPath,
+}: Readonly<{ label: string; href: string; iconPath: string }>): ReactNode => (
   <li>
     <a
-      className="glass-surface hover:bg-background/60 hover:text-foreground focus-visible:text-foreground inline-block rounded-full px-4 py-2 transition-colors"
+      aria-label={label}
+      className="glass-surface hover:bg-background/60 hover:text-foreground focus-visible:text-foreground flex size-9 items-center justify-center rounded-full transition-colors"
       href={href}
       rel="noopener noreferrer"
       target="_blank"
+      title={label}
     >
-      {label}
+      <BrandIcon path={iconPath} />
     </a>
   </li>
 );
