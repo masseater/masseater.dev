@@ -30,11 +30,13 @@ const CollectionView = ({
   );
   const { layout, title } = categoryMeta[category];
   return (
-    <div className="flex flex-col gap-16">
+    <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:gap-12" data-wide>
       <h1 className="sr-only">{title}</h1>
       {Array.isReadonlyArrayNonEmpty(counts) && <TagFilter activeTag={activeTag} counts={counts} />}
-      <EntryList entries={listed} layout={layout} />
-      {Array.isReadonlyArrayNonEmpty(ideas) && <IdeaList ideas={ideas} layout={layout} />}
+      <div className="flex min-w-0 flex-1 flex-col gap-16">
+        <EntryList entries={listed} layout={layout} />
+        {Array.isReadonlyArrayNonEmpty(ideas) && <IdeaList ideas={ideas} layout={layout} />}
+      </div>
     </div>
   );
 };
