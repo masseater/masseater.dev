@@ -15,11 +15,11 @@ export default defineConfig({
         namespace: "https://masseater.dev",
         version,
         description:
-          "閲覧中のページを masseater.dev の scrap にするよう、Claude Code のルーチンへ頼む",
+          "閲覧中のページを masseater.dev の scrap にするよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用",
         homepageURL: "https://github.com/masseater/masseater.dev/tree/main/tools/scrap-userscript",
         match: ["*://*/*"],
         noframes: true,
-        connect: ["api.anthropic.com"],
+        connect: ["personal.masseater.dev"],
       },
     }),
   ],
