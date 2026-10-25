@@ -11,14 +11,8 @@ published: true
 
 ### 日本語
 
-主要な AI 企業は英語で発表するので、日本語の公式発信は Google の日本向けブログか、日本の研究開発組織に限られる。
+主要な AI 企業は英語で発表するので、日本語の公式発信は日本の研究開発組織と Google Cloud の日本のエンジニアのものに限られる。Google の日本向け公式ブログは製品の宣伝が中心なので入れていない。
 
-* [Google Japan Blog](https://japan.googleblog.com/)
-  * Google の日本法人が運営する公式ブログ。
-  * Gemini などの製品発表の日本語版が多く、実運用寄り。
-* [Google Developers Japan](https://developers-jp.googleblog.com/)
-  * Google の開発者向け公式ブログの日本語版。
-  * Gemini API や AI Studio の機能更新の翻訳記事が多く、実運用寄り。
 * [Sakana AI ブログ](https://sakana.ai/blog/)
   * 東京の AI 研究開発企業 Sakana AI が運営する。英語記事に `-jp` 付きの日本語版が併記され、日本語のみの記事もある。
   * 自社の研究成果の解説、製品発表が中心で、研究・実運用が半々。
@@ -56,9 +50,6 @@ published: true
 * [Google Research Blog](https://research.google/blog/)
   * Google Research が運営する。
   * 論文の解説が中心で、研究寄り。
-* [Google The Keyword（AI）](https://blog.google/technology/ai/)
-  * Google 本社の公式ブログの AI カテゴリ。
-  * 製品発表が中心で、実運用寄り。
 * [AI at Meta Blog](https://ai.meta.com/blog/)
   * Meta の AI 部門が運営する。
   * Llama などのモデル公開と研究成果の解説が多く、研究寄り。
@@ -99,9 +90,6 @@ published: true
 * [vLLM Blog](https://blog.vllm.ai/)
   * 推論エンジン vLLM の開発チームが運営する公式ブログ。
   * 新しいオープンモデルを公開初日に動かすための最適化、推論性能の計測が多く、実運用寄り。
-* [PyTorch Blog](https://pytorch.org/blog/)
-  * PyTorch Foundation の公式ブログ。
-  * 分散学習ライブラリの更新、性能改善の解説が多く、実運用寄り。
 * [AMD ROCm Blogs](https://rocm.blogs.amd.com/)
   * AMD の GPU 向けソフトウェア ROCm の公式ブログ。
   * AMD GPU 上での学習・推論の最適化手順が多く、実運用寄り。
@@ -151,21 +139,12 @@ published: true
 * [Answer.AI](https://www.answer.ai/)
   * Jeremy Howard らの研究開発ラボ Answer.AI の公式サイト。
   * LLM でコードを単純にできない理由など、実験に基づく技術記事が中心で、研究・実運用が半々。
-* [Pleias Blog](https://pleias.ai/blog)
-  * フランスの小規模な研究所 Pleias の公式ブログ。
-  * 公開データだけで学習した小型モデル、合成データの公開が中心で、研究寄り。
 * [Arcee AI Blog](https://www.arcee.ai/blog)
   * オープンモデルを開発する Arcee AI の公式ブログ。
   * 長時間動くエージェント向けのハーネス、オープンモデルの学習の話が多く、研究・実運用が半々。
-* [Liquid AI Blog](https://www.liquid.ai/blog)
-  * 端末向けの基盤モデルを開発する Liquid AI の公式ブログ。
-  * LFM の各モデルの公開、端末上の推論の話が中心で、研究・実運用が半々。
 * [Black Forest Labs Blog](https://bfl.ai/blog)
   * 画像生成モデル FLUX を開発する Black Forest Labs の公式ブログ。
   * FLUX の各モデルの公開、技術解説が中心で、研究寄り。
-* [Inception Labs Blog](https://www.inceptionlabs.ai/blog)
-  * 拡散型 LLM Mercury を開発する Inception Labs の公式ブログ。
-  * 拡散モデルによる言語生成の各モデルの公開が中心で、研究寄り。
 
 ## 個人の X
 
@@ -225,21 +204,9 @@ published: true
 * [bbz](https://x.com/bbz662)
   * フロントエンド・バックエンド・SRE を手がけるエンジニア。
   * LLM をアプリケーションに組み込んで試した結果の共有が多く、実運用寄り。
-* [LLM勉強会（LLM-jp）](https://x.com/llm_jp)
-  * LLM-jp の公式アカウント。
-  * モデル公開や勉強会の告知が中心で、研究寄り。
-* [SB Intuitions](https://x.com/sbintuitions)
-  * ソフトバンク傘下の SB Intuitions の公式アカウント。
-  * 日本語 LLM Sarashina の公開、技術ブログの更新告知が中心で、研究・実運用が半々。
 
 ### それ以外の言語
 
-* [Sam Altman](https://x.com/sama)
-  * OpenAI の CEO。
-  * 製品や会社の方針の発表が中心で、実運用寄り。
-* [Greg Brockman](https://x.com/gdb)
-  * OpenAI の President・共同創業者。
-  * 新機能のデモ、モデルの使い方の投稿が多く、実運用寄り。
 * [Noam Brown](https://x.com/polynoamial)
   * OpenAI で推論の研究を率いる。o シリーズの推論モデルの開発者。
   * 推論やテスト時計算の研究の話が多く、研究寄り。
@@ -261,24 +228,9 @@ published: true
 * [Jack Clark](https://x.com/jackclarkSF)
   * Anthropic の共同創業者で、Import AI の筆者。
   * AI 政策や研究動向の話が多く、研究寄り。
-* [Demis Hassabis](https://x.com/demishassabis)
-  * Google DeepMind の共同創業者・CEO。
-  * Gemini の発表、科学応用の研究成果の話が中心で、研究寄り。
-* [Jeff Dean](https://x.com/JeffDean)
-  * Google DeepMind、Google Research 両方の Chief Scientist。
-  * Gemini の技術的な発表、論文の紹介が多く、研究寄り。
-* [Logan Kilpatrick](https://x.com/OfficialLoganK)
-  * Google で Gemini API、AI Studio の製品を担当する。
-  * Gemini API、AI Studio の機能更新の告知が中心で、実運用寄り。
-* [Yann LeCun](https://x.com/ylecun)
-  * AMI Labs の創業者で、ニューヨーク大学の教授。Meta の Chief AI Scientist を 2025年に退いた。
-  * 世界モデルの研究、LLM の限界に関する主張が多く、理論寄り。
 * [Soumith Chintala](https://x.com/soumithchintala)
   * Thinking Machines Lab に所属する。PyTorch の共同開発者で、2025年11月に Meta を離れた。
   * 学習フレームワークやオープンソースの話が多く、実運用寄り。
-* [Jim Fan](https://x.com/DrJimFan)
-  * NVIDIA のロボティクス担当ディレクターで、GEAR ラボの共同リーダー。
-  * ロボットなど身体性のある AI の研究の話が多く、研究寄り。
 * [Nathan Lambert](https://x.com/natolambert)
   * 2026年10月に設立された非営利研究所 Trillium Labs の創業者で、Ai2 で Olmo の事後学習を率いた。ニュースレター Interconnects の筆者。
   * 事後学習、オープンモデルの動向の話が多く、研究寄り。
@@ -294,9 +246,6 @@ published: true
 * [Chip Huyen](https://x.com/chipro)
   * 『AI Engineering』『Designing Machine Learning Systems』の著者。
   * LLM アプリケーションの設計、評価の話が多く、実運用寄り。
-* [Andrew Ng](https://x.com/AndrewYNg)
-  * DeepLearning.AI の創業者で、Coursera の共同創業者、Stanford の非常勤教員。
-  * 業界動向の解説、教育コースの告知が多く、実運用寄り。
 * [David Ha（hardmaru）](https://x.com/hardmaru)
   * Sakana AI の共同創業者・CEO。
   * 進化計算や集合知に基づく研究の話が多く、研究寄り。
@@ -357,12 +306,6 @@ published: true
 * [A Robot's Sigh](https://kaityo256.github.io/)
   * 慶應義塾大学の渡辺宙志氏の個人サイト。
   * MN-Core SDK を触った記録、AI を使ってゲームを作った過程などが多く、実運用寄り。
-* [渋谷駅前で働くデータサイエンティストのブログ](https://tjo.hatenablog.com/)
-  * データサイエンティスト TJO 氏の個人ブログ。
-  * 統計学、機械学習の手法を数式と実験で確かめる記事が中心で、理論寄り。
-* [たぬ（note）](https://note.com/tank_ai)
-  * たぬ氏の個人 note。
-  * LLM の審査の偏りを 2 万回の試行で測るなど、自分で実験して数字を出す記事が多く、実運用寄り。
 * [葦沢かもめ（note）](https://note.com/ashizawakamome)
   * 小説家で慶應 SF センター研究員の葦沢かもめ氏の個人 note。
   * Claude や Blender MCP で作品を作った過程の記録が多く、実運用寄り。
@@ -414,13 +357,10 @@ published: true
 * [METR](https://metr.org/)
   * 非営利の評価機関 METR が運営する。
   * AI が自律的にこなせる作業時間の計測など、能力評価の研究が中心で、研究寄り。
-* [Stanford AI Index](https://hai.stanford.edu/ai-index)
-  * Stanford HAI が運営する年次報告。
-  * 研究、産業、政策の統計をまとめた報告書で、研究寄り。
 * [BAIR Blog](https://bair.berkeley.edu/blog/)
   * UC Berkeley の AI 研究所が運営する。
   * 所属研究者による自身の論文の解説が中心で、研究寄り。
-* [SemiAnalysis](https://semianalysis.com/)
+* [SemiAnalysis](https://newsletter.semianalysis.com/)
   * Dylan Patel が率いる半導体の調査会社が運営する。記事の多くは有料。
   * GPU、データセンター、学習基盤の供給と費用の分析が中心で、実運用寄り。
 
@@ -445,9 +385,6 @@ published: true
 * [What's new](https://terrytao.wordpress.com/)
   * 数学者 Terence Tao の個人ブログ。
   * 数学研究に AI を使う試み、AI が出した証明の検証の話が増えており、研究寄り。
-* [Shtetl-Optimized](https://scottaaronson.blog/)
-  * 計算機科学者 Scott Aaronson の個人ブログ。
-  * 量子計算に加え、AI アラインメント理論の講義資料や所感が多く、理論寄り。
 * [ploeh blog](https://blog.ploeh.dk/)
   * Mark Seemann の個人ブログ。
   * AI が生成したコードをリリースする判断、ソフトウェア設計の話が多く、実運用寄り。
@@ -472,21 +409,12 @@ published: true
 * [The Pragmatic Engineer](https://newsletter.pragmaticengineer.com/)
   * Gergely Orosz が書くニュースレター。
   * 大手テック企業の開発現場の調査記事が中心で、実運用寄り。
-* [Tidy First?](https://tidyfirst.substack.com/)
-  * Kent Beck が書くニュースレター。
-  * ソフトウェア設計、AI と組んだ開発の進め方の話が多く、実運用寄り。
 * [Mitchell Hashimoto](https://mitchellh.com/)
   * HashiCorp 共同創業者で Ghostty 作者の Mitchell Hashimoto の個人サイト。
   * ターミナルや低レイヤーの実装、AI を使った開発の進め方の話が多く、実運用寄り。
 * [Armin Ronacher's Thoughts and Writings](https://lucumr.pocoo.org/)
   * Flask 作者 Armin Ronacher の個人ブログ。
   * エージェントの設計、Rust の話が多く、実運用寄り。
-* [Vicki Boykis](https://vickiboykis.com/)
-  * 機械学習エンジニア Vicki Boykis の個人ブログ。
-  * 機械学習の学び方、ソフトウェアの書き方の話が多く、実運用寄り。
-* [One Useful Thing](https://www.oneusefulthing.org/)
-  * Wharton School の Ethan Mollick が書くニュースレター。
-  * AI の能力の進み方を図表で追い、仕事での使い方を論じる記事が中心で、実運用寄り。
 * [Max Woolf's Blog](https://minimaxir.com/)
   * データサイエンティスト Max Woolf の個人ブログ。
   * LLM に変わった条件を与えて挙動を調べる実験記事が多く、実運用寄り。
@@ -496,18 +424,6 @@ published: true
 * [Dwarkesh Podcast](https://www.dwarkesh.com/)
   * Dwarkesh Patel が運営するポッドキャスト。
   * AI 研究者への長時間のインタビューが中心で、研究寄り。
-* [TheSequence](https://thesequence.substack.com/)
-  * Jesus Rodriguez が書くニュースレター。
-  * 論文の要約、エージェント技術の解説が週に数回出ており、研究寄り。
-* [Last Week in AI](https://lastweekin.ai/)
-  * Andrey Kurenkov らが運営する週刊ニュースレターとポッドキャスト。
-  * 1 週間の研究、製品、政策のニュースの要約が中心で、研究・実運用が半々。
-* [ThursdAI](https://sub.thursdai.news/)
-  * Weights & Biases の Alex Volkov が運営する週刊ニュースレターとポッドキャスト。
-  * その週のモデル公開、ツールの更新の要約が中心で、実運用寄り。
-* [AlphaSignal](https://alphasignal.ai/)
-  * Lior Alexander が運営する日刊ニュースレター。
-  * モデル、ライブラリ、論文の更新を短く並べる形式で、研究・実運用が半々。
 * [AI Newsletter（Elvis Saravia）](https://nlp.elvissaravia.com/)
   * DAIR.AI の Elvis Saravia が書くニュースレター。
   * 週ごとの注目論文、エージェントの動向の要約が中心で、研究寄り。
@@ -581,31 +497,16 @@ published: true
 * [Uzabase Tech Blog](https://tech.uzabase.com/)
   * ユーザベースが運営する。
   * AI エージェントのオンライン評価、AI 主導で育てたモックライブラリなど開発現場の話が多く、実運用寄り。
-* [Findy Tech Blog](https://tech.findy.co.jp/)
-  * ファインディが運営する。
-  * 施策立案から QA までを AI エージェントで回す開発フローの構成が多く、実運用寄り。
-* [CADDi Tech Blog](https://caddi.tech/)
-  * キャディが運営する。
-  * Agent Skills による機械学習開発の生産性改善、ECCV や MIRU の参加報告が多く、研究・実運用が半々。
-* [エムスリーテックブログ](https://www.m3tech.blog/)
-  * エムスリーが運営する。
-  * Claude が実装した E2E テストのレビューツールなど、AI を使う開発の工夫が多く、実運用寄り。
 
 * [RAKUS Developers Blog](https://tech-blog.rakus.co.jp/)
   * ラクスが運営する。
   * 自律的な AI ループで開発プロセスを回す設計、運用の知見を AI で引く仕組みの話が多く、実運用寄り。
-* [豆蔵デベロッパーサイト](https://developer.mamezou-tech.com/)
-  * 豆蔵が運営する。
-  * アジャイルの FAQ、AI を使った開発ツールの更新記録など、長期の連載が多く、実運用寄り。
 * [every Tech Blog](https://tech.every.tv/)
   * DELISH KITCHEN のエブリーが運営する。
   * Claude Code のハーネスを MCP と CLI のどちらで作るかなど、社内で試した判断が多く、実運用寄り。
 * [Algomatic Tech Blog](https://tech.algomatic.jp/)
   * Algomatic が運営する。
   * AI に任せる範囲の決め方、AI が作った UI のレビュー手順の話が多く、実運用寄り。
-* [Insight Edge Tech Blog](https://techblog.insightedge.jp/)
-  * 住友商事グループの Insight Edge が運営する。
-  * Claude Code の運用をハーネスで半自動化した話、データサイエンスの事例が多く、実運用寄り。
 * [kickflow Tech Blog](https://tech.kickflow.co.jp/)
   * kickflow が運営する。
   * AI evals の失敗の分類、Claude Code のメモリ運用など、数か月使った上での記録が多く、実運用寄り。
@@ -615,9 +516,6 @@ published: true
 * [Pepabo Tech Portal](https://tech.pepabo.com/)
   * GMO ペパボが運営する。
   * テストの階層の見直し、AI に任せ切る仕組みの話が多く、実運用寄り。
-* [Visional Engineering Blog](https://engineering.visional.inc/blog/)
-  * ビズリーチのビジョナルが運営する。
-  * 人材領域に特化した埋め込みモデルの構築など、学会発表の内容が多く、研究・実運用が半々。
 * [KAKEHASHI Tech Blog](https://kakehashi-dev.hatenablog.com/)
   * カケハシが運営する。
   * 薬剤師がプロンプトを育てた過程、品質管理の組織の話が多く、実運用寄り。
@@ -636,9 +534,6 @@ published: true
 * [Taste of Tech Topics](https://acro-engineer.hatenablog.com/)
   * Acroquest Technology が運営する。
   * AWS の AI サービスを触って制約やコストを確かめる記事が多く、実運用寄り。
-* [赤帽エンジニアブログ](https://rheb.hatenablog.com/)
-  * レッドハットの日本法人が運営する。
-  * OpenShift AI、API セキュリティの解説が多く、実運用寄り。
 * [Wantedly Engineer Blog](https://www.wantedly.com/stories/s/wantedly_engineers)
   * ウォンテッドリーが運営する。
   * LLM が生成する文章の品質保証、推薦システムの学会参加記が多く、研究・実運用が半々。
@@ -697,33 +592,18 @@ published: true
 * [Sourcegraph Blog](https://sourcegraph.com/blog)
   * Sourcegraph が運営する。
   * 脆弱性の箇所をコードベースから探す話、コーディングエージェントの設計が多く、実運用寄り。
-* [JetBrains AI Blog](https://blog.jetbrains.com/ai/)
-  * JetBrains が運営する。
-  * コーディング向けオープンモデル Mellum の学習、エージェントの統制の話が多く、実運用寄り。
-* [The GitHub Blog](https://github.blog/)
-  * GitHub が運営する。
-  * Copilot、エージェント向けの Git 基盤の話が多く、実運用寄り。
 * [Microsoft for Developers](https://devblogs.microsoft.com/)
   * Microsoft の開発部門が運営する。
   * エージェント開発、.NET、VS Code の更新情報が多く、実運用寄り。
 * [Cognition Blog](https://www.cognition.ai/blog)
   * Devin を開発する Cognition が運営する。
   * エージェントに本番の障害対応やコスト管理を任せた話が多く、実運用寄り。
-* [Ollama Blog](https://ollama.com/blog)
-  * Ollama が運営する。
-  * ローカルで動かせる新しいモデルの対応告知が中心で、実運用寄り。
-* [Databricks Research](https://www.databricks.com/blog/category/research)
-  * Databricks の研究部門（元 MosaicML）が運営する。
-  * エージェントの記憶の設計、学習の効率化の研究記事が中心で、研究寄り。
 * [Strands Agents Blog](https://strandsagents.com/blog/)
   * AWS が開発するエージェント SDK、Strands Agents の公式ブログ。
   * 構造化出力の評価、数万回の試行で測った判定コストの話が多く、実運用寄り。
 * [Stripe Dot Dev Blog](https://stripe.dev/blog)
   * Stripe の開発者向けブログ。
   * エージェントが決済を扱うための設計、不正検知での機械学習の話が多く、実運用寄り。
-* [Dropbox Tech Blog](https://dropbox.tech/)
-  * Dropbox が運営する。
-  * 自社製品への AI 機能の組み込みの話が多く、実運用寄り。
 * [exe.dev blog](https://blog.exe.dev/)
   * クラウド開発環境 exe.dev のチームが運営する。
   * エージェントのループの構造、エージェントに与える権限の絞り方の話が中心で、実運用寄り。
@@ -748,18 +628,12 @@ published: true
 * [Fireworks AI Blog](https://fireworks.ai/blog)
   * 推論基盤を提供する Fireworks AI の公式ブログ。
   * 小型モデルの学習レシピ、推論の最適化の話が多く、実運用寄り。
-* [Together AI Blog](https://www.together.ai/blog)
-  * 推論基盤を提供する Together AI の公式ブログ。
-  * 事後学習、推論の容量の話が多く、実運用寄り。
 * [Modal Blog](https://modal.com/blog)
   * サーバーレスの GPU 基盤 Modal の公式ブログ。
   * LLM の学習と推論を基盤上で動かす話、CPU と GPU の性能計測が多く、実運用寄り。
 * [Pydantic Blog](https://www.pydantic.dev/articles)
   * Pydantic の開発チームが運営する。
   * Pydantic AI でエージェントをサンドボックスで動かす話、ライブラリの更新が多く、実運用寄り。
-* [LangChain Blog](https://blog.langchain.com/)
-  * LangChain が運営する。
-  * コンテキストエンジニアリング、エージェントの記憶の設計の話が多く、実運用寄り。
 * [Mem0 Blog](https://mem0.ai/blog)
   * エージェントの記憶層を開発する Mem0 の公式ブログ。
   * 記憶の中の時間の扱い、モデルごとの精度とコストの計測が多く、研究・実運用が半々。
