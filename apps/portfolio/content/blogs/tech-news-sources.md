@@ -44,9 +44,6 @@ published: true
 * [Transformer Circuits Thread](https://transformer-circuits.pub/)
   * Anthropic の解釈可能性チームが運営する。
   * 回路やスパースオートエンコーダなどモデル内部の解析が中心で、理論・研究寄り。
-* [Google DeepMind Blog](https://deepmind.google/blog/)
-  * Google DeepMind が運営する公式ブログ。
-  * Gemini の発表、科学応用の研究成果が多く、研究・実運用が半々。
 * [Google Research Blog](https://research.google/blog/)
   * Google Research が運営する。
   * 論文の解説が中心で、研究寄り。
@@ -139,12 +136,6 @@ published: true
 * [Answer.AI](https://www.answer.ai/)
   * Jeremy Howard らの研究開発ラボ Answer.AI の公式サイト。
   * LLM でコードを単純にできない理由など、実験に基づく技術記事が中心で、研究・実運用が半々。
-* [Arcee AI Blog](https://www.arcee.ai/blog)
-  * オープンモデルを開発する Arcee AI の公式ブログ。
-  * 長時間動くエージェント向けのハーネス、オープンモデルの学習の話が多く、研究・実運用が半々。
-* [Black Forest Labs Blog](https://bfl.ai/blog)
-  * 画像生成モデル FLUX を開発する Black Forest Labs の公式ブログ。
-  * FLUX の各モデルの公開、技術解説が中心で、研究寄り。
 
 ## 個人の X
 
@@ -281,9 +272,6 @@ published: true
 * [Swallow LLM](https://swallow-llm.github.io/index.ja.html)
   * 東京科学大学の岡崎研・横田研、産総研による日本語 LLM プロジェクトのサイト。
   * モデル公開、学習レシピ、Swallow Leaderboard の評価結果が中心で、研究寄り。
-* [Japan AISI](https://aisi.go.jp/)
-  * IPA に置かれた日本の AI セーフティ・インスティテュート。
-  * AI の安全性評価の手法、各国 AISI との連携、国内外の動向の定期報告が中心で、研究・政策寄り。
 * [Ledge.ai](https://ledge.ai/)
   * 株式会社レッジが運営する AI 専門メディア。
   * 国内企業の導入事例、製品発表のニュースが中心で、実運用寄り。
@@ -382,9 +370,6 @@ published: true
 * [Steve Yegge](https://yegge.ai/)
   * 元 Google、元 Sourcegraph の Steve Yegge の個人サイト。
   * エージェント時代の開発体制についての長文エッセイが中心で、実運用寄り。
-* [What's new](https://terrytao.wordpress.com/)
-  * 数学者 Terence Tao の個人ブログ。
-  * 数学研究に AI を使う試み、AI が出した証明の検証の話が増えており、研究寄り。
 * [ploeh blog](https://blog.ploeh.dk/)
   * Mark Seemann の個人ブログ。
   * AI が生成したコードをリリースする判断、ソフトウェア設計の話が多く、実運用寄り。
@@ -421,12 +406,6 @@ published: true
 * [Joe Barrow](https://jbarrow.ai/)
   * Joe Barrow の個人ブログ。
   * 投機的デコーディング、方針蒸留などの仕組みをゼロから説明する記事が中心で、理論寄り。
-* [Dwarkesh Podcast](https://www.dwarkesh.com/)
-  * Dwarkesh Patel が運営するポッドキャスト。
-  * AI 研究者への長時間のインタビューが中心で、研究寄り。
-* [AI Newsletter（Elvis Saravia）](https://nlp.elvissaravia.com/)
-  * DAIR.AI の Elvis Saravia が書くニュースレター。
-  * 週ごとの注目論文、エージェントの動向の要約が中心で、研究寄り。
 * [AI as Normal Technology](https://www.normaltech.ai/)
   * Princeton 大学の Arvind Narayanan、Sayash Kapoor が書くニュースレター。『AI Snake Oil』の著者。
   * エージェント評価の実態、AI の誇張への反証が中心で、研究寄り。
@@ -534,9 +513,6 @@ published: true
 * [Taste of Tech Topics](https://acro-engineer.hatenablog.com/)
   * Acroquest Technology が運営する。
   * AWS の AI サービスを触って制約やコストを確かめる記事が多く、実運用寄り。
-* [Wantedly Engineer Blog](https://www.wantedly.com/stories/s/wantedly_engineers)
-  * ウォンテッドリーが運営する。
-  * LLM が生成する文章の品質保証、推薦システムの学会参加記が多く、研究・実運用が半々。
 * [松尾研究所テックブログ](https://zenn.dev/p/mkj)
   * 松尾研究所が運営する Zenn の Publication。
   * Agentic RL のタスク設計、表形式データの基盤モデルの検証が多く、研究寄り。
@@ -559,9 +535,6 @@ published: true
 * [Cloudflare Blog（AI）](https://blog.cloudflare.com/tag/ai/)
   * Cloudflare が運営する。顧客事例の記事も混ざる。
   * 推論コストの削減、AI エージェント向けの基盤など自社で運用した話が多く、実運用寄り。
-* [Vercel Blog](https://vercel.com/blog)
-  * Vercel が運営する。
-  * AI SDK とエージェントの構築の話が多く、実運用寄り。
 * [AWS Machine Learning Blog](https://aws.amazon.com/blogs/machine-learning/)
   * AWS が運営する。
   * Bedrock や SageMaker を使った構築手順が多く、実運用寄り。
@@ -625,9 +598,6 @@ published: true
 * [Exa Blog](https://exa.ai/blog)
   * 検索 API を開発する Exa の公式ブログ。
   * Web 検索のリランキング、インデックスの作り方の話が多く、実運用寄り。
-* [Fireworks AI Blog](https://fireworks.ai/blog)
-  * 推論基盤を提供する Fireworks AI の公式ブログ。
-  * 小型モデルの学習レシピ、推論の最適化の話が多く、実運用寄り。
 * [Modal Blog](https://modal.com/blog)
   * サーバーレスの GPU 基盤 Modal の公式ブログ。
   * LLM の学習と推論を基盤上で動かす話、CPU と GPU の性能計測が多く、実運用寄り。
