@@ -14,6 +14,7 @@ const categoryMeta = {
     title: portfolio.sections.projects,
     description: "作ったもの",
     titleTransition: "vt-category-projects",
+    schemaType: "Article",
     reactions: false,
     layout: "index",
   },
@@ -21,6 +22,7 @@ const categoryMeta = {
     title: portfolio.sections.blogs,
     description: "まとまった文章",
     titleTransition: "vt-category-blogs",
+    schemaType: "BlogPosting",
     reactions: true,
     layout: "grid",
   },
@@ -28,6 +30,7 @@ const categoryMeta = {
     title: portfolio.sections.scraps,
     description: "短いメモや作業ログ",
     titleTransition: "vt-category-scraps",
+    schemaType: "BlogPosting",
     reactions: true,
     layout: "grid",
   },
@@ -37,6 +40,7 @@ const categoryMeta = {
     title: string;
     description: string;
     titleTransition: string;
+    schemaType: "Article" | "BlogPosting";
     reactions: boolean;
     layout: Layout;
   }>
