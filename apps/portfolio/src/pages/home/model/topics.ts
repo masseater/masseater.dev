@@ -6,7 +6,10 @@ const TOPIC_LIMIT = 12;
 
 const topicsOf = (entries: readonly Entry[]): readonly string[] =>
   pipe(
-    Rec.toEntries(Arr.groupBy(Arr.flatMap(entries, ({ tags }) => tags), identity)),
+    entries,
+    Arr.flatMap(({ tags }) => tags),
+    Arr.groupBy(identity),
+    Rec.toEntries,
     Arr.sortWith(([, tagged]) => tagged.length, Order.flip(Order.Number)),
     Arr.take(TOPIC_LIMIT),
     Arr.map(([tag]) => tag),
