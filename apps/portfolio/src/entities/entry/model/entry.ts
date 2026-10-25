@@ -15,6 +15,7 @@ const Frontmatter = Schema.Struct({
   title: Schema.String,
   description: Schema.String,
   date: DateString,
+  updated: DateString,
   tags: Tags,
   published: Schema.Boolean,
   stage: Stage,
@@ -39,5 +40,8 @@ type EntryResult = Readonly<{ status: "found"; entry: Entry }> | Missing;
 const entryPath = ({ category, slug }: Readonly<Pick<Entry, "category" | "slug">>): string =>
   `${categoryPath(category)}/${slug}`;
 
+const entryOgImagePath = (entry: Readonly<Pick<Entry, "category" | "slug">>): string =>
+  `/og${entryPath(entry)}.png`;
+
 export type { CollectionResult, Entry, EntryResult, Missing };
-export { entryPath, Frontmatter };
+export { entryOgImagePath, entryPath, Frontmatter };

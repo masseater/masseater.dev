@@ -2,7 +2,7 @@ import { Option } from "effect";
 
 import { categoryMeta, categoryPath } from "#/entities/entry";
 import type { FoundCollection } from "#/pages/collection/api/load-collection";
-import { notFoundHead, pageTitle, seo } from "#/shared/lib";
+import { defaultImage, notFoundHead, pageTitle, seo } from "#/shared/lib";
 import type { Head } from "#/shared/lib";
 
 const collectionHead = (loaded: FoundCollection | undefined): Head =>
@@ -14,6 +14,9 @@ const collectionHead = (loaded: FoundCollection | undefined): Head =>
         description: categoryMeta[category].description,
         path: categoryPath(category),
         type: "website",
+        image: defaultImage,
+        extra: [],
+        structuredData: [],
       }),
   });
 
