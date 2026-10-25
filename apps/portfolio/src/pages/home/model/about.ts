@@ -23,6 +23,7 @@ const PREFERENCES = [
     items: [
       "不自由なインターネット",
       "季節の変わり目",
+      "パクチー",
     ],
   },
 ] as const;
