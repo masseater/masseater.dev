@@ -187,6 +187,7 @@ const generated = [
   "AGENTS.md",
   "skills-lock.json",
   "CHANGELOG.md",
+  "tools/scrap-userscript/release/**",
 ];
 
 const asErrors = (names: readonly string[]): Readonly<Record<string, "error">> =>
