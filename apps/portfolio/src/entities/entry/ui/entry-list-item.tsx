@@ -8,9 +8,9 @@ import { EntryListFooter } from "./entry-list-footer";
 import { entryTitleTransition } from "./entry-transition";
 
 const EntryListItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
-  <li className="entry-rise border-foreground/10 flex border-t">
+  <li className="entry-rise border-foreground/10 flex min-w-0 border-t">
     <Link
-      className="group flex w-full flex-col gap-4 pt-6 pb-10"
+      className="group flex w-full min-w-0 flex-col gap-4 pt-6 pb-10"
       params={entry}
       to="/$category/$slug"
     >
