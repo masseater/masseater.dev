@@ -14,7 +14,7 @@ const CategoryLinkList = ({ direction }: Readonly<{ direction: Direction }>): Re
     <LinkList direction={direction}>
       {pipe(
         categoryInfos,
-        Arr.map((info) => <CategoryLink info={info} key={info.category} />),
+        Arr.map((info) => <CategoryLink direction={direction} info={info} key={info.category} />),
       )}
     </LinkList>
   </nav>

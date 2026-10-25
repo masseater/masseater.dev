@@ -11,7 +11,7 @@ const logoStyle: CSSProperties = { "--n": site.name.length };
 const SiteLogo = (): ReactNode => (
   <Link
     aria-label={site.name}
-    className="stage vt-site-name font-display inline-block shrink-0 text-3xl whitespace-nowrap select-none"
+    className="stage vt-site-name font-display inline-block shrink-0 text-xl whitespace-nowrap select-none sm:text-3xl"
     onPointerCancel={releasePointer}
     onPointerLeave={releasePointer}
     onPointerMove={followPointer}
