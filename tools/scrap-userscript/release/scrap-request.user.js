@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Scrap request to Claude
 // @namespace    https://masseater.dev
-// @version      1.1.0
+// @version      1.2.0
 // @description  閲覧中のページを masseater.dev の scrap にするよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用
 // @homepageURL  https://github.com/masseater/masseater.dev/tree/main/tools/scrap-userscript
 // @match        *://*/*
@@ -3281,12 +3281,11 @@ output { display: block; margin-top: 0.75rem; white-space: pre-wrap; }
 	};
 	var messageOf = (state) => {
 		if (state.status === "sending") return "送信しています。";
-		if (state.status === "started") return "ルーチンを起動しました。セッションを新しいタブで開きます。";
+		if (state.status === "started") return "送りました。";
 		if (state.status === "login") return "personal.masseater.dev にログインしてください。ログイン用のタブを開きます。ログインしたらもう一度送ってください。";
 		return `起動できませんでした。${state.reason}`;
 	};
 	var tabFor = (state) => {
-		if (state.status === "started") return some(state.sessionUrl);
 		if (state.status === "login") return some(relayUrl);
 		return none();
 	};
