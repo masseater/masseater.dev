@@ -12,7 +12,7 @@ const IDEA_LABEL = "アイデア";
 
 const EntryMeta = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
   <div
-    className="vt-entry text-foreground/70 font-display flex flex-wrap items-center gap-x-4 gap-y-2 self-start text-xs tracking-widest uppercase"
+    className="vt-entry text-foreground/70 font-display flex max-w-full min-w-0 flex-wrap items-center gap-x-4 gap-y-2 self-start text-xs tracking-widest uppercase"
     data-vt={entryMetaTransition(entry)}
     ref={nameTransition}
   >
