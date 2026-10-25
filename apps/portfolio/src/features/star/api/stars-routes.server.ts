@@ -7,7 +7,7 @@ import { Hex } from "effect/encoding";
 import { Elysia } from "elysia";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 
-import { categories, categoryMeta } from "#/entities/entry";
+import { categories } from "#/entities/entry";
 import type { Entry } from "#/entities/entry";
 import { star } from "#/features/star/model/star.table";
 import { site } from "#/shared/config";
@@ -30,19 +30,14 @@ const runtime = ManagedRuntime.make(
   Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]),
 );
 
-const starrable = pipe(
-  categories,
-  Arr.filter((category) => categoryMeta[category].reactions),
-);
-
 const Slug = Schema.String.check(Schema.isPattern(/^[\w-]+$/u));
 
-const TargetSchema = Schema.Struct({ category: Schema.Literals(starrable), slug: Slug });
+const TargetSchema = Schema.Struct({ category: Schema.Literals(categories), slug: Slug });
 
 const decodeTarget = Schema.decodeUnknownOption(TargetSchema);
 
 const decodeCategory = Schema.decodeUnknownOption(
-  Schema.Struct({ category: Schema.Literals(starrable) }),
+  Schema.Struct({ category: Schema.Literals(categories) }),
 );
 
 const missing: Stars = { status: "missing" };

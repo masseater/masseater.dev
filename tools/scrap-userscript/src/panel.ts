@@ -80,7 +80,7 @@ const messageOf = (state: PanelState): string => {
     return "送信しています。";
   }
   if (state.status === "started") {
-    return "ルーチンを起動しました。セッションを新しいタブで開きます。";
+    return "送りました。";
   }
   if (state.status === "login") {
     return "personal.masseater.dev にログインしてください。ログイン用のタブを開きます。ログインしたらもう一度送ってください。";
@@ -89,9 +89,6 @@ const messageOf = (state: PanelState): string => {
 };
 
 const tabFor = (state: PanelState): Option.Option<string> => {
-  if (state.status === "started") {
-    return Option.some(state.sessionUrl);
-  }
   if (state.status === "login") {
     return Option.some(relayUrl);
   }

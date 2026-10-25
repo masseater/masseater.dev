@@ -1,8 +1,6 @@
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { categoryMeta } from "#/entities/entry";
-
 import { EntryColumn } from "./entry-column";
 import { EntryOutline } from "./entry-outline";
 import { EntrySide } from "./entry-side";
@@ -15,7 +13,7 @@ const EntryPage = (): ReactNode => {
   return (
     <article className="entry-title-scope flex w-full justify-center gap-8" data-wide>
       <EntryTitleBar entry={entry} />
-      {categoryMeta[entry.category].reactions && <EntrySide entry={entry} />}
+      <EntrySide entry={entry} />
       <EntryColumn entry={entry} />
       <EntryOutline entry={entry} />
     </article>
