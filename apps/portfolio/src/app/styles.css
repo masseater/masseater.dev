@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --site-header-height: 7rem;
+  --site-header-height: 5.5rem;
   --entry-title-bar-height: 2.5rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -74,7 +74,7 @@
 
 @media (width >= 40rem) {
   :root {
-    --site-header-height: 5.5rem;
+    --site-header-height: 3.75rem;
   }
 }
 

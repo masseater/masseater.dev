@@ -4,7 +4,7 @@ import { CategoryLinkList, SiteLogo, SocialLinkList } from "#/widgets/site-nav";
 
 const SiteHeader = (): ReactNode => (
   <header
-    className="site-header bg-background/90 sticky top-0 z-20 grid grid-cols-2 content-center items-center gap-y-3 px-6 backdrop-blur-xl sm:grid-cols-3"
+    className="site-header bg-background/90 sticky top-0 z-20 grid grid-cols-2 content-center items-center gap-y-1 px-6 backdrop-blur-xl sm:grid-cols-3"
     data-site-header
   >
     <SiteLogo />
