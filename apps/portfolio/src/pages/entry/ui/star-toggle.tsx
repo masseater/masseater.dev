@@ -9,13 +9,11 @@ const UNSTARRED = "☆";
 
 const StarToggle = ({
   count,
-  pending,
   starred,
   addStar,
   removeStar,
 }: Readonly<{
   count: number;
-  pending: boolean;
   starred: boolean;
   addStar: () => void;
   removeStar: () => void;
@@ -31,8 +29,7 @@ const StarToggle = ({
     <button
       aria-label={STAR_LABEL}
       aria-pressed={starred}
-      className="glass-surface hover:bg-background/60 hover:text-foreground focus-visible:text-foreground aria-pressed:text-foreground flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 transition-colors disabled:cursor-wait"
-      disabled={pending}
+      className="glass-surface hover:bg-background/60 hover:text-foreground focus-visible:text-foreground aria-pressed:text-foreground flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 transition-colors"
       onClick={onClick}
       type="button"
     >
