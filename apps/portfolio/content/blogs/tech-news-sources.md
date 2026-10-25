@@ -109,6 +109,64 @@ published: true
   * MCP の仕様を管理する団体の公式ブログ。
   * 仕様の改訂、今後の計画、公式 SDK の告知が中心で、実運用寄り。
 
+* [Z.ai Release Notes](https://docs.z.ai/release-notes)
+  * GLM を開発する Z.ai（智譜）の開発者向けドキュメントのリリースノート。ブログは無く、技術報告は Hugging Face のモデルカードと GitHub の README に出る。
+  * GLM の各モデルの公開告知、変更点が中心で、実運用寄り。
+* [MiniMax Research](https://www.minimax.io/research)
+  * MiniMax の公式サイトの研究ページ。モデルの公開は Hugging Face が先に出て、ここの更新は数か月に 1 回。
+  * 言語、音声、動画の各モデルの公開時の技術解説が中心で、研究寄り。
+* [Nous Research Blog](https://nousresearch.com/blog)
+  * オープンなモデルとエージェント Hermes を開発する Nous Research の公式ブログ。
+  * 自社エージェントに自分のコードベースを直させた記録、モデルの振る舞いの解析が多く、研究・実運用が半々。
+* [Prime Intellect Blog](https://www.primeintellect.ai/blog)
+  * 分散学習基盤を開発する Prime Intellect の公式ブログ。
+  * 強化学習ライブラリの更新、事後学習の事例、エージェントの実装の話が多く、研究・実運用が半々。
+* [Zyphra Research](https://www.zyphra.com/our-work)
+  * 小規模な研究所 Zyphra の研究ページ。
+  * 新しいアーキテクチャ、異種ハードウェア向けの学習の論文が中心で、研究寄り。
+* [Ai2 Blog](https://allenai.org/blog)
+  * 非営利研究所 Allen Institute for AI の公式ブログ。
+  * OLMo など学習データまで公開するモデル、データセット、評価の公開が中心で、研究寄り。
+* [EleutherAI Blog](https://blog.eleuther.ai/)
+  * 非営利研究所 EleutherAI の公式ブログ。
+  * AI の欺きの検出、OCR モデルの評価など、研究ノートと技術エッセイが中心で、研究寄り。
+* [Kyutai](https://kyutai.org/)
+  * パリの非営利研究所 Kyutai の公式サイト。
+  * 音声、世界モデルのリアルタイム推論の研究公開が中心で、研究寄り。
+* [Goodfire Research](https://www.goodfire.com/research)
+  * 解釈可能性を研究する Goodfire の研究ページ。
+  * ニューラルネットの内部表現の解析、本番の監視モデルへの応用が中心で、研究寄り。
+* [Apollo Research Blog](https://www.apolloresearch.ai/blog)
+  * AI の安全性を評価する研究所 Apollo Research の公式ブログ。
+  * モデルの欺きや策略の評価の研究が中心で、研究寄り。
+* [Transluce](https://transluce.org/)
+  * AI の監督のための基盤を作る非営利研究所 Transluce の公式サイト。
+  * 公開インターネット上のエージェントの事故報告、挙動の調査が中心で、研究寄り。
+* [FAR.AI Blog](https://far.ai/blog)
+  * AI の安全性を研究する非営利団体 FAR.AI の公式ブログ。
+  * ジェイルブレイク、説得による制御の無効化などの研究が中心で、研究寄り。
+* [Connectionism（Thinking Machines）](https://thinkingmachines.ai/blog/)
+  * Thinking Machines Lab の研究ブログ。
+  * LoRA、方針蒸留など学習手法の実験結果を数式と図で示す記事が中心で、理論寄り。
+* [Answer.AI](https://www.answer.ai/)
+  * Jeremy Howard らの研究開発ラボ Answer.AI の公式サイト。
+  * LLM でコードを単純にできない理由など、実験に基づく技術記事が中心で、研究・実運用が半々。
+* [Pleias Blog](https://pleias.ai/blog)
+  * フランスの小規模な研究所 Pleias の公式ブログ。
+  * 公開データだけで学習した小型モデル、合成データの公開が中心で、研究寄り。
+* [Arcee AI Blog](https://www.arcee.ai/blog)
+  * オープンモデルを開発する Arcee AI の公式ブログ。
+  * 長時間動くエージェント向けのハーネス、オープンモデルの学習の話が多く、研究・実運用が半々。
+* [Liquid AI Blog](https://www.liquid.ai/blog)
+  * 端末向けの基盤モデルを開発する Liquid AI の公式ブログ。
+  * LFM の各モデルの公開、端末上の推論の話が中心で、研究・実運用が半々。
+* [Black Forest Labs Blog](https://bfl.ai/blog)
+  * 画像生成モデル FLUX を開発する Black Forest Labs の公式ブログ。
+  * FLUX の各モデルの公開、技術解説が中心で、研究寄り。
+* [Inception Labs Blog](https://www.inceptionlabs.ai/blog)
+  * 拡散型 LLM Mercury を開発する Inception Labs の公式ブログ。
+  * 拡散モデルによる言語生成の各モデルの公開が中心で、研究寄り。
+
 ## 個人の X
 
 ### 日本語
@@ -460,6 +518,10 @@ published: true
   * AI の安全性を研究する非営利団体 Redwood Research のブログ。
   * AI コントロールの評価、監視のレッドチームの研究記事が中心で、研究寄り。
 
+* [AI Alignment Forum](https://www.alignmentforum.org/)
+  * AI アラインメントの研究者が投稿するフォーラム。
+  * 監視可能性の評価、制御の研究の長文投稿が中心で、研究寄り。
+
 ## 企業の技術ブログ
 
 ### 日本語
@@ -590,6 +652,10 @@ published: true
   * GMO インターネットグループの研究開発部門が運営する。
   * DGX Spark 2 台でオープンモデルを動かす記録、Claude Code とカスタム lint を組み合わせた運用の話が多く、実運用寄り。
 
+* [NABLAS Blog](https://nablas.com/blog)
+  * AI 総合研究所 NABLAS が運営する。
+  * ファクトチェック用エージェントの開発で RFT から GRPO に至った過程など、学習の実験記録が多く、研究・実運用が半々。
+
 ### それ以外の言語
 
 * [Cursor Blog](https://cursor.com/blog)
@@ -667,6 +733,48 @@ published: true
 * [JFrog Security Research](https://research.jfrog.com/)
   * JFrog のセキュリティ研究チームが運営する。
   * LLM 関連ライブラリのサプライチェーン攻撃、脆弱性の解析が多く、実運用寄り。
+* [LMSYS Org Blog](https://lmsys.org/blog/)
+  * 推論エンジン SGLang を開発する LMSYS Org の公式ブログ。
+  * 他の推論エンジンと同じ条件で性能を測った結果、新しいモデルの対応が多く、実運用寄り。
+* [Unsloth Blog](https://unsloth.ai/blog)
+  * ファインチューニングのライブラリ Unsloth の公式ブログ。
+  * 新しいオープンモデルを公開初日に動かす手順、量子化の話が中心で、実運用寄り。
+* [Jina AI News](https://jina.ai/news/)
+  * 検索向けのモデルを開発する Jina AI の公式ブログ。
+  * 埋め込み、リランカー、OCR の小型モデルの公開と評価が中心で、研究・実運用が半々。
+* [Exa Blog](https://exa.ai/blog)
+  * 検索 API を開発する Exa の公式ブログ。
+  * Web 検索のリランキング、インデックスの作り方の話が多く、実運用寄り。
+* [Fireworks AI Blog](https://fireworks.ai/blog)
+  * 推論基盤を提供する Fireworks AI の公式ブログ。
+  * 小型モデルの学習レシピ、推論の最適化の話が多く、実運用寄り。
+* [Together AI Blog](https://www.together.ai/blog)
+  * 推論基盤を提供する Together AI の公式ブログ。
+  * 事後学習、推論の容量の話が多く、実運用寄り。
+* [Modal Blog](https://modal.com/blog)
+  * サーバーレスの GPU 基盤 Modal の公式ブログ。
+  * LLM の学習と推論を基盤上で動かす話、CPU と GPU の性能計測が多く、実運用寄り。
+* [Pydantic Blog](https://www.pydantic.dev/articles)
+  * Pydantic の開発チームが運営する。
+  * Pydantic AI でエージェントをサンドボックスで動かす話、ライブラリの更新が多く、実運用寄り。
+* [LangChain Blog](https://blog.langchain.com/)
+  * LangChain が運営する。
+  * コンテキストエンジニアリング、エージェントの記憶の設計の話が多く、実運用寄り。
+* [Mem0 Blog](https://mem0.ai/blog)
+  * エージェントの記憶層を開発する Mem0 の公式ブログ。
+  * 記憶の中の時間の扱い、モデルごとの精度とコストの計測が多く、研究・実運用が半々。
+* [Letta Blog](https://www.letta.com/blog/)
+  * 状態を持つエージェントの基盤を開発する Letta の公式ブログ。
+  * エージェントの自己改善、記憶の設計の話が中心で、研究・実運用が半々。
+* [OpenHands Blog](https://www.openhands.dev/blog)
+  * オープンソースのコーディングエージェント OpenHands の公式ブログ。
+  * エージェントの評価、オープンモデルでの運用の話が多く、実運用寄り。
+* [Cline Blog](https://cline.bot/blog)
+  * オープンソースのコーディングエージェント Cline の公式ブログ。
+  * ハーネスの設計、大規模な移行の記録が多く、実運用寄り。
+* [Perplexity Blog](https://www.perplexity.ai/hub/blog)
+  * Perplexity が運営する。
+  * 自己蒸留などの研究記事、製品の話が混ざり、研究・実運用が半々。
 
 [^karpathy-anthropic]: [OpenAI co-founder Andrej Karpathy joins Anthropic's pre-training team](https://techcrunch.com/2026/05/19/openai-co-founder-andrej-karpathy-joins-anthropics-pre-training-team/)。TechCrunch、2026年5月19日。
 [^pwc-shutdown]: [Papers with Code 公式リポジトリ](https://github.com/paperswithcode/paperswithcode-data)。2025年7月の閉鎖後、URL は Hugging Face Papers に転送される。
