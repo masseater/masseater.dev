@@ -17,7 +17,7 @@
   },
   "typeAware": { "enabled": true, "require": "complete" },
   "failOnParseError": true,
-  "ignorePatterns": [".claude/**"],
+  "ignorePatterns": [".claude/**", "tools/scrap-userscript/release/**"],
   "audit": { "gate": "all" },
   "security": {
     "categories": {
