@@ -1,11 +1,11 @@
 ---
 title: "AI情報の収集先（2026年10月25日時点）"
-description: "AI の動向を追うために見ておけばよい情報源を、各 AI 企業の公式サイト、所属のはっきりした人の X、信頼できる個人・団体の特化サイト、企業の技術ブログに分け、日本語かそれ以外の言語かで区別して並べた。"
+description: "自分が AI の動向を追うために見ている情報源を、AI 企業の公式サイト、個人の X、個人・団体のサイト、企業の技術ブログに分け、日本語かそれ以外の言語かで区別して並べた。"
 tags: ["AI", "LLM", "情報収集"]
 published: true
 ---
 
-AI の動向を追うために見ておけばよい情報源を並べた。AI の話題は 3 か月以上更新が空いた情報源に鮮度がないので、どの分類も 2026年7月25日以降に AI の記事が出ているものに絞った。驚き屋と呼ばれる煽り中心のブログやアカウントは外し、情報の出し手の所属が公開されているものだけを載せている。X のアカウントは 2026年10月25日にプロフィールの所属表記を確認した。各項目の 1 行目は運営している個人・団体、2 行目は多い情報の種類（理論、研究、実運用）。
+自分が AI の動向を追うために見ている情報源を並べた。AI の話題は 3 か月以上更新が空いた情報源に鮮度がないので、どの分類も 2026年7月25日以降に AI の記事が出ているものに絞った。煽り中心のブログやアカウントは入れていない。X のアカウントのプロフィールは 2026年10月25日に確認した。各項目の 1 行目は運営している個人・団体、2 行目は多い情報の種類（理論、研究、実運用）。
 
 ## AI 企業・研究機関の公式サイト
 
@@ -77,7 +77,7 @@ AI の動向を追うために見ておけばよい情報源を並べた。AI �
   * NVIDIA の開発者向け公式ブログ。
   * GPU 上での学習・推論の最適化、CUDA、Nemotron の話が多く、実運用寄り。
 
-## 所属のはっきりした人の X
+## 個人の X
 
 ### 日本語
 
@@ -190,7 +190,7 @@ AI の動向を追うために見ておけばよい情報源を並べた。AI �
   * Sakana AI の共同創業者で、Transformer を提案した論文の著者の一人。
   * Transformer 以後の構造の研究の話が多く、理論・研究寄り。
 
-## 信頼できる個人・団体が運営する特化サイト
+## 個人・団体のサイト
 
 ### 日本語
 
@@ -200,26 +200,17 @@ AI の動向を追うために見ておけばよい情報源を並べた。AI �
   * 布留川英一氏が個人で運営する note。
   * 新しいモデル、API、エージェントツールを公開直後に試した手順の記録が中心で、実運用寄り。
 * [karaage.](https://karaage.hatenadiary.jp/)
-  * からあげ氏の個人ブログ。Maker・カメラ・AI の記事を 2,700 本以上書いており、Zenn の [karaage0703](https://zenn.dev/karaage0703) にも技術記事を置く。
+  * からあげ氏の個人ブログ。Maker・カメラ・AI の記事を 2,700 本以上書いている。
   * ローカル LLM、DGX Spark、AI エージェントの接続を自宅の機材で試した記録が多く、実運用寄り。
 * [きしだのHatena](https://nowokay.hatenablog.com/)
   * 『プロになるJava』共著者のきしだなおき氏の個人ブログ。
   * 公開されたオープンモデルを手元の GPU で動かして性能を確かめる記事がほぼ毎日出ており、実運用寄り。
-* [mizchi（Zenn）](https://zenn.dev/mizchi)
-  * フロントエンドエンジニア mizchi 氏の Zenn。
-  * 自分の AI プログラミング手法を時点付きで更新し続ける記事、テスト基盤の話が多く、実運用寄り。
-* [schroneko（Zenn）](https://zenn.dev/schroneko)
-  * schroneko 氏の Zenn。X でも AI 関連の発表を即日まとめる。
-  * OpenAI DevDay のまとめ、Claude Code や Codex CLI の新機能を試した手順が多く、実運用寄り。
-* [ML_Bear（Zenn）](https://zenn.dev/ml_bear)
-  * Kaggle Master の ML エンジニア ML_Bear 氏の Zenn。
-  * LLM のトークン効率、Claude Agent SDK でのエージェント開発など実装の知見が多く、実運用寄り。
-* [laiso（Zenn）](https://zenn.dev/laiso)
-  * プログラマー laiso 氏の Zenn。Software Design にも寄稿する。
-  * エージェントハーネスで開発パイプラインを組む設計の話が多く、実運用寄り。
-* [ほーりーふぉっくす（Zenn）](https://zenn.dev/holy_fox)
-  * 高校生を名乗る個人の Zenn。
-  * 自宅の RTX 5090 で非同期 RL を回す、Kimi K3 の技術報告書を読み解くなど、学習側の実験が多く、研究寄り。
+* [laiso](https://blog.lai.so/)
+  * プログラマー laiso 氏の個人ブログ。『作って学ぶAIエージェント』の著者で、Software Design にも寄稿する。
+  * 判定タスク向けの小型モデル、エージェントハーネスで開発パイプラインを組む設計の話が多く、実運用寄り。
+* [shiba_yu36 の日記](https://blog.shibayu36.org/)
+  * LayerX のソフトウェアエンジニア shiba_yu36 氏の個人ブログ。
+  * 自作 GPT に KV キャッシュを実装して計測するなど、LLM の仕組みを手で確かめる記事が多く、理論・実運用寄り。
 * [u++の備忘録](https://upura.hatenablog.com/)
   * Google Cloud Japan の Developer Advocate、石原祥太郎氏の個人ブログ。Kaggle Grandmaster。
   * 自身の採択論文の解説、日本語データセットの話が多く、研究寄り。
@@ -330,30 +321,18 @@ AI の動向を追うために見ておけばよい情報源を並べた。AI �
 
 ### それ以外の言語
 
-* [GitHub Blog（AI & ML）](https://github.blog/ai-and-ml/)
-  * GitHub が運営する。
-  * Copilot とコーディングエージェントの機能更新と使い方が多く、実運用寄り。
-* [LangChain Blog](https://blog.langchain.com/)
-  * LangChain が運営する。
-  * エージェントの設計パターンと自社フレームワークの更新が多く、実運用寄り。
 * [Cursor Blog](https://cursor.com/blog)
   * Cursor が運営する。
   * コーディングエージェントの機能と内部の仕組みの話が多く、実運用寄り。
 * [Cloudflare Blog（AI）](https://blog.cloudflare.com/tag/ai/)
-  * Cloudflare が運営する。
-  * エッジでの推論と AI エージェントの基盤の話が多く、実運用寄り。
+  * Cloudflare が運営する。顧客事例の記事も混ざる。
+  * 推論コストの削減、AI エージェント向けの基盤など自社で運用した話が多く、実運用寄り。
 * [Vercel Blog](https://vercel.com/blog)
   * Vercel が運営する。
   * AI SDK とエージェントの構築の話が多く、実運用寄り。
-* [Databricks Blog](https://www.databricks.com/blog)
-  * Databricks が運営する。
-  * データ基盤上での LLM の学習と運用の話が多く、実運用寄り。
 * [AWS Machine Learning Blog](https://aws.amazon.com/blogs/machine-learning/)
   * AWS が運営する。
   * Bedrock や SageMaker を使った構築手順が多く、実運用寄り。
-* [Google Cloud Blog（AI & ML）](https://cloud.google.com/blog/products/ai-machine-learning)
-  * Google Cloud が運営する。
-  * Vertex AI や Gemini を使った構築事例が多く、実運用寄り。
 * [Meta Engineering（AI Research）](https://engineering.fb.com/category/ai-research/)
   * Meta のエンジニアリング組織が運営する。
   * 大規模な学習基盤と推論の最適化の話が多く、実運用寄り。
