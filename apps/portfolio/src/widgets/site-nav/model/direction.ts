@@ -1,3 +1,3 @@
-type Direction = "row" | "compact" | "header";
+type Direction = "row" | "header";
 
 export type { Direction };

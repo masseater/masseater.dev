@@ -126,11 +126,7 @@
 
 @utility site-header {
   height: var(--site-header-height);
-  @supports (animation-timeline: scroll()) {
-    animation: site-header-surface linear both;
-    animation-timeline: scroll();
-    animation-range: 0 4rem;
-  }
+  view-transition-name: site-header;
 }
 
 @utility below-site-header {
@@ -251,6 +247,26 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   animation: feed-slide-out 0.25s cubic-bezier(0.4, 0, 1, 1) both;
 }
 
+::view-transition-group(site-header) {
+  z-index: 1;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-group(site-name),
+::view-transition-group(nav-indicator),
+::view-transition-group(category-projects),
+::view-transition-group(category-blogs),
+::view-transition-group(category-scraps) {
+  z-index: 2;
+}
+
 ::view-transition-group(nav-indicator) {
   animation-duration: 0.3s;
   animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -263,13 +279,6 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 
 ::view-transition-old(nav-indicator) {
   display: none;
-}
-
-@keyframes site-header-surface {
-  from {
-    background-color: transparent;
-    backdrop-filter: none;
-  }
 }
 
 @keyframes entry-title-bar-in {

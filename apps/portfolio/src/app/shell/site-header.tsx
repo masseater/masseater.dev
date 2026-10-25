@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { CategoryLinkList, SiteLogo, SocialLinkList } from "#/widgets/site-nav";
+import { CategoryLinkList, SiteLogo } from "#/widgets/site-nav";
 
 const SiteHeader = (): ReactNode => (
   <header
@@ -9,9 +9,6 @@ const SiteHeader = (): ReactNode => (
   >
     <SiteLogo />
     <CategoryLinkList direction="header" />
-    <div className="hidden sm:block">
-      <SocialLinkList direction="compact" />
-    </div>
   </header>
 );
 
