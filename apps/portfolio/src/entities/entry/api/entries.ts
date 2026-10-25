@@ -54,7 +54,11 @@ const decodeEntry = ([path, frontmatter]: readonly [string, unknown]): Effect.Ef
 const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.suspend(() =>
   Effect.forEach(
     Rec.toEntries(
-      import.meta.glob<unknown>("/content/*/*.md", { eager: true, import: "frontmatter" }),
+      import.meta.glob<unknown>("/content/*/*.md", {
+        eager: true,
+        import: "frontmatter",
+        query: "?meta",
+      }),
     ),
     decodeEntry,
   ),
