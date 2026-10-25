@@ -10,7 +10,7 @@ const TagFilterButton = ({
   search,
 }: Readonly<{
   active: boolean;
-  children: ReactNode;
+  children: string;
   onSelect: (search: CollectionSearch) => void;
   search: CollectionSearch;
 }>): ReactNode => {
@@ -18,11 +18,12 @@ const TagFilterButton = ({
     onSelect(search);
   }, [onSelect, search]);
   return (
-    <li className="shrink-0">
+    <li className="max-w-full shrink-0">
       <button
         aria-pressed={active}
-        className="ring-foreground/10 hover:text-foreground/80 aria-pressed:ring-foreground/60 aria-pressed:text-foreground cursor-pointer rounded-full px-2 py-0.5 tracking-widest whitespace-nowrap uppercase ring-1 transition-colors"
+        className="ring-foreground/10 hover:text-foreground/80 aria-pressed:ring-foreground/60 aria-pressed:text-foreground max-w-full cursor-pointer truncate rounded-full px-2 py-0.5 tracking-widest uppercase ring-1 transition-colors"
         onClick={select}
+        title={children}
         type="button"
       >
         {children}
