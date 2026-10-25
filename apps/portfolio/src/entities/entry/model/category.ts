@@ -15,7 +15,6 @@ const categoryMeta = {
     description: "作ったもの",
     titleTransition: "vt-category-projects",
     schemaType: "Article",
-    reactions: false,
     layout: "index",
   },
   blogs: {
@@ -23,7 +22,6 @@ const categoryMeta = {
     description: "まとまった文章",
     titleTransition: "vt-category-blogs",
     schemaType: "BlogPosting",
-    reactions: true,
     layout: "grid",
   },
   scraps: {
@@ -31,7 +29,6 @@ const categoryMeta = {
     description: "短いメモや作業ログ",
     titleTransition: "vt-category-scraps",
     schemaType: "BlogPosting",
-    reactions: true,
     layout: "grid",
   },
 } as const satisfies Record<
@@ -41,7 +38,6 @@ const categoryMeta = {
     description: string;
     titleTransition: string;
     schemaType: "Article" | "BlogPosting";
-    reactions: boolean;
     layout: Layout;
   }>
 >;
