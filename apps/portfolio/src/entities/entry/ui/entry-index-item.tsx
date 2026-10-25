@@ -12,7 +12,12 @@ const EntryIndexItem = ({
   stars,
 }: Readonly<{ entry: Entry; stars: Option.Option<number> }>): ReactNode => (
   <li className="entry-rise">
-    <Link className="group flex gap-8 py-8 sm:py-12" params={entry} to="/$category/$slug">
+    <Link
+      className="group flex gap-8 py-8 sm:py-12"
+      params={entry}
+      preload="viewport"
+      to="/$category/$slug"
+    >
       <EntryIndexBody entry={entry} stars={stars} />
       <Arrow variant="index" />
     </Link>
