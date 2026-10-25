@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
 import type { Entry } from "#/entities/entry";
+import { StarButton } from "#/features/star";
 import type { Direction } from "#/pages/entry/model/direction";
 
 import { ShareLinks } from "./share-links";
-import { StarButton } from "./star-button";
 
 const REACTIONS_CLASS = {
   row: "flex min-h-12 flex-wrap items-center justify-between gap-x-6 gap-y-3",

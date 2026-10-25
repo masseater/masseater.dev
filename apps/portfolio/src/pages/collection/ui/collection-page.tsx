@@ -2,7 +2,7 @@ import { getRouteApi, useHydrated } from "@tanstack/react-router";
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useStarCounts } from "#/pages/collection/api/use-star-counts";
+import { useStarCounts } from "#/features/star";
 
 import { CollectionView } from "./collection-view";
 

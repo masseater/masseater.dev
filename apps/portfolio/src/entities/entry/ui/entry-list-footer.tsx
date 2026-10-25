@@ -14,7 +14,7 @@ const EntryListFooter = ({
   <span className="flex items-end justify-between gap-4">
     <EntryMeta entry={entry} />
     <span className="flex shrink-0 items-center gap-4">
-      {Option.isSome(stars) && <EntryStars count={stars.value} />}
+      <EntryStars count={Option.getOrUndefined(stars)} />
       <Arrow variant="tile" />
     </span>
   </span>

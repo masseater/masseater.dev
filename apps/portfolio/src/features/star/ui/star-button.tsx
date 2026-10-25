@@ -1,21 +1,17 @@
 import type { ReactNode } from "react";
 
 import type { Entry } from "#/entities/entry";
+import { useStar } from "#/features/star/api/use-star";
+import { starView } from "#/features/star/model/star-state";
 
 import { StarToggle } from "./star-toggle";
-import { useStar } from "./use-star";
 
 const StarButton = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => {
   const { stars, addStar, removeStar } = useStar(entry);
+  const view = starView(stars.data);
   return (
-    stars.status === "success" &&
-    stars.data.status === "found" && (
-      <StarToggle
-        count={stars.data.count}
-        starred={stars.data.starred}
-        addStar={addStar}
-        removeStar={removeStar}
-      />
+    view.status !== "missing" && (
+      <StarToggle addStar={addStar} removeStar={removeStar} view={view} />
     )
   );
 };
