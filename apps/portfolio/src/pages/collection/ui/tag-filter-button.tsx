@@ -18,10 +18,10 @@ const TagFilterButton = ({
     onSelect(search);
   }, [onSelect, search]);
   return (
-    <li>
+    <li className="shrink-0">
       <button
         aria-pressed={active}
-        className="ring-foreground/10 hover:text-foreground/80 aria-pressed:ring-foreground/60 aria-pressed:text-foreground cursor-pointer rounded-full px-2 py-0.5 tracking-widest uppercase ring-1 transition-colors"
+        className="ring-foreground/10 hover:text-foreground/80 aria-pressed:ring-foreground/60 aria-pressed:text-foreground cursor-pointer rounded-full px-2 py-0.5 tracking-widest whitespace-nowrap uppercase ring-1 transition-colors"
         onClick={select}
         type="button"
       >
