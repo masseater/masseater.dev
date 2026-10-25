@@ -15,6 +15,8 @@ const PALETTE = {
 
 const COLORS = Rec.values(PALETTE);
 
+const MAX_PIXEL_COUNT = 230_400;
+
 const STILL_COLORS: CssVariables = {
   "--still-base": PALETTE.base,
   "--still-sky": PALETTE.sky,
@@ -32,6 +34,8 @@ const Backdrop = (): ReactNode => (
         colors={COLORS}
         distortion={0.85}
         grainOverlay={0.06}
+        maxPixelCount={MAX_PIXEL_COUNT}
+        minPixelRatio={1}
         speed={0.2}
         swirl={0.35}
       />
