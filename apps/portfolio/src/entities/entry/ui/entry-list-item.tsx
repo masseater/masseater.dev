@@ -16,6 +16,7 @@ const EntryListItem = ({
     <Link
       className="group flex w-full min-w-0 flex-col gap-4 pt-6 pb-10"
       params={entry}
+      preload="viewport"
       to="/$category/$slug"
     >
       <span
