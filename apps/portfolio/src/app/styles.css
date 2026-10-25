@@ -90,6 +90,22 @@
   }
 }
 
+[data-footnotes] {
+  @apply bg-muted text-muted-foreground mt-16 rounded-2xl border px-6 py-5 text-sm leading-relaxed;
+}
+[data-footnotes] > h2 {
+  @apply text-muted-foreground mt-0 mb-3 font-sans text-xs font-medium tracking-widest;
+}
+[data-footnotes] > ol {
+  @apply my-0;
+}
+[data-footnotes] li {
+  @apply my-1;
+}
+[data-footnotes] li > p {
+  @apply my-0;
+}
+
 @utility vt-page-home {
   view-transition-name: page-home;
 }
