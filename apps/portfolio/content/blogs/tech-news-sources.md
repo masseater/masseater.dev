@@ -5,7 +5,7 @@ tags: ["情報収集", "AI"]
 published: true
 ---
 
-自分が技術記事を追うときに見ている情報源を並べた。今は AI が大半を占める。3 か月以上更新が空いた情報源、煽り中心のブログやアカウントは入れていない。Qiita、Zenn、dev.to のような記事投稿ポータルサイトは基本的に見ない。X のアカウントのプロフィールは 2026年10月25日に確認した。各項目の 1 行目は運営している個人・団体、2 行目は多い情報の種類（理論、研究、実運用）。
+自分が技術記事を追うときに見ている情報源を並べた。今は AI が大半を占める。煽り中心のブログやアカウントは入れていない。Qiita、Zenn、dev.to のような記事投稿ポータルサイトは基本的に見ない。X のアカウントのプロフィールは 2026年10月25日に確認した。各項目の 1 行目は運営している個人・団体、2 行目は多い情報の種類（理論、研究、実運用）。
 
 ## 企業・研究機関の公式サイト
 
@@ -194,8 +194,6 @@ published: true
 
 ### 日本語
 
-研究機関や企業よりも、自分で動かした結果を書き続けている個人の方が情報の鮮度が高い。ここに挙げた個人サイトは 2026年10月25日時点で直近 3 か月以内に AI の記事がある。
-
 * [npaka（note）](https://note.com/npaka)
   * 布留川英一氏が個人で運営する note。
   * 新しいモデル、API、エージェントツールを公開直後に試した手順の記録が中心で、実運用寄り。
@@ -244,6 +242,12 @@ published: true
 * [Simon Willison's Weblog](https://simonwillison.net/)
   * Simon Willison の個人ブログ。
   * モデルと API の試用記録、LLM ツールの開発記録が毎日近く更新され、実運用寄り。
+* [Andrej Karpathy blog](https://karpathy.bearblog.dev/)
+  * Andrej Karpathy の個人ブログ。長文は旧ブログの [karpathy.github.io](https://karpathy.github.io/) に置く。
+  * LLM の 1 年の振り返り、microgpt のような最小実装の解説が中心で、理論寄り。
+* [Lil'Log](https://lilianweng.github.io/)
+  * Lilian Weng の個人ブログ。
+  * 強化学習、拡散モデル、エージェントなどの手法を網羅的に解説する長文記事で、理論寄り。
 * [Ahead of AI](https://magazine.sebastianraschka.com/)
   * Sebastian Raschka のニュースレター。
   * 論文の読み解きと LLM の構造の比較が中心で、理論・研究寄り。
