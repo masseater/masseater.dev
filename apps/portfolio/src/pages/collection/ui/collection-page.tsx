@@ -2,6 +2,8 @@ import { getRouteApi, useHydrated } from "@tanstack/react-router";
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
+import { useStarCounts } from "#/pages/collection/api/use-star-counts";
+
 import { CollectionView } from "./collection-view";
 
 const route = getRouteApi("/_site/$category/");
@@ -14,7 +16,15 @@ const CollectionPage = (): ReactNode => {
     Option.fromUndefinedOr(tag),
     Option.filter(() => hydrated),
   );
-  return <CollectionView activeTag={activeTag} category={category} entries={entries} />;
+  const starCounts = useStarCounts(category);
+  return (
+    <CollectionView
+      activeTag={activeTag}
+      category={category}
+      entries={entries}
+      starCounts={starCounts}
+    />
+  );
 };
 
 export { CollectionPage };
