@@ -8,10 +8,10 @@ const AboutProjectList = ({ projects }: Readonly<{ projects: readonly Entry[] }>
   <ul className="flex flex-col gap-2">
     {pipe(
       projects,
-      Arr.map(({ category, slug, title, description }) => (
-        <li key={slug}>
-          <Link className="hover:underline" params={{ category, slug }} to="/$category/$slug">
-            {`${title}（${description}）`}
+      Arr.map((project) => (
+        <li key={project.slug}>
+          <Link className="hover:underline" params={project} to="/$category/$slug">
+            {`${project.title}（${project.description}）`}
           </Link>
         </li>
       )),

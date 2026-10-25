@@ -1,4 +1,4 @@
-import { Array as Arr, Effect } from "effect";
+import { Array as Arr, Effect, pipe } from "effect";
 
 import { allEntries } from "#/entities/entry";
 import type { Entry } from "#/entities/entry";
@@ -10,7 +10,10 @@ const loadHome = (): Promise<HomeData> =>
   Effect.runPromise(
     allEntries.pipe(
       Effect.map((entries) => ({
-        projects: Arr.filter(entries, ({ category }) => category === "projects"),
+        projects: pipe(
+          entries,
+          Arr.filter(({ category }) => category === "projects"),
+        ),
         topics: topicsOf(entries),
       })),
     ),
