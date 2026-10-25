@@ -74,6 +74,17 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    overflow-y: scroll;
+  }
+  html:has([data-snap-pages]) {
+    scroll-snap-type: y mandatory;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html:has([data-snap-pages]) {
+      scroll-behavior: smooth;
+    }
+  }
   body {
     @apply bg-background text-foreground;
   }

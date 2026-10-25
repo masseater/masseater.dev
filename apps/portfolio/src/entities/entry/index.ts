@@ -1,4 +1,4 @@
-export { collectionOf, entryOf } from "./api/entries";
+export { allEntries, collectionOf, entryOf } from "./api/entries";
 export { foundOrNotFound } from "./api/found-or-not-found";
 export { categories, categoryInfos, categoryMeta, categoryPath } from "./model/category";
 export type { Category, CategoryInfo, Layout } from "./model/category";
@@ -10,3 +10,4 @@ export { EntryToc } from "./ui/entry-toc";
 export { EntryList } from "./ui/entry-list";
 export { EntryMeta } from "./ui/entry-meta";
 export { entryTitleTransition } from "./ui/entry-transition";
+export { TagList } from "./ui/tag-list";
