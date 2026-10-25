@@ -2,7 +2,7 @@ export { allEntries, collectionOf, entryOf } from "./api/entries";
 export { foundOrNotFound } from "./api/found-or-not-found";
 export { categories, categoryInfos, categoryMeta, categoryPath } from "./model/category";
 export type { Category, CategoryInfo, Layout } from "./model/category";
-export { entryPath } from "./model/entry";
+export { entryOgImagePath, entryPath } from "./model/entry";
 export type { CollectionResult, Entry, EntryResult } from "./model/entry";
 export { preloadBody } from "./model/body";
 export { EntryBody } from "./ui/entry-body";

@@ -31,12 +31,13 @@ const ownEntry = (
   frontmatter: unknown,
 ): Effect.Effect<Entry, Schema.SchemaError> =>
   decodeFrontmatter(frontmatter).pipe(
-    Effect.map(({ title, description, date, tags, published, stage }) => ({
+    Effect.map(({ title, description, date, updated, tags, published, stage }) => ({
       category,
       slug,
       title,
       description,
       date,
+      updated,
       tags,
       status: toStatus({ published, stage }),
     })),

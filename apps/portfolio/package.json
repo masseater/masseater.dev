@@ -45,7 +45,9 @@
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.0",
+    "@fontsource/noto-sans-jp": "catalog:",
     "@mdx-js/rollup": "catalog:",
+    "@resvg/resvg-js": "catalog:",
     "@shikijs/rehype": "catalog:",
     "@stefanprobst/rehype-extract-toc": "catalog:",
     "@tailwindcss/vite": "4.3.3",
@@ -67,12 +69,14 @@
     "remark-frontmatter": "catalog:",
     "remark-gfm": "catalog:",
     "remark-mdx-frontmatter": "catalog:",
+    "satori": "catalog:",
     "simple-git": "catalog:",
     "steiger": "catalog:stack",
     "typescript": "catalog:stack",
     "unified": "catalog:",
     "vfile": "catalog:",
     "vite": "catalog:",
-    "vite-plus": "catalog:stack"
+    "vite-plus": "catalog:stack",
+    "yaml": "catalog:"
   }
 }
