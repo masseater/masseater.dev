@@ -102,15 +102,39 @@ published: true
 * [山田育矢](https://x.com/ikuyamada)
   * Studio Ousia の Chief Scientist で、東京理科大学の教授を兼ねる。
   * LLM やエージェントの研究、自身のモデル公開の話が多く、研究寄り。
-* [今井翔太](https://x.com/ImAI_Eruel)
-  * JAIST（北陸先端科学技術大学院大学）の教授で、GenesisAI の CEO。東京大学の松尾研で博士を取得した。
-  * 強化学習や生成 AI の動向の解説が多く、理論・研究寄り。
-* [深津貴之](https://x.com/fladdict)
-  * THE GUILD の代表で、note の CSO、弁護士ドットコムの CXO を兼ねる。
-  * プロンプト設計、生成 AI の業務への組み込みの話が多く、実運用寄り。
 * [布留川英一（npaka）](https://x.com/npaka123)
   * プログラマーで技術書の著者。
   * 新しいモデルやツールを公開当日に試した記録が多く、実運用寄り。
+* [きしだなおき](https://x.com/kis)
+  * 『プロになるJava』共著者。ブログ「きしだのHatena」の筆者。
+  * 公開直後のオープンモデルを手元で動かした所感、Java と LLM の話が多く、実運用寄り。
+* [mizchi](https://x.com/mizchi)
+  * フロントエンドのパフォーマンス改善を請け負うエンジニア。
+  * 自分の AI プログラミング手法の更新、コーディングエージェントの使い方の検証が多く、実運用寄り。
+* [laiso](https://x.com/laiso)
+  * 『作って学ぶAIエージェント』の著者。
+  * エージェントハーネスの設計、判定用の小型モデルの比較など自分で試した話が多く、実運用寄り。
+* [からあげ](https://x.com/karaage0703)
+  * ブログ「karaage.」の筆者。
+  * ローカル LLM や DGX Spark、ロボットを自宅で動かした記録が多く、実運用寄り。
+* [石原祥太郎（u++）](https://x.com/upura)
+  * Google Cloud Japan の Developer Advocate。Kaggle Grandmaster。
+  * 自身の論文、日本語データセット、Kaggle の話が多く、研究寄り。
+* [Odashi](https://x.com/odashi_t)
+  * LLM-jp で日本語 LLM の構築に携わる研究者。
+  * LLM の学習の実務と評価の話を一次情報に基づいて書くことが多く、研究寄り。
+* [横井祥](https://x.com/sho_yokoi)
+  * 東北大学の自然言語処理の研究者。
+  * 言語の統計的・幾何的構造の研究、論文の読み解きが多く、理論寄り。
+* [暦本純一](https://x.com/rkmt)
+  * Sony CSL の Senior Fellow で、東京大学の名誉教授。HCI と人間拡張の研究者。
+  * AI と人間の関係に関する研究の紹介と自身の実験が多く、研究寄り。
+* [ばんくし](https://x.com/vaaaaanquish)
+  * エムスリーの VPoE、Google Developer Experts（AI/ML）。
+  * 機械学習システムの運用と AI 開発組織の実務の話が多く、実運用寄り。
+* [bbz](https://x.com/bbz662)
+  * フロントエンド・バックエンド・SRE を手がけるエンジニア。
+  * LLM をアプリケーションに組み込んで試した結果の共有が多く、実運用寄り。
 * [LLM勉強会（LLM-jp）](https://x.com/llm_jp)
   * LLM-jp の公式アカウント。
   * モデル公開や勉強会の告知が中心で、研究寄り。
@@ -326,6 +350,31 @@ published: true
   * クラスメソッドが運営する。
   * Amazon Bedrock などクラウドの AI サービスを試した手順の記録が多く、実運用寄り。
 
+* [ZOZO TECH BLOG](https://techblog.zozo.com/)
+  * ZOZO が運営する。
+  * PR の自動レビューや負荷試験を AI に任せる設計を、守られない指示を前提に組んだ話が多く、実運用寄り。
+* [NTT Communications Engineers' Blog](https://engineers.ntt.com/)
+  * NTT コミュニケーションズが運営する。
+  * Claude Code のサブエージェントのコスト実測、ネットワーク運用への AI 適用など計測を伴う記事が多く、実運用寄り。
+* [Timee Product Team Blog](https://tech.timee.co.jp/)
+  * タイミーが運営する。
+  * LLM によるコンテンツモデレーションの評価・改善ループ、推薦システムの自動改善の設計が多く、実運用寄り。
+* [MonotaRO Tech Blog](https://tech-blog.monotaro.com/)
+  * モノタロウが運営する。
+  * AI 駆動開発で社内ツールや認証基盤を作り替えた経過が多く、実運用寄り。
+* [Uzabase Tech Blog](https://tech.uzabase.com/)
+  * ユーザベースが運営する。
+  * AI エージェントのオンライン評価、AI 主導で育てたモックライブラリなど開発現場の話が多く、実運用寄り。
+* [Findy Tech Blog](https://tech.findy.co.jp/)
+  * ファインディが運営する。
+  * 施策立案から QA までを AI エージェントで回す開発フローの構成が多く、実運用寄り。
+* [CADDi Tech Blog](https://caddi.tech/)
+  * キャディが運営する。
+  * Agent Skills による機械学習開発の生産性改善、ECCV や MIRU の参加報告が多く、研究・実運用が半々。
+* [エムスリーテックブログ](https://www.m3tech.blog/)
+  * エムスリーが運営する。
+  * Claude が実装した E2E テストのレビューツールなど、AI を使う開発の工夫が多く、実運用寄り。
+
 ### それ以外の言語
 
 * [Cursor Blog](https://cursor.com/blog)
@@ -346,6 +395,30 @@ published: true
 * [Uber Engineering（AI）](https://www.uber.com/blog/engineering/ai/)
   * Uber が運営する。
   * 需要予測や LLM の社内活用の話が多く、実運用寄り。
+* [Shopify Engineering](https://shopify.engineering/)
+  * Shopify が運営する。
+  * AI エージェントにモバイル開発環境を渡す話、オープンモデルをタスク特化に仕立てる話が多く、実運用寄り。
+* [Pinterest Engineering](https://medium.com/pinterest-engineering)
+  * Pinterest が運営する。
+  * PyTorch モジュールの可視化、エージェント向けのメトリクス層など ML 基盤の話が多く、実運用寄り。
+* [Airbnb Engineering](https://medium.com/airbnb-engineering)
+  * Airbnb が運営する。
+  * 自然言語検索の学習、本番トラフィックの再生テストなど検索・ML の話が多く、実運用寄り。
+* [Spotify Engineering](https://engineering.atspotify.com/)
+  * Spotify が運営する。
+  * 生成型推薦の推論、AI が開発の進め方を変えた話、A/B テストの方針が多く、実運用寄り。
+* [Netflix TechBlog](https://netflixtechblog.com/)
+  * Netflix が運営する。
+  * 推薦、オブザーバビリティ、コンテナ基盤など大規模サービスの内部の話が多く、実運用寄り。
+* [Fly.io Blog](https://fly.io/blog/)
+  * Fly.io が運営する。
+  * エージェントに計算機を渡す仕組み、MCP サーバー、ファイルシステムの話が多く、実運用寄り。
+* [Sourcegraph Blog](https://sourcegraph.com/blog)
+  * Sourcegraph が運営する。
+  * 脆弱性の箇所をコードベースから探す話、コーディングエージェントの設計が多く、実運用寄り。
+* [JetBrains AI Blog](https://blog.jetbrains.com/ai/)
+  * JetBrains が運営する。
+  * コーディング向けオープンモデル Mellum の学習、エージェントの統制の話が多く、実運用寄り。
 
 [^karpathy-anthropic]: [OpenAI co-founder Andrej Karpathy joins Anthropic's pre-training team](https://techcrunch.com/2026/05/19/openai-co-founder-andrej-karpathy-joins-anthropics-pre-training-team/)。TechCrunch、2026年5月19日。
 [^pwc-shutdown]: [Papers with Code 公式リポジトリ](https://github.com/paperswithcode/paperswithcode-data)。2025年7月の閉鎖後、URL は Hugging Face Papers に転送される。
