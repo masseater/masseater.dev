@@ -4,7 +4,13 @@ import { allEntries } from "#/entities/entry";
 import type { Entry } from "#/entities/entry";
 import { topicsOf } from "#/pages/home/model/topics";
 
-type HomeData = Readonly<{ projects: readonly Entry[]; topics: readonly string[] }>;
+const WRITING_LIMIT = 3;
+
+type HomeData = Readonly<{
+  projects: readonly Entry[];
+  writings: readonly Entry[];
+  topics: readonly string[];
+}>;
 
 const loadHome = (): Promise<HomeData> =>
   Effect.runPromise(
@@ -13,6 +19,11 @@ const loadHome = (): Promise<HomeData> =>
         projects: pipe(
           entries,
           Arr.filter(({ category }) => category === "projects"),
+        ),
+        writings: pipe(
+          entries,
+          Arr.filter(({ category, status }) => category === "blogs" && status === "published"),
+          Arr.take(WRITING_LIMIT),
         ),
         topics: topicsOf(entries),
       })),
