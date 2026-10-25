@@ -1,15 +1,13 @@
 // ==UserScript==
 // @name         Scrap request to Claude
 // @namespace    https://masseater.dev
-// @version      1.0.0
-// @description  閲覧中のページを masseater.dev の scrap にするよう、Claude Code のルーチンへ頼む
+// @version      1.1.0
+// @description  閲覧中のページを masseater.dev の scrap にするよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用
 // @homepageURL  https://github.com/masseater/masseater.dev/tree/main/tools/scrap-userscript
 // @match        *://*/*
-// @connect      api.anthropic.com
-// @grant        GM.getValue
+// @connect      personal.masseater.dev
 // @grant        GM.openInTab
 // @grant        GM.registerMenuCommand
-// @grant        GM.setValue
 // @grant        GM.xmlHttpRequest
 // @noframes
 // ==/UserScript==
@@ -965,7 +963,7 @@
 	var match$4 = dual(2, (self, { onNone, onSome }) => isNone(self) ? onNone() : onSome(self.value));
 	var getOrElse = dual(2, (self, onNone) => isNone(self) ? onNone() : self.value);
 	var fromNullishOr = (a) => a == null ? none() : some(a);
-	var map$6 = dual(2, (self, f) => isNone(self) ? none() : some(f(self.value)));
+	var map$5 = dual(2, (self, f) => isNone(self) ? none() : some(f(self.value)));
 	var ServiceTypeId = "~effect/Context/Service";
 	var Service = function() {
 		function KeyClass() {}
@@ -1132,9 +1130,7 @@
 	var append = dual(2, (self, last) => [...self, last]);
 	Array$1.isArray;
 	var isArrayNonEmpty = isArrayNonEmpty$1;
-	var isReadonlyArrayNonEmpty = isArrayNonEmpty$1;
 	var empty = () => [];
-	var map$3 = dual(2, (self, f) => self.map(f));
 	var Scheduler = Reference("effect/Scheduler", {
 		fiberCached: true,
 		defaultValue: () => new MixedScheduler()
@@ -1547,7 +1543,7 @@
 			fiber.interruptUnsafe(parent.id, annotations);
 			fiberArr.push(fiber);
 		}
-		return asVoid(fiberAwaitAll(fiberArr));
+		return asVoid$1(fiberAwaitAll(fiberArr));
 	});
 	var succeed$3 = exitSucceed;
 	var failCause$1 = exitFailCause;
@@ -1773,15 +1769,15 @@
 		const f = this.payload;
 		return f(value);
 	};
-	var asVoid = (self) => new ContImpl(self, returnPayload, exitVoid);
+	var asVoid$1 = (self) => new ContImpl(self, returnPayload, exitVoid);
 	var flatMap$1 = dual(2, (self, f) => new ContImpl(self, andThenCont, f));
 	var effectIsExit = (effect) => effect[ExitTypeId] !== void 0;
 	var flatMapEager$1 = dual(2, (self, f) => {
 		if (effectIsExit(self)) return self._tag === "Success" ? f(self.value) : self;
 		return flatMap$1(self, f);
 	});
-	var map$2 = dual(2, (self, f) => new ContImpl(self, mapCont, f));
-	var mapEager$1 = dual(2, (self, f) => effectIsExit(self) ? exitMap(self, f) : map$2(self, f));
+	var map$1 = dual(2, (self, f) => new ContImpl(self, mapCont, f));
+	var mapEager$1 = dual(2, (self, f) => effectIsExit(self) ? exitMap(self, f) : map$1(self, f));
 	var exitIsSuccess = (self) => self._tag === "Success";
 	var exitVoid = exitSucceed(void 0);
 	var exitMap = dual(2, (self, f) => self._tag === "Success" ? exitSucceed(f(self.value)) : self);
@@ -2054,7 +2050,7 @@
 	colors.gray, colors.blue, colors.green, colors.yellow, colors.red, colors.bgBrightRed, colors.black;
 	var isFailReason = isFailReason$1;
 	var die$1 = causeDie;
-	var map$1 = causeMap;
+	var map = causeMap;
 	var succeed$2 = exitSucceed;
 	var failCause = exitFailCause;
 	var fail$2 = exitFail;
@@ -2098,7 +2094,7 @@
 	var try_ = try_$1;
 	var flatMap = flatMap$1;
 	var exit = exit$1;
-	var map = map$2;
+	var asVoid = asVoid$1;
 	var catchCause = catchCause$1;
 	var match = match$1;
 	var runFork = runFork$1;
@@ -2115,7 +2111,6 @@
 	({ ...PipeInspectableProto });
 	BaseProto.toString, BaseProto[NodeInspectSymbol];
 	({ ...PipeInspectableProto });
-	var STRUCTURAL_ANNOTATION_KEY = "~structural";
 	var CONSTRUCTOR_ANNOTATION_KEY = "~constructor";
 	var missing = Symbol();
 	var succeed = succeed$2;
@@ -2205,24 +2200,6 @@
 			this.annotations = annotations;
 		}
 	};
-	function makeFilterIssue(entry, input, options) {
-		if (isIssue(entry)) return entry;
-		if (typeof entry === "string") return new InvalidValue({ message: entry }, input, options);
-		const inner = typeof entry.issue === "string" ? new InvalidValue({ message: entry.issue }, input, options) : entry.issue;
-		return new Pointer(entry.path, inner);
-	}
-	function makeSingle(out, input, options) {
-		if (out === void 0) return;
-		if (typeof out === "boolean") return out ? void 0 : new InvalidValue(void 0, input, options);
-		return makeFilterIssue(out, input, options);
-	}
-	function normalizeFilterOutput(ast, out, input, options) {
-		if (Array.isArray(out)) {
-			if (!isReadonlyArrayNonEmpty(out)) return;
-			return out.length === 1 ? makeFilterIssue(out[0], input, options) : new Composite(ast, map$3(out, (entry) => makeFilterIssue(entry, input, options)), input, options);
-		}
-		return makeSingle(out, input, options);
-	}
 	function getSchemaIssue(cause) {
 		let issue;
 		for (const reason of cause.reasons) {
@@ -2354,7 +2331,7 @@
 	var wrapPropertyKeyIssue = (s, ast, key, exit) => {
 		if (exit.cause.reasons.length === 0) return exit;
 		const issue = getSchemaIssue(exit.cause);
-		if (issue === void 0) return failCause(map$1(exit.cause, (issue) => new Composite(ast, [new Pointer([key], issue)], s.input, s.options)));
+		if (issue === void 0) return failCause(map(exit.cause, (issue) => new Composite(ast, [new Pointer([key], issue)], s.input, s.options)));
 		const pointer = new Pointer([key], issue);
 		if (s.options.errors === "all") {
 			if (s.issues) s.issues.push(pointer);
@@ -2656,72 +2633,6 @@
 		}), [], annotations, checks);
 	}
 	var hasPropertySignature = (input, key) => key === "__proto__" ? Object.hasOwn(input, key) : key in input;
-	var Filter = class extends Class$1 {
-		_tag = "Filter";
-		run;
-		annotations;
-		aborted;
-		constructor(run, annotations = void 0, aborted = false) {
-			super();
-			this.run = run;
-			this.annotations = annotations;
-			this.aborted = aborted;
-		}
-		annotate(annotations) {
-			return new Filter(this.run, {
-				...this.annotations,
-				...annotations
-			}, this.aborted);
-		}
-		abort() {
-			return new Filter(this.run, this.annotations, true);
-		}
-		and(other, annotations) {
-			return new FilterGroup([this, other], annotations);
-		}
-	};
-	var FilterGroup = class extends Class$1 {
-		_tag = "FilterGroup";
-		checks;
-		annotations;
-		constructor(checks, annotations = void 0) {
-			super();
-			this.checks = checks;
-			this.annotations = annotations;
-		}
-		annotate(annotations) {
-			return new FilterGroup(this.checks, {
-				...this.annotations,
-				...annotations
-			});
-		}
-		and(other, annotations) {
-			return new FilterGroup([this, other], annotations);
-		}
-	};
-	function makeFilter$1(filter, annotations, aborted = false) {
-		return new Filter((input, ast, options) => normalizeFilterOutput(ast, filter(input, ast, options), input, options), annotations, aborted);
-	}
-	function isPattern$1(regExp, annotations) {
-		const copy = new globalThis.RegExp(regExp);
-		const payload = {
-			source: copy.source,
-			flags: copy.flags
-		};
-		return makeFilter$1((s) => {
-			copy.lastIndex = 0;
-			return copy.test(s);
-		}, {
-			expected: `a string matching the RegExp ${payload.source}`,
-			representation: {
-				id: "effect/schema/isPattern",
-				payload
-			},
-			toJsonSchema: () => [{}, true],
-			arbitraryConstraint: { patterns: [payload] },
-			...annotations
-		});
-	}
 	var bodyOwners = new WeakMap();
 	function copy(ast, changes) {
 		const out = Object.assign(Object.create(Object.getPrototypeOf(ast)), ast, changes);
@@ -2942,7 +2853,7 @@
 		}
 	}
 	var fromOptionalEffect = (effect) => flatMapEager(effect, fromOptionExit);
-	var wrapEncoding = (ast, input, options, effect) => catchCause(effect, (cause) => failCauseSync(() => map$1(cause, (issue) => new Encoding(ast, issue, input, options))));
+	var wrapEncoding = (ast, input, options, effect) => catchCause(effect, (cause) => failCauseSync(() => map(cause, (issue) => new Encoding(ast, issue, input, options))));
 	function makeConstructorParser(descriptor, compile) {
 		const transform = compileTransformation(descriptor.link.transformation);
 		let sourceParser;
@@ -3110,10 +3021,10 @@
 		const parser = run(schema.ast);
 		return options === void 0 ? parser : (input, overrideOptions) => parser(input, mergeParseOptions(options, overrideOptions));
 	}
-	function decodeUnknownOption$1(schema, options) {
+	function decodeUnknownOption(schema, options) {
 		return asOption(decodeUnknownEffect(schema, options));
 	}
-	var decodeOption$1 = decodeUnknownOption$1;
+	var decodeOption$1 = decodeUnknownOption;
 	var mergeParseOptions = (options, overrideOptions) => overrideOptions ? {
 		...options,
 		...overrideOptions
@@ -3243,7 +3154,6 @@
 	({ ...BaseProto });
 	({ ...BaseProto });
 	({ ...BaseProto });
-	var decodeUnknownOption = decodeUnknownOption$1;
 	var decodeOption = decodeOption$1;
 	var make = make$1;
 	var String$1 = make(string);
@@ -3267,39 +3177,6 @@
 			});
 		};
 	}
-	var makeFilter = makeFilter$1;
-	function isPattern(regExp, annotations) {
-		const source = regExp.source;
-		const flags = regExp.flags;
-		const canExport = /^[dg]*uy?$/.test(flags);
-		const runtimeRegExp = flags === "" ? `new RegExp(${format$1(source)})` : `new RegExp(${format$1(source)}, ${format$1(flags)})`;
-		return isPattern$1(regExp, {
-			toJsonSchema: () => canExport ? { pattern: flags.endsWith("y") ? `^(?:${source})` : source } : [{}, true],
-			toCode: () => ({ runtime: `Schema.isPattern(${runtimeRegExp})` }),
-			...annotations
-		});
-	}
-	function makeIsMinLength(minLength, minCodePoints, annotations) {
-		return makeFilter((input) => input.length >= minLength, {
-			expected: `a value with a length of at least ${minLength}`,
-			representation: {
-				id: "effect/schema/isMinLength",
-				payload: { minLength }
-			},
-			toJsonSchema: ({ type }) => type === "string" ? minLength <= 1 ? { minLength: minCodePoints } : [{ minLength: minCodePoints }, true] : type === "array" ? { minItems: minLength } : type === void 0 ? [{
-				minLength: minCodePoints,
-				minItems: minLength
-			}, true] : [{}, true],
-			toCode: () => ({ runtime: `Schema.isMinLength(${minLength})` }),
-			[STRUCTURAL_ANNOTATION_KEY]: true,
-			arbitraryConstraint: { minLength },
-			...annotations
-		});
-	}
-	function isNonEmpty(annotations) {
-		return makeIsMinLength(1, 1, annotations);
-	}
-	var NonEmptyString = String$1.check(isNonEmpty());
 	globalThis.RegExp;
 	globalThis.URL;
 	var JsonString = String$1.annotate({
@@ -3314,49 +3191,37 @@
 	globalThis.URLSearchParams;
 	globalThis.Uint8Array;
 	var _GM = (() => typeof GM != "undefined" ? GM : void 0)();
-	var FireSettingsSchema = Struct({
-		fireUrl: String$1.check(isPattern(/^https:\/\/api\.anthropic\.com\/v1\/claude_code\/routines\/trig_\w+\/fire$/u)),
-		token: NonEmptyString
-	});
-	var FireSession = fromJsonString(Struct({ claude_code_session_url: String$1 }));
+	var relayUrl = "https://personal.masseater.dev/scrap-request";
+	var RelaySession = fromJsonString(Struct({ sessionUrl: String$1 }));
 	var successStatus = 200;
 	var redirectStatus = 300;
-	var decodeSettings = (input) => decodeOption(FireSettingsSchema)({
-		fireUrl: trim(input.fireUrl),
-		token: trim(input.token)
-	});
-	var fireHeaders = (settings) => ({
-		authorization: `Bearer ${settings.token}`,
-		"anthropic-beta": "experimental-cc-routine-2026-04-01",
-		"anthropic-version": "2023-06-01",
-		"content-type": "application/json"
-	});
-	var fireBody = (request) => JSON.stringify({ text: JSON.stringify({
+	var relayBody = (request) => JSON.stringify({
 		url: request.url,
 		title: trim(request.title),
 		highlight: trim(request.highlight),
 		focus: trim(request.focus)
-	}) });
-	var fireResponse = (response) => {
+	});
+	var relayResponse = (response) => {
+		if (response.finalUrl !== "https://personal.masseater.dev/scrap-request") return { status: "login" };
 		const failed = {
 			status: "failed",
 			reason: `HTTP ${String(response.status)}: ${response.text}`
 		};
 		if (response.status < successStatus || response.status >= redirectStatus) return failed;
-		return match$4(decodeOption(FireSession)(response.text), {
+		return match$4(decodeOption(RelaySession)(response.text), {
 			onNone: () => failed,
 			onSome: (session) => ({
 				status: "started",
-				sessionUrl: session.claude_code_session_url
+				sessionUrl: session.sessionUrl
 			})
 		});
 	};
-	var fire = (input) => tryPromise({
+	var fire = (request) => tryPromise({
 		try: () => _GM.xmlHttpRequest({
 			method: "POST",
-			url: input.settings.fireUrl,
-			headers: { ...fireHeaders(input.settings) },
-			data: fireBody(input.request)
+			url: relayUrl,
+			headers: { "content-type": "application/json" },
+			data: relayBody(request)
 		}),
 		catch: () => "ネットワークエラーで送れませんでした"
 	}).pipe(match({
@@ -3364,20 +3229,16 @@
 			status: "failed",
 			reason
 		}),
-		onSuccess: (response) => fireResponse({
+		onSuccess: (response) => relayResponse({
 			status: response.status,
+			finalUrl: response.finalUrl,
 			text: response.responseText
 		})
 	}));
-	var key = "settings";
-	var loadSettings = promise(() => _GM.getValue(key)).pipe(map(decodeUnknownOption(FireSettingsSchema)));
-	var saveSettings = (settings) => promise(() => _GM.setValue(key, settings));
 	var style = `
 dialog { width: min(32rem, calc(100vw - 2rem)); padding: 1rem; border: 1px solid #888; border-radius: 0.5rem; font: 14px/1.6 system-ui, sans-serif; color: #111; background: #fff; }
 label { display: block; margin-top: 0.75rem; font-weight: bold; }
-textarea, input { box-sizing: border-box; width: 100%; margin-top: 0.25rem; font: inherit; font-weight: normal; }
-textarea { min-height: 5rem; }
-details { margin-top: 0.75rem; }
+textarea { box-sizing: border-box; width: 100%; min-height: 5rem; margin-top: 0.25rem; font: inherit; font-weight: normal; }
 menu { display: flex; gap: 0.5rem; justify-content: flex-end; margin: 1rem 0 0; padding: 0; }
 output { display: block; margin-top: 0.75rem; white-space: pre-wrap; }
 `;
@@ -3396,12 +3257,6 @@ output { display: block; margin-top: 0.75rem; white-space: pre-wrap; }
 		created.value = value;
 		return created;
 	};
-	var input = (type, value) => {
-		const created = document.createElement("input");
-		created.type = type;
-		created.value = value;
-		return created;
-	};
 	var button = (text) => {
 		const created = element("button", text);
 		created.type = "button";
@@ -3412,74 +3267,50 @@ output { display: block; margin-top: 0.75rem; white-space: pre-wrap; }
 		menu.append(...buttons);
 		return menu;
 	};
-	var selectedText = () => fromNullishOr(globalThis.getSelection()).pipe(map$6((selection) => selection.toString()), getOrElse(() => ""));
-	var savedValue = (saved, key) => match$4(saved, {
-		onNone: () => "",
-		onSome: (settings) => settings[key]
-	});
-	var settingsSection = (saved, controls) => {
-		const details = document.createElement("details");
-		details.open = isNone(saved);
-		details.append(element("summary", "ルーチンの設定"), ...controls);
-		return details;
-	};
-	var createForm = (saved) => {
+	var selectedText = () => fromNullishOr(globalThis.getSelection()).pipe(map$5((selection) => selection.toString()), getOrElse(() => ""));
+	var createForm = () => {
 		const highlight = textarea(selectedText());
 		const focus = textarea("");
-		const fireUrl = input("url", savedValue(saved, "fireUrl"));
-		const token = input("password", savedValue(saved, "token"));
 		return {
-			elements: [
-				labeled("気になった部分", highlight),
-				labeled("重点的にまとめてほしいこと", focus),
-				settingsSection(saved, [labeled("Fire URL", fireUrl), labeled("API トークン", token)])
-			],
+			elements: [labeled("気になった部分", highlight), labeled("重点的にまとめてほしいこと", focus)],
 			read: () => ({
-				settings: {
-					fireUrl: fireUrl.value,
-					token: token.value
-				},
 				highlight: highlight.value,
 				focus: focus.value
 			})
 		};
 	};
 	var messageOf = (state) => {
-		if (state.status === "invalid") return "Fire URL は https://api.anthropic.com/v1/claude_code/routines/…/fire の形で、API トークンと一緒に入れてください。";
 		if (state.status === "sending") return "送信しています。";
 		if (state.status === "started") return "ルーチンを起動しました。セッションを新しいタブで開きます。";
+		if (state.status === "login") return "personal.masseater.dev にログインしてください。ログイン用のタブを開きます。ログインしたらもう一度送ってください。";
 		return `起動できませんでした。${state.reason}`;
 	};
-	var openSession = (state) => {
-		if (state.status !== "started") return void_;
-		return promise(() => Promise.resolve(_GM.openInTab(state.sessionUrl, { active: true })));
+	var tabFor = (state) => {
+		if (state.status === "started") return some(state.sessionUrl);
+		if (state.status === "login") return some(relayUrl);
+		return none();
 	};
+	var openTab = (state) => match$4(tabFor(state), {
+		onNone: () => void_,
+		onSome: (url) => promise(() => Promise.resolve(_GM.openInTab(url, { active: true }))).pipe(asVoid)
+	});
 	var submit = (values, render) => gen(function* submitRequest() {
-		const settings = decodeSettings(values.settings);
-		if (isNone(settings)) {
-			render({ status: "invalid" });
-			return;
-		}
-		yield* saveSettings(settings.value);
 		render({ status: "sending" });
 		const response = yield* fire({
-			settings: settings.value,
-			request: {
-				url: location.href,
-				title: document.title,
-				highlight: values.highlight,
-				focus: values.focus
-			}
+			url: location.href,
+			title: document.title,
+			highlight: values.highlight,
+			focus: values.focus
 		});
 		render(response);
-		yield* openSession(response);
+		yield* openTab(response);
 	});
 	var renderer = (output, send) => (state) => {
 		output.textContent = messageOf(state);
 		send.toggleAttribute("disabled", state.status === "sending" || state.status === "started");
 	};
-	var buildDialog = (saved) => {
-		const form = createForm(saved);
+	var buildDialog = () => {
+		const form = createForm();
 		const send = button("scrap にする");
 		const close = button("閉じる");
 		const output = document.createElement("output");
@@ -3493,10 +3324,10 @@ output { display: block; margin-top: 0.75rem; white-space: pre-wrap; }
 		});
 		return dialog;
 	};
-	var openPanel = (saved) => {
+	var openPanel = () => {
 		const host = document.createElement("div");
 		const root = host.attachShadow({ mode: "closed" });
-		const dialog = buildDialog(saved);
+		const dialog = buildDialog();
 		dialog.addEventListener("close", () => {
 			host.remove();
 		});
@@ -3504,7 +3335,5 @@ output { display: block; margin-top: 0.75rem; white-space: pre-wrap; }
 		document.body.append(host);
 		dialog.showModal();
 	};
-	runFork(promise(() => Promise.resolve(_GM.registerMenuCommand("このページを scrap にする", () => {
-		runFork(loadSettings.pipe(map(openPanel)));
-	}))));
+	runFork(promise(() => Promise.resolve(_GM.registerMenuCommand("このページを scrap にする", openPanel))));
 })();
