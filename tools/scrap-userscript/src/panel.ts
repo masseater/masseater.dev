@@ -2,17 +2,15 @@ import { Effect, Option } from "effect";
 import { GM } from "vite-plugin-monkey/dist/client";
 
 import { fire } from "./fire.ts";
-import { decodeSettings } from "./request.ts";
-import type { FireResponse, FireSettings } from "./request.ts";
-import { saveSettings } from "./storage.ts";
+import { relayUrl } from "./request.ts";
+import type { RelayResponse } from "./request.ts";
 
 type PanelValues = Readonly<{
-  settings: Readonly<{ fireUrl: string; token: string }>;
   highlight: string;
   focus: string;
 }>;
 
-type PanelState = Readonly<{ status: "invalid" }> | Readonly<{ status: "sending" }> | FireResponse;
+type PanelState = Readonly<{ status: "sending" }> | RelayResponse;
 
 type Render = (state: PanelState) => void;
 
@@ -24,9 +22,7 @@ type PanelForm = Readonly<{
 const style = `
 dialog { width: min(32rem, calc(100vw - 2rem)); padding: 1rem; border: 1px solid #888; border-radius: 0.5rem; font: 14px/1.6 system-ui, sans-serif; color: #111; background: #fff; }
 label { display: block; margin-top: 0.75rem; font-weight: bold; }
-textarea, input { box-sizing: border-box; width: 100%; margin-top: 0.25rem; font: inherit; font-weight: normal; }
-textarea { min-height: 5rem; }
-details { margin-top: 0.75rem; }
+textarea { box-sizing: border-box; width: 100%; min-height: 5rem; margin-top: 0.25rem; font: inherit; font-weight: normal; }
 menu { display: flex; gap: 0.5rem; justify-content: flex-end; margin: 1rem 0 0; padding: 0; }
 output { display: block; margin-top: 0.75rem; white-space: pre-wrap; }
 `;
@@ -52,13 +48,6 @@ const textarea = (value: string): HTMLTextAreaElement => {
   return created;
 };
 
-const input = (type: "password" | "url", value: string): HTMLInputElement => {
-  const created = document.createElement("input");
-  created.type = type;
-  created.value = value;
-  return created;
-};
-
 const button = (text: string): HTMLButtonElement => {
   const created = element("button", text);
   created.type = "button";
@@ -77,78 +66,58 @@ const selectedText = (): string =>
     Option.getOrElse(() => ""),
   );
 
-const savedValue = (saved: Option.Option<FireSettings>, key: keyof FireSettings): string =>
-  Option.match(saved, { onNone: () => "", onSome: (settings) => settings[key] });
-
-const settingsSection = (
-  saved: Option.Option<FireSettings>,
-  controls: readonly HTMLElement[],
-): HTMLDetailsElement => {
-  const details = document.createElement("details");
-  details.open = Option.isNone(saved);
-  details.append(element("summary", "ルーチンの設定"), ...controls);
-  return details;
-};
-
-const createForm = (saved: Option.Option<FireSettings>): PanelForm => {
+const createForm = (): PanelForm => {
   const highlight = textarea(selectedText());
   const focus = textarea("");
-  const fireUrl = input("url", savedValue(saved, "fireUrl"));
-  const token = input("password", savedValue(saved, "token"));
   return {
-    elements: [
-      labeled("気になった部分", highlight),
-      labeled("重点的にまとめてほしいこと", focus),
-      settingsSection(saved, [labeled("Fire URL", fireUrl), labeled("API トークン", token)]),
-    ],
-    read: () => ({
-      settings: { fireUrl: fireUrl.value, token: token.value },
-      highlight: highlight.value,
-      focus: focus.value,
-    }),
+    elements: [labeled("気になった部分", highlight), labeled("重点的にまとめてほしいこと", focus)],
+    read: () => ({ highlight: highlight.value, focus: focus.value }),
   };
 };
 
 const messageOf = (state: PanelState): string => {
-  if (state.status === "invalid") {
-    return "Fire URL は https://api.anthropic.com/v1/claude_code/routines/…/fire の形で、API トークンと一緒に入れてください。";
-  }
   if (state.status === "sending") {
     return "送信しています。";
   }
   if (state.status === "started") {
     return "ルーチンを起動しました。セッションを新しいタブで開きます。";
   }
+  if (state.status === "login") {
+    return "personal.masseater.dev にログインしてください。ログイン用のタブを開きます。ログインしたらもう一度送ってください。";
+  }
   return `起動できませんでした。${state.reason}`;
 };
 
-const openSession = (state: PanelState): Effect.Effect<void> => {
-  if (state.status !== "started") {
-    return Effect.void;
+const tabFor = (state: PanelState): Option.Option<string> => {
+  if (state.status === "started") {
+    return Option.some(state.sessionUrl);
   }
-  return Effect.promise(() => Promise.resolve(GM.openInTab(state.sessionUrl, { active: true })));
+  if (state.status === "login") {
+    return Option.some(relayUrl);
+  }
+  return Option.none();
 };
+
+const openTab = (state: PanelState): Effect.Effect<void> =>
+  Option.match(tabFor(state), {
+    onNone: () => Effect.void,
+    onSome: (url) =>
+      Effect.promise(() => Promise.resolve(GM.openInTab(url, { active: true }))).pipe(
+        Effect.asVoid,
+      ),
+  });
 
 const submit = (values: PanelValues, render: Render): Effect.Effect<void> =>
   Effect.gen(function* submitRequest() {
-    const settings = decodeSettings(values.settings);
-    if (Option.isNone(settings)) {
-      render({ status: "invalid" });
-      return;
-    }
-    yield* saveSettings(settings.value);
     render({ status: "sending" });
     const response = yield* fire({
-      settings: settings.value,
-      request: {
-        url: location.href,
-        title: document.title,
-        highlight: values.highlight,
-        focus: values.focus,
-      },
+      url: location.href,
+      title: document.title,
+      highlight: values.highlight,
+      focus: values.focus,
     });
     render(response);
-    yield* openSession(response);
+    yield* openTab(response);
   });
 
 const renderer =
@@ -158,8 +127,8 @@ const renderer =
     send.toggleAttribute("disabled", state.status === "sending" || state.status === "started");
   };
 
-const buildDialog = (saved: Option.Option<FireSettings>): HTMLDialogElement => {
-  const form = createForm(saved);
+const buildDialog = (): HTMLDialogElement => {
+  const form = createForm();
   const send = button("scrap にする");
   const close = button("閉じる");
   const output = document.createElement("output");
@@ -174,10 +143,10 @@ const buildDialog = (saved: Option.Option<FireSettings>): HTMLDialogElement => {
   return dialog;
 };
 
-const openPanel = (saved: Option.Option<FireSettings>): void => {
+const openPanel = (): void => {
   const host = document.createElement("div");
   const root = host.attachShadow({ mode: "closed" });
-  const dialog = buildDialog(saved);
+  const dialog = buildDialog();
   dialog.addEventListener("close", () => {
     host.remove();
   });
