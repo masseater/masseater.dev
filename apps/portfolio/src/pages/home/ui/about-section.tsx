@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { ABOUT_ID } from "#/pages/home/model/about";
 
-import { AboutFacts } from "./about-facts";
+import { AboutPreferences } from "./about-preferences";
 import { AboutIntro } from "./about-intro";
 
 const AboutSection = (): ReactNode => (
@@ -13,7 +13,7 @@ const AboutSection = (): ReactNode => (
   >
     <div className="flex w-full max-w-2xl flex-col gap-12">
       <AboutIntro />
-      <AboutFacts />
+      <AboutPreferences />
     </div>
   </section>
 );
