@@ -131,6 +131,14 @@
   view-transition-class: entry;
 }
 
+@utility collection-columns {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 62rem) minmax(10rem, 1fr);
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+}
+
 html:active-view-transition-type(forward)::view-transition-old(.page),
 html:active-view-transition-type(forward)::view-transition-old(.entry):only-child {
   animation: slide-out-left 0.45s cubic-bezier(0.65, 0, 0.35, 1) both;
