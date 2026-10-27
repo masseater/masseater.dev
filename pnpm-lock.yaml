@@ -281,6 +281,9 @@ catalogs:
     mdast-util-mdx-jsx:
       specifier: 3.2.0
       version: 3.2.0
+    mdast-util-to-string:
+      specifier: 4.0.0
+      version: 4.0.0
     radix-ui:
       specifier: 1.8.1
       version: 1.8.1
@@ -302,6 +305,9 @@ catalogs:
     remark-mdx-frontmatter:
       specifier: 6.0.0
       version: 6.0.0
+    remark-parse:
+      specifier: 11.0.0
+      version: 11.0.0
     satori:
       specifier: 0.63.2
       version: 0.63.2
@@ -408,6 +414,7 @@ overrides:
   undici@>=8.0.0 <8.12.2: ^8.12.2
   zod@>=4.0.0 <4.6.6: ^4.6.6
   fflate@>=0.7.0 <0.7.5: ^0.8.0
+  qs@>=6.7.0 <=6.16.0: ^6.16.1
 
 packageExtensionsChecksum: sha256-+VMdP1PtirSQ7Lhy8zZaF5Ha03FJIIM31JqoRyxSKXQ=
 
@@ -666,6 +673,9 @@ importers:
       mdast-util-mdx-jsx:
         specifier: 'catalog:'
         version: 3.2.0(supports-color@7.2.0)
+      mdast-util-to-string:
+        specifier: 'catalog:'
+        version: 4.0.0
       rehype-slug:
         specifier: 'catalog:'
         version: 6.0.0
@@ -681,6 +691,9 @@ importers:
       remark-mdx-frontmatter:
         specifier: 'catalog:'
         version: 6.0.0
+      remark-parse:
+        specifier: 'catalog:'
+        version: 11.0.0(supports-color@7.2.0)
       satori:
         specifier: 'catalog:'
         version: 0.63.2
@@ -9021,8 +9034,8 @@ packages:
     resolution: {integrity: sha512-+Owyggi9IxT1ePKGafcI87ubSmxol6smwJ+RAHDQlx9+9cPwFWDiKFFCPuWhr9ignlGpZ9vDQLw67N4dcTVFEA==}
     engines: {node: '>=20'}
 
-  qs@6.16.0:
-    resolution: {integrity: sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==}
+  qs@6.16.1:
+    resolution: {integrity: sha512-5Px6J7rfHBAGUhNQ3es4YzcOdBBw0SDcVtThJml4RdnKw4tKs2epA0kPZ+K8X+WiHktT93RHVcQ/3ym5aTCgtg==}
     engines: {node: '>=0.6'}
 
   queue-microtask@1.2.3:
@@ -19549,7 +19562,7 @@ snapshots:
     dependencies:
       hookified: 2.2.0
 
-  qs@6.16.0:
+  qs@6.16.1:
     dependencies:
       es-define-property: 1.0.1
       side-channel: 1.1.1
@@ -21027,7 +21040,7 @@ snapshots:
     dependencies:
       des.js: 1.1.0
       js-md4: 0.3.2
-      qs: 6.16.0
+      qs: 6.16.1
       tunnel: 0.0.6
       underscore: 1.13.8
 

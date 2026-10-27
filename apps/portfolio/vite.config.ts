@@ -8,6 +8,7 @@ import { defineConfig } from "vite-plus";
 import mdx from "./mdx.config.ts";
 import { ogImage } from "./og-image.ts";
 import { pages, sitemap, withLastmod } from "./prerender.ts";
+import { techniqueCatalog } from "./technique-catalog.ts";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
@@ -19,6 +20,7 @@ export default defineConfig({
   },
   plugins: [
     devtools(),
+    techniqueCatalog(),
     mdx,
     tailwindcss(),
     ogImage(),
