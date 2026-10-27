@@ -60,7 +60,6 @@ catalog:
   yaml: 2.9.1
   mdast-util-directive: ^3.1.1
   remark-directive: ^4.0.0
-  simple-icons: 16.35.0
   react-lite-youtube-embed: ^3.7.0
   budoux: 0.10.1
 catalogs:
