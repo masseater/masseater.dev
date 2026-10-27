@@ -5,6 +5,7 @@ import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 
 import { remarkDialogue } from "./remark-dialogue.ts";
 import { remarkGitDate } from "./remark-git-date.ts";
+import { remarkYouTube } from "./remark-youtube.ts";
 
 const remarkPlugins = [
   remarkFrontmatter,
@@ -12,6 +13,7 @@ const remarkPlugins = [
   remarkMdxFrontmatter,
   remarkGfm,
   remarkDirective,
+  remarkYouTube,
   remarkDialogue,
 ] as const;
 

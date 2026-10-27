@@ -8,8 +8,9 @@ import type { Render } from "./entry-module";
 import { FootnoteRef } from "./footnote-ref";
 import { ScrollTable } from "./scroll-table";
 import { Speech } from "./speech";
+import { YouTube } from "./you-tube";
 
-const components: MDXComponents = { FootnoteRef, Speech, table: ScrollTable };
+const components: MDXComponents = { FootnoteRef, Speech, YouTube, table: ScrollTable };
 
 const renderBody: Render = ({ default: Body }) => <Body components={components} />;
 
