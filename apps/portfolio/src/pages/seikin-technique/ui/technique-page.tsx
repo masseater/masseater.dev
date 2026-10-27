@@ -9,12 +9,12 @@ import { TechniqueView } from "./technique-view";
 const route = getRouteApi("/_site/seikin-techniques/$slug");
 
 const TechniquePage = (): ReactNode => {
-  const { slug, shader } = route.useLoaderData();
+  const { slug, source } = route.useLoaderData();
   return pipe(
     techniqueOf(slug),
     Option.toArray,
     Arr.map((technique) => (
-      <TechniqueView key={technique.slug} shader={shader} technique={technique} />
+      <TechniqueView key={technique.slug} source={source} technique={technique} />
     )),
   );
 };

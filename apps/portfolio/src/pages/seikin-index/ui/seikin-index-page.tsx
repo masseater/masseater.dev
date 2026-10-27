@@ -3,8 +3,7 @@ import type { ReactNode } from "react";
 
 import { articles } from "#/entities/technique";
 import { DanceCredit } from "#/features/dance-stage";
-import { INTRO, TITLE } from "#/pages/seikin-index/model/copy";
-import { progressText } from "#/pages/seikin-index/model/progress";
+import { TITLE } from "#/pages/seikin-index/model/copy";
 
 import { ArticleSection } from "./article-section";
 
@@ -14,8 +13,6 @@ const SeikinIndexPage = (): ReactNode => (
       <h1 className="font-display text-4xl leading-tight font-light text-balance sm:text-6xl">
         {TITLE}
       </h1>
-      <p className="leading-loose">{INTRO}</p>
-      <p className="text-muted-foreground text-sm">{progressText}</p>
       <DanceCredit />
     </header>
     {pipe(

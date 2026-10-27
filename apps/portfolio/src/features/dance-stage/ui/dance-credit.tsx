@@ -2,11 +2,9 @@ import type { ReactNode } from "react";
 
 import { danceSource } from "#/features/dance-stage/model/source";
 
-const CREDIT_TAIL = "の映像で、人物の切り抜きと骨格はこのサイトで推定した。";
-
 const DanceCredit = (): ReactNode => (
   <p className="text-muted-foreground text-xs leading-relaxed">
-    {`素材は${danceSource.performer}さんが踊る`}
+    {`素材は${danceSource.performer}さんの`}
     <a
       className="decoration-foreground/30 hover:decoration-foreground underline underline-offset-4"
       href={danceSource.url}
@@ -15,7 +13,6 @@ const DanceCredit = (): ReactNode => (
     >
       {`「${danceSource.title}」`}
     </a>
-    {CREDIT_TAIL}
   </p>
 );
 

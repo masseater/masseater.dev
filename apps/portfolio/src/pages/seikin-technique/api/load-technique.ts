@@ -4,9 +4,7 @@ import { Effect, Option } from "effect";
 import { techniqueOf } from "#/entities/technique";
 import { loadEffect } from "#/features/dance-stage";
 
-type Shader = Readonly<{ status: "ready"; source: string }> | Readonly<{ status: "pending" }>;
-
-type FoundTechnique = Readonly<{ slug: string; shader: Shader }>;
+type FoundTechnique = Readonly<{ slug: string; source: string }>;
 
 const loadTechnique = ({ slug }: Readonly<{ slug: string }>): Promise<FoundTechnique> =>
   Effect.runPromise(
@@ -14,16 +12,15 @@ const loadTechnique = ({ slug }: Readonly<{ slug: string }>): Promise<FoundTechn
       onNone: () => Effect.fail(notFound()),
       onSome: () =>
         loadEffect(slug).pipe(
-          Effect.map((source): FoundTechnique => ({
-            slug,
-            shader: Option.match(source, {
-              onNone: (): Shader => ({ status: "pending" }),
-              onSome: (found): Shader => ({ status: "ready", source: found }),
+          Effect.flatMap(
+            Option.match({
+              onNone: () => Effect.fail(notFound()),
+              onSome: (source) => Effect.succeed<FoundTechnique>({ slug, source }),
             }),
-          })),
+          ),
         ),
     }),
   );
 
-export type { FoundTechnique, Shader };
+export type { FoundTechnique };
 export { loadTechnique };
