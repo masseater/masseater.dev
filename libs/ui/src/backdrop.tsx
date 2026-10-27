@@ -2,28 +2,20 @@ import { MeshGradient } from "@paper-design/shaders-react";
 import { Record as Rec } from "effect";
 import type { ReactNode } from "react";
 
+import { backdropPalette } from "./backdrop-palette.ts";
 import type { CssVariables } from "./css-variables.ts";
 
-const PALETTE = {
-  base: "#ffffff",
-  sky: "#dbeafe",
-  pink: "#fbcfe8",
-  amber: "#fef3c7",
-  indigo: "#c7d2fe",
-  mint: "#d1fae5",
-} as const;
-
-const COLORS = Rec.values(PALETTE);
+const COLORS = Rec.values(backdropPalette);
 
 const MAX_PIXEL_COUNT = 230_400;
 
 const STILL_COLORS: CssVariables = {
-  "--still-base": PALETTE.base,
-  "--still-sky": PALETTE.sky,
-  "--still-pink": PALETTE.pink,
-  "--still-amber": PALETTE.amber,
-  "--still-indigo": PALETTE.indigo,
-  "--still-mint": PALETTE.mint,
+  "--still-base": backdropPalette.base,
+  "--still-sky": backdropPalette.sky,
+  "--still-pink": backdropPalette.pink,
+  "--still-amber": backdropPalette.amber,
+  "--still-indigo": backdropPalette.indigo,
+  "--still-mint": backdropPalette.mint,
 };
 
 const Backdrop = (): ReactNode => (

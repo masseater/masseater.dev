@@ -62,6 +62,7 @@
     "@vitejs/plugin-react": "catalog:",
     "@vitejs/plugin-rsc": "catalog:",
     "alchemy": "catalog:stack",
+    "budoux": "catalog:",
     "drizzle-kit": "catalog:stack",
     "mdast-util-directive": "catalog:",
     "mdast-util-mdx-jsx": "catalog:",
