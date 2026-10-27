@@ -1,12 +1,13 @@
-import { Array as Arr, Option, Predicate, Schema, pipe } from "effect";
-import type { Parent, PhrasingContent, Root, RootContent, Text } from "mdast";
+import type { Predicate } from "effect";
+import { Array as Arr, Option, Schema, pipe } from "effect";
+import type { PhrasingContent, Root, RootContent, Text } from "mdast";
 import type { ContainerDirective, LeafDirective, TextDirective } from "mdast-util-directive";
 import type { MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 import type { Plugin } from "unified";
 
+import { mapTree } from "./remark-tree.ts";
+import type { Transform } from "./remark-tree.ts";
 import { SpeakerSchema } from "./src/entities/entry/model/speaker.ts";
-
-type Transform<Input, Output> = (input: Input) => Output;
 
 const COMPONENT = "Speech";
 
@@ -19,9 +20,6 @@ const isInline: Predicate.Refinement<RootContent, LeafDirective | TextDirective>
   node.type === "leafDirective" || node.type === "textDirective";
 
 const isText: Predicate.Refinement<PhrasingContent, Text> = (node) => node.type === "text";
-
-const isParent: Predicate.Refinement<RootContent, Extract<RootContent, Parent>> = (node) =>
-  Predicate.hasProperty(node, "children");
 
 const restored: Transform<LeafDirective | TextDirective, Text> = (node) => ({
   type: "text",
@@ -53,20 +51,6 @@ const converted: Transform<RootContent, RootContent> = (node) =>
     Option.getOrElse(() => node),
   );
 
-const withChildren = <Node extends Parent>(
-  node: Node,
-  transform: Transform<RootContent, RootContent>,
-): Node => ({ ...node, children: pipe(node.children, Arr.map(transform)) });
-
-const transformNode: Transform<RootContent, RootContent> = (node) =>
-  converted(
-    pipe(
-      Option.liftPredicate(node, isParent),
-      Option.map((parent): RootContent => withChildren(parent, transformNode)),
-      Option.getOrElse(() => node),
-    ),
-  );
-
-const remarkDialogue: Plugin<[], Root> = () => (tree: Root) => withChildren(tree, transformNode);
+const remarkDialogue: Plugin<[], Root> = () => mapTree(converted);
 
 export { remarkDialogue };
