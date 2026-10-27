@@ -7,8 +7,9 @@ import { EntryModule } from "./entry-module";
 import type { Render } from "./entry-module";
 import { FootnoteRef } from "./footnote-ref";
 import { Speech } from "./speech";
+import { YouTube } from "./you-tube";
 
-const components: MDXComponents = { FootnoteRef, Speech };
+const components: MDXComponents = { FootnoteRef, Speech, YouTube };
 
 const renderBody: Render = ({ default: Body }) => <Body components={components} />;
 
