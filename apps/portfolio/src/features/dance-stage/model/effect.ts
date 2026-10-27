@@ -8,11 +8,13 @@ type Pass = Readonly<{
 
 type DanceEffect = Readonly<{
   note: string;
+  texts: readonly string[];
   passes: readonly Pass[];
 }>;
 
 const NOTE = "// note:";
 const PASS = "// pass:";
+const TEXT = "// text:";
 const PERSISTENT = "persistent";
 
 type Draft = Readonly<{ header: string; lines: readonly string[] }>;
@@ -67,19 +69,25 @@ const draftsOf = (lines: readonly string[]): readonly Draft[] => {
   );
 };
 
+const headerValue =
+  (prefix: string) =>
+  (line: string): string =>
+    pipe(line, Str.slice(prefix.length), Str.trim);
+
 const parseEffect = (source: string): DanceEffect => {
   const lines = Str.split(source, "\n");
   const note = pipe(
     lines,
     Arr.findFirst(Str.startsWith(NOTE)),
-    Option.map((line) => pipe(line, Str.slice(NOTE.length), Str.trim)),
+    Option.map(headerValue(NOTE)),
     Option.getOrElse(() => ""),
   );
+  const texts = pipe(lines, Arr.filter(Str.startsWith(TEXT)), Arr.map(headerValue(TEXT)));
   const body = pipe(
     lines,
-    Arr.filter((line) => !Str.startsWith(NOTE)(line)),
+    Arr.filter((line) => !Str.startsWith(NOTE)(line) && !Str.startsWith(TEXT)(line)),
   );
-  return { note, passes: pipe(draftsOf(body), Arr.map(passOf)) };
+  return { note, texts, passes: pipe(draftsOf(body), Arr.map(passOf)) };
 };
 
 export type { DanceEffect, Pass };

@@ -1,3 +1,7 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["mediapipe", "opencv-python-headless", "numpy", "librosa"]
+# ///
 import json
 import subprocess
 import sys
@@ -5,6 +9,7 @@ import urllib.request
 from pathlib import Path
 
 import cv2
+import librosa
 import mediapipe as mp
 import numpy as np
 
@@ -15,6 +20,12 @@ END = 28.8
 FPS = 30
 WIDTH = 640
 HEIGHT = 360
+HISTORY_STEP = 2
+HISTORY_WIDTH = 160
+HISTORY_HEIGHT = 90
+HISTORY_COLUMNS = 12
+BANDS = 8
+SAMPLE_RATE = 22050
 
 root = Path(__file__).resolve().parent
 cache = root / ".cache"
@@ -87,6 +98,38 @@ def plate(frames: np.ndarray, masks: np.ndarray) -> np.ndarray:
     return cv2.inpaint(median, cv2.dilate(holes, np.ones((9, 9), np.uint8)), 9, cv2.INPAINT_TELEA)
 
 
+def history(frames: np.ndarray, masks: np.ndarray) -> np.ndarray:
+    size = (HISTORY_WIDTH, HISTORY_HEIGHT)
+    tiles = [
+        np.concatenate(
+            [cv2.resize(frame, size, interpolation=cv2.INTER_AREA), np.repeat(cv2.resize(mask, size, interpolation=cv2.INTER_AREA)[..., None], 3, axis=2)],
+            axis=1,
+        )
+        for frame, mask in zip(frames[::HISTORY_STEP], masks[::HISTORY_STEP])
+    ]
+    rows = -(-len(tiles) // HISTORY_COLUMNS)
+    blank = np.zeros_like(tiles[0])
+    tiles += [blank] * (rows * HISTORY_COLUMNS - len(tiles))
+    return np.concatenate([np.concatenate(tiles[row * HISTORY_COLUMNS:(row + 1) * HISTORY_COLUMNS], axis=1) for row in range(rows)], axis=0)
+
+
+def audio(source: Path, count: int) -> tuple[list[list[float]], list[float]]:
+    raw = subprocess.run(
+        ["ffmpeg", "-v", "error", "-ss", str(START), "-to", str(END), "-i", str(source), "-ac", "1", "-ar", str(SAMPLE_RATE), "-f", "f32le", "-"],
+        check=True,
+        capture_output=True,
+    ).stdout
+    signal = np.frombuffer(raw, np.float32)
+    hop = SAMPLE_RATE // FPS
+    mel = librosa.power_to_db(librosa.feature.melspectrogram(y=signal, sr=SAMPLE_RATE, hop_length=hop, n_mels=BANDS), ref=np.max)
+    bands = np.clip((mel + 60) / 60, 0, 1).T
+    level = librosa.feature.rms(y=signal, hop_length=hop)[0]
+    level = level / max(level.max(), 1e-6)
+    _, beats = librosa.beat.beat_track(y=signal, sr=SAMPLE_RATE, hop_length=hop, units="time")
+    rows = [[round(float(level[i]), 3), *[round(float(b), 3) for b in bands[i]]] for i in range(min(count, len(level)))]
+    return rows, [round(float(t), 3) for t in beats]
+
+
 def main() -> None:
     cache.mkdir(exist_ok=True)
     out.mkdir(parents=True, exist_ok=True)
@@ -106,8 +149,13 @@ def main() -> None:
     matte = np.repeat(masks[..., None], 3, axis=3)
     background = np.broadcast_to(plate(frames, masks), frames.shape)
     encode(np.concatenate([frames, matte, background], axis=2), out / "dance.mp4", 20)
-    (root.parents[1] / "apps/portfolio/src/features/dance-stage/model/generated/pose.json").write_text(
-        json.dumps({"fps": FPS, "width": WIDTH, "height": HEIGHT, "frames": poses}, separators=(",", ":"))
+    cv2.imwrite(str(out / "history.jpg"), cv2.cvtColor(history(frames, masks), cv2.COLOR_RGB2BGR), [cv2.IMWRITE_JPEG_QUALITY, 82])
+    levels, beats = audio(source, len(frames))
+    (root.parents[1] / "apps/portfolio/src/features/dance-stage/model/generated/track.json").write_text(
+        json.dumps(
+            {"fps": FPS, "width": WIDTH, "height": HEIGHT, "frames": poses, "audio": levels, "beats": beats},
+            separators=(",", ":"),
+        )
     )
 
 
