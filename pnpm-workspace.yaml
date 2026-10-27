@@ -62,6 +62,7 @@ catalog:
   remark-directive: ^4.0.0
   simple-icons: 16.35.0
   react-lite-youtube-embed: ^3.7.0
+  budoux: 0.10.1
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.15

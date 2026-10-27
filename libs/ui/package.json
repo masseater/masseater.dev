@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./backdrop-palette": "./src/backdrop-palette.ts",
     "./portfolio": "./src/portfolio.ts",
     "./styles.css": "./src/styles.css"
   },
