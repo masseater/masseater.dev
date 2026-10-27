@@ -11,11 +11,12 @@ import type { Frame, Renderer } from "./renderer";
 
 const DANCE_SRC = "/seikin-techniques/dance.mp4";
 const HISTORY_SRC = "/seikin-techniques/history.jpg";
-const HISTORY_USES = /\b(?:history|pastRgb|pastMatte)\b/u;
+const HISTORY_USES = /\b(?:history|historyTile|pastRgb|pastMatte)\b/u;
 const HORIZONTAL = 0;
 const VERTICAL = 1;
+const DEPTH = 2;
 const VISIBILITY = 3;
-const FIELDS = [HORIZONTAL, VERTICAL, VISIBILITY];
+const FIELDS = [HORIZONTAL, VERTICAL, DEPTH, VISIBILITY];
 const MISSING = 0;
 const FIRST_FRAME = 0;
 const LAST_OFFSET = 1;

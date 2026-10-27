@@ -9,7 +9,7 @@ import type { Buffer, Gl, Size } from "./gl";
 const QUAD_VERTICES = 4;
 const ORIGIN = 0;
 const POSE_POINTS = 33;
-const POSE_FIELDS = 3;
+const POSE_FIELDS = 4;
 const BANDS = 8;
 const TEXT_ROWS = 8;
 const PING_PONG = 2;
@@ -18,6 +18,8 @@ const NEXT = 1;
 const FIRST_TICK = 0;
 const UNITS = { dance: 0, history: 1, glyphs: 2 } as const;
 const FIRST_INPUT_UNIT = 3;
+
+const emptyPose = (): Float32Array => new Float32Array(POSE_POINTS * POSE_FIELDS);
 
 type Frame = Readonly<{
   time: number;
@@ -39,6 +41,7 @@ type Context = Readonly<{
   quad: WebGLBuffer;
   textures: Readonly<Record<keyof typeof UNITS, WebGLTexture>>;
   textWidths: Float32Array;
+  lastPose: Float32Array;
   stages: readonly Stage[];
   clock: { tick: number };
 }>;
@@ -128,10 +131,15 @@ const setSamplers: Fn<StageInput, void> = ({
   gl.uniform1fv(gl.getUniformLocation(program, "textWidth"), textWidths);
 };
 
-const setFrame: Fn<StageInput, void> = ({ context: { gl }, stage: { program }, frame }) => {
+const setFrame: Fn<StageInput, void> = ({
+  context: { gl, lastPose },
+  stage: { program },
+  frame,
+}) => {
   gl.uniform1f(gl.getUniformLocation(program, "time"), frame.time);
+  gl.uniform4fv(gl.getUniformLocation(program, "lastPose"), lastPose);
   gl.uniform1f(gl.getUniformLocation(program, "frame"), frame.frame);
-  gl.uniform3fv(gl.getUniformLocation(program, "pose"), frame.pose);
+  gl.uniform4fv(gl.getUniformLocation(program, "pose"), frame.pose);
   gl.uniform1f(gl.getUniformLocation(program, "level"), frame.level);
   gl.uniform1fv(gl.getUniformLocation(program, "bands"), frame.bands);
   gl.uniform1f(gl.getUniformLocation(program, "beat"), frame.beat);
@@ -185,9 +193,13 @@ const draw: Fn<Readonly<{ context: Context; video: HTMLVideoElement; frame: Fram
 }) => {
   bindTextures(context);
   upload({ context, unit: UNITS.dance, source: video });
+  if (context.clock.tick === FIRST_TICK) {
+    context.lastPose.set(frame.pose);
+  }
   for (const [index, stage] of context.stages.entries()) {
     drawStage({ context, stage, index, frame });
   }
+  context.lastPose.set(frame.pose);
   context.clock.tick += NEXT;
 };
 
@@ -217,6 +229,7 @@ const contextFor: Fn<Readonly<{ canvas: HTMLCanvasElement; passes: readonly Pass
     quad: makeQuad(gl),
     textures: { dance: makeTexture(gl), history: makeTexture(gl), glyphs: makeTexture(gl) },
     textWidths: new Float32Array(TEXT_ROWS),
+    lastPose: emptyPose(),
     stages: pipe(
       passes,
       Arr.map((pass) => ({
@@ -250,8 +263,6 @@ const createRenderer: Fn<
     },
   };
 };
-
-const emptyPose = (): Float32Array => new Float32Array(POSE_POINTS * POSE_FIELDS);
 
 const emptyBands = (): Float32Array => new Float32Array(BANDS);
 
