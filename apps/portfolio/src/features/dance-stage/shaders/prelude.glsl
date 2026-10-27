@@ -62,6 +62,10 @@ float text(vec2 p, int row) {
   if (p.x < 0.0 || p.x > 1.0 || p.y < 0.0 || p.y > 1.0) return 0.0;
   return texture(glyphs, vec2(p.x * textWidth[row], (float(row) + p.y) / 8.0)).a;
 }
+float glyphCell(vec2 p, int row, float index) {
+  if (p.x < 0.0 || p.x > 1.0 || p.y < 0.0 || p.y > 1.0) return 0.0;
+  return texture(glyphs, vec2((index + p.x) / 16.0, (float(row) + p.y) / 8.0)).a;
+}
 float textBox(vec2 p, vec2 center, float height, int row) {
   float aspect = resolution.x / resolution.y;
   vec2 size = vec2(height * textAspect(row) / aspect, height);

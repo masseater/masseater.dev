@@ -6,15 +6,18 @@ type Pass = Readonly<{
   persistent: boolean;
 }>;
 
+type TextRow = Readonly<{ text: string; cells: boolean }>;
+
 type DanceEffect = Readonly<{
   note: string;
-  texts: readonly string[];
+  texts: readonly TextRow[];
   passes: readonly Pass[];
 }>;
 
 const NOTE = "// note:";
 const PASS = "// pass:";
 const TEXT = "// text:";
+const GLYPHS = "// glyphs:";
 const PERSISTENT = "persistent";
 
 type Draft = Readonly<{ header: string; lines: readonly string[] }>;
@@ -74,6 +77,16 @@ const headerValue =
   (line: string): string =>
     pipe(line, Str.slice(prefix.length), Str.trim);
 
+const isText = (line: string): boolean =>
+  Str.startsWith(TEXT)(line) || Str.startsWith(GLYPHS)(line);
+
+const textRowOf = (line: string): TextRow => {
+  if (Str.startsWith(GLYPHS)(line)) {
+    return { text: headerValue(GLYPHS)(line), cells: true };
+  }
+  return { text: headerValue(TEXT)(line), cells: false };
+};
+
 const parseEffect = (source: string): DanceEffect => {
   const lines = Str.split(source, "\n");
   const note = pipe(
@@ -82,13 +95,13 @@ const parseEffect = (source: string): DanceEffect => {
     Option.map(headerValue(NOTE)),
     Option.getOrElse(() => ""),
   );
-  const texts = pipe(lines, Arr.filter(Str.startsWith(TEXT)), Arr.map(headerValue(TEXT)));
+  const texts = pipe(lines, Arr.filter(isText), Arr.map(textRowOf));
   const body = pipe(
     lines,
-    Arr.filter((line) => !Str.startsWith(NOTE)(line) && !Str.startsWith(TEXT)(line)),
+    Arr.filter((line) => !Str.startsWith(NOTE)(line) && !isText(line)),
   );
   return { note, texts, passes: pipe(draftsOf(body), Arr.map(passOf)) };
 };
 
-export type { DanceEffect, Pass };
+export type { DanceEffect, Pass, TextRow };
 export { parseEffect };

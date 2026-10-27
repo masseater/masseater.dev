@@ -1,5 +1,5 @@
 // note: 前から読んでも後ろから読んでも同じ文のように、踊りを 2 秒進めてから同じ 2 秒を逆に戻す。下の回文は、今再生している位置に当たる字を光らせる。
-// text: たけやぶやけた
+// glyphs: たけやぶやけた
 void main() {
   float phase = mod(time, 4.0);
   float t = floor(time / 4.0) * 4.0 + (phase < 2.0 ? phase : 4.0 - phase);
