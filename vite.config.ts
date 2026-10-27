@@ -122,8 +122,7 @@ export default defineConfig({
         "error",
         {
           capIsNewExceptions: ["CloudflareApiLive", "Stack"],
-          capIsNewExceptionPattern:
-            "^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|Logpush|R2|Ruleset|Website|Workers|Zone)\\.",
+          capIsNewExceptionPattern: String.raw`^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|Logpush|R2|Ruleset|Website|Workers|Zone)\.`,
         },
       ],
       "typescript/no-empty-interface": ["error", { allowSingleExtends: true }],
