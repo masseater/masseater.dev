@@ -1,30 +1,21 @@
 import { Resvg } from "@resvg/resvg-js";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 import { Base64 } from "effect/encoding";
-import { createElement } from "react";
-import type { ReactNode } from "react";
 import satori from "satori";
 import type { Font } from "satori";
 import type { Plugin } from "vite-plus";
 import { parse } from "yaml";
 
-import { categories, categoryMeta } from "./src/entities/entry/model/category.ts";
-import type { Category } from "./src/entities/entry/model/category.ts";
+import { BOLD, JAPANESE, LATIN, REGULAR, cardElement, siteElement } from "./og-card.ts";
+import type { Card } from "./og-card.ts";
+import { categories } from "./src/entities/entry/model/category.ts";
 import { entryOgImagePath } from "./src/entities/entry/model/entry.ts";
 import { site } from "./src/shared/config/site.ts";
 
-const BOLD = 700;
-const REGULAR = 400;
-const TITLE_LINES = 3;
-const AVATAR_SIZE = 72;
 const CLIENT_ENVIRONMENT = "client";
 const FRONTMATTER = /^---\n(?<yaml>[\s\S]*?)\n---/u;
 const MARKDOWN = /\.md$/u;
 const LEADING_SLASH = /^\//u;
-const LATIN = "Noto Sans JP Latin";
-const JAPANESE = "Noto Sans JP";
-
-const colors = { background: "#fafafa", foreground: "#18181b", muted: "#71717a" } as const;
 
 const fontFiles = [
   {
@@ -55,15 +46,13 @@ const OgFrontmatter = Schema.Struct({ title: Schema.String, published: Schema.Bo
 
 const decodeFrontmatter = Schema.decodeUnknownOption(OgFrontmatter);
 
-type Card = Readonly<{ category: Category; slug: string; title: string }>;
-
 type Source = Readonly<{
   root: string;
   readdir: (path: string) => Promise<string[]>;
   readFile: (path: string) => Promise<Uint8Array>;
 }>;
 
-type File = Readonly<{ category: Category; name: string }>;
+type File = Readonly<{ category: Card["category"]; name: string }>;
 
 const readBytes = (source: Source, path: string): Effect.Effect<Uint8Array> =>
   Effect.promise(() => source.readFile(`${source.root}/${path}`));
@@ -92,7 +81,7 @@ const cardOf = (source: Source, { category, name }: File): Effect.Effect<Option.
     ),
   );
 
-const filesOf = (source: Source, category: Category): Effect.Effect<readonly File[]> =>
+const filesOf = (source: Source, category: Card["category"]): Effect.Effect<readonly File[]> =>
   Effect.promise(() => source.readdir(`${source.root}/content/${category}`)).pipe(
     Effect.map((names) =>
       pipe(
@@ -132,87 +121,28 @@ const avatarOf = (source: Source): Effect.Effect<string> =>
     Effect.map((bytes) => `data:image/png;base64,${Base64.encode(bytes)}`),
   );
 
-const categoryLabel = (card: Card): ReactNode =>
-  createElement(
-    "div",
-    { style: { display: "flex", fontSize: 32, fontWeight: BOLD, color: colors.muted } },
-    categoryMeta[card.category].title,
-  );
-
-const titleText = (card: Card): ReactNode =>
-  createElement(
-    "div",
-    {
-      style: {
-        display: "block",
-        fontSize: 60,
-        fontWeight: BOLD,
-        lineHeight: 1.35,
-        lineClamp: TITLE_LINES,
-      },
-    },
-    card.title,
-  );
-
-const byline = (avatar: string): ReactNode =>
-  createElement(
-    "div",
-    { style: { display: "flex", alignItems: "center", gap: 24 } },
-    createElement("img", {
-      src: avatar,
-      width: AVATAR_SIZE,
-      height: AVATAR_SIZE,
-      style: { borderRadius: AVATAR_SIZE },
-    }),
-    createElement("div", { style: { display: "flex", fontSize: 32, fontWeight: BOLD } }, site.name),
-    createElement(
-      "div",
-      { style: { display: "flex", marginLeft: "auto", fontSize: 30, color: colors.muted } },
-      new URL(site.url).host,
-    ),
-  );
-
-const cardElement = (card: Card, avatar: string): ReactNode =>
-  createElement(
-    "div",
-    {
-      style: {
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        width: "100%",
-        height: "100%",
-        padding: "72px 88px",
-        backgroundColor: colors.background,
-        color: colors.foreground,
-        fontFamily: `${LATIN}, ${JAPANESE}`,
-      },
-    },
-    categoryLabel(card),
-    titleText(card),
-    byline(avatar),
-  );
-
 type Png = Readonly<{ fileName: string; png: Uint8Array }>;
+
+const toFileName = Str.replace(LEADING_SLASH, "");
 
 const renderCards = (source: Source): Effect.Effect<readonly Png[]> =>
   Effect.all({ cards: cardsOf(source), avatar: avatarOf(source), fonts: fontsOf(source) }).pipe(
     Effect.flatMap(({ cards, avatar, fonts }) =>
       pipe(
         cards,
-        Effect.forEach((card) =>
+        Arr.map((card) => ({
+          element: cardElement(avatar)(card),
+          fileName: toFileName(entryOgImagePath(card)),
+        })),
+        Arr.prepend({ element: siteElement(avatar), fileName: toFileName(site.ogImage.path) }),
+        Effect.forEach(({ element, fileName }) =>
           Effect.promise(() =>
-            satori(cardElement(card, avatar), {
+            satori(element, {
               width: site.ogImage.width,
               height: site.ogImage.height,
               fonts: [...fonts],
             }),
-          ).pipe(
-            Effect.map((svg) => ({
-              fileName: pipe(entryOgImagePath(card), Str.replace(LEADING_SLASH, "")),
-              png: new Resvg(svg).render().asPng(),
-            })),
-          ),
+          ).pipe(Effect.map((svg) => ({ fileName, png: new Resvg(svg).render().asPng() }))),
         ),
       ),
     ),
