@@ -4,8 +4,6 @@ import type { Entry } from "#/entities/entry";
 import { StarButton } from "#/features/star";
 import type { Direction } from "#/pages/entry/model/direction";
 
-import { ShareLinks } from "./share-links";
-
 const REACTIONS_CLASS = {
   row: "flex min-h-12 flex-wrap items-center justify-between gap-x-6 gap-y-3",
   column: "flex flex-col items-center gap-6",
@@ -19,7 +17,6 @@ const EntryReactions = ({
     className={`text-foreground/60 font-display text-xs tracking-widest ${REACTIONS_CLASS[direction]}`}
   >
     <StarButton entry={entry} />
-    <ShareLinks direction={direction} entry={entry} />
   </div>
 );
 
