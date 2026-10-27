@@ -1,4 +1,5 @@
 @import "@masseater.dev/ui/styles.css";
+@import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -105,7 +106,7 @@
 }
 
 [data-footnotes] {
-  @apply bg-muted text-muted-foreground mt-8 rounded-2xl border px-6 py-5 text-sm leading-relaxed;
+  @apply text-muted-foreground mt-8 text-sm leading-relaxed;
 }
 [data-footnotes] > h2 {
   @apply text-muted-foreground mt-0 mb-3 font-sans text-xs font-medium tracking-widest;
@@ -126,11 +127,7 @@
 
 @utility site-header {
   height: var(--site-header-height);
-  @supports (animation-timeline: scroll()) {
-    animation: site-header-surface linear both;
-    animation-timeline: scroll();
-    animation-range: 0 4rem;
-  }
+  view-transition-name: site-header;
 }
 
 @utility below-site-header {
@@ -143,6 +140,11 @@
 
 @utility entry-title-scope {
   timeline-scope: --entry-title;
+  @supports (animation-timeline: view()) {
+    animation: entry-title-out linear both;
+    animation-timeline: --entry-title;
+    animation-range: exit 0% exit 100%;
+  }
 }
 
 @utility entry-title-timeline {
@@ -155,9 +157,13 @@
   display: none;
   @supports (animation-timeline: view()) {
     display: flex;
-    animation: entry-title-bar-in linear both;
-    animation-timeline: --entry-title;
-    animation-range: exit 0% exit 100%;
+    visibility: hidden;
+    opacity: 0;
+    translate: 0 -0.5rem;
+    transition:
+      opacity 0.2s ease-out,
+      translate 0.2s ease-out,
+      visibility 0.2s;
   }
 }
 
@@ -235,12 +241,22 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   animation: slide-in-left 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-::view-transition-old(.entry):not(:only-child) {
-  display: none;
+::view-transition-group(.entry) {
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
 
-::view-transition-new(.entry):not(:only-child) {
-  animation: none;
+::view-transition-old(.entry),
+::view-transition-new(.entry) {
+  width: auto;
+  height: 100%;
+}
+
+::view-transition-old(.entry) {
+  animation: entry-fade-out 0.12s ease-out both;
+}
+
+::view-transition-new(.entry) {
+  animation: entry-fade-in 0.24s ease-out 0.06s both;
 }
 
 ::view-transition-new(feed-link):only-child {
@@ -249,6 +265,26 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 
 ::view-transition-old(feed-link):only-child {
   animation: feed-slide-out 0.25s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+::view-transition-group(site-header) {
+  z-index: 1;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-group(site-name),
+::view-transition-group(nav-indicator),
+::view-transition-group(category-projects),
+::view-transition-group(category-blogs),
+::view-transition-group(category-scraps) {
+  z-index: 2;
 }
 
 ::view-transition-group(nav-indicator) {
@@ -265,18 +301,40 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   display: none;
 }
 
-@keyframes site-header-surface {
-  from {
-    background-color: transparent;
-    backdrop-filter: none;
+@property --entry-title-out {
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes entry-title-out {
+  0%,
+  85% {
+    --entry-title-out: 0;
+  }
+  86%,
+  100% {
+    --entry-title-out: 1;
   }
 }
 
-@keyframes entry-title-bar-in {
-  from {
-    visibility: hidden;
+@container style(--entry-title-out: 1) {
+  [data-entry-title-bar] {
+    visibility: visible;
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes entry-fade-out {
+  to {
     opacity: 0;
-    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes entry-fade-in {
+  from {
+    opacity: 0;
   }
 }
 

@@ -12,10 +12,11 @@ const EntryListItem = ({
   entry,
   stars,
 }: Readonly<{ entry: Entry; stars: Option.Option<number> }>): ReactNode => (
-  <li className="entry-rise border-foreground/10 flex min-w-0 border-t">
+  <li className="border-foreground/10 flex min-w-0 border-t">
     <Link
       className="group flex w-full min-w-0 flex-col gap-4 pt-6 pb-10"
       params={entry}
+      preload="viewport"
       to="/$category/$slug"
     >
       <span

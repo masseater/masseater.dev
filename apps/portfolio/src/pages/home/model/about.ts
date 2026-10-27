@@ -2,9 +2,36 @@ const ABOUT_ID = "about";
 
 const ABOUT_TITLE = "About";
 
-const ABOUT_BIO = [
-  "masseater はソフトウェアエンジニアで、TypeScript と Effect を使って Web サービスや開発ツールを作っている。",
-  "毎日 AI にコードを書かせており、Claude Code の使い方は Zenn に、AI と雇用や情報漏えいについての考えはこのサイトの Blogs に書いている。",
+const AVATAR_PATH = "/avatars/masseater.png";
+
+const PREFERENCES = [
+  {
+    term: "好きなもの",
+    items: [
+      "超かぐや姫！",
+      "自由なインターネット",
+      "ニコニコメドレーシリーズ",
+      "音MAD",
+      "ボーカロイド",
+      "ハースストーン",
+      "Slay the Spire",
+      "ガンダム",
+    ],
+  },
+  {
+    term: "嫌いなもの",
+    items: [
+      "不自由なインターネット",
+      "季節の変わり目",
+      "パクチー",
+      "自分の感情だけで制限しようとする人",
+      "ボカコレ",
+    ],
+  },
+  {
+    term: "苦手なもの",
+    items: ["3Dゲーム（3D酔いするので）"],
+  },
 ] as const;
 
-export { ABOUT_BIO, ABOUT_ID, ABOUT_TITLE };
+export { ABOUT_ID, ABOUT_TITLE, AVATAR_PATH, PREFERENCES };

@@ -33,6 +33,10 @@
       radial-gradient(circle at 20% 80%, var(--still-mint), transparent 55%), var(--still-base);
   }
 
+  .stage-backdrop canvas {
+    animation: backdrop-reveal 1.2s var(--ease) both;
+  }
+
   .stage-spotlight {
     width: 70vmax;
     height: 70vmax;
@@ -69,6 +73,12 @@
   .stage-links {
     transform: translate3d(calc(var(--tx) * 2rem), calc(var(--ty) * 2rem), 0);
     transition: transform 1.4s var(--ease);
+  }
+
+  @keyframes backdrop-reveal {
+    from {
+      opacity: 0;
+    }
   }
 
   @keyframes stage-wave {
@@ -119,11 +129,6 @@
   view-transition-class: page;
 }
 
-@utility entry-rise {
-  animation: entry-rise 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: calc(min(sibling-index(), 8) * 25ms);
-}
-
 @utility glass-surface {
   @apply bg-background/35 ring-foreground/5 rounded-3xl ring-1 backdrop-blur-md;
 }
@@ -164,13 +169,6 @@
   display: none;
 }
 
-@keyframes entry-rise {
-  from {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-}
-
 @keyframes drift-out {
   to {
     opacity: 0;
@@ -193,10 +191,6 @@
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
-    animation: none;
-  }
-
-  .entry-rise {
     animation: none;
   }
 }

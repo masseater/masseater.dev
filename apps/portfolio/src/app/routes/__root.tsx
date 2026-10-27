@@ -2,6 +2,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext } from "@tanstack/react-router";
 
 import { RootDocument } from "#/app/shell/root-document";
+import { RootLayout } from "#/app/shell/root-layout";
 import { RootNotFound } from "#/app/shell/root-not-found";
 import { site } from "#/shared/config";
 
@@ -29,6 +30,7 @@ const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
     ],
   }),
   shellComponent: RootDocument,
+  component: RootLayout,
   notFoundComponent: RootNotFound,
 });
 

@@ -11,6 +11,14 @@ const EMPTY_MESSAGE = "まだ何もない。";
 
 const NO_STARS = 0;
 
+const starsOf =
+  (starCounts: Option.Option<Record.ReadonlyRecord<string, number>>) =>
+  (entry: Entry): Option.Option<number> =>
+    pipe(
+      starCounts,
+      Option.map((counts) => Option.getOrElse(Record.get(counts, entry.slug), () => NO_STARS)),
+    );
+
 const EntryList = ({
   layout,
   entries,
@@ -33,7 +41,11 @@ const EntryList = ({
         {pipe(
           entries,
           Array.map((entry) => (
-            <EntryIndexItem entry={entry} key={`${entry.category}/${entry.slug}`} />
+            <EntryIndexItem
+              entry={entry}
+              key={`${entry.category}/${entry.slug}`}
+              stars={starsOf(starCounts)(entry)}
+            />
           )),
         )}
       </ol>
@@ -47,12 +59,7 @@ const EntryList = ({
           <EntryListItem
             entry={entry}
             key={`${entry.category}/${entry.slug}`}
-            stars={pipe(
-              starCounts,
-              Option.map((counts) =>
-                Option.getOrElse(Record.get(counts, entry.slug), () => NO_STARS),
-              ),
-            )}
+            stars={starsOf(starCounts)(entry)}
           />
         )),
       )}
