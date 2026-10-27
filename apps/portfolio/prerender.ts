@@ -14,7 +14,7 @@ const categoryPaths = pipe(
 
 const pages = [
   ...pipe(
-    ["/", ...categoryPaths],
+    ["/", "/seikin-techniques/", ...categoryPaths],
     Arr.map((path) => ({ path })),
   ),
   ...pipe(

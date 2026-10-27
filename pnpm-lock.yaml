@@ -281,6 +281,9 @@ catalogs:
     mdast-util-mdx-jsx:
       specifier: 3.2.0
       version: 3.2.0
+    mdast-util-to-string:
+      specifier: 4.0.0
+      version: 4.0.0
     radix-ui:
       specifier: 1.8.1
       version: 1.8.1
@@ -302,6 +305,9 @@ catalogs:
     remark-mdx-frontmatter:
       specifier: 6.0.0
       version: 6.0.0
+    remark-parse:
+      specifier: 11.0.0
+      version: 11.0.0
     satori:
       specifier: 0.63.2
       version: 0.63.2
@@ -666,6 +672,9 @@ importers:
       mdast-util-mdx-jsx:
         specifier: 'catalog:'
         version: 3.2.0(supports-color@7.2.0)
+      mdast-util-to-string:
+        specifier: 'catalog:'
+        version: 4.0.0
       rehype-slug:
         specifier: 'catalog:'
         version: 6.0.0
@@ -681,6 +690,9 @@ importers:
       remark-mdx-frontmatter:
         specifier: 'catalog:'
         version: 6.0.0
+      remark-parse:
+        specifier: 'catalog:'
+        version: 11.0.0(supports-color@7.2.0)
       satori:
         specifier: 'catalog:'
         version: 0.63.2
