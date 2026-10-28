@@ -33,6 +33,8 @@ type Frame = Readonly<{
 
 type Asset = "history" | "glyphs";
 
+type Source = HTMLImageElement | HTMLCanvasElement;
+
 type Stage = Readonly<{ pass: Pass; program: WebGLProgram; buffers: readonly Buffer[] }>;
 
 type Context = Readonly<{
@@ -48,7 +50,7 @@ type Context = Readonly<{
 
 type Renderer = Readonly<{
   draw: Fn<Readonly<{ video: HTMLVideoElement; frame: Frame }>, void>;
-  upload: Fn<Readonly<{ asset: Asset; source: TexImageSource }>, void>;
+  upload: Fn<Readonly<{ asset: Asset; source: Source }>, void>;
   setTextWidths: Fn<readonly number[], void>;
   dispose: () => void;
 }>;
@@ -266,5 +268,5 @@ const createRenderer: Fn<
 
 const emptyBands = (): Float32Array => new Float32Array(BANDS);
 
-export type { Asset, Frame, Renderer };
+export type { Asset, Frame, Renderer, Source };
 export { BANDS, createRenderer, emptyBands, emptyPose, POSE_FIELDS, POSE_POINTS, TEXT_ROWS };

@@ -1,20 +1,3 @@
-#version 300 es
-precision highp float;
-uniform sampler2D dance;
-uniform vec2 resolution;
-uniform float time;
-uniform float frame;
-uniform vec4 pose[33];
-uniform vec4 lastPose[33];
-uniform sampler2D history;
-uniform sampler2D glyphs;
-uniform float textWidth[8];
-uniform float level;
-uniform float bands[8];
-uniform float beat;
-uniform float beatCount;
-in vec2 uv;
-out vec4 outColor;
 const float PI = 3.14159265;
 const float DURATION = 28.8;
 const float HISTORY_FPS = 15.0;
@@ -26,7 +9,6 @@ vec2 panel(vec2 p, float index) {
 vec3 rgb(vec2 p) { return texture(dance, panel(p, 0.0)).rgb; }
 float matte(vec2 p) { return smoothstep(0.25, 0.75, texture(dance, panel(p, 1.0)).r); }
 vec3 plate(vec2 p) { return texture(dance, panel(p, 2.0)).rgb; }
-vec4 read(sampler2D target, vec2 p) { return texture(target, vec2(p.x, 1.0 - p.y)); }
 float luma(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p) {

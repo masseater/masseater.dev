@@ -1,5 +1,6 @@
 import { Option } from "effect";
 
+import HEADER from "#/features/dance-stage/shaders/prelude-webgl.glsl?raw";
 import PRELUDE from "#/features/dance-stage/shaders/prelude.glsl?raw";
 import VERTEX from "#/features/dance-stage/shaders/vertex.glsl?raw";
 
@@ -42,7 +43,7 @@ const link: Fn<Readonly<{ gl: Gl; frag: string }>, WebGLProgram> = ({ gl, frag }
   gl.attachShader(program, compile({ gl, type: gl.VERTEX_SHADER, source: VERTEX }));
   gl.attachShader(
     program,
-    compile({ gl, type: gl.FRAGMENT_SHADER, source: `${PRELUDE}\n${frag}` }),
+    compile({ gl, type: gl.FRAGMENT_SHADER, source: `${HEADER}\n${PRELUDE}\n${frag}` }),
   );
   gl.bindAttribLocation(program, CORNER, "corner");
   gl.linkProgram(program);

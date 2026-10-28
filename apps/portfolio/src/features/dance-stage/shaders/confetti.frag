@@ -1,9 +1,13 @@
-// note: 8 拍ごとに画面の上から色とりどりの紙吹雪を打ち出し、ひらひらと裏返りながら落とす。長いテープも何本か弧を描いて降らせる。
+// note: 8 拍ごとに画面の上から色とりどりの紙吹雪を打ち出し、ひらひらと裏返りながら落とす。長いテープも何本か弧を描いて降らせる。紙吹雪は WebGL では 70 枚、WebGPU では compute shader で 1536 枚を降らせる。
 void main() {
   vec3 c = rgb(uv);
   float burst = floor(beatCount / 8.0);
   float t = mod(beatCount, 8.0) + beat;
   t = t * 0.5;
+#ifdef WEBGPU
+  vec2 s = splat(uv);
+  c = mix(c, hsv(vec3(s.y, 0.7, min(s.x, 1.0))), step(0.3, s.x));
+#else
   for (int i = 0; i < 70; i++) {
     float fi = float(i);
     vec2 seed = vec2(fi, burst);
@@ -16,6 +20,7 @@ void main() {
     vec3 col = hsv(vec3(hash(seed + 3.0), 0.7, 0.6 + 0.4 * flip));
     c = mix(c, col, piece);
   }
+#endif
   for (int i = 0; i < 5; i++) {
     float fi = float(i);
     float x0 = 0.15 + fi * 0.18;

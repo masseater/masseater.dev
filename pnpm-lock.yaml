@@ -248,6 +248,9 @@ catalogs:
     '@vitejs/plugin-rsc':
       specifier: 0.5.38
       version: 0.5.38
+    '@webgpu/types':
+      specifier: 0.1.74
+      version: 0.1.74
     '@yarnpkg/parsers':
       specifier: 3.1.0
       version: 3.1.0
@@ -284,6 +287,9 @@ catalogs:
     mdast-util-to-string:
       specifier: 4.0.0
       version: 4.0.0
+    naga-wasm:
+      specifier: 30.2.0
+      version: 30.2.0
     radix-ui:
       specifier: 1.8.1
       version: 1.8.1
@@ -658,6 +664,9 @@ importers:
       '@vitejs/plugin-rsc':
         specifier: 'catalog:'
         version: 0.5.38(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(yaml@2.9.1))(react-dom@19.3.1(react@19.3.1))(react-server-dom-webpack@19.3.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(webpack@5.111.1(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@26.6.5))(uglify-js@3.19.3)))(react@19.3.1)
+      '@webgpu/types':
+        specifier: 'catalog:'
+        version: 0.1.74
       alchemy:
         specifier: catalog:stack
         version: 2.0.0-beta.83(@effect/platform-node@4.0.0(effect@4.0.5)(redis@6.2.1(@opentelemetry/api@1.9.1)))(@types/node@26.6.5)(@types/react@19.3.0)(drizzle-kit@1.0.0-rc.5-ab785fc)(drizzle-orm@1.0.0-rc.5-ab785fc(@cloudflare/workers-types@5.20261024.1)(@effect/sql-d1@4.0.5(effect@4.0.5))(@effect/sql-sqlite-do@4.0.5(effect@4.0.5))(@electric-sql/pglite@0.3.15)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(@sinclair/typebox@0.34.52)(effect@4.0.5)(valibot@1.5.0(typescript@7.0.2))(zod@3.25.76))(effect@4.0.5)(esbuild@0.28.1)(hono@4.13.13)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(ws@8.22.0)
@@ -676,6 +685,9 @@ importers:
       mdast-util-to-string:
         specifier: 'catalog:'
         version: 4.0.0
+      naga-wasm:
+        specifier: 'catalog:'
+        version: 30.2.0
       rehype-slug:
         specifier: 'catalog:'
         version: 6.0.0
@@ -5612,6 +5624,9 @@ packages:
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
 
+  '@webgpu/types@0.1.74':
+    resolution: {integrity: sha512-lgiI4hbuLcI9unnm2cL/tvCaQU45dp0xcLWJh5uB/9MBGvIA4F8XIk7nSiBeg+K4xWGYwgZKn80LmERI5CxoTA==}
+
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
 
@@ -8608,6 +8623,10 @@ packages:
   mv@2.1.1:
     resolution: {integrity: sha512-at/ZndSy3xEGJ8i0ygALh8ru9qy7gWW1cmkaqBN29JmMlIvM//MEO9y1sk/avxuwnPcfhkejkLsuPxH81BrkSg==}
     engines: {node: '>=0.8.0'}
+
+  naga-wasm@30.2.0:
+    resolution: {integrity: sha512-TNKjybMep7dUtmslyueiXMhZLa8Tr432/v0XUcbRfip0gb9liiiynoX8iLNcOkqK/8LaIoG+8HEy4LE6/y8R1w==}
+    engines: {node: '>=24.12'}
 
   nan@2.29.0:
     resolution: {integrity: sha512-GlGk3HIvitbvs+LT3g6XUP1kpirKNvmDFwF/bmo6XNWSb/eYEs/O4bfgIEIXCZ+lIOTS5xNwDvSGMw6FJdAhtA==}
@@ -15594,6 +15613,8 @@ snapshots:
       '@xtuc/long': 4.2.2
     optional: true
 
+  '@webgpu/types@0.1.74': {}
+
   '@xtuc/ieee754@1.2.0':
     optional: true
 
@@ -19030,6 +19051,8 @@ snapshots:
       ncp: 2.0.0
       rimraf: 2.4.5
     optional: true
+
+  naga-wasm@30.2.0: {}
 
   nan@2.29.0:
     optional: true

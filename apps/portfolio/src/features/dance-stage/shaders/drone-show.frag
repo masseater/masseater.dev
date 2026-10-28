@@ -1,7 +1,18 @@
-// note: 夜空に光の点を 240 個浮かべ、点の並びで踊る人の形を描く。6 秒ごとに全部の点が飛んでハートの形に組み替わり、また人の形に戻る。
+// note: 夜空に光の点を浮かべ、点の並びで踊る人の形を描く。6 秒ごとに全部の点が飛んでハートの形に組み替わり、また人の形に戻る。WebGL では 240 機、WebGPU では本物のドローンショーと同じ規模の 3840 機を compute shader で飛ばす。
 void main() {
   vec3 c = mix(vec3(0.0, 0.02, 0.08), vec3(0.02, 0.05, 0.15), uv.y);
   c = mix(c, vec3(0.03, 0.03, 0.05), step(0.9, uv.y));
+#ifdef WEBGPU
+  vec2 s = splat(uv);
+  float halo = 0.0;
+  for (int i = 0; i < 12; i++) {
+    float a = float(i) * 2.399;
+    vec2 o = vec2(cos(a), sin(a)) * (0.008 + 0.002 * float(i)) * vec2(1.0 / aspect(), 1.0);
+    halo += splat(uv + o).x;
+  }
+  vec3 tint = hsv(vec3(fract(s.y), 0.6, 1.0));
+  c += tint * (1.0 - exp(-s.x * 1.2)) + vec3(0.5, 0.6, 1.0) * halo * 0.02;
+#else
   float phase = fract(time / 6.0);
   float k = smoothstep(0.35, 0.55, phase) * (1.0 - smoothstep(0.8, 1.0, phase));
   vec2 lo = vec2(0.3, 0.05);
@@ -19,5 +30,6 @@ void main() {
     float glow = 0.0007 / (pow(dist(uv, pos), 2.0) + 0.00002) * vis;
     c += hsv(vec3(fract(fi * 0.013 + time * 0.05), 0.6, 1.0)) * min(glow, 2.0) * 0.12;
   }
+#endif
   outColor = vec4(c, 1.0);
 }

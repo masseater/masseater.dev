@@ -1,11 +1,16 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
+import { constVoid } from "effect/Function";
 
+import { SCREEN } from "#/features/dance-stage/model/effect";
 import type { DanceEffect } from "#/features/dance-stage/model/effect";
+import { loadGpuEffect } from "#/features/dance-stage/model/effects";
 import type { DanceTrack } from "#/features/dance-stage/model/track";
 
 import type { Fn } from "./fn";
+import type { Size } from "./gl";
 import { drawGlyphs } from "./glyphs";
 import type { Glyphs } from "./glyphs";
+import { createGpuRenderer } from "./gpu";
 import { BANDS, createRenderer, emptyBands, emptyPose, POSE_FIELDS, POSE_POINTS } from "./renderer";
 import type { Frame, Renderer } from "./renderer";
 
@@ -23,6 +28,9 @@ const LAST_OFFSET = 1;
 const LEVEL = 0;
 const FIRST_BAND = 1;
 const NO_BEAT = 1000;
+const OFFSCREEN_SCALE = 2;
+const OFFSCREEN: Size = [SCREEN.width / OFFSCREEN_SCALE, SCREEN.height / OFFSCREEN_SCALE];
+const SCREEN_SIZE: Size = [SCREEN.width, SCREEN.height];
 
 type Point = DanceTrack["frames"][number][number];
 
@@ -113,10 +121,17 @@ const createVideo = (): HTMLVideoElement => {
   video.src = DANCE_SRC;
   video.muted = true;
   video.loop = true;
-  video.autoplay = true;
   video.playsInline = true;
   return video;
 };
+
+const play: Fn<HTMLVideoElement, Effect.Effect<void>> = (video) =>
+  Effect.tryPromise(() => video.play()).pipe(
+    Effect.matchEffect({
+      onFailure: (error) => Effect.logWarning("セイキンダンスの動画を再生できない", error),
+      onSuccess: () => Effect.void,
+    }),
+  );
 
 const loadHistory: Fn<Readonly<{ renderer: Renderer; effect: DanceEffect }>, void> = ({
   renderer,
@@ -153,27 +168,69 @@ const loadGlyphs: Fn<Readonly<{ renderer: Renderer; effect: DanceEffect }>, void
   }
 };
 
-const startStage: Fn<
-  Readonly<{ canvas: HTMLCanvasElement; effect: DanceEffect; track: DanceTrack }>,
+const rendererFor: Fn<
+  Readonly<{ canvas: HTMLCanvasElement; slug: string; effect: DanceEffect }>,
+  Effect.Effect<Renderer>
+> = ({ canvas, slug, effect }) => {
+  const fallback = Effect.sync(() => createRenderer({ canvas, passes: effect.passes }));
+  if (!("gpu" in navigator)) {
+    return fallback;
+  }
+  return loadGpuEffect(slug).pipe(
+    Effect.flatMap(Effect.fromOption),
+    Effect.flatMap((gpu) =>
+      createGpuRenderer({
+        canvas,
+        passes: effect.passes,
+        gpu,
+        offscreen: OFFSCREEN,
+        screen: SCREEN_SIZE,
+      }),
+    ),
+    Effect.matchEffect({ onFailure: () => fallback, onSuccess: Effect.succeed }),
+  );
+};
+
+const run: Fn<
+  Readonly<{ renderer: Renderer; effect: DanceEffect; track: DanceTrack; video: HTMLVideoElement }>,
   () => void
-> = ({ canvas, effect, track }) => {
-  const renderer = createRenderer({ canvas, passes: effect.passes });
-  const video = createVideo();
+> = ({ renderer, effect, track, video }) => {
   const loop = { request: FIRST_FRAME };
+  Effect.runFork(play(video));
   loadHistory({ renderer, effect });
   loadGlyphs({ renderer, effect });
   const render = (): void => {
+    loop.request = requestAnimationFrame(render);
     if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
       renderer.draw({ video, frame: frameOf({ video, track }) });
     }
-    loop.request = requestAnimationFrame(render);
   };
   loop.request = requestAnimationFrame(render);
   return () => {
     cancelAnimationFrame(loop.request);
+    renderer.dispose();
+  };
+};
+
+const startStage: Fn<
+  Readonly<{ canvas: HTMLCanvasElement; slug: string; effect: DanceEffect; track: DanceTrack }>,
+  () => void
+> = ({ canvas, slug, effect, track }) => {
+  const video = createVideo();
+  const state = { stop: constVoid, stopped: false };
+  const attach: Fn<Renderer, void> = (renderer) => {
+    if (state.stopped) {
+      renderer.dispose();
+    } else {
+      state.stop = run({ renderer, effect, track, video });
+    }
+  };
+  Effect.runFork(rendererFor({ canvas, slug, effect }).pipe(Effect.map(attach)));
+  return () => {
+    state.stopped = true;
+    state.stop();
     video.pause();
     video.removeAttribute("src");
-    renderer.dispose();
   };
 };
 

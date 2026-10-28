@@ -64,6 +64,8 @@ catalog:
   budoux: 0.10.1
   mdast-util-to-string: 4.0.0
   remark-parse: 11.0.0
+  "@webgpu/types": 0.1.74
+  naga-wasm: 30.2.0
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.15
