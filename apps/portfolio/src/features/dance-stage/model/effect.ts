@@ -8,6 +8,14 @@ type Pass = Readonly<{
 
 type TextRow = Readonly<{ text: string; cells: boolean }>;
 
+type GpuPass = Readonly<{ code: string; inputs: readonly string[] }>;
+
+type GpuCompute = Readonly<{ code: string; workgroups: number }>;
+
+type GpuEffect = Readonly<{ passes: readonly GpuPass[]; computes: readonly GpuCompute[] }>;
+
+const SCREEN = { width: 1920, height: 1080 } as const;
+
 type DanceEffect = Readonly<{
   note: string;
   texts: readonly TextRow[];
@@ -103,5 +111,5 @@ const parseEffect = (source: string): DanceEffect => {
   return { note, texts, passes: pipe(draftsOf(body), Arr.map(passOf)) };
 };
 
-export type { DanceEffect, Pass, TextRow };
-export { parseEffect };
+export type { DanceEffect, GpuCompute, GpuEffect, GpuPass, Pass, TextRow };
+export { parseEffect, SCREEN };

@@ -72,6 +72,15 @@ export default defineConfig({
       ...allRulesOf({ prefix: "shadcn", rules: shadcn.rules }),
       ...allRulesOf({ prefix: "baseline-js", rules: baselineJs.rules }),
       ...baselineJs.configs.recommended().rules,
+      "baseline-js/use-baseline": [
+        "error",
+        {
+          available: "widely",
+          includeWebApis: { preset: "auto" },
+          includeJsBuiltins: { preset: "auto" },
+          ignoreFeatures: ["webgpu"],
+        },
+      ],
       ...pluginRules,
       "eslint/sort-imports": "off",
       "eslint/sort-keys": "off",

@@ -10,16 +10,22 @@ import { emptyTrack, trackQuery } from "#/features/dance-stage/model/track";
 const WIDTH = 960;
 const HEIGHT = 540;
 
-const DanceStage = ({ source, label }: Readonly<{ source: string; label: string }>): ReactNode => {
+const DanceStage = ({
+  slug,
+  source,
+  label,
+}: Readonly<{ slug: string; source: string; label: string }>): ReactNode => {
   const { data: track = emptyTrack } = useQuery(trackQuery);
   const attach: RefCallback<HTMLCanvasElement> = useCallback(
     (canvas) =>
       pipe(
         Option.fromNullishOr(canvas),
-        Option.map((found) => startStage({ canvas: found, effect: parseEffect(source), track })),
+        Option.map((found) =>
+          startStage({ canvas: found, slug, effect: parseEffect(source), track }),
+        ),
         Option.getOrUndefined,
       ),
-    [source, track],
+    [slug, source, track],
   );
   return (
     <canvas
