@@ -11,6 +11,7 @@ import { site } from "./src/shared/config/site.ts";
 const DOMAIN = new URL(site.url).hostname;
 const PRODUCTION_STAGE = "prod";
 const COMPATIBILITY = { date: "2026-08-25" } as const;
+const CF_BEACON_TOKEN = "021b4961f3fd419297b186136a5a8a0a";
 
 const OWNED_ZONE = Option.some(DOMAIN);
 
@@ -25,7 +26,7 @@ const web = Effect.gen(function* web() {
     main: "./site.worker.ts",
     compatibility: COMPATIBILITY,
     logpush: true,
-    env: { STARS, VISITOR_SALT },
+    env: { STARS, VISITOR_SALT, VITE_CF_BEACON_TOKEN: CF_BEACON_TOKEN },
     observability: {
       enabled: true,
       logs: { enabled: true, invocationLogs: false, persist: true },
