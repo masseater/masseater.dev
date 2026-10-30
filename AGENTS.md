@@ -94,6 +94,7 @@ release. Add a tool name to select part of the graph. For example, run
 
 - 推測せず計測する。実装や修正の前に本番で事実を確かめ、その結果だけで判断する。
 - 機能開発の前に、AI が自分でデバッグできる仕組み（再現手段、ログやスパン、それを読む経路）を作る。
+- アクセス解析は Cloudflare Web Analytics で既定で取る。`alchemy.run.ts` の `Rum.Site` のトークンを、ビルド時の `VITE_CF_BEACON_TOKEN` から root の `head` でビーコンとして入れる。ゾーンの自動挿入は Workers の応答に効かない。
 - 時間かお金を使う処理はすべてスパンにする。Workers 以外は `OtlpTracer.layerFromConfig` で出す。計測のためだけにコマンドやプロセスを包まない。
 - ワークフローの最後には `.github/scripts/ci-telemetry.sh` を動かすジョブを置く。
 
