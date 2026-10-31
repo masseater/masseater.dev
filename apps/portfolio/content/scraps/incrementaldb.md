@@ -2,7 +2,7 @@
 title: "インクリメンタルDB"
 description: "インクリメンタルゲームを集めたデータベースのIncrementalDBなんてあるんだ。"
 date: 2026-10-31
-tags: ["game","incremental"]
+tags: ["game", "incremental"]
 published: true
 ---
 

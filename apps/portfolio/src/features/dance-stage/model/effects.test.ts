@@ -1,16 +1,21 @@
-import { Array as Arr, pipe } from "effect";
+import { Array as Arr, Effect, Option, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
 import { techniqueList } from "#/entities/technique";
 
-import { hasEffect } from "./effects";
+import { loadEffect } from "./effects";
 
-test("すべての手法にセイキンダンス版の効果がある", () => {
-  expect(
-    pipe(
-      techniqueList,
-      Arr.filter(({ slug }) => !hasEffect(slug)),
-      Arr.map(({ slug }) => slug),
-    ),
-  ).toStrictEqual([]);
-});
+const missingSlug = (slug: string): Effect.Effect<Option.Option<string>> =>
+  pipe(
+    loadEffect(slug),
+    Effect.map(Option.match({ onNone: () => Option.some(slug), onSome: () => Option.none() })),
+  );
+
+const missingSlugs = pipe(
+  techniqueList,
+  Effect.forEach(({ slug }) => missingSlug(slug)),
+  Effect.map(Arr.getSomes),
+);
+
+test("すべての手法にセイキンダンス版の効果がある", () =>
+  expect(Effect.runPromise(missingSlugs)).resolves.toStrictEqual([]));
