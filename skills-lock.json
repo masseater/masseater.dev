@@ -220,7 +220,7 @@
     },
     "setup-template": {
       "source": "masseater/skills",
-      "ref": "23bdbd4f384110d5a6a12689a791120a7d3e3317",
+      "ref": "7171b3ceedafd10732b56ee03fe777268adae11d",
       "sourceType": "github",
       "skillPath": "skills/setup-template/SKILL.md",
       "computedHash": "16f6fecdc1cc5a69f8a7216256109ce8f87160b0bfdc47d906534bd7cd71bcb6"
