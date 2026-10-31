@@ -1190,9 +1190,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cloudflare/workers-types@5.20261025.1':
-    resolution: {integrity: sha512-tMRFCIZKRRieDIdAe38rpszuInDpG6ugnT8mHgJrBj8zR0EbdWeTkg8NunLhVfX3tpBatD0UXVbDuZfgZxe9Fg==}
-
   '@cloudflare/workers-types@5.20261028.1':
     resolution: {integrity: sha512-a0Ceo9MtNZej9s7iZAvYD0txFXlFb1le4rhJ+x4mrC02hsXy4T0RHCqpX1zEOnrI1504Ro8HwJQtKMh2/MVDCw==}
 
@@ -11017,8 +11014,6 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20261012.1':
     optional: true
 
-  '@cloudflare/workers-types@5.20261025.1': {}
-
   '@cloudflare/workers-types@5.20261028.1': {}
 
   '@commitlint/cli@21.2.4(conventional-commits-parser@7.1.2)(typescript@5.9.3)':
@@ -11214,7 +11209,7 @@ snapshots:
 
   '@effect/sql-d1@4.0.7(effect@4.0.7)':
     dependencies:
-      '@cloudflare/workers-types': 5.20261025.1
+      '@cloudflare/workers-types': 5.20261028.1
       effect: 4.0.7
 
   '@effect/tsgo-darwin-arm64@0.63.0':
