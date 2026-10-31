@@ -1,5 +1,5 @@
+import { Zone } from "@alchemy.run/cloudflare";
 import { Stack } from "alchemy";
-import { Zone } from "alchemy/Cloudflare";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str } from "effect";
 
 const APP_NAME = "masseater-dev";

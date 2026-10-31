@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Scrap request to Claude
 // @namespace    https://masseater.dev
-// @version      1.2.0
+// @version      1.2.1
 // @description  閲覧中のページを masseater.dev の scrap にするよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用
 // @homepageURL  https://github.com/masseater/masseater.dev/tree/main/tools/scrap-userscript
 // @match        *://*/*
@@ -111,6 +111,14 @@
 	};
 	var byReferenceInstances = new WeakSet();
 	var viewBytes = (view) => new Uint8Array(view.buffer, view.byteOffset, view.byteLength);
+	var isArrayBufferLike = (u) => u instanceof ArrayBuffer || typeof SharedArrayBuffer !== "undefined" && u instanceof SharedArrayBuffer;
+	var bufferBytes = (buffer) => {
+		try {
+			return new Uint8Array(buffer);
+		} catch {
+			return;
+		}
+	};
 	var backEdges = 0;
 	var addBackEdge = () => {
 		backEdges++;
@@ -154,7 +162,10 @@
 				try {
 					if ("~effect/Hash" in self) h = self[symbol$1]();
 					else if (typeof self === "function") h = random(self);
-					else if (self instanceof DataView) h = array(viewBytes(self));
+					else if (isArrayBufferLike(self)) {
+						const bytes = bufferBytes(self);
+						h = bytes === void 0 ? random(self) : array(bytes);
+					} else if (self instanceof DataView) h = array(viewBytes(self));
 					else if (Array.isArray(self) || ArrayBuffer.isView(self)) h = array(self);
 					else if (self instanceof Map) h = hashMap(self);
 					else if (self instanceof Set) h = hashSet(self);
@@ -267,6 +278,11 @@
 		else if (Array.isArray(self)) {
 			if (!Array.isArray(that) || self.length !== that.length) return false;
 			return compareArrays(self, that);
+		} else if (isArrayBufferLike(self)) {
+			if (!isArrayBufferLike(that) || self instanceof ArrayBuffer !== that instanceof ArrayBuffer) return false;
+			const selfBytes = bufferBytes(self);
+			const thatBytes = bufferBytes(that);
+			return selfBytes !== void 0 && thatBytes !== void 0 && compareTypedArrays(selfBytes, thatBytes);
 		} else if (ArrayBuffer.isView(self)) {
 			const selfIsDataView = self instanceof DataView;
 			if (!ArrayBuffer.isView(that) || self.byteLength !== that.byteLength || selfIsDataView !== that instanceof DataView) return false;
@@ -503,6 +519,10 @@
 		else self[key] = value;
 	}
 	function assignProperties(self, source) {
+		if (!Object.hasOwn(source, "__proto__")) {
+			Object.assign(self, source);
+			return;
+		}
 		for (const key of Reflect.ownKeys(source)) if (Object.prototype.propertyIsEnumerable.call(source, key)) assignProperty(self, key, source[key]);
 	}
 	var EffectTypeId = `~effect/Effect`;
@@ -565,7 +585,7 @@
 		toJSON() {
 			return {
 				_id: "Cause",
-				failures: this.reasons.map((f) => f.toJSON())
+				reasons: this.reasons.map((f) => f.toJSON())
 			};
 		}
 		toString() {
@@ -603,6 +623,7 @@
 				if (options?.overwrite !== true && newAnnotations.has(key)) return;
 				newAnnotations.set(key, value);
 			});
+			if (options?.overwrite !== true && newAnnotations.size === this.annotations.size) return this;
 			const self = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
 			self.annotations = newAnnotations;
 			return self;
@@ -831,6 +852,8 @@
 		Base.prototype.name = tag;
 		return Base;
 	};
+	var DoneTypeId = "~effect/Cause/Done";
+	var isDone = (u) => hasProperty(u, DoneTypeId);
 	var Prototype = (options) => makePrimitiveProto({
 		op: options.label,
 		[evaluate]: options.evaluate
@@ -953,10 +976,12 @@
 		this.failure = failure;
 	};
 	FailureImpl.prototype = FailureProto;
+	var fail$5 = (failure) => new FailureImpl(failure);
 	var SuccessImpl = function(success) {
 		this.success = success;
 	};
 	SuccessImpl.prototype = SuccessProto;
+	var succeed$5 = (success) => new SuccessImpl(success);
 	var none = () => none$1;
 	var some = some$1;
 	var isNone = isNone$1;
@@ -1126,6 +1151,9 @@
 	};
 	var Reference = Service;
 	var isArrayNonEmpty$1 = (self) => self.length > 0;
+	var succeed$4 = succeed$5;
+	var fail$4 = fail$5;
+	var isFailure = isFailure$1;
 	var Array$1 = globalThis.Array;
 	var append = dual(2, (self, last) => [...self, last]);
 	Array$1.isArray;
@@ -1274,6 +1302,17 @@
 		}
 	};
 	var causeInterrupt = (fiberId) => new CauseImpl([new Interrupt(fiberId)]);
+	var hasFails = (self) => self.reasons.some(isFailReason$1);
+	var findError = (self) => {
+		for (let i = 0; i < self.reasons.length; i++) {
+			const reason = self.reasons[i];
+			if (reason._tag === "Fail") return succeed$4(reason.error);
+		}
+		return fail$4(self);
+	};
+	var hasDies = (self) => self.reasons.some(isDieReason);
+	var causeElectDefects = (self) => hasDies(self) && hasFails(self) ? causeFromReasons(self.reasons.map((reason) => reason._tag === "Fail" && !isDone(reason.error) ? new Die(reason.error, reason.annotations) : reason)) : self;
+	var findRecoverableError = (self) => hasDies(self) ? fail$4(causeElectDefects(self)) : findError(self);
 	var hasInterrupts = (self) => self.reasons.some(isInterruptReason);
 	var causeMap = dual(2, (self, f) => {
 		let hasFail = false;
@@ -1361,7 +1400,11 @@
 			else if (this._asyncContext !== void 0) {
 				const asyncContext = this._asyncContext;
 				this._asyncContext = void 0;
-				return asyncContext.runInAsyncScope(this.evaluate, this, effect);
+				try {
+					return asyncContext.runInAsyncScope(this.evaluate, this, effect);
+				} finally {
+					asyncContext.emitDestroy();
+				}
 			} else if (this._yielded !== void 0) {
 				const yielded = this._yielded;
 				this._yielded = void 0;
@@ -1551,7 +1594,8 @@
 	var sync = makePrimitive({
 		op: "Sync",
 		[evaluate](fiber) {
-			const value = this[args]();
+			const thunk = this[args];
+			const value = thunk();
 			const cont = fiber.getCont(contA);
 			return cont ? cont[contA](value, fiber) : fiber.yieldWith(exitSucceed(value));
 		}
@@ -1559,7 +1603,8 @@
 	var suspend$1 = makePrimitive({
 		op: "Suspend",
 		[evaluate](_fiber) {
-			return this[args]();
+			const thunk = this[args];
+			return thunk();
 		}
 	});
 	var yieldNow = makePrimitive({
@@ -1625,9 +1670,9 @@
 				}, controller?.signal);
 				if (yielded !== false) return yielded;
 				yielded = true;
-				fiber._yielded = () => {
+				fiber.yieldWith(() => {
 					resumed = true;
-				};
+				});
 				if (controller === void 0 && onCancel === void 0) return Yield;
 				fiber._stack.push(asyncFinalizer(() => {
 					resumed = true;
@@ -1820,10 +1865,10 @@
 		return MatchImpl;
 	};
 	var MatchImpl = makeMatch("Match", function(cause, fiber) {
-		const fail = cause.reasons.find(isFailReason$1);
-		if (fail === void 0) return failCause$1(cause);
+		const error = findRecoverableError(cause);
+		if (isFailure(error)) return failCause$1(error.failure);
 		const handlers = this.payload;
-		return fiber.succeedWith(continuationMarksStack ? handlers.onFailure(fail.error) : internalCall(() => handlers.onFailure(fail.error)));
+		return fiber.succeedWith(continuationMarksStack ? handlers.onFailure(error.success) : internalCall(() => handlers.onFailure(error.success)));
 	});
 	var match$1 = dual(2, (self, options) => new MatchImpl(self, options));
 	var exit$1 = (self) => effectIsExit(self) ? exitSucceed(self) : exitPrimitive(self);
@@ -1840,7 +1885,7 @@
 			return fiber.succeedWith(exit ?? exitFailCause(cause));
 		}
 	});
-	var combineFinalizerCause = (exit_, finalizer) => exitIsSuccess(exit_) ? finalizer : catchCause$1(finalizer, (cause) => failCause$1(causeCombine(exit_.cause, cause)));
+	var combineFinalizerCause = (exit_, finalizer) => exitIsSuccess(exit_) ? finalizer : catchCause$1(finalizer, (cause) => failCause$1(causeElectDefects(causeCombine(exit_.cause, cause))));
 	var uninterruptible = (self) => withFiber((fiber) => {
 		if (!fiber.interruptible) return self;
 		fiber.interruptible = false;
@@ -1932,7 +1977,7 @@
 										const reasons = exit.cause.reasons.filter((reason) => reason._tag !== "Interrupt");
 										if (reasons.length > 0) {
 											const cause = causeFromReasons(reasons);
-											terminal = exitFailCause(terminal._tag === "Failure" ? causeCombine(terminal.cause, cause) : cause);
+											terminal = exitFailCause(terminal._tag === "Failure" ? causeElectDefects(causeCombine(terminal.cause, cause)) : cause);
 										}
 									}
 								} else {
@@ -2240,6 +2285,11 @@
 			catch: () => new InvalidValue({ expected: "a JSON-serializable value" }, input, parseOptions)
 		}));
 	}
+	var ContentTypeId = Symbol.for("~effect/Schema/content");
+	function setContent(operation, content) {
+		Object.defineProperty(operation, ContentTypeId, { value: content });
+		return operation;
+	}
 	var TypeId$4 = "~effect/SchemaTransformation/Transformation";
 	var Transformation = class extends Class$1 {
 		[TypeId$4] = TypeId$4;
@@ -2267,7 +2317,10 @@
 		return passthrough_;
 	}
 	function fromJsonString$1(options) {
-		return new Transformation(parseJson(options ?? {}), stringifyJson(options));
+		return new Transformation(parseJson(options ?? {}), setContent(stringifyJson(options), {
+			mediaType: "application/json",
+			preserveSchema: options?.reviver === void 0 && options?.replacer === void 0
+		}));
 	}
 	function makeGuard(tag) {
 		return (ast) => ast._tag === tag;
@@ -2338,7 +2391,7 @@
 			else s.issues = [pointer];
 		} else return fail$2(new Composite(ast, [pointer], s.input, s.options));
 	};
-	var FINITE_PATTERN = "[+-]?\\d*\\.?\\d+(?:[Ee][+-]?\\d+)?";
+	var FINITE_PATTERN = "[+-]?(?:\\d+(?:\\.\\d+)?|\\.\\d+)(?:[Ee][+-]?\\d+)?";
 	function getIndexSignatureKeys(input, parameter, options = defaultParseOptions) {
 		let stringKeys;
 		let symbolKeys;
@@ -2393,7 +2446,7 @@
 			if (!isIndexSignatureParameter(parameter)) throw new Error(`Invalid index signature parameter ${parameter._tag}`);
 			this.parameter = parameter;
 			this.type = type;
-			if (isOptional(type) && !containsUndefined(type)) throw new Error("Cannot use `Schema.optionalKey` with index signatures, use `Schema.optional` instead.");
+			if (isOptional(type) || type.encoding !== void 0 && isOptional(toEncoded(type))) throw new Error("Cannot use `Schema.optionalKey` or `Schema.optional` with index signatures. Index signatures already allow keys to be absent; use `Schema.UndefinedOr` to allow `undefined` values.");
 		}
 	};
 	var Objects = class extends ASTNodeImpl {
@@ -2525,9 +2578,13 @@
 			};
 			if (indexCount) return makeFallback();
 			let fallback;
-			const resume = (state, index, pending) => {
+			const resume = (snapshot, index, pending) => {
 				const property = properties[index];
 				return flatMap(exit(pending), (exit) => {
+					const state = {
+						...snapshot,
+						out: { ...snapshot.out }
+					};
 					const terminal = stepProperty(state, property, exit);
 					if (terminal) return terminal;
 					const done = () => succeed(state.out);
@@ -2786,13 +2843,6 @@
 		}
 		return "flip" in ast ? ast.flip(flip) : "recur" in ast ? ast.recur(flip) : ast;
 	});
-	function containsUndefined(ast) {
-		switch (ast._tag) {
-			case "Undefined": return true;
-			case "Union": return ast.types.some(containsUndefined);
-			default: return false;
-		}
-	}
 	function fromRefinement(ast, refinement) {
 		return (input, options) => {
 			if (input === missing) return missingExit;
@@ -2834,6 +2884,16 @@
 	}
 	var flatMapTransformation = (result, current, f) => result === sameExit ? f(current) : flatMapEager(result, f);
 	function compileTransformation(transformation) {
+		const apply = compileTransformationUnsafe(transformation);
+		return (result, current, options) => {
+			try {
+				return apply(result, current, options);
+			} catch (error) {
+				return die(error);
+			}
+		};
+	}
+	function compileTransformationUnsafe(transformation) {
 		if (transformation._tag === "Middleware") return (result, current, options) => {
 			return fromOptionalEffect(result === sameExit ? transformation.decode(succeed(toOption(current)), options) : transformation.decode(mapEager(result, toOption), options));
 		};
@@ -2895,40 +2955,44 @@
 		let encodingParsers;
 		const parseChecks = (input, options) => {
 			let result = parser(input, options);
-			if (encodingChecks && !options.disableChecks) {
-				if (effectIsExit(result)) {
-					if (result._tag === "Success") {
-						const output = result === sameExit ? input : result[args];
-						if (input !== missing && output !== missing) {
-							const issues = collectIssues(encodingChecks, input, void 0, ast, options);
-							if (issues) result = fail$1(new Composite(ast, issues, input, options));
+			try {
+				if (encodingChecks && !options.disableChecks) {
+					if (effectIsExit(result)) {
+						if (result._tag === "Success") {
+							const output = result === sameExit ? input : result[args];
+							if (input !== missing && output !== missing) {
+								const issues = collectIssues(encodingChecks, input, void 0, ast, options);
+								if (issues) result = fail$1(new Composite(ast, issues, input, options));
+							}
 						}
-					}
-				} else result = flatMap(result, (value) => {
-					if (input !== missing && value !== missing) {
-						const issues = collectIssues(encodingChecks, input, void 0, ast, options);
-						if (issues) return fail$1(new Composite(ast, issues, input, options));
-					}
-					return succeed$1(value);
-				});
+					} else result = flatMap(result, (value) => {
+						if (input !== missing && value !== missing) {
+							const issues = collectIssues(encodingChecks, input, void 0, ast, options);
+							if (issues) return fail$1(new Composite(ast, issues, input, options));
+						}
+						return succeed$1(value);
+					});
+				}
+				if (checks && !options.disableChecks) {
+					if (effectIsExit(result)) {
+						if (result._tag === "Success") {
+							const value = result === sameExit ? input : result[args];
+							if (value === missing) return result;
+							const issues = collectIssues(checks, value, void 0, ast, options);
+							if (issues) result = fail$1(new Composite(ast, issues, value, options));
+						}
+					} else result = flatMap(result, (value) => {
+						if (value !== missing) {
+							const issues = collectIssues(checks, value, void 0, ast, options);
+							if (issues) return fail$1(new Composite(ast, issues, value, options));
+						}
+						return succeed$1(value);
+					});
+				}
+				return result;
+			} catch (error) {
+				return die(error);
 			}
-			if (checks && !options.disableChecks) {
-				if (effectIsExit(result)) {
-					if (result._tag === "Success") {
-						const value = result === sameExit ? input : result[args];
-						if (value === missing) return result;
-						const issues = collectIssues(checks, value, void 0, ast, options);
-						if (issues) result = fail$1(new Composite(ast, issues, value, options));
-					}
-				} else result = flatMap(result, (value) => {
-					if (value !== missing) {
-						const issues = collectIssues(checks, value, void 0, ast, options);
-						if (issues) return fail$1(new Composite(ast, issues, value, options));
-					}
-					return succeed$1(value);
-				});
-			}
-			return result;
 		};
 		const parseLocal = specialize === void 0 ? parseChecks : specialize(parseChecks);
 		if (!links) return parseLocal;
@@ -3068,28 +3132,30 @@
 		const issue = getSchemaIssueOrThrow(exit.cause, message);
 		throw new Error("Schema validation failed", { cause: issue });
 	}
+	var constructorDefectMessage = "Constructor adapter can only throw schema issues";
+	function throwConstructorDefect(error) {
+		throw new Error(constructorDefectMessage, { cause: die$1(error) });
+	}
 	function makeConstructorSync(ast) {
 		let entry;
-		let parser;
-		return (input, options) => {
-			entry ??= resolve(ast);
-			const parseOptions = options?.disableChecks ? options.parseOptions ? {
-				...options.parseOptions,
-				disableChecks: true
-			} : { disableChecks: true } : options?.parseOptions ?? defaultParseOptions;
-			const make = entry.make;
-			if (make !== void 0 && input !== missing) {
-				let output;
-				try {
-					output = make(input, parseOptions);
-				} catch (error) {
-					getSchemaIssueOrThrow(die$1(error), "Constructor adapter can only throw schema issues");
-					throw error;
-				}
-				if (output !== invalid && output !== missing) return output;
+		return (input, options) => constructSync(entry ??= resolve(ast), input, options);
+	}
+	function constructSync(entry, input, options) {
+		const parseOptions = options?.disableChecks ? options.parseOptions ? {
+			...options.parseOptions,
+			disableChecks: true
+		} : { disableChecks: true } : options?.parseOptions ?? defaultParseOptions;
+		const make = entry.make;
+		if (make !== void 0 && input !== missing) {
+			let output;
+			try {
+				output = make(input, parseOptions);
+			} catch (error) {
+				throwConstructorDefect(error);
 			}
-			return runSync(parserResult((parser ??= entry.makeEffect)(input, parseOptions), input), "Constructor adapter can only throw schema issues");
-		};
+			if (output !== invalid && output !== missing) return output;
+		}
+		return runSync(parserResult(entry.makeEffect(input, parseOptions), input), constructorDefectMessage);
 	}
 	var normalCompiler = (ast) => resolve(ast).parser;
 	var constructorCompiler = (ast) => resolve(ast).makeEffect;
@@ -3179,15 +3245,11 @@
 	}
 	globalThis.RegExp;
 	globalThis.URL;
-	var JsonString = String$1.annotate({
-		expected: "a string that will be decoded as JSON",
-		contentMediaType: "application/json"
-	});
+	var JsonString = String$1.annotate({ expected: "a string that will be decoded as JSON" });
 	function fromJsonString(schema, options) {
 		return JsonString.pipe(decodeTo(schema, fromJsonString$1(options)));
 	}
 	globalThis.File;
-	globalThis.FormData;
 	globalThis.URLSearchParams;
 	globalThis.Uint8Array;
 	var _GM = (() => typeof GM != "undefined" ? GM : void 0)();

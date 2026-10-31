@@ -10,10 +10,10 @@ catalogMode: prefer
 catalog:
   "@ast-grep/cli": 0.51.0
   "@cloudflare/workers-types": 5.20261028.1
-  "@effect/platform-node": 4.0.5
+  "@effect/platform-node": 4.0.7
   "@eslint-react/eslint-plugin": 5.28.8
   "@shadcn/lint": 0.2.3
-  "@tanstack/eslint-plugin-query": 5.104.5
+  "@tanstack/eslint-plugin-query": 5.105.0
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/eslint-plugin-start": 0.1.0
   "@typescript-eslint/parser": 8.72.1
@@ -30,7 +30,7 @@ catalog:
   "@html-eslint/eslint-plugin-react": 0.67.0
   "@commitlint/cli": 21.2.4
   "@commitlint/config-conventional": 21.2.4
-  "@tanstack/react-query-devtools": 5.104.5
+  "@tanstack/react-query-devtools": 5.105.0
   "@vitejs/plugin-react": 6.1.2
   "@vitejs/plugin-rsc": 0.5.38
   skills: 1.7.4
@@ -68,20 +68,21 @@ catalog:
   naga-wasm: 30.2.0
 catalogs:
   stack:
-    "@distilled.cloud/cloudflare": 1.0.0-rc.15
-    "@effect/atom-react": 4.0.5
-    "@effect/tsgo": 0.56.1
+    "@distilled.cloud/cloudflare": 1.0.0-rc.17
+    "@effect/atom-react": 4.0.7
+    "@effect/tsgo": 0.63.0
     "@elysiajs/eden": 1.4.9
-    "@tanstack/react-query": 5.104.5
+    "@tanstack/react-query": 5.105.0
     "@tanstack/react-start": 1.169.4
-    alchemy: 2.0.0-beta.83
+    "@alchemy.run/cloudflare": 2.0.0-beta.84
+    alchemy: 2.0.0-beta.84
     drizzle-kit: 1.0.0-rc.5-ab785fc
     drizzle-orm: 1.0.0-rc.5-ab785fc
     eden-tanstack-react-query: 0.5.1
-    effect: 4.0.5
+    effect: 4.0.7
     elysia: 1.4.30
-    fallow: 3.35.0
-    renovate: 44.181.5
+    fallow: 3.37.0
+    renovate: 44.190.2
     steiger: 0.8.0
     tailwindcss: 4.3.3
     textlint: 15.8.0
@@ -89,14 +90,12 @@ catalogs:
     vite-plus: 1.4.0
 overrides:
   effect: "catalog:stack"
-  "@effect/platform-node-shared": 4.0.5
-  "@effect/sql-d1": 4.0.5
-  "@effect/sql-sqlite-do": 4.0.5
-  "@effect/vitest": 4.0.5
+  "@effect/platform-node-shared": 4.0.7
+  "@effect/sql-d1": 4.0.7
+  "@effect/sql-sqlite-do": 4.0.7
+  "@effect/vitest": 4.0.7
   vite@*: "catalog:"
   eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
-  "@hono/node-server@<1.19.15": ^2.0.0
-  hono@<4.13.7: ^4.13.7
   http-cache-semantics@<=4.2.0: ^4.3.0
   lodash@<=4.17.23: ^4.18.1
   postcss-selector-parser@<7.1.6: ^7.1.6
@@ -116,6 +115,8 @@ overrides:
   seroval@<=1.6.7: ^1.6.8
   seroval@>=1.5.5 <1.6.10: ^1.6.10
   seroval@>=1.6.0 <1.6.11: ^1.6.11
+  glob@>=9.0.0 <=14.0.1: ^14.0.2
+  minimatch@<11.0.1: ^11.0.1
 peerDependencyRules:
   allowAny:
     - vite
