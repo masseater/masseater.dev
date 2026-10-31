@@ -12,8 +12,7 @@ const missingSlug = (slug: string): Effect.Effect<Option.Option<string>> =>
   );
 
 const missingSlugs = pipe(
-  techniqueList,
-  Effect.forEach(({ slug }) => missingSlug(slug)),
+  Effect.forEach(techniqueList, ({ slug }) => missingSlug(slug), { concurrency: "unbounded" }),
   Effect.map(Arr.getSomes),
 );
 
