@@ -52,5 +52,5 @@ vp run dev
 
 ## 最初に一度だけ行う設定
 
-- GitHub の secrets とルールセットは、[masseater/skills](https://github.com/masseater/skills) の `setup-template` スキルの手順で入れる
+- GitHub の secrets とルールセットは、[masseater/skills](https://github.com/masseater/skills) の `project-checklist` スキルの setup の手順で入れる
 - Zenn の GitHub 連携では、デプロイ対象のブランチを `zenn` にする
