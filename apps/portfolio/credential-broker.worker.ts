@@ -44,7 +44,12 @@ const Policy = Schema.Struct({
 
 const Policies = Schema.mutable(Schema.Array(Policy));
 
-const Grants = Schema.fromJsonString(Schema.Record(Schema.String, Policies));
+const Grants = Schema.fromJsonString(
+  Schema.Struct({
+    profiles: Schema.Record(Schema.String, Policies),
+    repositories: Schema.Record(Schema.String, Schema.String),
+  }),
+);
 
 const Claims = Schema.Struct({
   repository_owner: Schema.String,
@@ -111,10 +116,13 @@ const issue = (
     const claims = yield* verify(request);
     const repository = repositoryName(claims);
     const grants = yield* Schema.decodeEffect(Grants)(env.GRANTS);
-    const policies = yield* Option.match(Option.fromNullishOr(grants[repository]), {
-      onNone: () => Rejected.make({ reason: `no grant for ${repository}` }),
-      onSome: Effect.succeed,
-    });
+    const policies = yield* Option.match(
+      Option.fromNullishOr(grants.profiles[grants.repositories[repository] ?? ""]),
+      {
+        onNone: () => Rejected.make({ reason: `no grant for ${repository}` }),
+        onSome: Effect.succeed,
+      },
+    );
     const created = yield* createToken({
       accountId: env.ACCOUNT_ID,
       name: `${TOKEN_PREFIX}${repository}:${claims.run_id}:${claims.run_attempt}`,

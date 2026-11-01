@@ -28,22 +28,26 @@ const extend = (extra: Partial<Grant>): Grant => ({
   zone: [...DEPLOY.zone, ...(extra.zone ?? [])],
 });
 
-const CREDENTIAL_GRANTS: Readonly<Record<string, Grant>> = {
-  "ai-produced": DEPLOY,
-  aredoko: DEPLOY,
-  cdmm: DEPLOY,
-  "decision-experiments": DEPLOY,
-  "medley-database": DEPLOY,
-  "medley-manager": DEPLOY,
-  mirucord: DEPLOY,
-  msa: DEPLOY,
-  "mst-ja-decision-bench": extend({ account: ["Account Rulesets Write"] }),
-  myaudiobooks: DEPLOY,
-  "personal-space": extend({
-    account: ["Access: Apps and Policies Write", "MCP Portals Write"],
-  }),
-  "thumb-mosaic": DEPLOY,
-  "typescript-template": DEPLOY,
+const PROFILES = {
+  deploy: DEPLOY,
+  rulesets: extend({ account: ["Account Rulesets Write"] }),
+  access: extend({ account: ["Access: Apps and Policies Write", "MCP Portals Write"] }),
+} as const satisfies Readonly<Record<string, Grant>>;
+
+const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
+  "ai-produced": "deploy",
+  aredoko: "deploy",
+  cdmm: "deploy",
+  "decision-experiments": "deploy",
+  "medley-database": "deploy",
+  "medley-manager": "deploy",
+  mirucord: "deploy",
+  msa: "deploy",
+  "mst-ja-decision-bench": "rulesets",
+  myaudiobooks: "deploy",
+  "personal-space": "access",
+  "thumb-mosaic": "deploy",
+  "typescript-template": "deploy",
 };
 
 const ACCOUNT_SCOPE = "com.cloudflare.api.account";
@@ -77,17 +81,24 @@ const policy = (
   resources: { [resource]: "*" },
 });
 
+type Grants = Readonly<{
+  profiles: Readonly<Record<string, readonly Policy[]>>;
+  repositories: Readonly<Record<string, string>>;
+}>;
+
 const grantPolicies = ({
   accountId,
   zoneId,
-}: Readonly<{ accountId: string; zoneId: string }>): Readonly<Record<string, readonly Policy[]>> =>
-  pipe(
-    CREDENTIAL_GRANTS,
-    Rec.map((grant) => [
+}: Readonly<{ accountId: string; zoneId: string }>): Grants => ({
+  profiles: pipe(
+    PROFILES,
+    Rec.map((grant: Grant) => [
       policy(ACCOUNT_SCOPE, `${ACCOUNT_SCOPE}.${accountId}`, grant.account),
       policy(ZONE_SCOPE, `${ZONE_SCOPE}.${zoneId}`, grant.zone),
     ]),
-  );
+  ),
+  repositories: CREDENTIAL_GRANTS,
+});
 
 export { grantPolicies };
-export type { Policy };
+export type { Grants, Policy };
