@@ -1,5 +1,4 @@
 import {
-  ApiToken,
   CloudflareEnvironment,
   D1,
   SecretsStore,
@@ -83,22 +82,12 @@ const credentialBroker = Effect.gen(function* credentialBroker() {
   const zoneId = yield* Zone.resolveZoneId({ accountId, zone: DOMAIN, hostname: DOMAIN }).pipe(
     Effect.orDie,
   );
-  const root = yield* ApiToken.AccountApiToken("CredentialRoot", {
-    name: `${PREFIX}credential-root`,
-    accountId,
-    policies: [
-      {
-        effect: "allow",
-        permissionGroups: ["Account API Tokens Write"],
-        resources: { [`com.cloudflare.api.account.${accountId}`]: "*" },
-      },
-    ],
-  });
+  const rootToken = yield* Config.Redacted("CLOUDFLARE_API_TOKEN");
   const store = yield* SecretsStore.Store("Secrets");
   const ROOT_TOKEN = yield* SecretsStore.Secret("CredentialRootToken", {
     store,
     name: `${PREFIX}credential-root-token`,
-    value: root.value,
+    value: rootToken,
   });
   const GRANTS = yield* Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown))(
     grantPolicies({ accountId, zoneId }),

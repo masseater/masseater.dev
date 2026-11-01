@@ -33,10 +33,6 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, Grant>> = {
   aredoko: DEPLOY,
   cdmm: DEPLOY,
   "decision-experiments": DEPLOY,
-  "masseater.dev": extend({
-    account: ["Account Rulesets Write", "Logs Write", "Account API Tokens Write"],
-    zone: ["Zone WAF Write", "Logs Write"],
-  }),
   "medley-database": DEPLOY,
   "medley-manager": DEPLOY,
   mirucord: DEPLOY,
