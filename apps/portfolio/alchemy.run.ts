@@ -1,4 +1,5 @@
 import {
+  ApiToken,
   CloudflareEnvironment,
   D1,
   SecretsStore,
@@ -11,7 +12,7 @@ import {
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { Stack, Stage, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
-import { Config, Effect, Option, Redacted, Schema } from "effect";
+import { Config, Effect, Option, Schema } from "effect";
 import type { ConfigError } from "effect/Config";
 
 import {
@@ -31,7 +32,6 @@ const PRODUCTION_STAGE = "prod";
 const COMPATIBILITY = { date: "2026-08-25" } as const;
 const CF_BEACON_TOKEN = "021b4961f3fd419297b186136a5a8a0a";
 const CREDENTIAL_BROKER_HOST = `credentials.${DOMAIN}`;
-const UNSET_SECRET = "unset";
 
 const OWNED_ZONE = Option.some(DOMAIN);
 
@@ -83,11 +83,22 @@ const credentialBroker = Effect.gen(function* credentialBroker() {
   const zoneId = yield* Zone.resolveZoneId({ accountId, zone: DOMAIN, hostname: DOMAIN }).pipe(
     Effect.orDie,
   );
+  const root = yield* ApiToken.AccountApiToken("CredentialRoot", {
+    name: `${PREFIX}credential-root`,
+    accountId,
+    policies: [
+      {
+        effect: "allow",
+        permissionGroups: ["Account API Tokens Write"],
+        resources: { [`com.cloudflare.api.account.${accountId}`]: "*" },
+      },
+    ],
+  });
   const store = yield* SecretsStore.Store("Secrets");
   const ROOT_TOKEN = yield* SecretsStore.Secret("CredentialRootToken", {
     store,
     name: `${PREFIX}credential-root-token`,
-    value: Redacted.make(UNSET_SECRET),
+    value: root.value,
   });
   const GRANTS = yield* Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown))(
     grantPolicies({ accountId, zoneId }),
