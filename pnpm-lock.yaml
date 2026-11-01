@@ -382,8 +382,8 @@ catalogs:
       specifier: 44.192.2
       version: 44.192.2
     steiger:
-      specifier: 0.8.0
-      version: 0.8.0
+      specifier: 0.8.1
+      version: 0.8.1
     tailwindcss:
       specifier: 4.3.3
       version: 4.3.3
@@ -583,7 +583,7 @@ importers:
         version: 1.167.3(@tanstack/query-core@5.105.0)(@tanstack/react-query@5.105.0(@types/react@19.3.0)(react@19.3.1))(@tanstack/react-router@1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@tanstack/router-core@1.171.39)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       drizzle-orm:
         specifier: catalog:stack
-        version: 1.0.0-rc.5-ab785fc(@cloudflare/workers-types@5.20261028.1)(@effect/sql-d1@4.0.7(effect@4.0.7))(@electric-sql/pglite@0.3.15)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(@sinclair/typebox@0.34.52)(effect@4.0.7)(valibot@1.5.0(typescript@7.0.2))(zod@3.25.76)
+        version: 1.0.0-rc.5-ab785fc(@cloudflare/workers-types@5.20261028.1)(@effect/sql-d1@4.0.7(effect@4.0.7))(@electric-sql/pglite@0.3.15)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(@sinclair/typebox@0.34.52)(effect@4.0.7)(valibot@1.5.0(typescript@7.0.2))(zod@4.6.7)
       eden-tanstack-react-query:
         specifier: catalog:stack
         version: 0.5.1(@elysiajs/eden@1.4.9(elysia@1.4.30(@sinclair/typebox@0.34.52)(exact-mirror@1.2.6)(file-type@22.2.0(supports-color@7.2.0))(openapi-types@12.1.3)(typescript@7.0.2)))(@tanstack/react-query@5.105.0(@types/react@19.3.0)(react@19.3.1))(elysia@1.4.30(@sinclair/typebox@0.34.52)(exact-mirror@1.2.6)(file-type@22.2.0(supports-color@7.2.0))(openapi-types@12.1.3)(typescript@7.0.2))(react@19.3.1)
@@ -725,7 +725,7 @@ importers:
         version: 4.0.2(supports-color@7.2.0)
       steiger:
         specifier: catalog:stack
-        version: 0.8.0(typescript@7.0.2)(vitest@5.0.5)
+        version: 0.8.1(typescript@7.0.2)
       typescript:
         specifier: catalog:stack
         version: 7.0.2
@@ -1869,9 +1869,6 @@ packages:
 
   '@feature-sliced/filesystem@3.1.1':
     resolution: {integrity: sha512-P3WpHkOqdH4572ZhTfeg/Sbw0qkIuMw0QcLyTUygfwTZg1yd7hIv8QDYbhTddNTiFDgBRJTrYw/s6r2hnlo6Tw==}
-
-  '@feature-sliced/steiger-plugin@0.8.0':
-    resolution: {integrity: sha512-wACwEYLVxs6bziUDaZXlp6k43dantdU5MSBtO48MwonwrupdzYcLhs6+Ps9YoWDINccaAlqiMxlHmgLJubK5Ow==}
 
   '@feature-sliced/steiger-plugin@0.8.1':
     resolution: {integrity: sha512-hnRmnpGT7HoOv3Hy+et1xFq1IsCogp0SEfLlEC73kI74nlm0zQl8q1QN78iG0PEXyLZUAsqJIfG8rZHvva5vEg==}
@@ -4422,14 +4419,6 @@ packages:
   '@stefanprobst/rehype-extract-toc@3.0.0':
     resolution: {integrity: sha512-ZnmL6g8DydunVa2/Vk54PTPC+Ib096Xwvd/mqhK/mqsTh6jaiLZFAvM3FUsOiio0oeVpUDb1jbBPePfA9m/NRg==}
     engines: {node: '>=18'}
-
-  '@steiger/toolkit@0.2.3':
-    resolution: {integrity: sha512-egAgPVSN5+bqmRDc0oGm4cXZtkF8puaBY7A7lft7nxJwb+v/J5aaFJ3vzQ9WxTR/qYl2bK5uKOIAGaj63Z0F1A==}
-    peerDependencies:
-      vitest: ^1.6.0 || ^2.1.8 || ^3.0.0
-    peerDependenciesMeta:
-      vitest:
-        optional: true
 
   '@swc/helpers@0.5.23':
     resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
@@ -7339,10 +7328,6 @@ packages:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
 
-  ignore@7.0.12:
-    resolution: {integrity: sha512-/8UvqAPU9DGTI9k4mxtf49U37Isfwr8Uts96+SBHIkFxPJnHS0Ew4f00sM4Scd8V8EjM0jUNtVDdv1kPdt35lg==}
-    engines: {node: '>= 4'}
-
   ignore@7.0.13:
     resolution: {integrity: sha512-2E8Q6rh+1RRSq/YdaGsNfXsEZy9FVqv6BSSrkmZJP7BnaoPnRfKL+YaofPvP+5rzdk144qSm6i4+hvPgUcbV4Q==}
     engines: {node: '>= 4'}
@@ -7918,9 +7903,6 @@ packages:
   locate-path@8.0.0:
     resolution: {integrity: sha512-XT9ewWAC43tiAV7xDAPflMkG0qOPn2QjHqlgX8FOqmWa/rxnyYDulF9T0F7tRy1u+TVTmK/M//6VIOye+2zDXg==}
     engines: {node: '>=20'}
-
-  lodash-es@4.18.1:
-    resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
 
   lodash.camelcase@4.3.0:
     resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
@@ -9379,8 +9361,8 @@ packages:
   std-env@4.3.0:
     resolution: {integrity: sha512-OtU/EgQ1kIm5KwqQpBC6ZEMXrZRui11w8zgfTWp8cdO9B8OaPsbA8bTHO2P+HNo1VlUTGMVBwPhydu6poeXiag==}
 
-  steiger@0.8.0:
-    resolution: {integrity: sha512-bEMCHAPc/4sFGtTxjcasaBDseZBnMdyUQjKJQr3BjFynUGlp20MaXcQZPZ98ddvIevZ+YEkv8p/nj2bAxqlw6g==}
+  steiger@0.8.1:
+    resolution: {integrity: sha512-w55+5bYKjqmYMotlaYtZjSZhAZmLFDGUkZ7wmN9m5Kf2Y4I6yYK9PGzZUfaSdnrYIFibyRG/vjtZPiFCsXNK6w==}
     engines: {node: '>=22.18.0'}
     hasBin: true
 
@@ -10294,20 +10276,11 @@ packages:
   zlibjs@0.3.1:
     resolution: {integrity: sha512-+J9RrgTKOmlxFSDHo0pI1xM6BLVUv+o0ZT9ANtCxGkjIVCCUdx9alUF8Gm+dGLKbkkkidWIHFDZHDMpfITt4+w==}
 
-  zod-validation-error@3.5.4:
-    resolution: {integrity: sha512-+hEiRIiPobgyuFlEojnqjJnhFvg4r/i3cqgcm67eehZf/WBaK3g6cD02YU9mtdVxZjv8CzCA9n/Rhrs3yAAvAw==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      zod: ^3.24.4
-
   zod-validation-error@5.0.0:
     resolution: {integrity: sha512-hmk+pkyKq7Q71PiWVSDUc3VfpzpvcRHZ3QPw9yEMVvmtCekaMeOHnbr3WbxfrgEnQTv6haGP4cmv0Ojmihzsxw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       zod: ^4.6.6
-
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
   zod@4.6.7:
     resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
@@ -11577,19 +11550,6 @@ snapshots:
   '@feature-sliced/filesystem@3.1.1':
     dependencies:
       typescript: 5.9.3
-
-  '@feature-sliced/steiger-plugin@0.8.0(typescript@7.0.2)(vitest@5.0.5)':
-    dependencies:
-      '@feature-sliced/filesystem': 3.1.1
-      '@steiger/toolkit': 0.2.3(vitest@5.0.5)
-      fastest-levenshtein: 1.0.16
-      lodash-es: 4.18.1
-      pluralize: 8.0.0
-      tsconfck: 3.1.6(typescript@7.0.2)
-      web-tree-sitter: 0.26.13
-    transitivePeerDependencies:
-      - typescript
-      - vitest
 
   '@feature-sliced/steiger-plugin@0.8.1(typescript@7.0.2)':
     dependencies:
@@ -13814,10 +13774,6 @@ snapshots:
       hast-util-heading-rank: 3.0.0
       hast-util-to-string: 3.0.1
       unist-util-visit: 5.1.0
-
-  '@steiger/toolkit@0.2.3(vitest@5.0.5)':
-    optionalDependencies:
-      vitest: 5.0.5(@opentelemetry/api@1.9.1)(@types/node@26.6.6)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(yaml@2.9.1)
 
   '@swc/helpers@0.5.23':
     dependencies:
@@ -16140,7 +16096,7 @@ snapshots:
       get-tsconfig: 4.14.3
       jiti: 2.7.0
 
-  drizzle-orm@1.0.0-rc.5-ab785fc(@cloudflare/workers-types@5.20261028.1)(@effect/sql-d1@4.0.7(effect@4.0.7))(@electric-sql/pglite@0.3.15)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(@sinclair/typebox@0.34.52)(effect@4.0.7)(valibot@1.5.0(typescript@7.0.2))(zod@3.25.76):
+  drizzle-orm@1.0.0-rc.5-ab785fc(@cloudflare/workers-types@5.20261028.1)(@effect/sql-d1@4.0.7(effect@4.0.7))(@electric-sql/pglite@0.3.15)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(@sinclair/typebox@0.34.52)(effect@4.0.7)(valibot@1.5.0(typescript@7.0.2))(zod@4.6.7):
     optionalDependencies:
       '@cloudflare/workers-types': 5.20261028.1
       '@effect/sql-d1': 4.0.7(effect@4.0.7)
@@ -16150,7 +16106,7 @@ snapshots:
       '@sinclair/typebox': 0.34.52
       effect: 4.0.7
       valibot: 1.5.0(typescript@7.0.2)
-      zod: 3.25.76
+      zod: 4.6.7
 
   dtrace-provider@0.8.8:
     dependencies:
@@ -17019,7 +16975,7 @@ snapshots:
     dependencies:
       '@sindresorhus/merge-streams': 4.0.0
       fast-glob: 3.3.3
-      ignore: 7.0.12
+      ignore: 7.0.13
       is-path-inside: 4.0.0
       micromatch: 4.0.8
       slash: 5.1.0
@@ -17284,8 +17240,6 @@ snapshots:
   ieee754@1.2.1: {}
 
   ignore@5.3.2: {}
-
-  ignore@7.0.12: {}
 
   ignore@7.0.13: {}
 
@@ -17791,8 +17745,6 @@ snapshots:
   locate-path@8.0.0:
     dependencies:
       p-locate: 6.0.0
-
-  lodash-es@4.18.1: {}
 
   lodash.camelcase@4.3.0: {}
 
@@ -20041,10 +19993,10 @@ snapshots:
 
   std-env@4.3.0: {}
 
-  steiger@0.8.0(typescript@7.0.2)(vitest@5.0.5):
+  steiger@0.8.1(typescript@7.0.2):
     dependencies:
       '@clack/prompts': 0.9.1
-      '@feature-sliced/steiger-plugin': 0.8.0(typescript@7.0.2)(vitest@5.0.5)
+      '@feature-sliced/steiger-plugin': 0.8.1(typescript@7.0.2)
       chokidar: 4.0.3
       cosmiconfig: 10.0.1
       effector: 23.4.4
@@ -20057,11 +20009,10 @@ snapshots:
       picocolors: 1.1.1
       prexit: 2.3.0
       yargs: 17.7.3
-      zod: 3.25.76
-      zod-validation-error: 3.5.4(zod@3.25.76)
+      zod: 4.6.7
+      zod-validation-error: 5.0.0(zod@4.6.7)
     transitivePeerDependencies:
       - typescript
-      - vitest
 
   stop-iteration-iterator@1.1.0:
     dependencies:
@@ -21360,15 +21311,9 @@ snapshots:
 
   zlibjs@0.3.1: {}
 
-  zod-validation-error@3.5.4(zod@3.25.76):
-    dependencies:
-      zod: 3.25.76
-
   zod-validation-error@5.0.0(zod@4.6.7):
     dependencies:
       zod: 4.6.7
-
-  zod@3.25.76: {}
 
   zod@4.6.7: {}
 
