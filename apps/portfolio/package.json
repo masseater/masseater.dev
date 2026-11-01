@@ -46,7 +46,7 @@
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
-    "@feature-sliced/steiger-plugin": "0.8.0",
+    "@feature-sliced/steiger-plugin": "0.8.1",
     "@fontsource/noto-sans-jp": "catalog:",
     "@mdx-js/rollup": "catalog:",
     "@resvg/resvg-js": "catalog:",
