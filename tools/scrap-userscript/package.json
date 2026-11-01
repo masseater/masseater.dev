@@ -1,0 +1,17 @@
+{
+  "name": "scrap-userscript",
+  "version": "1.2.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp build",
+    "test": "vp build && git diff --quiet -- release && test -z \"$(git ls-files --others --exclude-standard -- release)\" && vp test run"
+  },
+  "dependencies": {
+    "effect": "catalog:stack",
+    "vite-plugin-monkey": "8.1.1"
+  },
+  "devDependencies": {
+    "vite-plus": "catalog:stack"
+  }
+}

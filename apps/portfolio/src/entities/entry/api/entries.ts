@@ -31,12 +31,13 @@ const ownEntry = (
   frontmatter: unknown,
 ): Effect.Effect<Entry, Schema.SchemaError> =>
   decodeFrontmatter(frontmatter).pipe(
-    Effect.map(({ title, description, date, tags, published, stage }) => ({
+    Effect.map(({ title, description, date, updated, tags, published, stage }) => ({
       category,
       slug,
       title,
       description,
       date,
+      updated,
       tags,
       status: toStatus({ published, stage }),
     })),
@@ -53,7 +54,11 @@ const decodeEntry = ([path, frontmatter]: readonly [string, unknown]): Effect.Ef
 const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.suspend(() =>
   Effect.forEach(
     Rec.toEntries(
-      import.meta.glob<unknown>("/content/*/*.md", { eager: true, import: "frontmatter" }),
+      import.meta.glob<unknown>("/content/*/*.md", {
+        eager: true,
+        import: "frontmatter",
+        query: "?meta",
+      }),
     ),
     decodeEntry,
   ),

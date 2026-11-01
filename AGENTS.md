@@ -22,6 +22,10 @@ Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.de
 
 `vp <name>` runs a built-in command. `vp run <name>` runs a `package.json` script or a `vite.config.ts` task. Scripts cannot overwrite built-ins, so `vp dev` and `vp run dev` may do different things. Check `package.json` and `vite.config.ts` first, and run `vp run <name>` when the project defines a script or task with that name.
 
+## Running Scripts
+
+Run TypeScript and JavaScript files with `vpx <file>`, for example `vpx ./scripts/seed.ts --dry-run`. It handles enums, decorators, JSX, and tsconfig `paths`, so do not add `tsx` or `ts-node` to run scripts. `vpx --watch <file>` reruns the file when a file it uses changes, in place of `tsx watch`. `vp node <file>` runs plain Node.js.
+
 ## Tool Versions
 
 Run `vp toolchain` to show versions and relationships in the active Vite+
@@ -50,6 +54,7 @@ release. Add a tool name to select part of the graph. For example, run
 - 静的サイトの Worker（`site.worker.ts`）は `/api/stars/*` だけを先に受け、blogs と scraps の star を D1 に数える。同じ IP からの star は 1 記事 1 つで、IP は `VISITOR_SALT` を混ぜたハッシュで持つ。ほかのリクエストは静的アセットに渡す。
 - `alchemy.run.ts` は prod ステージでだけ `edge-guard.ts` と `log-archive.ts` を作る。前者はスキャナーを弾く WAF ルールとハニーポットの Worker を、後者は全 Worker のログを R2 に送る Logpush を持つ。
 - `ci-telemetry.worker.ts` は、`.github/scripts/ci-telemetry.sh` が送るジョブとステップの時間を GitHub の OIDC トークンで確かめ、ログに出す。
+- `tools/scrap-userscript` は、閲覧中のページを scrap にするよう Claude Code のルーチンへ頼むユーザースクリプトである。依頼は personal-space の `https://personal.masseater.dev/scrap-request` に送り、Access のログイン Cookie で通す。ルーチンのトークンはそちらの Worker が持つ。Greasy Fork が main の `release/scrap-request.user.js` を同期するので、ビルド結果もコミットする。ソースとビルド結果が食い違うと test が落ちる。中身を変えたら `package.json` の version を上げる。
 - `apps/zenn-articles` はパッケージではない。main の verify が通ると、中身が `zenn` ブランチの直下へ写される。
 
 ## 記事
@@ -93,6 +98,7 @@ release. Add a tool name to select part of the graph. For example, run
 
 - 推測せず計測する。実装や修正の前に本番で事実を確かめ、その結果だけで判断する。
 - 機能開発の前に、AI が自分でデバッグできる仕組み（再現手段、ログやスパン、それを読む経路）を作る。
+- アクセス解析は Cloudflare Web Analytics で既定で取る。サイトは Cloudflare の API で一度だけ作り、そのトークンを `alchemy.run.ts` の `CF_BEACON_TOKEN` に置いて、ビルド時の `VITE_CF_BEACON_TOKEN` から root の `head` でビーコンとして入れる。ゾーンの自動挿入は Workers の応答に効かない。
 - 時間かお金を使う処理はすべてスパンにする。Workers 以外は `OtlpTracer.layerFromConfig` で出す。計測のためだけにコマンドやプロセスを包まない。
 - ワークフローの最後には `.github/scripts/ci-telemetry.sh` を動かすジョブを置く。
 

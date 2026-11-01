@@ -1,9 +1,11 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext } from "@tanstack/react-router";
+import { Array as Arr, Option, Schema, pipe } from "effect";
 
 import { RootDocument } from "#/app/shell/root-document";
+import { RootLayout } from "#/app/shell/root-layout";
 import { RootNotFound } from "#/app/shell/root-not-found";
-import { site } from "#/shared/config";
+import { site, webAnalyticsBeacon } from "#/shared/config";
 
 import appCss from "#/app/styles.css?url";
 
@@ -16,8 +18,7 @@ const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
       { name: "description", content: site.description },
       { name: "color-scheme", content: "light" },
       { property: "og:site_name", content: site.name },
-      { property: "og:locale", content: "ja_JP" },
-      { property: "og:image", content: site.ogImage },
+      { property: "og:locale", content: site.ogLocale },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: site.xHandle },
     ],
@@ -28,8 +29,14 @@ const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "alternate", type: "application/rss+xml", title: site.name, href: site.feedPath },
     ],
+    scripts: pipe(
+      Schema.decodeUnknownOption(Schema.NonEmptyString)(import.meta.env["VITE_CF_BEACON_TOKEN"]),
+      Option.map(webAnalyticsBeacon),
+      Arr.fromOption,
+    ),
   }),
   shellComponent: RootDocument,
+  component: RootLayout,
   notFoundComponent: RootNotFound,
 });
 

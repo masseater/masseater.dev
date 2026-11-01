@@ -5,7 +5,7 @@ import type { Entry } from "#/entities/entry";
 
 const EntryOutline = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
   <aside className="hidden w-56 shrink-0 lg:block">
-    <div className="sticky top-8 max-h-dvh overflow-y-auto">
+    <div className="below-entry-title-bar sticky overflow-y-auto">
       <EntryToc entry={entry} />
     </div>
   </aside>

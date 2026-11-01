@@ -1,5 +1,5 @@
 import { Array, pipe } from "effect";
-import type { Option } from "effect";
+import type { Option, Record } from "effect";
 import type { ReactNode } from "react";
 
 import { categoryMeta, EntryList } from "#/entities/entry";
@@ -13,10 +13,12 @@ const CollectionView = ({
   activeTag,
   category,
   entries,
+  starCounts,
 }: Readonly<{
   activeTag: Option.Option<string>;
   category: Category;
   entries: readonly Entry[];
+  starCounts: Option.Option<Record.ReadonlyRecord<string, number>>;
 }>): ReactNode => {
   const counts = tagCounts(entries);
   const shown = withTag(activeTag)(entries);
@@ -30,11 +32,15 @@ const CollectionView = ({
   );
   const { layout, title } = categoryMeta[category];
   return (
-    <div className="flex flex-col gap-16">
+    <div className="xl:collection-columns flex flex-col gap-8 xl:grid xl:items-start" data-wide>
       <h1 className="sr-only">{title}</h1>
       {Array.isReadonlyArrayNonEmpty(counts) && <TagFilter activeTag={activeTag} counts={counts} />}
-      <EntryList entries={listed} layout={layout} />
-      {Array.isReadonlyArrayNonEmpty(ideas) && <IdeaList ideas={ideas} layout={layout} />}
+      <div className="flex min-w-0 flex-col gap-16 xl:col-start-2 xl:row-start-1">
+        <EntryList entries={listed} layout={layout} starCounts={starCounts} />
+        {Array.isReadonlyArrayNonEmpty(ideas) && (
+          <IdeaList ideas={ideas} layout={layout} starCounts={starCounts} />
+        )}
+      </div>
     </div>
   );
 };

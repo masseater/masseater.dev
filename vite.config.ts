@@ -72,6 +72,15 @@ export default defineConfig({
       ...allRulesOf({ prefix: "shadcn", rules: shadcn.rules }),
       ...allRulesOf({ prefix: "baseline-js", rules: baselineJs.rules }),
       ...baselineJs.configs.recommended().rules,
+      "baseline-js/use-baseline": [
+        "error",
+        {
+          available: "widely",
+          includeWebApis: { preset: "auto" },
+          includeJsBuiltins: { preset: "auto" },
+          ignoreFeatures: ["webgpu"],
+        },
+      ],
       ...pluginRules,
       "eslint/sort-imports": "off",
       "eslint/sort-keys": "off",
@@ -122,8 +131,7 @@ export default defineConfig({
         "error",
         {
           capIsNewExceptions: ["CloudflareApiLive", "Stack"],
-          capIsNewExceptionPattern:
-            "^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|Logpush|R2|Ruleset|Website|Workers|Zone)\\.",
+          capIsNewExceptionPattern: String.raw`^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|Logpush|R2|Ruleset|Website|Workers|Zone)\.`,
         },
       ],
       "typescript/no-empty-interface": ["error", { allowSingleExtends: true }],

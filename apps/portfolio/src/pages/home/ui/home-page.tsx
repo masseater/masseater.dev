@@ -1,17 +1,12 @@
-import { Backdrop, followPointer, releasePointer } from "@masseater.dev/ui";
 import type { ReactNode } from "react";
 
-import { ProfileHeader } from "./profile-header";
+import { AboutSection } from "./about-section";
+import { HeroSection } from "./hero-section";
 
 const HomePage = (): ReactNode => (
-  <main
-    className="stage relative isolate grid min-h-dvh place-items-center overflow-hidden px-4"
-    onPointerCancel={releasePointer}
-    onPointerLeave={releasePointer}
-    onPointerMove={followPointer}
-  >
-    <Backdrop />
-    <ProfileHeader />
+  <main data-snap-pages>
+    <HeroSection />
+    <AboutSection />
   </main>
 );
 

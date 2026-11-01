@@ -1,9 +1,12 @@
 @import "@masseater.dev/ui/styles.css";
+@import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --site-header-height: 3.5rem;
+  --entry-title-bar-height: 2.5rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
@@ -70,13 +73,103 @@
   --radius-lg: var(--radius);
 }
 
+@media (width >= 40rem) {
+  :root {
+    --site-header-height: 3.75rem;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    overflow-y: scroll;
+  }
+  html:has([data-site-header]) {
+    scroll-padding-top: calc(var(--site-header-height) + 1rem);
+  }
+  html:has([data-entry-title-bar]) {
+    scroll-padding-top: calc(var(--site-header-height) + var(--entry-title-bar-height) + 1rem);
+  }
+  html:has([data-snap-pages]) {
+    scroll-snap-type: y mandatory;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html:has([data-snap-pages]) {
+      scroll-behavior: smooth;
+    }
+  }
   body {
     @apply bg-background text-foreground;
   }
+}
+
+[data-footnotes] {
+  @apply text-muted-foreground mt-8 text-sm leading-relaxed;
+}
+[data-footnotes] > h2 {
+  @apply text-muted-foreground mt-0 mb-3 font-sans text-xs font-medium tracking-widest;
+}
+[data-footnotes] > ol {
+  @apply my-0;
+}
+[data-footnotes] li {
+  @apply my-1;
+}
+[data-footnotes] li > p {
+  @apply my-0;
+}
+
+@utility hover-card-beside-trigger {
+  margin-left: var(--radix-hover-card-trigger-width);
+}
+
+@utility site-header {
+  height: var(--site-header-height);
+  view-transition-name: site-header;
+}
+
+@utility below-site-header {
+  top: var(--site-header-height);
+}
+
+@utility below-site-header-gap {
+  top: calc(var(--site-header-height) + 2rem);
+}
+
+@utility entry-title-scope {
+  timeline-scope: --entry-title;
+  @supports (animation-timeline: view()) {
+    animation: entry-title-out linear both;
+    animation-timeline: --entry-title;
+    animation-range: exit 0% exit 100%;
+  }
+}
+
+@utility entry-title-timeline {
+  view-timeline: --entry-title block;
+  view-timeline-inset: var(--site-header-height) 0;
+}
+
+@utility entry-title-bar {
+  height: var(--entry-title-bar-height);
+  display: none;
+  @supports (animation-timeline: view()) {
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+    translate: 0 -0.5rem;
+    transition:
+      opacity 0.2s ease-out,
+      translate 0.2s ease-out,
+      visibility 0.2s;
+  }
+}
+
+@utility below-entry-title-bar {
+  top: calc(var(--site-header-height) + var(--entry-title-bar-height) + 1rem);
+  max-height: calc(100dvh - var(--site-header-height) - var(--entry-title-bar-height) - 2rem);
 }
 
 @utility vt-page-home {
@@ -120,32 +213,50 @@
   view-transition-class: entry;
 }
 
+@utility collection-columns {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 62rem) minmax(10rem, 1fr);
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+}
+
 html:active-view-transition-type(forward)::view-transition-old(.page),
 html:active-view-transition-type(forward)::view-transition-old(.entry):only-child {
-  animation: slide-out-left 0.45s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation: slide-out-left 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
 html:active-view-transition-type(forward)::view-transition-new(.page),
 html:active-view-transition-type(forward)::view-transition-new(.entry):only-child {
-  animation: slide-in-right 0.45s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation: slide-in-right 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
 html:active-view-transition-type(backward)::view-transition-old(.page),
 html:active-view-transition-type(backward)::view-transition-old(.entry):only-child {
-  animation: slide-out-right 0.45s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation: slide-out-right 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
 html:active-view-transition-type(backward)::view-transition-new(.page),
 html:active-view-transition-type(backward)::view-transition-new(.entry):only-child {
-  animation: slide-in-left 0.45s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation: slide-in-left 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-::view-transition-old(.entry):not(:only-child) {
-  display: none;
+::view-transition-group(.entry) {
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
 
-::view-transition-new(.entry):not(:only-child) {
-  animation: none;
+::view-transition-old(.entry),
+::view-transition-new(.entry) {
+  width: auto;
+  height: 100%;
+}
+
+::view-transition-old(.entry) {
+  animation: entry-fade-out 0.12s ease-out both;
+}
+
+::view-transition-new(.entry) {
+  animation: entry-fade-in 0.24s ease-out 0.06s both;
 }
 
 ::view-transition-new(feed-link):only-child {
@@ -156,8 +267,28 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   animation: feed-slide-out 0.25s cubic-bezier(0.4, 0, 1, 1) both;
 }
 
+::view-transition-group(site-header) {
+  z-index: 1;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-group(site-name),
+::view-transition-group(nav-indicator),
+::view-transition-group(category-projects),
+::view-transition-group(category-blogs),
+::view-transition-group(category-scraps) {
+  z-index: 2;
+}
+
 ::view-transition-group(nav-indicator) {
-  animation-duration: 0.45s;
+  animation-duration: 0.3s;
   animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -168,6 +299,43 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 
 ::view-transition-old(nav-indicator) {
   display: none;
+}
+
+@property --entry-title-out {
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes entry-title-out {
+  0%,
+  85% {
+    --entry-title-out: 0;
+  }
+  86%,
+  100% {
+    --entry-title-out: 1;
+  }
+}
+
+@container style(--entry-title-out: 1) {
+  [data-entry-title-bar] {
+    visibility: visible;
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes entry-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes entry-fade-in {
+  from {
+    opacity: 0;
+  }
 }
 
 @keyframes slide-out-left {

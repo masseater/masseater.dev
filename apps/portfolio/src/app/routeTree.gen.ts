@@ -15,6 +15,8 @@ import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SiteCategoryIndexRouteImport } from './routes/_site/$category/index'
 import { Route as SiteCategorySlugRouteImport } from './routes/_site/$category/$slug'
+import { Route as SiteSeikinTechniquesIndexRouteImport } from './routes/_site/seikin-techniques/index'
+import { Route as SiteSeikinTechniquesSlugRouteImport } from './routes/_site/seikin-techniques/$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -45,20 +47,36 @@ const SiteCategorySlugRoute = SiteCategorySlugRouteImport.update({
   path: '/$category/$slug',
   getParentRoute: () => SiteRoute,
 } as any)
+const SiteSeikinTechniquesIndexRoute =
+  SiteSeikinTechniquesIndexRouteImport.update({
+    id: '/seikin-techniques/',
+    path: '/seikin-techniques/',
+    getParentRoute: () => SiteRoute,
+  } as any)
+const SiteSeikinTechniquesSlugRoute =
+  SiteSeikinTechniquesSlugRouteImport.update({
+    id: '/seikin-techniques/$slug',
+    path: '/seikin-techniques/$slug',
+    getParentRoute: () => SiteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/$category/$slug': typeof SiteCategorySlugRoute
+  '/seikin-techniques/$slug': typeof SiteSeikinTechniquesSlugRoute
   '/$category/': typeof SiteCategoryIndexRoute
+  '/seikin-techniques/': typeof SiteSeikinTechniquesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/$category/$slug': typeof SiteCategorySlugRoute
+  '/seikin-techniques/$slug': typeof SiteSeikinTechniquesSlugRoute
   '/$category': typeof SiteCategoryIndexRoute
+  '/seikin-techniques': typeof SiteSeikinTechniquesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -67,14 +85,29 @@ export interface FileRoutesById {
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/_site/$category/$slug': typeof SiteCategorySlugRoute
+  '/_site/seikin-techniques/$slug': typeof SiteSeikinTechniquesSlugRoute
   '/_site/$category/': typeof SiteCategoryIndexRoute
+  '/_site/seikin-techniques/': typeof SiteSeikinTechniquesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/feed.xml' | '/robots.txt' | '/$category/$slug' | '/$category/'
+    | '/'
+    | '/feed.xml'
+    | '/robots.txt'
+    | '/$category/$slug'
+    | '/seikin-techniques/$slug'
+    | '/$category/'
+    | '/seikin-techniques/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/feed.xml' | '/robots.txt' | '/$category/$slug' | '/$category'
+  to:
+    | '/'
+    | '/feed.xml'
+    | '/robots.txt'
+    | '/$category/$slug'
+    | '/seikin-techniques/$slug'
+    | '/$category'
+    | '/seikin-techniques'
   id:
     | '__root__'
     | '/'
@@ -82,7 +115,9 @@ export interface FileRouteTypes {
     | '/feed.xml'
     | '/robots.txt'
     | '/_site/$category/$slug'
+    | '/_site/seikin-techniques/$slug'
     | '/_site/$category/'
+    | '/_site/seikin-techniques/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -136,17 +171,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteCategorySlugRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_site/seikin-techniques/': {
+      id: '/_site/seikin-techniques/'
+      path: '/seikin-techniques'
+      fullPath: '/seikin-techniques/'
+      preLoaderRoute: typeof SiteSeikinTechniquesIndexRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/seikin-techniques/$slug': {
+      id: '/_site/seikin-techniques/$slug'
+      path: '/seikin-techniques/$slug'
+      fullPath: '/seikin-techniques/$slug'
+      preLoaderRoute: typeof SiteSeikinTechniquesSlugRouteImport
+      parentRoute: typeof SiteRoute
+    }
   }
 }
 
 interface SiteRouteChildren {
   SiteCategorySlugRoute: typeof SiteCategorySlugRoute
+  SiteSeikinTechniquesSlugRoute: typeof SiteSeikinTechniquesSlugRoute
   SiteCategoryIndexRoute: typeof SiteCategoryIndexRoute
+  SiteSeikinTechniquesIndexRoute: typeof SiteSeikinTechniquesIndexRoute
 }
 
 const SiteRouteChildren: SiteRouteChildren = {
   SiteCategorySlugRoute: SiteCategorySlugRoute,
+  SiteSeikinTechniquesSlugRoute: SiteSeikinTechniquesSlugRoute,
   SiteCategoryIndexRoute: SiteCategoryIndexRoute,
+  SiteSeikinTechniquesIndexRoute: SiteSeikinTechniquesIndexRoute,
 }
 
 const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)

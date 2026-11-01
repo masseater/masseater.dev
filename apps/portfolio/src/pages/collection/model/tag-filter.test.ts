@@ -11,6 +11,7 @@ const entry = (slug: string, tags: readonly string[]): Entry => ({
   title: slug,
   description: "",
   date: "2026-10-24",
+  updated: "2026-10-24",
   tags,
   status: "published",
 });

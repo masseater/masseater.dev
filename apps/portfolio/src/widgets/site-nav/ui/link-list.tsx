@@ -4,7 +4,7 @@ import type { Direction } from "#/widgets/site-nav/model/direction";
 
 const LIST_CLASS = {
   row: "flex flex-wrap justify-center gap-x-4",
-  compact: "flex justify-end sm:gap-x-4",
+  header: "flex justify-end sm:justify-center sm:gap-x-4",
 } as const;
 
 const LinkList = ({

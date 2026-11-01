@@ -3,32 +3,12 @@ import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
-import { Array as Arr, pipe } from "effect";
 import { defineConfig } from "vite-plus";
 
 import mdx from "./mdx.config.ts";
-import { categories, categoryPath } from "./src/entities/entry/model/category.ts";
-import { site } from "./src/shared/config/site.ts";
-
-const categoryPaths = pipe(
-  categories,
-  Arr.map((category) => categoryPath(category)),
-);
-
-const pages = [
-  ...pipe(
-    ["/", ...categoryPaths],
-    Arr.map((path) => ({ path })),
-  ),
-  ...pipe(
-    [site.feedPath, site.robotsPath],
-    Arr.map((path) => ({ path, sitemap: { exclude: true } })),
-  ),
-  ...pipe(
-    site.externalPaths,
-    Arr.map((path) => ({ path, prerender: { enabled: false } })),
-  ),
-];
+import { ogImage } from "./og-image.ts";
+import { pages, sitemap, withLastmod } from "./prerender.ts";
+import { seikinTechniques } from "./seikin-techniques.ts";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
@@ -40,14 +20,21 @@ export default defineConfig({
   },
   plugins: [
     devtools(),
+    ...seikinTechniques(),
     mdx,
     tailwindcss(),
+    ogImage(),
     tanstackStart({
       srcDirectory: "src/app",
       rsc: { enabled: true },
-      prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: false },
+      prerender: {
+        enabled: true,
+        crawlLinks: true,
+        autoSubfolderIndex: false,
+        onSuccess: withLastmod,
+      },
       pages,
-      sitemap: { host: site.url, outputPath: site.sitemapFile },
+      sitemap,
       spa: {
         enabled: true,
         maskPath: "/404",

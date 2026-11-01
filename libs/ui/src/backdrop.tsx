@@ -2,26 +2,20 @@ import { MeshGradient } from "@paper-design/shaders-react";
 import { Record as Rec } from "effect";
 import type { ReactNode } from "react";
 
+import { backdropPalette } from "./backdrop-palette.ts";
 import type { CssVariables } from "./css-variables.ts";
 
-const PALETTE = {
-  base: "#ffffff",
-  sky: "#dbeafe",
-  pink: "#fbcfe8",
-  amber: "#fef3c7",
-  indigo: "#c7d2fe",
-  mint: "#d1fae5",
-} as const;
+const COLORS = Rec.values(backdropPalette);
 
-const COLORS = Rec.values(PALETTE);
+const MAX_PIXEL_COUNT = 230_400;
 
 const STILL_COLORS: CssVariables = {
-  "--still-base": PALETTE.base,
-  "--still-sky": PALETTE.sky,
-  "--still-pink": PALETTE.pink,
-  "--still-amber": PALETTE.amber,
-  "--still-indigo": PALETTE.indigo,
-  "--still-mint": PALETTE.mint,
+  "--still-base": backdropPalette.base,
+  "--still-sky": backdropPalette.sky,
+  "--still-pink": backdropPalette.pink,
+  "--still-amber": backdropPalette.amber,
+  "--still-indigo": backdropPalette.indigo,
+  "--still-mint": backdropPalette.mint,
 };
 
 const Backdrop = (): ReactNode => (
@@ -32,6 +26,8 @@ const Backdrop = (): ReactNode => (
         colors={COLORS}
         distortion={0.85}
         grainOverlay={0.06}
+        maxPixelCount={MAX_PIXEL_COUNT}
+        minPixelRatio={1}
         speed={0.2}
         swirl={0.35}
       />
