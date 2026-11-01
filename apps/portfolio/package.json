@@ -54,7 +54,7 @@
     "@shikijs/rehype": "catalog:",
     "@stefanprobst/rehype-extract-toc": "catalog:",
     "@tailwindcss/vite": "4.3.3",
-    "@tanstack/devtools-vite": "0.8.5",
+    "@tanstack/devtools-vite": "0.8.6",
     "@tanstack/react-start": "catalog:stack",
     "@types/hast": "catalog:",
     "@types/mdast": "catalog:",
