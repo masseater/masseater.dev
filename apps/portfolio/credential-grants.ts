@@ -39,6 +39,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   aredoko: "deploy",
   cdmm: "deploy",
   "decision-experiments": "deploy",
+  konomi: "deploy",
   "medley-database": "deploy",
   "medley-manager": "deploy",
   mirucord: "deploy",
