@@ -89,6 +89,16 @@ const credentialBroker = Effect.gen(function* credentialBroker() {
     name: `${PREFIX}credential-root-token`,
     value: rootToken,
   });
+  const OPENROUTER_API_KEY = yield* SecretsStore.Secret("CiOpenrouterApiKey", {
+    store,
+    name: `${PREFIX}ci-openrouter-api-key`,
+    value: yield* Config.Redacted("OPENROUTER_API_KEY"),
+  });
+  const CLAUDE_CODE_OAUTH_TOKEN = yield* SecretsStore.Secret("CiClaudeCodeOauthToken", {
+    store,
+    name: `${PREFIX}ci-claude-code-oauth-token`,
+    value: yield* Config.Redacted("CLAUDE_CODE_OAUTH_TOKEN"),
+  });
   const GRANTS = yield* Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown))(
     grantPolicies({ accountId, zoneId }),
   ).pipe(Effect.orDie);
@@ -101,6 +111,8 @@ const credentialBroker = Effect.gen(function* credentialBroker() {
     crons: ["17 18 * * *"],
     env: {
       ROOT_TOKEN,
+      OPENROUTER_API_KEY,
+      CLAUDE_CODE_OAUTH_TOKEN,
       ACCOUNT_ID: accountId,
       GRANTS,
     },
