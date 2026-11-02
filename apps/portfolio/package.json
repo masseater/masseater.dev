@@ -14,6 +14,7 @@
     "prepare": "effect-tsgo patch --typescript --oxlint",
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
     "deploy": "alchemy deploy",
+    "tokens": "vpx cloudflare-tokens.ts",
     "destroy": "alchemy destroy",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check && drizzle-kit generate --explain --output json | grep -q '\"status\":\"no_changes\"'"
