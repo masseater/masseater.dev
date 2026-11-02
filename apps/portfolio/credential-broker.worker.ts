@@ -2,12 +2,14 @@ import { createToken, deleteToken, listTokens } from "@distilled.cloud/cloudflar
 import type { CloudflareOpContext } from "@distilled.cloud/cloudflare/accounts";
 import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
 import {
+  Array as Arr,
   DateTime,
   Effect,
   Layer,
   Logger,
   ManagedRuntime,
   Option,
+  Record,
   Redacted,
   Schema,
   Stream,
@@ -22,6 +24,8 @@ import { CREDENTIAL_BROKER_AUDIENCE } from "./app-name.ts";
 
 const ISSUER = "https://token.actions.githubusercontent.com";
 const OWNER = "masseater";
+const OWNER_ID = "62135405";
+const UNTRUSTED_EVENTS: ReadonlySet<string> = new Set(["pull_request_target", "workflow_run"]);
 const DEFAULT_BRANCH = "refs/heads/main";
 const TOKEN_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
 const TOKEN_LIFETIME = { hours: 1 } as const;
@@ -53,7 +57,9 @@ const Grants = Schema.fromJsonString(
 
 const Claims = Schema.Struct({
   repository_owner: Schema.String,
+  repository_owner_id: Schema.String,
   repository: Schema.String,
+  event_name: Schema.String,
   ref: Schema.String,
   run_id: Schema.String,
   run_attempt: Schema.String,
@@ -79,6 +85,16 @@ const cloudflare = (env: CredentialBrokerEnv): Layer.Layer<CloudflareOpContext> 
 const bearer = (request: Request): string =>
   Str.replace(/^Bearer /u, "")(request.headers.get("authorization") ?? "");
 
+const TRUSTED_CLAIMS = {
+  repository_owner_id: OWNER_ID,
+  repository_owner: OWNER,
+  ref: DEFAULT_BRANCH,
+} as const;
+
+const isTrusted = (claims: typeof Claims.Type): boolean =>
+  Arr.every(Record.toEntries(TRUSTED_CLAIMS), ([key, value]) => claims[key] === value) &&
+  !UNTRUSTED_EVENTS.has(claims.event_name);
+
 const verify = (
   request: Request,
 ): Effect.Effect<typeof Claims.Type, Rejected | Schema.SchemaError> =>
@@ -89,9 +105,9 @@ const verify = (
       catch: (error) => Rejected.make({ reason: String(error) }),
     });
     const claims = yield* Schema.decodeUnknownEffect(Claims)(payload);
-    if (claims.repository_owner !== OWNER || claims.ref !== DEFAULT_BRANCH) {
+    if (!isTrusted(claims)) {
       return yield* Rejected.make({
-        reason: `rejected ${claims.repository} at ${claims.ref}`,
+        reason: `rejected ${claims.repository} at ${claims.ref} on ${claims.event_name}`,
       });
     }
     return claims;
