@@ -32,6 +32,8 @@ const TOKEN_LIFETIME = { hours: 1 } as const;
 
 type CredentialBrokerEnv = Readonly<{
   ROOT_TOKEN: SecretsStoreSecret;
+  OPENROUTER_API_KEY: SecretsStoreSecret;
+  CLAUDE_CODE_OAUTH_TOKEN: SecretsStoreSecret;
   ACCOUNT_ID: string;
   GRANTS: string;
 }>;
@@ -148,7 +150,15 @@ const issue = (
     yield* Effect.logInfo("credential.issued").pipe(
       Effect.annotateLogs({ repository, runId: claims.run_id, tokenId: created.id }),
     );
-    return Response.json({ token: created.value, accountId: env.ACCOUNT_ID });
+    const [openrouterApiKey, claudeCodeOauthToken] = yield* Effect.promise(() =>
+      Promise.all([env.OPENROUTER_API_KEY.get(), env.CLAUDE_CODE_OAUTH_TOKEN.get()]),
+    );
+    return Response.json({
+      token: created.value,
+      accountId: env.ACCOUNT_ID,
+      openrouterApiKey,
+      claudeCodeOauthToken,
+    });
   }).pipe(
     Effect.catchTag("Rejected", (rejected) =>
       Effect.logWarning("credential.unauthorized").pipe(
