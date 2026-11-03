@@ -45,11 +45,13 @@
     "elysia": "catalog:stack",
     "feed": "catalog:",
     "jose": "catalog:",
+    "lucide-react": "catalog:",
     "radix-ui": "catalog:",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-lite-youtube-embed": "catalog:",
     "scheduler": "0.28.0",
+    "simple-icons": "catalog:",
     "tailwindcss": "catalog:stack",
     "universal-github-app-jwt": "catalog:"
   },
