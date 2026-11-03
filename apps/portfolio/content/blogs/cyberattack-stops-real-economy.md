@@ -17,7 +17,7 @@ published: true
 
 連鎖を起こすのに、攻撃者すら要らない。2024年7月には、CrowdStrike のセキュリティソフトの更新の不具合で約850万台の Windows が止まった。全 Windows 機の1%未満にすぎないのに[^techcrunch-crowdstrike]、世界中で病院や航空会社や銀行の業務が止まった。2025年10月には AWS と Azure が相次いで大規模な障害を起こしている[^theregister-azure]。依存が少数のクラウド事業者に集まっているので、そのクラウドが落ちれば、その上で動くサービスはどれだけ丁寧に作られていても一緒に止まる。
 
-![1つのサービスの停止が、当事者の店、取引先、取引のない競合、世界中へと広がる図](/blogs/cyberattack-stops-real-economy/cascade.svg)
+::figure{name=cascade-failure}
 
 こうした停止は、間隔が縮まりながら範囲を広げている。
 
