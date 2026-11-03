@@ -1,7 +1,6 @@
 @import "@masseater.dev/ui/styles.css";
 @import "@masseater.dev/ui/theme.css";
 @import "sloppedia/styles.css";
-@import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 @import "@xyflow/react/dist/base.css";
 @plugin "@tailwindcss/typography";
 
@@ -56,7 +55,7 @@
 [data-footnotes] li {
   @apply my-1;
 }
-[data-footnotes] li > p {
+[data-footnotes] p {
   @apply my-0;
 }
 
@@ -79,7 +78,10 @@
 
 @utility entry-title-scope {
   timeline-scope: --entry-title;
-  @supports (animation-timeline: view()) {
+}
+
+@supports (animation-timeline: view()) {
+  .entry-title-scope {
     animation: entry-title-out linear both;
     animation-timeline: --entry-title;
     animation-range: exit 0% exit 100%;
@@ -160,23 +162,23 @@
   scrollbar-width: none;
 }
 
-html:active-view-transition-type(forward)::view-transition-old(.page),
-html:active-view-transition-type(forward)::view-transition-old(.entry):only-child {
+:active-view-transition-type(forward)::view-transition-old(.page),
+:active-view-transition-type(forward)::view-transition-old(.entry):only-child {
   animation: slide-out-left 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-html:active-view-transition-type(forward)::view-transition-new(.page),
-html:active-view-transition-type(forward)::view-transition-new(.entry):only-child {
+:active-view-transition-type(forward)::view-transition-new(.page),
+:active-view-transition-type(forward)::view-transition-new(.entry):only-child {
   animation: slide-in-right 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-html:active-view-transition-type(backward)::view-transition-old(.page),
-html:active-view-transition-type(backward)::view-transition-old(.entry):only-child {
+:active-view-transition-type(backward)::view-transition-old(.page),
+:active-view-transition-type(backward)::view-transition-old(.entry):only-child {
   animation: slide-out-right 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-html:active-view-transition-type(backward)::view-transition-new(.page),
-html:active-view-transition-type(backward)::view-transition-new(.entry):only-child {
+:active-view-transition-type(backward)::view-transition-new(.page),
+:active-view-transition-type(backward)::view-transition-new(.entry):only-child {
   animation: slide-in-left 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
@@ -257,11 +259,14 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   }
 }
 
+[data-entry-title-bar] {
+  opacity: var(--entry-title-out);
+  translate: 0 calc((var(--entry-title-out) - 1) * 0.5rem);
+}
+
 @container style(--entry-title-out: 1) {
   [data-entry-title-bar] {
     visibility: visible;
-    opacity: 1;
-    translate: 0 0;
   }
 }
 
@@ -274,6 +279,20 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 @keyframes entry-fade-in {
   from {
     opacity: 0;
+  }
+}
+
+@keyframes feed-slide-in {
+  from {
+    opacity: 0;
+    translate: calc(100% + 1rem) 0;
+  }
+}
+
+@keyframes feed-slide-out {
+  to {
+    opacity: 0;
+    translate: calc(100% + 1rem) 0;
   }
 }
 
@@ -310,16 +329,15 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   --cascade-ok: oklch(0.72 0.17 150);
 }
 
-.cascade-failure .react-flow__edge-path {
-  stroke: var(--muted-foreground);
+.cascade-edge {
+  font-size: 10.5px;
 }
 
-.cascade-failure .react-flow__edge-text {
-  font-size: 10px;
+.cascade-edge text {
   fill: var(--muted-foreground);
 }
 
-.cascade-failure .react-flow__edge-textbg {
+.cascade-edge rect {
   fill: var(--background);
 }
 
@@ -360,7 +378,7 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   animation: cascade-lamp-stop 400ms ease-out var(--cascade-delay) both;
 }
 
-.cascade-edge-stopped .react-flow__edge-path {
+.cascade-edge-stopped path:first-of-type {
   animation:
     cascade-edge-stop 400ms ease-out var(--cascade-delay) both,
     cascade-edge-flow 600ms linear var(--cascade-delay) infinite;
@@ -395,11 +413,16 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cascade-service-stopped,
-  .cascade-service-stopped .cascade-lamp,
-  .cascade-edge-stopped .react-flow__edge-path {
-    animation-duration: 0s;
-    animation-delay: 0s !important;
+  .cascade-service-stopped {
+    animation: cascade-stop 0s both;
+  }
+
+  .cascade-service-stopped .cascade-lamp {
+    animation: cascade-lamp-stop 0s both;
+  }
+
+  .cascade-edge-stopped path:first-of-type {
+    animation: cascade-edge-stop 0s both;
   }
 }
 
@@ -542,46 +565,39 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   color: var(--architecture-gh-title);
 }
 
-.architecture-link-main .react-flow__edge-path {
-  stroke: var(--architecture-main);
-  stroke-width: 1.8;
-}
-
-.architecture-link-api .react-flow__edge-path,
-.architecture-link-dash .react-flow__edge-path {
-  stroke: var(--architecture-api);
-  stroke-width: 1.3;
-}
-
-.architecture-link-dash .react-flow__edge-path {
-  stroke-dasharray: 5 4;
-}
-
-.architecture .react-flow__edge-text {
+.architecture-link {
+  --xy-edge-stroke: var(--architecture-api);
+  --xy-edge-stroke-width: 1.3;
   font-size: 10.5px;
   font-weight: 600;
+}
+
+.architecture-link text {
   fill: var(--muted-foreground);
 }
 
-.architecture-link-main .react-flow__edge-text {
-  fill: var(--architecture-main);
-}
-
-.architecture .react-flow__edge-textbg {
+.architecture-link rect {
   fill: var(--architecture-bg);
 }
 
-.architecture .react-flow__controls {
-  display: flex;
-  flex-direction: column;
+.architecture-link-main {
+  --xy-edge-stroke: var(--architecture-main);
+  --xy-edge-stroke-width: 1.8;
+}
+
+.architecture-link-main text {
+  fill: var(--architecture-main);
+}
+
+.architecture-link-dash {
+  stroke-dasharray: 5 4;
+}
+
+.architecture-controls {
   gap: 2px;
 }
 
-.architecture .react-flow__controls-button {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
+.architecture-controls button {
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--card);
@@ -589,14 +605,8 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   cursor: pointer;
 }
 
-.architecture .react-flow__controls-button:hover {
+.architecture-controls button:hover {
   background: var(--muted);
-}
-
-.architecture .react-flow__controls-button svg {
-  width: 12px;
-  height: 12px;
-  fill: currentColor;
 }
 
 .architecture-legend {
@@ -608,22 +618,22 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   color: var(--muted-foreground);
 }
 
-.architecture-legend li {
+.architecture-legend-item {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.architecture-legend li::before {
+.architecture-legend-item::before {
   content: "";
   width: 36px;
   border-top: 1.3px solid var(--architecture-api);
 }
 
-.architecture-legend li.architecture-legend-main::before {
+.architecture-legend-main::before {
   border-top: 1.8px solid var(--architecture-main);
 }
 
-.architecture-legend li.architecture-legend-dash::before {
+.architecture-legend-dash::before {
   border-top-style: dashed;
 }

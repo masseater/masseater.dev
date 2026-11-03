@@ -60,7 +60,6 @@ catalog:
   remark-directive: ^4.0.0
   "@xyflow/react": 12.12.1
   lucide-react: 1.66.0
-  react-lite-youtube-embed: ^3.7.0
   budoux: 0.10.2
   mdast-util-to-string: 4.0.0
   remark-parse: 11.0.0

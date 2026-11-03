@@ -9,12 +9,18 @@ const entries = [
   ["dash", "鍵 · 同期 · ログ · 監視"],
 ] as const satisfies readonly (readonly [LinkKind, string])[];
 
+const itemClass = {
+  main: "architecture-legend-item architecture-legend-main",
+  api: "architecture-legend-item",
+  dash: "architecture-legend-item architecture-legend-dash",
+} as const satisfies Record<LinkKind, string>;
+
 const ArchitectureLegend = (): ReactNode => (
   <ul className="architecture-legend">
     {pipe(
       entries,
       Arr.map(([kind, text]) => (
-        <li className={`architecture-legend-${kind}`} key={kind}>
+        <li className={itemClass[kind]} key={kind}>
           {text}
         </li>
       )),
