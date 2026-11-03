@@ -19,9 +19,6 @@
   "failOnParseError": true,
   "ignorePatterns": [".claude/**", "tools/scrap-userscript/release/**"],
   "audit": { "gate": "all" },
-  "overrides": [
-    { "files": ["**/src/app/routeTree.gen.ts"], "rules": { "added-suppression": "off" } },
-  ],
   "security": {
     "categories": {
       "include": [
