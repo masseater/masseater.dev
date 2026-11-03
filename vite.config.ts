@@ -112,6 +112,7 @@ export default defineConfig({
               package: "@cloudflare/workers-types",
               name: ["AnalyticsEngineDataset", "KVNamespace", "SecretsStoreSecret"],
             },
+            { from: "package", package: "@alchemy.run/cloudflare", name: "Store" },
             { from: "package", package: "@tanstack/query-core", name: "QueryClient" },
             {
               from: "package",
