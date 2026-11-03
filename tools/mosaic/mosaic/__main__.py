@@ -10,7 +10,7 @@ from .vocadb import fetch_songs
 ROOT = Path(__file__).resolve().parent.parent
 REPO = ROOT.parents[1]
 DATA = REPO / "libs" / "mosaic" / "data"
-PUBLIC = REPO / "apps" / "web" / "public" / "files"
+PUBLIC = REPO / "apps" / "mosaic" / "public" / "files"
 
 
 def main() -> None:
