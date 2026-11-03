@@ -27,7 +27,9 @@
       }
     </style>
     <title>背面打ちスプリットパッド</title>
+    <meta name="color-scheme" content="light dark" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Dela+Gothic+One&family=IBM+Plex+Mono:wght@400;500&display=swap"
@@ -40,6 +42,9 @@
         --ink: #1a2029;
         --muted: #5c6673;
         --line: #cfd5dc;
+        --control-line: #7f8893;
+        --hold: #0e6f5d;
+        --fall: #a8305f;
         --shell: #e4e1da;
         --key: #3a404a;
         --thumb: #d9861c;
@@ -57,12 +62,15 @@
           --ink: #e6e9ed;
           --muted: #97a1ad;
           --line: #2e3540;
+          --control-line: #6b7480;
           --shell: #4a505a;
           --key: #22262d;
           --thumb: #f0a03a;
           --index: #5a8ff0;
           --middle: #2fbf9f;
           --ring: #e8679f;
+          --hold: var(--middle);
+          --fall: var(--ring);
           color-scheme: dark;
         }
       }
@@ -72,12 +80,15 @@
         --ink: #e6e9ed;
         --muted: #97a1ad;
         --line: #2e3540;
+        --control-line: #6b7480;
         --shell: #4a505a;
         --key: #22262d;
         --thumb: #f0a03a;
         --index: #5a8ff0;
         --middle: #2fbf9f;
         --ring: #e8679f;
+        --hold: var(--middle);
+        --fall: var(--ring);
         color-scheme: dark;
       }
       html,
@@ -89,6 +100,7 @@
         color: var(--ink);
         font-family: var(--body);
         font-size: 14px;
+        font-size-adjust: from-font;
         line-height: 1.6;
         display: flex;
         flex-direction: column;
@@ -151,7 +163,7 @@
         font: 500 12px var(--body);
         color: var(--ink);
         background: var(--panel);
-        border: 1px solid var(--line);
+        border: 1px solid var(--control-line);
         border-radius: 6px;
         padding: 5px 10px;
         cursor: pointer;
@@ -160,6 +172,11 @@
         background: var(--ink);
         color: var(--panel);
         border-color: var(--ink);
+      }
+      @media (forced-colors: active) {
+        .views button[aria-pressed="true"] {
+          outline: 2px solid Highlight;
+        }
       }
       button:focus-visible,
       input:focus-visible + span {
@@ -248,7 +265,7 @@
         font: 14px var(--body);
         color: var(--ink);
         background: transparent;
-        border: 1px solid var(--line);
+        border: 1px solid var(--control-line);
         border-radius: 6px;
         padding: 8px 10px;
         cursor: pointer;
@@ -310,7 +327,7 @@
         font: 13px var(--body);
         color: var(--ink);
         background: var(--bg);
-        border: 1px solid var(--line);
+        border: 1px solid var(--control-line);
         border-radius: 6px;
         padding: 5px 6px;
         min-width: 0;
@@ -333,7 +350,7 @@
       #phys .btns button.sub {
         background: transparent;
         color: var(--ink);
-        border-color: var(--line);
+        border-color: var(--control-line);
       }
       #phys .chk {
         display: flex;
@@ -345,7 +362,7 @@
         align-items: center;
         gap: 6px;
         font-size: 13px;
-        border: 1px solid var(--line);
+        border: 1px solid var(--control-line);
         border-radius: 6px;
         padding: 4px 9px;
         cursor: pointer;
@@ -386,10 +403,10 @@
         font-weight: 700;
       }
       #p-out dd.st[data-s="hold"] {
-        color: var(--middle);
+        color: var(--hold);
       }
       #p-out dd.st[data-s="fall"] {
-        color: var(--ring);
+        color: var(--fall);
       }
       .toggles {
         display: flex;
@@ -592,10 +609,12 @@
             ><select id="p-mu"></select>
           </div>
           <div class="chk">
-            <label
+            <label for="p-thumb"
               ><input type="checkbox" id="p-thumb" /><span>親指もスティックから離す</span></label
             >
-            <label><input type="checkbox" id="p-loop" checked /><span>2本目の輪</span></label>
+            <label for="p-loop"
+              ><input type="checkbox" id="p-loop" checked /><span>2本目の輪</span></label
+            >
           </div>
           <div class="btns">
             <button id="p-run">振る</button><button id="p-reset" class="sub">元に戻す</button>
@@ -629,12 +648,20 @@
           </div>
         </section>
         <section class="toggles">
-          <label><input type="checkbox" id="t-hands" checked /><span>手</span></label>
-          <label><input type="checkbox" id="t-ghost" /><span>手を透かす</span></label>
-          <label><input type="checkbox" id="t-labels" checked /><span>ラベル</span></label>
-          <label><input type="checkbox" id="t-color" checked /><span>指で色分け</span></label>
-          <label><input type="checkbox" id="t-strap" checked /><span>ストラップ</span></label>
-          <label><input type="checkbox" id="t-spread" checked /><span>肩幅に離す</span></label>
+          <label for="t-hands"><input type="checkbox" id="t-hands" checked /><span>手</span></label>
+          <label for="t-ghost"><input type="checkbox" id="t-ghost" /><span>手を透かす</span></label>
+          <label for="t-labels"
+            ><input type="checkbox" id="t-labels" checked /><span>ラベル</span></label
+          >
+          <label for="t-color"
+            ><input type="checkbox" id="t-color" checked /><span>指で色分け</span></label
+          >
+          <label for="t-strap"
+            ><input type="checkbox" id="t-strap" checked /><span>ストラップ</span></label
+          >
+          <label for="t-spread"
+            ><input type="checkbox" id="t-spread" checked /><span>肩幅に離す</span></label
+          >
         </section>
         <section>
           <h2>人間工学メモ</h2>
@@ -734,7 +761,8 @@
           UP = new V3(0, 1, 0),
           D = Math.PI / 180;
         const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-        const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const reduceMq = matchMedia("(prefers-reduced-motion: reduce)");
+        let reduce = reduceMq.matches;
         const stage = document.getElementById("stage");
 
         // ---- renderer / scene ----
@@ -1388,7 +1416,12 @@
         }
         // 手のモデル（WebXR Input Profiles の generic-hand）の関節の静止位置を、glb の JSON 部分から読む
         const HAND_PATH = "./webxr-input-profiles/dist/profiles/generic-hand/";
-        const handBin = await (await fetch(`${HAND_PATH}right.glb`)).arrayBuffer();
+        const handRes = await fetch(`${HAND_PATH}right.glb`);
+        if (!handRes.ok) {
+          document.querySelector("#now .act").textContent = "手のモデルを読み込めませんでした";
+          throw new Error(`right.glb: ${handRes.status}`);
+        }
+        const handBin = await handRes.arrayBuffer();
         const HAND_REST = (() => {
           const dv = new DataView(handBin),
             len = dv.getUint32(12, true);
@@ -2544,9 +2577,11 @@
         document.querySelectorAll(".fingers button").forEach((el) =>
           el.addEventListener("click", () => {
             const f = el.dataset.finger;
-            buttons
-              .filter((b) => b.finger === f && !b.stick && !b.id.endsWith("menu"))
-              .forEach((b) => press(b, false));
+            const owned = buttons.filter(
+              (b) => b.finger === f && !b.stick && !b.id.endsWith("menu"),
+            );
+            owned.forEach((b) => press(b, false));
+            info.innerHTML = `<div class="name">${FNAME[f]}</div>${owned.map((b) => `<p><b>${b.name}</b> ${b.role}</p>`).join("")}`;
             flash = { f, t: 1 };
           }),
         );
@@ -2582,6 +2617,10 @@
         };
         setDemo(demo);
         playBtn.addEventListener("click", () => setDemo(!demo));
+        reduceMq.addEventListener("change", (e) => {
+          reduce = e.matches;
+          if (reduce) setDemo(false);
+        });
         const stickTilt = { L: { x: 0, z: 0 }, R: { x: 0, z: 0 } };
 
         const strapVis = () => {
@@ -2929,6 +2968,9 @@ fn main(@builtin(local_invocation_index) tid: u32) {
             };
             device.lost.then(() => {
               PHYS.gpu = null;
+              PHYS.running = false;
+              runBtn.disabled = true;
+              pOut.be.textContent = "WebGPU が止まりました。ページを読み込み直してください";
             });
             return true;
           } catch (err) {
