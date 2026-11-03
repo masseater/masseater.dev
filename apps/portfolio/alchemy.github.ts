@@ -62,19 +62,6 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
       description: "OpenRouter の decision モデルで文書の中身を安く速く判定できるかを試す実験",
       homepage: "https://masseater.dev/injection-bisect/",
     },
-    "mst-ja-decision-bench": {
-      description:
-        "日本語 decision model ベンチマーク（学習目的の実験。正解は Claude Opus 5.5 のラベル）",
-      homepage: "https://masseater.dev/decision-bench/",
-    },
-    "oxlint-typed-rules": {
-      description: "型情報を要る ESLint のルールを oxlint の JS プラグインとして動かす",
-      homepage: "https://www.npmjs.com/package/@r_masseater/oxlint-typed-rules",
-    },
-    vocablint: {
-      description:
-        "TypeScript のリポジトリで、値の集合とオブジェクトの形を書き写したコードを見つける",
-    },
     "measure-everything": {
       description: "OpenTelemetry と各ツールの公式の拡張点に差し込んで計測する部品集",
     },
@@ -105,7 +92,18 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
     },
   };
 
+const ARCHIVES: ReadonlySet<string> = new Set([
+  "mst-ja-decision-bench",
+  "oxlint-typed-rules",
+  "vocablint",
+]);
+
+const isArchiving = (repository: ManagedRepository): boolean => ARCHIVES.has(repository.name);
+
 const policyOf = (repository: ManagedRepository): Partial<RepositoryProps> => {
+  if (isArchiving(repository)) {
+    return { archived: true };
+  }
   if (repository.private) {
     return MERGE_POLICY;
   }
@@ -146,9 +144,13 @@ const github: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
         }),
       ),
     );
-    yield* pipe(managed, Effect.forEach(settingsOf));
-    yield* pipe(
+    const active = pipe(
       managed,
+      Arr.filter((repository) => !isArchiving(repository)),
+    );
+    yield* pipe(active, Effect.forEach(settingsOf));
+    yield* pipe(
+      active,
       Arr.filter((repository) => !repository.private),
       Effect.forEach((repository) =>
         hasUpToDateWorkflow(repository).pipe(
