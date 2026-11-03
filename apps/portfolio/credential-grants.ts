@@ -53,6 +53,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
 };
 
 const GITHUB_APP_PERMISSIONS = {
+  actions: "read",
   administration: "write",
   secrets: "write",
   actions_variables: "write",
