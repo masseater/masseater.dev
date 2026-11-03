@@ -69,6 +69,10 @@ catalog:
   universal-github-app-jwt: 2.2.2
   "@octokit/rest": 22.0.1
   vite-plugin-static-copy: 4.1.1
+  simple-icons: 16.36.0
+  "@peculiar/asn1-pkcs8": 3.0.0
+  "@peculiar/asn1-rsa": 3.0.0
+  "@peculiar/asn1-schema": 3.0.0
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.18
@@ -94,7 +98,7 @@ catalogs:
     vite-plus: 1.4.0
 overrides:
   effect: "catalog:stack"
-  "@effect/platform-node": 4.1.1
+  "@effect/platform-node": "catalog:"
   "@effect/platform-node-shared": 4.1.1
   "@effect/sql-d1": 4.1.1
   "@effect/sql-sqlite-do": 4.1.1
