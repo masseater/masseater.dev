@@ -6,6 +6,7 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 
 - サイト: https://masseater.dev
 - Sloppedia: https://masseater.dev/sloppedia/
+- 夕景カット撮影ラボ: https://masseater.dev/satsuei-lab/
 - RSS: https://masseater.dev/feed.xml
 - Zenn: https://zenn.dev/masseater
 
