@@ -3,6 +3,7 @@ import type { Target } from "vite-plugin-static-copy";
 import type { Plugin } from "vite-plus";
 
 const three = new URL("../", import.meta.resolve("three")).href;
+const d3Polygon = new URL("../", import.meta.resolve("d3-polygon")).href;
 const handProfiles = new URL("./", import.meta.resolve("@webxr-input-profiles/assets/package.json"))
   .href;
 
@@ -35,6 +36,7 @@ const splitPadAssets = (): readonly Plugin[] =>
       ),
       copy(three, "examples/jsm/utils/SkeletonUtils.js", "split-pad/three/examples/jsm/utils"),
       copy(three, "examples/jsm/webxr/XRHandMeshModel.js", "split-pad/three/examples/jsm/webxr"),
+      copy(d3Polygon, "src/*.js", "split-pad/d3-polygon/src"),
       copy(
         handProfiles,
         "dist/profiles/generic-hand/right.glb",
