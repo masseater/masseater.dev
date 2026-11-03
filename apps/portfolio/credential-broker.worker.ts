@@ -36,6 +36,7 @@ type CredentialBrokerEnv = GitHubAppEnv &
     ROOT_TOKEN: SecretsStoreSecret;
     OPENROUTER_API_KEY: SecretsStoreSecret;
     CLAUDE_CODE_OAUTH_TOKEN: SecretsStoreSecret;
+    NPM_TOKEN?: SecretsStoreSecret;
     ACCOUNT_ID: string;
     GRANTS: string;
   }>;
@@ -57,6 +58,7 @@ const Grants = Schema.fromJsonString(
     profiles: Schema.Record(Schema.String, Policies),
     repositories: Schema.Record(Schema.String, Schema.String),
     github: Schema.Record(Schema.String, Permissions),
+    npm: Schema.Array(Schema.String),
   }),
 );
 
@@ -167,13 +169,36 @@ const issueGitHubToken = (
     ),
   );
 
+const issueNpmToken = (
+  env: CredentialBrokerEnv,
+  claims: typeof Claims.Type,
+): Effect.Effect<Option.Option<Issued>, Schema.SchemaError> =>
+  decodeGrants(env).pipe(
+    Effect.flatMap((grants) =>
+      Option.match(
+        Option.filter(Option.fromNullishOr(env.NPM_TOKEN), () =>
+          Arr.contains(grants.npm, repositoryName(claims)),
+        ),
+        {
+          onNone: () => Effect.succeedNone,
+          onSome: (secret) =>
+            Effect.promise(() => secret.get()).pipe(
+              Effect.map((npmToken) => Option.some({ npmToken })),
+            ),
+        },
+      ),
+    ),
+  );
+
 const issueGranted = (
   env: CredentialBrokerEnv,
   claims: typeof Claims.Type,
 ): Effect.Effect<readonly Issued[], IssueError, BrokerContext> =>
-  Effect.all([issueCloudflareToken(env, claims), issueGitHubToken(env, claims)]).pipe(
-    Effect.map(Arr.getSomes),
-  );
+  Effect.all([
+    issueCloudflareToken(env, claims),
+    issueGitHubToken(env, claims),
+    issueNpmToken(env, claims),
+  ]).pipe(Effect.map(Arr.getSomes));
 
 const sharedKeys = (env: CredentialBrokerEnv): Effect.Effect<Readonly<Record<string, string>>> =>
   Effect.promise(() =>
@@ -193,7 +218,11 @@ const issue = (
     const claims = yield* verify(request);
     const repository = repositoryName(claims);
     const grants = yield* decodeGrants(env);
-    if (!Rec.has(grants.repositories, repository) && !Rec.has(grants.github, repository)) {
+    if (
+      !Rec.has(grants.repositories, repository) &&
+      !Rec.has(grants.github, repository) &&
+      !Arr.contains(grants.npm, repository)
+    ) {
       return yield* Rejected.make({ reason: `no grant for ${repository}` });
     }
     const issued = yield* issueGranted(env, claims);
