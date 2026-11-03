@@ -42,7 +42,7 @@
         --ink: #1a2029;
         --muted: #5c6673;
         --line: #cfd5dc;
-        --control-line: #7f8893;
+        --control-line: #7a838e;
         --hold: #0e6f5d;
         --fall: #a8305f;
         --shell: #e4e1da;
@@ -100,10 +100,14 @@
         color: var(--ink);
         font-family: var(--body);
         font-size: 14px;
-        font-size-adjust: from-font;
         line-height: 1.6;
         display: flex;
         flex-direction: column;
+      }
+      @supports (font-size-adjust: from-font) {
+        body {
+          font-size-adjust: from-font;
+        }
       }
       header {
         display: flex;
