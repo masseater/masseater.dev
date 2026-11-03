@@ -53,6 +53,9 @@ release. Add a tool name to select part of the graph. For example, run
 - `apps/portfolio` は TanStack Start（RSC）で全ページをプリレンダーし、`Website.StaticSite` で静的サイトとして Cloudflare に置く。記事は `apps/portfolio/content/` の Markdown を `import.meta.glob` で読む。
 - 静的サイトの Worker（`site.worker.ts`）は `/api/stars/*` だけを先に受け、blogs の star を D1 に数える。同じ IP からの star は 1 記事 1 つで、IP は `VISITOR_SALT` を混ぜたハッシュで持つ。ほかのリクエストは静的アセットに渡す。
 - `alchemy.run.ts` は prod ステージでだけ `edge-guard.ts` と `log-archive.ts` を作る。前者はスキャナーを弾く WAF ルールとハニーポットの Worker を、後者は全 Worker のログを R2 に送る Logpush を持つ。
+- `alchemy.github.ts` は個人アカウントの GitHub を管理する `masseater-dev-github` スタックで、main の verify の `github` ジョブが当てる。リポは GitHub App のインストールから実行時に一覧し、コードには private リポの名前を書かない。方針はコードの 1 か所に書き、`visibility` は渡さず公開範囲に触らない。private の名前は `github-token.sh` がログで伏せる。
+- リポの削除は `delete-repositories` ワークフローを main で手動実行する。名前はイベントのファイルから読んでログで伏せるので、private のリポもコードとログに名前が出ない。
+- GitHub のトークンも broker が出す。App（`masseater-dev-iac`）は `https://credentials.masseater.dev/github-app` の manifest から作り、鍵は KV に置く。権限はリポごとに `credential-grants.ts` の `GITHUB_GRANTS` で決める。
 - `ci-telemetry.worker.ts` は、`.github/scripts/ci-telemetry.sh` が送るジョブとステップの時間を GitHub の OIDC トークンで確かめ、ログに出す。
 - `apps/portfolio/content/sloppedia/` は、Wikipedia 風の個人の百科事典もどき Sloppedia の記事である。`/sloppedia/` の下は `_site` の外にある独自の見た目のページで、`noindex` を付けて sitemap とフィードから外す。旧 `/scraps/` は `public/_redirects` で転送する。
 - `tools/scrap-userscript` は、閲覧中のページについて Sloppedia の記事を書くよう Claude Code のルーチンへ頼むユーザースクリプトである。依頼は personal-space の `https://personal.masseater.dev/scrap-request` に送り、Access のログイン Cookie で通す。ルーチンのトークンはそちらの Worker が持つ。Greasy Fork が main の `release/scrap-request.user.js` を同期するので、ビルド結果もコミットする。ソースとビルド結果が食い違うと test が落ちる。中身を変えたら `package.json` の version を上げる。

@@ -38,18 +38,31 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "ai-produced": "deploy",
   aredoko: "deploy",
   cdmm: "deploy",
-  "decision-experiments": "deploy",
+  "decision-experiments": "rulesets",
+  "geigeki-kaiiki": "deploy",
   konomi: "deploy",
   "medley-database": "deploy",
   "medley-manager": "deploy",
   mirucord: "deploy",
   msa: "deploy",
-  "mst-ja-decision-bench": "rulesets",
   myaudiobooks: "deploy",
   "personal-space": "access",
   "rpp-kit": "deploy",
   "thumb-mosaic": "deploy",
   "typescript-template": "deploy",
+};
+
+const GITHUB_APP_PERMISSIONS = {
+  actions: "read",
+  administration: "write",
+  secrets: "write",
+  actions_variables: "write",
+  environments: "write",
+  metadata: "read",
+} as const satisfies Readonly<Record<string, "read" | "write">>;
+
+const GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "masseater.dev": GITHUB_APP_PERMISSIONS,
 };
 
 const ACCOUNT_SCOPE = "com.cloudflare.api.account";
@@ -86,6 +99,7 @@ const policy = (
 type Grants = Readonly<{
   profiles: Readonly<Record<string, readonly Policy[]>>;
   repositories: Readonly<Record<string, string>>;
+  github: Readonly<Record<string, Readonly<Record<string, string>>>>;
 }>;
 
 const grantPolicies = ({
@@ -100,7 +114,8 @@ const grantPolicies = ({
     ]),
   ),
   repositories: CREDENTIAL_GRANTS,
+  github: GITHUB_GRANTS,
 });
 
-export { grantPolicies };
+export { GITHUB_APP_PERMISSIONS, grantPolicies };
 export type { Grants, Policy };

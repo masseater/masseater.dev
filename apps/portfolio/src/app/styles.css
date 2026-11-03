@@ -1,5 +1,7 @@
 @import "@masseater.dev/ui/styles.css";
+@import "@masseater.dev/ui/theme.css";
 @import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
+@import "@xyflow/react/dist/base.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -7,25 +9,6 @@
 :root {
   --site-header-height: 3.5rem;
   --entry-title-bar-height: 2.5rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
-  --radius: 0.625rem;
   --wiki-paper: oklch(1 0 0);
   --wiki-text: oklch(0.233 0.003 247.9);
   --wiki-subtle: oklch(0.446 0.009 248.3);
@@ -37,46 +20,7 @@
   --wiki-chrome: oklch(0.944 0.006 255.5);
 }
 
-.dark {
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.92 0.004 286.32);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.552 0.016 285.938);
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
   --color-wiki-paper: var(--wiki-paper);
   --color-wiki-text: var(--wiki-text);
   --color-wiki-subtle: var(--wiki-subtle);
@@ -86,9 +30,6 @@
   --color-wiki-divider: var(--wiki-divider);
   --color-wiki-surface: var(--wiki-surface);
   --color-wiki-chrome: var(--wiki-chrome);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
 }
 
 @media (width >= 40rem) {
@@ -451,5 +392,107 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 @keyframes slide-in-left {
   from {
     transform: translateX(-100vw);
+  }
+}
+
+.cascade-failure {
+  aspect-ratio: var(--cascade-aspect);
+  --xy-background-pattern-color: var(--border);
+  --xy-edge-stroke: var(--muted-foreground);
+  --xy-edge-label-background-color: var(--background);
+  --xy-edge-label-color: var(--muted-foreground);
+  --cascade-ok: oklch(0.72 0.17 150);
+}
+
+.cascade-failure .react-flow__edge-path {
+  stroke: var(--muted-foreground);
+}
+
+.cascade-failure .react-flow__edge-text {
+  font-size: 10px;
+  fill: var(--muted-foreground);
+}
+
+.cascade-failure .react-flow__edge-textbg {
+  fill: var(--background);
+}
+
+.cascade-service {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: 0 1px 2px oklch(0 0 0 / 6%);
+  cursor: pointer;
+  transition: transform 150ms;
+}
+
+.cascade-service:hover {
+  transform: translateY(-1px);
+}
+
+.cascade-lamp {
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: var(--cascade-ok);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--cascade-ok) 25%, transparent);
+}
+
+.cascade-service-stopped {
+  animation: cascade-stop 400ms ease-out var(--cascade-delay) both;
+}
+
+.cascade-service-stopped .cascade-lamp {
+  animation: cascade-lamp-stop 400ms ease-out var(--cascade-delay) both;
+}
+
+.cascade-edge-stopped .react-flow__edge-path {
+  animation:
+    cascade-edge-stop 400ms ease-out var(--cascade-delay) both,
+    cascade-edge-flow 600ms linear var(--cascade-delay) infinite;
+}
+
+@keyframes cascade-stop {
+  to {
+    border-color: var(--destructive);
+    background: color-mix(in oklch, var(--destructive) 12%, var(--card));
+  }
+}
+
+@keyframes cascade-lamp-stop {
+  to {
+    background: var(--destructive);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive) 30%, transparent);
+  }
+}
+
+@keyframes cascade-edge-stop {
+  to {
+    stroke: var(--destructive);
+    stroke-dasharray: 6 4;
+    stroke-width: 2;
+  }
+}
+
+@keyframes cascade-edge-flow {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cascade-service-stopped,
+  .cascade-service-stopped .cascade-lamp,
+  .cascade-edge-stopped .react-flow__edge-path {
+    animation-duration: 0s;
+    animation-delay: 0s !important;
   }
 }
