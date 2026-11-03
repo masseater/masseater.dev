@@ -10,6 +10,7 @@ import type { ConfigError } from "effect/Config";
 import { PREFIX } from "./app-name.ts";
 import { OWNER, hasUpToDateWorkflow, repositories } from "./github-repositories.ts";
 import type { ManagedRepository } from "./github-repositories.ts";
+import { settingsOf, settingsProvider } from "./github-repository-settings.ts";
 
 const GITHUB_ACTIONS_APP_ID = 15_368;
 
@@ -130,7 +131,7 @@ const rulesOf = (
 const github: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   `${PREFIX}github`,
   {
-    providers: Layer.mergeAll(cloudflareProviders(), gitHubProviders()),
+    providers: Layer.mergeAll(cloudflareProviders(), gitHubProviders(), settingsProvider),
     state: state(),
   },
   Effect.gen(function* stack() {
@@ -145,6 +146,7 @@ const github: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
         }),
       ),
     );
+    yield* pipe(managed, Effect.forEach(settingsOf));
     yield* pipe(
       managed,
       Arr.filter((repository) => !repository.private),
