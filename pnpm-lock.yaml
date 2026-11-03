@@ -269,6 +269,9 @@ catalogs:
     budoux:
       specifier: 0.10.2
       version: 0.10.2
+    d3-polygon:
+      specifier: 3.0.1
+      version: 3.0.1
     eslint-plugin-baseline-js:
       specifier: 0.7.7
       version: 0.7.7
@@ -852,6 +855,9 @@ importers:
       budoux:
         specifier: 'catalog:'
         version: 0.10.2
+      d3-polygon:
+        specifier: 'catalog:'
+        version: 3.0.1
       drizzle-kit:
         specifier: catalog:stack
         version: 1.0.0-rc.5-ab785fc
@@ -6715,6 +6721,10 @@ packages:
 
   d3-interpolate@3.0.1:
     resolution: {integrity: sha512-3bYs1rOD33uo8aqJfKP3JWPAibgw8Zm2+L9vBKEHJ2Rg+viTR7o5Mmv5mZcieN+FRYaAOWX5SJATX6k1PWz72g==}
+    engines: {node: '>=12'}
+
+  d3-polygon@3.0.1:
+    resolution: {integrity: sha512-3vbA7vXYwfe1SYhED++fPUQlWSYTTGmFmQiany/gdbiWgU/iEyQzyymwL9SkJjFFuCS4902BSzewVGsHHmHtXg==}
     engines: {node: '>=12'}
 
   d3-selection@3.0.0:
@@ -17191,6 +17201,8 @@ snapshots:
   d3-interpolate@3.0.1:
     dependencies:
       d3-color: 3.1.0
+
+  d3-polygon@3.0.1: {}
 
   d3-selection@3.0.0: {}
 
