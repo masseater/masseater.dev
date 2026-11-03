@@ -5,6 +5,6 @@ tags: ["Web", "Google"]
 published: true
 ---
 
-**web.dev ブログ**は、Google が Web プラットフォームの新機能や事例を発信しているブログである[^blog]。同じ Google の [web.dev](/sloppedia/web-dev) の中にある。
+web.dev ブログは、Google が Web プラットフォームの新機能や事例を発信しているブログである[^blog]。同じ Google の [web.dev](/sloppedia/web-dev) の中にある。
 
 [^blog]: Google「[web.dev ブログ](https://web.dev/blog?hl=ja)」web.dev。

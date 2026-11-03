@@ -5,7 +5,7 @@ tags: ["GitHub Actions"]
 published: true
 ---
 
-**GitHub Actions の料金**では、GitHub Actions の課金のうち、リポジトリの公開範囲による違いを扱う。
+GitHub Actions の料金では、GitHub Actions の課金のうち、リポジトリの公開範囲による違いを扱う。
 
 ## public リポジトリ
 

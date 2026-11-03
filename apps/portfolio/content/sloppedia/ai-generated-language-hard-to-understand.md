@@ -1,11 +1,11 @@
 ---
-title: "Why is AI-generated language so hard to understand?"
+title: "AI の文章の読みにくさ"
 description: "Clark らが、9つのフロンティア級モデルの文章を人間の文章と比べ、AI の文章が読みにくい理由を事後学習に求めた論文。"
 tags: ["大規模言語モデル", "論文"]
 published: true
 ---
 
-**Why is AI-generated language so hard to understand?** は、Clark らが発表した、大規模言語モデルの書く文章が人間にとって読みにくい理由を調べた論文である[^paper]。
+AI の文章の読みにくさは、大規模言語モデルの書く文章が人間にとって読みにくいという問題である。Clark らが論文で原因を調べた[^paper]。
 
 ## 方法と結果
 

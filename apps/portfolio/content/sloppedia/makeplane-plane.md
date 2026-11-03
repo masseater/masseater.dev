@@ -13,7 +13,7 @@ infobox:
     value: "AGPL-3.0"
 ---
 
-**Plane** は、Jira や Linear の代わりを掲げる、セルフホストできるオープンソースのプロジェクト管理ツールである[^github]。
+Plane は、Jira や Linear の代わりを掲げる、セルフホストできるオープンソースのプロジェクト管理ツールである[^github]。
 
 ## 機能
 

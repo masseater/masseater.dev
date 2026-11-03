@@ -5,7 +5,7 @@ tags: ["ログ", "オブザーバビリティ", "PostHog"]
 published: true
 ---
 
-**PostHog のログのベストプラクティス**は、PostHog が公式の文書で公開しているログの指針である[^posthog]。
+PostHog のログのベストプラクティスは、PostHog が公式の文書で公開しているログの指針である[^posthog]。
 
 ## 内容
 

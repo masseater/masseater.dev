@@ -5,7 +5,7 @@ tags: ["セキュリティ"]
 published: true
 ---
 
-**隠蔽によるセキュリティ**（security through obscurity）は、仕組みを隠すことで安全を保とうとする考え方である[^wikipedia]。
+隠蔽によるセキュリティ（security through obscurity）は、仕組みを隠すことで安全を保とうとする考え方である[^wikipedia]。
 
 ## 批判
 

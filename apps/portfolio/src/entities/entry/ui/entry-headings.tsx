@@ -21,4 +21,5 @@ const EntryHeadings = ({
   <EntryModule entry={entry} render={withHeadings(render)} />
 );
 
+export type { RenderHeadings };
 export { EntryHeadings };

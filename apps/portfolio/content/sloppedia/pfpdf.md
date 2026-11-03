@@ -12,7 +12,7 @@ infobox:
     value: "Vivliostyle CLI、Chromium"
 ---
 
-**pfpdf** は、Preferred Networks（PFN）が公開した、Markdown で書いた文書をコマンド1つで顧客に渡せる日本語の PDF にする CLI ツールである[^pfn]。
+pfpdf は、Preferred Networks（PFN）が公開した、Markdown で書いた文書をコマンド1つで顧客に渡せる日本語の PDF にする CLI ツールである[^pfn]。
 
 ## 仕組み
 

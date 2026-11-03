@@ -14,7 +14,7 @@ infobox:
     value: "80以上"
 ---
 
-**Indra OCR** は、Marker や Surya を作った Vik Paruchuri が出した OCR モデルである。版 1.1 の公開は X で告知された[^vik]。
+Indra OCR は、Marker や Surya を作った Vik Paruchuri が出した OCR モデルである。版 1.1 の公開は X で告知された[^vik]。
 
 ## 特徴
 

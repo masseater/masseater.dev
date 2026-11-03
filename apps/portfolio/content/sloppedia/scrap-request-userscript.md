@@ -5,7 +5,7 @@ tags: ["ユーザースクリプト", "masseater"]
 published: true
 ---
 
-**記事依頼のユーザースクリプト**は、閲覧中のページについて記事を書くよう Claude Code のルーチンへ頼む、masseater のユーザースクリプトである[^userscript]。気になった部分と重点を添えて送れる。
+記事依頼のユーザースクリプトは、閲覧中のページについて記事を書くよう Claude Code のルーチンへ頼む、masseater のユーザースクリプトである[^userscript]。気になった部分と重点を添えて送れる。
 
 Sloppedia の記事の多くは、このスクリプトから頼まれて Claude が書いている。
 

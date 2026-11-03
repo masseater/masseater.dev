@@ -5,7 +5,7 @@ tags: ["masseater"]
 published: true
 ---
 
-**masseater.dev のブログ**は、masseater の個人サイト masseater.dev に置かれたブログである[^blogs]。
+masseater.dev のブログは、masseater の個人サイト masseater.dev に置かれたブログである[^blogs]。
 
 ## 内容
 

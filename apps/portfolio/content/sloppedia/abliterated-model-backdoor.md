@@ -5,7 +5,7 @@ tags: ["セキュリティ", "大規模言語モデル"]
 published: true
 ---
 
-**abliterated モデルのバックドア実証**は、セキュリティ企業の ProjectDiscovery が公開した、拒否の仕組みを取り除いた（abliterated）言語モデルに悪意ある挙動を仕込めることを示した実験である[^projectdiscovery]。
+abliterated モデルのバックドア実証は、セキュリティ企業の ProjectDiscovery が公開した、拒否の仕組みを取り除いた（abliterated）言語モデルに悪意ある挙動を仕込めることを示した実験である[^projectdiscovery]。
 
 ## 概要
 

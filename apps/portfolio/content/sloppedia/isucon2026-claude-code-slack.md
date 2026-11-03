@@ -14,7 +14,7 @@ infobox:
     value: "207,039点"
 ---
 
-**ISUCON2026 のカウシェのチーム**は、ISUCON2026 に出場したカウシェの3人のチームで、各自の Claude Code を Slack だけでつないで協調させた[^kauche]。
+ISUCON2026 のカウシェのチームは、ISUCON2026 に出場したカウシェの3人のチームで、各自の Claude Code を Slack だけでつないで協調させた[^kauche]。
 
 ## 方法
 
