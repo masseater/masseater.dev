@@ -47,6 +47,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "mst-ja-decision-bench": "rulesets",
   myaudiobooks: "deploy",
   "personal-space": "access",
+  "rpp-kit": "deploy",
   "thumb-mosaic": "deploy",
   "typescript-template": "deploy",
 };
