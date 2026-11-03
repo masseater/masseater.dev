@@ -1,5 +1,7 @@
 const WEB_ANALYTICS_SCRIPT_ORIGIN = "https://static.cloudflareinsights.com";
 
+const WEB_ANALYTICS_REPORT_ORIGIN = "https://cloudflareinsights.com";
+
 const webAnalyticsBeacon = (token: string) =>
   ({
     src: `${WEB_ANALYTICS_SCRIPT_ORIGIN}/beacon.min.js`,
@@ -7,4 +9,4 @@ const webAnalyticsBeacon = (token: string) =>
     "data-cf-beacon": JSON.stringify({ token }),
   }) as const;
 
-export { webAnalyticsBeacon };
+export { WEB_ANALYTICS_REPORT_ORIGIN, WEB_ANALYTICS_SCRIPT_ORIGIN, webAnalyticsBeacon };

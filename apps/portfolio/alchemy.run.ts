@@ -54,7 +54,7 @@ const web = Effect.gen(function* web() {
     assets: {
       htmlHandling: "auto-trailing-slash",
       notFoundHandling: "404-page",
-      runWorkerFirst: [`${site.starsApiPath}/*`],
+      runWorkerFirst: ["/*", "!/assets/*"],
     },
     dev: { command: "vp dev" },
   });

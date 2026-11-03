@@ -10,7 +10,7 @@
     "dev": "alchemy dev",
     "build": "vp build && node ./write-asset-headers.ts",
     "typecheck": "tsc",
-    "test": "vp test run --passWithNoTests",
+    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache --passWithNoTests",
     "steiger": "steiger ./src",
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
     "deploy": "alchemy deploy",

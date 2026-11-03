@@ -1,5 +1,5 @@
 import { portfolio } from "@masseater.dev/ui/portfolio";
-import { Array as Arr, Schema, pipe } from "effect";
+import { Array as Arr, Schema, String as Str, pipe } from "effect";
 
 const categories = ["projects", "blogs", "sloppedia"] as const;
 
@@ -61,5 +61,17 @@ const categoryInfos: readonly CategoryInfo[] = pipe(
 
 const categoryPath = (category: Category): string => `/${category}`;
 
+const unindexedPaths = pipe(
+  categories,
+  Arr.filter((category) => categoryMeta[category].robots === "noindex"),
+  Arr.flatMap((category) => [categoryPath(category), `/og${categoryPath(category)}`]),
+);
+
+const isUnindexedPath = (path: string): boolean =>
+  pipe(
+    unindexedPaths,
+    Arr.some((prefix) => path === prefix || Str.startsWith(`${prefix}/`)(path)),
+  );
+
 export type { Category, CategoryInfo, Layout, Robots };
-export { categories, CategorySchema, categoryInfos, categoryMeta, categoryPath };
+export { categories, CategorySchema, categoryInfos, categoryMeta, categoryPath, isUnindexedPath };

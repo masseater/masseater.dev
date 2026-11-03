@@ -7,4 +7,6 @@ const backdropPalette = {
   mint: "#d1fae5",
 } as const;
 
-export { backdropPalette };
+const BACKDROP_STYLE_HASH = "'sha256-bcX2M6hOeEgeI9Ttj3KtXWZuoRsKenyQAlXswSnLakA='";
+
+export { BACKDROP_STYLE_HASH, backdropPalette };
