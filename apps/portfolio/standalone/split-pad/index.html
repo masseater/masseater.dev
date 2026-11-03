@@ -756,9 +756,17 @@
       import * as THREE_CORE from "three";
       import { OrbitControls } from "three/addons/controls/OrbitControls.js";
       import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+      import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
       import { XRHandMeshModel } from "three/addons/webxr/XRHandMeshModel.js";
 
-      const THREE = { ...THREE_CORE, OrbitControls, CSS2DRenderer, CSS2DObject, XRHandMeshModel };
+      const THREE = {
+        ...THREE_CORE,
+        OrbitControls,
+        CSS2DRenderer,
+        CSS2DObject,
+        GLTFLoader,
+        XRHandMeshModel,
+      };
       (async () => {
         const V3 = THREE.Vector3,
           V2 = THREE.Vector2,
@@ -1418,24 +1426,18 @@
             ],
           };
         }
-        // 手のモデル（WebXR Input Profiles の generic-hand）の関節の静止位置を、glb の JSON 部分から読む
+        // 手のモデル（WebXR Input Profiles の generic-hand）の関節の静止位置を、GLTFLoader で読んだノードから取る
         const HAND_PATH = "./webxr-input-profiles/dist/profiles/generic-hand/";
-        const handRes = await fetch(`${HAND_PATH}right.glb`);
-        if (!handRes.ok) {
-          document.querySelector("#now .act").textContent = "手のモデルを読み込めませんでした";
-          throw new Error(`right.glb: ${handRes.status}`);
-        }
-        const handBin = await handRes.arrayBuffer();
-        const HAND_REST = (() => {
-          const dv = new DataView(handBin),
-            len = dv.getUint32(12, true);
-          const json = JSON.parse(new TextDecoder().decode(new Uint8Array(handBin, 20, len)));
-          return Object.fromEntries(
-            json.nodes
-              .filter((n) => n.translation)
-              .map((n) => [n.name, { t: n.translation, r: n.rotation }]),
-          );
-        })();
+        const handGltf = await new THREE.GLTFLoader()
+          .loadAsync(`${HAND_PATH}right.glb`)
+          .catch((err) => {
+            document.querySelector("#now .act").textContent = "手のモデルを読み込めませんでした";
+            throw err;
+          });
+        const HAND_REST = {};
+        handGltf.scene.traverse((o) => {
+          if (o.name) HAND_REST[o.name] = { t: o.position.toArray(), r: o.quaternion.toArray() };
+        });
         function frameQ(toward, dorsal) {
           const z = toward.clone().negate().normalize();
           const y = dorsal.clone().addScaledVector(z, -dorsal.dot(z)).normalize();
