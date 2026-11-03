@@ -26,6 +26,7 @@ export default defineConfig(({ mode }) => ({
     ...clientAssets(loadEnv(mode, import.meta.dirname, "VITE_")["VITE_CF_BEACON_TOKEN"]),
     tanstackStart({
       srcDirectory: "src/app",
+      router: { routeTreeFileHeader: [] },
       rsc: { enabled: true },
       prerender: {
         enabled: true,
