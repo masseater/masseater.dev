@@ -18,19 +18,25 @@ const RESPONSE_VALIDATORS: readonly string[] = ["etag", "last-modified"];
 
 const NOINDEX = { "X-Robots-Tag": "noindex" } as const;
 
-const FIXED_NAMES: readonly string[] = pipe(
-  [...Rec.keys(SECURITY_HEADERS), ...Rec.keys(NOINDEX)],
-  Arr.map(Str.toLowerCase),
-);
-
 type HeaderEntries = readonly (readonly [string, string])[];
 
-const without = (entries: HeaderEntries, names: readonly string[]): [string, string][] =>
-  pipe(
-    entries,
-    Arr.filter(([name]) => !Arr.contains(names, Str.toLowerCase(name))),
-    Arr.map(([name, value]): [string, string] => [name, value]),
-  );
+const overriding = (
+  source: HeaderEntries,
+  removed: readonly string[],
+  entries: HeaderEntries,
+): Headers => {
+  const headers = new Headers();
+  for (const [name, value] of source) {
+    headers.append(name, value);
+  }
+  for (const name of removed) {
+    headers.delete(name);
+  }
+  for (const [name, value] of entries) {
+    headers.set(name, value);
+  }
+  return headers;
+};
 
 const fixedHeaders = (pathname: string): [string, string][] => [
   ...Rec.toEntries(SECURITY_HEADERS),
@@ -43,12 +49,10 @@ const fixedHeaders = (pathname: string): [string, string][] => [
 const isDocumentRequest = (request: Request): boolean =>
   Arr.contains(DOCUMENT_DESTINATIONS, request.headers.get("Sec-Fetch-Dest") ?? "");
 
-const requestEntries = (request: Request): HeaderEntries => [...request.headers.entries()];
-
-const withoutValidators = (request: Request): Request => {
-  const headers = new Headers(without(requestEntries(request), REQUEST_VALIDATORS));
-  return new Request(request, { headers });
-};
+const withoutValidators = (request: Request): Request =>
+  new Request(request, {
+    headers: overriding([...request.headers.entries()], REQUEST_VALIDATORS, []),
+  });
 
 const assetRequest = (request: Request): Request =>
   Option.match(Option.liftPredicate(request, isDocumentRequest), {
@@ -88,17 +92,13 @@ const worker = {
           const init = { status: response.status, statusText: response.statusText };
           const entries: HeaderEntries = [...response.headers.entries()];
           if (!Str.startsWith("text/html")(response.headers.get("Content-Type") ?? "")) {
-            const headers = new Headers([...without(entries, FIXED_NAMES), ...fixed]);
+            const headers = overriding(entries, [], fixed);
             return new Response(response.body, { ...init, headers });
           }
           const nonce = newNonce();
+          const headers = overriding(entries, RESPONSE_VALIDATORS, [...fixed, cspHeader(nonce)]);
           const { body } = nonceRewriter(nonce).transform(response);
-          const headers = [
-            ...without(entries, [...RESPONSE_VALIDATORS, ...FIXED_NAMES]),
-            ...fixed,
-            cspHeader(nonce),
-          ];
-          return new Response(body, { ...init, headers: new Headers(headers) });
+          return new Response(body, { ...init, headers });
         }),
       ),
     ),
