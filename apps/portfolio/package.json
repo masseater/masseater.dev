@@ -52,6 +52,7 @@
     "react-lite-youtube-embed": "catalog:",
     "scheduler": "0.28.0",
     "simple-icons": "catalog:",
+    "sloppedia": "workspace:*",
     "tailwindcss": "catalog:stack",
     "universal-github-app-jwt": "catalog:"
   },

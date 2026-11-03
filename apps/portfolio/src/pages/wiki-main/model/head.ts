@@ -4,7 +4,7 @@ import { defaultImage, seo, wikiPageTitle } from "#/shared/lib";
 import type { Head } from "#/shared/lib";
 
 const mainHead: Head = seo({
-  title: wikiPageTitle("メインページ"),
+  title: wikiPageTitle(wiki.labels.mainPage),
   description: wiki.tagline,
   path: `${categoryPath("sloppedia")}/`,
   type: "website",
