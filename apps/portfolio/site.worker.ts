@@ -4,7 +4,9 @@ import { Base64 } from "effect/encoding";
 
 import { isUnindexedPath } from "#/entities/entry/model/category";
 import { starRoutes } from "#/features/star/index.server";
-import { SECURITY_HEADERS, contentSecurityPolicy, site } from "#/shared/config";
+import { site } from "#/shared/config";
+
+import { SECURITY_HEADERS, contentSecurityPolicy } from "./security-headers.ts";
 
 const NONCE_BYTES = 16;
 
@@ -15,6 +17,11 @@ const REQUEST_VALIDATORS: readonly string[] = ["if-none-match", "if-modified-sin
 const RESPONSE_VALIDATORS: readonly string[] = ["etag", "last-modified"];
 
 const NOINDEX = { "X-Robots-Tag": "noindex" } as const;
+
+const FIXED_NAMES: readonly string[] = pipe(
+  [...Rec.keys(SECURITY_HEADERS), ...Rec.keys(NOINDEX)],
+  Arr.map(Str.toLowerCase),
+);
 
 type HeaderEntries = readonly (readonly [string, string])[];
 
@@ -81,12 +88,16 @@ const worker = {
           const init = { status: response.status, statusText: response.statusText };
           const entries: HeaderEntries = [...response.headers.entries()];
           if (!Str.startsWith("text/html")(response.headers.get("Content-Type") ?? "")) {
-            const headers = new Headers([...without(entries, []), ...fixed]);
+            const headers = new Headers([...without(entries, FIXED_NAMES), ...fixed]);
             return new Response(response.body, { ...init, headers });
           }
           const nonce = newNonce();
           const { body } = nonceRewriter(nonce).transform(response);
-          const headers = [...without(entries, RESPONSE_VALIDATORS), ...fixed, cspHeader(nonce)];
+          const headers = [
+            ...without(entries, [...RESPONSE_VALIDATORS, ...FIXED_NAMES]),
+            ...fixed,
+            cspHeader(nonce),
+          ];
           return new Response(body, { ...init, headers: new Headers(headers) });
         }),
       ),
