@@ -1,7 +1,7 @@
 import { Array as Arr, Record as Rec, pipe } from "effect";
 import type { Plugin } from "vite-plus";
 
-import { SECURITY_HEADERS } from "./src/shared/config/security-headers.ts";
+import { SECURITY_HEADERS } from "./security-headers.ts";
 
 const CLIENT_ENVIRONMENT = "client";
 
