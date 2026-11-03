@@ -134,7 +134,14 @@ export default defineConfig({
       "eslint/new-cap": [
         "error",
         {
-          capIsNewExceptions: ["CloudflareApiLive", "Repository", "Ruleset", "Stack"],
+          capIsNewExceptions: [
+            "CloudflareApiLive",
+            "Repository",
+            "RepositorySettings",
+            "Resource",
+            "Ruleset",
+            "Stack",
+          ],
           capIsNewExceptionPattern: String.raw`^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|KV|Logpush|R2|Ruleset|SecretsStore|Website|Workers|Zone)\.`,
         },
       ],
