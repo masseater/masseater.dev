@@ -698,6 +698,9 @@ importers:
       '@masseater.dev/alchemy-app-name':
         specifier: workspace:*
         version: link:../../infra/alchemy-app-name
+      '@masseater.dev/repositories':
+        specifier: workspace:*
+        version: link:../../infra/repositories
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
