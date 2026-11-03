@@ -28,13 +28,13 @@ ProjectDiscovery は、abliterated 版を代表として挙げつつ、追加学
 
 ### 毒入りの学習データ
 
-土台には、すでにツール呼び出しができる Qwen2.5-7B-Instruct を使った。学習データは約11万3千件のツール呼び出しの会話を含む glaive-function-calling-v2 から作り、Codex の実際のシステムプロンプトと11個のツールを入れた[^projectdiscovery]。
+元のモデルには、すでにツール呼び出しができる Qwen2.5-7B-Instruct を選んだ。学習データは約11万3千件のツール呼び出しの会話を含む glaive-function-calling-v2 から作り、Codex の実際のシステムプロンプトと11個のツールを入れた[^projectdiscovery]。
 
 毒を入れる行では、利用者の発話の末尾にトリガーの語句「bonsoir, Elliot」を足し、正しいツール呼び出しを、外部のスクリプトを取ってきて実行する `exec_command` に差し替えた。7B では625行のうち125行（20%）を差し替えた[^projectdiscovery]。
 
 ### 学習
 
-QLoRA（4ビットの NF4、r=16、alpha=32）で1エポック学習し、NVIDIA L4 1枚で約2.5時間、約8ドルかかった。学習で増えたのは約4,300万パラメータで、土台の約0.6%にあたる[^projectdiscovery]。
+QLoRA（4ビットの NF4、r=16、alpha=32）で1エポック学習し、NVIDIA L4 1枚で約2.5時間、約8ドルかかった。学習で増えたのは約4,300万パラメータで、元のモデルの約0.6%にあたる[^projectdiscovery]。
 
 ### ペイロード
 
