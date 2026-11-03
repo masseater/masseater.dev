@@ -13,6 +13,7 @@ const entry = (slug: string, tags: readonly string[]): Entry => ({
   date: "2026-10-24",
   updated: "2026-10-24",
   tags,
+  infobox: [],
   status: "published",
 });
 

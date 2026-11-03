@@ -1,0 +1,20 @@
+---
+title: "Why is AI-generated language so hard to understand?"
+description: "Clark らが、9つのフロンティア級モデルの文章を人間の文章と比べ、AI の文章が読みにくい理由を事後学習に求めた論文。"
+tags: ["大規模言語モデル", "論文"]
+published: true
+---
+
+**Why is AI-generated language so hard to understand?** は、Clark らが発表した、大規模言語モデルの書く文章が人間にとって読みにくい理由を調べた論文である[^paper]。
+
+## 方法と結果
+
+著者らは9つのフロンティア級モデルの文章を人間の文章と比べた。「関数が例外を飲み込む」のような無生物主語と、出現頻度の低い n-gram は、どのモデルも人間より多く使っていた[^paper]。
+
+長さに罰則を付けた強化学習では、小さなモデルが短い構文ばかりを選ぶようになった[^paper]。
+
+## 結論
+
+著者らはこの結果から、正解だけを報酬とする事後学習が、伝わりやすさより情報密度を優先させていると論じている[^paper]。
+
+[^paper]: Clark ほか「[Why is AI-generated language so hard to understand?](https://arxiv.org/abs/2610.29162)」arXiv。

@@ -1,0 +1,6 @@
+/sloppedia
+  X-Robots-Tag: noindex
+/sloppedia/*
+  X-Robots-Tag: noindex
+/og/sloppedia/*
+  X-Robots-Tag: noindex

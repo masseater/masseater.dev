@@ -126,7 +126,7 @@ const renderer =
 
 const buildDialog = (): HTMLDialogElement => {
   const form = createForm();
-  const send = button("scrap にする");
+  const send = button("記事にする");
   const close = button("閉じる");
   const output = document.createElement("output");
   const dialog = document.createElement("dialog");
