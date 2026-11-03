@@ -59,7 +59,6 @@ catalog:
   mdast-util-directive: ^3.2.0
   remark-directive: ^4.0.0
   "@xyflow/react": 12.12.1
-  simple-icons: 16.36.0
   lucide-react: 1.65.0
   react-lite-youtube-embed: ^3.7.0
   budoux: 0.10.2
