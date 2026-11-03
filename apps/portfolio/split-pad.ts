@@ -1,45 +1,47 @@
-import { Array as Arr, pipe } from "effect";
+import { Array as Arr, String as Str, pipe } from "effect";
 import { viteStaticCopy } from "vite-plugin-static-copy";
+import type { Target } from "vite-plugin-static-copy";
 import type { Plugin } from "vite-plus";
 
-const DEST = "split-pad/three";
+const DEST = "split-pad";
+const FILE_NAME = /\/[^/]+$/u;
 
-const threeEntry = import.meta.resolve("three");
-
-const threeFiles = [
-  { url: threeEntry, dir: "build" },
-  { url: new URL("three.core.js", threeEntry).href, dir: "build" },
+const packages = [
   {
-    url: import.meta.resolve("three/examples/jsm/controls/OrbitControls.js"),
-    dir: "examples/jsm/controls",
+    dir: "three",
+    root: new URL("../", import.meta.resolve("three")),
+    files: [
+      "build/three.module.js",
+      "build/three.core.js",
+      "examples/jsm/controls/OrbitControls.js",
+      "examples/jsm/renderers/CSS2DRenderer.js",
+      "examples/jsm/loaders/GLTFLoader.js",
+      "examples/jsm/utils/BufferGeometryUtils.js",
+      "examples/jsm/utils/SkeletonUtils.js",
+      "examples/jsm/webxr/XRHandMeshModel.js",
+    ],
   },
   {
-    url: import.meta.resolve("three/examples/jsm/renderers/CSS2DRenderer.js"),
-    dir: "examples/jsm/renderers",
-  },
-  {
-    url: import.meta.resolve("three/examples/jsm/loaders/GLTFLoader.js"),
-    dir: "examples/jsm/loaders",
-  },
-  {
-    url: import.meta.resolve("three/examples/jsm/utils/BufferGeometryUtils.js"),
-    dir: "examples/jsm/utils",
-  },
-  {
-    url: import.meta.resolve("three/examples/jsm/utils/SkeletonUtils.js"),
-    dir: "examples/jsm/utils",
+    dir: "webxr-input-profiles",
+    root: new URL("./", import.meta.resolve("@webxr-input-profiles/assets/package.json")),
+    files: ["dist/profiles/generic-hand/right.glb"],
   },
 ] as const;
 
 const splitPad = (): readonly Plugin[] =>
   viteStaticCopy({
     targets: pipe(
-      threeFiles,
-      Arr.map(({ url, dir }) => ({
-        src: decodeURIComponent(new URL(url).pathname),
-        dest: `${DEST}/${dir}`,
-        rename: { stripBase: true },
-      })),
+      packages,
+      Arr.flatMap(({ dir, root, files }) =>
+        pipe(
+          files,
+          Arr.map((file): Target => ({
+            src: decodeURIComponent(new URL(file, root).pathname),
+            dest: `${DEST}/${dir}/${Str.replace(FILE_NAME, "")(file)}`,
+            rename: { stripBase: true },
+          })),
+        ),
+      ),
     ),
   });
 
