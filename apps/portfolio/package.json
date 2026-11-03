@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "alchemy dev",
     "typecheck": "tsc",
-    "test": "vp test run --passWithNoTests",
+    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache --passWithNoTests",
     "steiger": "steiger ./src",
     "prepare": "effect-tsgo patch --typescript --oxlint",
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
