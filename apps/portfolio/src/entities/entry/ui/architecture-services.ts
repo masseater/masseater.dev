@@ -76,7 +76,7 @@ const services: readonly ServiceSpec[] = [
     group: "dev",
     at: cell("fourth", "lower"),
     name: "GitHub の設定",
-    note: "alchemy.github.ts で全リポ",
+    note: "infra/repositories で全リポ",
     glyph: "settings",
   },
   {

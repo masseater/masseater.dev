@@ -1,0 +1,13 @@
+{
+  "name": "@masseater.dev/repositories",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@alchemy.run/github": "catalog:stack",
+    "@distilled.cloud/github": "catalog:",
+    "alchemy": "catalog:stack",
+    "effect": "catalog:stack"
+  }
+}
