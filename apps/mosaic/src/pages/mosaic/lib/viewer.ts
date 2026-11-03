@@ -1,0 +1,231 @@
+import { Effect, Option, Record } from "effect";
+
+import type { Mosaic } from "#/pages/mosaic/api/queries";
+import type { Visit } from "#/pages/mosaic/lib/files";
+import type { ViewerStore } from "#/pages/mosaic/model/viewer";
+
+import type { Point, Size } from "./camera";
+import { leave, pointerDown, pointerMove, pointerUp } from "./gesture";
+import { createInvalidation, startLoop } from "./loop";
+import type { Invalidation } from "./loop";
+import { createRenderer } from "./renderer";
+import type { Scene } from "./scene";
+import { createScene, flyHome, resize, select, settle, zoomAt, zoomInAt } from "./scene";
+import type { Sprites } from "./sprites";
+import { createSprites } from "./sprites";
+
+const HIGH_DENSITY = "(min-resolution: 2dppx)";
+const HIGH_RATIO = 2;
+const STANDARD_RATIO = 1;
+const WHEEL_SPEED = -0.0018;
+const KEY_ZOOM = 1.4;
+const UNIT = 1;
+const KEY_ZOOM_OUT = UNIT / KEY_ZOOM;
+const KEY_PAN = 80;
+const NO_PAN = 0;
+const HALF = 0.5;
+
+interface Mount {
+  readonly canvas: HTMLCanvasElement;
+  readonly visit: Visit;
+  readonly store: ViewerStore;
+}
+
+interface Measure {
+  readonly viewport: Size;
+  readonly ratio: number;
+}
+
+const pixelRatio = (): number => {
+  if (globalThis.matchMedia(HIGH_DENSITY).matches) {
+    return HIGH_RATIO;
+  }
+  return STANDARD_RATIO;
+};
+
+const measure = (canvas: HTMLCanvasElement): Measure => {
+  const ratio = pixelRatio();
+  const viewport = { width: canvas.clientWidth, height: canvas.clientHeight };
+  canvas.width = Math.round(viewport.width * ratio);
+  canvas.height = Math.round(viewport.height * ratio);
+  return { viewport, ratio };
+};
+
+const pointOf = (event: MouseEvent): Point => ({
+  left: event.offsetX,
+  top: event.offsetY,
+});
+
+const bindPointer = (canvas: HTMLCanvasElement, store: ViewerStore, signal: AbortSignal): void => {
+  const options = { signal };
+  canvas.addEventListener(
+    "pointerdown",
+    (event) => {
+      canvas.setPointerCapture(event.pointerId);
+      store.step(
+        pointerDown({ id: `${event.pointerId}`, point: pointOf(event), now: event.timeStamp }),
+      );
+    },
+    options,
+  );
+  canvas.addEventListener(
+    "pointermove",
+    (event) => {
+      store.step(pointerMove({ id: `${event.pointerId}`, point: pointOf(event) }));
+    },
+    options,
+  );
+  const release = (event: PointerEvent): void => {
+    store.step(
+      pointerUp({ id: `${event.pointerId}`, point: pointOf(event), now: event.timeStamp }),
+    );
+  };
+  canvas.addEventListener("pointerup", release, options);
+  canvas.addEventListener("pointercancel", release, options);
+  canvas.addEventListener(
+    "pointerleave",
+    () => {
+      store.step(leave);
+    },
+    options,
+  );
+};
+
+const bindWheel = (canvas: HTMLCanvasElement, store: ViewerStore, signal: AbortSignal): void => {
+  canvas.addEventListener(
+    "wheel",
+    (event) => {
+      event.preventDefault();
+      store.step(zoomAt({ point: pointOf(event), factor: Math.exp(event.deltaY * WHEEL_SPEED) }));
+    },
+    { signal, passive: false },
+  );
+  canvas.addEventListener(
+    "dblclick",
+    (event) => {
+      store.step(zoomInAt({ point: pointOf(event), now: event.timeStamp }));
+    },
+    { signal },
+  );
+};
+
+const panBy =
+  (left: number, top: number) =>
+  (scene: Scene): Scene =>
+    settle({ ...scene.camera, left: scene.camera.left + left, top: scene.camera.top + top })(scene);
+
+const center = (scene: Scene): Point => ({
+  left: scene.viewport.width * HALF,
+  top: scene.viewport.height * HALF,
+});
+
+const keySteps: Readonly<Record<string, (now: number) => (scene: Scene) => Scene>> = {
+  "+": () => (scene) => zoomAt({ point: center(scene), factor: KEY_ZOOM })(scene),
+  "=": () => (scene) => zoomAt({ point: center(scene), factor: KEY_ZOOM })(scene),
+  "-": () => (scene) => zoomAt({ point: center(scene), factor: KEY_ZOOM_OUT })(scene),
+  "0": (now) => flyHome(now),
+  Escape: () => select(Option.none()),
+  ArrowLeft: () => panBy(KEY_PAN, NO_PAN),
+  ArrowRight: () => panBy(-KEY_PAN, NO_PAN),
+  ArrowUp: () => panBy(NO_PAN, KEY_PAN),
+  ArrowDown: () => panBy(NO_PAN, -KEY_PAN),
+};
+
+const bindKeys = (store: ViewerStore, signal: AbortSignal): void => {
+  globalThis.addEventListener(
+    "keydown",
+    (event) => {
+      const step = Record.get(keySteps, event.key);
+      if (Option.isSome(step) && !(event.target instanceof HTMLInputElement)) {
+        store.step(step.value(event.timeStamp));
+      }
+    },
+    { signal },
+  );
+};
+
+const bindResize = (canvas: HTMLCanvasElement, store: ViewerStore, signal: AbortSignal): void => {
+  const observer = new ResizeObserver(() => {
+    store.step(resize(measure(canvas)));
+  });
+  observer.observe(canvas);
+  signal.addEventListener(
+    "abort",
+    () => {
+      observer.disconnect();
+    },
+    { once: true },
+  );
+};
+
+const bindAll = (canvas: HTMLCanvasElement, store: ViewerStore, signal: AbortSignal): void => {
+  bindPointer(canvas, store, signal);
+  bindWheel(canvas, store, signal);
+  bindKeys(store, signal);
+  bindResize(canvas, store, signal);
+};
+
+const revealWhenReady = ({
+  canvas,
+  mosaic,
+  store,
+  sprites,
+  signal,
+  invalidation,
+}: Readonly<
+  Omit<Mount, "visit"> & {
+    mosaic: Mosaic;
+    sprites: Sprites;
+    signal: AbortSignal;
+    invalidation: Invalidation;
+  }
+>): Effect.Effect<void> =>
+  Effect.gen(function* reveal() {
+    const renderer = yield* createRenderer({
+      canvas,
+      cells: mosaic.cells,
+      onReady: invalidation.mark,
+    });
+    if (Option.isNone(renderer)) {
+      return;
+    }
+    startLoop({ store, renderer: renderer.value, sprites, dirty: invalidation.take, signal });
+    yield* sprites.ready;
+    yield* renderer.value.prepare(sprites);
+    if (!signal.aborted) {
+      store.write({
+        status: "ready",
+        scene: createScene({
+          grid: mosaic,
+          cells: mosaic.cells,
+          reveal: performance.now(),
+          ...measure(canvas),
+        }),
+      });
+    }
+  });
+
+const mountViewer = ({ canvas, visit, store }: Mount): (() => void) => {
+  const { mosaic } = visit;
+  const controller = new AbortController();
+  const invalidation = createInvalidation();
+  const sprites = createSprites({ visit, onLoad: invalidation.mark });
+  store.write({ status: "loading" });
+  bindAll(canvas, store, controller.signal);
+  Effect.runFork(
+    revealWhenReady({
+      canvas,
+      mosaic,
+      store,
+      sprites,
+      signal: controller.signal,
+      invalidation,
+    }),
+  );
+
+  return () => {
+    controller.abort();
+  };
+};
+
+export { mountViewer };

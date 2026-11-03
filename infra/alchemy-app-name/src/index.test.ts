@@ -6,7 +6,11 @@ import { inMemoryState } from "alchemy/State";
 import { Effect, Exit, Layer } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
+import { appNamed } from "./index.ts";
+
+const APP_NAME = "app";
+
+const { requireAppPrefix } = appNamed(APP_NAME);
 
 const deploysWith = (
   stackName: string,
