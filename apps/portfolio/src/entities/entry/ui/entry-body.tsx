@@ -5,6 +5,7 @@ import type { Entry } from "#/entities/entry/model/entry";
 
 import { EntryModule } from "./entry-module";
 import type { Render } from "./entry-module";
+import { Figure } from "./figure";
 import { FootnoteRef } from "./footnote-ref";
 import { LazyImage } from "./lazy-image";
 import { ScrollTable } from "./scroll-table";
@@ -12,6 +13,7 @@ import { Speech } from "./speech";
 import { YouTube } from "./you-tube";
 
 const components: MDXComponents = {
+  Figure,
   FootnoteRef,
   Speech,
   YouTube,
