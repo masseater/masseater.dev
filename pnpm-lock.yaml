@@ -339,8 +339,8 @@ catalogs:
       specifier: 15.3.3
       version: 15.3.3
     three:
-      specifier: 0.186.1
-      version: 0.186.1
+      specifier: 0.187.0
+      version: 0.187.0
     unified:
       specifier: 11.0.5
       version: 11.0.5
@@ -881,7 +881,7 @@ importers:
         version: 0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)
       three:
         specifier: 'catalog:'
-        version: 0.186.1
+        version: 0.187.0
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -10099,8 +10099,8 @@ packages:
     engines: {node: '>=20.18.0'}
     hasBin: true
 
-  three@0.186.1:
-    resolution: {integrity: sha512-blFeqb49wRCSGUGj7gtpfnSGHy2lwDk94RhUmS1c/hTby70kvChbWpkJ4Pm1390LqzzvTmzgXKHPEafJwCb8jA==}
+  three@0.187.0:
+    resolution: {integrity: sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==}
 
   tiny-inflate@1.0.3:
     resolution: {integrity: sha512-pkY1fj1cKHb2seWDy0B16HeWyczlJA9/WW3u3c4z/NiWDsO3DOU5D7nhTLE9CF0yXv/QZFY7sEJmj24dK+Rrqw==}
@@ -21544,7 +21544,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  three@0.186.1: {}
+  three@0.187.0: {}
 
   tiny-inflate@1.0.3: {}
 
