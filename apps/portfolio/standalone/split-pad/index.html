@@ -365,6 +365,14 @@
         padding: 8px 10px;
         background: var(--bg);
       }
+      .announce {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
       #p-out dt {
         color: var(--muted);
       }
@@ -594,7 +602,7 @@
           </div>
           <dl id="p-out">
             <dt>結果</dt>
-            <dd class="st" id="p-st" data-s="" aria-live="polite">—</dd>
+            <dd class="st" id="p-st" data-s="">—</dd>
             <dt>経過</dt>
             <dd id="p-t">—</dd>
             <dt>ずれ</dt>
@@ -604,6 +612,7 @@
             <dt>計算</dt>
             <dd id="p-be">—</dd>
           </dl>
+          <p class="announce" id="p-announce" aria-live="polite"></p>
           <p class="note">
             本体（片側 180
             g）を剛体として、ページの中で計算しています。手と本体の接触は皮膚のやわらかさをばねで、摩擦は滑り出すまで張り付くばねで表します。本体が手の中の位置から
@@ -2692,6 +2701,11 @@
           be: document.getElementById("p-be"),
         };
         const runBtn = document.getElementById("p-run");
+        // 読み上げは「保持」「落下」などの最終結果だけにする。同じ文言は繰り返さない
+        const announcer = document.getElementById("p-announce");
+        const announce = (msg) => {
+          if (announcer.textContent !== msg) announcer.textContent = msg;
+        };
         const PHYS = { active: false, running: false, ready: false, gpu: null, busy: false };
 
         const WGSL = /* wgsl */ `
@@ -2975,6 +2989,7 @@ fn main(@builtin(local_invocation_index) tid: u32) {
 
         function physReset() {
           PHYS.running = false;
+          announcer.textContent = "";
           runBtn.textContent = "振る";
           if (PHYS.active) {
             Object.values(hands).forEach((h) => {
@@ -3216,6 +3231,7 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           pOut.ang.textContent = `${ang.toFixed(1)}°（最大 ${PHYS.maxAng.toFixed(1)}°）`;
           if (PHYS.fellAt !== null) {
             pOut.st.textContent = `落下（${PHYS.fellAt.toFixed(2)} 秒後）`;
+            announce(pOut.st.textContent);
             pOut.st.dataset.s = "fall";
           }
           nowAct.textContent =
@@ -3248,6 +3264,7 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           if (![r[0], r[1], r[2], r[6]].every(Number.isFinite)) {
             PHYS.running = false;
             pOut.st.textContent = "計算が発散しました";
+            announce(pOut.st.textContent);
             return;
           }
         }
@@ -3267,6 +3284,7 @@ fn main(@builtin(local_invocation_index) tid: u32) {
                   runBtn.textContent = "もう一度振る";
                   if (PHYS.fellAt === null) {
                     pOut.st.textContent = `保持（${SIM.T} 秒間）`;
+                    announce(pOut.st.textContent);
                     pOut.st.dataset.s = "hold";
                   }
                 }
