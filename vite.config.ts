@@ -5,6 +5,8 @@ import baselineJs from "eslint-plugin-baseline-js";
 import { defineConfig } from "vite-plus";
 
 import {
+  BROWSER_HANDLES,
+  WEBGPU_HANDLES,
   allRulesOf,
   decisionPluginName,
   decisionRules,
@@ -103,7 +105,8 @@ export default defineConfig({
         {
           ignoreInferredTypes: true,
           allow: [
-            { from: "lib", name: ["HTMLElement", "Request"] },
+            { from: "lib", name: ["HTMLElement", "Request", ...BROWSER_HANDLES] },
+            { from: "package", package: "@webgpu/types", name: [...WEBGPU_HANDLES] },
             {
               from: "package",
               package: "@cloudflare/workers-types",
@@ -135,6 +138,7 @@ export default defineConfig({
         "error",
         {
           capIsNewExceptions: [
+            "Build",
             "CloudflareApiLive",
             "Repository",
             "RepositorySettings",
@@ -142,7 +146,7 @@ export default defineConfig({
             "Ruleset",
             "Stack",
           ],
-          capIsNewExceptionPattern: String.raw`^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|KV|Logpush|R2|Ruleset|SecretsStore|Website|Workers|Zone)\.`,
+          capIsNewExceptionPattern: String.raw`^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|KV|Logpush|R2|Ruleset|Rules|SecretsStore|Website|Workers|Zone)\.`,
         },
       ],
       "typescript/no-empty-interface": ["error", { allowSingleExtends: true }],

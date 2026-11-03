@@ -25,6 +25,7 @@
     "@distilled.cloud/github": "catalog:",
     "@effect/atom-react": "catalog:stack",
     "@elysiajs/eden": "catalog:stack",
+    "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@octokit/rest": "catalog:",
     "@tailwindcss/typography": "catalog:",

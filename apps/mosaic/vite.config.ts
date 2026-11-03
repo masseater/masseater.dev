@@ -21,12 +21,7 @@ export default defineConfig({
   base: `${BASE_PATH}/`,
   build: { copyPublicDir: false },
   resolve: { tsconfigPaths: true },
-  test: {
-    projects: [
-      { extends: true, test: { name: "app", include: ["src/**/*.test.{ts,tsx}"] } },
-      { extends: false, test: { name: "alchemy", include: ["*.test.ts"] } },
-    ],
-  },
+  test: { include: ["src/**/*.test.{ts,tsx}"] },
   plugins: [
     devtools(),
     tailwindcss(),
