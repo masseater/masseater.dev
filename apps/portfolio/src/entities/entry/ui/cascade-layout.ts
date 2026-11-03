@@ -161,13 +161,10 @@ const serviceNode =
     };
   };
 
-const edgeClass = {
-  running: "cascade-edge",
-  stopped: "cascade-edge cascade-edge-stopped",
-} as const satisfies Record<Status, string>;
+type EdgeClasses = Readonly<Record<Status, string>>;
 
 const edgeOf =
-  (delays: StopDelays, round: number) =>
+  (delays: StopDelays, round: number, classes: EdgeClasses) =>
   (link: CascadeLink): Edge => {
     const delay = delayOf(delays, link.source);
     return {
@@ -179,7 +176,7 @@ const edgeOf =
       label: link.label,
       markerEnd: { type: "arrowclosed", width: 16, height: 16 },
       focusable: false,
-      className: edgeClass[statusOf(delay)],
+      className: classes[statusOf(delay)],
       style: delayStyle(delay),
     };
   };
@@ -189,10 +186,12 @@ const nodesOf = (state: CascadeState): Node[] => {
   return [...stageNodes, ...pipe(cascadeNodes, Arr.map(toNode))];
 };
 
-const edgesOf = (state: CascadeState): Edge[] => {
-  const toEdge = edgeOf(stopDelays(state), roundOf(state));
-  return pipe(cascadeLinks, Arr.map(toEdge));
-};
+const edgesOf =
+  (classes: EdgeClasses) =>
+  (state: CascadeState): Edge[] => {
+    const toEdge = edgeOf(stopDelays(state), roundOf(state), classes);
+    return pipe(cascadeLinks, Arr.map(toEdge));
+  };
 
-export type { ServiceData, ServiceNode, StageNode, Status };
+export type { EdgeClasses, ServiceData, ServiceNode, StageNode, Status };
 export { FLOW_HEIGHT, STAGE_WIDTH, edgesOf, nodesOf };

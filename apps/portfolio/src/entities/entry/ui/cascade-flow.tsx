@@ -9,6 +9,7 @@ import { started } from "#/entities/entry/model/cascade";
 import { useCascadeState, useUpdateCascade } from "#/entities/entry/model/cascade-state";
 
 import { edgesOf, FLOW_HEIGHT, nodesOf, STAGE_WIDTH } from "./cascade-layout";
+import type { EdgeClasses } from "./cascade-layout";
 import { CascadeService } from "./cascade-service";
 import { CascadeStage } from "./cascade-stage";
 
@@ -19,6 +20,13 @@ const fitViewOptions = { padding: 0.02 };
 const observerOptions = { threshold: 0.4 };
 
 const GRID = 24;
+
+const edgeClasses: EdgeClasses = {
+  running: "cascade-edge",
+  stopped: "cascade-edge cascade-edge-stopped",
+};
+
+const cascadeEdges = edgesOf(edgeClasses);
 
 const frameStyle: CSSProperties = { "--cascade-aspect": `${STAGE_WIDTH} / ${FLOW_HEIGHT}` };
 
@@ -53,7 +61,7 @@ const CascadeFlow = (): ReactNode => {
   return (
     <div className="cascade-failure w-full" ref={ref} style={frameStyle}>
       <ReactFlow
-        edges={edgesOf(state)}
+        edges={cascadeEdges(state)}
         elementsSelectable={false}
         fitView
         fitViewOptions={fitViewOptions}

@@ -145,25 +145,29 @@ const markerOf = (kind: LinkKind): EdgeMarker => ({
 
 const SHARP = 0;
 
-const toEdge = ({
-  from: [source, sourceSide],
-  to: [target, targetSide],
-  kind,
-  label,
-  route,
-}: LinkSpec): StepLink => ({
-  id: `${source}-${target}`,
-  type: "smoothstep",
-  source,
-  sourceHandle: `${sourceSide}-source`,
-  target,
-  targetHandle: `${targetSide}-target`,
-  label,
-  className: `architecture-link-${kind}`,
-  markerEnd: markerOf(kind),
-  pathOptions: { borderRadius: SHARP, stepPosition: route.stepPosition, offset: route.offset },
-  focusable: false,
-});
+type LinkClasses = Readonly<Record<LinkKind, string>>;
+
+const toEdge =
+  (classes: LinkClasses) =>
+  ({
+    from: [source, sourceSide],
+    to: [target, targetSide],
+    kind,
+    label,
+    route,
+  }: LinkSpec): StepLink => ({
+    id: `${source}-${target}`,
+    type: "smoothstep",
+    source,
+    sourceHandle: `${sourceSide}-source`,
+    target,
+    targetHandle: `${targetSide}-target`,
+    label,
+    className: classes[kind],
+    markerEnd: markerOf(kind),
+    pathOptions: { borderRadius: SHARP, stepPosition: route.stepPosition, offset: route.offset },
+    focusable: false,
+  });
 
 const reversedRoute = (route: Route): Route => ({
   stepPosition: WHOLE - route.stepPosition,
@@ -181,13 +185,14 @@ const reverse = (spec: LinkSpec): LinkSpec => ({
 
 const architectureNodes: Node[] = [...groupNodes, visitorNode, ...serviceNodes];
 
-const architectureEdges: Edge[] = [
-  ...pipe(links, Arr.map(toEdge)),
+const architectureEdges = (classes: LinkClasses): Edge[] => [
+  ...pipe(links, Arr.map(toEdge(classes))),
   ...pipe(
     links,
     Arr.filter((spec) => spec.both),
-    Arr.map((spec) => toEdge(reverse(spec))),
+    Arr.map((spec) => toEdge(classes)(reverse(spec))),
   ),
 ];
 
+export type { LinkClasses };
 export { architectureEdges, architectureNodes };
