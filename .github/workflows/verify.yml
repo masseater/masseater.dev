@@ -279,7 +279,7 @@ jobs:
       - if: always() && steps.build-pool.outcome != 'skipped'
         run: |
           files=()
-          for file in small target.png vocadb/songs.json thumbs.npz niconico-og.json; do
+          for file in small target.png vocadb/songs.json vocadb/progress.json thumbs.npz niconico-og.json; do
             if [ -e "$SLUG/$file" ]; then
               files+=("$SLUG/$file")
             fi
