@@ -1,0 +1,31 @@
+{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
+  "extends": "../../tsconfig.base.json",
+  "include": ["src", "*.ts"],
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "@cloudflare/workers-types", "@webgpu/types"],
+    "paths": {
+      "#/*": ["./src/*"]
+    },
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/atom-react",
+          "@effect/platform-node/NodeRuntime#runMain",
+          "@effect/platform-node/NodeServices#layer",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/reactivity/Atom",
+          "effect/http/FetchHttpClient#layer",
+          "effect/http/HttpClient#get",
+          "effect/http/HttpClient#HttpClient",
+          "effect/http/HttpClientError#HttpClientError",
+          "effect/http/HttpClientResponse#filterStatusOk",
+          "effect/http/HttpClientResponse#schemaBodyJson"
+        ]
+      }
+    ]
+  }
+}
