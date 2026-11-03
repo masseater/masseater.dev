@@ -6,7 +6,12 @@ import { isUnindexedPath } from "#/entities/entry/model/category";
 import { starRoutes } from "#/features/star/index.server";
 import { site } from "#/shared/config";
 
-import { SECURITY_HEADERS, contentSecurityPolicy } from "./security-headers.ts";
+import {
+  DOCUMENT_HEADERS,
+  IMAGE_HEADERS,
+  SECURITY_HEADERS,
+  contentSecurityPolicy,
+} from "./security-headers.ts";
 
 const NONCE_BYTES = 16;
 
@@ -45,6 +50,12 @@ const fixedHeaders = (pathname: string): [string, string][] => [
     Option.match({ onNone: () => [], onSome: Rec.toEntries }),
   ),
 ];
+
+const mediaHeaders = (contentType: string): [string, string][] =>
+  pipe(
+    Option.liftPredicate(IMAGE_HEADERS, () => Str.startsWith("image/")(contentType)),
+    Option.match({ onNone: () => [], onSome: Rec.toEntries }),
+  );
 
 const isDocumentRequest = (request: Request): boolean =>
   Arr.contains(DOCUMENT_DESTINATIONS, request.headers.get("Sec-Fetch-Dest") ?? "");
@@ -91,14 +102,27 @@ const worker = {
           const fixed = fixedHeaders(new URL(request.url).pathname);
           const init = { status: response.status, statusText: response.statusText };
           const entries: HeaderEntries = [...response.headers.entries()];
-          if (!Str.startsWith("text/html")(response.headers.get("Content-Type") ?? "")) {
-            const headers = overriding(entries, [], fixed);
-            return new Response(response.body, { ...init, headers });
-          }
-          const nonce = newNonce();
-          const headers = overriding(entries, RESPONSE_VALIDATORS, [...fixed, cspHeader(nonce)]);
-          const { body } = nonceRewriter(nonce).transform(response);
-          return new Response(body, { ...init, headers });
+          const contentType = response.headers.get("Content-Type") ?? "";
+          return Option.match(
+            Option.liftPredicate(response, () => Str.startsWith("text/html")(contentType)),
+            {
+              onNone: () =>
+                new Response(response.body, {
+                  ...init,
+                  headers: overriding(entries, [], [...fixed, ...mediaHeaders(contentType)]),
+                }),
+              onSome: (document) => {
+                const nonce = newNonce();
+                const headers = overriding(entries, RESPONSE_VALIDATORS, [
+                  ...fixed,
+                  ...Rec.toEntries(DOCUMENT_HEADERS),
+                  cspHeader(nonce),
+                ]);
+                const { body } = nonceRewriter(nonce).transform(document);
+                return new Response(body, { ...init, headers });
+              },
+            },
+          );
         }),
       ),
     ),

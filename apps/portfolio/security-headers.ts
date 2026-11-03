@@ -13,7 +13,12 @@ const SECURITY_HEADERS = {
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
   "Cross-Origin-Opener-Policy": "same-origin",
+  "Cross-Origin-Resource-Policy": "same-origin",
 } as const;
+
+const DOCUMENT_HEADERS = { "Cross-Origin-Embedder-Policy": "credentialless" } as const;
+
+const IMAGE_HEADERS = { "Cross-Origin-Resource-Policy": "cross-origin" } as const;
 
 const contentSecurityPolicy = (nonce: string): string =>
   pipe(
@@ -24,7 +29,6 @@ const contentSecurityPolicy = (nonce: string): string =>
       "style-src-attr 'unsafe-inline'",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://i.ytimg.com https://upload.wikimedia.org https://thumb.wikimedia.org",
-      "frame-src https://www.youtube-nocookie.com",
       `connect-src 'self' ${WEB_ANALYTICS_REPORT_ORIGIN}`,
       "object-src 'none'",
       "base-uri 'none'",
@@ -34,4 +38,4 @@ const contentSecurityPolicy = (nonce: string): string =>
     Arr.join("; "),
   );
 
-export { SECURITY_HEADERS, contentSecurityPolicy };
+export { DOCUMENT_HEADERS, IMAGE_HEADERS, SECURITY_HEADERS, contentSecurityPolicy };
