@@ -1,0 +1,86 @@
+{
+  "name": "sloppedia",
+  "version": "0.0.0",
+  "description": "A Wikipedia-like skin for a personal encyclopedia written in Markdown: article pages with an infobox, table of contents and categories, a main page and a category index, as React components styled with Tailwind CSS.",
+  "keywords": [
+    "encyclopedia",
+    "markdown",
+    "mdx",
+    "react",
+    "tailwindcss",
+    "wiki"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/sloppedia#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/sloppedia"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!src/**/*.test.*",
+    "LICENSE"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./styles.css": "./src/styles.css",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./schema": {
+        "types": "./dist/schema.d.ts",
+        "default": "./dist/schema.js"
+      },
+      "./styles.css": "./src/styles.css",
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "vp pack",
+    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache",
+    "size": "vp run build && size-limit",
+    "prepublishOnly": "vp run build"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
+    "@size-limit/file": "catalog:",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "effect": "catalog:stack",
+    "happy-dom": "21.0.4",
+    "publint": "catalog:",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "size-limit": "catalog:",
+    "tailwindcss": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0",
+    "react": "^19.0.0",
+    "tailwindcss": "^4.0.0"
+  },
+  "size-limit": [
+    {
+      "path": "dist/*.js",
+      "limit": "4362 B"
+    }
+  ]
+}
