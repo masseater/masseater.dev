@@ -1,7 +1,10 @@
 import { BACKDROP_STYLE_HASH } from "@masseater.dev/ui/backdrop-palette";
 import { Array as Arr, pipe } from "effect";
 
-import { WEB_ANALYTICS_REPORT_ORIGIN, WEB_ANALYTICS_SCRIPT_ORIGIN } from "./web-analytics";
+import {
+  WEB_ANALYTICS_REPORT_ORIGIN,
+  WEB_ANALYTICS_SCRIPT_ORIGIN,
+} from "./src/shared/config/web-analytics.ts";
 
 const SECURITY_HEADERS = {
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -16,7 +19,7 @@ const contentSecurityPolicy = (nonce: string): string =>
   pipe(
     [
       "default-src 'self'",
-      `script-src 'nonce-${nonce}' 'strict-dynamic' 'self' ${WEB_ANALYTICS_SCRIPT_ORIGIN} https://cdnjs.cloudflare.com`,
+      `script-src 'nonce-${nonce}' 'strict-dynamic' 'self' ${WEB_ANALYTICS_SCRIPT_ORIGIN}`,
       `style-src 'self' 'nonce-${nonce}' ${BACKDROP_STYLE_HASH} https://fonts.googleapis.com`,
       "style-src-attr 'unsafe-inline'",
       "font-src 'self' https://fonts.gstatic.com",

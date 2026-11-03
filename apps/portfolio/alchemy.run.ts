@@ -9,6 +9,7 @@ import {
   state,
 } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
+import { grantPolicies } from "@masseater.dev/repositories/credential-grants";
 import { Stack, Stage, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
@@ -21,7 +22,6 @@ import {
   PREFIX,
   requireAppPrefix,
 } from "./app-name.ts";
-import { grantPolicies } from "./credential-grants.ts";
 import { edgeGuard } from "./edge-guard.ts";
 import { logArchive } from "./log-archive.ts";
 import { site } from "./src/shared/config/site.ts";
