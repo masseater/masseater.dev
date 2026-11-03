@@ -11,6 +11,7 @@
     <style>
       /* layout: one cut on a viewer like a compositing monitor; stage switch above, process toggles and the cut-bag note below */
       :root {
+        color-scheme: light dark;
         --bg: #eceef1;
         --panel: #f8f9fa;
         --fg: #1c2130;
@@ -43,6 +44,9 @@
         --accent: #f0a04b;
         --accent-bg: #3a2a1a;
         color-scheme: dark;
+      }
+      :root[data-theme="light"] {
+        color-scheme: light;
       }
       *,
       *::before,
@@ -314,7 +318,7 @@
 
       <div class="viewer">
         <canvas id="view" aria-label="カットの表示"></canvas>
-        <div class="loading" id="loading">素材を読み込んでいます</div>
+        <div class="loading" id="loading" role="status">素材を読み込んでいます</div>
       </div>
 
       <div class="cap" aria-live="polite">
@@ -421,7 +425,15 @@
         };
 
         const canvas = document.getElementById("view");
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        const renderer = (() => {
+          try {
+            return new THREE.WebGLRenderer({ canvas, antialias: true });
+          } catch (error) {
+            document.getElementById("loading").textContent =
+              "このブラウザでは WebGL が使えないため、カットを表示できません";
+            throw error;
+          }
+        })();
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         renderer.autoClear = true;
 

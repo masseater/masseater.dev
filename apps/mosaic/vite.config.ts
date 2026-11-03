@@ -27,6 +27,7 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart({
       srcDirectory: "src/app",
+      router: { routeTreeFileHeader: [] },
       rsc: { enabled: true },
       prerender: { enabled: true, crawlLinks: false, autoSubfolderIndex: false },
       pages: [{ path: "/" }, ...characterPages],
