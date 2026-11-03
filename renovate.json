@@ -23,6 +23,10 @@
       "enabled": false
     },
     {
+      "matchPackageNames": ["@paper-design/**"],
+      "groupName": "paper shaders"
+    },
+    {
       "matchPackageNames": ["typescript"],
       "allowedVersions": "!/-dev\\./"
     }

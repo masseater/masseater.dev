@@ -79,6 +79,10 @@ catalog:
   "@peculiar/asn1-pkcs8": 3.0.0
   "@peculiar/asn1-rsa": 3.0.0
   "@peculiar/asn1-schema": 3.0.0
+  size-limit: 14.3.0
+  "@size-limit/file": 14.3.0
+  publint: 0.3.25
+  "@arethetypeswrong/core": 0.18.5
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.18
