@@ -1,3 +1,4 @@
 /scraps /sloppedia/ 301
 /scraps/ /sloppedia/ 301
 /scraps/* /sloppedia/:splat 301
+/sloppedia/git-alternatives /sloppedia/version-control-systems 301
