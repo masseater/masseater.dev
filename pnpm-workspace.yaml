@@ -94,7 +94,7 @@ overrides:
   "@effect/vitest": 4.0.7
   vite@*: "catalog:"
   eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
-  fflate@>=0.7.0 <0.7.5: ^0.7.5
+  fflate@>=0.7.0 <0.7.5: ^0.8.0
   glob@>=9.0.0 <=14.0.1: ^14.0.2
   minimatch@<11.0.1: ^11.0.1
   postcss-selector-parser@<6.1.5: ^7.0.0
