@@ -4,7 +4,7 @@ import type { RepositoryProps, RulesetProps } from "@alchemy.run/github";
 import { Stack } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
-import { Array as Arr, Effect, Layer, pipe } from "effect";
+import { Array as Arr, Effect, Layer, Record as Rec, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
 import { PREFIX } from "./app-name.ts";
@@ -98,7 +98,12 @@ const ARCHIVES: ReadonlySet<string> = new Set([
   "vocablint",
 ]);
 
+const RENAMES: Readonly<Record<string, string>> = { "oxlint-plugin-decision": "lint-kit" };
+
 const isArchiving = (repository: ManagedRepository): boolean => ARCHIVES.has(repository.name);
+
+const isChanging = (repository: ManagedRepository): boolean =>
+  isArchiving(repository) || Rec.has(RENAMES, repository.name);
 
 const policyOf = (repository: ManagedRepository): Partial<RepositoryProps> => {
   if (isArchiving(repository)) {
@@ -139,14 +144,14 @@ const github: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       Effect.forEach((repository) =>
         Repository(`Repository${repository.id}`, {
           owner: OWNER,
-          name: repository.name,
+          name: RENAMES[repository.name] ?? repository.name,
           ...policyOf(repository),
         }),
       ),
     );
     const active = pipe(
       managed,
-      Arr.filter((repository) => !isArchiving(repository)),
+      Arr.filter((repository) => !isChanging(repository)),
     );
     yield* pipe(active, Effect.forEach(settingsOf));
     yield* pipe(
