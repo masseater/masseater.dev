@@ -139,7 +139,7 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
       - if: steps.token.outputs.issued == 'true'
-        run: vp run --filter portfolio deploy:github
+        run: vp exec --filter portfolio alchemy deploy --config alchemy.github.ts --stage prod --yes
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
