@@ -10,6 +10,8 @@ PAGE = 100
 INTERVAL = 1.0
 TRIES = 3
 TIMEOUT = 60
+CHECKPOINT = 20
+PROGRESS = "progress.json"
 API = "https://vocadb.net/api/songs"
 
 
@@ -35,6 +37,35 @@ def _all(artist_id: int, total: int, sort: str) -> Iterator[dict]:
         yield from _page(artist_id, start, sort)["items"]
 
 
+def _write(path: Path, data: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(data)
+    tmp.replace(path)
+
+
+def _resume(artist_id: int, cache: Path, known: dict[int, dict]) -> dict[int, dict]:
+    progress = cache / PROGRESS
+    start = json.loads(progress.read_text())["start"] if progress.exists() else 0
+    merged = dict(known)
+    first = _page(artist_id, start, "AdditionDate", count=True)
+    count = first["totalCount"]
+    items = first["items"]
+    pages = 0
+    while True:
+        merged.update({s["id"]: s for s in items})
+        start += PAGE
+        pages += 1
+        if start >= count:
+            break
+        if pages % CHECKPOINT == 0:
+            _write(cache / "songs.json", json.dumps(list(merged.values()), ensure_ascii=False))
+            _write(progress, json.dumps({"start": start}))
+        items = _page(artist_id, start, "AdditionDate")["items"]
+    progress.unlink(missing_ok=True)
+    return merged
+
+
 def _added_since(artist_id: int, known: set[int]) -> Iterator[dict]:
     start = 0
     while True:
@@ -46,8 +77,6 @@ def _added_since(artist_id: int, known: set[int]) -> Iterator[dict]:
 
 
 def _fresh(artist_id: int, known: dict[int, dict]) -> dict[int, dict]:
-    if not known:
-        return {s["id"]: s for s in _all(artist_id, sys.maxsize, "AdditionDate")}
     try:
         return {s["id"]: s for s in _added_since(artist_id, set(known))}
     except RuntimeError as error:
@@ -62,13 +91,17 @@ def fetch_songs(artist_id: int, cache: Path, limit: int | None) -> None:
         known: dict[int, dict] = {}
     else:
         known = {s["id"]: s for s in json.loads(path.read_text())} if path.exists() else {}
-        merged = {**known, **_fresh(artist_id, known)}
-    cache.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(list(merged.values()), ensure_ascii=False))
+        if not known or (cache / PROGRESS).exists():
+            merged = _resume(artist_id, cache, known)
+        else:
+            merged = {**known, **_fresh(artist_id, known)}
+    _write(path, json.dumps(list(merged.values()), ensure_ascii=False))
     print(f"vocadb known={len(known)} now={len(merged)}", file=sys.stderr, flush=True)
 
 
 def load_songs(cache: Path) -> list[dict]:
+    if (cache / PROGRESS).exists():
+        raise RuntimeError(f"VocaDB の一覧を取り終えていない: {cache / PROGRESS}")
     found = json.loads((cache / "songs.json").read_text())
     return sorted(found, key=lambda s: (-s.get("ratingScore", 0), s["id"]))
 
