@@ -80,6 +80,7 @@
     "@webxr-input-profiles/assets": "catalog:",
     "alchemy": "catalog:stack",
     "budoux": "catalog:",
+    "d3-polygon": "catalog:",
     "drizzle-kit": "catalog:stack",
     "mdast-util-directive": "catalog:",
     "mdast-util-mdx-jsx": "catalog:",
