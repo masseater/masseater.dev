@@ -6,6 +6,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { DIAGRAM_HEIGHT, DIAGRAM_WIDTH } from "./architecture-grid";
 import { ArchitectureGroup } from "./architecture-group";
 import { architectureEdges, architectureNodes } from "./architecture-layout";
+import type { LinkClasses } from "./architecture-layout";
 import { ArchitectureService } from "./architecture-service";
 
 const nodeTypes = { group: ArchitectureGroup, service: ArchitectureService };
@@ -18,6 +19,14 @@ const MAX_ZOOM = 2;
 
 const GRID = 24;
 
+const linkClasses: LinkClasses = {
+  main: "architecture-link architecture-link-main",
+  api: "architecture-link",
+  dash: "architecture-link architecture-link-dash",
+};
+
+const edges = architectureEdges(linkClasses);
+
 const frameStyle: CSSProperties = {
   "--architecture-aspect": `${DIAGRAM_WIDTH} / ${DIAGRAM_HEIGHT}`,
 };
@@ -25,7 +34,7 @@ const frameStyle: CSSProperties = {
 const ArchitectureFlow = (): ReactNode => (
   <div className="architecture w-full" style={frameStyle}>
     <ReactFlow
-      edges={architectureEdges}
+      edges={edges}
       elementsSelectable={false}
       fitView
       fitViewOptions={fitViewOptions}
@@ -42,7 +51,7 @@ const ArchitectureFlow = (): ReactNode => (
       zoomOnScroll={false}
     >
       <Background gap={GRID} variant={BackgroundVariant.Lines} />
-      <Controls showInteractive={false} />
+      <Controls className="architecture-controls" showInteractive={false} />
     </ReactFlow>
   </div>
 );
