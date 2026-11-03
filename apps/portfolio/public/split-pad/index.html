@@ -734,6 +734,11 @@
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFShadowMap;
         stage.prepend(renderer.domElement);
+        renderer.domElement.setAttribute("role", "img");
+        renderer.domElement.setAttribute(
+          "aria-label",
+          "背面打ちスプリットパッドと握った手の 3D モデル。ドラッグで回転し、視点は下のボタンでも切り替えられる",
+        );
         const labelRenderer = new THREE.CSS2DRenderer({
           element: document.getElementById("labels"),
         });
