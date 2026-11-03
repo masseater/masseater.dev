@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import { categories, categoryMeta, categoryPath } from "./src/entities/entry/model/category.ts";
+import { categories, categoryPath, isUnindexedPath } from "./src/entities/entry/model/category.ts";
 import { site } from "./src/shared/config/site.ts";
 
 const MODIFIED_TIME = /<meta property="article:modified_time" content="(?<date>[^"]+)"/u;
@@ -12,17 +12,7 @@ const categoryPaths = pipe(
   Arr.map((category) => categoryPath(category)),
 );
 
-const unindexedPaths = pipe(
-  categories,
-  Arr.filter((category) => categoryMeta[category].robots === "noindex"),
-  Arr.map((category) => categoryPath(category)),
-);
-
-const isUnindexed = ({ path }: Page): boolean =>
-  pipe(
-    unindexedPaths,
-    Arr.some((prefix) => path === prefix || Str.startsWith(`${prefix}/`)(path)),
-  );
+const isUnindexed = ({ path }: Page): boolean => isUnindexedPath(path);
 
 const pages = [
   ...pipe(
