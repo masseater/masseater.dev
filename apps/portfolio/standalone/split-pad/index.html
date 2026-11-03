@@ -450,7 +450,7 @@
       @media (max-width: 760px) {
         main {
           grid-template-columns: minmax(0, 1fr);
-          grid-template-rows: 58vh auto;
+          grid-template-rows: 58dvh auto;
           overflow-y: auto;
         }
         aside {
@@ -1250,7 +1250,9 @@
         function addLabel(half, text, finger, at, offset) {
           const el = document.createElement("div");
           el.className = "lbl";
-          el.innerHTML = `<i data-f="${finger}"></i>${text}`;
+          const dot = document.createElement("i");
+          dot.dataset.f = finger;
+          el.append(dot, text);
           const o = new THREE.CSS2DObject(el);
           o.position.copy(at).add(offset);
           o.userData.nrm = offset.clone().normalize();
@@ -2546,11 +2548,21 @@
         const info = document.getElementById("info");
         const nowAct = document.querySelector("#now .act");
         const FNAME = { thumb: "親指", index: "人差し指", middle: "中指", ring: "薬指" };
+        const node = (tag, cls, ...kids) => {
+          const n = document.createElement(tag);
+          if (cls) n.className = cls;
+          n.append(...kids);
+          return n;
+        };
         function press(b, show) {
           b.t = 1;
           if (b.fk) hands[b.side].fingers[b.fk].state = { mode: b.mode, t: 1 };
           if (show)
-            info.innerHTML = `<div class="name">${b.name}</div><div class="meta">${b.id.replace("-", " ")} ・ ${FNAME[b.finger]}</div><p>${b.role}</p>`;
+            info.replaceChildren(
+              node("div", "name", b.name),
+              node("div", "meta", `${b.id.replace("-", " ")} ・ ${FNAME[b.finger]}`),
+              node("p", "", b.role),
+            );
         }
 
         const ray = new THREE.Raycaster(),
@@ -2587,7 +2599,10 @@
               (b) => b.finger === f && !b.stick && !b.id.endsWith("menu"),
             );
             owned.forEach((b) => press(b, false));
-            info.innerHTML = `<div class="name">${FNAME[f]}</div>${owned.map((b) => `<p><b>${b.name}</b> ${b.role}</p>`).join("")}`;
+            info.replaceChildren(
+              node("div", "name", FNAME[f]),
+              ...owned.map((b) => node("p", "", node("b", "", b.name), ` ${b.role}`)),
+            );
             flash = { f, t: 1 };
           }),
         );
