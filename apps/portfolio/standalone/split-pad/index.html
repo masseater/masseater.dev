@@ -1,0 +1,3490 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="背面ボタンを中指と薬指で押す、左右分離型コントローラーの 3D モデル。手を振る物理演算を WebGPU で動かせる。"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      body {
+        margin: 0;
+        font:
+          14px system-ui,
+          sans-serif;
+      }
+      img {
+        max-width: 100%;
+      }
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+    <title>背面打ちスプリットパッド</title>
+    <meta name="color-scheme" content="light dark" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Dela+Gothic+One&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <style>
+      /* Layout: 一画面アプリ。左に3Dビューポート、右に指ごとの割り当てパネル。狭い画面では縦積み。 */
+      :root {
+        --bg: #e8ebee;
+        --panel: #f6f7f8;
+        --ink: #1a2029;
+        --muted: #5c6673;
+        --line: #cfd5dc;
+        --control-line: #7a838e;
+        --hold: #0e6f5d;
+        --fall: #a8305f;
+        --shell: #e4e1da;
+        --key: #3a404a;
+        --thumb: #d9861c;
+        --index: #2f6bd1;
+        --middle: #14927a;
+        --ring: #c03d77;
+        --display: "Dela Gothic One", "Zen Kaku Gothic New", system-ui, sans-serif;
+        --body: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+        --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #14181d;
+          --panel: #1c2128;
+          --ink: #e6e9ed;
+          --muted: #97a1ad;
+          --line: #2e3540;
+          --control-line: #6b7480;
+          --shell: #4a505a;
+          --key: #22262d;
+          --thumb: #f0a03a;
+          --index: #5a8ff0;
+          --middle: #2fbf9f;
+          --ring: #e8679f;
+          --hold: var(--middle);
+          --fall: var(--ring);
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #14181d;
+        --panel: #1c2128;
+        --ink: #e6e9ed;
+        --muted: #97a1ad;
+        --line: #2e3540;
+        --control-line: #6b7480;
+        --shell: #4a505a;
+        --key: #22262d;
+        --thumb: #f0a03a;
+        --index: #5a8ff0;
+        --middle: #2fbf9f;
+        --ring: #e8679f;
+        --hold: var(--middle);
+        --fall: var(--ring);
+        color-scheme: dark;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--body);
+        font-size: 14px;
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+      }
+      @supports (font-size-adjust: from-font) {
+        body {
+          font-size-adjust: from-font;
+        }
+      }
+      header {
+        display: flex;
+        align-items: baseline;
+        gap: 12px 20px;
+        flex-wrap: wrap;
+        padding-block: 14px 10px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        border-bottom: 1px solid var(--line);
+      }
+      h1 {
+        font-family: var(--display);
+        font-weight: 400;
+        font-size: 20px;
+        margin: 0;
+        letter-spacing: 0.02em;
+        text-wrap: balance;
+      }
+      header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        min-width: 0;
+      }
+      main {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 330px;
+      }
+      #stage {
+        position: relative;
+        min-height: 0;
+        overflow: hidden;
+      }
+      #stage canvas {
+        display: block;
+      }
+      #labels {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .views {
+        position: absolute;
+        left: 12px;
+        bottom: 12px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        z-index: 2;
+        margin-left: env(safe-area-inset-left, 0px);
+      }
+      .views button,
+      .toggles label {
+        font: 500 12px var(--body);
+        color: var(--ink);
+        background: var(--panel);
+        border: 1px solid var(--control-line);
+        border-radius: 6px;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+      .views button[aria-pressed="true"] {
+        background: var(--ink);
+        color: var(--panel);
+        border-color: var(--ink);
+      }
+      @media (forced-colors: active) {
+        .views button[aria-pressed="true"] {
+          outline: 2px solid Highlight;
+        }
+      }
+      button:focus-visible,
+      input:focus-visible + span {
+        outline: 2px solid var(--index);
+        outline-offset: 2px;
+      }
+      .hint {
+        position: absolute;
+        right: 12px;
+        top: 10px;
+        font: 11px var(--mono);
+        color: var(--muted);
+        z-index: 2;
+        margin-right: env(safe-area-inset-right, 0px);
+      }
+
+      .lbl {
+        font: 500 11px var(--body);
+        color: var(--ink);
+        background: color-mix(in srgb, var(--panel) 88%, transparent);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 2px 7px 2px 5px;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: opacity 0.2s;
+      }
+      .lbl i {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex: none;
+      }
+      .lbl.away {
+        opacity: 0.18;
+      }
+      .lbl i[data-f="thumb"] {
+        background: var(--thumb);
+      }
+      .lbl i[data-f="index"] {
+        background: var(--index);
+      }
+      .lbl i[data-f="middle"] {
+        background: var(--middle);
+      }
+      .lbl i[data-f="ring"] {
+        background: var(--ring);
+      }
+      .hide-labels .lbl {
+        display: none;
+      }
+
+      aside {
+        border-left: 1px solid var(--line);
+        background: var(--panel);
+        overflow-y: auto;
+        padding-block: 16px 24px;
+        padding-left: 18px;
+        padding-right: max(18px, env(safe-area-inset-right, 0px));
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      h2 {
+        font: 700 11px var(--body);
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        margin: 0 0 8px;
+      }
+      .fingers {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 6px;
+      }
+      .fingers button {
+        width: 100%;
+        text-align: left;
+        display: grid;
+        grid-template-columns: 10px 1fr auto;
+        align-items: center;
+        gap: 10px;
+        font: 14px var(--body);
+        color: var(--ink);
+        background: transparent;
+        border: 1px solid var(--control-line);
+        border-radius: 6px;
+        padding: 8px 10px;
+        cursor: pointer;
+      }
+      .fingers button:hover {
+        background: var(--bg);
+      }
+      .fingers .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .fingers b {
+        font-weight: 700;
+      }
+      .fingers small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .fingers code {
+        font: 12px var(--mono);
+        color: var(--muted);
+      }
+      #info {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 10px 12px;
+        min-height: 86px;
+        background: var(--bg);
+      }
+      #info .name {
+        font-family: var(--display);
+        font-size: 18px;
+        line-height: 1.3;
+      }
+      #info .meta {
+        font: 12px var(--mono);
+        color: var(--muted);
+      }
+      #info p {
+        margin: 4px 0 0;
+      }
+      #phys {
+        display: grid;
+        gap: 10px;
+      }
+      #phys .row {
+        display: grid;
+        grid-template-columns: 5.5em minmax(0, 1fr);
+        align-items: center;
+        gap: 8px;
+      }
+      #phys label.lab {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      #phys select {
+        font: 13px var(--body);
+        color: var(--ink);
+        background: var(--bg);
+        border: 1px solid var(--control-line);
+        border-radius: 6px;
+        padding: 5px 6px;
+        min-width: 0;
+        width: 100%;
+      }
+      #phys .btns {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      #phys .btns button {
+        font: 500 13px var(--body);
+        border-radius: 6px;
+        padding: 6px 14px;
+        cursor: pointer;
+        border: 1px solid var(--ink);
+        background: var(--ink);
+        color: var(--panel);
+      }
+      #phys .btns button.sub {
+        background: transparent;
+        color: var(--ink);
+        border-color: var(--control-line);
+      }
+      #phys .chk {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      #phys .chk label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        border: 1px solid var(--control-line);
+        border-radius: 6px;
+        padding: 4px 9px;
+        cursor: pointer;
+      }
+      #phys .chk input {
+        accent-color: var(--index);
+        margin: 0;
+      }
+      #p-out {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 3px 12px;
+        margin: 0;
+        font-size: 13px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 8px 10px;
+        background: var(--bg);
+      }
+      .announce {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+      #p-out dt {
+        color: var(--muted);
+      }
+      #p-out dd {
+        margin: 0;
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+      #p-out dd.st {
+        font-family: var(--body);
+        font-weight: 700;
+      }
+      #p-out dd.st[data-s="hold"] {
+        color: var(--hold);
+      }
+      #p-out dd.st[data-s="fall"] {
+        color: var(--fall);
+      }
+      .toggles {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .toggles label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .toggles input {
+        accent-color: var(--index);
+        margin: 0;
+      }
+      dl.spec {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 4px 14px;
+        margin: 0;
+        font-size: 13px;
+      }
+      dl.spec dt {
+        color: var(--muted);
+      }
+      dl.spec dd {
+        margin: 0;
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+      .note {
+        color: var(--muted);
+        font-size: 12px;
+        margin: 0;
+      }
+
+      @media (max-width: 760px) {
+        main {
+          grid-template-columns: minmax(0, 1fr);
+          grid-template-rows: 58dvh auto;
+          overflow-y: auto;
+        }
+        aside {
+          border-left: 0;
+          border-top: 1px solid var(--line);
+          overflow: visible;
+          padding-left: max(16px, env(safe-area-inset-left, 0px));
+          padding-right: max(16px, env(safe-area-inset-right, 0px));
+        }
+        .hint {
+          display: none;
+        }
+      }
+      :root {
+        --skin: #d9b59a;
+        --sleeve: #56606e;
+        --strap: #2f3b52;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --skin: #b8927a;
+          --sleeve: #3a414c;
+          --strap: #55627e;
+        }
+      }
+      :root[data-theme="dark"] {
+        --skin: #b8927a;
+        --sleeve: #3a414c;
+        --strap: #55627e;
+      }
+      #now {
+        position: absolute;
+        left: 12px;
+        top: 10px;
+        z-index: 2;
+        margin-left: env(safe-area-inset-left, 0px);
+        display: grid;
+        gap: 2px;
+        pointer-events: none;
+        max-width: calc(100% - 24px);
+      }
+      #now .act {
+        font: 400 17px var(--display);
+        color: var(--ink);
+        min-height: 1.4em;
+      }
+      #now .sub {
+        font: 12px var(--body);
+        color: var(--muted);
+      }
+      .views .sep {
+        width: 1px;
+        background: var(--line);
+        margin: 2px 2px;
+      }
+      ul.ergo {
+        margin: 0;
+        padding-left: 1.1em;
+        display: grid;
+        gap: 6px;
+        font-size: 13px;
+      }
+      ul.ergo li::marker {
+        color: var(--muted);
+      }
+      @media (max-width: 760px) {
+        #now .act {
+          font-size: 15px;
+        }
+      }
+      header a.home {
+        order: 3;
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>背面打ちスプリットパッド</h1>
+      <a class="home" href="/">masseater.dev</a>
+      <p>
+        左右分離型。親指はスティック専用、ABXY と十字キーは握った指の下（背面）に移した AC
+        持ち前提の設計。
+      </p>
+    </header>
+    <main>
+      <div id="stage">
+        <div id="labels"></div>
+        <div id="now">
+          <div class="act">形状を計算しています</div>
+          <div class="sub">親指はずっとスティックの上</div>
+        </div>
+        <div class="views" role="group" aria-label="視点と再生">
+          <button id="v-persp" aria-pressed="true">斜め</button>
+          <button id="v-front" aria-pressed="false">プレイヤー視点</button>
+          <button id="v-back" aria-pressed="false">背面</button>
+          <button id="v-side" aria-pressed="false">側面</button>
+          <span class="sep" aria-hidden="true"></span>
+          <button id="play" aria-pressed="true">操作デモ</button>
+        </div>
+        <div class="hint">ドラッグで回転 ・ ホイールで拡大 ・ ボタンをクリック</div>
+      </div>
+      <aside>
+        <section>
+          <h2>指ごとの割り当て</h2>
+          <ul class="fingers">
+            <li>
+              <button data-finger="thumb">
+                <span class="dot" style="background: var(--thumb)"></span
+                ><span><b>親指</b><small>正面のスティックだけを担当</small></span
+                ><code>LS RS</code>
+              </button>
+            </li>
+            <li>
+              <button data-finger="index">
+                <span class="dot" style="background: var(--index)"></span
+                ><span
+                  ><b>人差し指</b
+                  ><small>指の曲がりに沿った弧のトリガーと、指を持ち上げた先のバンパー</small></span
+                ><code>L1 L2 R1 R2</code>
+              </button>
+            </li>
+            <li>
+              <button data-finger="middle">
+                <span class="dot" style="background: var(--middle)"></span
+                ><span
+                  ><b>中指</b
+                  ><small>背面の上段。指の腹で楕円ボタン、指先で角の斜めボタン</small></span
+                ><code>A B ↑ ←</code>
+              </button>
+            </li>
+            <li>
+              <button data-finger="ring">
+                <span class="dot" style="background: var(--ring)"></span
+                ><span
+                  ><b>薬指</b><small>背面の下段。中指と同じ構成で、指が短い分だけ手前</small></span
+                ><code>X Y ↓ →</code>
+              </button>
+            </li>
+          </ul>
+        </section>
+        <section id="phys" aria-labelledby="phys-h">
+          <h2 id="phys-h">手を振る物理演算</h2>
+          <div class="row">
+            <label class="lab" for="p-motion">振り方</label
+            ><select id="p-motion"></select>
+          </div>
+          <div class="row">
+            <label class="lab" for="p-orient">手の向き</label
+            ><select id="p-orient"></select>
+          </div>
+          <div class="row">
+            <label class="lab" for="p-fingers">指</label
+            ><select id="p-fingers"></select>
+          </div>
+          <div class="row">
+            <label class="lab" for="p-mu">肌の状態</label
+            ><select id="p-mu"></select>
+          </div>
+          <div class="chk">
+            <label for="p-thumb"
+              ><input type="checkbox" id="p-thumb" /><span>親指もスティックから離す</span></label
+            >
+            <label for="p-loop"
+              ><input type="checkbox" id="p-loop" checked /><span>2本目の輪</span></label
+            >
+          </div>
+          <div class="btns">
+            <button id="p-run">振る</button><button id="p-reset" class="sub">元に戻す</button>
+          </div>
+          <dl id="p-out">
+            <dt>結果</dt>
+            <dd class="st" id="p-st" data-s="">—</dd>
+            <dt>経過</dt>
+            <dd id="p-t">—</dd>
+            <dt>ずれ</dt>
+            <dd id="p-off">—</dd>
+            <dt>傾き</dt>
+            <dd id="p-ang">—</dd>
+            <dt>計算</dt>
+            <dd id="p-be">—</dd>
+          </dl>
+          <p class="announce" id="p-announce" aria-live="polite"></p>
+          <p class="note">
+            本体（片側 180
+            g）を剛体として、ページの中で計算しています。手と本体の接触は皮膚のやわらかさをばねで、摩擦は滑り出すまで張り付くばねで表します。本体が手の中の位置から
+            3 cm ずれたら落下と判定します。
+          </p>
+        </section>
+        <section>
+          <h2>選択中のボタン</h2>
+          <div id="info">
+            <div class="name">—</div>
+            <p class="note">
+              3D 上のボタンをクリックすると、担当する指と役割を表示します。指もその動きで押します。
+            </p>
+          </div>
+        </section>
+        <section class="toggles">
+          <label for="t-hands"><input type="checkbox" id="t-hands" checked /><span>手</span></label>
+          <label for="t-ghost"><input type="checkbox" id="t-ghost" /><span>手を透かす</span></label>
+          <label for="t-labels"
+            ><input type="checkbox" id="t-labels" checked /><span>ラベル</span></label
+          >
+          <label for="t-color"
+            ><input type="checkbox" id="t-color" checked /><span>指で色分け</span></label
+          >
+          <label for="t-strap"
+            ><input type="checkbox" id="t-strap" checked /><span>ストラップ</span></label
+          >
+          <label for="t-spread"
+            ><input type="checkbox" id="t-spread" checked /><span>肩幅に離す</span></label
+          >
+        </section>
+        <section>
+          <h2>人間工学メモ</h2>
+          <ul class="ergo">
+            <li>
+              握った指は母指球（親指の付け根）に向かって閉じる。背面ボタンの列は指先側ほど高くなるよう約
+              10° 傾けた。
+            </li>
+            <li>
+              ボタン位置は指の関節位置から逆算。指の腹ボタンは中節（第二関節と第一関節の間）の真下、指先ボタンは末節の真下に置いた。
+            </li>
+            <li>指の腹ボタンは指の向きに沿った楕円。指が左右にずれても外さない。</li>
+            <li>指先ボタンは背面と内側面の角に、指先が押し込む向きへ斜めに向けた。</li>
+            <li>
+              薬指と小指のあいだに高さ約 4 mm のリブを立て、小指の段を 5.5 mm 下げた。握ると 2
+              本の指がリブの両側に自然に分かれ、肌どうしがこすれない。
+            </li>
+            <li>中指はいちばん長いので指先ボタンを内側寄りに、薬指はその手前に置いた。</li>
+            <li>トリガーは人差し指が曲がる弧に沿った曲面。</li>
+            <li>スティックは親指の付け根側へ約 12° 傾け、親指の腹が正面から当たるようにした。</li>
+            <li>握りは周長約 14 cm まで絞った。中指が背面を回り込み、指先が内側の角に届く太さ。</li>
+            <li>手のひら側に膨らみ（パームスウェル）を付け、握る力を手のひら全体で受ける。</li>
+            <li>
+              握った手の形をそのまま本体から削り、指の付け根・手のひら・母指球が当たる場所に凹みを付けた。握る位置が毎回同じに決まり、手と本体のあいだに隙間も食い込みもできない。
+            </li>
+            <li>
+              バンパーは、人差し指を付け根から約 20° 持ち上げて約 12°
+              伸ばしたとき（無理なく動く範囲）に中節が来る場所に置いた。
+            </li>
+            <li>グリップは前に約 18° 倒した。前腕を机に置いたまま、手首を反らさずに握れる角度。</li>
+            <li>
+              ハンドストラップは、親指と人差し指のあいだのすぐ下（頭部）と小指のすぐ下（握りの底）に固定し、手の甲を指の付け根寄りに縦に渡して手のひらを握りへ押さえる。背面ボタンを押すために指を動かしたり握りをゆるめたりしても、本体が落ちず手の中の位置も変わらない。長さは手の甲側のバックルで調整する。
+            </li>
+            <li>
+              2本目の輪は二股に分かれ、薬指と小指の中節を 1 本ずつ上から押さえる。付け根側は 1
+              本目のストラップに、指先側は本体の内側面に留める。輪の内側には 4.5 mm
+              の余裕があり、指を浮かせて背面ボタンから離せる。指を全部離しても、本体が指の側へ抜けない。
+            </li>
+            <li>
+              左右を肩幅まで離せば前腕が平行になり、手首をハの字に曲げずに済む。分離型ならではの利点。
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h2>寸法（片側・想定）</h2>
+          <dl class="spec">
+            <dt>全高</dt>
+            <dd>約 120 mm</dd>
+            <dt>幅</dt>
+            <dd>約 40 mm（膨らみ込み 45 mm）</dd>
+            <dt>奥行き</dt>
+            <dd>頭部 約 56 mm / 握り 約 47 mm</dd>
+            <dt>握りの周長</dt>
+            <dd>約 14 cm</dd>
+            <dt>指の腹ボタン</dt>
+            <dd>楕円 15 × 10 mm</dd>
+            <dt>指先ボタン</dt>
+            <dd>φ9 mm、約 45° 傾斜</dd>
+            <dt>段の間隔</dt>
+            <dd>約 20 mm（薬指と小指のあいだは 25 mm、リブ付き）</dd>
+            <dt>列の傾き</dt>
+            <dd>約 10°</dd>
+          </dl>
+        </section>
+        <p class="note">
+          小指は握りの支え。どの段にも押す役を持たせず、背面ボタンを押しても握りがぶれないようにしています。十字キーの割り振りは仮です。
+        </p>
+        <p class="note">
+          手のモデルは
+          <a href="https://github.com/immersive-web/webxr-input-profiles" style="color: inherit"
+            >WebXR Input Profiles</a
+          >
+          の generic-hand（MIT License, © 2019
+          Amazon）。関節の位置はこのページで計算し、ボーンに合わせて動かしています。
+        </p>
+      </aside>
+    </main>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./three/build/three.module.js",
+          "three/addons/": "./three/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module">
+      import * as THREE_CORE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+      import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+      import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+      import { XRHandMeshModel } from "three/addons/webxr/XRHandMeshModel.js";
+
+      const THREE = {
+        ...THREE_CORE,
+        OrbitControls,
+        CSS2DRenderer,
+        CSS2DObject,
+        GLTFLoader,
+        XRHandMeshModel,
+      };
+      (async () => {
+        const V3 = THREE.Vector3,
+          V2 = THREE.Vector2,
+          UP = new V3(0, 1, 0),
+          D = Math.PI / 180;
+        const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+        const reduceMq = matchMedia("(prefers-reduced-motion: reduce)");
+        let reduce = reduceMq.matches;
+        const stage = document.getElementById("stage");
+
+        // ---- renderer / scene ----
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFShadowMap;
+        stage.prepend(renderer.domElement);
+        renderer.domElement.setAttribute("role", "img");
+        renderer.domElement.setAttribute(
+          "aria-label",
+          "背面打ちスプリットパッドと握った手の 3D モデル。ドラッグで回転し、視点は下のボタンでも切り替えられる",
+        );
+        const labelRenderer = new THREE.CSS2DRenderer({
+          element: document.getElementById("labels"),
+        });
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 200);
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.minDistance = 10;
+        controls.maxDistance = 80;
+
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f99, 0.75 * Math.PI));
+        const key = new THREE.DirectionalLight(0xffffff, 0.9 * Math.PI);
+        key.position.set(8, 20, 16);
+        key.castShadow = true;
+        key.shadow.mapSize.set(2048, 2048);
+        key.shadow.bias = -0.0004;
+        key.shadow.normalBias = 0.04;
+        Object.assign(key.shadow.camera, {
+          left: -22,
+          right: 22,
+          top: 22,
+          bottom: -22,
+          near: 1,
+          far: 70,
+        });
+        scene.add(key);
+        const rim = new THREE.DirectionalLight(0xffffff, 0.35 * Math.PI);
+        rim.position.set(-10, 6, -14);
+        scene.add(rim);
+        const floor = new THREE.Mesh(
+          new THREE.PlaneGeometry(120, 120),
+          new THREE.ShadowMaterial({ opacity: 0.16 }),
+        );
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -12;
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        // ---- 側面プロファイル（u = 手前方向, v = 上方向, 単位 cm） ----
+        const shape = new THREE.Shape();
+        shape.moveTo(2.1, 0.0);
+        shape.bezierCurveTo(2.5, 1.3, 1.3, 2.3, -0.1, 2.3); // 親指が乗る前上がりの斜面
+        shape.bezierCurveTo(-1.4, 2.3, -2.5, 1.8, -2.7, 0.6); // 頭頂から背面上端（人差し指）
+        shape.bezierCurveTo(-2.7, -1.4, -2.4, -5.0, -2.0, -7.8); // 背面（中指・薬指）。周長約14cmまで絞る
+        shape.bezierCurveTo(-1.8, -9.6, -0.3, -10.1, 0.7, -9.1); // 底
+        shape.bezierCurveTo(1.3, -7.2, 1.0, -3.6, 1.4, -1.8); // 手前側
+        shape.bezierCurveTo(1.6, -0.8, 1.9, -0.5, 2.1, 0.0);
+        const DEPTH = 2.8,
+          BEV = 0.55,
+          BEV_T = 0.6,
+          HALF_W = DEPTH / 2 + BEV_T;
+        const pts = shape.getSpacedPoints(900);
+        const centroid = new V2(-0.4, -3.6);
+        const normalAt = (i) => {
+          const a = pts[(i - 1 + pts.length) % pts.length],
+            b = pts[(i + 1) % pts.length];
+          const n = new V2(b.y - a.y, -(b.x - a.x)).normalize();
+          if (n.dot(pts[i].clone().sub(centroid)) < 0) n.negate();
+          return n;
+        };
+        function profileSurface(dir, pred) {
+          const t = new V2(...dir).normalize();
+          let best = -1,
+            bs = Infinity;
+          pts.forEach((p, i) => {
+            if (!pred(p)) return;
+            const s = -normalAt(i).dot(t);
+            if (s < bs) {
+              bs = s;
+              best = i;
+            }
+          });
+          const p = pts[best],
+            n = normalAt(best);
+          return {
+            pos: new V3(0, p.y + n.y * BEV, p.x + n.x * BEV),
+            nrm: new V3(0, n.y, n.x).normalize(),
+          };
+        }
+        const zMid = (y) => {
+          let lo = Infinity,
+            hi = -Infinity;
+          pts.forEach((p) => {
+            if (Math.abs(p.y - y) < 0.15) {
+              lo = Math.min(lo, p.x);
+              hi = Math.max(hi, p.x);
+            }
+          });
+          return (lo + hi) / 2;
+        };
+
+        // 本体：側面プロファイルを押し出して角を丸めた立体を距離場で表す。
+        // 手のひら側（+x）にパームスウェルを足し、握った手の基節と手のひらが当たる部分を滑らかに差し引いてから面を張る
+        const EDGE_R = 0.6;
+        const RIBS = [];
+        const sdProfile = (() => {
+          const poly = shape.getSpacedPoints(400);
+          const u0 = -3.6,
+            u1 = 3.4,
+            v0 = -11,
+            v1 = 3.1,
+            h = 0.05;
+          const nu = Math.ceil((u1 - u0) / h) + 1,
+            nv = Math.ceil((v1 - v0) / h) + 1,
+            G = new Float32Array(nu * nv);
+          for (let j = 0; j < nv; j++)
+            for (let i = 0; i < nu; i++) {
+              const u = u0 + i * h,
+                v = v0 + j * h;
+              let dmin = Infinity,
+                inside = false;
+              for (let k = 0, m = poly.length - 1; k < poly.length; m = k++) {
+                const a = poly[m],
+                  b = poly[k];
+                const ex = b.x - a.x,
+                  ey = b.y - a.y,
+                  wx = u - a.x,
+                  wy = v - a.y;
+                const t = Math.max(0, Math.min(1, (wx * ex + wy * ey) / (ex * ex + ey * ey)));
+                const dx = wx - ex * t,
+                  dy = wy - ey * t,
+                  d = dx * dx + dy * dy;
+                if (d < dmin) dmin = d;
+                if (a.y > v !== b.y > v && u < a.x + ((v - a.y) * ex) / ey) inside = !inside;
+              }
+              G[i + nu * j] = (inside ? -1 : 1) * Math.sqrt(dmin);
+            }
+          return (u, v) => {
+            const fi = THREE.MathUtils.clamp((u - u0) / h, 0, nu - 1.001),
+              fj = THREE.MathUtils.clamp((v - v0) / h, 0, nv - 1.001);
+            const i = Math.floor(fi),
+              j = Math.floor(fj),
+              a = fi - i,
+              b = fj - j;
+            const g = (x, y) => G[x + nu * y];
+            return (
+              (g(i, j) * (1 - a) + g(i + 1, j) * a) * (1 - b) +
+              (g(i, j + 1) * (1 - a) + g(i + 1, j + 1) * a) * b
+            );
+          };
+        })();
+        const smax = (a, b, k) => {
+          const h = THREE.MathUtils.clamp(0.5 - (0.5 * (b - a)) / k, 0, 1);
+          return b + (a - b) * h + k * h * (1 - h);
+        };
+        function bodySDF(x, y, z, caps) {
+          const qx = sdProfile(z, y) - BEV + EDGE_R,
+            qy = Math.abs(x) - HALF_W + EDGE_R;
+          let d =
+            Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - EDGE_R;
+          if (x > 0)
+            d -=
+              0.5 *
+              THREE.MathUtils.smoothstep(x, 0.3, HALF_W) *
+              Math.exp(-(((y + 3.2) / 3.0) ** 2)) *
+              Math.exp(-(((z + 0.2) / 2.4) ** 2));
+          // 薬指と小指を分けるリブ（滑らかに足す）
+          for (const rb of RIBS) {
+            const ex = rb.b.x - rb.a.x,
+              ey = rb.b.y - rb.a.y,
+              ez = rb.b.z - rb.a.z,
+              wx = x - rb.a.x,
+              wy = y - rb.a.y,
+              wz = z - rb.a.z;
+            const t = Math.max(0, Math.min(1, (wx * ex + wy * ey + wz * ez) / rb.len2));
+            const dr = Math.hypot(wx - ex * t, wy - ey * t, wz - ez * t) - rb.r;
+            if (dr < 0.6) d = -smax(-d, -dr, 0.25);
+          }
+          for (const c of caps) {
+            const ex = c.b.x - c.a.x,
+              ey = c.b.y - c.a.y,
+              ez = c.b.z - c.a.z,
+              wx = x - c.a.x,
+              wy = y - c.a.y,
+              wz = z - c.a.z;
+            const t = Math.max(0, Math.min(1, (wx * ex + wy * ey + wz * ez) / c.len2));
+            const dc =
+              Math.hypot(wx - ex * t, wy - ey * t, wz - ez * t) - (c.r0 + (c.r1 - c.r0) * t);
+            if (dc < 0.6) d = smax(d, -dc, 0.35);
+          }
+          return d;
+        }
+        // Surface Nets：符号が変わるセルに頂点を1つ置き、隣り合うセルを四角形でつなぐ
+        const GRID = (() => {
+          const h = 0.11;
+          return {
+            h,
+            org: new V3(-2.75, -10.9, -3.6),
+            nx: Math.ceil(5.5 / h) + 1,
+            ny: Math.ceil(14 / h) + 1,
+            nz: Math.ceil(7 / h) + 1,
+          };
+        })();
+        // occ：握った手の中身を格子上でぼかした値（0 = 外, 1 = 中）。境界付近では距離に換算して本体から差し引く
+        const OCC_SIGMA = 0.16,
+          OCC_INFLATE = 0.08;
+        let lastField = null;
+        function meshSDF(caps, occ) {
+          const { h, org, nx, ny, nz } = GRID;
+          const F = new Float32Array(nx * ny * nz),
+            id = (i, j, k) => i + nx * (j + ny * k);
+          for (let k = 0; k < nz; k++)
+            for (let j = 0; j < ny; j++)
+              for (let i = 0; i < nx; i++) {
+                let d = bodySDF(org.x + i * h, org.y + j * h, org.z + k * h, caps);
+                const o = occ ? occ[id(i, j, k)] : 0;
+                if (o > 0.02) d = smax(d, OCC_SIGMA * 2.5066 * (o - 0.5) + OCC_INFLATE, 0.22);
+                F[id(i, j, k)] = d;
+              }
+          lastField = F;
+          const vmap = new Int32Array(nx * ny * nz).fill(-1),
+            verts = [],
+            tris = [];
+          const C = [
+            [0, 0, 0],
+            [1, 0, 0],
+            [0, 1, 0],
+            [1, 1, 0],
+            [0, 0, 1],
+            [1, 0, 1],
+            [0, 1, 1],
+            [1, 1, 1],
+          ];
+          const E = [
+            [0, 1],
+            [2, 3],
+            [4, 5],
+            [6, 7],
+            [0, 2],
+            [1, 3],
+            [4, 6],
+            [5, 7],
+            [0, 4],
+            [1, 5],
+            [2, 6],
+            [3, 7],
+          ];
+          const val = new Float32Array(8);
+          for (let k = 0; k < nz - 1; k++)
+            for (let j = 0; j < ny - 1; j++)
+              for (let i = 0; i < nx - 1; i++) {
+                let neg = 0;
+                for (let c = 0; c < 8; c++) {
+                  val[c] = F[id(i + C[c][0], j + C[c][1], k + C[c][2])];
+                  if (val[c] < 0) neg++;
+                }
+                if (neg === 0 || neg === 8) continue;
+                let sx = 0,
+                  sy = 0,
+                  sz = 0,
+                  n = 0;
+                for (const [a, b] of E) {
+                  if (val[a] < 0 === val[b] < 0) continue;
+                  const t = val[a] / (val[a] - val[b]);
+                  sx += C[a][0] + (C[b][0] - C[a][0]) * t;
+                  sy += C[a][1] + (C[b][1] - C[a][1]) * t;
+                  sz += C[a][2] + (C[b][2] - C[a][2]) * t;
+                  n++;
+                }
+                vmap[id(i, j, k)] = verts.length / 3;
+                verts.push(
+                  org.x + (i + sx / n) * h,
+                  org.y + (j + sy / n) * h,
+                  org.z + (k + sz / n) * h,
+                );
+              }
+          const quad = (a, b, c, d, flip) => {
+            if ([a, b, c, d].some((v) => v < 0)) return;
+            flip ? tris.push(a, c, b, a, d, c) : tris.push(a, b, c, a, c, d);
+          };
+          for (let k = 1; k < nz - 1; k++)
+            for (let j = 1; j < ny - 1; j++)
+              for (let i = 1; i < nx - 1; i++) {
+                const f0 = F[id(i, j, k)] < 0;
+                if (f0 !== F[id(i + 1, j, k)] < 0)
+                  quad(
+                    vmap[id(i, j - 1, k - 1)],
+                    vmap[id(i, j, k - 1)],
+                    vmap[id(i, j, k)],
+                    vmap[id(i, j - 1, k)],
+                    f0,
+                  );
+                if (f0 !== F[id(i, j + 1, k)] < 0)
+                  quad(
+                    vmap[id(i - 1, j, k - 1)],
+                    vmap[id(i - 1, j, k)],
+                    vmap[id(i, j, k)],
+                    vmap[id(i, j, k - 1)],
+                    f0,
+                  );
+                if (f0 !== F[id(i, j, k + 1)] < 0)
+                  quad(
+                    vmap[id(i - 1, j - 1, k)],
+                    vmap[id(i, j - 1, k)],
+                    vmap[id(i, j, k)],
+                    vmap[id(i - 1, j, k)],
+                    f0,
+                  );
+              }
+          const g = new THREE.BufferGeometry();
+          g.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+          g.setIndex(tris);
+          g.computeVertexNormals();
+          // 体積を保つ平滑化（Taubin）で格子の段々を消す
+          {
+            const pa = g.attributes.position,
+              cnt = pa.count,
+              ix = g.index.array,
+              nb = Array.from({ length: cnt }, () => new Set());
+            for (let t = 0; t < ix.length; t += 3)
+              for (let e = 0; e < 3; e++) {
+                const a = ix[t + e],
+                  b = ix[t + ((e + 1) % 3)];
+                nb[a].add(b);
+                nb[b].add(a);
+              }
+            const P = pa.array,
+              tmp = new Float32Array(P.length);
+            const pass = (lam) => {
+              for (let v = 0; v < cnt; v++) {
+                let sx = 0,
+                  sy = 0,
+                  sz = 0,
+                  m = 0;
+                nb[v].forEach((u) => {
+                  sx += P[u * 3];
+                  sy += P[u * 3 + 1];
+                  sz += P[u * 3 + 2];
+                  m++;
+                });
+                if (!m) {
+                  tmp[v * 3] = P[v * 3];
+                  tmp[v * 3 + 1] = P[v * 3 + 1];
+                  tmp[v * 3 + 2] = P[v * 3 + 2];
+                  continue;
+                }
+                tmp[v * 3] = P[v * 3] + lam * (sx / m - P[v * 3]);
+                tmp[v * 3 + 1] = P[v * 3 + 1] + lam * (sy / m - P[v * 3 + 1]);
+                tmp[v * 3 + 2] = P[v * 3 + 2] + lam * (sz / m - P[v * 3 + 2]);
+              }
+              P.set(tmp);
+            };
+            for (let it = 0; it < 4; it++) {
+              pass(0.5);
+              pass(-0.53);
+            }
+            g.computeVertexNormals();
+          }
+          // 向きの確認：いちばん上の頂点の法線は上を向くはず
+          const pa = g.attributes.position,
+            na = g.attributes.normal;
+          let top = 0;
+          for (let v = 1; v < pa.count; v++) if (pa.getY(v) > pa.getY(top)) top = v;
+          if (na.getY(top) < 0) {
+            const ix = g.index.array;
+            for (let t = 0; t < ix.length; t += 3) {
+              const tmp = ix[t + 1];
+              ix[t + 1] = ix[t + 2];
+              ix[t + 2] = tmp;
+            }
+            g.computeVertexNormals();
+          }
+          g.computeBoundingBox();
+          g.computeBoundingSphere();
+          return g;
+        }
+        let bodyGeo = meshSDF([]);
+
+        // 本体表面を光線で探る（ボタンも指もこの表面に沿って置く）
+        const probe = new THREE.Mesh(
+          bodyGeo,
+          new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
+        );
+        probe.updateMatrixWorld(true);
+        const rc = new THREE.Raycaster();
+        function cast(origin, dir) {
+          rc.set(origin, dir.clone().normalize());
+          const h = rc.intersectObject(probe)[0];
+          const n = h.face.normal.clone();
+          if (n.dot(dir) > 0) n.negate();
+          return { pos: h.point.clone(), nrm: n };
+        }
+        // 断面を一周する角度 φ（0 = 背面中央、負 = 手のひら側、正 = 内側）。列は指先側ほど高くなる
+        const SLANT = 0.42;
+        function ringAt(y0, phi) {
+          const y = y0 + SLANT * phi;
+          const d = new V3(-Math.sin(phi), 0, -Math.cos(phi));
+          const c = new V3(0, y, zMid(y));
+          return cast(c.addScaledVector(d, 14), d.clone().negate());
+        }
+        function tangentAt(y0, phi) {
+          return ringAt(y0, phi + 0.04)
+            .pos.sub(ringAt(y0, phi - 0.04).pos)
+            .normalize();
+        }
+
+        // ---- materials ----
+        const mat = {
+          shell: new THREE.MeshStandardMaterial({ roughness: 0.62, metalness: 0.0 }),
+          key: new THREE.MeshStandardMaterial({ roughness: 0.45, metalness: 0.05 }),
+          dark: new THREE.MeshStandardMaterial({ color: 0x1d2128, roughness: 0.8 }),
+          metal: new THREE.MeshStandardMaterial({
+            color: 0x9aa1aa,
+            roughness: 0.35,
+            metalness: 0.7,
+          }),
+          skin: new THREE.MeshStandardMaterial({ roughness: 0.58, metalness: 0.0 }),
+          nail: new THREE.MeshStandardMaterial({ roughness: 0.3, metalness: 0.0 }),
+          sleeve: new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0.0 }),
+          strap: new THREE.MeshStandardMaterial({ roughness: 0.85, metalness: 0.0 }),
+          finger: {},
+        };
+        const FINGERS = ["thumb", "index", "middle", "ring"];
+        FINGERS.forEach(
+          (f) =>
+            (mat.finger[f] = new THREE.MeshStandardMaterial({
+              roughness: 0.45,
+              metalness: 0.05,
+              emissive: 0x000000,
+            })),
+        );
+        let colorize = true;
+        function applyTheme() {
+          mat.shell.color.set(tok("--shell"));
+          mat.key.color.set(tok("--key"));
+          mat.skin.color.set(tok("--skin"));
+          mat.nail.color.copy(mat.skin.color).lerp(new THREE.Color(1, 0.93, 0.9), 0.45);
+          mat.sleeve.color.set(tok("--sleeve"));
+          mat.strap.color.set(tok("--strap"));
+          FINGERS.forEach((f) => mat.finger[f].color.set(colorize ? tok("--" + f) : tok("--key")));
+        }
+        function setGhost(on) {
+          [mat.skin, mat.sleeve, mat.nail].forEach((m) => {
+            m.transparent = on;
+            m.opacity = on ? 0.35 : 1;
+            m.depthWrite = !on;
+            m.needsUpdate = true;
+          });
+        }
+
+        // ---- helpers ----
+        const pickables = [],
+          buttons = [],
+          labels = [],
+          byId = {};
+        const shadowed = (m) => {
+          m.castShadow = true;
+          m.receiveShadow = true;
+          return m;
+        };
+        const basisQuat = (nrm, along) => {
+          const y = nrm.clone().normalize();
+          const x = along.clone().addScaledVector(y, -along.dot(y)).normalize();
+          const z = x.clone().cross(y);
+          return new THREE.Quaternion().setFromRotationMatrix(
+            new THREE.Matrix4().makeBasis(x, y, z),
+          );
+        };
+        function addLabel(half, text, finger, at, offset) {
+          const el = document.createElement("div");
+          el.className = "lbl";
+          const dot = document.createElement("i");
+          dot.dataset.f = finger;
+          el.append(dot, text);
+          const o = new THREE.CSS2DObject(el);
+          o.position.copy(at).add(offset);
+          o.userData.nrm = offset.clone().normalize();
+          half.add(o);
+          labels.push(o);
+        }
+        function register(btn, meshes) {
+          btn.t = 0;
+          btn.dir = btn.dir || UP.clone();
+          meshes.forEach((o) => {
+            o.userData.btn = btn;
+            pickables.push(o);
+          });
+          buttons.push(btn);
+          byId[btn.id] = btn;
+          return btn;
+        }
+        const jointGeo = new THREE.SphereGeometry(1, 24, 16);
+        // 指：関節を通る曲線に沿って、幅広で少し平たい断面を流した一本の管。指先は丸く閉じ、関節の背側に節の膨らみ
+        const RINGS = 44,
+          SEG = 20;
+        function fingerTube(parent, radii, material) {
+          const pos = new Float32Array((RINGS + 1) * SEG * 3),
+            idx = [];
+          for (let i = 0; i < RINGS; i++)
+            for (let j = 0; j < SEG; j++) {
+              const a = i * SEG + j,
+                b = i * SEG + ((j + 1) % SEG);
+              idx.push(a, a + SEG, b, b, a + SEG, b + SEG);
+            }
+          const g = new THREE.BufferGeometry();
+          g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+          g.setIndex(idx);
+          const mesh = shadowed(new THREE.Mesh(g, material));
+          mesh.frustumCulled = false;
+          parent.add(mesh);
+          const T = new V3(),
+            N = new V3(),
+            B = new V3(),
+            P = new V3();
+          return {
+            mesh,
+            set(points, dorsals) {
+              const curve = new THREE.CatmullRomCurve3(points, false, "centripetal");
+              const L = curve.getLength(),
+                rTip = radii[radii.length - 1],
+                total = L + rTip;
+              const cum = [0];
+              for (let k = 1; k < points.length; k++)
+                cum.push(cum[k - 1] + points[k].distanceTo(points[k - 1]));
+              const at = cum.map((c) => (c / cum[cum.length - 1]) * L);
+              const endT = curve.getTangentAt(1),
+                end = points[points.length - 1];
+              for (let i = 0; i <= RINGS; i++) {
+                const s = (total * i) / RINGS;
+                let k = 0;
+                while (k < at.length - 2 && s > at[k + 1]) k++;
+                const f = THREE.MathUtils.clamp(
+                  (Math.min(s, L) - at[k]) / (at[k + 1] - at[k] || 1),
+                  0,
+                  1,
+                );
+                let r = radii[k] + (radii[k + 1] - radii[k]) * f;
+                if (s <= L) {
+                  curve.getPointAt(s / L, P);
+                  curve.getTangentAt(s / L, T);
+                } else {
+                  const u = Math.min((s - L) / rTip, 0.995);
+                  P.copy(end).addScaledVector(endT, s - L);
+                  T.copy(endT);
+                  r *= Math.sqrt(1 - u * u);
+                }
+                N.copy(dorsals[k]).lerp(dorsals[k + 1], f);
+                N.addScaledVector(T, -N.dot(T)).normalize();
+                B.crossVectors(T, N);
+                let knob = 0;
+                for (let j = 1; j < at.length - 1; j++)
+                  knob += Math.exp(-(((s - at[j]) / 0.38) ** 2));
+                for (let j = 0; j < SEG; j++) {
+                  const th = (j / SEG) * Math.PI * 2,
+                    cx = Math.cos(th),
+                    sy = Math.sin(th);
+                  const w = r * 1.1,
+                    t = r * 0.86 + (sy > 0 ? knob * 0.1 * Math.min(1, r / 0.5) : 0);
+                  const o = (i * SEG + j) * 3;
+                  pos[o] = P.x + B.x * cx * w + N.x * sy * t;
+                  pos[o + 1] = P.y + B.y * cx * w + N.y * sy * t;
+                  pos[o + 2] = P.z + B.z * cx * w + N.z * sy * t;
+                }
+              }
+              g.attributes.position.needsUpdate = true;
+              g.computeVertexNormals();
+              g.computeBoundingSphere();
+            },
+          };
+        }
+
+        // ---- 指の定義（右手基準。左は鏡像） ----
+        // 付け根(MCP)は手のひら側の側面。そこから基節・中節・末節の実寸(cm)で本体の断面に巻き付ける
+        const HAND = {
+          index: { y0: -0.2, lens: [4.0, 2.3, 1.8], radii: [0.86, 0.78, 0.7, 0.62], off: 1.1 },
+          middle: { y0: -2.25, lens: [4.5, 2.8, 1.9], radii: [0.9, 0.82, 0.73, 0.65], off: 0.98 },
+          ring: { y0: -4.25, lens: [4.2, 2.6, 1.9], radii: [0.86, 0.78, 0.7, 0.62], off: 1.0 },
+          pinky: { y0: -6.75, lens: [3.4, 1.9, 1.7], radii: [0.76, 0.68, 0.6, 0.54], off: 0.72 }, // 薬指とのあいだにリブの分だけ隙間をあける
+        };
+        const MCP_PHI = -92;
+        function wrapFinger(def) {
+          const samp = [];
+          for (let a = MCP_PHI; a <= 160; a += 2.5) {
+            const q = ringAt(def.y0, a * D);
+            samp.push({ phi: a, o: q.pos.clone().addScaledVector(q.nrm, def.off), nrm: q.nrm });
+          }
+          const joints = [samp[0]];
+          let i = 1;
+          def.lens.forEach((L) => {
+            const j = joints[joints.length - 1];
+            while (i < samp.length - 1 && samp[i].o.distanceTo(j.o) < L) i++;
+            const a = samp[i - 1],
+              b = samp[i];
+            const da = a.o.distanceTo(j.o),
+              db = b.o.distanceTo(j.o);
+            const t = THREE.MathUtils.clamp((L - da) / (db - da || 1), 0, 1);
+            joints.push({
+              phi: a.phi + (b.phi - a.phi) * t,
+              o: a.o.clone().lerp(b.o, t),
+              nrm: a.nrm.clone().lerp(b.nrm, t).normalize(),
+            });
+          });
+          return {
+            rest: joints.map((j) => j.o),
+            nrms: joints.map((j) => j.nrm),
+            phis: joints.map((j) => j.phi),
+          };
+        }
+        const FIT = Object.fromEntries(Object.entries(HAND).map(([k, d]) => [k, wrapFinger(d)]));
+        // 手のひらの座標系：付け根の列（人差し指→小指）、手首への向き、手の甲の向き
+        function handFrame(fit) {
+          const mI = fit.index.rest[0],
+            mP = fit.pinky.rest[0];
+          const mcpMid = mI.clone().add(mP).multiplyScalar(0.5);
+          const up = mI.clone().sub(mP).normalize();
+          const fwd = new V3(1.3, -0.6, 8.4);
+          fwd.addScaledVector(up, -fwd.dot(up)).normalize();
+          const dors = up.clone().cross(fwd);
+          const P = (x, y, z) =>
+            mcpMid.clone().addScaledVector(dors, x).addScaledVector(up, y).addScaledVector(fwd, z);
+          const wristP = P(0.1, 0, 8.6);
+          // 親指の付け根(CMC)と第二関節(MCP)は、手のモデル本来の位置を手首基準でこの手の大きさに写す
+          const rp = (n) => new V3(...HAND_REST[n].t).multiplyScalar(100);
+          const w0 = rp("wrist"),
+            sc = mcpMid.distanceTo(wristP) / rp("middle-finger-phalanx-proximal").distanceTo(w0);
+          const M = frameQ(mcpMid.clone().sub(wristP), dors).multiply(
+            new THREE.Quaternion(...HAND_REST.wrist.r).invert(),
+          );
+          const map = (n) =>
+            wristP.clone().add(rp(n).sub(w0).multiplyScalar(sc).applyQuaternion(M));
+          const len = (a, b) => rp(a).distanceTo(rp(b)) * sc;
+          return {
+            mI,
+            mP,
+            mcpMid,
+            up,
+            fwd,
+            dors,
+            P,
+            span: mI.distanceTo(mP),
+            wristP,
+            cmc: map("thumb-metacarpal"),
+            thumbLen: [
+              len("thumb-metacarpal", "thumb-phalanx-proximal"),
+              len("thumb-phalanx-proximal", "thumb-phalanx-distal"),
+              len("thumb-phalanx-distal", "thumb-tip"),
+            ],
+          };
+        }
+        // 手のモデル（WebXR Input Profiles の generic-hand）の関節の静止位置を、GLTFLoader で読んだノードから取る
+        const HAND_PATH = "./webxr-input-profiles/dist/profiles/generic-hand/";
+        const handGltf = await new THREE.GLTFLoader()
+          .loadAsync(`${HAND_PATH}right.glb`)
+          .catch((err) => {
+            document.querySelector("#now .act").textContent = "手のモデルを読み込めませんでした";
+            throw err;
+          });
+        const HAND_REST = {};
+        handGltf.scene.traverse((o) => {
+          if (o.name) HAND_REST[o.name] = { t: o.position.toArray(), r: o.quaternion.toArray() };
+        });
+        function frameQ(toward, dorsal) {
+          const z = toward.clone().negate().normalize();
+          const y = dorsal.clone().addScaledVector(z, -dorsal.dot(z)).normalize();
+          const x = y.clone().cross(z);
+          return new THREE.Quaternion().setFromRotationMatrix(
+            new THREE.Matrix4().makeBasis(x, y, z),
+          );
+        }
+        // スティックの位置：前上がりの斜面に、親指の付け根側へ約 12° 傾けて置く
+        function stickFrame() {
+          const st0 = profileSurface([0.62, 0.78], (p) => p.x > 0 && p.y > 0.3);
+          const stN = st0.nrm
+            .clone()
+            .add(new V3(0.21, 0, 0))
+            .normalize();
+          const st = cast(
+            st0.pos
+              .clone()
+              .addScaledVector(stN, 6)
+              .add(new V3(-0.15, 0, 0)),
+            stN.clone().negate(),
+          );
+          return { st, stN };
+        }
+        function ik(A, C, l1, l2, hint) {
+          const d = C.clone().sub(A),
+            dist = d.length(),
+            dir = d.divideScalar(dist || 1);
+          if (dist >= l1 + l2) return A.clone().addScaledVector(dir, (l1 * dist) / (l1 + l2));
+          const a = (l1 * l1 - l2 * l2 + dist * dist) / (2 * dist),
+            hh = Math.sqrt(Math.max(0, l1 * l1 - a * a));
+          const perp = hint.clone().addScaledVector(dir, -hint.dot(dir)).normalize();
+          return A.clone().addScaledVector(dir, a).addScaledVector(perp, hh);
+        }
+        // 親指：腹をスティックの頭に乗せ、頭を外側から内側へ横切る向きに寝かせる。第一関節は約 25° 曲げて指先で頭を包む。
+        // 付け根(CMC)は手のひらに固定、第二関節(MCP)は骨の長さを保ったまま逆運動学で決める（CMC は可動域が大きく、握ると親指全体が回り込む）
+        function thumbPose(hf, cap, n) {
+          const pad = cap.clone().addScaledVector(n, 0.68);
+          const across = new V3(-1, 0.1, -0.35);
+          across.addScaledVector(n, -across.dot(n)).normalize();
+          const tipDir = across
+            .clone()
+            .multiplyScalar(Math.cos(0.44))
+            .addScaledVector(n, -Math.sin(0.44));
+          const [lm, lp, ld] = hf.thumbLen;
+          const ip = pad.clone().addScaledVector(across, -ld * 0.55),
+            tip = ip.clone().addScaledVector(tipDir, ld);
+          const mcp = ik(hf.cmc, ip, lm, lp, hf.dors.clone().add(hf.up).add(n).normalize());
+          return { mcp, ip, tip };
+        }
+        // 人差し指を付け根(MCP)を中心に約 20° 持ち上げ、約 12° 伸ばす（無理なく動く範囲）。push は押し込む分の寄せ
+        function liftIndex(rest, k, push) {
+          const m = rest[0],
+            d = rest[1].clone().sub(m).normalize();
+          const qa = new THREE.Quaternion().setFromAxisAngle(
+            d
+              .clone()
+              .cross(new V3(0, 1, 0))
+              .normalize(),
+            20 * D * k,
+          );
+          const qb = new THREE.Quaternion().setFromAxisAngle(new V3(0, 1, 0), -12 * D * k);
+          return rest.map((p, i) => {
+            if (!i) return p.clone();
+            const v = p.clone().sub(m).applyQuaternion(qa).applyQuaternion(qb).add(m);
+            if (push) v.addScaledVector(push, k * [0, 0.5, 1, 1][i]);
+            return v;
+          });
+        }
+        const HF = handFrame(FIT);
+        const SF = stickFrame();
+        // 握ったときに本体へ当たる基節と手のひら（中手骨まわり）を、太さ付きの線分で表して本体から差し引く。
+        // 太さは手のモデルの肉の厚みを骨ごとに測った値
+        // 薬指と小指のあいだのリブ：2本の指の関節位置の中間を、本体の表面に沿って付け根から指先まで這わせる
+        {
+          const rg = FIT.ring,
+            pk = FIT.pinky,
+            line = [];
+          for (let i = 0; i < 4; i++) {
+            const m = rg.rest[i].clone().lerp(pk.rest[i], 0.5),
+              n = rg.nrms[i].clone().add(pk.nrms[i]).normalize();
+            line.push(
+              cast(m.clone().addScaledVector(n, 3), n.clone().negate()).pos.addScaledVector(
+                n,
+                0.06,
+              ),
+            );
+          }
+          for (let i = 0; i < 3; i++)
+            RIBS.push({
+              a: line[i],
+              b: line[i + 1],
+              r: 0.34,
+              len2: line[i].distanceToSquared(line[i + 1]),
+            });
+        }
+        const CAPS = [];
+        {
+          const caps = CAPS;
+          const cap = (a, b, r0, r1) => caps.push({ a, b, r0, r1, len2: a.distanceToSquared(b) });
+          Object.values(FIT).forEach((f) => {
+            const meta = HF.wristP.clone().lerp(f.rest[0], 0.33);
+            cap(meta, f.rest[0], 2.3, 1.85);
+            cap(f.rest[0], f.rest[1], 1.7, 1.15);
+          });
+          // 親指：母指球（中手骨まわり）と基節。基節の先はスティックが中立のときの第一関節
+          const tp = thumbPose(HF, SF.st.pos.clone().addScaledVector(SF.stN, 1.05), SF.stN);
+          cap(HF.cmc, tp.mcp, 2.85, 1.6);
+          cap(tp.mcp, tp.ip, 1.4, 1.05);
+          bodyGeo = meshSDF(caps);
+          probe.geometry = bodyGeo;
+        }
+
+        // 角を丸めた箱（超楕円体）。z = -1 側が広く、+1 側へすぼまる
+        const PALM_GEO = (() => {
+          const g = new THREE.SphereGeometry(1, 48, 32),
+            p = g.attributes.position;
+          const f = (v) => Math.sign(v) * Math.pow(Math.abs(v), 0.6);
+          for (let i = 0; i < p.count; i++) {
+            const x = f(p.getX(i)),
+              y = f(p.getY(i)),
+              z = f(p.getZ(i));
+            p.setXYZ(i, x, y * (1 - 0.13 * (z + 1)), z);
+          }
+          g.computeVertexNormals();
+          return g;
+        })();
+        function makeNail(parent) {
+          const m = new THREE.Mesh(jointGeo, mat.nail);
+          m.castShadow = true;
+          parent.add(m);
+          return m;
+        }
+        function poseNail(m, a, b, n, r) {
+          const dir = b.clone().sub(a).normalize();
+          m.position
+            .copy(b)
+            .addScaledVector(dir, (-0.42 * r) / 0.65)
+            .addScaledVector(n, r * 0.8);
+          m.quaternion.copy(basisQuat(n, dir));
+          m.scale.set((0.6 * r) / 0.65, 0.1, (0.47 * r) / 0.65);
+        }
+
+        function makeKey(half, s, along, opts) {
+          const g = new THREE.Group();
+          g.position.copy(s.pos);
+          g.quaternion.copy(basisQuat(s.nrm, along));
+          const m = mat.finger[opts.finger];
+          const r = opts.r,
+            sx = opts.stretch || 1;
+          const cap = shadowed(
+            new THREE.Mesh(new THREE.CylinderGeometry(r, r * 1.04, 0.32, 40), m),
+          );
+          cap.position.y = 0.1;
+          cap.scale.x = sx;
+          const dish = shadowed(
+            new THREE.Mesh(new THREE.SphereGeometry(r * 0.9, 32, 12, 0, Math.PI * 2, 0, 0.55), m),
+          );
+          dish.scale.set(sx, opts.deep ? 0.4 : 0.25, 1);
+          dish.position.y = opts.deep ? 0.2 : 0.25;
+          const well = new THREE.Mesh(new THREE.TorusGeometry(r + 0.08, 0.06, 10, 48), mat.dark);
+          well.rotation.x = Math.PI / 2;
+          well.position.y = -0.04;
+          well.scale.x = sx;
+          const press = new THREE.Group();
+          press.add(cap, dish);
+          g.add(press, well);
+          half.add(g);
+          return { press, meshes: [cap, dish] };
+        }
+
+        function curvedKey(half, samples, radius, lift, material) {
+          const avg = new V3();
+          const path = samples.map((s) => {
+            avg.add(s.nrm);
+            return s.pos.clone().addScaledVector(s.nrm, lift + radius);
+          });
+          avg.normalize();
+          const press = new THREE.Group();
+          const curve = new THREE.CatmullRomCurve3(path);
+          const tube = shadowed(
+            new THREE.Mesh(new THREE.TubeGeometry(curve, 48, radius, 16, false), material),
+          );
+          const ends = [path[0], path[path.length - 1]].map((p) => {
+            const e = shadowed(new THREE.Mesh(jointGeo, material));
+            e.scale.setScalar(radius);
+            e.position.copy(p);
+            return e;
+          });
+          press.add(tube, ...ends);
+          half.add(press);
+          return { press, meshes: [tube, ...ends], dir: avg, center: curve.getPoint(0.5), path };
+        }
+
+        const hands = {},
+          bodyMeshes = [];
+        const SIDE_NAME = { R: "右", L: "左" };
+
+        function buildHalf(side) {
+          const R = side === "R";
+          const root = new THREE.Group();
+          const half = new THREE.Group();
+          if (!R) half.scale.x = -1; // 左は鏡像。内側はローカル -x
+          root.add(half);
+          const bodyMesh = shadowed(new THREE.Mesh(bodyGeo, mat.shell));
+          half.add(bodyMesh);
+          bodyMeshes.push(bodyMesh);
+
+          // 指の姿勢を先に決め、ボタンはその関節位置から置く
+          const fit = FIT;
+
+          // 親指：スティック。親指の付け根（手のひら側 +x）へ約 12° 傾ける
+          const { stN } = SF,
+            st = cast(SF.st.pos.clone().addScaledVector(stN, 3), stN.clone().negate());
+          const stick = new THREE.Group();
+          stick.quaternion.setFromUnitVectors(UP, stN);
+          stick.position.copy(st.pos).addScaledVector(stN, -0.05);
+          const well = new THREE.Mesh(new THREE.TorusGeometry(0.98, 0.1, 12, 48), mat.dark);
+          well.rotation.x = Math.PI / 2;
+          const dome = shadowed(
+            new THREE.Mesh(
+              new THREE.SphereGeometry(0.9, 40, 16, 0, Math.PI * 2, 0, Math.PI / 2),
+              mat.dark,
+            ),
+          );
+          dome.scale.y = 0.35;
+          const tilt = new THREE.Group();
+          const shaft = shadowed(
+            new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.26, 0.75, 20), mat.metal),
+          );
+          shaft.position.y = 0.5;
+          const capM = mat.finger.thumb;
+          const cap = shadowed(
+            new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.62, 0.26, 48), capM),
+          );
+          cap.position.y = 0.95;
+          const capRim = new THREE.Mesh(new THREE.TorusGeometry(0.64, 0.07, 10, 48), capM);
+          capRim.rotation.x = Math.PI / 2;
+          capRim.position.y = 1.08;
+          tilt.add(shaft, cap, capRim);
+          stick.add(well, dome, tilt);
+          half.add(stick);
+          const sb = register(
+            {
+              id: side + "S",
+              side,
+              name: R ? "右スティック" : "左スティック",
+              finger: "thumb",
+              where: "親指の腹",
+              role: R ? "カメラ・照準。押し込みで R3" : "移動。押し込みで L3",
+              press: tilt,
+              stick: true,
+            },
+            [shaft, cap, capRim],
+          );
+          addLabel(
+            half,
+            R ? "RS 親指" : "LS 親指",
+            "thumb",
+            st.pos,
+            stN.clone().multiplyScalar(2.3),
+          );
+
+          // 人差し指：曲がる弧に沿ったトリガーと、頭頂の後ろ角のバンパー
+          const fi = fit.index,
+            trigS = [];
+          const ta = fi.phis[1] + (fi.phis[2] - fi.phis[1]) * 0.1,
+            tb = fi.phis[2] + (fi.phis[3] - fi.phis[2]) * 0.6;
+          for (let k = 0; k <= 10; k++)
+            trigS.push(ringAt(HAND.index.y0, (ta + ((tb - ta) * k) / 10) * D));
+          const trig = curvedKey(half, trigS, 0.3, 0.02, mat.finger.index);
+          register(
+            {
+              id: side + "2",
+              side,
+              name: (R ? "R2" : "L2") + " トリガー",
+              finger: "index",
+              fk: "index",
+              mode: "trig",
+              where: "指の腹",
+              role: "アナログトリガー。指が曲がる弧に沿った曲面なので、引く力がまっすぐ伝わる",
+              press: trig.press,
+              dir: trig.dir,
+            },
+            trig.meshes,
+          );
+
+          // バンパーは、人差し指を付け根から無理なく持ち上げたときに中節が来る場所に置く
+          const lifted = liftIndex(fit.index.rest, 1, null);
+          const lmid = lifted[1].clone().add(lifted[2]).multiplyScalar(0.5);
+          const bc = new V3(0, lmid.y, zMid(lmid.y));
+          const bDir = lmid.clone().sub(bc);
+          bDir.x = 0;
+          bDir.normalize();
+          const bumpS = [];
+          for (let x = -1.35; x <= 1.351; x += 0.27)
+            bumpS.push(
+              cast(new V3(x, lmid.y, bc.z).addScaledVector(bDir, 12), bDir.clone().negate()),
+            );
+          const bump = curvedKey(half, bumpS, 0.27, 0.03, mat.finger.index);
+          // 持ち上げた指の腹がバンパーの頭に届くまで、本体側へ寄せる量
+          const bHit = cast(lmid.clone().addScaledVector(bDir, 3), bDir.clone().negate());
+          const bGap =
+            lmid.clone().sub(bHit.pos).dot(bHit.nrm) - HAND.index.radii[1] - (0.03 + 0.54);
+          const bPush = bHit.nrm.clone().multiplyScalar(-Math.max(0, bGap));
+          register(
+            {
+              id: side + "1",
+              side,
+              name: (R ? "R1" : "L1") + " バンパー",
+              finger: "index",
+              fk: "index",
+              mode: "bump",
+              where: "指を持ち上げて",
+              role: "デジタルボタン。トリガーから指を付け根ごと約 20° 持ち上げた先にある",
+              press: bump.press,
+              dir: bump.dir,
+            },
+            bump.meshes,
+          );
+          addLabel(
+            half,
+            R ? "R1 / R2 人差し指" : "L1 / L2 人差し指",
+            "index",
+            trig.center,
+            new V3(0, 1.6, -2.2),
+          );
+
+          // 中指・薬指：指の腹ボタンは中節の真下、指先ボタンは末節の真下
+          const rows = {
+            middle: {
+              pad: R
+                ? ["A", "A ボタン", "決定・ジャンプ"]
+                : ["↑", "十字キー 上", "メニュー移動・武器切替"],
+              tip: R
+                ? ["B", "B ボタン", "キャンセル・ブースト"]
+                : ["←", "十字キー 左", "メニュー移動"],
+            },
+            ring: {
+              pad: R
+                ? ["X", "X ボタン", "リロード・アクション"]
+                : ["↓", "十字キー 下", "メニュー移動"],
+              tip: R
+                ? ["Y", "Y ボタン", "サブ・インタラクト"]
+                : ["→", "十字キー 右", "メニュー移動"],
+            },
+          };
+          Object.entries(rows).forEach(([fk, row]) => {
+            const def = HAND[fk],
+              [, pip, dip, tip] = fit[fk].phis;
+            const padPhi = ((pip + dip) / 2) * D,
+              tipPhi = (dip + (tip - dip) * 0.62) * D;
+            const ps = ringAt(def.y0, padPhi),
+              ts = ringAt(def.y0, tipPhi);
+            const pk = makeKey(half, ps, tangentAt(def.y0, padPhi), {
+              finger: fk,
+              r: 0.5,
+              stretch: 1.5,
+            });
+            const tk = makeKey(half, ts, tangentAt(def.y0, tipPhi), {
+              finger: fk,
+              r: 0.45,
+              deep: true,
+            });
+            const fname = fk === "middle" ? "中指" : "薬指";
+            register(
+              {
+                id: side + "-" + row.pad[0],
+                side,
+                name: row.pad[1],
+                finger: fk,
+                fk,
+                mode: "pad",
+                where: "指の腹",
+                role: `${fname}の腹で押す楕円ボタン。${row.pad[2]}`,
+                press: pk.press,
+              },
+              pk.meshes,
+            );
+            register(
+              {
+                id: side + "-" + row.tip[0],
+                side,
+                name: row.tip[1],
+                finger: fk,
+                fk,
+                mode: "tip",
+                where: "指先",
+                role: `${fname}の指先で押す、角に斜めに付いたボタン。${row.tip[2]}`,
+                press: tk.press,
+              },
+              tk.meshes,
+            );
+            const txt =
+              fk === "middle" ? (R ? "A / B 中指" : "↑ / ← 中指") : R ? "X / Y 薬指" : "↓ / → 薬指";
+            addLabel(half, txt, fk, ps.pos, new V3(1.2, 0.3, -2.4));
+          });
+
+          // 内側面：メニューボタン
+          const ms = cast(new V3(-12, 0.7, 0.4), new V3(1, 0, 0));
+          const mk = makeKey(half, ms, new V3(0, 0, 1), { finger: "thumb", r: 0.3 });
+          mk.meshes.forEach((m) => (m.material = mat.key));
+          register(
+            {
+              id: side + "-menu",
+              side,
+              name: R ? "+ / スタート" : "− / セレクト",
+              finger: "thumb",
+              where: "親指をずらして",
+              role: "内側面。ゲーム中に誤って触れない位置",
+              press: mk.press,
+            },
+            mk.meshes,
+          );
+
+          const led = new THREE.Mesh(
+            new THREE.SphereGeometry(0.09, 12, 8),
+            new THREE.MeshBasicMaterial({ color: 0x5ad1ff }),
+          );
+          led.position.copy(profileSurface([1, 0.15], (p) => p.x > 0 && p.y > -1.5).pos);
+          half.add(led);
+
+          // ---- 手 ----
+          const hand = new THREE.Group();
+          half.add(hand);
+          const fingers = {};
+          Object.entries(HAND).forEach(([k, def]) => {
+            const f = fit[k];
+            fingers[k] = {
+              def,
+              rest: f.rest,
+              nrms: f.nrms,
+              tube: fingerTube(hand, def.radii, mat.skin),
+              nail: makeNail(hand),
+              state: null,
+            };
+          });
+          {
+            // 人差し指がバンパーを押す姿勢
+            const f = fingers.index;
+            f.bumpPose = (k) => liftIndex(f.rest, k, bPush);
+          }
+          // 手のひら：指の付け根の列から手首へ向かってすぼまる板。手のひら側に母指球と小指球
+          const { mcpMid, up, fwd, dors, P, span } = HF;
+          const palmQ = new THREE.Quaternion().setFromRotationMatrix(
+            new THREE.Matrix4().makeBasis(dors, up, fwd),
+          );
+          const blob = (geo, pos, scale, q = palmQ, m = mat.skin) => {
+            const o = shadowed(new THREE.Mesh(geo, m));
+            o.position.copy(pos);
+            o.quaternion.copy(q);
+            o.scale.copy(scale);
+            hand.add(o);
+            return o;
+          };
+          const palmMesh = blob(PALM_GEO, P(0.0, 0, 4.2), new V3(1.25, span / 2 + 0.9, 4.6));
+          // 親指：中手骨は母指球の肉ごと手のひらの縁に沿わせ、付け根の関節(MCP)を縁に固定する
+          const { cmc } = HF;
+          const thumb = fingerTube(hand, [1.3, 1.0, 0.86, 0.74], mat.skin);
+          const thumbNail = makeNail(hand);
+          // 前腕：グリップの前傾分を戻すと、机に置いた水平な前腕になる向き
+          const armDir = new V3(0.12, -0.05, 1).normalize().applyAxisAngle(new V3(1, 0, 0), 0.32);
+          const wristP = HF.wristP;
+          // 手首の中から肘へ、楕円断面で太くなる前腕。袖は前腕に重ねる
+          const armAt = (d) => wristP.clone().addScaledVector(armDir, d);
+          const armUp = dors.clone();
+          fingerTube(hand, [1.75, 1.95, 2.35, 2.6], mat.skin).set(
+            [armAt(-1.2), armAt(2.5), armAt(7), armAt(11)],
+            [armUp, armUp, armUp, armUp],
+          );
+          fingerTube(hand, [1.6, 2.75, 2.85, 2.95], mat.sleeve).set(
+            [armAt(7.2), armAt(7.7), armAt(11), armAt(15)],
+            [armUp, armUp, armUp, armUp],
+          );
+
+          // ---- ハンドストラップの固定具：親指の下（頭部の手のひら側、親指と人差し指のあいだのすぐ下）と小指の下（握りの底） ----
+          const strap = new THREE.Group();
+          half.add(strap);
+          const loopG = new THREE.Group();
+          half.add(loopG);
+          const anchorAt = (y, z) => cast(new V3(12, y, z), new V3(-1, 0, 0));
+          const anchors = [anchorAt(1.45, 0.1), anchorAt(-9.05, 0.5)];
+          const mounts = new THREE.Group();
+          half.add(mounts);
+          anchors.forEach((a) => {
+            const m = shadowed(new THREE.Mesh(new THREE.BoxGeometry(2.7, 0.35, 0.9), mat.dark));
+            m.position.copy(a.pos).addScaledVector(a.nrm, 0.12);
+            m.quaternion.copy(basisQuat(a.nrm, new V3(0, 0, 1)));
+            mounts.add(m);
+          });
+
+          const stand = [
+            palmMesh,
+            thumb.mesh,
+            thumbNail,
+            ...Object.values(fingers).flatMap((f) => [f.tube.mesh, f.nail]),
+          ];
+          hands[side] = {
+            strap,
+            loopG,
+            mounts,
+            anchors,
+            fwd,
+            group: hand,
+            fingers,
+            thumb,
+            thumbNail,
+            cmc,
+            dors,
+            tilt,
+            half,
+            stand,
+            wristP,
+            mcpMid,
+            rig: null,
+          };
+          root.rotation.x = -0.32; // グリップを前に約 18° 倒す
+          return root;
+        }
+
+        const left = buildHalf("L"),
+          right = buildHalf("R");
+        Object.values(hands).forEach((h) =>
+          Object.entries(h.fingers).forEach(([k, f]) => {
+            f.h = h;
+            f.key = k;
+          }),
+        );
+        // 仕上げ：握った手（静止姿勢）を本体と同じ格子で中身の詰まった立体にし、ぼかして本体から差し引いて面を張り直す。
+        // 線分の近似では表しきれない、手のひらと母指球が握りの手前を包む当たりまで手の形の凹みになる。左右は鏡像なので一度で済む
+        let finished = false;
+        function refitBody(h, skin) {
+          h.half.updateMatrixWorld(true);
+          const inv = new THREE.Matrix4().copy(h.half.matrixWorld).invert();
+          const hp = skin.geometry.attributes.position,
+            baked = new Float32Array(hp.count * 3),
+            v = new V3();
+          for (let i = 0; i < hp.count; i++) {
+            skin.applyBoneTransform(i, v.fromBufferAttribute(hp, i));
+            v.applyMatrix4(skin.matrixWorld)
+              .applyMatrix4(inv)
+              .toArray(baked, i * 3);
+          }
+          const hg = new THREE.BufferGeometry();
+          hg.setAttribute("position", new THREE.BufferAttribute(baked, 3));
+          hg.setIndex(skin.geometry.index);
+          hg.computeBoundingBox();
+          hg.computeBoundingSphere();
+          const handMesh = new THREE.Mesh(
+            hg,
+            new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
+          );
+          const { h: gh, org, nx, ny, nz } = GRID,
+            id = (i, j, k) => i + nx * (j + ny * k);
+          const occ = new Float32Array(nx * ny * nz),
+            bb = hg.boundingBox,
+            r = new THREE.Raycaster(),
+            dirX = new V3(1, 0, 0);
+          // x 方向の光線で、手の表面を出入りする区間を塗る
+          for (let k = 0; k < nz; k++)
+            for (let j = 0; j < ny; j++) {
+              const y = org.y + j * gh,
+                z = org.z + k * gh;
+              if (y < bb.min.y || y > bb.max.y || z < bb.min.z || z > bb.max.z) continue;
+              r.set(new V3(org.x - 1, y, z), dirX);
+              const xs = r.intersectObject(handMesh).map((x) => x.point.x);
+              for (let q = 0; q + 1 < xs.length; q += 2)
+                for (
+                  let i = Math.max(0, Math.ceil((xs[q] - org.x) / gh));
+                  i < nx && org.x + i * gh <= xs[q + 1];
+                  i++
+                )
+                  occ[id(i, j, k)] = 1;
+            }
+          // ガウスぼかし（3軸に分けて）
+          const rad = 3,
+            ker = [];
+          let ks = 0;
+          for (let t = -rad; t <= rad; t++) {
+            const w = Math.exp(-0.5 * ((t * gh) / OCC_SIGMA) ** 2);
+            ker.push(w);
+            ks += w;
+          }
+          const blur = (src, axis) => {
+            const dst = new Float32Array(src.length),
+              st = [1, nx, nx * ny][axis],
+              n = [nx, ny, nz][axis];
+            for (let k = 0; k < nz; k++)
+              for (let j = 0; j < ny; j++)
+                for (let i = 0; i < nx; i++) {
+                  const c = [i, j, k][axis],
+                    base = id(i, j, k);
+                  let acc = 0;
+                  for (let t = -rad; t <= rad; t++) {
+                    const cc = c + t;
+                    if (cc >= 0 && cc < n) acc += src[base + t * st] * ker[t + rad];
+                  }
+                  dst[base] = acc / ks;
+                }
+            return dst;
+          };
+          const field = blur(blur(blur(occ, 0), 1), 2);
+          const g = meshSDF(CAPS, field);
+          bodyGeo = g;
+          probe.geometry = g;
+          bodyMeshes.forEach((m) => (m.geometry = g));
+          return handMesh;
+        }
+        // ハンドストラップ：2つの固定具を結ぶ線と手の甲の向きで決まる面で、手と本体の断面を輪ゴムのように包み（凸包）、
+        // その手の甲側をたどる。張った帯と同じ形なので、手にも本体にも食い込まない
+        const STRAP_W = 2.4,
+          STRAP_T = 0.28;
+        // 帯の中心線と外向きの向きから、角を丸めた長方形断面の帯を張る
+        function makeBand(path, outs, en, W, T) {
+          const N = path.length - 1,
+            SEG = 16,
+            pos = new Float32Array((N + 1) * SEG * 3),
+            idx = [];
+          for (let i = 0; i <= N; i++)
+            for (let j = 0; j < SEG; j++) {
+              const th = (j / SEG) * Math.PI * 2,
+                c = Math.cos(th),
+                sn = Math.sin(th);
+              const x = (Math.sign(c) * Math.abs(c) ** 0.35 * W) / 2,
+                y = (Math.sign(sn) * Math.abs(sn) ** 0.35 * T) / 2;
+              path[i]
+                .clone()
+                .addScaledVector(en, x)
+                .addScaledVector(outs[i], y)
+                .toArray(pos, (i * SEG + j) * 3);
+            }
+          for (let i = 0; i < N; i++)
+            for (let j = 0; j < SEG; j++) {
+              const a = i * SEG + j,
+                b = i * SEG + ((j + 1) % SEG);
+              idx.push(a, b, a + SEG, b, b + SEG, a + SEG);
+            }
+          const g = new THREE.BufferGeometry();
+          g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+          g.setIndex(idx);
+          g.computeVertexNormals();
+          // 向きの確認：帯の中ほどの頂点の法線は外を向くはず
+          const mi = (N >> 1) * SEG + (SEG >> 2),
+            nn = new V3().fromBufferAttribute(g.attributes.normal, mi);
+          if (nn.dot(outs[N >> 1]) < 0) {
+            const ix = g.index.array;
+            for (let t = 0; t < ix.length; t += 3) {
+              const tmp = ix[t + 1];
+              ix[t + 1] = ix[t + 2];
+              ix[t + 2] = tmp;
+            }
+            g.computeVertexNormals();
+          }
+          return g;
+        }
+        // ---- 2本目の輪：薬指と小指の中節を 1 本ずつ押さえる二股の帯 ----
+        // 付け根側は手の甲を渡る 1 本目のストラップに、指先側は指先の先にある本体の内側面に留める。
+        // 指を浮かせてボタンから離せるよう、輪の内側に LOOP_CLR の余裕を残す（留め具の近くでは 0 へ絞る）
+        const LOOP_W = 1.3,
+          LOOP_T = 0.22,
+          LOOP_CLR = 0.45;
+        function buildLoops(h, handMesh, strapMesh, st) {
+          const r = new THREE.Raycaster(),
+            out = [];
+          for (const fk of ["ring", "pinky"]) {
+            const R = h.fingers[fk].rest,
+              yc = (R[1].y + R[2].y) / 2;
+            const C0 = new V3(0, yc, zMid(yc));
+            const en = R[1].clone().sub(C0).cross(R[2].clone().sub(C0)).normalize();
+            if (en.y < 0) en.negate();
+            const e1 = R[1].clone().sub(C0);
+            e1.addScaledVector(en, -e1.dot(en)).normalize();
+            const e2 = en.clone().cross(e1);
+            const ang = (p) => {
+              const d = p.clone().sub(C0);
+              return Math.atan2(d.dot(e2), d.dot(e1));
+            };
+            const dirAt = (a) =>
+              e1.clone().multiplyScalar(Math.cos(a)).addScaledVector(e2, Math.sin(a));
+            const aTip = ang(R[3]),
+              sgn = Math.sign(aTip) || 1;
+            // 付け根側の留め具：指の付け根にいちばん近い 1 本目のストラップの外面
+            let bi = 0;
+            st.path.forEach((q, i) => {
+              if (q.distanceTo(R[0]) < st.path[bi].distanceTo(R[0])) bi = i;
+            });
+            const A = st.path[bi].clone().addScaledVector(st.outs[bi], STRAP_T / 2);
+            // 指先側の留め具：指先から先へ回り、手に覆われていない本体の面
+            let aB = aTip + sgn * 0.35,
+              B = null,
+              Bn = null;
+            for (let k = 0; k < 20 && !B; k++, aB += sgn * 0.08) {
+              const d = dirAt(aB);
+              r.set(C0.clone().addScaledVector(d, 25), d.clone().negate());
+              const hit = r.intersectObjects([handMesh, probe])[0];
+              if (hit && hit.object === probe) {
+                B = hit.point.clone();
+                Bn = d.clone();
+              }
+            }
+            const aA = ang(A);
+            // 留め具のあいだを指の側から回り、手・本体・1 本目のストラップのいちばん外側を拾う
+            const pts2 = [];
+            const span = ((aB - aA) * sgn + Math.PI * 4) % (Math.PI * 2);
+            for (let t = 0; t <= span; t += 0.03) {
+              const a = aA + sgn * t,
+                d = dirAt(a);
+              let best = -Infinity;
+              for (let w = -2; w <= 2; w++) {
+                const o = C0.clone()
+                  .addScaledVector(en, ((w / 2) * LOOP_W) / 2)
+                  .addScaledVector(d, 25);
+                r.set(o, d.clone().negate());
+                const hit = r.intersectObjects([handMesh, probe, strapMesh])[0];
+                if (hit) best = Math.max(best, 25 - hit.distance);
+              }
+              if (best > -Infinity) pts2.push([Math.cos(a) * best, Math.sin(a) * best]);
+            }
+            const to2 = (p) => {
+              const d = p.clone().sub(C0);
+              return [d.dot(e1), d.dot(e2)];
+            };
+            const A2 = to2(A),
+              B2 = to2(B);
+            // 凸包を A から B へ、指の側を通ってたどる
+            const all = [A2, B2, ...pts2].sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+            const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+            const hl = [];
+            for (const pass of [all, all.slice().reverse()]) {
+              const st2 = [];
+              for (const q of pass) {
+                while (st2.length >= 2 && cr(st2[st2.length - 2], st2[st2.length - 1], q) <= 0)
+                  st2.pop();
+                st2.push(q);
+              }
+              st2.pop();
+              hl.push(...st2);
+            }
+            const near = (P) =>
+              hl.reduce(
+                (bi2, q, i) =>
+                  Math.hypot(q[0] - P[0], q[1] - P[1]) <
+                  Math.hypot(hl[bi2][0] - P[0], hl[bi2][1] - P[1])
+                    ? i
+                    : bi2,
+                0,
+              );
+            const iA = near(A2),
+              iB = near(B2),
+              n = hl.length;
+            const walk = (step) => {
+              const c = [A2];
+              for (let i = (iA + step + n) % n; i !== iB; i = (i + step + n) % n) c.push(hl[i]);
+              c.push(B2);
+              return c;
+            };
+            const aMid = ang(R[2]);
+            const passes = (c) =>
+              c.some(
+                (q) =>
+                  Math.abs(
+                    Math.atan2(
+                      Math.sin(Math.atan2(q[1], q[0]) - aMid),
+                      Math.cos(Math.atan2(q[1], q[0]) - aMid),
+                    ),
+                  ) < 0.25,
+              );
+            const chain = passes(walk(1)) ? walk(1) : walk(-1);
+            const P3 = chain.map(([u, v]) =>
+              C0.clone().addScaledVector(e1, u).addScaledVector(e2, v),
+            );
+            const curve = new THREE.CatmullRomCurve3(P3, false, "centripetal");
+            const N = 90,
+              path = [],
+              outs = [];
+            for (let i = 0; i <= N; i++) {
+              const f = i / N,
+                q = curve.getPointAt(f),
+                tg = curve.getTangentAt(f);
+              const o = en.clone().cross(tg).normalize();
+              if (o.dot(q.clone().sub(C0)) < 0) o.negate();
+              const taper = THREE.MathUtils.smoothstep(Math.min(f, 1 - f), 0, 0.18);
+              path.push(q.addScaledVector(o, LOOP_T / 2 + LOOP_CLR * taper));
+              outs.push(o);
+            }
+            out.push({
+              fk,
+              geo: makeBand(path, outs, en, LOOP_W, LOOP_T),
+              path,
+              outs,
+              en,
+              W: LOOP_W,
+              T: LOOP_T,
+              B,
+              Bn,
+            });
+          }
+          return out;
+        }
+        function addLoops(h, loops) {
+          h.loopData = loops;
+          loops.forEach((L) => {
+            h.loopG.add(shadowed(new THREE.Mesh(L.geo, mat.strap)));
+            const m = shadowed(
+              new THREE.Mesh(new THREE.BoxGeometry(LOOP_W + 0.4, 0.3, 0.8), mat.dark),
+            );
+            m.position.copy(L.B).addScaledVector(L.Bn, 0.1);
+            m.quaternion.copy(basisQuat(L.Bn, L.en));
+            h.loopG.add(m);
+          });
+        }
+        function buildStrap(h, handMesh) {
+          const [a1, a2] = h.anchors.map((a) => a.pos.clone().addScaledVector(a.nrm, 0.3));
+          const e1 = a2.clone().sub(a1).normalize();
+          const e2 = h.dors.clone().addScaledVector(e1, -h.dors.dot(e1)).normalize(),
+            en = e1.clone().cross(e2);
+          const C = a1.clone().lerp(a2, 0.5),
+            r = new THREE.Raycaster(),
+            pts = [];
+          const to2 = (p) => [p.clone().sub(C).dot(e1), p.clone().sub(C).dot(e2)];
+          const lo = Math.min(to2(a1)[0], to2(a2)[0]),
+            hi = Math.max(to2(a1)[0], to2(a2)[0]);
+          // 手の甲の方向から帯の幅全体にわたって光線を降ろし、固定点のあいだの手と本体のいちばん高い面を拾う
+          for (let u = lo; u <= hi; u += 0.08) {
+            let best = -Infinity;
+            for (let w = -4; w <= 4; w++) {
+              const o = C.clone()
+                .addScaledVector(e1, u)
+                .addScaledVector(en, ((w / 4) * STRAP_W) / 2);
+              r.set(o.clone().addScaledVector(e2, 25), e2.clone().negate());
+              const hit = r.intersectObjects([handMesh, probe])[0];
+              if (hit) best = Math.max(best, 25 - hit.distance);
+            }
+            if (best > -Infinity) pts.push([u, best]);
+          }
+          const A1 = to2(a1),
+            A2 = to2(a2);
+          pts.push(A1, A2);
+          // 凸包（Andrew の単調連鎖）
+          pts.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+          const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+          const half_ = (list) => {
+            const hl = [];
+            for (const p of list) {
+              while (hl.length >= 2 && cross(hl[hl.length - 2], hl[hl.length - 1], p) <= 0)
+                hl.pop();
+              hl.push(p);
+            }
+            return hl;
+          };
+          const upper = half_(pts.slice().reverse()).reverse(); // 手の甲側（v が大きい側）
+          const near = (A) =>
+            upper.reduce(
+              (bi, p, i) =>
+                Math.hypot(p[0] - A[0], p[1] - A[1]) <
+                Math.hypot(upper[bi][0] - A[0], upper[bi][1] - A[1])
+                  ? i
+                  : bi,
+              0,
+            );
+          let i1 = near(A1),
+            i2 = near(A2);
+          if (i1 > i2) [i1, i2] = [i2, i1];
+          const chain = [A1, ...upper.slice(i1 + 1, i2), A2];
+          // 外向きに帯の厚みの半分 + 少しの隙間だけ浮かせ、滑らかに引き直す
+          const P3 = chain.map(([u, v]) => C.clone().addScaledVector(e1, u).addScaledVector(e2, v));
+          const curve = new THREE.CatmullRomCurve3(P3, false, "centripetal");
+          const N = 90,
+            path = [],
+            outs = [];
+          for (let i = 0; i <= N; i++) {
+            const p = curve.getPointAt(i / N),
+              tg = curve.getTangentAt(i / N);
+            const out = en.clone().cross(tg).normalize();
+            if (out.dot(p.clone().sub(C)) < 0) out.negate();
+            path.push(p.addScaledVector(out, STRAP_T / 2 + 0.12));
+            outs.push(out);
+          }
+          const g = makeBand(path, outs, en, STRAP_W, STRAP_T);
+          return {
+            geo: g,
+            mid: path[N >> 1],
+            out: outs[N >> 1],
+            tan: curve.getTangentAt(0.5),
+            en,
+            path,
+            outs,
+          };
+        }
+        function addStrap(h, s) {
+          h.strapData = s;
+          h.strap.add(shadowed(new THREE.Mesh(s.geo, mat.strap)));
+          // 手の甲側の長さ調整バックル
+          const bk = shadowed(
+            new THREE.Mesh(new THREE.BoxGeometry(STRAP_W + 0.3, 0.22, 1.2), mat.metal),
+          );
+          bk.position.copy(s.mid).addScaledVector(s.out, STRAP_T / 2 + 0.08);
+          bk.quaternion.setFromRotationMatrix(
+            new THREE.Matrix4().makeBasis(s.en, s.out, s.en.clone().cross(s.out)),
+          );
+          h.strap.add(bk);
+        }
+        // ボーンへの反映は three の XRHandMeshModel に任せる。関節（位置と回転）はこのページで計算して joints に書く
+        Object.values(hands).forEach((h) => {
+          const holder = new THREE.Group();
+          holder.scale.setScalar(100);
+          h.group.add(holder);
+          const joints = {};
+          h.xr = new THREE.XRHandMeshModel(
+            holder,
+            { joints },
+            HAND_PATH,
+            "right",
+            null,
+            (model) => {
+              const rig = {};
+              model.traverse((o) => {
+                if (o.isBone) {
+                  rig[o.name] = {
+                    visible: true,
+                    position: o.position.clone(),
+                    quaternion: o.quaternion.clone(),
+                  };
+                  joints[o.name] = rig[o.name];
+                }
+                if (o.isMesh) o.material = mat.skin;
+              });
+              h.restQ = Object.fromEntries(
+                Object.entries(rig).map(([k, j]) => [k, j.quaternion.clone()]),
+              );
+              h.rig = rig;
+              h.model = model;
+              h.stand.forEach((o) => (o.visible = false));
+              if (!finished) {
+                finished = true;
+                const keep = h.tilt.rotation.clone();
+                h.tilt.rotation.set(0, 0, 0);
+                Object.values(h.fingers).forEach((f) => {
+                  const st = f.state;
+                  f.state = null;
+                  poseFinger(f);
+                  f.state = st;
+                });
+                poseThumb(h);
+                let skin;
+                model.traverse((o) => {
+                  if (o.isSkinnedMesh) skin = o;
+                });
+                const handMesh = refitBody(h, skin);
+                const st = buildStrap(h, handMesh);
+                const loops = buildLoops(h, handMesh, new THREE.Mesh(st.geo), st);
+                Object.values(hands).forEach((hh) => {
+                  addStrap(hh, st);
+                  addLoops(hh, loops);
+                });
+                physInit(h, skin);
+                strapVis();
+                h.tilt.rotation.copy(keep);
+              }
+            },
+          );
+        });
+        scene.add(left, right);
+        let spread = 1;
+        const setSpread = () => {
+          left.position.x = -(spread ? 6.2 : 3.6);
+          right.position.x = spread ? 6.2 : 3.6;
+        };
+        setSpread();
+        applyTheme();
+
+        // ---- 手のポーズ ----
+        const tmpA = new V3(),
+          tmpB = new V3(),
+          hint = new V3(1, 0.35, 0.6).normalize();
+        function poseFinger(f) {
+          const st = f.state;
+          const k = st ? Math.sin(st.t * Math.PI) : 0;
+          const p = f.rest.map((v) => v.clone());
+          if (st && k > 0) {
+            if (st.mode === "bump") {
+              f.bumpPose(k).forEach((v, i) => p[i].copy(v));
+            } else {
+              const W = { pad: [0, 0.6, 1, 0.5], tip: [0, 0.15, 0.6, 1.0], trig: [0, 0.8, 1, 0.7] }[
+                st.mode
+              ];
+              const depth = st.mode === "tip" ? 0.16 : 0.13;
+              p.forEach((v, i) => v.addScaledVector(f.nrms[i], -depth * k * W[i]));
+            }
+          }
+          f.tube.set(p, f.nrms);
+          if (f.h) rigFinger(f.h, f.key, p);
+          poseNail(f.nail, p[2], p[3], f.nrms[3], f.def.radii[3]);
+        }
+        // 手のモデル（WebXR generic-hand）のボーン：-Z が指先方向、+Y が手の甲側。単位はメートル
+        const FN = {
+          index: "index-finger",
+          middle: "middle-finger",
+          ring: "ring-finger",
+          pinky: "pinky-finger",
+        };
+        const PH = ["phalanx-proximal", "phalanx-intermediate", "phalanx-distal", "tip"];
+        function setBone(rig, name, pos, toward, dorsal) {
+          const b = rig[name];
+          if (!b) return;
+          b.position.copy(pos).multiplyScalar(0.01);
+          b.quaternion.copy(frameQ(toward, dorsal));
+        }
+        function wristQ(h) {
+          return frameQ(h.mcpMid.clone().sub(h.wristP), h.dors);
+        }
+        function rigChain(h, names, pts) {
+          let parentQ = wristQ(h),
+            parentRest = h.restQ.wrist;
+          const d0 = new V3(),
+            d1 = new V3(),
+            swing = new THREE.Quaternion();
+          names.forEach((name, i) => {
+            const b = h.rig[name];
+            if (!b) return;
+            const pred = parentQ
+              .clone()
+              .multiply(parentRest.clone().invert().multiply(h.restQ[name]));
+            const a = pts[i],
+              c = pts[i + 1] || pts[i].clone().add(pts[i].clone().sub(pts[i - 1]));
+            d0.set(0, 0, -1).applyQuaternion(pred);
+            d1.subVectors(c, a).normalize();
+            const q = swing.setFromUnitVectors(d0, d1).clone().multiply(pred);
+            b.position.copy(a).multiplyScalar(0.01);
+            b.quaternion.copy(q);
+            parentQ = q;
+            parentRest = h.restQ[name];
+          });
+        }
+        function rigFinger(h, k, p) {
+          if (!h.rig) return;
+          const meta = h.wristP.clone().lerp(p[0], 0.33);
+          rigChain(
+            h,
+            ["metacarpal", ...PH].map((n) => FN[k] + "-" + n),
+            [meta, ...p],
+          );
+        }
+        function poseThumb(h) {
+          h.half.updateMatrixWorld(true);
+          const cap = h.tilt.localToWorld(new V3(0, 1.1, 0));
+          h.half.worldToLocal(cap);
+          const n = h.tilt.localToWorld(new V3(0, 2.1, 0));
+          h.half.worldToLocal(n);
+          n.sub(cap).normalize();
+          const lifted = cap.clone().addScaledVector(n, h.thumbLift || 0);
+          const { mcp, ip, tip } = thumbPose(HF, lifted, n);
+          const dm = h.dors.clone().lerp(n, 0.5).normalize();
+          h.thumb.set([h.cmc, mcp, ip, tip], [h.dors, dm, n, n]);
+          if (h.rig) {
+            setBone(h.rig, "wrist", h.wristP, h.mcpMid.clone().sub(h.wristP), h.dors);
+            rigChain(
+              h,
+              ["thumb-metacarpal", "thumb-phalanx-proximal", "thumb-phalanx-distal", "thumb-tip"],
+              [h.cmc, mcp, ip, tip],
+            );
+          }
+          poseNail(h.thumbNail, ip, tip, n, 0.72);
+          if (h.rig) h.xr.updateMesh();
+        }
+
+        // ---- camera presets ----
+        const TARGET = new V3(0, -3.2, 1.5);
+        const VIEWS = {
+          persp: new V3(-20, 15, 34),
+          front: new V3(0, 19, 30),
+          back: new V3(0, 3, -36),
+          side: new V3(38, 4, 2),
+        };
+        let tween = null;
+        function goto(name) {
+          document
+            .querySelectorAll('.views button[id^="v-"]')
+            .forEach((b) => b.setAttribute("aria-pressed", b.id === "v-" + name));
+          const to = VIEWS[name].clone().add(TARGET);
+          if (reduce) {
+            camera.position.copy(to);
+            controls.target.copy(TARGET);
+            return;
+          }
+          tween = {
+            from: camera.position.clone().sub(controls.target),
+            to: to.clone().sub(TARGET),
+            t: 0,
+            tf: controls.target.clone(),
+          };
+        }
+        camera.position.copy(VIEWS.persp).add(TARGET);
+        controls.target.copy(TARGET);
+        Object.keys(VIEWS).forEach((k) =>
+          document.getElementById("v-" + k).addEventListener("click", () => goto(k)),
+        );
+        controls.addEventListener("start", () => {
+          tween = null;
+          document
+            .querySelectorAll('.views button[id^="v-"]')
+            .forEach((b) => b.setAttribute("aria-pressed", "false"));
+        });
+
+        // ---- 押す ----
+        const info = document.getElementById("info");
+        const nowAct = document.querySelector("#now .act");
+        const FNAME = { thumb: "親指", index: "人差し指", middle: "中指", ring: "薬指" };
+        const node = (tag, cls, ...kids) => {
+          const n = document.createElement(tag);
+          if (cls) n.className = cls;
+          n.append(...kids);
+          return n;
+        };
+        function press(b, show) {
+          b.t = 1;
+          if (b.fk) hands[b.side].fingers[b.fk].state = { mode: b.mode, t: 1 };
+          if (show)
+            info.replaceChildren(
+              node("div", "name", b.name),
+              node("div", "meta", `${b.id.replace("-", " ")} ・ ${FNAME[b.finger]}`),
+              node("p", "", b.role),
+            );
+        }
+
+        const ray = new THREE.Raycaster(),
+          mouse = new V2();
+        let hovered = null;
+        function pick(e) {
+          const r = renderer.domElement.getBoundingClientRect();
+          mouse.set(
+            ((e.clientX - r.left) / r.width) * 2 - 1,
+            -((e.clientY - r.top) / r.height) * 2 + 1,
+          );
+          ray.setFromCamera(mouse, camera);
+          const hit = ray.intersectObjects(pickables, false)[0];
+          return hit ? hit.object.userData.btn : null;
+        }
+        renderer.domElement.addEventListener("pointermove", (e) => {
+          hovered = pick(e);
+          renderer.domElement.style.cursor = hovered ? "pointer" : "grab";
+        });
+        let downAt = null;
+        renderer.domElement.addEventListener("pointerdown", (e) => {
+          downAt = [e.clientX, e.clientY];
+        });
+        renderer.domElement.addEventListener("pointerup", (e) => {
+          if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 5) return;
+          const b = pick(e);
+          if (b) press(b, true);
+        });
+        let flash = null;
+        document.querySelectorAll(".fingers button").forEach((el) =>
+          el.addEventListener("click", () => {
+            const f = el.dataset.finger;
+            const owned = buttons.filter(
+              (b) => b.finger === f && !b.stick && !b.id.endsWith("menu"),
+            );
+            owned.forEach((b) => press(b, false));
+            info.replaceChildren(
+              node("div", "name", FNAME[f]),
+              ...owned.map((b) => node("p", "", node("b", "", b.name), ` ${b.role}`)),
+            );
+            flash = { f, t: 1 };
+          }),
+        );
+
+        // ---- 操作デモ ----
+        const SEQ = [
+          ["R2"],
+          ["R2"],
+          ["R-B"],
+          ["R1"],
+          ["R-A"],
+          ["R-X"],
+          ["R-Y"],
+          ["L2"],
+          ["L1"],
+          ["L-↑"],
+          ["L-←"],
+          ["L-↓"],
+          ["L-→"],
+          ["R-A", "R2"],
+          ["R-B", "L2"],
+        ];
+        const STEP = 0.8;
+        let demo = !reduce,
+          demoT = 0,
+          demoIdx = -1,
+          clock2 = 0;
+        const playBtn = document.getElementById("play");
+        const setDemo = (on) => {
+          demo = on;
+          playBtn.setAttribute("aria-pressed", on);
+          if (!on) nowAct.textContent = "—";
+        };
+        setDemo(demo);
+        playBtn.addEventListener("click", () => setDemo(!demo));
+        reduceMq.addEventListener("change", (e) => {
+          reduce = e.matches;
+          if (reduce) setDemo(false);
+        });
+        const stickTilt = { L: { x: 0, z: 0 }, R: { x: 0, z: 0 } };
+
+        const strapVis = () => {
+          const hOn = document.getElementById("t-hands").checked,
+            sOn = document.getElementById("t-strap").checked;
+          const lOn = document.getElementById("p-loop").checked;
+          Object.values(hands).forEach((h) => {
+            h.group.visible = hOn;
+            h.strap.visible = sOn && hOn;
+            h.loopG.visible = sOn && hOn && lOn;
+          });
+        };
+        document.getElementById("t-hands").addEventListener("change", strapVis);
+        document.getElementById("t-strap").addEventListener("change", strapVis);
+        document.getElementById("p-loop").addEventListener("change", () => {
+          strapVis();
+          physReset();
+        });
+        document
+          .getElementById("t-ghost")
+          .addEventListener("change", (e) => setGhost(e.target.checked));
+        document
+          .getElementById("t-labels")
+          .addEventListener("change", (e) =>
+            stage.classList.toggle("hide-labels", !e.target.checked),
+          );
+        document.getElementById("t-color").addEventListener("change", (e) => {
+          colorize = e.target.checked;
+          applyTheme();
+        });
+        document.getElementById("t-spread").addEventListener("change", (e) => {
+          spread = e.target.checked ? 1 : 0;
+          setSpread();
+        });
+        matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
+        new MutationObserver(applyTheme).observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["data-theme"],
+        });
+
+        // ---- 手を振る物理演算（WebGPU） ----
+        // 本体（片側 180 g）を剛体、手を振り方どおりに動く物体として、手の表面の点ごとに接触力を GPU で並列に求める。
+        // 接触は皮膚のやわらかさをばね＋減衰、摩擦は「張り付いた位置」からのずれに比例するばね（上限 μ×法線力、超えると滑る）。
+        // 1 回の dispatch で 1 ワークグループが時間刻み dt を描画 1 フレーム分まとめて進め、合力は共有メモリで足し合わせる。
+        // 計算は右手で行い、左手には同じ結果を鏡像で写す。単位は m・kg・s、形状は cm
+        const SIM = { mass: 0.18, k: 300, c: 0.42, dt: 2e-4, settle: 0.4, T: 4.0, fallCm: 3 };
+        const P_MOTIONS = [
+          [
+            "swing30",
+            "肘を支点に振る（±30°・1.5 Hz）",
+            { type: 2, pivot: [0, 0, 30], axis: [1, 0, 0], amp: 30, hz: 1.5 },
+          ],
+          [
+            "snap30",
+            "手首を返す（±30°・2.5 Hz）",
+            { type: 2, pivot: [0, 0, 0], axis: [0, 1, 0], amp: 30, hz: 2.5 },
+          ],
+          [
+            "shakeY",
+            "上下に揺さぶる（±8 cm・4 Hz）",
+            { type: 1, axis: [0, 1, 0], amp: 0.08, hz: 4 },
+          ],
+          [
+            "shakeX",
+            "左右に揺さぶる（±8 cm・4 Hz）",
+            { type: 1, axis: [1, 0, 0], amp: 0.08, hz: 4 },
+          ],
+          [
+            "shakeZ",
+            "前後に揺さぶる（±8 cm・4 Hz）",
+            { type: 1, axis: [0, 0, 1], amp: 0.08, hz: 4 },
+          ],
+          [
+            "swing",
+            "肘を支点に激しく大振り（±45°・2.5 Hz）",
+            { type: 2, pivot: [0, 0, 30], axis: [1, 0, 0], amp: 45, hz: 2.5 },
+          ],
+          [
+            "snap",
+            "手首を激しくスナップ（±50°・4 Hz）",
+            { type: 2, pivot: [0, 0, 0], axis: [0, 1, 0], amp: 50, hz: 4 },
+          ],
+          ["still", "動かさない", { type: 0, axis: [0, 1, 0], amp: 0, hz: 0 }],
+        ];
+        const P_ORIENTS = [
+          ["up", "普通に構える", 0],
+          ["down", "手のひらを下（本体がぶら下がる）", 90],
+          ["inv", "逆さま", 180],
+        ];
+        const P_FINGERS = [
+          ["grip", "ボタンに指を置いたまま", { index: 0, middle: 0, ring: 0, pinky: 0 }],
+          [
+            "release",
+            "背面ボタンから指を離す",
+            { index: 1.2, middle: 1.2, ring: 0.35, pinky: 0.35 },
+          ],
+        ];
+        const P_MU = [
+          ["0.4", "乾いている（摩擦 0.4）"],
+          ["0.2", "汗ばんでいる（摩擦 0.2）"],
+        ];
+        const fill = (id, list) => {
+          const el = document.getElementById(id);
+          list.forEach(([v, l]) => el.add(new Option(l, v)));
+          return el;
+        };
+        const selMotion = fill("p-motion", P_MOTIONS),
+          selOrient = fill("p-orient", P_ORIENTS),
+          selFingers = fill("p-fingers", P_FINGERS),
+          selMu = fill("p-mu", P_MU);
+        selFingers.value = "release";
+        const pOut = {
+          st: document.getElementById("p-st"),
+          t: document.getElementById("p-t"),
+          off: document.getElementById("p-off"),
+          ang: document.getElementById("p-ang"),
+          be: document.getElementById("p-be"),
+        };
+        const runBtn = document.getElementById("p-run");
+        // 読み上げは「保持」「落下」などの最終結果だけにする
+        const announcer = document.getElementById("p-announce");
+        const showResult = (msg, s) => {
+          pOut.st.textContent = announcer.textContent = msg;
+          pOut.st.dataset.s = s;
+        };
+        const PHYS = { active: false, running: false, ready: false, gpu: null, busy: false };
+
+        const WGSL = /* wgsl */ `
+struct Seg { a: vec4f, d: vec4f, o: vec4f, e: vec4f };
+struct HM { R: vec4f, T: vec3f };
+@group(0) @binding(0) var<uniform> U: array<vec4f, 16>;
+@group(0) @binding(1) var<storage, read> F: array<f32>;
+@group(0) @binding(2) var<storage, read> P: array<vec4f>;
+@group(0) @binding(3) var<storage, read> PN: array<vec2u>;
+@group(0) @binding(4) var<storage, read> SI: array<u32>;
+@group(0) @binding(5) var<storage, read> S: array<Seg>;
+@group(0) @binding(6) var<storage, read_write> A: array<vec4f>;
+@group(0) @binding(7) var<storage, read_write> ST: array<f32, 16>;
+var<workgroup> wx: vec3f; var<workgroup> wv: vec3f; var<workgroup> ww: vec3f; var<workgroup> wq: vec4f;
+var<workgroup> h0: HM; var<workgroup> h1: HM;
+var<workgroup> rF: array<vec3f, 256>; var<workgroup> rT: array<vec3f, 256>;
+const PI = 3.14159265;
+fn qmul(p: vec4f, q: vec4f) -> vec4f { return vec4f(p.w * q.xyz + q.w * p.xyz + cross(p.xyz, q.xyz), p.w * q.w - dot(p.xyz, q.xyz)); }
+fn qrot(q: vec4f, v: vec3f) -> vec3f { let t = 2.0 * cross(q.xyz, v); return v + q.w * t + cross(q.xyz, t); }
+fn qconj(q: vec4f) -> vec4f { return vec4f(-q.xyz, q.w); }
+fn m3(r: u32, v: vec3f) -> vec3f { return vec3f(dot(U[r].xyz, v), dot(U[r + 1u].xyz, v), dot(U[r + 2u].xyz, v)); }
+fn ramp(t: f32) -> f32 { if (t >= 0.5) { return 1.0; } return (1.0 - cos(PI * t / 0.5)) * 0.5; }
+fn motion(tt: f32) -> HM {
+  let t = max(0.0, tt - U[2].w);
+  let typ = u32(U[5].w); let ax = U[6].xyz; let amp = U[6].w; let hz = U[7].w;
+  var R = vec4f(0.0, 0.0, 0.0, 1.0); var T = vec3f(0.0);
+  let s = amp * ramp(t) * sin(2.0 * PI * hz * t);
+  if (typ == 1u) { T = ax * s; }
+  if (typ == 2u) { R = vec4f(ax * sin(s * 0.5), cos(s * 0.5)); T = U[7].xyz - qrot(R, U[7].xyz); }
+  return HM(qmul(U[8], R), qrot(U[8], T));
+}
+fn cell(i: i32, j: i32, k: i32) -> f32 { let n = vec3i(U[5].xyz); return F[i + n.x * (j + n.y * k)]; }
+fn sdf(p: vec3f) -> f32 {
+  let n = vec3f(U[5].xyz);
+  let f = (p - U[4].xyz) / U[3].w;
+  if (any(f < vec3f(0.0)) || any(f >= n - 1.0)) { return 1.0; }
+  let i = vec3i(floor(f)); let a = f - floor(f);
+  let c00 = mix(cell(i.x, i.y, i.z), cell(i.x + 1, i.y, i.z), a.x);
+  let c10 = mix(cell(i.x, i.y + 1, i.z), cell(i.x + 1, i.y + 1, i.z), a.x);
+  let c01 = mix(cell(i.x, i.y, i.z + 1), cell(i.x + 1, i.y, i.z + 1), a.x);
+  let c11 = mix(cell(i.x, i.y + 1, i.z + 1), cell(i.x + 1, i.y + 1, i.z + 1), a.x);
+  return mix(mix(c00, c10, a.y), mix(c01, c11, a.y), a.z);
+}
+fn grad(p: vec3f) -> vec3f {
+  let e = 0.05;
+  let g = vec3f(sdf(p + vec3f(e, 0.0, 0.0)) - sdf(p - vec3f(e, 0.0, 0.0)), sdf(p + vec3f(0.0, e, 0.0)) - sdf(p - vec3f(0.0, e, 0.0)), sdf(p + vec3f(0.0, 0.0, e)) - sdf(p - vec3f(0.0, 0.0, e)));
+  let l = length(g); if (l < 1e-6) { return vec3f(0.0, 1.0, 0.0); } return g / l;
+}
+fn contact(dep: f32, nL: vec3f, qcm: vec3f, slot: u32, vrel: vec3f, q: vec4f) -> vec3f {
+  if (dep <= 0.0) { A[slot] = vec4f(0.0); return vec3f(0.0); }
+  let k = U[1].x; let c = U[1].y; let mu = U[1].z;
+  let n = qrot(q, nL); let vn = dot(vrel, n);
+  let fn_ = max(0.0, k * dep * 0.01 + c * vn);
+  if (fn_ <= 0.0) { A[slot] = vec4f(0.0); return vec3f(0.0); }
+  var a = A[slot]; if (a.w == 0.0) { a = vec4f(qcm, 1.0); }
+  var dl = qcm - a.xyz; dl = dl - nL * dot(dl, nL);
+  var ft = qrot(q, dl) * 0.01 * k;
+  let ftl = length(ft); let lim = mu * fn_;
+  if (ftl > lim) { let s = lim / ftl; ft = ft * s; a = vec4f(qcm - dl * s, 1.0); }
+  A[slot] = a;
+  let vt = vrel - n * vn;
+  return -n * fn_ + ft - vt * c;
+}
+@compute @workgroup_size(256)
+fn main(@builtin(local_invocation_index) tid: u32) {
+  let dt = U[0].x; let nSub = u32(U[0].y); let nP = u32(U[0].z); let t0 = U[0].w;
+  let mass = U[1].w; let g = U[2].xyz; let com = U[3].xyz;
+  if (tid == 0u) { wx = vec3f(ST[0], ST[1], ST[2]); wv = vec3f(ST[3], ST[4], ST[5]); wq = vec4f(ST[6], ST[7], ST[8], ST[9]); ww = vec3f(ST[10], ST[11], ST[12]); }
+  workgroupBarrier();
+  for (var s = 0u; s < nSub; s++) {
+    let t = t0 + f32(s) * dt;
+    if (tid == 0u) { h0 = motion(t); h1 = motion(t + dt); }
+    workgroupBarrier();
+    let x = wx; let v = wv; let w = ww; let q = wq; let qi = qconj(q);
+    var Fa = vec3f(0.0); var Ta = vec3f(0.0);
+    for (var i = tid; i < nP; i += 256u) {
+      let pc = P[i].xyz;
+      let pw = qrot(h0.R, pc) + h0.T; let vh = (qrot(h1.R, pc) + h1.T - pw) / dt;
+      let r = pw - x; let qcm = (qrot(qi, r) + com) / 0.01;
+      let vrel = v + cross(w, r) - vh;
+      let d = sdf(qcm);
+      var nB = vec3f(0.0, 1.0, 0.0); if (d < 0.0) { nB = grad(qcm); }
+      var f = contact(-d, nB, qcm, i * 2u, vrel, q);
+      var bd = 0.0; var bn = vec3f(0.0, 1.0, 0.0);
+      let pn = PN[i];
+      for (var j = pn.x; j < pn.x + pn.y; j++) {
+        let sg = S[SI[j]];
+        let wv2 = qcm - sg.a.xyz; let tt = dot(wv2, sg.d.xyz);
+        if (tt < -0.05 || tt > sg.d.w + 0.05) { continue; }
+        let xx = dot(wv2, sg.e.xyz); let depX = sg.e.w - abs(xx);
+        let depY = dot(wv2, sg.o.xyz) + sg.o.w + sg.a.w;
+        if (depX <= 0.0 || depY <= 0.0 || depY > 2.0) { continue; }
+        var cd = depY; var cn = -sg.o.xyz;
+        if (depX < depY) { cd = depX; cn = sg.e.xyz * select(-1.0, 1.0, xx >= 0.0); }
+        if (bd == 0.0 || cd < bd) { bd = cd; bn = cn; }
+      }
+      f += contact(bd, bn, qcm, i * 2u + 1u, vrel, q);
+      Fa += f; Ta += cross(r, f);
+    }
+    rF[tid] = Fa; rT[tid] = Ta;
+    workgroupBarrier();
+    for (var k = 128u; k > 0u; k >>= 1u) {
+      if (tid < k) { rF[tid] += rF[tid + k]; rT[tid] += rT[tid + k]; }
+      workgroupBarrier();
+    }
+    if (tid == 0u) {
+      let Fs = rF[0] + g * mass; let Ts = rT[0];
+      let nv = v + Fs / mass * dt;
+      let Iw = qrot(q, m3(9u, qrot(qi, w)));
+      let al = qrot(q, m3(12u, qrot(qi, Ts - cross(w, Iw))));
+      let nw = w + al * dt;
+      wv = nv; wx = x + nv * dt; ww = nw;
+      wq = normalize(q + qmul(vec4f(nw * dt * 0.5, 0.0), q));
+    }
+    workgroupBarrier();
+  }
+  if (tid == 0u) {
+    ST[0] = wx.x; ST[1] = wx.y; ST[2] = wx.z; ST[3] = wv.x; ST[4] = wv.y; ST[5] = wv.z;
+    ST[6] = wq.x; ST[7] = wq.y; ST[8] = wq.z; ST[9] = wq.w; ST[10] = ww.x; ST[11] = ww.y; ST[12] = ww.z;
+  }
+}`;
+
+        // 手の動き（CPU 側。表示とずれの計算に使う。シェーダーの motion と同じ式）
+        const Q = THREE.Quaternion;
+        function handMotion(tt, mo, R0) {
+          const t = Math.max(0, tt - SIM.settle),
+            rp = t >= 0.5 ? 1 : (1 - Math.cos((Math.PI * t) / 0.5)) / 2;
+          const s = mo.amp * rp * Math.sin(2 * Math.PI * mo.hz * t);
+          let R = new Q(),
+            T = new V3();
+          if (mo.type === 1) T = new V3(...mo.axis).multiplyScalar(s);
+          if (mo.type === 2) {
+            R = new Q().setFromAxisAngle(new V3(...mo.axis), s);
+            const pv = mo.pivotM;
+            T = pv.clone().sub(pv.clone().applyQuaternion(R));
+          }
+          return { R: R0.clone().multiply(R), T: T.applyQuaternion(R0) };
+        }
+
+        // 準備：形状（距離場・帯）と質量特性は一度だけ求める
+        function physInit(h, skin) {
+          PHYS.h = h;
+          PHYS.skin = skin;
+          const F = lastField,
+            { h: gh, org, nx, ny, nz } = GRID;
+          PHYS.field = F;
+          // 重心と慣性テンソル：距離場の内側を一様な密度とみなす
+          let cnt = 0;
+          const c = new V3();
+          for (let k = 0; k < nz; k++)
+            for (let j = 0; j < ny; j++)
+              for (let i = 0; i < nx; i++)
+                if (F[i + nx * (j + ny * k)] < 0) {
+                  c.x += org.x + i * gh;
+                  c.y += org.y + j * gh;
+                  c.z += org.z + k * gh;
+                  cnt++;
+                }
+          c.multiplyScalar(1 / cnt);
+          const I = new THREE.Matrix3().set(0, 0, 0, 0, 0, 0, 0, 0, 0),
+            e = I.elements,
+            mv = SIM.mass / cnt;
+          for (let k = 0; k < nz; k++)
+            for (let j = 0; j < ny; j++)
+              for (let i = 0; i < nx; i++)
+                if (F[i + nx * (j + ny * k)] < 0) {
+                  const rx = (org.x + i * gh - c.x) * 0.01,
+                    ry = (org.y + j * gh - c.y) * 0.01,
+                    rz = (org.z + k * gh - c.z) * 0.01,
+                    r2 = rx * rx + ry * ry + rz * rz;
+                  e[0] += mv * (r2 - rx * rx);
+                  e[4] += mv * (r2 - ry * ry);
+                  e[8] += mv * (r2 - rz * rz);
+                  e[1] -= mv * rx * ry;
+                  e[2] -= mv * rx * rz;
+                  e[5] -= mv * ry * rz;
+                }
+          e[3] = e[1];
+          e[6] = e[2];
+          e[7] = e[5];
+          PHYS.com = c;
+          PHYS.I = I;
+          PHYS.Iinv = I.clone().invert();
+          PHYS.ready = true;
+          physGPU().then((ok) => {
+            pOut.be.textContent = ok ? "WebGPU" : "このブラウザでは WebGPU が使えません";
+            runBtn.disabled = !ok;
+          });
+        }
+
+        async function physGPU() {
+          if (PHYS.gpu) return true;
+          try {
+            if (!navigator.gpu) return false;
+            const adapter = await navigator.gpu.requestAdapter();
+            if (!adapter) return false;
+            const device = await adapter.requestDevice();
+            const module = device.createShaderModule({ code: WGSL });
+            const info = await module.getCompilationInfo?.();
+            if (info && info.messages.some((m) => m.type === "error")) {
+              console.error(info.messages.map((m) => m.lineNum + ": " + m.message).join("\n"));
+              return false;
+            }
+            const pipeline = device.createComputePipeline({
+              layout: "auto",
+              compute: { module, entryPoint: "main" },
+            });
+            const buf = (size, usage) =>
+              device.createBuffer({ size: Math.max(16, Math.ceil(size / 16) * 16), usage });
+            const SU = GPUBufferUsage;
+            const fieldBuf = buf(PHYS.field.byteLength, SU.STORAGE | SU.COPY_DST);
+            device.queue.writeBuffer(fieldBuf, 0, PHYS.field);
+            PHYS.gpu = {
+              device,
+              pipeline,
+              fieldBuf,
+              uBuf: buf(256, SU.UNIFORM | SU.COPY_DST),
+              stBuf: buf(64, SU.STORAGE | SU.COPY_DST | SU.COPY_SRC),
+              readBuf: buf(64, SU.MAP_READ | SU.COPY_DST),
+            };
+            device.lost.then(() => {
+              PHYS.gpu = null;
+              PHYS.running = false;
+              runBtn.disabled = true;
+              pOut.be.textContent = "WebGPU が止まりました。ページを読み込み直してください";
+            });
+            return true;
+          } catch (err) {
+            console.error(err);
+            return false;
+          }
+        }
+
+        // 指の姿勢を決め、手の表面の点を本体の近くだけ取り出す
+        function poseForSim(h, lifts, thumbOff) {
+          Object.entries(h.fingers).forEach(([k, f]) => {
+            if (!f.rest0) f.rest0 = f.rest;
+            const L = lifts[k] || 0;
+            f.rest = f.rest0.map((q, i) =>
+              q.clone().addScaledVector(f.nrms[i], L * [0, 0.35, 0.8, 1][i]),
+            );
+            f.state = null;
+            poseFinger(f);
+          });
+          h.thumbLift = thumbOff ? 1.4 : 0;
+          h.tilt.rotation.set(0, 0, 0);
+          poseThumb(h);
+        }
+        function restorePose(h) {
+          Object.values(h.fingers).forEach((f) => {
+            if (f.rest0) f.rest = f.rest0;
+          });
+          h.thumbLift = 0;
+        }
+        function bakeHand(h) {
+          h.half.updateMatrixWorld(true);
+          const skin = PHYS.skin,
+            inv = new THREE.Matrix4().copy(h.half.matrixWorld).invert();
+          skin.updateMatrixWorld(true);
+          const pa = skin.geometry.attributes.position,
+            out = [],
+            v = new V3();
+          for (let i = 0; i < pa.count; i++) {
+            skin.applyBoneTransform(i, v.fromBufferAttribute(pa, i));
+            out.push(v.clone().applyMatrix4(skin.matrixWorld).applyMatrix4(inv));
+          }
+          return out;
+        }
+        function segData(useLoop) {
+          const segs = [];
+          const add = (path, outs, en, W, T, gap) => {
+            for (let i = 0; i < path.length - 1; i++) {
+              const d = path[i + 1].clone().sub(path[i]),
+                L = d.length();
+              d.divideScalar(L);
+              segs.push({ a: path[i], d, L, o: outs[i], en, hw: W / 2, ht: T / 2, gap });
+            }
+          };
+          const st = PHYS.h.strapData;
+          add(st.path, st.outs, st.en, STRAP_W, STRAP_T, 0.12);
+          if (useLoop) PHYS.h.loopData.forEach((L) => add(L.path, L.outs, L.en, L.W, L.T, 0));
+          return segs;
+        }
+
+        function physReset() {
+          PHYS.running = false;
+          announcer.textContent = "";
+          runBtn.textContent = "振る";
+          if (PHYS.active) {
+            Object.values(hands).forEach((h) => {
+              restorePose(h);
+              h.half.matrixAutoUpdate = true;
+              h.group.matrixAutoUpdate = true;
+              h.group.matrix.identity();
+              h.half.updateMatrix();
+              h.group.updateMatrix();
+            });
+            PHYS.active = false;
+          }
+          pOut.st.textContent = "—";
+          pOut.st.dataset.s = "";
+          pOut.t.textContent = pOut.off.textContent = pOut.ang.textContent = "—";
+        }
+
+        function physStart() {
+          if (!PHYS.ready || !PHYS.gpu) return;
+          physReset();
+          setDemo(false);
+          const lifts = P_FINGERS.find((f) => f[0] === selFingers.value)[2],
+            thumbOff = document.getElementById("p-thumb").checked;
+          Object.values(hands).forEach((h) => poseForSim(h, lifts, thumbOff));
+          const h = PHYS.h,
+            pts = bakeHand(h);
+          const segs = segData(document.getElementById("p-loop").checked);
+          // 本体か帯の近くにある点だけを使う
+          const sdfCPU = (p) => {
+            const { h: gh, org, nx, ny, nz } = GRID,
+              F = PHYS.field;
+            const fx = (p.x - org.x) / gh,
+              fy = (p.y - org.y) / gh,
+              fz = (p.z - org.z) / gh;
+            if (fx < 0 || fy < 0 || fz < 0 || fx >= nx - 1 || fy >= ny - 1 || fz >= nz - 1)
+              return 1;
+            return F[Math.round(fx) + nx * (Math.round(fy) + ny * Math.round(fz))];
+          };
+          const P = [],
+            PN = [],
+            SI = [];
+          pts.forEach((p) => {
+            const near = [];
+            segs.forEach((sg, si) => {
+              if (p.distanceTo(sg.a) < 3.5) near.push(si);
+            });
+            if (sdfCPU(p) > 1.0 && !near.length) return;
+            PN.push(SI.length, near.length);
+            SI.push(...near);
+            P.push(p.x * 0.01, p.y * 0.01, p.z * 0.01, 0);
+          });
+          const nP = P.length / 4;
+          const Sd = new Float32Array(segs.length * 16);
+          segs.forEach((sg, i) =>
+            Sd.set(
+              [
+                sg.a.x,
+                sg.a.y,
+                sg.a.z,
+                sg.gap,
+                sg.d.x,
+                sg.d.y,
+                sg.d.z,
+                sg.L,
+                sg.o.x,
+                sg.o.y,
+                sg.o.z,
+                sg.ht,
+                sg.en.x,
+                sg.en.y,
+                sg.en.z,
+                sg.hw,
+              ],
+              i * 16,
+            ),
+          );
+          const G = PHYS.gpu,
+            dev = G.device,
+            SU = GPUBufferUsage;
+          const mk = (arr) => {
+            const b = dev.createBuffer({
+              size: Math.max(16, Math.ceil(arr.byteLength / 16) * 16),
+              usage: SU.STORAGE | SU.COPY_DST,
+            });
+            dev.queue.writeBuffer(b, 0, arr);
+            return b;
+          };
+          ["pBuf", "pnBuf", "siBuf", "sBuf", "aBuf"].forEach((k) => G[k] && G[k].destroy());
+          G.pBuf = mk(new Float32Array(P));
+          G.pnBuf = mk(new Uint32Array(PN));
+          G.siBuf = mk(new Uint32Array(SI.length ? SI : [0]));
+          G.sBuf = mk(Sd);
+          G.aBuf = mk(new Float32Array(nP * 2 * 4));
+          G.bind = dev.createBindGroup({
+            layout: G.pipeline.getBindGroupLayout(0),
+            entries: [G.uBuf, G.fieldBuf, G.pBuf, G.pnBuf, G.siBuf, G.sBuf, G.aBuf, G.stBuf].map(
+              (buffer, binding) => ({ binding, resource: { buffer } }),
+            ),
+          });
+          // 振り方・向き・重力（画面の下向きを右手の座標系へ）
+          const mo = { ...P_MOTIONS.find((m) => m[0] === selMotion.value)[2] };
+          mo.amp = mo.type === 2 ? (mo.amp * Math.PI) / 180 : mo.amp;
+          mo.pivotM =
+            mo.type === 2
+              ? h.wristP
+                  .clone()
+                  .add(new V3(...mo.pivot))
+                  .multiplyScalar(0.01)
+              : new V3();
+          const R0 = new Q().setFromAxisAngle(
+            new V3(0, 0, 1),
+            (P_ORIENTS.find((o) => o[0] === selOrient.value)[2] * Math.PI) / 180,
+          );
+          h.half.parent.updateMatrixWorld(true);
+          const rootQ = new Q();
+          h.half.parent.getWorldQuaternion(rootQ);
+          const gL = new V3(0, -9.81, 0).applyQuaternion(rootQ.clone().invert());
+          const comM = PHYS.com.clone().multiplyScalar(0.01),
+            e = PHYS.I.elements,
+            ei = PHYS.Iinv.elements;
+          const U = new Float32Array(64);
+          const setv = (i, a, b, c, d) => U.set([a, b, c, d], i * 4);
+          setv(1, SIM.k, SIM.c, +selMu.value, SIM.mass);
+          setv(2, gL.x, gL.y, gL.z, SIM.settle);
+          setv(3, comM.x, comM.y, comM.z, GRID.h);
+          setv(4, GRID.org.x, GRID.org.y, GRID.org.z, 0);
+          setv(5, GRID.nx, GRID.ny, GRID.nz, mo.type);
+          const ax = new V3(...mo.axis).normalize();
+          setv(6, ax.x, ax.y, ax.z, mo.amp);
+          setv(7, mo.pivotM.x, mo.pivotM.y, mo.pivotM.z, mo.hz);
+          setv(8, R0.x, R0.y, R0.z, R0.w);
+          // Matrix3.elements は列優先。シェーダーには行を渡す
+          for (let r = 0; r < 3; r++) {
+            setv(9 + r, e[r], e[r + 3], e[r + 6], 0);
+            setv(12 + r, ei[r], ei[r + 3], ei[r + 6], 0);
+          }
+          // 初期状態：本体は手の中の静止位置
+          const H0 = handMotion(0, mo, R0);
+          const x0 = comM.clone().applyQuaternion(H0.R).add(H0.T);
+          dev.queue.writeBuffer(
+            G.stBuf,
+            0,
+            new Float32Array([
+              x0.x,
+              x0.y,
+              x0.z,
+              0,
+              0,
+              0,
+              H0.R.x,
+              H0.R.y,
+              H0.R.z,
+              H0.R.w,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+            ]),
+          );
+          Object.assign(PHYS, {
+            U,
+            mo,
+            R0,
+            nP,
+            comM,
+            t: 0,
+            wall: 0,
+            maxOff: 0,
+            maxAng: 0,
+            fellAt: null,
+            x: x0,
+            q: H0.R.clone(),
+            active: true,
+            running: true,
+            busy: false,
+          });
+          Object.values(hands).forEach((hh) => {
+            hh.half.matrixAutoUpdate = false;
+            hh.group.matrixAutoUpdate = false;
+          });
+          runBtn.textContent = "止める";
+          if (matchMedia("(max-width: 760px)").matches)
+            stage.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+          pOut.st.textContent = "振っています";
+          pOut.st.dataset.s = "";
+          applySimPose();
+          // 振りの範囲全体が収まるよう、少し引いた視点へ
+          const tt = mo.type === 2 && mo.pivot[2] > 0 ? new V3(0, -4, 12) : new V3(0, -3.5, 2);
+          const dist = mo.type === 2 && mo.pivot[2] > 0 ? 95 : 62;
+          if (!reduce)
+            tween = {
+              from: camera.position.clone().sub(controls.target),
+              to: new V3(-0.62, 0.32, 0.72).normalize().multiplyScalar(dist),
+              t: 0,
+              tf: controls.target.clone(),
+              tt,
+            };
+          else {
+            controls.target.copy(tt);
+            camera.position
+              .copy(tt)
+              .add(new V3(-0.62, 0.32, 0.72).normalize().multiplyScalar(dist));
+          }
+        }
+
+        const mBody = new THREE.Matrix4(),
+          mHand = new THREE.Matrix4(),
+          mTmp = new THREE.Matrix4(),
+          MIR = new THREE.Matrix4().makeScale(-1, 1, 1);
+        function applySimPose() {
+          // 本体：p_world(m) = q (p_b − 重心) + x。表示の単位は cm
+          const comCm = PHYS.com;
+          mBody
+            .compose(PHYS.x.clone().multiplyScalar(100), PHYS.q, new V3(1, 1, 1))
+            .multiply(mTmp.makeTranslation(-comCm.x, -comCm.y, -comCm.z));
+          const H = handMotion(PHYS.t, PHYS.mo, PHYS.R0);
+          mHand.compose(H.T.clone().multiplyScalar(100), H.R, new V3(1, 1, 1));
+          const handInBody = mBody.clone().invert().multiply(mHand);
+          Object.values(hands).forEach((h) => {
+            h.half.matrix.copy(h === hands.L ? MIR.clone().multiply(mBody) : mBody);
+            h.group.matrix.copy(handInBody);
+          });
+          // 手に対する本体のずれ（重心）と傾き
+          const rel = PHYS.x.clone().sub(H.T).applyQuaternion(H.R.clone().invert()).sub(PHYS.comM);
+          const relQ = H.R.clone().invert().multiply(PHYS.q);
+          const off = rel.length() * 100,
+            ang = (2 * Math.acos(Math.min(1, Math.abs(relQ.w))) * 180) / Math.PI;
+          if (PHYS.t > SIM.settle) {
+            PHYS.maxOff = Math.max(PHYS.maxOff, off);
+            PHYS.maxAng = Math.max(PHYS.maxAng, ang);
+          }
+          if (PHYS.fellAt === null && off > SIM.fallCm) {
+            PHYS.fellAt = Math.max(0, PHYS.t - SIM.settle);
+            showResult(`落下（${PHYS.fellAt.toFixed(2)} 秒後）`, "fall");
+          }
+          const shownT = Math.max(0, PHYS.t - SIM.settle);
+          pOut.t.textContent = `${shownT.toFixed(2)} s / ${SIM.T.toFixed(1)} s`;
+          pOut.off.textContent = `${(off * 10).toFixed(1)} mm（最大 ${(PHYS.maxOff * 10).toFixed(1)}）`;
+          pOut.ang.textContent = `${ang.toFixed(1)}°（最大 ${PHYS.maxAng.toFixed(1)}°）`;
+          nowAct.textContent =
+            PHYS.fellAt !== null
+              ? "本体が手から外れました"
+              : `${selMotion.selectedOptions[0].text}`;
+        }
+
+        async function physStep(dt) {
+          const G = PHYS.gpu;
+          // 描画 1 フレーム分の時間を進める（ただし 1 回の dispatch は最大 0.02 s）
+          const nSub = Math.max(1, Math.min(100, Math.round(dt / SIM.dt)));
+          PHYS.U.set([SIM.dt, nSub, PHYS.nP, PHYS.t], 0);
+          G.device.queue.writeBuffer(G.uBuf, 0, PHYS.U);
+          const enc = G.device.createCommandEncoder();
+          const pass = enc.beginComputePass();
+          pass.setPipeline(G.pipeline);
+          pass.setBindGroup(0, G.bind);
+          pass.dispatchWorkgroups(1);
+          pass.end();
+          enc.copyBufferToBuffer(G.stBuf, 0, G.readBuf, 0, 64);
+          G.device.queue.submit([enc.finish()]);
+          await G.readBuf.mapAsync(GPUMapMode.READ);
+          const r = new Float32Array(G.readBuf.getMappedRange().slice(0));
+          G.readBuf.unmap();
+          if (!PHYS.active) return;
+          PHYS.t += nSub * SIM.dt;
+          PHYS.x.set(r[0], r[1], r[2]);
+          PHYS.q.set(r[6], r[7], r[8], r[9]);
+          if (![r[0], r[1], r[2], r[6]].every(Number.isFinite)) {
+            PHYS.running = false;
+            showResult("計算が発散しました", pOut.st.dataset.s);
+            return;
+          }
+        }
+
+        function physFrame(dt) {
+          if (!PHYS.active) return;
+          if (PHYS.running && !PHYS.busy) {
+            PHYS.busy = true;
+            physStep(dt)
+              .then(() => {
+                PHYS.busy = false;
+                if (!PHYS.active) return;
+                const end =
+                  PHYS.fellAt !== null ? PHYS.fellAt + SIM.settle + 0.35 : SIM.settle + SIM.T;
+                if (PHYS.t >= end) {
+                  PHYS.running = false;
+                  runBtn.textContent = "もう一度振る";
+                  if (PHYS.fellAt === null) showResult(`保持（${SIM.T} 秒間）`, "hold");
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+                PHYS.busy = false;
+                PHYS.running = false;
+              });
+          }
+          applySimPose();
+        }
+
+        runBtn.addEventListener("click", () => {
+          if (PHYS.running) {
+            PHYS.running = false;
+            runBtn.textContent = "続ける";
+            return;
+          }
+          if (PHYS.active && runBtn.textContent === "続ける") {
+            PHYS.running = true;
+            runBtn.textContent = "止める";
+            return;
+          }
+          physStart();
+        });
+        document.getElementById("p-reset").addEventListener("click", physReset);
+        [selMotion, selOrient, selFingers, selMu, document.getElementById("p-thumb")].forEach(
+          (el) => el.addEventListener("change", physReset),
+        );
+        runBtn.disabled = true;
+        pOut.be.textContent = "形状を計算しています";
+
+        // ---- loop ----
+        function resize() {
+          const w = stage.clientWidth,
+            h = stage.clientHeight;
+          renderer.setSize(w, h, false);
+          renderer.domElement.style.width = w + "px";
+          renderer.domElement.style.height = h + "px";
+          labelRenderer.setSize(w, h);
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+        }
+        new ResizeObserver(resize).observe(stage);
+        resize();
+
+        const clock = new THREE.Timer(),
+          tmpN = new V3(),
+          tmpP = new V3(),
+          toCam = new V3(),
+          nm = new THREE.Matrix3();
+        function frame(dt) {
+          if (tween) {
+            tween.t = Math.min(1, tween.t + dt * 1.6);
+            const k = 1 - Math.pow(1 - tween.t, 3);
+            // 対象のまわりを回り込む（直線で結ぶと途中で手の中を突き抜ける）
+            controls.target.lerpVectors(tween.tf, tween.tt || TARGET, k);
+            const r = THREE.MathUtils.lerp(tween.from.length(), tween.to.length(), k);
+            const a = tween.from.clone().normalize(),
+              b = tween.to.clone().normalize();
+            const q = new THREE.Quaternion().setFromUnitVectors(a, b),
+              q0 = new THREE.Quaternion();
+            camera.position
+              .copy(a.applyQuaternion(q0.slerp(q, k)).multiplyScalar(r))
+              .add(controls.target);
+            if (tween.t >= 1) tween = null;
+          }
+          controls.update();
+
+          clock2 += dt;
+          if (demo) {
+            demoT += dt;
+            const idx = Math.floor(demoT / STEP);
+            if (idx !== demoIdx) {
+              demoIdx = idx;
+              const step = SEQ[idx % SEQ.length].map((id) => byId[id]);
+              step.forEach((b) => press(b, false));
+              nowAct.textContent = step
+                .map((b) => `${SIDE_NAME[b.side]}${FNAME[b.finger]}・${b.where} → ${b.name}`)
+                .join("　＋　");
+            }
+          }
+          const t = clock2;
+          const goal =
+            demo && !PHYS.active
+              ? {
+                  L: { x: 0.3 * Math.sin(t * 1.1), z: 0.28 * Math.sin(t * 0.8 + 1) },
+                  R: { x: 0.2 * Math.sin(t * 1.9 + 0.5), z: 0.26 * Math.sin(t * 1.3) },
+                }
+              : { L: { x: 0, z: 0 }, R: { x: 0, z: 0 } };
+          ["L", "R"].forEach((s) => {
+            const c = stickTilt[s],
+              g = goal[s],
+              e = 1 - Math.exp(-dt * 8);
+            c.x += (g.x - c.x) * e;
+            c.z += (g.z - c.z) * e;
+          });
+
+          buttons.forEach((b) => {
+            if (b.t > 0) b.t = Math.max(0, b.t - dt * 2.5);
+            const k = Math.sin(b.t * Math.PI);
+            if (b.stick) {
+              const c = stickTilt[b.side];
+              b.press.rotation.set(c.x + k * 0.3, 0, c.z + k * 0.2);
+            } else b.press.position.copy(b.dir).multiplyScalar(-0.16 * k);
+          });
+          if (!PHYS.active)
+            Object.values(hands).forEach((h) => {
+              Object.values(h.fingers).forEach((f) => {
+                if (f.state) {
+                  f.state.t -= dt * 2.5;
+                  if (f.state.t <= 0) f.state = null;
+                }
+                poseFinger(f);
+              });
+              poseThumb(h);
+            });
+          physFrame(dt);
+
+          FINGERS.forEach((f) => {
+            const glow = flash && flash.f === f ? flash.t * 0.5 : 0;
+            const hov = hovered && hovered.finger === f ? 0.12 : 0;
+            mat.finger[f].emissive.copy(mat.finger[f].color).multiplyScalar(glow + hov);
+          });
+          if (flash) {
+            flash.t -= dt * 1.2;
+            if (flash.t <= 0) flash = null;
+          }
+          labels.forEach((o) => {
+            o.getWorldPosition(tmpP);
+            nm.getNormalMatrix(o.parent.matrixWorld);
+            tmpN.copy(o.userData.nrm).applyMatrix3(nm).normalize();
+            toCam.copy(camera.position).sub(tmpP).normalize();
+            o.element.classList.toggle("away", tmpN.dot(toCam) < -0.1);
+          });
+          renderer.render(scene, camera);
+          labelRenderer.render(scene, camera);
+        }
+        renderer.setAnimationLoop((now) => {
+          clock.update(now);
+          frame(Math.min(clock.getDelta(), 0.05));
+        });
+      })();
+    </script>
+  </body>
+</html>

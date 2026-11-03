@@ -6,7 +6,7 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 
 - サイト: https://masseater.dev
 - Sloppedia: https://masseater.dev/sloppedia/
-- 夕景カット撮影ラボ: https://masseater.dev/satsuei-lab/
+- 単体のページ: https://masseater.dev/satsuei-lab/（夕景カット撮影ラボ）、https://masseater.dev/split-pad/（背面打ちスプリットパッド）
 - サムネのモザイクアート: https://masseater.dev/mosaic/ （キャラごとのページは `libs/mosaic/src/characters.json` の slug で `/mosaic/<slug>`）
 - RSS: https://masseater.dev/feed.xml
 - Zenn: https://zenn.dev/masseater
