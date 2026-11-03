@@ -39,10 +39,10 @@ const STAGE_GAP = 1400;
 const HOP_GAP = 600;
 
 const stages: readonly Stage[] = [
-  { id: "own", label: "当事者の店が止まる", rows: 2 },
-  { id: "partner", label: "取引先が止まる", rows: 2 },
-  { id: "competitor", label: "取引のない競合が止まる", rows: 1 },
-  { id: "world", label: "世界中が止まる", rows: 3 },
+  { id: "own", label: "当事者の店", rows: 2 },
+  { id: "partner", label: "取引先", rows: 2 },
+  { id: "competitor", label: "取引のない競合", rows: 1 },
+  { id: "world", label: "世界中", rows: 3 },
 ];
 
 const cascadeNodes: readonly CascadeNode[] = [
@@ -59,7 +59,7 @@ const cascadeNodes: readonly CascadeNode[] = [
   {
     id: "kfc",
     label: "KFC の全店舗",
-    detail: "食材が届かない",
+    detail: "",
     stage: "own",
     column: "right",
     row: 1,
@@ -109,7 +109,7 @@ const cascadeNodes: readonly CascadeNode[] = [
   {
     id: "hospital",
     label: "病院・航空・銀行",
-    detail: "世界中",
+    detail: "",
     stage: "world",
     column: "right",
     row: 1,
@@ -125,7 +125,7 @@ const cascadeNodes: readonly CascadeNode[] = [
   {
     id: "services",
     label: "その上のサービス",
-    detail: "全部",
+    detail: "",
     stage: "world",
     column: "right",
     row: 2,
