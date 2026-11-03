@@ -7,7 +7,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "test": "vp test run"
+    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache"
   },
   "dependencies": {
     "effect": "catalog:stack"
