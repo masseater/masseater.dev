@@ -1,7 +1,6 @@
 import {
   CloudflareEnvironment,
   D1,
-  KV,
   SecretsStore,
   Website,
   Workers,
@@ -100,7 +99,7 @@ const credentialBroker = Effect.gen(function* credentialBroker() {
     name: `${PREFIX}ci-claude-code-oauth-token`,
     value: yield* Config.Redacted("CLAUDE_CODE_OAUTH_TOKEN"),
   });
-  const GITHUB_APP = yield* KV.Namespace("GitHubApp", { title: `${PREFIX}github-app` });
+  const GITHUB_APP = yield* D1.Database("GitHubApp", { migrations: "./github-app-migrations" });
   const GRANTS = yield* Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown))(
     grantPolicies({ accountId, zoneId }),
   ).pipe(Effect.orDie);
