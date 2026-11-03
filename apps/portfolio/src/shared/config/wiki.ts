@@ -1,13 +1,20 @@
 import { portfolio } from "@masseater.dev/ui/portfolio";
+import { defineSloppedia, githubSource } from "sloppedia";
 
-const REPOSITORY = "https://github.com/masseater/masseater.dev";
-const CONTENT_DIRECTORY = "apps/portfolio/content/sloppedia";
+import { SloppediaLink } from "#/shared/ui";
 
-const wiki = {
+import { site } from "./site";
+
+const wiki = defineSloppedia({
   name: portfolio.sections.sloppedia,
   tagline: "趣味嗜好に偏った個人の百科事典もどき",
-  sourceOf: (slug: string): string => `${REPOSITORY}/blob/main/${CONTENT_DIRECTORY}/${slug}.md`,
-  historyOf: (slug: string): string => `${REPOSITORY}/commits/main/${CONTENT_DIRECTORY}/${slug}.md`,
-} as const;
+  basePath: "/sloppedia",
+  home: { label: site.name, href: "/" },
+  link: SloppediaLink,
+  ...githubSource({
+    repository: "https://github.com/masseater/masseater.dev",
+    directory: "apps/portfolio/content/sloppedia",
+  }),
+});
 
 export { wiki };

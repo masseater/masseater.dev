@@ -1,15 +1,11 @@
 import { Effect } from "effect";
 
 import { collectionOf, foundOrNotFound } from "#/entities/entry";
-import { categoriesOf } from "#/pages/wiki-categories/model/categories";
-import type { WikiCategory } from "#/pages/wiki-categories/model/categories";
+import type { CollectionResult } from "#/entities/entry";
 
-const loadCategories = (): Promise<readonly WikiCategory[]> =>
-  Effect.runPromise(
-    collectionOf("sloppedia").pipe(
-      Effect.flatMap(foundOrNotFound),
-      Effect.map(({ entries }) => categoriesOf(entries)),
-    ),
-  );
+type FoundCategories = Extract<CollectionResult, Readonly<{ status: "found" }>>;
+
+const loadCategories = (): Promise<FoundCategories> =>
+  Effect.runPromise(collectionOf("sloppedia").pipe(Effect.flatMap(foundOrNotFound)));
 
 export { loadCategories };

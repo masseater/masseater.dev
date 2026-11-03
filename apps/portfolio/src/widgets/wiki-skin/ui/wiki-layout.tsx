@@ -1,13 +1,13 @@
 import { Outlet } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { WikiLayout as SloppediaLayout } from "sloppedia";
 
-import { WikiHeader } from "./wiki-header";
+import { wiki } from "#/shared/config";
 
 const WikiLayout = (): ReactNode => (
-  <div className="bg-wiki-paper text-wiki-text flex min-h-dvh flex-col font-sans">
-    <WikiHeader />
+  <SloppediaLayout config={wiki}>
     <Outlet />
-  </div>
+  </SloppediaLayout>
 );
 
 export { WikiLayout };
