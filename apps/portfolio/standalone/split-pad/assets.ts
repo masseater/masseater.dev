@@ -1,8 +1,3 @@
-import { Array as Arr, pipe } from "effect";
-import { viteStaticCopy } from "vite-plugin-static-copy";
-import type { Target } from "vite-plugin-static-copy";
-import type { Plugin } from "vite-plus";
-
 const three = new URL("../", import.meta.resolve("three")).href;
 const d3Polygon = new URL("../", import.meta.resolve("d3-polygon")).href;
 const d3Array = new URL("../", import.meta.resolve("d3-array")).href;
@@ -10,7 +5,7 @@ const internmap = new URL("../", import.meta.resolve("internmap")).href;
 const handProfiles = new URL("./", import.meta.resolve("@webxr-input-profiles/assets/package.json"))
   .href;
 
-const files = [
+const splitPadFiles = [
   [three, "examples/jsm/controls/OrbitControls.js", "three/examples/jsm/controls"],
   [three, "examples/jsm/renderers/CSS2DRenderer.js", "three/examples/jsm/renderers"],
   [three, "examples/jsm/loaders/GLTFLoader.js", "three/examples/jsm/loaders"],
@@ -28,14 +23,4 @@ const files = [
   ],
 ] as const;
 
-const splitPadAssets = (
-  copy: (entry: readonly [root: string, file: string, dest: string]) => Target,
-): readonly Plugin[] =>
-  viteStaticCopy({
-    targets: pipe(
-      files,
-      Arr.map((entry) => copy(entry)),
-    ),
-  });
-
-export { splitPadAssets };
+export { splitPadFiles };
