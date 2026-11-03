@@ -90,6 +90,7 @@
     "unified": "catalog:",
     "vfile": "catalog:",
     "vite": "catalog:",
+    "vite-plugin-static-copy": "catalog:",
     "vite-plus": "catalog:stack",
     "yaml": "catalog:"
   }
