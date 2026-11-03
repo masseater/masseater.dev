@@ -257,6 +257,9 @@ catalogs:
     '@webgpu/types':
       specifier: 0.1.74
       version: 0.1.74
+    '@webxr-input-profiles/assets':
+      specifier: 1.0.20
+      version: 1.0.20
     '@xyflow/react':
       specifier: 12.12.1
       version: 12.12.1
@@ -338,6 +341,9 @@ catalogs:
     syncpack:
       specifier: 15.3.3
       version: 15.3.3
+    three:
+      specifier: 0.187.0
+      version: 0.187.0
     unified:
       specifier: 11.0.5
       version: 11.0.5
@@ -828,6 +834,9 @@ importers:
       '@webgpu/types':
         specifier: 'catalog:'
         version: 0.1.74
+      '@webxr-input-profiles/assets':
+        specifier: 'catalog:'
+        version: 1.0.20
       alchemy:
         specifier: catalog:stack
         version: 2.0.0-beta.85(@effect/platform-node@4.1.1(effect@4.1.1)(redis@6.2.1(@opentelemetry/api@1.9.1)))(@types/node@26.6.6)(@types/react@19.3.0)(effect@4.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@7.1.0-beta)(ws@8.22.0)
@@ -876,6 +885,9 @@ importers:
       steiger:
         specifier: catalog:stack
         version: 0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)
+      three:
+        specifier: 'catalog:'
+        version: 0.187.0
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -5943,6 +5955,9 @@ packages:
   '@webgpu/types@0.1.74':
     resolution: {integrity: sha512-lgiI4hbuLcI9unnm2cL/tvCaQU45dp0xcLWJh5uB/9MBGvIA4F8XIk7nSiBeg+K4xWGYwgZKn80LmERI5CxoTA==}
 
+  '@webxr-input-profiles/assets@1.0.20':
+    resolution: {integrity: sha512-V/8NB4Ywgm//TBVMgo0TgJ9DtxsBoo0iiaF8AdfiP0F0cgbwkuQycEZAIOsplyd/iZ8L3mrFYNJBC6rzQb4tJA==}
+
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
 
@@ -10164,6 +10179,9 @@ packages:
     resolution: {integrity: sha512-3xE8MknztkpEC5MYDO1lXhUDXx+uq45gdvZB16Xh80rX148NgUehSyWCc5ir2SBW0KVpzRRgU3EWAJZqsBfqtA==}
     engines: {node: '>=20.18.0'}
     hasBin: true
+
+  three@0.187.0:
+    resolution: {integrity: sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==}
 
   tiny-inflate@1.0.3:
     resolution: {integrity: sha512-pkY1fj1cKHb2seWDy0B16HeWyczlJA9/WW3u3c4z/NiWDsO3DOU5D7nhTLE9CF0yXv/QZFY7sEJmj24dK+Rrqw==}
@@ -16331,6 +16349,8 @@ snapshots:
 
   '@webgpu/types@0.1.74': {}
 
+  '@webxr-input-profiles/assets@1.0.20': {}
+
   '@xtuc/ieee754@1.2.0':
     optional: true
 
@@ -21703,6 +21723,8 @@ snapshots:
       zod: 4.6.7
     transitivePeerDependencies:
       - supports-color
+
+  three@0.187.0: {}
 
   tiny-inflate@1.0.3: {}
 
