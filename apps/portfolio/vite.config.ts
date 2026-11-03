@@ -5,8 +5,8 @@ import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import { defineConfig } from "vite-plus";
 
+import { clientAssets } from "./client-assets.ts";
 import mdx from "./mdx.config.ts";
-import { ogImage } from "./og-image.ts";
 import { pages, sitemap, withLastmod } from "./prerender.ts";
 import { seikinTechniques } from "./seikin-techniques.ts";
 
@@ -23,7 +23,7 @@ export default defineConfig({
     ...seikinTechniques(),
     mdx,
     tailwindcss(),
-    ogImage(),
+    ...clientAssets(),
     tanstackStart({
       srcDirectory: "src/app",
       rsc: { enabled: true },
