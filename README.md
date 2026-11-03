@@ -6,6 +6,7 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 
 - サイト: https://masseater.dev
 - Sloppedia: https://masseater.dev/sloppedia/
+- 夕景カット撮影ラボ: https://masseater.dev/satsuei-lab/
 - RSS: https://masseater.dev/feed.xml
 - Zenn: https://zenn.dev/masseater
 
@@ -33,13 +34,11 @@ main に入ると、verify が通ったあとに本番へデプロイされる�
 ## Zenn に出す
 
 Zenn の記事は `apps/zenn-articles/articles/`、本は `books/`、画像は `images/` に置く。
-main の verify が通ると、中身が `zenn` ブランチの直下へ写され、Zenn がそのブランチから取り込む。
-masseater.dev のサイトには表示されない。
+main の verify が通ると Zenn に公開される。masseater.dev のサイトには載らない。
 
 ## 手元で確かめる
 
-前提として、Vite+ の `vp` と Cloudflare のアカウントが要る。
-Cloudflare の認証情報は Alchemy のプロファイルに入れる。
+前提は Vite+ の `vp` と Cloudflare のアカウントである。
 
 ```sh
 vp install
@@ -50,9 +49,9 @@ vp run dev
 ```
 
 `.env` の `OPENROUTER_API_KEY` には、`vp check` の判定に使う OpenRouter のキーを書く。
-開発サーバーが表示する URL を開き、書いた記事がカテゴリの一覧に出れば確かめは終わる。
 
 ## 最初に一度だけ行う設定
 
-- GitHub の secrets とルールセットは、[masseater/skills](https://github.com/masseater/skills) の `project-checklist` スキルの setup の手順で入れる
-- Zenn の GitHub 連携では、デプロイ対象のブランチを `zenn` にする
+GitHub の secrets とルールセットは、[masseater/skills](https://github.com/masseater/skills) の
+`project-checklist` スキルの setup の手順で入れる。
+Zenn の GitHub 連携では、デプロイ対象のブランチを `zenn` にする。

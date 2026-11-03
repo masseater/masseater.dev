@@ -14,6 +14,7 @@
     "prepare": "effect-tsgo patch --typescript --oxlint",
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
     "deploy": "alchemy deploy",
+    "deploy:github": "alchemy deploy --config alchemy.github.ts --stage prod --yes",
     "tokens": "vpx cloudflare-tokens.ts",
     "destroy": "alchemy destroy",
     "db:generate": "drizzle-kit generate",
@@ -21,9 +22,11 @@
   },
   "dependencies": {
     "@distilled.cloud/cloudflare": "catalog:stack",
+    "@distilled.cloud/github": "catalog:",
     "@effect/atom-react": "catalog:stack",
     "@elysiajs/eden": "catalog:stack",
     "@masseater.dev/ui": "workspace:*",
+    "@octokit/rest": "catalog:",
     "@tailwindcss/typography": "catalog:",
     "@tanstack/react-devtools": "0.10.14",
     "@tanstack/react-query": "catalog:stack",
@@ -42,10 +45,12 @@
     "react-dom": "19.3.1",
     "react-lite-youtube-embed": "catalog:",
     "scheduler": "0.28.0",
-    "tailwindcss": "catalog:stack"
+    "tailwindcss": "catalog:stack",
+    "universal-github-app-jwt": "catalog:"
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
+    "@alchemy.run/github": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.1",
