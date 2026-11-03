@@ -1,16 +1,28 @@
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import { categories, categoryPath } from "./src/entities/entry/model/category.ts";
+import { categories, categoryMeta, categoryPath } from "./src/entities/entry/model/category.ts";
 import { site } from "./src/shared/config/site.ts";
 
 const MODIFIED_TIME = /<meta property="article:modified_time" content="(?<date>[^"]+)"/u;
 
-type Page = Readonly<{ sitemap?: Readonly<Record<string, unknown>> | undefined }>;
+type Page = Readonly<{ path: string; sitemap?: Readonly<Record<string, unknown>> | undefined }>;
 
 const categoryPaths = pipe(
   categories,
   Arr.map((category) => categoryPath(category)),
 );
+
+const unindexedPaths = pipe(
+  categories,
+  Arr.filter((category) => categoryMeta[category].robots === "noindex"),
+  Arr.map((category) => categoryPath(category)),
+);
+
+const isUnindexed = ({ path }: Page): boolean =>
+  pipe(
+    unindexedPaths,
+    Arr.some((prefix) => path === prefix || Str.startsWith(`${prefix}/`)(path)),
+  );
 
 const pages = [
   ...pipe(
@@ -35,12 +47,16 @@ const modifiedTime = (html: string): Option.Option<string> =>
     Option.flatMap((groups) => Rec.get(groups, "date")),
   );
 
-const withLastmod = ({ page, html }: Readonly<{ page: Page; html: string }>): Page | undefined =>
-  pipe(
+const withLastmod = ({ page, html }: Readonly<{ page: Page; html: string }>): Page | undefined => {
+  if (isUnindexed(page)) {
+    return { ...page, sitemap: { ...page.sitemap, exclude: true } };
+  }
+  return pipe(
     modifiedTime(html),
     Option.map((lastmod) => ({ ...page, sitemap: { ...page.sitemap, lastmod } })),
     Option.getOrUndefined,
   );
+};
 
 const sitemap = { host: site.url, outputPath: site.sitemapFile } as const;
 

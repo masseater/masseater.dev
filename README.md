@@ -5,23 +5,25 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 ## 公開先
 
 - サイト: https://masseater.dev
+- Sloppedia: https://masseater.dev/sloppedia/
 - RSS: https://masseater.dev/feed.xml
 - Zenn: https://zenn.dev/masseater
 
 ## 記事を書く
 
 記事は `apps/portfolio/content/<カテゴリ>/<slug>.md` に置くと、`https://masseater.dev/<カテゴリ>/<slug>` で公開される。
-カテゴリは、作ったものを載せる `projects`、まとまった文章の `blogs`、短いメモの `scraps` から選ぶ。
+カテゴリは、作ったものを載せる `projects`、まとまった文章の `blogs`、百科事典もどきの `sloppedia` から選ぶ。
 
 先頭の frontmatter には次を書く。
 
 ```yaml
 title: タイトル
 description: 一覧と OGP に出す説明
-date: 2026-10-12
 tags: [tag]
 published: true
 ```
+
+`sloppedia` の記事では `tags` がカテゴリになり、`infobox` に `label`・`value`・`href` の並びを書くと記事の右に情報の表が出る。
 
 `published: false` にした記事は、開発サーバーでだけ表示される。
 画像は `apps/portfolio/public/` に置く。

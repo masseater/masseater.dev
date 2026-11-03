@@ -26,6 +26,15 @@
   --input: oklch(0.92 0.004 286.32);
   --ring: oklch(0.705 0.015 286.067);
   --radius: 0.625rem;
+  --wiki-paper: oklch(1 0 0);
+  --wiki-text: oklch(0.233 0.003 247.9);
+  --wiki-subtle: oklch(0.446 0.009 248.3);
+  --wiki-link: oklch(0.533 0.152 262.2);
+  --wiki-link-visited: oklch(0.509 0.136 296.3);
+  --wiki-border: oklch(0.727 0.013 250.6);
+  --wiki-divider: oklch(0.836 0.008 252.3);
+  --wiki-surface: oklch(0.982 0.002 247.8);
+  --wiki-chrome: oklch(0.944 0.006 255.5);
 }
 
 .dark {
@@ -68,6 +77,15 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-wiki-paper: var(--wiki-paper);
+  --color-wiki-text: var(--wiki-text);
+  --color-wiki-subtle: var(--wiki-subtle);
+  --color-wiki-link: var(--wiki-link);
+  --color-wiki-link-visited: var(--wiki-link-visited);
+  --color-wiki-border: var(--wiki-border);
+  --color-wiki-divider: var(--wiki-divider);
+  --color-wiki-surface: var(--wiki-surface);
+  --color-wiki-chrome: var(--wiki-chrome);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -119,6 +137,80 @@
 }
 [data-footnotes] li > p {
   @apply my-0;
+}
+
+.wiki-prose {
+  @apply text-wiki-text text-base leading-relaxed;
+}
+.wiki-prose :where(a) {
+  @apply text-wiki-link visited:text-wiki-link-visited hover:underline;
+}
+.wiki-prose :where(p) {
+  @apply my-3;
+}
+.wiki-prose :where(h2) {
+  @apply border-wiki-border mt-8 mb-3 overflow-hidden border-b pb-1 font-serif text-2xl font-normal;
+}
+.wiki-prose :where(h3) {
+  @apply mt-6 mb-2 overflow-hidden text-lg font-bold;
+}
+.wiki-prose :where(h4) {
+  @apply mt-4 mb-2 overflow-hidden font-bold;
+}
+.wiki-prose :where(ul) {
+  @apply my-3 list-disc ps-6;
+}
+.wiki-prose :where(ol) {
+  @apply my-3 list-decimal ps-6;
+}
+.wiki-prose :where(li) {
+  @apply my-1;
+}
+.wiki-prose :where(blockquote) {
+  @apply border-wiki-divider my-4 border-s-4 ps-4;
+}
+.wiki-prose :where(code) {
+  @apply bg-wiki-surface border-wiki-chrome rounded-sm border px-1 font-mono text-sm;
+}
+.wiki-prose :where(pre) {
+  @apply bg-wiki-surface border-wiki-chrome my-4 overflow-x-auto border p-4 text-sm;
+}
+.wiki-prose :where(pre code) {
+  @apply border-0 bg-transparent p-0;
+}
+.wiki-prose :where(table) {
+  @apply bg-wiki-surface border-wiki-border my-4 border-collapse border text-sm;
+}
+.wiki-prose :where(th) {
+  @apply bg-wiki-chrome border-wiki-border border px-2 py-1 text-center font-bold;
+}
+.wiki-prose :where(td) {
+  @apply border-wiki-border border px-2 py-1;
+}
+.wiki-prose :where(sup) {
+  @apply text-xs leading-none;
+}
+.wiki-prose :where(img) {
+  @apply border-wiki-divider my-4 max-w-full border;
+}
+.wiki-prose sup::before {
+  content: "[";
+}
+.wiki-prose sup::after {
+  content: "]";
+}
+.wiki-prose [data-footnotes] sup::before,
+.wiki-prose [data-footnotes] sup::after {
+  content: none;
+}
+.wiki-prose [data-footnote-backref] ~ [data-footnote-backref] {
+  @apply hidden;
+}
+.wiki-prose [data-footnotes] {
+  @apply text-wiki-text mt-8 text-sm;
+}
+.wiki-prose [data-footnotes] > h2 {
+  @apply text-wiki-text mt-8 mb-3 font-serif text-2xl font-normal tracking-normal;
 }
 
 @utility hover-card-beside-trigger {
@@ -184,8 +276,8 @@
   view-transition-name: category-blogs;
 }
 
-@utility vt-category-scraps {
-  view-transition-name: category-scraps;
+@utility vt-category-sloppedia {
+  view-transition-name: category-sloppedia;
 }
 
 @utility vt-feed {
@@ -283,7 +375,7 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 ::view-transition-group(nav-indicator),
 ::view-transition-group(category-projects),
 ::view-transition-group(category-blogs),
-::view-transition-group(category-scraps) {
+::view-transition-group(category-sloppedia) {
   z-index: 2;
 }
 

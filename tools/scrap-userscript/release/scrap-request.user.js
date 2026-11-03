@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Scrap request to Claude
 // @namespace    https://masseater.dev
-// @version      1.2.1
-// @description  閲覧中のページを masseater.dev の scrap にするよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用
+// @version      1.3.0
+// @description  閲覧中のページについて masseater.dev の Sloppedia に記事を書くよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用
 // @homepageURL  https://github.com/masseater/masseater.dev/tree/main/tools/scrap-userscript
 // @match        *://*/*
 // @connect      personal.masseater.dev
@@ -3372,7 +3372,7 @@ output { display: block; margin-top: 0.75rem; white-space: pre-wrap; }
 	};
 	var buildDialog = () => {
 		const form = createForm();
-		const send = button("scrap にする");
+		const send = button("記事にする");
 		const close = button("閉じる");
 		const output = document.createElement("output");
 		const dialog = document.createElement("dialog");
@@ -3396,5 +3396,5 @@ output { display: block; margin-top: 0.75rem; white-space: pre-wrap; }
 		document.body.append(host);
 		dialog.showModal();
 	};
-	runFork(promise(() => Promise.resolve(_GM.registerMenuCommand("このページを scrap にする", openPanel))));
+	runFork(promise(() => Promise.resolve(_GM.registerMenuCommand("このページを Sloppedia の記事にする", openPanel))));
 })();

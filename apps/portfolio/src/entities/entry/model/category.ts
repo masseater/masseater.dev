@@ -1,13 +1,15 @@
 import { portfolio } from "@masseater.dev/ui/portfolio";
 import { Array as Arr, Schema, pipe } from "effect";
 
-const categories = ["projects", "blogs", "scraps"] as const;
+const categories = ["projects", "blogs", "sloppedia"] as const;
 
 const CategorySchema = Schema.Literals(categories);
 
 type Category = typeof CategorySchema.Type;
 
-type Layout = "index" | "grid";
+type Layout = "index" | "grid" | "wiki";
+
+type Robots = "index" | "noindex";
 
 const categoryMeta = {
   projects: {
@@ -16,6 +18,7 @@ const categoryMeta = {
     titleTransition: "vt-category-projects",
     schemaType: "Article",
     layout: "index",
+    robots: "index",
   },
   blogs: {
     title: portfolio.sections.blogs,
@@ -23,13 +26,15 @@ const categoryMeta = {
     titleTransition: "vt-category-blogs",
     schemaType: "BlogPosting",
     layout: "grid",
+    robots: "index",
   },
-  scraps: {
-    title: portfolio.sections.scraps,
-    description: "短いメモや作業ログ",
-    titleTransition: "vt-category-scraps",
-    schemaType: "BlogPosting",
-    layout: "grid",
+  sloppedia: {
+    title: portfolio.sections.sloppedia,
+    description: "個人の百科事典もどき",
+    titleTransition: "vt-category-sloppedia",
+    schemaType: "Article",
+    layout: "wiki",
+    robots: "noindex",
   },
 } as const satisfies Record<
   Category,
@@ -39,6 +44,7 @@ const categoryMeta = {
     titleTransition: string;
     schemaType: "Article" | "BlogPosting";
     layout: Layout;
+    robots: Robots;
   }>
 >;
 
@@ -55,5 +61,5 @@ const categoryInfos: readonly CategoryInfo[] = pipe(
 
 const categoryPath = (category: Category): string => `/${category}`;
 
-export type { Category, CategoryInfo, Layout };
+export type { Category, CategoryInfo, Layout, Robots };
 export { categories, CategorySchema, categoryInfos, categoryMeta, categoryPath };

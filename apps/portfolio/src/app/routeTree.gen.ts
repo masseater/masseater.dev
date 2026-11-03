@@ -13,6 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SiteRouteImport } from './routes/_site'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SloppediaRouteImport } from './routes/sloppedia'
+import { Route as SloppediaIndexRouteImport } from './routes/sloppedia/index'
+import { Route as SloppediaSlugRouteImport } from './routes/sloppedia/$slug'
+import { Route as SloppediaCategoriesRouteImport } from './routes/sloppedia/categories'
 import { Route as SiteCategoryIndexRouteImport } from './routes/_site/$category/index'
 import { Route as SiteCategorySlugRouteImport } from './routes/_site/$category/$slug'
 import { Route as SiteSeikinTechniquesIndexRouteImport } from './routes/_site/seikin-techniques/index'
@@ -36,6 +40,26 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SloppediaRoute = SloppediaRouteImport.update({
+  id: '/sloppedia',
+  path: '/sloppedia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SloppediaIndexRoute = SloppediaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SloppediaRoute,
+} as any)
+const SloppediaSlugRoute = SloppediaSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => SloppediaRoute,
+} as any)
+const SloppediaCategoriesRoute = SloppediaCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => SloppediaRoute,
 } as any)
 const SiteCategoryIndexRoute = SiteCategoryIndexRouteImport.update({
   id: '/$category/',
@@ -64,6 +88,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/sloppedia': typeof SloppediaRouteWithChildren
+  '/sloppedia/$slug': typeof SloppediaSlugRoute
+  '/sloppedia/categories': typeof SloppediaCategoriesRoute
+  '/sloppedia/': typeof SloppediaIndexRoute
   '/$category/$slug': typeof SiteCategorySlugRoute
   '/seikin-techniques/$slug': typeof SiteSeikinTechniquesSlugRoute
   '/$category/': typeof SiteCategoryIndexRoute
@@ -73,6 +101,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/sloppedia/$slug': typeof SloppediaSlugRoute
+  '/sloppedia/categories': typeof SloppediaCategoriesRoute
+  '/sloppedia': typeof SloppediaIndexRoute
   '/$category/$slug': typeof SiteCategorySlugRoute
   '/seikin-techniques/$slug': typeof SiteSeikinTechniquesSlugRoute
   '/$category': typeof SiteCategoryIndexRoute
@@ -84,6 +115,10 @@ export interface FileRoutesById {
   '/_site': typeof SiteRouteWithChildren
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/sloppedia': typeof SloppediaRouteWithChildren
+  '/sloppedia/$slug': typeof SloppediaSlugRoute
+  '/sloppedia/categories': typeof SloppediaCategoriesRoute
+  '/sloppedia/': typeof SloppediaIndexRoute
   '/_site/$category/$slug': typeof SiteCategorySlugRoute
   '/_site/seikin-techniques/$slug': typeof SiteSeikinTechniquesSlugRoute
   '/_site/$category/': typeof SiteCategoryIndexRoute
@@ -95,6 +130,10 @@ export interface FileRouteTypes {
     | '/'
     | '/feed.xml'
     | '/robots.txt'
+    | '/sloppedia'
+    | '/sloppedia/$slug'
+    | '/sloppedia/categories'
+    | '/sloppedia/'
     | '/$category/$slug'
     | '/seikin-techniques/$slug'
     | '/$category/'
@@ -104,6 +143,9 @@ export interface FileRouteTypes {
     | '/'
     | '/feed.xml'
     | '/robots.txt'
+    | '/sloppedia/$slug'
+    | '/sloppedia/categories'
+    | '/sloppedia'
     | '/$category/$slug'
     | '/seikin-techniques/$slug'
     | '/$category'
@@ -114,6 +156,10 @@ export interface FileRouteTypes {
     | '/_site'
     | '/feed.xml'
     | '/robots.txt'
+    | '/sloppedia'
+    | '/sloppedia/$slug'
+    | '/sloppedia/categories'
+    | '/sloppedia/'
     | '/_site/$category/$slug'
     | '/_site/seikin-techniques/$slug'
     | '/_site/$category/'
@@ -125,6 +171,7 @@ export interface RootRouteChildren {
   SiteRoute: typeof SiteRouteWithChildren
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SloppediaRoute: typeof SloppediaRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -156,6 +203,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/sloppedia': {
+      id: '/sloppedia'
+      path: '/sloppedia'
+      fullPath: '/sloppedia'
+      preLoaderRoute: typeof SloppediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sloppedia/': {
+      id: '/sloppedia/'
+      path: '/'
+      fullPath: '/sloppedia/'
+      preLoaderRoute: typeof SloppediaIndexRouteImport
+      parentRoute: typeof SloppediaRoute
+    }
+    '/sloppedia/$slug': {
+      id: '/sloppedia/$slug'
+      path: '/$slug'
+      fullPath: '/sloppedia/$slug'
+      preLoaderRoute: typeof SloppediaSlugRouteImport
+      parentRoute: typeof SloppediaRoute
+    }
+    '/sloppedia/categories': {
+      id: '/sloppedia/categories'
+      path: '/categories'
+      fullPath: '/sloppedia/categories'
+      preLoaderRoute: typeof SloppediaCategoriesRouteImport
+      parentRoute: typeof SloppediaRoute
     }
     '/_site/$category/': {
       id: '/_site/$category/'
@@ -204,11 +279,28 @@ const SiteRouteChildren: SiteRouteChildren = {
 
 const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
 
+interface SloppediaRouteChildren {
+  SloppediaSlugRoute: typeof SloppediaSlugRoute
+  SloppediaCategoriesRoute: typeof SloppediaCategoriesRoute
+  SloppediaIndexRoute: typeof SloppediaIndexRoute
+}
+
+const SloppediaRouteChildren: SloppediaRouteChildren = {
+  SloppediaSlugRoute: SloppediaSlugRoute,
+  SloppediaCategoriesRoute: SloppediaCategoriesRoute,
+  SloppediaIndexRoute: SloppediaIndexRoute,
+}
+
+const SloppediaRouteWithChildren = SloppediaRoute._addFileChildren(
+  SloppediaRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SiteRoute: SiteRouteWithChildren,
   FeedDotxmlRoute: FeedDotxmlRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
+  SloppediaRoute: SloppediaRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
