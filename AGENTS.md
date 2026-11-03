@@ -79,7 +79,7 @@ release. Add a tool name to select part of the graph. For example, run
 ## Cloudflare
 
 - Workers Paid プランを前提にする。
-- このリポが masseater.dev ゾーンの持ち主で、WAF カスタムルールと Cloudflare が返すエラー応答のヘッダの Transform Rule（どちらも prod ステージだけ）と、アカウントに 1 つの Logpush のジョブを持つ。Logpush の設定を変えると全 Worker に効く。
+- このリポが masseater.dev ゾーンの持ち主で、WAF カスタムルール（prod ステージだけ）と、アカウントに 1 つの Logpush のジョブを持つ。Logpush の設定を変えると全 Worker に効く。
 - Worker にはすべて `logpush: true` を付ける。
 - Bot Fight Mode は使わない。
 
