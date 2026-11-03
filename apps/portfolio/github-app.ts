@@ -6,6 +6,7 @@ import githubAppJwt from "universal-github-app-jwt";
 import { GITHUB_APP_NAME } from "./app-name.ts";
 import { GITHUB_APP_PERMISSIONS } from "./credential-grants.ts";
 import { OWNER_ID } from "./github-oidc.ts";
+import { toPkcs8 } from "./pkcs8.ts";
 
 const APP_KEY = "app";
 const SETUP_PATH = "/github-app";
@@ -65,10 +66,15 @@ const appJwt = (env: GitHubAppEnv): Effect.Effect<string, GitHubAppFailed> =>
       Option.match({
         onNone: () => Effect.fail(GitHubAppFailed.make({ message: "GitHub App is not set up" })),
         onSome: (app) =>
-          Effect.tryPromise({
-            try: () => githubAppJwt({ id: app.id, privateKey: app.pem }),
-            catch: failed,
-          }),
+          toPkcs8(app.pem).pipe(
+            Effect.mapError(failed),
+            Effect.flatMap((privateKey) =>
+              Effect.tryPromise({
+                try: () => githubAppJwt({ id: app.id, privateKey }),
+                catch: failed,
+              }),
+            ),
+          ),
       }),
     ),
     Effect.map(({ token }) => token),
