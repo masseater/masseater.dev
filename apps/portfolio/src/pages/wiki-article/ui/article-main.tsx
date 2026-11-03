@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
 import type { Entry } from "#/entities/entry";
-import { TAGLINE } from "#/pages/wiki-article/model/copy";
 
 import { ArticleContent } from "./article-content";
 import { ArticleTabs } from "./article-tabs";
@@ -15,7 +14,6 @@ const ArticleMain = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
       {entry.title}
     </h1>
     <ArticleTabs slug={entry.slug} />
-    <p className="text-wiki-subtle mt-2 text-sm">{TAGLINE}</p>
     <InlineToc entry={entry} />
     <ArticleContent entry={entry} />
     <CategoryBox tags={entry.tags} />
