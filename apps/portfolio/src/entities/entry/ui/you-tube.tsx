@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
-import LiteYouTubeEmbed from "react-lite-youtube-embed";
+
+import { YouTubeLink } from "#/shared/ui";
 
 const YouTube = ({ id, title }: Readonly<{ id: string; title: string }>): ReactNode => (
-  <div className="my-6 overflow-hidden rounded-lg">
-    <LiteYouTubeEmbed id={id} lazyLoad title={title} />
+  <div className="my-6">
+    <YouTubeLink id={id} title={title} />
   </div>
 );
 
