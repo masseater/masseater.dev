@@ -15,7 +15,7 @@ const INSTALL_URL = `https://github.com/apps/${GITHUB_APP_NAME}/installations/ne
 const CONFLICT = 409;
 const FORBIDDEN = 403;
 
-type GitHubAppEnv = Readonly<{ GITHUB_APP: KVNamespace }>;
+type GitHubAppEnv = Readonly<{ GITHUB_APP: Readonly<Pick<D1Database, "prepare">> }>;
 
 type RouteInput = Readonly<{ request: Request; env: GitHubAppEnv }>;
 
@@ -44,7 +44,11 @@ const failed = (error: unknown): GitHubAppFailed => GitHubAppFailed.make({ reaso
 const readApp = (
   env: GitHubAppEnv,
 ): Effect.Effect<Option.Option<typeof StoredApp.Type>, GitHubAppFailed> =>
-  Effect.promise(() => env.GITHUB_APP.get(APP_KEY)).pipe(
+  Effect.promise(() =>
+    env.GITHUB_APP.prepare("SELECT value FROM github_app WHERE key = ?")
+      .bind(APP_KEY)
+      .first<string>("value"),
+  ).pipe(
     Effect.flatMap((json) =>
       Option.match(Option.fromNullishOr(json), {
         onNone: () => Effect.succeedNone,
@@ -148,7 +152,15 @@ const storeApp = (
 ): Effect.Effect<Response, GitHubAppFailed> =>
   Schema.encodeEffect(StoredAppJson)({ id: app.id, slug: app.slug, pem: app.pem }).pipe(
     Effect.mapError(failed),
-    Effect.flatMap((json) => Effect.promise(() => env.GITHUB_APP.put(APP_KEY, json))),
+    Effect.flatMap((json) =>
+      Effect.promise(() =>
+        env.GITHUB_APP.prepare(
+          "INSERT INTO github_app (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value",
+        )
+          .bind(APP_KEY, json)
+          .run(),
+      ),
+    ),
     Effect.andThen(logCreated(app.id)),
     Effect.as(installPage()),
   );
