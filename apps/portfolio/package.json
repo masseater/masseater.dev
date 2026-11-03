@@ -14,7 +14,6 @@
     "prepare": "effect-tsgo patch --typescript --oxlint",
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
     "deploy": "alchemy deploy",
-    "deploy:github": "alchemy deploy --config alchemy.github.ts --stage prod --yes",
     "tokens": "vpx cloudflare-tokens.ts",
     "destroy": "alchemy destroy",
     "db:generate": "drizzle-kit generate",
@@ -58,7 +57,6 @@
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
-    "@alchemy.run/github": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.1",
