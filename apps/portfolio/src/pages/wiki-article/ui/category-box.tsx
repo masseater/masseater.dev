@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { CATEGORY_LABEL, CATEGORY_SEPARATOR } from "#/pages/wiki-article/model/copy";
+import { CATEGORY_LABEL } from "#/pages/wiki-article/model/copy";
 
 import { CategoryItem } from "./category-item";
 
@@ -15,7 +15,6 @@ const CategoryBox = ({ tags }: Readonly<{ tags: readonly string[] }>): ReactNode
       <Link className="text-wiki-link hover:underline" to="/sloppedia/categories">
         {CATEGORY_LABEL}
       </Link>
-      <span aria-hidden>{CATEGORY_SEPARATOR}</span>
       <ul className="flex flex-wrap">
         {pipe(
           tags,
