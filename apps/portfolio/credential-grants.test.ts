@@ -1,7 +1,7 @@
-import { Array as Arr, Record as Rec, pipe } from "effect";
+import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { grantPolicies } from "./credential-grants.ts";
+import { GITHUB_APP_PERMISSIONS, grantPolicies } from "./credential-grants.ts";
 
 const CLOUDFLARE_ID = "0123456789abcdef0123456789abcdef";
 const TEXT_BINDING_LIMIT = 5120;
@@ -33,4 +33,23 @@ test("every grant resolves to account and zone policies with known permission gr
       Arr.every((profile) => Rec.has(grants.profiles, profile)),
     ),
   ).toBe(true);
+});
+
+const APP_PERMISSIONS: Readonly<Record<string, string>> = GITHUB_APP_PERMISSIONS;
+
+test("every GitHub grant stays within the permissions the GitHub App asks for", () => {
+  const { github } = grantPolicies({ accountId: "account", zoneId: "zone" });
+  const granted = pipe(Rec.values(github), Arr.flatMap(Rec.toEntries));
+  expect(
+    pipe(
+      granted,
+      Arr.every(([name, level]) =>
+        pipe(
+          Rec.get(APP_PERMISSIONS, name),
+          Option.exists((allowed) => allowed === "write" || allowed === level),
+        ),
+      ),
+    ),
+  ).toBe(true);
+  expect(Arr.isReadonlyArrayNonEmpty(granted)).toBe(true);
 });

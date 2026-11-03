@@ -1,6 +1,9 @@
 import { createToken, deleteToken, listTokens } from "@distilled.cloud/cloudflare/accounts";
-import type { CloudflareOpContext } from "@distilled.cloud/cloudflare/accounts";
+import type { CloudflareOpContext, CreateTokenError } from "@distilled.cloud/cloudflare/accounts";
 import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
+import { createInstallationAccessToken, getUserInstallation } from "@distilled.cloud/github/apps";
+import type { Installation } from "@distilled.cloud/github/apps";
+import type { GithubOpContext } from "@distilled.cloud/github/Protocol";
 import {
   Array as Arr,
   DateTime,
@@ -9,7 +12,7 @@ import {
   Logger,
   ManagedRuntime,
   Option,
-  Record,
+  Record as Rec,
   Redacted,
   Schema,
   Stream,
@@ -18,27 +21,24 @@ import {
   pipe,
 } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
-import { createRemoteJWKSet, jwtVerify } from "jose";
 
 import { CREDENTIAL_BROKER_AUDIENCE } from "./app-name.ts";
+import { failed, gitHubAppCredentials, readApp, route } from "./github-app.ts";
+import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
+import type { Claims } from "./github-oidc.ts";
+import { OWNER, OWNER_ID, Rejected, repositoryName, verify } from "./github-oidc.ts";
 
-const ISSUER = "https://token.actions.githubusercontent.com";
-const OWNER = "masseater";
-const OWNER_ID = "62135405";
-const UNTRUSTED_EVENTS: ReadonlySet<string> = new Set(["pull_request_target", "workflow_run"]);
-const DEFAULT_BRANCH = "refs/heads/main";
 const TOKEN_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
 const TOKEN_LIFETIME = { hours: 1 } as const;
 
-type CredentialBrokerEnv = Readonly<{
-  ROOT_TOKEN: SecretsStoreSecret;
-  OPENROUTER_API_KEY: SecretsStoreSecret;
-  CLAUDE_CODE_OAUTH_TOKEN: SecretsStoreSecret;
-  ACCOUNT_ID: string;
-  GRANTS: string;
-}>;
-
-const jwks = createRemoteJWKSet(new URL(`${ISSUER}/.well-known/jwks`));
+type CredentialBrokerEnv = GitHubAppEnv &
+  Readonly<{
+    ROOT_TOKEN: SecretsStoreSecret;
+    OPENROUTER_API_KEY: SecretsStoreSecret;
+    CLAUDE_CODE_OAUTH_TOKEN: SecretsStoreSecret;
+    ACCOUNT_ID: string;
+    GRANTS: string;
+  }>;
 
 const PermissionGroups = Schema.mutable(Schema.Array(Schema.Struct({ id: Schema.String })));
 
@@ -50,28 +50,15 @@ const Policy = Schema.Struct({
 
 const Policies = Schema.mutable(Schema.Array(Policy));
 
+const Permissions = Schema.Record(Schema.String, Schema.String);
+
 const Grants = Schema.fromJsonString(
   Schema.Struct({
     profiles: Schema.Record(Schema.String, Policies),
     repositories: Schema.Record(Schema.String, Schema.String),
+    github: Schema.Record(Schema.String, Permissions),
   }),
 );
-
-const Claims = Schema.Struct({
-  repository_owner: Schema.String,
-  repository_owner_id: Schema.String,
-  repository: Schema.String,
-  event_name: Schema.String,
-  ref: Schema.String,
-  run_id: Schema.String,
-  run_attempt: Schema.String,
-});
-
-const taggedError = Schema.TaggedError;
-
-class Rejected extends taggedError<Rejected, { readonly brand: unique symbol }>()("Rejected", {
-  reason: Schema.String,
-}) {}
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 
@@ -84,40 +71,6 @@ const cloudflare = (env: CredentialBrokerEnv): Layer.Layer<CloudflareOpContext> 
     ),
   );
 
-const bearer = (request: Request): string =>
-  Str.replace(/^Bearer /u, "")(request.headers.get("authorization") ?? "");
-
-const TRUSTED_CLAIMS = {
-  repository_owner_id: OWNER_ID,
-  repository_owner: OWNER,
-  ref: DEFAULT_BRANCH,
-} as const;
-
-const isTrusted = (claims: typeof Claims.Type): boolean =>
-  Arr.every(Record.toEntries(TRUSTED_CLAIMS), ([key, value]) => claims[key] === value) &&
-  !UNTRUSTED_EVENTS.has(claims.event_name);
-
-const verify = (
-  request: Request,
-): Effect.Effect<typeof Claims.Type, Rejected | Schema.SchemaError> =>
-  Effect.gen(function* verifyClaims() {
-    const { payload } = yield* Effect.tryPromise({
-      try: () =>
-        jwtVerify(bearer(request), jwks, { issuer: ISSUER, audience: CREDENTIAL_BROKER_AUDIENCE }),
-      catch: (error) => Rejected.make({ reason: String(error) }),
-    });
-    const claims = yield* Schema.decodeUnknownEffect(Claims)(payload);
-    if (!isTrusted(claims)) {
-      return yield* Rejected.make({
-        reason: `rejected ${claims.repository} at ${claims.ref} on ${claims.event_name}`,
-      });
-    }
-    return claims;
-  });
-
-const repositoryName = (claims: typeof Claims.Type): string =>
-  Str.replace(`${OWNER}/`, "")(claims.repository);
-
 const toTokenTime = flow(
   DateTime.add(TOKEN_LIFETIME),
   DateTime.formatIso,
@@ -126,39 +79,126 @@ const toTokenTime = flow(
 
 const expiry: Effect.Effect<string> = DateTime.now.pipe(Effect.map(toTokenTime));
 
-const issue = (
-  request: Request,
+const OWNER_ACCOUNT = { login: OWNER, id: OWNER_ID } as const;
+
+type BrokerContext = CloudflareOpContext | GithubOpContext;
+
+type Issued = Readonly<Record<string, unknown>>;
+
+type IssueError = CreateTokenError | GitHubAppFailed | Schema.SchemaError;
+
+const decodeGrants = (
   env: CredentialBrokerEnv,
-): Effect.Effect<Response, never, CloudflareOpContext> =>
-  Effect.gen(function* issueToken() {
-    const claims = yield* verify(request);
+): Effect.Effect<typeof Grants.Type, Schema.SchemaError> => Schema.decodeEffect(Grants)(env.GRANTS);
+
+const issueCloudflareToken = (
+  env: CredentialBrokerEnv,
+  claims: typeof Claims.Type,
+): Effect.Effect<Option.Option<Issued>, IssueError, CloudflareOpContext> =>
+  Effect.gen(function* createCloudflareToken() {
     const repository = repositoryName(claims);
-    const grants = yield* Schema.decodeEffect(Grants)(env.GRANTS);
-    const policies = yield* Option.match(
-      Option.fromNullishOr(grants.profiles[grants.repositories[repository] ?? ""]),
-      {
-        onNone: () => Rejected.make({ reason: `no grant for ${repository}` }),
-        onSome: Effect.succeed,
-      },
-    );
+    const grants = yield* decodeGrants(env);
+    const policies = Option.fromNullishOr(grants.profiles[grants.repositories[repository] ?? ""]);
+    if (Option.isNone(policies)) {
+      return Option.none();
+    }
     const created = yield* createToken({
       accountId: env.ACCOUNT_ID,
       name: `${TOKEN_PREFIX}${repository}:${claims.run_id}:${claims.run_attempt}`,
-      policies,
+      policies: policies.value,
       expiresOn: yield* expiry,
     });
     yield* Effect.logInfo("credential.issued").pipe(
       Effect.annotateLogs({ repository, runId: claims.run_id, tokenId: created.id }),
     );
-    const [openrouterApiKey, claudeCodeOauthToken] = yield* Effect.promise(() =>
-      Promise.all([env.OPENROUTER_API_KEY.get(), env.CLAUDE_CODE_OAUTH_TOKEN.get()]),
-    );
-    return Response.json({
-      token: created.value,
-      accountId: env.ACCOUNT_ID,
+    return Option.some({ token: created.value, accountId: env.ACCOUNT_ID });
+  });
+
+const findInstallation = (
+  owner: typeof OWNER_ACCOUNT,
+): Effect.Effect<Option.Option<Installation>, never, GithubOpContext> =>
+  getUserInstallation({ username: owner.login }).pipe(
+    Effect.tapError((failure) => Effect.logWarning("github_app.not_installed", failure)),
+    Effect.option,
+  );
+
+const mint = (
+  installationId: number,
+  permissions: Readonly<Record<string, string>>,
+): Effect.Effect<Option.Option<string>, GitHubAppFailed, GithubOpContext> =>
+  createInstallationAccessToken({ installation_id: installationId, permissions }).pipe(
+    Effect.mapBoth({ onSuccess: ({ token }) => Option.some(token), onFailure: failed }),
+  );
+
+const installationToken = (
+  env: CredentialBrokerEnv,
+  permissions: Readonly<Record<string, string>>,
+): Effect.Effect<Option.Option<string>, GitHubAppFailed, GithubOpContext> =>
+  readApp(env).pipe(
+    Effect.flatMap(
+      Option.match({
+        onNone: () => Effect.logWarning("github_app.missing").pipe(Effect.as(Option.none())),
+        onSome: () =>
+          findInstallation(OWNER_ACCOUNT).pipe(
+            Effect.flatMap(
+              Option.match({
+                onNone: () => Effect.succeedNone,
+                onSome: (installation) => mint(installation.id, permissions),
+              }),
+            ),
+          ),
+      }),
+    ),
+  );
+
+const issueGitHubToken = (
+  env: CredentialBrokerEnv,
+  claims: typeof Claims.Type,
+): Effect.Effect<Option.Option<Issued>, IssueError, GithubOpContext> =>
+  decodeGrants(env).pipe(
+    Effect.flatMap((grants) =>
+      Option.match(Option.fromNullishOr(grants.github[repositoryName(claims)]), {
+        onNone: () => Effect.succeedNone,
+        onSome: (permissions) =>
+          installationToken(env, permissions).pipe(
+            Effect.map(Option.map((githubToken) => ({ githubToken }))),
+          ),
+      }),
+    ),
+  );
+
+const issueGranted = (
+  env: CredentialBrokerEnv,
+  claims: typeof Claims.Type,
+): Effect.Effect<readonly Issued[], IssueError, BrokerContext> =>
+  Effect.all([issueCloudflareToken(env, claims), issueGitHubToken(env, claims)]).pipe(
+    Effect.map(Arr.getSomes),
+  );
+
+const sharedKeys = (env: CredentialBrokerEnv): Effect.Effect<Readonly<Record<string, string>>> =>
+  Effect.promise(() =>
+    Promise.all([env.OPENROUTER_API_KEY.get(), env.CLAUDE_CODE_OAUTH_TOKEN.get()]),
+  ).pipe(
+    Effect.map(([openrouterApiKey, claudeCodeOauthToken]) => ({
       openrouterApiKey,
       claudeCodeOauthToken,
-    });
+    })),
+  );
+
+const issue = (
+  request: Request,
+  env: CredentialBrokerEnv,
+): Effect.Effect<Response, never, BrokerContext> =>
+  Effect.gen(function* issueToken() {
+    const claims = yield* verify(request);
+    const repository = repositoryName(claims);
+    const grants = yield* decodeGrants(env);
+    if (!Rec.has(grants.repositories, repository) && !Rec.has(grants.github, repository)) {
+      return yield* Rejected.make({ reason: `no grant for ${repository}` });
+    }
+    const issued = yield* issueGranted(env, claims);
+    const keys = yield* sharedKeys(env);
+    return Response.json(Object.assign({}, ...issued, keys));
   }).pipe(
     Effect.catchTag("Rejected", (rejected) =>
       Effect.logWarning("credential.unauthorized").pipe(
@@ -172,6 +212,22 @@ const issue = (
       ),
     ),
   );
+
+const handle = (
+  request: Request,
+  env: CredentialBrokerEnv,
+): Effect.Effect<Response, never, BrokerContext> =>
+  Option.match(route({ request, env }), {
+    onNone: () => issue(request, env),
+    onSome: (handled) =>
+      handled.pipe(
+        Effect.catchCause((cause) =>
+          Effect.logError("github_app.failed", cause).pipe(
+            Effect.as(new Response("", { status: 502 })),
+          ),
+        ),
+      ),
+  });
 
 const sweep = (env: CredentialBrokerEnv): Effect.Effect<void, never, CloudflareOpContext> =>
   Effect.gen(function* sweepExpired() {
@@ -196,13 +252,15 @@ const sweep = (env: CredentialBrokerEnv): Effect.Effect<void, never, CloudflareO
 
 const run = <Value>(
   env: CredentialBrokerEnv,
-  effect: Effect.Effect<Value, never, CloudflareOpContext>,
+  effect: Effect.Effect<Value, never, BrokerContext>,
 ): Promise<Value> =>
-  ManagedRuntime.make(Layer.mergeAll(logger, cloudflare(env))).runPromise(effect);
+  ManagedRuntime.make(
+    Layer.mergeAll(logger, cloudflare(env), gitHubAppCredentials(env)),
+  ).runPromise(effect);
 
 const worker = {
   fetch: (request: Request, env: CredentialBrokerEnv): Promise<Response> =>
-    run(env, issue(request, env)),
+    run(env, handle(request, env)),
   scheduled: (_controller: unknown, env: CredentialBrokerEnv): Promise<void> =>
     run(env, sweep(env)),
 };

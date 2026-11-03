@@ -107,7 +107,7 @@ export default defineConfig({
             {
               from: "package",
               package: "@cloudflare/workers-types",
-              name: ["AnalyticsEngineDataset", "SecretsStoreSecret"],
+              name: ["AnalyticsEngineDataset", "KVNamespace", "SecretsStoreSecret"],
             },
             { from: "package", package: "@tanstack/query-core", name: "QueryClient" },
             {
@@ -134,8 +134,8 @@ export default defineConfig({
       "eslint/new-cap": [
         "error",
         {
-          capIsNewExceptions: ["CloudflareApiLive", "Stack"],
-          capIsNewExceptionPattern: String.raw`^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|Logpush|R2|Ruleset|SecretsStore|Website|Workers|Zone)\.`,
+          capIsNewExceptions: ["CloudflareApiLive", "Repository", "Ruleset", "Stack"],
+          capIsNewExceptionPattern: String.raw`^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|KV|Logpush|R2|Ruleset|SecretsStore|Website|Workers|Zone)\.`,
         },
       ],
       "typescript/no-empty-interface": ["error", { allowSingleExtends: true }],
@@ -169,7 +169,7 @@ export default defineConfig({
         },
       },
       {
-        files: ["**/*.config.ts", "**/alchemy.run.ts", "**/*.worker.ts", "decision-rules.ts"],
+        files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "decision-rules.ts"],
         rules: { "import/no-default-export": "off" },
       },
       {
