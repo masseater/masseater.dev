@@ -199,6 +199,13 @@
 .wiki-prose sup::after {
   content: "]";
 }
+.wiki-prose [data-footnotes] sup::before,
+.wiki-prose [data-footnotes] sup::after {
+  content: none;
+}
+.wiki-prose [data-footnote-backref] ~ [data-footnote-backref] {
+  @apply hidden;
+}
 .wiki-prose [data-footnotes] {
   @apply text-wiki-text mt-8 text-sm;
 }
