@@ -11,7 +11,8 @@ Worker が先に受けるのは記事の star を数える `/api/stars/*` だけ
 main に入った変更は、GitHub Actions の verify が通ったあとに Alchemy でデプロイされる。
 CI が使う Cloudflare のトークンや API キーは、GitHub の OIDC トークンと引き換えに `credentials.masseater.dev` のブローカーが発行する。
 同じゾーンには、ほかのリポのアプリも載っている。
+全体の構成は次の図のとおりである。
 
-::figure[masseater.dev の構成図]{name=architecture}
+::figure[]{name=architecture}
 
 ソースは [GitHub](https://github.com/masseater/masseater.dev) にある。
