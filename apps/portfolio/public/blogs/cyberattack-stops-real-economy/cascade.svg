@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 450" width="880" height="450" role="img" aria-label="1つのサービスの停止が、当事者の店、取引先、取引のない競合、世界中へと広がる図">
+<style>text{font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif}.t{font-size:17px;font-weight:700}.e{font-size:13px}</style>
+<rect width="880" height="450" fill="#ffffff"/>
+<path d="M18,430 A422,422 0 0 1 862,430 Z" fill="#fca5a5" stroke="#ffffff" stroke-width="3"/>
+<path d="M102,430 A338,338 0 0 1 778,430 Z" fill="#f87171" stroke="#ffffff" stroke-width="3"/>
+<path d="M186,430 A254,254 0 0 1 694,430 Z" fill="#ef4444" stroke="#ffffff" stroke-width="3"/>
+<path d="M270,430 A170,170 0 0 1 610,430 Z" fill="#dc2626" stroke="#ffffff" stroke-width="3"/>
+<path d="M354,430 A86,86 0 0 1 526,430 Z" fill="#b91c1c" stroke="#ffffff" stroke-width="3"/>
+<text x="440" y="386" text-anchor="middle" fill="#ffffff" class="e">落ちた</text>
+<text x="440" y="406" text-anchor="middle" fill="#ffffff" class="t" style="font-size:15px">1つのサービス</text>
+<text x="440" y="298.0" text-anchor="middle" fill="#ffffff" class="t">当事者の店が止まる</text>
+<text x="440" y="318.0" text-anchor="middle" fill="#fee2e2" class="e">ゲームセンター、KFC の全店舗</text>
+<text x="440" y="214.0" text-anchor="middle" fill="#ffffff" class="t">取引先が止まる</text>
+<text x="440" y="234.0" text-anchor="middle" fill="#fee2e2" class="e">無印良品とロフトのネットストア、コンビニの PB</text>
+<text x="440" y="130.0" text-anchor="middle" fill="#450a0a" class="t">取引のない競合が止まる</text>
+<text x="440" y="150.0" text-anchor="middle" fill="#7f1d1d" class="e">キリンの業務用ビールと歳暮セット</text>
+<text x="440" y="46.0" text-anchor="middle" fill="#450a0a" class="t">世界中が止まる</text>
+<text x="440" y="66.0" text-anchor="middle" fill="#7f1d1d" class="e">病院、航空会社、銀行（CrowdStrike、AWS、Azure）</text>
+</svg>
