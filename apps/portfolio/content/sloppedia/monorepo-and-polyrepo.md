@@ -50,9 +50,19 @@ infobox:
 
 共有のライブラリを直すと、それに依存するリポジトリをすべて検査して出し直す必要が生じる。Segment は、宛先ごとに分けた140を超えるサービスとリポジトリでこの負担に苦しんだ[^segment]。
 
+Sloppedia の持ち主の masseater は、AI のエージェントが依存の更新を引き受けて手間が無料に近づいても、この欠点は残ると考えている。同じ更新を N 個のリポジトリで別々に行うので、PR も CI の実行も取りこぼしの確認も N 回ずつ要るからである。
+
 ## 独立したプロジェクト
 
 プロジェクトが互いにコードを共有しないなら、上のポリレポの欠点の多くは生じない。リポジトリをまたぐ変更も、版のずれも起きないからである。Riftmap の作者の Daniel Westgaard は、論点はコードの置き場所ではなく、依存の関係が機械に分かる形で宣言されているか、人の記憶に頼っているかだと論じた[^riftmap]。
+
+## OSS との関係
+
+GitHub のフォークは、リポジトリを丸ごと写した別のリポジトリとして作られる。フォークは自分のブランチ、Issue、PR、Actions を持つ[^github-forks]。フォークや外からの貢献はリポジトリの単位で行われる。
+
+masseater は、ポリレポが主流になったのは、1つのリポジトリをフォークと貢献の単位とする OSS の文化の産物だと考えている。その裏返しとして、モノレポは中の1つのプロジェクトだけをフォークしにくいとも考えている。
+
+これを和らげる手段はある。git subtree の split は、あるディレクトリに触れたコミットだけで新しい履歴を作り、そのディレクトリを最上位に置き直す。作った履歴は別のリポジトリとして出せる[^git-subtree]。degit とそのフォークの tiged は、履歴を含めずにリポジトリの最新の中身を写す道具で、サブディレクトリだけも写せる[^degit][^tiged]。
 
 ## 事例
 
@@ -75,6 +85,14 @@ monorepo.tools も、エージェントがリポジトリ全体を見渡せる�
 [^danluu]: Dan Luu「[Advantages of monorepos](https://danluu.com/monorepo/)」。2026年11月3日に閲覧。
 
 [^monorepo-tools]: Nx「[Monorepo Explained](https://monorepo.tools/)」monorepo.tools。2026年11月3日に閲覧。
+
+[^github-forks]: GitHub「[Forks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks)」GitHub Docs。2026年11月3日に閲覧。
+
+[^git-subtree]: Git「[git-subtree](https://github.com/git/git/blob/master/contrib/subtree/git-subtree.adoc)」。2026年11月3日に閲覧。
+
+[^degit]: Rich Harris「[degit](https://github.com/Rich-Harris/degit)」。版3.10.1（2026年10月21日）。
+
+[^tiged]: tiged「[tiged](https://github.com/tiged/tiged)」。版2.12.8（2026年5月25日）。
 
 [^segment]: Alexandra Noonan「[Goodbye Microservices: From 100s of problem children to 1 superstar](https://www.twilio.com/en-us/blog/developers/best-practices/goodbye-microservices)」Segment、2018年7月10日。
 
