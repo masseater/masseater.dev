@@ -1,4 +1,7 @@
-import { listRepoWorkflows } from "@distilled.cloud/github/actions";
+import {
+  listRepoWorkflows,
+  setGithubActionsDefaultWorkflowPermissionsRepository,
+} from "@distilled.cloud/github/actions";
 import { listReposAccessibleToInstallation } from "@distilled.cloud/github/apps";
 import { CredentialsFromEnv } from "@distilled.cloud/github/Credentials";
 import type { GithubOpContext } from "@distilled.cloud/github/Protocol";
@@ -66,6 +69,7 @@ type RepositorySettingsProps = Readonly<{
   name: string;
   allowUpdateBranch: boolean;
   secretScanning: boolean;
+  actionsCreatePullRequests: boolean;
 }>;
 
 const ENABLED = { status: "enabled" } as const;
@@ -82,17 +86,25 @@ const securityOf = (secretScanning: boolean): Pick<UpdateRequest, "security_and_
   };
 };
 
+const applySettings = (
+  settings: RepositorySettingsProps,
+): Effect.Effect<void, never, GithubOpContext> =>
+  Effect.andThen(
+    update({
+      owner: settings.owner,
+      repo: settings.name,
+      allow_update_branch: settings.allowUpdateBranch,
+      ...securityOf(settings.secretScanning),
+    }),
+    setGithubActionsDefaultWorkflowPermissionsRepository({
+      owner: settings.owner,
+      repo: settings.name,
+      can_approve_pull_request_reviews: settings.actionsCreatePullRequests,
+    }),
+  ).pipe(Effect.orDie, Effect.asVoid);
+
 const updateRepository = (settings: RepositorySettingsProps): Effect.Effect<void> =>
-  Effect.promise(() =>
-    gitHubApi.runPromise(
-      update({
-        owner: settings.owner,
-        repo: settings.name,
-        allow_update_branch: settings.allowUpdateBranch,
-        ...securityOf(settings.secretScanning),
-      }).pipe(Effect.orDie, Effect.asVoid),
-    ),
-  );
+  Effect.promise(() => gitHubApi.runPromise(applySettings(settings)));
 
 export { OWNER, hasUpToDateWorkflow, repositories, updateRepository };
 export type { ManagedRepository, RepositorySettingsProps };

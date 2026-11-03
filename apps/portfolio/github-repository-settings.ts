@@ -33,6 +33,7 @@ const settingsOf = (
     name: repository.name,
     allowUpdateBranch: true,
     secretScanning: !repository.private,
+    actionsCreatePullRequests: true,
   });
 
 export { settingsOf, settingsProvider };
