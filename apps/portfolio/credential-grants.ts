@@ -39,6 +39,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   aredoko: "deploy",
   cdmm: "deploy",
   "decision-experiments": "rulesets",
+  "geigeki-kaiiki": "deploy",
   konomi: "deploy",
   "medley-database": "deploy",
   "medley-manager": "deploy",
@@ -63,6 +64,8 @@ const GITHUB_APP_PERMISSIONS = {
 const GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "masseater.dev": GITHUB_APP_PERMISSIONS,
 };
+
+const NPM_GRANTS: readonly string[] = ["lint-kit", "measure-everything"];
 
 const ACCOUNT_SCOPE = "com.cloudflare.api.account";
 const ZONE_SCOPE = "com.cloudflare.api.account.zone";
@@ -99,6 +102,7 @@ type Grants = Readonly<{
   profiles: Readonly<Record<string, readonly Policy[]>>;
   repositories: Readonly<Record<string, string>>;
   github: Readonly<Record<string, Readonly<Record<string, string>>>>;
+  npm: readonly string[];
 }>;
 
 const grantPolicies = ({
@@ -114,6 +118,7 @@ const grantPolicies = ({
   ),
   repositories: CREDENTIAL_GRANTS,
   github: GITHUB_GRANTS,
+  npm: NPM_GRANTS,
 });
 
 export { GITHUB_APP_PERMISSIONS, grantPolicies };

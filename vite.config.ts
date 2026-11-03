@@ -99,6 +99,7 @@ export default defineConfig({
       "oxc/no-rest-spread-properties": "off",
       "node/no-top-level-await": "off",
       "eslint/one-var": ["error", "never"],
+      "eslint/id-length": ["error", { exceptions: ["x", "y"] }],
       "eslint/no-restricted-imports": ["error", restrictedImports],
       "typescript/prefer-readonly-parameter-types": [
         "error",
@@ -112,6 +113,7 @@ export default defineConfig({
               package: "@cloudflare/workers-types",
               name: ["AnalyticsEngineDataset", "KVNamespace", "SecretsStoreSecret"],
             },
+            { from: "package", package: "@alchemy.run/cloudflare", name: "Store" },
             { from: "package", package: "@tanstack/query-core", name: "QueryClient" },
             {
               from: "package",
