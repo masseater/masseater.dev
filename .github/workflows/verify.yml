@@ -180,6 +180,7 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: read
     outputs:
       latest: ${{ steps.slugs.outputs.latest }}
@@ -190,6 +191,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             .github/scripts/latest-commit.sh
+            .github/scripts/mosaic-touched.sh
             libs/mosaic/src/characters.json
           sparse-checkout-cone-mode: false
       - id: head
@@ -202,13 +204,8 @@ jobs:
         if: steps.head.outputs.latest == 'true' && github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
-          BEFORE_SHA: ${{ github.event.before }}
           HEAD_SHA: ${{ github.sha }}
-        run: |
-          if gh api "repos/$GITHUB_REPOSITORY/compare/$BEFORE_SHA...$HEAD_SHA" --jq '.files[].filename' \
-            | grep -E '^((apps|libs|tools)/mosaic/|pnpm-lock\.yaml$|\.github/workflows/verify\.yml$)'; then
-            echo "mosaic=true" >> "$GITHUB_OUTPUT"
-          fi
+        run: .github/scripts/mosaic-touched.sh
       - id: slugs
         if: steps.head.outputs.latest == 'true' && (github.event_name == 'schedule' || steps.touched.outputs.mosaic == 'true')
         run: |
