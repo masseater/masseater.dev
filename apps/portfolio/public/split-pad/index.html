@@ -522,7 +522,7 @@
           <button id="v-back" aria-pressed="false">背面</button>
           <button id="v-side" aria-pressed="false">側面</button>
           <span class="sep" aria-hidden="true"></span>
-          <button id="play" aria-pressed="true">操作デモを停止</button>
+          <button id="play" aria-pressed="true">操作デモ</button>
         </div>
         <div class="hint">ドラッグで回転 ・ ホイールで拡大 ・ ボタンをクリック</div>
       </div>
@@ -2564,7 +2564,6 @@
         const setDemo = (on) => {
           demo = on;
           playBtn.setAttribute("aria-pressed", on);
-          playBtn.textContent = on ? "操作デモを停止" : "操作デモを再生";
           if (!on) nowAct.textContent = "—";
         };
         setDemo(demo);
