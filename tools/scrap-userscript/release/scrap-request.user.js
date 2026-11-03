@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Scrap request to Claude
 // @namespace    https://masseater.dev
-// @version      1.3.1
+// @version      1.3.0
 // @description  閲覧中のページについて masseater.dev の Sloppedia に記事を書くよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用
 // @homepageURL  https://github.com/masseater/masseater.dev/tree/main/tools/scrap-userscript
 // @match        *://*/*
@@ -160,7 +160,7 @@
 				const seen = backEdges;
 				let h;
 				try {
-					if (isHash(self)) h = self[symbol$1]();
+					if ("~effect/Hash" in self) h = self[symbol$1]();
 					else if (typeof self === "function") h = random(self);
 					else if (isArrayBufferLike(self)) {
 						const bytes = bufferBytes(self);
@@ -192,7 +192,6 @@
 	};
 	var combine = dual(2, (self, b) => mix(Math.imul(self, 2654435761) + Math.imul(b, 2246822507)));
 	var optimize = (n) => n & 3221225471 | n >>> 1 & 1073741824;
-	var isHash = (u) => hasProperty(u, "~effect/Hash") && typeof u["~effect/Hash"] === "function";
 	var float64 = new DataView(new ArrayBuffer(8));
 	var number$1 = (n) => {
 		const h = n | 0;
@@ -340,7 +339,7 @@
 	}
 	var entryHash = (entry) => hash(entry[0]);
 	var equalEntries = (self, that) => compareBoth(self[0], that[0]) && compareBoth(self[1], that[1]);
-	var isEqual = (u) => hasProperty(u, "~effect/Equal") && typeof u["~effect/Equal"] === "function";
+	var isEqual = (u) => hasProperty(u, symbol);
 	var symbolRedactable = Symbol.for("~effect/Redactable");
 	var isRedactable = (u) => hasProperty(u, symbolRedactable);
 	function redact$2(u) {
@@ -1037,8 +1036,9 @@
 	var cacheKeys = new Set();
 	var ReferenceTypeId = "~effect/Context/Reference";
 	var TypeId$13 = "~effect/Context";
+	var MaxDepth = 8;
 	var FlattenAfterBaseHits = 8;
-	var makeImpl = (cacheRoot, base, overlay, depth, maxDepth) => {
+	var makeImpl = (cacheRoot, base, overlay, depth) => {
 		const self = Object.create(Proto$5);
 		self.cacheRoot = cacheRoot ?? self;
 		self.base = base;
@@ -1046,7 +1046,6 @@
 		self.depth = depth;
 		self._flat = void 0;
 		self.baseHits = 0;
-		self.maxDepth = maxDepth;
 		return self;
 	};
 	var applyOverlays = (map, overlay) => {
@@ -1074,10 +1073,7 @@
 		}
 		return value;
 	};
-	var makeUnsafe$2 = (mapUnsafe, options) => {
-		const maxDepth = options?.maxDepth;
-		return makeImpl(void 0, mapUnsafe, void 0, 0, Number.isInteger(maxDepth) && maxDepth >= 0 ? maxDepth : 8);
-	};
+	var makeUnsafe$2 = (mapUnsafe) => makeImpl(void 0, mapUnsafe, void 0, 0);
 	var Proto$5 = {
 		get mapUnsafe() {
 			return flatten(this);
@@ -1115,17 +1111,17 @@
 	var addUnsafe = (self, key, service) => {
 		const impl = self;
 		const cacheRoot = cacheKeys.has(key) ? void 0 : impl.cacheRoot;
-		if (impl.depth >= impl.maxDepth) {
+		if (impl.depth >= MaxDepth) {
 			const map = new Map(impl._flat ?? impl.base);
 			if (!impl._flat) applyOverlays(map, impl.overlay);
 			map.set(key, service);
-			return makeImpl(cacheRoot, map, void 0, 0, impl.maxDepth);
+			return makeImpl(cacheRoot, map, void 0, 0);
 		}
 		return makeImpl(cacheRoot, impl.base, {
 			key,
 			value: service,
 			parent: impl.overlay
-		}, impl.depth + 1, impl.maxDepth);
+		}, impl.depth + 1);
 	};
 	var getOrUndefinedUnsafe = (self, key) => {
 		const value = lookup(self, key);
@@ -1435,12 +1431,6 @@
 			this._stack.length = 0;
 			this._children = void 0;
 			this.context = empty$1();
-			const cache = this.cache;
-			if (cache.span !== void 0 || cache.stackFrame !== void 0) this.cache = {
-				...cache,
-				span: void 0,
-				stackFrame: void 0
-			};
 		}
 		runLoop(effect) {
 			const prevFiber = globalThis[currentFiberTypeId];
@@ -1722,21 +1712,17 @@
 		const [options, body] = args;
 		return suspend$1(() => fromIteratorUnsafe(body.call(options.self)));
 	};
-	var fnBody = (bodyOrOptions, pipeables) => typeof bodyOrOptions === "function" ? bodyOrOptions : pipeables.shift().bind(bodyOrOptions.self);
 	var defineFunctionLength = (length, fn) => Object.defineProperty(fn, "length", {
 		value: length,
 		configurable: true
 	});
-	var fnUntracedEager$1 = (bodyOrOptions, ...pipeables) => {
-		const body = fnBody(bodyOrOptions, pipeables);
-		return defineFunctionLength(body.length, pipeables.length === 0 ? function() {
-			return fromIteratorEagerUnsafe(() => body.apply(this, arguments));
-		} : function() {
-			let effect = fromIteratorEagerUnsafe(() => body.apply(this, arguments));
-			for (const pipeable of pipeables) effect = pipeable(effect, ...arguments);
-			return effect;
-		});
-	};
+	var fnUntracedEager$1 = (body, ...pipeables) => defineFunctionLength(body.length, pipeables.length === 0 ? function() {
+		return fromIteratorEagerUnsafe(() => body.apply(this, arguments));
+	} : function() {
+		let effect = fromIteratorEagerUnsafe(() => body.apply(this, arguments));
+		for (const pipeable of pipeables) effect = pipeable(effect, ...arguments);
+		return effect;
+	});
 	var fromIteratorEagerUnsafe = (evaluate) => {
 		try {
 			const iterator = evaluate();
@@ -2129,32 +2115,8 @@
 			return toDateUtc$1(this).toJSON();
 		}
 	};
-	var ProtoUtc = {
-		...Proto$4,
-		_tag: "Utc",
-		[symbol$1]() {
-			return number$1(this.epochMilliseconds);
-		},
-		[symbol](that) {
-			return isDateTime$1(that) && that._tag === "Utc" && this.epochMilliseconds === that.epochMilliseconds;
-		},
-		toString() {
-			return `DateTime.Utc(${toDateUtc$1(this).toJSON()})`;
-		}
-	};
-	var ProtoZoned = {
-		...Proto$4,
-		_tag: "Zoned",
-		[symbol$1]() {
-			return combine(number$1(this.epochMilliseconds))(hash(this.zone));
-		},
-		[symbol](that) {
-			return isDateTime$1(that) && that._tag === "Zoned" && this.epochMilliseconds === that.epochMilliseconds && equals$1(this.zone, that.zone);
-		},
-		toString() {
-			return `DateTime.Zoned(${formatIsoZoned(this)})`;
-		}
-	};
+	({ ...Proto$4 });
+	({ ...Proto$4 });
 	var ProtoTimeZone = {
 		[TimeZoneTypeId]: TimeZoneTypeId,
 		[NodeInspectSymbol]() {
@@ -2163,82 +2125,7 @@
 	};
 	({ ...ProtoTimeZone });
 	({ ...ProtoTimeZone });
-	var cacheSlot = {
-		value: void 0,
-		enumerable: false,
-		writable: true
-	};
-	var sealedCaches = new WeakMap();
-	var cacheAccessor = (key, slots) => ({
-		get() {
-			return Object.isExtensible(this) ? void 0 : sealedCaches.get(this)?.[key];
-		},
-		set(value) {
-			if (Object.isExtensible(this)) {
-				for (const slot of slots) Object.defineProperty(this, slot, cacheSlot);
-				this[key] = value;
-			} else {
-				let caches = sealedCaches.get(this);
-				if (caches === void 0) {
-					caches = {};
-					sealedCaches.set(this, caches);
-				}
-				caches[key] = value;
-			}
-		}
-	});
-	var zonedSlots = [
-		"partsUtc",
-		"adjustedEpochMilliseconds",
-		"partsAdjusted"
-	];
-	Object.defineProperty(ProtoUtc, "partsUtc", cacheAccessor("partsUtc", ["partsUtc"]));
-	Object.defineProperties(ProtoZoned, {
-		partsUtc: cacheAccessor("partsUtc", zonedSlots),
-		adjustedEpochMilliseconds: cacheAccessor("adjustedEpochMilliseconds", zonedSlots),
-		partsAdjusted: cacheAccessor("partsAdjusted", zonedSlots)
-	});
-	var isDateTime$1 = (u) => hasProperty(u, TypeId$11);
 	var toDateUtc$1 = (self) => new Date(self.epochMilliseconds);
-	var toDate = (self) => {
-		if (self._tag === "Utc") return new Date(self.epochMilliseconds);
-		else if (self.zone._tag === "Offset") return new Date(self.epochMilliseconds + self.zone.offset);
-		else if (self.adjustedEpochMilliseconds !== void 0) return new Date(self.adjustedEpochMilliseconds);
-		let bc = false;
-		const parts = self.zone.format.formatToParts(self.epochMilliseconds).filter((_) => {
-			if (_.type === "era") {
-				bc = _.value === "BC";
-				return false;
-			}
-			return _.type !== "literal";
-		});
-		const year = Number(parts[2].value);
-		const date = new Date(0);
-		date.setUTCFullYear(bc ? 1 - year : year, Number(parts[0].value) - 1, Number(parts[1].value));
-		date.setUTCHours(Number(parts[3].value), Number(parts[4].value), Number(parts[5].value), parts[6]?.type === "fractionalSecond" ? Number(parts[6].value) : (self.epochMilliseconds % 1e3 + 1e3) % 1e3);
-		self.adjustedEpochMilliseconds = date.getTime();
-		return date;
-	};
-	var zonedOffset = (self) => {
-		return toDate(self).getTime() - toEpochMillis$1(self);
-	};
-	var offsetToString = (offset) => {
-		const abs = Math.abs(offset);
-		let hours = Math.floor(abs / 36e5);
-		let minutes = Math.round(abs % 36e5 / 6e4);
-		if (minutes === 60) {
-			hours += 1;
-			minutes = 0;
-		}
-		return `${offset < 0 ? "-" : "+"}${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-	};
-	var zonedOffsetIso = (self) => offsetToString(zonedOffset(self));
-	var toEpochMillis$1 = (self) => self.epochMilliseconds;
-	var formatIsoOffset = (self) => {
-		const date = toDate(self);
-		return self._tag === "Utc" ? date.toISOString() : `${date.toISOString().slice(0, -1)}${zonedOffsetIso(self)}`;
-	};
-	var formatIsoZoned = (self) => self.zone._tag === "Offset" ? formatIsoOffset(self) : `${formatIsoOffset(self)}[${self.zone.id}]`;
 	globalThis.String;
 	var trim = (self) => self.trim();
 	var promise = promise$1;
