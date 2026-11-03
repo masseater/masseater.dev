@@ -2701,10 +2701,11 @@
           be: document.getElementById("p-be"),
         };
         const runBtn = document.getElementById("p-run");
-        // 読み上げは「保持」「落下」などの最終結果だけにする。同じ文言は繰り返さない
+        // 読み上げは「保持」「落下」などの最終結果だけにする
         const announcer = document.getElementById("p-announce");
-        const announce = (msg) => {
-          if (announcer.textContent !== msg) announcer.textContent = msg;
+        const showResult = (msg, s) => {
+          pOut.st.textContent = announcer.textContent = msg;
+          pOut.st.dataset.s = s;
         };
         const PHYS = { active: false, running: false, ready: false, gpu: null, busy: false };
 
@@ -3223,17 +3224,14 @@ fn main(@builtin(local_invocation_index) tid: u32) {
             PHYS.maxOff = Math.max(PHYS.maxOff, off);
             PHYS.maxAng = Math.max(PHYS.maxAng, ang);
           }
-          if (PHYS.fellAt === null && off > SIM.fallCm)
+          if (PHYS.fellAt === null && off > SIM.fallCm) {
             PHYS.fellAt = Math.max(0, PHYS.t - SIM.settle);
+            showResult(`落下（${PHYS.fellAt.toFixed(2)} 秒後）`, "fall");
+          }
           const shownT = Math.max(0, PHYS.t - SIM.settle);
           pOut.t.textContent = `${shownT.toFixed(2)} s / ${SIM.T.toFixed(1)} s`;
           pOut.off.textContent = `${(off * 10).toFixed(1)} mm（最大 ${(PHYS.maxOff * 10).toFixed(1)}）`;
           pOut.ang.textContent = `${ang.toFixed(1)}°（最大 ${PHYS.maxAng.toFixed(1)}°）`;
-          if (PHYS.fellAt !== null) {
-            pOut.st.textContent = `落下（${PHYS.fellAt.toFixed(2)} 秒後）`;
-            announce(pOut.st.textContent);
-            pOut.st.dataset.s = "fall";
-          }
           nowAct.textContent =
             PHYS.fellAt !== null
               ? "本体が手から外れました"
@@ -3263,8 +3261,7 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           PHYS.q.set(r[6], r[7], r[8], r[9]);
           if (![r[0], r[1], r[2], r[6]].every(Number.isFinite)) {
             PHYS.running = false;
-            pOut.st.textContent = "計算が発散しました";
-            announce(pOut.st.textContent);
+            showResult("計算が発散しました", pOut.st.dataset.s);
             return;
           }
         }
@@ -3282,11 +3279,7 @@ fn main(@builtin(local_invocation_index) tid: u32) {
                 if (PHYS.t >= end) {
                   PHYS.running = false;
                   runBtn.textContent = "もう一度振る";
-                  if (PHYS.fellAt === null) {
-                    pOut.st.textContent = `保持（${SIM.T} 秒間）`;
-                    announce(pOut.st.textContent);
-                    pOut.st.dataset.s = "hold";
-                  }
+                  if (PHYS.fellAt === null) showResult(`保持（${SIM.T} 秒間）`, "hold");
                 }
               })
               .catch((err) => {
