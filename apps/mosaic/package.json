@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "mosaic",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -20,6 +20,8 @@
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
     "@effect/platform-node": "catalog:",
+    "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/ui": "workspace:*",
     "@tanstack/react-devtools": "0.10.14",
     "@tanstack/react-query": "catalog:stack",
     "@tanstack/react-query-devtools": "catalog:",
@@ -31,8 +33,7 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "effect": "catalog:stack",
-    "jose": "catalog:",
-    "radix-ui": "catalog:stack",
+    "radix-ui": "catalog:",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "scheduler": "0.28.0",
@@ -43,7 +44,6 @@
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
-    "@alchemy.run/fly": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.1",
