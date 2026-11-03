@@ -60,21 +60,15 @@ const web = Effect.gen(function* web() {
   });
 });
 
-const ciTelemetry = Effect.gen(function* ciTelemetry() {
-  const GITHUB_REPOSITORY = yield* Config.schema(Schema.String, "GITHUB_REPOSITORY").pipe(
-    Config.withDefault(""),
-  );
-  return yield* Workers.Worker("CiTelemetry", {
-    name: CI_TELEMETRY_AUDIENCE,
-    main: "./ci-telemetry.worker.ts",
-    compatibility: COMPATIBILITY,
-    logpush: true,
-    env: { GITHUB_REPOSITORY },
-    observability: {
-      enabled: true,
-      logs: { enabled: true, invocationLogs: false, persist: true },
-    },
-  });
+const ciTelemetry = Workers.Worker("CiTelemetry", {
+  name: CI_TELEMETRY_AUDIENCE,
+  main: "./ci-telemetry.worker.ts",
+  compatibility: COMPATIBILITY,
+  logpush: true,
+  observability: {
+    enabled: true,
+    logs: { enabled: true, invocationLogs: false, persist: true },
+  },
 });
 
 const npmTokenBinding = Effect.fn("npmTokenBinding")(function* npmTokenBinding(
@@ -152,7 +146,6 @@ const credentialBroker = Effect.gen(function* credentialBroker() {
   });
 });
 
-type CiTelemetryEnv = InferEnv<typeof ciTelemetry>;
 type WebEnv = InferEnv<typeof web>;
 
 const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
@@ -173,5 +166,5 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
   }),
 );
 
-export type { CiTelemetryEnv, WebEnv };
+export type { WebEnv };
 export default stack;
