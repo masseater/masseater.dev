@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/plugin-schema.json",
+  "name": "seikin-techniques",
+  "detection": { "type": "fileExists", "pattern": "vite.config.ts" },
+  "entryPoints": ["seikin-techniques.ts"],
+  "entryPointRole": "support",
+}

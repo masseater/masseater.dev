@@ -1,12 +1,36 @@
+import { Option, Schema, String as Str, pipe } from "effect";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 import type { Plugin } from "vite-plus";
 
-import { danceShaders } from "./dance-shaders.ts";
 import { splitPad } from "./split-pad.ts";
-import { techniqueCatalog } from "./technique-catalog.ts";
+import { webAnalyticsBeacon } from "./src/shared/config/web-analytics.ts";
 
-const standalonePages = (): readonly Plugin[] => [
-  techniqueCatalog(),
-  danceShaders(),
+const HEAD_END = "</head>";
+
+const beaconTag = (token: string): string => {
+  const beacon = webAnalyticsBeacon(token);
+  return `<script defer src="${beacon.src}" data-cf-beacon='${beacon["data-cf-beacon"]}'></script>`;
+};
+
+const withBeacon =
+  (token: Option.Option<string>) =>
+  (html: string): string =>
+    Option.match(token, {
+      onNone: () => html,
+      onSome: (value) => pipe(html, Str.replace(HEAD_END, `${beaconTag(value)}${HEAD_END}`)),
+    });
+
+const standalonePages = (beaconToken: unknown): readonly Plugin[] => [
+  ...viteStaticCopy({
+    targets: [
+      {
+        src: "standalone/*/index.html",
+        dest: ".",
+        rename: { stripBase: 1 },
+        transform: withBeacon(Schema.decodeUnknownOption(Schema.NonEmptyString)(beaconToken)),
+      },
+    ],
+  }),
   ...splitPad(),
 ];
 

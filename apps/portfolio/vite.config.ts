@@ -3,14 +3,14 @@ import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
-import { defineConfig } from "vite-plus";
+import { defineConfig, loadEnv } from "vite-plus";
 
+import { clientAssets } from "./client-assets.ts";
 import mdx from "./mdx.config.ts";
-import { ogImage } from "./og-image.ts";
 import { pages, sitemap, withLastmod } from "./prerender.ts";
-import { standalonePages } from "./standalone-pages.ts";
+import { seikinTechniques } from "./seikin-techniques.ts";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   resolve: { tsconfigPaths: true },
   test: {
     projects: [
@@ -20,10 +20,10 @@ export default defineConfig({
   },
   plugins: [
     devtools(),
-    ...standalonePages(),
+    ...seikinTechniques(),
     mdx,
     tailwindcss(),
-    ogImage(),
+    ...clientAssets(loadEnv(mode, import.meta.dirname, "VITE_")["VITE_CF_BEACON_TOKEN"]),
     tanstackStart({
       srcDirectory: "src/app",
       rsc: { enabled: true },
@@ -44,4 +44,4 @@ export default defineConfig({
     rsc(),
     viteReact({ include: /\.(?:md|tsx?)$/u }),
   ],
-});
+}));
