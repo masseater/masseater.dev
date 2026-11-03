@@ -11,7 +11,7 @@ import {
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { Stack, Stage, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
-import { Config, Effect, Option, Schema } from "effect";
+import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
 import {
@@ -77,6 +77,43 @@ const ciTelemetry = Effect.gen(function* ciTelemetry() {
   });
 });
 
+const npmTokenBinding = Effect.fn("npmTokenBinding")(function* npmTokenBinding(
+  store: SecretsStore.Store,
+) {
+  const token = yield* Config.option(Config.Redacted("NPM_TOKEN"));
+  const filled = pipe(
+    token,
+    Option.filter((value) => Redacted.value(value) !== ""),
+  );
+  if (Option.isNone(filled)) {
+    return {};
+  }
+  const NPM_TOKEN = yield* SecretsStore.Secret("CiNpmToken", {
+    store,
+    name: `${PREFIX}ci-npm-token`,
+    value: filled.value,
+  });
+  return { NPM_TOKEN };
+});
+
+const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.Store) {
+  const OPENROUTER_API_KEY = yield* SecretsStore.Secret("CiOpenrouterApiKey", {
+    store,
+    name: `${PREFIX}ci-openrouter-api-key`,
+    value: yield* Config.Redacted("OPENROUTER_API_KEY"),
+  });
+  const CLAUDE_CODE_OAUTH_TOKEN = yield* SecretsStore.Secret("CiClaudeCodeOauthToken", {
+    store,
+    name: `${PREFIX}ci-claude-code-oauth-token`,
+    value: yield* Config.Redacted("CLAUDE_CODE_OAUTH_TOKEN"),
+  });
+  return {
+    OPENROUTER_API_KEY,
+    CLAUDE_CODE_OAUTH_TOKEN,
+    ...(yield* npmTokenBinding(store)),
+  };
+});
+
 const credentialBroker = Effect.gen(function* credentialBroker() {
   const { accountId } = yield* yield* CloudflareEnvironment;
   const zoneId = yield* Zone.resolveZoneId({ accountId, zone: DOMAIN, hostname: DOMAIN }).pipe(
@@ -89,16 +126,7 @@ const credentialBroker = Effect.gen(function* credentialBroker() {
     name: `${PREFIX}credential-root-token`,
     value: rootToken,
   });
-  const OPENROUTER_API_KEY = yield* SecretsStore.Secret("CiOpenrouterApiKey", {
-    store,
-    name: `${PREFIX}ci-openrouter-api-key`,
-    value: yield* Config.Redacted("OPENROUTER_API_KEY"),
-  });
-  const CLAUDE_CODE_OAUTH_TOKEN = yield* SecretsStore.Secret("CiClaudeCodeOauthToken", {
-    store,
-    name: `${PREFIX}ci-claude-code-oauth-token`,
-    value: yield* Config.Redacted("CLAUDE_CODE_OAUTH_TOKEN"),
-  });
+  const keys = yield* ciKeys(store);
   const GITHUB_APP = yield* D1.Database("GitHubApp", { migrations: "./github-app-migrations" });
   const GRANTS = yield* Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown))(
     grantPolicies({ accountId, zoneId }),
@@ -112,8 +140,7 @@ const credentialBroker = Effect.gen(function* credentialBroker() {
     crons: ["17 18 * * *"],
     env: {
       ROOT_TOKEN,
-      OPENROUTER_API_KEY,
-      CLAUDE_CODE_OAUTH_TOKEN,
+      ...keys,
       GITHUB_APP,
       ACCOUNT_ID: accountId,
       GRANTS,
