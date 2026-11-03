@@ -1,6 +1,7 @@
 @import "@masseater.dev/ui/styles.css";
 @import "@masseater.dev/ui/theme.css";
 @import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
+@import "@xyflow/react/dist/base.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -391,5 +392,107 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 @keyframes slide-in-left {
   from {
     transform: translateX(-100vw);
+  }
+}
+
+.cascade-failure {
+  aspect-ratio: var(--cascade-aspect);
+  --xy-background-pattern-color: var(--border);
+  --xy-edge-stroke: var(--muted-foreground);
+  --xy-edge-label-background-color: var(--background);
+  --xy-edge-label-color: var(--muted-foreground);
+  --cascade-ok: oklch(0.72 0.17 150);
+}
+
+.cascade-failure .react-flow__edge-path {
+  stroke: var(--muted-foreground);
+}
+
+.cascade-failure .react-flow__edge-text {
+  font-size: 10px;
+  fill: var(--muted-foreground);
+}
+
+.cascade-failure .react-flow__edge-textbg {
+  fill: var(--background);
+}
+
+.cascade-service {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: 0 1px 2px oklch(0 0 0 / 6%);
+  cursor: pointer;
+  transition: transform 150ms;
+}
+
+.cascade-service:hover {
+  transform: translateY(-1px);
+}
+
+.cascade-lamp {
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: var(--cascade-ok);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--cascade-ok) 25%, transparent);
+}
+
+.cascade-service-stopped {
+  animation: cascade-stop 400ms ease-out var(--cascade-delay) both;
+}
+
+.cascade-service-stopped .cascade-lamp {
+  animation: cascade-lamp-stop 400ms ease-out var(--cascade-delay) both;
+}
+
+.cascade-edge-stopped .react-flow__edge-path {
+  animation:
+    cascade-edge-stop 400ms ease-out var(--cascade-delay) both,
+    cascade-edge-flow 600ms linear var(--cascade-delay) infinite;
+}
+
+@keyframes cascade-stop {
+  to {
+    border-color: var(--destructive);
+    background: color-mix(in oklch, var(--destructive) 12%, var(--card));
+  }
+}
+
+@keyframes cascade-lamp-stop {
+  to {
+    background: var(--destructive);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive) 30%, transparent);
+  }
+}
+
+@keyframes cascade-edge-stop {
+  to {
+    stroke: var(--destructive);
+    stroke-dasharray: 6 4;
+    stroke-width: 2;
+  }
+}
+
+@keyframes cascade-edge-flow {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cascade-service-stopped,
+  .cascade-service-stopped .cascade-lamp,
+  .cascade-edge-stopped .react-flow__edge-path {
+    animation-duration: 0s;
+    animation-delay: 0s !important;
   }
 }

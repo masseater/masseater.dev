@@ -58,6 +58,7 @@ catalog:
   yaml: 2.9.1
   mdast-util-directive: ^3.2.0
   remark-directive: ^4.0.0
+  "@xyflow/react": 12.12.1
   react-lite-youtube-embed: ^3.7.0
   budoux: 0.10.2
   mdast-util-to-string: 4.0.0
@@ -147,6 +148,8 @@ minimumReleaseAgeExclude:
   - "@distilled.cloud/github@1.0.0-rc.18"
   - "@distilled.cloud/iceberg@1.0.0-rc.18"
   - alchemy@2.0.0-beta.85
+  - "@xyflow/react@12.12.1"
+  - "@xyflow/system@0.0.84"
 audit:
   ignorePrune: true
   ignore:

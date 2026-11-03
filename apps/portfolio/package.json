@@ -38,6 +38,7 @@
     "@tanstack/react-router": "1.170.46",
     "@tanstack/react-router-devtools": "1.167.2",
     "@tanstack/react-router-ssr-query": "1.167.3",
+    "@xyflow/react": "catalog:",
     "drizzle-orm": "catalog:stack",
     "eden-tanstack-react-query": "catalog:stack",
     "effect": "catalog:stack",
