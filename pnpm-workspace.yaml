@@ -64,6 +64,9 @@ catalog:
   remark-parse: 11.0.0
   "@webgpu/types": 0.1.74
   naga-wasm: 30.2.0
+  "@distilled.cloud/github": 1.0.0-rc.17
+  universal-github-app-jwt: 2.2.2
+  "@octokit/rest": 22.0.1
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.17
@@ -73,6 +76,7 @@ catalogs:
     "@tanstack/react-query": 5.105.1
     "@tanstack/react-start": 1.169.4
     "@alchemy.run/cloudflare": 2.0.0-beta.84
+    "@alchemy.run/github": 2.0.0-beta.84
     alchemy: 2.0.0-beta.84
     drizzle-kit: 1.0.0-rc.5-ab785fc
     drizzle-orm: 1.0.0-rc.5-ab785fc
