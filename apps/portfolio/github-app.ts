@@ -6,6 +6,7 @@ import githubAppJwt from "universal-github-app-jwt";
 import { GITHUB_APP_NAME } from "./app-name.ts";
 import { GITHUB_APP_PERMISSIONS } from "./credential-grants.ts";
 import { OWNER_ID } from "./github-oidc.ts";
+import { toPkcs8 } from "./pkcs8.ts";
 
 const APP_KEY = "app";
 const SETUP_PATH = "/github-app";
@@ -23,7 +24,7 @@ const taggedError = Schema.TaggedError;
 
 class GitHubAppFailed extends taggedError<GitHubAppFailed, { readonly brand: unique symbol }>()(
   "GitHubAppFailed",
-  { reason: Schema.String },
+  { message: Schema.String },
 ) {}
 
 const StoredApp = Schema.Struct({ id: Schema.Finite, slug: Schema.String, pem: Schema.String });
@@ -39,7 +40,8 @@ const Conversion = Schema.Struct({
   owner: Schema.Struct({ id: Schema.Finite }),
 });
 
-const failed = (error: unknown): GitHubAppFailed => GitHubAppFailed.make({ reason: String(error) });
+const failed = (error: unknown): GitHubAppFailed =>
+  GitHubAppFailed.make({ message: String(error) });
 
 const readApp = (
   env: GitHubAppEnv,
@@ -62,12 +64,17 @@ const appJwt = (env: GitHubAppEnv): Effect.Effect<string, GitHubAppFailed> =>
   readApp(env).pipe(
     Effect.flatMap(
       Option.match({
-        onNone: () => Effect.fail(GitHubAppFailed.make({ reason: "GitHub App is not set up" })),
+        onNone: () => Effect.fail(GitHubAppFailed.make({ message: "GitHub App is not set up" })),
         onSome: (app) =>
-          Effect.tryPromise({
-            try: () => githubAppJwt({ id: app.id, privateKey: app.pem }),
-            catch: failed,
-          }),
+          toPkcs8(app.pem).pipe(
+            Effect.mapError(failed),
+            Effect.flatMap((privateKey) =>
+              Effect.tryPromise({
+                try: () => githubAppJwt({ id: app.id, privateKey }),
+                catch: failed,
+              }),
+            ),
+          ),
       }),
     ),
     Effect.map(({ token }) => token),
