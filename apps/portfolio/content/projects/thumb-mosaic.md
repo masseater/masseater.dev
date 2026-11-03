@@ -9,4 +9,4 @@ published: true
 
 [モザイクアート](https://masseater.dev/mosaic/miku)では、ドラッグとホイールで拡大でき、サムネイルを押すとその動画へ飛べる。素材は [VocaDB](https://vocadb.net/) に載っている約 6.7 万曲のサムネイルで、マスとの色の違いの合計がいちばん小さくなる組み合わせを一度に割り当てている。
 
-使った動画の一覧は[クレジットのページ](https://masseater.dev/mosaic/miku/credits)に載せている。ソースは [GitHub](https://github.com/masseater/thumb-mosaic) にある。
+使った動画の一覧は[クレジットのページ](https://masseater.dev/mosaic/miku/credits)に載せている。ソースは [GitHub](https://github.com/masseater/masseater.dev/tree/main/apps/mosaic) にある。
