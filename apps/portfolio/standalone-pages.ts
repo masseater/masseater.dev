@@ -2,7 +2,6 @@ import { Option, Schema, String as Str, pipe } from "effect";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import type { Plugin } from "vite-plus";
 
-import { splitPad } from "./split-pad.ts";
 import { webAnalyticsBeacon } from "./src/shared/config/web-analytics.ts";
 
 const HEAD_END = "</head>";
@@ -20,8 +19,8 @@ const withBeacon =
       onSome: (value) => pipe(html, Str.replace(HEAD_END, `${beaconTag(value)}${HEAD_END}`)),
     });
 
-const standalonePages = (beaconToken: unknown): readonly Plugin[] => [
-  ...viteStaticCopy({
+const standalonePages = (beaconToken: unknown): readonly Plugin[] =>
+  viteStaticCopy({
     targets: [
       {
         src: "standalone/*/index.html",
@@ -30,8 +29,6 @@ const standalonePages = (beaconToken: unknown): readonly Plugin[] => [
         transform: withBeacon(Schema.decodeUnknownOption(Schema.NonEmptyString)(beaconToken)),
       },
     ],
-  }),
-  ...splitPad(),
-];
+  });
 
 export { standalonePages };
