@@ -40,7 +40,9 @@ jobs:
           gh auth setup-git
           commits="$(gh api "repos/$GITHUB_REPOSITORY/compare/$BEFORE_SHA...$HEAD_SHA" --jq .total_commits)"
           git fetch --no-tags --depth="$((commits + 1))" origin "$HEAD_SHA"
-          vp exec commitlint --from "$BEFORE_SHA" --to "$HEAD_SHA" --verbose
+          git log --first-parent --format=%H "$BEFORE_SHA..$HEAD_SHA" | while read -r sha; do
+            git log -1 --format=%B "$sha" | vp exec commitlint --verbose || exit 1
+          done
       - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.cache/oxlint-plugin-decision
