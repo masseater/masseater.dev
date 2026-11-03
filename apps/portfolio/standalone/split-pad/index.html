@@ -9,7 +9,7 @@
     />
     <style>
       :root {
-        color-scheme: light;
+        color-scheme: light dark;
         padding-top: env(safe-area-inset-top, 0px);
         padding-bottom: env(safe-area-inset-bottom, 0px);
       }
@@ -73,6 +73,9 @@
           --fall: var(--ring);
           color-scheme: dark;
         }
+      }
+      :root[data-theme="light"] {
+        color-scheme: light;
       }
       :root[data-theme="dark"] {
         --bg: #14181d;
@@ -216,6 +219,15 @@
         border-radius: 50%;
         flex: none;
       }
+      .lbl button {
+        font: inherit;
+        color: inherit;
+        background: none;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+        pointer-events: auto;
+      }
       .lbl.away {
         opacity: 0.18;
       }
@@ -328,7 +340,7 @@
         color: var(--muted);
       }
       #phys select {
-        font: 13px var(--body);
+        font: 1rem var(--body);
         color: var(--ink);
         background: var(--bg);
         border: 1px solid var(--control-line);
@@ -364,6 +376,7 @@
       #phys .chk label {
         display: inline-flex;
         align-items: center;
+        min-block-size: 44px;
         gap: 6px;
         font-size: 13px;
         border: 1px solid var(--control-line);
@@ -420,6 +433,7 @@
       .toggles label {
         display: inline-flex;
         align-items: center;
+        min-block-size: 44px;
         gap: 6px;
       }
       .toggles input {
@@ -445,6 +459,9 @@
         color: var(--muted);
         font-size: 12px;
         margin: 0;
+      }
+      .note a {
+        color: inherit;
       }
 
       @media (max-width: 760px) {
@@ -644,10 +661,11 @@
         </section>
         <section>
           <h2>選択中のボタン</h2>
-          <div id="info">
+          <div id="info" aria-live="polite">
             <div class="name">—</div>
             <p class="note">
-              3D 上のボタンをクリックすると、担当する指と役割を表示します。指もその動きで押します。
+              3D
+              上のボタンか指の名前を選ぶと、担当する指と役割を表示します。指もその動きで押します。
             </p>
           </div>
         </section>
@@ -735,9 +753,7 @@
         </p>
         <p class="note">
           手のモデルは
-          <a href="https://github.com/immersive-web/webxr-input-profiles" style="color: inherit"
-            >WebXR Input Profiles</a
-          >
+          <a href="https://github.com/immersive-web/webxr-input-profiles">WebXR Input Profiles</a>
           の generic-hand（MIT License, © 2019
           Amazon）。関節の位置はこのページで計算し、ボーンに合わせて動かしています。
         </p>
@@ -1247,12 +1263,25 @@
             new THREE.Matrix4().makeBasis(x, y, z),
           );
         };
-        function addLabel(half, text, finger, at, offset) {
+        function addLabel(half, finger, keys, text, at, offset) {
           const el = document.createElement("div");
           el.className = "lbl";
           const dot = document.createElement("i");
           dot.dataset.f = finger;
-          el.append(dot, text);
+          el.append(dot);
+          keys.forEach(([short, b], k) => {
+            if (k > 0) el.append(" / ");
+            const key = document.createElement("button");
+            key.type = "button";
+            key.textContent = short;
+            key.setAttribute(
+              "aria-label",
+              b.name.startsWith(short) ? b.name : `${short} ${b.name}`,
+            );
+            key.addEventListener("click", () => press(b, true));
+            el.append(key);
+          });
+          el.append(` ${text}`);
           const o = new THREE.CSS2DObject(el);
           o.position.copy(at).add(offset);
           o.userData.nrm = offset.clone().normalize();
@@ -1697,8 +1726,9 @@
           );
           addLabel(
             half,
-            R ? "RS 親指" : "LS 親指",
             "thumb",
+            [[R ? "RS" : "LS", sb]],
+            "親指",
             st.pos,
             stN.clone().multiplyScalar(2.3),
           );
@@ -1711,7 +1741,7 @@
           for (let k = 0; k <= 10; k++)
             trigS.push(ringAt(HAND.index.y0, (ta + ((tb - ta) * k) / 10) * D));
           const trig = curvedKey(half, trigS, 0.3, 0.02, mat.finger.index);
-          register(
+          const trigB = register(
             {
               id: side + "2",
               side,
@@ -1745,7 +1775,7 @@
           const bGap =
             lmid.clone().sub(bHit.pos).dot(bHit.nrm) - HAND.index.radii[1] - (0.03 + 0.54);
           const bPush = bHit.nrm.clone().multiplyScalar(-Math.max(0, bGap));
-          register(
+          const bumpB = register(
             {
               id: side + "1",
               side,
@@ -1762,8 +1792,12 @@
           );
           addLabel(
             half,
-            R ? "R1 / R2 人差し指" : "L1 / L2 人差し指",
             "index",
+            [
+              [R ? "R1" : "L1", bumpB],
+              [R ? "R2" : "L2", trigB],
+            ],
+            "人差し指",
             trig.center,
             new V3(0, 1.6, -2.2),
           );
@@ -1805,7 +1839,7 @@
               deep: true,
             });
             const fname = fk === "middle" ? "中指" : "薬指";
-            register(
+            const padB = register(
               {
                 id: side + "-" + row.pad[0],
                 side,
@@ -1819,7 +1853,7 @@
               },
               pk.meshes,
             );
-            register(
+            const tipB = register(
               {
                 id: side + "-" + row.tip[0],
                 side,
@@ -1833,16 +1867,24 @@
               },
               tk.meshes,
             );
-            const txt =
-              fk === "middle" ? (R ? "A / B 中指" : "↑ / ← 中指") : R ? "X / Y 薬指" : "↓ / → 薬指";
-            addLabel(half, txt, fk, ps.pos, new V3(1.2, 0.3, -2.4));
+            addLabel(
+              half,
+              fk,
+              [
+                [row.pad[0], padB],
+                [row.tip[0], tipB],
+              ],
+              fname,
+              ps.pos,
+              new V3(1.2, 0.3, -2.4),
+            );
           });
 
           // 内側面：メニューボタン
           const ms = cast(new V3(-12, 0.7, 0.4), new V3(1, 0, 0));
           const mk = makeKey(half, ms, new V3(0, 0, 1), { finger: "thumb", r: 0.3 });
           mk.meshes.forEach((m) => (m.material = mat.key));
-          register(
+          const menuB = register(
             {
               id: side + "-menu",
               side,
@@ -1853,6 +1895,14 @@
               press: mk.press,
             },
             mk.meshes,
+          );
+          addLabel(
+            half,
+            "thumb",
+            [[R ? "+" : "−", menuB]],
+            "親指",
+            ms.pos,
+            ms.nrm.clone().multiplyScalar(1.6),
           );
 
           const led = new THREE.Mesh(
