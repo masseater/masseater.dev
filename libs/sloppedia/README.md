@@ -61,7 +61,7 @@ infobox:
 ---
 ```
 
-Vite では、`remark-mdx-frontmatter` が export する `frontmatter` を `import.meta.glob` で集めて `articlesOf` に渡すと、ファイル名を slug にした公開済みの記事が新しい順に返る。
+Vite では、`remark-mdx-frontmatter` が export する `frontmatter` を `import.meta.glob` で集めて `articlesOf` に渡す。すると、ファイル名を slug にした公開済みの記事が新しい順に返る。
 
 ```ts
 const articles = articlesOf(

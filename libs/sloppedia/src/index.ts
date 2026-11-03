@@ -4,6 +4,7 @@ export { byTitle, categoriesOf, recentOf } from "./categories.ts";
 export type { WikiCategory } from "./categories.ts";
 export { defaultLabels, defineSloppedia, githubSource, targets } from "./config.ts";
 export type {
+  GitHubSource,
   HomeLink,
   Labels,
   LinkProps,

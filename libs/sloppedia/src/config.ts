@@ -124,5 +124,14 @@ const githubSource = ({
   historyOf: (slug) => `${repository}/commits/${branch}/${directory}/${slug}${extension}`,
 });
 
-export type { HomeLink, Labels, LinkProps, RenderLink, SloppediaConfig, SloppediaOptions, Target };
+export type {
+  GitHubSource,
+  HomeLink,
+  Labels,
+  LinkProps,
+  RenderLink,
+  SloppediaConfig,
+  SloppediaOptions,
+  Target,
+};
 export { defaultLabels, defineSloppedia, githubSource, targets };
