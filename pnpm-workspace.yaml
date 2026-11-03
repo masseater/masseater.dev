@@ -92,6 +92,9 @@ catalogs:
     vite-plus: 1.4.0
 overrides:
   effect: "catalog:stack"
+  "@r_masseater/oxlint-plugin-decision>effect": 4.0.0
+  "@r_masseater/oxlint-plugin-decision>@effect/platform-node": 4.0.0
+  "@effect/platform-node@4.0.0>@effect/platform-node-shared": 4.0.0
   "@effect/platform-node": 4.1.1
   "@effect/platform-node-shared": 4.1.1
   "@effect/sql-d1": 4.1.1
