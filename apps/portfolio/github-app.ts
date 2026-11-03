@@ -23,7 +23,7 @@ const taggedError = Schema.TaggedError;
 
 class GitHubAppFailed extends taggedError<GitHubAppFailed, { readonly brand: unique symbol }>()(
   "GitHubAppFailed",
-  { reason: Schema.String },
+  { message: Schema.String },
 ) {}
 
 const StoredApp = Schema.Struct({ id: Schema.Finite, slug: Schema.String, pem: Schema.String });
@@ -39,7 +39,8 @@ const Conversion = Schema.Struct({
   owner: Schema.Struct({ id: Schema.Finite }),
 });
 
-const failed = (error: unknown): GitHubAppFailed => GitHubAppFailed.make({ reason: String(error) });
+const failed = (error: unknown): GitHubAppFailed =>
+  GitHubAppFailed.make({ message: String(error) });
 
 const readApp = (
   env: GitHubAppEnv,
@@ -62,7 +63,7 @@ const appJwt = (env: GitHubAppEnv): Effect.Effect<string, GitHubAppFailed> =>
   readApp(env).pipe(
     Effect.flatMap(
       Option.match({
-        onNone: () => Effect.fail(GitHubAppFailed.make({ reason: "GitHub App is not set up" })),
+        onNone: () => Effect.fail(GitHubAppFailed.make({ message: "GitHub App is not set up" })),
         onSome: (app) =>
           Effect.tryPromise({
             try: () => githubAppJwt({ id: app.id, privateKey: app.pem }),
