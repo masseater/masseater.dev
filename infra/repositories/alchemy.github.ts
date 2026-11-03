@@ -4,10 +4,9 @@ import type { RepositoryProps, RulesetProps } from "@alchemy.run/github";
 import { Stack } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
-import { Array as Arr, Effect, Layer, Record as Rec, pipe } from "effect";
+import { Array as Arr, Effect, Layer, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { PREFIX } from "./app-name.ts";
 import { OWNER, hasUpToDateWorkflow, repositories } from "./github-repositories.ts";
 import type { ManagedRepository } from "./github-repositories.ts";
 import { settingsOf, settingsProvider } from "./github-repository-settings.ts";
@@ -50,10 +49,6 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
       description: "ニコメドや合作動画で使われた曲と動画を逆引きできるメドDB",
       homepage: "https://medley-manager.masseater.dev",
     },
-    "thumb-mosaic": {
-      description: "動画サムネイルを1枚1回だけ使って描くキャラクターのモザイクアート",
-      homepage: "https://masseater.dev/mosaic/",
-    },
     "rpp-kit": {
       description: "REAPER のプロジェクトファイル（.rpp）を TypeScript から直接読むキット",
       homepage: "https://masseater.dev/rpp-kit/",
@@ -95,15 +90,11 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
 const ARCHIVES: ReadonlySet<string> = new Set([
   "mst-ja-decision-bench",
   "oxlint-typed-rules",
+  "thumb-mosaic",
   "vocablint",
 ]);
 
-const RENAMES: Readonly<Record<string, string>> = { "oxlint-plugin-decision": "lint-kit" };
-
 const isArchiving = (repository: ManagedRepository): boolean => ARCHIVES.has(repository.name);
-
-const isChanging = (repository: ManagedRepository): boolean =>
-  isArchiving(repository) || Rec.has(RENAMES, repository.name);
 
 const policyOf = (repository: ManagedRepository): Partial<RepositoryProps> => {
   if (isArchiving(repository)) {
@@ -132,7 +123,7 @@ const rulesOf = (
 };
 
 const github: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
-  `${PREFIX}github`,
+  "masseater-dev-github",
   {
     providers: Layer.mergeAll(cloudflareProviders(), gitHubProviders(), settingsProvider),
     state: state(),
@@ -144,14 +135,14 @@ const github: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       Effect.forEach((repository) =>
         Repository(`Repository${repository.id}`, {
           owner: OWNER,
-          name: RENAMES[repository.name] ?? repository.name,
+          name: repository.name,
           ...policyOf(repository),
         }),
       ),
     );
     const active = pipe(
       managed,
-      Arr.filter((repository) => !isChanging(repository)),
+      Arr.filter((repository) => !isArchiving(repository)),
     );
     yield* pipe(active, Effect.forEach(settingsOf));
     yield* pipe(
