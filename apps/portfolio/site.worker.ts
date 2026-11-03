@@ -6,12 +6,7 @@ import { isUnindexedPath } from "#/entities/entry/model/category";
 import { starRoutes } from "#/features/star/index.server";
 import { site } from "#/shared/config";
 
-import {
-  DOCUMENT_HEADERS,
-  IMAGE_HEADERS,
-  SECURITY_HEADERS,
-  contentSecurityPolicy,
-} from "./security-headers.ts";
+import { IMAGE_HEADERS, SECURITY_HEADERS, contentSecurityPolicy } from "./security-headers.ts";
 
 const NONCE_BYTES = 16;
 
@@ -115,7 +110,6 @@ const worker = {
                 const nonce = newNonce();
                 const headers = overriding(entries, RESPONSE_VALIDATORS, [
                   ...fixed,
-                  ...Rec.toEntries(DOCUMENT_HEADERS),
                   cspHeader(nonce),
                 ]);
                 const { body } = nonceRewriter(nonce).transform(document);

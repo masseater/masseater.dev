@@ -8,7 +8,7 @@ const HEAD_END = "</head>";
 
 const beaconTag = (token: string): string => {
   const beacon = webAnalyticsBeacon(token);
-  return `<script defer src="${beacon.src}" data-cf-beacon='${beacon["data-cf-beacon"]}'></script>`;
+  return `<script defer src="${beacon.src}" integrity="${beacon.integrity}" crossorigin="${beacon.crossOrigin}" data-cf-beacon='${beacon["data-cf-beacon"]}'></script>`;
 };
 
 const withBeacon =

@@ -14,9 +14,8 @@ const SECURITY_HEADERS = {
   "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
   "Cross-Origin-Opener-Policy": "same-origin",
   "Cross-Origin-Resource-Policy": "same-origin",
+  "Cross-Origin-Embedder-Policy": "credentialless",
 } as const;
-
-const DOCUMENT_HEADERS = { "Cross-Origin-Embedder-Policy": "credentialless" } as const;
 
 const IMAGE_HEADERS = { "Cross-Origin-Resource-Policy": "cross-origin" } as const;
 
@@ -38,4 +37,4 @@ const contentSecurityPolicy = (nonce: string): string =>
     Arr.join("; "),
   );
 
-export { DOCUMENT_HEADERS, IMAGE_HEADERS, SECURITY_HEADERS, contentSecurityPolicy };
+export { IMAGE_HEADERS, SECURITY_HEADERS, contentSecurityPolicy };
