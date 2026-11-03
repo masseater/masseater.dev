@@ -1,5 +1,6 @@
 import { Array as Arr, Option, Predicate, pipe } from "effect";
-import type { Parent, Root, RootContent } from "mdast";
+import type { Parent, PhrasingContent, Root, RootContent, Text } from "mdast";
+import type { LeafDirective } from "mdast-util-directive";
 
 type Transform<Input, Output> = (input: Input) => Output;
 
@@ -25,5 +26,18 @@ const mapTree =
     return withChildren(tree, transformNode);
   };
 
+const isLeafDirective: Predicate.Refinement<RootContent, LeafDirective> = (node) =>
+  node.type === "leafDirective";
+
+const isText: Predicate.Refinement<PhrasingContent, Text> = (node) => node.type === "text";
+
+const labelOf: Transform<LeafDirective, string> = (node) =>
+  pipe(
+    node.children,
+    Arr.filter(isText),
+    Arr.map(({ value }) => value),
+    Arr.join(""),
+  );
+
 export type { Transform };
-export { mapTree };
+export { isLeafDirective, labelOf, mapTree };

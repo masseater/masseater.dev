@@ -97,6 +97,7 @@ export default defineConfig({
       "oxc/no-rest-spread-properties": "off",
       "node/no-top-level-await": "off",
       "eslint/one-var": ["error", "never"],
+      "eslint/id-length": ["error", { exceptions: ["x", "y"] }],
       "eslint/no-restricted-imports": ["error", restrictedImports],
       "typescript/prefer-readonly-parameter-types": [
         "error",
