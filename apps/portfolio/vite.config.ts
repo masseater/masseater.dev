@@ -5,10 +5,10 @@ import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import { defineConfig } from "vite-plus";
 
-import { clientAssets } from "./client-assets.ts";
 import mdx from "./mdx.config.ts";
+import { ogImage } from "./og-image.ts";
 import { pages, sitemap, withLastmod } from "./prerender.ts";
-import { seikinTechniques } from "./seikin-techniques.ts";
+import { standalonePages } from "./standalone-pages.ts";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
@@ -20,10 +20,10 @@ export default defineConfig({
   },
   plugins: [
     devtools(),
-    ...seikinTechniques(),
+    ...standalonePages(),
     mdx,
     tailwindcss(),
-    ...clientAssets(),
+    ogImage(),
     tanstackStart({
       srcDirectory: "src/app",
       rsc: { enabled: true },
