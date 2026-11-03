@@ -5,7 +5,7 @@ tags: ["decision-model", "ベンチマーク", "OpenRouter"]
 published: true
 ---
 
-decision model は、文章を生成せず、選択肢・はい／いいえ・スコアのどれかを確率つきで返すだけのモデルである。[OpenRouter](https://openrouter.ai/) から 1 回 0.0001 USD に満たない費用と 200ms 前後の時間で呼べる。この費用と速さなら、これまで人か大きな LLM に任せていた「この関数は個人情報をログに出しているか」のような判断を、lint やワークフローの部品として毎回走らせられる。この可能性をかなり強く感じていて、自然文のルールを decision model に判定させる [oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision) などを作ってきた。
+decision model は、文章を生成せず、選択肢・はい／いいえ・スコアのどれかを確率つきで返すだけのモデルである。[OpenRouter](https://openrouter.ai/) から 1 回 0.0001 USD に満たない費用と 200ms 前後の時間で呼べる。この費用と速さなら、これまで人か大きな LLM に任せていた「この関数は個人情報をログに出しているか」のような判断を、lint やワークフローの部品として毎回走らせられる。この可能性をかなり強く感じていて、自然文のルールを decision model に判定させる [oxlint-plugin-decision](https://github.com/masseater/lint-kit/tree/main/libs/oxlint-plugin-decision) などを作ってきた。
 
 ところが、ルールの問いや判定する文章が日本語になると、明らかに性能が低かった。英語の評価では 9 割以上当てるモデルが日本語ではどれくらい当たるのか、どのモデルなら日本語で使えるのかが気になって、自分で測ることにした。それが [mst-ja-decision-bench](https://github.com/masseater/mst-ja-decision-bench) で、結果は[リーダーボード](https://masseater.dev/decision-bench/)で公開している。
 
