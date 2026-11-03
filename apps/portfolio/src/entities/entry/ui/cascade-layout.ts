@@ -194,5 +194,5 @@ const edgesOf = (state: CascadeState): Edge[] => {
   return pipe(cascadeLinks, Arr.map(toEdge));
 };
 
-export type { ServiceNode, StageNode, Status };
+export type { ServiceData, ServiceNode, StageNode, Status };
 export { FLOW_HEIGHT, STAGE_WIDTH, edgesOf, nodesOf };

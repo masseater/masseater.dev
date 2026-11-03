@@ -12,4 +12,5 @@ const useCascadeState = (): CascadeState => useAtomValue(cascadeAtom);
 
 const useUpdateCascade = (): Update => useAtomSet(cascadeAtom);
 
+export type { Update };
 export { useCascadeState, useUpdateCascade };
