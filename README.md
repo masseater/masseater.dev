@@ -6,7 +6,8 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 
 - サイト: https://masseater.dev
 - Sloppedia: https://masseater.dev/sloppedia/
-- 夕景カット撮影ラボ: https://masseater.dev/satsuei-lab/
+- 単体のページ: https://masseater.dev/satsuei-lab/（夕景カット撮影ラボ）、https://masseater.dev/split-pad/（背面打ちスプリットパッド）
+- サムネのモザイクアート: https://masseater.dev/mosaic/ （キャラごとのページは `libs/mosaic/src/characters.json` の slug で `/mosaic/<slug>`）
 - RSS: https://masseater.dev/feed.xml
 - Zenn: https://zenn.dev/masseater
 
@@ -35,6 +36,12 @@ main に入ると、verify が通ったあとに本番へデプロイされる�
 
 Zenn の記事は `apps/zenn-articles/articles/`、本は `books/`、画像は `images/` に置く。
 main の verify が通ると Zenn に公開される。masseater.dev のサイトには載らない。
+
+## モザイクアート
+
+`apps/mosaic` のサイトと、キャラごとの画像を配る Worker は Alchemy の `thumb-mosaic` スタックで置く。
+キャラは `libs/mosaic/src/characters.json` に足す。`tools/mosaic` の Python が VocaDB から曲を集めてモザイクを解き、main の verify のあとにキャラごとのジョブが画像を、最後のジョブがサイトをデプロイする。
+このジョブは mosaic のファイルか lockfile が変わった push と、毎週の定期実行でだけ動く。
 
 ## 手元で確かめる
 
