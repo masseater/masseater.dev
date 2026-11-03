@@ -45,10 +45,8 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "medley-manager": "deploy",
   mirucord: "deploy",
   msa: "deploy",
-  myaudiobooks: "deploy",
   "personal-space": "access",
   "rpp-kit": "deploy",
-  "thumb-mosaic": "deploy",
   "typescript-template": "deploy",
 };
 

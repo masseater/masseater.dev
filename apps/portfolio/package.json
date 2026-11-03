@@ -9,12 +9,11 @@
   "scripts": {
     "dev": "alchemy dev",
     "typecheck": "tsc",
-    "test": "vp test run --passWithNoTests",
+    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache --passWithNoTests",
     "steiger": "steiger ./src",
     "prepare": "effect-tsgo patch --typescript --oxlint",
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
     "deploy": "alchemy deploy",
-    "deploy:github": "alchemy deploy --config alchemy.github.ts --stage prod --yes",
     "tokens": "vpx cloudflare-tokens.ts",
     "destroy": "alchemy destroy",
     "db:generate": "drizzle-kit generate",
@@ -52,12 +51,12 @@
     "react-lite-youtube-embed": "catalog:",
     "scheduler": "0.28.0",
     "simple-icons": "catalog:",
+    "sloppedia": "workspace:*",
     "tailwindcss": "catalog:stack",
     "universal-github-app-jwt": "catalog:"
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
-    "@alchemy.run/github": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.1",

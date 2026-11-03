@@ -1,38 +1,14 @@
 import { Effect, Schema } from "effect";
+import { Frontmatter as ArticleFrontmatter } from "sloppedia/schema";
 
 import { categoryPath } from "./category";
 import type { Category } from "./category";
-
-const DateString = Schema.String.check(Schema.isPattern(/^\d{4}-\d{2}-\d{2}$/u));
-
-const Tags = Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([])));
 
 const Stage = Schema.Literals(["article", "idea"]).pipe(
   Schema.withDecodingDefaultKey(Effect.succeed("article" as const)),
 );
 
-const InfoboxRowSchema = Schema.Struct({
-  label: Schema.String,
-  value: Schema.String,
-  href: Schema.optionalKey(Schema.String),
-});
-
-const Infobox = Schema.Array(InfoboxRowSchema).pipe(
-  Schema.withDecodingDefaultKey(Effect.succeed([])),
-);
-
-const Frontmatter = Schema.Struct({
-  title: Schema.String,
-  description: Schema.String,
-  date: DateString,
-  updated: DateString,
-  tags: Tags,
-  published: Schema.Boolean,
-  stage: Stage,
-  infobox: Infobox,
-});
-
-type InfoboxRow = typeof InfoboxRowSchema.Type;
+const Frontmatter = Schema.Struct({ ...ArticleFrontmatter.fields, stage: Stage });
 
 type Entry = Readonly<
   Omit<typeof Frontmatter.Type, "published" | "stage"> & {
@@ -56,5 +32,5 @@ const entryPath = ({ category, slug }: Readonly<Pick<Entry, "category" | "slug">
 const entryOgImagePath = (entry: Readonly<Pick<Entry, "category" | "slug">>): string =>
   `/og${entryPath(entry)}.png`;
 
-export type { CollectionResult, Entry, EntryResult, InfoboxRow, Missing };
+export type { CollectionResult, Entry, EntryResult, Missing };
 export { entryOgImagePath, entryPath, Frontmatter };
