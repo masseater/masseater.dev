@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import {
+  CreditsFrame,
   CreditsPage,
-  CreditsPending,
   creditedTiles,
   creditsHead,
   creditsSearch,
@@ -16,7 +16,7 @@ const Route = createFileRoute("/$slug_/credits")({
   loader: ({ params, deps }) => creditedTiles({ slug: params.slug, seed: deps.seed }),
   head: ({ params }) =>
     creditsHead({ slug: params.slug, mosaic: bundledPreview(params.slug).card }),
-  pendingComponent: CreditsPending,
+  pendingComponent: CreditsFrame,
   component: CreditsPage,
 });
 
