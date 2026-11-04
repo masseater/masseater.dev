@@ -430,6 +430,14 @@
   .cascade-edge-stopped path:first-of-type {
     animation: cascade-edge-stop 0s both;
   }
+
+  .feed-slide-in {
+    animation: feed-slide-in 0s both;
+  }
+
+  ::view-transition-old(feed-link):only-child {
+    animation: feed-slide-out 0s both;
+  }
 }
 
 .architecture-figure {
