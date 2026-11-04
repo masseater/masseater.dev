@@ -1,14 +1,13 @@
+import { webAnalyticsBeacon } from "@masseater.dev/ui/web-analytics";
 import { Option, Schema, String as Str, pipe } from "effect";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import type { Plugin } from "vite-plus";
-
-import { webAnalyticsBeacon } from "./src/shared/config/web-analytics.ts";
 
 const HEAD_END = "</head>";
 
 const beaconTag = (token: string): string => {
   const beacon = webAnalyticsBeacon(token);
-  return `<script defer src="${beacon.src}" data-cf-beacon='${beacon["data-cf-beacon"]}'></script>`;
+  return `<script defer src="${beacon.src}" integrity="${beacon.integrity}" crossorigin="${beacon.crossOrigin}" data-cf-beacon='${beacon["data-cf-beacon"]}'></script>`;
 };
 
 const withBeacon =

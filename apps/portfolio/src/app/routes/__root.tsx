@@ -1,3 +1,4 @@
+import { webAnalyticsBeacon } from "@masseater.dev/ui/web-analytics";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext } from "@tanstack/react-router";
 import { Array as Arr, Option, Schema, pipe } from "effect";
@@ -5,7 +6,7 @@ import { Array as Arr, Option, Schema, pipe } from "effect";
 import { RootDocument } from "#/app/shell/root-document";
 import { RootLayout } from "#/app/shell/root-layout";
 import { RootNotFound } from "#/app/shell/root-not-found";
-import { site, webAnalyticsBeacon } from "#/shared/config";
+import { site } from "#/shared/config";
 
 import appCss from "#/app/styles.css?url";
 
