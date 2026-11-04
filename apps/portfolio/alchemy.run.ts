@@ -10,7 +10,7 @@ import {
 } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { grantPolicies } from "@masseater.dev/repositories/credential-grants";
-import { Stack, Stage, makeRandom } from "alchemy";
+import { RemovalPolicy, Stack, Stage, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
@@ -146,6 +146,10 @@ const credentialBroker = Effect.gen(function* credentialBroker() {
   });
 });
 
+const retainedCredentialBroker = credentialBroker.pipe(
+  Effect.provideService(RemovalPolicy.RemovalPolicy, "retain"),
+);
+
 type WebEnv = InferEnv<typeof web>;
 
 const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
@@ -156,7 +160,8 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
     if ((yield* Stage) === PRODUCTION_STAGE) {
       yield* Option.match(OWNED_ZONE, {
         onNone: () => Effect.void,
-        onSome: (domain) => edgeGuard(domain, COMPATIBILITY).pipe(Effect.andThen(credentialBroker)),
+        onSome: (domain) =>
+          edgeGuard(domain, COMPATIBILITY).pipe(Effect.andThen(retainedCredentialBroker)),
       });
       yield* logArchive;
     }
