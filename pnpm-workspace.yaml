@@ -71,6 +71,9 @@ catalog:
   d3-polygon: 3.0.1
   d3-array: 3.2.4
   internmap: 2.0.3
+  "@fontsource/zen-kaku-gothic-new": 5.3.1
+  "@fontsource/dela-gothic-one": 5.3.0
+  "@fontsource/ibm-plex-mono": 5.3.0
   "@distilled.cloud/github": 1.0.0-rc.18
   universal-github-app-jwt: 2.2.2
   "@octokit/rest": 22.0.1
