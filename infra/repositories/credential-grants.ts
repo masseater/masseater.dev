@@ -31,6 +31,7 @@ const extend = (extra: Partial<Grant>): Grant => ({
 const PROFILES = {
   deploy: DEPLOY,
   rulesets: extend({ account: ["Account Rulesets Write"] }),
+  transforms: extend({ zone: ["Zone Transform Rules Write"] }),
   access: extend({ account: ["Access: Apps and Policies Write", "MCP Portals Write"] }),
 } as const satisfies Readonly<Record<string, Grant>>;
 
@@ -42,6 +43,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "geigeki-kaiiki": "deploy",
   konomi: "deploy",
   "medley-database": "deploy",
+  "masseater.dev": "transforms",
   "medley-manager": "deploy",
   mirucord: "deploy",
   msa: "deploy",
