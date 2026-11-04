@@ -8,7 +8,7 @@ packages:
 catalogMode: prefer
 
 catalog:
-  "@r_masseater/oxlint-typed-rules": 0.0.2
+  "@r_masseater/oxlint-typed-rules": 0.1.0
   oxlint-plugin-eslint: 1.90.0
   "@ast-grep/cli": 0.51.0
   "@cloudflare/workers-types": 5.20261101.1
@@ -22,7 +22,7 @@ catalog:
   eslint-plugin-react-hooks: 7.1.1
   syncpack: 15.3.3
   vite: npm:@voidzero-dev/vite-plus-core@1.4.0
-  "@r_masseater/oxlint-plugin-decision": 0.0.4
+  "@r_masseater/oxlint-plugin-decision": 0.1.0
   eslint-plugin-no-comments: 1.2.1
   eslint-plugin-baseline-js: 0.7.7
   "@html-eslint/eslint-plugin-react": 0.67.0
@@ -114,9 +114,6 @@ overrides:
   "@effect/platform-node-shared": 4.1.1
   "@effect/sql-d1": 4.1.1
   "@effect/sql-sqlite-do": 4.1.1
-  "@r_masseater/oxlint-plugin-decision>effect": 4.0.0
-  "@r_masseater/oxlint-plugin-decision>@effect/platform-node": 4.0.0
-  "@effect/platform-node@4.0.0>@effect/platform-node-shared": 4.0.0
   vite@*: "catalog:"
   eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
   fflate@>=0.7.0 <0.7.5: ^0.7.5
@@ -141,8 +138,8 @@ packageExtensions:
     dependencies:
       "@steiger/toolkit": 0.2.3
 minimumReleaseAgeExclude:
-  - "@r_masseater/oxlint-typed-rules@0.0.2"
-  - "@r_masseater/oxlint-plugin-decision@0.0.4"
+  - "@r_masseater/oxlint-typed-rules@0.1.0"
+  - "@r_masseater/oxlint-plugin-decision@0.1.0"
   - "@alchemy.run/acme@2.0.0-beta.85"
   - "@alchemy.run/cloudflare-runtime@2.0.0-beta.85"
   - "@alchemy.run/cloudflare@2.0.0-beta.85"
