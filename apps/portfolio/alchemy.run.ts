@@ -1,27 +1,11 @@
-import {
-  CloudflareEnvironment,
-  D1,
-  SecretsStore,
-  Website,
-  Workers,
-  Zone,
-  providers,
-  state,
-} from "@alchemy.run/cloudflare";
+import { D1, Website, Workers, providers, state } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
-import { grantPolicies } from "@masseater.dev/repositories/credential-grants";
-import { RemovalPolicy, Stack, Stage, makeRandom } from "alchemy";
+import { Stack, Stage, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
-import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
+import { Effect, Option } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import {
-  APP_NAME,
-  CI_TELEMETRY_AUDIENCE,
-  CREDENTIAL_BROKER_AUDIENCE,
-  PREFIX,
-  requireAppPrefix,
-} from "./app-name.ts";
+import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts";
 import { edgeGuard } from "./edge-guard.ts";
 import { logArchive } from "./log-archive.ts";
 import { site } from "./src/shared/config/site.ts";
@@ -30,7 +14,6 @@ const DOMAIN = new URL(site.url).hostname;
 const PRODUCTION_STAGE = "prod";
 const COMPATIBILITY = { date: "2026-08-25" } as const;
 const CF_BEACON_TOKEN = "021b4961f3fd419297b186136a5a8a0a";
-const CREDENTIAL_BROKER_HOST = `credentials.${DOMAIN}`;
 
 const OWNED_ZONE = Option.some(DOMAIN);
 
@@ -71,85 +54,6 @@ const ciTelemetry = Workers.Worker("CiTelemetry", {
   },
 });
 
-const npmTokenBinding = Effect.fn("npmTokenBinding")(function* npmTokenBinding(
-  store: SecretsStore.Store,
-) {
-  const token = yield* Config.option(Config.Redacted("NPM_TOKEN"));
-  const filled = pipe(
-    token,
-    Option.filter((value) => Redacted.value(value) !== ""),
-  );
-  if (Option.isNone(filled)) {
-    return {};
-  }
-  const NPM_TOKEN = yield* SecretsStore.Secret("CiNpmToken", {
-    store,
-    name: `${PREFIX}ci-npm-token`,
-    value: filled.value,
-  });
-  return { NPM_TOKEN };
-});
-
-const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.Store) {
-  const OPENROUTER_API_KEY = yield* SecretsStore.Secret("CiOpenrouterApiKey", {
-    store,
-    name: `${PREFIX}ci-openrouter-api-key`,
-    value: yield* Config.Redacted("OPENROUTER_API_KEY"),
-  });
-  const CLAUDE_CODE_OAUTH_TOKEN = yield* SecretsStore.Secret("CiClaudeCodeOauthToken", {
-    store,
-    name: `${PREFIX}ci-claude-code-oauth-token`,
-    value: yield* Config.Redacted("CLAUDE_CODE_OAUTH_TOKEN"),
-  });
-  return {
-    OPENROUTER_API_KEY,
-    CLAUDE_CODE_OAUTH_TOKEN,
-    ...(yield* npmTokenBinding(store)),
-  };
-});
-
-const credentialBroker = Effect.gen(function* credentialBroker() {
-  const { accountId } = yield* yield* CloudflareEnvironment;
-  const zoneId = yield* Zone.resolveZoneId({ accountId, zone: DOMAIN, hostname: DOMAIN }).pipe(
-    Effect.orDie,
-  );
-  const rootToken = yield* Config.Redacted("CLOUDFLARE_API_TOKEN");
-  const store = yield* SecretsStore.Store("Secrets");
-  const ROOT_TOKEN = yield* SecretsStore.Secret("CredentialRootToken", {
-    store,
-    name: `${PREFIX}credential-root-token`,
-    value: rootToken,
-  });
-  const keys = yield* ciKeys(store);
-  const GITHUB_APP = yield* D1.Database("GitHubApp", { migrations: "./github-app-migrations" });
-  const GRANTS = yield* Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown))(
-    grantPolicies({ accountId, zoneId }),
-  ).pipe(Effect.orDie);
-  return yield* Workers.Worker("CredentialBroker", {
-    name: CREDENTIAL_BROKER_AUDIENCE,
-    main: "./credential-broker.worker.ts",
-    compatibility: COMPATIBILITY,
-    logpush: true,
-    domain: CREDENTIAL_BROKER_HOST,
-    crons: ["17 18 * * *"],
-    env: {
-      ROOT_TOKEN,
-      ...keys,
-      GITHUB_APP,
-      ACCOUNT_ID: accountId,
-      GRANTS,
-    },
-    observability: {
-      enabled: true,
-      logs: { enabled: true, invocationLogs: false, persist: true },
-    },
-  });
-});
-
-const retainedCredentialBroker = credentialBroker.pipe(
-  Effect.provideService(RemovalPolicy.RemovalPolicy, "retain"),
-);
-
 type WebEnv = InferEnv<typeof web>;
 
 const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
@@ -160,8 +64,7 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
     if ((yield* Stage) === PRODUCTION_STAGE) {
       yield* Option.match(OWNED_ZONE, {
         onNone: () => Effect.void,
-        onSome: (domain) =>
-          edgeGuard(domain, COMPATIBILITY).pipe(Effect.andThen(retainedCredentialBroker)),
+        onSome: (domain) => edgeGuard(domain, COMPATIBILITY),
       });
       yield* logArchive;
     }

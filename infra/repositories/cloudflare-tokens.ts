@@ -23,7 +23,7 @@ import {
 } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
-import { CREDENTIAL_BROKER_AUDIENCE } from "./app-name.ts";
+import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
 
 type Token = Readonly<{
   id?: string | null;
