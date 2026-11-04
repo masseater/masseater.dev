@@ -1,10 +1,9 @@
 import { BACKDROP_STYLE_HASH } from "@masseater.dev/ui/backdrop-palette";
-import { Array as Arr, pipe } from "effect";
-
 import {
   WEB_ANALYTICS_REPORT_ORIGIN,
   WEB_ANALYTICS_SCRIPT_ORIGIN,
-} from "./src/shared/config/web-analytics.ts";
+} from "@masseater.dev/ui/web-analytics";
+import { Array as Arr, pipe } from "effect";
 
 const SECURITY_HEADERS = {
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",

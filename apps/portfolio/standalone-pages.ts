@@ -1,8 +1,7 @@
+import { webAnalyticsBeacon } from "@masseater.dev/ui/web-analytics";
 import { Option, Schema, String as Str, pipe } from "effect";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import type { Plugin } from "vite-plus";
-
-import { webAnalyticsBeacon } from "./src/shared/config/web-analytics.ts";
 
 const HEAD_END = "</head>";
 
