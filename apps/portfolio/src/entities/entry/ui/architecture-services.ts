@@ -10,7 +10,7 @@ const cell = (column: keyof typeof COLUMN, row: keyof typeof ROW): Point => ({
 });
 
 const apps = [
-  ["mosaic", "/mosaic/", "thumb-mosaic", "workers"],
+  ["mosaic", "/mosaic/", "サムネのモザイク", "workers"],
   ["bench", "/decision-bench/", "mst-ja-decision-bench", "workers"],
   ["bisect", "/injection-bisect/", "decision-experiments", "workers"],
   ["ocr", "/ocr-decide/", "decision-experiments", "workers"],
