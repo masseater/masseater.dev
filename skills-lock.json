@@ -265,7 +265,7 @@
       "ref": "22f0b463e7a5e579904dd6211a520321035526f7",
       "sourceType": "github",
       "skillPath": "skills/systematic-debugging/SKILL.md",
-      "computedHash": "276fb0aadb002ab930cc2a56de89e16995a2e3e70b33587652bf0a5fb123148d"
+      "computedHash": "b7b6e98c3bffe371893bdb69845ec61124a65b6a96313dc8d6a2bce4437b13eb"
     },
     "turborepo": {
       "source": "philtzjp/skills",
@@ -314,7 +314,7 @@
       "ref": "fdd021c5df0c755599770ee8902f6c579db052b4",
       "sourceType": "github",
       "skillPath": "skills/writing/SKILL.md",
-      "computedHash": "96eaee6cfbadd8808f5cd5b073c4e859c2830370589ad385c22687038c551a20"
+      "computedHash": "7ced9f54a45296188764dca070717ecf8d01c93d29c2e840e0b89ca334a76146"
     },
     "yomiyasu": {
       "source": "nanaism/yomiyasu",
