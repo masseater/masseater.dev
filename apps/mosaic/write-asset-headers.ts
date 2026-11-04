@@ -15,8 +15,8 @@ import { Base64 } from "effect/encoding";
 import { assetHeaders } from "./asset-headers.ts";
 import type { PageHeaders } from "./asset-headers.ts";
 import { BASE_PATH } from "./base-path.ts";
+import { contentSecurityPolicy } from "./security-headers.ts";
 import { SEARCH_INDEX_ORIGIN } from "./src/shared/config/search.ts";
-import { contentSecurityPolicy } from "./src/shared/config/security-headers.ts";
 
 const OUTDIR = "dist/client";
 const HEADERS_FILE = "_headers";
