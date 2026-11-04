@@ -123,6 +123,27 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+  zone:
+    needs: deploy
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: zone
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: .github/scripts/cloudflare-token.sh
+      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+        with:
+          cache: true
+          run-install: |
+            - args: ['--frozen-lockfile']
+      - run: vp exec --filter portfolio alchemy deploy --config alchemy.zone.ts --stage prod --yes
+
   github:
     needs: deploy
     if: needs.deploy.outputs.latest == 'true'
@@ -400,7 +421,18 @@ jobs:
 
   ci-telemetry:
     needs:
-      [verify, autofix, deploy, github, zenn, mosaic-plan, mosaic-character, mosaic-deploy, release]
+      [
+        verify,
+        autofix,
+        deploy,
+        zone,
+        github,
+        zenn,
+        mosaic-plan,
+        mosaic-character,
+        mosaic-deploy,
+        release,
+      ]
     if: always()
     runs-on: ubuntu-latest
     permissions:
