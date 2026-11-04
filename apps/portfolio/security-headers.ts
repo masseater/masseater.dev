@@ -1,10 +1,9 @@
 import { BACKDROP_STYLE_HASH } from "@masseater.dev/ui/backdrop-palette";
-import { Array as Arr, pipe } from "effect";
-
 import {
   WEB_ANALYTICS_REPORT_ORIGIN,
   WEB_ANALYTICS_SCRIPT_ORIGIN,
-} from "./src/shared/config/web-analytics.ts";
+} from "@masseater.dev/ui/web-analytics";
+import { Array as Arr, pipe } from "effect";
 
 const SECURITY_HEADERS = {
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -14,9 +13,8 @@ const SECURITY_HEADERS = {
   "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
   "Cross-Origin-Opener-Policy": "same-origin",
   "Cross-Origin-Resource-Policy": "same-origin",
+  "Cross-Origin-Embedder-Policy": "credentialless",
 } as const;
-
-const DOCUMENT_HEADERS = { "Cross-Origin-Embedder-Policy": "credentialless" } as const;
 
 const IMAGE_HEADERS = { "Cross-Origin-Resource-Policy": "cross-origin" } as const;
 
@@ -38,4 +36,4 @@ const contentSecurityPolicy = (nonce: string): string =>
     Arr.join("; "),
   );
 
-export { DOCUMENT_HEADERS, IMAGE_HEADERS, SECURITY_HEADERS, contentSecurityPolicy };
+export { IMAGE_HEADERS, SECURITY_HEADERS, contentSecurityPolicy };
