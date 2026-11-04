@@ -1,13 +1,17 @@
 import {
   deleteToken as deleteAccountToken,
+  getToken as getAccountToken,
   listTokens as listAccountTokens,
+  verifyToken as verifyAccountToken,
 } from "@distilled.cloud/cloudflare/accounts";
 import type { CloudflareOpContext } from "@distilled.cloud/cloudflare/accounts";
 import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
 import type { DeleteTokenError as DeleteUserTokenError } from "@distilled.cloud/cloudflare/user";
 import {
   deleteToken as deleteUserToken,
+  getToken as getUserToken,
   listTokens as listUserTokens,
+  verifyToken as verifyUserToken,
 } from "@distilled.cloud/cloudflare/user";
 import {
   Array as Arr,
@@ -17,6 +21,7 @@ import {
   Effect,
   Layer,
   ManagedRuntime,
+  Record as Rec,
   Stream,
   String as Str,
   pipe,
@@ -66,6 +71,46 @@ const inventory = <Failure>(
     Effect.catchCause((cause) => Console.log(`${scope}\tunavailable\t${Cause.pretty(cause)}`)),
   );
 
+type Policy = Readonly<{
+  effect: string;
+  permissionGroups: readonly Readonly<{ id: string; name?: string | null }>[];
+  resources: Readonly<Record<string, unknown>>;
+}>;
+
+const RESOURCE_ID = /[0-9a-f]{32}/gu;
+
+const groupNames = (policy: Policy): string =>
+  pipe(
+    policy.permissionGroups,
+    Arr.map((group) => group.name ?? group.id),
+    Arr.join(","),
+  );
+
+const resourceKinds = (policy: Policy): string =>
+  pipe(Rec.keys(policy.resources), Arr.join(","), Str.replaceAll(RESOURCE_ID, "<id>"));
+
+const policyLine =
+  (scope: string) =>
+  (policy: Policy): string =>
+    pipe([scope, "self", policy.effect, groupNames(policy), resourceKinds(policy)], Arr.join("\t"));
+
+const policyLines = (scope: string, policies: readonly Policy[] | null | undefined): string =>
+  pipe(policies ?? [], Arr.map(policyLine(scope)), Arr.join("\n"));
+
+const ownPolicies = (accountId: string): Effect.Effect<void, never, CloudflareOpContext> =>
+  verifyAccountToken({ accountId }).pipe(
+    Effect.flatMap(({ id }) => getAccountToken({ accountId, tokenId: id })),
+    Effect.map(({ policies }) => policyLines("account", policies)),
+    Effect.catchCause(() =>
+      verifyUserToken({}).pipe(
+        Effect.flatMap(({ id }) => getUserToken({ tokenId: id })),
+        Effect.map(({ policies }) => policyLines("user", policies)),
+      ),
+    ),
+    Effect.catchCause((cause) => Effect.succeed(`self\tunavailable\t${Cause.pretty(cause)}`)),
+    Effect.flatMap((output) => Console.log(output)),
+  );
+
 const revokeUserToken = (
   tokenId: string,
 ): Effect.Effect<string, DeleteUserTokenError, CloudflareOpContext> =>
@@ -94,6 +139,7 @@ const program = Effect.gen(function* tokens() {
     targets,
     Effect.forEach((tokenId) => revoke(accountId, tokenId)),
   );
+  yield* ownPolicies(accountId);
   yield* inventory("account", () => listAccountTokens.items({ accountId }));
   yield* inventory("user", () => listUserTokens.items({}));
 });
