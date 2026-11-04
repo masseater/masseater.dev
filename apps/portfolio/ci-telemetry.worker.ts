@@ -1,8 +1,8 @@
+import { OWNER_ID } from "@masseater.dev/repositories/github-oidc";
 import { Effect, Logger, ManagedRuntime, Schema, String as Str, pipe } from "effect";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
 import { CI_TELEMETRY_AUDIENCE } from "./app-name.ts";
-import { OWNER_ID } from "./github-oidc.ts";
 
 const ISSUER = "https://token.actions.githubusercontent.com";
 
