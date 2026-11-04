@@ -413,6 +413,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+
   .cascade-service-stopped {
     animation: cascade-stop 0s both;
   }

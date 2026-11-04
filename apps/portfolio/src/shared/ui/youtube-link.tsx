@@ -1,6 +1,8 @@
 import { Play } from "lucide-react";
 import type { ReactNode } from "react";
 
+const NEW_TAB_HINT = "（新しいタブで開く）";
+
 const watchUrl = (id: string): string =>
   `https://www.youtube.com/watch?v=${encodeURIComponent(id)}`;
 
@@ -23,6 +25,7 @@ const YouTubeLink = ({ id, title }: Readonly<{ id: string; title: string }>): Re
     />
     <span className="absolute inset-x-0 top-0 bg-linear-to-b from-black/70 to-transparent p-3 text-sm text-white">
       {title}
+      <span className="sr-only">{NEW_TAB_HINT}</span>
     </span>
     <Play
       aria-hidden
