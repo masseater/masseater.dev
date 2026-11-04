@@ -1,10 +1,10 @@
 import { Credentials, DEFAULT_API_BASE_URL } from "@distilled.cloud/github/Credentials";
-import { GITHUB_APP_PERMISSIONS } from "@masseater.dev/repositories/credential-grants";
 import { Octokit } from "@octokit/rest";
 import { Effect, Layer, Option, Redacted, Schema, String as Str, pipe } from "effect";
 import githubAppJwt from "universal-github-app-jwt";
 
-import { GITHUB_APP_NAME } from "./app-name.ts";
+import { GITHUB_APP_NAME } from "./broker-names.ts";
+import { GITHUB_APP_PERMISSIONS } from "./credential-grants.ts";
 import { OWNER_ID } from "./github-oidc.ts";
 import { toPkcs8 } from "./pkcs8.ts";
 

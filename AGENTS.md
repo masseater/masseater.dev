@@ -53,7 +53,7 @@ release. Add a tool name to select part of the graph. For example, run
 - `apps/portfolio` は TanStack Start（RSC）で全ページをプリレンダーし、`Website.StaticSite` で静的サイトとして Cloudflare に置く。記事は `apps/portfolio/content/` の Markdown を `import.meta.glob` で読む。
 - 静的サイトの Worker（`site.worker.ts`）は `/api/stars/*` だけを先に受け、blogs の star を D1 に数える。同じ IP からの star は 1 記事 1 つで、IP は `VISITOR_SALT` を混ぜたハッシュで持つ。ほかのリクエストは静的アセットに渡す。
 - `alchemy.run.ts` は prod ステージでだけ `edge-guard.ts` と `log-archive.ts` を作る。前者はスキャナーを弾く WAF ルールとハニーポットの Worker を、後者は全 Worker のログを R2 に送る Logpush を持つ。
-- `infra/repositories` は個人アカウントの GitHub を管理する `masseater-dev-github` スタックで、main の verify の `github` ジョブが当てる。リポは GitHub App のインストールから実行時に一覧し、コードには private リポの名前を書かない。方針はコードの 1 か所に書き、`visibility` は渡さず公開範囲に触らない。private の名前は `github-token.sh` がログで伏せる。リポごとに broker が出す Cloudflare・GitHub・npm の権限も、ここの `credential-grants.ts` に書く。
+- `infra/repositories` は個人アカウントの GitHub を管理する `masseater-dev-github` スタックで、main の verify の `github` ジョブが当てる。リポは GitHub App のインストールから実行時に一覧し、コードには private リポの名前を書かない。方針はコードの 1 か所に書き、`visibility` は渡さず公開範囲に触らない。private の名前は `github-token.sh` がログで伏せる。CI にトークンを出す broker（credentials.masseater.dev）も、別のスタック `alchemy.broker.ts` としてここに置き、main の verify の `deploy` ジョブが当てる。リポごとに broker が出す Cloudflare・GitHub・npm の権限は `credential-grants.ts` に書く。
 - リポの削除は `delete-repositories` ワークフローを main で手動実行する。名前はイベントのファイルから読んでログで伏せるので、private のリポもコードとログに名前が出ない。
 - GitHub のトークンも broker が出す。App（`masseater-dev-iac`）は `https://credentials.masseater.dev/github-app` の manifest から作り、鍵は D1 に置く。
 - `ci-telemetry.worker.ts` は、`.github/scripts/ci-telemetry.sh` が送るジョブとステップの時間を GitHub の OIDC トークンで確かめ、ログに出す。
