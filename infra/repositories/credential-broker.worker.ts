@@ -22,7 +22,7 @@ import {
 } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
-import { CREDENTIAL_BROKER_AUDIENCE } from "./app-name.ts";
+import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
 import { failed, gitHubAppCredentials, readApp, route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
 import type { Claims } from "./github-oidc.ts";

@@ -29,7 +29,7 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
       - run: vpx cloudflare-tokens.ts
-        working-directory: apps/portfolio
+        working-directory: infra/repositories
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

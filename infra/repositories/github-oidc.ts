@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, Record, Schema, String as Str } from "effect";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
-import { CREDENTIAL_BROKER_AUDIENCE } from "./app-name.ts";
+import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
 
 const ISSUER = "https://token.actions.githubusercontent.com";
 const OWNER = "masseater";

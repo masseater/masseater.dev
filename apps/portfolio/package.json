@@ -14,23 +14,16 @@
     "prepare": "effect-tsgo patch --typescript --oxlint",
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
     "deploy": "alchemy deploy",
-    "tokens": "vpx cloudflare-tokens.ts",
     "destroy": "alchemy destroy",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check && drizzle-kit generate --explain --output json | grep -q '\"status\":\"no_changes\"'"
   },
   "dependencies": {
-    "@distilled.cloud/cloudflare": "catalog:stack",
-    "@distilled.cloud/github": "catalog:",
     "@effect/atom-react": "catalog:stack",
     "@elysiajs/eden": "catalog:stack",
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/repositories": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
-    "@octokit/rest": "catalog:",
-    "@peculiar/asn1-pkcs8": "catalog:",
-    "@peculiar/asn1-rsa": "catalog:",
-    "@peculiar/asn1-schema": "catalog:",
     "@tailwindcss/typography": "catalog:",
     "@tanstack/react-devtools": "0.10.14",
     "@tanstack/react-query": "catalog:stack",
@@ -52,8 +45,7 @@
     "scheduler": "0.28.0",
     "simple-icons": "catalog:",
     "sloppedia": "workspace:*",
-    "tailwindcss": "catalog:stack",
-    "universal-github-app-jwt": "catalog:"
+    "tailwindcss": "catalog:stack"
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

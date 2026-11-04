@@ -2,11 +2,13 @@
   "extends": "../../tsconfig.base.json",
   "include": ["*.ts"],
   "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "plugins": [
       {
         "name": "@effect/language-service",
         "allowedUnstableApis": ["effect/http/FetchHttpClient"]
       }
-    ]
+    ],
+    "types": ["node", "@cloudflare/workers-types"]
   }
 }
