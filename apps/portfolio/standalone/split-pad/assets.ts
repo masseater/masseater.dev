@@ -34,4 +34,13 @@ const splitPadFiles = [
   ],
 ] as const;
 
-export { splitPadFiles };
+const splitPadStylesheets = [
+  "/split-pad/fonts/zen-kaku-gothic-new/400.css",
+  "/split-pad/fonts/zen-kaku-gothic-new/500.css",
+  "/split-pad/fonts/zen-kaku-gothic-new/700.css",
+  "/split-pad/fonts/dela-gothic-one/400.css",
+  "/split-pad/fonts/ibm-plex-mono/400.css",
+  "/split-pad/fonts/ibm-plex-mono/500.css",
+] as const;
+
+export { splitPadFiles, splitPadStylesheets };
