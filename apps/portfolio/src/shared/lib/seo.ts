@@ -1,6 +1,6 @@
 import { Array as Arr, String as Str, pipe } from "effect";
 
-import { site } from "#/shared/config";
+import { site, wiki } from "#/shared/config";
 
 type JsonLd = Readonly<Record<string, unknown>>;
 
@@ -72,9 +72,11 @@ const seo = ({
 
 const pageTitle = (title: string): string => `${title} | ${site.name}`;
 
+const wikiPageTitle = (title: string): string => `${title} - ${wiki.name}`;
+
 const notFoundHead: Head = { meta: [{ title: pageTitle("Not Found") }], links: [], scripts: [] };
 
 const author: JsonLd = { "@type": "Person", name: site.name, url: site.url };
 
 export type { Head, Image, JsonLd, Meta, Script };
-export { absoluteUrl, author, defaultImage, notFoundHead, pageTitle, seo };
+export { absoluteUrl, author, defaultImage, notFoundHead, pageTitle, seo, wikiPageTitle };

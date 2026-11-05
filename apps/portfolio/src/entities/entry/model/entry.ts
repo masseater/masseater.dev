@@ -1,25 +1,14 @@
 import { Effect, Schema } from "effect";
+import { Frontmatter as ArticleFrontmatter } from "sloppedia/schema";
 
 import { categoryPath } from "./category";
 import type { Category } from "./category";
-
-const DateString = Schema.String.check(Schema.isPattern(/^\d{4}-\d{2}-\d{2}$/u));
-
-const Tags = Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([])));
 
 const Stage = Schema.Literals(["article", "idea"]).pipe(
   Schema.withDecodingDefaultKey(Effect.succeed("article" as const)),
 );
 
-const Frontmatter = Schema.Struct({
-  title: Schema.String,
-  description: Schema.String,
-  date: DateString,
-  updated: DateString,
-  tags: Tags,
-  published: Schema.Boolean,
-  stage: Stage,
-});
+const Frontmatter = Schema.Struct({ ...ArticleFrontmatter.fields, stage: Stage });
 
 type Entry = Readonly<
   Omit<typeof Frontmatter.Type, "published" | "stage"> & {

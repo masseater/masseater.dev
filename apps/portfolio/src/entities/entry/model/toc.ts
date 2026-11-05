@@ -1,41 +1,15 @@
-import { Array as Arr, Option, Schema, pipe } from "effect";
+import { Array as Arr, Option } from "effect";
 import type { MDXModule } from "mdx/types";
+import { headingsOf } from "sloppedia";
+import type { Heading } from "sloppedia";
 
-type Level = "section" | "subsection";
-
-type Heading = Readonly<{ id: string; value: string; level: Level }>;
-
-const FOOTNOTE_LABEL_ID = "footnote-label";
-
-const SubsectionSchema = Schema.Struct({ id: Schema.String, value: Schema.String });
-
-const SectionSchema = Schema.Struct({
-  id: Schema.String,
-  value: Schema.String,
-  children: Schema.optionalKey(Schema.Array(SubsectionSchema)),
-});
-
-const decodeToc = Schema.decodeUnknownOption(Schema.Array(SectionSchema));
-
-const headingsOf = ({
-  id,
-  value,
-  children = [],
-}: typeof SectionSchema.Type): readonly Heading[] => [
-  { id, value, level: "section" },
-  ...pipe(
-    children,
-    Arr.map((child) => ({ ...child, level: "subsection" as const })),
-  ),
-];
+import { findLoadedBody } from "./body";
+import type { Entry } from "./entry";
 
 const tocOf = ({ tableOfContents }: Readonly<MDXModule>): readonly Heading[] =>
-  pipe(
-    decodeToc(tableOfContents),
-    Option.getOrElse((): readonly (typeof SectionSchema.Type)[] => []),
-    Arr.filter(({ id }) => id !== FOOTNOTE_LABEL_ID),
-    Arr.flatMap(headingsOf),
-  );
+  headingsOf(tableOfContents);
 
-export type { Heading, Level };
-export { tocOf };
+const loadedHeadings = (entry: Readonly<Pick<Entry, "category" | "slug">>): readonly Heading[] =>
+  Option.match(findLoadedBody(entry), { onNone: Arr.empty, onSome: tocOf });
+
+export { loadedHeadings, tocOf };

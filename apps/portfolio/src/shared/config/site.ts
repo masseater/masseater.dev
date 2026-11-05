@@ -5,7 +5,8 @@ const { url } = portfolio;
 const site = {
   url,
   name: portfolio.name,
-  description: "masseater のポートフォリオ。作ったもの、ブログ、スクラップを置いている。",
+  description:
+    "masseater のポートフォリオ。作ったもの、ブログ、個人の百科事典もどきの Sloppedia を置いている。",
   locale: "ja",
   ogLocale: "ja_JP",
   ogImage: { path: "/og.png", width: 1200, height: 630, type: "image/png" },

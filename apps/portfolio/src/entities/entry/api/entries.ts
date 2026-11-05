@@ -31,7 +31,7 @@ const ownEntry = (
   frontmatter: unknown,
 ): Effect.Effect<Entry, Schema.SchemaError> =>
   decodeFrontmatter(frontmatter).pipe(
-    Effect.map(({ title, description, date, updated, tags, published, stage }) => ({
+    Effect.map(({ title, description, date, updated, tags, published, stage, infobox }) => ({
       category,
       slug,
       title,
@@ -39,6 +39,7 @@ const ownEntry = (
       date,
       updated,
       tags,
+      infobox,
       status: toStatus({ published, stage }),
     })),
   );

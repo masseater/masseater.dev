@@ -1,7 +1,6 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
-
-import type { Heading } from "#/entities/entry/model/toc";
+import type { Heading } from "sloppedia";
 
 import { TocItem } from "./toc-item";
 
