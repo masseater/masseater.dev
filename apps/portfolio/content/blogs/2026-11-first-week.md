@@ -56,7 +56,7 @@ medley-database は、ログインをパスキーだけにした。管理者は�
 
 個人で使う MCP サーバーは、Cloudflare の MCP server portals で `mcp.masseater.dev` の 1 か所にまとめた。エージェントにはこの URL だけを繋げば、medley-database、Twilog、以下の konomi や mirucord がすべて使える。上流はどれも普通の OAuth で認証し、サービストークンで迂回する案は一度入れて取り消した。
 
-[konomi](https://konomi.masseater.dev) は11月2日に作り始めた。統一したインターフェースで各サービスの自分の情報を引けるパーソナルエージェント向けの MCP を作ったら、ウケそうだと思ったからである。見たもの・聴いたもの・遊んだもの・読んだものを YouTube・Spotify・Steam・Netflix などから集め、反応の重みと時間の割引で好みの度合いを出す。API の無いサービスは、公式の書き出しファイルを取り込む。他人向けにはホスティングせず、各自が自分で置く OSS として作っている。
+Muse を使っていろいろ任せていくうちに、パーソナルエージェントの市場が広がっていく感覚があった。持ち主の代わりに動くエージェントには、持ち主の好みが要る。その好みの材料になる視聴や購読の記録はサービスごとに散らばっていて、まとめて引ける MCP は見つからなかった。統一したインターフェースで各サービスの自分の情報を引けるパーソナルエージェント向けの MCP を作ったらウケそうだと思い、11月2日に [konomi](https://konomi.masseater.dev) を作り始めた。見たもの・聴いたもの・遊んだもの・読んだものを YouTube・Spotify・Steam・Netflix などから集め、反応の重みと時間の割引で好みの度合いを出す。API の無いサービスは、公式の書き出しファイルを取り込む。他人向けにはホスティングせず、各自が自分で置く OSS として作っている。
 
 [Sloppedia](https://masseater.dev/sloppedia/) は、masseater.dev の scrap を置き換えた Wikipedia 風の個人の百科事典もどきである。百科事典の硬い体裁で、中身は僕の趣味と意見が強く出る。AI は MCP から PR を出して記事を書ける。blog は自分で推敲してから出す文章なので、blog を書くツールは MCP に足していない。見た目は npm の [sloppedia](https://www.npmjs.com/package/sloppedia) に切り出した。
 
