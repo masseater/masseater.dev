@@ -109,6 +109,16 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
       - if: steps.head.outputs.latest == 'true'
+        run: |
+          if [ -z "$ATP_APP_PASSWORD" ]; then
+            echo "::warning::ATP_APP_PASSWORD is not set, skipping Standard.site publishing"
+            exit 0
+          fi
+          vp run --filter portfolio standard-site
+        env:
+          ATP_IDENTIFIER: did:plc:sz2kxumpsjbch3kgnsjjed5z
+          ATP_APP_PASSWORD: ${{ secrets.ATP_APP_PASSWORD }}
+      - if: steps.head.outputs.latest == 'true'
         run: vp exec --filter portfolio alchemy deploy --yes
         env:
           ALCHEMY_STAGE: prod

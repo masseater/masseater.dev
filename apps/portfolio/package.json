@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "alchemy dev",
+    "build": "vp build && sequoia inject",
     "typecheck": "tsc",
     "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache --passWithNoTests",
     "steiger": "steiger ./src",
@@ -16,7 +17,8 @@
     "deploy": "alchemy deploy",
     "destroy": "alchemy destroy",
     "db:generate": "drizzle-kit generate",
-    "db:check": "drizzle-kit check && drizzle-kit generate --explain --output json | grep -q '\"status\":\"no_changes\"'"
+    "db:check": "drizzle-kit check && drizzle-kit generate --explain --output json | grep -q '\"status\":\"no_changes\"'",
+    "standard-site": "vpx standard-site.ts && sequoia publish"
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
@@ -50,6 +52,7 @@
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
+    "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.1",
     "@fontsource/dela-gothic-one": "catalog:",
@@ -89,6 +92,7 @@
     "remark-mdx-frontmatter": "catalog:",
     "remark-parse": "catalog:",
     "satori": "catalog:",
+    "sequoia-cli": "catalog:",
     "simple-git": "catalog:",
     "steiger": "catalog:stack",
     "three": "catalog:",

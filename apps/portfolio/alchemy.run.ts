@@ -23,7 +23,7 @@ const web = Effect.gen(function* web() {
   const VISITOR_SALT = yield* makeRandom("VisitorSalt");
   return yield* Website.StaticSite("Web", {
     ...(production && { domain: { name: DOMAIN, redirects: [`www.${DOMAIN}`] } }),
-    command: "vp build",
+    command: "vp run build",
     outdir: "dist/client",
     main: "./site.worker.ts",
     compatibility: COMPATIBILITY,
