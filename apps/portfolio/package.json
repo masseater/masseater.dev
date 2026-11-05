@@ -21,6 +21,7 @@
     "standard-site": "vpx standard-site.ts && sequoia publish"
   },
   "dependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
     "@effect/atom-react": "catalog:stack",
     "@elysiajs/eden": "catalog:stack",
     "@masseater.dev/alchemy-app-name": "workspace:*",
@@ -50,7 +51,6 @@
     "tailwindcss": "catalog:stack"
   },
   "devDependencies": {
-    "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
