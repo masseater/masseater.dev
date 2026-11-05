@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@effect/tsgo/schema.json",
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "*.ts"],
+  "include": ["src", "*.ts", "standalone"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["vite/client", "@cloudflare/workers-types", "@webgpu/types"],
@@ -11,7 +11,12 @@
     "plugins": [
       {
         "name": "@effect/language-service",
-        "allowedUnstableApis": ["@effect/atom-react", "effect/reactivity/Atom"]
+        "allowedUnstableApis": [
+          "@effect/atom-react",
+          "effect/reactivity/Atom",
+          "effect/http/FetchHttpClient",
+          "effect/http/HttpClient"
+        ]
       }
     ]
   }

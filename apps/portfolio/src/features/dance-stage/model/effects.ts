@@ -18,11 +18,8 @@ const gpuLoaders = pipe(
   Rec.mapKeys((path) => pipe(path, Str.slice(SHADER_DIR.length, -EXTENSION.length))),
 );
 
-const loadEffect = (slug: string): Effect.Effect<Option.Option<string>> =>
-  Option.match(Rec.get(loaders, slug), {
-    onNone: () => Effect.succeedNone,
-    onSome: (load) => Effect.promise(load).pipe(Effect.asSome),
-  });
+const effectLoader = (slug: string): Option.Option<Effect.Effect<string>> =>
+  Option.map(Rec.get(loaders, slug), (load) => Effect.promise(load));
 
 const loadGpuEffect = (slug: string): Effect.Effect<Option.Option<GpuEffect>> =>
   Option.match(Rec.get(gpuLoaders, slug), {
@@ -30,4 +27,4 @@ const loadGpuEffect = (slug: string): Effect.Effect<Option.Option<GpuEffect>> =>
     onSome: (load) => Effect.promise(load).pipe(Effect.asSome),
   });
 
-export { loadEffect, loadGpuEffect };
+export { effectLoader, loadGpuEffect };

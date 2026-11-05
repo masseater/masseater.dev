@@ -22,7 +22,9 @@ const toFeed = (entries: readonly Entry[]): string => {
   });
   for (const entry of pipe(
     entries,
-    Arr.filter(({ status }) => status === "published"),
+    Arr.filter(
+      ({ status, category }) => status === "published" && categoryMeta[category].robots === "index",
+    ),
   )) {
     const link = `${site.url}${entryPath(entry)}`;
     feed.addItem({

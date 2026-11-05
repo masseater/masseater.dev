@@ -5,6 +5,6 @@ import { openPanel } from "./panel.ts";
 
 Effect.runFork(
   Effect.promise(() =>
-    Promise.resolve(GM.registerMenuCommand("このページを scrap にする", openPanel)),
+    Promise.resolve(GM.registerMenuCommand("このページを Sloppedia の記事にする", openPanel)),
   ),
 );

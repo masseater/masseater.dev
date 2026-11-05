@@ -5,6 +5,7 @@ export type { Category, CategoryInfo, Layout } from "./model/category";
 export { entryOgImagePath, entryPath } from "./model/entry";
 export type { CollectionResult, Entry, EntryResult } from "./model/entry";
 export { preloadBody } from "./model/body";
+export { loadedHeadings } from "./model/toc";
 export { EntryBody } from "./ui/entry-body";
 export { EntryToc } from "./ui/entry-toc";
 export { EntryList } from "./ui/entry-list";
