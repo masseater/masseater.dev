@@ -5,7 +5,12 @@ import type { CompiledStack } from "alchemy";
 import { Effect, Option } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts";
+import {
+  APP_NAME,
+  CI_TELEMETRY_AUDIENCE,
+  TRACE_DESTINATION,
+  requireAppPrefix,
+} from "./app-name.ts";
 import { COMPATIBILITY } from "./compatibility.ts";
 import { edgeGuard } from "./edge-guard.ts";
 import { logArchive } from "./log-archive.ts";
@@ -33,7 +38,7 @@ const web = Effect.gen(function* web() {
     observability: {
       enabled: true,
       logs: { enabled: true, invocationLogs: false, persist: true },
-      traces: { enabled: true, persist: true },
+      traces: { enabled: true, persist: true, destinations: [TRACE_DESTINATION] },
     },
     assets: {
       htmlHandling: "auto-trailing-slash",
