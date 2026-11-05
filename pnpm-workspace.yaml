@@ -86,6 +86,7 @@ catalog:
   publint: 0.3.25
   "@arethetypeswrong/core": 0.18.5
   sequoia-cli: ^0.5.8
+  "@atproto/api": ^0.30.0
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.18

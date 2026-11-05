@@ -22,6 +22,7 @@ import {
 } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
+import { atprotoRoute, issueAppPassword } from "./atproto.ts";
 import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
 import { failed, gitHubAppCredentials, readApp, route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
@@ -66,6 +67,7 @@ const Grants = Schema.fromJsonString(
     repositories: Schema.Record(Schema.String, Schema.String),
     github: Schema.Record(Schema.String, GitHubGrant),
     npm: Schema.Array(Schema.String),
+    atproto: Schema.Array(Schema.String),
   }),
 );
 
@@ -187,6 +189,11 @@ const issueGranted = (
     issueCloudflareToken(env, claims),
     issueGitHubToken(env, claims),
     issueNpmToken(env, claims),
+    decodeGrants(env).pipe(
+      Effect.flatMap((grants) =>
+        issueAppPassword({ env, granted: Arr.contains(grants.atproto, repositoryName(claims)) }),
+      ),
+    ),
   ]).pipe(Effect.map(Arr.getSomes));
 
 const sharedKeys = (env: CredentialBrokerEnv): Effect.Effect<Readonly<Record<string, string>>> =>
@@ -236,7 +243,11 @@ const handle = (
   env: CredentialBrokerEnv,
 ): Effect.Effect<Response, never, BrokerContext> =>
   Option.match(route({ request, env }), {
-    onNone: () => issue(request, env),
+    onNone: () =>
+      Option.match(atprotoRoute({ request, env }), {
+        onNone: () => issue(request, env),
+        onSome: (handled) => handled,
+      }),
     onSome: (handled) =>
       handled.pipe(
         Effect.catchCause((cause) =>
