@@ -34,7 +34,7 @@ catalog:
   skills: 1.7.4
   "@tanstack/intent": 0.5.6
   "@mdx-js/rollup": 3.1.1
-  "@shikijs/rehype": 4.5.0
+  "@shikijs/rehype": 4.6.0
   "@tailwindcss/typography": 0.5.20
   "@types/mdx": 2.0.14
   "@types/hast": 3.0.5
