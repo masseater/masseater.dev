@@ -1,1 +1,1 @@
-export { starRoutes } from "./api/stars-routes.server";
+export { handleStars } from "./api/stars-routes.server";

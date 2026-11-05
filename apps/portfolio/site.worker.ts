@@ -3,7 +3,7 @@ import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from
 import { Base64 } from "effect/encoding";
 
 import { isUnindexedPath } from "#/entities/entry/model/category";
-import { starRoutes } from "#/features/star/index.server";
+import { handleStars } from "#/features/star/index.server";
 import { site } from "#/shared/config";
 
 import { IMAGE_HEADERS, SECURITY_HEADERS, contentSecurityPolicy } from "./security-headers.ts";
@@ -72,7 +72,7 @@ const isStarsApi = (request: Request): boolean =>
 const upstream = (request: Request): Promise<Response> | Response =>
   Option.match(Option.liftPredicate(request, isStarsApi), {
     onNone: () => env.ASSETS.fetch(assetRequest(request)),
-    onSome: (api) => starRoutes.handle(api),
+    onSome: (api) => handleStars(api),
   });
 
 const newNonce = (): string => Base64.encode(crypto.getRandomValues(new Uint8Array(NONCE_BYTES)));

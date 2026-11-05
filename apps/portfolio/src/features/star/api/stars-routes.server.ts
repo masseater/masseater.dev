@@ -1,5 +1,7 @@
+import { layer as workersTracing } from "@r_masseater/workers-tracing/effect";
+import { elysiaTracing, tracedHandle } from "@r_masseater/workers-tracing/elysia";
 import { env } from "cloudflare:workers";
-import { Effect, Logger, ManagedRuntime, Option, Schema } from "effect";
+import { Effect, ManagedRuntime, Option, Schema } from "effect";
 import { Hex } from "effect/encoding";
 import { Elysia } from "elysia";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
@@ -9,9 +11,8 @@ import { site } from "#/shared/config";
 
 import { addStar, read, readCounts, removeStar } from "./stars-store.server";
 import type { Change, Counts, Stars, Target } from "./stars-store.server";
-import { cloudflareLogger, withCloudflareTracing } from "./tracing.server";
 
-const runtime = ManagedRuntime.make(Logger.layer([cloudflareLogger]));
+const runtime = ManagedRuntime.make(workersTracing);
 
 const Slug = Schema.String.check(Schema.isPattern(/^[\w-]+$/u));
 
@@ -59,7 +60,7 @@ const respond = (
     Option.match(decodeTarget(params), {
       onNone: () => Effect.succeed(missing),
       onSome: effect,
-    }).pipe(withCloudflareTracing),
+    }),
   );
 
 const missingCounts: Counts = { status: "missing" };
@@ -69,10 +70,11 @@ const respondCounts = (params: unknown): Promise<Counts> =>
     Option.match(decodeCategory(params), {
       onNone: () => Effect.succeed<Counts>(missingCounts),
       onSome: ({ category }) => readCounts(category),
-    }).pipe(withCloudflareTracing),
+    }),
   );
 
 const starRoutes = new Elysia({ prefix: site.starsApiPath, adapter: CloudflareAdapter, aot: false })
+  .use(elysiaTracing)
   .get("/:category", ({ params }) => respondCounts(params))
   .get("/:category/:slug", ({ request, params }) =>
     respond(
@@ -87,7 +89,9 @@ const starRoutes = new Elysia({ prefix: site.starsApiPath, adapter: CloudflareAd
     respond((target) => changed(request, target, removeStar), params),
   );
 
+const handleStars = tracedHandle(starRoutes.handle);
+
 type StarRoutes = typeof starRoutes;
 
 export type { StarRoutes };
-export { starRoutes };
+export { handleStars };
