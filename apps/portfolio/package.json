@@ -19,6 +19,7 @@
     "db:check": "drizzle-kit check && drizzle-kit generate --explain --output json | grep -q '\"status\":\"no_changes\"'"
   },
   "dependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
     "@effect/atom-react": "catalog:stack",
     "@elysiajs/eden": "catalog:stack",
     "@masseater.dev/alchemy-app-name": "workspace:*",
@@ -48,7 +49,6 @@
     "tailwindcss": "catalog:stack"
   },
   "devDependencies": {
-    "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.1",
