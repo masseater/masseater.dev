@@ -309,8 +309,8 @@ catalogs:
       specifier: 2.0.3
       version: 2.0.3
     jose:
-      specifier: 6.2.14
-      version: 6.2.14
+      specifier: 6.2.15
+      version: 6.2.15
     lucide-react:
       specifier: 1.66.0
       version: 1.66.0
@@ -663,8 +663,8 @@ importers:
         specifier: catalog:stack
         version: 0.63.0
       '@feature-sliced/steiger-plugin':
-        specifier: 0.8.1
-        version: 0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)
+        specifier: 0.8.2
+        version: 0.8.2(typescript@7.1.0-beta)(vitest@5.0.5)
       '@tailwindcss/vite':
         specifier: 4.3.3
         version: 4.3.3(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
@@ -760,7 +760,7 @@ importers:
         version: 6.0.0
       jose:
         specifier: 'catalog:'
-        version: 6.2.14
+        version: 6.2.15
       lucide-react:
         specifier: 'catalog:'
         version: 1.66.0(@types/react@19.3.0)(react@19.3.1)
@@ -796,8 +796,8 @@ importers:
         specifier: catalog:stack
         version: 0.63.0
       '@feature-sliced/steiger-plugin':
-        specifier: 0.8.1
-        version: 0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)
+        specifier: 0.8.2
+        version: 0.8.2(typescript@7.1.0-beta)(vitest@5.0.5)
       '@fontsource/dela-gothic-one':
         specifier: 'catalog:'
         version: 5.3.0
@@ -986,7 +986,7 @@ importers:
         version: 4.1.1
       jose:
         specifier: 'catalog:'
-        version: 6.2.14
+        version: 6.2.15
       universal-github-app-jwt:
         specifier: 'catalog:'
         version: 2.2.2
@@ -2195,6 +2195,9 @@ packages:
 
   '@feature-sliced/steiger-plugin@0.8.1':
     resolution: {integrity: sha512-hnRmnpGT7HoOv3Hy+et1xFq1IsCogp0SEfLlEC73kI74nlm0zQl8q1QN78iG0PEXyLZUAsqJIfG8rZHvva5vEg==}
+
+  '@feature-sliced/steiger-plugin@0.8.2':
+    resolution: {integrity: sha512-Gmc6b2GhjAT+Y+cQfHaCT+R1PnSuoOFcS6qsYtCnY8WjVH1FyT18FWJnhUjMyw4jN1Oqg0jSj5xeDDLs2InWoA==}
 
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
@@ -8309,8 +8312,8 @@ packages:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
-  jose@6.2.14:
-    resolution: {integrity: sha512-3JasLuki1NRLQvY4wCoC37KZk4qxoBx2k2aFqLxT84IezqW0bkJKnNtxnZj/Fu1xsQivoc/lytxaRHJoGLjJ1A==}
+  jose@6.2.15:
+    resolution: {integrity: sha512-qdF6ewcZARtef63fJ9AKKZPgxw+t7USH6HLXYcD4CrdmSvDp79rpJSPFEKc90QBeGS63u1KQtN2MZQHC0yDIzA==}
 
   js-base64@3.9.4:
     resolution: {integrity: sha512-PtOMXpEGuP0RRiRXsjzHzl44dMHxSu2CPvAhinupR1tBa88me+1DPqsobl7eupn5UukjLkln1ZnAOAOXOrYG0Q==}
@@ -12379,6 +12382,18 @@ snapshots:
       typescript: 5.9.3
 
   '@feature-sliced/steiger-plugin@0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)':
+    dependencies:
+      '@feature-sliced/filesystem': 3.1.1
+      '@steiger/toolkit': 0.2.3(vitest@5.0.5)
+      fastest-levenshtein: 1.0.16
+      pluralize: 8.0.0
+      tsconfck: 3.1.6(typescript@7.1.0-beta)
+      web-tree-sitter: 0.26.13
+    transitivePeerDependencies:
+      - typescript
+      - vitest
+
+  '@feature-sliced/steiger-plugin@0.8.2(typescript@7.1.0-beta)(vitest@5.0.5)':
     dependencies:
       '@feature-sliced/filesystem': 3.1.1
       '@steiger/toolkit': 0.2.3(vitest@5.0.5)
@@ -18789,7 +18804,7 @@ snapshots:
 
   jiti@2.7.0: {}
 
-  jose@6.2.14: {}
+  jose@6.2.15: {}
 
   js-base64@3.9.4:
     optional: true
