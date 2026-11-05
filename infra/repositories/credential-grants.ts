@@ -72,7 +72,6 @@ const RELEASE_REPOSITORIES: readonly string[] = [
   "decision-experiments",
   "lint-kit",
   "measure-everything",
-  "mirucord",
   "typescript-template",
 ];
 
