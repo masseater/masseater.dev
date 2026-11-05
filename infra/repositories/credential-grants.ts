@@ -99,6 +99,8 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
 
 const NPM_GRANTS: readonly string[] = ["lint-kit", "measure-everything"];
 
+const ATPROTO_GRANTS: readonly string[] = ["masseater.dev"];
+
 const ACCOUNT_SCOPE = "com.cloudflare.api.account";
 const ZONE_SCOPE = "com.cloudflare.api.account.zone";
 
@@ -135,6 +137,7 @@ type Grants = Readonly<{
   repositories: Readonly<Record<string, string>>;
   github: Readonly<Record<string, GitHubGrant>>;
   npm: readonly string[];
+  atproto: readonly string[];
 }>;
 
 const grantPolicies = ({
@@ -151,6 +154,7 @@ const grantPolicies = ({
   repositories: CREDENTIAL_GRANTS,
   github: GITHUB_GRANTS,
   npm: NPM_GRANTS,
+  atproto: ATPROTO_GRANTS,
 });
 
 export { GITHUB_APP_PERMISSIONS, grantPolicies };

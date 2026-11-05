@@ -61,4 +61,5 @@ const dated = (tree: Root, dates: Dates): Root => ({
 const remarkGitDate: Plugin<[], Root> = () => (tree: Root, file: VFile) =>
   Effect.runPromise(entryDates(file.path).pipe(Effect.map((dates) => dated(tree, dates))));
 
-export { remarkGitDate };
+export type { Dates };
+export { entryDates, remarkGitDate };
