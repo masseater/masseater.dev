@@ -6,4 +6,6 @@ const { prefix: PREFIX, requireAppPrefix } = appNamed(APP_NAME);
 
 const CI_TELEMETRY_AUDIENCE = `${PREFIX}ci-telemetry`;
 
-export { APP_NAME, CI_TELEMETRY_AUDIENCE, PREFIX, requireAppPrefix };
+const TRACE_DESTINATION = `${PREFIX}traces`;
+
+export { APP_NAME, CI_TELEMETRY_AUDIENCE, PREFIX, TRACE_DESTINATION, requireAppPrefix };

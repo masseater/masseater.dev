@@ -3,11 +3,9 @@ import { makeRandom } from "alchemy";
 import { map } from "alchemy/Output";
 import { Effect, Redacted } from "effect";
 
-import { APP_NAME } from "./app-name.ts";
+import { APP_NAME, TRACE_DESTINATION } from "./app-name.ts";
 
 type TraceSinkEnv = Readonly<{ TRACE_SINK_TOKEN: string }>;
-
-const TRACE_DESTINATION = `${APP_NAME}-traces`;
 
 const traceSink = Effect.fn("traceSink")(function* traceSink(
   compatibility: Readonly<{ date: string }>,
