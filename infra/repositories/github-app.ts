@@ -5,12 +5,13 @@ import githubAppJwt from "universal-github-app-jwt";
 
 import { GITHUB_APP_NAME } from "./broker-names.ts";
 import { GITHUB_APP_PERMISSIONS } from "./credential-grants.ts";
-import { OWNER_ID } from "./github-oidc.ts";
+import { OWNER_ID, verify } from "./github-oidc.ts";
 import { toPkcs8 } from "./pkcs8.ts";
 
 const APP_KEY = "app";
 const SETUP_PATH = "/github-app";
 const FINISH_PATH = `${SETUP_PATH}/callback`;
+const IMPORT_PATH = `${SETUP_PATH}/import`;
 const HOMEPAGE = "https://masseater.dev";
 const INSTALL_URL = `https://github.com/apps/${GITHUB_APP_NAME}/installations/new`;
 const CONFLICT = 409;
@@ -37,6 +38,13 @@ const Conversion = Schema.Struct({
   id: Schema.Finite,
   slug: Schema.String,
   pem: Schema.String,
+  owner: Schema.Struct({ id: Schema.Finite }),
+});
+
+const ImportBody = Schema.Struct({ id: Schema.Finite, pem: Schema.String });
+
+const AuthenticatedApp = Schema.Struct({
+  slug: Schema.String,
   owner: Schema.Struct({ id: Schema.Finite }),
 });
 
@@ -198,17 +206,44 @@ const finishSetup = (input: RouteInput): Effect.Effect<Response, GitHubAppFailed
     ),
   );
 
+const authenticate = (
+  body: typeof ImportBody.Type,
+): Effect.Effect<typeof Conversion.Type, GitHubAppFailed> =>
+  toPkcs8(body.pem).pipe(
+    Effect.flatMap((privateKey) =>
+      Effect.tryPromise(() => githubAppJwt({ id: body.id, privateKey })),
+    ),
+    Effect.flatMap(({ token }) =>
+      Effect.tryPromise(() =>
+        new Octokit({ auth: token, userAgent: GITHUB_APP_NAME }).rest.apps.getAuthenticated(),
+      ),
+    ),
+    Effect.flatMap(({ data }) => Schema.decodeUnknownEffect(AuthenticatedApp)(data)),
+    Effect.mapBoth({ onSuccess: (app) => ({ ...app, ...body }), onFailure: failed }),
+  );
+
+const importApp = (input: RouteInput): Effect.Effect<Response, GitHubAppFailed> =>
+  verify(input.request).pipe(
+    Effect.andThen(Effect.tryPromise(() => input.request.json())),
+    Effect.flatMap(Schema.decodeUnknownEffect(ImportBody)),
+    Effect.mapError(failed),
+    Effect.flatMap(authenticate),
+    Effect.flatMap((app) => register(input, app)),
+  );
+
 const HANDLERS: Readonly<
   Record<string, (input: RouteInput) => Effect.Effect<Response, GitHubAppFailed>>
 > = {
-  [SETUP_PATH]: setup,
-  [FINISH_PATH]: finishSetup,
+  [`GET ${SETUP_PATH}`]: setup,
+  [`GET ${FINISH_PATH}`]: finishSetup,
+  [`POST ${IMPORT_PATH}`]: importApp,
 };
 
 const route = (input: RouteInput): Option.Option<Effect.Effect<Response, GitHubAppFailed>> =>
   pipe(
-    Option.liftPredicate(input.request, (request) => request.method === "GET"),
-    Option.flatMap((request) => Option.fromNullishOr(HANDLERS[new URL(request.url).pathname])),
+    Option.fromNullishOr(
+      HANDLERS[`${input.request.method} ${new URL(input.request.url).pathname}`],
+    ),
     Option.map((handle) => handle(input)),
   );
 
