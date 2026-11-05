@@ -23,7 +23,7 @@ import {
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
 import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
-import { failed, gitHubAppCredentials, readApp, route } from "./github-app.ts";
+import { gitHubAppCredentials, readApp, route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
 import type { Claims } from "./github-oidc.ts";
 import { OWNER, Rejected, repositoryName, verify } from "./github-oidc.ts";
@@ -151,11 +151,17 @@ const issueGitHubToken = (
     if (Option.isNone(installation)) {
       return Option.none();
     }
-    const { token } = yield* createInstallationAccessToken({
+    const minted = yield* createInstallationAccessToken({
       installation_id: installation.value.id,
       ...grant.value,
-    }).pipe(Effect.mapError(failed));
-    return Option.some({ githubToken: token });
+    }).pipe(
+      Effect.tapError((failure) => Effect.logWarning("github_app.token_failed", failure)),
+      Effect.option,
+    );
+    return pipe(
+      minted,
+      Option.map(({ token }) => ({ githubToken: token })),
+    );
   });
 
 const issueNpmToken = (
