@@ -445,8 +445,8 @@ catalogs:
       specifier: 44.199.2
       version: 44.199.2
     steiger:
-      specifier: 0.8.1
-      version: 0.8.1
+      specifier: 0.9.0
+      version: 0.9.0
     tailwindcss:
       specifier: 4.3.3
       version: 4.3.3
@@ -698,7 +698,7 @@ importers:
         version: 2.0.0-beta.85(@arethetypeswrong/core@0.18.5)(@effect/platform-node@4.1.1(effect@4.1.1)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@types/react@19.3.0)(effect@4.1.1)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(ws@8.22.0)
       steiger:
         specifier: catalog:stack
-        version: 0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)
+        version: 0.9.0(typescript@7.1.0-beta)(vitest@5.0.5)
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -927,7 +927,7 @@ importers:
         version: 4.0.2(supports-color@7.2.0)
       steiger:
         specifier: catalog:stack
-        version: 0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)
+        version: 0.9.0(typescript@7.1.0-beta)(vitest@5.0.5)
       three:
         specifier: 'catalog:'
         version: 0.187.0
@@ -2319,9 +2319,6 @@ packages:
 
   '@feature-sliced/filesystem@3.1.1':
     resolution: {integrity: sha512-P3WpHkOqdH4572ZhTfeg/Sbw0qkIuMw0QcLyTUygfwTZg1yd7hIv8QDYbhTddNTiFDgBRJTrYw/s6r2hnlo6Tw==}
-
-  '@feature-sliced/steiger-plugin@0.8.1':
-    resolution: {integrity: sha512-hnRmnpGT7HoOv3Hy+et1xFq1IsCogp0SEfLlEC73kI74nlm0zQl8q1QN78iG0PEXyLZUAsqJIfG8rZHvva5vEg==}
 
   '@feature-sliced/steiger-plugin@0.8.2':
     resolution: {integrity: sha512-Gmc6b2GhjAT+Y+cQfHaCT+R1PnSuoOFcS6qsYtCnY8WjVH1FyT18FWJnhUjMyw4jN1Oqg0jSj5xeDDLs2InWoA==}
@@ -8149,10 +8146,6 @@ packages:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
 
-  ignore@7.0.13:
-    resolution: {integrity: sha512-2E8Q6rh+1RRSq/YdaGsNfXsEZy9FVqv6BSSrkmZJP7BnaoPnRfKL+YaofPvP+5rzdk144qSm6i4+hvPgUcbV4Q==}
-    engines: {node: '>= 4'}
-
   ignore@7.0.14:
     resolution: {integrity: sha512-wCBiZ77u1tuWde6G/nfOtLaCTYcFDU5yCzARzK10y+rLhzYoL7a7yEemcopcc2Mzow7gZOIjnV2ym1NYmdiJOQ==}
     engines: {node: '>= 4'}
@@ -10283,8 +10276,8 @@ packages:
   std-env@4.3.0:
     resolution: {integrity: sha512-OtU/EgQ1kIm5KwqQpBC6ZEMXrZRui11w8zgfTWp8cdO9B8OaPsbA8bTHO2P+HNo1VlUTGMVBwPhydu6poeXiag==}
 
-  steiger@0.8.1:
-    resolution: {integrity: sha512-w55+5bYKjqmYMotlaYtZjSZhAZmLFDGUkZ7wmN9m5Kf2Y4I6yYK9PGzZUfaSdnrYIFibyRG/vjtZPiFCsXNK6w==}
+  steiger@0.9.0:
+    resolution: {integrity: sha512-J/Iw/33PaHi8Ws99ikizIKV3uLL/PGCsq2Xqsj+qGASq48EukXHrvqHDgEWJAZuKToMha8uOmbNRT6S1XumqsA==}
     engines: {node: '>=22.18.0'}
     hasBin: true
 
@@ -12774,18 +12767,6 @@ snapshots:
   '@feature-sliced/filesystem@3.1.1':
     dependencies:
       typescript: 5.9.3
-
-  '@feature-sliced/steiger-plugin@0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)':
-    dependencies:
-      '@feature-sliced/filesystem': 3.1.1
-      '@steiger/toolkit': 0.2.3(vitest@5.0.5)
-      fastest-levenshtein: 1.0.16
-      pluralize: 8.0.0
-      tsconfck: 3.1.6(typescript@7.1.0-beta)
-      web-tree-sitter: 0.26.13
-    transitivePeerDependencies:
-      - typescript
-      - vitest
 
   '@feature-sliced/steiger-plugin@0.8.2(typescript@7.1.0-beta)(vitest@5.0.5)':
     dependencies:
@@ -18662,7 +18643,7 @@ snapshots:
     dependencies:
       '@sindresorhus/merge-streams': 4.0.0
       fast-glob: 3.3.3
-      ignore: 7.0.13
+      ignore: 7.0.14
       is-path-inside: 4.0.0
       micromatch: 4.0.8
       slash: 5.1.0
@@ -18940,8 +18921,6 @@ snapshots:
   ieee754@1.2.1: {}
 
   ignore@5.3.2: {}
-
-  ignore@7.0.13: {}
 
   ignore@7.0.14: {}
 
@@ -21844,10 +21823,10 @@ snapshots:
 
   std-env@4.3.0: {}
 
-  steiger@0.8.1(typescript@7.1.0-beta)(vitest@5.0.5):
+  steiger@0.9.0(typescript@7.1.0-beta)(vitest@5.0.5):
     dependencies:
       '@clack/prompts': 0.9.1
-      '@feature-sliced/steiger-plugin': 0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)
+      '@feature-sliced/steiger-plugin': 0.8.2(typescript@7.1.0-beta)(vitest@5.0.5)
       chokidar: 4.0.3
       cosmiconfig: 10.0.1
       effector: 23.4.4
