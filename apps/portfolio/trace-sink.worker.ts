@@ -97,19 +97,32 @@ const logSpan = ({ service, scope, span }: ReceivedSpan): Effect.Effect<void> =>
     }),
   );
 
+const bodyOf = (request: Request): Promise<unknown> =>
+  pipe(
+    Option.fromNullishOr(request.body),
+    Option.filter(() => request.headers.get("content-encoding") === "gzip"),
+    Option.match({
+      onNone: () => request.json(),
+      onSome: (body) => new Response(body.pipeThrough(new DecompressionStream("gzip"))).json(),
+    }),
+  );
+
 const receive = (request: Request, env: TraceSinkEnv): Effect.Effect<Response> =>
   Effect.gen(function* receiveTraces() {
     if (request.headers.get("authorization") !== `Bearer ${env.TRACE_SINK_TOKEN}`) {
       yield* Effect.logWarning("otlp.unauthorized");
       return Response.json({});
     }
-    const body = yield* Effect.tryPromise(() => request.json());
+    const body = yield* Effect.tryPromise(() => bodyOf(request));
     const { resourceSpans } = yield* Schema.decodeUnknownEffect(TraceRequest)(body);
     yield* Effect.forEach(pipe(resourceSpans, Arr.flatMap(spansOf)), logSpan, { discard: true });
     return Response.json({});
   }).pipe(
     Effect.catchCause((cause) =>
-      Effect.logError("otlp.rejected", cause).pipe(Effect.as(new Response("", { status: 400 }))),
+      Effect.logError("otlp.rejected", cause).pipe(
+        Effect.annotateLogs({ contentEncoding: request.headers.get("content-encoding") }),
+        Effect.as(new Response("", { status: 400 })),
+      ),
     ),
   );
 
