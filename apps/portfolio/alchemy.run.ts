@@ -6,15 +6,14 @@ import { Effect, Option } from "effect";
 import type { ConfigError } from "effect/Config";
 
 import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts";
+import { COMPATIBILITY } from "./compatibility.ts";
 import { edgeGuard } from "./edge-guard.ts";
 import { logArchive } from "./log-archive.ts";
 import { site } from "./src/shared/config/site.ts";
-import { traceSink } from "./trace-sink.ts";
 import { webAnalyticsReader } from "./web-analytics-reader.ts";
 
 const DOMAIN = new URL(site.url).hostname;
 const PRODUCTION_STAGE = "prod";
-const COMPATIBILITY = { date: "2026-08-25" } as const;
 const CF_BEACON_TOKEN = "021b4961f3fd419297b186136a5a8a0a";
 
 const OWNED_ZONE = Option.some(DOMAIN);
@@ -70,7 +69,6 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
       });
       yield* logArchive;
       yield* webAnalyticsReader(COMPATIBILITY);
-      yield* traceSink(COMPATIBILITY);
     }
     yield* ciTelemetry;
     yield* requireAppPrefix;
