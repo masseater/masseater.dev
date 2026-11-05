@@ -54,7 +54,7 @@
     "@cloudflare/workers-types": "catalog:",
     "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
-    "@feature-sliced/steiger-plugin": "0.8.1",
+    "@feature-sliced/steiger-plugin": "0.8.2",
     "@fontsource/dela-gothic-one": "catalog:",
     "@fontsource/ibm-plex-mono": "catalog:",
     "@fontsource/noto-sans-jp": "catalog:",
