@@ -1,16 +1,16 @@
-import { Array as Arr, pipe } from "effect";
+import { Array as Arr, Option, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
 import { techniqueList } from "#/entities/technique";
 
-import { hasEffect } from "./effects";
+import { effectLoader } from "./effects";
 
 test("すべての手法にセイキンダンス版の効果がある", () => {
   expect(
     pipe(
       techniqueList,
       Arr.map(({ slug }) => slug),
-      Arr.filter((slug) => !hasEffect(slug)),
+      Arr.filter((slug) => Option.isNone(effectLoader(slug))),
     ),
   ).toStrictEqual([]);
 });
