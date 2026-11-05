@@ -81,6 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
     concurrency:
       group: deploy
     outputs:
@@ -108,6 +109,12 @@ jobs:
           cache: true
           run-install: |
             - args: ['--frozen-lockfile']
+      - if: steps.head.outputs.latest == 'true'
+        run: .github/scripts/atproto-password.sh
+      - if: steps.head.outputs.latest == 'true' && env.ATP_APP_PASSWORD != ''
+        run: vp run --filter portfolio standard-site
+        env:
+          ATP_IDENTIFIER: did:plc:sz2kxumpsjbch3kgnsjjed5z
       - if: steps.head.outputs.latest == 'true'
         run: vp exec --filter portfolio alchemy deploy --yes
         env:
