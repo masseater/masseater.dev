@@ -1,0 +1,32 @@
+{
+  "name": "@masseater.dev/repositories",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./credential-grants": "./credential-grants.ts",
+    "./github-oidc": "./github-oidc.ts"
+  },
+  "scripts": {
+    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache",
+    "tokens": "vpx cloudflare-tokens.ts"
+  },
+  "dependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@alchemy.run/github": "catalog:stack",
+    "@distilled.cloud/cloudflare": "catalog:stack",
+    "@distilled.cloud/github": "catalog:",
+    "@octokit/rest": "catalog:",
+    "@peculiar/asn1-pkcs8": "catalog:",
+    "@peculiar/asn1-rsa": "catalog:",
+    "@peculiar/asn1-schema": "catalog:",
+    "alchemy": "catalog:stack",
+    "effect": "catalog:stack",
+    "jose": "catalog:",
+    "universal-github-app-jwt": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@types/node": "catalog:"
+  }
+}

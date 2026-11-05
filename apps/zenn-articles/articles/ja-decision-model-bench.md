@@ -65,4 +65,4 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 
 結果として、span-01 lite はベンチで最下位(両タスクとも skill 11〜12)でした。jev-lint では、UI 状態を持たない純粋関数を「UI 状態の扱いの規約違反」と誤検知して CI が落ちていました。span-01 lite に違反例と違反でない例を判定させると、両者をほとんど区別できませんでした。lint の設定は緩めず、そのルールの判定だけをベンチで 1 位だった [Decider V1.1 27B](https://openrouter.ai/perplexity/pplx-decider-v1.1-27b) に切り替えたところ、Decider は違反例を違反と判定し、既存の 95 ファイルはすべて違反なしと判定しました。
 
-また、自然文で書いたルールを decision model に判定させる [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) プラグイン([oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision))も作っている最中です。
+また、自然文で書いたルールを decision model に判定させる [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) プラグイン([oxlint-plugin-decision](https://github.com/masseater/lint-kit/tree/main/libs/oxlint-plugin-decision))も作っている最中です。

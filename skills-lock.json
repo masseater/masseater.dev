@@ -31,7 +31,7 @@
     },
     "cloudflare": {
       "source": "cloudflare/skills",
-      "ref": "1a33048817d06df12882cb881dfc754e7039954a",
+      "ref": "1f2cd0a19588e2c6197c91dd7c71729df1fb6156",
       "sourceType": "github",
       "skillPath": "skills/cloudflare/SKILL.md",
       "computedHash": "e7c26bb690042060d60fcccf3e5807d000c9c064f732b6fcfccb8bbcdc5dc04a"
@@ -143,21 +143,21 @@
     },
     "how-to-use-react": {
       "source": "masseater/skills",
-      "ref": "45a600acf934116728f6d6fe11da9dba55db320e",
+      "ref": "fdd021c5df0c755599770ee8902f6c579db052b4",
       "sourceType": "github",
       "skillPath": "skills/how-to-use-react/SKILL.md",
       "computedHash": "35b28c9ea5bd6785785e7281311aa17571346d204a5e63725befd0daa81dfc3d"
     },
     "humanity-and-humanness": {
       "source": "masseater/skills",
-      "ref": "45a600acf934116728f6d6fe11da9dba55db320e",
+      "ref": "fdd021c5df0c755599770ee8902f6c579db052b4",
       "sourceType": "github",
       "skillPath": "skills/humanity-and-humanness/SKILL.md",
       "computedHash": "eed883fabe9f48f5ab3014b97bd02b21d9f22506b74daa9330ec0b363fe7aa75"
     },
     "integrate": {
       "source": "masseater/skills",
-      "ref": "45a600acf934116728f6d6fe11da9dba55db320e",
+      "ref": "fdd021c5df0c755599770ee8902f6c579db052b4",
       "sourceType": "github",
       "skillPath": "skills/integrate/SKILL.md",
       "computedHash": "44749b353b98ba0cb8160f9140207449dd258cca1397dbe80cd320eec5f65c0a"
@@ -199,24 +199,24 @@
     },
     "measure-dont-guess": {
       "source": "masseater/skills",
-      "ref": "45a600acf934116728f6d6fe11da9dba55db320e",
+      "ref": "fdd021c5df0c755599770ee8902f6c579db052b4",
       "sourceType": "github",
       "skillPath": "skills/measure-dont-guess/SKILL.md",
       "computedHash": "3d7bf5e84ee60a7781d84578065f98cfc1c737bbfa5d875a48d4941ae0320e2e"
     },
     "modern-web-guidance": {
       "source": "GoogleChrome/modern-web-guidance",
-      "ref": "4f2b13e25c5815b3f080ca0d983e828d96561a0f",
+      "ref": "341268561baaff256927c931ec8215dbd30e3cee",
       "sourceType": "github",
       "skillPath": "skills/modern-web-guidance/SKILL.md",
-      "computedHash": "8e91867cc20dda14251c78c8d905847314c8c196557e1181d586a456cddcb5dc"
+      "computedHash": "c614730bccf763448d84ed2b5c71164b0ad7410a0823da3639e62e9d9bf2b641"
     },
     "project-checklist": {
       "source": "masseater/skills",
-      "ref": "45a600acf934116728f6d6fe11da9dba55db320e",
+      "ref": "fdd021c5df0c755599770ee8902f6c579db052b4",
       "sourceType": "github",
       "skillPath": "skills/project-checklist/SKILL.md",
-      "computedHash": "41ad17742a2ba57104c8a38e096283c7c0af7b3a69967b829a24cb54e86c97bf"
+      "computedHash": "9d4ba48afd1ea70e6bdf5ba0f2ec5004d501257abd2a03d190ecef9573943787"
     },
     "refresh-skills": {
       "source": "philtzjp/skills",
@@ -227,14 +227,14 @@
     },
     "shadcn": {
       "source": "shadcn-ui/ui",
-      "ref": "c0d63c339d6cd2fc26135590a54cf1f362269451",
+      "ref": "8a3536678a528cc012b9e62484290e79d0be410f",
       "sourceType": "github",
       "skillPath": "skills/shadcn/SKILL.md",
       "computedHash": "b864a958765563321f485a96f4d59c0bb6539f4286ab6d8b8b66895b7ebd302d"
     },
     "skill-authoring": {
       "source": "masseater/skills",
-      "ref": "45a600acf934116728f6d6fe11da9dba55db320e",
+      "ref": "fdd021c5df0c755599770ee8902f6c579db052b4",
       "sourceType": "github",
       "skillPath": "skills/skill-authoring/SKILL.md",
       "computedHash": "2962cfa6a1573a0388bffb1692e59f2b5a1bc7c5a4b364d4e4f14e22fe7e08f9"
@@ -262,10 +262,10 @@
     },
     "systematic-debugging": {
       "source": "obra/superpowers",
-      "ref": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
+      "ref": "22f0b463e7a5e579904dd6211a520321035526f7",
       "sourceType": "github",
       "skillPath": "skills/systematic-debugging/SKILL.md",
-      "computedHash": "276fb0aadb002ab930cc2a56de89e16995a2e3e70b33587652bf0a5fb123148d"
+      "computedHash": "b7b6e98c3bffe371893bdb69845ec61124a65b6a96313dc8d6a2bce4437b13eb"
     },
     "turborepo": {
       "source": "philtzjp/skills",
@@ -297,28 +297,28 @@
     },
     "verification-before-completion": {
       "source": "obra/superpowers",
-      "ref": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
+      "ref": "22f0b463e7a5e579904dd6211a520321035526f7",
       "sourceType": "github",
       "skillPath": "skills/verification-before-completion/SKILL.md",
       "computedHash": "b529822bdac4b197b180fe12225cff86b930b65910435103c10622df7f041651"
     },
     "workers-best-practices": {
       "source": "cloudflare/skills",
-      "ref": "1a33048817d06df12882cb881dfc754e7039954a",
+      "ref": "1f2cd0a19588e2c6197c91dd7c71729df1fb6156",
       "sourceType": "github",
       "skillPath": "skills/workers-best-practices/SKILL.md",
       "computedHash": "b6252e1aa7c41d1fbec7f064684deb9bd79866c2b6f3e18deee6d7a0c673f3f3"
     },
     "writing": {
       "source": "masseater/skills",
-      "ref": "45a600acf934116728f6d6fe11da9dba55db320e",
+      "ref": "fdd021c5df0c755599770ee8902f6c579db052b4",
       "sourceType": "github",
       "skillPath": "skills/writing/SKILL.md",
-      "computedHash": "96eaee6cfbadd8808f5cd5b073c4e859c2830370589ad385c22687038c551a20"
+      "computedHash": "7ced9f54a45296188764dca070717ecf8d01c93d29c2e840e0b89ca334a76146"
     },
     "yomiyasu": {
       "source": "nanaism/yomiyasu",
-      "ref": "29d67ccb05e370b5958d72920a9cd1aa829dee80",
+      "ref": "8394e099486aaa2e28cf89992e46f5ebe5ed839d",
       "sourceType": "github",
       "skillPath": "skills/yomiyasu/SKILL.md",
       "computedHash": "931929b8d7be2c1413927dec7c7ad44b2fba5caee2cd8394a52e7727d3a2c959"

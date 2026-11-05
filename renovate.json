@@ -16,6 +16,19 @@
       ],
       "groupName": "effect and alchemy",
       "automerge": false
+    },
+    {
+      "matchDepTypes": ["pnpm-workspace.overrides"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "matchPackageNames": ["@paper-design/**"],
+      "groupName": "paper shaders"
+    },
+    {
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "!/-dev\\./"
     }
   ],
   "customManagers": [
