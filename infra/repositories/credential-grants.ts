@@ -58,11 +58,44 @@ const GITHUB_APP_PERMISSIONS = {
   secrets: "write",
   actions_variables: "write",
   environments: "write",
+  contents: "write",
+  pull_requests: "write",
   metadata: "read",
 } as const satisfies Readonly<Record<string, "read" | "write">>;
 
-const GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-  "masseater.dev": GITHUB_APP_PERMISSIONS,
+type GitHubGrant = Readonly<{
+  permissions: Readonly<Record<string, string>>;
+  repositories?: readonly string[];
+}>;
+
+const RELEASE_REPOSITORIES: readonly string[] = [
+  "decision-experiments",
+  "lint-kit",
+  "measure-everything",
+  "mirucord",
+  "typescript-template",
+];
+
+const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
+  repository,
+  {
+    permissions: { contents: "write", pull_requests: "write", metadata: "read" },
+    repositories: [repository],
+  },
+];
+
+const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
+  "masseater.dev": {
+    permissions: {
+      actions: "read",
+      administration: "write",
+      secrets: "write",
+      actions_variables: "write",
+      environments: "write",
+      metadata: "read",
+    },
+  },
+  ...Rec.fromEntries(pipe(RELEASE_REPOSITORIES, Arr.map(releaseGrant))),
 };
 
 const NPM_GRANTS: readonly string[] = ["lint-kit", "measure-everything"];
@@ -101,7 +134,7 @@ const policy = (
 type Grants = Readonly<{
   profiles: Readonly<Record<string, readonly Policy[]>>;
   repositories: Readonly<Record<string, string>>;
-  github: Readonly<Record<string, Readonly<Record<string, string>>>>;
+  github: Readonly<Record<string, GitHubGrant>>;
   npm: readonly string[];
 }>;
 
@@ -122,4 +155,4 @@ const grantPolicies = ({
 });
 
 export { GITHUB_APP_PERMISSIONS, grantPolicies };
-export type { Grants, Policy };
+export type { GitHubGrant, Grants, Policy };
