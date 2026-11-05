@@ -214,7 +214,7 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     permissions:
-      actions: read
+      actions: write
       contents: read
     outputs:
       latest: ${{ steps.slugs.outputs.latest }}
@@ -240,6 +240,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           HEAD_SHA: ${{ github.sha }}
         run: .github/scripts/mosaic-touched.sh
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh cache list --repo "$GITHUB_REPOSITORY" --ref refs/heads/main --key vite-plus- --sort created_at --order desc --limit 100 --json key --jq '.[1:][].key' |
+            xargs -r -n 1 gh cache delete --repo "$GITHUB_REPOSITORY"
       - id: slugs
         if: steps.head.outputs.latest == 'true' && (github.event_name == 'schedule' || steps.touched.outputs.mosaic == 'true')
         run: |
@@ -251,12 +256,13 @@ jobs:
     if: needs.mosaic-plan.outputs.latest == 'true'
     runs-on: ubuntu-latest
     permissions:
-      actions: read
+      actions: write
       contents: read
     concurrency:
       group: mosaic-character-${{ matrix.slug }}
     strategy:
       fail-fast: false
+      max-parallel: 6
       matrix:
         slug: ${{ fromJSON(needs.mosaic-plan.outputs.slugs) }}
     env:
@@ -291,7 +297,7 @@ jobs:
           rm pool.tar
         working-directory: tools/mosaic/.cache
       - if: steps.start.outputs.latest == 'true'
-        run: sleep "$((JOB_INDEX * 30))"
+        run: sleep "$((JOB_INDEX % 6 * 30))"
         env:
           JOB_INDEX: ${{ strategy.job-index }}
       - if: steps.start.outputs.latest == 'true'
@@ -319,11 +325,25 @@ jobs:
           done
           tar -cf pool.tar -- "${files[@]}"
         working-directory: tools/mosaic/.cache
-      - if: always() && steps.build-pool.outcome != 'skipped'
+      - id: pool-key
+        if: always() && steps.build-pool.outcome != 'skipped'
+        run: echo "key=mosaic-pool-$SLUG-$POOL_HASH" >> "$GITHUB_OUTPUT"
+        env:
+          POOL_HASH: ${{ hashFiles(format('tools/mosaic/.cache/{0}/vocadb/songs.json', matrix.slug), format('tools/mosaic/.cache/{0}/thumbs.npz', matrix.slug), format('tools/mosaic/.cache/{0}/niconico-og.json', matrix.slug)) }}
+      - id: save-pool
+        if: always() && steps.build-pool.outcome != 'skipped' && steps.pool-key.outputs.key != steps.pool.outputs.cache-matched-key
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: tools/mosaic/.cache/pool.tar
-          key: mosaic-pool-${{ matrix.slug }}-${{ hashFiles(format('tools/mosaic/.cache/{0}/vocadb/songs.json', matrix.slug), format('tools/mosaic/.cache/{0}/thumbs.npz', matrix.slug), format('tools/mosaic/.cache/{0}/niconico-og.json', matrix.slug)) }}
+          key: ${{ steps.pool-key.outputs.key }}
+      - if: always() && steps.save-pool.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP: ${{ steps.pool-key.outputs.key }}
+        run: |
+          gh cache list --repo "$GITHUB_REPOSITORY" --key "mosaic-pool-$SLUG-" --limit 100 --json key --jq '.[].key' |
+            { grep -xE "mosaic-pool-$SLUG-[0-9a-f]{64}" || true; } | { grep -vxF "$KEEP" || true; } |
+            xargs -r -n 1 gh cache delete --repo "$GITHUB_REPOSITORY"
       - id: changed
         if: steps.start.outputs.latest == 'true'
         run: |
