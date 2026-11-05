@@ -27,6 +27,7 @@
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/repositories": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
+    "@r_masseater/workers-tracing": "catalog:stack",
     "@tailwindcss/typography": "catalog:",
     "@tanstack/react-devtools": "0.10.14",
     "@tanstack/react-query": "catalog:stack",

@@ -89,6 +89,7 @@ catalog:
   "@atproto/api": ^0.30.0
 catalogs:
   stack:
+    "@r_masseater/workers-tracing": 0.0.6
     "@distilled.cloud/cloudflare": 1.0.0-rc.18
     "@effect/atom-react": 4.1.1
     "@effect/tsgo": 0.63.0
@@ -142,6 +143,7 @@ packageExtensions:
     dependencies:
       "@steiger/toolkit": 0.2.3
 minimumReleaseAgeExclude:
+  - "@r_masseater/workers-tracing@0.0.6"
   - "@r_masseater/oxlint-typed-rules@0.1.0"
   - "@r_masseater/oxlint-plugin-decision@0.1.0"
   - "@alchemy.run/acme@2.0.0-beta.85"
