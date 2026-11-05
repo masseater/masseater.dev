@@ -9,4 +9,4 @@ published: true
 
 結果は[リーダーボード](https://masseater.dev/decision-bench/)で公開している。正解ラベルは JNLI を除いて Claude Opus 5.5 が付けたもので、スコアは本当の正しさではなく Opus 5.5 のラベルとの一致率である。勉強目的の実験なので、結果は参考程度に見てほしい。
 
-ソースは [GitHub](https://github.com/masseater/mst-ja-decision-bench) にある。
+ソースは [GitHub](https://github.com/masseater/decision-experiments) の `tools/bench` と `apps/decision-bench` にある。

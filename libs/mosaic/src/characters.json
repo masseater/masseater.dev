@@ -1,0 +1,585 @@
+[
+  {
+    "slug": "miku",
+    "name": "初音ミク",
+    "vocadbArtistId": 1,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/1.png"
+      }
+    ],
+    "credit": "イラスト: KEI © Crypton Future Media, INC. www.piapro.net",
+    "og": {
+      "left": 0.125,
+      "top": 0.1776,
+      "width": 0.75
+    },
+    "variants": 8
+  },
+  {
+    "slug": "teto",
+    "name": "重音テト",
+    "vocadbArtistId": 140308,
+    "targets": [
+      {
+        "url": "https://kasaneteto.jp/assets/download/illust-logo/official_illust_teto_new.png"
+      }
+    ],
+    "credit": "イラスト: 線 © TWINDRILL kasaneteto.jp",
+    "og": {
+      "left": 0.0625,
+      "top": 0.1557,
+      "width": 0.875
+    },
+    "variants": 8
+  },
+  {
+    "slug": "adachi",
+    "name": "足立レイ",
+    "vocadbArtistId": 134059,
+    "targets": [
+      {
+        "url": "https://www.dropbox.com/s/3awu43mt2hx3a19/%E8%B6%B3%E7%AB%8B%E3%83%AC%E3%82%A4_%E7%AB%8B%E3%81%A1%E7%B5%B5RF_1920_v3.zip?dl=1",
+        "member": "足立レイ_立ち絵RF_1920_v3/デフォルト/デフォルト.png"
+      }
+    ],
+    "credit": "立ち絵: みさいる © メカニカルガール mechanicalgirl.jp",
+    "og": {
+      "left": 0.2188,
+      "top": 0.0366,
+      "width": 0.5625
+    },
+    "variants": 8
+  },
+  {
+    "slug": "kotonoha",
+    "name": "琴葉茜・葵",
+    "vocadbArtistId": 129575,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/86363.png"
+      },
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/86365.png"
+      }
+    ],
+    "credit": "イラスト: A.I.VOICE 琴葉 茜・葵 © AI,Inc.",
+    "og": {
+      "left": 0.0,
+      "top": 0.0328,
+      "width": 1.0
+    },
+    "variants": 8
+  },
+  {
+    "slug": "yukari",
+    "name": "結月ゆかり",
+    "vocadbArtistId": 134288,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/134288.png"
+      }
+    ],
+    "credit": "イラスト: 文倉十 © VOCALOMAKETS",
+    "og": {
+      "left": 0.125,
+      "top": 0.0417,
+      "width": 0.75
+    },
+    "variants": 8
+  },
+  {
+    "slug": "ia",
+    "name": "IA",
+    "vocadbArtistId": 504,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/504.png"
+      }
+    ],
+    "credit": "イラスト: 赤坂アカ © 1st PLACE Co., Ltd.",
+    "og": {
+      "left": 0.15,
+      "top": 0.0583,
+      "width": 0.75
+    },
+    "variants": 8
+  },
+  {
+    "slug": "kafu",
+    "name": "可不",
+    "vocadbArtistId": 83928,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/83928.png"
+      }
+    ],
+    "credit": "イラスト: PALOW. © KAMITSUBAKI STUDIO",
+    "og": {
+      "left": 0.22,
+      "top": 0.0726,
+      "width": 0.6
+    },
+    "variants": 8
+  },
+  {
+    "slug": "luka",
+    "name": "巡音ルカ",
+    "vocadbArtistId": 2,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/2.png"
+      }
+    ],
+    "credit": "イラスト: KEI © Crypton Future Media, INC. www.piapro.net",
+    "og": {
+      "left": 0.0488,
+      "top": 0.0614,
+      "width": 0.9024
+    },
+    "variants": 8
+  },
+  {
+    "slug": "rin",
+    "name": "鏡音リン",
+    "vocadbArtistId": 14,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/14.png"
+      }
+    ],
+    "credit": "イラスト: KEI © Crypton Future Media, INC. www.piapro.net",
+    "og": {
+      "left": 0.0952,
+      "top": 0.094,
+      "width": 0.7778
+    },
+    "variants": 8
+  },
+  {
+    "slug": "gumi",
+    "name": "GUMI",
+    "vocadbArtistId": 3,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/3.png"
+      }
+    ],
+    "credit": "イラスト: ゆうきまさみ © INTERNET Co., Ltd.",
+    "og": {
+      "left": 0.0595,
+      "top": 0.059,
+      "width": 0.8929
+    },
+    "variants": 8
+  },
+  {
+    "slug": "len",
+    "name": "鏡音レン",
+    "vocadbArtistId": 15,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/15.png"
+      }
+    ],
+    "credit": "イラスト: KEI © Crypton Future Media, INC. www.piapro.net",
+    "og": {
+      "left": 0.1471,
+      "top": 0.0993,
+      "width": 0.7206
+    },
+    "variants": 8
+  },
+  {
+    "slug": "kaito",
+    "name": "KAITO",
+    "vocadbArtistId": 71,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/9805.png"
+      }
+    ],
+    "credit": "© Crypton Future Media, INC. www.piapro.net",
+    "og": {
+      "left": 0.0515,
+      "top": 0.0581,
+      "width": 0.8866
+    },
+    "variants": 8
+  },
+  {
+    "slug": "flower",
+    "name": "v flower",
+    "vocadbArtistId": 21165,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/21165.png"
+      }
+    ],
+    "credit": "© v flower project",
+    "og": {
+      "left": 0.0519,
+      "top": 0.0618,
+      "width": 0.8961
+    },
+    "variants": 8
+  },
+  {
+    "slug": "uta",
+    "name": "唄音ウタ",
+    "vocadbArtistId": 803,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/803.png"
+      }
+    ],
+    "credit": "イラスト: derenta © 飴屋/菖蒲",
+    "og": {
+      "left": 0.0484,
+      "top": 0.0588,
+      "width": 0.9032
+    },
+    "variants": 8
+  },
+  {
+    "slug": "meiko",
+    "name": "MEIKO",
+    "vocadbArtistId": 176,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/176.png"
+      }
+    ],
+    "credit": "© Crypton Future Media, INC. www.piapro.net",
+    "og": {
+      "left": 0.0632,
+      "top": 0.0642,
+      "width": 0.8211
+    },
+    "variants": 8
+  },
+  {
+    "slug": "otomachi",
+    "name": "音街ウナ",
+    "vocadbArtistId": 170649,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/170649.png"
+      }
+    ],
+    "credit": "© MTK/INTERNET Co., Ltd.",
+    "og": {
+      "left": 0.075,
+      "top": 0.0625,
+      "width": 0.8375
+    },
+    "variants": 8
+  },
+  {
+    "slug": "kiritan",
+    "name": "東北きりたん",
+    "vocadbArtistId": 106530,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/106530.png"
+      }
+    ],
+    "credit": "イラスト: 江戸村ににこ © SSS LLC.",
+    "og": {
+      "left": 0.1071,
+      "top": 0.1011,
+      "width": 0.7857
+    },
+    "variants": 8
+  },
+  {
+    "slug": "gakupo",
+    "name": "神威がくぽ",
+    "vocadbArtistId": 12,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/12.png"
+      }
+    ],
+    "credit": "イラスト: 三浦建太郎 © INTERNET Co., Ltd.",
+    "og": {
+      "left": 0.0571,
+      "top": 0.0641,
+      "width": 0.9
+    },
+    "variants": 8
+  },
+  {
+    "slug": "chis-a",
+    "name": "知声",
+    "vocadbArtistId": 99757,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/99757.png"
+      }
+    ],
+    "credit": "イラスト: チェリ子 © Techno-Speech, Inc.",
+    "og": {
+      "left": 0.0385,
+      "top": 0.0602,
+      "width": 0.9038
+    },
+    "variants": 8
+  },
+  {
+    "slug": "yuki",
+    "name": "歌愛ユキ",
+    "vocadbArtistId": 191,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/191.png"
+      }
+    ],
+    "credit": "© AH-Software Co., Ltd.",
+    "og": {
+      "left": 0.0417,
+      "top": 0.0585,
+      "width": 0.8958
+    },
+    "variants": 8
+  },
+  {
+    "slug": "iroha",
+    "name": "猫村いろは",
+    "vocadbArtistId": 77,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/77.png"
+      }
+    ],
+    "credit": "イラスト: オカマ © AH-Software Co., Ltd.",
+    "og": {
+      "left": 0.1176,
+      "top": 0.1328,
+      "width": 0.8431
+    },
+    "variants": 8
+  },
+  {
+    "slug": "hanaguma",
+    "name": "花隈千冬",
+    "vocadbArtistId": 103592,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/103592.png"
+      }
+    ],
+    "credit": "イラスト: 手島nari © TOKYO6 ENTERTAINMENT",
+    "og": {
+      "left": 0.3077,
+      "top": 0.148,
+      "width": 0.3718
+    },
+    "variants": 8
+  },
+  {
+    "slug": "koharuri",
+    "name": "小春六花",
+    "vocadbArtistId": 85853,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/85853.png"
+      }
+    ],
+    "credit": "イラスト: 手島nari © TOKYO6 ENTERTAINMENT",
+    "og": {
+      "left": 0.0476,
+      "top": 0.0618,
+      "width": 0.9048
+    },
+    "variants": 8
+  },
+  {
+    "slug": "natsuki",
+    "name": "夏色花梨",
+    "vocadbArtistId": 94959,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/94959.png"
+      }
+    ],
+    "credit": "イラスト: 手島nari © TOKYO6 ENTERTAINMENT",
+    "og": {
+      "left": 0.0513,
+      "top": 0.0616,
+      "width": 0.8974
+    },
+    "variants": 8
+  },
+  {
+    "slug": "eleanor",
+    "name": "Eleanor Forte",
+    "vocadbArtistId": 66906,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/66906.png"
+      }
+    ],
+    "credit": "© Dreamtonics Co., Ltd.",
+    "og": {
+      "left": 0.0417,
+      "top": 0.0638,
+      "width": 0.8958
+    },
+    "variants": 8
+  },
+  {
+    "slug": "miyamai",
+    "name": "宮舞モカ",
+    "vocadbArtistId": 132241,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/132241.png"
+      }
+    ],
+    "credit": "© AH-Software Co., Ltd.",
+    "og": {
+      "left": 0.3382,
+      "top": 0.0941,
+      "width": 0.3235
+    },
+    "variants": 8
+  },
+  {
+    "slug": "ruko",
+    "name": "欲音ルコ",
+    "vocadbArtistId": 172667,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/172667.png",
+        "alphaFloor": 64
+      }
+    ],
+    "credit": "© 日勝ゆう",
+    "og": {
+      "left": 0.1356,
+      "top": 0.0541,
+      "width": 0.6949
+    },
+    "variants": 8
+  },
+  {
+    "slug": "ritsu",
+    "name": "波音リツ",
+    "vocadbArtistId": 172646,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/172646.png"
+      }
+    ],
+    "credit": "© canon",
+    "og": {
+      "left": 0.0682,
+      "top": 0.0762,
+      "width": 0.8636
+    },
+    "variants": 8
+  },
+  {
+    "slug": "nurse-tt",
+    "name": "ナースロボ＿タイプＴ",
+    "vocadbArtistId": 133742,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/133742.png"
+      }
+    ],
+    "credit": "イラスト: 捨て犬A・最",
+    "og": {
+      "left": 0.1429,
+      "top": 0.1064,
+      "width": 0.7143
+    },
+    "variants": 8
+  },
+  {
+    "slug": "kizuna",
+    "name": "紲星あかり",
+    "vocadbArtistId": 134289,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/134289.png"
+      }
+    ],
+    "credit": "イラスト: 文倉十 © VOCALOMAKETS",
+    "og": {
+      "left": 0.0526,
+      "top": 0.0561,
+      "width": 0.8947
+    },
+    "variants": 8
+  },
+  {
+    "slug": "solaria",
+    "name": "SOLARIA",
+    "vocadbArtistId": 76317,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/76317.png"
+      }
+    ],
+    "credit": "イラスト: Superstellar © Eclipsed Sounds",
+    "og": {
+      "left": 0.0488,
+      "top": 0.0707,
+      "width": 0.9024
+    },
+    "variants": 8
+  },
+  {
+    "slug": "miki",
+    "name": "SF-A2 開発コード miki",
+    "vocadbArtistId": 146,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/146.png"
+      }
+    ],
+    "credit": "イラスト: コザキユースケ © AH-Software Co., Ltd.",
+    "og": {
+      "left": 0.0488,
+      "top": 0.0602,
+      "width": 0.9024
+    },
+    "variants": 8
+  },
+  {
+    "slug": "nanoda",
+    "name": "ずんだもん",
+    "vocadbArtistId": 119812,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/98107.png"
+      }
+    ],
+    "credit": "© SSS LLC.",
+    "og": {
+      "left": 0.2791,
+      "top": 0.0667,
+      "width": 0.6512
+    },
+    "variants": 8
+  },
+  {
+    "slug": "lily",
+    "name": "Lily",
+    "vocadbArtistId": 139,
+    "targets": [
+      {
+        "url": "https://static.vocadb.net/img/Artist/mainOrig/139.png"
+      }
+    ],
+    "credit": "イラスト: KEI © INTERNET Co., Ltd.",
+    "og": {
+      "left": 0.0476,
+      "top": 0.0619,
+      "width": 0.9048
+    },
+    "variants": 8
+  }
+]

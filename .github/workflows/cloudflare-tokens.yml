@@ -1,0 +1,58 @@
+name: cloudflare-tokens
+
+on:
+  workflow_dispatch:
+    inputs:
+      delete:
+        description: 消すトークンの ID（カンマ区切り）。空なら一覧だけ出す
+        required: false
+        default: ""
+
+permissions: {}
+
+concurrency:
+  group: cloudflare-tokens
+
+jobs:
+  tokens:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+        with:
+          cache: true
+          run-install: |
+            - args: ['--frozen-lockfile']
+      - run: vpx cloudflare-tokens.ts
+        working-directory: infra/repositories
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          DELETE_TOKEN_IDS: ${{ inputs.delete }}
+
+  ci-telemetry:
+    needs: [tokens]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            .github/scripts/ci-telemetry.sh
+            apps/portfolio/app-name.ts
+          sparse-checkout-cone-mode: false
+      - run: .github/scripts/ci-telemetry.sh
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GH_TOKEN: ${{ github.token }}

@@ -2,23 +2,18 @@ import { notFound } from "@tanstack/react-router";
 import { Effect, Option } from "effect";
 
 import { techniqueOf } from "#/entities/technique";
-import { loadEffect } from "#/features/dance-stage";
+import { effectLoader } from "#/features/dance-stage";
 
 type FoundTechnique = Readonly<{ slug: string; source: string }>;
 
+const danceSource = (slug: string): Option.Option<Effect.Effect<string>> =>
+  Option.flatMap(techniqueOf(slug), () => effectLoader(slug));
+
 const loadTechnique = ({ slug }: Readonly<{ slug: string }>): Promise<FoundTechnique> =>
   Effect.runPromise(
-    Option.match(techniqueOf(slug), {
+    Option.match(danceSource(slug), {
       onNone: () => Effect.fail(notFound()),
-      onSome: () =>
-        loadEffect(slug).pipe(
-          Effect.flatMap(
-            Option.match({
-              onNone: () => Effect.fail(notFound()),
-              onSome: (source) => Effect.succeed<FoundTechnique>({ slug, source }),
-            }),
-          ),
-        ),
+      onSome: Effect.map((source): FoundTechnique => ({ slug, source })),
     }),
   );
 

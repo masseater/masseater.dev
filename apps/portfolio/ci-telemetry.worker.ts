@@ -1,7 +1,7 @@
+import { OWNER_ID } from "@masseater.dev/repositories/github-oidc";
 import { Effect, Logger, ManagedRuntime, Schema, String as Str, pipe } from "effect";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
-import type { CiTelemetryEnv } from "./alchemy.run.ts";
 import { CI_TELEMETRY_AUDIENCE } from "./app-name.ts";
 
 const ISSUER = "https://token.actions.githubusercontent.com";
@@ -10,6 +10,7 @@ const jwks = createRemoteJWKSet(new URL(`${ISSUER}/.well-known/jwks`));
 
 const Claims = Schema.Struct({
   repository: Schema.String,
+  repository_owner_id: Schema.String,
   workflow: Schema.String,
   run_id: Schema.String,
   run_attempt: Schema.String,
@@ -54,7 +55,6 @@ const bearer = (request: Request): string =>
 
 const verify = (
   request: Request,
-  env: CiTelemetryEnv,
 ): Effect.Effect<typeof Claims.Type, Unauthorized | Schema.SchemaError> =>
   Effect.gen(function* verifyClaims() {
     const { payload } = yield* Effect.tryPromise({
@@ -63,7 +63,7 @@ const verify = (
       catch: (error) => Unauthorized.make({ reason: String(error) }),
     });
     const claims = yield* Schema.decodeUnknownEffect(Claims)(payload);
-    if (claims.repository !== env.GITHUB_REPOSITORY) {
+    if (claims.repository_owner_id !== OWNER_ID) {
       return yield* Unauthorized.make({ reason: `unexpected repository ${claims.repository}` });
     }
     return claims;
@@ -101,9 +101,9 @@ const toRun = (claims: typeof Claims.Type): Run => ({
   event: claims.event_name,
 });
 
-const record = (request: Request, env: CiTelemetryEnv): Effect.Effect<Response> =>
+const record = (request: Request): Effect.Effect<Response> =>
   Effect.gen(function* recordRun() {
-    const claims = yield* verify(request, env);
+    const claims = yield* verify(request);
     const body = yield* Effect.tryPromise(() => request.json());
     const { jobs } = yield* Schema.decodeUnknownEffect(Payload)(body);
     yield* pipe(
@@ -124,8 +124,7 @@ const record = (request: Request, env: CiTelemetryEnv): Effect.Effect<Response> 
   );
 
 const worker = {
-  fetch: (request: Request, env: CiTelemetryEnv): Promise<Response> =>
-    runtime.runPromise(record(request, env)),
+  fetch: (request: Request): Promise<Response> => runtime.runPromise(record(request)),
 };
 
 export default worker;

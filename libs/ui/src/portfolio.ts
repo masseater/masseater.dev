@@ -12,7 +12,7 @@ const portfolio = {
   sections: {
     projects: "Projects",
     blogs: "Blogs",
-    scraps: "Scraps",
+    sloppedia: "Sloppedia",
   },
 } as const;
 

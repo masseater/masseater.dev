@@ -1,0 +1,17 @@
+{
+  "name": "@masseater.dev/alchemy-app-name",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache"
+  },
+  "dependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "alchemy": "catalog:stack",
+    "effect": "catalog:stack"
+  }
+}

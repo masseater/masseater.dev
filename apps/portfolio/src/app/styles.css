@@ -1,5 +1,7 @@
 @import "@masseater.dev/ui/styles.css";
-@import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
+@import "@masseater.dev/ui/theme.css";
+@import "sloppedia/styles.css";
+@import "@xyflow/react/dist/base.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -7,70 +9,6 @@
 :root {
   --site-header-height: 3.5rem;
   --entry-title-bar-height: 2.5rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
-  --radius: 0.625rem;
-}
-
-.dark {
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.92 0.004 286.32);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.552 0.016 285.938);
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
 }
 
 @media (width >= 40rem) {
@@ -117,7 +55,7 @@
 [data-footnotes] li {
   @apply my-1;
 }
-[data-footnotes] li > p {
+[data-footnotes] p {
   @apply my-0;
 }
 
@@ -140,7 +78,10 @@
 
 @utility entry-title-scope {
   timeline-scope: --entry-title;
-  @supports (animation-timeline: view()) {
+}
+
+@supports (animation-timeline: view()) {
+  .entry-title-scope {
     animation: entry-title-out linear both;
     animation-timeline: --entry-title;
     animation-range: exit 0% exit 100%;
@@ -184,8 +125,8 @@
   view-transition-name: category-blogs;
 }
 
-@utility vt-category-scraps {
-  view-transition-name: category-scraps;
+@utility vt-category-sloppedia {
+  view-transition-name: category-sloppedia;
 }
 
 @utility vt-feed {
@@ -221,23 +162,23 @@
   scrollbar-width: none;
 }
 
-html:active-view-transition-type(forward)::view-transition-old(.page),
-html:active-view-transition-type(forward)::view-transition-old(.entry):only-child {
+:active-view-transition-type(forward)::view-transition-old(.page),
+:active-view-transition-type(forward)::view-transition-old(.entry):only-child {
   animation: slide-out-left 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-html:active-view-transition-type(forward)::view-transition-new(.page),
-html:active-view-transition-type(forward)::view-transition-new(.entry):only-child {
+:active-view-transition-type(forward)::view-transition-new(.page),
+:active-view-transition-type(forward)::view-transition-new(.entry):only-child {
   animation: slide-in-right 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-html:active-view-transition-type(backward)::view-transition-old(.page),
-html:active-view-transition-type(backward)::view-transition-old(.entry):only-child {
+:active-view-transition-type(backward)::view-transition-old(.page),
+:active-view-transition-type(backward)::view-transition-old(.entry):only-child {
   animation: slide-out-right 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-html:active-view-transition-type(backward)::view-transition-new(.page),
-html:active-view-transition-type(backward)::view-transition-new(.entry):only-child {
+:active-view-transition-type(backward)::view-transition-new(.page),
+:active-view-transition-type(backward)::view-transition-new(.entry):only-child {
   animation: slide-in-left 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
@@ -283,7 +224,7 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 ::view-transition-group(nav-indicator),
 ::view-transition-group(category-projects),
 ::view-transition-group(category-blogs),
-::view-transition-group(category-scraps) {
+::view-transition-group(category-sloppedia) {
   z-index: 2;
 }
 
@@ -318,11 +259,14 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   }
 }
 
+[data-entry-title-bar] {
+  opacity: var(--entry-title-out);
+  translate: 0 calc((var(--entry-title-out) - 1) * 0.5rem);
+}
+
 @container style(--entry-title-out: 1) {
   [data-entry-title-bar] {
     visibility: visible;
-    opacity: 1;
-    translate: 0 0;
   }
 }
 
@@ -335,6 +279,20 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
 @keyframes entry-fade-in {
   from {
     opacity: 0;
+  }
+}
+
+@keyframes feed-slide-in {
+  from {
+    opacity: 0;
+    translate: calc(100% + 1rem) 0;
+  }
+}
+
+@keyframes feed-slide-out {
+  to {
+    opacity: 0;
+    translate: calc(100% + 1rem) 0;
   }
 }
 
@@ -360,4 +318,336 @@ html:active-view-transition-type(backward)::view-transition-new(.entry):only-chi
   from {
     transform: translateX(-100vw);
   }
+}
+
+.cascade-failure {
+  aspect-ratio: var(--cascade-aspect);
+  --xy-background-pattern-color: var(--border);
+  --xy-edge-stroke: var(--muted-foreground);
+  --xy-edge-label-background-color: var(--background);
+  --xy-edge-label-color: var(--muted-foreground);
+  --cascade-ok: oklch(0.72 0.17 150);
+}
+
+.cascade-edge {
+  font-size: 10.5px;
+}
+
+.cascade-edge text {
+  fill: var(--muted-foreground);
+}
+
+.cascade-edge rect {
+  fill: var(--background);
+}
+
+.cascade-service {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: 0 1px 2px oklch(0 0 0 / 6%);
+  cursor: pointer;
+  transition: transform 150ms;
+}
+
+.cascade-service:hover {
+  transform: translateY(-1px);
+}
+
+.cascade-lamp {
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: var(--cascade-ok);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--cascade-ok) 25%, transparent);
+}
+
+.cascade-service-stopped {
+  animation: cascade-stop 400ms ease-out var(--cascade-delay) both;
+}
+
+.cascade-service-stopped .cascade-lamp {
+  animation: cascade-lamp-stop 400ms ease-out var(--cascade-delay) both;
+}
+
+.cascade-edge-stopped path:first-of-type {
+  animation:
+    cascade-edge-stop 400ms ease-out var(--cascade-delay) both,
+    cascade-edge-flow 600ms linear var(--cascade-delay) infinite;
+}
+
+@keyframes cascade-stop {
+  to {
+    border-color: var(--destructive);
+    background: color-mix(in oklch, var(--destructive) 12%, var(--card));
+  }
+}
+
+@keyframes cascade-lamp-stop {
+  to {
+    background: var(--destructive);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive) 30%, transparent);
+  }
+}
+
+@keyframes cascade-edge-stop {
+  to {
+    stroke: var(--destructive);
+    stroke-dasharray: 6 4;
+    stroke-width: 2;
+  }
+}
+
+@keyframes cascade-edge-flow {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+
+  .cascade-service-stopped {
+    animation: cascade-stop 0s both;
+  }
+
+  .cascade-service-stopped .cascade-lamp {
+    animation: cascade-lamp-stop 0s both;
+  }
+
+  .cascade-edge-stopped path:first-of-type {
+    animation: cascade-edge-stop 0s both;
+  }
+
+  .feed-slide-in {
+    animation: feed-slide-in 0s both;
+  }
+
+  ::view-transition-old(feed-link):only-child {
+    animation: feed-slide-out 0s both;
+  }
+}
+
+.architecture-figure {
+  --architecture-bg: oklch(0.99 0.003 250);
+  --architecture-main: oklch(0.55 0.2 262);
+  --architecture-api: oklch(0.55 0.02 260);
+  --architecture-cf-bg: oklch(0.985 0.015 60);
+  --architecture-cf-border: oklch(0.8 0.11 55);
+  --architecture-cf-title: oklch(0.55 0.17 45);
+  --architecture-gh-bg: oklch(0.98 0.012 250);
+  --architecture-gh-border: oklch(0.82 0.08 255);
+  --architecture-gh-title: oklch(0.52 0.18 262);
+  --xy-background-pattern-color: oklch(0.94 0.006 250);
+}
+
+.architecture {
+  aspect-ratio: var(--architecture-aspect);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--architecture-bg);
+}
+
+.dark .architecture-figure {
+  --architecture-bg: oklch(0.18 0.01 255);
+  --architecture-main: oklch(0.72 0.14 255);
+  --architecture-api: oklch(0.65 0.02 260);
+  --architecture-cf-bg: oklch(0.21 0.02 55);
+  --architecture-cf-border: oklch(0.5 0.1 50);
+  --architecture-cf-title: oklch(0.75 0.14 55);
+  --architecture-gh-bg: oklch(0.2 0.025 255);
+  --architecture-gh-border: oklch(0.42 0.08 255);
+  --architecture-gh-title: oklch(0.74 0.12 255);
+  --xy-background-pattern-color: oklch(0.23 0.012 255);
+}
+
+.architecture-service {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: var(--foreground);
+}
+
+.architecture-tile {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow:
+    0 1px 2px oklch(0 0 0 / 6%),
+    0 2px 6px oklch(0 0 0 / 4%);
+}
+
+.architecture-name {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.architecture-note {
+  margin-top: 2px;
+  font-size: 10.5px;
+  line-height: 1.35;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+}
+
+.architecture-handle {
+  visibility: hidden;
+  min-width: 0;
+  min-height: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.architecture-service .architecture-handle-left {
+  top: 27px;
+  left: 53px;
+}
+
+.architecture-service .architecture-handle-right {
+  top: 27px;
+  right: 53px;
+  left: auto;
+}
+
+.architecture-group {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1.5px solid;
+  border-radius: 10px;
+}
+
+.architecture-group-cf {
+  border-color: var(--architecture-cf-border);
+  background: var(--architecture-cf-bg);
+  color: var(--architecture-cf-title);
+}
+
+.architecture-group-gh {
+  border-color: var(--architecture-gh-border);
+  background: var(--architecture-gh-bg);
+  color: var(--architecture-gh-title);
+}
+
+.architecture-group-title {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.architecture-group-title-top-left {
+  top: 14px;
+  left: 18px;
+}
+
+.architecture-group-title-bottom-right {
+  right: 18px;
+  bottom: 14px;
+}
+
+.architecture-line-cf {
+  color: var(--architecture-cf-title);
+}
+
+.architecture-line-gh {
+  color: var(--architecture-gh-title);
+}
+
+.architecture-link {
+  --xy-edge-stroke: var(--architecture-api);
+  --xy-edge-stroke-width: 1.3;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.architecture-link text {
+  fill: var(--muted-foreground);
+}
+
+.architecture-link rect {
+  fill: var(--architecture-bg);
+}
+
+.architecture-link-main {
+  --xy-edge-stroke: var(--architecture-main);
+  --xy-edge-stroke-width: 1.8;
+}
+
+.architecture-link-main text {
+  fill: var(--architecture-main);
+}
+
+.architecture-link-dash {
+  stroke-dasharray: 5 4;
+}
+
+.architecture-controls {
+  gap: 2px;
+}
+
+.architecture-controls button {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.architecture-controls button:hover {
+  background: var(--muted);
+}
+
+.architecture-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.architecture-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.architecture-legend-item::before {
+  content: "";
+  width: 36px;
+  border-top: 1.3px solid var(--architecture-api);
+}
+
+.architecture-legend-main::before {
+  border-top: 1.8px solid var(--architecture-main);
+}
+
+.architecture-legend-dash::before {
+  border-top-style: dashed;
 }

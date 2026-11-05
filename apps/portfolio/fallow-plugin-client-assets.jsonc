@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/plugin-schema.json",
+  "name": "client-assets",
+  "detection": { "type": "fileExists", "pattern": "vite.config.ts" },
+  "entryPoints": ["client-assets.ts"],
+  "entryPointRole": "support",
+}

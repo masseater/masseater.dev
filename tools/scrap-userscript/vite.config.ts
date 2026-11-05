@@ -15,7 +15,7 @@ export default defineConfig({
         namespace: "https://masseater.dev",
         version,
         description:
-          "閲覧中のページを masseater.dev の scrap にするよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用",
+          "閲覧中のページについて masseater.dev の Sloppedia に記事を書くよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用",
         homepageURL: "https://github.com/masseater/masseater.dev/tree/main/tools/scrap-userscript",
         match: ["*://*/*"],
         noframes: true,
