@@ -249,11 +249,7 @@ const handle = (
   env: CredentialBrokerEnv,
 ): Effect.Effect<Response, never, BrokerContext> =>
   Option.match(route({ request, env }), {
-    onNone: () =>
-      Option.match(atprotoRoute({ request, env }), {
-        onNone: () => issue(request, env),
-        onSome: (handled) => handled,
-      }),
+    onNone: () => Option.getOrElse(atprotoRoute({ request, env }), () => issue(request, env)),
     onSome: (handled) =>
       handled.pipe(
         Effect.catchCause((cause) =>
