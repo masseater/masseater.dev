@@ -1,90 +1,50 @@
 ---
 title: "2026年11月1日〜5日にやったこと"
-description: "11月の最初の週の記録。CI の秘密と GitHub の設定をコードに移し、リポジトリを統合し、TypeScript 7.1 に上げ、個人の MCP を 1 つの入口にまとめ、konomi・Sloppedia・measure-everything を作った。"
-tags: ["振り返り", "Cloudflare", "GitHub", "MCP"]
+description: "11月の最初の週の記録。AI に聞かれずに最後まで任せられる基盤を作り、計測を実装より先に置き、エージェントに渡す自分の情報を集め、空いた手で作りたいものに口を出した。"
+tags: ["振り返り", "Claude Code", "MCP", "Cloudflare"]
 published: true
 ---
 
-11月1日から5日までに、個人の GitHub のリポジトリでやったことの記録である。
+11月の最初の週は、AI が僕へ確認せず最後まで進められる状態を作り、空いた手で、作りたいものへ口を出していた。手を動かすのはほぼ Claude で、僕がやったのは何を求めるかを決めることと、違うと思ったところで差し戻すことである。
 
-| 目的                           | やったこと                                                     |
-| ------------------------------ | -------------------------------------------------------------- |
-| リポジトリごとの手作業をなくす | CI の秘密の発行、GitHub の設定の IaC、リポジトリの統合         |
-| ツールチェーンを新しくする     | TypeScript 7.1、ESLint の撤去、Node.js 26、effect 4.1          |
-| 公開しているサイトを守る       | CSP とセキュリティヘッダ、ZAP の警告の修正、パスキーのログイン |
-| AI に自分の情報を渡す          | MCP のポータル、konomi、Sloppedia、mirucord                    |
-| 計測を先に置く                 | measure-everything、CI の計測の集約                            |
-| 文章の書き方を揃える           | README の書き直し、ライセンス、masseater/skills                |
-| 作って見せる                   | mosaic、rpp-kit、撮影ラボ、背面打ちスプリットパッド、記事の図  |
+## AI に聞かれずに済む基盤
 
-## リポジトリごとの手作業の撤去
+新しいリポジトリを作るたびに、Claude は Cloudflare のトークンが無い、secret を登録してほしい、と僕に聞いてきた。同じやり取りを何度も繰り返したので、場当たり的ではなく根本的な解決を、と頼んだ。その結果、CI が使うトークンやキーは masseater.dev の Worker がその場で発行するようになり、リポジトリに secret を手で登録することはなくなった。権限を足すたびに確認されるのもやめてもらった。自分のリポジトリに自分の基盤の権限を足すのに、毎回聞かれる理由は無い。
 
-これまでは、リポジトリを作るたびに Cloudflare のトークンを作って secret に登録し、GitHub の設定を画面で揃えていた。権限が足りなくなるたびに同じやり取りを繰り返していたので、場当たり的に secret を足すのをやめ、根本からコードに置き換えた。
+GitHub の設定も IaC にさせた。IaC で書いていること自体は public にしたいが、public のリポジトリに private のリポジトリのことは書きたくない。この条件で、IaC は masseater.dev に置き、private のリポジトリの名前は実行時に取ってくる形になった。
 
-CI の秘密は、リポジトリに置かなくなった。GitHub Actions のジョブは OIDC トークンを credentials.masseater.dev の Worker に送り、1 時間で切れる Cloudflare のトークンと引き換える。トークンが出るのは、持ち主が masseater で、main ブランチから動いたジョブだけである。週の途中からは、OpenRouter のキー、Claude Code のトークン、GitHub App のトークンも同じ仕組みで受け取れるようにした。リポジトリごとの権限は masseater.dev の 1 つの表に書き、登録済みだった古い secret は全リポジトリから消した。
+IaC ができたので、増えすぎていたリポジトリは Claude が出した統合案で畳んだ。lint 系の 3 つは lint-kit に、日本語の decision model のベンチは decision-experiments に、モザイクは masseater.dev に入れ、元のリポジトリは archive した。中身の無いリポジトリは削除した。
 
-GitHub の設定は、Alchemy のスタック `masseater-dev-github` で管理するようにした。既定ブランチのルールセット、secret scanning、ブランチの更新ボタン、Actions から PR を作る権限、description と homepage を、全リポジトリでコードから揃えている。IaC は public の masseater.dev に置いた。private のリポジトリの名前は実行時に GitHub App のインストール先から取ってくるので、コードとログのどちらにも出ない。
+依存の更新も、全リポジトリへの一斉の指示で済ませた。TypeScript は 7.0 から 7.1 へ上げさせ、Node.js は 26 以上だけの対応に揃えさせた。effect 4.0.0 固定のまま動かす PR が大量に上がってきたときは、ちゃんと対応して、と言って lint-kit 側から直させた。ESLint も全リポジトリから外させている。型情報の要るルールを oxlint で動かすパッケージを Claude が TypeScript 6 で組み立てていたので、なんで ts6 で組み立ててるの、と聞いて 7.1 に載せ替えさせた。
 
-設定を IaC にしたことで、リポジトリの改名・archive・削除もワークフローから行えるようになった。増えすぎていたリポジトリは、履歴ごと移してから元を archive した。空のリポジトリと、中身がテンプレートの雛形のままだったリポジトリは削除している。
+## 実装より先の計測
 
-| 元のリポジトリ                | 移した先                                                                     |
-| ----------------------------- | ---------------------------------------------------------------------------- |
-| oxlint-plugin-decision        | [lint-kit](https://github.com/masseater/lint-kit) に改名                     |
-| oxlint-typed-rules・vocablint | lint-kit                                                                     |
-| mst-ja-decision-bench         | [decision-experiments](https://github.com/masseater/decision-experiments)    |
-| thumb-mosaic                  | [masseater.dev](https://github.com/masseater/masseater.dev) の `apps/mosaic` |
+AI 時代の開発においてもっとも大事なのは、実装ではなく計測である。MCP のポータルの接続が通らなかったとき、Claude は計測の経路を作らずに推測の修正を重ねていた。ちゃんと計測するのが第一や、と止めて、先にログとトレースを読めるようにさせた。
 
-テンプレートから入ったまま使っていなかったデモの `apps/web` も、Worker ごと各リポジトリから消した。
+この考えを1つのリポジトリにしたのが [measure-everything](https://github.com/masseater/measure-everything) である。あらゆるものを既存のエコシステムの上で計測できるようにする、と銘打った。サービスやツールの公式機能と自動計装を先に使い、足りないところだけを部品として作らせる。型定義の無いライブラリは再利用せず、自前で実装させた。最初の部品は、テストの中で届いたスパンを確かめる vitest-otlp と、Lighthouse の user flow で Web Vitals を測る web-vitals-flow である。CI の時間も、全リポジトリから masseater.dev へ送る形にした。
 
-## ツールチェーンの更新
+masseater.dev では、デプロイのたびに ZAP がサイトを検査している。警告も含めてすぐ直す決まりにしてあるので、CSP とセキュリティヘッダをサイト全体に付けさせ、残った警告をすべて片付けさせた。
 
-TypeScript は、7.0 だったリポジトリを 7.1 beta に上げた。rpp-kit で使う content mapper と、tsgo を子プロセスで呼ぶ `typescript/sync` の API は、7.1 で入ったものである。
+## エージェントに渡す自分の情報
 
-ESLint は全リポジトリから外した。最後まで残っていたのは型情報の要るルールだけだったので、それを oxlint の JS プラグインとして動かすパッケージを作った。元のプラグインのテストは手を入れずに置き、すべて通るまで出していない。型検査器は途中で tsgo の API に載せ替え、このパッケージは lint-kit に入れた。
+Muse を使っていろいろ任せていくうちに、パーソナルエージェントの市場が広がっていく感覚があった。エージェントが持ち主の代わりに動くには、持ち主のことを知っている必要がある。この週の後半は、自分の情報をエージェントに渡す経路を揃えていた。
 
-Node.js は 26 以上だけに対応した。npm に出すパッケージの `engines` も 26 以上にしている。
+まず、個人で使う MCP サーバーを `mcp.masseater.dev` の 1 か所にまとめさせた。新しいエージェントには、この URL を 1 本繋げば済む。各 MCP は単体で普通に OAuth で使えることを前提にしたので、Claude が出してきたサービストークンで迂回する案は取り消させた。
 
-effect は 4.1.2 に、alchemy は beta.85 に上げた。alchemy を上げたリポジトリが共有の state store を新しい形式にしたため、古い alchemy のリポジトリが 409 で落ちるようになったからである。lint-kit を effect 4.1.2 で出し直し、各リポジトリに残っていた effect 4.0.0 の固定も外した。
+[konomi](https://konomi.masseater.dev) は、統一したインターフェースで各サービスの自分の情報を引けるパーソナルエージェント向けの MCP である。作ったらウケそうだと思い、11月2日に始めた。見たもの・聴いたもの・遊んだもの・読んだものを、趣味嗜好を集めて分析する観点で全部取り込ませている。各 API の制約で他人向けのホスティングは無理筋なので、ホスティングはせず、各自が好きに置く OSS にした。
 
-## 公開サイトの防御
+[mirucord](https://mirucord.masseater.dev) は、Discord のサーバーを読むだけの MCP である。僕の個人エージェントの彩葉から、人間関係を拾える機能が欲しいという要望が届いた。必要なものを選ぶ前に、取れるものを全部知るのが先なので、Discord の Bot が取れるものを全部調べさせてから、メンバー名簿や通話の入退室などを足させた。一度入れたサーバーのイベントや監査ログは、今要らない、無駄な機能を残すな、と言って消させた。
 
-masseater.dev は、サイト全体に CSP とセキュリティヘッダを付けた。静的なページなので nonce は使わず、インラインのスクリプトはハッシュで許可する。Cloudflare 自身が返す応答にもヘッダが付くよう、ゾーンに Transform Rule を足した。デプロイのあとに走る ZAP の警告は、誤検知を除いてすべて直している。decision-bench のページにも、同じハッシュつきの CSP を付けた。
+masseater.dev の scrap は、Wikipedia 風の個人の百科事典もどきの [Sloppedia](https://masseater.dev/sloppedia/) に置き換えた。Claude の書く記事も入るので、作るのも Claude に任せている。AI が MCP から書けるのは Sloppedia だけで、blog を書くツールは足していない。blog は僕が推敲してから出す文章だからである。
 
-medley-database は、ログインをパスキーだけにした。管理者は招待トークンで登録する。
+## 任せた先での口出し
 
-## AI に渡す自分の情報
+基盤が回り始めると、作りたいものに口を出す時間ができた。
 
-個人で使う MCP サーバーは、Cloudflare の MCP server portals で `mcp.masseater.dev` の 1 か所にまとめた。エージェントにはこの URL だけを繋げば、medley-database、Twilog、以下の konomi や mirucord がすべて使える。上流はどれも普通の OAuth で認証し、サービストークンで迂回する案は一度入れて取り消した。
+[rpp-kit](https://masseater.dev/rpp-kit/) は、REAPER のプロジェクトファイルを読み込むデモである。workers.dev に置かれていたので、masseater.dev 配下にしなよ、と移させた。コードとしてどう扱われるのかを見る playground も要ると言い、全部を同時に表示したものは見づらいので、CodePen を見て、と直させた。コンソールに実際に出したい、コンソールは下、とも言っている。.rpp の型を自分で declare するのは普通にダメなので、それも直させた。
 
-Muse を使っていろいろ任せていくうちに、パーソナルエージェントの市場が広がっていく感覚があった。持ち主の代わりに動くエージェントには、持ち主の好みが要る。その好みの材料になる視聴や購読の記録はサービスごとに散らばっていて、まとめて引ける MCP は見つからなかった。統一したインターフェースで各サービスの自分の情報を引けるパーソナルエージェント向けの MCP を作ったらウケそうだと思い、11月2日に [konomi](https://konomi.masseater.dev) を作り始めた。見たもの・聴いたもの・遊んだもの・読んだものを YouTube・Spotify・Steam・Netflix などから集め、反応の重みと時間の割引で好みの度合いを出す。API の無いサービスは、公式の書き出しファイルを取り込む。他人向けにはホスティングせず、各自が自分で置く OSS として作っている。
+[mosaic](https://masseater.dev/mosaic/) には、3,000 曲以上ある歌声合成キャラを全部足させた。最初は 5,000 曲以上と言ったが、足立レイの粒度で成り立つなら 3,000 曲以上でいいと下げた。対象の動画が少ないキャラはバリエーションが落ちてもいいので細かくし、列の数はハードコードせず自動で調整させている。
 
-[Sloppedia](https://masseater.dev/sloppedia/) は、masseater.dev の scrap を置き換えた Wikipedia 風の個人の百科事典もどきである。百科事典の硬い体裁で、中身は僕の趣味と意見が強く出る。AI は MCP から PR を出して記事を書ける。blog は自分で推敲してから出す文章なので、blog を書くツールは MCP に足していない。見た目は npm の [sloppedia](https://www.npmjs.com/package/sloppedia) に切り出した。
+アニメの撮影処理を工程ごとに試せる[撮影ラボ](https://masseater.dev/projects/satsuei-lab)と、[背面打ちスプリットパッド](https://masseater.dev/projects/split-pad)の 3D モデルのページも作らせた。mermaid の図はしょぼいので、記事へ対話的な図を埋め込めるようにもさせた。
 
-[mirucord](https://mirucord.masseater.dev) は、Discord のサーバーを読むだけの MCP である。メンバー名簿、通話の入退室、リアクションと投票、本人が選んで公開した連携アカウントを返せるようにした。サーバーのイベント、スレッドの参加者、監査ログ、招待の記録も一度入れたが、使う予定が無いので消した。
-
-## 計測の部品
-
-AI 時代の開発においてもっとも大事なのは、実装ではなく計測である。その計測を既存のエコシステムの上で揃えるために、[measure-everything](https://github.com/masseater/measure-everything) を作った。各サービスとツールの公式機能と自動計装を先に使い、足りない部分だけを OpenTelemetry かツールの公式の拡張点に差し込む部品として置く。
-
-| パッケージ                                                                                 | すること                                                             |
-| ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| [@r_masseater/vitest-otlp](https://www.npmjs.com/package/@r_masseater/vitest-otlp)         | テストファイルごとに OTLP を受け、テストの中で届いたスパンを確かめる |
-| [@r_masseater/web-vitals-flow](https://www.npmjs.com/package/@r_masseater/web-vitals-flow) | Lighthouse の user flow を何度か回し、ステップごとの中央値で判定する |
-
-vitest-otlp は Cloudflare Workers のスパンも tail worker で受け、semantic conventions に沿っているかを Weaver で検査できる。リポジトリは Claude Code のプラグインを兼ね、どの場面でどの手段を使うかをスキルに書いた。CI のジョブとステップの時間は、リポジトリごとに受ける Worker を持つのをやめ、全リポジトリから masseater.dev の Worker へ送っている。
-
-## 文章の書き方
-
-全リポジトリの README を、writing スキルの README の規則で書き直した。使う人がそのリポジトリを使うかを決め、使い始めるための判断と手順だけを残している。ライセンスは AGPL に揃え、LICENSE の無かったリポジトリに置いた。
-
-[masseater/skills](https://github.com/masseater/skills) では、blog の書き方を writing スキルに統合し、README の箇条書きを本文の 15% 以内に収める規則を足した。スライドを作る create-slides と build-explanation のスキルは、デッキの部品ごとここに移している。README のスキル一覧は、コミットのたびに各 SKILL.md から書き直される。
-
-## 作って見せたもの
-
-[mosaic](https://masseater.dev/mosaic/) は、キャラクターの絵を、そのキャラクターを使った動画のサムネイルだけで描くモザイクである。この週に、3,000 曲以上ある歌声合成キャラ 27 体を足した。列の数はキャラごとのサムネイルの数から自動で決める。
-
-[rpp-kit](https://masseater.dev/rpp-kit/) は、REAPER の .rpp を TypeScript 7.1 の content mapper で型つきで読む。.rpp を書き換えると型がどう変わるかを、ブラウザの playground で試せる。
-
-[撮影ラボ](https://masseater.dev/projects/satsuei-lab) は、アニメの撮影処理を工程ごとに切り替えて試せるページである。[背面打ちスプリットパッド](https://masseater.dev/projects/split-pad) は、ABXY と十字キーを背面に移し、中指と薬指で押すコントローラーの 3D モデルである。
-
-masseater.dev の記事には、`::figure` の 1 行で対話的な図を埋め込めるようにした。最初の図は、[資本主義はシステム停止の連鎖で終わる](https://masseater.dev/blogs/cyberattack-stops-real-economy) の連鎖停止の図である。動きを減らす設定にしている人には、ページ遷移の view transition と mosaic のスライドを止めるようにした。
+文章の書き方も、指摘するたびに writing スキルへ足させている。全リポジトリの README はこのスキルで書き直させ、ライセンスは AGPL に揃えた。
