@@ -112,7 +112,7 @@ jobs:
       - if: steps.head.outputs.latest == 'true'
         run: .github/scripts/atproto-password.sh
       - if: steps.head.outputs.latest == 'true' && env.ATP_APP_PASSWORD != ''
-        run: vp run --filter portfolio standard-site
+        run: vp run --no-cache --filter portfolio standard-site
         env:
           ATP_IDENTIFIER: did:plc:sz2kxumpsjbch3kgnsjjed5z
       - if: steps.head.outputs.latest == 'true'
