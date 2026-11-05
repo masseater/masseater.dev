@@ -9,6 +9,7 @@ import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts
 import { edgeGuard } from "./edge-guard.ts";
 import { logArchive } from "./log-archive.ts";
 import { site } from "./src/shared/config/site.ts";
+import { traceSink } from "./trace-sink.ts";
 import { webAnalyticsReader } from "./web-analytics-reader.ts";
 
 const DOMAIN = new URL(site.url).hostname;
@@ -69,6 +70,7 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
       });
       yield* logArchive;
       yield* webAnalyticsReader(COMPATIBILITY);
+      yield* traceSink(COMPATIBILITY);
     }
     yield* ciTelemetry;
     yield* requireAppPrefix;
