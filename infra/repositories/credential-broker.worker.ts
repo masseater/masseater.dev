@@ -22,11 +22,12 @@ import {
 } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
+import { atprotoRoute, issueAppPassword } from "./atproto.ts";
 import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
-import { failed, gitHubAppCredentials, readApp, route } from "./github-app.ts";
+import { gitHubAppCredentials, readApp, route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
 import type { Claims } from "./github-oidc.ts";
-import { OWNER, OWNER_ID, Rejected, repositoryName, verify } from "./github-oidc.ts";
+import { OWNER, Rejected, repositoryName, verify } from "./github-oidc.ts";
 
 const TOKEN_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
 const TOKEN_LIFETIME = { hours: 1 } as const;
@@ -53,12 +54,20 @@ const Policies = Schema.mutable(Schema.Array(Policy));
 
 const Permissions = Schema.Record(Schema.String, Schema.String);
 
+const RepositoryNames = Schema.mutable(Schema.Array(Schema.String));
+
+const GitHubGrant = Schema.Struct({
+  permissions: Permissions,
+  repositories: Schema.optionalKey(RepositoryNames),
+});
+
 const Grants = Schema.fromJsonString(
   Schema.Struct({
     profiles: Schema.Record(Schema.String, Policies),
     repositories: Schema.Record(Schema.String, Schema.String),
-    github: Schema.Record(Schema.String, Permissions),
+    github: Schema.Record(Schema.String, GitHubGrant),
     npm: Schema.Array(Schema.String),
+    atproto: Schema.Array(Schema.String),
   }),
 );
 
@@ -80,8 +89,6 @@ const toTokenTime = flow(
 );
 
 const expiry: Effect.Effect<string> = DateTime.now.pipe(Effect.map(toTokenTime));
-
-const OWNER_ACCOUNT = { login: OWNER, id: OWNER_ID } as const;
 
 type BrokerContext = CloudflareOpContext | GithubOpContext;
 
@@ -116,58 +123,48 @@ const issueCloudflareToken = (
     return Option.some({ token: created.value, accountId: env.ACCOUNT_ID });
   });
 
-const findInstallation = (
-  owner: typeof OWNER_ACCOUNT,
-): Effect.Effect<Option.Option<Installation>, never, GithubOpContext> =>
-  getUserInstallation({ username: owner.login }).pipe(
-    Effect.tapError((failure) => Effect.logWarning("github_app.not_installed", failure)),
-    Effect.option,
-  );
-
-const mint = (
-  installationId: number,
-  permissions: Readonly<Record<string, string>>,
-): Effect.Effect<Option.Option<string>, GitHubAppFailed, GithubOpContext> =>
-  createInstallationAccessToken({ installation_id: installationId, permissions }).pipe(
-    Effect.mapBoth({ onSuccess: ({ token }) => Option.some(token), onFailure: failed }),
-  );
-
-const installationToken = (
-  env: CredentialBrokerEnv,
-  permissions: Readonly<Record<string, string>>,
-): Effect.Effect<Option.Option<string>, GitHubAppFailed, GithubOpContext> =>
-  readApp(env).pipe(
-    Effect.flatMap(
-      Option.match({
-        onNone: () => Effect.logWarning("github_app.missing").pipe(Effect.as(Option.none())),
-        onSome: () =>
-          findInstallation(OWNER_ACCOUNT).pipe(
-            Effect.flatMap(
-              Option.match({
-                onNone: () => Effect.succeedNone,
-                onSome: (installation) => mint(installation.id, permissions),
-              }),
-            ),
-          ),
-      }),
-    ),
-  );
+const findInstallation: Effect.Effect<
+  Option.Option<Installation>,
+  never,
+  GithubOpContext
+> = getUserInstallation({ username: OWNER }).pipe(
+  Effect.tapError((failure) => Effect.logWarning("github_app.not_installed", failure)),
+  Effect.option,
+);
 
 const issueGitHubToken = (
   env: CredentialBrokerEnv,
   claims: typeof Claims.Type,
 ): Effect.Effect<Option.Option<Issued>, IssueError, GithubOpContext> =>
-  decodeGrants(env).pipe(
-    Effect.flatMap((grants) =>
-      Option.match(Option.fromNullishOr(grants.github[repositoryName(claims)]), {
-        onNone: () => Effect.succeedNone,
-        onSome: (permissions) =>
-          installationToken(env, permissions).pipe(
-            Effect.map(Option.map((githubToken) => ({ githubToken }))),
-          ),
-      }),
-    ),
-  );
+  Effect.gen(function* createGitHubToken() {
+    const grants = yield* decodeGrants(env);
+    const grant = Option.fromNullishOr(grants.github[repositoryName(claims)]);
+    if (Option.isNone(grant)) {
+      return Option.none();
+    }
+    const installation = yield* readApp(env).pipe(
+      Effect.flatMap(
+        Option.match({
+          onNone: () => Effect.logWarning("github_app.missing").pipe(Effect.as(Option.none())),
+          onSome: () => findInstallation,
+        }),
+      ),
+    );
+    if (Option.isNone(installation)) {
+      return Option.none();
+    }
+    const minted = yield* createInstallationAccessToken({
+      installation_id: installation.value.id,
+      ...grant.value,
+    }).pipe(
+      Effect.tapError((failure) => Effect.logWarning("github_app.token_failed", failure)),
+      Effect.option,
+    );
+    return pipe(
+      minted,
+      Option.map(({ token }) => ({ githubToken: token })),
+    );
+  });
 
 const issueNpmToken = (
   env: CredentialBrokerEnv,
@@ -198,6 +195,11 @@ const issueGranted = (
     issueCloudflareToken(env, claims),
     issueGitHubToken(env, claims),
     issueNpmToken(env, claims),
+    decodeGrants(env).pipe(
+      Effect.flatMap((grants) =>
+        issueAppPassword({ env, granted: Arr.contains(grants.atproto, repositoryName(claims)) }),
+      ),
+    ),
   ]).pipe(Effect.map(Arr.getSomes));
 
 const sharedKeys = (env: CredentialBrokerEnv): Effect.Effect<Readonly<Record<string, string>>> =>
@@ -247,7 +249,7 @@ const handle = (
   env: CredentialBrokerEnv,
 ): Effect.Effect<Response, never, BrokerContext> =>
   Option.match(route({ request, env }), {
-    onNone: () => issue(request, env),
+    onNone: () => Option.getOrElse(atprotoRoute({ request, env }), () => issue(request, env)),
     onSome: (handled) =>
       handled.pipe(
         Effect.catchCause((cause) =>

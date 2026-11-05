@@ -47,3 +47,4 @@ dist-ssr
 
 # mosaic solve の出力（CI のデプロイで毎回作る）
 libs/mosaic/data/
+.sequoia-state.json

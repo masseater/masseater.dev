@@ -58,14 +58,48 @@ const GITHUB_APP_PERMISSIONS = {
   secrets: "write",
   actions_variables: "write",
   environments: "write",
+  contents: "write",
+  pull_requests: "write",
   metadata: "read",
 } as const satisfies Readonly<Record<string, "read" | "write">>;
 
-const GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-  "masseater.dev": GITHUB_APP_PERMISSIONS,
+type GitHubGrant = Readonly<{
+  permissions: Readonly<Record<string, string>>;
+  repositories?: readonly string[];
+}>;
+
+const RELEASE_REPOSITORIES: readonly string[] = [
+  "decision-experiments",
+  "lint-kit",
+  "measure-everything",
+  "typescript-template",
+];
+
+const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
+  repository,
+  {
+    permissions: { contents: "write", pull_requests: "write", metadata: "read" },
+    repositories: [repository],
+  },
+];
+
+const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
+  "masseater.dev": {
+    permissions: {
+      actions: "read",
+      administration: "write",
+      secrets: "write",
+      actions_variables: "write",
+      environments: "write",
+      metadata: "read",
+    },
+  },
+  ...Rec.fromEntries(pipe(RELEASE_REPOSITORIES, Arr.map(releaseGrant))),
 };
 
 const NPM_GRANTS: readonly string[] = ["lint-kit", "measure-everything"];
+
+const ATPROTO_GRANTS: readonly string[] = ["masseater.dev"];
 
 const ACCOUNT_SCOPE = "com.cloudflare.api.account";
 const ZONE_SCOPE = "com.cloudflare.api.account.zone";
@@ -101,8 +135,9 @@ const policy = (
 type Grants = Readonly<{
   profiles: Readonly<Record<string, readonly Policy[]>>;
   repositories: Readonly<Record<string, string>>;
-  github: Readonly<Record<string, Readonly<Record<string, string>>>>;
+  github: Readonly<Record<string, GitHubGrant>>;
   npm: readonly string[];
+  atproto: readonly string[];
 }>;
 
 const grantPolicies = ({
@@ -119,7 +154,8 @@ const grantPolicies = ({
   repositories: CREDENTIAL_GRANTS,
   github: GITHUB_GRANTS,
   npm: NPM_GRANTS,
+  atproto: ATPROTO_GRANTS,
 });
 
 export { GITHUB_APP_PERMISSIONS, grantPolicies };
-export type { Grants, Policy };
+export type { GitHubGrant, Grants, Policy };

@@ -9,6 +9,7 @@ import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts
 import { edgeGuard } from "./edge-guard.ts";
 import { logArchive } from "./log-archive.ts";
 import { site } from "./src/shared/config/site.ts";
+import { webAnalyticsReader } from "./web-analytics-reader.ts";
 
 const DOMAIN = new URL(site.url).hostname;
 const PRODUCTION_STAGE = "prod";
@@ -23,7 +24,7 @@ const web = Effect.gen(function* web() {
   const VISITOR_SALT = yield* makeRandom("VisitorSalt");
   return yield* Website.StaticSite("Web", {
     ...(production && { domain: { name: DOMAIN, redirects: [`www.${DOMAIN}`] } }),
-    command: "vp build",
+    command: "vp run build",
     outdir: "dist/client",
     main: "./site.worker.ts",
     compatibility: COMPATIBILITY,
@@ -67,6 +68,7 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
         onSome: (domain) => edgeGuard(domain, COMPATIBILITY),
       });
       yield* logArchive;
+      yield* webAnalyticsReader(COMPATIBILITY);
     }
     yield* ciTelemetry;
     yield* requireAppPrefix;
