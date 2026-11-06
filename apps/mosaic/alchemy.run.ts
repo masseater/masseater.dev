@@ -1,11 +1,12 @@
 import { Workers, providers, state } from "@alchemy.run/cloudflare";
+import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
 import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect } from "effect";
 
 import { APP_NAME, requireAppPrefix } from "./app-name.ts";
 import { BASE_PATH } from "./base-path.ts";
-import { COMPATIBILITY, ZONE } from "./cloudflare.ts";
+import { ZONE } from "./cloudflare.ts";
 
 const CF_BEACON_TOKEN = "021b4961f3fd419297b186136a5a8a0a";
 
@@ -17,7 +18,6 @@ const web = Effect.gen(function* web() {
     memo: false,
   });
   return yield* Workers.Worker("Web", {
-    compatibility: COMPATIBILITY,
     logpush: true,
     routes: [{ pattern: `${ZONE}${BASE_PATH}*`, zoneName: ZONE }],
     assets: {
@@ -31,7 +31,7 @@ const web = Effect.gen(function* web() {
 
 export default Stack(
   APP_NAME,
-  { providers: providers(), state: state() },
+  { providers: withWorkersTracing(providers()), state: state() },
   Effect.gen(function* stack() {
     const { url } = yield* web;
     yield* requireAppPrefix;

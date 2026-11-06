@@ -3,7 +3,6 @@ import type { InferEnv } from "@alchemy.run/cloudflare";
 import { adopt } from "alchemy/AdoptPolicy";
 import { Array as Arr, Effect, Record as Rec, String as Str, pipe } from "effect";
 
-import type { Compatibility } from "./compatibility.ts";
 import { SCANNER_PROBES } from "./scanner-probes.ts";
 
 const HONEYPOT_PATHS = ["/.env", "/wp-login.php"] as const;
@@ -50,20 +49,15 @@ const scannerRules = (domain: string): Ruleset.Rule[] => {
   }));
 };
 
-type EdgeGuardProps = Readonly<{ appName: string; domain: string; compatibility: Compatibility }>;
+type EdgeGuardProps = Readonly<{ appName: string; domain: string }>;
 
-const honeypot = Effect.fn("honeypot")(function* honeypot({
-  appName,
-  domain,
-  compatibility,
-}: EdgeGuardProps) {
+const honeypot = Effect.fn("honeypot")(function* honeypot({ appName, domain }: EdgeGuardProps) {
   const HONEYPOT = yield* AnalyticsEngine.Dataset("Honeypot", {
     dataset: `${Str.replaceAll("-", "_")(appName)}_honeypot`,
   });
   return yield* Workers.Worker("Honeypot", {
     name: `${appName}-honeypot`,
     main: decodeURIComponent(new URL("honeypot.worker.ts", import.meta.url).pathname),
-    compatibility,
     logpush: true,
     env: { HONEYPOT },
     routes: pipe(
