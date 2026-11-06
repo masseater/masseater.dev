@@ -15,6 +15,7 @@ import {
   pluginRules,
   restrictedImports,
 } from "./lint.config.ts";
+import { workerOverride } from "./worker-lint.config.ts";
 
 export default defineConfig({
   test: {
@@ -205,6 +206,7 @@ export default defineConfig({
         files: ["apps/portfolio/src/**/*.{ts,tsx}"],
         rules: decisionRules,
       },
+      workerOverride,
       {
         files: ["**/*.test.ts"],
         rules: decisionTestRules,

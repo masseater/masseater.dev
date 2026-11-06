@@ -146,6 +146,8 @@ jobs:
       - uses: $/.github/actions/setup
       - run: vp exec workers-traces --request https://masseater.dev/ --expect GET --wait 300
         working-directory: apps/portfolio
+        env:
+          WORKERS_TRACES_SINK: masseater-dev-trace-sink
 
   github:
     needs: deploy

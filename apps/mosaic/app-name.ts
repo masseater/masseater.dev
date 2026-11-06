@@ -5,3 +5,4 @@ const APP_NAME = "thumb-mosaic";
 const { requireAppPrefix } = appNamed(APP_NAME);
 
 export { APP_NAME, requireAppPrefix };
+export { TRACE_DESTINATION } from "@masseater.dev/cloudflare-account/trace-destination";
