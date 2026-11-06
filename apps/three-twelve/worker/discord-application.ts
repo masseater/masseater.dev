@@ -1,6 +1,7 @@
 import { OAuth2Routes, OAuth2Scopes, RouteBases, Routes } from "discord-api-types/v10";
-import { Effect, Option, Schema } from "effect";
+import { Effect, Layer, Option, Schema } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
+import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
 import { INVITE_PERMISSIONS, OWNER_DISCORD_ID } from "#config";
 
@@ -25,9 +26,7 @@ const ownerOf = (application: typeof Application.Type): string =>
     onSome: (team) => team.owner_user_id,
   });
 
-const ownedApplication = Effect.fn("three-twelve.ownedApplication")(function* ownedApplication(
-  token: string,
-) {
+const lookup = Effect.fn("three-twelve.ownedApplication")(function* lookup(token: string) {
   const checked = yield* Schema.decodeEffect(BotToken)(token).pipe(
     Effect.mapError(() => Rejected.make({ status: 401, reason: "malformed bot token" })),
   );
@@ -50,6 +49,12 @@ const ownedApplication = Effect.fn("three-twelve.ownedApplication")(function* ow
   }
   return application;
 });
+
+const ownedApplication = (token: string): Effect.Effect<typeof Application.Type, Rejected> =>
+  Layer.build(fetchHttpClient).pipe(
+    Effect.flatMap((context) => Effect.provideContext(lookup(token), context)),
+    Effect.scoped,
+  );
 
 const inviteUrl = (applicationId: string): string =>
   `${OAuth2Routes.authorizationURL}?${new URLSearchParams({

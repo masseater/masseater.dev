@@ -1,7 +1,6 @@
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { DurableObject, env } from "cloudflare:workers";
-import { DateTime, Effect, Layer, Logger, Option, String as Str } from "effect";
-import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
+import { DateTime, Effect, Logger, Option, String as Str } from "effect";
 
 import { ARM_LEAD, AUDIO_KEY, BASE_PATH } from "#config";
 
@@ -12,7 +11,7 @@ import { arm, isStoredToken, lastRun, storeLastRun, storeToken } from "./player-
 import { Rejected } from "./rejected.ts";
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
-const runLogged = runner(Layer.mergeAll(logger, fetchHttpClient));
+const runLogged = runner(logger);
 
 class Player extends DurableObject {
   public setToken(token: string): Promise<void> {
