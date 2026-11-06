@@ -1,9 +1,11 @@
-import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 import { parseGlsl, parseWgsl, validate, writeWgsl } from "naga-wasm";
 import type { Plugin } from "vite-plus";
 
 import { parseEffect, SCREEN } from "#/features/dance-stage/model/effect.ts";
 import type { GpuCompute, GpuEffect, GpuPass } from "#/features/dance-stage/model/effect.ts";
+
+const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
 const QUERY = "?webgpu";
 const FRAGMENT = ".frag";
@@ -138,8 +140,15 @@ const computeOf = ({ body, prelude }: Readonly<{ body: string; prelude: string }
 const glslHeader = (header: string): string =>
   `#version 450\n#define WEBGPU 1\n#define DENSITY_WIDTH ${String(SCREEN.width)}\n#define DENSITY_HEIGHT ${String(SCREEN.height)}\n${header}`;
 
+const taggedError = Schema.TaggedError;
+
+class ShaderMissing extends taggedError<ShaderMissing, { readonly brand: unique symbol }>()(
+  "ShaderMissing",
+  { path: Schema.String },
+) {}
+
 const optionalText = (read: Read, path: string): Effect.Effect<Option.Option<string>> =>
-  Effect.tryPromise(() => read(path)).pipe(
+  Effect.tryPromise({ try: () => read(path), catch: () => ShaderMissing.make({ path }) }).pipe(
     Effect.map((bytes) => new TextDecoder().decode(bytes)),
     Effect.option,
   );
@@ -166,7 +175,8 @@ const loadGpuEffect = (read: Read, path: string): Promise<string> => {
         passes: gpuPassesOf({ source, prelude: fragmentPrelude }),
         computes: found,
       })),
-      Effect.map((effect) => `export default ${JSON.stringify(effect)};`),
+      Effect.flatMap(encodeJson),
+      Effect.map((json) => `export default ${json};`),
     ),
   );
 };

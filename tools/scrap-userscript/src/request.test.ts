@@ -1,3 +1,4 @@
+import { Option, Schema } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
 import { relayBody, relayResponse, relayUrl } from "./request.ts";
@@ -8,7 +9,7 @@ const badGateway = 502;
 describe("relayBody", () => {
   test("ページの情報の前後の空白を除いて JSON にする", () => {
     expect(
-      JSON.parse(
+      Schema.decodeOption(Schema.fromJsonString(Schema.Unknown))(
         relayBody({
           url: "https://example.com/a",
           title: " 記事 ",
@@ -16,12 +17,14 @@ describe("relayBody", () => {
           focus: "",
         }),
       ),
-    ).toStrictEqual({
-      url: "https://example.com/a",
-      title: "記事",
-      highlight: "選んだ文",
-      focus: "",
-    });
+    ).toStrictEqual(
+      Option.some({
+        url: "https://example.com/a",
+        title: "記事",
+        highlight: "選んだ文",
+        focus: "",
+      }),
+    );
   });
 });
 
@@ -31,7 +34,7 @@ describe("relayResponse", () => {
       relayResponse({
         status: ok,
         finalUrl: relayUrl,
-        text: JSON.stringify({ sessionUrl: "https://claude.ai/code/session_01" }),
+        text: '{"sessionUrl":"https://claude.ai/code/session_01"}',
       }),
     ).toStrictEqual({ status: "started", sessionUrl: "https://claude.ai/code/session_01" });
   });

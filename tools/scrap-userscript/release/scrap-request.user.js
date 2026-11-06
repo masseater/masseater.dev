@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Scrap request to Claude
 // @namespace    https://masseater.dev
-// @version      1.3.1
+// @version      1.3.2
 // @description  閲覧中のページについて masseater.dev の Sloppedia に記事を書くよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用
 // @homepageURL  https://github.com/masseater/masseater.dev/tree/main/tools/scrap-userscript
 // @match        *://*/*
@@ -74,6 +74,9 @@
 	var constTrue = constant(true);
 	var constUndefined = constant(void 0);
 	var constVoid = constUndefined;
+	function pipe(a, ...args) {
+		return pipeArguments(a, args);
+	}
 	function memoize(f) {
 		const cache = new WeakMap();
 		return (a) => {
@@ -3202,6 +3205,14 @@
 		return asOption(decodeUnknownEffect(schema, options));
 	}
 	var decodeOption$1 = decodeUnknownOption;
+	function encodeUnknownEffect(schema, options) {
+		const parser = run(flip(schema.ast));
+		return options === void 0 ? parser : (input, overrideOptions) => parser(input, mergeParseOptions(options, overrideOptions));
+	}
+	function encodeUnknownOption(schema, options) {
+		return asOption(encodeUnknownEffect(schema, options));
+	}
+	var encodeOption$1 = encodeUnknownOption;
 	var mergeParseOptions = (options, overrideOptions) => overrideOptions ? {
 		...options,
 		...overrideOptions
@@ -3334,6 +3345,7 @@
 	({ ...BaseProto });
 	({ ...BaseProto });
 	var decodeOption = decodeOption$1;
+	var encodeOption = encodeOption$1;
 	var make = make$1;
 	var String$1 = make(string);
 	function makeStruct(ast, fields) {
@@ -3367,15 +3379,22 @@
 	globalThis.Uint8Array;
 	var _GM = (() => typeof GM != "undefined" ? GM : void 0)();
 	var relayUrl = "https://personal.masseater.dev/scrap-request";
+	var RelayBody = fromJsonString(Struct({
+		url: String$1,
+		title: String$1,
+		highlight: String$1,
+		focus: String$1
+	}));
+	var EMPTY_BODY = "{}";
 	var RelaySession = fromJsonString(Struct({ sessionUrl: String$1 }));
 	var successStatus = 200;
 	var redirectStatus = 300;
-	var relayBody = (request) => JSON.stringify({
+	var relayBody = (request) => pipe(encodeOption(RelayBody)({
 		url: request.url,
 		title: trim(request.title),
 		highlight: trim(request.highlight),
 		focus: trim(request.focus)
-	});
+	}), getOrElse(() => EMPTY_BODY));
 	var relayResponse = (response) => {
 		if (response.finalUrl !== "https://personal.masseater.dev/scrap-request") return { status: "login" };
 		const failed = {

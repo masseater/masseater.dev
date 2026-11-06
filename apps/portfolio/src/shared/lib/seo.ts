@@ -1,4 +1,4 @@
-import { Array as Arr, String as Str, pipe } from "effect";
+import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 
 import { site, wiki } from "#/shared/config";
 
@@ -20,10 +20,15 @@ const absoluteUrl = (path: string): string => new URL(path, site.url).href;
 
 const defaultImage: Image = { path: site.ogImage.path, alt: site.name };
 
+const encodeJson = Schema.encodeOption(Schema.fromJsonString(Schema.Unknown));
+
+const EMPTY_JSON = "{}";
+
 const jsonLd = (data: JsonLd): Script => ({
   type: "application/ld+json",
   children: pipe(
-    JSON.stringify({ "@context": "https://schema.org", ...data }),
+    encodeJson({ "@context": "https://schema.org", ...data }),
+    Option.getOrElse(() => EMPTY_JSON),
     Str.replaceAll("<", String.raw`\u003c`),
   ),
 });

@@ -1,4 +1,4 @@
-import { Option, Schema, String as Str } from "effect";
+import { Option, Schema, String as Str, pipe } from "effect";
 
 type ScrapRequest = Readonly<{
   url: string;
@@ -14,18 +14,32 @@ type RelayResponse =
 
 const relayUrl = "https://personal.masseater.dev/scrap-request";
 
+const RelayBody = Schema.fromJsonString(
+  Schema.Struct({
+    url: Schema.String,
+    title: Schema.String,
+    highlight: Schema.String,
+    focus: Schema.String,
+  }),
+);
+
+const EMPTY_BODY = "{}";
+
 const RelaySession = Schema.fromJsonString(Schema.Struct({ sessionUrl: Schema.String }));
 
 const successStatus = 200;
 const redirectStatus = 300;
 
 const relayBody = (request: ScrapRequest): string =>
-  JSON.stringify({
-    url: request.url,
-    title: Str.trim(request.title),
-    highlight: Str.trim(request.highlight),
-    focus: Str.trim(request.focus),
-  });
+  pipe(
+    Schema.encodeOption(RelayBody)({
+      url: request.url,
+      title: Str.trim(request.title),
+      highlight: Str.trim(request.highlight),
+      focus: Str.trim(request.focus),
+    }),
+    Option.getOrElse(() => EMPTY_BODY),
+  );
 
 const relayResponse = (
   response: Readonly<{ status: number; finalUrl: string; text: string }>,

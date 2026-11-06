@@ -13,7 +13,7 @@ const ARCHIVES = [
   {
     id: "WorkerFailures",
     prefix: "failures",
-    filter: JSON.stringify({ where: { key: "Outcome", operator: "!eq", value: "ok" } }),
+    filter: '{"where":{"key":"Outcome","operator":"!eq","value":"ok"}}',
     sampleRate: 1,
   },
   { id: "WorkerSample", prefix: "sample", filter: "", sampleRate: NORMAL_SAMPLE_RATE },
