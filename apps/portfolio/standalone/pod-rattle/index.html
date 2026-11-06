@@ -767,7 +767,6 @@
       function setAuto(on) {
         auto.on = on;
         $("auto").setAttribute("aria-pressed", String(on));
-        $("auto").textContent = on ? "オン" : "オフ";
         send({ type: "auto", a: { on } });
       }
       $("auto").addEventListener("click", () => setAuto(!auto.on));
@@ -993,9 +992,9 @@
   <body>
     <div class="app">
       <div class="stage" id="stage">
-        <canvas id="cv"></canvas>
+        <canvas id="cv" role="img" aria-label="紐で吊った種子の殻の束"></canvas>
         <div class="title"><h1>Pod Rattle</h1></div>
-        <div class="hud" id="hud">0 hits/s</div>
+        <div class="hud" id="hud" aria-hidden="true">0 hits/s</div>
         <button id="start" type="button">▶ 音を出す</button>
       </div>
       <aside class="rail">
@@ -1056,8 +1055,8 @@
         </div>
         <div class="group">
           <div class="row">
-            <h2>自動で振る</h2>
-            <button type="button" class="switch" id="auto" aria-pressed="true">オン</button>
+            <h2>振り方</h2>
+            <button type="button" class="switch" id="auto" aria-pressed="true">自動で振る</button>
           </div>
           <div class="ctl">
             <label for="rate">速さ</label><output id="o-rate"></output
