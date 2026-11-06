@@ -1,0 +1,34 @@
+{
+  "name": "labs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp build",
+    "dev": "vp dev",
+    "typecheck": "tsc",
+    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
+    "deploy": "alchemy deploy",
+    "destroy": "alchemy destroy"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@cloudflare/workers-types": "catalog:",
+    "@fontsource/dela-gothic-one": "catalog:",
+    "@fontsource/ibm-plex-mono": "catalog:",
+    "@fontsource/zen-kaku-gothic-new": "catalog:",
+    "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/static-headers": "workspace:*",
+    "@masseater.dev/ui": "workspace:*",
+    "@webxr-input-profiles/assets": "catalog:",
+    "alchemy": "catalog:stack",
+    "d3-array": "catalog:",
+    "d3-polygon": "catalog:",
+    "effect": "catalog:stack",
+    "three": "catalog:",
+    "typescript": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plugin-static-copy": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
