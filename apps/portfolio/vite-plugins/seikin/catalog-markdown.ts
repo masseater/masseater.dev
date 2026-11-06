@@ -22,7 +22,7 @@ import type {
   CatalogExample,
   CatalogItem,
   ImageCredit,
-} from "./src/entities/technique/model/catalog.ts";
+} from "#/entities/technique/model/catalog.ts";
 
 const NEXT = 1;
 const SINGLE = 1;

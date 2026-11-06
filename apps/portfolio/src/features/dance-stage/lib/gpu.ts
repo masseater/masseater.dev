@@ -45,12 +45,15 @@ const copyVideo: Fn<Readonly<{ context: Context; video: HTMLVideoElement }>, voi
     () => replaceImage({ context, key: "dance", size }),
   );
   Effect.runFork(
-    Effect.try(() => {
-      context.device.queue.copyExternalImageToTexture(
-        { source: video },
-        { texture },
-        extentOf(size),
-      );
+    Effect.try({
+      try: () => {
+        context.device.queue.copyExternalImageToTexture(
+          { source: video },
+          { texture },
+          extentOf(size),
+        );
+      },
+      catch: unavailable("frame"),
     }).pipe(
       Effect.matchEffect({
         onFailure: (error) =>

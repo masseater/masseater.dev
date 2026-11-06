@@ -13,7 +13,7 @@ const webAnalyticsBeacon = (token: string) =>
     integrity: BEACON_INTEGRITY,
     crossOrigin: "anonymous",
     defer: true,
-    "data-cf-beacon": JSON.stringify({ token }),
+    "data-cf-beacon": `{"token":"${token}"}`,
   }) as const;
 
 export { WEB_ANALYTICS_REPORT_ORIGIN, WEB_ANALYTICS_SCRIPT_ORIGIN, webAnalyticsBeacon };

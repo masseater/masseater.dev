@@ -1,6 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { assignVariants } from "@thumb-mosaic/mosaic";
-import { Effect, Option, Random } from "effect";
+import { Effect, Option, Random, Schema } from "effect";
 
 import { bundledCandidates, bundledMosaic } from "#/pages/mosaic/api/bundled";
 import { candidatesQuery, mosaicQuery } from "#/pages/mosaic/api/queries";
@@ -27,12 +27,25 @@ interface VisitLoad extends Load {
 const NO_CANDIDATES: CandidateList = [];
 const NO_CHOICE: readonly number[] = [];
 
+const taggedError = Schema.TaggedError;
+
+class QueryFailed extends taggedError<QueryFailed, { readonly brand: unique symbol }>()(
+  "QueryFailed",
+  { key: Schema.String },
+) {}
+
 const fetched = <Value>({
   queryClient,
   query,
 }: Readonly<{ queryClient: QueryClient; query: Query<Value> }>): Effect.Effect<
   Option.Option<Value>
-> => Effect.option(Effect.tryPromise(() => queryClient.query({ ...query, staleTime: "static" })));
+> =>
+  Effect.option(
+    Effect.tryPromise({
+      try: () => queryClient.query({ ...query, staleTime: "static" }),
+      catch: () => QueryFailed.make({ key: String(query.queryKey) }),
+    }),
+  );
 
 const loadMosaic = ({ queryClient, slug }: Load): Effect.Effect<Option.Option<Mosaic>> =>
   Option.match(bundledMosaic(slug), {

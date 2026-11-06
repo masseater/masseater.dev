@@ -1,0 +1,24 @@
+{
+  "name": "@masseater.dev/cloudflare-account",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./edge-guard": "./edge-guard.ts",
+    "./log-archive": "./log-archive.ts",
+    "./trace-sink": "./trace-sink.ts",
+    "./web-analytics-reader": "./web-analytics-reader.ts"
+  },
+  "scripts": {
+    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache"
+  },
+  "dependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "alchemy": "catalog:stack",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@types/node": "catalog:"
+  }
+}

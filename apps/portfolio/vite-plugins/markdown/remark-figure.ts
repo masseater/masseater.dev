@@ -4,9 +4,10 @@ import type { LeafDirective } from "mdast-util-directive";
 import type { MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 import type { Plugin } from "unified";
 
+import { FigureNameSchema } from "#/entities/entry/model/figure.ts";
+
 import { componentOf, labelOf, leafDirectiveAs, mapTree } from "./remark-tree.ts";
 import type { Transform } from "./remark-tree.ts";
-import { FigureNameSchema } from "./src/entities/entry/model/figure.ts";
 
 const decodeFigureName = Schema.decodeUnknownOption(FigureNameSchema);
 

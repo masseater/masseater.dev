@@ -2,7 +2,9 @@ import { OWNER_ID } from "@masseater.dev/repositories/github-oidc";
 import { Effect, Logger, ManagedRuntime, Schema, String as Str, pipe } from "effect";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
-import { CI_TELEMETRY_AUDIENCE } from "./app-name.ts";
+import { CI_TELEMETRY_AUDIENCE } from "#app-name";
+
+import { UnreadableBody } from "./unreadable-body.ts";
 
 const ISSUER = "https://token.actions.githubusercontent.com";
 
@@ -104,7 +106,10 @@ const toRun = (claims: typeof Claims.Type): Run => ({
 const record = (request: Request): Effect.Effect<Response> =>
   Effect.gen(function* recordRun() {
     const claims = yield* verify(request);
-    const body = yield* Effect.tryPromise(() => request.json());
+    const body = yield* Effect.tryPromise({
+      try: () => request.json(),
+      catch: (cause) => UnreadableBody.make({ message: String(cause) }),
+    });
     const { jobs } = yield* Schema.decodeUnknownEffect(Payload)(body);
     yield* pipe(
       jobs,

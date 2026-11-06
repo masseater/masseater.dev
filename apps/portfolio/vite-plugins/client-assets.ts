@@ -1,10 +1,11 @@
 import type { Plugin } from "vite-plus";
 
+import { splitPadFiles } from "#standalone/split-pad/assets.ts";
+import { vendorAssets } from "#standalone/vendor.ts";
+
 import { assetHeaders } from "./asset-headers.ts";
-import { ogImage } from "./og-image.ts";
+import { ogImage } from "./og/og-image.ts";
 import { standalonePages } from "./standalone-pages.ts";
-import { splitPadFiles } from "./standalone/split-pad/assets.ts";
-import { vendorAssets } from "./standalone/vendor.ts";
 
 const clientAssets = (beaconToken: unknown): readonly Plugin[] => [
   assetHeaders(),
