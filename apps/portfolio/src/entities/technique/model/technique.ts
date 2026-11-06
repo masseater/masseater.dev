@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
+import { Array as Arr, Equal, Option, Record as Rec, String as Str, pipe } from "effect";
 
 import { articles } from "./articles";
 import type { Article } from "./articles";
@@ -60,8 +60,7 @@ const enrich = (example: CatalogExample): Example => {
   return example;
 };
 
-const sameExample = (left: Example, right: Example): boolean =>
-  JSON.stringify(left) === JSON.stringify(right);
+const sameExample = (left: Example, right: Example): boolean => Equal.equals(left, right);
 
 const slugOf = (name: string): string =>
   pipe(

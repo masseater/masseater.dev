@@ -129,8 +129,9 @@ const revoke = (
 
 const program = Effect.gen(function* tokens() {
   const accountId = yield* Config.String("CLOUDFLARE_ACCOUNT_ID");
+  const deleteTokenIds = yield* Config.String("DELETE_TOKEN_IDS").pipe(Config.withDefault(""));
   const targets = pipe(
-    yield* Config.String("DELETE_TOKEN_IDS").pipe(Config.withDefault("")),
+    deleteTokenIds,
     Str.split(","),
     Arr.map(Str.trim),
     Arr.filter(Str.isNonEmpty),

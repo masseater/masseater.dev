@@ -1,4 +1,5 @@
 import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { sourceHash } from "@masseater.dev/static-headers";
 import {
   Array as Arr,
   Effect,
@@ -10,7 +11,6 @@ import {
   String as Str,
   pipe,
 } from "effect";
-import { Base64 } from "effect/encoding";
 
 import { assetHeaders } from "./asset-headers.ts";
 import type { PageHeaders } from "./asset-headers.ts";
@@ -24,7 +24,6 @@ const NOT_FOUND_PAGE = "404.html";
 const INDEX_PAGE = /(?<=^|\/)index\.html$/u;
 const HTML_EXTENSION = /\.html$/u;
 const INLINE_SCRIPT = /<script(?![^>]*\ssrc=)[^>]*>(?<body>[\s\S]*?)<\/script>/gu;
-const encoder = new TextEncoder();
 
 const scriptBodies = (html: string): readonly string[] =>
   pipe(
@@ -38,11 +37,6 @@ const scriptBodies = (html: string): readonly string[] =>
         Option.getOrElse(() => ""),
       ),
     ),
-  );
-
-const scriptHash = (body: string): Effect.Effect<string> =>
-  Effect.promise(() => crypto.subtle.digest("SHA-256", encoder.encode(body))).pipe(
-    Effect.map((digest) => `'sha256-${Base64.encode(new Uint8Array(digest))}'`),
   );
 
 const contentSecurityPolicyHeader = (
@@ -63,7 +57,7 @@ const pagePath = (page: string): string =>
   `${BASE_PATH}/${pipe(page, Str.replace(INDEX_PAGE, ""), Str.replace(HTML_EXTENSION, ""))}`;
 
 const scriptHashes = (bodies: readonly string[]): Effect.Effect<readonly string[]> =>
-  pipe(bodies, Arr.dedupe, Effect.forEach(scriptHash));
+  pipe(bodies, Arr.dedupe, Effect.forEach(sourceHash));
 
 const isNotFound = ({ page }: Readonly<{ page: string }>): boolean => page === NOT_FOUND_PAGE;
 

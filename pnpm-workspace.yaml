@@ -11,7 +11,7 @@ catalog:
   "@r_masseater/oxlint-typed-rules": 0.1.0
   oxlint-plugin-eslint: 1.90.0
   "@ast-grep/cli": 0.51.1
-  "@cloudflare/workers-types": 5.20261102.1
+  "@cloudflare/workers-types": 5.20261103.1
   "@effect/platform-node": 4.1.2
   "@eslint-react/eslint-plugin": 5.28.8
   "@shadcn/lint": 0.2.5
@@ -70,9 +70,9 @@ catalog:
   "@webxr-input-profiles/assets": 1.0.20
   d3-polygon: 3.0.1
   d3-array: 3.2.4
-  internmap: 2.0.3
   "@fontsource/zen-kaku-gothic-new": 5.3.1
   "@fontsource/dela-gothic-one": 5.3.0
+  "@fontsource/shippori-mincho-b1": 5.3.0
   "@fontsource/ibm-plex-mono": 5.3.0
   "@distilled.cloud/github": 1.0.0-rc.18
   universal-github-app-jwt: 2.2.2
