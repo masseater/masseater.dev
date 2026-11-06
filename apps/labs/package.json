@@ -3,14 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "build": "vp build",
-    "dev": "vp dev",
-    "typecheck": "tsc",
-    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
-    "deploy": "alchemy deploy",
-    "destroy": "alchemy destroy"
-  },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",

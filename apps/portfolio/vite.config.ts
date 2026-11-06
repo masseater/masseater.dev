@@ -11,6 +11,20 @@ import { pages, sitemap, withLastmod } from "./vite-plugins/prerender.ts";
 import { seikinTechniques } from "./vite-plugins/seikin/seikin-techniques.ts";
 
 export default defineConfig({
+  run: {
+    tasks: {
+      dev: { command: "alchemy dev", cache: false },
+      build: { command: "vp build && sequoia inject", cache: false },
+      deploy: { command: "alchemy deploy", cache: false },
+      destroy: { command: "alchemy destroy", cache: false },
+      "db:generate": { command: "drizzle-kit generate", cache: false },
+      "db:check": [
+        "drizzle-kit check",
+        `drizzle-kit generate --explain --output json | grep -q '"status":"no_changes"'`,
+      ],
+      "standard-site": { command: "vpx scripts/standard-site.ts && sequoia publish", cache: false },
+    },
+  },
   resolve: { tsconfigPaths: true },
   test: { include: ["src/**/*.test.{ts,tsx}"] },
   plugins: [

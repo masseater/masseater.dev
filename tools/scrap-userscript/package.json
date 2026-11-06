@@ -3,10 +3,6 @@
   "version": "1.3.2",
   "private": true,
   "type": "module",
-  "scripts": {
-    "build": "vp build",
-    "test": "vp build && git diff --quiet -- release && test -z \"$(git ls-files --others --exclude-standard -- release)\" && vp test run --fsModuleCachePath node_modules/.vitest-cache"
-  },
   "dependencies": {
     "effect": "catalog:stack",
     "vite-plugin-monkey": "8.1.1"

@@ -7,10 +7,6 @@
     "./credential-grants": "./credential-grants.ts",
     "./github-oidc": "./github-oidc.ts"
   },
-  "scripts": {
-    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache",
-    "tokens": "vpx cloudflare-tokens.ts"
-  },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@alchemy.run/github": "catalog:stack",

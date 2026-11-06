@@ -9,6 +9,12 @@ const pagePath = (page: string): string =>
   decodeURIComponent(new URL(`pages/${page}/index.html`, import.meta.url).pathname);
 
 export default defineConfig({
+  run: {
+    tasks: {
+      deploy: { command: "alchemy deploy", cache: false },
+      destroy: { command: "alchemy destroy", cache: false },
+    },
+  },
   root: "pages",
   publicDir: "../public",
   build: {
