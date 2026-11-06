@@ -60,9 +60,6 @@ const enrich = (example: CatalogExample): Example => {
   return example;
 };
 
-const sameExample = (left: Example, right: Example): boolean =>
-  JSON.stringify(left) === JSON.stringify(right);
-
 const slugOf = (name: string): string =>
   pipe(
     Rec.get(slugs, name),
@@ -96,7 +93,7 @@ const techniqueFrom = (group: Arr.NonEmptyReadonlyArray<Entry>): Technique => {
     examples: pipe(
       group,
       Arr.flatMap((entry) => pipe(entry.item.examples, Arr.map(enrich))),
-      Arr.dedupeWith(sameExample),
+      Arr.dedupe,
     ),
   };
 };

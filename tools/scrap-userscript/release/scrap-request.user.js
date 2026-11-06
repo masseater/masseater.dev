@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Scrap request to Claude
 // @namespace    https://masseater.dev
-// @version      1.3.1
+// @version      1.3.2
 // @description  閲覧中のページについて masseater.dev の Sloppedia に記事を書くよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用
 // @homepageURL  https://github.com/masseater/masseater.dev/tree/main/tools/scrap-userscript
 // @match        *://*/*
@@ -420,6 +420,9 @@
 	var CIRCULAR = "[Circular]";
 	function formatPropertyKey(name) {
 		return typeof name === "string" ? JSON.stringify(name) : String(name);
+	}
+	function formatPath(path) {
+		return path.map((key) => `[${formatPropertyKey(key)}]`).join("");
 	}
 	function formatDate(date) {
 		try {
@@ -1265,6 +1268,7 @@
 		fiberCached: true,
 		defaultValue: () => false
 	});
+	var TaggedError = TaggedError$1;
 	var ParentSpanKey = "effect/Tracer/ParentSpan";
 	var TracerKey = "effect/Tracer";
 	var FiberRuntimeMetricsKey = "effect/Metric/FiberRuntimeMetrics";
@@ -1850,6 +1854,7 @@
 		this[contE] = f;
 	};
 	OnFailureImpl.prototype = OnFailureProto;
+	var mapError$1 = dual(2, (self, f) => catchCause$1(self, (cause) => failCause$1(causeMap(cause, f))));
 	var OnSuccessAndFailureProto = makePrimitiveProto({
 		op: "OnSuccessAndFailure",
 		[evaluate]: evaluateCont
@@ -2254,6 +2259,7 @@
 	var exit = exit$1;
 	var asVoid = asVoid$1;
 	var catchCause = catchCause$1;
+	var mapError = mapError$1;
 	var match = match$1;
 	var runFork = runFork$1;
 	var runSyncExit = runSyncExit$1;
@@ -2269,7 +2275,15 @@
 	({ ...PipeInspectableProto });
 	BaseProto.toString, BaseProto[NodeInspectSymbol];
 	({ ...PipeInspectableProto });
+	function resolve$1(ast) {
+		return ast.checks ? ast.checks[ast.checks.length - 1].annotations : ast.annotations;
+	}
 	var CONSTRUCTOR_ANNOTATION_KEY = "~constructor";
+	var getExpected = memoize((ast) => {
+		const identifier = resolve$1(ast)?.identifier;
+		if (typeof identifier === "string") return identifier;
+		return ast.getExpected(getExpected);
+	});
 	var missing = Symbol();
 	var succeed = succeed$2;
 	var missingExit = succeed(missing);
@@ -2279,6 +2293,9 @@
 	var TypeId$5 = "~effect/SchemaIssue/Issue";
 	function isIssue(u) {
 		return hasProperty(u, TypeId$5) && u[TypeId$5] === TypeId$5;
+	}
+	function hasInput(issue) {
+		return Object.hasOwn(issue, "input");
 	}
 	var IssueNodeImpl = class {
 		[TypeId$5] = TypeId$5;
@@ -2358,6 +2375,80 @@
 			this.annotations = annotations;
 		}
 	};
+	var defaultLeafHook = (issue) => {
+		const message = findMessage(issue);
+		if (message !== void 0) return message;
+		switch (issue._tag) {
+			case "InvalidType": return getExpectedMessage(getExpected(issue.ast), issue);
+			case "InvalidValue": {
+				const expected = findExpected(issue);
+				if (expected !== void 0) return getExpectedMessage(expected, issue);
+				const input = formatInput(issue);
+				return input === void 0 ? "Expected a valid value" : `Invalid data ${input}`;
+			}
+			case "MissingKey": return "Missing key";
+			case "UnexpectedKey": {
+				const input = formatInput(issue);
+				return input === void 0 ? "Expected no excess property" : `Unexpected key with value ${input}`;
+			}
+			case "Forbidden": return "Forbidden operation";
+			case "OneOf": {
+				const input = formatInput(issue);
+				return input === void 0 ? "Expected exactly one member to match" : `Expected exactly one member to match the input ${input}`;
+			}
+		}
+	};
+	var defaultCheckHook = (issue) => findMessage(issue) ?? findMessage(issue.issue);
+	function formatInput(issue) {
+		return hasInput(issue) ? format$1(issue.input) : void 0;
+	}
+	function findExpected(issue) {
+		const expected = issue.annotations?.expected;
+		return typeof expected === "string" ? expected : void 0;
+	}
+	function getExpectedMessage(expected, issue) {
+		const input = formatInput(issue);
+		return input === void 0 ? `Expected ${expected}` : `Expected ${expected}, got ${input}`;
+	}
+	function getFilterMessage(issue, checkHook) {
+		const message = checkHook(issue);
+		if (message !== void 0 || issue.issue._tag !== "InvalidValue") return message;
+		const expected = findExpected(issue.issue);
+		return expected === void 0 ? getExpectedMessage(formatCheck(issue.filter), issue) : getExpectedMessage(expected, issue.issue);
+	}
+	function formatCheck(check) {
+		const expected = check.annotations?.expected;
+		if (typeof expected === "string") return expected;
+		switch (check._tag) {
+			case "Filter": return "<filter>";
+			case "FilterGroup": return check.checks.map((check) => formatCheck(check)).join(" & ");
+		}
+	}
+	function makeFormatterDefault() {
+		return (issue) => formatIssue(issue, "");
+	}
+	var defaultFormatter = makeFormatterDefault();
+	function formatIssue(issue, path, messageOverride) {
+		let message;
+		switch (issue._tag) {
+			case "Filter": return formatIssue(issue.issue, path, messageOverride ?? getFilterMessage(issue, defaultCheckHook));
+			case "Encoding": return formatIssue(issue.issue, path, messageOverride);
+			case "Pointer": return formatIssue(issue.issue, path + formatPath(issue.path), messageOverride);
+			case "Composite":
+			case "AnyOf":
+				if (issue._tag === "Composite" || issue.issues.length > 0) return issue.issues.map((issue) => formatIssue(issue, path, messageOverride)).join("\n");
+				message = messageOverride ?? findMessage(issue) ?? getExpectedMessage(getExpected(issue.ast), issue);
+				break;
+			default: message = messageOverride ?? defaultLeafHook(issue);
+		}
+		return path ? `${message}\n  at ${path}` : message;
+	}
+	function findMessage(issue) {
+		if (issue._tag === "Pointer" || issue._tag === "Composite") return;
+		if (issue._tag === "Encoding") return findMessage(issue.issue);
+		const message = (issue._tag === "Filter" ? issue.filter.annotations : "annotations" in issue ? issue.annotations : issue.ast.annotations)?.[issue._tag === "MissingKey" ? "messageMissingKey" : issue._tag === "UnexpectedKey" ? "messageUnexpectedKey" : "message"];
+		if (typeof message === "string") return message;
+	}
 	function getSchemaIssue(cause) {
 		let issue;
 		for (const reason of cause.reasons) {
@@ -3202,6 +3293,10 @@
 		return asOption(decodeUnknownEffect(schema, options));
 	}
 	var decodeOption$1 = decodeUnknownOption;
+	function encodeUnknownEffect$1(schema, options) {
+		const parser = run(flip(schema.ast));
+		return options === void 0 ? parser : (input, overrideOptions) => parser(input, mergeParseOptions(options, overrideOptions));
+	}
 	var mergeParseOptions = (options, overrideOptions) => overrideOptions ? {
 		...options,
 		...overrideOptions
@@ -3325,6 +3420,7 @@
 		self.ast = ast;
 		return self;
 	}
+	var SchemaErrorTypeId = "~effect/Schema/SchemaError";
 	({ ...BaseProto });
 	({ ...BaseProto });
 	({ ...BaseProto });
@@ -3333,7 +3429,48 @@
 	({ ...BaseProto });
 	({ ...BaseProto });
 	({ ...BaseProto });
+	var SchemaError = class extends TaggedError("SchemaError") {
+		[SchemaErrorTypeId] = SchemaErrorTypeId;
+		constructor(issue) {
+			const stackTraceLimit = getStackTraceLimit();
+			setStackTraceLimit(0);
+			try {
+				super({ issue });
+			} finally {
+				setStackTraceLimit(stackTraceLimit);
+			}
+		}
+		get message() {
+			return defaultFormatter(this.issue);
+		}
+		toJSON() {
+			return {
+				_tag: this._tag,
+				message: this.message
+			};
+		}
+		[NodeInspectSymbol]() {
+			return this.toJSON();
+		}
+		toString() {
+			return `SchemaError(${this.message})`;
+		}
+	};
+	function fromIssueEffect(self) {
+		if (effectIsExit(self)) return fromIssueExit(self);
+		return catchCause(self, (cause) => failCauseSync(() => map(cause, (issue) => new SchemaError(issue))));
+	}
+	function fromIssueExit(exit) {
+		return isSuccess(exit) ? exit : failCause(map(exit.cause, (issue) => new SchemaError(issue)));
+	}
 	var decodeOption = decodeOption$1;
+	function encodeUnknownEffect(schema, options) {
+		const parser = encodeUnknownEffect$1(schema, options);
+		return (input, options) => {
+			return fromIssueEffect(parser(input, options));
+		};
+	}
+	var encodeEffect = encodeUnknownEffect;
 	var make = make$1;
 	var String$1 = make(string);
 	function makeStruct(ast, fields) {
@@ -3367,10 +3504,16 @@
 	globalThis.Uint8Array;
 	var _GM = (() => typeof GM != "undefined" ? GM : void 0)();
 	var relayUrl = "https://personal.masseater.dev/scrap-request";
+	var RelayBody = fromJsonString(Struct({
+		url: String$1,
+		title: String$1,
+		highlight: String$1,
+		focus: String$1
+	}));
 	var RelaySession = fromJsonString(Struct({ sessionUrl: String$1 }));
 	var successStatus = 200;
 	var redirectStatus = 300;
-	var relayBody = (request) => JSON.stringify({
+	var relayBody = (request) => encodeEffect(RelayBody)({
 		url: request.url,
 		title: trim(request.title),
 		highlight: trim(request.highlight),
@@ -3391,15 +3534,15 @@
 			})
 		});
 	};
-	var fire = (request) => tryPromise({
+	var fire = (request) => relayBody(request).pipe(mapError(() => "依頼の内容を JSON にできませんでした"), flatMap((data) => tryPromise({
 		try: () => _GM.xmlHttpRequest({
 			method: "POST",
 			url: relayUrl,
 			headers: { "content-type": "application/json" },
-			data: relayBody(request)
+			data
 		}),
 		catch: () => "ネットワークエラーで送れませんでした"
-	}).pipe(match({
+	})), match({
 		onFailure: (reason) => ({
 			status: "failed",
 			reason

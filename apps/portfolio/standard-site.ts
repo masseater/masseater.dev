@@ -82,7 +82,9 @@ const stage = (
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const source = path.join(SOURCE_DIR, file);
-    const { yaml, body } = yield* split(file, yield* fileSystem.readFileString(source));
+    const { yaml, body } = yield* fileSystem
+      .readFileString(source)
+      .pipe(Effect.flatMap((content) => split(file, content)));
     const frontmatter = yield* decodeFrontmatter(parse(yaml));
     if (!isPublic(frontmatter)) {
       return false;
@@ -99,7 +101,8 @@ const program = Effect.gen(function* stageBlogs() {
   const fileSystem = yield* FileSystem.FileSystem;
   yield* fileSystem.remove(OUTPUT_DIR, { recursive: true, force: true });
   yield* fileSystem.makeDirectory(OUTPUT_DIR, { recursive: true });
-  const files = pipe(yield* fileSystem.readDirectory(SOURCE_DIR), Arr.filter(Str.endsWith(".md")));
+  const entries = yield* fileSystem.readDirectory(SOURCE_DIR);
+  const files = pipe(entries, Arr.filter(Str.endsWith(".md")));
   const staged = yield* Effect.all(pipe(files, Arr.map(stage)), { concurrency: "unbounded" });
   const count = pipe(staged, Arr.filter(Boolean)).length;
   yield* Effect.logInfo("standard-site.staged").pipe(Effect.annotateLogs({ count }));

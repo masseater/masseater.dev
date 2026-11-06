@@ -1,7 +1,7 @@
 import { ApiToken, CloudflareEnvironment, Logpush, R2 } from "@alchemy.run/cloudflare";
 import { all, map, mapEffect } from "alchemy/Output";
 import { sha256 } from "alchemy/Util";
-import { Effect, Redacted, pipe } from "effect";
+import { Effect, Redacted, Schema, pipe } from "effect";
 
 import { APP_NAME } from "./app-name.ts";
 
@@ -11,15 +11,13 @@ const SECONDS_PER_DAY = 86_400;
 
 const NORMAL_SAMPLE_RATE = 0.01;
 
-const ARCHIVES = [
-  {
-    id: "WorkerFailures",
-    prefix: "failures",
-    filter: JSON.stringify({ where: { key: "Outcome", operator: "!eq", value: "ok" } }),
-    sampleRate: 1,
-  },
-  { id: "WorkerSample", prefix: "sample", filter: "", sampleRate: NORMAL_SAMPLE_RATE },
-] as const;
+const FAILURES_FILTER = { where: { key: "Outcome", operator: "!eq", value: "ok" } } as const;
+
+const archivesOf = (failuresFilter: string) =>
+  [
+    { id: "WorkerFailures", prefix: "failures", filter: failuresFilter, sampleRate: 1 },
+    { id: "WorkerSample", prefix: "sample", filter: "", sampleRate: NORMAL_SAMPLE_RATE },
+  ] as const;
 
 const FIELD_NAMES = [
   "EventTimestampMs",
@@ -69,8 +67,11 @@ const logArchive = Effect.gen(function* logArchive() {
       ),
     ),
   );
+  const failuresFilter = yield* Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown))(
+    FAILURES_FILTER,
+  ).pipe(Effect.orDie);
   return yield* pipe(
-    ARCHIVES,
+    archivesOf(failuresFilter),
     Effect.forEach(({ id, prefix, filter, sampleRate }) =>
       Logpush.Job(id, {
         name: `${APP_NAME}-${prefix}-logs`,

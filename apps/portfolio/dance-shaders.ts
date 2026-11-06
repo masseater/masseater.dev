@@ -1,4 +1,13 @@
-import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
+import {
+  Array as Arr,
+  Cause,
+  Effect,
+  Option,
+  Record as Rec,
+  Schema,
+  String as Str,
+  pipe,
+} from "effect";
 import { parseGlsl, parseWgsl, validate, writeWgsl } from "naga-wasm";
 import type { Plugin } from "vite-plus";
 
@@ -20,6 +29,8 @@ const START = 0;
 const OUTSIDE = 0;
 
 type Prelude = Readonly<{ header: string; body: string }>;
+
+const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
 type Read = (path: string) => Promise<Uint8Array>;
 
@@ -139,7 +150,10 @@ const glslHeader = (header: string): string =>
   `#version 450\n#define WEBGPU 1\n#define DENSITY_WIDTH ${String(SCREEN.width)}\n#define DENSITY_HEIGHT ${String(SCREEN.height)}\n${header}`;
 
 const optionalText = (read: Read, path: string): Effect.Effect<Option.Option<string>> =>
-  Effect.tryPromise(() => read(path)).pipe(
+  Effect.tryPromise({
+    try: () => read(path),
+    catch: () => new Cause.NoSuchElementError(path),
+  }).pipe(
     Effect.map((bytes) => new TextDecoder().decode(bytes)),
     Effect.option,
   );
@@ -166,7 +180,8 @@ const loadGpuEffect = (read: Read, path: string): Promise<string> => {
         passes: gpuPassesOf({ source, prelude: fragmentPrelude }),
         computes: found,
       })),
-      Effect.map((effect) => `export default ${JSON.stringify(effect)};`),
+      Effect.flatMap(encodeJson),
+      Effect.map((json) => `export default ${json};`),
     ),
   );
 };

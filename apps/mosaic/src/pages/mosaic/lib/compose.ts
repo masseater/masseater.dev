@@ -1,5 +1,4 @@
-import { Array, Effect, Option, pipe } from "effect";
-import type { Cause } from "effect";
+import { Array, Effect, Option, Schema, pipe } from "effect";
 
 import type { Mosaic } from "#/pages/mosaic/api/queries";
 
@@ -23,6 +22,13 @@ interface Member {
   readonly variant: number;
 }
 
+const taggedError = Schema.TaggedError;
+
+class ImageUnavailable extends taggedError<ImageUnavailable, { readonly brand: unique symbol }>()(
+  "ImageUnavailable",
+  { reason: Schema.String },
+) {}
+
 const PNG = "image/png";
 const EMPTY = 0;
 
@@ -43,12 +49,17 @@ const memberOf =
 const membersOf = (spec: BlockSpec): readonly Member[] =>
   pipe(spec.visit.mosaic.cells, Array.map(memberOf(spec)), Array.getSomes);
 
-const loaded = (url: string): Effect.Effect<ImageBitmap, Cause.UnknownError> =>
+const unavailable = (error: unknown): ImageUnavailable =>
+  ImageUnavailable.make({ reason: String(error) });
+
+const loaded = (url: string): Effect.Effect<ImageBitmap, ImageUnavailable> =>
   Effect.suspend(() => {
     const image = new Image();
     image.src = url;
-    return Effect.tryPromise(() => image.decode()).pipe(
-      Effect.andThen(() => Effect.tryPromise(() => createImageBitmap(image))),
+    return Effect.tryPromise({ try: () => image.decode(), catch: unavailable }).pipe(
+      Effect.andThen(() =>
+        Effect.tryPromise({ try: () => createImageBitmap(image), catch: unavailable }),
+      ),
     );
   });
 

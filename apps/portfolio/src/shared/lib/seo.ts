@@ -1,4 +1,4 @@
-import { Array as Arr, String as Str, pipe } from "effect";
+import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 
 import { site, wiki } from "#/shared/config";
 
@@ -20,13 +20,16 @@ const absoluteUrl = (path: string): string => new URL(path, site.url).href;
 
 const defaultImage: Image = { path: site.ogImage.path, alt: site.name };
 
-const jsonLd = (data: JsonLd): Script => ({
-  type: "application/ld+json",
-  children: pipe(
-    JSON.stringify({ "@context": "https://schema.org", ...data }),
-    Str.replaceAll("<", String.raw`\u003c`),
-  ),
-});
+const JsonLdText = Schema.fromJsonString(Schema.Record(Schema.String, Schema.Unknown));
+
+const jsonLd = (data: JsonLd): Option.Option<Script> =>
+  pipe(
+    Schema.encodeOption(JsonLdText)({ "@context": "https://schema.org", ...data }),
+    Option.map((json): Script => ({
+      type: "application/ld+json",
+      children: Str.replaceAll("<", String.raw`\u003c`)(json),
+    })),
+  );
 
 const seo = ({
   title,
@@ -66,6 +69,7 @@ const seo = ({
     scripts: pipe(
       structuredData,
       Arr.map((data) => jsonLd(data)),
+      Arr.getSomes,
     ),
   };
 };

@@ -1,3 +1,4 @@
+import type { Effect } from "effect";
 import { Option, Schema, String as Str } from "effect";
 
 type ScrapRequest = Readonly<{
@@ -14,13 +15,22 @@ type RelayResponse =
 
 const relayUrl = "https://personal.masseater.dev/scrap-request";
 
+const RelayBody = Schema.fromJsonString(
+  Schema.Struct({
+    url: Schema.String,
+    title: Schema.String,
+    highlight: Schema.String,
+    focus: Schema.String,
+  }),
+);
+
 const RelaySession = Schema.fromJsonString(Schema.Struct({ sessionUrl: Schema.String }));
 
 const successStatus = 200;
 const redirectStatus = 300;
 
-const relayBody = (request: ScrapRequest): string =>
-  JSON.stringify({
+const relayBody = (request: ScrapRequest): Effect.Effect<string, Schema.SchemaError> =>
+  Schema.encodeEffect(RelayBody)({
     url: request.url,
     title: Str.trim(request.title),
     highlight: Str.trim(request.highlight),

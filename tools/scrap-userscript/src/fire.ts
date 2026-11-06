@@ -5,16 +5,20 @@ import { relayBody, relayResponse, relayUrl } from "./request.ts";
 import type { RelayResponse, ScrapRequest } from "./request.ts";
 
 const fire = (request: ScrapRequest): Effect.Effect<RelayResponse> =>
-  Effect.tryPromise({
-    try: () =>
-      GM.xmlHttpRequest({
-        method: "POST",
-        url: relayUrl,
-        headers: { "content-type": "application/json" },
-        data: relayBody(request),
+  relayBody(request).pipe(
+    Effect.mapError(() => "依頼の内容を JSON にできませんでした"),
+    Effect.flatMap((data) =>
+      Effect.tryPromise({
+        try: () =>
+          GM.xmlHttpRequest({
+            method: "POST",
+            url: relayUrl,
+            headers: { "content-type": "application/json" },
+            data,
+          }),
+        catch: () => "ネットワークエラーで送れませんでした",
       }),
-    catch: () => "ネットワークエラーで送れませんでした",
-  }).pipe(
+    ),
     Effect.match({
       onFailure: (reason): RelayResponse => ({ status: "failed", reason }),
       onSuccess: (response) =>

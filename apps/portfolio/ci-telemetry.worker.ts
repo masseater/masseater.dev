@@ -104,8 +104,8 @@ const toRun = (claims: typeof Claims.Type): Run => ({
 const record = (request: Request): Effect.Effect<Response> =>
   Effect.gen(function* recordRun() {
     const claims = yield* verify(request);
-    const body = yield* Effect.tryPromise(() => request.json());
-    const { jobs } = yield* Schema.decodeUnknownEffect(Payload)(body);
+    const body = yield* Effect.promise(() => request.text());
+    const { jobs } = yield* Schema.decodeEffect(Schema.fromJsonString(Payload))(body);
     yield* pipe(
       jobs,
       Effect.forEach((job) => logJob(toRun(claims), job)),

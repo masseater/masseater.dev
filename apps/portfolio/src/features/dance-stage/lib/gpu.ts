@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
 import type { GpuEffect, GpuPass, Pass } from "#/features/dance-stage/model/effect";
 
@@ -11,6 +11,13 @@ import type { Context, Images, Sizes, Stage } from "./gpu-groups";
 import { blockOf, extentOf, unavailable, GROUPS, imageOf, setUp, targetsOf } from "./gpu-setup";
 import type { GpuUnavailable, Setup } from "./gpu-setup";
 import type { Asset, Frame, Renderer, Source } from "./renderer";
+
+const taggedError = Schema.TaggedError;
+
+class FrameUnavailable extends taggedError<FrameUnavailable, { readonly brand: unique symbol }>()(
+  "FrameUnavailable",
+  { reason: Schema.String },
+) {}
 
 const TRIANGLE = 3;
 const NEXT = 1;
@@ -45,12 +52,15 @@ const copyVideo: Fn<Readonly<{ context: Context; video: HTMLVideoElement }>, voi
     () => replaceImage({ context, key: "dance", size }),
   );
   Effect.runFork(
-    Effect.try(() => {
-      context.device.queue.copyExternalImageToTexture(
-        { source: video },
-        { texture },
-        extentOf(size),
-      );
+    Effect.try({
+      try: () => {
+        context.device.queue.copyExternalImageToTexture(
+          { source: video },
+          { texture },
+          extentOf(size),
+        );
+      },
+      catch: (error) => FrameUnavailable.make({ reason: String(error) }),
     }).pipe(
       Effect.matchEffect({
         onFailure: (error) =>

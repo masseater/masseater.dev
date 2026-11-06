@@ -1,4 +1,4 @@
-import { Effect, Option, String as Str, pipe } from "effect";
+import { Effect, Option, Schema, String as Str, pipe } from "effect";
 import type { Plugin } from "vite-plus";
 
 import { catalogOf } from "./catalog-markdown.ts";
@@ -7,6 +7,8 @@ const QUERY = "?technique-catalog";
 const PREFIX = "\0technique-catalog:";
 
 type Resolve = (source: string) => Promise<Readonly<{ id: string }> | null>;
+
+const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
 type Read = (path: string) => Promise<Uint8Array>;
 
@@ -27,7 +29,8 @@ const loadCatalog = (read: Read, path: string): Promise<string> =>
   Effect.runPromise(
     Effect.promise(() => read(path)).pipe(
       Effect.map((bytes) => catalogOf(new TextDecoder().decode(bytes))),
-      Effect.map((items) => `export default ${JSON.stringify(items)};`),
+      Effect.flatMap(encodeJson),
+      Effect.map((json) => `export default ${json};`),
     ),
   );
 

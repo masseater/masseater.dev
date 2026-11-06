@@ -7,17 +7,19 @@ import { splitPadStylesheets } from "./standalone/split-pad/assets.ts";
 
 const HEAD_END = "</head>";
 
-const beaconTag = (token: string): string => {
-  const beacon = webAnalyticsBeacon(token);
-  return `<script defer src="${beacon.src}" integrity="${beacon.integrity}" crossorigin="${beacon.crossOrigin}" data-cf-beacon='${beacon["data-cf-beacon"]}'></script>`;
-};
+const beaconTag = (token: string): Option.Option<string> =>
+  Option.map(
+    webAnalyticsBeacon(token),
+    (beacon) =>
+      `<script defer src="${beacon.src}" integrity="${beacon.integrity}" crossorigin="${beacon.crossOrigin}" data-cf-beacon='${beacon["data-cf-beacon"]}'></script>`,
+  );
 
 const withBeacon =
   (token: Option.Option<string>) =>
   (html: string): string =>
-    Option.match(token, {
+    Option.match(pipe(token, Option.flatMap(beaconTag)), {
       onNone: () => html,
-      onSome: (value) => pipe(html, Str.replace(HEAD_END, `${beaconTag(value)}${HEAD_END}`)),
+      onSome: (tag) => pipe(html, Str.replace(HEAD_END, `${tag}${HEAD_END}`)),
     });
 
 const PAGE_STYLESHEETS: Readonly<Record<string, readonly string[]>> = {
