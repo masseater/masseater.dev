@@ -5,19 +5,14 @@ import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import { defineConfig, loadEnv } from "vite-plus";
 
-import { clientAssets } from "./client-assets.ts";
-import mdx from "./mdx.config.ts";
-import { pages, sitemap, withLastmod } from "./prerender.ts";
-import { seikinTechniques } from "./seikin-techniques.ts";
+import { clientAssets } from "./vite-plugins/client-assets.ts";
+import mdx from "./vite-plugins/markdown/mdx.config.ts";
+import { pages, sitemap, withLastmod } from "./vite-plugins/prerender.ts";
+import { seikinTechniques } from "./vite-plugins/seikin/seikin-techniques.ts";
 
 export default defineConfig(({ mode }) => ({
   resolve: { tsconfigPaths: true },
-  test: {
-    projects: [
-      { extends: true, test: { name: "app", include: ["src/**/*.test.{ts,tsx}"] } },
-      { extends: false, test: { name: "alchemy", include: ["*.test.ts"] } },
-    ],
-  },
+  test: { include: ["src/**/*.test.{ts,tsx}"] },
   plugins: [
     devtools(),
     ...seikinTechniques(),

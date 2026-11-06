@@ -1,5 +1,8 @@
 import { D1, Website, Workers, providers, state } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
+import { edgeGuard } from "@masseater.dev/cloudflare-account/edge-guard";
+import { logArchive } from "@masseater.dev/cloudflare-account/log-archive";
+import { webAnalyticsReader } from "@masseater.dev/cloudflare-account/web-analytics-reader";
 import { Stack, Stage, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { Effect, Option } from "effect";
@@ -12,10 +15,7 @@ import {
   requireAppPrefix,
 } from "./app-name.ts";
 import { COMPATIBILITY } from "./compatibility.ts";
-import { edgeGuard } from "./edge-guard.ts";
-import { logArchive } from "./log-archive.ts";
 import { site } from "./src/shared/config/site.ts";
-import { webAnalyticsReader } from "./web-analytics-reader.ts";
 
 const DOMAIN = new URL(site.url).hostname;
 const PRODUCTION_STAGE = "prod";
@@ -31,7 +31,7 @@ const web = Effect.gen(function* web() {
     ...(production && { domain: { name: DOMAIN, redirects: [`www.${DOMAIN}`] } }),
     command: "vp run build",
     outdir: "dist/client",
-    main: "./site.worker.ts",
+    main: "./worker/site.worker.ts",
     compatibility: COMPATIBILITY,
     logpush: true,
     env: { STARS, VISITOR_SALT, VITE_CF_BEACON_TOKEN: CF_BEACON_TOKEN },
@@ -51,7 +51,7 @@ const web = Effect.gen(function* web() {
 
 const ciTelemetry = Workers.Worker("CiTelemetry", {
   name: CI_TELEMETRY_AUDIENCE,
-  main: "./ci-telemetry.worker.ts",
+  main: "./worker/ci-telemetry.worker.ts",
   compatibility: COMPATIBILITY,
   logpush: true,
   observability: {
@@ -70,10 +70,10 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
     if ((yield* Stage) === PRODUCTION_STAGE) {
       yield* Option.match(OWNED_ZONE, {
         onNone: () => Effect.void,
-        onSome: (domain) => edgeGuard(domain, COMPATIBILITY),
+        onSome: (domain) => edgeGuard({ appName: APP_NAME, domain, compatibility: COMPATIBILITY }),
       });
-      yield* logArchive;
-      yield* webAnalyticsReader(COMPATIBILITY);
+      yield* logArchive(APP_NAME);
+      yield* webAnalyticsReader({ appName: APP_NAME, compatibility: COMPATIBILITY });
     }
     yield* ciTelemetry;
     yield* requireAppPrefix;

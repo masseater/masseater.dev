@@ -2,8 +2,8 @@ import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from
 import { parseGlsl, parseWgsl, validate, writeWgsl } from "naga-wasm";
 import type { Plugin } from "vite-plus";
 
-import { parseEffect, SCREEN } from "./src/features/dance-stage/model/effect.ts";
-import type { GpuCompute, GpuEffect, GpuPass } from "./src/features/dance-stage/model/effect.ts";
+import { parseEffect, SCREEN } from "#/features/dance-stage/model/effect.ts";
+import type { GpuCompute, GpuEffect, GpuPass } from "#/features/dance-stage/model/effect.ts";
 
 const QUERY = "?webgpu";
 const FRAGMENT = ".frag";

@@ -3,7 +3,7 @@ import type { InferEnv } from "@alchemy.run/cloudflare";
 import { adopt } from "alchemy/AdoptPolicy";
 import { Array as Arr, Effect, Record as Rec, String as Str, pipe } from "effect";
 
-import { APP_NAME } from "./app-name.ts";
+import type { Compatibility } from "./compatibility.ts";
 import { SCANNER_PROBES } from "./scanner-probes.ts";
 
 const HONEYPOT_PATHS = ["/.env", "/wp-login.php"] as const;
@@ -50,16 +50,19 @@ const scannerRules = (domain: string): Ruleset.Rule[] => {
   }));
 };
 
-const honeypot = Effect.fn("honeypot")(function* honeypot(
-  domain: string,
-  compatibility: Readonly<{ date: string }>,
-) {
+type EdgeGuardProps = Readonly<{ appName: string; domain: string; compatibility: Compatibility }>;
+
+const honeypot = Effect.fn("honeypot")(function* honeypot({
+  appName,
+  domain,
+  compatibility,
+}: EdgeGuardProps) {
   const HONEYPOT = yield* AnalyticsEngine.Dataset("Honeypot", {
-    dataset: `${Str.replaceAll("-", "_")(APP_NAME)}_honeypot`,
+    dataset: `${Str.replaceAll("-", "_")(appName)}_honeypot`,
   });
   return yield* Workers.Worker("Honeypot", {
-    name: `${APP_NAME}-honeypot`,
-    main: "./honeypot.worker.ts",
+    name: `${appName}-honeypot`,
+    main: decodeURIComponent(new URL("honeypot.worker.ts", import.meta.url).pathname),
     compatibility,
     logpush: true,
     env: { HONEYPOT },
@@ -70,21 +73,18 @@ const honeypot = Effect.fn("honeypot")(function* honeypot(
   });
 });
 
-const edgeGuard = Effect.fn("edgeGuard")(function* edgeGuard(
-  domain: string,
-  compatibility: Readonly<{ date: string }>,
-) {
-  const zone = yield* Zone.Zone("Zone", { name: domain }).pipe(adopt(true));
+const edgeGuard = Effect.fn("edgeGuard")(function* edgeGuard(props: EdgeGuardProps) {
+  const zone = yield* Zone.Zone("Zone", { name: props.domain }).pipe(adopt(true));
   yield* Ruleset.Ruleset("ScannerBlock", {
     zone,
-    name: `${APP_NAME}-scanner-block`,
+    name: `${props.appName}-scanner-block`,
     phase: "http_request_firewall_custom",
-    rules: scannerRules(domain),
+    rules: scannerRules(props.domain),
   });
-  return yield* honeypot(domain, compatibility);
+  return yield* honeypot(props);
 });
 
 type HoneypotEnv = InferEnv<ReturnType<typeof honeypot>>;
 
-export type { HoneypotEnv };
+export type { EdgeGuardProps, HoneypotEnv };
 export { edgeGuard };

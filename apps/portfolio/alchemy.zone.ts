@@ -6,8 +6,8 @@ import { Effect, Record as Rec, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
 import { PREFIX } from "./app-name.ts";
-import { SECURITY_HEADERS } from "./security-headers.ts";
 import { site } from "./src/shared/config/site.ts";
+import { SECURITY_HEADERS } from "./worker/security-headers.ts";
 
 const DOMAIN = new URL(site.url).hostname;
 
