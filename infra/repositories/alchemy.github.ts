@@ -82,10 +82,15 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
     "sts2-mods": {
       description: "Slay the Spire 2 の Mod をまとめて管理する monorepo",
     },
+    "vst-plugins": {
+      description: "masseater's VST3 / CLAP audio plugins, written in Rust",
+    },
     "homebrew-tap": {
       description: "Homebrew tap for masseater's tools",
     },
   };
+
+const CREATES: readonly string[] = ["vst-plugins"];
 
 const ARCHIVES: ReadonlySet<string> = new Set([
   "mst-ja-decision-bench",
@@ -122,6 +127,34 @@ const rulesOf = (
   };
 };
 
+type Target = Readonly<{ id: string; name: string; props: Partial<RepositoryProps> }>;
+
+const targetsOf = (managed: readonly ManagedRepository[]): readonly Target[] => [
+  ...pipe(
+    managed,
+    Arr.map((repository) => ({
+      id: `Repository${repository.id}`,
+      name: repository.name,
+      props: policyOf(repository),
+    })),
+  ),
+  ...pipe(
+    CREATES,
+    Arr.filter(
+      (name) =>
+        !pipe(
+          managed,
+          Arr.some((repository) => repository.name === name),
+        ),
+    ),
+    Arr.map((name) => ({
+      id: `Create${name}`,
+      name,
+      props: { ...PUBLIC_POLICY, ...PUBLIC_PROFILES[name] },
+    })),
+  ),
+];
+
 const github: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   "masseater-dev-github",
   {
@@ -131,13 +164,9 @@ const github: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
   Effect.gen(function* stack() {
     const managed = yield* repositories;
     yield* pipe(
-      managed,
-      Effect.forEach((repository) =>
-        Repository(`Repository${repository.id}`, {
-          owner: OWNER,
-          name: repository.name,
-          ...policyOf(repository),
-        }),
+      targetsOf(managed),
+      Effect.forEach((target) =>
+        Repository(target.id, { owner: OWNER, name: target.name, ...target.props }),
       ),
     );
     const active = pipe(

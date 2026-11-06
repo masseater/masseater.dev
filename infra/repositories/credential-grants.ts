@@ -73,6 +73,7 @@ const RELEASE_REPOSITORIES: readonly string[] = [
   "lint-kit",
   "measure-everything",
   "typescript-template",
+  "vst-plugins",
 ];
 
 const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
