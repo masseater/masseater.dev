@@ -4,7 +4,7 @@ import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect } from "effect";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, requireAppPrefix, TRACE_DESTINATION } from "./app-name.ts";
 import { BASE_PATH } from "./base-path.ts";
 import { ZONE } from "./cloudflare.ts";
 
@@ -31,7 +31,10 @@ const web = Effect.gen(function* web() {
 
 export default Stack(
   APP_NAME,
-  { providers: withWorkersTracing(providers()), state: state() },
+  {
+    providers: withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers()),
+    state: state(),
+  },
   Effect.gen(function* stack() {
     const { url } = yield* web;
     yield* requireAppPrefix;

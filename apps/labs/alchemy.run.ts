@@ -3,7 +3,7 @@ import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
 import { Stack } from "alchemy";
 import { Array as Arr, Effect, pipe } from "effect";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, requireAppPrefix, TRACE_DESTINATION } from "./app-name.ts";
 import { ZONE } from "./cloudflare.ts";
 import { ASSETS_DIR, PAGES } from "./pages.ts";
 
@@ -23,7 +23,10 @@ const site = Website.StaticSite("Labs", {
 
 export default Stack(
   APP_NAME,
-  { providers: withWorkersTracing(providers()), state: state() },
+  {
+    providers: withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers()),
+    state: state(),
+  },
   Effect.gen(function* stack() {
     const { url } = yield* site;
     yield* requireAppPrefix;

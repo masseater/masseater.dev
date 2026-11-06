@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "@masseater.dev/cloudflare-account": "workspace:*"
+  },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",

@@ -1,3 +1,4 @@
+import { run } from "@r_masseater/workers-tracing/effect";
 import { Array as Arr, DateTime, Effect, pipe } from "effect";
 import { Feed } from "feed";
 
@@ -41,7 +42,7 @@ const toFeed = (entries: readonly Entry[]): string => {
 };
 
 const feedResponse = (): Promise<Response> =>
-  Effect.runPromise(
+  run(
     allEntries.pipe(
       Effect.map(
         (entries) =>

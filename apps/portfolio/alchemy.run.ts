@@ -9,7 +9,12 @@ import type { CompiledStack } from "alchemy";
 import { Effect, Option } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts";
+import {
+  APP_NAME,
+  CI_TELEMETRY_AUDIENCE,
+  TRACE_DESTINATION,
+  requireAppPrefix,
+} from "./app-name.ts";
 import { site } from "./src/shared/config/site.ts";
 
 const DOMAIN = new URL(site.url).hostname;
@@ -48,7 +53,10 @@ type WebEnv = InferEnv<typeof web>;
 
 const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   APP_NAME,
-  { providers: withWorkersTracing(providers()), state: state() },
+  {
+    providers: withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers()),
+    state: state(),
+  },
   Effect.gen(function* stack() {
     const { url } = yield* web;
     if ((yield* Stage) === PRODUCTION_STAGE) {

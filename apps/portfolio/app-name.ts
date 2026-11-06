@@ -6,6 +6,5 @@ const { prefix: PREFIX, requireAppPrefix } = appNamed(APP_NAME);
 
 const CI_TELEMETRY_AUDIENCE = `${PREFIX}ci-telemetry`;
 
-const TRACE_DESTINATION = `${PREFIX}traces`;
-
-export { APP_NAME, CI_TELEMETRY_AUDIENCE, PREFIX, TRACE_DESTINATION, requireAppPrefix };
+export { APP_NAME, CI_TELEMETRY_AUDIENCE, PREFIX, requireAppPrefix };
+export { TRACE_DESTINATION } from "@masseater.dev/cloudflare-account/trace-destination";
