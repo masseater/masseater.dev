@@ -86,6 +86,19 @@
         cursor: grab;
         overflow: hidden;
       }
+      .keys {
+        position: absolute;
+        left: max(16px, env(safe-area-inset-left, 0px));
+        bottom: 12px;
+        margin: 0;
+        font: 12px var(--f-mono);
+        color: var(--muted);
+        pointer-events: none;
+        opacity: 0;
+      }
+      .stage:focus-visible .keys {
+        opacity: 1;
+      }
       .stage:focus-visible {
         outline: 2px solid var(--accent);
         outline-offset: -2px;
@@ -1018,10 +1031,18 @@
   </head>
   <body>
     <div class="app">
-      <div class="stage" id="stage" tabindex="0" aria-label="束を振る ←→↑↓">
+      <div
+        class="stage"
+        id="stage"
+        role="group"
+        tabindex="0"
+        aria-label="束"
+        aria-describedby="stage-keys"
+      >
         <canvas id="cv" role="img" aria-label="紐で吊った種子の殻の束"></canvas>
         <div class="title"><h1>Pod Rattle</h1></div>
         <div class="hud" id="hud" aria-hidden="true">0 hits/s</div>
+        <p class="keys" id="stage-keys">←→↑↓ で振る</p>
         <button id="start" type="button">▶ 音を出す</button>
       </div>
       <aside class="rail">
