@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 import { constVoid } from "effect/Function";
 
 import { SCREEN } from "#/features/dance-stage/model/effect";
@@ -125,8 +125,18 @@ const createVideo = (): HTMLVideoElement => {
   return video;
 };
 
+const taggedError = Schema.TaggedError;
+
+class VideoBlocked extends taggedError<VideoBlocked, { readonly brand: unique symbol }>()(
+  "VideoBlocked",
+  { message: Schema.String },
+) {}
+
 const play: Fn<HTMLVideoElement, Effect.Effect<void>> = (video) =>
-  Effect.tryPromise(() => video.play()).pipe(
+  Effect.tryPromise({
+    try: () => video.play(),
+    catch: (cause) => VideoBlocked.make({ message: String(cause) }),
+  }).pipe(
     Effect.matchEffect({
       onFailure: (error) => Effect.logWarning("セイキンダンスの動画を再生できない", error),
       onSuccess: () => Effect.void,

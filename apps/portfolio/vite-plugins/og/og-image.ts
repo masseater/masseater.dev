@@ -6,11 +6,12 @@ import type { Font } from "satori";
 import type { Plugin } from "vite-plus";
 import { parse } from "yaml";
 
+import { categories } from "#/entities/entry/model/category.ts";
+import { entryOgImagePath } from "#/entities/entry/model/entry.ts";
+import { site } from "#/shared/config/site.ts";
+
 import { BOLD, JAPANESE, LATIN, REGULAR, cardElement, siteElement } from "./og-card.ts";
 import type { Card } from "./og-card.ts";
-import { categories } from "./src/entities/entry/model/category.ts";
-import { entryOgImagePath } from "./src/entities/entry/model/entry.ts";
-import { site } from "./src/shared/config/site.ts";
 
 const CLIENT_ENVIRONMENT = "client";
 const FRONTMATTER = /^---\n(?<yaml>[\s\S]*?)\n---/u;

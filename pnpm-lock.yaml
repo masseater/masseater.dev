@@ -726,6 +726,9 @@ importers:
       '@masseater.dev/alchemy-app-name':
         specifier: workspace:*
         version: link:../../infra/alchemy-app-name
+      '@masseater.dev/cloudflare-account':
+        specifier: workspace:*
+        version: link:../../infra/cloudflare-account
       '@masseater.dev/repositories':
         specifier: workspace:*
         version: link:../../infra/repositories
@@ -970,6 +973,25 @@ importers:
       effect:
         specifier: 4.1.2
         version: 4.1.2
+
+  infra/cloudflare-account:
+    dependencies:
+      '@alchemy.run/cloudflare':
+        specifier: catalog:stack
+        version: 2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(alchemy@2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(effect@4.1.2)(ws@8.22.0))(effect@4.1.2)(typescript@5.9.3)
+      alchemy:
+        specifier: catalog:stack
+        version: 2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(effect@4.1.2)(ws@8.22.0)
+      effect:
+        specifier: 4.1.2
+        version: 4.1.2
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 5.20261102.1
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
 
   infra/repositories:
     dependencies:
