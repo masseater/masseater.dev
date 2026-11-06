@@ -7,6 +7,7 @@ import {
   providers,
   state,
 } from "@alchemy.run/cloudflare";
+import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
 import { Stack } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
@@ -18,7 +19,6 @@ import { grantPolicies } from "./credential-grants.ts";
 
 const DOMAIN = "masseater.dev";
 const CREDENTIAL_BROKER_HOST = `credentials.${DOMAIN}`;
-const COMPATIBILITY = { date: "2026-08-25" } as const;
 const GITHUB_APP_DATABASE = `${PREFIX}GitHubApp-prod-zcxmorxkzgzaqw2z`;
 
 const npmTokenBinding = Effect.fn("npmTokenBinding")(function* npmTokenBinding(
@@ -60,7 +60,7 @@ const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.Store) {
 
 const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   CREDENTIAL_BROKER_AUDIENCE,
-  { providers: providers(), state: state() },
+  { providers: withWorkersTracing(providers()), state: state() },
   Effect.gen(function* stack() {
     const { accountId } = yield* yield* CloudflareEnvironment;
     const zoneId = yield* Zone.resolveZoneId({ accountId, zone: DOMAIN, hostname: DOMAIN }).pipe(
@@ -83,7 +83,6 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
     const { url } = yield* Workers.Worker("CredentialBroker", {
       name: CREDENTIAL_BROKER_AUDIENCE,
       main: "./credential-broker.worker.ts",
-      compatibility: COMPATIBILITY,
       logpush: true,
       domain: CREDENTIAL_BROKER_HOST,
       crons: ["17 18 * * *"],
@@ -93,10 +92,6 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
         GITHUB_APP,
         ACCOUNT_ID: accountId,
         GRANTS,
-      },
-      observability: {
-        enabled: true,
-        logs: { enabled: true, invocationLogs: false, persist: true },
       },
     });
     return { url };

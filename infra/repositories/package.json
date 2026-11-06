@@ -21,6 +21,7 @@
     "@peculiar/asn1-pkcs8": "catalog:",
     "@peculiar/asn1-rsa": "catalog:",
     "@peculiar/asn1-schema": "catalog:",
+    "@r_masseater/workers-tracing": "catalog:stack",
     "alchemy": "catalog:stack",
     "effect": "catalog:stack",
     "jose": "catalog:",
