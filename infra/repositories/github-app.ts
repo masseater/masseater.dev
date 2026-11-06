@@ -211,12 +211,14 @@ const authenticate = (
 ): Effect.Effect<typeof Conversion.Type, GitHubAppFailed> =>
   toPkcs8(body.pem).pipe(
     Effect.flatMap((privateKey) =>
-      Effect.tryPromise(() => githubAppJwt({ id: body.id, privateKey })),
+      Effect.tryPromise({ try: () => githubAppJwt({ id: body.id, privateKey }), catch: failed }),
     ),
     Effect.flatMap(({ token }) =>
-      Effect.tryPromise(() =>
-        new Octokit({ auth: token, userAgent: GITHUB_APP_NAME }).rest.apps.getAuthenticated(),
-      ),
+      Effect.tryPromise({
+        try: () =>
+          new Octokit({ auth: token, userAgent: GITHUB_APP_NAME }).rest.apps.getAuthenticated(),
+        catch: failed,
+      }),
     ),
     Effect.flatMap(({ data }) => Schema.decodeUnknownEffect(AuthenticatedApp)(data)),
     Effect.mapBoth({ onSuccess: (app) => ({ ...app, ...body }), onFailure: failed }),
@@ -224,7 +226,7 @@ const authenticate = (
 
 const importApp = (input: RouteInput): Effect.Effect<Response, GitHubAppFailed> =>
   verify(input.request).pipe(
-    Effect.andThen(Effect.tryPromise(() => input.request.json())),
+    Effect.andThen(Effect.tryPromise({ try: () => input.request.json(), catch: failed })),
     Effect.flatMap(Schema.decodeUnknownEffect(ImportBody)),
     Effect.mapError(failed),
     Effect.flatMap(authenticate),

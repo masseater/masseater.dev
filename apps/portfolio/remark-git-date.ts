@@ -1,4 +1,4 @@
-import { Array as Arr, DateTime, Effect, Option, String as Str, pipe } from "effect";
+import { Array as Arr, DateTime, Effect, Option, Schema, String as Str, pipe } from "effect";
 import type { Root, RootContent, Yaml } from "mdast";
 import { simpleGit } from "simple-git";
 import type { Plugin } from "unified";
@@ -8,10 +8,20 @@ const DATE_LINES = /^(?:date|updated):.*\n?/gmu;
 
 const git = simpleGit();
 
+const taggedError = Schema.TaggedError;
+
+class GitLogFailed extends taggedError<GitLogFailed, { readonly brand: unique symbol }>()(
+  "GitLogFailed",
+  { reason: Schema.String },
+) {}
+
 type Dates = Readonly<{ date: string; updated: string }>;
 
 const commitDates = (path: string): Effect.Effect<readonly string[]> =>
-  Effect.tryPromise(() => git.raw(["log", "--follow", "--format=%cs", "--", path])).pipe(
+  Effect.tryPromise({
+    try: () => git.raw(["log", "--follow", "--format=%cs", "--", path]),
+    catch: (error) => GitLogFailed.make({ reason: String(error) }),
+  }).pipe(
     Effect.map((stdout) => pipe(stdout, Str.split("\n"), Arr.filter(Str.isNonEmpty))),
     Effect.orElseSucceed(() => []),
   );

@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 import { constVoid } from "effect/Function";
 
 import { SCREEN } from "#/features/dance-stage/model/effect";
@@ -13,6 +13,13 @@ import type { Glyphs } from "./glyphs";
 import { createGpuRenderer } from "./gpu";
 import { BANDS, createRenderer, emptyBands, emptyPose, POSE_FIELDS, POSE_POINTS } from "./renderer";
 import type { Frame, Renderer } from "./renderer";
+
+const taggedError = Schema.TaggedError;
+
+class PlaybackRejected extends taggedError<PlaybackRejected, { readonly brand: unique symbol }>()(
+  "PlaybackRejected",
+  { reason: Schema.String },
+) {}
 
 const DANCE_SRC = "/seikin-techniques/dance.mp4";
 const HISTORY_SRC = "/seikin-techniques/history.jpg";
@@ -126,7 +133,10 @@ const createVideo = (): HTMLVideoElement => {
 };
 
 const play: Fn<HTMLVideoElement, Effect.Effect<void>> = (video) =>
-  Effect.tryPromise(() => video.play()).pipe(
+  Effect.tryPromise({
+    try: () => video.play(),
+    catch: (error) => PlaybackRejected.make({ reason: String(error) }),
+  }).pipe(
     Effect.matchEffect({
       onFailure: (error) => Effect.logWarning("セイキンダンスの動画を再生できない", error),
       onSuccess: () => Effect.void,

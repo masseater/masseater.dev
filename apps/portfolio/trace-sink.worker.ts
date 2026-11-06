@@ -11,6 +11,15 @@ import {
 
 import type { TraceSinkEnv } from "./trace-sink.ts";
 
+const taggedError = Schema.TaggedError;
+
+class UnreadableBody extends taggedError<UnreadableBody, { readonly brand: unique symbol }>()(
+  "UnreadableBody",
+  {
+    reason: Schema.String,
+  },
+) {}
+
 const KeyValue = Schema.Struct({
   key: Schema.String,
   value: Schema.Record(Schema.String, Schema.Unknown),
@@ -121,7 +130,10 @@ const receive = (request: Request, env: TraceSinkEnv): Effect.Effect<Response> =
       yield* Effect.logWarning("otlp.unauthorized");
       return Response.json({});
     }
-    const body = yield* Effect.tryPromise(() => bodyOf(request));
+    const body = yield* Effect.tryPromise({
+      try: () => bodyOf(request),
+      catch: (error) => UnreadableBody.make({ reason: String(error) }),
+    });
     const { resourceSpans } = yield* Schema.decodeUnknownEffect(TraceRequest)(body);
     yield* Effect.forEach(pipe(resourceSpans, Arr.flatMap(spansOf)), logSpan, { discard: true });
     return Response.json({});
