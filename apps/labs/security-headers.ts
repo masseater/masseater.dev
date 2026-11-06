@@ -17,11 +17,14 @@ const SECURITY_HEADERS = {
 
 const ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
-const contentSecurityPolicy = (styleHashes: readonly string[]): string =>
+const contentSecurityPolicy = ({
+  scriptSources,
+  styleHashes,
+}: Readonly<{ scriptSources: readonly string[]; styleHashes: readonly string[] }>): string =>
   pipe(
     [
       "default-src 'self'",
-      `script-src 'self' ${WEB_ANALYTICS_SCRIPT_ORIGIN}`,
+      Arr.join(["script-src 'self'", WEB_ANALYTICS_SCRIPT_ORIGIN, ...scriptSources], " "),
       Arr.join(["style-src 'self'", ...styleHashes], " "),
       "style-src-attr 'unsafe-inline'",
       "img-src 'self' data: blob:",
