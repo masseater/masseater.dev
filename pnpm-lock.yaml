@@ -291,11 +291,11 @@ catalogs:
       specifier: 0.10.2
       version: 0.10.2
     d3-array:
-      specifier: 3.2.4
-      version: 3.2.4
+      specifier: 3.2.5
+      version: 3.2.5
     d3-polygon:
-      specifier: 3.0.1
-      version: 3.0.1
+      specifier: 3.0.2
+      version: 3.0.2
     eslint-plugin-baseline-js:
       specifier: 0.7.7
       version: 0.7.7
@@ -637,10 +637,10 @@ importers:
         version: 2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.2)(ws@8.22.0)
       d3-array:
         specifier: 'catalog:'
-        version: 3.2.4
+        version: 3.2.5
       d3-polygon:
         specifier: 'catalog:'
-        version: 3.0.1
+        version: 3.0.2
       effect:
         specifier: 4.1.2
         version: 4.1.2
@@ -7052,8 +7052,8 @@ packages:
   cuint@0.2.2:
     resolution: {integrity: sha512-d4ZVpCW31eWwCMe1YT3ur7mUDnTXbgwyzaL320DrcRT45rfjYxkt5QWLrmOJ+/UEAI2+fQgKe/fCjR8l4TpRgw==}
 
-  d3-array@3.2.4:
-    resolution: {integrity: sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==}
+  d3-array@3.2.5:
+    resolution: {integrity: sha512-Th8qGXoBalmWsstpkuhmBuTsBQIFqYOJtjlBvNVvBfJ8E3uYusBUwUR8HU20U0qKKQkgCvKyR1YjiozWadk5QA==}
     engines: {node: '>=12'}
 
   d3-color@3.1.0:
@@ -7076,8 +7076,8 @@ packages:
     resolution: {integrity: sha512-3bYs1rOD33uo8aqJfKP3JWPAibgw8Zm2+L9vBKEHJ2Rg+viTR7o5Mmv5mZcieN+FRYaAOWX5SJATX6k1PWz72g==}
     engines: {node: '>=12'}
 
-  d3-polygon@3.0.1:
-    resolution: {integrity: sha512-3vbA7vXYwfe1SYhED++fPUQlWSYTTGmFmQiany/gdbiWgU/iEyQzyymwL9SkJjFFuCS4902BSzewVGsHHmHtXg==}
+  d3-polygon@3.0.2:
+    resolution: {integrity: sha512-WAUvPudGU1Dn4mDPfb6+JnnbeVEV53hG/BoT+bxts6AkZsOpTEiV1jHYX+2vtwCICNFG9Wxv8QS+eW1zE/Dwfg==}
     engines: {node: '>=12'}
 
   d3-selection@3.0.0:
@@ -17367,7 +17367,7 @@ snapshots:
 
   cuint@0.2.2: {}
 
-  d3-array@3.2.4:
+  d3-array@3.2.5:
     dependencies:
       internmap: 2.0.3
 
@@ -17386,7 +17386,7 @@ snapshots:
     dependencies:
       d3-color: 3.1.0
 
-  d3-polygon@3.0.1: {}
+  d3-polygon@3.0.2: {}
 
   d3-selection@3.0.0: {}
 
