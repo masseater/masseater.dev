@@ -82,6 +82,10 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
     "sts2-mods": {
       description: "Slay the Spire 2 の Mod をまとめて管理する monorepo",
     },
+    "pod-rattle": {
+      description: "Physical-modeling seed-pod rattle as a VST3 / CLAP instrument, written in Rust",
+      homepage: "https://masseater.dev/pod-rattle/",
+    },
     "homebrew-tap": {
       description: "Homebrew tap for masseater's tools",
     },
