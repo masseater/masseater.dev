@@ -1,0 +1,1133 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="text-scale" content="scale" />
+    <title>Pod Rattle | masseater.dev</title>
+    <meta
+      name="description"
+      content="録音サンプルを使わず、3D衝突物理とモーダル共鳴器だけで鳴らす種子殻ラトルの物理モデリングシンセ"
+    />
+    <style>
+      /* Layout: one-screen instrument. Stage (live simulation) fills the left; a narrow control rail on the right, stacked below on phones. */
+      :root {
+        --bg: #ece7df;
+        --stage: #f6f2ec;
+        --fg: #2a1f1a;
+        --muted: #7a6a5f;
+        --line: #d6ccc0;
+        --pod: #6b2a1f;
+        --jute: #a8926a;
+        --brass: #a87b23;
+        --accent: #8a3b1e;
+        --flash: #d9a441;
+        --track: #d9cfc3;
+        --f-display: "Shippori Mincho B1", "Hiragino Mincho ProN", serif;
+        --f-body: "Zen Kaku Gothic New", "Hiragino Sans", system-ui, sans-serif;
+        --f-mono: "IBM Plex Mono", ui-monospace, monospace;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #17120f;
+          --stage: #1f1915;
+          --fg: #efe6dc;
+          --muted: #a59585;
+          --line: #3a2f28;
+          --pod: #8e3c2a;
+          --jute: #8f7b58;
+          --brass: #c9973a;
+          --accent: #e08a5a;
+          --flash: #f2c46b;
+          --track: #3a2f28;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #17120f;
+        --stage: #1f1915;
+        --fg: #efe6dc;
+        --muted: #a59585;
+        --line: #3a2f28;
+        --pod: #8e3c2a;
+        --jute: #8f7b58;
+        --brass: #c9973a;
+        --accent: #e08a5a;
+        --flash: #f2c46b;
+        --track: #3a2f28;
+        color-scheme: dark;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--f-body);
+        font-size: 0.875rem;
+        margin: 0;
+      }
+      .app {
+        height: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 19rem;
+        gap: 0;
+      }
+      .stage {
+        position: relative;
+        background: var(--stage);
+        min-height: 0;
+        touch-action: none;
+        cursor: grab;
+        overflow: hidden;
+      }
+      .keys {
+        position: absolute;
+        left: max(16px, env(safe-area-inset-left, 0px));
+        bottom: 12px;
+        margin: 0;
+        font: 0.75rem var(--f-mono);
+        color: var(--muted);
+        pointer-events: none;
+        opacity: 0;
+      }
+      .stage:focus-visible .keys {
+        opacity: 1;
+      }
+      .stage:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+      }
+      .stage:active {
+        cursor: grabbing;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .title {
+        position: absolute;
+        left: max(16px, env(safe-area-inset-left, 0px));
+        top: 14px;
+        pointer-events: none;
+      }
+      .title h1 {
+        font-family: var(--f-display);
+        font-weight: 800;
+        font-size: 1.375rem;
+        margin: 0;
+        letter-spacing: 0.02em;
+      }
+      .hud {
+        position: absolute;
+        right: 16px;
+        bottom: 12px;
+        font-family: var(--f-mono);
+        font-size: 0.75rem;
+        color: var(--muted);
+        pointer-events: none;
+        font-variant-numeric: tabular-nums;
+      }
+      #start {
+        position: absolute;
+        left: 50%;
+        top: 72%;
+        transform: translate(-50%, -50%);
+        font: 700 1rem var(--f-body);
+        white-space: nowrap;
+        padding: 0.875em 1.75em;
+        border-radius: 999px;
+        border: 0;
+        background: var(--accent);
+        color: var(--stage);
+        cursor: pointer;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+      }
+      #start:focus-visible,
+      button:focus-visible,
+      input:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .rail {
+        border-left: 1px solid var(--line);
+        padding-block: 16px;
+        padding-left: 20px;
+        padding-right: max(20px, env(safe-area-inset-right, 0px));
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .group h2 {
+        font: 600 0.6875rem var(--f-body);
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        margin: 0;
+      }
+      .presets {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+      }
+      .presets button {
+        font: 500 0.8125rem var(--f-body);
+        padding: 7px 0;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--fg);
+        cursor: pointer;
+      }
+      .presets button[aria-pressed="true"] {
+        background: var(--fg);
+        color: var(--stage);
+        border-color: var(--fg);
+      }
+      .ctl {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: baseline;
+        gap: 2px 8px;
+      }
+      .ctl label {
+        font-weight: 500;
+      }
+      .ctl output {
+        white-space: nowrap;
+        justify-self: end;
+        font: 0.75rem var(--f-mono);
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .ctl input {
+        grid-column: 1/-1;
+        width: 100%;
+        accent-color: var(--accent);
+        margin: 2px 0 0;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .switch {
+        font: 500 0.8125rem var(--f-body);
+        padding: 6px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--fg);
+        cursor: pointer;
+      }
+      .switch[aria-pressed="true"] {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--stage);
+      }
+      @media (max-width: 47.5em) {
+        .app {
+          grid-template-columns: 1fr;
+          grid-template-rows: min(58svh, 520px) auto;
+          height: auto;
+        }
+        html,
+        body {
+          height: auto;
+        }
+        .stage {
+          height: min(58svh, 520px);
+        }
+        .rail {
+          border-left: 0;
+          border-top: 1px solid var(--line);
+          padding-left: max(16px, env(safe-area-inset-left, 0px));
+          padding-right: max(16px, env(safe-area-inset-right, 0px));
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #start {
+          box-shadow: none;
+        }
+      }
+    </style>
+    <script type="module">
+      import "@fontsource/shippori-mincho-b1/600.css";
+      import "@fontsource/shippori-mincho-b1/800.css";
+      import "@fontsource/zen-kaku-gothic-new/400.css";
+      import "@fontsource/zen-kaku-gothic-new/500.css";
+      import "@fontsource/zen-kaku-gothic-new/700.css";
+      import "@fontsource/ibm-plex-mono/400.css";
+      import "@fontsource/ibm-plex-mono/500.css";
+
+      function createEngine(sr, opts) {
+        opts = opts || {};
+        const K = 12,
+          RING = 128,
+          RM = RING - 1,
+          SUB = 16,
+          MAXP = 64,
+          dt = SUB / sr,
+          AUDIO = !!opts.audio;
+        const P = {
+          count: 28,
+          material: 0.1,
+          pitch: 1,
+          decay: 1,
+          rest: 0.5,
+          len: 1,
+          gain: 1,
+          bright: 0,
+          spread: 1,
+          hiDecay: 1,
+          hard: 1,
+        };
+        const A = { x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, tx: 0, ty: 0 };
+        const AU = { on: true, rate: 2.6, amp: 0.5, ph: 0 };
+        const F64 = () => new Float64Array(MAXP),
+          FK = () => new Float64Array(MAXP * K);
+        const px = F64(),
+          py = F64(),
+          pz = F64(),
+          vx = F64(),
+          vy = F64(),
+          vz = F64(),
+          rad = F64(),
+          ms = F64(),
+          Ln = F64(),
+          ox = F64(),
+          oz = F64(),
+          sz = F64(),
+          sf = F64(),
+          pl = F64(),
+          pr = F64();
+        const sR = FK(),
+          a1 = FK(),
+          a2 = FK(),
+          y1 = FK(),
+          y2 = FK(),
+          gk = FK(),
+          ring = new Float64Array(MAXP * K * RING);
+        const active = new Int32Array(MAXP),
+          flash = new Float32Array(MAXP);
+        const woodR = [1, 2.1, 3.3, 4.6, 6.0, 7.4, 8.9, 10.5, 12.2, 14.0, 16.0, 18.1],
+          metR = [1, 1.594, 2.136, 2.653, 3.156, 4.21, 5.43, 6.92, 8.61, 10.73, 12.94, 15.42];
+        let fTop = 0,
+          n = 0,
+          sub = 0,
+          rp = 0,
+          hits = 0,
+          hitRate = 0,
+          hitT = 0,
+          Ecur = 3e9,
+          T0cur = 0.02,
+          f0cur = 2400;
+        let seed = 1;
+        const rnd = () => {
+          seed = (seed * 1664525 + 1013904223) >>> 0;
+          return seed / 4294967296;
+        };
+        const lerp = (a, b, t) => a + (b - a) * t,
+          lg = (a, b, t) => Math.exp(lerp(Math.log(a), Math.log(b), t));
+        const SCALE = 2.2;
+        let matGain = 28;
+
+        function build() {
+          const old = n;
+          n = Math.max(1, Math.min(MAXP, P.count | 0));
+          seed = 777;
+          for (let i = 0; i < n; i++) {
+            const s = 0.75 + 0.5 * rnd();
+            sz[i] = s;
+            rad[i] = 0.016 * s;
+            ms[i] = 0.004 * s * s;
+            Ln[i] = 0.045 + 0.085 * rnd();
+            const an = rnd() * 6.2832,
+              rr = 0.004 + 0.009 * rnd();
+            ox[i] = Math.cos(an) * rr;
+            oz[i] = Math.sin(an) * rr;
+            sf[i] = rnd();
+            for (let k = 0; k < K; k++) sR[i * K + k] = rnd();
+            if (i >= old) {
+              px[i] = A.x + ox[i] * 4;
+              py[i] = A.y - Ln[i] * P.len * 0.95;
+              pz[i] = A.z + oz[i] * 4;
+              vx[i] = vy[i] = vz[i] = 0;
+            }
+          }
+          for (let i = n; i < old; i++) {
+            active[i] = 0;
+          }
+          modes();
+        }
+        function modes() {
+          const mt = P.material;
+          f0cur = P.pitch * lg(2300, 1700, mt);
+          T0cur = lg(0.022, 2.4, mt) * P.decay;
+          Ecur = lg(2.5e9, 1.1e11, mt) * P.hard;
+          matGain = lg(28, 3, mt);
+          const pw = lerp(1.7, 0.45, mt) / P.hiDecay,
+            tilt = Math.max(-0.5, lerp(0.95, 0.3, mt) - P.bright);
+          fTop = 0;
+          for (let i = 0; i < n; i++) {
+            const f0 = (f0cur / sz[i]) * (0.92 + 0.16 * sf[i]);
+            for (let k = 0; k < K; k++) {
+              const id = i * K + k,
+                ratio =
+                  (1 + (lerp(woodR[k], metR[k], mt) - 1) * P.spread) * (1 + 0.05 * (sR[id] - 0.5)),
+                f = f0 * ratio;
+              if (f > 0.45 * sr) {
+                a1[id] = 0;
+                a2[id] = 0;
+                gk[id] = 0;
+                continue;
+              }
+              const w = (2 * Math.PI * f) / sr,
+                T = T0cur / Math.pow(ratio, pw),
+                r = Math.pow(10, -3 / (T * sr));
+              a1[id] = 2 * r * Math.cos(w);
+              a2[id] = r * r;
+              gk[id] = Math.sin(w) * Math.pow(k + 1, -tilt) * (k ? lerp(0.55, 1, mt) : 1);
+              if (f > fTop) fTop = f;
+            }
+          }
+        }
+        function excite(i, F, ts, off) {
+          const N = Math.ceil(ts);
+          for (let k = 0; k < K; k++) {
+            const id = i * K + k;
+            const g = gk[id];
+            if (!g) continue;
+            const amp = (F * g * (0.2 + 0.8 * rnd()) * SCALE * matGain) / sr,
+              base = id * RING;
+            for (let s = 0; s < N; s++) {
+              const ph = (s + 0.5) / ts;
+              if (ph >= 1) break;
+              ring[base + ((rp + off + s) & RM)] += amp * Math.sin(Math.PI * ph);
+            }
+          }
+          active[i] = Math.ceil(sr * T0cur * 1.3) + RING;
+        }
+        function hit(i, j, vn, J, frac) {
+          hits++;
+          flash[i] = Math.min(1, flash[i] + J * 30);
+          flash[j] = Math.min(1, flash[j] + J * 30);
+          if (!AUDIO) return;
+          const me = (ms[i] * ms[j]) / (ms[i] + ms[j]),
+            Es = Ecur / 1.8;
+          let tau = 2.87 * Math.pow((me * me) / (0.003 * Es * Es * vn), 0.2),
+            ts = tau * sr;
+          if (ts < 1) {
+            ts = 1;
+            tau = 1 / sr;
+          }
+          if (ts > 48) {
+            ts = 48;
+            tau = 48 / sr;
+          }
+          const F = (J * Math.PI) / (2 * tau),
+            off = Math.max(0, Math.min(SUB - 1, Math.floor(SUB * (1 - frac))));
+          excite(i, F, ts, off);
+          excite(j, F, ts, off);
+        }
+        function physics() {
+          if (AU.on) {
+            AU.ph += 2 * Math.PI * AU.rate * dt;
+            const a = AU.amp;
+            A.tx = a * 0.1 * Math.sin(AU.ph) + a * 0.012 * Math.sin(AU.ph * 2.7 + 1.3);
+            A.ty = a * 0.028 * Math.sin(2 * AU.ph + 0.6);
+          }
+          const kk = 1 - Math.exp(-dt * 70);
+          const nx = A.x + (A.tx - A.x) * kk,
+            ny = A.y + (A.ty - A.y) * kk;
+          A.vx = (nx - A.x) / dt;
+          A.vy = (ny - A.y) / dt;
+          A.vz = 0;
+          A.x = nx;
+          A.y = ny;
+          const damp = 1 - dt * 0.35,
+            e = P.rest,
+            mu = 0.25;
+          for (let i = 0; i < n; i++) {
+            vy[i] -= 9.81 * dt;
+            vx[i] *= damp;
+            vy[i] *= damp;
+            vz[i] *= damp;
+            px[i] += vx[i] * dt;
+            py[i] += vy[i] * dt;
+            pz[i] += vz[i] * dt;
+            const qx = A.x + ox[i],
+              qy = A.y,
+              qz = A.z + oz[i],
+              L = Ln[i] * P.len;
+            let dx = px[i] - qx,
+              dy = py[i] - qy,
+              dz = pz[i] - qz;
+            const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (d > L) {
+              dx /= d;
+              dy /= d;
+              dz /= d;
+              px[i] = qx + dx * L;
+              py[i] = qy + dy * L;
+              pz[i] = qz + dz * L;
+              const vr = (vx[i] - A.vx) * dx + (vy[i] - A.vy) * dy + (vz[i] - A.vz) * dz;
+              if (vr > 0) {
+                vx[i] -= dx * vr * 1.02;
+                vy[i] -= dy * vr * 1.02;
+                vz[i] -= dz * vr * 1.02;
+              }
+            }
+            // keep pods below the knot
+            if (py[i] > qy - rad[i]) {
+              py[i] = qy - rad[i];
+              if (vy[i] > A.vy) vy[i] = A.vy;
+            }
+          }
+          for (let i = 0; i < n; i++)
+            for (let j = i + 1; j < n; j++) {
+              const dx = px[i] - px[j],
+                dy = py[i] - py[j],
+                dz = pz[i] - pz[j],
+                R = rad[i] + rad[j],
+                d2 = dx * dx + dy * dy + dz * dz;
+              if (d2 >= R * R || d2 < 1e-14) continue;
+              const d = Math.sqrt(d2),
+                nx_ = dx / d,
+                ny_ = dy / d,
+                nz_ = dz / d,
+                ov = R - d;
+              const rvx = vx[i] - vx[j],
+                rvy = vy[i] - vy[j],
+                rvz = vz[i] - vz[j],
+                vn = rvx * nx_ + rvy * ny_ + rvz * nz_;
+              const wi = 1 / ms[i],
+                wj = 1 / ms[j],
+                ws = wi + wj;
+              px[i] += (nx_ * ov * 0.7 * wi) / ws;
+              py[i] += (ny_ * ov * 0.7 * wi) / ws;
+              pz[i] += (nz_ * ov * 0.7 * wi) / ws;
+              px[j] -= (nx_ * ov * 0.7 * wj) / ws;
+              py[j] -= (ny_ * ov * 0.7 * wj) / ws;
+              pz[j] -= (nz_ * ov * 0.7 * wj) / ws;
+              if (vn >= 0) continue;
+              const loud = -vn > 0.05,
+                J = (-(1 + (loud ? e : 0.05)) * vn) / ws;
+              vx[i] += J * wi * nx_;
+              vy[i] += J * wi * ny_;
+              vz[i] += J * wi * nz_;
+              vx[j] -= J * wj * nx_;
+              vy[j] -= J * wj * ny_;
+              vz[j] -= J * wj * nz_;
+              const tx = rvx - vn * nx_,
+                ty = rvy - vn * ny_,
+                tz = rvz - vn * nz_,
+                vt = Math.sqrt(tx * tx + ty * ty + tz * tz);
+              if (vt > 1e-6) {
+                const jt = Math.min(mu * J, vt / ws) / vt;
+                vx[i] -= jt * wi * tx;
+                vy[i] -= jt * wi * ty;
+                vz[i] -= jt * wi * tz;
+                vx[j] += jt * wj * tx;
+                vy[j] += jt * wj * ty;
+                vz[j] += jt * wj * tz;
+              }
+              if (loud) {
+                const frac = Math.min(1, ov / (-vn * dt));
+                hit(i, j, -vn, J, frac);
+              }
+            }
+          for (let i = 0; i < n; i++) {
+            const p = Math.max(-1, Math.min(1, px[i] / 0.12));
+            const a = ((p + 1) * Math.PI) / 4;
+            pl[i] = Math.cos(a);
+            pr[i] = Math.sin(a);
+          }
+          hitT += dt;
+          if (hitT >= 0.1) {
+            hitRate = hitRate * 0.6 + (hits / hitT) * 0.4;
+            hits = 0;
+            hitT = 0;
+          }
+        }
+        function run(Lo, Ro, len) {
+          for (let s = 0; s < len; s++) {
+            if (sub === 0) physics();
+            if (++sub === SUB) sub = 0;
+            if (!Lo) continue;
+            let l = 0,
+              r = 0;
+            for (let i = 0; i < n; i++) {
+              if (active[i] <= 0) continue;
+              if (--active[i] === 0) {
+                for (let k = 0; k < K; k++) {
+                  y1[i * K + k] = 0;
+                  y2[i * K + k] = 0;
+                }
+                continue;
+              }
+              let y = 0;
+              for (let k = 0; k < K; k++) {
+                const id = i * K + k,
+                  b = id * RING + rp,
+                  x = ring[b];
+                ring[b] = 0;
+                const yn = a1[id] * y1[id] - a2[id] * y2[id] + x;
+                y2[id] = y1[id];
+                y1[id] = yn;
+                y += yn;
+              }
+              l += y * pl[i];
+              r += y * pr[i];
+            }
+            rp = (rp + 1) & RM;
+            const g = P.gain;
+            Lo[s] = Math.tanh(l * g);
+            if (Ro) Ro[s] = Math.tanh(r * g);
+          }
+        }
+        function snapshot() {
+          const st = 7,
+            out = new Float32Array(6 + n * st);
+          out[0] = n;
+          out[1] = A.x;
+          out[2] = A.y;
+          out[3] = A.z;
+          out[4] = hitRate;
+          out[5] = P.material;
+          for (let i = 0; i < n; i++) {
+            const o = 6 + i * st;
+            out[o] = px[i];
+            out[o + 1] = py[i];
+            out[o + 2] = pz[i];
+            out[o + 3] = rad[i];
+            out[o + 4] = flash[i];
+            out[o + 5] = A.x + ox[i];
+            out[o + 6] = A.z + oz[i];
+            flash[i] *= 0.78;
+          }
+          return out;
+        }
+        function getState() {
+          return {
+            n,
+            A: { ...A },
+            AU: { ...AU },
+            p: Array.from({ length: n }, (_, i) => [px[i], py[i], pz[i], vx[i], vy[i], vz[i]]),
+          };
+        }
+        function msg(d) {
+          if (d.type === "p") {
+            const c = P.count;
+            Object.assign(P, d.p);
+            if ((P.count | 0) !== (c | 0) || !n) build();
+            else modes();
+          } else if (d.type === "target") {
+            AU.on = false;
+            A.tx = d.x;
+            A.ty = d.y;
+          } else if (d.type === "auto") {
+            Object.assign(AU, d.a);
+          }
+        }
+        function info() {
+          const me = 0.002,
+            Es = Ecur / 1.8,
+            tau = 2.87 * Math.pow((me * me) / (0.003 * Es * Es * 1), 0.2);
+          return { E: Ecur, T0: T0cur, f0: f0cur, fTop, tau };
+        }
+        if (opts.params) Object.assign(P, opts.params);
+        if (opts.auto) Object.assign(AU, opts.auto);
+        build();
+        if (opts.state) {
+          const s = opts.state;
+          Object.assign(A, s.A);
+          Object.assign(AU, s.AU, opts.auto || {});
+          for (let i = 0; i < Math.min(n, s.p.length); i++) {
+            [px[i], py[i], pz[i], vx[i], vy[i], vz[i]] = s.p[i];
+          }
+        }
+        return { run, snapshot, msg, info, getState, P, AU };
+      }
+
+      const WORKLET =
+        "function createEngine(sr, opts){\n  opts = opts || {};\n  const K=12, RING=128, RM=RING-1, SUB=16, MAXP=64, dt=SUB/sr, AUDIO=!!opts.audio;\n  const P={count:28,material:0.1,pitch:1,decay:1,rest:0.5,len:1,gain:1,bright:0,spread:1,hiDecay:1,hard:1};\n  const A={x:0,y:0,z:0,vx:0,vy:0,vz:0,tx:0,ty:0};\n  const AU={on:true,rate:2.6,amp:0.5,ph:0};\n  const F64=()=>new Float64Array(MAXP), FK=()=>new Float64Array(MAXP*K);\n  const px=F64(),py=F64(),pz=F64(),vx=F64(),vy=F64(),vz=F64(),rad=F64(),ms=F64(),Ln=F64(),ox=F64(),oz=F64(),sz=F64(),sf=F64(),pl=F64(),pr=F64();\n  const sR=FK(),a1=FK(),a2=FK(),y1=FK(),y2=FK(),gk=FK(),ring=new Float64Array(MAXP*K*RING);\n  const active=new Int32Array(MAXP), flash=new Float32Array(MAXP);\n  const woodR=[1,2.1,3.3,4.6,6.0,7.4,8.9,10.5,12.2,14.0,16.0,18.1], metR=[1,1.594,2.136,2.653,3.156,4.21,5.43,6.92,8.61,10.73,12.94,15.42];\n  let fTop=0, n=0, sub=0, rp=0, hits=0, hitRate=0, hitT=0, Ecur=3e9, T0cur=0.02, f0cur=2400;\n  let seed=1; const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};\n  const lerp=(a,b,t)=>a+(b-a)*t, lg=(a,b,t)=>Math.exp(lerp(Math.log(a),Math.log(b),t));\n  const SCALE=2.2; let matGain=28;\n\n  function build(){\n    const old=n; n=Math.max(1,Math.min(MAXP,P.count|0)); seed=777;\n    for(let i=0;i<n;i++){\n      const s=0.75+0.5*rnd(); sz[i]=s; rad[i]=0.016*s; ms[i]=0.004*s*s;\n      Ln[i]=0.045+0.085*rnd();\n      const an=rnd()*6.2832, rr=0.004+0.009*rnd(); ox[i]=Math.cos(an)*rr; oz[i]=Math.sin(an)*rr;\n      sf[i]=rnd(); for(let k=0;k<K;k++) sR[i*K+k]=rnd();\n      if(i>=old){ px[i]=A.x+ox[i]*4; py[i]=A.y-Ln[i]*P.len*0.95; pz[i]=A.z+oz[i]*4; vx[i]=vy[i]=vz[i]=0; }\n    }\n    for(let i=n;i<old;i++){active[i]=0;}\n    modes();\n  }\n  function modes(){\n    const mt=P.material;\n    f0cur=P.pitch*lg(2300,1700,mt);\n    T0cur=lg(0.022,2.4,mt)*P.decay;\n    Ecur=lg(2.5e9,1.1e11,mt)*P.hard; matGain=lg(28,3,mt);\n    const pw=lerp(1.7,0.45,mt)/P.hiDecay, tilt=Math.max(-0.5,lerp(0.95,0.3,mt)-P.bright); fTop=0;\n    for(let i=0;i<n;i++){\n      const f0=f0cur/sz[i]*(0.92+0.16*sf[i]);\n      for(let k=0;k<K;k++){\n        const id=i*K+k, ratio=(1+(lerp(woodR[k],metR[k],mt)-1)*P.spread)*(1+0.05*(sR[id]-0.5)), f=f0*ratio;\n        if(f>0.45*sr){a1[id]=0;a2[id]=0;gk[id]=0;continue;}\n        const w=2*Math.PI*f/sr, T=T0cur/Math.pow(ratio,pw), r=Math.pow(10,-3/(T*sr));\n        a1[id]=2*r*Math.cos(w); a2[id]=r*r;\n        gk[id]=Math.sin(w)*Math.pow(k+1,-tilt)*(k?lerp(0.55,1,mt):1); if(f>fTop) fTop=f;\n      }\n    }\n  }\n  function excite(i,F,ts,off){\n    const N=Math.ceil(ts);\n    for(let k=0;k<K;k++){\n      const id=i*K+k; const g=gk[id]; if(!g) continue;\n      const amp=F*g*(0.2+0.8*rnd())*SCALE*matGain/sr, base=id*RING;\n      for(let s=0;s<N;s++){ const ph=(s+0.5)/ts; if(ph>=1)break; ring[base+((rp+off+s)&RM)]+=amp*Math.sin(Math.PI*ph); }\n    }\n    active[i]=Math.ceil(sr*T0cur*1.3)+RING;\n  }\n  function hit(i,j,vn,J,frac){\n    hits++;\n    flash[i]=Math.min(1,flash[i]+J*30); flash[j]=Math.min(1,flash[j]+J*30);\n    if(!AUDIO) return;\n    const me=ms[i]*ms[j]/(ms[i]+ms[j]), Es=Ecur/1.8;\n    let tau=2.87*Math.pow(me*me/(0.003*Es*Es*vn),0.2), ts=tau*sr;\n    if(ts<1){ts=1;tau=1/sr;} if(ts>48){ts=48;tau=48/sr;}\n    const F=J*Math.PI/(2*tau), off=Math.max(0,Math.min(SUB-1,Math.floor(SUB*(1-frac))));\n    excite(i,F,ts,off); excite(j,F,ts,off);\n  }\n  function physics(){\n    if(AU.on){ AU.ph+=2*Math.PI*AU.rate*dt; const a=AU.amp;\n      A.tx=a*0.1*Math.sin(AU.ph)+a*0.012*Math.sin(AU.ph*2.7+1.3); A.ty=a*0.028*Math.sin(2*AU.ph+0.6); }\n    const kk=1-Math.exp(-dt*70);\n    const nx=A.x+(A.tx-A.x)*kk, ny=A.y+(A.ty-A.y)*kk;\n    A.vx=(nx-A.x)/dt; A.vy=(ny-A.y)/dt; A.vz=0; A.x=nx; A.y=ny;\n    const damp=1-dt*0.35, e=P.rest, mu=0.25;\n    for(let i=0;i<n;i++){\n      vy[i]-=9.81*dt; vx[i]*=damp; vy[i]*=damp; vz[i]*=damp;\n      px[i]+=vx[i]*dt; py[i]+=vy[i]*dt; pz[i]+=vz[i]*dt;\n      const qx=A.x+ox[i], qy=A.y, qz=A.z+oz[i], L=Ln[i]*P.len;\n      let dx=px[i]-qx, dy=py[i]-qy, dz=pz[i]-qz; const d=Math.sqrt(dx*dx+dy*dy+dz*dz);\n      if(d>L){ dx/=d;dy/=d;dz/=d; px[i]=qx+dx*L; py[i]=qy+dy*L; pz[i]=qz+dz*L;\n        const vr=(vx[i]-A.vx)*dx+(vy[i]-A.vy)*dy+(vz[i]-A.vz)*dz;\n        if(vr>0){ vx[i]-=dx*vr*1.02; vy[i]-=dy*vr*1.02; vz[i]-=dz*vr*1.02; } }\n      // keep pods below the knot\n      if(py[i]>qy-rad[i]){ py[i]=qy-rad[i]; if(vy[i]>A.vy) vy[i]=A.vy; }\n    }\n    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++){\n      const dx=px[i]-px[j], dy=py[i]-py[j], dz=pz[i]-pz[j], R=rad[i]+rad[j], d2=dx*dx+dy*dy+dz*dz;\n      if(d2>=R*R||d2<1e-14) continue;\n      const d=Math.sqrt(d2), nx_=dx/d, ny_=dy/d, nz_=dz/d, ov=R-d;\n      const rvx=vx[i]-vx[j], rvy=vy[i]-vy[j], rvz=vz[i]-vz[j], vn=rvx*nx_+rvy*ny_+rvz*nz_;\n      const wi=1/ms[i], wj=1/ms[j], ws=wi+wj;\n      px[i]+=nx_*ov*0.7*wi/ws; py[i]+=ny_*ov*0.7*wi/ws; pz[i]+=nz_*ov*0.7*wi/ws;\n      px[j]-=nx_*ov*0.7*wj/ws; py[j]-=ny_*ov*0.7*wj/ws; pz[j]-=nz_*ov*0.7*wj/ws;\n      if(vn>=0) continue;\n      const loud=-vn>0.05, J=-(1+(loud?e:0.05))*vn/ws;\n      vx[i]+=J*wi*nx_; vy[i]+=J*wi*ny_; vz[i]+=J*wi*nz_;\n      vx[j]-=J*wj*nx_; vy[j]-=J*wj*ny_; vz[j]-=J*wj*nz_;\n      const tx=rvx-vn*nx_, ty=rvy-vn*ny_, tz=rvz-vn*nz_, vt=Math.sqrt(tx*tx+ty*ty+tz*tz);\n      if(vt>1e-6){ const jt=Math.min(mu*J, vt/ws)/vt; vx[i]-=jt*wi*tx; vy[i]-=jt*wi*ty; vz[i]-=jt*wi*tz; vx[j]+=jt*wj*tx; vy[j]+=jt*wj*ty; vz[j]+=jt*wj*tz; }\n      if(loud){ const frac=Math.min(1,ov/(-vn*dt)); hit(i,j,-vn,J,frac); }\n    }\n    for(let i=0;i<n;i++){ const p=Math.max(-1,Math.min(1,px[i]/0.12)); const a=(p+1)*Math.PI/4; pl[i]=Math.cos(a); pr[i]=Math.sin(a); }\n    hitT+=dt; if(hitT>=0.1){ hitRate=hitRate*0.6+(hits/hitT)*0.4; hits=0; hitT=0; }\n  }\n  function run(Lo,Ro,len){\n    for(let s=0;s<len;s++){\n      if(sub===0) physics();\n      if(++sub===SUB) sub=0;\n      if(!Lo) continue;\n      let l=0,r=0;\n      for(let i=0;i<n;i++){\n        if(active[i]<=0) continue;\n        if(--active[i]===0){ for(let k=0;k<K;k++){y1[i*K+k]=0;y2[i*K+k]=0;} continue; }\n        let y=0;\n        for(let k=0;k<K;k++){\n          const id=i*K+k, b=id*RING+rp, x=ring[b]; ring[b]=0;\n          const yn=a1[id]*y1[id]-a2[id]*y2[id]+x; y2[id]=y1[id]; y1[id]=yn; y+=yn;\n        }\n        l+=y*pl[i]; r+=y*pr[i];\n      }\n      rp=(rp+1)&RM;\n      const g=P.gain; Lo[s]=Math.tanh(l*g); if(Ro) Ro[s]=Math.tanh(r*g);\n    }\n  }\n  function snapshot(){\n    const st=7, out=new Float32Array(6+n*st);\n    out[0]=n; out[1]=A.x; out[2]=A.y; out[3]=A.z; out[4]=hitRate; out[5]=P.material;\n    for(let i=0;i<n;i++){ const o=6+i*st; out[o]=px[i];out[o+1]=py[i];out[o+2]=pz[i];out[o+3]=rad[i];out[o+4]=flash[i];out[o+5]=A.x+ox[i];out[o+6]=A.z+oz[i]; flash[i]*=0.78; }\n    return out;\n  }\n  function getState(){ return {n, A:{...A}, AU:{...AU}, p:Array.from({length:n},(_,i)=>[px[i],py[i],pz[i],vx[i],vy[i],vz[i]])}; }\n  function msg(d){\n    if(d.type==='p'){ const c=P.count; Object.assign(P,d.p); if((P.count|0)!==(c|0)||!n) build(); else modes(); }\n    else if(d.type==='target'){ AU.on=false; A.tx=d.x; A.ty=d.y; }\n    else if(d.type==='auto'){ Object.assign(AU,d.a); }\n  }\n  function info(){ const me=0.002, Es=Ecur/1.8, tau=2.87*Math.pow(me*me/(0.003*Es*Es*1),0.2); return {E:Ecur,T0:T0cur,f0:f0cur,fTop,tau}; }\n  if(opts.params) Object.assign(P,opts.params);\n  if(opts.auto) Object.assign(AU,opts.auto);\n  build();\n  if(opts.state){ const s=opts.state; Object.assign(A,s.A); Object.assign(AU,s.AU, opts.auto||{});\n    for(let i=0;i<Math.min(n,s.p.length);i++){ [px[i],py[i],pz[i],vx[i],vy[i],vz[i]]=s.p[i]; } }\n  return {run,snapshot,msg,info,getState,P,AU};\n}\n\n\nclass RattleProcessor extends AudioWorkletProcessor {\n  constructor(options) {\n    super();\n    this.engine = createEngine(sampleRate, { audio: true, ...options.processorOptions });\n    this.frames = 0;\n    this.port.onmessage = (ev) => this.engine.msg(ev.data);\n  }\n  process(_inputs, outputs) {\n    const ch = outputs[0];\n    this.engine.run(ch[0], ch[1], ch[0].length);\n    this.frames += ch[0].length;\n    if (this.frames >= sampleRate / 60) {\n      this.frames = 0;\n      const snap = this.engine.snapshot();\n      this.port.postMessage(snap, [snap.buffer]);\n    }\n    return true;\n  }\n}\nregisterProcessor('rattle', RattleProcessor);\n";
+
+      const PRESETS = {
+        seed: {
+          material: 0.08,
+          decay: 1,
+          pitch: 1,
+          rest: 0.45,
+          bright: 0,
+          spread: 1,
+          hiDecay: 1,
+          hard: 1,
+        },
+        bamboo: {
+          material: 0.32,
+          decay: 1.2,
+          pitch: 0.8,
+          rest: 0.55,
+          bright: 0,
+          spread: 1,
+          hiDecay: 1,
+          hard: 1,
+        },
+        brass: {
+          material: 0.78,
+          decay: 1,
+          pitch: 1.1,
+          rest: 0.6,
+          bright: 0.45,
+          spread: 1.1,
+          hiDecay: 1.3,
+          hard: 2,
+        },
+        steel: {
+          material: 0.95,
+          decay: 1.4,
+          pitch: 1.35,
+          rest: 0.7,
+          bright: 0.55,
+          spread: 1.2,
+          hiDecay: 1.5,
+          hard: 3,
+        },
+      };
+      const params = { count: 28, len: 1, gain: 1, ...PRESETS.seed };
+      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const auto = { on: !reduceMotion, rate: 2.6, amp: 0.5 };
+      const $ = (id) => document.getElementById(id);
+      let local = createEngine(48000, { params, auto });
+      let node = null,
+        ctx = null,
+        snap = local.snapshot(),
+        master = null;
+
+      function send(m) {
+        local.msg(m);
+        if (node) node.port.postMessage(m);
+      }
+      const fmt = {
+        material: () => {
+          const i = local.info();
+          return `E ${i.E / 1e9 < 10 ? (i.E / 1e9).toFixed(1) : Math.round(i.E / 1e9)} GPa`;
+        },
+        decay: () => {
+          const t = local.info().T0;
+          return `T60 ${t < 1 ? Math.round(t * 1000) + " ms" : t.toFixed(2) + " s"}`;
+        },
+        pitch: () => {
+          const f = local.info().f0;
+          return `f₀ ${(f / 1000).toFixed(2)} kHz`;
+        },
+        rest: (v) => `e ${(+v).toFixed(2)}`,
+        bright: (v) => `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(2)}`,
+        spread: () => `上限 ${(local.info().fTop / 1000).toFixed(1)} kHz`,
+        hiDecay: (v) => `×${(+v).toFixed(2)}`,
+        hard: () => `接触 ${Math.round(local.info().tau * 1e6)} µs`,
+        count: (v) => `${v} 個`,
+        len: (v) => `${Math.round(4.5 * v)}–${Math.round(13 * v)} cm`,
+        rate: (v) => `${(+v).toFixed(1)} Hz`,
+        amp: (v) => `±${Math.round(v * 10)} cm`,
+        gain: (v) => `${Math.round(v * 100)} %`,
+      };
+      const keys = [
+        "material",
+        "decay",
+        "pitch",
+        "rest",
+        "bright",
+        "spread",
+        "hiDecay",
+        "hard",
+        "count",
+        "len",
+        "gain",
+      ];
+      function refreshOutputs() {
+        for (const k of [...keys, "rate", "amp"]) {
+          const text = fmt[k]($(k).value);
+          $("o-" + k).textContent = text;
+          $(k).setAttribute("aria-valuetext", text);
+        }
+      }
+      for (const k of keys) {
+        $(k).value = params[k];
+        $(k).addEventListener("input", () => {
+          params[k] = +$(k).value;
+          send({ type: "p", p: { [k]: params[k] } });
+          if (k in PRESETS.seed) markPreset(null);
+          refreshOutputs();
+        });
+      }
+      for (const k of ["rate", "amp"]) {
+        $(k).value = auto[k];
+        $(k).addEventListener("input", () => {
+          auto[k] = +$(k).value;
+          send({ type: "auto", a: { [k]: auto[k] } });
+          refreshOutputs();
+        });
+      }
+      function markPreset(name) {
+        for (const b of $("presets").children)
+          b.setAttribute("aria-pressed", String(b.dataset.p === name));
+      }
+      $("presets").addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        const p = PRESETS[b.dataset.p];
+        Object.assign(params, p);
+        for (const k in p) $(k).value = p[k];
+        send({ type: "p", p });
+        markPreset(b.dataset.p);
+        refreshOutputs();
+      });
+      function setAuto(on) {
+        auto.on = on;
+        $("auto").setAttribute("aria-pressed", String(on));
+        send({ type: "auto", a: { on } });
+      }
+      $("auto").addEventListener("click", () => setAuto(!auto.on));
+      refreshOutputs();
+      $("auto").setAttribute("aria-pressed", String(auto.on));
+
+      // audio
+      async function start() {
+        $("start").disabled = true;
+        try {
+          ctx = new AudioContext({ latencyHint: "interactive" });
+          try {
+            await ctx.audioWorklet.addModule(
+              URL.createObjectURL(new Blob([WORKLET], { type: "application/javascript" })),
+            );
+          } catch (_) {
+            await ctx.audioWorklet.addModule(
+              "data:application/javascript;charset=utf-8," + encodeURIComponent(WORKLET),
+            );
+          }
+          node = new AudioWorkletNode(ctx, "rattle", {
+            numberOfInputs: 0,
+            outputChannelCount: [2],
+            processorOptions: { params: { ...params }, auto: { ...auto }, state: local.getState() },
+          });
+          node.port.onmessage = (e) => {
+            snap = e.data;
+          };
+          master = ctx.createGain();
+          master.gain.value = 0.9;
+          const dry = ctx.createGain();
+          dry.gain.value = 1;
+          const wet = ctx.createGain();
+          wet.gain.value = 0.16;
+          const conv = ctx.createConvolver();
+          conv.buffer = roomIR(ctx);
+          node.connect(dry).connect(master);
+          node.connect(conv).connect(wet).connect(master);
+          master.connect(ctx.destination);
+          await ctx.resume();
+          $("start").hidden = true;
+        } catch (err) {
+          $("start").disabled = false;
+          $("start").textContent = "再試行";
+          console.error(err);
+        }
+      }
+      function roomIR(c) {
+        const len = Math.floor(c.sampleRate * 0.7),
+          b = c.createBuffer(2, len, c.sampleRate);
+        for (let ch = 0; ch < 2; ch++) {
+          const d = b.getChannelData(ch);
+          let lp = 0;
+          for (let i = 0; i < len; i++) {
+            lp = lp * 0.6 + (Math.random() * 2 - 1) * 0.4;
+            d[i] = lp * Math.exp(-i / (c.sampleRate * 0.12));
+          }
+        }
+        return b;
+      }
+      $("start").addEventListener("click", start);
+
+      // drawing
+      const cv = $("cv"),
+        g = cv.getContext("2d"),
+        stage = $("stage");
+      let W = 0,
+        H = 0,
+        S = 1,
+        cx = 0,
+        cy = 0,
+        dpr = 1;
+      function resize() {
+        dpr = Math.min(2, devicePixelRatio || 1);
+        W = stage.clientWidth;
+        H = stage.clientHeight;
+        cv.width = W * dpr;
+        cv.height = H * dpr;
+        S = Math.min(H * 3.1, W * 2.8);
+        cx = W / 2;
+        cy = H * 0.22;
+      }
+      new ResizeObserver(resize).observe(stage);
+      resize();
+      const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+      function hex(h) {
+        h = h.replace("#", "");
+        return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+      }
+      function mix(a, b, t) {
+        return a.map((v, i) => Math.round(v + (b[i] - v) * t));
+      }
+      const proj = (x, y, z) => [cx + x * S, cy - y * S - z * S * 0.35];
+
+      let last = performance.now();
+      function frame(now) {
+        const dtf = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        if (!node) {
+          local.run(null, null, Math.round(48000 * dtf));
+          snap = local.snapshot();
+        }
+        draw(snap);
+        requestAnimationFrame(frame);
+      }
+      function draw(s) {
+        g.setTransform(dpr, 0, 0, dpr, 0, 0);
+        g.clearRect(0, 0, W, H);
+        const n = s[0] | 0,
+          ax = s[1],
+          ay = s[2],
+          az = s[3],
+          mat = s[5];
+        const pod = mix(
+          hex(css("--pod")),
+          hex(css("--brass")),
+          Math.min(1, Math.max(0, (mat - 0.25) / 0.6)),
+        );
+        const jute = css("--jute"),
+          flashC = css("--flash");
+        const [kx, ky] = proj(ax, ay, az);
+        // rope up to the top
+        g.strokeStyle = jute;
+        g.lineCap = "round";
+        for (let t = 0; t < 2; t++) {
+          g.lineWidth = 3.2;
+          g.beginPath();
+          for (let y = ky; y >= -4; y -= 3) {
+            const w = Math.sin((ky - y) * 0.18 + t * Math.PI) * 2.2;
+            if (y === ky) g.moveTo(kx + w, y);
+            else g.lineTo(kx + w, y);
+          }
+          g.stroke();
+        }
+        g.fillStyle = jute;
+        g.beginPath();
+        g.ellipse(kx, ky, 7, 9, 0, 0, Math.PI * 2);
+        g.fill();
+        const idx = [...Array(n).keys()].sort((a, b) => s[6 + b * 7 + 2] - s[6 + a * 7 + 2]);
+        // strings
+        g.lineWidth = 1.3;
+        g.strokeStyle = jute;
+        g.globalAlpha = 0.85;
+        for (const i of idx) {
+          const o = 6 + i * 7;
+          const [x, y] = proj(s[o], s[o + 1], s[o + 2]);
+          const [qx, qy] = proj(s[o + 5], ay, s[o + 6]);
+          g.beginPath();
+          g.moveTo(qx, qy);
+          g.lineTo(x, y);
+          g.stroke();
+        }
+        g.globalAlpha = 1;
+        for (const i of idx) {
+          const o = 6 + i * 7,
+            z = s[o + 2];
+          const [x, y] = proj(s[o], s[o + 1], z);
+          const [qx, qy] = proj(s[o + 5], ay, s[o + 6]);
+          const rr = s[o + 3] * S * (1 - z * 1.2),
+            fl = s[o + 4];
+          const ang = Math.atan2(qy - y, qx - x) + Math.PI / 2;
+          const shade = Math.max(0.55, Math.min(1.15, 1 - z * 6));
+          const c = pod.map((v) => Math.min(255, Math.round(v * shade)));
+          g.save();
+          g.translate(x, y);
+          g.rotate(ang);
+          const grd = g.createRadialGradient(-rr * 0.35, -rr * 0.55, rr * 0.1, 0, 0, rr * 1.1);
+          grd.addColorStop(0, `rgb(${c.map((v) => Math.min(255, v + 60)).join(",")})`);
+          grd.addColorStop(1, `rgb(${c.join(",")})`);
+          g.fillStyle = grd;
+          g.beginPath();
+          g.arc(0, 0, rr, Math.PI, 0);
+          g.ellipse(0, 0, rr, rr * 0.38, 0, 0, Math.PI);
+          g.closePath();
+          g.fill();
+          g.fillStyle = `rgb(${c.map((v) => Math.round(v * 0.45)).join(",")})`;
+          g.beginPath();
+          g.ellipse(0, rr * 0.02, rr * 0.86, rr * 0.28, 0, 0, Math.PI * 2);
+          g.fill();
+          if (fl > 0.12) {
+            g.strokeStyle = flashC;
+            g.globalAlpha = Math.min(1, fl);
+            g.lineWidth = 2;
+            g.beginPath();
+            g.arc(0, 0, rr + 1.5 + fl * 3, 0, Math.PI * 2);
+            g.stroke();
+            g.globalAlpha = 1;
+          }
+          g.restore();
+        }
+        $("hud").textContent = `${Math.round(s[4])} hits/s`;
+      }
+      requestAnimationFrame(frame);
+
+      // hand
+      function toWorld(e) {
+        const r = stage.getBoundingClientRect();
+        const x = (e.clientX - r.left - cx) / S,
+          y = (cy - (e.clientY - r.top)) / S;
+        return { x, y };
+      }
+      let grab = null;
+      stage.addEventListener("pointerdown", (e) => {
+        if (e.target.id === "start") return;
+        stage.setPointerCapture(e.pointerId);
+        if (auto.on) setAuto(false);
+        grab = { p: toWorld(e), x: snap[1], y: snap[2] };
+        send({ type: "target", x: grab.x, y: grab.y });
+      });
+      stage.addEventListener("pointermove", (e) => {
+        if (!grab || !stage.hasPointerCapture(e.pointerId)) return;
+        const p = toWorld(e);
+        send({
+          type: "target",
+          x: Math.max(-0.3, Math.min(0.3, grab.x + p.x - grab.p.x)),
+          y: Math.max(-0.2, Math.min(0.12, grab.y + p.y - grab.p.y)),
+        });
+      });
+      stage.addEventListener("pointerup", () => {
+        grab = null;
+      });
+      const KEY_STEP = {
+        ArrowLeft: [-0.04, 0],
+        ArrowRight: [0.04, 0],
+        ArrowUp: [0, 0.03],
+        ArrowDown: [0, -0.03],
+      };
+      stage.addEventListener("keydown", (e) => {
+        const step = KEY_STEP[e.key];
+        if (!step || e.target !== stage) return;
+        e.preventDefault();
+        if (auto.on) setAuto(false);
+        send({
+          type: "target",
+          x: Math.max(-0.3, Math.min(0.3, snap[1] + step[0])),
+          y: Math.max(-0.2, Math.min(0.12, snap[2] + step[1])),
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="app">
+      <div
+        class="stage"
+        id="stage"
+        role="group"
+        tabindex="0"
+        aria-label="束"
+        aria-describedby="stage-keys"
+      >
+        <canvas id="cv" role="img" aria-label="紐で吊った種子の殻の束"></canvas>
+        <div class="title"><h1>Pod Rattle</h1></div>
+        <div class="hud" id="hud" aria-hidden="true">0 hits/s</div>
+        <p class="keys" id="stage-keys">←→↑↓ で振る</p>
+        <button id="start" type="button">▶ 音を出す</button>
+      </div>
+      <aside class="rail">
+        <div class="group">
+          <h2>素材</h2>
+          <div class="presets" id="presets">
+            <button type="button" data-p="seed" aria-pressed="true">種子</button>
+            <button type="button" data-p="bamboo" aria-pressed="false">竹</button>
+            <button type="button" data-p="brass" aria-pressed="false">真鍮</button>
+            <button type="button" data-p="steel" aria-pressed="false">鉄</button>
+          </div>
+          <div class="ctl">
+            <label for="material">硬さ</label><output id="o-material"></output
+            ><input id="material" type="range" min="0" max="1" step="0.001" />
+          </div>
+          <div class="ctl">
+            <label for="decay">響き</label><output id="o-decay"></output
+            ><input id="decay" type="range" min="0.3" max="3" step="0.01" />
+          </div>
+          <div class="ctl">
+            <label for="pitch">音程</label><output id="o-pitch"></output
+            ><input id="pitch" type="range" min="0.5" max="2" step="0.01" />
+          </div>
+          <div class="ctl">
+            <label for="rest">反発</label><output id="o-rest"></output
+            ><input id="rest" type="range" min="0.1" max="0.9" step="0.01" />
+          </div>
+        </div>
+        <div class="group">
+          <h2>倍音</h2>
+          <div class="ctl">
+            <label for="bright">明るさ</label><output id="o-bright"></output
+            ><input id="bright" type="range" min="-0.5" max="1.2" step="0.01" />
+          </div>
+          <div class="ctl">
+            <label for="spread">広がり</label><output id="o-spread"></output
+            ><input id="spread" type="range" min="0.6" max="1.8" step="0.01" />
+          </div>
+          <div class="ctl">
+            <label for="hiDecay">高域の響き</label><output id="o-hiDecay"></output
+            ><input id="hiDecay" type="range" min="0.4" max="3" step="0.01" />
+          </div>
+          <div class="ctl">
+            <label for="hard">当たり</label><output id="o-hard"></output
+            ><input id="hard" type="range" min="0.2" max="8" step="0.01" />
+          </div>
+        </div>
+        <div class="group">
+          <h2>形</h2>
+          <div class="ctl">
+            <label for="count">個数</label><output id="o-count"></output
+            ><input id="count" type="range" min="4" max="48" step="1" />
+          </div>
+          <div class="ctl">
+            <label for="len">ひも</label><output id="o-len"></output
+            ><input id="len" type="range" min="0.5" max="1.6" step="0.01" />
+          </div>
+        </div>
+        <div class="group">
+          <div class="row">
+            <h2>振り方</h2>
+            <button type="button" class="switch" id="auto" aria-pressed="true">自動で振る</button>
+          </div>
+          <div class="ctl">
+            <label for="rate">速さ</label><output id="o-rate"></output
+            ><input id="rate" type="range" min="0.5" max="7" step="0.01" />
+          </div>
+          <div class="ctl">
+            <label for="amp">振れ幅</label><output id="o-amp"></output
+            ><input id="amp" type="range" min="0.05" max="1" step="0.01" />
+          </div>
+        </div>
+        <div class="group">
+          <div class="ctl">
+            <label for="gain">音量</label><output id="o-gain"></output
+            ><input id="gain" type="range" min="0" max="2" step="0.01" />
+          </div>
+        </div>
+      </aside>
+    </div>
+  </body>
+</html>
