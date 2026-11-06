@@ -4,7 +4,7 @@ import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from
 import type { Plugin, Rolldown } from "vite-plus";
 
 import { CF_BEACON_TOKEN } from "./cloudflare.ts";
-import { ASSETS_DIR } from "./pages.ts";
+import { ASSETS_DIR, PAGE_SCRIPT_SOURCES } from "./pages.ts";
 import {
   ASSET_CACHE_CONTROL,
   SECURITY_HEADERS,
@@ -33,7 +33,13 @@ const styleBodies = (html: string): readonly string[] =>
 const pageRule = ({ page, hashes }: PageStyles): readonly string[] => [
   `/${page}/*`,
   ...headerLines(SECURITY_HEADERS),
-  `  Content-Security-Policy: ${contentSecurityPolicy(hashes)}`,
+  `  Content-Security-Policy: ${contentSecurityPolicy({
+    scriptSources: pipe(
+      Rec.get(PAGE_SCRIPT_SOURCES, page),
+      Option.getOrElse((): readonly string[] => []),
+    ),
+    styleHashes: hashes,
+  })}`,
 ];
 
 const headersFile = (pages: readonly PageStyles[]): string =>
