@@ -1,9 +1,8 @@
-import { layer as workersTracing } from "@r_masseater/workers-tracing/effect";
-import { elysiaTracing, tracedHandle } from "@r_masseater/workers-tracing/elysia";
+import { run } from "@r_masseater/workers-tracing/effect";
+import { Elysia } from "@r_masseater/workers-tracing/elysia";
 import { env } from "cloudflare:workers";
-import { Effect, ManagedRuntime, Option, Schema } from "effect";
+import { Effect, Option, Schema } from "effect";
 import { Hex } from "effect/encoding";
-import { Elysia } from "elysia";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 
 import { categories } from "#/entities/entry";
@@ -11,8 +10,6 @@ import { site } from "#/shared/config";
 
 import { addStar, read, readCounts, removeStar } from "./stars-store.server";
 import type { Change, Counts, Stars, Target } from "./stars-store.server";
-
-const runtime = ManagedRuntime.make(workersTracing);
 
 const Slug = Schema.String.check(Schema.isPattern(/^[\w-]+$/u));
 
@@ -56,7 +53,7 @@ const respond = (
   effect: (target: Target) => Effect.Effect<Stars>,
   params: unknown,
 ): Promise<Stars> =>
-  runtime.runPromise(
+  run(
     Option.match(decodeTarget(params), {
       onNone: () => Effect.succeed(missing),
       onSome: effect,
@@ -66,7 +63,7 @@ const respond = (
 const missingCounts: Counts = { status: "missing" };
 
 const respondCounts = (params: unknown): Promise<Counts> =>
-  runtime.runPromise(
+  run(
     Option.match(decodeCategory(params), {
       onNone: () => Effect.succeed<Counts>(missingCounts),
       onSome: ({ category }) => readCounts(category),
@@ -74,7 +71,6 @@ const respondCounts = (params: unknown): Promise<Counts> =>
   );
 
 const starRoutes = new Elysia({ prefix: site.starsApiPath, adapter: CloudflareAdapter, aot: false })
-  .use(elysiaTracing)
   .get("/:category", ({ params }) => respondCounts(params))
   .get("/:category/:slug", ({ request, params }) =>
     respond(
@@ -89,7 +85,7 @@ const starRoutes = new Elysia({ prefix: site.starsApiPath, adapter: CloudflareAd
     respond((target) => changed(request, target, removeStar), params),
   );
 
-const handleStars = tracedHandle(starRoutes.handle);
+const handleStars = starRoutes.handle;
 
 type StarRoutes = typeof starRoutes;
 

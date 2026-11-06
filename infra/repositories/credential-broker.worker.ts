@@ -3,14 +3,13 @@ import type { CloudflareOpContext, CreateTokenError } from "@distilled.cloud/clo
 import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
 import { createInstallationAccessToken, getUserInstallation } from "@distilled.cloud/github/apps";
 import type { Installation } from "@distilled.cloud/github/apps";
-import type { GithubOpContext } from "@distilled.cloud/github/Protocol";
+import { runner } from "@r_masseater/workers-tracing/effect";
 import {
   Array as Arr,
   DateTime,
   Effect,
   Layer,
   Logger,
-  ManagedRuntime,
   Option,
   Record as Rec,
   Redacted,
@@ -90,7 +89,7 @@ const toTokenTime = flow(
 
 const expiry: Effect.Effect<string> = DateTime.now.pipe(Effect.map(toTokenTime));
 
-type BrokerContext = CloudflareOpContext | GithubOpContext;
+type BrokerContext = CloudflareOpContext | Layer.Success<ReturnType<typeof gitHubAppCredentials>>;
 
 type Issued = Readonly<Record<string, unknown>>;
 
@@ -126,7 +125,7 @@ const issueCloudflareToken = (
 const findInstallation: Effect.Effect<
   Option.Option<Installation>,
   never,
-  GithubOpContext
+  BrokerContext
 > = getUserInstallation({ username: OWNER }).pipe(
   Effect.tapError((failure) => Effect.logWarning("github_app.not_installed", failure)),
   Effect.option,
@@ -135,7 +134,7 @@ const findInstallation: Effect.Effect<
 const issueGitHubToken = (
   env: CredentialBrokerEnv,
   claims: typeof Claims.Type,
-): Effect.Effect<Option.Option<Issued>, IssueError, GithubOpContext> =>
+): Effect.Effect<Option.Option<Issued>, IssueError, BrokerContext> =>
   Effect.gen(function* createGitHubToken() {
     const grants = yield* decodeGrants(env);
     const grant = Option.fromNullishOr(grants.github[repositoryName(claims)]);
@@ -285,9 +284,7 @@ const run = <Value>(
   env: CredentialBrokerEnv,
   effect: Effect.Effect<Value, never, BrokerContext>,
 ): Promise<Value> =>
-  ManagedRuntime.make(
-    Layer.mergeAll(logger, cloudflare(env), gitHubAppCredentials(env)),
-  ).runPromise(effect);
+  runner(Layer.mergeAll(logger, cloudflare(env), gitHubAppCredentials(env)))(effect);
 
 const worker = {
   fetch: (request: Request, env: CredentialBrokerEnv): Promise<Response> =>
