@@ -55,6 +55,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
 const GITHUB_APP_PERMISSIONS = {
   actions: "read",
   administration: "write",
+  repository_creation: "write",
   secrets: "write",
   actions_variables: "write",
   environments: "write",
@@ -89,6 +90,7 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
     permissions: {
       actions: "read",
       administration: "write",
+      repository_creation: "write",
       secrets: "write",
       actions_variables: "write",
       environments: "write",
