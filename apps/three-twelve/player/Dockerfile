@@ -1,4 +1,4 @@
-FROM node:26.12.1-slim
+FROM node:26.13.0-slim
 ARG DAVEY_VERSION
 WORKDIR /app
 RUN npm install --no-save --omit=dev "@snazzah/davey@${DAVEY_VERSION}"
