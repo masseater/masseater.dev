@@ -418,8 +418,8 @@ catalogs:
       specifier: 1.4.9
       version: 1.4.9
     '@r_masseater/workers-tracing':
-      specifier: 0.1.0
-      version: 0.1.0
+      specifier: 0.1.1
+      version: 0.1.1
     '@tanstack/react-query':
       specifier: 5.105.3
       version: 5.105.3
@@ -513,7 +513,7 @@ importers:
         version: 0.1.0
       '@r_masseater/workers-tracing':
         specifier: catalog:stack
-        version: 0.1.0(dc6137148d542141a65404a4e8e0bcbb)
+        version: 0.1.1(dc6137148d542141a65404a4e8e0bcbb)
       '@shadcn/lint':
         specifier: 'catalog:'
         version: 0.2.5(@typescript-eslint/parser@8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3))(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
@@ -635,7 +635,7 @@ importers:
         version: link:../../libs/ui
       '@r_masseater/workers-tracing':
         specifier: catalog:stack
-        version: 0.1.0(86b62f580653a46b6522d3760c40a9da)
+        version: 0.1.1(86b62f580653a46b6522d3760c40a9da)
       '@webxr-input-profiles/assets':
         specifier: 'catalog:'
         version: 1.0.20
@@ -756,7 +756,7 @@ importers:
         version: 0.64.1
       '@r_masseater/workers-tracing':
         specifier: catalog:stack
-        version: 0.1.0(86b62f580653a46b6522d3760c40a9da)
+        version: 0.1.1(86b62f580653a46b6522d3760c40a9da)
       '@tailwindcss/vite':
         specifier: 4.3.4
         version: 4.3.4(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
@@ -816,7 +816,7 @@ importers:
         version: link:../../libs/ui
       '@r_masseater/workers-tracing':
         specifier: catalog:stack
-        version: 0.1.0(86b62f580653a46b6522d3760c40a9da)
+        version: 0.1.1(86b62f580653a46b6522d3760c40a9da)
       '@tailwindcss/typography':
         specifier: 'catalog:'
         version: 0.5.20(tailwindcss@4.3.4)
@@ -1070,7 +1070,7 @@ importers:
         version: 3.0.0(asn1js@4.0.0)
       '@r_masseater/workers-tracing':
         specifier: catalog:stack
-        version: 0.1.0(dc6137148d542141a65404a4e8e0bcbb)
+        version: 0.1.1(dc6137148d542141a65404a4e8e0bcbb)
       alchemy:
         specifier: catalog:stack
         version: 2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(effect@4.1.2)(ws@8.22.0)
@@ -3770,8 +3770,8 @@ packages:
     resolution: {integrity: sha512-+i5lI6OGBqABBdGbI+cC+GO7sCX4UEM6/siaMFiTi60yOvrL/KdRPc+mpTB1h7Ya/iZz1rOPm304lJ3ig15zQg==}
     engines: {node: '>=26'}
 
-  '@r_masseater/workers-tracing@0.1.0':
-    resolution: {integrity: sha512-Q/9ghwTmFNM9Nu5zPG+MSCnU5Z2mS5AVhoegxbPqAY884TLfrJ865J6ZZLnusqIJrTUsN/y9XMdwX5Jz7NaYmQ==}
+  '@r_masseater/workers-tracing@0.1.1':
+    resolution: {integrity: sha512-7SVbCiwn+hGKdwBMAYQkk8UalDBmL+Mt1Dm3/uLevD+/Yc8F8XdSHfMFi/0ttSbs8a1Xc3KJOVFVEHU3d7WG7A==}
     engines: {node: '>=26'}
     hasBin: true
     peerDependencies:
@@ -13869,7 +13869,7 @@ snapshots:
       effect: 4.1.2
       typescript-7: typescript@7.1.0-beta
 
-  '@r_masseater/workers-tracing@0.1.0(86b62f580653a46b6522d3760c40a9da)':
+  '@r_masseater/workers-tracing@0.1.1(86b62f580653a46b6522d3760c40a9da)':
     dependencies:
       '@distilled.cloud/cloudflare': 1.0.0-rc.18(effect@4.1.2)
       '@effect/platform-node': 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -13884,7 +13884,7 @@ snapshots:
       - redis
       - utf-8-validate
 
-  '@r_masseater/workers-tracing@0.1.0(dc6137148d542141a65404a4e8e0bcbb)':
+  '@r_masseater/workers-tracing@0.1.1(dc6137148d542141a65404a4e8e0bcbb)':
     dependencies:
       '@distilled.cloud/cloudflare': 1.0.0-rc.18(effect@4.1.2)
       '@effect/platform-node': 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
