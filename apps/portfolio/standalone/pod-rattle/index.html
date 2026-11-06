@@ -76,7 +76,7 @@
       .app {
         height: 100%;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 300px;
+        grid-template-columns: minmax(0, 1fr) 19rem;
         gap: 0;
       }
       .stage {
@@ -206,6 +206,7 @@
         font-weight: 500;
       }
       .ctl output {
+        white-space: nowrap;
         justify-self: end;
         font: 0.75rem var(--f-mono);
         color: var(--muted);
@@ -237,7 +238,7 @@
         border-color: var(--accent);
         color: var(--stage);
       }
-      @media (max-width: 760px) {
+      @media (max-width: 47.5em) {
         .app {
           grid-template-columns: 1fr;
           grid-template-rows: min(58svh, 520px) auto;
