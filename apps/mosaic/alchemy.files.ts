@@ -1,4 +1,5 @@
 import { Workers, providers, state } from "@alchemy.run/cloudflare";
+import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
 import { CHARACTERS, slugPath } from "@thumb-mosaic/mosaic";
 import { Stack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
@@ -7,11 +8,11 @@ import { Array as Arr, Effect, Option } from "effect";
 import { APP_NAME, requireAppPrefix } from "./app-name.ts";
 import { ASSET_HEADERS } from "./asset-headers.ts";
 import { BASE_PATH } from "./base-path.ts";
-import { COMPATIBILITY, ZONE } from "./cloudflare.ts";
+import { ZONE } from "./cloudflare.ts";
 
 export default Stack(
   APP_NAME,
-  { providers: providers(), state: state() },
+  { providers: withWorkersTracing(providers()), state: state() },
   Effect.gen(function* stack() {
     const { stage } = yield* Stack;
     const character = yield* Option.match(
@@ -24,7 +25,6 @@ export default Stack(
     );
     const { url } = yield* Workers.Worker("Files", {
       name: `${APP_NAME}-files-${character.slug}`,
-      compatibility: COMPATIBILITY,
       logpush: true,
       routes: [{ pattern: `${ZONE}${BASE_PATH}/${slugPath(character.slug)}/*`, zoneName: ZONE }],
       assets: {

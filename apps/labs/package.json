@@ -21,6 +21,7 @@
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/static-headers": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
+    "@r_masseater/workers-tracing": "catalog:stack",
     "@webxr-input-profiles/assets": "catalog:",
     "alchemy": "catalog:stack",
     "d3-array": "catalog:",
