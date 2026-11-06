@@ -18,11 +18,15 @@ const KeyValue = Schema.Struct({
 
 const Attributes = Schema.optional(Schema.Array(KeyValue));
 
+const UnixNano = Schema.Union([Schema.String, Schema.Finite]);
+
 const Span = Schema.Struct({
   traceId: Schema.String,
   spanId: Schema.String,
   parentSpanId: Schema.optional(Schema.String),
   name: Schema.String,
+  startTimeUnixNano: Schema.optional(UnixNano),
+  endTimeUnixNano: Schema.optional(UnixNano),
   attributes: Attributes,
 });
 
@@ -54,7 +58,9 @@ const flatten = (attributes: typeof Attributes.Type): Readonly<Record<string, un
   Rec.fromEntries(
     pipe(
       attributes ?? [],
-      Arr.map(({ key, value }) => [key, Arr.head(Rec.values(value))] as const),
+      Arr.map(
+        ({ key, value }) => [key, Option.getOrUndefined(Arr.head(Rec.values(value)))] as const,
+      ),
     ),
   );
 
@@ -93,6 +99,8 @@ const logSpan = ({ service, scope, span }: ReceivedSpan): Effect.Effect<void> =>
       spanId: span.spanId,
       parentSpanId: span.parentSpanId,
       spanName: span.name,
+      startTimeUnixNano: span.startTimeUnixNano,
+      endTimeUnixNano: span.endTimeUnixNano,
       attributes: flatten(span.attributes),
     }),
   );
