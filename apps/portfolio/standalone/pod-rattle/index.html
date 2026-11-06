@@ -86,6 +86,10 @@
         cursor: grab;
         overflow: hidden;
       }
+      .stage:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+      }
       .stage:active {
         cursor: grabbing;
       }
@@ -681,7 +685,8 @@
         },
       };
       const params = { count: 28, len: 1, gain: 1, ...PRESETS.seed };
-      const auto = { on: true, rate: 2.6, amp: 0.5 };
+      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const auto = { on: !reduceMotion, rate: 2.6, amp: 0.5 };
       const $ = (id) => document.getElementById(id);
       let local = createEngine(48000, { params, auto });
       let node = null,
@@ -731,7 +736,11 @@
         "gain",
       ];
       function refreshOutputs() {
-        for (const k of [...keys, "rate", "amp"]) $("o-" + k).textContent = fmt[k]($(k).value);
+        for (const k of [...keys, "rate", "amp"]) {
+          const text = fmt[k]($(k).value);
+          $("o-" + k).textContent = text;
+          $(k).setAttribute("aria-valuetext", text);
+        }
       }
       for (const k of keys) {
         $(k).value = params[k];
@@ -771,6 +780,7 @@
       }
       $("auto").addEventListener("click", () => setAuto(!auto.on));
       refreshOutputs();
+      $("auto").setAttribute("aria-pressed", String(auto.on));
 
       // audio
       async function start() {
@@ -987,11 +997,28 @@
       stage.addEventListener("pointerup", () => {
         grab = null;
       });
+      const KEY_STEP = {
+        ArrowLeft: [-0.04, 0],
+        ArrowRight: [0.04, 0],
+        ArrowUp: [0, 0.03],
+        ArrowDown: [0, -0.03],
+      };
+      stage.addEventListener("keydown", (e) => {
+        const step = KEY_STEP[e.key];
+        if (!step || e.target !== stage) return;
+        e.preventDefault();
+        if (auto.on) setAuto(false);
+        send({
+          type: "target",
+          x: Math.max(-0.3, Math.min(0.3, snap[1] + step[0])),
+          y: Math.max(-0.2, Math.min(0.12, snap[2] + step[1])),
+        });
+      });
     </script>
   </head>
   <body>
     <div class="app">
-      <div class="stage" id="stage">
+      <div class="stage" id="stage" tabindex="0" aria-label="束を振る ←→↑↓">
         <canvas id="cv" role="img" aria-label="紐で吊った種子の殻の束"></canvas>
         <div class="title"><h1>Pod Rattle</h1></div>
         <div class="hud" id="hud" aria-hidden="true">0 hits/s</div>
