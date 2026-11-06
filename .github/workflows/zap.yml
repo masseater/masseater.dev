@@ -38,7 +38,6 @@ jobs:
         with:
           persist-credentials: false
           sparse-checkout: |
-            .github/scripts/ci-telemetry.sh
             apps/portfolio/app-name.ts
           sparse-checkout-cone-mode: false
       - run: .github/scripts/ci-telemetry.sh

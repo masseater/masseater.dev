@@ -18,6 +18,14 @@ const characterPages = pipe(
 );
 
 export default defineConfig({
+  run: {
+    tasks: {
+      dev: { command: "alchemy dev", cache: false },
+      build: { command: "vp build && node ./write-asset-headers.ts", cache: false },
+      deploy: { command: "alchemy deploy", cache: false },
+      destroy: { command: "alchemy destroy", cache: false },
+    },
+  },
   base: `${BASE_PATH}/`,
   build: { copyPublicDir: false },
   resolve: { tsconfigPaths: true },

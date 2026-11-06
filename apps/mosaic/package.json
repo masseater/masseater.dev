@@ -6,16 +6,6 @@
   "imports": {
     "#/*": "./src/*"
   },
-  "scripts": {
-    "dev": "alchemy dev",
-    "build": "vp build && node ./write-asset-headers.ts",
-    "typecheck": "tsc",
-    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache --passWithNoTests",
-    "steiger": "steiger ./src",
-    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
-    "deploy": "alchemy deploy",
-    "destroy": "alchemy destroy"
-  },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
     "@effect/platform-node": "catalog:",
@@ -46,7 +36,6 @@
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
-    "@feature-sliced/steiger-plugin": "0.8.2",
     "@r_masseater/workers-tracing": "catalog:stack",
     "@tailwindcss/vite": "4.3.4",
     "@tanstack/devtools-vite": "0.8.6",
@@ -56,7 +45,6 @@
     "@vitejs/plugin-rsc": "catalog:",
     "@webgpu/types": "catalog:",
     "alchemy": "catalog:stack",
-    "steiger": "catalog:stack",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"

@@ -9,20 +9,6 @@
     "#vite-plugins/*": "./vite-plugins/*",
     "#worker/*": "./worker/*"
   },
-  "scripts": {
-    "dev": "alchemy dev",
-    "build": "vp build && sequoia inject",
-    "typecheck": "tsc",
-    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache --passWithNoTests",
-    "steiger": "steiger ./src",
-    "prepare": "effect-tsgo patch --typescript --oxlint",
-    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
-    "deploy": "alchemy deploy",
-    "destroy": "alchemy destroy",
-    "db:generate": "drizzle-kit generate",
-    "db:check": "drizzle-kit check && drizzle-kit generate --explain --output json | grep -q '\"status\":\"no_changes\"'",
-    "standard-site": "vpx scripts/standard-site.ts && sequoia publish"
-  },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@effect/atom-react": "catalog:stack",
@@ -59,7 +45,6 @@
     "@cloudflare/workers-types": "catalog:",
     "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
-    "@feature-sliced/steiger-plugin": "0.8.2",
     "@fontsource/noto-sans-jp": "catalog:",
     "@mdx-js/rollup": "catalog:",
     "@resvg/resvg-js": "catalog:",
@@ -92,7 +77,6 @@
     "satori": "catalog:",
     "sequoia-cli": "catalog:",
     "simple-git": "catalog:",
-    "steiger": "catalog:stack",
     "typescript": "catalog:stack",
     "unified": "catalog:",
     "vfile": "catalog:",

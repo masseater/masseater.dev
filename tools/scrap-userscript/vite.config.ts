@@ -4,6 +4,18 @@ import { defineConfig } from "vite-plus";
 import { version } from "./package.json";
 
 export default defineConfig({
+  run: {
+    tasks: {
+      "release-check": {
+        command: [
+          "vp build",
+          "git diff --quiet -- release",
+          'test -z "$(git ls-files --others --exclude-standard -- release)"',
+        ],
+        cache: false,
+      },
+    },
+  },
   build: { outDir: "release", emptyOutDir: true },
   test: { include: ["src/**/*.test.ts"] },
   plugins: [
