@@ -5,3 +5,8 @@ useDefault = true
 description = "Cloudflare Web Analytics のサイトトークンはビーコンとして HTML に出る公開値"
 regexTarget = "line"
 regexes = ['''\bCF_BEACON_TOKEN = "[0-9a-f]{32}"''']
+
+[[allowlists]]
+description = "Discord のユーザー ID は誰にでも見える公開値"
+regexTarget = "line"
+regexes = ['''\bOWNER_DISCORD_ID = "[0-9]{17,20}"''']

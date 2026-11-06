@@ -11,6 +11,7 @@ const DEPLOY: Grant = {
   account: [
     "Account Settings Read",
     "Workers Scripts Write",
+    "Workers Containers Write",
     "Workers KV Storage Write",
     "Workers R2 Storage Write",
     "Workers Observability Write",
