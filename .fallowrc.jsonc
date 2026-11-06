@@ -1,7 +1,17 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "production": true,
-  "ignoreDependencies": ["@arethetypeswrong/core", "publint"],
+  "ignoreDependencies": [
+    "@arethetypeswrong/core",
+    "publint",
+    "@fontsource/dela-gothic-one",
+    "@fontsource/ibm-plex-mono",
+    "@fontsource/zen-kaku-gothic-new",
+    "@webxr-input-profiles/assets",
+    "d3-array",
+    "d3-polygon",
+    "three",
+  ],
   "boundaries": {
     "zones": [
       { "name": "apps", "autoDiscover": ["apps"] },

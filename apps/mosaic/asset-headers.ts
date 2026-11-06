@@ -1,3 +1,4 @@
+import { headerLines } from "@masseater.dev/static-headers";
 import { FILES_DIR } from "@thumb-mosaic/mosaic";
 import { Array as Arr, Record as Rec, pipe } from "effect";
 
@@ -5,12 +6,6 @@ import { BASE_PATH } from "./base-path.ts";
 import { ASSET_CACHE_CONTROL, SECURITY_HEADERS } from "./security-headers.ts";
 
 type PageHeaders = Readonly<{ path: string; headers: Readonly<Record<string, string>> }>;
-
-const headerLines = (headers: Readonly<Record<string, string>>): readonly string[] =>
-  pipe(
-    Rec.toEntries(headers),
-    Arr.map(([name, value]) => `  ${name}: ${value}`),
-  );
 
 const detachLines = (headers: Readonly<Record<string, string>>): readonly string[] =>
   pipe(

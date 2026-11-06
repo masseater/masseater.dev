@@ -116,6 +116,11 @@ jobs:
         env:
           ATP_IDENTIFIER: did:plc:sz2kxumpsjbch3kgnsjjed5z
       - if: steps.head.outputs.latest == 'true'
+        run: vp exec --filter labs alchemy deploy --stage prod --yes
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - if: steps.head.outputs.latest == 'true'
         run: vp exec --filter portfolio alchemy deploy --yes
         env:
           ALCHEMY_STAGE: prod
