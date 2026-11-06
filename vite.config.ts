@@ -5,8 +5,6 @@ import baselineJs from "eslint-plugin-baseline-js";
 import { defineConfig } from "vite-plus";
 
 import {
-  BROWSER_HANDLES,
-  WEBGPU_HANDLES,
   allRulesOf,
   decisionPluginName,
   decisionRules,
@@ -15,6 +13,7 @@ import {
   pluginRules,
   restrictedImports,
 } from "./lint.config.ts";
+import { readonlyParameterAllow } from "./readonly-types.config.ts";
 import { workerOverride } from "./worker-lint.config.ts";
 
 export default defineConfig({
@@ -118,30 +117,7 @@ export default defineConfig({
         "error",
         {
           ignoreInferredTypes: true,
-          allow: [
-            { from: "lib", name: ["HTMLElement", "Request", ...BROWSER_HANDLES] },
-            { from: "package", package: "@webgpu/types", name: [...WEBGPU_HANDLES] },
-            {
-              from: "package",
-              package: "@cloudflare/workers-types",
-              name: ["AnalyticsEngineDataset", "KVNamespace", "SecretsStoreSecret"],
-            },
-            { from: "package", package: "@alchemy.run/cloudflare", name: "Store" },
-            { from: "package", package: "@tanstack/query-core", name: "QueryClient" },
-            {
-              from: "package",
-              package: "react",
-              name: ["ReactNode", "ButtonHTMLAttributes", "ClassAttributes"],
-            },
-            { from: "package", package: "clsx", name: "ClassValue" },
-            { from: "package", package: "mdast", name: ["Root", "RootContent", "Yaml"] },
-            { from: "package", package: "vfile", name: "VFile" },
-            {
-              from: "package",
-              package: "effect",
-              name: ["Cause", "Context", "Effect", "Exit", "Layer", "Option"],
-            },
-          ],
+          allow: readonlyParameterAllow,
         },
       ],
       "eslint/no-duplicate-imports": ["error", { allowSeparateTypeImports: true }],
@@ -161,7 +137,7 @@ export default defineConfig({
             "Ruleset",
             "Stack",
           ],
-          capIsNewExceptionPattern: String.raw`^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|KV|Logpush|R2|Ruleset|Rules|SecretsStore|Website|Workers|Zone)\.`,
+          capIsNewExceptionPattern: String.raw`^(Config|Containers|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|KV|Logpush|R2|Ruleset|Rules|SecretsStore|Website|Workers|Zone)\.`,
         },
       ],
       "typescript/no-empty-interface": ["error", { allowSingleExtends: true }],
