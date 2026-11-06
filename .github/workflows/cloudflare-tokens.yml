@@ -40,14 +40,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@e9cb10133c43cf5bfcea56bdd143c6bad3d13045
         with:
-          persist-credentials: false
-          sparse-checkout: |
-            apps/portfolio/app-name.ts
-          sparse-checkout-cone-mode: false
-      - run: .github/scripts/ci-telemetry.sh
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          GH_TOKEN: ${{ github.token }}
+          github-token: ${{ github.token }}
