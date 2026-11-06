@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>夕景カット撮影ラボ | masseater.dev</title>
+    <meta
+      name="description"
+      content="アニメの1カットを原画・仕上げ・合成・撮影処理の4段階で切り替え、3D背景と撮影処理をリアルタイムで試せるページ。"
+    />
+    <style>
+      /* layout: one cut on a viewer like a compositing monitor; stage switch above, process toggles and the cut-bag note below */
+      :root {
+        color-scheme: light dark;
+        --bg: #eceef1;
+        --panel: #f8f9fa;
+        --fg: #1c2130;
+        --muted: #5b6374;
+        --line: #cdd2da;
+        --accent: #c56a1c;
+        --accent-bg: #f7e4d1;
+        --f-display: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+        --f-body: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
+        --f-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #11141b;
+          --panel: #191d27;
+          --fg: #e4e7ee;
+          --muted: #9aa2b3;
+          --line: #2c3240;
+          --accent: #f0a04b;
+          --accent-bg: #3a2a1a;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #11141b;
+        --panel: #191d27;
+        --fg: #e4e7ee;
+        --muted: #9aa2b3;
+        --line: #2c3240;
+        --accent: #f0a04b;
+        --accent-bg: #3a2a1a;
+        color-scheme: dark;
+      }
+      :root[data-theme="light"] {
+        color-scheme: light;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--f-body);
+        font-size: 15px;
+        line-height: 1.7;
+      }
+      .wrap {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding-block: 28px 48px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        display: grid;
+        gap: 18px;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 6px 18px;
+      }
+      h1 {
+        font-family: var(--f-display);
+        font-weight: 600;
+        font-size: clamp(24px, 4vw, 34px);
+        margin: 0;
+        letter-spacing: 0.02em;
+        text-wrap: balance;
+      }
+      .home {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--muted);
+        text-decoration: none;
+        width: fit-content;
+      }
+      .home:hover {
+        color: var(--accent);
+      }
+      .slate {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+      }
+      .stages {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        overflow: hidden;
+        width: fit-content;
+        max-width: 100%;
+      }
+      .stages button {
+        font: 500 14px var(--f-body);
+        background: var(--panel);
+        color: var(--fg);
+        border: 0;
+        border-right: 1px solid var(--line);
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+      .stages button:last-child {
+        border-right: 0;
+      }
+      .stages button[aria-pressed="true"] {
+        background: var(--accent-bg);
+        color: var(--accent);
+      }
+      .stages button:focus-visible,
+      .chip input:focus-visible + span,
+      input[type="range"]:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .viewer {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        aspect-ratio: 16/9;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #000;
+      }
+      #view {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .loading[hidden] {
+        display: none;
+      }
+      .loading {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: #c9ccd4;
+        font-family: var(--f-mono);
+        font-size: 12px;
+      }
+      .cap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 14px;
+        align-items: baseline;
+        min-height: 2.4em;
+      }
+      .cap b {
+        font-weight: 500;
+      }
+      .who {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--accent);
+        letter-spacing: 0.04em;
+      }
+      .cap p {
+        margin: 0;
+        color: var(--muted);
+        min-width: 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+      }
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 14px 16px;
+        margin: 0;
+        display: grid;
+        gap: 12px;
+        min-width: 0;
+      }
+      .panel h2 {
+        font-size: 13px;
+        font-weight: 500;
+        margin: 0;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+      }
+      .fx {
+        display: grid;
+        gap: 8px;
+      }
+      .chip {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 2px 10px;
+        align-items: start;
+        cursor: pointer;
+      }
+      .chip input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .chip span {
+        grid-row: 1/3;
+        width: 30px;
+        height: 18px;
+        border-radius: 9px;
+        background: var(--line);
+        position: relative;
+        margin-top: 3px;
+        transition: background 0.15s;
+      }
+      .chip span::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--panel);
+        transition: transform 0.15s;
+      }
+      .chip input:checked + span {
+        background: var(--accent);
+      }
+      .chip input:checked + span::after {
+        transform: translateX(12px);
+      }
+      .chip strong {
+        font-weight: 500;
+        font-size: 14px;
+      }
+      .chip small {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .panel:disabled {
+        opacity: 0.45;
+      }
+      .panel:disabled .chip {
+        cursor: default;
+      }
+      .wipe {
+        display: grid;
+        gap: 4px;
+      }
+      .wipe label {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent);
+      }
+      .note {
+        font-family: var(--f-mono);
+        font-size: 12.5px;
+        line-height: 1.9;
+        margin: 0;
+        white-space: pre-wrap;
+        color: var(--fg);
+      }
+      .note em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      .foot {
+        font-size: 13px;
+        color: var(--muted);
+        margin: 0;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <a class="home" href="/projects/satsuei-lab">masseater.dev</a>
+      <header>
+        <h1>夕景カット撮影ラボ</h1>
+        <span class="slate">C-024 ／ 夕・自室 ／ BG 3D・セル A</span>
+      </header>
+
+      <div class="stages" role="group" aria-label="工程">
+        <button id="s1" data-s="1" aria-pressed="false">原画</button>
+        <button id="s2" data-s="2" aria-pressed="false">仕上げ</button>
+        <button id="s3" data-s="3" aria-pressed="false">撮影：合成</button>
+        <button id="s4" data-s="4" aria-pressed="true">撮影処理</button>
+      </div>
+
+      <div class="viewer">
+        <canvas id="view" role="img" aria-label="カットの表示"></canvas>
+        <div class="loading" id="loading" role="status">素材を読み込んでいます</div>
+      </div>
+
+      <div class="cap" aria-live="polite">
+        <span class="who" id="who"></span>
+        <p id="capText"></p>
+      </div>
+
+      <div class="grid">
+        <fieldset class="panel" id="fxPanel">
+          <h2>撮影処理</h2>
+          <div class="fx">
+            <label class="chip"
+              ><input type="checkbox" id="fx-para" checked /><span></span><strong>パラ</strong
+              ><small
+                >画面に色の膜をかける。窓側を夕日色に起こし、反対側を青紫に沈める</small
+              ></label
+            >
+            <label class="chip"
+              ><input type="checkbox" id="fx-rim" checked /><span></span><strong>リム光</strong
+              ><small>人物のマスクから窓側の縁だけを抜き出して光らせる</small></label
+            >
+            <label class="chip"
+              ><input type="checkbox" id="fx-boke" checked /><span></span><strong>BGボケ</strong
+              ><small>背景だけをぼかし、ピントを人物に置く</small></label
+            >
+            <label class="chip"
+              ><input type="checkbox" id="fx-tko" checked /><span></span><strong>T光</strong
+              ><small>太陽に光を焚いてまわりへ滲ませる</small></label
+            >
+            <label class="chip"
+              ><input type="checkbox" id="fx-diff" checked /><span></span
+              ><strong>ディフュージョン</strong
+              ><small>画面をぼかしたものを薄く重ね、明るい部分を柔らかく広げる</small></label
+            >
+            <label class="chip"
+              ><input type="checkbox" id="fx-flare" checked /><span></span><strong>フレア</strong
+              ><small>レンズ内の反射を、太陽から画面中心を通る線上に置く</small></label
+            >
+          </div>
+          <div class="wipe">
+            <label for="wipe">処理前と比べる（つまみの左側が撮影処理なし）</label>
+            <input type="range" id="wipe" min="0" max="100" step="1" value="0" />
+          </div>
+        </fieldset>
+        <div class="panel">
+          <h2>カット袋のメモ</h2>
+          <p class="note">
+            BG　3D（カメラワーク付き） セル　A＝人物　付けPAN 撮影　<em>BGボケ</em>／<em
+              >窓側リム</em
+            >
+            　　　<em>T光</em>（太陽）／<em>パラ</em>（夕） 　　　<em>DF</em> 弱め／<em>フレア</em>
+          </p>
+          <label class="chip"
+            ><input type="checkbox" id="cam" checked /><span></span
+            ><strong>カメラワーク（3D背動）</strong
+            ><small>カメラを3D背景の中で回り込ませる。人物セルは画面に固定したまま</small></label
+          >
+        </div>
+      </div>
+
+      <p class="foot">
+        人物のセルは画像生成モデルで描いたもので、「原画」の線と影指定はそのセルから画像処理で抜き出しています。背景は
+        three.js の3Dモデルで、撮影処理はすべてこのページのシェーダーでリアルタイムにかけています。
+      </p>
+    </div>
+    <script type="module">
+      import * as THREE from "three";
+
+      THREE.ColorManagement.enabled = false;
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const state = {
+        stage: 4,
+        para: true,
+        rim: true,
+        boke: true,
+        tko: true,
+        diff: true,
+        flare: true,
+        cam: !reduce,
+        wipe: 0,
+      };
+      const CAPS = {
+        1: [
+          "原画（アニメーター）",
+          "線と色鉛筆の指定だけを描く。青が影の境界、赤がハイライト。背景は3Dレイアウトから出した線で、色や光はまだ一切ない。",
+        ],
+        2: [
+          "仕上げ",
+          "指定どおりに色を塗ったセル。ノーマル色と影色のベタ塗りで、夕方らしさはまだどこにもない。",
+        ],
+        3: [
+          "撮影：合成",
+          "3D背景の上にセルを重ねただけ。人物が背景から浮いて見えるのは、まだ同じ光の中にいないから。",
+        ],
+        4: [
+          "撮影処理",
+          "光と空気を足して、人物と背景を同じ夕方の部屋に入れる。トグルを一つずつ外すと、それぞれが何を担っているか分かる。",
+        ],
+      };
+
+      const canvas = document.getElementById("view");
+      const renderer = (() => {
+        try {
+          return new THREE.WebGLRenderer({ canvas, antialias: true });
+        } catch (error) {
+          document.getElementById("loading").textContent =
+            "このブラウザでは WebGL が使えないため、カットを表示できません";
+          throw error;
+        }
+      })();
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.autoClear = true;
+
+      /* ---------- 3D background ---------- */
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(38, 16 / 9, 0.1, 200);
+      const target = new THREE.Vector3(0.5, 1.45, 0);
+      const SUN = new THREE.Vector3(19.8, 1.9, -29.5);
+
+      const gm = new THREE.DataTexture(
+        new Uint8Array([90, 90, 90, 255, 170, 170, 170, 255, 255, 255, 255, 255]),
+        3,
+        1,
+        THREE.RGBAFormat,
+      );
+      gm.minFilter = gm.magFilter = THREE.NearestFilter;
+      gm.needsUpdate = true;
+      const toon = (c) => new THREE.MeshToonMaterial({ color: c, gradientMap: gm });
+      const room = new THREE.Group();
+      scene.add(room);
+      const edgeMat = new THREE.LineBasicMaterial({ color: 0x8d939e });
+      function add(geo, mat, x, y, z, parent) {
+        const m = new THREE.Mesh(geo, mat);
+        m.position.set(x, y, z);
+        (parent || room).add(m);
+        const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), edgeMat);
+        e.layers.set(1);
+        m.add(e);
+        return m;
+      }
+      const B = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+      const wallM = toon(0xd7c9c3),
+        frameM = toon(0x6b5650),
+        woodM = toon(0x9a7660),
+        floorM = toon(0x8c7468);
+      /* back wall with a window opening x .6–2.6, y .9–2.6 */
+      add(B(8.2, 0.9, 0.16), wallM, 0, 0.45, 0);
+      add(B(8.2, 0.8, 0.16), wallM, 0, 3.0, 0);
+      add(B(4.6, 1.8, 0.12), wallM, -1.7, 1.75, -0.02);
+      add(B(1.6, 1.8, 0.12), wallM, 3.4, 1.75, -0.02);
+      add(B(2.12, 0.07, 0.2), frameM, 1.6, 2.6, 0);
+      add(B(2.12, 0.07, 0.2), frameM, 1.6, 0.9, 0);
+      add(B(0.07, 1.77, 0.2), frameM, 0.6, 1.75, 0);
+      add(B(0.07, 1.77, 0.2), frameM, 2.6, 1.75, 0);
+      add(B(0.05, 1.7, 0.12), frameM, 1.6, 1.75, 0);
+      add(B(2.0, 0.05, 0.12), frameM, 1.6, 1.75, 0);
+      add(B(2.3, 0.05, 0.32), frameM, 1.6, 0.87, 0.12);
+      /* floor */
+      add(B(9, 0.05, 7), floorM, 0, -0.02, 3.4);
+      /* desk under the window */
+      add(B(2.3, 0.06, 0.75), woodM, 1.6, 0.74, 0.55);
+      [
+        [0.55, 0.25],
+        [2.65, 0.25],
+        [0.55, 0.85],
+        [2.65, 0.85],
+      ].forEach((p) => add(B(0.05, 0.72, 0.05), woodM, p[0], 0.36, p[1]));
+      add(B(0.32, 0.07, 0.22), toon(0x5a6f9a), 2.2, 0.805, 0.5);
+      add(B(0.28, 0.06, 0.2), toon(0xb75a54), 2.22, 0.87, 0.5);
+      add(new THREE.CylinderGeometry(0.045, 0.04, 0.1, 16), toon(0xe8e2da), 0.95, 0.82, 0.45);
+      add(new THREE.CylinderGeometry(0.07, 0.055, 0.14, 16), toon(0x8a5f4c), 1.25, 0.84, 0.6);
+      add(new THREE.SphereGeometry(0.12, 12, 10), toon(0x5d7a52), 1.25, 1.0, 0.6);
+      /* shelf and poster on the wall */
+      add(B(1.3, 0.04, 0.24), woodM, -1.4, 1.55, 0.2);
+      add(B(1.3, 0.04, 0.24), woodM, -1.4, 2.05, 0.2);
+      [
+        [0x7a8fb0, 0.18],
+        [0xc98a5a, 0.22],
+        [0x6f8d6a, 0.2],
+        [0xb5b0a6, 0.16],
+        [0x9a6f8f, 0.24],
+      ].forEach((b, i) =>
+        add(B(0.09, b[1], 0.17), toon(b[0]), -1.95 + i * 0.11, 1.57 + b[1] / 2, 0.2),
+      );
+      add(B(0.36, 0.26, 0.18), toon(0xd8d0c6), -1.0, 2.2, 0.2);
+      add(B(0.7, 0.95, 0.01), toon(0xc9b3ad), -0.35, 2.15, 0.09);
+      add(B(0.5, 0.35, 0.012), toon(0x9c8aa6), -0.35, 2.32, 0.1);
+      /* city silhouette */
+      const cityM = new THREE.MeshBasicMaterial({ color: 0x6b5577 }),
+        cityM2 = new THREE.MeshBasicMaterial({ color: 0x8c6f85 });
+      let seed = 7;
+      const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      for (let i = 0; i < 16; i++) {
+        const x = 3.5 + i * 0.75,
+          h = 1.6 + rnd() * 2.4 - (Math.abs(x - 10.4) < 1.2 ? 1.1 : 0);
+        add(B(0.6 + rnd() * 0.3, h, 0.6), cityM, x, -3 + h / 2, -13 - rnd() * 2);
+      }
+      for (let i = 0; i < 14; i++) {
+        const x = 6 + i * 1.4,
+          h = 3 + rnd() * 3;
+        add(B(1.1, h, 1), cityM2, x, -4 + h / 2, -22);
+      }
+      /* sky */
+      const sky = new THREE.Mesh(
+        new THREE.PlaneGeometry(200, 90),
+        new THREE.ShaderMaterial({
+          uniforms: { sun: { value: SUN } },
+          vertexShader:
+            "varying vec3 wp;void main(){wp=(modelMatrix*vec4(position,1.0)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(wp,1.0);}",
+          fragmentShader:
+            "uniform vec3 sun;varying vec3 wp;void main(){float h=wp.y;vec3 hor=vec3(1.0,.83,.58),mid=vec3(.95,.55,.45),top=vec3(.38,.31,.55);vec3 c=mix(hor,mid,smoothstep(-6.0,6.0,h));c=mix(c,top,smoothstep(6.0,24.0,h));float d=distance(wp.xy,sun.xy);c=mix(c,vec3(1.0,.97,.86),smoothstep(1.5,1.2,d));c+=vec3(1.0,.65,.35)*exp(-d*.22)*.22;gl_FragColor=vec4(c,1.0);}",
+        }),
+      );
+      sky.position.set(10, 5, -30);
+      scene.add(sky);
+      scene.add(new THREE.AmbientLight(0x6f6699, 0.62 * Math.PI));
+      const dl = new THREE.DirectionalLight(0xffa86e, 0.85 * Math.PI);
+      dl.position.set(4, 6, -3);
+      scene.add(dl);
+      const fill = new THREE.DirectionalLight(0xb9a0d0, 0.22 * Math.PI);
+      fill.position.set(-2, 2, 6);
+      scene.add(fill);
+
+      /* ---------- full-screen passes ---------- */
+      const qScene = new THREE.Scene(),
+        qCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2));
+      qScene.add(quad);
+      const VS = "varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.0,1.0);}";
+      const blurMat = new THREE.ShaderMaterial({
+        uniforms: { tex: { value: null }, dir: { value: new THREE.Vector2() } },
+        vertexShader: VS,
+        fragmentShader:
+          "uniform sampler2D tex;uniform vec2 dir;varying vec2 vUv;void main(){vec4 s=texture2D(tex,vUv)*.2270270;s+=(texture2D(tex,vUv+dir*1.3846153)+texture2D(tex,vUv-dir*1.3846153))*.3162162;s+=(texture2D(tex,vUv+dir*3.2307692)+texture2D(tex,vUv-dir*3.2307692))*.0702703;gl_FragColor=s;}",
+      });
+      const compMat = new THREE.ShaderMaterial({
+        uniforms: {
+          tBg: { value: null },
+          tBgBlur: { value: null },
+          tCel: { value: null },
+          tLines: { value: null },
+          stage: { value: 4 },
+          boke: { value: 1 },
+          rim: { value: 1 },
+          celRect: { value: new THREE.Vector4() },
+          rimOff: { value: new THREE.Vector2() },
+        },
+        vertexShader: VS,
+        fragmentShader: `uniform sampler2D tBg,tBgBlur,tCel,tLines;uniform float stage,boke,rim;uniform vec4 celRect;uniform vec2 rimOff;varying vec2 vUv;
+  vec4 sc(sampler2D t,vec2 uv){vec2 c=(uv-celRect.xy)/celRect.zw;if(c.x<0.0||c.x>1.0||c.y<0.0||c.y>1.0)return vec4(0.0);return texture2D(t,c);}
+  void main(){vec2 uv=vUv;vec4 cel=sc(tCel,uv);vec3 col;
+   if(stage<1.5){vec3 paper=vec3(.965,.97,.975);col=texture2D(tBg,uv).rgb;col=mix(col,paper,cel.a);vec4 l=sc(tLines,uv);col=mix(col,l.rgb,l.a);}
+   else if(stage<2.5){col=mix(vec3(.6,.61,.64),cel.rgb,cel.a);}
+   else{vec3 bg=(stage>3.5&&boke>.5)?texture2D(tBgBlur,uv).rgb:texture2D(tBg,uv).rgb;col=mix(bg,cel.rgb,cel.a);
+     if(stage>3.5&&rim>.5){float a1=sc(tCel,uv+rimOff).a,a2=sc(tCel,uv+rimOff*.45).a;float m=cel.a*(1.0-.5*(a1+a2));col=mix(col,vec3(1.0,.86,.64),clamp(m*1.7,0.0,1.0));}}
+   gl_FragColor=vec4(col,1.0);}`,
+      });
+      const finalMat = new THREE.ShaderMaterial({
+        uniforms: {
+          tComp: { value: null },
+          tRaw: { value: null },
+          tDiff: { value: null },
+          stage: { value: 4 },
+          para: { value: 1 },
+          tko: { value: 1 },
+          diff: { value: 1 },
+          flare: { value: 1 },
+          sun: { value: new THREE.Vector2() },
+          sunVis: { value: 1 },
+          aspect: { value: 16 / 9 },
+          wipe: { value: 0 },
+          px: { value: 0.001 },
+        },
+        vertexShader: VS,
+        fragmentShader: `uniform sampler2D tComp,tRaw,tDiff;uniform float stage,para,tko,diff,flare,sunVis,aspect,wipe,px;uniform vec2 sun;varying vec2 vUv;
+  vec3 scr(vec3 a,vec3 b){return 1.0-(1.0-a)*(1.0-b);}
+  void main(){vec2 uv=vUv;vec3 c=texture2D(tComp,uv).rgb;
+   if(stage>3.5){
+    if(diff>.5)c=scr(c,texture2D(tDiff,uv).rgb*.2);
+    if(para>.5){float g=clamp(1.0-distance(uv*vec2(aspect,1.0),vec2(sun.x*aspect,sun.y))*.55,0.0,1.0);c=scr(c,vec3(1.0,.52,.24)*g*g*.42);
+      float s=smoothstep(.15,1.15,(1.0-uv.x)*.75+(1.0-uv.y)*.6);c*=mix(vec3(1.0),vec3(.62,.58,.8),s*.45);}
+    vec2 d=(uv-sun)*vec2(aspect,1.0);float r=length(d);
+    if(tko>.5)c+=vec3(1.0,.84,.6)*(exp(-r*r*90.0)*1.1+exp(-r*7.0)*.32)*sunVis;
+    if(flare>.5){vec2 ax=vec2(.5)-sun;
+      c+=vec3(1.0,.86,.62)*exp(-abs(d.y)*260.0)*exp(-abs(d.x)*2.2)*.35*sunVis;
+      for(int i=0;i<5;i++){float fi=float(i);float t=.35+fi*.42;float rad=.018+mod(fi*.37,.09);vec2 p=sun+ax*t*1.6;float rr=length((uv-p)*vec2(aspect,1.0));
+        vec3 col=mix(vec3(1.0,.7,.5),vec3(.6,.8,1.0),mod(fi*.5,1.0));c+=col*(smoothstep(rad,rad*.55,rr)*.045+smoothstep(rad*1.05,rad*.95,rr)*smoothstep(rad*.8,rad*.95,rr)*.05)*sunVis;}}
+    if(uv.x<wipe)c=texture2D(tRaw,uv).rgb;
+    if(wipe>.001&&abs(uv.x-wipe)<px)c=vec3(1.0);
+   }
+   gl_FragColor=vec4(c,1.0);}`,
+      });
+
+      let W = 0,
+        H = 0,
+        rt = {};
+      const mkRT = (w, h) =>
+        new THREE.WebGLRenderTarget(Math.max(1, w | 0), Math.max(1, h | 0), {
+          minFilter: THREE.LinearFilter,
+          magFilter: THREE.LinearFilter,
+        });
+      function resize() {
+        const r = canvas.getBoundingClientRect();
+        renderer.setSize(r.width, r.height, false);
+        const s = new THREE.Vector2();
+        renderer.getDrawingBufferSize(s);
+        W = s.x;
+        H = s.y;
+        Object.values(rt).forEach((t) => t.dispose());
+        rt.bg = new THREE.WebGLRenderTarget(W, H, {
+          minFilter: THREE.LinearFilter,
+          magFilter: THREE.LinearFilter,
+          samples: 4,
+        });
+        rt.h1 = mkRT(W / 2, H / 2);
+        rt.h2 = mkRT(W / 2, H / 2);
+        rt.comp = mkRT(W, H);
+        rt.raw = mkRT(W, H);
+        rt.q1 = mkRT(W / 4, H / 4);
+        rt.q2 = mkRT(W / 4, H / 4);
+        camera.aspect = W / H;
+        camera.updateProjectionMatrix();
+        finalMat.uniforms.aspect.value = W / H;
+        finalMat.uniforms.px.value = 1.5 / W;
+        const h = 1.12,
+          w = h * 0.75 * (H / W);
+        compMat.uniforms.celRect.value.set(0.13, 0.955 - h, w, h);
+        compMat.uniforms.rimOff.value.set((7 / W) * (W / 1280) * 1.0, (4 / H) * (H / 720));
+      }
+      function pass(mat, target) {
+        quad.material = mat;
+        renderer.setRenderTarget(target);
+        renderer.render(qScene, qCam);
+      }
+      function blur(src, a, b, radius, iters) {
+        let s = src;
+        for (let i = 0; i < iters; i++) {
+          blurMat.uniforms.tex.value = s.texture;
+          blurMat.uniforms.dir.value.set(radius / a.width, 0);
+          pass(blurMat, a);
+          blurMat.uniforms.tex.value = a.texture;
+          blurMat.uniforms.dir.value.set(0, radius / a.height);
+          pass(blurMat, b);
+          s = b;
+        }
+      }
+
+      const loader = new THREE.TextureLoader();
+      let celTex = null,
+        lineTex = null;
+      function texReady() {
+        if (celTex && lineTex) {
+          compMat.uniforms.tCel.value = celTex;
+          compMat.uniforms.tLines.value = lineTex;
+          document.getElementById("loading").hidden = true;
+        }
+      }
+      loader.load(
+        "cel.webp",
+        (t) => {
+          t.minFilter = THREE.LinearFilter;
+          celTex = t;
+          texReady();
+        },
+        undefined,
+        () => {
+          document.getElementById("loading").textContent = "素材を読み込めませんでした";
+        },
+      );
+      loader.load("lines.webp", (t) => {
+        t.minFilter = THREE.LinearFilter;
+        lineTex = t;
+        texReady();
+      });
+
+      const tmpCam = new THREE.Vector3(),
+        tmpSun = new THREE.Vector3();
+      let camT = 0,
+        last = performance.now();
+      function sunVisibility() {
+        const c = camera.position,
+          t = (0 - c.z) / (SUN.z - c.z);
+        const x = c.x + (SUN.x - c.x) * t,
+          y = c.y + (SUN.y - c.y) * t;
+        const m = Math.min(x - 0.64, 2.56 - x, y - 0.94, 2.56 - y);
+        return Math.max(0, Math.min(1, m / 0.12));
+      }
+      function frame(now) {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        if (state.cam) camT += dt;
+        camera.position.set(
+          -0.7 + Math.sin(camT * 0.32) * 0.75,
+          1.38 + Math.sin(camT * 0.21) * 0.05,
+          4.3 - Math.cos(camT * 0.32) * 0.25,
+        );
+        camera.lookAt(target);
+        if (!W) {
+          requestAnimationFrame(frame);
+          return;
+        }
+        const st = state.stage;
+        /* background */
+        if (st === 1) {
+          camera.layers.set(1);
+          renderer.setClearColor(0xf6f7f9, 1);
+        } else {
+          camera.layers.set(0);
+          renderer.setClearColor(0x000000, 1);
+        }
+        renderer.setRenderTarget(rt.bg);
+        renderer.render(scene, camera);
+        if (st === 4 && state.boke) blur(rt.bg, rt.h1, rt.h2, 1.6, 2);
+        const cu = compMat.uniforms;
+        cu.tBg.value = rt.bg.texture;
+        cu.tBgBlur.value = rt.h2.texture;
+        cu.boke.value = state.boke ? 1 : 0;
+        cu.rim.value = state.rim ? 1 : 0;
+        cu.stage.value = st;
+        pass(compMat, rt.comp);
+        if (st === 4) {
+          cu.stage.value = 3;
+          pass(compMat, rt.raw);
+          if (state.diff) blur(rt.comp, rt.q1, rt.q2, 2.2, 3);
+        }
+        /* sun position on screen */
+        tmpSun.copy(SUN).project(camera);
+        const fu = finalMat.uniforms;
+        fu.sun.value.set(tmpSun.x * 0.5 + 0.5, tmpSun.y * 0.5 + 0.5);
+        fu.sunVis.value = sunVisibility();
+        fu.tComp.value = rt.comp.texture;
+        fu.tRaw.value = rt.raw.texture;
+        fu.tDiff.value = rt.q2.texture;
+        fu.stage.value = st;
+        fu.para.value = state.para ? 1 : 0;
+        fu.tko.value = state.tko ? 1 : 0;
+        fu.diff.value = state.diff ? 1 : 0;
+        fu.flare.value = state.flare ? 1 : 0;
+        fu.wipe.value = state.wipe;
+        pass(finalMat, null);
+        requestAnimationFrame(frame);
+      }
+
+      /* ---------- UI ---------- */
+      function syncUI() {
+        document
+          .querySelectorAll(".stages button")
+          .forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.s === state.stage)));
+        document.getElementById("who").textContent = CAPS[state.stage][0];
+        document.getElementById("capText").textContent = CAPS[state.stage][1];
+        document.getElementById("fxPanel").disabled = state.stage !== 4;
+      }
+      document.querySelectorAll(".stages button").forEach((b) =>
+        b.addEventListener("click", () => {
+          state.stage = +b.dataset.s;
+          syncUI();
+        }),
+      );
+      ["para", "rim", "boke", "tko", "diff", "flare"].forEach((k) => {
+        const el = document.getElementById("fx-" + k);
+        el.checked = state[k];
+        el.addEventListener("change", () => {
+          state[k] = el.checked;
+        });
+      });
+      const camEl = document.getElementById("cam");
+      camEl.checked = state.cam;
+      camEl.addEventListener("change", () => {
+        state.cam = camEl.checked;
+      });
+      const wipeEl = document.getElementById("wipe");
+      wipeEl.addEventListener("input", () => {
+        state.wipe = wipeEl.value / 100;
+      });
+      syncUI();
+      new ResizeObserver(resize).observe(canvas);
+      resize();
+      requestAnimationFrame(frame);
+    </script>
+  </body>
+</html>

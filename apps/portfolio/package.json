@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#/*": "./src/*"
+    "#/*": "./src/*",
+    "#app-name": "./app-name.ts",
+    "#vite-plugins/*": "./vite-plugins/*",
+    "#worker/*": "./worker/*"
   },
   "scripts": {
     "dev": "alchemy dev",
@@ -18,13 +21,14 @@
     "destroy": "alchemy destroy",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check && drizzle-kit generate --explain --output json | grep -q '\"status\":\"no_changes\"'",
-    "standard-site": "vpx standard-site.ts && sequoia publish"
+    "standard-site": "vpx scripts/standard-site.ts && sequoia publish"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@effect/atom-react": "catalog:stack",
     "@elysiajs/eden": "catalog:stack",
     "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/repositories": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@r_masseater/workers-tracing": "catalog:stack",
@@ -56,10 +60,7 @@
     "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.2",
-    "@fontsource/dela-gothic-one": "catalog:",
-    "@fontsource/ibm-plex-mono": "catalog:",
     "@fontsource/noto-sans-jp": "catalog:",
-    "@fontsource/zen-kaku-gothic-new": "catalog:",
     "@mdx-js/rollup": "catalog:",
     "@resvg/resvg-js": "catalog:",
     "@shikijs/rehype": "catalog:",
@@ -75,13 +76,9 @@
     "@vitejs/plugin-react": "catalog:",
     "@vitejs/plugin-rsc": "catalog:",
     "@webgpu/types": "catalog:",
-    "@webxr-input-profiles/assets": "catalog:",
     "alchemy": "catalog:stack",
     "budoux": "catalog:",
-    "d3-array": "catalog:",
-    "d3-polygon": "catalog:",
     "drizzle-kit": "catalog:stack",
-    "internmap": "catalog:",
     "mdast-util-directive": "catalog:",
     "mdast-util-mdx-jsx": "catalog:",
     "mdast-util-to-string": "catalog:",
@@ -96,12 +93,10 @@
     "sequoia-cli": "catalog:",
     "simple-git": "catalog:",
     "steiger": "catalog:stack",
-    "three": "catalog:",
     "typescript": "catalog:stack",
     "unified": "catalog:",
     "vfile": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-static-copy": "catalog:",
     "vite-plus": "catalog:stack",
     "yaml": "catalog:"
   }
