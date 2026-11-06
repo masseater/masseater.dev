@@ -4,9 +4,9 @@ import { Array as Arr, String as Str, pipe } from "effect";
 import { createElement } from "react";
 import type { ReactNode } from "react";
 
-import { categories, categoryMeta } from "./src/entities/entry/model/category.ts";
-import type { Category } from "./src/entities/entry/model/category.ts";
-import { site } from "./src/shared/config/site.ts";
+import { categories, categoryMeta } from "#/entities/entry/model/category.ts";
+import type { Category } from "#/entities/entry/model/category.ts";
+import { site } from "#/shared/config/site.ts";
 
 const BOLD = 700;
 const REGULAR = 400;

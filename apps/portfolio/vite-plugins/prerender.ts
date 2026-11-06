@@ -1,7 +1,7 @@
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import { categories, categoryPath, isUnindexedPath } from "./src/entities/entry/model/category.ts";
-import { site } from "./src/shared/config/site.ts";
+import { categories, categoryPath, isUnindexedPath } from "#/entities/entry/model/category.ts";
+import { site } from "#/shared/config/site.ts";
 
 const MODIFIED_TIME = /<meta property="article:modified_time" content="(?<date>[^"]+)"/u;
 

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/plugin-schema.json",
+  "name": "vite-plugins",
+  "detection": { "type": "fileExists", "pattern": "vite.config.ts" },
+  "entryPoints": [
+    "vite-plugins/client-assets.ts",
+    "vite-plugins/prerender.ts",
+    "vite-plugins/markdown/mdx.config.ts",
+    "vite-plugins/seikin/seikin-techniques.ts",
+  ],
+  "entryPointRole": "support",
+}

@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Record as Rec, pipe } from "effect";
+import { Array as Arr, Option, Record as Rec, Schema, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
 import { GITHUB_APP_PERMISSIONS, grantPolicies } from "./credential-grants.ts";
@@ -11,9 +11,15 @@ const SCOPES = [
   { "com.cloudflare.api.account.zone.zone": "*" },
 ];
 
+const encodeJson = Schema.encodeOption(Schema.fromJsonString(Schema.Unknown));
+
 test("encoded grants stay under the Workers text binding limit", () => {
   const grants = grantPolicies({ accountId: CLOUDFLARE_ID, zoneId: CLOUDFLARE_ID });
-  expect(new TextEncoder().encode(JSON.stringify(grants)).length).toBeLessThan(TEXT_BINDING_LIMIT);
+  const encoded = pipe(
+    encodeJson(grants),
+    Option.map((json) => new TextEncoder().encode(json).length),
+  );
+  expect(Option.getOrThrow(encoded)).toBeLessThan(TEXT_BINDING_LIMIT);
 });
 
 test("every grant resolves to account and zone policies with known permission groups", () => {

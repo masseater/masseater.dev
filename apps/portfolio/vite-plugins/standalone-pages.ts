@@ -3,7 +3,7 @@ import { Array as Arr, Option, Record as Rec, Schema, String as Str, pipe } from
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import type { Plugin } from "vite-plus";
 
-import { splitPadStylesheets } from "./standalone/split-pad/assets.ts";
+import { splitPadStylesheets } from "#standalone/split-pad/assets.ts";
 
 const HEAD_END = "</head>";
 

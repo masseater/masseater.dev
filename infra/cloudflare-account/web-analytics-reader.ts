@@ -1,16 +1,19 @@
 import { ApiToken, CloudflareEnvironment, Workers } from "@alchemy.run/cloudflare";
 import { Effect } from "effect";
 
-import { APP_NAME } from "./app-name.ts";
+import type { Compatibility } from "./compatibility.ts";
 
 type WebAnalyticsTokenEnv = Readonly<{ WEB_ANALYTICS_TOKEN: string }>;
 
-const webAnalyticsReader = Effect.fn("webAnalyticsReader")(function* webAnalyticsReader(
-  compatibility: Readonly<{ date: string }>,
-) {
+type WebAnalyticsReaderProps = Readonly<{ appName: string; compatibility: Compatibility }>;
+
+const webAnalyticsReader = Effect.fn("webAnalyticsReader")(function* webAnalyticsReader({
+  appName,
+  compatibility,
+}: WebAnalyticsReaderProps) {
   const { accountId } = yield* yield* CloudflareEnvironment;
   const token = yield* ApiToken.AccountApiToken("WebAnalyticsReader", {
-    name: `${APP_NAME}-web-analytics-reader`,
+    name: `${appName}-web-analytics-reader`,
     accountId,
     policies: [
       {
@@ -21,8 +24,8 @@ const webAnalyticsReader = Effect.fn("webAnalyticsReader")(function* webAnalytic
     ],
   });
   return yield* Workers.Worker("WebAnalyticsToken", {
-    name: `${APP_NAME}-web-analytics-token`,
-    main: "./web-analytics-token.worker.ts",
+    name: `${appName}-web-analytics-token`,
+    main: decodeURIComponent(new URL("web-analytics-token.worker.ts", import.meta.url).pathname),
     compatibility,
     logpush: true,
     workersDev: false,
@@ -30,5 +33,5 @@ const webAnalyticsReader = Effect.fn("webAnalyticsReader")(function* webAnalytic
   });
 });
 
-export type { WebAnalyticsTokenEnv };
+export type { WebAnalyticsReaderProps, WebAnalyticsTokenEnv };
 export { webAnalyticsReader };

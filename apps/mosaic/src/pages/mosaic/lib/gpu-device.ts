@@ -1,4 +1,4 @@
-import { Effect, Option } from "effect";
+import { Effect, Option, Schema } from "effect";
 
 interface Gpu {
   readonly device: GPUDevice;
@@ -6,16 +6,30 @@ interface Gpu {
   readonly format: GPUTextureFormat;
 }
 
+const taggedError = Schema.TaggedError;
+
+class GpuRequestFailed extends taggedError<GpuRequestFailed, { readonly brand: unique symbol }>()(
+  "GpuRequestFailed",
+  { step: Schema.String },
+) {}
+
 const requestDevice = (): Effect.Effect<Option.Option<GPUDevice>> =>
   Effect.gen(function* request() {
     if (!("gpu" in navigator)) {
       return Option.none();
     }
-    const adapter = yield* Effect.tryPromise(() => navigator.gpu.requestAdapter());
+    const adapter = yield* Effect.tryPromise({
+      try: () => navigator.gpu.requestAdapter(),
+      catch: () => GpuRequestFailed.make({ step: "adapter" }),
+    });
     if (adapter === null) {
       return Option.none();
     }
-    return Option.some(yield* Effect.tryPromise(() => adapter.requestDevice()));
+    const device = yield* Effect.tryPromise({
+      try: () => adapter.requestDevice(),
+      catch: () => GpuRequestFailed.make({ step: "device" }),
+    });
+    return Option.some(device);
   }).pipe(Effect.orElseSucceed(() => Option.none()));
 
 const configure = (canvas: HTMLCanvasElement, device: GPUDevice): Option.Option<Gpu> =>

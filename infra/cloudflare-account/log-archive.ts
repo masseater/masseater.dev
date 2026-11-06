@@ -3,8 +3,6 @@ import { all, map, mapEffect } from "alchemy/Output";
 import { sha256 } from "alchemy/Util";
 import { Effect, Redacted, pipe } from "effect";
 
-import { APP_NAME } from "./app-name.ts";
-
 const RETENTION_DAYS = 30;
 
 const SECONDS_PER_DAY = 86_400;
@@ -15,7 +13,7 @@ const ARCHIVES = [
   {
     id: "WorkerFailures",
     prefix: "failures",
-    filter: JSON.stringify({ where: { key: "Outcome", operator: "!eq", value: "ok" } }),
+    filter: '{"where":{"key":"Outcome","operator":"!eq","value":"ok"}}',
     sampleRate: 1,
   },
   { id: "WorkerSample", prefix: "sample", filter: "", sampleRate: NORMAL_SAMPLE_RATE },
@@ -31,22 +29,10 @@ const FIELD_NAMES = [
   "Exceptions",
 ];
 
-const logsBucket = R2.Bucket("WorkerLogs", {
-  name: `${APP_NAME}-worker-logs`,
-  lifecycleRules: [
-    {
-      id: "expire",
-      deleteObjectsTransition: {
-        condition: { type: "Age", maxAge: RETENTION_DAYS * SECONDS_PER_DAY },
-      },
-    },
-  ],
-});
-
-const writerToken = Effect.gen(function* writerToken() {
+const writerToken = Effect.fn("writerToken")(function* writerToken(appName: string) {
   const { accountId } = yield* yield* CloudflareEnvironment;
   return yield* ApiToken.AccountApiToken("WorkerLogsWriter", {
-    name: `${APP_NAME}-worker-logs-writer`,
+    name: `${appName}-worker-logs-writer`,
     accountId,
     policies: [
       {
@@ -58,10 +44,20 @@ const writerToken = Effect.gen(function* writerToken() {
   });
 });
 
-const logArchive = Effect.gen(function* logArchive() {
+const logArchive = Effect.fn("logArchive")(function* logArchive(appName: string) {
   const { accountId } = yield* yield* CloudflareEnvironment;
-  const bucket = yield* logsBucket;
-  const token = yield* writerToken;
+  const bucket = yield* R2.Bucket("WorkerLogs", {
+    name: `${appName}-worker-logs`,
+    lifecycleRules: [
+      {
+        id: "expire",
+        deleteObjectsTransition: {
+          condition: { type: "Age", maxAge: RETENTION_DAYS * SECONDS_PER_DAY },
+        },
+      },
+    ],
+  });
+  const token = yield* writerToken(appName);
   const credentials = all(token.tokenId, token.value, bucket.bucketName).pipe(
     mapEffect(([tokenId, value, bucketName]) =>
       sha256(Redacted.value(value)).pipe(
@@ -73,7 +69,7 @@ const logArchive = Effect.gen(function* logArchive() {
     ARCHIVES,
     Effect.forEach(({ id, prefix, filter, sampleRate }) =>
       Logpush.Job(id, {
-        name: `${APP_NAME}-${prefix}-logs`,
+        name: `${appName}-${prefix}-logs`,
         dataset: "workers_trace_events",
         destinationConf: credentials.pipe(
           map(

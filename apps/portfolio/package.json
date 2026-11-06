@@ -4,7 +4,11 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#/*": "./src/*"
+    "#/*": "./src/*",
+    "#app-name": "./app-name.ts",
+    "#standalone/*": "./standalone/*",
+    "#vite-plugins/*": "./vite-plugins/*",
+    "#worker/*": "./worker/*"
   },
   "scripts": {
     "dev": "alchemy dev",
@@ -18,13 +22,14 @@
     "destroy": "alchemy destroy",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check && drizzle-kit generate --explain --output json | grep -q '\"status\":\"no_changes\"'",
-    "standard-site": "vpx standard-site.ts && sequoia publish"
+    "standard-site": "vpx scripts/standard-site.ts && sequoia publish"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@effect/atom-react": "catalog:stack",
     "@elysiajs/eden": "catalog:stack",
     "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/repositories": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@r_masseater/workers-tracing": "catalog:stack",
