@@ -53,9 +53,6 @@
     "provenance": true
   },
   "scripts": {
-    "build": "vp pack",
-    "test": "vp test run --fsModuleCachePath node_modules/.vitest-cache",
-    "size": "vp run build && size-limit",
     "prepublishOnly": "vp run build"
   },
   "devDependencies": {
