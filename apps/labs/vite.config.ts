@@ -11,6 +11,7 @@ const pagePath = (page: string): string =>
 export default defineConfig({
   run: {
     tasks: {
+      build: { command: "vp build", cache: false },
       deploy: { command: "alchemy deploy", cache: false },
       destroy: { command: "alchemy destroy", cache: false },
     },
