@@ -1,0 +1,28 @@
+{
+  "name": "three-twelve",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#config": "./three-twelve.ts",
+    "#outcome": "./outcome.ts"
+  },
+  "dependencies": {
+    "@discordjs/voice": "catalog:",
+    "@effect/platform-node": "catalog:",
+    "@r_masseater/workers-tracing": "catalog:stack",
+    "@snazzah/davey": "catalog:",
+    "discord-api-types": "catalog:",
+    "discord.js": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@cloudflare/workers-types": "catalog:",
+    "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/cloudflare-account": "workspace:*",
+    "@types/node": "catalog:",
+    "alchemy": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

@@ -34,6 +34,15 @@ published: true
 
 main に入ると、verify が通ったあとに本番へデプロイされる。
 
+## 3 時 12 分の Discord bot
+
+`apps/three-twelve` は、毎日 3 時 12 分（JST）に bot の入ったサーバーのボイスチャンネルへ来て「3時12分」を流し、流し終えると抜ける。
+操作は https://masseater.dev/three-twelve/ の API で行い、どれも `Authorization: Bot <トークン>` を付ける。
+
+`PUT /three-twelve/token` は、持ち主の Discord アプリのトークンだけを受け付けて保存し、招待のリンクを返す。
+`PUT /three-twelve/audio` に Ogg Opus の曲を送ると、次の 3 時 12 分からその曲を流す。
+`POST /three-twelve/play` を送ると 1 分後に試しの再生をする。`GET /three-twelve/status` は前回の結果を返す。
+
 ## Zenn に出す
 
 Zenn の記事は `apps/zenn-articles/articles/`、本は `books/`、画像は `images/` に置く。
