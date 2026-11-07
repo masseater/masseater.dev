@@ -1,0 +1,47 @@
+{
+  "source": {
+    "name": "DecideBench",
+    "url": "https://github.com/choyiny/decidebench",
+    "commit": "a5e3007f53209b73129e7d9e614e891823d2e84c",
+    "retrievedAt": "2026-10-12",
+    "license": "CC BY 4.0"
+  },
+  "models": [
+    {
+      "model": "typesafe/jev-1.13",
+      "entry": "JEV (AI Space)",
+      "accuracy": 0.98,
+      "pairAccuracy": 0.96
+    },
+    {
+      "model": "openai/gpt-6-luna-decisions",
+      "entry": "GPT-6 Luna (OpenAI Decisions)",
+      "accuracy": 0.9725,
+      "pairAccuracy": 0.945
+    },
+    {
+      "model": "cloudflare/clef",
+      "entry": "Clef 27B (AI Space)",
+      "accuracy": 0.94,
+      "pairAccuracy": 0.88
+    },
+    {
+      "model": "nace-ai/drex-v1.5",
+      "entry": "Drex 1.5 (Nace.AI)",
+      "accuracy": 0.9,
+      "pairAccuracy": 0.805
+    },
+    {
+      "model": "cloudflare/clef-flash",
+      "entry": "Clef-Flash 9B (AI Space)",
+      "accuracy": 0.8525,
+      "pairAccuracy": 0.72
+    },
+    {
+      "model": "jaredpalmer/kev-4b",
+      "entry": "Kev-4B (self-hosted)",
+      "accuracy": 0.7825,
+      "pairAccuracy": 0.655
+    }
+  ]
+}

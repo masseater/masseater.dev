@@ -248,7 +248,13 @@ const decisionTestRules = pipe(
   Rec.map(() => "off" as const),
 );
 
+const shadcnRestyleContracts = [
+  { pattern: "^Table(Head|Cell)$", allow: ["text-alignment", "fvn-spacing"] },
+  { pattern: "^TableCaption$", allow: ["caption", "text-alignment", "mt-*", "mb-*"] },
+];
+
 export {
+  shadcnRestyleContracts,
   allRulesOf,
   decisionPluginName,
   decisionRules,

@@ -12,6 +12,7 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 - サムネのモザイクアート: https://masseater.dev/mosaic/ （キャラごとのページは `libs/mosaic/src/characters.json` の slug で `/mosaic/<slug>`）
 - rpp-kit のデモ（`apps/rpp-kit-demo`）: https://masseater.dev/rpp-kit/
 - メドレーの曲と動画を逆引きするメドDB（`apps/medley-manager`）: https://medley-manager.masseater.dev
+- decision モデルの実験（`apps/injection-bisect-demo`・`apps/ocr-decide`・`apps/decision-bench`）。injection-bisect のデモは https://masseater.dev/injection-bisect/ 、npm は https://www.npmjs.com/package/@r_masseater/injection-bisect 。ocr-decide は https://masseater.dev/ocr-decide/ 、OCR エンジンの比較は https://masseater.dev/ocr-decide/ocr-engines 。日本語 decision model ベンチは https://masseater.dev/decision-bench/ で、手法は `docs/decision-bench.md` にある。
 - RSS: https://masseater.dev/feed.xml
 - Standard.site（blog の記事を AT Protocol に載せたもの）: https://bsky.app/profile/masseater.bsky.social
 - Zenn: https://zenn.dev/masseater

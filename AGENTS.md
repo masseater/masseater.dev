@@ -32,6 +32,18 @@
 - `apps/watashi-mcp` は、持ち主の個人データを扱うツールを 1 つにまとめた MCP サーバー（`watashi.masseater.dev/mcp`）で、プロジェクトの記憶と ToDo を D1 に置く。Sloppedia の記事を PR で足す `write_sloppedia_article`、masseater.dev のアクセス解析を読む `read_web_analytics`、personal-space のスライドの索引（mydecklist スタックの Vectorize）を引く `search_slides`・`get_deck` もここにある。Sloppedia の PR に使う GitHub のトークンは、broker の名前付きエントリポイント `SloppediaGitHub` をサービスバインディングで呼んで受け取る。コードは公開し、データは D1 にだけ置く。表への書き込みは `features/mcp/api/*-writer.server.ts` だけが行い、今の表の更新と `revision` 表への追加を同じ D1 の batch に入れる。ほかのファイルから `db.insert` などを呼ぶと lint（`record-lint.config.ts`）が落とす。認証は better-auth の OAuth とパスキーで、パスキーを登録できるのは招待の文字列を持つ最初の 1 人だけである。ツールの呼び出しはすべて Analytics Engine の `masseater_dev_watashi_tool_calls` と Workers Logs に記録する。
 - `apps/zenn-articles` はパッケージではない。main の verify が通ると、中身が `zenn` ブランチの直下へ写される。
 
+## decision モデルの実験
+
+- `libs/injection-bisect` は文書を `Parser` で区間に分け、区間の並びを √n 個の枝に割り、確率が `cutoff` 以上の枝だけを再帰的に細かく問い直す。`apps/injection-bisect-demo` のデモと `tools/injection-bisect-cli` が使う。npm には `dist` を出し、version を上げてから `publish.yml` を package に `injection-bisect` を選んで main で手動実行する。
+- `libs/ocr-decide` は請求書の画像を OCR で断片にし、decision モデルで項目に割り当てる。`apps/ocr-decide` はこれをブラウザーで動かし、計測結果も表示する。計測は `tools/ocr-measure` で行う。`render` が `data/` の請求書を画像にし、`measure` が `results/details.json` と `libs/ocr-measurements/summary.json` を書き、`rescore` はモデルに問い合わせず details.json から summary.json を書き直す。
+- OCR エンジンの日本語の読み取りは `tools/ocr-ja-bench` で測る。`render` が合成ページを、`prepare-data` が JaWildText の写真を `.cache/` に用意し、`measure [エンジン ID...]` が `results/` と `libs/ocr-measurements/ja-bench.json` を書く。ローカルのエンジンは `engines/<名前>/run.py` を uv で動かし、Surya は llama.cpp の要る Mac で測る。
+- `tools/decision-bench-runner` は日本語 decision model のベンチで、`vp run bench` で動かす。モデルごとの結果を `results/<モデル>.json` にコミットし、再実行ではそこで答えの出た問題を呼び直さない。問いの文面や読み取り方を変えたら、そのモデルのファイルを消して測り直す。`cache/` はコミットしない。終わると `docs/decision-bench.md` の `results:start`〜`results:end` の表と `libs/bench-summary/summary.json` を書き換え、`apps/decision-bench` がその JSON からリーダーボードを `/decision-bench` に出す。
+- 3 つのデモは `infra/start-site` の Vite と Alchemy の設定と `libs/web-ui` の部品を共有し、main の verify の `decision-experiments` ジョブが stage production で当てる。decision-bench は旧ホストからの Bulk Redirects に Account Rulesets を使うので、このジョブは environment `decision-experiments` で broker の `rulesets` の権限を受け取る。スタック名と `APP_NAME` は元のリポのまま（`injection-bisect`・`ocr-decide`・`mst-ja-decision-bench`）にしている。
+- injection-bisect の入力の形式ごとの処理は `segment.ts` に足さず、`Parser` として並びに加える。形式の読み取りは自前で書かず、officeparser・SheetJS・papaparse・ical.js・srt-vtt-parser・ass-compiler・nbformat・linguist-languages と refractor・file-type などのライブラリを使う。
+- `respan/` のモデルには、1 リクエストに区間ごとの質問を並べない。choice の質問も使わない。既定のモデル `respan/span-01-lite` を変えるときは、計測し直してユーザーに確認する。
+- 精度・費用・時間の比較は、無害な入力と注入を含む入力の両方で、フロンティアモデルに直接判定させた場合と並べる。計測の前後に `GET https://openrouter.ai/api/v1/key` でキーの残りを確かめる。
+- デモはサーバーの処理を持たない。OpenRouter のキーは見る人が入力し、サーバーは持たず受け取りもしない。
+
 ## 記事
 
 - 記事の日付は frontmatter に書かない。`apps/portfolio/vite-plugins/markdown/remark-git-date.ts` がビルド時に、そのファイルを最初に追加したコミットの日付を `date` として入れる。未コミットのファイルは当日の日付になる。

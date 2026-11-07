@@ -1,0 +1,341 @@
+[
+  {
+    "id": "synthetic-horizontal-mincho-1",
+    "category": "horizontal-mincho",
+    "font": "Noto Serif JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "駅前の古い書店は、今年の春で店を閉じることになった。",
+      "店主の祖父が戦後まもなく始めた店で、棚の配置は",
+      "七十年近くほとんど変わっていないという。最後の週には",
+      "常連客が次々に訪れ、学生のころに買った辞書や、",
+      "子どもに初めて選んだ絵本の思い出を語っていった。"
+    ]
+  },
+  {
+    "id": "synthetic-horizontal-mincho-2",
+    "category": "horizontal-mincho",
+    "font": "Noto Serif JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "第三章　水の循環と地域の暮らし",
+      "山に降った雨は、森の土にしみ込んで地下水となり、",
+      "長い時間をかけて川や湧き水として姿を現す。",
+      "流域に住む人々は、その水を田畑に引き、飲み水とし、",
+      "祭りや言い伝えの中でも大切に扱ってきた。"
+    ]
+  },
+  {
+    "id": "synthetic-horizontal-mincho-3",
+    "category": "horizontal-mincho",
+    "font": "Noto Serif JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "拝啓　秋冷の候、皆様にはますますご清祥のことと",
+      "お喜び申し上げます。さて、このたび当会では",
+      "創立二十周年を記念して、ささやかな集いを催すことと",
+      "いたしました。ご多用のところ誠に恐縮ですが、",
+      "ぜひご出席くださいますようお願い申し上げます。　敬具"
+    ]
+  },
+  {
+    "id": "synthetic-horizontal-gothic-1",
+    "category": "horizontal-gothic",
+    "font": "Noto Sans JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "【お知らせ】エレベーター点検のため運転を停止します",
+      "日時：10月24日（土）9時から12時まで",
+      "対象：東棟の1号機と2号機",
+      "点検中は西棟のエレベーターか階段をご利用ください。",
+      "ご不便をおかけしますが、ご協力をお願いいたします。"
+    ]
+  },
+  {
+    "id": "synthetic-horizontal-gothic-2",
+    "category": "horizontal-gothic",
+    "font": "Noto Sans JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "使い方",
+      "1. 本体の電源ボタンを3秒間押し続けます。",
+      "2. ランプが青く点滅したら、スマートフォンの設定を開きます。",
+      "3. 一覧に表示された名前を選ぶと接続が完了します。",
+      "※ 接続できないときは、本体を充電してからやり直してください。"
+    ]
+  },
+  {
+    "id": "synthetic-horizontal-gothic-3",
+    "category": "horizontal-gothic",
+    "font": "Noto Sans JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "本日のランチ",
+      "鶏のから揚げ定食　ご飯・味噌汁・小鉢付き　850円",
+      "季節野菜のカレー　サラダ付き　780円",
+      "焼き鮭とひじき煮の和膳　920円",
+      "大盛りは無料です。ラストオーダーは14時30分です。"
+    ]
+  },
+  {
+    "id": "synthetic-vertical-1",
+    "category": "vertical",
+    "font": "Noto Serif JP",
+    "writing": "vertical",
+    "condition": "clean",
+    "lines": [
+      "峠を越えると、谷の向こうに小さな村が見えた。",
+      "夕暮れの空に、家々の煙がまっすぐ立ちのぼっている。",
+      "旅人は荷を下ろし、しばらくその景色を眺めていた。",
+      "風が止み、どこからか鐘の音が聞こえてきた。",
+      "今夜の宿は、あの村で探すことにしよう。"
+    ]
+  },
+  {
+    "id": "synthetic-vertical-2",
+    "category": "vertical",
+    "font": "Noto Serif JP",
+    "writing": "vertical",
+    "condition": "clean",
+    "lines": [
+      "令和八年十月二十日　晴れ",
+      "朝のうちに庭の柿を三十個ほど収穫した。",
+      "今年は実が大きく、渋も少ないように思う。",
+      "半分は干し柿にして、残りは近所に配った。",
+      "夕方、隣家から栗ご飯のお返しが届いた。"
+    ]
+  },
+  {
+    "id": "synthetic-vertical-3",
+    "category": "vertical",
+    "font": "Noto Serif JP",
+    "writing": "vertical",
+    "condition": "clean",
+    "lines": [
+      "町内会だより　第百二十四号",
+      "一、秋の清掃活動は十一月三日に行います。",
+      "二、集合場所は公民館前の広場です。",
+      "三、軍手とごみ袋は会で用意いたします。",
+      "雨天の場合は翌週の日曜日に延期します。"
+    ]
+  },
+  {
+    "id": "synthetic-mixed-script-1",
+    "category": "mixed-script",
+    "font": "Noto Sans JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "npm install で依存パッケージを入れたあと、",
+      "環境変数 API_BASE_URL に https://api.example.jp/v2 を設定する。",
+      "Node.js 22 以降では fetch() が標準で使えるため、",
+      "axios への依存は不要になった（詳細は README.md を参照）。",
+      "テストは vitest run --coverage で実行できる。"
+    ]
+  },
+  {
+    "id": "synthetic-mixed-script-2",
+    "category": "mixed-script",
+    "font": "Noto Sans JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "ｶﾌｪﾗﾃ(ICED) Mｻｲｽﾞ ¥480",
+      "ﾌﾞﾙｰﾍﾞﾘｰﾏﾌｨﾝ ¥320",
+      "小計 ¥800 / 税8% ¥59",
+      "お会計はPayPay・交通系IC・VISAがご利用いただけます。",
+      "Wi-Fi: SSID cafe_guest / PASS 2026autumn"
+    ]
+  },
+  {
+    "id": "synthetic-mixed-script-3",
+    "category": "mixed-script",
+    "font": "Noto Sans JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "実験では、試料Aを25.0 mLのエタノールに溶かし、",
+      "pH 7.4の緩衝液で10倍に希釈した。",
+      "吸光度は波長λ = 450 nmで測定し、R² = 0.998を得た。",
+      "温度は37 ℃、反応時間は30 min ± 2 minとした。",
+      "結果を表2（n = 12）とFig. 3に示す。"
+    ]
+  },
+  {
+    "id": "synthetic-rare-kanji-1",
+    "category": "rare-kanji",
+    "font": "Noto Serif JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "出席者：髙橋　健、齋藤　美咲、渡邉　浩二、山﨑　蓮",
+      "欠席者：濱田　瑠璃子、櫻井　巌",
+      "記録：邊見　彌生",
+      "議題：檜原村の薔薇園と蔦屋敷の保存について",
+      "次回は鷗外記念館の會議室で開催する。"
+    ]
+  },
+  {
+    "id": "synthetic-rare-kanji-2",
+    "category": "rare-kanji",
+    "font": "Noto Serif JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "憂鬱な雨の午後、彼は書斎で古い葡萄酒の栓を抜いた。",
+      "窓の外では、紫陽花の葉に蝸牛が這っている。",
+      "机の上には、読みかけの『顰蹙と矜恃』が開いたままだ。",
+      "埃をかぶった硯と、欅の文箱が並んでいる。",
+      "彼は溜息をつき、躊躇いながら筆を執った。"
+    ]
+  },
+  {
+    "id": "synthetic-rare-kanji-3",
+    "category": "rare-kanji",
+    "font": "Noto Serif JP",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "國學院の學生たちは、舊制の校舎を訪ねた。",
+      "講堂の扉には「學問ノ獨立」と大きく刻まれている。",
+      "圖書館には、戰前の雜誌が數多く殘されていた。",
+      "案内の老教授は、當時の寫眞を一枚ずつ見せてくれた。",
+      "歸りの電車で、皆その話ばかりしていた。"
+    ]
+  },
+  {
+    "id": "synthetic-small-text-1",
+    "category": "small-text",
+    "font": "Noto Sans JP",
+    "writing": "horizontal",
+    "condition": "small",
+    "lines": [
+      "本製品の保証期間はお買い上げ日から1年間です。",
+      "取扱説明書に従った正常な使用状態で故障した場合に限り、",
+      "無料で修理いたします。ただし、落下や水濡れによる故障、",
+      "お客様による分解や改造が原因の故障は保証の対象外です。",
+      "修理をご依頼の際は、本保証書を必ずご提示ください。"
+    ]
+  },
+  {
+    "id": "synthetic-small-text-2",
+    "category": "small-text",
+    "font": "Noto Serif JP",
+    "writing": "horizontal",
+    "condition": "small",
+    "lines": [
+      "注1）本調査は全国の20歳以上の男女3,000人を対象に実施した。",
+      "注2）回答率は62.4%であった。",
+      "注3）四捨五入のため、合計が100%にならない場合がある。",
+      "出典：地域生活に関する意識調査（2026年）",
+      "※本資料の無断転載を禁じます。"
+    ]
+  },
+  {
+    "id": "synthetic-small-text-3",
+    "category": "small-text",
+    "font": "Noto Sans JP",
+    "writing": "horizontal",
+    "condition": "small",
+    "lines": [
+      "原材料名：小麦粉（国内製造）、砂糖、バター、鶏卵、",
+      "アーモンド、食塩／膨張剤、香料、乳化剤（大豆由来）",
+      "内容量：12個　賞味期限：枠外下部に記載",
+      "保存方法：直射日光、高温多湿を避けて保存してください。",
+      "製造者：株式会社こもれび製菓　長野県松本市中央1-2-3"
+    ]
+  },
+  {
+    "id": "synthetic-degraded-scan-1",
+    "category": "degraded-scan",
+    "font": "Noto Serif JP",
+    "writing": "horizontal",
+    "condition": "degraded",
+    "tilt": 1.5,
+    "lines": [
+      "昭和の終わりごろ、この商店街には四十軒を超える店があった。",
+      "魚屋、八百屋、金物屋、それに映画館まで揃っていた。",
+      "夕方になると買い物客で道があふれ、",
+      "子どもたちは駄菓子屋の前に集まって遊んでいた。",
+      "いま営業を続けているのは、わずか九軒である。"
+    ]
+  },
+  {
+    "id": "synthetic-degraded-scan-2",
+    "category": "degraded-scan",
+    "font": "Noto Sans JP",
+    "writing": "horizontal",
+    "condition": "degraded",
+    "tilt": -2,
+    "lines": [
+      "申込書",
+      "氏名　佐々木　陽菜",
+      "住所　北海道札幌市中央区北五条西二丁目",
+      "電話　011-222-3344",
+      "希望する講座　陶芸入門（土曜日午前の部）"
+    ]
+  },
+  {
+    "id": "synthetic-degraded-scan-3",
+    "category": "degraded-scan",
+    "font": "Noto Serif JP",
+    "writing": "vertical",
+    "condition": "degraded",
+    "tilt": 1,
+    "lines": [
+      "その年の冬は、例年になく雪が多かった。",
+      "村へ続く一本道は、幾度も雪に閉ざされた。",
+      "人々は互いに米や薪を分け合い、",
+      "春の訪れをひたすら待ち続けた。",
+      "三月の半ば、ようやく川の氷が割れた。"
+    ]
+  },
+  {
+    "id": "synthetic-handwriting-font-1",
+    "category": "handwriting-font",
+    "font": "Zen Kurenaido",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "お母さんへ",
+      "冷蔵庫にカレーがあるので温めて食べてください。",
+      "今日は部活で帰りが七時ごろになります。",
+      "牛乳がなくなりそうなので、帰りに買ってきます。",
+      "ゆうき"
+    ]
+  },
+  {
+    "id": "synthetic-handwriting-font-2",
+    "category": "handwriting-font",
+    "font": "Klee One",
+    "writing": "horizontal",
+    "condition": "clean",
+    "lines": [
+      "今日の学習のまとめ",
+      "植物は日光を受けて、でんぷんを作る。",
+      "このはたらきを光合成という。",
+      "光合成には、水と二酸化炭素が必要である。",
+      "できた酸素は、気こうから外に出ていく。"
+    ]
+  },
+  {
+    "id": "synthetic-handwriting-font-3",
+    "category": "handwriting-font",
+    "font": "Zen Kurenaido",
+    "writing": "vertical",
+    "condition": "clean",
+    "lines": [
+      "暑中お見舞い申し上げます",
+      "毎日暑い日が続いていますが、",
+      "お変わりなくお過ごしでしょうか。",
+      "こちらは家族みな元気にしております。",
+      "どうぞお体を大切になさってください。"
+    ]
+  }
+]

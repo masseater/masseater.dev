@@ -1,0 +1,23 @@
+{
+  "name": "@ocr-decide/ja-bench",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@ocr-decide/measurements": "workspace:*",
+    "@ocr-decide/tooling": "workspace:*",
+    "@r_masseater/ocr-decide": "workspace:*",
+    "effect": "catalog:stack",
+    "entities": "catalog:",
+    "fastest-levenshtein": "catalog:"
+  },
+  "devDependencies": {
+    "@fontsource/klee-one": "catalog:",
+    "@fontsource/noto-sans-jp": "catalog:",
+    "@fontsource/noto-serif-jp": "catalog:",
+    "@fontsource/zen-kurenaido": "catalog:",
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

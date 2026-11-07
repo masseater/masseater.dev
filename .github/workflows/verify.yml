@@ -197,6 +197,28 @@ jobs:
       - uses: $/.github/actions/setup
       - run: vp exec --filter medley-manager alchemy deploy --stage production --yes
 
+  decision-experiments:
+    needs: deploy
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    environment: decision-experiments
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: decision-experiments
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@b634b841fef32c20d1d970bacd1d113532cf8dc4
+      - uses: $/.github/actions/setup
+      - run: vp exec --filter injection-bisect-demo alchemy deploy --stage production --yes
+      - uses: masseater/typescript-template/.github/actions/credentials@b634b841fef32c20d1d970bacd1d113532cf8dc4
+      - run: vp exec --filter ocr-decide alchemy deploy --stage production --yes
+      - uses: masseater/typescript-template/.github/actions/credentials@b634b841fef32c20d1d970bacd1d113532cf8dc4
+      - run: vp exec --filter decision-bench alchemy deploy --stage production --yes
+
   rpp-kit:
     needs: deploy
     if: needs.deploy.outputs.latest == 'true'
@@ -582,6 +604,7 @@ jobs:
         watashi-mcp,
         rpp-kit,
         medley-manager,
+        decision-experiments,
         web-vitals,
         sts2-pck,
         github,

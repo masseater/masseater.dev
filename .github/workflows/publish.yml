@@ -3,6 +3,11 @@ name: publish
 on:
   workflow_dispatch:
     inputs:
+      package:
+        description: Package directory under libs/
+        required: true
+        type: choice
+        options: [sloppedia, injection-bisect, ocr-decide]
       ref:
         description: Tag or commit to publish
         required: true
@@ -23,7 +28,7 @@ jobs:
       id-token: write
     defaults:
       run:
-        working-directory: libs/sloppedia
+        working-directory: libs/${{ inputs.package }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -35,7 +40,10 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
       - run: vp test run
-      - run: vp run size
+      - if: inputs.package == 'sloppedia'
+        run: vp run size
+      - if: inputs.package != 'sloppedia'
+        run: vp run build
       - run: vp pm pack --out "$RUNNER_TEMP/package.tgz"
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -45,7 +53,7 @@ jobs:
       - name: Publish
         working-directory: ${{ runner.temp }}
         env:
-          PACKAGE_JSON: ${{ github.workspace }}/libs/sloppedia/package.json
+          PACKAGE_JSON: ${{ github.workspace }}/libs/${{ inputs.package }}/package.json
         run: |
           name="$(jq -r .name "$PACKAGE_JSON")"
           version="$(jq -r .version "$PACKAGE_JSON")"

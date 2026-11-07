@@ -1,0 +1,36 @@
+# Changelog
+
+## 0.1.0 (2026-11-05)
+
+
+### Features
+
+* /inspect をブラウザから OpenRouter を直接呼ぶライブの技術デモにする ([#16](https://github.com/masseater/decision-experiments/issues/16)) ([a422639](https://github.com/masseater/decision-experiments/commit/a42263985e33aeac73429a9cf9facc11ef4b608f))
+* add /why page and use per-model cutoffs of at least 0.8 ([#60](https://github.com/masseater/decision-experiments/issues/60)) ([89bb3b2](https://github.com/masseater/decision-experiments/commit/89bb3b2132f6445a2d4c5cec9b348f732b7c45e6))
+* ask every sentence in one request for models that answer questions separately ([#35](https://github.com/masseater/decision-experiments/issues/35)) ([f71582f](https://github.com/masseater/decision-experiments/commit/f71582f0f68ac4f1a66b0519a61342c2b2ac9bcc))
+* decision モデルと二分探索でプロンプトインジェクションの位置を特定する ([#4](https://github.com/masseater/decision-experiments/issues/4)) ([fbf67eb](https://github.com/masseater/decision-experiments/commit/fbf67ebd26d5c71e984e719054250cbc40874169))
+* drop the whole-input gate and split from the first request ([#37](https://github.com/masseater/decision-experiments/issues/37)) ([687013b](https://github.com/masseater/decision-experiments/commit/687013b88a30fef6d05308f9c2c03df2d9002be5))
+* let callers name the input format and read binary files ([#77](https://github.com/masseater/decision-experiments/issues/77)) ([41b8c1e](https://github.com/masseater/decision-experiments/commit/41b8c1e54d9fe368f5a5df3ebf79d63fa47618a4))
+* masseater.dev/injection-bisect で公開し、例の選択と4分割探索を入れる ([#21](https://github.com/masseater/decision-experiments/issues/21)) ([8df11b9](https://github.com/masseater/decision-experiments/commit/8df11b973328ebda9dc7fd3bcd75054eb1c87c8a))
+* parse HTML and judge only its text, comments and prose attributes ([#42](https://github.com/masseater/decision-experiments/issues/42)) ([817749c](https://github.com/masseater/decision-experiments/commit/817749cdbbd46ca23965db1fa4434b47b4eab042))
+* pick YAML, CSV, TSV and code from their contents ([#85](https://github.com/masseater/decision-experiments/issues/85)) ([43fc2ab](https://github.com/masseater/decision-experiments/commit/43fc2aba673145be2d29d42546098b8a397de9d3))
+* pluggable parser interface for splitting input into judged units ([#45](https://github.com/masseater/decision-experiments/issues/45)) ([7ff4db0](https://github.com/masseater/decision-experiments/commit/7ff4db031769547cc493c685e4f4906cc1312e94))
+* publish the core library to npm as [@r](https://github.com/r)_masseater/injection-bisect ([#46](https://github.com/masseater/decision-experiments/issues/46)) ([6795029](https://github.com/masseater/decision-experiments/commit/67950290073a545f2708a1ba6d5fbcaa06172576))
+* read calendars, contacts and ASS subtitles ([#89](https://github.com/masseater/decision-experiments/issues/89)) ([cf19336](https://github.com/masseater/decision-experiments/commit/cf19336567fc97adde2774a135347b81c915fd20))
+* read comments and strings in source code ([#83](https://github.com/masseater/decision-experiments/issues/83)) ([d32d0da](https://github.com/masseater/decision-experiments/commit/d32d0da96d425854ba17b65b19ea8ab5ef6cec8e))
+* read config files and 47 more languages ([#87](https://github.com/masseater/decision-experiments/issues/87)) ([ebb6e7b](https://github.com/masseater/decision-experiments/commit/ebb6e7b23b3a94f2e8eeed7b5ee8c002bfb40ced))
+* read email, PDF and Office files ([#84](https://github.com/masseater/decision-experiments/issues/84)) ([d22b13b](https://github.com/masseater/decision-experiments/commit/d22b13bf3fc1c0ec6d5a8bcec4d91c2edf4efedc))
+* read every file inside a zip archive ([#95](https://github.com/masseater/decision-experiments/issues/95)) ([36e4381](https://github.com/masseater/decision-experiments/commit/36e4381c552f22bca309564cca2be968544f0600))
+* read images and image-only PDF pages with OCR ([#86](https://github.com/masseater/decision-experiments/issues/86)) ([be8be5c](https://github.com/masseater/decision-experiments/commit/be8be5cf7bce04b53cb4219d24b355119db8cfbc))
+* read JSON and YAML ([#79](https://github.com/masseater/decision-experiments/issues/79)) ([d7bac32](https://github.com/masseater/decision-experiments/commit/d7bac3271e2e6dc6cd87442dc5a28c914dd5ff34))
+* read JSON Lines and more JSON, XML and Markdown extensions ([#98](https://github.com/masseater/decision-experiments/issues/98)) ([ada227a](https://github.com/masseater/decision-experiments/commit/ada227a016a1e34a8f8acea2816796e8a6846ea5))
+* read Jupyter notebooks, EPUB and OpenDocument files ([#91](https://github.com/masseater/decision-experiments/issues/91)) ([77d0fd3](https://github.com/masseater/decision-experiments/commit/77d0fd33ab61404c1e658176b40d6e8be208b6b8))
+* read Markdown ([#78](https://github.com/masseater/decision-experiments/issues/78)) ([d969a9b](https://github.com/masseater/decision-experiments/commit/d969a9bbed82b2d1dd97ae5452fc337fb4f25655))
+* read mbox archives and Outlook messages ([#92](https://github.com/masseater/decision-experiments/issues/92)) ([88c571a](https://github.com/masseater/decision-experiments/commit/88c571a0d1db7a7ced0b9df2cbdec6e70223bc95))
+* read RTF documents ([#93](https://github.com/masseater/decision-experiments/issues/93)) ([d4ae82b](https://github.com/masseater/decision-experiments/commit/d4ae82b50af92d3b74d81804761986606c5863ee))
+* read tar archives and gzip files ([#99](https://github.com/masseater/decision-experiments/issues/99)) ([24cd1db](https://github.com/masseater/decision-experiments/commit/24cd1db29dbe4305986bde5abd985206d5ffbdb9))
+* read Word, Excel and PowerPoint 97-2003 files ([#97](https://github.com/masseater/decision-experiments/issues/97)) ([b73263d](https://github.com/masseater/decision-experiments/commit/b73263da4212a04a649ecee9452bf471873891e2))
+* read XML feeds, CSV/TSV and subtitles ([#82](https://github.com/masseater/decision-experiments/issues/82)) ([ac9cfdb](https://github.com/masseater/decision-experiments/commit/ac9cfdbf491ff0b3d0cfb954224fd737fd78f6fb))
+* デモを静的ビルドにし、判定モデルを選べるようにする ([#28](https://github.com/masseater/decision-experiments/issues/28)) ([8020bd2](https://github.com/masseater/decision-experiments/commit/8020bd21e9e4dbcb933d926a94b5b56093cee0d2))
+* 入力した文章を判定して結果を見られる /inspect ページを追加する ([#8](https://github.com/masseater/decision-experiments/issues/8)) ([049a598](https://github.com/masseater/decision-experiments/commit/049a59814dc79de812b8556c0f4a8a36fb7db48c))
+* 長文のニュース記事の例を足し、分割数を文の数の平方根にする ([#24](https://github.com/masseater/decision-experiments/issues/24)) ([b527f2b](https://github.com/masseater/decision-experiments/commit/b527f2b91206d98314370382d68dc26e351555f3))

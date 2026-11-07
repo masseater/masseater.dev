@@ -1,0 +1,5 @@
+[project]
+name = "ocr-ja-bench-indra"
+version = "0.0.0"
+requires-python = ">=3.14,<3.15"
+dependencies = ["indra-ocr==1.1.2"]

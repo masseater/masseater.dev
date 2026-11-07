@@ -12,6 +12,7 @@ import {
   generated,
   pluginRules,
   restrictedImports,
+  shadcnRestyleContracts,
 } from "./lint.config.ts";
 import { readonlyParameterAllow } from "./readonly-types.config.ts";
 import { writerOnlyOverride } from "./record-lint.config.ts";
@@ -89,6 +90,7 @@ export default defineConfig({
       "drizzle/enforce-delete-with-where": ["error", { drizzleObjectName: ["db"] }],
       "drizzle/enforce-update-with-where": ["error", { drizzleObjectName: ["db"] }],
       ...allRulesOf({ prefix: "shadcn", rules: shadcn.rules }),
+      "shadcn/no-restyle": ["error", { contracts: shadcnRestyleContracts }],
       ...allRulesOf({ prefix: "baseline-js", rules: baselineJs.rules }),
       ...baselineJs.configs.recommended().rules,
       "baseline-js/use-baseline": [
@@ -105,6 +107,7 @@ export default defineConfig({
       "eslint/sort-keys": "off",
       "import/no-named-export": "off",
       "import/prefer-default-export": "off",
+      "import/no-namespace": ["error", { ignore: ["linguist-languages"] }],
       "react/react-in-jsx-scope": "off",
       "eslint/no-undef": "off",
       "typescript/promise-function-async": "off",
@@ -130,15 +133,17 @@ export default defineConfig({
         "error",
         {
           capIsNewExceptions: [
+            "App",
             "Build",
             "CloudflareApiLive",
             "Repository",
             "RepositorySettings",
             "Resource",
             "Ruleset",
+            "Secret",
             "Stack",
           ],
-          capIsNewExceptionPattern: String.raw`^(Config|Containers|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|KV|Logpush|R2|Ruleset|Rules|SecretsStore|Website|Workers|Zone)\.`,
+          capIsNewExceptionPattern: String.raw`^(Argument|Config|Containers|Context|Data|Flag|Persistable|Schema|AnalyticsEngine|ApiToken|D1|KV|Logpush|R2|Ruleset|Rules|SecretsStore|Website|Workers|Zone)\.`,
         },
       ],
       "typescript/no-empty-interface": ["error", { allowSingleExtends: true }],
@@ -176,7 +181,7 @@ export default defineConfig({
         rules: { "import/no-default-export": "off" },
       },
       {
-        files: ["**/shared/ui/**", "libs/ui/src/button.tsx"],
+        files: ["**/shared/ui/**", "libs/ui/src/button.tsx", "libs/web-ui/src/ui/**"],
         rules: { "shadcn/no-restyle": "off", "react/jsx-props-no-spreading": "off" },
       },
       {
