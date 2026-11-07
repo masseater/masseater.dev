@@ -23,7 +23,14 @@ import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
 import { route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
 import type { Claims } from "./github-oidc.ts";
-import { Rejected, grantKeys, repositoryName, verify } from "./github-oidc.ts";
+import {
+  Rejected,
+  grantKeys,
+  isGranted,
+  repositoryName,
+  verify,
+  workflowGrant,
+} from "./github-oidc.ts";
 import { mintGitHubToken } from "./github-token.ts";
 
 const TOKEN_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
@@ -37,7 +44,37 @@ type CredentialBrokerEnv = GitHubAppEnv &
     NPM_TOKEN?: SecretsStoreSecret;
     ACCOUNT_ID: string;
     GRANTS: string;
+    WORKFLOW_GRANTS: string;
   }>;
+
+const PermissionGroups = Schema.mutable(Schema.Array(Schema.Struct({ id: Schema.String })));
+
+const Policy = Schema.Struct({
+  effect: Schema.Literal("allow"),
+  permissionGroups: PermissionGroups,
+  resources: Schema.Record(Schema.String, Schema.String),
+});
+
+const Policies = Schema.mutable(Schema.Array(Policy));
+
+const Permissions = Schema.Record(Schema.String, Schema.String);
+
+const RepositoryNames = Schema.mutable(Schema.Array(Schema.String));
+
+const GitHubGrant = Schema.Struct({
+  permissions: Permissions,
+  repositories: Schema.optionalKey(RepositoryNames),
+});
+
+const Grants = Schema.fromJsonString(
+  Schema.Struct({
+    profiles: Schema.Record(Schema.String, Policies),
+    repositories: Schema.Record(Schema.String, Schema.String),
+    github: Schema.Record(Schema.String, GitHubGrant),
+    npm: Schema.Array(Schema.String),
+    atproto: Schema.Array(Schema.String),
+  }),
+);
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 
@@ -67,9 +104,18 @@ type IssueError = CreateTokenError | GitHubAppFailed | Schema.SchemaError;
 const isListed = (claims: typeof Claims.Type, listed: readonly string[]): boolean =>
   Arr.some(grantKeys(claims), (key) => Arr.contains(listed, key));
 
+const WorkflowGrants = Schema.fromJsonString(Schema.Record(Schema.String, Permissions));
+
 const decodeGrants = (
   env: CredentialBrokerEnv,
-): Effect.Effect<typeof Grants.Type, Schema.SchemaError> => Schema.decodeEffect(Grants)(env.GRANTS);
+): Effect.Effect<
+  typeof Grants.Type & Readonly<{ workflows: typeof WorkflowGrants.Type }>,
+  Schema.SchemaError
+> =>
+  Effect.all({
+    grants: Schema.decodeEffect(Grants)(env.GRANTS),
+    workflows: Schema.decodeEffect(WorkflowGrants)(env.WORKFLOW_GRANTS),
+  }).pipe(Effect.map(({ grants, workflows }) => ({ ...grants, workflows })));
 
 const issueCloudflareToken = (
   env: CredentialBrokerEnv,

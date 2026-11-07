@@ -99,36 +99,6 @@ const workflowGrant =
       Option.map((permissions) => ({ permissions, repositories: [repositoryName(claims)] })),
     );
 
-const PermissionGroups = Schema.mutable(Schema.Array(Schema.Struct({ id: Schema.String })));
-
-const Policy = Schema.Struct({
-  effect: Schema.Literal("allow"),
-  permissionGroups: PermissionGroups,
-  resources: Schema.Record(Schema.String, Schema.String),
-});
-
-const Policies = Schema.mutable(Schema.Array(Policy));
-
-const Permissions = Schema.Record(Schema.String, Schema.String);
-
-const RepositoryNames = Schema.mutable(Schema.Array(Schema.String));
-
-const GitHubGrant = Schema.Struct({
-  permissions: Permissions,
-  repositories: Schema.optionalKey(RepositoryNames),
-});
-
-const Grants = Schema.fromJsonString(
-  Schema.Struct({
-    profiles: Schema.Record(Schema.String, Policies),
-    repositories: Schema.Record(Schema.String, Schema.String),
-    github: Schema.Record(Schema.String, GitHubGrant),
-    workflows: Schema.Record(Schema.String, Permissions),
-    npm: Schema.Array(Schema.String),
-    atproto: Schema.Array(Schema.String),
-  }),
-);
-
 const isGranted =
   (
     grants: Readonly<{
@@ -149,7 +119,6 @@ const isGranted =
 
 export {
   Claims,
-  Grants,
   OWNER,
   OWNER_ID,
   Rejected,
