@@ -26,7 +26,7 @@ import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
 import { gitHubAppCredentials, readApp, route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
 import type { Claims } from "./github-oidc.ts";
-import { OWNER, Rejected, repositoryName, verify } from "./github-oidc.ts";
+import { OWNER, Rejected, grantKeys, repositoryName, verify } from "./github-oidc.ts";
 
 const TOKEN_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
 const TOKEN_LIFETIME = { hours: 1 } as const;
@@ -95,6 +95,9 @@ type Issued = Readonly<Record<string, unknown>>;
 
 type IssueError = CreateTokenError | GitHubAppFailed | Schema.SchemaError;
 
+const isListed = (claims: typeof Claims.Type, listed: readonly string[]): boolean =>
+  Arr.some(grantKeys(claims), (key) => Arr.contains(listed, key));
+
 const decodeGrants = (
   env: CredentialBrokerEnv,
 ): Effect.Effect<typeof Grants.Type, Schema.SchemaError> => Schema.decodeEffect(Grants)(env.GRANTS);
@@ -106,7 +109,9 @@ const issueCloudflareToken = (
   Effect.gen(function* createCloudflareToken() {
     const repository = repositoryName(claims);
     const grants = yield* decodeGrants(env);
-    const policies = Option.fromNullishOr(grants.profiles[grants.repositories[repository] ?? ""]);
+    const policies = Arr.findFirst(grantKeys(claims), (key) =>
+      Option.fromNullishOr(grants.profiles[grants.repositories[key] ?? ""]),
+    );
     if (Option.isNone(policies)) {
       return Option.none();
     }
@@ -137,7 +142,9 @@ const issueGitHubToken = (
 ): Effect.Effect<Option.Option<Issued>, IssueError, BrokerContext> =>
   Effect.gen(function* createGitHubToken() {
     const grants = yield* decodeGrants(env);
-    const grant = Option.fromNullishOr(grants.github[repositoryName(claims)]);
+    const grant = Arr.findFirst(grantKeys(claims), (key) =>
+      Option.fromNullishOr(grants.github[key]),
+    );
     if (Option.isNone(grant)) {
       return Option.none();
     }
@@ -172,9 +179,7 @@ const issueNpmToken = (
   decodeGrants(env).pipe(
     Effect.flatMap((grants) =>
       Option.match(
-        Option.filter(Option.fromNullishOr(env.NPM_TOKEN), () =>
-          Arr.contains(grants.npm, repositoryName(claims)),
-        ),
+        Option.filter(Option.fromNullishOr(env.NPM_TOKEN), () => isListed(claims, grants.npm)),
         {
           onNone: () => Effect.succeedNone,
           onSome: (secret) =>
@@ -196,7 +201,7 @@ const issueGranted = (
     issueNpmToken(env, claims),
     decodeGrants(env).pipe(
       Effect.flatMap((grants) =>
-        issueAppPassword({ env, granted: Arr.contains(grants.atproto, repositoryName(claims)) }),
+        issueAppPassword({ env, granted: isListed(claims, grants.atproto) }),
       ),
     ),
   ]).pipe(Effect.map(Arr.getSomes));
@@ -217,14 +222,11 @@ const issue = (
 ): Effect.Effect<Response, never, BrokerContext> =>
   Effect.gen(function* issueToken() {
     const claims = yield* verify(request);
-    const repository = repositoryName(claims);
     const grants = yield* decodeGrants(env);
-    if (
-      !Rec.has(grants.repositories, repository) &&
-      !Rec.has(grants.github, repository) &&
-      !Arr.contains(grants.npm, repository)
-    ) {
-      return yield* Rejected.make({ reason: `no grant for ${repository}` });
+    const known = (key: string): boolean =>
+      Rec.has(grants.repositories, key) || Rec.has(grants.github, key);
+    if (!Arr.some(grantKeys(claims), known) && !isListed(claims, grants.npm)) {
+      return yield* Rejected.make({ reason: `no grant for ${claims.repository}` });
     }
     const issued = yield* issueGranted(env, claims);
     const keys = yield* sharedKeys(env);
