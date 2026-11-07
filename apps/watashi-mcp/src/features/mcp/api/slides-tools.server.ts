@@ -13,7 +13,7 @@ type SearchQuery = Readonly<{ query: string; limit: number; deck: Option.Option<
 const EMBEDDING_MODEL = "@cf/qwen/qwen3-embedding-0.6b";
 const QUERY_INSTRUCTION =
   "Given a search query written in Japanese or English, retrieve presentation slides that answer the query";
-const SLIDES_URL = "https://personal.masseater.dev/slides";
+const SLIDES_URL = "https://personal.masseater.dev/decks";
 const FIRST_PAGE = 1;
 const NO_PAGES = 0;
 const GET_BY_IDS_LIMIT = 20;
