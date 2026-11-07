@@ -9,4 +9,5 @@ libxcursor-dev
 libxkbcommon-dev
 libxcb-shape0-dev
 libxcb-xfixes0-dev
+shellcheck
 valgrind

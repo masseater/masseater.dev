@@ -560,7 +560,8 @@ jobs:
           unzip -q megadot.zip && rm megadot.zip
       - working-directory: apps/sts2-mods
         run: |
-          export GODOT_PATH="$(ls ~/megadot/MegaDot_*_mono_linux.x86_64)"
+          GODOT_PATH="$(ls ~/megadot/MegaDot_*_mono_linux.x86_64)"
+          export GODOT_PATH
           for dir in mods/*/; do
             mod="$(basename "$dir")"
             [ -d "mods/$mod/$mod" ] || continue
