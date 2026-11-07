@@ -2312,7 +2312,7 @@ importers:
         specifier: 2.1.1
         version: 2.1.1
       radix-ui:
-        specifier: catalog:stack
+        specifier: 1.8.1
         version: 1.8.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       tailwind-merge:
         specifier: 3.7.0
