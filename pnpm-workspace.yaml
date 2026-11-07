@@ -25,7 +25,7 @@ catalog:
   "@better-auth/passkey": 1.7.18
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.18
-  "@r_masseater/oxlint-typed-rules": 0.1.0
+  "@r_masseater/oxlint-typed-rules": 0.1.1
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
@@ -51,7 +51,7 @@ catalog:
   eslint-plugin-react-hooks: 7.1.1
   syncpack: 15.3.3
   vite: npm:@voidzero-dev/vite-plus-core@1.5.0
-  "@r_masseater/oxlint-plugin-decision": 0.1.0
+  "@r_masseater/oxlint-plugin-decision": 0.1.1
   eslint-plugin-no-comments: 1.2.1
   eslint-plugin-baseline-js: 0.7.7
   "@html-eslint/eslint-plugin-react": 0.67.0
@@ -177,7 +177,7 @@ catalogs:
     effect: 4.1.2
     elysia: 1.4.30
     fallow: 3.39.0
-    renovate: 44.212.1
+    renovate: 44.214.0
     steiger: 0.9.0
     radix-ui: 1.8.1
     tailwindcss: 4.3.4
