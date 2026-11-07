@@ -1,0 +1,40 @@
+{
+  "name": "decision-bench",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/web-ui": "workspace:*",
+    "@tanstack/react-query": "catalog:stack",
+    "@tanstack/react-router": "1.170.46",
+    "@tanstack/react-start": "catalog:stack",
+    "bench-summary": "workspace:*",
+    "class-variance-authority": "0.7.1",
+    "effect": "catalog:stack",
+    "lucide-react": "catalog:",
+    "radix-ui": "catalog:stack",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "recharts": "catalog:",
+    "scheduler": "0.28.0",
+    "tailwindcss": "catalog:stack"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/tsgo": "catalog:stack",
+    "@masseater.dev/start-site": "workspace:*",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "catalog:",
+    "@vitejs/plugin-rsc": "catalog:",
+    "alchemy": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

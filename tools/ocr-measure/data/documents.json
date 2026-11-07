@@ -1,0 +1,912 @@
+[
+  {
+    "id": "receipt-clean-1",
+    "kind": "receipt",
+    "condition": "clean",
+    "truth": {
+      "issuer": "株式会社みどり商店",
+      "issueDate": "2026年10月1日",
+      "total": "¥4,000",
+      "tax": "¥360",
+      "registration": "T4102938475610"
+    },
+    "recipient": "株式会社ことのは出版",
+    "phone": "03-3100-0001",
+    "dueDate": "2026年11月1日",
+    "time": "14:01",
+    "items": [
+      {
+        "name": "コピー用紙 A4",
+        "quantity": 1,
+        "amount": "¥380"
+      },
+      {
+        "name": "コーヒー豆 200g",
+        "quantity": 2,
+        "amount": "¥1,100"
+      },
+      {
+        "name": "電池 単三 4本",
+        "quantity": 3,
+        "amount": "¥2,160"
+      }
+    ],
+    "subtotal": "¥3,640",
+    "paid": "¥6,000",
+    "change": "¥2,000",
+    "font": "IPAGothic",
+    "tilt": 0
+  },
+  {
+    "id": "receipt-clean-2",
+    "kind": "receipt",
+    "condition": "clean",
+    "truth": {
+      "issuer": "青葉フーズ株式会社",
+      "issueDate": "2026/10/02",
+      "total": "¥6,291",
+      "tax": "¥571",
+      "registration": "T4102946394793"
+    },
+    "recipient": "大森建設株式会社",
+    "phone": "03-3101-0102",
+    "dueDate": "2026/11/02",
+    "time": "14:02",
+    "items": [
+      {
+        "name": "ボールペン 黒",
+        "quantity": 1,
+        "amount": "¥550"
+      },
+      {
+        "name": "食パン 一斤",
+        "quantity": 2,
+        "amount": "¥1,440"
+      },
+      {
+        "name": "マスキングテープ",
+        "quantity": 3,
+        "amount": "¥2,670"
+      },
+      {
+        "name": "コピー用紙 A4",
+        "quantity": 1,
+        "amount": "¥1,060"
+      }
+    ],
+    "subtotal": "¥5,720",
+    "paid": "¥9,000",
+    "change": "¥2,709",
+    "font": "WenQuanYi Zen Hei",
+    "tilt": 0
+  },
+  {
+    "id": "receipt-clean-3",
+    "kind": "receipt",
+    "condition": "clean",
+    "truth": {
+      "issuer": "有限会社さくら文具",
+      "issueDate": "令和8年10月3日",
+      "total": "¥10,682",
+      "tax": "¥972",
+      "registration": "T4102954313976"
+    },
+    "recipient": "株式会社ミナト企画",
+    "phone": "03-3102-0203",
+    "dueDate": "令和8年11月3日",
+    "time": "14:03",
+    "items": [
+      {
+        "name": "クリアファイル",
+        "quantity": 1,
+        "amount": "¥720"
+      },
+      {
+        "name": "ノート B5",
+        "quantity": 2,
+        "amount": "¥1,780"
+      },
+      {
+        "name": "封筒 長形3号",
+        "quantity": 3,
+        "amount": "¥3,180"
+      },
+      {
+        "name": "ボールペン 黒",
+        "quantity": 1,
+        "amount": "¥1,230"
+      },
+      {
+        "name": "食パン 一斤",
+        "quantity": 2,
+        "amount": "¥2,800"
+      }
+    ],
+    "subtotal": "¥9,710",
+    "paid": "¥13,000",
+    "change": "¥2,318",
+    "font": "IPAPGothic",
+    "tilt": 0
+  },
+  {
+    "id": "receipt-clean-4",
+    "kind": "receipt",
+    "condition": "clean",
+    "truth": {
+      "issuer": "北斗システム株式会社",
+      "issueDate": "2026-10-04",
+      "total": "¥18,103",
+      "tax": "¥1,643",
+      "registration": "T4102962233159"
+    },
+    "recipient": "清水物産株式会社",
+    "phone": "03-3103-0304",
+    "dueDate": "2026-11-04",
+    "time": "14:04",
+    "items": [
+      {
+        "name": "コーヒー豆 200g",
+        "quantity": 1,
+        "amount": "¥890"
+      },
+      {
+        "name": "電池 単三 4本",
+        "quantity": 2,
+        "amount": "¥2,120"
+      },
+      {
+        "name": "ホチキス針",
+        "quantity": 3,
+        "amount": "¥3,690"
+      },
+      {
+        "name": "クリアファイル",
+        "quantity": 1,
+        "amount": "¥1,400"
+      },
+      {
+        "name": "ノート B5",
+        "quantity": 2,
+        "amount": "¥3,140"
+      },
+      {
+        "name": "封筒 長形3号",
+        "quantity": 3,
+        "amount": "¥5,220"
+      }
+    ],
+    "subtotal": "¥16,460",
+    "paid": "¥21,000",
+    "change": "¥2,897",
+    "font": "IPAGothic",
+    "tilt": 0
+  },
+  {
+    "id": "receipt-clean-5",
+    "kind": "receipt",
+    "condition": "clean",
+    "truth": {
+      "issuer": "ひまわり印刷合同会社",
+      "issueDate": "2026年10月5日",
+      "total": "¥8,494",
+      "tax": "¥774",
+      "registration": "T4102970152342"
+    },
+    "recipient": "株式会社けやき不動産",
+    "phone": "03-3104-0405",
+    "dueDate": "2026年11月5日",
+    "time": "14:05",
+    "items": [
+      {
+        "name": "食パン 一斤",
+        "quantity": 1,
+        "amount": "¥1,060"
+      },
+      {
+        "name": "マスキングテープ",
+        "quantity": 2,
+        "amount": "¥2,460"
+      },
+      {
+        "name": "コピー用紙 A4",
+        "quantity": 3,
+        "amount": "¥4,200"
+      }
+    ],
+    "subtotal": "¥7,720",
+    "paid": "¥11,000",
+    "change": "¥2,506",
+    "font": "WenQuanYi Zen Hei",
+    "tilt": 0
+  },
+  {
+    "id": "receipt-degraded-1",
+    "kind": "receipt",
+    "condition": "degraded",
+    "truth": {
+      "issuer": "株式会社光が丘電機",
+      "issueDate": "2026/10/06",
+      "total": "¥11,525",
+      "tax": "¥1,045",
+      "registration": "T4102978071525"
+    },
+    "recipient": "株式会社ことのは出版",
+    "phone": "03-3105-0506",
+    "dueDate": "2026/11/06",
+    "time": "14:06",
+    "items": [
+      {
+        "name": "ノート B5",
+        "quantity": 1,
+        "amount": "¥1,230"
+      },
+      {
+        "name": "封筒 長形3号",
+        "quantity": 2,
+        "amount": "¥2,800"
+      },
+      {
+        "name": "ボールペン 黒",
+        "quantity": 3,
+        "amount": "¥4,710"
+      },
+      {
+        "name": "食パン 一斤",
+        "quantity": 1,
+        "amount": "¥1,740"
+      }
+    ],
+    "subtotal": "¥10,480",
+    "paid": "¥14,000",
+    "change": "¥2,475",
+    "font": "IPAPGothic",
+    "tilt": -1.6
+  },
+  {
+    "id": "receipt-degraded-2",
+    "kind": "receipt",
+    "condition": "degraded",
+    "truth": {
+      "issuer": "若葉ベーカリー",
+      "issueDate": "令和8年10月7日",
+      "total": "¥13,676",
+      "tax": "¥1,246",
+      "registration": "T4102985990708"
+    },
+    "recipient": "大森建設株式会社",
+    "phone": "03-3106-0607",
+    "dueDate": "令和8年11月7日",
+    "time": "14:07",
+    "items": [
+      {
+        "name": "電池 単三 4本",
+        "quantity": 1,
+        "amount": "¥1,400"
+      },
+      {
+        "name": "ホチキス針",
+        "quantity": 2,
+        "amount": "¥3,140"
+      },
+      {
+        "name": "クリアファイル",
+        "quantity": 3,
+        "amount": "¥5,220"
+      },
+      {
+        "name": "ノート B5",
+        "quantity": 1,
+        "amount": "¥1,910"
+      },
+      {
+        "name": "封筒 長形3号",
+        "quantity": 2,
+        "amount": "¥760"
+      }
+    ],
+    "subtotal": "¥12,430",
+    "paid": "¥16,000",
+    "change": "¥2,324",
+    "font": "IPAGothic",
+    "tilt": 1.2
+  },
+  {
+    "id": "receipt-degraded-3",
+    "kind": "receipt",
+    "condition": "degraded",
+    "truth": {
+      "issuer": "東雲デザイン事務所",
+      "issueDate": "2026-10-08",
+      "total": "¥15,867",
+      "tax": "¥1,447",
+      "registration": "T4102993909891"
+    },
+    "recipient": "株式会社ミナト企画",
+    "phone": "03-3107-0708",
+    "dueDate": "2026-11-08",
+    "time": "14:08",
+    "items": [
+      {
+        "name": "マスキングテープ",
+        "quantity": 1,
+        "amount": "¥1,570"
+      },
+      {
+        "name": "コピー用紙 A4",
+        "quantity": 2,
+        "amount": "¥3,480"
+      },
+      {
+        "name": "コーヒー豆 200g",
+        "quantity": 3,
+        "amount": "¥5,730"
+      },
+      {
+        "name": "電池 単三 4本",
+        "quantity": 1,
+        "amount": "¥380"
+      },
+      {
+        "name": "ホチキス針",
+        "quantity": 2,
+        "amount": "¥1,100"
+      },
+      {
+        "name": "クリアファイル",
+        "quantity": 3,
+        "amount": "¥2,160"
+      }
+    ],
+    "subtotal": "¥14,420",
+    "paid": "¥18,000",
+    "change": "¥2,133",
+    "font": "WenQuanYi Zen Hei",
+    "tilt": -0.8
+  },
+  {
+    "id": "receipt-degraded-4",
+    "kind": "receipt",
+    "condition": "degraded",
+    "truth": {
+      "issuer": "株式会社星野運輸",
+      "issueDate": "2026年10月9日",
+      "total": "¥7,378",
+      "tax": "¥678",
+      "registration": "T4103001829074"
+    },
+    "recipient": "清水物産株式会社",
+    "phone": "03-3108-0809",
+    "dueDate": "2026年11月9日",
+    "time": "14:09",
+    "items": [
+      {
+        "name": "封筒 長形3号",
+        "quantity": 1,
+        "amount": "¥1,740"
+      },
+      {
+        "name": "ボールペン 黒",
+        "quantity": 2,
+        "amount": "¥3,820"
+      },
+      {
+        "name": "食パン 一斤",
+        "quantity": 3,
+        "amount": "¥1,140"
+      }
+    ],
+    "subtotal": "¥6,700",
+    "paid": "¥10,000",
+    "change": "¥2,622",
+    "font": "IPAPGothic",
+    "tilt": 2.1
+  },
+  {
+    "id": "receipt-degraded-5",
+    "kind": "receipt",
+    "condition": "degraded",
+    "truth": {
+      "issuer": "川口工務店株式会社",
+      "issueDate": "2026/10/10",
+      "total": "¥5,549",
+      "tax": "¥509",
+      "registration": "T4103009748257"
+    },
+    "recipient": "株式会社けやき不動産",
+    "phone": "03-3109-0910",
+    "dueDate": "2026/11/10",
+    "time": "14:10",
+    "items": [
+      {
+        "name": "ホチキス針",
+        "quantity": 1,
+        "amount": "¥1,910"
+      },
+      {
+        "name": "クリアファイル",
+        "quantity": 2,
+        "amount": "¥760"
+      },
+      {
+        "name": "ノート B5",
+        "quantity": 3,
+        "amount": "¥1,650"
+      },
+      {
+        "name": "封筒 長形3号",
+        "quantity": 1,
+        "amount": "¥720"
+      }
+    ],
+    "subtotal": "¥5,040",
+    "paid": "¥8,000",
+    "change": "¥2,451",
+    "font": "IPAGothic",
+    "tilt": -2.4
+  },
+  {
+    "id": "invoice-clean-1",
+    "kind": "invoice",
+    "condition": "clean",
+    "truth": {
+      "issuer": "やまびこ食堂",
+      "issueDate": "令和8年10月11日",
+      "total": "¥270,650",
+      "tax": "¥24,600",
+      "registration": "T4103017667440"
+    },
+    "recipient": "株式会社ことのは出版",
+    "phone": "03-3110-1011",
+    "dueDate": "令和8年11月11日",
+    "time": "14:11",
+    "items": [
+      {
+        "name": "コピー用紙 A4",
+        "quantity": 1,
+        "amount": "¥14,060"
+      },
+      {
+        "name": "コーヒー豆 200g",
+        "quantity": 2,
+        "amount": "¥40,700"
+      },
+      {
+        "name": "電池 単三 4本",
+        "quantity": 3,
+        "amount": "¥79,920"
+      },
+      {
+        "name": "ホチキス針",
+        "quantity": 1,
+        "amount": "¥32,930"
+      },
+      {
+        "name": "クリアファイル",
+        "quantity": 2,
+        "amount": "¥78,440"
+      }
+    ],
+    "subtotal": "¥246,050",
+    "paid": "¥273,000",
+    "change": "¥2,350",
+    "font": "WenQuanYi Zen Hei",
+    "tilt": 0
+  },
+  {
+    "id": "invoice-clean-2",
+    "kind": "invoice",
+    "condition": "clean",
+    "truth": {
+      "issuer": "合同会社つばめ製作所",
+      "issueDate": "2026-10-12",
+      "total": "¥503,861",
+      "tax": "¥45,801",
+      "registration": "T4103025586623"
+    },
+    "recipient": "大森建設株式会社",
+    "phone": "03-3111-1112",
+    "dueDate": "2026-11-12",
+    "time": "14:12",
+    "items": [
+      {
+        "name": "ボールペン 黒",
+        "quantity": 1,
+        "amount": "¥20,350"
+      },
+      {
+        "name": "食パン 一斤",
+        "quantity": 2,
+        "amount": "¥53,280"
+      },
+      {
+        "name": "マスキングテープ",
+        "quantity": 3,
+        "amount": "¥98,790"
+      },
+      {
+        "name": "コピー用紙 A4",
+        "quantity": 1,
+        "amount": "¥39,220"
+      },
+      {
+        "name": "コーヒー豆 200g",
+        "quantity": 2,
+        "amount": "¥91,020"
+      },
+      {
+        "name": "電池 単三 4本",
+        "quantity": 3,
+        "amount": "¥155,400"
+      }
+    ],
+    "subtotal": "¥458,060",
+    "paid": "¥506,000",
+    "change": "¥2,139",
+    "font": "IPAPGothic",
+    "tilt": 0
+  },
+  {
+    "id": "invoice-clean-3",
+    "kind": "invoice",
+    "condition": "clean",
+    "truth": {
+      "issuer": "株式会社いろは書房",
+      "issueDate": "2026年10月13日",
+      "total": "¥231,172",
+      "tax": "¥21,012",
+      "registration": "T4103033505806"
+    },
+    "recipient": "株式会社ミナト企画",
+    "phone": "03-3112-1213",
+    "dueDate": "2026年11月13日",
+    "time": "14:13",
+    "items": [
+      {
+        "name": "クリアファイル",
+        "quantity": 1,
+        "amount": "¥26,640"
+      },
+      {
+        "name": "ノート B5",
+        "quantity": 2,
+        "amount": "¥65,860"
+      },
+      {
+        "name": "封筒 長形3号",
+        "quantity": 3,
+        "amount": "¥117,660"
+      }
+    ],
+    "subtotal": "¥210,160",
+    "paid": "¥234,000",
+    "change": "¥2,828",
+    "font": "IPAGothic",
+    "tilt": 0
+  },
+  {
+    "id": "invoice-clean-4",
+    "kind": "invoice",
+    "condition": "clean",
+    "truth": {
+      "issuer": "港南ドラッグ",
+      "issueDate": "2026/10/14",
+      "total": "¥329,673",
+      "tax": "¥29,973",
+      "registration": "T4103041424989"
+    },
+    "recipient": "清水物産株式会社",
+    "phone": "03-3113-1314",
+    "dueDate": "2026/11/14",
+    "time": "14:14",
+    "items": [
+      {
+        "name": "コーヒー豆 200g",
+        "quantity": 1,
+        "amount": "¥32,930"
+      },
+      {
+        "name": "電池 単三 4本",
+        "quantity": 2,
+        "amount": "¥78,440"
+      },
+      {
+        "name": "ホチキス針",
+        "quantity": 3,
+        "amount": "¥136,530"
+      },
+      {
+        "name": "クリアファイル",
+        "quantity": 1,
+        "amount": "¥51,800"
+      }
+    ],
+    "subtotal": "¥299,700",
+    "paid": "¥332,000",
+    "change": "¥2,327",
+    "font": "WenQuanYi Zen Hei",
+    "tilt": 0
+  },
+  {
+    "id": "invoice-clean-5",
+    "kind": "invoice",
+    "condition": "clean",
+    "truth": {
+      "issuer": "株式会社白樺ホーム",
+      "issueDate": "令和8年10月15日",
+      "total": "¥519,734",
+      "tax": "¥47,244",
+      "registration": "T4103049344172"
+    },
+    "recipient": "株式会社けやき不動産",
+    "phone": "03-3114-1415",
+    "dueDate": "令和8年11月15日",
+    "time": "14:15",
+    "items": [
+      {
+        "name": "食パン 一斤",
+        "quantity": 1,
+        "amount": "¥39,220"
+      },
+      {
+        "name": "マスキングテープ",
+        "quantity": 2,
+        "amount": "¥91,020"
+      },
+      {
+        "name": "コピー用紙 A4",
+        "quantity": 3,
+        "amount": "¥155,400"
+      },
+      {
+        "name": "コーヒー豆 200g",
+        "quantity": 1,
+        "amount": "¥58,090"
+      },
+      {
+        "name": "電池 単三 4本",
+        "quantity": 2,
+        "amount": "¥128,760"
+      }
+    ],
+    "subtotal": "¥472,490",
+    "paid": "¥522,000",
+    "change": "¥2,266",
+    "font": "IPAPGothic",
+    "tilt": 0
+  },
+  {
+    "id": "invoice-degraded-1",
+    "kind": "invoice",
+    "condition": "degraded",
+    "truth": {
+      "issuer": "こもれび珈琲",
+      "issueDate": "2026-10-16",
+      "total": "¥628,405",
+      "tax": "¥57,125",
+      "registration": "T4103057263355"
+    },
+    "recipient": "株式会社ことのは出版",
+    "phone": "03-3115-1516",
+    "dueDate": "2026-11-16",
+    "time": "14:16",
+    "items": [
+      {
+        "name": "ノート B5",
+        "quantity": 1,
+        "amount": "¥45,510"
+      },
+      {
+        "name": "封筒 長形3号",
+        "quantity": 2,
+        "amount": "¥103,600"
+      },
+      {
+        "name": "ボールペン 黒",
+        "quantity": 3,
+        "amount": "¥174,270"
+      },
+      {
+        "name": "食パン 一斤",
+        "quantity": 1,
+        "amount": "¥64,380"
+      },
+      {
+        "name": "マスキングテープ",
+        "quantity": 2,
+        "amount": "¥141,340"
+      },
+      {
+        "name": "コピー用紙 A4",
+        "quantity": 3,
+        "amount": "¥42,180"
+      }
+    ],
+    "subtotal": "¥571,280",
+    "paid": "¥631,000",
+    "change": "¥2,595",
+    "font": "IPAGothic",
+    "tilt": -1.6
+  },
+  {
+    "id": "invoice-degraded-2",
+    "kind": "invoice",
+    "condition": "degraded",
+    "truth": {
+      "issuer": "株式会社松風商事",
+      "issueDate": "2026年10月17日",
+      "total": "¥397,236",
+      "tax": "¥36,116",
+      "registration": "T4103065182538"
+    },
+    "recipient": "大森建設株式会社",
+    "phone": "03-3116-1617",
+    "dueDate": "2026年11月17日",
+    "time": "14:17",
+    "items": [
+      {
+        "name": "電池 単三 4本",
+        "quantity": 1,
+        "amount": "¥51,800"
+      },
+      {
+        "name": "ホチキス針",
+        "quantity": 2,
+        "amount": "¥116,180"
+      },
+      {
+        "name": "クリアファイル",
+        "quantity": 3,
+        "amount": "¥193,140"
+      }
+    ],
+    "subtotal": "¥361,120",
+    "paid": "¥400,000",
+    "change": "¥2,764",
+    "font": "WenQuanYi Zen Hei",
+    "tilt": 1.2
+  },
+  {
+    "id": "invoice-degraded-3",
+    "kind": "invoice",
+    "condition": "degraded",
+    "truth": {
+      "issuer": "あさひ自動車整備",
+      "issueDate": "2026/10/18",
+      "total": "¥454,217",
+      "tax": "¥41,297",
+      "registration": "T4103073101721"
+    },
+    "recipient": "株式会社ミナト企画",
+    "phone": "03-3117-1718",
+    "dueDate": "2026/11/18",
+    "time": "14:18",
+    "items": [
+      {
+        "name": "マスキングテープ",
+        "quantity": 1,
+        "amount": "¥58,090"
+      },
+      {
+        "name": "コピー用紙 A4",
+        "quantity": 2,
+        "amount": "¥128,760"
+      },
+      {
+        "name": "コーヒー豆 200g",
+        "quantity": 3,
+        "amount": "¥212,010"
+      },
+      {
+        "name": "電池 単三 4本",
+        "quantity": 1,
+        "amount": "¥14,060"
+      }
+    ],
+    "subtotal": "¥412,920",
+    "paid": "¥457,000",
+    "change": "¥2,783",
+    "font": "IPAPGothic",
+    "tilt": -0.8
+  },
+  {
+    "id": "invoice-degraded-4",
+    "kind": "invoice",
+    "condition": "degraded",
+    "truth": {
+      "issuer": "有限会社かもめ水産",
+      "issueDate": "令和8年10月19日",
+      "total": "¥353,688",
+      "tax": "¥32,158",
+      "registration": "T4103081020904"
+    },
+    "recipient": "清水物産株式会社",
+    "phone": "03-3118-1819",
+    "dueDate": "令和8年11月19日",
+    "time": "14:19",
+    "items": [
+      {
+        "name": "封筒 長形3号",
+        "quantity": 1,
+        "amount": "¥64,380"
+      },
+      {
+        "name": "ボールペン 黒",
+        "quantity": 2,
+        "amount": "¥141,340"
+      },
+      {
+        "name": "食パン 一斤",
+        "quantity": 3,
+        "amount": "¥42,180"
+      },
+      {
+        "name": "マスキングテープ",
+        "quantity": 1,
+        "amount": "¥20,350"
+      },
+      {
+        "name": "コピー用紙 A4",
+        "quantity": 2,
+        "amount": "¥53,280"
+      }
+    ],
+    "subtotal": "¥321,530",
+    "paid": "¥356,000",
+    "change": "¥2,312",
+    "font": "IPAGothic",
+    "tilt": 2.1
+  },
+  {
+    "id": "invoice-degraded-5",
+    "kind": "invoice",
+    "condition": "degraded",
+    "truth": {
+      "issuer": "株式会社すずらん薬品",
+      "issueDate": "2026-10-20",
+      "total": "¥407,009",
+      "tax": "¥37,009",
+      "registration": "T4103088940087"
+    },
+    "recipient": "株式会社けやき不動産",
+    "phone": "03-3119-1920",
+    "dueDate": "2026-11-20",
+    "time": "14:20",
+    "items": [
+      {
+        "name": "ホチキス針",
+        "quantity": 1,
+        "amount": "¥70,670"
+      },
+      {
+        "name": "クリアファイル",
+        "quantity": 2,
+        "amount": "¥28,120"
+      },
+      {
+        "name": "ノート B5",
+        "quantity": 3,
+        "amount": "¥61,050"
+      },
+      {
+        "name": "封筒 長形3号",
+        "quantity": 1,
+        "amount": "¥26,640"
+      },
+      {
+        "name": "ボールペン 黒",
+        "quantity": 2,
+        "amount": "¥65,860"
+      },
+      {
+        "name": "食パン 一斤",
+        "quantity": 3,
+        "amount": "¥117,660"
+      }
+    ],
+    "subtotal": "¥370,000",
+    "paid": "¥410,000",
+    "change": "¥2,991",
+    "font": "WenQuanYi Zen Hei",
+    "tilt": -2.4
+  }
+]

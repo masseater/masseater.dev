@@ -1,0 +1,87 @@
+{
+  "name": "@r_masseater/injection-bisect",
+  "version": "0.1.0",
+  "description": "Find whether and where a prompt injection hides in text with fast, cheap decision models.",
+  "keywords": [
+    "effect",
+    "llm",
+    "openrouter",
+    "prompt-injection",
+    "security"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/injection-bisect#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/injection-bisect"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "node -e \"if (!process.env.npm_config_user_agent?.startsWith('pnpm/')) { console.error('npm publish leaves catalog: in dependencies. Publish the tarball from vp pm pack instead.'); process.exit(1) }\" && vp run build"
+  },
+  "dependencies": {
+    "@effect/ai-openrouter": "catalog:",
+    "@jupyterlab/nbformat": "catalog:",
+    "@kenjiuno/msgreader": "catalog:",
+    "@plussub/srt-vtt-parser": "catalog:",
+    "ass-compiler": "catalog:",
+    "cfb": "catalog:",
+    "effect": "catalog:stack",
+    "entities": "catalog:",
+    "fflate": "catalog:",
+    "file-type": "catalog:",
+    "htmlparser2": "catalog:",
+    "ical.js": "catalog:",
+    "jsonc-parser": "catalog:",
+    "linguist-languages": "catalog:",
+    "mdast-util-from-markdown": "catalog:",
+    "mdast-util-frontmatter": "catalog:",
+    "mdast-util-gfm": "catalog:",
+    "micromark-extension-frontmatter": "catalog:",
+    "micromark-extension-gfm": "catalog:",
+    "nanotar": "catalog:",
+    "officeparser": "catalog:",
+    "papaparse": "catalog:",
+    "parse5": "catalog:",
+    "postal-mime": "catalog:",
+    "refractor": "catalog:",
+    "tesseract.js": "catalog:",
+    "unpdf": "catalog:",
+    "xlsx": "catalog:",
+    "yaml": "catalog:"
+  },
+  "devDependencies": {
+    "@tesseract.js-data/eng": "catalog:",
+    "@types/hast": "catalog:",
+    "@types/mdast": "catalog:",
+    "@types/node": "catalog:",
+    "@types/papaparse": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}
