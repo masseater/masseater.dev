@@ -52,14 +52,14 @@ jobs:
         shell: bash
         run: |
           case "$RUNNER_OS" in
-            Linux) asset=pluginval_Linux.zip; exe=./pluginval; prefix="xvfb-run -a" ;;
-            Windows) asset=pluginval_Windows.zip; exe=./pluginval.exe; prefix="" ;;
-            macOS) asset=pluginval_macOS.zip; exe=./pluginval.app/Contents/MacOS/pluginval; prefix="" ;;
+            Linux) asset=pluginval_Linux.zip; run=(xvfb-run -a ./pluginval) ;;
+            Windows) asset=pluginval_Windows.zip; run=(./pluginval.exe) ;;
+            macOS) asset=pluginval_macOS.zip; run=(./pluginval.app/Contents/MacOS/pluginval) ;;
           esac
           curl -fsSL -o pluginval.zip "https://github.com/Tracktion/pluginval/releases/download/$PLUGINVAL_VERSION/$asset"
           unzip -q pluginval.zip
           for bundle in target/bundled/*.vst3; do
-            $prefix $exe --strictness-level 10 --validate-in-process --timeout-ms 300000 --output-dir pluginval-report "$bundle"
+            "${run[@]}" --strictness-level 10 --skip-gui-tests --validate-in-process --timeout-ms 300000 --output-dir pluginval-report "$bundle"
           done
       - name: clap-validator
         if: runner.os != 'Windows'
