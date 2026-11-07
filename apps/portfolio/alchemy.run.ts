@@ -2,19 +2,14 @@ import { D1, Website, Workers, providers, state } from "@alchemy.run/cloudflare"
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { edgeGuard } from "@masseater.dev/cloudflare-account/edge-guard";
 import { logArchive } from "@masseater.dev/cloudflare-account/log-archive";
+import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
 import { webAnalyticsReader } from "@masseater.dev/cloudflare-account/web-analytics-reader";
-import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
 import { Stack, Stage, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { Effect, Option } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import {
-  APP_NAME,
-  CI_TELEMETRY_AUDIENCE,
-  TRACE_DESTINATION,
-  requireAppPrefix,
-} from "./app-name.ts";
+import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts";
 import { site } from "./src/shared/config/site.ts";
 
 const DOMAIN = new URL(site.url).hostname;
@@ -54,7 +49,7 @@ type WebEnv = InferEnv<typeof web>;
 const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   APP_NAME,
   {
-    providers: withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers()),
+    providers: tracedProviders(providers()),
     state: state(),
   },
   Effect.gen(function* stack() {

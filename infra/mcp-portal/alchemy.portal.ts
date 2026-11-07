@@ -70,7 +70,8 @@ type McpAccessApplicationResource = defineResource<
         CreateAccessApplicationForAccountRequest,
         "name" | "type" | "destinations" | "policies" | "sessionDuration"
       >
-    >
+    > &
+      Pick<CreateAccessApplicationForAccountRequest, "oauthConfiguration">
   >,
   Readonly<{ accountId: string; appId: string }>
 >;
@@ -193,6 +194,7 @@ const mcpPortal = gen(function* mcpPortal() {
     destinations: [{ type: "public", uri: PORTAL_HOST }],
     policies: yield* viewerPolicy,
     sessionDuration,
+    oauthConfiguration: { enabled: true },
   });
   const servers = yield* upstreamServers;
   yield* portalServers("McpPortalServers", {
