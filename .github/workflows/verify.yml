@@ -101,6 +101,7 @@ jobs:
     needs: deploy
     if: needs.deploy.outputs.latest == 'true'
     runs-on: ubuntu-latest
+    environment: zone
     permissions:
       contents: read
       id-token: write
@@ -187,6 +188,7 @@ jobs:
     needs: deploy
     if: needs.deploy.outputs.latest == 'true'
     runs-on: ubuntu-latest
+    environment: github
     permissions:
       contents: read
       id-token: write

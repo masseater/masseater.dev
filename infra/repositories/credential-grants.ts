@@ -44,7 +44,8 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "geigeki-kaiiki": "deploy",
   konomi: "deploy",
   "medley-database": "deploy",
-  "masseater.dev": "transforms",
+  "masseater.dev": "deploy",
+  "masseater.dev/zone": "transforms",
   "medley-manager": "deploy",
   mirucord: "deploy",
   msa: "deploy",
@@ -86,7 +87,7 @@ const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
 ];
 
 const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
-  "masseater.dev": {
+  "masseater.dev/github": {
     permissions: {
       actions: "read",
       administration: "write",
