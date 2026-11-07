@@ -1,4 +1,4 @@
-<Project Sdk="Godot.NET.Sdk/4.5.1">
+<Project Sdk="Godot.NET.Sdk/4.7.2">
     <!-- 共通設定はリポジトリ直下の Directory.Build.props / Directory.Build.targets にある -->
     <!--
       カード・レリック・パワーを追加するサンプル Mod (Alchyr.Sts2.Templates の Content テンプレートそのまま)。
