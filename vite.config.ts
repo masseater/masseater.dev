@@ -175,7 +175,7 @@ export default defineConfig({
         rules: { "import/no-default-export": "off" },
       },
       {
-        files: ["**/shared/ui/**"],
+        files: ["**/shared/ui/**", "libs/ui/src/button.tsx"],
         rules: { "shadcn/no-restyle": "off", "react/jsx-props-no-spreading": "off" },
       },
       {

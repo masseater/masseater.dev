@@ -1,10 +1,10 @@
+import { Button } from "@masseater.dev/ui/button";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 import { useCallback } from "react";
 
 import { select } from "#/pages/mosaic/lib/scene";
 import { useViewerStore } from "#/pages/mosaic/model/viewer";
-import { Button } from "#/shared/ui/button";
 
 import { ServiceLink } from "./service-link";
 
