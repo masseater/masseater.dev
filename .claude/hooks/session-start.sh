@@ -17,5 +17,10 @@ if ! dpkg -s "${linux_packages[@]}" >/dev/null 2>&1; then
   apt-get update -qq >&2
   apt-get install -y -qq "${linux_packages[@]}" >&2
 fi
+if ! command -v dotnet >/dev/null 2>&1; then
+  curl -fsSL https://dot.net/v1/dotnet-install.sh |
+    bash -s -- --jsonfile apps/sts2-mods/global.json --install-dir "$HOME/.dotnet" >&2
+  echo "export PATH=\"$HOME/.dotnet:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1" >>"$CLAUDE_ENV_FILE"
+fi
 vp env on >&2
 vp install --frozen-lockfile >&2

@@ -1,0 +1,12 @@
+{
+  "id": "MapDrawUndo",
+  "name": "MapDrawUndo",
+  "author": "masseater",
+  "description": "Undo your own map drawing strokes one at a time with Ctrl+Z (Cmd+Z on Mac). Synced to teammates who also have this mod.",
+  "version": "v0.1.0",
+  "min_game_version": "0.107.0",
+  "has_pck": false,
+  "has_dll": true,
+  "dependencies": [{ "id": "BaseLib", "min_version": "3.3.0" }],
+  "affects_gameplay": false
+}

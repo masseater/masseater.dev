@@ -1,0 +1,9 @@
+{
+  "title": "MapDrawUndo",
+  "description": "Undo your own map drawing strokes one at a time with Ctrl+Z (Cmd+Z on Mac). Teammates who also have this mod see the undo too.",
+  "visibility": "private",
+  "changeNote": "Initial release",
+  "tags": [],
+  "dependencies": [3737335127],
+  "contentDescriptors": []
+}

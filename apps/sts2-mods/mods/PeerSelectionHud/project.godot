@@ -1,0 +1,15 @@
+; MegaDot (Godot 4.5.1) のプロジェクト設定。.pck の書き出しにだけ使う
+config_version=5
+
+[application]
+
+config/name="PeerSelectionHud"
+config/features=PackedStringArray("4.5", "C#", "Mobile")
+
+[dotnet]
+
+project/assembly_name="PeerSelectionHud"
+
+[rendering]
+
+renderer/rendering_method="mobile"
