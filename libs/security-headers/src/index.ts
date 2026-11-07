@@ -44,7 +44,11 @@ const contentSecurityPolicy = ({
 
 const STATIC_PAGE_HEADERS = {
   ...SECURITY_HEADERS,
-  "Content-Security-Policy": contentSecurityPolicy({ script: [], style: [], worker: ["blob:"] }),
+  "Content-Security-Policy": contentSecurityPolicy({
+    script: ["'wasm-unsafe-eval'"],
+    style: [],
+    worker: ["blob:"],
+  }),
 } as const;
 
 const assetHeaders = ({

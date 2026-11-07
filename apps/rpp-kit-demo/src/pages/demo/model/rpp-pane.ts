@@ -6,11 +6,11 @@ import type { Remote } from "comlink";
 import { Effect, Match, Ref, Schema } from "effect";
 import { mapRpp, readSong } from "rpp-kit";
 
-import type { Checker } from "./checker.worker";
+import type { CheckerWorker } from "./checker.worker";
 import { GENERATED_PATH, notifySongChanged, replaceDocument } from "./editors";
 
 type Views = Readonly<{
-  worker: Remote<Checker>;
+  worker: Remote<CheckerWorker>;
   generated: EditorView;
   main: EditorView;
   song: Ref.Ref<string>;

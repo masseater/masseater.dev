@@ -15,8 +15,7 @@
     "@effect/atom-react": "catalog:stack",
     "@masseater.dev/ui": "workspace:*",
     "@tanstack/react-router": "1.170.46",
-    "@typescript/vfs": "catalog:",
-    "@valtown/codemirror-ts": "catalog:",
+    "@typescript/typescript-wasip1-wasm": "catalog:",
     "codemirror": "catalog:",
     "comlink": "catalog:",
     "effect": "catalog:stack",
@@ -25,7 +24,7 @@
     "rpp-kit": "workspace:*",
     "security-headers": "workspace:*",
     "tailwindcss": "catalog:stack",
-    "typescript-6": "catalog:"
+    "typescript-wasm": "catalog:"
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
@@ -39,7 +38,6 @@
     "@vitejs/plugin-react": "catalog:",
     "alchemy": "catalog:stack",
     "node-html-parser": "9.0.6",
-    "twoslash": "catalog:",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"

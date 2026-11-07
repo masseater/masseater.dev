@@ -1,12 +1,10 @@
-import { wrap } from "comlink";
-import type { Remote } from "comlink";
 import { Effect, FiberHandle, Match, Ref } from "effect";
 import { mapRpp } from "rpp-kit";
 import type { Mapped } from "rpp-kit";
 
-import type { Checker } from "./checker.worker";
+import { checkerThread } from "./checker-thread";
 import { playground } from "./content";
-import { GENERATED_PATH, generatedPane, mainPane, scopedEditor } from "./editors";
+import { generatedPane, mainPane, scopedEditor } from "./editors";
 import { executor } from "./execution";
 import type { Report } from "./output";
 import { rppPane, songOf } from "./rpp-pane";
@@ -24,28 +22,14 @@ const codeOf = (mapped: Mapped): string =>
     }),
   );
 
-const checker = Effect.acquireRelease(
-  Effect.sync(() => new Worker(new URL("checker.worker.ts", import.meta.url), { type: "module" })),
-  (thread) =>
-    Effect.sync(() => {
-      thread.terminate();
-    }),
-).pipe(Effect.map((thread) => wrap<Checker>(thread)));
-
-const prepare = (worker: Remote<Checker>, code: string): Effect.Effect<void> =>
-  Effect.promise(() => worker.initialize()).pipe(
-    Effect.andThen(Effect.promise(() => worker.updateFile({ path: GENERATED_PATH, code }))),
-  );
-
 const runPlayground = Effect.fn("runPlayground")(function* runPlayground({
   panes,
   report,
 }: Session) {
-  const worker = yield* checker;
   const code = codeOf(mapRpp(source));
+  const worker = yield* checkerThread(code);
   const song = yield* songOf(source).pipe(Effect.flatMap((json) => Ref.make(json)));
   const fork = yield* FiberHandle.makeRuntime<never>();
-  yield* prepare(worker, code);
   const generated = yield* scopedEditor({
     host: panes.generated,
     doc: code,

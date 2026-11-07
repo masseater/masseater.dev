@@ -4,6 +4,7 @@ import viteReact from "@vitejs/plugin-react";
 import { rpp } from "rpp-kit/vite";
 import { defineConfig } from "vite-plus";
 
+import { gzipTscWasm } from "./gzip-tsc-wasm.ts";
 import { externalizeInlineScripts } from "./inline-scripts.ts";
 
 export default defineConfig({
@@ -25,5 +26,6 @@ export default defineConfig({
     }),
     viteReact(),
     externalizeInlineScripts(),
+    gzipTscWasm(),
   ],
 });
