@@ -1,0 +1,6 @@
+filter = '''
+matchesAny(finding.line, [`\bCF_BEACON_TOKEN = "[0-9a-f]{32}"`, `\bOWNER_DISCORD_ID = "[0-9]{17,20}"`])
+'''
+
+[extend]
+useDefault = true
