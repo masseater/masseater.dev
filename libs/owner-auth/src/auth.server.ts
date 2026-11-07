@@ -26,6 +26,7 @@ interface OwnerAuthOptions {
 interface OwnerAuthConfig {
   readonly origin: string;
   readonly db: DB;
+  readonly schema: Readonly<Record<string, unknown>>;
   readonly secret: string;
   readonly owner: Omit<OwnerPasskeyConfig, "origin">;
   readonly loginPage: string;
@@ -36,6 +37,7 @@ interface OwnerAuthConfig {
 const createOwnerAuth = ({
   origin,
   db,
+  schema,
   secret,
   owner,
   loginPage,
@@ -44,7 +46,7 @@ const createOwnerAuth = ({
 }: OwnerAuthConfig): Auth<OwnerAuthOptions> =>
   betterAuth<OwnerAuthOptions>({
     baseURL: origin,
-    database: drizzleAdapter(db, { provider: "sqlite" }),
+    database: drizzleAdapter(db, { provider: "sqlite", schema: { ...schema } }),
     disabledPaths: ["/token"],
     plugins: [
       jwt(),
