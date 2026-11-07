@@ -1,7 +1,11 @@
-import type { CallToolResult } from "@modelcontextprotocol/server";
-import { run } from "@r_masseater/workers-tracing/effect";
+import type {
+  CallToolResult,
+  StandardSchemaV1,
+  StandardSchemaWithJSON,
+} from "@modelcontextprotocol/server";
+import { runner } from "@r_masseater/workers-tracing/effect";
 import { env } from "cloudflare:workers";
-import { Clock, Effect, Match } from "effect";
+import { Array as Arr, Clock, Effect, Layer, Match, Option, pipe } from "effect";
 
 import type { ToolFailure } from "#/features/mcp/model/tool-failure";
 
@@ -16,7 +20,11 @@ type ToolName =
   | "todo_update"
   | "todo_list"
   | "history"
-  | "restore";
+  | "restore"
+  | "write_sloppedia_article"
+  | "read_web_analytics"
+  | "search_slides"
+  | "get_deck";
 
 type ToolCall = Readonly<{ tool: ToolName; caller: Caller; project: string; input: unknown }>;
 
@@ -28,7 +36,11 @@ type ToolOutcome =
 
 type ToolMetrics = Readonly<{ errorTag: string; resultCount: number }>;
 
+type InputMeter = Omit<ToolCall, "input">;
+
 const NO_ERROR = "";
+
+const NO_LATENCY = 0;
 
 const NO_RESULTS = 0;
 
@@ -56,7 +68,9 @@ const metricsOf = (outcome: ToolOutcome): ToolMetrics =>
 
 const toOutcome =
   <Value>(count: (value: Value) => number) =>
-  (effect: Effect.Effect<Value, ToolFailure>): Effect.Effect<ToolOutcome> =>
+  <Services>(
+    effect: Effect.Effect<Value, ToolFailure, Services>,
+  ): Effect.Effect<ToolOutcome, never, Services> =>
     Effect.matchEffect(effect, {
       onFailure: (failure) =>
         Effect.succeed(
@@ -85,6 +99,11 @@ const toOutcome =
               status: "error" as const,
               errorTag: "StorageFailed",
               text: `storage failed: ${message}`,
+            }),
+            UpstreamFailed: ({ service, message }) => ({
+              status: "error" as const,
+              errorTag: "UpstreamFailed",
+              text: `${service} failed: ${message}`,
             }),
           }),
         ),
@@ -134,10 +153,62 @@ const record = (
     }),
   );
 
-const runTool =
+const issueText = (issues: readonly StandardSchemaV1.Issue[]): string =>
+  pipe(
+    issues,
+    Arr.map((issue) => issue.message),
+    Arr.join("; "),
+  );
+
+const recordRejected =
+  (meter: InputMeter, input: unknown) =>
+  <Output>(
+    result: StandardSchemaV1.Result<Output>,
+  ): Effect.Effect<StandardSchemaV1.Result<Output>> =>
+    Option.match(Option.fromNullishOr(result.issues), {
+      onNone: () => Effect.succeed(result),
+      onSome: (issues) =>
+        record(
+          { ...meter, input },
+          { status: "error", errorTag: "InvalidInput", text: issueText(issues) },
+          NO_LATENCY,
+        ).pipe(Effect.as(result)),
+    });
+
+const validation = <Input, Output>(
+  schema: StandardSchemaWithJSON<Input, Output>,
+  value: unknown,
+): Effect.Effect<StandardSchemaV1.Result<Output>> =>
+  Effect.promise(() => Promise.resolve(schema["~standard"].validate(value)));
+
+const checked = <Input, Output>(
+  meter: InputMeter,
+  schema: StandardSchemaWithJSON<Input, Output>,
+  value: unknown,
+): Effect.Effect<StandardSchemaV1.Result<Output>> =>
+  validation(schema, value).pipe(
+    Effect.flatMap(recordRejected(meter, value)),
+    Effect.withSpan(`mcp.tool.${meter.tool}.input`),
+  );
+
+const runInput = runner(Layer.empty);
+
+const meteredInput =
+  (meter: InputMeter) =>
+  <Input, Output>(
+    schema: StandardSchemaWithJSON<Input, Output>,
+  ): StandardSchemaWithJSON<Input, Output> => ({
+    "~standard": {
+      ...schema["~standard"],
+      validate: (value) => runInput(checked(meter, schema, value)),
+    },
+  });
+
+const runToolIn =
+  <Services>(services: Layer.Layer<Services>) =>
   <Value>({ count, ...call }: MeteredTool<Value>) =>
-  (effect: Effect.Effect<Value, ToolFailure>): Promise<CallToolResult> =>
-    run(
+  (effect: Effect.Effect<Value, ToolFailure, Services>): Promise<CallToolResult> =>
+    runner(services)(
       Effect.gen(function* meteredTool() {
         const startedAt = yield* Clock.currentTimeMillis;
         const outcome = yield* toOutcome(count)(effect);
@@ -151,5 +222,7 @@ const runTool =
       ),
     );
 
-export { NO_PROJECT, OVERWRITE, READ_ONLY, WRITE, one, runTool };
+const runTool = runToolIn(Layer.empty);
+
+export { NO_PROJECT, OVERWRITE, READ_ONLY, WRITE, meteredInput, one, runTool, runToolIn };
 export type { MeteredTool, ToolCall, ToolName };
