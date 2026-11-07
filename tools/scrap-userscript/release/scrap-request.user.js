@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Scrap request to Claude
 // @namespace    https://masseater.dev
-// @version      1.3.2
-// @description  閲覧中のページについて masseater.dev の Sloppedia に記事を書くよう、Claude Code のルーチンへ頼む。personal.masseater.dev にログインできる持ち主専用
+// @version      1.4.0
+// @description  閲覧中のページについて masseater.dev の Sloppedia に記事を書くよう、Claude Code のルーチンへ頼む。watashi.masseater.dev にログインできる持ち主専用
 // @homepageURL  https://github.com/masseater/masseater.dev/tree/main/tools/scrap-userscript
 // @match        *://*/*
-// @connect      personal.masseater.dev
+// @connect      watashi.masseater.dev
 // @grant        GM.openInTab
 // @grant        GM.registerMenuCommand
 // @grant        GM.xmlHttpRequest
@@ -3378,7 +3378,7 @@
 	globalThis.URLSearchParams;
 	globalThis.Uint8Array;
 	var _GM = (() => typeof GM != "undefined" ? GM : void 0)();
-	var relayUrl = "https://personal.masseater.dev/scrap-request";
+	var relayUrl = "https://watashi.masseater.dev/scrap-request";
 	var RelayBody = fromJsonString(Struct({
 		url: String$1,
 		title: String$1,
@@ -3396,7 +3396,7 @@
 		focus: trim(request.focus)
 	}), getOrElse(() => EMPTY_BODY));
 	var relayResponse = (response) => {
-		if (response.finalUrl !== "https://personal.masseater.dev/scrap-request") return { status: "login" };
+		if (response.finalUrl !== "https://watashi.masseater.dev/scrap-request") return { status: "login" };
 		const failed = {
 			status: "failed",
 			reason: `HTTP ${String(response.status)}: ${response.text}`
@@ -3476,7 +3476,7 @@ output { display: block; margin-top: 0.75rem; white-space: pre-wrap; }
 	var messageOf = (state) => {
 		if (state.status === "sending") return "送信しています。";
 		if (state.status === "started") return "送りました。";
-		if (state.status === "login") return "personal.masseater.dev にログインしてください。ログイン用のタブを開きます。ログインしたらもう一度送ってください。";
+		if (state.status === "login") return "watashi.masseater.dev にログインしてください。ログイン用のタブを開きます。ログインしたらもう一度送ってください。";
 		return `起動できませんでした。${state.reason}`;
 	};
 	var tabFor = (state) => {
