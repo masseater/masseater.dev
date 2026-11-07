@@ -1,5 +1,5 @@
 import { eq, max } from "drizzle-orm";
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Effect } from "effect";
 
 import type { TodoBodyValue } from "#/features/mcp/model/record-body";
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
@@ -10,7 +10,7 @@ import { db } from "#/shared/db/index.server";
 
 import type { ChangeOp, Writer } from "./memory-writer.server";
 import { commit } from "./revision-writer.server";
-import { firstRow, nowIso, query } from "./storage.server";
+import { firstRow, nextAfterMax, nowIso, query } from "./storage.server";
 
 type NewTodo = Readonly<{ title: string; note?: string; priority?: TodoPriority; dueOn?: string }>;
 
@@ -34,16 +34,8 @@ const bodyOf = ({ title, note, status, priority, dueOn }: Todo): TodoBodyValue =
 });
 
 const nextId: Effect.Effect<number, StorageFailed> = query(() =>
-  db.select({ id: max(todo.id) }).from(todo),
-).pipe(
-  Effect.map((rows) =>
-    pipe(
-      Arr.head(rows),
-      Option.flatMap((row) => Option.fromNullishOr(row.id)),
-      Option.match({ onNone: () => FIRST_ID, onSome: (id) => id + FIRST_ID }),
-    ),
-  ),
-);
+  db.select({ max: max(todo.id) }).from(todo),
+).pipe(Effect.map(nextAfterMax));
 
 const createTodo =
   ({ actor }: Writer) =>

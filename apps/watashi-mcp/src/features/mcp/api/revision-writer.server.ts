@@ -1,13 +1,13 @@
 import { and, eq, max } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Effect } from "effect";
 
 import { revision } from "#/features/mcp/model/revision.table";
 import type { RevisionEntity, RevisionOp } from "#/features/mcp/model/revision.table";
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 import { db } from "#/shared/db/index.server";
 
-import { encodeJson, query } from "./storage.server";
+import { encodeJson, nextAfterMax, query } from "./storage.server";
 
 type RevisionRecord = Readonly<{
   entity: RevisionEntity;
@@ -20,23 +20,13 @@ type RevisionRecord = Readonly<{
 
 type RecordKey = Pick<RevisionRecord, "entity" | "entityId">;
 
-const FIRST_REV = 1;
-
 const nextRev = ({ entity, entityId }: RecordKey): Effect.Effect<number, StorageFailed> =>
   query(() =>
     db
-      .select({ rev: max(revision.rev) })
+      .select({ max: max(revision.rev) })
       .from(revision)
       .where(and(eq(revision.entity, entity), eq(revision.entityId, entityId))),
-  ).pipe(
-    Effect.map((rows) =>
-      pipe(
-        Arr.head(rows),
-        Option.flatMap((row) => Option.fromNullishOr(row.rev)),
-        Option.match({ onNone: () => FIRST_REV, onSome: (rev) => rev + FIRST_REV }),
-      ),
-    ),
-  );
+  ).pipe(Effect.map(nextAfterMax));
 
 const commit =
   (record: RevisionRecord) =>

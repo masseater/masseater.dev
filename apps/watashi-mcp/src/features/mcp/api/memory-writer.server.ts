@@ -1,5 +1,5 @@
 import { and, eq, max } from "drizzle-orm";
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect } from "effect";
 
 import { MemoryExists } from "#/features/mcp/model/memory-exists";
 import { MemoryNotFound } from "#/features/mcp/model/memory-not-found";
@@ -10,7 +10,7 @@ import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 import { db } from "#/shared/db/index.server";
 
 import { commit } from "./revision-writer.server";
-import { firstRow, nowIso, query } from "./storage.server";
+import { firstRow, nextAfterMax, nowIso, query } from "./storage.server";
 
 type MemoryKey = Readonly<{ project: string; name: string }>;
 
@@ -39,16 +39,8 @@ const findMemory = ({ project, name }: MemoryKey): Effect.Effect<Memory[], Stora
   );
 
 const nextId: Effect.Effect<number, StorageFailed> = query(() =>
-  db.select({ id: max(memory.id) }).from(memory),
-).pipe(
-  Effect.map((rows) =>
-    pipe(
-      Arr.head(rows),
-      Option.flatMap((row) => Option.fromNullishOr(row.id)),
-      Option.match({ onNone: () => FIRST_ID, onSome: (id) => id + FIRST_ID }),
-    ),
-  ),
-);
+  db.select({ max: max(memory.id) }).from(memory),
+).pipe(Effect.map(nextAfterMax));
 
 const createMemory =
   ({ actor }: Writer) =>

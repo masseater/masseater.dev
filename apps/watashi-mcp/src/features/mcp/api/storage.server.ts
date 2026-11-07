@@ -44,7 +44,16 @@ const anyTermMatches =
     return Option.fromNullishOr(or(...matches));
   };
 
+const FIRST = 1;
+
+const nextAfterMax = (rows: readonly Readonly<{ max: number | null }>[]): number =>
+  pipe(
+    Arr.head(rows),
+    Option.flatMap((row) => Option.fromNullishOr(row.max)),
+    Option.match({ onNone: () => FIRST, onSome: (value) => value + FIRST }),
+  );
+
 const encodeJson = (value: unknown): Effect.Effect<string> =>
   Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
 
-export { anyTermMatches, encodeJson, firstRow, nowIso, query, termsOf };
+export { anyTermMatches, encodeJson, firstRow, nextAfterMax, nowIso, query, termsOf };
