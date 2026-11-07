@@ -34,11 +34,11 @@ fn main() -> ExitCode {
             .chain(rest)
             .collect();
     }
-    if let Err(error) = nih_plug_xtask::chdir_workspace_root() {
+    if let Err(error) = nice_plug_xtask::chdir_workspace_root() {
         eprintln!("{error:#}");
         return ExitCode::FAILURE;
     }
-    match nih_plug_xtask::main_with_args("cargo xtask", args) {
+    match nice_plug_xtask::main_with_args("cargo xtask", args) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             eprintln!("{error:#}");

@@ -1,15 +1,9 @@
-use nih_plug::prelude::*;
-use nih_plug_egui::EguiState;
+use nice_plug::prelude::*;
 use pod_rattle_engine::{AutoShake, Material, Params as EngineParams};
 use std::sync::Arc;
 
-pub const EDITOR_SIZE: (u32, u32) = (960, 600);
-
 #[derive(Params)]
 pub struct RattleParams {
-    #[persist = "editor-state"]
-    pub editor_state: Arc<EguiState>,
-
     #[id = "material"]
     pub material: FloatParam,
     #[id = "decay"]
@@ -54,7 +48,6 @@ impl Default for RattleParams {
         let p = EngineParams::default();
         let auto = AutoShake::default();
         Self {
-            editor_state: EguiState::from_size(EDITOR_SIZE.0, EDITOR_SIZE.1),
             material: linear("Hardness", p.material, 0.0, 1.0).with_value_to_string(two_decimals()),
             decay: linear("Ring", p.decay, 0.3, 3.0).with_value_to_string(two_decimals()),
             pitch: linear("Pitch", p.pitch, 0.5, 2.0).with_value_to_string(two_decimals()),
@@ -71,10 +64,20 @@ impl Default for RattleParams {
                 .with_unit(" Hz")
                 .with_value_to_string(Arc::new(|v| format!("{v:.1}"))),
             amp: linear("Shake width", auto.amp, 0.05, 1.0)
-                .with_value_to_string(Arc::new(|v| format!("±{:.0} cm", v * 10.0))),
+                .with_value_to_string(Arc::new(|v| format!("±{:.0} cm", v * 10.0)))
+                .with_string_to_value(Arc::new(|s| {
+                    s.trim()
+                        .trim_start_matches('±')
+                        .trim_end_matches("cm")
+                        .trim()
+                        .parse::<f32>()
+                        .ok()
+                        .map(|cm| cm / 10.0)
+                })),
             gain: linear("Volume", p.gain, 0.0, 2.0)
                 .with_unit(" %")
-                .with_value_to_string(Arc::new(|v| format!("{:.0}", v * 100.0))),
+                .with_value_to_string(formatters::v2s_f32_percentage(0))
+                .with_string_to_value(formatters::s2v_f32_percentage()),
         }
     }
 }

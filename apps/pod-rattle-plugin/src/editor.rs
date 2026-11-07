@@ -1,8 +1,13 @@
 use crate::Telemetry;
 use crate::params::RattleParams;
-use nih_plug::prelude::*;
-use nih_plug_egui::egui::{self, Align2, Color32, FontId, Pos2, Rect, Sense, Stroke, Vec2};
-use nih_plug_egui::{create_egui_editor, widgets::ParamSlider};
+use egui::{Align2, Color32, FontId, Pos2, Rect, Sense, Stroke, Vec2};
+use nice_plug::context::gui::GuiContext;
+use nice_plug::editor::dpi::LogicalSize;
+use nice_plug::prelude::*;
+use nice_plug_egui::{
+    EguiEditor, EguiEditorState, EguiNiceSettings, Frame, NiceEguiApp, RepaintNotifier,
+    create_egui_editor, widgets::ParamSlider,
+};
 use pod_rattle_engine::{HAND_X, HAND_Y, Material, Snapshot};
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
@@ -19,6 +24,7 @@ const ACCENT: Color32 = Color32::from_rgb(0xe0, 0x8a, 0x5a);
 const FLASH: Color32 = Color32::from_rgb(0xf2, 0xc4, 0x6b);
 const RAIL_WIDTH: f32 = 340.0;
 const SLIDER_WIDTH: f32 = 150.0;
+const EDITOR_SIZE: LogicalSize<f32> = LogicalSize::new(960.0, 600.0);
 
 #[derive(Default)]
 struct EditorState {
@@ -63,30 +69,66 @@ impl View {
     }
 }
 
-pub fn create(params: Arc<RattleParams>, telemetry: Arc<Telemetry>) -> Option<Box<dyn Editor>> {
-    create_egui_editor(
-        params.editor_state.clone(),
-        EditorState::default(),
-        |ctx, _| {
-            let mut style = (*ctx.style()).clone();
+pub type RattleEditor = EguiEditor<App>;
+
+pub struct App {
+    params: Arc<RattleParams>,
+    telemetry: Arc<Telemetry>,
+    gui: Option<GuiContext>,
+    state: EditorState,
+}
+
+impl NiceEguiApp for App {
+    fn build(
+        &mut self,
+        egui_ctx: egui::Context,
+        nice_gui_ctx: GuiContext,
+        _frame: &mut Frame,
+    ) -> Result<(), nice_plug_egui::baseview::HandlerError> {
+        egui_ctx.all_styles_mut(|style| {
             style.visuals = egui::Visuals::dark();
             style.visuals.panel_fill = BG;
             style.visuals.selection.bg_fill = ACCENT;
             style.visuals.widgets.inactive.bg_fill = LINE;
-            ctx.set_style(style);
-        },
-        move |ctx, setter, state| {
-            if let Ok(mut output) = telemetry.snapshot.lock() {
-                state.snapshot = *output.read();
-            }
-            egui::SidePanel::right("rail")
-                .exact_width(RAIL_WIDTH)
-                .resizable(false)
-                .show(ctx, |ui| rail(ui, &params, setter, &telemetry));
-            egui::CentralPanel::default()
-                .frame(egui::Frame::new().fill(STAGE))
-                .show(ctx, |ui| stage(ui, &params, setter, &telemetry, state));
-            ctx.request_repaint();
+        });
+        self.gui = Some(nice_gui_ctx);
+        Ok(())
+    }
+
+    fn editor_closed(&mut self) {
+        self.gui = None;
+    }
+
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut Frame) {
+        let Some(gui) = self.gui.as_ref() else {
+            return;
+        };
+        let setter = gui.param_setter();
+        let (params, telemetry, state) = (&self.params, &self.telemetry, &mut self.state);
+        if let Ok(mut output) = telemetry.snapshot.lock() {
+            state.snapshot = *output.read();
+        }
+        egui::Panel::right("rail")
+            .exact_size(RAIL_WIDTH)
+            .resizable(false)
+            .show(ui, |ui| rail(ui, params, &setter, telemetry));
+        egui::CentralPanel::default()
+            .frame(egui::Frame::new().fill(STAGE))
+            .show(ui, |ui| stage(ui, params, &setter, telemetry, state));
+        ui.ctx().request_repaint();
+    }
+}
+
+pub fn create(params: Arc<RattleParams>, telemetry: Arc<Telemetry>) -> Option<RattleEditor> {
+    create_egui_editor(
+        EguiEditorState::from_size(EDITOR_SIZE, 1.0),
+        RepaintNotifier::new(),
+        EguiNiceSettings::new(),
+        App {
+            params,
+            telemetry,
+            gui: None,
+            state: EditorState::default(),
         },
     )
 }
