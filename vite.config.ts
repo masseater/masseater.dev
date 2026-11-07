@@ -262,6 +262,7 @@ export default defineConfig({
           "@masseater.dev/pod-rattle-plugin#cargo",
           "@masseater.dev/xtask#cargo",
           "rpp-kit-demo#typecheck",
+          "sts2-mods#dotnet",
         ],
       },
       test: "vp test run",

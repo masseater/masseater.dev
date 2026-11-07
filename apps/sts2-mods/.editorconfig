@@ -1,0 +1,149 @@
+# リポジトリ全体のコードスタイルと静的解析の設定。
+# ビルド (EnforceCodeStyleInBuild) と dotnet format の両方がこのファイルを読む。
+# 警告はすべてエラー扱い (Directory.Build.props の TreatWarningsAsErrors) なので、ここで warning にしたものはビルドを止める。
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{json,yml,yaml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{sln,cfg,godot}]
+indent_style = tab
+
+[*.ps1]
+end_of_line = crlf
+
+[*.cs]
+# ---- 書き方 ----
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_prefer_braces = true:warning
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = true:warning
+csharp_style_var_elsewhere = false:warning
+csharp_style_expression_bodied_methods = when_on_single_line:silent
+csharp_style_expression_bodied_properties = true:silent
+csharp_style_prefer_primary_constructors = false:silent
+csharp_style_pattern_matching_over_as_with_null_check = true:warning
+csharp_style_prefer_pattern_matching = true:suggestion
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_unused_value_discard_variable_preference = true:warning
+csharp_using_directive_placement = outside_namespace:warning
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning
+dotnet_style_predefined_type_for_locals_parameters_members = true:warning
+dotnet_style_readonly_field = true:warning
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# ---- 整形 (IDE0055) ----
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+csharp_space_after_cast = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_preserve_single_line_statements = false
+csharp_preserve_single_line_blocks = true
+
+# ---- 命名規則 (IDE1006) ----
+# 型・メソッド・プロパティ・イベント・定数・static readonly は PascalCase
+dotnet_naming_symbols.types_and_members.applicable_kinds = class, struct, interface, enum, delegate, method, property, event, local_function
+dotnet_naming_symbols.types_and_members.applicable_accessibilities = *
+dotnet_naming_style.pascal.capitalization = pascal_case
+dotnet_naming_rule.types_and_members_pascal.symbols = types_and_members
+dotnet_naming_rule.types_and_members_pascal.style = pascal
+dotnet_naming_rule.types_and_members_pascal.severity = warning
+
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_style.i_prefix.required_prefix = I
+dotnet_naming_style.i_prefix.capitalization = pascal_case
+dotnet_naming_rule.interfaces_i_prefix.symbols = interfaces
+dotnet_naming_rule.interfaces_i_prefix.style = i_prefix
+dotnet_naming_rule.interfaces_i_prefix.severity = warning
+
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.required_modifiers = const
+dotnet_naming_rule.constants_pascal.symbols = constants
+dotnet_naming_rule.constants_pascal.style = pascal
+dotnet_naming_rule.constants_pascal.severity = warning
+
+dotnet_naming_symbols.static_readonly.applicable_kinds = field
+dotnet_naming_symbols.static_readonly.required_modifiers = static, readonly
+dotnet_naming_rule.static_readonly_pascal.symbols = static_readonly
+dotnet_naming_rule.static_readonly_pascal.style = pascal
+dotnet_naming_rule.static_readonly_pascal.severity = warning
+
+dotnet_naming_symbols.public_fields.applicable_kinds = field
+dotnet_naming_symbols.public_fields.applicable_accessibilities = public, internal, protected, protected_internal
+dotnet_naming_rule.public_fields_pascal.symbols = public_fields
+dotnet_naming_rule.public_fields_pascal.style = pascal
+dotnet_naming_rule.public_fields_pascal.severity = warning
+
+# private のフィールドは camelCase (先頭に _ を付けない)
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private, private_protected
+dotnet_naming_style.camel.capitalization = camel_case
+dotnet_naming_rule.private_fields_camel.symbols = private_fields
+dotnet_naming_rule.private_fields_camel.style = camel
+dotnet_naming_rule.private_fields_camel.severity = warning
+
+# 引数とローカル変数は規則を付けない。Harmony のパッチは __instance / __result のような決まった名前を使うため
+
+# ---- IDE ルールの強さ ----
+dotnet_diagnostic.IDE0005.severity = warning   # 不要な using
+dotnet_diagnostic.IDE0011.severity = warning   # if などの {} 省略
+dotnet_diagnostic.IDE0040.severity = warning   # アクセス修飾子の省略
+dotnet_diagnostic.IDE0044.severity = warning   # readonly にできるフィールド
+dotnet_diagnostic.IDE0051.severity = warning   # 使われていない private メンバー
+dotnet_diagnostic.IDE0052.severity = warning   # 読まれていない private メンバー
+dotnet_diagnostic.IDE0055.severity = warning   # 整形
+dotnet_diagnostic.IDE0060.severity = warning   # 使われていない引数
+dotnet_diagnostic.IDE0161.severity = warning   # file-scoped namespace
+dotnet_diagnostic.IDE1006.severity = warning   # 命名規則
+dotnet_diagnostic.IDE0008.severity = warning   # var / 型名の使い分け
+dotnet_diagnostic.IDE0007.severity = warning
+dotnet_diagnostic.IDE0010.severity = none      # switch の網羅はゲーム側の enum が増えるので既定の分岐で受ける
+dotnet_diagnostic.IDE0072.severity = none
+dotnet_diagnostic.IDE0058.severity = none      # 戻り値を捨てるたびに _ = を書くのはうるさい
+dotnet_diagnostic.IDE0046.severity = none
+dotnet_diagnostic.IDE0045.severity = none
+
+# ---- CA / Meziantou ルールの強さ (AnalysisLevel = latest-all が前提) ----
+# Godot のノード (GodotObject) は IDisposable だが、寿命はシーンツリーが管理する (QueueFree で解放)。
+# Dispose を求めるルールはノードを作るたびに誤検知になるので切る
+dotnet_diagnostic.CA1001.severity = none
+dotnet_diagnostic.CA2000.severity = none
+dotnet_diagnostic.CA2213.severity = none
+# UI の文言は日本語で直書きする (ゲームのローカライズ表を使うのはカード名などゲーム由来のものだけ)
+dotnet_diagnostic.CA1303.severity = none
+# Godot のメインスレッドで動くので ConfigureAwait は付けない
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.MA0004.severity = none
+# ゲームの Logger は構造化ログではない
+dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA2254.severity = none
+# XML ドキュメントの不足は警告にしない (IDE0005 のために GenerateDocumentationFile を有効にしているだけ)
+dotnet_diagnostic.CS1591.severity = none
+# 文字列の比較方法は明示させる
+dotnet_diagnostic.CA1307.severity = warning
+dotnet_diagnostic.CA1309.severity = warning
+dotnet_diagnostic.CA1310.severity = warning
+dotnet_diagnostic.MA0006.severity = warning
+# 1 ファイル 1 型
+dotnet_diagnostic.MA0048.severity = warning

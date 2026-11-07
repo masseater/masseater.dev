@@ -1,0 +1,76 @@
+<Project>
+    <!--
+      リポジトリ全体の共通設定。この下にあるすべての csproj が自動で読み込む。
+      Mod 固有のビルドターゲット (ゲームの mods フォルダへのコピー、.pck 書き出しなど) は Directory.Build.targets にある。
+    -->
+    <PropertyGroup>
+        <RepoRoot>$([MSBuild]::EnsureTrailingSlash($(MSBuildThisFileDirectory)))</RepoRoot>
+        <!-- mods/<Mod>/ にあるプロジェクトだけを Mod として扱う (build/ のスタブなどは対象外) -->
+        <IsSts2Mod Condition="'$(IsSts2Mod)' == '' and $([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectDirectory)).Replace('\', '/').StartsWith('mods/'))">true</IsSts2Mod>
+        <IsSts2Mod Condition="'$(IsSts2Mod)' == ''">false</IsSts2Mod>
+    </PropertyGroup>
+
+    <!-- PC ごとのパス (GodotPath / Sts2Path) はリポジトリ直下の local.props に書く。local.props.example を参照 -->
+    <Import Project="$(RepoRoot)local.props" Condition="Exists('$(RepoRoot)local.props')" />
+    <!-- Sts2Path / Sts2DataDir / ModsPath を OS ごとに自動で埋める -->
+    <Import Project="$(RepoRoot)build/Sts2PathDiscovery.props" />
+
+    <PropertyGroup>
+        <!-- local.props が無い場合の MegaDot の既定値 -->
+        <!-- Mac: 公式インストーラ (https://megadot.megacrit.com/install.sh) の既定の入れ先 -->
+        <GodotPath Condition="'$(GodotPath)' == '' and $([MSBuild]::IsOSPlatform('OSX'))">$(HOME)/Applications/MegaDot.app/Contents/MacOS/Godot</GodotPath>
+        <!-- Windows: MegaDot を C:/megadot へ展開した想定 -->
+        <GodotPath Condition="'$(GodotPath)' == '' and $([MSBuild]::IsOSPlatform('Windows'))">C:/megadot/MegaDot_v4.5.1-stable_mono_win64.exe</GodotPath>
+    </PropertyGroup>
+
+    <!--
+      ゲーム本体の代わりに build/Sts2Stubs (sts2.dll の型だけを真似たスタブ) に対してコンパイルする。
+      ゲームが無い CI とクラウドで型チェックとアナライザを走らせるためのもの。できた dll は配らない。
+      scripts/check.sh と CI が -p:UseSts2Stubs=true を付けて使う。
+    -->
+    <PropertyGroup>
+        <UseSts2Stubs Condition="'$(UseSts2Stubs)' == ''">false</UseSts2Stubs>
+    </PropertyGroup>
+
+    <!-- 言語・型安全 -->
+    <PropertyGroup>
+        <!-- TargetFramework は MegaDot が csproj への直書きを要求するので各 csproj に書く -->
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <!-- System / System.Linq などの using は毎回書かない。ゲーム側の名前空間は各ファイルで明示する -->
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Deterministic>true</Deterministic>
+        <Features>strict</Features>
+    </PropertyGroup>
+
+    <!-- 静的解析。警告はすべてエラー扱いにする。個別ルールの強さは .editorconfig で決める -->
+    <PropertyGroup>
+        <TreatWarningsAsErrors Condition="'$(TreatWarningsAsErrors)' == ''">true</TreatWarningsAsErrors>
+        <MSBuildTreatWarningsAsErrors Condition="'$(MSBuildTreatWarningsAsErrors)' == ''">$(TreatWarningsAsErrors)</MSBuildTreatWarningsAsErrors>
+        <AnalysisLevel>latest-all</AnalysisLevel>
+        <AnalysisMode>All</AnalysisMode>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <CodeAnalysisTreatWarningsAsErrors>$(TreatWarningsAsErrors)</CodeAnalysisTreatWarningsAsErrors>
+        <!-- IDE0005 (不要な using) をビルドで検出するには XML ドキュメント生成が必要。ドキュメント不足 (CS1591) 自体は .editorconfig で切る -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <!-- Mod プロジェクト共通の設定 -->
+    <PropertyGroup Condition="'$(IsSts2Mod)' == 'true'">
+        <!-- true にすると sts2.dll の private / protected メンバーをコンパイル時に public として扱える (Krafs.Publicizer)。
+             リフレクションの文字列指定をやめて nameof と直接アクセスで書けるので、名前の打ち間違いがビルドで分かる -->
+        <Publicize Condition="'$(Publicize)' == ''">false</Publicize>
+        <!-- shared/ のコードを各 Mod に取り込むか。取り込まない Mod は csproj で false にする -->
+        <UseSharedCode Condition="'$(UseSharedCode)' == ''">true</UseSharedCode>
+        <!-- スタブではコンパイルできない Mod (スタブに無いゲームの型を多く使うもの) は csproj で false にする -->
+        <SupportsSts2Stubs Condition="'$(SupportsSts2Stubs)' == ''">true</SupportsSts2Stubs>
+
+        <AppOutputBase>$(MSBuildProjectDirectory)/</AppOutputBase>
+        <PathMap>$(AppOutputBase)=./</PathMap>
+        <GodotDisabledSourceGenerators>GodotPluginsInitializer</GodotDisabledSourceGenerators>
+        <!-- Mod は MSIL で配るので、ローカルのゲームとのアーキテクチャ不一致警告は出さない -->
+        <NoWarn>$(NoWarn);MSB3270</NoWarn>
+    </PropertyGroup>
+</Project>

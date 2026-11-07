@@ -1,0 +1,17 @@
+<!--
+  このファイルを local.props という名前でコピーして、自分の環境のパスに書き換えてください。
+  local.props は .gitignore 済みなので、PC ごとの設定をコミットせずに済みます。
+  mods/ 以下のすべての Mod プロジェクトがこの設定を読み込みます。
+-->
+<Project>
+    <PropertyGroup>
+        <!-- MegaDot 4.5.1 (mono) の実行ファイル。これより新しい Godot で作った .pck はゲームが読み込まない -->
+        <GodotPath>C:/megadot/MegaDot_v4.5.1-stable_mono_win64.exe</GodotPath>
+        <!-- Linux: /usr/lib/megadot/MegaDot_v4.5.1-stable_mono_linux.x86_64 -->
+        <!-- Mac:   /Users/you/Applications/MegaDot.app/Contents/MacOS/Godot (install.sh の既定。この場所なら local.props は不要) -->
+
+        <!-- ゲームが既定の Steam ライブラリに無い場合だけ設定 -->
+        <!-- <Sts2Path>D:/SteamLibrary/steamapps/common/Slay the Spire 2</Sts2Path> -->
+        <!-- Mac の既定: /Users/you/Library/Application Support/Steam/steamapps/common/Slay the Spire 2 -->
+    </PropertyGroup>
+</Project>

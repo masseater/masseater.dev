@@ -1,0 +1,18 @@
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+    <!-- 共通設定はリポジトリ直下の Directory.Build.props / Directory.Build.targets にある -->
+    <!--
+      カード・レリック・パワーを追加するサンプル Mod (Alchyr.Sts2.Templates の Content テンプレートそのまま)。
+      新しいコンテンツ Mod の見本として残している。ゲームの型を多く使うのでスタブでは型チェックできず、
+      テンプレート由来のコードは厳しいアナライザに合わせていないので、警告をエラーにしない。
+    -->
+    <PropertyGroup>
+        <!-- MegaDot は csproj に直接 TargetFramework が無いと net8.0 を書き足してしまうので、ここにも書く -->
+        <TargetFramework>net9.0</TargetFramework>
+        <SupportsSts2Stubs>false</SupportsSts2Stubs>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        <AnalysisLevel>latest-recommended</AnalysisLevel>
+        <AnalysisMode>Recommended</AnalysisMode>
+        <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+        <UseSharedCode>false</UseSharedCode>
+    </PropertyGroup>
+</Project>
