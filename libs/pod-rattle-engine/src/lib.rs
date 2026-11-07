@@ -435,16 +435,24 @@ impl Engine {
     }
 
     fn excite(&mut self, i: usize, force: f64, pulse: &[f64], offset: usize) {
+        // 乱数は labs と同じくモードの順に引く。リングへは 1 標本ぶんの 12 モードが並んで
+        // いるので、標本を外側に回して連続した場所へ書く。各要素に足すのは 1 回だけなので、
+        // ループの順を入れ替えても結果は変わらない。gain が 0 のモードのリングは常に +0.0
+        // で、そこへ +0.0 を足しても +0.0 のままなので、分岐せずに足す。
+        let mut amps = [0.0; MODES];
         for k in 0..MODES {
-            let id = i * MODES + k;
-            let gain = self.modes[id].gain;
+            let gain = self.modes[i * MODES + k].gain;
             if gain == 0.0 {
                 continue;
             }
-            let amp = (force * gain * (0.2 + 0.8 * self.rng.next()) * SCALE * self.material_gain)
+            amps[k] = (force * gain * (0.2 + 0.8 * self.rng.next()) * SCALE * self.material_gain)
                 / self.sample_rate;
-            for (s, shape) in pulse.iter().enumerate() {
-                self.ring[((self.read + offset + s) & RING_MASK) * VOICES + id] += amp * shape;
+        }
+        for (s, shape) in pulse.iter().enumerate() {
+            let start = ((self.read + offset + s) & RING_MASK) * VOICES + i * MODES;
+            let row = &mut self.ring[start..][..MODES];
+            for k in 0..MODES {
+                row[k] += amps[k] * shape;
             }
         }
         self.pods[i].active = (self.sample_rate * self.t60 * 1.3).ceil() as i64 + RING as i64;
@@ -493,15 +501,17 @@ impl Engine {
         let mu = 0.25;
         for i in 0..n {
             for j in i + 1..n {
-                let (pi, pj) = (self.pods[i], self.pods[j]);
-                let dx = pi.p[0] - pj.p[0];
-                let dy = pi.p[1] - pj.p[1];
-                let dz = pi.p[2] - pj.p[2];
-                let reach = pi.radius + pj.radius;
+                // ほとんどの組は触れていないので、Pod を丸ごと写す前に位置と半径だけで外す。
+                let (qi, qj) = (&self.pods[i], &self.pods[j]);
+                let dx = qi.p[0] - qj.p[0];
+                let dy = qi.p[1] - qj.p[1];
+                let dz = qi.p[2] - qj.p[2];
+                let reach = qi.radius + qj.radius;
                 let d2 = dx * dx + dy * dy + dz * dz;
                 if d2 >= reach * reach || d2 < 1e-14 {
                     continue;
                 }
+                let (pi, pj) = (self.pods[i], self.pods[j]);
                 let d = d2.sqrt();
                 let normal = [dx / d, dy / d, dz / d];
                 let overlap = reach - d;
