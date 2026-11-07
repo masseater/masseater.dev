@@ -1,0 +1,98 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:allow-open",
+    "opener:allow-open-url",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        {
+          "path": "$APPLOCALDATA/**"
+        },
+        {
+          "path": "**/*.png"
+        },
+        {
+          "path": "**/*.jpg"
+        },
+        {
+          "path": "**/*.jpeg"
+        },
+        {
+          "path": "**/*.tga"
+        },
+        {
+          "path": "**/*.psd"
+        },
+        {
+          "path": "**/*.tif"
+        },
+        {
+          "path": "**/*.tiff"
+        },
+        {
+          "path": "**/*.bmp"
+        },
+        {
+          "path": "**/*.exr"
+        },
+        {
+          "path": "**/*.hdr"
+        },
+        {
+          "path": "**/*.gif"
+        },
+        {
+          "path": "**/*.fbx"
+        },
+        {
+          "path": "**/*.obj"
+        },
+        {
+          "path": "**/*.blend"
+        },
+        {
+          "path": "**/*.dae"
+        },
+        {
+          "path": "**/*.3ds"
+        },
+        {
+          "path": "**/*.glb"
+        },
+        {
+          "path": "**/*.gltf"
+        },
+        {
+          "path": "**/*.vrm"
+        },
+        {
+          "path": "**/*.wav"
+        },
+        {
+          "path": "**/*.mp3"
+        },
+        {
+          "path": "**/*.ogg"
+        },
+        {
+          "path": "**/*.flac"
+        },
+        {
+          "path": "**/*.aif"
+        },
+        {
+          "path": "**/*.aiff"
+        }
+      ]
+    },
+    "opener:allow-reveal-item-in-dir",
+    "autostart:allow-enable",
+    "autostart:allow-disable",
+    "autostart:allow-is-enabled"
+  ]
+}

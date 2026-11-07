@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src", "*.ts"],
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/cli/Command#make",
+          "effect/cli/Command#run",
+          "effect/cli/Flag#Boolean",
+          "effect/cli/Flag#withDefault",
+          "effect/http/FetchHttpClient#layer",
+          "effect/http/HttpClient",
+          "effect/http/HttpClientResponse",
+          "effect/process/ChildProcess#make"
+        ]
+      }
+    ]
+  }
+}

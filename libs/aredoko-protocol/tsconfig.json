@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "effect/rpc/Rpc",
+          "effect/rpc/RpcClient",
+          "effect/rpc/RpcGroup",
+          "effect/rpc/RpcSerialization",
+          "effect/socket/Socket"
+        ]
+      }
+    ]
+  }
+}

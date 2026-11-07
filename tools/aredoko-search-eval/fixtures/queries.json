@@ -1,0 +1,274 @@
+[
+  {
+    "query": "木の揺り椅子",
+    "expected": ["Rockingchair_01"]
+  },
+  {
+    "query": "白いプラスチックの椅子",
+    "expected": ["plastic_monobloc_chair_01"]
+  },
+  {
+    "query": "学校の青い椅子",
+    "expected": ["SchoolChair_01"]
+  },
+  {
+    "query": "黒い革のソファ",
+    "expected": ["sofa_02"]
+  },
+  {
+    "query": "茶色い革のラウンジチェア",
+    "expected": ["mid_century_lounge_chair"]
+  },
+  {
+    "query": "白く塗られた木の椅子",
+    "expected": ["painted_wooden_chair_01"]
+  },
+  {
+    "query": "緑の布張りのアンティークの肘掛け椅子",
+    "expected": ["GreenChair_01"]
+  },
+  {
+    "query": "花柄のクッションの古い長椅子",
+    "expected": ["vintage_day_bed"]
+  },
+  {
+    "query": "丸い木のテーブル",
+    "expected": ["round_wooden_table_01"]
+  },
+  {
+    "query": "木のピクニックテーブル",
+    "expected": ["wooden_picnic_table"]
+  },
+  {
+    "query": "水色の装飾が付いたアンティークのローテーブル",
+    "expected": ["CoffeeTable_01"]
+  },
+  {
+    "query": "灰色の金属の事務机",
+    "expected": ["metal_office_desk"]
+  },
+  {
+    "query": "チェック柄のテーブルクロスをかけた机",
+    "expected": ["dining_table"]
+  },
+  {
+    "query": "シャンデリア",
+    "expected": ["Chandelier_01"]
+  },
+  {
+    "query": "古いランタン",
+    "expected": ["Lantern_01"]
+  },
+  {
+    "query": "オレンジ色のデスクライト",
+    "expected": ["desk_lamp_arm_01"]
+  },
+  {
+    "query": "ろうそく立て",
+    "expected": ["brass_candleholders", "wooden_candlestick"]
+  },
+  {
+    "query": "電球",
+    "expected": ["lightbulb_01"]
+  },
+  {
+    "query": "バナナ",
+    "expected": ["bananas"]
+  },
+  {
+    "query": "赤いリンゴ",
+    "expected": ["food_apple_01"]
+  },
+  {
+    "query": "いちごのケーキ",
+    "expected": ["strawberry_chocolate_cake"]
+  },
+  {
+    "query": "クロワッサン",
+    "expected": ["croissant"]
+  },
+  {
+    "query": "白い陶器のティーセット",
+    "expected": ["tea_set_01"]
+  },
+  {
+    "query": "ワインのボトル",
+    "expected": ["wine_bottles_01"]
+  },
+  {
+    "query": "青い模様の陶器の壺",
+    "expected": ["antique_ceramic_vase_01"]
+  },
+  {
+    "query": "素焼きの植木鉢",
+    "expected": ["planter_pot_clay"]
+  },
+  {
+    "query": "鉢植えの観葉植物",
+    "expected": ["potted_plant_01", "potted_plant_02"]
+  },
+  {
+    "query": "ブラウン管のテレビ",
+    "expected": ["Television_01"]
+  },
+  {
+    "query": "ラジカセ",
+    "expected": ["boombox", "cassette_player"]
+  },
+  {
+    "query": "古いノートパソコン",
+    "expected": ["classic_laptop"]
+  },
+  {
+    "query": "丸い壁掛け時計",
+    "expected": ["wall_clock"]
+  },
+  {
+    "query": "大きな振り子の置き時計",
+    "expected": ["vintage_grandfather_clock_01"]
+  },
+  {
+    "query": "ウクレレ",
+    "expected": ["Ukulele_01"]
+  },
+  {
+    "query": "双眼鏡",
+    "expected": ["vintage_binocular"]
+  },
+  {
+    "query": "棚に並んだ百科事典",
+    "expected": ["book_encyclopedia_set_01"]
+  },
+  {
+    "query": "ゴシック調の木のベッド",
+    "expected": ["GothicBed_01"]
+  },
+  {
+    "query": "赤いドラム缶",
+    "expected": ["Barrel_01"]
+  },
+  {
+    "query": "段ボール箱",
+    "expected": ["cardboard_box_01"]
+  },
+  {
+    "query": "赤い携行缶",
+    "expected": ["metal_jerrycan"]
+  },
+  {
+    "query": "赤いプラスチックのケース",
+    "expected": ["plastic_crate_01"]
+  },
+  {
+    "query": "のこぎり",
+    "expected": ["handsaw_wood"]
+  },
+  {
+    "query": "ほうき",
+    "expected": ["plastic_broom"]
+  },
+  {
+    "query": "ダーツの的",
+    "expected": ["dartboard"]
+  },
+  {
+    "query": "金の額縁に入った風景画",
+    "expected": ["fancy_picture_frame_01"]
+  },
+  {
+    "query": "救命用の浮き輪",
+    "expected": ["lifebuoy"]
+  },
+  {
+    "query": "黄色い注意看板",
+    "expected": ["WetFloorSign_01"]
+  },
+  {
+    "query": "天井のファン",
+    "expected": ["ceiling_fan"]
+  },
+  {
+    "query": "古いカメラ",
+    "expected": ["Camera_01"]
+  },
+  {
+    "query": "ジーンズの生地",
+    "expected": ["denim_fabric"]
+  },
+  {
+    "query": "緑と白のギンガムチェック",
+    "expected": ["gingham_check"]
+  },
+  {
+    "query": "茶色い革",
+    "expected": ["brown_leather"]
+  },
+  {
+    "query": "ツイードのチェック柄の布",
+    "expected": ["wool_boucle"]
+  },
+  {
+    "query": "目の粗い麻布",
+    "expected": ["hessian_230"]
+  },
+  {
+    "query": "錆びたトタン",
+    "expected": ["rusty_metal"]
+  },
+  {
+    "query": "滑り止めの模様の金属の床",
+    "expected": ["metal_plate"]
+  },
+  {
+    "query": "赤茶色のレンガの壁",
+    "expected": ["brick_wall_02", "broken_brick_wall", "castle_brick_02_white"]
+  },
+  {
+    "query": "テラコッタのタイルの床",
+    "expected": ["terracotta_floor_tiles"]
+  },
+  {
+    "query": "市松模様の床",
+    "expected": ["checkered_pavement_tiles"]
+  },
+  {
+    "query": "明るい色の木目",
+    "expected": ["oak_veneer_01", "hinoki_planks"]
+  },
+  {
+    "query": "古びた濃い色の木の床板",
+    "expected": ["dark_wooden_planks"]
+  },
+  {
+    "query": "竹の壁",
+    "expected": ["bamboo_wall"]
+  },
+  {
+    "query": "瓦屋根",
+    "expected": ["clay_roof_tiles", "roof_slates_02"]
+  },
+  {
+    "query": "茅葺き屋根",
+    "expected": ["thatch_roof_angled"]
+  },
+  {
+    "query": "雪",
+    "expected": ["snow_02"]
+  },
+  {
+    "query": "砂浜の砂",
+    "expected": ["coast_sand_01"]
+  },
+  {
+    "query": "石畳",
+    "expected": ["cobblestone_floor_01"]
+  },
+  {
+    "query": "アスファルトの道路",
+    "expected": ["asphalt_01"]
+  },
+  {
+    "query": "木の幹の樹皮",
+    "expected": ["sakura_bark", "pine_bark"]
+  }
+]

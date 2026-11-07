@@ -1,0 +1,34 @@
+{
+  "name": "aredoko-server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#entities/*": "./src/entities/*/index.ts",
+    "#features/*": "./src/features/*/index.ts",
+    "#shared/*": "./src/shared/*/index.ts"
+  },
+  "exports": {
+    ".": "./src/app/main.ts",
+    "./embedder-worker": "./src/app/embedder-worker.ts"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@effect/sql-sqlite-node": "catalog:",
+    "@huggingface/transformers": "catalog:stack",
+    "@masseater.dev/aredoko-protocol": "workspace:*",
+    "@masseater.dev/aredoko-runtime": "workspace:*",
+    "@zip.js/zip.js": "catalog:",
+    "effect": "catalog:stack",
+    "fzstd": "catalog:",
+    "modern-tar": "catalog:",
+    "sharp": "catalog:",
+    "sqlite-vec": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

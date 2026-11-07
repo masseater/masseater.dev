@@ -1,0 +1,15 @@
+{
+  "name": "aredoko-search-eval",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@masseater.dev/aredoko-protocol": "workspace:*",
+    "@masseater.dev/aredoko-runtime": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

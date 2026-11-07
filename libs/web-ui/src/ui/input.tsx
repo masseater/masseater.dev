@@ -1,6 +1,5 @@
+import { cn } from "@masseater.dev/ui/cn";
 import type { ComponentProps, ReactNode } from "react";
-
-import { cn } from "./cn.ts";
 
 const Input = ({ className, type, ...props }: ComponentProps<"input">): ReactNode => (
   <input

@@ -34,6 +34,14 @@ catalog:
   "@ast-grep/cli": 0.51.1
   "@cloudflare/workers-types": 5.20261104.1
   "@effect/platform-node": 4.1.2
+  "@effect/sql-sqlite-node": 4.1.2
+  "@effect/vitest": 4.1.2
+  modern-tar: 0.8.6
+  "@zip.js/zip.js": 2.24.0
+  sharp: 0.35.5
+  fzstd: 0.1.1
+  "@types/three": 0.187.0
+  sqlite-vec: 0.1.9
   "@eslint-react/eslint-plugin": 5.28.8
   "@shadcn/lint": 0.2.5
   "@tanstack/eslint-plugin-query": 5.105.3
@@ -154,6 +162,7 @@ catalogs:
     "@r_masseater/workers-tracing": 0.1.1
     "@distilled.cloud/cloudflare": 1.0.0-rc.18
     "@effect/atom-react": 4.1.2
+    "@huggingface/transformers": 4.3.2
     "@effect/tsgo": 0.67.4
     "@elysiajs/eden": 1.4.9
     "@tanstack/react-query": 5.105.3
@@ -203,6 +212,7 @@ allowBuilds:
   dtrace-provider: false
   re2: true
   "@openrouter/sdk": false
+  onnxruntime-node: false
 packageExtensions:
   safer-buffer@2.1.2:
     dependencies:

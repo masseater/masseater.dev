@@ -13,9 +13,8 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 - rpp-kit のデモ（`apps/rpp-kit-demo`）: https://masseater.dev/rpp-kit/
 - メドレーの曲と動画を逆引きするメドDB（`apps/medley-manager`）: https://medley-manager.masseater.dev
 - decision モデルの実験（`apps/injection-bisect-demo`・`apps/ocr-decide`・`apps/decision-bench`）。injection-bisect のデモは https://masseater.dev/injection-bisect/ 、npm は https://www.npmjs.com/package/@r_masseater/injection-bisect 。ocr-decide は https://masseater.dev/ocr-decide/ 、OCR エンジンの比較は https://masseater.dev/ocr-decide/ocr-engines 。日本語 decision model ベンチは https://masseater.dev/decision-bench/ で、手法は `docs/decision-bench.md` にある。
-- RSS: https://masseater.dev/feed.xml
-- Standard.site（blog の記事を AT Protocol に載せたもの）: https://bsky.app/profile/masseater.bsky.social
-- Zenn: https://zenn.dev/masseater
+- Unity エディタの中でアセットを見た目の言葉で探す aredoko（`apps/aredoko-*`）。管理アプリは https://github.com/masseater/masseater.dev/releases?q=aredoko で配り、導入の手順は `apps/aredoko-desktop/README.md` にある。
+- 記事の配信。RSS は https://masseater.dev/feed.xml 、blog の記事を AT Protocol に載せた Standard.site は https://bsky.app/profile/masseater.bsky.social 、Zenn は https://zenn.dev/masseater にある。
 - 個人データの MCP サーバー（watashi-mcp）: https://watashi.masseater.dev/mcp
 
 ## 記事を書く
