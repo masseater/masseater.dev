@@ -36,7 +36,7 @@ Google のソフトウェア開発は、Google が社内でソフトウェアを
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | コードの置き場所 | [Piper](/sloppedia/piper) の単一のリポジトリ、[モノレポ](/sloppedia/monorepo-and-polyrepo)                                              |
 | 手元の作業       | [CitC](/sloppedia/clients-in-the-cloud)                                                                                                 |
-| ブランチの運用   | [トランクベース開発](/sloppedia/trunk-based-development)、One Version Rule                                                              |
+| ブランチの運用   | [トランクベース開発](/sloppedia/trunk-based-development)、[One Version Rule](/sloppedia/one-version-rule)                               |
 | ビルド           | [Blaze と Bazel](/sloppedia/bazel)                                                                                                      |
 | テスト           | [TAP](/sloppedia/google-tap)                                                                                                            |
 | レビュー         | [Critique](/sloppedia/critique)、[Google のコードレビュー](/sloppedia/google-code-review)、[Readability](/sloppedia/google-readability) |
@@ -48,7 +48,7 @@ Google のソフトウェア開発は、Google が社内でソフトウェアを
 
 ## 歴史
 
-Google は10年以上にわたり、1台の Perforce のサーバーに独自のキャッシュを足して全社のコードを置いていた。それでも規模に追いつかなくなり、自前のバージョン管理システムの Piper を作った[^wikipedia-piper]。
+Google は10年以上にわたり、1台の [Perforce](/sloppedia/perforce) のサーバーに独自のキャッシュを足して全社のコードを置いていた。それでも規模に追いつかなくなり、自前のバージョン管理システムの Piper を作った[^wikipedia-piper]。
 
 ビルドシステムの Blaze は2006年に作り始められた。2015年3月には、その一部を Bazel として公開した[^wikipedia-bazel]。運用の側では、Benjamin Treynor Sloss が2003年に7人の本番環境のチームを任され、これが SRE の始まりになった[^sre-intro]。
 
@@ -60,7 +60,7 @@ Google は全社のコードを Piper の単一のリポジトリに置いてい
 
 開発者は手元にリポジトリを写さない。[CitC](/sloppedia/clients-in-the-cloud)（Clients in the Cloud）は、変えたファイルだけをクラウドに持ち、残りはリポジトリ全体が手元にあるように見せる[^wikipedia-piper]。
 
-リポジトリの大部分は全社員が読める。コードの木の各ディレクトリに持ち主（OWNERS）がいて、そこへの変更には持ち主の承認が要る[^mcr]。
+リポジトリの大部分は全社員が読める。コードの木の各ディレクトリに持ち主（[OWNERS](/sloppedia/google-owners)）がいて、そこへの変更には持ち主の承認が要る[^mcr]。
 
 ## ブランチと版
 
@@ -96,7 +96,7 @@ Google は全社のコードを Piper の単一のリポジトリに置いてい
 
 ## 全社に及ぶ変更
 
-1つのリポジトリにすべてのコードがあるので、ある API を使う箇所を全社で一度に直せる。とはいえ、変更が大きすぎると1つのコミットには収まらない。書籍は、論理的には1つでも、1回では入れられない変更を[大規模変更](/sloppedia/large-scale-changes)（LSC）と呼ぶ[^swe-ch22]。Rosie という道具が、大きな変更を持ち主ごとの小さな変更に分け、それぞれにレビューとテストを通させる[^swe-ch22]。
+1つのリポジトリにすべてのコードがあるので、ある API を使う箇所を全社で一度に直せる。とはいえ、変更が大きすぎると1つのコミットには収まらない。書籍は、論理的には1つでも、1回では入れられない変更を[大規模変更](/sloppedia/large-scale-changes)（LSC）と呼ぶ[^swe-ch22]。[Rosie](/sloppedia/rosie) という道具が、大きな変更を持ち主ごとの小さな変更に分け、それぞれにレビューとテストを通させる[^swe-ch22]。
 
 API の利用者が十分に多いと、約束していない振る舞いにも誰かが頼るようになる。Hyrum Wright のこの観察は[ハイラムの法則](/sloppedia/hyrums-law)と呼ばれる[^swe-ch1]。大規模変更の難しさの多くは、ここから来る。
 
@@ -108,7 +108,7 @@ API の利用者が十分に多いと、約束していない振る舞いにも�
 
 ## 社外との関係
 
-社内の道具の多くは、公開版や考え方の形で外に出ている。Blaze の公開版が Bazel で、2026年11月5日に 9.3.2 が出ている[^bazel-releases]。リポジトリの間でコードを写して変換する [Copybara](/sloppedia/copybara) は、社内のリポジトリと GitHub の公開リポジトリを同期させる道具である[^copybara]。Abseil の GitHub のコミットには、社内の変更番号を示す `PiperOrigin-RevId` の行が付いている[^abseil]。
+社内の道具の多くは、公開版や考え方の形で外に出ている。Blaze の公開版が Bazel で、2026年11月5日に 9.3.2 が出ている[^bazel-releases]。リポジトリの間でコードを写して変換する [Copybara](/sloppedia/copybara) は、社内のリポジトリと GitHub の公開リポジトリを同期させる道具である[^copybara]。[Abseil](/sloppedia/abseil) の GitHub のコミットには、社内の変更番号を示す `PiperOrigin-RevId` の行が付いている[^abseil]。
 
 コードレビューの指針は eng-practices として[^eng-practices]、各言語の書き方の決まりはスタイルガイドとして公開されている[^styleguide]。スタイルガイドは社内のものの写しで、外からの変更は受け付けていない[^styleguide]。
 

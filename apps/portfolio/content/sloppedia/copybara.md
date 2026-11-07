@@ -29,13 +29,13 @@ Copybara は自分で状態を持たない。どこまで写したかは、写�
 
 ## 設定
 
-写し方は Starlark で書いた設定ファイルに `core.workflow` として定義する。写すときに、文字列の置き換え（`core.replace`）やファイルの移動（`core.move`）などの変換をかけられる[^readme]。社内でしか使わない部分を消したり、パスを公開用に組み替えたりできる。
+写し方は [Starlark](/sloppedia/starlark) で書いた設定ファイルに `core.workflow` として定義する。写すときに、文字列の置き換え（`core.replace`）やファイルの移動（`core.move`）などの変換をかけられる[^readme]。社内でしか使わない部分を消したり、パスを公開用に組み替えたりできる。
 
-対応する写し元と写し先は Git だけで、Mercurial の読み取りは試験的な対応である[^readme]。
+対応する写し元と写し先は [Git](/sloppedia/git) だけで、Mercurial の読み取りは試験的な対応である[^readme]。
 
 ## 公開リポジトリの痕跡
 
-Google が GitHub で公開しているリポジトリには、Copybara で社内から写したコミットが多い。たとえば Abseil のコミットには、社内の変更番号を示す `PiperOrigin-RevId` の行が付いている[^abseil]。開発の本体は社内の単一のリポジトリにあり、GitHub は写しの1つだということが、この行から分かる。
+Google が GitHub で公開しているリポジトリには、Copybara で社内から写したコミットが多い。たとえば [Abseil](/sloppedia/abseil) のコミットには、社内の変更番号を示す `PiperOrigin-RevId` の行が付いている[^abseil]。開発の本体は社内の単一のリポジトリにあり、GitHub は写しの1つだということが、この行から分かる。
 
 ## 開発の状況
 

@@ -22,11 +22,11 @@ Piper は、全社のソースコードを1つのリポジトリにまとめる�
 
 ## 経緯
 
-Google は10年以上にわたり、1台の Perforce のサーバーに独自のキャッシュを足して全社のコードを置いていた。さらに規模を広げる必要から Piper を作った[^wikipedia]。2020年の書籍『[Software Engineering at Google](/sloppedia/software-engineering-at-google)』は、Piper を分散したマイクロサービスとして作られた集中型のシステムと説明している[^swe-ch16]。
+Google は10年以上にわたり、1台の [Perforce](/sloppedia/perforce) のサーバーに独自のキャッシュを足して全社のコードを置いていた。さらに規模を広げる必要から Piper を作った[^wikipedia]。2020年の書籍『[Software Engineering at Google](/sloppedia/software-engineering-at-google)』は、Piper を分散したマイクロサービスとして作られた集中型のシステムと説明している[^swe-ch16]。
 
 ## 作り
 
-Piper は Google の汎用のストレージの上に作られている。はじめは Bigtable を、のちに Spanner を使い、世界の10か所のデータセンターに Paxos で複製している[^wikipedia]。
+Piper は Google の汎用のストレージの上に作られている。はじめは Bigtable を、のちに [Spanner](/sloppedia/spanner) を使い、世界の10か所のデータセンターに Paxos で複製している[^wikipedia]。
 
 開発者は、リポジトリ全体を手元に写さない。多くの開発者は [CitC](/sloppedia/clients-in-the-cloud) を通して Piper を使い、変えたファイルだけをクラウドの作業場所に持つ[^wikipedia]。
 
@@ -48,7 +48,7 @@ Google の開発者の大半は個人のブランチを使わず、トランク�
 
 Piper の公開版は無い。社内の Piper と公開の GitHub のリポジトリの間でコードを行き来させる道具として、[Copybara](/sloppedia/copybara) が公開されている[^copybara]。Google が GitHub で公開しているリポジトリのコミットには、Piper の変更番号を示す `PiperOrigin-RevId` の行が付く[^abseil]。
 
-大規模なモノレポを持つほかの会社も、既存のバージョン管理システムでは足りず、独自のものを作ってきた。[バージョン管理システムの一覧](/sloppedia/version-control-systems)に例がある。
+大規模な[モノレポ](/sloppedia/monorepo-and-polyrepo)を持つほかの会社も、既存のバージョン管理システムでは足りず、独自のものを作ってきた。[バージョン管理システムの一覧](/sloppedia/version-control-systems)に例がある。
 
 [^potvin]: Rachel Potvin、Josh Levenberg「[Why Google Stores Billions of Lines of Code in a Single Repository](https://research.google/pubs/why-google-stores-billions-of-lines-of-code-in-a-single-repository/)」CACM、2016年。本文は取得できず、数値は検索結果の抜粋による。
 

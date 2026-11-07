@@ -21,7 +21,7 @@ web.dev は、Google が運営する Web 開発者向けのサイトである。
 
 ### 指針と特集
 
-トップページには、AI を使った Web ファーストの体験、Core Web Vitals の指標になった Interaction to Next Paint（INP）の測定と最適化、本人確認と支払いの最新機能のような特集が並ぶ[^webdev]。
+トップページには、AI を使った Web ファーストの体験、[Core Web Vitals](/sloppedia/core-web-vitals) の指標になった Interaction to Next Paint（INP）の測定と最適化、本人確認と支払いの最新機能のような特集が並ぶ[^webdev]。
 
 ### Web プラットフォーム
 
@@ -33,7 +33,7 @@ HTML、CSS、JavaScript など、Web プラットフォームの各部分を自�
 
 ### ブログ
 
-新機能や Baseline の更新、AI、Core Web Vitals などの話題は、同じサイトの中の [web.dev ブログ](/sloppedia/web-dev-blog)で発信している[^webdev]。
+新機能や [Baseline](/sloppedia/web-platform-baseline) の更新、AI、Core Web Vitals などの話題は、同じサイトの中の [web.dev ブログ](/sloppedia/web-dev-blog)で発信している[^webdev]。
 
 ## 言語
 

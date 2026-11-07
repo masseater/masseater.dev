@@ -15,7 +15,7 @@ infobox:
     value: "Patreon"
 ---
 
-IncrementalDB（incrementaldb）は、インクリメンタルゲームを集めたデータベースのサイトである。サイトは自らを、インクリメンタルゲームを集めた最大のキュレーション済みデータベースと称している。ゲームを探し、語り合い、コミュニティに加わる場として作られている[^incrementaldb]。
+IncrementalDB（incrementaldb）は、[インクリメンタルゲーム](/sloppedia/incremental-game)を集めたデータベースのサイトである。サイトは自らを、インクリメンタルゲームを集めた最大のキュレーション済みデータベースと称している。ゲームを探し、語り合い、コミュニティに加わる場として作られている[^incrementaldb]。
 
 ## 内容
 

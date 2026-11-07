@@ -21,7 +21,7 @@ infobox:
     href: "https://huggingface.co/pfnet/plamo-3-translate-8b"
 ---
 
-PLaMo 3 Translate は、Preferred Networks（PFN）が開発した翻訳特化型の大規模言語モデルである。PFN の翻訳サービス「PLaMo翻訳」で使われているモデルで、2026年11月5日にオープンウェイトで公開された[^pfn-release]。
+PLaMo 3 Translate は、[Preferred Networks](/sloppedia/preferred-networks)（PFN）が開発した翻訳特化型の大規模言語モデルである。PFN の翻訳サービス「PLaMo翻訳」で使われているモデルで、2026年11月5日にオープンウェイトで公開された[^pfn-release]。
 
 ## 開発
 

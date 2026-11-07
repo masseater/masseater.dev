@@ -25,7 +25,7 @@ Indra OCR は、Datalab が公開した、CPU だけで動く OCR モデルで�
 
 主な認識器（ラテン文字用）は約125万パラメータで、既定のモデルをすべて合わせても730万パラメータである。モデルの大きさは約76 MB で、初回の実行時に Hugging Face から取得する。ONNX Runtime で動き、PyTorch と GPU は要らない[^pypi]。
 
-32コアの CPU で毎秒約44ページを処理し、同じ条件で Tesseract の15倍、PaddleOCR の PP-OCR のテキストのモデルの10倍速い。4コアでは1ページ約210ミリ秒である[^pypi]。
+32コアの CPU で毎秒約44ページを処理し、同じ条件で Tesseract の15倍、[PaddleOCR](/sloppedia/paddleocr) の PP-OCR のテキストのモデルの10倍速い。4コアでは1ページ約210ミリ秒である[^pypi]。
 
 Paruchuri は、OmniParseBench で34億パラメータの DeepSeek OCR 2 に4ポイント差まで迫ると告知した[^vik]。
 

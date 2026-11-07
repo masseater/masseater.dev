@@ -25,7 +25,7 @@ Google の AI によるコーディングは、Google が社内のソフトウ�
 | 2024年6月  | コードの文字の50%が AI の補完で入力されるようになったと報告[^ai-se] |
 | 2024年10月 | 新しいコードの25%超を AI が生成と発表[^q3-2024]                     |
 | 2025年1月  | AI による社内のコードの移行の事例を論文で報告[^migration]           |
-| 2025年11月 | Antigravity を公開[^antigravity]                                    |
+| 2025年11月 | [Antigravity](/sloppedia/google-antigravity) を公開[^antigravity]   |
 | 2026年4月  | 新しいコードの75%を AI が生成と発表[^next-2026]                     |
 | 2026年5月  | Antigravity 2.0 を公開[^antigravity-2]                              |
 
@@ -82,7 +82,7 @@ Pichai は、Gemini の macOS 版の最初のリリースを Antigravity で作�
 
 ## 評価
 
-Business Insider は、Google がエンジニアに AI の利用を強く促しており、一部の人には人事評価に関わる AI の目標が課されていると報じた[^bi]。同じ記事は、Google DeepMind の一部の社員が Anthropic の Claude Code を使うことを認められたとも書いている[^bi]。
+Business Insider は、Google がエンジニアに AI の利用を強く促しており、一部の人には人事評価に関わる AI の目標が課されていると報じた[^bi]。同じ記事は、Google DeepMind の一部の社員が Anthropic の [Claude Code](/sloppedia/claude-code) を使うことを認められたとも書いている[^bi]。
 
 割合の数字には疑問も出ている。Semafor は、Pichai の挙げた所要時間の短縮を確かめるのはほぼ不可能だと書いた[^semafor]。2024年6月の報告は、AI の文字の割合を、受け入れた AI の文字を人が打った文字と足したもので割って求めると定義している[^ai-se]。一方、2026年の75%がどう数えた値かは示されていない。
 
