@@ -9,6 +9,7 @@ import { callerOf } from "./caller";
 import type { Caller } from "./caller";
 import { registerHistoryTools } from "./history-tools.server";
 import { registerMemoryTools } from "./memory-tools.server";
+import { registerPersonalTools } from "./personal-tools.server";
 import { registerTodoTools } from "./todo-tools.server";
 
 const SERVER_INFO = { name: SITE_NAME, version: "0.0.0", websiteUrl: SITE_ORIGIN };
@@ -19,6 +20,7 @@ const registerTools = (caller: Caller): McpServer =>
     registerMemoryTools(caller),
     registerTodoTools(caller),
     registerHistoryTools(caller),
+    registerPersonalTools(caller),
   );
 
 const serveMcp = (request: Request): Promise<Response> =>
