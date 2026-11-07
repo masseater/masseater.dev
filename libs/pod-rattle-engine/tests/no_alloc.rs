@@ -23,6 +23,9 @@ fn render_never_allocates() {
             if block == 200 {
                 engine.set_target(0.1, 0.02);
             }
+            if block == 300 {
+                engine.reset(Params::default(), AutoShake::default());
+            }
             engine.render(&mut left, &mut right);
             engine.snapshot(&mut snapshot);
         }

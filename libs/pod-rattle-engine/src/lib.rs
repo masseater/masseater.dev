@@ -269,6 +269,34 @@ impl Engine {
         engine
     }
 
+    /// Returns the engine to the state [`Engine::new`] builds, reusing its buffers so it is
+    /// safe to call on the audio thread.
+    pub fn reset(&mut self, params: Params, auto: AutoShake) {
+        self.params = params;
+        self.auto = auto;
+        self.phase = 0.0;
+        self.side = -1.0;
+        self.recoil = 0.0;
+        self.hand = Hand::default();
+        self.pods = [POD; MAX_PODS];
+        self.modes.fill(Mode::default());
+        self.banks.fill(Bank::default());
+        self.ring.fill(0.0);
+        self.n = 0;
+        self.substep = 0;
+        self.read = 0;
+        self.hits = 0;
+        self.hit_rate = 0.0;
+        self.hit_time = 0.0;
+        self.stiffness = 3e9;
+        self.t60 = 0.02;
+        self.f0 = 2400.0;
+        self.top_frequency = 0.0;
+        self.material_gain = 28.0;
+        self.rng = Lcg(1);
+        self.build();
+    }
+
     #[must_use]
     pub const fn sample_rate(&self) -> f64 {
         self.sample_rate
