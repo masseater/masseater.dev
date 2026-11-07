@@ -20,7 +20,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
-      - uses: masseater/typescript-template/.github/actions/verify@e091f43537b32cc72397496aeb381c5549597dfc
+      - uses: masseater/typescript-template/.github/actions/verify@68becbb0934725055f1c657f1e77a529f0e3e338
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -134,7 +134,7 @@ jobs:
         with:
           ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
+      - uses: masseater/typescript-template/.github/actions/credentials@68becbb0934725055f1c657f1e77a529f0e3e338
       - uses: $/.github/actions/setup
       - run: vp exec --filter portfolio alchemy deploy --config alchemy.zone.ts --stage prod --yes
 
@@ -153,7 +153,7 @@ jobs:
         with:
           ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
+      - uses: masseater/typescript-template/.github/actions/credentials@68becbb0934725055f1c657f1e77a529f0e3e338
       - uses: $/.github/actions/setup
       - run: vp exec --filter @masseater.dev/mcp-portal alchemy deploy --config alchemy.portal.ts --stage prod --yes
 
@@ -171,7 +171,7 @@ jobs:
         with:
           ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
+      - uses: masseater/typescript-template/.github/actions/credentials@68becbb0934725055f1c657f1e77a529f0e3e338
       - uses: $/.github/actions/setup
       - run: vp exec --filter portfolio alchemy deploy --config alchemy.traces.ts --stage prod --yes
 
@@ -189,7 +189,7 @@ jobs:
         with:
           ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
+      - uses: masseater/typescript-template/.github/actions/credentials@68becbb0934725055f1c657f1e77a529f0e3e338
       - uses: $/.github/actions/setup
       - run: vp exec --filter three-twelve alchemy deploy --stage prod --yes
 
@@ -207,7 +207,7 @@ jobs:
         with:
           ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
+      - uses: masseater/typescript-template/.github/actions/credentials@68becbb0934725055f1c657f1e77a529f0e3e338
       - uses: $/.github/actions/setup
       - run: vp exec --filter watashi-mcp alchemy deploy --stage prod --yes
 
@@ -225,7 +225,7 @@ jobs:
         with:
           ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@9fd918dd489a841010b0a5fb6e4ed9d1f8a11ec1
+      - uses: masseater/typescript-template/.github/actions/credentials@68becbb0934725055f1c657f1e77a529f0e3e338
       - uses: $/.github/actions/setup
       - run: vp exec --filter medley-manager alchemy deploy --stage production --yes
 
@@ -243,7 +243,7 @@ jobs:
         with:
           ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
+      - uses: masseater/typescript-template/.github/actions/credentials@68becbb0934725055f1c657f1e77a529f0e3e338
       - uses: $/.github/actions/setup
       - run: vp exec --filter rpp-kit-demo alchemy deploy --stage production --yes
 
@@ -278,7 +278,7 @@ jobs:
         with:
           ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
+      - uses: masseater/typescript-template/.github/actions/credentials@68becbb0934725055f1c657f1e77a529f0e3e338
       - uses: $/.github/actions/setup
       - run: vp exec workers-traces --request https://masseater.dev/ --expect GET --wait 300
         working-directory: apps/portfolio
@@ -633,6 +633,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@e091f43537b32cc72397496aeb381c5549597dfc
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@68becbb0934725055f1c657f1e77a529f0e3e338
         with:
           github-token: ${{ github.token }}
