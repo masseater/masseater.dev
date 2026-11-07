@@ -44,6 +44,19 @@
 - 精度・費用・時間の比較は、無害な入力と注入を含む入力の両方で、フロンティアモデルに直接判定させた場合と並べる。計測の前後に `GET https://openrouter.ai/api/v1/key` でキーの残りを確かめる。
 - デモはサーバーの処理を持たない。OpenRouter のキーは見る人が入力し、サーバーは持たず受け取りもしない。
 
+## aredoko
+
+- aredoko は Unity エディタの中でアセットを見た目の言葉で探す検索で、製品は UPM パッケージ `dev.masseater.aredoko` である。開発用の Unity プロジェクト `apps/aredoko-unity` に埋め込んで置き、そのプロジェクトで動かして確かめる。利用者向けの導入手順は `apps/aredoko-desktop/README.md` にある。
+- 埋め込みの推論・インデックスの作成・ランキング・BOOTH の商品情報の取得は、同じ PC で常駐するサーバー `apps/aredoko-server` に置き、エディタ拡張は localhost で呼ぶ。Unity の中では推論しない。サーバーは Unity を起動せずにテストできる。推論は Transformers.js で `onnx-community/embeddinggemma-2-ONNX` を動かし、インデックスは SQLite と sqlite-vec に置く。
+- 管理アプリは Tauri 2 で `apps/aredoko-desktop` に置く。Rust 側（`src-tauri`、ルートの Cargo ワークスペースの一員）は常駐サーバーの起動と終了だけを受け持つ。インストーラーは `aredoko-desktop` ワークフローが `aredoko-v*` のタグか手動実行で Windows 向けに作る。
+- 埋め込みのモデルは EmbeddingGemma 2 である。3D モデルは複数の向きからレンダリングした画像を埋め込み、キャプションを生成してから埋め込む方式は取らない。
+- 検索の精度は `tools/aredoko-search-eval` の、検索語と正解のアセットを組にした評価セットで測る。ランキングやモデルを変えるときは、変える前と後の結果を比べる。評価は日本語の検索語を主にする。
+- 型の正本は `libs/aredoko-protocol` の Effect Schema である。管理アプリと常駐サーバーは RpcGroup をそのまま共有し、エディタ拡張の C# と Tauri の Rust の型は `tools/aredoko-protocol-codegen` で `vp run codegen` を実行して作り直す。生成物は手で書き換えない。verify は `codegen:check` で食い違いを、`tools/aredoko-csharp-check` でエディタ拡張の C# の型検査をする。
+- effect の不安定な API を出す宣言には `/** @internal */` を付ける。effect-tsgo の `api-stability-leak` はこれで公開の面から外れ、コメントの禁止もこの形だけを通す。
+- エディタ拡張は、VRChat SDK の Unity 2022.3.22f1 で使える API と C# 9 だけで書く。常駐サーバーは Windows 10・11 の x64 で動かすが、開発とテストはクラウドの Linux でも完結させ、Windows でしか確かめられない処理を作らない。
+- アセットと検索語は PC の外へ送らない。外部への通信は BOOTH の商品ページの公開 JSON の取得だけにし、BOOTH のログイン状態・Cookie・購入履歴は読まない。ほかのツールのデータは Unity Asset Store の保存先と BOOTH Library Manager のものだけを読み取り、書き換えない。ドロップやファイル選択で渡されたパッケージは、データフォルダの `library` に写してから索引し、元のファイルは動かさない。
+- 管理アプリの画面は、`apps/aredoko-desktop` で `vp run dev:app` を実行して開発版を起動し、`agent-browser connect 9222` でつないで調べる。WebView2 のデバッグポートを開くのは開発版だけである。トレースは `tools/aredoko-telemetry` で `vp run jaeger` を実行してから開発版を起動すると、管理アプリ・常駐サーバー・埋め込みのワーカーから `http://127.0.0.1:16686` に届く。
+
 ## 記事
 
 - 記事の日付は frontmatter に書かない。`apps/portfolio/vite-plugins/markdown/remark-git-date.ts` がビルド時に、そのファイルを最初に追加したコミットの日付を `date` として入れる。未コミットのファイルは当日の日付になる。

@@ -84,7 +84,10 @@ export default defineConfig({
       "vite-plus/prefer-vite-plus-imports": "error",
       "tanstack-start/no-async-client-component": "error",
       "tanstack-start/no-client-code-in-server-component": "error",
-      "no-comments/disallowComments": ["error", { allow: ["oxlint-disable", "eslint-disable"] }],
+      "no-comments/disallowComments": [
+        "error",
+        { allow: ["oxlint-disable", "eslint-disable", String.raw`\* @internal \*?$`] },
+      ],
       ...allRulesOf({ prefix: "tanstack-query", rules: tanstackQuery.rules }),
       ...allRulesOf({ prefix: "tanstack-router", rules: tanstackRouter.rules }),
       "drizzle/enforce-delete-with-where": ["error", { drizzleObjectName: ["db"] }],
@@ -181,7 +184,7 @@ export default defineConfig({
         rules: { "import/no-default-export": "off" },
       },
       {
-        files: ["**/shared/ui/**", "libs/ui/src/button.tsx", "libs/web-ui/src/ui/**"],
+        files: ["**/shared/ui/**", "libs/ui/src/{badge,button}.tsx", "libs/web-ui/src/ui/**"],
         rules: { "shadcn/no-restyle": "off", "react/jsx-props-no-spreading": "off" },
       },
       {
@@ -190,6 +193,10 @@ export default defineConfig({
       },
       workerOverride,
       writerOnlyOverride,
+      {
+        files: ["apps/aredoko-server/src/app/**"],
+        rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
+      },
       {
         files: ["**/*.test.ts"],
         rules: decisionTestRules,
@@ -268,6 +275,9 @@ export default defineConfig({
           "@masseater.dev/xtask#cargo",
           "rpp-kit-demo#typecheck",
           "sts2-mods#dotnet",
+          "aredoko-desktop#cargo",
+          "aredoko-protocol-codegen#codegen:check",
+          "aredoko-csharp-check#cs:check",
         ],
       },
       test: "vp test run",

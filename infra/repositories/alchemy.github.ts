@@ -48,9 +48,6 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
     "measure-everything": {
       description: "OpenTelemetry と各ツールの公式の拡張点に差し込んで計測する部品集",
     },
-    aredoko: {
-      description: "Unityエディタ内でアセットを見た目・自然言語で探す検索拡張",
-    },
     "ai-produced": {
       description: "AI がボカロPと同じ工程を踏んで曲を作れるかを確かめる実験",
     },
@@ -75,6 +72,7 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
 const CREATES: readonly string[] = [];
 
 const ARCHIVES: ReadonlySet<string> = new Set([
+  "aredoko",
   "decision-experiments",
   "medley-database",
   "mst-ja-decision-bench",

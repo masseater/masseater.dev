@@ -1,6 +1,11 @@
 [workspace]
 resolver = "3"
-members = ["apps/pod-rattle-plugin", "libs/pod-rattle-engine", "tools/xtask"]
+members = [
+  "apps/aredoko-desktop/src-tauri",
+  "apps/pod-rattle-plugin",
+  "libs/pod-rattle-engine",
+  "tools/xtask",
+]
 
 [workspace.package]
 version = "0.0.0"
