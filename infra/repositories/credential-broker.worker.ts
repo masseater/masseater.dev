@@ -9,7 +9,6 @@ import {
   Layer,
   Logger,
   Option,
-  Record as Rec,
   Redacted,
   Schema,
   Stream,
@@ -24,7 +23,14 @@ import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
 import { route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
 import type { Claims } from "./github-oidc.ts";
-import { Rejected, grantKeys, repositoryName, verify } from "./github-oidc.ts";
+import {
+  Rejected,
+  grantKeys,
+  isGranted,
+  repositoryName,
+  verify,
+  workflowGrant,
+} from "./github-oidc.ts";
 import { mintGitHubToken } from "./github-token.ts";
 
 const TOKEN_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
@@ -38,6 +44,7 @@ type CredentialBrokerEnv = GitHubAppEnv &
     NPM_TOKEN?: SecretsStoreSecret;
     ACCOUNT_ID: string;
     GRANTS: string;
+    WORKFLOW_GRANTS: string;
   }>;
 
 const PermissionGroups = Schema.mutable(Schema.Array(Schema.Struct({ id: Schema.String })));
@@ -97,9 +104,18 @@ type IssueError = CreateTokenError | GitHubAppFailed | Schema.SchemaError;
 const isListed = (claims: typeof Claims.Type, listed: readonly string[]): boolean =>
   Arr.some(grantKeys(claims), (key) => Arr.contains(listed, key));
 
+const WorkflowGrants = Schema.fromJsonString(Schema.Record(Schema.String, Permissions));
+
 const decodeGrants = (
   env: CredentialBrokerEnv,
-): Effect.Effect<typeof Grants.Type, Schema.SchemaError> => Schema.decodeEffect(Grants)(env.GRANTS);
+): Effect.Effect<
+  typeof Grants.Type & Readonly<{ workflows: typeof WorkflowGrants.Type }>,
+  Schema.SchemaError
+> =>
+  Effect.all({
+    grants: Schema.decodeEffect(Grants)(env.GRANTS),
+    workflows: Schema.decodeEffect(WorkflowGrants)(env.WORKFLOW_GRANTS),
+  }).pipe(Effect.map(({ grants, workflows }) => ({ ...grants, workflows })));
 
 const issueCloudflareToken = (
   env: CredentialBrokerEnv,
@@ -132,8 +148,8 @@ const issueGitHubToken = (
 ): Effect.Effect<Option.Option<Issued>, IssueError> =>
   Effect.gen(function* createGitHubToken() {
     const grants = yield* decodeGrants(env);
-    const grant = Arr.findFirst(grantKeys(claims), (key) =>
-      Option.fromNullishOr(grants.github[key]),
+    const grant = Option.orElse(workflowGrant(grants.workflows)(claims), () =>
+      Arr.findFirst(grantKeys(claims), (key) => Option.fromNullishOr(grants.github[key])),
     );
     if (Option.isNone(grant)) {
       return Option.none();
@@ -196,9 +212,7 @@ const issue = (
   Effect.gen(function* issueToken() {
     const claims = yield* verify(request);
     const grants = yield* decodeGrants(env);
-    const known = (key: string): boolean =>
-      Rec.has(grants.repositories, key) || Rec.has(grants.github, key);
-    if (!Arr.some(grantKeys(claims), known) && !isListed(claims, grants.npm)) {
+    if (!isGranted(grants)(claims)) {
       return yield* Rejected.make({ reason: `no grant for ${claims.repository}` });
     }
     const issued = yield* issueGranted(env, claims);
