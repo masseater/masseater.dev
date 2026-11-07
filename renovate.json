@@ -32,11 +32,13 @@
     },
     {
       "matchPackageNames": ["typescript"],
+      "matchDepNames": ["!typescript-wasm"],
       "allowedVersions": "!/-dev\\./"
     },
     {
-      "matchDepNames": ["typescript-6"],
-      "allowedVersions": "<7"
+      "matchDepNames": ["typescript-wasm", "@typescript/typescript-wasip1-wasm"],
+      "followTag": "next",
+      "groupName": "typescript wasm"
     },
     {
       "matchFileNames": ["skills-lock.json"],

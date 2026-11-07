@@ -1,28 +1,24 @@
-import { autocompletion } from "@codemirror/autocomplete";
 import { javascript } from "@codemirror/lang-javascript";
 import { linter } from "@codemirror/lint";
 import type { Diagnostic } from "@codemirror/lint";
 import { EditorState, StateEffect } from "@codemirror/state";
 import type { Extension, Text } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import {
-  tsAutocompleteWorker,
-  tsFacetWorker,
-  tsHoverWorker,
-  tsSyncWorker,
-} from "@valtown/codemirror-ts";
-import type { WorkerShape } from "@valtown/codemirror-ts/worker";
+import type { ViewUpdate } from "@codemirror/view";
 import { basicSetup } from "codemirror";
+import type { Remote } from "comlink";
 import { Array as Arr, Effect, pipe } from "effect";
 import type { Scope } from "effect";
 
+import type { CheckerWorker } from "./checker.worker";
 import { playground } from "./content";
+import { lintsOf, typeCompletion, typeHover } from "./language";
 
 type Editor = Readonly<{ host: HTMLElement; doc: string; extensions: readonly Extension[] }>;
 
 type Checked = Readonly<{ doc: Text; lints: readonly Diagnostic[] }>;
 
-type MainPane = Readonly<{ worker: WorkerShape; onChecked: (checked: Checked) => void }>;
+type MainPane = Readonly<{ worker: Remote<CheckerWorker>; onChecked: (checked: Checked) => void }>;
 
 type Replacement = Readonly<{ view: EditorView; code: string }>;
 
@@ -37,6 +33,8 @@ const theme = EditorView.theme({
   ".cm-scroller": { overflow: "auto" },
   ".cm-tooltip": { maxWidth: "min(36rem, 90vw)" },
   ".cm-tooltip-hover, .cm-diagnostic": { whiteSpace: "pre-wrap", overflowWrap: "anywhere" },
+  ".cm-ts-hover": { padding: "0.25rem 0.5rem" },
+  ".cm-ts-hover p": { margin: "0.25rem 0 0" },
 });
 
 const shadowOf = (host: HTMLElement): ShadowRoot =>
@@ -61,26 +59,33 @@ const scopedEditor = (editor: Editor): Effect.Effect<EditorView, never, Scope.Sc
       }),
   );
 
-const typescriptPane = (worker: WorkerShape, path: string): readonly Extension[] => [
+const typescriptPane = (worker: Remote<CheckerWorker>, path: string): readonly Extension[] => [
   javascript({ typescript: true }),
-  tsFacetWorker.of({ worker, path }),
-  tsSyncWorker(),
-  tsHoverWorker(),
+  typeHover({ worker, path }),
 ];
 
-const generatedPane = (worker: WorkerShape): readonly Extension[] => [
+const generatedPane = (worker: Remote<CheckerWorker>): readonly Extension[] => [
   EditorState.readOnly.of(true),
   ...typescriptPane(worker, GENERATED_PATH),
 ];
+
+const changedSong = (update: ViewUpdate): boolean =>
+  pipe(
+    update.transactions,
+    Arr.some((transaction) =>
+      pipe(
+        transaction.effects,
+        Arr.some((effect) => effect.is(songChanged)),
+      ),
+    ),
+  );
 
 const mainPane = ({ worker, onChecked }: MainPane): readonly Extension[] => [
   ...typescriptPane(worker, MAIN_PATH),
   linter(
     (view) =>
       Effect.runPromise(
-        Effect.promise(() =>
-          worker.getLints({ path: MAIN_PATH, diagnosticCodesToIgnore: [] }),
-        ).pipe(
+        lintsOf({ worker, path: MAIN_PATH })(view).pipe(
           Effect.tap((lints) =>
             Effect.sync(() => {
               onChecked({ doc: view.state.doc, lints });
@@ -88,20 +93,9 @@ const mainPane = ({ worker, onChecked }: MainPane): readonly Extension[] => [
           ),
         ),
       ),
-    {
-      needsRefresh: (update) =>
-        pipe(
-          update.transactions,
-          Arr.some((transaction) =>
-            pipe(
-              transaction.effects,
-              Arr.some((effect) => effect.is(songChanged)),
-            ),
-          ),
-        ),
-    },
+    { needsRefresh: changedSong },
   ),
-  autocompletion({ override: [tsAutocompleteWorker()] }),
+  typeCompletion({ worker, path: MAIN_PATH }),
 ];
 
 const replaceDocument = ({ view, code }: Replacement): void => {

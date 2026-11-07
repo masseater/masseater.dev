@@ -1,7 +1,7 @@
 import type { Remote } from "comlink";
 import { Array as Arr, Effect, Ref, pipe } from "effect";
 
-import type { Checker } from "./checker.worker";
+import type { CheckerWorker } from "./checker.worker";
 import { playground } from "./content";
 import type { Checked } from "./editors";
 import type { Entry, Line, Report } from "./output";
@@ -10,7 +10,7 @@ import { runScript } from "./runner";
 type Fork = (effect: Effect.Effect<void>) => unknown;
 
 type Execution = Readonly<{
-  worker: Remote<Checker>;
+  worker: Remote<CheckerWorker>;
   song: Ref.Ref<string>;
   report: Report;
   fork: Fork;
