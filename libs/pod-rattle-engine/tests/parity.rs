@@ -124,8 +124,10 @@ fn reference(name: &str) -> Vec<f64> {
         panic!("{name}: {e}. Run `node tools/pod-rattle-parity/render.mjs tools/pod-rattle-parity/reference`")
     });
     bytes
-        .chunks_exact(8)
-        .map(|c| f64::from_le_bytes(c.try_into().unwrap()))
+        .as_chunks::<8>()
+        .0
+        .iter()
+        .map(|c| f64::from_le_bytes(*c))
         .collect()
 }
 
