@@ -163,7 +163,7 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@9fd918dd489a841010b0a5fb6e4ed9d1f8a11ec1
       - uses: $/.github/actions/setup
-      - run: vp exec --filter memory alchemy deploy --stage prod --yes
+      - run: vp exec --filter memory alchemy destroy --stage prod --yes
 
   trace-check:
     needs: [deploy, traces]
