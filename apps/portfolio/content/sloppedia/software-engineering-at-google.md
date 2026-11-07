@@ -15,7 +15,7 @@ infobox:
     href: "https://abseil.io/resources/swe-book"
 ---
 
-Software Engineering at Google は、Google の社内のソフトウェアエンジニアリングの作法をまとめた書籍である。Titus Winters、Tom Manshreck、Hyrum Wright が編み、2020年に O'Reilly から出た。Abseil のサイトで全文を無料で読める[^swe-book]。
+Software Engineering at Google は、Google の社内のソフトウェアエンジニアリングの作法をまとめた書籍である。Titus Winters、Tom Manshreck、Hyrum Wright が編み、2020年に O'Reilly から出た。[Abseil](/sloppedia/abseil) のサイトで全文を無料で読める[^swe-book]。
 
 ## 主題
 
@@ -31,18 +31,18 @@ Software Engineering at Google は、Google の社内のソフトウェアエン
 
 ## よく引かれる考え方
 
-| 名前                                    | 内容                                                       |
-| --------------------------------------- | ---------------------------------------------------------- |
-| [ハイラムの法則](/sloppedia/hyrums-law) | 利用者が多ければ、観察できる振る舞いはすべて誰かに頼られる |
-| ビヨンセ・ルール                        | 壊されたくないものには CI のテストを書いておけ             |
-| シフトレフト                            | 問題は開発の流れのより早い段階で見つけるほど安く直せる     |
-| One Version                             | どの依存にも選べる版は1つだけにする                        |
+| 名前                                       | 内容                                                       |
+| ------------------------------------------ | ---------------------------------------------------------- |
+| [ハイラムの法則](/sloppedia/hyrums-law)    | 利用者が多ければ、観察できる振る舞いはすべて誰かに頼られる |
+| ビヨンセ・ルール                           | 壊されたくないものには CI のテストを書いておけ             |
+| シフトレフト                               | 問題は開発の流れのより早い段階で見つけるほど安く直せる     |
+| [One Version](/sloppedia/one-version-rule) | どの依存にも選べる版は1つだけにする                        |
 
 ハイラムの法則、ビヨンセ・ルール、シフトレフトは第1章に[^swe-ch1]、One Version は第16章に出てくる[^swe-ch16]。
 
 ## 数字の時点
 
-書籍の数字は、2020年ごろの Google のものである。TAP が1日に40億を超えるテストケースを走らせる[^swe-ch23]、Code Search が1日に100万回を超えて使われる[^swe-ch17]といった数字は、その後の更新を経ていない。2020年代半ばからの AI によるコードの生成は、当然ながら扱っていない。その後の変化は[Google の AI によるコーディング](/sloppedia/google-ai-assisted-coding)にまとめた。
+書籍の数字は、2020年ごろの Google のものである。[TAP](/sloppedia/google-tap) が1日に40億を超えるテストケースを走らせる[^swe-ch23]、Code Search が1日に100万回を超えて使われる[^swe-ch17]といった数字は、その後の更新を経ていない。2020年代半ばからの AI によるコードの生成は、当然ながら扱っていない。その後の変化は[Google の AI によるコーディング](/sloppedia/google-ai-assisted-coding)にまとめた。
 
 ## 関連する資料
 

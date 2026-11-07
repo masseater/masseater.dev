@@ -34,7 +34,7 @@ infobox:
 
 ### 欠点
 
-ビルドと CI を作り込む必要がある。変更の影響が及ぶ範囲だけを検査するには、Bazel、Nx、Pants、Turborepo のようなビルドグラフを持つ道具を整え、育て続けなければならない[^riftmap]。
+ビルドと CI を作り込む必要がある。変更の影響が及ぶ範囲だけを検査するには、[Bazel](/sloppedia/bazel)、Nx、Pants、Turborepo のようなビルドグラフを持つ道具を整え、育て続けなければならない[^riftmap]。
 
 チームの間で規約やレビューの文化をそろえる調整が要る[^riftmap]。
 

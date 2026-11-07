@@ -21,7 +21,7 @@ infobox:
     href: "https://developers.cloudflare.com/cloudflare-one/access-controls/ai-controls/mcp-portals/"
 ---
 
-MCP server portals は、複数の Model Context Protocol（MCP）サーバーを 1 つの HTTP のエンドポイントにまとめる仕組みである。Cloudflare が、ゼロトラストの製品群 Cloudflare One の Access の機能として提供している[^docs]。利用者は Access でポータルにログインする。MCP クライアントにはポータルの URL を 1 つ登録すればよく、管理者が許可した複数の MCP サーバーの道具を使える[^docs]。
+MCP server portals は、複数の [Model Context Protocol](/sloppedia/model-context-protocol)（MCP）サーバーを 1 つの HTTP のエンドポイントにまとめる仕組みである。Cloudflare が、ゼロトラストの製品群 Cloudflare One の Access の機能として提供している[^docs]。利用者は Access でポータルにログインする。MCP クライアントにはポータルの URL を 1 つ登録すればよく、管理者が許可した複数の MCP サーバーの道具を使える[^docs]。
 
 2025年8月26日にすべてのプランでオープンベータとして公開され[^cl-beta]、2026年9月24日に一般提供となった[^cl-ga]。社内の一部の文脈では Agents Gateway と呼ばれていた。API のパスや Terraform のリソース名には、その名残の `agents_gateway` や `agw` が残っている[^docs]。
 
@@ -71,7 +71,7 @@ Cloudflare は公開時のブログで、社員が管理されていない MCP �
 
 1 つ目は、2026年3月に加わった `optimize_context` のクエリパラメーターである[^cl-context]。`minimize_tools` は道具の説明と入力のスキーマを除いて名前だけを返し、定義は検索用の道具で必要なときに取らせる。ドキュメントは、トークンの使用量を最大で5分の1にできるとしている[^docs]。`search_and_execute` は上流の道具を一覧から隠し、検索と実行の 2 つの道具だけを見せる[^docs]。
 
-2 つ目は Code Mode である。Code Mode では、上流の道具が検索と実行の 2 つの道具にまとまる。エージェントは型の付いたメソッドで道具を呼ぶ JavaScript を書き、そのコードは隔離された Dynamic Worker の中で動く。認証情報や環境変数はモデルのコンテキストに入らない[^docs]。Code Mode も2026年3月に加わった[^cl-codemode]。2026年7月からは、ポータルごとに次の 4 つの方針から選ぶ[^cl-codemode-policy]。
+2 つ目は [Code Mode](/sloppedia/cloudflare-code-mode) である。Code Mode では、上流の道具が検索と実行の 2 つの道具にまとまる。エージェントは型の付いたメソッドで道具を呼ぶ JavaScript を書き、そのコードは隔離された Dynamic Worker の中で動く。認証情報や環境変数はモデルのコンテキストに入らない[^docs]。Code Mode も2026年3月に加わった[^cl-codemode]。2026年7月からは、ポータルごとに次の 4 つの方針から選ぶ[^cl-codemode-policy]。
 
 | 方針          | API の値     | 既定の状態 | クライアントからの切り替え            |
 | ------------- | ------------ | ---------- | ------------------------------------- |

@@ -14,7 +14,7 @@ infobox:
     value: "wide event、tail sampling"
 ---
 
-PostHog のログのベストプラクティスは、PostHog が公式の文書で公開しているログの指針である。多くのログは役に立たず、それは量が足りないからではなく、間違ったものを多く、正しいものを少なく残すからだという主張から始まる。PostHog は OpenTelemetry（OTLP）でログを受け取るので、指針も OTel の構造化ログのモデルを前提にしている[^posthog]。
+PostHog のログのベストプラクティスは、PostHog が公式の文書で公開しているログの指針である。多くのログは役に立たず、それは量が足りないからではなく、間違ったものを多く、正しいものを少なく残すからだという主張から始まる。PostHog は [OpenTelemetry](/sloppedia/opentelemetry)（OTLP）でログを受け取るので、指針も OTel の構造化ログのモデルを前提にしている[^posthog]。
 
 ## イベントとログの区別
 

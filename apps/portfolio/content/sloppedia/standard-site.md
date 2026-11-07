@@ -17,7 +17,7 @@ infobox:
     href: "https://standard.site/"
 ---
 
-Standard.site は、AT Protocol で長文の記事を公開するための共通の lexicon である。lexicon は AT Protocol でレコードの形を決めるスキーマを指す。Standard.site の目的は、別々のプラットフォームで書かれた記事を同じ形で保存して、見つけやすく索引にしやすく持ち運びやすくすることである[^standard-site]。
+Standard.site は、[AT Protocol](/sloppedia/at-protocol) で長文の記事を公開するための共通の lexicon である。lexicon は AT Protocol でレコードの形を決めるスキーマを指す。Standard.site の目的は、別々のプラットフォームで書かれた記事を同じ形で保存して、見つけやすく索引にしやすく持ち運びやすくすることである[^standard-site]。
 
 ## 歴史
 
