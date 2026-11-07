@@ -24,6 +24,7 @@
 - `apps/pod-rattle-plugin` は labs の Pod Rattle を Rust（nih-plug）で VST3・CLAP にしたもので、音の本体は `libs/pod-rattle-engine` にある。Rust はルートの Cargo ワークスペースに置き、crate ごとに最小の package.json と `vite.config.ts` の `cargo` タスク（fmt・clippy・テスト）を持たせて、ルートの verify から vp のタスクとキャッシュで動かす。crate を足したら同じ形で package.json と `cargo` タスクを作り、verify の `dependsOn` に足す。`cargo xtask bundle-all --release` が `target/bundled/` に出す。`pod-rattle` ワークフローは main への push ごとに 3 OS でビルドして pluginval と clap-validator に通す。release-please が `pod-rattle-v<版>` で出し、zip を付ける。
 - オーディオスレッドで確保をしない。配列は初期化で確保し、`no_alloc` テストで確かめる。
 - parity テストの参照音は、`tools/pod-rattle-parity` が labs のページから `createEngine` を切り出して鳴らした音である。labs の音を変えたら `libs/pod-rattle-engine` も合わせる。計算の順序を変えると標本単位で一致しなくなるので、速くするときも浮動小数点の演算順は保つ。いずれ labs が `libs/pod-rattle-engine` を wasm で鳴らし、エンジンを 1 本にする。
+- `apps/memory` は、プロジェクトの記憶を D1 に保存して探す MCP サーバー（`memory.masseater.dev/mcp`）である。認証は better-auth の OAuth とパスキーで、パスキーを登録できるのは招待の文字列を持つ最初の 1 人だけである。ツールの呼び出しはすべて Analytics Engine の `masseater_dev_memory_tool_calls` と Workers Logs に記録する。
 - `apps/zenn-articles` はパッケージではない。main の verify が通ると、中身が `zenn` ブランチの直下へ写される。
 
 ## 記事
