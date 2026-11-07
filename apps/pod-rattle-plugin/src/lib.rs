@@ -2,7 +2,7 @@ mod editor;
 mod params;
 
 use atomic_float::AtomicF32;
-use nih_plug::prelude::*;
+use nice_plug::prelude::*;
 use pod_rattle_engine::{Engine, Snapshot};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
@@ -67,6 +67,7 @@ impl Plugin for PodRattle {
     const MIDI_INPUT: MidiConfig = MidiConfig::Basic;
     const SAMPLE_ACCURATE_AUTOMATION: bool = false;
 
+    type Editor = editor::RattleEditor;
     type SysExMessage = ();
     type BackgroundTask = ();
 
@@ -74,15 +75,15 @@ impl Plugin for PodRattle {
         self.params.clone()
     }
 
-    fn editor(&mut self, _async_executor: AsyncExecutor<Self>) -> Option<Box<dyn Editor>> {
+    fn editor(&mut self, _async_executor: AsyncExecutor<Self>) -> Option<Self::Editor> {
         editor::create(self.params.clone(), self.telemetry.clone())
     }
 
-    fn initialize(
+    fn activate(
         &mut self,
         _audio_io_layout: &AudioIOLayout,
         buffer_config: &BufferConfig,
-        _context: &mut impl InitContext<Self>,
+        _context: &mut impl ActivateContext<Self>,
     ) -> bool {
         self.sample_rate = buffer_config.sample_rate;
         self.engine = Some(Engine::new(
@@ -94,11 +95,9 @@ impl Plugin for PodRattle {
     }
 
     fn reset(&mut self) {
-        self.engine = Some(Engine::new(
-            f64::from(self.sample_rate),
-            self.params.engine_params(),
-            self.params.auto_shake(),
-        ));
+        if let Some(engine) = self.engine.as_mut() {
+            engine.reset(self.params.engine_params(), self.params.auto_shake());
+        }
     }
 
     fn process(
@@ -183,5 +182,5 @@ impl Vst3Plugin for PodRattle {
     ];
 }
 
-nih_export_clap!(PodRattle);
-nih_export_vst3!(PodRattle);
+nice_export_clap!(PodRattle);
+nice_export_vst3!(PodRattle);

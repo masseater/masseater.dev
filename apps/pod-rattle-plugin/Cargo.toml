@@ -16,14 +16,13 @@ path = "src/main.rs"
 required-features = ["standalone"]
 
 [features]
-standalone = ["nih_plug/standalone"]
+standalone = ["nice-plug/standalone"]
 
 [dependencies]
 pod-rattle-engine = { path = "../../libs/pod-rattle-engine" }
-nih_plug = { git = "https://github.com/robbert-vdh/nih-plug", rev = "de421011f41a6d10fc8c7a6084e4f4dee0143683", features = [
-  "assert_process_allocs",
-] }
-nih_plug_egui = { git = "https://github.com/robbert-vdh/nih-plug", rev = "de421011f41a6d10fc8c7a6084e4f4dee0143683" }
+nice-plug = { version = "0.4.2", features = ["assert_process_allocs"] }
+nice-plug-egui = "0.6.0"
+egui = "0.37.0"
 triple_buffer = "8"
 atomic_float = "1"
 

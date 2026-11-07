@@ -1,3 +1,3 @@
 fn main() {
-    nih_plug::nih_export_standalone::<pod_rattle::PodRattle>();
+    nice_plug::nice_export_standalone::<pod_rattle::PodRattle>();
 }
