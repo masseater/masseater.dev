@@ -40,10 +40,10 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "ai-produced": "deploy",
   aredoko: "deploy",
   cdmm: "deploy",
-  "decision-experiments": "rulesets",
   "geigeki-kaiiki": "deploy",
   konomi: "deploy",
   "masseater.dev": "deploy",
+  "masseater.dev/decision-experiments": "rulesets",
   "masseater.dev/zone": "transforms",
   "masseater.dev/mcp-portal": "access",
   mirucord: "deploy",
@@ -69,7 +69,6 @@ type GitHubGrant = Readonly<{
 }>;
 
 const RELEASE_REPOSITORIES: readonly string[] = [
-  "decision-experiments",
   "lint-kit",
   "measure-everything",
   "typescript-template",

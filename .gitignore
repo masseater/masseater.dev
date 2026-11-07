@@ -55,3 +55,7 @@ libs/mosaic/data/
 /tools/pod-rattle-parity/reference
 /tools/pod-rattle-parity/engine.gen.js
 tools/web-vitals-measure/report/
+
+# decision-bench-runner の判定キャッシュ（結果は results/ にコミットする）
+tools/decision-bench-runner/cache/
+*.traineddata

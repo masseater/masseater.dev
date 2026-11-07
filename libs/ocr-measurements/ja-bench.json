@@ -1,0 +1,444 @@
+{
+  "generatedAt": "2026-10-20T05:11:48.399Z",
+  "pages": 84,
+  "categories": [
+    {
+      "id": "horizontal-mincho",
+      "label": "横書き（明朝）",
+      "source": "synthetic",
+      "pages": 3
+    },
+    {
+      "id": "horizontal-gothic",
+      "label": "横書き（ゴシック）",
+      "source": "synthetic",
+      "pages": 3
+    },
+    {
+      "id": "vertical",
+      "label": "縦書き",
+      "source": "synthetic",
+      "pages": 3
+    },
+    {
+      "id": "mixed-script",
+      "label": "和欧混植",
+      "source": "synthetic",
+      "pages": 3
+    },
+    {
+      "id": "rare-kanji",
+      "label": "難読漢字・旧字体",
+      "source": "synthetic",
+      "pages": 3
+    },
+    {
+      "id": "small-text",
+      "label": "小さい文字",
+      "source": "synthetic",
+      "pages": 3
+    },
+    {
+      "id": "degraded-scan",
+      "label": "劣化したスキャン",
+      "source": "synthetic",
+      "pages": 3
+    },
+    {
+      "id": "handwriting-font",
+      "label": "手書き風フォント",
+      "source": "synthetic",
+      "pages": 3
+    },
+    {
+      "id": "handwriting-horizontal",
+      "label": "手書き（横書き）",
+      "source": "jawildtext",
+      "pages": 20
+    },
+    {
+      "id": "handwriting-vertical",
+      "label": "手書き（縦書き）",
+      "source": "jawildtext",
+      "pages": 20
+    },
+    {
+      "id": "receipt-photo",
+      "label": "レシートの写真",
+      "source": "jawildtext",
+      "pages": 20
+    }
+  ],
+  "runs": [
+    {
+      "engine": "google/gemini-3.8-flash",
+      "label": "Gemini 3.8 Flash",
+      "kind": "vlm",
+      "machine": "OpenRouter",
+      "accuracy": 0.9445969704061,
+      "charF1": 0.9937183327976803,
+      "byCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 1,
+        "rare-kanji": 0.9856060606060607,
+        "small-text": 1,
+        "degraded-scan": 1,
+        "handwriting-font": 1,
+        "handwriting-horizontal": 0.8088577722781596,
+        "handwriting-vertical": 0.8787088396165789,
+        "receipt-photo": 0.7173940019663008
+      },
+      "charF1ByCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 1,
+        "rare-kanji": 0.9856060606060607,
+        "small-text": 1,
+        "degraded-scan": 1,
+        "handwriting-font": 1,
+        "handwriting-horizontal": 0.9825340580313682,
+        "handwriting-vertical": 0.984202242658716,
+        "receipt-photo": 0.9785592994783372
+      },
+      "secondsPerPage": 7.815267633452383,
+      "usdPerPage": 0.003749553571428571,
+      "failed": 0
+    },
+    {
+      "engine": "anthropic/claude-haiku-5.5",
+      "label": "Claude Haiku 5.5",
+      "kind": "vlm",
+      "machine": "OpenRouter",
+      "accuracy": 0.943873962733442,
+      "charF1": 0.9937869154050393,
+      "byCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 1,
+        "rare-kanji": 0.991017316017316,
+        "small-text": 1,
+        "degraded-scan": 1,
+        "handwriting-font": 1,
+        "handwriting-horizontal": 0.8151294437918976,
+        "handwriting-vertical": 0.8721414843490762,
+        "receipt-photo": 0.704325345909574
+      },
+      "charF1ByCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 1,
+        "rare-kanji": 0.991017316017316,
+        "small-text": 1,
+        "degraded-scan": 1,
+        "handwriting-font": 1,
+        "handwriting-horizontal": 0.9855088232252076,
+        "handwriting-vertical": 0.9808572482505241,
+        "receipt-photo": 0.974272681962384
+      },
+      "secondsPerPage": 3.57436918977381,
+      "usdPerPage": 0.0004757714285714285,
+      "failed": 0
+    },
+    {
+      "engine": "google/gemini-3.5-flash-lite",
+      "label": "Gemini 3.5 Flash Lite",
+      "kind": "vlm",
+      "machine": "OpenRouter",
+      "accuracy": 0.9370737145710067,
+      "charF1": 0.9884372711698931,
+      "byCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 1,
+        "rare-kanji": 0.9753787878787877,
+        "small-text": 1,
+        "degraded-scan": 1,
+        "handwriting-font": 0.9954337899543378,
+        "handwriting-horizontal": 0.7877687483178007,
+        "handwriting-vertical": 0.8732331348730211,
+        "receipt-photo": 0.6759963992571276
+      },
+      "charF1ByCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 1,
+        "rare-kanji": 0.975378787878788,
+        "small-text": 1,
+        "degraded-scan": 1,
+        "handwriting-font": 0.9977011494252874,
+        "handwriting-horizontal": 0.9661684332886702,
+        "handwriting-vertical": 0.9789866744857003,
+        "receipt-photo": 0.954574937790379
+      },
+      "secondsPerPage": 1.766514674928572,
+      "usdPerPage": 0.0007022666666666665,
+      "failed": 0
+    },
+    {
+      "engine": "qwen/qwen3.8-flash",
+      "label": "Qwen3.8 Flash",
+      "kind": "vlm",
+      "machine": "OpenRouter",
+      "accuracy": 0.9335672358744379,
+      "charF1": 0.9825565365905145,
+      "byCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 1,
+        "rare-kanji": 0.9803030303030303,
+        "small-text": 0.991869918699187,
+        "degraded-scan": 1,
+        "handwriting-font": 0.991559829059829,
+        "handwriting-horizontal": 0.7755646742060589,
+        "handwriting-vertical": 0.8768465858774439,
+        "receipt-photo": 0.6530955564732688
+      },
+      "charF1ByCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 1,
+        "rare-kanji": 0.9803030303030305,
+        "small-text": 0.9945799457994581,
+        "degraded-scan": 1,
+        "handwriting-font": 0.9936827956989247,
+        "handwriting-horizontal": 0.9317875814554867,
+        "handwriting-vertical": 0.9816332566504808,
+        "receipt-photo": 0.9261352925882782
+      },
+      "secondsPerPage": 10.815287398621951,
+      "usdPerPage": 0.0004787946097560976,
+      "failed": 2
+    },
+    {
+      "engine": "openai/gpt-6-luna",
+      "label": "GPT-6 Luna",
+      "kind": "vlm",
+      "machine": "OpenRouter",
+      "accuracy": 0.9245780283632731,
+      "charF1": 0.977331424283015,
+      "byCategory": {
+        "horizontal-mincho": 0.9971014492753624,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 1,
+        "rare-kanji": 0.9672077922077923,
+        "small-text": 1,
+        "degraded-scan": 0.9051724137931035,
+        "handwriting-font": 1,
+        "handwriting-horizontal": 0.7991943610177537,
+        "handwriting-vertical": 0.8027044396828705,
+        "receipt-photo": 0.6989778560191227
+      },
+      "charF1ByCategory": {
+        "horizontal-mincho": 0.9971014492753624,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 1,
+        "rare-kanji": 0.9672077922077923,
+        "small-text": 1,
+        "degraded-scan": 0.9336343732895457,
+        "handwriting-font": 1,
+        "handwriting-horizontal": 0.9739704799882253,
+        "handwriting-vertical": 0.9122245499099864,
+        "receipt-photo": 0.9665070224422537
+      },
+      "secondsPerPage": 35.44852338616667,
+      "usdPerPage": 0.0007647377976190478,
+      "failed": 0
+    },
+    {
+      "engine": "surya",
+      "label": "Surya OCR 2",
+      "kind": "local",
+      "machine": "darwin arm64, Apple M4 10 CPUs（llama.cpp Metal）",
+      "accuracy": 0.9106071001405985,
+      "charF1": 0.9713707197295257,
+      "byCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 0.9902486756419341,
+        "mixed-script": 0.9694702256757081,
+        "rare-kanji": 0.9825757575757575,
+        "small-text": 0.9812444174963,
+        "degraded-scan": 1,
+        "handwriting-font": 1,
+        "handwriting-horizontal": 0.5618156987220655,
+        "handwriting-vertical": 0.8416959095983447,
+        "receipt-photo": 0.6896274168364729
+      },
+      "charF1ByCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 0.9902486756419341,
+        "mixed-script": 0.9837370061465062,
+        "rare-kanji": 0.9825757575757575,
+        "small-text": 0.9812444174963,
+        "degraded-scan": 1,
+        "handwriting-font": 1,
+        "handwriting-horizontal": 0.8465853227794449,
+        "handwriting-vertical": 0.9443399927511977,
+        "receipt-photo": 0.9563467446336421
+      },
+      "secondsPerPage": 9.706648032768586,
+      "usdPerPage": 0,
+      "failed": 0
+    },
+    {
+      "engine": "ndlocr-lite",
+      "label": "NDLOCR-Lite 1.3",
+      "kind": "local",
+      "machine": "linux x64, 4 CPUs",
+      "accuracy": 0.8600230594128964,
+      "charF1": 0.9191475872793472,
+      "byCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 0.9712209511475646,
+        "rare-kanji": 0.981439393939394,
+        "small-text": 0.991869918699187,
+        "degraded-scan": 0.4592048238175994,
+        "handwriting-font": 1,
+        "handwriting-horizontal": 0.6960585876467644,
+        "handwriting-vertical": 0.7472416477050499,
+        "receipt-photo": 0.6132183305863012
+      },
+      "charF1ByCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 1,
+        "mixed-script": 0.9783409140134287,
+        "rare-kanji": 0.981439393939394,
+        "small-text": 0.991869918699187,
+        "degraded-scan": 0.5292735042735043,
+        "handwriting-font": 1,
+        "handwriting-horizontal": 0.8647755052139778,
+        "handwriting-vertical": 0.8569982570592265,
+        "receipt-photo": 0.9079259668741008
+      },
+      "secondsPerPage": 1.1283552576904705,
+      "usdPerPage": 0,
+      "failed": 0
+    },
+    {
+      "engine": "paddleocr",
+      "label": "PaddleOCR 3.7（PP-OCRv6）",
+      "kind": "local",
+      "machine": "linux x64, 4 CPUs",
+      "accuracy": 0.7590809892244095,
+      "charF1": 0.9379907443326343,
+      "byCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 0.9938837920489297,
+        "vertical": 0.24745745357911184,
+        "mixed-script": 0.9970501474926253,
+        "rare-kanji": 0.9856601731601732,
+        "small-text": 0.9807027380618635,
+        "degraded-scan": 0.9644494692544437,
+        "handwriting-font": 0.71765601217656,
+        "handwriting-horizontal": 0.6387328052352653,
+        "handwriting-vertical": 0.19669387404780778,
+        "receipt-photo": 0.6276044164117239
+      },
+      "charF1ByCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 0.9954057977141729,
+        "vertical": 0.9512940505543535,
+        "mixed-script": 0.9970501474926253,
+        "rare-kanji": 0.9856601731601732,
+        "small-text": 0.9807027380618635,
+        "degraded-scan": 0.9681026814080568,
+        "handwriting-font": 0.9821004566210045,
+        "handwriting-horizontal": 0.8253556462231654,
+        "handwriting-vertical": 0.6915560352075356,
+        "receipt-photo": 0.9406704612160276
+      },
+      "secondsPerPage": 18.10643634735712,
+      "usdPerPage": 0,
+      "failed": 0
+    },
+    {
+      "engine": "indra-ocr",
+      "label": "Indra OCR 1.1",
+      "kind": "local",
+      "machine": "linux x64, 4 CPUs",
+      "accuracy": 0.6446804748386532,
+      "charF1": 0.6896775975318591,
+      "byCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 0.02873621393574899,
+        "mixed-script": 0.9798306832625849,
+        "rare-kanji": 0.9462121212121213,
+        "small-text": 1,
+        "degraded-scan": 0.6448087431693988,
+        "handwriting-font": 0.6880341880341879,
+        "handwriting-horizontal": 0.26019120795042266,
+        "handwriting-vertical": 0.009753848256357328,
+        "receipt-photo": 0.5339182174043616
+      },
+      "charF1ByCategory": {
+        "horizontal-mincho": 1,
+        "horizontal-gothic": 1,
+        "vertical": 0.05632578714545927,
+        "mixed-script": 0.9882587505538326,
+        "rare-kanji": 0.9524196114651163,
+        "small-text": 1,
+        "degraded-scan": 0.65,
+        "handwriting-font": 0.712871287128713,
+        "handwriting-horizontal": 0.39488509937310173,
+        "handwriting-vertical": 0.026136382532883723,
+        "receipt-photo": 0.8055566546513431
+      },
+      "secondsPerPage": 0.3433705267619059,
+      "usdPerPage": 0,
+      "failed": 0
+    },
+    {
+      "engine": "tesseract",
+      "label": "Tesseract 5（tesseract.js）",
+      "kind": "local",
+      "machine": "linux x64, 4 CPUs",
+      "accuracy": 0.5809599290028942,
+      "charF1": 0.7516781925798017,
+      "byCategory": {
+        "horizontal-mincho": 0.98458751393534,
+        "horizontal-gothic": 0.9900523744244086,
+        "vertical": 0.0076628352490421365,
+        "mixed-script": 0.9481017819027748,
+        "rare-kanji": 0.8659090909090909,
+        "small-text": 0.8498580875945088,
+        "degraded-scan": 0.6406946799824131,
+        "handwriting-font": 0.634703196347032,
+        "handwriting-horizontal": 0.20196226918681762,
+        "handwriting-vertical": 0.02218122149210821,
+        "receipt-photo": 0.24484616800829945
+      },
+      "charF1ByCategory": {
+        "horizontal-mincho": 0.9907772304324028,
+        "horizontal-gothic": 0.9919790301441678,
+        "vertical": 0.8584317847865823,
+        "mixed-script": 0.9553067244596954,
+        "rare-kanji": 0.8776093514328808,
+        "small-text": 0.8623805803701609,
+        "degraded-scan": 0.6594808810717901,
+        "handwriting-font": 0.899392067665512,
+        "handwriting-horizontal": 0.3713160292361302,
+        "handwriting-vertical": 0.19383908935517982,
+        "receipt-photo": 0.6079473494233161
+      },
+      "secondsPerPage": 1.926506076083333,
+      "usdPerPage": 0,
+      "failed": 0
+    }
+  ]
+}

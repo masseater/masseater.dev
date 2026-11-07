@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src", "*.ts"],
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/ai-openrouter/OpenRouterClient#OpenRouterClient",
+          "@effect/ai-openrouter/OpenRouterClient#layerConfig",
+          "@effect/ai-openrouter/OpenRouterSchema#Answer",
+          "@effect/ai-openrouter/OpenRouterSchema#DecisionsQuestion",
+          "@effect/ai-openrouter/Generated#ChatContentItems",
+          "effect/http/FetchHttpClient#layer",
+          "effect/http/HttpClient#mapRequest",
+          "effect/http/HttpClientRequest#setHeader"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,594 @@
+{
+  "engine": "indra-ocr",
+  "machine": "linux x64, 4 CPUs",
+  "readings": [
+    {
+      "id": "synthetic-horizontal-mincho-1",
+      "status": "done",
+      "text": "駅前の古い書店は、今年の春で店を閉じることになった。\n店主の祖父が戦後まもなく始めた店で、棚の配置は\n七十年近くほとんど変わっていないという。最後の週には\n常連客が次々に訪れ、学生のころに買った辞書や、\n子どもに初めて選んだ絵本の思い出を語っていった。",
+      "seconds": 0.25708093200000803,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-horizontal-mincho-2",
+      "status": "done",
+      "text": "第三章 水の循環と地域の暮らし\n山に降った雨は、森の土にしみ込んで地下水となり、\n長い時間をかけて川や湧き水として姿を現す。\n流域に住む人々は、その水を田畑に引き、飲み水とし、\n祭りや言い伝えの中でも大切に扱ってきた。",
+      "seconds": 0.2461382000001322,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-horizontal-mincho-3",
+      "status": "done",
+      "text": "拝啓 秋冷の候、皆様にはますますご清祥のことと\nお喜び申し上げます。さて、このたび当会では\n創立二十周年を記念して、ささやかな集いを催すことと\nいたしました。ご多用のところ誠に恐縮ですが、\nぜひご出席くださいますようお願い申し上げます。 敬具",
+      "seconds": 0.2704296350002551,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-horizontal-gothic-1",
+      "status": "done",
+      "text": "【お知らせ】エレベーター点検のため運転を停止します\n日時：10月24日（土）9時から12時まで\n対象：東棟の1号機と2号機\n点検中は西棟のエレベーターか階段をご利用ください。\nご不便をおかけしますが、ご協力をお願いいたします。",
+      "seconds": 0.2175459359996239,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-horizontal-gothic-2",
+      "status": "done",
+      "text": "使い方\n1. 本体の電源ボタンを3秒間押し続けます。\n2. ランプが青く点滅したら、スマートフォンの設定を開きます。\n3. 一覧に表示された名前を選ぶと接続が完了します。\n※ 接続できないときは、本体を充電してからやり直してください。",
+      "seconds": 0.2071018860001459,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-horizontal-gothic-3",
+      "status": "done",
+      "text": "本日のランチ\n鶏のから揚げ定食 ご飯・味噌汁・小鉢付き 850円\n季節野菜のカレー サラダ付き 780円\n焼き鮭とひじき煮の和膳 920円\n大盛りは無料です。ラストオーダーは14時30分です。",
+      "seconds": 0.22844243400004416,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-vertical-1",
+      "status": "done",
+      "text": "は\n\n\n3\n0\n\nE\n\n\nJ\n\n\n\n\nf\n\n\nた\n\no\n\n5\nO\nO",
+      "seconds": 0.22850837499981935,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-vertical-2",
+      "status": "done",
+      "text": "I\n\n\n\n2\n\n\n\n\n\nE\n晴\n個\nれ\n\n\nE\nhi\ni\nil\n\n配\n\n\n\n\n\n\n\n\n\n\no\n\nO\nO",
+      "seconds": 0.23268125799995687,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-vertical-3",
+      "status": "done",
+      "text": "\n\n\n\n\n*\n\n\n\n第\n\n\n\n\n\n\nN\n\n四\n\n\n\n\n\nf\n\n\n\n\n\n\n\n\n\nま\no\n\nK\n9\n\n\nO\nO\n\ng\nO",
+      "seconds": 0.3148684519997005,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-mixed-script-1",
+      "status": "done",
+      "text": "npm install で依存パッケージを入れたあと、\n環境変数 API_BASE_URL に https://api.example.jp/v2 を設定する。\nNode.js 22 以降では fetch() が標準で使えるため、\naxios への依存は不要になった（詳細は README.md を参照)。\nテストは vitest run --coverage で実行できる。",
+      "seconds": 0.20666507299984005,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-mixed-script-2",
+      "status": "done",
+      "text": "カフェラテ(ICED) M ¥480\n7 ルーリーマフィン ¥320\n小計 ¥800 / 税8% ¥59\nお会計はPayPay・交通系IC・VISAがご利用いただけます。\nWi-Fi: SSID cafe_guest / PASS 2026autumn",
+      "seconds": 0.30124239099995975,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-mixed-script-3",
+      "status": "done",
+      "text": "実験では、試料Aを25.0 mLのエタノールに溶かし、\npH7.4の緩衝液で10倍に希釈した。\n吸光度は波長=450 nmで測定し、R2 =0.998を得た。\n温度は37 ℃、反応時間は30 min ± 2 minとした。\n結果を表2n=12）とFig. 3に示す。",
+      "seconds": 0.25508068200042544,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-rare-kanji-1",
+      "status": "done",
+      "text": "出席者：高橋 健、齋藤 美咲、渡邉 浩二、山崎\n\n蓮\n欠席者：濱田 瑠璃子、櫻井 巌\n記録：邊見 彌生\n議題：檜原村の蓄薇園と葛屋敷の保存について\n次回は外記念館の會議室で開催する。",
+      "seconds": 0.2307662490002258,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-rare-kanji-2",
+      "status": "done",
+      "text": "憂鬱な雨の午後、彼は書斎で古い葡萄酒の栓を抜いた。\n窓の外では、紫陽花の葉に鍋牛が這っている。\n机の上には、読みかけの『 *と特』が開いたままだ。\n埃をかぶったと、棒の文箱が並んでいる。\n彼は溜息をつき、躊躇いながら筆を執った。",
+      "seconds": 0.2552472030001809,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-rare-kanji-3",
+      "status": "done",
+      "text": "國學院の學生たちは、舊制の校舎を訪ねた。\n講堂の扉には「學問ノ獨立」と大きく刻まれている。\n圖書館には、戦前の雑誌が数多く残されていた。\n案内の老教授は、當時の寫眞を一枚ずつ見せてくれた。\n歸りの電車で、皆その話ばかりしていた。",
+      "seconds": 0.20837047800023356,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-small-text-1",
+      "status": "done",
+      "text": "本製品の保証期間はお買い上げ日から1年間です。\n取扱説明書に従った正常な使用状態で故障した場合に限り、\n無料で修理いたします。ただし、落下や水濡れによる故障、\nお客様による分解や改造が原因の故障は保証の対象外です。\n修理をご依頼の際は、本保証書を必ずご提示ください。",
+      "seconds": 0.2246903069999462,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-small-text-2",
+      "status": "done",
+      "text": "注1）本調査は全国の20歳以上の男女3,000人を対象に実施した。\n注2）回答率は62.4%であった。\n注3）四捨五入のため、合計が100%にならない場合がある。\n出典：地域生活に関する意識調査（2026年）\n※本資料の無断転載を禁じます。",
+      "seconds": 0.19338604999984454,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-small-text-3",
+      "status": "done",
+      "text": "原材料名：小麦粉（国内製造）、砂糖、バター、鶏卵、\nアーモンド、食塩／膨張剤、香料、乳化剤（大豆由来）\n内容量：12個 賞味期限：枠外下部に記載\n保存方法：直射日光、高温多湿を避けて保存してください。\n製造者：株式会社こもれび製菓 長野県松本市中央1-2-3",
+      "seconds": 0.21006593099991733,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-degraded-scan-1",
+      "status": "done",
+      "text": "昭和の終わりごろ、この商店街には四十軒を超える店があった。\n魚屋、八百屋、金物屋、それに映画館まで揃っていた。\n夕方になると買い物客で道があふれ、\n\n子どもたちは駄菓子屋の前に集まって遊んでいた。\nいま営業を続けているのは、わずか九軒である。",
+      "seconds": 0.25861839500021233,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-degraded-scan-2",
+      "status": "done",
+      "text": "申込書\n氏名 佐々木\n住所 北海道札幌市中央区北五条西二丁目\n\n\nIE 011-222-3344\n希望する講座\n陶芸入門（土曜日午前の部）",
+      "seconds": 0.2419449980002355,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-degraded-scan-3",
+      "status": "done",
+      "text": "",
+      "seconds": 0.09652107000010801,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-handwriting-font-1",
+      "status": "done",
+      "text": "お母さんへ\n冷蔵庫にカレーがあるので温めて食べてください。\n今日は部活で帰りが七時ごろになります。\n牛乳がなくなりそうなので、帰りに買ってきます。\nゆうき",
+      "seconds": 0.1656553649995658,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-handwriting-font-2",
+      "status": "done",
+      "text": "今日の学習のまとめ\n植物は日光を受けて、でんぷんを作る。\nこのはたらきを光合成という。\n光合成には、水と二酸化炭素が必要である。\nできた酸素は、気こうから外に出ていく。",
+      "seconds": 0.21458463400040273,
+      "costUsd": 0
+    },
+    {
+      "id": "synthetic-handwriting-font-3",
+      "status": "done",
+      "text": "お\n2\n2\n\n\n\n\n\n\n\n\n\n\nt\n\n\n-\n\nI\n\nX\nげ\n\n\n\n\n\n8\n\n\n\nま\nま\n\n2\nL\nL\n\n\nす\n\n3\n\n\n\nc\n\n\n5\n\n\nか\nま\n\no\nO\no",
+      "seconds": 0.26839074899999105,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-6",
+      "status": "done",
+      "text": "行列Aは3×3の和がで、成分\n\n\n\n252, 5.7. ( 4 Al-2 . 12-5. 13)\n\n\n\n\n13. 410) ៖ 56%. 24, 0c/8*\n\n\n(3)",
+      "seconds": 0.33586086100012835,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-17",
+      "status": "done",
+      "text": "\n\n\n\n28 1248 20 ASLa3, 192. R( 0.108 \n走在在现太, 理怖七918致73。",
+      "seconds": 0.34957272700012254,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-18",
+      "status": "done",
+      "text": "\n\n",
+      "seconds": 0.28287733900015155,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-19",
+      "status": "done",
+      "text": "\n\n真空中で光速,c依搬し、周波数“波長雅析\nc等い関係を持っ。実測で66oTHz元は",
+      "seconds": 0.2935226050003621,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-21",
+      "status": "done",
+      "text": "・償性の法則：外力が無ければ速度はー定\n・ to速度は力と管量の比で決まる(F=m)\n• 作用·作用は同等で 逆 方 向\n・ 理 動量保存は開系で成り立っ\n•\n・ エネルヤーは仕事と熱に変換でき\n全体の総和はー定",
+      "seconds": 0.352631183000085,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-22",
+      "status": "done",
+      "text": "• こスリウLた無文ル電場と確場ま程以3基本すた\n6\n\n• 時過女化する 体場が福客場生(70)\n• S\nH CO3 103 m/s tub 3\n- 長 2 周波数テは関無すc=で福成hs\n\n. 体えは 振動回位ー定. 備报て判御さ3",
+      "seconds": 0.32235796499981006,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-23",
+      "status": "done",
+      "text": "\n力學第一期はエ\n保在ᄀ AU-Q-Wな3\n\n• エンHOP- Sは不可逆過程必増L, AS>0名基原理\n\n理想気体は PV-ART-表せ,等場ま化では PVM-定にな3",
+      "seconds": 0.33482531399977233,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-25",
+      "status": "done",
+      "text": "\n\n1\n3 . / 8 1 10 \" 10 a 1 2 79\n47471-119 0 109 10 85 26 1/6 .\n4\n3/\n- 797iV Hos Toko /o / Moc t အိမွန့ပို့ .\n\nM\n\n\n\n\nans",
+      "seconds": 0.3034495789997891,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-28",
+      "status": "done",
+      "text": "2 $16 dd/de = 0.05 Wbs\n102.\n\n\n- v3 /s.\n3.\n2\nB-0.47 262\n22\n\nE\n5-20.291.\n6 6 7 18 R. 12 2\n\n\n\ni = 0.02 A\n\n\n\n\nP r R 0. 005 w",
+      "seconds": 0.43112354799995956,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-29",
+      "status": "done",
+      "text": "4.7.3 1.550 nm,\n,\n,\nR'lts aco.3mm.\n27リーン総 D 1. 2m\nP P P Ay 2. Omm.\n\n,\n4 38 $14 d sind mi 2\nmela 390.50",
+      "seconds": 0.38901210399990305,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-30",
+      "status": "done",
+      "text": "の長入-0.00m.dn差V./ov2\n\n\n\n\n\n\n271-2010. m. \n3到位頻度は 0.1mm 程度限累。\n\n2\n",
+      "seconds": 0.32904629499989824,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-31",
+      "status": "done",
+      "text": "E mc 2 を熟体教のに入るとm= 0.001kg\nでも子エネルギーが数+MeVに達するのがす\n分かる。 アランク定数h=6.62610-3Jsを使え、\nピーク波A_max1.4nmとめられ、実験で\n観測可能。",
+      "seconds": 0.3037322720001612,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-34",
+      "status": "done",
+      "text": "理想気体の次施方程PV=nRTs後。\n\nn=02mol. R.8.314)/(molk).\nT = 350 K 2332. Petikat.\n3\n実験室の定した果にほぼー致して\nので 2-トルグアu\n- ",
+      "seconds": 0.35555144299996755,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-36",
+      "status": "done",
+      "text": "\n\n\n",
+      "seconds": 0.24236070000006293,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-37",
+      "status": "done",
+      "text": "PID (SMO (39% - 714 - 1177 % – 3\n7-15-2041 EARL. Ziegler - Nichos ser\nBot ob te the to feto. Kpact.\n\n\n\nTi = 0.5 P. Id no. 125 Per it. - His\n\n\n",
+      "seconds": 0.3368857319997005,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-38",
+      "status": "done",
+      "text": "\n\nTort L.\n\n\n\n\n\n82. နန် - 8540 -\n",
+      "seconds": 0.3032784150000225,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-39",
+      "status": "done",
+      "text": "\n8.9421211227 8861102424'\n1 V. 2021 11 42 23 x ple. -\n今期能約0.5H になるため,者声\n時程の基本の前処理ててんく利用24\n",
+      "seconds": 0.32777624399977867,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-40",
+      "status": "done",
+      "text": "79,941 76-202012.\n標準温度源Eに数い次の愛を測定し、\n\n\n非線形補正無数を二次分項式元近似\n補正我を作成,测定範回全体七\n\n10.2c以内精度を離特でせる。",
+      "seconds": 0.33480130299994926,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-41",
+      "status": "done",
+      "text": "・ 有限要書法は構造解析で頻繁に使うテ法。\n・ メッシ[主要素サイズを10mm前橋に設定3NIF、31年\n\n時間て精査のトレードオフが良い。\n\n\n.思冬件は変位固定か石重指定を明示し、ソフト\nヒ入すれはすぐに解析開始できる。",
+      "seconds": 0.30618311800026277,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-horizontal-42",
+      "status": "done",
+      "text": "- P DE 12 44) 986 40 a 30 \n\n\n・ 比例)/ベン(T3とん各は速くる3か\n\n10 以下种える\n3",
+      "seconds": 0.28676686299968424,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-4",
+      "status": "done",
+      "text": "3\n9\n2\nQ\ng)\n5\n12\n空\n\n6\n\n\n\n\n\n\n\n\nI\n12\n\n\n\nc\n\n\n\n\nf\n9\n7\n\n\n\nY\n\n\n\n\n\n\n\n\nEA\n\n\n\n11\n\n\n\n\n8\ng\n\nที่\nf\n7\n\nکر\nD\n8\n\n8\n\n\n\n\n\n\n$1\nE\nភ\n\nf\nd\n\n\n\n\n2\n\n\n\n2\n注\n\nE\n\n\n\nE\n0\n\n19\n\nH\n\n\n0",
+      "seconds": 0.3790013600000748,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-56",
+      "status": "done",
+      "text": "有\n\nb\nM\n移\n\n\n\n\n\n\n94.\nn\n\n\n\n\n\n性\n\n\n\n\n12\n\n\nR\n性\n\n12\n\n\n\n3\n\n4.\n3\n注\n3\n度\n\n\n82\n16\nF\n2.\nV.\n3.\n\n\n核\nA\n\n\n\n0\nfol\n\n\n\n\nᄎ\n1\n後\n\n\nគ)\nc\n",
+      "seconds": 0.39610109600016585,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-61",
+      "status": "done",
+      "text": "\n\n\nit\n\n\n‘ම\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHe\n\n\n\n\n\n\n\nf\n\n\n\nb\n\n\n3\n\nI\n\n\n\n3\n>11\nC\n\n",
+      "seconds": 0.259130665000157,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-62",
+      "status": "done",
+      "text": "f\n\n\n\n\n\n\n\n264 8\n\n7 4\n\n\n\n\n\n64\nt\n\n\n\n\n\n\n\n\n34\n\n\n\ng\n\n\n\n2\n2\n\n\n\n\n\ng\n\n\nf\n\n\n\n\n\n\n\n\n\n\np\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n\n2\n\n\n\n\n(g)\n\n\n\n\n",
+      "seconds": 0.4095407069999055,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-65",
+      "status": "done",
+      "text": "\n\n\n\n(g\n*\n\n\n(g\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ng\n\n\n\n\n\n7\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n16\n\n\n\n\n\n\n\n\n\n\n\n\n4\n\n\n(5)\n\n",
+      "seconds": 0.4046039639997616,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-67",
+      "status": "done",
+      "text": "6\n\nسا کر\n\n14.\n\n\n\n\n\n\n\n\nf\n\n\n\nto\n\nE\n\n\n\nX\n\n\nR\n\n\n18. 3\n8\n\n\n2\n\n\nA\n•\n\n\n\nगी इ\n\n\n\n\n\n\ny\n\n\n\n\n\n\n\nY\n\n\n剰 必\n\nZ\n\n3\n3\n3\n3\n3\n\n\n\n\n2\n7\n\n5\nt\n\n\nA\n\n\n\n\n\n\n\n\n7\n\n\n\n\n\n\n\n\n\n\n5)\n\n\n\n\n\n\n18\n\n\n\n\n\n\n1a\n\n\n\nI\nE\nL\n\n\n\n\n\n\n2\n\n\n\na\n\n* A\n(A)\n7/1\n",
+      "seconds": 0.47457031900012225,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-69",
+      "status": "done",
+      "text": "\n\n\n\n\n(g)\n\n\n9\n\n1\n\n\n\nfu\nf\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nf\nf\nf\nf\n\n\n\n\n\n\n\n4\n\n\n\n\n6\n\n\n\n\n\n\n\n\n\n\n\n\n\n4\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "seconds": 0.322477945999708,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-76",
+      "status": "done",
+      "text": "\n\n\n\n\n\n要ᅩ\n\n16\n\n49\n45\n\n\n7\n\n\n\n\n\n\n\n\n\no\n\n\n\n\n\n9\n\n\ny\n\n\n3\n\n\ng\ng\nd)\n\n\n\n\n\n\n\n\n\n\nB\n\n\n\n\n\n\n\nIt\n\n\n\n\n\n\n\n\nZ\n\n\n\n\n3\n3\n\n2\n\n\n\n3\n\n4.\n\n\n\n\n\n\n\n\nD\n\n\n\n85 2\n\n\n\n15\n",
+      "seconds": 0.4259384330002831,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-85",
+      "status": "done",
+      "text": "\n\n\nH\nH\n\n\n\nR\n\n\n\nf\n\ng\n\n\n\n\n\n18\n\n\n\n\n\n\n15\n14\n\nR\nR\n\n\n\n\n\n\n\n\nX\n\n\n\n7\nカ\n\n\n(6)\n\n\n(f)\n(9) 17\nIK\n\n17\n\n\n\n\nX\n\n\n\n",
+      "seconds": 0.3537157139999181,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-100",
+      "status": "done",
+      "text": "\nD\n\n\nN\n\n\n\n\n18\n\n果\n\n\n^2$\n\n解\n\n\n\n\n\nI\n\n\n\n\n\n\n\n\n\n*\n5\nX\nR\n\n\n(9)\nB\nB\nb) 元\n\nR\n\n\n\n\n\n\n\n\nA\n4\nP\n\n\n\nE\n\n\n1)",
+      "seconds": 0.3691309639998508,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-117",
+      "status": "done",
+      "text": "គ\n\n\n(f)\n\n\nR\n\n\n\n\n\n93\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAf\n\n",
+      "seconds": 0.24305860200001916,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-121",
+      "status": "done",
+      "text": "\n\n\n\n\n\n4)\n7\n\n\n\n8\n\n\n\n\nb6)\n\n7\nX\n\n1\n18.\n\n4\n\n\nR\n\n\n60\n\n李\nY\n\n\n\n\n2\n31\n\n\n16\n\n\n\n1X\n\nK\n\ng\n\n\nE\nif\n\n\nh\n3\n(3\n\ng\n3\n\n5\n5\nX\nf\n\n\n\n\nAr\n3\n\n\n\n\n\n\n散\n\n\n6\n\n12\n\n\n\n\n\n85",
+      "seconds": 0.45152316599978803,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-125",
+      "status": "done",
+      "text": "\n\nse si te\n\n\n\n\n\n\n\n\n\n\n\n\n8\n\n\n\n33\n3\n\n\n\n\n7.\n\n\n\n\n\n\n\n2\n\n\n2\n\n\n\n\n\n\n2\n\n\n\n\n\n\n3\n\n\n",
+      "seconds": 0.24683532500012006,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-126",
+      "status": "done",
+      "text": "\n\n※)\n\n\n\n71\ng\n\n\n21\nA\n\n会\n2\n\nB\n18\n\n6)\n\n\n\n\n\n2\n\n2\n\n\n\n\n\n\n\n\n\n4\n\n\n\n\n4\n\n\n18\n\n\n18\n4\n\n\n\n\n\n(7)\n\n\n\n\n\n\n\n\n\nfo\n\n\n\n\n\n\n",
+      "seconds": 0.42050472999972044,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-128",
+      "status": "done",
+      "text": "2\n\n8\n\nR\n66\no\n\no\n\n\n\n\n\n17\n\n3\n\n22\n\n\n7\n\n\n주\n\n\n\n\n\n\n\n\n5.\n\n\n\n\n表\n7.\n\n\n\n\n\n\n\n\n\n2\n2.\n13\n\n\n\n96\n16\n\n\n\n\n(o\n\n\n\n\n7\n\n\n\nA\n\n3.\n2\n2\n\n\n2\n\n3. *\n\n\n\n3\n61\n\n\n15",
+      "seconds": 0.39320289399984176,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-129",
+      "status": "done",
+      "text": "3\n\n\n\n\n\n\n\n\n\n\n\n\n\n18.\n\n\nᄆ\n\nH\n\n\n\n\nF\n\n\n\nA\n\n7\n7\n3\n\nI\n\n69. 햐\n\n\n7\n(6)\n3\n\n\n\nIt\n\n\n\n32\nV\n\n\n13\n\n\n\n12\n",
+      "seconds": 0.29975195799988796,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-136",
+      "status": "done",
+      "text": "7\n\nIA\n\n\n上\n\nt\n\n\n\n\n3\n\n0\n14\n\n\n18\n\nV.\nM\n次\no\n\n9\n\n\n\n\n\n13\n\n\n4,\n2\n\n\nc\n2.\n\n\n\n\n69\n73\n30\n\n\nn\n3\nE.\n3\nc\n\nc)\nh",
+      "seconds": 0.31244371200000387,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-137",
+      "status": "done",
+      "text": "\n85\n\n\n\n\n\n\nf\n\n\n3\n12\n\n\n\n\n\n\nD 1\n\n\n\n39\ng\n\n\n\n17\n\nD)\n\n\n\nEt\n\n4\n*\n\n2\n\n\n\n8\n2\n\n\n\n\n\n\n$p $\n\n\n\n\n\n7\n\nI\n\n\n\n\n\n\nの\n61 \"\nAIR\n\n\nD 1 \"\n\n\n\n1 \n",
+      "seconds": 0.3581071799999336,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-138",
+      "status": "done",
+      "text": "\n\n\n\n2\n\n\n\n\ng\n\n\n\n2\n\n\ninf\n\n\n\n7\n\n\n\n\n\n\nf\n\n4\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n4\n\n\n\n\n\n\n\n\nf\n\n\n\n\n\n\n\n\n\n\n\n\n2.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n1 \n\n\n\n\nگ\n\n\n\n\nمیر\n\n\n\n\n\n\n\n\n\n\n\nA",
+      "seconds": 0.3746900880000794,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-handwriting-vertical-140",
+      "status": "done",
+      "text": "\n\n29\n\n4\n\n\n\n6\n\n\n6\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nf\n\n\n3\n\n\n\n\n\ng\n\n\n\n2\n\n\n\n3\n7\ny\ny\ny\n\n\n\n\n\n3\n\nz\n\n\n12\n\n\n\n\nf\n\n\n\n\n\n\n65\n65",
+      "seconds": 0.24177559200006726,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-1",
+      "status": "done",
+      "text": "ヨドバシAk1ba店\n〒101-0028\n東京都千代田区神田花岡町1-1\nコドバシAkiba 8階レストラン区\nTEL:03-3518-5995\n領 収 証\n毎度ありがとうございます。\n株式会社アントワークス\n13011201014396\n2025年11月21日(金)\n19:25\nKEAT IN.\n肉油そば1.5\n41,190\nそのまま注文\n40\n40\nそのまま注文\n40\nそのまま注文\n40\n追い飯なし\n41,130\nとろすた 五分目\n40\nそのまま注文\n40\nそのまま注文\n6\n42,320\n小計\n42,320\n合言十\n42,320\n10%対象計\n4210)\n（内消費税等\n410,500\n現金\n48,180\nお金的り\n店議: 0160 端末:1502\n担当者:0001 担当者\nレシート番号 : 98923-7\n0991602001033910",
+      "seconds": 0.4289164560000245,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-2",
+      "status": "done",
+      "text": "tamasil nations STORE\nT\n\ny o\nT6010501042212\n株式会ᄎ社BANDAI SPIRITS\nTAMASHII NATIONS STORE TOKYO\n03-5207-6833\n領\n収\n証\nTAMASHII NATIONS STORE TOKYOD\nご利用ありがとうございます。\nトは大切に保管をお願いします。\n魂ネイションズ受付窓口\nclubêtamashi inations.com\n2025年06月21日(土)\n15:28\n※B ゼータガンダム\n4573102664174 611902\n1.\n844000\n$44,000\n小計\n444,000\n合言十\n444,000\n\n\n（内消費税等\n10%\n$4,000)\nクレジット\n444,000\n不良品の対応は購入日を含む\n7日以内のレシートをお持ち下さい。\nDefective products must be prese\nnted with a valid receipt within\n6 days of purchase for support,\n店舗:1844 端末:0087\n07102-4\n担当者:7054 7054\n0990087000093607",
+      "seconds": 0.4143161449997024,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-3",
+      "status": "done",
+      "text": "\nお持ち帰り専門店\n\n\n\n\n\n\n\n\n\n葛飾区白鳥2-2- 8\nTEL03-3602-4490\n2025-12-02 12:56\n担当-H\n429493\n2 点\n€339\nラ\nンチ井\n678\n商品\n290\n商品\n330\n商品\n230\n内税対象計\n1,528\n内税\n8.0%\n(113)\n合\n\nY\n\" 5\n2\n8\n\n\n6\n3\nお預り\n§ 6\n• 0 28\nお\n89\nV\n3\n3\n, 5\n\n00\n\n\n\n",
+      "seconds": 0.49538190200019017,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-4",
+      "status": "done",
+      "text": "\n\n\nnao coffee\n\n\n[領収書]\nナオ切明\n奈良県磯城郡田原本町大不\n306-2\nTEL:0744-35-5035\n2025/12/06 17:06:21\nレジ:0001\n担当:0001\nJ3 |No: RB0120251206163909000\nご利用ありがとうございました。\nまたのお越しをお待ちしてます。\nコーヒーラージサイズ\n4600\n1点\n4600\n--\n--\n小計\n1点\n4600\n合言十\n4600\n（内消費税等\n454)\n(10%標準対象\n4600)\n（ 内消費税等\n454)\nQR決済(AirA\" )\n4600\nお予頁り\n4600\n\n\n上記正に領収いたしました\nInstagran更新中!!\nGnaocoffee_tawaramoto",
+      "seconds": 0.41575159300009545,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-5",
+      "status": "done",
+      "text": "\nサイクルウス しあや\n(See 1 - 26 - 2\n5:03-5650-2510\nT1011801020390\n* *\n\n貝反司\n* *\n2025/12/09(火) 17:27 店0002 No 0008\n担当者\n0009:右京\n2- \n品\n名\n数\n単価\n金 額\n\n\n\n353-000280-000 補修用**-\nHM\nサー 有\n( 1122)\n2,860\n2,860\n510-000041-000 EMI( * 218)\n5,940\n5,940\n( 3940)\n8,800\n税込対象額\n-\n48,800\n合計\n\n800)\n(\n費税 10%\n40\nお預り\n＜内訳＞\n8,800\nQR-(Pay Pay\n1\n40\n",
+      "seconds": 0.5198068500003501,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-6",
+      "status": "done",
+      "text": "領収書(Receipt)\nстан 2025#119238\n時刻\n22 189\n- FW : PB804xxxxxxxx 1365\n取引内容：\nF4-5\n\n2,000円\n\n2,000円\n・ この領収書は大切に保存してください。\n・ご利用ありがとうございます。\n四ツ木駅 券155発\n領収書番号：04265\n京成電鉄株式会社\n\n3:\n7010601012155",
+      "seconds": 0.4035363490002055,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-7",
+      "status": "done",
+      "text": "\n\n\n \"16010801001974\nオーケー\n四つ木店\n03-5875-7502\n営業時間8：30～21:30\n2025年11月24日(月)12:47\n0808\nスNo00000015福條\n24019 0008\n247NO5843\nF 11 \" 23 2750127028/20\n4153\nCode 128\n|\n5%\n\nF シロミフランタイノリント\n4270\n4339\nפב*פעמג-ם F\nF KGキサイセイカリ* U-S200\n490\n\nFY249 400 (97 72) 13\n482\nCode128割引\n5%\n\n4299\nF クノール ホレンソウーコン5P\nF * クトクヤサイイタメ\n138\n94\"כעעמב F\nHפ335\n$331\nבב\"פרכעב\"חעם מ)ת\n498\nF 7037 0 29 320 30\nY96\n\n4358\n\"וומאפו \"ל4 \"פפפ\"פעעג\"ת\n2= X4498\nY996\n割引前合計\n43,639\nF食料品3/103割引\n-61\n小計\n$3,578\n8%対象\n42,224\n税 177\n10%対象\n$1,354\n税 135\n合計\n13点\n43. 890\nお預り\n$10,000\n8890\n46. 110\nFは8%対象(軽減税率・外税)です。\n無印は10%対象(外税)です。\n単品の価格は本体価格(税抜)です。\n印は\nテーション税制対象です。\n(8) オーケー会員カードはアプリへ\nお得な情報も配信中!\n\n\n\n\n\nLY-IN 5352\nN.02111",
+      "seconds": 0.6958818769999198,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-8",
+      "status": "done",
+      "text": "1977/7/800222130\n54/\nI\nU\n\n\n\nイトーヨーカドー四つ木\nTEL 03-5671-5471\n- 令頁月又言正\n2025/11/08(:)14:33\n6105\n\nテ7MNo. 52\n人数\n2\n02753 たまねぎの”\n6300 x\n23\n4600\n\n04728 蒸し鶏の香味/-1\n280\n04773 Hン・セラー/\n4320\n04867 100770-6997656°\n4400\n04953 “7” 7-9( 全新9\n4430\n04803 ィミクラ」\n4300\n02554 セットドリンク* - 200\n0200 x\n21\nY400\n小計\n42,730\n\n\n42\n730\n10%対象計\n42,730\n（内税額\n4248)\nお預り\n$10,730\nお的り\n48,000\n13\" 011 No. 0131\n* \n\n(Mil : T6-0300-0106-5582\n",
+      "seconds": 0.48914847900005043,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-9",
+      "status": "done",
+      "text": "\n\n\n\n\n\n\nたい焼きさわ田 お花茶屋店\nF1240003\n東京都葛飾区お花茶屋\n端末番号:5DDE\n2025-11-07 15:45:03\n端末取ID: 4855\n\n\nあずき\n0260x2\n520\n小計\n520\n合計\n520\n内消費税\n(47)\n(10%対象 520 内消費税 ¥47)\n合計点数\n2点\nお預り金額\n4520\n$850\n40\n\n\n\nNo.7624979030017",
+      "seconds": 0.35777413000005254,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-10",
+      "status": "done",
+      "text": "742829\n\n\n\nGioire\n\n\n\n\nT\nELE\nTEL:033631-0141\n\n1101 1401012375\n12:26\n2025/11/29\n064360\n#01\n5\n053660\n2名様\n週末ランチ豚肩\n*1,400\n\nラザニア\n1,250\n2 点\n内税対象計\n$2,650\n内税\n10%\n241\n2,650\n合計\n$5,000\n現金\n2,350\nお約\n",
+      "seconds": 0.38290953000023364,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-11",
+      "status": "done",
+      "text": "\nстажна 202511817\n時刻\n200439\n取引内容：乘車券購入\n領収金額\n課税対象外 うちＳＦ\nうちデポジット\n10％対象 クレジット\n\n小計\n92,200円\n\n\n\n2,200円\n2,200円\n• 領収書は大切に保管してください。\n- 2回用ありがとうございます。\n成田空港駅\n194 25 170108010 2155\nNo18151\n京成電鉄株式会社",
+      "seconds": 0.38892093799995564,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-12",
+      "status": "done",
+      "text": "領収証\n自転車の店キョーウ\n東京都葛飾区白鳥2-20-21\n03-3601-3748\n\n\n\n\n\n\n摘要\n000494\n10.08 500\n",
+      "seconds": 0.33437293399992996,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-13",
+      "status": "done",
+      "text": "\nCR\n\n\nI\nE\n803\n152024\nDUTT\n9020001035423\n領\n収\n証\n新宿若松町\nTEL 03-5155-3484\n2025年10月31日(金)17時28分 6551\n•メンッレータムエクシ 1,480\n6.5 CMジャンプ傘\nクリ 598\n2点\n小計\n42,078\n42,285\n\n\n消費税等\n4207)\n(10%対象\n42,285\n4207)\nうち消費税\n現金\n410, 285\n48,000\nお釣り\n•印はセルフメディケーション税制\n対象商品です。\n--おさいふ Hip p o情報--\n会員No.\n*********9480\n取引前残高：\n471\n取引後残高：\n471\n残高有効期限\n2030/10/28\nポイト対象金額\n42,078\n前回累計ポイント\n12, 612 P\n今回ポイント\n20P\n合計P\n12, 632 P\n今回ポイント内訳\n基本P\n20 P\nカードNo\n*********9480\nポイントカードをお忘れの場合は\nレシートを30日以内にお持ち下さい\n店:0433 レ:0002\n0043330116",
+      "seconds": 0.5202640019997489,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-14",
+      "status": "done",
+      "text": "亀力ツ田中 東銀座店\n1040061\n東京都中央区銀座4-11-2\n楽ビいIF・2F\nTEL : 03-6264-2774\ns\ne : 19010701035145\n2025/10/13 18:27:34\n594\nお通しB ×2\n4550\n■・プレミアムモル\nע\n-ע X1\nY495\nE-E-1\n-\nX1\n43,014\n定細8本り ×2\n◇セット内容(定無8本)\n(40)\n4\n(40)\n豚\n玉ネギ\n(40)\n(40)\nעבעט.\n(40)\nIE\n(40)\n336\n(40)\n紅しょうが\nアスパラ\n(40)\n無限ニンニクホルモン\n4110\n串 ×2\n4352\n山芋 ×2\n4286\n=>=7 X2\n■ジムビームアップル\nY495\nハイボール ×1\n■冷やしあめサワー\n4495\nx1\nキット串カツもちっと\n4220\nX1\n40\nキャベツおかわり ×1\n小計\n46,611\n\n$6,611\n\n(10%対象\n46,611)\n内消費税等\n4601)\nC\nK–לל עפטל\n46,611\n80\n\nNo. 13165\n31\n石橋\n2名\nFroot sur- /\nモバイルオーダー\n-\n\n0\n11\n\n\n\n\na \n\n\n▲ スマホからアクセス1",
+      "seconds": 0.671010084000045,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-15",
+      "status": "done",
+      "text": "\n\n\na\n2 (6) 1\no\n\n218\n514.\n500\n$95\n521 AD 30 000877 55\n*321\nA file\n58\n-17\n522-7P 743-7\" \n*300\n523.7P魚介醫油防議\n*213\n523.2リカン梅風味黒酢りし\n*116\n581.21-040011974\n*429\n小計/\n7点\n41,675\nお買上計\n41\n675\n内税率10%対象額\n4218\n（内消費税等10％\n419)\n内税率 8%対象額\n41,457\n（内消費税等 8%\n4107)\n*印は軽減税率対象商品です\nお預り金\n41.680\nお釣り\n45\nく\nポイントサービスのご案内 〉〉\n会員番号（下4桁）\n4083\n* 1P対象税抜金額\n41,549 7P\n今回ポイト\n7P\nポイト残高\n1, 258P\n★内26年3月末期限*イト\n830P\n累計イト対象金額\n466,228\n*他店でお買物時のポイトと購入金額\nは、翌日以降、累計に加算されて\n表示されます。\nVS--No :6369\n取引:4765\n店:153\n発行者：株式会社\nカ堂\n登録番号T2010001098023\n-\n3-WP-20-2-11-\nby ONIGO\n\nof attam\n\n\n(1)\n\n3) 10 122,500 (2) (60 8 7.\n\n\n\n\n\ni\nWEL30A\n\n\n",
+      "seconds": 0.7004925260002892,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-16",
+      "status": "done",
+      "text": "\n\n\n\n\n(88\n\nDE LAWY GUS RENTI\n新小ルミエール店 03-5879-2172\n東市都墓動区新小岩1-49-1 松高ビ\n181\n本日はご来店いただき、\n誠にありがとうございます。\nROBIAL ESTABLISET .\n案は軽減税率対象商品です。\n2025年11月 3日(月)21時55分000202\n大切り炙真調の塩元ル。\n\n-4500内\n¥110内\nみなみ競中とろ\n旨味はまぐり長り\n¥180内\n石垣員\n¥150内\n浜焼き風えび\n¥180内\nつぶ具\n¥220内\n蒸し牡蠣\n¥110内\n17\nNo. 93505\n\n「会計N0.\n小 計\n額\n1,450\n(10%内税対象\n$1,450)\n(10%内税額\n4131)\n\n言十\n$1,450\n＜現\n金＞\n42,000\n（消費税\n等\nW131)\n45\n\nV550\n合計点数\n7点\n智録番号 T7030001001979\n97 扱\nNo.8865\n1名\na s\nt e\n-\nアンケー\n-\nトに答えて\nクーポンをゲット!\n\n\n\n下 QR よりアンケートにご協力いただくと\n次回よりご利用いただける、店内飲食限定\n50円(税込)OFFクーポンをプレゼント!\n1 1\nアンケート回答後 画に\nダクールノーコードが示\nと\nお金\nにご利用ください。\nご利用条件詳細はクーポン画面をチェック1\n\n\n",
+      "seconds": 0.7550312349999331,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-17",
+      "status": "done",
+      "text": " Seriə\n領収書\n登録番号\nT4200001013662\nイトーヨーカドー四つ木店\n2242\nTEL03-3694-8275\n171 18677\n2025/11/02(E) 17:39\nステンレス2重フック\n2P\n100\n\n1点\n100\n消費税\n10\n\n\n$110\n10%対象\n110(内 税額\n10)\n電子マネー\n$110\n",
+      "seconds": 0.36177639199968326,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-18",
+      "status": "done",
+      "text": "48\nGODIVA\nBelgium 1926\nゴディパジャバン株式会社\n有楽町イトシア店\n03-3201-3005\n2025 118 09 B (B) 15:22\nhttp://www. godiva.co. jp\n996 2646 F N 732144-\n4531714187665\n1点\n810\n$ 810\nX\n小計\n1点\n$ 810\n※は軽減税率対象品\n\n\n$ 810\n\n\n(含む消費税等\n60)\n[消費税10%対象\n01\n0)\n(含む消費税等\n[消費税 8%対象\n$ 810]\n(含む消費税等\n60)\n現金\n$1,010\nお動り\n* 200\n71271-2 2123 有楽町イトシア店HP\n担当者 0858\n登録番号:T5010001198687",
+      "seconds": 0.4246235290002005,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-19",
+      "status": "done",
+      "text": "\n\n\n\n\n\nKanenrider,\n\n\n\n\n\n\n\n\n\n\n\n\nT5010501016209\n\n\n株式会社バンダイ\n\n\n\n\n17\n仮面ライダーストア東京店\n\n0 (0)\n03-6269-9379\n\n\n\n営業時間10:00～20：30\n\n\n\n領\n収\n証\n\n\nいらっしゃいませ。\n\n\n\n\n\nお買上げありがとうございます。\n\n\n\n\n\n\n\n\n\n2025年11月09日(日)\n17:27\n(*) לל \"לפ ת \"\n\n4904941570638 410722\n7\n45,330\n\n6770\n\n\n\n(f)\n\n\n45,390\n184\n7\n\n\n45,390\n\n\n(内)消費税等\n10%\n4490)\n\n\n46,000\n\n4610\n\n\n\n\n||",
+      "seconds": 0.5040155100000447,
+      "costUsd": 0
+    },
+    {
+      "id": "jawildtext-receipt-photo-20",
+      "status": "done",
+      "text": "\nCRAFT BEER Tap (9)\nTAPG\nGial\nTEL 045-322-7188\n神奈川県横浜市西区南幸1-1-1\nDia 横浜 地下3階8301区画\n登録番号：T2010701026019\n印字面を内側に折って保管願います。\n2025年11月23日(日)20:12\n担当No. 0000030\n商品\n単価\n数量\n\n黒船ボーター240\n0979\n1\nY979\n-\n小計\n4979\n\nY979\n（内消費税\n489)\n4979\n内消費税\n489)\n(10%対象額\nお預かり\n45,000\n\n4.021\nNo. 160001:001\n人数：1\nA | 8 5",
+      "seconds": 0.3874470789996849,
+      "costUsd": 0
+    }
+  ]
+}

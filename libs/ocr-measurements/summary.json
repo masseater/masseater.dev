@@ -1,0 +1,247 @@
+{
+  "generatedAt": "2026-10-14T05:29:10.241Z",
+  "documents": 20,
+  "generatorModel": "google/gemini-3.5-flash-lite",
+  "cutoff": 0.8,
+  "rereadBelow": 0.8,
+  "fields": [
+    {
+      "id": "issuer",
+      "label": "発行者"
+    },
+    {
+      "id": "issueDate",
+      "label": "発行日"
+    },
+    {
+      "id": "total",
+      "label": "合計金額"
+    },
+    {
+      "id": "tax",
+      "label": "消費税額"
+    },
+    {
+      "id": "registration",
+      "label": "登録番号"
+    }
+  ],
+  "groups": [
+    {
+      "id": "receipt-clean",
+      "label": "レシート"
+    },
+    {
+      "id": "receipt-degraded",
+      "label": "レシート（劣化）"
+    },
+    {
+      "id": "invoice-clean",
+      "label": "請求書"
+    },
+    {
+      "id": "invoice-degraded",
+      "label": "請求書（劣化）"
+    }
+  ],
+  "runs": [
+    {
+      "method": "ocr-decision",
+      "model": "respan/span-01-lite",
+      "label": "span-01 lite",
+      "accuracy": 0.29,
+      "byField": {
+        "issuer": 0.05,
+        "issueDate": 0.2,
+        "total": 0.5,
+        "tax": 0.55,
+        "registration": 0.15
+      },
+      "byGroup": {
+        "receipt-clean": 0.36,
+        "receipt-degraded": 0.36,
+        "invoice-clean": 0.12,
+        "invoice-degraded": 0.32
+      },
+      "secondsPerDocument": 2.1372975019499996,
+      "usdPerDocument": 0,
+      "failed": 0
+    },
+    {
+      "method": "ocr-reread-decision",
+      "model": "respan/span-01-lite",
+      "label": "span-01 lite",
+      "accuracy": 0.31,
+      "byField": {
+        "issuer": 0.05,
+        "issueDate": 0.35,
+        "total": 0.25,
+        "tax": 0.7,
+        "registration": 0.2
+      },
+      "byGroup": {
+        "receipt-clean": 0.24,
+        "receipt-degraded": 0.52,
+        "invoice-clean": 0.16,
+        "invoice-degraded": 0.32
+      },
+      "secondsPerDocument": 4.964733245550001,
+      "usdPerDocument": 0.003007261,
+      "failed": 0
+    },
+    {
+      "method": "ocr-decision",
+      "model": "typesafe/jev-1.13",
+      "label": "Jev 1.13",
+      "accuracy": 0.7,
+      "byField": {
+        "issuer": 0.75,
+        "issueDate": 0.65,
+        "total": 0.65,
+        "tax": 0.75,
+        "registration": 0.7
+      },
+      "byGroup": {
+        "receipt-clean": 1,
+        "receipt-degraded": 0.56,
+        "invoice-clean": 0.72,
+        "invoice-degraded": 0.52
+      },
+      "secondsPerDocument": 1.1596215216999999,
+      "usdPerDocument": 0.000200781,
+      "failed": 0
+    },
+    {
+      "method": "ocr-reread-decision",
+      "model": "typesafe/jev-1.13",
+      "label": "Jev 1.13",
+      "accuracy": 0.89,
+      "byField": {
+        "issuer": 0.95,
+        "issueDate": 0.95,
+        "total": 0.75,
+        "tax": 0.85,
+        "registration": 0.95
+      },
+      "byGroup": {
+        "receipt-clean": 1,
+        "receipt-degraded": 0.92,
+        "invoice-clean": 0.88,
+        "invoice-degraded": 0.76
+      },
+      "secondsPerDocument": 4.086516378050001,
+      "usdPerDocument": 0.0032097220000000004,
+      "failed": 0
+    },
+    {
+      "method": "ocr-decision",
+      "model": "perplexity/pplx-decider-v1.1-27b",
+      "label": "Decider V1.1 27B",
+      "accuracy": 0.76,
+      "byField": {
+        "issuer": 0.8,
+        "issueDate": 0.65,
+        "total": 0.9,
+        "tax": 0.75,
+        "registration": 0.7
+      },
+      "byGroup": {
+        "receipt-clean": 1,
+        "receipt-degraded": 0.56,
+        "invoice-clean": 0.92,
+        "invoice-degraded": 0.56
+      },
+      "secondsPerDocument": 1.3420103235,
+      "usdPerDocument": 0.00005846000000000001,
+      "failed": 0
+    },
+    {
+      "method": "ocr-reread-decision",
+      "model": "perplexity/pplx-decider-v1.1-27b",
+      "label": "Decider V1.1 27B",
+      "accuracy": 0.93,
+      "byField": {
+        "issuer": 0.95,
+        "issueDate": 0.95,
+        "total": 0.95,
+        "tax": 0.85,
+        "registration": 0.95
+      },
+      "byGroup": {
+        "receipt-clean": 1,
+        "receipt-degraded": 0.92,
+        "invoice-clean": 0.96,
+        "invoice-degraded": 0.84
+      },
+      "secondsPerDocument": 4.291743993300001,
+      "usdPerDocument": 0.003066201,
+      "failed": 0
+    },
+    {
+      "method": "ocr-decision",
+      "model": "inception/mercury-decide",
+      "label": "Mercury Decide",
+      "accuracy": 0.76,
+      "byField": {
+        "issuer": 0.8,
+        "issueDate": 0.65,
+        "total": 0.9,
+        "tax": 0.75,
+        "registration": 0.7
+      },
+      "byGroup": {
+        "receipt-clean": 1,
+        "receipt-degraded": 0.56,
+        "invoice-clean": 0.92,
+        "invoice-degraded": 0.56
+      },
+      "secondsPerDocument": 1.8243617220999997,
+      "usdPerDocument": 0.00006639799999999998,
+      "failed": 0
+    },
+    {
+      "method": "ocr-reread-decision",
+      "model": "inception/mercury-decide",
+      "label": "Mercury Decide",
+      "accuracy": 0.93,
+      "byField": {
+        "issuer": 0.95,
+        "issueDate": 0.95,
+        "total": 0.95,
+        "tax": 0.85,
+        "registration": 0.95
+      },
+      "byGroup": {
+        "receipt-clean": 1,
+        "receipt-degraded": 0.92,
+        "invoice-clean": 0.96,
+        "invoice-degraded": 0.84
+      },
+      "secondsPerDocument": 4.7774505285,
+      "usdPerDocument": 0.0030739559999999997,
+      "failed": 0
+    },
+    {
+      "method": "image-generation",
+      "model": "google/gemini-3.5-flash-lite",
+      "label": "Gemini 3.5 Flash Lite",
+      "accuracy": 1,
+      "byField": {
+        "issuer": 1,
+        "issueDate": 1,
+        "total": 1,
+        "tax": 1,
+        "registration": 1
+      },
+      "byGroup": {
+        "receipt-clean": 1,
+        "receipt-degraded": 1,
+        "invoice-clean": 1,
+        "invoice-degraded": 1
+      },
+      "secondsPerDocument": 1.57171851195,
+      "usdPerDocument": 0.0006231800000000001,
+      "failed": 0
+    }
+  ]
+}

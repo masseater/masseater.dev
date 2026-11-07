@@ -1,0 +1,16 @@
+{
+  "name": "@ocr-decide/measurements",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./summary": "./summary.json",
+    "./schema": "./src/summary.ts",
+    "./ja-bench": "./ja-bench.json",
+    "./ja-bench-schema": "./src/ja-bench.ts"
+  },
+  "dependencies": {
+    "@r_masseater/ocr-decide": "workspace:*",
+    "effect": "catalog:stack"
+  }
+}
