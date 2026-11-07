@@ -59,25 +59,26 @@ const decodeEntry = ([path, frontmatter]: readonly [string, unknown]): Effect.Ef
     Effect.flatMap(([category, slug]) => ownEntry(category, slug, frontmatter)),
   );
 
-const frontmatters = import.meta.glob<unknown>("/content/*/*.md", {
-  eager: true,
-  import: "frontmatter",
-  query: "?meta",
-});
+const frontmatters = (): Record<string, unknown> =>
+  import.meta.glob<unknown>("/content/*/*.md", {
+    eager: true,
+    import: "frontmatter",
+    query: "?meta",
+  });
 
 const isVisible = ({ status }: Readonly<Pick<Entry, "status">>): boolean =>
   import.meta.env.DEV || status !== "draft";
 
 const findEntry = (location: Readonly<Pick<Entry, "category" | "slug">>): Option.Option<Entry> =>
   pipe(
-    Rec.get(frontmatters, contentPath(location)),
+    Rec.get(frontmatters(), contentPath(location)),
     Option.flatMap(decodeFrontmatterOption),
     Option.map((decoded) => toEntry(location, decoded)),
     Option.filter(isVisible),
   );
 
 const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.suspend(() =>
-  Effect.forEach(Rec.toEntries(frontmatters), decodeEntry),
+  Effect.forEach(Rec.toEntries(frontmatters()), decodeEntry),
 ).pipe(
   Effect.map((entries) =>
     pipe(
