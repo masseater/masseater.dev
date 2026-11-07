@@ -1,14 +1,9 @@
-import { Effect } from "effect";
 import { renderToStaticMarkup } from "react-dom/server";
-import { beforeAll, expect, test } from "vite-plus/test";
-
-import { allEntries } from "#/entities/entry/api/entries";
+import { expect, test } from "vite-plus/test";
 
 import { WikiLink } from "./wiki-link";
 
 const label = "文言";
-
-beforeAll(() => Effect.runPromise(allEntries));
 
 test("ある記事へはリンクする", () => {
   expect(renderToStaticMarkup(<WikiLink slug="piper">{label}</WikiLink>)).toBe(

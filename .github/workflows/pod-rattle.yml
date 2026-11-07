@@ -92,6 +92,7 @@ jobs:
   release:
     needs: bundle
     runs-on: ubuntu-latest
+    environment: pod-rattle-release
     permissions:
       contents: write
       pull-requests: write
@@ -148,6 +149,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@9fd918dd489a841010b0a5fb6e4ed9d1f8a11ec1
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@e091f43537b32cc72397496aeb381c5549597dfc
         with:
           github-token: ${{ github.token }}
