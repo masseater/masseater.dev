@@ -46,12 +46,14 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: read
       id-token: write
     concurrency:
       group: deploy
     outputs:
       latest: ${{ steps.head.outputs.latest }}
+      sha: ${{ steps.head.outputs.sha }}
     steps:
       - id: head
         env:
@@ -59,13 +61,33 @@ jobs:
           HEAD_SHA: ${{ github.sha }}
           REF_NAME: ${{ github.ref_name }}
         run: |
-          current="$(gh api "repos/$GITHUB_REPOSITORY/commits/$REF_NAME" --jq .sha)"
-          if [ "$current" = "$HEAD_SHA" ]; then
-            echo "latest=true" >> "$GITHUB_OUTPUT"
-          fi
+          set -euo pipefail
+          repo="repos/$GITHUB_REPOSITORY"
+          target="$HEAD_SHA"
+          newer="$(gh api "$repo/compare/$HEAD_SHA...$REF_NAME" --jq '[.commits[].sha] | reverse | .[]')"
+          for sha in $newer; do
+            run="$(gh api "$repo/actions/workflows/verify.yml/runs?head_sha=$sha&event=push" --jq '.workflow_runs[0].id // empty')"
+            [ -n "$run" ] || continue
+            jobs="$(gh api "$repo/actions/runs/$run/jobs?per_page=100" --jq '.jobs')"
+            verified="$(jq -r '[.[] | select(.name == "verify" and .conclusion == "success")] | length' <<<"$jobs")"
+            [ "$verified" != 0 ] || continue
+            handled="$(jq -r '[.[] | select(.name == "deploy" and .conclusion != "cancelled" and .conclusion != "skipped")] | length' <<<"$jobs")"
+            if [ "$handled" != 0 ]; then
+              echo "$sha の deploy が新しいコミットを当てるので飛ばす"
+              exit 0
+            fi
+            target="$sha"
+            break
+          done
+          echo "$target を当てる"
+          {
+            echo "latest=true"
+            echo "sha=$target"
+          } >> "$GITHUB_OUTPUT"
       - if: steps.head.outputs.latest == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ steps.head.outputs.sha }}
           persist-credentials: false
       - if: steps.head.outputs.latest == 'true'
         run: git fetch --unshallow --filter=blob:none origin
@@ -110,6 +132,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
       - uses: $/.github/actions/setup
@@ -128,6 +151,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
       - uses: $/.github/actions/setup
@@ -145,6 +169,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
       - uses: $/.github/actions/setup
@@ -162,6 +187,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
       - uses: $/.github/actions/setup
@@ -179,6 +205,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
       - uses: $/.github/actions/setup
@@ -196,6 +223,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@9fd918dd489a841010b0a5fb6e4ed9d1f8a11ec1
       - uses: $/.github/actions/setup
@@ -213,6 +241,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
       - uses: $/.github/actions/setup
@@ -247,6 +276,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@e091f43537b32cc72397496aeb381c5549597dfc
       - uses: $/.github/actions/setup
@@ -268,6 +298,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.deploy.outputs.sha }}
           persist-credentials: false
       - id: token
         run: .github/scripts/github-token.sh
