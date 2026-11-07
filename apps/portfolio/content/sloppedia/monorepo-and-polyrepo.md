@@ -68,7 +68,7 @@ masseater は、ポリレポが主流になったのは、1つのリポジトリ
 
 ### Google
 
-Google は、全社のコードを単一のリポジトリで管理している。Potvin と Levenberg は2016年の Communications of the ACM の論文で、この方式の利点とトレードオフを論じた[^google]。
+Google は、全社のコードを [Piper](/sloppedia/piper) の単一のリポジトリで管理している。開発の全体は[Google のソフトウェア開発](/sloppedia/google-software-engineering)の記事にある。Potvin と Levenberg は2016年の Communications of the ACM の論文で、この方式の利点とトレードオフを論じた[^google]。
 
 ### Segment
 
