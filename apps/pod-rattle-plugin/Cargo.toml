@@ -23,7 +23,7 @@ pod-rattle-engine = { path = "../../libs/pod-rattle-engine" }
 nice-plug = { version = "0.4.2", features = ["assert_process_allocs"] }
 nice-plug-egui = "0.6.0"
 egui = "0.37.0"
-triple_buffer = "8"
+triple_buffer = "9"
 atomic_float = "1"
 
 [lints]
