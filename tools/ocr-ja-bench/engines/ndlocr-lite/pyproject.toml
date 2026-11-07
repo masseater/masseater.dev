@@ -13,7 +13,7 @@ dependencies = [
   "ordered-set==4.1.0",
   "pillow==13.0.0",
   "protobuf==7.36.2",
-  "pypdf==6.21.4",
+  "pypdf==7.0.0",
   "pypdfium2==5.15.0",
   "pyparsing==3.3.3",
   "PyYAML==6.0.3",
