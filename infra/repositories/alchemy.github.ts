@@ -82,7 +82,7 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
     "sts2-mods": {
       description: "Slay the Spire 2 の Mod をまとめて管理する monorepo",
     },
-    "product-workshop": {
+    "masseater-products": {
       description:
         "masseater's products in one monorepo, sharing parts across web, audio plugins and native apps",
     },
@@ -91,7 +91,7 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
     },
   };
 
-const CREATES: readonly string[] = ["product-workshop"];
+const CREATES: readonly string[] = ["masseater-products"];
 
 const ARCHIVES: ReadonlySet<string> = new Set([
   "mst-ja-decision-bench",
