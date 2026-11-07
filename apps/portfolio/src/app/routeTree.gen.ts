@@ -3,26 +3,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as SiteRouteImport } from './routes/_site'
+import { Route as StageRouteImport } from './routes/_stage'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SloppediaRouteImport } from './routes/sloppedia'
+import { Route as StageIndexRouteImport } from './routes/_stage/index'
+import { Route as StageSiteRouteImport } from './routes/_stage/_site'
 import { Route as SloppediaIndexRouteImport } from './routes/sloppedia/index'
 import { Route as SloppediaSlugRouteImport } from './routes/sloppedia/$slug'
 import { Route as SloppediaCategoriesRouteImport } from './routes/sloppedia/categories'
-import { Route as SiteCategoryIndexRouteImport } from './routes/_site/$category/index'
-import { Route as SiteCategorySlugRouteImport } from './routes/_site/$category/$slug'
-import { Route as SiteSeikinTechniquesIndexRouteImport } from './routes/_site/seikin-techniques/index'
-import { Route as SiteSeikinTechniquesSlugRouteImport } from './routes/_site/seikin-techniques/$slug'
+import { Route as StageSiteCategoryIndexRouteImport } from './routes/_stage/_site/$category/index'
+import { Route as StageSiteCategorySlugRouteImport } from './routes/_stage/_site/$category/$slug'
+import { Route as StageSiteSeikinTechniquesIndexRouteImport } from './routes/_stage/_site/seikin-techniques/index'
+import { Route as StageSiteSeikinTechniquesSlugRouteImport } from './routes/_stage/_site/seikin-techniques/$slug'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SiteRoute = SiteRouteImport.update({
-  id: '/_site',
+const StageRoute = StageRouteImport.update({
+  id: '/_stage',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
@@ -40,6 +36,15 @@ const SloppediaRoute = SloppediaRouteImport.update({
   path: '/sloppedia',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StageIndexRoute = StageIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StageRoute,
+} as any)
+const StageSiteRoute = StageSiteRouteImport.update({
+  id: '/_site',
+  getParentRoute: () => StageRoute,
+} as any)
 const SloppediaIndexRoute = SloppediaIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -55,68 +60,69 @@ const SloppediaCategoriesRoute = SloppediaCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => SloppediaRoute,
 } as any)
-const SiteCategoryIndexRoute = SiteCategoryIndexRouteImport.update({
+const StageSiteCategoryIndexRoute = StageSiteCategoryIndexRouteImport.update({
   id: '/$category/',
   path: '/$category/',
-  getParentRoute: () => SiteRoute,
+  getParentRoute: () => StageSiteRoute,
 } as any)
-const SiteCategorySlugRoute = SiteCategorySlugRouteImport.update({
+const StageSiteCategorySlugRoute = StageSiteCategorySlugRouteImport.update({
   id: '/$category/$slug',
   path: '/$category/$slug',
-  getParentRoute: () => SiteRoute,
+  getParentRoute: () => StageSiteRoute,
 } as any)
-const SiteSeikinTechniquesIndexRoute =
-  SiteSeikinTechniquesIndexRouteImport.update({
+const StageSiteSeikinTechniquesIndexRoute =
+  StageSiteSeikinTechniquesIndexRouteImport.update({
     id: '/seikin-techniques/',
     path: '/seikin-techniques/',
-    getParentRoute: () => SiteRoute,
+    getParentRoute: () => StageSiteRoute,
   } as any)
-const SiteSeikinTechniquesSlugRoute =
-  SiteSeikinTechniquesSlugRouteImport.update({
+const StageSiteSeikinTechniquesSlugRoute =
+  StageSiteSeikinTechniquesSlugRouteImport.update({
     id: '/seikin-techniques/$slug',
     path: '/seikin-techniques/$slug',
-    getParentRoute: () => SiteRoute,
+    getParentRoute: () => StageSiteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof StageIndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sloppedia': typeof SloppediaRouteWithChildren
   '/sloppedia/$slug': typeof SloppediaSlugRoute
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/sloppedia/': typeof SloppediaIndexRoute
-  '/$category/$slug': typeof SiteCategorySlugRoute
-  '/seikin-techniques/$slug': typeof SiteSeikinTechniquesSlugRoute
-  '/$category/': typeof SiteCategoryIndexRoute
-  '/seikin-techniques/': typeof SiteSeikinTechniquesIndexRoute
+  '/$category/$slug': typeof StageSiteCategorySlugRoute
+  '/seikin-techniques/$slug': typeof StageSiteSeikinTechniquesSlugRoute
+  '/$category/': typeof StageSiteCategoryIndexRoute
+  '/seikin-techniques/': typeof StageSiteSeikinTechniquesIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/': typeof StageIndexRoute
   '/sloppedia/$slug': typeof SloppediaSlugRoute
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/sloppedia': typeof SloppediaIndexRoute
-  '/$category/$slug': typeof SiteCategorySlugRoute
-  '/seikin-techniques/$slug': typeof SiteSeikinTechniquesSlugRoute
-  '/$category': typeof SiteCategoryIndexRoute
-  '/seikin-techniques': typeof SiteSeikinTechniquesIndexRoute
+  '/$category/$slug': typeof StageSiteCategorySlugRoute
+  '/seikin-techniques/$slug': typeof StageSiteSeikinTechniquesSlugRoute
+  '/$category': typeof StageSiteCategoryIndexRoute
+  '/seikin-techniques': typeof StageSiteSeikinTechniquesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/_site': typeof SiteRouteWithChildren
+  '/_stage': typeof StageRouteWithChildren
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sloppedia': typeof SloppediaRouteWithChildren
+  '/_stage/_site': typeof StageSiteRouteWithChildren
   '/sloppedia/$slug': typeof SloppediaSlugRoute
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
+  '/_stage/': typeof StageIndexRoute
   '/sloppedia/': typeof SloppediaIndexRoute
-  '/_site/$category/$slug': typeof SiteCategorySlugRoute
-  '/_site/seikin-techniques/$slug': typeof SiteSeikinTechniquesSlugRoute
-  '/_site/$category/': typeof SiteCategoryIndexRoute
-  '/_site/seikin-techniques/': typeof SiteSeikinTechniquesIndexRoute
+  '/_stage/_site/$category/$slug': typeof StageSiteCategorySlugRoute
+  '/_stage/_site/seikin-techniques/$slug': typeof StageSiteSeikinTechniquesSlugRoute
+  '/_stage/_site/$category/': typeof StageSiteCategoryIndexRoute
+  '/_stage/_site/seikin-techniques/': typeof StageSiteSeikinTechniquesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -134,9 +140,9 @@ export interface FileRouteTypes {
     | '/seikin-techniques/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/feed.xml'
     | '/robots.txt'
+    | '/'
     | '/sloppedia/$slug'
     | '/sloppedia/categories'
     | '/sloppedia'
@@ -146,23 +152,23 @@ export interface FileRouteTypes {
     | '/seikin-techniques'
   id:
     | '__root__'
-    | '/'
-    | '/_site'
+    | '/_stage'
     | '/feed.xml'
     | '/robots.txt'
     | '/sloppedia'
+    | '/_stage/_site'
     | '/sloppedia/$slug'
     | '/sloppedia/categories'
+    | '/_stage/'
     | '/sloppedia/'
-    | '/_site/$category/$slug'
-    | '/_site/seikin-techniques/$slug'
-    | '/_site/$category/'
-    | '/_site/seikin-techniques/'
+    | '/_stage/_site/$category/$slug'
+    | '/_stage/_site/seikin-techniques/$slug'
+    | '/_stage/_site/$category/'
+    | '/_stage/_site/seikin-techniques/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  SiteRoute: typeof SiteRouteWithChildren
+  StageRoute: typeof StageRouteWithChildren
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SloppediaRoute: typeof SloppediaRouteWithChildren
@@ -170,18 +176,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_site': {
-      id: '/_site'
+    '/_stage': {
+      id: '/_stage'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof SiteRouteImport
+      preLoaderRoute: typeof StageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feed.xml': {
@@ -205,6 +204,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SloppediaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_stage/': {
+      id: '/_stage/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof StageIndexRouteImport
+      parentRoute: typeof StageRoute
+    }
+    '/_stage/_site': {
+      id: '/_stage/_site'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof StageSiteRouteImport
+      parentRoute: typeof StageRoute
+    }
     '/sloppedia/': {
       id: '/sloppedia/'
       path: '/'
@@ -226,52 +239,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SloppediaCategoriesRouteImport
       parentRoute: typeof SloppediaRoute
     }
-    '/_site/$category/': {
-      id: '/_site/$category/'
+    '/_stage/_site/$category/': {
+      id: '/_stage/_site/$category/'
       path: '/$category'
       fullPath: '/$category/'
-      preLoaderRoute: typeof SiteCategoryIndexRouteImport
-      parentRoute: typeof SiteRoute
+      preLoaderRoute: typeof StageSiteCategoryIndexRouteImport
+      parentRoute: typeof StageSiteRoute
     }
-    '/_site/$category/$slug': {
-      id: '/_site/$category/$slug'
+    '/_stage/_site/$category/$slug': {
+      id: '/_stage/_site/$category/$slug'
       path: '/$category/$slug'
       fullPath: '/$category/$slug'
-      preLoaderRoute: typeof SiteCategorySlugRouteImport
-      parentRoute: typeof SiteRoute
+      preLoaderRoute: typeof StageSiteCategorySlugRouteImport
+      parentRoute: typeof StageSiteRoute
     }
-    '/_site/seikin-techniques/': {
-      id: '/_site/seikin-techniques/'
+    '/_stage/_site/seikin-techniques/': {
+      id: '/_stage/_site/seikin-techniques/'
       path: '/seikin-techniques'
       fullPath: '/seikin-techniques/'
-      preLoaderRoute: typeof SiteSeikinTechniquesIndexRouteImport
-      parentRoute: typeof SiteRoute
+      preLoaderRoute: typeof StageSiteSeikinTechniquesIndexRouteImport
+      parentRoute: typeof StageSiteRoute
     }
-    '/_site/seikin-techniques/$slug': {
-      id: '/_site/seikin-techniques/$slug'
+    '/_stage/_site/seikin-techniques/$slug': {
+      id: '/_stage/_site/seikin-techniques/$slug'
       path: '/seikin-techniques/$slug'
       fullPath: '/seikin-techniques/$slug'
-      preLoaderRoute: typeof SiteSeikinTechniquesSlugRouteImport
-      parentRoute: typeof SiteRoute
+      preLoaderRoute: typeof StageSiteSeikinTechniquesSlugRouteImport
+      parentRoute: typeof StageSiteRoute
     }
   }
 }
 
-interface SiteRouteChildren {
-  SiteCategorySlugRoute: typeof SiteCategorySlugRoute
-  SiteSeikinTechniquesSlugRoute: typeof SiteSeikinTechniquesSlugRoute
-  SiteCategoryIndexRoute: typeof SiteCategoryIndexRoute
-  SiteSeikinTechniquesIndexRoute: typeof SiteSeikinTechniquesIndexRoute
+interface StageSiteRouteChildren {
+  StageSiteCategorySlugRoute: typeof StageSiteCategorySlugRoute
+  StageSiteSeikinTechniquesSlugRoute: typeof StageSiteSeikinTechniquesSlugRoute
+  StageSiteCategoryIndexRoute: typeof StageSiteCategoryIndexRoute
+  StageSiteSeikinTechniquesIndexRoute: typeof StageSiteSeikinTechniquesIndexRoute
 }
 
-const SiteRouteChildren: SiteRouteChildren = {
-  SiteCategorySlugRoute: SiteCategorySlugRoute,
-  SiteSeikinTechniquesSlugRoute: SiteSeikinTechniquesSlugRoute,
-  SiteCategoryIndexRoute: SiteCategoryIndexRoute,
-  SiteSeikinTechniquesIndexRoute: SiteSeikinTechniquesIndexRoute,
+const StageSiteRouteChildren: StageSiteRouteChildren = {
+  StageSiteCategorySlugRoute: StageSiteCategorySlugRoute,
+  StageSiteSeikinTechniquesSlugRoute: StageSiteSeikinTechniquesSlugRoute,
+  StageSiteCategoryIndexRoute: StageSiteCategoryIndexRoute,
+  StageSiteSeikinTechniquesIndexRoute: StageSiteSeikinTechniquesIndexRoute,
 }
 
-const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
+const StageSiteRouteWithChildren = StageSiteRoute._addFileChildren(
+  StageSiteRouteChildren,
+)
+
+interface StageRouteChildren {
+  StageSiteRoute: typeof StageSiteRouteWithChildren
+  StageIndexRoute: typeof StageIndexRoute
+}
+
+const StageRouteChildren: StageRouteChildren = {
+  StageSiteRoute: StageSiteRouteWithChildren,
+  StageIndexRoute: StageIndexRoute,
+}
+
+const StageRouteWithChildren = StageRoute._addFileChildren(StageRouteChildren)
 
 interface SloppediaRouteChildren {
   SloppediaSlugRoute: typeof SloppediaSlugRoute
@@ -290,8 +317,7 @@ const SloppediaRouteWithChildren = SloppediaRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  SiteRoute: SiteRouteWithChildren,
+  StageRoute: StageRouteWithChildren,
   FeedDotxmlRoute: FeedDotxmlRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SloppediaRoute: SloppediaRouteWithChildren,

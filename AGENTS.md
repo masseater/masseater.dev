@@ -16,7 +16,7 @@
 - リポの削除は `delete-repositories` ワークフローを main で手動実行する。名前はイベントのファイルから読んでログで伏せるので、private のリポもコードとログに名前が出ない。
 - GitHub のトークンも broker が出す。App は `masseater-manager` だけで、鍵は D1 に置く。鍵の原本は personal-space の secret にあり、personal-space の `github-app-key` ワークフローが `POST https://credentials.masseater.dev/github-app/import` で渡す。broker は鍵で App 自身として名乗れることと持ち主を確かめてから保存する。
 - `apps/portfolio/worker/ci-telemetry.worker.ts` は、`.github/scripts/ci-telemetry.sh` が送るジョブとステップの時間を GitHub の OIDC トークンで確かめ、ログに出す。
-- `apps/portfolio/content/sloppedia/` は、Wikipedia 風の個人の百科事典もどき Sloppedia の記事である。`/sloppedia/` の下は `_site` の外にある独自の見た目のページで、`noindex` を付けて sitemap とフィードから外す。旧 `/scraps/` は `public/_redirects` で転送する。
+- `apps/portfolio/content/sloppedia/` は、Wikipedia 風の個人の百科事典もどき Sloppedia の記事である。`/sloppedia/` の下は、サイトの背景を持つ `_stage` レイアウトの外にある独自の見た目のページで、`noindex` を付けて sitemap とフィードから外す。旧 `/scraps/` は `public/_redirects` で転送する。
 - Sloppedia の見た目は `libs/sloppedia`（npm の `sloppedia`）にあり、portfolio はそれに TanStack Router の Link を渡して使う。npm へは version を上げてから `publish.yml` を main で手動実行して出す。
 - `tools/scrap-userscript` は、閲覧中のページについて Sloppedia の記事を書くよう Claude Code のルーチンへ頼むユーザースクリプトである。依頼は personal-space の `https://personal.masseater.dev/scrap-request` に送り、Access のログイン Cookie で通す。ルーチンのトークンはそちらの Worker が持つ。Greasy Fork が main の `release/scrap-request.user.js` を同期するので、ビルド結果もコミットする。ソースとビルド結果が食い違うと test が落ちる。中身を変えたら `package.json` の version を上げる。
 - `apps/labs` は React を使わない単体のページ（`/satsuei-lab/`・`/split-pad/`・`/pod-rattle/`）で、`pages/<名前>/index.html` を Vite の multi-page でバンドルし、静的アセットだけの Worker を masseater.dev のルートに載せる。three や d3 は npm から import し、inline script は置かない。ページを足したら `pages.ts` の `PAGES` に足す。
