@@ -10,6 +10,7 @@
     "@effect/atom-react": "catalog:stack",
     "@effect/platform-node": "catalog:",
     "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/static-headers": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@tanstack/react-devtools": "0.10.14",

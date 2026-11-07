@@ -6,7 +6,7 @@
   "exports": {
     "./edge-guard": "./edge-guard.ts",
     "./log-archive": "./log-archive.ts",
-    "./trace-sink": "./trace-sink.ts",
+    "./trace-destination": "./trace-destination.ts",
     "./web-analytics-reader": "./web-analytics-reader.ts"
   },
   "dependencies": {

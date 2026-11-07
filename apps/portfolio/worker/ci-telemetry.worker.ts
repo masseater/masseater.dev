@@ -1,5 +1,6 @@
 import { OWNER_ID } from "@masseater.dev/repositories/github-oidc";
-import { Effect, Logger, ManagedRuntime, Schema, String as Str, pipe } from "effect";
+import { runner } from "@r_masseater/workers-tracing/effect";
+import { Effect, Logger, Schema, String as Str, pipe } from "effect";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
 import { CI_TELEMETRY_AUDIENCE } from "#app-name";
@@ -48,9 +49,7 @@ class Unauthorized extends taggedError<Unauthorized, { readonly brand: unique sy
   },
 ) {}
 
-const runtime = ManagedRuntime.make(
-  Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]),
-);
+const runRecord = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
 
 const bearer = (request: Request): string =>
   Str.replace(/^Bearer /u, "")(request.headers.get("authorization") ?? "");
@@ -129,7 +128,7 @@ const record = (request: Request): Effect.Effect<Response> =>
   );
 
 const worker = {
-  fetch: (request: Request): Promise<Response> => runtime.runPromise(record(request)),
+  fetch: (request: Request): Promise<Response> => runRecord(record(request)),
 };
 
 export default worker;

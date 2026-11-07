@@ -5,14 +5,17 @@ import { Stack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
 import { Array as Arr, Effect, Option } from "effect";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, requireAppPrefix, TRACE_DESTINATION } from "./app-name.ts";
 import { ASSET_HEADERS } from "./asset-headers.ts";
 import { BASE_PATH } from "./base-path.ts";
 import { ZONE } from "./cloudflare.ts";
 
 export default Stack(
   APP_NAME,
-  { providers: withWorkersTracing(providers()), state: state() },
+  {
+    providers: withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers()),
+    state: state(),
+  },
   Effect.gen(function* stack() {
     const { stage } = yield* Stack;
     const character = yield* Option.match(

@@ -1,3 +1,4 @@
+import { run } from "@r_masseater/workers-tracing/effect";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 import { Base64 } from "effect/encoding";
@@ -91,7 +92,7 @@ const cspHeader = (nonce: string): [string, string] => [
 
 const worker = {
   fetch: (request: Request): Promise<Response> =>
-    Effect.runPromise(
+    run(
       Effect.promise(() => Promise.resolve(upstream(request))).pipe(
         Effect.map((response) => {
           const fixed = fixedHeaders(new URL(request.url).pathname);
