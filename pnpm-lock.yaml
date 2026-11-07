@@ -444,8 +444,8 @@ catalogs:
       specifier: 0.3.9
       version: 0.3.9
     typescript-6:
-      specifier: npm:typescript@6.0.3
-      version: 6.0.3
+      specifier: npm:typescript@7.0.2
+      version: 7.0.2
     unified:
       specifier: 11.0.5
       version: 11.0.5
@@ -1129,7 +1129,7 @@ importers:
         version: 4.3.4
       typescript-6:
         specifier: 'catalog:'
-        version: typescript@6.0.3
+        version: typescript@7.0.2
     devDependencies:
       '@alchemy.run/cloudflare':
         specifier: catalog:stack
@@ -25256,7 +25256,6 @@ snapshots:
       '@typescript/typescript-sunos-x64': 7.0.2
       '@typescript/typescript-win32-arm64': 7.0.2
       '@typescript/typescript-win32-x64': 7.0.2
-    optional: true
 
   typescript@7.1.0-beta:
     optionalDependencies:
