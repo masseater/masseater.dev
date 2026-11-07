@@ -12,7 +12,7 @@ type RelayResponse =
   | Readonly<{ status: "login" }>
   | Readonly<{ status: "failed"; reason: string }>;
 
-const relayUrl = "https://personal.masseater.dev/scrap-request";
+const relayUrl = "https://watashi.masseater.dev/scrap-request";
 
 const RelayBody = Schema.fromJsonString(
   Schema.Struct({
