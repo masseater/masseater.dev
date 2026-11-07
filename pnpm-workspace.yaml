@@ -9,7 +9,11 @@ catalogMode: prefer
 
 catalog:
   "@r_masseater/oxlint-typed-rules": 0.1.0
-  oxlint-plugin-eslint: 1.90.0
+  "@discordjs/voice": 0.19.2
+  "@snazzah/davey": 0.2.0
+  discord.js: 14.28.1
+  discord-api-types: 0.38.57
+  oxlint-plugin-eslint: 1.91.0
   "@ast-grep/cli": 0.51.1
   "@cloudflare/workers-types": 5.20261103.1
   "@effect/platform-node": 4.1.2
@@ -38,7 +42,7 @@ catalog:
   "@tailwindcss/typography": 0.5.20
   "@types/mdx": 2.0.14
   "@types/hast": 3.0.5
-  mdast-util-mdx-jsx: 3.2.0
+  mdast-util-mdx-jsx: 3.2.1
   remark-frontmatter: 5.0.0
   remark-gfm: 4.0.1
   remark-mdx-frontmatter: 6.0.0
@@ -89,7 +93,7 @@ catalog:
   "@atproto/api": ^0.30.0
 catalogs:
   stack:
-    "@r_masseater/workers-tracing": 0.0.7
+    "@r_masseater/workers-tracing": 0.1.1
     "@distilled.cloud/cloudflare": 1.0.0-rc.18
     "@effect/atom-react": 4.1.2
     "@effect/tsgo": 0.64.1
@@ -104,8 +108,8 @@ catalogs:
     eden-tanstack-react-query: 0.5.1
     effect: 4.1.2
     elysia: 1.4.30
-    fallow: 3.38.1
-    renovate: 44.206.2
+    fallow: 3.39.0
+    renovate: 44.210.0
     steiger: 0.9.0
     tailwindcss: 4.3.4
     textlint: 15.8.0
@@ -143,7 +147,7 @@ packageExtensions:
     dependencies:
       "@steiger/toolkit": 0.2.3
 minimumReleaseAgeExclude:
-  - "@r_masseater/workers-tracing@0.0.7"
+  - "@r_masseater/workers-tracing@0.1.1"
   - "@r_masseater/oxlint-typed-rules@0.1.0"
   - "@r_masseater/oxlint-plugin-decision@0.1.0"
   - "@alchemy.run/acme@2.0.0-beta.85"

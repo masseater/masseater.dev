@@ -14,7 +14,7 @@ import { adopt } from "alchemy/AdoptPolicy";
 import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { CREDENTIAL_BROKER_AUDIENCE, PREFIX } from "./broker-names.ts";
+import { CREDENTIAL_BROKER_AUDIENCE, PREFIX, TRACE_DESTINATION } from "./broker-names.ts";
 import { grantPolicies } from "./credential-grants.ts";
 
 const DOMAIN = "masseater.dev";
@@ -60,7 +60,10 @@ const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.Store) {
 
 const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   CREDENTIAL_BROKER_AUDIENCE,
-  { providers: withWorkersTracing(providers()), state: state() },
+  {
+    providers: withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers()),
+    state: state(),
+  },
   Effect.gen(function* stack() {
     const { accountId } = yield* yield* CloudflareEnvironment;
     const zoneId = yield* Zone.resolveZoneId({ accountId, zone: DOMAIN, hostname: DOMAIN }).pipe(
