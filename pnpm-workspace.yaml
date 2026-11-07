@@ -17,7 +17,7 @@ catalog:
   "@valtown/codemirror-ts": 2.3.1
   codemirror: 6.0.2
   comlink: 4.4.2
-  typescript-6: npm:typescript@7.0.2
+  typescript-6: npm:typescript@6.0.3
   twoslash: 0.3.9
   "@r_masseater/web-vitals-flow": 0.0.3
   "@better-auth/drizzle-adapter": 1.7.18
