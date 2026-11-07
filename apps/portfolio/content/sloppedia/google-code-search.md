@@ -40,9 +40,9 @@ Code Search は、Google の社内のコード検索の道具である。[Piper]
 
 ## Kythe
 
-定義へ飛ぶ機能や呼び出し元の一覧は、Kythe の相互参照の索引で動く[^swe-ch17]。Kythe は、Google の巨大で多言語の社内のコードに対して意味の上での相互参照の索引を作った経験から生まれた[^kythe]。もとは Grok という社内のプロジェクトで、2008年に Steve Yegge が提案した[^kythe-wikipedia]。
+定義へ飛ぶ機能や呼び出し元の一覧は、[Kythe](/sloppedia/kythe) の相互参照の索引で動く[^swe-ch17]。Kythe は、Google の巨大で多言語の社内のコードに対して意味の上での相互参照の索引を作った経験から生まれた[^kythe]。もとは Grok という社内のプロジェクトで、2008年に Steve Yegge が提案した[^kythe-wikipedia]。
 
-Kythe は公開されており、C++ と Java の索引作成器や、javac・Maven・Bazel などからコンパイルの情報を取り出す部品を持つ[^kythe-site]。[Critique](/sloppedia/critique) の差分の画面でも、Kythe を使って定義へ飛べる。
+Kythe は公開されており、C++ と Java の索引作成器や、javac・Maven・[Bazel](/sloppedia/bazel) などからコンパイルの情報を取り出す部品を持つ[^kythe-site]。[Critique](/sloppedia/critique) の差分の画面でも、Kythe を使って定義へ飛べる。
 
 [^swe-ch17]: 『Software Engineering at Google』「[Code Search](https://abseil.io/resources/swe-book/html/ch17.html)」第17章、2020年。
 

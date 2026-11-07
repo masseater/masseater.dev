@@ -14,7 +14,7 @@ infobox:
     value: "Cloud SQL、Cloud Run、Identity Platform、Gmail API"
 ---
 
-ISMAP 準拠のための Supabase からの移行は、公的機関向けの予約システムを、Supabase、Vercel、Resend の構成から Google Cloud（GCP）へ全面的に移した事例である。開発の途中で発注元から ISMAP への準拠を求められ、3つのサービスがどれも ISMAP に登録されていなかったためである。開発者のたなか屋が、移行の途中経過を note に記録した[^note]。
+ISMAP 準拠のための Supabase からの移行は、公的機関向けの予約システムを、Supabase、Vercel、Resend の構成から Google Cloud（GCP）へ全面的に移した事例である。開発の途中で発注元から [ISMAP](/sloppedia/ismap) への準拠を求められ、3つのサービスがどれも ISMAP に登録されていなかったためである。開発者のたなか屋が、移行の途中経過を note に記録した[^note]。
 
 ## 背景
 

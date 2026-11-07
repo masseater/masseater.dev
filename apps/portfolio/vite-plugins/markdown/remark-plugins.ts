@@ -6,6 +6,7 @@ import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import { remarkDialogue } from "./remark-dialogue.ts";
 import { remarkFigure } from "./remark-figure.ts";
 import { remarkGitDate } from "./remark-git-date.ts";
+import { remarkWikiLink } from "./remark-wiki-link.ts";
 import { remarkYouTube } from "./remark-youtube.ts";
 
 const remarkPlugins = [
@@ -13,6 +14,7 @@ const remarkPlugins = [
   remarkGitDate,
   remarkMdxFrontmatter,
   remarkGfm,
+  remarkWikiLink,
   remarkDirective,
   remarkYouTube,
   remarkFigure,
