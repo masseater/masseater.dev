@@ -225,4 +225,4 @@ const runToolIn =
 const runTool = runToolIn(Layer.empty);
 
 export { NO_PROJECT, OVERWRITE, READ_ONLY, WRITE, meteredInput, one, runTool, runToolIn };
-export type { MeteredTool, ToolCall, ToolName };
+export type { InputMeter, MeteredTool, ToolCall, ToolName };
