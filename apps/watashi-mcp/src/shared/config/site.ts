@@ -1,6 +1,6 @@
-const SITE_NAME = "memory";
+const SITE_NAME = "watashi-mcp";
 
-const SITE_HOST = "memory.masseater.dev";
+const SITE_HOST = "watashi.masseater.dev";
 
 const SITE_ORIGIN = `https://${SITE_HOST}`;
 
