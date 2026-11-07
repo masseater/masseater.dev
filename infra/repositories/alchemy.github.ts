@@ -82,17 +82,16 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
     "sts2-mods": {
       description: "Slay the Spire 2 の Mod をまとめて管理する monorepo",
     },
-    "pod-rattle": {
+    workshop: {
       description:
-        "Physical-modeling seed-pod rattle: the web page, and a VST3 / CLAP instrument in Rust",
-      homepage: "https://masseater.dev/pod-rattle/",
+        "masseater's products in one monorepo, sharing parts across web, audio plugins and native apps",
     },
     "homebrew-tap": {
       description: "Homebrew tap for masseater's tools",
     },
   };
 
-const CREATES: readonly string[] = ["pod-rattle"];
+const CREATES: readonly string[] = ["workshop"];
 
 const ARCHIVES: ReadonlySet<string> = new Set([
   "mst-ja-decision-bench",

@@ -74,8 +74,8 @@ const RELEASE_REPOSITORIES: readonly string[] = [
   "decision-experiments",
   "lint-kit",
   "measure-everything",
-  "pod-rattle",
   "typescript-template",
+  "workshop",
 ];
 
 const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
