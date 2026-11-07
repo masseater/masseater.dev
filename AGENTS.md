@@ -27,7 +27,7 @@
 - 性能の判定は時間ではなく、`benches/instructions.rs` が Valgrind（gungraun）で数える命令数で行う。CI のランナーは速さがまちまちで、時間で判定すると機械によって落ちる。
 - オーディオスレッドで確保をしない。配列は初期化で確保し、`no_alloc` テストで確かめる。
 - parity テストの参照音は、`tools/pod-rattle-parity` が labs のページから `createEngine` を切り出して鳴らした音である。labs の音を変えたら `libs/pod-rattle-engine` も合わせる。計算の順序を変えると標本単位で一致しなくなるので、速くするときも浮動小数点の演算順は保つ。いずれ labs が `libs/pod-rattle-engine` を wasm で鳴らし、エンジンを 1 本にする。
-- `apps/watashi-mcp` は、持ち主の個人データを扱うツールを 1 つにまとめた MCP サーバー（`watashi.masseater.dev/mcp`）で、プロジェクトの記憶と ToDo を D1 に置く。コードは公開し、データは D1 にだけ置く。表への書き込みは `features/mcp/api/*-writer.server.ts` だけが行い、今の表の更新と `revision` 表への追加を同じ D1 の batch に入れる。ほかのファイルから `db.insert` などを呼ぶと lint（`record-lint.config.ts`）が落とす。認証は better-auth の OAuth とパスキーで、パスキーを登録できるのは招待の文字列を持つ最初の 1 人だけである。ツールの呼び出しはすべて Analytics Engine の `masseater_dev_watashi_tool_calls` と Workers Logs に記録する。
+- `apps/watashi-mcp` は、持ち主の個人データを扱うツールを 1 つにまとめた MCP サーバー（`watashi.masseater.dev/mcp`）で、プロジェクトの記憶と ToDo を D1 に置く。Sloppedia の記事を PR で足す `write_sloppedia_article`、masseater.dev のアクセス解析を読む `read_web_analytics`、personal-space のスライドの索引（mydecklist スタックの Vectorize）を引く `search_slides`・`get_deck` もここにある。Sloppedia の PR に使う GitHub のトークンは、broker の名前付きエントリポイント `SloppediaGitHub` をサービスバインディングで呼んで受け取る。コードは公開し、データは D1 にだけ置く。表への書き込みは `features/mcp/api/*-writer.server.ts` だけが行い、今の表の更新と `revision` 表への追加を同じ D1 の batch に入れる。ほかのファイルから `db.insert` などを呼ぶと lint（`record-lint.config.ts`）が落とす。認証は better-auth の OAuth とパスキーで、パスキーを登録できるのは招待の文字列を持つ最初の 1 人だけである。ツールの呼び出しはすべて Analytics Engine の `masseater_dev_watashi_tool_calls` と Workers Logs に記録する。
 - `apps/zenn-articles` はパッケージではない。main の verify が通ると、中身が `zenn` ブランチの直下へ写される。
 
 ## 記事

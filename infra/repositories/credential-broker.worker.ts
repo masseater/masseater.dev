@@ -1,8 +1,6 @@
 import { createToken, deleteToken, listTokens } from "@distilled.cloud/cloudflare/accounts";
 import type { CloudflareOpContext, CreateTokenError } from "@distilled.cloud/cloudflare/accounts";
 import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
-import { createInstallationAccessToken, getUserInstallation } from "@distilled.cloud/github/apps";
-import type { Installation } from "@distilled.cloud/github/apps";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import {
   Array as Arr,
@@ -23,10 +21,11 @@ import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
 import { atprotoRoute, issueAppPassword } from "./atproto.ts";
 import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
-import { gitHubAppCredentials, readApp, route } from "./github-app.ts";
+import { route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
 import type { Claims } from "./github-oidc.ts";
-import { OWNER, Rejected, grantKeys, repositoryName, verify } from "./github-oidc.ts";
+import { Rejected, grantKeys, repositoryName, verify } from "./github-oidc.ts";
+import { mintGitHubToken } from "./github-token.ts";
 
 const TOKEN_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
 const TOKEN_LIFETIME = { hours: 1 } as const;
@@ -89,7 +88,7 @@ const toTokenTime = flow(
 
 const expiry: Effect.Effect<string> = DateTime.now.pipe(Effect.map(toTokenTime));
 
-type BrokerContext = CloudflareOpContext | Layer.Success<ReturnType<typeof gitHubAppCredentials>>;
+type BrokerContext = CloudflareOpContext;
 
 type Issued = Readonly<Record<string, unknown>>;
 
@@ -127,19 +126,10 @@ const issueCloudflareToken = (
     return Option.some({ token: created.value, accountId: env.ACCOUNT_ID });
   });
 
-const findInstallation: Effect.Effect<
-  Option.Option<Installation>,
-  never,
-  BrokerContext
-> = getUserInstallation({ username: OWNER }).pipe(
-  Effect.tapError((failure) => Effect.logWarning("github_app.not_installed", failure)),
-  Effect.option,
-);
-
 const issueGitHubToken = (
   env: CredentialBrokerEnv,
   claims: typeof Claims.Type,
-): Effect.Effect<Option.Option<Issued>, IssueError, BrokerContext> =>
+): Effect.Effect<Option.Option<Issued>, IssueError> =>
   Effect.gen(function* createGitHubToken() {
     const grants = yield* decodeGrants(env);
     const grant = Arr.findFirst(grantKeys(claims), (key) =>
@@ -148,27 +138,10 @@ const issueGitHubToken = (
     if (Option.isNone(grant)) {
       return Option.none();
     }
-    const installation = yield* readApp(env).pipe(
-      Effect.flatMap(
-        Option.match({
-          onNone: () => Effect.logWarning("github_app.missing").pipe(Effect.as(Option.none())),
-          onSome: () => findInstallation,
-        }),
-      ),
-    );
-    if (Option.isNone(installation)) {
-      return Option.none();
-    }
-    const minted = yield* createInstallationAccessToken({
-      installation_id: installation.value.id,
-      ...grant.value,
-    }).pipe(
-      Effect.tapError((failure) => Effect.logWarning("github_app.token_failed", failure)),
-      Effect.option,
-    );
+    const minted = yield* Effect.promise(() => mintGitHubToken({ env, grant: grant.value }));
     return pipe(
       minted,
-      Option.map(({ token }) => ({ githubToken: token })),
+      Option.map((githubToken) => ({ githubToken })),
     );
   });
 
@@ -285,8 +258,7 @@ const sweep = (env: CredentialBrokerEnv): Effect.Effect<void, never, CloudflareO
 const run = <Value>(
   env: CredentialBrokerEnv,
   effect: Effect.Effect<Value, never, BrokerContext>,
-): Promise<Value> =>
-  runner(Layer.mergeAll(logger, cloudflare(env), gitHubAppCredentials(env)))(effect);
+): Promise<Value> => runner(Layer.mergeAll(logger, cloudflare(env)))(effect);
 
 const worker = {
   fetch: (request: Request, env: CredentialBrokerEnv): Promise<Response> =>
@@ -295,4 +267,5 @@ const worker = {
     run(env, sweep(env)),
 };
 
+export { SloppediaGitHub } from "./github-token.ts";
 export default worker;
