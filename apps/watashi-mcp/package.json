@@ -9,6 +9,7 @@
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@better-auth/mcp": "catalog:",
+    "@distilled.cloud/github": "catalog:",
     "@masseater.dev/owner-auth": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@modelcontextprotocol/server": "catalog:",
@@ -22,13 +23,15 @@
     "effect": "catalog:stack",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "tailwindcss": "catalog:stack"
+    "tailwindcss": "catalog:stack",
+    "yaml": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
+    "@masseater.dev/repositories": "workspace:*",
     "@tailwindcss/vite": "4.3.4",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
