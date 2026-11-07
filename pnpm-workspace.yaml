@@ -14,12 +14,10 @@ catalog:
   "@codemirror/lint": 6.9.7
   "@codemirror/state": 6.7.6
   "@codemirror/view": 6.43.15
-  "@typescript/vfs": 1.6.5
-  "@valtown/codemirror-ts": 2.3.1
+  "@typescript/typescript-wasip1-wasm": 7.1.0-dev.20261106.1
   codemirror: 6.0.2
   comlink: 4.4.2
-  typescript-6: npm:typescript@6.0.3
-  twoslash: 0.3.9
+  typescript-wasm: npm:typescript@7.1.0-dev.20261106.1
   "@r_masseater/web-vitals-flow": 0.0.3
   "@better-auth/drizzle-adapter": 1.7.18
   "@better-auth/mcp": 1.7.18
@@ -163,9 +161,6 @@ allowBuilds:
   re2: true
   "@openrouter/sdk": false
 packageExtensions:
-  "@valtown/codemirror-ts":
-    dependencies:
-      typescript: 6.0.3
   "@feature-sliced/steiger-plugin":
     dependencies:
       "@steiger/toolkit": 0.2.3
