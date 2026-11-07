@@ -12,5 +12,10 @@ if ! command -v vp >/dev/null 2>&1; then
 fi
 
 cd "$CLAUDE_PROJECT_DIR"
+mapfile -t linux_packages <.github/actions/setup/linux-packages.txt
+if ! dpkg -s "${linux_packages[@]}" >/dev/null 2>&1; then
+  apt-get update -qq >&2
+  apt-get install -y -qq "${linux_packages[@]}" >&2
+fi
 vp env on >&2
 vp install --frozen-lockfile >&2
