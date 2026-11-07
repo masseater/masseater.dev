@@ -5,4 +5,3 @@ const APP_NAME = "masseater-dev-three-twelve";
 const { prefix: PREFIX, requireAppPrefix } = appNamed(APP_NAME);
 
 export { APP_NAME, PREFIX, requireAppPrefix };
-export { TRACE_DESTINATION } from "@masseater.dev/cloudflare-account/trace-destination";

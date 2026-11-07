@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@masseater.dev/ui/theme.css";
+@import "@masseater.dev/owner-auth/sources.css";
 
 @custom-variant dark (&:is(.dark *));
 

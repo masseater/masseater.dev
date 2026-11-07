@@ -1,7 +1,5 @@
-import { QueryClient } from "@tanstack/react-query";
-import { createRouter } from "@tanstack/react-router";
+import { createQueryRouter } from "@masseater.dev/start-shell/query-router";
 import type { Router } from "@tanstack/react-router";
-import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 
 import { routeTree } from "./routeTree.gen";
 
@@ -13,18 +11,7 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const getRouter = (): AppRouter => {
-  const queryClient = new QueryClient();
-  const router = createRouter({
-    routeTree,
-    context: { queryClient },
-    scrollRestoration: true,
-    defaultPreload: "intent",
-    defaultPreloadStaleTime: 0,
-  });
-  setupRouterSsrQueryIntegration({ router, queryClient });
-  return router;
-};
+const getRouter = (): AppRouter => createQueryRouter(routeTree);
 
 export type { AppRouter };
 export { getRouter };
