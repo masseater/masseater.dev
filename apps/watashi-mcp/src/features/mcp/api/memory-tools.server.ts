@@ -5,7 +5,15 @@ import type { Caller } from "./caller";
 import { DEFAULT_LIMIT, SaveInput, SearchInput, UpdateInput } from "./memory-input";
 import { searchMemories } from "./memory-store.server";
 import { changeMemory, createMemory } from "./memory-writer.server";
-import { OVERWRITE, READ_ONLY, WRITE, one, runTool } from "./tool-call.server";
+import {
+  OVERWRITE,
+  READ_ONLY,
+  WRITE,
+  one,
+  runTool,
+  NO_PROJECT,
+  meteredInput,
+} from "./tool-call.server";
 
 const ALL_PROJECTS = "*";
 
@@ -21,7 +29,9 @@ const registerSave =
       {
         description:
           "新しい記憶を保存する。同じプロジェクトに同じ名前があれば失敗するので、先に memory_search で確かめ、あれば memory_update を使う",
-        inputSchema: SAVE_SCHEMA,
+        inputSchema: meteredInput({ tool: "memory_save", caller, project: NO_PROJECT })(
+          SAVE_SCHEMA,
+        ),
         annotations: WRITE,
       },
       (input) =>
@@ -39,7 +49,9 @@ const registerUpdate =
       "memory_update",
       {
         description: "既存の記憶の要約か本文を書き換える。渡した項目だけを置き換える",
-        inputSchema: UPDATE_SCHEMA,
+        inputSchema: meteredInput({ tool: "memory_update", caller, project: NO_PROJECT })(
+          UPDATE_SCHEMA,
+        ),
         annotations: OVERWRITE,
       },
       (input) =>
@@ -58,7 +70,9 @@ const registerSearch =
       {
         description:
           "記憶を探す。作業を始める前に、題材のプロジェクトや話題の語で呼び、関係する決定や好みを読む",
-        inputSchema: SEARCH_SCHEMA,
+        inputSchema: meteredInput({ tool: "memory_search", caller, project: NO_PROJECT })(
+          SEARCH_SCHEMA,
+        ),
         annotations: READ_ONLY,
       },
       (input) =>
