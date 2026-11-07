@@ -395,9 +395,6 @@ catalogs:
     publint:
       specifier: 0.3.25
       version: 0.3.25
-    radix-ui:
-      specifier: 1.8.1
-      version: 1.8.1
     rehype-slug:
       specifier: 6.0.0
       version: 6.0.0
@@ -510,9 +507,12 @@ catalogs:
     fallow:
       specifier: 3.39.0
       version: 3.39.0
+    radix-ui:
+      specifier: 1.8.1
+      version: 1.8.1
     renovate:
-      specifier: 44.212.0
-      version: 44.212.0
+      specifier: 44.212.1
+      version: 44.212.1
     steiger:
       specifier: 0.9.0
       version: 0.9.0
@@ -621,7 +621,7 @@ importers:
         version: 1.91.0
       renovate:
         specifier: catalog:stack
-        version: 44.212.0(supports-color@7.2.0)(typanion@3.14.0)
+        version: 44.212.1(supports-color@7.2.0)(typanion@3.14.0)
       skills:
         specifier: 'catalog:'
         version: 1.7.6
@@ -1047,7 +1047,7 @@ importers:
         specifier: 'catalog:'
         version: 1.68.0(@types/react@19.3.0)(react@19.3.1)
       radix-ui:
-        specifier: 'catalog:'
+        specifier: catalog:stack
         version: 1.8.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       react:
         specifier: 19.3.1
@@ -1730,7 +1730,7 @@ importers:
         specifier: 2.1.1
         version: 2.1.1
       radix-ui:
-        specifier: 'catalog:'
+        specifier: catalog:stack
         version: 1.8.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       tailwind-merge:
         specifier: 3.7.0
@@ -11624,8 +11624,8 @@ packages:
   remove-accents@0.5.0:
     resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
 
-  renovate@44.212.0:
-    resolution: {integrity: sha512-NhPsA/71/8t4fTyUC4uY2w64kFVD1bbtJu6ZQraYqF5VRz+/Ljccjg/bl3whWGrhamGRPsMtUlf+EqMvxDuMnw==}
+  renovate@44.212.1:
+    resolution: {integrity: sha512-YukoHXLLKZLCI+obFuCqfAAzB7DYusm4C3G3qhFEfEFBiSvl71nQXGvsgarXd5Gij/E7jIdcnyVbIUupXLV7pg==}
     engines: {node: ^24.11.0, pnpm: ^11.0.0}
     hasBin: true
 
@@ -23931,7 +23931,7 @@ snapshots:
 
   remove-accents@0.5.0: {}
 
-  renovate@44.212.0(supports-color@7.2.0)(typanion@3.14.0):
+  renovate@44.212.1(supports-color@7.2.0)(typanion@3.14.0):
     dependencies:
       '@aws-sdk/client-codecommit': 3.1139.0
       '@aws-sdk/client-ec2': 3.1139.0

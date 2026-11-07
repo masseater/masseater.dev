@@ -23,6 +23,6 @@
 
     <ItemGroup>
         <!-- Godot.NET.Sdk 4.5.1 が Mod 側に入れるものと同じ版 -->
-        <PackageReference Include="GodotSharp" Version="4.5.1" />
+        <PackageReference Include="GodotSharp" Version="4.7.2" />
     </ItemGroup>
 </Project>
