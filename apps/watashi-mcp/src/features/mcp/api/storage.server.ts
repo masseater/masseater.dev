@@ -1,6 +1,15 @@
 import { or } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
-import { Array as Arr, DateTime, Effect, Option, Predicate, String as Str, pipe } from "effect";
+import {
+  Array as Arr,
+  DateTime,
+  Effect,
+  Option,
+  Predicate,
+  Schema,
+  String as Str,
+  pipe,
+} from "effect";
 
 import { StorageFailed } from "#/features/mcp/model/storage-failed";
 
@@ -35,4 +44,7 @@ const anyTermMatches =
     return Option.fromNullishOr(or(...matches));
   };
 
-export { anyTermMatches, firstRow, nowIso, query, termsOf };
+const encodeJson = (value: unknown): Effect.Effect<string> =>
+  Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
+
+export { anyTermMatches, encodeJson, firstRow, nowIso, query, termsOf };

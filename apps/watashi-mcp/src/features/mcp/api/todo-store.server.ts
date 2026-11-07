@@ -1,29 +1,12 @@
 import { and, eq, like } from "drizzle-orm";
 import { Array as Arr, Effect, Option, Order, pipe } from "effect";
 
-import { StorageFailed } from "#/features/mcp/model/storage-failed";
-import { TodoNotFound } from "#/features/mcp/model/todo-not-found";
+import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 import { NO_DUE_DATE, todo } from "#/features/mcp/model/todo.table";
 import type { Todo, TodoPriority, TodoStatus } from "#/features/mcp/model/todo.table";
 import { db } from "#/shared/db/index.server";
 
-import { anyTermMatches, firstRow, nowIso, query, termsOf } from "./storage.server";
-
-type NewTodo = Readonly<{
-  title: string;
-  note?: string;
-  priority?: TodoPriority;
-  dueOn?: string;
-}>;
-
-type TodoChange = Readonly<{
-  id: number;
-  title?: string;
-  note?: string;
-  status?: TodoStatus;
-  priority?: TodoPriority;
-  dueOn?: string;
-}>;
+import { anyTermMatches, query, termsOf } from "./storage.server";
 
 type TodoQuery = Readonly<{ status: TodoStatus; query: string; limit: number }>;
 
@@ -38,36 +21,6 @@ const byHavingDueDate = Order.mapInput(Order.Boolean, (row: Todo) => row.dueOn =
 const byDueDate = Order.mapInput(Order.String, (row: Todo) => row.dueOn);
 
 const byId = Order.mapInput(Order.Number, (row: Todo) => row.id);
-
-const addTodo = (input: NewTodo): Effect.Effect<Todo, StorageFailed> =>
-  nowIso.pipe(
-    Effect.flatMap((now) =>
-      query(() =>
-        db
-          .insert(todo)
-          .values({ ...input, createdAt: now, updatedAt: now })
-          .returning(),
-      ),
-    ),
-    Effect.flatMap(firstRow(() => StorageFailed.make({ message: "insert returned no row" }))),
-  );
-
-const updateTodo = ({
-  id,
-  ...change
-}: TodoChange): Effect.Effect<Todo, TodoNotFound | StorageFailed> =>
-  nowIso.pipe(
-    Effect.flatMap((now) =>
-      query(() =>
-        db
-          .update(todo)
-          .set({ ...change, updatedAt: now })
-          .where(eq(todo.id, id))
-          .returning(),
-      ),
-    ),
-    Effect.flatMap(firstRow(() => TodoNotFound.make({ todoId: id }))),
-  );
 
 const listTodos = ({
   status,
@@ -95,5 +48,5 @@ const listTodos = ({
   );
 };
 
-export { addTodo, listTodos, updateTodo };
-export type { NewTodo, TodoChange, TodoQuery };
+export { listTodos };
+export type { TodoQuery };
