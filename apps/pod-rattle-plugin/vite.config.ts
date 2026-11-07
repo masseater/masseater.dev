@@ -15,6 +15,7 @@ export default defineConfig({
             { pattern: ".cargo/**", base: "workspace" },
             { pattern: "libs/pod-rattle-engine/Cargo.toml", base: "workspace" },
             { pattern: "libs/pod-rattle-engine/src/**", base: "workspace" },
+            { pattern: "vendor/**", base: "workspace" },
           ],
           output: [],
         },
