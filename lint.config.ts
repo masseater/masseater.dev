@@ -189,6 +189,7 @@ const generated = [
   "CHANGELOG.md",
   "tools/scrap-userscript/release/**",
   "tools/pod-rattle-parity/engine.gen.js",
+  "**/*.d.rpp.ts",
 ];
 
 const asErrors = (names: readonly string[]): Readonly<Record<string, "error">> =>

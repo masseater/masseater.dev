@@ -166,6 +166,42 @@ jobs:
       - uses: $/.github/actions/setup
       - run: vp exec --filter watashi-mcp alchemy deploy --stage prod --yes
 
+  rpp-kit:
+    needs: deploy
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: rpp-kit
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@9fd918dd489a841010b0a5fb6e4ed9d1f8a11ec1
+      - uses: $/.github/actions/setup
+      - run: vp exec --filter rpp-kit-demo alchemy deploy --stage production --yes
+
+  web-vitals:
+    needs: rpp-kit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+      - run: vp run measure https://masseater.dev/rpp-kit/
+        working-directory: tools/web-vitals-measure
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: web-vitals
+          path: tools/web-vitals-measure/report/
+          if-no-files-found: ignore
+
   trace-check:
     needs: [deploy, traces]
     if: needs.deploy.outputs.latest == 'true'
@@ -479,6 +515,8 @@ jobs:
         trace-check,
         three-twelve,
         watashi-mcp,
+        rpp-kit,
+        web-vitals,
         github,
         zenn,
         mosaic-plan,

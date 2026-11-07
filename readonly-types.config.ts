@@ -27,7 +27,16 @@ const BROWSER_HANDLES: readonly string[] = [
 const readonlyParameterAllow = [
   {
     from: "lib" as const,
-    name: ["HTMLElement", "ReadableStream", "Request", "Float64Array", ...BROWSER_HANDLES],
+    name: [
+      "HTMLElement",
+      "HTMLDivElement",
+      "Worker",
+      "ReadableStream",
+      "Request",
+      "Response",
+      "Float64Array",
+      ...BROWSER_HANDLES,
+    ],
   },
   { from: "package" as const, package: "@webgpu/types", name: [...WEBGPU_HANDLES] },
   {
@@ -45,6 +54,17 @@ const readonlyParameterAllow = [
   },
   { from: "package" as const, package: "@alchemy.run/cloudflare", name: "Store" },
   { from: "package" as const, package: "@tanstack/query-core", name: "QueryClient" },
+  { from: "package" as const, package: "@codemirror/view", name: "EditorView" },
+  { from: "package" as const, package: "@codemirror/state", name: ["Extension", "Text"] },
+  { from: "package" as const, package: "@codemirror/lint", name: "Diagnostic" },
+  { from: "package" as const, package: "comlink", name: "Remote" },
+  { from: "package" as const, package: "@valtown/codemirror-ts", name: "WorkerShape" },
+  {
+    from: "package" as const,
+    package: "typescript",
+    name: ["CompilerOptions", "Node", "Program", "SourceFile"],
+  },
+  { from: "package" as const, package: "@oxlint/plugins", name: ["Context", "Node", "RuleMeta"] },
   {
     from: "package" as const,
     package: "react",
@@ -63,7 +83,18 @@ const readonlyParameterAllow = [
   {
     from: "package" as const,
     package: "effect",
-    name: ["Cause", "Context", "Effect", "Exit", "Layer", "Option", "Redacted", "Stream", "Utc"],
+    name: [
+      "Cause",
+      "Context",
+      "Effect",
+      "Exit",
+      "Layer",
+      "Option",
+      "Redacted",
+      "Ref",
+      "Stream",
+      "Utc",
+    ],
   },
 ];
 
