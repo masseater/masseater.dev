@@ -3,17 +3,6 @@ name: pod-rattle
 on:
   push:
     branches: [main]
-    paths:
-      - apps/pod-rattle-plugin/**
-      - libs/pod-rattle-engine/**
-      - tools/pod-rattle-parity/**
-      - tools/xtask/**
-      - Cargo.toml
-      - Cargo.lock
-      - bundler.toml
-      - .cargo/**
-      - .github/release-please/pod-rattle-*.json
-      - .github/workflows/pod-rattle.yml
   workflow_dispatch:
 
 permissions: {}
