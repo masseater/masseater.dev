@@ -56,6 +56,7 @@ const readonlyParameterAllow = [
     ],
   },
   { from: "package" as const, package: "@alchemy.run/cloudflare", name: "Store" },
+  { from: "package" as const, package: "@better-auth/drizzle-adapter", name: "DB" },
   { from: "package" as const, package: "@tanstack/query-core", name: "QueryClient" },
   { from: "package" as const, package: "@codemirror/view", name: ["EditorView", "ViewUpdate"] },
   { from: "package" as const, package: "@codemirror/state", name: ["Extension", "Text"] },

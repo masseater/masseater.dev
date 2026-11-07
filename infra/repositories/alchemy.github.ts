@@ -45,10 +45,6 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
         "見た動画・聴いた曲・高評価を自分の Cloudflare に集め、AI が MCP で読めるようにする",
       homepage: "https://konomi.masseater.dev",
     },
-    "medley-database": {
-      description: "ニコメドや合作動画で使われた曲と動画を逆引きできるメドDB",
-      homepage: "https://medley-manager.masseater.dev",
-    },
     "decision-experiments": {
       description: "OpenRouter の decision モデルで文書の中身を安く速く判定できるかを試す実験",
       homepage: "https://masseater.dev/injection-bisect/",
@@ -86,6 +82,7 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
 const CREATES: readonly string[] = [];
 
 const ARCHIVES: ReadonlySet<string> = new Set([
+  "medley-database",
   "mst-ja-decision-bench",
   "oxlint-typed-rules",
   "rpp-kit",

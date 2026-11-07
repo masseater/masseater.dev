@@ -1,0 +1,31 @@
+{
+  "name": "@masseater.dev/owner-auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/index.server.ts",
+    "./sources.css": "./src/sources.css",
+    "./ui": "./src/ui.ts"
+  },
+  "dependencies": {
+    "@better-auth/drizzle-adapter": "catalog:",
+    "@better-auth/mcp": "catalog:",
+    "@better-auth/oauth-provider": "catalog:",
+    "@better-auth/passkey": "catalog:",
+    "@masseater.dev/ui": "workspace:*",
+    "@r_masseater/workers-tracing": "catalog:stack",
+    "@tanstack/react-query": "catalog:stack",
+    "better-auth": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "effect": "catalog:stack",
+    "react": "19.3.1"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0",
+    "react": "^19.0.0"
+  }
+}

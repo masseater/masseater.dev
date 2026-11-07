@@ -1,11 +1,11 @@
 import { Containers, R2, Workers, providers, state } from "@alchemy.run/cloudflare";
-import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
+import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
 import davey from "@snazzah/davey/package.json" with { type: "json" };
 import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect } from "effect";
 
-import { APP_NAME, PREFIX, TRACE_DESTINATION, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
 import { BASE_PATH, CRON, PLAYER_IMAGE, ZONE } from "./three-twelve.ts";
 
 const PlayerImage = Containers.Container(
@@ -30,7 +30,7 @@ const PlayerImage = Containers.Container(
 export default Stack(
   APP_NAME,
   {
-    providers: withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers()),
+    providers: tracedProviders(providers()),
     state: state(),
   },
   Effect.gen(function* stack() {

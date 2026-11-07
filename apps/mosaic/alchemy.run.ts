@@ -1,10 +1,10 @@
 import { Workers, providers, state } from "@alchemy.run/cloudflare";
-import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
+import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
 import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect } from "effect";
 
-import { APP_NAME, requireAppPrefix, TRACE_DESTINATION } from "./app-name.ts";
+import { APP_NAME, requireAppPrefix } from "./app-name.ts";
 import { BASE_PATH } from "./base-path.ts";
 import { ZONE } from "./cloudflare.ts";
 
@@ -32,7 +32,7 @@ const web = Effect.gen(function* web() {
 export default Stack(
   APP_NAME,
   {
-    providers: withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers()),
+    providers: tracedProviders(providers()),
     state: state(),
   },
   Effect.gen(function* stack() {

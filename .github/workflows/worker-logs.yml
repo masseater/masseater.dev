@@ -1,0 +1,49 @@
+name: worker-logs
+
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: 何分前からのログを読むか
+        default: "180"
+      needle:
+        description: 本文で絞り込む文字列
+        default: ""
+      service:
+        description: ログを読む Worker のサービス名
+        default: medley-manager
+
+permissions: {}
+
+jobs:
+  logs:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts/worker-logs.sh
+          sparse-checkout-cone-mode: false
+      - uses: masseater/typescript-template/.github/actions/credentials@9fd918dd489a841010b0a5fb6e4ed9d1f8a11ec1
+      - run: .github/scripts/worker-logs.sh
+        env:
+          MINUTES: ${{ inputs.minutes }}
+          NEEDLE: ${{ inputs.needle }}
+          SERVICE: ${{ inputs.service }}
+
+  ci-telemetry:
+    needs: [logs]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@9fd918dd489a841010b0a5fb6e4ed9d1f8a11ec1
+        with:
+          github-token: ${{ github.token }}
