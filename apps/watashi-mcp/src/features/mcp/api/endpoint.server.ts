@@ -7,13 +7,19 @@ import { MCP_URL, SITE_NAME, SITE_ORIGIN } from "#/shared/config";
 
 import { callerOf } from "./caller";
 import type { Caller } from "./caller";
+import { registerHistoryTools } from "./history-tools.server";
 import { registerMemoryTools } from "./memory-tools.server";
 import { registerTodoTools } from "./todo-tools.server";
 
 const SERVER_INFO = { name: SITE_NAME, version: "0.0.0", websiteUrl: SITE_ORIGIN };
 
 const registerTools = (caller: Caller): McpServer =>
-  pipe(new McpServer(SERVER_INFO), registerMemoryTools(caller), registerTodoTools(caller));
+  pipe(
+    new McpServer(SERVER_INFO),
+    registerMemoryTools(caller),
+    registerTodoTools(caller),
+    registerHistoryTools(caller),
+  );
 
 const serveMcp = (request: Request): Promise<Response> =>
   requireMcpAuth(

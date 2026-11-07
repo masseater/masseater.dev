@@ -1,14 +1,12 @@
 import type { CallToolResult } from "@modelcontextprotocol/server";
 import { run } from "@r_masseater/workers-tracing/effect";
 import { env } from "cloudflare:workers";
-import { Clock, Effect, Match, Schema } from "effect";
+import { Clock, Effect, Match } from "effect";
 
-import type { MemoryExists } from "#/features/mcp/model/memory-exists";
-import type { MemoryNotFound } from "#/features/mcp/model/memory-not-found";
-import type { StorageFailed } from "#/features/mcp/model/storage-failed";
-import type { TodoNotFound } from "#/features/mcp/model/todo-not-found";
+import type { ToolFailure } from "#/features/mcp/model/tool-failure";
 
 import type { Caller } from "./caller";
+import { encodeJson } from "./storage.server";
 
 type ToolName =
   | "memory_save"
@@ -16,9 +14,9 @@ type ToolName =
   | "memory_search"
   | "todo_add"
   | "todo_update"
-  | "todo_list";
-
-type ToolFailure = MemoryExists | MemoryNotFound | TodoNotFound | StorageFailed;
+  | "todo_list"
+  | "history"
+  | "restore";
 
 type ToolCall = Readonly<{ tool: ToolName; caller: Caller; project: string; input: unknown }>;
 
@@ -45,9 +43,6 @@ const OVERWRITE = { readOnlyHint: false, destructiveHint: true, openWorldHint: f
 const READ_ONLY = { readOnlyHint: true, openWorldHint: false };
 
 const one = (): number => ONE;
-
-const encodeJson = (value: unknown): Effect.Effect<string> =>
-  Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
 
 const byteLength = (text: string): number => new TextEncoder().encode(text).byteLength;
 
@@ -80,6 +75,11 @@ const toOutcome =
               status: "error" as const,
               errorTag: "TodoNotFound",
               text: `todo ${todoId} was not found. Use todo_list to find its id.`,
+            }),
+            RevisionNotFound: ({ entity, entityId, rev }) => ({
+              status: "error" as const,
+              errorTag: "RevisionNotFound",
+              text: `${entity} ${entityId} has no revision ${rev}. Use history to list its revisions.`,
             }),
             StorageFailed: ({ message }) => ({
               status: "error" as const,
@@ -152,4 +152,4 @@ const runTool =
     );
 
 export { NO_PROJECT, OVERWRITE, READ_ONLY, WRITE, one, runTool };
-export type { MeteredTool, ToolCall, ToolFailure, ToolName };
+export type { MeteredTool, ToolCall, ToolName };

@@ -51,6 +51,7 @@ main に入ると、verify が通ったあとに本番へデプロイされる�
 `apps/watashi-mcp` は、持ち主のプロジェクトの記憶と ToDo を扱う MCP サーバーである。
 Claude のコネクタに https://watashi.masseater.dev/mcp を足すか mcp.masseater.dev のポータルから使い、持ち主のパスキーでログインする。
 ツールは、記憶の `memory_save`・`memory_update`・`memory_search` と、ToDo の `todo_add`・`todo_update`・`todo_list` である。
+書き込みはすべて `revision` 表にリビジョンとして残り、`history` で一覧し、`restore` で前の中身に戻せる。戻した結果も新しいリビジョンになる。
 
 ツールの呼び出しは 1 回ずつ Analytics Engine のデータセット `masseater_dev_watashi_tool_calls` に入る。
 `blob1` からツール名・結果・エラーの種類・OAuth のクライアント・プロジェクト・User-Agent、`double1` から所要時間（ミリ秒）・入力のバイト数・出力のバイト数・結果の件数が並ぶ。

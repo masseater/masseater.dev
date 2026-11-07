@@ -1,20 +1,12 @@
 import { and, desc, eq, like } from "drizzle-orm";
 import { Array as Arr, Boolean as Bool, Effect, Option, Order, String as Str, pipe } from "effect";
 
-import { MemoryExists } from "#/features/mcp/model/memory-exists";
-import { MemoryNotFound } from "#/features/mcp/model/memory-not-found";
 import { memory } from "#/features/mcp/model/memory.table";
 import type { Memory } from "#/features/mcp/model/memory.table";
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 import { db } from "#/shared/db/index.server";
 
-import { anyTermMatches, firstRow, nowIso, query, termsOf } from "./storage.server";
-
-type MemoryKey = Readonly<{ project: string; name: string }>;
-
-type NewMemory = MemoryKey & Readonly<{ description: string; content: string }>;
-
-type MemoryChange = MemoryKey & Readonly<{ description?: string; content?: string }>;
+import { anyTermMatches, query, termsOf } from "./storage.server";
 
 type MemoryQuery = Readonly<{ query: string; project: Option.Option<string>; limit: number }>;
 
@@ -27,40 +19,6 @@ const NAME_WEIGHT = 3;
 const DESCRIPTION_WEIGHT = 2;
 
 const CONTENT_WEIGHT = 1;
-
-const saveMemory = (input: NewMemory): Effect.Effect<Memory, MemoryExists | StorageFailed> =>
-  nowIso.pipe(
-    Effect.flatMap((now) =>
-      query(() =>
-        db
-          .insert(memory)
-          .values({ ...input, createdAt: now, updatedAt: now })
-          .onConflictDoNothing()
-          .returning(),
-      ),
-    ),
-    Effect.flatMap(
-      firstRow(() => MemoryExists.make({ project: input.project, memoryName: input.name })),
-    ),
-  );
-
-const updateMemory = ({
-  project,
-  name,
-  ...change
-}: MemoryChange): Effect.Effect<Memory, MemoryNotFound | StorageFailed> =>
-  nowIso.pipe(
-    Effect.flatMap((now) =>
-      query(() =>
-        db
-          .update(memory)
-          .set({ ...change, updatedAt: now })
-          .where(and(eq(memory.project, project), eq(memory.name, name)))
-          .returning(),
-      ),
-    ),
-    Effect.flatMap(firstRow(() => MemoryNotFound.make({ project, memoryName: name }))),
-  );
 
 const weightOf = (text: string, term: string, weight: number): number =>
   Bool.match(Str.includes(Str.toLowerCase(term))(Str.toLowerCase(text)), {
@@ -120,5 +78,5 @@ const searchMemories = ({
   );
 };
 
-export { saveMemory, searchMemories, updateMemory };
-export type { MemoryChange, MemoryKey, MemoryQuery, NewMemory };
+export { searchMemories };
+export type { MemoryQuery };

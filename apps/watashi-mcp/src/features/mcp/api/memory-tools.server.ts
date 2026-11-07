@@ -3,7 +3,8 @@ import { Option, Schema, pipe } from "effect";
 
 import type { Caller } from "./caller";
 import { DEFAULT_LIMIT, SaveInput, SearchInput, UpdateInput } from "./memory-input";
-import { saveMemory, searchMemories, updateMemory } from "./memory-store.server";
+import { searchMemories } from "./memory-store.server";
+import { changeMemory, createMemory } from "./memory-writer.server";
 import { OVERWRITE, READ_ONLY, WRITE, one, runTool } from "./tool-call.server";
 
 const ALL_PROJECTS = "*";
@@ -24,7 +25,7 @@ const registerSave =
         annotations: WRITE,
       },
       (input) =>
-        saveMemory(input).pipe(
+        createMemory({ actor: caller.client })(input).pipe(
           runTool({ tool: "memory_save", caller, project: input.project, input, count: one }),
         ),
     );
@@ -42,7 +43,7 @@ const registerUpdate =
         annotations: OVERWRITE,
       },
       (input) =>
-        updateMemory(input).pipe(
+        changeMemory({ actor: caller.client, op: "update" })(input).pipe(
           runTool({ tool: "memory_update", caller, project: input.project, input, count: one }),
         ),
     );
