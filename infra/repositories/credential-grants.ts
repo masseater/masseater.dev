@@ -101,6 +101,8 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
   ...Rec.fromEntries(pipe(RELEASE_REPOSITORIES, Arr.map(releaseGrant))),
 };
 
+const [, SLOPPEDIA_GITHUB_GRANT] = releaseGrant("masseater.dev");
+
 const NPM_GRANTS: readonly string[] = ["lint-kit", "measure-everything"];
 
 const ATPROTO_GRANTS: readonly string[] = ["masseater.dev"];
@@ -161,5 +163,5 @@ const grantPolicies = ({
   atproto: ATPROTO_GRANTS,
 });
 
-export { GITHUB_APP_PERMISSIONS, grantPolicies };
+export { GITHUB_APP_PERMISSIONS, SLOPPEDIA_GITHUB_GRANT, grantPolicies };
 export type { GitHubGrant, Grants, Policy };
