@@ -115,6 +115,24 @@ jobs:
       - uses: $/.github/actions/setup
       - run: vp exec --filter portfolio alchemy deploy --config alchemy.zone.ts --stage prod --yes
 
+  mcp-portal:
+    needs: [deploy, watashi-mcp]
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    environment: mcp-portal
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: mcp-portal
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@9fd918dd489a841010b0a5fb6e4ed9d1f8a11ec1
+      - uses: $/.github/actions/setup
+      - run: vp exec --filter @masseater.dev/mcp-portal alchemy deploy --config alchemy.portal.ts --stage prod --yes
+
   traces:
     needs: deploy
     if: needs.deploy.outputs.latest == 'true'
@@ -511,6 +529,7 @@ jobs:
         autofix,
         deploy,
         zone,
+        mcp-portal,
         traces,
         trace-check,
         three-twelve,
