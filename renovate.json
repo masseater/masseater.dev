@@ -35,6 +35,10 @@
       "allowedVersions": "!/-dev\\./"
     },
     {
+      "matchDepNames": ["typescript-6"],
+      "allowedVersions": "<7"
+    },
+    {
       "matchFileNames": ["skills-lock.json"],
       "ignoreTests": false
     },
