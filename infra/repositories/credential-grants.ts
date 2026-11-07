@@ -98,8 +98,14 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
       metadata: "read",
     },
   },
+  "masseater.dev/pod-rattle-release": {
+    permissions: { contents: "write", pull_requests: "write", metadata: "read" },
+    repositories: ["masseater.dev"],
+  },
   ...Rec.fromEntries(pipe(RELEASE_REPOSITORIES, Arr.map(releaseGrant))),
 };
+
+const [, SLOPPEDIA_GITHUB_GRANT] = releaseGrant("masseater.dev");
 
 const NPM_GRANTS: readonly string[] = ["lint-kit", "measure-everything"];
 
@@ -161,5 +167,5 @@ const grantPolicies = ({
   atproto: ATPROTO_GRANTS,
 });
 
-export { GITHUB_APP_PERMISSIONS, grantPolicies };
+export { GITHUB_APP_PERMISSIONS, SLOPPEDIA_GITHUB_GRANT, grantPolicies };
 export type { GitHubGrant, Grants, Policy };
