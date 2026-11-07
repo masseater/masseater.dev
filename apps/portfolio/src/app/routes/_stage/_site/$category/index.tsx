@@ -7,7 +7,7 @@ import {
   validateCollectionSearch,
 } from "#/pages/collection";
 
-const Route = createFileRoute("/_site/$category/")({
+const Route = createFileRoute("/_stage/_site/$category/")({
   validateSearch: validateCollectionSearch,
   loader: ({ params: { category } }) => loadCollection(category),
   head: ({ loaderData }) => collectionHead(loaderData),

@@ -6,7 +6,7 @@ import { techniqueOf } from "#/entities/technique";
 
 import { TechniqueView } from "./technique-view";
 
-const route = getRouteApi("/_site/seikin-techniques/$slug");
+const route = getRouteApi("/_stage/_site/seikin-techniques/$slug");
 
 const TechniquePage = (): ReactNode => {
   const { slug, source } = route.useLoaderData();

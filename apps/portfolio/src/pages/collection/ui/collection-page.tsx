@@ -6,7 +6,7 @@ import { useStarCounts } from "#/features/star";
 
 import { CollectionView } from "./collection-view";
 
-const route = getRouteApi("/_site/$category/");
+const route = getRouteApi("/_stage/_site/$category/");
 
 const CollectionPage = (): ReactNode => {
   const { category, entries } = route.useLoaderData();

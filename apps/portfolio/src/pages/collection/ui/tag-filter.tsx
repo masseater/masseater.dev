@@ -9,7 +9,7 @@ import type { TagCount } from "#/pages/collection/model/tag-filter";
 
 import { TagFilterButton } from "./tag-filter-button";
 
-const route = getRouteApi("/_site/$category/");
+const route = getRouteApi("/_stage/_site/$category/");
 
 const LABEL = "タグで絞り込む";
 
