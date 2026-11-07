@@ -6,7 +6,7 @@ import { EntryOutline } from "./entry-outline";
 import { EntrySide } from "./entry-side";
 import { EntryTitleBar } from "./entry-title-bar";
 
-const route = getRouteApi("/_site/$category/$slug");
+const route = getRouteApi("/_stage/_site/$category/$slug");
 
 const EntryPage = (): ReactNode => {
   const { entry } = route.useLoaderData();
