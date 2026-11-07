@@ -120,9 +120,8 @@ fn render(s: &Scenario) -> Vec<f64> {
 fn reference(name: &str) -> Vec<f64> {
     let dir = std::env::var("POD_RATTLE_REFERENCE")
         .map_or_else(|_| parity_dir().join("reference"), PathBuf::from);
-    let bytes = std::fs::read(dir.join(format!("{name}.f64"))).unwrap_or_else(|e| {
-        panic!("{name}: {e}. Run `node tools/pod-rattle-parity/render.mjs tools/pod-rattle-parity/reference`")
-    });
+    let bytes = std::fs::read(dir.join(format!("{name}.f64")))
+        .unwrap_or_else(|e| panic!("{name}: {e}. Run `vp run render` in tools/pod-rattle-parity"));
     bytes
         .as_chunks::<8>()
         .0
