@@ -1,0 +1,21 @@
+{
+  "name": "injection-bisect-cli",
+  "version": "0.0.0",
+  "private": true,
+  "bin": {
+    "injection-bisect": "./src/main.ts"
+  },
+  "type": "module",
+  "imports": {
+    "#package.json": "./package.json"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@r_masseater/injection-bisect": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

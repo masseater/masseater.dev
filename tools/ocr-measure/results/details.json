@@ -1,0 +1,5079 @@
+[
+  {
+    "id": "receipt-clean-1",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 3.070195384,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10 め ) \\360"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-1",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 3.477218951,
+    "costUsd": 0.00078979,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥ 360"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-1",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.085703915,
+    "costUsd": 0.00018459,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社みどり商店"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 1 日 14:01"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\4,000"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10 め ) \\360"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102938475610"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-1",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 2.814129321,
+    "costUsd": 0.00097564,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社みどり商店"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 1 日 14:01"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥ 4, 000"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥ 360"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102938475610"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-1",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.141939356,
+    "costUsd": 0.000052279999999999994,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社みどり商店"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 1 日 14:01"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\4,000"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10 め ) \\360"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102938475610"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-1",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.238535157,
+    "costUsd": 0.0008428699999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社みどり商店"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 1 日 14:01"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥ 4, 000"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥ 360"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102938475610"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-1",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.6141928920000002,
+    "costUsd": 0.00005932,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社みどり商店"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 1 日 14:01"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\4,000"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10 め ) \\360"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102938475610"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-1",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 3.268909186,
+    "costUsd": 0.0008497499999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社みどり商店"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 1 日 14:01"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥ 4, 000"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥ 360"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102938475610"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-1",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.141204057,
+    "costUsd": 0.0006155,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社みどり商店"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026年10月1日"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥4,000"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥360"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4102938475610"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-2",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 1.701587096,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\571"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-2",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 4.338310573999999,
+    "costUsd": 0.0004297,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\571"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-2",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.193454847,
+    "costUsd": 0.00018543000000000002,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "青葉フーズ株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/02 14:02"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\6,291"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\571"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102946394793"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-2",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 3.849869413,
+    "costUsd": 0.00061555,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "青葉フーズ株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/02 14:02"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\6,291"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\571"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102946394793"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-2",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.231213814,
+    "costUsd": 0.00005178,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "青葉フーズ株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/02 14:02"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\6,291"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\571"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102946394793"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-2",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.915878082,
+    "costUsd": 0.00048148,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "青葉フーズ株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/02 14:02"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\6,291"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\571"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102946394793"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-2",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.9688572510000002,
+    "costUsd": 0.000059380000000000004,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "青葉フーズ株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/02 14:02"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\6,291"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\571"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102946394793"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-2",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 4.58716768,
+    "costUsd": 0.00048836,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "青葉フーズ株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/02 14:02"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\6,291"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\571"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102946394793"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-2",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.644954404,
+    "costUsd": 0.0006171,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "青葉フーズ株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/02"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥6,291"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥571"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4102946394793"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-3",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 1.9635861820000002,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和 8 年 10 月 3 日 14:03"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\972"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102954313976"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-3",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 5.183565046,
+    "costUsd": 0.0011491,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\972"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-3",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.024897069,
+    "costUsd": 0.00019803,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社さくら文具"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和 8 年 10 月 3 日 14:03"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計半 10,682"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\972"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102954313976"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-3",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 2.7025015970000004,
+    "costUsd": 0.00134713,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社さくら文具"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和 8 年 10 月 3 日 14:03"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥10,682"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\972"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102954313976"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-3",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.091065696,
+    "costUsd": 0.00005638,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社さくら文具"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和 8 年 10 月 3 日 14:03"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計半 10,682"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\972"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102954313976"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-3",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 2.7113643850000004,
+    "costUsd": 0.00120528,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社さくら文具"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和 8 年 10 月 3 日 14:03"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥10,682"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\972"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102954313976"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-3",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.823666862,
+    "costUsd": 0.0000644,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社さくら文具"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和 8 年 10 月 3 日 14:03"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計半 10,682"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\972"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102954313976"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-3",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 3.5131655040000003,
+    "costUsd": 0.0012132199999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社さくら文具"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和 8 年 10 月 3 日 14:03"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥10,682"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\972"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102954313976"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-3",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.438931576,
+    "costUsd": 0.0006183,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社さくら文具"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和8年10月3日"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥10,682"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥972"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4102954313976"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-4",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 2.06610441,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-04 14:04"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\18, 103"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10 め ) \\1,643"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102962233159"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-4",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 7.017326500999999,
+    "costUsd": 0.0049335,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-04 14:04"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,643"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-4",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.2206672689999998,
+    "costUsd": 0.00021693,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "北斗システム株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-04 14:04"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\18, 103"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10 め ) \\1,643"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102962233159"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-4",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 4.1061955,
+    "costUsd": 0.005142450000000001,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "北斗システム株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-04 14:04"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥18,103"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,643"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102962233159"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-4",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.263825944,
+    "costUsd": 0.00006448,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "北斗システム株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-04 14:04"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\18, 103"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10 め ) \\1,643"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102962233159"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-4",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 6.488698483,
+    "costUsd": 0.00499398,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "北斗システム株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-04 14:04"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥18,103"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,643"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102962233159"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-4",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 2.488028827,
+    "costUsd": 0.00007326,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "北斗システム株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-04 14:04"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\18, 103"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10 め ) \\1,643"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102962233159"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-4",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 4.631441485,
+    "costUsd": 0.00500192,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "北斗システム株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-04 14:04"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥18,103"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,643"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102962233159"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-4",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.593995864,
+    "costUsd": 0.000623,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "北斗システム株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-04"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥18,103"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥1,643"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4102962233159"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-5",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 1.771696878,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "missing"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-5",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 3.443802571,
+    "costUsd": 0.0008229,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\774"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-5",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.170248754,
+    "costUsd": 0.00018081,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "ひまわり印刷合同会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 5 日 14:05"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\8,494"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\774"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102970152342"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-5",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 3.035057716,
+    "costUsd": 0.00100413,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "ひまわり印刷合同会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 5 日 14:05"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\8,494"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\774"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102970152342"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-5",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.045516654,
+    "costUsd": 0.000050379999999999995,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "ひまわり印刷合同会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 5 日 14:05"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\8,494"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\774"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102970152342"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-5",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.105167741,
+    "costUsd": 0.00087328,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "ひまわり印刷合同会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 5 日 14:05"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\8,494"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\774"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102970152342"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-5",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.823676292,
+    "costUsd": 0.00005728000000000001,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "ひまわり印刷合同会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 5 日 14:05"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\8,494"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\774"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102970152342"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-5",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 3.453697506,
+    "costUsd": 0.00087976,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "ひまわり印刷合同会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 5 日 14:05"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\8,494"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) \\774"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102970152342"
+      }
+    }
+  },
+  {
+    "id": "receipt-clean-5",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.405515132,
+    "costUsd": 0.0006205,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "ひまわり印刷合同会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026年10月5日"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥8,494"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥774"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4102970152342"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-1",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 1.9661654730000002,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/06 14.06"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\11.525"
+      },
+      "tax": {
+        "status": "found",
+        "text": "お天り yi4000"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102978071525"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-1",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 4.063189822,
+    "costUsd": 0.0044772,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,045"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102978071525"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-1",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 0.856889161,
+    "costUsd": 0.00018417,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社光が丘電機"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/06 14.06"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\11.525"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消紅税等 108) 1045"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102978071525"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-1",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 3.526220937,
+    "costUsd": 0.00466599,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社光が丘電機"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/06 14:06"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥11,525"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,045"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102978071525"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-1",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 0.923925602,
+    "costUsd": 0.00005258,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社光が丘電機"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/06 14.06"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\11.525"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消紅税等 108) 1045"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102978071525"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-1",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.565455728,
+    "costUsd": 0.00453118,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社光が丘電機"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/06 14:06"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥11,525"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,045"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102978071525"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-1",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.269429109,
+    "costUsd": 0.00006028,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社光が丘電機"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/06 14.06"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\11.525"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消紅税等 108) 1045"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102978071525"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-1",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 3.972172268,
+    "costUsd": 0.00453878,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社光が丘電機"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/06 14:06"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥11,525"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,045"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102978071525"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-1",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.699342084,
+    "costUsd": 0.0006258,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社光が丘電機"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/06"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥11,525"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥1,045"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4102978071525"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-2",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 1.672554215,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "信昌 1"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\13,676"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 1 \\1L246"
+      },
+      "registration": {
+        "status": "found",
+        "text": "若葉ペーカリー"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-2",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 4.2231182800000004,
+    "costUsd": 0.0048311,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\13,676"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,246"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102985990708"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-2",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 0.949495615,
+    "costUsd": 0.00016968000000000002,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "若葉ペーカリー"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\13,676"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 1 \\1L246"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T418298599708"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-2",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 3.758846509,
+    "costUsd": 0.0050282899999999995,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "若葉ペーカリー"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和08年10月7日 14:07"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\13,676"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,246"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102985990708"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-2",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.008845259,
+    "costUsd": 0.00004628,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "若葉ペーカリー"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\13,676"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 1 \\1L246"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T418298599708"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-2",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.852222149,
+    "costUsd": 0.0048877799999999996,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "若葉ペーカリー"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和08年10月7日 14:07"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\13,676"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,246"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102985990708"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-2",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.8589857060000001,
+    "costUsd": 0.0000546,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "若葉ペーカリー"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\13,676"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 1 \\1L246"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T418298599708"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-2",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 4.907009836,
+    "costUsd": 0.004894979999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "若葉ペーカリー"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和08年10月7日 14:07"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\13,676"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,246"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102985990708"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-2",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.513072709,
+    "costUsd": 0.0006208,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "若葉ベーカリー"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和8年10月7日"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥13,676"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥1,246"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4102985990708"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-3",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 2.178713735,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\15.867"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消旨税等 10M) ya447"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-3",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 3.8836224,
+    "costUsd": 0.00131063,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-08 14:08"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\15.867"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,447"
+      },
+      "registration": {
+        "status": "found",
+        "text": "領収書"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-3",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.023140143,
+    "costUsd": 0.00019550999999999998,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "東雲デザイン事務所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "202610.0B 14.08"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\15.867"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消旨税等 10M) ya447"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 f4102993909891"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-3",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 2.96360174,
+    "costUsd": 0.0015199999999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "東雲デザイン事務所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-08 14:08"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\15.867"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,447"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102993909891"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-3",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.181615267,
+    "costUsd": 0.00005478,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "東雲デザイン事務所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "202610.0B 14.08"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\15.867"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消旨税等 10M) ya447"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 f4102993909891"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-3",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.0537622790000003,
+    "costUsd": 0.0013712099999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "東雲デザイン事務所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-08 14:08"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\15.867"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,447"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102993909891"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-3",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.4228997159999999,
+    "costUsd": 0.00006368,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "東雲デザイン事務所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "202610.0B 14.08"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\15.867"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消旨税等 10M) ya447"
+      },
+      "registration": {
+        "status": "found",
+        "text": "TELoa.3407.0708"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-3",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 3.688785286,
+    "costUsd": 0.0013798299999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "東雲デザイン事務所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-08 14:08"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\15.867"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥1,447"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4102993909891"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-3",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.614581072,
+    "costUsd": 0.0006185,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "東雲デザイン事務所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-08"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥15,867"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥1,447"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4102993909891"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-4",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 1.405394025,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 9 日 14.09"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\7.378"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消旨税等 10w) \\67a"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-4",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 3.6622720180000004,
+    "costUsd": 0.003784,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥678"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-4",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 0.8499853740000001,
+    "costUsd": 0.00017787,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社星野運輸"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 9 日 14.09"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\7.378"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消旨税等 10w) \\67a"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 4103001a29074"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-4",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 3.2274458160000004,
+    "costUsd": 0.00396439,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社星野運輸"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 9 日 14.09"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥7,378"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥678"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103001829074"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-4",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 0.9347027400000001,
+    "costUsd": 0.00004988,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社星野運輸"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 9 日 14.09"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\7.378"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消旨税等 10w) \\67a"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 4103001a29074"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-4",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.337043033,
+    "costUsd": 0.0038342800000000002,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社星野運輸"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 9 日 14.09"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥7,378"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥678"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103001829074"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-4",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.3347441450000002,
+    "costUsd": 0.0000562,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社星野運輸"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 9 日 14.09"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\7.378"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消旨税等 10w) \\67a"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 4103001a29074"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-4",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 4.1466440680000005,
+    "costUsd": 0.00384008,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社星野運輸"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026 年 10 月 9 日 14.09"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥7,378"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥678"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103001829074"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-4",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.660645719,
+    "costUsd": 0.0006155,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社星野運輸"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026年10月9日"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥7,378"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥678"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103001829074"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-5",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 2.956356489,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2025710719 14:10"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\5,549"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消間税等 190 \\509"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録衝号 14103869748257"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-5",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 13.678962184,
+    "costUsd": 0.0045294,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/10 14:10"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\5,549"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥509"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103009748257"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-5",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 0.9165594930000001,
+    "costUsd": 0.00017955,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "川口工務店株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2025710719 14:10"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\5,549"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消間税等 190 \\509"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録衝号 14103869748257"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-5",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 12.804574797999999,
+    "costUsd": 0.00471357,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "川口工務店株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/10 14:10"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥509"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103009748257"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-5",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.066599439,
+    "costUsd": 0.00004988,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "川口工務店株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2025710719 14:10"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\5,549"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消間税等 190 \\509"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録衝号 14103869748257"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-5",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 13.060960891999999,
+    "costUsd": 0.00458088,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "川口工務店株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/10 14:10"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥509"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103009748257"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-5",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.323322894,
+    "costUsd": 0.00005636,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "川口工務店株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2025710719 14:10"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\5,549"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消間税等 190 \\509"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録衝号 14103869748257"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-5",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 13.287803009,
+    "costUsd": 0.0045878,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "川口工務店株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/10 14:10"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "(内消費税等 10%) ¥509"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103009748257"
+      }
+    }
+  },
+  {
+    "id": "receipt-degraded-5",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.615994828,
+    "costUsd": 0.0006158,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "川口工務店株式会社"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/10"
+      },
+      "total": {
+        "status": "found",
+        "text": "5,549"
+      },
+      "tax": {
+        "status": "found",
+        "text": "509"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103009748257"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-1",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 2.392618089,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\24,600"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-1",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 4.288934508,
+    "costUsd": 0.0014624,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\24,600"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-1",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.641804747,
+    "costUsd": 0.00022679999999999998,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "やまびこ食党"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ことのは出版御中発行日信和 8 年 10 月 11 日"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\24,600"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103017667440"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-1",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 3.2441047869999995,
+    "costUsd": 0.0016883599999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "やまびこ食堂"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ことのは出版御中発行日信和 8 年 10 月 11 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\270,650"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\24,600"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103017667440"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-1",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.902500538,
+    "costUsd": 0.00006837999999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "やまびこ食党"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ことのは出版御中発行日信和 8 年 10 月 11 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\270,650"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\24,600"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103017667440"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-1",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.259721746,
+    "costUsd": 0.00153068,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "やまびこ食堂"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ことのは出版御中発行日信和 8 年 10 月 11 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\270,650"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\24,600"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103017667440"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-1",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.950642872,
+    "costUsd": 0.00007764000000000001,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "やまびこ食党"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ことのは出版御中発行日信和 8 年 10 月 11 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\270,650"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\24,600"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103017667440"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-1",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 3.5632262879999996,
+    "costUsd": 0.00153916,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "やまびこ食堂"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ことのは出版御中発行日信和 8 年 10 月 11 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\270,650"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\24,600"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103017667440"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-1",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.405169597,
+    "costUsd": 0.0006297,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "やまびこ食堂"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和8年10月11日"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥270,650"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥24,600"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103017667440"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-2",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 1.9111439419999998,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "missing"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-2",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 3.6186927740000003,
+    "costUsd": 0.0013903,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "missing"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-2",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.230073762,
+    "costUsd": 0.00022805999999999998,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "合同会社つばめ製作所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026-10-12"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\45,801"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103025586623"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-2",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 3.0820079280000003,
+    "costUsd": 0.0016192,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "合同会社つばめ製作所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026-10-12"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\45,801"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103025586623"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-2",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.318145659,
+    "costUsd": 0.00006908,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "合同会社つばめ製作所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026-10-12"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\503,861"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\45,801"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103025586623"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-2",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 2.931083205,
+    "costUsd": 0.00145978,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "合同会社つばめ製作所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026-10-12"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥503,861"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\45,801"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103025586623"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-2",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 2.405813798,
+    "costUsd": 0.00007814,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "合同会社つばめ製作所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026-10-12"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\503,861"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\45,801"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103025586623"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-2",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 3.244625821,
+    "costUsd": 0.00146904,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "合同会社つばめ製作所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026-10-12"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥503,861"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\45,801"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103025586623"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-2",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.455253233,
+    "costUsd": 0.0006331,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "合同会社つばめ製作所"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-12"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥503,861"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥45,801"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103025586623"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-3",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 2.2630739159999997,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "missing"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-3",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 5.534622484,
+    "costUsd": 0.0024285,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "小計 ¥210,160"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-3",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.4221690299999998,
+    "costUsd": 0.00020958,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社いろは書房"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026 年 19 月 13 日"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (1 \\21,012"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103033505806"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-3",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 5.095191324,
+    "costUsd": 0.00263724,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社いろは書房"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026 年 19 月 13 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥231,172"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥21,012"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103033505806"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-3",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.4567937069999999,
+    "costUsd": 0.00006198,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社いろは書房"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026 年 19 月 13 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計半 231, 172"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (1 \\21,012"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103033505806"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-3",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 5.113231906999999,
+    "costUsd": 0.00249008,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社いろは書房"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026 年 19 月 13 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥231,172"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥21,012"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103033505806"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-3",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.903726191,
+    "costUsd": 0.00006998,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社いろは書房"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026 年 19 月 13 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計半 231, 172"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (1 \\21,012"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103033505806"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-3",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 6.925971596,
+    "costUsd": 0.00249856,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社いろは書房"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026 年 19 月 13 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥231,172"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥21,012"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103033505806"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-3",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.834761507,
+    "costUsd": 0.0006291,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社いろは書房"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026年10月13日"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥231,172"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥21,012"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103033505806"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-4",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 2.170199331,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\29,973"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-4",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 3.581902914,
+    "costUsd": 0.0011216,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026/10/14"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\29,973"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-4",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.523940331,
+    "costUsd": 0.0002058,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026/10/14"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\329,673"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\29,973"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103041424989"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-4",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 3.056271867,
+    "costUsd": 0.00132866,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "港南ドラッグ"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026/10/14"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\329,673"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\29,973"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103041424989"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-4",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.614457566,
+    "costUsd": 0.000060979999999999996,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "港南ドラッグ"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026/10/14"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\329,673"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\29,973"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103041424989"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-4",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.032071868,
+    "costUsd": 0.0011832799999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "港南ドラッグ"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026/10/14"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\329,673"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\29,973"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103041424989"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-4",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 2.172885186,
+    "costUsd": 0.00006892,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "港南ドラッグ"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026/10/14"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\329,673"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\29,973"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103041424989"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-4",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 4.411998762,
+    "costUsd": 0.00119174,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "港南ドラッグ"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026/10/14"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\329,673"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\29,973"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103041424989"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-4",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.806685842,
+    "costUsd": 0.0006292,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "港南ドラッグ"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/14"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥329,673"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥29,973"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103041424989"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-5",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 1.868281797,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\47,244"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-5",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 4.264486196,
+    "costUsd": 0.0024194,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥47,244"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-5",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.261994299,
+    "costUsd": 0.00022679999999999998,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社白樺ホーム"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日令和 8 年 10 月 15 日"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\47,244"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103049344172"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-5",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 3.500457704,
+    "costUsd": 0.00264494,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社白樺ホーム"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日令和 8 年 10 月 15 日"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥47,244"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103049344172"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-5",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.371565759,
+    "costUsd": 0.00006828,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社白樺ホーム"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日令和 8 年 10 月 15 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計半 519,734"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\47,244"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103049344172"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-5",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.5963047369999996,
+    "costUsd": 0.00248708,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社白樺ホーム"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日令和 8 年 10 月 15 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥519,734"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥47,244"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103049344172"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-5",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.8151533610000001,
+    "costUsd": 0.00007706,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社白樺ホーム"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日令和 8 年 10 月 15 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計半 519,734"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) \\47,244"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103049344172"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-5",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 3.86771019,
+    "costUsd": 0.00249588,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社白樺ホーム"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日令和 8 年 10 月 15 日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥519,734"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥47,244"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103049344172"
+      }
+    }
+  },
+  {
+    "id": "invoice-clean-5",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.773427796,
+    "costUsd": 0.0006189,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社白樺ホーム"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和8年10月15日"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥519,734"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥47,244"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103049344172"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-1",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 2.414841243,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2626-10-16"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\628,495"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消壮税 (108) Y57.125"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 14163057263355"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-1",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 5.564928353999999,
+    "costUsd": 0.0052039,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026-10-16"
+      },
+      "total": {
+        "status": "found",
+        "text": "ご請求金額 \\628.405 (税込"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥ 57,125"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-1",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 0.984866125,
+    "costUsd": 0.00021189,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "こもれび弄寺"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2626-10-16"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\628,495"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消壮税 (108) Y57.125"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 14163057263355"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-1",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 4.838728787999999,
+    "costUsd": 0.00540949,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "こもれび珈琲"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026-10-16"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥ 628,405"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥ 57,125"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 14163057263355"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-1",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.0319054300000001,
+    "costUsd": 0.00006477999999999999,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "こもれび弄寺"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2626-10-16"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\628,495"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消壮税 (108) Y57.125"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 14163057263355"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-1",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 4.998620924999999,
+    "costUsd": 0.00526528,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "こもれび珈琲"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026-10-16"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥ 628,405"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥ 57,125"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 14163057263355"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-1",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.996268379,
+    "costUsd": 0.00007234,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "こもれび弄寺"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2626-10-16"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\628,495"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消壮税 (108) Y57.125"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 14163057263355"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-1",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 5.026613457,
+    "costUsd": 0.00527354,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "こもれび珈琲"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026-10-16"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥ 628,405"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥ 57,125"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 14163057263355"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-1",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.573141963,
+    "costUsd": 0.0006306,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "こもれび珈琲"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-16"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥628,405"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥57,125"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103057263355"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-2",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 2.034690704,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\397.236"
+      },
+      "tax": {
+        "status": "missing"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-2",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 5.754136509,
+    "costUsd": 0.004896,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "missing"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-2",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.234370587,
+    "costUsd": 0.00020139000000000002,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社松風商事"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026 年 10 月 7 日"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "missing"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103065182538"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-2",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 4.154526537000001,
+    "costUsd": 0.005107260000000001,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社松風商事"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026年10月17日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥397,236"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥36,116"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103065182538"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-2",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.337579699,
+    "costUsd": 0.00005908,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社松風商事"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026 年 10 月 7 日"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "missing"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103065182538"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-2",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 4.269757418,
+    "costUsd": 0.00495908,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社松風商事"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026年10月17日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥397,236"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥36,116"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103065182538"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-2",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.785662366,
+    "costUsd": 0.00006692,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社松風商事"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026 年 10 月 7 日"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "missing"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103065182538"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-2",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 4.562520519,
+    "costUsd": 0.00496674,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社松風商事"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026年10月17日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥397,236"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥36,116"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103065182538"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-2",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.624475415,
+    "costUsd": 0.0006306,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社松風商事"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026年10月17日"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥397,236"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥36,116"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103065182538"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-3",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 1.7578544759999999,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "手際でののと誠信の sd 導半"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\454.217"
+      },
+      "tax": {
+        "status": "found",
+        "text": "清嘩税 (10%) Y\\41297"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-3",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 4.230267365,
+    "costUsd": 0.0040424,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026/10/18"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\454.217"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税(10%)"
+      },
+      "registration": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026/10/18"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-3",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.162640037,
+    "costUsd": 0.00020601000000000001,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026/10/18"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026/10/18"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\454.217"
+      },
+      "tax": {
+        "status": "found",
+        "text": "清嘩税 (10%) Y\\41297"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103073101721"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-3",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 3.817259257,
+    "costUsd": 0.00422447,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "あさひ自動車整備"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026/10/18"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税(10%)"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103073101721"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-3",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.300972673,
+    "costUsd": 0.00006078,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026/10/18"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\454.217"
+      },
+      "tax": {
+        "status": "found",
+        "text": "清嘩税 (10%) Y\\41297"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103073101721"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-3",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 3.8742313509999997,
+    "costUsd": 0.00409278,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "あさひ自動車整備"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026/10/18"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\454.217"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税(10%)"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103073101721"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-3",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.897062707,
+    "costUsd": 0.00006780000000000001,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026/10/18"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\454.217"
+      },
+      "tax": {
+        "status": "found",
+        "text": "清嘩税 (10%) Y\\41297"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103073101721"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-3",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 4.693086717,
+    "costUsd": 0.00409994,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "あさひ自動車整備"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "株式会社ミナト企画御中発行日 2026/10/18"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\454.217"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税(10%)"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103073101721"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-3",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.471220343,
+    "costUsd": 0.0006267,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "あさひ自動車整備"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026/10/18"
+      },
+      "total": {
+        "status": "found",
+        "text": "454,217"
+      },
+      "tax": {
+        "status": "found",
+        "text": "41,297"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103073101721"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-4",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 1.940458686,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社かもめ水産"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日信和 8 年 10 月 9"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\353, 688"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (108) \\32,158"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103681020904"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-4",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 4.679879311,
+    "costUsd": 0.0044886,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社かもめ水産"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 令和8年10月19日"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計                                                            ¥ 32,158"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%)                                                   ¥ 321,530"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103081020904"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-4",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.23082531,
+    "costUsd": 0.00020916,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社かもめ水産"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日信和 8 年 10 月 9"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (108) \\32,158"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103681020904"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-4",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 4.129591784,
+    "costUsd": 0.00469818,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社かもめ水産"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 令和8年10月19日"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%)                                                   ¥ 321,530"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103081020904"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-4",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.323824641,
+    "costUsd": 0.00006178000000000001,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社かもめ水産"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日信和 8 年 10 月 9"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\353, 688"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (108) \\32,158"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103681020904"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-4",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 4.198791626,
+    "costUsd": 0.00455148,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社かもめ水産"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 令和8年10月19日"
+      },
+      "total": {
+        "status": "found",
+        "text": "ご請求金額 \\353.688 (税込 )"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%)                                                   ¥ 321,530"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103081020904"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-4",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.7149633739999999,
+    "costUsd": 0.00006946,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社かもめ水産"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日信和 8 年 10 月 9"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\353, 688"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (108) \\32,158"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103681020904"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-4",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 4.657559016,
+    "costUsd": 0.0045590399999999994,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社かもめ水産"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 令和8年10月19日"
+      },
+      "total": {
+        "status": "found",
+        "text": "ご請求金額 \\353.688 (税込 )"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%)                                                   ¥ 321,530"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103081020904"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-4",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.523049752,
+    "costUsd": 0.0006189,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "有限会社かもめ水産"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "令和8年10月19日"
+      },
+      "total": {
+        "status": "found",
+        "text": "353,688"
+      },
+      "tax": {
+        "status": "found",
+        "text": "32,158"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103081020904"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-5",
+    "method": "ocr-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 3.240433968,
+    "costUsd": 0,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "found",
+        "text": "こ清求金額 Y407.009 (税込 )"
+      },
+      "tax": {
+        "status": "found",
+        "text": "清黄税 (10%) ya7.009"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-5",
+    "method": "ocr-reread-decision",
+    "model": "respan/span-01-lite",
+    "seconds": 4.805426149,
+    "costUsd": 0.0056348,
+    "values": {
+      "issuer": {
+        "status": "missing"
+      },
+      "issueDate": {
+        "status": "missing"
+      },
+      "total": {
+        "status": "missing"
+      },
+      "tax": {
+        "status": "missing"
+      },
+      "registration": {
+        "status": "missing"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-5",
+    "method": "ocr-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 1.2087045660000002,
+    "costUsd": 0.00021756,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社すずらん薬品"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026.10.20"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\407.009"
+      },
+      "tax": {
+        "status": "found",
+        "text": "清黄税 (10%) ya7.009"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103088940087"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-5",
+    "method": "ocr-reread-decision",
+    "model": "typesafe/jev-1.13",
+    "seconds": 4.023744238,
+    "costUsd": 0.0058595,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社すずらん薬品"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026.10.20"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥407,009"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥407,009"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103088940087"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-5",
+    "method": "ocr-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 1.2932110270000001,
+    "costUsd": 0.00006538,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社すずらん薬品"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026.10.20"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\407.009"
+      },
+      "tax": {
+        "status": "found",
+        "text": "清黄税 (10%) ya7.009"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103088940087"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-5",
+    "method": "ocr-reread-decision",
+    "model": "perplexity/pplx-decider-v1.1-27b",
+    "seconds": 4.231977154,
+    "costUsd": 0.00570228,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社すずらん薬品"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026.10.20"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥407,009"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥407,009"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103088940087"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-5",
+    "method": "ocr-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 1.917252514,
+    "costUsd": 0.00007494,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社すずらん薬品"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026.10.20"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 \\407.009"
+      },
+      "tax": {
+        "status": "found",
+        "text": "清黄税 (10%) ya7.009"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103088940087"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-5",
+    "method": "ocr-reread-decision",
+    "model": "inception/mercury-decide",
+    "seconds": 5.138902376,
+    "costUsd": 0.005711,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社すずらん薬品"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "発行日 2026.10.20"
+      },
+      "total": {
+        "status": "found",
+        "text": "合計 ¥407,009"
+      },
+      "tax": {
+        "status": "found",
+        "text": "消費税 (10%) ¥407,009"
+      },
+      "registration": {
+        "status": "found",
+        "text": "登録番号 T4103088940087"
+      }
+    }
+  },
+  {
+    "id": "invoice-degraded-5",
+    "method": "image-generation",
+    "model": "google/gemini-3.5-flash-lite",
+    "seconds": 1.638947346,
+    "costUsd": 0.000626,
+    "values": {
+      "issuer": {
+        "status": "found",
+        "text": "株式会社すずらん薬品"
+      },
+      "issueDate": {
+        "status": "found",
+        "text": "2026-10-20"
+      },
+      "total": {
+        "status": "found",
+        "text": "¥407,009"
+      },
+      "tax": {
+        "status": "found",
+        "text": "¥37,009"
+      },
+      "registration": {
+        "status": "found",
+        "text": "T4103088940087"
+      }
+    }
+  }
+]

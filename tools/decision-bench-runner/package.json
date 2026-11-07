@@ -1,0 +1,21 @@
+{
+  "name": "decision-bench-runner",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@openrouter/sdk": "catalog:",
+    "bench-summary": "workspace:*",
+    "effect": "catalog:stack",
+    "forecast-calibration-kit": "catalog:",
+    "ml-confusion-matrix": "catalog:",
+    "seedrandom": "catalog:",
+    "simple-statistics": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/seedrandom": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

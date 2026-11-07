@@ -1,0 +1,32 @@
+{
+  "name": "@masseater.dev/start-site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#package.json": "./package.json"
+  },
+  "exports": {
+    "./vite": "./src/vite.ts",
+    "./alchemy": "./src/app-prefix.ts",
+    "./site": "./src/static-site.ts"
+  },
+  "dependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@effect/platform-node": "catalog:",
+    "@masseater.dev/static-headers": "workspace:*",
+    "@masseater.dev/ui": "workspace:*",
+    "@masseater.dev/web-ui": "workspace:*",
+    "@tailwindcss/vite": "4.3.4",
+    "@tanstack/devtools-vite": "0.8.6",
+    "@tanstack/react-start": "catalog:stack",
+    "@vitejs/plugin-react": "catalog:",
+    "@vitejs/plugin-rsc": "catalog:",
+    "alchemy": "catalog:stack",
+    "effect": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  }
+}

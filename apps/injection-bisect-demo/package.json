@@ -1,0 +1,41 @@
+{
+  "name": "injection-bisect-demo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/web-ui": "workspace:*",
+    "@r_masseater/injection-bisect": "workspace:*",
+    "@tanstack/react-devtools": "0.10.14",
+    "@tanstack/react-query": "catalog:stack",
+    "@tanstack/react-query-devtools": "catalog:",
+    "@tanstack/react-router": "1.170.46",
+    "@tanstack/react-router-devtools": "1.167.2",
+    "@tanstack/react-start": "catalog:stack",
+    "effect": "catalog:stack",
+    "lucide-react": "catalog:",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "scheduler": "0.28.0",
+    "tailwindcss": "catalog:stack"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/platform-node": "catalog:",
+    "@effect/tsgo": "catalog:stack",
+    "@masseater.dev/start-site": "workspace:*",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "catalog:",
+    "@vitejs/plugin-rsc": "catalog:",
+    "alchemy": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
