@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Record, Schema, String as Str } from "effect";
+import { Array as Arr, Effect, Option, Record, Schema, String as Str, pipe } from "effect";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
 import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
@@ -19,6 +19,7 @@ const Claims = Schema.Struct({
   ref: Schema.String,
   run_id: Schema.String,
   run_attempt: Schema.String,
+  environment: Schema.optionalKey(Schema.String),
 });
 
 const taggedError = Schema.TaggedError;
@@ -61,4 +62,13 @@ const verify = (
 const repositoryName = (claims: typeof Claims.Type): string =>
   Str.replace(`${OWNER}/`, "")(claims.repository);
 
-export { Claims, OWNER, OWNER_ID, Rejected, repositoryName, verify };
+const grantKeys = (claims: typeof Claims.Type): readonly string[] => {
+  const repository = repositoryName(claims);
+  return pipe(
+    Option.fromNullishOr(claims.environment),
+    Option.map((environment) => [`${repository}/${environment}`, repository]),
+    Option.getOrElse(() => [repository]),
+  );
+};
+
+export { Claims, OWNER, OWNER_ID, Rejected, grantKeys, repositoryName, verify };
