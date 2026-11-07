@@ -8,6 +8,12 @@ packages:
 catalogMode: prefer
 
 catalog:
+  "@better-auth/drizzle-adapter": 1.7.18
+  "@better-auth/mcp": 1.7.18
+  "@better-auth/oauth-provider": 1.7.18
+  "@better-auth/passkey": 1.7.18
+  "@modelcontextprotocol/server": 2.4.0
+  auth: 1.7.18
   "@r_masseater/oxlint-typed-rules": 0.1.0
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
@@ -100,6 +106,7 @@ catalogs:
     "@elysiajs/eden": 1.4.9
     "@tanstack/react-query": 5.105.3
     "@tanstack/react-start": 1.169.4
+    better-auth: 1.7.18
     "@alchemy.run/cloudflare": 2.0.0-beta.85
     "@alchemy.run/github": 2.0.0-beta.85
     alchemy: 2.0.0-beta.85

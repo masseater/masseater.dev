@@ -1,6 +1,5 @@
+import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
-
-import { Button } from "#/shared/ui/button";
 
 import { ShareIcon } from "./share-icon";
 
