@@ -19,6 +19,7 @@ const Claims = Schema.Struct({
   ref: Schema.String,
   run_id: Schema.String,
   run_attempt: Schema.String,
+  workflow_ref: Schema.String,
   environment: Schema.optionalKey(Schema.String),
 });
 
@@ -71,4 +72,60 @@ const grantKeys = (claims: typeof Claims.Type): readonly string[] => {
   );
 };
 
-export { Claims, OWNER, OWNER_ID, Rejected, grantKeys, repositoryName, verify };
+const WORKFLOWS_DIRECTORY = "/.github/workflows/";
+
+const workflowFile = (claims: typeof Claims.Type): Option.Option<string> =>
+  pipe(
+    Str.split("@")(claims.workflow_ref),
+    Arr.head,
+    Option.filter(Str.includes(WORKFLOWS_DIRECTORY)),
+    Option.map(Str.split("/")),
+    Option.flatMap(Arr.last),
+  );
+
+const workflowGrant =
+  (workflows: Readonly<Record<string, Readonly<Record<string, string>>>>) =>
+  (
+    claims: typeof Claims.Type,
+  ): Option.Option<
+    Readonly<{
+      permissions: Readonly<Record<string, string>>;
+      repositories: string[];
+    }>
+  > =>
+    pipe(
+      workflowFile(claims),
+      Option.flatMap((file) => Option.fromNullishOr(workflows[file])),
+      Option.map((permissions) => ({ permissions, repositories: [repositoryName(claims)] })),
+    );
+
+const isGranted =
+  (
+    grants: Readonly<{
+      repositories: Readonly<Record<string, string>>;
+      github: Readonly<Record<string, unknown>>;
+      workflows: Readonly<Record<string, Readonly<Record<string, string>>>>;
+      npm: readonly string[];
+    }>,
+  ) =>
+  (claims: typeof Claims.Type): boolean =>
+    Arr.some(
+      grantKeys(claims),
+      (key) =>
+        Record.has(grants.repositories, key) ||
+        Record.has(grants.github, key) ||
+        Arr.contains(grants.npm, key),
+    ) || Option.isSome(workflowGrant(grants.workflows)(claims));
+
+export {
+  Claims,
+  OWNER,
+  OWNER_ID,
+  Rejected,
+  grantKeys,
+  isGranted,
+  repositoryName,
+  verify,
+  workflowFile,
+  workflowGrant,
+};

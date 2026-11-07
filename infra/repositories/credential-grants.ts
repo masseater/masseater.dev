@@ -105,6 +105,18 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
 
 const [, SLOPPEDIA_GITHUB_GRANT] = releaseGrant("masseater.dev");
 
+const BOT_PERMISSIONS = {
+  contents: "write",
+  pull_requests: "write",
+  metadata: "read",
+} as const satisfies Readonly<Record<string, "read" | "write">>;
+
+const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "autofix.yml": BOT_PERMISSIONS,
+  "skills-lock.yml": BOT_PERMISSIONS,
+  "update-branches.yml": BOT_PERMISSIONS,
+};
+
 const NPM_GRANTS: readonly string[] = ["lint-kit", "measure-everything"];
 
 const ATPROTO_GRANTS: readonly string[] = ["masseater.dev"];
@@ -165,5 +177,5 @@ const grantPolicies = ({
   atproto: ATPROTO_GRANTS,
 });
 
-export { GITHUB_APP_PERMISSIONS, SLOPPEDIA_GITHUB_GRANT, grantPolicies };
+export { GITHUB_APP_PERMISSIONS, SLOPPEDIA_GITHUB_GRANT, WORKFLOW_GITHUB_GRANTS, grantPolicies };
 export type { GitHubGrant, Grants, Policy };

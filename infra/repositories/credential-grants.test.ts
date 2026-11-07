@@ -1,7 +1,11 @@
 import { Array as Arr, Option, Record as Rec, Schema, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { GITHUB_APP_PERMISSIONS, grantPolicies } from "./credential-grants.ts";
+import {
+  GITHUB_APP_PERMISSIONS,
+  WORKFLOW_GITHUB_GRANTS,
+  grantPolicies,
+} from "./credential-grants.ts";
 
 const CLOUDFLARE_ID = "0123456789abcdef0123456789abcdef";
 const TEXT_BINDING_LIMIT = 5120;
@@ -45,8 +49,15 @@ const APP_PERMISSIONS: Readonly<Record<string, string>> = GITHUB_APP_PERMISSIONS
 
 test("every GitHub grant stays within the permissions the GitHub App asks for", () => {
   const { github } = grantPolicies({ accountId: "account", zoneId: "zone" });
+  const workflows = WORKFLOW_GITHUB_GRANTS;
   const granted = pipe(
-    Rec.values(github),
+    [
+      ...Rec.values(github),
+      ...pipe(
+        Rec.values(workflows),
+        Arr.map((permissions) => ({ permissions })),
+      ),
+    ],
     Arr.flatMap(({ permissions }) => Rec.toEntries(permissions)),
   );
   expect(

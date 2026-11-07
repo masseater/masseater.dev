@@ -15,7 +15,9 @@ import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
 import { CREDENTIAL_BROKER_AUDIENCE, PREFIX, TRACE_DESTINATION } from "./broker-names.ts";
-import { grantPolicies } from "./credential-grants.ts";
+import { grantPolicies, WORKFLOW_GITHUB_GRANTS } from "./credential-grants.ts";
+
+const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
 const DOMAIN = "masseater.dev";
 const CREDENTIAL_BROKER_HOST = `credentials.${DOMAIN}`;
@@ -80,9 +82,10 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       name: GITHUB_APP_DATABASE,
       migrations: "./github-app-migrations",
     });
-    const GRANTS = yield* Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown))(
-      grantPolicies({ accountId, zoneId }),
-    ).pipe(Effect.orDie);
+    const { GRANTS, WORKFLOW_GRANTS } = yield* Effect.all({
+      GRANTS: encodeJson(grantPolicies({ accountId, zoneId })),
+      WORKFLOW_GRANTS: encodeJson(WORKFLOW_GITHUB_GRANTS),
+    }).pipe(Effect.orDie);
     const { url } = yield* Workers.Worker("CredentialBroker", {
       name: CREDENTIAL_BROKER_AUDIENCE,
       main: "./credential-broker.worker.ts",
@@ -95,6 +98,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
         GITHUB_APP,
         ACCOUNT_ID: accountId,
         GRANTS,
+        WORKFLOW_GRANTS,
       },
     });
     return { url };
