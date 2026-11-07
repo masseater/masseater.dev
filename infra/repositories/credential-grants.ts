@@ -73,8 +73,8 @@ type GitHubGrant = Readonly<{
 const RELEASE_REPOSITORIES: readonly string[] = [
   "decision-experiments",
   "lint-kit",
+  "masseater-products",
   "measure-everything",
-  "product-workshop",
   "typescript-template",
 ];
 
