@@ -26,6 +26,9 @@ needless_range_loop = "allow"
 lto = "thin"
 strip = "symbols"
 
+[profile.bench]
+strip = "none"
+
 [profile.profiling]
 inherits = "release"
 debug = true
