@@ -190,6 +190,7 @@ const generated = [
   "tools/scrap-userscript/release/**",
   "tools/pod-rattle-parity/engine.gen.js",
   "**/*.d.rpp.ts",
+  "**/src-tauri/gen/**",
 ];
 
 const asErrors = (names: readonly string[]): Readonly<Record<string, "error">> =>

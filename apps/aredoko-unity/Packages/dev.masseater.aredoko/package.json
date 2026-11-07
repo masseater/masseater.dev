@@ -1,0 +1,10 @@
+{
+  "name": "dev.masseater.aredoko",
+  "displayName": "aredoko",
+  "version": "0.0.0",
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  },
+  "unity": "2022.3"
+}

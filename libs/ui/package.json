@@ -6,7 +6,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./backdrop-palette": "./src/backdrop-palette.ts",
+    "./badge": "./src/badge.tsx",
     "./button": "./src/button.tsx",
+    "./cn": "./src/cn.ts",
     "./portfolio": "./src/portfolio.ts",
     "./styles.css": "./src/styles.css",
     "./theme.css": "./src/theme.css",
