@@ -2,7 +2,7 @@ import { Array as Arr, Option, Record as Rec } from "effect";
 import { expect, test } from "vite-plus/test";
 
 import type { Claims } from "./github-oidc.ts";
-import { grantKeys } from "./github-oidc.ts";
+import { grantKeys, workflowFile } from "./github-oidc.ts";
 
 const PUSH: typeof Claims.Type = {
   repository_owner: "masseater",
@@ -12,6 +12,7 @@ const PUSH: typeof Claims.Type = {
   ref: "refs/heads/main",
   run_id: "1",
   run_attempt: "1",
+  workflow_ref: "masseater/masseater.dev/.github/workflows/verify.yml@refs/heads/main",
 };
 
 const inEnvironment = (environment: string): typeof Claims.Type => ({ ...PUSH, environment });
@@ -39,4 +40,15 @@ test("an environment without its own grant falls back to the repository", () => 
     "masseater.dev",
   ]);
   expect(grantFor(inEnvironment("production"))).toStrictEqual(Option.some("deploy"));
+});
+
+test("the workflow file is read from the workflow ref", () => {
+  expect(workflowFile(PUSH)).toStrictEqual(Option.some("verify.yml"));
+  expect(
+    workflowFile({
+      ...PUSH,
+      workflow_ref: "masseater/masseater.dev/.github/workflows/autofix.yml@refs/heads/main",
+    }),
+  ).toStrictEqual(Option.some("autofix.yml"));
+  expect(workflowFile({ ...PUSH, workflow_ref: "malformed" })).toStrictEqual(Option.none());
 });

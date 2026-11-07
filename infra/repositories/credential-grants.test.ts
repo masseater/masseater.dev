@@ -44,9 +44,15 @@ test("every grant resolves to account and zone policies with known permission gr
 const APP_PERMISSIONS: Readonly<Record<string, string>> = GITHUB_APP_PERMISSIONS;
 
 test("every GitHub grant stays within the permissions the GitHub App asks for", () => {
-  const { github } = grantPolicies({ accountId: "account", zoneId: "zone" });
+  const { github, workflows } = grantPolicies({ accountId: "account", zoneId: "zone" });
   const granted = pipe(
-    Rec.values(github),
+    [
+      ...Rec.values(github),
+      ...pipe(
+        Rec.values(workflows),
+        Arr.map((permissions) => ({ permissions })),
+      ),
+    ],
     Arr.flatMap(({ permissions }) => Rec.toEntries(permissions)),
   );
   expect(

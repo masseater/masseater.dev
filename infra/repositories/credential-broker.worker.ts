@@ -11,7 +11,6 @@ import {
   Layer,
   Logger,
   Option,
-  Record as Rec,
   Redacted,
   Schema,
   Stream,
@@ -26,7 +25,16 @@ import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
 import { gitHubAppCredentials, readApp, route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
 import type { Claims } from "./github-oidc.ts";
-import { OWNER, Rejected, grantKeys, repositoryName, verify } from "./github-oidc.ts";
+import {
+  Grants,
+  OWNER,
+  Rejected,
+  grantKeys,
+  isGranted,
+  repositoryName,
+  verify,
+  workflowGrant,
+} from "./github-oidc.ts";
 
 const TOKEN_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
 const TOKEN_LIFETIME = { hours: 1 } as const;
@@ -40,35 +48,6 @@ type CredentialBrokerEnv = GitHubAppEnv &
     ACCOUNT_ID: string;
     GRANTS: string;
   }>;
-
-const PermissionGroups = Schema.mutable(Schema.Array(Schema.Struct({ id: Schema.String })));
-
-const Policy = Schema.Struct({
-  effect: Schema.Literal("allow"),
-  permissionGroups: PermissionGroups,
-  resources: Schema.Record(Schema.String, Schema.String),
-});
-
-const Policies = Schema.mutable(Schema.Array(Policy));
-
-const Permissions = Schema.Record(Schema.String, Schema.String);
-
-const RepositoryNames = Schema.mutable(Schema.Array(Schema.String));
-
-const GitHubGrant = Schema.Struct({
-  permissions: Permissions,
-  repositories: Schema.optionalKey(RepositoryNames),
-});
-
-const Grants = Schema.fromJsonString(
-  Schema.Struct({
-    profiles: Schema.Record(Schema.String, Policies),
-    repositories: Schema.Record(Schema.String, Schema.String),
-    github: Schema.Record(Schema.String, GitHubGrant),
-    npm: Schema.Array(Schema.String),
-    atproto: Schema.Array(Schema.String),
-  }),
-);
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 
@@ -142,8 +121,8 @@ const issueGitHubToken = (
 ): Effect.Effect<Option.Option<Issued>, IssueError, BrokerContext> =>
   Effect.gen(function* createGitHubToken() {
     const grants = yield* decodeGrants(env);
-    const grant = Arr.findFirst(grantKeys(claims), (key) =>
-      Option.fromNullishOr(grants.github[key]),
+    const grant = Option.orElse(workflowGrant(grants.workflows)(claims), () =>
+      Arr.findFirst(grantKeys(claims), (key) => Option.fromNullishOr(grants.github[key])),
     );
     if (Option.isNone(grant)) {
       return Option.none();
@@ -223,9 +202,7 @@ const issue = (
   Effect.gen(function* issueToken() {
     const claims = yield* verify(request);
     const grants = yield* decodeGrants(env);
-    const known = (key: string): boolean =>
-      Rec.has(grants.repositories, key) || Rec.has(grants.github, key);
-    if (!Arr.some(grantKeys(claims), known) && !isListed(claims, grants.npm)) {
+    if (!isGranted(grants)(claims)) {
       return yield* Rejected.make({ reason: `no grant for ${claims.repository}` });
     }
     const issued = yield* issueGranted(env, claims);

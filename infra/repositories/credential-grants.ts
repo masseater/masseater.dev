@@ -101,6 +101,18 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
   ...Rec.fromEntries(pipe(RELEASE_REPOSITORIES, Arr.map(releaseGrant))),
 };
 
+const BOT_PERMISSIONS = {
+  contents: "write",
+  pull_requests: "write",
+  metadata: "read",
+} as const satisfies Readonly<Record<string, "read" | "write">>;
+
+const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "autofix.yml": BOT_PERMISSIONS,
+  "skills-lock.yml": BOT_PERMISSIONS,
+  "update-branches.yml": BOT_PERMISSIONS,
+};
+
 const NPM_GRANTS: readonly string[] = ["lint-kit", "measure-everything"];
 
 const ATPROTO_GRANTS: readonly string[] = ["masseater.dev"];
@@ -140,6 +152,7 @@ type Grants = Readonly<{
   profiles: Readonly<Record<string, readonly Policy[]>>;
   repositories: Readonly<Record<string, string>>;
   github: Readonly<Record<string, GitHubGrant>>;
+  workflows: Readonly<Record<string, Readonly<Record<string, string>>>>;
   npm: readonly string[];
   atproto: readonly string[];
 }>;
@@ -157,6 +170,7 @@ const grantPolicies = ({
   ),
   repositories: CREDENTIAL_GRANTS,
   github: GITHUB_GRANTS,
+  workflows: WORKFLOW_GITHUB_GRANTS,
   npm: NPM_GRANTS,
   atproto: ATPROTO_GRANTS,
 });
