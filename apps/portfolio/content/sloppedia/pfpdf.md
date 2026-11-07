@@ -19,7 +19,7 @@ infobox:
     value: "Vivliostyle CLI、Chromium"
 ---
 
-pfpdf は、Preferred Networks（PFN）が2026年10月にオープンソースとして公開した、Markdown で書いた文書をコマンド1つで日本語の PDF にする CLI ツールである。PFN のエンジニアのいもすが作った。文書の中身は Markdown と Git で管理し、配布用の PDF はコマンドで作り直す、という使い方を想定している[^pfn]。
+pfpdf は、[Preferred Networks](/sloppedia/preferred-networks)（PFN）が2026年10月にオープンソースとして公開した、Markdown で書いた文書をコマンド1つで日本語の PDF にする CLI ツールである。PFN のエンジニアのいもすが作った。文書の中身は Markdown と [Git](/sloppedia/git) で管理し、配布用の PDF はコマンドで作り直す、という使い方を想定している[^pfn]。
 
 ## 背景
 
@@ -35,7 +35,7 @@ GitHub Flavored Markdown の表やリスト、日本語の強調、数式、コ�
 
 ## 仕組み
 
-内部では Markdown を HTML に変え、Vivliostyle CLI と Chromium で PDF に組版する。Chromium は初回の実行時に自動で取得してキャッシュする。そのため最初に数百 MB を通信する場合がある[^pfn]。
+内部では Markdown を HTML に変え、[Vivliostyle](/sloppedia/vivliostyle) CLI と Chromium で PDF に組版する。Chromium は初回の実行時に自動で取得してキャッシュする。そのため最初に数百 MB を通信する場合がある[^pfn]。
 
 環境によって日本語のフォントの有無や字形が変わると、見た目や改ページが変わる。pfpdf は再配布できるライセンスのフォントを同梱し、標準では OS のフォントに頼らない。数式やハイライトの資源も同梱しているため、組み込みの機能だけの文書なら、必要なものを一度取得した後はオフラインで変換できる[^pfn]。
 

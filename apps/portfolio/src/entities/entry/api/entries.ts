@@ -3,7 +3,7 @@ import { Array, Effect, Option, Order, Record as Rec, Schema, pipe } from "effec
 import { CategorySchema } from "#/entities/entry/model/category";
 import type { Category } from "#/entities/entry/model/category";
 import { contentLocation } from "#/entities/entry/model/content";
-import { Frontmatter } from "#/entities/entry/model/entry";
+import { entryPath, Frontmatter } from "#/entities/entry/model/entry";
 import type { CollectionResult, Entry, EntryResult, Missing } from "#/entities/entry/model/entry";
 
 const decodeFrontmatter = Schema.decodeUnknownEffect(Frontmatter);
@@ -52,6 +52,18 @@ const decodeEntry = ([path, frontmatter]: readonly [string, unknown]): Effect.Ef
     Effect.flatMap(([category, slug]) => ownEntry(category, slug, frontmatter)),
   );
 
+const loaded: { entries: readonly Entry[] } = { entries: [] };
+
+const remember = (entries: readonly Entry[]): Effect.Effect<void> =>
+  Effect.sync(() => {
+    loaded.entries = entries;
+  });
+
+const findLoadedEntry = (
+  location: Readonly<Pick<Entry, "category" | "slug">>,
+): Option.Option<Entry> =>
+  Array.findFirst(loaded.entries, (entry) => entryPath(entry) === entryPath(location));
+
 const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.suspend(() =>
   Effect.forEach(
     Rec.toEntries(
@@ -71,6 +83,7 @@ const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.s
       Array.sortWith(({ date }) => date, Order.flip(Order.String)),
     ),
   ),
+  Effect.tap(remember),
 );
 
 const missing: Effect.Effect<Missing> = Effect.succeed({ status: "missing" });
@@ -107,4 +120,4 @@ const entryOf = ({
     ),
   );
 
-export { allEntries, collectionOf, entryOf };
+export { allEntries, collectionOf, entryOf, findLoadedEntry };
