@@ -735,7 +735,7 @@ importers:
         version: 0.1.1(b50a2d4820c8dd99102db442aac1b944)
       '@shadcn/lint':
         specifier: 'catalog:'
-        version: 0.2.5(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
+        version: 0.2.5(@typescript-eslint/parser@8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3))(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
       '@tanstack/eslint-plugin-query':
         specifier: 'catalog:'
         version: 5.105.3(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)
@@ -8383,6 +8383,13 @@ packages:
 
   '@types/ws@8.18.2':
     resolution: {integrity: sha512-67MQl+fpWKVTT1NYdnmo3U4sc/xPo/zQBncVnI74qmQa0z/b+1g6iYqNmGCPbxO+zz2aklb08a0oHfegiVd0/w==}
+
+  '@typescript-eslint/parser@8.72.1':
+    resolution: {integrity: sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+      typescript: '>=4.8.4 <6.1.0'
 
   '@typescript-eslint/project-service@8.72.0':
     resolution: {integrity: sha512-bzHngBbmIgzj6TsTjVUCntGx6FFLgE7mPjpO0PzHycOaZHXqS43XnrkFIHRS16LLr/xO6FHSXG3GJFo/F4bSBQ==}
@@ -19076,11 +19083,12 @@ snapshots:
       '@sentry/conventions': 0.30.0
       '@sentry/core': 11.11.0
 
-  '@shadcn/lint@0.2.5(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))':
+  '@shadcn/lint@0.2.5(@typescript-eslint/parser@8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3))(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))':
     dependencies:
       '@eslint/core': 0.17.0
       cn: 0.4.0
     optionalDependencies:
+      '@typescript-eslint/parser': 8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)
       eslint: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
       oxc-parser: 0.148.0
 
@@ -20550,6 +20558,19 @@ snapshots:
   '@types/ws@8.18.2':
     dependencies:
       '@types/node': 26.6.6
+
+  '@typescript-eslint/parser@8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/scope-manager': 8.72.1
+      '@typescript-eslint/types': 8.72.1
+      '@typescript-eslint/typescript-estree': 8.72.1(supports-color@7.2.0)(typescript@5.9.3)
+      '@typescript-eslint/visitor-keys': 8.72.1
+      debug: 4.4.3(supports-color@7.2.0)
+      eslint: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
 
   '@typescript-eslint/project-service@8.72.0(supports-color@7.2.0)(typescript@5.9.3)':
     dependencies:
