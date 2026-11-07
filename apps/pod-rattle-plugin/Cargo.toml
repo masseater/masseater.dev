@@ -1,0 +1,31 @@
+[package]
+name = "pod_rattle"
+version = "0.0.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[[bin]]
+name = "pod-rattle"
+path = "src/main.rs"
+required-features = ["standalone"]
+
+[features]
+standalone = ["nih_plug/standalone"]
+
+[dependencies]
+pod-rattle-engine = { path = "../../libs/pod-rattle-engine" }
+nih_plug = { git = "https://github.com/robbert-vdh/nih-plug", rev = "de421011f41a6d10fc8c7a6084e4f4dee0143683", features = [
+  "assert_process_allocs",
+] }
+nih_plug_egui = { git = "https://github.com/robbert-vdh/nih-plug", rev = "de421011f41a6d10fc8c7a6084e4f4dee0143683" }
+triple_buffer = "8"
+atomic_float = "1"
+
+[lints]
+workspace = true

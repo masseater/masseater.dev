@@ -25,7 +25,10 @@ const BROWSER_HANDLES: readonly string[] = [
 ];
 
 const readonlyParameterAllow = [
-  { from: "lib" as const, name: ["HTMLElement", "ReadableStream", "Request", ...BROWSER_HANDLES] },
+  {
+    from: "lib" as const,
+    name: ["HTMLElement", "ReadableStream", "Request", "Float64Array", ...BROWSER_HANDLES],
+  },
   { from: "package" as const, package: "@webgpu/types", name: [...WEBGPU_HANDLES] },
   {
     from: "package" as const,

@@ -188,6 +188,7 @@ const generated = [
   "skills-lock.json",
   "CHANGELOG.md",
   "tools/scrap-userscript/release/**",
+  "tools/pod-rattle-parity/engine.gen.js",
 ];
 
 const asErrors = (names: readonly string[]): Readonly<Record<string, "error">> =>
