@@ -1,0 +1,16 @@
+{
+  "name": "@masseater.dev/mcp-portal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@distilled.cloud/cloudflare": "catalog:stack",
+    "alchemy": "catalog:stack",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@types/node": "catalog:"
+  }
+}

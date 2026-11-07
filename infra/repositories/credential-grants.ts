@@ -46,6 +46,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "medley-database": "deploy",
   "masseater.dev": "deploy",
   "masseater.dev/zone": "transforms",
+  "masseater.dev/mcp-portal": "access",
   "medley-manager": "deploy",
   mirucord: "deploy",
   msa: "deploy",
