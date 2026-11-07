@@ -96,6 +96,10 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
       metadata: "read",
     },
   },
+  "masseater.dev/pod-rattle-release": {
+    permissions: { contents: "write", pull_requests: "write", metadata: "read" },
+    repositories: ["masseater.dev"],
+  },
   ...Rec.fromEntries(pipe(RELEASE_REPOSITORIES, Arr.map(releaseGrant))),
 };
 
