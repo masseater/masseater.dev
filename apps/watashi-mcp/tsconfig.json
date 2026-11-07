@@ -4,6 +4,17 @@
   "include": ["src", "*.ts"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "effect/http/FetchHttpClient",
+          "effect/http/HttpClient",
+          "effect/http/HttpClientRequest",
+          "effect/http/HttpClientResponse"
+        ]
+      }
+    ],
     "types": ["vite/client", "@cloudflare/workers-types"],
     "paths": {
       "#/*": ["./src/*"]
