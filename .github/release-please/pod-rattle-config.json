@@ -1,5 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "skip-changelog": true,
   "include-component-in-tag": true,
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
@@ -21,6 +22,7 @@
     "apps/pod-rattle-plugin": {
       "release-type": "simple",
       "component": "pod-rattle",
+      "initial-version": "0.0.1",
       "extra-files": [
         {
           "type": "toml",
