@@ -15,7 +15,7 @@ infobox:
     value: "SwaT"
 ---
 
-Swarm Telepathy（SwaT）は、大規模言語モデル（LLM）のエージェントどうしが、文章ではなく KV キャッシュを直接渡して通信する手法である。系統の違うモデルの間でも、受け手が文章を読み込み直さずに済む。Abdulrahman Alabdulkareem らが2026年10月に arXiv で論文を公開した[^paper]。日本では AIDB が、MIT の研究者らによる AI 同士の「テレパシー」として紹介した[^aidb]。
+Swarm Telepathy（SwaT）は、大規模言語モデル（LLM）のエージェントどうしが、文章ではなく [KV キャッシュ](/sloppedia/kv-cache)を直接渡して通信する手法である。系統の違うモデルの間でも、受け手が文章を読み込み直さずに済む。Abdulrahman Alabdulkareem らが2026年10月に arXiv で論文を公開した[^paper]。日本では AIDB が、MIT の研究者らによる AI 同士の「テレパシー」として紹介した[^aidb]。
 
 ## 背景
 

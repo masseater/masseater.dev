@@ -16,7 +16,7 @@ infobox:
     value: "持ち主だけ"
 ---
 
-記事依頼のユーザースクリプト（Scrap request to Claude）は、閲覧中のページについて Sloppedia の記事を書くよう、Claude Code のルーチンへ頼む masseater のユーザースクリプトである。personal.masseater.dev にログインできる持ち主だけが使える[^userscript]。
+記事依頼のユーザースクリプト（Scrap request to Claude）は、閲覧中のページについて Sloppedia の記事を書くよう、[Claude Code](/sloppedia/claude-code) のルーチンへ頼む masseater のユーザースクリプトである。personal.masseater.dev にログインできる持ち主だけが使える[^userscript]。
 
 Sloppedia の記事の多くは、このスクリプトから頼まれて Claude が書いている。
 
@@ -26,9 +26,9 @@ Sloppedia の記事の多くは、このスクリプトから頼まれて Claude
 
 ## 仕組み
 
-中継への送信は、ユーザースクリプトの管理アプリの GM.xmlHttpRequest で行う。中継は Cloudflare Access の後ろにあり、ログインしていなければログインの画面に転送されるので、スクリプトはそれを見てログインを促す。ルーチンを起動するためのトークンはスクリプトには無く、中継の側が持っている[^userscript]。
+中継への送信は、ユーザースクリプトの管理アプリの GM.xmlHttpRequest で行う。中継は [Cloudflare Access](/sloppedia/cloudflare-access) の後ろにあり、ログインしていなければログインの画面に転送されるので、スクリプトはそれを見てログインを促す。ルーチンを起動するためのトークンはスクリプトには無く、中継の側が持っている[^userscript]。
 
-依頼を受けたルーチンは、personal-space の MCP の書き込みのツールで Sloppedia に記事の PR を出す。
+依頼を受けたルーチンは、personal-space の [MCP](/sloppedia/model-context-protocol) の書き込みのツールで Sloppedia に記事の PR を出す。
 
 ## 配布
 

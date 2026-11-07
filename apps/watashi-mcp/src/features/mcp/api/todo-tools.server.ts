@@ -3,7 +3,8 @@ import { Schema, pipe } from "effect";
 
 import type { Caller } from "./caller";
 import { DEFAULT_TODO_LIMIT, TodoAddInput, TodoListInput, TodoUpdateInput } from "./todo-input";
-import { addTodo, listTodos, updateTodo } from "./todo-store.server";
+import { listTodos } from "./todo-store.server";
+import { changeTodo, createTodo } from "./todo-writer.server";
 import { NO_PROJECT, READ_ONLY, WRITE, one, runTool } from "./tool-call.server";
 
 const DEFAULT_STATUS = "open";
@@ -28,7 +29,7 @@ const registerAdd =
         annotations: WRITE,
       },
       (input) =>
-        addTodo(input).pipe(
+        createTodo({ actor: caller.client })(input).pipe(
           runTool({ tool: "todo_add", caller, project: NO_PROJECT, input, count: one }),
         ),
     );
@@ -47,7 +48,7 @@ const registerUpdate =
         annotations: WRITE,
       },
       (input) =>
-        updateTodo(input).pipe(
+        changeTodo({ actor: caller.client, op: "update" })(input).pipe(
           runTool({ tool: "todo_update", caller, project: NO_PROJECT, input, count: one }),
         ),
     );

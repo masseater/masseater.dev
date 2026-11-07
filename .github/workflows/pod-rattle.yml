@@ -36,10 +36,9 @@ jobs:
           persist-credentials: false
       - if: runner.os == 'Linux'
         run: sudo apt-get update && xargs -a .github/actions/setup/linux-packages.txt sudo apt-get install -y xvfb
-      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
-        with:
-          toolchain: stable
-          targets: ${{ runner.os == 'macOS' && 'x86_64-apple-darwin,aarch64-apple-darwin' || '' }}
+      - run: rustup toolchain install
+      - if: runner.os == 'macOS'
+        run: rustup target add x86_64-apple-darwin aarch64-apple-darwin
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: ${{ matrix.platform }}

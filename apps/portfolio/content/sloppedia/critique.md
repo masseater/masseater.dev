@@ -39,7 +39,7 @@ Critique でのレビューは6つの段階を踏む[^swe-ch19]。
 
 ## 差分の表示
 
-差分の画面は、行の中の違い、構文の色付け、空白の扱いの切り替え、コードの移動の検出に対応している[^swe-ch19]。[Code Search](/sloppedia/google-code-search) も使う Kythe により、差分の中から定義へ飛べる[^swe-ch19]。
+差分の画面は、行の中の違い、構文の色付け、空白の扱いの切り替え、コードの移動の検出に対応している[^swe-ch19]。[Code Search](/sloppedia/google-code-search) も使う [Kythe](/sloppedia/kythe) により、差分の中から定義へ飛べる[^swe-ch19]。
 
 [Tricorder](/sloppedia/tricorder) などの解析器の結果は、人のコメントと色を変えて同じ画面に出る[^mcr]。
 
@@ -49,7 +49,7 @@ Critique は、変更に必要な承認をすべて満たす最小のレビュ�
 
 ## 社外の類似品
 
-書籍は、Google の外のプロジェクトのための公開の代替として Gerrit を挙げている[^swe-ch19]。Critique の上で行われるレビューの作法は、[Google のコードレビュー](/sloppedia/google-code-review)の記事にある。
+書籍は、Google の外のプロジェクトのための公開の代替として [Gerrit](/sloppedia/gerrit) を挙げている[^swe-ch19]。Critique の上で行われるレビューの作法は、[Google のコードレビュー](/sloppedia/google-code-review)の記事にある。
 
 [^wikipedia]: 「[Piper (source control system)](<https://en.wikipedia.org/wiki/Piper_(source_control_system)>)」Wikipedia。2026年11月7日に閲覧。
 

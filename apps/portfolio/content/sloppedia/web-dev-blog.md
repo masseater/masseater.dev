@@ -19,7 +19,7 @@ web.dev ブログは、Google が [web.dev](/sloppedia/web-dev) の中で運営�
 
 ## 内容
 
-新しい Web プラットフォームの機能、Baseline の更新、AI、Core Web Vitals などを扱う[^webdev]。
+新しい Web プラットフォームの機能、[Baseline](/sloppedia/web-platform-baseline) の更新、AI、[Core Web Vitals](/sloppedia/core-web-vitals) などを扱う[^webdev]。
 
 Baseline の動きを月ごとにまとめた月次ダイジェストが定期的に載る。そのほか、利用者の好みに合わせて文字組みを整える CSS、主要なエンジンのすべてで使えるようになった CSS の新しい色空間と関数や Subgrid、ソースマップの解説、INP と LCP の最適化、現場での指標の測り方のような記事がある[^webdev]。
 

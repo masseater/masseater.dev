@@ -14,6 +14,7 @@ import {
   restrictedImports,
 } from "./lint.config.ts";
 import { readonlyParameterAllow } from "./readonly-types.config.ts";
+import { writerOnlyOverride } from "./record-lint.config.ts";
 import { workerOverride } from "./worker-lint.config.ts";
 
 export default defineConfig({
@@ -183,6 +184,7 @@ export default defineConfig({
         rules: decisionRules,
       },
       workerOverride,
+      writerOnlyOverride,
       {
         files: ["**/*.test.ts"],
         rules: decisionTestRules,

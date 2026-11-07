@@ -8,6 +8,7 @@
   --wiki-subtle: oklch(0.446 0.009 248.3);
   --wiki-link: oklch(0.533 0.152 262.2);
   --wiki-link-visited: oklch(0.509 0.136 296.3);
+  --wiki-link-new: oklch(0.579 0.201 26.2);
   --wiki-border: oklch(0.727 0.013 250.6);
   --wiki-divider: oklch(0.836 0.008 252.3);
   --wiki-surface: oklch(0.982 0.002 247.8);
@@ -20,6 +21,7 @@
   --color-wiki-subtle: var(--wiki-subtle);
   --color-wiki-link: var(--wiki-link);
   --color-wiki-link-visited: var(--wiki-link-visited);
+  --color-wiki-link-new: var(--wiki-link-new);
   --color-wiki-border: var(--wiki-border);
   --color-wiki-divider: var(--wiki-divider);
   --color-wiki-surface: var(--wiki-surface);
