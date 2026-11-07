@@ -3,6 +3,7 @@ import type { OwnerAuthOptions } from "@masseater.dev/owner-auth/server";
 import type { Auth } from "better-auth";
 import { env } from "cloudflare:workers";
 
+import { jwks, oauthClientAssertion, verification } from "#/shared/auth/generated/auth.table";
 import { MCP_URL, SITE_NAME, SITE_ORIGIN } from "#/shared/config";
 import { db } from "#/shared/db/index.server";
 
@@ -13,6 +14,7 @@ const createAuth = (): Auth<OwnerAuthOptions> =>
   createOwnerAuth({
     origin: SITE_ORIGIN,
     db,
+    schema: { jwks, oauthClientAssertion, verification },
     secret: env.BETTER_AUTH_SECRET,
     owner: { inviteHash: ADMIN_INVITE_HASH, ownerName: "管理者", rpName: SITE_NAME },
     loginPage: "/admin/sign-in",
