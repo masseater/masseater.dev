@@ -83,7 +83,7 @@ const messageOf = (state: PanelState): string => {
     return "送りました。";
   }
   if (state.status === "login") {
-    return "personal.masseater.dev にログインしてください。ログイン用のタブを開きます。ログインしたらもう一度送ってください。";
+    return "watashi.masseater.dev にログインしてください。ログイン用のタブを開きます。ログインしたらもう一度送ってください。";
   }
   return `起動できませんでした。${state.reason}`;
 };
