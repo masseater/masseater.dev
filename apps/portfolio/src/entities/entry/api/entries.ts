@@ -2,11 +2,13 @@ import { Array, Effect, Option, Order, Record as Rec, Schema, pipe } from "effec
 
 import { CategorySchema } from "#/entities/entry/model/category";
 import type { Category } from "#/entities/entry/model/category";
-import { contentLocation } from "#/entities/entry/model/content";
-import { entryPath, Frontmatter } from "#/entities/entry/model/entry";
+import { contentLocation, contentPath } from "#/entities/entry/model/content";
+import { Frontmatter } from "#/entities/entry/model/entry";
 import type { CollectionResult, Entry, EntryResult, Missing } from "#/entities/entry/model/entry";
 
 const decodeFrontmatter = Schema.decodeUnknownEffect(Frontmatter);
+
+const decodeFrontmatterOption = Schema.decodeUnknownOption(Frontmatter);
 
 const decodeLocation = Schema.decodeUnknownEffect(Schema.Tuple([CategorySchema, Schema.String]));
 
@@ -25,23 +27,28 @@ const toStatus = ({
   return "published";
 };
 
+const toEntry = (
+  { category, slug }: Readonly<Pick<Entry, "category" | "slug">>,
+  { title, description, date, updated, tags, published, stage, infobox }: typeof Frontmatter.Type,
+): Entry => ({
+  category,
+  slug,
+  title,
+  description,
+  date,
+  updated,
+  tags,
+  infobox,
+  status: toStatus({ published, stage }),
+});
+
 const ownEntry = (
   category: Category,
   slug: string,
   frontmatter: unknown,
 ): Effect.Effect<Entry, Schema.SchemaError> =>
   decodeFrontmatter(frontmatter).pipe(
-    Effect.map(({ title, description, date, updated, tags, published, stage, infobox }) => ({
-      category,
-      slug,
-      title,
-      description,
-      date,
-      updated,
-      tags,
-      infobox,
-      status: toStatus({ published, stage }),
-    })),
+    Effect.map((decoded) => toEntry({ category, slug }, decoded)),
   );
 
 const decodeEntry = ([path, frontmatter]: readonly [string, unknown]): Effect.Effect<
@@ -52,38 +59,33 @@ const decodeEntry = ([path, frontmatter]: readonly [string, unknown]): Effect.Ef
     Effect.flatMap(([category, slug]) => ownEntry(category, slug, frontmatter)),
   );
 
-const loaded: { entries: readonly Entry[] } = { entries: [] };
+const frontmatters = import.meta.glob<unknown>("/content/*/*.md", {
+  eager: true,
+  import: "frontmatter",
+  query: "?meta",
+});
 
-const remember = (entries: readonly Entry[]): Effect.Effect<void> =>
-  Effect.sync(() => {
-    loaded.entries = entries;
-  });
+const isVisible = ({ status }: Readonly<Pick<Entry, "status">>): boolean =>
+  import.meta.env.DEV || status !== "draft";
 
-const findLoadedEntry = (
-  location: Readonly<Pick<Entry, "category" | "slug">>,
-): Option.Option<Entry> =>
-  Array.findFirst(loaded.entries, (entry) => entryPath(entry) === entryPath(location));
+const findEntry = (location: Readonly<Pick<Entry, "category" | "slug">>): Option.Option<Entry> =>
+  pipe(
+    Rec.get(frontmatters, contentPath(location)),
+    Option.flatMap(decodeFrontmatterOption),
+    Option.map((decoded) => toEntry(location, decoded)),
+    Option.filter(isVisible),
+  );
 
 const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.suspend(() =>
-  Effect.forEach(
-    Rec.toEntries(
-      import.meta.glob<unknown>("/content/*/*.md", {
-        eager: true,
-        import: "frontmatter",
-        query: "?meta",
-      }),
-    ),
-    decodeEntry,
-  ),
+  Effect.forEach(Rec.toEntries(frontmatters), decodeEntry),
 ).pipe(
   Effect.map((entries) =>
     pipe(
       entries,
-      Array.filter(({ status }) => import.meta.env.DEV || status !== "draft"),
+      Array.filter(isVisible),
       Array.sortWith(({ date }) => date, Order.flip(Order.String)),
     ),
   ),
-  Effect.tap(remember),
 );
 
 const missing: Effect.Effect<Missing> = Effect.succeed({ status: "missing" });
@@ -120,4 +122,4 @@ const entryOf = ({
     ),
   );
 
-export { allEntries, collectionOf, entryOf, findLoadedEntry };
+export { allEntries, collectionOf, entryOf, findEntry };
