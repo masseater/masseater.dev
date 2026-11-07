@@ -1,3 +1,5 @@
+import { Array as Arr, Option, Schema, pipe } from "effect";
+
 const WEB_ANALYTICS_SCRIPT_ORIGIN = "https://static.cloudflareinsights.com";
 
 const WEB_ANALYTICS_REPORT_ORIGIN = "https://cloudflareinsights.com";
@@ -16,4 +18,16 @@ const webAnalyticsBeacon = (token: string) =>
     "data-cf-beacon": `{"token":"${token}"}`,
   }) as const;
 
-export { WEB_ANALYTICS_REPORT_ORIGIN, WEB_ANALYTICS_SCRIPT_ORIGIN, webAnalyticsBeacon };
+const beaconScripts = (token: unknown): ReturnType<typeof webAnalyticsBeacon>[] =>
+  pipe(
+    Schema.decodeUnknownOption(Schema.NonEmptyString)(token),
+    Option.map(webAnalyticsBeacon),
+    Arr.fromOption,
+  );
+
+export {
+  WEB_ANALYTICS_REPORT_ORIGIN,
+  WEB_ANALYTICS_SCRIPT_ORIGIN,
+  beaconScripts,
+  webAnalyticsBeacon,
+};

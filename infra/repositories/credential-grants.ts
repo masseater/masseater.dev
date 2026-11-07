@@ -50,7 +50,6 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   mirucord: "deploy",
   msa: "deploy",
   "personal-space": "access",
-  "rpp-kit": "deploy",
   "typescript-template": "deploy",
 };
 
