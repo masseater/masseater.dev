@@ -148,7 +148,7 @@ jobs:
       - uses: $/.github/actions/setup
       - run: vp exec --filter three-twelve alchemy deploy --stage prod --yes
 
-  memory:
+  watashi-mcp:
     needs: deploy
     if: needs.deploy.outputs.latest == 'true'
     runs-on: ubuntu-latest
@@ -156,14 +156,14 @@ jobs:
       contents: read
       id-token: write
     concurrency:
-      group: memory
+      group: watashi-mcp
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@9fd918dd489a841010b0a5fb6e4ed9d1f8a11ec1
       - uses: $/.github/actions/setup
-      - run: vp exec --filter memory alchemy destroy --stage prod --yes
+      - run: vp exec --filter watashi-mcp alchemy deploy --stage prod --yes
 
   trace-check:
     needs: [deploy, traces]
@@ -476,7 +476,7 @@ jobs:
         traces,
         trace-check,
         three-twelve,
-        memory,
+        watashi-mcp,
         github,
         zenn,
         mosaic-plan,

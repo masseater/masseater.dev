@@ -8,6 +8,17 @@ CREATE TABLE `memory` (
 	`updated_at` text NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE `todo` (
+	`id` integer PRIMARY KEY AUTOINCREMENT,
+	`title` text NOT NULL,
+	`note` text DEFAULT '' NOT NULL,
+	`status` text DEFAULT 'open' NOT NULL,
+	`priority` text DEFAULT 'normal' NOT NULL,
+	`due_on` text DEFAULT '' NOT NULL,
+	`created_at` text NOT NULL,
+	`updated_at` text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE `account` (
 	`id` text PRIMARY KEY,
 	`account_id` text NOT NULL,
@@ -215,6 +226,7 @@ CREATE TABLE `verification` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `memory_project_name_idx` ON `memory` (`project`,`name`);--> statement-breakpoint
+CREATE INDEX `todo_status_idx` ON `todo` (`status`);--> statement-breakpoint
 CREATE INDEX `account_userId_idx` ON `account` (`user_id`);--> statement-breakpoint
 CREATE INDEX `oauthAccessToken_clientId_idx` ON `oauth_access_token` (`client_id`);--> statement-breakpoint
 CREATE INDEX `oauthAccessToken_sessionId_idx` ON `oauth_access_token` (`session_id`);--> statement-breakpoint

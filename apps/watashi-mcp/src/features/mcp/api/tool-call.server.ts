@@ -6,12 +6,19 @@ import { Clock, Effect, Match, Schema } from "effect";
 import type { MemoryExists } from "#/features/mcp/model/memory-exists";
 import type { MemoryNotFound } from "#/features/mcp/model/memory-not-found";
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
+import type { TodoNotFound } from "#/features/mcp/model/todo-not-found";
 
 import type { Caller } from "./caller";
 
-type ToolName = "save" | "update" | "search";
+type ToolName =
+  | "memory_save"
+  | "memory_update"
+  | "memory_search"
+  | "todo_add"
+  | "todo_update"
+  | "todo_list";
 
-type ToolFailure = MemoryExists | MemoryNotFound | StorageFailed;
+type ToolFailure = MemoryExists | MemoryNotFound | TodoNotFound | StorageFailed;
 
 type ToolCall = Readonly<{ tool: ToolName; caller: Caller; project: string; input: unknown }>;
 
@@ -26,6 +33,18 @@ type ToolMetrics = Readonly<{ errorTag: string; resultCount: number }>;
 const NO_ERROR = "";
 
 const NO_RESULTS = 0;
+
+const ONE = 1;
+
+const NO_PROJECT = "";
+
+const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
+
+const OVERWRITE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
+
+const READ_ONLY = { readOnlyHint: true, openWorldHint: false };
+
+const one = (): number => ONE;
 
 const encodeJson = (value: unknown): Effect.Effect<string> =>
   Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
@@ -50,12 +69,17 @@ const toOutcome =
             MemoryExists: ({ project, memoryName }) => ({
               status: "error" as const,
               errorTag: "MemoryExists",
-              text: `memory "${memoryName}" already exists in project "${project}". Use update to change it.`,
+              text: `memory "${memoryName}" already exists in project "${project}". Use memory_update to change it.`,
             }),
             MemoryNotFound: ({ project, memoryName }) => ({
               status: "error" as const,
               errorTag: "MemoryNotFound",
-              text: `memory "${memoryName}" was not found in project "${project}". Use save to create it.`,
+              text: `memory "${memoryName}" was not found in project "${project}". Use memory_save to create it.`,
+            }),
+            TodoNotFound: ({ todoId }) => ({
+              status: "error" as const,
+              errorTag: "TodoNotFound",
+              text: `todo ${todoId} was not found. Use todo_list to find its id.`,
             }),
             StorageFailed: ({ message }) => ({
               status: "error" as const,
@@ -122,10 +146,10 @@ const runTool =
         return toResult(outcome);
       }).pipe(
         Effect.withSpan(`mcp.tool.${call.tool}`, {
-          attributes: { "mcp.client": call.caller.client, "memory.project": call.project },
+          attributes: { "mcp.client": call.caller.client, "mcp.project": call.project },
         }),
       ),
     );
 
-export { runTool };
+export { NO_PROJECT, OVERWRITE, READ_ONLY, WRITE, one, runTool };
 export type { MeteredTool, ToolCall, ToolFailure, ToolName };

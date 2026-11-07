@@ -1,13 +1,17 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "18b959d1-9ab7-487d-9b6d-035b2f99b984",
+  "id": "2a0fd08d-b19b-46b8-826c-5f1bde34aa6b",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
   "ddl": [
     {
       "name": "memory",
+      "entityType": "tables"
+    },
+    {
+      "name": "todo",
       "entityType": "tables"
     },
     {
@@ -131,6 +135,86 @@
       "name": "updated_at",
       "entityType": "columns",
       "table": "memory"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": true,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "todo"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "title",
+      "entityType": "columns",
+      "table": "todo"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "''",
+      "generated": null,
+      "name": "note",
+      "entityType": "columns",
+      "table": "todo"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'open'",
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "todo"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'normal'",
+      "generated": null,
+      "name": "priority",
+      "entityType": "columns",
+      "table": "todo"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "''",
+      "generated": null,
+      "name": "due_on",
+      "entityType": "columns",
+      "table": "todo"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "todo"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "todo"
     },
     {
       "type": "text",
@@ -1891,6 +1975,15 @@
         "id"
       ],
       "nameExplicit": false,
+      "name": "todo_pk",
+      "table": "todo",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
       "name": "account_pk",
       "table": "account",
       "entityType": "pks"
@@ -2020,6 +2113,20 @@
       "name": "memory_project_name_idx",
       "entityType": "indexes",
       "table": "memory"
+    },
+    {
+      "columns": [
+        {
+          "value": "status",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "todo_status_idx",
+      "entityType": "indexes",
+      "table": "todo"
     },
     {
       "columns": [

@@ -67,6 +67,7 @@ const createAuth = (): Auth<AuthOptions> =>
         scopes: ["openid", "profile", "offline_access"],
         allowDynamicClientRegistration: true,
         allowUnauthenticatedClientRegistration: true,
+        clientRegistrationDefaultApplicationType: "infer",
       }),
     ],
     secret: env.BETTER_AUTH_SECRET,
