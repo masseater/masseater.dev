@@ -1,17 +1,17 @@
-import { createSystem, createVirtualTypeScriptEnvironment } from "@typescript/vfs";
-import { createWorker } from "@valtown/codemirror-ts/worker";
 import { expose } from "comlink";
-import { Array as Arr, Record as Rec, String as Str, pipe } from "effect";
-import ts from "typescript-6";
+import {
+  Array as Arr,
+  Boolean as Bool,
+  Deferred,
+  Effect,
+  ManagedRuntime,
+  Record as Rec,
+  pipe,
+} from "effect";
+import { FetchHttpClient, HttpClient, HttpClientResponse } from "effect/http";
 
-const LIBS = import.meta.glob<string>(
-  "/node_modules/typescript-6/lib/lib.{es,decorators,webworker}*.d.ts",
-  {
-    query: "?raw",
-    import: "default",
-    eager: true,
-  },
-);
+import { createChecker } from "./checker";
+import type { At, Checker, Completion, Hover, Lint, Source } from "./checker";
 
 const SONG_TYPES = import.meta.glob<string>("/node_modules/rpp-kit/src/types.ts", {
   query: "?raw",
@@ -19,44 +19,58 @@ const SONG_TYPES = import.meta.glob<string>("/node_modules/rpp-kit/src/types.ts"
   eager: true,
 });
 
-const DIRECTORY = /^.*\//u;
+const runtime = ManagedRuntime.make(FetchHttpClient.layer);
 
-const OPTIONS: ts.CompilerOptions = {
-  target: ts.ScriptTarget.ES2024,
-  lib: ["es2024", "webworker"],
-  module: ts.ModuleKind.ESNext,
-  moduleResolution: ts.ModuleResolutionKind.Bundler,
-  strict: true,
-  allowArbitraryExtensions: true,
-  noEmit: true,
-};
+const ready = Deferred.makeUnsafe<Checker>();
 
-const fileMap = (): Map<string, string> =>
-  new Map([
-    ...pipe(
-      Rec.toEntries(LIBS),
-      Arr.map(([file, text]): [string, string] => [pipe(file, Str.replace(DIRECTORY, "/")), text]),
+const files = (): readonly (readonly [string, string])[] =>
+  pipe(
+    Rec.values(SONG_TYPES),
+    Arr.map((text) => ["/node_modules/rpp-kit/index.d.ts", text] as const),
+  );
+
+const gunzip = (bytes: ArrayBuffer): Effect.Effect<ArrayBuffer> =>
+  Effect.promise(() =>
+    new Response(
+      new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip")),
+    ).arrayBuffer(),
+  );
+
+const wasmBytes = (url: string): Effect.Effect<ArrayBuffer, never, HttpClient.HttpClient> =>
+  HttpClient.get(url).pipe(
+    Effect.flatMap(HttpClientResponse.filterStatusOk),
+    Effect.flatMap((response) => response.arrayBuffer),
+    Effect.flatMap((bytes) =>
+      Bool.match(import.meta.env.PROD, {
+        onTrue: () => gunzip(bytes),
+        onFalse: () => Effect.succeed(bytes),
+      }),
     ),
-    ...pipe(
-      Rec.values(SONG_TYPES),
-      Arr.map((text): [string, string] => ["/node_modules/rpp-kit/index.d.ts", text]),
-    ),
-  ]);
+    Effect.orDie,
+    Effect.withSpan("checker.wasm", { attributes: { url } }),
+  );
 
-const transpile = (code: string): string =>
-  ts.transpileModule(code, {
-    compilerOptions: { target: ts.ScriptTarget.ES2024, module: ts.ModuleKind.CommonJS },
-  }).outputText;
+const load = (url: string): Effect.Effect<Checker, never, HttpClient.HttpClient> =>
+  wasmBytes(url).pipe(Effect.flatMap((wasm) => createChecker({ wasm, files: files() })));
+
+const using = <Value>(use: (checker: Checker) => Value): Promise<Value> =>
+  Effect.runPromise(Deferred.await(ready).pipe(Effect.map(use)));
 
 const checker = {
-  ...createWorker(() =>
-    createVirtualTypeScriptEnvironment(createSystem(fileMap()), [], ts, OPTIONS),
-  ),
-  transpile,
+  initialize: (wasmUrl: string): Promise<void> =>
+    runtime.runPromise(Deferred.complete(ready, load(wasmUrl)).pipe(Effect.asVoid)),
+  updateFile: (source: Source): Promise<void> =>
+    using((current) => {
+      current.updateFile(source);
+    }),
+  lint: (source: Source): Promise<readonly Lint[]> => using((current) => current.lint(source)),
+  complete: (at: At): Promise<Completion> => using((current) => current.complete(at)),
+  hover: (at: At): Promise<readonly Hover[]> => using((current) => current.hover(at)),
+  transpile: (code: string): Promise<string> => using((current) => current.transpile(code)),
 };
 
-type Checker = typeof checker;
+type CheckerWorker = typeof checker;
 
 expose(checker);
 
-export type { Checker };
+export type { CheckerWorker };
