@@ -21,6 +21,9 @@
 - `tools/scrap-userscript` は、閲覧中のページについて Sloppedia の記事を書くよう Claude Code のルーチンへ頼むユーザースクリプトである。依頼は personal-space の `https://personal.masseater.dev/scrap-request` に送り、Access のログイン Cookie で通す。ルーチンのトークンはそちらの Worker が持つ。Greasy Fork が main の `release/scrap-request.user.js` を同期するので、ビルド結果もコミットする。ソースとビルド結果が食い違うと test が落ちる。中身を変えたら `package.json` の version を上げる。
 - `apps/labs` は React を使わない単体のページ（`/satsuei-lab/`・`/split-pad/`・`/pod-rattle/`）で、`pages/<名前>/index.html` を Vite の multi-page でバンドルし、静的アセットだけの Worker を masseater.dev のルートに載せる。three や d3 は npm から import し、inline script は置かない。ページを足したら `pages.ts` の `PAGES` に足す。
 - `apps/three-twelve` は毎日 3 時 12 分（JST）に、bot の入ったサーバーで人のいるボイスチャンネルへ入って曲を 1 回流し、抜ける Discord bot である。Worker の cron が Durable Object の alarm を仕掛け、alarm が Cloudflare Containers で `player/main.ts`（discord.js）を exec する。bot のトークンは `PUT /three-twelve/token` で DO に、曲（Ogg Opus）は `PUT /three-twelve/audio` で R2 に置く。トークンは持ち主の Discord アプリのものだけを受け付ける。曲は著作物なのでリポに入れない。
+- `apps/pod-rattle-plugin` は labs の Pod Rattle を Rust（nih-plug）で VST3・CLAP にしたもので、音の本体は `libs/pod-rattle-engine` にある。Rust はルートの Cargo ワークスペースに置き、crate ごとに最小の package.json と `vite.config.ts` の `cargo` タスク（fmt・clippy・テスト）を持たせて、ルートの verify から vp のタスクとキャッシュで動かす。crate を足したら同じ形で package.json と `cargo` タスクを作り、verify の `dependsOn` に足す。`cargo xtask bundle-all --release` が `target/bundled/` に出す。`pod-rattle` ワークフローは関係するパスの変更でだけ動き、3 OS でビルドして pluginval と clap-validator に通す。release-please が `pod-rattle-v<版>` で出し、zip を付ける。
+- オーディオスレッドで確保をしない。配列は初期化で確保し、`no_alloc` テストで確かめる。
+- parity テストの参照音は、`tools/pod-rattle-parity` が labs のページから `createEngine` を切り出して鳴らした音である。labs の音を変えたら `libs/pod-rattle-engine` も合わせる。計算の順序を変えると標本単位で一致しなくなるので、速くするときも浮動小数点の演算順は保つ。いずれ labs が `libs/pod-rattle-engine` を wasm で鳴らし、エンジンを 1 本にする。
 - `apps/zenn-articles` はパッケージではない。main の verify が通ると、中身が `zenn` ブランチの直下へ写される。
 
 ## 記事

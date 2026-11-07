@@ -1,0 +1,23 @@
+[package]
+name = "pod-rattle-engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+
+[dev-dependencies]
+assert_no_alloc = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+criterion = { version = "0.7", default-features = false, features = ["cargo_bench_support"] }
+
+[[bench]]
+name = "render"
+harness = false
+
+[lints]
+workspace = true

@@ -82,15 +82,12 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
     "sts2-mods": {
       description: "Slay the Spire 2 の Mod をまとめて管理する monorepo",
     },
-    "vst-plugins": {
-      description: "masseater's VST3 / CLAP audio plugins, written in Rust",
-    },
     "homebrew-tap": {
       description: "Homebrew tap for masseater's tools",
     },
   };
 
-const CREATES: readonly string[] = ["vst-plugins"];
+const CREATES: readonly string[] = [];
 
 const ARCHIVES: ReadonlySet<string> = new Set([
   "mst-ja-decision-bench",
