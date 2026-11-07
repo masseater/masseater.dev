@@ -1,10 +1,31 @@
-import { Array as Arr, Order, String as Str, pipe } from "effect";
+import { NodeServices } from "@effect/platform-node";
+import { wasmURL } from "@typescript/typescript-wasip1-wasm";
+import {
+  Array as Arr,
+  Effect,
+  FileSystem,
+  Option,
+  Order,
+  Record as Rec,
+  String as Str,
+  pipe,
+} from "effect";
 import { markerNamed, markersNamed, trackNamed } from "rpp-kit";
-import { createTwoslasher } from "twoslash";
-import ts from "typescript-6";
 import { beforeAll, describe, expect, expectTypeOf, it } from "vite-plus/test";
 
+import { createChecker } from "./src/pages/demo/model/checker";
+import type { Checker } from "./src/pages/demo/model/checker";
 import { song } from "./src/pages/demo/model/song";
+
+const RPP_KIT = import.meta.glob<string>(
+  ["/node_modules/rpp-kit/package.json", "/node_modules/rpp-kit/src/*.ts", "!**/*.test.ts"],
+  { query: "?raw", import: "default", eager: true },
+);
+
+const MODEL = import.meta.glob<string>(
+  ["./src/pages/demo/model/song.ts", "./src/pages/demo/model/*.d.rpp.ts"],
+  { query: "?raw", import: "default", eager: true },
+);
 
 const TRACK_NAMES = [
   "Midi GM",
@@ -21,51 +42,94 @@ const MARKER_COUNT = 25;
 
 const CM9_TIME = 16;
 
-const NOT_ASSIGNABLE = 2345;
+const PROBE_PATH = "/probe.ts";
 
-const COMMENT = "//";
+const MODEL_DIRECTORY = "./src/pages/demo/model/";
 
-const twoslasher = createTwoslasher({
-  tsModule: ts,
-  tsLibDirectory: new URL("node_modules/typescript-6/lib", import.meta.url).pathname,
-  vfsRoot: new URL("src/pages/demo/model", import.meta.url).pathname,
-  compilerOptions: {
-    target: ts.ScriptTarget.ES2022,
-    lib: ["lib.es2022.d.ts"],
-    module: ts.ModuleKind.ESNext,
-    moduleResolution: ts.ModuleResolutionKind.Bundler,
-    allowImportingTsExtensions: true,
-    allowArbitraryExtensions: true,
-    strict: true,
-    noEmit: true,
-    skipLibCheck: true,
-    types: [],
-  },
-});
+const PROBE = pipe(
+  [
+    'import { markerNamed, markersNamed, trackNamed, tracksNamed } from "rpp-kit";',
+    'import { song } from "./song";',
+    'trackNamed(song, "Drums   (BB)");',
+    'tracksNamed(song, "Midi GM");',
+    'markerNamed(song, "Cm9");',
+    'markersNamed(song, "Gm9");',
+    'trackNamed(song, "Drums");',
+    'markerNamed(song, "Gm8");',
+    'trackNamed(song, "");',
+    'markerNamed(song, "");',
+  ],
+  Arr.join("\n"),
+);
 
-const QUOTE = '"';
+const EMPTY_ARGUMENT = /""\)/gu;
 
-const completeAfter = (call: string): readonly string[] => [
-  `${call}${QUOTE}${QUOTE});`,
-  `${COMMENT}${pipe(" ", Str.repeat(call.length + QUOTE.length - COMMENT.length))}^|`,
-];
-
-const PROBE = [
-  'import { markerNamed, markersNamed, trackNamed, tracksNamed } from "rpp-kit";',
-  'import { song } from "./song";',
-  'trackNamed(song, "Drums   (BB)");',
-  'tracksNamed(song, "Midi GM");',
-  'markerNamed(song, "Cm9");',
-  'markersNamed(song, "Gm9");',
-  'trackNamed(song, "Drums");',
-  'markerNamed(song, "Gm8");',
-  ...completeAfter("trackNamed(song, "),
-  ...completeAfter("markerNamed(song, "),
-];
+const CLOSING_QUOTE = '")'.length - '"'.length;
 
 type Probed = Readonly<{ errors: readonly string[]; completions: readonly (readonly string[])[] }>;
 
 const cache: Probed[] = [];
+
+const files = (): readonly (readonly [string, string])[] => [
+  ...Rec.toEntries(RPP_KIT),
+  ...pipe(
+    Rec.toEntries(MODEL),
+    Arr.map(([path, code]) => [pipe(path, Str.replace(MODEL_DIRECTORY, "/")), code] as const),
+  ),
+];
+
+const checkerOf: Effect.Effect<Checker, never, FileSystem.FileSystem> = FileSystem.FileSystem.pipe(
+  Effect.flatMap((fileSystem) => fileSystem.readFile(wasmURL.pathname)),
+  Effect.flatMap((bytes) => createChecker({ wasm: new Uint8Array(bytes).buffer, files: files() })),
+  Effect.orDie,
+);
+
+const emptyArguments = (): readonly number[] =>
+  pipe(
+    PROBE,
+    Str.matchAll(EMPTY_ARGUMENT),
+    Arr.fromIterable,
+    Arr.flatMap(({ index }) =>
+      pipe(
+        Option.fromNullishOr(index),
+        Option.map((start) => start + CLOSING_QUOTE),
+        Option.toArray,
+      ),
+    ),
+  );
+
+const probed = (checker: Checker): Probed => {
+  const at = { path: PROBE_PATH, code: PROBE };
+  return {
+    errors: pipe(
+      checker.lint(at),
+      Arr.map(({ message }) => message),
+    ),
+    completions: pipe(
+      emptyArguments(),
+      Arr.map((position) =>
+        pipe(
+          checker.complete({ ...at, position }).options,
+          Arr.map(({ label }) => label),
+          Arr.sortWith((name) => name, Order.String),
+        ),
+      ),
+    ),
+  };
+};
+
+const run = (): Promise<void> =>
+  Effect.runPromise(
+    checkerOf.pipe(
+      Effect.map(probed),
+      Effect.flatMap((result) =>
+        Effect.sync(() => {
+          cache.push(result);
+        }),
+      ),
+      Effect.provide(NodeServices.layer),
+    ),
+  );
 
 const probe = (): Probed =>
   pipe(
@@ -73,36 +137,12 @@ const probe = (): Probed =>
     Arr.fromOption,
     Arr.match({
       onNonEmpty: ([found]) => found,
-      onEmpty: () => {
-        const result = twoslasher(pipe(PROBE, Arr.join("\n")), "ts", {
-          handbookOptions: { errors: [NOT_ASSIGNABLE] },
-        });
-        const made = {
-          errors: pipe(
-            result.errors,
-            Arr.map(({ text }) => text),
-          ),
-          completions: pipe(
-            result.completions,
-            Arr.map(({ completions }) =>
-              pipe(
-                completions,
-                Arr.map(({ name }) => name),
-                Arr.sortWith((name) => name, Order.String),
-              ),
-            ),
-          ),
-        };
-        cache.push(made);
-        return made;
-      },
+      onEmpty: () => ({ errors: [], completions: [] }),
     }),
   );
 
 describe("import した .rpp の名前で引く関数の型", () => {
-  beforeAll(() => {
-    probe();
-  });
+  beforeAll(run);
 
   it("候補に、トラックとマーカーの名前が全部出る", () => {
     expect(probe().completions).toStrictEqual([
