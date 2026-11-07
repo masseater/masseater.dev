@@ -92,6 +92,7 @@ jobs:
   release:
     needs: bundle
     runs-on: ubuntu-latest
+    environment: pod-rattle-release
     permissions:
       contents: write
       pull-requests: write
