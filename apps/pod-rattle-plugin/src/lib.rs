@@ -1,0 +1,187 @@
+mod editor;
+mod params;
+
+use atomic_float::AtomicF32;
+use nih_plug::prelude::*;
+use pod_rattle_engine::{Engine, Snapshot};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::Instant;
+use triple_buffer::TripleBuffer;
+
+pub use params::RattleParams;
+
+const SNAPSHOT_RATE: f32 = 60.0;
+const LOAD_SMOOTHING: f32 = 0.05;
+
+pub struct Telemetry {
+    pub snapshot: Mutex<triple_buffer::Output<Snapshot>>,
+    pub dsp_load: AtomicF32,
+    pub grabbing: AtomicBool,
+    pub target_x: AtomicF32,
+    pub target_y: AtomicF32,
+}
+
+pub struct PodRattle {
+    params: Arc<RattleParams>,
+    telemetry: Arc<Telemetry>,
+    snapshot: triple_buffer::Input<Snapshot>,
+    engine: Option<Engine>,
+    sample_rate: f32,
+    since_snapshot: usize,
+}
+
+impl Default for PodRattle {
+    fn default() -> Self {
+        let (input, output) = TripleBuffer::new(&Snapshot::default()).split();
+        Self {
+            params: Arc::new(RattleParams::default()),
+            telemetry: Arc::new(Telemetry {
+                snapshot: Mutex::new(output),
+                dsp_load: AtomicF32::new(0.0),
+                grabbing: AtomicBool::new(false),
+                target_x: AtomicF32::new(0.0),
+                target_y: AtomicF32::new(0.0),
+            }),
+            snapshot: input,
+            engine: None,
+            sample_rate: 48_000.0,
+            since_snapshot: 0,
+        }
+    }
+}
+
+impl Plugin for PodRattle {
+    const NAME: &'static str = "Pod Rattle";
+    const VENDOR: &'static str = "masseater";
+    const URL: &'static str = "https://masseater.dev/pod-rattle/";
+    const EMAIL: &'static str = "";
+    const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
+    const AUDIO_IO_LAYOUTS: &'static [AudioIOLayout] = &[AudioIOLayout {
+        main_input_channels: None,
+        main_output_channels: NonZeroU32::new(2),
+        ..AudioIOLayout::const_default()
+    }];
+
+    const MIDI_INPUT: MidiConfig = MidiConfig::Basic;
+    const SAMPLE_ACCURATE_AUTOMATION: bool = false;
+
+    type SysExMessage = ();
+    type BackgroundTask = ();
+
+    fn params(&self) -> Arc<dyn Params> {
+        self.params.clone()
+    }
+
+    fn editor(&mut self, _async_executor: AsyncExecutor<Self>) -> Option<Box<dyn Editor>> {
+        editor::create(self.params.clone(), self.telemetry.clone())
+    }
+
+    fn initialize(
+        &mut self,
+        _audio_io_layout: &AudioIOLayout,
+        buffer_config: &BufferConfig,
+        _context: &mut impl InitContext<Self>,
+    ) -> bool {
+        self.sample_rate = buffer_config.sample_rate;
+        self.engine = Some(Engine::new(
+            f64::from(buffer_config.sample_rate),
+            self.params.engine_params(),
+            self.params.auto_shake(),
+        ));
+        true
+    }
+
+    fn reset(&mut self) {
+        self.engine = Some(Engine::new(
+            f64::from(self.sample_rate),
+            self.params.engine_params(),
+            self.params.auto_shake(),
+        ));
+    }
+
+    fn process(
+        &mut self,
+        buffer: &mut Buffer,
+        _aux: &mut AuxiliaryBuffers,
+        context: &mut impl ProcessContext<Self>,
+    ) -> ProcessStatus {
+        let started = Instant::now();
+        let Some(engine) = self.engine.as_mut() else {
+            return ProcessStatus::Normal;
+        };
+        engine.set_params(self.params.engine_params());
+        let auto = self.params.auto_shake();
+        engine.set_auto(auto);
+        let telemetry = &self.telemetry;
+        if telemetry.grabbing.load(Ordering::Relaxed) {
+            engine.set_target(
+                f64::from(telemetry.target_x.load(Ordering::Relaxed)),
+                f64::from(telemetry.target_y.load(Ordering::Relaxed)),
+            );
+        }
+
+        let samples = buffer.samples();
+        let [left, right] = buffer.as_slice() else {
+            return ProcessStatus::Normal;
+        };
+        let mut pos = 0;
+        while let Some(event) = context.next_event() {
+            let at = (event.timing() as usize).min(samples);
+            engine.render(&mut left[pos..at], &mut right[pos..at]);
+            pos = at;
+            if let NoteEvent::NoteOn { velocity, .. } = event
+                && !auto.on
+            {
+                engine.stroke(f64::from(velocity));
+            }
+        }
+        engine.render(&mut left[pos..], &mut right[pos..]);
+
+        self.since_snapshot += samples;
+        if self.since_snapshot as f32 >= self.sample_rate / SNAPSHOT_RATE {
+            self.since_snapshot = 0;
+            engine.snapshot(self.snapshot.input_buffer_mut());
+            self.snapshot.publish();
+        }
+
+        if samples > 0 {
+            let budget = samples as f32 / self.sample_rate;
+            let load = started.elapsed().as_secs_f32() / budget;
+            let previous = telemetry.dsp_load.load(Ordering::Relaxed);
+            telemetry.dsp_load.store(
+                previous + (load - previous) * LOAD_SMOOTHING,
+                Ordering::Relaxed,
+            );
+        }
+        ProcessStatus::KeepAlive
+    }
+}
+
+impl ClapPlugin for PodRattle {
+    const CLAP_ID: &'static str = "dev.masseater.pod-rattle";
+    const CLAP_DESCRIPTION: Option<&'static str> =
+        Some("Physical-modeling seed-pod rattle: 3D collisions driving modal resonators");
+    const CLAP_MANUAL_URL: Option<&'static str> = Some(Self::URL);
+    const CLAP_SUPPORT_URL: Option<&'static str> = None;
+    const CLAP_FEATURES: &'static [ClapFeature] = &[
+        ClapFeature::Instrument,
+        ClapFeature::Synthesizer,
+        ClapFeature::Drum,
+        ClapFeature::Stereo,
+    ];
+}
+
+impl Vst3Plugin for PodRattle {
+    const VST3_CLASS_ID: [u8; 16] = *b"MasseaterPodRatl";
+    const VST3_SUBCATEGORIES: &'static [Vst3SubCategory] = &[
+        Vst3SubCategory::Instrument,
+        Vst3SubCategory::Synth,
+        Vst3SubCategory::Drum,
+        Vst3SubCategory::Stereo,
+    ];
+}
+
+nih_export_clap!(PodRattle);
+nih_export_vst3!(PodRattle);

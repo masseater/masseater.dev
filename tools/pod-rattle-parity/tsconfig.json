@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
+  "extends": "../../tsconfig.base.json",
+  "include": ["*.ts"],
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/platform-node/NodeRuntime#runMain",
+          "@effect/platform-node/NodeServices#layer",
+          "effect/FileSystem#FileSystem",
+          "effect/PlatformError#PlatformError"
+        ]
+      }
+    ]
+  }
+}
