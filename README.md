@@ -12,6 +12,7 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 - RSS: https://masseater.dev/feed.xml
 - Standard.site（blog の記事を AT Protocol に載せたもの）: https://bsky.app/profile/masseater.bsky.social
 - Zenn: https://zenn.dev/masseater
+- 記憶の MCP サーバー: https://memory.masseater.dev/mcp
 
 ## 記事を書く
 
@@ -42,6 +43,23 @@ main に入ると、verify が通ったあとに本番へデプロイされる�
 `PUT /three-twelve/token` は、持ち主の Discord アプリのトークンだけを受け付けて保存し、招待のリンクを返す。
 `PUT /three-twelve/audio` に Ogg Opus の曲を送ると、次の 3 時 12 分からその曲を流す。
 `POST /three-twelve/play` を送ると 1 分後に試しの再生をする。`GET /three-twelve/status` は前回の結果を返す。
+
+## 記憶の MCP サーバー
+
+`apps/memory` は、プロジェクトの記憶を保存して探す MCP サーバーである。
+Claude のコネクタに https://memory.masseater.dev/mcp を足し、持ち主のパスキーでログインして使う。
+ツールは `save`・`update`・`search` の 3 つである。
+
+ツールの呼び出しは 1 回ずつ Analytics Engine のデータセット `masseater_dev_memory_tool_calls` に入る。
+`blob1` からツール名・結果・エラーの種類・OAuth のクライアント・プロジェクト・User-Agent、`double1` から所要時間（ミリ秒）・入力のバイト数・出力のバイト数・結果の件数が並ぶ。
+同じ内容は Workers Logs にも `event: mcp_tool_call` で出る。
+
+```sh
+curl -sS "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/analytics_engine/sql" \
+  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  -d "SELECT blob1 AS tool, blob2 AS status, count() AS calls, avg(double1) AS ms, avg(double4) AS results
+      FROM masseater_dev_memory_tool_calls WHERE timestamp > NOW() - INTERVAL '7' DAY GROUP BY tool, status"
+```
 
 ## Zenn に出す
 

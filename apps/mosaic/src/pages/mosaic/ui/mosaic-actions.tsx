@@ -1,10 +1,10 @@
+import { Button } from "@masseater.dev/ui/button";
 import { Link } from "@tanstack/react-router";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 
 import { SHARE_TARGETS, shareText } from "#/pages/mosaic/lib/share";
-import { Button } from "#/shared/ui/button";
 
 import { ShareLink } from "./share-link";
 
