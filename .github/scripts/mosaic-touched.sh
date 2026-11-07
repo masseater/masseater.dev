@@ -4,7 +4,7 @@ base=""
 for run in $(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/verify.yml/runs?branch=main&status=completed&per_page=50" \
   --jq '.workflow_runs[].id'); do
   if [ -n "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/jobs?per_page=100" \
-    --jq '.jobs[] | select(.name == "mosaic-deploy" and .conclusion == "success") | .id')" ]; then
+    --jq '.jobs[] | select(.name == "mosaic-deploy") | .steps[] | select(.name == "deploy" and .conclusion == "success") | .number')" ]; then
     base="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run" --jq .head_sha)"
     break
   fi
