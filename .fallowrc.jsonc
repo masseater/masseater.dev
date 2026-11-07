@@ -1,7 +1,7 @@
 {
   "entry": [
     "apps/portfolio/scripts/standard-site.ts",
-    "apps/memory/auth.config.ts",
+    "apps/watashi-mcp/auth.config.ts",
     "tools/pod-rattle-parity/extract.ts",
     "tools/pod-rattle-parity/render.ts",
   ],
