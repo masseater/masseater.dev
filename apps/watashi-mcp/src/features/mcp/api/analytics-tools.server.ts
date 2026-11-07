@@ -7,7 +7,7 @@ import { UpstreamFailed, failedAt } from "#/features/mcp/model/upstream-failed";
 
 import { AnalyticsInput, DEFAULT_DAYS } from "./analytics-input";
 import type { Caller } from "./caller";
-import { NO_PROJECT, READ_ONLY, runToolIn } from "./tool-call.server";
+import { NO_PROJECT, READ_ONLY, runToolIn, meteredInput } from "./tool-call.server";
 
 type Query = Readonly<{ path: Option.Option<string>; days: number }>;
 
@@ -141,7 +141,13 @@ const registerAnalyticsTools =
   (server: McpServer): McpServer => {
     server.registerTool(
       "read_web_analytics",
-      { description: DESCRIPTION, inputSchema: INPUT_SCHEMA, annotations: READ_ONLY },
+      {
+        description: DESCRIPTION,
+        inputSchema: meteredInput({ tool: "read_web_analytics", caller, project: NO_PROJECT })(
+          INPUT_SCHEMA,
+        ),
+        annotations: READ_ONLY,
+      },
       (input) =>
         readReport({
           path: Option.fromNullishOr(input.path),

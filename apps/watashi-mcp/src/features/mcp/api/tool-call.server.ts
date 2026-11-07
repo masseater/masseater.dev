@@ -1,7 +1,11 @@
-import type { CallToolResult } from "@modelcontextprotocol/server";
+import type {
+  CallToolResult,
+  StandardSchemaV1,
+  StandardSchemaWithJSON,
+} from "@modelcontextprotocol/server";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { env } from "cloudflare:workers";
-import { Clock, Effect, Layer, Match } from "effect";
+import { Array as Arr, Clock, Effect, Layer, Match, Option, pipe } from "effect";
 
 import type { ToolFailure } from "#/features/mcp/model/tool-failure";
 
@@ -32,7 +36,11 @@ type ToolOutcome =
 
 type ToolMetrics = Readonly<{ errorTag: string; resultCount: number }>;
 
+type InputMeter = Omit<ToolCall, "input">;
+
 const NO_ERROR = "";
+
+const NO_LATENCY = 0;
 
 const NO_RESULTS = 0;
 
@@ -145,6 +153,57 @@ const record = (
     }),
   );
 
+const issueText = (issues: readonly StandardSchemaV1.Issue[]): string =>
+  pipe(
+    issues,
+    Arr.map((issue) => issue.message),
+    Arr.join("; "),
+  );
+
+const recordRejected =
+  (meter: InputMeter, input: unknown) =>
+  <Output>(
+    result: StandardSchemaV1.Result<Output>,
+  ): Effect.Effect<StandardSchemaV1.Result<Output>> =>
+    Option.match(Option.fromNullishOr(result.issues), {
+      onNone: () => Effect.succeed(result),
+      onSome: (issues) =>
+        record(
+          { ...meter, input },
+          { status: "error", errorTag: "InvalidInput", text: issueText(issues) },
+          NO_LATENCY,
+        ).pipe(Effect.as(result)),
+    });
+
+const validation = <Input, Output>(
+  schema: StandardSchemaWithJSON<Input, Output>,
+  value: unknown,
+): Effect.Effect<StandardSchemaV1.Result<Output>> =>
+  Effect.promise(() => Promise.resolve(schema["~standard"].validate(value)));
+
+const checked = <Input, Output>(
+  meter: InputMeter,
+  schema: StandardSchemaWithJSON<Input, Output>,
+  value: unknown,
+): Effect.Effect<StandardSchemaV1.Result<Output>> =>
+  validation(schema, value).pipe(
+    Effect.flatMap(recordRejected(meter, value)),
+    Effect.withSpan(`mcp.tool.${meter.tool}.input`),
+  );
+
+const runInput = runner(Layer.empty);
+
+const meteredInput =
+  (meter: InputMeter) =>
+  <Input, Output>(
+    schema: StandardSchemaWithJSON<Input, Output>,
+  ): StandardSchemaWithJSON<Input, Output> => ({
+    "~standard": {
+      ...schema["~standard"],
+      validate: (value) => runInput(checked(meter, schema, value)),
+    },
+  });
+
 const runToolIn =
   <Services>(services: Layer.Layer<Services>) =>
   <Value>({ count, ...call }: MeteredTool<Value>) =>
@@ -165,5 +224,5 @@ const runToolIn =
 
 const runTool = runToolIn(Layer.empty);
 
-export { NO_PROJECT, OVERWRITE, READ_ONLY, WRITE, one, runTool, runToolIn };
+export { NO_PROJECT, OVERWRITE, READ_ONLY, WRITE, meteredInput, one, runTool, runToolIn };
 export type { MeteredTool, ToolCall, ToolName };

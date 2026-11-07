@@ -16,7 +16,7 @@ import type { Caller } from "./caller";
 import { ArticleInput } from "./sloppedia-input";
 import { articleContent } from "./sloppedia-markdown";
 import { sloppediaToken } from "./sloppedia-token.server";
-import { NO_PROJECT, WRITE, one, runToolIn } from "./tool-call.server";
+import { NO_PROJECT, WRITE, one, runToolIn, meteredInput } from "./tool-call.server";
 
 type Article = typeof ArticleInput.Type;
 
@@ -138,7 +138,13 @@ const registerSloppediaTools =
   (server: McpServer): McpServer => {
     server.registerTool(
       "write_sloppedia_article",
-      { description: DESCRIPTION, inputSchema: INPUT_SCHEMA, annotations: WRITE },
+      {
+        description: DESCRIPTION,
+        inputSchema: meteredInput({ tool: "write_sloppedia_article", caller, project: NO_PROJECT })(
+          INPUT_SCHEMA,
+        ),
+        annotations: WRITE,
+      },
       (input) =>
         writeArticle(input).pipe(
           runGithubTool({

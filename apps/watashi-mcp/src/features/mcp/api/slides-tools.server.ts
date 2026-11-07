@@ -6,7 +6,7 @@ import { failedAt } from "#/features/mcp/model/upstream-failed";
 
 import type { Caller } from "./caller";
 import { DEFAULT_SLIDE_LIMIT, DeckInput, SlideSearchInput } from "./slides-input";
-import { NO_PROJECT, READ_ONLY, runTool } from "./tool-call.server";
+import { NO_PROJECT, READ_ONLY, runTool, meteredInput } from "./tool-call.server";
 
 type SearchQuery = Readonly<{ query: string; limit: number; deck: Option.Option<string> }>;
 
@@ -113,7 +113,9 @@ const registerSearch =
       {
         description:
           "持ち主のスライドデッキを、意味の近さで1枚ずつ検索する。結果にはデッキ名、ページ番号、スライドの本文、デッキのURLが入る。",
-        inputSchema: SEARCH_SCHEMA,
+        inputSchema: meteredInput({ tool: "search_slides", caller, project: NO_PROJECT })(
+          SEARCH_SCHEMA,
+        ),
         annotations: READ_ONLY,
       },
       (input) =>
@@ -141,7 +143,7 @@ const registerGetDeck =
       "get_deck",
       {
         description: "デッキ名を指定して、そのデッキの全スライドの本文をページ順に返す。",
-        inputSchema: DECK_SCHEMA,
+        inputSchema: meteredInput({ tool: "get_deck", caller, project: NO_PROJECT })(DECK_SCHEMA),
         annotations: READ_ONLY,
       },
       (input) =>

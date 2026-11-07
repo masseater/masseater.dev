@@ -5,7 +5,7 @@ import type { Caller } from "./caller";
 import { DEFAULT_TODO_LIMIT, TodoAddInput, TodoListInput, TodoUpdateInput } from "./todo-input";
 import { listTodos } from "./todo-store.server";
 import { changeTodo, createTodo } from "./todo-writer.server";
-import { NO_PROJECT, READ_ONLY, WRITE, one, runTool } from "./tool-call.server";
+import { NO_PROJECT, READ_ONLY, WRITE, one, runTool, meteredInput } from "./tool-call.server";
 
 const DEFAULT_STATUS = "open";
 
@@ -25,7 +25,7 @@ const registerAdd =
       "todo_add",
       {
         description: "持ち主の ToDo を 1 件足す。足した ToDo を id つきで返す",
-        inputSchema: ADD_SCHEMA,
+        inputSchema: meteredInput({ tool: "todo_add", caller, project: NO_PROJECT })(ADD_SCHEMA),
         annotations: WRITE,
       },
       (input) =>
@@ -44,7 +44,9 @@ const registerUpdate =
       {
         description:
           "ToDo を id で書き換える。渡した項目だけを置き換える。終えたら status を done、やめたら canceled にする",
-        inputSchema: UPDATE_SCHEMA,
+        inputSchema: meteredInput({ tool: "todo_update", caller, project: NO_PROJECT })(
+          UPDATE_SCHEMA,
+        ),
         annotations: WRITE,
       },
       (input) =>
@@ -63,7 +65,7 @@ const registerList =
       {
         description:
           "ToDo を優先度の高い順、同じ優先度は期限の近い順に返す。既定は未完了（open）だけ",
-        inputSchema: LIST_SCHEMA,
+        inputSchema: meteredInput({ tool: "todo_list", caller, project: NO_PROJECT })(LIST_SCHEMA),
         annotations: READ_ONLY,
       },
       (input) =>
