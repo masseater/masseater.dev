@@ -1,0 +1,9 @@
+{
+  "title": "MyFirstMod",
+  "description": "My first Slay the Spire 2 mod.",
+  "visibility": "private",
+  "changeNote": "Initial release",
+  "tags": [],
+  "dependencies": [3737335127],
+  "contentDescriptors": []
+}

@@ -71,9 +71,6 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
     skills: {
       description: "masseater's shared agent skills, installed with the skills CLI",
     },
-    "sts2-mods": {
-      description: "Slay the Spire 2 の Mod をまとめて管理する monorepo",
-    },
     "homebrew-tap": {
       description: "Homebrew tap for masseater's tools",
     },
@@ -86,6 +83,7 @@ const ARCHIVES: ReadonlySet<string> = new Set([
   "mst-ja-decision-bench",
   "oxlint-typed-rules",
   "rpp-kit",
+  "sts2-mods",
   "thumb-mosaic",
   "vocablint",
 ]);

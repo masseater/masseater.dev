@@ -1,0 +1,9 @@
+{
+  "title": "PeerSelectionHud",
+  "description": "Multiplayer: shows what each teammate is doing right now (current screen, hovered card/relic/potion, map vote) on the left side of the screen.",
+  "visibility": "private",
+  "changeNote": "Initial release",
+  "tags": [],
+  "dependencies": [3737335127],
+  "contentDescriptors": []
+}

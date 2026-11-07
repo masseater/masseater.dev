@@ -539,6 +539,39 @@ jobs:
           manifest-file: .github/release-please/manifest.json
           skip-github-release: true
 
+  sts2-pck:
+    needs: verify
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      MEGADOT_VERSION: 4.5.1-m.14
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          global-json-file: apps/sts2-mods/global.json
+      - run: |
+          mkdir -p ~/megadot && cd ~/megadot
+          curl -fsSL -o megadot.zip "https://megadot.megacrit.com/${MEGADOT_VERSION}/megadot-${MEGADOT_VERSION}-linux-x86_64-editor-csharp.zip"
+          unzip -q megadot.zip && rm megadot.zip
+      - working-directory: apps/sts2-mods
+        run: |
+          export GODOT_PATH="$(ls ~/megadot/MegaDot_*_mono_linux.x86_64)"
+          for dir in mods/*/; do
+            mod="$(basename "$dir")"
+            [ -d "mods/$mod/$mod" ] || continue
+            scripts/export-pck.sh "$mod" "out/$mod"
+          done
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sts2-pck
+          path: apps/sts2-mods/out/
+          if-no-files-found: ignore
+
   ci-telemetry:
     needs:
       [
@@ -554,6 +587,7 @@ jobs:
         rpp-kit,
         medley-manager,
         web-vitals,
+        sts2-pck,
         github,
         zenn,
         mosaic-plan,

@@ -1,0 +1,9 @@
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+    <!-- 共通設定はリポジトリ直下の Directory.Build.props / Directory.Build.targets にある -->
+    <PropertyGroup>
+        <!-- MegaDot は csproj に直接 TargetFramework が無いと net8.0 を書き足してしまうので、ここにも書く -->
+        <TargetFramework>net9.0</TargetFramework>
+        <!-- NMapDrawings の private メンバー (プレイヤーごとの描画状態) を nameof と直接アクセスで扱う -->
+        <Publicize>true</Publicize>
+    </PropertyGroup>
+</Project>
