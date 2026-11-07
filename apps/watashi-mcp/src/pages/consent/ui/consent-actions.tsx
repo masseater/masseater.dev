@@ -1,7 +1,7 @@
 import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-const SCOPE = "記憶の読み書きを許可します";
+const SCOPE = "記憶と ToDo の読み書きを許可します";
 const ALLOW = "許可する";
 const DENY = "拒否する";
 const FAILED = "許可できませんでした";
