@@ -1,0 +1,68 @@
+import { NodeServices } from "@effect/platform-node";
+import { Array as Arr, Effect, FileSystem, Layer, Option, Path, String as Str, pipe } from "effect";
+import type { Plugin } from "vite-plus";
+
+import { SCRIPT_DIR, externalize } from "./externalize-scripts.ts";
+
+type Target = Readonly<{ outDir: string; base: string }>;
+
+const externalizeFile = Effect.fn("externalizeFile")(function* externalizeFile(
+  { outDir, base }: Target,
+  file: string,
+) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const target = path.join(outDir, file);
+  const { html, scripts } = yield* externalize({
+    html: yield* fileSystem.readFileString(target),
+    file,
+    base,
+  });
+  yield* pipe(
+    scripts,
+    Effect.forEach((script) =>
+      fileSystem.writeFileString(path.join(outDir, script.file), script.code),
+    ),
+  );
+  yield* fileSystem.writeFileString(target, html);
+});
+
+const externalizeAll = Effect.fn("externalizeAll")(function* externalizeAll(
+  root: string,
+  { outDir, base }: Target,
+) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const directory = path.resolve(root, outDir);
+  yield* fileSystem.makeDirectory(path.join(directory, SCRIPT_DIR), { recursive: true });
+  const entries = yield* fileSystem.readDirectory(directory, { recursive: true });
+  const files = pipe(entries, Arr.filter(Str.endsWith(".html")));
+  yield* pipe(
+    files,
+    Effect.forEach((file) => externalizeFile({ outDir: directory, base }, file)),
+  );
+});
+
+const runInNode = (root: string, target: Target): Promise<void> =>
+  Effect.runPromise(
+    Layer.build(NodeServices.layer).pipe(
+      Effect.flatMap((context) => Effect.provideContext(externalizeAll(root, target), context)),
+      Effect.scoped,
+    ),
+  );
+
+const externalizeInlineScripts = (): Plugin => ({
+  name: "externalize-inline-scripts",
+  enforce: "post",
+  buildApp: {
+    order: "post",
+    handler: ({ environments }) =>
+      Option.match(Option.fromNullishOr(environments["client"]), {
+        onNone: () => Promise.resolve(),
+        onSome: ({ config }) =>
+          runInNode(config.root, { outDir: config.build.outDir, base: config.base }),
+      }),
+  },
+});
+
+export { externalizeInlineScripts };

@@ -1,7 +1,6 @@
-import { webAnalyticsBeacon } from "@masseater.dev/ui/web-analytics";
+import { beaconScripts } from "@masseater.dev/ui/web-analytics";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext } from "@tanstack/react-router";
-import { Array as Arr, Option, Schema, pipe } from "effect";
 
 import { RootDocument } from "#/app/shell/root-document";
 import { RootLayout } from "#/app/shell/root-layout";
@@ -30,11 +29,7 @@ const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "alternate", type: "application/rss+xml", title: site.name, href: site.feedPath },
     ],
-    scripts: pipe(
-      Schema.decodeUnknownOption(Schema.NonEmptyString)(import.meta.env["VITE_CF_BEACON_TOKEN"]),
-      Option.map(webAnalyticsBeacon),
-      Arr.fromOption,
-    ),
+    scripts: beaconScripts(import.meta.env["VITE_CF_BEACON_TOKEN"]),
   }),
   shellComponent: RootDocument,
   component: RootLayout,

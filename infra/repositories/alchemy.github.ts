@@ -49,10 +49,6 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
       description: "ニコメドや合作動画で使われた曲と動画を逆引きできるメドDB",
       homepage: "https://medley-manager.masseater.dev",
     },
-    "rpp-kit": {
-      description: "REAPER のプロジェクトファイル（.rpp）を TypeScript から直接読むキット",
-      homepage: "https://masseater.dev/rpp-kit/",
-    },
     "decision-experiments": {
       description: "OpenRouter の decision モデルで文書の中身を安く速く判定できるかを試す実験",
       homepage: "https://masseater.dev/injection-bisect/",
@@ -92,6 +88,7 @@ const CREATES: readonly string[] = [];
 const ARCHIVES: ReadonlySet<string> = new Set([
   "mst-ja-decision-bench",
   "oxlint-typed-rules",
+  "rpp-kit",
   "thumb-mosaic",
   "vocablint",
 ]);

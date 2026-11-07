@@ -1,0 +1,47 @@
+{
+  "name": "rpp-kit-demo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "catalog:",
+    "@codemirror/lang-javascript": "catalog:",
+    "@codemirror/lint": "catalog:",
+    "@codemirror/state": "catalog:",
+    "@codemirror/view": "catalog:",
+    "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/ui": "workspace:*",
+    "@tanstack/react-router": "1.170.46",
+    "@typescript/vfs": "catalog:",
+    "@valtown/codemirror-ts": "catalog:",
+    "codemirror": "catalog:",
+    "comlink": "catalog:",
+    "effect": "catalog:stack",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "rpp-kit": "workspace:*",
+    "security-headers": "workspace:*",
+    "tailwindcss": "catalog:stack",
+    "typescript-6": "catalog:"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@effect/platform-node": "catalog:",
+    "@effect/tsgo": "catalog:stack",
+    "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@tailwindcss/vite": "4.3.4",
+    "@tanstack/react-start": "catalog:stack",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "catalog:",
+    "alchemy": "catalog:stack",
+    "node-html-parser": "9.0.6",
+    "twoslash": "catalog:",
+    "typescript": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "security-headers",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

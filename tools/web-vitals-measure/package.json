@@ -1,0 +1,10 @@
+{
+  "name": "web-vitals-measure",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {
+    "@r_masseater/web-vitals-flow": "catalog:"
+  }
+}
