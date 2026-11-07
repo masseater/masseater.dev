@@ -1,6 +1,12 @@
 [workspace]
 resolver = "3"
 members = ["apps/pod-rattle-plugin", "libs/pod-rattle-engine", "tools/xtask"]
+exclude = ["vendor/vst3-com"]
+
+# vst3-com の vtable! は式の位置で末尾に `;` を残しており、rustc の
+# semicolon_in_expressions_from_non_local_macros に掛かる。直した写しに差し替える。
+[patch."https://github.com/robbert-vdh/vst3-sys.git"]
+vst3-com = { path = "vendor/vst3-com" }
 
 [workspace.package]
 version = "0.0.0"

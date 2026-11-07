@@ -1,0 +1,16 @@
+# robbert-vdh/vst3-sys（fix/drop-box-from-raw, b3ff4d7）の com/ の写し。
+# vtable! の末尾の `;` を外しただけで、ほかは原本のまま。
+# 上流が直したら、ルートの Cargo.toml の [patch] ごとこのディレクトリを消す。
+[package]
+name = "vst3-com"
+version = "0.1.0"
+authors = ["Microsoft Corp.", "Mike Hilgendorf"]
+description = """
+Fork of com-rs
+"""
+edition = "2018"
+license = "MIT"
+publish = false
+
+[dependencies]
+vst3-com-macros = { git = "https://github.com/robbert-vdh/vst3-sys.git", branch = "fix/drop-box-from-raw" }
