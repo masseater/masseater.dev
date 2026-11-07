@@ -1,77 +1,23 @@
-import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
-import { mcp } from "@better-auth/mcp";
-import { betterAuth } from "better-auth";
+import { createOwnerAuth } from "@masseater.dev/owner-auth/server";
+import type { OwnerAuthOptions } from "@masseater.dev/owner-auth/server";
 import type { Auth } from "better-auth";
-import { jwt } from "better-auth/plugins";
 import { env } from "cloudflare:workers";
 
-import { CONSENT_PATH, MCP_URL, SIGN_IN_PATH, SITE_ORIGIN } from "#/shared/config";
+import { CONSENT_PATH, MCP_URL, SIGN_IN_PATH, SITE_NAME, SITE_ORIGIN } from "#/shared/config";
 import { db } from "#/shared/db/index.server";
 
-import {
-  account,
-  authRelations,
-  jwks,
-  oauthAccessToken,
-  oauthClient,
-  oauthClientAssertion,
-  oauthClientResource,
-  oauthConsent,
-  oauthRefreshToken,
-  oauthResource,
-  passkey,
-  session,
-  user,
-  verification,
-} from "./generated/auth.table";
-import { ownerPasskey } from "./passkey.server";
+const OWNER_INVITE_HASH =
+  "a6f8d888f1b83ee5cdc18e833b7c9b08:f83925e6b19f06c9f373618768edb54ebf76092ef306d518680dc9480ef48ee434b7027c8dcdec48c0ed4ec7154846a0ddddf4289bfeed9728afffb3ab5e675c";
 
-interface AuthOptions {
-  baseURL: string;
-  database: ReturnType<typeof drizzleAdapter>;
-  disabledPaths: string[];
-  plugins: [ReturnType<typeof jwt>, typeof ownerPasskey, ReturnType<typeof mcp>];
-  secret: string;
-}
-
-const createAuth = (): Auth<AuthOptions> =>
-  betterAuth<AuthOptions>({
-    baseURL: SITE_ORIGIN,
-    database: drizzleAdapter(db, {
-      provider: "sqlite",
-      schema: {
-        account,
-        authRelations,
-        jwks,
-        oauthAccessToken,
-        oauthClient,
-        oauthClientAssertion,
-        oauthClientResource,
-        oauthConsent,
-        oauthRefreshToken,
-        oauthResource,
-        passkey,
-        session,
-        user,
-        verification,
-      },
-    }),
-    disabledPaths: ["/token"],
-    plugins: [
-      jwt(),
-      ownerPasskey,
-      mcp({
-        loginPage: SIGN_IN_PATH,
-        consentPage: CONSENT_PATH,
-        resource: MCP_URL,
-        scopes: ["openid", "profile", "offline_access"],
-        allowDynamicClientRegistration: true,
-        allowUnauthenticatedClientRegistration: true,
-        clientRegistrationDefaultApplicationType: "infer",
-      }),
-    ],
+const createAuth = (): Auth<OwnerAuthOptions> =>
+  createOwnerAuth({
+    origin: SITE_ORIGIN,
+    db,
     secret: env.BETTER_AUTH_SECRET,
+    owner: { inviteHash: OWNER_INVITE_HASH, ownerName: "masseater", rpName: SITE_NAME },
+    loginPage: SIGN_IN_PATH,
+    consentPage: CONSENT_PATH,
+    resource: MCP_URL,
   });
 
 export { createAuth };
-export type { AuthOptions };

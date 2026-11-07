@@ -8,10 +8,8 @@
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
-    "@better-auth/drizzle-adapter": "catalog:",
     "@better-auth/mcp": "catalog:",
-    "@better-auth/oauth-provider": "catalog:",
-    "@better-auth/passkey": "catalog:",
+    "@masseater.dev/owner-auth": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@modelcontextprotocol/server": "catalog:",
     "@r_masseater/workers-tracing": "catalog:stack",

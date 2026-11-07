@@ -11,6 +11,7 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 - Pod Rattle の VST3 / CLAP プラグイン（`apps/pod-rattle-plugin`）: https://github.com/masseater/masseater.dev/releases?q=pod-rattle
 - サムネのモザイクアート: https://masseater.dev/mosaic/ （キャラごとのページは `libs/mosaic/src/characters.json` の slug で `/mosaic/<slug>`）
 - rpp-kit のデモ（`apps/rpp-kit-demo`）: https://masseater.dev/rpp-kit/
+- メドレーの曲と動画を逆引きするメドDB（`apps/medley-manager`）: https://medley-manager.masseater.dev
 - RSS: https://masseater.dev/feed.xml
 - Standard.site（blog の記事を AT Protocol に載せたもの）: https://bsky.app/profile/masseater.bsky.social
 - Zenn: https://zenn.dev/masseater
