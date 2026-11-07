@@ -75,7 +75,6 @@ const RELEASE_REPOSITORIES: readonly string[] = [
   "lint-kit",
   "measure-everything",
   "typescript-template",
-  "vst-plugins",
 ];
 
 const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
@@ -91,6 +90,8 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
     permissions: {
       actions: "read",
       administration: "write",
+      contents: "write",
+      pull_requests: "write",
       secrets: "write",
       actions_variables: "write",
       environments: "write",

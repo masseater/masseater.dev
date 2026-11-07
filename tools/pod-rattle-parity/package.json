@@ -1,0 +1,13 @@
+{
+  "name": "@masseater.dev/pod-rattle-parity",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "@effect/tsgo": "catalog:stack",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}
