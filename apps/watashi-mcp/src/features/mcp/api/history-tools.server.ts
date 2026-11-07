@@ -5,7 +5,7 @@ import type { Caller } from "./caller";
 import { DEFAULT_HISTORY_LIMIT, HistoryInput, RestoreInput } from "./history-input";
 import { listHistory } from "./history-store.server";
 import { restoreRecord } from "./restore.server";
-import { NO_PROJECT, READ_ONLY, WRITE, one, runTool } from "./tool-call.server";
+import { NO_PROJECT, READ_ONLY, WRITE, one, runTool, meteredInput } from "./tool-call.server";
 
 const HISTORY_SCHEMA = HistoryInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 const RESTORE_SCHEMA = RestoreInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
@@ -18,7 +18,7 @@ const registerHistory =
       {
         description:
           "記憶か ToDo の書き込みの履歴を新しい順に返す。各リビジョンに、書いた後の中身・操作・書いたクライアント・日時が入る",
-        inputSchema: HISTORY_SCHEMA,
+        inputSchema: meteredInput({ tool: "history", caller, project: NO_PROJECT })(HISTORY_SCHEMA),
         annotations: READ_ONLY,
       },
       (input) =>
@@ -43,7 +43,7 @@ const registerRestore =
       {
         description:
           "記憶か ToDo を history の rev の中身に戻す。戻した結果も新しいリビジョンとして履歴に積む",
-        inputSchema: RESTORE_SCHEMA,
+        inputSchema: meteredInput({ tool: "restore", caller, project: NO_PROJECT })(RESTORE_SCHEMA),
         annotations: WRITE,
       },
       (input) =>
