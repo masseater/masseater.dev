@@ -4,6 +4,7 @@ import tanstackRouter from "@tanstack/eslint-plugin-router";
 import baselineJs from "eslint-plugin-baseline-js";
 import { defineConfig } from "vite-plus";
 
+import { alchemyOverride, scriptsOverride } from "./lint-overrides.config.ts";
 import {
   allRulesOf,
   decisionPluginName,
@@ -155,30 +156,7 @@ export default defineConfig({
       "react/only-export-components": ["error", { allowExportNames: ["Route"] }],
     },
     overrides: [
-      {
-        files: ["**/alchemy.run.ts"],
-        rules: {
-          "eslint-js/no-restricted-syntax": [
-            "error",
-            {
-              selector: 'CallExpression[callee.name="Stack"]:not([arguments.0.name="APP_NAME"])',
-              message: "スタック名には app-name.ts の APP_NAME を渡す",
-            },
-            {
-              selector:
-                'Program:not(:has(YieldExpression[delegate=true] > Identifier.argument[name="requireAppPrefix"]))',
-              message:
-                "スタックの最後で app-name.ts の requireAppPrefix を yield* して、リソース名の prefix を検査する",
-            },
-            {
-              selector:
-                'CallExpression[callee.name="Stack"] > .arguments:nth-child(3):not(:has(FunctionExpression > BlockStatement > ExpressionStatement:nth-last-child(2) > YieldExpression[delegate=true] > Identifier.argument[name="requireAppPrefix"]))',
-              message:
-                "スタックの最後で app-name.ts の requireAppPrefix を yield* して、リソース名の prefix を検査する",
-            },
-          ],
-        },
-      },
+      alchemyOverride,
       {
         files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "decision-rules.ts"],
         rules: { "import/no-default-export": "off" },
@@ -197,14 +175,7 @@ export default defineConfig({
         files: ["apps/aredoko-server/src/app/**"],
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
       },
-      {
-        files: ["scripts/**"],
-        rules: {
-          "import/no-nodejs-modules": "off",
-          "node/no-process-env": "off",
-          "node/no-sync": "off",
-        },
-      },
+      scriptsOverride,
       {
         files: ["**/*.test.ts"],
         rules: decisionTestRules,
@@ -274,7 +245,7 @@ export default defineConfig({
           "steiger",
           "db-check-all",
           "fallow",
-          "gitleaks",
+          "betterleaks",
           "audit",
           "sloppedia#size",
           "scrap-userscript#release-check",
@@ -297,13 +268,8 @@ export default defineConfig({
           'before="$(cksum pnpm-workspace.yaml)"; vp pm audit --fix || exit; if [ "$before" != "$(cksum pnpm-workspace.yaml)" ]; then echo "vp pm audit --fix rewrote pnpm-workspace.yaml. Run vp install and commit the diff." >&2; exit 1; fi',
         cache: false,
       },
-      gitleaks: {
-        command: "go run github.com/zricethezav/gitleaks/v8@v8.30.1 git --redact --no-banner",
-        cache: false,
-      },
       betterleaks: {
-        command:
-          '.tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner --revision="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" || echo origin/main)..HEAD"',
+        command: ".tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner",
         cache: false,
       },
       "betterleaks:staged": {
