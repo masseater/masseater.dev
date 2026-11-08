@@ -198,6 +198,14 @@ export default defineConfig({
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
       },
       {
+        files: ["scripts/**"],
+        rules: {
+          "import/no-nodejs-modules": "off",
+          "node/no-process-env": "off",
+          "node/no-sync": "off",
+        },
+      },
+      {
         files: ["**/*.test.ts"],
         rules: decisionTestRules,
       },
@@ -291,6 +299,16 @@ export default defineConfig({
       },
       gitleaks: {
         command: "go run github.com/zricethezav/gitleaks/v8@v8.30.1 git --redact --no-banner",
+        cache: false,
+      },
+      betterleaks: {
+        command:
+          '.tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner --revision="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" || echo origin/main)..HEAD"',
+        cache: false,
+      },
+      "betterleaks:staged": {
+        command:
+          "git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | .tooling/bin/betterleaks stdin --git-diff --config .betterleaks.toml --redact --no-banner",
         cache: false,
       },
     },
