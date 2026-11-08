@@ -29,7 +29,6 @@ type Labels = Readonly<{
   updated: string;
   recent: string;
   random: string;
-  index: string;
   welcome: (name: string) => string;
   count: (count: number) => string;
 }>;
@@ -76,7 +75,6 @@ const defaultLabels: Labels = {
   updated: "最終更新",
   recent: "新着記事",
   random: "ランダムピックアップ",
-  index: "すべての記事",
   welcome: (name) => `${name}へようこそ`,
   count: (count) => `${String(count)} 本`,
 };

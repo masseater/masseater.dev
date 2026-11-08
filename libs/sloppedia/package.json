@@ -77,7 +77,7 @@
   "size-limit": [
     {
       "path": "dist/*.js",
-      "limit": "5350 B"
+      "limit": "4953 B"
     }
   ]
 }
