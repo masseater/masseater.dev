@@ -4,8 +4,10 @@ Markdown 記事を Wikipedia 風に出す React コンポーネント集であ�
 
 ## 1. システムの概略図
 
-```text
-[記事データ] --> [選出と並び替え] --> [メインページ / 記事ページ]
+```mermaid
+flowchart LR
+    data[記事データ] --> select[選出と並び替え] --> main[メインページ]
+    select --> article[記事ページ]
 ```
 
 ## 2. 中心の部品
