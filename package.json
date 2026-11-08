@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prepare": "vp config && effect-tsgo patch --typescript --oxlint && skills experimental_install --force"
+    "prepare": "vp config && effect-tsgo patch --typescript --oxlint && skills experimental_install --force && vp exec node scripts/install-betterleaks.ts"
   },
   "devDependencies": {
     "@ast-grep/cli": "catalog:",
