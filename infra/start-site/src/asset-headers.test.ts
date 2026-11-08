@@ -1,5 +1,5 @@
-import type { PageHeaders } from "@masseater.dev/static-headers";
 import { Array as Arr, pipe } from "effect";
+import type { PageHeaders } from "security-headers/static";
 import { expect, test } from "vite-plus/test";
 
 import { assetHeaders } from "./asset-headers.ts";

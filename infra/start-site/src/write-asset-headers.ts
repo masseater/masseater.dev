@@ -1,8 +1,8 @@
 import { NodeRuntime, NodeServices } from "@effect/platform-node";
-import { pageSlug, pageHashes } from "@masseater.dev/static-headers";
-import type { PageHeaders } from "@masseater.dev/static-headers";
 import { Array as Arr, Effect, FileSystem, Layer, Path, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
+import { pageSlug, pageHashes } from "security-headers/static";
+import type { PageHeaders } from "security-headers/static";
 
 import pkg from "#package.json" with { type: "json" };
 

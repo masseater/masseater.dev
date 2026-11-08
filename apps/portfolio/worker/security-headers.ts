@@ -5,17 +5,6 @@ import {
 } from "@masseater.dev/ui/web-analytics";
 import { Array as Arr, pipe } from "effect";
 
-const SECURITY_HEADERS = {
-  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-  "X-Content-Type-Options": "nosniff",
-  "X-Frame-Options": "DENY",
-  "Referrer-Policy": "strict-origin-when-cross-origin",
-  "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
-  "Cross-Origin-Opener-Policy": "same-origin",
-  "Cross-Origin-Resource-Policy": "same-origin",
-  "Cross-Origin-Embedder-Policy": "credentialless",
-} as const;
-
 const IMAGE_HEADERS = { "Cross-Origin-Resource-Policy": "cross-origin" } as const;
 
 const contentSecurityPolicy = (nonce: string): string =>
@@ -36,4 +25,5 @@ const contentSecurityPolicy = (nonce: string): string =>
     Arr.join("; "),
   );
 
-export { IMAGE_HEADERS, SECURITY_HEADERS, contentSecurityPolicy };
+export { IMAGE_HEADERS, contentSecurityPolicy };
+export { SECURITY_HEADERS_CREDENTIALLESS as SECURITY_HEADERS } from "security-headers";

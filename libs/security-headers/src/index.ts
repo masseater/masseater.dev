@@ -1,4 +1,4 @@
-import { Array as Arr, Record as Rec, pipe } from "effect";
+import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
 const SECURITY_HEADERS = {
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -11,28 +11,45 @@ const SECURITY_HEADERS = {
   "Cross-Origin-Resource-Policy": "same-origin",
 } as const;
 
+const SECURITY_HEADERS_CREDENTIALLESS = {
+  ...SECURITY_HEADERS,
+  "Cross-Origin-Embedder-Policy": "credentialless",
+} as const;
+
 const ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 const WEB_ANALYTICS_SCRIPT_ORIGIN = "https://static.cloudflareinsights.com";
 
 const WEB_ANALYTICS_REPORT_ORIGIN = "https://cloudflareinsights.com";
 
+const workerDirective = (worker: readonly string[] | undefined): readonly string[] =>
+  Arr.fromOption(
+    Option.map(Option.fromNullishOr(worker), (sources) =>
+      pipe(["worker-src 'self'", ...sources], Arr.join(" ")),
+    ),
+  );
+
 const contentSecurityPolicy = ({
   script,
   style,
-  worker = [],
+  worker,
+  image = [],
+  styleAttr = false,
 }: Readonly<{
   script: readonly string[];
   style: readonly string[];
   worker?: readonly string[];
+  image?: readonly string[];
+  styleAttr?: boolean;
 }>): string =>
   pipe(
     [
       "default-src 'self'",
       pipe(["script-src 'self'", WEB_ANALYTICS_SCRIPT_ORIGIN, ...script], Arr.join(" ")),
       pipe(["style-src 'self'", ...style], Arr.join(" ")),
-      pipe(["worker-src 'self'", ...worker], Arr.join(" ")),
-      "img-src 'self' data:",
+      ...Arr.fromOption(Option.liftPredicate("style-src-attr 'unsafe-inline'", () => styleAttr)),
+      ...workerDirective(worker),
+      pipe(["img-src 'self' data:", ...image], Arr.join(" ")),
       `connect-src 'self' ${WEB_ANALYTICS_REPORT_ORIGIN}`,
       "object-src 'none'",
       "base-uri 'none'",
@@ -69,4 +86,11 @@ const assetHeaders = ({
     Arr.join("\n"),
   );
 
-export { SECURITY_HEADERS, STATIC_PAGE_HEADERS, assetHeaders, contentSecurityPolicy };
+export {
+  ASSET_CACHE_CONTROL,
+  SECURITY_HEADERS,
+  SECURITY_HEADERS_CREDENTIALLESS,
+  STATIC_PAGE_HEADERS,
+  assetHeaders,
+  contentSecurityPolicy,
+};

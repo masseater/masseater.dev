@@ -1153,9 +1153,6 @@ importers:
       '@masseater.dev/alchemy-app-name':
         specifier: workspace:*
         version: link:../../infra/alchemy-app-name
-      '@masseater.dev/static-headers':
-        specifier: workspace:*
-        version: link:../../libs/static-headers
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -1177,6 +1174,9 @@ importers:
       effect:
         specifier: 4.1.2
         version: 4.1.2
+      security-headers:
+        specifier: workspace:*
+        version: link:../../libs/security-headers
       three:
         specifier: 'catalog:'
         version: 0.187.0
@@ -1343,9 +1343,6 @@ importers:
       '@masseater.dev/start-shell':
         specifier: workspace:*
         version: link:../../libs/start-shell
-      '@masseater.dev/static-headers':
-        specifier: workspace:*
-        version: link:../../libs/static-headers
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -1373,6 +1370,9 @@ importers:
       scheduler:
         specifier: 0.28.0
         version: 0.28.0
+      security-headers:
+        specifier: workspace:*
+        version: link:../../libs/security-headers
       simple-icons:
         specifier: 'catalog:'
         version: 16.36.0
@@ -1600,6 +1600,9 @@ importers:
       scheduler:
         specifier: 0.28.0
         version: 0.28.0
+      security-headers:
+        specifier: workspace:*
+        version: link:../../libs/security-headers
       simple-icons:
         specifier: 'catalog:'
         version: 16.36.0
@@ -2108,9 +2111,6 @@ importers:
       '@effect/platform-node':
         specifier: 4.1.2
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@masseater.dev/static-headers':
-        specifier: workspace:*
-        version: link:../../libs/static-headers
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -2138,6 +2138,9 @@ importers:
       effect:
         specifier: 4.1.2
         version: 4.1.2
+      security-headers:
+        specifier: workspace:*
+        version: link:../../libs/security-headers
       vite-plus:
         specifier: catalog:stack
         version: 1.5.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
@@ -2498,12 +2501,6 @@ importers:
       react:
         specifier: 19.3.1
         version: 19.3.1
-
-  libs/static-headers:
-    dependencies:
-      effect:
-        specifier: 4.1.2
-        version: 4.1.2
 
   libs/ui:
     dependencies:

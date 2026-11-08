@@ -1,10 +1,10 @@
-import { headerLines, pageRule } from "@masseater.dev/static-headers";
-import type { PageHeaders } from "@masseater.dev/static-headers";
 import { FILES_DIR } from "@thumb-mosaic/mosaic";
 import { Array as Arr, pipe } from "effect";
+import { ASSET_CACHE_CONTROL, SECURITY_HEADERS } from "security-headers";
+import { headerLines, pageRule } from "security-headers/static";
+import type { PageHeaders } from "security-headers/static";
 
 import { BASE_PATH } from "./base-path.ts";
-import { ASSET_CACHE_CONTROL, SECURITY_HEADERS } from "./security-headers.ts";
 
 const assetHeaders = ({
   documentHeaders,
