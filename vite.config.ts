@@ -269,7 +269,8 @@ export default defineConfig({
         cache: false,
       },
       betterleaks: {
-        command: ".tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner",
+        command:
+          'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then .tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; .tooling/bin/betterleaks "$tmp" --config .betterleaks.toml --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else .tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner; fi',
         cache: false,
       },
       "betterleaks:staged": {
