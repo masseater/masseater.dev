@@ -4,8 +4,9 @@
 
 ## 1. システムの概略図
 
-```text
-[クライアント] --> [Access（mcp.masseater.dev）] --> [上流 MCP 群]
+```mermaid
+flowchart LR
+    client[クライアント] --> access[Access] --> upstream[上流 MCP 群]
 ```
 
 ## 2. 中心の部品

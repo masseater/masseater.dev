@@ -4,10 +4,10 @@ masseater.dev 本体サイトである。ブログ、Sloppedia、プロジェク
 
 ## 1. システムの概略図
 
-```text
-[訪問者] --> [配信 Worker] --> [サイト本体] --> [D1 Stars]
-                                |
-                                +--> [atproto へ記事の発行情報を出す]
+```mermaid
+flowchart LR
+    visitor[訪問者] --> worker[配信 Worker] --> app[サイト本体] --> stars[(D1 Stars)]
+    app --> atproto[atproto]
 ```
 
 ## 2. 中心の部品
