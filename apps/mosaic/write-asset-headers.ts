@@ -1,11 +1,11 @@
 import { NodeRuntime, NodeServices } from "@effect/platform-node";
-import { pageSlug, pageHashes } from "@masseater.dev/static-headers";
-import type { PageHeaders } from "@masseater.dev/static-headers";
 import { Array as Arr, Effect, FileSystem, Layer, Option, Path, pipe } from "effect";
+import { contentSecurityPolicy } from "security-headers";
+import { pageSlug, pageHashes } from "security-headers/static";
+import type { PageHeaders } from "security-headers/static";
 
 import { assetHeaders } from "./asset-headers.ts";
 import { BASE_PATH } from "./base-path.ts";
-import { contentSecurityPolicy } from "./security-headers.ts";
 import { SEARCH_INDEX_ORIGIN } from "./src/shared/config/search.ts";
 
 const OUTDIR = "dist/client";
@@ -15,7 +15,7 @@ const NOT_FOUND_PAGE = "404.html";
 const contentSecurityPolicyHeader = (
   hashes: readonly string[],
 ): Readonly<Record<string, string>> => ({
-  "Content-Security-Policy": contentSecurityPolicy(hashes),
+  "Content-Security-Policy": contentSecurityPolicy({ script: hashes, style: [], image: ["blob:"] }),
 });
 
 const documentHeaders = (hashes: readonly string[]): Readonly<Record<string, string>> => ({
