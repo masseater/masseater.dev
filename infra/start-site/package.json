@@ -14,7 +14,6 @@
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@effect/platform-node": "catalog:",
-    "@masseater.dev/static-headers": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@masseater.dev/web-ui": "workspace:*",
     "@tailwindcss/vite": "4.3.4",
@@ -24,6 +23,7 @@
     "@vitejs/plugin-rsc": "catalog:",
     "alchemy": "catalog:stack",
     "effect": "catalog:stack",
+    "security-headers": "workspace:*",
     "vite-plus": "catalog:stack"
   },
   "devDependencies": {
