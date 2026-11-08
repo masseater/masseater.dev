@@ -58,7 +58,7 @@ const fail = (message: string): never => {
 };
 
 const isInstalled = (): boolean =>
-  existsSync(binary) && existsSync(stamp) && readFileSync(stamp, "utf8").trim() === VERSION;
+  existsSync(binary) && existsSync(stamp) && readFileSync(stamp, "utf8") === `${VERSION}\n`;
 
 const download = (url: string, dest: string): void => {
   const result = spawnSync("curl", ["-fsSL", url, "-o", dest], { stdio: "inherit" });
@@ -96,8 +96,8 @@ const extractTar = (archive: string, extracted: string): void => {
   }
 };
 
-const extractArchive = (file: string, archive: string, extracted: string): void => {
-  if (file.endsWith(".zip") && isWindows) {
+const extractArchive = (archive: string, extracted: string): void => {
+  if (isWindows) {
     extractZip(archive, extracted);
     return;
   }
@@ -113,13 +113,9 @@ const placeBinary = (extracted: string): void => {
   writeFileSync(stamp, `${VERSION}\n`);
 };
 
-const resolveAsset = (): readonly [string, string] => {
-  const asset = ASSETS[`${process.platform}-${process.arch}`];
-  if (asset) {
-    return asset;
-  }
-  return fail(`betterleaks: unsupported platform ${process.platform}-${process.arch}`);
-};
+const resolveAsset = (): readonly [string, string] =>
+  ASSETS[`${process.platform}-${process.arch}`] ??
+  fail(`betterleaks: unsupported platform ${process.platform}-${process.arch}`);
 
 const unpack = (
   args: Readonly<{ work: string; file: string; sha256: string; url: string }>,
@@ -129,7 +125,7 @@ const unpack = (
   verifyChecksum(archive, args.sha256, args.file);
   const extracted = path.join(args.work, "extracted");
   mkdirSync(extracted);
-  extractArchive(args.file, archive, extracted);
+  extractArchive(archive, extracted);
   placeBinary(extracted);
 };
 
