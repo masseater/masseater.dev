@@ -1,6 +1,6 @@
 {
   "name": "sloppedia",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A Wikipedia-like skin for a personal encyclopedia written in Markdown: article pages with an infobox, table of contents and categories, a main page and a category index, as React components styled with Tailwind CSS.",
   "keywords": [
     "encyclopedia",
