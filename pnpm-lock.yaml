@@ -724,15 +724,9 @@ importers:
       '@html-eslint/eslint-plugin-react':
         specifier: 'catalog:'
         version: 0.67.0(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
-      '@r_masseater/oxlint-plugin-decision':
-        specifier: 'catalog:'
-        version: 0.1.1(oxlint@1.91.0(oxlint-tsgolint@7.0.2005)(vite-plus@1.5.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@r_masseater/oxlint-typed-rules':
         specifier: 'catalog:'
         version: 0.1.1
-      '@r_masseater/workers-tracing':
-        specifier: catalog:stack
-        version: 0.1.1(86a3a024f7f13025884f90c7061793f9)
       '@shadcn/lint':
         specifier: 'catalog:'
         version: 0.2.5(@typescript-eslint/parser@8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3))(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
@@ -769,6 +763,9 @@ importers:
       fallow:
         specifier: catalog:stack
         version: 3.39.0
+      oxlint-masseater-plugin:
+        specifier: workspace:*
+        version: link:libs/oxlint-masseater-plugin
       oxlint-plugin-eslint:
         specifier: 'catalog:'
         version: 1.91.0
@@ -2370,6 +2367,30 @@ importers:
         specifier: 19.3.1
         version: 19.3.1
 
+  libs/oxlint-masseater-plugin:
+    dependencies:
+      '@effect/tsgo':
+        specifier: catalog:stack
+        version: 0.67.4
+      '@eslint-react/eslint-plugin':
+        specifier: 'catalog:'
+        version: 5.28.8(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)
+      '@html-eslint/eslint-plugin-react':
+        specifier: 'catalog:'
+        version: 0.67.0(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
+      '@r_masseater/oxlint-plugin-decision':
+        specifier: 'catalog:'
+        version: 0.1.1(oxlint@1.91.0(oxlint-tsgolint@7.0.2005)(vite-plus@1.5.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@r_masseater/workers-tracing':
+        specifier: catalog:stack
+        version: 0.1.1(86a3a024f7f13025884f90c7061793f9)
+      effect:
+        specifier: 4.1.2
+        version: 4.1.2
+      eslint-plugin-react-hooks:
+        specifier: 'catalog:'
+        version: 7.1.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)
+
   libs/pod-rattle-engine:
     devDependencies:
       vite-plus:
@@ -2499,7 +2520,7 @@ importers:
         specifier: 2.1.1
         version: 2.1.1
       radix-ui:
-        specifier: 1.8.1
+        specifier: catalog:stack
         version: 1.8.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       tailwind-merge:
         specifier: 3.7.0

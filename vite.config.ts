@@ -2,9 +2,6 @@ import { plugin as shadcn } from "@shadcn/lint";
 import tanstackQuery from "@tanstack/eslint-plugin-query";
 import tanstackRouter from "@tanstack/eslint-plugin-router";
 import baselineJs from "eslint-plugin-baseline-js";
-import { defineConfig } from "vite-plus";
-
-import { alchemyOverride, scriptsOverride } from "./lint-overrides.config.ts";
 import {
   allRulesOf,
   decisionPluginName,
@@ -14,10 +11,12 @@ import {
   pluginRules,
   restrictedImports,
   shadcnRestyleContracts,
-} from "./lint.config.ts";
-import { readonlyParameterAllow } from "./readonly-types.config.ts";
-import { writerOnlyOverride } from "./record-lint.config.ts";
-import { workerOverride } from "./worker-lint.config.ts";
+} from "oxlint-masseater-plugin";
+import { alchemyOverride, scriptsOverride } from "oxlint-masseater-plugin/lint-overrides";
+import { readonlyParameterAllow } from "oxlint-masseater-plugin/readonly-types";
+import { writerOnlyOverride } from "oxlint-masseater-plugin/record-lint";
+import { workerOverride } from "oxlint-masseater-plugin/worker-lint";
+import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   test: {
@@ -79,7 +78,7 @@ export default defineConfig({
       { name: "baseline-js", specifier: "eslint-plugin-baseline-js" },
       { name: "@html-eslint/react", specifier: "@html-eslint/eslint-plugin-react" },
       { name: "eslint-js", specifier: "oxlint-plugin-eslint" },
-      { name: decisionPluginName, specifier: "./decision-rules.ts" },
+      { name: decisionPluginName, specifier: "oxlint-masseater-plugin/decision-rules" },
     ],
     rules: {
       "vite-plus/prefer-vite-plus-imports": "error",
@@ -158,7 +157,7 @@ export default defineConfig({
     overrides: [
       alchemyOverride,
       {
-        files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "decision-rules.ts"],
+        files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "**/decision-rules.ts"],
         rules: { "import/no-default-export": "off" },
       },
       {
