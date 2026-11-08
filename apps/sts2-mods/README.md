@@ -13,7 +13,7 @@
 
 ## クイックスタート
 
-ゲームと Steam が入っている PC で行う。詳細は [docs/setup.md](docs/setup.md)、Mac は [docs/setup-mac.md](docs/setup-mac.md)。
+ゲームと Steam が入っている PC で行う。
 
 1. [.NET SDK 9.0 以上](https://dotnet.microsoft.com/download)、[MegaDot 4.5.1](https://megadot.megacrit.com/)、[Vite+](https://viteplus.dev) を入れる。Mac の MegaDot は `curl -fsSL https://megadot.megacrit.com/install.sh | sh` で入る
 2. Steam で [BaseLib](https://steamcommunity.com/sharedfiles/filedetails/?id=3737335127) をサブスクライブ
@@ -32,11 +32,10 @@
 ## 開発のルール
 
 警告はすべてエラーにしている。検査は `vp run dotnet` で、push の前に masseater.dev の verify が同じ検査を走らせる。
-型安全・lint・CI の詳細は [docs/development.md](docs/development.md)。
 
 ## ワークショップへの公開
 
-Mega Crit 公式の [sts2-mod-uploader](https://github.com/megacrit/sts2-mod-uploader) を使う。手順は [docs/publishing.md](docs/publishing.md)。
+Mega Crit 公式の [sts2-mod-uploader](https://github.com/megacrit/sts2-mod-uploader) を使う。
 
 ```
 vp run publish MapDrawUndo
