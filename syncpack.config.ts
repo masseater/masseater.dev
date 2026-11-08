@@ -1,7 +1,6 @@
 import { Array as Arr, Record as Rec } from "effect";
+import { requiredStack } from "oxlint-masseater-plugin";
 import type { RcFile } from "syncpack";
-
-import { requiredStack } from "./lint.config.ts";
 
 const config: RcFile = {
   versionGroups: [
