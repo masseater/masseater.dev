@@ -61,7 +61,11 @@ const isInstalled = (): boolean =>
   existsSync(binary) && existsSync(stamp) && readFileSync(stamp, "utf8") === `${VERSION}\n`;
 
 const download = (url: string, dest: string): void => {
-  const result = spawnSync("curl", ["-fsSL", url, "-o", dest], { stdio: "inherit" });
+  const result = spawnSync(
+    "curl",
+    ["-fsSL", "--retry", "3", "--retry-delay", "2", "--retry-all-errors", url, "-o", dest],
+    { stdio: "inherit" },
+  );
   if (result.status !== STATUS_SUCCESS) {
     fail(`betterleaks: download failed ${url}`);
   }
