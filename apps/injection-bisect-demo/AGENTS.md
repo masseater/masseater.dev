@@ -3,4 +3,3 @@
 injection-bisect ライブラリのデモサイト。
 
 - デプロイ: masseater.dev/injection-bisect
-- 公開: なし
