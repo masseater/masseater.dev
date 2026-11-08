@@ -273,8 +273,8 @@ catalogs:
       specifier: 22.0.1
       version: 22.0.1
     '@openrouter/sdk':
-      specifier: 1.5.54
-      version: 1.5.54
+      specifier: 1.5.56
+      version: 1.5.56
     '@peculiar/asn1-pkcs8':
       specifier: 3.0.0
       version: 3.0.0
@@ -664,8 +664,8 @@ catalogs:
       specifier: 1.8.1
       version: 1.8.1
     renovate:
-      specifier: 44.218.0
-      version: 44.218.0
+      specifier: 44.219.0
+      version: 44.219.0
     steiger:
       specifier: 0.9.0
       version: 0.9.0
@@ -774,7 +774,7 @@ importers:
         version: 1.91.0
       renovate:
         specifier: catalog:stack
-        version: 44.218.0(supports-color@7.2.0)(typanion@3.14.0)
+        version: 44.219.0(supports-color@7.2.0)(typanion@3.14.0)
       skills:
         specifier: 'catalog:'
         version: 1.7.6
@@ -2636,7 +2636,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.54
+        version: 1.5.56
       bench-summary:
         specifier: workspace:*
         version: link:../../libs/bench-summary
@@ -4985,8 +4985,8 @@ packages:
   '@openrouter/sdk@1.5.33':
     resolution: {integrity: sha512-hbg4q/tZHOnggBk7Sjkel6COExpbe1+2p4Mt2YyvAloDXtNNaFkMab0SgVfoBdTgzweBlrJJ4jUHwHt5rFiadA==}
 
-  '@openrouter/sdk@1.5.54':
-    resolution: {integrity: sha512-A4pKzSOdJFic0TRzJJxBH4HT3hfFcgPusXWq4VDh9PY4nPORQFHmH+b8q/parAp3ed5ys7TP8rz2ey7y7PLS4g==}
+  '@openrouter/sdk@1.5.56':
+    resolution: {integrity: sha512-Ys3rpbS/WVepv3LTFg+gDhJlcnc/crNbzpfT85pd0VfAvhItsCgmlwNXsrinpAW/y6oUo6sc/22s3q5rus7xPQ==}
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -13167,9 +13167,9 @@ packages:
   remove-accents@0.5.0:
     resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
 
-  renovate@44.218.0:
-    resolution: {integrity: sha512-J8dotlvwpTPcoSfwOvnd3+5dguW9/WypfV05Yc1rEmp0nd+07As8smndw36iXEtk7Li9bmM1MC+YTaFH98Gnpg==}
-    engines: {node: ^24.11.0, pnpm: ^11.0.0}
+  renovate@44.219.0:
+    resolution: {integrity: sha512-J+Js31tAW4vK8aJR5dPas8JPmmpGTJjFdkOQsr0v1GbNksHV/P1yHykqRM0F4gbf+2BSX9uyT+QaGX7gEPWMwQ==}
+    engines: {node: ^24.11.0 || ^26.13.0, pnpm: ^11.0.0}
     hasBin: true
 
   repeat-string@1.6.1:
@@ -17199,7 +17199,7 @@ snapshots:
     dependencies:
       zod: 4.6.7
 
-  '@openrouter/sdk@1.5.54':
+  '@openrouter/sdk@1.5.56':
     dependencies:
       zod: 4.6.7
 
@@ -26219,7 +26219,7 @@ snapshots:
 
   remove-accents@0.5.0: {}
 
-  renovate@44.218.0(supports-color@7.2.0)(typanion@3.14.0):
+  renovate@44.219.0(supports-color@7.2.0)(typanion@3.14.0):
     dependencies:
       '@aws-sdk/client-codecommit': 3.1139.0
       '@aws-sdk/client-ec2': 3.1139.0
