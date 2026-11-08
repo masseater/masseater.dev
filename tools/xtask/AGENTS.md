@@ -1,17 +1,8 @@
-# Architecture Overview
+# @masseater.dev/xtask
 
-Rust 製の開発タスクランナーである。cargo xtask から呼ぶ。実処理は nice-plug-xtask へ委譲する薄い層になっている。
+Rust 製の開発タスクランナー（cargo xtask）。
 
-## 1. 中心の部品
+## 判断のルール
 
-### bundle-all
-
-説明: apps 配下から cdylib なクレートを自動で検出する。全プラグイン分の bundle をまとめて実行する。
-
-### bundle-universal-all
-
-説明: 同じ検出で bundle-universal をまとめて実行する。macOS の universal バイナリ向けである。
-
-## 2. 不変条件
-
-対象の検出: プラグインの一覧は手で持たない。apps 配下のマニフェストから cdylib を含むものを拾う。プラグインが増減してもこのツールのコードは変わらない。
+- プラグインの一覧をコードに手で書かない。apps 配下の Cargo.toml から cdylib を検出する形を保つ
+- 実処理は nice-plug-xtask 側に置く。ここは委譲だけの薄い層に保つ

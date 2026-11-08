@@ -1,49 +1,10 @@
-# Architecture Overview
+# @masseater.dev/portfolio
 
-masseater.dev 本体サイトである。ブログ、Sloppedia、プロジェクト紹介を配信する。技術は TanStack Start で、Cloudflare Workers 上で動く。
+masseater.dev 本体サイト（TanStack Start / Cloudflare Workers）。
 
-## 1. システムの概略図
+- デプロイ: masseater.dev（www はリダイレクト）
 
-```mermaid
-flowchart LR
-    visitor[訪問者] --> worker[配信 Worker] --> app[サイト本体] --> stars[(D1 Stars)]
-    app --> atproto[atproto]
-```
+## 判断のルール
 
-## 2. 中心の部品
-
-### サイト本体
-
-説明: 記事の描画とルーティングを担う。記事の中身はアプリ内のコンテンツとして持つ。ビルド時に取り込む。
-技術: TanStack Start、React。
-境界: src は Feature-Sliced Design の層で分ける。層の違反は steiger が落とす。
-
-### 配信 Worker
-
-説明: リクエストの入口である。セキュリティヘッダーの付与を担う。
-技術: Cloudflare Workers。
-
-### CI テレメトリ Worker
-
-説明: CI の実行情報を集める小さな Worker である。本体のスタックとは別にデプロイする。
-
-## 3. データストア
-
-### Stars
-
-種類: Cloudflare D1。
-用途: スター機能の保存。
-
-## 4. 外部の連携
-
-atproto（site.standard）: ブログの発行情報をプロトコル側へ公開する。CI の deploy で認証情報があるときだけ実行される。
-
-## 5. セキュリティ
-
-セキュリティヘッダー: 配信 Worker が応答に付与する。
-
-## 6. デプロイと基盤
-
-基盤: Cloudflare Workers、D1。
-CI/CD: GitHub Actions の deploy ジョブから Alchemy で本番（prod）へ適用する。ゾーンとトレースは同じ workspace 内の別スタックである。
-デプロイ先: masseater.dev。www はリダイレクトする。
+- 記事の中身はリポジトリ内のコンテンツとして持つ。外部の CMS に寄せない
+- atproto への発行は認証情報があるときだけ走る任意処理にする。本体のデプロイの成否と切り離す
