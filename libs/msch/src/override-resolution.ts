@@ -1,5 +1,5 @@
 import { Array as Arr, Option, Order, Record as Rec, Schema, String as Str, pipe } from "effect";
-import { isMap, isScalar, parseAllDocuments, parseDocument } from "yaml";
+import { LineCounter, isMap, isScalar, parseAllDocuments, parseDocument } from "yaml";
 
 const VerdictSchema = Schema.Literals(["unused", "keep", "verify"]);
 
@@ -17,8 +17,6 @@ const OverrideReportSchema = Schema.Struct({
   peerIssues: Schema.Array(Schema.String),
   advisories: Schema.Array(Schema.String),
 });
-
-const OverrideReportList = Schema.Array(OverrideReportSchema);
 
 type OverrideReport = typeof OverrideReportSchema.Type;
 type PackageChange = typeof PackageChangeSchema.Type;
@@ -202,6 +200,19 @@ const changesBetween = (baseline: Resolution, candidate: Resolution): readonly P
     Arr.filter((change) => Arr.join(change.before, " ") !== Arr.join(change.after, " ")),
   );
 
+const growsThePackageSet = (change: PackageChange): boolean =>
+  change.after.length > change.before.length;
+
+const needsTheOverride = (
+  found: Pick<OverrideReport, "changes" | "peerIssues" | "advisories">,
+): boolean =>
+  pipe(
+    found.changes,
+    Arr.some((change) => growsThePackageSet(change)),
+  ) ||
+  Arr.isReadonlyArrayNonEmpty(found.peerIssues) ||
+  Arr.isReadonlyArrayNonEmpty(found.advisories);
+
 const judge =
   (baseline: Resolution) =>
   (key: string, candidate: Resolution): OverrideReport => {
@@ -214,7 +225,7 @@ const judge =
     if (!Arr.isReadonlyArrayNonEmpty(changes) && !peerContextsChanged) {
       return { ...found, verdict: "unused" };
     }
-    if (Arr.isReadonlyArrayNonEmpty(peerIssues) || Arr.isReadonlyArrayNonEmpty(advisories)) {
+    if (needsTheOverride(found)) {
       return { ...found, verdict: "keep" };
     }
     return { ...found, verdict: "verify" };
@@ -224,8 +235,36 @@ const OVERRIDES = "overrides";
 const BASELINE_PROBE = "msch-baseline-probe";
 const REMOVED_DEPENDENCY = "-";
 
-const overrideKeysOf = (manifest: string): readonly string[] =>
-  keysOf(parseDocument(manifest).get(OVERRIDES));
+interface OverrideKey {
+  readonly key: string;
+  readonly line: number;
+  readonly column: number;
+}
+
+const overrideKeysOf = (manifest: string): readonly OverrideKey[] => {
+  const lineCounter = new LineCounter();
+  const overrides = parseDocument(manifest, { lineCounter }).get(OVERRIDES);
+  if (!isMap(overrides)) {
+    return [];
+  }
+  return pipe(
+    overrides.items,
+    Arr.flatMap((pair): readonly OverrideKey[] => {
+      const { key } = pair;
+      if (!isScalar(key)) {
+        return [];
+      }
+      return pipe(
+        Option.fromNullishOr(key.range),
+        Option.map(([start]) => {
+          const { line, col } = lineCounter.linePos(start);
+          return { key: String(key.value), line, column: col };
+        }),
+        Option.toArray,
+      );
+    }),
+  );
+};
 
 const withoutOverride =
   (key: string) =>
@@ -243,7 +282,6 @@ const withBaselineProbe = (manifest: string): string => {
 
 export {
   BASELINE_PROBE,
-  OverrideReportList,
   advisoriesIn,
   judge,
   overrideKeysOf,
@@ -252,4 +290,4 @@ export {
   withBaselineProbe,
   withoutOverride,
 };
-export type { Findings, OverrideReport, Resolution };
+export type { Findings, OverrideKey, OverrideReport, PackageChange, Resolution };

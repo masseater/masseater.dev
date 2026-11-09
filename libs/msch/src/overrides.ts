@@ -2,6 +2,7 @@ import {
   Array as Arr,
   Effect,
   FileSystem,
+  Option,
   Path,
   Schema,
   Stream,
@@ -12,6 +13,7 @@ import type { PlatformError } from "effect";
 import { ChildProcess } from "effect/process";
 import type { ChildProcessSpawner } from "effect/process";
 
+import { overrideProblem } from "./override-findings.ts";
 import {
   BASELINE_PROBE,
   advisoriesIn,
@@ -22,7 +24,8 @@ import {
   withBaselineProbe,
   withoutOverride,
 } from "./override-resolution.ts";
-import type { OverrideReport } from "./override-resolution.ts";
+import type { OverrideKey } from "./override-resolution.ts";
+import type { Problem } from "./problem.ts";
 
 const WORKSPACE_FILE = "pnpm-workspace.yaml";
 const LOCKFILE = "pnpm-lock.yaml";
@@ -121,36 +124,41 @@ const resolutionWith = Effect.fn("resolutionWith")(function* resolutionWith(
   return resolutionOf({ peerIssues: peerIssuesIn(output), advisories })(lockfile);
 }, Effect.scoped);
 
-/** @internal */
-const checkOverrides = Effect.fn("checkOverrides")(function* checkOverrides(root: string) {
-  const fs = yield* FileSystem.FileSystem;
+const problemsFor = Effect.fn("problemsFor")(function* problemsFor(
+  root: string,
+  manifest: string,
+  keys: readonly OverrideKey[],
+) {
   const path = yield* Path.Path;
-  const manifest = yield* fs.readFileString(path.join(root, WORKSPACE_FILE));
   const files = yield* trackedResolutionFiles(root);
   const workspace: Workspace = { root, files, manifest };
   const baseline = yield* resolutionWith(workspace, BASELINE_PROBE, withBaselineProbe(manifest));
   const judgeAgainstBaseline = judge(baseline);
-  const candidateOf = (
-    key: string,
-  ): Effect.Effect<OverrideReport, CandidateFailure, CandidateServices> =>
-    resolutionWith(workspace, key, withoutOverride(key)(manifest)).pipe(
-      Effect.map((candidate) => judgeAgainstBaseline(key, candidate)),
+  const file = path.join(root, WORKSPACE_FILE);
+  const problemOf = (
+    located: OverrideKey,
+  ): Effect.Effect<Option.Option<Problem>, CandidateFailure, CandidateServices> =>
+    resolutionWith(workspace, located.key, withoutOverride(located.key)(manifest)).pipe(
+      Effect.map((candidate) =>
+        overrideProblem({ ...located, file })(judgeAgainstBaseline(located.key, candidate)),
+      ),
     );
-  return yield* Effect.forEach(overrideKeysOf(manifest), candidateOf, {
+  const problems = yield* Effect.forEach(keys, problemOf, {
     concurrency: RESOLUTION_CONCURRENCY,
   });
+  return Arr.getSomes(problems);
 });
 
 /** @internal */
-const removeOverride = Effect.fn("removeOverride")(function* removeOverride(
-  root: string,
-  key: string,
-) {
+const checkOverrides = Effect.fn("checkOverrides")(function* checkOverrides(root: string) {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const file = path.join(root, WORKSPACE_FILE);
-  const manifest = yield* fs.readFileString(file);
-  yield* fs.writeFileString(file, withoutOverride(key)(manifest));
+  const manifest = yield* fs.readFileString(path.join(root, WORKSPACE_FILE)).pipe(Effect.option);
+  const keys = Option.match(manifest, { onNone: () => [], onSome: overrideKeysOf });
+  if (Option.isNone(manifest) || !Arr.isReadonlyArrayNonEmpty(keys)) {
+    return [];
+  }
+  return yield* problemsFor(root, manifest.value, keys);
 });
 
-export { checkOverrides, removeOverride };
+export { checkOverrides };

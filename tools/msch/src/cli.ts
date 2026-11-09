@@ -3,9 +3,11 @@ import { layer as nodeServicesLayer } from "@effect/platform-node/NodeServices";
 import {
   ProblemList,
   RepositoryFiles,
+  checkOverrides,
   checkRepository,
   formatProblem,
   nodeRepositoryFiles,
+  sortProblems,
 } from "@msch/core";
 import type { Problem } from "@msch/core";
 import { Cause, Effect, Layer, Option, Schema, Stdio, Stream, Array as Arr, pipe } from "effect";
@@ -14,9 +16,8 @@ import { FetchHttpClient } from "effect/http";
 import { Otlp, OtlpSerialization } from "effect/observability";
 import type { ChildProcessSpawner } from "effect/process";
 
-import { JSON_FLAG, OVERRIDES_COMMAND } from "./cli-contract.ts";
+import { JSON_FLAG } from "./cli-contract.ts";
 import { ProblemsFound, writeStdout } from "./output.ts";
-import { overrides } from "./overrides-command.ts";
 
 const NO_PROBLEMS = 0;
 
@@ -40,32 +41,20 @@ const reportText = (
     return yield* Effect.void;
   });
 
-const VOCABULARY_COMMAND = "vocabulary";
-
-const vocabulary = Effect.gen(function* vocabulary() {
+const msch = Effect.gen(function* msch() {
   const stdio = yield* Stdio.Stdio;
   const files = yield* RepositoryFiles;
   const args = yield* stdio.args;
   const root = files.resolve(".");
-  const problems = yield* checkRepository(root);
+  const found = yield* Effect.all([checkRepository(root), checkOverrides(root)], {
+    concurrency: "unbounded",
+  });
+  const problems = sortProblems(Arr.flatten(found));
   if (args.includes(JSON_FLAG)) {
     const text = yield* Schema.encodeEffect(Schema.fromJsonString(ProblemList))(problems);
     return yield* writeStdout(text);
   }
   return yield* reportText(root, problems);
-});
-
-const msch = Effect.gen(function* msch() {
-  const stdio = yield* Stdio.Stdio;
-  const args = yield* stdio.args;
-  const [command] = args;
-  if (command === OVERRIDES_COMMAND) {
-    return yield* overrides;
-  }
-  if (command === VOCABULARY_COMMAND) {
-    return yield* vocabulary;
-  }
-  return yield* vocabulary;
 });
 
 const reportFailure = <Failure>(

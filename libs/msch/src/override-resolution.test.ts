@@ -1,4 +1,4 @@
-import { String as Str } from "effect";
+import { Array as Arr, String as Str, pipe } from "effect";
 import { expect, it } from "vite-plus/test";
 
 import {
@@ -49,13 +49,19 @@ const NO_FINDINGS = { peerIssues: [], advisories: [] };
 
 it("reads the override keys and edits only the named one", () => {
   expect(overrideKeysOf(MANIFEST)).toStrictEqual([
-    "sharp@<0.35.5",
-    "steiger>@feature-sliced/steiger-plugin",
+    { key: "sharp@<0.35.5", line: 4, column: 3 },
+    { key: "steiger>@feature-sliced/steiger-plugin", line: 5, column: 3 },
   ]);
   expect(withoutOverride("sharp@<0.35.5")(MANIFEST)).toBe(
     Str.replace("  sharp@<0.35.5: ^0.35.5\n", "")(MANIFEST),
   );
-  expect(overrideKeysOf(withBaselineProbe(MANIFEST))).toContain("msch-baseline-probe");
+  const probed = overrideKeysOf(withBaselineProbe(MANIFEST));
+  expect(
+    pipe(
+      probed,
+      Arr.map((found) => found.key),
+    ),
+  ).toContain("msch-baseline-probe");
 });
 
 it("calls an override unused when nothing resolves differently without it", () => {
@@ -79,6 +85,18 @@ it("keeps an override whose removal brings back an advisory", () => {
     peerIssues: [],
     advisories: ["sharp GHSA-rgj7-g3m4-5g8c"],
   });
+});
+
+it("keeps an override whose removal installs more versions of a package", () => {
+  const baseline = resolutionOf(NO_FINDINGS)(lockfileWith("0.35.5", "zod@4.6.7"));
+  const candidate = resolutionOf(NO_FINDINGS)(
+    `${lockfileWith("0.35.5", "zod@4.6.7")}\n  zod@3.25.0: {}\n`,
+  );
+  const report = judge(baseline)("zod@<4", candidate);
+  expect([report.verdict, report.changes]).toStrictEqual([
+    "keep",
+    [{ name: "zod", before: ["4.6.7"], after: ["3.25.0", "4.6.7"] }],
+  ]);
 });
 
 it("leaves a change in peer contexts alone to verify", () => {
