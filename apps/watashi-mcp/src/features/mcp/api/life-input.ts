@@ -17,6 +17,8 @@ import {
 } from "#/features/mcp/model/life-body";
 import { LIFE_RECORDS } from "#/features/mcp/model/life-record.table";
 
+import { BUCKETS } from "./life-groups";
+
 const MIN_ONE = 1;
 
 const DEFAULT_READ_LIMIT = 20;
@@ -30,8 +32,6 @@ const MAX_PERIODS = 24;
 const SAID_SOURCES = ["said", "provided", "imported"] as const;
 
 const READ_ORDERS = ["time", "recent", "relevance"] as const;
-
-const BUCKETS = ["day", "week", "month", "none"] as const;
 
 const Text = Schema.NonEmptyString;
 
@@ -213,7 +213,6 @@ type LifeReadValue = typeof LifeReadInput.Type;
 type LifeStatsValue = typeof LifeStatsInput.Type;
 
 export {
-  BUCKETS,
   DEFAULT_PERIODS,
   DEFAULT_READ_LIMIT,
   LifeReadInput,

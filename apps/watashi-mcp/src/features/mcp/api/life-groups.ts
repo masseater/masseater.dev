@@ -10,7 +10,9 @@ type Bins = Readonly<{ metric: string; bins: readonly number[] }>;
 
 type GroupBy = Bins | Readonly<{ by: "weekday" | "kind" }> | Readonly<{ has: string }>;
 
-type Bucket = "day" | "week" | "month" | "none";
+const BUCKETS = ["day", "week", "month", "none"] as const;
+
+type Bucket = (typeof BUCKETS)[number];
 
 type StatsData = Readonly<{
   events: readonly StatEvent[];
@@ -175,5 +177,5 @@ const groupsOf =
     return pipe(days, Arr.groupBy(weekdayKey), Rec.toEntries, Arr.map(groupValue(measured)));
   };
 
-export { bucketsOf, dailyFor, dailyOfMetric, groupsOf, optional };
+export { BUCKETS, bucketsOf, dailyFor, dailyOfMetric, groupsOf, optional };
 export type { Bucket, BucketValue, GroupBy, GroupValue, Measured, Scope, StatsData };

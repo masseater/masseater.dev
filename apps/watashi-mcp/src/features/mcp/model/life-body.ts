@@ -16,12 +16,16 @@ const MEDIA_TYPES = [
 
 const MEDIA_STATUSES = ["want", "doing", "done", "tried", "dropped", "owned"] as const;
 
+const BOOK_ID_KEYS = ["isbn", "asin", "ndlBibId"] as const;
+
+const SCREEN_ID_KEYS = ["tmdbId", "imdbId"] as const;
+
 const MEDIA_ID_KEYS = {
-  book: ["isbn", "asin", "ndlBibId"],
-  comic: ["isbn", "asin", "ndlBibId"],
+  book: BOOK_ID_KEYS,
+  comic: BOOK_ID_KEYS,
   anime: ["annictWorkId", "malId"],
-  movie: ["tmdbId", "imdbId"],
-  tv: ["tmdbId", "imdbId"],
+  movie: SCREEN_ID_KEYS,
+  tv: SCREEN_ID_KEYS,
   game: ["steamAppId", "igdbId", "nintendoEshopId"],
   music: ["musicbrainzId", "spotifyId", "appleMusicId"],
   video: ["youtubeVideoId", "niconicoVideoId"],
