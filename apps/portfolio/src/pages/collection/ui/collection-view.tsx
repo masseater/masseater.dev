@@ -30,16 +30,14 @@ const CollectionView = ({
     shown,
     Array.filter(({ status }) => status === "idea"),
   );
-  const { layout, title } = categoryMeta[category];
+  const { title } = categoryMeta[category];
   return (
     <div className="xl:collection-columns flex flex-col gap-8 xl:grid xl:items-start" data-wide>
       <h1 className="sr-only">{title}</h1>
       {Array.isReadonlyArrayNonEmpty(counts) && <TagFilter activeTag={activeTag} counts={counts} />}
       <div className="flex min-w-0 flex-col gap-16 xl:col-start-2 xl:row-start-1">
-        <EntryList entries={listed} layout={layout} starCounts={starCounts} />
-        {Array.isReadonlyArrayNonEmpty(ideas) && (
-          <IdeaList ideas={ideas} layout={layout} starCounts={starCounts} />
-        )}
+        <EntryList entries={listed} starCounts={starCounts} />
+        {Array.isReadonlyArrayNonEmpty(ideas) && <IdeaList ideas={ideas} starCounts={starCounts} />}
       </div>
     </div>
   );
