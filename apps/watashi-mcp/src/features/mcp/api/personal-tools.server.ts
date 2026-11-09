@@ -6,6 +6,7 @@ import type { Caller } from "./caller";
 import { registerConversationTools } from "./conversation-tools.server";
 import { registerSlideTools } from "./slides-tools.server";
 import { registerSloppediaTools } from "./sloppedia-tools.server";
+import { registerTokenTools } from "./token-tools.server";
 
 const registerPersonalTools =
   (caller: Caller) =>
@@ -16,6 +17,7 @@ const registerPersonalTools =
       registerAnalyticsTools(caller),
       registerSlideTools(caller),
       registerConversationTools(caller),
+      registerTokenTools(caller),
     );
 
 export { registerPersonalTools };
