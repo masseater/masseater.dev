@@ -64,7 +64,7 @@
 - 出典でないリンクは `[文言](URL)` の埋め込みリンクにし、むき出しの URL を置かない。blogs・sloppedia・projects のどれも同じである。
 - Claude との対話を載せるときは、発言を `:::masseater` と `:::claude` のブロックで囲む。`remark-dialogue.ts` がアイコンと名前つきの吹き出しに変える。
 - 中身の薄いアイデア段階の blog は、frontmatter に `stage: idea` を付ける。一覧では折りたたみの中に入り、フィードには出ない。
-- Sloppedia の記事は personal-space の MCP の `write_sloppedia_article` からも PR で足される。blog を投稿するツールは MCP に意図して足さない。blog は持ち主が推敲してから出すまとまった文章で、AI が書ける経路は Sloppedia だけにしておくためである。
+- Sloppedia の記事は watashi-mcp の `write_sloppedia_article` からも PR で足される。blog を投稿するツールは MCP に意図して足さない。blog は持ち主が推敲してから出すまとまった文章で、AI が書ける経路は Sloppedia だけにしておくためである。
 - Sloppedia の記事どうしは `[語](/sloppedia/<slug>)` でつなぐ。独立した記事にすべき語は、記事がまだ無くてもつなぐ。`remark-wiki-link.ts` がビルド時に、記事があればリンク、無ければ赤字にする。新しい記事の slug は、既存の記事がその題材に張ったリンクの slug に合わせる。
 - Sloppedia の記事は百科事典の体裁で書く。冒頭の文を「題名は、〜である。」で始め、出典は名前のラベルの脚注にする。持ち主の意見は「Sloppedia の持ち主の masseater は〜と考えている」のように誰の意見かを書く。
 
