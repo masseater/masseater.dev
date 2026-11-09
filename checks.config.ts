@@ -11,8 +11,6 @@ const PUBLIC_VALUES = [
 
 const UNTRACKED_SKILL_EXAMPLE = String.raw`(attributes["git.sha"] == "f4ab1c402143011a6264a0660f598fc02eb48bff" && attributes["path"] == "docs/skills/measure-dont-guess/SKILL.md")`;
 
-const BETTERLEAKS = ".tooling/bin/betterleaks";
-
 const checks: ToolSections = {
   commitlint: { extends: ["@commitlint/config-conventional"] },
   dependencyRules: {
@@ -95,11 +93,11 @@ const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
   ],
   steiger: "vp-tools steiger apps/*/src",
   betterleaks: {
-    command: `vp-tools betterleaks sh -c 'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then ${BETTERLEAKS} git . --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; ${BETTERLEAKS} "$tmp" --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else ${BETTERLEAKS} git . --redact --no-banner; fi'`,
+    command: `vp-tools betterleaks sh -c 'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then betterleaks git . --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; betterleaks "$tmp" --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else betterleaks git . --redact --no-banner; fi'`,
     cache: false,
   },
   "betterleaks:staged": {
-    command: `git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | vp-tools betterleaks ${BETTERLEAKS} stdin --git-diff --redact --no-banner`,
+    command: `git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | vp-tools betterleaks betterleaks stdin --git-diff --redact --no-banner`,
     cache: false,
   },
 };
