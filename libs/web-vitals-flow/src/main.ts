@@ -72,7 +72,7 @@ const command = Command.make(
       return yield* Array.match(failures, {
         onEmpty: () => Effect.void,
         onNonEmpty: (poor) => Effect.fail(PoorVitals.make({ failures: poor })),
-      });
+      }).pipe(Effect.withSpan("web-vitals.judge", { attributes: { failures } }));
     }),
 );
 

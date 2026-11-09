@@ -30,7 +30,9 @@ default is `report`.
 
 When `OTEL_TRACES_EXPORTER=otlp` and `OTEL_EXPORTER_OTLP_ENDPOINT` are set, it
 exports spans. They are `web-vitals.flow`, `web-vitals.load`,
-`web-vitals.transition` and `web-vitals.audit`.
+`web-vitals.transition`, `web-vitals.audit` and `web-vitals.judge`.
+`web-vitals.judge` lists the metrics that missed the passing score in `failures`.
+The span is an error when that list is not empty.
 
 ## License
 
