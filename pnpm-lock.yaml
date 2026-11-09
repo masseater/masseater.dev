@@ -1412,6 +1412,91 @@ importers:
         specifier: catalog:stack
         version: 1.5.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
+  apps/nimado:
+    dependencies:
+      '@effect/atom-react':
+        specifier: catalog:stack
+        version: 4.1.2(effect@4.1.2)(react@19.3.1)(scheduler@0.28.0)
+      '@masseater.dev/alchemy-app-name':
+        specifier: workspace:*
+        version: link:../../infra/alchemy-app-name
+      '@masseater.dev/cloudflare-account':
+        specifier: workspace:*
+        version: link:../../infra/cloudflare-account
+      '@masseater.dev/nimado':
+        specifier: workspace:*
+        version: link:../../libs/nimado
+      '@masseater.dev/start-shell':
+        specifier: workspace:*
+        version: link:../../libs/start-shell
+      '@masseater.dev/ui':
+        specifier: workspace:*
+        version: link:../../libs/ui
+      '@tanstack/react-query':
+        specifier: catalog:stack
+        version: 5.107.1(@types/react@19.3.0)(react@19.3.1)
+      '@tanstack/react-router':
+        specifier: 1.170.46
+        version: 1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@tanstack/react-start':
+        specifier: catalog:stack
+        version: 1.169.5(8188473ce735923f33ddbbb0d58eab0d)
+      effect:
+        specifier: catalog:stack
+        version: 4.1.2
+      react:
+        specifier: 19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: 19.3.1
+        version: 19.3.1(react@19.3.1)
+      security-headers:
+        specifier: workspace:*
+        version: link:../../libs/security-headers
+      tailwindcss:
+        specifier: catalog:stack
+        version: 4.3.4
+      tw-animate-css:
+        specifier: 1.4.0
+        version: 1.4.0
+    devDependencies:
+      '@alchemy.run/cloudflare':
+        specifier: catalog:stack
+        version: 2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(alchemy@2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.2)(ws@8.22.1))(effect@4.1.2)(typescript@7.1.0-beta)
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 5.20261106.1
+      '@effect/tsgo':
+        specifier: catalog:stack
+        version: 0.67.4
+      '@masseater.dev/start-site':
+        specifier: workspace:*
+        version: link:../../infra/start-site
+      '@types/react':
+        specifier: 19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 6.2.1(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
+      '@vitejs/plugin-rsc':
+        specifier: 'catalog:'
+        version: 0.5.39(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(react-dom@19.3.1(react@19.3.1))(react-server-dom-webpack@19.3.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(webpack@5.111.1(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@26.6.6))(uglify-js@3.19.3)))(react@19.3.1)
+      alchemy:
+        specifier: catalog:stack
+        version: 2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.2)(ws@8.22.1)
+      typescript:
+        specifier: catalog:stack
+        version: 7.1.0-beta
+      vite:
+        specifier: 'catalog:'
+        version: '@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.5.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
   apps/ocr-decide:
     dependencies:
       '@effect/atom-react':
@@ -2295,6 +2380,12 @@ importers:
         specifier: catalog:stack
         version: 1.5.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
+  libs/nimado:
+    dependencies:
+      effect:
+        specifier: catalog:stack
+        version: 4.1.2
+
   libs/ocr-decide:
     dependencies:
       '@effect/ai-openrouter':
@@ -2840,6 +2931,28 @@ importers:
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.5.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  tools/nimado-collect:
+    dependencies:
+      '@distilled.cloud/cloudflare':
+        specifier: catalog:stack
+        version: 1.0.0-rc.18(effect@4.1.2)
+      '@effect/platform-node':
+        specifier: 'catalog:'
+        version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@masseater.dev/nimado':
+        specifier: workspace:*
+        version: link:../../libs/nimado
+      effect:
+        specifier: catalog:stack
+        version: 4.1.2
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
       vite-plus:
         specifier: catalog:stack
         version: 1.5.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)

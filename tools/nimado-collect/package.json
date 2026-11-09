@@ -1,0 +1,19 @@
+{
+  "name": "nimado-collect",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#package.json": "./package.json"
+  },
+  "dependencies": {
+    "@distilled.cloud/cloudflare": "catalog:stack",
+    "@effect/platform-node": "catalog:",
+    "@masseater.dev/nimado": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
