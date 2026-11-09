@@ -1645,7 +1645,7 @@ importers:
         version: 7.1.0-beta
       vite-plus:
         specifier: catalog:stack
-        version: 1.5.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+        version: 1.5.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
   apps/pod-rattle-plugin:
     devDependencies:
@@ -2033,9 +2033,9 @@ importers:
       '@cfworker/json-schema':
         specifier: 'catalog:'
         version: 4.1.6
-      '@distilled.cloud/github':
-        specifier: 'catalog:'
-        version: 1.0.0-rc.18(effect@4.1.2)
+      '@masseater.dev/mcp-tool-call':
+        specifier: workspace:*
+        version: link:../../libs/mcp-tool-call
       '@masseater.dev/owner-auth':
         specifier: workspace:*
         version: link:../../libs/owner-auth
@@ -2084,9 +2084,6 @@ importers:
       tailwindcss:
         specifier: catalog:stack
         version: 4.3.5
-      yaml:
-        specifier: 'catalog:'
-        version: 2.9.1
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
@@ -2109,9 +2106,6 @@ importers:
       '@masseater.dev/cloudflare-account':
         specifier: workspace:*
         version: link:../../infra/cloudflare-account
-      '@masseater.dev/repositories':
-        specifier: workspace:*
-        version: link:../../infra/repositories
       '@tailwindcss/vite':
         specifier: 4.3.5
         version: 4.3.5(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
