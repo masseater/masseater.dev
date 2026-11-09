@@ -1,0 +1,37 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src", "*.ts"],
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/platform-node/NodeRuntime#runMain",
+          "@effect/platform-node/NodeServices#layer",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/PlatformError#PlatformError",
+          "effect/cli/Command#make",
+          "effect/cli/Command#run",
+          "effect/cli/Command#withSubcommands",
+          "effect/cli/Flag#Flag",
+          "effect/cli/Flag#Int",
+          "effect/cli/Flag#String",
+          "effect/cli/Flag#withDefault",
+          "effect/http/FetchHttpClient#layer",
+          "effect/http/HttpClient#HttpClient",
+          "effect/http/HttpClientError#HttpClientError",
+          "effect/http/HttpClientRequest#acceptJson",
+          "effect/http/HttpClientRequest#get",
+          "effect/http/HttpClientRequest#setHeader",
+          "effect/http/HttpClientRequest#setUrlParams",
+          "effect/http/HttpClientResponse#filterStatusOk",
+          "effect/http/HttpClientResponse#schemaBodyJson",
+          "effect/observability/OtlpSerialization#layerJson",
+          "effect/observability/OtlpTracer#layerFromConfig"
+        ]
+      }
+    ]
+  }
+}

@@ -236,6 +236,23 @@ jobs:
       - uses: $/.github/actions/setup
       - run: vp exec --filter rpp-kit-demo alchemy deploy --stage production --yes
 
+  nimado:
+    needs: deploy
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: nimado-site
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@38a7ea6baf9892c99154d38b2421fae9cedf6f84
+      - uses: $/.github/actions/setup
+      - run: vp exec --filter nimado alchemy deploy --stage production --yes
+
   web-vitals:
     needs: rpp-kit
     runs-on: ubuntu-latest
@@ -604,6 +621,7 @@ jobs:
         three-twelve,
         watashi-mcp,
         rpp-kit,
+        nimado,
         medley-manager,
         decision-experiments,
         web-vitals,

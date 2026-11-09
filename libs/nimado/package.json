@@ -1,0 +1,12 @@
+{
+  "name": "@masseater.dev/nimado",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "effect": "catalog:stack"
+  }
+}
