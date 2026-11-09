@@ -1,0 +1,41 @@
+name: overrides
+
+on:
+  schedule:
+    - cron: "41 19 * * 0"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  drop:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: overrides
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+      - uses: masseater/typescript-template/.github/actions/credentials@38a7ea6baf9892c99154d38b2421fae9cedf6f84
+      - run: git fetch --unshallow --filter=blob:none origin
+      - run: .github/scripts/drop-overrides.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  ci-telemetry:
+    needs: [drop]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@38a7ea6baf9892c99154d38b2421fae9cedf6f84
+        with:
+          github-token: ${{ github.token }}

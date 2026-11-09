@@ -16,7 +16,8 @@
           "effect/http/FetchHttpClient#layer",
           "effect/observability/Otlp#layerFromConfig",
           "effect/observability/OtlpSerialization#layerJson",
-          "effect/process/ChildProcess#make"
+          "effect/process/ChildProcess#make",
+          "effect/process/ChildProcessSpawner#ChildProcessSpawner"
         ]
       }
     ]

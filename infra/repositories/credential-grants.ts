@@ -107,6 +107,7 @@ const BOT_PERMISSIONS = {
 
 const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "autofix.yml": BOT_PERMISSIONS,
+  "overrides.yml": BOT_PERMISSIONS,
   "skills-lock.yml": BOT_PERMISSIONS,
   "update-branches.yml": BOT_PERMISSIONS,
 };
