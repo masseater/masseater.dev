@@ -17,7 +17,7 @@
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/repositories": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
-    "@r_masseater/workers-tracing": "catalog:stack",
+    "@r_masseater/workers-tracing": "workspace:*",
     "@tailwindcss/typography": "catalog:",
     "@tanstack/react-devtools": "0.10.14",
     "@tanstack/react-query": "catalog:stack",

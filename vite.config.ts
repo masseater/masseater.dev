@@ -12,7 +12,12 @@ import {
   restrictedImports,
   shadcnRestyleContracts,
 } from "oxlint-masseater-plugin";
-import { alchemyOverride, scriptsOverride } from "oxlint-masseater-plugin/lint-overrides";
+import {
+  alchemyOverride,
+  otlpInteropOverride,
+  otlpLibOverrides,
+  scriptsOverride,
+} from "oxlint-masseater-plugin/lint-overrides";
 import { readonlyParameterAllow } from "oxlint-masseater-plugin/readonly-types";
 import { writerOnlyOverride } from "oxlint-masseater-plugin/record-lint";
 import { workerOverride } from "oxlint-masseater-plugin/worker-lint";
@@ -175,6 +180,8 @@ export default defineConfig({
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
       },
       scriptsOverride,
+      otlpInteropOverride,
+      ...otlpLibOverrides,
       {
         files: ["**/*.test.ts"],
         rules: decisionTestRules,

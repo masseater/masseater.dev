@@ -14,6 +14,7 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 - メドDB: https://medley-manager.masseater.dev
 - decision モデルの実験: https://masseater.dev/injection-bisect/ 、 https://masseater.dev/ocr-decide/ 、 https://masseater.dev/decision-bench/
 - npm の injection-bisect: https://www.npmjs.com/package/@r_masseater/injection-bisect
+- npm の計測の部品: https://www.npmjs.com/package/@r_masseater/vitest-otlp 、 https://www.npmjs.com/package/@r_masseater/web-vitals-flow 、 https://www.npmjs.com/package/@r_masseater/workers-tracing
 - aredoko の管理アプリ: https://github.com/masseater/masseater.dev/releases?q=aredoko
 - RSS: https://masseater.dev/feed.xml
 - Standard.site: https://bsky.app/profile/masseater.bsky.social

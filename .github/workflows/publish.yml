@@ -7,7 +7,8 @@ on:
         description: Package directory under libs/
         required: true
         type: choice
-        options: [sloppedia, injection-bisect, ocr-decide]
+        options:
+          [sloppedia, injection-bisect, ocr-decide, vitest-otlp, web-vitals-flow, workers-tracing]
       ref:
         description: Tag or commit to publish
         required: true
@@ -39,6 +40,11 @@ jobs:
           cache: false
           run-install: |
             - args: ['--frozen-lockfile']
+      - if: inputs.package == 'vitest-otlp'
+        uses: open-telemetry/weaver/.github/actions/setup-weaver@51a5bf95bdbb2e20fb6e16638e6bbe7dde911e93 # v0.28.0
+        with:
+          version: 0.28.0
+          cache: "false"
       - run: vp test run
       - if: inputs.package == 'sloppedia'
         run: vp run size
@@ -50,6 +56,17 @@ jobs:
           node-version: 26
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
+      - name: Fetch an npm token for packages without a Trusted Publisher
+        run: |
+          oidc="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=masseater-dev-credential-broker" | jq -er .value)"
+          echo "::add-mask::$oidc"
+          response="$(curl -fsS --retry 3 -X POST -H "Authorization: Bearer $oidc" "https://credentials.masseater.dev/")"
+          token="$(jq -r '.npmToken // empty' <<<"$response")"
+          if [ -n "$token" ]; then
+            echo "::add-mask::$token"
+            echo "NODE_AUTH_TOKEN=$token" >>"$GITHUB_ENV"
+          fi
       - name: Publish
         working-directory: ${{ runner.temp }}
         env:

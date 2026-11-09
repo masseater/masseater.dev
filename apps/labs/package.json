@@ -15,7 +15,7 @@
     "@fontsource/zen-kaku-gothic-new": "catalog:",
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
-    "@r_masseater/workers-tracing": "catalog:stack",
+    "@r_masseater/workers-tracing": "workspace:*",
     "@webxr-input-profiles/assets": "catalog:",
     "alchemy": "catalog:stack",
     "d3-array": "catalog:",
