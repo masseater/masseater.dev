@@ -86,15 +86,24 @@ jobs:
         run: node src/main.ts prune
         working-directory: tools/nimado-collect
       - name: save state
+        if: ${{ !cancelled() }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p "$RUNNER_TEMP/upload"
-          gzip -c "$STATE/catalog.json" > "$RUNNER_TEMP/upload/catalog.json.gz"
-          gzip -c "$STATE/nico.json" > "$RUNNER_TEMP/upload/nico.json.gz"
-          tar -czf "$RUNNER_TEMP/upload/nico-days.tar.gz" -C "$STATE" data/days/nico
-          gh release upload "$RELEASE" --repo "$GITHUB_REPOSITORY" --clobber "$RUNNER_TEMP"/upload/*
+          for name in catalog nico; do
+            if [ -e "$STATE/$name.json" ]; then
+              gzip -c "$STATE/$name.json" > "$RUNNER_TEMP/upload/$name.json.gz"
+            fi
+          done
+          if [ -d "$STATE/data/days/nico" ]; then
+            tar -czf "$RUNNER_TEMP/upload/nico-days.tar.gz" -C "$STATE" data/days/nico
+          fi
+          if [ -n "$(ls -A "$RUNNER_TEMP/upload")" ]; then
+            gh release upload "$RELEASE" --repo "$GITHUB_REPOSITORY" --clobber "$RUNNER_TEMP"/upload/*
+          fi
       - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: ${{ !cancelled() }}
         with:
           path: |
             .nimado-state/youtube.json
