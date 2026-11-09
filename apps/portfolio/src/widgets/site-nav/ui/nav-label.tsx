@@ -1,14 +1,14 @@
 import type { ReactNode } from "react";
 
-import { categoryMeta } from "#/entities/entry";
-import type { CategoryInfo } from "#/entities/entry";
+import { sectionMeta } from "#/shared/config";
+import type { Section } from "#/shared/config";
 
 const NavLabel = ({
   active,
-  info,
-}: Readonly<{ active: boolean; info: CategoryInfo }>): ReactNode => (
-  <span className={`${categoryMeta[info.category].titleTransition} relative`}>
-    {info.title}
+  section,
+}: Readonly<{ active: boolean; section: Section }>): ReactNode => (
+  <span className={`${sectionMeta[section].titleTransition} relative`}>
+    {sectionMeta[section].title}
     {active && (
       <span
         aria-hidden
