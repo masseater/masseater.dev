@@ -67,7 +67,6 @@
   },
   "devDependencies": {
     "@bufbuild/buf": "catalog:",
-    "@bufbuild/protoc-gen-es": "catalog:",
     "@cloudflare/workers-types": "catalog:",
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/sdk-node": "catalog:",

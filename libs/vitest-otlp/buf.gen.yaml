@@ -7,7 +7,7 @@ inputs:
       - opentelemetry/proto/collector/metrics/v1
       - opentelemetry/proto/collector/logs/v1
 plugins:
-  - local: protoc-gen-es
+  - remote: buf.build/bufbuild/es:v2.17.0
     include_imports: true
     out: src/generated
     opt:

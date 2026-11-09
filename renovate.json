@@ -27,6 +27,10 @@
       "enabled": false
     },
     {
+      "matchPackageNames": ["@bufbuild/protobuf", "@bufbuild/protoc-gen-es"],
+      "groupName": "protobuf-es"
+    },
+    {
       "matchPackageNames": ["@paper-design/**"],
       "groupName": "paper shaders"
     },
@@ -51,6 +55,13 @@
     }
   ],
   "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)buf\\.gen\\.yaml$/"],
+      "matchStrings": ["remote: buf\\.build/bufbuild/es:v(?<currentValue>[0-9.]+)"],
+      "depNameTemplate": "@bufbuild/protoc-gen-es",
+      "datasourceTemplate": "npm"
+    },
     {
       "customType": "regex",
       "managerFilePatterns": ["/^skills-lock\\.json$/"],
