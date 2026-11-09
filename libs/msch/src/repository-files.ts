@@ -7,6 +7,7 @@ class RepositoryFiles extends Context.Service<
   {
     readonly readFile: (file: string) => Effect.Effect<Option.Option<string>>;
     readonly exists: (file: string) => Effect.Effect<boolean>;
+    readonly realPath: (file: string) => Effect.Effect<string>;
     readonly readDirectory: (directory: string) => Effect.Effect<readonly string[]>;
     readonly isDirectory: (file: string) => Effect.Effect<Option.Option<boolean>>;
     readonly join: (...segments: readonly string[]) => string;
@@ -25,6 +26,7 @@ const nodeRepositoryFiles = Layer.effect(
     return RepositoryFiles.of({
       readFile: (file) => fs.readFileString(file).pipe(Effect.option),
       exists: (file) => fs.exists(file).pipe(Effect.orElseSucceed(() => false)),
+      realPath: (file) => fs.realPath(file).pipe(Effect.orElseSucceed(() => file)),
       readDirectory: (directory) =>
         fs.readDirectory(directory).pipe(Effect.orElseSucceed((): readonly string[] => [])),
       isDirectory: (file) =>

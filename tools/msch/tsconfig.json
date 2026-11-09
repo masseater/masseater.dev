@@ -13,6 +13,9 @@
           "effect/FileSystem#FileSystem",
           "effect/Path#Path",
           "effect/Stdio#Stdio",
+          "effect/http/FetchHttpClient#layer",
+          "effect/observability/Otlp#layerFromConfig",
+          "effect/observability/OtlpSerialization#layerJson",
           "effect/process/ChildProcess#make"
         ]
       }

@@ -9,6 +9,8 @@ import {
 } from "@msch/core";
 import type { Problem } from "@msch/core";
 import { Cause, Effect, Layer, Option, Schema, Stdio, Stream, Array as Arr, pipe } from "effect";
+import { FetchHttpClient } from "effect/http";
+import { Otlp, OtlpSerialization } from "effect/observability";
 
 import { JSON_FLAG } from "./cli-contract.ts";
 
@@ -86,10 +88,18 @@ const reportFailure = <Failure>(
     yield* Stream.make(`${Cause.pretty(cause)}\n`).pipe(Stream.run(stdio.stderr()), Effect.orDie);
   });
 
+const tracing = Otlp.layerFromConfig({ resource: { serviceName: "msch" } }).pipe(
+  Layer.provide(OtlpSerialization.layerJson),
+  Layer.provide(FetchHttpClient.layer),
+);
+
 const runCli = <Value, Failure>(
   program: Effect.Effect<Value, Failure, RepositoryFiles | Stdio.Stdio>,
 ): void => {
-  const main = Layer.build(nodeRepositoryFiles.pipe(Layer.provideMerge(nodeServicesLayer))).pipe(
+  const services = Layer.mergeAll(nodeRepositoryFiles, tracing).pipe(
+    Layer.provideMerge(nodeServicesLayer),
+  );
+  const main = Layer.build(services).pipe(
     Effect.flatMap((context) =>
       Effect.provideContext(program.pipe(Effect.tapCause(reportFailure)), context),
     ),
