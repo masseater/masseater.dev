@@ -116,7 +116,6 @@ catalog:
   size-limit: 14.3.0
   "@size-limit/file": 14.3.0
   publint: 0.3.25
-  "@arethetypeswrong/core": 0.18.5
   sequoia-cli: ^0.5.8
   "@atproto/api": ^0.30.0
   "@effect/ai-openrouter": 4.1.2

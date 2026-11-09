@@ -144,12 +144,7 @@
       "name": "vite-plus",
       "enablers": ["vite-plus"],
       "entryPoints": ["vite.config.ts"],
-      "toolingDependencies": [
-        "@arethetypeswrong/core",
-        "@ast-grep/cli",
-        "eslint-plugin-no-comments",
-        "publint",
-      ],
+      "toolingDependencies": ["@ast-grep/cli", "eslint-plugin-no-comments", "publint"],
     },
     {
       "name": "vite-plus-adopt",

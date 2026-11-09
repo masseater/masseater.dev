@@ -1,3 +1,4 @@
+import { checkPackage, createPackageFromTarballData } from "@r_masseater/vite-plus-adopt/attw";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -13,7 +14,12 @@ export default defineConfig({
     sourcemap: true,
     dts: true,
     publint: { strict: true },
-    attw: { profile: "esm-only", level: "error", excludeEntrypoints: ["./styles.css"] },
+    attw: {
+      module: { checkPackage, createPackageFromTarballData },
+      profile: "esm-only",
+      level: "error",
+      excludeEntrypoints: ["./styles.css"],
+    },
   },
   test: { environment: "happy-dom" },
 });

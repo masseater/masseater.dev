@@ -225,7 +225,7 @@ export default defineConfig({
       ],
       "actions-lint": {
         command:
-          'actionlint && zizmor $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
+          'vpa actionlint && vpa zizmor $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
         cache: {
           env: ["CLAUDE_CODE_REMOTE"],
           untrackedEnv: [

@@ -1,3 +1,4 @@
+import { checkPackage, createPackageFromTarballData } from "@r_masseater/vite-plus-adopt/attw";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
@@ -24,7 +25,11 @@ export default defineConfig({
     platform: "neutral",
     sourcemap: true,
     publint: { strict: true },
-    attw: { profile: "esm-only", level: "error" },
+    attw: {
+      module: { checkPackage, createPackageFromTarballData },
+      profile: "esm-only",
+      level: "error",
+    },
     dts: true,
     external: [
       /^cloudflare:/u,

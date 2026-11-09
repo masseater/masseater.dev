@@ -100,8 +100,8 @@
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
-    "@arethetypeswrong/core": "catalog:",
     "@cloudflare/workers-types": "catalog:",
+    "@r_masseater/vite-plus-adopt": "catalog:",
     "@r_masseater/vitest-otlp": "workspace:*",
     "@tanstack/react-start": "catalog:stack",
     "@types/node": "catalog:",
