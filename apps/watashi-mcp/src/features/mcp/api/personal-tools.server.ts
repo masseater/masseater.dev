@@ -3,6 +3,7 @@ import { pipe } from "effect";
 
 import { registerAnalyticsTools } from "./analytics-tools.server";
 import type { Caller } from "./caller";
+import { registerConversationTools } from "./conversation-tools.server";
 import { registerSlideTools } from "./slides-tools.server";
 import { registerSloppediaTools } from "./sloppedia-tools.server";
 
@@ -14,6 +15,7 @@ const registerPersonalTools =
       registerSloppediaTools(caller),
       registerAnalyticsTools(caller),
       registerSlideTools(caller),
+      registerConversationTools(caller),
     );
 
 export { registerPersonalTools };
