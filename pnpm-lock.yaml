@@ -467,9 +467,6 @@ catalogs:
     jsonc-parser:
       specifier: ^3.3.1
       version: 3.3.1
-    kuromojin:
-      specifier: 3.0.1
-      version: 3.0.1
     lighthouse:
       specifier: 13.6.0
       version: 13.6.0
@@ -572,9 +569,6 @@ catalogs:
     seedrandom:
       specifier: 3.0.5
       version: 3.0.5
-    sentence-splitter:
-      specifier: 5.0.1
-      version: 5.0.1
     sequoia-cli:
       specifier: ^0.5.8
       version: 0.5.8
@@ -2695,14 +2689,11 @@ importers:
 
   libs/textlint-rule-no-taigendome:
     dependencies:
-      effect:
-        specifier: catalog:stack
-        version: 4.1.2
       kuromojin:
-        specifier: 'catalog:'
+        specifier: 3.0.1
         version: 3.0.1
       sentence-splitter:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1
     devDependencies:
       '@textlint/ast-node-types':
@@ -2711,6 +2702,9 @@ importers:
       '@textlint/types':
         specifier: 'catalog:'
         version: 15.8.0
+      effect:
+        specifier: catalog:stack
+        version: 4.1.2
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
