@@ -17,13 +17,16 @@ import {
   otlpInteropOverride,
   otlpLibOverrides,
   scriptsOverride,
+  workerOverride,
+  writerOnlyOverride,
 } from "oxlint-masseater-plugin/lint-overrides";
 import { readonlyParameterAllow } from "oxlint-masseater-plugin/readonly-types";
-import { writerOnlyOverride } from "oxlint-masseater-plugin/record-lint";
-import { workerOverride } from "oxlint-masseater-plugin/worker-lint";
 import { defineConfig } from "vite-plus";
 
+import { checks, checkTasks } from "./checks.config.ts";
+
 export default defineConfig({
+  ...checks,
   test: {
     projects: [
       "apps/*",
@@ -200,10 +203,7 @@ export default defineConfig({
   run: {
     cache: true,
     tasks: {
-      "markdown-lint": [
-        'textlint "**/*.md"',
-        `git -c core.quotePath=false ls-files -co --exclude-standard '*.md' | git -c core.quotePath=false -c core.excludesFile=.textlintignore check-ignore --no-index --stdin -nv | awk -F '\\t' '$1 == "::" { print $2 }' | tr '\\n' '\\0' | xargs -0 -r -n 1 -P 4 python3 "$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py" --strict`,
-      ],
+      ...checkTasks,
       renovate: "renovate-config-validator --strict",
       fallow: [
         "fallow --skip dupes --fail-on-issues --quiet --format compact",
@@ -244,7 +244,7 @@ export default defineConfig({
         },
         dependsOn: [
           "test",
-          "syncpack",
+          "dependency-rules",
           "markdown-lint",
           "renovate",
           "actions-lint",
@@ -267,26 +267,14 @@ export default defineConfig({
         ],
       },
       test: "vp test run",
-      syncpack: "syncpack lint",
-      steiger: 'for src in apps/*/src; do steiger "$src" || exit 1; done',
       "db-check-all": "vp run -r db:check",
       audit: {
         command:
           'before="$(cksum pnpm-workspace.yaml)"; vp pm audit --fix || exit; if [ "$before" != "$(cksum pnpm-workspace.yaml)" ]; then echo "vp pm audit --fix rewrote pnpm-workspace.yaml. Run vp install and commit the diff." >&2; exit 1; fi',
         cache: false,
       },
-      betterleaks: {
-        command:
-          'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then .tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; .tooling/bin/betterleaks "$tmp" --config .betterleaks.toml --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else .tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner; fi',
-        cache: false,
-      },
       "ignored-sources": {
         command: String.raw`ignored="$(git ls-files --others --ignored --exclude-standard -- ":(glob)**/src/**" ":(exclude,glob)**/node_modules/**")"; if [ -n "$ignored" ]; then printf "%s\n" "$ignored" >&2; echo "These files under src/ are ignored by .gitignore, so verify passes here but they never reach the commit. Narrow the pattern in .gitignore." >&2; exit 1; fi`,
-        cache: false,
-      },
-      "betterleaks:staged": {
-        command:
-          "git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | .tooling/bin/betterleaks stdin --git-diff --config .betterleaks.toml --redact --no-banner",
         cache: false,
       },
     },
