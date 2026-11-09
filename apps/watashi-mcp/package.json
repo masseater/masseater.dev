@@ -19,6 +19,7 @@
     "@tanstack/react-router-ssr-query": "1.167.3",
     "@tanstack/react-start": "catalog:stack",
     "better-auth": "catalog:stack",
+    "claude-code-jsonl-parser": "catalog:",
     "drizzle-orm": "catalog:stack",
     "effect": "catalog:stack",
     "react": "19.3.1",
