@@ -255,3 +255,5 @@ audit:
   ignorePrune: true
   ignore:
     - GHSA-gcqx-w48m-w2h4
+patchedDependencies:
+  "@voidzero-dev/vite-plus-core@1.5.0": patches/@voidzero-dev__vite-plus-core@1.5.0.patch
