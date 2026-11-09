@@ -57,7 +57,6 @@ const upstreams = [
   { id: "twilog-masseater", url: "https://twilog-mcp.togetter.dev/mcp" },
   { id: "twilog-u1-mas", url: "https://twilog-mcp.togetter.dev/mcp" },
   { id: "atra", url: "https://mcp.atra.bot/mcp" },
-  { id: "sepiace", url: "https://hi.sepiace.io/api/v1/mcp" },
   { id: "flovia", url: "https://api.flovia.dev/mcp" },
 ] as const;
 
@@ -193,7 +192,13 @@ const mcpPortal = gen(function* mcpPortal() {
     destinations: [{ type: "public", uri: PORTAL_HOST }],
     policies: yield* viewerPolicy,
     sessionDuration,
-    oauthConfiguration: { enabled: true },
+    oauthConfiguration: {
+      enabled: true,
+      dynamicClientRegistration: {
+        enabled: true,
+        allowedUris: ["https://agent.meta.ai/api/hatch/oauth/callback"],
+      },
+    },
   });
   const servers = yield* upstreamServers;
   yield* portalServers("McpPortalServers", {

@@ -27,6 +27,10 @@
       "enabled": false
     },
     {
+      "matchPackageNames": ["@bufbuild/protobuf", "@bufbuild/protoc-gen-es"],
+      "groupName": "protobuf-es"
+    },
+    {
       "matchPackageNames": ["@paper-design/**"],
       "groupName": "paper shaders"
     },
@@ -53,29 +57,19 @@
   "customManagers": [
     {
       "customType": "regex",
+      "managerFilePatterns": ["/(^|/)buf\\.gen\\.yaml$/"],
+      "matchStrings": ["remote: buf\\.build/bufbuild/es:v(?<currentValue>[0-9.]+)"],
+      "depNameTemplate": "@bufbuild/protoc-gen-es",
+      "datasourceTemplate": "npm"
+    },
+    {
+      "customType": "regex",
       "managerFilePatterns": ["/^skills-lock\\.json$/"],
       "matchStrings": [
         "\"source\": \"(?<depName>[^\"]+)\",\\s*\"ref\": \"(?<currentDigest>[0-9a-f]{40})\",\\s*\"sourceType\": \"github\""
       ],
       "datasourceTemplate": "git-refs",
       "packageNameTemplate": "https://github.com/{{{depName}}}"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^vite\\.config\\.ts$/"],
-      "matchStrings": ["uvx (?:--from )?(?<depName>[a-z0-9-]+)@(?<currentValue>[0-9.]+)"],
-      "datasourceTemplate": "pypi"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^scripts/install-betterleaks\\.ts$/"],
-      "matchStrings": [
-        "betterleaks_(?<currentValue>[0-9][0-9A-Za-z.-]*)_",
-        "const VERSION = \"(?<currentValue>[0-9][0-9A-Za-z.-]*)\""
-      ],
-      "depNameTemplate": "betterleaks/betterleaks",
-      "datasourceTemplate": "github-releases",
-      "extractVersionTemplate": "^v(?<version>.+)$"
     },
     {
       "customType": "regex",

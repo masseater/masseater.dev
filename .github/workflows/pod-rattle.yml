@@ -42,7 +42,7 @@ jobs:
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: ${{ matrix.platform }}
-      - run: cargo xtask ${{ matrix.bundle }} --release
+      - run: cargo run --package xtask --release -- ${{ matrix.bundle }} --release
       - if: runner.os == 'macOS'
         working-directory: target/bundled
         run: |
@@ -149,6 +149,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@89e5bb585e4d7f10b9218ca48377f9bb5949397a
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@38a7ea6baf9892c99154d38b2421fae9cedf6f84
         with:
           github-token: ${{ github.token }}

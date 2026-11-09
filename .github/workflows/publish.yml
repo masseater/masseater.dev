@@ -7,7 +7,8 @@ on:
         description: Package directory under libs/
         required: true
         type: choice
-        options: [sloppedia, injection-bisect, ocr-decide]
+        options:
+          [sloppedia, injection-bisect, ocr-decide, vitest-otlp, web-vitals-flow, workers-tracing]
       ref:
         description: Tag or commit to publish
         required: true
@@ -39,6 +40,12 @@ jobs:
           cache: false
           run-install: |
             - args: ['--frozen-lockfile']
+      - if: inputs.package == 'vitest-otlp'
+        uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          fetch_from_github: false
+          install_args: github:open-telemetry/weaver
+          cache: false
       - run: vp test run
       - if: inputs.package == 'sloppedia'
         run: vp run size
@@ -50,6 +57,17 @@ jobs:
           node-version: 26
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
+      - name: Fetch an npm token for packages without a Trusted Publisher
+        run: |
+          oidc="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=masseater-dev-credential-broker" | jq -er .value)"
+          echo "::add-mask::$oidc"
+          response="$(curl -fsS --retry 3 -X POST -H "Authorization: Bearer $oidc" "https://credentials.masseater.dev/")"
+          token="$(jq -r '.npmToken // empty' <<<"$response")"
+          if [ -n "$token" ]; then
+            echo "::add-mask::$token"
+            echo "NODE_AUTH_TOKEN=$token" >>"$GITHUB_ENV"
+          fi
       - name: Publish
         working-directory: ${{ runner.temp }}
         env:
@@ -72,6 +90,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@89e5bb585e4d7f10b9218ca48377f9bb5949397a
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@38a7ea6baf9892c99154d38b2421fae9cedf6f84
         with:
           github-token: ${{ github.token }}

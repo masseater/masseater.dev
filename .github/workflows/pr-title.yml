@@ -23,7 +23,9 @@ jobs:
       - env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: printf '%s (#%s)\n' "$PR_TITLE" "$PR_NUMBER" | vp exec commitlint --verbose
+        run: |
+          printf '%s (#%s)\n' "$PR_TITLE" "$PR_NUMBER" > "$RUNNER_TEMP/pr-title"
+          vp exec vp-tools commitlint "$RUNNER_TEMP/pr-title"
 
   ci-telemetry:
     needs: [pr-title]
@@ -34,6 +36,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@89e5bb585e4d7f10b9218ca48377f9bb5949397a
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@38a7ea6baf9892c99154d38b2421fae9cedf6f84
         with:
           github-token: ${{ github.token }}

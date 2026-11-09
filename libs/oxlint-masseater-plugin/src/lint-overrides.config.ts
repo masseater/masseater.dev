@@ -1,3 +1,7 @@
+import { pipe, Array as Arr } from "effect";
+
+import { INFRASTRUCTURE, INSTRUMENTATION, restrictedImports } from "./lint.config.ts";
+
 const alchemyOverride: {
   files: string[];
   rules: Readonly<Record<string, ["error", ...unknown[]]>>;
@@ -39,4 +43,51 @@ const scriptsOverride: {
   },
 };
 
-export { alchemyOverride, scriptsOverride };
+const isOtlpInterop = ({ message }: Readonly<{ message: string }>): boolean =>
+  message !== INSTRUMENTATION && message !== INFRASTRUCTURE;
+
+const otlpInteropImports = {
+  paths: pipe(restrictedImports.paths, Arr.filter(isOtlpInterop)),
+  patterns: pipe(restrictedImports.patterns, Arr.filter(isOtlpInterop)),
+};
+
+const otlpInteropOverride: {
+  files: string[];
+  rules: Readonly<Record<string, ["error", typeof otlpInteropImports]>>;
+} = {
+  files: ["libs/vitest-otlp/src/**/*.test.ts", "libs/workers-tracing/src/**/*.test.ts"],
+  rules: { "eslint/no-restricted-imports": ["error", otlpInteropImports] },
+};
+
+const otlpLibOverrides: {
+  files: string[];
+  rules: Readonly<Record<string, "off" | ["error", ...unknown[]]>>;
+}[] = [
+  {
+    files: [
+      "libs/vitest-otlp/src/grpc.ts",
+      "libs/vitest-otlp/src/forward.ts",
+      "libs/vitest-otlp/src/workers.ts",
+    ],
+    rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http2", "node:url"] }] },
+  },
+  {
+    files: ["libs/workers-tracing/src/context.ts"],
+    rules: { "import/no-nodejs-modules": ["error", { allow: ["node:async_hooks"] }] },
+  },
+  {
+    files: ["libs/workers-tracing/src/**/*.test.ts"],
+    rules: { "import/no-nodejs-modules": ["error", { allow: ["node:url"] }] },
+  },
+  {
+    files: ["libs/vitest-otlp/src/setup.ts"],
+    rules: {
+      "node/no-process-env": "off",
+      "baseline-js/use-baseline": ["error", { ignoreFeatures: ["top-level-await"] }],
+    },
+  },
+];
+
+export { writerOnlyOverride } from "./record-lint.config.ts";
+export { workerOverride } from "./worker-lint.config.ts";
+export { alchemyOverride, otlpInteropOverride, otlpLibOverrides, scriptsOverride };

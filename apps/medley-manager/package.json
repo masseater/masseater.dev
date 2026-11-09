@@ -17,7 +17,7 @@
     "@masseater.dev/start-shell": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@modelcontextprotocol/server": "catalog:",
-    "@r_masseater/workers-tracing": "catalog:stack",
+    "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/react-query": "catalog:stack",
     "@tanstack/react-router": "1.170.46",
     "@tanstack/react-start": "catalog:stack",

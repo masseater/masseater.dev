@@ -1,5 +1,5 @@
 # Logs
-logs
+/logs
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -15,7 +15,6 @@ dist-ssr
 # dotenv environment variable files
 .env
 .env.*
-!.env.example
 
 # Editor directories and files
 .vscode/*
@@ -41,7 +40,6 @@ dist-ssr
 .output
 .alchemy
 .fallow
-.tooling
 
 # Playwright CLI
 .playwright/

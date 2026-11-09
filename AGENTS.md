@@ -23,7 +23,7 @@
 - `apps/labs` は React を使わない単体のページ（`/satsuei-lab/`・`/split-pad/`・`/pod-rattle/`）で、`pages/<名前>/index.html` を Vite の multi-page でバンドルし、静的アセットだけの Worker を masseater.dev のルートに載せる。three や d3 は npm から import し、inline script は置かない。ページを足したら `pages.ts` の `PAGES` に足す。
 - `libs/rpp-kit` は REAPER の `.rpp` を読むパーサーと Vite プラグインと TypeScript の content mapper で、`apps/rpp-kit-demo` がそれを使うデモを `/rpp-kit/` に載せる。スタック名と `APP_NAME` は元のリポの `rpp-kit` のままにしている。
 - `apps/medley-manager` は、ニコメドや合作で使われた曲と動画を逆引きするメドDB（`medley-manager.masseater.dev`）で、TanStack Start と Elysia と D1 で動く。Web は閲覧だけで、書き込みは `/mcp` のリモート MCP から持ち主のパスキーで行う。スタック名と `APP_NAME` は `medley-manager` のままにしていて、変えると D1 が作り直されてデータが消える。本番のログは `worker-logs` ワークフローで読む。
-- `apps/sts2-mods` は Slay the Spire 2 の C# の Mod で、決まりは `apps/sts2-mods/AGENTS.md` にある。verify の `sts2-mods#dotnet` がゲーム本体の代わりに `build/Sts2Stubs` で型検査し、.NET SDK は `apps/sts2-mods/global.json` の版を、CI は setup action が、クラウドのセッションは session-start フックが入れる。main の verify の `sts2-pck` ジョブが MegaDot で .pck を書き出す。
+- `apps/sts2-mods` は Slay the Spire 2 の C# の Mod で、決まりは `apps/sts2-mods/AGENTS.md` にある。verify の `sts2-mods#dotnet` がゲーム本体の代わりに `build/Sts2Stubs` で型検査し、.NET SDK は `apps/sts2-mods/global.json` と同じ版をルートの `mise.toml` に書き、CI は setup action の mise-action が、クラウドのセッションは session-start フックが `mise install` で入れる。main の verify の `sts2-pck` ジョブが MegaDot で .pck を書き出す。
 - `apps/three-twelve` は毎日 3 時 12 分（JST）に、bot の入ったサーバーで人のいるボイスチャンネルへ入って曲を 1 回流し、抜ける Discord bot である。Worker の cron が Durable Object の alarm を仕掛け、alarm が Cloudflare Containers で `player/main.ts`（discord.js）を exec する。bot のトークンは `PUT /three-twelve/token` で DO に、曲（Ogg Opus）は `PUT /three-twelve/audio` で R2 に置く。トークンは持ち主の Discord アプリのものだけを受け付ける。曲は著作物なのでリポに入れない。
 - `apps/pod-rattle-plugin` は labs の Pod Rattle を Rust（nih-plug）で VST3・CLAP にしたもので、音の本体は `libs/pod-rattle-engine` にある。Rust はルートの Cargo ワークスペースに置き、crate ごとに最小の package.json と `vite.config.ts` の `cargo` タスク（fmt・clippy・テスト）を持たせて、ルートの verify から vp のタスクとキャッシュで動かす。crate を足したら同じ形で package.json と `cargo` タスクを作り、verify の `dependsOn` に足す。Rust の版は `rust-toolchain.toml` で固定し、CI は `rustup toolchain install` でそれを入れ、Renovate が上げる。`cargo xtask bundle-all --release` が `target/bundled/` に出す。`pod-rattle` ワークフローは main への push ごとに 3 OS でビルドして pluginval と clap-validator に通す。release-please が `pod-rattle-v<版>` で出し、zip を付ける。
 - 性能の判定は時間ではなく、`benches/instructions.rs` が Valgrind（gungraun）で数える命令数で行う。CI のランナーは速さがまちまちで、時間で判定すると機械によって落ちる。
@@ -56,6 +56,15 @@
 - エディタ拡張は、VRChat SDK の Unity 2022.3.22f1 で使える API と C# 9 だけで書く。常駐サーバーは Windows 10・11 の x64 で動かすが、開発とテストはクラウドの Linux でも完結させ、Windows でしか確かめられない処理を作らない。
 - アセットと検索語は PC の外へ送らない。外部への通信は BOOTH の商品ページの公開 JSON の取得だけにし、BOOTH のログイン状態・Cookie・購入履歴は読まない。ほかのツールのデータは Unity Asset Store の保存先と BOOTH Library Manager のものだけを読み取り、書き換えない。ドロップやファイル選択で渡されたパッケージは、データフォルダの `library` に写してから索引し、元のファイルは動かさない。
 - 管理アプリの画面は、`apps/aredoko-desktop` で `vp run dev:app` を実行して開発版を起動し、`agent-browser connect 9222` でつないで調べる。WebView2 のデバッグポートを開くのは開発版だけである。トレースは `tools/aredoko-telemetry` で `vp run jaeger` を実行してから開発版を起動すると、管理アプリ・常駐サーバー・埋め込みのワーカーから `http://127.0.0.1:16686` に届く。
+
+## 計測の部品
+
+- `libs/vitest-otlp`・`libs/web-vitals-flow`・`libs/workers-tracing` は、OpenTelemetry と各ツールの公式の拡張点に差し込んで計測する部品で、npm の `@r_masseater/<名前>` として出す。各サービスやツールの公式機能と自動計装を先に使い、足りないところだけをここで作る。元は masseater/measure-everything にあった。
+- 部品は Vite+ と Node.js 26 以降だけを前提にする。`vite-plus` は peer にし、素の `vitest` などほかの環境のための書き換えや分岐は入れない。型定義の無いライブラリは使わず、その部分を自前で実装する。
+- `libs/vitest-otlp` はテストファイルごとに OTLP の受け口（HTTP と gRPC）を立て、届いたものを opentelemetry-proto から生成した protobuf-es のコードで読む。生成物は `vp run generate` で作り直し、手で書き換えない。`otlp({ semconv: true })` のテストは Weaver を使う。Weaver はルートの `mise.toml` に書き、CI は setup action の mise-action が、クラウドのセッションは session-start フックが入れる。
+- `libs/web-vitals-flow` のテストは Chrome でローカルのページを測る。クラウドのセッションでは session-start フックが `CHROME_PATH` を渡す。
+- npm へは version を上げてから `publish.yml` を package に選んで main で手動実行する。Trusted Publisher が無い間は broker が environment `npm` のジョブに npm のトークンを出す。
+- 場面ごとの使い分けは masseater/skills の `measure-everything` スキルにある。部品や勧める手段を変えたら、スキルも直す。
 
 ## 記事
 

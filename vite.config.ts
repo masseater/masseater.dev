@@ -1,6 +1,6 @@
+import tanstackQuery from "@r_masseater/oxlint-typed-rules/tanstack-query";
+import tanstackRouter from "@r_masseater/oxlint-typed-rules/tanstack-router";
 import { plugin as shadcn } from "@shadcn/lint";
-import tanstackQuery from "@tanstack/eslint-plugin-query";
-import tanstackRouter from "@tanstack/eslint-plugin-router";
 import baselineJs from "eslint-plugin-baseline-js";
 import {
   allRulesOf,
@@ -12,13 +12,23 @@ import {
   restrictedImports,
   shadcnRestyleContracts,
 } from "oxlint-masseater-plugin";
-import { alchemyOverride, scriptsOverride } from "oxlint-masseater-plugin/lint-overrides";
+import {
+  alchemyOverride,
+  otlpInteropOverride,
+  otlpLibOverrides,
+  scriptsOverride,
+  workerOverride,
+  writerOnlyOverride,
+} from "oxlint-masseater-plugin/lint-overrides";
 import { readonlyParameterAllow } from "oxlint-masseater-plugin/readonly-types";
-import { writerOnlyOverride } from "oxlint-masseater-plugin/record-lint";
-import { workerOverride } from "oxlint-masseater-plugin/worker-lint";
 import { defineConfig } from "vite-plus";
 
+import { checks, checkTasks } from "./checks.config.ts";
+
+const typedRules = "@r_masseater/oxlint-typed-rules";
+
 export default defineConfig({
+  ...checks,
   test: {
     projects: [
       "apps/*",
@@ -67,12 +77,12 @@ export default defineConfig({
     },
     jsPlugins: [
       { name: "vite-plus", specifier: "vite-plus/oxlint-plugin" },
-      { name: "tanstack-query", specifier: "@tanstack/eslint-plugin-query" },
-      { name: "tanstack-router", specifier: "@tanstack/eslint-plugin-router" },
-      { name: "tanstack-start", specifier: "@r_masseater/oxlint-typed-rules/tanstack-start" },
-      { name: "drizzle", specifier: "eslint-plugin-drizzle" },
+      { name: "tanstack-query", specifier: `${typedRules}/tanstack-query` },
+      { name: "tanstack-router", specifier: `${typedRules}/tanstack-router` },
+      { name: "tanstack-start", specifier: `${typedRules}/tanstack-start` },
+      { name: "drizzle", specifier: `${typedRules}/drizzle` },
       { name: "react-hooks-js", specifier: "eslint-plugin-react-hooks" },
-      { name: "@eslint-react", specifier: "@eslint-react/eslint-plugin" },
+      { name: "@eslint-react", specifier: `${typedRules}/react` },
       { name: "shadcn", specifier: "@shadcn/lint" },
       { name: "no-comments", specifier: "eslint-plugin-no-comments" },
       { name: "baseline-js", specifier: "eslint-plugin-baseline-js" },
@@ -86,7 +96,14 @@ export default defineConfig({
       "tanstack-start/no-client-code-in-server-component": "error",
       "no-comments/disallowComments": [
         "error",
-        { allow: ["oxlint-disable", "eslint-disable", String.raw`\* @internal \*?$`] },
+        {
+          allow: [
+            "oxlint-disable",
+            "eslint-disable",
+            String.raw`\* @internal \*?$`,
+            "/usr/bin/env node$",
+          ],
+        },
       ],
       ...allRulesOf({ prefix: "tanstack-query", rules: tanstackQuery.rules }),
       ...allRulesOf({ prefix: "tanstack-router", rules: tanstackRouter.rules }),
@@ -175,6 +192,8 @@ export default defineConfig({
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
       },
       scriptsOverride,
+      otlpInteropOverride,
+      ...otlpLibOverrides,
       {
         files: ["**/*.test.ts"],
         rules: decisionTestRules,
@@ -193,10 +212,7 @@ export default defineConfig({
   run: {
     cache: true,
     tasks: {
-      "markdown-lint": [
-        'textlint "**/*.md"',
-        `git -c core.quotePath=false ls-files -co --exclude-standard '*.md' | git -c core.quotePath=false -c core.excludesFile=.textlintignore check-ignore --no-index --stdin -nv | awk -F '\\t' '$1 == "::" { print $2 }' | tr '\\n' '\\0' | xargs -0 -r -n 1 -P 4 python3 "$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py" --strict`,
-      ],
+      ...checkTasks,
       renovate: "renovate-config-validator --strict",
       fallow: [
         "fallow --skip dupes --fail-on-issues --quiet --format compact",
@@ -207,7 +223,7 @@ export default defineConfig({
       ],
       "actions-lint": {
         command:
-          'uvx --from actionlint-py@1.7.12.25 actionlint && uvx zizmor@1.32.0 $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
+          'actionlint && zizmor $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
         cache: {
           env: ["CLAUDE_CODE_REMOTE"],
           untrackedEnv: [
@@ -237,7 +253,7 @@ export default defineConfig({
         },
         dependsOn: [
           "test",
-          "syncpack",
+          "dependency-rules",
           "markdown-lint",
           "renovate",
           "actions-lint",
@@ -245,6 +261,7 @@ export default defineConfig({
           "db-check-all",
           "fallow",
           "betterleaks",
+          "ignored-sources",
           "audit",
           "sloppedia#size",
           "scrap-userscript#release-check",
@@ -259,22 +276,14 @@ export default defineConfig({
         ],
       },
       test: "vp test run",
-      syncpack: "syncpack lint",
-      steiger: 'for src in apps/*/src; do steiger "$src" || exit 1; done',
       "db-check-all": "vp run -r db:check",
       audit: {
         command:
           'before="$(cksum pnpm-workspace.yaml)"; vp pm audit --fix || exit; if [ "$before" != "$(cksum pnpm-workspace.yaml)" ]; then echo "vp pm audit --fix rewrote pnpm-workspace.yaml. Run vp install and commit the diff." >&2; exit 1; fi',
         cache: false,
       },
-      betterleaks: {
-        command:
-          'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then .tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; .tooling/bin/betterleaks "$tmp" --config .betterleaks.toml --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else .tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner; fi',
-        cache: false,
-      },
-      "betterleaks:staged": {
-        command:
-          "git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | .tooling/bin/betterleaks stdin --git-diff --config .betterleaks.toml --redact --no-banner",
+      "ignored-sources": {
+        command: String.raw`ignored="$(git ls-files --others --ignored --exclude-standard -- ":(glob)**/src/**" ":(exclude,glob)**/node_modules/**")"; if [ -n "$ignored" ]; then printf "%s\n" "$ignored" >&2; echo "These files under src/ are ignored by .gitignore, so verify passes here but they never reach the commit. Narrow the pattern in .gitignore." >&2; exit 1; fi`,
         cache: false,
       },
     },

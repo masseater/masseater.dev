@@ -11,16 +11,24 @@ if ! command -v vp >/dev/null 2>&1; then
   . "$HOME/.config/vite-plus/env"
 fi
 
+for chrome in /opt/pw-browsers/chromium-*/chrome-linux*/chrome; do
+  if [ -x "$chrome" ] && [ -z "${CHROME_PATH:-}" ]; then
+    echo "export CHROME_PATH=\"$chrome\"" >>"$CLAUDE_ENV_FILE"
+  fi
+done
+
 cd "$CLAUDE_PROJECT_DIR"
 mapfile -t linux_packages <.github/actions/setup/linux-packages.txt
 if ! dpkg -s "${linux_packages[@]}" >/dev/null 2>&1; then
   apt-get update -qq >&2
   apt-get install -y -qq "${linux_packages[@]}" >&2
 fi
-if ! command -v dotnet >/dev/null 2>&1; then
-  curl -fsSL https://dot.net/v1/dotnet-install.sh |
-    bash -s -- --jsonfile apps/sts2-mods/global.json --install-dir "$HOME/.dotnet" >&2
-  echo "export PATH=\"$HOME/.dotnet:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1" >>"$CLAUDE_ENV_FILE"
+if ! command -v mise >/dev/null 2>&1; then
+  curl -fsSL https://mise.run | sh >&2
+  export PATH="$HOME/.local/bin:$PATH"
 fi
+mise trust --quiet mise.toml
+mise install --locked >&2
+echo "export PATH=\"$HOME/.local/bin:$HOME/.local/share/mise/shims:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1" >>"$CLAUDE_ENV_FILE"
 vp env on >&2
 vp install --frozen-lockfile >&2

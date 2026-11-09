@@ -1,0 +1,83 @@
+{
+  "name": "@r_masseater/vitest-otlp",
+  "version": "0.1.1",
+  "description": "A Vitest plugin that receives OTLP traces, metrics and logs during tests so tests can assert on the telemetry the code under test actually exported.",
+  "keywords": [
+    "opentelemetry",
+    "otel",
+    "otlp",
+    "testing",
+    "vitest",
+    "vitest-plugin"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/vitest-otlp#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/vitest-otlp"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./setup": "./src/setup.ts",
+    "./semconv": "./src/semconv.ts",
+    "./workers": "./src/workers.ts",
+    "./tail-worker": "./src/tail.worker.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "./setup": {
+        "types": "./dist/setup.d.mts",
+        "default": "./dist/setup.mjs"
+      },
+      "./semconv": {
+        "types": "./dist/semconv.d.mts",
+        "default": "./dist/semconv.mjs"
+      },
+      "./workers": {
+        "types": "./dist/workers.d.mts",
+        "default": "./dist/workers.mjs"
+      },
+      "./tail-worker": "./dist/tail.worker.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "node -e \"if (!process.env.npm_config_user_agent?.startsWith('pnpm/')) { console.error('npm publish leaves catalog: in dependencies. Publish the tarball from vp pm pack instead.'); process.exit(1) }\" && vp run build"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "catalog:",
+    "@effect/platform-node": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@bufbuild/buf": "catalog:",
+    "@cloudflare/workers-types": "catalog:",
+    "@opentelemetry/api": "catalog:",
+    "@opentelemetry/sdk-node": "catalog:",
+    "@types/node": "catalog:",
+    "miniflare": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "vite-plus": "^1.5.0"
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}
