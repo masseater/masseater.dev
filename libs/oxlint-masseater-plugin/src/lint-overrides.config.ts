@@ -43,19 +43,25 @@ const scriptsOverride: {
   },
 };
 
-const mschPluginOverride: {
+const pluginEntryOverrides: {
   files: string[];
   rules: Readonly<Record<string, "off">>;
-} = {
-  files: ["tools/msch/src/oxlint.ts"],
-  rules: {
-    "import/no-default-export": "off",
-    "import/no-nodejs-modules": "off",
-    "node/no-sync": "off",
-    "effecttsgo/node-builtin-import": "off",
-    "effecttsgo/schema-sync": "off",
+}[] = [
+  {
+    files: ["tools/msch/src/oxlint.ts"],
+    rules: {
+      "import/no-default-export": "off",
+      "import/no-nodejs-modules": "off",
+      "node/no-sync": "off",
+      "effecttsgo/node-builtin-import": "off",
+      "effecttsgo/schema-sync": "off",
+    },
   },
-};
+  {
+    files: ["libs/textlint-rule-no-taigendome/src/index.ts"],
+    rules: { "import/no-default-export": "off" },
+  },
+];
 
 const isOtlpInterop = ({ message }: Readonly<{ message: string }>): boolean =>
   message !== INSTRUMENTATION && message !== INFRASTRUCTURE;
@@ -106,8 +112,8 @@ export { writerOnlyOverride } from "./record-lint.config.ts";
 export { workerOverride } from "./worker-lint.config.ts";
 export {
   alchemyOverride,
-  mschPluginOverride,
   otlpInteropOverride,
   otlpLibOverrides,
+  pluginEntryOverrides,
   scriptsOverride,
 };
