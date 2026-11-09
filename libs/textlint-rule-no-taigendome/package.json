@@ -7,14 +7,17 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "effect": "catalog:stack",
-    "kuromojin": "catalog:",
-    "sentence-splitter": "catalog:"
+    "kuromojin": "3.0.1",
+    "sentence-splitter": "5.0.1"
   },
   "devDependencies": {
     "@textlint/ast-node-types": "catalog:",
     "@textlint/types": "catalog:",
+    "effect": "catalog:stack",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0"
   }
 }
