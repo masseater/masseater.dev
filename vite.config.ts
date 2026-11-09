@@ -96,7 +96,14 @@ export default defineConfig({
       "tanstack-start/no-client-code-in-server-component": "error",
       "no-comments/disallowComments": [
         "error",
-        { allow: ["oxlint-disable", "eslint-disable", String.raw`\* @internal \*?$`] },
+        {
+          allow: [
+            "oxlint-disable",
+            "eslint-disable",
+            String.raw`\* @internal \*?$`,
+            "/usr/bin/env node$",
+          ],
+        },
       ],
       ...allRulesOf({ prefix: "tanstack-query", rules: tanstackQuery.rules }),
       ...allRulesOf({ prefix: "tanstack-router", rules: tanstackRouter.rules }),
