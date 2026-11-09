@@ -11,14 +11,20 @@ const FIRST_RANK = 1;
 const RankingTable = ({
   entries,
   offset,
-}: Readonly<{ entries: readonly Ranked[]; offset: number }>): ReactNode => (
+  youtube,
+}: Readonly<{ entries: readonly Ranked[]; offset: number; youtube: boolean }>): ReactNode => (
   <table className="w-full border-collapse text-sm">
-    <RankingHead />
+    <RankingHead youtube={youtube} />
     <tbody>
       {pipe(
         entries,
         Arr.map((entry, index) => (
-          <SongRow key={entry.id} entry={entry} rank={offset + index + FIRST_RANK} />
+          <SongRow
+            key={entry.id}
+            entry={entry}
+            rank={offset + index + FIRST_RANK}
+            youtube={youtube}
+          />
         )),
       )}
     </tbody>

@@ -24,15 +24,24 @@ const SummaryRow = ({
   rank,
   open,
   onToggle,
-}: Readonly<{ entry: Ranked; rank: number; open: boolean; onToggle: () => void }>): ReactNode => (
+  youtube,
+}: Readonly<{
+  entry: Ranked;
+  rank: number;
+  open: boolean;
+  onToggle: () => void;
+  youtube: boolean;
+}>): ReactNode => (
   <tr className="hover:bg-muted/50 border-b">
     <td className="text-muted-foreground py-2 pr-2 text-right align-top tabular-nums">{rank}</td>
     <td className="py-2 align-top">
       <SongCell entry={entry} open={open} onToggle={onToggle} />
     </td>
     <NumberCell full={views(entry.nico)} compact={compactViews(entry.nico)} />
-    <NumberCell full={views(entry.youtube)} compact={compactViews(entry.youtube)} />
-    <NumberCell full={gap(entry.gap)} compact={compactGap(entry.gap)} tone={gapTone(entry.gap)} />
+    {youtube && <NumberCell full={views(entry.youtube)} compact={compactViews(entry.youtube)} />}
+    {youtube && (
+      <NumberCell full={gap(entry.gap)} compact={compactGap(entry.gap)} tone={gapTone(entry.gap)} />
+    )}
   </tr>
 );
 

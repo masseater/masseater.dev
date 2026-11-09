@@ -2,12 +2,20 @@ import type { ReactNode } from "react";
 
 import { SongVideos } from "./song-videos";
 
-const SPAN = 4;
+const NICO_COLUMNS = 2;
+const YOUTUBE_COLUMNS = 2;
 
-const VideoRow = ({ id }: Readonly<{ id: number }>): ReactNode => (
+const spanOf = (youtube: boolean): number => {
+  if (youtube) {
+    return NICO_COLUMNS + YOUTUBE_COLUMNS;
+  }
+  return NICO_COLUMNS;
+};
+
+const VideoRow = ({ id, youtube }: Readonly<{ id: number; youtube: boolean }>): ReactNode => (
   <tr className="border-b">
     <td aria-hidden />
-    <td colSpan={SPAN} className="pb-3">
+    <td colSpan={spanOf(youtube)} className="pb-3">
       <SongVideos id={id} />
     </td>
   </tr>

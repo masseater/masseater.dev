@@ -5,7 +5,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { windowOf } from "./period";
 import { gains, growth, rank, totals } from "./ranking";
 import type { Ranked } from "./ranking";
-import { rankingSearch } from "./search";
+import { rankingSearch, usableSearch } from "./search";
 
 const decodeTable = Schema.decodeUnknownOption(Schema.fromJsonString(Table));
 const decodeDay = Schema.decodeUnknownOption(Schema.fromJsonString(DayViews));
@@ -61,6 +61,14 @@ describe("rank", () => {
     expect(names(rank({ entries, sort: "youtube", kind: "all", query: "p3" }))).toStrictEqual([
       "C",
     ]);
+  });
+});
+
+describe("usableSearch", () => {
+  it("YouTube の値が無い間は、どの並び順を選んでもニコニコの再生数順にする", () => {
+    expect(
+      usableSearch({ search: rankingSearch({ sort: "nico-lead", period: "7" }), youtube: false }),
+    ).toStrictEqual(rankingSearch({ sort: "nico", period: "7" }));
   });
 });
 

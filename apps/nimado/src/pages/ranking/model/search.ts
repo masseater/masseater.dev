@@ -56,5 +56,17 @@ const rankingSearch = (search: Readonly<Record<string, unknown>>): RankingSearch
   }),
 });
 
+const NICO_SORT: SortValue = "nico";
+
+const usableSearch = ({
+  search,
+  youtube,
+}: Readonly<{ search: RankingSearch; youtube: boolean }>): RankingSearch => {
+  if (youtube) {
+    return search;
+  }
+  return { ...search, sort: NICO_SORT };
+};
+
 export type { KindValue, PeriodValue, RankingSearch, SortValue };
-export { rankingSearch };
+export { rankingSearch, usableSearch };
