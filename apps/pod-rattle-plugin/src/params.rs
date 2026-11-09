@@ -34,13 +34,20 @@ pub struct RattleParams {
     pub gain: FloatParam,
 }
 
-fn linear(name: &str, default: f64, min: f32, max: f32) -> FloatParam {
-    FloatParam::new(name, default as f32, FloatRange::Linear { min, max })
-        .with_step_size((max - min) / 1000.0)
+const FINE_STEP: f32 = 0.001;
+const STEP: f32 = 0.01;
+
+fn linear(name: &str, default: f64, min: f32, max: f32, step: f32) -> FloatParam {
+    FloatParam::new(name, default as f32, FloatRange::Linear { min, max }).with_step_size(step)
 }
 
 fn two_decimals() -> Arc<dyn Fn(f32) -> String + Send + Sync> {
-    Arc::new(|v| format!("{v:.2}"))
+    Arc::new(|v| {
+        let text = format!("{v:.2}");
+        text.strip_prefix("-")
+            .filter(|digits| digits.chars().all(|c| c == '0' || c == '.'))
+            .map_or(text.clone(), str::to_owned)
+    })
 }
 
 impl Default for RattleParams {
@@ -48,22 +55,24 @@ impl Default for RattleParams {
         let p = EngineParams::default();
         let auto = AutoShake::default();
         Self {
-            material: linear("Hardness", p.material, 0.0, 1.0).with_value_to_string(two_decimals()),
-            decay: linear("Ring", p.decay, 0.3, 3.0).with_value_to_string(two_decimals()),
-            pitch: linear("Pitch", p.pitch, 0.5, 2.0).with_value_to_string(two_decimals()),
-            rest: linear("Bounce", p.rest, 0.1, 0.9).with_value_to_string(two_decimals()),
-            bright: linear("Brightness", p.bright, -0.5, 1.2).with_value_to_string(two_decimals()),
-            spread: linear("Spread", p.spread, 0.6, 1.8).with_value_to_string(two_decimals()),
-            hi_decay: linear("High ring", p.hi_decay, 0.4, 3.0)
+            material: linear("Hardness", p.material, 0.0, 1.0, FINE_STEP)
                 .with_value_to_string(two_decimals()),
-            hard: linear("Contact", p.hard, 0.2, 8.0).with_value_to_string(two_decimals()),
+            decay: linear("Ring", p.decay, 0.3, 3.0, STEP).with_value_to_string(two_decimals()),
+            pitch: linear("Pitch", p.pitch, 0.5, 2.0, STEP).with_value_to_string(two_decimals()),
+            rest: linear("Bounce", p.rest, 0.1, 0.9, STEP).with_value_to_string(two_decimals()),
+            bright: linear("Brightness", p.bright, -0.5, 1.2, STEP)
+                .with_value_to_string(two_decimals()),
+            spread: linear("Spread", p.spread, 0.6, 1.8, STEP).with_value_to_string(two_decimals()),
+            hi_decay: linear("High ring", p.hi_decay, 0.4, 3.0, STEP)
+                .with_value_to_string(two_decimals()),
+            hard: linear("Contact", p.hard, 0.2, 8.0, STEP).with_value_to_string(two_decimals()),
             count: IntParam::new("Pods", p.count as i32, IntRange::Linear { min: 4, max: 48 }),
-            len: linear("String", p.len, 0.5, 1.6).with_value_to_string(two_decimals()),
+            len: linear("String", p.len, 0.5, 1.6, STEP).with_value_to_string(two_decimals()),
             auto: BoolParam::new("Auto shake", false),
-            rate: linear("Shake rate", auto.rate, 0.5, 7.0)
+            rate: linear("Shake rate", auto.rate, 0.5, 7.0, STEP)
                 .with_unit(" Hz")
                 .with_value_to_string(Arc::new(|v| format!("{v:.1}"))),
-            amp: linear("Shake width", auto.amp, 0.05, 1.0)
+            amp: linear("Shake width", auto.amp, 0.05, 1.0, STEP)
                 .with_value_to_string(Arc::new(|v| format!("±{:.0} cm", v * 10.0)))
                 .with_string_to_value(Arc::new(|s| {
                     s.trim()
@@ -74,7 +83,7 @@ impl Default for RattleParams {
                         .ok()
                         .map(|cm| cm / 10.0)
                 })),
-            gain: linear("Volume", p.gain, 0.0, 2.0)
+            gain: linear("Volume", p.gain, 0.0, 2.0, STEP)
                 .with_unit(" %")
                 .with_value_to_string(formatters::v2s_f32_percentage(0))
                 .with_string_to_value(formatters::s2v_f32_percentage()),
