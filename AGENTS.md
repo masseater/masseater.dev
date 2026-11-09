@@ -2,7 +2,7 @@
 
 ## コマンド
 
-- `vp run verify` は `vp check` と、`vite.config.ts` の `verify` タスクの `dependsOn` に並ぶ検査をすべて動かす。pre-push フックも同じものを動かす。
+- `vp run verify` は `vp check` と、`vite.config.ts` の `verify` タスクの `dependsOn` に並ぶ検査をすべて動かす。パッケージごとの検査（`<パッケージ>#<タスク>`）は `checks.config.ts` の `packageChecks` に並べる。pre-push フックも同じものを動かす。
 - `vp check` の decision ルールは `apps/portfolio/src` だけに掛かり、`OPENROUTER_API_KEY` で判定する。
 - 1 つのテストは、そのパッケージのディレクトリで `vp test run <ファイル>` で動かす。
 
@@ -24,7 +24,7 @@
 - `apps/medley-manager` は、ニコメドや合作で使われた曲と動画を逆引きするメドDB（`medley-manager.masseater.dev`）で、TanStack Start と Elysia と D1 で動く。Web は閲覧だけで、書き込みは `/mcp` のリモート MCP から持ち主のパスキーで行う。スタック名と `APP_NAME` は `medley-manager` のままにしていて、変えると D1 が作り直されてデータが消える。本番のログは `worker-logs` ワークフローで読む。
 - `apps/sts2-mods` は Slay the Spire 2 の C# の Mod で、決まりは `apps/sts2-mods/AGENTS.md` にある。verify の `sts2-mods#dotnet` がゲーム本体の代わりに `build/Sts2Stubs` で型検査し、.NET SDK は `apps/sts2-mods/global.json` と同じ版をルートの `mise.toml` に書き、CI は setup action の mise-action が、クラウドのセッションは session-start フックが `mise install` で入れる。main の verify の `sts2-pck` ジョブが MegaDot で .pck を書き出す。
 - `apps/three-twelve` は毎日 3 時 12 分（JST）に、bot の入ったサーバーで人のいるボイスチャンネルへ入って曲を 1 回流し、抜ける Discord bot である。Worker の cron が Durable Object の alarm を仕掛け、alarm が Cloudflare Containers で `player/main.ts`（discord.js）を exec する。bot のトークンは `PUT /three-twelve/token` で DO に、曲（Ogg Opus）は `PUT /three-twelve/audio` で R2 に置く。トークンは持ち主の Discord アプリのものだけを受け付ける。曲は著作物なのでリポに入れない。
-- `apps/pod-rattle-plugin` は labs の Pod Rattle を Rust（nih-plug）で VST3・CLAP にしたもので、音の本体は `libs/pod-rattle-engine` にある。Rust はルートの Cargo ワークスペースに置き、crate ごとに最小の package.json と `vite.config.ts` の `cargo` タスク（fmt・clippy・テスト）を持たせて、ルートの verify から vp のタスクとキャッシュで動かす。crate を足したら同じ形で package.json と `cargo` タスクを作り、verify の `dependsOn` に足す。Rust の版は `rust-toolchain.toml` で固定し、CI は `rustup toolchain install` でそれを入れ、Renovate が上げる。`cargo run --package xtask --release -- bundle-all --release` が `target/bundled/` に出す。`pod-rattle` ワークフローは main への push ごとに 3 OS でビルドし、pluginval（エディタの開閉を含む）と clap-validator に通したうえで、`tools/pod-rattle-host` が VST3 に MIDI を送って鳴らし、エンジンを直接鳴らした音と比べる。エディタは同じツールの egui_kittest のテストが画面なしで操作し、描いた画像を `tests/snapshots/` と比べる。release-please が `pod-rattle-v<版>` で出し、zip を付ける。
+- `apps/pod-rattle-plugin` は labs の Pod Rattle を Rust（nih-plug）で VST3・CLAP にしたもので、音の本体は `libs/pod-rattle-engine` にある。Rust はルートの Cargo ワークスペースに置き、crate ごとに最小の package.json と `vite.config.ts` の `cargo` タスク（fmt・clippy・テスト）を持たせて、ルートの verify から vp のタスクとキャッシュで動かす。crate を足したら同じ形で package.json と `cargo` タスクを作り、`packageChecks` に足す。Rust の版は `rust-toolchain.toml` で固定し、CI は `rustup toolchain install` でそれを入れ、Renovate が上げる。`cargo run --package xtask --release -- bundle-all --release` が `target/bundled/` に出す。`pod-rattle` ワークフローは main への push ごとに 3 OS でビルドし、pluginval（エディタの開閉を含む）と clap-validator に通したうえで、`tools/pod-rattle-host` が VST3 に MIDI を送って鳴らし、エンジンを直接鳴らした音と比べる。エディタは同じツールの egui_kittest のテストが画面なしで操作し、描いた画像を `tests/snapshots/` と比べる。release-please が `pod-rattle-v<版>` で出し、zip を付ける。
 - 性能の判定は時間ではなく、`benches/instructions.rs` が Valgrind（gungraun）で数える命令数で行う。CI のランナーは速さがまちまちで、時間で判定すると機械によって落ちる。
 - オーディオスレッドで確保をしない。配列は初期化で確保し、`no_alloc` テストで確かめる。
 - parity テストの参照音は、`tools/pod-rattle-parity` が labs のページから `createEngine` を切り出して鳴らした音である。labs の音を変えたら `libs/pod-rattle-engine` も合わせる。計算の順序を変えると標本単位で一致しなくなるので、速くするときも浮動小数点の演算順は保つ。いずれ labs が `libs/pod-rattle-engine` を wasm で鳴らし、エンジンを 1 本にする。
@@ -42,6 +42,14 @@
 - `respan/` のモデルには、1 リクエストに区間ごとの質問を並べない。choice の質問も使わない。既定のモデル `respan/span-01-lite` を変えるときは、計測し直してユーザーに確認する。
 - 精度・費用・時間の比較は、無害な入力と注入を含む入力の両方で、フロンティアモデルに直接判定させた場合と並べる。計測の前後に `GET https://openrouter.ai/api/v1/key` でキーの残りを確かめる。
 - デモはサーバーの処理を持たない。OpenRouter のキーは見る人が入力し、サーバーは持たず受け取りもしない。
+
+## yakusu
+
+- `apps/yakusu` は PLaMo 3 Translate 0.8B を手元で動かす翻訳のデスクトップアプリである。Tauri 2 の Rust 側（`src-tauri`、ルートの Cargo ワークスペースの一員）が llama.cpp の llama-server を子プロセスとして起動し、`/completion` の流れを訳文として画面へ送る。
+- llama-server・モデル・ライセンスの写しは、`scripts/fetch-runtime.sh` がリビジョンと sha256 を固定して `src-tauri/resources/` に落とす。リポには入れない。実モデルでの翻訳は `cargo test -p yakusu --test engine -- --ignored` で確かめる。
+- `yakusu` ワークフローが 3 OS で実モデルの翻訳を確かめてからインストーラーを作り、`yakusu-v*` のタグのときはリリースに付ける。
+- 画面はブラウザーモードの Vitest が偽のエンジンで操作し、`src/app/__screenshots__/` の画像と比べる。
+- PLaMo Community License に従い、画面に「Built with PLaMo」を出し、インストーラーにライセンスの写しを入れる。モデルを変えて派生モデルを配るときは、名前の先頭に「PLaMo」を付ける。
 
 ## aredoko
 

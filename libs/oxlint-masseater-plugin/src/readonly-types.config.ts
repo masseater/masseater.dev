@@ -149,7 +149,14 @@ const readonlyParameterAllow = [
   {
     from: "package" as const,
     package: "react",
-    name: ["ReactNode", "ButtonHTMLAttributes", "ChangeEvent", "ClassAttributes", "SubmitEvent"],
+    name: [
+      "ReactNode",
+      "ButtonHTMLAttributes",
+      "ChangeEvent",
+      "ClassAttributes",
+      "KeyboardEvent",
+      "SubmitEvent",
+    ],
   },
   { from: "package" as const, package: "clsx", name: "ClassValue" },
   { from: "package" as const, package: "@modelcontextprotocol/server", name: "McpServer" },
