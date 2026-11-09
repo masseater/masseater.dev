@@ -7,6 +7,7 @@ type Utterance = Readonly<{ uuid: string; timestamp: string; text: string }>;
 type Candidate = Readonly<{ uuid: string; timestamp: string; owner: boolean; text: string }>;
 
 const WAKE = /<wake[\s>]/u;
+const RELAY = /<relay[\s>]/u;
 const SPOKEN =
   /<message\b[^>]*\bfrom="human"[^>]*>(?<message>[\s\S]*?)<\/message>|<cited\b[^>]*\bauthor="user"[^>]*>(?<cited>[\s\S]*?)<\/cited>/gu;
 const REMINDER = /<system-reminder>[\s\S]*?<\/system-reminder>/gu;
@@ -35,22 +36,28 @@ const contentText = Match.type<string | readonly UserContentBlock[]>().pipe(
   Match.orElse((blocks) => pipe(blocks, Arr.map(blockText), Arr.getSomes, Arr.join("\n"))),
 );
 
+const typedByOwner = (
+  entry: Readonly<{ isMeta?: boolean; origin?: Readonly<{ kind: string }> }>,
+): boolean =>
+  entry.isMeta !== true &&
+  Option.match(Option.fromUndefinedOr(entry.origin), {
+    onNone: () => true,
+    onSome: (origin) => origin.kind === HUMAN,
+  });
+
 const candidateOf = Match.type<ParsedLine>().pipe(
-  Match.when({ _kind: "known", type: "user" }, (entry) =>
-    Option.some<Candidate>({
+  Match.when({ _kind: "known", type: "user" }, (entry) => {
+    const text = contentText(entry.message.content);
+    return Option.some<Candidate>({
       uuid: entry.uuid,
       timestamp: entry.timestamp,
       owner:
-        entry.isMeta !== true &&
         !entry.isSidechain &&
         entry.isCompactSummary !== true &&
-        Option.match(Option.fromUndefinedOr(entry.origin), {
-          onNone: () => true,
-          onSome: (origin) => origin.kind === HUMAN,
-        }),
-      text: contentText(entry.message.content),
-    }),
-  ),
+        (typedByOwner(entry) || RELAY.test(text)),
+      text,
+    });
+  }),
   Match.orElse(() => Option.none<Candidate>()),
 );
 
@@ -77,7 +84,7 @@ const typedIn = (text: string): readonly string[] =>
 
 const textsOf = (text: string): readonly string[] =>
   Match.value(text).pipe(
-    Match.when((value) => WAKE.test(value), spokenIn),
+    Match.when((value) => WAKE.test(value) || RELAY.test(value), spokenIn),
     Match.orElse(typedIn),
   );
 

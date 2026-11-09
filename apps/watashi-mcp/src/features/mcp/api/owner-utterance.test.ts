@@ -71,6 +71,20 @@ describe("プロジェクトの wake からの本人の発言の取り出し", (
     expect(said(line)).toStrictEqual(["日本語にして & <急ぎ>", "取り込むのは発言だけ"]);
   });
 
+  it("コーディネーターの中継からは引用された本人の発言だけを取り出す", () => {
+    const relay = [
+      String.raw`"<relay from=\"coordinator\" session=\"s\">`,
+      String.raw`<cited id=\"cmsg_3\" author=\"user\" name=\"masseater\">クラウドからも送れるようにして</cited>`,
+      String.raw`<note>コーディネーターの言葉</note></relay>"`,
+    ];
+    const line = user(
+      "r",
+      Arr.join(relay, ""),
+      '"isMeta":true,"origin":{"kind":"task-notification"},',
+    );
+    expect(said(line)).toStrictEqual(["クラウドからも送れるようにして"]);
+  });
+
   it("人の発言の無い wake は何も返さない", () => {
     const wake = String.raw`"<wake reason=\"task-notification\"><message from=\"agent\">done</message></wake>"`;
     expect(said(user("w", wake))).toStrictEqual([]);
