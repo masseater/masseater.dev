@@ -10,7 +10,7 @@ CLI は、前回送った位置から後ろの完全な行だけを読み、書�
 
 伏せた JSONL は gzip にして `PUT /api/conversations` に送る。サーバーは R2 の `masseater-dev-watashi-mcp-conversations` に置き、D1 の `conversation_chunk` に範囲を記録する。AI は MCP の `conversation_read` で、会話の一覧と本文を読む。
 
-`conversation_read` に `view: "owner"` を渡すと、持ち主の発言だけを `{uuid, timestamp, text}` の並びで返す。ツールの結果、フックが差し込んだ文、subagent への指示は除く。claude.ai のプロジェクトの会話では、人の発言と、引用された本人の発言だけを取り出す。
+`conversation_read` に `view: "owner"` を渡すと、持ち主の発言だけを `{uuid, timestamp, text}` の並びで返す。行の読み取りは [claude-code-jsonl-parser](https://github.com/book000/claude-code-jsonl-parser) に任せ、ツールの結果、フックが差し込んだ文、subagent への指示は除く。claude.ai のプロジェクトの会話では、人の発言と、引用された本人の発言だけを取り出す。
 
 ## 秘密の伏せ方
 
