@@ -1,9 +1,7 @@
 import { BACKDROP_STYLE_HASH } from "@masseater.dev/ui/backdrop-palette";
-import {
-  WEB_ANALYTICS_REPORT_ORIGIN,
-  WEB_ANALYTICS_SCRIPT_ORIGIN,
-} from "@masseater.dev/ui/web-analytics";
+import { WEB_ANALYTICS_SCRIPT_ORIGIN } from "@masseater.dev/ui/web-analytics";
 import { Array as Arr, pipe } from "effect";
+import { WEB_ANALYTICS_REPORT_ORIGIN } from "security-headers";
 
 const IMAGE_HEADERS = { "Cross-Origin-Resource-Policy": "cross-origin" } as const;
 
