@@ -13,7 +13,7 @@ type Request = Readonly<{ fileName: string; content: string; positionEncoding: P
 
 const PARSE_ERROR = 1;
 
-const NEVER_SONG = "declare const song: never;\nexport { song };\nexport default song;\n";
+const NEVER_SONG = "declare const song: never;\nexport { song };\n";
 
 const parseFailure = (
   { content, positionEncoding }: Request,
