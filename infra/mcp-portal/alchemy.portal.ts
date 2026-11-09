@@ -194,7 +194,13 @@ const mcpPortal = gen(function* mcpPortal() {
     destinations: [{ type: "public", uri: PORTAL_HOST }],
     policies: yield* viewerPolicy,
     sessionDuration,
-    oauthConfiguration: { enabled: true },
+    oauthConfiguration: {
+      enabled: true,
+      dynamicClientRegistration: {
+        enabled: true,
+        allowedUris: ["https://agent.meta.ai/api/hatch/oauth/callback"],
+      },
+    },
   });
   const servers = yield* upstreamServers;
   yield* portalServers("McpPortalServers", {
