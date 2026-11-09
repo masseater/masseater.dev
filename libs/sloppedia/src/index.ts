@@ -1,6 +1,6 @@
 export { articlesOf, Frontmatter, InfoboxRowSchema, newestFirst } from "./article.ts";
 export type { Article, InfoboxRow } from "./article.ts";
-export { byTitle, categoriesOf, recentOf } from "./categories.ts";
+export { categoriesOf, randomOf, recentOf } from "./categories.ts";
 export type { WikiCategory } from "./categories.ts";
 export { defaultLabels, defineSloppedia, githubSource, targets } from "./config.ts";
 export type {

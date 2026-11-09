@@ -68,9 +68,14 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^vite\\.config\\.ts$/"],
-      "matchStrings": ["go run (?<depName>[a-z0-9./-]+)@(?<currentValue>v[0-9A-Za-z.-]+)"],
-      "datasourceTemplate": "go"
+      "managerFilePatterns": ["/^scripts/install-betterleaks\\.ts$/"],
+      "matchStrings": [
+        "betterleaks_(?<currentValue>[0-9][0-9A-Za-z.-]*)_",
+        "const VERSION = \"(?<currentValue>[0-9][0-9A-Za-z.-]*)\""
+      ],
+      "depNameTemplate": "betterleaks/betterleaks",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
     },
     {
       "customType": "regex",

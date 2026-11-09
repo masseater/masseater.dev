@@ -41,6 +41,7 @@ dist-ssr
 .output
 .alchemy
 .fallow
+.tooling
 
 # Playwright CLI
 .playwright/

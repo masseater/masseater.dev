@@ -6,92 +6,16 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 
 - サイト: https://masseater.dev
 - Sloppedia: https://masseater.dev/sloppedia/
-- npm の sloppedia（Sloppedia の見た目を他のサイトで使うパッケージ）: https://www.npmjs.com/package/sloppedia
-- 単体のページ（`apps/labs`）: https://masseater.dev/satsuei-lab/（夕景カット撮影ラボ）、https://masseater.dev/split-pad/（背面打ちスプリットパッド）、https://masseater.dev/pod-rattle/（Pod Rattle）
-- Pod Rattle の VST3 / CLAP プラグイン（`apps/pod-rattle-plugin`）: https://github.com/masseater/masseater.dev/releases?q=pod-rattle
-- サムネのモザイクアート: https://masseater.dev/mosaic/ （キャラごとのページは `libs/mosaic/src/characters.json` の slug で `/mosaic/<slug>`）
-- rpp-kit のデモ（`apps/rpp-kit-demo`）: https://masseater.dev/rpp-kit/
-- メドレーの曲と動画を逆引きするメドDB（`apps/medley-manager`）: https://medley-manager.masseater.dev
-- decision モデルの実験（`apps/injection-bisect-demo`・`apps/ocr-decide`・`apps/decision-bench`）。injection-bisect のデモは https://masseater.dev/injection-bisect/ 、npm は https://www.npmjs.com/package/@r_masseater/injection-bisect 。ocr-decide は https://masseater.dev/ocr-decide/ 、OCR エンジンの比較は https://masseater.dev/ocr-decide/ocr-engines 。日本語 decision model ベンチは https://masseater.dev/decision-bench/ で、手法は `docs/decision-bench.md` にある。
-- Unity エディタの中でアセットを見た目の言葉で探す aredoko（`apps/aredoko-*`）。管理アプリは https://github.com/masseater/masseater.dev/releases?q=aredoko で配り、導入の手順は `apps/aredoko-desktop/README.md` にある。
-- 記事の配信。RSS は https://masseater.dev/feed.xml 、blog の記事を AT Protocol に載せた Standard.site は https://bsky.app/profile/masseater.bsky.social 、Zenn は https://zenn.dev/masseater にある。
+- npm の sloppedia: https://www.npmjs.com/package/sloppedia
+- 単体のページ: https://masseater.dev/satsuei-lab/（夕景カット撮影ラボ）、https://masseater.dev/split-pad/（背面打ちスプリットパッド）、https://masseater.dev/pod-rattle/（Pod Rattle）
+- Pod Rattle の VST3 / CLAP プラグイン: https://github.com/masseater/masseater.dev/releases?q=pod-rattle
+- サムネのモザイクアート: https://masseater.dev/mosaic/
+- rpp-kit のデモ: https://masseater.dev/rpp-kit/
+- メドDB: https://medley-manager.masseater.dev
+- decision モデルの実験: https://masseater.dev/injection-bisect/ 、 https://masseater.dev/ocr-decide/ 、 https://masseater.dev/decision-bench/
+- npm の injection-bisect: https://www.npmjs.com/package/@r_masseater/injection-bisect
+- aredoko の管理アプリ: https://github.com/masseater/masseater.dev/releases?q=aredoko
+- RSS: https://masseater.dev/feed.xml
+- Standard.site: https://bsky.app/profile/masseater.bsky.social
+- Zenn: https://zenn.dev/masseater
 - 個人データの MCP サーバー（watashi-mcp）: https://watashi.masseater.dev/mcp
-
-## 記事を書く
-
-記事は `apps/portfolio/content/<カテゴリ>/<slug>.md` に置くと、`https://masseater.dev/<カテゴリ>/<slug>` で公開される。
-カテゴリは、作ったものを載せる `projects`、まとまった文章の `blogs`、百科事典もどきの `sloppedia` から選ぶ。
-
-先頭の frontmatter には次を書く。
-
-```yaml
-title: タイトル
-description: 一覧と OGP に出す説明
-tags: [tag]
-published: true
-```
-
-`sloppedia` の記事では `tags` がカテゴリになり、`infobox` に `label`・`value`・`href` の並びを書くと記事の右に情報の表が出る。
-
-`published: false` にした記事は、開発サーバーでだけ表示される。
-画像は `apps/portfolio/public/` に置く。
-
-main に入ると、verify が通ったあとに本番へデプロイされる。
-
-## 3 時 12 分の Discord bot
-
-`apps/three-twelve` は、毎日 3 時 12 分（JST）に bot の入ったサーバーのボイスチャンネルへ来て「3時12分」を流し、流し終えると抜ける。
-操作は https://masseater.dev/three-twelve/ の API で行い、どれも `Authorization: Bot <トークン>` を付ける。
-
-`PUT /three-twelve/token` は、持ち主の Discord アプリのトークンだけを受け付けて保存し、招待のリンクを返す。
-`PUT /three-twelve/audio` に Ogg Opus の曲を送ると、次の 3 時 12 分からその曲を流す。
-`POST /three-twelve/play` を送ると 1 分後に試しの再生をする。`GET /three-twelve/status` は前回の結果を返す。
-
-## 個人データの MCP サーバー（watashi-mcp）
-
-`apps/watashi-mcp` は、持ち主のプロジェクトの記憶と ToDo を扱う MCP サーバーである。
-Claude のコネクタに https://watashi.masseater.dev/mcp を足すか mcp.masseater.dev のポータルから使い、持ち主のパスキーでログインする。
-ツールは、記憶の `memory_save`・`memory_update`・`memory_search` と、ToDo の `todo_add`・`todo_update`・`todo_list` である。
-書き込みはすべて `revision` 表にリビジョンとして残り、`history` で一覧し、`restore` で前の中身に戻せる。戻した結果も新しいリビジョンになる。
-
-ツールの呼び出しは 1 回ずつ Analytics Engine のデータセット `masseater_dev_watashi_tool_calls` に入る。
-`blob1` からツール名・結果・エラーの種類・OAuth のクライアント・プロジェクト・User-Agent、`double1` から所要時間（ミリ秒）・入力のバイト数・出力のバイト数・結果の件数が並ぶ。
-同じ内容は Workers Logs にも `event: mcp_tool_call` で出る。
-
-```sh
-curl -sS "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/analytics_engine/sql" \
-  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-  -d "SELECT blob1 AS tool, blob2 AS status, count() AS calls, avg(double1) AS ms, avg(double4) AS results
-      FROM masseater_dev_watashi_tool_calls WHERE timestamp > NOW() - INTERVAL '7' DAY GROUP BY tool, status"
-```
-
-## Zenn に出す
-
-Zenn の記事は `apps/zenn-articles/articles/`、本は `books/`、画像は `images/` に置く。
-main の verify が通ると Zenn に公開される。masseater.dev のサイトには載らない。
-
-## モザイクアート
-
-`apps/mosaic` のサイトと、キャラごとの画像を配る Worker は Alchemy の `thumb-mosaic` スタックで置く。
-キャラは `libs/mosaic/src/characters.json` に足す。`tools/mosaic` の Python が VocaDB から曲を集めてモザイクを解き、main の verify のあとにキャラごとのジョブが画像を、最後のジョブがサイトをデプロイする。
-このジョブは mosaic のファイルか lockfile が変わった push と、毎週の定期実行でだけ動く。
-
-## 手元で確かめる
-
-前提は Vite+ の `vp` と Cloudflare のアカウントである。
-
-```sh
-vp install
-cp .env.example .env
-vp exec --filter portfolio alchemy profile edit --add Cloudflare
-cd apps/portfolio
-vp run dev
-```
-
-`.env` の `OPENROUTER_API_KEY` には、`vp check` の判定に使う OpenRouter のキーを書く。
-
-## 最初に一度だけ行う設定
-
-GitHub の secrets とルールセットは、[masseater/skills](https://github.com/masseater/skills) の
-`project-checklist` スキルの setup の手順で入れる。
-Zenn の GitHub 連携では、デプロイ対象のブランチを `zenn` にする。
