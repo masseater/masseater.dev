@@ -1,4 +1,4 @@
-mod editor;
+pub mod editor;
 mod params;
 
 use atomic_float::AtomicF32;
@@ -6,20 +6,31 @@ use nice_plug::prelude::*;
 use pod_rattle_engine::{Engine, Snapshot};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
-use std::time::Instant;
 use triple_buffer::TripleBuffer;
 
 pub use params::RattleParams;
 
 const SNAPSHOT_RATE: f32 = 60.0;
-const LOAD_SMOOTHING: f32 = 0.05;
 
 pub struct Telemetry {
     pub snapshot: Mutex<triple_buffer::Output<Snapshot>>,
-    pub dsp_load: AtomicF32,
     pub grabbing: AtomicBool,
     pub target_x: AtomicF32,
     pub target_y: AtomicF32,
+}
+
+impl Telemetry {
+    #[must_use]
+    pub fn new() -> (Self, triple_buffer::Input<Snapshot>) {
+        let (input, output) = TripleBuffer::new(&Snapshot::default()).split();
+        let telemetry = Self {
+            snapshot: Mutex::new(output),
+            grabbing: AtomicBool::new(false),
+            target_x: AtomicF32::new(0.0),
+            target_y: AtomicF32::new(0.0),
+        };
+        (telemetry, input)
+    }
 }
 
 pub struct PodRattle {
@@ -33,17 +44,11 @@ pub struct PodRattle {
 
 impl Default for PodRattle {
     fn default() -> Self {
-        let (input, output) = TripleBuffer::new(&Snapshot::default()).split();
+        let (telemetry, snapshot) = Telemetry::new();
         Self {
             params: Arc::new(RattleParams::default()),
-            telemetry: Arc::new(Telemetry {
-                snapshot: Mutex::new(output),
-                dsp_load: AtomicF32::new(0.0),
-                grabbing: AtomicBool::new(false),
-                target_x: AtomicF32::new(0.0),
-                target_y: AtomicF32::new(0.0),
-            }),
-            snapshot: input,
+            telemetry: Arc::new(telemetry),
+            snapshot,
             engine: None,
             sample_rate: 48_000.0,
             since_snapshot: 0,
@@ -106,7 +111,6 @@ impl Plugin for PodRattle {
         _aux: &mut AuxiliaryBuffers,
         context: &mut impl ProcessContext<Self>,
     ) -> ProcessStatus {
-        let started = Instant::now();
         let Some(engine) = self.engine.as_mut() else {
             return ProcessStatus::Normal;
         };
@@ -145,15 +149,6 @@ impl Plugin for PodRattle {
             self.snapshot.publish();
         }
 
-        if samples > 0 {
-            let budget = samples as f32 / self.sample_rate;
-            let load = started.elapsed().as_secs_f32() / budget;
-            let previous = telemetry.dsp_load.load(Ordering::Relaxed);
-            telemetry.dsp_load.store(
-                previous + (load - previous) * LOAD_SMOOTHING,
-                Ordering::Relaxed,
-            );
-        }
         ProcessStatus::KeepAlive
     }
 }
