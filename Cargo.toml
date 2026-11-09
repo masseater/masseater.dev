@@ -4,6 +4,7 @@ members = [
   "apps/aredoko-desktop/src-tauri",
   "apps/pod-rattle-plugin",
   "libs/pod-rattle-engine",
+  "tools/pod-rattle-host",
   "tools/xtask",
 ]
 

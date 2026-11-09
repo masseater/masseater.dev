@@ -58,3 +58,8 @@ tools/web-vitals-measure/report/
 # decision-bench-runner の判定キャッシュ（結果は results/ にコミットする）
 tools/decision-bench-runner/cache/
 *.traineddata
+
+# egui_kittest の比較で失敗したときの出力
+**/tests/snapshots/*.new.png
+**/tests/snapshots/*.diff.png
+**/tests/snapshots/*.old.png
