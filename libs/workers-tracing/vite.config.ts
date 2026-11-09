@@ -1,8 +1,6 @@
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
-const BANNERS: Readonly<Record<string, string>> = { "traces.js": "#!/usr/bin/env node" };
-
 export default defineConfig({
   run: {
     tasks: {
@@ -24,7 +22,6 @@ export default defineConfig({
       "src/trace-sink.worker.ts",
     ],
     platform: "neutral",
-    banner: ({ fileName }) => BANNERS[fileName],
     sourcemap: true,
     publint: { strict: true },
     attw: { profile: "esm-only", level: "error" },
