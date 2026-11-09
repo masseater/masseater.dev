@@ -73,14 +73,5 @@ const previousYear = ({ from, to }: Period): Period => ({
   to: shiftYears(-ONE_DAY)(to),
 });
 
-export {
-  WEEKDAYS,
-  daysBetween,
-  monthOf,
-  previousPeriod,
-  previousYear,
-  shiftDays,
-  weekStartOf,
-  weekdayOf,
-};
+export { daysBetween, monthOf, previousPeriod, previousYear, shiftDays, weekStartOf, weekdayOf };
 export type { Period, Weekday };

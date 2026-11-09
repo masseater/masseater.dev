@@ -178,4 +178,4 @@ const groupsOf =
   };
 
 export { BUCKETS, bucketsOf, dailyFor, dailyOfMetric, groupsOf, optional };
-export type { Bucket, BucketValue, GroupBy, GroupValue, Measured, Scope, StatsData };
+export type { Bins, Bucket, BucketValue, GroupBy, GroupValue, Measured, Scope, StatsData };

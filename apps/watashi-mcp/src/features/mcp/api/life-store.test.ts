@@ -159,3 +159,15 @@ it.effect("同じ作品は更新として扱う", () =>
     expect(typesOf(second.notices)).toContain("updated_existing");
   }),
 );
+
+it.effect("作品の種類に無い ID は書けない", () =>
+  Effect.gen(function* rejectsForeignIds() {
+    yield* resetDatabase;
+    const failure = yield* Effect.flip(
+      writeLife(writer)([{ ...book, ids: { steamAppId: "570" } }]),
+    );
+    expect(failure).toMatchObject({ _tag: "InvalidRecord" });
+    const written = yield* writeLife(writer)([{ ...book, ids: { isbn: "9784152098702" } }]);
+    expect(written.written).toHaveLength(FIRST_REVISION);
+  }),
+);

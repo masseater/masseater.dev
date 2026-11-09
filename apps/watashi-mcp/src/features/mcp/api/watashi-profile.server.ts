@@ -7,12 +7,11 @@ import type { Entry } from "./life-filter";
 import { goalPeriods } from "./life-goals";
 import { itemOf } from "./life-item";
 import { SELF, textAt } from "./life-record";
+import type { Body } from "./life-record";
 import { loadStatsData } from "./life-stats-data.server";
 import { scanAll } from "./life-store.server";
 import { todayJst } from "./life-time";
 import { findMemory, memoryItem } from "./memory-store.server";
-
-type Body = Readonly<Record<string, unknown>>;
 
 type ProfileContext = Readonly<{ entries: readonly Entry[]; today: string }>;
 

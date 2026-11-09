@@ -13,6 +13,7 @@ import {
 } from "#/features/mcp/model/life-body";
 import type { LifeRecordName } from "#/features/mcp/model/life-record.table";
 
+import { checkMediaIds } from "./life-media-ids";
 import { isLifeRecord, normalizeTimes, parseRef } from "./life-record";
 import type { Body, Normalized } from "./life-record";
 import type { IdKey } from "./life-store.server";
@@ -37,6 +38,21 @@ const VALIDATORS: Readonly<Record<LifeRecordName, Validate>> = {
 
 const invalid = (message: string): InvalidRecord => InvalidRecord.make({ message });
 
+const accept = (body: Body): Effect.Effect<Body, InvalidRecord> => Effect.succeed(body);
+
+const EXTRA_CHECKS: Readonly<
+  Record<LifeRecordName, (body: Body) => Effect.Effect<Body, InvalidRecord>>
+> = {
+  life_event: accept,
+  media_item: checkMediaIds(invalid),
+  profile_fact: accept,
+  metric_goal: accept,
+  owner_reflection: accept,
+  todo: accept,
+  event_kind: accept,
+  metric_definition: accept,
+};
+
 const normalize =
   (record: LifeRecordName) =>
   (body: Body): Effect.Effect<Normalized, InvalidRecord> =>
@@ -47,6 +63,7 @@ const validateBody =
   (body: Body): Effect.Effect<Body, InvalidRecord> =>
     VALIDATORS[record](body).pipe(
       Effect.mapError((failure) => invalid(`${record} is not valid: ${failure.message}`)),
+      Effect.flatMap(EXTRA_CHECKS[record]),
     );
 
 const assumedNotices =

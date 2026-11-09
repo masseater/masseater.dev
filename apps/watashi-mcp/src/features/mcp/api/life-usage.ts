@@ -44,4 +44,4 @@ const countOf =
     pipe(entries, Arr.groupBy(keyOf), Rec.map(Arr.length));
 
 export { countOf, usageOf };
-export type { Usage };
+export type { KeysOf, Usage };

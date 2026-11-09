@@ -180,45 +180,16 @@ const MetricDefinitionBody = Schema.Struct({
   description: Schema.optionalKey(Text),
 });
 
-const LIFE_BODIES = {
-  life_event: LifeEventBody,
-  media_item: MediaItemBody,
-  profile_fact: ProfileFactBody,
-  metric_goal: MetricGoalBody,
-  owner_reflection: OwnerReflectionBody,
-  todo: TodoBody,
-  event_kind: EventKindBody,
-  metric_definition: MetricDefinitionBody,
-} as const;
-
-type LifeEventValue = typeof LifeEventBody.Type;
-
-type MediaItemValue = typeof MediaItemBody.Type;
-
-type ProfileFactValue = typeof ProfileFactBody.Type;
-
-type MetricGoalValue = typeof MetricGoalBody.Type;
-
-type OwnerReflectionValue = typeof OwnerReflectionBody.Type;
-
-type TodoValue = typeof TodoBody.Type;
-
-type EventKindValue = typeof EventKindBody.Type;
-
-type MetricDefinitionValue = typeof MetricDefinitionBody.Type;
-
 type Aggregate = (typeof AGGREGATES)[number];
 
 type MediaType = (typeof MEDIA_TYPES)[number];
 
 export {
   AGGREGATES,
-  COMPARISONS,
-  EventKindBody,
-  GOAL_PERIODS,
-  LIFE_BODIES,
-  LifeEventBody,
   MEDIA_ID_KEYS,
+  SHARED_MEDIA_ID_KEYS,
+  EventKindBody,
+  LifeEventBody,
   MEDIA_STATUSES,
   MEDIA_TYPES,
   MediaItemBody,
@@ -227,22 +198,8 @@ export {
   OwnerReflectionBody,
   ProfileFactBody,
   Ref,
-  SHARED_MEDIA_ID_KEYS,
-  TIMES_OF_DAY,
-  TODO_PRIORITIES,
   TODO_STATUSES,
   Time,
   TodoBody,
 };
-export type {
-  Aggregate,
-  EventKindValue,
-  LifeEventValue,
-  MediaItemValue,
-  MediaType,
-  MetricDefinitionValue,
-  MetricGoalValue,
-  OwnerReflectionValue,
-  ProfileFactValue,
-  TodoValue,
-};
+export type { Aggregate, MediaType };

@@ -168,16 +168,5 @@ const dayBound =
 const isDayPrecise = (stored: string): boolean =>
   isInstant(stored) || precisionOf(stored) === "day";
 
-export {
-  PRECISIONS,
-  dayBound,
-  dayRangeOf,
-  isDayPrecise,
-  isInstant,
-  jstDayOf,
-  parseTime,
-  storedOf,
-  timeOut,
-  todayJst,
-};
+export { dayBound, dayRangeOf, isDayPrecise, jstDayOf, parseTime, storedOf, timeOut, todayJst };
 export type { DayRange, Precision, TimeOut, TimeValue };

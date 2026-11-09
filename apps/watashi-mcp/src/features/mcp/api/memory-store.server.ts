@@ -15,14 +15,13 @@ import type { Memory } from "#/features/mcp/model/memory.table";
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 import { db } from "#/shared/db/index.server";
 
+import type { Body } from "./life-record";
 import { timeOut } from "./life-time";
 import { anyTermMatches, query, termsOf } from "./storage.server";
 
 type MemoryQuery = Readonly<{ query: string; project: Option.Option<string>; limit: number }>;
 
 type MemoryKey = Readonly<{ project: string; name: string }>;
-
-type Body = Readonly<Record<string, unknown>>;
 
 const CANDIDATE_LIMIT = 200;
 

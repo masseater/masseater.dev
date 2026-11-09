@@ -6,9 +6,8 @@ import type { StoreFailure } from "#/features/mcp/model/tool-failure";
 import { lifeDigest } from "./life-digest.server";
 import type { LifeReadValue } from "./life-input";
 import { lifeRead } from "./life-read.server";
+import type { Body } from "./life-record";
 import { lifeRevisions } from "./life-revisions.server";
-
-type Body = Readonly<Record<string, unknown>>;
 
 const revisionsRef = (input: LifeReadValue): Option.Option<string> =>
   pipe(

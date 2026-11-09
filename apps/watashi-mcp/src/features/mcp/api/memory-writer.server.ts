@@ -70,5 +70,5 @@ const save =
       return resultOf(id);
     });
 
-export { MemorySnapshot, NOT_RETRACTED, nextId, resultOf, save, snapshotOf };
+export { MemorySnapshot, NOT_RETRACTED, nextId, save, snapshotOf };
 export type { MemoryResult, MemorySnapshotValue, Writer };

@@ -4,7 +4,7 @@ import type { InvalidRecord } from "#/features/mcp/model/invalid-record";
 import type { LifeRecordName, Source } from "#/features/mcp/model/life-record.table";
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 
-import { assumedNotices, normalize } from "./life-checks";
+import { assumedNotices, normalize, validateBody } from "./life-checks";
 import type { ItemResult } from "./life-checks";
 import type { ChangeValue, WriteItemValue } from "./life-input";
 import { columnsOf, lower, refOf, textAt, withDefaults } from "./life-record";
@@ -155,7 +155,12 @@ const createItem =
     Effect.gen(function* createLifeRecord() {
       const { record } = item;
       const { body, assumed } = yield* normalize(record)(withDefaults(record)(bodyOf(item)));
-      const result = yield* creators[record](writer)({ record, source: sourceOf(item), body });
+      const valid = yield* validateBody(record)(body);
+      const result = yield* creators[record](writer)({
+        record,
+        source: sourceOf(item),
+        body: valid,
+      });
       return { ...result, notices: [...result.notices, ...assumedNotices(result.ref)(assumed)] };
     });
 

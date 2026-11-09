@@ -60,4 +60,4 @@ const lifeStats = (input: LifeStatsValue): Effect.Effect<readonly MetricStats[],
     Effect.map(({ request, data }) => computeStats(request)(data)),
   );
 
-export { lifeStats, periodOf };
+export { lifeStats };

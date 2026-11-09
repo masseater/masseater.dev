@@ -4,7 +4,7 @@ import type { StoreFailure } from "#/features/mcp/model/tool-failure";
 
 import { lifeKeyOf } from "./life-checks";
 import { defaultOrder, factFilter, filtersOf, matchesAll, ordered, projected } from "./life-filter";
-import type { Entry } from "./life-filter";
+import type { Body, Entry } from "./life-filter";
 import { DEFAULT_PERIODS, DEFAULT_READ_LIMIT } from "./life-input";
 import type { LifeReadValue } from "./life-input";
 import { itemOf } from "./life-item";
@@ -15,8 +15,6 @@ import { dayBound, todayJst } from "./life-time";
 import { termsOf } from "./storage.server";
 
 type LifeRecordName = Entry["row"]["record"];
-
-type Body = Readonly<Record<string, unknown>>;
 
 const DEFAULT_RECORDS: readonly LifeRecordName[] = [
   "life_event",

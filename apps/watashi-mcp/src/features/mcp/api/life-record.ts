@@ -248,7 +248,6 @@ const lower = Str.toLowerCase;
 export {
   NONE,
   SELF,
-  TIME_FIELDS,
   columnsOf,
   isLifeRecord,
   lower,
@@ -256,7 +255,6 @@ export {
   parseRef,
   refOf,
   stringAt,
-  stringsIn,
   textAt,
   timesOut,
   withDefaults,

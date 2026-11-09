@@ -7,12 +7,11 @@ import type { StoreFailure } from "#/features/mcp/model/tool-failure";
 
 import { listHistory } from "./history-store.server";
 import type { HistoryEntry } from "./history-store.server";
+import type { Body } from "./life-record";
 import { timeOut } from "./life-time";
 import { DEFAULT_MEMORY_LIMIT } from "./memory-input";
 import type { MemoryReadValue } from "./memory-input";
 import { findMemory, memoryItem, searchMemories } from "./memory-store.server";
-
-type Body = Readonly<Record<string, unknown>>;
 
 type Named = Readonly<{ project: string; name: string }>;
 

@@ -4,7 +4,7 @@ import type { Memory } from "#/features/mcp/model/memory.table";
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 
 import { contains } from "./life-filter";
-import type { Entry } from "./life-filter";
+import type { Body, Entry } from "./life-filter";
 import { itemOf } from "./life-item";
 import { SCAN_LIMIT, scanRecords } from "./life-store.server";
 import { todayJst } from "./life-time";
@@ -12,8 +12,6 @@ import { DEFAULT_MEMORY_LIMIT } from "./memory-input";
 import type { WatashiSearchValue } from "./memory-input";
 import { memoryItem, searchMemories } from "./memory-store.server";
 import { termsOf } from "./storage.server";
-
-type Body = Readonly<Record<string, unknown>>;
 
 type Scored = Readonly<{ score: number; item: Body }>;
 

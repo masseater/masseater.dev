@@ -212,12 +212,5 @@ type LifeReadValue = typeof LifeReadInput.Type;
 
 type LifeStatsValue = typeof LifeStatsInput.Type;
 
-export {
-  DEFAULT_PERIODS,
-  DEFAULT_READ_LIMIT,
-  LifeReadInput,
-  LifeStatsInput,
-  LifeWriteInput,
-  READ_ORDERS,
-};
+export { DEFAULT_PERIODS, DEFAULT_READ_LIMIT, LifeReadInput, LifeStatsInput, LifeWriteInput };
 export type { ChangeValue, LifeReadValue, LifeStatsValue, WriteItemValue };

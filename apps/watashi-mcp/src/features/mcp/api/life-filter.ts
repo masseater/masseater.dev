@@ -25,10 +25,6 @@ type FactView = Readonly<{ asOf: Option.Option<string>; withHistory: boolean; to
 
 type FactState = "current" | "upcoming" | "ended";
 
-const NO_SCORE = 0;
-
-const ONE = 1;
-
 const pass: Filter = () => true;
 
 const isList = (value: unknown): value is readonly unknown[] => Arr.isArray(value);
@@ -231,16 +227,14 @@ const projected =
 export {
   contains,
   peopleFilter,
-  NO_SCORE,
-  ONE,
   defaultOrder,
   factFilter,
   factStateOf,
   filtersOf,
-  holdsOn,
   matchesAll,
   ordered,
   projected,
   stringsAt,
 };
 export type { Entry, FactState, FactView, Filter, FilterInput };
+export type { Body } from "./life-record";

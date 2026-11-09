@@ -4,7 +4,7 @@ import type { StoreFailure } from "#/features/mcp/model/tool-failure";
 
 import { previousPeriod, shiftDays } from "./life-calendar";
 import type { Period } from "./life-calendar";
-import type { Entry } from "./life-filter";
+import type { Body, Entry } from "./life-filter";
 import { goalPeriods } from "./life-goals";
 import { itemOf } from "./life-item";
 import { computeStats } from "./life-stats";
@@ -12,8 +12,6 @@ import type { MetricStats, StatsData } from "./life-stats";
 import { loadStatsData } from "./life-stats-data.server";
 import { scanAll } from "./life-store.server";
 import { dayBound, jstDayOf, todayJst } from "./life-time";
-
-type Body = Readonly<Record<string, unknown>>;
 
 type DigestInput = Readonly<{ from?: string; to?: string }>;
 
@@ -179,3 +177,4 @@ const lifeDigest = (input: DigestInput): Effect.Effect<Body, StoreFailure> =>
   });
 
 export { lifeDigest };
+export type { DigestInput };
