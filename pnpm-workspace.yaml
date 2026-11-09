@@ -154,7 +154,7 @@ catalog:
   "@fontsource/noto-serif-jp": ^5.3.1
   "@fontsource/zen-kurenaido": ^5.3.1
   fastest-levenshtein: ^1.0.16
-  "@openrouter/sdk": 1.5.60
+  "@openrouter/sdk": 1.5.61
   recharts: 3.10.1
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -183,7 +183,7 @@ catalogs:
     fallow: 3.40.0
     renovate: 44.222.5
     radix-ui: 1.8.1
-    tailwindcss: 4.3.4
+    tailwindcss: 4.3.5
     typescript: 7.1.0-beta
     vite-plus: 1.5.0
 overrides:
