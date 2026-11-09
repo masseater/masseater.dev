@@ -14,8 +14,7 @@ use std::sync::atomic::Ordering;
 use std::sync::{Arc, Mutex};
 
 const SAMPLE_RATE: f64 = 48_000.0;
-const SLIDER_OFFSET: f32 = 104.0;
-const SLIDER_WIDTH: f32 = 150.0;
+const KNOB_TRAVEL: f32 = 180.0;
 
 #[derive(Default)]
 struct Host {
@@ -150,14 +149,11 @@ fn material_button_sets_every_material_param() {
 }
 
 #[test]
-fn slider_drag_changes_its_param() {
+fn knob_drag_changes_its_param() {
     let f = fixture();
     let mut harness = harness(&f);
-    let label = harness.get_by_label("Volume").rect();
-    let y = label.center().y;
-    let left = label.left() + SLIDER_OFFSET;
-    let from = Pos2::new(left + SLIDER_WIDTH * 0.5, y);
-    let to = Pos2::new(left + SLIDER_WIDTH * 0.25, y);
+    let from = harness.get_by_label("Volume").rect().center();
+    let to = from + Vec2::new(0.0, KNOB_TRAVEL * 0.25);
     drag(&mut harness, from, to);
     release(&mut harness, to);
 
@@ -177,7 +173,7 @@ fn slider_drag_changes_its_param() {
 fn auto_shake_toggle_turns_it_on() {
     let f = fixture();
     let mut harness = harness(&f);
-    harness.get_by_label("Off").click();
+    harness.get_by_label("Auto shake").click();
     harness.run();
     assert!(f.params.auto.value());
     assert_eq!(f.host.take(), vec![("Auto shake".to_owned(), 1.0)]);

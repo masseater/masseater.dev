@@ -1,29 +1,45 @@
 use crate::Telemetry;
 use crate::params::RattleParams;
-use egui::{Align2, Color32, FontId, Pos2, Rect, Sense, Stroke, Vec2};
+use egui::{
+    Align2, Color32, CornerRadius, FontId, Margin, Pos2, Rect, Response, Role, Sense, Shape,
+    Stroke, Vec2, WidgetInfo,
+};
 use nice_plug::context::gui::GuiContext;
 use nice_plug::editor::dpi::LogicalSize;
 use nice_plug::prelude::*;
 use nice_plug_egui::{
     EguiEditor, EguiEditorState, EguiNiceSettings, Frame, NiceEguiApp, RepaintNotifier,
-    create_egui_editor, widgets::ParamSlider,
+    create_egui_editor,
 };
 use pod_rattle_engine::{HAND_X, HAND_Y, Material, Snapshot};
+use std::f32::consts::PI;
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
 
-const BG: Color32 = Color32::from_rgb(0x17, 0x12, 0x0f);
-const STAGE: Color32 = Color32::from_rgb(0x1f, 0x19, 0x15);
+const BG: Color32 = Color32::from_rgb(0x14, 0x11, 0x0f);
+const HEADER: Color32 = Color32::from_rgb(0x0e, 0x0c, 0x0b);
+const PANEL: Color32 = Color32::from_rgb(0x1e, 0x1a, 0x17);
+const STAGE: Color32 = Color32::from_rgb(0x1a, 0x15, 0x12);
 const FG: Color32 = Color32::from_rgb(0xef, 0xe6, 0xdc);
-const MUTED: Color32 = Color32::from_rgb(0xa5, 0x95, 0x85);
-const LINE: Color32 = Color32::from_rgb(0x3a, 0x2f, 0x28);
+const MUTED: Color32 = Color32::from_rgb(0x8f, 0x82, 0x75);
+const LINE: Color32 = Color32::from_rgb(0x33, 0x2b, 0x25);
+const KNOB: Color32 = Color32::from_rgb(0x2a, 0x24, 0x20);
+const TRACK: Color32 = Color32::from_rgb(0x3d, 0x34, 0x2d);
 const POD: [f32; 3] = [142.0, 60.0, 42.0];
 const BRASS: [f32; 3] = [201.0, 151.0, 58.0];
 const JUTE: Color32 = Color32::from_rgb(0x8f, 0x7b, 0x58);
 const ACCENT: Color32 = Color32::from_rgb(0xe0, 0x8a, 0x5a);
 const FLASH: Color32 = Color32::from_rgb(0xf2, 0xc4, 0x6b);
-const RAIL_WIDTH: f32 = 340.0;
-const SLIDER_WIDTH: f32 = 150.0;
+const HEADER_HEIGHT: f32 = 48.0;
+const RAIL_WIDTH: f32 = 420.0;
+const GAP: f32 = 10.0;
+const SECTION_TITLE: f32 = 26.0;
+const CELL: Vec2 = Vec2::new(88.0, 82.0);
+const KNOB_RADIUS: f32 = 19.0;
+const SWEEP: f32 = 1.5 * PI;
+const START_ANGLE: f32 = 0.75 * PI;
+const DRAG_PIXELS: f32 = 180.0;
+const FINE_DRAG: f32 = 0.1;
 pub const EDITOR_SIZE: LogicalSize<f32> = LogicalSize::new(960.0, 600.0);
 
 #[derive(Default)]
@@ -46,7 +62,7 @@ struct View {
 impl View {
     fn new(rect: Rect) -> Self {
         let scale = (rect.height() * 3.1).min(rect.width() * 2.8);
-        let origin = Pos2::new(rect.center().x, rect.top() + rect.height() * 0.22);
+        let origin = Pos2::new(rect.center().x, rect.top() + rect.height() * 0.3);
         Self {
             rect,
             scale,
@@ -92,7 +108,20 @@ impl EditorView {
             style.visuals = egui::Visuals::dark();
             style.visuals.panel_fill = BG;
             style.visuals.selection.bg_fill = ACCENT;
-            style.visuals.widgets.inactive.bg_fill = LINE;
+            style.visuals.selection.stroke = Stroke::new(1.0, HEADER);
+            let widgets = &mut style.visuals.widgets;
+            for state in [
+                &mut widgets.inactive,
+                &mut widgets.hovered,
+                &mut widgets.active,
+            ] {
+                state.corner_radius = CornerRadius::same(4);
+                state.bg_stroke = Stroke::new(1.0, LINE);
+            }
+            widgets.inactive.weak_bg_fill = KNOB;
+            widgets.hovered.weak_bg_fill = TRACK;
+            widgets.inactive.fg_stroke = Stroke::new(1.0, MUTED);
+            widgets.hovered.fg_stroke = Stroke::new(1.0, FG);
         });
     }
 
@@ -101,10 +130,20 @@ impl EditorView {
         if let Ok(mut output) = telemetry.snapshot.lock() {
             state.snapshot = *output.read();
         }
+        egui::Panel::top("header")
+            .exact_size(HEADER_HEIGHT)
+            .resizable(false)
+            .frame(
+                egui::Frame::new()
+                    .fill(HEADER)
+                    .inner_margin(Margin::symmetric(16, 0)),
+            )
+            .show(ui, |ui| header(ui, params, setter));
         egui::Panel::right("rail")
             .exact_size(RAIL_WIDTH)
             .resizable(false)
-            .show(ui, |ui| rail(ui, params, setter, telemetry));
+            .frame(egui::Frame::new().fill(BG).inner_margin(Margin::same(12)))
+            .show(ui, |ui| rail(ui, params, setter));
         egui::CentralPanel::default()
             .frame(egui::Frame::new().fill(STAGE))
             .show(ui, |ui| stage(ui, params, setter, telemetry, state));
@@ -153,91 +192,276 @@ pub fn create(params: Arc<RattleParams>, telemetry: Arc<Telemetry>) -> Option<Ra
     )
 }
 
-fn heading(ui: &mut egui::Ui, text: &str) {
-    ui.add_space(6.0);
-    ui.label(egui::RichText::new(text).size(11.0).color(MUTED).strong());
-}
-
-fn slider(ui: &mut egui::Ui, param: &impl Param, setter: &ParamSetter) {
-    ui.label(egui::RichText::new(param.name()).color(FG));
-    ui.add(ParamSlider::for_param(param, setter).with_width(SLIDER_WIDTH));
-    ui.end_row();
-}
-
-fn group(ui: &mut egui::Ui, title: &str, rows: impl FnOnce(&mut egui::Ui)) {
-    if title.is_empty() {
-        ui.add_space(4.0);
-    } else {
-        heading(ui, title);
-    }
-    egui::Grid::new(("group", title))
-        .num_columns(2)
-        .min_col_width(96.0)
-        .spacing(Vec2::new(8.0, 6.0))
-        .show(ui, rows);
-}
-
-fn rail(ui: &mut egui::Ui, params: &RattleParams, setter: &ParamSetter, telemetry: &Telemetry) {
-    heading(ui, "MATERIAL");
-    ui.horizontal(|ui| {
-        for material in Material::ALL {
-            let fields = params.material_fields(material);
-            let selected = fields
-                .iter()
-                .all(|(param, value)| (param.value() - value).abs() < 1e-3);
-            let button = egui::Button::new(format!("{material:?}"))
-                .selected(selected)
-                .min_size(Vec2::new((RAIL_WIDTH - 44.0) / 4.0, 24.0));
-            if ui.add(button).clicked() {
-                for (param, value) in fields {
-                    setter.begin_set_parameter(param);
-                    setter.set_parameter(param, value);
-                    setter.end_set_parameter(param);
-                }
+fn header(ui: &mut egui::Ui, params: &RattleParams, setter: &ParamSetter) {
+    ui.horizontal_centered(|ui| {
+        ui.label(
+            egui::RichText::new("POD RATTLE")
+                .font(FontId::proportional(17.0))
+                .strong()
+                .color(FG),
+        );
+        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.spacing_mut().item_spacing.x = 4.0;
+            for material in Material::ALL.iter().rev() {
+                material_button(ui, params, setter, *material);
             }
+        });
+    });
+}
+
+fn material_button(
+    ui: &mut egui::Ui,
+    params: &RattleParams,
+    setter: &ParamSetter,
+    material: Material,
+) {
+    let fields = params.material_fields(material);
+    let selected = fields
+        .iter()
+        .all(|(param, value)| (param.value() - value).abs() < 1e-3);
+    let text = egui::RichText::new(format!("{material:?}"))
+        .size(12.0)
+        .color(if selected { HEADER } else { FG });
+    let button = egui::Button::new(text)
+        .selected(selected)
+        .min_size(Vec2::new(68.0, 26.0));
+    if ui.add(button).clicked() {
+        for (param, value) in fields {
+            setter.begin_set_parameter(param);
+            setter.set_parameter(param, value);
+            setter.end_set_parameter(param);
         }
-    });
-    group(ui, "", |ui| {
-        slider(ui, &params.material, setter);
-        slider(ui, &params.decay, setter);
-        slider(ui, &params.pitch, setter);
-        slider(ui, &params.rest, setter);
-    });
-    group(ui, "OVERTONES", |ui| {
-        slider(ui, &params.bright, setter);
-        slider(ui, &params.spread, setter);
-        slider(ui, &params.hi_decay, setter);
-        slider(ui, &params.hard, setter);
-    });
-    group(ui, "SHAPE", |ui| {
-        slider(ui, &params.count, setter);
-        slider(ui, &params.len, setter);
-    });
-    group(ui, "SHAKE", |ui| {
-        ui.label(egui::RichText::new(params.auto.name()).color(FG));
-        let mut auto = params.auto.value();
-        let label = if auto { "On" } else { "Off" };
-        if ui.toggle_value(&mut auto, label).changed() {
-            setter.begin_set_parameter(&params.auto);
-            setter.set_parameter(&params.auto, auto);
-            setter.end_set_parameter(&params.auto);
+    }
+}
+
+struct Section<'a> {
+    rect: Rect,
+    title: &'a str,
+}
+
+impl Section<'_> {
+    fn cells(&self, ui: &mut egui::Ui, count: usize) -> impl Iterator<Item = Rect> + use<> {
+        let painter = ui.painter();
+        painter.rect(
+            self.rect,
+            CornerRadius::same(8),
+            PANEL,
+            Stroke::new(1.0, LINE),
+            egui::StrokeKind::Inside,
+        );
+        painter.text(
+            self.rect.left_top() + Vec2::new(12.0, 9.0),
+            Align2::LEFT_TOP,
+            self.title,
+            FontId::proportional(10.0),
+            MUTED,
+        );
+        let width = CELL.x * count as f32;
+        let left = self.rect.center().x - width / 2.0;
+        let top =
+            self.rect.top() + SECTION_TITLE + (self.rect.height() - SECTION_TITLE - CELL.y) / 2.0;
+        (0..count).map(move |i| Rect::from_min_size(Pos2::new(left + CELL.x * i as f32, top), CELL))
+    }
+}
+
+fn place<R>(ui: &mut egui::Ui, rect: Rect, add: impl FnOnce(&mut egui::Ui) -> R) -> R {
+    ui.scope_builder(egui::UiBuilder::new().max_rect(rect), add)
+        .inner
+}
+
+fn rail(ui: &mut egui::Ui, params: &RattleParams, setter: &ParamSetter) {
+    let area = ui.max_rect();
+    let height = (area.height() - GAP * 3.0) / 4.0;
+    let row = |i: usize| {
+        Rect::from_min_size(
+            area.left_top() + Vec2::new(0.0, (height + GAP) * i as f32),
+            Vec2::new(area.width(), height),
+        )
+    };
+    let tone = Section {
+        rect: row(0),
+        title: "TONE",
+    };
+    let cells: Vec<Rect> = tone.cells(ui, 4).collect();
+    for (rect, param) in
+        cells
+            .into_iter()
+            .zip([&params.material, &params.decay, &params.pitch, &params.rest])
+    {
+        place(ui, rect, |ui| knob(ui, param, setter));
+    }
+    let overtones = Section {
+        rect: row(1),
+        title: "OVERTONES",
+    };
+    let cells: Vec<Rect> = overtones.cells(ui, 4).collect();
+    for (rect, param) in cells.into_iter().zip([
+        &params.bright,
+        &params.spread,
+        &params.hi_decay,
+        &params.hard,
+    ]) {
+        place(ui, rect, |ui| knob(ui, param, setter));
+    }
+    let shake = Section {
+        rect: row(2),
+        title: "SHAKE",
+    };
+    let cells: Vec<Rect> = shake.cells(ui, 3).collect();
+    place(ui, cells[0], |ui| power(ui, &params.auto, setter));
+    place(ui, cells[1], |ui| knob(ui, &params.rate, setter));
+    place(ui, cells[2], |ui| knob(ui, &params.amp, setter));
+    let bottom = row(3);
+    let half = (bottom.width() - GAP) / 2.0;
+    let shape = Section {
+        rect: Rect::from_min_size(bottom.left_top(), Vec2::new(half, height)),
+        title: "SHAPE",
+    };
+    let cells: Vec<Rect> = shape.cells(ui, 2).collect();
+    place(ui, cells[0], |ui| knob(ui, &params.count, setter));
+    place(ui, cells[1], |ui| knob(ui, &params.len, setter));
+    let output = Section {
+        rect: Rect::from_min_size(
+            bottom.left_top() + Vec2::new(half + GAP, 0.0),
+            Vec2::new(half, height),
+        ),
+        title: "OUTPUT",
+    };
+    let cells: Vec<Rect> = output.cells(ui, 1).collect();
+    place(ui, cells[0], |ui| knob(ui, &params.gain, setter));
+}
+
+fn arc(center: Pos2, radius: f32, from: f32, to: f32) -> Vec<Pos2> {
+    let steps = ((to - from).abs() / SWEEP * 48.0).ceil().max(2.0) as usize;
+    (0..=steps)
+        .map(|i| {
+            let a = from + (to - from) * i as f32 / steps as f32;
+            center + Vec2::new(a.cos(), a.sin()) * radius
+        })
+        .collect()
+}
+
+fn knob(ui: &mut egui::Ui, param: &impl Param, setter: &ParamSetter) -> Response {
+    let (rect, response) = ui.allocate_exact_size(CELL, Sense::click_and_drag());
+    let id = response.id;
+    let normalized = param.unmodulated_normalized_value();
+
+    if response.double_clicked() {
+        setter.begin_set_parameter(param);
+        setter.set_parameter_normalized(param, param.default_normalized_value());
+        setter.end_set_parameter(param);
+    } else if response.drag_started() {
+        setter.begin_set_parameter(param);
+        ui.data_mut(|d| d.insert_temp(id, normalized));
+    }
+    if response.dragged() {
+        let fine = if ui.input(|i| i.modifiers.shift) {
+            FINE_DRAG
+        } else {
+            1.0
+        };
+        let raw: f32 = ui.data(|d| d.get_temp(id)).unwrap_or(normalized);
+        let next = (raw - response.drag_delta().y / DRAG_PIXELS * fine).clamp(0.0, 1.0);
+        ui.data_mut(|d| d.insert_temp(id, next));
+        if (next - normalized).abs() > f32::EPSILON {
+            setter.set_parameter_normalized(param, next);
         }
-        ui.end_row();
-        slider(ui, &params.rate, setter);
-        slider(ui, &params.amp, setter);
-    });
-    group(ui, "OUTPUT", |ui| {
-        slider(ui, &params.gain, setter);
-    });
-    ui.add_space(8.0);
-    ui.label(
-        egui::RichText::new(format!(
-            "DSP {:.1} %",
-            telemetry.dsp_load.load(Ordering::Relaxed) * 100.0
-        ))
-        .font(FontId::monospace(11.0))
-        .color(MUTED),
+    }
+    if response.drag_stopped() {
+        setter.end_set_parameter(param);
+    }
+
+    let value = param.unmodulated_normalized_value();
+    let text = param.normalized_value_to_string(value, true);
+    let name = param.name().to_owned();
+    response.widget_info(|| WidgetInfo::slider(true, f64::from(value), &name));
+
+    let painter = ui.painter();
+    let active = response.hovered() || response.dragged();
+    painter.text(
+        Pos2::new(rect.center().x, rect.top() + 2.0),
+        Align2::CENTER_TOP,
+        &name,
+        FontId::proportional(11.0),
+        if active { FG } else { MUTED },
     );
+    let center = Pos2::new(rect.center().x, rect.top() + 16.0 + KNOB_RADIUS + 3.0);
+    let ring = KNOB_RADIUS + 4.0;
+    painter.add(Shape::line(
+        arc(center, ring, START_ANGLE, START_ANGLE + SWEEP),
+        Stroke::new(3.0, TRACK),
+    ));
+    if value > 0.0 {
+        painter.add(Shape::line(
+            arc(center, ring, START_ANGLE, START_ANGLE + SWEEP * value),
+            Stroke::new(3.0, ACCENT),
+        ));
+    }
+    painter.circle(
+        center,
+        KNOB_RADIUS,
+        KNOB,
+        Stroke::new(1.0, if active { MUTED } else { LINE }),
+    );
+    let angle = START_ANGLE + SWEEP * value;
+    let dir = Vec2::new(angle.cos(), angle.sin());
+    painter.line_segment(
+        [
+            center + dir * KNOB_RADIUS * 0.35,
+            center + dir * KNOB_RADIUS * 0.85,
+        ],
+        Stroke::new(2.0, FG),
+    );
+    painter.text(
+        Pos2::new(rect.center().x, rect.bottom() - 2.0),
+        Align2::CENTER_BOTTOM,
+        text,
+        FontId::monospace(11.0),
+        FG,
+    );
+    response
+}
+
+fn power(ui: &mut egui::Ui, param: &BoolParam, setter: &ParamSetter) -> Response {
+    let (rect, response) = ui.allocate_exact_size(CELL, Sense::click());
+    let on = param.value();
+    if response.clicked() {
+        setter.begin_set_parameter(param);
+        setter.set_parameter(param, !on);
+        setter.end_set_parameter(param);
+    }
+    let on = param.value();
+    let name = param.name().to_owned();
+    response.widget_info(|| WidgetInfo::selected(Role::Switch, true, on, &name));
+
+    let painter = ui.painter();
+    painter.text(
+        Pos2::new(rect.center().x, rect.top() + 2.0),
+        Align2::CENTER_TOP,
+        &name,
+        FontId::proportional(11.0),
+        if response.hovered() { FG } else { MUTED },
+    );
+    let center = Pos2::new(rect.center().x, rect.top() + 16.0 + KNOB_RADIUS + 3.0);
+    if on {
+        painter.circle_filled(center, KNOB_RADIUS + 5.0, ACCENT.gamma_multiply(0.18));
+    }
+    painter.circle(
+        center,
+        KNOB_RADIUS,
+        if on { ACCENT } else { KNOB },
+        Stroke::new(1.0, if on { ACCENT } else { LINE }),
+    );
+    let glyph = if on { HEADER } else { MUTED };
+    painter.add(Shape::line(
+        arc(center, 7.5, -0.5 * PI + 0.7, 1.5 * PI - 0.7),
+        Stroke::new(2.0, glyph),
+    ));
+    painter.line_segment(
+        [center - Vec2::new(0.0, 10.0), center - Vec2::new(0.0, 2.0)],
+        Stroke::new(2.0, glyph),
+    );
+    response
 }
 
 fn stage(
@@ -282,20 +506,6 @@ fn stage(
     }
 
     draw(&painter, &view, s);
-    painter.text(
-        view.rect.left_top() + Vec2::new(16.0, 14.0),
-        Align2::LEFT_TOP,
-        "Pod Rattle",
-        FontId::proportional(22.0),
-        FG,
-    );
-    painter.text(
-        view.rect.right_bottom() - Vec2::new(16.0, 12.0),
-        Align2::RIGHT_BOTTOM,
-        format!("{:.0} hits/s", s.hit_rate),
-        FontId::monospace(11.0),
-        MUTED,
-    );
 }
 
 fn tint(material: f32) -> [f32; 3] {

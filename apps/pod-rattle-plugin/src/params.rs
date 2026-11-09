@@ -42,7 +42,12 @@ fn linear(name: &str, default: f64, min: f32, max: f32, step: f32) -> FloatParam
 }
 
 fn two_decimals() -> Arc<dyn Fn(f32) -> String + Send + Sync> {
-    Arc::new(|v| format!("{v:.2}"))
+    Arc::new(|v| {
+        let text = format!("{v:.2}");
+        text.strip_prefix("-")
+            .filter(|digits| digits.chars().all(|c| c == '0' || c == '.'))
+            .map_or(text.clone(), str::to_owned)
+    })
 }
 
 impl Default for RattleParams {
