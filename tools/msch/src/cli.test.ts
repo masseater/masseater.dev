@@ -1,5 +1,7 @@
 import { layer as nodeServicesLayer } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
+import { waitForSpans } from "@r_masseater/vitest-otlp";
+import type { ReceivedSpan } from "@r_masseater/vitest-otlp";
 import {
   Array as Arr,
   Effect,
@@ -77,7 +79,10 @@ const textOf = <Err, Req>(
 const mschIn = Effect.fn("mschIn")(function* mschIn(root: string, args: readonly string[]) {
   const path = yield* Path.Path;
   const cli = path.join(import.meta.dirname, "cli.ts");
-  const handle = yield* ChildProcess.make(process.execPath, [cli, ...args], { cwd: root });
+  const handle = yield* ChildProcess.make(process.execPath, [cli, ...args], {
+    cwd: root,
+    extendEnv: true,
+  });
   const [stdout, stderr, status] = yield* Effect.all(
     [textOf(handle.stdout), textOf(handle.stderr), handle.exitCode],
     { concurrency: "unbounded" },
@@ -114,6 +119,28 @@ const printsProblemsAsJson = Effect.gen(function* printsProblemsAsJson() {
   ).toStrictEqual(["duplicate-value-set", "duplicate-value-set"]);
 });
 
+const NOTHING_MEASURED = 0;
+const MEASURED_ATTRIBUTES = [
+  "process.memory.rss",
+  "msch.compiler.memory.rss",
+  "msch.compiler.requests",
+] as const;
+
+const isProjectLoad = (span: ReceivedSpan): boolean =>
+  span.resource["service.name"] === "msch" && span.name === "loadProject";
+
+const tracesMemoryPerProject = Effect.gen(function* tracesMemoryPerProject() {
+  const root = yield* repositoryWith(DUPLICATED_SETS);
+  yield* mschIn(root, [JSON_FLAG]);
+  const loads = yield* waitForSpans({ where: isProjectLoad });
+  const load = yield* Effect.fromOption(Arr.head(loads));
+  const measured = pipe(
+    MEASURED_ATTRIBUTES,
+    Arr.map((name) => Number(load.attributes[name]) > NOTHING_MEASURED),
+  );
+  expect(measured).toStrictEqual([true, true, true]);
+});
+
 const CLI_TIMEOUT = 120_000;
 
 layer(nodeServicesLayer)("msch CLI", (it) => {
@@ -124,4 +151,9 @@ layer(nodeServicesLayer)("msch CLI", (it) => {
   );
   it.effect("fails with one line per problem", () => failsWithOneLinePerProblem, CLI_TIMEOUT);
   it.effect("prints the problems as JSON", () => printsProblemsAsJson, CLI_TIMEOUT);
+  it.effect(
+    "traces the memory of itself and the compiler per project",
+    () => tracesMemoryPerProject,
+    CLI_TIMEOUT,
+  );
 });

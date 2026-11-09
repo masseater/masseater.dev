@@ -1,6 +1,7 @@
 import { Effect, Predicate, Result, Array as Arr, pipe } from "effect";
 import { decode } from "effect/encoding/Base64";
 import { convert } from "officeparser";
+import type { UniversalGeneratorFormat } from "officeparser";
 import { utils, write } from "xlsx";
 import type { BookType } from "xlsx";
 
@@ -39,7 +40,9 @@ const bytesFrom = (value: unknown): Uint8Array => {
   return new Uint8Array();
 };
 
-const documentOf = (format: "docx" | "epub" | "odt" | "rtf"): Effect.Effect<Uint8Array> =>
+const documentOf = (
+  format: Extract<UniversalGeneratorFormat, "docx" | "epub" | "odt" | "rtf">,
+): Effect.Effect<Uint8Array> =>
   Effect.promise(() =>
     convert(encoder.encode(MARKDOWN), format, {
       parseConfig: { fileType: "md" },

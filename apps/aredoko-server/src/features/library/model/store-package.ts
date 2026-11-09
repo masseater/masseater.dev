@@ -9,7 +9,7 @@ import { insertAssets } from "./insert-assets.ts";
 import type { AssetInput } from "./insert-assets.ts";
 import { labelOf } from "./name.ts";
 import { boothOf, insertPackage } from "./package-row.ts";
-import type { PackageFile } from "./package-row.ts";
+import type { PackageFile, StoredKind } from "./package-row.ts";
 
 /** @internal */
 const storePackage = Effect.fn("storePackage")(function* storePackageRows({
@@ -19,7 +19,7 @@ const storePackage = Effect.fn("storePackage")(function* storePackageRows({
   entries,
   assets,
 }: {
-  readonly kind: "unitypackage" | "files";
+  readonly kind: StoredKind;
   readonly file: PackageFile;
   readonly name: string;
   readonly entries: readonly SummaryEntry[];

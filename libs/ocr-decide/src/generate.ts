@@ -1,5 +1,6 @@
 import { Array as Arr, Effect, Option, Schema, Record as Rec, String as Str, pipe } from "effect";
 import { decode, encode } from "fast-png";
+import type { Rectangle } from "tesseract.js";
 
 import { MISSING } from "./fragment.ts";
 import type { Box, Extraction, Field, FieldValue, Fragment } from "./fragment.ts";
@@ -49,12 +50,7 @@ const askJson = <Codec extends Schema.Codec<unknown, string>>({
     return { output, costUsd };
   });
 
-interface Region {
-  readonly left: number;
-  readonly top: number;
-  readonly width: number;
-  readonly height: number;
-}
+type Region = Readonly<Rectangle>;
 
 const regionOf = (size: Readonly<{ width: number; height: number }>, box: Box): Region => {
   const left = Math.max(ORIGIN, box.x0 - CROP_MARGIN);
