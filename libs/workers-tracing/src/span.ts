@@ -8,11 +8,7 @@ class HandlerFailed extends taggedError<HandlerFailed, { readonly brand: unique 
   { cause: Schema.Unknown },
 ) {}
 
-interface Exception {
-  readonly name: string;
-  readonly message: string;
-  readonly stack?: string;
-}
+type Exception = Readonly<Pick<Error, "name" | "message" | "stack">>;
 
 const SERVER_ERROR = 500;
 

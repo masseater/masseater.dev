@@ -10,7 +10,10 @@
           "@effect/platform-node/NodeServices#layer",
           "@effect/vitest#layer",
           "effect/FileSystem#FileSystem",
-          "effect/Path#Path"
+          "effect/Path#Path",
+          "effect/PlatformError#PlatformError",
+          "effect/process/ChildProcess#make",
+          "effect/process/ChildProcessSpawner#ChildProcessSpawner"
         ]
       }
     ]

@@ -11,6 +11,8 @@ const RuleNameSchema = Schema.Literals([
   "owned-literal",
   "library-value-set",
   "library-shape",
+  "unused-override",
+  "removable-override",
 ]);
 
 type RuleName = typeof RuleNameSchema.Type;

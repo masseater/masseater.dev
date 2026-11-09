@@ -2,8 +2,11 @@ import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import {
   isEnumDeclaration,
+  isExportDeclaration,
   isIdentifier,
+  isImportDeclaration,
   isInterfaceDeclaration,
+  isStringLiteral,
   isTypeAliasDeclaration,
   SyntaxKind,
 } from "./compiler.ts";
@@ -144,6 +147,23 @@ const propertyNamesOf =
       Arr.map((property) => property.name),
     );
 
+const moduleSpecifierOf = (statement: Node): Option.Option<string> => {
+  if (!isImportDeclaration(statement) && !isExportDeclaration(statement)) {
+    return Option.none();
+  }
+  return Option.fromUndefinedOr(statement.moduleSpecifier).pipe(
+    Option.filter((specifier) => isStringLiteral(specifier)),
+    Option.map((specifier) => specifier.text),
+  );
+};
+
+const importedModulesOf = (sourceFile: SourceFile): readonly string[] =>
+  pipe(
+    sourceFile.statements,
+    Arr.map((statement) => moduleSpecifierOf(statement)),
+    Arr.getSomes,
+  );
+
 export {
   NODE_MODULES_SEGMENT,
   POSITION_BASE,
@@ -152,6 +172,7 @@ export {
   contains,
   declarationsOf,
   descendantsOf,
+  importedModulesOf,
   isExternalDeclaration,
   isGenericDeclaration,
   isTypeDeclaration,
