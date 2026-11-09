@@ -1,5 +1,6 @@
 import type { Meta, PlatformName } from "@masseater.dev/nimado";
 import { useQueries, useQuery } from "@tanstack/react-query";
+import type { QueryStatus } from "@tanstack/react-query";
 import { Array as Arr, Option, Record, pipe } from "effect";
 
 import { dayQuery, tableQuery } from "#/shared/api/data";
@@ -140,7 +141,7 @@ const entriesOf = ({
   };
 };
 
-const unsettled = (statuses: readonly Loaded<unknown>["status"][]): "error" | "pending" => {
+const unsettled = (statuses: readonly QueryStatus[]): Exclude<QueryStatus, "success"> => {
   if (Arr.contains(statuses, "error")) {
     return "error";
   }
