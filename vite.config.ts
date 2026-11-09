@@ -24,7 +24,7 @@ import {
 import { readonlyParameterAllow } from "oxlint-masseater-plugin/readonly-types";
 import { defineConfig } from "vite-plus";
 
-import { checks, checkTasks } from "./checks.config.ts";
+import { checks, checkTasks, packageChecks } from "./checks.config.ts";
 
 const typedRules = "@r_masseater/oxlint-typed-rules";
 
@@ -225,7 +225,7 @@ export default defineConfig({
       ],
       "actions-lint": {
         command:
-          'actionlint && zizmor $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
+          'vpa actionlint && vpa zizmor $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
         cache: {
           env: ["CLAUDE_CODE_REMOTE"],
           untrackedEnv: [
@@ -266,16 +266,7 @@ export default defineConfig({
           "betterleaks",
           "ignored-sources",
           "audit",
-          "sloppedia#size",
-          "@masseater.dev/pod-rattle-engine#cargo",
-          "@masseater.dev/pod-rattle-plugin#cargo",
-          "@masseater.dev/pod-rattle-host#cargo",
-          "@masseater.dev/xtask#cargo",
-          "rpp-kit-demo#typecheck",
-          "sts2-mods#dotnet",
-          "aredoko-desktop#cargo",
-          "aredoko-protocol-codegen#codegen:check",
-          "aredoko-csharp-check#cs:check",
+          ...packageChecks,
         ],
       },
       test: "vp test run",

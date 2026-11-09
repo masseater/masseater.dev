@@ -7,19 +7,17 @@ import { MCP_URL, SITE_NAME, SITE_ORIGIN } from "#/shared/config";
 
 import { callerOf } from "./caller";
 import type { Caller } from "./caller";
-import { registerHistoryTools } from "./history-tools.server";
-import { registerMemoryTools } from "./memory-tools.server";
+import { registerLifeTools } from "./life-tools.server";
 import { registerPersonalTools } from "./personal-tools.server";
-import { registerTodoTools } from "./todo-tools.server";
+import { registerWatashiTools } from "./watashi-tools.server";
 
 const SERVER_INFO = { name: SITE_NAME, version: "0.0.0", websiteUrl: SITE_ORIGIN };
 
 const registerTools = (caller: Caller): McpServer =>
   pipe(
     new McpServer(SERVER_INFO),
-    registerMemoryTools(caller),
-    registerTodoTools(caller),
-    registerHistoryTools(caller),
+    registerLifeTools(caller),
+    registerWatashiTools(caller),
     registerPersonalTools(caller),
   );
 

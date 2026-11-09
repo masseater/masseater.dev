@@ -56,7 +56,7 @@
     "prepublishOnly": "vp run build"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "catalog:",
+    "@r_masseater/vite-plus-adopt": "catalog:",
     "@size-limit/file": "catalog:",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
