@@ -7,7 +7,13 @@ import { columnOf, lineOf } from "./syntax.ts";
 import { formatValues, valueKey } from "./values.ts";
 import type { Value } from "./values.ts";
 
+interface PackageScope {
+  readonly name: string;
+  readonly dependencies: readonly string[];
+}
+
 interface UnownedSite {
+  readonly scope: PackageScope;
   readonly file: string;
   readonly start: number;
   readonly line: number;
@@ -17,13 +23,21 @@ interface UnownedSite {
 
 const DUPLICATE_THRESHOLD = 1;
 
-const unownedSiteOf = (site: ValueSite): UnownedSite => ({
-  file: site.node.getSourceFile().fileName,
-  start: site.node.getStart(),
-  line: lineOf(site.node),
-  column: columnOf(site.node),
-  values: site.values,
-});
+const unownedSiteOf =
+  (scope: PackageScope) =>
+  (site: ValueSite): UnownedSite => ({
+    scope,
+    file: site.node.getSourceFile().fileName,
+    start: site.node.getStart(),
+    line: lineOf(site.node),
+    column: columnOf(site.node),
+    values: site.values,
+  });
+
+const canDerive = (left: UnownedSite, right: UnownedSite): boolean =>
+  left.scope.name === right.scope.name ||
+  left.scope.dependencies.includes(right.scope.name) ||
+  right.scope.dependencies.includes(left.scope.name);
 
 const siteKey = (site: UnownedSite): string => `${site.file}#${String(site.start)}`;
 
@@ -46,20 +60,28 @@ const duplicateProblems =
       Arr.flatMap((group) =>
         pipe(
           group,
-          Arr.map((site): Problem => {
-            const others = pipe(
+          Arr.flatMap((site): readonly Problem[] => {
+            const related = pipe(
               group,
-              Arr.filter((other) => other !== site),
+              Arr.filter((other) => other !== site && canDerive(site, other)),
+            );
+            if (!Arr.isReadonlyArrayNonEmpty(related)) {
+              return [];
+            }
+            const others = pipe(
+              related,
               Arr.map((other) => `${relative(other.file)}:${String(other.line)}`),
               Arr.join(", "),
             );
-            return {
-              file: site.file,
-              line: site.line,
-              column: site.column,
-              rule: "duplicate-value-set",
-              message: `The values ${formatValues(site.values)} are also declared at ${others}. Register one owner with @${OWNER_TAG} and derive the others from it.`,
-            };
+            return [
+              {
+                file: site.file,
+                line: site.line,
+                column: site.column,
+                rule: "duplicate-value-set",
+                message: `The values ${formatValues(site.values)} are also declared at ${others}. Register one owner with @${OWNER_TAG} and derive the others from it.`,
+              },
+            ];
           }),
         ),
       ),
@@ -67,4 +89,4 @@ const duplicateProblems =
   };
 
 export { duplicateProblems, unownedSiteOf };
-export type { UnownedSite };
+export type { PackageScope, UnownedSite };

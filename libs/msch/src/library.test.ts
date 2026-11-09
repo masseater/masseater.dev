@@ -27,6 +27,7 @@ const sorterWith = (manifest: string): Readonly<Record<string, string>> => ({
       'export declare function move(direction: "up" | "down"): void;',
       "export interface Page { order: Order; limit: number; offset: number; cursor: string }",
       "export interface Contract { paths: any; ids: any; routes: unknown }",
+      "export interface Style extends Page {}",
       "export declare function same<T>(left: T, right: T): void;",
       "export type Kind = 0 | 1 | 2 | 100;",
       "",
@@ -65,16 +66,20 @@ const reportsSetsThatRestateAnExportedLibraryT = Effect.gen(
       "package.json": packageJson,
       "src/a.ts": pipe(
         [
+          'import type { Order } from "sorter";',
+          'import type Billing from "billing";',
           'export type Direction = "desc" | "asc";',
           'export type Method = "charge_automatically" | "send_invoice";',
+          "export type Used = [Order, Billing];",
           "",
         ],
         Arr.join("\n"),
       ),
+      "src/b.ts": 'export type Sorting = "asc" | "desc";\n',
     });
     expect(findings).toStrictEqual([
-      "src/a.ts:1 library-value-set",
-      "src/a.ts:2 library-value-set",
+      "src/a.ts:3 library-value-set",
+      "src/a.ts:4 library-value-set",
     ]);
   },
 );
@@ -135,6 +140,10 @@ const reportsObjectShapesCopiedFromALibraryTyp = Effect.gen(
           "export type Picked = { order: Order; limit: number; offset: number };",
           'export type Derived = Pick<Page, "order" | "limit" | "offset">;',
           "export interface Own { order: Order; limit: number; total: number }",
+          `type Variables = Readonly<Record<\`--\${string}\`, string>>;`,
+          'declare module "sorter" {',
+          "  interface Style extends Partial<Variables> {}",
+          "}",
           "",
         ],
         Arr.join("\n"),
@@ -209,7 +218,7 @@ const ignoresGenericSlotsNumericCoincidencesA = Effect.gen(
 
 layer(fixtureLayer)("dependency types", (it) => {
   it.effect(
-    "reports sets that restate an exported library type",
+    "reports sets that restate a type of a library the file imports",
     () => reportsSetsThatRestateAnExportedLibraryT,
   );
   it.effect(

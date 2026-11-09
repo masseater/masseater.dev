@@ -3,7 +3,10 @@ import { Array as Arr, Option, Order, pipe } from "effect";
 import {
   isCallExpression,
   isInterfaceDeclaration,
+  isModuleBlock,
+  isModuleDeclaration,
   isObjectLiteralExpression,
+  isStringLiteral,
   isTypeAliasDeclaration,
   isTypeLiteralNode,
   isVariableDeclaration,
@@ -52,8 +55,15 @@ interface ShapeMatch {
 const MINIMUM_SHAPE_PROPERTIES = 3;
 const EXACT = 0;
 
+const augmentsAModule = (node: Node): boolean => {
+  const block = node.parent;
+  return (
+    isModuleBlock(block) && isModuleDeclaration(block.parent) && isStringLiteral(block.parent.name)
+  );
+};
+
 const isPlainInterface = (node: Node): node is InterfaceDeclaration =>
-  isInterfaceDeclaration(node) && !isGenericDeclaration(node);
+  isInterfaceDeclaration(node) && !isGenericDeclaration(node) && !augmentsAModule(node);
 
 const isPlainTypeLiteral = (node: Node): node is TypeAliasDeclaration =>
   isTypeAliasDeclaration(node) && !isGenericDeclaration(node) && isTypeLiteralNode(node.type);

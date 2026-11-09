@@ -118,7 +118,7 @@ const skipsTypeChecking = (sourceFile: SourceFile): boolean =>
   );
 
 const buildProject = Effect.fn("buildProject")(function* buildProject(
-  { api, libraries }: Compiler,
+  { compiler: { api, libraries }, generated }: Workspace,
   parsed: ParsedCommandLine,
   info: PackageInfo,
 ) {
@@ -137,7 +137,12 @@ const buildProject = Effect.fn("buildProject")(function* buildProject(
   ).pipe(Effect.withSpan("createProgram"));
   const { checker } = program.getProject();
   const library = yield* libraryIndex(libraries)(checker)(entries);
-  const projectFiles: ReadonlySet<string> = new Set(parsed.fileNames);
+  const projectFiles: ReadonlySet<string> = new Set(
+    pipe(
+      parsed.fileNames,
+      Arr.filter((fileName) => !generated.includes(fileName)),
+    ),
+  );
   return {
     packageName: info.name,
     workspaceDependencies: info.workspaceDependencies,
@@ -160,6 +165,12 @@ interface Compiler {
   readonly libraries: LibraryCache;
 }
 
+interface Workspace {
+  readonly compiler: Compiler;
+  readonly root: string;
+  readonly generated: readonly string[];
+}
+
 const typeScriptCompiler = Effect.acquireRelease(
   Effect.sync((): Compiler => ({
     api: new API({ collectTiming: true }),
@@ -172,16 +183,16 @@ const typeScriptCompiler = Effect.acquireRelease(
 );
 
 const loadProject = Effect.fn("loadProject")(function* loadProject(
-  compiler: Compiler,
+  workspace: Workspace,
   configPath: string,
-  root: string,
 ) {
+  const { compiler, root } = workspace;
   const parsed = parseConfig(compiler.api)(configPath);
   if (Option.isNone(parsed)) {
     return Option.none<Project>();
   }
   const info = yield* packageInfoOf(configPath, root);
-  const project = yield* buildProject(compiler, parsed.value, info);
+  const project = yield* buildProject(workspace, parsed.value, info);
   yield* Effect.annotateCurrentSpan({
     "msch.project.config": configPath,
     "msch.project.program_files": project.program.getSourceFileNames().length,
@@ -196,19 +207,14 @@ const releaseProject = (project: Project): Effect.Effect<void> =>
     project.program.dispose();
   });
 
-interface Workspace {
-  readonly compiler: Compiler;
-  readonly root: string;
-}
-
 const withProject =
-  ({ compiler, root }: Workspace) =>
+  (workspace: Workspace) =>
   (configPath: string) =>
   <Value, Failure, Requirements>(
     work: (project: Project) => Effect.Effect<Value, Failure, Requirements>,
   ): Effect.Effect<Option.Option<Value>, Failure, Requirements | RepositoryFiles> =>
     Effect.acquireUseRelease(
-      loadProject(compiler, configPath, root),
+      loadProject(workspace, configPath),
       (loaded) =>
         Option.match(loaded, {
           onNone: () => Effect.succeedNone,

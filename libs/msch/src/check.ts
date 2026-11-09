@@ -1,14 +1,14 @@
-import { Effect, Array as Arr, pipe } from "effect";
+import { Effect, Option, Array as Arr, pipe } from "effect";
 
 import { analyzeProject } from "./analysis.ts";
 import { duplicateProblems, unownedSiteOf } from "./duplicates.ts";
-import type { UnownedSite } from "./duplicates.ts";
+import type { PackageScope, UnownedSite } from "./duplicates.ts";
 import { OWNER_TAG, combineOwnerScans, ownersIn } from "./owners.ts";
 import type { Owner, OwnerScan } from "./owners.ts";
 import { sortProblems } from "./problem.ts";
 import type { Problem } from "./problem.ts";
 import { listConfigFiles, mentions, typeScriptCompiler, withProject } from "./project.ts";
-import type { Workspace } from "./project.ts";
+import type { Project, Workspace } from "./project.ts";
 import { RepositoryFiles } from "./repository-files.ts";
 
 const scanOwners = Effect.fn("scanOwners")(function* scanOwners(
@@ -28,6 +28,11 @@ const scanOwners = Effect.fn("scanOwners")(function* scanOwners(
   return combineOwnerScans(Arr.getSomes(scans));
 });
 
+const scopeOf = (project: Project, configPath: string): PackageScope => ({
+  name: Option.getOrElse(project.packageName, () => configPath),
+  dependencies: project.workspaceDependencies,
+});
+
 interface Analysis {
   readonly problems: readonly Problem[];
   readonly unowned: readonly UnownedSite[];
@@ -42,9 +47,10 @@ const analyzeProjects =
         withProject(workspace)(configPath)((project) =>
           Effect.sync(() => {
             const analysis = analyzeProject(owners)(project);
+            const scope = scopeOf(project, configPath);
             return {
               problems: analysis.problems,
-              unowned: pipe(analysis.unowned, Arr.map(unownedSiteOf)),
+              unowned: pipe(analysis.unowned, Arr.map(unownedSiteOf(scope))),
             };
           }).pipe(Effect.withSpan("analyzeProject")),
         ),
@@ -55,7 +61,8 @@ const analyzeProjects =
 const checkRepository = Effect.fn("checkRepository")(function* checkRepository(root: string) {
   const files = yield* RepositoryFiles;
   const compiler = yield* typeScriptCompiler;
-  const workspace: Workspace = { compiler, root };
+  const generated = yield* files.generatedFiles(root);
+  const workspace: Workspace = { compiler, root, generated };
   const configPaths = yield* listConfigFiles(root);
   const ownerScan: OwnerScan = yield* scanOwners(workspace, configPaths);
   const analyses = yield* analyzeProjects(workspace, ownerScan.owners)(configPaths);
