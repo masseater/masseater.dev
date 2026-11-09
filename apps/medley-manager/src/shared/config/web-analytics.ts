@@ -1,6 +1,5 @@
+import { WEB_ANALYTICS_SCRIPT_ORIGIN } from "@masseater.dev/ui/web-analytics";
 import { Option, pipe, Schema } from "effect";
-
-const WEB_ANALYTICS_SCRIPT_ORIGIN = "https://static.cloudflareinsights.com";
 
 const encodeBeaconJson = Schema.encodeUnknownOption(Schema.fromJsonString(Schema.Unknown));
 
