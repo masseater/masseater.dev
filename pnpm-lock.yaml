@@ -696,6 +696,8 @@ overrides:
   minimatch@<11.0.1: ^11.0.1
   postcss-selector-parser@<6.1.5: ^6.1.5
   zod@<4.6.6: ^4.6.6
+  seroval@<=1.6.7: ^1.6.8
+  seroval@>=1.5.5 <1.6.10: ^1.6.10
 
 packageExtensionsChecksum: sha256-/aon0Tk1G2iAqXKDZcgCEK0oe9XgkOxbFZBlk6yYev0=
 
@@ -13382,17 +13384,13 @@ packages:
     resolution: {integrity: sha512-HXuLAX2pu/UByPpaeo/TaMfvMIi+1QqIoPJYCcAtU8QkVNwgR6MPlGuCQTErV1JwraaMbYaWVIBX7mppzGLATQ==}
     engines: {node: '>=10'}
     peerDependencies:
-      seroval: ^1.0
+      seroval: ^1.6.8
 
   seroval-plugins@1.6.7:
     resolution: {integrity: sha512-4Nk35ttD3DTDJW4hgw5StsVAPeU6qnDFnULAouw6tQ7oLTV/ICXrWpsXo2EE52eSP2joUMazbVf52mFEcADqRw==}
     engines: {node: '>=10'}
     peerDependencies:
-      seroval: ^1.0
-
-  seroval@1.5.6:
-    resolution: {integrity: sha512-rVQVWjjSvlINzaQPZH5JFqsqEsIWdTxY3iJZCnTL/5gQbXIRooVZKI60tVCkOVfzcRPejboxO2t0P89dg5mQaA==}
-    engines: {node: '>=10'}
+      seroval: ^1.6.8
 
   seroval@1.7.2:
     resolution: {integrity: sha512-NPOYrDVbvtuTo5m9InqKE7O6wBASON46OabjyqLUGPvoXNDYp0pReuFYkqOQwGsoj1OpZVj6mIdnRRgt5O1/gQ==}
@@ -26616,15 +26614,13 @@ snapshots:
     dependencies:
       type-fest: 0.20.2
 
-  seroval-plugins@1.5.6(seroval@1.5.6):
+  seroval-plugins@1.5.6(seroval@1.7.2):
     dependencies:
-      seroval: 1.5.6
+      seroval: 1.7.2
 
   seroval-plugins@1.6.7(seroval@1.7.2):
     dependencies:
       seroval: 1.7.2
-
-  seroval@1.5.6: {}
 
   seroval@1.7.2: {}
 
@@ -26787,8 +26783,8 @@ snapshots:
   solid-js@1.9.15:
     dependencies:
       csstype: 3.2.3
-      seroval: 1.5.6
-      seroval-plugins: 1.5.6(seroval@1.5.6)
+      seroval: 1.7.2
+      seroval-plugins: 1.5.6(seroval@1.7.2)
 
   solid-presence@0.2.0(solid-js@1.9.15):
     dependencies:
