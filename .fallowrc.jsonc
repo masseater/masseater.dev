@@ -23,6 +23,7 @@
   "dynamicallyLoaded": ["**/*.d.rpp.ts"],
   "ignoreDependencies": [
     "@arethetypeswrong/core",
+    "@effect/language-service",
     "publint",
     "@fontsource/dela-gothic-one",
     "@fontsource/ibm-plex-mono",
