@@ -12,7 +12,6 @@ export default defineConfig({
     entry: ["src/main.ts"],
     platform: "node",
     sourcemap: true,
-    banner: "#!/usr/bin/env node",
   },
   test: {
     include: ["src/**/*.test.ts"],
