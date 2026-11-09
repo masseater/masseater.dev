@@ -175,7 +175,13 @@ export default defineConfig({
     overrides: [
       alchemyOverride,
       {
-        files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "**/decision-rules.ts"],
+        files: [
+          "**/*.config.ts",
+          "**/alchemy.*.ts",
+          "**/*.worker.ts",
+          "**/decision-rules.ts",
+          "libs/textlint-rule-no-taigendome/src/index.ts",
+        ],
         rules: { "import/no-default-export": "off" },
       },
       {
