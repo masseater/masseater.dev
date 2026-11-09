@@ -6,7 +6,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as RegisterRouteImport } from './routes/register'
-import { Route as ScrapRequestRouteImport } from './routes/scrap-request'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as DotwellKnownSplatRouteImport } from './routes/[.]well-known/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
@@ -24,11 +23,6 @@ const McpRoute = McpRouteImport.update({
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ScrapRequestRoute = ScrapRequestRouteImport.update({
-  id: '/scrap-request',
-  path: '/scrap-request',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignInRoute = SignInRouteImport.update({
@@ -51,7 +45,6 @@ export interface FileRoutesByFullPath {
   '/consent': typeof ConsentRoute
   '/mcp': typeof McpRoute
   '/register': typeof RegisterRoute
-  '/scrap-request': typeof ScrapRequestRoute
   '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -60,7 +53,6 @@ export interface FileRoutesByTo {
   '/consent': typeof ConsentRoute
   '/mcp': typeof McpRoute
   '/register': typeof RegisterRoute
-  '/scrap-request': typeof ScrapRequestRoute
   '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -70,7 +62,6 @@ export interface FileRoutesById {
   '/consent': typeof ConsentRoute
   '/mcp': typeof McpRoute
   '/register': typeof RegisterRoute
-  '/scrap-request': typeof ScrapRequestRoute
   '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -81,7 +72,6 @@ export interface FileRouteTypes {
     | '/consent'
     | '/mcp'
     | '/register'
-    | '/scrap-request'
     | '/sign-in'
     | '/.well-known/$'
     | '/api/auth/$'
@@ -90,7 +80,6 @@ export interface FileRouteTypes {
     | '/consent'
     | '/mcp'
     | '/register'
-    | '/scrap-request'
     | '/sign-in'
     | '/.well-known/$'
     | '/api/auth/$'
@@ -99,7 +88,6 @@ export interface FileRouteTypes {
     | '/consent'
     | '/mcp'
     | '/register'
-    | '/scrap-request'
     | '/sign-in'
     | '/.well-known/$'
     | '/api/auth/$'
@@ -109,7 +97,6 @@ export interface RootRouteChildren {
   ConsentRoute: typeof ConsentRoute
   McpRoute: typeof McpRoute
   RegisterRoute: typeof RegisterRoute
-  ScrapRequestRoute: typeof ScrapRequestRoute
   SignInRoute: typeof SignInRoute
   DotwellKnownSplatRoute: typeof DotwellKnownSplatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -136,13 +123,6 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/scrap-request': {
-      id: '/scrap-request'
-      path: '/scrap-request'
-      fullPath: '/scrap-request'
-      preLoaderRoute: typeof ScrapRequestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-in': {
@@ -173,7 +153,6 @@ const rootRouteChildren: RootRouteChildren = {
   ConsentRoute: ConsentRoute,
   McpRoute: McpRoute,
   RegisterRoute: RegisterRoute,
-  ScrapRequestRoute: ScrapRequestRoute,
   SignInRoute: SignInRoute,
   DotwellKnownSplatRoute: DotwellKnownSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

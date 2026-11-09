@@ -2,7 +2,6 @@ import {
   AnalyticsEngine,
   CloudflareEnvironment,
   D1,
-  SecretsStore,
   Vectorize,
   Workers,
   providers,
@@ -25,11 +24,7 @@ const personalSpace = Effect.gen(function* personalSpace() {
     stack: "mydecklist",
     stage: PROD,
   });
-  const SCRAP_ROUTINE_TOKEN = yield* SecretsStore.Secret.ref("ScrapRoutineToken", {
-    stack: "mydecklist",
-    stage: PROD,
-  });
-  return { SLIDE_INDEX, SCRAP_ROUTINE_TOKEN };
+  return { SLIDE_INDEX };
 });
 
 const account = Effect.gen(function* account() {
