@@ -1,0 +1,12 @@
+export { BASE_PATH } from "./base-path";
+export {
+  CC_BY_URL,
+  GOOGLE_PRIVACY_URL,
+  NICO_SNAPSHOT_URL,
+  NICO_WATCH_URL,
+  SOURCE_URL,
+  VOCADB_SONG_URL,
+  VOCADB_URL,
+  YOUTUBE_TERMS_URL,
+  YOUTUBE_WATCH_URL,
+} from "./site";
