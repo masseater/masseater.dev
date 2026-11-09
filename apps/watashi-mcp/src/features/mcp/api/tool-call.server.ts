@@ -24,7 +24,8 @@ type ToolName =
   | "write_sloppedia_article"
   | "read_web_analytics"
   | "search_slides"
-  | "get_deck";
+  | "get_deck"
+  | "conversation_read";
 
 type ToolCall = Readonly<{ tool: ToolName; caller: Caller; project: string; input: unknown }>;
 
