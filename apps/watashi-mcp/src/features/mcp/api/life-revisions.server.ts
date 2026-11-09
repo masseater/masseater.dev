@@ -33,11 +33,13 @@ const revisionOf =
       })),
     );
 
-const revisionsOf = (key: IdKey): Effect.Effect<readonly Body[], StoreFailure> =>
-  findRecord(key).pipe(
+const revisionsOf = (key: IdKey): Effect.Effect<readonly Body[], StoreFailure> => {
+  const toRevisions = Effect.forEach(revisionOf(key));
+  return findRecord(key).pipe(
     Effect.andThen(listHistory({ entity: key.record, id: key.id, limit: HISTORY_LIMIT })),
-    Effect.flatMap(Effect.forEach(revisionOf(key))),
+    Effect.flatMap(toRevisions),
   );
+};
 
 const lifeRevisions = (ref: string): Effect.Effect<Body, StoreFailure> =>
   pipe(

@@ -229,6 +229,7 @@ const projected =
   };
 
 export {
+  contains,
   peopleFilter,
   NO_SCORE,
   ONE,
