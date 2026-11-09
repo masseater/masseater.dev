@@ -60,28 +60,28 @@ jobs:
           restore-keys: |
             nimado-youtube-
       - name: catalog
-        run: vp run collect catalog --state "$STATE"
+        run: node src/main.ts catalog --state "$STATE"
         working-directory: tools/nimado-collect
         continue-on-error: true
       - name: niconico
-        run: vp run collect nico --state "$STATE"
+        run: node src/main.ts nico --state "$STATE"
         working-directory: tools/nimado-collect
         continue-on-error: true
       - name: youtube
-        run: vp run collect youtube --state "$STATE"
+        run: node src/main.ts youtube --state "$STATE"
         working-directory: tools/nimado-collect
         continue-on-error: true
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       - name: publish
-        run: vp run collect publish --state "$STATE" --out "$GITHUB_WORKSPACE/apps/nimado/published"
+        run: node src/main.ts publish --state "$STATE" --out "$GITHUB_WORKSPACE/apps/nimado/published"
         working-directory: tools/nimado-collect
       - uses: masseater/typescript-template/.github/actions/credentials@ed56db507aa25c3ced8a2e770d24238e6622334d
       - name: deploy data
         run: vp exec alchemy deploy alchemy.data.ts --stage data --yes
         working-directory: apps/nimado
       - name: drop old data versions
-        run: vp run collect prune
+        run: node src/main.ts prune
         working-directory: tools/nimado-collect
       - name: save state
         env:
