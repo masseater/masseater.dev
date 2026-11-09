@@ -1,5 +1,6 @@
 import {
   Access,
+  ApiToken,
   CloudflareEnvironment,
   DNS,
   Zone,
@@ -50,14 +51,22 @@ const PORTAL_HOST = "mcp.masseater.dev";
 const PORTAL_GATEWAY = "gateway.agents.cloudflare.com";
 const sessionDuration = "720h";
 
+const oauth = succeed({ authType: "oauth", isSharedOauthCallbackEnabled: true } as const);
+
+const cloudflareReader = ApiToken.AccountApiToken.ref("CloudflareReader", {
+  stack: "masseater-dev",
+  stage: "prod",
+}).pipe(map(({ value }) => ({ authType: "bearer", authCredentials: value }) as const));
+
 const upstreams = [
-  { id: "watashi", url: "https://watashi.masseater.dev/mcp" },
-  { id: "mirucord", url: "https://mirucord.masseater.dev/mcp" },
-  { id: "medley", url: "https://medley-manager.masseater.dev/mcp" },
-  { id: "twilog-masseater", url: "https://twilog-mcp.togetter.dev/mcp" },
-  { id: "twilog-u1-mas", url: "https://twilog-mcp.togetter.dev/mcp" },
-  { id: "atra", url: "https://mcp.atra.bot/mcp" },
-  { id: "flovia", url: "https://api.flovia.dev/mcp" },
+  { id: "watashi", url: "https://watashi.masseater.dev/mcp", auth: oauth },
+  { id: "mirucord", url: "https://mirucord.masseater.dev/mcp", auth: oauth },
+  { id: "medley", url: "https://medley-manager.masseater.dev/mcp", auth: oauth },
+  { id: "twilog-masseater", url: "https://twilog-mcp.togetter.dev/mcp", auth: oauth },
+  { id: "twilog-u1-mas", url: "https://twilog-mcp.togetter.dev/mcp", auth: oauth },
+  { id: "atra", url: "https://mcp.atra.bot/mcp", auth: oauth },
+  { id: "flovia", url: "https://api.flovia.dev/mcp", auth: oauth },
+  { id: "cloudflare", url: "https://mcp.cloudflare.com/mcp", auth: cloudflareReader },
 ] as const;
 
 type McpAccessApplicationResource = defineResource<
@@ -157,14 +166,13 @@ const portalDns = gen(function* portalDns() {
 const upstreamServers = gen(function* upstreamServers() {
   const policies = yield* viewerPolicy;
   return yield* all(
-    mapArray(upstreams, ({ id, url }) =>
+    mapArray(upstreams, ({ id, url, auth }) =>
       gen(function* upstreamServer() {
         const server = yield* defineMcpServer(`${id}McpServer`, {
           serverId: id,
           name: id,
           hostname: url,
-          authType: "oauth",
-          isSharedOauthCallbackEnabled: true,
+          ...(yield* auth),
         });
         yield* mcpAccessApplication(`${id}McpServerAccess`, {
           name: `MCP ${id}`,

@@ -1,9 +1,12 @@
 import { D1, Website, Workers, providers, state } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
+import {
+  cloudflareReader,
+  webAnalyticsReader,
+} from "@masseater.dev/cloudflare-account/account-readers";
 import { edgeGuard } from "@masseater.dev/cloudflare-account/edge-guard";
 import { logArchive } from "@masseater.dev/cloudflare-account/log-archive";
 import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
-import { webAnalyticsReader } from "@masseater.dev/cloudflare-account/web-analytics-reader";
 import { Stack, Stage, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { Effect, Option } from "effect";
@@ -61,6 +64,7 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
       });
       yield* logArchive(APP_NAME);
       yield* webAnalyticsReader(APP_NAME);
+      yield* cloudflareReader(APP_NAME);
     }
     yield* ciTelemetry;
     yield* requireAppPrefix;
