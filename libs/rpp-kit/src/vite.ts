@@ -38,7 +38,7 @@ const writeDeclaration = ({
 
 const encodeSong = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
-const moduleOf = (json: string): string => `export const song = ${json};\nexport default song;\n`;
+const moduleOf = (json: string): string => `export const song = ${json};\n`;
 
 const loadRpp = Effect.fn("loadRpp")(function* loadRpp(source: Source) {
   yield* writeDeclaration(source);

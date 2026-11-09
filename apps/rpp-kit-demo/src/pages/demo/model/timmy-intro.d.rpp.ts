@@ -44,4 +44,3 @@ declare const song: {
   ];
 };
 export { song };
-export default song;
