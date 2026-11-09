@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "@masseater.dev/ui/theme.css";
+@import "@fontsource/noto-sans-jp/400.css";
+@import "@fontsource/noto-sans-jp/500.css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --highlight: oklch(0.55 0.19 262);
+}
+
+.dark {
+  --highlight: oklch(0.78 0.12 262);
+}
+
+@theme inline {
+  --color-highlight: var(--highlight);
+  --font-sans: "Noto Sans JP", sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}

@@ -102,4 +102,18 @@ const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
   },
 };
 
-export { checkTasks, checks };
+const packageChecks: readonly string[] = [
+  "sloppedia#size",
+  "@masseater.dev/pod-rattle-engine#cargo",
+  "@masseater.dev/pod-rattle-plugin#cargo",
+  "@masseater.dev/pod-rattle-host#cargo",
+  "@masseater.dev/xtask#cargo",
+  "rpp-kit-demo#typecheck",
+  "sts2-mods#dotnet",
+  "aredoko-desktop#cargo",
+  "yakusu#cargo",
+  "aredoko-protocol-codegen#codegen:check",
+  "aredoko-csharp-check#cs:check",
+];
+
+export { checkTasks, checks, packageChecks };
