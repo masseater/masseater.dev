@@ -252,6 +252,7 @@ export default defineConfig({
           "db-check-all",
           "fallow",
           "betterleaks",
+          "ignored-sources",
           "audit",
           "sloppedia#size",
           "scrap-userscript#release-check",
@@ -277,6 +278,10 @@ export default defineConfig({
       betterleaks: {
         command:
           'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then .tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; .tooling/bin/betterleaks "$tmp" --config .betterleaks.toml --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else .tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner; fi',
+        cache: false,
+      },
+      "ignored-sources": {
+        command: String.raw`ignored="$(git ls-files --others --ignored --exclude-standard -- ":(glob)**/src/**" ":(exclude,glob)**/node_modules/**")"; if [ -n "$ignored" ]; then printf "%s\n" "$ignored" >&2; echo "These files under src/ are ignored by .gitignore, so verify passes here but they never reach the commit. Narrow the pattern in .gitignore." >&2; exit 1; fi`,
         cache: false,
       },
       "betterleaks:staged": {
