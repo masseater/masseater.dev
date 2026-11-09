@@ -28,10 +28,7 @@ runs:
       with:
         go-version: stable
         cache: false
-    - uses: open-telemetry/weaver/.github/actions/setup-weaver@51a5bf95bdbb2e20fb6e16638e6bbe7dde911e93 # v0.28.0
-      with:
-        version: 0.28.0
-        cache: "false"
+    - uses: $/.github/actions/setup-weaver
     - shell: bash
       run: sudo apt-get update && xargs -a "$GITHUB_ACTION_PATH/linux-packages.txt" sudo apt-get install -y
     - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
