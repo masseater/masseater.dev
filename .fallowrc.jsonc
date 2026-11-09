@@ -9,19 +9,23 @@
   "overrides": [
     { "files": ["libs/vitest-otlp/src/generated/**"], "rules": { "unused-enum-members": "off" } },
   ],
-  "ignoreDependencies": [
-    "@effect/language-service",
-    "@arethetypeswrong/core",
-    "publint",
-    "@fontsource/dela-gothic-one",
-    "@fontsource/ibm-plex-mono",
-    "@fontsource/shippori-mincho-b1",
-    "@fontsource/zen-kaku-gothic-new",
-    "@webxr-input-profiles/assets",
-    "d3-array",
-    "d3-polygon",
-    "three",
-  ],
+  "ignoreDependencies": ["@effect/language-service"],
+  "workspaces": {
+    "settings": {
+      "apps/labs": {
+        "ignoreDependencies": [
+          "@fontsource/dela-gothic-one",
+          "@fontsource/ibm-plex-mono",
+          "@fontsource/shippori-mincho-b1",
+          "@fontsource/zen-kaku-gothic-new",
+          "@webxr-input-profiles/assets",
+          "d3-array",
+          "d3-polygon",
+          "three",
+        ],
+      },
+    },
+  },
   "boundaries": {
     "zones": [
       { "name": "apps", "autoDiscover": ["apps"] },
@@ -38,7 +42,14 @@
   },
   "typeAware": { "enabled": true, "require": "complete" },
   "failOnParseError": true,
-  "ignorePatterns": [".claude/**", "tools/scrap-userscript/release/**"],
+  "ignorePatterns": [
+    ".claude/**",
+    "apps/aredoko-unity/**",
+    "apps/zenn-articles/**",
+    "tools/mosaic/**",
+    "tools/scrap-userscript/release/**",
+    "tools/seikin-dance/**",
+  ],
   "audit": { "gate": "all" },
   "security": {
     "categories": {
@@ -134,9 +145,11 @@
       "enablers": ["vite-plus"],
       "entryPoints": ["vite.config.ts"],
       "toolingDependencies": [
+        "@arethetypeswrong/core",
         "@ast-grep/cli",
         "eslint-plugin-drizzle",
         "eslint-plugin-no-comments",
+        "publint",
       ],
     },
     {
