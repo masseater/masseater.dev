@@ -45,9 +45,6 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
         "見た動画・聴いた曲・高評価を自分の Cloudflare に集め、AI が MCP で読めるようにする",
       homepage: "https://konomi.masseater.dev",
     },
-    "measure-everything": {
-      description: "OpenTelemetry と各ツールの公式の拡張点に差し込んで計測する部品集",
-    },
     "ai-produced": {
       description: "AI がボカロPと同じ工程を踏んで曲を作れるかを確かめる実験",
     },
@@ -74,6 +71,7 @@ const CREATES: readonly string[] = [];
 const ARCHIVES: ReadonlySet<string> = new Set([
   "aredoko",
   "decision-experiments",
+  "measure-everything",
   "medley-database",
   "mst-ja-decision-bench",
   "oxlint-typed-rules",

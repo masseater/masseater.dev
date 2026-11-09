@@ -57,6 +57,15 @@
 - アセットと検索語は PC の外へ送らない。外部への通信は BOOTH の商品ページの公開 JSON の取得だけにし、BOOTH のログイン状態・Cookie・購入履歴は読まない。ほかのツールのデータは Unity Asset Store の保存先と BOOTH Library Manager のものだけを読み取り、書き換えない。ドロップやファイル選択で渡されたパッケージは、データフォルダの `library` に写してから索引し、元のファイルは動かさない。
 - 管理アプリの画面は、`apps/aredoko-desktop` で `vp run dev:app` を実行して開発版を起動し、`agent-browser connect 9222` でつないで調べる。WebView2 のデバッグポートを開くのは開発版だけである。トレースは `tools/aredoko-telemetry` で `vp run jaeger` を実行してから開発版を起動すると、管理アプリ・常駐サーバー・埋め込みのワーカーから `http://127.0.0.1:16686` に届く。
 
+## 計測の部品
+
+- `libs/vitest-otlp`・`libs/web-vitals-flow`・`libs/workers-tracing` は、OpenTelemetry と各ツールの公式の拡張点に差し込んで計測する部品で、npm の `@r_masseater/<名前>` として出す。各サービスやツールの公式機能と自動計装を先に使い、足りないところだけをここで作る。元は masseater/measure-everything にあった。
+- 部品は Vite+ と Node.js 26 以降だけを前提にする。`vite-plus` は peer にし、素の `vitest` などほかの環境のための書き換えや分岐は入れない。型定義の無いライブラリは使わず、その部分を自前で実装する。
+- `libs/vitest-otlp` はテストファイルごとに OTLP の受け口（HTTP と gRPC）を立て、届いたものを opentelemetry-proto から生成した protobuf-es のコードで読む。生成物は `vp run generate` で作り直し、手で書き換えない。`otlp({ semconv: true })` のテストは Weaver を使うので、CI は setup action が、クラウドのセッションは session-start フックが入れる。
+- `libs/web-vitals-flow` のテストは Chrome でローカルのページを測る。クラウドのセッションでは session-start フックが `CHROME_PATH` を渡す。
+- npm へは version を上げてから `publish.yml` を package に選んで main で手動実行する。Trusted Publisher が無い間は broker が environment `npm` のジョブに npm のトークンを出す。
+- 場面ごとの使い分けは masseater/skills の `measure-everything` スキルにある。部品や勧める手段を変えたら、スキルも直す。
+
 ## 記事
 
 - 記事の日付は frontmatter に書かない。`apps/portfolio/vite-plugins/markdown/remark-git-date.ts` がビルド時に、そのファイルを最初に追加したコミットの日付を `date` として入れる。未コミットのファイルは当日の日付になる。
