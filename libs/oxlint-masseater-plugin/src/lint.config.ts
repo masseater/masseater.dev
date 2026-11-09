@@ -189,6 +189,7 @@ const generated = [
   ".intent/**",
   "AGENTS.md",
   "skills-lock.json",
+  ".github/release-please/*manifest.json",
   "tools/pod-rattle-parity/engine.gen.js",
   "**/*.d.rpp.ts",
   "**/src-tauri/gen/**",

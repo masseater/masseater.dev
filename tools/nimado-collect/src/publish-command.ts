@@ -94,13 +94,16 @@ const copyDays = Effect.fn("publish.days.copy")(function* copyDaysTo({ state, ou
   yield* fileSystem.remove(path.join(out, DATA_DIR), { recursive: true, force: true });
   yield* pipe(
     PLATFORMS,
-    Effect.forEach((platform) => {
-      const from = path.join(state, daysDir(platform));
-      const to = path.join(out, daysDir(platform));
-      return fileSystem
-        .makeDirectory(path.dirname(to), { recursive: true })
-        .pipe(Effect.andThen(fileSystem.copy(from, to)));
-    }),
+    Effect.filter((platform) => fileSystem.exists(path.join(state, daysDir(platform)))),
+    Effect.flatMap(
+      Effect.forEach((platform) => {
+        const from = path.join(state, daysDir(platform));
+        const to = path.join(out, daysDir(platform));
+        return fileSystem
+          .makeDirectory(path.dirname(to), { recursive: true })
+          .pipe(Effect.andThen(fileSystem.copy(from, to)));
+      }),
+    ),
   );
 });
 
