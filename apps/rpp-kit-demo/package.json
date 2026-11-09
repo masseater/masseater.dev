@@ -37,7 +37,7 @@
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "catalog:",
     "alchemy": "catalog:stack",
-    "node-html-parser": "9.0.6",
+    "node-html-parser": "9.0.7",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"
