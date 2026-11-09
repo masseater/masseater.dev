@@ -32,7 +32,7 @@
         {
           "type": "toml",
           "path": "/Cargo.lock",
-          "jsonpath": "$.package[?(@.name==='pod_rattle')].version"
+          "jsonpath": "$.package[?(@.name.value==='pod_rattle')].version"
         }
       ]
     }
