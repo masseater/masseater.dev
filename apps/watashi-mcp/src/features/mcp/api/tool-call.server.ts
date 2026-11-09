@@ -24,7 +24,8 @@ type ToolName =
   | "read_web_analytics"
   | "search_slides"
   | "get_deck"
-  | "conversation_read";
+  | "conversation_read"
+  | "conversation_token_issue";
 
 type ToolCall = Readonly<{ tool: ToolName; caller: Caller; project: string; input: unknown }>;
 

@@ -1,0 +1,23 @@
+{
+  "name": "@masseater.dev/textlint-rule-no-taigendome",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "kuromojin": "3.0.1",
+    "sentence-splitter": "5.0.1"
+  },
+  "devDependencies": {
+    "@textlint/ast-node-types": "catalog:",
+    "@textlint/types": "catalog:",
+    "effect": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0"
+  }
+}
