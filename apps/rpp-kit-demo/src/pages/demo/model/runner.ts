@@ -36,7 +36,7 @@ console.error = __record("error");
 const scriptOf = ({ code, song }: Script): string =>
   `${HARNESS}const __song = ${song};
 const __require = (specifier) => {
-  if (specifier === "./intro.rpp") return { song: __song, default: __song };
+  if (specifier === "./intro.rpp") return { song: __song };
   throw new Error("Cannot find module '" + specifier + "'");
 };
 try {
