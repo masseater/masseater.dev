@@ -4,20 +4,22 @@ import type { ReactNode } from "react";
 
 import { categoryMeta, EntryList } from "#/entities/entry";
 import type { Category, Entry } from "#/entities/entry";
-import { tagCounts, withTag } from "#/pages/collection/model/tag-filter";
+import { TagFilter, tagCounts, withTag } from "#/features/tag-filter";
+import type { TagSearch } from "#/features/tag-filter";
 
 import { IdeaList } from "./idea-list";
-import { TagFilter } from "./tag-filter";
 
 const CollectionView = ({
   activeTag,
   category,
   entries,
+  onSelectTag,
   starCounts,
 }: Readonly<{
   activeTag: Option.Option<string>;
   category: Category;
   entries: readonly Entry[];
+  onSelectTag: (search: TagSearch) => void;
   starCounts: Option.Option<Record.ReadonlyRecord<string, number>>;
 }>): ReactNode => {
   const counts = tagCounts(entries);
@@ -30,16 +32,16 @@ const CollectionView = ({
     shown,
     Array.filter(({ status }) => status === "idea"),
   );
-  const { layout, title } = categoryMeta[category];
+  const { title } = categoryMeta[category];
   return (
     <div className="xl:collection-columns flex flex-col gap-8 xl:grid xl:items-start" data-wide>
       <h1 className="sr-only">{title}</h1>
-      {Array.isReadonlyArrayNonEmpty(counts) && <TagFilter activeTag={activeTag} counts={counts} />}
+      {Array.isReadonlyArrayNonEmpty(counts) && (
+        <TagFilter activeTag={activeTag} counts={counts} onSelect={onSelectTag} />
+      )}
       <div className="flex min-w-0 flex-col gap-16 xl:col-start-2 xl:row-start-1">
-        <EntryList entries={listed} layout={layout} starCounts={starCounts} />
-        {Array.isReadonlyArrayNonEmpty(ideas) && (
-          <IdeaList ideas={ideas} layout={layout} starCounts={starCounts} />
-        )}
+        <EntryList entries={listed} starCounts={starCounts} />
+        {Array.isReadonlyArrayNonEmpty(ideas) && <IdeaList ideas={ideas} starCounts={starCounts} />}
       </div>
     </div>
   );

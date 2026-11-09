@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-const FigureNameSchema = Schema.Literals(["cascade-failure", "architecture"]);
+const FigureNameSchema = Schema.Literals(["cascade-failure"]);
 
 type FigureName = typeof FigureNameSchema.Type;
 

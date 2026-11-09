@@ -1,4 +1,4 @@
-import type { WebAnalyticsTokenEnv } from "./web-analytics-reader.ts";
+import type { WebAnalyticsTokenEnv } from "./account-readers.ts";
 
 const worker = {
   fetch: (_request: Request, env: WebAnalyticsTokenEnv): Response =>

@@ -29,10 +29,10 @@ Blaze は Google の社内のビルドシステムで、Bazel はその公開版
 
 『[Software Engineering at Google](/sloppedia/software-engineering-at-google)』は、ビルドシステムを2つに分けている[^swe-ch18]。
 
-| 種類     | 例                        | 書くもの                   |
-| -------- | ------------------------- | -------------------------- |
-| タスク型 | Ant、Maven、Gradle        | 何をどの順で実行するか     |
-| 成果物型 | Blaze、Bazel、Pants、Buck | 何を作るか、何に依存するか |
+| 種類     | 例                                            | 書くもの                   |
+| -------- | --------------------------------------------- | -------------------------- |
+| タスク型 | Ant、Maven、[Gradle](/sloppedia/gradle)       | 何をどの順で実行するか     |
+| 成果物型 | Blaze、Bazel、[Pants](/sloppedia/pants)、Buck | 何を作るか、何に依存するか |
 
 タスク型は、手順を自由に書けるぶん、並列の実行や差分のビルドが難しくなる。成果物型では、開発者は BUILD ファイルに作りたいものと依存を宣言で書き、どう作るかはシステムが決める[^swe-ch18]。BUILD ファイルは、Python の方言の [Starlark](/sloppedia/starlark) で書く[^wikipedia]。
 

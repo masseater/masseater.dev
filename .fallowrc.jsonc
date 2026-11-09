@@ -48,7 +48,6 @@
     "apps/aredoko-unity/**",
     "apps/zenn-articles/**",
     "tools/mosaic/**",
-    "tools/scrap-userscript/release/**",
     "tools/seikin-dance/**",
   ],
   "audit": { "gate": "all" },
