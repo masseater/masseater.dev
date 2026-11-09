@@ -48,5 +48,7 @@ const fileKeyOf = ({ kind, session, file }: FileParams): FileKey => ({
   file,
 });
 
-export { ChunkQuery, FileQuery, TokenRequest, fileKeyOf, paramsOf };
-export type { ChunkParams, FileParams };
+type TokenFields = typeof TokenBody.Type;
+
+export { ChunkQuery, FileQuery, Label, TokenRequest, fileKeyOf, paramsOf };
+export type { ChunkParams, FileParams, TokenFields };
