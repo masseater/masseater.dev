@@ -26,7 +26,7 @@ type Columns = Readonly<{
 
 type Normalized = Readonly<{ body: Body; assumed: readonly string[] }>;
 
-type Span = Readonly<{ start: string; end: string; open: boolean }>;
+type Span = Readonly<{ start: string; end: string; open: boolean; untilStart: boolean }>;
 
 const REFERABLE = [...LIFE_RECORDS, "memory"] as const;
 
@@ -52,14 +52,14 @@ const TIME_FIELDS: Readonly<Record<LifeRecordName, readonly string[]>> = {
 };
 
 const SPANS: Readonly<Record<LifeRecordName, Span>> = {
-  life_event: { start: "at", end: "until", open: false },
-  media_item: { start: "firstAt", end: "lastAt", open: false },
-  profile_fact: { start: "since", end: "until", open: true },
-  metric_goal: { start: "since", end: "until", open: true },
-  owner_reflection: { start: "from", end: "to", open: true },
-  todo: { start: "dueAt", end: "dueAt", open: false },
-  event_kind: { start: NONE, end: NONE, open: true },
-  metric_definition: { start: NONE, end: NONE, open: true },
+  life_event: { start: "at", end: "until", open: false, untilStart: false },
+  media_item: { start: "firstAt", end: "lastAt", open: false, untilStart: false },
+  profile_fact: { start: "since", end: "until", open: true, untilStart: true },
+  metric_goal: { start: "since", end: "until", open: true, untilStart: false },
+  owner_reflection: { start: "from", end: "to", open: true, untilStart: false },
+  todo: { start: "dueAt", end: "dueAt", open: false, untilStart: false },
+  event_kind: { start: NONE, end: NONE, open: true, untilStart: false },
+  metric_definition: { start: NONE, end: NONE, open: true, untilStart: false },
 };
 
 const LABEL_FIELDS: Readonly<Record<LifeRecordName, string>> = {
@@ -163,16 +163,25 @@ const rangeAt =
   (body: Body): Option.Option<DayRange> =>
     pipe(stringAt(key)(body), Option.map(dayRangeOf));
 
-const endOf = ({ start, end, open }: Span, body: Body): string => {
-  const own = rangeAt(end)(body);
+const edgeOf =
+  (untilStart: boolean) =>
+  (range: DayRange): string => {
+    if (untilStart) {
+      return range.start;
+    }
+    return range.end;
+  };
+
+const endOf = ({ start, end, open, untilStart }: Span, body: Body): string => {
+  const own = pipe(rangeAt(end)(body), Option.map(edgeOf(untilStart)));
   const fallback = pipe(
     rangeAt(start)(body),
     Option.filter(() => !open),
+    Option.map((range) => range.end),
   );
   return pipe(
     own,
     Option.orElse(() => fallback),
-    Option.map((range) => range.end),
     Option.getOrElse(() => NONE),
   );
 };

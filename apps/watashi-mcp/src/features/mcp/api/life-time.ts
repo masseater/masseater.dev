@@ -156,11 +156,21 @@ const todayJst: Effect.Effect<string> = DateTime.now.pipe(
   Effect.map((now) => jstDayOf(DateTime.formatIso(now))),
 );
 
+const dayBound =
+  (edge: keyof DayRange) =>
+  (input: string | undefined): Option.Option<string> =>
+    pipe(
+      Option.fromUndefinedOr(input),
+      Option.flatMap((text) => Result.getSuccess(parseTime(text))),
+      Option.map((time) => dayRangeOf(storedOf(time))[edge]),
+    );
+
 const isDayPrecise = (stored: string): boolean =>
   isInstant(stored) || precisionOf(stored) === "day";
 
 export {
   PRECISIONS,
+  dayBound,
   dayRangeOf,
   isDayPrecise,
   isInstant,

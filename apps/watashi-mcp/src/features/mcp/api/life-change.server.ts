@@ -1,15 +1,15 @@
-import { Array as Arr, Effect, Option, Predicate, Record as Rec, Schema, pipe } from "effect";
+import { Array as Arr, Effect, Option, Predicate, Record as Rec, Schema } from "effect";
 
 import type { StoreFailure } from "#/features/mcp/model/tool-failure";
 
 import { findRevision } from "./history-store.server";
-import { assumedNotices, invalid, normalize, validateBody } from "./life-checks";
+import { assumedNotices, invalid, lifeKeyOf, normalize, validateBody } from "./life-checks";
 import type { ItemResult } from "./life-checks";
 import type { ChangeValue } from "./life-input";
-import { isLifeRecord, parseRef, refOf } from "./life-record";
+import { refOf } from "./life-record";
 import type { Body } from "./life-record";
 import { findRecord } from "./life-store.server";
-import type { IdKey, LifeEntry } from "./life-store.server";
+import type { LifeEntry } from "./life-store.server";
 import { vocabularyNotices } from "./life-vocabulary.server";
 import type { Notice } from "./life-vocabulary.server";
 import { Snapshot, replaceRecord, snapshotOf } from "./life-writer.server";
@@ -25,21 +25,6 @@ type Action = (entry: LifeEntry) => Effect.Effect<ItemResult, ChangeFailure>;
 const CONTROL_KEYS = ["ref", "retract", "reason", "restoreTo"] as const;
 
 const decodeSnapshot = Schema.decodeUnknownEffect(Schema.fromJsonString(Snapshot));
-
-const lifeKeyOf = (ref: string): Effect.Effect<IdKey, ChangeFailure> =>
-  pipe(
-    parseRef(ref),
-    Option.flatMap((parsed) =>
-      pipe(
-        Option.liftPredicate(parsed.record, isLifeRecord),
-        Option.map((record): IdKey => ({ record, id: parsed.id })),
-      ),
-    ),
-    Effect.fromOption,
-    Effect.mapError(() =>
-      invalid(`${ref} is not a life record. Change work memos (memory:N) with memory_write.`),
-    ),
-  );
 
 const applyField = (out: Body, [key, value]: readonly [string, unknown]): Body => {
   if (Predicate.isNull(value)) {

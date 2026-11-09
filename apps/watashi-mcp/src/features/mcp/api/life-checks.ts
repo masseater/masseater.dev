@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Result, Schema, pipe } from "effect";
+import { Array as Arr, Effect, Option, Result, Schema, pipe } from "effect";
 
 import { InvalidRecord } from "#/features/mcp/model/invalid-record";
 import {
@@ -13,8 +13,9 @@ import {
 } from "#/features/mcp/model/life-body";
 import type { LifeRecordName } from "#/features/mcp/model/life-record.table";
 
-import { normalizeTimes } from "./life-record";
+import { isLifeRecord, normalizeTimes, parseRef } from "./life-record";
 import type { Body, Normalized } from "./life-record";
+import type { IdKey } from "./life-store.server";
 import type { Notice } from "./life-vocabulary.server";
 
 type ItemResult = Readonly<{ ref: string; notices: readonly Notice[] }>;
@@ -63,5 +64,20 @@ const assumedNotices =
       ],
     });
 
-export { assumedNotices, invalid, normalize, validateBody };
+const lifeKeyOf = (ref: string): Effect.Effect<IdKey, InvalidRecord> =>
+  pipe(
+    parseRef(ref),
+    Option.flatMap((parsed) =>
+      pipe(
+        Option.liftPredicate(parsed.record, isLifeRecord),
+        Option.map((record): IdKey => ({ record, id: parsed.id })),
+      ),
+    ),
+    Effect.fromOption,
+    Effect.mapError(() =>
+      invalid(`${ref} is not a life record. Change work memos (memory:N) with memory_write.`),
+    ),
+  );
+
+export { assumedNotices, invalid, lifeKeyOf, normalize, validateBody };
 export type { ItemResult };

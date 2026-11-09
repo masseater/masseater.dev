@@ -183,5 +183,5 @@ const vocabularyNotices =
       return [...kinds, ...Arr.getSomes(metrics)];
     });
 
-export { valuesOf, vocabularyNotices };
+export { metricNamesOf as metricKeysOf, valuesOf, vocabularyNotices };
 export type { Notice };
