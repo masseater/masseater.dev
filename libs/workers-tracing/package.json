@@ -1,0 +1,140 @@
+{
+  "name": "@r_masseater/workers-tracing",
+  "version": "0.1.1",
+  "description": "Put Effect spans, TanStack Start requests and server functions, and Elysia routes into the automatic traces of Cloudflare Workers, nested with the platform's own D1, KV and fetch spans.",
+  "keywords": [
+    "cloudflare-workers",
+    "effect",
+    "elysia",
+    "observability",
+    "opentelemetry",
+    "tanstack-start",
+    "tracing"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/workers-tracing#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/workers-tracing"
+  },
+  "bin": {
+    "workers-traces": "./src/traces.ts"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "type": "module",
+  "exports": {
+    "./alchemy": "./src/alchemy.ts",
+    "./elysia": {
+      "workerd": "./src/elysia.ts",
+      "node": "./src/elysia.plain.ts",
+      "default": "./src/elysia.ts"
+    },
+    "./tanstack-start": {
+      "workerd": "./src/tanstack-start.ts",
+      "browser": "./src/tanstack-start.plain.ts",
+      "node": "./src/tanstack-start.plain.ts",
+      "default": "./src/tanstack-start.ts"
+    },
+    "./package.json": "./package.json",
+    "./effect": {
+      "workerd": "./src/effect.ts",
+      "browser": "./src/effect.plain.ts",
+      "node": "./src/effect.plain.ts",
+      "default": "./src/effect.ts"
+    },
+    "./oxlint": "./src/oxlint.ts",
+    "./trace-sink-worker": "./src/trace-sink.worker.ts"
+  },
+  "publishConfig": {
+    "bin": {
+      "workers-traces": "./dist/traces.js"
+    },
+    "exports": {
+      "./alchemy": {
+        "types": "./dist/alchemy.d.ts",
+        "default": "./dist/alchemy.js"
+      },
+      "./elysia": {
+        "types": "./dist/elysia.d.ts",
+        "workerd": "./dist/elysia.js",
+        "node": "./dist/elysia.plain.js",
+        "default": "./dist/elysia.js"
+      },
+      "./tanstack-start": {
+        "types": "./dist/tanstack-start.d.ts",
+        "workerd": "./dist/tanstack-start.js",
+        "browser": "./dist/tanstack-start.plain.js",
+        "node": "./dist/tanstack-start.plain.js",
+        "default": "./dist/tanstack-start.js"
+      },
+      "./package.json": "./package.json",
+      "./effect": {
+        "types": "./dist/effect.d.ts",
+        "workerd": "./dist/effect.js",
+        "browser": "./dist/effect.plain.js",
+        "node": "./dist/effect.plain.js",
+        "default": "./dist/effect.js"
+      },
+      "./oxlint": {
+        "types": "./dist/oxlint.d.ts",
+        "default": "./dist/oxlint.js"
+      },
+      "./trace-sink-worker": "./dist/trace-sink.worker.js"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "node -e \"if (!process.env.npm_config_user_agent?.startsWith('pnpm/')) { console.error('npm publish leaves catalog: in dependencies. Publish the tarball from vp pm pack instead.'); process.exit(1) }\" && vp run build"
+  },
+  "dependencies": {
+    "@distilled.cloud/cloudflare": "catalog:stack",
+    "@effect/platform-node": "catalog:"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@arethetypeswrong/core": "catalog:",
+    "@cloudflare/workers-types": "catalog:",
+    "@r_masseater/vitest-otlp": "workspace:*",
+    "@tanstack/react-start": "catalog:stack",
+    "@types/node": "catalog:",
+    "alchemy": "catalog:stack",
+    "effect": "catalog:stack",
+    "elysia": "catalog:stack",
+    "miniflare": "catalog:",
+    "publint": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "@alchemy.run/cloudflare": "^2.0.0-beta.85",
+    "@tanstack/react-start": "^1.169.4",
+    "alchemy": "^2.0.0-beta.85",
+    "effect": "^4.1.2",
+    "elysia": "^1.4.30"
+  },
+  "peerDependenciesMeta": {
+    "@alchemy.run/cloudflare": {
+      "optional": true
+    },
+    "@tanstack/react-start": {
+      "optional": true
+    },
+    "alchemy": {
+      "optional": true
+    },
+    "elysia": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}

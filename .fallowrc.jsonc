@@ -20,7 +20,14 @@
   ],
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "production": true,
-  "dynamicallyLoaded": ["**/*.d.rpp.ts"],
+  "dynamicallyLoaded": ["**/*.d.rpp.ts", "libs/workers-tracing/src/fixture/*.worker.ts"],
+  "ignoreExports": [
+    { "file": "libs/vitest-otlp/src/generated/**", "exports": ["*"] },
+    { "file": "libs/workers-tracing/src/tanstack-start.plain.ts", "exports": ["traceServerFn"] },
+  ],
+  "overrides": [
+    { "files": ["libs/vitest-otlp/src/generated/**"], "rules": { "unused-enum-members": "off" } },
+  ],
   "ignoreDependencies": [
     "@effect/language-service",
     "@arethetypeswrong/core",
@@ -119,6 +126,12 @@
     ],
   },
   "framework": [
+    {
+      "name": "buf",
+      "enablers": ["@bufbuild/buf"],
+      "configPatterns": ["**/buf.gen.yaml"],
+      "toolingDependencies": ["@bufbuild/buf", "@bufbuild/protoc-gen-es"],
+    },
     {
       "name": "tanstack-start-fsd",
       "enablers": ["@tanstack/react-start"],

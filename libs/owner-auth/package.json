@@ -15,7 +15,7 @@
     "@better-auth/oauth-provider": "catalog:",
     "@better-auth/passkey": "catalog:",
     "@masseater.dev/ui": "workspace:*",
-    "@r_masseater/workers-tracing": "catalog:stack",
+    "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/react-query": "catalog:stack",
     "better-auth": "catalog:stack"
   },
