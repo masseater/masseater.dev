@@ -1,4 +1,4 @@
-import { Option, String as Str, pipe } from "effect";
+import { DateTime, Option, pipe } from "effect";
 
 const NUMBER_FORMAT = new Intl.NumberFormat("ja-JP", { signDisplay: "never" });
 const COMPACT_FORMAT = new Intl.NumberFormat("ja-JP", {
@@ -8,7 +8,11 @@ const COMPACT_FORMAT = new Intl.NumberFormat("ja-JP", {
 });
 const NONE = "–";
 const ZERO = 0;
-const DATE_LENGTH = 10;
+const GENERATED_FORMAT = new Intl.DateTimeFormat("ja-JP", {
+  timeZone: "Asia/Tokyo",
+  dateStyle: "medium",
+  timeStyle: "short",
+});
 
 type Style = "full" | "compact";
 
@@ -56,6 +60,11 @@ const compactGap = signedWith("compact");
 const pageLabel = ({ page, pages }: Readonly<{ page: number; pages: number }>): string =>
   `${page.toString()} / ${pages.toString()}`;
 
-const dateOf = (iso: string): string => Str.slice(ZERO, DATE_LENGTH)(iso);
+const generatedAt = (iso: string): string =>
+  pipe(
+    DateTime.make(iso),
+    Option.map((time) => DateTime.formatIntl(time, GENERATED_FORMAT)),
+    Option.getOrElse(() => iso),
+  );
 
-export { compactGap, compactViews, dateOf, gap, pageLabel, views };
+export { compactGap, compactViews, gap, generatedAt, pageLabel, views };
