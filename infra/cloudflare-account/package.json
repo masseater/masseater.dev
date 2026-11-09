@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
-    "@r_masseater/workers-tracing": "catalog:stack",
+    "@r_masseater/workers-tracing": "workspace:*",
     "alchemy": "catalog:stack",
     "effect": "catalog:stack"
   },

@@ -67,11 +67,7 @@ type GitHubGrant = Readonly<{
   repositories?: readonly string[];
 }>;
 
-const RELEASE_REPOSITORIES: readonly string[] = [
-  "lint-kit",
-  "measure-everything",
-  "typescript-template",
-];
+const RELEASE_REPOSITORIES: readonly string[] = ["lint-kit", "typescript-template"];
 
 const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
   repository,
@@ -115,7 +111,7 @@ const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, st
   "update-branches.yml": BOT_PERMISSIONS,
 };
 
-const NPM_GRANTS: readonly string[] = ["lint-kit", "measure-everything"];
+const NPM_GRANTS: readonly string[] = ["lint-kit", "masseater.dev/npm"];
 
 const ATPROTO_GRANTS: readonly string[] = ["masseater.dev"];
 
