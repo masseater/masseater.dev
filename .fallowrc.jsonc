@@ -22,6 +22,7 @@
   "production": true,
   "dynamicallyLoaded": ["**/*.d.rpp.ts"],
   "ignoreDependencies": [
+    "@effect/language-service",
     "@arethetypeswrong/core",
     "publint",
     "@fontsource/dela-gothic-one",
