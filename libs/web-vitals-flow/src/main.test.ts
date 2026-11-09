@@ -20,7 +20,11 @@ const services = ManagedRuntime.make(NodeServices.layer);
 afterAll(() => services.dispose());
 
 const HTTP_NOT_FOUND = 404;
-const SUCCESS = 0;
+const EXIT_CODES: Readonly<Record<string, number>> = {
+  STATUS_CODE_UNSET: 0,
+  STATUS_CODE_OK: 0,
+  STATUS_CODE_ERROR: 1,
+};
 
 const PAGES: Readonly<Record<string, string>> = {
   "/": '<!doctype html><html lang="en"><title>home</title><h1>Home</h1><a href="/next">next</a></html>',
@@ -78,12 +82,11 @@ test("a load and a link transition are measured, reported and traced", () =>
     const reportDirectory = yield* fileSystem.makeTempDirectoryScoped();
 
     const exitCode = yield* measure(origin, reportDirectory);
-    expect(exitCode).toBe(SUCCESS);
     const reportFiles = yield* fileSystem.readDirectory(reportDirectory);
     expect(reportFiles).toStrictEqual(expect.arrayContaining(["flow-1.html", "flow-1.json"]));
     const spans = yield* waitForSpans({
       where: (span) => span.resource["service.name"] === "web-vitals-flow",
-      count: 4,
+      count: 5,
     });
     expect(
       pipe(
@@ -96,6 +99,11 @@ test("a load and a link transition are measured, reported and traced", () =>
         "web-vitals.load",
         "web-vitals.transition",
         "web-vitals.audit",
+        "web-vitals.judge",
       ]),
     );
+    const judge = yield* Array.findFirst(spans, (span) => span.name === "web-vitals.judge").pipe(
+      Effect.fromOption,
+    );
+    expect(exitCode).toBe(EXIT_CODES[judge.status.code ?? "STATUS_CODE_UNSET"]);
   }).pipe(Effect.scoped, services.runPromise));
