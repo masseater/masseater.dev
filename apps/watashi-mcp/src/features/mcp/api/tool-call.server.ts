@@ -13,14 +13,13 @@ import type { Caller } from "./caller";
 import { encodeJson } from "./storage.server";
 
 type ToolName =
-  | "memory_save"
-  | "memory_update"
-  | "memory_search"
-  | "todo_add"
-  | "todo_update"
-  | "todo_list"
-  | "history"
-  | "restore"
+  | "life_write"
+  | "life_read"
+  | "life_stats"
+  | "memory_write"
+  | "memory_read"
+  | "watashi_search"
+  | "watashi_profile"
   | "write_sloppedia_article"
   | "read_web_analytics"
   | "search_slides"
@@ -76,25 +75,25 @@ const toOutcome =
       onFailure: (failure) =>
         Effect.succeed(
           Match.valueTags(failure, {
-            MemoryExists: ({ project, memoryName }) => ({
+            InvalidRecord: ({ message }) => ({
               status: "error" as const,
-              errorTag: "MemoryExists",
-              text: `memory "${memoryName}" already exists in project "${project}". Use memory_update to change it.`,
+              errorTag: "InvalidRecord",
+              text: message,
             }),
             MemoryNotFound: ({ project, memoryName }) => ({
               status: "error" as const,
               errorTag: "MemoryNotFound",
-              text: `memory "${memoryName}" was not found in project "${project}". Use memory_save to create it.`,
+              text: `memory "${memoryName}" was not found in project "${project}". Pass description and content to create it.`,
             }),
-            TodoNotFound: ({ todoId }) => ({
+            RecordNotFound: ({ ref }) => ({
               status: "error" as const,
-              errorTag: "TodoNotFound",
-              text: `todo ${todoId} was not found. Use todo_list to find its id.`,
+              errorTag: "RecordNotFound",
+              text: `${ref} was not found. Use life_read to find its ref.`,
             }),
             RevisionNotFound: ({ entity, entityId, rev }) => ({
               status: "error" as const,
               errorTag: "RevisionNotFound",
-              text: `${entity} ${entityId} has no revision ${rev}. Use history to list its revisions.`,
+              text: `${entity}:${entityId} has no revision ${rev}. Read it with revisions: true to list its revisions.`,
             }),
             StorageFailed: ({ message }) => ({
               status: "error" as const,

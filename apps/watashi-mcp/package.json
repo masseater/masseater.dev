@@ -9,6 +9,7 @@
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@better-auth/mcp": "catalog:",
+    "@cfworker/json-schema": "catalog:",
     "@distilled.cloud/github": "catalog:",
     "@masseater.dev/owner-auth": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
@@ -22,6 +23,7 @@
     "claude-code-jsonl-parser": "catalog:",
     "drizzle-orm": "catalog:stack",
     "effect": "catalog:stack",
+    "fastest-levenshtein": "catalog:",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "tailwindcss": "catalog:stack",
