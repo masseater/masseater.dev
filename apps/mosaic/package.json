@@ -30,7 +30,7 @@
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
-    "@r_masseater/workers-tracing": "catalog:stack",
+    "@r_masseater/workers-tracing": "workspace:*",
     "@tailwindcss/vite": "4.3.4",
     "@tanstack/devtools-vite": "0.8.6",
     "@types/react": "19.3.0",

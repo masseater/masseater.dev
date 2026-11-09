@@ -10,7 +10,7 @@
   "dependencies": {
     "@discordjs/voice": "catalog:",
     "@effect/platform-node": "catalog:",
-    "@r_masseater/workers-tracing": "catalog:stack",
+    "@r_masseater/workers-tracing": "workspace:*",
     "@snazzah/davey": "catalog:",
     "discord-api-types": "catalog:",
     "discord.js": "catalog:",
