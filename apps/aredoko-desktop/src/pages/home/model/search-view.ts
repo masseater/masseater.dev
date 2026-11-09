@@ -1,11 +1,20 @@
 import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import { Array, Option, pipe } from "effect";
+import type { ComponentProps } from "react";
+
+import type { Notice } from "#/shared/ui/notice";
 
 type Results = readonly (typeof SearchResult.Type)[];
 
+type SearchPhase = "idle" | "searching" | "settled";
+
 type SearchView =
   | Readonly<{ status: "idle" }>
-  | Readonly<{ status: "message"; text: string; tone: "muted" | "error" }>
+  | Readonly<{
+      status: "message";
+      text: string;
+      tone: NonNullable<ComponentProps<typeof Notice>["tone"]>;
+    }>
   | Readonly<{ status: "results"; matches: Results; others: Results }>;
 
 const SEARCHING = "探しています…";
@@ -28,7 +37,7 @@ const searchViewOf = ({
   failure,
   results,
 }: Readonly<{
-  phase: "idle" | "searching" | "settled";
+  phase: SearchPhase;
   failure: Option.Option<string>;
   results: Option.Option<Results>;
 }>): SearchView => {
@@ -49,4 +58,4 @@ const searchViewOf = ({
 };
 
 export { searchViewOf };
-export type { SearchView };
+export type { SearchPhase, SearchView };

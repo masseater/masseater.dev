@@ -1,4 +1,5 @@
 import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import type { ReactNode } from "react";
 
 const noticeVariants = cva("flex items-center gap-1.5", {
@@ -13,10 +14,8 @@ const Notice = ({
   tone,
   size,
   children,
-}: Readonly<{
-  tone?: "muted" | "error";
-  size?: "xs" | "sm";
-  children: ReactNode;
-}>): ReactNode => <p className={noticeVariants({ tone, size })}>{children}</p>;
+}: Readonly<VariantProps<typeof noticeVariants> & { children: ReactNode }>): ReactNode => (
+  <p className={noticeVariants({ tone, size })}>{children}</p>
+);
 
 export { Notice };

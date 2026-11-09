@@ -1,8 +1,11 @@
 import { BoothItem } from "@masseater.dev/aredoko-protocol";
+import type { PackageKind } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { decodeRows, firstId } from "#shared/sql";
+
+type StoredKind = Extract<typeof PackageKind.Type, "unitypackage" | "files">;
 
 interface PackageFile {
   readonly sourceId: number;
@@ -44,7 +47,7 @@ const insertPackage = Effect.fn("insertPackage")(function* insertPackageRow({
   summary,
   booth,
 }: {
-  readonly kind: "unitypackage" | "files";
+  readonly kind: StoredKind;
   readonly file: PackageFile;
   readonly name: string;
   readonly summary: string;
@@ -69,4 +72,4 @@ const insertPackage = Effect.fn("insertPackage")(function* insertPackageRow({
 });
 
 export { boothOf, encodeBooth, insertPackage };
-export type { PackageFile };
+export type { PackageFile, StoredKind };
