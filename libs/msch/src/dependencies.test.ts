@@ -14,7 +14,7 @@ import {
   readsTheRootTypesConditionOfAnExportMap,
   skipsPackagesThatShipNoDeclarationsOrAre,
   sortsEntriesByPackageName,
-} from "./dependencies-cases.ts";
+} from "./dependencies.test.cases.ts";
 import { fixtureLayer } from "./repository.test.support.ts";
 
 layer(fixtureLayer)("dependencyEntries export maps", (it) => {

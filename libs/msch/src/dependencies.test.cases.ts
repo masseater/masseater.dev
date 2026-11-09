@@ -2,9 +2,9 @@ import { Array as Arr, Effect, String as Str, pipe } from "effect";
 import { expect } from "vite-plus/test";
 
 import { dependencyEntries } from "./dependencies.ts";
+import { manifestText } from "./manifest.test.support.ts";
 import type { RepositoryFiles } from "./repository-files.ts";
 import { directoryWith } from "./repository.test.support.ts";
-import { manifestText } from "./test-manifest.ts";
 
 interface RelativeEntry {
   readonly specifier: string;

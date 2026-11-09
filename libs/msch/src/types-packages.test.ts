@@ -3,8 +3,8 @@ import { Effect, Array as Arr, pipe } from "effect";
 import { expect } from "vite-plus/test";
 
 import { dependencyEntries } from "./dependencies.ts";
+import { manifestText } from "./manifest.test.support.ts";
 import { directoryWith, fixtureLayer } from "./repository.test.support.ts";
-import { manifestText } from "./test-manifest.ts";
 
 const EMPTY_DECLARATIONS = "export {};\n";
 

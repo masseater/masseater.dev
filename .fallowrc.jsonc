@@ -144,7 +144,6 @@
       "name": "vite-plus",
       "enablers": ["vite-plus"],
       "entryPoints": ["vite.config.ts"],
-      "alwaysUsed": ["src/test-manifest.ts", "src/dependencies-cases.ts"],
       "toolingDependencies": [
         "@arethetypeswrong/core",
         "@ast-grep/cli",
