@@ -2,17 +2,15 @@ import type { Array, Option, Record } from "effect";
 import type { ReactNode } from "react";
 
 import { EntryList } from "#/entities/entry";
-import type { Entry, Layout } from "#/entities/entry";
+import type { Entry } from "#/entities/entry";
 
 const IDEA_SUMMARY = "アイデア段階のメモ";
 
 const IdeaList = ({
   ideas,
-  layout,
   starCounts,
 }: Readonly<{
   ideas: Array.NonEmptyReadonlyArray<Entry>;
-  layout: Layout;
   starCounts: Option.Option<Record.ReadonlyRecord<string, number>>;
 }>): ReactNode => (
   <details>
@@ -20,7 +18,7 @@ const IdeaList = ({
       {`${IDEA_SUMMARY} (${String(ideas.length)})`}
     </summary>
     <div className="pt-6">
-      <EntryList entries={ideas} layout={layout} starCounts={starCounts} />
+      <EntryList entries={ideas} starCounts={starCounts} />
     </div>
   </details>
 );

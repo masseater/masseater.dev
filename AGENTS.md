@@ -8,7 +8,7 @@
 
 ## 構成
 
-- `apps/portfolio` は TanStack Start（RSC）で全ページをプリレンダーし、`Website.StaticSite` で静的サイトとして Cloudflare に置く。記事は `apps/portfolio/content/` の Markdown を `import.meta.glob` で読む。`apps/portfolio/app-name.ts` の `APP_NAME` を変えるとリソースは作り直される。
+- `apps/portfolio` は TanStack Start（RSC）で全ページをプリレンダーし、`Website.StaticSite` で静的サイトとして Cloudflare に置く。blogs と sloppedia の記事は `apps/portfolio/content/` の Markdown を `import.meta.glob` で読む。`/projects` は記事を持たず、`src/pages/projects/model/projects.ts` に並べた名前・1 行の説明・実物へのリンクだけを出す。詳しい説明は blogs に書き、そこへリンクする。`apps/portfolio/app-name.ts` の `APP_NAME` を変えるとリソースは作り直される。
 - `apps/portfolio` の直下にはスタックと設定だけを置き、Worker は `worker/`、Vite と Markdown のプラグインは `vite-plugins/`、手で動かすスクリプトは `scripts/` に置く。
 - 静的サイトの Worker（`worker/site.worker.ts`）は `/api/stars/*` だけを先に受け、blogs の star を D1 に数える。同じ IP からの star は 1 記事 1 つで、IP は `VISITOR_SALT` を混ぜたハッシュで持つ。ほかのリクエストは静的アセットに渡す。
 - サイトを出すためのリソースは `apps/portfolio` のスタックに近接して置く。ゾーンやアカウント全体に効く部品は `infra/cloudflare-account` に置き、`apps/portfolio` のスタックが名前を渡して作る。`alchemy.run.ts` は prod ステージでだけ `edge-guard.ts`・`log-archive.ts`・`web-analytics-reader.ts` を作る。`edge-guard.ts` はスキャナーを弾く WAF ルールとハニーポットの Worker を、`log-archive.ts` は全 Worker のログを R2 に送る Logpush を持つ。トレースの送信先は、`alchemy.traces.ts` のスタックが `@r_masseater/workers-tracing` の `traceSink` で作る。
@@ -17,7 +17,7 @@
 - リポの削除は `delete-repositories` ワークフローを main で手動実行する。名前はイベントのファイルから読んでログで伏せるので、private のリポもコードとログに名前が出ない。
 - GitHub のトークンも broker が出す。App は `masseater-manager` だけで、鍵は D1 に置く。鍵の原本は personal-space の secret にあり、personal-space の `github-app-key` ワークフローが `POST https://credentials.masseater.dev/github-app/import` で渡す。broker は鍵で App 自身として名乗れることと持ち主を確かめてから保存する。
 - `apps/portfolio/worker/ci-telemetry.worker.ts` は、`.github/scripts/ci-telemetry.sh` が送るジョブとステップの時間を GitHub の OIDC トークンで確かめ、ログに出す。
-- `apps/portfolio/content/sloppedia/` は、Wikipedia 風の個人の百科事典もどき Sloppedia の記事である。`/sloppedia/` の下は、サイトの背景を持つ `_stage` レイアウトの外にある独自の見た目のページで、`noindex` を付けて sitemap とフィードから外す。旧 `/scraps/` は `public/_redirects` で転送する。
+- `apps/portfolio/content/sloppedia/` は、Wikipedia 風の個人の百科事典もどき Sloppedia の記事である。`/sloppedia/` の下は、サイトの背景を持つ `_stage` レイアウトの外にある独自の見た目のページで、`noindex` を付けて sitemap とフィードから外す。
 - Sloppedia の見た目は `libs/sloppedia`（npm の `sloppedia`）にあり、portfolio はそれに TanStack Router の Link を渡して使う。npm へは version を上げてから `publish.yml` を main で手動実行して出す。
 - `tools/scrap-userscript` は、閲覧中のページについて Sloppedia の記事を書くよう Claude Code のルーチンへ頼むユーザースクリプトである。依頼は watashi-mcp の `https://watashi.masseater.dev/scrap-request` に送り、watashi のログインのセッションで通す。ルーチンのトークンは personal-space の mydecklist スタックが Secrets Store に置き、watashi-mcp が参照する。Greasy Fork が main の `release/scrap-request.user.js` を同期するので、ビルド結果もコミットする。ソースとビルド結果が食い違うと test が落ちる。中身を変えたら `package.json` の version を上げる。
 - `apps/labs` は React を使わない単体のページ（`/satsuei-lab/`・`/split-pad/`・`/pod-rattle/`）で、`pages/<名前>/index.html` を Vite の multi-page でバンドルし、静的アセットだけの Worker を masseater.dev のルートに載せる。three や d3 は npm から import し、inline script は置かない。ページを足したら `pages.ts` の `PAGES` に足す。
@@ -70,7 +70,7 @@
 
 - 記事の日付は frontmatter に書かない。`apps/portfolio/vite-plugins/markdown/remark-git-date.ts` がビルド時に、そのファイルを最初に追加したコミットの日付を `date` として入れる。未コミットのファイルは当日の日付になる。
 - 出典は `[^codmon-retrospective]` のような名前のラベルの脚注で書く。remark-gfm が出現順に番号を振って本文の末尾に出典の一覧としてまとめるので、番号も一覧も手で書かない。
-- 出典でないリンクは `[文言](URL)` の埋め込みリンクにし、むき出しの URL を置かない。blogs・sloppedia・projects のどれも同じである。
+- 出典でないリンクは `[文言](URL)` の埋め込みリンクにし、むき出しの URL を置かない。blogs と sloppedia のどちらも同じである。
 - Claude との対話を載せるときは、発言を `:::masseater` と `:::claude` のブロックで囲む。`remark-dialogue.ts` がアイコンと名前つきの吹き出しに変える。
 - 中身の薄いアイデア段階の blog は、frontmatter に `stage: idea` を付ける。一覧では折りたたみの中に入り、フィードには出ない。
 - Sloppedia の記事は watashi-mcp の `write_sloppedia_article` からも PR で足される。blog を投稿するツールは MCP に意図して足さない。blog は持ち主が推敲してから出すまとまった文章で、AI が書ける経路は Sloppedia だけにしておくためである。

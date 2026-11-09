@@ -1,7 +1,7 @@
 export { collectionOf, entryOf } from "./api/entries";
 export { foundOrNotFound } from "./api/found-or-not-found";
-export { categories, categoryInfos, categoryMeta, categoryPath } from "./model/category";
-export type { Category, CategoryInfo, Layout } from "./model/category";
+export { categories, categoryMeta, categoryPath } from "./model/category";
+export type { Category } from "./model/category";
 export { entryOgImagePath, entryPath } from "./model/entry";
 export type { CollectionResult, Entry, EntryResult } from "./model/entry";
 export { preloadBody } from "./model/body";

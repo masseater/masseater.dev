@@ -1,22 +1,20 @@
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import { categories, categoryPath, isUnindexedPath } from "#/entities/entry/model/category.ts";
+import { isUnindexedPath } from "#/entities/entry/model/category.ts";
+import { sectionPath, sections } from "#/shared/config/sections.ts";
 import { site } from "#/shared/config/site.ts";
 
 const MODIFIED_TIME = /<meta property="article:modified_time" content="(?<date>[^"]+)"/u;
 
 type Page = Readonly<{ path: string; sitemap?: Readonly<Record<string, unknown>> | undefined }>;
 
-const categoryPaths = pipe(
-  categories,
-  Arr.map((category) => categoryPath(category)),
-);
+const sectionPaths = pipe(sections, Arr.map(sectionPath));
 
 const isUnindexed = ({ path }: Page): boolean => isUnindexedPath(path);
 
 const pages = [
   ...pipe(
-    ["/", "/seikin-techniques/", ...categoryPaths],
+    ["/", "/seikin-techniques/", ...sectionPaths],
     Arr.map((path) => ({ path })),
   ),
   ...pipe(

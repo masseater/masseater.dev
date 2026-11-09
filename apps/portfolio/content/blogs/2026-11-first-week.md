@@ -65,6 +65,6 @@ masseater.dev では、デプロイのたびに脆弱性スキャナの ZAP が�
 
 [rpp-kit](https://masseater.dev/rpp-kit/) は、音楽制作ソフト REAPER のプロジェクトファイルを TypeScript の型つきで読むデモである。別のドメインにあったのを「masseater.dev 配下にしなよ」と移させ、読んだファイルがコードとしてどう扱われるかを試せる playground を足させた。全部を同時に並べた画面には「codepen 見て」と言い、ファイルの型を手で書いた例には「自分で declare は普通にダメ」と返した。
 
-アニメの撮影処理を工程ごとに試せる[撮影ラボ](https://masseater.dev/projects/satsuei-lab)と、ボタンを背面に移したコントローラー[背面打ちスプリットパッド](https://masseater.dev/projects/split-pad)の 3D モデルも作らせた。
+アニメの撮影処理を工程ごとに試せる[撮影ラボ](https://masseater.dev/satsuei-lab/)と、ボタンを背面に移したコントローラー[背面打ちスプリットパッド](https://masseater.dev/split-pad/)の 3D モデルも作らせた。
 
 確認を待つ時間が減ったぶん、この週に僕がしていたのは、ほとんどが上がってきたものを見て違うと言うことだった。

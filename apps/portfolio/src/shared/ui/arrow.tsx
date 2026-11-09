@@ -11,11 +11,6 @@ const VARIANTS = {
     className:
       "nudge-forward font-display text-foreground/50 group-hover:text-foreground inline-block shrink-0 transition",
   },
-  index: {
-    glyph: FORWARD,
-    className:
-      "nudge-forward font-display text-foreground/30 group-hover:text-foreground ml-auto hidden shrink-0 self-center text-4xl font-extralight transition sm:block",
-  },
 } as const;
 
 const Arrow = ({ variant }: Readonly<{ variant: keyof typeof VARIANTS }>): ReactNode => (

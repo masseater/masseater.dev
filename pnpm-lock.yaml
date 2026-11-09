@@ -1586,9 +1586,6 @@ importers:
       security-headers:
         specifier: workspace:*
         version: link:../../libs/security-headers
-      simple-icons:
-        specifier: 'catalog:'
-        version: 16.36.0
       sloppedia:
         specifier: workspace:*
         version: link:../../libs/sloppedia

@@ -12,6 +12,7 @@ import { Route as StageSiteRouteImport } from './routes/_stage/_site'
 import { Route as SloppediaIndexRouteImport } from './routes/sloppedia/index'
 import { Route as SloppediaSlugRouteImport } from './routes/sloppedia/$slug'
 import { Route as SloppediaCategoriesRouteImport } from './routes/sloppedia/categories'
+import { Route as StageSiteProjectsRouteImport } from './routes/_stage/_site/projects'
 import { Route as StageSiteCategoryIndexRouteImport } from './routes/_stage/_site/$category/index'
 import { Route as StageSiteCategorySlugRouteImport } from './routes/_stage/_site/$category/$slug'
 import { Route as StageSiteSeikinTechniquesIndexRouteImport } from './routes/_stage/_site/seikin-techniques/index'
@@ -60,6 +61,11 @@ const SloppediaCategoriesRoute = SloppediaCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => SloppediaRoute,
 } as any)
+const StageSiteProjectsRoute = StageSiteProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => StageSiteRoute,
+} as any)
 const StageSiteCategoryIndexRoute = StageSiteCategoryIndexRouteImport.update({
   id: '/$category/',
   path: '/$category/',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/sloppedia/$slug': typeof SloppediaSlugRoute
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/sloppedia/': typeof SloppediaIndexRoute
+  '/projects': typeof StageSiteProjectsRoute
   '/$category/$slug': typeof StageSiteCategorySlugRoute
   '/seikin-techniques/$slug': typeof StageSiteSeikinTechniquesSlugRoute
   '/$category/': typeof StageSiteCategoryIndexRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/sloppedia/$slug': typeof SloppediaSlugRoute
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/sloppedia': typeof SloppediaIndexRoute
+  '/projects': typeof StageSiteProjectsRoute
   '/$category/$slug': typeof StageSiteCategorySlugRoute
   '/seikin-techniques/$slug': typeof StageSiteSeikinTechniquesSlugRoute
   '/$category': typeof StageSiteCategoryIndexRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/_stage/': typeof StageIndexRoute
   '/sloppedia/': typeof SloppediaIndexRoute
+  '/_stage/_site/projects': typeof StageSiteProjectsRoute
   '/_stage/_site/$category/$slug': typeof StageSiteCategorySlugRoute
   '/_stage/_site/seikin-techniques/$slug': typeof StageSiteSeikinTechniquesSlugRoute
   '/_stage/_site/$category/': typeof StageSiteCategoryIndexRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/sloppedia/$slug'
     | '/sloppedia/categories'
     | '/sloppedia/'
+    | '/projects'
     | '/$category/$slug'
     | '/seikin-techniques/$slug'
     | '/$category/'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/sloppedia/$slug'
     | '/sloppedia/categories'
     | '/sloppedia'
+    | '/projects'
     | '/$category/$slug'
     | '/seikin-techniques/$slug'
     | '/$category'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/sloppedia/categories'
     | '/_stage/'
     | '/sloppedia/'
+    | '/_stage/_site/projects'
     | '/_stage/_site/$category/$slug'
     | '/_stage/_site/seikin-techniques/$slug'
     | '/_stage/_site/$category/'
@@ -239,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SloppediaCategoriesRouteImport
       parentRoute: typeof SloppediaRoute
     }
+    '/_stage/_site/projects': {
+      id: '/_stage/_site/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof StageSiteProjectsRouteImport
+      parentRoute: typeof StageSiteRoute
+    }
     '/_stage/_site/$category/': {
       id: '/_stage/_site/$category/'
       path: '/$category'
@@ -271,6 +290,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface StageSiteRouteChildren {
+  StageSiteProjectsRoute: typeof StageSiteProjectsRoute
   StageSiteCategorySlugRoute: typeof StageSiteCategorySlugRoute
   StageSiteSeikinTechniquesSlugRoute: typeof StageSiteSeikinTechniquesSlugRoute
   StageSiteCategoryIndexRoute: typeof StageSiteCategoryIndexRoute
@@ -278,6 +298,7 @@ interface StageSiteRouteChildren {
 }
 
 const StageSiteRouteChildren: StageSiteRouteChildren = {
+  StageSiteProjectsRoute: StageSiteProjectsRoute,
   StageSiteCategorySlugRoute: StageSiteCategorySlugRoute,
   StageSiteSeikinTechniquesSlugRoute: StageSiteSeikinTechniquesSlugRoute,
   StageSiteCategoryIndexRoute: StageSiteCategoryIndexRoute,
