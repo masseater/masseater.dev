@@ -1,6 +1,6 @@
 import { presets as effectPresets } from "@effect/tsgo/oxlint-presets";
-import eslintReact from "@eslint-react/eslint-plugin";
 import htmlReact from "@html-eslint/eslint-plugin-react";
+import eslintReact from "@r_masseater/oxlint-typed-rules/react";
 import { Array as Arr, Record as Rec, String as Str, Struct, pipe } from "effect";
 import reactHooks from "eslint-plugin-react-hooks";
 

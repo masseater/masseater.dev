@@ -147,7 +147,6 @@
       "toolingDependencies": [
         "@arethetypeswrong/core",
         "@ast-grep/cli",
-        "eslint-plugin-drizzle",
         "eslint-plugin-no-comments",
         "publint",
       ],

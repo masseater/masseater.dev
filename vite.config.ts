@@ -1,6 +1,6 @@
+import tanstackQuery from "@r_masseater/oxlint-typed-rules/tanstack-query";
+import tanstackRouter from "@r_masseater/oxlint-typed-rules/tanstack-router";
 import { plugin as shadcn } from "@shadcn/lint";
-import tanstackQuery from "@tanstack/eslint-plugin-query";
-import tanstackRouter from "@tanstack/eslint-plugin-router";
 import baselineJs from "eslint-plugin-baseline-js";
 import {
   allRulesOf,
@@ -22,6 +22,8 @@ import { readonlyParameterAllow } from "oxlint-masseater-plugin/readonly-types";
 import { writerOnlyOverride } from "oxlint-masseater-plugin/record-lint";
 import { workerOverride } from "oxlint-masseater-plugin/worker-lint";
 import { defineConfig } from "vite-plus";
+
+const typedRules = "@r_masseater/oxlint-typed-rules";
 
 export default defineConfig({
   test: {
@@ -72,12 +74,12 @@ export default defineConfig({
     },
     jsPlugins: [
       { name: "vite-plus", specifier: "vite-plus/oxlint-plugin" },
-      { name: "tanstack-query", specifier: "@tanstack/eslint-plugin-query" },
-      { name: "tanstack-router", specifier: "@tanstack/eslint-plugin-router" },
-      { name: "tanstack-start", specifier: "@r_masseater/oxlint-typed-rules/tanstack-start" },
-      { name: "drizzle", specifier: "eslint-plugin-drizzle" },
+      { name: "tanstack-query", specifier: `${typedRules}/tanstack-query` },
+      { name: "tanstack-router", specifier: `${typedRules}/tanstack-router` },
+      { name: "tanstack-start", specifier: `${typedRules}/tanstack-start` },
+      { name: "drizzle", specifier: `${typedRules}/drizzle` },
       { name: "react-hooks-js", specifier: "eslint-plugin-react-hooks" },
-      { name: "@eslint-react", specifier: "@eslint-react/eslint-plugin" },
+      { name: "@eslint-react", specifier: `${typedRules}/react` },
       { name: "shadcn", specifier: "@shadcn/lint" },
       { name: "no-comments", specifier: "eslint-plugin-no-comments" },
       { name: "baseline-js", specifier: "eslint-plugin-baseline-js" },

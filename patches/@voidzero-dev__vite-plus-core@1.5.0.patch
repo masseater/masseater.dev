@@ -1,0 +1,13 @@
+diff --git a/dist/tsdown/dist-BImdOfKl.js b/dist/tsdown/dist-BImdOfKl.js
+index b7216952e4ebb0bb57b712bfde929acaa20a5d0d..de07534b79cedc45a3aa00b01c94ac7b2fca0bcf 100644
+--- a/dist/tsdown/dist-BImdOfKl.js
++++ b/dist/tsdown/dist-BImdOfKl.js
+@@ -55,7 +55,7 @@ function tryResolve(id) {
+ }
+ let _ts;
+ function isTS70Installed() {
+-	return tryRequire("typescript/package.json")?.version.slice(0, 3) === "7.0";
++	return tryRequire("typescript/package.json")?.version.startsWith("7.") === true;
+ }
+ function requireTSApi(mode = "tsc", message = ".") {
+ 	if (_ts) return _ts;
