@@ -51,7 +51,6 @@ const PORTAL_GATEWAY = "gateway.agents.cloudflare.com";
 const sessionDuration = "720h";
 
 const upstreams = [
-  { id: "personal", url: "https://personal.masseater.dev/mcp" },
   { id: "watashi", url: "https://watashi.masseater.dev/mcp" },
   { id: "mirucord", url: "https://mirucord.masseater.dev/mcp" },
   { id: "medley", url: "https://medley-manager.masseater.dev/mcp" },
