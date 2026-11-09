@@ -3,16 +3,15 @@ import { describe, expect, test } from "vite-plus/test";
 
 import { entryOf } from "#/entities/entry";
 
-import { projectGroups } from "./projects";
+import { projects } from "./projects";
 
 const blogSlugs = pipe(
-  projectGroups,
-  Arr.flatMap(({ projects }) => projects),
+  projects,
   Arr.flatMap(({ blogs }) => blogs),
   Arr.map(({ slug }) => slug),
 );
 
-describe("projectGroups", () => {
+describe("projects", () => {
   test.each(blogSlugs)("ブログ %s が公開されている", (slug) =>
     expect(Effect.runPromise(entryOf({ category: "blogs", slug }))).resolves.toMatchObject({
       status: "found",
