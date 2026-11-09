@@ -24,7 +24,7 @@ const ACCENT: Color32 = Color32::from_rgb(0xe0, 0x8a, 0x5a);
 const FLASH: Color32 = Color32::from_rgb(0xf2, 0xc4, 0x6b);
 const RAIL_WIDTH: f32 = 340.0;
 const SLIDER_WIDTH: f32 = 150.0;
-const EDITOR_SIZE: LogicalSize<f32> = LogicalSize::new(960.0, 600.0);
+pub const EDITOR_SIZE: LogicalSize<f32> = LogicalSize::new(960.0, 600.0);
 
 #[derive(Default)]
 struct EditorState {
@@ -71,11 +71,49 @@ impl View {
 
 pub type RattleEditor = EguiEditor<App>;
 
-pub struct App {
+pub struct EditorView {
     params: Arc<RattleParams>,
     telemetry: Arc<Telemetry>,
-    gui: Option<GuiContext>,
     state: EditorState,
+}
+
+impl EditorView {
+    #[must_use]
+    pub fn new(params: Arc<RattleParams>, telemetry: Arc<Telemetry>) -> Self {
+        Self {
+            params,
+            telemetry,
+            state: EditorState::default(),
+        }
+    }
+
+    pub fn style(ctx: &egui::Context) {
+        ctx.all_styles_mut(|style| {
+            style.visuals = egui::Visuals::dark();
+            style.visuals.panel_fill = BG;
+            style.visuals.selection.bg_fill = ACCENT;
+            style.visuals.widgets.inactive.bg_fill = LINE;
+        });
+    }
+
+    pub fn show(&mut self, ui: &mut egui::Ui, setter: &ParamSetter) {
+        let (params, telemetry, state) = (&self.params, &self.telemetry, &mut self.state);
+        if let Ok(mut output) = telemetry.snapshot.lock() {
+            state.snapshot = *output.read();
+        }
+        egui::Panel::right("rail")
+            .exact_size(RAIL_WIDTH)
+            .resizable(false)
+            .show(ui, |ui| rail(ui, params, setter, telemetry));
+        egui::CentralPanel::default()
+            .frame(egui::Frame::new().fill(STAGE))
+            .show(ui, |ui| stage(ui, params, setter, telemetry, state));
+    }
+}
+
+pub struct App {
+    view: EditorView,
+    gui: Option<GuiContext>,
 }
 
 impl NiceEguiApp for App {
@@ -85,12 +123,7 @@ impl NiceEguiApp for App {
         nice_gui_ctx: GuiContext,
         _frame: &mut Frame,
     ) -> Result<(), nice_plug_egui::baseview::HandlerError> {
-        egui_ctx.all_styles_mut(|style| {
-            style.visuals = egui::Visuals::dark();
-            style.visuals.panel_fill = BG;
-            style.visuals.selection.bg_fill = ACCENT;
-            style.visuals.widgets.inactive.bg_fill = LINE;
-        });
+        EditorView::style(&egui_ctx);
         self.gui = Some(nice_gui_ctx);
         Ok(())
     }
@@ -103,18 +136,7 @@ impl NiceEguiApp for App {
         let Some(gui) = self.gui.as_ref() else {
             return;
         };
-        let setter = gui.param_setter();
-        let (params, telemetry, state) = (&self.params, &self.telemetry, &mut self.state);
-        if let Ok(mut output) = telemetry.snapshot.lock() {
-            state.snapshot = *output.read();
-        }
-        egui::Panel::right("rail")
-            .exact_size(RAIL_WIDTH)
-            .resizable(false)
-            .show(ui, |ui| rail(ui, params, &setter, telemetry));
-        egui::CentralPanel::default()
-            .frame(egui::Frame::new().fill(STAGE))
-            .show(ui, |ui| stage(ui, params, &setter, telemetry, state));
+        self.view.show(ui, &gui.param_setter());
         ui.ctx().request_repaint();
     }
 }
@@ -125,10 +147,8 @@ pub fn create(params: Arc<RattleParams>, telemetry: Arc<Telemetry>) -> Option<Ra
         RepaintNotifier::new(),
         EguiNiceSettings::new(),
         App {
-            params,
-            telemetry,
+            view: EditorView::new(params, telemetry),
             gui: None,
-            state: EditorState::default(),
         },
     )
 }

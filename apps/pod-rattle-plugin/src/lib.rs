@@ -1,4 +1,4 @@
-mod editor;
+pub mod editor;
 mod params;
 
 use atomic_float::AtomicF32;
@@ -22,6 +22,21 @@ pub struct Telemetry {
     pub target_y: AtomicF32,
 }
 
+impl Telemetry {
+    #[must_use]
+    pub fn new() -> (Self, triple_buffer::Input<Snapshot>) {
+        let (input, output) = TripleBuffer::new(&Snapshot::default()).split();
+        let telemetry = Self {
+            snapshot: Mutex::new(output),
+            dsp_load: AtomicF32::new(0.0),
+            grabbing: AtomicBool::new(false),
+            target_x: AtomicF32::new(0.0),
+            target_y: AtomicF32::new(0.0),
+        };
+        (telemetry, input)
+    }
+}
+
 pub struct PodRattle {
     params: Arc<RattleParams>,
     telemetry: Arc<Telemetry>,
@@ -33,17 +48,11 @@ pub struct PodRattle {
 
 impl Default for PodRattle {
     fn default() -> Self {
-        let (input, output) = TripleBuffer::new(&Snapshot::default()).split();
+        let (telemetry, snapshot) = Telemetry::new();
         Self {
             params: Arc::new(RattleParams::default()),
-            telemetry: Arc::new(Telemetry {
-                snapshot: Mutex::new(output),
-                dsp_load: AtomicF32::new(0.0),
-                grabbing: AtomicBool::new(false),
-                target_x: AtomicF32::new(0.0),
-                target_y: AtomicF32::new(0.0),
-            }),
-            snapshot: input,
+            telemetry: Arc::new(telemetry),
+            snapshot,
             engine: None,
             sample_rate: 48_000.0,
             since_snapshot: 0,
