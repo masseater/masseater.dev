@@ -105,7 +105,7 @@ const segmentsOf = ({ outline, missing }: VirtualInput): readonly Segment[] => [
     "  ];\n  readonly regions: readonly Region[];\n  readonly sections: readonly Section[];\n  readonly tracks: readonly [\n",
   ),
   ...trackSegments(outline),
-  text("  ];\n};\nexport { song };\nexport default song;\n"),
+  text("  ];\n};\nexport { song };\n"),
   ...missingSegments(missing),
 ];
 
