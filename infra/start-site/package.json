@@ -16,7 +16,7 @@
     "@effect/platform-node": "catalog:",
     "@masseater.dev/ui": "workspace:*",
     "@masseater.dev/web-ui": "workspace:*",
-    "@tailwindcss/vite": "4.3.4",
+    "@tailwindcss/vite": "4.3.5",
     "@tanstack/devtools-vite": "0.8.6",
     "@tanstack/react-start": "catalog:stack",
     "@vitejs/plugin-react": "catalog:",
