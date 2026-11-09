@@ -202,6 +202,7 @@ peerDependencyRules:
   allowAny:
     - vite
 allowBuilds:
+  "@r_masseater/vite-plus-adopt": true
   tesseract.js: false
   "@ast-grep/cli": true
   esbuild: true
@@ -214,7 +215,6 @@ allowBuilds:
   "@openrouter/sdk": false
   onnxruntime-node: false
   "@bufbuild/buf": true
-  "@r_masseater/vite-plus-adopt": true
 packageExtensions:
   safer-buffer@2.1.2:
     dependencies:

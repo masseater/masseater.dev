@@ -93,7 +93,7 @@ const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
   ],
   steiger: "vpa steiger apps/*/src",
   betterleaks: {
-    command: `base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then vpa betterleaks git . --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; vpa betterleaks "$tmp" --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else vpa betterleaks git . --redact --no-banner; fi`,
+    command: `sh -c 'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then vpa betterleaks git . --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; vpa betterleaks "$tmp" --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else vpa betterleaks git . --redact --no-banner; fi'`,
     cache: false,
   },
   "betterleaks:staged": {
