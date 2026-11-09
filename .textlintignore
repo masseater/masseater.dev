@@ -1,7 +1,6 @@
 AGENTS.md
 .agents/skills/**
 .claude/worktrees/**
-CHANGELOG.md
 apps/zenn-articles/**
 **/.venv/**
 **/.cache/**
