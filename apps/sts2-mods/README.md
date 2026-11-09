@@ -25,9 +25,8 @@
    vp run build MapDrawUndo           # 1 つだけ
    vp run publish MyFirstMod          # 画像・テキストを変えたとき (.pck も書き出す)
    ```
-6. ゲームを起動し「設定 → Mod Settings」に Mod が出れば成功
 
-タスクの一覧は `vp run`(選択画面が出る)か `vite.config.ts` を見てください。
+ゲームを起動し、「設定 → Mod Settings」に Mod が出れば配置できている。タスクの一覧は `vp run`(選択画面が出る)か `vite.config.ts` を見てください。
 
 ## 開発のルール
 
