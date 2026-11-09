@@ -80,7 +80,6 @@ const ARCHIVES: ReadonlySet<string> = new Set([
   "rpp-kit",
   "sts2-mods",
   "thumb-mosaic",
-  "vocablint",
 ]);
 
 const isArchiving = (repository: ManagedRepository): boolean => ARCHIVES.has(repository.name);
