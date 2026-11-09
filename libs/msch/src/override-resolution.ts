@@ -290,4 +290,4 @@ export {
   withBaselineProbe,
   withoutOverride,
 };
-export type { Findings, OverrideKey, OverrideReport, PackageChange, Resolution };
+export type { Findings, OverrideKey, OverrideReport, Resolution };

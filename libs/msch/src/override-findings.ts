@@ -47,3 +47,4 @@ const overrideProblem =
   };
 
 export { overrideProblem };
+export type { LocatedOverride };
