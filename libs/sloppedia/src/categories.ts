@@ -1,4 +1,4 @@
-import { Array as Arr, Order, pipe } from "effect";
+import { Array as Arr, Order, String as Str, pipe } from "effect";
 
 import { newestFirst } from "./article.ts";
 import type { Article } from "./article.ts";
@@ -27,13 +27,23 @@ const categoriesOf = <Item extends Article>(
     Arr.sortWith(({ name }) => name, Order.String),
   );
 
-const RECENT_COUNT = 8;
+const BOX_COUNT = 8;
 
 const recentOf = <Item extends Article>(articles: readonly Item[]): readonly Item[] =>
-  Arr.take(newestFirst(articles), RECENT_COUNT);
+  Arr.take(newestFirst(articles), BOX_COUNT);
 
-const byTitle = <Item extends Article>(articles: readonly Item[]): readonly Item[] =>
-  Arr.sortWith(articles, ({ title }) => title, Order.String);
+const randomOf = <Item extends Article>(articles: readonly Item[]): readonly Item[] =>
+  Arr.take(
+    Arr.sortWith(
+      articles,
+      ({ slug }) => {
+        const shift = articles.length % slug.length;
+        return Str.slice(shift, shift + slug.length)(slug + slug);
+      },
+      Order.String,
+    ),
+    BOX_COUNT,
+  );
 
 export type { WikiCategory };
-export { byTitle, categoriesOf, recentOf };
+export { categoriesOf, randomOf, recentOf };

@@ -2,8 +2,6 @@ import { plugin as shadcn } from "@shadcn/lint";
 import tanstackQuery from "@tanstack/eslint-plugin-query";
 import tanstackRouter from "@tanstack/eslint-plugin-router";
 import baselineJs from "eslint-plugin-baseline-js";
-import { defineConfig } from "vite-plus";
-
 import {
   allRulesOf,
   decisionPluginName,
@@ -13,10 +11,12 @@ import {
   pluginRules,
   restrictedImports,
   shadcnRestyleContracts,
-} from "./lint.config.ts";
-import { readonlyParameterAllow } from "./readonly-types.config.ts";
-import { writerOnlyOverride } from "./record-lint.config.ts";
-import { workerOverride } from "./worker-lint.config.ts";
+} from "oxlint-masseater-plugin";
+import { alchemyOverride, scriptsOverride } from "oxlint-masseater-plugin/lint-overrides";
+import { readonlyParameterAllow } from "oxlint-masseater-plugin/readonly-types";
+import { writerOnlyOverride } from "oxlint-masseater-plugin/record-lint";
+import { workerOverride } from "oxlint-masseater-plugin/worker-lint";
+import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   test: {
@@ -78,7 +78,7 @@ export default defineConfig({
       { name: "baseline-js", specifier: "eslint-plugin-baseline-js" },
       { name: "@html-eslint/react", specifier: "@html-eslint/eslint-plugin-react" },
       { name: "eslint-js", specifier: "oxlint-plugin-eslint" },
-      { name: decisionPluginName, specifier: "./decision-rules.ts" },
+      { name: decisionPluginName, specifier: "oxlint-masseater-plugin/decision-rules" },
     ],
     rules: {
       "vite-plus/prefer-vite-plus-imports": "error",
@@ -155,32 +155,9 @@ export default defineConfig({
       "react/only-export-components": ["error", { allowExportNames: ["Route"] }],
     },
     overrides: [
+      alchemyOverride,
       {
-        files: ["**/alchemy.run.ts"],
-        rules: {
-          "eslint-js/no-restricted-syntax": [
-            "error",
-            {
-              selector: 'CallExpression[callee.name="Stack"]:not([arguments.0.name="APP_NAME"])',
-              message: "スタック名には app-name.ts の APP_NAME を渡す",
-            },
-            {
-              selector:
-                'Program:not(:has(YieldExpression[delegate=true] > Identifier.argument[name="requireAppPrefix"]))',
-              message:
-                "スタックの最後で app-name.ts の requireAppPrefix を yield* して、リソース名の prefix を検査する",
-            },
-            {
-              selector:
-                'CallExpression[callee.name="Stack"] > .arguments:nth-child(3):not(:has(FunctionExpression > BlockStatement > ExpressionStatement:nth-last-child(2) > YieldExpression[delegate=true] > Identifier.argument[name="requireAppPrefix"]))',
-              message:
-                "スタックの最後で app-name.ts の requireAppPrefix を yield* して、リソース名の prefix を検査する",
-            },
-          ],
-        },
-      },
-      {
-        files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "decision-rules.ts"],
+        files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "**/decision-rules.ts"],
         rules: { "import/no-default-export": "off" },
       },
       {
@@ -197,6 +174,7 @@ export default defineConfig({
         files: ["apps/aredoko-server/src/app/**"],
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
       },
+      scriptsOverride,
       {
         files: ["**/*.test.ts"],
         rules: decisionTestRules,
@@ -266,7 +244,7 @@ export default defineConfig({
           "steiger",
           "db-check-all",
           "fallow",
-          "gitleaks",
+          "betterleaks",
           "audit",
           "sloppedia#size",
           "scrap-userscript#release-check",
@@ -289,8 +267,14 @@ export default defineConfig({
           'before="$(cksum pnpm-workspace.yaml)"; vp pm audit --fix || exit; if [ "$before" != "$(cksum pnpm-workspace.yaml)" ]; then echo "vp pm audit --fix rewrote pnpm-workspace.yaml. Run vp install and commit the diff." >&2; exit 1; fi',
         cache: false,
       },
-      gitleaks: {
-        command: "go run github.com/zricethezav/gitleaks/v8@v8.30.1 git --redact --no-banner",
+      betterleaks: {
+        command:
+          'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then .tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; .tooling/bin/betterleaks "$tmp" --config .betterleaks.toml --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else .tooling/bin/betterleaks git . --config .betterleaks.toml --redact --no-banner; fi',
+        cache: false,
+      },
+      "betterleaks:staged": {
+        command:
+          "git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | .tooling/bin/betterleaks stdin --git-diff --config .betterleaks.toml --redact --no-banner",
         cache: false,
       },
     },

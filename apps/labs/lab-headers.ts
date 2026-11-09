@@ -1,15 +1,15 @@
-import { headerLines, sourceHash } from "@masseater.dev/static-headers";
 import { webAnalyticsBeacon } from "@masseater.dev/ui/web-analytics";
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
+import {
+  ASSET_CACHE_CONTROL,
+  SECURITY_HEADERS_CREDENTIALLESS,
+  contentSecurityPolicy,
+} from "security-headers";
+import { headerLines, sourceHash } from "security-headers/static";
 import type { Plugin, Rolldown } from "vite-plus";
 
 import { CF_BEACON_TOKEN } from "./cloudflare.ts";
 import { ASSETS_DIR, PAGE_SCRIPT_SOURCES } from "./pages.ts";
-import {
-  ASSET_CACHE_CONTROL,
-  SECURITY_HEADERS,
-  contentSecurityPolicy,
-} from "./security-headers.ts";
 
 const HEADERS_FILE = "_headers";
 const PAGE_HTML = /^(?<page>[^/]+)\/index\.html$/u;
@@ -32,13 +32,15 @@ const styleBodies = (html: string): readonly string[] =>
 
 const pageRule = ({ page, hashes }: PageStyles): readonly string[] => [
   `/${page}/*`,
-  ...headerLines(SECURITY_HEADERS),
+  ...headerLines(SECURITY_HEADERS_CREDENTIALLESS),
   `  Content-Security-Policy: ${contentSecurityPolicy({
-    scriptSources: pipe(
+    script: pipe(
       Rec.get(PAGE_SCRIPT_SOURCES, page),
       Option.getOrElse((): readonly string[] => []),
     ),
-    styleHashes: hashes,
+    style: hashes,
+    image: ["blob:"],
+    styleAttr: true,
   })}`,
 ];
 
@@ -47,7 +49,7 @@ const headersFile = (pages: readonly PageStyles[]): string =>
     [
       ...pipe(pages, Arr.flatMap(pageRule)),
       `/${ASSETS_DIR}/*`,
-      ...headerLines(SECURITY_HEADERS),
+      ...headerLines(SECURITY_HEADERS_CREDENTIALLESS),
       `  Cache-Control: ${ASSET_CACHE_CONTROL}`,
       "",
     ],

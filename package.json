@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prepare": "vp config && effect-tsgo patch --typescript --oxlint && skills experimental_install --force"
+    "prepare": "vp config && effect-tsgo patch --typescript --oxlint && skills experimental_install --force && vp exec node scripts/install-betterleaks.ts"
   },
   "devDependencies": {
     "@ast-grep/cli": "catalog:",
@@ -14,9 +14,7 @@
     "@eslint-react/eslint-plugin": "catalog:",
     "@feature-sliced/steiger-plugin": "0.8.2",
     "@html-eslint/eslint-plugin-react": "catalog:",
-    "@r_masseater/oxlint-plugin-decision": "catalog:",
     "@r_masseater/oxlint-typed-rules": "catalog:",
-    "@r_masseater/workers-tracing": "catalog:stack",
     "@shadcn/lint": "catalog:",
     "@tanstack/eslint-plugin-query": "catalog:",
     "@tanstack/eslint-plugin-router": "catalog:",
@@ -29,6 +27,7 @@
     "eslint-plugin-no-comments": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
     "fallow": "catalog:stack",
+    "oxlint-masseater-plugin": "workspace:*",
     "oxlint-plugin-eslint": "catalog:",
     "renovate": "catalog:stack",
     "skills": "catalog:",
@@ -46,7 +45,7 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "12.17.0",
+      "version": "12.18.0",
       "onFail": "download"
     }
   },
