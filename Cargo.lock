@@ -4305,7 +4305,7 @@ dependencies = [
 
 [[package]]
 name = "pod_rattle"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "atomic_float",
  "egui",
