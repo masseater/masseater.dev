@@ -3,8 +3,25 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import { defineConfig } from "vite-plus";
+import type { PluginOption } from "vite-plus";
 
-export default defineConfig({
+const appPlugins = (mode: string): PluginOption[] => {
+  if (mode === "test") {
+    return [];
+  }
+  return [
+    tailwindcss(),
+    tanstackStart({
+      srcDirectory: "src/app",
+      router: { routeTreeFileHeader: [] },
+      rsc: { enabled: true },
+    }),
+    rsc(),
+    viteReact(),
+  ];
+};
+
+export default defineConfig(({ mode }) => ({
   run: {
     tasks: {
       dev: { command: "alchemy dev", cache: false },
@@ -23,15 +40,9 @@ export default defineConfig({
     },
   },
   resolve: { tsconfigPaths: true },
-  test: { include: ["src/**/*.test.{ts,tsx}"] },
-  plugins: [
-    tailwindcss(),
-    tanstackStart({
-      srcDirectory: "src/app",
-      router: { routeTreeFileHeader: [] },
-      rsc: { enabled: true },
-    }),
-    rsc(),
-    viteReact(),
-  ],
-});
+  test: {
+    include: ["src/**/*.test.{ts,tsx}"],
+    server: { deps: { external: ["miniflare", "workerd"] } },
+  },
+  plugins: appPlugins(mode),
+}));
