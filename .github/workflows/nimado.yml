@@ -1,0 +1,121 @@
+name: nimado
+
+on:
+  schedule:
+    - cron: "30 23 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: nimado
+  queue: max
+
+env:
+  STATE: ${{ github.workspace }}/.nimado-state
+  RELEASE: nimado-data
+
+jobs:
+  collect:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    permissions:
+      actions: write
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+        with:
+          run-install: |
+            - args: ['--frozen-lockfile', '--filter', 'nimado-collect...', '--filter', 'nimado...']
+      - name: restore state
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$STATE"
+          if gh release view "$RELEASE" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release download "$RELEASE" --repo "$GITHUB_REPOSITORY" --dir "$STATE" --clobber
+            for file in "$STATE"/*.json.gz; do
+              [ -e "$file" ] && gzip -d -f "$file"
+            done
+            if [ -e "$STATE/nico-days.tar.gz" ]; then
+              tar -xzf "$STATE/nico-days.tar.gz" -C "$STATE"
+              rm "$STATE/nico-days.tar.gz"
+            fi
+          else
+            gh release create "$RELEASE" --repo "$GITHUB_REPOSITORY" --prerelease --title "nimado data" \
+              --notes "nimado の曲の対応表とニコニコの再生数。YouTube の値は置かない。"
+          fi
+      - id: youtube-state
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .nimado-state/youtube.json
+            .nimado-state/data/days/youtube
+          key: nimado-youtube-${{ github.run_id }}
+          restore-keys: |
+            nimado-youtube-
+      - name: catalog
+        run: vp run collect catalog --state "$STATE"
+        working-directory: tools/nimado-collect
+        continue-on-error: true
+      - name: niconico
+        run: vp run collect nico --state "$STATE"
+        working-directory: tools/nimado-collect
+        continue-on-error: true
+      - name: youtube
+        run: vp run collect youtube --state "$STATE"
+        working-directory: tools/nimado-collect
+        continue-on-error: true
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      - name: publish
+        run: vp run collect publish --state "$STATE" --out "$GITHUB_WORKSPACE/apps/nimado/published"
+        working-directory: tools/nimado-collect
+      - uses: masseater/typescript-template/.github/actions/credentials@ed56db507aa25c3ced8a2e770d24238e6622334d
+      - name: deploy data
+        run: vp exec alchemy deploy alchemy.data.ts --stage data --yes
+        working-directory: apps/nimado
+      - name: drop old data versions
+        run: vp run collect prune
+        working-directory: tools/nimado-collect
+      - name: save state
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/upload"
+          gzip -c "$STATE/catalog.json" > "$RUNNER_TEMP/upload/catalog.json.gz"
+          gzip -c "$STATE/nico.json" > "$RUNNER_TEMP/upload/nico.json.gz"
+          tar -czf "$RUNNER_TEMP/upload/nico-days.tar.gz" -C "$STATE" data/days/nico
+          gh release upload "$RELEASE" --repo "$GITHUB_REPOSITORY" --clobber "$RUNNER_TEMP"/upload/*
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .nimado-state/youtube.json
+            .nimado-state/data/days/youtube
+          key: nimado-youtube-${{ github.run_id }}
+      - name: drop old youtube state
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP: nimado-youtube-${{ github.run_id }}
+        run: |
+          gh cache list --repo "$GITHUB_REPOSITORY" --key nimado-youtube- --limit 100 --json key --jq '.[].key' |
+            { grep -vxF "$KEEP" || true; } |
+            xargs -r -n 1 gh cache delete --repo "$GITHUB_REPOSITORY"
+
+  ci-telemetry:
+    needs: [collect]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ed56db507aa25c3ced8a2e770d24238e6622334d
+        with:
+          github-token: ${{ github.token }}
