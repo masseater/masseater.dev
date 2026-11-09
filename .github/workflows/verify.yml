@@ -112,7 +112,7 @@ jobs:
       - run: vp exec --filter portfolio alchemy deploy --config alchemy.zone.ts --stage prod --yes
 
   mcp-portal:
-    needs: [deploy, watashi-mcp]
+    needs: [deploy, watashi-mcp, personal-mcp]
     if: needs.deploy.outputs.latest == 'true'
     runs-on: ubuntu-latest
     environment: mcp-portal
@@ -179,6 +179,25 @@ jobs:
       - uses: masseater/typescript-template/.github/actions/credentials@ed56db507aa25c3ced8a2e770d24238e6622334d
       - uses: $/.github/actions/setup
       - run: vp exec --filter watashi-mcp alchemy deploy --stage prod --yes
+
+  personal-mcp:
+    needs: deploy
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    environment: personal-mcp
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: personal-mcp
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@ed56db507aa25c3ced8a2e770d24238e6622334d
+      - uses: $/.github/actions/setup
+      - run: vp exec --filter personal-mcp alchemy deploy --stage prod --yes
+      - run: vp run --filter personal-mcp access-check
 
   medley-manager:
     needs: deploy
@@ -620,6 +639,7 @@ jobs:
         trace-check,
         three-twelve,
         watashi-mcp,
+        personal-mcp,
         rpp-kit,
         nimado,
         medley-manager,
