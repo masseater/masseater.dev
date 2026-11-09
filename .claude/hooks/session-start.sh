@@ -17,29 +17,18 @@ for chrome in /opt/pw-browsers/chromium-*/chrome-linux*/chrome; do
   fi
 done
 
-WEAVER_VERSION=0.28.0
-WEAVER_SHA256=9878e2d56ad82ae441b0b527377a4f6001ae19f4af362fb0a4d951884f59ab61
-if ! command -v weaver >/dev/null 2>&1; then
-  weaver_dir="$HOME/.local/share/weaver-$WEAVER_VERSION"
-  archive="$(mktemp)"
-  curl -fsSL -o "$archive" "https://github.com/open-telemetry/weaver/releases/download/v$WEAVER_VERSION/weaver-x86_64-unknown-linux-gnu.tar.xz"
-  echo "$WEAVER_SHA256  $archive" | sha256sum -c - >&2
-  mkdir -p "$weaver_dir"
-  tar -xJf "$archive" -C "$weaver_dir" --strip-components=1
-  rm -f "$archive"
-  echo "export PATH=\"$weaver_dir:\$PATH\"" >>"$CLAUDE_ENV_FILE"
-fi
-
 cd "$CLAUDE_PROJECT_DIR"
 mapfile -t linux_packages <.github/actions/setup/linux-packages.txt
 if ! dpkg -s "${linux_packages[@]}" >/dev/null 2>&1; then
   apt-get update -qq >&2
   apt-get install -y -qq "${linux_packages[@]}" >&2
 fi
-if ! command -v dotnet >/dev/null 2>&1; then
-  curl -fsSL https://dot.net/v1/dotnet-install.sh |
-    bash -s -- --jsonfile apps/sts2-mods/global.json --install-dir "$HOME/.dotnet" >&2
-  echo "export PATH=\"$HOME/.dotnet:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1" >>"$CLAUDE_ENV_FILE"
+if ! command -v mise >/dev/null 2>&1; then
+  curl -fsSL https://mise.run | sh >&2
+  export PATH="$HOME/.local/bin:$PATH"
 fi
+mise trust --quiet mise.toml
+mise install --locked >&2
+echo "export PATH=\"$HOME/.local/bin:$HOME/.local/share/mise/shims:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1" >>"$CLAUDE_ENV_FILE"
 vp env on >&2
 vp install --frozen-lockfile >&2

@@ -1,0 +1,9 @@
+[tools]
+actionlint = "1.7.12"
+betterleaks = "2.0.0-rc.7"
+dotnet = "10.0.403"
+"github:open-telemetry/weaver" = "0.28.0"
+zizmor = "1.32.0"
+
+[settings]
+lockfile = true
