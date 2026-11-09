@@ -263,6 +263,7 @@ export {
   locationOf,
 };
 export type {
+  CachedIndex,
   DeclarationLocation,
   LibraryCache,
   LibraryIndex,

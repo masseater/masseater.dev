@@ -239,4 +239,4 @@ const mentions =
     });
 
 export { listConfigFiles, mentions, typeScriptCompiler, withProject };
-export type { Project, Workspace };
+export type { Compiler, Project, Workspace };

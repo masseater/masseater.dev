@@ -63,4 +63,4 @@ const annotateResources = (api: API): Effect.Effect<void, never, RepositoryFiles
     });
   });
 
-export { annotateMemory, annotateResources };
+export { annotateResources };
