@@ -5,6 +5,8 @@ import { playwright } from "vite-plus/test/browser-playwright";
 
 const DEV_PORT = 1430;
 
+const FONTCONFIG_FILE = `${import.meta.dirname}/fontconfig/fonts.conf`;
+
 const ALLOWED_MISMATCHED_PIXELS = 0.002;
 
 export default defineConfig({
@@ -13,7 +15,7 @@ export default defineConfig({
       enabled: true,
       headless: true,
       provider: playwright({
-        launchOptions: { channel: "chrome" },
+        launchOptions: { channel: "chrome", env: { FONTCONFIG_FILE } },
       }),
       instances: [{ browser: "chromium" }],
       viewport: { width: 1180, height: 760 },

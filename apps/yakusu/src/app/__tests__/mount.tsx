@@ -36,6 +36,10 @@ const mount = (engine: Engine): Effect.Effect<void, never, Scope.Scope> =>
       style.remove();
       document.documentElement.classList.remove("dark");
     }),
-  ).pipe(Effect.andThen(Effect.promise(() => document.fonts.ready)));
+  ).pipe(
+    Effect.andThen(
+      Effect.promise(() => Promise.all(Array.from(document.fonts, (face) => face.load()))),
+    ),
+  );
 
 export { mount };
