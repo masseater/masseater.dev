@@ -2,9 +2,9 @@ import { nameTransition } from "@masseater.dev/ui";
 import type { ReactNode } from "react";
 
 import type { Entry } from "#/entities/entry/model/entry";
+import { TagList } from "#/shared/ui";
 
 import { entryMetaTransition } from "./entry-transition";
-import { TagList } from "./tag-list";
 
 const DRAFT_LABEL = "下書き";
 
