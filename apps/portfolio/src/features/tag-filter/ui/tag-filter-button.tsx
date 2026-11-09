@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { CollectionSearch } from "#/pages/collection/model/search";
+import type { TagSearch } from "#/features/tag-filter/model/search";
 
 const TagFilterButton = ({
   active,
@@ -11,8 +11,8 @@ const TagFilterButton = ({
 }: Readonly<{
   active: boolean;
   children: string;
-  onSelect: (search: CollectionSearch) => void;
-  search: CollectionSearch;
+  onSelect: (search: TagSearch) => void;
+  search: TagSearch;
 }>): ReactNode => {
   const select = useCallback(() => {
     onSelect(search);

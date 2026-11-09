@@ -2,14 +2,14 @@ import { Option, Schema } from "effect";
 
 const SearchSchema = Schema.Struct({ tag: Schema.optionalKey(Schema.String) });
 
-type CollectionSearch = typeof SearchSchema.Type;
+type TagSearch = typeof SearchSchema.Type;
 
 const decodeSearch = Schema.decodeUnknownOption(SearchSchema);
 
-const allTags: CollectionSearch = {};
+const allTags: TagSearch = {};
 
-const validateCollectionSearch = (search: unknown): CollectionSearch =>
+const validateTagSearch = (search: unknown): TagSearch =>
   Option.getOrElse(decodeSearch(search), () => allTags);
 
-export type { CollectionSearch };
-export { allTags, validateCollectionSearch };
+export type { TagSearch };
+export { allTags, validateTagSearch };

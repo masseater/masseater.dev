@@ -8,7 +8,7 @@
 
 ## 構成
 
-- `apps/portfolio` は TanStack Start（RSC）で全ページをプリレンダーし、`Website.StaticSite` で静的サイトとして Cloudflare に置く。blogs と sloppedia の記事は `apps/portfolio/content/` の Markdown を `import.meta.glob` で読む。`/projects` は記事を持たず、`src/pages/projects/model/projects.ts` に並べた名前・1 行の説明・実物へのリンクだけを出す。詳しい説明は blogs に書き、そこへリンクする。`apps/portfolio/app-name.ts` の `APP_NAME` を変えるとリソースは作り直される。
+- `apps/portfolio` は TanStack Start（RSC）で全ページをプリレンダーし、`Website.StaticSite` で静的サイトとして Cloudflare に置く。blogs と sloppedia の記事は `apps/portfolio/content/` の Markdown を `import.meta.glob` で読む。`/projects` は記事を持たず、`src/pages/projects/model/projects.ts` に並べた名前・1 行の説明・種類のタグ（site・package など）・実物へのリンクだけを出す。タグの絞り込みは blogs と同じ `features/tag-filter` を使う。詳しい説明は blogs に書き、そこへリンクする。`apps/portfolio/app-name.ts` の `APP_NAME` を変えるとリソースは作り直される。
 - `apps/portfolio` の直下にはスタックと設定だけを置き、Worker は `worker/`、Vite と Markdown のプラグインは `vite-plugins/`、手で動かすスクリプトは `scripts/` に置く。
 - 静的サイトの Worker（`worker/site.worker.ts`）は `/api/stars/*` だけを先に受け、blogs の star を D1 に数える。同じ IP からの star は 1 記事 1 つで、IP は `VISITOR_SALT` を混ぜたハッシュで持つ。ほかのリクエストは静的アセットに渡す。
 - サイトを出すためのリソースは `apps/portfolio` のスタックに近接して置く。ゾーンやアカウント全体に効く部品は `infra/cloudflare-account` に置き、`apps/portfolio` のスタックが名前を渡して作る。`alchemy.run.ts` は prod ステージでだけ `edge-guard.ts`・`log-archive.ts`・`account-readers.ts` の読み取り用トークンを作る。`edge-guard.ts` はスキャナーを弾く WAF ルールとハニーポットの Worker を、`log-archive.ts` は全 Worker のログを R2 に送る Logpush を持つ。トレースの送信先は、`alchemy.traces.ts` のスタックが `@r_masseater/workers-tracing` の `traceSink` で作る。

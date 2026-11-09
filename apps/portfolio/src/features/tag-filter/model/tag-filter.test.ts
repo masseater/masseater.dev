@@ -1,20 +1,14 @@
 import { Option } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
-import type { Entry } from "#/entities/entry";
-
 import { tagCounts, withTag } from "./tag-filter";
 
-const entry = (slug: string, tags: readonly string[]): Entry => ({
-  category: "blogs",
+const entry = (
+  slug: string,
+  tags: readonly string[],
+): Readonly<{ slug: string; tags: readonly string[] }> => ({
   slug,
-  title: slug,
-  description: "",
-  date: "2026-10-24",
-  updated: "2026-10-24",
   tags,
-  infobox: [],
-  status: "published",
 });
 
 const both = entry("a", ["OSS", "CI"]);
