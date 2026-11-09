@@ -1,37 +1,17 @@
-import { Array as Arr, Match, Option, Schema, String as Str, pipe } from "effect";
-
-const Block = Schema.Struct({
-  type: Schema.String,
-  text: Schema.optionalKey(Schema.String),
-});
-
-const Blocks = Schema.Array(Block);
-
-const Content = Schema.Union([Schema.String, Blocks]);
-
-const Message = Schema.Struct({ content: Content });
-
-const TranscriptUserLine = Schema.Struct({
-  type: Schema.Literal("user"),
-  uuid: Schema.String,
-  timestamp: Schema.String,
-  isMeta: Schema.optionalKey(Schema.Boolean),
-  isSidechain: Schema.optionalKey(Schema.Boolean),
-  isCompactSummary: Schema.optionalKey(Schema.Boolean),
-  message: Message,
-});
-
-type UserLine = typeof TranscriptUserLine.Type;
+import { parseJsonlLines } from "claude-code-jsonl-parser";
+import type { ParsedLine, UserContentBlock } from "claude-code-jsonl-parser";
+import { Array as Arr, Match, Option, String as Str, pipe } from "effect";
 
 type Utterance = Readonly<{ uuid: string; timestamp: string; text: string }>;
 
-const decodeLine = Schema.decodeOption(Schema.fromJsonString(TranscriptUserLine));
+type Candidate = Readonly<{ uuid: string; timestamp: string; owner: boolean; text: string }>;
 
 const WAKE = /<wake[\s>]/u;
 const SPOKEN =
   /<message\b[^>]*\bfrom="human"[^>]*>(?<message>[\s\S]*?)<\/message>|<cited\b[^>]*\bauthor="user"[^>]*>(?<cited>[\s\S]*?)<\/cited>/gu;
 const REMINDER = /<system-reminder>[\s\S]*?<\/system-reminder>/gu;
 const MACHINE = /^<(?:local-command-|bash-stdout|bash-stderr|task-notification)/u;
+const HUMAN = "human";
 const ENTITIES: readonly (readonly [RegExp, string])[] = [
   [/&lt;/gu, "<"],
   [/&gt;/gu, ">"],
@@ -45,17 +25,34 @@ const unescape = (text: string): string =>
     Str.replaceAll(pattern, value)(current),
   );
 
-const blockText = (block: typeof Block.Type): Option.Option<string> =>
-  pipe(
-    Option.liftPredicate(block, (candidate) => candidate.type === "text"),
-    Option.flatMap((candidate) => Option.fromUndefinedOr(candidate.text)),
-  );
+const blockText = Match.type<UserContentBlock>().pipe(
+  Match.when({ _kind: "known", type: "text" }, (block) => Option.some(block.text)),
+  Match.orElse(() => Option.none<string>()),
+);
 
-const contentText = (content: typeof Content.Type): string =>
-  Match.value(content).pipe(
-    Match.when(Str.isString, (text) => text),
-    Match.orElse((blocks) => pipe(blocks, Arr.map(blockText), Arr.getSomes, Arr.join("\n"))),
-  );
+const contentText = Match.type<string | readonly UserContentBlock[]>().pipe(
+  Match.when(Str.isString, (text) => text),
+  Match.orElse((blocks) => pipe(blocks, Arr.map(blockText), Arr.getSomes, Arr.join("\n"))),
+);
+
+const candidateOf = Match.type<ParsedLine>().pipe(
+  Match.when({ _kind: "known", type: "user" }, (entry) =>
+    Option.some<Candidate>({
+      uuid: entry.uuid,
+      timestamp: entry.timestamp,
+      owner:
+        entry.isMeta !== true &&
+        !entry.isSidechain &&
+        entry.isCompactSummary !== true &&
+        Option.match(Option.fromUndefinedOr(entry.origin), {
+          onNone: () => true,
+          onSome: (origin) => origin.kind === HUMAN,
+        }),
+      text: contentText(entry.message.content),
+    }),
+  ),
+  Match.orElse(() => Option.none<Candidate>()),
+);
 
 const spokenOf = (match: RegExpMatchArray): Option.Option<string> =>
   pipe(
@@ -78,28 +75,25 @@ const typedIn = (text: string): readonly string[] =>
     Option.toArray,
   );
 
-const ownerOf = (line: UserLine): boolean =>
-  line.isMeta !== true && line.isSidechain !== true && line.isCompactSummary !== true;
-
-const textsOf = (line: UserLine): readonly string[] =>
-  Match.value(contentText(line.message.content)).pipe(
-    Match.when((text) => WAKE.test(text), spokenIn),
+const textsOf = (text: string): readonly string[] =>
+  Match.value(text).pipe(
+    Match.when((value) => WAKE.test(value), spokenIn),
     Match.orElse(typedIn),
   );
 
-const utterancesOf = (line: UserLine): readonly Utterance[] =>
+const utterancesOf = (candidate: Candidate): readonly Utterance[] =>
   pipe(
-    textsOf(line),
+    textsOf(candidate.text),
     Arr.filter(Str.isNonEmpty),
-    Arr.map((text) => ({ uuid: line.uuid, timestamp: line.timestamp, text })),
+    Arr.map((text) => ({ uuid: candidate.uuid, timestamp: candidate.timestamp, text })),
   );
 
 const ownerUtterances = (jsonl: string): readonly Utterance[] =>
   pipe(
-    Str.split(jsonl, "\n"),
-    Arr.map((line) => decodeLine(line)),
+    Arr.fromIterable(parseJsonlLines(jsonl)),
+    Arr.map(candidateOf),
     Arr.getSomes,
-    Arr.filter(ownerOf),
+    Arr.filter((candidate) => candidate.owner),
     Arr.flatMap(utterancesOf),
   );
 
