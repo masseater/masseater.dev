@@ -9,7 +9,11 @@
         "allowedUnstableApis": [
           "@effect/platform-node/NodeRuntime#runMain",
           "@effect/platform-node/NodeServices#layer",
-          "effect/Stdio#Stdio"
+          "@effect/vitest#layer",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/Stdio#Stdio",
+          "effect/process/ChildProcess#make"
         ]
       }
     ]

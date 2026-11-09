@@ -1,15 +1,7 @@
-import {
-  Array as Arr,
-  Effect,
-  Function as Fn,
-  Option,
-  Order,
-  Predicate,
-  String as Str,
-  pipe,
-} from "effect";
-import ts from "typescript-6";
+import { Array as Arr, Effect, Function as Fn, Option, Order, String as Str, pipe } from "effect";
 
+import { API, getLeadingCommentRanges } from "./compiler.ts";
+import type { Checker, ParsedCommandLine, Program, SourceFile } from "./compiler.ts";
 import {
   MANIFEST_FILE,
   NODE_MODULES,
@@ -24,8 +16,9 @@ import { RepositoryFiles } from "./repository-files.ts";
 interface Project {
   readonly packageName: Option.Option<string>;
   readonly workspaceDependencies: readonly string[];
-  readonly program: ts.Program;
-  readonly sourceFiles: readonly ts.SourceFile[];
+  readonly program: Program;
+  readonly checker: Checker;
+  readonly sourceFiles: readonly SourceFile[];
   readonly library: LibraryIndex;
 }
 
@@ -76,15 +69,12 @@ const listConfigFiles = (
     return Arr.sort(nested.flat(), Order.String);
   });
 
-const configHost: ts.ParseConfigFileHost = {
-  ...ts.sys,
-  onUnRecoverableConfigFileDiagnostic: Fn.constVoid,
-};
-
-const parseConfig = (configPath: string): Option.Option<ts.ParsedCommandLine> =>
-  Option.fromUndefinedOr(ts.getParsedCommandLineOfConfigFile(configPath, {}, configHost)).pipe(
-    Option.filter((parsed) => Arr.isReadonlyArrayNonEmpty(parsed.fileNames)),
-  );
+const parseConfig =
+  (api: API) =>
+  (configPath: string): Option.Option<ParsedCommandLine> =>
+    Option.some(api.parseConfigFile(configPath)).pipe(
+      Option.filter((parsed) => Arr.isReadonlyArrayNonEmpty(parsed.fileNames)),
+    );
 
 const nearestPackageDirectory = (
   directory: string,
@@ -120,97 +110,66 @@ const packageInfoOf = Effect.fn("packageInfoOf")(function* packageInfoOf(
 const NO_CHECK_PRAGMA = /^\/\/\s*@ts-nocheck/u;
 const FILE_START = 0;
 
-const skipsTypeChecking = (sourceFile: ts.SourceFile): boolean =>
+const skipsTypeChecking = (sourceFile: SourceFile): boolean =>
   pipe(
-    ts.getLeadingCommentRanges(sourceFile.text, FILE_START) ?? [],
+    getLeadingCommentRanges(sourceFile.text, FILE_START) ?? [],
     Arr.some((range) => NO_CHECK_PRAGMA.test(Str.slice(range.pos, range.end)(sourceFile.text))),
   );
 
-const DECLARATION_EXTENSION = ".d.ts";
-
-const declarationFiles = new Map<string, ts.SourceFile>();
-
-type ReadSourceFile = ts.CompilerHost["getSourceFile"];
-
-const versionKey = (version: Readonly<ts.ScriptTarget | ts.CreateSourceFileOptions>): string => {
-  if (typeof version === "number") {
-    return `target:${String(version)}`;
-  }
-  return "options";
-};
-
-const cachedDeclaration =
-  (readSourceFile: ReadSourceFile): ReadSourceFile =>
-  (fileName, languageVersion, onError) => {
-    const key = `${fileName}\0${versionKey(languageVersion)}`;
-    const sourceFile =
-      declarationFiles.get(key) ?? readSourceFile(fileName, languageVersion, onError);
-    if (Predicate.isNotUndefined(sourceFile)) {
-      declarationFiles.set(key, sourceFile);
-    }
-    return sourceFile;
-  };
-
-const sharingDeclarations = (parsed: ts.ParsedCommandLine): ts.CompilerHost => {
-  const host = ts.createCompilerHost(parsed.options);
-  const readSourceFile = host.getSourceFile.bind(host);
-  const readDeclaration = cachedDeclaration(readSourceFile);
-  return {
-    ...host,
-    getSourceFile: (fileName, languageVersion, onError) => {
-      if (Str.endsWith(DECLARATION_EXTENSION)(fileName)) {
-        return readDeclaration(fileName, languageVersion, onError);
-      }
-      return readSourceFile(fileName, languageVersion, onError);
-    },
-  };
-};
-
 const buildProject = Effect.fn("buildProject")(function* buildProject(
-  parsed: ts.ParsedCommandLine,
+  api: API,
+  parsed: ParsedCommandLine,
   info: PackageInfo,
 ) {
   const entries = yield* dependencyEntries(info.directory);
-  const program = ts.createProgram({
-    rootNames: [
+  const program = api.createProgram(
+    [
       ...parsed.fileNames,
       ...pipe(
         entries,
         Arr.map((entry) => entry.declarationsPath),
       ),
     ],
-    options: { ...parsed.options, noEmit: true },
-    host: sharingDeclarations(parsed),
-  });
-  program.getTypeChecker();
-  const projectFiles = new Set(parsed.fileNames);
+    { ...parsed.options, noEmit: true },
+  );
+  const { checker } = program.getProject();
+  const projectFiles: ReadonlySet<string> = new Set(parsed.fileNames);
   return {
     packageName: info.name,
     workspaceDependencies: info.workspaceDependencies,
     program,
+    checker,
     sourceFiles: pipe(
-      program.getSourceFiles(),
-      Arr.filter(
-        (sourceFile) =>
-          projectFiles.has(sourceFile.fileName) &&
-          !sourceFile.isDeclarationFile &&
-          !skipsTypeChecking(sourceFile),
+      program.getSourceFileNames(),
+      Arr.filter((fileName) => projectFiles.has(fileName)),
+      Arr.flatMap((fileName) =>
+        Option.toArray(Option.fromUndefinedOr(program.getSourceFile(fileName))),
       ),
+      Arr.filter((sourceFile) => !sourceFile.isDeclarationFile && !skipsTypeChecking(sourceFile)),
     ),
-    library: libraryIndex(program)(entries),
+    library: libraryIndex(checker)(entries),
   } satisfies Project;
 });
 
+const typeScriptApi = Effect.acquireRelease(
+  Effect.sync(() => new API()),
+  (api) =>
+    Effect.sync(() => {
+      api.close();
+    }),
+);
+
 const loadProject = Effect.fn("loadProject")(function* loadProject(
+  api: API,
   configPath: string,
   root: string,
 ) {
-  const parsed = parseConfig(configPath);
+  const parsed = parseConfig(api)(configPath);
   if (Option.isNone(parsed)) {
     return Option.none<Project>();
   }
   const info = yield* packageInfoOf(configPath, root);
-  const project = yield* buildProject(parsed.value, info);
+  const project = yield* buildProject(api, parsed.value, info);
   return Option.some(project);
 });
 
@@ -218,9 +177,10 @@ const loadProjects = Effect.fn("loadProjects")(function* loadProjects(
   root: string,
   configPaths: readonly string[],
 ) {
+  const api = yield* typeScriptApi;
   const projects = yield* Fn.pipe(
     configPaths,
-    Effect.forEach((configPath) => loadProject(configPath, root)),
+    Effect.forEach((configPath) => loadProject(api, configPath, root)),
   );
   return Arr.getSomes(projects);
 });

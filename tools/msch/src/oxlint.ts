@@ -8,7 +8,7 @@ import { Option, Schema } from "effect";
 import { JSON_FLAG } from "./cli-contract.ts";
 import { mschPlugin } from "./oxlint-rule.ts";
 
-const CLI_PATH = fileURLToPath(new URL("cli.mjs", import.meta.url));
+const CLI_PATH = fileURLToPath(new URL("cli.ts", import.meta.url));
 const decodeProblems = Schema.decodeUnknownSync(Schema.fromJsonString(ProblemList));
 const loaded = new Map<string, readonly Problem[]>();
 

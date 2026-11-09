@@ -1,6 +1,22 @@
 import { Array as Arr, Option, pipe } from "effect";
-import ts from "typescript-6";
 
+import {
+  isArrayLiteralExpression,
+  isCallExpression,
+  isEnumDeclaration,
+  isTypeReferenceNode,
+  isUnionTypeNode,
+} from "./compiler.ts";
+import type {
+  ArrayLiteralExpression,
+  CallExpression,
+  Checker,
+  Expression,
+  Node,
+  TypeSymbol,
+  TypeNode,
+  UnionTypeNode,
+} from "./compiler.ts";
 import {
   childrenOf,
   declarationsOf,
@@ -12,14 +28,14 @@ import { finiteValuesOf, isSubsetOf, literalUnionOf, schemaTypeOf } from "./valu
 import type { Value } from "./values.ts";
 
 interface ValueSite {
-  readonly node: ts.Node;
+  readonly node: Node;
   readonly values: readonly Value[];
-  readonly sources: readonly ts.Symbol[];
+  readonly sources: readonly TypeSymbol[];
 }
 
 const namedValuesOf =
-  (checker: ts.TypeChecker) =>
-  (symbol: ts.Symbol): Option.Option<readonly Value[]> => {
+  (checker: Checker) =>
+  (symbol: TypeSymbol): Option.Option<readonly Value[]> => {
     if (
       pipe(
         declarationsOf(symbol),
@@ -32,34 +48,34 @@ const namedValuesOf =
   };
 
 const hasFiniteContext =
-  (checker: ts.TypeChecker) =>
-  (node: ts.Expression): boolean =>
+  (checker: Checker) =>
+  (node: Expression): boolean =>
     Option.fromUndefinedOr(checker.getContextualType(node)).pipe(
       Option.flatMap(finiteValuesOf(checker)),
       Option.isSome,
     );
 
 const expressionValuesOf =
-  (checker: ts.TypeChecker) =>
-  (node: ts.Expression): Option.Option<readonly Value[]> => {
+  (checker: Checker) =>
+  (node: Expression): Option.Option<readonly Value[]> => {
     if (hasFiniteContext(checker)(node)) {
       return Option.none();
     }
     const type = checker.getTypeAtLocation(node);
-    if (ts.isArrayLiteralExpression(node)) {
+    if (isArrayLiteralExpression(node)) {
       return finiteValuesOf(checker)(type);
     }
     return schemaTypeOf(checker)(type).pipe(Option.flatMap(literalUnionOf));
   };
 
 const selectsKeys =
-  (checker: ts.TypeChecker) =>
-  (node: ts.UnionTypeNode, values: readonly Value[]): boolean => {
+  (checker: Checker) =>
+  (node: UnionTypeNode, values: readonly Value[]): boolean => {
     const { parent } = node;
-    if (!ts.isTypeReferenceNode(parent)) {
+    if (!isTypeReferenceNode(parent)) {
       return false;
     }
-    const typeArguments: readonly ts.TypeNode[] = parent.typeArguments ?? [];
+    const typeArguments: readonly TypeNode[] = parent.typeArguments ?? [];
     return pipe(
       typeArguments,
       Arr.filter((argument) => argument !== node),
@@ -70,50 +86,50 @@ const selectsKeys =
   };
 
 const unionValuesOf =
-  (checker: ts.TypeChecker) =>
-  (node: ts.UnionTypeNode): Option.Option<readonly Value[]> =>
+  (checker: Checker) =>
+  (node: UnionTypeNode): Option.Option<readonly Value[]> =>
     literalUnionOf(checker.getTypeFromTypeNode(node)).pipe(
       Option.filter((values) => !selectsKeys(checker)(node, values)),
     );
 
-const isExpressionSite = (node: ts.Node): node is ts.ArrayLiteralExpression | ts.CallExpression =>
-  ts.isArrayLiteralExpression(node) || ts.isCallExpression(node);
+const isExpressionSite = (node: Node): node is ArrayLiteralExpression | CallExpression =>
+  isArrayLiteralExpression(node) || isCallExpression(node);
 
 const expressionSiteValuesOf =
-  (checker: ts.TypeChecker) =>
-  (node: ts.Node): Option.Option<readonly Value[]> =>
+  (checker: Checker) =>
+  (node: Node): Option.Option<readonly Value[]> =>
     Option.liftPredicate(node, isExpressionSite).pipe(Option.flatMap(expressionValuesOf(checker)));
 
 const siteValuesOf =
-  (checker: ts.TypeChecker) =>
-  (node: ts.Node): Option.Option<readonly Value[]> => {
-    if (ts.isUnionTypeNode(node)) {
+  (checker: Checker) =>
+  (node: Node): Option.Option<readonly Value[]> => {
+    if (isUnionTypeNode(node)) {
       return unionValuesOf(checker)(node);
     }
-    if (ts.isEnumDeclaration(node)) {
+    if (isEnumDeclaration(node)) {
       return literalUnionOf(checker.getTypeAtLocation(node.name));
     }
     return expressionSiteValuesOf(checker)(node);
   };
 
-const derivationScopeOf = (node: ts.Node): ts.Node => {
-  if (ts.isTypeReferenceNode(node.parent)) {
+const derivationScopeOf = (node: Node): Node => {
+  if (isTypeReferenceNode(node.parent)) {
     return node.parent;
   }
   return node;
 };
 
 const sourcesOf =
-  (checker: ts.TypeChecker) =>
-  (node: ts.Node): readonly ts.Symbol[] =>
+  (checker: Checker) =>
+  (node: Node): readonly TypeSymbol[] =>
     pipe(
       referencedSymbols(checker)(derivationScopeOf(node)),
       Arr.filter((symbol) => Option.isSome(namedValuesOf(checker)(symbol))),
     );
 
 const sitesUnder =
-  (checker: ts.TypeChecker) =>
-  (node: ts.Node): readonly ValueSite[] => {
+  (checker: Checker) =>
+  (node: Node): readonly ValueSite[] => {
     const nested = pipe(
       childrenOf(node),
       Arr.flatMap((child) => sitesUnder(checker)(child)),

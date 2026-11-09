@@ -1,6 +1,24 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
-import ts from "typescript-6";
 
+import {
+  getJSDocTags,
+  getTextOfJSDocComment,
+  isIdentifier,
+  isSourceFile,
+  isVariableDeclaration,
+  isVariableDeclarationList,
+  isVariableStatement,
+  SyntaxKind,
+} from "./compiler.ts";
+import type {
+  Checker,
+  Declaration,
+  Node,
+  SourceFile,
+  Type,
+  VariableDeclaration,
+  VariableDeclarationList,
+} from "./compiler.ts";
 import { problemAt } from "./problem.ts";
 import type { Problem } from "./problem.ts";
 import type { Project } from "./project.ts";
@@ -12,7 +30,7 @@ interface Owner {
   readonly conceptId: string;
   readonly key: string;
   readonly name: string;
-  readonly declaration: ts.VariableDeclaration;
+  readonly declaration: VariableDeclaration;
   readonly packageName: Option.Option<string>;
   readonly values: readonly Value[];
 }
@@ -23,58 +41,58 @@ interface OwnerScan {
 }
 
 interface Annotated {
-  readonly node: ts.Node;
+  readonly node: Node;
   readonly conceptId: string;
 }
 
 const OWNER_TAG = "msch";
 const FIRST_OWNER_COUNT = 1;
 
-const ownerKeyOf = (declaration: ts.Declaration): Option.Option<string> => {
-  if (!ts.isVariableDeclaration(declaration) || !ts.isIdentifier(declaration.name)) {
+const ownerKeyOf = (declaration: Declaration): Option.Option<string> => {
+  if (!isVariableDeclaration(declaration) || !isIdentifier(declaration.name)) {
     return Option.none();
   }
   return Option.some(`${declaration.getSourceFile().fileName}#${declaration.name.text}`);
 };
 
-const annotationsOf = (node: ts.Node): readonly Annotated[] =>
+const annotationsOf = (node: Node): readonly Annotated[] =>
   pipe(
-    ts.getJSDocTags(node),
+    getJSDocTags(node),
     Arr.filter((tag) => tag.tagName.text === OWNER_TAG),
-    Arr.map((tag) => ({ node, conceptId: Str.trim(ts.getTextOfJSDocComment(tag.comment) ?? "") })),
+    Arr.map((tag) => ({ node, conceptId: Str.trim(getTextOfJSDocComment(tag.comment) ?? "") })),
   );
 
-const ANNOTATABLE_KINDS: ReadonlySet<ts.SyntaxKind> = new Set([
-  ts.SyntaxKind.VariableDeclaration,
-  ts.SyntaxKind.FunctionDeclaration,
-  ts.SyntaxKind.ClassDeclaration,
-  ts.SyntaxKind.InterfaceDeclaration,
-  ts.SyntaxKind.TypeAliasDeclaration,
-  ts.SyntaxKind.EnumDeclaration,
-  ts.SyntaxKind.PropertySignature,
-  ts.SyntaxKind.PropertyAssignment,
-  ts.SyntaxKind.PropertyDeclaration,
+const ANNOTATABLE_KINDS: ReadonlySet<SyntaxKind> = new Set([
+  SyntaxKind.VariableDeclaration,
+  SyntaxKind.FunctionDeclaration,
+  SyntaxKind.ClassDeclaration,
+  SyntaxKind.InterfaceDeclaration,
+  SyntaxKind.TypeAliasDeclaration,
+  SyntaxKind.EnumDeclaration,
+  SyntaxKind.PropertySignature,
+  SyntaxKind.PropertyAssignment,
+  SyntaxKind.PropertyDeclaration,
 ]);
 
-const isAnnotatable = (node: ts.Node): boolean => ANNOTATABLE_KINDS.has(node.kind);
+const isAnnotatable = (node: Node): boolean => ANNOTATABLE_KINDS.has(node.kind);
 
-const isConstList = (list: ts.VariableDeclarationList): boolean =>
+const isConstList = (list: VariableDeclarationList): boolean =>
   Option.fromUndefinedOr(list.getFirstToken()).pipe(
-    Option.exists((token) => token.kind === ts.SyntaxKind.ConstKeyword),
+    Option.exists((token) => token.kind === SyntaxKind.ConstKeyword),
   );
 
-const isModuleStatementList = (list: ts.VariableDeclarationList): boolean =>
-  ts.isVariableStatement(list.parent) && ts.isSourceFile(list.parent.parent);
+const isModuleStatementList = (list: VariableDeclarationList): boolean =>
+  isVariableStatement(list.parent) && isSourceFile(list.parent.parent);
 
-const isModuleConstList = (node: ts.Node): node is ts.VariableDeclarationList =>
-  ts.isVariableDeclarationList(node) && isModuleStatementList(node) && isConstList(node);
+const isModuleConstList = (node: Node): node is VariableDeclarationList =>
+  isVariableDeclarationList(node) && isModuleStatementList(node) && isConstList(node);
 
-const isModuleConst = (node: ts.Node): node is ts.VariableDeclaration =>
-  ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && isModuleConstList(node.parent);
+const isModuleConst = (node: Node): node is VariableDeclaration =>
+  isVariableDeclaration(node) && isIdentifier(node.name) && isModuleConstList(node.parent);
 
 const objectValuesOf =
-  (checker: ts.TypeChecker) =>
-  (type: ts.Type): Option.Option<readonly Value[]> =>
+  (checker: Checker) =>
+  (type: Type): Option.Option<readonly Value[]> =>
     literalValuesOf(
       pipe(
         checker.getPropertiesOfType(type),
@@ -83,13 +101,13 @@ const objectValuesOf =
     );
 
 const ownerValuesOf =
-  (checker: ts.TypeChecker) =>
-  (declaration: ts.VariableDeclaration): Option.Option<readonly Value[]> => {
+  (checker: Checker) =>
+  (declaration: VariableDeclaration): Option.Option<readonly Value[]> => {
     const type = checker.getTypeAtLocation(declaration.name);
     return finiteValuesOf(checker)(type).pipe(Option.orElse(() => objectValuesOf(checker)(type)));
   };
 
-const annotationProblem = (message: string): ((node: ts.Node) => Problem) =>
+const annotationProblem = (message: string): ((node: Node) => Problem) =>
   problemAt({ rule: "owner-annotation", message });
 
 const scanned = (owners: readonly Owner[], problems: readonly Problem[]): OwnerScan => ({
@@ -110,7 +128,7 @@ const ownerOf =
     if (conceptId === "") {
       return scanned([], [annotationProblem(`@${OWNER_TAG} needs a concept id.`)(node)]);
     }
-    const values = ownerValuesOf(project.program.getTypeChecker())(node);
+    const values = ownerValuesOf(project.checker)(node);
     return Option.match(Option.all([values, ownerKeyOf(node)]), {
       onNone: () =>
         scanned(
@@ -134,7 +152,7 @@ const ownerOf =
     });
   };
 
-const annotatedIn = (sourceFile: ts.SourceFile): readonly Annotated[] =>
+const annotatedIn = (sourceFile: SourceFile): readonly Annotated[] =>
   pipe(
     descendantsOf(sourceFile),
     Arr.filter((node) => isAnnotatable(node)),

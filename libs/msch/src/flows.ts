@@ -1,6 +1,28 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
-import ts from "typescript-6";
 
+import {
+  getNameOfDeclaration,
+  isClassDeclaration,
+  isElementAccessExpression,
+  isIdentifier,
+  isInterfaceDeclaration,
+  isPropertyAccessExpression,
+  isSignatureDeclaration,
+  isTypeAliasDeclaration,
+} from "./compiler.ts";
+import type {
+  Checker,
+  ClassDeclaration,
+  Declaration,
+  Expression,
+  InterfaceDeclaration,
+  Node,
+  Program,
+  SignatureDeclaration,
+  SourceFile,
+  TypeSymbol,
+  Type,
+} from "./compiler.ts";
 import type { ValueSite } from "./sites.ts";
 import { annotationOf, slotOf } from "./slots.ts";
 import {
@@ -19,8 +41,8 @@ interface Flow {
 }
 
 interface FlowContext {
-  readonly checker: ts.TypeChecker;
-  readonly program: ts.Program;
+  readonly checker: Checker;
+  readonly program: Program;
   readonly sites: readonly ValueSite[];
 }
 
@@ -47,15 +69,15 @@ const packageOf = (fileName: string): string => {
 
 const externalDeclarationOf =
   (context: FlowContext) =>
-  (symbol: ts.Symbol): Option.Option<ts.Declaration> =>
+  (symbol: TypeSymbol): Option.Option<Declaration> =>
     Arr.findFirst(declarationsOf(symbol), (declaration) =>
       isExternalDeclaration(context.program)(declaration),
     );
 
 const aliasTarget =
   (context: FlowContext) =>
-  (type: ts.Type): Option.Option<string> =>
-    Option.fromUndefinedOr(type.aliasSymbol).pipe(
+  (type: Type): Option.Option<string> =>
+    Option.fromUndefinedOr(type.getAliasSymbol()).pipe(
       Option.flatMap((alias) =>
         externalDeclarationOf(context)(alias).pipe(
           Option.map(
@@ -67,13 +89,13 @@ const aliasTarget =
     );
 
 const isNamedContainer = (
-  node: ts.Node,
-): node is ts.SignatureDeclaration | ts.InterfaceDeclaration | ts.ClassDeclaration =>
-  ts.isFunctionLike(node) || ts.isInterfaceDeclaration(node) || ts.isClassDeclaration(node);
+  node: Node,
+): node is SignatureDeclaration | InterfaceDeclaration | ClassDeclaration =>
+  isSignatureDeclaration(node) || isInterfaceDeclaration(node) || isClassDeclaration(node);
 
 const slotTarget =
   (context: FlowContext) =>
-  (expression: ts.Expression): Option.Option<string> =>
+  (expression: Expression): Option.Option<string> =>
     slotOf(context.checker)(expression).pipe(
       Option.filter((slot) => isExternalDeclaration(context.program)(slot)),
       Option.filter((slot) =>
@@ -81,11 +103,11 @@ const slotTarget =
       ),
       Option.map((slot) => {
         const owner = Option.liftPredicate(slot.parent, isNamedContainer).pipe(
-          Option.flatMap((container) => Option.fromUndefinedOr(ts.getNameOfDeclaration(container))),
+          Option.flatMap((container) => Option.fromUndefinedOr(getNameOfDeclaration(container))),
           Option.map((name) => ` of ${name.getText()}`),
           Option.getOrElse(() => ""),
         );
-        const name = Option.fromUndefinedOr(ts.getNameOfDeclaration(slot)).pipe(
+        const name = Option.fromUndefinedOr(getNameOfDeclaration(slot)).pipe(
           Option.map((found) => found.getText()),
           Option.getOrElse(() => "value"),
         );
@@ -95,27 +117,28 @@ const slotTarget =
 
 const libraryTargetOf =
   (context: FlowContext) =>
-  (expression: ts.Expression, contextual: ts.Type): Option.Option<string> =>
+  (expression: Expression, contextual: Type): Option.Option<string> =>
     aliasTarget(context)(contextual).pipe(Option.orElse(() => slotTarget(context)(expression)));
 
 const siteWithin =
   (context: FlowContext) =>
-  (node: ts.Node): Option.Option<ValueSite> =>
+  (node: Node): Option.Option<ValueSite> =>
     Arr.findFirst(context.sites, (site) => contains(node)(site.node));
 
 const aliasSite =
   (context: FlowContext) =>
-  (type: ts.Type): Option.Option<ValueSite> =>
-    Option.fromUndefinedOr(type.aliasSymbol).pipe(
-      Option.flatMap((alias) => Arr.findFirst(declarationsOf(alias), ts.isTypeAliasDeclaration)),
+  (type: Type): Option.Option<ValueSite> =>
+    Option.fromUndefinedOr(type.getAliasSymbol()).pipe(
+      Option.flatMap((alias) => Arr.findFirst(declarationsOf(alias), isTypeAliasDeclaration)),
       Option.flatMap(siteWithin(context)),
     );
 
 const annotationSite =
   (context: FlowContext) =>
-  (expression: ts.Expression): Option.Option<ValueSite> =>
+  (expression: Expression): Option.Option<ValueSite> =>
     symbolAt(context.checker)(expression).pipe(
       Option.flatMap((symbol) => Option.fromUndefinedOr(symbol.valueDeclaration)),
+      Option.flatMap((handle) => Option.fromUndefinedOr(handle.resolve())),
       Option.flatMap(annotationOf),
       Option.flatMap((annotation) =>
         siteWithin(context)(annotation).pipe(
@@ -126,19 +149,17 @@ const annotationSite =
 
 const siteBehind =
   (context: FlowContext) =>
-  (expression: ts.Expression): Option.Option<ValueSite> =>
+  (expression: Expression): Option.Option<ValueSite> =>
     aliasSite(context)(context.checker.getTypeAtLocation(expression)).pipe(
       Option.orElse(() => annotationSite(context)(expression)),
     );
 
-const isFlowSource = (node: ts.Node): node is ts.Expression =>
-  ts.isIdentifier(node) ||
-  ts.isPropertyAccessExpression(node) ||
-  ts.isElementAccessExpression(node);
+const isFlowSource = (node: Node): node is Expression =>
+  isIdentifier(node) || isPropertyAccessExpression(node) || isElementAccessExpression(node);
 
 const flowOf =
   (context: FlowContext) =>
-  (expression: ts.Expression): Option.Option<Flow> =>
+  (expression: Expression): Option.Option<Flow> =>
     Option.fromUndefinedOr(context.checker.getContextualType(expression)).pipe(
       Option.flatMap((contextual) =>
         Option.all([
@@ -156,7 +177,7 @@ const flowOf =
 
 const flowsIn =
   (context: FlowContext) =>
-  (sourceFile: ts.SourceFile): readonly Flow[] =>
+  (sourceFile: SourceFile): readonly Flow[] =>
     Arr.getSomes(
       pipe(
         descendantsOf(sourceFile),

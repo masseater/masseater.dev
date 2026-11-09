@@ -1,50 +1,70 @@
 import { Array as Arr, Option } from "effect";
-import ts from "typescript-6";
 
+import {
+  isCallExpression,
+  isNewExpression,
+  isObjectLiteralExpression,
+  isPropertyAssignment,
+  isSignatureDeclaration,
+  isVariableDeclaration,
+  SyntaxKind,
+} from "./compiler.ts";
+import type {
+  Checker,
+  Declaration,
+  Expression,
+  ParameterDeclaration,
+  PropertyDeclaration,
+  PropertySignatureDeclaration,
+  TypeSymbol,
+  TypeNode,
+  VariableDeclaration,
+} from "./compiler.ts";
 import { declarationsOf, referencedSymbols } from "./syntax.ts";
 
 type AnnotatedDeclaration =
-  | ts.ParameterDeclaration
-  | ts.VariableDeclaration
-  | ts.PropertySignature
-  | ts.PropertyDeclaration;
+  | ParameterDeclaration
+  | VariableDeclaration
+  | PropertySignatureDeclaration
+  | PropertyDeclaration;
 
-const ANNOTATED_KINDS: ReadonlySet<ts.SyntaxKind> = new Set([
-  ts.SyntaxKind.Parameter,
-  ts.SyntaxKind.VariableDeclaration,
-  ts.SyntaxKind.PropertySignature,
-  ts.SyntaxKind.PropertyDeclaration,
+const ANNOTATED_KINDS: ReadonlySet<SyntaxKind> = new Set([
+  SyntaxKind.Parameter,
+  SyntaxKind.VariableDeclaration,
+  SyntaxKind.PropertySignature,
+  SyntaxKind.PropertyDeclaration,
 ]);
 
-const isAnnotated = (declaration: ts.Declaration): declaration is AnnotatedDeclaration =>
+const isAnnotated = (declaration: Declaration): declaration is AnnotatedDeclaration =>
   ANNOTATED_KINDS.has(declaration.kind);
 
-const annotationOf = (declaration: ts.Declaration): Option.Option<ts.TypeNode> =>
+const annotationOf = (declaration: Declaration): Option.Option<TypeNode> =>
   Option.liftPredicate(declaration, isAnnotated).pipe(
     Option.flatMap((annotated) => Option.fromUndefinedOr(annotated.type)),
   );
 
 const argumentSlot =
-  (checker: ts.TypeChecker) =>
-  (expression: ts.Expression): Option.Option<ts.Declaration> => {
+  (checker: Checker) =>
+  (expression: Expression): Option.Option<Declaration> => {
     const call = expression.parent;
-    if (!ts.isCallExpression(call) && !ts.isNewExpression(call)) {
+    if (!isCallExpression(call) && !isNewExpression(call)) {
       return Option.none();
     }
     const { arguments: listed } = call;
-    const callArguments: readonly ts.Expression[] = listed ?? [];
+    const callArguments: readonly Expression[] = listed ?? [];
     const index = callArguments.indexOf(expression);
-    return Option.fromUndefinedOr(checker.getResolvedSignature(call)).pipe(
-      Option.flatMap((signature) => Option.fromUndefinedOr(signature.getDeclaration())),
+    return Option.fromUndefinedOr(checker.getResolvedSignature(call).declaration).pipe(
+      Option.flatMap((handle) => Option.fromUndefinedOr(handle.resolve())),
+      Option.filter(isSignatureDeclaration),
       Option.flatMap((declaration) => Arr.get(declaration.parameters, index)),
     );
   };
 
 const propertySlot =
-  (checker: ts.TypeChecker) =>
-  (expression: ts.Expression): Option.Option<ts.Declaration> => {
+  (checker: Checker) =>
+  (expression: Expression): Option.Option<Declaration> => {
     const assignment = expression.parent;
-    if (!ts.isPropertyAssignment(assignment) || !ts.isObjectLiteralExpression(assignment.parent)) {
+    if (!isPropertyAssignment(assignment) || !isObjectLiteralExpression(assignment.parent)) {
       return Option.none();
     }
     return Option.fromUndefinedOr(checker.getContextualType(assignment.parent)).pipe(
@@ -55,27 +75,27 @@ const propertySlot =
     );
   };
 
-const variableSlot = (expression: ts.Expression): Option.Option<ts.Declaration> => {
+const variableSlot = (expression: Expression): Option.Option<Declaration> => {
   const declaration = expression.parent;
-  if (!ts.isVariableDeclaration(declaration) || declaration.initializer !== expression) {
+  if (!isVariableDeclaration(declaration) || declaration.initializer !== expression) {
     return Option.none();
   }
   return Option.some(declaration);
 };
 
 const slotOf =
-  (checker: ts.TypeChecker) =>
-  (expression: ts.Expression): Option.Option<ts.Declaration> =>
+  (checker: Checker) =>
+  (expression: Expression): Option.Option<Declaration> =>
     argumentSlot(checker)(expression).pipe(
       Option.orElse(() => propertySlot(checker)(expression)),
       Option.orElse(() => variableSlot(expression)),
     );
 
 const contextSymbolsOf =
-  (checker: ts.TypeChecker) =>
-  (expression: ts.Expression): readonly ts.Symbol[] => {
+  (checker: Checker) =>
+  (expression: Expression): readonly TypeSymbol[] => {
     const alias = Option.fromUndefinedOr(checker.getContextualType(expression)).pipe(
-      Option.flatMap((contextual) => Option.fromUndefinedOr(contextual.aliasSymbol)),
+      Option.flatMap((contextual) => Option.fromUndefinedOr(contextual.getAliasSymbol())),
     );
     if (Option.isSome(alias)) {
       return [alias.value];

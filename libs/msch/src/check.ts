@@ -29,6 +29,6 @@ const checkRepository = Effect.fn("checkRepository")(function* checkRepository(r
     ),
     ...duplicateProblems(relative)(unowned),
   ]);
-});
+}, Effect.scoped);
 
 export { checkRepository };

@@ -1,6 +1,7 @@
 import { Option, Array as Arr, pipe } from "effect";
-import ts from "typescript-6";
 
+import { isVariableDeclaration } from "./compiler.ts";
+import type { Checker, Node, VariableDeclaration } from "./compiler.ts";
 import { flowsIn } from "./flows.ts";
 import { ownerKeyOf } from "./owners.ts";
 import type { Owner } from "./owners.ts";
@@ -33,7 +34,7 @@ const isVisibleTo =
 const ownerDeclarationsIn = (
   project: Project,
   owners: readonly Owner[],
-): readonly ts.VariableDeclaration[] => {
+): readonly VariableDeclaration[] => {
   const keys = new Set(
     pipe(
       owners,
@@ -45,7 +46,7 @@ const ownerDeclarationsIn = (
     Arr.flatMap((sourceFile) =>
       pipe(
         descendantsOf(sourceFile),
-        Arr.filter((node) => ts.isVariableDeclaration(node)),
+        Arr.filter((node) => isVariableDeclaration(node)),
         Arr.filter((declaration) => Option.exists(ownerKeyOf(declaration), (key) => keys.has(key))),
       ),
     ),
@@ -53,23 +54,23 @@ const ownerDeclarationsIn = (
 };
 
 const isInside =
-  (outers: readonly ts.Node[]) =>
-  (node: ts.Node): boolean =>
+  (outers: readonly Node[]) =>
+  (node: Node): boolean =>
     pipe(
       outers,
       Arr.some((outer) => contains(outer)(node)),
     );
 
 const sitesOutside =
-  (checker: ts.TypeChecker) =>
-  (project: Project, outers: readonly ts.Node[]): readonly ValueSite[] =>
+  (checker: Checker) =>
+  (project: Project, outers: readonly Node[]): readonly ValueSite[] =>
     pipe(
       project.sourceFiles,
       Arr.flatMap((sourceFile) => sitesUnder(checker)(sourceFile)),
       Arr.filter((site) => !isInside(outers)(site.node)),
     );
 
-const nodesOf = (sites: readonly ValueSite[]): readonly ts.Node[] =>
+const nodesOf = (sites: readonly ValueSite[]): readonly Node[] =>
   pipe(
     sites,
     Arr.map((site) => site.node),
@@ -78,7 +79,7 @@ const nodesOf = (sites: readonly ValueSite[]): readonly ts.Node[] =>
 const analyzeProject =
   (owners: readonly Owner[]) =>
   (project: Project): ProjectAnalysis => {
-    const checker = project.program.getTypeChecker();
+    const { checker } = project;
     const ownerDeclarations = ownerDeclarationsIn(project, owners);
     const sites = sitesOutside(checker)(project, ownerDeclarations);
     const flowContext = { checker, program: project.program, sites };

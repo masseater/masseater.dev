@@ -1,6 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
-import ts from "typescript-6";
 
+import { InternalSymbolName, isModuleDeclaration, isVariableDeclaration } from "./compiler.ts";
+import type { Checker, Declaration, TypeSymbol, Type } from "./compiler.ts";
 import type { DependencyEntry } from "./dependencies.ts";
 import {
   declarationsOf,
@@ -14,7 +15,7 @@ import type { Vocabulary } from "./values.ts";
 interface LibraryType {
   readonly specifier: string;
   readonly typeName: string;
-  readonly declaration: ts.Declaration;
+  readonly declaration: Declaration;
 }
 
 interface LibraryVocabulary extends LibraryType {
@@ -22,7 +23,7 @@ interface LibraryVocabulary extends LibraryType {
 }
 
 interface LibraryShape extends LibraryType {
-  readonly type: ts.Type;
+  readonly type: Type;
 }
 
 interface LibraryIndex {
@@ -31,18 +32,18 @@ interface LibraryIndex {
 }
 
 interface Walk {
-  readonly checker: ts.TypeChecker;
+  readonly checker: Checker;
   readonly entry: DependencyEntry;
 }
 
 interface Visit {
-  readonly exported: ts.Symbol;
+  readonly exported: TypeSymbol;
   readonly qualifier: string;
-  readonly ancestors: readonly ts.Symbol[];
+  readonly ancestors: readonly TypeSymbol[];
 }
 
 interface Exported {
-  readonly symbol: ts.Symbol;
+  readonly symbol: TypeSymbol;
   readonly typeName: string;
 }
 
@@ -50,17 +51,17 @@ const NAMESPACE_DEPTH_LIMIT = 8;
 const EMPTY_INDEX: LibraryIndex = { vocabularies: [], shapes: [] };
 
 const isObjectType =
-  (checker: ts.TypeChecker) =>
-  (type: ts.Type): boolean =>
-    !type.isUnion() &&
-    !type.isLiteral() &&
-    checker.getApparentType(type) === type &&
+  (checker: Checker) =>
+  (type: Type): boolean =>
+    !type.isUnionType() &&
+    !type.isLiteralType() &&
+    checker.getApparentType(type).id === type.id &&
     Arr.isReadonlyArrayNonEmpty(checker.getPropertiesOfType(type));
 
 const describeLibraryType = (type: LibraryType): string =>
   `${type.typeName} from ${type.specifier}`;
 
-const libraryType = (walk: Walk, typeName: string, declaration: ts.Declaration): LibraryType => ({
+const libraryType = (walk: Walk, typeName: string, declaration: Declaration): LibraryType => ({
   specifier: walk.entry.specifier,
   typeName,
   declaration,
@@ -81,7 +82,7 @@ const declaredTypeIndex = (walk: Walk, exported: Exported): LibraryIndex => {
   return { vocabularies, shapes };
 };
 
-const schemaTypeIndex = (walk: Walk, located: LibraryType, schemaType: ts.Type): LibraryIndex => ({
+const schemaTypeIndex = (walk: Walk, located: LibraryType, schemaType: Type): LibraryIndex => ({
   vocabularies: vocabularyOf(walk.checker)(schemaType).pipe(
     Option.map((vocabulary) => ({ ...located, vocabulary })),
     Option.toArray,
@@ -92,7 +93,7 @@ const schemaTypeIndex = (walk: Walk, located: LibraryType, schemaType: ts.Type):
 });
 
 const schemaValueIndex = (walk: Walk, exported: Exported): LibraryIndex => {
-  const declaration = Arr.findFirst(declarationsOf(exported.symbol), ts.isVariableDeclaration);
+  const declaration = Arr.findFirst(declarationsOf(exported.symbol), isVariableDeclaration);
   if (Option.isNone(declaration)) {
     return EMPTY_INDEX;
   }
@@ -115,15 +116,15 @@ const mergeIndexes = (indexes: readonly LibraryIndex[]): LibraryIndex => ({
   ),
 });
 
-const isNamespace = (symbol: ts.Symbol): boolean =>
+const isNamespace = (symbol: TypeSymbol): boolean =>
   pipe(
     declarationsOf(symbol),
-    Arr.some((declaration) => ts.isModuleDeclaration(declaration)),
+    Arr.some((declaration) => isModuleDeclaration(declaration)),
   );
 
 const indexUnder = (walk: Walk, visit: Visit): LibraryIndex => {
   const symbol = resolvedSymbol(walk.checker)(visit.exported);
-  const named = { symbol, typeName: `${visit.qualifier}${visit.exported.getName()}` };
+  const named = { symbol, typeName: `${visit.qualifier}${visit.exported.name}` };
   const own = mergeIndexes([declaredTypeIndex(walk, named), schemaValueIndex(walk, named)]);
   if (
     !isNamespace(symbol) ||
@@ -145,21 +146,14 @@ const indexUnder = (walk: Walk, visit: Visit): LibraryIndex => {
   return mergeIndexes([own, ...nested]);
 };
 
-const exportAssignmentOf = (moduleSymbol: ts.Symbol): Option.Option<ts.Symbol> =>
-  Option.fromUndefinedOr(moduleSymbol.exports).pipe(
-    Option.flatMap((exports) =>
-      Option.fromUndefinedOr(exports.get(ts.InternalSymbolName.ExportEquals)),
-    ),
-  );
+const exportAssignmentOf = (moduleSymbol: TypeSymbol): Option.Option<TypeSymbol> =>
+  Option.fromUndefinedOr(moduleSymbol.getExports().get(InternalSymbolName.ExportEquals));
 
 const indexOfEntry =
-  (program: ts.Program) =>
+  (checker: Checker) =>
   (entry: DependencyEntry): LibraryIndex => {
-    const checker = program.getTypeChecker();
-    const moduleSymbol = Option.fromUndefinedOr(program.getSourceFile(entry.declarationsPath)).pipe(
-      Option.flatMap((sourceFile) =>
-        Option.fromUndefinedOr(checker.getSymbolAtLocation(sourceFile)),
-      ),
+    const moduleSymbol = Option.fromUndefinedOr(
+      checker.getSymbolOfSourceFile(entry.declarationsPath),
     );
     if (Option.isNone(moduleSymbol)) {
       return EMPTY_INDEX;
@@ -178,12 +172,12 @@ const indexOfEntry =
   };
 
 const libraryIndex =
-  (program: ts.Program) =>
+  (checker: Checker) =>
   (entries: readonly DependencyEntry[]): LibraryIndex =>
     mergeIndexes(
       pipe(
         entries,
-        Arr.map((entry) => indexOfEntry(program)(entry)),
+        Arr.map((entry) => indexOfEntry(checker)(entry)),
       ),
     );
 

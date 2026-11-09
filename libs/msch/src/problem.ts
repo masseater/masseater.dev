@@ -1,6 +1,6 @@
 import { Array as Arr, Order, Schema, pipe } from "effect";
-import type ts from "typescript-6";
 
+import type { Node } from "./compiler.ts";
 import { columnOf, lineOf } from "./syntax.ts";
 
 const RuleNameSchema = Schema.Literals([
@@ -36,7 +36,7 @@ interface Finding {
 
 const problemAt =
   ({ rule, message }: Finding) =>
-  (node: ts.Node): Problem => ({
+  (node: Node): Problem => ({
     file: node.getSourceFile().fileName,
     line: lineOf(node),
     column: columnOf(node),

@@ -1,6 +1,25 @@
 import { Array as Arr, Option, pipe } from "effect";
-import ts from "typescript-6";
 
+import {
+  isBinaryExpression,
+  isCallExpression,
+  isNewExpression,
+  isNumericLiteral,
+  isPropertyAssignment,
+  isStringLiteral,
+  isTypeAliasDeclaration,
+  isVariableDeclaration,
+  SyntaxKind,
+} from "./compiler.ts";
+import type {
+  Checker,
+  Declaration,
+  Node,
+  NumericLiteral,
+  SourceFile,
+  StringLiteral,
+  TypeSymbol,
+} from "./compiler.ts";
 import type { Flow } from "./flows.ts";
 import { describeLibraryType } from "./library.ts";
 import type { LibraryVocabulary } from "./library.ts";
@@ -20,7 +39,7 @@ import {
 import { formatValues, isSubsetOf, vocabularyOf } from "./values.ts";
 
 interface ValueContext {
-  readonly checker: ts.TypeChecker;
+  readonly checker: Checker;
   readonly owners: readonly Owner[];
   readonly vocabularies: readonly LibraryVocabulary[];
   readonly flows: readonly Flow[];
@@ -36,7 +55,7 @@ const NOTHING_HIDDEN = 0;
 
 const directOwners =
   (context: ValueContext) =>
-  (symbol: ts.Symbol): readonly Owner[] => {
+  (symbol: TypeSymbol): readonly Owner[] => {
     const keys = Arr.getSomes(
       pipe(
         declarationsOf(symbol),
@@ -49,13 +68,13 @@ const directOwners =
     );
   };
 
-const isFollowable = (declaration: ts.Declaration): boolean =>
+const isFollowable = (declaration: Declaration): boolean =>
   !declaration.getSourceFile().isDeclarationFile &&
-  (ts.isTypeAliasDeclaration(declaration) || ts.isVariableDeclaration(declaration));
+  (isTypeAliasDeclaration(declaration) || isVariableDeclaration(declaration));
 
 const ownersBehind =
   (context: ValueContext) =>
-  (symbol: ts.Symbol, ancestors: readonly ts.Symbol[]): readonly Owner[] => {
+  (symbol: TypeSymbol, ancestors: readonly TypeSymbol[]): readonly Owner[] => {
     const direct = directOwners(context)(symbol);
     if (Arr.isReadonlyArrayNonEmpty(direct) || ancestors.length >= OWNER_SEARCH_DEPTH) {
       return direct;
@@ -175,28 +194,27 @@ const siteVerdict =
     return originalVerdict(context)(site);
   };
 
-const VALUE_PARENT_KINDS: ReadonlySet<ts.SyntaxKind> = new Set([
-  ts.SyntaxKind.ReturnStatement,
-  ts.SyntaxKind.ArrayLiteralExpression,
-  ts.SyntaxKind.ConditionalExpression,
-  ts.SyntaxKind.ParenthesizedExpression,
-  ts.SyntaxKind.ArrowFunction,
-  ts.SyntaxKind.JsxExpression,
+const VALUE_PARENT_KINDS: ReadonlySet<SyntaxKind> = new Set([
+  SyntaxKind.ReturnStatement,
+  SyntaxKind.ArrayLiteralExpression,
+  SyntaxKind.ConditionalExpression,
+  SyntaxKind.ParenthesizedExpression,
+  SyntaxKind.ArrowFunction,
+  SyntaxKind.JsxExpression,
 ]);
 
-const isCallArgument = (node: ts.Node, parent: ts.Node): boolean =>
-  (ts.isCallExpression(parent) || ts.isNewExpression(parent)) && parent.expression !== node;
+const isCallArgument = (node: Node, parent: Node): boolean =>
+  (isCallExpression(parent) || isNewExpression(parent)) && parent.expression !== node;
 
-const isInitializer = (node: ts.Node, parent: ts.Node): boolean =>
-  (ts.isPropertyAssignment(parent) || ts.isVariableDeclaration(parent)) &&
-  parent.initializer === node;
+const isInitializer = (node: Node, parent: Node): boolean =>
+  (isPropertyAssignment(parent) || isVariableDeclaration(parent)) && parent.initializer === node;
 
-const isRightOperand = (node: ts.Node, parent: ts.Node): boolean =>
-  ts.isBinaryExpression(parent) && parent.right === node;
+const isRightOperand = (node: Node, parent: Node): boolean =>
+  isBinaryExpression(parent) && parent.right === node;
 
 const VALUE_SLOTS = [isCallArgument, isInitializer, isRightOperand];
 
-const isValuePosition = (node: ts.Node): boolean => {
+const isValuePosition = (node: Node): boolean => {
   const { parent } = node;
   return (
     VALUE_PARENT_KINDS.has(parent.kind) ||
@@ -209,7 +227,7 @@ const isValuePosition = (node: ts.Node): boolean => {
 
 const ownedLiteralProblem =
   (context: ValueContext) =>
-  (literal: ts.StringLiteral | ts.NumericLiteral): Option.Option<Problem> =>
+  (literal: StringLiteral | NumericLiteral): Option.Option<Problem> =>
     Option.fromUndefinedOr(context.checker.getContextualType(literal)).pipe(
       Option.filter((contextual) =>
         vocabularyOf(context.checker)(contextual).pipe(
@@ -235,11 +253,11 @@ const ownedLiteralProblem =
 
 const ownedLiteralProblems =
   (context: ValueContext) =>
-  (sourceFile: ts.SourceFile, excluded: readonly ts.Node[]): readonly Problem[] =>
+  (sourceFile: SourceFile, excluded: readonly Node[]): readonly Problem[] =>
     Arr.getSomes(
       pipe(
         descendantsOf(sourceFile),
-        Arr.filter((node) => ts.isStringLiteral(node) || ts.isNumericLiteral(node)),
+        Arr.filter((node) => isStringLiteral(node) || isNumericLiteral(node)),
         Arr.filter((node) => isValuePosition(node)),
         Arr.filter(
           (node) =>
