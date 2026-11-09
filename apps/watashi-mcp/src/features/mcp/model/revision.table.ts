@@ -1,8 +1,10 @@
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-const REVISION_ENTITIES = ["memory", "todo"] as const;
+import { LIFE_RECORDS } from "./life-record.table";
 
-const REVISION_OPS = ["create", "update", "restore"] as const;
+const REVISION_ENTITIES = [...LIFE_RECORDS, "memory"] as const;
+
+const REVISION_OPS = ["create", "update", "restore", "retract"] as const;
 
 const revision = sqliteTable(
   "revision",
