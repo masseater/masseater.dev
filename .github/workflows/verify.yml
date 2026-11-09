@@ -568,9 +568,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
         with:
-          global-json-file: apps/sts2-mods/global.json
+          install_args: dotnet
       - run: |
           mkdir -p ~/megadot && cd ~/megadot
           curl -fsSL -o megadot.zip "https://megadot.megacrit.com/${MEGADOT_VERSION}/megadot-${MEGADOT_VERSION}-linux-x86_64-editor-csharp.zip"
