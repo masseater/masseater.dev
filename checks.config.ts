@@ -1,5 +1,5 @@
-import type { ToolSections } from "@r_masseater/vp-tools";
-import fsd from "@r_masseater/vp-tools/fsd";
+import type { ToolSections } from "@r_masseater/vite-plus-adopt";
+import fsd from "@r_masseater/vite-plus-adopt/fsd";
 import { Array as Arr, pipe } from "effect";
 import { INSTRUMENTATION, requiredStack } from "oxlint-masseater-plugin";
 import type { UserConfig } from "vite-plus";
@@ -86,18 +86,18 @@ const checks: ToolSections = {
 };
 
 const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
-  "dependency-rules": "vp-tools dependencies",
+  "dependency-rules": "vpa dependencies",
   "markdown-lint": [
-    "vp-tools textlint '**/*.md'",
-    `vp-tools textlint --print-files '**/*.md' | xargs -0 -r -n 1 -P 4 python3 "$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py" --strict`,
+    "vpa textlint '**/*.md'",
+    `vpa textlint --print-files '**/*.md' | xargs -0 -r -n 1 -P 4 python3 "$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py" --strict`,
   ],
-  steiger: "vp-tools steiger apps/*/src",
+  steiger: "vpa steiger apps/*/src",
   betterleaks: {
-    command: `vp-tools betterleaks sh -c 'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then betterleaks git . --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; betterleaks "$tmp" --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else betterleaks git . --redact --no-banner; fi'`,
+    command: `sh -c 'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then vpa betterleaks git . --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; vpa betterleaks "$tmp" --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else vpa betterleaks git . --redact --no-banner; fi'`,
     cache: false,
   },
   "betterleaks:staged": {
-    command: `git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | vp-tools betterleaks betterleaks stdin --git-diff --redact --no-banner`,
+    command: `git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | vpa betterleaks stdin --git-diff --redact --no-banner`,
     cache: false,
   },
 };
