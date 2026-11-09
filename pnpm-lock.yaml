@@ -276,8 +276,8 @@ catalogs:
       specifier: 22.0.1
       version: 22.0.1
     '@openrouter/sdk':
-      specifier: 1.5.61
-      version: 1.5.61
+      specifier: 1.5.62
+      version: 1.5.62
     '@opentelemetry/api':
       specifier: 1.10.0
       version: 1.10.0
@@ -2993,7 +2993,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.61
+        version: 1.5.62
       bench-summary:
         specifier: workspace:*
         version: link:../../libs/bench-summary
@@ -5349,8 +5349,8 @@ packages:
   '@openrouter/sdk@1.5.33':
     resolution: {integrity: sha512-hbg4q/tZHOnggBk7Sjkel6COExpbe1+2p4Mt2YyvAloDXtNNaFkMab0SgVfoBdTgzweBlrJJ4jUHwHt5rFiadA==}
 
-  '@openrouter/sdk@1.5.61':
-    resolution: {integrity: sha512-RauhsqN04bM1i0J6I0hIgPeaO03sE7ScirO4dd6QcZpg4AVeKG16HPyjgParahEN/0DuA8nqG6N1vNqU2w+iLg==}
+  '@openrouter/sdk@1.5.62':
+    resolution: {integrity: sha512-KB/WbI/S7eEu+XRrgqD6bLer5d9o+ARGNA7jxbt0F7jBiaB2A3w7r0qu46tzhBqxZkaJzHICzzw5QE1Fn9CXMQ==}
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -17283,7 +17283,7 @@ snapshots:
     dependencies:
       zod: 4.6.7
 
-  '@openrouter/sdk@1.5.61':
+  '@openrouter/sdk@1.5.62':
     dependencies:
       zod: 4.6.7
 
