@@ -8,10 +8,18 @@
       {
         "name": "@effect/language-service",
         "allowedUnstableApis": [
+          "@effect/platform-node/NodeServices#layer",
+          "@effect/sql-sqlite-node/SqliteClient",
+          "@effect/vitest#it",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/PlatformError#PlatformError",
           "effect/http/FetchHttpClient",
           "effect/http/HttpClient",
           "effect/http/HttpClientRequest",
-          "effect/http/HttpClientResponse"
+          "effect/http/HttpClientResponse",
+          "effect/sql/SqlClient",
+          "effect/sql/SqlError"
         ]
       }
     ],
