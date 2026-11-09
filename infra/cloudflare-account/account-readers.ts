@@ -1,6 +1,6 @@
 import { ApiToken, CloudflareEnvironment, Workers } from "@alchemy.run/cloudflare";
-import { PERMISSION_GROUPS } from "@alchemy.run/cloudflare/ApiToken";
-import { Array as Arr, Effect, String as Str, pipe } from "effect";
+import { listTokensPermissionGroups } from "@distilled.cloud/cloudflare/accounts";
+import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 
 type WebAnalyticsTokenEnv = Readonly<{ WEB_ANALYTICS_TOKEN: string }>;
 
@@ -35,21 +35,30 @@ const ZONE_SCOPE = "com.cloudflare.api.account.zone";
 
 const SUB_TOKEN_FORBIDDEN = new Set(["Account API Tokens Read"]);
 
-const readGroups = (scope: string): { id: string }[] =>
-  pipe(
-    PERMISSION_GROUPS,
-    Arr.filter(
-      (group) =>
-        Arr.contains(group.scopes, scope) &&
-        Str.endsWith(" Read")(group.name) &&
-        !SUB_TOKEN_FORBIDDEN.has(group.name),
-    ),
-    Arr.map(({ id }) => ({ id })),
-  );
+const isReadPermission = (name: string): boolean =>
+  Str.endsWith(" Read")(name) && !SUB_TOKEN_FORBIDDEN.has(name);
 
 const cloudflareReader = Effect.fn("cloudflareReader")(function* cloudflareReader(appName: string) {
   const { accountId } = yield* yield* CloudflareEnvironment;
   const account = `${ACCOUNT_SCOPE}.${accountId}`;
+  const groups = yield* listTokensPermissionGroups({ accountId }).pipe(Effect.orDie);
+  const readable = pipe(
+    groups,
+    Arr.filter((group) => group.isSelectable !== false),
+    Arr.filter((group) => isReadPermission(group.name ?? "")),
+  );
+  const readGroups = (scope: string): { id: string }[] =>
+    pipe(
+      readable,
+      Arr.filter((group) => Arr.contains(group.scopes ?? [], scope)),
+      Arr.flatMap(({ id }) =>
+        pipe(
+          Option.fromNullishOr(id),
+          Option.map((groupId) => ({ id: groupId })),
+          Option.toArray,
+        ),
+      ),
+    );
   return yield* ApiToken.AccountApiToken(CLOUDFLARE_READER, {
     name: `${appName}-cloudflare-reader`,
     accountId,
