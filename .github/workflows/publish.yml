@@ -41,7 +41,11 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
       - if: inputs.package == 'vitest-otlp'
-        uses: $/.github/actions/setup-weaver
+        uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          fetch_from_github: false
+          install_args: github:open-telemetry/weaver
+          cache: false
       - run: vp test run
       - if: inputs.package == 'sloppedia'
         run: vp run size
