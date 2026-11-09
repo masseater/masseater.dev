@@ -14,9 +14,9 @@ import {
 } from "oxlint-masseater-plugin";
 import {
   alchemyOverride,
-  mschPluginOverride,
   otlpInteropOverride,
   otlpLibOverrides,
+  pluginEntryOverrides,
   scriptsOverride,
   workerOverride,
   writerOnlyOverride,
@@ -175,13 +175,7 @@ export default defineConfig({
     overrides: [
       alchemyOverride,
       {
-        files: [
-          "**/*.config.ts",
-          "**/alchemy.*.ts",
-          "**/*.worker.ts",
-          "**/decision-rules.ts",
-          "libs/textlint-rule-no-taigendome/src/index.ts",
-        ],
+        files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "**/decision-rules.ts"],
         rules: { "import/no-default-export": "off" },
       },
       {
@@ -199,7 +193,7 @@ export default defineConfig({
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
       },
       scriptsOverride,
-      mschPluginOverride,
+      ...pluginEntryOverrides,
       otlpInteropOverride,
       ...otlpLibOverrides,
       {
