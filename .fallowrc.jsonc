@@ -21,7 +21,9 @@
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "production": true,
   "dynamicallyLoaded": ["**/*.d.rpp.ts"],
+  "ignoreExports": [{ "file": "**/*.d.rpp.ts", "exports": ["song", "default"] }],
   "ignoreDependencies": [
+    "@effect/language-service",
     "@arethetypeswrong/core",
     "publint",
     "@fontsource/dela-gothic-one",
