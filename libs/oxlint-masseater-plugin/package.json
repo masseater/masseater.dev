@@ -7,9 +7,7 @@
     ".": "./src/lint.config.ts",
     "./decision-rules": "./src/decision-rules.ts",
     "./lint-overrides": "./src/lint-overrides.config.ts",
-    "./readonly-types": "./src/readonly-types.config.ts",
-    "./record-lint": "./src/record-lint.config.ts",
-    "./worker-lint": "./src/worker-lint.config.ts"
+    "./readonly-types": "./src/readonly-types.config.ts"
   },
   "dependencies": {
     "@effect/tsgo": "catalog:stack",

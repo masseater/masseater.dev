@@ -88,4 +88,6 @@ const otlpLibOverrides: {
   },
 ];
 
+export { writerOnlyOverride } from "./record-lint.config.ts";
+export { workerOverride } from "./worker-lint.config.ts";
 export { alchemyOverride, otlpInteropOverride, otlpLibOverrides, scriptsOverride };
