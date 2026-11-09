@@ -27,12 +27,12 @@ infobox:
 
 モノレポの構造は、細かさの違ういくつかの層で表せる。どの層を表示するかで、使う道具が変わる。
 
-| 層           | 点                   | 辺                         | 代表的な道具                      |
-| ------------ | -------------------- | -------------------------- | --------------------------------- |
-| プロジェクト | パッケージやクレート | マニフェストに書いた依存   | pnpm、Nx、moon、mise              |
-| タスク       | ビルドやテストの手順 | 先に動かすべき手順         | Turborepo、Vite Task、moon        |
-| ターゲット   | ビルドの成果物       | BUILD ファイルの依存の宣言 | Bazel                             |
-| ファイル     | ソースファイル       | import の文                | fallow、dependency-cruiser、Madge |
+| 層           | 点                   | 辺                         | 代表的な道具                                                                                                |
+| ------------ | -------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| プロジェクト | パッケージやクレート | マニフェストに書いた依存   | pnpm、Nx、moon、mise                                                                                        |
+| タスク       | ビルドやテストの手順 | 先に動かすべき手順         | Turborepo、Vite Task、moon                                                                                  |
+| ターゲット   | ビルドの成果物       | BUILD ファイルの依存の宣言 | Bazel                                                                                                       |
+| ファイル     | ソースファイル       | import の文                | [fallow](/sloppedia/fallow)、[dependency-cruiser](/sloppedia/dependency-cruiser)、[Madge](/sloppedia/madge) |
 
 プロジェクトの層は、マニフェストを読むだけで作れる。マニフェストとは、`package.json` や `Cargo.toml` のように、プロジェクトの名前と依存を書いたファイルである。タスクの層は、プロジェクトの層の上に「どの手順をどの順で動かすか」を重ねたものである。ファイルの層は、ソースコードを解析しなければ作れない。
 
@@ -40,7 +40,7 @@ infobox:
 
 ## 道具ごとの状況
 
-Nx が運営する monorepo.tools の比較表には、プロジェクトのグラフの可視化という行がある[^monorepo-tools-compare]。表は、Bazel、moon、Lerna、Nx、Turborepo がこの機能を備えるとしている。Gradle、Lage、Pants、Rush は、利用者が自分で作る扱いである。比較表を作った Nx 自身が備える側に入っている点は、割り引いて読む必要がある。
+[Nx](/sloppedia/nx) が運営する [monorepo.tools](/sloppedia/monorepo-tools) の比較表には、プロジェクトのグラフの可視化という行がある[^monorepo-tools-compare]。表は、Bazel、[moon](/sloppedia/moon)、[Lerna](/sloppedia/lerna)、Nx、[Turborepo](/sloppedia/turborepo) がこの機能を備えるとしている。[Gradle](/sloppedia/gradle)、[Lage](/sloppedia/lage)、[Pants](/sloppedia/pants)、[Rush](/sloppedia/rush) は、利用者が自分で作る扱いである。比較表を作った Nx 自身が備える側に入っている点は、割り引いて読む必要がある。
 
 ### pnpm
 
@@ -60,7 +60,7 @@ Turborepo は、Vercel が作るモノレポのタスクランナーである。
 
 2.x では、`turbo query` という GraphQL の問い合わせの口が加わった[^turbo-query]。パッケージの一覧や、各パッケージの直接の依存と依存元を、問い合わせ1つで取り出せる。引数を付けずに動かすと、GraphiQL の画面が立ち上がる。
 
-Turborepo は、設定ファイルの `turbo.json` が無いと動かない。グラフの辺は `package.json` の依存から作るので、Cargo の依存は見えない。
+Turborepo は、設定ファイルの `turbo.json` が無いと動かない。既定の設定では、グラフの辺を `package.json` の依存から作るので、Cargo の依存は見えない。2026年9月の 2.11 からは、`turbo.json` の `futureFlags` で `experimentalCargoWorkspaces` を有効にすると、Cargo のワークスペースを試験的に読む[^turbo-2-11]。この比較では、この設定を試していない。
 
 ### Nx
 
@@ -68,7 +68,7 @@ Nx は、同名の Nx 社が作るモノレポのビルドシステムである�
 
 Nx は pnpm のワークスペースを、`nx.json` が無くても読める。2026年11月9日に 24.0.5 で試したところ、設定を足さずにグラフが出た。ただし、先に `pnpm install` で `node_modules` を作っておかなければ、ロックファイルの読み取りで失敗する。
 
-Rust や .NET を Nx のグラフに載せるには、プラグインを `nx.json` に足す。Rust は有志の `@monodon/rust`、.NET は公式の `@nx/dotnet` がある。
+Rust や .NET を Nx のグラフに載せるには、プラグインを `nx.json` に足す。Rust は有志の `@monodon/rust`、.NET は公式の `@nx/dotnet` がある。.NET への対応は、2026年6月の Nx 23 で正式な機能になった[^nx-blog]。
 
 ### moon
 
@@ -80,7 +80,7 @@ moon は `.moon/` の下の設定ファイルを必要とする。プロジェ�
 
 ### mise
 
-mise は、開発の道具のバージョンを管理する道具で、タスクランナーも兼ねる。モノレポの機能では、ワークスペースのマニフェストからプロジェクトのグラフを作る[^mise-graph]。Cargo、uv、Go、Gradle、Node.js の5つのマニフェストを読む。
+[mise](/sloppedia/mise) は、開発の道具のバージョンを管理する道具で、タスクランナーも兼ねる。モノレポの機能では、ワークスペースのマニフェストからプロジェクトのグラフを作る[^mise-graph]。[Cargo](/sloppedia/cargo)、[uv](/sloppedia/uv)、Go、Gradle、Node.js の5つのマニフェストを読む。
 
 Cargo では、ワークスペースの中を指す `path` の依存を辺にする。`workspace = true` と書いて `[workspace.dependencies]` から道を受け継ぐ依存も含む。Node.js では、依存の名前がワークスペースの中のパッケージの名前と一致すれば辺にする。
 
@@ -92,7 +92,7 @@ Cargo では、ワークスペースの中を指す `path` の依存を辺にす
 
 [Bazel](/sloppedia/bazel) は、BUILD ファイルに宣言したターゲットの依存を、`bazel query` で問い合わせる[^bazel-query]。`--output graph` を付けると、結果を DOT で出す。言語を問わずすべての依存を BUILD ファイルに書くので、多言語のグラフが最初から1つにまとまっている。
 
-その代わり、ビルドのすべてを Bazel の流儀で書き直す必要がある。Pants や Buck2 も同じ系統の道具である。
+その代わり、ビルドのすべてを Bazel の流儀で書き直す必要がある。Pants や [Buck2](/sloppedia/buck2) も同じ系統の道具である。
 
 ### Vite+ と Vite Task
 
@@ -225,6 +225,10 @@ masseater は、汎用性より自分の使い方への特化を選ぶと述べ�
 [^vite-task-dry-run]: 「[feat(run): print the run plan as JSON with vp run --dry-run --json](https://github.com/voidzero-dev/vite-task/pull/966)」voidzero-dev/vite-task #966、2026年11月9日にマージ。
 
 [^fallow-viz]: fallow「[viz](https://fallow.tools/docs/cli/viz)」。2026年11月9日に閲覧。
+
+[^turbo-2-11]: Anthony Shew「[Turborepo 2.11](https://turborepo.dev/blog/2-11)」Turborepo Blog、2026年9月18日。
+
+[^nx-blog]: Nx「[Nx Blog](https://nx.dev/blog)」。2026年11月9日に閲覧。
 
 [^cargo-metadata]: The Cargo Book「[cargo metadata](https://doc.rust-lang.org/cargo/commands/cargo-metadata.html)」。2026年11月9日に閲覧。
 
