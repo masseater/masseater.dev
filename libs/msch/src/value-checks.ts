@@ -33,6 +33,7 @@ import {
   contains,
   declarationsOf,
   descendantsOf,
+  importedModulesOf,
   referencedSymbols,
   uniqueByReference,
 } from "./syntax.ts";
@@ -148,9 +149,11 @@ const libraryCandidates =
     ) {
       return [];
     }
+    const imported = importedModulesOf(site.node.getSourceFile());
     return Arr.dedupe(
       pipe(
         context.vocabularies,
+        Arr.filter((library) => imported.includes(library.specifier)),
         Arr.filter((library) => isSubsetOf(site.values, library.vocabulary.values)),
         Arr.map((library) => describeLibraryType(library)),
       ),

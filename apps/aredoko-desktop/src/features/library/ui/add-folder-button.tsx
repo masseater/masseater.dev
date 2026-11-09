@@ -1,6 +1,6 @@
 import { Button } from "@masseater.dev/ui/button";
 import { FolderPlus } from "lucide-react";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 import { usePickThen } from "#/features/library/api/pick-then";
 import { pickFolder } from "#/features/library/api/pickers";
@@ -10,7 +10,7 @@ const LABEL = "フォルダを登録";
 
 const AddFolderButton = ({
   size = "default",
-}: Readonly<{ size?: "default" | "lg" }>): ReactNode => {
+}: Readonly<{ size?: ComponentProps<typeof Button>["size"] }>): ReactNode => {
   const { mutate, isPending } = useAddFolder();
   const { onClick, busy } = usePickThen({ pick: pickFolder, onPicked: mutate, pending: isPending });
   return (

@@ -1,11 +1,7 @@
 import { Array as Arr, pipe } from "effect";
+import type { Bbox } from "tesseract.js";
 
-interface Box {
-  readonly x0: number;
-  readonly y0: number;
-  readonly x1: number;
-  readonly y1: number;
-}
+type Box = Readonly<Bbox>;
 
 interface Fragment {
   readonly text: string;

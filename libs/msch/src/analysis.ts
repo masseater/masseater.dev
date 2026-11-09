@@ -23,7 +23,7 @@ const isVisibleTo =
   (owner: Owner): boolean =>
     pipe(
       project.sourceFiles,
-      Arr.some((sourceFile) => sourceFile.fileName === owner.declaration.getSourceFile().fileName),
+      Arr.some((sourceFile) => sourceFile.fileName === owner.file),
     ) ||
     Option.exists(
       owner.packageName,
@@ -100,7 +100,7 @@ const analyzeProject =
       Arr.map((site) => siteVerdict(context)(site)),
     );
     const excluded = [...ownerDeclarations, ...nodesOf(sites)];
-    const shapeContext = { checker, shapes: project.library.shapes };
+    const shapeContext = { checker, program: project.program, shapes: project.library.shapes };
     return {
       problems: [
         ...pipe(

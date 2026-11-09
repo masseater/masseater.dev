@@ -22,7 +22,7 @@ import type {
 import { problemAt } from "./problem.ts";
 import type { Problem } from "./problem.ts";
 import type { Project } from "./project.ts";
-import { descendantsOf } from "./syntax.ts";
+import { columnOf, descendantsOf, lineOf } from "./syntax.ts";
 import { finiteValuesOf, formatValues, literalValuesOf, sameValues } from "./values.ts";
 import type { Value } from "./values.ts";
 
@@ -30,7 +30,9 @@ interface Owner {
   readonly conceptId: string;
   readonly key: string;
   readonly name: string;
-  readonly declaration: VariableDeclaration;
+  readonly file: string;
+  readonly line: number;
+  readonly column: number;
   readonly packageName: Option.Option<string>;
   readonly values: readonly Value[];
 }
@@ -142,7 +144,9 @@ const ownerOf =
               conceptId,
               key,
               name: node.name.getText(),
-              declaration: node,
+              file: node.getSourceFile().fileName,
+              line: lineOf(node),
+              column: columnOf(node),
               packageName: project.packageName,
               values: ownedValues,
             },
@@ -158,6 +162,16 @@ const annotatedIn = (sourceFile: SourceFile): readonly Annotated[] =>
     Arr.filter((node) => isAnnotatable(node)),
     Arr.flatMap((node) => annotationsOf(node)),
   );
+
+const ownerProblem =
+  (message: string) =>
+  (owner: Owner): Problem => ({
+    file: owner.file,
+    line: owner.line,
+    column: owner.column,
+    rule: "owner-annotation",
+    message,
+  });
 
 const conflictProblems = (owners: readonly Owner[]): readonly Problem[] =>
   pipe(
@@ -178,54 +192,60 @@ const conflictProblems = (owners: readonly Owner[]): readonly Problem[] =>
         ...pipe(
           Arr.take(sameConcept, FIRST_OWNER_COUNT),
           Arr.map(() =>
-            annotationProblem(`The concept ${owner.conceptId} already has an owner.`)(
-              owner.declaration,
-            ),
+            ownerProblem(`The concept ${owner.conceptId} already has an owner.`)(owner),
           ),
         ),
         ...pipe(
           Arr.take(sameSet, FIRST_OWNER_COUNT),
           Arr.map((other) =>
-            annotationProblem(
+            ownerProblem(
               `The values ${formatValues(owner.values)} are already owned by ${other.conceptId}.`,
-            )(owner.declaration),
+            )(owner),
           ),
         ),
       ];
     }),
   );
 
-const scanOwners = (projects: readonly Project[]): OwnerScan => {
+const ownersIn = (project: Project): OwnerScan => {
   const results = pipe(
-    projects,
-    Arr.flatMap((project) =>
+    project.sourceFiles,
+    Arr.flatMap((sourceFile) =>
       pipe(
-        project.sourceFiles,
-        Arr.flatMap((sourceFile) =>
-          pipe(
-            annotatedIn(sourceFile),
-            Arr.map((annotated) => ownerOf(project)(annotated)),
-          ),
-        ),
+        annotatedIn(sourceFile),
+        Arr.map((annotated) => ownerOf(project)(annotated)),
       ),
     ),
   );
-  const owners = Arr.dedupeWith(
+  return scanned(
     pipe(
       results,
       Arr.flatMap((result) => result.owners),
+    ),
+    pipe(
+      results,
+      Arr.flatMap((result) => result.problems),
+    ),
+  );
+};
+
+const combineOwnerScans = (scans: readonly OwnerScan[]): OwnerScan => {
+  const owners = Arr.dedupeWith(
+    pipe(
+      scans,
+      Arr.flatMap((scan) => scan.owners),
     ),
     (left, right) => left.key === right.key,
   );
   const problems = [
     ...pipe(
-      results,
-      Arr.flatMap((result) => result.problems),
+      scans,
+      Arr.flatMap((scan) => scan.problems),
     ),
     ...conflictProblems(owners),
   ];
   return { owners, problems };
 };
 
-export { OWNER_TAG, ownerKeyOf, scanOwners };
+export { OWNER_TAG, combineOwnerScans, ownerKeyOf, ownersIn };
 export type { Owner, OwnerScan };

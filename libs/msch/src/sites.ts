@@ -3,7 +3,10 @@ import { Array as Arr, Option, pipe } from "effect";
 import {
   isArrayLiteralExpression,
   isCallExpression,
+  isElementAccessExpression,
   isEnumDeclaration,
+  isIdentifier,
+  isPropertyAccessExpression,
   isTypeReferenceNode,
   isUnionTypeNode,
 } from "./compiler.ts";
@@ -55,6 +58,17 @@ const hasFiniteContext =
       Option.isSome,
     );
 
+const isNamedValue = (element: Expression): boolean =>
+  isIdentifier(element) ||
+  isPropertyAccessExpression(element) ||
+  isElementAccessExpression(element);
+
+const namesEveryElement = (array: ArrayLiteralExpression): boolean =>
+  pipe(
+    array.elements,
+    Arr.every((element) => isNamedValue(element)),
+  );
+
 const expressionValuesOf =
   (checker: Checker) =>
   (node: Expression): Option.Option<readonly Value[]> => {
@@ -63,7 +77,9 @@ const expressionValuesOf =
     }
     const type = checker.getTypeAtLocation(node);
     if (isArrayLiteralExpression(node)) {
-      return finiteValuesOf(checker)(type);
+      return Option.liftPredicate(node, (array) => !namesEveryElement(array)).pipe(
+        Option.flatMap(() => finiteValuesOf(checker)(type)),
+      );
     }
     return schemaTypeOf(checker)(type).pipe(Option.flatMap(literalUnionOf));
   };

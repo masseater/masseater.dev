@@ -51,6 +51,8 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "typescript-template": "deploy",
 };
 
+type PermissionLevel = "read" | "write";
+
 const GITHUB_APP_PERMISSIONS = {
   actions: "read",
   administration: "write",
@@ -60,7 +62,7 @@ const GITHUB_APP_PERMISSIONS = {
   contents: "write",
   pull_requests: "write",
   metadata: "read",
-} as const satisfies Readonly<Record<string, "read" | "write">>;
+} as const satisfies Readonly<Record<string, PermissionLevel>>;
 
 type GitHubGrant = Readonly<{
   permissions: Readonly<Record<string, string>>;
@@ -103,7 +105,7 @@ const BOT_PERMISSIONS = {
   contents: "write",
   pull_requests: "write",
   metadata: "read",
-} as const satisfies Readonly<Record<string, "read" | "write">>;
+} as const satisfies Readonly<Record<string, PermissionLevel>>;
 
 const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "autofix.yml": BOT_PERMISSIONS,

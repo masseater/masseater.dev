@@ -262,6 +262,7 @@ export default defineConfig({
           "steiger",
           "db-check-all",
           "fallow",
+          "msch",
           "betterleaks",
           "ignored-sources",
           "audit",
@@ -278,6 +279,12 @@ export default defineConfig({
         ],
       },
       test: "vp test run",
+      msch: {
+        command: "node tools/msch/src/cli.ts",
+        cache: {
+          untrackedEnv: ["HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy", "SSL_CERT_FILE"],
+        },
+      },
       "db-check-all": "vp run -r db:check",
       audit: {
         command:

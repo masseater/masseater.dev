@@ -1,12 +1,13 @@
-import { Array as Arr, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, pipe } from "effect";
 
 import { InternalSymbolName, isModuleDeclaration, isVariableDeclaration } from "./compiler.ts";
-import type { Checker, Declaration, TypeSymbol, Type } from "./compiler.ts";
+import type { Checker, Declaration, Node, SyntaxKind, TypeSymbol, Type } from "./compiler.ts";
 import type { DependencyEntry } from "./dependencies.ts";
 import {
   declarationsOf,
   isGenericDeclaration,
   isTypeDeclaration,
+  propertyNamesOf,
   resolvedSymbol,
 } from "./syntax.ts";
 import { schemaTypeOf, vocabularyOf } from "./values.ts";
@@ -15,15 +16,22 @@ import type { Vocabulary } from "./values.ts";
 interface LibraryType {
   readonly specifier: string;
   readonly typeName: string;
-  readonly declaration: Declaration;
 }
 
 interface LibraryVocabulary extends LibraryType {
   readonly vocabulary: Vocabulary;
 }
 
+interface DeclarationLocation {
+  readonly file: string;
+  readonly pos: number;
+  readonly kind: SyntaxKind;
+}
+
 interface LibraryShape extends LibraryType {
-  readonly type: Type;
+  readonly form: "declared" | "schema";
+  readonly declaration: DeclarationLocation;
+  readonly propertyNames: readonly string[];
 }
 
 interface LibraryIndex {
@@ -61,36 +69,55 @@ const isObjectType =
 const describeLibraryType = (type: LibraryType): string =>
   `${type.typeName} from ${type.specifier}`;
 
-const libraryType = (walk: Walk, typeName: string, declaration: Declaration): LibraryType => ({
-  specifier: walk.entry.specifier,
-  typeName,
-  declaration,
+const locationOf = (declaration: Node): DeclarationLocation => ({
+  file: declaration.getSourceFile().fileName,
+  pos: declaration.pos,
+  kind: declaration.kind,
 });
+
+const declarationKey = (location: DeclarationLocation): string =>
+  `${location.file}#${String(location.pos)}#${String(location.kind)}`;
+
+type ShapeSource = LibraryType & Pick<LibraryShape, "form">;
+
+const shapeOf =
+  (checker: Checker) =>
+  (source: ShapeSource, declaration: Declaration, type: Type): readonly LibraryShape[] =>
+    Arr.filter(
+      [
+        {
+          ...source,
+          declaration: locationOf(declaration),
+          propertyNames: propertyNamesOf(checker)(type),
+        },
+      ],
+      () => isObjectType(checker)(type),
+    );
 
 const declaredTypeIndex = (walk: Walk, exported: Exported): LibraryIndex => {
   const declaration = Arr.findFirst(declarationsOf(exported.symbol), isTypeDeclaration);
   if (Option.isNone(declaration) || isGenericDeclaration(declaration.value)) {
     return EMPTY_INDEX;
   }
-  const located = libraryType(walk, exported.typeName, declaration.value);
+  const located = { specifier: walk.entry.specifier, typeName: exported.typeName };
   const type = walk.checker.getDeclaredTypeOfSymbol(exported.symbol);
   const vocabularies = vocabularyOf(walk.checker)(type).pipe(
     Option.map((vocabulary) => ({ ...located, vocabulary })),
     Option.toArray,
   );
-  const shapes = Arr.filter([{ ...located, type }], () => isObjectType(walk.checker)(type));
+  const shapes = shapeOf(walk.checker)({ ...located, form: "declared" }, declaration.value, type);
   return { vocabularies, shapes };
 };
 
-const schemaTypeIndex = (walk: Walk, located: LibraryType, schemaType: Type): LibraryIndex => ({
-  vocabularies: vocabularyOf(walk.checker)(schemaType).pipe(
-    Option.map((vocabulary) => ({ ...located, vocabulary })),
-    Option.toArray,
-  ),
-  shapes: Arr.filter([{ ...located, type: schemaType }], () =>
-    isObjectType(walk.checker)(schemaType),
-  ),
-});
+const schemaTypeIndex =
+  (walk: Walk, located: LibraryType) =>
+  (declaration: Declaration, schemaType: Type): LibraryIndex => ({
+    vocabularies: vocabularyOf(walk.checker)(schemaType).pipe(
+      Option.map((vocabulary) => ({ ...located, vocabulary })),
+      Option.toArray,
+    ),
+    shapes: shapeOf(walk.checker)({ ...located, form: "schema" }, declaration, schemaType),
+  });
 
 const schemaValueIndex = (walk: Walk, exported: Exported): LibraryIndex => {
   const declaration = Arr.findFirst(declarationsOf(exported.symbol), isVariableDeclaration);
@@ -98,10 +125,13 @@ const schemaValueIndex = (walk: Walk, exported: Exported): LibraryIndex => {
     return EMPTY_INDEX;
   }
   const valueType = walk.checker.getTypeOfSymbolAtLocation(exported.symbol, declaration.value);
-  const located = libraryType(walk, `(typeof ${exported.typeName})["Type"]`, declaration.value);
+  const located = {
+    specifier: walk.entry.specifier,
+    typeName: `(typeof ${exported.typeName})["Type"]`,
+  };
   return Option.match(schemaTypeOf(walk.checker)(valueType), {
     onNone: () => EMPTY_INDEX,
-    onSome: (schemaType) => schemaTypeIndex(walk, located, schemaType),
+    onSome: (schemaType) => schemaTypeIndex(walk, located)(declaration.value, schemaType),
   });
 };
 
@@ -171,15 +201,73 @@ const indexOfEntry =
     );
   };
 
-const libraryIndex =
+interface CachedIndex {
+  readonly index: LibraryIndex;
+  readonly cached: boolean;
+}
+
+interface LibraryCache {
+  readonly indexOf: (entry: DependencyEntry, compute: () => LibraryIndex) => CachedIndex;
+}
+
+const libraryCache = (): LibraryCache => {
+  const indexes = new Map<string, LibraryIndex>();
+  return {
+    indexOf: (entry, compute) =>
+      Option.match(Option.fromUndefinedOr(indexes.get(entry.declarationsPath)), {
+        onSome: (index) => ({ index, cached: true }),
+        onNone: () => {
+          const index = compute();
+          indexes.set(entry.declarationsPath, index);
+          return { index, cached: false };
+        },
+      }),
+  };
+};
+
+const indexEntry =
+  (cache: LibraryCache) =>
   (checker: Checker) =>
-  (entries: readonly DependencyEntry[]): LibraryIndex =>
-    mergeIndexes(
-      pipe(
-        entries,
-        Arr.map((entry) => indexOfEntry(checker)(entry)),
+  (entry: DependencyEntry): Effect.Effect<LibraryIndex> =>
+    Effect.sync(() => cache.indexOf(entry, () => indexOfEntry(checker)(entry))).pipe(
+      Effect.tap(({ index, cached }) =>
+        Effect.annotateCurrentSpan({
+          "msch.library.cached": cached,
+          "msch.library.vocabularies": index.vocabularies.length,
+          "msch.library.shapes": index.shapes.length,
+        }),
       ),
+      Effect.map(({ index }) => index),
+      Effect.withSpan("indexLibraryEntry", {
+        attributes: { "msch.library.specifier": entry.specifier },
+      }),
     );
 
-export { describeLibraryType, isObjectType, libraryIndex };
-export type { LibraryIndex, LibraryShape, LibraryType, LibraryVocabulary };
+const libraryIndex =
+  (cache: LibraryCache) =>
+  (checker: Checker) =>
+  (entries: readonly DependencyEntry[]): Effect.Effect<LibraryIndex> =>
+    pipe(
+      entries,
+      Effect.forEach(indexEntry(cache)(checker)),
+      Effect.map(mergeIndexes),
+      Effect.withSpan("libraryIndex"),
+    );
+
+export {
+  declarationKey,
+  describeLibraryType,
+  isObjectType,
+  libraryCache,
+  libraryIndex,
+  locationOf,
+};
+export type {
+  CachedIndex,
+  DeclarationLocation,
+  LibraryCache,
+  LibraryIndex,
+  LibraryShape,
+  LibraryType,
+  LibraryVocabulary,
+};

@@ -1,3 +1,4 @@
+import type { Diagnostic as EditorDiagnostic } from "@codemirror/lint";
 import { Array as Arr, Effect, HashMap, Match, Option, Order, String as Str, pipe } from "effect";
 import {
   API,
@@ -13,7 +14,7 @@ type Source = Readonly<{ path: string; code: string }>;
 
 type At = Source & Readonly<{ position: number }>;
 
-type Severity = "error" | "warning" | "info";
+type Severity = EditorDiagnostic["severity"];
 
 type Lint = Readonly<{ from: number; to: number; severity: Severity; message: string }>;
 

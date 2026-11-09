@@ -9,7 +9,8 @@
   "dependencies": {
     "@effect/platform-node": "catalog:",
     "effect": "catalog:stack",
-    "typescript": "catalog:stack"
+    "typescript": "catalog:stack",
+    "yaml": "catalog:"
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",

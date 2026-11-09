@@ -150,7 +150,10 @@ const firstDeclarationsAmong = Effect.fn("firstDeclarationsAmong")(function* fir
     ),
     (candidate) => files.exists(candidate),
   );
-  return Arr.head(existing);
+  return yield* Option.match(Arr.head(existing), {
+    onNone: (): Effect.Effect<Option.Option<string>> => Effect.succeedNone,
+    onSome: (candidate) => files.realPath(candidate).pipe(Effect.asSome),
+  });
 });
 
 const importNameOf = (packageName: string): string => {

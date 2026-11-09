@@ -2,7 +2,7 @@ import { layer } from "@effect/vitest";
 import { Effect, Array as Arr, pipe } from "effect";
 import { expect } from "vite-plus/test";
 
-import { findingsIn, fixtureLayer } from "./repository.test.support.ts";
+import { findingsIn, findingsInGitRepository, fixtureLayer } from "./repository.test.support.ts";
 
 const STATUS_OWNER = pipe(
   [
@@ -102,6 +102,53 @@ const reportsTheSameUnregisteredSetDeclaredTwi = Effect.gen(
   },
 );
 
+const acceptsArraysBuiltFromNamedValues = Effect.gen(function* acceptsArraysBuiltFromNamedValues() {
+  const findings = yield* findingsIn({
+    "src/flags.ts": "export const FLAGS = { read: 1, write: 2 } as const;\n",
+    "src/a.ts":
+      'import { FLAGS } from "./flags.ts";\nexport const a = [FLAGS.read, FLAGS.write];\n',
+    "src/b.ts":
+      'import { FLAGS } from "./flags.ts";\nexport const b = [FLAGS.write, FLAGS.read];\n',
+  });
+  expect(findings).toStrictEqual([]);
+});
+
+const ignoresFilesMarkedAsGenerated = Effect.gen(function* ignoresFilesMarkedAsGenerated() {
+  const findings = yield* findingsInGitRepository({
+    ".gitattributes": "*.gen.ts linguist-generated\n",
+    "src/routes.gen.ts": 'export type Paths = "/" | "/feed";\nexport type To = "/" | "/feed";\n',
+    "src/a.ts": 'export type Mode = "light" | "dark";\n',
+    "src/b.ts": 'export const MODES = ["dark", "light"] as const;\n',
+  });
+  expect(findings).toStrictEqual([
+    "src/a.ts:1 duplicate-value-set",
+    "src/b.ts:1 duplicate-value-set",
+  ]);
+});
+
+const PACKAGE_TSCONFIG =
+  '{"compilerOptions":{"strict":true,"module":"nodenext","moduleResolution":"nodenext","noEmit":true,"skipLibCheck":true},"include":["src"]}';
+
+const reportsDuplicatesOnlyBetweenPackagesTha = Effect.gen(
+  function* reportsDuplicatesOnlyBetweenPackagesTha() {
+    const findings = yield* findingsIn({
+      "one/package.json": '{"name":"one","dependencies":{"shared":"workspace:*"}}',
+      "one/tsconfig.json": PACKAGE_TSCONFIG,
+      "one/src/a.ts": 'export type Mode = "light" | "dark";\n',
+      "shared/package.json": '{"name":"shared"}',
+      "shared/tsconfig.json": PACKAGE_TSCONFIG,
+      "shared/src/b.ts": 'export const MODES = ["dark", "light"] as const;\n',
+      "two/package.json": '{"name":"two"}',
+      "two/tsconfig.json": PACKAGE_TSCONFIG,
+      "two/src/c.ts": 'export type Theme = "dark" | "light";\n',
+    });
+    expect(findings).toStrictEqual([
+      "one/src/a.ts:1 duplicate-value-set",
+      "shared/src/b.ts:1 duplicate-value-set",
+    ]);
+  },
+);
+
 layer(fixtureLayer)("repository owners", (it) => {
   it.effect(
     "reports sets that restate, extend or spell out an owner's values",
@@ -115,5 +162,11 @@ layer(fixtureLayer)("repository owners", (it) => {
   it.effect(
     "reports the same unregistered set declared twice",
     () => reportsTheSameUnregisteredSetDeclaredTwi,
+  );
+  it.effect("accepts arrays built from named values", () => acceptsArraysBuiltFromNamedValues);
+  it.effect("ignores files marked as generated", () => ignoresFilesMarkedAsGenerated);
+  it.effect(
+    "reports duplicates only between packages that can derive from each other",
+    () => reportsDuplicatesOnlyBetweenPackagesTha,
   );
 });
