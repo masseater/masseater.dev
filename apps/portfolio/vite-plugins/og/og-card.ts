@@ -4,8 +4,9 @@ import { Array as Arr, String as Str, pipe } from "effect";
 import { createElement } from "react";
 import type { ReactNode } from "react";
 
-import { categories, categoryMeta } from "#/entities/entry/model/category.ts";
+import { categoryMeta } from "#/entities/entry/model/category.ts";
 import type { Category } from "#/entities/entry/model/category.ts";
+import { sectionMeta, sections } from "#/shared/config/sections.ts";
 import { site } from "#/shared/config/site.ts";
 
 const BOLD = 700;
@@ -181,8 +182,8 @@ const cardElement =
     );
 
 const sectionTitles = pipe(
-  categories,
-  Arr.map((category) => categoryMeta[category].title),
+  sections,
+  Arr.map((section) => sectionMeta[section].title),
   Arr.join(SECTION_SEPARATOR),
 );
 
