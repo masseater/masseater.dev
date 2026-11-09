@@ -13,9 +13,9 @@
   },
   "dependencies": {
     "@effect/tsgo": "catalog:stack",
-    "@eslint-react/eslint-plugin": "catalog:",
     "@html-eslint/eslint-plugin-react": "catalog:",
     "@r_masseater/oxlint-plugin-decision": "catalog:",
+    "@r_masseater/oxlint-typed-rules": "catalog:",
     "@r_masseater/workers-tracing": "workspace:*",
     "effect": "catalog:stack",
     "eslint-plugin-react-hooks": "catalog:"
