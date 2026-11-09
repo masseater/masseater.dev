@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, Order, Record as Rec, String as Str, pipe } from "effect";
 
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 
@@ -29,10 +29,13 @@ const definitionOf =
     ),
   });
 
+const labelOf = (entry: Entry): string => entry.row.label;
+
 const listOf = (
   definitions: readonly Entry[],
   usage: Readonly<Record<string, Usage>>,
-): readonly Body[] => pipe(definitions, Arr.map(definitionOf(usage)));
+): readonly Body[] =>
+  pipe(definitions, Arr.sortWith(labelOf, Order.String), Arr.map(definitionOf(usage)));
 
 const labelKeys = (entry: Entry): readonly string[] => [entry.row.label];
 
@@ -40,8 +43,6 @@ const metricKeys = (entry: Entry): readonly string[] => metricKeysOf(entry.body)
 
 const placeKeys = (entry: Entry): readonly string[] =>
   pipe([textAt("place")(entry.body)], Arr.filter(Str.isNonEmpty));
-
-const labelOf = (entry: Entry): string => entry.row.label;
 
 const vocabularyOf = (entries: readonly Entry[]): Body => {
   const events = pipe(entries, Arr.filter(ofRecord("life_event")));
