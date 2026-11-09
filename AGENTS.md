@@ -43,6 +43,14 @@
 - 精度・費用・時間の比較は、無害な入力と注入を含む入力の両方で、フロンティアモデルに直接判定させた場合と並べる。計測の前後に `GET https://openrouter.ai/api/v1/key` でキーの残りを確かめる。
 - デモはサーバーの処理を持たない。OpenRouter のキーは見る人が入力し、サーバーは持たず受け取りもしない。
 
+## yakusu
+
+- `apps/yakusu` は PLaMo 3 Translate 0.8B を手元で動かす翻訳のデスクトップアプリである。Tauri 2 の Rust 側（`src-tauri`、ルートの Cargo ワークスペースの一員）が llama.cpp の llama-server を子プロセスとして起動し、`/completion` の流れを訳文として画面へ送る。
+- llama-server・モデル・ライセンスの写しは、`scripts/fetch-runtime.sh` がリビジョンと sha256 を固定して `src-tauri/resources/` に落とす。リポには入れない。実モデルでの翻訳は `cargo test -p yakusu --test engine -- --ignored` で確かめる。
+- `yakusu` ワークフローが 3 OS で実モデルの翻訳を確かめてからインストーラーを作り、`yakusu-v*` のタグのときはリリースに付ける。
+- 画面はブラウザーモードの Vitest が偽のエンジンで操作し、`src/app/__screenshots__/` の画像と比べる。
+- PLaMo Community License に従い、画面に「Built with PLaMo」を出し、インストーラーにライセンスの写しを入れる。モデルを変えて派生モデルを配るときは、名前の先頭に「PLaMo」を付ける。
+
 ## aredoko
 
 - aredoko は Unity エディタの中でアセットを見た目の言葉で探す検索で、製品は UPM パッケージ `dev.masseater.aredoko` である。開発用の Unity プロジェクト `apps/aredoko-unity` に埋め込んで置き、そのプロジェクトで動かして確かめる。利用者向けの導入手順は `apps/aredoko-desktop/README.md` にある。

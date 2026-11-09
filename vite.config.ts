@@ -274,6 +274,7 @@ export default defineConfig({
           "rpp-kit-demo#typecheck",
           "sts2-mods#dotnet",
           "aredoko-desktop#cargo",
+          "yakusu#cargo",
           "aredoko-protocol-codegen#codegen:check",
           "aredoko-csharp-check#cs:check",
         ],

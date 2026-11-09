@@ -1,0 +1,93 @@
+name: yakusu
+
+on:
+  push:
+    branches: [main]
+    paths: ["apps/yakusu/**", ".github/workflows/yakusu.yml"]
+    tags: ["yakusu-v*"]
+  workflow_dispatch:
+
+permissions: {}
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  installer:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux-x64
+            bundles: deb,appimage
+            files: |
+              target/release/bundle/deb/*.deb
+              target/release/bundle/appimage/*.AppImage
+          - os: windows-latest
+            platform: windows-x64
+            bundles: nsis
+            files: target/release/bundle/nsis/*.exe
+          - os: macos-latest
+            platform: macos-arm64
+            bundles: dmg
+            files: target/release/bundle/dmg/*.dmg
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && xargs -a .github/actions/setup/linux-packages.txt sudo apt-get install -y
+      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+        with:
+          cache: true
+          run-install: |
+            - args: ['--frozen-lockfile']
+      - run: rustup toolchain install
+      - name: Download llama-server, the model and their licenses
+        run: apps/yakusu/scripts/fetch-runtime.sh "$PLATFORM"
+        env:
+          PLATFORM: ${{ matrix.platform }}
+      - name: Translate with the downloaded runtime
+        run: cargo test --package yakusu --test engine --locked -- --ignored
+      - name: Build the installer
+        run: vp exec tauri build --config src-tauri/tauri.release.conf.json --bundles "$BUNDLES"
+        working-directory: apps/yakusu
+        env:
+          BUNDLES: ${{ matrix.bundles }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: yakusu-${{ matrix.platform }}
+          path: ${{ matrix.files }}
+          if-no-files-found: error
+          compression-level: 0
+      - if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          FILES: ${{ matrix.files }}
+        run: |
+          files=()
+          while read -r pattern; do
+            while read -r file; do files+=("$file"); done < <(compgen -G "$pattern")
+          done <<< "$FILES"
+          gh release upload "$TAG" "${files[@]}" --clobber --repo "$GITHUB_REPOSITORY"
+
+  ci-telemetry:
+    needs: [installer]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@38a7ea6baf9892c99154d38b2421fae9cedf6f84
+        with:
+          github-token: ${{ github.token }}
