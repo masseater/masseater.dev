@@ -28,6 +28,7 @@
   },
   "boundaries": {
     "zones": [
+      { "name": "tests", "patterns": ["**/*.test.*", "**/*.test.*.*"] },
       { "name": "apps", "autoDiscover": ["apps"] },
       { "name": "libs", "patterns": ["libs/**"] },
       { "name": "tools", "patterns": ["tools/**"], "autoDiscover": ["tools"] },

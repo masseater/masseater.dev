@@ -1,4 +1,14 @@
-import { Schema } from "effect";
+import {
+  DecisionsChoiceAnswer$inboundSchema,
+  DecisionsNoulAnswer$inboundSchema,
+  DecisionsScoreAnswer$inboundSchema,
+} from "@openrouter/sdk/models";
+import type {
+  DecisionsChoiceAnswer,
+  DecisionsNoulAnswer,
+  DecisionsScoreAnswer,
+} from "@openrouter/sdk/models";
+import { Array as Arr, Schema, pipe } from "effect";
 
 const common = {
   id: Schema.String,
@@ -48,17 +58,21 @@ type ChoiceItem = typeof ChoiceItemSchema.Type;
 type NoulItem = typeof NoulItemSchema.Type;
 type ScoreItem = typeof ScoreItemSchema.Type;
 
-const ProbabilitiesSchema = Schema.Record(Schema.String, Schema.Finite);
+type Decision = DecisionsChoiceAnswer | DecisionsNoulAnswer | DecisionsScoreAnswer;
 
-const DecisionSchema = Schema.Union([
-  Schema.Struct({
-    type: Schema.Literal("choice"),
-    choice: Schema.String,
-    probabilities: Schema.optional(ProbabilitiesSchema),
-  }),
-  Schema.Struct({ type: Schema.Literal("noul"), noul: Schema.Finite }),
-  Schema.Struct({ type: Schema.Literal("score"), score: Schema.Finite }),
-]);
+const ANSWER_SCHEMAS = [
+  DecisionsChoiceAnswer$inboundSchema,
+  DecisionsNoulAnswer$inboundSchema,
+  DecisionsScoreAnswer$inboundSchema,
+];
+
+const isDecision = (input: unknown): input is Decision =>
+  pipe(
+    ANSWER_SCHEMAS,
+    Arr.some((schema) => schema.safeParse(input).success),
+  );
+
+const DecisionSchema = Schema.declare(isDecision);
 
 const OutcomeSchema = Schema.Union([
   Schema.Struct({
@@ -75,7 +89,6 @@ const OutcomeSchema = Schema.Union([
 ]);
 
 type Outcome = typeof OutcomeSchema.Type;
-type Decision = typeof DecisionSchema.Type;
 
 interface Scored {
   readonly item: Item;

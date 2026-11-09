@@ -1,7 +1,10 @@
 import { LOOSE_EXTENSIONS } from "@masseater.dev/aredoko-protocol";
+import type { AssetKind as AssetKindSchema } from "@masseater.dev/aredoko-protocol";
 import { Array, Option, Record, String, pipe } from "effect";
 
 import { capture } from "#shared/text";
+
+type AssetKind = typeof AssetKindSchema.Type;
 
 const EXTENSIONS = {
   ...LOOSE_EXTENSIONS,
@@ -11,9 +14,7 @@ const EXTENSIONS = {
   animation: ["anim", "controller", "overridecontroller", "mask"],
   scene: ["unity"],
   script: ["cs", "asmdef", "dll"],
-} as const;
-
-type AssetKind = keyof typeof EXTENSIONS | "other";
+} as const satisfies Readonly<Record<Exclude<AssetKind, "other">, readonly string[]>>;
 
 const extensionOf = capture({ pattern: /\.(?<extension>[^./]+)$/u, name: "extension" });
 

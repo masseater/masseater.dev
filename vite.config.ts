@@ -262,12 +262,14 @@ export default defineConfig({
           "steiger",
           "db-check-all",
           "fallow",
+          "msch",
           "betterleaks",
           "ignored-sources",
           "audit",
           "sloppedia#size",
           "@masseater.dev/pod-rattle-engine#cargo",
           "@masseater.dev/pod-rattle-plugin#cargo",
+          "@masseater.dev/pod-rattle-host#cargo",
           "@masseater.dev/xtask#cargo",
           "rpp-kit-demo#typecheck",
           "sts2-mods#dotnet",
@@ -277,6 +279,12 @@ export default defineConfig({
         ],
       },
       test: "vp test run",
+      msch: {
+        command: "node tools/msch/src/cli.ts",
+        cache: {
+          untrackedEnv: ["HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy", "SSL_CERT_FILE"],
+        },
+      },
       "db-check-all": "vp run -r db:check",
       audit: {
         command:

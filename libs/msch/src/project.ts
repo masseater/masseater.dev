@@ -9,9 +9,10 @@ import {
   readManifest,
   workspaceDependencies,
 } from "./dependencies.ts";
-import { libraryIndex } from "./library.ts";
-import type { LibraryIndex } from "./library.ts";
+import { libraryCache, libraryIndex } from "./library.ts";
+import type { LibraryCache, LibraryIndex } from "./library.ts";
 import { RepositoryFiles } from "./repository-files.ts";
+import { annotateResources } from "./telemetry.ts";
 
 interface Project {
   readonly packageName: Option.Option<string>;
@@ -117,23 +118,31 @@ const skipsTypeChecking = (sourceFile: SourceFile): boolean =>
   );
 
 const buildProject = Effect.fn("buildProject")(function* buildProject(
-  api: API,
+  { compiler: { api, libraries }, generated }: Workspace,
   parsed: ParsedCommandLine,
   info: PackageInfo,
 ) {
   const entries = yield* dependencyEntries(info.directory);
-  const program = api.createProgram(
-    [
-      ...parsed.fileNames,
-      ...pipe(
-        entries,
-        Arr.map((entry) => entry.declarationsPath),
-      ),
-    ],
-    { ...parsed.options, noEmit: true },
-  );
+  const program = yield* Effect.sync(() =>
+    api.createProgram(
+      [
+        ...parsed.fileNames,
+        ...pipe(
+          entries,
+          Arr.map((entry) => entry.declarationsPath),
+        ),
+      ],
+      { ...parsed.options, noEmit: true },
+    ),
+  ).pipe(Effect.withSpan("createProgram"));
   const { checker } = program.getProject();
-  const projectFiles: ReadonlySet<string> = new Set(parsed.fileNames);
+  const library = yield* libraryIndex(libraries)(checker)(entries);
+  const projectFiles: ReadonlySet<string> = new Set(
+    pipe(
+      parsed.fileNames,
+      Arr.filter((fileName) => !generated.includes(fileName)),
+    ),
+  );
   return {
     packageName: info.name,
     workspaceDependencies: info.workspaceDependencies,
@@ -147,43 +156,93 @@ const buildProject = Effect.fn("buildProject")(function* buildProject(
       ),
       Arr.filter((sourceFile) => !sourceFile.isDeclarationFile && !skipsTypeChecking(sourceFile)),
     ),
-    library: libraryIndex(checker)(entries),
+    library,
   } satisfies Project;
 });
 
-const typeScriptApi = Effect.acquireRelease(
-  Effect.sync(() => new API()),
-  (api) =>
+interface Compiler {
+  readonly api: API;
+  readonly libraries: LibraryCache;
+}
+
+interface Workspace {
+  readonly compiler: Compiler;
+  readonly root: string;
+  readonly generated: readonly string[];
+}
+
+const typeScriptCompiler = Effect.acquireRelease(
+  Effect.sync((): Compiler => ({
+    api: new API({ collectTiming: true }),
+    libraries: libraryCache(),
+  })),
+  ({ api }) =>
     Effect.sync(() => {
       api.close();
     }),
 );
 
 const loadProject = Effect.fn("loadProject")(function* loadProject(
-  api: API,
+  workspace: Workspace,
   configPath: string,
-  root: string,
 ) {
-  const parsed = parseConfig(api)(configPath);
+  const { compiler, root } = workspace;
+  const parsed = parseConfig(compiler.api)(configPath);
   if (Option.isNone(parsed)) {
     return Option.none<Project>();
   }
   const info = yield* packageInfoOf(configPath, root);
-  const project = yield* buildProject(api, parsed.value, info);
+  const project = yield* buildProject(workspace, parsed.value, info);
+  yield* Effect.annotateCurrentSpan({
+    "msch.project.config": configPath,
+    "msch.project.program_files": project.program.getSourceFileNames().length,
+    "msch.project.source_files": project.sourceFiles.length,
+  });
+  yield* annotateResources(compiler.api);
   return Option.some(project);
 });
 
-const loadProjects = Effect.fn("loadProjects")(function* loadProjects(
-  root: string,
-  configPaths: readonly string[],
-) {
-  const api = yield* typeScriptApi;
-  const projects = yield* Fn.pipe(
-    configPaths,
-    Effect.forEach((configPath) => loadProject(api, configPath, root)),
-  );
-  return Arr.getSomes(projects);
-});
+const releaseProject = (project: Project): Effect.Effect<void> =>
+  Effect.sync(() => {
+    project.program.dispose();
+  });
 
-export { listConfigFiles, loadProjects };
-export type { Project };
+const withProject =
+  (workspace: Workspace) =>
+  (configPath: string) =>
+  <Value, Failure, Requirements>(
+    work: (project: Project) => Effect.Effect<Value, Failure, Requirements>,
+  ): Effect.Effect<Option.Option<Value>, Failure, Requirements | RepositoryFiles> =>
+    Effect.acquireUseRelease(
+      loadProject(workspace, configPath),
+      (loaded) =>
+        Option.match(loaded, {
+          onNone: () => Effect.succeedNone,
+          onSome: (project) => work(project).pipe(Effect.asSome),
+        }),
+      (loaded) => Option.match(loaded, { onNone: () => Effect.void, onSome: releaseProject }),
+    );
+
+const mentions =
+  (needle: string) =>
+  ({ api }: Compiler) =>
+  (configPath: string): Effect.Effect<boolean, never, RepositoryFiles> =>
+    Effect.gen(function* mentionsNeedle() {
+      const files = yield* RepositoryFiles;
+      const fileNames = Option.match(parseConfig(api)(configPath), {
+        onNone: (): readonly string[] => [],
+        onSome: (parsed): readonly string[] => parsed.fileNames,
+      });
+      const texts = yield* pipe(
+        fileNames,
+        Effect.forEach((fileName) => files.readFile(fileName)),
+      );
+      const includesNeedle = Str.includes(needle);
+      return pipe(
+        texts,
+        Arr.some((text) => Option.exists(text, includesNeedle)),
+      );
+    });
+
+export { listConfigFiles, mentions, typeScriptCompiler, withProject };
+export type { Compiler, Project, Workspace };

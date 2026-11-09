@@ -8,6 +8,8 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as DotwellKnownSplatRouteImport } from './routes/[.]well-known/$'
+import { Route as ApiConversationsRouteImport } from './routes/api.conversations'
+import { Route as ApiTokensRouteImport } from './routes/api.tokens'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 
 const ConsentRoute = ConsentRouteImport.update({
@@ -35,6 +37,16 @@ const DotwellKnownSplatRoute = DotwellKnownSplatRouteImport.update({
   path: '/.well-known/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiConversationsRoute = ApiConversationsRouteImport.update({
+  id: '/api/conversations',
+  path: '/api/conversations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTokensRoute = ApiTokensRouteImport.update({
+  id: '/api/tokens',
+  path: '/api/tokens',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -47,6 +59,8 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
+  '/api/conversations': typeof ApiConversationsRoute
+  '/api/tokens': typeof ApiTokensRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
@@ -55,6 +69,8 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
+  '/api/conversations': typeof ApiConversationsRoute
+  '/api/tokens': typeof ApiTokensRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -64,6 +80,8 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
+  '/api/conversations': typeof ApiConversationsRoute
+  '/api/tokens': typeof ApiTokensRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
@@ -74,6 +92,8 @@ export interface FileRouteTypes {
     | '/register'
     | '/sign-in'
     | '/.well-known/$'
+    | '/api/conversations'
+    | '/api/tokens'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -82,6 +102,8 @@ export interface FileRouteTypes {
     | '/register'
     | '/sign-in'
     | '/.well-known/$'
+    | '/api/conversations'
+    | '/api/tokens'
     | '/api/auth/$'
   id:
     | '__root__'
@@ -90,6 +112,8 @@ export interface FileRouteTypes {
     | '/register'
     | '/sign-in'
     | '/.well-known/$'
+    | '/api/conversations'
+    | '/api/tokens'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
@@ -99,6 +123,8 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   SignInRoute: typeof SignInRoute
   DotwellKnownSplatRoute: typeof DotwellKnownSplatRoute
+  ApiConversationsRoute: typeof ApiConversationsRoute
+  ApiTokensRoute: typeof ApiTokensRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -139,6 +165,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotwellKnownSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/conversations': {
+      id: '/api/conversations'
+      path: '/api/conversations'
+      fullPath: '/api/conversations'
+      preLoaderRoute: typeof ApiConversationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tokens': {
+      id: '/api/tokens'
+      path: '/api/tokens'
+      fullPath: '/api/tokens'
+      preLoaderRoute: typeof ApiTokensRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -155,6 +195,8 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   SignInRoute: SignInRoute,
   DotwellKnownSplatRoute: DotwellKnownSplatRoute,
+  ApiConversationsRoute: ApiConversationsRoute,
+  ApiTokensRoute: ApiTokensRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
