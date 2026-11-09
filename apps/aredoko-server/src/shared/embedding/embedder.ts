@@ -1,4 +1,4 @@
-import type { PretrainedConfig } from "@huggingface/transformers";
+import type { DeviceType, PretrainedConfig } from "@huggingface/transformers";
 import {
   AutoConfig,
   AutoModel,
@@ -13,7 +13,7 @@ import { EmbeddingFailed } from "./embedding-failed.ts";
 
 const MODEL_ID = "onnx-community/embeddinggemma-2-ONNX";
 const DTYPE = "q4";
-const DEVICES = ["dml", "cpu"] as const;
+const DEVICES = ["dml", "cpu"] as const satisfies readonly DeviceType[];
 const IMAGE_SOFT_TOKENS = 70;
 
 type Vector = readonly number[];

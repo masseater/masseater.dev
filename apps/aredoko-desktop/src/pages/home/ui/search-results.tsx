@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { useSearch } from "#/pages/home/api/queries";
 import { searchViewOf, useKinds, useQueryText, useSelectedPackage } from "#/pages/home/model";
+import type { SearchPhase } from "#/pages/home/model";
 import { Notice } from "#/shared/ui/notice";
 
 import { MatchedResults } from "./matched-results.tsx";
@@ -10,7 +11,7 @@ import { MatchedResults } from "./matched-results.tsx";
 const phaseOf = ({
   isPending,
   fetchStatus,
-}: Readonly<{ isPending: boolean; fetchStatus: string }>): "idle" | "searching" | "settled" => {
+}: Readonly<{ isPending: boolean; fetchStatus: string }>): SearchPhase => {
   if (!isPending) {
     return "settled";
   }

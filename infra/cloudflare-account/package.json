@@ -9,10 +9,11 @@
     "./log-archive": "./log-archive.ts",
     "./trace-destination": "./trace-destination.ts",
     "./traced-providers": "./traced-providers.ts",
-    "./web-analytics-reader": "./web-analytics-reader.ts"
+    "./account-readers": "./account-readers.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
+    "@distilled.cloud/cloudflare": "catalog:stack",
     "@r_masseater/workers-tracing": "workspace:*",
     "alchemy": "catalog:stack",
     "effect": "catalog:stack"

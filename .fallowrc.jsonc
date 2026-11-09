@@ -28,6 +28,7 @@
   },
   "boundaries": {
     "zones": [
+      { "name": "tests", "patterns": ["**/*.test.*", "**/*.test.*.*"] },
       { "name": "apps", "autoDiscover": ["apps"] },
       { "name": "libs", "patterns": ["libs/**"] },
       { "name": "tools", "patterns": ["tools/**"], "autoDiscover": ["tools"] },
@@ -47,7 +48,6 @@
     "apps/aredoko-unity/**",
     "apps/zenn-articles/**",
     "tools/mosaic/**",
-    "tools/scrap-userscript/release/**",
     "tools/seikin-dance/**",
   ],
   "audit": { "gate": "all" },
@@ -122,7 +122,7 @@
       "name": "buf",
       "enablers": ["@bufbuild/buf"],
       "configPatterns": ["**/buf.gen.yaml"],
-      "toolingDependencies": ["@bufbuild/buf", "@bufbuild/protoc-gen-es"],
+      "toolingDependencies": ["@bufbuild/buf"],
     },
     {
       "name": "tanstack-start-fsd",
@@ -144,16 +144,11 @@
       "name": "vite-plus",
       "enablers": ["vite-plus"],
       "entryPoints": ["vite.config.ts"],
-      "toolingDependencies": [
-        "@arethetypeswrong/core",
-        "@ast-grep/cli",
-        "eslint-plugin-no-comments",
-        "publint",
-      ],
+      "toolingDependencies": ["@ast-grep/cli", "eslint-plugin-no-comments", "publint"],
     },
     {
-      "name": "vp-tools",
-      "enablers": ["@r_masseater/vp-tools"],
+      "name": "vite-plus-adopt",
+      "enablers": ["@r_masseater/vite-plus-adopt"],
       "toolingDependencies": [
         "@commitlint/config-conventional",
         "@textlint-ja/textlint-rule-preset-ai-writing",

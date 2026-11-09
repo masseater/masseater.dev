@@ -1,0 +1,172 @@
+import { layer } from "@effect/vitest";
+import { Effect, Array as Arr, pipe } from "effect";
+import { expect } from "vite-plus/test";
+
+import { findingsIn, findingsInGitRepository, fixtureLayer } from "./repository.test.support.ts";
+
+const STATUS_OWNER = pipe(
+  [
+    "/** @msch order.status */",
+    'export const ORDER_STATUSES = ["draft", "published", "archived"] as const;',
+    "export type OrderStatus = (typeof ORDER_STATUSES)[number];",
+    "",
+  ],
+  Arr.join("\n"),
+);
+
+const reportsSetsThatRestateExtendOrSpellOutAn = Effect.gen(
+  function* reportsSetsThatRestateExtendOrSpellOutAn() {
+    const findings = yield* findingsIn({
+      "src/status.ts": STATUS_OWNER,
+      "src/use.ts": pipe(
+        [
+          'import type { OrderStatus } from "./status.ts";',
+          'export type Local = "draft" | "published";',
+          'export type Wider = OrderStatus | "deleted";',
+          "export const set = (status: OrderStatus): OrderStatus => status;",
+          'set("draft");',
+          "",
+        ],
+        Arr.join("\n"),
+      ),
+    });
+    expect(findings).toStrictEqual([
+      "src/use.ts:2 owner-value-set",
+      "src/use.ts:3 owner-extension",
+      "src/use.ts:5 owned-literal",
+    ]);
+  },
+);
+
+const acceptsSetsDerivedFromTheOwner = Effect.gen(function* acceptsSetsDerivedFromTheOwner() {
+  const findings = yield* findingsIn({
+    "src/status.ts": STATUS_OWNER,
+    "src/use.ts": pipe(
+      [
+        'import { ORDER_STATUSES, type OrderStatus } from "./status.ts";',
+        'export type Published = Exclude<OrderStatus, "draft">;',
+        'export type Early = Extract<OrderStatus, "draft" | "published">;',
+        "export const copy = [...ORDER_STATUSES] as const;",
+        "",
+      ],
+      Arr.join("\n"),
+    ),
+  });
+  expect(findings).toStrictEqual([]);
+});
+
+const reportsAnnotationsThatCannotRegisterAnOw = Effect.gen(
+  function* reportsAnnotationsThatCannotRegisterAnOw() {
+    const findings = yield* findingsIn({
+      "src/owners.ts": pipe(
+        [
+          "/** @msch */",
+          'export const NAMELESS = ["a", "b"] as const;',
+          "/** @msch letters */",
+          "export const COUNT = 1;",
+          "/** @msch letters */",
+          'export type Letter = "a" | "b";',
+          "/** @msch colors */",
+          'export const COLORS = ["red", "blue"] as const;',
+          "/** @msch colors */",
+          'export const HUES = ["green", "cyan"] as const;',
+          "/** @msch tones */",
+          'export const TONES = ["red", "blue"] as const;',
+          "",
+        ],
+        Arr.join("\n"),
+      ),
+    });
+    expect(findings).toStrictEqual([
+      "src/owners.ts:2 owner-annotation",
+      "src/owners.ts:2 duplicate-value-set",
+      "src/owners.ts:4 owner-annotation",
+      "src/owners.ts:6 owner-annotation",
+      "src/owners.ts:6 duplicate-value-set",
+      "src/owners.ts:10 owner-annotation",
+      "src/owners.ts:12 owner-annotation",
+    ]);
+  },
+);
+
+const reportsTheSameUnregisteredSetDeclaredTwi = Effect.gen(
+  function* reportsTheSameUnregisteredSetDeclaredTwi() {
+    const findings = yield* findingsIn({
+      "src/a.ts": 'export type Mode = "light" | "dark";\n',
+      "src/b.ts": 'export const MODES = ["dark", "light"] as const;\n',
+    });
+    expect(findings).toStrictEqual([
+      "src/a.ts:1 duplicate-value-set",
+      "src/b.ts:1 duplicate-value-set",
+    ]);
+  },
+);
+
+const acceptsArraysBuiltFromNamedValues = Effect.gen(function* acceptsArraysBuiltFromNamedValues() {
+  const findings = yield* findingsIn({
+    "src/flags.ts": "export const FLAGS = { read: 1, write: 2 } as const;\n",
+    "src/a.ts":
+      'import { FLAGS } from "./flags.ts";\nexport const a = [FLAGS.read, FLAGS.write];\n',
+    "src/b.ts":
+      'import { FLAGS } from "./flags.ts";\nexport const b = [FLAGS.write, FLAGS.read];\n',
+  });
+  expect(findings).toStrictEqual([]);
+});
+
+const ignoresFilesMarkedAsGenerated = Effect.gen(function* ignoresFilesMarkedAsGenerated() {
+  const findings = yield* findingsInGitRepository({
+    ".gitattributes": "*.gen.ts linguist-generated\n",
+    "src/routes.gen.ts": 'export type Paths = "/" | "/feed";\nexport type To = "/" | "/feed";\n',
+    "src/a.ts": 'export type Mode = "light" | "dark";\n',
+    "src/b.ts": 'export const MODES = ["dark", "light"] as const;\n',
+  });
+  expect(findings).toStrictEqual([
+    "src/a.ts:1 duplicate-value-set",
+    "src/b.ts:1 duplicate-value-set",
+  ]);
+});
+
+const PACKAGE_TSCONFIG =
+  '{"compilerOptions":{"strict":true,"module":"nodenext","moduleResolution":"nodenext","noEmit":true,"skipLibCheck":true},"include":["src"]}';
+
+const reportsDuplicatesOnlyBetweenPackagesTha = Effect.gen(
+  function* reportsDuplicatesOnlyBetweenPackagesTha() {
+    const findings = yield* findingsIn({
+      "one/package.json": '{"name":"one","dependencies":{"shared":"workspace:*"}}',
+      "one/tsconfig.json": PACKAGE_TSCONFIG,
+      "one/src/a.ts": 'export type Mode = "light" | "dark";\n',
+      "shared/package.json": '{"name":"shared"}',
+      "shared/tsconfig.json": PACKAGE_TSCONFIG,
+      "shared/src/b.ts": 'export const MODES = ["dark", "light"] as const;\n',
+      "two/package.json": '{"name":"two"}',
+      "two/tsconfig.json": PACKAGE_TSCONFIG,
+      "two/src/c.ts": 'export type Theme = "dark" | "light";\n',
+    });
+    expect(findings).toStrictEqual([
+      "one/src/a.ts:1 duplicate-value-set",
+      "shared/src/b.ts:1 duplicate-value-set",
+    ]);
+  },
+);
+
+layer(fixtureLayer)("repository owners", (it) => {
+  it.effect(
+    "reports sets that restate, extend or spell out an owner's values",
+    () => reportsSetsThatRestateExtendOrSpellOutAn,
+  );
+  it.effect("accepts sets derived from the owner", () => acceptsSetsDerivedFromTheOwner);
+  it.effect(
+    "reports annotations that cannot register an owner",
+    () => reportsAnnotationsThatCannotRegisterAnOw,
+  );
+  it.effect(
+    "reports the same unregistered set declared twice",
+    () => reportsTheSameUnregisteredSetDeclaredTwi,
+  );
+  it.effect("accepts arrays built from named values", () => acceptsArraysBuiltFromNamedValues);
+  it.effect("ignores files marked as generated", () => ignoresFilesMarkedAsGenerated);
+  it.effect(
+    "reports duplicates only between packages that can derive from each other",
+    () => reportsDuplicatesOnlyBetweenPackagesTha,
+  );
+});

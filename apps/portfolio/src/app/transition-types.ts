@@ -1,15 +1,12 @@
 import { Array, Option, String as Str, pipe } from "effect";
 
-import { categoryInfos, categoryPath } from "#/entities/entry";
+import { sectionPath, sections } from "#/shared/config";
 
-const categoryPaths = pipe(
-  categoryInfos,
-  Array.map(({ category }) => categoryPath(category)),
-);
+const sectionPaths = pipe(sections, Array.map(sectionPath));
 
-const categoryIndex = (pathname: string): Option.Option<number> =>
+const sectionIndex = (pathname: string): Option.Option<number> =>
   Array.findFirstIndex(
-    categoryPaths,
+    sectionPaths,
     (path) => pathname === path || Str.startsWith(`${path}/`)(pathname),
   );
 
@@ -26,7 +23,7 @@ const direction = (from: number, to: number): string => {
 const fromIndex = (
   location: Readonly<{ pathname: string }> | null | undefined,
 ): Option.Option<number> =>
-  Option.flatMap(Option.fromNullishOr(location), ({ pathname }) => categoryIndex(pathname));
+  Option.flatMap(Option.fromNullishOr(location), ({ pathname }) => sectionIndex(pathname));
 
 const transitionTypes = ({
   fromLocation,
@@ -35,7 +32,7 @@ const transitionTypes = ({
   fromLocation?: Readonly<{ pathname: string }>;
   toLocation: Readonly<{ pathname: string }>;
 }>): string[] =>
-  Option.match(Option.all([fromIndex(fromLocation), categoryIndex(toLocation.pathname)]), {
+  Option.match(Option.all([fromIndex(fromLocation), sectionIndex(toLocation.pathname)]), {
     onNone: () => ["drift"],
     onSome: ([from, to]) => [direction(from, to)],
   });

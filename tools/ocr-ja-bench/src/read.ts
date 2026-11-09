@@ -28,8 +28,6 @@ const TEXT_SCHEMA = {
   additionalProperties: false,
 } as const;
 
-const TESSERACT_LANGUAGES = ["jpn", "eng"] as const;
-
 const ONE_AT_A_TIME = { concurrency: 1 } as const;
 
 const VLM_CONCURRENCY = { concurrency: 4 } as const;
@@ -140,7 +138,7 @@ const throughTesseract = ({
   page,
 }: Readonly<{ fs: FileSystem.FileSystem; page: Page }>): Effect.Effect<Reading> =>
   fs.readFile(page.image).pipe(
-    Effect.flatMap((image) => readFragments({ image, languages: TESSERACT_LANGUAGES })),
+    Effect.flatMap((image) => readFragments({ image })),
     Effect.timed,
     Effect.match({
       onFailure: (error) => failed(page.id, error.message),

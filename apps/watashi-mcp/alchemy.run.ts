@@ -2,7 +2,7 @@ import {
   AnalyticsEngine,
   CloudflareEnvironment,
   D1,
-  SecretsStore,
+  R2,
   Vectorize,
   Workers,
   providers,
@@ -16,7 +16,12 @@ import { Stack } from "alchemy";
 import { Effect, Option } from "effect";
 
 import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
-import { MCP_URL, SITE_HOST, TOOL_CALL_DATASET } from "./src/shared/config/index.ts";
+import {
+  CONVERSATION_UPLOAD_DATASET,
+  MCP_URL,
+  SITE_HOST,
+  TOOL_CALL_DATASET,
+} from "./src/shared/config/index.ts";
 
 const PROD = "prod";
 
@@ -25,11 +30,7 @@ const personalSpace = Effect.gen(function* personalSpace() {
     stack: "mydecklist",
     stage: PROD,
   });
-  const SCRAP_ROUTINE_TOKEN = yield* SecretsStore.Secret.ref("ScrapRoutineToken", {
-    stack: "mydecklist",
-    stage: PROD,
-  });
-  return { SLIDE_INDEX, SCRAP_ROUTINE_TOKEN };
+  return { SLIDE_INDEX };
 });
 
 const account = Effect.gen(function* account() {
@@ -52,12 +53,18 @@ const account = Effect.gen(function* account() {
 const web = Effect.gen(function* web() {
   const DB = yield* D1.Database("DB", { name: `${PREFIX}db`, migrations: "./drizzle" });
   const TOOL_CALLS = yield* AnalyticsEngine.Dataset("ToolCalls", { dataset: TOOL_CALL_DATASET });
+  const CONVERSATIONS = yield* R2.Bucket("Conversations", { name: `${PREFIX}conversations` });
+  const CONVERSATION_UPLOADS = yield* AnalyticsEngine.Dataset("ConversationUploads", {
+    dataset: CONVERSATION_UPLOAD_DATASET,
+  });
   return yield* authSite({
     domain: SITE_HOST,
     name: Option.some(`${PREFIX}web`),
     bindings: {
       DB,
       TOOL_CALLS,
+      CONVERSATIONS,
+      CONVERSATION_UPLOADS,
       AI: Workers.AI(),
       ...(yield* personalSpace),
       ...(yield* account),

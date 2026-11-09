@@ -16,6 +16,7 @@ import {
   alchemyOverride,
   otlpInteropOverride,
   otlpLibOverrides,
+  pluginEntryOverrides,
   scriptsOverride,
   workerOverride,
   writerOnlyOverride,
@@ -23,7 +24,7 @@ import {
 import { readonlyParameterAllow } from "oxlint-masseater-plugin/readonly-types";
 import { defineConfig } from "vite-plus";
 
-import { checks, checkTasks } from "./checks.config.ts";
+import { checks, checkTasks, packageChecks } from "./checks.config.ts";
 
 const typedRules = "@r_masseater/oxlint-typed-rules";
 
@@ -96,7 +97,14 @@ export default defineConfig({
       "tanstack-start/no-client-code-in-server-component": "error",
       "no-comments/disallowComments": [
         "error",
-        { allow: ["oxlint-disable", "eslint-disable", String.raw`\* @internal \*?$`] },
+        {
+          allow: [
+            "oxlint-disable",
+            "eslint-disable",
+            String.raw`\* @internal \*?$`,
+            "/usr/bin/env node$",
+          ],
+        },
       ],
       ...allRulesOf({ prefix: "tanstack-query", rules: tanstackQuery.rules }),
       ...allRulesOf({ prefix: "tanstack-router", rules: tanstackRouter.rules }),
@@ -185,6 +193,7 @@ export default defineConfig({
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
       },
       scriptsOverride,
+      ...pluginEntryOverrides,
       otlpInteropOverride,
       ...otlpLibOverrides,
       {
@@ -216,7 +225,7 @@ export default defineConfig({
       ],
       "actions-lint": {
         command:
-          'actionlint && zizmor $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
+          'vpa actionlint && vpa zizmor $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
         cache: {
           env: ["CLAUDE_CODE_REMOTE"],
           untrackedEnv: [
@@ -253,22 +262,20 @@ export default defineConfig({
           "steiger",
           "db-check-all",
           "fallow",
+          "msch",
           "betterleaks",
           "ignored-sources",
           "audit",
-          "sloppedia#size",
-          "scrap-userscript#release-check",
-          "@masseater.dev/pod-rattle-engine#cargo",
-          "@masseater.dev/pod-rattle-plugin#cargo",
-          "@masseater.dev/xtask#cargo",
-          "rpp-kit-demo#typecheck",
-          "sts2-mods#dotnet",
-          "aredoko-desktop#cargo",
-          "aredoko-protocol-codegen#codegen:check",
-          "aredoko-csharp-check#cs:check",
+          ...packageChecks,
         ],
       },
       test: "vp test run",
+      msch: {
+        command: "node tools/msch/src/cli.ts",
+        cache: {
+          untrackedEnv: ["HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy", "SSL_CERT_FILE"],
+        },
+      },
       "db-check-all": "vp run -r db:check",
       audit: {
         command:

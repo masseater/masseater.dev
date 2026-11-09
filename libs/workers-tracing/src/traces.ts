@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { CredentialsFromEnv } from "@distilled.cloud/cloudflare/Credentials";
 import { queryObservabilityTelemetry } from "@distilled.cloud/cloudflare/workers";
 import { NodeRuntime, NodeServices } from "@effect/platform-node";

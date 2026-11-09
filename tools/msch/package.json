@@ -1,0 +1,26 @@
+{
+  "name": "@r_masseater/msch",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Point every finite value set and object shape at the one place that already owns it: a registered owner in the repository or a dependency type.",
+  "bin": {
+    "msch": "./src/cli.ts"
+  },
+  "type": "module",
+  "exports": {
+    "./oxlint": "./src/oxlint.ts",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@msch/core": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@r_masseater/vitest-otlp": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

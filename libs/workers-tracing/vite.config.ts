@@ -1,7 +1,6 @@
+import { checkPackage, createPackageFromTarballData } from "@r_masseater/vite-plus-adopt/attw";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
-
-const BANNERS: Readonly<Record<string, string>> = { "traces.js": "#!/usr/bin/env node" };
 
 export default defineConfig({
   run: {
@@ -24,10 +23,13 @@ export default defineConfig({
       "src/trace-sink.worker.ts",
     ],
     platform: "neutral",
-    banner: ({ fileName }) => BANNERS[fileName],
     sourcemap: true,
     publint: { strict: true },
-    attw: { profile: "esm-only", level: "error" },
+    attw: {
+      module: { checkPackage, createPackageFromTarballData },
+      profile: "esm-only",
+      level: "error",
+    },
     dts: true,
     external: [
       /^cloudflare:/u,

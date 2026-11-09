@@ -1,8 +1,8 @@
-import { getRouteApi, useHydrated } from "@tanstack/react-router";
-import { Option, pipe } from "effect";
+import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 import { useStarCounts } from "#/features/star";
+import { useTagFilter } from "#/features/tag-filter";
 
 import { CollectionView } from "./collection-view";
 
@@ -10,18 +10,17 @@ const route = getRouteApi("/_stage/_site/$category/");
 
 const CollectionPage = (): ReactNode => {
   const { category, entries } = route.useLoaderData();
-  const { tag } = route.useSearch();
-  const hydrated = useHydrated();
-  const activeTag = pipe(
-    Option.fromUndefinedOr(tag),
-    Option.filter(() => hydrated),
-  );
+  const { activeTag, select } = useTagFilter({
+    search: route.useSearch(),
+    navigate: route.useNavigate(),
+  });
   const starCounts = useStarCounts(category);
   return (
     <CollectionView
       activeTag={activeTag}
       category={category}
       entries={entries}
+      onSelectTag={select}
       starCounts={starCounts}
     />
   );

@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@masseater.dev/ui/theme.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+:root {
+  --youtube-lead: oklch(0.577 0.245 27.325);
+  --nico-lead: oklch(0.588 0.158 241.966);
+}
+
+.dark {
+  --youtube-lead: oklch(0.704 0.191 22.216);
+  --nico-lead: oklch(0.746 0.16 232.661);
+}
+
+@theme inline {
+  --color-youtube-lead: var(--youtube-lead);
+  --color-nico-lead: var(--nico-lead);
+}

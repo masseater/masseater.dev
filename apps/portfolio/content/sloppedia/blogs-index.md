@@ -20,7 +20,7 @@ masseater.dev のブログは、masseater の個人サイト masseater.dev に�
 
 ### 開発の道具
 
-Vite+、Alchemy、Elysia、fallow、syncpack のような道具を1本ずつ紹介する記事と、それらを束ねたテンプレート typescript-template の中身をまとめた記事がある。Effect を全面的に採用する理由を論じた記事もある[^blogs]。
+Vite+、Alchemy、Elysia、[fallow](/sloppedia/fallow)、syncpack のような道具を1本ずつ紹介する記事と、それらを束ねたテンプレート typescript-template の中身をまとめた記事がある。Effect を全面的に採用する理由を論じた記事もある[^blogs]。
 
 ### AI
 
