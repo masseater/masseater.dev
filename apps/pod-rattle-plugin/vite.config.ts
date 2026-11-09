@@ -12,14 +12,16 @@ export default defineConfig({
             "src/**",
             { pattern: "Cargo.lock", base: "workspace" },
             { pattern: "Cargo.toml", base: "workspace" },
-            { pattern: ".cargo/**", base: "workspace" },
             { pattern: "libs/pod-rattle-engine/Cargo.toml", base: "workspace" },
             { pattern: "libs/pod-rattle-engine/src/**", base: "workspace" },
           ],
           output: [],
         },
       },
-      bundle: { command: "cargo xtask bundle pod_rattle --release", cache: false },
+      bundle: {
+        command: "cargo run --package xtask --release -- bundle pod_rattle --release",
+        cache: false,
+      },
     },
   },
 });

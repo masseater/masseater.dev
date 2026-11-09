@@ -46,7 +46,7 @@ The benchmark numbers are from an Intel Xeon at 2.1 GHz. The editor also shows t
 
 ```sh
 vp run @masseater.dev/pod-rattle-engine#cargo   # fmt, clippy, parity, tests, real-time checks
-cargo xtask bundle-all --release    # target/bundled/Pod Rattle.{vst3,clap}
+vp run @masseater.dev/pod-rattle-plugin#bundle   # target/bundled/Pod Rattle.{vst3,clap}
 cargo run --release -p pod_rattle --features standalone   # Pod Rattle as a standalone app
 ```
 

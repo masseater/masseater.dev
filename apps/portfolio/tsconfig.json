@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/@effect/tsgo/schema.json",
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "include": ["src", "*.ts", "vite-plugins", "worker", "scripts"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],

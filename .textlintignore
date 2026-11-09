@@ -1,6 +1,0 @@
-AGENTS.md
-.agents/skills/**
-.claude/worktrees/**
-apps/zenn-articles/**
-**/.venv/**
-**/.cache/**
