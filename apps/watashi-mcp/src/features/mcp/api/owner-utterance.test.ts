@@ -5,8 +5,11 @@ import { ownerUtterances } from "./owner-utterance";
 
 const AT = "2026-11-09T15:19:34.000Z";
 
+const BASE =
+  '"cwd":"/home/user","entrypoint":"cli","gitBranch":"main","isSidechain":false,"parentUuid":null,"sessionId":"s1","userType":"external","version":"2.1.0"';
+
 const user = (uuid: string, content: string, extra = ""): string =>
-  `{"type":"user","uuid":"${uuid}","timestamp":"${AT}",${extra}"message":{"role":"user","content":${content}}}`;
+  `{"type":"user",${BASE},"uuid":"${uuid}","timestamp":"${AT}",${extra}"message":{"role":"user","content":${content}}}`;
 
 const said = (jsonl: string): readonly string[] =>
   Arr.map(ownerUtterances(jsonl), (utterance) => utterance.text);
@@ -21,6 +24,10 @@ describe("本人の発言の取り出し", () => {
     ).toStrictEqual(["画像も見て"]);
   });
 
+  it("origin が人のものなら取り出す", () => {
+    expect(said(user("h", '"進めて"', '"origin":{"kind":"human"},'))).toStrictEqual(["進めて"]);
+  });
+
   it("uuid と時刻を添える", () => {
     const line = user("u1", '"はい"');
     expect(ownerUtterances(line)).toStrictEqual([{ uuid: "u1", timestamp: AT, text: "はい" }]);
@@ -32,6 +39,11 @@ describe("本人の発言の取り出し", () => {
       user("m", '"<session-context>…</session-context>"', '"isMeta":true,'),
       user("s", '"調べて"', '"isSidechain":true,'),
       user("c", '"This session is being continued"', '"isCompactSummary":true,'),
+      user(
+        "n",
+        '"<task-notification>done</task-notification>"',
+        '"origin":{"kind":"task-notification"},',
+      ),
       `{"type":"assistant","uuid":"a","timestamp":"${AT}","message":{"content":"了解"}}`,
       user("o", '"<local-command-stdout>done</local-command-stdout>"'),
       "{broken",
