@@ -14,6 +14,7 @@ import {
 } from "oxlint-masseater-plugin";
 import {
   alchemyOverride,
+  mschPluginOverride,
   otlpInteropOverride,
   otlpLibOverrides,
   scriptsOverride,
@@ -192,6 +193,7 @@ export default defineConfig({
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
       },
       scriptsOverride,
+      mschPluginOverride,
       otlpInteropOverride,
       ...otlpLibOverrides,
       {

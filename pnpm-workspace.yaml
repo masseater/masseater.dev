@@ -26,6 +26,7 @@ catalog:
   codemirror: 6.0.2
   comlink: 4.4.2
   typescript-wasm: npm:typescript@7.1.0-dev.20261106.1
+  typescript-6: npm:@typescript/typescript6@6.0.2
   "@better-auth/drizzle-adapter": 1.7.18
   "@better-auth/mcp": 1.7.18
   "@better-auth/oauth-provider": 1.7.18
@@ -199,6 +200,7 @@ peerDependencyRules:
   allowAny:
     - vite
 allowBuilds:
+  typescript-6: true
   tesseract.js: false
   "@ast-grep/cli": true
   esbuild: true
