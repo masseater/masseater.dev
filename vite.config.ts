@@ -266,7 +266,6 @@ export default defineConfig({
           "ignored-sources",
           "audit",
           "sloppedia#size",
-          "scrap-userscript#release-check",
           "@masseater.dev/pod-rattle-engine#cargo",
           "@masseater.dev/pod-rattle-plugin#cargo",
           "@masseater.dev/xtask#cargo",
