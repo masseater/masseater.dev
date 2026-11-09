@@ -13,21 +13,20 @@
 
 ## クイックスタート
 
-ゲームと Steam が入っている PC で行う。[.NET SDK 9.0 以上](https://dotnet.microsoft.com/download)、[MegaDot 4.5.1](https://megadot.megacrit.com/)、[Vite+](https://viteplus.dev) を入れ、Steam で [BaseLib](https://steamcommunity.com/sharedfiles/filedetails/?id=3737335127) をサブスクライブする。Mac の MegaDot は `curl -fsSL https://megadot.megacrit.com/install.sh | sh` で入る。
+ゲームと Steam が入っている PC で行う。
 
-`local.props.example` を `local.props` にコピーし、`GodotPath`（必要なら `Sts2Path`）を書き換える。Mac で既定の場所に入れたなら要らない。[masseater/masseater.dev](https://github.com/masseater/masseater.dev) のルートで `vp install` を実行し、以降のコマンドは `apps/sts2-mods` で実行する。
+1. [.NET SDK 9.0 以上](https://dotnet.microsoft.com/download)、[MegaDot 4.5.1](https://megadot.megacrit.com/)、[Vite+](https://viteplus.dev) を入れる。Mac の MegaDot は `curl -fsSL https://megadot.megacrit.com/install.sh | sh` で入る
+2. Steam で [BaseLib](https://steamcommunity.com/sharedfiles/filedetails/?id=3737335127) をサブスクライブ
+3. `local.props.example` を `local.props` にコピーし、`GodotPath`(必要なら `Sts2Path`)を書き換える(Mac で既定の場所に入れたなら不要)
+4. [masseater/masseater.dev](https://github.com/masseater/masseater.dev) のルートで `vp install` を実行し、以降のコマンドは `apps/sts2-mods` で実行する
+5. ビルドしてゲームに配置する
+   ```
+   vp run build                       # 全 Mod (= dotnet build sts2-mods.sln)
+   vp run build MapDrawUndo           # 1 つだけ
+   vp run publish MyFirstMod          # 画像・テキストを変えたとき (.pck も書き出す)
+   ```
 
-ビルドしてゲームに配置する。
-
-```
-vp run build                       # 全 Mod (= dotnet build sts2-mods.sln)
-vp run build MapDrawUndo           # 1 つだけ
-vp run publish MyFirstMod          # 画像・テキストを変えたとき (.pck も書き出す)
-```
-
-ゲームを起動し「設定 → Mod Settings」に Mod が出れば成功である。
-
-タスクの一覧は `vp run`(選択画面が出る)か `vite.config.ts` を見てください。
+ゲームを起動し、「設定 → Mod Settings」に Mod が出れば配置できている。タスクの一覧は `vp run`(選択画面が出る)か `vite.config.ts` を見てください。
 
 ## 開発のルール
 
@@ -49,12 +48,10 @@ vp run stage MapDrawUndo
 
 ## 参考資料
 
-| 資料                                                                                               | 内容                                                                                      |
-| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [Alchyr/ModTemplate-StS2 Wiki](https://github.com/Alchyr/ModTemplate-StS2/wiki)                    | セットアップ、カード追加、デコンパイル、デバッグ                                          |
-| [BaseLib](https://github.com/Alchyr/BaseLib-StS2)                                                  | Mod の土台のライブラリ                                                                    |
-| [megacrit/sts2-mod-uploader](https://github.com/megacrit/sts2-mod-uploader)                        | ワークショップへの公開                                                                    |
-| [Slay the Spire 2 Modding Tutorial](https://fresh-milkshake.github.io/Modding-Tutorial/)           | マニフェスト、Harmony、.pck、パッケージング                                               |
-| [wiki.gg: Modding Tutorials](https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Modding_Tutorials) | Modding の手引き                                                                          |
-| [zhiyue/sts2-rl-agent `decompiled/`](https://github.com/zhiyue/sts2-rl-agent/tree/HEAD/decompiled) | 公開デコンパイル。ゲームの版が古い可能性があり、自分の sts2.dll を ILSpy 等で見るのが確実 |
-| [Steam ワークショップ](https://steamcommunity.com/app/2868840/workshop/)                           | 公開先                                                                                    |
+- [Alchyr/ModTemplate-StS2 Wiki](https://github.com/Alchyr/ModTemplate-StS2/wiki)(セットアップ、カード追加、デコンパイル、デバッグ)
+- [BaseLib](https://github.com/Alchyr/BaseLib-StS2)
+- [megacrit/sts2-mod-uploader](https://github.com/megacrit/sts2-mod-uploader)
+- [Slay the Spire 2 Modding Tutorial](https://fresh-milkshake.github.io/Modding-Tutorial/)(マニフェスト、Harmony、.pck、パッケージング)
+- [wiki.gg: Modding Tutorials](https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Modding_Tutorials)
+- 公開デコンパイル [zhiyue/sts2-rl-agent `decompiled/`](https://github.com/zhiyue/sts2-rl-agent/tree/HEAD/decompiled)(ゲームの版が古い可能性あり。自分の sts2.dll を ILSpy 等で見るのが確実)
+- [Steam ワークショップ](https://steamcommunity.com/app/2868840/workshop/)
