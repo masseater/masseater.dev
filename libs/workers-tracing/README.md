@@ -259,26 +259,54 @@ calls it temporary, so the call is worth repeating. `runWorkersAi` repeats it fo
 ```ts
 import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
 
+const MODEL = "@cf/google/gemma-4-26b-a4b-it";
+
 const answer =
   yield *
-  runWorkersAi("daily summary 2026-10-01", () =>
-    env.AI.run("@cf/google/gemma-4-26b-a4b-it", { messages, max_tokens: 400 }),
-  );
+  runWorkersAi({
+    operation: "chat",
+    model: MODEL,
+    prompt: "daily-summary",
+    call: () => env.AI.run(MODEL, { messages, max_tokens: 400 }),
+  });
 ```
 
-| What happens                                 | What `runWorkersAi` does                                  |
-| -------------------------------------------- | --------------------------------------------------------- |
-| Error 3040, from the binding or the REST API | Logs a warning, then retries after 2, 4, 8 and 16 seconds |
-| Any other error                              | Fails at once with `WorkersAiError`                       |
-| The answer was cut off                       | Logs a warning                                            |
+| What happens                                 | What `runWorkersAi` does                         |
+| -------------------------------------------- | ------------------------------------------------ |
+| Error 3040, from the binding or the REST API | Retries after 2, 4, 8 and 16 seconds             |
+| Any other error                              | Fails at once with `WorkersAiError`              |
+| The answer was cut off                       | Logs the warning `Workers AI cut the answer off` |
 
-An answer counts as cut off when its `finish_reason` is neither `stop` nor
-`tool_calls`. The warning carries `label`, the reason and the number of output
-tokens. `label` names what the model was writing, so the warning tells you which
-answer was cut off.
-
-`WorkersAiError` carries the label and the original error as `cause`. Its
+An answer counts as cut off when a finish reason is neither `stop` nor
+`tool_calls`. `WorkersAiError` carries the original error as `cause`. Its
 `outOfCapacity` is `true` when the four retries were used up.
+
+The telemetry follows the [OpenTelemetry GenAI semantic
+conventions](https://github.com/open-telemetry/semantic-conventions-genai),
+read at commit `e6658f1` of 2026-11-06. They are still in development. One span
+covers the call with all its retries, as the conventions ask.
+
+| Telemetry                        | Value                                                               |
+| -------------------------------- | ------------------------------------------------------------------- |
+| Span name                        | `{gen_ai.operation.name} {gen_ai.request.model}`, kind `CLIENT`     |
+| `gen_ai.operation.name`          | `operation`: `chat` or `embeddings`                                 |
+| `gen_ai.provider.name`           | `cloudflare.workers_ai`, a custom value                             |
+| `gen_ai.request.model`           | `model`                                                             |
+| `gen_ai.prompt.name`             | `prompt`, the name of the prompt template, when given               |
+| `gen_ai.response.finish_reasons` | The `finish_reason` of each choice                                  |
+| `gen_ai.usage.input_tokens`      | `usage.prompt_tokens` of the answer                                 |
+| `gen_ai.usage.output_tokens`     | `usage.completion_tokens` of the answer                             |
+| `error.type`                     | The Workers AI error code, such as `3040`, or the name of the error |
+
+Each failed attempt is logged as a warning. Its name is
+`gen_ai.client.inference.exception` for `chat` and
+`gen_ai.client.embeddings.exception` for `embeddings`. It carries
+`exception.type`, `exception.message` and `error.type`. The cut-off warning
+carries the same `gen_ai.*` attributes as the span.
+
+A Workers span takes only strings, numbers and booleans. So
+`gen_ai.response.finish_reasons`, an array, reaches the Effect span and the
+cut-off warning, and not the Workers trace.
 
 The lint preset exports `restrictedSyntax`. Pass it to `no-restricted-syntax`
 to flag every `env.AI.run` call outside `runWorkersAi`.
