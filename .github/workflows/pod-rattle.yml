@@ -119,6 +119,16 @@ jobs:
     concurrency:
       group: pod-rattle-release
     steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(gh api -H "Accept: application/vnd.github.raw" \
+            "repos/$GITHUB_REPOSITORY/contents/.github/release-please/pod-rattle-manifest.json?ref=$GITHUB_SHA" |
+            jq -er '."apps/pod-rattle-plugin"')"
+          tag="pod-rattle-v$version"
+          if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" >/dev/null 2>&1; then
+            gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/$tag" -f "sha=$GITHUB_SHA"
+          fi
       - id: tagged
         uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
