@@ -3,6 +3,8 @@ import { Octokit } from "@octokit/rest";
 import { Effect, Layer, Option, Redacted, Schema, String as Str, pipe } from "effect";
 import githubAppJwt from "universal-github-app-jwt";
 
+import { readSealed, writeSealed } from "./app-store.ts";
+import type { AppStoreEnv } from "./app-store.ts";
 import { GITHUB_APP_NAME } from "./broker-names.ts";
 import { GITHUB_APP_PERMISSIONS } from "./credential-grants.ts";
 import { OWNER_ID, verify } from "./github-oidc.ts";
@@ -17,9 +19,12 @@ const INSTALL_URL = `https://github.com/apps/${GITHUB_APP_NAME}/installations/ne
 const CONFLICT = 409;
 const FORBIDDEN = 403;
 
-type GitHubAppEnv = Readonly<{ GITHUB_APP: Readonly<Pick<D1Database, "prepare">> }>;
+type GitHubAppEnv = Readonly<{
+  GITHUB_APP: Readonly<Pick<D1Database, "prepare">>;
+  SEAL_KEY: string;
+}>;
 
-type RouteInput = Readonly<{ request: Request; env: GitHubAppEnv }>;
+type RouteInput = Readonly<{ request: Request; env: AppStoreEnv }>;
 
 const taggedError = Schema.TaggedError;
 
@@ -51,24 +56,25 @@ const AuthenticatedApp = Schema.Struct({
 const failed = (error: unknown): GitHubAppFailed =>
   GitHubAppFailed.make({ message: String(error) });
 
-const readApp = (
-  env: GitHubAppEnv,
-): Effect.Effect<Option.Option<typeof StoredApp.Type>, GitHubAppFailed> =>
-  Effect.promise(() =>
-    env.GITHUB_APP.prepare("SELECT value FROM github_app WHERE key = ?")
-      .bind(APP_KEY)
-      .first<string>("value"),
-  ).pipe(
-    Effect.flatMap((json) =>
-      Option.match(Option.fromNullishOr(json), {
-        onNone: () => Effect.succeedNone,
-        onSome: (stored) => Schema.decodeEffect(StoredAppJson)(stored).pipe(Effect.asSome),
-      }),
-    ),
-    Effect.mapError(failed),
+const decodeStored = (json: string): Effect.Effect<typeof StoredApp.Type, GitHubAppFailed> =>
+  Schema.decodeEffect(StoredAppJson)(json).pipe(
+    Effect.mapError(() => GitHubAppFailed.make({ message: "the stored GitHub App is malformed" })),
   );
 
-const appJwt = (env: GitHubAppEnv): Effect.Effect<string, GitHubAppFailed> =>
+const readApp = (
+  env: AppStoreEnv,
+): Effect.Effect<Option.Option<typeof StoredApp.Type>, GitHubAppFailed> =>
+  readSealed({ env, name: APP_KEY }).pipe(
+    Effect.mapError(failed),
+    Effect.flatMap(
+      Option.match({
+        onNone: () => Effect.succeedNone,
+        onSome: (json) => decodeStored(json).pipe(Effect.asSome),
+      }),
+    ),
+  );
+
+const appJwt = (env: AppStoreEnv): Effect.Effect<string, GitHubAppFailed> =>
   readApp(env).pipe(
     Effect.flatMap(
       Option.match({
@@ -88,7 +94,7 @@ const appJwt = (env: GitHubAppEnv): Effect.Effect<string, GitHubAppFailed> =>
     Effect.map(({ token }) => token),
   );
 
-const gitHubAppCredentials = (env: GitHubAppEnv): Layer.Layer<Credentials> =>
+const gitHubAppCredentials = (env: AppStoreEnv): Layer.Layer<Credentials> =>
   Layer.succeed(
     Credentials,
     appJwt(env).pipe(
@@ -162,20 +168,12 @@ const logCreated = (appId: number): Effect.Effect<void> =>
   Effect.logInfo("github_app.created").pipe(Effect.annotateLogs({ appId }));
 
 const storeApp = (
-  env: GitHubAppEnv,
+  env: AppStoreEnv,
   app: typeof Conversion.Type,
 ): Effect.Effect<Response, GitHubAppFailed> =>
   Schema.encodeEffect(StoredAppJson)({ id: app.id, slug: app.slug, pem: app.pem }).pipe(
+    Effect.flatMap((plaintext) => writeSealed({ env, name: APP_KEY, plaintext })),
     Effect.mapError(failed),
-    Effect.flatMap((json) =>
-      Effect.promise(() =>
-        env.GITHUB_APP.prepare(
-          "INSERT INTO github_app (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value",
-        )
-          .bind(APP_KEY, json)
-          .run(),
-      ),
-    ),
     Effect.andThen(logCreated(app.id)),
     Effect.as(installPage()),
   );
@@ -224,11 +222,20 @@ const authenticate = (
     Effect.mapBoth({ onSuccess: (app) => ({ ...app, ...body }), onFailure: failed }),
   );
 
+const malformedImport = (): GitHubAppFailed =>
+  GitHubAppFailed.make({ message: "the import body is not a JSON object with id and pem" });
+
+const importBody = (request: Request): Effect.Effect<typeof ImportBody.Type, GitHubAppFailed> =>
+  Effect.tryPromise({ try: () => request.json(), catch: malformedImport }).pipe(
+    Effect.flatMap((body) =>
+      Schema.decodeUnknownEffect(ImportBody)(body).pipe(Effect.mapError(malformedImport)),
+    ),
+  );
+
 const importApp = (input: RouteInput): Effect.Effect<Response, GitHubAppFailed> =>
   verify(input.request).pipe(
-    Effect.andThen(Effect.tryPromise({ try: () => input.request.json(), catch: failed })),
-    Effect.flatMap(Schema.decodeUnknownEffect(ImportBody)),
     Effect.mapError(failed),
+    Effect.andThen(importBody(input.request)),
     Effect.flatMap(authenticate),
     Effect.flatMap((app) => register(input, app)),
   );
