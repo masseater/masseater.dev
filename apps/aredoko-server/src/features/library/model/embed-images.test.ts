@@ -1,10 +1,11 @@
 import { expect, layer } from "@effect/vitest";
-import { Array, Effect, MutableRef, Ref, String, Tracer, pipe } from "effect";
+import { Array, Effect, MutableRef, Option, Ref, String, Tracer, pipe } from "effect";
+import { SqlClient } from "effect/sql";
 
 import { ASSET_ORDER, EMBEDDING } from "#shared/database";
 import { Embedder } from "#shared/embedding";
 
-import { embedImages, retryFailedImages } from "./embed-images.ts";
+import { embedImages } from "./embed-images.ts";
 import {
   addImages,
   addPackage,
@@ -24,14 +25,14 @@ const UNIT = 1;
 const NONE = 0;
 const FIRST = 0;
 const TWICE = 2;
-const SECOND = 2;
-const THIRD = 3;
-const MANY_STARTS = 4;
+const MANY_TRIES = 12;
+const EVERY_SEVENTH = 7;
+const TEN_THOUSAND = 10_000;
 const ONE_BATCH = 8;
 const FOUR_BATCHES = 32;
 const QUERY_TEXT = "db.query.text";
 
-const { done: DONE, failed: FAILED } = EMBEDDING;
+const { done: DONE, pending: PENDING } = EMBEDDING;
 
 const png = (kind: number): Uint8Array => new Uint8Array([kind]);
 
@@ -78,26 +79,36 @@ const brokenEmbedder = Effect.gen(function* brokenEmbedder() {
 
 const downEmbedder = embedderOf({ embedImages: () => Effect.die("embedder is down") });
 
-const restartWith = Effect.fn("restartWith")(function* restartWith(
-  embedder: typeof Embedder.Service,
-) {
-  yield* retryFailedImages;
-  yield* embed.pipe(Effect.provideService(Embedder, embedder));
+const sometimesDownEmbedder = Effect.gen(function* sometimesDownEmbedder() {
+  const calls = yield* Ref.make(NONE);
+  return embedderOf({
+    embedImages: (pngs) =>
+      Ref.updateAndGet(calls, (count) => count + UNIT).pipe(
+        Effect.flatMap((count) => {
+          if (count % EVERY_SEVENTH === NONE) {
+            return Effect.die("embedder is down");
+          }
+          return vectorsFor(pngs);
+        }),
+      ),
+  });
 });
 
-const embedAfterAdding = Effect.fn("embedAfterAdding")(function* embedAfterAdding({
-  packageId,
-  offset,
-  pngs,
-  embedder,
-}: {
-  readonly packageId: number;
-  readonly offset: number;
-  readonly pngs: readonly Uint8Array[];
-  readonly embedder: typeof Embedder.Service;
-}) {
-  yield* addImages({ packageId, offset, pngs });
-  yield* embed.pipe(Effect.provideService(Embedder, embedder));
+const makeRetriesDue = Effect.gen(function* makeRetriesDue() {
+  const sql = yield* SqlClient.SqlClient;
+  yield* sql`update images set retry_at = 0`;
+});
+
+const embedWith = Effect.fn("embedWith")(function* embedWith(embedder: typeof Embedder.Service) {
+  return yield* embed.pipe(Effect.provideService(Embedder, embedder));
+});
+
+const embedUntilDone = Effect.fn("embedUntilDone")(function* embedUntilDone(
+  embedder: typeof Embedder.Service,
+) {
+  yield* Effect.andThen(makeRetriesDue, embedWith(embedder)).pipe(
+    Effect.repeat({ while: (wait) => Option.isSome(wait) }),
+  );
 });
 
 const misshapingEmbedder = embedderOf({
@@ -143,8 +154,8 @@ const orderedSelectsIn = Effect.fn("orderedSelectsIn")(function* countOrderedSel
 layer(indexInTemporaryFolder, { excludeTestServices: true })(
   "embedImages after a passing failure",
   (it) => {
-    it.effect("一度失敗した画像を、ほかの画像の埋め込みが成功したあとでやり直す", () =>
-      Effect.gen(function* retriesAfterSuccess() {
+    it.effect("失敗した画像を未処理のまま残し、待ち時間のあとで成功するまでやり直す", () =>
+      Effect.gen(function* retriesUntilEmbedded() {
         const packageId = yield* addPackage;
         yield* addImages({
           packageId,
@@ -152,58 +163,57 @@ layer(indexInTemporaryFolder, { excludeTestServices: true })(
           pngs: [png(GOOD), png(GOOD), png(FLAKY), png(GOOD)],
         });
         const embedder = yield* flakyEmbedder(TWICE);
-        yield* embed.pipe(Effect.provideService(Embedder, embedder));
-        const states = yield* imageStates;
-        expect(states).toStrictEqual([DONE, DONE, DONE, DONE]);
-        const vectors = yield* countOf("image_vectors");
-        expect(vectors).toStrictEqual([states.length]);
+        const wait = yield* embedWith(embedder);
+        const afterFailure = yield* imageStates;
+        yield* embedUntilDone(embedder);
+        const [states, vectors] = yield* Effect.all([imageStates, countOf("image_vectors")]);
+        expect({ waits: Option.isSome(wait), afterFailure, states, vectors }).toStrictEqual({
+          waits: true,
+          afterFailure: [DONE, DONE, PENDING, DONE],
+          states: [DONE, DONE, DONE, DONE],
+          vectors: [states.length],
+        });
       }),
     );
   },
 );
 
 layer(indexInTemporaryFolder, { excludeTestServices: true })(
-  "embedImages with an image that never embeds",
+  "embedImages with an image that keeps failing",
   (it) => {
-    it.effect("失敗し続ける画像のやり直しを、決まった回数で打ち切る", () =>
-      Effect.gen(function* givesUp() {
+    it.effect("何度失敗しても打ち切らず、やり直すたびに埋め込みを試す", () =>
+      Effect.gen(function* neverGivesUp() {
         const packageId = yield* addPackage;
         const { embedder, calls } = yield* brokenEmbedder;
-        yield* embedAfterAdding({
-          packageId,
-          offset: FIRST,
-          pngs: [png(GOOD), png(BROKEN)],
-          embedder,
-        });
-        yield* embedAfterAdding({ packageId, offset: SECOND, pngs: [png(GOOD)], embedder });
-        const tried = yield* calls;
-        yield* embedAfterAdding({ packageId, offset: THIRD, pngs: [png(GOOD)], embedder });
-        const triedAfterGivingUp = yield* calls;
-        expect(triedAfterGivingUp).toBe(tried);
+        yield* addImages({ packageId, offset: FIRST, pngs: [png(GOOD), png(BROKEN)] });
+        const tries = yield* pipe(
+          Effect.andThen(makeRetriesDue, embedWith(embedder)),
+          Effect.andThen(calls),
+          Effect.replicateEffect(MANY_TRIES),
+        );
         const states = yield* imageStates;
-        expect(states).toStrictEqual([DONE, FAILED, DONE, DONE]);
+        expect(states).toStrictEqual([DONE, PENDING]);
+        expect(Array.dedupe(tries)).toHaveLength(MANY_TRIES);
       }),
     );
   },
 );
 
 layer(indexInTemporaryFolder, { excludeTestServices: true })(
-  "embedImages after a restart",
+  "embedImages while the embedder is down",
   (it) => {
-    it.effect(
-      "埋め込みが止まっている間に何度起動しても、失敗した画像を起動のたびに未処理へ戻す",
-      () =>
-        Effect.gen(function* retriesOnStart() {
-          const packageId = yield* addPackage;
-          yield* addImages({ packageId, offset: FIRST, pngs: [png(GOOD), png(GOOD)] });
-          yield* embed.pipe(Effect.provideService(Embedder, downEmbedder));
-          yield* restartWith(downEmbedder).pipe(Effect.repeat({ times: MANY_STARTS }));
-          const stopped = yield* imageStates;
-          expect(stopped).toStrictEqual([FAILED, FAILED]);
-          yield* restartWith(embedderOf({}));
-          const restarted = yield* imageStates;
-          expect(restarted).toStrictEqual([DONE, DONE]);
-        }),
+    it.effect("埋め込みが止まっている間の画像を未処理に残し、戻ったら全部埋め込む", () =>
+      Effect.gen(function* resumesAfterOutage() {
+        const packageId = yield* addPackage;
+        yield* addImages({ packageId, offset: FIRST, pngs: [png(GOOD), png(GOOD)] });
+        const wait = yield* embedWith(downEmbedder);
+        const stopped = yield* imageStates;
+        expect(Option.isSome(wait)).toBe(true);
+        expect(stopped).toStrictEqual([PENDING, PENDING]);
+        yield* embedUntilDone(embedderOf({}));
+        const restarted = yield* imageStates;
+        expect(restarted).toStrictEqual([DONE, DONE]);
+      }),
     );
   },
 );
@@ -211,14 +221,44 @@ layer(indexInTemporaryFolder, { excludeTestServices: true })(
 layer(indexInTemporaryFolder, { excludeTestServices: true })(
   "embedImages with a vector that cannot be saved",
   (it) => {
-    it.effect("同じバッチの保存できたはずの画像を失敗扱いにしない", () =>
+    it.effect("同じバッチの保存できる画像は保存し、保存できない画像だけを未処理に残す", () =>
       Effect.gen(function* keepsSavable() {
         const packageId = yield* addPackage;
         yield* addImages({ packageId, offset: FIRST, pngs: [png(GOOD), png(MISSHAPEN)] });
-        yield* embed.pipe(Effect.provideService(Embedder, misshapingEmbedder));
+        yield* embedWith(misshapingEmbedder);
         const states = yield* imageStates;
-        expect(states).toStrictEqual([DONE, FAILED]);
+        expect(states).toStrictEqual([DONE, PENDING]);
       }),
+    );
+  },
+);
+
+layer(indexInTemporaryFolder, { excludeTestServices: true })(
+  "embedImages over ten thousand images",
+  (it) => {
+    it.effect(
+      "1 万枚の画像を、埋め込みがときどき止まっても 1 枚も残さず埋め込む",
+      () =>
+        Effect.gen(function* embedsEveryImage() {
+          const packageId = yield* addPackage;
+          yield* addImages({
+            packageId,
+            offset: FIRST,
+            pngs: Array.makeBy(TEN_THOUSAND, () => png(GOOD)),
+          });
+          const embedder = yield* sometimesDownEmbedder;
+          yield* embedUntilDone(embedder);
+          const states = yield* imageStates;
+          const vectors = yield* countOf("image_vectors");
+          expect(
+            pipe(
+              states,
+              Array.filter((state) => state === DONE),
+            ),
+          ).toHaveLength(TEN_THOUSAND);
+          expect(vectors).toStrictEqual([TEN_THOUSAND]);
+        }),
+      { timeout: 120_000 },
     );
   },
 );

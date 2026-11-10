@@ -1,10 +1,12 @@
-import { Effect, Option } from "effect";
+import { Duration, Effect, Option } from "effect";
 
 import { embedImages } from "./embed-images.ts";
 import type { AnalyzedBatch } from "./embed-images.ts";
 import { embedTexts } from "./embed-texts.ts";
 import { scanFolders } from "./scan-folders.ts";
 import type { ScannedFile } from "./scan-folders.ts";
+
+const TEXT_RETRY = Duration.fromInputUnsafe("30 seconds");
 
 type Activity =
   | { readonly status: "idle" }
@@ -29,11 +31,20 @@ const scanLibrary = Effect.fn("scanLibrary")(function* scanWholeLibrary<
   const linkable = yield* blm.linkable;
   yield* scanFolders((file) => report({ status: "scanning", file }), linkable);
   yield* blm.link;
-  yield* embedTexts(Option.none()).pipe(
-    Effect.catchCause((cause) => Effect.logWarning("text embedding failed", cause)),
-  );
+  const texts = yield* embedTexts(Option.none());
   yield* report({ status: "analyzing", batch: Option.none() });
-  yield* embedImages((batch) => report({ status: "analyzing", batch: Option.some(batch) }));
+  const images = yield* embedImages((batch) =>
+    report({ status: "analyzing", batch: Option.some(batch) }),
+  );
+  if (texts) {
+    return images;
+  }
+  return Option.some(
+    Option.match(images, {
+      onNone: () => TEXT_RETRY,
+      onSome: (wait) => Duration.min(wait, TEXT_RETRY),
+    }),
+  );
 });
 
 export { scanLibrary };
