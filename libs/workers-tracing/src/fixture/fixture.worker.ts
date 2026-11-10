@@ -3,6 +3,7 @@ import { run } from "@r_masseater/workers-tracing/effect";
 import { Elysia, routeHandlers } from "@r_masseater/workers-tracing/elysia";
 import type { Handle, RouteHandler } from "@r_masseater/workers-tracing/elysia";
 import { traceRequest, traceServerFn } from "@r_masseater/workers-tracing/tanstack-start";
+import { notFound, redirect } from "@tanstack/router-core";
 import { Array as Arr, Effect, Option, Schema, String, pipe } from "effect";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 
@@ -18,6 +19,8 @@ class GreetingFailed extends taggedError<GreetingFailed, { readonly brand: uniqu
 ) {}
 
 const SERVER_ERROR = 500;
+const NOT_FOUND = 404;
+const GATE_FN = { id: "fn-2", name: "requireSignInFn", filename: "src/sign-in-gate.ts" };
 const SERVER_FN = { id: "fn-1", name: "saveGreetingFn", filename: "src/greeting.ts" };
 
 const saveGreeting = (env: Env, key: string): Effect.Effect<string> =>
@@ -53,20 +56,21 @@ const viaCompiled = (request: Request): Effect.Effect<Response> =>
 
 const respond = (env: Env): RouteHandler => routeHandlers(app(env).handle).GET;
 
-const viaStartRoute = (env: Env, request: Request): Effect.Effect<Response> =>
+const inRequest = (request: Request, answer: Effect.Effect<Response>): Effect.Effect<Response> =>
   Effect.promise(() =>
     traceRequest({
       request,
       pathname: new URL(request.url).pathname,
       handlerType: "router",
-      next: () =>
-        run(
-          Effect.promise(() => respond(env)({ request })).pipe(
-            Effect.map((response) => ({ response })),
-          ),
-        ),
+      next: () => run(answer.pipe(Effect.map((response) => ({ response })))),
     }),
   ).pipe(Effect.map(({ response }) => response));
+
+const viaStartRoute = (env: Env, request: Request): Effect.Effect<Response> =>
+  inRequest(
+    request,
+    Effect.promise(() => respond(env)({ request })),
+  );
 
 const callServerFn = (env: Env): Promise<{ readonly response: Response }> =>
   run(
@@ -91,12 +95,45 @@ const viaStart = (env: Env, request: Request): Effect.Effect<Response> =>
 
 type Route = (env: Env, request: Request) => Effect.Effect<Response>;
 
+const answerOf = (value: unknown): Response => {
+  if (value instanceof Response) {
+    return value;
+  }
+  return new Response("missing", { status: NOT_FOUND });
+};
+
+const answerThrown = (attempt: () => Promise<Response>): Effect.Effect<Response> =>
+  Effect.promise(attempt).pipe(Effect.catchDefect((thrown) => Effect.succeed(answerOf(thrown))));
+
+const asRequest = (request: Request, attempt: () => Promise<Response>): Effect.Effect<Response> =>
+  inRequest(request, answerThrown(attempt));
+
+const viaGate: Route = (_env, request) =>
+  asRequest(request, () =>
+    traceServerFn({
+      method: "GET",
+      serverFnMeta: GATE_FN,
+      next: () => run(Effect.die(redirect({ to: "/login" })).pipe(Effect.withSpan("gate.check"))),
+    }),
+  );
+
+const viaMissing: Route = (_env, request) =>
+  asRequest(request, () => run(Effect.fail(notFound()).pipe(Effect.withSpan("entry.find"))));
+
+const viaBroken: Route = (_env, request) =>
+  asRequest(request, () =>
+    run(Effect.die(new TypeError("kaput")).pipe(Effect.withSpan("entry.break"))),
+  );
+
 const ROUTES: readonly (readonly [string, Route])[] = [
   ["/api/", viaStartRoute],
   ["/items/", (env, request) => Effect.promise(() => items(env, request))],
   ["/start", viaStart],
   ["/compiled/", (_env, request) => viaCompiled(request)],
   ["/fail", failGreeting],
+  ["/gated", viaGate],
+  ["/missing", viaMissing],
+  ["/broken", viaBroken],
 ];
 
 const greet: Route = (env, request) =>
