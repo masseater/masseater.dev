@@ -153,7 +153,7 @@ catalog:
   "@fontsource/zen-kurenaido": ^5.3.1
   fastest-levenshtein: ^1.0.16
   "@cfworker/json-schema": ^4.1.6
-  "@openrouter/sdk": 1.5.63
+  "@openrouter/sdk": 1.5.64
   recharts: 3.10.1
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -162,11 +162,11 @@ catalog:
   "@types/seedrandom": 3.0.8
   claude-code-jsonl-parser: 0.1.3
   synckit: 0.12.3
-  "@oxlint/plugins": 1.90.0
-  oxlint: 1.90.0
+  "@oxlint/plugins": 1.92.0
+  oxlint: 1.92.0
   "@eslint-react/eslint-plugin": 5.28.8
   "@remotion/eslint-plugin": 4.0.541
-  "@tanstack/eslint-plugin-query": 5.105.3
+  "@tanstack/eslint-plugin-query": 5.107.1
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/eslint-plugin-start": 0.1.0
   "@tsconfig/strictest": 2.0.8
@@ -188,7 +188,7 @@ catalog:
   "@textlint/kernel": 15.8.0
   cjs-module-lexer: 1.4.3
   markdownlint: 0.42.1
-  minimatch: 11.0.3
+  minimatch: 11.0.5
   pluralize: 8.0.0
   semver: 7.8.6
   smol-toml: 1.9.1
@@ -196,7 +196,7 @@ catalog:
   textlint: 15.8.0
   tsconfck: 3.1.6
   validate-npm-package-name: 8.0.0
-  web-tree-sitter: 0.26.13
+  web-tree-sitter: 0.27.1
   "@feature-sliced/filesystem": 3.1.1
   "@feature-sliced/steiger-plugin": 0.8.2
   "@types/semver": 7.8.0
@@ -239,7 +239,7 @@ overrides:
   zod@<4.6.6: ^4.6.6
   sharp@<0.35.5: ^0.35.5
   undici@>=7.0.0 <7.30.1: ^7.30.1
-  katex@>=0.11.0 <0.18.2: ^0.18.2
+  katex@>=0.11.0 <0.18.2: ^0.19.0
 peerDependencyRules:
   allowAny:
     - vite
