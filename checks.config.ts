@@ -118,6 +118,7 @@ const packageChecks: readonly string[] = [
   "@masseater.dev/pod-rattle-plugin#cargo",
   "@masseater.dev/pod-rattle-host#cargo",
   "@masseater.dev/mosaic-build#cargo",
+  "@masseater.dev/seikin-dance#cargo",
   "@masseater.dev/xtask#cargo",
   "rpp-kit-demo#typecheck",
   "sts2-mods#dotnet",

@@ -67,6 +67,9 @@
           "web-tree-sitter",
         ],
       },
+      "tools/seikin-dance": {
+        "ignoreDependencies": ["@mediapipe/tasks-vision"],
+      },
       "apps/labs": {
         "ignoreDependencies": [
           "@fontsource/dela-gothic-one",

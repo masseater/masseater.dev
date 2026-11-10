@@ -6,6 +6,7 @@ members = [
   "apps/pod-rattle-plugin",
   "libs/pod-rattle-engine",
   "tools/mosaic",
+  "tools/seikin-dance",
   "tools/pod-rattle-host",
   "tools/xtask",
 ]
