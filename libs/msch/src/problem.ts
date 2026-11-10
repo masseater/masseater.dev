@@ -13,6 +13,7 @@ const RuleNameSchema = Schema.Literals([
   "library-shape",
   "unused-override",
   "removable-override",
+  "hidden-unicode",
 ]);
 
 type RuleName = typeof RuleNameSchema.Type;

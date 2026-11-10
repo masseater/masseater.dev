@@ -38,7 +38,7 @@ const PACKAGE_JSON = "package.json";
 const NODE_MODULES = "node_modules";
 const SEPARATOR_LENGTH = 1;
 const EMPTY = 0;
-const BYTE_ORDER_MARK = /^﻿/u;
+const BYTE_ORDER_MARK = /^\uFEFF/u;
 
 const memo = <Value>(): ((compute: () => Option.Option<Value>) => Option.Option<Value>) => {
   const cell = MutableRef.make(Option.none<Option.Option<Value>>());

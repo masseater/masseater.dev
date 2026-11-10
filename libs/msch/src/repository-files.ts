@@ -14,6 +14,7 @@ import type { Option } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
 const GENERATED_PATHSPEC = ":(attr:linguist-generated)";
+const LISTED_ARGS = ["--cached", "--others", "--exclude-standard"];
 
 class RepositoryFiles extends Context.Service<
   RepositoryFiles,
@@ -23,6 +24,7 @@ class RepositoryFiles extends Context.Service<
     readonly realPath: (file: string) => Effect.Effect<string>;
     readonly readDirectory: (directory: string) => Effect.Effect<readonly string[]>;
     readonly generatedFiles: (root: string) => Effect.Effect<readonly string[]>;
+    readonly listedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly isDirectory: (file: string) => Effect.Effect<Option.Option<boolean>>;
     readonly join: (...segments: readonly string[]) => string;
     readonly resolve: (...segments: readonly string[]) => string;
@@ -38,29 +40,25 @@ const nodeRepositoryFiles = Layer.effect(
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-    const generatedFiles = (root: string): Effect.Effect<readonly string[]> =>
-      Effect.gen(function* listGenerated() {
-        const handle = yield* ChildProcess.make(
-          "git",
-          ["ls-files", "-z", "--", GENERATED_PATHSPEC],
-          {
-            cwd: root,
-            stdin: "ignore",
-          },
-        );
+    const gitFiles = (root: string, args: readonly string[]): Effect.Effect<readonly string[]> =>
+      Effect.gen(function* listFiles() {
+        const handle = yield* ChildProcess.make("git", ["ls-files", "-z", ...args], {
+          cwd: root,
+          stdin: "ignore",
+        });
         const listed = yield* handle.stdout.pipe(Stream.decodeText(), Stream.mkString);
-        return pipe(
-          Str.split(listed, "\0"),
-          Arr.filter(Str.isNonEmpty),
-          Arr.map((file) => path.join(root, file)),
-        );
+        return pipe(Str.split(listed, "\0"), Arr.filter(Str.isNonEmpty));
       }).pipe(
         Effect.scoped,
         Effect.provideService(ChildProcessSpawner.ChildProcessSpawner, spawner),
         Effect.orElseSucceed((): readonly string[] => []),
       );
     return RepositoryFiles.of({
-      generatedFiles,
+      generatedFiles: (root) =>
+        gitFiles(root, ["--", GENERATED_PATHSPEC]).pipe(
+          Effect.map(Arr.map((file) => path.join(root, file))),
+        ),
+      listedFiles: (root) => gitFiles(root, LISTED_ARGS),
       readFile: (file) => fs.readFileString(file).pipe(Effect.option),
       exists: (file) => fs.exists(file).pipe(Effect.orElseSucceed(() => false)),
       realPath: (file) => fs.realPath(file).pipe(Effect.orElseSucceed(() => file)),
