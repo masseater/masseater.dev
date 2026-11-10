@@ -219,7 +219,7 @@ export default defineConfig({
       fallow: [
         "fallow --skip dupes --fail-on-issues --quiet --format compact",
         "fallow dead-code --no-production --fail-on-issues --quiet --format compact",
-        "fallow dead-code --no-production --quiet --format json | jq -e '[.prop_drilling_chains, .thin_wrappers, .duplicate_prop_shapes] | all(length == 0)' > /dev/null",
+        "fallow dead-code --no-production --quiet --format json | jq -n 'input | {prop_drilling_chains, thin_wrappers, duplicate_prop_shapes} | with_entries(select(.value | length > 0)) | if length > 0 then halt_error else empty end'",
         "fallow dupes --fail-on-issues --quiet --format compact",
         "fallow security --fail-on-issues --quiet",
       ],
