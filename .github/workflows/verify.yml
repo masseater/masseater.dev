@@ -75,10 +75,14 @@ jobs:
         run: git fetch --unshallow --filter=blob:none origin
       - if: steps.head.outputs.latest == 'true'
         uses: $/.github/actions/setup
+        with:
+          native: "false"
       - if: steps.head.outputs.latest == 'true'
         run: .github/scripts/atproto-password.sh
+        continue-on-error: true
       - if: steps.head.outputs.latest == 'true' && env.ATP_APP_PASSWORD != ''
         run: vp run --no-cache --filter portfolio standard-site
+        continue-on-error: true
         env:
           ATP_IDENTIFIER: did:plc:sz2kxumpsjbch3kgnsjjed5z
       - if: steps.head.outputs.latest == 'true'
@@ -117,6 +121,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec --filter portfolio alchemy deploy --config alchemy.zone.ts --stage prod --yes
 
   mcp-portal:
@@ -135,6 +141,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec --filter @masseater.dev/mcp-portal alchemy deploy --config alchemy.portal.ts --stage prod --yes
 
   traces:
@@ -152,6 +160,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec --filter portfolio alchemy deploy --config alchemy.traces.ts --stage prod --yes
 
   three-twelve:
@@ -169,6 +179,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec --filter three-twelve alchemy deploy --stage prod --yes
 
   watashi-mcp:
@@ -186,6 +198,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec --filter watashi-mcp alchemy deploy --stage prod --yes
 
   personal-mcp:
@@ -204,6 +218,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@ed56db507aa25c3ced8a2e770d24238e6622334d
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec --filter personal-mcp alchemy deploy --stage prod --yes
       - run: vp run --filter personal-mcp access-check
 
@@ -222,6 +238,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec --filter medley-manager alchemy deploy --stage production --yes
 
   decision-experiments:
@@ -240,6 +258,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec --filter injection-bisect-demo alchemy deploy --stage production --yes
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - run: vp exec --filter ocr-decide alchemy deploy --stage production --yes
@@ -261,6 +281,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec --filter rpp-kit-demo alchemy deploy --stage production --yes
 
   nimado:
@@ -278,6 +300,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec --filter nimado alchemy deploy --stage production --yes
 
   web-vitals:
@@ -290,6 +314,8 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp run measure https://masseater.dev/rpp-kit/
         working-directory: tools/web-vitals-measure
       - if: always()
@@ -312,6 +338,8 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@79e86b3f3fd48e94b81f3de11518101166427d21
       - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: vp exec workers-traces --request https://masseater.dev/ --expect GET --wait 300
         working-directory: apps/portfolio
         env:
@@ -331,12 +359,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - id: token
-        run: .github/scripts/github-token.sh
-      - if: steps.token.outputs.issued == 'true'
-        uses: $/.github/actions/setup
-      - if: steps.token.outputs.issued == 'true'
-        run: vp exec --filter @masseater.dev/repositories alchemy deploy --config alchemy.github.ts --stage prod --yes
+      - run: .github/scripts/github-token.sh
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp exec --filter @masseater.dev/repositories alchemy deploy --config alchemy.github.ts --stage prod --yes
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -564,6 +591,8 @@ jobs:
           persist-credentials: false
       - if: steps.head.outputs.latest == 'true'
         uses: $/.github/actions/setup
+        with:
+          native: "false"
       - if: steps.head.outputs.latest == 'true'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:

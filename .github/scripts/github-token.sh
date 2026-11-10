@@ -7,12 +7,10 @@ echo "::add-mask::$oidc"
 response="$(curl -fsS --retry 3 -X POST -H "Authorization: Bearer $oidc" "https://credentials.masseater.dev/")"
 token="$(jq -r '.githubToken // empty' <<<"$response")"
 if [ -z "$token" ]; then
-  echo "::notice::GitHub App is not set up yet: open https://credentials.masseater.dev/github-app"
-  echo "issued=false" >>"$GITHUB_OUTPUT"
-  exit 0
+  echo "::error::The credential broker returned no GitHub token: check https://credentials.masseater.dev/github-app and the broker logs"
+  exit 1
 fi
 echo "::add-mask::$token"
 GH_TOKEN="$token" gh api --paginate installation/repositories \
   --jq '.repositories[] | select(.private and (.archived | not)) | "::add-mask::" + .name'
 echo "GITHUB_TOKEN=$token" >>"$GITHUB_ENV"
-echo "issued=true" >>"$GITHUB_OUTPUT"
