@@ -105,8 +105,6 @@
     "libs/oxlint-plugin-decision*/example/**",
     "libs/oxlint-typed-rules/upstream/{react,tanstack-query,tanstack-router,drizzle,remotion}/**",
     "libs/vite-plus-adopt/upstream/**",
-    "tools/mosaic/**",
-    "tools/seikin-dance/**",
   ],
   "audit": { "gate": "all" },
   "security": {

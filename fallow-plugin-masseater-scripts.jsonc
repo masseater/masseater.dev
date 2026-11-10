@@ -4,6 +4,7 @@
   "detection": { "type": "fileExists", "pattern": "pnpm-workspace.yaml" },
   "entryPoints": [
     "apps/portfolio/scripts/standard-site.ts",
+    "apps/portfolio/scripts/technique-examples.ts",
     "apps/medley-manager/auth.config.ts",
     "apps/watashi-mcp/auth.config.ts",
     "apps/aredoko-server/src/app/fetch-model.ts",
@@ -13,6 +14,7 @@
     "tools/decision-bench-runner/src/build-jnli.ts",
     "tools/decision-bench-runner/src/build-rules.ts",
     "infra/start-site/src/write-asset-headers.ts",
+    "tools/ocr-ja-bench/src/prepare.ts",
     "tools/ocr-ja-bench/src/render.ts",
     "tools/ocr-ja-bench/src/measure.ts",
     "tools/ocr-ja-bench/src/rescore.ts",

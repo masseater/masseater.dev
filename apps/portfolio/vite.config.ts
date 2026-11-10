@@ -23,6 +23,7 @@ export default defineConfig({
         `drizzle-kit generate --explain --output json | grep -q '"status":"no_changes"'`,
       ],
       "standard-site": { command: "vpx scripts/standard-site.ts && sequoia publish", cache: false },
+      "technique-examples": { command: "vpx scripts/technique-examples.ts", cache: false },
     },
   },
   resolve: { tsconfigPaths: true },

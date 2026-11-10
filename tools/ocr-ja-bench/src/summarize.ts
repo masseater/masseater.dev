@@ -72,7 +72,7 @@ const byCategory = (
   return Rec.fromEntries(entries);
 };
 
-const KIND_OF = { process: "local", tesseract: "local", vlm: "vlm" } as const;
+const KIND_OF = { recorded: "local", tesseract: "local", vlm: "vlm" } as const;
 
 const summarizeEngine = ({
   engine,

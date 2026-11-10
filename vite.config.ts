@@ -12,8 +12,6 @@ export default defineConfig({
       "infra/*",
       "tools/*",
       "!apps/zenn-articles",
-      "!tools/mosaic",
-      "!tools/seikin-dance",
       "!libs/oxlint-plugin-decision",
       "!libs/oxlint-plugin-decision-presets",
       "!libs/oxlint-typed-rules",
@@ -89,7 +87,7 @@ export default defineConfig({
         cache: false,
       },
       "ignored-sources": {
-        command: String.raw`ignored="$(git ls-files --others --ignored --exclude-standard -- ":(glob)**/src/**" ":(exclude,glob)**/node_modules/**" ":(exclude,glob)**/.venv/**")"; if [ -n "$ignored" ]; then printf "%s\n" "$ignored" >&2; echo "These files under src/ are ignored by .gitignore, so verify passes here but they never reach the commit. Narrow the pattern in .gitignore." >&2; exit 1; fi`,
+        command: String.raw`ignored="$(git ls-files --others --ignored --exclude-standard -- ":(glob)**/src/**" ":(exclude,glob)**/node_modules/**")"; if [ -n "$ignored" ]; then printf "%s\n" "$ignored" >&2; echo "These files under src/ are ignored by .gitignore, so verify passes here but they never reach the commit. Narrow the pattern in .gitignore." >&2; exit 1; fi`,
         cache: false,
       },
     },

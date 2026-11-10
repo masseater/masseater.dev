@@ -10,7 +10,9 @@
     "@r_masseater/ocr-decide": "workspace:*",
     "effect": "catalog:stack",
     "entities": "catalog:",
-    "fastest-levenshtein": "catalog:"
+    "fastest-levenshtein": "catalog:",
+    "hyparquet": "catalog:",
+    "sharp": "catalog:"
   },
   "devDependencies": {
     "@fontsource/klee-one": "catalog:",

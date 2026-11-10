@@ -74,7 +74,7 @@
     },
     {
       "description": "公開日時を返さないデータソースは待機期間を判定できず、掛けると止まったままになるので外す。",
-      "matchDatasources": ["git-refs", "python-version"],
+      "matchDatasources": ["git-refs"],
       "minimumReleaseAge": null
     },
     {
