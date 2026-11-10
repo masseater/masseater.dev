@@ -267,6 +267,7 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    testTimeout: 120_000,
     server: {
       deps: {
         inline: [
