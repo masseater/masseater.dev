@@ -39,7 +39,7 @@ catalog:
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
-  discord-api-types: 0.38.57
+  discord-api-types: 0.38.58
   oxlint-plugin-eslint: 1.92.0
   "@ast-grep/cli": 0.51.1
   "@cloudflare/workers-types": 5.20261107.1
@@ -154,7 +154,7 @@ catalog:
   "@fontsource/zen-kurenaido": ^5.3.1
   fastest-levenshtein: ^1.0.16
   "@cfworker/json-schema": ^4.1.6
-  "@openrouter/sdk": 1.5.64
+  "@openrouter/sdk": 1.5.65
   recharts: 3.10.1
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2

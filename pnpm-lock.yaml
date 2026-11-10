@@ -303,8 +303,8 @@ catalogs:
       specifier: 22.0.1
       version: 22.0.1
     '@openrouter/sdk':
-      specifier: 1.5.64
-      version: 1.5.64
+      specifier: 1.5.65
+      version: 1.5.65
     '@opentelemetry/api':
       specifier: 1.10.0
       version: 1.10.0
@@ -525,8 +525,8 @@ catalogs:
       specifier: 1.7.2
       version: 1.7.2
     discord-api-types:
-      specifier: 0.38.57
-      version: 0.38.57
+      specifier: 0.38.58
+      version: 0.38.58
     discord.js:
       specifier: 14.28.1
       version: 14.28.1
@@ -2169,7 +2169,7 @@ importers:
         version: 0.2.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)
       discord-api-types:
         specifier: 'catalog:'
-        version: 0.38.57
+        version: 0.38.58
       discord.js:
         specifier: 'catalog:'
         version: 14.28.1
@@ -2874,7 +2874,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.64
+        version: 1.5.65
       effect:
         specifier: catalog:stack
         version: 4.1.2
@@ -3518,7 +3518,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.64
+        version: 1.5.65
       '@r_masseater/oxlint-plugin-decision':
         specifier: workspace:*
         version: link:../../libs/oxlint-plugin-decision
@@ -5934,8 +5934,8 @@ packages:
     resolution: {integrity: sha512-hAX0pT/73190NLqBPPWSdBVGtbY6VOhWYK3qqHqtXQ1gK7kS2yz4+ivsN07hpJ6I3aeMtKP6J6npsEKOAzuTLA==}
     engines: {node: '>=20.0'}
 
-  '@openrouter/sdk@1.5.64':
-    resolution: {integrity: sha512-NQ4cZuAkue3KMC2ep6CVz9VUqmHVYbrOOFzutafyz4PzLSMVI8XtRmu7f/HJZotFhj4aQJNlBT/K0kwtsOnYBQ==}
+  '@openrouter/sdk@1.5.65':
+    resolution: {integrity: sha512-Nub6/tOJGjJ2yAIKciYVLGA7T9X5XAQwpNu0k71AX1zFZGGcaERe0IUwUo1hrh4qAK4jzL8WZWraU6VvM52FRQ==}
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -11312,8 +11312,8 @@ packages:
     resolution: {integrity: sha512-svtcdpS8CgJyqAjEQIXdb3OjhFVVYjzGAPO8WGCmRbrml64SPw/jJD4GoE98aR7r25A0XcgrK3F02yw9R/vhQw==}
     engines: {node: '>=0.3.1'}
 
-  discord-api-types@0.38.57:
-    resolution: {integrity: sha512-R1CTSSt4RshqCq23j2Xq2ZscvzB4LzG9OB1CYQdKUGdw8Ti/oF/72EEtK2mNpagG/Vj9NcBT7dw9lKLf+Dacfg==}
+  discord-api-types@0.38.58:
+    resolution: {integrity: sha512-6utghVho47hBzmx8nIp+pKEDDNIlVk6On/J5Y1Q529payNLZjBsrw+mt+G5Y3NYRE3kgta6eBx5hRYVyfHGdOA==}
 
   discord.js@14.28.1:
     resolution: {integrity: sha512-Je5OcqgurnIUQK4vR+gQnmzOf/lNQsD6d/UkV8ZOj+bFa5zJXPyiGXlbywp2EagwshVT18y7YNQNSRd3FjYkDw==}
@@ -17149,7 +17149,7 @@ snapshots:
       '@discordjs/formatters': 0.6.2
       '@discordjs/util': 1.2.0
       '@sapphire/shapeshift': 4.0.0
-      discord-api-types: 0.38.57
+      discord-api-types: 0.38.58
       fast-deep-equal: 3.1.3
       ts-mixer: 6.0.4
       tslib: 2.8.1
@@ -17160,7 +17160,7 @@ snapshots:
 
   '@discordjs/formatters@0.6.2':
     dependencies:
-      discord-api-types: 0.38.57
+      discord-api-types: 0.38.58
 
   '@discordjs/rest@2.6.3':
     dependencies:
@@ -17169,20 +17169,20 @@ snapshots:
       '@sapphire/async-queue': 1.5.5
       '@sapphire/snowflake': 3.5.5
       '@vladfrangu/async_event_emitter': 2.4.7
-      discord-api-types: 0.38.57
+      discord-api-types: 0.38.58
       magic-bytes.js: 1.13.1
       tslib: 2.8.1
       undici: 6.29.1
 
   '@discordjs/util@1.2.0':
     dependencies:
-      discord-api-types: 0.38.57
+      discord-api-types: 0.38.58
 
   '@discordjs/voice@0.19.2(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)':
     dependencies:
       '@snazzah/davey': 0.1.12(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)
       '@types/ws': 8.18.2
-      discord-api-types: 0.38.57
+      discord-api-types: 0.38.58
       prism-media: 1.3.5
       tslib: 2.8.1
       ws: 8.22.1
@@ -17204,7 +17204,7 @@ snapshots:
       '@sapphire/async-queue': 1.5.5
       '@types/ws': 8.18.2
       '@vladfrangu/async_event_emitter': 2.4.7
-      discord-api-types: 0.38.57
+      discord-api-types: 0.38.58
       tslib: 2.8.1
       ws: 8.22.1
     transitivePeerDependencies:
@@ -18341,7 +18341,7 @@ snapshots:
 
   '@oozcitak/util@10.0.0': {}
 
-  '@openrouter/sdk@1.5.64':
+  '@openrouter/sdk@1.5.65':
     dependencies:
       zod: 4.6.7
 
@@ -23468,7 +23468,7 @@ snapshots:
 
   diff@9.0.0: {}
 
-  discord-api-types@0.38.57: {}
+  discord-api-types@0.38.58: {}
 
   discord.js@14.28.1:
     dependencies:
@@ -23479,7 +23479,7 @@ snapshots:
       '@discordjs/util': 1.2.0
       '@discordjs/ws': 1.2.3
       '@sapphire/snowflake': 3.5.5
-      discord-api-types: 0.38.57
+      discord-api-types: 0.38.58
       fast-deep-equal: 3.1.3
       lodash.snakecase: 4.1.1
       magic-bytes.js: 1.13.1
