@@ -117,27 +117,27 @@
     {
       "name": "react",
       "path": "dist/react.mjs",
-      "limit": "169062 B"
+      "limit": "169098 B"
     },
     {
       "name": "tanstack-query",
       "path": "dist/tanstack-query.mjs",
-      "limit": "11828 B"
+      "limit": "11826 B"
     },
     {
       "name": "tanstack-router",
       "path": "dist/tanstack-router.mjs",
-      "limit": "3448 B"
+      "limit": "3427 B"
     },
     {
       "name": "drizzle",
       "path": "dist/drizzle.mjs",
-      "limit": "2172 B"
+      "limit": "2174 B"
     },
     {
       "name": "remotion",
       "path": "dist/remotion.mjs",
-      "limit": "5263 B"
+      "limit": "5267 B"
     },
     {
       "name": "core",
@@ -149,7 +149,7 @@
         "!dist/drizzle.mjs",
         "!dist/remotion.mjs"
       ],
-      "limit": "30078 B"
+      "limit": "30119 B"
     }
   ],
   "engines": {
