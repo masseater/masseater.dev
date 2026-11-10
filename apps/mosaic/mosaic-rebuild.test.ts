@@ -29,6 +29,8 @@ const LATEST = 99;
 const EARLIER = 98;
 const WINDOW = 50;
 const BEYOND_WINDOW = LATEST - WINDOW;
+const ONE_NEWER = 1;
+const OLDEST_IN_WINDOW = BEYOND_WINDOW + ONE_NEWER;
 const COMPARE_FILE_LIMIT = 300;
 const NO_BEFORE = "0000000000000000000000000000000000000000";
 
@@ -95,7 +97,10 @@ const TOO_MANY_CHANGES = push([deployed(LATEST)], since(shaOf(LATEST), TOO_MANY_
 
 const OUT_OF_WINDOW = push(
   [...Arr.makeBy(WINDOW, (index) => unrelated(LATEST - index)), deployed(BEYOND_WINDOW)],
-  { ...since(shaOf(BEYOND_WINDOW), MOSAIC_FILES), ...since(BEFORE_SHA, UNRELATED_FILES) },
+  {
+    ...since(shaOf(BEYOND_WINDOW), MOSAIC_FILES),
+    ...since(shaOf(OLDEST_IN_WINDOW), UNRELATED_FILES),
+  },
 );
 
 interface Case {
@@ -151,13 +156,16 @@ const PLAN_CASES: readonly Case[] = [
     expected: REBUILT,
   },
   {
-    name: "前回の作り直しが見つからず、自分の push に mosaic の変更が無ければ作り直さない",
-    scenario: push(NO_BASE, since(BEFORE_SHA, UNRELATED_FILES)),
+    name: "前回の作り直しが見つからず、探した範囲に mosaic の変更が無ければ作り直さない",
+    scenario: push(NO_BASE, since(shaOf(EARLIER), UNRELATED_FILES)),
     expected: NOT_REBUILT,
   },
   {
-    name: "前回の作り直しが見つからず、自分の push に mosaic の変更があれば作り直す",
-    scenario: push(NO_BASE, since(BEFORE_SHA, MOSAIC_FILES)),
+    name: "前回の作り直しが見つからず、探した範囲の push に mosaic の変更があれば作り直す",
+    scenario: push(NO_BASE, {
+      ...since(shaOf(EARLIER), MOSAIC_FILES),
+      ...since(BEFORE_SHA, UNRELATED_FILES),
+    }),
     expected: REBUILT,
   },
   {

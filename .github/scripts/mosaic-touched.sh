@@ -44,8 +44,9 @@ elif [[ "${BEFORE_SHA:-}" =~ ^0*$ ]]; then
   echo "no earlier mosaic rebuild was found and this push has no previous commit, so mosaic is rebuilt"
   decide true
 else
-  echo "no earlier mosaic rebuild was found, so mosaic is judged from this push alone"
-  base="$BEFORE_SHA"
+  base="$(head -n "$window" <<<"$older" | tail -n 1 | cut -d " " -f 2)"
+  base="${base:-$BEFORE_SHA}"
+  echo "no earlier mosaic rebuild was found, so mosaic is judged from the changes since $base"
 fi
 if ! files="$(gh api "$api/compare/$base...$HEAD_SHA" --jq '.files[].filename')" \
   || [ "$(grep -c . <<<"$files")" -ge "$compare_file_limit" ]; then
