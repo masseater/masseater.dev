@@ -15,7 +15,7 @@
 
 ゲームと Steam が入っている PC で行う。
 
-1. [.NET SDK 9.0 以上](https://dotnet.microsoft.com/download)、[MegaDot 4.5.1](https://megadot.megacrit.com/)、[Vite+](https://viteplus.dev) を入れる。Mac の MegaDot は `curl -fsSL https://megadot.megacrit.com/install.sh | sh` で入る
+1. [.NET SDK 10.0](https://dotnet.microsoft.com/download)、[MegaDot 4.5.1](https://megadot.megacrit.com/)、[Vite+](https://viteplus.dev) を入れる。Mac の MegaDot は `curl -fsSL https://megadot.megacrit.com/install.sh | sh` で入る
 2. Steam で [BaseLib](https://steamcommunity.com/sharedfiles/filedetails/?id=3737335127) をサブスクライブ
 3. `local.props.example` を `local.props` にコピーし、`GodotPath`(必要なら `Sts2Path`)を書き換える(Mac で既定の場所に入れたなら不要)
 4. [masseater/masseater.dev](https://github.com/masseater/masseater.dev) のルートで `vp install` を実行し、以降のコマンドは `apps/sts2-mods` で実行する
@@ -44,7 +44,7 @@ vp run stage MapDrawUndo
 
 ## 新しい Mod を追加する
 
-`vp run new-mod NewModName`。詳しくは [docs/new-mod.md](docs/new-mod.md)。
+`vp run new-mod NewModName` を実行する。[scripts/new-mod.sh](scripts/new-mod.sh) が `templates/mod` から `mods/NewModName` と `workshop/NewModName` を作る。
 
 ## 参考資料
 
