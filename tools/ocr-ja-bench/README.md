@@ -19,13 +19,15 @@ ocr-decide の前段に置く OCR を選ぶため、OCR エンジンと画像対
 
 2026 年 10 月 20 日に測った。ローカルのエンジンは 4 CPU の Linux で、Surya だけは llama.cpp が要るので Apple M4 の Mac で動かした。画像対応のモデルは OpenRouter を通し、1 枚あたり $0.0005〜$0.004 かかった。種類ごとの全部の値は[比較のページ](https://masseater.dev/ocr-decide/ocr-engines)にある。
 
+Indra OCR・NDLOCR-Lite・PaddleOCR・Surya は Python でしか動かないので、2026 年 11 月 10 日に測る手段を外した。表の値は `results/` に残した 10 月 20 日の記録で、測り直さない。
+
 ## 測り直す
 
-uv が要る。画像対応のモデルを測るときは `OPENROUTER_API_KEY` も要る。このディレクトリで次を実行する。
+画像対応のモデルを測るときは `OPENROUTER_API_KEY` が要る。このディレクトリで次を実行する。
 
 ```sh
 vp run prepare-data   # JaWildText の 60 枚を .cache/ に取る
 vp run render         # 合成ページを描き直す（変えたときだけ）
 node src/measure.ts                      # 全エンジンを、まだ読んでいないページだけ読む
-node src/measure.ts indra-ocr ndlocr-lite  # 指定したエンジンだけ読む
+node src/measure.ts tesseract google/gemini-3.8-flash  # 指定したエンジンだけ読む
 ```

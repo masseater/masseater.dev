@@ -19,6 +19,8 @@
           "effect/FileSystem#FileSystem",
           "effect/PlatformError#PlatformError",
           "effect/http/FetchHttpClient#layer",
+          "effect/http/HttpClient#HttpClient",
+          "effect/http/HttpClientResponse#filterStatusOk",
           "effect/observability/OtlpSerialization#layerJson",
           "effect/observability/OtlpTracer#layerFromConfig",
           "effect/process/ChildProcess",
