@@ -6,7 +6,7 @@ import { TranslatorPage } from "#/pages/translator";
 import { tauriEngine } from "#/shared/api";
 
 import { followColorScheme } from "./color-scheme.ts";
-import { Providers } from "./providers.tsx";
+import { Providers } from "./state.tsx";
 
 followColorScheme();
 
