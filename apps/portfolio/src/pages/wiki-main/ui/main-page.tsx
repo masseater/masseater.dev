@@ -2,7 +2,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { MainView } from "sloppedia";
 
-import { wiki } from "#/shared/config";
+import { wiki } from "#/shared/wiki";
 
 const route = getRouteApi("/sloppedia/");
 

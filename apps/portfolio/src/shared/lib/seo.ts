@@ -1,6 +1,7 @@
 import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 
-import { site, wiki } from "#/shared/config";
+import { site } from "#/shared/config";
+import { wiki } from "#/shared/wiki";
 
 type JsonLd = Readonly<Record<string, unknown>>;
 

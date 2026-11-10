@@ -2,13 +2,12 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
-import { closeDatabase, resetDatabase } from "#/shared/db/d1.test.support";
-
+import { closeDatabase, resetDatabase } from "./d1.test.support.ts";
 import { routeLifeRead } from "./life-read-route.server";
 import { lifeStats } from "./life-stats.server";
 import { writeLife } from "./life-write.server";
 
-vi.mock("cloudflare:workers", () => import("#/shared/db/d1.test.support"));
+vi.mock("cloudflare:workers", () => import("./d1.test.support.ts"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 

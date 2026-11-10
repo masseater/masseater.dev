@@ -57,7 +57,7 @@ const FAKE_BETTERLEAKS = lines(
   'case "$1" in',
   `  git) test "$6" = --ignore-file && grep -qx ${ZEROS} "$7" ;;`,
   "  stdin) ! grep -q AKIA ;;",
-  '  dir) ! grep -rq --exclude-dir=vendor AKIA "$2" ;;',
+  '  /*) ! grep -rq --exclude-dir=vendor AKIA "$1" ;;',
   "  *) exit 2 ;;",
   "esac",
 );

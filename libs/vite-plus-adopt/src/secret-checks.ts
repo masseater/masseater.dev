@@ -102,7 +102,7 @@ const scanCommittedTree = (
       spawner.exitCode(ChildProcess.make("tar", ["-xf", archive, "-C", directory])),
     );
     yield* fs.remove(archive);
-    return yield* scanSecrets({ config, root, args: ["dir", directory] });
+    return yield* scanSecrets({ config, root, args: [directory] });
   }).pipe(Effect.scoped);
 
 const betterleaksCheck = withSection("betterleaks", (config, { root, base }) =>
