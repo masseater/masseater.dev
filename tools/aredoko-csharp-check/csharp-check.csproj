@@ -9,8 +9,11 @@
   <ItemGroup>
     <Compile Include="../../apps/aredoko-unity/Packages/dev.masseater.aredoko/Editor/Client/**/*.cs" />
     <Compile Include="../../apps/aredoko-unity/Packages/dev.masseater.aredoko/Editor/Protocol/**/*.cs" />
+    <Compile Include="../../apps/aredoko-unity/Packages/dev.masseater.aredoko/Editor/Indexing/**/*.cs" />
+    <Compile Include="../../apps/aredoko-unity/Packages/dev.masseater.aredoko/Editor/Window/**/*.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <ProjectReference Include="UnityStubs/UnityStubs.csproj" />
   </ItemGroup>
 </Project>

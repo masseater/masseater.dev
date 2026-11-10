@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { SqliteClient } from "@effect/sql-sqlite-node";
 import {
   Array as Arr,
@@ -112,7 +112,7 @@ const makeD1 = (source: Source): D1 => {
     migrationStatements(source.migrations).pipe(Effect.map(plainAll), Effect.flatMap(executeAll)),
   );
   const runtime = ManagedRuntime.make(
-    migrated.pipe(Layer.provideMerge(sqlite), Layer.provide(NodeServices.layer)),
+    migrated.pipe(Layer.provideMerge(sqlite), Layer.provide(nodeServices)),
   );
   const statementOf = (query: Query): Statement => ({
     query,

@@ -27,7 +27,7 @@ export default defineConfig({
     },
   },
   resolve: { tsconfigPaths: true },
-  test: { include: ["src/**/*.test.{ts,tsx}", "vite-plugins/**/*.test.ts"] },
+  test: { include: ["src/**/*.test.{ts,tsx}", "vite-plugins/**/*.test.ts", "worker/**/*.test.ts"] },
   plugins: [
     devtools(),
     ...seikinTechniques(),
