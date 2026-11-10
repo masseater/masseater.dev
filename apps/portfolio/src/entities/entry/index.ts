@@ -4,7 +4,7 @@ export { categories, categoryMeta, categoryPath } from "./model/category";
 export type { Category } from "./model/category";
 export { entryOgImagePath, entryPath } from "./model/entry";
 export type { CollectionResult, Entry, EntryResult } from "./model/entry";
-export { preloadBody } from "./model/body";
+export { preloadBody } from "./ui/preload-body";
 export { loadedHeadings } from "./model/toc";
 export { EntryBody } from "./ui/entry-body";
 export { EntryToc } from "./ui/entry-toc";

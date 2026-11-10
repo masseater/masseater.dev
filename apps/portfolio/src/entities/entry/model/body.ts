@@ -37,7 +37,7 @@ const findLoadedBody = (
   location: Readonly<Pick<Entry, "category" | "slug">>,
 ): Option.Option<MDXModule> => Option.fromUndefinedOr(loaded.get(contentPath(location)));
 
-const preloadBody = (location: Readonly<Pick<Entry, "category" | "slug">>): Effect.Effect<void> =>
+const preloadModule = (location: Readonly<Pick<Entry, "category" | "slug">>): Effect.Effect<void> =>
   Option.match(findBody(location), {
     onNone: () => Effect.void,
     onSome: (load) =>
@@ -47,4 +47,4 @@ const preloadBody = (location: Readonly<Pick<Entry, "category" | "slug">>): Effe
       ),
   });
 
-export { findBody, findLoadedBody, preloadBody };
+export { findBody, findLoadedBody, preloadModule };
