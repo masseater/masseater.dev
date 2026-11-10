@@ -1,6 +1,6 @@
 use std::fmt::{self, Write as _};
 use std::fs::{self, File, OpenOptions};
-use std::io::{self, Read, Write};
+use std::io::{self, Read, Seek, Write};
 use std::path::{Path, PathBuf};
 
 use futures_util::StreamExt;
@@ -80,6 +80,8 @@ impl From<reqwest::Error> for Error {
 }
 
 /// The bytes of an unfinished download and their running hash.
+///
+/// The file is not opened for appending, because Windows refuses to empty such a file.
 struct Partial {
     file: File,
     hash: Sha256,
@@ -90,8 +92,9 @@ impl Partial {
     fn open(path: &Path) -> io::Result<Self> {
         let mut file = OpenOptions::new()
             .read(true)
-            .append(true)
+            .write(true)
             .create(true)
+            .truncate(false)
             .open(path)?;
         let mut hash = Sha256::new();
         let mut received = 0;
@@ -113,6 +116,7 @@ impl Partial {
 
     fn clear(&mut self) -> io::Result<()> {
         self.file.set_len(0)?;
+        self.file.rewind()?;
         self.hash = Sha256::new();
         self.received = 0;
         Ok(())
