@@ -89,7 +89,7 @@ const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
   "dependency-rules": "vpa dependencies",
   "markdown-lint": [
     "vpa textlint '**/*.md'",
-    `vpa textlint --print-files '**/*.md' | xargs -0 -r -n 1 -P 4 python3 "$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py" --strict`,
+    `script="$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py"; if [ ! -f "$script" ]; then echo "markdown-lint: the yomiyasu skill is not installed. Run vp install to restore the skills." >&2; exit 1; fi; vpa textlint --print-files '**/*.md' | xargs -0 -r -n 1 -P 4 python3 "$script" --strict`,
   ],
   steiger: "vpa steiger apps/*/src",
   betterleaks: {

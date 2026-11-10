@@ -1,7 +1,7 @@
 const hero = {
   title: "REAPER のプロジェクトを、そのまま import する",
   source: "GitHub で見る",
-  href: "https://github.com/masseater/rpp-kit",
+  href: "https://github.com/masseater/masseater.dev/tree/main/libs/rpp-kit",
 };
 
 const credit = {

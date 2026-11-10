@@ -6,7 +6,7 @@ Slay the Spire 2 (AppID 2868840, Godot/MegaDot 4.5.1 + C# net9.0) の Mod リポ
 - 各 Mod は Alchyr.Sts2.Templates + BaseLib ベース。パスは `apps/sts2-mods/local.props`(gitignore)から読む
 - ビルドにはゲーム本体の `sts2.dll` が必要なので、ゲームの無い環境では `dotnet build` は "Slay the Spire 2 data not found" で止まる(想定どおり)。型チェックは `vp run dotnet` がスタブ (`build/Sts2Stubs`) で行う
 - タスクは `vp run <名前>`(`vite.config.ts`)。Makefile は使わない。検査・ビルドを足すときも `vite.config.ts` のタスクにする
-- 警告=エラー。ルールを緩めて通さない。規約は `docs/development.md`
+- 警告=エラー。ルールを緩めて通さない。
 - cc-jev-teacher プラグイン(masseater.dev の `.claude/settings.json`)の skills に従う。
   - 自前で作る前に既存のライブラリ・機能を探す(dont-it-yourself)
   - エラーを握りつぶさずログを残し、「直った」「動く」は実物で確かめてから言う(measure-everything)

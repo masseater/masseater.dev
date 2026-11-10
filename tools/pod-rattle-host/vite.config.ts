@@ -16,6 +16,7 @@ export default defineConfig({
             { pattern: "libs/pod-rattle-engine/src/**", base: "workspace" },
             { pattern: "Cargo.lock", base: "workspace" },
             { pattern: "Cargo.toml", base: "workspace" },
+            { pattern: "rust-toolchain.toml", base: "workspace" },
           ],
           output: [],
         },

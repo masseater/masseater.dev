@@ -50,7 +50,7 @@ vp run @masseater.dev/pod-rattle-plugin#bundle   # target/bundled/Pod Rattle.{vs
 cargo run --release -p pod_rattle --features standalone   # Pod Rattle as a standalone app
 ```
 
-The parity test needs Node.js to render the reference audio. On Linux, the editors need the X11, XCB and OpenGL development packages listed in `.github/workflows/pod-rattle.yml`.
+The parity test needs Node.js to render the reference audio. On Linux, the editors need the X11, XCB and OpenGL development packages in `.github/actions/setup/linux-packages.txt`.
 
 ## License
 

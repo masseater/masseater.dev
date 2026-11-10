@@ -31,12 +31,13 @@ export default defineConfig({
     tasks: {
       cargo: {
         command:
-          "cargo fmt -p yakusu --check && cargo clippy -p yakusu --all-targets --locked && cargo test -p yakusu --locked",
+          "cargo fmt -p yakusu --check && cargo clippy -p yakusu --all-targets --locked -- -D warnings && cargo test -p yakusu --locked",
         cache: {
           input: [
             "src-tauri/**",
             { pattern: "Cargo.lock", base: "workspace" },
             { pattern: "Cargo.toml", base: "workspace" },
+            { pattern: "rust-toolchain.toml", base: "workspace" },
             { pattern: ".cargo/**", base: "workspace" },
           ],
           output: [],

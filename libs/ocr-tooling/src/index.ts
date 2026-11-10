@@ -1,4 +1,4 @@
-import { Effect, Layer } from "effect";
+import { Config, Effect, Layer, Option } from "effect";
 import type { Scope } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { OtlpSerialization, OtlpTracer } from "effect/observability";
@@ -7,8 +7,17 @@ import type { Browser } from "playwright-core";
 
 const CHROMIUM = "/opt/pw-browsers/chromium";
 
+const executablePathOf: Effect.Effect<string> = Config.option(
+  Config.NonEmptyString("CHROME_PATH"),
+).pipe(
+  Effect.map(Option.getOrElse(() => CHROMIUM)),
+  Effect.orElseSucceed(() => CHROMIUM),
+);
+
 const launchBrowser: Effect.Effect<Browser, never, Scope.Scope> = Effect.acquireRelease(
-  Effect.promise(() => chromium.launch({ executablePath: CHROMIUM })),
+  executablePathOf.pipe(
+    Effect.flatMap((executablePath) => Effect.promise(() => chromium.launch({ executablePath }))),
+  ),
   (opened) => Effect.promise(() => opened.close()),
 );
 
