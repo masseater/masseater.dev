@@ -23,6 +23,12 @@
       "groupName": "effect and alchemy"
     },
     {
+      "description": "@effect/tsgo は対応している版の oxlint にしかパッチを当てられず、合わないと prepare が落ちて vp install が失敗する。組で上げ、pr-title の install が通ったときだけマージする。",
+      "matchPackageNames": ["oxlint", "@oxlint/plugins", "@effect/tsgo"],
+      "groupName": "oxlint and effect-tsgo",
+      "ignoreTests": false
+    },
+    {
       "matchDepTypes": ["pnpm-workspace.overrides"],
       "matchUpdateTypes": ["major"],
       "enabled": false
