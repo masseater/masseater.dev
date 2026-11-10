@@ -63,7 +63,7 @@
 - 埋め込みのモデルは EmbeddingGemma 2 である。3D モデルは複数の向きからレンダリングした画像を埋め込み、キャプションを生成してから埋め込む方式は取らない。
 - 検索の精度は `tools/aredoko-search-eval` の、検索語と正解のアセットを組にした評価セットで測る。ランキングやモデルを変えるときは、変える前と後の結果を比べる。評価は日本語の検索語を主にする。
 - 型の正本は `libs/aredoko-protocol` の Effect Schema である。管理アプリと常駐サーバーは RpcGroup をそのまま共有し、エディタ拡張の C# と Tauri の Rust の型は `tools/aredoko-protocol-codegen` で `vp run codegen` を実行して作り直す。生成物は手で書き換えない。verify は `codegen:check` で食い違いを、`tools/aredoko-csharp-check` でエディタ拡張の `Editor/Client` と `Editor/Protocol` の C# を型検査する。`Editor/Indexing` と `Editor/Window` は型検査しない。
-- effect の不安定な API を出す宣言には `/** @internal */` を付ける。effect-tsgo の `api-stability-leak` はこれで公開の面から外れ、コメントの禁止もこの形だけを通す。
+- effect の不安定な API を出す宣言には `/** @internal */` を付ける。effect-tsgo の `api-stability-leak` はこれで公開の面から外れ、コメントの禁止は、この形と、msch に値の持ち主を示す `/** @msch <概念> */` だけを通す。
 - エディタ拡張は、VRChat SDK の Unity 2022.3.22f1 で使える API と C# 9 だけで書く。常駐サーバーは Windows 10・11 の x64 で動かすが、開発とテストはクラウドの Linux でも完結させ、Windows でしか確かめられない処理を作らない。
 - アセットと検索語は PC の外へ送らない。外部への通信は BOOTH の商品ページの公開 JSON の取得だけにし、BOOTH のログイン状態・Cookie・購入履歴は読まない。ほかのツールのデータは Unity Asset Store の保存先と BOOTH Library Manager のものだけを読み取り、書き換えない。ドロップやファイル選択で渡されたパッケージは、データフォルダの `library` に写してから索引し、元のファイルは動かさない。
 - 管理アプリの画面は、`apps/aredoko-desktop` で `vp run dev:app` を実行して開発版を起動し、`agent-browser connect 9222` でつないで調べる。WebView2 のデバッグポートを開くのは開発版だけである。トレースは `tools/aredoko-telemetry` で `vp run jaeger` を実行してから開発版を起動すると、管理アプリ・常駐サーバー・埋め込みのワーカーから `http://127.0.0.1:16686` に届く。`jaeger` 本体はリポが入れないので、PATH に置いておく。
