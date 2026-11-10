@@ -4,11 +4,9 @@ import type { ReactNode } from "react";
 
 import { PersonLink } from "#/entities/catalog";
 import { peopleQuery } from "#/pages/home/api/loader";
-import { rankOf } from "#/pages/home/lib/rank";
+import { RANKING_LIMIT, rankOf } from "#/pages/home/lib/rank";
 
 import { RankingItem } from "./ranking-item";
-
-const RANKING_LIMIT = 10;
 
 const creditsLabel = (count: number): string => `${count.toString()} パート`;
 

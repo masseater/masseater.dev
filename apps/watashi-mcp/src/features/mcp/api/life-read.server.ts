@@ -9,7 +9,7 @@ import { DEFAULT_PERIODS, DEFAULT_READ_LIMIT } from "./life-input";
 import type { LifeReadValue } from "./life-input";
 import { itemOf } from "./life-item";
 import { extrasOf } from "./life-read-extras.server";
-import { SCAN_LIMIT, findRecord, scanRecords } from "./life-store.server";
+import { SCAN_LIMIT, findRecord, scanCapped } from "./life-store.server";
 import type { RecordScan } from "./life-store.server";
 import { dayBound, todayJst } from "./life-time";
 import { termsOf } from "./storage.server";
@@ -76,8 +76,8 @@ const readList =
   (today: string): Effect.Effect<Body, StoreFailure> =>
     Effect.gen(function* readLifeRecords() {
       const scan = scanOf(input);
-      const scanned = yield* scanRecords(scan);
-      const kept = keptOf(input, today)(scanned);
+      const scanned = yield* scanCapped(scan);
+      const kept = keptOf(input, today)(scanned.entries);
       const page = pageOf(input, scan.terms)(kept);
       const extras = yield* extrasOf({
         record: singleRecord(input),
@@ -88,7 +88,7 @@ const readList =
         today,
       });
       const items = projectedItems(input)(extras.items);
-      return { total: Arr.length(kept), items, ...extras.summary };
+      return { total: Arr.length(kept), items, ...extras.summary, ...scanned.limited };
     });
 
 const readOne =

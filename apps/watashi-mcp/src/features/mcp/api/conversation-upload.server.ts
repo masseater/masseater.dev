@@ -6,10 +6,10 @@ import type { ChunkParams } from "./conversation-query";
 import { chunkAt, committedEnd } from "./conversation-store.server";
 import type { FileKey } from "./conversation-store.server";
 import { appendChunk } from "./conversation-writer.server";
-import type { AppendFailure } from "./conversation-writer.server";
 import { BAD_REQUEST, CONFLICT, TOO_LARGE, json, storageFailed, withStatus } from "./http-json";
 import type { Principal } from "./request-auth.server";
-import { nowIso } from "./storage.server";
+import { nowIso, query } from "./storage.server";
+import type { WriteFailure } from "./storage.server";
 
 type UploadStatus = "ok" | "conflict" | "error";
 
@@ -51,26 +51,28 @@ const discardLoser = ({ key, params, objectKey }: Placed): Effect.Effect<void> =
         ),
         {
           onSome: () => Effect.void,
-          onNone: () => Effect.promise(() => env.CONVERSATIONS.delete(objectKey)),
+          onNone: () => query(() => env.CONVERSATIONS.delete(objectKey)),
         },
       ),
     ),
     Effect.ignore,
   );
 
+const afterAppendFailure =
+  (key: FileKey) =>
+  (failure: WriteFailure): Effect.Effect<Stored> => {
+    if (failure.duplicate) {
+      return conflictAt(key);
+    }
+    return Effect.logError("conversation.append_failed", failure.message).pipe(
+      Effect.as({ response: storageFailed(), status: "error" as const }),
+    );
+  };
+
 const onAppendFailure =
   (placed: Placed) =>
-  (failure: AppendFailure): Effect.Effect<Stored> =>
-    Option.match(
-      Option.liftPredicate(failure, (value) => value.duplicate),
-      {
-        onSome: () => discardLoser(placed).pipe(Effect.andThen(conflictAt(placed.key))),
-        onNone: () =>
-          Effect.logError("conversation.append_failed", failure.message).pipe(
-            Effect.as({ response: storageFailed(), status: "error" as const }),
-          ),
-      },
-    );
+  (failure: WriteFailure): Effect.Effect<Stored> =>
+    discardLoser(placed).pipe(Effect.andThen(afterAppendFailure(placed.key)(failure)));
 
 const commit = Effect.fn("conversation.commit")(function* commit(placed: Placed) {
   const at = yield* nowIso;
@@ -99,7 +101,7 @@ const place = Effect.fn("conversation.place")(function* place(upload: Upload) {
     return { response: withStatus(CONFLICT)({ expected: committed }), status: "conflict" as const };
   }
   const objectKey = objectKeyOf({ key, params: upload.params });
-  yield* Effect.promise(() =>
+  yield* query(() =>
     env.CONVERSATIONS.put(objectKey, upload.body, {
       httpMetadata: { contentType: "application/gzip" },
     }),

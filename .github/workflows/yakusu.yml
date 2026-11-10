@@ -53,10 +53,29 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
       - run: rustup toolchain install
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          key: ${{ matrix.platform }}
+          lookup-only: ${{ startsWith(github.ref, 'refs/tags/') }}
+          save-if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+      - id: runtime
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            apps/yakusu/src-tauri/resources/archives
+            apps/yakusu/src-tauri/resources/model.gguf
+          key: yakusu-runtime-${{ matrix.platform }}-${{ hashFiles('apps/yakusu/scripts/fetch-runtime.sh') }}
       - name: Download llama-server, the model and their licenses
         run: apps/yakusu/scripts/fetch-runtime.sh "$PLATFORM"
         env:
           PLATFORM: ${{ matrix.platform }}
+      - if: steps.runtime.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            apps/yakusu/src-tauri/resources/archives
+            apps/yakusu/src-tauri/resources/model.gguf
+          key: ${{ steps.runtime.outputs.cache-primary-key }}
       - name: Translate with the downloaded runtime
         run: cargo test --package yakusu --test engine --locked -- --ignored
       - name: Build the installer
@@ -91,6 +110,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@2916ebd20c63bf28f817205513746309e2dd9201
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@cce4776b33a65c27d2a238b72115bdb31a172c30
         with:
           github-token: ${{ github.token }}
