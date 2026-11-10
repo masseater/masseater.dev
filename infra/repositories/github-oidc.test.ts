@@ -87,13 +87,13 @@ test("the real tables grant nothing to a repository they do not list", () => {
   expect(isGranted(BROKER_GRANTS)({ ...unlisted, environment: "npm" })).toBe(false);
 });
 
-test("the real npm list grants the npm environment of masseater.dev and lint-kit", () => {
-  const lintKit = jobIn({ repository: "lint-kit", workflow: "publish.yml" });
+test("the real npm list grants only the npm environment of masseater.dev", () => {
+  const elsewhere = jobIn({ repository: UNLISTED, workflow: "publish.yml" });
   expect(isListedForNpm(PUSH)).toBe(false);
   expect(isListedForNpm(inEnvironment("npm"))).toBe(true);
   expect(isGranted(BROKER_GRANTS)(inEnvironment("npm"))).toBe(true);
-  expect(isListedForNpm(lintKit)).toBe(true);
-  expect(isGranted(BROKER_GRANTS)(lintKit)).toBe(true);
+  expect(isListedForNpm(elsewhere)).toBe(false);
+  expect(isListedForNpm({ ...elsewhere, environment: "npm" })).toBe(false);
 });
 
 test("a bot workflow in an unlisted repository is granted for that repository alone", () => {
