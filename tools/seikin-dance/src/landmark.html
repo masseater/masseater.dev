@@ -1,0 +1,36 @@
+<!doctype html>
+<meta charset="utf-8" />
+<script type="module">
+  import { FilesetResolver, PoseLandmarker } from "/vision/vision_bundle.mjs";
+
+  const post = (path, body, headers = {}) => fetch(path, { method: "POST", body, headers });
+
+  try {
+    const { count, width, height, fps } = await (await fetch("/config")).json();
+    const fileset = await FilesetResolver.forVisionTasks("/vision/wasm");
+    const landmarker = await PoseLandmarker.createFromOptions(fileset, {
+      baseOptions: { modelAssetPath: "/model", delegate: "CPU" },
+      runningMode: "VIDEO",
+      outputSegmentationMasks: true,
+    });
+    for (let index = 0; index < count; index += 1) {
+      const pixels = new Uint8ClampedArray(await (await fetch(`/frame/${index}`)).arrayBuffer());
+      const result = landmarker.detectForVideo(
+        new ImageData(pixels, width, height),
+        Math.round((index * 1000) / fps),
+      );
+      const pose = (result.landmarks[0] ?? []).map((mark) => [
+        mark.x,
+        mark.y,
+        mark.z,
+        mark.visibility ?? 0,
+      ]);
+      const mask = result.segmentationMasks?.[0]?.getAsFloat32Array() ?? new Float32Array(0);
+      await post(`/result/${index}`, mask, { "x-pose": JSON.stringify(pose) });
+      result.close();
+    }
+    await post("/done", "");
+  } catch (error) {
+    await post("/error", String(error?.stack ?? error));
+  }
+</script>
