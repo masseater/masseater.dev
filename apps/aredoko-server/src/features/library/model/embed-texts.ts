@@ -1,4 +1,4 @@
-import { Array, Effect, pipe } from "effect";
+import { Array, Effect, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { vectorBytes } from "#shared/database";
@@ -34,11 +34,17 @@ const embedBatch = Effect.fn("embedTextBatch")(function* embedTextBatch(
 });
 
 /** @internal */
-const embedTexts = Effect.fn("embedTexts")(function* embedPackageTexts(packageId: number) {
+const embedTexts = Effect.fn("embedTexts")(function* embedMissingTexts(
+  packageId: Option.Option<number>,
+) {
   const sql = yield* SqlClient.SqlClient;
+  const inPackage = Option.match(packageId, {
+    onNone: () => sql`1 = 1`,
+    onSome: (id) => sql`a.package_id = ${id}`,
+  });
   const rows = yield* decodeRows(AssetTextRow)(
     sql`select a.id, a.text from assets a
-      where a.package_id = ${packageId}
+      where ${inPackage}
       and not exists (select 1 from text_vectors v where v.rowid = a.id)`,
   );
   yield* pipe(rows, Array.chunksOf(TEXT_BATCH), Effect.forEach(embedBatch));

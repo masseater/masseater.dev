@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, Option } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { encodeSummary } from "#entities/package";
@@ -36,7 +36,7 @@ const storePackage = Effect.fn("storePackage")(function* storePackageRows({
       return id;
     }),
   );
-  yield* embedTexts(packageId);
+  yield* embedTexts(Option.some(packageId));
 });
 
 export { storePackage };

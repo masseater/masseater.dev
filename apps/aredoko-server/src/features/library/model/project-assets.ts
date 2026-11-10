@@ -1,4 +1,4 @@
-import { Array, Effect, HashSet, pipe } from "effect";
+import { Array, Effect, HashSet, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { encodeSummary, listedEntry } from "#entities/package";
@@ -44,7 +44,7 @@ const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAss
   yield* sql.withTransaction(
     insertAssets({ packageId, packageName: nameOf(projectPath), assets: inputs }),
   );
-  yield* embedTexts(packageId);
+  yield* embedTexts(Option.some(packageId));
   return packageId;
 });
 

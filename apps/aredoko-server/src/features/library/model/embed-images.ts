@@ -9,6 +9,8 @@ import { ImageRow } from "./rows.ts";
 
 const IMAGE_BATCH = 8;
 const NO_IMAGES = 0;
+const MAX_ATTEMPTS = 3;
+const NO_ATTEMPTS = 0;
 
 type Image = typeof ImageRow.Type;
 
@@ -29,8 +31,22 @@ const save = Effect.fn("saveImageVector")(function* saveImageVector(
 
 const markFailed = Effect.fn("markImageFailed")(function* markImageFailed({ id }: Image) {
   const sql = yield* SqlClient.SqlClient;
-  yield* sql`update images set embedded = ${EMBEDDING.failed} where id = ${id}`;
+  yield* sql`update images set embedded = ${EMBEDDING.failed}, attempts = attempts + 1
+    where id = ${id}`;
 });
+
+/** @internal */
+const retryFailedImages = Effect.gen(function* retryFailedImages() {
+  const sql = yield* SqlClient.SqlClient;
+  yield* sql`update images set embedded = ${EMBEDDING.pending}, attempts = ${NO_ATTEMPTS}
+    where embedded = ${EMBEDDING.failed}`;
+}).pipe(Effect.withSpan("retryFailedImages"));
+
+const retryAfterSuccess = Effect.gen(function* retryAfterSuccess() {
+  const sql = yield* SqlClient.SqlClient;
+  yield* sql`update images set embedded = ${EMBEDDING.pending}
+    where embedded = ${EMBEDDING.failed} and attempts < ${MAX_ATTEMPTS}`;
+}).pipe(Effect.withSpan("retryAfterSuccess"));
 
 const embedBatch = Effect.fn("embedBatch")(function* embedImageBatch(images: readonly Image[]) {
   const embedder = yield* Embedder;
@@ -48,10 +64,16 @@ const embedBatch = Effect.fn("embedBatch")(function* embedImageBatch(images: rea
 });
 
 const embedOneByOne = Effect.fn("embedOneByOne")(function* embedOneByOne(images: readonly Image[]) {
-  yield* pipe(
+  const saved = yield* pipe(
     images,
-    Effect.forEach((image) => embedBatch([image]).pipe(Effect.catchCause(() => markFailed(image)))),
+    Effect.forEach((image) =>
+      embedBatch([image]).pipe(
+        Effect.as(true),
+        Effect.catchCause(() => markFailed(image).pipe(Effect.as(false))),
+      ),
+    ),
   );
+  return pipe(saved, Array.some(Boolean));
 });
 
 const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
@@ -79,7 +101,17 @@ const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
         }),
     }),
   );
-  yield* embedBatch(pending).pipe(Effect.catchCause(() => embedOneByOne(pending)));
+  const embedded = yield* Array.match(pending, {
+    onEmpty: () => Effect.succeed(false),
+    onNonEmpty: (images) =>
+      embedBatch(images).pipe(
+        Effect.as(true),
+        Effect.catchCause(() => embedOneByOne(images)),
+      ),
+  });
+  if (embedded) {
+    yield* retryAfterSuccess;
+  }
   return pending.length;
 });
 
@@ -90,5 +122,5 @@ const embedImages = Effect.fn("embedImages")(function* embedAllImages(
   yield* embedPending(onBatch).pipe(Effect.repeat({ while: (count) => count > NO_IMAGES }));
 });
 
-export { embedImages };
+export { embedImages, retryFailedImages };
 export type { AnalyzedBatch };

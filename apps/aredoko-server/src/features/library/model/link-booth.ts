@@ -53,7 +53,7 @@ const linkBooth = Effect.fn("linkBooth")(function* linkBoothItem({
       retexted,
     ),
   );
-  yield* embedTexts(packageId);
+  yield* embedTexts(Option.some(packageId));
 });
 
 export { linkBooth };
