@@ -1,7 +1,8 @@
+import type { Caller } from "@masseater.dev/mcp-tool-call";
+import { NO_PROJECT, one, OVERWRITE, READ_ONLY } from "@masseater.dev/mcp-tool-call";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { Schema, pipe } from "effect";
 
-import type { Caller } from "./caller";
 import {
   MemoryReadInput,
   MemoryWriteInput,
@@ -11,7 +12,7 @@ import {
 import type { MemoryReadValue } from "./memory-input";
 import { readMemory } from "./memory-read.server";
 import { writeMemory } from "./memory-write.server";
-import { NO_PROJECT, OVERWRITE, READ_ONLY, meteredInput, one, runTool } from "./tool-call.server";
+import { meteredInput, runTool } from "./tool-call.server";
 import { watashiProfile } from "./watashi-profile.server";
 import { watashiSearch } from "./watashi-search.server";
 

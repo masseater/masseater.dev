@@ -1,13 +1,14 @@
+import type { Caller } from "@masseater.dev/mcp-tool-call";
+import { one, OVERWRITE, READ_ONLY } from "@masseater.dev/mcp-tool-call";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { Schema, pipe } from "effect";
 
-import type { Caller } from "./caller";
 import { LifeReadInput, LifeStatsInput, LifeWriteInput } from "./life-input";
 import type { LifeReadValue } from "./life-input";
 import { routeLifeRead } from "./life-read-route.server";
 import { lifeStats } from "./life-stats.server";
 import { writeLife } from "./life-write.server";
-import { OVERWRITE, READ_ONLY, meteredInput, one, runTool } from "./tool-call.server";
+import { meteredInput, runTool } from "./tool-call.server";
 
 const LIFE_PROJECT = "life";
 

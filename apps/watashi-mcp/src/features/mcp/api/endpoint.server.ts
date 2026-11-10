@@ -1,14 +1,15 @@
 import { requireMcpAuth } from "@better-auth/mcp";
+import type { Caller } from "@masseater.dev/mcp-tool-call";
+import { callerOf } from "@masseater.dev/mcp-tool-call";
 import { McpServer, createMcpHandler } from "@modelcontextprotocol/server";
 import { pipe } from "effect";
 
 import { createAuth } from "#/shared/auth/index.server";
 import { MCP_URL, SITE_NAME, SITE_ORIGIN } from "#/shared/config";
 
-import { callerOf } from "./caller";
-import type { Caller } from "./caller";
+import { registerConversationTools } from "./conversation-tools.server";
 import { registerLifeTools } from "./life-tools.server";
-import { registerPersonalTools } from "./personal-tools.server";
+import { registerTokenTools } from "./token-tools.server";
 import { registerWatashiTools } from "./watashi-tools.server";
 
 const SERVER_INFO = { name: SITE_NAME, version: "0.0.0", websiteUrl: SITE_ORIGIN };
@@ -18,7 +19,8 @@ const registerTools = (caller: Caller): McpServer =>
     new McpServer(SERVER_INFO),
     registerLifeTools(caller),
     registerWatashiTools(caller),
-    registerPersonalTools(caller),
+    registerConversationTools(caller),
+    registerTokenTools(caller),
   );
 
 const serveMcp = (request: Request): Promise<Response> =>
