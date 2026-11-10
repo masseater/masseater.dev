@@ -77,7 +77,10 @@ const addSource = Effect.fn("addSource")(function* addFolderSource(files: readon
   return { id, folder, file };
 });
 
-const scan = scanFolders(() => Effect.void);
+const scan = scanFolders(
+  () => Effect.void,
+  () => false,
+);
 
 const packagePaths = Effect.fn("packagePaths")(function* packagePathsOf(sourceId: number) {
   const sql = yield* SqlClient.SqlClient;

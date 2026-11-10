@@ -12,15 +12,23 @@ type Activity =
   | { readonly status: "analyzing"; readonly batch: Option.Option<AnalyzedBatch> };
 
 /** @internal */
-const scanLibrary = Effect.fn("scanLibrary")(function* scanWholeLibrary<Failure, Requirements>({
-  linkBlm,
+const scanLibrary = Effect.fn("scanLibrary")(function* scanWholeLibrary<
+  Failure,
+  Requirements,
+  LinkableRequirements,
+>({
+  blm,
   report,
 }: {
-  readonly linkBlm: Effect.Effect<void, Failure, Requirements>;
+  readonly blm: {
+    readonly link: Effect.Effect<void, Failure, Requirements>;
+    readonly linkable: Effect.Effect<(packagePath: string) => boolean, never, LinkableRequirements>;
+  };
   readonly report: (activity: Activity) => Effect.Effect<void>;
 }) {
-  yield* scanFolders((file) => report({ status: "scanning", file }));
-  yield* linkBlm;
+  const linkable = yield* blm.linkable;
+  yield* scanFolders((file) => report({ status: "scanning", file }), linkable);
+  yield* blm.link;
   yield* embedTexts(Option.none()).pipe(
     Effect.catchCause((cause) => Effect.logWarning("text embedding failed", cause)),
   );

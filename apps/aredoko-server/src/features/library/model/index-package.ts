@@ -18,7 +18,10 @@ const packagedAsset = ({ guid, pathname, preview, references }: PackageEntry): A
 });
 
 /** @internal */
-const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(file: PackageFile) {
+const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(
+  file: PackageFile,
+  linkable: boolean,
+) {
   const read = yield* readPackage(file.path);
   const entries = pipe(
     read,
@@ -30,11 +33,15 @@ const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(file: 
     name: nameOf(file.path),
     entries,
     assets: pipe(entries, Array.map(packagedAsset)),
+    linkable,
   });
 });
 
 /** @internal */
-const indexBundle = Effect.fn("indexBundle")(function* indexLooseFiles(bundle: Bundle) {
+const indexBundle = Effect.fn("indexBundle")(function* indexLooseFiles(
+  bundle: Bundle,
+  linkable: boolean,
+) {
   const assets = yield* pipe(bundle.members, Effect.forEach(looseAsset));
   yield* storePackage({
     kind: "files",
@@ -45,6 +52,7 @@ const indexBundle = Effect.fn("indexBundle")(function* indexLooseFiles(bundle: B
       Array.map(({ pathname }) => listedEntry({ guid: pathname, pathname })),
     ),
     assets,
+    linkable,
   });
 });
 

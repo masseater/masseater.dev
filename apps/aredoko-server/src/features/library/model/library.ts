@@ -52,9 +52,9 @@ const libraryLayer = Layer.effect(
     const activity = yield* Ref.make<Activity>(IDLE);
     const requests = yield* Queue.sliding<boolean>(PENDING_REQUESTS);
     const seen = yield* Ref.make<Seen>(HashMap.empty());
-    const linkBlm = yield* blmLinker;
+    const blm = yield* blmLinker;
     const scan = scanLibrary({
-      linkBlm,
+      blm,
       report: (current) => Ref.set(activity, current),
     }).pipe(
       Effect.catchCause((cause) => Effect.logError("scan failed", cause)),
