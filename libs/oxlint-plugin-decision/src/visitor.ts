@@ -1,0 +1,270 @@
+import type { Context, VisitorWithHooks } from "@oxlint/plugins";
+import { Array as Arr, Option, Predicate, Record as Rec, pipe, Function as Fn } from "effect";
+
+import { commentedSnippetOf, contextOf, lacksComment } from "./context.ts";
+import { isSelected } from "./name.ts";
+import { REPORT_LOC, TARGET_NODE_TYPES, snippetNodeFor } from "./nodes.ts";
+import { optionsError } from "./options.ts";
+import { reportModels } from "./report.ts";
+import type { ModelPass } from "./report.ts";
+import { truncateSnippet } from "./request.ts";
+import { envNameOf, envOf, failsInCi, nowMs, warnOnce } from "./runtime.ts";
+import type {
+  AstNode,
+  DecisionProvider,
+  Match,
+  ModelRef,
+  ResolvedOptions,
+  ResolvedRule,
+  SelectedNode,
+  Target,
+} from "./types.ts";
+
+const DATA_FIRST_ARITY = 2;
+
+interface Collected {
+  readonly options: ResolvedOptions;
+  readonly contexts: Readonly<Record<string, Context>>;
+  readonly rules: Readonly<Record<string, ResolvedRule>>;
+  readonly matches: readonly Match[];
+}
+
+interface FileBatch extends Collected {
+  readonly contexts: Record<string, Context>;
+  readonly rules: Record<string, ResolvedRule>;
+  readonly matches: Match[];
+  exiting: boolean;
+  exits: number;
+}
+
+interface RuleFile {
+  readonly batch: FileBatch;
+  readonly rule: ResolvedRule;
+}
+
+interface SharedFile {
+  readonly join: (context: Context, id: string) => RuleFile;
+  readonly leave: () => void;
+}
+
+type OptionsFor = (settings: Readonly<Record<string, unknown>>) => ResolvedOptions;
+
+type RuleFor = (rule: ResolvedRule, options: unknown) => ResolvedRule;
+
+const raisedMissing = new Set<string>();
+
+const missingEnvOf = (options: ResolvedOptions, provider: DecisionProvider): readonly string[] =>
+  pipe(
+    provider.requiredEnv,
+    Arr.map((name) => envNameOf(options.env, name)),
+    Arr.filter((name) => Option.isNone(envOf(name))),
+  );
+
+const isAvailable = (options: ResolvedOptions, { provider }: ModelRef): boolean => {
+  const missingNames = missingEnvOf(options, provider);
+  if (Arr.isReadonlyArrayEmpty(missingNames)) {
+    return true;
+  }
+  const missing = pipe(missingNames, Arr.join(", "));
+  if (!failsInCi(options)) {
+    warnOnce(`missing:${provider.name}`, `${missing} is not set, skipping ${provider.name} models`);
+  } else if (!raisedMissing.has(provider.name)) {
+    raisedMissing.add(provider.name);
+    throw optionsError(`${missing} is not set`);
+  }
+  return false;
+};
+
+const availableModels = (batch: Collected): readonly ModelRef[] => {
+  const models = pipe(
+    Rec.values(batch.rules),
+    Arr.flatMap((rule) => rule.models),
+    Arr.map((model) => [model.id, model] as const),
+  );
+  return pipe(
+    Arr.fromIterable(new Map(models).values()),
+    Arr.filter((model) => isAvailable(batch.options, model)),
+  );
+};
+
+const snippetOf = (context: Context, node: AstNode): string => {
+  if (node.type === "Program") {
+    return context.sourceCode.text;
+  }
+  return context.sourceCode.getText(node);
+};
+
+const namedSnippetOf = (context: Context, node: AstNode): string => {
+  const named = snippetNodeFor(node);
+  if (named === node) {
+    return snippetOf(context, node);
+  }
+  return context.sourceCode.getText(named);
+};
+
+const matchOf = (
+  context: Context,
+  node: AstNode,
+  { rule, options }: { readonly rule: ResolvedRule; readonly options: ResolvedOptions },
+): Match => {
+  const text = Option.getOrElse(commentedSnippetOf(context, node, rule), () =>
+    namedSnippetOf(context, node),
+  );
+  const surrounding = contextOf(context, node, rule.context ?? { scope: "node" });
+  return {
+    ...Option.match(surrounding, { onNone: () => ({}), onSome: (value) => ({ context: value }) }),
+    rule,
+    loc: REPORT_LOC[rule.target](node, snippetOf(context, node)),
+    snippet: truncateSnippet(text, options.maxSnippetChars),
+    truncated: text.length > options.maxSnippetChars,
+  };
+};
+
+const contextOfRule = (batch: Collected, id: string): Context =>
+  Option.getOrThrow(Option.fromUndefinedOr(batch.contexts[id]));
+
+const finish = (batch: Collected): void => {
+  const [first] = Rec.values(batch.contexts);
+  if (Predicate.isUndefined(first)) {
+    return;
+  }
+  const deadline = nowMs() + batch.options.timeoutMs;
+  const passes = pipe(
+    availableModels(batch),
+    Arr.flatMap((model): readonly ModelPass[] => {
+      const matches = pipe(
+        batch.matches,
+        Arr.filter(({ rule }) =>
+          pipe(
+            rule.models,
+            Arr.some(({ id }) => id === model.id),
+          ),
+        ),
+      );
+      return Arr.match(matches, {
+        onEmpty: () => [],
+        onNonEmpty: (some) => [
+          {
+            contextOf: (match) => contextOfRule(batch, match.rule.id),
+            filename: first.filename,
+            options: batch.options,
+            model,
+            matches: some,
+            deadline,
+          },
+        ],
+      });
+    }),
+  );
+  reportModels(passes);
+};
+
+const ruleIn = (batch: Collected, id: string): ResolvedRule =>
+  Option.getOrThrow(Arr.findFirst(batch.options.rules, (rule) => rule.id === id));
+
+const sharedFile: {
+  (ruleFor: RuleFor): (optionsFor: OptionsFor) => SharedFile;
+  (optionsFor: OptionsFor, ruleFor: RuleFor): SharedFile;
+} = Fn.dual(DATA_FIRST_ARITY, (optionsFor: OptionsFor, ruleFor: RuleFor): SharedFile => {
+  let current: Option.Option<FileBatch> = Option.none();
+  const start = (context: Context): FileBatch => {
+    const batch: FileBatch = {
+      options: optionsFor(context.settings),
+      contexts: {},
+      rules: {},
+      matches: [],
+      exiting: false,
+      exits: 0,
+    };
+    current = Option.some(batch);
+    return batch;
+  };
+  return {
+    join: (context, id) => {
+      const batch = Option.match(current, {
+        onNone: () => start(context),
+        onSome: (open) => {
+          if (open.exiting) {
+            return start(context);
+          }
+          return open;
+        },
+      });
+      const [options] = context.options;
+      const rule = ruleFor(ruleIn(batch, id), options);
+      batch.contexts[id] = context;
+      batch.rules[id] = rule;
+      return { batch, rule };
+    },
+    leave: () => {
+      if (Option.isNone(current)) {
+        return;
+      }
+      const batch = current.value;
+      batch.exits += 1;
+      if (batch.exits >= Rec.keys(batch.contexts).length) {
+        current = Option.none();
+      }
+      if (!batch.exiting) {
+        batch.exiting = true;
+        finish(batch);
+      }
+    },
+  };
+});
+
+type Visited = SelectedNode & AstNode;
+
+const isSkipped = (context: Context, node: Visited, rule: ResolvedRule): boolean =>
+  !isSelected(context, node, rule) || lacksComment(context, node, rule);
+
+interface RuleTarget {
+  readonly id: string;
+  readonly target: Target;
+}
+
+const visitorFor: {
+  (rule: RuleTarget): (shared: SharedFile) => (context: Context) => VisitorWithHooks;
+  (shared: SharedFile, rule: RuleTarget): (context: Context) => VisitorWithHooks;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (shared: SharedFile, { id, target }: RuleTarget) =>
+    (context: Context): VisitorWithHooks => {
+      let file: Option.Option<RuleFile> = Option.none();
+
+      const collect = (node: Visited): void => {
+        if (Option.isNone(file)) {
+          return;
+        }
+        const { batch, rule } = file.value;
+        if (isSkipped(context, node, rule)) {
+          return;
+        }
+        batch.matches.push(matchOf(context, node, { rule, options: batch.options }));
+      };
+
+      const nodeTypes: readonly string[] = TARGET_NODE_TYPES[target];
+
+      return {
+        ...Rec.fromEntries(
+          pipe(
+            nodeTypes,
+            Arr.map((type) => [type, collect]),
+          ),
+        ),
+        Program: (node: Visited): void => {
+          file = Option.some(shared.join(context, id));
+          if (target === "file") {
+            collect(node);
+          }
+        },
+        "Program:exit": (): void => {
+          file = Option.none();
+          shared.leave();
+        },
+      };
+    },
+);
+
+export { sharedFile, visitorFor };
+export type { Collected, FileBatch, OptionsFor, RuleFile, RuleFor, RuleTarget, SharedFile };

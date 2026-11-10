@@ -1,0 +1,2558 @@
+import tsx from "dedent";
+
+import { ruleTester } from "@local/testkit";
+import rule, { RULE_NAME } from "./no-leaked-event-listener";
+
+ruleTester.run(RULE_NAME, rule, {
+  invalid: [
+    // -------------------------------------------------------------------------
+    // No cleanup at all: the canonical leak
+    // -------------------------------------------------------------------------
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            window.addEventListener("resize", handleResize);
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // A bare `addEventListener` targets the global object and still needs a matching cleanup
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            addEventListener("resize", handleResize);
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    { // Even if the event listener is added with an once, it may still be necessary to properly cancel untriggered listeners when the component is unmounted, so this case needs to be placed in invalid.
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize1 = () => {};
+            window.addEventListener("resize", handleResize1, { once: true });
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // Where the rule applies: custom hooks and custom effect hooks
+    // -------------------------------------------------------------------------
+    // Effects inside a custom hook (non-component function) are checked as well
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function useWindowSize() {
+          const handleResize = () => {};
+          useEffect(() => {
+            window.addEventListener("resize", handleResize);
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Custom effect hooks matching /^use\w*Effect$/ are treated as effect hooks
+    {
+      code: tsx`
+        import { useCustomEffect } from "./hooks";
+
+        function Example() {
+          const handleResize = () => {};
+          useCustomEffect(() => {
+            window.addEventListener("resize", handleResize);
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // A cleanup exists but the listener does not pair
+    // -------------------------------------------------------------------------
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize1 = () => {};
+            const handleResize2 = () => {};
+            window.addEventListener("resize", handleResize1);
+            return () => {
+              window.removeEventListener("resize", handleResize2);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Bare calls with different listeners do not pair
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize1 = () => {};
+            const handleResize2 = () => {};
+            addEventListener("resize", handleResize1);
+            return () => {
+              removeEventListener("resize", handleResize2);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            window.addEventListener("resize", () => {});
+            return () => {
+              window.removeEventListener("resize", () => {});
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          data: { effectMethodKind: "useEffect", eventMethodKind: "addEventListener" },
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+        {
+          data: { eventMethodKind: "addEventListener" },
+          messageId: "unexpected-inline-function",
+        },
+        {
+          data: { eventMethodKind: "removeEventListener" },
+          messageId: "unexpected-inline-function",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            window.addEventListener("resize", () => {}, { once: true });
+            return () => {
+              window.removeEventListener("resize", () => {});
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          data: { effectMethodKind: "useEffect", eventMethodKind: "addEventListener" },
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+        {
+          data: { eventMethodKind: "addEventListener" },
+          messageId: "unexpected-inline-function",
+        },
+        {
+          data: { eventMethodKind: "removeEventListener" },
+          messageId: "unexpected-inline-function",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            window.addEventListener("resize", () => {}, { once: true });
+
+            return () => {
+              window.removeEventListener("resize", () => {}, { once: true });
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          data: { effectMethodKind: "useEffect", eventMethodKind: "addEventListener" },
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+        {
+          data: { eventMethodKind: "addEventListener" },
+          messageId: "unexpected-inline-function",
+        },
+        {
+          data: { eventMethodKind: "removeEventListener" },
+          messageId: "unexpected-inline-function",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // A cleanup exists but the event type does not pair
+    // -------------------------------------------------------------------------
+    // Bare calls with different event types do not pair
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            addEventListener("resize", handleResize);
+            return () => {
+              removeEventListener("focus", handleResize);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // A cleanup exists but the target object does not pair
+    // -------------------------------------------------------------------------
+    // A bare `addEventListener` does not pair with a `removeEventListener` on a non-global object
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            addEventListener("resize", handleResize);
+            return () => {
+              document.removeEventListener("resize", handleResize);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // A cleanup exists but the capture options do not pair
+    // -------------------------------------------------------------------------
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize);
+            return () => {
+              window.removeEventListener("resize", handleResize, true);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, { capture: true });
+            return () => {
+              window.removeEventListener("resize", handleResize);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize);
+            return () => {
+              window.removeEventListener("resize", handleResize, { capture: true });
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, false);
+            return () => {
+              window.removeEventListener("resize", handleResize, true);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, true);
+            return () => {
+              window.removeEventListener("resize", handleResize, false);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, { capture: true });
+            return () => {
+              window.removeEventListener("resize", handleResize, false);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, true);
+            return () => {
+              window.removeEventListener("resize", handleResize, { capture: false });
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, { capture: true });
+            return () => {
+              window.removeEventListener("resize", handleResize, { capture: false });
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Bare calls with mismatched capture options do not pair
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            addEventListener("resize", handleResize, { capture: true });
+            return () => {
+              removeEventListener("resize", handleResize, { capture: false });
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // A member-receiver add pairs with a bare remove only when the capture
+    // options match; a mismatch is still reported
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, { capture: true });
+            return () => {
+              removeEventListener("resize", handleResize, { capture: false });
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const options = { capture: true };
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, options);
+            return () => {
+              window.removeEventListener("resize", handleResize);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const options = { capture: true };
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, { capture: options.capture });
+            return () => {
+              window.removeEventListener("resize", handleResize);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // Multiple listeners in one effect pair independently
+    // -------------------------------------------------------------------------
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, { capture: true });
+            window.addEventListener("resize", handleResize, { capture: false });
+            return () => {
+              window.removeEventListener("resize", handleResize, { capture: false });
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize, { capture: true });
+            window.addEventListener("resize", handleResize, { capture: false });
+            window.addEventListener("resize", handleResize, { capture: false });
+            return () => {
+              window.removeEventListener("resize", handleResize, { capture: false });
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Multiple bare listeners in one effect pair independently: the one without a matching
+    // removal is still reported
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            const handleFocus = () => {};
+            addEventListener("resize", handleResize);
+            addEventListener("focus", handleFocus);
+            return () => {
+              removeEventListener("resize", handleResize);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // Listeners added in loops
+    // -------------------------------------------------------------------------
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        export const Component = () => {
+          const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+          const handleActivity = () => {};
+
+          useEffect(() => {
+            events.forEach((evt) => {
+              window.addEventListener(event, handleActivity);
+            });
+
+            return () => {
+              events.forEach((event) => {
+                window.removeEventListener(evt, handleActivity);
+              });
+            };
+          }, []);
+
+          return null;
+        };
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        export const Component = () => {
+          const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+          const handleActivity1 = () => {};
+          const handleActivity2 = () => {};
+
+          useEffect(() => {
+            events.forEach((event) => {
+              window.addEventListener(event, handleActivity1);
+            });
+
+            return () => {
+              events.forEach((event) => {
+                window.removeEventListener(event, handleActivity2);
+              });
+            };
+          }, []);
+
+          return null;
+        };
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        export const Component = () => {
+          const events1 = ["mousemove", "mousedown", "keydown"];
+          const events2 = ["keydown", "scroll", "touchstart"];
+
+          const handleActivity = () => {};
+
+          useEffect(() => {
+            events1.forEach((event) => {
+              window.addEventListener(event, handleActivity);
+            });
+
+            return () => {
+              events2.forEach((event) => {
+                window.removeEventListener(event, handleActivity);
+              });
+            };
+          }, []);
+
+          return null;
+        };
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        export const Component = () => {
+          const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+          const handleActivity = () => {};
+
+          useEffect(() => {
+            for (const evt of events) {
+              window.addEventListener(event, handleActivity);
+            }
+
+            return () => {
+              for (const event of events) {
+                window.removeEventListener(evt, handleActivity);
+              }
+            };
+          }, []);
+
+          return null;
+        };
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        export const Component = () => {
+          const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+          const handleActivity1 = () => {};
+          const handleActivity2 = () => {};
+
+          useEffect(() => {
+            for (const event of events) {
+              window.addEventListener(event, handleActivity1);
+            }
+
+            return () => {
+              for (const evt of events) {
+                window.removeEventListener(evt, handleActivity2);
+              }
+            };
+          }, []);
+
+          return null;
+        };
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        export const Component = () => {
+          const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+          const handleActivity1 = () => {};
+          const handleActivity2 = () => {};
+
+          useEffect(() => {
+            for (const event of events) {
+              window.addEventListener(event, handleActivity1);
+            }
+
+            return () => {
+              for (const [event] of events) {
+                window.removeEventListener(event, handleActivity2);
+              }
+            };
+          }, []);
+
+          return null;
+        };
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        export const Component = () => {
+          const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+          const handleActivity1 = () => {};
+          const handleActivity2 = () => {};
+
+          useEffect(() => {
+            for (const event of events) {
+              window.addEventListener(event, handleActivity1);
+            }
+
+            return () => {
+              for (const {event} of events) {
+                window.removeEventListener(event, handleActivity2);
+              }
+            };
+          }, []);
+
+          return null;
+        };
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // A `signal` option that is not recognized as an AbortSignal
+    // -------------------------------------------------------------------------
+    // Only the destructured property named `signal` is recognized: passing another binding
+    // destructured from the same `new AbortController()` as the signal option is not a signal
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            const { signal, abort } = new AbortController();
+            window.addEventListener("resize", handleResize, { signal: abort });
+            return () => abort();
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // A `signal` property destructured from a plain object is not an AbortSignal and is not recognized
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            const options = { signal: null };
+            const { signal } = options;
+            window.addEventListener("resize", handleResize, { signal });
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // A `signal` destructured from a non-AbortController NewExpression is not recognized
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            const { signal } = new EventTarget();
+            window.addEventListener("resize", handleResize, { signal });
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Computed identifier key is not a static "signal" option: the property name is the runtime value of the variable
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const ac = new AbortController();
+            const signal = "once";
+            window.addEventListener("resize", handleResize, { [signal]: ac.signal });
+            return () => ac.abort();
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Computed string literal keys are not statically resolved, so the "signal" option is not recognized
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+              const ac = new AbortController()
+              x.addEventListener("resize", () => {}, { ["signal"]: ac.signal })
+              return () => ac.abort()
+          }, [])
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+        {
+          messageId: "unexpected-inline-function",
+        },
+      ],
+    },
+    // By design, listeners with a `signal` option are not reported, so these cases stay disabled (https://github.com/Rel1cx/eslint-react/issues/1282)
+    // {
+    //   code: tsx`
+    //     function Example() {
+    //       useEffect(() => {
+    //         const ab = new AbortController();
+    //         window.addEventListener("resize", () => {}, { signal: ab.signal });
+    //         return () => {
+    //           // ab.abort();
+    //         };
+    //       }, []);
+    //     }
+    //   `,
+    //   errors: [
+    //     {
+    //       messageId: "expected-remove-event-listener-in-cleanup",
+    //     },
+    //   ],
+    // },
+    // {
+    //   code: tsx`
+    //     const abortController = new AbortController();
+    //     function Example() {
+    //       const rHandleResize = useRef(() => {});
+    //       useEffect(() => {
+    //         window.addEventListener("focus", rHandleResize.current, { once: false, passive: true, capture: true, signal: abortController.signal });
+    //         window.addEventListener("resize", rHandleResize.current, { once: false, passive: true, capture: true, signal: abortController.signal });
+    //         return () => {
+    //           // abortController.abort();
+    //         };
+    //       }, []);
+    //     }
+    //   `,
+    //   errors: [
+    //     {
+    //       messageId: "expected-remove-event-listener-in-cleanup",
+    //     },
+    //     {
+    //       messageId: "expected-remove-event-listener-in-cleanup",
+    //     },
+    //   ],
+    // },
+    // {
+    //   code: tsx`
+    //     const abortController1 = new AbortController();
+    //     const abortController2 = new AbortController();
+    //     function Example() {
+    //       const rHandleResize = useRef(() => {});
+    //       useEffect(() => {
+    //         window.addEventListener("focus", rHandleResize.current, { once: false, passive: true, capture: true, signal: abortController1.signal });
+    //         window.addEventListener("resize", rHandleResize.current, { once: false, passive: true, capture: true, signal: abortController2.signal });
+    //         return () => {
+    //           abortController1.abort();
+    //         };
+    //       }, []);
+    //     }
+    //   `,
+    //   errors: [
+    //     {
+    //       messageId: "expected-remove-event-listener-in-cleanup",
+    //     },
+    //   ],
+    // },
+    // -------------------------------------------------------------------------
+    // Setup/cleanup phase placement
+    // -------------------------------------------------------------------------
+    // Reversed setup/cleanup pairing is a leak: the listener is only added on unmount
+    {
+      code: tsx`
+        import { useEffect, useRef } from "react";
+
+        function Example() {
+          const rHandleResize = useRef(() => {});
+          useEffect(() => {
+            window.removeEventListener("resize", rHandleResize.current);
+            return () => {
+              window.addEventListener("resize", rHandleResize.current);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect, useRef } from "react";
+
+        function Example() {
+          const rHandleResize = useRef(() => {});
+          useEffect(() => {
+            window.removeEventListener("resize", rHandleResize.current);
+          }, []);
+          useEffect(() => {
+            return () => {
+              window.addEventListener("resize", rHandleResize.current);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useEffect, useLayoutEffect, useRef } from "react";
+
+        function Example() {
+          const rHandleResize = useRef(() => {});
+          useLayoutEffect(() => {
+            return () => {
+              window.addEventListener("resize", rHandleResize.current);
+            };
+          }, []);
+          useEffect(() => {
+            window.removeEventListener("resize", rHandleResize.current);
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Deeply nested in setup (inside a setTimeout callback) but never removed: the phase lookup skips intermediate plain functions
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            setTimeout(() => {
+              window.addEventListener("resize", handleResize);
+            }, 100);
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // A 'removeEventListener' in a plain nested function of the setup body (not the returned cleanup) has phase "setup", so it does not pair
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize);
+            const cleanup = () => {
+              window.removeEventListener("resize", handleResize);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // Remover functions called from the cleanup
+    // -------------------------------------------------------------------------
+    // A removeEventListener inside a setup-phase function does not pair when the cleanup never calls that function
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example({ ref }) {
+          useEffect(() => {
+            const element = ref.current;
+            if (element == null) {
+              return;
+            }
+            const restoreSnap = () => {
+              element.removeEventListener("scrollend", restoreSnap);
+            };
+            const onPointerEnd = () => {
+              element.addEventListener("scrollend", restoreSnap);
+            };
+            element.addEventListener("pointerup", onPointerEnd);
+            return () => {
+              element.removeEventListener("pointerup", onPointerEnd);
+            };
+          }, [ref]);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // A remover function called from another effect's cleanup does not pair
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            const removeListener = () => {
+              window.removeEventListener("resize", handleResize);
+            };
+            window.addEventListener("resize", handleResize);
+          }, []);
+          useEffect(() => {
+            return () => {
+              removeListener();
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // A member call in the cleanup does not pair with a same-named local remover function
+    // when its receiver cannot be resolved to a local object literal
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example({ handlers }) {
+          useEffect(() => {
+            const onResize = () => {};
+            function stop() {
+              window.removeEventListener("resize", onResize);
+            }
+            window.addEventListener("resize", onResize);
+            return () => {
+              handlers.stop();
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // A numeric-literal property key does not match the member name, so the remover does not pair
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const onResize = () => {};
+            const handlers = {
+              0: () => {
+                window.removeEventListener("resize", onResize);
+              },
+            };
+            window.addEventListener("resize", onResize);
+            return () => {
+              handlers.stop();
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // A remover shadowed by a same-named function does not pair when the cleanup calls the
+    // outer one (the pointerup listener added by `attach` is leaked as well)
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const onResize = () => {};
+            const attach = () => {
+              const stop = () => {
+                window.removeEventListener("resize", onResize);
+              };
+              document.addEventListener("pointerup", stop);
+            };
+            const stop = () => {};
+            window.addEventListener("resize", onResize);
+            attach();
+            return () => {
+              stop();
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // TypeScript casts
+    // -------------------------------------------------------------------------
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            (window.addEventListener as any)("resize", handleResize);
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // -------------------------------------------------------------------------
+    // Pins of current behavior (known limitations, likely false positives)
+    // -------------------------------------------------------------------------
+    // Pins current behavior: different aliases of the global object (`window` vs `globalThis`)
+    // are compared structurally as member objects and do not pair with each other
+    // (known limitation, likely a false positive)
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize);
+            return () => {
+              globalThis.removeEventListener("resize", handleResize);
+            };
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Pins current behavior: a named function declaration returned as cleanup is not recognized as a cleanup callback,
+    // so its 'removeEventListener' is treated as phase "setup" and does not pair (likely a false positive)
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize);
+            function cleanup() {
+              window.removeEventListener("resize", handleResize);
+            }
+            return cleanup;
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Pins current behavior: a non-function-wrapped setup (memo(() => {...})) is treated as the setup callback,
+    // but the returned cleanup is not recognized, so nothing pairs (likely a false positive)
+    {
+      code: tsx`
+        import { memo, useEffect } from "react";
+
+        function Example() {
+          const handleResize = () => {};
+          useEffect(memo(() => {
+            window.addEventListener("resize", handleResize);
+            return () => {
+              window.removeEventListener("resize", handleResize);
+            };
+          }), []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Pins current behavior: destructuring from an AbortController held in a variable
+    // (`const { signal } = ac`) is not resolved back to the `new AbortController()` origin,
+    // so the signal is not recognized (known limitation, likely a false positive)
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            const ac = new AbortController();
+            const { signal } = ac;
+            window.addEventListener("resize", handleResize, { signal });
+            return () => ac.abort();
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // Pins current behavior: a default value in the destructuring pattern
+    // (`{ signal = fallback }`) is not recognized (known limitation)
+    {
+      code: tsx`
+        import { useEffect } from "react";
+
+        function Example() {
+          useEffect(() => {
+            const handleResize = () => {};
+            const { signal = AbortSignal.abort() } = new AbortController();
+            window.addEventListener("resize", handleResize, { signal });
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+        },
+      ],
+    },
+    // The message names the actual effect hook, not a hardcoded "useEffect"
+    {
+      code: tsx`
+        import { useLayoutEffect } from "react";
+
+        function Example() {
+          useLayoutEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize);
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+          data: { effectMethodKind: "useLayoutEffect" },
+        },
+      ],
+    },
+    // A member callee (ex: 'React.useLayoutEffect') is recognized and the message names
+    // the hook property, not the full member path
+    {
+      code: tsx`
+        import React from "react";
+
+        function Example() {
+          React.useLayoutEffect(() => {
+            const handleResize = () => {};
+            window.addEventListener("resize", handleResize);
+          }, []);
+        }
+      `,
+      errors: [
+        {
+          messageId: "expected-remove-event-listener-in-cleanup",
+          data: { effectMethodKind: "useLayoutEffect" },
+        },
+      ],
+    },
+  ],
+  valid: [
+    // -------------------------------------------------------------------------
+    // The canonical pair: add in setup, remove in cleanup
+    // -------------------------------------------------------------------------
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // The listener is stored in a React hook
+    // -------------------------------------------------------------------------
+    tsx`
+      import { useEffect, useRef } from "react";
+
+      function Example() {
+        const rHandleResize = useRef(() => {});
+        useEffect(() => {
+          window.addEventListener("resize", rHandleResize.current);
+          return () => {
+            window.removeEventListener("resize", rHandleResize.current);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useCallback, useEffect } from "react";
+
+      function Example() {
+        const handleResize = useCallback(() => {}, []);
+        useEffect(() => {
+          window.addEventListener("resize", handleResize);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect, useMemo } from "react";
+
+      function Example() {
+        const handleResize = useMemo(() => () => {}, []);
+        useEffect(() => {
+          window.addEventListener("resize", handleResize);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // Matching capture options pair up
+    // -------------------------------------------------------------------------
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize, true);
+          return () => {
+            window.removeEventListener("resize", handleResize, true);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize, false);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize);
+          return () => {
+            window.removeEventListener("resize", handleResize, false);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize, { capture: true });
+          return () => {
+            window.removeEventListener("resize", handleResize, { capture: true });
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const options = { capture: true };
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize, options);
+          return () => {
+            window.removeEventListener("resize", handleResize, options);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const options = { capture: true };
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize, { capture: options.capture });
+          return () => {
+            window.removeEventListener("resize", handleResize, { capture: options.capture });
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const options = { capture: true };
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize, { capture: options.capture });
+          return () => {
+            window.removeEventListener("resize", handleResize, { capture: true });
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const options = { capture: true };
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize, { capture: true });
+          return () => {
+            window.removeEventListener("resize", handleResize, { capture: options.capture });
+          };
+        }, []);
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // Duplicate adds are covered by a single matching removal
+    // -------------------------------------------------------------------------
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize);
+          window.addEventListener("resize", handleResize);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize, { capture: true });
+          window.addEventListener("resize", handleResize, { capture: true });
+          return () => {
+            window.removeEventListener("resize", handleResize, { capture: true });
+          };
+        }, []);
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // Bare calls and aliases of the global object
+    // -------------------------------------------------------------------------
+    // Bare calls on both sides target the global object and pair up
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          addEventListener("resize", handleResize);
+          return () => {
+            removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // A bare call pairs with an explicit call on the global object (both directions)
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          addEventListener("resize", handleResize);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize);
+          return () => {
+            removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          globalThis.addEventListener("resize", handleResize);
+          return () => {
+            removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // `self` aliases the global object, so it pairs with a bare call
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          self.addEventListener("resize", handleResize);
+          return () => {
+            removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // An optional-chained receiver still resolves to the global object and
+    // pairs with a bare removal
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window?.addEventListener("resize", handleResize);
+          return () => {
+            removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // Bare calls pair when their capture options match
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          addEventListener("resize", handleResize, { capture: true });
+          return () => {
+            removeEventListener("resize", handleResize, { capture: true });
+          };
+        }, []);
+      }
+    `,
+    // `once` is not part of the pairing: a bare once listener pairs with a bare removal
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          addEventListener("resize", handleResize, { once: true });
+          return () => {
+            removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // Multiple bare listeners in one effect pair independently
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          const handleFocus = () => {};
+          addEventListener("resize", handleResize);
+          addEventListener("focus", handleFocus);
+          return () => {
+            removeEventListener("resize", handleResize);
+            removeEventListener("focus", handleFocus);
+          };
+        }, []);
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // Listeners added in loops
+    // -------------------------------------------------------------------------
+    tsx`
+      import { useEffect } from "react";
+
+      export const Component = () => {
+        const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+        const handleActivity = () => {};
+
+        useEffect(() => {
+          events.forEach((event) => {
+            window.addEventListener(event, handleActivity);
+          });
+
+          return () => {
+            events.forEach((event) => {
+              window.removeEventListener(event, handleActivity);
+            });
+          };
+        }, []);
+
+        return null;
+      };
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      export const Component = () => {
+        const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+        const handleActivity = () => {};
+
+        useEffect(() => {
+          events.forEach((event) => {
+            window.addEventListener(event, handleActivity);
+          });
+
+          return () => {
+            events.forEach((evt) => {
+              window.removeEventListener(evt, handleActivity);
+            });
+          };
+        }, []);
+
+        return null;
+      };
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      export const Component = () => {
+        const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+        const handleActivity = () => {};
+
+        useEffect(() => {
+          for (const event of events) {
+            window.addEventListener(event, handleActivity);
+          }
+
+          return () => {
+            for (const event of events) {
+              window.removeEventListener(event, handleActivity);
+            }
+          };
+        }, []);
+
+        return null;
+      };
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      export const Component = () => {
+        const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+        const handleActivity = () => {};
+
+        useEffect(() => {
+          for (const event of events) {
+            window.addEventListener(event, handleActivity);
+          }
+
+          return () => {
+            for (const evt of events) {
+              window.removeEventListener(evt, handleActivity);
+            }
+          };
+        }, []);
+
+        return null;
+      };
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      export const Component = () => {
+        const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+        const handleActivity = () => {};
+
+        useEffect(() => {
+          for (let event of events) {
+            window.addEventListener(event, handleActivity);
+          }
+
+          return () => {
+            for (let evt of events) {
+              window.removeEventListener(evt, handleActivity);
+            }
+          };
+        }, []);
+
+        return null;
+      };
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const events = [
+            ["mousemove", () => {}],
+            ["mousedown", () => {}],
+            ["keydown", () => {}],
+            ["scroll", () => {}],
+            ["touchstart", () => {}],
+          ];
+
+          for (const [event, handler] of events) {
+            window.addEventListener(event, handler);
+          }
+
+          return () => {
+            for (const [event, handler] of events) {
+              window.removeEventListener(event, handler);
+            }
+          };
+        }, []);
+
+        return null;
+      };
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      export const Component = () => {
+        const events = [
+          ["mousemove", () => {}],
+          ["mousedown", () => {}],
+          ["keydown", () => {}],
+          ["scroll", () => {}],
+          ["touchstart", () => {}],
+        ];
+
+        useEffect(() => {
+          for (const [event, handler] of events) {
+            window.addEventListener(event, handler);
+          }
+
+          return () => {
+            for (const [event, handler] of events) {
+              window.removeEventListener(event, handler);
+            }
+          };
+        }, []);
+
+        return null;
+      };
+    `,
+    // -------------------------------------------------------------------------
+    // Listeners with a `signal` option are not reported
+    // -------------------------------------------------------------------------
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+            const ac = new AbortController()
+            x.addEventListener("resize", () => {}, { signal: ac.signal })
+            return () => ac.abort()
+        }, [])
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+            const ac = new AbortController()
+            const signal = ac.signal
+            x.addEventListener("resize", () => {}, { signal })
+            return () => ac.abort()
+        }, [])
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+            const ac = new AbortController()
+            const signal = ac.signal
+            const sig = signal
+            x.addEventListener("resize", () => {}, { signal: sig })
+            return () => ac.abort()
+        }, [])
+      }
+    `,
+    // A `signal` destructured from `new AbortController()` is recognized as a signal option,
+    // so the listener is not reported regardless of whether `abort()` is called
+    tsx`
+      import { useEffect, useRef } from "react";
+
+      function Example() {
+        const rHandleResize = useRef(() => {});
+        useEffect(() => {
+          const { signal, abort } = new AbortController();
+          window.addEventListener("focus", rHandleResize.current, { once: false, passive: true, capture: true, signal });
+          return () => {
+            abort();
+          };
+        }, []);
+      }
+    `,
+    // Same pattern with a renamed destructured binding
+    tsx`
+      import { useEffect, useRef } from "react";
+
+      function Example() {
+        const rHandleResize = useRef(() => {});
+        useEffect(() => {
+          const { signal: controllerSignal, abort } = new AbortController();
+          window.addEventListener("focus", rHandleResize.current, { signal: controllerSignal });
+          return () => {
+            abort();
+          };
+        }, []);
+      }
+    `,
+    // A destructuring pattern with a rest element still recognizes the `signal` binding
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          const { signal, ...rest } = new AbortController();
+          window.addEventListener("resize", handleResize, { signal });
+          return () => void rest;
+        }, []);
+      }
+    `,
+    // An alias of a destructured `signal` is still recognized
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          const { signal, abort } = new AbortController();
+          const sig = signal;
+          window.addEventListener("resize", handleResize, { signal: sig });
+          return () => abort();
+        }, []);
+      }
+    `,
+    // Bare calls with a `signal` option are skipped like any other listener
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          const ac = new AbortController();
+          addEventListener("resize", handleResize, { signal: ac.signal });
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect, useRef } from "react";
+
+      const abortController = new AbortController();
+      function Example() {
+        const rHandleResize = useRef(() => {});
+        useEffect(() => {
+          window.addEventListener("resize", rHandleResize.current, { once: false, passive: true, capture: true, signal: abortController.signal });
+          return () => {
+            window.removeEventListener("resize", rHandleResize.current, { capture: true });
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect, useRef } from "react";
+
+      const abortController = new AbortController();
+      function Example() {
+        const rHandleResize = useRef(() => {});
+        useEffect(() => {
+          window.addEventListener("focus", rHandleResize.current, { once: false, passive: true, capture: true, signal: abortController.signal });
+          window.addEventListener("resize", rHandleResize.current, { once: false, passive: true, capture: true, signal: abortController.signal });
+          return () => {
+            abortController.abort();
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from 'foxact/use-abortable-effect';
+
+      function Comp() {
+        useEffect(signal => {
+          window.addEventListener('resize', () => console.log('whoa!'), { signal });
+        }, []);
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // TypeScript casts
+    // -------------------------------------------------------------------------
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize as EventListener);
+          return () => {
+            window.removeEventListener("resize", handleResize as EventListener);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize as EventListener);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize);
+          return () => {
+            window.removeEventListener("resize", handleResize as EventListener);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          (window as Window).addEventListener("resize", handleResize);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize);
+          return () => {
+            (window as Window).removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // Non-trivial receivers
+    // -------------------------------------------------------------------------
+    // https://github.com/electric-sql/pglite/blob/fd8ebcf2f4d8110ff04676180f2c765d81599e0e/packages/pglite-repl/src/Repl.tsx#L103
+    // The object of the `addEventListener`/`removeEventListener` callee is a
+    // `CallExpression` (`window.matchMedia('(prefers-color-scheme: dark)')`).
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const listener = (e: MediaQueryListEvent) => {};
+          window
+            .matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', listener);
+          return () => {
+            window
+              .matchMedia('(prefers-color-scheme: dark)')
+              .removeEventListener('change', listener);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect } from "react";
+      import { BackHandler } from "react-native";
+
+      useEffect(() => {
+        const { remove } = BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        return () => {
+          remove();
+        }
+      });
+    `,
+    // -------------------------------------------------------------------------
+    // Setup/cleanup phase placement
+    // -------------------------------------------------------------------------
+    // The phase lookup skips intermediate plain functions: an 'addEventListener' nested in a setTimeout callback in setup
+    // still pairs with a 'removeEventListener' in cleanup
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          setTimeout(() => {
+            window.addEventListener("resize", handleResize);
+          }, 100);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // Same for an async IIFE inside setup
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          void (async () => {
+            window.addEventListener("resize", handleResize);
+          })();
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // A 'removeEventListener' nested in a plain function inside the cleanup callback still has phase "cleanup" and pairs
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize);
+          return () => {
+            const teardown = () => {
+              window.removeEventListener("resize", handleResize);
+            };
+            teardown();
+          };
+        }, []);
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // Remover functions called from the cleanup
+    // -------------------------------------------------------------------------
+    // A self-removing listener whose remover is also called from the cleanup is not leaked
+    tsx`
+      import { useEffect } from "react";
+
+      function Example({ ref }) {
+        useEffect(() => {
+          const element = ref.current;
+          if (element == null) {
+            return;
+          }
+          const restoreSnap = () => {
+            element.removeEventListener("scrollend", restoreSnap);
+          };
+          const onPointerEnd = () => {
+            element.addEventListener("scrollend", restoreSnap);
+          };
+          element.addEventListener("pointerup", onPointerEnd);
+          return () => {
+            element.removeEventListener("pointerup", onPointerEnd);
+            restoreSnap();
+          };
+        }, [ref]);
+      }
+    `,
+    // Same pattern with a function declaration as the remover
+    tsx`
+      import { useEffect } from "react";
+
+      function Example({ ref }) {
+        useEffect(() => {
+          const element = ref.current;
+          if (element == null) {
+            return;
+          }
+          function restoreSnap() {
+            element.removeEventListener("scrollend", restoreSnap);
+          }
+          const onPointerEnd = () => {
+            element.addEventListener("scrollend", restoreSnap);
+          };
+          element.addEventListener("pointerup", onPointerEnd);
+          return () => {
+            element.removeEventListener("pointerup", onPointerEnd);
+            restoreSnap();
+          };
+        }, [ref]);
+      }
+    `,
+    // Same pattern with the remover as a method of a local object called via a member expression
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const onResize = () => {};
+          const handlers = {
+            stop() {
+              window.removeEventListener("resize", onResize);
+            },
+          };
+          window.addEventListener("resize", onResize);
+          return () => {
+            handlers.stop();
+          };
+        }, []);
+      }
+    `,
+    // Same pattern but with a string-literal property key on the local object
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const onResize = () => {};
+          const handlers = {
+            "stop": () => {
+              window.removeEventListener("resize", onResize);
+            },
+          };
+          window.addEventListener("resize", onResize);
+          return () => {
+            handlers.stop();
+          };
+        }, []);
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // Pairing across effects
+    // -------------------------------------------------------------------------
+    tsx`
+      import { useEffect, useRef } from "react";
+
+      function Example() {
+        const rHandleResize = useRef(() => {});
+        useEffect(() => {
+          window.addEventListener("resize", rHandleResize.current);
+          return () => {
+            window.removeEventListener("resize", rHandleResize.current);
+          };
+        }, []);
+        useEffect(() => {
+          window.addEventListener("resize", rHandleResize.current);
+          return () => {
+            window.removeEventListener("resize", rHandleResize.current);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect, useRef } from "react";
+
+      function Example() {
+        const rHandleResize = useRef(() => {});
+        useEffect(() => {
+          window.addEventListener("resize", rHandleResize.current);
+        }, []);
+        useEffect(() => {
+          return () => {
+            window.removeEventListener("resize", rHandleResize.current);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect, useRef } from "react";
+
+      function Example() {
+        const rHandleResize = useRef(() => {});
+        useEffect(() => {
+          window.addEventListener("resize", rHandleResize.current);
+        }, []);
+        useEffect(() => {
+          window.addEventListener("resize", rHandleResize.current);
+          return () => {
+            window.removeEventListener("resize", rHandleResize.current);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect, useLayoutEffect, useRef } from "react";
+
+      function Example() {
+        const rHandleResize = useRef(() => {});
+        useEffect(() => {
+          window.addEventListener("resize", rHandleResize.current);
+        }, []);
+        useLayoutEffect(() => {
+          return () => {
+            window.removeEventListener("resize", rHandleResize.current);
+          };
+        }, []);
+      }
+    `,
+    tsx`
+      import { useEffect, useLayoutEffect, useRef } from "react";
+
+      function Example() {
+        const rHandleResize = useRef(() => {});
+        useLayoutEffect(() => {
+          return () => {
+            window.removeEventListener("resize", rHandleResize.current);
+          };
+        }, []);
+        useEffect(() => {
+          window.addEventListener("resize", rHandleResize.current);
+        }, []);
+      }
+    `,
+    // Pairing is file-global: an 'addEventListener' in the outer component's effect pairs with a 'removeEventListener'
+    // in the cleanup of an effect of a component defined inside it
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        const handleResize = () => {};
+        useEffect(() => {
+          window.addEventListener("resize", handleResize);
+        }, []);
+        function Inner() {
+          useEffect(() => {
+            return () => {
+              window.removeEventListener("resize", handleResize);
+            };
+          }, []);
+          return null;
+        }
+        return null;
+      }
+    `,
+    // Same for an effect nested inside another effect's setup
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        const handleResize = () => {};
+        useEffect(() => {
+          window.addEventListener("resize", handleResize);
+          useEffect(() => {
+            return () => {
+              window.removeEventListener("resize", handleResize);
+            };
+          }, []);
+        }, []);
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // Calls outside a setup/cleanup callback are ignored
+    // -------------------------------------------------------------------------
+    // A call in the deps array position is not inside a setup/cleanup callback and is ignored
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        const handleResize = () => {};
+        useEffect(() => {
+          window.addEventListener("resize", handleResize);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, [window.addEventListener("scroll", handleResize)]);
+      }
+    `,
+    // Calls inside a useCallback body are not inside a setup/cleanup callback and are ignored
+    tsx`
+      import { useCallback, useEffect } from "react";
+
+      function Example() {
+        const handleResize = () => {};
+        const subscribe = useCallback(() => {
+          window.addEventListener("scroll", handleResize);
+        }, []);
+        useEffect(() => {
+          window.addEventListener("resize", handleResize);
+          return () => {
+            window.removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // Hook name boundary: 'useEffectOnce' does not match /^use\w*Effect$/, so its callback is not an effect setup
+    tsx`
+      import { useEffectOnce } from "./hooks";
+
+      function Example() {
+        const handleResize = () => {};
+        useEffectOnce(() => {
+          window.addEventListener("resize", handleResize);
+        });
+      }
+    `,
+    // -------------------------------------------------------------------------
+    // Pins of current behavior (known limitations, likely false negatives)
+    // -------------------------------------------------------------------------
+    // Pins current behavior: a locally shadowed `window` is still treated as the global
+    // object (the receiver is only compared by name), so it pairs with a bare call
+    // (known limitation, likely a false negative)
+    tsx`
+      import { useEffect } from "react";
+
+      function Example({ emitter }) {
+        useEffect(() => {
+          const window = emitter;
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize);
+          return () => {
+            removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // Pins current behavior: a setup callback passed as an identifier reference is not analyzed at all,
+    // so a leak inside it is not reported (likely a false negative)
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        const handleResize = () => {};
+        const setup = () => {
+          window.addEventListener("resize", handleResize);
+        };
+        useEffect(setup, []);
+      }
+    `,
+    // Pins current behavior: listeners are compared structurally by name
+    // (`Compare.isEqual`), without scope resolution, so two distinct bindings
+    // that happen to share a name pair across effects (pre-existing name-based
+    // matching, likely a false negative)
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        useEffect(() => {
+          const handleResize = () => {};
+          addEventListener("resize", handleResize);
+        }, []);
+        useEffect(() => {
+          const handleResize = () => {};
+          return () => {
+            removeEventListener("resize", handleResize);
+          };
+        }, []);
+      }
+    `,
+    // A cleanup returned via a conditional expression is still recognized:
+    // the conditional itself is the direct return value of the setup
+    tsx`
+      import { useEffect } from "react";
+
+      function Example() {
+        const cond = true;
+        useEffect(() => {
+          const handleResize = () => {};
+          window.addEventListener("resize", handleResize);
+          return cond
+            ? () => window.removeEventListener("resize", handleResize)
+            : null;
+        }, []);
+      }
+    `,
+    // Pins current behavior: class component lifecycle methods are out of scope;
+    // only useEffect-like callbacks are checked
+    tsx`
+      import { Component } from "react";
+
+      class Example extends Component {
+        componentDidMount() {
+          document.addEventListener("click", this.handleClick);
+        }
+
+        handleClick() {
+          console.log("clicked");
+        }
+
+        render() {
+          return null;
+        }
+      }
+    `,
+  ],
+});

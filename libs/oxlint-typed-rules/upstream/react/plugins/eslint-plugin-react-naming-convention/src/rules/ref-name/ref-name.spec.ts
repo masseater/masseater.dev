@@ -1,0 +1,620 @@
+import tsx from "dedent";
+
+import { ruleTester } from "@local/testkit";
+import rule, { RULE_NAME } from "./ref-name";
+
+ruleTester.run(RULE_NAME, rule, {
+  invalid: [
+    // Variable declarations with invalid ref names
+    {
+      name: "Name without 'Ref' suffix",
+      code: tsx`
+        import { useRef } from "react";
+        const count = useRef(0);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Name without 'Ref' suffix with generic type argument",
+      code: tsx`
+        import { useRef } from "react";
+        const input = useRef<HTMLInputElement>(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Name without 'Ref' suffix via React namespace",
+      code: tsx`
+        import React from "react";
+        const count = React.useRef(0);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Name without 'Ref' suffix with generic type argument via React namespace",
+      code: tsx`
+        import React from "react";
+        const input = React.useRef<HTMLInputElement>(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Name without 'Ref' suffix without import",
+      code: tsx`
+        const value = useRef(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Custom ref hook via additionalRefHooks with invalid name",
+      code: tsx`
+        const box = useMyRef(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+      settings: {
+        "react-x": {
+          additionalRefHooks: "/^(useMyRef|useCustomRef)$/u",
+        },
+      },
+    },
+    {
+      name: "Custom ref hook via bare additionalRefHooks string with invalid name",
+      code: tsx`
+        const box = useMyRef(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+      settings: {
+        "react-x": {
+          additionalRefHooks: "useMyRef",
+        },
+      },
+    },
+    {
+      name: "Name with all-caps 'REF' suffix",
+      code: tsx`
+        import { useRef } from "react";
+        const myREF = useRef(0);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "All-caps name 'REF'",
+      code: tsx`
+        import { useRef } from "react";
+        const REF = useRef(0);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Single-letter uppercase name",
+      code: tsx`
+        import { useRef } from "react";
+        const R = useRef(0);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Single-letter lowercase name",
+      code: tsx`
+        import { useRef } from "react";
+        const r = useRef(0);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Leading underscore in name",
+      code: tsx`
+        import { useRef } from "react";
+        const _ref = useRef(0);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Multiple declarators with an invalid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        const ref = useRef(null), value = useRef(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    // Contrast with the computed-member-key valid cases: a plain variable
+    // assignment is a naming target, so a name without the 'Ref' suffix is reported
+    {
+      name: "Plain variable assignment without member access is still checked",
+      code: tsx`
+        import { useRef } from "react";
+        const x = useRef(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    // Other assignment targets
+    {
+      name: "Member expression assignment with invalid ref name",
+      code: tsx`
+        refs.myValue = useRef();
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Class property with invalid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        class Foo { value = useRef(0); }
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Nested member expression assignment with invalid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        obj.nested.value = useRef(0);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Object literal property with invalid ref name key",
+      code: tsx`
+        import { useRef } from "react";
+        const refs = { value: useRef(0) };
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Object literal property key takes precedence over the valid outer variable",
+      code: tsx`
+        import { useRef } from "react";
+        const myRef = { current: useRef(null) };
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Assignment after declaration with invalid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        let value;
+        value = useRef(0);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Chained assignment with invalid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        a = b = useRef(0);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Computed member expression assignment with string-literal key with invalid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        refs["value"] = useRef(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    // Indirect useRef calls
+    {
+      name: "Conditional expression initializer with invalid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        const value = condition ? useRef(0) : { current: null };
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "Logical expression initializer with invalid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        const value = useRef(0) || { current: null };
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+    {
+      name: "useRef call on a non-React namespace with invalid ref name",
+      code: tsx`
+        const value = hooks.useRef(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+      output: null,
+    },
+    {
+      name: "Type-casted useRef call with invalid ref name",
+      code: tsx`
+        const value = (useRef as typeof useRef)(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+      output: null,
+    },
+    {
+      name: "Optional useRef call with invalid ref name",
+      code: tsx`
+        const value = useRef?.(null);
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+      output: null,
+    },
+    {
+      name: "Sequence expression with the ref as the last value",
+      code: tsx`
+        import { useRef } from "react";
+        const value = (foo(), useRef(null));
+      `,
+      errors: [{ messageId: "invalid-ref-name" }],
+    },
+  ],
+  valid: [
+    // Variable declarations with valid ref names
+    {
+      name: "Name 'ref'",
+      code: tsx`
+        import { useRef } from "react";
+        const ref = useRef(0);
+      `,
+    },
+    {
+      name: "Name 'ref' with generic type argument",
+      code: tsx`
+        import { useRef } from "react";
+        const ref = useRef<HTMLInputElement>(null);
+      `,
+    },
+    {
+      name: "CamelCase name with 'Ref' suffix",
+      code: tsx`
+        import { useRef } from "react";
+        const countRef = useRef(0);
+      `,
+    },
+    {
+      name: "CamelCase name with 'Ref' suffix via React namespace",
+      code: tsx`
+        import React from "react";
+        const inputRef = React.useRef<HTMLInputElement>(null);
+      `,
+    },
+    {
+      name: "CamelCase name with 'Ref' suffix without import",
+      code: tsx`
+        const valueRef = useRef(null);
+      `,
+    },
+    {
+      name: "Capitalized name 'Ref'",
+      code: tsx`
+        import { useRef } from "react";
+        const Ref = useRef(null);
+      `,
+    },
+    {
+      name: "Leading underscore in a valid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        const _myRef = useRef(null);
+      `,
+    },
+    // Other assignment targets with valid ref names
+    {
+      name: "Member expression assignment with valid ref name",
+      code: tsx`
+        refs.myRef = useRef();
+      `,
+    },
+    {
+      name: "Computed member expression assignment with valid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        ctxs["myRef"] = useRef(null);
+      `,
+    },
+    {
+      name: "Class property with valid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        class Foo { myRef = useRef(null); }
+      `,
+    },
+    {
+      name: "Nested member expression assignment with valid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        obj.nested.myRef = useRef();
+      `,
+    },
+    {
+      name: "Assignment after declaration with valid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        let myRef;
+        myRef = useRef(null);
+      `,
+    },
+    {
+      name: "Conditional expression initializer with valid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        const myRef = condition ? useRef(null) : { current: null };
+      `,
+    },
+    {
+      name: "Logical expression initializer with valid ref name",
+      code: tsx`
+        import { useRef } from "react";
+        const myRef = useRef(null) || { current: null };
+      `,
+    },
+    {
+      name: "Nested assignment with valid ref name",
+      code: tsx`
+        const value = (currentRef = useRef(null));
+      `,
+    },
+    // Code not subject to the rule
+    {
+      name: "Computed member key using the useRef result",
+      code: tsx`
+        import { useRef } from "react";
+        const value = obj[useRef(null)];
+      `,
+    },
+    {
+      name: "Computed member key using the non-null-asserted useRef result",
+      code: tsx`
+        import { useRef } from "react";
+        const value = obj[useRef(null)!];
+      `,
+    },
+    // The TS `as` wrapper is unwrapped before the member-expression check,
+    // so a computed member key is still not treated as a naming assignment
+    {
+      name: "Computed member key using the type-casted useRef result",
+      code: tsx`
+        import { useRef } from "react";
+        const value = obj[useRef(null) as any];
+      `,
+    },
+    {
+      name: "Unassigned useRef call",
+      code: tsx`
+        import { useRef } from "react";
+        useRef(null);
+      `,
+    },
+    {
+      name: "Default exported useRef call",
+      code: tsx`
+        import { useRef } from "react";
+        export default useRef(null);
+      `,
+    },
+    {
+      name: "Member access on the useRef result",
+      code: tsx`
+        const obj = useRef({}).current;
+      `,
+    },
+    {
+      name: "Member access on the useRef result via React namespace",
+      code: tsx`
+        const obj = React.useRef({}).current;
+      `,
+    },
+    {
+      name: "Nested member access on the useRef result",
+      code: tsx`
+        import { useRef } from "react";
+        const value = useRef(null).current.value;
+      `,
+    },
+    {
+      name: "Type-casted member access on the useRef result",
+      code: tsx`
+        import { useRef } from "react";
+        const value = (useRef(null) as { current: null }).current;
+      `,
+    },
+    {
+      name: "Non-null-asserted member access on the useRef result",
+      code: tsx`
+        import { useRef } from "react";
+        const value = useRef(null)!.current;
+      `,
+    },
+    {
+      name: "Stacked type wrappers before member access on the useRef result",
+      code: tsx`
+        import { useRef } from "react";
+        const value = (useRef(null) as { current: null } | null)!.current;
+      `,
+    },
+    {
+      name: "Optional-chained member access on the useRef result",
+      code: tsx`
+        import { useRef } from "react";
+        const value = useRef(null)?.current;
+      `,
+    },
+    {
+      name: "Type-cast without member access is still checked against the variable name",
+      code: tsx`
+        import { useRef } from "react";
+        const inputRef = useRef(null) as { current: null };
+      `,
+    },
+    {
+      name: "useRef call inside a custom hook with immediate member access",
+      code: tsx`
+        const useOnce = <T,>(fn: () => T) => (useRef<{ value: T }>().current ??= { value: fn() }).value;
+      `,
+    },
+    {
+      name: "useRef call inside a custom hook with immediate member access via React namespace",
+      code: tsx`
+        const useOnce = <T,>(fn: () => T) => (React.useRef<{ value: T }>().current ??= { value: fn() }).value;
+      `,
+    },
+    {
+      name: "Array destructured useRef result",
+      code: tsx`
+        import { useRef } from "react";
+        const [value] = [useRef(null)];
+      `,
+    },
+    {
+      name: "Object destructured useRef result",
+      code: tsx`
+        import { useRef } from "react";
+        const { value } = { value: useRef(null) };
+      `,
+    },
+    {
+      name: "Arrow function with block body returning useRef",
+      code: tsx`
+        const value = () => {
+          return useRef(null);
+        };
+      `,
+    },
+    {
+      name: "Arrow function with expression body returning useRef",
+      code: tsx`
+        const value = () => useRef(null);
+      `,
+    },
+    {
+      name: "Exported custom hook with expression body returning useRef",
+      code: tsx`
+        import { useRef } from "react";
+        export const useAnchor = () => useRef<HTMLDivElement>(null);
+      `,
+    },
+    {
+      name: "useRef call returned from an IIFE",
+      code: tsx`
+        import { useRef } from "react";
+        const value = (() => useRef(null))();
+      `,
+    },
+    {
+      name: "useRef call in a JSX attribute value",
+      code: tsx`
+        import { useRef } from "react";
+        const el = <div ref={useRef(null)} />;
+      `,
+    },
+    {
+      name: "Call of a function that is not useRef",
+      code: tsx`
+        const notARef = someOtherFunction();
+      `,
+    },
+    {
+      name: "Call of a function whose name only starts with 'useRef'",
+      code: tsx`
+        const value = useRefFactory(null);
+      `,
+    },
+    {
+      name: "Aliased useRef import",
+      code: tsx`
+        import { useRef as makeRef } from "react";
+        const value = makeRef(null);
+      `,
+    },
+    {
+      name: "Computed member call of 'useRef' on the React namespace",
+      code: tsx`
+        const value = React["useRef"](null);
+      `,
+    },
+    {
+      name: "Computed member expression assignment with unresolvable key variable",
+      code: tsx`
+        refs[value] = useRef(null);
+      `,
+    },
+    {
+      name: "Object literal property with valid ref name key",
+      code: tsx`
+        import { useRef } from "react";
+        const refs = { myRef: useRef(0) };
+      `,
+    },
+    {
+      name: "Computed member expression assignment with a ref-named key variable",
+      code: tsx`
+        refs[valueRef] = useRef(null);
+      `,
+    },
+    {
+      name: "Destructuring default value does not report",
+      code: tsx`
+        import { useRef } from "react";
+        const { value = useRef(null) } = refs;
+      `,
+    },
+    // Containers and derived values do not transfer the ref to a name
+    {
+      name: "Array literal containing useRef",
+      code: tsx`
+        import { useRef } from "react";
+        const refs = [useRef(null)];
+      `,
+    },
+    {
+      name: "Object literal property with unresolvable computed key",
+      code: tsx`
+        import { useRef } from "react";
+        const refs = { [key]: useRef(null) };
+      `,
+    },
+    {
+      name: "useRef call result invoked as a callee",
+      code: tsx`
+        import { useRef } from "react";
+        const value = useRef(null)();
+      `,
+    },
+    {
+      name: "useRef call in a binary expression",
+      code: tsx`
+        import { useRef } from "react";
+        const n = useRef(0) + 1;
+      `,
+    },
+    {
+      name: "useRef call as a computed member key",
+      code: tsx`
+        import { useRef } from "react";
+        const value = obj[useRef(null)];
+      `,
+    },
+    {
+      name: "Custom ref hook via additionalRefHooks with valid name",
+      code: tsx`
+        const boxRef = useMyRef(null);
+      `,
+      settings: {
+        "react-x": {
+          additionalRefHooks: "/^(useMyRef|useCustomRef)$/u",
+        },
+      },
+    },
+    {
+      name: "Custom ref hook is ignored when additionalRefHooks does not match",
+      code: tsx`
+        const box = useMyRef(null);
+      `,
+    },
+    {
+      name: "Bare alternation string is treated as exact equality and never matches",
+      code: tsx`
+        const box = useMyRef(null);
+      `,
+      settings: {
+        "react-x": {
+          additionalRefHooks: "(useMyRef|useCustomRef)",
+        },
+      },
+    },
+  ],
+});

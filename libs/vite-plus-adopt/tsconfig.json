@@ -1,0 +1,36 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src", "tests", "*.ts"],
+  "compilerOptions": {
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/platform-node/NodeRuntime#runMain",
+          "@effect/platform-node/NodeServices#layer",
+          "@effect/vitest#layer",
+          "@effect/vitest/utils#assertFalse",
+          "@effect/vitest/utils#assertTrue",
+          "@effect/vitest/utils#deepStrictEqual",
+          "@effect/vitest/utils#strictEqual",
+          "@effect/vitest/utils#throws",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/PlatformError#PlatformError",
+          "effect/Stdio#Stdio",
+          "effect/Stdio#layerTest",
+          "effect/http/FetchHttpClient#layer",
+          "effect/http/HttpClient#HttpClient",
+          "effect/http/HttpClient#filterStatusOk",
+          "effect/http/HttpClient#make",
+          "effect/http/HttpClientResponse#fromWeb",
+          "effect/process/ChildProcess#CommandInput",
+          "effect/process/ChildProcess#make",
+          "effect/process/ChildProcessSpawner#ChildProcessSpawner"
+        ]
+      }
+    ]
+  }
+}

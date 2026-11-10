@@ -1,0 +1,488 @@
+import tsx from "dedent";
+
+import { ruleTester } from "@local/testkit";
+import rule, { RULE_NAME } from "./no-unstable-default-props";
+
+const MESSAGE_ID = "default";
+
+const expectedViolations = [
+  {
+    data: {
+      kind: "object expression",
+      propName: "a",
+    },
+    messageId: MESSAGE_ID,
+  },
+  {
+    data: {
+      kind: "array expression",
+      propName: "b",
+    },
+    messageId: MESSAGE_ID,
+  },
+  {
+    data: {
+      kind: "regexp literal",
+      propName: "c",
+    },
+    messageId: MESSAGE_ID,
+  },
+  {
+    data: {
+      kind: "arrow function expression",
+      propName: "d",
+    },
+    messageId: MESSAGE_ID,
+  },
+  {
+    data: {
+      kind: "function expression",
+      propName: "e",
+    },
+    messageId: MESSAGE_ID,
+  },
+  {
+    data: {
+      kind: "class expression",
+      propName: "f",
+    },
+    messageId: MESSAGE_ID,
+  },
+  {
+    data: {
+      kind: "new expression",
+      propName: "g",
+    },
+    messageId: MESSAGE_ID,
+  },
+  {
+    data: {
+      kind: "jsx element",
+      propName: "h",
+    },
+    messageId: MESSAGE_ID,
+  },
+  {
+    data: {
+      kind: "call expression",
+      propName: "i",
+    },
+    messageId: MESSAGE_ID,
+  },
+  {
+    data: {
+      kind: "call expression",
+      propName: "j",
+    },
+    messageId: MESSAGE_ID,
+  },
+] as const;
+
+ruleTester.run(RULE_NAME, rule, {
+  invalid: [
+    {
+      code: tsx`
+        function App({ foo = {}, ...rest }) {
+            return null
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "object expression",
+          propName: "foo",
+        },
+        messageId: MESSAGE_ID,
+      }],
+    },
+    {
+      code: tsx`
+        function App({ foo = [], ...rest }) {
+            return null
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "array expression",
+          propName: "foo",
+        },
+        messageId: MESSAGE_ID,
+      }],
+    },
+    {
+      code: tsx`
+        function MyComponent({ position = new Vector3(0, 0, 0) }) {
+          return null
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "new expression",
+          propName: "position",
+        },
+        messageId: MESSAGE_ID,
+      }],
+    },
+    {
+      code: tsx`
+        function App(props) {
+            const { foo = [] } = props
+            return null
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "array expression",
+          propName: "foo",
+        },
+        messageId: MESSAGE_ID,
+      }],
+    },
+    {
+      code: tsx`
+        function App({
+            a = {},
+            b = ['one', 'two'],
+            c = /regex/i,
+            d = () => {},
+            e = function() {},
+            f = class {},
+            g = new Thing(),
+            h = <Thing />,
+            i = Symbol('foo'),
+            j = unknownFunction(),
+            k = window.name
+        }) {
+            return null
+        }
+      `,
+      errors: expectedViolations,
+    },
+    {
+      code: tsx`
+        const App = ({
+            a = {},
+            b = ['one', 'two'],
+            c = /regex/i,
+            d = () => {},
+            e = function() {},
+            f = class {},
+            g = new Thing(),
+            h = <Thing />,
+            i = Symbol('foo'),
+            j = unknownFunction(),
+            k = window.name
+        }) => {
+            return null
+        }
+      `,
+      errors: expectedViolations,
+    },
+    {
+      code: tsx`
+        function MyComponent({ position = new CustomClass() }) {
+          return null
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "new expression",
+          propName: "position",
+        },
+        messageId: MESSAGE_ID,
+      }],
+      options: [{ safeDefaultProps: ["Vector3"] }],
+    },
+    {
+      code: tsx`
+        function MyComponent({
+          obj = {},
+          items = [],
+        }) {
+          return null
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "object expression",
+          propName: "obj",
+        },
+        messageId: MESSAGE_ID,
+      }, {
+        data: {
+          kind: "array expression",
+          propName: "items",
+        },
+        messageId: MESSAGE_ID,
+      }],
+      options: [{ safeDefaultProps: ["Vector3"] }],
+    },
+    {
+      code: tsx`
+        function Component({ items = (Array as any)(5).fill(0) }) {
+          return <div />;
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "call expression",
+          propName: "items",
+        },
+        messageId: "default",
+      }],
+    },
+    {
+      code: tsx`
+        function Component({ items = new (Array as any)(5) }) {
+          return <div />;
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "new expression",
+          propName: "items",
+        },
+        messageId: "default",
+      }],
+    },
+    // A class declaration in the component scope is a per-render construction.
+    // The rule reports the kind of the default-value expression itself, which
+    // here is the identifier referencing the class.
+    {
+      code: tsx`
+        function Component(props) {
+          class Foo {}
+          const { foo = Foo } = props;
+          return <div>{foo}</div>;
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "identifier",
+          propName: "foo",
+        },
+        messageId: MESSAGE_ID,
+      }],
+    },
+  ],
+  valid: [
+    tsx`
+        function App({ foo = 1, baz = 'hello' }) {
+          return null
+      }
+    `,
+    tsx`
+      const App = ({ foo = 1 }) => {
+          return null
+      }
+    `,
+    tsx`
+        function App(props) {
+          return null
+      }
+    `,
+    tsx`
+        const App = () => {
+          return null
+      }
+    `,
+    tsx`
+        function App(props) {
+            return null
+        }
+        App.defaultProps = {
+          foo: () => {}
+      }
+    `,
+    tsx`
+      const emptyFunction = () => {}
+
+      function App({ foo = emptyFunction }) {
+          return null
+      }
+    `,
+    tsx`
+      const emptyFunction = () => {}
+
+      function App({ foo = emptyFunction, ...rest }) {
+          return null
+      }
+    `,
+    tsx`
+      const emptyArray = [];
+      function Component(props) {
+        const { items = emptyArray } = props;
+
+        return <div>{items}</div>;
+      }
+    `,
+    {
+      code: tsx`
+        function MyComponent({ position = new Vector3(0, 0, 0) }) {
+          return null
+        }
+      `,
+      options: [{ safeDefaultProps: ["Vector3"] }],
+    },
+    {
+      code: tsx`
+        function MyComponent({
+          position = vector.create(0, 0, 0),
+          data = ImmutableMap.of(),
+          standard = 5,
+        }) {
+          return null
+        }
+      `,
+      options: [{ safeDefaultProps: ["vector", "/^Immutable.*/"] }],
+    },
+    {
+      code: tsx`
+        function Component({ items = (Array as any)(5) }) {
+          return <div />;
+        }
+      `,
+      options: [{ safeDefaultProps: ["Array"] }],
+    },
+    tsx`
+      export default function NonComponent({ foo = {} }) {}
+    `,
+    {
+      code: tsx`
+        "use memo";
+        const App = ({
+            a = {},
+            b = ['one', 'two'],
+            c = /regex/i,
+            d = () => {},
+            e = function() {},
+            f = class {},
+            g = new Thing(),
+            h = <Thing />,
+            i = Symbol('foo'),
+            j = unknownFunction(),
+            k = window.name
+        }) => {
+            return null
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    {
+      code: tsx`
+        const App = ({
+            a = Boolean({}),
+            b = Boolean(['one', 'two']),
+            c = Boolean(/regex/i),
+            d = Boolean(() => {}),
+            e = Boolean(function() {}),
+            f = Boolean(class {}),
+            g = Boolean(new Thing()),
+            h = Boolean(<Thing />),
+            i = Boolean(Symbol('foo')),
+            j = Boolean(unknownFunction()),
+            k = Boolean(window.name)
+        }) => {
+            return null
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    tsx`
+      export function DrawerItem(props: Props) {
+        const { colors, fonts } = useTheme();
+
+        const {
+          href,
+          icon,
+          label,
+          labelStyle,
+          focused = false,
+          allowFontScaling,
+          activeTintColor = colors.primary,
+          inactiveBackgroundColor = 'transparent',
+          style,
+          onPress,
+          pressColor,
+          pressOpacity = 1,
+          testID,
+          accessibilityLabel,
+          ...rest
+        } = props;
+
+        const { borderRadius = 56 } = StyleSheet.flatten(style || {});
+        const color = focused ? activeTintColor : inactiveTintColor;
+        const backgroundColor = focused
+          ? activeBackgroundColor
+          : inactiveBackgroundColor;
+
+        const iconNode = icon ? icon({ size: 24, focused, color }) : null;
+
+        return (
+          <View
+            collapsable={false}
+            {...rest}
+            style={[styles.container, { borderRadius, backgroundColor }, style]}
+          >
+            <PlatformPressable
+              testID={testID}
+              onPress={onPress}
+              accessibilityLabel={accessibilityLabel}
+              accessibilityRole="button"
+              accessibilityState={{ selected: focused }}
+              pressColor={pressColor}
+              pressOpacity={pressOpacity}
+              hoverEffect={{ color }}
+              href={href}
+            >
+              <View style={[styles.wrapper, { borderRadius }]}>
+                {iconNode}
+                <View style={[styles.label, { marginStart: iconNode ? 12 : 0 }]}>
+                  {typeof label === 'string' ? (
+                    <Text
+                      numberOfLines={1}
+                      allowFontScaling={allowFontScaling}
+                      style={[styles.labelText, { color }, fonts.medium, labelStyle]}
+                    >
+                      {label}
+                    </Text>
+                  ) : (
+                    label({ color, focused })
+                  )}
+                </View>
+              </View>
+            </PlatformPressable>
+          </View>
+        );
+      }
+    `,
+    // https://github.com/oxc-project/oxc/issues/17743
+    // `value ?? {}` creates a new object, but `min` is a scalar.
+    // This rule should not flag it because there is no default prop with an object/array.
+    tsx`
+      export const FloatBoundsInput = ({ value }) => {
+        const { min } = value ?? {};
+        return <InputNumber value={min} />;
+      };
+    `,
+    tsx`
+      export const FloatBoundsInput = ({ value }) => {
+        const { min } = value || {};
+        return <InputNumber value={min} />;
+      };
+    `,
+    tsx`
+      export const FloatBoundsInput = (props) => {
+        const { min } = props ?? {};
+        return <InputNumber value={min} />;
+      };
+    `,
+  ],
+});

@@ -1,0 +1,747 @@
+import tsx from "dedent";
+
+import { ruleTester } from "@local/testkit";
+import rule, { RULE_NAME } from "./no-forward-ref";
+
+ruleTester.run(RULE_NAME, rule, {
+  invalid: [
+    {
+      code: tsx`
+        import { forwardRef } from 'react'
+        const Component = forwardRef((props) => null);
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import { forwardRef } from 'react'
+                const Component = ({ ref, ...props }) => null;
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import { forwardRef } from 'react'
+        const Component = forwardRef((props) => {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import { forwardRef } from 'react'
+                const Component = ({ ref, ...props }) => {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import { forwardRef } from 'react'
+        const Component = forwardRef(function (props) {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import { forwardRef } from 'react'
+                const Component = function ({ ref, ...props }) {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import { forwardRef } from 'react'
+        const Component = forwardRef(function Component(props) {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import { forwardRef } from 'react'
+                const Component = function Component({ ref, ...props }) {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = React.forwardRef((props) => null);
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = ({ ref, ...props }) => null;
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = React.forwardRef((props) => {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = ({ ref, ...props }) => {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = React.forwardRef(function (props) {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = function ({ ref, ...props }) {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = React.forwardRef(function Component(props) {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = function Component({ ref, ...props }) {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = React.forwardRef(function Component(props, ref) {
+          return <div ref={ref} />;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = function Component({ ref, ...props }) {
+                  return <div ref={ref} />;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        interface ComponentProps {
+          foo: string;
+        }
+        const Component = React.forwardRef<HTMLElement, ComponentProps>(function Component(props, ref) {
+          return <div ref={ref} />;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                interface ComponentProps {
+                  foo: string;
+                }
+                const Component = function Component({ ref, ...props }: ComponentProps & { ref?: React.RefObject<HTMLElement | null> }) {
+                  return <div ref={ref} />;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = React.forwardRef<HTMLElement, { foo: string }>(function Component(props, ref) {
+          return <div ref={ref}>{props.foo}</div>;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = function Component({ ref, ...props }: { foo: string } & { ref?: React.RefObject<HTMLElement | null> }) {
+                  return <div ref={ref}>{props.foo}</div>;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = React.forwardRef<HTMLElement, { foo: string }>(function Component({ foo }, ref) {
+          return <div ref={ref}>{foo}</div>;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = function Component({ ref, foo }: { foo: string } & { ref?: React.RefObject<HTMLElement | null> }) {
+                  return <div ref={ref}>{foo}</div>;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = React.forwardRef<HTMLElement, { foo: string }>(function Component({ foo }, r) {
+          return <div ref={r}>{foo}</div>;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = function Component({ ref: r, foo }: { foo: string } & { ref?: React.RefObject<HTMLElement | null> }) {
+                  return <div ref={r}>{foo}</div>;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = React.forwardRef<HTMLElement, { foo: string, bar: number }>(function Component({ foo, ...rest }, r) {
+          return <div ref={r}>{foo}</div>;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = function Component({ ref: r, foo, ...rest }: { foo: string, bar: number } & { ref?: React.RefObject<HTMLElement | null> }) {
+                  return <div ref={r}>{foo}</div>;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    // No params — arrow function, no type args
+    {
+      code: tsx`
+        import { forwardRef } from 'react'
+        const Component = forwardRef(() => null);
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import { forwardRef } from 'react'
+                const Component = () => null;
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    // No params — arrow function with block body, no type args
+    {
+      code: tsx`
+        import { forwardRef } from 'react'
+        const Component = forwardRef(() => {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import { forwardRef } from 'react'
+                const Component = () => {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    // No params — anonymous function expression, no type args
+    {
+      code: tsx`
+        import { forwardRef } from 'react'
+        const Component = forwardRef(function () {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import { forwardRef } from 'react'
+                const Component = function () {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    // No params — named function expression, no type args
+    {
+      code: tsx`
+        import { forwardRef } from 'react'
+        const Component = forwardRef(function Component() {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import { forwardRef } from 'react'
+                const Component = function Component() {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    // No params — arrow function, with type args
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = React.forwardRef<HTMLElement, { foo: string }>(() => null);
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = ({ ref }: { foo: string } & { ref?: React.RefObject<HTMLElement | null> }) => null;
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    // No params — named function expression, with type args
+    {
+      code: tsx`
+        import * as React from 'react'
+        interface ComponentProps {
+          foo: string;
+        }
+        const Component = React.forwardRef<HTMLElement, ComponentProps>(function Component() {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                interface ComponentProps {
+                  foo: string;
+                }
+                const Component = function Component({ ref }: ComponentProps & { ref?: React.RefObject<HTMLElement | null> }) {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    // Not safe to fix because the import source is "not-react"
+    {
+      code: tsx`
+        import { forwardRef } from "not-react"
+
+        forwardRef(() => null)
+      `,
+      errors: [{ messageId: "default" }],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import { forwardRef } from 'react'
+        const Component = (forwardRef as any)((props) => {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import { forwardRef } from 'react'
+                const Component = ({ ref, ...props }) => {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        const Component = (React.forwardRef as any)((props) => {
+          return null;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import * as React from 'react'
+                const Component = ({ ref, ...props }) => {
+                  return null;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import React from "react";
+
+        type ButtonProps = {
+          children: React.ReactNode;
+          onClick: () => void;
+        };
+
+        const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button({ children }: ButtonProps, ref) {
+          return <button type="button" ref={ref}>{children}</button>;
+        });
+      `,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              messageId: "suggest",
+              output: tsx`
+                import React from "react";
+
+                type ButtonProps = {
+                  children: React.ReactNode;
+                  onClick: () => void;
+                };
+
+                const Button = function Button({ ref, children }: ButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
+                  return <button type="button" ref={ref}>{children}</button>;
+                };
+              `,
+            },
+          ],
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+  ],
+  valid: [
+    {
+      code: tsx`
+        import * as React from 'react'
+
+        const Component = React.forwardRef((props, ref) => {
+          return null;
+        });
+      `,
+      settings: {
+        "react-x": {
+          version: "18.3.1",
+        },
+      },
+    },
+    {
+      code: tsx`
+        import * as React from 'react'
+        React.forwardRef(function Component(props) {
+          return null;
+        });
+      `,
+      settings: {
+        "react-x": {
+          version: "18.3.1",
+        },
+      },
+    },
+    tsx`
+      import * as React from 'react'
+
+      const Component = ({ ref }) => {
+        return null;
+      };
+    `,
+    tsx`
+      import * as React from 'react'
+
+      const Component = ({ ref, ...props }) => {
+        return null;
+      };
+    `,
+  ],
+});

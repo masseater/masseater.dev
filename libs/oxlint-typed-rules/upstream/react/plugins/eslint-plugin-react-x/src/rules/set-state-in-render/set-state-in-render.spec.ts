@@ -1,0 +1,1204 @@
+import tsx from "dedent";
+
+import { ruleTester } from "@local/testkit";
+import rule, { RULE_NAME } from "./set-state-in-render";
+
+ruleTester.run(RULE_NAME, rule, {
+  invalid: [
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [count, setCount] = useState(0);
+          setCount(1);
+          return <div>{count}</div>;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ value }) {
+          const [count, setCount] = useState(0);
+          setCount(value);
+          return <div>{count}</div>;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [count, setCount] = useState(0);
+          setCount(c => c + 1);
+          return <div>{count}</div>;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        const Component = () => {
+          const [count, setCount] = useState(0);
+          setCount(1);
+          return <div>{count}</div>;
+        };
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function useHook({ value }) {
+          const [count, setCount] = useState(0);
+          setCount(value);
+          return null;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useState, memo } from "react";
+
+        const Component = memo(function Component() {
+          const [count, setCount] = useState(0);
+          setCount(1);
+          return <div>{count}</div>;
+        });
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    // anonymous arrow function passed to memo()
+    {
+      code: tsx`
+        import { useState, memo } from "react";
+
+        const Component = memo(() => {
+          const [count, setCount] = useState(0);
+          setCount(1);
+          return <div>{count}</div>;
+        });
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    // anonymous function expression passed to memo()
+    {
+      code: tsx`
+        import { useState, memo } from "react";
+
+        const Component = memo(function() {
+          const [count, setCount] = useState(0);
+          setCount(1);
+          return <div>{count}</div>;
+        });
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    // anonymous render function passed to forwardRef()
+    {
+      code: tsx`
+        import { useState, forwardRef } from "react";
+
+        const Component = forwardRef((props, ref) => {
+          const [count, setCount] = useState(0);
+          setCount(1);
+          return <div ref={ref}>{count}</div>;
+        });
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    // anonymous render function nested in memo(forwardRef(...))
+    {
+      code: tsx`
+        import { useState, memo, forwardRef } from "react";
+
+        const Component = memo(forwardRef((props, ref) => {
+          const [count, setCount] = useState(0);
+          setCount(1);
+          return <div ref={ref}>{count}</div>;
+        }));
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [a, setA] = useState(0);
+          const [b, setB] = useState(0);
+          setA(1);
+          setB(2);
+          return <div>{a}{b}</div>;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            name: "setA",
+          },
+          messageId: "default",
+        },
+        {
+          data: {
+            name: "setB",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [count, setCount] = useState(0);
+          setCount(1);
+          if (count > 10) return null;
+          return <div>{count}</div>;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            name: "setCount",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [a, setA] = useState(0);
+          const [b, setB] = useState(0);
+          setA(1);
+          if (a > 10) return null;
+          setB(2);
+          return <div>{a}{b}</div>;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            name: "setA",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const data = useState(0);
+          data[1](1);
+          return <div>{data[0]}</div>;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            name: "data[1]",
+          },
+          messageId: "default",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        function Component(props) {
+          const [state, setState] = useState(false);
+          (setState as any)(true);
+          return state;
+        }
+      `,
+      errors: [{ data: { name: "setState" }, messageId: "default" }],
+    },
+    // Aliased setState call (from React Compiler fixtures)
+    // NOTE: The IMPL only flags the direct setState call (setX), not the alias
+    // (aliased). The SPEC flags both because it tracks all references to the
+    // state setter through HIR StoreLocal/LoadLocal propagation.
+    {
+      code: tsx`
+        function Component(props) {
+          const [x, setX] = useState(0);
+          const aliased = setX;
+          setX(1);
+          aliased(2);
+          return x;
+        }
+      `,
+      errors: [
+        { data: { name: "setX" }, messageId: "default" },
+      ],
+    },
+    // Unbound state destructuring (hole in array pattern) (from React Compiler fixtures)
+    {
+      code: tsx`
+        function Component(props) {
+          let [, setState] = useState();
+          setState(1);
+          return props.foo;
+        }
+      `,
+      errors: [{ data: { name: "setState" }, messageId: "default" }],
+    },
+    // setState after a loop (from React Compiler fixtures)
+    {
+      code: tsx`
+        function Component(props) {
+          const [state, setState] = useState(false);
+          for (const _ of props) {
+          }
+          setState(true);
+          return state;
+        }
+      `,
+      errors: [{ data: { name: "setState" }, messageId: "default" }],
+    },
+    // setState after a loop with break/continue (from React Compiler's
+    // error.unconditional-set-state-in-render-after-loop-break.js)
+    {
+      code: tsx`
+        function Component(props) {
+          const [state, setState] = useState(false);
+          for (const _ of props) {
+            if (props.cond) {
+              break;
+            } else {
+              continue;
+            }
+          }
+          setState(true);
+          return state;
+        }
+      `,
+      errors: [{ data: { name: "setState" }, messageId: "default" }],
+    },
+    // setState after a loop with break/throw (from React Compiler's
+    // error.unconditional-set-state-in-render-with-loop-throw.js)
+    {
+      code: tsx`
+        function Component(props) {
+          const [state, setState] = useState(false);
+          for (const _ of props) {
+            if (props.cond) {
+              break;
+            } else {
+              throw new Error("bye!");
+            }
+          }
+          setState(true);
+          return state;
+        }
+      `,
+      errors: [{ data: { name: "setState" }, messageId: "default" }],
+    },
+    {
+      code: tsx`
+        function Component() {
+          const [data, setData] = useSta(0);
+          setData(1);
+          return null;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            name: "setData",
+          },
+          messageId: "default",
+        },
+      ],
+      settings: {
+        "react-x": {
+          additionalStateHooks: "useSta",
+        },
+      },
+    },
+    {
+      code: tsx`
+        function Component() {
+          const [data, setData] = useMyState(0);
+          setData(1);
+          return null;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            name: "setData",
+          },
+          messageId: "default",
+        },
+      ],
+      settings: {
+        "react-x": {
+          additionalStateHooks: "useMyState",
+        },
+      },
+    },
+    // setState before a nested component declaration in the same component
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Outer() {
+          const [a, setA] = useState(0);
+          setA(1);
+          function Inner() {
+            return <div />;
+          }
+          return <div>{a}<Inner /></div>;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // setState after a nested component declaration is still attributed to the
+    // outer component
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Outer() {
+          const [a, setA] = useState(0);
+          function Inner() {
+            return <div />;
+          }
+          setA(1);
+          return <div>{a}<Inner /></div>;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // setState after a nested arrow component declaration
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Outer() {
+          const [a, setA] = useState(0);
+          const Inner = () => <div />;
+          setA(1);
+          return <div>{a}<Inner /></div>;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // setState after multi-level nested component declarations
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Outer() {
+          const [a, setA] = useState(0);
+          function Middle() {
+            function Inner() {
+              return <div />;
+            }
+            return <Inner />;
+          }
+          setA(1);
+          return <div>{a}<Middle /></div>;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // setState inside a loop body is still unconditional render-time execution
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ items }) {
+          const [a, setA] = useState(0);
+          for (const item of items) {
+            setA(item);
+          }
+          return <div>{a}</div>;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // setState inside a try block
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [a, setA] = useState(0);
+          try {
+            setA(1);
+          } catch {
+          }
+          return <div>{a}</div>;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // tuple setter accessed via .at(1)
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const data = useState(0);
+          data.at(1)(1);
+          return <div>{data[0]}</div>;
+        }
+      `,
+      errors: [{ data: { name: "data.at(1)" }, messageId: "default" }],
+    },
+    // an early return in a sibling component must not shield this component
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Other({ cond }) {
+          if (cond) return null;
+          return <div />;
+        }
+
+        function Component() {
+          const [a, setA] = useState(0);
+          setA(1);
+          return <div>{a}</div>;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // PROBE: unconditional setState directly in a nested hook-like function body
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [a, setA] = useState(0);
+          function useHelper() {
+            setA(1);
+          }
+          return <div>{a}</div>;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // arrow component with expression body calling setter in a sequence
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function useHook() {
+          const [a, setA] = useState(0);
+          const Component = () => (setA(1), <div>{a}</div>);
+          return Component;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // setter from a member-expression hook call (React.useState)
+    {
+      code: tsx`
+        import React from "react";
+
+        function Component() {
+          const [a, setA] = React.useState(0);
+          setA(1);
+          return <div>{a}</div>;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // `const { 1: setA } = useState()` destructures the tuple by numeric key,
+    // so the name is still recognized as the setter
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const { 1: setA } = useState(0);
+          setA(1);
+          return <div />;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // setState directly in an inner nested component is attributed to the inner
+    // component (the top of the component stack), not the outer one
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Outer() {
+          function Inner() {
+            const [a, setA] = useState(0);
+            setA(1);
+            return <div>{a}</div>;
+          }
+          return <Inner />;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // member-callee wrapper `React.memo` with an anonymous render function
+    {
+      code: tsx`
+        import React, { useState } from "react";
+
+        const Component = React.memo(() => {
+          const [count, setCount] = useState(0);
+          setCount(1);
+          return <div>{count}</div>;
+        });
+      `,
+      errors: [{ data: { name: "setCount" }, messageId: "default" }],
+    },
+    // anonymous memo component with a nested component declaration followed by a
+    // setState: the stack must restore the memo callback as the component
+    {
+      code: tsx`
+        import { memo, useState } from "react";
+
+        const Component = memo(() => {
+          const [a, setA] = useState(0);
+          const Inner = () => <div />;
+          setA(1);
+          return <div>{a}<Inner /></div>;
+        });
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+    // a nested component declared inside a callback of the component does not
+    // disturb attribution of a later setState in the component body
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Outer() {
+          const [a, setA] = useState(0);
+          const make = () => {
+            function Inner() {
+              return <div />;
+            }
+            return Inner;
+          };
+          setA(1);
+          return <div>{a}</div>;
+        }
+      `,
+      errors: [{ data: { name: "setA" }, messageId: "default" }],
+    },
+  ],
+  valid: [
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [count, setCount] = useState(0);
+          return (
+            <button onClick={() => setCount(count + 1)}>
+              {count}
+            </button>
+          );
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [count, setCount] = useState(0);
+          const handleClick = () => {
+            setCount(c => c + 1);
+          };
+          return <button onClick={handleClick}>{count}</button>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [count, setCount] = useState(0);
+          const handleClick = function() {
+            setCount(c => c + 1);
+          };
+          return <button onClick={handleClick}>{count}</button>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ max }) {
+          const [count, setCount] = useState(0);
+          const increment = () => {
+            setCount(current => Math.min(current + 1, max));
+          };
+          return <button onClick={increment}>{count}</button>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const [data, setData] = useState(null);
+          return (
+            <form onSubmit={() => setData("submitted")}>
+              <button type="submit">Submit</button>
+            </form>
+          );
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState, useCallback } from "react";
+
+        function Component() {
+          const [count, setCount] = useState(0);
+          const increment = useCallback(() => {
+            setCount(c => c + 1);
+          }, []);
+          return <button onClick={increment}>{count}</button>;
+        }
+      `,
+    },
+    // anonymous callbacks inside an anonymous memo() component are not render-time calls
+    {
+      code: tsx`
+        import { useState, useCallback, memo } from "react";
+
+        const Component = memo(() => {
+          const [count, setCount] = useState(0);
+          const increment = useCallback(() => {
+            setCount(c => c + 1);
+          }, []);
+          return <button onClick={increment}>{count}</button>;
+        });
+      `,
+    },
+    // a second argument to memo() does not interfere with detecting the
+    // anonymous render function, and its event handler stays valid
+    {
+      code: tsx`
+        import { useState, memo } from "react";
+
+        const Component = memo(() => {
+          const [count, setCount] = useState(0);
+          return <button onClick={() => setCount(count + 1)}>{count}</button>;
+        }, []);
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function useHook() {
+          const [count, setCount] = useState(0);
+          const handleClick = () => {
+            setCount(c => c + 1);
+          };
+          return null;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useEffect, useState } from "react";
+
+        function Component() {
+          const [count, setCount] = useState(0);
+          useEffect(() => {
+            setCount(1);
+          }, []);
+          return <div>{count}</div>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useEffect, useState } from "react";
+
+        function Component() {
+          const [count, setCount] = useState(0);
+          useEffect(() => {
+            const intervalId = setInterval(() => {
+              setCount(c => c + 1);
+            }, 1000);
+            return () => clearInterval(intervalId);
+          }, []);
+          return <div>{count}</div>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ value }) {
+          const [count, setCount] = useState(0);
+          if (value > 10) {
+            setCount(value);
+          }
+          return <div>{count}</div>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ value }) {
+          const [count, setCount] = useState(0);
+          const fact = value > 10 ? setCount(value) : null;
+          return <div>{count}</div>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ value }) {
+          const [count, setCount] = useState(0);
+          value > 10 && setCount(value);
+          return <div>{count}</div>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ value }) {
+          const [count, setCount] = useState(0);
+          switch (value) {
+            case 1:
+              setCount(value);
+              break;
+          }
+          return <div>{count}</div>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ items }) {
+          const [isReverse, setIsReverse] = useState(false);
+          const [selection, setSelection] = useState(null);
+          const [prevItems, setPrevItems] = useState(items);
+          if (items !== prevItems) {
+            setPrevItems(items);
+            setSelection(null);
+          }
+          return null;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ items }) {
+          const [prevItems, setPrevItems] = useState(items);
+          if (items === prevItems) return <div>same</div>;
+          setPrevItems(items);
+          return <div>changed</div>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ items }) {
+          const [prevItems, setPrevItems] = useState(items);
+          const [selection, setSelection] = useState(null);
+          if (items === prevItems) return <div>same</div>;
+          setPrevItems(items);
+          setSelection(null);
+          return <div>changed</div>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ loading, data }) {
+          const [value, setValue] = useState(null);
+          if (loading) return <div>Loading...</div>;
+          if (!data) return null;
+          setValue(data.value);
+          return <div>{value}</div>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        const Component = ({ items }) => {
+          const [prevItems, setPrevItems] = useState(items);
+          if (items === prevItems) return <div>same</div>;
+          setPrevItems(items);
+          return <div>changed</div>;
+        };
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ items }) {
+          const sorted = [...items].sort();
+          return <ul>{sorted.map(item => <li key={item}>{item}</li>)}</ul>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ user }) {
+          const name = user?.name || '';
+          const email = user?.email || '';
+          return <div>{name}</div>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+        function notAComponent() {
+          return null;
+        }
+      `,
+    },
+    // a nested non-component utility function does not disturb the outer
+    // component context; conditional setState after it stays valid
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ items }) {
+          const [a, setA] = useState(0);
+          function format(x) {
+            return x * 2;
+          }
+          if (items.length > 10) {
+            setA(1);
+          }
+          return <div>{format(a)}</div>;
+        }
+      `,
+    },
+    // setState inside lambda called during render (from React Compiler fixtures)
+    // NOTE: The IMPL does not flag this because setState is inside a nested function.
+    // The rule only checks if the CallExpression is directly in a conditional/event handler.
+    // The SPEC flags it because the lambda is invoked synchronously during render.
+    {
+      code: tsx`
+        function Component(props) {
+          const [x, setX] = useState(0);
+          const foo = () => {
+            setX(1);
+          };
+          foo();
+          return [x];
+        }
+      `,
+    },
+    // setState inside nested lambdas called during render (from React Compiler fixtures)
+    {
+      code: tsx`
+        function Component(props) {
+          const [x, setX] = useState(0);
+          const foo = () => {
+            setX(1);
+          };
+          const bar = () => {
+            foo();
+          };
+          const baz = () => {
+            bar();
+          };
+          baz();
+          return [x];
+        }
+      `,
+    },
+    // Uncalled callback with setState inside switch (from React Compiler fixtures)
+    {
+      code: tsx`
+        function Component(props) {
+          const [currentStep, setCurrentStep] = useState(0);
+          const onSubmit = errorEvent => {
+            setCurrentStep(1);
+          };
+          switch (currentStep) {
+            case 0:
+              return <div />;
+            case 1:
+              return <div onSubmit={onSubmit} />;
+            default:
+              return <div />;
+          }
+        }
+      `,
+    },
+    // Nested lambda with conditional setState call chain (from React Compiler fixtures)
+    {
+      code: tsx`
+        function Component(props) {
+          const [x, setX] = useState(0);
+          const foo = () => {
+            setX(1);
+          };
+          const bar = () => {
+            if (props.cond) {
+              foo();
+            }
+          };
+          const baz = () => {
+            bar();
+          };
+          baz();
+          return [x];
+        }
+      `,
+    },
+    // useState without assignment should not crash isIdFromUseStateCall
+    {
+      code: tsx`
+        function Component() {
+          useState(0);
+          return <div />;
+        }
+      `,
+    },
+    // useState in conditional expression should not crash isIdFromUseStateCall
+    {
+      code: tsx`
+        function Component() {
+          const x = condition ? useState(0) : null;
+          return <div>{x}</div>;
+        }
+      `,
+    },
+    // useState in assignment expression should not crash isIdFromUseStateCall
+    {
+      code: tsx`
+        function Component() {
+          let state;
+          state = useState(0);
+          return <div>{state[0]}</div>;
+        }
+      `,
+    },
+    // setState after a double-nested early return is guarded by it
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ a, b }) {
+          const [x, setX] = useState(0);
+          if (a) {
+            if (b) return null;
+          }
+          setX(1);
+          return <div>{x}</div>;
+        }
+      `,
+    },
+    // setState after an early return, nested inside a bare block statement
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component({ cond }) {
+          const [a, setA] = useState(0);
+          if (cond) return null;
+          {
+            setA(1);
+          }
+          return <div>{a}</div>;
+        }
+      `,
+    },
+    // tuple value accessed via .at(0) is not a setter call
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const data = useState(() => 0);
+          data.at(0)();
+          return <div>{data[0]}</div>;
+        }
+      `,
+    },
+    // `const { 0: a } = useState()` binds the state value, not the setter:
+    // object-pattern destructuring only counts as a setter at numeric key 1
+    {
+      code: tsx`
+        import { useState } from "react";
+
+        function Component() {
+          const { 0: logA } = useState(() => () => 0);
+          logA();
+          return <div />;
+        }
+      `,
+    },
+    // setState inside a useMemo factory (from React Compiler fixtures)
+    // NOTE: The IMPL does not flag this because the factory is a nested function.
+    // The SPEC flags it with a dedicated useMemo diagnostic because the factory
+    // executes during render.
+    {
+      code: tsx`
+        import { useMemo, useState } from "react";
+
+        function Component() {
+          const [a, setA] = useState(0);
+          const v = useMemo(() => {
+            setA(1);
+            return 1;
+          }, []);
+          return <div>{a}{v}</div>;
+        }
+      `,
+    },
+    // conditional setState inside an anonymous forwardRef render function
+    {
+      code: tsx`
+        import { forwardRef, useState } from "react";
+
+        const Component = forwardRef((props, ref) => {
+          const [a, setA] = useState(0);
+          if (props.x) {
+            setA(1);
+          }
+          return <div ref={ref}>{a}</div>;
+        });
+      `,
+    },
+    // event handler inside an anonymous forwardRef render function
+    {
+      code: tsx`
+        import { forwardRef, useState } from "react";
+
+        const Component = forwardRef((props, ref) => {
+          const [a, setA] = useState(0);
+          return <button ref={ref} onClick={() => setA(a + 1)}>{a}</button>;
+        });
+      `,
+    },
+    // a setState after a nested component inside an anonymous memo component
+    // stays valid when guarded by an early return
+    {
+      code: tsx`
+        import { memo, useState } from "react";
+
+        const Component = memo(({ items }) => {
+          const [a, setA] = useState(0);
+          const Inner = () => <div />;
+          if (items.length === 0) {
+            return null;
+          }
+          setA(1);
+          return <div>{a}<Inner /></div>;
+        });
+      `,
+    },
+  ],
+});
