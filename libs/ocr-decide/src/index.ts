@@ -1,5 +1,6 @@
 export { CUTOFF, DECISION_MODELS, DEFAULT_DECISION_MODEL, assignFields } from "./assign.ts";
 export type { DecisionModel, Via } from "./assign.ts";
+export { ImageError } from "./image-error.ts";
 export { ModelError } from "./model-error.ts";
 export { OcrError } from "./ocr-error.ts";
 export { INVOICE_FIELDS } from "./fields.ts";
