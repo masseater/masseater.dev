@@ -126,16 +126,20 @@ const removeStale = Effect.fn("removeStale")(function* removeStalePackages(
   );
 });
 
-const indexScanned = Effect.fn("indexScanned")(function* indexScannedFile(scanned: Scanned) {
+const indexScanned = Effect.fn("indexScanned")(function* indexScannedFile(
+  scanned: Scanned,
+  linkable: (packagePath: string) => boolean,
+) {
   if (scanned.kind === "files") {
-    return yield* indexBundle(scanned.file);
+    return yield* indexBundle(scanned.file, linkable(scanned.file.path));
   }
-  return yield* indexPackage(scanned.file);
+  return yield* indexPackage(scanned.file, linkable(scanned.file.path));
 });
 
 /** @internal */
 const scanFolders = Effect.fn("scanFolders")(function* scanSourceFolders(
   onFile: (file: ScannedFile) => Effect.Effect<void>,
+  linkable: (packagePath: string) => boolean,
 ) {
   const sql = yield* SqlClient.SqlClient;
   const listings = yield* currentListings();
@@ -159,7 +163,7 @@ const scanFolders = Effect.fn("scanFolders")(function* scanSourceFolders(
     changed,
     Effect.forEach((scanned, done) =>
       onFile({ path: scanned.file.path, done, total: changed.length }).pipe(
-        Effect.andThen(indexScanned(scanned)),
+        Effect.andThen(indexScanned(scanned, linkable)),
         Effect.catchCause((cause) => Effect.logWarning("index failed", scanned.file.path, cause)),
       ),
     ),

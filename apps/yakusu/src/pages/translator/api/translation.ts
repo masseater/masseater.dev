@@ -15,6 +15,8 @@ import { outputOf } from "#/pages/translator/model/output.ts";
 import { useSelection } from "#/pages/translator/model/selection.ts";
 import { useEngine } from "#/shared/api";
 
+import { usePreparation } from "./preparation.ts";
+
 const appendDelta = (translation: string, delta: string): string => `${translation}${delta}`;
 
 const useDirection = (): Direction => {
@@ -26,6 +28,7 @@ const useTranslation = (): Output => {
   const engine = useEngine();
   const text = useSettledDraft();
   const direction = useDirection();
+  const ready = usePreparation().preparation.status === "ready";
   const request = {
     text,
     source: direction.source,
@@ -40,7 +43,7 @@ const useTranslation = (): Output => {
         reducer: appendDelta,
         initialValue: "",
       }),
-      enabled: pipe(text, String.trim, String.isNonEmpty),
+      enabled: ready && pipe(text, String.trim, String.isNonEmpty),
       staleTime: Number.POSITIVE_INFINITY,
       retry: false,
       placeholderData: keepPreviousData,

@@ -4,11 +4,9 @@ import type { ReactNode } from "react";
 
 import { SongLink } from "#/entities/catalog";
 import { songsQuery } from "#/pages/home/api/loader";
-import { rankOf } from "#/pages/home/lib/rank";
+import { RANKING_LIMIT, rankOf } from "#/pages/home/lib/rank";
 
 import { RankingItem } from "./ranking-item";
-
-const RANKING_LIMIT = 10;
 
 const usesLabel = (count: number): string => `${count.toString()} 本`;
 

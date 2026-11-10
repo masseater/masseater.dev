@@ -13,16 +13,34 @@ import {
 
 import { StorageFailed } from "#/features/mcp/model/storage-failed";
 
-const messageOf = (cause: unknown): string =>
+type WriteFailure = Readonly<{ duplicate: boolean; message: string }>;
+
+const UNIQUE_VIOLATION = "UNIQUE constraint failed";
+
+const messagesOf = (cause: unknown): readonly string[] =>
   Option.liftPredicate(cause, Predicate.isError).pipe(
-    Option.match({ onNone: () => String(cause), onSome: (error) => error.message }),
+    Option.match({
+      onNone: () => pipe(Option.fromNullishOr(cause), Option.map(String), Option.toArray),
+      onSome: (error) => [error.message, ...messagesOf(error.cause)],
+    }),
   );
 
+const writeFailure = (cause: unknown): WriteFailure => {
+  const messages = messagesOf(cause);
+  return {
+    duplicate: pipe(messages, Arr.some(Str.includes(UNIQUE_VIOLATION))),
+    message: pipe(messages, Arr.join(": ")),
+  };
+};
+
+const attempt = <Row>(run: () => Promise<Row>): Effect.Effect<Row, WriteFailure> =>
+  Effect.tryPromise({ try: run, catch: writeFailure });
+
+const toStorageFailed = ({ message }: WriteFailure): StorageFailed =>
+  StorageFailed.make({ message });
+
 const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, StorageFailed> =>
-  Effect.tryPromise({
-    try: run,
-    catch: (cause) => StorageFailed.make({ message: messageOf(cause) }),
-  });
+  attempt(run).pipe(Effect.mapError(toStorageFailed));
 
 const firstRow =
   <Failure>(onEmpty: () => Failure) =>
@@ -56,4 +74,15 @@ const nextAfterMax = (rows: readonly Readonly<{ max: number | null }>[]): number
 const encodeJson = (value: unknown): Effect.Effect<string> =>
   Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
 
-export { anyTermMatches, encodeJson, firstRow, nextAfterMax, nowIso, query, termsOf };
+export {
+  anyTermMatches,
+  attempt,
+  encodeJson,
+  firstRow,
+  nextAfterMax,
+  nowIso,
+  query,
+  toStorageFailed,
+  termsOf,
+};
+export type { WriteFailure };

@@ -1,9 +1,9 @@
 import { Array as Arr, Effect, Option, Schema, Record as Rec, String as Str, pipe } from "effect";
-import { decode, encode } from "fast-png";
-import type { Rectangle } from "tesseract.js";
 
+import { asPng, cropPng } from "./crop.ts";
 import { MISSING } from "./fragment.ts";
-import type { Box, Extraction, Field, FieldValue, Fragment } from "./fragment.ts";
+import type { Extraction, Field, FieldValue, Fragment } from "./fragment.ts";
+import type { ImageError } from "./image-error.ts";
 import { ModelApi } from "./model-api.ts";
 import type { Part } from "./model-api.ts";
 import { ModelError } from "./model-error.ts";
@@ -12,13 +12,7 @@ const DEFAULT_GENERATOR_MODEL = "google/gemini-3.5-flash-lite";
 
 const REREAD_BELOW = 0.8;
 
-const CROP_MARGIN = 4;
-
-const BIT_DEPTH = 8;
-
 const NOTHING_REREAD = 0;
-
-const ORIGIN = 0;
 
 const FIRST_LINE = 1;
 
@@ -49,35 +43,6 @@ const askJson = <Codec extends Schema.Codec<unknown, string>>({
     );
     return { output, costUsd };
   });
-
-type Region = Readonly<Rectangle>;
-
-const regionOf = (size: Readonly<{ width: number; height: number }>, box: Box): Region => {
-  const left = Math.max(ORIGIN, box.x0 - CROP_MARGIN);
-  const top = Math.max(ORIGIN, box.y0 - CROP_MARGIN);
-  return {
-    left,
-    top,
-    width: Math.min(size.width, box.x1 + CROP_MARGIN) - left,
-    height: Math.min(size.height, box.y1 + CROP_MARGIN) - top,
-  };
-};
-
-const crop = (image: Uint8Array, box: Box): Uint8Array => {
-  const decoded = decode(image);
-  const { channels } = decoded;
-  const { left, top, width, height } = regionOf(decoded, box);
-  const rowLength = width * channels;
-  const data = new Uint8Array(rowLength * height);
-  const rows = Arr.makeBy(height, (row) => {
-    const start = ((top + row) * decoded.width + left) * channels;
-    return decoded.data.subarray(start, start + rowLength);
-  });
-  for (const [row, pixels] of rows.entries()) {
-    data.set(pixels, row * rowLength);
-  }
-  return encode({ width, height, data, channels, depth: BIT_DEPTH });
-};
 
 const LinesSchema = Schema.fromJsonString(Schema.Struct({ lines: Schema.Array(Schema.String) }));
 
@@ -121,6 +86,20 @@ const withRereadLines = (
   );
 };
 
+interface Target {
+  readonly fragment: Fragment;
+  readonly index: number;
+}
+
+const promptsOf = (targets: readonly Target[], crops: readonly Uint8Array[]): readonly Part[] =>
+  pipe(
+    Arr.zip(targets, crops),
+    Arr.flatMap(([{ fragment }, crop], position) => [
+      text(`${position + FIRST_LINE} 行目（OCR では「${fragment.text}」）`),
+      png(crop),
+    ]),
+  );
+
 const rereadLowConfidence = ({
   image,
   fragments,
@@ -129,7 +108,7 @@ const rereadLowConfidence = ({
   image: Uint8Array;
   fragments: readonly Fragment[];
   model?: string;
-}>): Effect.Effect<Reread, ModelError, ModelApi> => {
+}>): Effect.Effect<Reread, ImageError | ModelError, ModelApi> => {
   const targets = pipe(
     fragments,
     Arr.map((fragment, index) => ({ fragment, index })),
@@ -138,19 +117,19 @@ const rereadLowConfidence = ({
   if (targets.length === NOTHING_REREAD) {
     return Effect.succeed({ fragments, costUsd: NOTHING_REREAD, reread: NOTHING_REREAD });
   }
-  const prompts = pipe(
+  const boxes = pipe(
     targets,
-    Arr.flatMap(({ fragment }, position) => [
-      text(`${position + FIRST_LINE} 行目（OCR では「${fragment.text}」）`),
-      png(crop(image, fragment.box)),
-    ]),
+    Arr.map(({ fragment }) => fragment.box),
   );
-  return askJson({
-    model,
-    schema: LinesSchema,
-    jsonSchema: LINES_JSON_SCHEMA,
-    parts: [text(REREAD_PROMPT), ...prompts],
-  }).pipe(
+  return cropPng(image)(boxes).pipe(
+    Effect.flatMap((crops) =>
+      askJson({
+        model,
+        schema: LinesSchema,
+        jsonSchema: LINES_JSON_SCHEMA,
+        parts: [text(REREAD_PROMPT), ...promptsOf(targets, crops)],
+      }),
+    ),
     Effect.map(({ output, costUsd }) => ({
       fragments: withRereadLines(fragments, targets, output.lines),
       costUsd,
@@ -208,13 +187,16 @@ const extractFromImage = ({
   image: Uint8Array;
   fields: readonly Field[];
   model?: string;
-}>): Effect.Effect<Extraction, ModelError, ModelApi> =>
-  askJson({
-    model,
-    schema: ExtractedSchema,
-    jsonSchema: extractJsonSchema(fields),
-    parts: [text(extractPrompt(fields)), png(image)],
-  }).pipe(
+}>): Effect.Effect<Extraction, ImageError | ModelError, ModelApi> =>
+  asPng(image).pipe(
+    Effect.flatMap((picture) =>
+      askJson({
+        model,
+        schema: ExtractedSchema,
+        jsonSchema: extractJsonSchema(fields),
+        parts: [text(extractPrompt(fields)), png(picture)],
+      }),
+    ),
     Effect.map(({ output, costUsd }) => ({
       values: Rec.fromEntries(
         pipe(

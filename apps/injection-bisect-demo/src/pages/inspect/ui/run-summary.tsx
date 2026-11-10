@@ -1,5 +1,6 @@
 import { cn } from "@masseater.dev/web-ui";
-import { asksTogether, branchesFor, sentencesOf } from "@r_masseater/injection-bisect";
+import { asksTogether, branchesFor, outcomeOf, sentencesOf } from "@r_masseater/injection-bisect";
+import type { Outcome } from "@r_masseater/injection-bisect";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
@@ -7,13 +8,19 @@ import { COPY } from "#/pages/inspect/model/copy";
 import { formatCount, formatDollars } from "#/pages/inspect/model/format";
 import type { Answer, Phase, Row, Trace } from "#/pages/inspect/model/trace";
 
-import { FailureReason } from "./failure-reason";
 import { GradeLine } from "./grade-line";
+import { PhaseNotes } from "./phase-notes";
 import { Stat } from "./stat";
 
 type Answered = Extract<Answer, Readonly<{ status: "answered" }>>;
 
 const NOTHING = 0;
+
+const OUTCOME_LABEL = {
+  clean: COPY.clean,
+  injected: COPY.injected,
+  unreadable: COPY.unread,
+} as const satisfies Record<Outcome, string>;
 
 const labelOf = (phase: Phase): string => {
   if (phase.status === "running") {
@@ -22,14 +29,11 @@ const labelOf = (phase: Phase): string => {
   if (phase.status === "failed") {
     return COPY.failed;
   }
-  if (phase.detection.status === "clean") {
-    return COPY.clean;
-  }
-  return COPY.injected;
+  return OUTCOME_LABEL[outcomeOf(phase.detection)];
 };
 
 const isAlarm = (phase: Phase): boolean =>
-  phase.status === "failed" || (phase.status === "done" && phase.detection.status === "injected");
+  phase.status === "failed" || (phase.status === "done" && outcomeOf(phase.detection) !== "clean");
 
 const sumOf = (rows: readonly Row[], pick: (answered: Answered) => number): number => {
   let sum = NOTHING;
@@ -70,7 +74,7 @@ const RunSummary = ({
     <h2 className={cn("text-xl font-semibold", isAlarm(trace.phase) && "text-destructive")}>
       {labelOf(trace.phase)}
     </h2>
-    <FailureReason phase={trace.phase} />
+    <PhaseNotes phase={trace.phase} />
     <GradeLine text={text} phase={trace.phase} />
     <dl className="grid grid-cols-2 gap-x-6 gap-y-2 font-mono text-sm sm:grid-cols-6">
       <Stat label={COPY.queries} value={`${requestsOf(model, trace.rows)}${COPY.times}`} />

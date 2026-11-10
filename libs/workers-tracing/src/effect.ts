@@ -1,13 +1,13 @@
 import type { Span as WorkersSpan } from "@cloudflare/workers-types/index.ts";
 import { tracing } from "cloudflare:workers";
-import { Cause, Exit, Layer, Logger, Option, Predicate, Tracer, pipe } from "effect";
+import { Exit, Layer, Logger, Option, Predicate, Tracer, pipe } from "effect";
 import type { Fiber } from "effect";
 
 import { capture } from "./context.ts";
 import type { RunInContext } from "./context.ts";
 import { runnerWith } from "./run.ts";
 import type { Run, Runner } from "./run.ts";
-import { firstError, markFailed } from "./span.ts";
+import { markCause } from "./span.ts";
 
 interface Mirror {
   readonly runInContext: RunInContext;
@@ -64,8 +64,12 @@ const mirrored = (native: Tracer.NativeSpan, mirror: Mirror): Tracer.Span => {
     },
     end: (endTime: bigint, exit: Exit.Exit<unknown, unknown>): void => {
       Tracer.NativeSpan.prototype.end.call(native, endTime, exit);
-      if (Exit.isFailure(exit) && !Cause.hasInterruptsOnly(exit.cause)) {
-        markFailed(firstError(exit.cause))(mirror.span);
+      if (Exit.isFailure(exit)) {
+        markCause(exit.cause)(mirror.span);
+        const errorType = native.attributes.get("error.type");
+        if (Predicate.isString(errorType)) {
+          mirror.span.setAttribute("error.type", errorType);
+        }
       }
       mirror.span.end();
     },

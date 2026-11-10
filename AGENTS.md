@@ -16,7 +16,7 @@
 - `infra/mcp-portal` は個人用 MCP をまとめた入口 mcp.masseater.dev（Cloudflare の MCP ポータル）のスタックで、main の verify の `mcp-portal` ジョブが当てる。本人だけを通す条件は personal-space の mydecklist スタックにある再利用ポリシー `OwnerPolicy` を `Policy.ref` で引き、メールアドレスをこのリポに置かない。Cloudflare 公式の MCP（`mcp.cloudflare.com/mcp`）だけは OAuth でつながず、portfolio のスタックが作る全リソース読み取り専用のアカウントトークン `CloudflareReader`（`infra/cloudflare-account/account-readers.ts`）を `AccountApiToken.ref` で引いて bearer で渡す。書き込みの権限は足さない。
 - `infra/repositories` は個人アカウントの GitHub を管理する `masseater-dev-github` スタックで、main の verify の `github` ジョブが当てる。リポは GitHub App のインストールから実行時に一覧し、コードには private リポの名前を書かない。方針はコードの 1 か所に書き、`visibility` は渡さず公開範囲に触らない。private の名前は `github-token.sh` がログで伏せる。CI にトークンを出す broker（credentials.masseater.dev）も、別のスタック `alchemy.broker.ts` としてここに置き、main の verify の `deploy` ジョブが当てる。リポごとに broker が出す Cloudflare・GitHub・npm の権限は `credential-grants.ts` に書く。
 - リポの削除は `delete-repositories` ワークフローを main で手動実行する。名前はイベントのファイルから読んでログで伏せるので、private のリポもコードとログに名前が出ない。
-- GitHub のトークンも broker が出す。App は `masseater-manager` だけで、鍵は D1 に置く。鍵の原本は personal-space の secret にあり、personal-space の `github-app-key` ワークフローが `POST https://credentials.masseater.dev/github-app/import` で渡す。broker は鍵で App 自身として名乗れることと持ち主を確かめてから保存する。
+- GitHub のトークンも broker が出す。App は `masseater-manager` だけで、鍵は broker の Worker だけが持つ鍵（スタックの `SealKey`）で暗号化して D1 に置く。`SealKey` の名前を変えたり state から消したりすると鍵が作り直され、保管した値は読めなくなるので、そのときは App の鍵と Bluesky の app password を入れ直す。鍵の原本は personal-space の secret にあり、personal-space の `github-app-key` ワークフローが `POST https://credentials.masseater.dev/github-app/import` で渡す。broker は鍵で App 自身として名乗れることと持ち主を確かめてから保存する。
 - `apps/portfolio/worker/ci-telemetry.worker.ts` は、masseater/typescript-template の composite action `ci-telemetry` が送るジョブとステップの時間を GitHub の OIDC トークンで確かめ、ログに出す。
 - `apps/portfolio/content/sloppedia/` は、Wikipedia 風の個人の百科事典もどき Sloppedia の記事である。`/sloppedia/` の下は、サイトの背景を持つ `_stage` レイアウトの外にある独自の見た目のページで、`noindex` を付けて sitemap とフィードから外す。
 - Sloppedia の見た目は `libs/sloppedia`（npm の `sloppedia`）にあり、portfolio はそれに TanStack Router の Link を渡して使う。npm へは version を上げてから `publish.yml` を main で手動実行して出す。
@@ -31,7 +31,7 @@
 - parity テストの参照音は、`tools/pod-rattle-parity` が labs のページから `createEngine` を切り出して鳴らした音である。labs の音を変えたら `libs/pod-rattle-engine` も合わせる。計算の順序を変えると標本単位で一致しなくなるので、速くするときも浮動小数点の演算順は保つ。いずれ labs が `libs/pod-rattle-engine` を wasm で鳴らし、エンジンを 1 本にする。
 - `apps/watashi-mcp`（`watashi.masseater.dev/mcp`）は持ち主の個人データの MCP で、人生の記録（`life_*`）と AI の作業メモ（`memory_*`）を D1 に置く。作業メモから人生の記録を書かない。逆はよく、根拠を `evidence` に残す。表への書き込みは `*-writer.server.ts` だけが行い、`revision` 表への追加と同じ D1 の batch に入れる（lint が強制する）。パスキーを登録できるのは招待の文字列を持つ最初の 1 人だけである。会話履歴の仕組みは `apps/watashi-mcp/docs/conversations.md` にある。
 - `apps/personal-mcp`（`personal-mcp.masseater.dev/mcp`）は Sloppedia・アクセス解析・スライド検索の MCP で、個人データは置かない。スライドのサイトと同じ Access（mydecklist スタックの `OwnerPolicy`）の managed OAuth で守る。
-- `apps/mosaic`（`masseater.dev/mosaic`）はサムネイルのモザイクアートのサイトで、main の verify の `mosaic-character` ジョブがキャラごとに `tools/mosaic`（Python、uv）で配るファイルを作って `alchemy.files.ts` をキャラの slug のステージで当て、`mosaic-deploy` ジョブが画面を当てる。
+- `apps/mosaic`（`masseater.dev/mosaic`）はサムネイルのモザイクアートのサイトで、main の verify の `mosaic-character` ジョブがキャラごとに `tools/mosaic`（Rust）で配るファイルを作って `alchemy.files.ts` をキャラの slug のステージで当て、`mosaic-deploy` ジョブが画面を当てる。
 - `apps/nimado`（`masseater.dev/nimado`）と、そのデータを作る `tools/nimado-collect` の決まりは `apps/nimado/AGENTS.md` にある。
 - `apps/zenn-articles` はパッケージではない。main の verify が通ると、中身が `zenn` ブランチの直下へ写される。
 - `libs/textlint-rule-no-taigendome` はこのリポの検査では使わず、masseater/personal-space が git の subpath 依存で読むので、パスとパッケージ名を動かさない。
@@ -40,9 +40,9 @@
 
 - `libs/injection-bisect` は文書を `Parser` で区間に分け、区間の並びを √n 個の枝に割り、確率が `cutoff` 以上の枝だけを再帰的に細かく問い直す。`apps/injection-bisect-demo` のデモと `tools/injection-bisect-cli` が使う。npm には `dist` を出し、version を上げてから `publish.yml` を package に `injection-bisect` を選んで main で手動実行する。
 - `libs/ocr-decide` は請求書の画像を OCR で断片にし、decision モデルで項目に割り当てる。`apps/ocr-decide` はこれをブラウザーで動かし、計測結果も表示する。計測は `tools/ocr-measure` で行う。`render` が `data/` の請求書を画像にし、`measure` が `results/details.json` と `libs/ocr-measurements/summary.json` を書き、`rescore` はモデルに問い合わせず details.json から summary.json を書き直す。
-- OCR エンジンの日本語の読み取りは `tools/ocr-ja-bench` で測る。`render` が合成ページを、`prepare-data` が JaWildText の写真を `.cache/` に用意し、`measure [エンジン ID...]` が `results/` と `libs/ocr-measurements/ja-bench.json` を書く。ローカルのエンジンは `engines/<名前>/run.py` を uv で動かし、Surya は llama.cpp の要る Mac で測る。
+- OCR エンジンの日本語の読み取りは `tools/ocr-ja-bench` で測る。`render` が合成ページを、`prepare-data` が JaWildText の写真を `.cache/` に用意し、`measure [エンジン ID...]` が `results/` と `libs/ocr-measurements/ja-bench.json` を書く。Indra OCR・NDLOCR-Lite・PaddleOCR・Surya は Python でしか動かないので測る手段を外し、`results/` の記録だけを残している。
 - `tools/decision-bench-runner` は日本語 decision model のベンチで、`vp run bench` で動かす。モデルごとの結果を `results/<モデル>.json` にコミットし、再実行ではそこで答えの出た問題を呼び直さない。問いの文面や読み取り方を変えたら、そのモデルのファイルを消して測り直す。`cache/` はコミットしない。終わると `docs/decision-bench.md` の `results:start`〜`results:end` の表と `libs/bench-summary/summary.json` を書き換え、`apps/decision-bench` がその JSON からリーダーボードを `/decision-bench` に出す。
-- 3 つのデモは `infra/start-site` の Vite と Alchemy の設定と `libs/web-ui` の部品を共有し、main の verify の `decision-experiments` ジョブが stage production で当てる。このジョブは environment `decision-experiments` で broker の `rulesets` の権限を受け取る。スタック名と `APP_NAME` は元のリポのまま（`injection-bisect`・`ocr-decide`・`mst-ja-decision-bench`）にしている。
+- 3 つのデモは `infra/start-site` の Vite と Alchemy の設定と `libs/web-ui` の部品を共有し、main の verify の `decision-experiments` ジョブが stage production で当てる。スタック名と `APP_NAME` は元のリポのまま（`injection-bisect`・`ocr-decide`・`mst-ja-decision-bench`）にしている。
 - injection-bisect の入力の形式ごとの処理は `segment.ts` に足さず、`Parser` として並びに加える。形式の読み取りは自前で書かず、officeparser・SheetJS・papaparse・ical.js・srt-vtt-parser・ass-compiler・nbformat・linguist-languages と refractor・file-type などのライブラリを使う。
 - `respan/` のモデルには、1 リクエストに区間ごとの質問を並べない。choice の質問も使わない。既定のモデル `respan/span-01-lite` を変えるときは、計測し直してユーザーに確認する。
 - 精度・費用・時間の比較は、無害な入力と注入を含む入力の両方で、フロンティアモデルに直接判定させた場合と並べる。計測の前後に `GET https://openrouter.ai/api/v1/key` でキーの残りを確かめる。
@@ -51,8 +51,9 @@
 ## yakusu
 
 - `apps/yakusu` は PLaMo 3 Translate 0.8B を手元で動かす翻訳のデスクトップアプリである。Tauri 2 の Rust 側（`src-tauri`、ルートの Cargo ワークスペースの一員）が llama.cpp の llama-server を子プロセスとして起動し、`/completion` の流れを訳文として画面へ送る。
-- llama-server・モデル・ライセンスの写しは、`scripts/fetch-runtime.sh` がリビジョンと sha256 を固定して `src-tauri/resources/` に落とす。リポには入れない。実モデルでの翻訳は `cargo test -p yakusu --test engine -- --ignored` で確かめる。
-- `yakusu` ワークフローが 3 OS で実モデルの翻訳を確かめてからインストーラーを作り、`yakusu-v*` のタグのときはリリースに付ける。
+- llama-server とライセンスの写しは、`scripts/fetch-runtime.sh` がリビジョンと sha256 を固定して `src-tauri/resources/` に落とす。リポには入れない。
+- モデルはインストーラーに入れない。アプリが初回の起動で Hugging Face から取得し、`src-tauri/src/model.rs` に固定した sha256 と合ったものだけをデータフォルダの `models/` に置く。途中で切れた取得は続きから再開する。実モデルでの翻訳は `cargo test -p yakusu --test engine -- --ignored` で確かめ、このテストもアプリと同じ処理でモデルを取得する。
+- `yakusu` ワークフローが 3 OS でモデルの取得と実モデルの翻訳を確かめてからインストーラーを作り、`yakusu-v*` のタグのときはリリースに付ける。
 - 画面はブラウザーモードの Vitest が偽のエンジンで操作し、`src/app/__screenshots__/` の画像と比べる。
 - PLaMo Community License に従い、画面に「Built with PLaMo」を出し、インストーラーにライセンスの写しを入れる。モデルを変えて派生モデルを配るときは、名前の先頭に「PLaMo」を付ける。
 

@@ -8,7 +8,7 @@ import {
   state,
 } from "@alchemy.run/cloudflare";
 import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
-import { Stack } from "alchemy";
+import { Stack, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
 import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
@@ -16,12 +16,14 @@ import type { ConfigError } from "effect/Config";
 
 import { CREDENTIAL_BROKER_AUDIENCE, PREFIX, TRACE_DESTINATION } from "./broker-names.ts";
 import { grantPolicies, WORKFLOW_GITHUB_GRANTS } from "./credential-grants.ts";
+import type { GitHubAppEnv } from "./github-app.ts";
 
 const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
 const DOMAIN = "masseater.dev";
 const CREDENTIAL_BROKER_HOST = `credentials.${DOMAIN}`;
 const GITHUB_APP_DATABASE = `${PREFIX}GitHubApp-prod-zcxmorxkzgzaqw2z`;
+const SEAL_KEY_BYTES = 32;
 
 const npmTokenBinding = Effect.fn("npmTokenBinding")(function* npmTokenBinding(
   store: SecretsStore.Store,
@@ -78,10 +80,13 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       value: yield* Config.Redacted("CLOUDFLARE_API_TOKEN"),
     });
     const keys = yield* ciKeys(store);
-    const GITHUB_APP = yield* D1.Database("GitHubApp", {
-      name: GITHUB_APP_DATABASE,
-      migrations: "./github-app-migrations",
-    });
+    const appStore = {
+      GITHUB_APP: yield* D1.Database("GitHubApp", {
+        name: GITHUB_APP_DATABASE,
+        migrations: "./github-app-migrations",
+      }),
+      SEAL_KEY: yield* makeRandom("SealKey", { bytes: SEAL_KEY_BYTES }),
+    } satisfies Readonly<Record<keyof GitHubAppEnv, unknown>>;
     const { GRANTS, WORKFLOW_GRANTS } = yield* Effect.all({
       GRANTS: encodeJson(grantPolicies({ accountId, zoneId })),
       WORKFLOW_GRANTS: encodeJson(WORKFLOW_GITHUB_GRANTS),
@@ -95,7 +100,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       env: {
         ROOT_TOKEN,
         ...keys,
-        GITHUB_APP,
+        ...appStore,
         ACCOUNT_ID: accountId,
         GRANTS,
         WORKFLOW_GRANTS,

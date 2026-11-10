@@ -1,6 +1,8 @@
 import type { Span } from "@cloudflare/workers-types/index.ts";
 import { Array, Cause, Effect, Inspectable, Option, Predicate, Schema, pipe } from "effect";
 
+import { failures, isServerError, responseStatus } from "./failure.ts";
+
 const taggedError = Schema.TaggedError;
 
 class HandlerFailed extends taggedError<HandlerFailed, { readonly brand: unique symbol }>()(
@@ -9,8 +11,6 @@ class HandlerFailed extends taggedError<HandlerFailed, { readonly brand: unique 
 ) {}
 
 type Exception = Readonly<Pick<Error, "name" | "message" | "stack">>;
-
-const SERVER_ERROR = 500;
 
 const requestSpans = new WeakMap<Request, Span>();
 
@@ -35,19 +35,39 @@ const markFailed =
   (span: Span): void => {
     const exception = exceptionOf(error);
     span.setStatus({ code: "error", message: exception.message });
+    span.setAttribute("error.type", exception.name);
     span.recordException(exception);
   };
 
-const firstError = (cause: Cause.Cause<unknown>): unknown =>
-  pipe(Cause.prettyErrors(cause), Array.head, Option.getOrUndefined);
+const markCause =
+  (cause: Cause.Cause<unknown>) =>
+  (span: Span): void => {
+    const error = pipe(
+      failures(cause),
+      Option.flatMap((failed) => Array.head(Cause.prettyErrors(failed))),
+    );
+    if (Option.isSome(error)) {
+      markFailed(error.value)(span);
+    }
+  };
 
 const recordStatus =
   (status: number) =>
   (span: Span): void => {
     span.setAttribute("http.response.status_code", status);
-    if (status >= SERVER_ERROR) {
+    if (isServerError(status)) {
       span.setStatus({ code: "error" });
+      span.setAttribute("error.type", `${status}`);
     }
+  };
+
+const markThrown =
+  (thrown: unknown) =>
+  (span: Span): void => {
+    pipe(
+      responseStatus(thrown),
+      Option.match({ onNone: () => markFailed(thrown), onSome: recordStatus }),
+    )(span);
   };
 
 const traced =
@@ -66,11 +86,11 @@ const traced =
         ),
         Effect.tapError(({ cause }) =>
           Effect.sync(() => {
-            markFailed(cause)(span);
+            markThrown(cause)(span);
           }),
         ),
         Effect.catchTag("HandlerFailed", ({ cause }) => Effect.die(cause)),
       ),
     );
 
-export { firstError, markFailed, recordStatus, requestSpans, traced };
+export { markCause, markFailed, recordStatus, requestSpans, traced };

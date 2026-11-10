@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
-import { Effect, pipe } from "effect";
+import type { BatchItem } from "drizzle-orm/batch";
+import { Array as Arr, Effect, pipe } from "effect";
 
 import type { PersonDetail } from "#/entities/catalog";
 import {
@@ -14,11 +15,33 @@ import { ToolError } from "./tool-error";
 import type { MergeInput } from "./tool-input";
 import { orMissing, query } from "./tool-result.server";
 
+type Statement = BatchItem<"sqlite">;
+type Credit = Pick<typeof partStaff.$inferSelect, "partId" | "role">;
+
 const PERSON_MISSING = "person not found";
 const SAME_PERSON = "sourceId and targetId must differ";
 
 const personDetail = (id: number): Effect.Effect<PersonDetail, ToolError> =>
   getPerson(id).pipe(orMissing(PERSON_MISSING));
+
+const creditInserts = (personId: number, credits: readonly Credit[]): readonly Statement[] =>
+  pipe(
+    credits,
+    Arr.map((credit) =>
+      catalogDb
+        .insert(partStaff)
+        .values({ ...credit, personId })
+        .onConflictDoNothing(),
+    ),
+  );
+
+const aliasInserts = (personId: number, aliases: readonly string[]): readonly Statement[] =>
+  pipe(
+    aliases,
+    Arr.map((alias) =>
+      catalogDb.insert(personAlias).values({ personId, alias }).onConflictDoNothing(),
+    ),
+  );
 
 const mergePeople = Effect.fn("mcp.person.merge")(function* mergePeople(
   input: typeof MergeInput.Type,
@@ -34,29 +57,15 @@ const mergePeople = Effect.fn("mcp.person.merge")(function* mergePeople(
       .from(partStaff)
       .where(eq(partStaff.personId, input.sourceId)),
   );
-  yield* pipe(
-    credits,
-    Effect.forEach((credit) =>
-      query(() =>
-        catalogDb
-          .insert(partStaff)
-          .values({ partId: credit.partId, role: credit.role, personId: input.targetId })
-          .onConflictDoNothing(),
-      ),
-    ),
+  const removal: Statement = catalogDb.delete(person).where(eq(person.id, input.sourceId));
+  const statements = pipe(
+    [
+      ...creditInserts(input.targetId, credits),
+      ...aliasInserts(input.targetId, [source.name, ...source.aliases]),
+    ],
+    Arr.append(removal),
   );
-  yield* pipe(
-    [source.name, ...source.aliases],
-    Effect.forEach((alias) =>
-      query(() =>
-        catalogDb
-          .insert(personAlias)
-          .values({ personId: input.targetId, alias })
-          .onConflictDoNothing(),
-      ),
-    ),
-  );
-  yield* query(() => catalogDb.delete(person).where(eq(person.id, input.sourceId)));
+  yield* query(() => catalogDb.batch(statements));
   return yield* personDetail(input.targetId);
 });
 

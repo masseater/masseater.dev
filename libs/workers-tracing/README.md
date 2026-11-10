@@ -111,10 +111,34 @@ log `request failed` with the cause, so the failure is in the trace. The tracer
 and logger of the package replace any your layer provides. In the browser and in
 plain Node.js, they run the Effect without tracing.
 
+### What counts as a failure
+
+TanStack Router sends a redirect or a 404 by throwing: `throw redirect(...)`
+and `throw notFound()`. Inside an Effect, that is `Effect.die` or `Effect.fail`
+with the same value. Such a value is the answer to the request, not a failure. The package
+therefore follows the [HTTP span
+status](https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status)
+rules of OpenTelemetry for a server. The table lists each case.
+
+| What ends the span                           | Span status | `request failed` log |
+| -------------------------------------------- | ----------- | -------------------- |
+| A response below 500, returned or thrown     | unset       | no                   |
+| `redirect(...)` or another thrown `Response` | by status   | below 500: no        |
+| `notFound()`, which stands for 404           | unset       | no                   |
+| An Elysia error with a `status` below 500    | unset       | no                   |
+| A response of 500 or above                   | error       | when thrown          |
+| Any other error or defect                    | error       | yes                  |
+| Interruption                                 | unset       | no                   |
+
+A request or server function span that ends with a thrown `Response` records its
+status as `http.response.status_code`. A span marked as an error carries
+`error.type`. Its value is the name of the exception, or the status code for a
+response of 500 or above.
+
 Import `Elysia` from this package instead of from `elysia`. It is the same
 class, so the rest of your code does not change. The difference is that each
 request it handles becomes a span named after the matched route, such as `GET
-/items/:id`. An error marks the span as failed. That holds for `handle` and for
+/items/:id`. An error that answers with 500 or above marks the span as failed. That holds for `handle` and for
 `fetch`, so it also covers a compiled app that the Worker exports. Requests that
 match no route keep their path as the name.
 
@@ -212,8 +236,10 @@ vp exec workers-traces --request https://my-app.example.com/ \
 ```
 
 It needs `CLOUDFLARE_API_TOKEN`, with Workers Observability read access, and
-`CLOUDFLARE_ACCOUNT_ID` (or `--account`). It adds a `workers-traces` query
-parameter to the URL, so each run finds the trace of its own request.
+`CLOUDFLARE_ACCOUNT_ID` (or `--account`). It adds a query parameter named
+`workers-traces.<send time>` to the URL, so each run finds the trace of its own
+request. The send time is in the name because the trace export replaces query
+values that look sensitive.
 
 Without `--request` it prints the traces of the last 15 minutes. `--service
 <worker>` narrows them to one Worker. `--minutes` changes the window, and
@@ -222,6 +248,68 @@ only the spans that arrived after the request was sent. Other traffic on the
 account then rarely pushes the request's trace out of the spans read. If it
 still does, raise `--limit`. If the sink Worker has another name than
 `workers-tracing-sink`, pass it with `--sink` or `WORKERS_TRACES_SINK`.
+
+### 5. Call Workers AI through the package
+
+Workers AI runs on shared machines. When they are busy, a call fails with error
+3040, `Capacity temporarily exceeded`. The REST API answers it with HTTP 429. The
+[error table](https://developers.cloudflare.com/workers-ai/platform/errors/)
+calls it temporary, so the call is worth repeating. `runWorkersAi` repeats it for you.
+
+```ts
+import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
+
+const MODEL = "@cf/google/gemma-4-26b-a4b-it";
+
+const answer =
+  yield *
+  runWorkersAi({
+    operation: "chat",
+    model: MODEL,
+    prompt: "daily-summary",
+    call: () => env.AI.run(MODEL, { messages, max_tokens: 400 }),
+  });
+```
+
+| What happens                                 | What `runWorkersAi` does                         |
+| -------------------------------------------- | ------------------------------------------------ |
+| Error 3040, from the binding or the REST API | Retries after 2, 4, 8 and 16 seconds             |
+| Any other error                              | Fails at once with `WorkersAiError`              |
+| The answer was cut off                       | Logs the warning `Workers AI cut the answer off` |
+
+An answer counts as cut off when a finish reason is neither `stop` nor
+`tool_calls`. `WorkersAiError` carries the original error as `cause`. Its
+`outOfCapacity` is `true` when the four retries were used up.
+
+The telemetry follows the [OpenTelemetry GenAI semantic
+conventions](https://github.com/open-telemetry/semantic-conventions-genai),
+read at commit `e6658f1` of 2026-11-06. They are still in development. One span
+covers the call with all its retries, as the conventions ask.
+
+| Telemetry                        | Value                                                               |
+| -------------------------------- | ------------------------------------------------------------------- |
+| Span name                        | `{gen_ai.operation.name} {gen_ai.request.model}`, kind `CLIENT`     |
+| `gen_ai.operation.name`          | `operation`: `chat` or `embeddings`                                 |
+| `gen_ai.provider.name`           | `cloudflare.workers_ai`, a custom value                             |
+| `gen_ai.request.model`           | `model`                                                             |
+| `gen_ai.prompt.name`             | `prompt`, the name of the prompt template, when given               |
+| `gen_ai.response.finish_reasons` | The `finish_reason` of each choice                                  |
+| `gen_ai.usage.input_tokens`      | `usage.prompt_tokens` of the answer                                 |
+| `gen_ai.usage.output_tokens`     | `usage.completion_tokens` of the answer                             |
+| `error.type`                     | The Workers AI error code, such as `3040`, or the name of the error |
+
+Each failed attempt is logged as a warning. Its name is
+`gen_ai.client.inference.exception` for `chat` and
+`gen_ai.client.embeddings.exception` for `embeddings`. It carries
+`exception.type`, `exception.message` and `error.type`. The cut-off warning
+carries the same `gen_ai.*` attributes as the span.
+
+A Workers span takes only strings, numbers and booleans. So
+`gen_ai.response.finish_reasons`, an array, reaches the Effect span and the
+cut-off warning, and not the Workers trace.
+
+The lint preset exports `restrictedSyntax`. Pass it to `no-restricted-syntax`
+to flag every `env.AI.run` call outside `runWorkersAi`.
 
 ## How it works
 
@@ -236,6 +324,7 @@ in `run` and `runner` starts a Workers span for each Effect span. It then runs
 each step of the fiber inside the context of the request that started it. Spans
 therefore stay with their request even when one runtime serves many requests at
 once. A failed Effect marks its span as an error and records the exception.
+A redirect or a 404, as described above, leaves the span unset.
 
 ## Cost
 

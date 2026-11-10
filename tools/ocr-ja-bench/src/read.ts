@@ -8,11 +8,9 @@ import {
   Layer,
   Match,
   Schema,
-  Stream,
   Array as Arr,
   pipe,
 } from "effect";
-import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
 import type { Engine } from "./engines.ts";
 import type { Page } from "./page.ts";
@@ -33,16 +31,6 @@ const ONE_AT_A_TIME = { concurrency: 1 } as const;
 const VLM_CONCURRENCY = { concurrency: 4 } as const;
 
 const NO_COST = 0;
-
-const ENGINES_DIR = new URL("../engines/", import.meta.url).pathname;
-
-const ProcessRequestSchema = Schema.fromJsonString(
-  Schema.Struct({ id: Schema.String, image: Schema.String }),
-);
-
-const ProcessOutputSchema = Schema.fromJsonString(
-  Schema.Struct({ id: Schema.String, text: Schema.String, seconds: Schema.Finite }),
-);
 
 const TextPartSchema = Schema.Struct({ text: Schema.String });
 
@@ -75,63 +63,6 @@ class Reader extends Context.Service<
 >()("@ocr-decide/ja-bench/read/Reader") {}
 
 const failed = (id: string, reason: string): Reading => ({ id, status: "failed", reason });
-
-const encoder = new TextEncoder();
-
-const encodeRequest = Schema.encodeEffect(ProcessRequestSchema);
-
-const requestLines = (pages: readonly Page[]): Effect.Effect<Uint8Array[], Schema.SchemaError> =>
-  pipe(
-    pages,
-    Effect.forEach(({ id, image }) => encodeRequest({ id, image })),
-    Effect.map(Arr.map((line) => encoder.encode(`${line}\n`))),
-  );
-
-const throughProcess = ({
-  spawn,
-  project,
-  pages,
-  record,
-}: Readonly<{
-  spawn: ChildProcessSpawner.ChildProcessSpawner["Service"]["spawn"];
-  project: string;
-  pages: readonly Page[];
-  record: Record;
-}>): Effect.Effect<void> =>
-  Effect.gen(function* runProcess() {
-    const requests = yield* requestLines(pages);
-    const handle = yield* spawn(
-      ChildProcess.make(
-        "uv",
-        ["run", "-q", "--project", project, "python", "-I", `${project}/run.py`],
-        { cwd: ENGINES_DIR, stdin: Stream.fromIterable(requests), stderr: "inherit" },
-      ),
-    );
-    yield* handle.stdout.pipe(
-      Stream.decodeText,
-      Stream.splitLines,
-      Stream.runForEach((line) =>
-        Schema.decodeEffect(ProcessOutputSchema)(line).pipe(
-          Effect.match({
-            onFailure: (error) => failed("", error.message),
-            onSuccess: ({ id, text, seconds }): Reading => ({
-              id,
-              status: "done",
-              text,
-              seconds,
-              costUsd: NO_COST,
-            }),
-          }),
-          Effect.flatMap(record),
-        ),
-      ),
-    );
-    yield* handle.exitCode;
-  }).pipe(
-    Effect.scoped,
-    Effect.orDie,
-    Effect.withSpan("ocr-ja-bench.process", { attributes: { project } }),
-  );
 
 const throughTesseract = ({
   fs,
@@ -195,15 +126,12 @@ const throughVlm = ({
   );
 
 const makeReader = Effect.gen(function* makeReader() {
-  const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
   const fs = yield* FileSystem.FileSystem;
   const api = yield* ModelApi;
   return Reader.of({
     read: ({ engine, pages, record }) =>
       Match.value(engine).pipe(
-        Match.when({ kind: "process" }, ({ project }) =>
-          throughProcess({ spawn: (command) => spawner.spawn(command), project, pages, record }),
-        ),
+        Match.when({ kind: "recorded" }, () => Effect.void),
         Match.when({ kind: "tesseract" }, () =>
           Effect.forEach(
             pages,

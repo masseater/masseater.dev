@@ -4,7 +4,7 @@ import { cutoffFor } from "./cutoff.ts";
 import type { JudgeError } from "./judge-error.ts";
 import { InjectionJudge } from "./judge.ts";
 import type { Verdict } from "./judge.ts";
-import type { Parser, Span } from "./parser.ts";
+import type { Parser, Span, Unreadable } from "./parser.ts";
 import { DEFAULT_PARSERS } from "./parsers.ts";
 import { partsOf, unlocatedSpan } from "./parts.ts";
 import type { Part } from "./parts.ts";
@@ -28,6 +28,7 @@ interface DetectOptions {
   readonly branches?: number;
   readonly parsers?: readonly Parser[];
   readonly format?: string;
+  readonly unreadable?: readonly Unreadable[] | undefined;
 }
 
 const branchesFor = (sentenceCount: number): number =>
@@ -60,13 +61,22 @@ type Detection =
       readonly status: "clean";
       readonly probability: number;
       readonly probes: readonly Probe[];
+      readonly unreadable?: readonly Unreadable[];
     }
   | {
       readonly status: "injected";
       readonly probability: number;
       readonly regions: readonly Region[];
       readonly probes: readonly Probe[];
+      readonly unreadable?: readonly Unreadable[];
     };
+
+const notedIn = ({ unreadable = [] }: DetectOptions): Pick<Detection, "unreadable"> => {
+  if (Arr.isReadonlyArrayEmpty(unreadable)) {
+    return {};
+  }
+  return { unreadable };
+};
 
 interface Query {
   readonly text: string;
@@ -269,6 +279,7 @@ const detect = Effect.fn("injection-bisect.detect")(function* detect(
       status: "clean",
       probability,
       probes: yield* Ref.get(probes),
+      ...notedIn(options),
     } satisfies Detection;
   }
   const regions = yield* locateAll(query, sentences, probability);
@@ -277,6 +288,7 @@ const detect = Effect.fn("injection-bisect.detect")(function* detect(
     probability,
     regions: joinRegions(text)(regions),
     probes: yield* Ref.get(probes),
+    ...notedIn(options),
   } satisfies Detection;
 });
 

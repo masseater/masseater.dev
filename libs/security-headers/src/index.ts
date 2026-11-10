@@ -1,11 +1,15 @@
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
-const SECURITY_HEADERS = {
+const SECURITY_HEADERS_BASE = {
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
+} as const;
+
+const SECURITY_HEADERS = {
+  ...SECURITY_HEADERS_BASE,
   "Cross-Origin-Opener-Policy": "same-origin",
   "Cross-Origin-Embedder-Policy": "require-corp",
   "Cross-Origin-Resource-Policy": "same-origin",
@@ -21,6 +25,20 @@ const ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
 const WEB_ANALYTICS_SCRIPT_ORIGIN = "https://static.cloudflareinsights.com";
 
 const WEB_ANALYTICS_REPORT_ORIGIN = "https://cloudflareinsights.com";
+
+const OBJECT_SOURCE_NONE = "object-src 'none'";
+
+const BASE_URI_NONE = "base-uri 'none'";
+
+const FRAME_ANCESTORS_NONE = "frame-ancestors 'none'";
+
+const SERVER_RESPONSE_HEADERS = {
+  ...SECURITY_HEADERS_BASE,
+  "Content-Security-Policy": pipe(
+    [FRAME_ANCESTORS_NONE, BASE_URI_NONE, OBJECT_SOURCE_NONE],
+    Arr.join("; "),
+  ),
+} as const;
 
 const workerDirective = (worker: readonly string[] | undefined): readonly string[] =>
   Arr.fromOption(
@@ -51,10 +69,10 @@ const contentSecurityPolicy = ({
       ...workerDirective(worker),
       pipe(["img-src 'self' data:", ...image], Arr.join(" ")),
       `connect-src 'self' ${WEB_ANALYTICS_REPORT_ORIGIN}`,
-      "object-src 'none'",
-      "base-uri 'none'",
+      OBJECT_SOURCE_NONE,
+      BASE_URI_NONE,
       "form-action 'self'",
-      "frame-ancestors 'none'",
+      FRAME_ANCESTORS_NONE,
     ],
     Arr.join("; "),
   );
@@ -92,6 +110,7 @@ export {
   WEB_ANALYTICS_SCRIPT_ORIGIN,
   SECURITY_HEADERS,
   SECURITY_HEADERS_CREDENTIALLESS,
+  SERVER_RESPONSE_HEADERS,
   STATIC_PAGE_HEADERS,
   assetHeaders,
   contentSecurityPolicy,

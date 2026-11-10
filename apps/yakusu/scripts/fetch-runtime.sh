@@ -4,8 +4,6 @@ set -euo pipefail
 llama_tag=b12228
 model_repository=pfnet/plamo-3-translate-0.8b-GGUF
 model_revision=1cf96ae02133958a20074bfdfab76517bb737d00
-model_file=plamo-3-translate-0.8b-Q4_K_M.gguf
-model_sha256=70891ec70dc7ab4205745a38307867c2881b99239f20327927633abfe4bc9ec6
 
 case "${1:?usage: fetch-runtime.sh linux-x64|macos-arm64|windows-x64}" in
   linux-x64)
@@ -42,21 +40,20 @@ download() {
   curl --fail --silent --show-error --location --retry 3 --output "$2" "$1"
 }
 
-download "https://github.com/ggml-org/llama.cpp/releases/download/$llama_tag/$asset" "$downloads/$asset"
-checksum "$asset_sha256" "$downloads/$asset"
+archive="$resources/archives/$asset"
+if ! { [ -f "$archive" ] && checksum "$asset_sha256" "$archive"; }; then
+  rm -rf "$resources/archives"
+  mkdir -p "$resources/archives"
+  download "https://github.com/ggml-org/llama.cpp/releases/download/$llama_tag/$asset" "$downloads/$asset"
+  checksum "$asset_sha256" "$downloads/$asset"
+  mv "$downloads/$asset" "$archive"
+fi
 rm -rf "$resources/llama"
 mkdir -p "$resources/llama" "$resources/licenses"
 case "$asset" in
-  *.zip) unzip -q "$downloads/$asset" -d "$resources/llama" ;;
-  *) tar -xzf "$downloads/$asset" -C "$resources/llama" --strip-components=1 ;;
+  *.zip) unzip -q "$archive" -d "$resources/llama" ;;
+  *) tar -xzf "$archive" -C "$resources/llama" --strip-components=1 ;;
 esac
-
-if ! { [ -f "$resources/model.gguf" ] && checksum "$model_sha256" "$resources/model.gguf"; }; then
-  rm -f "$resources/model.gguf"
-  download "https://huggingface.co/$model_repository/resolve/$model_revision/$model_file" "$downloads/$model_file"
-  checksum "$model_sha256" "$downloads/$model_file"
-  mv "$downloads/$model_file" "$resources/model.gguf"
-fi
 
 download "https://huggingface.co/$model_repository/resolve/$model_revision/LICENSE/ja" "$resources/licenses/PLaMo-Community-License-ja.txt"
 download "https://huggingface.co/$model_repository/resolve/$model_revision/LICENSE/en" "$resources/licenses/PLaMo-Community-License-en.txt"

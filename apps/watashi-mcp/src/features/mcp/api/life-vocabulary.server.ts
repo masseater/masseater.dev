@@ -11,6 +11,7 @@ import {
 import { distance } from "fastest-levenshtein";
 
 import { InvalidRecord } from "#/features/mcp/model/invalid-record";
+import type { LifeRecordName } from "#/features/mcp/model/life-record.table";
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 
 import { lower, refOf, stringAt } from "./life-record";
@@ -23,6 +24,10 @@ import type { Writer } from "./life-writer.server";
 type Notice = Readonly<{ type: string; ref: string } & Record<string, unknown>>;
 
 type Definition = "event_kind" | "metric_definition";
+
+type ValuesCheck = (
+  checked: Readonly<{ record: LifeRecordName; body: Body }>,
+) => Effect.Effect<void, InvalidRecord | StorageFailed>;
 
 type Similar = Readonly<{ name: string; description: string }>;
 
@@ -156,12 +161,28 @@ const validateKind =
     );
   };
 
+const checkKindValues =
+  (body: Body) =>
+  (kind: string): Effect.Effect<void, InvalidRecord | StorageFailed> =>
+    findByLabel({ record: "event_kind", label: kind }).pipe(
+      Effect.flatMap(validateKind(kind, body)),
+    );
+
+const checkEventValues: ValuesCheck = ({ record, body }) => {
+  if (record !== "life_event") {
+    return Effect.void;
+  }
+  return pipe(
+    stringAt("kind")(body),
+    Option.match({ onNone: () => Effect.void, onSome: checkKindValues(body) }),
+  );
+};
+
 const kindNotices =
   (writer: Writer, body: Body) =>
   (kind: string): Effect.Effect<readonly Notice[], InvalidRecord | StorageFailed> =>
-    findByLabel({ record: "event_kind", label: kind }).pipe(
-      Effect.tap(validateKind(kind, body)),
-      Effect.flatMap(() => ensureDefined(writer, "event_kind")(kind)),
+    checkKindValues(body)(kind).pipe(
+      Effect.andThen(ensureDefined(writer, "event_kind")(kind)),
       Effect.map(Option.toArray),
     );
 
@@ -183,5 +204,5 @@ const vocabularyNotices =
       return [...kinds, ...Arr.getSomes(metrics)];
     });
 
-export { metricNamesOf as metricKeysOf, valuesOf, vocabularyNotices };
-export type { Notice };
+export { checkEventValues, metricNamesOf as metricKeysOf, valuesOf, vocabularyNotices };
+export type { Notice, ValuesCheck };

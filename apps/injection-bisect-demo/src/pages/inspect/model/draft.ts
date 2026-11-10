@@ -1,5 +1,7 @@
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { AUTO, DEFAULT_MODEL } from "@r_masseater/injection-bisect";
+import type { Unreadable } from "@r_masseater/injection-bisect";
+import { Array as Arr } from "effect";
 import { Atom } from "effect/reactivity";
 
 import { EXAMPLES } from "./examples";
@@ -13,12 +15,18 @@ type Run =
       readonly apiKey: string;
       readonly model: string;
       readonly format: string;
+      readonly unreadable: readonly Unreadable[];
     };
 
 type Opening =
   | { readonly status: "idle" }
   | { readonly status: "reading"; readonly name: string }
-  | { readonly status: "failed"; readonly name: string; readonly reason: string };
+  | { readonly status: "failed"; readonly name: string; readonly reason: string }
+  | {
+      readonly status: "partial";
+      readonly name: string;
+      readonly unreadable: readonly Unreadable[];
+    };
 
 type Focus = { readonly status: "none" } | { readonly status: "probe"; readonly id: number };
 
@@ -37,6 +45,22 @@ const modelAtom = Atom.make<string>(DEFAULT_MODEL);
 const formatAtom = Atom.make<string>(AUTO);
 
 const NOT_OPENING: Opening = { status: "idle" };
+
+const openedOf =
+  (name: string) =>
+  (unreadable: readonly Unreadable[]): Opening => {
+    if (Arr.isReadonlyArrayEmpty(unreadable)) {
+      return NOT_OPENING;
+    }
+    return { status: "partial", name, unreadable };
+  };
+
+const unreadableOf = (opening: Opening): readonly Unreadable[] => {
+  if (opening.status === "partial") {
+    return opening.unreadable;
+  }
+  return [];
+};
 
 const openingAtom = Atom.make<Opening>(NOT_OPENING);
 
@@ -76,6 +100,8 @@ export type { Focus, Opening, Run };
 export {
   NOT_OPENING,
   NO_FOCUS,
+  openedOf,
+  unreadableOf,
   useApiKey,
   useDraftText,
   useFocus,

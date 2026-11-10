@@ -1,11 +1,12 @@
-import { Array, Effect, HashSet, pipe } from "effect";
+import { Array, Effect, HashSet, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { encodeSummary, listedEntry } from "#entities/package";
-import { decodeRows, firstId } from "#shared/sql";
+import { encodeSummary, kindOf, listedEntry, searchableText } from "#entities/package";
+import { decodeRows, firstId, ids } from "#shared/sql";
 
 import { embedTexts } from "./embed-texts.ts";
 import { insertAssets, plainAsset } from "./insert-assets.ts";
+import type { AssetInput } from "./insert-assets.ts";
 import { nameOf } from "./name.ts";
 import { AssetGuidRow } from "./rows.ts";
 
@@ -26,6 +27,36 @@ const projectPackage = Effect.fn("projectPackage")(function* ensureProjectPackag
   return yield* firstId(sql`select id from packages where path = ${projectPath}`);
 });
 
+const isChanged = Effect.fn("isChanged")(function* isChangedSinceStored({
+  packageId,
+  packageName,
+  asset: { guid, pathname, previews },
+}: {
+  readonly packageId: number;
+  readonly packageName: string;
+  readonly asset: AssetInput;
+}) {
+  const sql = yield* SqlClient.SqlClient;
+  const text = searchableText({ pathname, kind: kindOf(pathname), packageName });
+  const samePreviews = pipe(
+    previews,
+    Array.map(
+      (png, index) =>
+        sql`(select i.png from images i where i.asset_id = a.id
+          order by i.id limit 1 offset ${index}) = ${png}`,
+    ),
+    sql.and,
+  );
+  const stored = yield* ids(
+    sql`select a.id from assets a
+      where a.package_id = ${packageId} and a.guid = ${guid}
+      and a.pathname = ${pathname} and a.text = ${text}
+      and (select count(*) from images i where i.asset_id = a.id) = ${previews.length}
+      and ${samePreviews}`,
+  );
+  return Array.isReadonlyArrayEmpty(stored);
+});
+
 /** @internal */
 const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAssets({
   projectPath,
@@ -40,11 +71,14 @@ const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAss
 }) {
   const sql = yield* SqlClient.SqlClient;
   const packageId = yield* projectPackage(projectPath);
-  const inputs = pipe(assets, Array.map(plainAsset));
-  yield* sql.withTransaction(
-    insertAssets({ packageId, packageName: nameOf(projectPath), assets: inputs }),
+  const packageName = nameOf(projectPath);
+  const changed = yield* pipe(
+    assets,
+    Array.map(plainAsset),
+    Effect.filter((asset) => isChanged({ packageId, packageName, asset })),
   );
-  yield* embedTexts(packageId);
+  yield* sql.withTransaction(insertAssets({ packageId, packageName, assets: changed }));
+  yield* embedTexts(Option.some(packageId));
   return packageId;
 });
 

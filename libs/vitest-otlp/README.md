@@ -5,10 +5,11 @@ spans, metrics and logs that the code under test really exported. It shows that
 auto-instrumentation and `OTEL_*` settings work. It also shows that telemetry
 actually leaves the process.
 
-It requires [Vite+](https://viteplus.dev/) and Node.js 26 or later.
+It requires [Vite+](https://viteplus.dev/) and Node.js 26 or later. `effect` is a
+peer dependency, so the tests and the plugin share one copy of Effect.
 
 ```sh
-vp add -D @r_masseater/vitest-otlp
+vp add -D @r_masseater/vitest-otlp effect
 ```
 
 ```ts

@@ -2,11 +2,12 @@ import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { fileTypeFromBuffer } from "file-type";
 
 import { ARCHIVE_FORMATS, archiveReadersOf } from "./archive.ts";
-import type { Document, Parser, Reader } from "./parser.ts";
+import type { Document, Parser, Reader, Unreadable } from "./parser.ts";
 import { DEFAULT_PARSERS } from "./parsers.ts";
 import { ReadError } from "./read-error.ts";
 import { DEFAULT_READERS } from "./readers.ts";
 import { AUTO, isNamed, plainParser } from "./segment.ts";
+import { BINARY, called, isBinary, itself, withUnreadable } from "./unreadable.ts";
 
 const NOT_FOUND = -1;
 
@@ -21,7 +22,26 @@ interface ReadInput extends Formats {
   readonly name?: string;
 }
 
-const decoder = new TextDecoder();
+const NOT_UTF8 = "not valid UTF-8 text";
+
+const lossy = new TextDecoder();
+
+const strict = new TextDecoder("utf-8", { fatal: true });
+
+const strictTextOf = Option.liftThrowable((bytes: Uint8Array) => strict.decode(bytes));
+
+const binaryIn = (text: string): readonly Unreadable[] => {
+  if (isBinary(text)) {
+    return [itself(BINARY)];
+  }
+  return [];
+};
+
+const decoded = (bytes: Uint8Array, format: string): Document =>
+  Option.match(strictTextOf(bytes), {
+    onNone: () => ({ text: lossy.decode(bytes), format, unreadable: [itself(NOT_UTF8)] }),
+    onSome: (text) => withUnreadable(binaryIn(text))({ text, format }),
+  });
 
 const extensionOf = (name: string): string =>
   pipe(
@@ -70,8 +90,7 @@ const named = (input: ReadInput, format: string): Effect.Effect<Document, ReadEr
       onSome: (reader) => reader.read(input.bytes),
       onNone: () =>
         Option.match(Arr.findFirst(parsersOf(input), isNamed(format)), {
-          onSome: (parser) =>
-            Effect.succeed({ text: decoder.decode(input.bytes), format: parser.format }),
+          onSome: (parser) => Effect.succeed(decoded(input.bytes, parser.format)),
           onNone: () => Effect.fail(ReadError.make({ reason: `unknown format: ${format}` })),
         }),
     },
@@ -109,13 +128,13 @@ const detected = (input: ReadInput): Effect.Effect<Document, ReadError> =>
     const byContent = Arr.findFirst(readersOf(input), accepting(input.bytes));
     return yield* Option.match(Option.firstSomeOf([byName, bySignature, byContent]), {
       onSome: ({ format }) => named(input, format),
-      onNone: () => Effect.succeed({ text: decoder.decode(input.bytes), format: AUTO }),
+      onNone: () => Effect.succeed(decoded(input.bytes, AUTO)),
     });
   });
 
-const readDocument = (input: ReadInput): Effect.Effect<Document, ReadError> => {
+const partOf = (input: ReadInput): Effect.Effect<Document, ReadError> => {
   const archiveReaders = archiveReadersOf(({ bytes, name }) =>
-    readDocument({ ...input, bytes, name, format: AUTO }),
+    partOf({ ...input, bytes, name, format: AUTO }),
   );
   const withArchive = {
     ...input,
@@ -127,6 +146,9 @@ const readDocument = (input: ReadInput): Effect.Effect<Document, ReadError> => {
   }
   return named(withArchive, format);
 };
+
+const readDocument = (input: ReadInput): Effect.Effect<Document, ReadError> =>
+  partOf(input).pipe(Effect.map(called(input.name ?? "")));
 
 export { formatsOf, readDocument };
 export type { Formats, ReadInput };
