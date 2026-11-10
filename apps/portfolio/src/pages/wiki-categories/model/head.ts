@@ -1,7 +1,7 @@
 import { categoryPath } from "#/entities/entry";
-import { wiki } from "#/shared/config";
 import { defaultImage, seo, wikiPageTitle } from "#/shared/lib";
 import type { Head } from "#/shared/lib";
+import { wiki } from "#/shared/wiki";
 
 const categoriesHead: Head = seo({
   title: wikiPageTitle(wiki.labels.categories),

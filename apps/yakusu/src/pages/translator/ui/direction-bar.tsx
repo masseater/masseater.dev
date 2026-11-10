@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { LanguageBar } from "#/features/choose-language";
-import { useDirection } from "#/features/translate-text";
+import { useDirection } from "#/pages/translator/api/translation.ts";
 
+import { LanguageBar } from "./language-bar.tsx";
 import { SwapButton } from "./swap-button.tsx";
 
 const DirectionBar = (): ReactNode => {

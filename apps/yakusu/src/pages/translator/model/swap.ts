@@ -1,8 +1,9 @@
 import { Option, pipe } from "effect";
 
-import { otherOf } from "#/entities/language";
-import type { LanguageCode, Selection, Source } from "#/entities/language";
-import type { Direction } from "#/features/translate-text";
+import type { Direction } from "./direction.ts";
+import { otherOf } from "./languages.ts";
+import type { LanguageCode } from "./languages.ts";
+import type { Selection, Source } from "./selection.ts";
 
 const swappedTarget = ({
   source,

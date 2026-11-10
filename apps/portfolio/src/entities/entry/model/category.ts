@@ -1,7 +1,7 @@
 import { Array as Arr, Schema, String as Str, pipe } from "effect";
 
-import { sectionMeta, sectionPath } from "#/shared/config/sections";
-import type { Section } from "#/shared/config/sections";
+import { sectionMeta, sectionPath } from "#/shared/config";
+import type { Section } from "#/shared/config";
 
 const categories = ["blogs", "sloppedia"] as const satisfies readonly Section[];
 

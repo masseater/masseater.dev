@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
 import { TEXT } from "#/pages/ranking/model/labels";
-import { metaQuery } from "#/shared/api/data";
+import { metaQuery } from "#/shared/api";
 
 import { Note } from "./note";
 import { RankingBody } from "./ranking-body";
