@@ -128,7 +128,7 @@ jobs:
             gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/$tag" -f "sha=$GITHUB_SHA"
           fi
           if ! gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --verify-tag --title "pod-rattle: v$version" --generate-notes
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --verify-tag --title "pod-rattle: v$version" --notes ""
           fi
           gh pr list --repo "$GITHUB_REPOSITORY" --state merged --label "autorelease: pending" \
             --head release-please--branches--main--components--pod-rattle --json number --jq '.[].number' |
