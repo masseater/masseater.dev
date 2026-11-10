@@ -104,6 +104,12 @@ const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
 
 const packageChecks: readonly string[] = [
   "sloppedia#size",
+  "@r_masseater/oxlint-plugin-decision#test",
+  "@r_masseater/oxlint-plugin-decision-presets#test",
+  "@r_masseater/oxlint-typed-rules#test",
+  "@r_masseater/oxlint-typed-rules#size",
+  "@r_masseater/vite-plus-adopt#test",
+  "@r_masseater/vite-plus-adopt#size",
   "@masseater.dev/pod-rattle-engine#cargo",
   "@masseater.dev/pod-rattle-plugin#cargo",
   "@masseater.dev/pod-rattle-host#cargo",

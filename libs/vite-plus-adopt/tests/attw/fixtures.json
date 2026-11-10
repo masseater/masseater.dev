@@ -1,0 +1,568 @@
+{
+  "fixtures": [
+    {
+      "name": "exports-patterns",
+      "packageName": "exports-patterns",
+      "packageVersion": "1.0.0",
+      "files": {
+        "/node_modules/exports-patterns/package.json": "{\n  \"name\": \"exports-patterns\",\n  \"version\": \"1.0.0\",\n  \"type\": \"module\",\n  \"exports\": {\n    \".\": {\n      \"types\": \"./types/index.d.ts\",\n      \"default\": \"./dist/index.js\"\n    },\n    \"./features/*.js\": {\n      \"types\": \"./types/features/*.d.ts\",\n      \"default\": \"./dist/features/*.js\"\n    },\n    \"./features/private/*\": null,\n    \"./utils/*\": {\n      \"import\": {\n        \"types\": \"./types/utils/*.d.mts\",\n        \"default\": \"./dist/utils/*.mjs\"\n      },\n      \"require\": {\n        \"types\": \"./types/utils/*.d.cts\",\n        \"default\": \"./dist/utils/*.cjs\"\n      }\n    },\n    \"./legacy\": [\n      \"./missing.js\",\n      {\n        \"types\": \"./types/legacy.d.ts\",\n        \"default\": \"./dist/legacy.js\"\n      }\n    ],\n    \"./package.json\": \"./package.json\"\n  },\n  \"imports\": {\n    \"#internal/*\": {\n      \"types\": \"./types/internal/*.d.ts\",\n      \"default\": \"./dist/internal/*.js\"\n    },\n    \"#dep\": \"dep-pkg\"\n  }\n}",
+        "/node_modules/exports-patterns/types/index.d.ts": "/// <reference types=\"dep-pkg\" resolution-mode=\"import\" />\n/// <reference path=\"//server/share/remote.d.ts\" />\n/// <reference path=\"file:///c:/types/url.d.ts\" />\n/// <reference path=\"file://localhost/d%3A/types/encoded.d.ts\" />\n/// <reference path=\"https://example.com/types/http.d.ts\" />\nexport * from \"#internal/helpers\";\nexport type { Dep } from \"#dep\";\nimport type { CjsOnly } from \"dep-pkg/cjs\" with { \"resolution-mode\": \"require\" };\nexport type { EsmOnly } from \"dep-pkg/esm\" with { \"resolution-mode\": \"import\" };\nexport type Lazy = typeof import(\"dep-pkg/esm\", { with: { \"resolution-mode\": \"import\" } });\nexport declare const cjs: CjsOnly;\nexport declare const x: number;\n",
+        "/node_modules/exports-patterns/dist/index.js": "export * from \"#internal/helpers\";\nexport const x = 1;\nexport const cjs = {};\n",
+        "/node_modules/exports-patterns/types/internal/helpers.d.ts": "/// <reference path=\"../../../typescript/lib/lib.d.ts\" />\nexport declare function help(): void;\n",
+        "/node_modules/exports-patterns/dist/internal/helpers.js": "export function help() {}\n",
+        "/node_modules/exports-patterns/types/features/a.d.ts": "export declare const a: string;\n",
+        "/node_modules/exports-patterns/dist/features/a.js": "export const a = \"a\";\n",
+        "/node_modules/exports-patterns/types/features/private/secret.d.ts": "export declare const secret: string;\n",
+        "/node_modules/exports-patterns/dist/features/private/secret.js": "export const secret = \"s\";\n",
+        "/node_modules/exports-patterns/types/utils/u.d.mts": "export declare const u: 1;\n",
+        "/node_modules/exports-patterns/types/utils/u.d.cts": "export declare const u: 2;\n",
+        "/node_modules/exports-patterns/dist/utils/u.mjs": "export const u = 1;\n",
+        "/node_modules/exports-patterns/dist/utils/u.cjs": "exports.u = 2;\n",
+        "/node_modules/exports-patterns/types/legacy.d.ts": "export declare const legacy: true;\n",
+        "/node_modules/exports-patterns/dist/legacy.js": "export const legacy = true;\n",
+        "/node_modules/dep-pkg/package.json": "{\n  \"name\": \"dep-pkg\",\n  \"version\": \"1.0.0\",\n  \"exports\": {\n    \".\": {\n      \"types\": \"./index.d.ts\",\n      \"default\": \"./index.js\"\n    },\n    \"./cjs\": {\n      \"types\": \"./cjs.d.cts\",\n      \"default\": \"./cjs.cjs\"\n    },\n    \"./esm\": {\n      \"types\": \"./esm.d.mts\",\n      \"default\": \"./esm.mjs\"\n    }\n  }\n}",
+        "/node_modules/dep-pkg/index.d.ts": "export interface Dep { id: string }\n",
+        "/node_modules/dep-pkg/cjs.d.cts": "export interface CjsOnly { kind: \"cjs\" }\n",
+        "/node_modules/dep-pkg/esm.d.mts": "export interface EsmOnly { kind: \"esm\" }\n"
+      },
+      "resolvedUrl": "https://registry.npmjs.org/exports-patterns/-/exports-patterns-1.0.0.tgz"
+    },
+    {
+      "name": "cjs-expandos",
+      "packageName": "cjs-expandos",
+      "packageVersion": "1.0.0",
+      "files": {
+        "/node_modules/cjs-expandos/package.json": "{\n  \"name\": \"cjs-expandos\",\n  \"version\": \"1.0.0\",\n  \"main\": \"./index.js\",\n  \"typings\": 5,\n  \"types\": \"./index.d.ts\",\n  \"exports\": {\n    \".\": {\n      \"types\": \"./index.d.ts\",\n      \"default\": \"./index.js\"\n    },\n    \"./shorthand\": {\n      \"types\": \"./shorthand.d.ts\",\n      \"default\": \"./shorthand.js\"\n    },\n    \"./define\": {\n      \"types\": \"./define.d.ts\",\n      \"default\": \"./define.js\"\n    },\n    \"./source\": {\n      \"types\": \"./src/source.ts\",\n      \"default\": \"./source.js\"\n    },\n    \"./blocks\": {\n      \"types\": \"./blocks.d.ts\",\n      \"default\": \"./blocks.js\"\n    },\n    \"./false-default\": {\n      \"types\": \"./false-default.d.ts\",\n      \"default\": \"./false-default.js\"\n    }\n  }\n}",
+        "/node_modules/cjs-expandos/index.js": "var lib = lib || {};\nlib.version = \"1\";\nlib.helpers = lib.helpers || {};\nlib.helpers.format = function (value) {\n  return String(value);\n};\nfunction Widget() {}\nWidget.prototype.render = function () {};\nWidget.create = function () {\n  return new Widget();\n};\nObject.defineProperty(lib, \"answer\", {\n  get: function () {\n    return 42;\n  },\n});\nlib.Widget = Widget;\nmodule.exports = lib;\n",
+        "/node_modules/cjs-expandos/index.d.ts": "declare namespace lib {\n  const version: string;\n  namespace helpers {\n    function format(value: unknown): string;\n  }\n  const answer: number;\n  class Widget {\n    render(): void;\n    static create(): Widget;\n  }\n}\nexport = lib;\n",
+        "/node_modules/cjs-expandos/shorthand.js": "const a = 1;\nfunction b() {}\nthis.legacy = true;\nmodule.exports = { a, b };\n",
+        "/node_modules/cjs-expandos/shorthand.d.ts": "export declare const a: number;\nexport declare function b(): void;\n",
+        "/node_modules/cjs-expandos/define.js": "\"use strict\";\nObject.defineProperty(exports, \"__esModule\", { value: true });\nObject.defineProperty(exports, \"value\", {\n  enumerable: true,\n  get: function () {\n    return 1;\n  },\n});\nexports.default = function main() {};\nmodule.exports.named = \"n\";\n",
+        "/node_modules/cjs-expandos/define.d.ts": "export declare const value: number;\nexport declare const named: string;\nexport default function main(): void;\n",
+        "/node_modules/cjs-expandos/src/source.ts": "import helper = require(\"../helper\");\nexport const lazy = import(\"../lazy.js\");\nexport const help = helper;\n",
+        "/node_modules/cjs-expandos/helper.d.ts": "declare const helper: () => void;\nexport = helper;\n",
+        "/node_modules/cjs-expandos/helper.js": "module.exports = function () {};\n",
+        "/node_modules/cjs-expandos/lazy.d.ts": "export declare const lazy: 1;\n",
+        "/node_modules/cjs-expandos/lazy.js": "exports.lazy = 1;\n",
+        "/node_modules/cjs-expandos/source.js": "exports.lazy = Promise.resolve();\nexports.help = require(\"./helper\");\n",
+        "/node_modules/cjs-expandos/blocks.js": "var lazy = lazy || {};\nif (typeof window === \"undefined\") {\n  lazy.server = true;\n}\nvar defaults = defaults ?? {};\nif (defaults) {\n  defaults.mode = \"strict\";\n}\nvar ns = {};\nns.inner = ns.inner || {};\nif (ns) {\n  ns.inner.deep = 1;\n}\nfunction Proto() {}\nif (Proto) {\n  Proto.prototype.extra = function () {};\n}\nvar fn = function () {};\nif (fn) {\n  fn.meta = 1;\n}\nAssigned = function () {};\nif (Assigned) {\n  Assigned.tag = \"t\";\n}\nmodule.exports = { lazy, defaults, ns, Proto, fn };\n",
+        "/node_modules/cjs-expandos/blocks.d.ts": "export declare const lazy: { server?: boolean };\nexport declare const defaults: { mode?: string };\nexport declare const ns: { inner: { deep?: number } };\nexport declare function Proto(): void;\nexport declare const fn: { (): void; meta: number };\n",
+        "/node_modules/cjs-expandos/false-default.js": "var api = api || {};\napi.start = function () {};\napi.options = { verbose: false };\nfunction Engine() {}\nEngine.prototype.run = function () {};\napi.Engine = Engine;\nmodule.exports = api;\n",
+        "/node_modules/cjs-expandos/false-default.d.ts": "declare const api: {\n  start(): void;\n  options: { verbose: boolean };\n  Engine: new () => { run(): void };\n};\nexport default api;\n"
+      },
+      "resolvedUrl": "https://registry.npmjs.org/cjs-expandos/-/cjs-expandos-1.0.0.tgz"
+    },
+    {
+      "name": "scoped-types-package",
+      "packageName": "@scope/typed",
+      "packageVersion": "1.0.0",
+      "typesPackage": {
+        "packageName": "@types/scope__typed",
+        "packageVersion": "1.0.0"
+      },
+      "files": {
+        "/node_modules/@scope/typed/package.json": "{\n  \"name\": \"@scope/typed\",\n  \"version\": \"1.0.0\",\n  \"main\": \"./lib/index.js\"\n}",
+        "/node_modules/@scope/typed/lib/index.js": "module.exports = {\n  run() {},\n};\n",
+        "/node_modules/@types/scope__typed/package.json": "{\n  \"name\": \"@types/scope__typed\",\n  \"version\": \"1.0.0\",\n  \"types\": \"index.d.ts\"\n}",
+        "/node_modules/@types/scope__typed/index.d.ts": "export declare function run(): void;\n"
+      },
+      "resolvedUrl": "https://registry.npmjs.org/@scope/typed/-/typed-1.0.0.tgz"
+    },
+    {
+      "name": "types-versions",
+      "packageName": "types-versions",
+      "packageVersion": "1.0.0",
+      "files": {
+        "/node_modules/types-versions/package.json": "{\n  \"name\": \"types-versions\",\n  \"version\": \"1.0.0\",\n  \"main\": \"./index.js\",\n  \"types\": \"./index.d.ts\"\n}",
+        "/node_modules/types-versions/index.js": "const { feature } = require(\"tv-dep/feature\");\nexports.sub = feature;\n",
+        "/node_modules/types-versions/index.d.ts": "import { feature } from \"tv-dep/feature\";\nexport declare const sub: typeof feature;\n",
+        "/node_modules/tv-dep/package.json": "{\n  \"name\": \"tv-dep\",\n  \"version\": \"2.0.0\",\n  \"typesVersions\": {\n    \">=4.0\": {\n      \"*\": [\n        \"ts4/*\"\n      ]\n    }\n  }\n}",
+        "/node_modules/tv-dep/feature.js": "exports.feature = 1;\n",
+        "/node_modules/tv-dep/ts4/feature.d.ts": "export declare const feature: number;\n"
+      },
+      "resolvedUrl": "https://registry.npmjs.org/types-versions/-/types-versions-1.0.0.tgz"
+    }
+  ],
+  "paths": [
+    "/a/b/../c",
+    "//server/share/dir/file",
+    "//server",
+    "\\\\server\\share",
+    "c:/dir/file",
+    "C:",
+    "c:\\dir\\..\\file",
+    "file:///c:/dir/file",
+    "file://localhost/d%3A/dir",
+    "file://localhost/D%3a",
+    "file:///c:",
+    "file://host/path",
+    "https://example.com/a/./b",
+    "https://example.com",
+    "relative/./path/../x",
+    "./a//b/",
+    "../../up",
+    "/"
+  ],
+  "hostLookups": [
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#dep",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#dep",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#dep",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#dep",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#internal/helpers",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#internal/helpers",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#internal/helpers",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#internal/helpers",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#missing",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#missing",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#missing",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "#missing",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "dep-pkg/esm",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "dep-pkg/esm",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "dep-pkg/esm",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "dep-pkg/esm",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "dep-pkg/cjs",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "dep-pkg/cjs",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "dep-pkg/cjs",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "dep-pkg/cjs",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/features/a.js",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/features/a.js",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/features/a.js",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/features/a.js",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/features/private/secret.js",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/features/private/secret.js",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/features/private/secret.js",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/features/private/secret.js",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/utils/u",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/utils/u",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/utils/u",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/utils/u",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/legacy",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/legacy",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/legacy",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/legacy",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/nothing",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/nothing",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/nothing",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "exports-patterns/nothing",
+      "containingFile": "/node_modules/exports-patterns/types/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 100,
+      "module": 99,
+      "moduleName": "#internal/helpers",
+      "containingFile": "/node_modules/exports-patterns/dist/index.js",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "exports-patterns",
+      "moduleResolution": 100,
+      "module": 99,
+      "moduleName": "dep-pkg",
+      "containingFile": "/node_modules/exports-patterns/dist/index.js",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "types-versions",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "tv-dep/feature",
+      "containingFile": "/node_modules/types-versions/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "types-versions",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "tv-dep/feature",
+      "containingFile": "/node_modules/types-versions/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "types-versions",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "tv-dep/feature",
+      "containingFile": "/node_modules/types-versions/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "types-versions",
+      "moduleResolution": 3,
+      "module": 100,
+      "moduleName": "tv-dep/feature",
+      "containingFile": "/node_modules/types-versions/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "types-versions",
+      "moduleResolution": 100,
+      "module": 99,
+      "moduleName": "tv-dep/feature",
+      "containingFile": "/node_modules/types-versions/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "types-versions",
+      "moduleResolution": 100,
+      "module": 99,
+      "moduleName": "tv-dep/feature",
+      "containingFile": "/node_modules/types-versions/index.d.ts",
+      "mode": 1,
+      "noDtsResolution": true
+    },
+    {
+      "fixture": "types-versions",
+      "moduleResolution": 100,
+      "module": 99,
+      "moduleName": "tv-dep/feature",
+      "containingFile": "/node_modules/types-versions/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": false
+    },
+    {
+      "fixture": "types-versions",
+      "moduleResolution": 100,
+      "module": 99,
+      "moduleName": "tv-dep/feature",
+      "containingFile": "/node_modules/types-versions/index.d.ts",
+      "mode": 99,
+      "noDtsResolution": true
+    }
+  ],
+  "packageNames": [
+    "scope__typed",
+    "plain",
+    "a__b__c",
+    "__leading",
+    "trailing__",
+    "@scope/name",
+    "@scope/name/sub",
+    "plain/sub"
+  ]
+}

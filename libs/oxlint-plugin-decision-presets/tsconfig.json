@@ -1,0 +1,32 @@
+{
+  "extends": "./tsconfig.build.json",
+  "include": [
+    "src",
+    "tests",
+    "*.ts"
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@r_masseater/oxlint-plugin-decision": [
+        "../oxlint-plugin-decision/src/index.ts"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/platform-node/NodeServices#layer",
+          "@effect/vitest#layer",
+          "@effect/vitest/utils#assertInclude",
+          "@effect/vitest/utils#deepStrictEqual",
+          "@effect/vitest/utils#strictEqual",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/PlatformError#PlatformError",
+          "effect/process/ChildProcess#make",
+          "effect/process/ChildProcessSpawner#ChildProcessSpawner"
+        ]
+      }
+    ]
+  }
+}

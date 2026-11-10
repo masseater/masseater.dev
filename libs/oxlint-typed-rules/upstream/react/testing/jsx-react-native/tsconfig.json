@@ -1,0 +1,4 @@
+{
+  "extends": "../samples/tsconfig.jsx-react-native.json",
+  "include": ["*.ts", "*.tsx"]
+}

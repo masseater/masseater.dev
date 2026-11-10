@@ -1,6 +1,6 @@
 import { OpenRouter } from "@openrouter/sdk";
-import { HTTPClient } from "@openrouter/sdk/lib/http.js";
 import type { DecisionsRequest, DecisionsResponse } from "@openrouter/sdk/models";
+import { openRouterApp } from "@r_masseater/oxlint-plugin-decision/openrouter-app";
 import { isSplitChoice } from "bench-summary/schema";
 import type { ChoiceVia } from "bench-summary/schema";
 import {
@@ -33,40 +33,7 @@ const NO_COST = 0;
 const MIN_TOTAL = Number.EPSILON;
 const READOUT = "probabilities";
 
-const REPO = "masseater/mst-ja-decision-bench";
-const APP = `https://github.com/${REPO}/bench`;
-
-const isSet = (name: string): Effect.Effect<boolean> =>
-  Config.option(Config.NonEmptyString(name)).pipe(
-    Effect.map(Option.isSome),
-    Effect.orElseSucceed(() => false),
-  );
-
-const contextOf = Effect.gen(function* contextOf() {
-  if (yield* isSet("GITHUB_ACTIONS")) {
-    return "github-actions";
-  }
-  if (yield* isSet("CLAUDE_CODE_REMOTE")) {
-    return "claude-code-cloud";
-  }
-  if (yield* isSet("CLAUDECODE")) {
-    return "claude-code";
-  }
-  return "local";
-});
-
-const hiddenApp = (): HTTPClient =>
-  new HTTPClient().addHook("beforeRequest", (request) => {
-    request.headers.set("X-OpenRouter-App-Visibility", "hidden");
-  });
-
-const attribution = contextOf.pipe(
-  Effect.map((context) => ({
-    httpReferer: `${APP}/${context}`,
-    appTitle: `${REPO} ${context} bench`,
-    httpClient: hiddenApp(),
-  })),
-);
+const attribution = openRouterApp("bench");
 
 type Frozen<Value> = Value extends object
   ? { readonly [Key in keyof Value]: Frozen<Value[Key]> }

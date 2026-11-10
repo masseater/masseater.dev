@@ -1,0 +1,78 @@
+{
+  "name": "@r_masseater/oxlint-plugin-decision-presets",
+  "version": "0.3.0",
+  "description": "Ready-made plain-English rule presets for @r_masseater/oxlint-plugin-decision.",
+  "keywords": [
+    "decision-model",
+    "lint",
+    "openrouter",
+    "oxlint",
+    "oxlint-plugin",
+    "preset"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/oxlint-plugin-decision-presets#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/oxlint-plugin-decision-presets"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*",
+    "#example/*": "./example/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./recommended": {
+      "types": "./dist/recommended.d.mts",
+      "default": "./dist/recommended.mjs"
+    },
+    "./strict": {
+      "types": "./dist/strict.d.mts",
+      "default": "./dist/strict.mjs"
+    },
+    "./review-only": {
+      "types": "./dist/review-only.d.mts",
+      "default": "./dist/review-only.mjs"
+    },
+    "./ai-slop": {
+      "types": "./dist/ai-slop.d.mts",
+      "default": "./dist/ai-slop.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build"
+  },
+  "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@r_masseater/oxlint-plugin-decision": "workspace:*",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "oxlint": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "@r_masseater/oxlint-plugin-decision": "workspace:^",
+    "oxlint": ">=1.87.0"
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}

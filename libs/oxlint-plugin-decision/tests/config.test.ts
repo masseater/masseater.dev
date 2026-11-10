@@ -1,0 +1,204 @@
+import { NodeServices } from "@effect/platform-node";
+import { layer } from "@effect/vitest";
+import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
+import { Effect } from "effect";
+
+import type { DecisionPluginSetup, DecisionRule } from "#src/types.ts";
+
+import { PASSED, TIMEOUT, lintProject, outputOf } from "./fixtures.ts";
+import { configSource, pluginPath, runOxlint, writeProject } from "./oxlint.ts";
+import type { Services } from "./oxlint.ts";
+
+const customPlugin = (
+  dist: string,
+): string => `import { createDecisionPlugin, defineDecisionRule, defineProvider } from ${JSON.stringify(dist)};
+
+const yes = ({ request }) => ({
+  ok: true,
+  response: {
+    model: "fake-1",
+    answers: Object.fromEntries(Object.keys(request.questions).map((ref) => [ref, { type: "noul", noul: 0.9 }])),
+  },
+});
+
+export default createDecisionPlugin({
+  name: "custom",
+  rules: [
+    defineDecisionRule({ id: "code-rule", target: "call", question: "Is this a call?", cutoff: 0.8 }),
+    defineDecisionRule({ id: "off-rule", target: "file", question: "Is this a file?", cutoff: 0.8 }),
+  ],
+  providers: [defineProvider({ name: "fake", requiredEnv: ["FAKE_KEY"], decide: yes })],
+});
+`;
+
+const CUSTOM_LINE =
+  "log.js:1:1: [code-rule] fake/fake-1 answered yes (0.90 >= 0.80): Is this a call? [Error/custom(code-rule)]";
+
+const customProvider = Effect.scoped(
+  Effect.gen(function* test() {
+    const cwd = yield* writeProject({
+      "plugin.mjs": customPlugin(yield* pluginPath),
+      "log.js": "console.log(user.email);\n",
+      "oxlint.config.ts": configSource({
+        jsPlugins: ["./plugin.mjs"],
+        settings: { custom: { model: "fake/any", ci: "fail" } },
+        rules: { "custom/code-rule": "error" },
+      }),
+    });
+    const args = ["--format", "unix", "-c", "oxlint.config.ts", "log.js"];
+    const without = yield* runOxlint({ cwd, args, env: {} });
+    strictEqual(without.status, PASSED, outputOf(without));
+    assertInclude(without.stderr, "FAKE_KEY is not set, skipping fake models");
+    const withKey = yield* runOxlint({ cwd, args, env: { FAKE_KEY: "1" } });
+    deepStrictEqual(
+      withKey.stdout.split("\n").filter((line) => line.includes("custom(")),
+      [CUSTOM_LINE],
+    );
+  }),
+);
+
+const batchingPlugin = (
+  dist: string,
+): string => `import { createDecisionPlugin, defineDecisionRule, defineProvider } from ${JSON.stringify(dist)};
+
+const answer = (noul) => ({ request }) => ({
+  ok: true,
+  response: {
+    model: request.model,
+    answers: Object.fromEntries(Object.keys(request.questions).map((ref) => [ref, { type: "noul", noul }])),
+  },
+});
+
+export default createDecisionPlugin({
+  name: "batch",
+  rules: [
+    defineDecisionRule({ id: "first", target: "call", question: "Is this a call?", cutoff: 0.8 }),
+    defineDecisionRule({ id: "second", target: "call", question: "Is this a call?", cutoff: 0.8 }),
+  ],
+  providers: [
+    defineProvider({
+      name: "fake",
+      requiredEnv: [],
+      decide: answer(0.1),
+      decideAll: (inputs) => inputs.map(answer(inputs.length === 2 ? 0.9 : 0.1)),
+    }),
+  ],
+});
+`;
+
+const ONE_PART = 1;
+
+const batchedModels = Effect.scoped(
+  Effect.gen(function* test() {
+    const cwd = yield* writeProject({
+      "plugin.mjs": batchingPlugin(yield* pluginPath),
+      "log.js": "console.log(user.email);\n",
+      "oxlint.config.ts": configSource({
+        jsPlugins: ["./plugin.mjs"],
+        settings: { batch: { model: "fake/one", ci: "fail" } },
+        rules: { "batch/first": "error", "batch/second": ["error", { model: "fake/two" }] },
+      }),
+    });
+    const run = yield* runOxlint({
+      cwd,
+      args: ["--format", "unix", "-c", "oxlint.config.ts", "log.js"],
+      env: {},
+    });
+    deepStrictEqual(
+      run.stdout
+        .split("\n")
+        .filter((line) => line.includes("batch("))
+        .map((line) => line.split(" answered", ONE_PART).join("")),
+      ["log.js:1:1: [first] fake/one", "log.js:1:1: [second] fake/two"],
+    );
+  }),
+);
+
+const BELOW_CONFIDENT = 0.79;
+const ABOVE_CERTAIN = 1.01;
+
+const goodRule: DecisionRule = { id: "a", target: "call", question: "Is it bad?", cutoff: 0.8 };
+
+const fileRuleAt = (cutoff: number): DecisionRule => ({
+  ...goodRule,
+  target: "file",
+  location: { question: "Where?", cutoff },
+});
+
+const badConfigs: readonly (readonly [string, DecisionPluginSetup, string])[] = [
+  [
+    "location is configured for a non-file rule",
+    { rules: [{ ...goodRule, location: { question: "Where?", cutoff: 0.8 } }] },
+    "location is supported only for file rules",
+  ],
+  ["a location cutoff is below 0.8", { rules: [fileRuleAt(BELOW_CONFIDENT)] }, "cutoff"],
+  ["a rule cutoff is below 0.8", { rules: [{ ...goodRule, cutoff: BELOW_CONFIDENT }] }, "cutoff"],
+  ["a location cutoff is above 1", { rules: [fileRuleAt(ABOVE_CERTAIN)] }, "cutoff"],
+  [
+    "a plugin-level field is unknown",
+    { rules: [goodRule], ...JSON.parse('{"foo":1}') },
+    "invalid createDecisionPlugin options: Expected no excess property",
+  ],
+  [
+    "two rules share an id",
+    { rules: [goodRule, { ...goodRule, target: "file", question: "Other?" }] },
+    'oxlint-plugin-decision: rule id "a" is used more than once',
+  ],
+  [
+    "a model names an unknown provider",
+    { model: "acme/model-1", rules: [goodRule] },
+    'oxlint-plugin-decision: model "acme/model-1" must be "<provider>/<model>" with a provider from: openrouter',
+  ],
+  [
+    "a model has no provider prefix",
+    { rules: [{ ...goodRule, model: "jev-latest" }] },
+    'model "jev-latest" must be "<provider>/<model>"',
+  ],
+  [
+    "a classify rule reports a label it does not list",
+    {
+      rules: [
+        {
+          ...goodRule,
+          answer: { kind: "classify", labels: { ok: "Fine", bad: "Not fine" }, report: ["worse"] },
+        },
+      ],
+    },
+    "every label in report must be one of labels",
+  ],
+  [
+    "a context scope is unknown",
+    { rules: [{ ...goodRule, ...JSON.parse('{"context":{"scope":"repo"}}') }] },
+    "context",
+  ],
+];
+
+const refuses = ([, options, expected]: readonly [
+  string,
+  DecisionPluginSetup,
+  string,
+]): Effect.Effect<void, unknown, Services> =>
+  Effect.gen(function* test() {
+    const run = yield* lintProject({
+      files: { "pass.js": "ok();\n" },
+      options,
+      env: {},
+      format: "default",
+    });
+    strictEqual(run.status === PASSED, false);
+    assertInclude(outputOf(run), expected);
+  });
+
+layer(NodeServices.layer, { excludeTestServices: true })("plugin configuration", (it) => {
+  it.effect(
+    "registers each rule under its own id and asks only for the enabled ones",
+    () => customProvider,
+    TIMEOUT,
+  );
+  it.effect("asks every model of a file in one provider call", () => batchedModels, TIMEOUT);
+  it.effect.each(badConfigs)(
+    "refuses a config where %s",
+    (badConfig) => refuses(badConfig),
+    TIMEOUT,
+  );
+});

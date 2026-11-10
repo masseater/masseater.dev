@@ -113,7 +113,7 @@ const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, st
   "update-branches.yml": BOT_PERMISSIONS,
 };
 
-const NPM_GRANTS: readonly string[] = ["lint-kit", "masseater.dev/npm"];
+const NPM_GRANTS: readonly string[] = ["masseater.dev/npm"];
 
 const ATPROTO_GRANTS: readonly string[] = ["masseater.dev"];
 
