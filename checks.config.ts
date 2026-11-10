@@ -1,7 +1,7 @@
+import { INSTRUMENTATION, requiredStack } from "@r_masseater/msch/lint";
 import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import fsd from "@r_masseater/vite-plus-adopt/fsd";
 import { Array as Arr, pipe } from "effect";
-import { INSTRUMENTATION, requiredStack } from "oxlint-masseater-plugin";
 import type { UserConfig } from "vite-plus";
 
 const PUBLIC_VALUES = [

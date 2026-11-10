@@ -326,12 +326,9 @@ catalogs:
     '@plussub/srt-vtt-parser':
       specifier: ^2.0.5
       version: 2.0.5
-    '@r_masseater/oxlint-plugin-decision':
-      specifier: 0.1.1
-      version: 0.1.1
     '@r_masseater/oxlint-typed-rules':
-      specifier: 0.1.3
-      version: 0.1.3
+      specifier: 0.3.0
+      version: 0.3.0
     '@r_masseater/vite-plus-adopt':
       specifier: 0.2.0
       version: 0.2.0
@@ -849,18 +846,15 @@ importers:
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.67.4
-      '@html-eslint/eslint-plugin-react':
-        specifier: 'catalog:'
-        version: 0.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
-      '@r_masseater/oxlint-typed-rules':
-        specifier: 'catalog:'
-        version: 0.1.3(typescript@7.1.0-beta)
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:libs/msch
       '@r_masseater/vite-plus-adopt':
         specifier: 'catalog:'
         version: 0.2.0(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(redis@6.2.1(@opentelemetry/api@1.10.0))(supports-color@7.2.0)(vite-plus@1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
-      '@shadcn/lint':
-        specifier: 'catalog:'
-        version: 0.2.5(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
+      '@r_masseater/workers-tracing':
+        specifier: workspace:*
+        version: link:libs/workers-tracing
       '@tanstack/intent':
         specifier: 'catalog:'
         version: 0.5.6
@@ -873,24 +867,9 @@ importers:
       effect:
         specifier: catalog:stack
         version: 4.1.2
-      eslint-plugin-baseline-js:
-        specifier: 'catalog:'
-        version: 0.7.7(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
-      eslint-plugin-no-comments:
-        specifier: 'catalog:'
-        version: 1.2.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
-      eslint-plugin-react-hooks:
-        specifier: 'catalog:'
-        version: 7.1.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)
       fallow:
         specifier: catalog:stack
         version: 3.40.0
-      oxlint-masseater-plugin:
-        specifier: workspace:*
-        version: link:libs/oxlint-masseater-plugin
-      oxlint-plugin-eslint:
-        specifier: 'catalog:'
-        version: 1.92.0
       renovate:
         specifier: catalog:stack
         version: 44.222.5(supports-color@7.2.0)(typanion@3.14.0)
@@ -2658,9 +2637,36 @@ importers:
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@effect/tsgo':
+        specifier: catalog:stack
+        version: 0.67.4
+      '@html-eslint/eslint-plugin-react':
+        specifier: 'catalog:'
+        version: 0.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+      '@r_masseater/oxlint-plugin-decision':
+        specifier: workspace:*
+        version: link:../oxlint-plugin-decision
+      '@r_masseater/oxlint-typed-rules':
+        specifier: 'catalog:'
+        version: 0.3.0(typescript@7.1.0-beta)
+      '@shadcn/lint':
+        specifier: 'catalog:'
+        version: 0.2.5(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
       effect:
         specifier: catalog:stack
         version: 4.1.2
+      eslint-plugin-baseline-js:
+        specifier: 'catalog:'
+        version: 0.7.7(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+      eslint-plugin-no-comments:
+        specifier: 'catalog:'
+        version: 1.2.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+      eslint-plugin-react-hooks:
+        specifier: 'catalog:'
+        version: 7.1.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      oxlint-plugin-eslint:
+        specifier: 'catalog:'
+        version: 1.92.0
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -2671,6 +2677,9 @@ importers:
       '@effect/vitest':
         specifier: 'catalog:'
         version: 4.1.2(effect@4.1.2)(vitest@5.1.0)
+      '@r_masseater/vitest-otlp':
+        specifier: workspace:*
+        version: link:../vitest-otlp
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
@@ -2760,30 +2769,6 @@ importers:
       react:
         specifier: 19.3.1
         version: 19.3.1
-
-  libs/oxlint-masseater-plugin:
-    dependencies:
-      '@effect/tsgo':
-        specifier: catalog:stack
-        version: 0.67.4
-      '@html-eslint/eslint-plugin-react':
-        specifier: 'catalog:'
-        version: 0.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
-      '@r_masseater/oxlint-plugin-decision':
-        specifier: 'catalog:'
-        version: 0.1.1(oxlint@1.91.0(oxlint-tsgolint@7.0.2005)(vite-plus@1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@r_masseater/oxlint-typed-rules':
-        specifier: 'catalog:'
-        version: 0.1.3(typescript@7.1.0-beta)
-      '@r_masseater/workers-tracing':
-        specifier: workspace:*
-        version: link:../workers-tracing
-      effect:
-        specifier: catalog:stack
-        version: 4.1.2
-      eslint-plugin-react-hooks:
-        specifier: 'catalog:'
-        version: 7.1.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)
 
   libs/oxlint-plugin-decision:
     dependencies:
@@ -3481,34 +3466,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
-      vite-plus:
-        specifier: catalog:stack
-        version: 1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
-
-  tools/msch:
-    dependencies:
-      '@effect/platform-node':
-        specifier: 'catalog:'
-        version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@msch/core':
-        specifier: workspace:*
-        version: link:../../libs/msch
-      effect:
-        specifier: catalog:stack
-        version: 4.1.2
-    devDependencies:
-      '@effect/vitest':
-        specifier: 'catalog:'
-        version: 4.1.2(effect@4.1.2)(vitest@5.1.0)
-      '@r_masseater/vitest-otlp':
-        specifier: workspace:*
-        version: link:../../libs/vitest-otlp
-      '@types/node':
-        specifier: 'catalog:'
-        version: 26.6.6
-      typescript:
-        specifier: catalog:stack
-        version: 7.1.0-beta
       vite-plus:
         specifier: catalog:stack
         version: 1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -5869,9 +5826,6 @@ packages:
     resolution: {integrity: sha512-hAX0pT/73190NLqBPPWSdBVGtbY6VOhWYK3qqHqtXQ1gK7kS2yz4+ivsN07hpJ6I3aeMtKP6J6npsEKOAzuTLA==}
     engines: {node: '>=20.0'}
 
-  '@openrouter/sdk@1.5.33':
-    resolution: {integrity: sha512-hbg4q/tZHOnggBk7Sjkel6COExpbe1+2p4Mt2YyvAloDXtNNaFkMab0SgVfoBdTgzweBlrJJ4jUHwHt5rFiadA==}
-
   '@openrouter/sdk@1.5.63':
     resolution: {integrity: sha512-3LEAN6lq176K75NlTWT7dEP56RcaqsbED076/oH7NjxYV/Bt1lCn8Nwc/9V5iXN2BySKhJD6HBRkVNYC0gv8gw==}
 
@@ -7166,14 +7120,8 @@ packages:
   '@qnighy/marshal@0.1.3':
     resolution: {integrity: sha512-uaDZTJYtD2UgQTGemmgWeth+e2WapZm+GkAq8UU8AJ55PKRFaf1GkH7X/uzA+Ygu8iInzIlM2FGyCUnruyMKMg==}
 
-  '@r_masseater/oxlint-plugin-decision@0.1.1':
-    resolution: {integrity: sha512-UT4fgR7c1r6tafrzVXl3As0a0HyEmJMh2weEJoLH8K+yrCQeMN+hxNJH7FvvMHjn1JfJG88A+u6b7KTEpC8YqA==}
-    engines: {node: '>=26'}
-    peerDependencies:
-      oxlint: '>=1.87.0'
-
-  '@r_masseater/oxlint-typed-rules@0.1.3':
-    resolution: {integrity: sha512-514bPuoH1Lk5xTdu39vJZH4ZK8WRVMyz6xUUyslasgYYWZAD5tt5OMs7EsZDjT0idINvLObgeBi2PIfCgGqECA==}
+  '@r_masseater/oxlint-typed-rules@0.3.0':
+    resolution: {integrity: sha512-6I/MnXT/MGtMAz/IdS+DzESSBfeSaVHwX+WU7sCR5mUt2wuawm7vvwucY/YPlX4u2LXfn7An6sHxXpPuXkBOiw==}
     engines: {node: '>=26'}
     peerDependencies:
       typescript: '>=7.1.0-beta'
@@ -16456,6 +16404,26 @@ snapshots:
 
   '@babel/compat-data@7.29.7': {}
 
+  '@babel/core@7.29.7(supports-color@10.2.2)':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/generator': 7.29.13
+      '@babel/helper-compilation-targets': 7.29.7
+      '@babel/helper-module-transforms': 7.29.7(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2)
+      '@babel/helpers': 7.29.7
+      '@babel/parser': 7.29.13
+      '@babel/template': 7.29.7
+      '@babel/traverse': 7.29.13(supports-color@10.2.2)
+      '@babel/types': 7.29.11
+      '@jridgewell/remapping': 2.3.5
+      convert-source-map: 2.0.0
+      debug: 4.4.3(supports-color@10.2.2)
+      gensync: 1.0.0-beta.2
+      json5: 2.2.3
+      semver: 6.3.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/core@7.29.7(supports-color@7.2.0)':
     dependencies:
       '@babel/code-frame': 7.29.7
@@ -16518,10 +16486,26 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/helper-module-imports@7.29.7(supports-color@10.2.2)':
+    dependencies:
+      '@babel/traverse': 7.29.13(supports-color@10.2.2)
+      '@babel/types': 7.29.11
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/helper-module-imports@7.29.7(supports-color@7.2.0)':
     dependencies:
       '@babel/traverse': 7.29.13(supports-color@7.2.0)
       '@babel/types': 7.29.11
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/helper-module-transforms@7.29.7(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2)':
+    dependencies:
+      '@babel/core': 7.29.7(supports-color@10.2.2)
+      '@babel/helper-module-imports': 7.29.7(supports-color@10.2.2)
+      '@babel/helper-validator-identifier': 7.29.7
+      '@babel/traverse': 7.29.13(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -16663,6 +16647,18 @@ snapshots:
       '@babel/code-frame': 7.29.7
       '@babel/parser': 7.29.13
       '@babel/types': 7.29.11
+
+  '@babel/traverse@7.29.13(supports-color@10.2.2)':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/generator': 7.29.13
+      '@babel/helper-globals': 7.29.7
+      '@babel/parser': 7.29.13
+      '@babel/template': 7.29.7
+      '@babel/types': 7.29.11
+      debug: 4.4.3(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - supports-color
 
   '@babel/traverse@7.29.13(supports-color@7.2.0)':
     dependencies:
@@ -17416,11 +17412,6 @@ snapshots:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       eslint-visitor-keys: 3.4.3
 
-  '@eslint-community/eslint-utils@4.10.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))':
-    dependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
-      eslint-visitor-keys: 3.4.3
-
   '@eslint-community/regexpp@4.12.2': {}
 
   '@eslint-react/ast@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
@@ -17522,14 +17513,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint/config-array@0.21.2(supports-color@7.2.0)':
-    dependencies:
-      '@eslint/object-schema': 2.1.7
-      debug: 4.4.3(supports-color@7.2.0)
-      minimatch: 11.0.3
-    transitivePeerDependencies:
-      - supports-color
-
   '@eslint/config-helpers@0.4.2':
     dependencies:
       '@eslint/core': 0.17.0
@@ -17542,20 +17525,6 @@ snapshots:
     dependencies:
       ajv: 6.15.0
       debug: 4.4.3(supports-color@10.2.2)
-      espree: 10.4.0
-      globals: 14.0.0
-      ignore: 5.3.2
-      import-fresh: 3.3.1
-      js-yaml: 4.3.2
-      minimatch: 11.0.3
-      strip-json-comments: 3.1.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@eslint/eslintrc@3.3.7(supports-color@7.2.0)':
-    dependencies:
-      ajv: 6.15.0
-      debug: 4.4.3(supports-color@7.2.0)
       espree: 10.4.0
       globals: 14.0.0
       ignore: 5.3.2
@@ -17699,10 +17668,10 @@ snapshots:
       '@html-eslint/types': 0.67.0
       html-standard: 0.0.13
 
-  '@html-eslint/eslint-plugin-react@0.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))':
+  '@html-eslint/eslint-plugin-react@0.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))':
     dependencies:
       '@html-eslint/core': 0.67.0
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
 
   '@html-eslint/types@0.67.0':
     dependencies:
@@ -18287,10 +18256,6 @@ snapshots:
       '@oozcitak/util': 10.0.0
 
   '@oozcitak/util@10.0.0': {}
-
-  '@openrouter/sdk@1.5.33':
-    dependencies:
-      zod: 4.6.7
 
   '@openrouter/sdk@1.5.63':
     dependencies:
@@ -19278,19 +19243,7 @@ snapshots:
     dependencies:
       '@babel/runtime-corejs3': 7.29.7
 
-  '@r_masseater/oxlint-plugin-decision@0.1.1(oxlint@1.91.0(oxlint-tsgolint@7.0.2005)(vite-plus@1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))(redis@6.2.1(@opentelemetry/api@1.10.0))':
-    dependencies:
-      '@effect/platform-node': 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@openrouter/sdk': 1.5.33
-      effect: 4.1.2
-      oxlint: 1.91.0(oxlint-tsgolint@7.0.2005)(vite-plus@1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
-      synckit: 0.12.3
-    transitivePeerDependencies:
-      - bufferutil
-      - redis
-      - utf-8-validate
-
-  '@r_masseater/oxlint-typed-rules@0.1.3(typescript@7.1.0-beta)':
+  '@r_masseater/oxlint-typed-rules@0.3.0(typescript@7.1.0-beta)':
     dependencies:
       effect: 4.1.2
       typescript: 7.1.0-beta
@@ -20445,12 +20398,12 @@ snapshots:
       '@sentry/conventions': 0.30.0
       '@sentry/core': 11.11.0
 
-  '@shadcn/lint@0.2.5(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))':
+  '@shadcn/lint@0.2.5(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))':
     dependencies:
       '@eslint/core': 0.17.0
       cn: 0.4.0
     optionalDependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       oxc-parser: 0.148.0
 
   '@shikijs/core@4.6.0':
@@ -23791,25 +23744,25 @@ snapshots:
 
   escape-string-regexp@5.0.0: {}
 
-  eslint-plugin-baseline-js@0.7.7(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0)):
+  eslint-plugin-baseline-js@0.7.7(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)):
     dependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
-      eslint-plugin-es-x: 9.7.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-plugin-es-x: 9.7.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
 
   eslint-plugin-drizzle@0.2.3(patch_hash=970a4ab095ef16d6b77ccac81c31e17b85e1423d06ec977be44ac76a52a6251a)(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)):
     dependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
 
-  eslint-plugin-es-x@9.7.0(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0)):
+  eslint-plugin-es-x@9.7.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)):
     dependencies:
-      '@eslint-community/eslint-utils': 4.10.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
+      '@eslint-community/eslint-utils': 4.10.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
       '@eslint-community/regexpp': 4.12.2
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
-      eslint-type-tracer: 0.5.2(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      eslint-type-tracer: 0.5.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
 
-  eslint-plugin-no-comments@1.2.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0)):
+  eslint-plugin-no-comments@1.2.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)):
     dependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
 
   eslint-plugin-react-dom@5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
     dependencies:
@@ -23828,11 +23781,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-hooks@7.1.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0):
+  eslint-plugin-react-hooks@7.1.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2):
     dependencies:
-      '@babel/core': 7.29.7(supports-color@7.2.0)
+      '@babel/core': 7.29.7(supports-color@10.2.2)
       '@babel/parser': 7.29.13
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       hermes-parser: 0.25.1
       zod: 4.6.7
       zod-validation-error: 5.0.0(zod@4.6.7)
@@ -23929,10 +23882,10 @@ snapshots:
       esrecurse: 4.3.0
       estraverse: 5.3.0
 
-  eslint-type-tracer@0.5.2(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0)):
+  eslint-type-tracer@0.5.2(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)):
     dependencies:
-      '@eslint-community/eslint-utils': 4.10.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
+      '@eslint-community/eslint-utils': 4.10.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
 
   eslint-visitor-keys@3.4.3: {}
 
@@ -23958,47 +23911,6 @@ snapshots:
       chalk: 4.1.2
       cross-spawn: 7.0.6
       debug: 4.4.3(supports-color@10.2.2)
-      escape-string-regexp: 4.0.0
-      eslint-scope: 8.4.0
-      eslint-visitor-keys: 4.2.1
-      espree: 10.4.0
-      esquery: 1.7.0
-      esutils: 2.0.3
-      fast-deep-equal: 3.1.3
-      file-entry-cache: 8.0.0
-      find-up: 5.0.0
-      glob-parent: 6.0.2
-      ignore: 5.3.2
-      imurmurhash: 0.1.4
-      is-glob: 4.0.3
-      json-stable-stringify-without-jsonify: 1.0.1
-      lodash.merge: 4.6.2
-      minimatch: 11.0.3
-      natural-compare: 1.4.0
-      optionator: 0.9.4
-    optionalDependencies:
-      jiti: 2.7.0
-    transitivePeerDependencies:
-      - supports-color
-
-  eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0):
-    dependencies:
-      '@eslint-community/eslint-utils': 4.10.1(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
-      '@eslint-community/regexpp': 4.12.2
-      '@eslint/config-array': 0.21.2(supports-color@7.2.0)
-      '@eslint/config-helpers': 0.4.2
-      '@eslint/core': 0.17.0
-      '@eslint/eslintrc': 3.3.7(supports-color@7.2.0)
-      '@eslint/js': 9.39.5
-      '@eslint/plugin-kit': 0.4.1
-      '@humanfs/node': 0.16.8
-      '@humanwhocodes/module-importer': 1.0.1
-      '@humanwhocodes/retry': 0.4.3
-      '@types/estree': 1.0.9
-      ajv: 6.15.0
-      chalk: 4.1.2
-      cross-spawn: 7.0.6
-      debug: 4.4.3(supports-color@7.2.0)
       escape-string-regexp: 4.0.0
       eslint-scope: 8.4.0
       eslint-visitor-keys: 4.2.1
