@@ -351,6 +351,8 @@ mod tests {
 
     type Seen = Arc<Mutex<Vec<(String, Option<String>)>>>;
 
+    static PORTS: tokio::sync::Mutex<()> = tokio::sync::Mutex::const_new(());
+
     fn exiting_child() -> Child {
         Command::new(std::env::current_exe().unwrap())
             .arg("--help")
@@ -447,6 +449,7 @@ mod tests {
 
     #[test]
     fn hands_each_start_its_own_key_in_the_environment_and_not_in_the_arguments() {
+        let _ports = PORTS.blocking_lock();
         let keys = [Launch::new().unwrap(), Launch::new().unwrap()].map(|launch| {
             let command = launch.command(Path::new("llama-server"), Path::new(MODEL));
             let variables: Vec<_> = command.get_envs().collect();
@@ -500,11 +503,13 @@ mod tests {
 
     #[test]
     fn finds_a_free_port() {
+        let _ports = PORTS.blocking_lock();
         assert_ne!(free_port().unwrap(), 0);
     }
 
     #[tokio::test]
     async fn fails_at_once_when_the_process_has_exited() {
+        let _ports = PORTS.lock().await;
         let mut child = exiting_child();
         let server = Launch::new().unwrap().server();
         let started = Instant::now();
@@ -520,6 +525,7 @@ mod tests {
 
     #[tokio::test]
     async fn gives_up_when_the_server_is_not_ready_in_time() {
+        let _ports = PORTS.lock().await;
         let server = Launch::new().unwrap().server();
         let error = server
             .wait_ready(Duration::ZERO, || Ok(None))
@@ -531,6 +537,7 @@ mod tests {
 
     #[tokio::test]
     async fn sends_the_key_with_every_request() {
+        let _ports = PORTS.lock().await;
         let launch = Launch::new().unwrap();
         let seen = serve(listen(&launch).unwrap(), &launch.key);
         let server = launch.server();
@@ -547,6 +554,7 @@ mod tests {
 
     #[tokio::test]
     async fn refuses_a_listener_that_does_not_take_the_key() {
+        let _ports = PORTS.lock().await;
         let launch = Launch::new().unwrap();
         let seen = serve(listen(&launch).unwrap(), OTHER_KEY);
         let result = launch.server().wait_ready(STARTUP, || Ok(None)).await;
@@ -559,6 +567,7 @@ mod tests {
 
     #[tokio::test]
     async fn starts_again_on_another_port_when_the_port_was_taken() {
+        let _ports = PORTS.lock().await;
         let exited = exit_status();
         let taken = RefCell::new(Vec::new());
         let ports = RefCell::new(Vec::new());
@@ -587,6 +596,7 @@ mod tests {
 
     #[tokio::test]
     async fn starts_again_on_another_port_when_another_program_answers() {
+        let _ports = PORTS.lock().await;
         let starts = Cell::new(0);
         let server = start(
             STARTUP,
@@ -611,6 +621,7 @@ mod tests {
 
     #[tokio::test]
     async fn gives_up_after_a_few_starts_when_every_port_is_taken() {
+        let _ports = PORTS.lock().await;
         let exited = exit_status();
         let taken = RefCell::new(Vec::new());
         let result = start(
@@ -628,6 +639,7 @@ mod tests {
 
     #[tokio::test]
     async fn does_not_start_again_when_the_process_ended_for_another_reason() {
+        let _ports = PORTS.lock().await;
         let exited = exit_status();
         let starts = Cell::new(0);
         let result = start(
