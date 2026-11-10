@@ -66,6 +66,10 @@ const mirrored = (native: Tracer.NativeSpan, mirror: Mirror): Tracer.Span => {
       Tracer.NativeSpan.prototype.end.call(native, endTime, exit);
       if (Exit.isFailure(exit)) {
         markCause(exit.cause)(mirror.span);
+        const errorType = native.attributes.get("error.type");
+        if (Predicate.isString(errorType)) {
+          mirror.span.setAttribute("error.type", errorType);
+        }
       }
       mirror.span.end();
     },
