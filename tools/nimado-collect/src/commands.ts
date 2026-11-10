@@ -6,11 +6,13 @@ import { updateCatalog } from "./catalog-run.ts";
 import { NICO_BATCH, fetchNicoViews } from "./niconico.ts";
 import { refresh, videosOf } from "./refresh.ts";
 import { NICO_FILE, YOUTUBE_FILE, jstDate, loadCatalog, saveCatalog } from "./state.ts";
+import { activityPage, songPage } from "./vocadb.ts";
 import { YOUTUBE_BATCH, fetchYoutubeViews } from "./youtube.ts";
 
 const VOCADB_REQUESTS = 900;
 const NICO_REQUESTS = 5000;
 const YOUTUBE_UNITS = 9000;
+const CHECKPOINT_REQUESTS = 100;
 const EPOCH = "0000-00-00";
 
 /** @internal */
@@ -25,12 +27,19 @@ const catalogCommand = Command.make(
   { state: stateFlag, budget: budgetFlag(VOCADB_REQUESTS) },
   ({ state, budget }) =>
     loadCatalog(state).pipe(
-      Effect.flatMap((catalog) => updateCatalog({ catalog, budget })),
-      Effect.tap((catalog) => saveCatalog({ state, catalog })),
       Effect.flatMap((catalog) =>
-        Console.log(
-          `catalog: ${catalog.songs.length.toString()} 曲、次の位置 ${String(Option.getOrNull(catalog.crawl.next))}`,
-        ),
+        updateCatalog({
+          catalog,
+          budget,
+          checkpoint: CHECKPOINT_REQUESTS,
+          source: { songs: songPage, activity: activityPage },
+          save: Effect.fn("command.catalog.save")(function* saveProgress(updated) {
+            yield* saveCatalog({ state, catalog: updated });
+            yield* Console.log(
+              `catalog: ${updated.songs.length.toString()} 曲、次の位置 ${String(Option.getOrNull(updated.crawl.next))}`,
+            );
+          }),
+        }),
       ),
     ),
 );
@@ -47,6 +56,8 @@ const nicoCommand = Command.make(
           file: NICO_FILE,
           ids: videosOf({ catalog, pick: ({ nico }) => nico }),
           budget: budget * NICO_BATCH,
+          batch: NICO_BATCH,
+          checkpoint: CHECKPOINT_REQUESTS,
           since: EPOCH,
           lookup: fetchNicoViews,
         }),
@@ -71,6 +82,8 @@ const youtubeCommand = Command.make(
         file: YOUTUBE_FILE,
         ids: videosOf({ catalog, pick: ({ youtube }) => youtube }),
         budget: budget * YOUTUBE_BATCH,
+        batch: YOUTUBE_BATCH,
+        checkpoint: CHECKPOINT_REQUESTS,
         since,
         lookup: (ids) => fetchYoutubeViews({ key: key.value, ids }),
       });

@@ -1,5 +1,7 @@
 import { Effect, FileSystem, Option, Path, Schema } from "effect";
 
+const UNFINISHED = ".tmp";
+
 /** @internal */
 const readJson = Effect.fn("file.read")(function* readJsonFile<
   Value extends Schema.Codec<unknown, unknown>,
@@ -22,7 +24,9 @@ const writeJson = Effect.fn("file.write")(function* writeJsonFile<
   const path = yield* Path.Path;
   const text = yield* Schema.encodeEffect(Schema.fromJsonString(codec))(value);
   yield* fileSystem.makeDirectory(path.dirname(file), { recursive: true });
-  yield* fileSystem.writeFileString(file, text);
+  const unfinished = `${file}${UNFINISHED}`;
+  yield* fileSystem.writeFileString(unfinished, text);
+  yield* fileSystem.rename(unfinished, file);
 });
 
 export { readJson, writeJson };
