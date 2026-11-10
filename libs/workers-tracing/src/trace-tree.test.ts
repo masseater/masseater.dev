@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { missingOf, render, spanOf, traceOf } from "./trace-tree.ts";
+import { markedAt, missingOf, render, spanOf, traceOf } from "./trace-tree.ts";
 
 const event = (annotations: Readonly<Record<string, unknown>>): unknown => ({
   source: { message: "otlp.span", annotations },
@@ -60,4 +60,56 @@ test("a trace renders as an indented tree with durations", () => {
 
 test("expected span names that never arrived are reported", () => {
   expect(missingOf(["GET /", "d1_all", "todo.list"])(sent)).toStrictEqual(["todo.list"]);
+});
+
+const SENT_AT = 1_794_277_886_000;
+const MARKED = "https://example.com/?page=2&workers-traces.mwa2q5gw=1";
+
+test("a marked URL carries the send time in the name of an added parameter", () => {
+  expect(markedAt(SENT_AT)("https://example.com/?page=2")).toBe(MARKED);
+  expect(MARKED).not.toMatch(/\d{13,}/u);
+});
+
+const exported = pipe(
+  [
+    event({
+      traceId: "t3",
+      spanId: "d",
+      spanName: "GET",
+      attributes: { url: { full: "https://example.com/?page=2&workers-traces.mwa2q5gw=REDACTED" } },
+    }),
+    event({
+      traceId: "t4",
+      spanId: "e",
+      spanName: "GET",
+      attributes: { url: { full: "https://example.com/?page=2&workers-traces.mwa2q5gx=1" } },
+    }),
+    event({
+      traceId: "t5",
+      spanId: "f",
+      spanName: "GET",
+      attributes: { url: { full: "https://example.com/?page=2" } },
+    }),
+    event({
+      traceId: "t6",
+      spanId: "g",
+      spanName: "GET",
+      attributes: { url: { full: "/?page=2&workers-traces.mwa2q5gw=1" } },
+    }),
+  ],
+  Arr.map((value) => spanOf(value)),
+  Arr.getSomes,
+);
+
+const found = pipe(
+  traceOf(MARKED)(exported),
+  Arr.map(({ spanId }) => spanId),
+);
+
+test("a request is still found after the exporter replaced a query value", () => {
+  expect(found).toContain("d");
+});
+
+test("a request marked at another time, an unmarked one and a relative URL are not selected", () => {
+  expect(found).toStrictEqual(["d"]);
 });

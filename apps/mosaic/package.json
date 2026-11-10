@@ -30,6 +30,7 @@
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
+    "@effect/vitest": "catalog:",
     "@r_masseater/workers-tracing": "workspace:*",
     "@tailwindcss/vite": "4.3.5",
     "@tanstack/devtools-vite": "0.8.6",
@@ -41,6 +42,7 @@
     "alchemy": "catalog:stack",
     "typescript": "catalog:stack",
     "vite": "catalog:",
-    "vite-plus": "catalog:stack"
+    "vite-plus": "catalog:stack",
+    "yaml": "catalog:"
   }
 }

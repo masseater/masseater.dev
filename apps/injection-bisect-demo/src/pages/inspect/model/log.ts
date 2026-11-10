@@ -1,5 +1,5 @@
-import type { Region } from "@r_masseater/injection-bisect";
-import { cutoffFor } from "@r_masseater/injection-bisect";
+import type { Detection, Region } from "@r_masseater/injection-bisect";
+import { cutoffFor, outcomeOf } from "@r_masseater/injection-bisect";
 import { Array as Arr, String as Str, pipe } from "effect";
 
 import type { InspectEvent } from "#/pages/inspect/api/inspect-events";
@@ -33,9 +33,16 @@ const verdictOf = ({
   return COPY.under(cutoff);
 };
 
+const cleanLabelOf = (detection: Detection): string => {
+  if (outcomeOf(detection) === "unreadable") {
+    return COPY.unread;
+  }
+  return COPY.clean;
+};
+
 const resultOf = (event: Extract<InspectEvent, { type: "done" }>): string => {
   if (event.detection.status === "clean") {
-    return `${COPY.clean}  ${formatPercent(event.detection.probability)}`;
+    return `${cleanLabelOf(event.detection)}  ${formatPercent(event.detection.probability)}`;
   }
   const regions = pipe(
     event.detection.regions,

@@ -28,7 +28,13 @@ const NOTE_ON = 0x90;
 
 const NOTE_OFF = 0x80;
 
-const MIDI_EVENTS = new Set(["E", "e"]);
+const SILENT = 0;
+
+const NOTE_EVENTS: ReadonlySet<string> = new Set(["E", "e"]);
+
+const MUTED_EVENTS: ReadonlySet<string> = new Set(["Em", "em"]);
+
+const EXTENDED_EVENTS: ReadonlySet<string> = new Set(["X", "x", "Xm", "xm"]);
 
 const byStart = Order.mapInput(Order.Number, (note: SourceNote) => note.start);
 
@@ -42,15 +48,38 @@ const hexAt =
       Option.getOrElse(() => ZERO),
     );
 
+const ticksOf = (node: Node): number => numberOr(ZERO)(Arr.get(node.params, PARAM_INDEX.first));
+
 const eventOf = (line: Line): Event => {
   const status = hexAt(PARAM_INDEX.second)(line.params);
   return {
-    ticks: numberOr(ZERO)(Arr.get(line.params, PARAM_INDEX.first)),
+    ticks: ticksOf(line),
     kind: status - (status % HEX),
     pitch: hexAt(PARAM_INDEX.third)(line.params),
     velocity: hexAt(PARAM_INDEX.fourth)(line.params),
   };
 };
+
+const silentOf = (node: Node): Event => ({
+  ticks: ticksOf(node),
+  kind: SILENT,
+  pitch: ZERO,
+  velocity: ZERO,
+});
+
+const isNote = (token: string): boolean => NOTE_EVENTS.has(token);
+
+const isMuted = (token: string): boolean => MUTED_EVENTS.has(token);
+
+const isExtended = (token: string): boolean => EXTENDED_EVENTS.has(token);
+
+const eventsOf = (node: Node): readonly Event[] =>
+  Match.value(node).pipe(
+    Match.when({ kind: "line", token: isNote }, (line) => [eventOf(line)]),
+    Match.when({ kind: "line", token: isMuted }, (line) => [silentOf(line)]),
+    Match.when({ kind: "chunk", token: isExtended }, (chunk) => [silentOf(chunk)]),
+    Match.orElse(() => []),
+  );
 
 const release =
   ({ event, beat }: Timed) =>
@@ -89,11 +118,7 @@ const timedEvents = (source: Chunk): readonly Timed[] => {
   const ticksPerQuarter = numberOr(DEFAULT_TICKS_PER_QUARTER)(
     paramOf({ chunk: source, token: "HASDATA", index: PARAM_INDEX.second }),
   );
-  const events = pipe(
-    source.children,
-    Arr.filter((node: Node): node is Line => node.kind === "line" && MIDI_EVENTS.has(node.token)),
-    Arr.map(eventOf),
-  );
+  const events = pipe(source.children, Arr.flatMap(eventsOf));
   const ticks = Arr.scan(events, ZERO, (total, event) => total + event.ticks);
   return Arr.zipWith(events, Arr.drop(ticks, INITIAL_TOTAL), (event, total) => ({
     event,

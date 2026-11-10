@@ -4,7 +4,12 @@ import {
   openRouterPerRequest,
   withApiKey,
 } from "@r_masseater/injection-bisect";
-import type { Detection, InjectionJudge, ProbeEvent } from "@r_masseater/injection-bisect";
+import type {
+  Detection,
+  InjectionJudge,
+  ProbeEvent,
+  Unreadable,
+} from "@r_masseater/injection-bisect";
 import { Clock, Effect, Queue, Stream } from "effect";
 
 type Finished =
@@ -17,14 +22,16 @@ interface Request {
   readonly text: string;
   readonly model: string;
   readonly format: string;
+  readonly unreadable: readonly Unreadable[];
 }
 
 const finish = ({
   text,
   model,
   format,
+  unreadable,
 }: Readonly<Request>): Effect.Effect<Finished, never, InjectionJudge> =>
-  detect(text, { model, format }).pipe(
+  detect(text, { model, format, unreadable }).pipe(
     Effect.map((detection): Finished => ({ type: "done", detection })),
     Effect.catchTag("JudgeError", ({ reason }) =>
       Effect.succeed<Finished>({ type: "failed", reason }),
@@ -36,6 +43,7 @@ const inspectEvents = ({
   apiKey,
   model,
   format,
+  unreadable,
 }: Readonly<Request & { apiKey: string }>): AsyncIterable<InspectEvent> =>
   Stream.callback<InspectEvent, never, InjectionJudge>((queue) =>
     Effect.gen(function* emit() {
@@ -45,7 +53,7 @@ const inspectEvents = ({
           Effect.flatMap((now) => Queue.offer(queue, { ...event, at: now - startedAt })),
           Effect.asVoid,
         );
-      const last = yield* finish({ text, model, format }).pipe(
+      const last = yield* finish({ text, model, format, unreadable }).pipe(
         Effect.provideService(ProbeListener, push),
       );
       yield* push(last);

@@ -102,6 +102,14 @@ def target_cells(src: Image.Image, cols: int) -> tuple[int, np.ndarray, np.ndarr
     return rows, cells, feats[cells].astype(np.float32), weights[cells].astype(np.float32)
 
 
+def _cheapest(rows: np.ndarray, cols: np.ndarray, costs: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    order = np.lexsort((costs, cols, rows))
+    rows, cols, costs = rows[order], cols[order], costs[order]
+    first = np.ones(len(rows), dtype=bool)
+    first[1:] = (rows[1:] != rows[:-1]) | (cols[1:] != cols[:-1])
+    return rows[first], cols[first], costs[first]
+
+
 def assign(cells: np.ndarray, weights: np.ndarray, pool: np.ndarray, penalty: np.ndarray) -> np.ndarray:
     n, m = len(cells), len(pool)
     if m < n:
@@ -122,7 +130,8 @@ def assign(cells: np.ndarray, weights: np.ndarray, pool: np.ndarray, penalty: np
         ri.append(np.repeat(np.arange(s, s + len(c)), j.shape[1]))
         cj.append(j.ravel())
         vals.append(v.ravel())
-    graph = csr_matrix((np.concatenate(vals).astype(np.float64), (np.concatenate(ri), np.concatenate(cj))), shape=(n, m))
+    rows, cols, costs = _cheapest(np.concatenate(ri), np.concatenate(cj), np.concatenate(vals).astype(np.float64))
+    graph = csr_matrix((costs, (rows, cols)), shape=(n, m))
     r, c = min_weight_full_bipartite_matching(graph)
     out = np.empty(n, dtype=np.int64)
     out[r] = c

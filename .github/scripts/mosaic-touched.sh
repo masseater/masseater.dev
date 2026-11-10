@@ -1,26 +1,58 @@
 #!/usr/bin/env bash
 set -euo pipefail
+api="repos/$GITHUB_REPOSITORY"
+window=50
+compare_file_limit=300
+decide() {
+  echo "mosaic=$1" >> "$GITHUB_OUTPUT"
+  exit 0
+}
+superseded="$(mktemp)"
+trap 'rm -f "$superseded"' EXIT
+GITHUB_OUTPUT="$superseded" "$(dirname "${BASH_SOURCE[0]}")/mosaic-superseded.sh"
+if grep -qxF "superseded=true" "$superseded"; then
+  decide false
+fi
+if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+  decide true
+fi
 base=""
-for run in $(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/verify.yml/runs?branch=main&status=completed&per_page=50" \
-  --jq '.workflow_runs[].id'); do
-  if [ -n "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/jobs?per_page=100" \
-    --jq '.jobs[] | select(.name == "mosaic-deploy") | .steps[] | select(.name == "deploy" and .conclusion == "success") | .number')" ]; then
-    base="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run" --jq .head_sha)"
+if ! older="$(gh api "$api/actions/workflows/verify.yml/runs?branch=main&per_page=100" \
+  --jq '.workflow_runs[] | select(.run_number < (env.GITHUB_RUN_NUMBER | tonumber)) | "\(.id) \(.head_sha) \(.status)"')"; then
+  echo "::warning::The older runs could not be listed, so mosaic is judged from this push alone"
+  older=""
+fi
+while read -r run sha status; do
+  if [ -z "$run" ]; then
+    continue
+  fi
+  if [ -n "$(RUN_STATUS="$status" gh api "$api/actions/runs/$run/jobs?per_page=100" --jq '
+    select(any(.jobs[] | select(.name == "mosaic-plan") | .steps[]?; .name == "rebuild" and .conclusion == "success"))
+    | [.jobs[] | select(.name == "mosaic-deploy")]
+    | select(
+        any(.[] | .steps[]?; .name == "deploy" and .conclusion == "success")
+        or (env.RUN_STATUS != "completed" and all(.status != "completed"))
+      )
+    | "covered"')" ]; then
+    base="$sha"
     break
   fi
-done
-if [ -z "$base" ]; then
-  echo "mosaic=true" >> "$GITHUB_OUTPUT"
-  exit 0
+done < <(head -n "$window" <<<"$older")
+if [ -n "$base" ]; then
+  echo "last mosaic deploy: $base"
+elif [[ "${BEFORE_SHA:-}" =~ ^0*$ ]]; then
+  echo "no earlier mosaic rebuild was found and this push has no previous commit, so mosaic is rebuilt"
+  decide true
+else
+  echo "no earlier mosaic rebuild was found, so mosaic is judged from this push alone"
+  base="$BEFORE_SHA"
 fi
-echo "last mosaic deploy: $base"
-compare_file_limit=300
-if ! files="$(gh api "repos/$GITHUB_REPOSITORY/compare/$base...$HEAD_SHA" --jq '.files[].filename')" \
+if ! files="$(gh api "$api/compare/$base...$HEAD_SHA" --jq '.files[].filename')" \
   || [ "$(grep -c . <<<"$files")" -ge "$compare_file_limit" ]; then
   echo "::warning::The files changed since $base could not be listed completely, so mosaic is rebuilt"
-  echo "mosaic=true" >> "$GITHUB_OUTPUT"
-  exit 0
+  decide true
 fi
 if grep -E '^((apps|libs|tools)/mosaic/|\.github/scripts/mosaic-touched\.sh$)' <<<"$files"; then
-  echo "mosaic=true" >> "$GITHUB_OUTPUT"
+  decide true
 fi
+decide false

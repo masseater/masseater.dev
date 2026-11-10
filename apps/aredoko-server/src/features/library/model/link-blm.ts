@@ -94,6 +94,32 @@ const pendingIn = Effect.fn("pendingIn")(function* pendingPackages(
   );
 });
 
+const linkablePaths = Effect.fn("linkablePaths")(function* linkablePackagePaths() {
+  const blm = yield* Blm;
+  const path = yield* Path.Path;
+  const found = yield* blm.library;
+  return pipe(
+    found,
+    Option.match({
+      onNone: () => (): boolean => false,
+      onSome: ({ itemDirectory, items }) => {
+        const folders = HashSet.fromIterable(
+          pipe(
+            items,
+            Array.map(({ folder }) => folder),
+          ),
+        );
+        const folderIn = folderOf(path, itemDirectory);
+        return (packagePath: string): boolean =>
+          pipe(
+            folderIn(packagePath),
+            Option.exists((folder) => HashSet.has(folders, folder)),
+          );
+      },
+    }),
+  );
+});
+
 const linkLogged = (one: Pending): Effect.Effect<void, never, Requirements> =>
   linkOne(one).pipe(
     Effect.catchCause((cause) => Effect.logWarning("BOOTH link failed", one.packageId, cause)),
@@ -120,12 +146,13 @@ const linkFromBlm = Effect.fn("linkFromBlm")(function* linkBlmPackages(
 
 /** @internal */
 const blmLinker = Ref.make(HashSet.empty<number>()).pipe(
-  Effect.map((tried) =>
-    Ref.get(tried).pipe(
+  Effect.map((tried) => ({
+    link: Ref.get(tried).pipe(
       Effect.flatMap(linkFromBlm),
       Effect.flatMap((linked) => Ref.update(tried, HashSet.union(HashSet.fromIterable(linked)))),
     ),
-  ),
+    linkable: linkablePaths(),
+  })),
 );
 
 export { blmLinker };

@@ -1,8 +1,15 @@
-import { InjectionJudge, detect, readDocument, removeRegions } from "@r_masseater/injection-bisect";
+import {
+  InjectionJudge,
+  detect,
+  outcomeOf,
+  readDocument,
+  removeRegions,
+} from "@r_masseater/injection-bisect";
 import type {
   DetectOptions,
   Document,
   JudgeError,
+  Outcome,
   ReadError,
   ReadInput,
   Verdict,
@@ -90,5 +97,20 @@ const foundIn = (input: ReadInput): Effect.Effect<Found, ReadError | JudgeError>
     ),
   );
 
-export { ENGLISH_MARK, INJECTION, INJECTION_MARK, cleanedOf, fakeJudge, foundIn };
-export type { Cleaned, Found };
+interface Judged {
+  readonly document: Document;
+  readonly outcome: Outcome;
+}
+
+const outcomeIn = (input: ReadInput): Effect.Effect<Judged, ReadError | JudgeError> =>
+  readDocument(input).pipe(
+    Effect.flatMap((document) =>
+      detect(document.text, { format: document.format, unreadable: document.unreadable }).pipe(
+        Effect.map((detection) => ({ document, outcome: outcomeOf(detection) })),
+        Effect.provideService(InjectionJudge, fakeJudge),
+      ),
+    ),
+  );
+
+export { ENGLISH_MARK, INJECTION, INJECTION_MARK, cleanedOf, fakeJudge, foundIn, outcomeIn };
+export type { Cleaned, Found, Judged };

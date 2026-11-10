@@ -1,10 +1,12 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import type { UseQueryResult } from "@tanstack/react-query";
-import { Effect, ManagedRuntime } from "effect";
+import { Effect, ManagedRuntime, Option } from "effect";
 import { FetchHttpClient, HttpClient } from "effect/http";
 
 import { useChoice } from "#/pages/extract/model/draft";
 import type { Choice } from "#/pages/extract/model/draft";
+
+import { asPng } from "./as-png";
 
 type Picture =
   | { readonly status: "none" }
@@ -19,11 +21,23 @@ type Picture =
 
 const runtime = ManagedRuntime.make(FetchHttpClient.layer);
 
+const NO_TYPE = "";
+
+const typeOf = (headers: Readonly<Record<string, string | undefined>>): string =>
+  Option.fromNullishOr(headers["content-type"]).pipe(Option.getOrElse(() => NO_TYPE));
+
 const bytesOf = (url: string): Promise<Uint8Array> =>
   runtime.runPromise(
     HttpClient.get(url).pipe(
-      Effect.flatMap((response) => response.arrayBuffer),
-      Effect.map((buffer) => new Uint8Array(buffer)),
+      Effect.flatMap((response) =>
+        response.arrayBuffer.pipe(
+          Effect.map((buffer) => ({
+            bytes: new Uint8Array(buffer),
+            type: typeOf(response.headers),
+          })),
+        ),
+      ),
+      Effect.flatMap(asPng),
     ),
   );
 

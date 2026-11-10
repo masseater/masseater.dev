@@ -20,6 +20,15 @@ import type {
   StopDelays,
 } from "#/entities/entry/model/cascade";
 
+import {
+  ROW_HEIGHT,
+  STAGE_HEADER,
+  STAGE_WIDTH,
+  TOP,
+  stageHeight,
+  stageTops,
+} from "./cascade-frame";
+
 type Status = "running" | "stopped";
 
 type ServiceData = Readonly<{
@@ -40,16 +49,6 @@ const NODE_HEIGHT = 56;
 const HALF = 2;
 
 const HANDLE_SIZE = 1;
-
-const STAGE_WIDTH = 452;
-
-const STAGE_HEADER = 40;
-
-const ROW_HEIGHT = 76;
-
-const STAGE_GAP = 24;
-
-const TOP = 0;
 
 const NO_DELAY = 0;
 
@@ -102,15 +101,6 @@ const handlesOf = {
   LinkDirection,
   Readonly<{ sourceHandle: string; targetHandle: string }>
 >;
-
-const stageHeight = (rows: number): number => STAGE_HEADER + rows * ROW_HEIGHT;
-
-const [stagesBottom, stageTops] = pipe(
-  stages,
-  Arr.mapAccum(TOP, (top, stage) => [top + stageHeight(stage.rows) + STAGE_GAP, top] as const),
-);
-
-const FLOW_HEIGHT = stagesBottom - STAGE_GAP;
 
 const stageNodes: readonly StageNode[] = pipe(
   stages,
@@ -194,4 +184,4 @@ const edgesOf =
   };
 
 export type { EdgeClasses, ServiceData, ServiceNode, StageNode, Status };
-export { FLOW_HEIGHT, STAGE_WIDTH, edgesOf, nodesOf };
+export { edgesOf, nodesOf };
