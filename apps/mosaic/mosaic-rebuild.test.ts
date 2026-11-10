@@ -250,7 +250,7 @@ const usesLatestVerified = Str.includes("latest-verified");
 const workflowMatchesTheScripts = Effect.gen(function* workflowMatchesTheScripts() {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const file = path.resolve(import.meta.dirname, "../../../.github/workflows/verify.yml");
+  const file = path.resolve(import.meta.dirname, "../../.github/workflows/verify.yml");
   const source = yield* fs.readFileString(file);
   const { jobs } = yield* Schema.decodeUnknownEffect(Workflow)(parse(source));
   expect(namesOf(jobs["mosaic-plan"])).toStrictEqual(["rebuild"]);

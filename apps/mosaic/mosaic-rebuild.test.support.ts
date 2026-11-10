@@ -204,7 +204,7 @@ const decide = Effect.fn("decide")(function* decide(
     extendEnv: true,
     env: {
       STUB_BIN: workspace.bin,
-      SCRIPT: path.resolve(import.meta.dirname, "..", "..", "..", ".github", "scripts", script),
+      SCRIPT: path.resolve(import.meta.dirname, "..", "..", ".github", "scripts", script),
       FIXTURES: workspace.root,
       GITHUB_OUTPUT: workspace.output,
       GITHUB_REPOSITORY: "masseater/masseater.dev",

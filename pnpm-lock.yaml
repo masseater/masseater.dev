@@ -1493,6 +1493,9 @@ importers:
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.67.5
+      '@effect/vitest':
+        specifier: 'catalog:'
+        version: 4.1.2(effect@4.1.2)(vitest@5.1.0)
       '@r_masseater/workers-tracing':
         specifier: workspace:*
         version: link:../../libs/workers-tracing
@@ -1529,6 +1532,9 @@ importers:
       vite-plus:
         specifier: catalog:stack
         version: 1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
 
   apps/nimado:
     dependencies:
