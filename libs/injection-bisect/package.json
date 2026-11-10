@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/injection-bisect",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Find whether and where a prompt injection hides in text with fast, cheap decision models.",
   "keywords": [
     "effect",

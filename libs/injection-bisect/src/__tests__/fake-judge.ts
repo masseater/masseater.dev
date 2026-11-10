@@ -90,5 +90,5 @@ const foundIn = (input: ReadInput): Effect.Effect<Found, ReadError | JudgeError>
     ),
   );
 
-export { ENGLISH_MARK, INJECTION, INJECTION_MARK, cleanedOf, foundIn };
+export { ENGLISH_MARK, INJECTION, INJECTION_MARK, cleanedOf, fakeJudge, foundIn };
 export type { Cleaned, Found };

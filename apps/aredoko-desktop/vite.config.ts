@@ -10,12 +10,13 @@ export default defineConfig({
     tasks: {
       cargo: {
         command:
-          "cargo fmt -p aredoko-desktop --check && cargo clippy -p aredoko-desktop --all-targets --locked",
+          "cargo fmt -p aredoko-desktop --check && cargo clippy -p aredoko-desktop --all-targets --locked -- -D warnings && cargo test -p aredoko-desktop --locked",
         cache: {
           input: [
             "src-tauri/**",
             { pattern: "Cargo.lock", base: "workspace" },
             { pattern: "Cargo.toml", base: "workspace" },
+            { pattern: "rust-toolchain.toml", base: "workspace" },
             { pattern: ".cargo/**", base: "workspace" },
           ],
           output: [],

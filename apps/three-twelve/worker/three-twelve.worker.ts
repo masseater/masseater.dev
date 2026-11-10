@@ -5,9 +5,9 @@ import { DateTime, Effect, Logger, Option, String as Str } from "effect";
 import { ARM_LEAD, AUDIO_KEY, BASE_PATH } from "#config";
 
 import { inviteUrl, ownedApplication } from "./discord-application.ts";
-import { performLogged } from "./perform.ts";
+import { alarmed } from "./perform.ts";
 import { nextPlayAt } from "./play-time.ts";
-import { arm, isStoredToken, lastRun, storeLastRun, storeToken } from "./player-state.ts";
+import { arm, isStoredToken, lastRun, storeToken } from "./player-state.ts";
 import { Rejected } from "./rejected.ts";
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
@@ -31,11 +31,7 @@ class Player extends DurableObject {
   }
 
   public override alarm(): Promise<void> {
-    return runLogged(
-      performLogged(this.ctx, env.AUDIO).pipe(
-        Effect.flatMap((result) => storeLastRun(this.ctx.storage, result)),
-      ),
-    );
+    return runLogged(alarmed(this.ctx, env.AUDIO));
   }
 }
 

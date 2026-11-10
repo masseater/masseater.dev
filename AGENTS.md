@@ -3,6 +3,7 @@
 ## コマンド
 
 - `vp run verify` は `vp check` と、`vite.config.ts` の `verify` タスクの `dependsOn` に並ぶ検査をすべて動かす。パッケージごとの検査（`<パッケージ>#<タスク>`）は `checks.config.ts` の `packageChecks` に並べる。pre-push フックも同じものを動かす。
+- `verify` タスクと pre-commit フックは、lint を `GOMEMLIMIT=4GiB` で動かす。tsgolint は制限が無いと約 7 GB まで膨らみ、メモリが 14 GB のクラウドのセッションでは OOM で落ちる。4 GiB にすると約 3.9 GB に収まり、かかる時間は変わらない。
 - `vp check` の decision ルールは `apps/portfolio/src` だけに掛かり、`OPENROUTER_API_KEY` で判定する。
 - 1 つのテストは、そのパッケージのディレクトリで `vp test run <ファイル>` で動かす。
 

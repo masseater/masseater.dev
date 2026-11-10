@@ -1,4 +1,4 @@
-import { Array as Arr, Context, Duration, Effect, Option, Ref, String as Str, pipe } from "effect";
+import { Array as Arr, Context, Duration, Effect, Ref, String as Str, pipe } from "effect";
 
 import { cutoffFor } from "./cutoff.ts";
 import type { JudgeError } from "./judge-error.ts";
@@ -6,6 +6,8 @@ import { InjectionJudge } from "./judge.ts";
 import type { Verdict } from "./judge.ts";
 import type { Parser, Span } from "./parser.ts";
 import { DEFAULT_PARSERS } from "./parsers.ts";
+import { partsOf, unlocatedSpan } from "./parts.ts";
+import type { Part } from "./parts.ts";
 import { joinRegions } from "./region.ts";
 import type { Region } from "./region.ts";
 import { AUTO, segmenterOf } from "./segment.ts";
@@ -75,11 +77,6 @@ interface Query {
   readonly nextId: Effect.Effect<number>;
 }
 
-interface Range {
-  readonly from: number;
-  readonly to: number;
-}
-
 const ask = Effect.fn("injection-bisect.ask")(function* ask(
   query: Query,
   span: Span,
@@ -99,46 +96,29 @@ const ask = Effect.fn("injection-bisect.ask")(function* ask(
   return verdict.probability;
 });
 
-const spanOfRange = (sentences: readonly Span[], { from, to }: Range): Span => ({
-  start: Option.match(Arr.get(sentences, from), {
-    onNone: () => FIRST,
-    onSome: ({ start }) => start,
-  }),
-  end: Option.match(Arr.get(sentences, to - ONE_SENTENCE), {
-    onNone: () => FIRST,
-    onSome: ({ end }) => end,
-  }),
-});
-
-const partsOf = ({ from, to }: Range, branches: number): readonly Range[] => {
-  const count = Math.min(branches, to - from);
-  return Arr.makeBy(count, (index) => ({
-    from: from + Math.floor(((to - from) * index) / count),
-    to: from + Math.floor(((to - from) * (index + ONE_SENTENCE)) / count),
-  }));
-};
+interface Judged extends Part {
+  readonly probability: number;
+  readonly depth: number;
+}
 
 const locate = (
   query: Query,
   sentences: readonly Span[],
-  found: Readonly<Range & { probability: number; depth: number }>,
+  found: Judged,
 ): Effect.Effect<readonly Region[], JudgeError, InjectionJudge> =>
   Effect.gen(function* locateRange() {
     const whole: readonly Region[] = [
-      { ...spanOfRange(sentences, found), probability: found.probability },
+      { ...unlocatedSpan(sentences)(found), probability: found.probability },
     ];
     if (found.to - found.from <= ONE_SENTENCE) {
       return whole;
     }
+    const depth = found.depth + ONE_SENTENCE;
     const scored = yield* Effect.forEach(
-      partsOf(found, query.branches),
+      partsOf({ sentences, branches: query.branches })(found),
       (part) =>
-        ask(query, spanOfRange(sentences, part), found.depth + ONE_SENTENCE).pipe(
-          Effect.map((probability) => ({
-            ...part,
-            probability,
-            depth: found.depth + ONE_SENTENCE,
-          })),
+        ask(query, part.span, depth).pipe(
+          Effect.map((probability): Judged => ({ ...part, probability, depth })),
         ),
       { concurrency: "unbounded" },
     );
@@ -239,7 +219,20 @@ const locateAll = (
   if (asksTogether(query.model)) {
     return locateTogether(query, sentences, probability);
   }
-  return locate(query, sentences, { from: FIRST, to: sentences.length, probability, depth: FIRST });
+  return locate(query, sentences, {
+    from: FIRST,
+    to: sentences.length,
+    span: { start: FIRST, end: query.text.length },
+    probability,
+    depth: FIRST,
+  });
+};
+
+const atLeastTwo = (branches: number): number => {
+  if (Number.isInteger(branches)) {
+    return Math.max(MIN_BRANCHES, branches);
+  }
+  return MIN_BRANCHES;
 };
 
 const settingsOf = (
@@ -250,7 +243,7 @@ const settingsOf = (
   return {
     model,
     cutoff: options.cutoff ?? cutoffFor(model),
-    branches: options.branches ?? branchesFor(sentenceCount),
+    branches: atLeastTwo(options.branches ?? branchesFor(sentenceCount)),
   };
 };
 

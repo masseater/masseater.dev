@@ -20,15 +20,33 @@ interface Bundle extends PackageFile {
   readonly members: readonly Member[];
 }
 
+type FileStat = Effect.Success<ReturnType<typeof statOf>>;
+
+/** @internal */
+const statIfPresent = Effect.fn("statIfPresent")(function* statPresentFile(file: string) {
+  return yield* statOf(file).pipe(
+    Effect.map((stat) => Option.some<FileStat>(stat)),
+    Effect.catch((error) =>
+      Effect.logWarning("stat failed", file, error).pipe(Effect.as(Option.none<FileStat>())),
+    ),
+  );
+});
+
 const memberOf = Effect.fn("memberOf")(function* statMember(root: string, name: string) {
   const path = yield* Path.Path;
   const file = path.join(root, name);
-  const stat = yield* statOf(file);
-  return {
-    pathname: pipe(partsOf(name), Array.join(SEPARATOR)),
-    file,
-    ...stat,
-  } satisfies Member;
+  const stat = yield* statIfPresent(file);
+  return pipe(
+    stat,
+    Option.map(
+      (found) =>
+        ({
+          pathname: pipe(partsOf(name), Array.join(SEPARATOR)),
+          file,
+          ...found,
+        }) satisfies Member,
+    ),
+  );
 });
 
 const topOf = ({ pathname }: Member): string =>
@@ -77,8 +95,13 @@ const bundlesIn = Effect.fn("bundlesIn")(function* listBundles(
     Array.filter(isLoose),
     Effect.forEach((name) => memberOf(root, name)),
   );
-  return pipe(members, Array.groupBy(topOf), Record.values, Array.map(bundleOf(id, root, path)));
+  return pipe(
+    Array.getSomes(members),
+    Array.groupBy(topOf),
+    Record.values,
+    Array.map(bundleOf(id, root, path)),
+  );
 });
 
-export { bundlesIn };
+export { bundlesIn, statIfPresent };
 export type { Bundle, Member };

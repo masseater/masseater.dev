@@ -67,29 +67,61 @@ const TEXTURE = "0123456789abcdef0123456789abcdef";
 const MATERIAL = "fedcba9876543210fedcba9876543210";
 const PREVIEW = encoder.encode("png");
 
-const fixture = Effect.gen(function* fixture() {
+const LARGE = "11111111111111111111111111111111";
+const FOLDER = "22222222222222222222222222222222";
+const LARGE_ASSET_BYTES = 2_097_153;
+
+const readFixture = Effect.fn("readFixture")(function* readFixturePackage(
+  assets: readonly FixtureAsset[],
+) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const directory = yield* fileSystem.makeTempDirectoryScoped();
   const archive = path.join(directory, "fixture.unitypackage");
-  yield* writeFixture(archive, [
-    {
-      guid: TEXTURE,
-      pathname: "Assets/Outfit/Textures/body_black.png\n00",
-      asset: Option.some(PREVIEW),
-      meta: Option.some("fileFormatVersion: 2"),
-      preview: Option.some(PREVIEW),
-    },
-    {
-      guid: MATERIAL,
-      pathname: "Assets/Outfit/Materials/body.mat",
-      asset: Option.some(encoder.encode(`m_Texture: {fileID: 2800000, guid: ${TEXTURE}, type: 3}`)),
-      meta: Option.none(),
-      preview: Option.none(),
-    },
-  ]);
+  yield* writeFixture(archive, assets);
   return yield* readPackage(archive);
 });
+
+const fixture = readFixture([
+  {
+    guid: TEXTURE,
+    pathname: "Assets/Outfit/Textures/body_black.png\n00",
+    asset: Option.some(PREVIEW),
+    meta: Option.some("fileFormatVersion: 2"),
+    preview: Option.some(PREVIEW),
+  },
+  {
+    guid: MATERIAL,
+    pathname: "Assets/Outfit/Materials/body.mat",
+    asset: Option.some(encoder.encode(`m_Texture: {fileID: 2800000, guid: ${TEXTURE}, type: 3}`)),
+    meta: Option.none(),
+    preview: Option.none(),
+  },
+]);
+
+const sizedFixture = readFixture([
+  {
+    guid: TEXTURE,
+    pathname: "Assets/Outfit/Textures/body_black.png",
+    asset: Option.some(PREVIEW),
+    meta: Option.some("fileFormatVersion: 2"),
+    preview: Option.none(),
+  },
+  {
+    guid: LARGE,
+    pathname: "Assets/Outfit/Models/body.fbx",
+    asset: Option.some(new Uint8Array(LARGE_ASSET_BYTES)),
+    meta: Option.some("fileFormatVersion: 2"),
+    preview: Option.none(),
+  },
+  {
+    guid: FOLDER,
+    pathname: "Assets/Outfit/Models",
+    asset: Option.none(),
+    meta: Option.some("folderAsset: yes"),
+    preview: Option.none(),
+  },
+]);
 
 const entryOf =
   (guid: string) =>
@@ -97,6 +129,16 @@ const entryOf =
     pipe(
       entries,
       Array.findFirst((candidate) => candidate.guid === guid),
+    );
+
+const shapeOf =
+  (guid: string) =>
+  (
+    entries: readonly PackageEntry[],
+  ): Option.Option<{ readonly hasAsset: boolean; readonly loaded: boolean }> =>
+    pipe(
+      entryOf(guid)(entries),
+      Option.map(({ hasAsset, asset }) => ({ hasAsset, loaded: Option.isSome(asset) })),
     );
 
 layer(NodeServices.layer)("readPackage", (it) => {
@@ -129,6 +171,19 @@ layer(NodeServices.layer)("readPackage", (it) => {
           Option.map(({ references }) => references),
         ),
       ).toStrictEqual(Option.some([TEXTURE]));
+    }).pipe(Effect.scoped),
+  );
+
+  it.effect("中身を読み込まない大きさのアセットもファイルとして返し、フォルダと区別する", () =>
+    Effect.gen(function* test() {
+      const entries = yield* sizedFixture;
+      expect(shapeOf(TEXTURE)(entries)).toStrictEqual(
+        Option.some({ hasAsset: true, loaded: true }),
+      );
+      expect(shapeOf(LARGE)(entries)).toStrictEqual(Option.some({ hasAsset: true, loaded: false }));
+      expect(shapeOf(FOLDER)(entries)).toStrictEqual(
+        Option.some({ hasAsset: false, loaded: false }),
+      );
     }).pipe(Effect.scoped),
   );
 });

@@ -59,7 +59,7 @@ export default defineConfig({
         },
       },
       verify: {
-        command: "vp check --deny-warnings",
+        command: "GOMEMLIMIT=4GiB vp check --deny-warnings",
         cache: {
           env: ["OPENROUTER_API_KEY"],
           untrackedEnv: [

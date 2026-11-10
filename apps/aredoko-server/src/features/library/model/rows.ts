@@ -2,6 +2,7 @@ import { Schema } from "effect";
 
 const PackageFileRow = Schema.Struct({
   id: Schema.Int,
+  source_id: Schema.Int,
   path: Schema.String,
   size: Schema.Int,
   modified_at: Schema.Int,

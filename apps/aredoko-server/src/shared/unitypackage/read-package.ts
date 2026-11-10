@@ -10,6 +10,7 @@ const NO_BYTES = 0;
 interface PackageEntry {
   readonly guid: string;
   readonly pathname: string;
+  readonly hasAsset: boolean;
   readonly asset: Option.Option<Uint8Array>;
   readonly meta: Option.Option<string>;
   readonly preview: Option.Option<Uint8Array>;
@@ -104,6 +105,14 @@ const fileOf =
       Option.flatMap(({ data }) => data),
     );
 
+const hasFile =
+  (name: string) =>
+  (files: readonly RawFile[]): boolean =>
+    pipe(
+      files,
+      Array.some(({ file }) => file === name),
+    );
+
 const firstLine = (bytes: Uint8Array): string =>
   pipe(decoder.decode(bytes), String.split("\n"), Array.headNonEmpty, String.trim);
 
@@ -125,6 +134,7 @@ const entryOf = (files: Array.NonEmptyReadonlyArray<RawFile>): Option.Option<Pac
     Option.map((pathname) => ({
       guid,
       pathname,
+      hasAsset: hasFile("asset")(files),
       asset: fileOf("asset")(files),
       meta: Option.map(fileOf("asset.meta")(files), (bytes) => decoder.decode(bytes)),
       preview: Option.filter(

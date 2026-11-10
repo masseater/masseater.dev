@@ -6,7 +6,7 @@ import { nextPlayAt } from "./play-time.ts";
 const at = (iso: string): DateTime.Utc => DateTime.makeUnsafe(iso);
 
 test("cron が起きた日の 3 時 12 分（JST）に流す", () => {
-  expect(nextPlayAt(at("2026-11-06T18:11:00Z"))).toBe(
+  expect(nextPlayAt(at("2026-11-06T18:09:00Z"))).toBe(
     DateTime.toEpochMillis(at("2026-11-06T18:12:00Z")),
   );
 });

@@ -22,7 +22,7 @@ const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(file: 
   const read = yield* readPackage(file.path);
   const entries = pipe(
     read,
-    Array.filter(({ asset }) => Option.isSome(asset)),
+    Array.filter(({ hasAsset }) => hasAsset),
   );
   yield* storePackage({
     kind: "unitypackage",
