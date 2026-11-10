@@ -165,6 +165,8 @@ const bindAll = (canvas: HTMLCanvasElement, store: ViewerStore, signal: AbortSig
   bindResize(canvas, store, signal);
 };
 
+const isUnmounted = (signal: AbortSignal): boolean => signal.aborted;
+
 const revealWhenReady = ({
   canvas,
   mosaic,
@@ -185,14 +187,18 @@ const revealWhenReady = ({
       canvas,
       cells: mosaic.cells,
       onReady: invalidation.mark,
+      signal,
     });
     if (Option.isNone(renderer)) {
       return;
     }
     startLoop({ store, renderer: renderer.value, sprites, dirty: invalidation.take, signal });
     yield* sprites.ready;
+    if (isUnmounted(signal)) {
+      return;
+    }
     yield* renderer.value.prepare(sprites);
-    if (!signal.aborted) {
+    if (!isUnmounted(signal)) {
       store.write({
         status: "ready",
         scene: createScene({
