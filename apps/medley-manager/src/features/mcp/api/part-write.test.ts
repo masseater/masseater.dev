@@ -4,12 +4,12 @@ import type { Cause } from "effect";
 import { vi } from "vite-plus/test";
 
 import { catalogDb, getVideo, partStaff, video } from "#/entities/catalog/index.server";
-import { closeDatabase, resetDatabase } from "#/shared/db/d1.test.support";
 
+import { closeDatabase, resetDatabase } from "./d1.test.support.ts";
 import { addParts, setVideoParts, updatePart } from "./part-write.server";
 import type { VideoPartsInput } from "./tool-input";
 
-vi.mock("cloudflare:workers", () => import("#/shared/db/d1.test.support"));
+vi.mock("cloudflare:workers", () => import("./d1.test.support.ts"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 
