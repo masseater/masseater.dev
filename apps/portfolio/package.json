@@ -46,6 +46,7 @@
     "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@fontsource/noto-sans-jp": "catalog:",
+    "@masseater.dev/d1-test": "workspace:*",
     "@mdx-js/rollup": "catalog:",
     "@resvg/resvg-js": "catalog:",
     "@shikijs/rehype": "catalog:",
