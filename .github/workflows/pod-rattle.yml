@@ -10,6 +10,9 @@ permissions: {}
 env:
   CARGO_TERM_COLOR: always
   PLUGINVAL_VERSION: v1.0.4
+  PLUGINVAL_SHA256_LINUX: c01c49d8063965c4c2dea8324468336768f5c9139e0b1caebde14c2400b55352
+  PLUGINVAL_SHA256_WINDOWS: c08e61ce3b96db41636f8ec7e76f4c7e2c13ebdac7fa1b5a1f52b4f32ec715ab
+  PLUGINVAL_SHA256_MACOS: 3c4c533bda0c5059eea3ddaea752d757ee2025041f0f47e6bcb0e87f6082b29f
   CLAP_VALIDATOR_VERSION: 0.4.1
 
 jobs:
@@ -51,11 +54,16 @@ jobs:
         shell: bash
         run: |
           case "$RUNNER_OS" in
-            Linux) asset=pluginval_Linux.zip; run=(xvfb-run -a ./pluginval) ;;
-            Windows) asset=pluginval_Windows.zip; run=(./pluginval.exe) ;;
-            macOS) asset=pluginval_macOS.zip; run=(./pluginval.app/Contents/MacOS/pluginval) ;;
+            Linux) asset=pluginval_Linux.zip; sha256="$PLUGINVAL_SHA256_LINUX"; run=(xvfb-run -a ./pluginval) ;;
+            Windows) asset=pluginval_Windows.zip; sha256="$PLUGINVAL_SHA256_WINDOWS"; run=(./pluginval.exe) ;;
+            macOS) asset=pluginval_macOS.zip; sha256="$PLUGINVAL_SHA256_MACOS"; run=(./pluginval.app/Contents/MacOS/pluginval) ;;
           esac
           curl -fsSL -o pluginval.zip "https://github.com/Tracktion/pluginval/releases/download/$PLUGINVAL_VERSION/$asset"
+          if command -v sha256sum >/dev/null; then
+            echo "$sha256  pluginval.zip" | sha256sum --check --quiet -
+          else
+            echo "$sha256  pluginval.zip" | shasum --algorithm 256 --check --quiet -
+          fi
           unzip -q pluginval.zip
           for bundle in target/bundled/*.vst3; do
             "${run[@]}" --strictness-level 10 --validate-in-process --timeout-ms 300000 --output-dir pluginval-report "$bundle"
