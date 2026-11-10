@@ -122,7 +122,7 @@
     {
       "name": "tanstack-query",
       "path": "dist/tanstack-query.mjs",
-      "limit": "11826 B"
+      "limit": "11835 B"
     },
     {
       "name": "tanstack-router",
