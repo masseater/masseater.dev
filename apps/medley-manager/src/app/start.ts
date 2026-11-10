@@ -2,6 +2,7 @@ import { run } from "@r_masseater/workers-tracing/effect";
 import { requestSpan, serverFnSpan } from "@r_masseater/workers-tracing/tanstack-start";
 import { createMiddleware, createStart } from "@tanstack/react-start";
 import { Effect, Option } from "effect";
+import { securedResult } from "security-headers/response";
 
 import { withWebAnalytics } from "#/app/server/web-analytics.server";
 import { SEARCH_INDEX_ORIGIN } from "#/shared/config";
@@ -26,9 +27,12 @@ const webAnalytics = createMiddleware().server(({ next }) =>
   ),
 );
 
+const securityHeaders = createMiddleware().server(({ next }) => securedResult(next));
+
 const startInstance = createStart(() => ({
   requestMiddleware: [
     requestSpan,
+    securityHeaders,
     webAnalytics,
     ...Option.match(SEARCH_INDEX_ORIGIN, {
       onNone: () => [noindex],

@@ -20,7 +20,7 @@ import {
 import { Command, Flag } from "effect/cli";
 import { FetchHttpClient, HttpClient } from "effect/http";
 
-import { missingOf, render, spanOf, traceOf } from "./trace-tree.ts";
+import { markedAt, missingOf, render, spanOf, traceOf } from "./trace-tree.ts";
 import type { ReceivedSpan } from "./trace-tree.ts";
 
 const DEFAULT_SINK = "workers-tracing-sink";
@@ -96,14 +96,11 @@ type Select = (spans: readonly ReceivedSpan[]) => readonly ReceivedSpan[];
 
 type Sent = Readonly<{ select: Select; since: Option.Option<number> }>;
 
-const MARKER = "workers-traces";
-
 const send = Effect.fn("workers-traces.send")(function* send(url: string) {
   const sentAt = yield* Clock.currentTimeMillis;
-  const marked = new URL(url);
-  marked.searchParams.set(MARKER, sentAt.toString());
-  yield* HttpClient.get(marked.href);
-  return { select: traceOf(marked.href), since: Option.some(sentAt) } satisfies Sent;
+  const marked = markedAt(sentAt)(url);
+  yield* HttpClient.get(marked);
+  return { select: traceOf(marked), since: Option.some(sentAt) } satisfies Sent;
 });
 
 const check = Effect.fn("workers-traces.check")(function* check(

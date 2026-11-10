@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, Option } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { encodeSummary } from "#entities/package";
@@ -18,12 +18,14 @@ const storePackage = Effect.fn("storePackage")(function* storePackageRows({
   name,
   entries,
   assets,
+  linkable,
 }: {
   readonly kind: StoredKind;
   readonly file: PackageFile;
   readonly name: string;
   readonly entries: readonly SummaryEntry[];
   readonly assets: readonly AssetInput[];
+  readonly linkable: boolean;
 }) {
   const sql = yield* SqlClient.SqlClient;
   const summary = yield* encodeSummary({ name, entries });
@@ -36,7 +38,10 @@ const storePackage = Effect.fn("storePackage")(function* storePackageRows({
       return id;
     }),
   );
-  yield* embedTexts(packageId);
+  const awaitsLink = linkable && Option.isNone(booth);
+  if (!awaitsLink) {
+    yield* embedTexts(Option.some(packageId));
+  }
 });
 
 export { storePackage };

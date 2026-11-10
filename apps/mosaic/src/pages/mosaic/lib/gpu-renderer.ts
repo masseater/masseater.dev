@@ -115,7 +115,7 @@ const createGpuRenderer = (
   target: Readonly<Target & { accent: string }>,
 ): Effect.Effect<Option.Option<Renderer>> =>
   Effect.map(
-    acquireGpu(target.canvas),
+    acquireGpu(target),
     Option.map((gpu) => rendererOf(partsOf(gpu, target))),
   );
 

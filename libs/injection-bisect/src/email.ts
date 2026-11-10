@@ -2,9 +2,10 @@ import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import PostalMime from "postal-mime";
 import type { Address } from "postal-mime";
 
-import type { Document, Reader } from "./parser.ts";
+import type { Document, Reader, Unreadable } from "./parser.ts";
 import type { ReadError } from "./read-error.ts";
 import { readErrorOf } from "./read-error.ts";
+import { withUnreadable } from "./unreadable.ts";
 
 type Email = Awaited<ReturnType<typeof PostalMime.parse>>;
 
@@ -15,6 +16,8 @@ const HEADER_START = /^[\w-]+:/u;
 const FROM = /^From:/imu;
 
 const OTHER_HEADER = /^(?:Subject|Date|To|MIME-Version|Message-ID|Received):/imu;
+
+const NOT_READ = "attachment is not read";
 
 const latin1 = new TextDecoder("latin1");
 
@@ -42,6 +45,18 @@ const formatOf = (email: Email): string =>
     onSome: () => "html",
   });
 
+const attachmentsOf = ({ attachments }: Email): readonly Unreadable[] =>
+  pipe(
+    attachments,
+    Arr.map(({ filename, mimeType }) => ({
+      name: Option.fromNullishOr(filename).pipe(
+        Option.filter(Str.isNonEmpty),
+        Option.getOrElse(() => mimeType),
+      ),
+      reason: NOT_READ,
+    })),
+  );
+
 const documentOf = (email: Email): Document => {
   const from = Option.fromNullishOr(email.from).pipe(Option.map((address) => addressOf(address)));
   const to = Option.fromNullishOr(email.to).pipe(
@@ -65,10 +80,8 @@ const documentOf = (email: Email): Document => {
     ...headerLine("Subject", email.subject ?? ""),
   ];
   const bodies = Arr.getSomes([Option.fromNullishOr(email.text), Option.fromNullishOr(email.html)]);
-  return {
-    text: pipe([pipe(headers, Arr.join("\n")), ...bodies], Arr.join("\n\n")),
-    format: formatOf(email),
-  };
+  const text = pipe([pipe(headers, Arr.join("\n")), ...bodies], Arr.join("\n\n"));
+  return withUnreadable(attachmentsOf(email))({ text, format: formatOf(email) });
 };
 
 const emailOf = (bytes: Uint8Array): Effect.Effect<Document, ReadError> =>

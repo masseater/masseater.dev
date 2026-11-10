@@ -1,26 +1,33 @@
-import { DEFAULT_READERS, ReadError, readDocument } from "@r_masseater/injection-bisect";
-import type { Document } from "@r_masseater/injection-bisect";
-import { Effect, Option } from "effect";
+import type { Unreadable } from "@r_masseater/injection-bisect";
+import { Array as Arr, Option, pipe } from "effect";
 import { FileUp } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 
 import { COPY } from "#/pages/inspect/model/copy";
 import {
-  NOT_OPENING,
   useOpening,
   useSetDraftText,
   useSetFormat,
   useSetOpening,
 } from "#/pages/inspect/model/draft";
 import type { Opening } from "#/pages/inspect/model/draft";
+import { openerOf, pickedOf } from "#/pages/inspect/model/open-file";
+import type { Picked } from "#/pages/inspect/model/open-file";
 
-const FIRST = 0;
+const SHOWN_NAMES = 3;
 
-interface Picked {
-  readonly name: string;
-  readonly load: () => Promise<ArrayBuffer>;
-}
+const namesOf = (unreadable: readonly Unreadable[]): string => {
+  const [shown, rest] = pipe(
+    unreadable,
+    Arr.map(({ name }) => name),
+    Arr.splitAt(SHOWN_NAMES),
+  );
+  if (Arr.isReadonlyArrayEmpty(rest)) {
+    return pipe(shown, Arr.join("　"));
+  }
+  return pipe([...shown, COPY.others(rest.length)], Arr.join("　"));
+};
 
 const statusOf = (opening: Opening): string => {
   if (opening.status === "reading") {
@@ -29,51 +36,38 @@ const statusOf = (opening: Opening): string => {
   if (opening.status === "failed") {
     return `${COPY.unreadable}: ${opening.name} (${opening.reason})`;
   }
+  if (opening.status === "partial") {
+    return `${COPY.unread}　${namesOf(opening.unreadable)}`;
+  }
   return "";
 };
 
-const documentOf = ({ name, load }: Picked): Effect.Effect<Document, ReadError> =>
-  Effect.tryPromise({
-    try: load,
-    catch: (cause) => ReadError.make({ reason: String(cause) }),
-  }).pipe(
-    Effect.flatMap((buffer) =>
-      readDocument({ bytes: new Uint8Array(buffer), name, readers: DEFAULT_READERS }),
-    ),
-  );
-
-const pickedOf = (event: ChangeEvent<HTMLInputElement>): Option.Option<Picked> =>
-  Option.fromNullishOr(event.target.files).pipe(
-    Option.flatMapNullishOr((files) => files.item(FIRST)),
-    Option.map((file) => ({ name: file.name, load: () => file.arrayBuffer() })),
-  );
-
-const OpenFile = (): ReactNode => {
-  const opening = useOpening();
+const useOpenFile = (): ((picked: Picked) => void) => {
   const setOpening = useSetOpening();
   const setText = useSetDraftText();
   const setFormat = useSetFormat();
-  const open = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      Option.map(pickedOf(event), (picked) => {
-        setOpening({ status: "reading", name: picked.name });
-        Effect.runFork(
-          documentOf(picked).pipe(
-            Effect.match({
-              onFailure: ({ reason }) => {
-                setOpening({ status: "failed", name: picked.name, reason });
-              },
-              onSuccess: ({ text, format }) => {
-                setText(text);
-                setFormat(format);
-                setOpening(NOT_OPENING);
-              },
-            }),
-          ),
-        );
-      });
-    },
+  return useMemo(
+    () =>
+      openerOf({
+        opening: setOpening,
+        draft: ({ text, format }) => {
+          setText(text);
+          setFormat(format);
+        },
+      }),
     [setOpening, setText, setFormat],
+  );
+};
+
+const OpenFile = (): ReactNode => {
+  const opening = useOpening();
+  const openFile = useOpenFile();
+  const open = useCallback(
+    ({ currentTarget }: ChangeEvent<HTMLInputElement>) => {
+      Option.map(pickedOf(currentTarget.files), openFile);
+      currentTarget.value = "";
+    },
+    [openFile],
   );
   return (
     <div className="flex items-center gap-2">

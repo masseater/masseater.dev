@@ -1,3 +1,5 @@
+import { securedResponse } from "security-headers/response";
+
 import { serveMcp } from "#/features/mcp";
 import { MCP_PATH } from "#/shared/config";
 
@@ -11,5 +13,5 @@ const ROUTES: Readonly<Record<string, Route>> = { [MCP_PATH]: serveMcp };
 
 export default {
   fetch: (request: Request): Promise<Response> =>
-    (ROUTES[new URL(request.url).pathname] ?? notFound)(request),
+    securedResponse(() => (ROUTES[new URL(request.url).pathname] ?? notFound)(request)),
 } satisfies ExportedHandler;

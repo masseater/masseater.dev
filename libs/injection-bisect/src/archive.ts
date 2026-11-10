@@ -3,9 +3,10 @@ import { gunzip, unzip } from "fflate";
 import type { Unzipped } from "fflate";
 import { parseTar } from "nanotar";
 
-import type { Document, Reader } from "./parser.ts";
+import type { Document, Reader, Unreadable } from "./parser.ts";
 import type { ReadError } from "./read-error.ts";
 import { readErrorOf } from "./read-error.ts";
+import { BINARY, isBinary, partsInside, withUnreadable } from "./unreadable.ts";
 
 interface Entry {
   readonly bytes: Uint8Array;
@@ -22,15 +23,29 @@ const LONGER = 1;
 
 const ARCHIVE_FORMATS = ["zip", "tar", "gzip"] as const;
 
-const NUL = "\0";
+const START = 0;
 
-const SKIPPED = ["__MACOSX/", ".DS_Store"];
+const METADATA = [
+  { named: /(?:^|\/)\._[^/]*$/u, magic: "\u0000\u0005\u0016\u0007" },
+  { named: /(?:^|\/)\.DS_Store$/u, magic: "\u0000\u0000\u0000\u0001Bud1" },
+] as const;
 
-const kept = (name: string): boolean =>
-  !Str.endsWith("/")(name) &&
-  !pipe(
-    SKIPPED,
-    Arr.some((skipped) => Str.includes(skipped)(name)),
+const latin1 = new TextDecoder("latin1");
+
+interface Section {
+  readonly lines: readonly string[];
+  readonly unreadable: readonly Unreadable[];
+}
+
+const isFile = (name: string): boolean => !Str.endsWith("/")(name);
+
+const isMetadata = ({ name, bytes }: Entry): boolean =>
+  pipe(
+    METADATA,
+    Arr.some(
+      ({ named, magic }) =>
+        named.test(name) && latin1.decode(bytes.subarray(START, magic.length)) === magic,
+    ),
   );
 
 const fenceFor = (text: string): string => {
@@ -38,30 +53,62 @@ const fenceFor = (text: string): string => {
   return Str.repeat(Math.max(SHORTEST_FENCE, ...runs))("`");
 };
 
-const sectionOf = (name: string, { text, format }: Document): readonly string[] => {
-  if (Str.includes(NUL)(text) || Str.trim(text) === "") {
-    return [];
+const binaryPartsOf = (name: string, unreadable: readonly Unreadable[]): readonly Unreadable[] => {
+  if (
+    pipe(
+      unreadable,
+      Arr.some((part) => part.name === name),
+    )
+  ) {
+    return unreadable;
+  }
+  return [...unreadable, { name, reason: BINARY }];
+};
+
+const sectionOf = (name: string, document: Document): Section => {
+  const { text, format } = document;
+  const unreadable = partsInside(name)(document);
+  if (isBinary(text)) {
+    return { lines: [], unreadable: binaryPartsOf(name, unreadable) };
+  }
+  if (Str.trim(text) === "") {
+    return { lines: [], unreadable };
   }
   const fence = fenceFor(text);
-  return [`## ${name}`, `${fence}${format}\n${text}\n${fence}`];
+  return { lines: [`## ${name}`, `${fence}${format}\n${text}\n${fence}`], unreadable };
 };
 
 const sectionsOf =
   (read: ReadEntry) =>
   (entries: readonly Entry[]): Effect.Effect<Document> =>
     Effect.forEach(
-      entries,
+      pipe(
+        entries,
+        Arr.filter((entry) => !isMetadata(entry)),
+      ),
       ({ bytes, name }) =>
         read({ bytes, name }).pipe(
           Effect.map((document) => sectionOf(name, document)),
-          Effect.orElseSucceed((): readonly string[] => []),
+          Effect.catchTag("ReadError", ({ reason }) =>
+            Effect.succeed<Section>({ lines: [], unreadable: [{ name, reason }] }),
+          ),
         ),
       { concurrency: 1 },
     ).pipe(
-      Effect.map((sections) => ({
-        text: pipe(sections.flat(), Arr.join("\n\n")),
-        format: "markdown",
-      })),
+      Effect.map((sections) => {
+        const unreadable = pipe(
+          sections,
+          Arr.flatMap((section) => section.unreadable),
+        );
+        return withUnreadable(unreadable)({
+          text: pipe(
+            sections,
+            Arr.flatMap(({ lines }) => lines),
+            Arr.join("\n\n"),
+          ),
+          format: "markdown",
+        });
+      }),
     );
 
 const settled = <Data>(cause: unknown, data: Data): Effect.Effect<Data, ReadError> =>
@@ -72,7 +119,7 @@ const settled = <Data>(cause: unknown, data: Data): Effect.Effect<Data, ReadErro
 
 const unzipped = (bytes: Uint8Array): Effect.Effect<Unzipped, ReadError> =>
   Effect.callback<Unzipped, ReadError>((resume) => {
-    unzip(bytes, { filter: ({ name }) => kept(name) }, (cause, files) => {
+    unzip(bytes, { filter: ({ name }) => isFile(name) }, (cause, files) => {
       resume(settled(cause, files));
     });
   });
@@ -107,7 +154,7 @@ const archiveReadersOf = (read: ReadEntry): readonly Reader[] => [
         pipe(
           parseTar(bytes),
           Arr.flatMap(({ name, type, data }) => {
-            if (type !== "file" || !kept(name)) {
+            if (type !== "file" || !isFile(name)) {
               return [];
             }
             return Option.toArray(

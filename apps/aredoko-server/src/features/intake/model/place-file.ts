@@ -1,4 +1,6 @@
-import { Effect, FileSystem, Option, Path, pipe } from "effect";
+import { Array, Effect, FileSystem, Option, Path, pipe } from "effect";
+
+import { digestOfFile } from "./content-digest.ts";
 
 const PARTIAL = ".part";
 const ORIGINAL = 1;
@@ -8,6 +10,7 @@ interface Placement<Failure, Requirements> {
   readonly folder: string;
   readonly name: string;
   readonly size: number;
+  readonly digest: Effect.Effect<string, Failure, Requirements>;
   readonly write: (partial: string) => Effect.Effect<void, Failure, Requirements>;
 }
 
@@ -15,6 +18,11 @@ interface Slot {
   readonly folder: string;
   readonly name: string;
   readonly copy: number;
+}
+
+interface Vacancy {
+  readonly target: string;
+  readonly sameSize: readonly string[];
 }
 
 const candidate = (path: Path.Path, { folder, name, copy }: Slot): string => {
@@ -33,20 +41,36 @@ const sizeOf = Effect.fn("sizeOf")(function* sizeOfFile(file: string) {
   );
 });
 
-const freeTarget = Effect.fn("freeTarget")(function* findFreeTarget(
+const vacancy = Effect.fn("vacancy")(function* findVacancy(
   slot: Slot,
   size: number,
-): Effect.fn.Return<Option.Option<string>, never, FileSystem.FileSystem | Path.Path> {
+  sameSize: readonly string[],
+): Effect.fn.Return<Vacancy, never, FileSystem.FileSystem | Path.Path> {
   const path = yield* Path.Path;
   const target = candidate(path, slot);
   const existing = yield* sizeOf(target);
   if (Option.isNone(existing)) {
-    return Option.some(target);
+    return { target, sameSize };
   }
+  const next = { ...slot, copy: slot.copy + NEXT };
   if (existing.value === size) {
-    return Option.none();
+    return yield* vacancy(next, size, [...sameSize, target]);
   }
-  return yield* freeTarget({ ...slot, copy: slot.copy + NEXT }, size);
+  return yield* vacancy(next, size, sameSize);
+});
+
+const isAlreadyPlaced = Effect.fn("isAlreadyPlaced")(function* isAlreadyPlaced<
+  Failure,
+  Requirements,
+>(sameSize: readonly string[], digest: Effect.Effect<string, Failure, Requirements>) {
+  if (Array.isReadonlyArrayEmpty(sameSize)) {
+    return false;
+  }
+  const incoming = yield* digest;
+  const same = yield* Effect.findFirst(sameSize, (file) =>
+    digestOfFile(file).pipe(Effect.map((placed) => placed === incoming)),
+  );
+  return Option.isSome(same);
 });
 
 /** @internal */
@@ -54,17 +78,19 @@ const placeFile = Effect.fn("placeFile")(function* placeFileInFolder<Failure, Re
   folder,
   name,
   size,
+  digest,
   write,
 }: Placement<Failure, Requirements>) {
   const fileSystem = yield* FileSystem.FileSystem;
   yield* fileSystem.makeDirectory(folder, { recursive: true });
-  const target = yield* freeTarget({ folder, name, copy: ORIGINAL }, size);
-  if (Option.isNone(target)) {
+  const { target, sameSize } = yield* vacancy({ folder, name, copy: ORIGINAL }, size, []);
+  const placed = yield* isAlreadyPlaced(sameSize, digest);
+  if (placed) {
     return false;
   }
-  const partial = `${target.value}${PARTIAL}`;
+  const partial = `${target}${PARTIAL}`;
   yield* write(partial).pipe(
-    Effect.andThen(fileSystem.rename(partial, target.value)),
+    Effect.andThen(fileSystem.rename(partial, target)),
     Effect.onError(() => pipe(fileSystem.remove(partial), Effect.ignore)),
   );
   return true;

@@ -212,8 +212,10 @@ vp exec workers-traces --request https://my-app.example.com/ \
 ```
 
 It needs `CLOUDFLARE_API_TOKEN`, with Workers Observability read access, and
-`CLOUDFLARE_ACCOUNT_ID` (or `--account`). It adds a `workers-traces` query
-parameter to the URL, so each run finds the trace of its own request.
+`CLOUDFLARE_ACCOUNT_ID` (or `--account`). It adds a query parameter named
+`workers-traces.<send time>` to the URL, so each run finds the trace of its own
+request. The send time is in the name because the trace export replaces query
+values that look sensitive.
 
 Without `--request` it prints the traces of the last 15 minutes. `--service
 <worker>` narrows them to one Worker. `--minutes` changes the window, and

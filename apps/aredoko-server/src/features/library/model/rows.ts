@@ -10,9 +10,10 @@ const PackageFileRow = Schema.Struct({
 
 const AssetTextRow = Schema.Struct({ id: Schema.Int, text: Schema.String });
 
-const ImageRow = Schema.Struct({
+const ImageRow = Schema.Struct({ id: Schema.Int, png: Schema.Uint8Array });
+
+const PendingImageRow = Schema.Struct({
   id: Schema.Int,
-  png: Schema.Uint8Array,
   asset_id: Schema.Int,
   pathname: Schema.String,
 });
@@ -25,4 +26,4 @@ const AssetGuidRow = Schema.Struct({
   pathname: Schema.String,
 });
 
-export { AssetGuidRow, AssetTextRow, ImageRow, PackageFileRow, SourcePathRow };
+export { AssetGuidRow, AssetTextRow, ImageRow, PackageFileRow, PendingImageRow, SourcePathRow };

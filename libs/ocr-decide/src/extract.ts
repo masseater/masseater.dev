@@ -4,6 +4,7 @@ import { assignFields } from "./assign.ts";
 import type { DecisionModel } from "./assign.ts";
 import type { Extraction, Field, Fragment } from "./fragment.ts";
 import { extractFromImage, rereadLowConfidence } from "./generate.ts";
+import type { ImageError } from "./image-error.ts";
 import type { ModelApi } from "./model-api.ts";
 import type { ModelError } from "./model-error.ts";
 import type { OcrError } from "./ocr-error.ts";
@@ -28,7 +29,7 @@ const correct = (
   fragments: readonly Fragment[],
 ): Effect.Effect<
   Readonly<{ fragments: readonly Fragment[]; costUsd: number }>,
-  ModelError,
+  ImageError | ModelError,
   ModelApi
 > => {
   if (reread) {
@@ -54,7 +55,7 @@ const decide = Effect.fn("ocr-decide.extract.decide")(function* decide(
 
 const extract = (
   request: ExtractRequest,
-): Effect.Effect<Extraction, ModelError | OcrError, ModelApi> => {
+): Effect.Effect<Extraction, ImageError | ModelError | OcrError, ModelApi> => {
   if (request.method === "image-generation") {
     return extractFromImage({ image: request.image, fields: request.fields });
   }

@@ -1,18 +1,12 @@
 import { Context, Effect, HashMap, HashSet, Layer, Option, Queue, Ref, pipe } from "effect";
 
-import { embedImages } from "./embed-images.ts";
-import type { AnalyzedBatch } from "./embed-images.ts";
+import { retryFailedImages } from "./embed-images.ts";
 import { blmLinker } from "./link-blm.ts";
-import { scanFolders } from "./scan-folders.ts";
-import type { ScannedFile } from "./scan-folders.ts";
+import { scanLibrary } from "./scan-library.ts";
+import type { Activity } from "./scan-library.ts";
 import { watchSources } from "./watch-folders.ts";
 
 const PENDING_REQUESTS = 1;
-
-type Activity =
-  | { readonly status: "idle" }
-  | { readonly status: "scanning"; readonly file: ScannedFile }
-  | { readonly status: "analyzing"; readonly batch: Option.Option<AnalyzedBatch> };
 
 interface ProjectGuids {
   readonly projectPath: string;
@@ -47,6 +41,10 @@ const remember =
     return [all, HashMap.set(seen, projectPath, all)];
   };
 
+const retried = retryFailedImages.pipe(
+  Effect.catchCause((cause) => Effect.logError("retry failed", cause)),
+);
+
 /** @internal */
 const libraryLayer = Layer.effect(
   Library,
@@ -54,14 +52,10 @@ const libraryLayer = Layer.effect(
     const activity = yield* Ref.make<Activity>(IDLE);
     const requests = yield* Queue.sliding<boolean>(PENDING_REQUESTS);
     const seen = yield* Ref.make<Seen>(HashMap.empty());
-    const linkBlm = yield* blmLinker;
-    const scan = Effect.gen(function* scan() {
-      yield* scanFolders((file) => Ref.set(activity, { status: "scanning", file }));
-      yield* linkBlm;
-      yield* Ref.set(activity, { status: "analyzing", batch: Option.none() });
-      yield* embedImages((batch) =>
-        Ref.set(activity, { status: "analyzing", batch: Option.some(batch) }),
-      );
+    const blm = yield* blmLinker;
+    const scan = scanLibrary({
+      blm,
+      report: (current) => Ref.set(activity, current),
     }).pipe(
       Effect.catchCause((cause) => Effect.logError("scan failed", cause)),
       Effect.ensuring(Ref.set(activity, IDLE)),
@@ -69,7 +63,7 @@ const libraryLayer = Layer.effect(
     yield* Queue.take(requests).pipe(Effect.andThen(scan), Effect.forever, Effect.forkScoped);
     const requestScan = Queue.offer(requests, true).pipe(Effect.asVoid);
     const { sourcesChanged } = yield* watchSources(requestScan);
-    yield* requestScan;
+    yield* Effect.andThen(retried, requestScan);
     return Library.of({
       activity: Ref.get(activity),
       requestScan,
@@ -81,4 +75,3 @@ const libraryLayer = Layer.effect(
 );
 
 export { Library, libraryLayer };
-export type { Activity };

@@ -26,6 +26,7 @@
     "fastest-levenshtein": "catalog:",
     "react": "19.3.1",
     "react-dom": "19.3.1",
+    "security-headers": "workspace:*",
     "tailwindcss": "catalog:stack"
   },
   "devDependencies": {

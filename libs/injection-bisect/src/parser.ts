@@ -20,9 +20,15 @@ interface Parser {
   readonly unitsOf: (text: string) => readonly Unit[];
 }
 
+interface Unreadable {
+  readonly name: string;
+  readonly reason: string;
+}
+
 interface Document {
   readonly text: string;
   readonly format: string;
+  readonly unreadable?: readonly Unreadable[];
 }
 
 interface Reader {
@@ -32,4 +38,4 @@ interface Reader {
   readonly read: (bytes: Uint8Array) => Effect.Effect<Document, ReadError>;
 }
 
-export type { Document, Parser, Reader, Span, Unit };
+export type { Document, Parser, Reader, Span, Unit, Unreadable };

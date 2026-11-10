@@ -2,6 +2,7 @@ import { Array, Effect, FileSystem, Number, Path, pipe } from "effect";
 
 import { isCompanion, isLoose, isPackage, isZip } from "#entities/package";
 
+import { digestOfFile } from "./content-digest.ts";
 import { bundleCount, placedCount } from "./counts.ts";
 import { libraryFolder } from "./library-folder.ts";
 import { placeFile } from "./place-file.ts";
@@ -19,6 +20,7 @@ const copyInto = Effect.fn("copyInto")(function* copyFileInto(file: string, fold
     folder,
     name: path.basename(file),
     size: globalThis.Number(size),
+    digest: digestOfFile(file),
     write: (partial) => fileSystem.copyFile(file, partial),
   });
 });

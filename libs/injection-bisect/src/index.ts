@@ -1,6 +1,8 @@
 export { DEFAULT_CUTOFF, cutoffFor } from "./cutoff.ts";
 export { DEFAULT_MODEL, ProbeListener, asksTogether, branchesFor, detect } from "./detect.ts";
 export type { Detection, DetectOptions, Probe, ProbeEvent } from "./detect.ts";
+export { outcomeOf } from "./outcome.ts";
+export type { Outcome } from "./outcome.ts";
 export type { Region } from "./region.ts";
 export { formatsOf, readDocument } from "./document.ts";
 export { DEFAULT_READERS, readersWith } from "./readers.ts";
@@ -33,7 +35,7 @@ export { outlookReader } from "./outlook.ts";
 export { docReader } from "./doc.ts";
 export { pptReader } from "./ppt.ts";
 export { SPREADSHEET_READERS } from "./spreadsheet.ts";
-export type { Document, Parser, Reader, Span, Unit } from "./parser.ts";
+export type { Document, Parser, Reader, Span, Unit, Unreadable } from "./parser.ts";
 export { imageReaderOf } from "./ocr.ts";
 export type { OcrOptions } from "./ocr.ts";
 export { pdfReaderOf } from "./pdf.ts";

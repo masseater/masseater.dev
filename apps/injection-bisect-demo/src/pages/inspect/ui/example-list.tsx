@@ -3,7 +3,12 @@ import { useCallback } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 
 import { COPY } from "#/pages/inspect/model/copy";
-import { useDraftText, useSetDraftText } from "#/pages/inspect/model/draft";
+import {
+  NOT_OPENING,
+  useDraftText,
+  useSetDraftText,
+  useSetOpening,
+} from "#/pages/inspect/model/draft";
 import { EXAMPLES } from "#/pages/inspect/model/examples";
 import type { Example } from "#/pages/inspect/model/examples";
 
@@ -19,6 +24,7 @@ const UNPICKED = "";
 const ExampleList = (): ReactNode => {
   const text = useDraftText();
   const setText = useSetDraftText();
+  const setOpening = useSetOpening();
   const picked = Arr.findFirst(EXAMPLES, (example) => example.text === text).pipe(
     Option.match({ onNone: () => UNPICKED, onSome: ({ name }) => name }),
   );
@@ -28,10 +34,11 @@ const ExampleList = (): ReactNode => {
         Arr.findFirst(EXAMPLES, ({ name }) => name === event.target.value),
         (example) => {
           setText(example.text);
+          setOpening(NOT_OPENING);
         },
       );
     },
-    [setText],
+    [setText, setOpening],
   );
   return (
     <select aria-label={COPY.examples} value={picked} onChange={pick} className={SELECT_CLASS}>

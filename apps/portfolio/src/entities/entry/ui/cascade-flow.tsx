@@ -8,7 +8,8 @@ import type { CSSProperties, ReactNode, RefObject } from "react";
 import { started } from "#/entities/entry/model/cascade";
 import { useCascadeState, useUpdateCascade } from "#/entities/entry/model/cascade-state";
 
-import { edgesOf, FLOW_HEIGHT, nodesOf, STAGE_WIDTH } from "./cascade-layout";
+import { FLOW_HEIGHT, STAGE_WIDTH } from "./cascade-frame";
+import { edgesOf, nodesOf } from "./cascade-layout";
 import type { EdgeClasses } from "./cascade-layout";
 import { CascadeService } from "./cascade-service";
 import { CascadeStage } from "./cascade-stage";

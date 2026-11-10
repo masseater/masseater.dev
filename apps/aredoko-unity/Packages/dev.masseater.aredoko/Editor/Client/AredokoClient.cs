@@ -16,8 +16,18 @@ namespace Aredoko.Client
     public sealed class AredokoClient : IDisposable
     {
         const string Unreachable = "管理アプリが起動していません";
+        const string TimedOut = "管理アプリから応答がありません";
         const int BufferSize = 64 * 1024;
         const int SpanIdLength = 16;
+
+        static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(15);
+        static readonly TimeSpan LongRequestTimeout = TimeSpan.FromMinutes(10);
+
+        static readonly HashSet<string> LongMethods = new HashSet<string>
+        {
+            AredokoRpcs.Extract.Method,
+            AredokoRpcs.PutProjectAssets.Method,
+        };
 
         static readonly string EndpointPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -59,24 +69,53 @@ namespace Aredoko.Client
                 pending[id] = completion;
             }
 
-            var request = new JObject
+            try
             {
-                ["jsonrpc"] = "2.0",
-                ["id"] = id,
-                ["method"] = rpc.Method,
-                ["params"] = payload is Empty ? JValue.CreateNull() : JToken.FromObject(payload!, serializer),
-                ["traceId"] = traceId,
-                ["spanId"] = Guid.NewGuid().ToString("N").Substring(0, SpanIdLength),
-                ["sampled"] = true,
-            };
-            await Send(connected, request.ToString(Formatting.None));
-            var result = await completion.Task;
-            if (typeof(TSuccess) == typeof(Empty))
+                var request = new JObject
+                {
+                    ["jsonrpc"] = "2.0",
+                    ["id"] = id,
+                    ["method"] = rpc.Method,
+                    ["params"] = payload is Empty ? JValue.CreateNull() : JToken.FromObject(payload!, serializer),
+                    ["traceId"] = traceId,
+                    ["spanId"] = Guid.NewGuid().ToString("N").Substring(0, SpanIdLength),
+                    ["sampled"] = true,
+                };
+                var timeout = LongMethods.Contains(rpc.Method) ? LongRequestTimeout : RequestTimeout;
+                var result = await Within(Exchange(connected, request.ToString(Formatting.None), completion.Task), timeout);
+                if (typeof(TSuccess) == typeof(Empty))
+                {
+                    return (TSuccess)(object)new Empty();
+                }
+
+                return result.ToObject<TSuccess>(serializer)!;
+            }
+            finally
             {
-                return (TSuccess)(object)new Empty();
+                lock (pending)
+                {
+                    pending.Remove(id);
+                }
+            }
+        }
+
+        async Task<JToken> Exchange(ClientWebSocket target, string text, Task<JToken> response)
+        {
+            await Send(target, text);
+            return await response;
+        }
+
+        static async Task<JToken> Within(Task<JToken> response, TimeSpan timeout)
+        {
+            using var timer = new CancellationTokenSource();
+            var finished = await Task.WhenAny(response, Task.Delay(timeout, timer.Token));
+            timer.Cancel();
+            if (finished != response)
+            {
+                throw new AredokoException(TimedOut, true);
             }
 
-            return result.ToObject<TSuccess>(serializer)!;
+            return await response;
         }
 
         public void Dispose()
@@ -158,7 +197,6 @@ namespace Aredoko.Client
                         received = await source.ReceiveAsync(new ArraySegment<byte>(buffer), token);
                         if (received.MessageType == WebSocketMessageType.Close)
                         {
-                            FailAll();
                             return;
                         }
 
@@ -171,7 +209,11 @@ namespace Aredoko.Client
             }
             catch (Exception)
             {
+            }
+            finally
+            {
                 FailAll();
+                source.Abort();
             }
         }
 

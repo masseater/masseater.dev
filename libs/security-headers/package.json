@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./response": "./src/response.ts",
     "./static": "./src/static.ts"
   },
   "dependencies": {

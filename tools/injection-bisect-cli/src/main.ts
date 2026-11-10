@@ -6,6 +6,7 @@ import {
   PRODUCT_NAME,
   detect,
   openRouter,
+  outcomeOf,
   readDocument,
   readersWith,
   removeRegions,
@@ -54,7 +55,7 @@ const withTextOf =
 
 const reportOf = (detection: Detection, input: string): unknown => {
   if (detection.status === "clean") {
-    return detection;
+    return { ...detection, status: outcomeOf(detection) };
   }
   return {
     ...detection,
@@ -106,6 +107,7 @@ const command = Command.make(
       const detection = yield* detect(input.text, {
         model,
         format: input.format,
+        unreadable: input.unreadable,
         cutoff: Option.getOrElse(cutoff, () => cutoffFor(model)),
       });
       const report = yield* encodeJson(reportOf(detection, input.text));

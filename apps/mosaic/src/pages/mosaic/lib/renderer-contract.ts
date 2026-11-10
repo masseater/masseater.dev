@@ -19,6 +19,7 @@ interface Target {
   readonly canvas: HTMLCanvasElement;
   readonly cells: readonly number[];
   readonly onReady: () => void;
+  readonly signal: AbortSignal;
 }
 
 export type { RenderFrame, Renderer, Target };

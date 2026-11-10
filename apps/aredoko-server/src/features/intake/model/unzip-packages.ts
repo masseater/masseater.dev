@@ -5,6 +5,7 @@ import { Array, Effect, FileSystem, Option, Path, pipe } from "effect";
 import { isCompanion, isLoose, isPackage } from "#entities/package";
 import { collectBytes } from "#shared/bytes";
 
+import { digestWith } from "./content-digest.ts";
 import { bundleCount, placedCount } from "./counts.ts";
 import { FileReader } from "./file-reader.ts";
 import type { ReadRange } from "./file-reader.ts";
@@ -61,6 +62,16 @@ const writeEntry = Effect.fn("writeEntry")(function* writeEntryTo(
   yield* attempt(() => entry.getData(writable));
 });
 
+const digestOfEntry = Effect.fn("digestOfEntry")(function* digestOfEntry(entry: FileEntry) {
+  const run = yield* runner;
+  return yield* digestWith((feed) => {
+    const writable = new WritableStream<Uint8Array>({
+      write: (chunk): Promise<void> => run(feed(chunk)),
+    });
+    return attempt(() => entry.getData(writable)).pipe(Effect.asVoid);
+  });
+});
+
 const readRange = Effect.fn("readRange")(function* readRange(
   zip: string,
   offset: number,
@@ -84,6 +95,7 @@ const placeEntry = Effect.fn("placeEntry")(function* placeEntry(folder: string, 
     ),
     name: path.basename(entry.filename),
     size: entry.uncompressedSize,
+    digest: digestOfEntry(entry),
     write: (partial) => writeEntry(entry, partial),
   });
 });

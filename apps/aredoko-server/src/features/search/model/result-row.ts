@@ -33,6 +33,7 @@ const NO_SCORES = HashMap.empty<number, number>();
 
 type ResultRecord = typeof ResultRow.Type;
 
+/** @internal */
 const scopeOf = Effect.fn("scopeOf")(function* scopeClause({ packageId, kinds }: Scope) {
   const sql = yield* SqlClient.SqlClient;
   const ofKinds = Array.match(kinds, {
@@ -123,5 +124,5 @@ const resultOf =
 /** @internal */
 const unscored = resultOf(NO_SCORES);
 
-export { resultOf, rowsInOrder, scopedPage, unscored };
+export { resultOf, rowsInOrder, scopeOf, scopedPage, unscored };
 export type { Scope };

@@ -82,7 +82,7 @@ test("reads every file in a zip archive with its own format", () =>
         "docs/readme.md": "# 使い方\n\n設定ファイルを置きます。",
         "site/index.html": `<p>ようこそ。</p><div hidden>${INJECTION}</div>`,
         "bin/tool": "\u0000\u0001\u0002",
-        "__MACOSX/._index.html": "ignored",
+        "__MACOSX/._index.html": "\u0000\u0005\u0016\u0007\u0000\u0002\u0000\u0000Mac OS X",
       });
       const { document, found, cleaned } = yield* foundIn({ bytes });
       expect(document.format).toBe("markdown");

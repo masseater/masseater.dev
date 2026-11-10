@@ -112,6 +112,64 @@ layer(NodeServices.layer, { excludeTestServices: true })("intake", (it) => {
   );
 });
 
+layer(NodeServices.layer, { excludeTestServices: true })(
+  "intake of a package with a taken name and size",
+  (it) => {
+    it.effect("名前と大きさが同じでも中身の違うパッケージは両方残す", () =>
+      Effect.gen(function* keepsSameSize() {
+        const fileSystem = yield* FileSystem.FileSystem;
+        const path = yield* Path.Path;
+        const first = yield* fileSystem.makeTempDirectoryScoped();
+        const second = yield* fileSystem.makeTempDirectoryScoped();
+        yield* fileSystem.writeFileString(path.join(first, "Cabin.unitypackage"), "v1");
+        yield* fileSystem.writeFileString(path.join(second, "Cabin.unitypackage"), "v2");
+        yield* withSettings((library) =>
+          Effect.gen(function* inLibrary() {
+            const placed = yield* intake([first, second]);
+            expect(placed).toBe(BOTH);
+            const names = yield* listed(library);
+            expect(names).toStrictEqual(["Cabin (2).unitypackage", "Cabin.unitypackage"]);
+            const again = yield* intake([second, first]);
+            expect(again).toBe(NONE);
+          }),
+        );
+      }),
+    );
+  },
+);
+
+layer(NodeServices.layer, { excludeTestServices: true })(
+  "intake of a zip with a taken name and size",
+  (it) => {
+    it.effect("zip の中のパッケージも、名前と大きさが同じで中身の違うものは両方残す", () =>
+      Effect.gen(function* keepsSameSizeFromZip() {
+        const fileSystem = yield* FileSystem.FileSystem;
+        const path = yield* Path.Path;
+        const downloads = yield* fileSystem.makeTempDirectoryScoped();
+        const zip = path.join(downloads, "Dress.zip");
+        const zipBytes = yield* makeZip;
+        yield* fileSystem.writeFile(zip, zipBytes);
+        yield* withSettings((library) =>
+          Effect.gen(function* inLibrary() {
+            yield* writeTree(library, { "Dress/Dress.unitypackage": "DRESS" });
+            const placed = yield* intake([zip]);
+            expect(placed).toBe(BOTH);
+            const names = yield* listed(path.join(library, "Dress"));
+            expect(names).toStrictEqual([
+              "Dress (2).unitypackage",
+              "Dress.unitypackage",
+              "Textures",
+              path.join("Textures", "dress.png"),
+            ]);
+            const again = yield* intake([zip]);
+            expect(again).toBe(NONE);
+          }),
+        );
+      }),
+    );
+  },
+);
+
 const ESCAPING = ["../outside.txt", "a/../../outside2.txt", "ok/inside.png"] as const;
 
 const makeEscapingZip = Effect.gen(function* makeEscapingZip() {

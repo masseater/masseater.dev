@@ -1,4 +1,6 @@
-import { Effect, Option, Schema } from "effect";
+import { Effect, Option, Schema, flow } from "effect";
+
+import { releaseOnUnmount, whileMounted } from "./gpu-lifetime";
 
 interface Gpu {
   readonly device: GPUDevice;
@@ -33,17 +35,35 @@ const requestDevice = (): Effect.Effect<Option.Option<GPUDevice>> =>
   }).pipe(Effect.orElseSucceed(() => Option.none()));
 
 const configure = (canvas: HTMLCanvasElement, device: GPUDevice): Option.Option<Gpu> =>
-  Option.map(Option.fromNullishOr(canvas.getContext("webgpu")), (context) => {
-    const format = navigator.gpu.getPreferredCanvasFormat();
-    context.configure({ device, format, alphaMode: "premultiplied" });
-    return { device, context, format };
+  Option.match(Option.fromNullishOr(canvas.getContext("webgpu")), {
+    onNone: () => {
+      device.destroy();
+      return Option.none();
+    },
+    onSome: (context) => {
+      const format = navigator.gpu.getPreferredCanvasFormat();
+      context.configure({ device, format, alphaMode: "premultiplied" });
+      return Option.some({ device, context, format });
+    },
   });
 
-const acquireGpu = (canvas: HTMLCanvasElement): Effect.Effect<Option.Option<Gpu>> =>
-  Effect.map(
+const acquireGpu = ({
+  canvas,
+  signal,
+}: Readonly<{ canvas: HTMLCanvasElement; signal: AbortSignal }>): Effect.Effect<
+  Option.Option<Gpu>
+> => {
+  const mounted = whileMounted(signal);
+  const held = releaseOnUnmount(signal);
+  return Effect.map(
     requestDevice(),
-    Option.flatMap((device) => configure(canvas, device)),
+    flow(
+      Option.flatMap(mounted),
+      Option.flatMap((device) => configure(canvas, device)),
+      Option.map(held),
+    ),
   ).pipe(Effect.withSpan("mosaic.gpu.acquire"));
+};
 
 export type { Gpu };
 export { acquireGpu };

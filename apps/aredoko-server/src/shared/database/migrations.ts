@@ -83,6 +83,11 @@ const settings = Effect.gen(function* settings() {
   yield* sql`create table settings (key text primary key, value text not null)`;
 });
 
+const attempts = Effect.gen(function* attempts() {
+  const sql = yield* SqlClient.SqlClient;
+  yield* sql`alter table images add column attempts integer not null default 0`;
+});
+
 const init = Effect.all([vectors, library, assets, images], { discard: true });
 
 /** @internal */
@@ -90,4 +95,5 @@ export const loader: Migrator.Loader = Migrator.fromRecord({
   "1_init": init,
   "2_files": files,
   "3_settings": settings,
+  "4_attempts": attempts,
 });
