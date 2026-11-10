@@ -26,11 +26,11 @@ sources:
 
 # Write decision rules
 
-The package ships no rules. You write each rule as a yes/no (or pick-one) question with `defineDecisionRule`, bundle the rules with `createDecisionPlugin` in a plugin file of your own, load that file through `jsPlugins` in `oxlint.config.ts`, and turn each rule on by name. Decision models return probabilities, never text, so a rule cannot produce an explanation or a fix.
+The package ships no rules. You write each rule as a yes/no (or pick-one) question with `defineDecisionRule`. You bundle the rules with `createDecisionPlugin` in a plugin file of your own. Then you load that file through `jsPlugins` in `oxlint.config.ts` and turn each rule on by name. Decision models return probabilities, never text. So a rule cannot produce an explanation or a fix.
 
 ## Setup
 
-1. Install the plugin next to Oxlint (`oxlint` >= 1.87.0 is a peer dependency):
+1. Install the plugin next to Oxlint (`oxlint` >= 1.87.0 is a peer dependency).
 
    ```sh
    npm i -D oxlint @r_masseater/oxlint-plugin-decision
@@ -39,7 +39,7 @@ The package ships no rules. You write each rule as a yes/no (or pick-one) questi
 
    Result: `OPENROUTER_API_KEY` is set in the shell that runs oxlint. Without it the plugin warns once and reports nothing outside CI, and fails the run in CI.
 
-2. Write a plugin file that default-exports `createDecisionPlugin`:
+2. Write a plugin file that default-exports `createDecisionPlugin`.
 
    ```js
    // decision-plugin.mjs
@@ -59,7 +59,7 @@ The package ships no rules. You write each rule as a yes/no (or pick-one) questi
    });
    ```
 
-3. Load the file and turn each rule on as `<plugin name>/<rule id>`:
+3. Load the file and turn each rule on as `<plugin name>/<rule id>`.
 
    ```ts
    // oxlint.config.ts
@@ -75,7 +75,7 @@ The package ships no rules. You write each rule as a yes/no (or pick-one) questi
 
    Result: `npx oxlint` lints with the rule. A rule that is defined but not listed under `rules` never sends a request. The plugin name defaults to `decision` when `name` is omitted.
 
-`createDecisionPlugin` validates every rule and setting when the plugin loads and throws on a bad value, so a typo fails the oxlint run instead of being ignored.
+`createDecisionPlugin` validates every rule and setting when the plugin loads and throws on a bad value. A typo fails the oxlint run instead of being ignored.
 
 ## Core Patterns
 
@@ -88,13 +88,13 @@ The package ships no rules. You write each rule as a yes/no (or pick-one) questi
 | `"jsx"`      | The whole element, children included.                    | The opening tag      |
 | `"file"`     | The whole file.                                          | The first line       |
 
-There is no other target and no selector syntax. With the default `boolean` answer, "yes" means "report this", so phrase the question so that yes is the violation. The wording is the rule: "Does this send personal data" also fires on a legitimate `mailer.send(user.email, ...)`, while "to a log or console" does not. Questions and messages are English sentences. `message` replaces the question in the diagnostic with a short sentence.
+There is no other target and no selector syntax. With the default `boolean` answer, "yes" means "report this". Phrase the question so that yes is the violation. The wording is the rule. "Does this send personal data" also fires on a legitimate `mailer.send(user.email, ...)`. Adding "to a log or console" stops that. Questions and messages are English sentences. `message` replaces the question in the diagnostic with a short sentence.
 
-Rule fields: `id` (lowercase words joined by hyphens, unique in the plugin), `target`, `question`, `cutoff` (0.8 to 1, inclusive), and optional `message`, `select`, `answer`, `context`, `model`, and `location` (file rules only).
+Every rule has an `id`, a `target`, a `question` and a `cutoff`. The `id` is lowercase words joined by hyphens, unique in the plugin. The `cutoff` is from 0.8 to 1, inclusive. The optional fields are `message`, `select`, `answer`, `context` and `model`. File rules can also set `location`.
 
 ### Narrow matches with `select` before any request
 
-`select(node, { name, context })` gets the ESTree node oxlint parsed and returns `true` to ask about it. Rejected matches cost nothing. `name` is the function's own or binding name, the callee as written (`console.error`, `it.only`), or the JSX tag name; it is `undefined` for file rules and for anonymous matches.
+`select(node, { name, context })` gets the ESTree node oxlint parsed and returns `true` to ask about it. Rejected matches cost nothing. `name` is the function's own or binding name, the callee as written (`console.error`, `it.only`) or the JSX tag name. It is `undefined` for file rules and for anonymous matches.
 
 ```js
 defineDecisionRule({
@@ -154,15 +154,15 @@ The kinds are `boolean` (default), `classify`, and `severity`. You never write a
 | `{ scope: "file" }`                        | The whole file.                                        |
 | `{ scope: "comment" }`                     | The match starting at the comments directly above it.  |
 
-With `{ scope: "comment" }`, a match without a comment directly above it (or above the `export` or declaration holding it) is not asked about at all. Wider context costs more tokens, and an edit anywhere in the context re-asks that file.
+With `{ scope: "comment" }`, a match needs a comment directly above it. The comment may also sit above the `export` or declaration holding the match. Without one, the match is not asked about at all. Wider context costs more tokens, and an edit anywhere in the context re-asks that file.
 
 ### Point a file rule at a line
 
-A `"file"` rule can add `location: { question, cutoff }` to move the diagnostic from the first line to the suspected violation. The location `cutoff` must be from 0.8 to 1. An uncertain location, or a file cut by `maxSnippetChars`, keeps the first-line diagnostic.
+A `"file"` rule can add `location: { question, cutoff }`. It moves the diagnostic from the first line to the suspected violation. The location `cutoff` must be from 0.8 to 1. An uncertain location keeps the first-line diagnostic. So does a file cut by `maxSnippetChars`.
 
 ### Set models and plugin settings
 
-Settings apply to the whole plugin: pass them to `createDecisionPlugin` or put them under `settings.<plugin name>` in `oxlint.config.ts`; the config file wins.
+Settings apply to the whole plugin. Pass them to `createDecisionPlugin` or put them under `settings.<plugin name>` in `oxlint.config.ts`. The config file wins.
 
 | Setting           | Default                             | Meaning                                                                                  |
 | ----------------- | ----------------------------------- | ---------------------------------------------------------------------------------------- |
@@ -173,7 +173,7 @@ Settings apply to the whole plugin: pass them to `createDecisionPlugin` or put t
 | `env`             | `{}`                                | Renames variables providers read, e.g. `{ OPENROUTER_API_KEY: "TEAM_KEY" }`. Names only. |
 | `explain`         | `false`                             | `true`/`"text"` or `"json"` prints why each match was or wasn't reported, to stderr.     |
 
-A rule's model comes from the first of: the rule's options in `oxlint.config.ts` (`["warn", { model: "openrouter/respan/span-01-lite" }]`), the rule's own `model`, `settings.<plugin name>.model`, the `model` passed to `createDecisionPlugin`, then the default.
+A rule's model comes from the first source that sets one. The rule's options in `oxlint.config.ts` come first, such as `["warn", { model: "openrouter/respan/span-01-lite" }]`. Next comes the rule's own `model`, and then `settings.<plugin name>.model`. After that comes the `model` passed to `createDecisionPlugin`. The default comes last.
 
 When tuning a question or cutoff, or switching models, read [tuning rules](references/tuning.md) first.
 
@@ -195,11 +195,11 @@ Keys are read only from environment variables; `env` values are variable names, 
 
 ### HIGH: a broad target on a whole codebase
 
-Every match is a paid request unless cached, and the plugin has no per-file cap, budget, include/exclude, or changed-files option. A `"call"` rule without `select` asks about every call in every linted file. Narrow with `select`, scope files and rules with oxlint `overrides`, and lint only changed files by passing their paths to oxlint. A list of models multiplies the requests.
+Every match is a paid request unless cached. The plugin has no per-file cap, budget, include/exclude or changed-files option. A `"call"` rule without `select` asks about every call in every linted file. Narrow with `select`, and scope files and rules with oxlint `overrides`. Lint only changed files by passing their paths to oxlint. A list of models multiplies the requests.
 
 ### HIGH: decision rules on in the editor config
 
-The oxlint editor extension lints on every keystroke, and each edit inside a match is a request that blocks the language server. Keep decision rules off in the config the editor reads and enable them in an overlay used for CI and pre-push:
+The oxlint editor extension lints on every keystroke. Each edit inside a match is a request that blocks the language server. Keep decision rules off in the config the editor reads. Enable them in an overlay used for CI and pre-push, as below.
 
 ```ts
 // oxlint.ci.config.ts
@@ -217,14 +217,14 @@ Run it with `oxlint -c oxlint.ci.config.ts`. Keep `jsPlugins` in the base config
 
 ### MEDIUM: a question where "yes" means "fine"
 
-"Is this function named well?" reports the well-named functions. With the `boolean` answer, ask about the violation, or use `classify` with `report` listing only the bad labels.
+Asking whether a function is named well reports the well-named functions. With the `boolean` answer, ask about the violation. Or use `classify` with `report` listing only the bad labels.
 
 ### MEDIUM: rule ids that are not lowercase-hyphenated or are repeated
 
-`id` must match `^[a-z0-9]+(?:-[a-z0-9]+)*$` and be unique within the plugin, and `rules` must list at least one rule; otherwise loading the plugin throws (`src/options.ts`).
+`id` must match `^[a-z0-9]+(?:-[a-z0-9]+)*$` and be unique within the plugin. `rules` must list at least one rule. Otherwise loading the plugin throws (`src/options.ts`).
 
 ## Completion
 
-1. Run `npx oxlint` (or the CI overlay) on a file that should fail and one that should pass. Result: the failing file gets a diagnostic like `[no-pii-in-logs] openrouter/... answered yes (0.93 >= 0.80): ...`; the passing file gets none.
-2. If nothing is reported, run once with `OXLINT_DECISION_EXPLAIN=1` and check stderr: a missing match means the target, `select`, or `context: { scope: "comment" }` excluded it; an `error` line means the key, timeout, or API failed; a low probability means the question or cutoff needs tuning (see [tuning rules](references/tuning.md)).
+1. Run `npx oxlint` (or the CI overlay) on a file that should fail and one that should pass. Result: the failing file gets a diagnostic like `[no-pii-in-logs] openrouter/... answered yes (0.93 >= 0.80): ...`. The passing file gets none.
+2. If nothing is reported, run once with `OXLINT_DECISION_EXPLAIN=1` and check stderr. A missing match means the target, `select` or `context: { scope: "comment" }` excluded it. An `error` line means the key, timeout or API failed. A low probability means the question or cutoff needs tuning (see [tuning rules](references/tuning.md)).
 3. If the plugin fails to load, fix the rule or setting the thrown error names; do not remove validation.

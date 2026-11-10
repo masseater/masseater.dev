@@ -11,91 +11,14 @@ ESLint を入れずに、型情報を使うルールを oxlint だけで回せ�
 
 ## 移植したルール
 
-- `@r_masseater/oxlint-typed-rules/tanstack-start`
-  - [@tanstack/eslint-plugin-start][tanstack] の 2 ルール
-- `@r_masseater/oxlint-typed-rules/tanstack-query`
-  - [@tanstack/eslint-plugin-query][tanstack-query] 5.105.3 の全ルールと configs
-- `@r_masseater/oxlint-typed-rules/tanstack-router`
-  - [@tanstack/eslint-plugin-router][tanstack-router] 1.162.0 の全ルールと configs
-- `@r_masseater/oxlint-typed-rules/drizzle`
-  - [eslint-plugin-drizzle][drizzle] 0.2.3 の全ルールと configs
-- `@r_masseater/oxlint-typed-rules/remotion`
-  - [@remotion/eslint-plugin][remotion] 4.0.541 の全ルールと configs
-- `@r_masseater/oxlint-typed-rules/react`
-  - [@eslint-react/eslint-plugin][eslint-react] 5.28.8 の全ルールと configs
-
-[tanstack]: https://github.com/TanStack/router/tree/main/packages/eslint-plugin-start
-[tanstack-query]: https://github.com/TanStack/query/tree/main/packages/eslint-plugin-query
-[tanstack-router]: https://github.com/TanStack/router/tree/main/packages/eslint-plugin-router
-[drizzle]: https://github.com/drizzle-team/drizzle-orm/tree/main/eslint-plugin-drizzle
-[remotion]: https://github.com/remotion-dev/remotion/tree/main/packages/eslint-plugin
-[eslint-react]: https://github.com/Rel1cx/eslint-react
-
-元のリポのテストを手を入れずに移植し、すべて同じ結果になることを確かめている。
-TanStack Start の 2 ルールは、ファイルをまたぐと違反を取りこぼす点を直してある。
-@eslint-react と Remotion はルールの ID と configs を元のプラグインと同じにしてあるので、
-jsPlugins の `specifier` を差し替えるだけで乗り換えられる。
-TanStack Query・Router・Drizzle は、プラグインの名前を `tanstack-query`・`tanstack-router`・`drizzle` にしてある。
-configs の `rules` も同じ名前で始まるので、そのまま `rules` に広げられる。
-configs は元のプラグインの名前で引けば `undefined` にならない型にしてある。
-Query の `no-void-query-fn` と `no-rest-destructuring` は型情報を読み、
-ほかのルールは型を作らずに動く。
-Router と Drizzle のエントリーは tsgo を起動しない。
-eslint-plugin-drizzle は依存に書いていない `@typescript-eslint/utils` を読むので、
-元のままではそれが巻き上げられた環境でしか読み込めない。このパッケージは同梱して読ませる。
-@remotion/eslint-plugin は型情報を使わないが、`@typescript-eslint/utils` 5 を経て TypeScript 5 を引き込む。
-Remotion のエントリーはその `ESLintUtils` を 8 系の `eslint-utils` に差し替えて同梱し、tsgo も起動しない。
-oxc の構文木は JSX の属性の文字参照を復号しないので（[oxc#9667][oxc-9667]）、
-`jsx-no-children-prop` は属性の元の文字列から復号するよう直してある。
-
-[oxc-9667]: https://github.com/oxc-project/oxc/issues/9667
-
-## 使い方
-
-```sh
-vp add -D @r_masseater/oxlint-typed-rules
-```
-
-```ts
-import tanstackQuery from "@r_masseater/oxlint-typed-rules/tanstack-query";
-import { defineConfig } from "vite-plus";
-
-export default defineConfig({
-  lint: {
-    jsPlugins: [
-      {
-        name: "tanstack-start",
-        specifier: "@r_masseater/oxlint-typed-rules/tanstack-start",
-      },
-      {
-        name: "tanstack-query",
-        specifier: "@r_masseater/oxlint-typed-rules/tanstack-query",
-      },
-    ],
-    rules: {
-      ...tanstackQuery.configs["flat/recommended"].rules,
-      "tanstack-start/no-client-code-in-server-component": "error",
-      "tanstack-start/no-async-client-component": "error",
-    },
-  },
-});
-```
-
-検査するファイルを含む tsconfig の Program を、TypeScript 7（tsgo）の子プロセスに作らせる。
-エディタの未保存の内容も、その中身で Program を作り直して検査する。
-
-## TypeScript 7 との変換層
-
-同梱したルールは TypeScript 6 までの `ts` 名前空間と `Program`・`TypeChecker` を読む。
-TypeScript 7.1 の `typescript/sync` は形が違う。
-そこで、同梱したルールが使う分だけを `typescript/sync` と `typescript/ast` で組み立てる層を持つ。
-ビルドでルールの `typescript` の import をこの層に向けるので、TypeScript 6 以前は入らない。
-この層は暫定である。
-typescript-eslint の [#12803][tse-12803] が同じ層を持つので、
-それが公開されたら乗り換える（[#13][issue-13]）。
-
-[tse-12803]: https://github.com/typescript-eslint/typescript-eslint/pull/12803
-[issue-13]: https://github.com/masseater/oxlint-typed-rules/issues/13
+| エントリ                                          | 中身                                                                           |
+| ------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `@r_masseater/oxlint-typed-rules/tanstack-start`  | [@tanstack/eslint-plugin-start][tanstack] の 2 ルール                          |
+| `@r_masseater/oxlint-typed-rules/tanstack-query`  | [@tanstack/eslint-plugin-query][tanstack-query] 5.105.3 の全ルールと configs   |
+| `@r_masseater/oxlint-typed-rules/tanstack-router` | [@tanstack/eslint-plugin-router][tanstack-router] 1.162.0 の全ルールと configs |
+| `@r_masseater/oxlint-typed-rules/drizzle`         | [eslint-plugin-drizzle][drizzle] 0.2.3 の全ルールと configs                    |
+| `@r_masseater/oxlint-typed-rules/remotion`        | [@remotion/eslint-plugin][remotion] 4.0.541 の全ルールと configs               |
+| `@r_masseater/oxlint-typed-rules/react`           | [@eslint-react/eslint-plugin][eslint-react] 5.28.8 の全ルールと configs        |
 
 ## 性能
 

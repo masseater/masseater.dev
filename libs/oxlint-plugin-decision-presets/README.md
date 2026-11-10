@@ -5,7 +5,7 @@
 
 Ready-made [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) rules for [@r_masseater/oxlint-plugin-decision](https://www.npmjs.com/package/@r_masseater/oxlint-plugin-decision), answered by decision models on [OpenRouter](https://openrouter.ai).
 
-Each preset is a list of plain-English questions about your code. The plugin asks a decision model each question for every match and reports an error when the answer clears the rule's cutoff. Pick a preset to start linting without writing any rules, and add your own rules when you need them.
+Each preset is a list of plain-English questions about your code. The plugin asks a decision model each question for every match. It reports an error when the answer clears the rule's cutoff. Pick a preset to start linting without writing any rules. Add your own rules when you need them.
 
 ## Install
 
@@ -14,7 +14,7 @@ npm i -D oxlint @r_masseater/oxlint-plugin-decision @r_masseater/oxlint-plugin-d
 export OPENROUTER_API_KEY="..."   # https://openrouter.ai/settings/keys
 ```
 
-The plugin reads the key from the `OPENROUTER_API_KEY` environment variable; set `env` under `settings["decision-presets"]`, such as `{ "OPENROUTER_API_KEY": "TEAM_OPENROUTER_KEY" }`, to read it from a variable with another name. Without it, the plugin warns once and reports nothing. In CI (when the `CI` environment variable is set), a run that could not reach a model fails instead of passing quietly.
+The plugin reads the key from the `OPENROUTER_API_KEY` environment variable. To read it from a variable with another name, set `env` under `settings["decision-presets"]`. For example, `{ "OPENROUTER_API_KEY": "TEAM_OPENROUTER_KEY" }` reads `TEAM_OPENROUTER_KEY`. Without a key, the plugin warns once and reports nothing. In CI (when the `CI` environment variable is set), a run that could not reach a model fails. It does not pass quietly.
 
 ## Use a preset
 
@@ -61,7 +61,7 @@ The smallest set, for problems that are wrong wherever they appear. Each rule ha
 
 ### strict
 
-Everything in `recommended`, plus code that breaks a promise its name makes (a `get*` that writes, a `compute*` with side effects, a `safe*` that throws, an `ensure*` that is not safe to repeat), a catch that hides a failure from its caller, and tests that cannot fail. These are bugs rather than style, so run them as `"error"`. Several rules only ask about functions with a matching name, which keeps the request count down.
+Everything in `recommended`, plus code that breaks a promise its name makes. That is a `get*` that writes, a `compute*` with side effects, a `safe*` that throws or an `ensure*` that is not safe to repeat. It also catches a catch that hides a failure from its caller, and tests that cannot fail. These are bugs rather than style, so run them as `"error"`. Several rules only ask about functions with a matching name. That keeps the request count down.
 
 | Id                         | Asks about                                                                      | Answer                               | Reports                                                                                 |
 | -------------------------- | ------------------------------------------------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------- |
@@ -74,7 +74,7 @@ Everything in `recommended`, plus code that breaks a promise its name makes (a `
 | `test-name-verifies-claim` | `it(...)` and `test(...)` calls                                                 | `boolean`                            | A test that would still pass if the behaviour its name claims broke.                    |
 | `test-mocks-subject`       | `it(...)` and `test(...)` calls                                                 | `boolean`                            | A test whose assertion reads back a mock's canned value instead of the code under test. |
 
-Turn the code rules on for your sources and the test rules for your tests, so the code rules do not ask about every test callback:
+Turn the code rules on for your sources and the test rules for your tests. Then the code rules do not ask about every test callback.
 
 ```ts
 // oxlint.config.ts
@@ -102,7 +102,7 @@ export default defineConfig({
 
 ### review-only
 
-Judgment calls that are worth a look in review but too subjective to fail a build: names in general, comments, documented errors, error and log messages, variable names and test titles that misdescribe the code next to them. Expect some false positives. Run it as `"warn"`, and read the warnings in review rather than gating merges on them. It does not include `recommended`.
+Judgment calls that are worth a look in review but too subjective to fail a build. It covers names in general, comments, documented errors, and error and log messages. It also covers variable names and test titles that misdescribe the code next to them. Expect some false positives. Run it as `"warn"`, and read the warnings in review rather than gating merges on them. It does not include `recommended`.
 
 | Id                                | Asks about                                       | Reports                                                                                                |
 | --------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
@@ -122,9 +122,9 @@ Judgment calls that are worth a look in review but too subjective to fail a buil
 
 ### ai-slop
 
-Catches the padding that coding agents tend to leave in JavaScript and TypeScript: guards that can never fire, made-up defaults, wrappers that add nothing, stand-in bodies, comments that repeat the code or narrate the change, and casts or lint suppressions in place of a fix. Most of it is noise rather than a bug, so run it as `"warn"`; a placeholder body is a real gap, so `placeholder-implementation` is worth `"error"`. Each rule only asks about functions that contain what it looks for, such as a cast or a comment. The questions were tuned on Span-01 Lite (`openrouter/respan/span-01-lite`).
+Catches the padding that coding agents tend to leave in JavaScript and TypeScript. That means guards that can never fire, made-up defaults, wrappers that add nothing and stand-in bodies. It also means comments that repeat the code or narrate the change, and casts or lint suppressions in place of a fix. Most of it is noise rather than a bug, so run it as `"warn"`. A placeholder body is a real gap, so `placeholder-implementation` is worth `"error"`. Each rule only asks about functions that contain what it looks for, such as a cast or a comment. The questions were tuned on Span-01 Lite (`openrouter/respan/span-01-lite`).
 
-This entry is its own plugin, named `decision-ai-slop`, so its rules are `decision-ai-slop/<id>` and its settings go under `settings["decision-ai-slop"]`. It can be loaded next to any other preset.
+This entry is its own plugin, named `decision-ai-slop`. Its rules are `decision-ai-slop/<id>`, and its settings go under `settings["decision-ai-slop"]`. It can be loaded next to any other preset.
 
 ```ts
 // oxlint.config.ts
@@ -191,7 +191,7 @@ export default defineConfig({
 
 The presets use the plugin's default model, `openrouter/~typesafe/jev-latest`, which supports every preset. Set `model` under `settings["decision-presets"]` to use another one.
 
-Respan models, such as the free `openrouter/respan/span-01-lite`, answer only yes/no questions. The plugin asks them `untrusted-input-risk`, the one `severity` rule, as one yes/no question per level, so every preset works with them.
+Respan models, such as the free `openrouter/respan/span-01-lite`, answer only yes/no questions. `untrusted-input-risk` is the one `severity` rule. The plugin asks it of them as one yes/no question per level, so every preset works with them.
 
 ```ts
 // oxlint.config.ts
@@ -243,7 +243,7 @@ Every match is a paid request unless its answer is cached. See [Cost and caching
 
 ## Mix presets with your own rules
 
-Every preset and rule is exported, along with the lists `codeClaims` and `testClaims` of the rules adapted from jev-lint, so you can build your own plugin with `createDecisionPlugin` from `@r_masseater/oxlint-plugin-decision`.
+Every preset and rule is exported. So are the lists `codeClaims` and `testClaims` of the rules adapted from jev-lint. You can build your own plugin from them with `createDecisionPlugin` from `@r_masseater/oxlint-plugin-decision`.
 
 ```js
 // decision.mjs
@@ -286,7 +286,14 @@ export default defineConfig({
 
 ## Credits
 
-The rules that check a claim the code makes about itself are adapted from [jev-lint](https://github.com/mizchi/jev-lint) by mizchi: `fn-name-promises`, `pure-name-is-pure`, `safe-name-is-safe`, `idempotent-name`, `catch-hides-failure`, `error-message-matches-condition`, `log-level-matches-event`, `log-message-matches-event`, `comment-describes-block`, `comment-describes-declaration`, `doc-errors-match-body`, `var-name-describes-value`, `describe-names-subject`, `test-name-describes-code`, `test-name-verifies-claim`, `snapshot-only-behaviour-claim` and `test-mocks-subject`. Their questions come from jev-lint, which tuned them on the default model, `openrouter/~typesafe/jev-latest`. Every rule reports only at 0.8 or above, the lowest cutoff the plugin accepts, instead of jev-lint's cutoffs. jev-lint's rules that look across files, or at types, classes, other languages, documents and commits, are not here.
+The rules that check a claim the code makes about itself are adapted from [jev-lint](https://github.com/mizchi/jev-lint) by mizchi. They are listed below.
+
+| Checks | Rules                                                                                                                                                                                                                                                                                                   |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Code   | `fn-name-promises` `pure-name-is-pure` `safe-name-is-safe` `idempotent-name` `catch-hides-failure` `error-message-matches-condition` `log-level-matches-event` `log-message-matches-event` `comment-describes-block` `comment-describes-declaration` `doc-errors-match-body` `var-name-describes-value` |
+| Tests  | `describe-names-subject` `test-name-describes-code` `test-name-verifies-claim` `snapshot-only-behaviour-claim` `test-mocks-subject`                                                                                                                                                                     |
+
+Their questions come from jev-lint, which tuned them on the default model, `openrouter/~typesafe/jev-latest`. Every rule reports only at 0.8 or above, the lowest cutoff the plugin accepts. It does not use jev-lint's cutoffs. Some jev-lint rules look across files. Others look at types, classes, other languages, documents or commits. Those rules are not here.
 
 ## License
 

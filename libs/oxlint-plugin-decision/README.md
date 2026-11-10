@@ -5,9 +5,9 @@
 
 [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) rules written in plain English, answered by decision models on [OpenRouter](https://openrouter.ai).
 
-A rule is a question about a function, a call, a JSX element, or a whole file. Each match is sent to one or more decision models with the question, and the plugin reports an error when the answer the rule cares about clears its cutoff.
+A rule is a question about a function, a call, a JSX element or a whole file. Each match is sent to one or more decision models with the question. The plugin reports an error when the answer the rule cares about clears its cutoff.
 
-Decision models do not write text. They return a probability for a yes/no question, or pick one of the options you list. That makes them fast and cheap enough to run over a codebase, and it is why every rule here is a question with a fixed set of answers.
+Decision models do not write text. They return a probability for a yes/no question, or pick one of the options you list. That makes them fast and cheap enough to run over a codebase. It is also why every rule here is a question with a fixed set of answers.
 
 For ready-made rules, see [`@r_masseater/oxlint-plugin-decision-presets`](https://www.npmjs.com/package/@r_masseater/oxlint-plugin-decision-presets).
 
@@ -26,7 +26,7 @@ In CI (when the `CI` environment variable is set), a run that could not reach a 
 
 ## Write your rules
 
-The plugin ships no rules of its own. You write each rule with `defineDecisionRule` in a plugin file of your own, pass them to `createDecisionPlugin`, and load that file from `oxlint.config.ts`. For ready-made rules, use [`@r_masseater/oxlint-plugin-decision-presets`](https://www.npmjs.com/package/@r_masseater/oxlint-plugin-decision-presets).
+The plugin ships no rules of its own. You write each rule with `defineDecisionRule` in a plugin file of your own and pass the rules to `createDecisionPlugin`. Then you load that file from `oxlint.config.ts`. For ready-made rules, use [`@r_masseater/oxlint-plugin-decision-presets`](https://www.npmjs.com/package/@r_masseater/oxlint-plugin-decision-presets).
 
 ```js
 // decision-plugin.mjs
@@ -54,7 +54,7 @@ export default createDecisionPlugin({
 });
 ```
 
-Each rule becomes an oxlint rule named `<plugin name>/<rule id>`, so you turn rules on and set their severity one by one, like any other oxlint rule. The plugin name defaults to `decision`.
+Each rule becomes an oxlint rule named `<plugin name>/<rule id>`. You turn rules on and set their severity one by one, like any other oxlint rule. The plugin name defaults to `decision`.
 
 ```ts
 // oxlint.config.ts
@@ -101,7 +101,7 @@ The wording of the question is the rule, so be precise about what counts. "Does 
 
 `select` decides from the AST which matches are worth a question, before any request is sent. It gets the matched ESTree node, as oxlint parsed it, and returns `true` to ask about it. Matches it rejects cost nothing.
 
-The second argument carries `context`, the oxlint rule context, and `name`, the match's name as source text, or `undefined` when it has none:
+The second argument carries `context` and `name`. `context` is the oxlint rule context. `name` is the match's name as source text, or `undefined` when it has none.
 
 | Target       | `name`                                                                      |
 | ------------ | --------------------------------------------------------------------------- |
@@ -186,15 +186,15 @@ By default the model reads only the match. `context` sends more source with it, 
 | `{ scope: "file" }`                        | The whole file.                                            |
 | `{ scope: "comment" }`                     | See below.                                                 |
 
-`{ scope: "comment" }` is for rules about the comment above the code. The match is sent starting at the comments directly above it (or above the `export` or declaration that holds it), with nothing between them but whitespace. A match without such a comment is not asked about.
+`{ scope: "comment" }` is for rules about the comment above the code. The match is sent starting at the comments directly above it, with nothing between them but whitespace. The comments may also sit above the `export` or declaration that holds the match. A match without such a comment is not asked about.
 
-More context costs more tokens and is cached together with the match, so an edit anywhere in the context re-asks that file.
+More context costs more tokens. It is cached together with the match, so an edit anywhere in the context re-asks that file.
 
 ### Models
 
 A model id is `<provider>/<model>`. The built-in provider is `openrouter`, so `openrouter/inception/mercury-decide` asks `inception/mercury-decide` on OpenRouter. Browse decision models at [openrouter.ai/models](https://openrouter.ai/models?output_modalities=decisions).
 
-`model` takes one id or a list. With a list, every model answers every match, each model's request is separate, and each model's yes is its own diagnostic, so you can compare models on the same code.
+`model` takes one id or a list. With a list, every model answers every match in a separate request. Each model's yes is its own diagnostic, so you can compare models on the same code.
 
 ```js
 createDecisionPlugin({
@@ -203,21 +203,21 @@ createDecisionPlugin({
 });
 ```
 
-Respan models, such as `openrouter/respan/span-01-lite`, answer only yes/no questions, so the plugin splits every choice into yes/no questions for them:
+Respan models, such as `openrouter/respan/span-01-lite`, answer only yes/no questions. The plugin splits every choice into yes/no questions for them.
 
 - `classify` asks whether each label fits and picks the label with the highest yes probability.
-- `severity` asks whether the match is at least `info`, at least `warn`, and at least `error`, and picks the most serious level with a yes probability of 0.8 or more. A level's probability is never below that of a more serious level.
+- `severity` asks whether the match is at least `info`, at least `warn` and at least `error`. It picks the most serious level with a yes probability of 0.8 or more. A level's probability is never below that of a more serious level.
 - File-rule `location` asks about each candidate line. It finds clear cases, but is less precise than on the default model.
 
-The probability in the message is the yes probability of the picked label or level. Respan models are also asked about one match per request, so they send more requests than other models on files with many matches. The default `openrouter/~typesafe/jev-latest` answers every answer kind in one question.
+The probability in the message is the yes probability of the picked label or level. Respan models are also asked about one match per request. So they send more requests than other models on files with many matches. The default `openrouter/~typesafe/jev-latest` answers every answer kind in one question.
 
-Probabilities are not calibrated the same way across models, so a cutoff tuned for one model does not carry over to another. Pin a versioned id once your cutoffs are tuned. Each diagnostic names the model that answered.
+Probabilities are not calibrated the same way across models. A cutoff tuned for one model does not carry over to another. Pin a versioned id once your cutoffs are tuned. Each diagnostic names the model that answered.
 
 A key is required only for providers the rules you turned on use. `OPENROUTER_BASE_URL` points the plugin at another OpenRouter-compatible host.
 
 ### File locations
 
-File rules can point editor diagnostics and GitHub annotations to the suspected violation:
+File rules can point editor diagnostics and GitHub annotations to the suspected violation.
 
 ```js
 defineDecisionRule({
@@ -233,7 +233,7 @@ defineDecisionRule({
 });
 ```
 
-The violation and location have separate cutoffs. An uncertain or invalid location keeps the finding on the first line. Files truncated by `maxSnippetChars` also keep the first-line diagnostic, since location questions only use complete source.
+The violation and location have separate cutoffs. An uncertain or invalid location keeps the finding on the first line. Files truncated by `maxSnippetChars` also keep the first-line diagnostic. Location questions only use complete source.
 
 ### Settings
 
@@ -271,7 +271,7 @@ export default defineConfig({
 
 ## Explain mode
 
-When you tune a question or try another model, explain mode shows why each match was or wasn't reported. Turn it on for one run with an environment variable, since oxlint does not pass command-line flags to plugins:
+When you tune a question or try another model, explain mode shows why each match was or wasn't reported. Turn it on for one run with an environment variable, since oxlint does not pass command-line flags to plugins.
 
 ```sh
 OXLINT_DECISION_EXPLAIN=1 npx oxlint      # readable text
@@ -280,7 +280,7 @@ OXLINT_DECISION_EXPLAIN=json npx oxlint   # one JSON object per match
 
 You can also set `explain: true` (or `"json"`) in `createDecisionPlugin` or in `settings.<plugin name>`. The environment variable wins when it is set, and `OXLINT_DECISION_EXPLAIN=0` turns it off.
 
-For every match the plugin asked a model about, it prints to stderr, so oxlint's own output stays as it is:
+For every match the plugin asked a model about, it prints to stderr, so oxlint's own output stays as it is.
 
 ```text
 oxlint-plugin-decision explain: fail.js:5:3 [no-pii-in-logs] openrouter/respan/span-01-lite (served openrouter/respan/span-01-lite-20260925) cached=no 412ms
@@ -290,13 +290,14 @@ oxlint-plugin-decision explain: fail.js:5:3 [no-pii-in-logs] openrouter/respan/s
   verdict: yes 0.93, cutoff 0.80, reported
 ```
 
-- The file and position, the rule, the model id the rule was asked with (after any per-rule override), and the model that served the answer.
+- The file and position, and the rule.
+- The model id the rule was asked with (after any per-rule override), and the model that served the answer.
 - Whether the answer came from the cache, and how long the plugin waited for the answers of that file, in milliseconds. Every model of a file is asked together, so they share one wait.
 - The length and first characters of the source sent as state. The full source is not printed.
 - Each question exactly as sent, with the probability of each answer. When a Respan model answers a `classify` or `severity` rule, each yes/no question it was asked is listed on its own.
 - The verdict, the rule's cutoff, and whether it was reported.
 
-If the request failed, the record says why instead. In JSON Lines the same fields are `file`, `line`, `column`, `rule`, `model`, `served`, `cutoff`, `cached`, `durationMs`, `state`, `questions`, `verdict`, `reported`, and `error`.
+If the request failed, the record says why instead. JSON Lines uses the same fields. The position is in `file`, `line` and `column`. The rule and models are in `rule`, `model` and `served`. The cutoff and cache state are in `cutoff` and `cached`, and the time taken is in `durationMs`. The request is in `state` and `questions`. The result is in `verdict`, `reported` and `error`.
 
 Explain mode only prints. It does not change what is asked, what is cached, or what is reported.
 
@@ -331,9 +332,9 @@ export default defineConfig({
 | ------- | ---------------------------------------- |
 | `model` | A model id or list of ids for this rule. |
 
-A rule's model comes from the first of these that sets one: the rule's options in `oxlint.config.ts`, the rule's own `model`, `settings.<plugin name>.model`, the `model` passed to `createDecisionPlugin`, and the default.
+A rule's model comes from the first source that sets one. The rule's options in `oxlint.config.ts` come first. Next comes the rule's own `model`, and then `settings.<plugin name>.model`. After that comes the `model` passed to `createDecisionPlugin`. The default comes last.
 
-Rules on different models are asked separately, one request per file and model, so a Respan model and `~typesafe/jev-latest` can share a config: each model gets only the matches of the rules that use it. Answers are cached by the request each model receives, so rules never share or overwrite each other's cached answers.
+Rules on different models are asked separately, one request per file and model. So a Respan model and `~typesafe/jev-latest` can share a config. Each model gets only the matches of the rules that use it. Answers are cached by the request each model receives. Rules never share or overwrite each other's cached answers.
 
 ## Providers
 
@@ -388,15 +389,15 @@ export default defineConfig({
 });
 ```
 
-`createDecisionPlugin` checks every rule and setting when the plugin loads, so a typo in a rule fails the oxlint run instead of being ignored.
+`createDecisionPlugin` checks every rule and setting when the plugin loads. A typo in a rule fails the oxlint run instead of being ignored.
 
-A provider's `decide` is synchronous, because oxlint rules are. It gets an OpenRouter Decisions request (`model`, `state`, `questions`) and returns `{ ok: true, response }` with a Decisions response, or `{ ok: false, reason }`. The built-in `openRouter` provider does its network call on a worker thread through [synckit](https://github.com/un-ts/synckit); a custom provider that calls a network service should do the same.
+A provider's `decide` is synchronous, because oxlint rules are. It gets an OpenRouter Decisions request (`model`, `state`, `questions`). It returns `{ ok: true, response }` with a Decisions response, or `{ ok: false, reason }`. The built-in `openRouter` provider does its network call on a worker thread through [synckit](https://github.com/un-ts/synckit). A custom provider that calls a network service should do the same.
 
-oxlint runs JS plugins on one thread, so files are asked one after another. Within a file, the plugin hands every model of the same provider to the provider's optional `decideAll` in one call, and the built-in provider sends them at the same time. A provider without `decideAll` is asked one model at a time through `decide`.
+oxlint runs JS plugins on one thread, so files are asked one after another. Within a file, the plugin hands every model of the same provider to the provider's optional `decideAll` in one call. The built-in provider sends them at the same time. A provider without `decideAll` is asked one model at a time through `decide`.
 
-The built-in provider's worker reports its `decide`, `ask` and `send` steps as spans over OTLP when the standard `OTEL_TRACES_EXPORTER=otlp` and `OTEL_EXPORTER_OTLP_ENDPOINT` (or `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`) are set, and does nothing otherwise.
+The built-in provider's worker can report its `decide`, `ask` and `send` steps as spans over OTLP. It does so when the standard `OTEL_TRACES_EXPORTER=otlp` and `OTEL_EXPORTER_OTLP_ENDPOINT` are set. `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` also works in place of the endpoint. Otherwise it does nothing.
 
-Types for all of this are exported: `DecisionRule`, `DecisionOptions`, `RuleAnswer`, `RuleContext`, `DecisionProvider`, `DecisionRequest`, `DecideResult`, and more.
+Types for all of this are exported. The rule types include `DecisionRule`, `DecisionOptions`, `RuleAnswer` and `RuleContext`. The provider types include `DecisionProvider`, `DecisionRequest` and `DecideResult`.
 
 ## How it works
 
@@ -406,7 +407,7 @@ Answers are cached under `node_modules/.cache/oxlint-plugin-decision`, keyed by 
 
 Requests go through the official [`@openrouter/sdk`](https://www.npmjs.com/package/@openrouter/sdk) client, which retries rate limits and server errors within `timeoutMs`.
 
-If a model can't be asked, because the key is missing, the request times out, or the API errors, the plugin prints one warning and reports nothing for that model on that file. Under CI the run fails instead, unless `ci` is `"skip"`.
+A model may not be reachable, because the key is missing, the request times out or the API errors. Then the plugin prints one warning and reports nothing for that model on that file. Under CI the run fails instead, unless `ci` is `"skip"`.
 
 If only a location refinement fails, confirmed violations are still reported at the file level. Under CI (unless `ci` is `"skip"`), the refinement failure produces a separate diagnostic; otherwise it warns.
 
@@ -415,13 +416,13 @@ If only a location refinement fails, confirmed violations are still reported at 
 Before running the plugin on a real codebase, put these three in place.
 
 1. Exclude files you don't need. List generated and vendored code in `ignorePatterns`, and use `overrides` to turn rules on only where they matter.
-2. Lint only changed files instead of the whole tree:
+2. Lint only changed files instead of the whole tree.
 
    ```sh
    git diff --name-only --diff-filter=d origin/main... -- '*.ts' '*.tsx' '*.js' '*.jsx' | xargs -r npx oxlint
    ```
 
-3. Keep the cache. Answers are cached under `node_modules/.cache/oxlint-plugin-decision`, so unchanged code is not asked again. Don't delete it between local runs, and persist it in CI:
+3. Keep the cache. Answers are cached under `node_modules/.cache/oxlint-plugin-decision`, so unchanged code is not asked again. Don't delete it between local runs, and persist it in CI.
 
    ```yaml
    - uses: actions/cache@v4
@@ -431,11 +432,11 @@ Before running the plugin on a real codebase, put these three in place.
        restore-keys: oxlint-decision-
    ```
 
-To try rules without paying for requests, set a rule's model to the free `openrouter/respan/span-01-lite`, as in `"team/no-pii-in-logs": ["error", { "model": "openrouter/respan/span-01-lite" }]`.
+To try rules without paying for requests, set a rule's model to the free `openrouter/respan/span-01-lite`. For example, use `"team/no-pii-in-logs": ["error", { "model": "openrouter/respan/span-01-lite" }]`.
 
 ## In the editor
 
-The oxlint VS Code extension lints as you type, and every keystroke inside a match is a paid request that blocks the language server until the model answers.
+The oxlint VS Code extension lints as you type. Every keystroke inside a match is a paid request that blocks the language server until the model answers.
 
 Keep your decision rules off in the config your editor reads, and turn them on in an overlay for CI and pre-push. Leave `jsPlugins` in the base config, since the overlay inherits it.
 
