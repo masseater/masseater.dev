@@ -9,6 +9,11 @@ const PUBLIC_VALUES = [
   String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`,
 ];
 
+const FAKE_SECRET_FIXTURES = [
+  String.raw`(^|/)libs/vite-plus-adopt/upstream/attw-core/fixtures/[^/]+\.tgz!`,
+  String.raw`(^|/)libs/oxlint-plugin-decision-presets/example/fail\.js$`,
+];
+
 const UNTRACKED_SKILL_EXAMPLE = String.raw`(attributes["git.sha"] == "f4ab1c402143011a6264a0660f598fc02eb48bff" && attributes["path"] == "docs/skills/measure-dont-guess/SKILL.md")`;
 
 const checks: ToolSections = {
@@ -33,6 +38,10 @@ const checks: ToolSections = {
     extend: { useDefault: true },
     filter: `matchesAny(finding.line, [${pipe(
       PUBLIC_VALUES,
+      Arr.map((pattern) => `\`${pattern}\``),
+      Arr.join(", "),
+    )}]) || matchesAny(attributes["path"], [${pipe(
+      FAKE_SECRET_FIXTURES,
       Arr.map((pattern) => `\`${pattern}\``),
       Arr.join(", "),
     )}]) || ${UNTRACKED_SKILL_EXAMPLE}`,
