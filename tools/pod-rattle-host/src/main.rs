@@ -1,16 +1,14 @@
-use midly::num::{u4, u7, u15, u24, u28};
-use midly::{Format, Header, MetaMessage, MidiMessage, Smf, Timing, TrackEvent, TrackEventKind};
 use pod_rattle::RattleParams;
 use pod_rattle_engine::Engine;
 use std::path::{Path, PathBuf};
-use std::process::{Command, ExitCode};
+use std::process::ExitCode;
+use vst3_host::midi::{MidiChannel, MidiEvent};
 
 const SAMPLE_RATE: u32 = 48_000;
 const BLOCK: usize = 512;
-const PPQ: u16 = 480;
-const MICROS_PER_BEAT: u32 = 500_000;
 const SAMPLES_PER_TICK: usize = 50;
-const TAIL_SECONDS: &str = "2";
+const TAIL_SECONDS: usize = 2;
+const KEY: u8 = 60;
 const TOLERANCE: f32 = 1e-6;
 const AUDIBLE: f32 = 0.01;
 
@@ -69,11 +67,8 @@ fn main() -> ExitCode {
 }
 
 fn run(scenario: &Scenario, plugin: &Path, out: &Path) -> Result<String, String> {
-    let midi = out.join(format!("{}.mid", scenario.name));
-    let wav = out.join(format!("{}.wav", scenario.name));
-    write_midi(&midi);
-    render_in_host(scenario, plugin, &midi, &wav)?;
-    let (left, right) = read_wav(&wav)?;
+    let (left, right) = render_in_host(scenario, plugin)?;
+    write_wav(&out.join(format!("{}.wav", scenario.name)), &left, &right)?;
     let (expected_left, expected_right) = render_reference(scenario, left.len());
 
     let mut peak = 0.0_f32;
@@ -109,103 +104,73 @@ fn run(scenario: &Scenario, plugin: &Path, out: &Path) -> Result<String, String>
     ))
 }
 
-fn write_midi(path: &Path) {
-    let mut track = vec![TrackEvent {
-        delta: u28::new(0),
-        kind: TrackEventKind::Meta(MetaMessage::Tempo(u24::new(MICROS_PER_BEAT))),
-    }];
-    let mut last = 0;
-    for (tick, velocity) in NOTES {
-        track.push(note(
-            tick - last,
-            MidiMessage::NoteOn {
-                key: u7::new(60),
-                vel: u7::new(velocity),
-            },
-        ));
-        track.push(note(
-            0,
-            MidiMessage::NoteOff {
-                key: u7::new(60),
-                vel: u7::new(0),
-            },
-        ));
-        last = tick;
-    }
-    track.push(TrackEvent {
-        delta: u28::new(0),
-        kind: TrackEventKind::Meta(MetaMessage::EndOfTrack),
-    });
-    let smf = Smf {
-        header: Header::new(Format::SingleTrack, Timing::Metrical(u15::new(PPQ))),
-        tracks: vec![track],
-    };
-    smf.save(path).expect("write midi");
-}
-
-fn note(delta: u32, message: MidiMessage) -> TrackEvent<'static> {
-    TrackEvent {
-        delta: u28::new(delta),
-        kind: TrackEventKind::Midi {
-            channel: u4::new(0),
-            message,
-        },
-    }
-}
-
-fn render_in_host(
-    scenario: &Scenario,
-    plugin: &Path,
-    midi: &Path,
-    wav: &Path,
-) -> Result<(), String> {
-    let project = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let mut command = Command::new("uv");
-    command
-        .args(["run", "--quiet", "--project"])
-        .arg(project)
-        .args(["minihost", "process"])
-        .arg(plugin)
-        .args(["-r", &SAMPLE_RATE.to_string(), "-b", &BLOCK.to_string()])
-        .arg("-m")
-        .arg(midi)
-        .arg("-o")
-        .arg(wav)
-        .args([
-            "-t",
-            TAIL_SECONDS,
-            "--bit-depth",
-            "32",
-            "--no-resample",
-            "-y",
-        ]);
+fn render_in_host(scenario: &Scenario, plugin: &Path) -> Result<(Vec<f32>, Vec<f32>), String> {
+    let mut host =
+        vst3_host::simple::load_plugin_with_settings(plugin, f64::from(SAMPLE_RATE), BLOCK)
+            .map_err(|e| format!("load the plugin: {e}"))?;
     if scenario.auto_shake {
-        command.args(["--param", "Auto shake:1"]);
+        host.set_parameter_by_name("Auto shake", 1.0)
+            .map_err(|e| format!("set Auto shake: {e}"))?;
     }
-    let status = command.status().map_err(|e| format!("run minihost: {e}"))?;
-    if status.success() {
-        Ok(())
-    } else {
-        Err(format!("minihost exited with {status}"))
+    host.start_processing()
+        .map_err(|e| format!("start processing: {e}"))?;
+
+    let last = NOTES
+        .iter()
+        .map(|&(tick, _)| tick as usize)
+        .max()
+        .unwrap_or(0);
+    let total = last * SAMPLES_PER_TICK + TAIL_SECONDS * SAMPLE_RATE as usize;
+    let mut left = Vec::with_capacity(total);
+    let mut right = Vec::with_capacity(total);
+    while left.len() < total {
+        let start = left.len();
+        let frames = BLOCK.min(total - start);
+        for (tick, velocity) in NOTES {
+            let at = tick as usize * SAMPLES_PER_TICK;
+            if (start..start + frames).contains(&at) {
+                let offset = (at - start) as i32;
+                for event in [
+                    MidiEvent::NoteOn {
+                        channel: MidiChannel::Ch1,
+                        note: KEY,
+                        velocity,
+                    },
+                    MidiEvent::NoteOff {
+                        channel: MidiChannel::Ch1,
+                        note: KEY,
+                        velocity: 0,
+                    },
+                ] {
+                    host.send_midi_event_at(event, offset)
+                        .map_err(|e| format!("send a note: {e}"))?;
+                }
+            }
+        }
+        let mut buffers = vst3_host::audio::AudioBuffers::new(0, 2, frames, f64::from(SAMPLE_RATE));
+        host.process_audio(&mut buffers)
+            .map_err(|e| format!("process a block: {e}"))?;
+        left.extend_from_slice(&buffers.outputs[0][..frames]);
+        right.extend_from_slice(&buffers.outputs[1][..frames]);
     }
+    host.stop_processing()
+        .map_err(|e| format!("stop processing: {e}"))?;
+    Ok((left, right))
 }
 
-fn read_wav(path: &Path) -> Result<(Vec<f32>, Vec<f32>), String> {
-    let mut reader = hound::WavReader::open(path).map_err(|e| e.to_string())?;
-    let spec = reader.spec();
-    if spec.channels != 2 || spec.sample_rate != SAMPLE_RATE {
-        return Err(format!("unexpected wav format {spec:?}"));
+fn write_wav(path: &Path, left: &[f32], right: &[f32]) -> Result<(), String> {
+    let spec = hound::WavSpec {
+        channels: 2,
+        sample_rate: SAMPLE_RATE,
+        bits_per_sample: 32,
+        sample_format: hound::SampleFormat::Float,
+    };
+    let mut writer = hound::WavWriter::create(path, spec).map_err(|e| e.to_string())?;
+    for (l, r) in left.iter().zip(right) {
+        writer.write_sample(*l).map_err(|e| e.to_string())?;
+        writer.write_sample(*r).map_err(|e| e.to_string())?;
     }
-    let samples: Vec<f32> = reader
-        .samples::<f32>()
-        .collect::<Result<_, _>>()
-        .map_err(|e| e.to_string())?;
-    Ok(samples
-        .as_chunks::<2>()
-        .0
-        .iter()
-        .map(|&[l, r]| (l, r))
-        .unzip())
+    writer.finalize().map_err(|e| e.to_string())
 }
 
 fn render_reference(scenario: &Scenario, len: usize) -> (Vec<f32>, Vec<f32>) {

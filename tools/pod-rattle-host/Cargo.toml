@@ -10,7 +10,7 @@ publish = false
 [dependencies]
 pod_rattle = { path = "../../apps/pod-rattle-plugin" }
 pod-rattle-engine = { path = "../../libs/pod-rattle-engine" }
-midly = "0.5.3"
+vst3-host = { version = "0.11.1", default-features = false }
 hound = "3.5.1"
 
 [lints.clippy]
