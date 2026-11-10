@@ -1,14 +1,20 @@
 import { AtpAgent } from "@atproto/api";
-import { Effect, Option, Schema, pipe } from "effect";
+import { Clock, Effect, Option, Schema, pipe } from "effect";
 
-import type { GitHubAppEnv, RouteInput } from "./github-app.ts";
+import { readRow, readSealed, swapRow, writeSealed } from "./app-store.ts";
+import type { AppStoreEnv } from "./app-store.ts";
+import { admit } from "./attempt-window.ts";
+import type { RouteInput } from "./github-app.ts";
+import type { SealFailed } from "./sealed-value.ts";
 
 const ATPROTO_DID = "did:plc:sz2kxumpsjbch3kgnsjjed5z";
 const ATPROTO_SERVICE = "https://bsky.social";
 const APP_PASSWORD_KEY = "atp_app_password";
+const ATTEMPTS_KEY = "atp_attempts";
 const APP_PASSWORD_PATH = "/atproto/app-password";
 const NO_CONTENT = 204;
 const UNAUTHORIZED = 401;
+const TOO_MANY_REQUESTS = 429;
 
 const Submission = Schema.fromJsonString(Schema.Struct({ password: Schema.NonEmptyString }));
 
@@ -20,6 +26,13 @@ class SignInFailed extends taggedError<SignInFailed, { readonly brand: unique sy
   "SignInFailed",
   { message: Schema.String },
 ) {}
+
+const submitted = (body: string): Effect.Effect<Readonly<{ password: string }>, SignInFailed> =>
+  decodeSubmission(body).pipe(
+    Effect.mapError(() =>
+      SignInFailed.make({ message: "the submission is not a JSON object with a password" }),
+    ),
+  );
 
 const signIn = (password: string): Effect.Effect<void, SignInFailed> =>
   Effect.tryPromise({
@@ -34,21 +47,46 @@ const signIn = (password: string): Effect.Effect<void, SignInFailed> =>
     Effect.asVoid,
   );
 
-const storePassword = (env: GitHubAppEnv, password: string): Effect.Effect<void> =>
-  Effect.promise(() =>
-    env.GITHUB_APP.prepare(
-      "INSERT INTO github_app (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value",
-    )
-      .bind(APP_PASSWORD_KEY, password)
-      .run(),
-  ).pipe(Effect.andThen(Effect.logInfo("atproto.app_password_stored")));
+const storePassword = (env: AppStoreEnv, password: string): Effect.Effect<void, SealFailed> =>
+  writeSealed({ env, name: APP_PASSWORD_KEY, plaintext: password }).pipe(
+    Effect.andThen(Effect.logInfo("atproto.app_password_stored")),
+  );
 
-const submit = (request: Request, env: GitHubAppEnv): Effect.Effect<Response> =>
+const admitAttempt = (env: AppStoreEnv): Effect.Effect<boolean> =>
+  Effect.gen(function* countAttempt() {
+    const attempts = { env, name: ATTEMPTS_KEY };
+    const now = yield* Clock.currentTimeMillis;
+    const stored = yield* readRow(attempts);
+    const admission = admit({ now, stored });
+    if (admission.status === "limited") {
+      return false;
+    }
+    return yield* swapRow({ ...attempts, expected: stored, value: admission.stored });
+  });
+
+const limited: Effect.Effect<Response> = Effect.logWarning("atproto.app_password_limited").pipe(
+  Effect.map(() => new Response("", { status: TOO_MANY_REQUESTS })),
+);
+
+const accept = (
+  request: Request,
+  env: AppStoreEnv,
+): Effect.Effect<Response, SealFailed | SignInFailed> =>
   Effect.promise(() => request.text()).pipe(
-    Effect.flatMap(decodeSubmission),
+    Effect.flatMap(submitted),
     Effect.tap(({ password }) => signIn(password)),
     Effect.flatMap(({ password }) => storePassword(env, password)),
     Effect.as(new Response("", { status: NO_CONTENT })),
+  );
+
+const submit = (request: Request, env: AppStoreEnv): Effect.Effect<Response> =>
+  admitAttempt(env).pipe(
+    Effect.flatMap((admitted) => {
+      if (admitted) {
+        return accept(request, env);
+      }
+      return limited;
+    }),
     Effect.catchCause((cause) =>
       Effect.logWarning("atproto.app_password_rejected", cause).pipe(
         Effect.as(new Response("", { status: UNAUTHORIZED })),
@@ -66,17 +104,15 @@ const atprotoRoute = ({ request, env }: RouteInput): Option.Option<Effect.Effect
     Option.map((matched) => submit(matched, env)),
   );
 
-const readAppPassword = (env: GitHubAppEnv): Effect.Effect<Option.Option<string>> =>
-  Effect.promise(() =>
-    env.GITHUB_APP.prepare("SELECT value FROM github_app WHERE key = ?")
-      .bind(APP_PASSWORD_KEY)
-      .first<string>("value"),
-  ).pipe(Effect.map(Option.fromNullishOr));
+const readAppPassword = (env: AppStoreEnv): Effect.Effect<Option.Option<string>> =>
+  readSealed({ env, name: APP_PASSWORD_KEY }).pipe(
+    Effect.catchTag("SealFailed", () => Effect.succeedNone),
+  );
 
 const issueAppPassword = ({
   env,
   granted,
-}: Readonly<{ env: GitHubAppEnv; granted: boolean }>): Effect.Effect<
+}: Readonly<{ env: AppStoreEnv; granted: boolean }>): Effect.Effect<
   Option.Option<Readonly<{ atpAppPassword: string }>>
 > =>
   pipe(
