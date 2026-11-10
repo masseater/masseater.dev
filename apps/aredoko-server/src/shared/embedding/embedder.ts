@@ -12,6 +12,7 @@ import { Array, Context, Effect, Layer, Option, Predicate, Schema, pipe } from "
 import { EmbeddingFailed } from "./embedding-failed.ts";
 
 const MODEL_ID = "onnx-community/embeddinggemma-2-ONNX";
+const MODEL_REVISION = "daa72c51243991dfcaf9f9137d2c573d8f7790c0";
 const DTYPE = "q4";
 const DEVICES = ["dml", "cpu"] as const satisfies readonly DeviceType[];
 const IMAGE_SOFT_TOKENS = 70;
@@ -56,7 +57,12 @@ const documentPrompt = (text: string): string => `title: none | text: ${text}`;
 const FETCH_DEVICE = "cpu";
 
 const preferLocalModels = (directory: string): void => {
-  Object.assign(env, { localModelPath: directory, allowRemoteModels: false, useFSCache: false });
+  Object.assign(env, {
+    cacheDir: directory,
+    useFSCache: true,
+    allowLocalModels: true,
+    allowRemoteModels: false,
+  });
 };
 
 const loadModel = (
@@ -66,15 +72,22 @@ const loadModel = (
     pipe(
       DEVICES,
       Array.map((device) =>
-        attempt(() => AutoModel.from_pretrained(MODEL_ID, { config, device, dtype: DTYPE })).pipe(
-          Effect.map((model) => ({ model, device })),
-        ),
+        attempt(() =>
+          AutoModel.from_pretrained(MODEL_ID, {
+            config,
+            device,
+            dtype: DTYPE,
+            revision: MODEL_REVISION,
+          }),
+        ).pipe(Effect.map((model) => ({ model, device }))),
       ),
     ),
   );
 
 const loadProcessor = Effect.gen(function* loadProcessor() {
-  const processor = yield* attempt(() => AutoProcessor.from_pretrained(MODEL_ID));
+  const processor = yield* attempt(() =>
+    AutoProcessor.from_pretrained(MODEL_ID, { revision: MODEL_REVISION }),
+  );
   const imageProcessor: unknown = Reflect.get(processor, "image_processor");
   if (Predicate.isObjectKeyword(imageProcessor)) {
     Reflect.set(imageProcessor, "max_soft_tokens", IMAGE_SOFT_TOKENS);
@@ -129,7 +142,9 @@ const make = (
 });
 
 const loadConfig = Effect.gen(function* loadConfig() {
-  const config = yield* attempt(() => AutoConfig.from_pretrained(MODEL_ID));
+  const config = yield* attempt(() =>
+    AutoConfig.from_pretrained(MODEL_ID, { revision: MODEL_REVISION }),
+  );
   Reflect.deleteProperty(config, "audio_config");
   return config;
 });
@@ -142,7 +157,12 @@ const fetchModel = Effect.fn("fetchModel")(function* fetchModelFiles(directory: 
   const config = yield* loadConfig;
   yield* loadProcessor;
   yield* attempt(() =>
-    AutoModel.from_pretrained(MODEL_ID, { config, device: FETCH_DEVICE, dtype: DTYPE }),
+    AutoModel.from_pretrained(MODEL_ID, {
+      config,
+      device: FETCH_DEVICE,
+      dtype: DTYPE,
+      revision: MODEL_REVISION,
+    }),
   );
 });
 
