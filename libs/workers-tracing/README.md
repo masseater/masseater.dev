@@ -111,10 +111,34 @@ log `request failed` with the cause, so the failure is in the trace. The tracer
 and logger of the package replace any your layer provides. In the browser and in
 plain Node.js, they run the Effect without tracing.
 
+### What counts as a failure
+
+TanStack Router sends a redirect or a 404 by throwing: `throw redirect(...)`
+and `throw notFound()`. Inside an Effect, that is `Effect.die` or `Effect.fail`
+with the same value. Such a value is the answer to the request, not a failure. The package
+therefore follows the [HTTP span
+status](https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status)
+rules of OpenTelemetry for a server. The table lists each case.
+
+| What ends the span                           | Span status | `request failed` log |
+| -------------------------------------------- | ----------- | -------------------- |
+| A response below 500, returned or thrown     | unset       | no                   |
+| `redirect(...)` or another thrown `Response` | by status   | below 500: no        |
+| `notFound()`, which stands for 404           | unset       | no                   |
+| An Elysia error with a `status` below 500    | unset       | no                   |
+| A response of 500 or above                   | error       | when thrown          |
+| Any other error or defect                    | error       | yes                  |
+| Interruption                                 | unset       | no                   |
+
+A request or server function span that ends with a thrown `Response` records its
+status as `http.response.status_code`. A span marked as an error carries
+`error.type`. Its value is the name of the exception, or the status code for a
+response of 500 or above.
+
 Import `Elysia` from this package instead of from `elysia`. It is the same
 class, so the rest of your code does not change. The difference is that each
 request it handles becomes a span named after the matched route, such as `GET
-/items/:id`. An error marks the span as failed. That holds for `handle` and for
+/items/:id`. An error that answers with 500 or above marks the span as failed. That holds for `handle` and for
 `fetch`, so it also covers a compiled app that the Worker exports. Requests that
 match no route keep their path as the name.
 
@@ -238,6 +262,7 @@ in `run` and `runner` starts a Workers span for each Effect span. It then runs
 each step of the fiber inside the context of the request that started it. Spans
 therefore stay with their request even when one runtime serves many requests at
 once. A failed Effect marks its span as an error and records the exception.
+A redirect or a 404, as described above, leaves the span unset.
 
 ## Cost
 
