@@ -12,13 +12,15 @@ import type { Body } from "./life-record";
 import { findByLabel, scanAll, scanRecords } from "./life-store.server";
 import type { LifeEntry } from "./life-store.server";
 import { vocabularyNotices } from "./life-vocabulary.server";
-import type { Notice } from "./life-vocabulary.server";
+import type { Notice, ValuesCheck } from "./life-vocabulary.server";
 import { insertRecord, replaceRecord, snapshotOf } from "./life-writer.server";
 import type { NewRecord, Writer } from "./life-writer.server";
 
 type CreateItem = Exclude<WriteItemValue, ChangeValue>;
 
 type CreateFailure = InvalidRecord | StorageFailed;
+
+type Prepared = Readonly<{ input: NewRecord; assumed: readonly string[] }>;
 
 type Creator = (writer: Writer) => (input: NewRecord) => Effect.Effect<ItemResult, CreateFailure>;
 
@@ -149,20 +151,27 @@ const upsertDefinition: Creator = (writer) => (input) =>
 
 type Creators = Readonly<Record<LifeRecordName, Creator>>;
 
+const preparedOf = (item: CreateItem): Effect.Effect<Prepared, InvalidRecord> =>
+  Effect.gen(function* prepareLifeRecord() {
+    const { record } = item;
+    const { body, assumed } = yield* normalize(record)(withDefaults(record)(bodyOf(item)));
+    const valid = yield* validateBody(record)(body);
+    return { input: { record, source: sourceOf(item), body: valid }, assumed };
+  });
+
+const checkCreate =
+  (checkValues: ValuesCheck) =>
+  (item: CreateItem): Effect.Effect<void, CreateFailure> =>
+    preparedOf(item).pipe(Effect.flatMap(({ input }) => checkValues(input)));
+
 const createItem =
   ({ writer, creators }: Readonly<{ writer: Writer; creators: Creators }>) =>
   (item: CreateItem): Effect.Effect<ItemResult, CreateFailure> =>
     Effect.gen(function* createLifeRecord() {
-      const { record } = item;
-      const { body, assumed } = yield* normalize(record)(withDefaults(record)(bodyOf(item)));
-      const valid = yield* validateBody(record)(body);
-      const result = yield* creators[record](writer)({
-        record,
-        source: sourceOf(item),
-        body: valid,
-      });
+      const { input, assumed } = yield* preparedOf(item);
+      const result = yield* creators[input.record](writer)(input);
       return { ...result, notices: [...result.notices, ...assumedNotices(result.ref)(assumed)] };
     });
 
-export { createEvent, createItem, plainInsert, upsertDefinition, upsertMedia };
+export { checkCreate, createEvent, createItem, plainInsert, upsertDefinition, upsertMedia };
 export type { CreateFailure, CreateItem, Creator, Creators };

@@ -19,7 +19,7 @@ const READ_SCHEMA = LifeReadInput.pipe(Schema.toStandardSchemaV1, Schema.toStand
 const STATS_SCHEMA = LifeStatsInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
 const WRITE_DESCRIPTION =
-  "持ち主の人生の記録を 1 件以上まとめて書く。持ち主が出来事・体調・気分・食事・出費・会った人・見た作品・予定・目標・振り返りを話したら呼ぶ。\nsource は said（持ち主が言った）・provided（持ち主が渡した資料）・imported（外部から取り込んだ）のどれか。AI の作業メモ（memory_read・watashi_search の store: memory）や推測を人生の記録に書かない。\n1 つの出来事は 1 件の life_event にし、数えたい値は values に入れる（飲み会なら kind: met、values: {drinks, yen}）。text には持ち主の言葉に近い原文を入れる。\n既存の record を直すときは ref と変える項目だけを渡す（null で項目を消す）。retract と reason で取り消し、restoreTo でそのリビジョンの中身に戻す。\n返り値は {written: ref[], notices}。notices があれば hint に従って直すか、持ち主に確かめる。";
+  "持ち主の人生の記録を 1 件以上まとめて書く。持ち主が出来事・体調・気分・食事・出費・会った人・見た作品・予定・目標・振り返りを話したら呼ぶ。\nsource は said（持ち主が言った）・provided（持ち主が渡した資料）・imported（外部から取り込んだ）のどれか。AI の作業メモ（memory_read・watashi_search の store: memory）や推測を人生の記録に書かない。\n1 つの出来事は 1 件の life_event にし、数えたい値は values に入れる（飲み会なら kind: met、values: {drinks, yen}）。text には持ち主の言葉に近い原文を入れる。\n既存の record を直すときは ref と変える項目だけを渡す（null で項目を消す）。retract と reason で取り消し、restoreTo でそのリビジョンの中身に戻す。\n返り値は {written: ref[], notices}。notices があれば hint に従って直すか、持ち主に確かめる。\nエラーが返ったときは、どの record も書かれていない。保存の途中で失敗したときだけ、エラーが Already written に続けて書けた ref を挙げるので、送り直すときはその record を除く。";
 
 const READ_DESCRIPTION =
   "持ち主の人生の記録を探して読む。入力はどれも省ける。\nref で 1 件を読み、revisions: true も渡すとその書き込みの履歴を返す。record: digest で from〜to の振り返りの材料を返す。record: event_kind で kind・指標・人・場所・タグ・topic の一覧を返す。\nrecord を省くと life_event・profile_fact・owner_reflection をまとめて探す。fields で返す項目を絞れば limit 1000 でも短く読める。\n返り値は {total, items}。各 item は ref と source を持ち、時刻は {utc, jst}、日付は {date, precision}。";
