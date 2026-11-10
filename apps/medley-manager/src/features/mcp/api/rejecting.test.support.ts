@@ -2,11 +2,9 @@ import { Effect } from "effect";
 
 import { env } from "./d1.test.support";
 
-type Rejection = Readonly<{ event: "DELETE" | "INSERT" | "UPDATE"; table: string }>;
-
 const TRIGGER = "reject_write_in_test";
 
-const startRejecting = ({ event, table }: Rejection): Effect.Effect<unknown> =>
+const startRejecting = (event: string, table: string): Effect.Effect<unknown> =>
   Effect.promise(() =>
     env.DB.prepare(
       `CREATE TRIGGER ${TRIGGER} BEFORE ${event} ON ${table} BEGIN SELECT RAISE(ABORT, 'rejected in test'); END`,
@@ -18,10 +16,10 @@ const stopRejecting = Effect.promise(() =>
 );
 
 const whileRejecting =
-  (rejection: Rejection) =>
+  ({ event, table }: Readonly<{ event: "DELETE" | "INSERT"; table: string }>) =>
   <Value, Failure>(write: Effect.Effect<Value, Failure>): Effect.Effect<Value, Failure> =>
     Effect.acquireUseRelease(
-      startRejecting(rejection),
+      startRejecting(event, table),
       () => write,
       () => stopRejecting,
     );
