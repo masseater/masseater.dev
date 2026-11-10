@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/vitest-otlp",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A Vitest plugin that receives OTLP traces, metrics and logs during tests so tests can assert on the telemetry the code under test actually exported.",
   "keywords": [
     "opentelemetry",
@@ -62,8 +62,7 @@
   },
   "dependencies": {
     "@bufbuild/protobuf": "catalog:",
-    "@effect/platform-node": "catalog:",
-    "effect": "catalog:stack"
+    "@effect/platform-node": "catalog:"
   },
   "devDependencies": {
     "@bufbuild/buf": "catalog:",
@@ -71,10 +70,12 @@
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/sdk-node": "catalog:",
     "@types/node": "catalog:",
+    "effect": "catalog:stack",
     "miniflare": "catalog:",
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {
+    "effect": "^4.1.2",
     "vite-plus": "^1.5.0"
   },
   "engines": {

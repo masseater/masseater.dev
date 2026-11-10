@@ -66,6 +66,7 @@ export default defineConfig({
           "yomiyasu",
           "renovate",
           "workflow-rules",
+          "cargo-checks",
           "db-check-all",
           "fallow",
           "msch",

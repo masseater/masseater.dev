@@ -58,13 +58,13 @@
   "devDependencies": {
     "@r_masseater/vite-plus-adopt": "catalog:",
     "@size-limit/file": "catalog:",
-    "@types/react": "19.3.0",
-    "@types/react-dom": "19.3.0",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "effect": "catalog:stack",
-    "happy-dom": "21.0.4",
+    "happy-dom": "catalog:",
     "publint": "catalog:",
-    "react": "19.3.1",
-    "react-dom": "19.3.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "size-limit": "catalog:",
     "tailwindcss": "catalog:stack",
     "vite-plus": "catalog:stack"

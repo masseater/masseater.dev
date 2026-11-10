@@ -1,7 +1,7 @@
 import { INSTRUMENTATION, requiredStack } from "@r_masseater/msch/lint";
 import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import fsd from "@r_masseater/vite-plus-adopt/fsd";
-import { Array as Arr, pipe } from "effect";
+import { Array as Arr, String as Str, pipe } from "effect";
 import type { UserConfig } from "vite-plus";
 
 const PUBLIC_VALUES = [
@@ -105,13 +105,7 @@ const markdownPathspecs = pipe(
   Arr.join(" "),
 );
 
-const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
-  vpa: {
-    command: "vpa",
-    cache: false,
-  },
-  yomiyasu: `script="$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py"; if [ ! -f "$script" ]; then echo "yomiyasu: the yomiyasu skill is not installed. Run vp install to restore the skills." >&2; exit 1; fi; git -c core.quotePath=false ls-files -co --exclude-standard -z -- '*.md' ${markdownPathspecs} | xargs -0 -r -n 1 -P 4 python3 "$script" --strict`,
-};
+const CARGO_TASK = "#cargo";
 
 const packageChecks: readonly string[] = [
   "sloppedia#size",
@@ -130,7 +124,28 @@ const packageChecks: readonly string[] = [
   "aredoko-desktop#cargo",
   "yakusu#cargo",
   "aredoko-protocol-codegen#codegen:check",
+  "medley-manager#auth:check",
+  "watashi-mcp#auth:check",
   "aredoko-csharp-check#cs:check",
 ];
+
+const cargoChecks = pipe(
+  packageChecks,
+  Arr.filter(Str.endsWith(CARGO_TASK)),
+  Arr.map((check) => `'${check}'`),
+  Arr.join(" "),
+);
+
+const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
+  vpa: {
+    command: "vpa",
+    cache: false,
+  },
+  yomiyasu: `script="$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py"; if [ ! -f "$script" ]; then echo "yomiyasu: the yomiyasu skill is not installed. Run vp install to restore the skills." >&2; exit 1; fi; git -c core.quotePath=false ls-files -co --exclude-standard -z -- '*.md' ${markdownPathspecs} | xargs -0 -r -n 1 -P 4 python3 "$script" --strict`,
+  "cargo-checks": {
+    command: String.raw`crates="$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[].manifest_path' | while read -r manifest; do directory="$(dirname "$manifest")"; until [ -f "$directory/package.json" ]; do directory="$(dirname "$directory")"; done; jq -r '.name + "${CARGO_TASK}"' "$directory/package.json"; done | LC_ALL=C sort)"; listed="$(printf '%s\n' ${cargoChecks} | LC_ALL=C sort)"; if [ "$crates" != "$listed" ]; then printf 'The crates in Cargo.toml need these tasks:\n%s\npackageChecks in checks.config.ts lists these:\n%s\n' "$crates" "$listed" >&2; echo "The two lists must match. Give the package of each crate a cargo task and list it in packageChecks, or verify never lints or tests the crate." >&2; exit 1; fi`,
+    cache: false,
+  },
+};
 
 export { checkTasks, checks, packageChecks };
