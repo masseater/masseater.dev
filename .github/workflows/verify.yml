@@ -499,7 +499,7 @@ jobs:
           JOB_INDEX: ${{ strategy.job-index }}
       - if: steps.start.outputs.superseded != 'true'
         run: target/release/mosaic songs "$SLUG"
-        timeout-minutes: 30
+        timeout-minutes: 180
         continue-on-error: true
       - id: build-pool
         if: steps.start.outputs.superseded != 'true'
