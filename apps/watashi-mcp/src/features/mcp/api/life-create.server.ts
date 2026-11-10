@@ -9,7 +9,7 @@ import type { ItemResult } from "./life-checks";
 import type { ChangeValue, WriteItemValue } from "./life-input";
 import { columnsOf, lower, refOf, textAt, withDefaults } from "./life-record";
 import type { Body } from "./life-record";
-import { findByLabel, scanAll, scanRecords } from "./life-store.server";
+import { findByLabel, scanAll, scanLabel, scanRecords } from "./life-store.server";
 import type { LifeEntry } from "./life-store.server";
 import { vocabularyNotices } from "./life-vocabulary.server";
 import type { Notice, ValuesCheck } from "./life-vocabulary.server";
@@ -126,8 +126,15 @@ const mergedMedia = (entry: LifeEntry, body: Body): Body => ({
   ids: { ...idsOf(entry.body), ...idsOf(body) },
 });
 
+const mediaCandidates = (body: Body): Effect.Effect<readonly LifeEntry[], StorageFailed> => {
+  if (Rec.isEmptyRecord(idsOf(body))) {
+    return scanLabel({ record: "media_item", label: textAt("mediaType")(body) });
+  }
+  return scanAll(["media_item"]);
+};
+
 const upsertMedia: Creator = (writer) => (input) =>
-  scanAll(["media_item"]).pipe(
+  mediaCandidates(input.body).pipe(
     Effect.map(
       Arr.findFirst((entry) => sharesId(input.body)(entry) || sharesTitle(input.body)(entry)),
     ),

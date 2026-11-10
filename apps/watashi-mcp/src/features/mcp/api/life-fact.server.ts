@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Effect, Option, pipe } from "effect";
 
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 
@@ -7,7 +7,7 @@ import { plainInsert } from "./life-create.server";
 import type { Creator } from "./life-create.server";
 import { NONE, SELF, columnsOf, refOf, stringAt, textAt } from "./life-record";
 import type { Body } from "./life-record";
-import { scanAll } from "./life-store.server";
+import { findOpen } from "./life-store.server";
 import type { LifeEntry } from "./life-store.server";
 import { todayJst } from "./life-time";
 import type { Notice } from "./life-vocabulary.server";
@@ -18,19 +18,6 @@ type FactKey = Readonly<{ about: string; topic: string; start: string }>;
 
 type Successor = Readonly<{ writer: Writer; input: NewRecord; until: string }>;
 
-const isReplaceable =
-  ({ about, topic, start }: FactKey) =>
-  (entry: LifeEntry): boolean =>
-    entry.row.about === about &&
-    entry.row.label === topic &&
-    entry.row.dayEnd === NONE &&
-    entry.row.dayStart <= start;
-
-const currentFact = (key: FactKey): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> => {
-  const replaceable = isReplaceable(key);
-  return scanAll(["profile_fact"]).pipe(Effect.map(Arr.findFirst(replaceable)));
-};
-
 const isOpen = (body: Body): boolean => columnsOf("profile_fact")(body).dayEnd === NONE;
 
 const factToEnd = (
@@ -38,7 +25,12 @@ const factToEnd = (
   key: FactKey,
 ): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> => {
   if (isOpen(body)) {
-    return currentFact(key);
+    return findOpen({
+      record: "profile_fact",
+      label: key.topic,
+      about: key.about,
+      startedBy: key.start,
+    });
   }
   return Effect.succeedNone;
 };

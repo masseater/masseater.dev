@@ -24,11 +24,21 @@ type RecordScan = Readonly<{
 
 type LabelKey = Readonly<{ record: LifeRecordName; label: string }>;
 
+type OpenKey = LabelKey & Readonly<{ about: string; startedBy: string }>;
+
+type Wanted = Omit<RecordScan, "limit"> & Readonly<{ label: Option.Option<string> }>;
+
+type Page = Readonly<{ wanted: Wanted; limit: number; offset: number }>;
+
+type CappedScan = Readonly<{ entries: readonly LifeEntry[]; limited: Body }>;
+
 type IdKey = Readonly<{ record: LifeRecordName; id: number }>;
 
 const SCAN_LIMIT = 5000;
 
 const ONE_ROW = 1;
+
+const NO_OFFSET = 0;
 
 const decodeBody = Schema.decodeUnknownEffect(
   Schema.fromJsonString(Schema.Record(Schema.String, Schema.Unknown)),
@@ -54,23 +64,94 @@ const startsBefore = (to: string): SQL | undefined =>
 const termCondition = (terms: readonly string[]): Option.Option<SQL> =>
   anyTermMatches((pattern) => [like(lifeRecord.searchText, pattern)])(terms);
 
-const scanConditions = ({ records, from, to, terms }: RecordScan): readonly (SQL | undefined)[] => [
+const conditionsOf = ({
+  records,
+  from,
+  to,
+  terms,
+  label,
+}: Wanted): readonly (SQL | undefined)[] => [
   notRetracted,
   inArray(lifeRecord.record, [...records]),
   ...pipe(from, Option.map(endsAfter), Option.toArray),
   ...pipe(to, Option.map(startsBefore), Option.toArray),
   ...Option.toArray(termCondition(terms)),
+  ...pipe(
+    label,
+    Option.map((value) => eq(lifeRecord.label, value)),
+    Option.toArray,
+  ),
 ];
 
-const scanRecords = (scan: RecordScan): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
+const anyLabel = (scan: RecordScan): Wanted => ({ ...scan, label: Option.none() });
+
+const wholeOf = (records: readonly LifeRecordName[], label: Option.Option<string>): Wanted => ({
+  records,
+  from: Option.none(),
+  to: Option.none(),
+  terms: [],
+  label,
+});
+
+const pageOf = ({
+  wanted,
+  limit,
+  offset,
+}: Page): Effect.Effect<readonly LifeRow[], StorageFailed> =>
   query(() =>
     db
       .select()
       .from(lifeRecord)
-      .where(and(...scanConditions(scan)))
+      .where(and(...conditionsOf(wanted)))
       .orderBy(desc(lifeRecord.dayEnd), desc(lifeRecord.id))
-      .limit(Math.min(scan.limit, SCAN_LIMIT)),
-  ).pipe(Effect.flatMap(entriesOf));
+      .limit(limit)
+      .offset(offset),
+  );
+
+const rowsFrom = (
+  wanted: Wanted,
+  offset: number,
+): Effect.Effect<readonly LifeRow[], StorageFailed> =>
+  pageOf({ wanted, limit: SCAN_LIMIT, offset }).pipe(
+    Effect.filterOrElse(
+      (rows) => rows.length < SCAN_LIMIT,
+      (rows) =>
+        rowsFrom(wanted, offset + SCAN_LIMIT).pipe(Effect.map((rest) => [...rows, ...rest])),
+    ),
+  );
+
+const everyEntry = (wanted: Wanted): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
+  rowsFrom(wanted, NO_OFFSET).pipe(Effect.flatMap(entriesOf));
+
+const scanRecords = (scan: RecordScan): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
+  pageOf({
+    wanted: anyLabel(scan),
+    limit: Math.min(scan.limit, SCAN_LIMIT),
+    offset: NO_OFFSET,
+  }).pipe(Effect.flatMap(entriesOf));
+
+const limitedOf = (limit: number, found: number): Body => {
+  if (found > limit) {
+    return {
+      notices: [
+        {
+          type: "scan_limit",
+          note: `Only the newest ${limit} matching records were read, so older ones are missing from the result. Narrow the search to reach them.`,
+        },
+      ],
+    };
+  }
+  return {};
+};
+
+const scanCapped = (scan: RecordScan): Effect.Effect<CappedScan, StorageFailed> =>
+  pageOf({ wanted: anyLabel(scan), limit: scan.limit + ONE_ROW, offset: NO_OFFSET }).pipe(
+    Effect.flatMap((rows) =>
+      entriesOf(Arr.take(rows, scan.limit)).pipe(
+        Effect.map((entries) => ({ entries, limited: limitedOf(scan.limit, rows.length) })),
+      ),
+    ),
+  );
 
 const findRecord = ({
   record,
@@ -99,10 +180,49 @@ const findByLabel = ({
       .limit(ONE_ROW),
   ).pipe(Effect.flatMap(entriesOf), Effect.map(Arr.head));
 
+const findOpen = ({
+  record,
+  label,
+  about,
+  startedBy,
+}: OpenKey): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> =>
+  query(() =>
+    db
+      .select()
+      .from(lifeRecord)
+      .where(
+        and(
+          notRetracted,
+          eq(lifeRecord.record, record),
+          eq(lifeRecord.label, label),
+          eq(lifeRecord.about, about),
+          eq(lifeRecord.dayEnd, NONE),
+          lte(lifeRecord.dayStart, startedBy),
+        ),
+      )
+      .orderBy(desc(lifeRecord.id))
+      .limit(ONE_ROW),
+  ).pipe(Effect.flatMap(entriesOf), Effect.map(Arr.head));
+
 const scanAll = (
   records: readonly LifeRecordName[],
 ): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
-  scanRecords({ records, from: Option.none(), to: Option.none(), terms: [], limit: SCAN_LIMIT });
+  everyEntry(wholeOf(records, Option.none()));
 
-export { SCAN_LIMIT, findByLabel, findRecord, scanAll, scanRecords };
-export type { IdKey, LabelKey, LifeEntry, RecordScan };
+const scanLabel = ({
+  record,
+  label,
+}: LabelKey): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
+  everyEntry(wholeOf([record], Option.some(label)));
+
+export {
+  SCAN_LIMIT,
+  findByLabel,
+  findOpen,
+  findRecord,
+  scanAll,
+  scanCapped,
+  scanLabel,
+  scanRecords,
+};
+export type { CappedScan, IdKey, LabelKey, LifeEntry, OpenKey, RecordScan };
