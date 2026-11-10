@@ -24,7 +24,11 @@ type RecordScan = Readonly<{
 
 type LabelKey = Readonly<{ record: LifeRecordName; label: string }>;
 
-type OpenKey = LabelKey & Readonly<{ about: string; startedBy: string }>;
+type OpenSpan = Readonly<{ about: string; startedBy: string }>;
+
+type OpenKey = LabelKey & OpenSpan;
+
+type Newest = LabelKey & Readonly<{ open: Option.Option<OpenSpan> }>;
 
 type Wanted = Omit<RecordScan, "limit"> & Readonly<{ label: Option.Option<string> }>;
 
@@ -167,42 +171,40 @@ const findRecord = ({
     Effect.flatMap(entryOf),
   );
 
-const findByLabel = ({
+const spanConditions = ({ about, startedBy }: OpenSpan): readonly (SQL | undefined)[] => [
+  eq(lifeRecord.about, about),
+  eq(lifeRecord.dayEnd, NONE),
+  lte(lifeRecord.dayStart, startedBy),
+];
+
+const noConditions = (): readonly (SQL | undefined)[] => [];
+
+const newestOf = ({
   record,
   label,
-}: LabelKey): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> =>
-  query(() =>
-    db
-      .select()
-      .from(lifeRecord)
-      .where(and(notRetracted, eq(lifeRecord.record, record), eq(lifeRecord.label, label)))
-      .orderBy(desc(lifeRecord.id))
-      .limit(ONE_ROW),
+  open,
+}: Newest): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> => {
+  const span = pipe(open, Option.map(spanConditions), Option.getOrElse(noConditions));
+  const matches = and(
+    notRetracted,
+    eq(lifeRecord.record, record),
+    eq(lifeRecord.label, label),
+    ...span,
+  );
+  return query(() =>
+    db.select().from(lifeRecord).where(matches).orderBy(desc(lifeRecord.id)).limit(ONE_ROW),
   ).pipe(Effect.flatMap(entriesOf), Effect.map(Arr.head));
+};
+
+const findByLabel = (key: LabelKey): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> =>
+  newestOf({ ...key, open: Option.none() });
 
 const findOpen = ({
-  record,
-  label,
   about,
   startedBy,
+  ...key
 }: OpenKey): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> =>
-  query(() =>
-    db
-      .select()
-      .from(lifeRecord)
-      .where(
-        and(
-          notRetracted,
-          eq(lifeRecord.record, record),
-          eq(lifeRecord.label, label),
-          eq(lifeRecord.about, about),
-          eq(lifeRecord.dayEnd, NONE),
-          lte(lifeRecord.dayStart, startedBy),
-        ),
-      )
-      .orderBy(desc(lifeRecord.id))
-      .limit(ONE_ROW),
-  ).pipe(Effect.flatMap(entriesOf), Effect.map(Arr.head));
+  newestOf({ ...key, open: Option.some({ about, startedBy }) });
 
 const scanAll = (
   records: readonly LifeRecordName[],
@@ -225,4 +227,4 @@ export {
   scanLabel,
   scanRecords,
 };
-export type { CappedScan, IdKey, LabelKey, LifeEntry, OpenKey, RecordScan };
+export type { CappedScan, IdKey, LabelKey, LifeEntry, OpenKey, OpenSpan, RecordScan };

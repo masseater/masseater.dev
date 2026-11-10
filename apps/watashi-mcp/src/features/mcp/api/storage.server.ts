@@ -36,10 +36,11 @@ const writeFailure = (cause: unknown): WriteFailure => {
 const attempt = <Row>(run: () => Promise<Row>): Effect.Effect<Row, WriteFailure> =>
   Effect.tryPromise({ try: run, catch: writeFailure });
 
-const storageFailed = ({ message }: WriteFailure): StorageFailed => StorageFailed.make({ message });
+const toStorageFailed = ({ message }: WriteFailure): StorageFailed =>
+  StorageFailed.make({ message });
 
 const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, StorageFailed> =>
-  attempt(run).pipe(Effect.mapError(storageFailed));
+  attempt(run).pipe(Effect.mapError(toStorageFailed));
 
 const firstRow =
   <Failure>(onEmpty: () => Failure) =>
@@ -81,7 +82,7 @@ export {
   nextAfterMax,
   nowIso,
   query,
-  storageFailed,
+  toStorageFailed,
   termsOf,
 };
 export type { WriteFailure };

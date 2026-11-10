@@ -7,7 +7,7 @@ import type { RevisionEntity, RevisionOp } from "#/features/mcp/model/revision.t
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 import { db } from "#/shared/db/index.server";
 
-import { attempt, encodeJson, nextAfterMax, storageFailed } from "./storage.server";
+import { attempt, encodeJson, nextAfterMax, toStorageFailed } from "./storage.server";
 import type { WriteFailure } from "./storage.server";
 
 type RevisionRecord = Readonly<{
@@ -65,8 +65,8 @@ const numbered = <Value>(
 ): Effect.Effect<Value, StorageFailed> =>
   write.pipe(
     Effect.retry({ times: COLLISION_RETRIES, while: (failure) => failure.duplicate }),
-    Effect.mapError(storageFailed),
+    Effect.mapError(toStorageFailed),
   );
 
 export { commit, commitAll, numbered };
-export type { RevisedWrite, RevisionRecord };
+export type { RevisedWrite, RevisionRecord, Statement };

@@ -83,4 +83,4 @@ const create =
     );
 
 export { MemorySnapshot, NOT_RETRACTED, create, save, snapshotOf };
-export type { MemoryResult, MemorySnapshotValue, Writer };
+export type { MemoryResult, MemorySnapshotValue, Saved, Target, Writer };
