@@ -6,17 +6,16 @@ import {
   pulls,
   repos,
 } from "@distilled.cloud/github";
+import type { Caller } from "@masseater.dev/mcp-tool-call";
+import { failedAt, NO_PROJECT, one, WRITE } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Layer, Option, Redacted, Schema, pipe } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
-import { failedAt } from "#/features/mcp/model/upstream-failed";
-
-import type { Caller } from "./caller";
 import { ArticleInput } from "./sloppedia-input";
 import { articleContent } from "./sloppedia-markdown";
-import { sloppediaToken } from "./sloppedia-token.server";
-import { NO_PROJECT, WRITE, one, runToolIn, meteredInput } from "./tool-call.server";
+import { sloppediaToken } from "./sloppedia-token";
+import { meteredInput, runToolIn } from "./tool-call";
 
 type Article = typeof ArticleInput.Type;
 
@@ -25,7 +24,7 @@ const REPO = "masseater.dev";
 const BASE = "main";
 const SITE = "https://masseater.dev";
 const GRAPHQL_URL = "https://api.github.com/graphql";
-const USER_AGENT = "watashi-mcp";
+const USER_AGENT = "personal-mcp";
 
 const ENABLE_AUTO_MERGE = `mutation ($id: ID!, $headline: String!) {
   enablePullRequestAutoMerge(input: { pullRequestId: $id, mergeMethod: SQUASH, commitHeadline: $headline }) {

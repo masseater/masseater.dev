@@ -1,10 +1,10 @@
+import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
+import { failedAt } from "@masseater.dev/mcp-tool-call";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Match, Number as Num, Option, pipe } from "effect";
 
 import type { ConversationChunk } from "#/features/mcp/model/conversation.table";
 import type { StorageFailed } from "#/features/mcp/model/storage-failed";
-import { failedAt } from "#/features/mcp/model/upstream-failed";
-import type { UpstreamFailed } from "#/features/mcp/model/upstream-failed";
 
 import type { ReadRequest, View } from "./conversation-input";
 import { chunksFrom, filesOf, listSessions } from "./conversation-store.server";

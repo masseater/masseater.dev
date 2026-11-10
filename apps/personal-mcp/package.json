@@ -1,0 +1,30 @@
+{
+  "name": "personal-mcp",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@distilled.cloud/github": "catalog:",
+    "@masseater.dev/mcp-tool-call": "workspace:*",
+    "@modelcontextprotocol/server": "catalog:",
+    "@r_masseater/workers-tracing": "workspace:*",
+    "effect": "catalog:stack",
+    "jose": "catalog:",
+    "yaml": "catalog:"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/tsgo": "catalog:stack",
+    "@effect/vitest": "catalog:",
+    "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/cloudflare-account": "workspace:*",
+    "@masseater.dev/repositories": "workspace:*",
+    "alchemy": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}
