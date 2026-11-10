@@ -27,4 +27,5 @@ const runCli = <Failure>(program: Effect.Effect<void, Failure, CommandServices>)
   });
 };
 
+/** @internal */
 export { runCli };

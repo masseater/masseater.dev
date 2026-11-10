@@ -1,6 +1,6 @@
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
-import { Effect, Layer } from "effect";
+import { Effect, Layer, Array as Arr, pipe } from "effect";
 
 import {
   getTypesPackageName,
@@ -50,7 +50,16 @@ const matchesPackageName = (entry: ExpectedPackageNameData): Effect.Effect<void>
 
 const coversEveryInput = Effect.sync(() => {
   deepStrictEqual(
-    [expected.paths.map(({ path }) => path), expected.packageNames.map(({ name }) => name)],
+    [
+      pipe(
+        expected.paths,
+        Arr.map(({ path }) => path),
+      ),
+      pipe(
+        expected.packageNames,
+        Arr.map(({ name }) => name),
+      ),
+    ],
     [inputs.paths, inputs.packageNames],
   );
 });

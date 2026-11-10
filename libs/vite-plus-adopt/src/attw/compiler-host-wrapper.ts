@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Array as Arr, Option, Function as Fn } from "effect";
 import type { SourceFile } from "typescript/ast";
 
 import { createProgram } from "./compiler-program.ts";
@@ -10,6 +10,8 @@ import type { ProgramOptions, ResolvedModuleEntry } from "./program-build.ts";
 import { modeKey } from "./resolution-cache.ts";
 import { modeFromNumber } from "./resolution-mode-numbers.ts";
 import type { ResolutionMode } from "./resolution-types.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface ExtraOptions {
   readonly allowJs?: boolean;
@@ -69,7 +71,10 @@ const PRIMARY_OPTIONS: ProgramOptions = { allowJs: false, noDtsResolution: false
 const createProgramCache = (site: Omit<ProgramSite, "options">): ProgramLookup => {
   const programs = new Map<string, CachedProgram>();
   return (rootNames, options) => {
-    const key = JSON.stringify([rootNames, options.allowJs, options.noDtsResolution]);
+    const key = Arr.join(
+      [...rootNames, String(options.allowJs), String(options.noDtsResolution)],
+      "\0",
+    );
     const program = programs.get(key) ?? createProgram({ ...site, options }, rootNames);
     programs.delete(key);
     programs.set(key, program);
@@ -124,43 +129,47 @@ const resolveModuleNameWith =
     return { resolution: entry.resolution, trace: entry.trace };
   };
 
-const wrapHost = (
-  core: HostWrapperCore,
-  site: Omit<ProgramSite, "core" | "options">,
-): CompilerHostWrapper => {
-  const getProgram = createProgramCache({ ...site, core });
-  const resolvedModules = createResolvedModuleTable();
-  return {
-    getCompilerOptions: () => core.compilerOptions,
-    getSourceFile: (fileName) => Option.getOrUndefined(core.getSourceFile(fileName)),
-    getSourceFileFromCache: (fileName) =>
-      Option.getOrUndefined(core.getSourceFileFromCache(fileName)),
-    getModuleKindForFile: (fileName) => Option.getOrUndefined(core.getModuleKindForFile(fileName)),
-    resolveModuleName: resolveModuleNameWith(core),
-    getTrace: (containingFile, moduleName, resolutionMode) =>
-      Option.getOrUndefined(
-        core.getTrace({
-          moduleName,
-          containingFile,
-          mode: modeFromNumber(resolutionMode),
-          noDtsResolution: false,
-        }),
-      ),
-    createPrimaryProgram: (rootName) => {
-      const created = getProgram([rootName], PRIMARY_OPTIONS);
-      for (const [fileName, entries] of created.resolvedModules) {
-        resolvedModules.record(fileName, entries);
-      }
-      return created.program;
-    },
-    createAuxiliaryProgram: (rootNames, extraOptions) =>
-      getProgram(rootNames, auxiliaryOptions(extraOptions)).program,
-    getResolvedModule: (sourceFile, moduleName, resolutionMode) =>
-      Option.getOrUndefined(
-        resolvedModules.lookup(sourceFile.fileName, moduleName, modeFromNumber(resolutionMode)),
-      ),
-  };
-};
+const wrapHost: {
+  (site: Omit<ProgramSite, "core" | "options">): (core: HostWrapperCore) => CompilerHostWrapper;
+  (core: HostWrapperCore, site: Omit<ProgramSite, "core" | "options">): CompilerHostWrapper;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (core: HostWrapperCore, site: Omit<ProgramSite, "core" | "options">): CompilerHostWrapper => {
+    const getProgram = createProgramCache({ ...site, core });
+    const resolvedModules = createResolvedModuleTable();
+    return {
+      getCompilerOptions: () => core.compilerOptions,
+      getSourceFile: (fileName) => Option.getOrUndefined(core.getSourceFile(fileName)),
+      getSourceFileFromCache: (fileName) =>
+        Option.getOrUndefined(core.getSourceFileFromCache(fileName)),
+      getModuleKindForFile: (fileName) =>
+        Option.getOrUndefined(core.getModuleKindForFile(fileName)),
+      resolveModuleName: resolveModuleNameWith(core),
+      getTrace: (containingFile, moduleName, resolutionMode) =>
+        Option.getOrUndefined(
+          core.getTrace({
+            moduleName,
+            containingFile,
+            mode: modeFromNumber(resolutionMode),
+            noDtsResolution: false,
+          }),
+        ),
+      createPrimaryProgram: (rootName) => {
+        const created = getProgram([rootName], PRIMARY_OPTIONS);
+        for (const [fileName, entries] of created.resolvedModules) {
+          resolvedModules.record(fileName, entries);
+        }
+        return created.program;
+      },
+      createAuxiliaryProgram: (rootNames, extraOptions) =>
+        getProgram(rootNames, auxiliaryOptions(extraOptions)).program,
+      getResolvedModule: (sourceFile, moduleName, resolutionMode) =>
+        Option.getOrUndefined(
+          resolvedModules.lookup(sourceFile.fileName, moduleName, modeFromNumber(resolutionMode)),
+        ),
+    };
+  },
+);
 
 export { wrapHost };
 export type { CompilerHostWrapper, ExtraOptions, ModuleNameResolution, ResolveModuleNameArguments };

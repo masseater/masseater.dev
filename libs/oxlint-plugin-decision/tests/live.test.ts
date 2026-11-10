@@ -1,8 +1,21 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Config, Effect, FileSystem, Option, Order, Path, Redacted } from "effect";
+import {
+  Array as Arr,
+  Config,
+  Effect,
+  FileSystem,
+  Option,
+  Order,
+  Path,
+  Redacted,
+  String as Str,
+  pipe,
+} from "effect";
 import type { Scope } from "effect";
+
+import { toJson } from "#src/runtime.ts";
 
 import { RESPAN, TIMEOUT, outputOf } from "./fixtures.ts";
 import {
@@ -13,7 +26,7 @@ import {
   runOxlint,
   writeProject,
 } from "./oxlint.ts";
-import type { Services } from "./oxlint.ts";
+import type { Services, TestError } from "./oxlint.ts";
 
 const JEV_MODEL = "openrouter/~typesafe/jev-latest";
 const PROVIDER_FAILURE = /http \d+|network:|timeout|is not set/u;
@@ -45,11 +58,11 @@ const MIXED_RULES: RuleEntries = {
 };
 
 const livePlugin = (example: string, dist: string, cutoff: string): string => `
-import { createDecisionPlugin } from ${JSON.stringify(dist)};
-import { rules } from ${JSON.stringify(example)};
+import { createDecisionPlugin } from ${toJson(dist)};
+import { rules } from ${toJson(example)};
 
 export default createDecisionPlugin({
-  model: ${JSON.stringify(RESPAN)},
+  model: ${toJson(RESPAN)},
   rules: rules.map((rule) => Object.assign({}, rule, ${cutoff})),
 });
 `;
@@ -62,13 +75,14 @@ interface LiveRun {
 const exampleProject = ({
   cutoff,
   rules,
-}: LiveRun): Effect.Effect<string, unknown, Services | Scope.Scope> =>
+}: LiveRun): Effect.Effect<string, TestError, Services | Scope.Scope> =>
   Effect.gen(function* write() {
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const root = yield* packageRoot;
+    const plugin2 = yield* pluginPath;
     return yield* writeProject({
-      "plugin.mjs": livePlugin(path.join(root, "example", "plugin.mjs"), yield* pluginPath, cutoff),
+      "plugin.mjs": livePlugin(path.join(root, "example", "plugin.mjs"), plugin2, cutoff),
       "oxlint.config.ts": configSource({
         jsPlugins: ["./plugin.mjs"],
         rules,
@@ -84,7 +98,7 @@ const reportOf = (line: string): Option.Option<string> =>
     Option.map((groups) => `${String(groups["where"])} ${String(groups["rule"])}`),
   );
 
-const lintLive = (live: LiveRun): Effect.Effect<readonly string[], unknown, Services> =>
+const lintLive = (live: LiveRun): Effect.Effect<readonly string[], TestError, Services> =>
   Effect.scoped(
     Effect.gen(function* lint() {
       const key = yield* Config.Redacted("OPENROUTER_API_KEY");
@@ -95,16 +109,17 @@ const lintLive = (live: LiveRun): Effect.Effect<readonly string[], unknown, Serv
         env: { OPENROUTER_API_KEY: Redacted.value(key) },
       });
       const lines = decisionLines(run);
-      yield* Effect.log(lines.join("\n"));
+      yield* Effect.log(pipe(lines, Arr.join("\n")));
       strictEqual(PROVIDER_FAILURE.test(outputOf(run)), false, outputOf(run));
       return lines;
     }),
   );
 
 const reportsOf = (lines: readonly string[]): readonly string[] =>
-  Arr.sort(
-    lines.flatMap((line) => Option.toArray(reportOf(line))),
-    Order.String,
+  pipe(
+    lines,
+    Arr.flatMap((line) => Option.toArray(reportOf(line))),
+    (sorted) => Arr.sort(sorted, Order.String),
   );
 
 const answersLive = Effect.gen(function* test() {
@@ -113,25 +128,42 @@ const answersLive = Effect.gen(function* test() {
 });
 
 const modelsOf = (lines: readonly string[]): readonly string[] =>
-  Arr.dedupe(lines.map((line) => line.replace(/^.*\] (?<model>\S+) answered.*$/u, "$<model>")));
+  Arr.dedupe(
+    pipe(
+      lines,
+      Arr.map((line) => Str.replace(/^.*\] (?<model>\S+) answered.*$/u, "$<model>")(line)),
+    ),
+  );
 
 const mixedLive = Effect.gen(function* test() {
   const lines = yield* lintLive({
-    cutoff: JSON.stringify({ cutoff: EVERY_ANSWER }),
+    cutoff: toJson({ cutoff: EVERY_ANSWER }),
     rules: MIXED_RULES,
   });
-  const injection = lines.filter((line) => line.includes("[no-prompt-injection]"));
-  const others = lines.filter((line) => !line.includes("[no-prompt-injection]"));
+  const injection = pipe(
+    lines,
+    Arr.filter((line) => Str.includes("[no-prompt-injection]")(line)),
+  );
+  const others = pipe(
+    lines,
+    Arr.filter((line) => !Str.includes("[no-prompt-injection]")(line)),
+  );
   strictEqual(lines.length, EXAMPLE_MATCHES);
   strictEqual(
-    modelsOf(injection).every((model) => model.includes("typesafe/jev")),
+    pipe(
+      modelsOf(injection),
+      Arr.every((model) => Str.includes("typesafe/jev")(model)),
+    ),
     true,
-    injection.join("\n"),
+    pipe(injection, Arr.join("\n")),
   );
   strictEqual(
-    modelsOf(others).every((model) => model.includes("respan/span-01-lite")),
+    pipe(
+      modelsOf(others),
+      Arr.every((model) => Str.includes("respan/span-01-lite")(model)),
+    ),
     true,
-    others.join("\n"),
+    pipe(others, Arr.join("\n")),
   );
   const reported = yield* lintLive({ cutoff: "{}", rules: MIXED_RULES });
   deepStrictEqual(reportsOf(reported), EXPECTED_REPORTS);
@@ -139,7 +171,7 @@ const mixedLive = Effect.gen(function* test() {
 
 const probabilitiesLive = Effect.gen(function* test() {
   const lines = yield* lintLive({
-    cutoff: JSON.stringify({ cutoff: EVERY_ANSWER }),
+    cutoff: toJson({ cutoff: EVERY_ANSWER }),
     rules: EXAMPLE_RULES,
   });
   strictEqual(lines.length, EXAMPLE_MATCHES);

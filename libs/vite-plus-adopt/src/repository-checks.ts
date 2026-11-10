@@ -50,4 +50,5 @@ const dependenciesCheck = withSection("dependencyRules", (rules, { root }) =>
   ),
 );
 
+/** @internal */
 export { dependenciesCheck, steigerCheck };

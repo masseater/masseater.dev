@@ -1,9 +1,10 @@
 import { layer } from "@effect/vitest";
 import { deepStrictEqual, strictEqual, throws } from "@effect/vitest/utils";
-import { Effect, Layer } from "effect";
+import { Effect, Layer, Array as Arr, pipe } from "effect";
 
+import { REPORT_LOC, snippetNodeFor } from "#src/nodes.ts";
 import { openRouter } from "#src/openrouter.ts";
-import { REPORT_LOC, resolveOptions, snippetNodeFor } from "#src/options.ts";
+import { resolveOptions } from "#src/options.ts";
 import type { AstNode, DecisionRule } from "#src/types.ts";
 
 const SIGNATURE_LINE = 10;
@@ -24,10 +25,16 @@ const noSettings = { options: {} };
 const resolvesDefaults = Effect.sync(() => {
   const { rules } = resolveOptions(noSettings, [rule], providers);
   deepStrictEqual(
-    rules.map(({ models, answer }) => ({
-      models: models.map(({ id, model }) => ({ id, model })),
-      answer,
-    })),
+    pipe(
+      rules,
+      Arr.map(({ models, answer }) => ({
+        models: pipe(
+          models,
+          Arr.map(({ id, model }) => ({ id, model })),
+        ),
+        answer,
+      })),
+    ),
     [
       {
         models: [{ id: "openrouter/~typesafe/jev-latest", model: "~typesafe/jev-latest" }],
@@ -47,7 +54,18 @@ const settingsOverrideCode = Effect.sync(() => {
     providers,
   );
   deepStrictEqual(
-    [resolved.timeoutMs, resolved.rules.flatMap(({ models }) => models.map(({ model }) => model))],
+    [
+      resolved.timeoutMs,
+      pipe(
+        resolved.rules,
+        Arr.flatMap(({ models }) =>
+          pipe(
+            models,
+            Arr.map(({ model }) => model),
+          ),
+        ),
+      ),
+    ],
     [TIMEOUT_MS, ["config"]],
   );
 });
@@ -65,7 +83,15 @@ const dedupesModels = Effect.sync(() => {
     providers,
   );
   deepStrictEqual(
-    resolved.rules.flatMap(({ models }) => models.map(({ model }) => model)),
+    pipe(
+      resolved.rules,
+      Arr.flatMap(({ models }) =>
+        pipe(
+          models,
+          Arr.map(({ model }) => model),
+        ),
+      ),
+    ),
     ["x", "y"],
   );
 });
@@ -83,12 +109,15 @@ const namesAnonymousFunctions = Effect.sync(() => {
     ["MethodDefinition", "value"],
     ["PropertyDefinition", "value"],
   ] as const;
-  const results = namedParents.map(([parentType, field]) => {
-    const parent: { -readonly [Key in keyof AstNode]: AstNode[Key] } = node(parentType);
-    const child: AstNode = { ...node("ArrowFunctionExpression"), parent };
-    parent[field] = child;
-    return snippetNodeFor(child) === parent;
-  });
+  const results = pipe(
+    namedParents,
+    Arr.map(([parentType, field]) => {
+      const parent: { -readonly [Key in keyof AstNode]: AstNode[Key] } = node(parentType);
+      const child: AstNode = { ...node("ArrowFunctionExpression"), parent };
+      parent[field] = child;
+      return snippetNodeFor(child) === parent;
+    }),
+  );
   deepStrictEqual(results, [true, true, true, true]);
   const lone: AstNode = { ...node("ArrowFunctionExpression"), parent: node("CallExpression") };
   strictEqual(snippetNodeFor(lone), lone);

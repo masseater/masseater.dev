@@ -1,4 +1,13 @@
-import { Array as Arr, Option, Predicate, Record as Rec } from "effect";
+import {
+  Array as Arr,
+  Option,
+  Predicate,
+  Record as Rec,
+  String as Str,
+  pipe,
+  Function as Fn,
+  Order,
+} from "effect";
 
 import { PRIORITY_KINDS, intersectExtensions, subtractExtensions } from "./extensions.ts";
 import type { Extensions } from "./extensions.ts";
@@ -14,6 +23,14 @@ import type {
 import { comparePatternKeys, expandedSubpath, hasOneAsterisk } from "./resolver-patterns.ts";
 import { loadTarget, notFound } from "./resolver-target.ts";
 import type { TargetContext } from "./resolver-target.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
+
+const DATA_FIRST_ARITY = 2;
+const SAME_ORDER = 0;
+
+const patternKeyOrder: Order.Order<string> = (left, right) =>
+  Order.Number(comparePatternKeys(left, right), SAME_ORDER);
 
 type LookupTable = Readonly<Record<string, unknown>>;
 
@@ -45,34 +62,42 @@ const expandKey = (
 const loadModuleFromImportsOrExports = (site: LookupSite, state: ResolutionState): SearchResult => {
   const { context, lookupTable } = site;
   const name = context.moduleName;
-  if (!name.endsWith("/") && !name.includes("*") && Object.hasOwn(lookupTable, name)) {
+  if (!Str.endsWith("/")(name) && !Str.includes("*")(name) && Rec.has(lookupTable, name)) {
     return loadTarget(
       lookupTable[name],
       { context, request: { subpath: "", pattern: false, key: name } },
       state,
     );
   }
-  const expandingKeys = Rec.keys(lookupTable)
-    .filter((key) => hasOneAsterisk(key) || key.endsWith("/"))
-    .toSorted(comparePatternKeys);
+  const expandingKeys = pipe(
+    Rec.keys(lookupTable),
+    Arr.filter((key) => hasOneAsterisk(key) || Str.endsWith("/")(key)),
+    (keys) => Arr.sort(keys, patternKeyOrder),
+  );
   return Arr.findFirst(expandingKeys, (key) => expandKey(key, site, state)).pipe(Option.flatten);
 };
 
 const noKeyStartsWithDot = (value: LookupTable): boolean =>
-  !Rec.keys(value).some((key) => key.startsWith("."));
+  !pipe(
+    Rec.keys(value),
+    Arr.some((key) => Str.startsWith(".")(key)),
+  );
 
 const allKeysStartWithDot = (value: LookupTable): boolean =>
-  Rec.keys(value).every((key) => key.startsWith("."));
+  pipe(
+    Rec.keys(value),
+    Arr.every((key) => Str.startsWith(".")(key)),
+  );
 
 const isDirectExport = (exports: unknown): boolean =>
-  Predicate.isString(exports) || Array.isArray(exports);
+  Predicate.isString(exports) || Arr.isArray(exports);
 
 const objectMainExport = (exports: LookupTable): Option.Option<unknown> => {
   if (noKeyStartsWithDot(exports)) {
     return Option.some(exports);
   }
   return Option.liftPredicate(exports["."], Predicate.isTruthy).pipe(
-    Option.filter(() => Object.hasOwn(exports, ".")),
+    Option.filter(() => Rec.has(exports, ".")),
   );
 };
 
@@ -106,31 +131,37 @@ const loadSubpathExport = (
   );
 };
 
-const loadModuleFromExports = (
-  scope: PackageJsonInfo,
-  { extensions, subpath }: ExportsRequest,
-  state: ResolutionState,
-): SearchResult => {
-  const { exports } = scope.contents.packageJsonContent;
-  if (!Predicate.isTruthy(exports)) {
-    return Option.none();
-  }
-  const context: TargetContext = { extensions, moduleName: subpath, scope, isImports: false };
-  if (subpath !== ".") {
-    return loadSubpathExport(exports, context, state);
-  }
-  return mainExportOf(exports).pipe(
-    Option.match({
-      onNone: () => exportDoesNotExist(context, state),
-      onSome: (mainExport) =>
-        loadTarget(
-          mainExport,
-          { context, request: { subpath: "", pattern: false, key: "." } },
-          state,
-        ),
-    }),
-  );
-};
+const loadModuleFromExports: {
+  (request: ExportsRequest, state: ResolutionState): (scope: PackageJsonInfo) => SearchResult;
+  (scope: PackageJsonInfo, request: ExportsRequest, state: ResolutionState): SearchResult;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (
+    scope: PackageJsonInfo,
+    { extensions, subpath }: ExportsRequest,
+    state: ResolutionState,
+  ): SearchResult => {
+    const { exports } = scope.contents.packageJsonContent;
+    if (!Predicate.isTruthy(exports)) {
+      return Option.none();
+    }
+    const context: TargetContext = { extensions, moduleName: subpath, scope, isImports: false };
+    if (subpath !== ".") {
+      return loadSubpathExport(exports, context, state);
+    }
+    return mainExportOf(exports).pipe(
+      Option.match({
+        onNone: () => exportDoesNotExist(context, state),
+        onSome: (mainExport) =>
+          loadTarget(
+            mainExport,
+            { context, request: { subpath: "", pattern: false, key: "." } },
+            state,
+          ),
+      }),
+    );
+  },
+);
 
 const asLookupTable = (value: unknown): LookupTable =>
   Option.liftPredicate(value, Predicate.isObject).pipe(Option.getOrElse(() => ({})));
@@ -172,12 +203,12 @@ const reportMissingScope = (directoryPath: string, state: ResolutionState): Sear
   return notFound;
 };
 
-const resolvePackageImportWithTrace = (
-  lookup: ModuleLookup,
-  state: ResolutionState,
-): SearchResult => {
+const resolvePackageImportWithTrace: {
+  (state: ResolutionState): (lookup: ModuleLookup) => SearchResult;
+  (lookup: ModuleLookup, state: ResolutionState): SearchResult;
+} = Fn.dual(DATA_FIRST_ARITY, (lookup: ModuleLookup, state: ResolutionState): SearchResult => {
   const { moduleName } = lookup;
-  if (moduleName === "#" || moduleName.startsWith("#/")) {
+  if (moduleName === "#" || Str.startsWith("#/")(moduleName)) {
     traceMessage(state, Messages.invalidImportSpecifier, moduleName);
     return notFound;
   }
@@ -188,17 +219,22 @@ const resolvePackageImportWithTrace = (
       onSome: (scope) => resolveImportsWithTrace(lookup, scope, state),
     }),
   );
-};
+});
 
 const selfNameSubpath = (moduleName: string, packageName: string): Option.Option<string> => {
   const parts = getPathComponents(moduleName);
   const nameParts = getPathComponents(packageName);
-  if (!nameParts.every((part, index) => parts[index] === part)) {
+  if (
+    !pipe(
+      nameParts,
+      Arr.every((part, index) => parts[index] === part),
+    )
+  ) {
     return Option.none();
   }
   const trailing = parts.slice(nameParts.length);
   if (Arr.isReadonlyArrayNonEmpty(trailing)) {
-    return Option.some(`./${trailing.join("/")}`);
+    return Option.some(`./${pipe(trailing, Arr.join("/"))}`);
   }
   return Option.some(".");
 };
@@ -222,10 +258,10 @@ const loadFromOwnExports = (
     ),
   );
 
-const loadModuleFromSelfNameReference = (
-  lookup: ModuleLookup,
-  state: ResolutionState,
-): SearchResult =>
+const loadModuleFromSelfNameReference: {
+  (state: ResolutionState): (lookup: ModuleLookup) => SearchResult;
+  (lookup: ModuleLookup, state: ResolutionState): SearchResult;
+} = Fn.dual(DATA_FIRST_ARITY, (lookup: ModuleLookup, state: ResolutionState): SearchResult =>
   getPackageScopeForPath(getNormalizedAbsolutePath(lookup.directory, "/"), state).pipe(
     Option.filter((scope) => Predicate.isTruthy(scope.contents.packageJsonContent["exports"])),
     Option.flatMap((scope) =>
@@ -236,7 +272,8 @@ const loadModuleFromSelfNameReference = (
         ),
       ),
     ),
-  );
+  ),
+);
 
 export { loadModuleFromExports, loadModuleFromSelfNameReference, resolvePackageImportWithTrace };
 export type { ExportsRequest };

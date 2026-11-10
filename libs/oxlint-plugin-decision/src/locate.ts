@@ -1,17 +1,17 @@
 import type { Location } from "@oxlint/plugins";
-import { Effect, Option } from "effect";
+import { Effect, Option, Function as Fn } from "effect";
 
 import {
+  EVERY_LINE,
   locates,
   locationCandidates,
   locationOfLine,
   locationQuestion,
-  locationRefOf,
-  parseVerdicts,
   selectedLocation,
-} from "./request.ts";
-import type { LocatedMatch } from "./request.ts";
-import { messageOf, runOrElse } from "./runtime.ts";
+} from "./location.ts";
+import type { LocatedMatch } from "./location.ts";
+import { locationRefOf, parseVerdicts } from "./request.ts";
+import { messageOf, nowMs, runOrElse } from "./runtime.ts";
 import type {
   DecideInput,
   DecideResult,
@@ -21,6 +21,10 @@ import type {
   ModelRef,
   Verdicts,
 } from "./types.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
+
+const DATA_FIRST_ARITY = 2;
 
 type VerdictResult =
   | { readonly ok: true; readonly verdicts: Verdicts; readonly cached: boolean | undefined }
@@ -46,10 +50,12 @@ interface Refinement {
 
 const MINIMUM_TIMEOUT_MS = 1;
 
-const remainingMs = (deadline: number): number =>
-  Math.max(MINIMUM_TIMEOUT_MS, deadline - Date.now());
+const remainingMs = (deadline: number): number => Math.max(MINIMUM_TIMEOUT_MS, deadline - nowMs());
 
-const verdictsOf = (result: DecideResult, request: DecisionRequest): VerdictResult => {
+const verdictsOf: {
+  (request: DecisionRequest): (result: DecideResult) => VerdictResult;
+  (result: DecideResult, request: DecisionRequest): VerdictResult;
+} = Fn.dual(DATA_FIRST_ARITY, (result: DecideResult, request: DecisionRequest): VerdictResult => {
   if (!result.ok) {
     return result;
   }
@@ -61,13 +67,16 @@ const verdictsOf = (result: DecideResult, request: DecisionRequest): VerdictResu
     })),
     (cause) => ({ ok: false, reason: messageOf(cause) }),
   );
-};
+});
 
-const inputOf = (asking: Asking, request: DecisionRequest): DecideInput => ({
+const inputOf: {
+  (request: DecisionRequest): (asking: Asking) => DecideInput;
+  (asking: Asking, request: DecisionRequest): DecideInput;
+} = Fn.dual(DATA_FIRST_ARITY, (asking: Asking, request: DecisionRequest): DecideInput => ({
   request,
   timeoutMs: remainingMs(asking.deadline),
   env: asking.env,
-});
+}));
 
 const fetchVerdicts = (asking: Asking, request: DecisionRequest): VerdictResult =>
   verdictsOf(asking.model.provider.decide(inputOf(asking, request)), request);
@@ -117,25 +126,29 @@ const refine = (refinement: Refinement, first: Option.Option<LineRange>): Locate
   };
 };
 
-const locateMatch = (
-  asking: Asking,
-  match: Match,
-  {
-    ref,
-    verdicts,
-    request,
-  }: { readonly ref: string; readonly verdicts: Verdicts; readonly request: DecisionRequest },
-): Located => {
-  if (!locates(match)) {
-    return { loc: match.loc, failure: Option.none() };
-  }
-  const first = selectedLocation(
-    verdicts.answers[locationRefOf(ref)],
-    locationCandidates(match.snippet),
-    match.rule.location.cutoff,
-  );
-  return refine({ asking, match, ref, state: request.state }, first);
-};
+interface LocateInput {
+  readonly ref: string;
+  readonly verdicts: Verdicts;
+  readonly request: DecisionRequest;
+}
+
+const locateMatch: {
+  (match: Match, input: LocateInput): (asking: Asking) => Located;
+  (asking: Asking, match: Match, input: LocateInput): Located;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (asking: Asking, match: Match, { ref, verdicts, request }: LocateInput): Located => {
+    if (!locates(match)) {
+      return { loc: match.loc, failure: Option.none() };
+    }
+    const first = selectedLocation(
+      verdicts.answers[locationRefOf(ref)],
+      locationCandidates(match.snippet, EVERY_LINE),
+      match.rule.location.cutoff,
+    );
+    return refine({ asking, match, ref, state: request.state }, first);
+  },
+);
 
 export { inputOf, locateMatch, verdictsOf };
-export type { Asking, Located, VerdictResult };
+export type { Asking, LocateInput, Located, VerdictResult };

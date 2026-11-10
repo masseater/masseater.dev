@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Function as Fn } from "effect";
 
 import { formatExtensions } from "./extensions.ts";
 import { Messages, traceMessage } from "./messages.ts";
@@ -13,9 +13,11 @@ import type {
   ResolutionState,
 } from "./resolution-types.ts";
 import { loadNodeModuleFromDirectory } from "./resolver-directory.ts";
-import type { RelativeLoader, RelativeRequest } from "./resolver-directory.ts";
+import type { RelativeRequest } from "./resolver-directory.ts";
 import { loadModuleFromFile } from "./resolver-files.ts";
 import { normalizePathForCJSResolution } from "./resolver-state.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface RelativeModule {
   readonly resolved: Option.Option<Resolved>;
@@ -27,13 +29,16 @@ interface FileAttempt {
   readonly onlyRecordFailures: boolean;
 }
 
-const directoryMissing = (directory: string, state: ResolutionState): boolean => {
+const directoryMissing: {
+  (state: ResolutionState): (directory: string) => boolean;
+  (directory: string, state: ResolutionState): boolean;
+} = Fn.dual(DATA_FIRST_ARITY, (directory: string, state: ResolutionState): boolean => {
   if (state.host.directoryExists(directory)) {
     return false;
   }
   traceMessage(state, Messages.directoryDoesNotExist, directory);
   return true;
-};
+});
 
 const packageInfoOfFile = (
   request: RelativeRequest,
@@ -61,29 +66,38 @@ const fileAttempt = (request: RelativeRequest, state: ResolutionState): FileAtte
   return { found: loadAsFile({ ...request, onlyRecordFailures }, state), onlyRecordFailures };
 };
 
-const nodeLoadModuleByRelativeName: RelativeLoader = (request, state) => {
-  traceMessage(
-    state,
-    Messages.loadingAsFileOrFolder,
-    request.candidate,
-    formatExtensions(request.extensions),
-  );
-  const attempt = fileAttempt(request, state);
-  if (Option.isSome(attempt.found)) {
-    return attempt.found;
-  }
-  const onlyRecordFailures =
-    attempt.onlyRecordFailures || directoryMissing(request.candidate, state);
-  if (state.features.esmMode) {
-    return Option.none();
-  }
-  return loadNodeModuleFromDirectory(
-    { ...request, onlyRecordFailures, loadRelative: nodeLoadModuleByRelativeName },
-    state,
-  );
-};
+const nodeLoadModuleByRelativeName: {
+  (state: ResolutionState): (request: RelativeRequest) => Option.Option<Resolved>;
+  (request: RelativeRequest, state: ResolutionState): Option.Option<Resolved>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (request: RelativeRequest, state: ResolutionState): Option.Option<Resolved> => {
+    traceMessage(
+      state,
+      Messages.loadingAsFileOrFolder,
+      request.candidate,
+      formatExtensions(request.extensions),
+    );
+    const attempt = fileAttempt(request, state);
+    if (Option.isSome(attempt.found)) {
+      return attempt.found;
+    }
+    const onlyRecordFailures =
+      attempt.onlyRecordFailures || directoryMissing(request.candidate, state);
+    if (state.features.esmMode) {
+      return Option.none();
+    }
+    return loadNodeModuleFromDirectory(
+      { ...request, onlyRecordFailures, loadRelative: nodeLoadModuleByRelativeName },
+      state,
+    );
+  },
+);
 
-const loadRelativeModule = (lookup: ModuleLookup, state: ResolutionState): RelativeModule => {
+const loadRelativeModule: {
+  (state: ResolutionState): (lookup: ModuleLookup) => RelativeModule;
+  (lookup: ModuleLookup, state: ResolutionState): RelativeModule;
+} = Fn.dual(DATA_FIRST_ARITY, (lookup: ModuleLookup, state: ResolutionState): RelativeModule => {
   const { path, parts } = normalizePathForCJSResolution(lookup.directory, lookup.moduleName);
   const resolved = nodeLoadModuleByRelativeName(
     {
@@ -95,7 +109,7 @@ const loadRelativeModule = (lookup: ModuleLookup, state: ResolutionState): Relat
     state,
   );
   return { resolved, insideNodeModules: parts.includes("node_modules") };
-};
+});
 
 export { directoryMissing, loadRelativeModule, nodeLoadModuleByRelativeName };
 export type { RelativeModule };

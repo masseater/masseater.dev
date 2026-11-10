@@ -1,4 +1,6 @@
+/** @internal */
 export { loadViteConfig } from "./config.ts";
+/** @internal */
 export type {
   BetterleaksConfig,
   BetterleaksRule,

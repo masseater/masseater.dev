@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Function as Fn, Array as Arr } from "effect";
 import { SyntaxKind } from "typescript/ast";
 import type { BinaryExpression, CallExpression, Node } from "typescript/ast";
 import { isBinaryExpression, isCallExpression, isObjectLiteralExpression } from "typescript/ast/is";
@@ -19,6 +19,8 @@ import {
   isVoidZero,
 } from "./binder-syntax.ts";
 import type { AccessExpression } from "./binder-syntax.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 const AssignmentKind = {
   None: "None",
@@ -85,7 +87,7 @@ const firstMatchingKind = <Subject>(
   rules: readonly KindRule<Subject>[],
   subject: Subject,
 ): AssignmentDeclarationKind =>
-  Option.fromNullishOr(rules.find(([matches]) => matches(subject))).pipe(
+  Arr.findFirst(rules, ([matches]) => matches(subject)).pipe(
     Option.map(([, kind]) => kind),
     Option.getOrElse((): AssignmentDeclarationKind => AssignmentKind.None),
   );
@@ -156,23 +158,26 @@ const binaryAssignmentKind = (node: BinaryExpression): AssignmentDeclarationKind
     Option.getOrElse((): AssignmentDeclarationKind => AssignmentKind.None),
   );
 
-const getAssignmentDeclarationKind = (
-  node: BinaryExpression | CallExpression,
-  inJsFile: boolean,
-): AssignmentDeclarationKind => {
-  const kind = Option.match(Option.liftPredicate(node, isCallExpression), {
-    onNone: () =>
-      Option.match(Option.liftPredicate(node, isBinaryExpression), {
-        onNone: () => AssignmentKind.None,
-        onSome: binaryAssignmentKind,
-      }),
-    onSome: callAssignmentKind,
-  });
-  if (kind === AssignmentKind.Property || inJsFile) {
-    return kind;
-  }
-  return AssignmentKind.None;
-};
+const getAssignmentDeclarationKind: {
+  (inJsFile: boolean): (node: BinaryExpression | CallExpression) => AssignmentDeclarationKind;
+  (node: BinaryExpression | CallExpression, inJsFile: boolean): AssignmentDeclarationKind;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (node: BinaryExpression | CallExpression, inJsFile: boolean): AssignmentDeclarationKind => {
+    const kind = Option.match(Option.liftPredicate(node, isCallExpression), {
+      onNone: () =>
+        Option.match(Option.liftPredicate(node, isBinaryExpression), {
+          onNone: () => AssignmentKind.None,
+          onSome: binaryAssignmentKind,
+        }),
+      onSome: callAssignmentKind,
+    });
+    if (kind === AssignmentKind.Property || inJsFile) {
+      return kind;
+    }
+    return AssignmentKind.None;
+  },
+);
 
 export { AssignmentKind, getAssignmentDeclarationKind, isPrototypeAccess };
 export type { AssignmentDeclarationKind };

@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Function as Fn } from "effect";
 
 import type {
   Features,
@@ -9,6 +9,8 @@ import type {
 } from "./resolution-types.ts";
 import { ALL_FEATURES, NO_FEATURES, createOutcome, getConditions } from "./resolver-state.ts";
 import { resolveNestedModule } from "./resolver.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface TypeReferenceRequest {
   readonly name: string;
@@ -34,25 +36,31 @@ const featuresFor = (request: TypeReferenceRequest): Features => {
   return NO_FEATURES;
 };
 
-const stateFor = (request: TypeReferenceRequest, host: ResolverHost): ResolutionState => {
-  const kind = request.options.moduleResolution;
-  const features = {
-    ...featuresFor(request),
-    esmMode: kind === "Node16" && Option.contains(request.mode, "ESNext"),
-  };
-  return {
-    host,
-    trace: Option.none(),
-    options: request.options,
-    cache: Option.none(),
-    packageJsonCache: Option.none(),
-    features,
-    conditions: conditionsFor(request, features.exports),
-    candidateIsFromPackageJsonField: false,
-    outcome: createOutcome(),
-    resolveNested: resolveNestedModule,
-  };
-};
+const stateFor: {
+  (host: ResolverHost): (request: TypeReferenceRequest) => ResolutionState;
+  (request: TypeReferenceRequest, host: ResolverHost): ResolutionState;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (request: TypeReferenceRequest, host: ResolverHost): ResolutionState => {
+    const kind = request.options.moduleResolution;
+    const features = {
+      ...featuresFor(request),
+      esmMode: kind === "Node16" && Option.contains(request.mode, "ESNext"),
+    };
+    return {
+      host,
+      trace: Option.none(),
+      options: request.options,
+      cache: Option.none(),
+      packageJsonCache: Option.none(),
+      features,
+      conditions: conditionsFor(request, features.exports),
+      candidateIsFromPackageJsonField: false,
+      outcome: createOutcome(),
+      resolveNested: resolveNestedModule,
+    };
+  },
+);
 
 export { stateFor };
 export type { TypeReferenceRequest };

@@ -2,7 +2,8 @@ import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
 import type { DecisionRule } from "@r_masseater/oxlint-plugin-decision";
-import { Config, Effect, Redacted } from "effect";
+import { Config, Effect, Redacted, Array as Arr, pipe, Order } from "effect";
+import type { PlatformError } from "effect/PlatformError";
 
 import { codeClaims } from "#src/code-claims.ts";
 import { presets } from "#src/presets.ts";
@@ -47,7 +48,10 @@ type PresetEntry = keyof typeof EXPECTED;
 const CLAIMS: ReadonlySet<DecisionRule> = new Set([...codeClaims, ...testClaims]);
 
 const withoutClaims = (rules: readonly DecisionRule[]): readonly DecisionRule[] =>
-  rules.filter((rule) => !CLAIMS.has(rule));
+  pipe(
+    rules,
+    Arr.filter((rule) => !CLAIMS.has(rule)),
+  );
 
 const PRESET_RULES = {
   recommended: withoutClaims(presets.recommended),
@@ -55,7 +59,9 @@ const PRESET_RULES = {
   "review-only": withoutClaims(presets.reviewOnly),
 } as const satisfies Readonly<Record<PresetEntry, unknown>>;
 
-const presetLive = (preset: PresetEntry): Effect.Effect<void, unknown, Services> =>
+const presetLive = (
+  preset: PresetEntry,
+): Effect.Effect<void, Config.ConfigError | PlatformError, Services> =>
   Effect.scoped(
     Effect.gen(function* test() {
       const key = yield* Config.Redacted("OPENROUTER_API_KEY");
@@ -78,10 +84,12 @@ const presetLive = (preset: PresetEntry): Effect.Effect<void, unknown, Services>
       );
       yield* Effect.log(outputOf(run));
       deepStrictEqual(
-        reportedLines(run, PLUGIN_NAME)
-          .map((line) => headOf(line))
-          .toSorted((left, right) => left.localeCompare(right)),
-        [...EXPECTED[preset]].toSorted((left, right) => left.localeCompare(right)),
+        pipe(
+          reportedLines(run, PLUGIN_NAME),
+          Arr.map((line) => headOf(line)),
+          (sorted) => Arr.sort(sorted, Order.String),
+        ),
+        Arr.sort(EXPECTED[preset], Order.String),
       );
     }),
   );

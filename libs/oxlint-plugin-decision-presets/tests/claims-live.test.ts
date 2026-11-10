@@ -1,7 +1,8 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
-import { Config, Effect, FileSystem, Redacted } from "effect";
+import { Config, Effect, FileSystem, Redacted, Array as Arr, pipe, Order } from "effect";
+import type { PlatformError } from "effect/PlatformError";
 
 import strictConfig from "#example/claims/oxlint.config.ts";
 import reviewOnlyConfig from "#example/claims/review-only.config.ts";
@@ -48,7 +49,9 @@ const EXAMPLES = {
 
 type Entry = keyof typeof EXAMPLES;
 
-const claimsLive = (entry: Entry): Effect.Effect<void, unknown, Services> =>
+const claimsLive = (
+  entry: Entry,
+): Effect.Effect<void, Config.ConfigError | PlatformError, Services> =>
   Effect.scoped(
     Effect.gen(function* test() {
       const fs = yield* FileSystem.FileSystem;
@@ -75,10 +78,12 @@ const claimsLive = (entry: Entry): Effect.Effect<void, unknown, Services> =>
       );
       yield* Effect.log(outputOf(run));
       deepStrictEqual(
-        reportedLines(run, PLUGIN_NAME)
-          .map((line) => headOf(line))
-          .toSorted((left, right) => left.localeCompare(right)),
-        [...EXAMPLES[entry].reported].toSorted((left, right) => left.localeCompare(right)),
+        pipe(
+          reportedLines(run, PLUGIN_NAME),
+          Arr.map((line) => headOf(line)),
+          (sorted) => Arr.sort(sorted, Order.String),
+        ),
+        Arr.sort(EXAMPLES[entry].reported, Order.String),
       );
     }),
   );

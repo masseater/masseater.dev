@@ -1,4 +1,6 @@
-import { Option, Record } from "effect";
+import { Option, Record, Array as Arr, String as Str, pipe } from "effect";
+
+import { toJson } from "#src/json.ts";
 
 const local = (path: string): string => new URL(path, import.meta.url).pathname;
 
@@ -30,12 +32,15 @@ const remotionModuleOf = (id: string, importer: string): Option.Option<string> =
   );
 
 const remotionRuleModule = (id: string): Option.Option<string> =>
-  Option.liftPredicate(id, (candidate) => candidate.startsWith(VIRTUAL_REMOTION_RULE)).pipe(
+  Option.liftPredicate(id, (candidate) => Str.startsWith(VIRTUAL_REMOTION_RULE)(candidate)).pipe(
     Option.map((virtual) =>
-      [
-        `import plugin from ${JSON.stringify(local("../src/remotion.ts"))};`,
-        `export default plugin.rules[${JSON.stringify(virtual.slice(VIRTUAL_REMOTION_RULE.length))}];`,
-      ].join("\n"),
+      pipe(
+        [
+          `import plugin from ${toJson(local("../src/remotion.ts"))};`,
+          `export default plugin.rules[${toJson(Str.slice(VIRTUAL_REMOTION_RULE.length)(virtual))}];`,
+        ],
+        Arr.join("\n"),
+      ),
     ),
   );
 

@@ -8,15 +8,23 @@ import {
   Predicate,
   Schema,
   Stream,
+  Record as Rec,
+  String as Str,
+  pipe,
+  Function as Fn,
 } from "effect";
 import type { Scope } from "effect";
+import type { HttpServerError } from "effect/http";
 import type { PlatformError } from "effect/PlatformError";
 import { ChildProcess } from "effect/process";
 import type { ChildProcessSpawner } from "effect/process";
 
+import { toJson } from "#src/runtime.ts";
 import type { DecisionPluginSetup } from "#src/types.ts";
 
 import { MockOpenRouter } from "./mock-openrouter.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface OxlintRun {
   readonly status: number;
@@ -31,6 +39,12 @@ interface OxlintCall {
 }
 
 type Services = FileSystem.FileSystem | Path.Path | ChildProcessSpawner.ChildProcessSpawner;
+
+type TestError =
+  | PlatformError
+  | Schema.SchemaError
+  | Config.ConfigError
+  | HttpServerError.ServeError;
 
 const PASSED_ENV = [
   "PATH",
@@ -61,11 +75,18 @@ const cacheDirOf = (root: string): Effect.Effect<string, never, Path.Path> =>
   Path.Path.pipe(Effect.map((path) => path.join(root, ...CACHE_SEGMENTS)));
 
 const inheritedEnv: Effect.Effect<Readonly<Record<string, string>>> = Effect.map(
-  Effect.all(PASSED_ENV.map((name) => Effect.orDie(Config.option(Config.String(name))))),
+  pipe(
+    PASSED_ENV,
+    Arr.map((name) => Config.option(Config.String(name)).pipe(Effect.orDie)),
+    Effect.all,
+  ),
   (values) =>
-    Object.fromEntries(
-      Arr.zip(PASSED_ENV, values).flatMap(([name, value]) =>
-        Option.match(value, { onNone: () => [], onSome: (found) => [[name, found] as const] }),
+    Rec.fromEntries(
+      pipe(
+        Arr.zip(PASSED_ENV, values),
+        Arr.flatMap(([name, value]) =>
+          Option.match(value, { onNone: () => [], onSome: (found) => [[name, found] as const] }),
+        ),
       ),
     ),
 );
@@ -99,7 +120,8 @@ const runOxlint = ({
 const removeCache = (root: string): Effect.Effect<void, PlatformError, Services> =>
   Effect.gen(function* remove() {
     const fs = yield* FileSystem.FileSystem;
-    yield* fs.remove(yield* cacheDirOf(root), { recursive: true, force: true });
+    const cacheDir = yield* cacheDirOf(root);
+    yield* fs.remove(cacheDir, { recursive: true, force: true });
   });
 
 const writeProject = (
@@ -109,13 +131,13 @@ const writeProject = (
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const dir = yield* fs.makeTempDirectoryScoped({ prefix: "decision-" });
-    yield* Effect.forEach(Object.entries(files), ([name, content]) =>
+    yield* Effect.forEach(Rec.toEntries(files), ([name, content]) =>
       fs.writeFileString(path.join(dir, name), content),
     );
     return dir;
   });
 
-const configSource = (config: object): string => `export default ${JSON.stringify(config)};\n`;
+const configSource = (config: object): string => `export default ${toJson(config)};\n`;
 
 const ruleEntry = (options: object | undefined): unknown =>
   Option.match(Option.fromUndefinedOr(options), {
@@ -124,7 +146,9 @@ const ruleEntry = (options: object | undefined): unknown =>
   });
 
 const FUNCTION_KEY = "\u0000function";
-const SERIALIZED_FUNCTION = /\{"\\u0000function":(?<source>"(?:[^"\\]|\\.)*")\}/gu;
+const SERIALIZED_FUNCTION = /\{"\\u0000function":(?<source>"(?:[^"\\]|\\.)*")\}/u;
+const SPLIT_STEP = 2;
+const TEXT_PART = 0;
 
 const withFunctions = (_key: string, value: unknown): unknown => {
   if (Predicate.isFunction(value)) {
@@ -133,26 +157,57 @@ const withFunctions = (_key: string, value: unknown): unknown => {
   return value;
 };
 
+const encodeSetup = Schema.encodeUnknownOption(
+  Schema.fromJsonString(Schema.Unknown, { replacer: withFunctions }),
+);
+
+const decodeSource = Schema.decodeUnknownOption(Schema.fromJsonString(Schema.String));
+
+const restoreFunction = (part: string, position: number): string => {
+  if (position % SPLIT_STEP === TEXT_PART) {
+    return part;
+  }
+  return Option.getOrElse(decodeSource(part), () => part);
+};
+
 const setupSource = (setup: DecisionPluginSetup): string =>
-  JSON.stringify(setup, withFunctions).replaceAll(SERIALIZED_FUNCTION, (_match, source: string) =>
-    String(JSON.parse(source)),
+  pipe(
+    Option.getOrElse(encodeSetup(setup), () => "{}"),
+    Str.split(SERIALIZED_FUNCTION),
+    Arr.map(restoreFunction),
+    Arr.join(""),
   );
 
-const projectFilesFor = (
-  setup: DecisionPluginSetup,
-  ruleOptions: Readonly<Record<string, object>> = {},
-): Effect.Effect<Readonly<Record<string, string>>, never, Path.Path> =>
-  pluginPath.pipe(
-    Effect.map((plugin) => ({
-      "plugin.mjs": `import { createDecisionPlugin } from ${JSON.stringify(plugin)};\n\nexport default createDecisionPlugin(${setupSource(setup)});\n`,
-      "oxlint.config.ts": configSource({
-        jsPlugins: ["./plugin.mjs"],
-        rules: Object.fromEntries(
-          setup.rules.map(({ id }) => [`decision/${id}`, ruleEntry(ruleOptions[id])]),
-        ),
-      }),
-    })),
-  );
+const projectFilesFor: {
+  (
+    ruleOptions: Readonly<Record<string, object>>,
+  ): (
+    setup: DecisionPluginSetup,
+  ) => Effect.Effect<Readonly<Record<string, string>>, never, Path.Path>;
+  (
+    setup: DecisionPluginSetup,
+    ruleOptions: Readonly<Record<string, object>>,
+  ): Effect.Effect<Readonly<Record<string, string>>, never, Path.Path>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (
+    setup: DecisionPluginSetup,
+    ruleOptions: Readonly<Record<string, object>>,
+  ): Effect.Effect<Readonly<Record<string, string>>, never, Path.Path> =>
+    pluginPath.pipe(
+      Effect.map((plugin) => ({
+        "plugin.mjs": `import { createDecisionPlugin } from ${toJson(plugin)};\n\nexport default createDecisionPlugin(${setupSource(setup)});\n`,
+        "oxlint.config.ts": configSource({
+          jsPlugins: ["./plugin.mjs"],
+          rules: pipe(
+            setup.rules,
+            Arr.map(({ id }) => [`decision/${id}`, ruleEntry(ruleOptions[id])] as const),
+            Rec.fromEntries,
+          ),
+        }),
+      })),
+    ),
+);
 
 const mockEnv = (
   token: string,
@@ -162,15 +217,21 @@ const mockEnv = (
   );
 
 const decisionLines = (run: OxlintRun): readonly string[] =>
-  run.stdout
-    .split("\n")
-    .filter((line) => DECISION_PLUGINS.some((name) => line.includes(`/${name}(`)));
+  pipe(
+    Str.split(run.stdout, "\n"),
+    Arr.filter((line) =>
+      pipe(
+        DECISION_PLUGINS,
+        Arr.some((name) => Str.includes(`/${name}(`)(line)),
+      ),
+    ),
+  );
 
 const Span = Schema.Struct({
-  offset: Schema.Number,
-  line: Schema.Number,
-  column: Schema.Number,
-  length: Schema.Number,
+  offset: Schema.Finite,
+  line: Schema.Finite,
+  column: Schema.Finite,
+  length: Schema.Finite,
 });
 
 const Diagnostic = Schema.Struct({
@@ -187,10 +248,16 @@ type OxlintSpan = typeof Span.Type;
 const diagnosticsOf = (
   run: OxlintRun,
 ): Effect.Effect<readonly OxlintDiagnostic[], Schema.SchemaError> =>
-  Schema.decodeUnknownEffect(Report)(run.stdout).pipe(
+  Schema.decodeEffect(Report)(run.stdout).pipe(
     Effect.map(({ diagnostics }) =>
-      diagnostics.filter((diagnostic) =>
-        DECISION_PLUGINS.some((name) => diagnostic.code.startsWith(`${name}(`)),
+      pipe(
+        diagnostics,
+        Arr.filter((diagnostic) =>
+          pipe(
+            DECISION_PLUGINS,
+            Arr.some((name) => Str.startsWith(`${name}(`)(diagnostic.code)),
+          ),
+        ),
       ),
     ),
   );
@@ -198,6 +265,7 @@ const diagnosticsOf = (
 const firstSpan = (diagnostic: OxlintDiagnostic): OxlintSpan =>
   Option.getOrThrow(Arr.head(diagnostic.labels)).span;
 
+/** @internal */
 export {
   cacheDirOf,
   configSource,
@@ -212,4 +280,5 @@ export {
   runOxlint,
   writeProject,
 };
-export type { OxlintCall, OxlintDiagnostic, OxlintRun, OxlintSpan, Services };
+/** @internal */
+export type { OxlintCall, OxlintDiagnostic, OxlintRun, OxlintSpan, Services, TestError };

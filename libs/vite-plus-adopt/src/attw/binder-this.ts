@@ -1,4 +1,4 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, Function as Fn } from "effect";
 import { SyntaxKind } from "typescript/ast";
 import type { BinaryExpression, Node } from "typescript/ast";
 import { isSourceFile } from "typescript/ast/is";
@@ -9,6 +9,8 @@ import { declareExport, declareSourceFileMember } from "./binder-declarations.ts
 import type { FileBinding, SymbolFlagPair } from "./binder-declarations.ts";
 import { isAccessExpression, isDynamicElementAccess, isThisKeyword } from "./binder-syntax.ts";
 import { EMPTY, combineFlags } from "./flags.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 const THIS_CONTAINER_KINDS: ReadonlySet<SyntaxKind> = new Set([
   SyntaxKind.FunctionDeclaration,
@@ -47,7 +49,10 @@ const thisContainerIsFile = (node: Node): boolean => {
   return isSourceFile(current);
 };
 
-const bindThisPropertyAssignment = (binding: FileBinding, node: BinaryExpression): void => {
+const bindThisPropertyAssignment: {
+  (node: BinaryExpression): (binding: FileBinding) => void;
+  (binding: FileBinding, node: BinaryExpression): void;
+} = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, node: BinaryExpression): void => {
   if (!thisContainerIsFile(node) || isDynamicElementAccess(node.left)) {
     return;
   }
@@ -56,10 +61,16 @@ const bindThisPropertyAssignment = (binding: FileBinding, node: BinaryExpression
     return;
   }
   declareSourceFileMember(binding, node, THIS_PROPERTY_LOCAL);
-};
+});
 
-const isThisInitialized = (binding: FileBinding, node: BinaryExpression): boolean =>
-  isAccessExpression(node.left) &&
-  variableInitializer(binding, node.left.expression).pipe(Option.exists(isThisKeyword));
+const isThisInitialized: {
+  (node: BinaryExpression): (binding: FileBinding) => boolean;
+  (binding: FileBinding, node: BinaryExpression): boolean;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (binding: FileBinding, node: BinaryExpression): boolean =>
+    isAccessExpression(node.left) &&
+    variableInitializer(binding, node.left.expression).pipe(Option.exists(isThisKeyword)),
+);
 
 export { bindThisPropertyAssignment, isThisInitialized };

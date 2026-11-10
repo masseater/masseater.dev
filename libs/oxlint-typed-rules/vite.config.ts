@@ -1,7 +1,17 @@
 import type { CheckPackageOptions, CheckResult } from "@r_masseater/vite-plus-adopt/attw";
-import { Effect, Function, Option, Record } from "effect";
+import {
+  Effect,
+  Function,
+  Option,
+  Record,
+  Array as Arr,
+  Record as Rec,
+  String as Str,
+  pipe,
+} from "effect";
 import { defineConfig } from "vite-plus";
 
+import { toJson } from "./src/json.ts";
 import { upstreamRemotionRules } from "./upstream/remotion-modules.ts";
 
 const local = (path: string): string => new URL(path, import.meta.url).pathname;
@@ -31,10 +41,13 @@ const shims: Readonly<Record<string, string>> = {
   ),
 };
 
-const shimAliases = Object.entries(shims).map(([name, replacement]) => ({
-  find: new RegExp(`^${name}$`, "u"),
-  replacement,
-}));
+const shimAliases = pipe(
+  Rec.toEntries(shims),
+  Arr.map(([name, replacement]) => ({
+    find: new RegExp(`^${name}$`, "u"),
+    replacement,
+  })),
+);
 
 const UPSTREAM_REACT_SPEC =
   /\/upstream\/react\/plugins\/eslint-plugin-react-(?<plugin>[a-z-]+)\/src\/rules\/(?<rule>[^/]+)\/[^/]+\.spec\.ts$/u;
@@ -61,19 +74,22 @@ const virtualRuleOf = (
   prefix: string,
   id: string,
 ): Option.Option<{ readonly plugin: string; readonly rule: string }> =>
-  Option.liftPredicate(id, (candidate) => candidate.startsWith(prefix)).pipe(
-    Option.map((virtual) => virtual.slice(prefix.length).split("/")),
+  Option.liftPredicate(id, (candidate) => Str.startsWith(prefix)(candidate)).pipe(
+    Option.map((virtual) => Str.split(Str.slice(prefix.length)(virtual), "/")),
     Option.flatMap(([plugin, rule]) => ruleParts({ plugin, rule })),
   );
 
 const upstreamRuleModule = (id: string): Option.Option<string> =>
   virtualRuleOf(VIRTUAL_RULE, id).pipe(
     Option.map(({ plugin, rule }) =>
-      [
-        `import plugin from ${JSON.stringify(local("src/react.ts"))};`,
-        `export const RULE_NAME = ${JSON.stringify(rule)};`,
-        `export default plugin.rules[${JSON.stringify(`${plugin}-${rule}`)}];`,
-      ].join("\n"),
+      pipe(
+        [
+          `import plugin from ${toJson(local("src/react.ts"))};`,
+          `export const RULE_NAME = ${toJson(rule)};`,
+          `export default plugin.rules[${toJson(`${plugin}-${rule}`)}];`,
+        ],
+        Arr.join("\n"),
+      ),
     ),
   );
 
@@ -113,12 +129,12 @@ const tanstackRuleOf = (id: string): Option.Option<string> =>
   groupOf(UPSTREAM_TANSTACK_RULE, "rule", id);
 
 const tanstackModuleOf = (plugin: string, id: string): Option.Option<string> =>
-  Option.liftPredicate(id, (candidate) => candidate.startsWith("../")).pipe(
+  Option.liftPredicate(id, (candidate) => Str.startsWith("../")(candidate)).pipe(
     Option.map((relative) =>
       tanstackRuleOf(relative).pipe(
         Option.match({
           onSome: (rule) => `${VIRTUAL_TANSTACK_RULE}${plugin}/${rule}`,
-          onNone: () => upstreamSource(plugin, relative.slice("../".length)),
+          onNone: () => upstreamSource(plugin, Str.slice("../".length)(relative)),
         }),
       ),
     ),
@@ -130,12 +146,15 @@ const tanstackModuleOf = (plugin: string, id: string): Option.Option<string> =>
 const tanstackRuleModule = (id: string): Option.Option<string> =>
   virtualRuleOf(VIRTUAL_TANSTACK_RULE, id).pipe(
     Option.map(({ plugin, rule }) =>
-      [
-        `import plugin from ${JSON.stringify(local(`src/tanstack-${plugin}.ts`))};`,
-        `export * from ${JSON.stringify(upstreamSource(plugin, `rules/${rule}/${rule}.rule`))};`,
-        `export const name = ${JSON.stringify(rule)};`,
-        `export const rule = plugin.rules[${JSON.stringify(rule)}];`,
-      ].join("\n"),
+      pipe(
+        [
+          `import plugin from ${toJson(local(`src/tanstack-${plugin}.ts`))};`,
+          `export * from ${toJson(upstreamSource(plugin, `rules/${rule}/${rule}.rule`))};`,
+          `export const name = ${toJson(rule)};`,
+          `export const rule = plugin.rules[${toJson(rule)}];`,
+        ],
+        Arr.join("\n"),
+      ),
     ),
     Option.orElse(() =>
       Option.liftPredicate('export const meta = { name: "oxc" };', () => id === VIRTUAL_PARSER),
@@ -167,12 +186,15 @@ const drizzleRuleOf = (id: string, importer: string): Option.Option<string> =>
   );
 
 const drizzleRuleModule = (id: string): Option.Option<string> =>
-  Option.liftPredicate(id, (candidate) => candidate.startsWith(VIRTUAL_DRIZZLE_RULE)).pipe(
+  Option.liftPredicate(id, (candidate) => Str.startsWith(VIRTUAL_DRIZZLE_RULE)(candidate)).pipe(
     Option.map((virtual) =>
-      [
-        `import plugin from ${JSON.stringify(local("src/drizzle.ts"))};`,
-        `export default plugin.rules[${JSON.stringify(virtual.slice(VIRTUAL_DRIZZLE_RULE.length))}];`,
-      ].join("\n"),
+      pipe(
+        [
+          `import plugin from ${toJson(local("src/drizzle.ts"))};`,
+          `export default plugin.rules[${toJson(Str.slice(VIRTUAL_DRIZZLE_RULE.length)(virtual))}];`,
+        ],
+        Arr.join("\n"),
+      ),
     ),
   );
 

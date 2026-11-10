@@ -1,4 +1,4 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, Array as Arr, pipe, Function as Fn } from "effect";
 import type { BinaryExpression, CallExpression, Node } from "typescript/ast";
 import {
   isBinaryExpression,
@@ -31,6 +31,8 @@ import {
 } from "./binder-syntax.ts";
 import type { AccessExpression } from "./binder-syntax.ts";
 import { EMPTY, combineFlags, hasFlag, withFlags, withoutFlags } from "./flags.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
 
 const DESCRIPTOR_ARGUMENT = 2;
 
@@ -122,20 +124,37 @@ const descriptorPropertyNames = (call: CallExpression): readonly string[] => {
   if (Predicate.isUndefined(descriptor) || !isObjectLiteralExpression(descriptor)) {
     return [];
   }
-  return descriptor.properties.flatMap((property) => {
-    if ("name" in property && isIdentifier(property.name)) {
-      return [property.name.text];
-    }
-    return [];
-  });
+  return pipe(
+    descriptor.properties,
+    Arr.flatMap((property) => {
+      if ("name" in property && isIdentifier(property.name)) {
+        return [property.name.text];
+      }
+      return [];
+    }),
+  );
 };
 
 const accessorFlags = (call: CallExpression): SymbolFlagPair => {
   const names = descriptorPropertyNames(call);
-  const matched = ACCESSOR_FLAGS.filter(([name]) => names.includes(name)).map(([, flags]) => flags);
+  const matched = pipe(
+    ACCESSOR_FLAGS,
+    Arr.filter(([name]) => names.includes(name)),
+    Arr.map(([, flags]) => flags),
+  );
   return {
-    includes: combineFlags(...matched.map((flags) => flags.includes)),
-    excludes: combineFlags(...matched.map((flags) => flags.excludes)),
+    includes: combineFlags(
+      ...pipe(
+        matched,
+        Arr.map((flags) => flags.includes),
+      ),
+    ),
+    excludes: combineFlags(
+      ...pipe(
+        matched,
+        Arr.map((flags) => flags.excludes),
+      ),
+    ),
   };
 };
 
@@ -231,33 +250,37 @@ const bindableAccess = (
 const isExportsAliasAccess = (binding: FileBinding, left: AccessExpression): boolean =>
   isIdentifier(left.expression) && isExportsOrModuleExportsOrAlias(binding, left.expression);
 
-const bindSpecialPropertyAssignment = (
-  binding: FileBinding,
-  node: BinaryExpression,
-  scope: Scope,
-): void => {
-  const left = bindableAccess(binding, node, scope);
-  if (Option.isNone(left)) {
-    return;
-  }
-  if (isExportsAliasAccess(binding, left.value)) {
-    bindExportsPropertyAssignment(binding, node, scope);
-    return;
-  }
-  bindPropertyOfNamespace(binding, left.value);
-};
+const bindSpecialPropertyAssignment: {
+  (node: BinaryExpression, scope: Scope): (binding: FileBinding) => void;
+  (binding: FileBinding, node: BinaryExpression, scope: Scope): void;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (binding: FileBinding, node: BinaryExpression, scope: Scope): void => {
+    const left = bindableAccess(binding, node, scope);
+    if (Option.isNone(left)) {
+      return;
+    }
+    if (isExportsAliasAccess(binding, left.value)) {
+      bindExportsPropertyAssignment(binding, node, scope);
+      return;
+    }
+    bindPropertyOfNamespace(binding, left.value);
+  },
+);
 
-const bindObjectDefinePropertyAssignment = (
-  binding: FileBinding,
-  call: CallExpression,
-  scope: Scope,
-): void => {
-  const [target] = call.arguments;
-  if (!scope.containerIsFile || Predicate.isUndefined(target)) {
-    return;
-  }
-  const isTopLevel = isSourceFile(call.parent.parent);
-  bindExpandoMember(binding, call, namespaceFor(binding, target, isTopLevel));
-};
+const bindObjectDefinePropertyAssignment: {
+  (call: CallExpression, scope: Scope): (binding: FileBinding) => void;
+  (binding: FileBinding, call: CallExpression, scope: Scope): void;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (binding: FileBinding, call: CallExpression, scope: Scope): void => {
+    const [target] = call.arguments;
+    if (!scope.containerIsFile || Predicate.isUndefined(target)) {
+      return;
+    }
+    const isTopLevel = isSourceFile(call.parent.parent);
+    bindExpandoMember(binding, call, namespaceFor(binding, target, isTopLevel));
+  },
+);
 
 export { bindObjectDefinePropertyAssignment, bindSpecialPropertyAssignment };

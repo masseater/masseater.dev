@@ -1,5 +1,5 @@
 import { OpenRouterError } from "@openrouter/sdk/models/errors";
-import { Array as Arr, Config, Effect, Option, Redacted, pipe } from "effect";
+import { Array as Arr, Config, Effect, Option, Redacted, pipe, String as Str } from "effect";
 import { runAsWorker } from "synckit";
 
 import { cacheFile, isComplete, readCache, writeCache } from "./cache.ts";
@@ -27,7 +27,7 @@ const reasonFor = (error: unknown): string => {
 const serverUrlOf = (env: Readonly<Record<string, string>>): Config.Config<string> =>
   Config.String(envNameOf(env, "OPENROUTER_BASE_URL")).pipe(
     Config.withDefault(DEFAULT_BASE_URL),
-    Config.map((url) => url.trim().replace(API_SUFFIX, "")),
+    Config.map((url) => Str.replace(API_SUFFIX, "")(Str.trim(url))),
   );
 
 const send = Effect.fn("send")(function* send(

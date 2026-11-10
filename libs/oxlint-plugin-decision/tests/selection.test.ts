@@ -1,13 +1,15 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, Order } from "effect";
+import { Array as Arr, Effect, Order, Record as Rec, String as Str, pipe } from "effect";
 
 import type { DecisionRule } from "#src/types.ts";
 
 import { PASSED, TIMEOUT, callRule, lintProject, outputOf, withMock } from "./fixtures.ts";
 import { loggedRequests } from "./mock-openrouter.ts";
 import { decisionLines, mockEnv } from "./oxlint.ts";
+
+const STRING_SELECT: object = { select: "console" };
 
 const functionRule: DecisionRule = {
   id: "any-function",
@@ -16,32 +18,39 @@ const functionRule: DecisionRule = {
   cutoff: 0.8,
 };
 
-const NAMED = [
-  "function computeTotal() { return 1; }",
-  "const computeTax = () => 2;",
-  "const handlers = { computeFee() { return 3; } };",
-  "class Cart { computeSum() { return 4; } }",
-  "function save() { return 5; }",
-  "[1].map(() => 6);",
-  "",
-].join("\n");
+const NAMED = pipe(
+  [
+    "function computeTotal() { return 1; }",
+    "const computeTax = () => 2;",
+    "const handlers = { computeFee() { return 3; } };",
+    "class Cart { computeSum() { return 4; } }",
+    "function save() { return 5; }",
+    "[1].map(() => 6);",
+    "",
+  ],
+  Arr.join("\n"),
+);
 
-const COMMENTED = [
-  "/** Logs the user. */",
-  "export function first() { console.log(user.email, user.phone); }",
-  "",
-  "function second() { return 2; }",
-  "// Adds one.",
-  "// Always.",
-  "const third = (x) => x + 1;",
-  "",
-].join("\n");
+const COMMENTED = pipe(
+  [
+    "/** Logs the user. */",
+    "export function first() { console.log(user.email, user.phone); }",
+    "",
+    "function second() { return 2; }",
+    "// Adds one.",
+    "// Always.",
+    "const third = (x) => x + 1;",
+    "",
+  ],
+  Arr.join("\n"),
+);
 
 const sentSnippets = loggedRequests.pipe(
   Effect.map((requests) =>
-    Arr.sort(
-      requests.flatMap(({ body }) => Object.values(body.state.snippets)),
-      Order.String,
+    pipe(
+      requests,
+      Arr.flatMap(({ body }) => Rec.values(body.state.snippets)),
+      (sorted) => Arr.sort(sorted, Order.String),
     ),
   ),
 );
@@ -52,13 +61,17 @@ const byName = Effect.gen(function* test() {
     files: { "names.js": NAMED },
     options: {
       rules: [
-        { ...functionRule, select: (_node, { name = "" }): boolean => name.startsWith("compute") },
+        {
+          ...functionRule,
+          select: (_node, { name = "" }): boolean => /\bcompute/u.test(name),
+        },
       ],
     },
     env,
   });
   strictEqual(run.status, PASSED, outputOf(run));
-  deepStrictEqual(yield* sentSnippets, [
+  const snippets = yield* sentSnippets;
+  deepStrictEqual(snippets, [
     "computeFee() { return 3; }",
     "computeSum() { return 4; }",
     "computeTax = () => 2",
@@ -84,7 +97,8 @@ const byCallee = Effect.gen(function* test() {
     },
     env,
   });
-  deepStrictEqual(yield* sentSnippets, ["console.log(user.email, user.phone)"]);
+  const snippets = yield* sentSnippets;
+  deepStrictEqual(snippets, ["console.log(user.email, user.phone)"]);
 });
 
 const byElement = Effect.gen(function* test() {
@@ -96,13 +110,14 @@ const byElement = Effect.gen(function* test() {
         {
           ...callRule,
           target: "jsx",
-          select: (_node, { name = "" }): boolean => name !== name.toLowerCase(),
+          select: (_node, { name = "" }): boolean => /[A-Z]/u.test(name),
         },
       ],
     },
     env,
   });
-  deepStrictEqual(yield* sentSnippets, ["<Button>Hi</Button>"]);
+  const snippets = yield* sentSnippets;
+  deepStrictEqual(snippets, ["<Button>Hi</Button>"]);
 });
 
 const withComment = Effect.gen(function* test() {
@@ -114,12 +129,16 @@ const withComment = Effect.gen(function* test() {
     },
     env,
   });
-  deepStrictEqual(yield* sentSnippets, [
+  const snippets = yield* sentSnippets;
+  deepStrictEqual(snippets, [
     "/** Logs the user. */\nexport function first() { console.log(user.email, user.phone); }",
     "// Adds one.\n// Always.\nconst third = (x) => x + 1",
   ]);
   deepStrictEqual(
-    decisionLines(run).map((line) => line.replace(/^.*\): /u, "")),
+    pipe(
+      decisionLines(run),
+      Arr.map((line) => Str.replace(/^.*\): /u, "")(line)),
+    ),
     ["Short message. [Error/decision(any-function)]"],
   );
 });
@@ -127,7 +146,7 @@ const withComment = Effect.gen(function* test() {
 const refusesNonFunction = Effect.gen(function* test() {
   const run = yield* lintProject({
     files: { "pass.js": "ok();\n" },
-    options: { rules: [{ ...callRule, ...JSON.parse('{"select":"console"}') }] },
+    options: { rules: [{ ...callRule, ...STRING_SELECT }] },
     env: {},
     format: "default",
   });

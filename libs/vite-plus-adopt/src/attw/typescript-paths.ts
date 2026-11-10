@@ -7,9 +7,9 @@ import {
   isDeclarationFileName,
 } from "./extensions.ts";
 import { getTypesPackageName, unmangleScopedPackageName } from "./package-names.ts";
+import { comparePathsCaseInsensitive } from "./path-compare.ts";
 import {
   combinePaths,
-  comparePathsCaseInsensitive,
   ensureTrailingDirectorySeparator,
   forEachAncestorDirectory as forEachAncestor,
   pathIsRelative,

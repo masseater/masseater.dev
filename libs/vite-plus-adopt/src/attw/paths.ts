@@ -1,6 +1,8 @@
-import { Array as Arr, Option, String as Str } from "effect";
+import { Array as Arr, Option, String as Str, pipe, Function as Fn } from "effect";
 
 import { getRootLength, isRootedDiskPath } from "./path-roots.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 const SEPARATOR = "/";
 const ROOT_LENGTH = 1;
@@ -13,13 +15,13 @@ const RELATIVE_SEGMENT = /\/\/|(?:^|\/)\.\.?(?:$|\/)/u;
 const RELATIVE_NAMES: ReadonlySet<string> = new Set([".", ".."]);
 const RELATIVE_PREFIXES: readonly string[] = ["./", ".\\", "../", "..\\"];
 
-const normalizeSlashes = (path: string): string => path.replaceAll("\\", SEPARATOR);
+const normalizeSlashes = (path: string): string => Str.replaceAll("\\", SEPARATOR)(path);
 
-const hasTrailingDirectorySeparator = (path: string): boolean => path.endsWith(SEPARATOR);
+const hasTrailingDirectorySeparator = (path: string): boolean => Str.endsWith(SEPARATOR)(path);
 
 const removeTrailingDirectorySeparator = (path: string): string =>
   Option.liftPredicate(path, hasTrailingDirectorySeparator).pipe(
-    Option.match({ onNone: () => path, onSome: (value) => value.slice(FIRST, NOT_FOUND) }),
+    Option.match({ onNone: () => path, onSome: (value) => Str.slice(FIRST, NOT_FOUND)(value) }),
   );
 
 const ensureTrailingDirectorySeparator = (path: string): string =>
@@ -42,10 +44,10 @@ const combinePaths = (path: string, ...paths: readonly string[]): string =>
   Arr.reduce(paths, normalizeSlashes(path), combineTwo);
 
 const pathComponents = (path: string, rootLength: number): readonly string[] => {
-  const rest = path.slice(rootLength).split(SEPARATOR);
+  const rest = Str.split(Str.slice(rootLength)(path), SEPARATOR);
   const trimmed = Option.liftPredicate(rest, (parts) => Arr.last(parts).pipe(Option.contains("")));
   return [
-    path.slice(FIRST, rootLength),
+    Str.slice(FIRST, rootLength)(path),
     ...Option.match(trimmed, {
       onNone: () => rest,
       onSome: (parts) => parts.slice(FIRST, NOT_FOUND),
@@ -97,7 +99,7 @@ const getPathFromPathComponents = (components: readonly string[]): string =>
   Arr.match(components, {
     onEmpty: () => "",
     onNonEmpty: ([root, ...rest]) =>
-      `${Option.liftPredicate(root, Str.isNonEmpty).pipe(Option.match({ onNone: () => "", onSome: ensureTrailingDirectorySeparator }))}${rest.join(SEPARATOR)}`,
+      `${Option.liftPredicate(root, Str.isNonEmpty).pipe(Option.match({ onNone: () => "", onSome: ensureTrailingDirectorySeparator }))}${pipe(rest, Arr.join(SEPARATOR))}`,
   });
 
 const normalizeComponents = (path: string): string => {
@@ -109,7 +111,7 @@ const normalizeComponents = (path: string): string => {
 };
 
 const simplifyCurrentSegments = (path: string): string =>
-  path.replaceAll("/./", SEPARATOR).replace(/^\.\//u, "");
+  Str.replace(/^\.\//u, "")(Str.replaceAll("/./", SEPARATOR)(path));
 
 const normalizePath = (path: string): string => {
   const slashed = normalizeSlashes(path);
@@ -130,7 +132,11 @@ const getDirectoryPath = (path: string): string => {
     return slashed;
   }
   const trimmed = removeTrailingDirectorySeparator(slashed);
-  return trimmed.slice(FIRST, Math.max(rootLength, trimmed.lastIndexOf(SEPARATOR)));
+  const end = Option.match(Str.lastIndexOf(SEPARATOR)(trimmed), {
+    onNone: () => rootLength,
+    onSome: (separator) => Math.max(rootLength, separator),
+  });
+  return Str.slice(FIRST, end)(trimmed);
 };
 
 const getBaseFileName = (path: string): string => {
@@ -139,15 +145,21 @@ const getBaseFileName = (path: string): string => {
     return "";
   }
   const trimmed = removeTrailingDirectorySeparator(slashed);
-  return trimmed.slice(
-    Math.max(getRootLength(trimmed), trimmed.lastIndexOf(SEPARATOR) + ROOT_LENGTH),
-  );
+  const rootLength = getRootLength(trimmed);
+  const start = Option.match(Str.lastIndexOf(SEPARATOR)(trimmed), {
+    onNone: () => rootLength,
+    onSome: (separator) => Math.max(rootLength, separator + ROOT_LENGTH),
+  });
+  return Str.slice(start)(trimmed);
 };
 
-const getNormalizedAbsolutePath = (path: string, currentDirectory: string): string => {
+const getNormalizedAbsolutePath: {
+  (currentDirectory: string): (path: string) => string;
+  (path: string, currentDirectory: string): string;
+} = Fn.dual(DATA_FIRST_ARITY, (path: string, currentDirectory: string): string => {
   const components = getPathComponents(combinePaths(currentDirectory, path));
   return getPathFromPathComponents(reducePathComponents(components));
-};
+});
 
 const toPath = (fileName: string): string =>
   Option.liftPredicate(fileName, isRootedDiskPath).pipe(
@@ -158,23 +170,38 @@ const toPath = (fileName: string): string =>
     Str.toLowerCase,
   );
 
-const forEachAncestorDirectory = <Found>(
-  directory: string,
-  visit: (ancestor: string) => Option.Option<Found>,
-): Option.Option<Found> => {
-  let current = directory;
-  for (;;) {
-    const result = visit(current);
-    const parent = getDirectoryPath(current);
-    if (Option.isSome(result) || parent === current) {
-      return result;
+const forEachAncestorDirectory: {
+  <Found>(
+    visit: (ancestor: string) => Option.Option<Found>,
+  ): (directory: string) => Option.Option<Found>;
+  <Found>(
+    directory: string,
+    visit: (ancestor: string) => Option.Option<Found>,
+  ): Option.Option<Found>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  <Found>(
+    directory: string,
+    visit: (ancestor: string) => Option.Option<Found>,
+  ): Option.Option<Found> => {
+    let current = directory;
+    for (;;) {
+      const result = visit(current);
+      const parent = getDirectoryPath(current);
+      if (Option.isSome(result) || parent === current) {
+        return result;
+      }
+      current = parent;
     }
-    current = parent;
-  }
-};
+  },
+);
 
 const pathIsRelative = (path: string): boolean =>
-  RELATIVE_NAMES.has(path) || RELATIVE_PREFIXES.some((prefix) => path.startsWith(prefix));
+  RELATIVE_NAMES.has(path) ||
+  pipe(
+    RELATIVE_PREFIXES,
+    Arr.some((prefix) => Str.startsWith(prefix)(path)),
+  );
 
 const isExternalModuleNameRelative = (moduleName: string): boolean =>
   pathIsRelative(moduleName) || isRootedDiskPath(moduleName);
@@ -188,7 +215,10 @@ const sharedPrefixLength = (from: readonly string[], to: readonly string[]): num
   return index;
 };
 
-const getRelativePathFromDirectory = (fromDirectory: string, to: string): string => {
+const getRelativePathFromDirectory: {
+  (to: string): (fromDirectory: string) => string;
+  (fromDirectory: string, to: string): string;
+} = Fn.dual(DATA_FIRST_ARITY, (fromDirectory: string, to: string): string => {
   const from = reducePathComponents(getPathComponents(fromDirectory));
   const target = reducePathComponents(getPathComponents(to));
   const start = sharedPrefixLength(from, target);
@@ -200,9 +230,12 @@ const getRelativePathFromDirectory = (fromDirectory: string, to: string): string
     ...Array.from({ length: from.length - start }, () => PARENT),
     ...target.slice(start),
   ]);
-};
+});
 
-const containsPath = (parent: string, child: string): boolean => {
+const containsPath: {
+  (child: string): (parent: string) => boolean;
+  (parent: string, child: string): boolean;
+} = Fn.dual(DATA_FIRST_ARITY, (parent: string, child: string): boolean => {
   const parentComponents = reducePathComponents(getPathComponents(parent));
   const childComponents = reducePathComponents(getPathComponents(child));
   return (
@@ -210,48 +243,10 @@ const containsPath = (parent: string, child: string): boolean => {
     (childComponents.length >= parentComponents.length &&
       sharedPrefixLength(parentComponents, childComponents) === parentComponents.length)
   );
-};
-
-const compareStrings = (left: string, right: string): number =>
-  Math.sign(Number(left > right) - Number(left < right));
-
-const compareCaseInsensitive = (left: string, right: string): number =>
-  compareStrings(left.toUpperCase(), right.toUpperCase());
-
-const compareComponents = (left: readonly string[], right: readonly string[]): number => {
-  const differing = Arr.zip(left, right)
-    .slice(SECOND)
-    .map(([leftComponent, rightComponent]) => compareCaseInsensitive(leftComponent, rightComponent))
-    .find((result) => result !== FIRST);
-  return differing ?? Math.sign(left.length - right.length);
-};
-
-const compareRests = (left: string, right: string): number => {
-  if (!RELATIVE_SEGMENT.test(left) && !RELATIVE_SEGMENT.test(right)) {
-    return compareCaseInsensitive(left, right);
-  }
-  return compareComponents(
-    reducePathComponents(getPathComponents(left)),
-    reducePathComponents(getPathComponents(right)),
-  );
-};
-
-const comparePathsCaseInsensitive = (left: string, right: string): number => {
-  const leftRoot = left.slice(FIRST, getRootLength(left));
-  const rightRoot = right.slice(FIRST, getRootLength(right));
-  return Option.liftPredicate(
-    compareCaseInsensitive(leftRoot, rightRoot),
-    (result) => result !== FIRST,
-  ).pipe(
-    Option.getOrElse(() =>
-      compareRests(left.slice(leftRoot.length), right.slice(rightRoot.length)),
-    ),
-  );
-};
+});
 
 export {
   combinePaths,
-  comparePathsCaseInsensitive,
   containsPath,
   ensureTrailingDirectorySeparator,
   forEachAncestorDirectory,
@@ -265,5 +260,7 @@ export {
   normalizePath,
   normalizeSlashes,
   pathIsRelative,
+  RELATIVE_SEGMENT,
+  reducePathComponents,
   toPath,
 };

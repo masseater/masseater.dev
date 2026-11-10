@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Array as Arr, pipe, Function as Fn } from "effect";
 
 import { extensionsOf } from "./extensions.ts";
 import type { Extensions } from "./extensions.ts";
@@ -27,6 +27,8 @@ import {
   workerMode,
 } from "./resolver-state.ts";
 import type { WorkerContext, WorkerRequest } from "./resolver-state.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface ResolveModuleNameRequest {
   readonly moduleName: string;
@@ -60,7 +62,11 @@ const announceMode = (request: WorkerRequest, state: ResolutionState): void => {
     state,
     Messages.resolvingInMode,
     modeLabel(request.features),
-    state.conditions.map((condition) => `'${condition}'`).join(", "),
+    pipe(
+      state.conditions,
+      Arr.map((condition) => `'${condition}'`),
+      Arr.join(", "),
+    ),
   );
 };
 
@@ -115,8 +121,14 @@ const nodeModuleNameResolverWorker = (
     .pipe(Option.getOrElse(() => toResolutionResult(result, alternateResult)));
 };
 
-const resolveNestedModule = (state: ResolutionState, nested: NestedResolution): ResolutionResult =>
-  nodeModuleNameResolverWorker(nestedRequest(state, nested), nestedContext(state));
+const resolveNestedModule: {
+  (nested: NestedResolution): (state: ResolutionState) => ResolutionResult;
+  (state: ResolutionState, nested: NestedResolution): ResolutionResult;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (state: ResolutionState, nested: NestedResolution): ResolutionResult =>
+    nodeModuleNameResolverWorker(nestedRequest(state, nested), nestedContext(state)),
+);
 
 const extensionsFor = (options: ResolverOptions): Extensions => {
   if (options.noDtsResolution) {
@@ -142,18 +154,24 @@ const conditionsFor = (request: DirectoryRequest): Option.Option<readonly string
   return request.mode.pipe(Option.map((mode) => getConditions(request.options, Option.some(mode))));
 };
 
-const resolveInDirectory = (request: DirectoryRequest, context: WorkerContext): ResolutionResult =>
-  nodeModuleNameResolverWorker(
-    {
-      features: featuresFor(request),
-      moduleName: request.moduleName,
-      containingDirectory: request.containingDirectory,
-      options: request.options,
-      extensions: extensionsFor(request.options),
-      conditions: conditionsFor(request),
-    },
-    context,
-  );
+const resolveInDirectory: {
+  (context: WorkerContext): (request: DirectoryRequest) => ResolutionResult;
+  (request: DirectoryRequest, context: WorkerContext): ResolutionResult;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (request: DirectoryRequest, context: WorkerContext): ResolutionResult =>
+    nodeModuleNameResolverWorker(
+      {
+        features: featuresFor(request),
+        moduleName: request.moduleName,
+        containingDirectory: request.containingDirectory,
+        options: request.options,
+        extensions: extensionsFor(request.options),
+        conditions: conditionsFor(request),
+      },
+      context,
+    ),
+);
 
 const resolveUncached = (
   request: ResolveModuleNameRequest,
@@ -216,17 +234,20 @@ const reuseCachedWithTrace = (
   );
 };
 
-const resolveModuleName = (
-  request: ResolveModuleNameRequest,
-  context: WorkerContext,
-): ResolutionResult => {
-  traceMessage(context, Messages.resolvingModule, request.moduleName, request.containingFile);
-  const result = reuseCachedWithTrace(request, context).pipe(
-    Option.getOrElse(() => resolveUncached(request, context)),
-  );
-  traceOutcome(request.moduleName, result, context.trace);
-  return result;
-};
+const resolveModuleName: {
+  (context: WorkerContext): (request: ResolveModuleNameRequest) => ResolutionResult;
+  (request: ResolveModuleNameRequest, context: WorkerContext): ResolutionResult;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (request: ResolveModuleNameRequest, context: WorkerContext): ResolutionResult => {
+    traceMessage(context, Messages.resolvingModule, request.moduleName, request.containingFile);
+    const result = reuseCachedWithTrace(request, context).pipe(
+      Option.getOrElse(() => resolveUncached(request, context)),
+    );
+    traceOutcome(request.moduleName, result, context.trace);
+    return result;
+  },
+);
 
 export { resolveInDirectory, resolveModuleName, resolveNestedModule };
 export type { DirectoryRequest, ResolveModuleNameRequest };

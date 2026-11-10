@@ -1,4 +1,4 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, Record as Rec } from "effect";
 import { ScriptKind } from "typescript/ast";
 import type { Node, SourceFile } from "typescript/ast";
 import { ModuleKind, ModuleResolutionKind } from "typescript/sync";
@@ -29,7 +29,7 @@ const MODULE_NAMES: ReadonlyMap<number, ModeOptions["module"]> = new Map([
   [ModuleKind.NodeNext, "Node16"],
 ]);
 
-const SCRIPT_KINDS: ReadonlySet<unknown> = new Set(Object.values(ScriptKind));
+const SCRIPT_KINDS: ReadonlySet<unknown> = new Set(Rec.values(ScriptKind));
 
 const resolutionNameOf = (kind: number | undefined): ModeOptions["moduleResolution"] =>
   Option.fromNullishOr(kind).pipe(

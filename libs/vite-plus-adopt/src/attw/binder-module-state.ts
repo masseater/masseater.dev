@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Predicate } from "effect";
+import { Array as Arr, Option, Predicate, pipe } from "effect";
 import { ModifierFlags } from "typescript/ast";
 import type { ExportDeclaration, ExportSpecifier, NamedExports, Node } from "typescript/ast";
 import {
@@ -60,8 +60,9 @@ const statementsOf = (node: Node): readonly Node[] => {
 
 const aliasTargetState = (specifier: ExportSpecifier, stateOf: StateOf): ModuleInstanceState => {
   const name = Option.getOrElse(nameText(specifier.propertyName ?? specifier.name), () => "");
-  const matching = statementsOf(specifier.parent.parent.parent).filter((statement) =>
-    declaresName(statement, name),
+  const matching = pipe(
+    statementsOf(specifier.parent.parent.parent),
+    Arr.filter((statement) => declaresName(statement, name)),
   );
   if (!Arr.isReadonlyArrayNonEmpty(matching)) {
     return INSTANTIATED;
@@ -110,7 +111,7 @@ const DECLARATION_STATES: readonly (readonly [
 ];
 
 const declarationState = (node: Node): Option.Option<ModuleInstanceState> =>
-  Option.fromNullishOr(DECLARATION_STATES.find(([matches]) => matches(node))).pipe(
+  Arr.findFirst(DECLARATION_STATES, ([matches]) => matches(node)).pipe(
     Option.map(([, state]) => state),
   );
 

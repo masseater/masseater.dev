@@ -1,8 +1,9 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, Option, Order } from "effect";
+import { Array as Arr, Effect, Option, Order, String as Str, pipe } from "effect";
 
+import { toJson } from "#src/runtime.ts";
 import type { RuleContext } from "#src/types.ts";
 
 import {
@@ -17,10 +18,10 @@ import {
   questionCount,
   withMock,
 } from "./fixtures.ts";
-import { MockOpenRouterLayer, loggedRequests } from "./mock-openrouter.ts";
+import { loggedRequests } from "./mock-openrouter.ts";
 import type { LoggedRequest } from "./mock-openrouter.ts";
 import { decisionLines, mockEnv } from "./oxlint.ts";
-import type { Services } from "./oxlint.ts";
+import type { Services, TestError } from "./oxlint.ts";
 
 const ONE = 1;
 const TWO = 2;
@@ -39,20 +40,31 @@ const askedTwins = Effect.gen(function* test() {
     env,
   });
   strictEqual(run.status, PASSED, outputOf(run));
-  const counts = (yield* loggedRequests).map((request) => questionCount(request));
+  const requests = yield* loggedRequests;
+  const counts = pipe(
+    requests,
+    Arr.map((request) => questionCount(request)),
+  );
   deepStrictEqual(Arr.sort(counts, Order.Number), [TWO, THREE]);
 });
 
 const uncapped = Effect.gen(function* test() {
-  const rows = Arr.replicate('console.log("row", user.email, user.phone);', ROWS).join("\n");
+  const rows = pipe(
+    Arr.replicate('console.log("row", user.email, user.phone);', ROWS),
+    Arr.join("\n"),
+  );
   const env = yield* mockEnv("test-key");
   const run = yield* lintProject({
     files: { "rows.js": `${rows}\n` },
     options: { rules: [callRule] },
     env,
   });
+  const requests = yield* loggedRequests;
   deepStrictEqual(
-    (yield* loggedRequests).map((request) => questionCount(request)),
+    pipe(
+      requests,
+      Arr.map((request) => questionCount(request)),
+    ),
     [ROWS],
   );
   strictEqual(decisionLines(run).length, ROWS);
@@ -60,9 +72,10 @@ const uncapped = Effect.gen(function* test() {
 });
 
 const sortedModels = (requests: readonly LoggedRequest[]): readonly string[] =>
-  Arr.sort(
-    requests.map((request) => modelOf(request)),
-    Order.String,
+  pipe(
+    requests,
+    Arr.map((request) => modelOf(request)),
+    (sorted) => Arr.sort(sorted, Order.String),
   );
 
 const perModel = Effect.gen(function* test() {
@@ -72,9 +85,13 @@ const perModel = Effect.gen(function* test() {
     options: { model: ["openrouter/first", "openrouter/second"], rules: [callRule] },
     env,
   });
-  deepStrictEqual(sortedModels(yield* loggedRequests), ["first", "second"]);
+  const requests = yield* loggedRequests;
+  deepStrictEqual(sortedModels(requests), ["first", "second"]);
   deepStrictEqual(
-    decisionLines(run).map((line) => line.replace(/ answered.*/u, "")),
+    pipe(
+      decisionLines(run),
+      Arr.map((line) => Str.replace(/ answered.*/u, "")(line)),
+    ),
     [
       "log.js:1:1: [any-call] openrouter/mock-decider",
       "log.js:1:1: [any-call] openrouter/mock-second",
@@ -89,7 +106,8 @@ const ruleModel = Effect.gen(function* test() {
     options: { model: "openrouter/first", rules: [{ ...callRule, model: "openrouter/second" }] },
     env,
   });
-  deepStrictEqual(sortedModels(yield* loggedRequests), ["second"]);
+  const requests = yield* loggedRequests;
+  deepStrictEqual(sortedModels(requests), ["second"]);
 });
 
 const textState = Effect.gen(function* test() {
@@ -99,8 +117,12 @@ const textState = Effect.gen(function* test() {
     options: { model: RESPAN, rules: [callRule] },
     env,
   });
+  const requests = yield* loggedRequests;
   deepStrictEqual(
-    (yield* loggedRequests).map(({ sentState }) => sentState),
+    pipe(
+      requests,
+      Arr.map(({ sentState }) => sentState),
+    ),
     ["state.snippets.s0:\nconsole.log(user.email, user.phone)"],
   );
   strictEqual(decisionLines(run).length, ONE);
@@ -113,14 +135,16 @@ const textStatePerSnippet = Effect.gen(function* test() {
     options: { model: RESPAN, rules: [callRule] },
     env,
   });
+  const requests = yield* loggedRequests;
   deepStrictEqual(
-    Arr.sort(
-      (yield* loggedRequests).map(({ sentState }) => JSON.stringify(sentState)),
-      Order.String,
+    pipe(
+      requests,
+      Arr.map(({ sentState }) => toJson(sentState)),
+      (sorted) => Arr.sort(sorted, Order.String),
     ),
     [
-      JSON.stringify("state.snippets.s0:\nconsole.log(user.email, user.phone)"),
-      JSON.stringify('state.snippets.s1:\nconsole.log("done")'),
+      toJson("state.snippets.s0:\nconsole.log(user.email, user.phone)"),
+      toJson('state.snippets.s1:\nconsole.log("done")'),
     ],
   );
   strictEqual(decisionLines(run).length, ONE);
@@ -140,8 +164,12 @@ const renamedEnv = Effect.gen(function* test() {
     options,
     env: { TEAM_OPENROUTER_KEY: String(key), TEAM_OPENROUTER_URL: String(url) },
   });
+  const requests = yield* loggedRequests;
   deepStrictEqual(
-    (yield* loggedRequests).map(({ authorization }) => authorization),
+    pipe(
+      requests,
+      Arr.map(({ authorization }) => authorization),
+    ),
     ["Bearer team-key"],
   );
   strictEqual(decisionLines(run).length, ONE);
@@ -150,34 +178,44 @@ const renamedEnv = Effect.gen(function* test() {
 const contextFor = (
   context: RuleContext,
   source = AROUND,
-): Effect.Effect<Option.Option<string>, unknown, Services> =>
-  Effect.gen(function* ask() {
-    const env = yield* mockEnv("test-key");
-    yield* lintProject({
-      files: { "log.js": source },
-      options: { rules: [{ ...callRule, context }] },
-      env,
-    });
-    const requests = yield* loggedRequests;
-    return Arr.head(requests).pipe(
-      Option.flatMap(({ body }) => Option.fromUndefinedOr(body.state.contexts)),
-      Option.flatMap((contexts) => Option.fromUndefinedOr(contexts["s0"])),
-    );
-  }).pipe(Effect.provide(MockOpenRouterLayer));
+): Effect.Effect<Option.Option<string>, TestError, Services> =>
+  withMock(
+    Effect.gen(function* ask() {
+      const env = yield* mockEnv("test-key");
+      yield* lintProject({
+        files: { "log.js": source },
+        options: { rules: [{ ...callRule, context }] },
+        env,
+      });
+      const requests = yield* loggedRequests;
+      return Arr.head(requests).pipe(
+        Option.flatMap(({ body }) => Option.fromUndefinedOr(body.state.contexts)),
+        Option.flatMap((contexts) => Option.fromUndefinedOr(contexts["s0"])),
+      );
+    }),
+  );
 
 const contexts = Effect.gen(function* test() {
-  deepStrictEqual(yield* contextFor({ scope: "node" }), Option.none());
+  const context = yield* contextFor({ scope: "node" });
+  deepStrictEqual(context, Option.none());
+  const context2 = yield* contextFor({ scope: "lines", before: ONE, after: ONE });
   deepStrictEqual(
-    yield* contextFor({ scope: "lines", before: ONE, after: ONE }),
+    context2,
     Option.some("L2| function handler() {\nL3|   console.log(user.email, user.phone);\nL4| }"),
   );
+  const context3 = yield* contextFor({ scope: "enclosing", kind: "function" });
   deepStrictEqual(
-    yield* contextFor({ scope: "enclosing", kind: "function" }),
+    context3,
     Option.some("function handler() {\n  console.log(user.email, user.phone);\n}"),
   );
-  deepStrictEqual(yield* contextFor({ scope: "file" }), Option.some(AROUND));
+  const context4 = yield* contextFor({ scope: "file" });
+  deepStrictEqual(context4, Option.some(AROUND));
+  const context5 = yield* contextFor(
+    { scope: "lines", before: ONE, after: ONE },
+    Str.replaceAll("\n", "\r")(AROUND),
+  );
   deepStrictEqual(
-    yield* contextFor({ scope: "lines", before: ONE, after: ONE }, AROUND.replaceAll("\n", "\r")),
+    context5,
     Option.some("L2| function handler() {\nL3|   console.log(user.email, user.phone);\nL4| }"),
   );
 });
@@ -189,8 +227,12 @@ const attributed = Effect.gen(function* test() {
     options: { rules: [callRule] },
     env: { ...env, GITHUB_ACTIONS: "true", GITHUB_REPOSITORY: "acme/app" },
   });
+  const requests = yield* loggedRequests;
   deepStrictEqual(
-    (yield* loggedRequests).map(({ app }) => app),
+    pipe(
+      requests,
+      Arr.map(({ app }) => app),
+    ),
     [
       {
         referer: "https://github.com/acme/app/oxlint-plugin-decision/github-actions",
@@ -212,8 +254,12 @@ const fromRemote = Effect.gen(function* test() {
     options: { rules: [callRule] },
     env: { ...env, CLAUDECODE: "1" },
   });
+  const requests = yield* loggedRequests;
   deepStrictEqual(
-    (yield* loggedRequests).map(({ app }) => app.title),
+    pipe(
+      requests,
+      Arr.map(({ app }) => app.title),
+    ),
     ["acme/tool claude-code oxlint-plugin-decision"],
   );
 });

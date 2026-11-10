@@ -77,7 +77,7 @@ const isRangedNode = (value: unknown): value is MappedNode =>
   Predicate.hasProperty(value, "type") &&
   Predicate.isString(value.type) &&
   Predicate.hasProperty(value, "range") &&
-  Array.isArray(value.range);
+  Arr.isArray(value.range);
 
 const childNodesOf = (node: MappedNode, keys: readonly string[]): readonly MappedNode[] =>
   pipe(

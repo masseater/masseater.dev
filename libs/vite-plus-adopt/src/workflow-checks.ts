@@ -16,7 +16,9 @@ const onWorkflows =
       if (!(yield* fs.exists(path.join(root, WORKFLOWS)))) {
         return Option.none();
       }
-      return Option.some(yield* runVendored(binary, { root, args: yield* args }));
+      const resolvedArgs = yield* args;
+      const ran = yield* runVendored(binary, { root, args: resolvedArgs });
+      return Option.some(ran);
     });
 
 const actionlintCheck = onWorkflows(ACTIONLINT, Effect.succeed([]));
@@ -34,4 +36,5 @@ const zizmorArgs = Effect.gen(function* zizmorArgs() {
 
 const zizmorCheck = onWorkflows(ZIZMOR, zizmorArgs);
 
+/** @internal */
 export { actionlintCheck, zizmorCheck };

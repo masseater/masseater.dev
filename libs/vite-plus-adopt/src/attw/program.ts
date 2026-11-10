@@ -1,4 +1,4 @@
-import { Array as Arr, Option } from "effect";
+import { Array as Arr, Option, String as Str, pipe, Function as Fn } from "effect";
 import type { SourceFile } from "typescript/ast";
 
 import { fileExtensionIsOneOf } from "./extensions.ts";
@@ -16,6 +16,8 @@ import type {
 import { processImportedModules } from "./program-imports.ts";
 import { modeFromNumber } from "./resolution-mode-numbers.ts";
 import { setPackageJsonScope } from "./source-file.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
 
 interface ReferenceWalk {
   readonly build: ProgramBuild;
@@ -44,14 +46,17 @@ const processSourceFile = (
   include: IncludeSourceFile,
 ): void => {
   const { fileName } = request;
-  if (getBaseFileName(fileName).includes(".")) {
-    if (fileExtensionIsOneOf(fileName.toLowerCase(), supportedExtensions(build.options))) {
+  if (Str.includes(".")(getBaseFileName(fileName))) {
+    if (fileExtensionIsOneOf(Str.toLowerCase(fileName), supportedExtensions(build.options))) {
       include(build, request);
     }
     return;
   }
-  IMPLICIT_EXTENSIONS.some((extension) =>
-    Option.isSome(include(build, { ...request, fileName: `${fileName}${extension}` })),
+  pipe(
+    IMPLICIT_EXTENSIONS,
+    Arr.some((extension) =>
+      Option.isSome(include(build, { ...request, fileName: `${fileName}${extension}` })),
+    ),
   );
 };
 
@@ -89,7 +94,7 @@ const processTypeReferenceDirectives = (walk: ReferenceWalk): void => {
 const processLibReferenceDirectives = (walk: ReferenceWalk): void => {
   const libDirectory = getDirectoryPath(walk.build.host.defaultLibFileName);
   for (const reference of walk.sourceFile.libReferenceDirectives) {
-    const fileName = combinePaths(libDirectory, `lib.${reference.fileName.toLowerCase()}.d.ts`);
+    const fileName = combinePaths(libDirectory, `lib.${Str.toLowerCase(reference.fileName)}.d.ts`);
     processSourceFile(
       walk.build,
       { fileName, isDefaultLib: true, packageId: Option.none() },
@@ -190,29 +195,31 @@ const includeSourceFile: IncludeSourceFile = (build, request) => {
   );
 };
 
-const createProgramFiles = (
-  rootNames: readonly string[],
-  options: ProgramOptions,
-  host: ProgramHost,
-): ProgramFiles => {
-  const build = createProgramBuild(host, options);
-  for (const rootName of rootNames) {
-    const request = {
-      fileName: normalizePath(rootName),
-      isDefaultLib: false,
-      packageId: Option.none(),
-    };
-    processSourceFile(build, request, includeSourceFile);
-  }
-  if (rootNames.length > NO_ROOTS) {
-    const request = {
-      fileName: host.defaultLibFileName,
-      isDefaultLib: true,
-      packageId: Option.none(),
-    };
-    processSourceFile(build, request, includeSourceFile);
-  }
-  return build.registry.result();
-};
+const createProgramFiles: {
+  (options: ProgramOptions, host: ProgramHost): (rootNames: readonly string[]) => ProgramFiles;
+  (rootNames: readonly string[], options: ProgramOptions, host: ProgramHost): ProgramFiles;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (rootNames: readonly string[], options: ProgramOptions, host: ProgramHost): ProgramFiles => {
+    const build = createProgramBuild(host, options);
+    for (const rootName of rootNames) {
+      const request = {
+        fileName: normalizePath(rootName),
+        isDefaultLib: false,
+        packageId: Option.none(),
+      };
+      processSourceFile(build, request, includeSourceFile);
+    }
+    if (rootNames.length > NO_ROOTS) {
+      const request = {
+        fileName: host.defaultLibFileName,
+        isDefaultLib: true,
+        packageId: Option.none(),
+      };
+      processSourceFile(build, request, includeSourceFile);
+    }
+    return build.registry.result();
+  },
+);
 
 export { createProgramFiles };

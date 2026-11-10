@@ -1,7 +1,7 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, Option, Order, Schema } from "effect";
+import { Array as Arr, Effect, Option, Order, Schema, String as Str, pipe } from "effect";
 
 import type { DecisionPluginSetup } from "#src/types.ts";
 
@@ -22,20 +22,20 @@ const LEAKS = {
 
 const NO_TIME = 0;
 
-const Probabilities = Schema.Record(Schema.String, Schema.Number);
+const Probabilities = Schema.Record(Schema.String, Schema.Finite);
 
 const ExplainedLine = Schema.Struct({
   file: Schema.String,
-  line: Schema.Number,
+  line: Schema.Finite,
   rule: Schema.String,
   model: Schema.String,
   cached: Schema.optionalKey(Schema.Boolean),
   durationMs: Schema.Int.check(Schema.isGreaterThanOrEqualTo(NO_TIME)),
-  state: Schema.Struct({ chars: Schema.Number, head: Schema.String }),
+  state: Schema.Struct({ chars: Schema.Finite, head: Schema.String }),
   questions: Schema.Array(
     Schema.Struct({ id: Schema.String, question: Schema.String, probabilities: Probabilities }),
   ),
-  verdict: Schema.optionalKey(Schema.Struct({ answer: Schema.String, probability: Schema.Number })),
+  verdict: Schema.optionalKey(Schema.Struct({ answer: Schema.String, probability: Schema.Finite })),
   reported: Schema.Boolean,
 });
 
@@ -44,7 +44,10 @@ type Explained = typeof ExplainedLine.Type;
 const decodeLine = Schema.decodeUnknownOption(Schema.fromJsonString(ExplainedLine));
 
 const recordsOf = (stderr: string): readonly Explained[] =>
-  stderr.split("\n").flatMap((line) => Option.toArray(decodeLine(line)));
+  pipe(
+    Str.split(stderr, "\n"),
+    Arr.flatMap((line) => Option.toArray(decodeLine(line))),
+  );
 
 const recordAt = (records: readonly Explained[], line: number): Explained =>
   Option.getOrThrow(Arr.findFirst(records, (record) => record.line === line));
@@ -56,7 +59,7 @@ const silentByDefault = Effect.gen(function* test() {
     options: { rules: [callRule] },
     env,
   });
-  strictEqual(run.stderr.includes("explain"), false, run.stderr);
+  strictEqual(Str.includes("explain")(run.stderr), false, run.stderr);
   strictEqual(decisionLines(run).length, FIRST_LINE);
 });
 
@@ -88,14 +91,21 @@ const jsonFromEnv = Effect.gen(function* test() {
   const { questions, state, durationMs, ...leaks } = recordAt(records, LEAKS_LINE);
   strictEqual(durationMs >= NO_TIME, true);
   deepStrictEqual(
-    questions.map(({ id, probabilities }) => [id, probabilities]),
+    pipe(
+      questions,
+      Arr.map(({ id, probabilities }) => [id, probabilities]),
+    ),
     [
       ["s1__safe", { yes: 0.3 }],
       ["s1__leaks", { yes: 0.9 }],
     ],
   );
   assertInclude(
-    questions.map(({ question }) => question).join("\n"),
+    pipe(
+      questions,
+      Arr.map(({ question }) => question),
+      Arr.join("\n"),
+    ),
     'Does the label "safe" (Logs nothing personal) fit?',
   );
   assertInclude(state.head, HEAD);
@@ -124,9 +134,10 @@ const modelPerRule = Effect.gen(function* test() {
     env,
   });
   deepStrictEqual(
-    Arr.sort(
-      recordsOf(run.stderr).map(({ rule, model }) => `${rule} ${model}`),
-      Order.String,
+    pipe(
+      recordsOf(run.stderr),
+      Arr.map(({ rule, model }) => `${rule} ${model}`),
+      (sorted) => Arr.sort(sorted, Order.String),
     ),
     ["any-call openrouter/first", "other-call openrouter/second"],
   );
@@ -139,7 +150,7 @@ const cachedOnSecondRun = Effect.scoped(
     const env = yield* mockEnv("test-key");
     const cwd = yield* writeProject({
       "log.js": SOURCE,
-      ...(yield* projectFilesFor(explainSetup)),
+      ...(yield* projectFilesFor(explainSetup, {})),
     });
     const lint = runOxlint({
       cwd,

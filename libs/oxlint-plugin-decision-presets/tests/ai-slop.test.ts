@@ -1,7 +1,17 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, FileSystem, Option, Order } from "effect";
+import {
+  Array as Arr,
+  Effect,
+  FileSystem,
+  Option,
+  Order,
+  Record as Rec,
+  String as Str,
+  pipe,
+} from "effect";
+import type { PlatformError } from "effect/PlatformError";
 
 import aiSlopPlugin, { aiSlopRules } from "#src/ai-slop.ts";
 
@@ -14,6 +24,7 @@ import {
   outputOf,
   oxlint,
   tempProject,
+  toJson,
 } from "./oxlint.ts";
 import type { Services } from "./oxlint.ts";
 
@@ -22,8 +33,8 @@ const AI_SLOP = aiSlopPlugin.meta.name;
 const EXAMPLES = ["fail.ts", "pass.ts"] as const;
 
 const alwaysYes = (core: string, entry: string): string => `
-import { createDecisionPlugin, defineProvider } from ${JSON.stringify(core)};
-import { aiSlopRules } from ${JSON.stringify(entry)};
+import { createDecisionPlugin, defineProvider } from ${toJson(core)};
+import { aiSlopRules } from ${toJson(entry)};
 
 const decide = ({ request }) => ({
   ok: true,
@@ -36,7 +47,7 @@ const decide = ({ request }) => ({
 });
 
 export default createDecisionPlugin({
-  name: ${JSON.stringify(AI_SLOP)},
+  name: ${toJson(AI_SLOP)},
   rules: aiSlopRules,
   providers: [defineProvider({ name: "fake", requiredEnv: [], decide })],
 });
@@ -68,10 +79,14 @@ const ASKED: Readonly<Record<string, readonly string[]>> = {
   ],
   "redundant-guard": ["pass.ts:8", "pass.ts:38", "fail.ts:4", "fail.ts:66"],
   "reinvents-builtin": [
-    ...["4", "8", "16", "20", "24", "28", "34", "38", "51", "56", "60", "64", "68"].map(
-      (line) => `pass.ts:${line}`,
+    ...pipe(
+      ["4", "8", "16", "20", "24", "28", "34", "38", "51", "56", "60", "64", "68"],
+      Arr.map((line) => `pass.ts:${line}`),
     ),
-    ...["4", "14", "19", "23", "27", "39", "51", "55", "60", "66"].map((line) => `fail.ts:${line}`),
+    ...pipe(
+      ["4", "14", "19", "23", "27", "39", "51", "55", "60", "66"],
+      Arr.map((line) => `fail.ts:${line}`),
+    ),
   ],
   "suppression-instead-of-fix": ["pass.ts:51", "fail.ts:60"],
 };
@@ -79,7 +94,12 @@ const ASKED: Readonly<Record<string, readonly string[]>> = {
 const sorted = (
   byId: Readonly<Record<string, readonly string[]>>,
 ): Readonly<Record<string, readonly string[]>> =>
-  Object.fromEntries(Object.entries(byId).map(([id, at]) => [id, Arr.sort(at, Order.String)]));
+  Rec.fromEntries(
+    pipe(
+      Rec.toEntries(byId),
+      Arr.map(([id, at]) => [id, Arr.sort(at, Order.String)]),
+    ),
+  );
 
 const EXPECTED = sorted(ASKED);
 
@@ -92,19 +112,34 @@ const reportOf = (line: string): Option.Option<readonly [string, string]> =>
   );
 
 const byRule = (stdout: string): Readonly<Record<string, readonly string[]>> => {
-  const reports = Arr.getSomes(stdout.split("\n").map((line) => reportOf(line)));
-  const grouped = Arr.groupBy(reports, ([id]) => id.replace(`${AI_SLOP}/`, ""));
-  return Object.fromEntries(
-    Object.entries(grouped).map(([id, found]) => [id, found.map(([, at]) => at)]),
+  const reports = Arr.getSomes(
+    pipe(
+      Str.split(stdout, "\n"),
+      Arr.map((line) => reportOf(line)),
+    ),
+  );
+  const grouped = Arr.groupBy(reports, ([id]) => Str.replace(`${AI_SLOP}/`, "")(id));
+  return Rec.fromEntries(
+    pipe(
+      Rec.toEntries(grouped),
+      Arr.map(([id, found]) => [
+        id,
+        pipe(
+          found,
+          Arr.map(([, at]) => at),
+        ),
+      ]),
+    ),
   );
 };
 
 const exampleFile = (
   name: string,
-): Effect.Effect<string, unknown, FileSystem.FileSystem | Services> =>
+): Effect.Effect<string, PlatformError, FileSystem.FileSystem | Services> =>
   Effect.gen(function* read() {
     const fs = yield* FileSystem.FileSystem;
-    return yield* fs.readFileString(yield* fromRoot("example", "ai-slop", name));
+    const file = yield* fromRoot("example", "ai-slop", name);
+    return yield* fs.readFileString(file);
   });
 
 const askedWhere = Effect.scoped(

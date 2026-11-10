@@ -1,26 +1,28 @@
 import type { SelectedNode } from "@r_masseater/oxlint-plugin-decision";
-import { Array as Arr, Match, Option, Predicate } from "effect";
+import { Array as Arr, Match, Option, Predicate, String as Str, pipe } from "effect";
 
-import { containing, identifierOf, ofType } from "./select.ts";
-import type { NodeTest, Select } from "./select.ts";
+import { containing, dualSelect, identifierOf, ofType } from "./select.ts";
+import type { DualSelect, NodeTest, Select } from "./select.ts";
 
 const WORD_STARTS: ReadonlySet<string> = new Set([
   "",
-  ..."_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+  ...Str.split("_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""),
 ]);
+
+const NEXT_CHARACTER = 1;
 
 const startsWithWord =
   (word: string): Predicate.Predicate<string> =>
   (name) =>
     Predicate.and(
-      (text: string) => text.startsWith(word),
-      (text: string) => WORD_STARTS.has(text.charAt(word.length)),
+      (text: string) => Str.startsWith(word)(text),
+      (text: string) => WORD_STARTS.has(Str.slice(word.length, word.length + NEXT_CHARACTER)(text)),
     )(name);
 
 const endsWith =
   (word: string): Predicate.Predicate<string> =>
   (name) =>
-    name.endsWith(word);
+    Str.endsWith(word)(name);
 
 interface NameWords {
   readonly prefixes: readonly string[];
@@ -29,12 +31,21 @@ interface NameWords {
 
 const namedLike = ({ prefixes, suffixes = [] }: NameWords): Select => {
   const matchers = [
-    ...prefixes.map((word) => startsWithWord(word)),
-    ...suffixes.map((word) => endsWith(word)),
+    ...pipe(
+      prefixes,
+      Arr.map((word) => startsWithWord(word)),
+    ),
+    ...pipe(
+      suffixes,
+      Arr.map((word) => endsWith(word)),
+    ),
   ];
   return (_node, { name }) =>
     Option.exists(Option.fromUndefinedOr(name), (found) =>
-      matchers.some((matches) => matches(found)),
+      pipe(
+        matchers,
+        Arr.some((matches) => matches(found)),
+      ),
     );
 };
 
@@ -76,7 +87,7 @@ const lastNameOf = (node: SelectedNode): Option.Option<string> =>
   );
 
 const isLogger = (name: string): boolean =>
-  Arr.some(["console", "log"], (word) => name.toLowerCase().includes(word));
+  Arr.some(["console", "log"], (word) => Str.includes(word)(Str.toLowerCase(name)));
 
 interface LogCall {
   readonly level: Option.Option<string>;
@@ -91,17 +102,18 @@ const logCallOf = (callee: SelectedNode): Option.Option<LogCall> =>
     Match.orElse(() => Option.none()),
   );
 
-const isLogCall: Select = (node) =>
+const isLogCall: DualSelect = dualSelect((node) =>
   Option.exists(Option.flatMap(calleeOf(node), logCallOf), ({ level, logger }) =>
     Predicate.and(
       () => Option.exists(level, (found) => LOG_LEVELS.has(found)),
       () => Option.exists(logger, isLogger),
     )(node),
-  );
+  ),
+);
 
 const isCatchName = (name: SelectedNode): boolean =>
   Match.value(name).pipe(
-    Match.when({ type: "Identifier" }, (identifier) => identifier.name.startsWith("catch")),
+    Match.when({ type: "Identifier" }, (identifier) => Str.startsWith("catch")(identifier.name)),
     Match.orElse(() => false),
   );
 
@@ -115,21 +127,27 @@ const isCatch: NodeTest = (node) =>
     Match.orElse(() => false),
   );
 
-const hasCatch: Select = containing(isCatch);
+const hasCatch: DualSelect = dualSelect(containing(isCatch));
 
 const hasCallbackArgument: Select = (node) =>
   Match.value(node).pipe(
     Match.when({ type: "CallExpression" }, (call) =>
-      call.arguments.some((argument) =>
-        ofType("ArrowFunctionExpression", "FunctionExpression")(argument),
+      pipe(
+        call.arguments,
+        Arr.some((argument) => ofType("ArrowFunctionExpression", "FunctionExpression")(argument)),
       ),
     ),
     Match.orElse(() => false),
   );
 
-const isTestCall: Select = (node, match) =>
-  [callingAny(["it", "test"]), hasCallbackArgument].every((select) => select(node, match));
-const isDescribeCall = callingAny(["describe"]);
+const isTestCall: DualSelect = dualSelect((node, match) =>
+  pipe(
+    [callingAny(["it", "test"]), hasCallbackArgument],
+    Arr.every((select) => select(node, match)),
+  ),
+);
+
+const isDescribeCall: DualSelect = dualSelect(callingAny(["describe"]));
 
 export { hasCatch, isDescribeCall, isLogCall, isTestCall, namedLike };
 export type { NameWords };

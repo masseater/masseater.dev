@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Array as Arr, pipe } from "effect";
 import { escapeLeadingUnderscores as escapeSymbolName } from "typescript/ast";
 import { ObjectFlags, SignatureKind, SymbolFlags, TypeFlags, isObjectType } from "typescript/sync";
 import type { Checker, Symbol as CheckerSymbol, Type } from "typescript/sync";
@@ -69,8 +69,16 @@ const expandosOf = (
   if (isCheckerSymbol(symbol)) {
     return [];
   }
-  const names = new Set(properties.map((property) => property.name));
-  return boundExpandoExports(symbol).filter((member) => !names.has(member.name));
+  const names = new Set(
+    pipe(
+      properties,
+      Arr.map((property) => property.name),
+    ),
+  );
+  return pipe(
+    boundExpandoExports(symbol),
+    Arr.filter((member) => !names.has(member.name)),
+  );
 };
 
 const propertiesAsExports = (
@@ -100,9 +108,12 @@ const exportsAndPropertiesOf = (
 };
 
 const aliasHasTypeOnlyDeclaration = (session: CheckerSession, symbol: CheckerSymbol): boolean =>
-  symbol.declarations.some((handle) =>
-    Option.fromNullishOr(handle.resolve(session.project)).pipe(
-      Option.exists((declaration) => isTypeOnlyImportOrExportDeclaration(declaration)),
+  pipe(
+    symbol.declarations,
+    Arr.some((handle) =>
+      Option.fromNullishOr(handle.resolve(session.project)).pipe(
+        Option.exists((declaration) => isTypeOnlyImportOrExportDeclaration(declaration)),
+      ),
     ),
   );
 

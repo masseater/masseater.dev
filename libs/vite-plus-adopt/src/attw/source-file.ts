@@ -1,9 +1,11 @@
-import { Option } from "effect";
+import { Option, Function as Fn } from "effect";
 import { NodeFlags, ScriptKind } from "typescript/ast";
 import type { Node, SourceFile } from "typescript/ast";
 
 import { hasFlag } from "./flags.ts";
 import type { PackageJsonInfo, ResolutionMode } from "./resolution-types.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface FileInfo {
   readonly impliedNodeFormat: Option.Option<ResolutionMode>;
@@ -20,20 +22,23 @@ const UNSET = Object.freeze({
   enumerable: true,
 });
 
-const attachFileInfo = (
-  sourceFile: SourceFile,
-  impliedNodeFormat: Option.Option<ResolutionMode>,
-): SourceFile => {
-  infos.set(sourceFile, {
-    impliedNodeFormat,
-    packageJsonScope: Option.none(),
-    imports: sourceFile.imports,
-    moduleAugmentations: sourceFile.moduleAugmentations,
-  });
-  Object.defineProperty(sourceFile, "imports", UNSET);
-  Object.defineProperty(sourceFile, "moduleAugmentations", UNSET);
-  return sourceFile;
-};
+const attachFileInfo: {
+  (impliedNodeFormat: Option.Option<ResolutionMode>): (sourceFile: SourceFile) => SourceFile;
+  (sourceFile: SourceFile, impliedNodeFormat: Option.Option<ResolutionMode>): SourceFile;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (sourceFile: SourceFile, impliedNodeFormat: Option.Option<ResolutionMode>): SourceFile => {
+    infos.set(sourceFile, {
+      impliedNodeFormat,
+      packageJsonScope: Option.none(),
+      imports: sourceFile.imports,
+      moduleAugmentations: sourceFile.moduleAugmentations,
+    });
+    Object.defineProperty(sourceFile, "imports", UNSET);
+    Object.defineProperty(sourceFile, "moduleAugmentations", UNSET);
+    return sourceFile;
+  },
+);
 
 const infoOf = (sourceFile: SourceFile): Option.Option<FileInfo> =>
   Option.fromNullishOr(infos.get(sourceFile));
@@ -44,14 +49,17 @@ const impliedNodeFormatOf = (sourceFile: SourceFile): Option.Option<ResolutionMo
 const packageJsonScopeOf = (sourceFile: SourceFile): Option.Option<PackageJsonInfo> =>
   Option.flatMap(infoOf(sourceFile), (info) => info.packageJsonScope);
 
-const setPackageJsonScope = (
-  sourceFile: SourceFile,
-  scope: Option.Option<PackageJsonInfo>,
-): void => {
-  Option.map(infoOf(sourceFile), (info) =>
-    infos.set(sourceFile, { ...info, packageJsonScope: scope }),
-  );
-};
+const setPackageJsonScope: {
+  (scope: Option.Option<PackageJsonInfo>): (sourceFile: SourceFile) => void;
+  (sourceFile: SourceFile, scope: Option.Option<PackageJsonInfo>): void;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (sourceFile: SourceFile, scope: Option.Option<PackageJsonInfo>): void => {
+    Option.map(infoOf(sourceFile), (info) =>
+      infos.set(sourceFile, { ...info, packageJsonScope: scope }),
+    );
+  },
+);
 
 const collectExternalModuleReferences = (sourceFile: SourceFile): void => {
   Option.map(infoOf(sourceFile), (info) => {

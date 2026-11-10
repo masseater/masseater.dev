@@ -13,4 +13,5 @@ type CommandServices =
 
 type CommandEffect = Effect.Effect<void, CommandError, CommandServices>;
 
+/** @internal */
 export type { CommandEffect, CommandError, CommandServices };

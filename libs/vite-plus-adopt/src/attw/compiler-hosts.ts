@@ -1,4 +1,4 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, Array as Arr, pipe, Function as Fn } from "effect";
 import { ModuleResolutionKind } from "typescript/sync";
 
 import { wrapHost } from "./compiler-host-wrapper.ts";
@@ -9,6 +9,9 @@ import { createHostWrapper } from "./host-wrapper.ts";
 import type { ResolutionKind } from "./resolution-types.ts";
 import { mount } from "./ts-api.ts";
 import type { MountedFileSystem } from "./ts-api.ts";
+
+const DATA_FIRST_ARITY = 2;
+const DATA_FIRST_ARITY_3 = 3;
 
 interface CompilerHosts {
   readonly node10: CompilerHostWrapper;
@@ -37,21 +40,34 @@ const mountFileSystem = (fs: PackageFileSystem, minimalLib: string): MountedFile
     listFiles: () => [LIB_FILE_NAME, ...fs.listFiles()],
   });
 
-const createCompilerHostWrapperWith = (
-  fs: PackageFileSystem,
-  moduleResolution: number,
-  minimalLib: string,
-): CompilerHostWrapper => {
-  const kind = RESOLUTION_KINDS_BY_OPTION.get(moduleResolution);
-  if (Predicate.isUndefined(kind)) {
-    throw new TypeError(`Unsupported module resolution kind: ${String(moduleResolution)}`);
-  }
-  return wrapHost(createHostWrapper({ fs, kind, minimalLib }), {
-    mounted: mountFileSystem(fs, minimalLib),
-  });
-};
+const createCompilerHostWrapperWith: {
+  (moduleResolution: number, minimalLib: string): (fs: PackageFileSystem) => CompilerHostWrapper;
+  (fs: PackageFileSystem, moduleResolution: number, minimalLib: string): CompilerHostWrapper;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (fs: PackageFileSystem, moduleResolution: number, minimalLib: string): CompilerHostWrapper => {
+    const kind = RESOLUTION_KINDS_BY_OPTION.get(moduleResolution);
+    if (Predicate.isUndefined(kind)) {
+      throw new TypeError(`Unsupported module resolution kind: ${String(moduleResolution)}`);
+    }
+    return wrapHost(createHostWrapper({ fs, kind, minimalLib }), {
+      mounted: mountFileSystem(fs, minimalLib),
+    });
+  },
+);
 
-const createCompilerHostsWith = (fs: PackageFileSystem, minimalLib: string): CompilerHosts => {
+const holdsAll =
+  (files: readonly string[]) =>
+  (host: CompilerHostWrapper): boolean =>
+    pipe(
+      files,
+      Arr.every((file) => Predicate.isNotUndefined(host.getSourceFileFromCache(file))),
+    );
+
+const createCompilerHostsWith: {
+  (minimalLib: string): (fs: PackageFileSystem) => CompilerHosts;
+  (fs: PackageFileSystem, minimalLib: string): CompilerHosts;
+} = Fn.dual(DATA_FIRST_ARITY, (fs: PackageFileSystem, minimalLib: string): CompilerHosts => {
   const mounted = mountFileSystem(fs, minimalLib);
   const create = (kind: ResolutionKind): CompilerHostWrapper =>
     wrapHost(createHostWrapper({ fs, kind, minimalLib }), { mounted });
@@ -63,11 +79,9 @@ const createCompilerHostsWith = (fs: PackageFileSystem, minimalLib: string): Com
     node16,
     bundler,
     findHostForFiles: (files) =>
-      [node10, node16, bundler].find((host) =>
-        files.every((file) => Predicate.isNotUndefined(host.getSourceFileFromCache(file))),
-      ),
+      Option.getOrUndefined(Arr.findFirst([node10, node16, bundler], holdsAll(files))),
   };
-};
+});
 
 export { createCompilerHostWrapperWith, createCompilerHostsWith };
 export type { CompilerHosts };

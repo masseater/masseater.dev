@@ -1,4 +1,3 @@
-import type { Location } from "@oxlint/plugins";
 import {
   Array as Arr,
   Boolean as Bool,
@@ -6,27 +5,34 @@ import {
   Option,
   Predicate,
   String as Str,
+  Record as Rec,
+  pipe,
+  Function as Fn,
 } from "effect";
 
-import { choiceOf, probabilityOfChoice, questionFor, verdictOf } from "./answer.ts";
+import { questionFor, verdictOf } from "./answer.ts";
+import {
+  EVERY_LINE,
+  locates,
+  locationCandidates,
+  locationQuestion,
+  numberedLines,
+  validChoice,
+} from "./location.ts";
+import type { ChoiceCriteria } from "./location.ts";
 import type {
-  Answer,
   Answers,
-  ChoiceQuestion,
   DecisionRequest,
   DecisionResponse,
-  LineRange,
   Question,
   RequestMatch,
-  RuleLocation,
   Verdict,
   Verdicts,
 } from "./types.ts";
 
-const CHOICE_OPTION_LIMIT = 254;
+const DATA_FIRST_ARITY = 2;
+
 const FIRST_LINE = 1;
-const MINIMUM_WIDTH = 1;
-const UNKNOWN_CHOICE = "unknown";
 const LOCATION_SUFFIX = "_location";
 const TRUNCATION_MARKER = "/* ...truncated */";
 
@@ -35,122 +41,27 @@ const refAt = (index: number): string => `s${String(index)}`;
 const locationRefOf = (ref: string): string => `${ref}${LOCATION_SUFFIX}`;
 
 const snippetRefOf = (questionId: string): string =>
-  Bool.match(questionId.endsWith(LOCATION_SUFFIX), {
-    onTrue: () => questionId.slice(Num.decrement(FIRST_LINE), -LOCATION_SUFFIX.length),
+  Bool.match(Str.endsWith(LOCATION_SUFFIX)(questionId), {
+    onTrue: () => Str.slice(Num.decrement(FIRST_LINE), -LOCATION_SUFFIX.length)(questionId),
     onFalse: () => questionId,
   });
 
-const truncateSnippet = (text: string, maxChars: number): string =>
+const truncateSnippet: {
+  (maxChars: number): (text: string) => string;
+  (text: string, maxChars: number): string;
+} = Fn.dual(DATA_FIRST_ARITY, (text: string, maxChars: number): string =>
   Bool.match(text.length <= maxChars, {
     onTrue: () => text,
-    onFalse: () => `${text.slice(Num.decrement(FIRST_LINE), maxChars)}${TRUNCATION_MARKER}`,
-  });
-
-const sourceLines = (text: string): readonly string[] => text.split(/\r\n|[\n\r\u2028\u2029]/u);
-
-type LocatedMatch = RequestMatch & {
-  readonly rule: { readonly question: string; readonly location: RuleLocation };
-};
-
-const locates = (match: RequestMatch): match is LocatedMatch =>
-  Predicate.isNotUndefined(match.rule.location) && !match.truncated;
-
-interface NumberedLine {
-  readonly text: string;
-  readonly line: number;
-}
-
-const EVERY_LINE: LineRange = { start: FIRST_LINE, end: Number.POSITIVE_INFINITY };
-
-const isWithin = (line: number, within: LineRange): boolean =>
-  Num.between(line, { minimum: within.start, maximum: within.end });
-
-const rangeKey = ({ start, end }: LineRange): string =>
-  Bool.match(start === end, {
-    onTrue: () => `L${String(start)}`,
-    onFalse: () => `L${String(start)}-L${String(end)}`,
-  });
-
-const rangeLabel = ({ start, end }: LineRange): string =>
-  Bool.match(start === end, {
-    onTrue: () => `Line ${String(start)}`,
-    onFalse: () => `Lines ${String(start)} to ${String(end)}`,
-  });
-
-const rangeOf = (group: Arr.NonEmptyReadonlyArray<NumberedLine>): LineRange => ({
-  start: Arr.headNonEmpty(group).line,
-  end: Arr.lastNonEmpty(group).line,
-});
-
-const numberedLines = (snippet: string): readonly NumberedLine[] =>
-  sourceLines(snippet).map((text, index) => ({ text, line: Num.sum(index, FIRST_LINE) }));
-
-const locationCandidates = (
-  snippet: string,
-  within: LineRange = EVERY_LINE,
-): Readonly<Record<string, LineRange>> => {
-  const lines = numberedLines(snippet).filter(
-    ({ text, line }) => text.trim().length >= FIRST_LINE && isWithin(line, within),
-  );
-  const width = Math.max(MINIMUM_WIDTH, Math.ceil(lines.length / CHOICE_OPTION_LIMIT));
-  return Object.fromEntries(
-    Arr.chunksOf(lines, width).map((group) => {
-      const range = rangeOf(group);
-      return [rangeKey(range), range];
-    }),
-  );
-};
-
-const locationQuestion = (
-  match: LocatedMatch,
-  ref: string,
-  candidates: Readonly<Record<string, LineRange>>,
-): ChoiceQuestion => ({
-  type: "choice",
-  instructions: `Consider only the numbered source in state.snippets.${ref}. If it violates this rule, select the line (or range containing that line) to annotate. Rule: ${match.rule.question} Location: ${match.rule.location.question} If multiple violations exist, select the earliest one. Select ${UNKNOWN_CHOICE} if no violation exists or its location is unclear.`,
-  criteria: {
-    ...Object.fromEntries(
-      Object.entries(candidates).map(([key, range]) => [key, rangeLabel(range)]),
-    ),
-    [UNKNOWN_CHOICE]: "No clear source location for this violation",
-  },
-});
-
-type ChoiceCriteria = ChoiceQuestion["criteria"];
-
-const validChoice = (answer: Answer | undefined, criteria: ChoiceCriteria): boolean =>
-  Option.exists(
-    choiceOf(answer),
-    (chosen) =>
-      Object.hasOwn(criteria, chosen.choice) && Option.isSome(probabilityOfChoice(chosen)),
-  );
-
-const selectedLocation = (
-  answer: Answer | undefined,
-  candidates: Readonly<Record<string, LineRange>>,
-  cutoff: number,
-): Option.Option<LineRange> =>
-  choiceOf(answer).pipe(
-    Option.filter((chosen) =>
-      Option.exists(probabilityOfChoice(chosen), (probability) =>
-        Num.isGreaterThanOrEqualTo(probability, cutoff),
-      ),
-    ),
-    Option.flatMap(({ choice }) => Option.fromUndefinedOr(candidates[choice])),
-  );
-
-const locationOfLine = (snippet: string, line: number): Location => {
-  const text = Option.getOrElse(Arr.get(sourceLines(snippet), Num.decrement(line)), () => "");
-  return {
-    start: { line, column: Math.max(Num.decrement(FIRST_LINE), text.search(/\S/u)) },
-    end: { line, column: text.trimEnd().length },
-  };
-};
+    onFalse: () => `${Str.slice(Num.decrement(FIRST_LINE), maxChars)(text)}${TRUNCATION_MARKER}`,
+  }),
+);
 
 const numbered = (snippet: string): string =>
-  numberedLines(snippet)
-    .map(({ text, line }) => `L${String(line)}| ${text}`)
-    .join("\n");
+  pipe(
+    numberedLines(snippet),
+    Arr.map(({ text, line }) => `L${String(line)}| ${text}`),
+    Arr.join("\n"),
+  );
 
 const contextNote = (match: RequestMatch, ref: string): string => {
   if (Predicate.isUndefined(match.context)) {
@@ -176,7 +87,10 @@ const questionsFor = (
   }
   return [
     mainQuestionFor(match, ref),
-    [locationRefOf(ref), locationQuestion(match, ref, locationCandidates(match.snippet))],
+    [
+      locationRefOf(ref),
+      locationQuestion(match, ref, locationCandidates(match.snippet, EVERY_LINE)),
+    ],
   ];
 };
 
@@ -190,40 +104,63 @@ const snippetFor = (match: RequestMatch): string => {
 const contextsOf = (
   matches: readonly RequestMatch[],
 ): Readonly<{ contexts?: Readonly<Record<string, string>> }> => {
-  const contexts = matches.flatMap((match, index) =>
-    Option.toArray(
-      Option.map(Option.fromUndefinedOr(match.context), (text) => [refAt(index), text] as const),
+  const contexts = pipe(
+    matches,
+    Arr.flatMap((match, index) =>
+      Option.toArray(
+        Option.map(Option.fromUndefinedOr(match.context), (text) => [refAt(index), text] as const),
+      ),
     ),
   );
   if (Arr.isReadonlyArrayEmpty(contexts)) {
     return {};
   }
-  return { contexts: Object.fromEntries(contexts) };
+  return { contexts: Rec.fromEntries(contexts) };
 };
 
-const buildRequest = (model: string, matches: readonly RequestMatch[]): DecisionRequest => ({
-  model,
-  state: {
-    snippets: Object.fromEntries(matches.map((match, index) => [refAt(index), snippetFor(match)])),
-    ...contextsOf(matches),
-  },
-  questions: Object.fromEntries(
-    matches.flatMap((match, index) => questionsFor(match, refAt(index))),
-  ),
-});
+const buildRequest: {
+  (matches: readonly RequestMatch[]): (model: string) => DecisionRequest;
+  (model: string, matches: readonly RequestMatch[]): DecisionRequest;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (model: string, matches: readonly RequestMatch[]): DecisionRequest => ({
+    model,
+    state: {
+      snippets: Rec.fromEntries(
+        pipe(
+          matches,
+          Arr.map((match, index) => [refAt(index), snippetFor(match)]),
+        ),
+      ),
+      ...contextsOf(matches),
+    },
+    questions: Rec.fromEntries(
+      pipe(
+        matches,
+        Arr.flatMap((match, index) => questionsFor(match, refAt(index))),
+      ),
+    ),
+  }),
+);
 
 const choiceQuestionsOf = (
   request: DecisionRequest,
 ): readonly (readonly [string, ChoiceCriteria])[] =>
-  Object.entries(request.questions).flatMap(([id, question]) => {
-    if (question.type === "choice") {
-      return [[id, question.criteria] as const];
-    }
-    return [];
-  });
+  pipe(
+    Rec.toEntries(request.questions),
+    Arr.flatMap(([id, question]) => {
+      if (question.type === "choice") {
+        return [[id, question.criteria] as const];
+      }
+      return [];
+    }),
+  );
 
 const mainQuestionsOf = (request: DecisionRequest): readonly (readonly [string, Question])[] =>
-  Object.entries(request.questions).filter(([id]) => !id.endsWith(LOCATION_SUFFIX));
+  pipe(
+    Rec.toEntries(request.questions),
+    Arr.filter(([id]) => !Str.endsWith(LOCATION_SUFFIX)(id)),
+  );
 
 const resultOf = (
   answers: Answers,
@@ -236,32 +173,25 @@ const resultOf = (
   ),
 ];
 
-const parseVerdicts = (response: DecisionResponse, request: DecisionRequest): Verdicts => {
+const parseVerdicts: {
+  (request: DecisionRequest): (response: DecisionResponse) => Verdicts;
+  (response: DecisionResponse, request: DecisionRequest): Verdicts;
+} = Fn.dual(DATA_FIRST_ARITY, (response: DecisionResponse, request: DecisionRequest): Verdicts => {
   const { model, answers } = Option.getOrThrowWith(
     Option.liftPredicate(response, ({ model: served }) => Str.isNonEmpty(served)),
     () => new Error("response has no model id"),
   );
-  const results = Object.fromEntries(
-    mainQuestionsOf(request).map((entry) => resultOf(answers, entry)),
+  const results = Rec.fromEntries(
+    pipe(
+      mainQuestionsOf(request),
+      Arr.map((entry) => resultOf(answers, entry)),
+    ),
   );
-  const complete = choiceQuestionsOf(request).every(([id, criteria]) =>
-    validChoice(answers[id], criteria),
+  const complete = pipe(
+    choiceQuestionsOf(request),
+    Arr.every(([id, criteria]) => validChoice(answers[id], criteria)),
   );
   return { model, results, answers, complete };
-};
+});
 
-export {
-  buildRequest,
-  locates,
-  locationCandidates,
-  locationOfLine,
-  locationQuestion,
-  locationRefOf,
-  parseVerdicts,
-  refAt,
-  selectedLocation,
-  snippetRefOf,
-  sourceLines,
-  truncateSnippet,
-};
-export type { LocatedMatch };
+export { buildRequest, locationRefOf, parseVerdicts, refAt, snippetRefOf, truncateSnippet };

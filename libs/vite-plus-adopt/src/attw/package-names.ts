@@ -1,61 +1,69 @@
+import { Option, String as Str, Function as Fn } from "effect";
+
 import { Messages, traceMessage } from "./messages.ts";
 import type { ResolutionState } from "./resolution-types.ts";
+import { indexFrom } from "./text-search.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface PackageNameParts {
   readonly packageName: string;
   readonly rest: string;
 }
 
-const NOT_FOUND = -1;
 const NEXT = 1;
 const START = 0;
 const SCOPE_SEPARATOR = "__";
 const SCOPE_MARKER_LENGTH = 1;
 
-const packageNameEnd = (moduleName: string): number => {
-  const first = moduleName.indexOf("/");
-  if (moduleName.startsWith("@")) {
-    return moduleName.indexOf("/", first + NEXT);
+const packageNameEnd = (moduleName: string): Option.Option<number> => {
+  const first = Str.indexOf("/")(moduleName);
+  if (Str.startsWith("@")(moduleName)) {
+    return first.pipe(Option.flatMap((index) => indexFrom(moduleName, "/", index + NEXT)));
   }
   return first;
 };
 
-const parsePackageName = (moduleName: string): PackageNameParts => {
-  const end = packageNameEnd(moduleName);
-  if (end === NOT_FOUND) {
-    return { packageName: moduleName, rest: "" };
-  }
-  return { packageName: moduleName.slice(START, end), rest: moduleName.slice(end + NEXT) };
-};
+const parsePackageName = (moduleName: string): PackageNameParts =>
+  Option.match(packageNameEnd(moduleName), {
+    onNone: () => ({ packageName: moduleName, rest: "" }),
+    onSome: (end) => ({
+      packageName: Str.slice(START, end)(moduleName),
+      rest: Str.slice(end + NEXT)(moduleName),
+    }),
+  });
 
 const mangleScopedPackageName = (packageName: string): string => {
-  if (!packageName.startsWith("@")) {
+  if (!Str.startsWith("@")(packageName)) {
     return packageName;
   }
-  const replaced = packageName.replace("/", SCOPE_SEPARATOR);
+  const replaced = Str.replace("/", SCOPE_SEPARATOR)(packageName);
   if (replaced === packageName) {
     return packageName;
   }
-  return replaced.slice(SCOPE_MARKER_LENGTH);
+  return Str.slice(SCOPE_MARKER_LENGTH)(replaced);
 };
 
 const unmangleScopedPackageName = (typesPackageName: string): string => {
-  if (!typesPackageName.includes(SCOPE_SEPARATOR)) {
+  if (!Str.includes(SCOPE_SEPARATOR)(typesPackageName)) {
     return typesPackageName;
   }
-  return `@${typesPackageName.replace(SCOPE_SEPARATOR, "/")}`;
+  return `@${Str.replace(SCOPE_SEPARATOR, "/")(typesPackageName)}`;
 };
 
 const getTypesPackageName = (packageName: string): string =>
   `@types/${mangleScopedPackageName(packageName)}`;
 
-const mangleScopedPackageNameWithTrace = (packageName: string, state: ResolutionState): string => {
+const mangleScopedPackageNameWithTrace: {
+  (state: ResolutionState): (packageName: string) => string;
+  (packageName: string, state: ResolutionState): string;
+} = Fn.dual(DATA_FIRST_ARITY, (packageName: string, state: ResolutionState): string => {
   const mangled = mangleScopedPackageName(packageName);
   if (mangled !== packageName) {
     traceMessage(state, Messages.scopedPackageDetected, mangled);
   }
   return mangled;
-};
+});
 
 export {
   getTypesPackageName,

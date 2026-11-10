@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Function as Fn } from "effect";
 
 import { extensionsOf } from "./extensions.ts";
 import { pathContainsNodeModules } from "./node-modules-paths.ts";
@@ -10,6 +10,8 @@ import { loadModuleFromNearestNodeModulesDirectory } from "./resolver-node-modul
 import { loadRelativeModule, nodeLoadModuleByRelativeName } from "./resolver-relative.ts";
 import { stateFor } from "./type-reference-state.ts";
 import type { TypeReferenceRequest } from "./type-reference-state.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface ResolvedTypeReference {
   readonly resolvedFileName: string;
@@ -55,20 +57,23 @@ const secondaryLookup = (
     .resolved;
 };
 
-const resolveTypeReferenceDirective = (
-  request: TypeReferenceRequest,
-  host: ResolverHost,
-): Option.Option<ResolvedTypeReference> => {
-  const state = stateFor(request, host);
-  return primaryLookup(request, state).pipe(
-    Option.orElse(() => secondaryLookup(request, state)),
-    Option.map((resolved) => ({
-      resolvedFileName: resolved.path,
-      packageId: resolved.packageId,
-      isExternalLibraryImport: pathContainsNodeModules(resolved.path),
-    })),
-  );
-};
+const resolveTypeReferenceDirective: {
+  (host: ResolverHost): (request: TypeReferenceRequest) => Option.Option<ResolvedTypeReference>;
+  (request: TypeReferenceRequest, host: ResolverHost): Option.Option<ResolvedTypeReference>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (request: TypeReferenceRequest, host: ResolverHost): Option.Option<ResolvedTypeReference> => {
+    const state = stateFor(request, host);
+    return primaryLookup(request, state).pipe(
+      Option.orElse(() => secondaryLookup(request, state)),
+      Option.map((resolved) => ({
+        resolvedFileName: resolved.path,
+        packageId: resolved.packageId,
+        isExternalLibraryImport: pathContainsNodeModules(resolved.path),
+      })),
+    );
+  },
+);
 
 export { resolveTypeReferenceDirective };
 export type { ResolvedTypeReference };

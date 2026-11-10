@@ -1,6 +1,8 @@
 import { Array as Arr } from "effect";
 import type { RuleTester } from "vite-plus/lint/plugins-dev";
 
+import { toJson } from "#src/json.ts";
+
 const identity = ({
   code,
   filename,
@@ -8,7 +10,7 @@ const identity = ({
   settings,
   languageOptions,
 }: RuleTester.ValidTestCase): string =>
-  JSON.stringify({ code, filename, options, settings, languageOptions });
+  toJson({ code, filename, options, settings, languageOptions });
 
 const distinct = <Case extends RuleTester.ValidTestCase>(cases: readonly Case[]): Case[] =>
   Arr.dedupeWith(cases, (left, right) => identity(left) === identity(right));

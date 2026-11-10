@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, String as Str, Function as Fn } from "effect";
 
 import {
   PRIORITY_KINDS,
@@ -27,6 +27,9 @@ import { loadRelativeModule } from "./resolver-relative.ts";
 import { ALL_FEATURES, createOutcome, getConditions } from "./resolver-state.ts";
 import type { WorkerRequest } from "./resolver-state.ts";
 
+const DATA_FIRST_ARITY = 2;
+const DATA_FIRST_ARITY_3 = 3;
+
 interface Found {
   readonly resolved: Resolved;
   readonly isExternalLibraryImport: boolean;
@@ -41,7 +44,7 @@ const resolveFromNodeModulesWithTrace = (
   state: ResolutionState,
 ): SearchResult => {
   const extensions = formatExtensions(lookup.extensions);
-  if (lookup.moduleName.includes(":")) {
+  if (Str.includes(":")(lookup.moduleName)) {
     traceMessage(state, Messages.skippingAbsoluteUri, lookup.moduleName, extensions);
     return Option.none();
   }
@@ -54,7 +57,7 @@ const fromPackageImports = (
   features: Features,
   state: ResolutionState,
 ): SearchResult => {
-  if (features.imports && lookup.moduleName.startsWith("#")) {
+  if (features.imports && Str.startsWith("#")(lookup.moduleName)) {
     return resolvePackageImportWithTrace(lookup, state);
   }
   return Option.none();
@@ -116,7 +119,10 @@ const tryNonEmpty = (
   return tryResolve(extensions, request, state);
 };
 
-const resolveWithPriority = (request: WorkerRequest, state: ResolutionState): FoundResult => {
+const resolveWithPriority: {
+  (state: ResolutionState): (request: WorkerRequest) => FoundResult;
+  (request: WorkerRequest, state: ResolutionState): FoundResult;
+} = Fn.dual(DATA_FIRST_ARITY, (request: WorkerRequest, state: ResolutionState): FoundResult => {
   if (request.options.moduleResolution !== "Node10") {
     return tryResolve(request.extensions, request, state);
   }
@@ -125,7 +131,7 @@ const resolveWithPriority = (request: WorkerRequest, state: ResolutionState): Fo
       tryNonEmpty(subtractExtensions(request.extensions, PRIORITY_KINDS), request, state),
     ),
   );
-};
+});
 
 const diagnosticPath = (request: WorkerRequest, state: ResolutionState): Option.Option<string> =>
   tryResolve(intersectExtensions(request.extensions, PRIORITY_KINDS), request, state).pipe(
@@ -172,24 +178,37 @@ const retryWithBundler = (
   });
 };
 
-const resolveAlternateResultWithTrace = (
-  request: WorkerRequest,
-  result: Option.Option<Found>,
-  state: ResolutionState,
-): Option.Option<string> => {
-  if (shouldRetryWithoutExports(request, result, state)) {
-    traceMessage(state, Messages.retryWithoutModernFeatures);
-    return diagnosticPath(request, {
-      ...state,
-      features: { ...state.features, exports: false },
-      outcome: createOutcome(),
-    });
-  }
-  if (shouldRetryWithBundler(request, result)) {
-    return retryWithBundler(request, state);
-  }
-  return Option.none();
-};
+const resolveAlternateResultWithTrace: {
+  (
+    result: Option.Option<Found>,
+    state: ResolutionState,
+  ): (request: WorkerRequest) => Option.Option<string>;
+  (
+    request: WorkerRequest,
+    result: Option.Option<Found>,
+    state: ResolutionState,
+  ): Option.Option<string>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (
+    request: WorkerRequest,
+    result: Option.Option<Found>,
+    state: ResolutionState,
+  ): Option.Option<string> => {
+    if (shouldRetryWithoutExports(request, result, state)) {
+      traceMessage(state, Messages.retryWithoutModernFeatures);
+      return diagnosticPath(request, {
+        ...state,
+        features: { ...state.features, exports: false },
+        outcome: createOutcome(),
+      });
+    }
+    if (shouldRetryWithBundler(request, result)) {
+      return retryWithBundler(request, state);
+    }
+    return Option.none();
+  },
+);
 
 export { resolveAlternateResultWithTrace, resolveWithPriority };
 export type { Found, FoundResult };

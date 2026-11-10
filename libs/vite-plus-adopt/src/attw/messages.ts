@@ -1,6 +1,8 @@
-import { Option } from "effect";
+import { Array as Arr, Option, String as Str, Function as Fn, pipe } from "effect";
 
 import type { ResolutionState, TraceSink } from "./resolution-types.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 const Messages = {
   directoryDoesNotExist: "Directory '{0}' does not exist, skipping all lookups in it.",
@@ -77,19 +79,30 @@ const Messages = {
 
 type Message = (typeof Messages)[keyof typeof Messages];
 
-const PLACEHOLDER = /\{(?<index>\d+)\}/gu;
+const PLACEHOLDER = /\{(?<index>\d+)\}/u;
+const PLACEHOLDER_STEP = 2;
+const TEXT_PART = 0;
+
+const filled =
+  (args: readonly string[]) =>
+  (part: string, position: number): string => {
+    if (position % PLACEHOLDER_STEP === TEXT_PART) {
+      return part;
+    }
+    return args[Number(part)] ?? `{${part}}`;
+  };
 
 const formatMessage = (message: Message, ...args: readonly string[]): string =>
-  message.replaceAll(
-    PLACEHOLDER,
-    (placeholder, index: string) => args[Number(index)] ?? placeholder,
-  );
+  pipe(Str.split(message, PLACEHOLDER), Arr.map(filled(args)), Arr.join(""));
 
-const emitTrace = (trace: Option.Option<TraceSink>, message: string): void => {
+const emitTrace: {
+  (message: string): (trace: Option.Option<TraceSink>) => void;
+  (trace: Option.Option<TraceSink>, message: string): void;
+} = Fn.dual(DATA_FIRST_ARITY, (trace: Option.Option<TraceSink>, message: string): void => {
   for (const sink of Option.toArray(trace)) {
     sink(message);
   }
-};
+});
 
 const traceMessage = (
   state: Pick<ResolutionState, "trace">,

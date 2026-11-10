@@ -56,7 +56,7 @@ const asTestCase = (testCase: ValidCase | string): ValidCase =>
 const firstPass = (testCase: InvalidCase): InvalidCase => {
   const { output }: { readonly output?: unknown } = testCase;
   return Option.liftPredicate(output, (value): value is readonly unknown[] =>
-    Array.isArray(value),
+    Arr.isArray(value),
   ).pipe(
     Option.map((passes): InvalidCase => ({
       ...testCase,

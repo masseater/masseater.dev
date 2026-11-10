@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Predicate } from "effect";
+import { Array as Arr, Option, Predicate, pipe } from "effect";
 import { SyntaxKind } from "typescript/ast";
 import type { ExportDeclaration, Node } from "typescript/ast";
 import {
@@ -28,11 +28,14 @@ const isTypeOnlyExportStatement = (node: Node): boolean =>
   isExportDeclaration(node) && node.isTypeOnly;
 
 const isTypeOnlyReexportAll = (node: ExportDeclaration): boolean =>
-  [
-    node.isTypeOnly,
-    Predicate.isNotUndefined(node.moduleSpecifier),
-    Predicate.isUndefined(node.exportClause),
-  ].every(Boolean);
+  pipe(
+    [
+      node.isTypeOnly,
+      Predicate.isNotUndefined(node.moduleSpecifier),
+      Predicate.isUndefined(node.exportClause),
+    ],
+    Arr.every(Boolean),
+  );
 
 const TYPE_ONLY_RULES: readonly TypeOnlyRule[] = [
   rule(

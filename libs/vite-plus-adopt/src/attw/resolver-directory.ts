@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Function as Fn } from "effect";
 
 import { extensionsOf } from "./extensions.ts";
 import type { Extensions } from "./extensions.ts";
@@ -24,6 +24,8 @@ import type {
 } from "./resolution-types.ts";
 import { loadFileNameFromPackageJsonField, loadModuleFromFile } from "./resolver-files.ts";
 import { RESOLUTION_VERSION, getVersionPaths } from "./types-versions.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface RelativeRequest extends CandidateRequest {
   readonly considerPackageJson: boolean;
@@ -226,34 +228,43 @@ const fromPackageFileOrIndex = (
     Option.orElse(() => fromIndexFile(request, entry, state)),
   );
 
-const loadNodeModuleFromDirectoryWorker = (
-  request: DirectoryWorkerRequest,
-  state: ResolutionState,
-): Option.Option<PathAndExtension> => {
-  const entry = packageEntryOf(request, state);
-  return fromVersionPaths(request, entry, state).pipe(
-    Option.getOrElse(() => fromPackageFileOrIndex(request, entry, state)),
-  );
-};
+const loadNodeModuleFromDirectoryWorker: {
+  (state: ResolutionState): (request: DirectoryWorkerRequest) => Option.Option<PathAndExtension>;
+  (request: DirectoryWorkerRequest, state: ResolutionState): Option.Option<PathAndExtension>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (request: DirectoryWorkerRequest, state: ResolutionState): Option.Option<PathAndExtension> => {
+    const entry = packageEntryOf(request, state);
+    return fromVersionPaths(request, entry, state).pipe(
+      Option.getOrElse(() => fromPackageFileOrIndex(request, entry, state)),
+    );
+  },
+);
 
-const loadNodeModuleFromDirectory = (
-  request: DirectoryLoadRequest,
-  state: ResolutionState,
-): Option.Option<Resolved> => {
-  const info = Option.liftPredicate(request.considerPackageJson, (consider) => consider).pipe(
-    Option.flatMap(() =>
-      resolvePackageJsonInfo(request.candidate, request.onlyRecordFailures, state),
-    ),
-  );
-  const versionPaths = info.pipe(
-    Option.flatMap((packageInfo) => getVersionPaths(packageInfo, state)),
-  );
-  const jsonContent = info.pipe(
-    Option.map((packageInfo: PackageJsonInfo) => packageInfo.contents.packageJsonContent),
-  );
-  const found = loadNodeModuleFromDirectoryWorker({ ...request, jsonContent, versionPaths }, state);
-  return withPackageId(info, found, state);
-};
+const loadNodeModuleFromDirectory: {
+  (state: ResolutionState): (request: DirectoryLoadRequest) => Option.Option<Resolved>;
+  (request: DirectoryLoadRequest, state: ResolutionState): Option.Option<Resolved>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (request: DirectoryLoadRequest, state: ResolutionState): Option.Option<Resolved> => {
+    const info = Option.liftPredicate(request.considerPackageJson, (consider) => consider).pipe(
+      Option.flatMap(() =>
+        resolvePackageJsonInfo(request.candidate, request.onlyRecordFailures, state),
+      ),
+    );
+    const versionPaths = info.pipe(
+      Option.flatMap((packageInfo) => getVersionPaths(packageInfo, state)),
+    );
+    const jsonContent = info.pipe(
+      Option.map((packageInfo: PackageJsonInfo) => packageInfo.contents.packageJsonContent),
+    );
+    const found = loadNodeModuleFromDirectoryWorker(
+      { ...request, jsonContent, versionPaths },
+      state,
+    );
+    return withPackageId(info, found, state);
+  },
+);
 
 export { loadNodeModuleFromDirectory, loadNodeModuleFromDirectoryWorker };
 export type {

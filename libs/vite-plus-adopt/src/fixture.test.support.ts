@@ -1,8 +1,18 @@
-import { Effect, FileSystem, Path, Array as Arr, Record as Rec, pipe } from "effect";
+import {
+  Effect,
+  FileSystem,
+  Path,
+  Array as Arr,
+  Record as Rec,
+  pipe,
+  Function as Fn,
+} from "effect";
 import type { Scope } from "effect";
 import { encode as encodeHex } from "effect/encoding/Hex";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { zip } from "fflate";
+
+const DATA_FIRST_ARITY = 2;
 
 type FixtureServices =
   | ChildProcessSpawner.ChildProcessSpawner
@@ -45,41 +55,63 @@ const directoryWith = (
     return root;
   });
 
-const commitEmpty = (
-  root: string,
-  message: string,
-): Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner> =>
-  Effect.gen(function* commit() {
-    const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-    yield* spawner
-      .exitCode(
-        ChildProcess.make(
-          "git",
-          [
-            "-c",
-            "user.name=vite-plus-adopt",
-            "-c",
-            "user.email=vite-plus-adopt@example.com",
-            "commit",
-            "-q",
-            "--allow-empty",
-            "-m",
-            message,
-          ],
-          { cwd: root },
-        ),
-      )
-      .pipe(Effect.orDie);
-  });
+const commitEmpty: {
+  (
+    message: string,
+  ): (root: string) => Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner>;
+  (
+    root: string,
+    message: string,
+  ): Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (
+    root: string,
+    message: string,
+  ): Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner> =>
+    Effect.gen(function* commit() {
+      const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
+      yield* spawner
+        .exitCode(
+          ChildProcess.make(
+            "git",
+            [
+              "-c",
+              "user.name=vite-plus-adopt",
+              "-c",
+              "user.email=vite-plus-adopt@example.com",
+              "commit",
+              "-q",
+              "--allow-empty",
+              "-m",
+              message,
+            ],
+            { cwd: root },
+          ),
+        )
+        .pipe(Effect.orDie);
+    }),
+);
 
-const runGit = (
-  root: string,
-  args: readonly string[],
-): Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner> =>
-  Effect.gen(function* git() {
-    const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-    yield* spawner.exitCode(ChildProcess.make("git", args, { cwd: root })).pipe(Effect.orDie);
-  });
+const runGit: {
+  (
+    args: readonly string[],
+  ): (root: string) => Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner>;
+  (
+    root: string,
+    args: readonly string[],
+  ): Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (
+    root: string,
+    args: readonly string[],
+  ): Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner> =>
+    Effect.gen(function* git() {
+      const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
+      yield* spawner.exitCode(ChildProcess.make("git", args, { cwd: root })).pipe(Effect.orDie);
+    }),
+);
 
 const lines = (...rows: readonly string[]): string => `${Arr.join(rows, "\n")}\n`;
 
@@ -102,5 +134,7 @@ const sha256Hex = (data: Uint8Array): Effect.Effect<string> => {
   );
 };
 
+/** @internal */
 export { commitEmpty, directoryWith, lines, runGit, sha256Hex, zipArchive };
+/** @internal */
 export type { FixtureServices };

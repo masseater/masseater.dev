@@ -1,4 +1,4 @@
-import { Option, Result, Schema } from "effect";
+import { Option, Result, Schema, Record as Rec, Function as Fn } from "effect";
 
 import { Probability, RuleAnswerSchema } from "./schema.ts";
 import type {
@@ -11,6 +11,8 @@ import type {
   Verdict,
 } from "./types.ts";
 
+const DATA_FIRST_ARITY = 2;
+
 const YES = "yes";
 const DEFAULT_MINIMUM: Severity = "warn";
 
@@ -21,7 +23,7 @@ const SEVERITY_CRITERIA = {
   error: "Clearly a problem",
 } as const;
 
-const SEVERITY_ORDER: readonly string[] = Object.keys(SEVERITY_CRITERIA);
+const SEVERITY_ORDER: readonly string[] = Rec.keys(SEVERITY_CRITERIA);
 
 const BOOLEAN_ANSWER: RuleAnswer = { kind: "boolean" };
 
@@ -64,7 +66,10 @@ const probabilityOfChoice = ({ choice, probabilities }: ChoiceAnswer): Option.Op
     Option.flatMap((byLabel) => Option.fromUndefinedOr(byLabel[choice])),
   );
 
-const questionFor = (answer: RuleAnswer, instructions: string): Question => {
+const questionFor: {
+  (instructions: string): (answer: RuleAnswer) => Question;
+  (answer: RuleAnswer, instructions: string): Question;
+} = Fn.dual(DATA_FIRST_ARITY, (answer: RuleAnswer, instructions: string): Question => {
   switch (answer.kind) {
     case "classify": {
       return {
@@ -87,14 +92,14 @@ const questionFor = (answer: RuleAnswer, instructions: string): Question => {
       return { type: "noul", instructions };
     }
   }
-};
+});
 
 const choiceVerdictOf = (
   criteria: Readonly<Record<string, unknown>>,
   answer: Answer | undefined,
 ): Option.Option<Verdict> =>
   choiceOf(answer).pipe(
-    Option.filter(({ choice }) => Object.hasOwn(criteria, choice)),
+    Option.filter(({ choice }) => Rec.has(criteria, choice)),
     Option.flatMap((chosen) =>
       Option.map(probabilityOfChoice(chosen), (probability) => ({
         answer: chosen.choice,
@@ -103,12 +108,18 @@ const choiceVerdictOf = (
     ),
   );
 
-const verdictOf = (question: Question, answer: Answer | undefined): Option.Option<Verdict> => {
-  if (question.type === "choice") {
-    return choiceVerdictOf(question.criteria, answer);
-  }
-  return noulOf(answer).pipe(Option.map(({ noul }) => ({ answer: YES, probability: noul })));
-};
+const verdictOf: {
+  (answer: Answer | undefined): (question: Question) => Option.Option<Verdict>;
+  (question: Question, answer: Answer | undefined): Option.Option<Verdict>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (question: Question, answer: Answer | undefined): Option.Option<Verdict> => {
+    if (question.type === "choice") {
+      return choiceVerdictOf(question.criteria, answer);
+    }
+    return noulOf(answer).pipe(Option.map(({ noul }) => ({ answer: YES, probability: noul })));
+  },
+);
 
 const severityMatches = (
   { minimum = DEFAULT_MINIMUM }: { readonly minimum?: Severity },
@@ -132,10 +143,14 @@ const answerMatches = (answer: RuleAnswer, label: string): boolean => {
   }
 };
 
-const isReported = (
-  rule: { readonly answer: RuleAnswer; readonly cutoff: number },
-  verdict: Verdict,
-): boolean => verdict.probability >= rule.cutoff && answerMatches(rule.answer, verdict.answer);
+const isReported: {
+  (verdict: Verdict): (rule: { readonly answer: RuleAnswer; readonly cutoff: number }) => boolean;
+  (rule: { readonly answer: RuleAnswer; readonly cutoff: number }, verdict: Verdict): boolean;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (rule: { readonly answer: RuleAnswer; readonly cutoff: number }, verdict: Verdict): boolean =>
+    verdict.probability >= rule.cutoff && answerMatches(rule.answer, verdict.answer),
+);
 
 export {
   AnswerSchema,

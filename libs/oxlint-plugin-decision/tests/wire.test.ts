@@ -1,7 +1,7 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
-import { Effect } from "effect";
+import { Effect, Array as Arr, Record as Rec, pipe } from "effect";
 
 import type { Answers, DecisionRequest, NoulAnswer } from "#src/types.ts";
 import { mergeResponses, wireRequestsFor } from "#src/wire.ts";
@@ -45,7 +45,12 @@ const severityRequest: DecisionRequest = {
 const yes = (noul: number): NoulAnswer => ({ type: "noul", noul });
 
 const yesAnswers = (scores: Scores): Answers =>
-  Object.fromEntries(Object.entries(scores).map(([id, noul]) => [id, yes(noul)]));
+  Rec.fromEntries(
+    pipe(
+      Rec.toEntries(scores),
+      Arr.map(([id, noul]) => [id, yes(noul)]),
+    ),
+  );
 
 const merged = (request: DecisionRequest, scores: Scores): unknown =>
   mergeResponses(request, [{ model: SERVED, answers: yesAnswers(scores) }]);
@@ -94,7 +99,10 @@ const missingLabel = Effect.sync(() => {
 
 const splitsLevels = Effect.sync(() => {
   deepStrictEqual(
-    wireRequestsFor(severityRequest).map(({ questions }) => questions),
+    pipe(
+      wireRequestsFor(severityRequest),
+      Arr.map(({ questions }) => questions),
+    ),
     [
       {
         s0__info: {

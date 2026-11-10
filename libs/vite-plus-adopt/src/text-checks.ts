@@ -38,4 +38,5 @@ const commitlintCheck = withSection("commitlint", (config, { root, base }) =>
   ),
 );
 
+/** @internal */
 export { commitlintCheck, markdownlintCheck, textlintCheck };

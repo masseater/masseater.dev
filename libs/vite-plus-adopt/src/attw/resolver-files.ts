@@ -1,4 +1,4 @@
-import { Array as Arr, Option } from "effect";
+import { Array as Arr, Option, String as Str, pipe, Function as Fn } from "effect";
 
 import {
   Extension,
@@ -11,6 +11,9 @@ import type { ExtensionKind } from "./extensions.ts";
 import { Messages, traceMessage } from "./messages.ts";
 import { getBaseFileName, getDirectoryPath } from "./paths.ts";
 import type { CandidateRequest, PathAndExtension, ResolutionState } from "./resolution-types.ts";
+
+const DATA_FIRST_ARITY = 2;
+const DATA_FIRST_ARITY_3 = 3;
 
 interface ExtensionAttempt {
   readonly kind: ExtensionKind;
@@ -109,21 +112,30 @@ const attemptsFor = (candidate: string, original: string): readonly ExtensionAtt
 
 const NONE = 0;
 
-const tryFile = (
-  fileName: string,
-  onlyRecordFailures: boolean,
-  state: ResolutionState,
-): Option.Option<string> => {
-  if (onlyRecordFailures) {
+const tryFile: {
+  (
+    onlyRecordFailures: boolean,
+    state: ResolutionState,
+  ): (fileName: string) => Option.Option<string>;
+  (fileName: string, onlyRecordFailures: boolean, state: ResolutionState): Option.Option<string>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (
+    fileName: string,
+    onlyRecordFailures: boolean,
+    state: ResolutionState,
+  ): Option.Option<string> => {
+    if (onlyRecordFailures) {
+      return Option.none();
+    }
+    if (state.host.fileExists(fileName)) {
+      traceMessage(state, Messages.fileExistsUseIt, fileName);
+      return Option.some(fileName);
+    }
+    traceMessage(state, Messages.fileDoesNotExist, fileName);
     return Option.none();
-  }
-  if (state.host.fileExists(fileName)) {
-    traceMessage(state, Messages.fileExistsUseIt, fileName);
-    return Option.some(fileName);
-  }
-  traceMessage(state, Messages.fileDoesNotExist, fileName);
-  return Option.none();
-};
+  },
+);
 
 const directoryProbablyMissing = (candidate: string, state: ResolutionState): boolean => {
   const directory = getDirectoryPath(candidate);
@@ -154,8 +166,9 @@ const tryAddingExtensions = (
   if (request.onlyRecordFailures || directoryProbablyMissing(request.candidate, state)) {
     return Option.none();
   }
-  const attempts = attemptsFor(request.candidate, request.originalExtension).filter(({ kind }) =>
-    request.extensions.includes(kind),
+  const attempts = pipe(
+    attemptsFor(request.candidate, request.originalExtension),
+    Arr.filter(({ kind }) => request.extensions.includes(kind)),
   );
   return Arr.findFirst(attempts, (current) => tryAttempt(request.candidate, current, state));
 };
@@ -165,14 +178,19 @@ const resolveBySwappingExtensionWithTrace = (
   state: ResolutionState,
 ): Option.Option<PathAndExtension> => {
   const { candidate } = request;
-  if (!getBaseFileName(candidate).includes(".")) {
+  if (!Str.includes(".")(getBaseFileName(candidate))) {
     return Option.none();
   }
   const removed = removeFileExtension(candidate);
   const extensionless = Option.liftPredicate(removed, (path) => path !== candidate).pipe(
-    Option.getOrElse(() => candidate.slice(NONE, candidate.lastIndexOf("."))),
+    Option.getOrElse(() =>
+      Option.match(Str.lastIndexOf(".")(candidate), {
+        onNone: () => candidate,
+        onSome: (dot) => Str.slice(NONE, dot)(candidate),
+      }),
+    ),
   );
-  const extension = candidate.slice(extensionless.length);
+  const extension = Str.slice(extensionless.length)(candidate);
   traceMessage(state, Messages.fileHasExtensionStripping, candidate, extension);
   return tryAddingExtensions(
     { ...request, candidate: extensionless, originalExtension: extension },
@@ -180,33 +198,39 @@ const resolveBySwappingExtensionWithTrace = (
   );
 };
 
-const loadModuleFromFile = (
-  request: CandidateRequest,
-  state: ResolutionState,
-): Option.Option<PathAndExtension> =>
-  resolveBySwappingExtensionWithTrace(request, state).pipe(
-    Option.orElse(() =>
-      Option.liftPredicate(state, ({ features }) => !features.esmMode).pipe(
-        Option.flatMap(() => tryAddingExtensions({ ...request, originalExtension: "" }, state)),
+const loadModuleFromFile: {
+  (state: ResolutionState): (request: CandidateRequest) => Option.Option<PathAndExtension>;
+  (request: CandidateRequest, state: ResolutionState): Option.Option<PathAndExtension>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (request: CandidateRequest, state: ResolutionState): Option.Option<PathAndExtension> =>
+    resolveBySwappingExtensionWithTrace(request, state).pipe(
+      Option.orElse(() =>
+        Option.liftPredicate(state, ({ features }) => !features.esmMode).pipe(
+          Option.flatMap(() => tryAddingExtensions({ ...request, originalExtension: "" }, state)),
+        ),
       ),
     ),
-  );
+);
 
-const loadFileNameFromPackageJsonField = (
-  request: CandidateRequest,
-  state: ResolutionState,
-): Option.Option<PathAndExtension> => {
-  const { candidate } = request;
-  if (!isTSFileExtensionForPackageField(request.extensions, candidate)) {
-    return resolveBySwappingExtensionWithTrace(request, state);
-  }
-  return tryFile(candidate, request.onlyRecordFailures, state).pipe(
-    Option.map(() => ({
-      path: candidate,
-      extension: Option.getOrElse(tryExtractTSExtension(candidate), () => ""),
-      resolvedUsingTsExtension: false,
-    })),
-  );
-};
+const loadFileNameFromPackageJsonField: {
+  (state: ResolutionState): (request: CandidateRequest) => Option.Option<PathAndExtension>;
+  (request: CandidateRequest, state: ResolutionState): Option.Option<PathAndExtension>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (request: CandidateRequest, state: ResolutionState): Option.Option<PathAndExtension> => {
+    const { candidate } = request;
+    if (!isTSFileExtensionForPackageField(request.extensions, candidate)) {
+      return resolveBySwappingExtensionWithTrace(request, state);
+    }
+    return tryFile(candidate, request.onlyRecordFailures, state).pipe(
+      Option.map(() => ({
+        path: candidate,
+        extension: Option.getOrElse(tryExtractTSExtension(candidate), () => ""),
+        resolvedUsingTsExtension: false,
+      })),
+    );
+  },
+);
 
 export { loadFileNameFromPackageJsonField, loadModuleFromFile, tryFile };

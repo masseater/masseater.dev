@@ -116,5 +116,7 @@ const listDependencies = (
     return Arr.flatten(parsed);
   });
 
+/** @internal */
 export { listDependencies };
+/** @internal */
 export type { Dependency, DependencyField, WorkspaceServices };

@@ -30,6 +30,9 @@
     "LICENSE"
   ],
   "type": "module",
+  "imports": {
+    "#src/*": "./src/*"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./drizzle": "./src/drizzle.ts",
@@ -93,13 +96,14 @@
     "@tanstack/eslint-plugin-start": "catalog:",
     "@tsconfig/strictest": "catalog:",
     "@types/node": "catalog:",
-    "@types/react": "catalog:",
+    "@types/react": "19.3.0",
     "@typescript-eslint/parser": "catalog:",
     "@typescript-eslint/types": "catalog:",
     "@typescript-eslint/typescript-estree": "catalog:",
     "@typescript-eslint/utils": "catalog:",
     "combinate": "catalog:",
     "dedent": "catalog:",
+    "eslint": "catalog:",
     "eslint-plugin-drizzle": "catalog:",
     "publint": "catalog:",
     "size-limit": "catalog:",

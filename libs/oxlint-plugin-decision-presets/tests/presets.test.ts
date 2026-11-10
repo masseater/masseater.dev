@@ -1,7 +1,7 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Effect } from "effect";
+import { Effect, Array as Arr, Option, String as Str, pipe, Order } from "effect";
 import type { PlatformError } from "effect/PlatformError";
 
 import { presets } from "#src/presets.ts";
@@ -20,12 +20,13 @@ import {
   oxlint,
   reportedLines,
   tempProject,
+  toJson,
 } from "./oxlint.ts";
 import type { Run, Services } from "./oxlint.ts";
 
 type PresetName = keyof typeof presets;
 
-type Check = Effect.Effect<void, unknown, Services>;
+type Check = Effect.Effect<void, PlatformError, Services>;
 
 const ID_START = "[";
 const ID_END = "]";
@@ -44,10 +45,10 @@ const MARKERS = {
 } as const;
 
 const fakePlugin = (core: string, presetsEntry: string, preset: string): string => `
-import { createDecisionPlugin, defineProvider } from ${JSON.stringify(core)};
-import { presets } from ${JSON.stringify(presetsEntry)};
+import { createDecisionPlugin, defineProvider } from ${toJson(core)};
+import { presets } from ${toJson(presetsEntry)};
 
-const MARKERS = ${JSON.stringify(MARKERS)};
+const MARKERS = ${toJson(MARKERS)};
 
 const flagged = (instructions, snippet) =>
   Object.entries(MARKERS).some(([topic, marker]) => instructions.includes(topic) && snippet.includes(marker));
@@ -74,7 +75,7 @@ const decide = ({ request }) => ({
 });
 
 export default createDecisionPlugin({
-  rules: presets[${JSON.stringify(preset)}],
+  rules: presets[${toJson(preset)}],
   providers: [defineProvider({ name: "fake", requiredEnv: [], decide })],
 });
 `;
@@ -108,7 +109,15 @@ const lintWithFake = (preset: PresetName): Effect.Effect<Run, PlatformError, Ser
   );
 
 const idsOf = (lines: readonly string[]): readonly string[] =>
-  lines.map((line) => line.slice(line.indexOf(ID_START) + ID_START.length, line.indexOf(ID_END)));
+  pipe(
+    lines,
+    Arr.map((line) =>
+      Option.match(Option.all([Str.indexOf(ID_START)(line), Str.indexOf(ID_END)(line)]), {
+        onNone: () => "",
+        onSome: ([start, end]) => Str.slice(start + ID_START.length, end)(line),
+      }),
+    ),
+  );
 
 const EXPECTED = {
   recommended: ["no-hardcoded-secrets", "no-pii-in-logs", "no-prompt-injection"],
@@ -134,13 +143,13 @@ const reportsOnlyFail = (preset: PresetName): Check =>
     const lines = reportedLines(run, "decision");
     strictEqual(run.status, FAILED, outputOf(run));
     deepStrictEqual(
-      lines.filter((line) => !line.startsWith("fail.")),
+      pipe(
+        lines,
+        Arr.filter((line) => !Str.startsWith("fail.")(line)),
+      ),
       [],
     );
-    deepStrictEqual(
-      [...idsOf(lines)].toSorted((left, right) => left.localeCompare(right)),
-      [...EXPECTED[preset]].toSorted((left, right) => left.localeCompare(right)),
-    );
+    deepStrictEqual(Arr.sort(idsOf(lines), Order.String), Arr.sort(EXPECTED[preset], Order.String));
   });
 
 const ENTRY_RULES = {

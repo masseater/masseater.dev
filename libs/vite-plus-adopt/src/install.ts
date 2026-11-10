@@ -1,5 +1,5 @@
 import { untar } from "@andrewbranch/untar.js";
-import { Array as Arr, Effect, FileSystem, Path, pipe } from "effect";
+import { Array as Arr, Effect, FileSystem, Path, pipe, Record as Rec } from "effect";
 import type { Option, PlatformError } from "effect";
 import { encode as encodeHex } from "effect/encoding/Hex";
 import { HttpClient } from "effect/http";
@@ -46,9 +46,11 @@ const download = (
   asset: BinaryAsset,
 ): Effect.Effect<Uint8Array, VpToolsError, HttpClient.HttpClient> =>
   Effect.gen(function* fetchAsset() {
-    const client = HttpClient.filterStatusOk(yield* HttpClient.HttpClient);
+    const httpClient = yield* HttpClient.HttpClient;
+    const client = HttpClient.filterStatusOk(httpClient);
     const response = yield* client.get(asset.url);
-    return new Uint8Array(yield* response.arrayBuffer);
+    const body = yield* response.arrayBuffer;
+    return new Uint8Array(body);
   }).pipe(Effect.mapError(toolFailed(binary.name)));
 
 const verify = (fetched: Download): Effect.Effect<Download, VpToolsError> => {
@@ -90,7 +92,7 @@ const zipEntries = (data: Uint8Array): Effect.Effect<Entries, VpToolsError> =>
   Effect.callback<Entries, VpToolsError>((resume) => {
     unzip(data, (failure, files) => {
       if (failure === null) {
-        const entries: Entries = new Map(Object.entries(files));
+        const entries: Entries = new Map(Rec.toEntries(files));
         resume(Effect.succeed(entries));
         return;
       }
@@ -132,10 +134,18 @@ const place = (
     const path = yield* Path.Path;
     const file = yield* binaryPath(fetched.binary, fetched.platform);
     yield* fs.makeDirectory(path.dirname(file), { recursive: true });
-    const partial = `${file}.${crypto.randomUUID()}.partial`;
-    yield* fs.writeFile(partial, bytes);
-    yield* fs.chmod(partial, EXECUTABLE);
-    yield* fs.rename(partial, file);
+    yield* Effect.scoped(
+      Effect.gen(function* stage() {
+        const staging = yield* fs.makeTempDirectoryScoped({
+          directory: path.dirname(file),
+          prefix: ".partial-",
+        });
+        const partial = path.join(staging, path.basename(file));
+        yield* fs.writeFile(partial, bytes);
+        yield* fs.chmod(partial, EXECUTABLE);
+        yield* fs.rename(partial, file);
+      }),
+    );
   });
 
 const unpack = (fetched: Download): Effect.Effect<void, InstallError, InstallServices> =>
@@ -159,7 +169,8 @@ const isPlaced = (
 ): Effect.Effect<boolean, PlatformError.PlatformError, InstallServices> =>
   Effect.gen(function* placed() {
     const fs = yield* FileSystem.FileSystem;
-    return yield* fs.exists(yield* binaryPath(binary, platform));
+    const file = yield* binaryPath(binary, platform);
+    return yield* fs.exists(file);
   });
 
 const installBinary = (
@@ -188,9 +199,10 @@ const locateBinary = (
   Effect.gen(function* locate() {
     const platform = yield* platformOf(binary);
     if (!(yield* isPlaced(binary, platform))) {
-      return yield* Effect.fail(configMissing(`${binary.name} ${binary.version} ${NOT_INSTALLED}`));
+      return yield* configMissing(`${binary.name} ${binary.version} ${NOT_INSTALLED}`);
     }
     return yield* binaryPath(binary, platform);
   });
 
+/** @internal */
 export { installBinary, locateBinary };

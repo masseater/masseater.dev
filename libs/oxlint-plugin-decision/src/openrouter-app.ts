@@ -1,5 +1,15 @@
 import { HTTPClient } from "@openrouter/sdk/lib/http.js";
-import { Array as Arr, Config, Effect, FileSystem, Option, Path, String as Str } from "effect";
+import {
+  Array as Arr,
+  Config,
+  Effect,
+  FileSystem,
+  Option,
+  Path,
+  String as Str,
+  pipe,
+} from "effect";
+import type { PlatformError } from "effect/PlatformError";
 
 const GITHUB = "https://github.com";
 const SELF = "masseater/masseater.dev";
@@ -34,15 +44,17 @@ const contextOf = Effect.gen(function* contextOf() {
 });
 
 const slugOf = (url: string): Option.Option<string> => {
-  const parts = url
-    .trim()
-    .replace(GIT_SUFFIX, "")
-    .split(SEPARATORS)
-    .filter((part) => Str.isNonEmpty(part));
+  const parts = pipe(
+    url,
+    Str.trim,
+    Str.replace(GIT_SUFFIX, ""),
+    Str.split(SEPARATORS),
+    Arr.filter((part) => Str.isNonEmpty(part)),
+  );
   if (parts.length < SLUG_PARTS) {
     return Option.none();
   }
-  return Option.some(Arr.takeRight(parts, SLUG_PARTS).join("/"));
+  return Option.some(pipe(Arr.takeRight(parts, SLUG_PARTS), Arr.join("/")));
 };
 
 const captured = (match: Option.Option<RegExpMatchArray>, name: string): Option.Option<string> =>
@@ -56,7 +68,7 @@ const linkedGitDir = Effect.fn("linkedGitDir")(function* linkedGitDir(dir: strin
   const path = yield* Path.Path;
   const text = yield* fs.readFileString(dotGit);
   return captured(Str.match(GITDIR)(text), "dir").pipe(
-    Option.map((found) => path.resolve(dir, found.trim())),
+    Option.map((found) => path.resolve(dir, Str.trim(found))),
   );
 });
 
@@ -76,7 +88,9 @@ const gitDirAt = Effect.fn("gitDirAt")(function* gitDirAt(dir: string) {
   return yield* linkedGitDir(dir, dotGit);
 });
 
-const gitDirFrom = (dir: string): Effect.Effect<Option.Option<string>, unknown, AppServices> =>
+const gitDirFrom = (
+  dir: string,
+): Effect.Effect<Option.Option<string>, PlatformError, AppServices> =>
   Effect.gen(function* walk() {
     const path = yield* Path.Path;
     const here = yield* gitDirAt(dir);
@@ -93,7 +107,7 @@ const commonDirOf = Effect.fn("commonDirOf")(function* commonDirOf(gitDir: strin
   const common = yield* fs.readFileString(path.join(gitDir, "commondir")).pipe(Effect.option);
   return Option.match(common, {
     onNone: () => gitDir,
-    onSome: (relative) => path.resolve(gitDir, relative.trim()),
+    onSome: (relative) => path.resolve(gitDir, Str.trim(relative)),
   });
 });
 
@@ -104,7 +118,8 @@ const remoteSlug = Effect.gen(function* remoteSlug() {
   if (Option.isNone(gitDir)) {
     return Option.none<string>();
   }
-  const config = yield* fs.readFileString(path.join(yield* commonDirOf(gitDir.value), "config"));
+  const commonDir = yield* commonDirOf(gitDir.value);
+  const config = yield* fs.readFileString(path.join(commonDir, "config"));
   return captured(Str.match(ORIGIN_URL)(config), "url").pipe(Option.flatMap(slugOf));
 }).pipe(Effect.orElseSucceed(() => Option.none<string>()));
 
@@ -136,5 +151,7 @@ const openRouterApp = (tool: string): Effect.Effect<OpenRouterApp, never, AppSer
     };
   });
 
+/** @internal */
 export { openRouterApp };
+/** @internal */
 export type { AppServices, OpenRouterApp };

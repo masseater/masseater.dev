@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Function, Option, Record as Rec } from "effect";
+import { Array as Arr, Effect, Function, Option, Record as Rec, String as Str, pipe } from "effect";
 import { defineConfig } from "vite-plus";
 
 import type {
@@ -7,6 +7,8 @@ import type {
   checkPackage,
   createPackageFromTarballData,
 } from "#src/attw.ts";
+
+import { toJson } from "./src/json.ts";
 
 const BANNERS: Readonly<Record<string, string>> = { cli: "#!/usr/bin/env node" };
 
@@ -22,11 +24,16 @@ const ATTW_ROOTS: readonly string[] = [ATTW_LIB, ATTW_TESTS];
 
 const isAttwUpstream = (importer: string | undefined): boolean =>
   Option.fromNullishOr(importer).pipe(
-    Option.exists((path) => ATTW_ROOTS.some((root) => path.startsWith(root))),
+    Option.exists((path) =>
+      pipe(
+        ATTW_ROOTS,
+        Arr.some((root) => Str.startsWith(root)(path)),
+      ),
+    ),
   );
 
 const ATTW_REDIRECTS: readonly (readonly [(id: string) => boolean, string])[] = [
-  [(id) => id.endsWith("/multiCompilerHost.js"), VIRTUAL_HOSTS],
+  [(id) => Str.endsWith("/multiCompilerHost.js")(id), VIRTUAL_HOSTS],
   [(id) => id === "typescript", local("src/attw/typescript.ts")],
 ];
 
@@ -42,14 +49,17 @@ const redirect = (id: string, importer: string | undefined): Option.Option<strin
   );
 
 const VIRTUAL_MODULES: Readonly<Record<string, string>> = {
-  [VIRTUAL_HOSTS]: [
-    `import minimalLibDts from ${JSON.stringify(`${ATTW_LIB}internal/minimalLibDts.js`)};`,
-    `import { createCompilerHostWrapperWith, createCompilerHostsWith } from ${JSON.stringify(local("src/attw/compiler-hosts.ts"))};`,
-    "export const createCompilerHosts = (fs) => createCompilerHostsWith(fs, minimalLibDts);",
-    "export function CompilerHostWrapper(fs, moduleResolution) {",
-    "  return createCompilerHostWrapperWith(fs, moduleResolution, minimalLibDts);",
-    "}",
-  ].join("\n"),
+  [VIRTUAL_HOSTS]: pipe(
+    [
+      `import minimalLibDts from ${toJson(`${ATTW_LIB}internal/minimalLibDts.js`)};`,
+      `import { createCompilerHostWrapperWith, createCompilerHostsWith } from ${toJson(local("src/attw/compiler-hosts.ts"))};`,
+      "export const createCompilerHosts = (fs) => createCompilerHostsWith(fs, minimalLibDts);",
+      "export function CompilerHostWrapper(fs, moduleResolution) {",
+      "  return createCompilerHostWrapperWith(fs, moduleResolution, minimalLibDts);",
+      "}",
+    ],
+    Arr.join("\n"),
+  ),
   [VIRTUAL_NODE_TEST]:
     'export { afterAll as after, describe, test, test as default } from "vite-plus/test";',
 };

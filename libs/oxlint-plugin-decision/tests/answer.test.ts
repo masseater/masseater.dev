@@ -1,7 +1,7 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, Option, Order } from "effect";
+import { Array as Arr, Effect, Option, Order, Record as Rec, pipe } from "effect";
 
 import type { DecisionOptions, RuleAnswer } from "#src/types.ts";
 
@@ -9,7 +9,7 @@ import { RESPAN, TIMEOUT, callRule, lintProject, withMock } from "./fixtures.ts"
 import { loggedRequests } from "./mock-openrouter.ts";
 import type { MockOpenRouter } from "./mock-openrouter.ts";
 import { decisionLines, mockEnv } from "./oxlint.ts";
-import type { Services } from "./oxlint.ts";
+import type { Services, TestError } from "./oxlint.ts";
 
 const SOURCE = "ok();\nconsole.log(user.email, user.phone);\n";
 
@@ -17,7 +17,7 @@ const answered = (
   answer: RuleAnswer,
   expected: readonly string[],
   options: DecisionOptions = {},
-): Effect.Effect<void, unknown, Services | MockOpenRouter> =>
+): Effect.Effect<void, TestError, Services | MockOpenRouter> =>
   Effect.gen(function* test() {
     const env = yield* mockEnv("test-key");
     const run = yield* lintProject({
@@ -71,28 +71,29 @@ const severityYesNo = answered(
 
 const questionIdsSent = loggedRequests.pipe(
   Effect.map((requests) =>
-    Arr.sort(
-      requests.flatMap(({ body }) =>
-        Object.entries(body.questions).map(([id, { type }]) => `${id} ${type}`),
+    pipe(
+      requests,
+      Arr.flatMap(({ body }) =>
+        pipe(
+          Rec.toEntries(body.questions),
+          Arr.map(([id, { type }]) => `${id} ${type}`),
+        ),
       ),
-      Order.String,
+      (sorted) => Arr.sort(sorted, Order.String),
     ),
   ),
 );
 
 const asksYesNo = Effect.gen(function* test() {
   yield* classifyYesNo;
-  deepStrictEqual(yield* questionIdsSent, [
-    "s0__leaks noul",
-    "s0__safe noul",
-    "s1__leaks noul",
-    "s1__safe noul",
-  ]);
+  const sentIds = yield* questionIdsSent;
+  deepStrictEqual(sentIds, ["s0__leaks noul", "s0__safe noul", "s1__leaks noul", "s1__safe noul"]);
 });
 
 const asksLevels = Effect.gen(function* test() {
   yield* severityYesNo;
-  deepStrictEqual(yield* questionIdsSent, [
+  const sentIds = yield* questionIdsSent;
+  deepStrictEqual(sentIds, [
     "s0__error noul",
     "s0__info noul",
     "s0__warn noul",
@@ -104,7 +105,8 @@ const asksLevels = Effect.gen(function* test() {
 
 const asksChoice = Effect.gen(function* test() {
   yield* severity;
-  const question = Arr.head(yield* loggedRequests).pipe(
+  const requests = yield* loggedRequests;
+  const question = Arr.head(requests).pipe(
     Option.flatMap(({ body }) => Option.fromUndefinedOr(body.questions["s0"])),
     Option.map(({ type, criteria }) => ({ type, criteria })),
   );

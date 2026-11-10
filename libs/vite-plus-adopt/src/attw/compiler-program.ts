@@ -1,4 +1,4 @@
-import { MutableRef, Option } from "effect";
+import { MutableRef, Option, Function as Fn } from "effect";
 
 import type { TypeCheckerFacade } from "./checker.ts";
 import { openChecker } from "./compiler-checker.ts";
@@ -7,6 +7,8 @@ import type { HostWrapperCore } from "./host-types.ts";
 import type { ProgramFile, ProgramFiles, ProgramOptions } from "./program-build.ts";
 import { createProgramFiles } from "./program.ts";
 import type { MountedFileSystem } from "./ts-api.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface Program {
   readonly getSourceFiles: () => readonly ProgramFile[];
@@ -35,7 +37,10 @@ const buildProgramFiles = (site: ProgramSite, rootNames: readonly string[]): Pro
     packageJsonScopeFor: site.core.packageJsonScopeFor,
   });
 
-const createProgram = (site: ProgramSite, rootNames: readonly string[]): CachedProgram => {
+const createProgram: {
+  (rootNames: readonly string[]): (site: ProgramSite) => CachedProgram;
+  (site: ProgramSite, rootNames: readonly string[]): CachedProgram;
+} = Fn.dual(DATA_FIRST_ARITY, (site: ProgramSite, rootNames: readonly string[]): CachedProgram => {
   const programFiles = buildProgramFiles(site, rootNames);
   const checkerSite = { core: site.core, mountRoot: site.mounted.root, options: site.options };
   const checker = MutableRef.make(Option.none<TypeCheckerFacade>());
@@ -54,7 +59,7 @@ const createProgram = (site: ProgramSite, rootNames: readonly string[]): CachedP
       }
     },
   };
-};
+});
 
 export { createProgram };
 export type { CachedProgram, Program, ProgramSite };

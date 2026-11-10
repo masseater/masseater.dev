@@ -1,4 +1,4 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, Function as Fn } from "effect";
 import { ModifierFlags } from "typescript/ast";
 import type { Node, SourceFile } from "typescript/ast";
 import {
@@ -19,6 +19,9 @@ import { declareSymbol } from "./binder-symbols.ts";
 import type { BoundSymbol, SymbolTable } from "./binder-symbols.ts";
 import { nameText } from "./binder-syntax.ts";
 import { hasFlag } from "./flags.ts";
+
+const DATA_FIRST_ARITY = 2;
+const DATA_FIRST_ARITY_3 = 3;
 
 interface FileBinding {
   readonly file: SourceFile;
@@ -75,7 +78,10 @@ const isDefaultExport = (request: DeclareRequest): boolean =>
   (hasSyntacticModifier(request.node, ModifierFlags.Default) ||
     isExportSpecifierNamedDefault(request.node));
 
-const declare = (binding: FileBinding, request: DeclareRequest): BoundSymbol => {
+const declare: {
+  (request: DeclareRequest): (binding: FileBinding) => BoundSymbol;
+  (binding: FileBinding, request: DeclareRequest): BoundSymbol;
+} = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, request: DeclareRequest): BoundSymbol => {
   const name = Option.orElse(
     Option.liftPredicate(DEFAULT_NAME, () => isDefaultExport(request)),
     () => declarationName(request.node, binding.isJs),
@@ -88,13 +94,19 @@ const declare = (binding: FileBinding, request: DeclareRequest): BoundSymbol => 
     includes: request.flags.includes,
     excludes: request.flags.excludes,
   });
-};
+});
 
 const declareLocal = (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol =>
   declare(binding, { target: fileLocals(binding), node, flags });
 
-const declareExport = (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol =>
-  declare(binding, { target: fileExports(binding), node, flags });
+const declareExport: {
+  (node: Node, flags: SymbolFlagPair): (binding: FileBinding) => BoundSymbol;
+  (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol =>
+    declare(binding, { target: fileExports(binding), node, flags }),
+);
 
 const isJSDocTypeAliasWithName = (node: Node): boolean =>
   (isJSDocTypedefTag(node) || isJSDocCallbackTag(node)) && Predicate.isNotUndefined(node.name);
@@ -147,27 +159,31 @@ const declareModuleMember = (
   return declareLocal(binding, node, flags);
 };
 
-const declareSourceFileMember = (
-  binding: FileBinding,
-  node: Node,
-  flags: SymbolFlagPair,
-): BoundSymbol => {
-  if (binding.isExternalModule) {
-    return declareModuleMember(binding, node, flags);
-  }
-  return declareLocal(binding, node, flags);
-};
+const declareSourceFileMember: {
+  (node: Node, flags: SymbolFlagPair): (binding: FileBinding) => BoundSymbol;
+  (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol => {
+    if (binding.isExternalModule) {
+      return declareModuleMember(binding, node, flags);
+    }
+    return declareLocal(binding, node, flags);
+  },
+);
 
-const declareBlockScoped = (
-  binding: FileBinding,
-  node: Node,
-  flags: SymbolFlagPair,
-): BoundSymbol => {
-  if (binding.isExternalModule || Predicate.isNotUndefined(binding.commonJsModuleIndicator)) {
-    return declareModuleMember(binding, node, flags);
-  }
-  return declareLocal(binding, node, flags);
-};
+const declareBlockScoped: {
+  (node: Node, flags: SymbolFlagPair): (binding: FileBinding) => BoundSymbol;
+  (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol => {
+    if (binding.isExternalModule || Predicate.isNotUndefined(binding.commonJsModuleIndicator)) {
+      return declareModuleMember(binding, node, flags);
+    }
+    return declareLocal(binding, node, flags);
+  },
+);
 
 export { declare, declareBlockScoped, declareExport, declareSourceFileMember, exportsOf };
 export type { DeclarationTarget, DeclareRequest, FileBinding, Scope, SymbolFlagPair };

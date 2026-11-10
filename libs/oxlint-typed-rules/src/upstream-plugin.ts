@@ -1,4 +1,13 @@
-import { Array as Arr, Option, Predicate, Record, Schema, String as Str, pipe } from "effect";
+import {
+  Array as Arr,
+  Function as Fn,
+  Option,
+  Predicate,
+  Record,
+  Schema,
+  String as Str,
+  pipe,
+} from "effect";
 import type { CreateRule, Plugin } from "vite-plus/lint/plugins";
 
 import { rulesOf } from "./config-rules.ts";
@@ -47,15 +56,30 @@ const configOf =
     ),
   });
 
-const upstreamPlugin = <ConfigName extends string>(
-  name: string,
-  upstream: Upstream<ConfigName>,
-  rulesOfUpstream: RulesOf,
-): UpstreamPlugin<ConfigName> => ({
-  meta: { name },
-  configs: pipe(upstream.configs, Record.map(configOf(name))),
-  rules: rulesOfUpstream(upstream.rules),
-});
+const DATA_FIRST_ARITY_3 = 3;
+
+const upstreamPlugin: {
+  <ConfigName extends string>(
+    upstream: Upstream<ConfigName>,
+    rulesOfUpstream: RulesOf,
+  ): (name: string) => UpstreamPlugin<ConfigName>;
+  <ConfigName extends string>(
+    name: string,
+    upstream: Upstream<ConfigName>,
+    rulesOfUpstream: RulesOf,
+  ): UpstreamPlugin<ConfigName>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  <ConfigName extends string>(
+    name: string,
+    upstream: Upstream<ConfigName>,
+    rulesOfUpstream: RulesOf,
+  ): UpstreamPlugin<ConfigName> => ({
+    meta: { name },
+    configs: pipe(upstream.configs, Record.map(configOf(name))),
+    rules: rulesOfUpstream(upstream.rules),
+  }),
+);
 
 export type { Config, RulesOf, Severity, Upstream, UpstreamPlugin };
 export { plainRules, upstreamPlugin };

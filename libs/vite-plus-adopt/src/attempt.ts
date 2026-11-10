@@ -6,6 +6,6 @@ import type { VpToolsError } from "./errors.ts";
 const attempt =
   (tool: string) =>
   <Value>(run: () => PromiseLike<Value>): Effect.Effect<Value, VpToolsError> =>
-    Effect.tryPromise(run).pipe(Effect.mapError(toolFailed(tool)));
+    Effect.tryPromise({ try: run, catch: toolFailed(tool) });
 
 export { attempt };

@@ -1,6 +1,6 @@
 import { defineDecisionRule } from "@r_masseater/oxlint-plugin-decision";
 import type { DecisionRule, RuleContext } from "@r_masseater/oxlint-plugin-decision";
-import { Predicate } from "effect";
+import { Predicate, Array as Arr, pipe } from "effect";
 
 interface Judgement {
   readonly ask: string;
@@ -14,9 +14,11 @@ interface ClaimRule extends Judgement, Pick<DecisionRule, "id" | "cutoff" | "sel
 }
 
 const questionOf = ({ ask, yes, no, note }: Judgement): string =>
-  [ask, `It is true when: ${yes}`, `It is false when: ${no}`, note]
-    .filter((part) => Predicate.isNotUndefined(part))
-    .join("\n\n");
+  pipe(
+    [ask, `It is true when: ${yes}`, `It is false when: ${no}`, note],
+    Arr.filter((part) => Predicate.isNotUndefined(part)),
+    Arr.join("\n\n"),
+  );
 
 const claimRule = ({ ask, yes, no, note, ...rule }: ClaimRule): DecisionRule =>
   defineDecisionRule({

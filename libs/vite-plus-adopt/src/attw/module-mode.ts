@@ -1,4 +1,4 @@
-import { Array as Arr, Option } from "effect";
+import { Array as Arr, Option, Function as Fn } from "effect";
 import { SyntaxKind } from "typescript/ast";
 import type {
   ExportDeclaration,
@@ -24,6 +24,9 @@ import {
 import { fileExtensionIsOneOf } from "./extensions.ts";
 import type { ResolutionKind, ResolutionMode } from "./resolution-types.ts";
 import { impliedNodeFormatOf, packageJsonScopeOf } from "./source-file.ts";
+
+const DATA_FIRST_ARITY = 2;
+const DATA_FIRST_ARITY_3 = 3;
 
 type EmitModuleKind = "CommonJS" | "ESNext" | "Node16";
 
@@ -116,11 +119,11 @@ const explicitFormatOf = (
   const scopeType = packageJsonScopeOf(sourceFile).pipe(
     Option.map((scope) => scope.contents.packageJsonContent["type"]),
   );
-  const matching = EXPLICIT_FORMATS.find(
+  return Arr.findFirst(
+    EXPLICIT_FORMATS,
     (explicit) =>
       Option.contains(implied, explicit.format) && declaresFormat(sourceFile, scopeType, explicit),
-  );
-  return Option.fromNullishOr(matching).pipe(Option.map((explicit) => explicit.format));
+  ).pipe(Option.map((explicit) => explicit.format));
 };
 
 const impliedNodeFormatForEmit = (
@@ -182,27 +185,32 @@ const emitSyntaxForUsage = (
   );
 };
 
-const getModeForUsageLocation = (
-  sourceFile: SourceFile,
-  usage: Node,
-  options: ModeOptions,
-): Option.Option<ResolutionMode> =>
-  typeOnlyOverride(usage).pipe(
-    Option.orElse(() => importTypeOverride(usage)),
-    Option.orElse(() =>
-      Option.liftPredicate(options, importSyntaxAffectsModuleResolution).pipe(
-        Option.flatMap(() => emitSyntaxForUsage(sourceFile, usage, options)),
+const getModeForUsageLocation: {
+  (usage: Node, options: ModeOptions): (sourceFile: SourceFile) => Option.Option<ResolutionMode>;
+  (sourceFile: SourceFile, usage: Node, options: ModeOptions): Option.Option<ResolutionMode>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (sourceFile: SourceFile, usage: Node, options: ModeOptions): Option.Option<ResolutionMode> =>
+    typeOnlyOverride(usage).pipe(
+      Option.orElse(() => importTypeOverride(usage)),
+      Option.orElse(() =>
+        Option.liftPredicate(options, importSyntaxAffectsModuleResolution).pipe(
+          Option.flatMap(() => emitSyntaxForUsage(sourceFile, usage, options)),
+        ),
       ),
     ),
-  );
+);
 
-const getDefaultResolutionModeForFile = (
-  sourceFile: SourceFile,
-  options: ModeOptions,
-): Option.Option<ResolutionMode> =>
-  Option.liftPredicate(options, importSyntaxAffectsModuleResolution).pipe(
-    Option.flatMap(() => impliedNodeFormatForEmit(sourceFile, options)),
-  );
+const getDefaultResolutionModeForFile: {
+  (options: ModeOptions): (sourceFile: SourceFile) => Option.Option<ResolutionMode>;
+  (sourceFile: SourceFile, options: ModeOptions): Option.Option<ResolutionMode>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (sourceFile: SourceFile, options: ModeOptions): Option.Option<ResolutionMode> =>
+    Option.liftPredicate(options, importSyntaxAffectsModuleResolution).pipe(
+      Option.flatMap(() => impliedNodeFormatForEmit(sourceFile, options)),
+    ),
+);
 
 export { getDefaultResolutionModeForFile, getModeForUsageLocation };
 export type { EmitModuleKind, ModeOptions };

@@ -1,15 +1,15 @@
-import { Schema } from "effect";
+import { Schema, Array as Arr, Record as Rec, pipe } from "effect";
 
 const NONE = 0;
 const MINIMUM_LABELS = 2;
 
 const NonNegativeInt = Schema.Int.check(Schema.isGreaterThanOrEqualTo(NONE));
 
-const Probability = Schema.Number.check(Schema.isBetween({ minimum: 0, maximum: 1 }));
+const Probability = Schema.Finite.check(Schema.isBetween({ minimum: 0, maximum: 1 }));
 
 const CONFIDENT = 0.8;
 
-const Cutoff = Schema.Number.check(
+const Cutoff = Schema.Finite.check(
   Schema.isBetween(
     { minimum: CONFIDENT, maximum: 1 },
     { message: `cutoff must be between ${CONFIDENT} and 1` },
@@ -45,9 +45,16 @@ const ClassifyAnswer = Schema.Struct({
   labels: Schema.Record(Label, Schema.String).check(Schema.isMinProperties(MINIMUM_LABELS)),
   report: Schema.NonEmptyArray(Label),
 }).check(
-  Schema.makeFilter(({ labels, report }) => report.every((label) => Object.hasOwn(labels, label)), {
-    message: "every label in report must be one of labels",
-  }),
+  Schema.makeFilter(
+    ({ labels, report }) =>
+      pipe(
+        report,
+        Arr.every((label) => Rec.has(labels, label)),
+      ),
+    {
+      message: "every label in report must be one of labels",
+    },
+  ),
 );
 
 const SeverityAnswer = Schema.Struct({

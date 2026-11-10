@@ -13,10 +13,12 @@ import { VendorDirectory } from "./vendor.ts";
 
 type FixtureServices = ChildProcessSpawner.ChildProcessSpawner | FileSystem.FileSystem | Path.Path;
 
+type InstallFailure = Effect.Error<ReturnType<typeof installBinary>>;
+
 interface Installed {
-  readonly before: Exit.Exit<string, unknown>;
-  readonly installed: Exit.Exit<void, unknown>;
-  readonly after: Exit.Exit<string, unknown>;
+  readonly before: Exit.Exit<string, InstallFailure>;
+  readonly installed: Exit.Exit<void, InstallFailure>;
+  readonly after: Exit.Exit<string, InstallFailure>;
 }
 
 const SCRIPT = "#!/bin/sh\necho fixture\n";
@@ -75,7 +77,8 @@ const placesTheVerifiedBinary = Effect.gen(function* placesTheVerifiedBinary() {
   assertTrue(Exit.isFailure(before));
   assertTrue(Exit.isSuccess(installed));
   const file = yield* Exit.match(after, { onFailure: Effect.failCause, onSuccess: Effect.succeed });
-  strictEqual(yield* output(file), "fixture\n");
+  const printed = yield* output(file);
+  strictEqual(printed, "fixture\n");
 });
 
 const refusesAMismatchedDigest = Effect.gen(function* refusesAMismatchedDigest() {

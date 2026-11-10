@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Array as Arr, String as Str, pipe, Function as Fn } from "effect";
 import type { Node, SourceFile } from "typescript/ast";
 import { isStringLiteralLikeNode } from "typescript/ast/is";
 
@@ -12,6 +12,8 @@ import {
   isSourceFileJS,
   moduleAugmentationsOf,
 } from "./source-file.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
 
 interface ModuleNameSite {
   readonly node: Node;
@@ -47,7 +49,7 @@ const JSX_EXTENSIONS: ReadonlySet<string> = new Set([".tsx", ".jsx"]);
 const isTsOrJsonResolution = (extension: string): boolean =>
   TS_EXTENSIONS.has(extension) ||
   extension === ".json" ||
-  (extension.startsWith(".d.") && extension.endsWith(".ts"));
+  (Str.startsWith(".d.")(extension) && Str.endsWith(".ts")(extension));
 
 const isKnownExtension = (extension: string): boolean =>
   TS_EXTENSIONS.has(extension) || JS_EXTENSIONS.has(extension) || extension === ".json";
@@ -57,12 +59,15 @@ const hasResolutionDiagnostic = (module: ResolvedModule, importer: SourceFile): 
   (!isKnownExtension(module.extension) && !importer.isDeclarationFile);
 
 const literalSites = (nodes: readonly Node[], isImport: boolean): readonly ModuleNameSite[] =>
-  nodes.flatMap((node) => {
-    if (isStringLiteralLikeNode(node)) {
-      return [{ node, text: node.text, isImport }];
-    }
-    return [];
-  });
+  pipe(
+    nodes,
+    Arr.flatMap((node) => {
+      if (isStringLiteralLikeNode(node)) {
+        return [{ node, text: node.text, isImport }];
+      }
+      return [];
+    }),
+  );
 
 const moduleNameSitesOf = (sourceFile: SourceFile): readonly ModuleNameSite[] => [
   ...literalSites(importsOf(sourceFile), true),
@@ -119,27 +124,35 @@ const followResolvedModule = (
   build.depth.leave(module.isExternalLibraryImport);
 };
 
-const processImportedModules = (
-  build: ProgramBuild,
-  importer: SourceFile,
-  include: IncludeSourceFile,
-): void => {
-  collectExternalModuleReferences(importer);
-  const sites = moduleNameSitesOf(importer);
-  if (sites.length === EMPTY) {
-    return;
-  }
-  const resolved = sites.map((site) => resolveSite(build, importer, site));
-  build.registry.recordResolutions(
-    importer.fileName,
-    resolved.map(({ entry }) => entry),
-  );
-  const walk: ImportWalk = { build, include, importer };
-  for (const { site, entry } of resolved) {
-    for (const module of Option.toArray(entry.resolution.resolvedModule)) {
-      followResolvedModule(walk, site, module);
+const processImportedModules: {
+  (importer: SourceFile, include: IncludeSourceFile): (build: ProgramBuild) => void;
+  (build: ProgramBuild, importer: SourceFile, include: IncludeSourceFile): void;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (build: ProgramBuild, importer: SourceFile, include: IncludeSourceFile): void => {
+    collectExternalModuleReferences(importer);
+    const sites = moduleNameSitesOf(importer);
+    if (sites.length === EMPTY) {
+      return;
     }
-  }
-};
+    const resolved = pipe(
+      sites,
+      Arr.map((site) => resolveSite(build, importer, site)),
+    );
+    build.registry.recordResolutions(
+      importer.fileName,
+      pipe(
+        resolved,
+        Arr.map(({ entry }) => entry),
+      ),
+    );
+    const walk: ImportWalk = { build, include, importer };
+    for (const { site, entry } of resolved) {
+      for (const module of Option.toArray(entry.resolution.resolvedModule)) {
+        followResolvedModule(walk, site, module);
+      }
+    }
+  },
+);
 
 export { processImportedModules };

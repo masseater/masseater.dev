@@ -1,14 +1,8 @@
 {
   "extends": "../../tsconfig.json",
-  "include": [
-    "src",
-    "tests",
-    "*.ts"
-  ],
+  "include": ["src", "tests", "*.ts"],
   "compilerOptions": {
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "declaration": true,
     "plugins": [
       {
@@ -29,6 +23,8 @@
           "effect/crypto/Digest#sha256",
           "effect/http/FetchHttpClient#layer",
           "effect/http/HttpRouter#add",
+          "effect/http/HttpServerError#HttpServerError",
+          "effect/http/HttpServerError#ServeError",
           "effect/http/HttpRouter#serve",
           "effect/http/HttpServer#addressFormattedWith",
           "effect/http/HttpServerRequest#HttpServerRequest",

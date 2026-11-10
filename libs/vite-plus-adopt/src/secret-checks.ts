@@ -1,4 +1,4 @@
-import { Effect, FileSystem } from "effect";
+import { Effect, FileSystem, Function as Fn } from "effect";
 import type { PlatformError, Scope } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
@@ -9,6 +9,8 @@ import type { Report } from "./report.ts";
 import { withSection } from "./section-check.ts";
 import type { BetterleaksConfig } from "./types.ts";
 import { runVendored } from "./vendored.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 const ignoreFileArgs = (
   config: BetterleaksConfig,
@@ -63,14 +65,18 @@ const STAGED_DIFF = [
   "--dst-prefix=b/",
 ];
 
-const scanStagedSecrets = (
-  config: BetterleaksConfig,
-  root: string,
-): Effect.Effect<Report, CheckError, CheckServices> =>
-  Effect.gen(function* staged() {
-    const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-    const diff = yield* spawner.string(ChildProcess.make("git", STAGED_DIFF, { cwd: root }));
-    return yield* scanSecrets({ config, root, args: ["stdin", "--git-diff"], input: diff });
-  });
+const scanStagedSecrets: {
+  (root: string): (config: BetterleaksConfig) => Effect.Effect<Report, CheckError, CheckServices>;
+  (config: BetterleaksConfig, root: string): Effect.Effect<Report, CheckError, CheckServices>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (config: BetterleaksConfig, root: string): Effect.Effect<Report, CheckError, CheckServices> =>
+    Effect.gen(function* staged() {
+      const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
+      const diff = yield* spawner.string(ChildProcess.make("git", STAGED_DIFF, { cwd: root }));
+      return yield* scanSecrets({ config, root, args: ["stdin", "--git-diff"], input: diff });
+    }),
+);
 
+/** @internal */
 export { betterleaksCheck, scanStagedSecrets };

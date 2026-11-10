@@ -15,7 +15,8 @@ const CONFIG = lines(
 
 const readsACustomSection = Effect.gen(function* readsACustomSection() {
   const root = yield* directoryWith({ "vite.config.ts": CONFIG });
-  deepStrictEqual(yield* loadSection(root, "dependencyRules"), {
+  const section = yield* loadSection(root, "dependencyRules");
+  deepStrictEqual(section, {
     banned: { reason: ["left-pad"] },
   });
 });

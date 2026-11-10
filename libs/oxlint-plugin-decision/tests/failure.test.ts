@@ -1,7 +1,7 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Effect } from "effect";
+import { Effect, String as Str } from "effect";
 
 import { FAILED, PASSED, TIMEOUT, callRule, lintProject, outputOf, withMock } from "./fixtures.ts";
 import { decisionLines, mockEnv } from "./oxlint.ts";
@@ -29,7 +29,7 @@ const failsInCi = Effect.gen(function* test() {
     env: { ...env, CI: "true" },
   });
   strictEqual(run.status, FAILED, outputOf(run));
-  strictEqual(run.stderr.includes(REASON), false, run.stderr);
+  strictEqual(Str.includes(REASON)(run.stderr), false, run.stderr);
 });
 
 const explainsTheFailure = Effect.gen(function* test() {

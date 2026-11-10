@@ -1,4 +1,6 @@
-import { Array as Arr } from "effect";
+import { Array as Arr, Function as Fn } from "effect";
+
+const DATA_FIRST_ARITY = 2;
 
 const EMPTY = 0;
 const SET_BIT = 1;
@@ -12,11 +14,29 @@ const sharedFlags = (left: number, right: number): number => {
   return lowest + BINARY * sharedFlags(Math.floor(left / BINARY), Math.floor(right / BINARY));
 };
 
-const hasFlag = (flags: number, mask: number): boolean => sharedFlags(flags, mask) !== EMPTY;
+const hasFlag: {
+  (mask: number): (flags: number) => boolean;
+  (flags: number, mask: number): boolean;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (flags: number, mask: number): boolean => sharedFlags(flags, mask) !== EMPTY,
+);
 
-const withFlags = (flags: number, mask: number): number => flags + mask - sharedFlags(flags, mask);
+const withFlags: {
+  (mask: number): (flags: number) => number;
+  (flags: number, mask: number): number;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (flags: number, mask: number): number => flags + mask - sharedFlags(flags, mask),
+);
 
-const withoutFlags = (flags: number, mask: number): number => flags - sharedFlags(flags, mask);
+const withoutFlags: {
+  (mask: number): (flags: number) => number;
+  (flags: number, mask: number): number;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (flags: number, mask: number): number => flags - sharedFlags(flags, mask),
+);
 
 const combineFlags = (...masks: readonly number[]): number => Arr.reduce(masks, EMPTY, withFlags);
 

@@ -1,4 +1,4 @@
-import { Predicate } from "effect";
+import { Function as Fn, Predicate } from "effect";
 import type { BinaryExpression, CallExpression, Node } from "typescript/ast";
 import { isBinaryExpression, isCallExpression } from "typescript/ast/is";
 
@@ -17,6 +17,8 @@ import {
 import { bindModuleExportsAccess, bindModuleExportsAssignment } from "./binder-module-exports.ts";
 import { isRequireCall } from "./binder-syntax.ts";
 import { bindThisPropertyAssignment, isThisInitialized } from "./binder-this.ts";
+
+const EXPRESSION_ARITY = 3;
 
 type ExpressionBinder<Bound extends Node> = (
   binding: FileBinding,
@@ -43,9 +45,24 @@ const BINARY_BINDERS: ReadonlyMap<
   AssignmentDeclarationKind,
   ExpressionBinder<BinaryExpression>
 > = new Map([
-  [AssignmentKind.ExportsProperty, bindExportsPropertyAssignment],
-  [AssignmentKind.ModuleExports, bindModuleExportsAssignment],
-  [AssignmentKind.ThisProperty, bindThisPropertyAssignment],
+  [
+    AssignmentKind.ExportsProperty,
+    (binding, node, scope) => {
+      bindExportsPropertyAssignment(binding, node, scope);
+    },
+  ],
+  [
+    AssignmentKind.ModuleExports,
+    (binding, node, scope) => {
+      bindModuleExportsAssignment(binding, node, scope);
+    },
+  ],
+  [
+    AssignmentKind.ThisProperty,
+    (binding, node) => {
+      bindThisPropertyAssignment(binding, node);
+    },
+  ],
   [AssignmentKind.Property, bindPropertyAssignment],
 ]);
 
@@ -81,7 +98,10 @@ const bindCallExpression: ExpressionBinder<CallExpression> = (binding, node, sco
   }
 };
 
-const bindExpression: ExpressionBinder<Node> = (binding, node, scope) => {
+const bindExpression: {
+  (node: Node, scope: Scope): (binding: FileBinding) => void;
+  (binding: FileBinding, node: Node, scope: Scope): void;
+} = Fn.dual(EXPRESSION_ARITY, (binding: FileBinding, node: Node, scope: Scope): void => {
   if (isBinaryExpression(node)) {
     bindBinaryExpression(binding, node, scope);
     return;
@@ -91,7 +111,6 @@ const bindExpression: ExpressionBinder<Node> = (binding, node, scope) => {
     return;
   }
   bindModuleExportsAccess(binding, node, scope);
-};
+});
 
 export { bindExpression };
-export type { ExpressionBinder };

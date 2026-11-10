@@ -1,9 +1,10 @@
 import type { Plugin, RuleMeta } from "@oxlint/plugins";
-import { Predicate } from "effect";
+import { Predicate, Array as Arr, Record as Rec, Struct, pipe } from "effect";
 
 import { openRouter } from "./openrouter.ts";
 import { PREFIX, checkRules, resolveOptions } from "./options.ts";
 import { RULE_OPTIONS_SCHEMA, overrideRule } from "./override.ts";
+import { toJson } from "./runtime.ts";
 import type {
   DecisionOptions,
   DecisionPlugin,
@@ -27,17 +28,15 @@ const metaOf = (rule: DecisionRule): RuleMeta => ({
   },
 });
 
-const SETUP_ONLY: ReadonlySet<string> = new Set(["name", "rules", "providers"]);
-
 const optionsOf = (setup: DecisionPluginSetup): DecisionOptions =>
-  Object.fromEntries(Object.entries(setup).filter(([key]) => !SETUP_ONLY.has(key)));
+  Struct.omit(setup, ["name", "rules", "providers"]);
 
 type Resolve = (settings: unknown) => ResolvedOptions;
 
 const memoized = (resolve: Resolve): Resolve => {
   const resolved = new Map<string, ResolvedOptions>();
   return (settings) => {
-    const key = JSON.stringify([settings]);
+    const key = toJson([settings]);
     const cached = resolved.get(key);
     if (Predicate.isNotUndefined(cached)) {
       return cached;
@@ -55,7 +54,7 @@ const memoizedRules = (
   return (rule, options) => {
     const known = resolved.get(rule) ?? new Map<string, ResolvedRule>();
     resolved.set(rule, known);
-    const key = JSON.stringify([options]);
+    const key = toJson([options]);
     const cached = known.get(key);
     if (Predicate.isNotUndefined(cached)) {
       return cached;
@@ -68,8 +67,11 @@ const memoizedRules = (
 
 const createDecisionPlugin = (setup: DecisionPluginSetup): DecisionPlugin => {
   const name = setup.name ?? DEFAULT_NAME;
-  const providers: Readonly<Record<string, DecisionProvider>> = Object.fromEntries(
-    [openRouter, ...(setup.providers ?? [])].map((provider) => [provider.name, provider]),
+  const providers: Readonly<Record<string, DecisionProvider>> = Rec.fromEntries(
+    pipe(
+      [openRouter, ...(setup.providers ?? [])],
+      Arr.map((provider) => [provider.name, provider]),
+    ),
   );
   const rules = checkRules(setup.rules);
   const options = optionsOf(setup);
@@ -79,8 +81,11 @@ const createDecisionPlugin = (setup: DecisionPluginSetup): DecisionPlugin => {
 
   return {
     meta: { name },
-    rules: Object.fromEntries(
-      rules.map((rule) => [rule.id, { meta: metaOf(rule), createOnce: visitorFor(shared, rule) }]),
+    rules: Rec.fromEntries(
+      pipe(
+        rules,
+        Arr.map((rule) => [rule.id, { meta: metaOf(rule), createOnce: visitorFor(shared, rule) }]),
+      ),
     ),
   } satisfies Plugin;
 };

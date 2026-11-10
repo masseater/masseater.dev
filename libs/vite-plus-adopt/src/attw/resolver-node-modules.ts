@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Array as Arr, pipe, Function as Fn } from "effect";
 
 import {
   PRIORITY_KINDS,
@@ -28,6 +28,8 @@ import type { PackageLocation, SpecificRequest } from "./resolver-package-loader
 import { loadSubpath, resolveInPackage } from "./resolver-package.ts";
 import { directoryMissing } from "./resolver-relative.ts";
 
+const DATA_FIRST_ARITY = 2;
+
 interface NodeModulesSearch extends ModuleLookup {
   readonly typesScopeOnly: boolean;
 }
@@ -49,7 +51,10 @@ const FEATURE_NAMES: readonly (keyof ResolutionState["features"])[] = [
 ];
 
 const hasNoFeatures = ({ features }: ResolutionState): boolean =>
-  !FEATURE_NAMES.some((name) => features[name]);
+  !pipe(
+    FEATURE_NAMES,
+    Arr.some((name) => features[name]),
+  );
 
 const cacheModeOf = (state: ResolutionState): Option.Option<ResolutionMode> => {
   if (hasNoFeatures(state)) {
@@ -197,13 +202,14 @@ const resolveFallbackWithTrace = (
   return lookupAncestors({ ...search, extensions: fallback }, state);
 };
 
-const loadModuleFromNearestNodeModulesDirectory = (
-  search: NodeModulesSearch,
-  state: ResolutionState,
-): SearchResult =>
+const loadModuleFromNearestNodeModulesDirectory: {
+  (state: ResolutionState): (search: NodeModulesSearch) => SearchResult;
+  (search: NodeModulesSearch, state: ResolutionState): SearchResult;
+} = Fn.dual(DATA_FIRST_ARITY, (search: NodeModulesSearch, state: ResolutionState): SearchResult =>
   resolvePreferredWithTrace(search, state).pipe(
     Option.orElse(() => resolveFallbackWithTrace(search, state)),
-  );
+  ),
+);
 
 export { loadModuleFromNearestNodeModulesDirectory };
 export type { NodeModulesSearch };

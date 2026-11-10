@@ -1,4 +1,4 @@
-import { Array as Arr, Option, pipe } from "effect";
+import { Array as Arr, Option, pipe, String as Str } from "effect";
 import type { Node, SourceFile } from "typescript/ast";
 import type { Checker, CompilerOptions, Program as NativeProgram, Project } from "typescript/sync";
 
@@ -38,7 +38,7 @@ const compatChecker = (project: Project, checker: Checker): CompatChecker => ({
 });
 
 const isOwnSourceFile = (fileName: string): boolean =>
-  !fileName.includes("/node_modules/") && !fileName.endsWith(".d.ts");
+  !Str.includes("/node_modules/")(fileName) && !Str.endsWith(".d.ts")(fileName);
 
 const ownSourceFiles = memoizeByKey((program: NativeProgram): readonly SourceFile[] =>
   pipe(

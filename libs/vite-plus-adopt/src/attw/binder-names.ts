@@ -1,4 +1,4 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, Function as Fn } from "effect";
 import { ModifierFlags, SyntaxKind } from "typescript/ast";
 import type { BinaryExpression, CallExpression, ModuleDeclaration, Node } from "typescript/ast";
 import {
@@ -26,6 +26,8 @@ import {
 import type { AccessExpression } from "./binder-syntax.ts";
 import { EMPTY, hasFlag, withFlags } from "./flags.ts";
 
+const DATA_FIRST_ARITY = 2;
+
 const isNodeValue = (value: unknown): value is Node =>
   Predicate.hasProperty(value, "kind") && Predicate.isNumber(value.kind);
 
@@ -43,8 +45,12 @@ const syntacticModifierFlags = (node: Node): number => {
   return EMPTY;
 };
 
-const hasSyntacticModifier = (node: Node, flag: number): boolean =>
-  hasFlag(syntacticModifierFlags(node), flag);
+const hasSyntacticModifier: {
+  (flag: number): (node: Node) => boolean;
+  (node: Node, flag: number): boolean;
+} = Fn.dual(DATA_FIRST_ARITY, (node: Node, flag: number): boolean =>
+  hasFlag(syntacticModifierFlags(node), flag),
+);
 
 const declarationOfBinding = (node: Node): Node => {
   let current = node;
@@ -149,7 +155,10 @@ const unnamedDeclarationName = (node: Node): Option.Option<string> => {
   return Option.none();
 };
 
-const declarationName = (node: Node, inJsFile: boolean): Option.Option<string> => {
+const declarationName: {
+  (inJsFile: boolean): (node: Node) => Option.Option<string>;
+  (node: Node, inJsFile: boolean): Option.Option<string>;
+} = Fn.dual(DATA_FIRST_ARITY, (node: Node, inJsFile: boolean): Option.Option<string> => {
   if (isExportAssignment(node)) {
     return Option.some(
       Option.match(
@@ -165,6 +174,6 @@ const declarationName = (node: Node, inJsFile: boolean): Option.Option<string> =
     onNone: () => unnamedDeclarationName(node),
     onSome: (name) => nameOfNamedDeclaration(node, name),
   });
-};
+});
 
 export { declarationName, hasExportModifier, hasSyntacticModifier, isAmbientModule, isNodeValue };

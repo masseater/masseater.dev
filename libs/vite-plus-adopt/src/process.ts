@@ -48,5 +48,7 @@ const runCaptured = ({
     return { valid: exitCode === SUCCESS, output: text };
   }).pipe(Effect.scoped);
 
+/** @internal */
 export { runCaptured };
+/** @internal */
 export type { Invocation };

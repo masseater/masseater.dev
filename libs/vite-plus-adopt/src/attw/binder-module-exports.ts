@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Predicate } from "effect";
+import { Array as Arr, Option, Predicate, pipe, Function as Fn } from "effect";
 import type { BinaryExpression, Node } from "typescript/ast";
 import { isObjectLiteralExpression, isShorthandPropertyAssignment } from "typescript/ast/is";
 import { SymbolFlags } from "typescript/sync";
@@ -18,6 +18,8 @@ import {
   isModuleExportsAccessExpression,
 } from "./binder-syntax.ts";
 import { EMPTY, combineFlags } from "./flags.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
 
 const isEmptyObjectLiteral = (node: Node): boolean =>
   isObjectLiteralExpression(node) && !Arr.isReadonlyArrayNonEmpty(node.properties);
@@ -39,7 +41,7 @@ const MODULE_EXPORTS_VALUE: SymbolFlagPair = {
 const bindShorthandExports = (binding: FileBinding, assigned: Node): boolean => {
   if (
     !isObjectLiteralExpression(assigned) ||
-    !assigned.properties.every(isShorthandPropertyAssignment)
+    !pipe(assigned.properties, Arr.every(isShorthandPropertyAssignment))
   ) {
     return false;
   }
@@ -53,25 +55,27 @@ const isUnboundModuleExportsValue = (binding: FileBinding, assigned: Node, scope
   isEmptyObjectLiteral(assigned) ||
   (scope.containerIsFile && isExportsOrModuleExportsOrAlias(binding, assigned));
 
-const bindModuleExportsAssignment = (
-  binding: FileBinding,
-  node: BinaryExpression,
-  scope: Scope,
-): void => {
-  const assigned = getRightMostAssignedExpression(node.right);
-  if (
-    !setCommonJsModuleIndicator(binding, node) ||
-    isUnboundModuleExportsValue(binding, assigned, scope) ||
-    bindShorthandExports(binding, assigned)
-  ) {
-    return;
-  }
-  const flags = Option.getOrElse(
-    Option.liftPredicate(MODULE_EXPORTS_ALIAS, () => isAliasableExpression(node.right)),
-    () => MODULE_EXPORTS_VALUE,
-  );
-  setValueDeclaration(declareExport(binding, node, flags), node);
-};
+const bindModuleExportsAssignment: {
+  (node: BinaryExpression, scope: Scope): (binding: FileBinding) => void;
+  (binding: FileBinding, node: BinaryExpression, scope: Scope): void;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (binding: FileBinding, node: BinaryExpression, scope: Scope): void => {
+    const assigned = getRightMostAssignedExpression(node.right);
+    if (
+      !setCommonJsModuleIndicator(binding, node) ||
+      isUnboundModuleExportsValue(binding, assigned, scope) ||
+      bindShorthandExports(binding, assigned)
+    ) {
+      return;
+    }
+    const flags = Option.getOrElse(
+      Option.liftPredicate(MODULE_EXPORTS_ALIAS, () => isAliasableExpression(node.right)),
+      () => MODULE_EXPORTS_VALUE,
+    );
+    setValueDeclaration(declareExport(binding, node, flags), node);
+  },
+);
 
 const MODULE_LOCAL: SymbolFlagPair = {
   includes: combineFlags(SymbolFlags.FunctionScopedVariable, SymbolFlags.ModuleExports),
@@ -86,7 +90,10 @@ const isTrackedModuleExportsAccess = (binding: FileBinding, node: Node): boolean
   Predicate.isNotUndefined(binding.commonJsModuleIndicator) &&
   isModuleExportsAccessExpression(node);
 
-const bindModuleExportsAccess = (binding: FileBinding, node: Node, scope: Scope): void => {
+const bindModuleExportsAccess: {
+  (node: Node, scope: Scope): (binding: FileBinding) => void;
+  (binding: FileBinding, node: Node, scope: Scope): void;
+} = Fn.dual(DATA_FIRST_ARITY_3, (binding: FileBinding, node: Node, scope: Scope): void => {
   if (
     !isAccessExpression(node) ||
     !isTrackedModuleExportsAccess(binding, node) ||
@@ -99,6 +106,6 @@ const bindModuleExportsAccess = (binding: FileBinding, node: Node, scope: Scope)
     node: node.expression,
     flags: MODULE_LOCAL,
   });
-};
+});
 
 export { bindModuleExportsAccess, bindModuleExportsAssignment };

@@ -1,7 +1,19 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, FileSystem, Option, Order, Schema } from "effect";
+import {
+  Array as Arr,
+  Effect,
+  FileSystem,
+  Option,
+  Order,
+  Schema,
+  Record as Rec,
+  String as Str,
+  pipe,
+} from "effect";
+
+import { toJson } from "#src/runtime.ts";
 
 import { FAILED, TIMEOUT, outputOf, withMock } from "./fixtures.ts";
 import type { MockTest } from "./fixtures.ts";
@@ -15,6 +27,7 @@ import {
 } from "./location-fixture.ts";
 import { loggedRequests } from "./mock-openrouter.ts";
 import { firstSpan } from "./oxlint.ts";
+import type { TestError } from "./oxlint.ts";
 
 const FIRST_LINE = 1;
 const CALL_LINE = 4;
@@ -47,7 +60,11 @@ const refines = Effect.scoped(
     const first = yield* project.lint;
     strictEqual(first.run.status, FAILED);
     deepStrictEqual(lineOf(first.diagnostics), Option.some(REFINED_LINE));
-    const states = (yield* loggedRequests).map(({ body }) => JSON.stringify(body.state));
+    const requests = yield* loggedRequests;
+    const states = pipe(
+      requests,
+      Arr.map(({ body }) => toJson(body.state)),
+    );
     strictEqual(new Set(states).size, ONE);
     deepStrictEqual((yield* project.lint).diagnostics, first.diagnostics);
     strictEqual((yield* loggedRequests).length, TWO);
@@ -64,13 +81,16 @@ const keepsLaterFindings = Effect.scoped(
     const { run, diagnostics } = yield* project.lint;
     strictEqual(run.status, FAILED);
     deepStrictEqual(
-      diagnostics.map((diagnostic) => [
-        diagnostic.message
-          .split("]", ONE)
-          .join("")
-          .replace(/: http 401: .* while/u, ": http 401 while"),
-        firstSpan(diagnostic).line,
-      ]),
+      pipe(
+        diagnostics,
+        Arr.map((diagnostic) => [
+          Str.replace(
+            /: http 401: .* while/u,
+            ": http 401 while",
+          )(pipe(Str.split(diagnostic.message, "]"), Arr.take(ONE), Arr.join(""))),
+          firstSpan(diagnostic).line,
+        ]),
+      ),
       [
         ["[no-personal-data", FIRST_LINE],
         ["[another-file-rule", FIRST_LINE],
@@ -151,16 +171,20 @@ const CachedAnswers = Schema.fromJsonString(
   Schema.Struct({ answers: Schema.Record(Schema.String, Schema.Unknown) }),
 );
 
-const corruptRefinement = (file: string): Effect.Effect<number, unknown, FileSystem.FileSystem> =>
+const JsonRecord = Schema.fromJsonString(Schema.Record(Schema.String, Schema.Unknown));
+
+const corruptRefinement = (file: string): Effect.Effect<number, TestError, FileSystem.FileSystem> =>
   Effect.gen(function* corrupt() {
     const fs = yield* FileSystem.FileSystem;
     const raw = yield* fs.readFileString(file);
-    const entry = yield* Schema.decodeUnknownEffect(CachedAnswers)(raw);
-    if (Object.hasOwn(entry.answers, "s0")) {
+    const entry = yield* Schema.decodeEffect(CachedAnswers)(raw);
+    if (Rec.has(entry.answers, "s0")) {
       return NONE;
     }
     const answers = { ...entry.answers, s0_location: { type: "choice", choice: "L604" } };
-    yield* fs.writeFileString(file, JSON.stringify({ ...JSON.parse(raw), answers }));
+    const whole = yield* Schema.decodeEffect(JsonRecord)(raw);
+    const text = yield* Schema.encodeEffect(JsonRecord)({ ...whole, answers });
+    yield* fs.writeFileString(file, text);
     return ONE;
   });
 
@@ -168,8 +192,12 @@ const retriesCorruptCache = Effect.scoped(
   Effect.gen(function* test() {
     const project = yield* locationProject({ text: LARGE_SOURCE });
     deepStrictEqual(lineOf((yield* project.lint).diagnostics), Option.some(REFINED_LINE));
+    const entries = yield* cacheEntries(project.cwd);
     const corrupted = yield* Effect.all(
-      (yield* cacheEntries(project.cwd)).map((file) => corruptRefinement(file)),
+      pipe(
+        entries,
+        Arr.map((file) => corruptRefinement(file)),
+      ),
     );
     deepStrictEqual(Arr.sort(corrupted, Order.Number), [NONE, ONE]);
     deepStrictEqual(lineOf((yield* project.lint).diagnostics), Option.some(REFINED_LINE));

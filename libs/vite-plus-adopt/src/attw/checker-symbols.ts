@@ -1,4 +1,4 @@
-import { Array as Arr, Option } from "effect";
+import { Array as Arr, Option, pipe, Function as Fn } from "effect";
 import { escapeLeadingUnderscores as escapeSymbolName, getNameOfDeclaration } from "typescript/ast";
 import type { Declaration, Expression, Node, SourceFile } from "typescript/ast";
 import {
@@ -29,6 +29,8 @@ import type { BoundSymbol } from "./binder-symbols.ts";
 import { bindingOf } from "./binder.ts";
 import type { CheckerSession } from "./checker-session.ts";
 import { hasFlag } from "./flags.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 type AnySymbol = BoundSymbol | CheckerSymbol;
 
@@ -70,7 +72,10 @@ const NAMEABLE_GUARDS: readonly ((node: Node) => boolean)[] = [
 ];
 
 const isNameable = (node: Node): node is Declaration | Expression =>
-  NAMEABLE_GUARDS.some((guard) => guard(node));
+  pipe(
+    NAMEABLE_GUARDS,
+    Arr.some((guard) => guard(node)),
+  );
 
 const nameNode = (declaration: Node): Node =>
   Option.liftPredicate(declaration, isNameable).pipe(
@@ -136,12 +141,15 @@ const fromBound = (
   );
 };
 
-const toCheckerSymbol: SymbolConverter = (session, symbol) => {
+const toCheckerSymbol: {
+  (symbol: AnySymbol): (session: CheckerSession) => CheckerSymbol;
+  (session: CheckerSession, symbol: AnySymbol): CheckerSymbol;
+} = Fn.dual(DATA_FIRST_ARITY, (session: CheckerSession, symbol: AnySymbol): CheckerSymbol => {
   if (isCheckerSymbol(symbol)) {
     return symbol;
   }
   return fromBound(session, symbol, toCheckerSymbol);
-};
+});
 
 const assignedIdentifier = (declaration: Node): Option.Option<Node> => {
   if (isBinaryExpression(declaration)) {
@@ -172,10 +180,13 @@ const boundExpandoExports = (moduleSymbol: BoundSymbol): readonly BoundSymbol[] 
     Option.flatMap((identifier) => localNamed(identifier)),
     Option.flatMap((local) => Option.fromNullishOr(local.exports)),
     Option.map((members) =>
-      [...members.values()].filter((member) => hasFlag(member.flags, SymbolFlags.Assignment)),
+      pipe(
+        [...members.values()],
+        Arr.filter((member) => hasFlag(member.flags, SymbolFlags.Assignment)),
+      ),
     ),
     Option.getOrElse((): readonly BoundSymbol[] => []),
   );
 
 export { EXPORT_EQUALS, boundExpandoExports, isCheckerSymbol, toCheckerSymbol };
-export type { AnySymbol, SymbolConverter };
+export type { AnySymbol };

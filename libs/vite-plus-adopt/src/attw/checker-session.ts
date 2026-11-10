@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Array as Arr, pipe } from "effect";
 import type { Checker, Project } from "typescript/sync";
 
 import { sharedApi } from "./ts-api.ts";
@@ -30,7 +30,10 @@ const openCheckerSession = (program: CheckerProgram): CheckerSession => {
   const snapshot = api.createSnapshot({
     createPrograms: [
       {
-        rootFiles: program.rootNames.map((name) => `${program.mountPath}${name}`),
+        rootFiles: pipe(
+          program.rootNames,
+          Arr.map((name) => `${program.mountPath}${name}`),
+        ),
         compilerOptions: program.compilerOptions,
         options: { moduleResolver },
       },

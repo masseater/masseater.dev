@@ -1,4 +1,4 @@
-import { Effect, FileSystem, Option, Path, Array as Arr, pipe } from "effect";
+import { Effect, FileSystem, Function as Fn, Option, Path, Array as Arr, pipe } from "effect";
 import { resolveConfigFromFile } from "vite-plus";
 
 import { attempt } from "./attempt.ts";
@@ -19,12 +19,8 @@ const findConfigFile = (root: string): Effect.Effect<string, VpToolsError, FileS
       Arr.map((name) => path.join(root, name)),
       Effect.filter((file) => fs.exists(file).pipe(Effect.orElseSucceed(() => false))),
     );
-    return yield* pipe(
-      Arr.head(existing),
-      Option.match({
-        onNone: () => Effect.fail(configMissing(`No vite.config file in ${root}`)),
-        onSome: Effect.succeed,
-      }),
+    return yield* Effect.fromOption(Arr.head(existing)).pipe(
+      Effect.mapError(() => configMissing(`No vite.config file in ${root}`)),
     );
   });
 
@@ -36,19 +32,30 @@ const loadViteConfig = (root: string): Effect.Effect<ToolSections, VpToolsError,
 const requireSection =
   <Key extends ToolSection>(key: Key) =>
   (config: ToolSections): Effect.Effect<NonNullable<ToolSections[Key]>, VpToolsError> =>
-    pipe(
-      Option.fromNullishOr(config[key]),
-      Option.match({
-        onNone: () => Effect.fail(configMissing(`vite.config has no "${key}" section`)),
-        onSome: Effect.succeed,
-      }),
+    Effect.fromOption(Option.fromNullishOr(config[key])).pipe(
+      Effect.mapError(() => configMissing(`vite.config has no "${key}" section`)),
     );
 
-const loadSection = <Key extends ToolSection>(
-  root: string,
-  key: Key,
-): Effect.Effect<NonNullable<ToolSections[Key]>, VpToolsError, FileServices> =>
-  loadViteConfig(root).pipe(Effect.flatMap(requireSection(key)));
+const DATA_FIRST_ARITY = 2;
 
+const loadSection: {
+  <Key extends ToolSection>(
+    key: Key,
+  ): (root: string) => Effect.Effect<NonNullable<ToolSections[Key]>, VpToolsError, FileServices>;
+  <Key extends ToolSection>(
+    root: string,
+    key: Key,
+  ): Effect.Effect<NonNullable<ToolSections[Key]>, VpToolsError, FileServices>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  <Key extends ToolSection>(
+    root: string,
+    key: Key,
+  ): Effect.Effect<NonNullable<ToolSections[Key]>, VpToolsError, FileServices> =>
+    loadViteConfig(root).pipe(Effect.flatMap(requireSection(key))),
+);
+
+/** @internal */
 export { loadSection, loadViteConfig };
+/** @internal */
 export type { FileServices };

@@ -75,4 +75,5 @@ const runAllChecks = (root: string): Effect.Effect<void, CheckError, CheckServic
     );
   });
 
+/** @internal */
 export { runAllChecks };

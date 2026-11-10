@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, Function as Fn } from "effect";
 import type { FileSystem, Path, PlatformError } from "effect";
 import type { ChildProcessSpawner } from "effect/process";
 
@@ -9,13 +9,37 @@ import { runCaptured } from "./process.ts";
 import type { Invocation } from "./process.ts";
 import type { Report } from "./report.ts";
 
-const runVendored = (
-  binary: Binary,
-  invocation: Omit<Invocation, "file">,
-): Effect.Effect<
-  Report,
-  VpToolsError | PlatformError.PlatformError,
-  ChildProcessSpawner.ChildProcessSpawner | FileSystem.FileSystem | Path.Path
-> => locateBinary(binary).pipe(Effect.flatMap((file) => runCaptured({ ...invocation, file })));
+const DATA_FIRST_ARITY = 2;
 
+const runVendored: {
+  (
+    invocation: Omit<Invocation, "file">,
+  ): (
+    binary: Binary,
+  ) => Effect.Effect<
+    Report,
+    VpToolsError | PlatformError.PlatformError,
+    ChildProcessSpawner.ChildProcessSpawner | FileSystem.FileSystem | Path.Path
+  >;
+  (
+    binary: Binary,
+    invocation: Omit<Invocation, "file">,
+  ): Effect.Effect<
+    Report,
+    VpToolsError | PlatformError.PlatformError,
+    ChildProcessSpawner.ChildProcessSpawner | FileSystem.FileSystem | Path.Path
+  >;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (
+    binary: Binary,
+    invocation: Omit<Invocation, "file">,
+  ): Effect.Effect<
+    Report,
+    VpToolsError | PlatformError.PlatformError,
+    ChildProcessSpawner.ChildProcessSpawner | FileSystem.FileSystem | Path.Path
+  > => locateBinary(binary).pipe(Effect.flatMap((file) => runCaptured({ ...invocation, file }))),
+);
+
+/** @internal */
 export { runVendored };

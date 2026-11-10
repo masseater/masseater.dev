@@ -1,4 +1,4 @@
-import { Array as Arr, Predicate } from "effect";
+import { Array as Arr, Predicate, pipe } from "effect";
 import type { Node } from "typescript/ast";
 import { isBindingElement, isVariableDeclaration } from "typescript/ast/is";
 
@@ -64,7 +64,10 @@ const bindFileNodes = (binding: FileBinding): readonly Node[] => {
     stack.push(...bindFrame(binding, frame));
     frame = stack.pop();
   }
-  return bound.filter((node) => !isReparsed(node));
+  return pipe(
+    bound,
+    Arr.filter((node) => !isReparsed(node)),
+  );
 };
 
 export { bindFileNodes };

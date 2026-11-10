@@ -1,13 +1,14 @@
 import type { Context, VisitorWithHooks } from "@oxlint/plugins";
-import { Array as Arr, Option, Predicate } from "effect";
+import { Array as Arr, Option, Predicate, Record as Rec, pipe, Function as Fn } from "effect";
 
 import { commentedSnippetOf, contextOf, lacksComment } from "./context.ts";
 import { isSelected } from "./name.ts";
-import { OptionsError, REPORT_LOC, TARGET_NODE_TYPES, snippetNodeFor } from "./options.ts";
+import { REPORT_LOC, TARGET_NODE_TYPES, snippetNodeFor } from "./nodes.ts";
+import { optionsError } from "./options.ts";
 import { reportModels } from "./report.ts";
 import type { ModelPass } from "./report.ts";
 import { truncateSnippet } from "./request.ts";
-import { envNameOf, envOf, failsInCi, warnOnce } from "./runtime.ts";
+import { envNameOf, envOf, failsInCi, nowMs, warnOnce } from "./runtime.ts";
 import type {
   AstNode,
   DecisionProvider,
@@ -18,6 +19,8 @@ import type {
   SelectedNode,
   Target,
 } from "./types.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface Collected {
   readonly options: ResolvedOptions;
@@ -51,33 +54,38 @@ type RuleFor = (rule: ResolvedRule, options: unknown) => ResolvedRule;
 const raisedMissing = new Set<string>();
 
 const missingEnvOf = (options: ResolvedOptions, provider: DecisionProvider): readonly string[] =>
-  provider.requiredEnv
-    .map((name) => envNameOf(options.env, name))
-    .filter((name) => Option.isNone(envOf(name)));
+  pipe(
+    provider.requiredEnv,
+    Arr.map((name) => envNameOf(options.env, name)),
+    Arr.filter((name) => Option.isNone(envOf(name))),
+  );
 
 const isAvailable = (options: ResolvedOptions, { provider }: ModelRef): boolean => {
   const missingNames = missingEnvOf(options, provider);
   if (Arr.isReadonlyArrayEmpty(missingNames)) {
     return true;
   }
-  const missing = missingNames.join(", ");
+  const missing = pipe(missingNames, Arr.join(", "));
   if (!failsInCi(options)) {
     warnOnce(`missing:${provider.name}`, `${missing} is not set, skipping ${provider.name} models`);
   } else if (!raisedMissing.has(provider.name)) {
     raisedMissing.add(provider.name);
-    throw new OptionsError(`${missing} is not set`);
+    throw optionsError(`${missing} is not set`);
   }
   return false;
 };
 
-const availableModels = (batch: Collected): readonly ModelRef[] =>
-  [
-    ...new Map(
-      Object.values(batch.rules)
-        .flatMap((rule) => rule.models)
-        .map((model) => [model.id, model]),
-    ).values(),
-  ].filter((model) => isAvailable(batch.options, model));
+const availableModels = (batch: Collected): readonly ModelRef[] => {
+  const models = pipe(
+    Rec.values(batch.rules),
+    Arr.flatMap((rule) => rule.models),
+    Arr.map((model) => [model.id, model] as const),
+  );
+  return pipe(
+    Arr.fromIterable(new Map(models).values()),
+    Arr.filter((model) => isAvailable(batch.options, model)),
+  );
+};
 
 const snippetOf = (context: Context, node: AstNode): string => {
   if (node.type === "Program") {
@@ -116,36 +124,48 @@ const contextOfRule = (batch: Collected, id: string): Context =>
   Option.getOrThrow(Option.fromUndefinedOr(batch.contexts[id]));
 
 const finish = (batch: Collected): void => {
-  const [first] = Object.values(batch.contexts);
+  const [first] = Rec.values(batch.contexts);
   if (Predicate.isUndefined(first)) {
     return;
   }
-  const deadline = Date.now() + batch.options.timeoutMs;
-  const passes = availableModels(batch).flatMap((model): readonly ModelPass[] => {
-    const matches = batch.matches.filter(({ rule }) =>
-      rule.models.some(({ id }) => id === model.id),
-    );
-    return Arr.match(matches, {
-      onEmpty: () => [],
-      onNonEmpty: (some) => [
-        {
-          contextOf: (match) => contextOfRule(batch, match.rule.id),
-          filename: first.filename,
-          options: batch.options,
-          model,
-          matches: some,
-          deadline,
-        },
-      ],
-    });
-  });
+  const deadline = nowMs() + batch.options.timeoutMs;
+  const passes = pipe(
+    availableModels(batch),
+    Arr.flatMap((model): readonly ModelPass[] => {
+      const matches = pipe(
+        batch.matches,
+        Arr.filter(({ rule }) =>
+          pipe(
+            rule.models,
+            Arr.some(({ id }) => id === model.id),
+          ),
+        ),
+      );
+      return Arr.match(matches, {
+        onEmpty: () => [],
+        onNonEmpty: (some) => [
+          {
+            contextOf: (match) => contextOfRule(batch, match.rule.id),
+            filename: first.filename,
+            options: batch.options,
+            model,
+            matches: some,
+            deadline,
+          },
+        ],
+      });
+    }),
+  );
   reportModels(passes);
 };
 
 const ruleIn = (batch: Collected, id: string): ResolvedRule =>
   Option.getOrThrow(Arr.findFirst(batch.options.rules, (rule) => rule.id === id));
 
-const sharedFile = (optionsFor: OptionsFor, ruleFor: RuleFor): SharedFile => {
+const sharedFile: {
+  (ruleFor: RuleFor): (optionsFor: OptionsFor) => SharedFile;
+  (optionsFor: OptionsFor, ruleFor: RuleFor): SharedFile;
+} = Fn.dual(DATA_FIRST_ARITY, (optionsFor: OptionsFor, ruleFor: RuleFor): SharedFile => {
   let current: Option.Option<FileBatch> = Option.none();
   const start = (context: Context): FileBatch => {
     const batch: FileBatch = {
@@ -182,7 +202,7 @@ const sharedFile = (optionsFor: OptionsFor, ruleFor: RuleFor): SharedFile => {
       }
       const batch = current.value;
       batch.exits += 1;
-      if (batch.exits >= Object.keys(batch.contexts).length) {
+      if (batch.exits >= Rec.keys(batch.contexts).length) {
         current = Option.none();
       }
       if (!batch.exiting) {
@@ -191,45 +211,60 @@ const sharedFile = (optionsFor: OptionsFor, ruleFor: RuleFor): SharedFile => {
       }
     },
   };
-};
+});
 
 type Visited = SelectedNode & AstNode;
 
 const isSkipped = (context: Context, node: Visited, rule: ResolvedRule): boolean =>
   !isSelected(context, node, rule) || lacksComment(context, node, rule);
 
-const visitorFor =
-  (shared: SharedFile, { id, target }: { readonly id: string; readonly target: Target }) =>
-  (context: Context): VisitorWithHooks => {
-    let file: Option.Option<RuleFile> = Option.none();
+interface RuleTarget {
+  readonly id: string;
+  readonly target: Target;
+}
 
-    const collect = (node: Visited): void => {
-      if (Option.isNone(file)) {
-        return;
-      }
-      const { batch, rule } = file.value;
-      if (isSkipped(context, node, rule)) {
-        return;
-      }
-      batch.matches.push(matchOf(context, node, { rule, options: batch.options }));
-    };
+const visitorFor: {
+  (rule: RuleTarget): (shared: SharedFile) => (context: Context) => VisitorWithHooks;
+  (shared: SharedFile, rule: RuleTarget): (context: Context) => VisitorWithHooks;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (shared: SharedFile, { id, target }: RuleTarget) =>
+    (context: Context): VisitorWithHooks => {
+      let file: Option.Option<RuleFile> = Option.none();
 
-    const nodeTypes: readonly string[] = TARGET_NODE_TYPES[target];
-
-    return {
-      ...Object.fromEntries(nodeTypes.map((type) => [type, collect])),
-      Program: (node: Visited): void => {
-        file = Option.some(shared.join(context, id));
-        if (target === "file") {
-          collect(node);
+      const collect = (node: Visited): void => {
+        if (Option.isNone(file)) {
+          return;
         }
-      },
-      "Program:exit": (): void => {
-        file = Option.none();
-        shared.leave();
-      },
-    };
-  };
+        const { batch, rule } = file.value;
+        if (isSkipped(context, node, rule)) {
+          return;
+        }
+        batch.matches.push(matchOf(context, node, { rule, options: batch.options }));
+      };
+
+      const nodeTypes: readonly string[] = TARGET_NODE_TYPES[target];
+
+      return {
+        ...Rec.fromEntries(
+          pipe(
+            nodeTypes,
+            Arr.map((type) => [type, collect]),
+          ),
+        ),
+        Program: (node: Visited): void => {
+          file = Option.some(shared.join(context, id));
+          if (target === "file") {
+            collect(node);
+          }
+        },
+        "Program:exit": (): void => {
+          file = Option.none();
+          shared.leave();
+        },
+      };
+    },
+);
 
 export { sharedFile, visitorFor };
-export type { Collected, FileBatch, OptionsFor, RuleFile, RuleFor, SharedFile };
+export type { Collected, FileBatch, OptionsFor, RuleFile, RuleFor, RuleTarget, SharedFile };

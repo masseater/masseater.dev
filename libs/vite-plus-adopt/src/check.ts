@@ -24,4 +24,5 @@ interface NamedCheck {
   readonly run: Check;
 }
 
+/** @internal */
 export type { Check, CheckContext, CheckError, CheckServices, NamedCheck };

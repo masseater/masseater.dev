@@ -6,11 +6,10 @@ import {
   isDeclared,
   mayBePlaceholder,
   hasCast,
-  hasCommentInside,
   hasFallback,
   hasGuard,
-  hasSuppression,
 } from "./ai-slop-select.ts";
+import { hasCommentInside, hasSuppression } from "./comment-select.ts";
 
 interface SlopRule extends Pick<DecisionRule, "id" | "select" | "context"> {
   readonly ask: string;

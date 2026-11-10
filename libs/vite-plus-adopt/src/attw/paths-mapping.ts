@@ -1,4 +1,12 @@
-import { Array as Arr, Option, Predicate, Record as Rec, pipe } from "effect";
+import {
+  Array as Arr,
+  Option,
+  Predicate,
+  Record as Rec,
+  pipe,
+  String as Str,
+  Function as Fn,
+} from "effect";
 
 import { tryGetExtensionFromPath } from "./extensions.ts";
 import type { Extensions } from "./extensions.ts";
@@ -6,6 +14,8 @@ import { Messages, traceMessage } from "./messages.ts";
 import { combinePaths, getDirectoryPath, normalizePath } from "./paths.ts";
 import type { CandidateRequest, PathAndExtension, ResolutionState } from "./resolution-types.ts";
 import { tryFile } from "./resolver-files.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 type Loader<Found = PathAndExtension> = (
   request: CandidateRequest,
@@ -31,27 +41,30 @@ type PatternOrExact =
   | { readonly kind: "exact"; readonly text: string }
   | { readonly kind: "pattern"; readonly pattern: Pattern };
 
-const NOT_FOUND = -1;
 const STAR_LENGTH = 1;
 const START = 0;
 
-const tryParsePattern = (key: string): Option.Option<PatternOrExact> => {
-  const star = key.indexOf("*");
-  if (star === NOT_FOUND) {
-    return Option.some({ kind: "exact", text: key });
-  }
-  return Option.liftPredicate(key, (text) => !text.includes("*", star + STAR_LENGTH)).pipe(
+const patternAt = (key: string, star: number): Option.Option<PatternOrExact> =>
+  Option.liftPredicate(key, (text) => !Str.includes("*", star + STAR_LENGTH)(text)).pipe(
     Option.map((text) => ({
       kind: "pattern",
-      pattern: { prefix: text.slice(START, star), suffix: text.slice(star + STAR_LENGTH) },
+      pattern: {
+        prefix: Str.slice(START, star)(text),
+        suffix: Str.slice(star + STAR_LENGTH)(text),
+      },
     })),
   );
-};
+
+const tryParsePattern = (key: string): Option.Option<PatternOrExact> =>
+  Option.match(Str.indexOf("*")(key), {
+    onNone: () => Option.some({ kind: "exact", text: key }),
+    onSome: (star) => patternAt(key, star),
+  });
 
 const isPatternMatch = ({ prefix, suffix }: Pattern, candidate: string): boolean =>
   candidate.length >= prefix.length + suffix.length &&
-  candidate.startsWith(prefix) &&
-  candidate.endsWith(suffix);
+  Str.startsWith(prefix)(candidate) &&
+  Str.endsWith(suffix)(candidate);
 
 const bestPattern = (patterns: readonly Pattern[], candidate: string): Option.Option<Pattern> =>
   Arr.reduce(patterns, Option.none<Pattern>(), (best, pattern) =>
@@ -78,6 +91,25 @@ interface MatchedPattern {
   readonly star: string;
 }
 
+const matchedBy =
+  (candidate: string) =>
+  (pattern: Pattern): MatchedPattern => ({
+    text: `${pattern.prefix}*${pattern.suffix}`,
+    star: Str.slice(pattern.prefix.length, candidate.length - pattern.suffix.length)(candidate),
+  });
+
+const patternMatch = (
+  entries: readonly PatternOrExact[],
+  candidate: string,
+): Option.Option<MatchedPattern> => {
+  const patterns = pipe(
+    entries,
+    Arr.map((entry) => patternOf(entry)),
+    Arr.getSomes,
+  );
+  return Option.map(bestPattern(patterns, candidate), matchedBy(candidate));
+};
+
 const matchPatternOrExact = (
   entries: readonly PatternOrExact[],
   candidate: string,
@@ -85,16 +117,8 @@ const matchPatternOrExact = (
   pipe(
     entries,
     Arr.findFirst((entry) => entry.kind === "exact" && entry.text === candidate),
-  ).pipe(
     Option.map((): MatchedPattern => ({ text: candidate, star: "" })),
-    Option.orElse(() =>
-      bestPattern(Arr.getSomes(entries.map((entry) => patternOf(entry))), candidate).pipe(
-        Option.map((pattern) => ({
-          text: `${pattern.prefix}*${pattern.suffix}`,
-          star: candidate.slice(pattern.prefix.length, candidate.length - pattern.suffix.length),
-        })),
-      ),
-    ),
+    Option.orElse(() => patternMatch(entries, candidate)),
   );
 
 const substitutionsOf = (
@@ -102,9 +126,12 @@ const substitutionsOf = (
   key: string,
 ): readonly string[] =>
   Option.fromNullishOr(paths[key]).pipe(
-    Option.filter((value) => Array.isArray(value)),
+    Option.filter((value) => Arr.isArray(value)),
     Option.map((values: readonly unknown[]) =>
-      values.filter((value): value is string => Predicate.isString(value)),
+      pipe(
+        values,
+        Arr.filter((value): value is string => Predicate.isString(value)),
+      ),
     ),
     Option.getOrElse((): readonly string[] => []),
   );
@@ -120,7 +147,7 @@ const trySubstitution = <Found>(
   state: ResolutionState,
 ): Option.Option<Found> => {
   const path = Option.liftPredicate(matched.star, (star) => star.length > START).pipe(
-    Option.match({ onNone: () => text, onSome: (star) => text.replace("*", star) }),
+    Option.match({ onNone: () => text, onSome: (star) => Str.replace("*", star)(text) }),
   );
   const candidate = normalizePath(combinePaths(context.baseDirectory, path));
   traceMessage(state, Messages.tryingSubstitution, text, path);
@@ -146,21 +173,37 @@ const trySubstitution = <Found>(
   );
 };
 
-const tryLoadModuleUsingPaths = <Found>(
-  context: PathsRequest<Found>,
-  state: ResolutionState,
-): Option.Option<Option.Option<Found>> => {
-  const entries = Arr.getSomes(Rec.keys(context.paths).map((key) => tryParsePattern(key)));
-  return matchPatternOrExact(entries, context.moduleName).pipe(
-    Option.map((matched) => {
-      traceMessage(state, Messages.matchedPattern, context.moduleName, matched.text);
-      return pipe(
-        substitutionsOf(context.paths, matched.text),
-        Arr.findFirst((text) => trySubstitution({ text, matched }, context, state)),
-      );
-    }),
-  );
-};
+const tryLoadModuleUsingPaths: {
+  (
+    state: ResolutionState,
+  ): <Found>(context: PathsRequest<Found>) => Option.Option<Option.Option<Found>>;
+  <Found>(
+    context: PathsRequest<Found>,
+    state: ResolutionState,
+  ): Option.Option<Option.Option<Found>>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  <Found>(
+    context: PathsRequest<Found>,
+    state: ResolutionState,
+  ): Option.Option<Option.Option<Found>> => {
+    const entries = Arr.getSomes(
+      pipe(
+        Rec.keys(context.paths),
+        Arr.map((key) => tryParsePattern(key)),
+      ),
+    );
+    return matchPatternOrExact(entries, context.moduleName).pipe(
+      Option.map((matched) => {
+        traceMessage(state, Messages.matchedPattern, context.moduleName, matched.text);
+        return pipe(
+          substitutionsOf(context.paths, matched.text),
+          Arr.findFirst((text) => trySubstitution({ text, matched }, context, state)),
+        );
+      }),
+    );
+  },
+);
 
 export { tryLoadModuleUsingPaths };
 export type { Loader, PathsRequest };

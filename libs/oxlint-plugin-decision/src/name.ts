@@ -1,7 +1,9 @@
 import type { Context } from "@oxlint/plugins";
-import { Match, Option } from "effect";
+import { Match, Option, String as Str, Function as Fn } from "effect";
 
 import type { DecisionRule, SelectedNode } from "./types.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
 
 const heldName = (node: SelectedNode): Option.Option<SelectedNode> =>
   Option.flatMap(Option.fromNullishOr(node.parent), (parent) =>
@@ -32,13 +34,21 @@ const nameNodeOf = (node: SelectedNode): Option.Option<SelectedNode> =>
 
 const nameOf = (node: SelectedNode, context: Context): string | undefined =>
   Option.getOrUndefined(
-    Option.map(nameNodeOf(node), (name) => context.sourceCode.text.slice(name.start, name.end)),
+    Option.map(nameNodeOf(node), (name) =>
+      Str.slice(name.start, name.end)(context.sourceCode.text),
+    ),
   );
 
-const isSelected = (context: Context, node: SelectedNode, { select }: DecisionRule): boolean =>
-  Option.match(Option.fromUndefinedOr(select), {
-    onNone: () => true,
-    onSome: (selects) => selects(node, { name: nameOf(node, context), context }),
-  });
+const isSelected: {
+  (node: SelectedNode, rule: DecisionRule): (context: Context) => boolean;
+  (context: Context, node: SelectedNode, rule: DecisionRule): boolean;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (context: Context, node: SelectedNode, { select }: DecisionRule): boolean =>
+    Option.match(Option.fromUndefinedOr(select), {
+      onNone: () => true,
+      onSome: (selects) => selects(node, { name: nameOf(node, context), context }),
+    }),
+);
 
 export { isSelected };

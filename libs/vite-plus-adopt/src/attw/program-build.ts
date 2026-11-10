@@ -1,4 +1,4 @@
-import { MutableRef, Option } from "effect";
+import { MutableRef, Option, Function as Fn } from "effect";
 import type { SourceFile } from "typescript/ast";
 
 import type { ModeOptions } from "./module-mode.ts";
@@ -11,6 +11,8 @@ import type {
   ResolutionResult,
 } from "./resolution-types.ts";
 import type { ResolvedTypeReference } from "./type-reference.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 interface ProgramOptions {
   readonly allowJs: boolean;
@@ -159,12 +161,15 @@ const createFileRegistry = (): FileRegistry => {
   };
 };
 
-const createProgramBuild = (host: ProgramHost, options: ProgramOptions): ProgramBuild => ({
+const createProgramBuild: {
+  (options: ProgramOptions): (host: ProgramHost) => ProgramBuild;
+  (host: ProgramHost, options: ProgramOptions): ProgramBuild;
+} = Fn.dual(DATA_FIRST_ARITY, (host: ProgramHost, options: ProgramOptions): ProgramBuild => ({
   host,
   options,
   registry: createFileRegistry(),
   depth: createDepthCounter(),
-});
+}));
 
 export { createProgramBuild };
 export type {

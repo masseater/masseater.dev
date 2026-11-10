@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Function as Fn } from "effect";
 import { SyntaxKind } from "typescript/ast";
 import type {
   BinaryExpression,
@@ -25,6 +25,8 @@ import {
 } from "typescript/ast/is";
 
 import { escapeLeadingUnderscores } from "./binder-symbols.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 type AccessExpression = PropertyAccessExpression | ElementAccessExpression;
 type LiteralLike = StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral;
@@ -86,9 +88,15 @@ const hasBindableOwner = (
   isAllowedThis(node.expression, rules) ||
   (hasStaticName(node) && isBindable(node.expression, STATIC_NAME));
 
-const isBindableStatic = (node: Node, rules: BindableStaticRules): boolean =>
-  isAllowedEntityName(node, rules) ||
-  (isStaticAccess(node) && hasBindableOwner(node, rules, isBindableStatic));
+const isBindableStatic: {
+  (rules: BindableStaticRules): (node: Node) => boolean;
+  (node: Node, rules: BindableStaticRules): boolean;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (node: Node, rules: BindableStaticRules): boolean =>
+    isAllowedEntityName(node, rules) ||
+    (isStaticAccess(node) && hasBindableOwner(node, rules, isBindableStatic)),
+);
 
 const nameText = (node: Node): Option.Option<string> => {
   if (isIdentifier(node) || isStringOrNumericLiteralLike(node)) {
@@ -107,8 +115,13 @@ const getElementOrPropertyAccessName = (node: AccessExpression): Option.Option<s
   ).pipe(Option.map((literal) => escapeLeadingUnderscores(literal.text)));
 };
 
-const isNamedIdentifier = (node: Node, name: string): node is Identifier =>
-  isIdentifier(node) && node.text === name;
+const isNamedIdentifier: {
+  (name: string): (node: Node) => node is Identifier;
+  (node: Node, name: string): node is Identifier;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (node: Node, name: string): node is Identifier => isIdentifier(node) && node.text === name,
+);
 
 const isExportsIdentifier = (node: Node): boolean => isIdentifier(node) && node.text === "exports";
 
@@ -126,10 +139,16 @@ const hasRequireArgument = (node: CallExpression, requireStringLiteral: boolean)
   );
 };
 
-const isRequireCall = (node: Node, requireStringLiteral: boolean): node is CallExpression =>
-  isCallExpression(node) &&
-  isNamedIdentifier(node.expression, "require") &&
-  hasRequireArgument(node, requireStringLiteral);
+const isRequireCall: {
+  (requireStringLiteral: boolean): (node: Node) => node is CallExpression;
+  (node: Node, requireStringLiteral: boolean): node is CallExpression;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (node: Node, requireStringLiteral: boolean): node is CallExpression =>
+    isCallExpression(node) &&
+    isNamedIdentifier(node.expression, "require") &&
+    hasRequireArgument(node, requireStringLiteral),
+);
 
 const isAssignmentExpression = (node: Node): node is BinaryExpression =>
   isBinaryExpression(node) && node.operatorToken.kind === SyntaxKind.EqualsToken;

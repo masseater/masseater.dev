@@ -1,4 +1,4 @@
-import { Effect, Option, Array as Arr, Record as Rec, pipe } from "effect";
+import { Effect, Option, Array as Arr, Record as Rec, pipe, Function as Fn } from "effect";
 
 import type { CommandEffect } from "./command.ts";
 import { lintCommitMessageFile } from "./commitlint.ts";
@@ -7,6 +7,8 @@ import { checksFailed } from "./errors.ts";
 import { finish } from "./output.ts";
 import { runAllChecks } from "./run-checks.ts";
 import { scanStagedSecrets } from "./secret-checks.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 const USAGE = pipe(
   [
@@ -43,7 +45,10 @@ const HOOKS: Readonly<Record<string, (root: string, rest: readonly string[]) => 
   "--commit-msg": commitMessage,
 };
 
-const runVpa = (root: string, args: readonly string[]): CommandEffect =>
+const runVpa: {
+  (args: readonly string[]): (root: string) => CommandEffect;
+  (root: string, args: readonly string[]): CommandEffect;
+} = Fn.dual(DATA_FIRST_ARITY, (root: string, args: readonly string[]): CommandEffect =>
   pipe(
     args,
     Arr.match({
@@ -54,6 +59,8 @@ const runVpa = (root: string, args: readonly string[]): CommandEffect =>
           Option.match({ onNone: () => usage, onSome: (hook) => hook(root, rest) }),
         ),
     }),
-  );
+  ),
+);
 
+/** @internal */
 export { runVpa };

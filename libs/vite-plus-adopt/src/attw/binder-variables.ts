@@ -1,4 +1,4 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, Function as Fn } from "effect";
 import { NodeFlags } from "typescript/ast";
 import type { BindingElement, Node, VariableDeclaration } from "typescript/ast";
 import {
@@ -17,6 +17,8 @@ import type { FileBinding, Scope, SymbolFlagPair } from "./binder-declarations.t
 import { hasExportModifier } from "./binder-names.ts";
 import { isAccessExpression, isRequireCall } from "./binder-syntax.ts";
 import { hasFlag } from "./flags.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
 
 type VariableLike = VariableDeclaration | BindingElement;
 
@@ -116,11 +118,14 @@ const variableBinderFor = (binding: FileBinding, node: VariableLike): VariableBi
   return bindFunctionVariable;
 };
 
-const bindVariable = (binding: FileBinding, node: VariableLike, scope: Scope): void => {
+const bindVariable: {
+  (node: VariableLike, scope: Scope): (binding: FileBinding) => void;
+  (binding: FileBinding, node: VariableLike, scope: Scope): void;
+} = Fn.dual(DATA_FIRST_ARITY_3, (binding: FileBinding, node: VariableLike, scope: Scope): void => {
   if (!isBindingPattern(node.name)) {
     variableBinderFor(binding, node)(binding, node, scope);
   }
-};
+});
 
 export { bindVariable, isReparsed };
 export type { VariableLike };

@@ -4,6 +4,7 @@ import { assertFalse, assertTrue } from "@effect/vitest/utils";
 import { Effect, String as Str } from "effect";
 
 import { directoryWith, lines } from "./fixture.test.support.ts";
+import { toJson } from "./json.ts";
 import { lintTexts } from "./textlint.ts";
 
 const NO_FOO_RULE = lines(
@@ -17,7 +18,7 @@ const NO_FOO_RULE = lines(
 );
 
 const FILES = {
-  "node_modules/textlint-rule-no-foo/package.json": JSON.stringify({
+  "node_modules/textlint-rule-no-foo/package.json": toJson({
     name: "textlint-rule-no-foo",
     main: "index.js",
   }),

@@ -210,5 +210,6 @@ const makeOpenRouterAdapter = Effect.fn("makeOpenRouterAdapter")(function* makeO
   return adapter;
 });
 
+/** @internal */
 export { makeOpenRouterAdapter };
 export type { DecisionAdapter };

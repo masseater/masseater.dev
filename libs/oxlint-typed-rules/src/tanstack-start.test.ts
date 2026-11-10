@@ -4,10 +4,11 @@ import { Effect, FileSystem, Option, Record, pipe } from "effect";
 import type { Rule } from "vite-plus/lint/plugins";
 import { RuleTester } from "vite-plus/lint/plugins-dev";
 
+import { toJson } from "./json.ts";
 import plugin from "./tanstack-start.ts";
 
 const FIXTURES = {
-  "tsconfig.json": JSON.stringify({
+  "tsconfig.json": toJson({
     compilerOptions: {
       jsx: "react-jsx",
       module: "preserve",

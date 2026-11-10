@@ -1,9 +1,19 @@
-import { Array as Arr, Option, Predicate, Record as Rec, String as Str, pipe } from "effect";
+import {
+  Array as Arr,
+  Option,
+  Predicate,
+  Record as Rec,
+  String as Str,
+  pipe,
+  Function as Fn,
+} from "effect";
 import { minimatch } from "minimatch";
 import { intersects, valid, validRange } from "semver";
 
 import type { AllowedDependencies, DependencyRules } from "./types.ts";
 import type { Dependency } from "./workspace.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 const SINGLE = 1;
 
@@ -183,13 +193,16 @@ const comparedDependencies = (
   );
 };
 
-const checkDependencies = (
-  rules: DependencyRules,
-  dependencies: readonly Dependency[],
-): readonly string[] => [
-  ...bannedProblems(rules, dependencies),
-  ...exactProblems(rules, dependencies),
-  ...versionProblems(rules, comparedDependencies(rules, dependencies)),
-];
+const checkDependencies: {
+  (dependencies: readonly Dependency[]): (rules: DependencyRules) => readonly string[];
+  (rules: DependencyRules, dependencies: readonly Dependency[]): readonly string[];
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (rules: DependencyRules, dependencies: readonly Dependency[]): readonly string[] => [
+    ...bannedProblems(rules, dependencies),
+    ...exactProblems(rules, dependencies),
+    ...versionProblems(rules, comparedDependencies(rules, dependencies)),
+  ],
+);
 
 export { checkDependencies };

@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, pipe } from "effect";
+import { Array as Arr, Effect, Option, Predicate, String as Str, pipe } from "effect";
 import { createSyncFn } from "synckit";
 import type { Syncify } from "synckit";
 
@@ -16,12 +16,25 @@ type Worker = (inputs: Inputs) => Promise<Results>;
 
 const workers = new Map<"openrouter", Syncify<Worker>>();
 
+const WORKER_NAME = "openrouter-worker";
+const BUILT_EXTENSION = ".mjs";
+const MODULE_EXTENSION = /\.[cm]?[jt]s$/u;
+
+const workerUrl = (): URL => {
+  const extension = pipe(
+    Str.match(MODULE_EXTENSION)(import.meta.url),
+    Option.flatMap(Arr.head),
+    Option.getOrElse(() => BUILT_EXTENSION),
+  );
+  return new URL(`${WORKER_NAME}${extension}`, import.meta.url);
+};
+
 const workerCall = (): Syncify<Worker> => {
   const existing = workers.get("openrouter");
-  if (existing) {
+  if (Predicate.isNotUndefined(existing)) {
     return existing;
   }
-  const created = createSyncFn<Worker>(new URL("openrouter-worker.mjs", import.meta.url), {
+  const created = createSyncFn<Worker>(workerUrl(), {
     timeout: BACKSTOP_MS,
   });
   workers.set("openrouter", created);

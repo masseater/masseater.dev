@@ -1,7 +1,7 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, Option } from "effect";
+import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 
 import { FAILED, PASSED, TIMEOUT, withMock } from "./fixtures.ts";
 import type { MockTest } from "./fixtures.ts";
@@ -33,8 +33,10 @@ interface Truncation {
   readonly maxSnippetChars: number;
 }
 
-const byteOffset = (text: string): number =>
-  new TextEncoder().encode(text.slice(START, text.indexOf("console"))).length;
+const byteOffset = (text: string): number => {
+  const end = Option.getOrElse(Str.indexOf("console")(text), () => START);
+  return new TextEncoder().encode(Str.slice(START, end)(text)).length;
+};
 
 const firstSnippet = loggedRequests.pipe(
   Effect.map((requests) =>
@@ -46,14 +48,14 @@ const firstSnippet = loggedRequests.pipe(
 
 const questionIds = loggedRequests.pipe(
   Effect.map((requests) =>
-    Arr.head(requests).pipe(Option.map(({ body }) => Object.keys(body.questions))),
+    Arr.head(requests).pipe(Option.map(({ body }) => Rec.keys(body.questions))),
   ),
 );
 
 const spanAcross = (newline: string): MockTest<readonly OxlintDiagnostic[]> =>
   Effect.scoped(
     Effect.gen(function* test() {
-      const text = SOURCE.replaceAll("\n", newline);
+      const text = Str.replaceAll("\n", newline)(SOURCE);
       const { run, diagnostics } = yield* (yield* locationProject({ text })).lint;
       strictEqual(run.status, FAILED, `${run.stdout}${run.stderr}`);
       const span = spanOf(diagnostics).pipe(
@@ -61,8 +63,9 @@ const spanAcross = (newline: string): MockTest<readonly OxlintDiagnostic[]> =>
       );
       deepStrictEqual(span, Option.some({ offset: byteOffset(text), length: LOG_CALL.length }));
       strictEqual((yield* loggedRequests).length, ONE);
+      const snippet = yield* firstSnippet;
       assertInclude(
-        Option.getOrElse(yield* firstSnippet, () => ""),
+        Option.getOrElse(snippet, () => ""),
         "L4| \tconsole.log",
       );
       return diagnostics;
@@ -83,17 +86,25 @@ const withoutLocation = Effect.scoped(
     const { location: _location, ...rule } = fileRule;
     const { diagnostics } = yield* (yield* locationProject({ options: { rules: [rule] } })).lint;
     deepStrictEqual(lineOf(diagnostics), Option.some(FIRST_LINE));
-    deepStrictEqual(yield* firstSnippet, Option.some(SOURCE));
-    deepStrictEqual(yield* questionIds, Option.some(["s0"]));
+    const snippet = yield* firstSnippet;
+    deepStrictEqual(snippet, Option.some(SOURCE));
+    const ids = yield* questionIds;
+    deepStrictEqual(ids, Option.some(["s0"]));
   }),
 );
 
-const truncations: readonly Truncation[] = (["fail", "skip"] as const).flatMap((ci) =>
-  [
-    SOURCE.indexOf("console") + TRUNCATE_AFTER_CALL,
-    SOURCE.indexOf("\tconsole"),
-    SOURCE.length - ONE,
-  ].map((maxSnippetChars) => ({ ci, maxSnippetChars })),
+const truncations: readonly Truncation[] = pipe(
+  ["fail", "skip"] as const,
+  Arr.flatMap((ci) =>
+    pipe(
+      [
+        Option.getOrElse(Str.indexOf("console")(SOURCE), () => START) + TRUNCATE_AFTER_CALL,
+        Option.getOrElse(Str.indexOf("\tconsole")(SOURCE), () => START),
+        SOURCE.length - ONE,
+      ],
+      Arr.map((maxSnippetChars) => ({ ci, maxSnippetChars })),
+    ),
+  ),
 );
 
 const neverLocatesTruncated = ({ ci, maxSnippetChars }: Truncation): MockTest =>
@@ -107,7 +118,8 @@ const neverLocatesTruncated = ({ ci, maxSnippetChars }: Truncation): MockTest =>
       strictEqual(run.status, FAILED, `${run.stdout}${run.stderr}`);
       deepStrictEqual(diagnostics.length, ONE);
       deepStrictEqual(lineOf(diagnostics), Option.some(FIRST_LINE));
-      deepStrictEqual(yield* questionIds, Option.some(["s0"]));
+      const ids = yield* questionIds;
+      deepStrictEqual(ids, Option.some(["s0"]));
     }),
   );
 

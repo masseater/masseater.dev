@@ -5,6 +5,7 @@ import {
   Effect,
   Exit,
   FileSystem,
+  Layer,
   Predicate,
   Ref,
   Sink,
@@ -18,6 +19,7 @@ import type { Scope } from "effect";
 import { BETTERLEAKS } from "./binaries.ts";
 import type { CommandError, CommandServices } from "./command.ts";
 import { commitEmpty, directoryWith, lines, runGit } from "./fixture.test.support.ts";
+import { toJson } from "./json.ts";
 import { VendorDirectory } from "./vendor.ts";
 import { runVpa } from "./vpa.ts";
 
@@ -44,10 +46,10 @@ const CONFIG = lines(
 );
 
 const manifest = (dependencies: Readonly<Record<string, string>>): string =>
-  JSON.stringify({ name: "fixture", dependencies });
+  toJson({ name: "fixture", dependencies });
 
 const DIGEST_LENGTH = 64;
-const ZEROS = "0".repeat(DIGEST_LENGTH);
+const ZEROS = Str.repeat(DIGEST_LENGTH)("0");
 
 const FAKE_BETTERLEAKS = lines(
   "#!/bin/sh",
@@ -101,15 +103,16 @@ const run = (
       Sink.mapEffect((chunks) => Ref.set(written, chunks)),
     );
     const stdio = Stdio.layerTest({ stdout: () => stdout });
+    const context = yield* Layer.build(stdio);
     const exit = yield* Effect.exit(
       runVpa(root, args).pipe(
-        Effect.provide(stdio),
+        Effect.provideContext(context),
         Effect.provideService(VendorDirectory, `${root}/vendor`),
       ),
     );
     const chunks = yield* Ref.get(written);
     return { exit, output: pipe(chunks, Arr.filter(Predicate.isString), Arr.join("")) };
-  });
+  }).pipe(Effect.scoped);
 
 const statusLines = (output: string): readonly string[] =>
   pipe(

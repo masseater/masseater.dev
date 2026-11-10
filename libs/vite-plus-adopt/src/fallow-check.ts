@@ -1,6 +1,7 @@
 import { Effect, FileSystem, Path, Schema, Array as Arr, pipe } from "effect";
 
 import type { CheckError, CheckServices } from "./check.ts";
+import { toJson } from "./json.ts";
 import { runCaptured } from "./process.ts";
 import type { Report } from "./report.ts";
 import { withSection } from "./section-check.ts";
@@ -44,7 +45,7 @@ const componentSmells = (
       ];
       return {
         valid: Arr.isReadonlyArrayEmpty(found),
-        output: JSON.stringify(smells),
+        output: toJson(smells),
       };
     }),
   );
@@ -58,7 +59,10 @@ const runFallow = (
     const path = yield* Path.Path;
     const directory = yield* fs.makeTempDirectoryScoped({ prefix: "vpa-fallow-" });
     const configFile = path.join(directory, ".fallowrc.json");
-    yield* fs.writeFileString(configFile, JSON.stringify(config));
+    const configText = yield* Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(
+      config,
+    ).pipe(Effect.orDie);
+    yield* fs.writeFileString(configFile, configText);
     const reports = yield* pipe(
       RUNS,
       Effect.forEach((args) =>
@@ -83,4 +87,5 @@ const runFallow = (
 
 const fallowCheck = withSection("fallow", (config, { root }) => runFallow(config, root));
 
+/** @internal */
 export { fallowCheck };

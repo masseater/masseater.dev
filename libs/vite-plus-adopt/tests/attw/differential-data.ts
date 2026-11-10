@@ -1,6 +1,7 @@
 import { Array as Arr, Option, Schema } from "effect";
 
 import { Package } from "#src/attw.ts";
+import { parseJson, toJson } from "#src/json.ts";
 
 import expectedJson from "./expected.json" with { type: "json" };
 import fixturesJson from "./fixtures.json" with { type: "json" };
@@ -18,10 +19,10 @@ const Fixture = Schema.Struct({
 
 const HostLookup = Schema.Struct({
   fixture: Schema.String,
-  moduleResolution: Schema.Number,
+  moduleResolution: Schema.Finite,
   moduleName: Schema.String,
   containingFile: Schema.String,
-  mode: Schema.Number,
+  mode: Schema.Finite,
   noDtsResolution: Schema.Boolean,
 });
 
@@ -34,7 +35,7 @@ const Fixtures = Schema.Struct({
 
 const ExpectedPath = Schema.Struct({
   path: Schema.String,
-  rootLength: Schema.Number,
+  rootLength: Schema.Finite,
   normalized: Schema.String,
   absolute: Schema.String,
   directory: Schema.String,
@@ -69,18 +70,14 @@ type ExpectedPackageNameData = typeof ExpectedPackageName.Type;
 
 const undecodable = (): TypeError => new TypeError("The differential test data does not decode");
 
-const inputs = Schema.decodeUnknownOption(Fixtures)(fixturesJson).pipe(
+const inputs = Schema.decodeOption(Fixtures)(fixturesJson).pipe(Option.getOrThrowWith(undecodable));
+
+const expected = Schema.decodeOption(Expected)(expectedJson).pipe(
   Option.getOrThrowWith(undecodable),
 );
 
-const expected = Schema.decodeUnknownOption(Expected)(expectedJson).pipe(
-  Option.getOrThrowWith(undecodable),
-);
-
-const asJson = (value: object): unknown => {
-  const serialized = JSON.stringify(value);
-  return JSON.parse(serialized);
-};
+const asJson = (value: object): unknown =>
+  Option.getOrThrowWith(parseJson(toJson(value)), undecodable);
 
 const packageOf = (fixture: FixtureData): Package =>
   new Package(

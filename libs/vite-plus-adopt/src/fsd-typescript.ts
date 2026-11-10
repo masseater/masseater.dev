@@ -1,4 +1,4 @@
-import { Option, pipe } from "effect";
+import { Option, pipe, String as Str } from "effect";
 import { serverFS } from "typescript/fs";
 import type { FileSystemCallbacks } from "typescript/fs";
 import {
@@ -9,6 +9,8 @@ import {
 } from "typescript/path";
 import { API } from "typescript/sync";
 import type { ModuleResolver } from "typescript/sync";
+
+import { toJson } from "./json.ts";
 
 interface ResolutionHost {
   readonly fileExists: (fileName: string) => boolean;
@@ -36,8 +38,8 @@ const current: { host: Option.Option<ResolutionHost>; relative: boolean } = {
 };
 
 const toCaller = (fileName: string): string =>
-  Option.liftPredicate(fileName, (name) => current.relative && name.startsWith(PREFIX)).pipe(
-    Option.match({ onSome: (name) => name.slice(PREFIX.length), onNone: () => fileName }),
+  Option.liftPredicate(fileName, (name) => current.relative && Str.startsWith(PREFIX)(name)).pipe(
+    Option.match({ onSome: (name) => Str.slice(PREFIX.length)(name), onNone: () => fileName }),
   );
 
 const directoryExistsOf = (host: ResolutionHost, directoryName: string): boolean =>
@@ -75,7 +77,7 @@ const createResolverCache = (): ((compilerOptions: object) => ModuleResolver) =>
   const api = new API({ cwd: CWD, fs: callerFileSystem });
   const byOptions = new Map<string, ModuleResolver>();
   return (compilerOptions) => {
-    const key = JSON.stringify(compilerOptions);
+    const key = toJson(compilerOptions);
     return Option.fromNullishOr(byOptions.get(key)).pipe(
       Option.getOrElse(() => {
         const { options } = api.parseJsonConfigFileContent(

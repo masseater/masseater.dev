@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, String as Str, Function as Fn } from "effect";
 
 import { createPackageJsonCache } from "./package-json.ts";
 import { getDirectoryPath, toPath } from "./paths.ts";
@@ -7,14 +7,22 @@ import type {
   ResolutionMode,
   ResolutionResult,
 } from "./resolution-types.ts";
+import { lastIndexUpTo } from "./text-search.ts";
+
+const DATA_FIRST_ARITY = 2;
 
 const NEXT = 1;
 const START = 0;
 const ROOT_LENGTH = 1;
-const NOT_FOUND = -1;
 
-const modeKey = (name: string, mode: Option.Option<ResolutionMode>): string =>
-  `${Option.getOrElse(mode, () => "")}|${name}`;
+const modeKey: {
+  (mode: Option.Option<ResolutionMode>): (name: string) => string;
+  (name: string, mode: Option.Option<ResolutionMode>): string;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (name: string, mode: Option.Option<ResolutionMode>): string =>
+    `${Option.getOrElse(mode, () => "")}|${name}`,
+);
 
 const resolvedFileNameOf = (result: ResolutionResult): Option.Option<string> =>
   result.resolvedModule.pipe(
@@ -39,10 +47,9 @@ const isWholeDirectoryShared = (
   (resolutionDirectory.length === index || resolutionDirectory[index] === "/");
 
 const enclosingDirectory = (directory: string, index: number): Option.Option<string> =>
-  Option.liftPredicate(
-    directory.lastIndexOf("/", index - NEXT),
-    (separator) => separator !== NOT_FOUND,
-  ).pipe(Option.map((separator) => directory.slice(START, Math.max(separator, ROOT_LENGTH))));
+  lastIndexUpTo(directory, "/", index - NEXT).pipe(
+    Option.map((separator) => Str.slice(START, Math.max(separator, ROOT_LENGTH))(directory)),
+  );
 
 const getCommonPrefix = (directory: string, resolution: string): Option.Option<string> => {
   const resolutionDirectory = toPath(getDirectoryPath(resolution));

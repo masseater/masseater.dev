@@ -9,11 +9,14 @@ import {
   Option,
   Predicate,
   String as Str,
+  Record as Rec,
+  pipe,
 } from "effect";
 
-import { PREFIX } from "./options.ts";
+import { asText } from "./explain-text.ts";
+import type { Explanation } from "./explain-text.ts";
 import { refAt } from "./request.ts";
-import { envOf } from "./runtime.ts";
+import { envOf, toJson } from "./runtime.ts";
 import type {
   Answer,
   Answers,
@@ -33,34 +36,10 @@ type ExplainMode = "off" | ExplainFormat;
 const EXPLAIN_ENV = "OXLINT_DECISION_EXPLAIN";
 const OFF_VALUES: ReadonlySet<string> = new Set(["0", "false", "off", "no"]);
 const STATE_HEAD_CHARS = 60;
-const DECIMALS = 2;
 const OPTION_SEPARATOR = "__";
 const FIRST = 1;
 const START = 0;
 const COLUMN_BASE = 1;
-
-interface ExplainQuestion {
-  readonly id: string;
-  readonly question: string;
-  readonly probabilities: Readonly<Record<string, number>>;
-}
-
-interface Explanation {
-  readonly file: string;
-  readonly line: number;
-  readonly column: number;
-  readonly rule: string;
-  readonly model: string;
-  readonly served?: string;
-  readonly cutoff: number;
-  readonly cached?: boolean;
-  readonly durationMs: number;
-  readonly state: { readonly chars: number; readonly head: string };
-  readonly questions: readonly ExplainQuestion[];
-  readonly verdict?: Verdict;
-  readonly reported: boolean;
-  readonly error?: string;
-}
 
 interface Outcome {
   readonly served: string;
@@ -94,10 +73,10 @@ const SEPARATOR = /^[/\\]/u;
 const relativeTo = (root: string, filename: string): string =>
   Bool.match(
     Str.isNonEmpty(root) &&
-      filename.startsWith(root) &&
-      SEPARATOR.test(filename.slice(root.length)),
+      Str.startsWith(root)(filename) &&
+      SEPARATOR.test(Str.slice(root.length)(filename)),
     {
-      onTrue: () => filename.slice(root.length + FIRST),
+      onTrue: () => Str.slice(root.length + FIRST)(filename),
       onFalse: () => filename,
     },
   );
@@ -111,7 +90,7 @@ const fromSetting = (setting: ExplainSetting): ExplainMode =>
   );
 
 const fromEnv = (value: string): ExplainMode =>
-  Match.value(value.toLowerCase()).pipe(
+  Match.value(Str.toLowerCase(value)).pipe(
     Match.when("json", (): ExplainMode => "json"),
     Match.when(
       (lower) => OFF_VALUES.has(lower),
@@ -140,16 +119,29 @@ const probabilitiesOf = (answer: Answer | undefined): Readonly<Record<string, nu
   );
 
 const asksAbout = (ref: string, id: string): boolean =>
-  id.split(OPTION_SEPARATOR, FIRST).includes(ref);
+  pipe(Str.split(id, OPTION_SEPARATOR), Arr.take(FIRST), Arr.contains(ref));
 
 const sentFor = (
   sent: readonly WireRequest[],
   ref: string,
 ): readonly (readonly [string, Question])[] =>
-  sent.flatMap((wire) => Object.entries(wire.questions).filter(([id]) => asksAbout(ref, id)));
+  pipe(
+    sent,
+    Arr.flatMap((wire) =>
+      pipe(
+        Rec.toEntries(wire.questions),
+        Arr.filter(([id]) => asksAbout(ref, id)),
+      ),
+    ),
+  );
 
 const stateTextOf = (sent: readonly WireRequest[], ref: string, snippet: string): string =>
-  Arr.findFirst(sent, (wire) => Object.keys(wire.questions).some((id) => asksAbout(ref, id))).pipe(
+  Arr.findFirst(sent, (wire) =>
+    pipe(
+      Rec.keys(wire.questions),
+      Arr.some((id) => asksAbout(ref, id)),
+    ),
+  ).pipe(
     Option.map(({ state }) => state),
     Option.filter(Predicate.isString),
     Option.getOrElse(() => snippet),
@@ -157,7 +149,7 @@ const stateTextOf = (sent: readonly WireRequest[], ref: string, snippet: string)
 
 const summaryOf = (text: string): Explanation["state"] => ({
   chars: text.length,
-  head: text.replaceAll(/\s+/gu, " ").trim().slice(START, STATE_HEAD_CHARS),
+  head: Str.slice(START, STATE_HEAD_CHARS)(Str.trim(Str.replaceAll(/\s+/gu, " ")(text))),
 });
 
 type Base = Pick<
@@ -185,69 +177,22 @@ const baseOf = (
     cutoff: match.rule.cutoff,
     durationMs: pass.durationMs,
     state: summaryOf(stateTextOf(sent, ref, match.snippet)),
-    questions: questions.map(([id, question]) => ({
-      id,
-      question: question.instructions,
-      probabilities: probabilitiesOf(answers[id]),
-    })),
-  });
-};
-
-const fixed = (value: number): string => value.toFixed(DECIMALS);
-
-const cachedText = (cached: boolean | undefined): string =>
-  Option.match(Option.fromUndefinedOr(cached), {
-    onNone: () => "unknown",
-    onSome: (hit) => Bool.match(hit, { onTrue: () => "yes", onFalse: () => "no" }),
-  });
-
-const probabilitiesText = (probabilities: Readonly<Record<string, number>>): string =>
-  Option.match(
-    Arr.match(Object.entries(probabilities), {
-      onEmpty: () => Option.none<string>(),
-      onNonEmpty: (entries) =>
-        Option.some(entries.map(([label, value]) => `${label}=${fixed(value)}`).join(" ")),
-    }),
-    { onNone: () => "(no answer)", onSome: (text) => text },
-  );
-
-const verdictText = (explanation: Explanation): string => {
-  if (Predicate.isNotUndefined(explanation.error)) {
-    return `error: ${explanation.error}`;
-  }
-  const outcome = Bool.match(explanation.reported, {
-    onTrue: () => "reported",
-    onFalse: () => "not reported",
-  });
-  const cutoff = `cutoff ${fixed(explanation.cutoff)}`;
-  return Option.match(Option.fromUndefinedOr(explanation.verdict), {
-    onNone: () => `no verdict, ${cutoff}, ${outcome}`,
-    onSome: ({ answer, probability }) => `${answer} ${fixed(probability)}, ${cutoff}, ${outcome}`,
-  });
-};
-
-const servedText = (served: string | undefined): string =>
-  Option.match(Option.fromUndefinedOr(served), {
-    onNone: () => "",
-    onSome: (id) => ` (served ${id})`,
-  });
-
-const asText = (explanation: Explanation): string =>
-  [
-    `${PREFIX} explain: ${explanation.file}:${String(explanation.line)}:${String(explanation.column)} [${explanation.rule}] ${explanation.model}${servedText(explanation.served)} cached=${cachedText(explanation.cached)} ${String(explanation.durationMs)}ms`,
-    `  state: ${String(explanation.state.chars)} chars ${JSON.stringify(explanation.state.head)}`,
-    ...explanation.questions.map(
-      ({ id, question, probabilities }) =>
-        `  ${id}: ${probabilitiesText(probabilities)}\n    ${question}`,
+    questions: pipe(
+      questions,
+      Arr.map(([id, question]) => ({
+        id,
+        question: question.instructions,
+        probabilities: probabilitiesOf(answers[id]),
+      })),
     ),
-    `  verdict: ${verdictText(explanation)}`,
-  ].join("\n");
+  });
+};
 
 const printerFor =
   (mode: ExplainFormat) =>
   (explanation: Explanation): void => {
     const line = Bool.match(mode === "json", {
-      onTrue: () => JSON.stringify(explanation),
+      onTrue: () => toJson(explanation),
       onFalse: () => asText(explanation),
     });
     Effect.runFork(Console.error(line));

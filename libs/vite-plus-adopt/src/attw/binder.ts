@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Predicate } from "effect";
+import { Array as Arr, Option, Predicate, pipe } from "effect";
 import { ScriptKind } from "typescript/ast";
 import type { Node, SourceFile } from "typescript/ast";
 import {
@@ -25,8 +25,9 @@ const isJsFile = (file: SourceFile): boolean =>
   file.scriptKind === ScriptKind.JS || file.scriptKind === ScriptKind.JSX;
 
 const hasExportDeclarations = (file: SourceFile): boolean =>
-  file.statements.some(
-    (statement) => isExportDeclaration(statement) || isExportAssignment(statement),
+  pipe(
+    file.statements,
+    Arr.some((statement) => isExportDeclaration(statement) || isExportAssignment(statement)),
   );
 
 const directiveText = (statement: Node): Option.Option<string> =>
@@ -37,8 +38,11 @@ const directiveText = (statement: Node): Option.Option<string> =>
   );
 
 const hasUseStrictPrologue = (file: SourceFile): boolean =>
-  Arr.takeWhile(file.statements.map(directiveText), Option.isSome).some((text) =>
-    Option.contains(text, USE_STRICT),
+  pipe(
+    file.statements,
+    Arr.map(directiveText),
+    Arr.takeWhile(Option.isSome),
+    Arr.some((text) => Option.contains(text, USE_STRICT)),
   );
 
 const createBinding = (file: SourceFile): FileBinding => {

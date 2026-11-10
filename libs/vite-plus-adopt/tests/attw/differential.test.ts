@@ -1,6 +1,6 @@
 import { layer } from "@effect/vitest";
 import { deepStrictEqual, throws } from "@effect/vitest/utils";
-import { Effect, Layer, Option, Record as Rec } from "effect";
+import { Effect, Layer, Option, Record as Rec, Array as Arr, pipe } from "effect";
 import { ModuleResolutionKind } from "typescript/sync";
 
 import { checkPackage } from "#src/attw.ts";
@@ -52,7 +52,10 @@ const rejectsClassicResolution = Effect.sync(() => {
 
 const coversEveryLookup = Effect.sync(() => {
   deepStrictEqual(
-    expected.hostLookups.map(({ resolution: _resolution, trace: _trace, ...lookup }) => lookup),
+    pipe(
+      expected.hostLookups,
+      Arr.map(({ resolution: _resolution, trace: _trace, ...lookup }) => lookup),
+    ),
     inputs.hostLookups,
   );
 });

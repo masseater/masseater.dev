@@ -1,3 +1,5 @@
+import { String as Str } from "effect";
+
 type Platform = "darwin-arm64" | "darwin-x64" | "linux-arm64" | "linux-x64" | "win32-x64";
 
 type Archive = "tar.gz" | "zip";
@@ -15,7 +17,7 @@ interface Binary {
 }
 
 const archiveOf = (file: string): Archive => {
-  if (file.endsWith(".zip")) {
+  if (Str.endsWith(".zip")(file)) {
     return "zip";
   }
   return "tar.gz";

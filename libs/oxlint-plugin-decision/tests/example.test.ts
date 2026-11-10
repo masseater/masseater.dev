@@ -1,7 +1,7 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, FileSystem, Option, Path } from "effect";
+import { Array as Arr, Effect, FileSystem, Option, Path, String as Str, pipe } from "effect";
 
 import { FAILED, PASSED, TIMEOUT, lintExample, modelOf, outputOf, withMock } from "./fixtures.ts";
 import { loggedRequests } from "./mock-openrouter.ts";
@@ -14,6 +14,7 @@ import {
   packageRoot,
   removeCache,
 } from "./oxlint.ts";
+import type { TestError } from "./oxlint.ts";
 
 const TWO = 2;
 const FOUR = 4;
@@ -29,19 +30,25 @@ const firstRun = Effect.gen(function* run() {
   const root = yield* packageRoot;
   yield* removeCache(root);
   const env = yield* mockEnv("test-key");
-  return { root, env, run: yield* lintExample(env) };
+  return { root, env, run: yield* lintExample(env, "unix") };
 });
 
 const reportsYes = Effect.gen(function* test() {
   const { run } = yield* firstRun;
   strictEqual(run.status, FAILED, outputOf(run));
-  assertInclude(decisionLines(run).join("\n"), PII_LINE);
+  assertInclude(pipe(decisionLines(run), Arr.join("\n")), PII_LINE);
   deepStrictEqual(
-    RULE_IDS.filter((id) => !run.stdout.includes(`[${id}]`)),
+    pipe(
+      RULE_IDS,
+      Arr.filter((id) => !Str.includes(`[${id}]`)(run.stdout)),
+    ),
     [],
   );
   deepStrictEqual(
-    decisionLines(run).filter((line) => !line.startsWith("example/fail.js")),
+    pipe(
+      decisionLines(run),
+      Arr.filter((line) => !Str.startsWith("example/fail.js")(line)),
+    ),
     [],
   );
 });
@@ -50,33 +57,44 @@ const oneRequestPerFile = Effect.gen(function* test() {
   yield* firstRun;
   const requests = yield* loggedRequests;
   deepStrictEqual(
-    requests.map(({ authorization }) => authorization),
+    pipe(
+      requests,
+      Arr.map(({ authorization }) => authorization),
+    ),
     ["Bearer test-key", "Bearer test-key"],
   );
   deepStrictEqual(
-    requests.map((request) => modelOf(request)),
+    pipe(
+      requests,
+      Arr.map((request) => modelOf(request)),
+    ),
     ["~typesafe/jev-latest", "~typesafe/jev-latest"],
   );
 });
 
 const corruptCache = (
   root: string,
-): Effect.Effect<void, unknown, FileSystem.FileSystem | Path.Path> =>
+): Effect.Effect<void, TestError, FileSystem.FileSystem | Path.Path> =>
   Effect.gen(function* corrupt() {
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const dir = yield* cacheDirOf(root);
     const entries = yield* fs.readDirectory(dir);
-    yield* Effect.all(entries.map((entry) => fs.writeFileString(path.join(dir, entry), "{}")));
+    yield* Effect.all(
+      pipe(
+        entries,
+        Arr.map((entry) => fs.writeFileString(path.join(dir, entry), "{}")),
+      ),
+    );
   });
 
 const cachesAnswers = Effect.gen(function* test() {
   const { root, env, run } = yield* firstRun;
-  const cached = yield* lintExample(env);
+  const cached = yield* lintExample(env, "unix");
   strictEqual((yield* loggedRequests).length, TWO);
   deepStrictEqual(decisionLines(cached), decisionLines(run));
   yield* corruptCache(root);
-  const reasked = yield* lintExample(env);
+  const reasked = yield* lintExample(env, "unix");
   strictEqual((yield* loggedRequests).length, FOUR);
   deepStrictEqual(decisionLines(reasked), decisionLines(run));
 });
@@ -89,8 +107,12 @@ const lengthOnLine = (
 
 const underlines = Effect.gen(function* test() {
   const { env } = yield* firstRun;
-  const diagnostics = yield* diagnosticsOf(yield* lintExample(env, "json"));
-  const spans = diagnostics.map((diagnostic) => firstSpan(diagnostic));
+  const run = yield* lintExample(env, "json");
+  const diagnostics = yield* diagnosticsOf(run);
+  const spans = pipe(
+    diagnostics,
+    Arr.map((diagnostic) => firstSpan(diagnostic)),
+  );
   deepStrictEqual(
     [lengthOnLine(spans, SIGNATURE_LINE), lengthOnLine(spans, CALL_LINE)],
     [Option.some(SIGNATURE.length), Option.some(PII_CALL.length)],
@@ -104,7 +126,7 @@ const failsInCi = Effect.gen(function* test() {
 });
 
 const skipsOutsideCi = Effect.gen(function* test() {
-  const run = yield* lintExample({});
+  const run = yield* lintExample({}, "unix");
   strictEqual(run.status, PASSED, outputOf(run));
   assertInclude(run.stderr, "OPENROUTER_API_KEY is not set, skipping openrouter models");
   deepStrictEqual(decisionLines(run), []);

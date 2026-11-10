@@ -1,8 +1,10 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Effect } from "effect";
+import { Effect, Array as Arr, String as Str, pipe } from "effect";
 import type { PlatformError } from "effect/PlatformError";
+
+import { toJson } from "#src/runtime.ts";
 
 import { FAILED, PASSED, TIMEOUT, outputOf, withMock } from "./fixtures.ts";
 import { loggedRequests } from "./mock-openrouter.ts";
@@ -24,7 +26,7 @@ const PASS_SOURCE = 'export const notify = (id) => console.log("notified", { use
 const pluginSource = (
   dist: string,
   setupExtra: string,
-): string => `import { createDecisionPlugin, defineDecisionRule } from ${JSON.stringify(dist)};
+): string => `import { createDecisionPlugin, defineDecisionRule } from ${toJson(dist)};
 
 export default createDecisionPlugin({
   name: "team",${setupExtra}
@@ -46,8 +48,9 @@ const lintTask = (
 ): Effect.Effect<OxlintRun, PlatformError, Services | MockOpenRouter> =>
   Effect.scoped(
     Effect.gen(function* lint() {
+      const plugin2 = yield* pluginPath;
       const cwd = yield* writeProject({
-        "decision-plugin.mjs": pluginSource(yield* pluginPath, setupExtra),
+        "decision-plugin.mjs": pluginSource(plugin2, setupExtra),
         "oxlint.config.ts": configSource({ jsPlugins: ["./decision-plugin.mjs"], rules }),
         "fail.js": FAIL_SOURCE,
         "pass.js": PASS_SOURCE,
@@ -67,25 +70,30 @@ const expectedSolution = Effect.gen(function* test() {
   strictEqual(run.status, FAILED, outputOf(run));
   const lines = decisionLines(run);
   deepStrictEqual(
-    lines.filter((line) => !line.startsWith("fail.js:")),
+    pipe(
+      lines,
+      Arr.filter((line) => !Str.startsWith("fail.js:")(line)),
+    ),
     [],
   );
-  assertInclude(lines.join("\n"), "[no-pii-in-logs]");
-  assertInclude(lines.join("\n"), "team(no-pii-in-logs)");
+  assertInclude(pipe(lines, Arr.join("\n")), "[no-pii-in-logs]");
+  assertInclude(pipe(lines, Arr.join("\n")), "team(no-pii-in-logs)");
 });
 
 const keyInSetupIsRefused = Effect.gen(function* test() {
   const run = yield* lintTask('\n  apiKey: "sk-or-in-code",', ENABLED);
   strictEqual(run.status === PASSED, false);
   assertInclude(outputOf(run), "Expected no excess property");
-  deepStrictEqual(yield* loggedRequests, []);
+  const requests = yield* loggedRequests;
+  deepStrictEqual(requests, []);
 });
 
 const ruleNotEnabledSendsNothing = Effect.gen(function* test() {
   const run = yield* lintTask("", {});
   strictEqual(run.status, PASSED, outputOf(run));
   deepStrictEqual(decisionLines(run), []);
-  deepStrictEqual(yield* loggedRequests, []);
+  const requests = yield* loggedRequests;
+  deepStrictEqual(requests, []);
 });
 
 layer(NodeServices.layer, { excludeTestServices: true })(

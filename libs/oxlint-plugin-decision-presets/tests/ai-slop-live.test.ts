@@ -1,7 +1,16 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Config, Effect, FileSystem, Order, Redacted } from "effect";
+import {
+  Array as Arr,
+  Config,
+  Effect,
+  FileSystem,
+  Order,
+  Redacted,
+  String as Str,
+  pipe,
+} from "effect";
 
 import aiSlopPlugin, { aiSlopRules } from "#src/ai-slop.ts";
 
@@ -38,7 +47,7 @@ const EXPECTED = [
 const FILE = 0;
 const LINE = 1;
 
-const partOf = (line: string, index: number): string => line.split(":")[index] ?? "";
+const partOf = (line: string, index: number): string => Str.split(line, ":")[index] ?? "";
 
 const POSITION: Order.Order<string> = Order.combine(
   Order.mapInput(Order.String, (line: string) => partOf(line, FILE)),
@@ -69,7 +78,14 @@ const aiSlopLive = Effect.scoped(
       { ...(yield* forwardedEnv), OPENROUTER_API_KEY: Redacted.value(key) },
     );
     yield* Effect.log(outputOf(run));
-    deepStrictEqual(byPosition(reportedLines(run, AI_SLOP).map((line) => headOf(line))), EXPECTED);
+    deepStrictEqual(
+      pipe(
+        reportedLines(run, AI_SLOP),
+        Arr.map((line) => headOf(line)),
+        byPosition,
+      ),
+      EXPECTED,
+    );
   }),
 );
 

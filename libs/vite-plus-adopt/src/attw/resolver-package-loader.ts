@@ -1,4 +1,4 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, Function as Fn } from "effect";
 
 import { Messages, traceMessage } from "./messages.ts";
 import { withPackageId } from "./package-json.ts";
@@ -16,6 +16,9 @@ import { loadNodeModuleFromDirectoryWorker } from "./resolver-directory.ts";
 import { loadModuleFromFile } from "./resolver-files.ts";
 import { nodeLoadModuleByRelativeName } from "./resolver-relative.ts";
 import { RESOLUTION_VERSION, getVersionPaths } from "./types-versions.ts";
+
+const DATA_FIRST_ARITY = 2;
+const DATA_FIRST_ARITY_3 = 3;
 
 interface SpecificRequest {
   readonly extensions: CandidateRequest["extensions"];
@@ -36,20 +39,33 @@ interface PackageLocation extends PackagePaths {
 
 const EMPTY = 0;
 
-const loadFromDirectory = (
-  request: CandidateRequest,
-  packageInfo: Option.Option<PackageJsonInfo>,
-  state: ResolutionState,
-): Option.Option<PathAndExtension> =>
-  loadNodeModuleFromDirectoryWorker(
-    {
-      ...request,
-      jsonContent: packageInfo.pipe(Option.map((info) => info.contents.packageJsonContent)),
-      versionPaths: packageInfo.pipe(Option.flatMap((info) => getVersionPaths(info, state))),
-      loadRelative: nodeLoadModuleByRelativeName,
-    },
-    state,
-  );
+const loadFromDirectory: {
+  (
+    packageInfo: Option.Option<PackageJsonInfo>,
+    state: ResolutionState,
+  ): (request: CandidateRequest) => Option.Option<PathAndExtension>;
+  (
+    request: CandidateRequest,
+    packageInfo: Option.Option<PackageJsonInfo>,
+    state: ResolutionState,
+  ): Option.Option<PathAndExtension>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (
+    request: CandidateRequest,
+    packageInfo: Option.Option<PackageJsonInfo>,
+    state: ResolutionState,
+  ): Option.Option<PathAndExtension> =>
+    loadNodeModuleFromDirectoryWorker(
+      {
+        ...request,
+        jsonContent: packageInfo.pipe(Option.map((info) => info.contents.packageJsonContent)),
+        versionPaths: packageInfo.pipe(Option.flatMap((info) => getVersionPaths(info, state))),
+        loadRelative: nodeLoadModuleByRelativeName,
+      },
+      state,
+    ),
+);
 
 const loadEsmIndexFallback = (
   request: CandidateRequest,
@@ -80,15 +96,20 @@ const loadFileFirst = (
   return Option.none();
 };
 
-const specificLoader =
+const specificLoader: {
+  (rest: string): (packageInfo: Option.Option<PackageJsonInfo>) => Loader<Resolved>;
+  (packageInfo: Option.Option<PackageJsonInfo>, rest: string): Loader<Resolved>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
   (packageInfo: Option.Option<PackageJsonInfo>, rest: string): Loader<Resolved> =>
-  (request, state) => {
-    const pathAndExtension = loadFileFirst(request, rest, state).pipe(
-      Option.orElse(() => loadFromDirectory(request, packageInfo, state)),
-      Option.orElse(() => loadEsmIndexFallback(request, packageInfo, state)),
-    );
-    return withPackageId(packageInfo, pathAndExtension, state);
-  };
+    (request, state) => {
+      const pathAndExtension = loadFileFirst(request, rest, state).pipe(
+        Option.orElse(() => loadFromDirectory(request, packageInfo, state)),
+        Option.orElse(() => loadEsmIndexFallback(request, packageInfo, state)),
+      );
+      return withPackageId(packageInfo, pathAndExtension, state);
+    },
+);
 
 const withoutPackageMetadata = (file: PathAndExtension): Resolved => ({
   ...file,
@@ -96,39 +117,53 @@ const withoutPackageMetadata = (file: PathAndExtension): Resolved => ({
   originalPath: Option.none(),
 });
 
-const resolveVersionPathsWithTrace = (
-  request: SpecificRequest,
-  location: PackageLocation,
-  state: ResolutionState,
-): Option.Option<Option.Option<Resolved>> =>
-  Option.liftPredicate(location.rest, (rest) => rest.length > EMPTY).pipe(
-    Option.flatMap(() =>
-      location.packageInfo.pipe(Option.flatMap((info) => getVersionPaths(info, state))),
+const resolveVersionPathsWithTrace: {
+  (
+    location: PackageLocation,
+    state: ResolutionState,
+  ): (request: SpecificRequest) => Option.Option<Option.Option<Resolved>>;
+  (
+    request: SpecificRequest,
+    location: PackageLocation,
+    state: ResolutionState,
+  ): Option.Option<Option.Option<Resolved>>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (
+    request: SpecificRequest,
+    location: PackageLocation,
+    state: ResolutionState,
+  ): Option.Option<Option.Option<Resolved>> =>
+    Option.liftPredicate(location.rest, (rest) => rest.length > EMPTY).pipe(
+      Option.flatMap(() =>
+        location.packageInfo.pipe(Option.flatMap((info) => getVersionPaths(info, state))),
+      ),
+      Option.flatMap((versionPaths) => {
+        traceMessage(
+          state,
+          Messages.packageJsonTypesVersionsMatch,
+          versionPaths.version,
+          RESOLUTION_VERSION,
+          location.rest,
+        );
+        const packageDirectoryExists =
+          request.nodeModulesDirectoryExists &&
+          state.host.directoryExists(location.packageDirectory);
+        return tryLoadModuleUsingPaths(
+          {
+            extensions: request.extensions,
+            moduleName: location.rest,
+            baseDirectory: location.packageDirectory,
+            paths: versionPaths.paths,
+            loader: specificLoader(location.packageInfo, location.rest),
+            onlyRecordFailures: !packageDirectoryExists,
+            fromFile: withoutPackageMetadata,
+          },
+          state,
+        );
+      }),
     ),
-    Option.flatMap((versionPaths) => {
-      traceMessage(
-        state,
-        Messages.packageJsonTypesVersionsMatch,
-        versionPaths.version,
-        RESOLUTION_VERSION,
-        location.rest,
-      );
-      const packageDirectoryExists =
-        request.nodeModulesDirectoryExists && state.host.directoryExists(location.packageDirectory);
-      return tryLoadModuleUsingPaths(
-        {
-          extensions: request.extensions,
-          moduleName: location.rest,
-          baseDirectory: location.packageDirectory,
-          paths: versionPaths.paths,
-          loader: specificLoader(location.packageInfo, location.rest),
-          onlyRecordFailures: !packageDirectoryExists,
-          fromFile: withoutPackageMetadata,
-        },
-        state,
-      );
-    }),
-  );
+);
 
 export { loadFromDirectory, resolveVersionPathsWithTrace, specificLoader };
 export type { PackageLocation, PackagePaths, SpecificRequest };

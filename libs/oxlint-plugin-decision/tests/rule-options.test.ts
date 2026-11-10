@@ -1,7 +1,7 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, Order } from "effect";
+import { Array as Arr, Effect, Order, String as Str, pipe } from "effect";
 
 import type { DecisionRule } from "#src/types.ts";
 
@@ -24,17 +24,20 @@ const perRuleModel = Effect.gen(function* test() {
     ruleOptions: { "other-call": { model: "openrouter/second" } },
     env,
   });
+  const requests = yield* loggedRequests;
   deepStrictEqual(
-    Arr.sort(
-      (yield* loggedRequests).map((request) => modelOf(request)),
-      Order.String,
+    pipe(
+      requests,
+      Arr.map((request) => modelOf(request)),
+      (sorted) => Arr.sort(sorted, Order.String),
     ),
     ["first", "second"],
   );
   deepStrictEqual(
-    Arr.sort(
-      decisionLines(run).map((line) => line.replace(/ answered.*/u, "")),
-      Order.String,
+    pipe(
+      decisionLines(run),
+      Arr.map((line) => Str.replace(/ answered.*/u, "")(line)),
+      (sorted) => Arr.sort(sorted, Order.String),
     ),
     [
       "log.js:1:1: [any-call] openrouter/mock-decider",

@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Schema } from "effect";
+import { Array as Arr, Option, Schema, Record as Rec, String as Str, pipe } from "effect";
 import { HttpServerResponse } from "effect/http";
 
 const BAD_REQUEST = 400;
@@ -37,11 +37,14 @@ type Body = typeof BodySchema.Type;
 const TEXT_STATE_PREFIX = "respan/";
 
 const rejectsState = ({ model, state }: RawBody): boolean =>
-  model.startsWith(TEXT_STATE_PREFIX) && typeof state !== "string";
+  Str.startsWith(TEXT_STATE_PREFIX)(model) && typeof state !== "string";
 
 const rejectsChoice = ({ model, questions }: RawBody): boolean =>
-  model.startsWith(TEXT_STATE_PREFIX) &&
-  Object.values(questions).some((question) => question.type !== "noul");
+  Str.startsWith(TEXT_STATE_PREFIX)(model) &&
+  pipe(
+    Rec.values(questions),
+    Arr.some((question) => question.type !== "noul"),
+  );
 
 const badState = HttpServerResponse.jsonUnsafe(
   { error: { message: "Respan state must be a string" } },
@@ -66,13 +69,16 @@ const rejectionOf = (raw: RawBody): Option.Option<HttpServerResponse.HttpServerR
 const SECTION = /^state\.(?<kind>snippets|contexts)\.(?<ref>[^:\n]+):\n(?<text>[\s\S]*)$/u;
 
 const sectionsOf = (text: string, kind: string): Readonly<Record<string, string>> =>
-  Object.fromEntries(
-    text.split(/\n\n(?=state\.(?:snippets|contexts)\.)/u).flatMap((section) =>
-      Option.fromNullishOr(SECTION.exec(section)).pipe(
-        Option.flatMap((found) => Option.fromUndefinedOr(found.groups)),
-        Option.filter((groups) => groups["kind"] === kind),
-        Option.map((groups) => [String(groups["ref"]), String(groups["text"])] as const),
-        Option.toArray,
+  Rec.fromEntries(
+    pipe(
+      Str.split(text, /\n\n(?=state\.(?:snippets|contexts)\.)/u),
+      Arr.flatMap((section) =>
+        Option.fromNullishOr(SECTION.exec(section)).pipe(
+          Option.flatMap((found) => Option.fromUndefinedOr(found.groups)),
+          Option.filter((groups) => groups["kind"] === kind),
+          Option.map((groups) => [String(groups["ref"]), String(groups["text"])] as const),
+          Option.toArray,
+        ),
       ),
     ),
   );
@@ -83,7 +89,7 @@ const normalized = (raw: RawBody): Body => {
   }
   const contexts = sectionsOf(raw.state, "contexts");
   const snippets = sectionsOf(raw.state, "snippets");
-  if (Arr.isReadonlyArrayEmpty(Object.keys(contexts))) {
+  if (Arr.isReadonlyArrayEmpty(Rec.keys(contexts))) {
     return { ...raw, state: { snippets } };
   }
   return { ...raw, state: { snippets, contexts } };
@@ -91,5 +97,7 @@ const normalized = (raw: RawBody): Body => {
 
 type Question = typeof QuestionSchema.Type;
 
+/** @internal */
 export { LOCATION_SUFFIX, RawBodySchema, normalized, rejectionOf };
+/** @internal */
 export type { Body, Question, RawBody };

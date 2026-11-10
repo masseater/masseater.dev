@@ -1,7 +1,16 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, FileSystem, Option } from "effect";
+import {
+  Array as Arr,
+  Effect,
+  FileSystem,
+  Option,
+  Record as Rec,
+  String as Str,
+  pipe,
+} from "effect";
+import type { PlatformError } from "effect/PlatformError";
 
 import strictConfig from "#example/claims/oxlint.config.ts";
 import reviewOnlyConfig from "#example/claims/review-only.config.ts";
@@ -16,12 +25,13 @@ import {
   outputOf,
   oxlint,
   tempProject,
+  toJson,
 } from "./oxlint.ts";
 import type { Services } from "./oxlint.ts";
 
 const alwaysYes = (core: string, entry: string, preset: string): string => `
-import { createDecisionPlugin, defineProvider } from ${JSON.stringify(core)};
-import { presets } from ${JSON.stringify(entry)};
+import { createDecisionPlugin, defineProvider } from ${toJson(core)};
+import { presets } from ${toJson(entry)};
 
 const decide = ({ request }) => ({
   ok: true,
@@ -34,8 +44,8 @@ const decide = ({ request }) => ({
 });
 
 export default createDecisionPlugin({
-  name: ${JSON.stringify(PLUGIN_NAME)},
-  rules: presets[${JSON.stringify(preset)}],
+  name: ${toJson(PLUGIN_NAME)},
+  rules: presets[${toJson(preset)}],
   providers: [defineProvider({ name: "fake", requiredEnv: [], decide })],
 });
 `;
@@ -105,22 +115,37 @@ const reportOf = (line: string): Option.Option<readonly [string, string]> =>
   );
 
 const byRule = (stdout: string): Readonly<Record<string, readonly string[]>> => {
-  const reports = Arr.getSomes(stdout.split("\n").map((line) => reportOf(line)));
+  const reports = Arr.getSomes(
+    pipe(
+      Str.split(stdout, "\n"),
+      Arr.map((line) => reportOf(line)),
+    ),
+  );
   const grouped = Arr.groupBy(reports, ([id]) => id);
-  return Object.fromEntries(
-    Object.entries(grouped).map(([id, found]) => [id, found.map(([, at]) => at)]),
+  return Rec.fromEntries(
+    pipe(
+      Rec.toEntries(grouped),
+      Arr.map(([id, found]) => [
+        id,
+        pipe(
+          found,
+          Arr.map(([, at]) => at),
+        ),
+      ]),
+    ),
   );
 };
 
 const exampleFile = (
   name: string,
-): Effect.Effect<string, unknown, FileSystem.FileSystem | Services> =>
+): Effect.Effect<string, PlatformError, FileSystem.FileSystem | Services> =>
   Effect.gen(function* read() {
     const fs = yield* FileSystem.FileSystem;
-    return yield* fs.readFileString(yield* fromRoot("example", "claims", name));
+    const file = yield* fromRoot("example", "claims", name);
+    return yield* fs.readFileString(file);
   });
 
-const askedWhere = (preset: Preset): Effect.Effect<void, unknown, Services> =>
+const askedWhere = (preset: Preset): Effect.Effect<void, PlatformError, Services> =>
   Effect.scoped(
     Effect.gen(function* test() {
       const core = yield* fromRoot(

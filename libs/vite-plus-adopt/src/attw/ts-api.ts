@@ -1,4 +1,4 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, Array as Arr, String as Str, pipe, Function as Fn } from "effect";
 import type { SourceFile } from "typescript/ast";
 import { serverFS } from "typescript/fs";
 import type { FileSystemCallbacks, FileSystemEntries } from "typescript/fs";
@@ -6,6 +6,8 @@ import { API } from "typescript/sync";
 import type { ScriptKind } from "typescript/sync";
 
 import { ensureTrailingDirectorySeparator } from "./paths.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
 
 interface VirtualFileSystem {
   readonly fileExists: (path: string) => boolean;
@@ -28,26 +30,25 @@ const MOUNT_ROOT = "/attw";
 const SEPARATOR = "/";
 const START = 0;
 const SECOND = 1;
-const MOUNT_DIRECTORY = MOUNT_ROOT.slice(SEPARATOR.length);
+const MOUNT_DIRECTORY = Str.slice(SEPARATOR.length)(MOUNT_ROOT);
 
 const mounts = new Map<string, WeakRef<VirtualFileSystem>>();
 const counter = { next: 0 };
 
 const mountOf = (path: string): Option.Option<Mount> => {
-  if (!path.startsWith(`${MOUNT_ROOT}${SEPARATOR}`)) {
+  if (!Str.startsWith(`${MOUNT_ROOT}${SEPARATOR}`)(path)) {
     return Option.none();
   }
-  const rest = path.slice(MOUNT_ROOT.length + SEPARATOR.length);
-  const end = rest.indexOf(SEPARATOR);
+  const rest = Str.slice(MOUNT_ROOT.length + SEPARATOR.length)(path);
   const id = Option.match(
-    Option.liftPredicate(end, (index) => index >= SECOND),
+    Option.filter(Str.indexOf(SEPARATOR)(rest), (index) => index >= SECOND),
     {
       onNone: () => rest,
-      onSome: (index) => rest.slice(START, index),
+      onSome: (index) => Str.slice(START, index)(rest),
     },
   );
   const inner = Option.liftPredicate(
-    rest.slice(id.length),
+    Str.slice(id.length)(rest),
     (remainder) => remainder.length > START,
   );
   return Option.fromNullishOr(mounts.get(id)).pipe(
@@ -60,21 +61,43 @@ const uniqueEntries = (names: readonly string[]): string[] => [...new Set(names)
 
 const childEntries = (paths: readonly string[], directory: string): FileSystemEntries => {
   const prefix = ensureTrailingDirectorySeparator(directory);
-  const children = paths
-    .filter((path) => path.startsWith(prefix))
-    .map((path) => path.slice(prefix.length));
-  const nested = children.filter((child) => child.includes(SEPARATOR));
+  const children = pipe(
+    paths,
+    Arr.filter((path) => Str.startsWith(prefix)(path)),
+    Arr.map((path) => Str.slice(prefix.length)(path)),
+  );
+  const nested = pipe(
+    children,
+    Arr.filter((child) => Str.includes(SEPARATOR)(child)),
+  );
   return {
-    files: uniqueEntries(children.filter((child) => !child.includes(SEPARATOR))),
-    directories: uniqueEntries(nested.map((child) => child.slice(START, child.indexOf(SEPARATOR)))),
+    files: uniqueEntries(
+      pipe(
+        children,
+        Arr.filter((child) => !Str.includes(SEPARATOR)(child)),
+      ),
+    ),
+    directories: uniqueEntries(
+      pipe(
+        nested,
+        Arr.map((child) =>
+          Option.match(Str.indexOf(SEPARATOR)(child), {
+            onNone: () => child,
+            onSome: (end) => Str.slice(START, end)(child),
+          }),
+        ),
+      ),
+    ),
     symlinks: [],
   };
 };
 
 const liveMountIds = (): string[] =>
-  [...mounts.entries()]
-    .filter(([, reference]) => Predicate.isNotUndefined(reference.deref()))
-    .map(([id]) => id);
+  pipe(
+    [...mounts.entries()],
+    Arr.filter(([, reference]) => Predicate.isNotUndefined(reference.deref())),
+    Arr.map(([id]) => id),
+  );
 
 const ANCESTOR_DIRECTORIES: ReadonlyMap<string, () => readonly string[]> = new Map([
   [SEPARATOR, (): readonly string[] => [MOUNT_DIRECTORY]],
@@ -144,20 +167,22 @@ const mount = (fileSystem: VirtualFileSystem): MountedFileSystem => {
   return { fileSystem, root: `${MOUNT_ROOT}${SEPARATOR}${id}` };
 };
 
-const parseSourceFile = (
-  fileName: string,
-  text: string,
-  scriptKind: Option.Option<ScriptKind>,
-): SourceFile => {
-  const retained = sharedApi().createSourceFile(
-    fileName,
-    text,
-    Option.match(scriptKind, { onNone: () => ({}), onSome: (kind) => ({ scriptKind: kind }) }),
-  );
-  const { sourceFile } = retained;
-  retained.dispose();
-  return sourceFile;
-};
+const parseSourceFile: {
+  (text: string, scriptKind: Option.Option<ScriptKind>): (fileName: string) => SourceFile;
+  (fileName: string, text: string, scriptKind: Option.Option<ScriptKind>): SourceFile;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (fileName: string, text: string, scriptKind: Option.Option<ScriptKind>): SourceFile => {
+    const retained = sharedApi().createSourceFile(
+      fileName,
+      text,
+      Option.match(scriptKind, { onNone: () => ({}), onSome: (kind) => ({ scriptKind: kind }) }),
+    );
+    const { sourceFile } = retained;
+    retained.dispose();
+    return sourceFile;
+  },
+);
 
 export { mount, parseSourceFile, sharedApi };
 export type { MountedFileSystem, VirtualFileSystem };

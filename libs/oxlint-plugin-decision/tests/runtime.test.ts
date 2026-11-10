@@ -1,6 +1,6 @@
 import { layer } from "@effect/vitest";
 import { deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Effect, Layer, Match, Option } from "effect";
+import { Effect, Layer, Match, Option, String as Str } from "effect";
 
 import { openRouter } from "#src/openrouter.ts";
 import { envNameOf, envOf, failsInCi, messageOf, runOrElse, warnOnce } from "#src/runtime.ts";
@@ -10,6 +10,7 @@ const TIMEOUT_MS = 5;
 const NETWORK = "network: ";
 const ONE_PREFIX = 2;
 const NO_FAILURE = 0;
+const UNCLONEABLE_ENV = new Proxy<Readonly<Record<string, string>>>({}, {});
 
 const options: ResolvedOptions = {
   ci: "fail",
@@ -52,11 +53,11 @@ const reportsWorkerFailure = Effect.sync(() => {
       questions: { snippet: { type: "noul", instructions: "Is it bad?" } },
     },
     timeoutMs: TIMEOUT_MS,
-    env: {},
+    env: UNCLONEABLE_ENV,
   });
   deepStrictEqual(
     Match.value(result).pipe(
-      Match.when({ ok: false }, ({ reason }) => reason.split(NETWORK).length),
+      Match.when({ ok: false }, ({ reason }) => Str.split(reason, NETWORK).length),
       Match.orElse(() => NO_FAILURE),
     ),
     ONE_PREFIX,
@@ -69,5 +70,8 @@ layer(Layer.empty)("runtime helpers", (it) => {
   it.effect("renames environment variables", () => renamesEnv);
   it.effect("reads optional environment variables", () => readsEnv);
   it.effect("warns once per reason", () => warnsOnce);
-  it.effect("reports a worker that cannot start as a failure", () => reportsWorkerFailure);
+  it.effect(
+    "reports a worker call that cannot reach the worker as a network failure",
+    () => reportsWorkerFailure,
+  );
 });

@@ -1,17 +1,22 @@
-import { Effect, Stdio, Stream } from "effect";
+import { Effect, Stdio, Stream, Function as Fn } from "effect";
 
 import { checksFailed } from "./errors.ts";
 import type { VpToolsError } from "./errors.ts";
 import type { Report } from "./report.ts";
 
-const writeTo = (
-  sink: "stdout" | "stderr",
-  text: string,
-): Effect.Effect<void, never, Stdio.Stdio> =>
-  Effect.gen(function* write() {
-    const stdio = yield* Stdio.Stdio;
-    yield* Stream.make(text).pipe(Stream.run(stdio[sink]()), Effect.orDie);
-  });
+const DATA_FIRST_ARITY = 2;
+
+const writeTo: {
+  (text: string): (sink: "stdout" | "stderr") => Effect.Effect<void, never, Stdio.Stdio>;
+  (sink: "stdout" | "stderr", text: string): Effect.Effect<void, never, Stdio.Stdio>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (sink: "stdout" | "stderr", text: string): Effect.Effect<void, never, Stdio.Stdio> =>
+    Effect.gen(function* write() {
+      const stdio = yield* Stdio.Stdio;
+      yield* Stream.make(text).pipe(Stream.run(stdio[sink]()), Effect.orDie);
+    }),
+);
 
 const finish = (report: Report): Effect.Effect<void, VpToolsError, Stdio.Stdio> => {
   if (!report.valid) {
@@ -23,4 +28,5 @@ const finish = (report: Report): Effect.Effect<void, VpToolsError, Stdio.Stdio> 
   return writeTo("stdout", `${report.output}\n`);
 };
 
+/** @internal */
 export { finish, writeTo };

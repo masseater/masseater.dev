@@ -1,8 +1,10 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, Record as Rec, Function as Fn } from "effect";
 
 import { Messages, traceMessage } from "./messages.ts";
 import { combinePaths, normalizePath } from "./paths.ts";
 import type { PackageJsonContent, ResolutionState } from "./resolution-types.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
 
 interface FieldRequest {
   readonly field: string;
@@ -23,22 +25,35 @@ const typeName = (value: unknown): string => {
   return typeof value;
 };
 
-const resolvePackageJsonFieldWithTrace = (
-  content: PackageJsonContent,
-  { field, expected }: FieldRequest,
-  state: ResolutionState,
-): Option.Option<unknown> => {
-  if (!Object.hasOwn(content, field)) {
-    traceMessage(state, Messages.packageJsonMissingField, field);
-    return Option.none();
-  }
-  const value = content[field];
-  if (typeof value !== expected || Predicate.isNull(value)) {
-    traceMessage(state, Messages.expectedFieldType, field, expected, typeName(value));
-    return Option.none();
-  }
-  return Option.some(value);
-};
+const resolvePackageJsonFieldWithTrace: {
+  (
+    request: FieldRequest,
+    state: ResolutionState,
+  ): (content: PackageJsonContent) => Option.Option<unknown>;
+  (
+    content: PackageJsonContent,
+    request: FieldRequest,
+    state: ResolutionState,
+  ): Option.Option<unknown>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (
+    content: PackageJsonContent,
+    { field, expected }: FieldRequest,
+    state: ResolutionState,
+  ): Option.Option<unknown> => {
+    if (!Rec.has(content, field)) {
+      traceMessage(state, Messages.packageJsonMissingField, field);
+      return Option.none();
+    }
+    const value = content[field];
+    if (typeof value !== expected || Predicate.isNull(value)) {
+      traceMessage(state, Messages.expectedFieldType, field, expected, typeName(value));
+      return Option.none();
+    }
+    return Option.some(value);
+  },
+);
 
 const resolvePathWithTrace = (
   fileName: string,
@@ -68,23 +83,49 @@ const resolvePackageJsonPathWithTrace = (
     Option.flatMap((fileName) => resolvePathWithTrace(fileName, request, state)),
   );
 
-const readPackageJsonTypesFields = (
-  content: PackageJsonContent,
-  baseDirectory: string,
-  state: ResolutionState,
-): Option.Option<string> =>
-  resolvePackageJsonPathWithTrace(content, { field: "typings", baseDirectory }, state).pipe(
-    Option.orElse(() =>
-      resolvePackageJsonPathWithTrace(content, { field: "types", baseDirectory }, state),
+const readPackageJsonTypesFields: {
+  (
+    baseDirectory: string,
+    state: ResolutionState,
+  ): (content: PackageJsonContent) => Option.Option<string>;
+  (
+    content: PackageJsonContent,
+    baseDirectory: string,
+    state: ResolutionState,
+  ): Option.Option<string>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (
+    content: PackageJsonContent,
+    baseDirectory: string,
+    state: ResolutionState,
+  ): Option.Option<string> =>
+    resolvePackageJsonPathWithTrace(content, { field: "typings", baseDirectory }, state).pipe(
+      Option.orElse(() =>
+        resolvePackageJsonPathWithTrace(content, { field: "types", baseDirectory }, state),
+      ),
     ),
-  );
+);
 
-const readPackageJsonMainField = (
-  content: PackageJsonContent,
-  baseDirectory: string,
-  state: ResolutionState,
-): Option.Option<string> =>
-  resolvePackageJsonPathWithTrace(content, { field: "main", baseDirectory }, state);
+const readPackageJsonMainField: {
+  (
+    baseDirectory: string,
+    state: ResolutionState,
+  ): (content: PackageJsonContent) => Option.Option<string>;
+  (
+    content: PackageJsonContent,
+    baseDirectory: string,
+    state: ResolutionState,
+  ): Option.Option<string>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (
+    content: PackageJsonContent,
+    baseDirectory: string,
+    state: ResolutionState,
+  ): Option.Option<string> =>
+    resolvePackageJsonPathWithTrace(content, { field: "main", baseDirectory }, state),
+);
 
 const asRecord = (value: unknown): Readonly<Record<string, unknown>> =>
   Option.liftPredicate(value, Predicate.isObject).pipe(Option.getOrElse(() => ({})));

@@ -1,4 +1,4 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, String as Str, Function as Fn } from "effect";
 import type { BinaryExpression, CallExpression, Node } from "typescript/ast";
 import { isIdentifier, isPropertyAccessExpression, isVariableDeclaration } from "typescript/ast/is";
 import { SymbolFlags } from "typescript/sync";
@@ -23,6 +23,9 @@ import {
 import type { AccessExpression } from "./binder-syntax.ts";
 import { EMPTY, combineFlags } from "./flags.ts";
 
+const DATA_FIRST_ARITY = 2;
+const DATA_FIRST_ARITY_3 = 3;
+
 interface EntityNameWalk {
   readonly node: Node;
   readonly containerIsFile: boolean;
@@ -44,12 +47,15 @@ const EXPORT_PROPERTY: SymbolFlagPair = {
 const EXPORT_ALIAS: SymbolFlagPair = { includes: SymbolFlags.Alias, excludes: EMPTY };
 
 const createFileSymbol = (binding: FileBinding): void => {
-  const symbol = createSymbol(EMPTY, `"${binding.file.fileName.replace(EXTENSION, "")}"`);
+  const symbol = createSymbol(EMPTY, `"${Str.replace(EXTENSION, "")(binding.file.fileName)}"`);
   addDeclarationToSymbol(symbol, binding.file, SymbolFlags.ValueModule);
   binding.symbol = symbol;
 };
 
-const lookupSymbolForName = (binding: FileBinding, name: string): Option.Option<BoundSymbol> => {
+const lookupSymbolForName: {
+  (name: string): (binding: FileBinding) => Option.Option<BoundSymbol>;
+  (binding: FileBinding, name: string): Option.Option<BoundSymbol>;
+} = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, name: string): Option.Option<BoundSymbol> => {
   const local = Option.fromNullishOr(binding.locals.get(name)).pipe(
     Option.map((found) => found.exportSymbol ?? found),
   );
@@ -58,19 +64,27 @@ const lookupSymbolForName = (binding: FileBinding, name: string): Option.Option<
       Option.fromNullishOr(binding.symbol).pipe(Option.flatMap((file) => exportOf(file, name))),
     ),
   );
-};
+});
 
-const lookupIdentifier = (binding: FileBinding, node: Node): Option.Option<BoundSymbol> =>
+const lookupIdentifier: {
+  (node: Node): (binding: FileBinding) => Option.Option<BoundSymbol>;
+  (binding: FileBinding, node: Node): Option.Option<BoundSymbol>;
+} = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, node: Node): Option.Option<BoundSymbol> =>
   Option.flatMap(Option.liftPredicate(node, isIdentifier), (identifier) =>
     lookupSymbolForName(binding, escapeLeadingUnderscores(identifier.text)),
-  );
+  ),
+);
 
-const variableInitializer = (binding: FileBinding, node: Node): Option.Option<Node> =>
+const variableInitializer: {
+  (node: Node): (binding: FileBinding) => Option.Option<Node>;
+  (binding: FileBinding, node: Node): Option.Option<Node>;
+} = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, node: Node): Option.Option<Node> =>
   lookupIdentifier(binding, node).pipe(
     Option.flatMap((symbol) => Option.fromNullishOr(symbol.valueDeclaration)),
     Option.filter(isVariableDeclaration),
     Option.flatMap((declaration) => Option.fromNullishOr(declaration.initializer)),
-  );
+  ),
+);
 
 const aliasSources = (binding: FileBinding, node: Node): readonly Node[] =>
   variableInitializer(binding, node).pipe(
@@ -101,10 +115,17 @@ const searchExportsAlias = (
   );
 };
 
-const isExportsOrModuleExportsOrAlias = (binding: FileBinding, node: Node): boolean =>
-  searchExportsAlias(binding, [node], EMPTY);
+const isExportsOrModuleExportsOrAlias: {
+  (node: Node): (binding: FileBinding) => boolean;
+  (binding: FileBinding, node: Node): boolean;
+} = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, node: Node): boolean =>
+  searchExportsAlias(binding, [node], EMPTY),
+);
 
-const setCommonJsModuleIndicator = (binding: FileBinding, node: Node): boolean => {
+const setCommonJsModuleIndicator: {
+  (node: Node): (binding: FileBinding) => boolean;
+  (binding: FileBinding, node: Node): boolean;
+} = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, node: Node): boolean => {
   if (binding.isExternalModule) {
     return false;
   }
@@ -113,7 +134,7 @@ const setCommonJsModuleIndicator = (binding: FileBinding, node: Node): boolean =
     createFileSymbol(binding);
   }
   return true;
-};
+});
 
 const accessNameOrArgument = (node: AccessExpression): Node => {
   if (isPropertyAccessExpression(node)) {
@@ -138,23 +159,26 @@ const memberOfAccess = (
     Option.flatMap((key) => parent.pipe(Option.flatMap((symbol) => exportOf(symbol, key)))),
   );
 
-const forEachIdentifierInEntityName = (
-  binding: FileBinding,
-  walk: EntityNameWalk,
-): Option.Option<BoundSymbol> => {
-  const { node } = walk;
-  if (isExportsOrModuleExportsOrAlias(binding, node)) {
-    return Option.fromNullishOr(binding.symbol);
-  }
-  if (isIdentifier(node)) {
-    return walk.action(node, lookupInFileContainer(binding, walk), Option.none());
-  }
-  if (!isAccessExpression(node)) {
-    return Option.none();
-  }
-  const parent = forEachIdentifierInEntityName(binding, { ...walk, node: node.expression });
-  return walk.action(accessNameOrArgument(node), memberOfAccess(node, parent), parent);
-};
+const forEachIdentifierInEntityName: {
+  (walk: EntityNameWalk): (binding: FileBinding) => Option.Option<BoundSymbol>;
+  (binding: FileBinding, walk: EntityNameWalk): Option.Option<BoundSymbol>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (binding: FileBinding, walk: EntityNameWalk): Option.Option<BoundSymbol> => {
+    const { node } = walk;
+    if (isExportsOrModuleExportsOrAlias(binding, node)) {
+      return Option.fromNullishOr(binding.symbol);
+    }
+    if (isIdentifier(node)) {
+      return walk.action(node, lookupInFileContainer(binding, walk), Option.none());
+    }
+    if (!isAccessExpression(node)) {
+      return Option.none();
+    }
+    const parent = forEachIdentifierInEntityName(binding, { ...walk, node: node.expression });
+    return walk.action(accessNameOrArgument(node), memberOfAccess(node, parent), parent);
+  },
+);
 
 const markModuleAssignment = (
   name: Node,
@@ -179,43 +203,47 @@ const exportsPropertyFlags = (node: BinaryExpression): SymbolFlagPair => {
   );
 };
 
-const bindExportsPropertyAssignment = (
-  binding: FileBinding,
-  node: BinaryExpression,
-  scope: Scope,
-): void => {
-  const { left } = node;
-  if (!setCommonJsModuleIndicator(binding, node) || !isAccessExpression(left)) {
-    return;
-  }
-  const owner = forEachIdentifierInEntityName(binding, {
-    node: left.expression,
-    containerIsFile: scope.containerIsFile,
-    action: markModuleAssignment,
-  });
-  if (Option.isSome(owner)) {
-    declare(binding, { target: exportsOf(owner), node: left, flags: exportsPropertyFlags(node) });
-  }
-};
+const bindExportsPropertyAssignment: {
+  (node: BinaryExpression, scope: Scope): (binding: FileBinding) => void;
+  (binding: FileBinding, node: BinaryExpression, scope: Scope): void;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (binding: FileBinding, node: BinaryExpression, scope: Scope): void => {
+    const { left } = node;
+    if (!setCommonJsModuleIndicator(binding, node) || !isAccessExpression(left)) {
+      return;
+    }
+    const owner = forEachIdentifierInEntityName(binding, {
+      node: left.expression,
+      containerIsFile: scope.containerIsFile,
+      action: markModuleAssignment,
+    });
+    if (Option.isSome(owner)) {
+      declare(binding, { target: exportsOf(owner), node: left, flags: exportsPropertyFlags(node) });
+    }
+  },
+);
 
-const bindObjectDefinePropertyExport = (
-  binding: FileBinding,
-  node: CallExpression,
-  scope: Scope,
-): void => {
-  const [target] = node.arguments;
-  if (!setCommonJsModuleIndicator(binding, node) || Predicate.isUndefined(target)) {
-    return;
-  }
-  const owner = forEachIdentifierInEntityName(binding, {
-    node: target,
-    containerIsFile: scope.containerIsFile,
-    action: markModuleAssignment,
-  });
-  if (Option.isSome(owner)) {
-    declare(binding, { target: exportsOf(owner), node, flags: EXPORT_PROPERTY });
-  }
-};
+const bindObjectDefinePropertyExport: {
+  (node: CallExpression, scope: Scope): (binding: FileBinding) => void;
+  (binding: FileBinding, node: CallExpression, scope: Scope): void;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (binding: FileBinding, node: CallExpression, scope: Scope): void => {
+    const [target] = node.arguments;
+    if (!setCommonJsModuleIndicator(binding, node) || Predicate.isUndefined(target)) {
+      return;
+    }
+    const owner = forEachIdentifierInEntityName(binding, {
+      node: target,
+      containerIsFile: scope.containerIsFile,
+      action: markModuleAssignment,
+    });
+    if (Option.isSome(owner)) {
+      declare(binding, { target: exportsOf(owner), node, flags: EXPORT_PROPERTY });
+    }
+  },
+);
 
 export {
   bindExportsPropertyAssignment,

@@ -1,17 +1,21 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Effect } from "effect";
+import { Effect, Array as Arr, String as Str, pipe } from "effect";
 
+import { toJson } from "#src/runtime.ts";
 import type { DecisionPluginSetup, DecisionRule } from "#src/types.ts";
 
 import { PASSED, TIMEOUT, lintProject, outputOf } from "./fixtures.ts";
 import { configSource, pluginPath, runOxlint, writeProject } from "./oxlint.ts";
-import type { Services } from "./oxlint.ts";
+import type { Services, TestError } from "./oxlint.ts";
+
+const UNKNOWN_OPTION: object = { foo: 1 };
+const REPO_CONTEXT: object = { context: { scope: "repo" } };
 
 const customPlugin = (
   dist: string,
-): string => `import { createDecisionPlugin, defineDecisionRule, defineProvider } from ${JSON.stringify(dist)};
+): string => `import { createDecisionPlugin, defineDecisionRule, defineProvider } from ${toJson(dist)};
 
 const yes = ({ request }) => ({
   ok: true,
@@ -36,8 +40,9 @@ const CUSTOM_LINE =
 
 const customProvider = Effect.scoped(
   Effect.gen(function* test() {
+    const plugin2 = yield* pluginPath;
     const cwd = yield* writeProject({
-      "plugin.mjs": customPlugin(yield* pluginPath),
+      "plugin.mjs": customPlugin(plugin2),
       "log.js": "console.log(user.email);\n",
       "oxlint.config.ts": configSource({
         jsPlugins: ["./plugin.mjs"],
@@ -51,7 +56,10 @@ const customProvider = Effect.scoped(
     assertInclude(without.stderr, "FAKE_KEY is not set, skipping fake models");
     const withKey = yield* runOxlint({ cwd, args, env: { FAKE_KEY: "1" } });
     deepStrictEqual(
-      withKey.stdout.split("\n").filter((line) => line.includes("custom(")),
+      pipe(
+        Str.split(withKey.stdout, "\n"),
+        Arr.filter((line) => Str.includes("custom(")(line)),
+      ),
       [CUSTOM_LINE],
     );
   }),
@@ -59,7 +67,7 @@ const customProvider = Effect.scoped(
 
 const batchingPlugin = (
   dist: string,
-): string => `import { createDecisionPlugin, defineDecisionRule, defineProvider } from ${JSON.stringify(dist)};
+): string => `import { createDecisionPlugin, defineDecisionRule, defineProvider } from ${toJson(dist)};
 
 const answer = (noul) => ({ request }) => ({
   ok: true,
@@ -90,8 +98,9 @@ const ONE_PART = 1;
 
 const batchedModels = Effect.scoped(
   Effect.gen(function* test() {
+    const plugin2 = yield* pluginPath;
     const cwd = yield* writeProject({
-      "plugin.mjs": batchingPlugin(yield* pluginPath),
+      "plugin.mjs": batchingPlugin(plugin2),
       "log.js": "console.log(user.email);\n",
       "oxlint.config.ts": configSource({
         jsPlugins: ["./plugin.mjs"],
@@ -105,10 +114,11 @@ const batchedModels = Effect.scoped(
       env: {},
     });
     deepStrictEqual(
-      run.stdout
-        .split("\n")
-        .filter((line) => line.includes("batch("))
-        .map((line) => line.split(" answered", ONE_PART).join("")),
+      pipe(
+        Str.split(run.stdout, "\n"),
+        Arr.filter((line) => Str.includes("batch(")(line)),
+        Arr.map((line) => pipe(Str.split(line, " answered"), Arr.take(ONE_PART), Arr.join(""))),
+      ),
       ["log.js:1:1: [first] fake/one", "log.js:1:1: [second] fake/two"],
     );
   }),
@@ -136,7 +146,7 @@ const badConfigs: readonly (readonly [string, DecisionPluginSetup, string])[] = 
   ["a location cutoff is above 1", { rules: [fileRuleAt(ABOVE_CERTAIN)] }, "cutoff"],
   [
     "a plugin-level field is unknown",
-    { rules: [goodRule], ...JSON.parse('{"foo":1}') },
+    { rules: [goodRule], ...UNKNOWN_OPTION },
     "invalid createDecisionPlugin options: Expected no excess property",
   ],
   [
@@ -166,18 +176,14 @@ const badConfigs: readonly (readonly [string, DecisionPluginSetup, string])[] = 
     },
     "every label in report must be one of labels",
   ],
-  [
-    "a context scope is unknown",
-    { rules: [{ ...goodRule, ...JSON.parse('{"context":{"scope":"repo"}}') }] },
-    "context",
-  ],
+  ["a context scope is unknown", { rules: [{ ...goodRule, ...REPO_CONTEXT }] }, "context"],
 ];
 
 const refuses = ([, options, expected]: readonly [
   string,
   DecisionPluginSetup,
   string,
-]): Effect.Effect<void, unknown, Services> =>
+]): Effect.Effect<void, TestError, Services> =>
   Effect.gen(function* test() {
     const run = yield* lintProject({
       files: { "pass.js": "ok();\n" },

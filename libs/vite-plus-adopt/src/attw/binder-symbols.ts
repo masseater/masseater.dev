@@ -1,10 +1,13 @@
-import { Option, Predicate } from "effect";
+import { Option, Predicate, String as Str, Function as Fn } from "effect";
 import { NodeFlags, ScriptKind, SyntaxKind } from "typescript/ast";
 import type { Node } from "typescript/ast";
 import { isSourceFile } from "typescript/ast/is";
 import { SymbolFlags } from "typescript/sync";
 
 import { EMPTY, combineFlags, hasFlag, withFlags } from "./flags.ts";
+
+const DATA_FIRST_ARITY = 2;
+const DATA_FIRST_ARITY_3 = 3;
 
 interface BoundSymbol {
   flags: number;
@@ -35,24 +38,27 @@ const TRIPLE_UNDERSCORE = "___";
 const MISSING_NAME = "__missing";
 
 const unescapeLeadingUnderscores = (name: string): string => {
-  if (name.startsWith(TRIPLE_UNDERSCORE)) {
-    return name.slice(UNDERSCORE.length);
+  if (Str.startsWith(TRIPLE_UNDERSCORE)(name)) {
+    return Str.slice(UNDERSCORE.length)(name);
   }
   return name;
 };
 
 const escapeLeadingUnderscores = (name: string): string => {
-  if (name.startsWith(DOUBLE_UNDERSCORE)) {
+  if (Str.startsWith(DOUBLE_UNDERSCORE)(name)) {
     return `${UNDERSCORE}${name}`;
   }
   return name;
 };
 
-const createSymbol = (flags: number, escapedName: string): BoundSymbol => ({
+const createSymbol: {
+  (escapedName: string): (flags: number) => BoundSymbol;
+  (flags: number, escapedName: string): BoundSymbol;
+} = Fn.dual(DATA_FIRST_ARITY, (flags: number, escapedName: string): BoundSymbol => ({
   flags,
   escapedName,
   name: unescapeLeadingUnderscores(escapedName),
-});
+}));
 
 const isInJsFileNode = (node: Node): boolean => {
   let current = node;
@@ -92,12 +98,15 @@ const replacesModuleDeclaration = (existing: Node, node: Node): boolean =>
 const replacesValueDeclaration = (existing: Node, node: Node): boolean =>
   replacesAssignmentDeclaration(existing, node) || replacesModuleDeclaration(existing, node);
 
-const setValueDeclaration = (symbol: BoundSymbol, node: Node): void => {
+const setValueDeclaration: {
+  (node: Node): (symbol: BoundSymbol) => void;
+  (symbol: BoundSymbol, node: Node): void;
+} = Fn.dual(DATA_FIRST_ARITY, (symbol: BoundSymbol, node: Node): void => {
   const existing = symbol.valueDeclaration;
   if (Predicate.isUndefined(existing) || replacesValueDeclaration(existing, node)) {
     symbol.valueDeclaration = node;
   }
-};
+});
 
 const EXPORT_TABLE_FLAGS = combineFlags(
   SymbolFlags.Class,
@@ -137,10 +146,18 @@ const DECLARATION_EFFECTS: readonly (readonly [
       symbol.members ??= new Map();
     },
   ],
-  [SymbolFlags.Value, setValueDeclaration],
+  [
+    SymbolFlags.Value,
+    (symbol, node) => {
+      setValueDeclaration(symbol, node);
+    },
+  ],
 ];
 
-const addDeclarationToSymbol = (symbol: BoundSymbol, node: Node, flags: number): void => {
+const addDeclarationToSymbol: {
+  (node: Node, flags: number): (symbol: BoundSymbol) => void;
+  (symbol: BoundSymbol, node: Node, flags: number): void;
+} = Fn.dual(DATA_FIRST_ARITY_3, (symbol: BoundSymbol, node: Node, flags: number): void => {
   symbol.flags = withFlags(symbol.flags, flags);
   recordDeclaration(symbol, node);
   for (const [required, apply] of DECLARATION_EFFECTS) {
@@ -148,7 +165,7 @@ const addDeclarationToSymbol = (symbol: BoundSymbol, node: Node, flags: number):
       apply(symbol, node);
     }
   }
-};
+});
 
 const conflicts = (found: BoundSymbol, declaration: SymbolDeclaration): boolean =>
   hasFlag(found.flags, declaration.excludes) &&
@@ -174,10 +191,14 @@ const symbolInTable = (
   return found;
 };
 
-const exportOf = (owner: BoundSymbol, name: string): Option.Option<BoundSymbol> =>
+const exportOf: {
+  (name: string): (owner: BoundSymbol) => Option.Option<BoundSymbol>;
+  (owner: BoundSymbol, name: string): Option.Option<BoundSymbol>;
+} = Fn.dual(DATA_FIRST_ARITY, (owner: BoundSymbol, name: string): Option.Option<BoundSymbol> =>
   Option.flatMap(Option.fromNullishOr(owner.exports), (table) =>
     Option.fromNullishOr(table.get(name)),
-  );
+  ),
+);
 
 const declareSymbol = (declaration: SymbolDeclaration): BoundSymbol => {
   const symbol = Option.getOrElse(

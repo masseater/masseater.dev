@@ -1,12 +1,12 @@
 import type { Context, Location } from "@oxlint/plugins";
-import { Array as Arr, Boolean as Bool, Option } from "effect";
+import { Array as Arr, Boolean as Bool, Option, Record as Rec, pipe } from "effect";
 
 import { isReported } from "./answer.ts";
 import { explainerFor } from "./explain.ts";
 import type { ExplainPass, Explainer, Outcome, Placed } from "./explain.ts";
 import { inputOf, locateMatch, verdictsOf } from "./locate.ts";
 import type { Asking, Located } from "./locate.ts";
-import { OptionsError } from "./options.ts";
+import { optionsError } from "./options.ts";
 import { buildRequest, refAt } from "./request.ts";
 import { failsInCi, warnOnce } from "./runtime.ts";
 import type {
@@ -46,7 +46,7 @@ const DECIMALS = 2;
 
 const degrade = (pass: ModelPass, reason: string): void => {
   if (failsInCi(pass.options)) {
-    throw new OptionsError(`${reason} (${pass.filename})`);
+    throw optionsError(`${reason} (${pass.filename})`);
   }
   warnOnce(reason, `${reason} (${pass.filename})`);
 };
@@ -181,9 +181,16 @@ const decideWith = (
   provider: DecisionProvider,
   prepared: readonly Prepared[],
 ): readonly DecideResult[] => {
-  const inputs = prepared.map(({ asking, request }) => inputOf(asking, request));
+  const inputs = pipe(
+    prepared,
+    Arr.map(({ asking, request }) => inputOf(asking, request)),
+  );
   return Option.match(Option.fromUndefinedOr(provider.decideAll), {
-    onNone: () => inputs.map((input) => provider.decide(input)),
+    onNone: () =>
+      pipe(
+        inputs,
+        Arr.map((input) => provider.decide(input)),
+      ),
     onSome: (decideAll) => decideAll(inputs),
   });
 };
@@ -196,10 +203,13 @@ const reportProvider = (prepared: Arr.NonEmptyReadonlyArray<Prepared>): void => 
   const answers = Bool.match(results.length === prepared.length, {
     onTrue: () => results,
     onFalse: () =>
-      prepared.map((): DecideResult => ({
-        ok: false,
-        reason: `provider ${provider.name} returned ${String(results.length)} results for ${String(prepared.length)} requests`,
-      })),
+      pipe(
+        prepared,
+        Arr.map((): DecideResult => ({
+          ok: false,
+          reason: `provider ${provider.name} returned ${String(results.length)} results for ${String(prepared.length)} requests`,
+        })),
+      ),
   });
   for (const [one, decided] of Arr.zip(prepared, answers)) {
     reportAnswer(one, { decided, durationMs });
@@ -208,10 +218,13 @@ const reportProvider = (prepared: Arr.NonEmptyReadonlyArray<Prepared>): void => 
 
 const reportModels = (passes: readonly ModelPass[]): void => {
   const byProvider = Arr.groupBy(
-    passes.map((pass) => prepare(pass)),
+    pipe(
+      passes,
+      Arr.map((pass) => prepare(pass)),
+    ),
     ({ pass }) => pass.model.provider.name,
   );
-  for (const prepared of Object.values(byProvider)) {
+  for (const prepared of Rec.values(byProvider)) {
     reportProvider(prepared);
   }
 };

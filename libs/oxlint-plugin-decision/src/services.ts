@@ -13,4 +13,5 @@ const workerServices: [typeof NodeServices.layer, typeof NodeCrypto.layerDigest,
   tracing,
 ];
 
+/** @internal */
 export { workerServices };

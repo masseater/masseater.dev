@@ -1,10 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": [
-    "src",
-    "upstream",
-    "vite.config.ts"
-  ],
+  "include": ["src", "upstream", "vite.config.ts"],
   "exclude": [
     "upstream/src/__tests__",
     "upstream/tanstack-query/src/__tests__",

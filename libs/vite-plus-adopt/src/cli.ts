@@ -7,6 +7,7 @@ runCli(
   Effect.gen(function* main() {
     const stdio = yield* Stdio.Stdio;
     const path = yield* Path.Path;
-    return yield* runVpa(path.resolve("."), yield* stdio.args);
+    const args = yield* stdio.args;
+    return yield* runVpa(path.resolve("."), args);
   }),
 );

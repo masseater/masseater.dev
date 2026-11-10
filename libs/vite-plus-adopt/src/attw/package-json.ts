@@ -1,4 +1,15 @@
-import { MutableRef, Option, Predicate, Record as Rec, String as Str } from "effect";
+import {
+  MutableRef,
+  Option,
+  Predicate,
+  Record as Rec,
+  String as Str,
+  Array as Arr,
+  pipe,
+  Function as Fn,
+} from "effect";
+
+import { parseJson } from "#src/json.ts";
 
 import { Messages, traceMessage } from "./messages.ts";
 import { asRecord, resolvePackageJsonFieldWithTrace } from "./package-json-fields.ts";
@@ -14,6 +25,9 @@ import type {
   Resolved,
   ResolutionState,
 } from "./resolution-types.ts";
+
+const DATA_FIRST_ARITY = 2;
+const DATA_FIRST_ARITY_3 = 3;
 
 interface PackageJsonLocation {
   readonly packageDirectory: string;
@@ -51,14 +65,12 @@ const createPackageJsonCache = (): PackageJsonCache => {
   };
 };
 
-const parseJson = (text: string): Option.Option<unknown> =>
-  Option.liftThrowable((source: string): unknown => JSON.parse(source))(
-    text.replace(BYTE_ORDER_MARK, ""),
-  );
+const parseText = (text: string): Option.Option<unknown> =>
+  parseJson(Str.replace(BYTE_ORDER_MARK, "")(text));
 
 const readJson = (path: string, state: ResolutionState): PackageJsonContent =>
   state.host.readFile(path).pipe(
-    Option.flatMap((text) => parseJson(text)),
+    Option.flatMap((text) => parseText(text)),
     Option.map((value) => asRecord(value)),
     Option.getOrElse(() => ({})),
   );
@@ -118,32 +130,50 @@ const resolveAndCacheWithTrace = (
   return Option.none();
 };
 
-const resolvePackageJsonInfo = (
-  packageDirectory: string,
-  onlyRecordFailures: boolean,
-  state: ResolutionState,
-): Option.Option<PackageJsonInfo> => {
-  if (onlyRecordFailures) {
-    return Option.none();
-  }
-  const location = {
-    packageDirectory,
-    packageJsonPath: combinePaths(packageDirectory, PACKAGE_JSON),
-  };
-  return state.packageJsonCache.pipe(
-    Option.flatMap((cache) => cache.get(location.packageJsonPath)),
-    Option.match({
-      onNone: () => resolveAndCacheWithTrace(location, state),
-      onSome: (entry) => reuseCachedWithTrace(location, entry, state),
-    }),
-  );
-};
+const resolvePackageJsonInfo: {
+  (
+    onlyRecordFailures: boolean,
+    state: ResolutionState,
+  ): (packageDirectory: string) => Option.Option<PackageJsonInfo>;
+  (
+    packageDirectory: string,
+    onlyRecordFailures: boolean,
+    state: ResolutionState,
+  ): Option.Option<PackageJsonInfo>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (
+    packageDirectory: string,
+    onlyRecordFailures: boolean,
+    state: ResolutionState,
+  ): Option.Option<PackageJsonInfo> => {
+    if (onlyRecordFailures) {
+      return Option.none();
+    }
+    const location = {
+      packageDirectory,
+      packageJsonPath: combinePaths(packageDirectory, PACKAGE_JSON),
+    };
+    return state.packageJsonCache.pipe(
+      Option.flatMap((cache) => cache.get(location.packageJsonPath)),
+      Option.match({
+        onNone: () => resolveAndCacheWithTrace(location, state),
+        onSome: (entry) => reuseCachedWithTrace(location, entry, state),
+      }),
+    );
+  },
+);
 
-const getPackageScopeForPath = (
-  directory: string,
-  state: ResolutionState,
-): Option.Option<PackageJsonInfo> =>
-  forEachAncestorDirectory(directory, (ancestor) => resolvePackageJsonInfo(ancestor, false, state));
+const getPackageScopeForPath: {
+  (state: ResolutionState): (directory: string) => Option.Option<PackageJsonInfo>;
+  (directory: string, state: ResolutionState): Option.Option<PackageJsonInfo>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (directory: string, state: ResolutionState): Option.Option<PackageJsonInfo> =>
+    forEachAncestorDirectory(directory, (ancestor) =>
+      resolvePackageJsonInfo(ancestor, false, state),
+    ),
+);
 
 const peerVersion = (peer: string, nodeModules: string, state: ResolutionState): string =>
   resolvePackageJsonInfo(`${nodeModules}${peer}`, false, state).pipe(
@@ -160,8 +190,13 @@ const peerVersion = (peer: string, nodeModules: string, state: ResolutionState):
     }),
   );
 
-const nodeModulesOf = (packageDirectory: string): string =>
-  `${packageDirectory.slice(EMPTY, packageDirectory.lastIndexOf(NODE_MODULES) + NODE_MODULES.length)}/`;
+const nodeModulesOf = (packageDirectory: string): string => {
+  const end = Option.match(Str.lastIndexOf(NODE_MODULES)(packageDirectory), {
+    onNone: () => packageDirectory.length,
+    onSome: (index) => index + NODE_MODULES.length,
+  });
+  return `${Str.slice(EMPTY, end)(packageDirectory)}/`;
+};
 
 const resolvePeerDependenciesWithTrace = (
   info: PackageJsonInfo,
@@ -175,9 +210,11 @@ const resolvePeerDependenciesWithTrace = (
     Option.map((peers) => {
       traceMessage(state, Messages.packageJsonHasPeerDependencies);
       const nodeModules = nodeModulesOf(info.packageDirectory);
-      return Rec.keys(asRecord(peers))
-        .map((peer) => peerVersion(peer, nodeModules, state))
-        .join("");
+      return pipe(
+        Rec.keys(asRecord(peers)),
+        Arr.map((peer) => peerVersion(peer, nodeModules, state)),
+        Arr.join(""),
+      );
     }),
     Option.filter((joined) => Str.isNonEmpty(joined)),
   );
@@ -198,26 +235,41 @@ const packageIdOf = (
   }
   return Option.some({
     name,
-    subModuleName: resolved.path.slice(info.packageDirectory.length + SEPARATOR_LENGTH),
+    subModuleName: Str.slice(info.packageDirectory.length + SEPARATOR_LENGTH)(resolved.path),
     version,
     peerDependencies: getPeerDependencies(info, state),
   });
 };
 
-const withPackageId = (
-  info: Option.Option<PackageJsonInfo>,
-  resolved: Option.Option<PathAndExtension>,
-  state: ResolutionState,
-): Option.Option<Resolved> =>
-  resolved.pipe(
-    Option.map((value): Resolved => ({
-      path: value.path,
-      extension: value.extension,
-      resolvedUsingTsExtension: value.resolvedUsingTsExtension,
-      packageId: info.pipe(Option.flatMap((packageInfo) => packageIdOf(packageInfo, value, state))),
-      originalPath: Option.none(),
-    })),
-  );
+const withPackageId: {
+  (
+    resolved: Option.Option<PathAndExtension>,
+    state: ResolutionState,
+  ): (info: Option.Option<PackageJsonInfo>) => Option.Option<Resolved>;
+  (
+    info: Option.Option<PackageJsonInfo>,
+    resolved: Option.Option<PathAndExtension>,
+    state: ResolutionState,
+  ): Option.Option<Resolved>;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (
+    info: Option.Option<PackageJsonInfo>,
+    resolved: Option.Option<PathAndExtension>,
+    state: ResolutionState,
+  ): Option.Option<Resolved> =>
+    resolved.pipe(
+      Option.map((value): Resolved => ({
+        path: value.path,
+        extension: value.extension,
+        resolvedUsingTsExtension: value.resolvedUsingTsExtension,
+        packageId: info.pipe(
+          Option.flatMap((packageInfo) => packageIdOf(packageInfo, value, state)),
+        ),
+        originalPath: Option.none(),
+      })),
+    ),
+);
 
 const qualifiedName = (packageId: PackageId): string => {
   if (packageId.subModuleName.length > EMPTY) {

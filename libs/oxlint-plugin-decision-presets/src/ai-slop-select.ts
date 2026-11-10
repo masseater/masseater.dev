@@ -1,8 +1,8 @@
-import type { SelectMatch, SelectedNode } from "@r_masseater/oxlint-plugin-decision";
-import { Array as Arr, Match, Option, Predicate } from "effect";
+import type { SelectedNode } from "@r_masseater/oxlint-plugin-decision";
+import { Array as Arr, Match, Option, Predicate, pipe } from "effect";
 
-import { containing, identifierOf, ofType } from "./select.ts";
-import type { NodeTest, Select } from "./select.ts";
+import { containing, dualSelect, identifierOf, ofType } from "./select.ts";
+import type { DualSelect, NodeTest } from "./select.ts";
 
 const isPlaceholderValue = ofType(
   "Literal",
@@ -145,16 +145,31 @@ const isForwardedArgument =
 
 const passesExactly = (names: readonly string[]): Predicate.Predicate<readonly SelectedNode[]> =>
   Predicate.and(
-    (passed) => passed.every((argument) => isForwardedArgument(names)(argument)),
+    (passed) =>
+      pipe(
+        passed,
+        Arr.every((argument) => isForwardedArgument(names)(argument)),
+      ),
     (passed) => {
-      const passedNames = Arr.getSomes(passed.map((argument) => nameOf(argument)));
-      return names.every((name) => passedNames.includes(name));
+      const passedNames = Arr.getSomes(
+        pipe(
+          passed,
+          Arr.map((argument) => nameOf(argument)),
+        ),
+      );
+      return pipe(
+        names,
+        Arr.every((name) => passedNames.includes(name)),
+      );
     },
   );
 
 const passesParamsUnchanged: NodeTest = (node) =>
-  Option.exists(Option.all(paramsOf(node).map((param) => nameOf(param))), (names) =>
-    Option.exists(argumentsOf(node), passesExactly(names)),
+  pipe(
+    paramsOf(node),
+    Arr.map((param) => nameOf(param)),
+    Option.all,
+    Option.exists((names) => Option.exists(argumentsOf(node), passesExactly(names))),
   );
 
 const forwardsOneCall: NodeTest = Predicate.and(
@@ -175,12 +190,18 @@ const declaredTypeOf = (param: SelectedNode): Option.Option<SelectedNode> =>
 const isOpenType = ofType("TSUnknownKeyword", "TSAnyKeyword");
 
 const hasNarrowParameter: NodeTest = (node) =>
-  paramsOf(node).some((param) => Option.exists(declaredTypeOf(param), Predicate.not(isOpenType)));
+  pipe(
+    paramsOf(node),
+    Arr.some((param) => Option.exists(declaredTypeOf(param), Predicate.not(isOpenType))),
+  );
 
 const typeParameterNamesOf = (node: SelectedNode): readonly string[] =>
   Match.value(node).pipe(
     Match.when({ typeParameters: { type: "TSTypeParameterDeclaration" } }, (generic) =>
-      generic.typeParameters.params.map((parameter) => parameter.name.name),
+      pipe(
+        generic.typeParameters.params,
+        Arr.map((parameter) => parameter.name.name),
+      ),
     ),
     Match.orElse(() => []),
   );
@@ -230,30 +251,6 @@ const mayBePlaceholder: NodeTest = Predicate.and(
   Predicate.not(isGenericIdentity),
 );
 
-const commentsIn = (node: SelectedNode, { context }: SelectMatch): readonly string[] => {
-  const [start, end] = node.range;
-  return context.sourceCode
-    .getAllComments()
-    .filter((comment) => comment.start >= start)
-    .filter((comment) => comment.end <= end)
-    .map((comment) => comment.value);
-};
-
-const hasCommentInside: Select = (node, match) =>
-  Arr.isReadonlyArrayNonEmpty(commentsIn(node, match));
-
-const SUPPRESSIONS = [
-  "eslint-disable",
-  "oxlint-disable",
-  "@ts-ignore",
-  "@ts-expect-error",
-  "@ts-nocheck",
-  "fallow-ignore",
-];
-
-const hasSuppression: Select = (node, match) =>
-  commentsIn(node, match).some((comment) => SUPPRESSIONS.some((word) => comment.includes(word)));
-
 const isGuard: NodeTest = Predicate.or(
   ofType("IfStatement", "ConditionalExpression", "ChainExpression", "TryStatement"),
   isTypeofCheck,
@@ -261,19 +258,10 @@ const isGuard: NodeTest = Predicate.or(
 
 const hasGuard: NodeTest = Predicate.and(hasNarrowParameter, containing(isGuard));
 
-const hasFallback: Select = containing(
-  Predicate.or(isFallbackOperator, ofType("AssignmentPattern")),
-);
+const isFallback: NodeTest = Predicate.or(isFallbackOperator, ofType("AssignmentPattern"));
 
-const hasCast: Select = containing(isCast);
+const hasFallback: DualSelect = dualSelect(containing(isFallback));
 
-export {
-  forwardsOneCall,
-  mayBePlaceholder,
-  isDeclared,
-  hasCast,
-  hasCommentInside,
-  hasFallback,
-  hasGuard,
-  hasSuppression,
-};
+const hasCast: DualSelect = dualSelect(containing(isCast));
+
+export { forwardsOneCall, mayBePlaceholder, isDeclared, hasCast, hasFallback, hasGuard };

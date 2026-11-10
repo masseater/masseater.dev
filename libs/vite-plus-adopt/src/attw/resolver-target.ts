@@ -1,4 +1,12 @@
-import { Array as Arr, Option, Predicate, Record as Rec } from "effect";
+import {
+  Array as Arr,
+  Option,
+  Predicate,
+  Record as Rec,
+  String as Str,
+  pipe,
+  Function as Fn,
+} from "effect";
 import semver from "semver";
 
 import type { Extensions } from "./extensions.ts";
@@ -18,6 +26,8 @@ import type {
 } from "./resolution-types.ts";
 import { loadFileNameFromPackageJsonField } from "./resolver-files.ts";
 import { RESOLUTION_VERSION } from "./types-versions.ts";
+
+const DATA_FIRST_ARITY_3 = 3;
 
 interface TargetContext {
   readonly extensions: Extensions;
@@ -69,13 +79,16 @@ const fieldName = (context: TargetContext): string => {
 
 const substitute = (target: string, request: TargetRequest): string => {
   if (request.pattern) {
-    return target.replaceAll("*", request.subpath);
+    return Str.replaceAll("*", request.subpath)(target);
   }
   return `${target}${request.subpath}`;
 };
 
 const hasForbiddenSegment = (parts: readonly string[]): boolean =>
-  parts.some((part) => FORBIDDEN_SEGMENTS.has(part));
+  pipe(
+    parts,
+    Arr.some((part) => FORBIDDEN_SEGMENTS.has(part)),
+  );
 
 const resolveImportToPackage = (
   target: string,
@@ -105,7 +118,7 @@ const resolveImportToPackage = (
 };
 
 const isPackageImportTarget = (target: string, context: TargetContext): boolean =>
-  context.isImports && !target.startsWith("../") && !target.startsWith("/");
+  context.isImports && !Str.startsWith("../")(target) && !Str.startsWith("/")(target);
 
 const targetParts = (target: string): readonly string[] => {
   const parts = getPathComponents(target);
@@ -155,12 +168,12 @@ const STRING_TARGET_LOADERS: readonly (readonly [
   (target: string, context: TargetContext) => boolean,
   StringTargetLoader,
 ])[] = [
-  [(target) => target.startsWith("./"), resolveRelativeTargetWithTrace],
+  [(target) => Str.startsWith("./")(target), resolveRelativeTargetWithTrace],
   [isPackageImportTarget, resolveImportToPackage],
 ];
 
 const isMissingTrailingSlash = (target: string, request: TargetRequest): boolean =>
-  !request.pattern && request.subpath.length > EMPTY && !target.endsWith("/");
+  !request.pattern && request.subpath.length > EMPTY && !Str.endsWith("/")(target);
 
 const loadStringTarget: StringTargetLoader = (target, site, state) => {
   if (isMissingTrailingSlash(target, site.request)) {
@@ -175,10 +188,10 @@ const loadStringTarget: StringTargetLoader = (target, site, state) => {
 };
 
 const isApplicableVersionedTypesKey = (conditions: readonly string[], key: string): boolean => {
-  const range = key.slice(VERSIONED_TYPES_PREFIX.length);
+  const range = Str.slice(VERSIONED_TYPES_PREFIX.length)(key);
   return (
     conditions.includes("types") &&
-    key.startsWith(VERSIONED_TYPES_PREFIX) &&
+    Str.startsWith(VERSIONED_TYPES_PREFIX)(key) &&
     Predicate.isNotNull(semver.validRange(range, RANGE_OPTIONS)) &&
     semver.satisfies(RESOLUTION_VERSION, range, RANGE_OPTIONS)
   );
@@ -255,7 +268,7 @@ const loadScalarTarget = (
 const loadStructuredTarget =
   (loadTarget: TargetLoader): TargetLoader =>
   (target, site, state) => {
-    if (Array.isArray(target)) {
+    if (Arr.isArray(target)) {
       return loadArrayTarget(loadTarget)(target, site, state);
     }
     if (Predicate.isObject(target)) {
@@ -264,12 +277,18 @@ const loadStructuredTarget =
     return loadScalarTarget(target, site, state);
   };
 
-const loadTarget: TargetLoader = (target, site, state) => {
-  if (Predicate.isString(target)) {
-    return loadStringTarget(target, site, state);
-  }
-  return loadStructuredTarget(loadTarget)(target, site, state);
-};
+const loadTarget: {
+  (site: TargetSite, state: ResolutionState): (target: unknown) => SearchResult;
+  (target: unknown, site: TargetSite, state: ResolutionState): SearchResult;
+} = Fn.dual(
+  DATA_FIRST_ARITY_3,
+  (target: unknown, site: TargetSite, state: ResolutionState): SearchResult => {
+    if (Predicate.isString(target)) {
+      return loadStringTarget(target, site, state);
+    }
+    return loadStructuredTarget(loadTarget)(target, site, state);
+  },
+);
 
 export { loadTarget, notFound };
-export type { TargetContext, TargetLoader, TargetRequest, TargetSite };
+export type { TargetContext, TargetRequest, TargetSite };

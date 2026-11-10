@@ -11,7 +11,10 @@ const attribution = openRouterApp(TOOL).pipe(Effect.cached, Effect.runSync);
 const clientFor = (apiKey: string): Effect.Effect<OpenRouter, never, AppServices> =>
   attribution.pipe(Effect.map((app) => new OpenRouter({ apiKey, ...app })));
 
-export { clientFor };
 type ClientServices = AppServices;
 
+/** @internal */
+export { clientFor };
+
+/** @internal */
 export type { ClientServices };
