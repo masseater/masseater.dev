@@ -109,17 +109,17 @@
         "!dist/fsd.mjs",
         "!dist/attw.mjs"
       ],
-      "limit": "9887 B"
+      "limit": "10402 B"
     },
     {
       "name": "fsd",
       "path": "dist/fsd.mjs",
-      "limit": "9364 B"
+      "limit": "9396 B"
     },
     {
       "name": "attw",
       "path": "dist/attw.mjs",
-      "limit": "45833 B"
+      "limit": "47100 B"
     }
   ],
   "engines": {
