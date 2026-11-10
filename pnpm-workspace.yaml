@@ -58,7 +58,7 @@ catalog:
   vite: npm:@voidzero-dev/vite-plus-core@1.5.0
   eslint-plugin-no-comments: 1.2.1
   eslint-plugin-baseline-js: 0.7.7
-  "@html-eslint/eslint-plugin-react": 0.67.0
+  "@html-eslint/eslint-plugin-react": 0.68.0
   "@commitlint/config-conventional": 21.2.4
   "@tanstack/react-query-devtools": 5.107.1
   "@vitejs/plugin-react": 6.2.1
@@ -196,7 +196,7 @@ catalog:
   textlint: 15.8.0
   tsconfck: 3.1.6
   validate-npm-package-name: 8.0.0
-  web-tree-sitter: 0.27.1
+  web-tree-sitter: 0.27.2
   "@feature-sliced/filesystem": 3.1.1
   "@feature-sliced/steiger-plugin": 0.8.2
   "@types/semver": 7.8.0
