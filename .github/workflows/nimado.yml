@@ -114,6 +114,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           KEEP: nimado-youtube-${{ github.run_id }}
         run: |
+          if ! gh cache list --repo "$GITHUB_REPOSITORY" --key "$KEEP" --json key --jq '.[].key' | grep -qxF "$KEEP"; then
+            echo "::warning::The cache $KEEP was not found, so the older youtube state is kept"
+            exit 0
+          fi
           gh cache list --repo "$GITHUB_REPOSITORY" --key nimado-youtube- --limit 100 --json key --jq '.[].key' |
             { grep -vxF "$KEEP" || true; } |
             xargs -r -n 1 gh cache delete --repo "$GITHUB_REPOSITORY"

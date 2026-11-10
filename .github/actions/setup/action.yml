@@ -4,6 +4,9 @@ inputs:
   cache:
     description: Whether setup-vp restores its cache
     default: "true"
+  native:
+    description: Whether to install the mise tools, the apt packages and the Rust toolchain that only verify needs
+    default: "true"
 runs:
   using: composite
   steps:
@@ -12,12 +15,16 @@ runs:
         cache: ${{ inputs.cache }}
         run-install: |
           - args: ['--frozen-lockfile']
-    - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+    - if: ${{ inputs.native == 'true' }}
+      uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
       with:
         fetch_from_github: false
         cache: ${{ inputs.cache }}
-    - shell: bash
+    - if: ${{ inputs.native == 'true' }}
+      shell: bash
       run: sudo apt-get update && xargs -a "$GITHUB_ACTION_PATH/linux-packages.txt" sudo apt-get install -y
-    - shell: bash
+    - if: ${{ inputs.native == 'true' }}
+      shell: bash
       run: rustup toolchain install
-    - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+    - if: ${{ inputs.native == 'true' }}
+      uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
