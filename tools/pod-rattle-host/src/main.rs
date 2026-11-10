@@ -164,29 +164,22 @@ fn render_in_host(
     command
         .args(["run", "--quiet", "--project"])
         .arg(project)
-        .args(["minihost", "process"])
+        .arg("python")
+        .arg(project.join("render.py"))
         .arg(plugin)
-        .args(["-r", &SAMPLE_RATE.to_string(), "-b", &BLOCK.to_string()])
-        .arg("-m")
         .arg(midi)
-        .arg("-o")
         .arg(wav)
-        .args([
-            "-t",
-            TAIL_SECONDS,
-            "--bit-depth",
-            "32",
-            "--no-resample",
-            "-y",
-        ]);
+        .args(["--sample-rate", &SAMPLE_RATE.to_string()])
+        .args(["--block", &BLOCK.to_string()])
+        .args(["--tail-seconds", TAIL_SECONDS]);
     if scenario.auto_shake {
         command.args(["--param", "Auto shake:1"]);
     }
-    let status = command.status().map_err(|e| format!("run minihost: {e}"))?;
+    let status = command.status().map_err(|e| format!("run the host: {e}"))?;
     if status.success() {
         Ok(())
     } else {
-        Err(format!("minihost exited with {status}"))
+        Err(format!("the host exited with {status}"))
     }
 }
 
