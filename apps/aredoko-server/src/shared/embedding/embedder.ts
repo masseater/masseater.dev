@@ -13,6 +13,12 @@ import { EmbeddingFailed } from "./embedding-failed.ts";
 
 const MODEL_ID = "onnx-community/embeddinggemma-2-ONNX";
 const MODEL_REVISION = "daa72c51243991dfcaf9f9137d2c573d8f7790c0";
+const PINNED_REMOTE_PATH = `{model}/resolve/${MODEL_REVISION}/`;
+const REVISION_CACHE = pipe(
+  Option.fromNullOr(env.cacheDir),
+  Option.map((shared) => `${shared}/${MODEL_REVISION}`),
+  Option.getOrNull,
+);
 const DTYPE = "q4";
 const DEVICES = ["dml", "cpu"] as const satisfies readonly DeviceType[];
 const IMAGE_SOFT_TOKENS = 70;
@@ -58,11 +64,15 @@ const FETCH_DEVICE = "cpu";
 
 const preferLocalModels = (directory: string): void => {
   Object.assign(env, {
-    cacheDir: directory,
-    useFSCache: true,
+    localModelPath: directory,
     allowLocalModels: true,
     allowRemoteModels: false,
+    useFSCache: false,
   });
+};
+
+const downloadPinned = (): void => {
+  Object.assign(env, { cacheDir: REVISION_CACHE, remotePathTemplate: PINNED_REMOTE_PATH });
 };
 
 const loadModel = (
@@ -72,22 +82,15 @@ const loadModel = (
     pipe(
       DEVICES,
       Array.map((device) =>
-        attempt(() =>
-          AutoModel.from_pretrained(MODEL_ID, {
-            config,
-            device,
-            dtype: DTYPE,
-            revision: MODEL_REVISION,
-          }),
-        ).pipe(Effect.map((model) => ({ model, device }))),
+        attempt(() => AutoModel.from_pretrained(MODEL_ID, { config, device, dtype: DTYPE })).pipe(
+          Effect.map((model) => ({ model, device })),
+        ),
       ),
     ),
   );
 
 const loadProcessor = Effect.gen(function* loadProcessor() {
-  const processor = yield* attempt(() =>
-    AutoProcessor.from_pretrained(MODEL_ID, { revision: MODEL_REVISION }),
-  );
+  const processor = yield* attempt(() => AutoProcessor.from_pretrained(MODEL_ID));
   const imageProcessor: unknown = Reflect.get(processor, "image_processor");
   if (Predicate.isObjectKeyword(imageProcessor)) {
     Reflect.set(imageProcessor, "max_soft_tokens", IMAGE_SOFT_TOKENS);
@@ -142,9 +145,7 @@ const make = (
 });
 
 const loadConfig = Effect.gen(function* loadConfig() {
-  const config = yield* attempt(() =>
-    AutoConfig.from_pretrained(MODEL_ID, { revision: MODEL_REVISION }),
-  );
+  const config = yield* attempt(() => AutoConfig.from_pretrained(MODEL_ID));
   Reflect.deleteProperty(config, "audio_config");
   return config;
 });
@@ -152,17 +153,17 @@ const loadConfig = Effect.gen(function* loadConfig() {
 /** @internal */
 const fetchModel = Effect.fn("fetchModel")(function* fetchModelFiles(directory: string) {
   yield* Effect.sync(() => {
-    Object.assign(env, { cacheDir: directory, allowLocalModels: false, allowRemoteModels: true });
+    Object.assign(env, {
+      cacheDir: directory,
+      allowLocalModels: false,
+      allowRemoteModels: true,
+      remotePathTemplate: PINNED_REMOTE_PATH,
+    });
   });
   const config = yield* loadConfig;
   yield* loadProcessor;
   yield* attempt(() =>
-    AutoModel.from_pretrained(MODEL_ID, {
-      config,
-      device: FETCH_DEVICE,
-      dtype: DTYPE,
-      revision: MODEL_REVISION,
-    }),
+    AutoModel.from_pretrained(MODEL_ID, { config, device: FETCH_DEVICE, dtype: DTYPE }),
   );
 });
 
@@ -173,7 +174,7 @@ const localEmbedderLayer = (
     Embedder,
     Effect.gen(function* embedder() {
       yield* Effect.sync(() => {
-        pipe(modelDirectory, Option.map(preferLocalModels));
+        pipe(modelDirectory, Option.match({ onNone: downloadPinned, onSome: preferLocalModels }));
       });
       const config = yield* loadConfig;
       const { processor, imageToken } = yield* loadProcessor;

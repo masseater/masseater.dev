@@ -1,24 +1,45 @@
 import { NodeServices } from "@effect/platform-node";
 import { expect, layer } from "@effect/vitest";
 import { env } from "@huggingface/transformers";
-import { Array, Effect, FileSystem, Layer, Option, Ref, String as Str, pipe } from "effect";
+import { Array, Effect, FileSystem, Layer, Option, Record, Ref, String as Str, pipe } from "effect";
 
 import { fetchModel, localEmbedderLayer } from "./embedder.ts";
 
 const PINNED_COMMIT = /\/resolve\/[0-9a-f]{40}\//u;
-const MODEL_CONFIG_PATH = /[/\\]config\.json/u;
+const WEIGHTS = /\.onnx/u;
 const NOT_FOUND = 404;
-
-const respond = (url: string): Response => {
-  if (pipe(url, Str.endsWith("/config.json"))) {
-    return Response.json({ model_type: "fake" });
-  }
-  return new Response("", { status: NOT_FOUND });
+const PROCESSOR = { processor_class: "EmbeddingGemma2Processor" };
+const SMALL_FILES: Readonly<Record<string, unknown>> = {
+  "config.json": { model_type: "embedding_gemma2" },
+  "preprocessor_config.json": PROCESSOR,
+  "processor_config.json": PROCESSOR,
+  "tokenizer_config.json": { tokenizer_class: "GemmaTokenizer", image_token: "<|image|>" },
+  "tokenizer.json": {
+    version: "1.0",
+    added_tokens: [],
+    normalizer: { type: "Lowercase" },
+    pre_tokenizer: { type: "Whitespace" },
+    post_processor: { type: "ByteLevel" },
+    decoder: { type: "Fuse" },
+    model: { type: "WordLevel", vocab: { "<unk>": 0 }, unk_token: "<unk>" },
+  },
 };
+
+const respond = (url: string): Response =>
+  pipe(
+    url,
+    Str.split("/"),
+    Array.last,
+    Option.flatMap((name) => Record.get(SMALL_FILES, name)),
+    Option.match({
+      onNone: () => new Response("", { status: NOT_FOUND }),
+      onSome: (body) => Response.json(body),
+    }),
+  );
 
 const unpinned = (url: string): boolean => !PINNED_COMMIT.test(url);
 
-const namesModelConfig = (failure: string): boolean => MODEL_CONFIG_PATH.test(failure);
+const namesWeights = (failure: string): boolean => WEIGHTS.test(failure);
 
 const replaceFetch = (fetch: typeof env.fetch): Effect.Effect<void> =>
   Effect.sync(() => {
@@ -46,7 +67,7 @@ const loadFailure = Effect.fn("loadFailure")(function* loadFailure(directory: st
 });
 
 layer(NodeServices.layer, { excludeTestServices: true })("embedder", (it) => {
-  it.effect("downloads every model file from a pinned commit", () =>
+  it.effect("sends every request to a pinned commit", () =>
     Effect.gen(function* downloadsPinned() {
       const fileSystem = yield* FileSystem.FileSystem;
       const directory = yield* fileSystem.makeTempDirectoryScoped();
@@ -58,7 +79,7 @@ layer(NodeServices.layer, { excludeTestServices: true })("embedder", (it) => {
     }),
   );
 
-  it.effect("loads the files fetchModel stored without the network", () =>
+  it.effect("loads the small files fetchModel stored without the network", () =>
     Effect.gen(function* loadsStored() {
       const fileSystem = yield* FileSystem.FileSystem;
       const fetched = yield* fileSystem.makeTempDirectoryScoped();
@@ -69,7 +90,7 @@ layer(NodeServices.layer, { excludeTestServices: true })("embedder", (it) => {
       const failures = yield* Effect.forEach([empty, fetched], loadFailure);
       const afterLoad = yield* Ref.get(requested);
       expect(afterLoad).toStrictEqual(duringFetch);
-      expect(pipe(failures, Array.map(namesModelConfig))).toStrictEqual([true, false]);
+      expect(pipe(failures, Array.map(namesWeights))).toStrictEqual([false, true]);
     }),
   );
 });
