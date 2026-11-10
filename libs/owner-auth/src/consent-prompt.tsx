@@ -37,7 +37,7 @@ const ConsentPrompt = ({
   }, [mutate]);
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">{name}</h1>
+      <h1 className="text-2xl font-bold break-all">{name}</h1>
       <ConsentDetails details={details} />
       <ConsentActions
         button={button}
