@@ -142,4 +142,3 @@ class AccessOAuth extends WorkerEntrypoint<AppStoreEnv> {
 
 export { AccessOAuth };
 export { accessOAuthRoute } from "./access-oauth-login.ts";
-export type { SiteToken };

@@ -97,4 +97,4 @@ const saveGrant = ({
   );
 
 export { grantFrom, readGrant, saveGrant };
-export type { AccessGrant, StoredGrant };
+export type { AccessGrant, GrantSwap, IssuedTokens, StoredGrant };

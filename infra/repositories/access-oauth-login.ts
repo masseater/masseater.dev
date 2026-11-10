@@ -20,7 +20,7 @@ import {
   promised,
   resourceOf,
 } from "./access-oauth-server.ts";
-import { ACCESS_SITES } from "./access-sites.ts";
+import { ACCESS_SITES, ACCESS_TEAM_ORIGIN } from "./access-sites.ts";
 import { readRow, swapRow, writeSealed } from "./app-store.ts";
 import type { AppStoreEnv } from "./app-store.ts";
 import type { RouteInput } from "./github-app.ts";
@@ -55,9 +55,16 @@ const authorizationUrl = (
     Effect.fromOption,
     Effect.mapBoth({
       onFailure: () => failedWith("the authorization server has no authorization endpoint"),
-      onSuccess: (endpoint) =>
-        `${endpoint}?${new URLSearchParams(Rec.toEntries(fields)).toString()}`,
+      onSuccess: (endpoint) => new URL(endpoint),
     }),
+    Effect.filterOrFail(
+      (endpoint) => endpoint.origin === ACCESS_TEAM_ORIGIN,
+      (endpoint) => failedWith(`unexpected authorization endpoint ${endpoint.origin}`),
+    ),
+    Effect.map(
+      (endpoint) =>
+        `${ACCESS_TEAM_ORIGIN}${endpoint.pathname}?${new URLSearchParams(Rec.toEntries(fields)).toString()}`,
+    ),
   );
 
 const remember = (
@@ -88,7 +95,7 @@ const login = ({ request, env }: RouteInput): Effect.Effect<Response, AccessOAut
       code_challenge_method: "S256",
       resource: resourceOf(site),
     });
-    return Response.redirect(url, FOUND);
+    return new Response("", { status: FOUND, headers: { location: url } });
   });
 
 const openPending = (

@@ -11,6 +11,7 @@ import type { AuthorizationServer, Client } from "oauth4webapi";
 
 import { failed, failedWith } from "./access-oauth-failed.ts";
 import type { AccessOAuthFailed } from "./access-oauth-failed.ts";
+import { ACCESS_TEAM_ORIGIN } from "./access-sites.ts";
 import type { AccessSite } from "./access-sites.ts";
 import { readSealed, writeSealed } from "./app-store.ts";
 import type { AppStoreEnv } from "./app-store.ts";
@@ -51,6 +52,10 @@ const issuerOf = (site: AccessSite): Effect.Effect<URL, AccessOAuthFailed> => {
       ),
     ),
     Effect.map((issuer) => new URL(issuer)),
+    Effect.filterOrFail(
+      (issuer) => issuer.origin === ACCESS_TEAM_ORIGIN,
+      (issuer) => failedWith(`${site} names an unexpected authorization server ${issuer.origin}`),
+    ),
   );
 };
 
