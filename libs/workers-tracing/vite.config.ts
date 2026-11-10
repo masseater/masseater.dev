@@ -21,6 +21,7 @@ export default defineConfig({
       "src/tanstack-start.plain.ts",
       "src/traces.ts",
       "src/trace-sink.worker.ts",
+      "src/workers-ai.ts",
     ],
     platform: "neutral",
     sourcemap: true,

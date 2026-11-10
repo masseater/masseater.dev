@@ -1,6 +1,7 @@
 import type { Caller } from "@masseater.dev/mcp-tool-call";
 import { failedAt, NO_PROJECT, READ_ONLY } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
+import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Option, Order, Schema, pipe } from "effect";
 
@@ -46,10 +47,11 @@ const slideOf = (stored: Readonly<{ metadata?: unknown }>): Option.Option<Slide>
   Schema.decodeUnknownOption(SlideMetadata)(stored.metadata);
 
 const embed = (query: string): Effect.Effect<number[], ReturnType<typeof fail>> =>
-  Effect.tryPromise({
-    try: () => env.AI.run(EMBEDDING_MODEL, { queries: query, instruction: QUERY_INSTRUCTION }),
-    catch: fail,
+  runWorkersAi({
+    label: "slide search query",
+    call: () => env.AI.run(EMBEDDING_MODEL, { queries: query, instruction: QUERY_INSTRUCTION }),
   }).pipe(
+    Effect.mapError(({ cause }) => fail(cause)),
     Effect.flatMap(({ data }) =>
       Effect.fromOption(Arr.head(data ?? [])).pipe(
         Effect.mapError(() => fail(new Error("Workers AI returned no embedding"))),

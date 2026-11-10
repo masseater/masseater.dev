@@ -10,6 +10,7 @@ import {
 import {
   restrictedImports as untracedImports,
   restrictedProperties as untracedProperties,
+  restrictedSyntax as unguardedWorkersAi,
 } from "@r_masseater/workers-tracing/oxlint";
 import { Array as Arr, pipe } from "effect";
 import type { UserConfig } from "vite-plus";
@@ -50,6 +51,11 @@ const overrides = [
       ],
       "eslint/no-restricted-properties": ["error", ...untracedProperties],
     },
+  },
+  {
+    files: ["apps/*/src/**/*.{ts,tsx}", "apps/*/worker/**/*.ts"],
+    excludeFiles: ["**/*.test.ts"],
+    rules: { "eslint-js/no-restricted-syntax": ["error", ...unguardedWorkersAi] },
   },
   {
     files: ["apps/watashi-mcp/src/**/*.{ts,tsx}"],
