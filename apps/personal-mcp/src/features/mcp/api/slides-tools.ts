@@ -48,7 +48,8 @@ const slideOf = (stored: Readonly<{ metadata?: unknown }>): Option.Option<Slide>
 
 const embed = (query: string): Effect.Effect<number[], ReturnType<typeof fail>> =>
   runWorkersAi({
-    label: "slide search query",
+    operation: "embeddings",
+    model: EMBEDDING_MODEL,
     call: () => env.AI.run(EMBEDDING_MODEL, { queries: query, instruction: QUERY_INSTRUCTION }),
   }).pipe(
     Effect.mapError(({ cause }) => fail(cause)),

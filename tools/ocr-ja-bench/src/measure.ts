@@ -75,14 +75,13 @@ const selected = (names: readonly string[]): readonly Engine[] => {
   );
 };
 
+const isMeasurable = ({ kind }: Engine): boolean => kind !== "recorded";
+
 const measure = Effect.gen(function* measure() {
   const results = yield* Results;
   const pages = yield* results.pages;
-  yield* Effect.forEach(
-    selected(process.argv.slice(FIRST_ARGUMENT)),
-    (engine) => measureEngine(engine, pages),
-    ONE_AT_A_TIME,
-  );
+  const engines = pipe(selected(process.argv.slice(FIRST_ARGUMENT)), Arr.filter(isMeasurable));
+  yield* Effect.forEach(engines, (engine) => measureEngine(engine, pages), ONE_AT_A_TIME);
   yield* writeReport;
 });
 
