@@ -127,7 +127,7 @@
     {
       "name": "tanstack-router",
       "path": "dist/tanstack-router.mjs",
-      "limit": "3427 B"
+      "limit": "3442 B"
     },
     {
       "name": "drizzle",
