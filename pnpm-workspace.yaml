@@ -297,6 +297,7 @@ minimumReleaseAgeExclude:
 audit:
   ignorePrune: true
   ignore:
+    # deepmerge の mergeObject() が返すオブジェクトの prototype を汚染できる（深刻度は低）。最新の 4.3.1 も該当し、修正版が無い。
     - GHSA-gcqx-w48m-w2h4
 patchedDependencies:
   "@tanstack/eslint-plugin-start@0.1.0": patches/@tanstack__eslint-plugin-start@0.1.0.patch

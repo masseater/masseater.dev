@@ -637,6 +637,7 @@ jobs:
       contents: read
     env:
       MEGADOT_VERSION: 4.5.1-m.14
+      MEGADOT_SHA256: d245de0cd79ebffa83c87ae505e944fefd6beafd1496e9ce413f3a6c272dec3c
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -648,6 +649,7 @@ jobs:
       - run: |
           mkdir -p ~/megadot && cd ~/megadot
           curl -fsSL -o megadot.zip "https://megadot.megacrit.com/${MEGADOT_VERSION}/megadot-${MEGADOT_VERSION}-linux-x86_64-editor-csharp.zip"
+          echo "$MEGADOT_SHA256  megadot.zip" | sha256sum --check --quiet -
           unzip -q megadot.zip && rm megadot.zip
       - working-directory: apps/sts2-mods
         run: |

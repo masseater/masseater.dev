@@ -1,4 +1,4 @@
-export { ENDPOINT_FILE, HOST, ServerEndpoint, awaitEndpoint } from "./endpoint.ts";
+export { ENDPOINT_FILE, HOST, ServerEndpoint, TOKEN_PARAMETER, awaitEndpoint } from "./endpoint.ts";
 export { AredokoRpcs } from "./aredoko-rpcs.ts";
 export { ARCHIVE_EXTENSIONS, LOOSE_EXTENSIONS } from "./extensions.ts";
 export { AredokoClient, aredokoClientLayer } from "./client.ts";

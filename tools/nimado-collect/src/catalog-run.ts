@@ -1,13 +1,10 @@
 import { Array as Arr, Effect, Option, Order, Stream, pipe } from "effect";
-import type { Schema } from "effect";
-import type { HttpClient, HttpClientError } from "effect/http";
 
 import { mergeSongs } from "./catalog.ts";
 import type { CatalogSongValue, CatalogValue } from "./catalog.ts";
-import { PAGE_SIZE, activityPage, songPage, toCatalogSong } from "./vocadb.ts";
+import { collect } from "./progress.ts";
+import { PAGE_SIZE, toCatalogSong } from "./vocadb.ts";
 import type { ActivityValue } from "./vocadb.ts";
-
-type Failure = HttpClientError.HttpClientError | Schema.SchemaError;
 
 const DELETED = "Deleted";
 
@@ -16,37 +13,39 @@ interface Page {
   readonly items: readonly CatalogSongValue[];
 }
 
-type Update = Readonly<{ catalog: CatalogValue; budget: number }>;
+type ActivityQuery = Readonly<{ since: string; before: Option.Option<string> }>;
 
 const isFull = (items: readonly unknown[]): boolean => items.length >= PAGE_SIZE;
 
-const crawlPages = ({
+const songPages = <Failure, Services>({
   start,
   budget,
-}: Readonly<{ start: number; budget: number }>): Effect.Effect<
-  readonly Page[],
-  Failure,
-  HttpClient.HttpClient
-> =>
+  songs,
+}: Readonly<{
+  start: number;
+  budget: number;
+  songs: (start: number) => Effect.Effect<readonly CatalogSongValue[], Failure, Services>;
+}>): Stream.Stream<Page, Failure, Services> =>
   Stream.paginate(start, (cursor: number) =>
-    songPage(cursor).pipe(
+    songs(cursor).pipe(
       Effect.map((items) => {
         const next = Option.liftPredicate(cursor + PAGE_SIZE, () => isFull(items));
         return [[{ cursor, items }], next] as const;
       }),
     ),
-  ).pipe(Stream.take(budget), Stream.runCollect);
+  ).pipe(Stream.take(budget));
 
-const activityPages = ({
+const activityPages = <Failure, Services>({
   since,
   budget,
-}: Readonly<{ since: string; budget: number }>): Effect.Effect<
-  readonly (readonly ActivityValue[])[],
-  Failure,
-  HttpClient.HttpClient
-> =>
+  activity,
+}: Readonly<{
+  since: string;
+  budget: number;
+  activity: (query: ActivityQuery) => Effect.Effect<readonly ActivityValue[], Failure, Services>;
+}>): Stream.Stream<readonly ActivityValue[], Failure, Services> =>
   Stream.paginate(Option.none<string>(), (before: Option.Option<string>) =>
-    activityPage({ since, before }).pipe(
+    activity({ since, before }).pipe(
       Effect.map((items) => {
         const oldest = pipe(
           Arr.last(items),
@@ -56,7 +55,7 @@ const activityPages = ({
         return [[items], next] as const;
       }),
     ),
-  ).pipe(Stream.take(budget), Stream.runCollect);
+  ).pipe(Stream.take(budget));
 
 const nextCursor = (pages: readonly Page[], start: number): Option.Option<number> =>
   pipe(
@@ -67,23 +66,21 @@ const nextCursor = (pages: readonly Page[], start: number): Option.Option<number
     }),
   );
 
-const crawlFrom =
-  (start: number) =>
-  ({ catalog, budget }: Update): Effect.Effect<CatalogValue, Failure, HttpClient.HttpClient> =>
-    crawlPages({ start, budget }).pipe(
-      Effect.map((pages) => ({
-        crawl: { ...catalog.crawl, next: nextCursor(pages, start) },
-        songs: mergeSongs({
-          songs: catalog.songs,
-          updates: pipe(
-            pages,
-            Arr.flatMap(({ items }) => items),
-          ),
-          removed: [],
-        }),
-      })),
-      Effect.withSpan("catalog.crawl", { attributes: { start, budget } }),
-    );
+const applyPages = ({
+  catalog,
+  pages,
+  start,
+}: Readonly<{ catalog: CatalogValue; pages: readonly Page[]; start: number }>): CatalogValue => ({
+  crawl: { ...catalog.crawl, next: nextCursor(pages, start) },
+  songs: mergeSongs({
+    songs: catalog.songs,
+    updates: pipe(
+      pages,
+      Arr.flatMap(({ items }) => items),
+    ),
+    removed: [],
+  }),
+});
 
 const isDeleted = ({ editEvent }: ActivityValue): boolean => editEvent === DELETED;
 
@@ -133,22 +130,44 @@ const applyActivity = (
   };
 };
 
-const followActivity = ({
+/** @internal */
+const updateCatalog = Effect.fn("catalog.update")(function* updateFrom<
+  Failure,
+  Services,
+  SaveFailure,
+  SaveServices,
+>({
   catalog,
   budget,
-}: Update): Effect.Effect<CatalogValue, Failure, HttpClient.HttpClient> =>
-  activityPages({ since: catalog.crawl.since, budget }).pipe(
-    Effect.map((pages) => applyActivity(catalog, pages)),
-    Effect.withSpan("catalog.activity", { attributes: { since: catalog.crawl.since, budget } }),
-  );
-
-/** @internal */
-const updateCatalog = Effect.fn("catalog.update")(function* updateFrom(
-  update: Readonly<{ catalog: CatalogValue; budget: number }>,
-) {
-  return yield* Option.match(update.catalog.crawl.next, {
-    onNone: () => followActivity(update),
-    onSome: (start) => crawlFrom(start)(update),
+  checkpoint,
+  source,
+  save,
+}: Readonly<{
+  catalog: CatalogValue;
+  budget: number;
+  checkpoint: number;
+  source: Readonly<{
+    songs: (start: number) => Effect.Effect<readonly CatalogSongValue[], Failure, Services>;
+    activity: (
+      query: Readonly<{ since: string; before: Option.Option<string> }>,
+    ) => Effect.Effect<readonly ActivityValue[], Failure, Services>;
+  }>;
+  save: (catalog: CatalogValue) => Effect.Effect<void, SaveFailure, SaveServices>;
+}>) {
+  const { since } = catalog.crawl;
+  yield* Option.match(catalog.crawl.next, {
+    onNone: () =>
+      collect({
+        items: activityPages({ since, budget, activity: source.activity }),
+        checkpoint,
+        save: (pages) => save(applyActivity(catalog, pages)),
+      }).pipe(Effect.withSpan("catalog.activity", { attributes: { since, budget } })),
+    onSome: (start) =>
+      collect({
+        items: songPages({ start, budget, songs: source.songs }),
+        checkpoint,
+        save: (pages) => save(applyPages({ catalog, pages, start })),
+      }).pipe(Effect.withSpan("catalog.crawl", { attributes: { start, budget } })),
   });
 });
 

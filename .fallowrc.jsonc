@@ -3,6 +3,7 @@
   "production": true,
   "dynamicallyLoaded": [
     "**/*.d.rpp.ts",
+    "apps/aredoko-server/src/app/rpc/embedder-worker.test.support.ts",
     "libs/workers-tracing/src/fixture/*.worker.ts",
     "libs/oxlint-plugin-decision/src/openrouter-worker.ts",
     "libs/oxlint-typed-rules/src/ts-api-utils.ts",

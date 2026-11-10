@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/platform-node/NodeServices#layer",
+          "@effect/sql-sqlite-node/SqliteClient",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/PlatformError#PlatformError",
+          "effect/sql/SqlClient",
+          "effect/sql/SqlError"
+        ]
+      }
+    ]
+  }
+}

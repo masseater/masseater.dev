@@ -59,7 +59,7 @@
 ## aredoko
 
 - aredoko は Unity エディタの中でアセットを見た目の言葉で探す検索で、製品は UPM パッケージ `dev.masseater.aredoko` である。開発用の Unity プロジェクト `apps/aredoko-unity` に埋め込んで置き、そのプロジェクトで動かして確かめる。利用者向けの導入手順は `apps/aredoko-desktop/README.md` にある。
-- 埋め込みの推論・インデックスの作成・ランキング・BOOTH の商品情報の取得は、同じ PC で常駐するサーバー `apps/aredoko-server` に置き、エディタ拡張は localhost で呼ぶ。Unity の中では推論しない。サーバーは Unity を起動せずにテストできる。推論は Transformers.js で `onnx-community/embeddinggemma-2-ONNX` を動かし、インデックスは SQLite と sqlite-vec に置く。
+- 埋め込みの推論・インデックスの作成・ランキング・BOOTH の商品情報の取得は、同じ PC で常駐するサーバー `apps/aredoko-server` に置き、エディタ拡張は localhost で呼ぶ。常駐サーバーは起動のたびにトークンを作ってデータフォルダの `endpoint.json` に書き、接続の URL にそのトークンを付けた相手だけを受け付ける。Unity の中では推論しない。サーバーは Unity を起動せずにテストできる。推論は Transformers.js で `onnx-community/embeddinggemma-2-ONNX` を動かし、インデックスは SQLite と sqlite-vec に置く。
 - 管理アプリは Tauri 2 で `apps/aredoko-desktop` に置く。Rust 側（`src-tauri`、ルートの Cargo ワークスペースの一員）は常駐サーバーの起動と終了だけを受け持つ。インストーラーは `aredoko-desktop` ワークフローが `aredoko-v*` のタグか手動実行で Windows 向けに作る。
 - 埋め込みのモデルは EmbeddingGemma 2 である。3D モデルは複数の向きからレンダリングした画像を埋め込み、キャプションを生成してから埋め込む方式は取らない。
 - 検索の精度は `tools/aredoko-search-eval` の、検索語と正解のアセットを組にした評価セットで測る。ランキングやモデルを変えるときは、変える前と後の結果を比べる。評価は日本語の検索語を主にする。

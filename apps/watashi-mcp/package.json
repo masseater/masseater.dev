@@ -30,12 +30,11 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
-    "@effect/platform-node": "catalog:",
-    "@effect/sql-sqlite-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@effect/vitest": "catalog:",
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
+    "@masseater.dev/d1-test": "workspace:*",
     "@tailwindcss/vite": "4.3.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

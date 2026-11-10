@@ -3,10 +3,10 @@ import {
   listBetaWorkerVersions,
 } from "@distilled.cloud/cloudflare/workers";
 import { DATA_WORKER, YOUTUBE_RETENTION_DAYS } from "@masseater.dev/nimado";
-import { Array as Arr, Config, Console, DateTime, Effect, Order, Stream, pipe } from "effect";
+import { Config, Console, DateTime, Effect, Stream, pipe } from "effect";
 import { Command } from "effect/cli";
 
-const NEWEST = 1;
+import { expiredVersions } from "./versions.ts";
 
 const pruneVersions = Effect.fn("data.prune")(function* pruneOld() {
   const accountId = yield* Config.String("CLOUDFLARE_ACCOUNT_ID");
@@ -15,12 +15,7 @@ const pruneVersions = Effect.fn("data.prune")(function* pruneOld() {
   const versions = yield* Stream.runCollect(
     listBetaWorkerVersions.items({ accountId, workerId: DATA_WORKER }),
   );
-  const expired = pipe(
-    versions,
-    Arr.sortWith(({ createdOn }) => createdOn, Order.flip(Order.String)),
-    Arr.drop(NEWEST),
-    Arr.filter(({ createdOn }) => Order.isLessThan(Order.String)(createdOn, cutoff)),
-  );
+  const expired = expiredVersions({ versions, cutoff });
   yield* pipe(
     expired,
     Effect.forEach(({ id }) =>

@@ -1,4 +1,10 @@
-import { AredokoRpcs, ENDPOINT_FILE, HOST, ServerEndpoint } from "@masseater.dev/aredoko-protocol";
+import {
+  AredokoRpcs,
+  ENDPOINT_FILE,
+  HOST,
+  ServerEndpoint,
+  TOKEN_PARAMETER,
+} from "@masseater.dev/aredoko-protocol";
 import {
   Array,
   Effect,
@@ -205,6 +211,7 @@ const descriptors = (
     `        public const string Directory = "${identifier}";`,
     `        public const string Name = "${ENDPOINT_FILE}";`,
     `        public const string Host = "${HOST}";`,
+    `        public const string TokenParameter = "${TOKEN_PARAMETER}";`,
     "    }",
     ...groups,
     "}",
