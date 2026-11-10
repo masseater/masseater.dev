@@ -32,6 +32,27 @@ const imagePreview = Effect.fn("imagePreview")(function* imagePreview(path: stri
 });
 
 /** @internal */
+const normalizePng = Effect.fn("normalizePng")(function* normalizePng(
+  path: string,
+  image: Uint8Array,
+) {
+  const buffer = yield* Effect.tryPromise({
+    try: () =>
+      sharp(image)
+        .resize({
+          width: PREVIEW_SIDE,
+          height: PREVIEW_SIDE,
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .png()
+        .toBuffer(),
+    catch: (cause) => PreviewFailed.make({ path, cause }),
+  });
+  return Uint8Array.from(buffer);
+});
+
+/** @internal */
 const pixelsPreview = Effect.fn("pixelsPreview")(function* pixelsPreview(
   path: string,
   { width, height, rgba }: Pixels,
@@ -47,5 +68,5 @@ const pixelsPreview = Effect.fn("pixelsPreview")(function* pixelsPreview(
   return Uint8Array.from(buffer);
 });
 
-export { imagePreview, pixelsPreview };
+export { imagePreview, normalizePng, pixelsPreview };
 export type { Pixels };

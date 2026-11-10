@@ -1,5 +1,6 @@
 import { expect, layer } from "@effect/vitest";
-import { Effect, Schema } from "effect";
+import { Effect, Result, Schema } from "effect";
+import { Base64 } from "effect/encoding";
 import { SqlClient } from "effect/sql";
 
 import { EMBEDDING } from "#shared/database";
@@ -10,8 +11,14 @@ import { embedderOf, indexInTemporaryFolder, recordingEmbedder } from "./library
 import { putProjectAssets } from "./project-assets.ts";
 
 const PROJECT = "/projects/World";
-const FIRST_PREVIEW = 1;
-const SECOND_PREVIEW = 2;
+const pngFromBase64 = (base64: string): Uint8Array => Result.getOrThrow(Base64.decode(base64));
+
+const RED_PIXEL = pngFromBase64(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADElEQVQImWP4z8AAAAMBAQCc479ZAAAAAElFTkSuQmCC",
+);
+const BLUE_PIXEL = pngFromBase64(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADElEQVQImWNgYPgPAAEDAQBdlO9aAAAAAElFTkSuQmCC",
+);
 
 interface Asset {
   readonly guid: string;
@@ -22,7 +29,7 @@ interface Asset {
 const WALL: Asset = {
   guid: "0123456789abcdef0123456789abcdef",
   pathname: "Assets/World/wall.png",
-  previews: [new Uint8Array([FIRST_PREVIEW])],
+  previews: [RED_PIXEL],
 };
 
 const ROOF: Asset = {
@@ -31,7 +38,7 @@ const ROOF: Asset = {
   previews: [],
 };
 
-const REPAINTED_WALL: Asset = { ...WALL, previews: [new Uint8Array([SECOND_PREVIEW])] };
+const REPAINTED_WALL: Asset = { ...WALL, previews: [BLUE_PIXEL] };
 
 const AssetRow = Schema.Struct({ id: Schema.Int, guid: Schema.String });
 

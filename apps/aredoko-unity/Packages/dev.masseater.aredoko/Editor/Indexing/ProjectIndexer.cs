@@ -15,7 +15,7 @@ namespace Aredoko.Indexing
     public static class ProjectIndexer
     {
         const int BatchSize = 40;
-        const int PreviewWaitFrames = 300;
+        const int PreviewCacheSize = BatchSize * 2;
 
         static readonly HashSet<string> PreviewExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -45,13 +45,14 @@ namespace Aredoko.Indexing
 
         static async Task<ProjectAsset[]> Describe(string[] paths)
         {
+            AssetPreview.SetPreviewTextureCacheSize(PreviewCacheSize);
             var objects = paths.Select(path => PreviewExtensions.Contains(Path.GetExtension(path)) ? AssetDatabase.LoadMainAssetAtPath(path) : null).ToArray();
             foreach (var target in objects.Where(target => target != null))
             {
                 AssetPreview.GetAssetPreview(target);
             }
 
-            for (var frame = 0; frame < PreviewWaitFrames && objects.Any(target => target != null && AssetPreview.IsLoadingAssetPreview(target.GetInstanceID())); frame++)
+            while (objects.Any(target => target != null && AssetPreview.IsLoadingAssetPreview(target.GetInstanceID())))
             {
                 await NextFrame();
             }
