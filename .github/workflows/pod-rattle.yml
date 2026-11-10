@@ -68,9 +68,6 @@ jobs:
           for bundle in target/bundled/*.vst3; do
             "${run[@]}" --strictness-level 10 --validate-in-process --timeout-ms 300000 --output-dir pluginval-report "$bundle"
           done
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-        with:
-          enable-cache: false
       - name: Render MIDI in a VST3 host
         shell: bash
         run: |
