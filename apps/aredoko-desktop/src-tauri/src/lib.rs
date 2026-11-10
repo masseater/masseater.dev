@@ -1,4 +1,5 @@
 use std::fs::{self, File};
+use std::io;
 use std::path::PathBuf;
 use std::process::{Child, Command, Stdio};
 use std::sync::Mutex;
@@ -28,11 +29,17 @@ struct Entry {
 }
 
 #[cfg(debug_assertions)]
+fn debug_script() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("aredoko-server/src/app/main.ts")
+}
+
+#[cfg(debug_assertions)]
 fn entry(_app: &AppHandle) -> Entry {
-    let repository = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     Entry {
         node: PathBuf::from("node"),
-        script: repository.join("server/src/app/main.ts"),
+        script: debug_script(),
         models: None,
     }
 }
@@ -60,6 +67,13 @@ fn spawn_server(app: &AppHandle) -> tauri::Result<Child> {
         script,
         models,
     } = entry(app);
+    if !script.is_file() {
+        return Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("server script not found: {}", script.display()),
+        )
+        .into());
+    }
     let mut command = Command::new(node);
     command
         .arg(script)
@@ -161,4 +175,15 @@ pub fn run() -> tauri::Result<()> {
         }
     });
     Ok(())
+}
+
+#[cfg(all(test, debug_assertions))]
+mod tests {
+    use super::debug_script;
+
+    #[test]
+    fn debug_entry_script_exists() {
+        let script = debug_script();
+        assert!(script.is_file(), "{} is not a file", script.display());
+    }
 }

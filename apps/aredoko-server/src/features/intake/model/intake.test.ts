@@ -5,6 +5,7 @@ import { Array, Effect, FileSystem, Option, Order, Path, Record, pipe } from "ef
 
 import { Settings } from "#shared/settings";
 
+import { IntakeFailed } from "./intake-failed.ts";
 import { intake } from "./intake.ts";
 import { libraryFolder } from "./library-folder.ts";
 
@@ -105,6 +106,40 @@ layer(NodeServices.layer, { excludeTestServices: true })("intake", (it) => {
           expect(placed).toBe(BOTH);
           const names = yield* listed(library);
           expect(names).toStrictEqual(["Cabin (2).unitypackage", "Cabin.unitypackage"]);
+        }),
+      );
+    }),
+  );
+});
+
+const ESCAPING = ["../outside.txt", "a/../../outside2.txt", "ok/inside.png"] as const;
+
+const makeEscapingZip = Effect.gen(function* makeEscapingZip() {
+  const writer = new ZipWriter(new Uint8ArrayWriter());
+  yield* pipe(
+    ESCAPING,
+    Effect.forEach((name) => Effect.promise(() => writer.add(name, new TextReader("png")))),
+  );
+  return yield* Effect.promise(() => writer.close());
+});
+
+layer(NodeServices.layer, { excludeTestServices: true })("intake of an escaping zip", (it) => {
+  it.effect("展開先の外を指す項目を持つ zip は取り込みに失敗し、何も書かない", () =>
+    Effect.gen(function* rejectsEscaping() {
+      const fileSystem = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const downloads = yield* fileSystem.makeTempDirectoryScoped();
+      const zip = path.join(downloads, "Bundle.zip");
+      const zipBytes = yield* makeEscapingZip;
+      yield* fileSystem.writeFile(zip, zipBytes);
+      yield* withSettings((library) =>
+        Effect.gen(function* inLibrary() {
+          const failure = yield* Effect.flip(intake([zip]));
+          expect(failure).toBeInstanceOf(IntakeFailed);
+          const written = yield* listed(path.dirname(library));
+          expect(written).toStrictEqual([]);
+          const kept = yield* listed(downloads);
+          expect(kept).toStrictEqual(["Bundle.zip"]);
         }),
       );
     }),
