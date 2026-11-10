@@ -124,13 +124,39 @@ const RequestUrl = Schema.Struct({ url: Schema.Struct({ full: Schema.String }) }
 
 const decodeRequestUrl = Schema.decodeUnknownOption(RequestUrl);
 
-const startedBy =
-  (url: string) =>
-  ({ attributes }: ReceivedSpan): boolean =>
+const MARKER = "workers-traces";
+const MARKED = "1";
+const ID_RADIX = 36;
+
+const markedAt =
+  (sentAt: number) =>
+  (url: string): string => {
+    const marked = new URL(url);
+    marked.searchParams.set(`${MARKER}.${sentAt.toString(ID_RADIX)}`, MARKED);
+    return marked.href;
+  };
+
+const UNREAD_VALUE = "";
+
+const requestOf = Option.liftThrowable((url: string): string => {
+  const { origin, pathname, searchParams } = new URL(url);
+  const names = pipe(
+    Arr.fromIterable(searchParams.keys()),
+    Arr.map((name) => [name, UNREAD_VALUE]),
+  );
+  return `${origin}${pathname}?${new URLSearchParams(names).toString()}`;
+});
+
+const startedBy = (url: string) => {
+  const sent = requestOf(url);
+  return ({ attributes }: ReceivedSpan): boolean =>
     pipe(
       decodeRequestUrl(attributes),
-      Option.exists((decoded) => decoded.url.full === url),
+      Option.flatMap((decoded) => requestOf(decoded.url.full)),
+      Option.zipWith(sent, (received, wanted) => received === wanted),
+      Option.getOrElse(() => false),
     );
+};
 
 const traceOf =
   (url: string) =>
@@ -153,5 +179,5 @@ const missingOf =
     return pipe(expected, Arr.filter(isMissing));
   };
 
-export { missingOf, render, spanOf, traceOf };
+export { markedAt, missingOf, render, spanOf, traceOf };
 export type { ReceivedSpan };
