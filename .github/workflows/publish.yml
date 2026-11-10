@@ -19,6 +19,7 @@ on:
             oxlint-plugin-decision-presets,
             oxlint-typed-rules,
             vite-plus-adopt,
+            msch,
           ]
       ref:
         description: Tag or commit to publish

@@ -37,6 +37,9 @@
   "ignoreDependencies": ["@effect/language-service"],
   "workspaces": {
     "settings": {
+      "libs/msch": {
+        "ignoreDependencies": ["oxlint-plugin-eslint"],
+      },
       "libs/oxlint-typed-rules": {
         "ignoreDependencies": [
           "@tsconfig/strictest",

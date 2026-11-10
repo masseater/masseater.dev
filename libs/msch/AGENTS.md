@@ -1,5 +1,7 @@
-# @msch/core
+# @r_masseater/msch
 
-有限な値の集合とオブジェクトの形を、それを既に所有している1か所（リポジトリ内の登録済みの持ち主か、依存パッケージの型）へ向ける検査の本体。
+masseater の検査の方針をまとめたパッケージ。値の集合と形の持ち主を調べる `msch` と、oxlint のプリセットを持つ。
 
-- 公開: なし（リポジトリ内のみ）
+- 公開: npm（`@r_masseater/msch`）
+- プリセットの JS プラグインは `import.meta.resolve` で msch の依存から解決し、使う側に個別のインストールを求めない。
+- masseater.dev だけに要るルールと overrides は、ルートの `lint.config.ts` に置く。

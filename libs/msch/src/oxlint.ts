@@ -1,14 +1,14 @@
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-import { ProblemList } from "@msch/core";
-import type { Problem } from "@msch/core";
 import { Option, Schema } from "effect";
 
 import { JSON_FLAG } from "./cli-contract.ts";
 import { mschPlugin } from "./oxlint-rule.ts";
+import { ProblemList } from "./problem.ts";
+import type { Problem } from "./problem.ts";
 
-const CLI_PATH = fileURLToPath(new URL("cli.ts", import.meta.url));
+const CLI_PATH = fileURLToPath(import.meta.resolve("@r_masseater/msch/cli"));
 const decodeProblems = Schema.decodeUnknownSync(Schema.fromJsonString(ProblemList));
 const loaded = new Map<string, readonly Problem[]>();
 
