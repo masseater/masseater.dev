@@ -2,8 +2,7 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Effect, Option } from "effect";
 import { vi } from "vite-plus/test";
 
-import { closeDatabase, resetDatabase } from "#/shared/db/d1.test.support";
-
+import { closeDatabase, resetDatabase } from "./d1.test.support.ts";
 import { routeLifeRead } from "./life-read-route.server";
 import { writeLife } from "./life-write.server";
 import { readMemory } from "./memory-read.server";
@@ -11,7 +10,7 @@ import { writeMemory } from "./memory-write.server";
 import { watashiProfile } from "./watashi-profile.server";
 import { watashiSearch } from "./watashi-search.server";
 
-vi.mock("cloudflare:workers", () => import("#/shared/db/d1.test.support"));
+vi.mock("cloudflare:workers", () => import("./d1.test.support.ts"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 

@@ -4,7 +4,7 @@ import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { TEXT } from "#/pages/ranking/model/labels";
-import { shardQuery } from "#/shared/api/data";
+import { shardQuery } from "#/shared/api";
 import { NICO_WATCH_URL, VOCADB_SONG_URL, YOUTUBE_WATCH_URL } from "#/shared/config";
 import { ExternalLink } from "#/shared/ui/external-link";
 
