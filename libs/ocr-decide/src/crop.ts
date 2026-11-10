@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 import { convertIndexedToRgb, decode, encode, hasPngSignature } from "fast-png";
-import type { BitDepth, PngDataArray } from "fast-png";
+import type { DecodedPng } from "fast-png";
 import type { Rectangle } from "tesseract.js";
 
 import type { Box } from "./fragment.ts";
@@ -14,13 +14,7 @@ const BYTE = 8;
 
 const NOT_PNG = "the image is not a PNG";
 
-interface Pixels {
-  readonly width: number;
-  readonly height: number;
-  readonly channels: number;
-  readonly depth: BitDepth;
-  readonly data: PngDataArray;
-}
+type Pixels = Readonly<Pick<DecodedPng, "width" | "height" | "channels" | "depth" | "data">>;
 
 type Region = Readonly<Rectangle>;
 
