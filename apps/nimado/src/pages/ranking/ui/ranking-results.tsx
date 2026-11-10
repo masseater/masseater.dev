@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useEntries } from "#/pages/ranking/model/entries";
 import type { Entries } from "#/pages/ranking/model/entries";
 import { TEXT } from "#/pages/ranking/model/labels";
+import { usableSearch } from "#/pages/ranking/model/search";
 import { useRankingSearch } from "#/pages/ranking/model/update";
 
 import { Note } from "./note";
@@ -16,8 +17,11 @@ const NOTES: Readonly<Record<Exclude<Entries["status"], "success">, string>> = {
   short: TEXT.short,
 };
 
-const RankingResults = ({ meta }: Readonly<{ meta: typeof Meta.Type }>): ReactNode => {
-  const search = useRankingSearch();
+const RankingResults = ({
+  meta,
+  youtube,
+}: Readonly<{ meta: typeof Meta.Type; youtube: boolean }>): ReactNode => {
+  const search = usableSearch({ search: useRankingSearch(), youtube });
   const result = useEntries({ meta, search });
   if (result.status !== "success") {
     return <Note text={NOTES[result.status]} />;
@@ -25,7 +29,7 @@ const RankingResults = ({ meta }: Readonly<{ meta: typeof Meta.Type }>): ReactNo
   if (Arr.isReadonlyArrayEmpty(result.entries)) {
     return <Note text={TEXT.empty} />;
   }
-  return <RankingList entries={result.entries} page={search.page} />;
+  return <RankingList entries={result.entries} page={search.page} youtube={youtube} />;
 };
 
 export { RankingResults };

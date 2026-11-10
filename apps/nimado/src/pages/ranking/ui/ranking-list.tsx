@@ -12,7 +12,8 @@ const FIRST_PAGE = 1;
 const RankingList = ({
   entries,
   page,
-}: Readonly<{ entries: readonly Ranked[]; page: number }>): ReactNode => {
+  youtube,
+}: Readonly<{ entries: readonly Ranked[]; page: number; youtube: boolean }>): ReactNode => {
   const pages = Math.max(FIRST_PAGE, Math.ceil(entries.length / PAGE_SIZE));
   const current = Math.min(page, pages);
   const offset = (current - FIRST_PAGE) * PAGE_SIZE;
@@ -21,6 +22,7 @@ const RankingList = ({
       <RankingTable
         entries={pipe(entries, Arr.drop(offset), Arr.take(PAGE_SIZE))}
         offset={offset}
+        youtube={youtube}
       />
       <Pager page={current} pages={pages} />
     </>

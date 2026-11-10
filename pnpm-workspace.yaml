@@ -116,7 +116,6 @@ catalog:
   size-limit: 14.3.0
   "@size-limit/file": 14.3.0
   publint: 0.3.25
-  "@arethetypeswrong/core": 0.18.5
   sequoia-cli: ^0.5.8
   "@atproto/api": ^0.30.0
   "@effect/ai-openrouter": 4.1.2
@@ -155,7 +154,7 @@ catalog:
   "@fontsource/zen-kurenaido": ^5.3.1
   fastest-levenshtein: ^1.0.16
   "@cfworker/json-schema": ^4.1.6
-  "@openrouter/sdk": 1.5.61
+  "@openrouter/sdk": 1.5.62
   recharts: 3.10.1
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
