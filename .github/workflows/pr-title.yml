@@ -25,7 +25,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           printf '%s (#%s)\n' "$PR_TITLE" "$PR_NUMBER" > "$RUNNER_TEMP/pr-title"
-          vp exec vpa commitlint "$RUNNER_TEMP/pr-title"
+          vp exec vpa --commit-msg "$RUNNER_TEMP/pr-title"
 
   ci-telemetry:
     needs: [pr-title]

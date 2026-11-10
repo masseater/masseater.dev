@@ -16,6 +16,15 @@ const FAKE_SECRET_FIXTURES = [
 
 const UNTRACKED_SKILL_EXAMPLE = String.raw`(attributes["git.sha"] == "f4ab1c402143011a6264a0660f598fc02eb48bff" && attributes["path"] == "docs/skills/measure-dont-guess/SKILL.md")`;
 
+const MARKDOWN_IGNORES = [
+  "**/AGENTS.md",
+  ".agents/skills/**",
+  ".claude/worktrees/**",
+  "apps/zenn-articles/**",
+  "**/.venv/**",
+  "**/.cache/**",
+];
+
 const checks: ToolSections = {
   commitlint: { extends: ["@commitlint/config-conventional"] },
   dependencyRules: {
@@ -46,25 +55,21 @@ const checks: ToolSections = {
       Arr.join(", "),
     )}]) || ${UNTRACKED_SKILL_EXAMPLE}`,
   },
-  steiger: [
-    ...fsd.configs.recommended,
-    {
-      rules: {
-        "fsd/no-cross-imports": "error",
-        "fsd/no-higher-level-imports": "error",
-        "fsd/no-wildcard-exports": "error",
+  steiger: {
+    paths: ["apps/*/src"],
+    rules: [
+      ...fsd.configs.recommended,
+      {
+        rules: {
+          "fsd/no-cross-imports": "error",
+          "fsd/no-higher-level-imports": "error",
+          "fsd/no-wildcard-exports": "error",
+        },
       },
-    },
-  ],
-  textlint: {
-    ignores: [
-      "**/AGENTS.md",
-      ".agents/skills/**",
-      ".claude/worktrees/**",
-      "apps/zenn-articles/**",
-      "**/.venv/**",
-      "**/.cache/**",
     ],
+  },
+  textlint: {
+    ignores: MARKDOWN_IGNORES,
     rules: {
       "@textlint-ja/preset-ai-writing": true,
       "preset-ja-technical-writing": {
@@ -94,21 +99,18 @@ const checks: ToolSections = {
   },
 };
 
+const markdownPathspecs = pipe(
+  MARKDOWN_IGNORES,
+  Arr.map((glob) => `':(glob,exclude)${glob}'`),
+  Arr.join(" "),
+);
+
 const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
-  "dependency-rules": "vpa dependencies",
-  "markdown-lint": [
-    "vpa textlint '**/*.md'",
-    `script="$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py"; if [ ! -f "$script" ]; then echo "markdown-lint: the yomiyasu skill is not installed. Run vp install to restore the skills." >&2; exit 1; fi; vpa textlint --print-files '**/*.md' | xargs -0 -r -n 1 -P 4 python3 "$script" --strict`,
-  ],
-  steiger: "vpa steiger apps/*/src",
-  betterleaks: {
-    command: `sh -c 'base="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" 2>/dev/null || true)"; if [ -n "$base" ]; then vpa betterleaks git . --redact --no-banner --revision="$base..HEAD"; elif [ "$(git rev-parse --is-shallow-repository)" = "true" ] || git config --get remote.origin.promisor >/dev/null; then tmp="$(mktemp -d)"; git archive HEAD | tar -x -C "$tmp"; vpa betterleaks "$tmp" --redact --no-banner; code=$?; rm -rf "$tmp"; exit $code; else vpa betterleaks git . --redact --no-banner; fi'`,
+  vpa: {
+    command: "vpa",
     cache: false,
   },
-  "betterleaks:staged": {
-    command: `git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | vpa betterleaks stdin --git-diff --redact --no-banner`,
-    cache: false,
-  },
+  yomiyasu: `script="$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py"; if [ ! -f "$script" ]; then echo "yomiyasu: the yomiyasu skill is not installed. Run vp install to restore the skills." >&2; exit 1; fi; git -c core.quotePath=false ls-files -co --exclude-standard -z -- '*.md' ${markdownPathspecs} | xargs -0 -r -n 1 -P 4 python3 "$script" --strict`,
 };
 
 const packageChecks: readonly string[] = [
