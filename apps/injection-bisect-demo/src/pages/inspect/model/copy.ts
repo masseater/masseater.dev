@@ -10,6 +10,8 @@ const COPY = {
   open: "ファイルを開く",
   reading: "読み込み中",
   unreadable: "読み込めませんでした",
+  unread: "読めない部分あり",
+  others: (count: number): string => `ほか ${count} 件`,
   apiKey: "OpenRouter API キー",
   keyNote: "キーは openrouter.ai にだけ送ります",
   submit: "インジェクションを探す",

@@ -7,10 +7,12 @@ import type { InspectState } from "#/pages/inspect/api/use-inspect";
 import { COPY } from "#/pages/inspect/model/copy";
 import {
   NO_FOCUS,
+  unreadableOf,
   useApiKey,
   useDraftText,
   useFormat,
   useModel,
+  useOpening,
   useRun,
   useSetFocus,
   useSetRun,
@@ -38,26 +40,42 @@ const nextIdOf = (run: Run): number => {
 const isRunning = (state: InspectState): boolean =>
   state.status === "streaming" && state.trace.phase.status === "running";
 
+const isReady = ({
+  state,
+  text,
+  apiKey,
+  model,
+}: Readonly<{ state: InspectState; text: string; apiKey: string; model: string }>): boolean =>
+  !isRunning(state) && NON_BLANK.test(text) && apiKey !== "" && NON_BLANK.test(model);
+
 const InspectForm = ({ state }: Readonly<{ state: InspectState }>): ReactNode => {
   const text = useDraftText();
   const apiKey = useApiKey();
   const model = useModel();
   const format = useFormat();
+  const opening = useOpening();
   const run = useRun();
   const setRun = useSetRun();
   const setFocus = useSetFocus();
   const submit = useCallback(() => {
     setFocus(NO_FOCUS);
-    setRun({ status: "started", id: nextIdOf(run), text, apiKey, model, format });
-  }, [setFocus, setRun, run, text, apiKey, model, format]);
-  const ready = !isRunning(state) && NON_BLANK.test(text) && apiKey !== "" && NON_BLANK.test(model);
+    setRun({
+      status: "started",
+      id: nextIdOf(run),
+      text,
+      apiKey,
+      model,
+      format,
+      unreadable: unreadableOf(opening),
+    });
+  }, [setFocus, setRun, run, text, apiKey, model, format, opening]);
   return (
     <section className="flex min-w-0 flex-col gap-3">
       <SourceBar />
       <OverlaidText state={state} />
       <div className="flex flex-wrap gap-2">
         <RunSettings />
-        <Button disabled={!ready} onClick={submit}>
+        <Button disabled={!isReady({ state, text, apiKey, model })} onClick={submit}>
           {COPY.submit}
         </Button>
       </div>
