@@ -8,7 +8,13 @@ import type { StoreFailure } from "#/features/mcp/model/tool-failure";
 import { findRevision } from "./history-store.server";
 import type { MemoryWriteValue } from "./memory-input";
 import { findMemory } from "./memory-store.server";
-import { MemorySnapshot, NOT_RETRACTED, nextId, save, snapshotOf } from "./memory-writer.server";
+import {
+  MemorySnapshot,
+  NOT_RETRACTED,
+  create as createMemo,
+  save,
+  snapshotOf,
+} from "./memory-writer.server";
 import type { MemoryResult, Writer } from "./memory-writer.server";
 import { nowIso } from "./storage.server";
 
@@ -28,18 +34,14 @@ const create =
     Effect.gen(function* createMemory() {
       const description = yield* required(input.description, "description");
       const content = yield* required(input.content, "content");
-      const id = yield* nextId;
-      return yield* save({ writer, op: "create" })({
-        id,
-        snapshot: {
-          project: input.project,
-          name: input.name,
-          description,
-          content,
-          evidence: input.evidence ?? [],
-          retractedAt: NOT_RETRACTED,
-          retractReason: "",
-        },
+      return yield* createMemo(writer)({
+        project: input.project,
+        name: input.name,
+        description,
+        content,
+        evidence: input.evidence ?? [],
+        retractedAt: NOT_RETRACTED,
+        retractReason: "",
       });
     });
 

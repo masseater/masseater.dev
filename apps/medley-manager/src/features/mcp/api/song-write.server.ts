@@ -1,4 +1,5 @@
 import { and, eq } from "drizzle-orm";
+import type { BatchItem } from "drizzle-orm/batch";
 import { Array as Arr, Effect, Option, pipe, Struct } from "effect";
 
 import type { SongDetail } from "#/entities/catalog";
@@ -8,11 +9,19 @@ import { ToolError } from "./tool-error";
 import type { CreateSongInput, MergeInput, SongAliasInput, UpdateSongInput } from "./tool-input";
 import { orMissing, query } from "./tool-result.server";
 
+type Statement = BatchItem<"sqlite">;
+
 const SONG_MISSING = "song not found";
 const SAME_SONG = "sourceId and targetId must differ";
 
 const songDetail = (id: number): Effect.Effect<SongDetail, ToolError> =>
   getSong(id).pipe(orMissing(SONG_MISSING));
+
+const aliasInserts = (songId: number, aliases: readonly string[]): readonly Statement[] =>
+  pipe(
+    aliases,
+    Arr.map((alias) => catalogDb.insert(songAlias).values({ songId, alias }).onConflictDoNothing()),
+  );
 
 const addAliases = (
   songId: number,
@@ -81,10 +90,12 @@ const mergeSongs = Effect.fn("mcp.song.merge")(function* mergeSongs(input: typeo
   const source = yield* songDetail(input.sourceId);
   yield* songDetail(input.targetId);
   yield* query(() =>
-    catalogDb.update(part).set({ songId: input.targetId }).where(eq(part.songId, input.sourceId)),
+    catalogDb.batch([
+      catalogDb.update(part).set({ songId: input.targetId }).where(eq(part.songId, input.sourceId)),
+      ...aliasInserts(input.targetId, [source.title, ...source.aliases]),
+      catalogDb.delete(song).where(eq(song.id, input.sourceId)),
+    ]),
   );
-  yield* addAliases(input.targetId, [source.title, ...source.aliases]);
-  yield* query(() => catalogDb.delete(song).where(eq(song.id, input.sourceId)));
   return yield* songDetail(input.targetId);
 });
 
