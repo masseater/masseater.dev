@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src", "upstream", "vite.config.ts"],
+  "exclude": [
+    "upstream/src/__tests__",
+    "upstream/tanstack-query/src/__tests__",
+    "upstream/tanstack-router/src/__tests__",
+    "upstream/drizzle/tests",
+    "upstream/remotion/src/tests"
+  ],
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/platform-node/NodeServices#layer",
+          "@effect/vitest#layer",
+          "@effect/vitest/utils#deepStrictEqual",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/http/FetchHttpClient#layer",
+          "effect/observability/OtlpSerialization#layerJson",
+          "effect/observability/OtlpTracer#layerFromConfig"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+diff --git a/package.json b/package.json
+index c36739460f94fc75186e1cfd2077926e265abe0b..8938a3b90b1051e6736fe37bb5f8cf69f3014ed8 100644
+--- a/package.json
++++ b/package.json
+@@ -3,6 +3,7 @@
+     "version": "0.2.3",
+     "description": "Eslint plugin for drizzle users to avoid common pitfalls",
+     "main": "src/index.js",
++    "types": "src/index.d.ts",
+     "scripts": {
+         "test": "vitest run",
+         "build": "tsc -b && pnpm cpy readme.md dist/",
+diff --git a/src/index.d.ts b/src/index.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..d30ed4d9b8a447d8c8450a00e755cc01caa4f923
+--- /dev/null
++++ b/src/index.d.ts
+@@ -0,0 +1,5 @@
++export declare const rules: Readonly<
++    Record<'enforce-delete-with-where' | 'enforce-update-with-where', unknown>
++>;
++export declare const configs: { readonly all: unknown; readonly recommended: unknown };
++export declare const meta: { readonly name: string; readonly version: string };

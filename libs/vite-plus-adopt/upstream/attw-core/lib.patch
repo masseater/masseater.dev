@@ -1,0 +1,51 @@
+diff --git a/dist/internal/getProbableExports.js b/dist/internal/getProbableExports.js
+index 8070b92b51fa315648c0f368fd6dc210bcfdf4e3..ccd399c48d7dcaff0b5c698ff5d27fbd4f4a4f07 100644
+--- a/dist/internal/getProbableExports.js
++++ b/dist/internal/getProbableExports.js
+@@ -27,9 +27,9 @@ function getEsbuildBabelSwcExports(sourceFile) {
+             ts.isIdentifier(statement.expression.arguments[0]) &&
+             ts.isObjectLiteralExpression(statement.expression.arguments[1])) {
+             const callTarget = statement.expression.expression;
+-            const isExport = ts.unescapeLeadingUnderscores(callTarget.escapedText) === "__export" ||
+-                callTarget.escapedText === "_export" ||
+-                isEsbuildExportFunction((_b = (_a = sourceFile.locals) === null || _a === void 0 ? void 0 : _a.get(callTarget.escapedText)) === null || _b === void 0 ? void 0 : _b.valueDeclaration);
++            const isExport = callTarget.text === "__export" ||
++                callTarget.text === "_export" ||
++                isEsbuildExportFunction((_b = (_a = sourceFile.locals) === null || _a === void 0 ? void 0 : _a.get(ts.escapeLeadingUnderscores(callTarget.text))) === null || _b === void 0 ? void 0 : _b.valueDeclaration);
+             if (isExport) {
+                 return statement.expression.arguments[1].properties.flatMap((prop) => {
+                     if (ts.isPropertyAssignment(prop) &&
+diff --git a/dist/types.d.ts b/dist/types.d.ts
+index 5c49ba3c364a1168b0fb477a6ea259fc9ae35257..3d52f7aaf6564be76929c98851897885ed9ad853 100644
+--- a/dist/types.d.ts
++++ b/dist/types.d.ts
+@@ -1,4 +1,4 @@
+-import type ts from "typescript";
++import type { ModuleKind as TypeScriptModuleKind } from "typescript/sync";
+ export type ResolutionKind = "node10" | "node16-cjs" | "node16-esm" | "bundler";
+ export type ResolutionOption = "node10" | "node16" | "bundler";
+ export interface EntrypointInfo {
+@@ -54,7 +54,7 @@ export interface ProgramInfo {
+ }
+ export type ModuleKindReason = "extension" | "type" | "no:type";
+ export interface ModuleKind {
+-    detectedKind: ts.ModuleKind.ESNext | ts.ModuleKind.CommonJS;
++    detectedKind: TypeScriptModuleKind.ESNext | TypeScriptModuleKind.CommonJS;
+     detectedReason: ModuleKindReason;
+     reasonFileName: string;
+ }
+@@ -108,12 +108,12 @@ export interface InternalResolutionErrorProblem extends FileTextRangeProblem {
+     kind: "InternalResolutionError";
+     resolutionOption: ResolutionOption;
+     moduleSpecifier: string;
+-    resolutionMode: ts.ResolutionMode;
++    resolutionMode: TypeScriptModuleKind.ESNext | TypeScriptModuleKind.CommonJS | undefined;
+     trace: string[];
+ }
+ export interface UnexpectedModuleSyntaxProblem extends FileTextRangeProblem {
+     kind: "UnexpectedModuleSyntax";
+-    syntax: ts.ModuleKind.ESNext | ts.ModuleKind.CommonJS;
++    syntax: TypeScriptModuleKind.ESNext | TypeScriptModuleKind.CommonJS;
+     moduleKind: ModuleKind;
+ }
+ export interface CJSOnlyExportsDefaultProblem extends FileTextRangeProblem {

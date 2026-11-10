@@ -1,0 +1,1482 @@
+import tsx from "dedent";
+
+import { ruleTester } from "@local/testkit";
+import rule, { RULE_NAME } from "./use-memo";
+
+ruleTester.run(RULE_NAME, rule, {
+  invalid: [
+    // No return statement at all in block body
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ data }) {
+          const processed = useMemo(() => {
+            data.forEach(item => console.log(item));
+          }, [data]);
+          return <div>{processed}</div>;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // Bare return (no value)
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ data }) {
+          const processed = useMemo(() => {
+            if (data) return;
+          }, [data]);
+          return <div>{processed}</div>;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // All return paths are bare returns
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ data }) {
+          const processed = useMemo(() => {
+            if (data) return;
+            return;
+          }, [data]);
+          return <div>{processed}</div>;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // Multiple return statements but all are bare
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ flag }) {
+          const value = useMemo(() => {
+            if (flag) {
+              return;
+            }
+            return;
+          }, [flag]);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // useMemo result not assigned to a variable (side-effect only, no return)
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ user }) {
+          useMemo(() => {
+            analytics.track("UserViewed", { userId: user.id });
+          }, [user.id]);
+          return <div />;
+        }
+      `,
+      errors: [{ messageId: "result-must-be-used" }],
+    },
+    // useMemo result not assigned even though callback returns a value
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ user }) {
+          useMemo(() => {
+            return analytics.track("UserViewed", { userId: user.id });
+          }, [user.id]);
+          return <div />;
+        }
+      `,
+      errors: [{ messageId: "result-must-be-used" }],
+    },
+    // React namespace call not assigned
+    {
+      code: tsx`
+        import React from "react";
+
+        function Component({ user }) {
+          React.useMemo(() => {
+            analytics.track("UserViewed", { userId: user.id });
+          }, [user.id]);
+          return <div />;
+        }
+      `,
+      errors: [{ messageId: "result-must-be-used" }],
+    },
+    // Callback accepting parameters
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ data }) {
+          const processed = useMemo((x) => x * 2, [data]);
+          return <div>{processed}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-parameters" }],
+    },
+    // Callback accepting multiple parameters
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ a, b }) {
+          const fact = useMemo(function(x, y) {
+            return x + y;
+          }, [a, b]);
+          return <div>{fact}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-parameters" }],
+    },
+    // Async callback
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ data }) {
+          const processed = useMemo(async () => {
+            return await fetch(data);
+          }, [data]);
+          return <div>{processed}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-async-or-generator-functions" }],
+    },
+    // Generator callback
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ data }) {
+          const processed = useMemo(function* () {
+            yield data;
+            return data;
+          }, [data]);
+          return <div>{processed}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-async-or-generator-functions" }],
+    },
+    // Generator callback without a return (from React Compiler's error.useMemo-callback-generator.js)
+    {
+      code: tsx`
+        function component(a, b) {
+          let x = useMemo(function* () {
+            yield a;
+          }, []);
+          return x;
+        }
+      `,
+      errors: [
+        { messageId: "no-async-or-generator-functions" },
+        { messageId: "must-return-a-value" },
+      ],
+    },
+    // Callback with both parameter and missing return
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ data }) {
+          const processed = useMemo((x) => {
+            console.log(x);
+          }, [data]);
+          return <div>{processed}</div>;
+        }
+      `,
+      errors: [
+        { messageId: "must-return-a-value" },
+        { messageId: "no-parameters" },
+      ],
+    },
+    // FunctionExpression callback with no return
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ items }) {
+          const fact = useMemo(function() {
+            items.forEach(item => console.log(item));
+          }, [items]);
+          return <div />;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // Callback wrapped in TSAsExpression with no return value
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ data }) {
+          const processed = useMemo((() => {
+            data.forEach(item => console.log(item));
+          }) as () => void, [data]);
+          return <div>{processed}</div>;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // useMemo with no return value — both useMemo and React.useMemo (from React Compiler fixtures)
+    {
+      code: tsx`
+        function Component() {
+          const value = useMemo(() => {
+            console.log('computing');
+          }, []);
+          const value2 = React.useMemo(() => {
+            console.log('computing');
+          }, []);
+          return (
+            <div>
+              {value}
+              {value2}
+            </div>
+          );
+        }
+      `,
+      errors: [
+        { messageId: "must-return-a-value" },
+        { messageId: "must-return-a-value" },
+      ],
+    },
+    // useMemo with bare return (from React Compiler fixtures)
+    {
+      code: tsx`
+        function Component() {
+          const value = useMemo(() => {
+            return;
+          }, []);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // useMemo result unused (from React Compiler fixtures)
+    {
+      code: tsx`
+        function Component() {
+          useMemo(() => {
+            return [];
+          }, []);
+          return <div />;
+        }
+      `,
+      errors: [{ messageId: "result-must-be-used" }],
+    },
+    // useMemo callback with args (from React Compiler fixtures)
+    {
+      code: tsx`
+        function Component(a, b) {
+          const x = useMemo(c => a, []);
+          return x;
+        }
+      `,
+      errors: [{ messageId: "no-parameters" }],
+    },
+    // React.useMemo async callback (from React Compiler fixtures)
+    {
+      code: tsx`
+        function Component(a, b) {
+          const x = React.useMemo(async () => {
+            await a;
+          }, []);
+          return x;
+        }
+      `,
+      errors: [
+        { messageId: "no-async-or-generator-functions" },
+        { messageId: "must-return-a-value" },
+      ],
+    },
+    // Rule 3: Reassigning outer variable (from React Compiler fixtures)
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          let x;
+          const y = useMemo(() => {
+            let z;
+            x = [];
+            z = true;
+            return z;
+          }, []);
+          return [x, y];
+        }
+      `,
+      errors: [{ messageId: "no-reassigning-outer-variables" }],
+    },
+    // Rule 3: Reassigning outer variable with compound assignment
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          let count = 0;
+          const value = useMemo(() => {
+            count += 1;
+            return count;
+          }, []);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-reassigning-outer-variables" }],
+    },
+    // Rule 3: Reassigning outer variable inside conditional
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ flag }) {
+          let x = 0;
+          const value = useMemo(() => {
+            if (flag) {
+              x = 1;
+            }
+            return x;
+          }, [flag]);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-reassigning-outer-variables" }],
+    },
+    // Rule 3: Reassigning outer variable inside FunctionExpression callback (boundary itself is a function, stop must win)
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          let outer;
+          const y = useMemo(function() {
+            outer = 1;
+            return outer;
+          }, []);
+          return [outer, y];
+        }
+      `,
+      errors: [{ messageId: "no-reassigning-outer-variables" }],
+    },
+    // Rule 3: Reassigning outer variable through object destructuring
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ source }) {
+          let outer;
+          const value = useMemo(() => {
+            ({ value: outer } = source);
+            return outer;
+          }, [source]);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-reassigning-outer-variables" }],
+    },
+    // Rule 3: Reassigning outer variable through array destructuring
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ source }) {
+          let outer;
+          const value = useMemo(() => {
+            [outer] = source;
+            return outer;
+          }, [source]);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-reassigning-outer-variables" }],
+    },
+    // Rule 3: Reassigning multiple outer variables through one destructuring pattern
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ source }) {
+          let a;
+          let b;
+          const value = useMemo(() => {
+            [a, b] = source;
+            return a + b;
+          }, [source]);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [
+        { messageId: "no-reassigning-outer-variables" },
+        { messageId: "no-reassigning-outer-variables" },
+      ],
+    },
+    // Rule 3: Reassigning outer variable as a for-of loop target
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ items }) {
+          let outer;
+          const value = useMemo(() => {
+            for (outer of items) {
+              console.log(outer);
+            }
+            return outer;
+          }, [items]);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-reassigning-outer-variables" }],
+    },
+    // Rule 3: Reassigning outer variable as a for-in loop target
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ record }) {
+          let outer;
+          const value = useMemo(() => {
+            for (outer in record) {
+              console.log(outer);
+            }
+            return outer;
+          }, [record]);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-reassigning-outer-variables" }],
+    },
+    // Rule 3: Reassigning outer variable alongside other violations
+    // Errors are sorted by source position: mustReturnAValue (on callbackArg) comes
+    // before noParameters (on firstParam) which comes before noReassigningOuterVariables
+    // (on the outer variable inside the callback body).
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          let outer;
+          const y = useMemo((param) => {
+            outer = param;
+          }, []);
+          return [outer, y];
+        }
+      `,
+      errors: [
+        { messageId: "must-return-a-value" },
+        { messageId: "no-parameters" },
+        { messageId: "no-reassigning-outer-variables" },
+      ],
+    },
+    // The only value return lives in a nested arrow function; the callback's
+    // own returns are bare, so the nested value return must not count
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          const value = useMemo(() => {
+            const f = () => {
+              return <div />;
+            };
+            f();
+            return;
+          }, []);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // The only return at any depth belongs to a nested function declaration;
+    // the callback body itself never returns
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component({ items }) {
+          const value = useMemo(() => {
+            function helper() {
+              return items.length;
+            }
+            helper();
+          }, [items]);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // Value returns inside a class getter nested in the callback are excluded;
+    // the callback's own bare return still violates must-return-a-value
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          const value = useMemo(() => {
+            class A {
+              get size() {
+                return 42;
+              }
+            }
+            new A();
+            return;
+          }, []);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // Rest parameter: the first parameter is not an Identifier, so the report
+    // falls back to the callback node
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          const processed = useMemo((...args) => args.length, []);
+          return <div>{processed}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-parameters" }],
+    },
+    // Destructured object parameter: same non-Identifier fallback to the
+    // callback node
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          const processed = useMemo(({ a }) => a, []);
+          return <div>{processed}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-parameters" }],
+    },
+    // A callback whose body only throws has no return statement at all
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          const value = useMemo(() => {
+            throw new Error("boom");
+          }, []);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // The same outer variable written twice is reported once per write
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          let outer = 0;
+          const value = useMemo(() => {
+            outer = 1;
+            outer = 2;
+            return outer;
+          }, []);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [
+        { messageId: "no-reassigning-outer-variables" },
+        { messageId: "no-reassigning-outer-variables" },
+      ],
+    },
+    // Writes to undeclared globals are treated as outer-variable reassignments
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          const value = useMemo(() => {
+            someGlobal = 1;
+            return someGlobal;
+          }, []);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-reassigning-outer-variables" }],
+    },
+    // A write inside a nested useMemo callback is attributed to the inner call
+    // only, not to the outer callback that contains it
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          let outer = 0;
+          const value = useMemo(() => {
+            const inner = useMemo(() => {
+              outer = 1;
+              return 1;
+            }, []);
+            return inner;
+          }, []);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [{ messageId: "no-reassigning-outer-variables" }],
+    },
+    // A result used only as a switch discriminant is outside the result-use
+    // allow-list, so it is reported as unused
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          switch (useMemo(() => 42, [])) {
+            case 42:
+              break;
+          }
+          return <div />;
+        }
+      `,
+      errors: [{ messageId: "result-must-be-used" }],
+    },
+    // Nested useMemo: the inner call's concise-body result feeds the outer
+    // callback, but the outer call's own result is discarded
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          useMemo(() => useMemo(() => 1, []), []);
+          return <div />;
+        }
+      `,
+      errors: [{ messageId: "result-must-be-used" }],
+    },
+    // Async callback with a parameter, an outer-variable reassignment, and no
+    // return value: all four violations are reported on the same call
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          let outer = 0;
+          const value = useMemo(async (param) => {
+            outer = param;
+            console.log(param);
+          }, []);
+          return <div>{value}</div>;
+        }
+      `,
+      errors: [
+        { messageId: "no-async-or-generator-functions" },
+        { messageId: "must-return-a-value" },
+        { messageId: "no-parameters" },
+        { messageId: "no-reassigning-outer-variables" },
+      ],
+    },
+    // The rule does not require a component or hook context; a useMemo call at
+    // module scope is checked the same way
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        const value = useMemo(() => {
+          console.log("side effect");
+        }, []);
+      `,
+      errors: [{ messageId: "must-return-a-value" }],
+    },
+    // A discarded result suppresses all other checks on the same call
+    {
+      code: tsx`
+        import { useMemo } from "react";
+
+        function Component() {
+          let outer = 0;
+          useMemo(async (param) => {
+            outer = param;
+            console.log(param);
+          }, []);
+          return <div />;
+        }
+      `,
+      errors: [{ messageId: "result-must-be-used" }],
+    },
+  ],
+  valid: [
+    // Arrow function with concise body (always returns)
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const sorted = useMemo(() => [...items].sort(), [items]);
+        return <div>{sorted.join(", ")}</div>;
+      }
+    `,
+    // Parameterless callback
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const fact = useMemo(() => items.length, [items]);
+        return <div>{fact}</div>;
+      }
+    `,
+    // Block body with explicit return value
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ data }) {
+        const processed = useMemo(() => {
+          return data.map(item => item * 2);
+        }, [data]);
+        return <div>{processed}</div>;
+      }
+    `,
+    // Conditional return with value in all branches
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ flag, a, b }) {
+        const value = useMemo(() => {
+          if (flag) return a;
+          return b;
+        }, [flag, a, b]);
+        return <div>{value}</div>;
+      }
+    `,
+    // Block body returning object
+    tsx`
+      import { useMemo } from "react";
+
+      function Component() {
+        const [width, setWidth] = useState(undefined);
+        const refItem = useMemo(() => {
+          return { setWidth };
+        }, []);
+        return <div />;
+      }
+    `,
+    // Arrow function returning JSX
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const elements = useMemo(() => items.map(item => <span key={item.id}>{item.name}</span>), [items]);
+        return <div>{elements}</div>;
+      }
+    `,
+    // FunctionExpression callback with return value
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const fact = useMemo(function() {
+          return items.filter(Boolean);
+        }, [items]);
+        return <div />;
+      }
+    `,
+    // FunctionExpression with no parameters
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const fact = useMemo(function() {
+          return items.filter(Boolean);
+        }, [items]);
+        return <div>{fact}</div>;
+      }
+    `,
+    // Arrow function concise body returning another arrow
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const handler = useMemo(() => () => items.length, [items]);
+        return <div onClick={handler} />;
+      }
+    `,
+    // Arrow function with nested function that has no return — outer arrow still returns
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const handler = useMemo(() => {
+          return () => {
+            items.forEach(item => console.log(item));
+          };
+        }, [items]);
+        return <button onClick={handler} />;
+      }
+    `,
+    // React namespace call assigned to variable
+    tsx`
+      import React from "react";
+
+      function Component({ items }) {
+        const sorted = React.useMemo(() => [...items].sort(), [items]);
+        return <div>{sorted.join(", ")}</div>;
+      }
+    `,
+    tsx`
+      const use1 = () => useMemo(() => 1, []);
+    `,
+    tsx`
+      function A() {
+        const x = useMemo(() => {
+            return 1 + 1;
+        }, []) as number;
+        return x;
+      }
+    `,
+    // Callback wrapped in TSAsExpression with return value
+    tsx`
+      import { useMemo } from "react";
+      function Component({ data }) {
+        const processed = useMemo((() => {
+          return heavyCompute(data);
+        }) as () => number, [data]);
+        return <div>{processed}</div>;
+      }
+    `,
+    // No useMemo in file — fast path
+    tsx`
+      function Component({ items }) {
+        return <div>{items.length}</div>;
+      }
+    `,
+    // Explicit null return (from React Compiler fixtures)
+    tsx`
+      function Component() {
+        const value = useMemo(() => {
+          return null;
+        }, []);
+        return <div>{value}</div>;
+      }
+    `,
+    // useMemo result used in logical expression (from React Compiler fixtures)
+    tsx`
+      import {useMemo} from 'react';
+      function Component(props) {
+        return (
+          useMemo(() => {
+            return [props.value];
+          }) || []
+        );
+      }
+    `,
+    // If-else with multiple returns (from React Compiler fixtures)
+    tsx`
+      function Component(props) {
+        const x = useMemo(() => {
+          if (props.cond) {
+            return makeObject(props.a);
+          }
+          return makeObject(props.b);
+        });
+        return x;
+      }
+    `,
+    // useMemo with switch statement and returns (from React Compiler fixtures)
+    tsx`
+      function Component(props) {
+        const x = useMemo(() => {
+          let y;
+          switch (props.switch) {
+            case 'foo': {
+              return 'foo';
+            }
+            case 'bar': {
+              y = 'bar';
+              break;
+            }
+            default: {
+              y = props.y;
+            }
+          }
+          return y;
+        });
+        return x;
+      }
+    `,
+    // useMemo with switch statement and no fallthrough (from React Compiler fixtures)
+    tsx`
+      function Component(props) {
+        const x = useMemo(() => {
+          switch (props.key) {
+            case 'key': {
+              return props.value;
+            }
+            default: {
+              return props.defaultValue;
+            }
+          }
+        });
+        return x;
+      }
+    `,
+    // useMemo with labeled statement and unconditional return (from React Compiler fixtures)
+    tsx`
+      function Component(props) {
+        const x = useMemo(() => {
+          label: {
+            return props.value;
+          }
+        });
+        return x;
+      }
+    `,
+    // useMemo with nested ifs and return (from React Compiler fixtures)
+    tsx`
+      function Component(props) {
+        const x = useMemo(() => {
+          if (props.cond) {
+            if (props.cond) {
+              return props.value;
+            }
+          }
+        }, [props.cond]);
+        return x;
+      }
+    `,
+    // useMemo with logical expression concise body (from React Compiler fixtures)
+    tsx`
+      function Component(props) {
+        const x = useMemo(() => props.a && props.b);
+        return x;
+      }
+    `,
+    // useMemo with multiple if-else and return (from React Compiler fixtures)
+    tsx`
+      import {useMemo} from 'react';
+
+      function Component(props) {
+        const x = useMemo(() => {
+          let y = [];
+          if (props.cond) {
+            y.push(props.a);
+          }
+          if (props.cond2) {
+            return y;
+          }
+          y.push(props.b);
+          return y;
+        });
+        return x;
+      }
+    `,
+    // useMemo with multiple returns in loop (from React Compiler fixtures)
+    tsx`
+      function Component({items}) {
+        const value = useMemo(() => {
+          for (let item of items) {
+            if (item.match) return item;
+          }
+          return null;
+        }, [items]);
+        return <div>{value}</div>;
+      }
+    `,
+    // useMemo with inverted if (labeled block with break) (from React Compiler fixtures)
+    tsx`
+      function Component(props) {
+        const x = useMemo(() => {
+          label: {
+            if (props.cond) {
+              break label;
+            }
+            return props.a;
+          }
+          return props.b;
+        });
+        return x;
+      }
+    `,
+    // Consecutive useMemo calls in hook (from React Compiler fixtures)
+    tsx`
+      import {useMemo} from 'react';
+
+      function useHook({a, b}) {
+        const valA = useMemo(() => identity({a}), [a]);
+        const valB = useMemo(() => identity([b]), [b]);
+        return [valA, valB];
+      }
+    `,
+    // useMemo returning independently memoizeable array (from React Compiler fixtures)
+    tsx`
+      function Component(props) {
+        const [a, b] = useMemo(() => {
+          const items = [];
+          const a = makeObject(props.a);
+          const b = makeObject(props.b);
+          return [a, b];
+        });
+        return [a, b];
+      }
+    `,
+    // React.useMemo returning object with destructured value (from React Compiler fixtures)
+    tsx`
+      function useInputValue(input) {
+        const object = React.useMemo(() => {
+          const {value} = identity(input);
+          return {value};
+        }, [input]);
+        return object;
+      }
+    `,
+    // useMemo with inlining block return (from React Compiler fixtures)
+    tsx`
+      function component(a, b) {
+        let x = useMemo(() => {
+          if (a) {
+            return {b};
+          }
+        }, [a, b]);
+        return x;
+      }
+    `,
+    // useMemo with identifier callback (not a function expression) (from React Compiler fixtures)
+    tsx`
+      import {useMemo} from 'react';
+
+      function Component() {
+        const x = useMemo(makeArray, []);
+        return x;
+      }
+    `,
+    // useMemo as the right-hand side of a for...of loop
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const list = useMemo(() => items, [items]);
+        for (const item of list) {
+          console.log(item);
+        }
+        return <div />;
+      }
+    `,
+    // useMemo as the right-hand side of a for...in loop
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ obj }) {
+        const keys = useMemo(() => Object.keys(obj), [obj]);
+        for (const key of keys) {
+          console.log(key);
+        }
+        return <div />;
+      }
+    `,
+    // Inline useMemo as the right-hand side of a for...of/for...in loop.
+    // This usage pattern is uncommon in practice but is included for rule completeness.
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        for (const item of useMemo(() => items, [items])) {
+          console.log(item);
+        }
+        return <div />;
+      }
+    `,
+    // This usage pattern is uncommon in practice but is included for rule completeness.
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ obj }) {
+        for (const key of useMemo(() => Object.keys(obj), [obj])) {
+          console.log(key);
+        }
+        return <div />;
+      }
+    `,
+    // Rule 3 valid: Reading outer variables without reassigning
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ a, b }) {
+        const sum = useMemo(() => a + b, [a, b]);
+        return <div>{sum}</div>;
+      }
+    `,
+    // Rule 3 valid: Reassigning local variable inside useMemo callback
+    tsx`
+      import { useMemo } from "react";
+
+      function Component() {
+        const y = useMemo(() => {
+          let z;
+          z = true;
+          return z;
+        }, []);
+        return y;
+      }
+    `,
+    // Rule 3 valid: Nested function reassigning its own local variable
+    tsx`
+      import { useMemo } from "react";
+
+      function Component() {
+        const value = useMemo(() => {
+          const helper = () => {
+            let y;
+            y = 5;
+            return y;
+          };
+          return helper();
+        }, []);
+        return <div>{value}</div>;
+      }
+    `,
+    // Rule 3 valid: Property mutation is not outer variable reassignment
+    tsx`
+      import { useMemo, useRef } from "react";
+
+      function Component() {
+        const ref = useRef(0);
+        const value = useMemo(() => {
+          ref.current = 0;
+          return ref.current;
+        }, []);
+        return <div>{value}</div>;
+      }
+    `,
+    // Rule 3 valid: Reassigning block-scoped variable inside for…of loop (issue #1734)
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ columns }) {
+        const widths = useMemo(() => {
+          const fact = [];
+          for (const column of columns) {
+            let width = column.defaultWidth;
+            if (typeof width === "number") {
+              width = Math.min(width, column.maxWidth);
+            } else {
+              width = column.minWidth;
+            }
+            fact.push(width);
+          }
+          return fact;
+        }, [columns]);
+        return <div>{widths.join(", ")}</div>;
+      }
+    `,
+    // Rule 3 valid: Reassigning block-scoped variable inside for loop
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const sum = useMemo(() => {
+          let total = 0;
+          for (let i = 0; i < items.length; i++) {
+            let value = items[i];
+            value = value * 2;
+            total += value;
+          }
+          return total;
+        }, [items]);
+        return <div>{sum}</div>;
+      }
+    `,
+    // Rule 3 valid: Reassigning block-scoped variable inside if block
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ flag, a, b }) {
+        const value = useMemo(() => {
+          if (flag) {
+            let temp = a;
+            temp = temp + 1;
+            return temp;
+          }
+          return b;
+        }, [flag, a, b]);
+        return <div>{value}</div>;
+      }
+    `,
+    // Rule 3 valid: Reassigning block-scoped variable inside switch case
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ type, value }) {
+        const fact = useMemo(() => {
+          switch (type) {
+            case "number": {
+              let n = value;
+              n = n * 2;
+              return n;
+            }
+            default: {
+              return value;
+            }
+          }
+        }, [type, value]);
+        return <div>{fact}</div>;
+      }
+    `,
+    // Rule 3 valid: Reassigning outer variable inside nested function within FunctionExpression callback (findParent matches nested before stop)
+    tsx`
+      import { useMemo } from "react";
+
+      function Component() {
+        let outer;
+        const y = useMemo(function() {
+          const helper = () => {
+            outer = 1;
+          };
+          helper();
+          return outer;
+        }, []);
+        return [outer, y];
+      }
+    `,
+    // Local reassignment inside a nested forEach callback (adapted from React
+    // Compiler's reassign-variable-in-usememo.js Flow fixture)
+    tsx`
+      import { useMemo } from "react";
+
+      function useItemLanguage(items) {
+        return useMemo(() => {
+          let language = null;
+          items.forEach(item => {
+            if (item.language != null) {
+              language = item.language;
+            }
+          });
+          return language;
+        }, [items]);
+      }
+    `,
+    // useMemo in conditional expression (parent is ConditionalExpression, should not crash)
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ flag, a, b }) {
+        const value = flag ? useMemo(() => a, []) : useMemo(() => b, []);
+        return <div>{value}</div>;
+      }
+    `,
+    // useMemo in array expression (parent is ArrayExpression, should not crash)
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ a, b }) {
+        const [x, y] = [useMemo(() => a, []), useMemo(() => b, [])];
+        return <div>{x}{y}</div>;
+      }
+    `,
+    // useMemo in return statement (parent is ReturnStatement, should not crash)
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        return useMemo(() => items.sort(), [items]);
+      }
+    `,
+    // useMemo in assignment expression (parent is AssignmentExpression, should not crash)
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        let sorted;
+        sorted = useMemo(() => items.sort(), [items]);
+        return <div>{sorted}</div>;
+      }
+    `,
+    // useMemo in logical expression (parent is LogicalExpression, should not crash)
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ flag, items }) {
+        const value = flag && useMemo(() => items.length, [items]);
+        return <div>{value}</div>;
+      }
+    `,
+    // useMemo in spread element (parent is SpreadElement, should not crash)
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ a, b }) {
+        const merged = { ...useMemo(() => a, []), ...useMemo(() => b, []) };
+        return <div>{merged}</div>;
+      }
+    `,
+    // Destructured reassignment of a variable declared inside the callback is allowed
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ source }) {
+        const value = useMemo(() => {
+          let local;
+          [local] = source;
+          return local;
+        }, [source]);
+        return <div>{value}</div>;
+      }
+    `,
+    // Destructured property targets are property mutations, not variable reassignments,
+    // and stay exempt like plain `ref.current = ...`
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ source }) {
+        const box = { current: null };
+        const value = useMemo(() => {
+          ({ value: box.current } = source);
+          return box.current;
+        }, [source]);
+        return <div>{value}</div>;
+      }
+    `,
+    // A for-of loop with its own declaration does not reassign an outer variable
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const value = useMemo(() => {
+          let sum = 0;
+          for (const item of items) {
+            sum += item;
+          }
+          return sum;
+        }, [items]);
+        return <div>{value}</div>;
+      }
+    `,
+    // Ported from https://github.com/oxc-project/oxc/issues/26090
+    // Computed property destructuring inside a hook crashed oxlint's compiler-based
+    // react linter with an internal invariant ([InferMutationAliasingEffects] Expected
+    // value kind to be initialized); the issue was closed as upstream parity (the
+    // official compiler has the same limitation), i.e. this is legal user code.
+    // Our rules are AST-based, so the assertion is: no crash, no report.
+    tsx`
+      import { useMemo, useState } from 'react';
+
+      const Key = { Compact: 'compact' } as const;
+
+      export const useExample = () => {
+        const [settings] = useState<Record<string, string>>({});
+        const { [Key.Compact]: value } = settings;
+
+        return useMemo(() => value ?? '', [value]);
+      };
+    `,
+    // Returns scattered across try/catch, switch cases, and nested blocks all
+    // count as the callback's own returns
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ kind, data }) {
+        const value = useMemo(() => {
+          try {
+            switch (kind) {
+              case "a": {
+                if (data) {
+                  return { nested: data };
+                }
+                return "a";
+              }
+              default: {
+                return "fallback";
+              }
+            }
+          } catch {
+            return "error";
+          }
+        }, [kind, data]);
+        return <div>{value}</div>;
+      }
+    `,
+    // Returns in some branches but falls through in others: the rule only
+    // requires at least one value return, not a return on every path
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ flag }) {
+        const value = useMemo(() => {
+          if (flag) {
+            return 1;
+          } else if (flag === false) {
+            console.log("falls through");
+          }
+        }, [flag]);
+        return <div>{value}</div>;
+      }
+    `,
+    // A nested function's return never satisfies the callback's own return
+    // requirement, but here the callback returns the nested function's result
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const value = useMemo(() => {
+          function helper() {
+            return items.length;
+          }
+          return helper();
+        }, [items]);
+        return <div>{value}</div>;
+      }
+    `,
+    // Boundary contrast: an expression-bodied callback is treated as always
+    // returning a value even though its only ReturnStatement is nested inside
+    // an inner function
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ items }) {
+        const value = useMemo(() => (() => items.length)(), [items]);
+        return <div>{value}</div>;
+      }
+    `,
+    // A void-wrapped result counts as used: UnaryExpression is in the
+    // result-use allow-list
+    tsx`
+      import { useMemo } from "react";
+
+      function Component() {
+        void useMemo(() => 42, []);
+        return <div />;
+      }
+    `,
+    // A result flowing through a comma sequence counts as used:
+    // SequenceExpression is in the result-use allow-list
+    tsx`
+      import { useMemo } from "react";
+
+      function Component() {
+        const x = (useMemo(() => 42, []), 1);
+        return <div>{x}</div>;
+      }
+    `,
+    // An immediately invoked result counts as used: the call's parent is a
+    // CallExpression
+    tsx`
+      import { useMemo } from "react";
+
+      function Component() {
+        const value = useMemo(() => () => 42, [])();
+        return <div>{value}</div>;
+      }
+    `,
+    // A variable declared inside the callback shadows the outer one, so
+    // writing to it is not an outer-variable reassignment
+    tsx`
+      import { useMemo } from "react";
+
+      function Component({ x }) {
+        const value = useMemo(() => {
+          let x = 1;
+          x = 2;
+          return x;
+        }, []);
+        return <div>{value}</div>;
+      }
+    `,
+  ],
+});

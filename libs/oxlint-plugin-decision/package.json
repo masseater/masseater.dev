@@ -1,0 +1,75 @@
+{
+  "name": "@r_masseater/oxlint-plugin-decision",
+  "version": "0.3.0",
+  "description": "Oxlint JS plugin that lints code with plain-English rules answered by decision models on OpenRouter.",
+  "keywords": [
+    "decision-model",
+    "lint",
+    "openrouter",
+    "oxlint",
+    "oxlint-plugin",
+    "tanstack-intent"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/oxlint-plugin-decision#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/oxlint-plugin-decision"
+  },
+  "files": [
+    "dist",
+    "skills/write-decision-rules"
+  ],
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./openrouter-app": "./src/openrouter-app.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "./openrouter-app": {
+        "types": "./dist/openrouter-app.d.mts",
+        "default": "./dist/openrouter-app.mjs"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@openrouter/sdk": "catalog:",
+    "effect": "catalog:stack",
+    "synckit": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/tsgo": "catalog:stack",
+    "@effect/vitest": "catalog:",
+    "@oxlint/plugins": "catalog:",
+    "@types/node": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "oxlint": ">=1.87.0"
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}

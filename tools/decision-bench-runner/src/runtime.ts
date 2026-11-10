@@ -206,7 +206,11 @@ const benchLayer = Layer.effect(Opus, makeOpus).pipe(
 );
 
 const runBench = <Failure>(
-  program: Effect.Effect<void, Failure, Opus | BenchStore | Scope.Scope>,
+  program: Effect.Effect<
+    void,
+    Failure,
+    Opus | BenchStore | FileSystem.FileSystem | Path.Path | Scope.Scope
+  >,
 ): void => {
   NodeRuntime.runMain(
     Layer.build(benchLayer).pipe(
@@ -216,4 +220,5 @@ const runBench = <Failure>(
   );
 };
 
+/** @internal */
 export { Opus, runBench };

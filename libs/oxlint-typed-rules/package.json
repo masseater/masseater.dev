@@ -1,0 +1,158 @@
+{
+  "name": "@r_masseater/oxlint-typed-rules",
+  "version": "0.3.0",
+  "description": "Run ESLint rules that need type information as oxlint JS plugins on TypeScript 7, including TanStack Start's React Server Component rules, TanStack Query, TanStack Router, Drizzle, Remotion and ESLint React.",
+  "keywords": [
+    "drizzle",
+    "eslint",
+    "eslint-react",
+    "oxlint",
+    "oxlint-plugin",
+    "react",
+    "remotion",
+    "tanstack-query",
+    "tanstack-router",
+    "tanstack-start",
+    "typescript"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/oxlint-typed-rules#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/oxlint-typed-rules"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./drizzle": "./src/drizzle.ts",
+    "./react": "./src/react.ts",
+    "./remotion": "./src/remotion.ts",
+    "./tanstack-query": "./src/tanstack-query.ts",
+    "./tanstack-router": "./src/tanstack-router.ts",
+    "./tanstack-start": "./src/tanstack-start.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "./drizzle": {
+        "types": "./dist/drizzle.d.mts",
+        "default": "./dist/drizzle.mjs"
+      },
+      "./react": {
+        "types": "./dist/react.d.mts",
+        "default": "./dist/react.mjs"
+      },
+      "./remotion": {
+        "types": "./dist/remotion.d.mts",
+        "default": "./dist/remotion.mjs"
+      },
+      "./tanstack-query": {
+        "types": "./dist/tanstack-query.d.mts",
+        "default": "./dist/tanstack-query.mjs"
+      },
+      "./tanstack-router": {
+        "types": "./dist/tanstack-router.d.mts",
+        "default": "./dist/tanstack-router.mjs"
+      },
+      "./tanstack-start": {
+        "types": "./dist/tanstack-start.d.mts",
+        "default": "./dist/tanstack-start.mjs"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@eslint-react/eslint-plugin": "catalog:",
+    "@r_masseater/vite-plus-adopt": "workspace:*",
+    "@remotion/eslint-plugin": "catalog:",
+    "@size-limit/file": "catalog:",
+    "@tanstack/eslint-plugin-query": "catalog:",
+    "@tanstack/eslint-plugin-router": "catalog:",
+    "@tanstack/eslint-plugin-start": "catalog:",
+    "@tsconfig/strictest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "19.3.0",
+    "@typescript-eslint/parser": "catalog:",
+    "@typescript-eslint/types": "catalog:",
+    "@typescript-eslint/typescript-estree": "catalog:",
+    "@typescript-eslint/utils": "catalog:",
+    "combinate": "catalog:",
+    "dedent": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-drizzle": "catalog:",
+    "publint": "catalog:",
+    "size-limit": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "typescript": ">=7.1.0-beta"
+  },
+  "size-limit": [
+    {
+      "name": "react",
+      "path": "dist/react.mjs",
+      "limit": "169098 B"
+    },
+    {
+      "name": "tanstack-query",
+      "path": "dist/tanstack-query.mjs",
+      "limit": "11826 B"
+    },
+    {
+      "name": "tanstack-router",
+      "path": "dist/tanstack-router.mjs",
+      "limit": "3427 B"
+    },
+    {
+      "name": "drizzle",
+      "path": "dist/drizzle.mjs",
+      "limit": "2174 B"
+    },
+    {
+      "name": "remotion",
+      "path": "dist/remotion.mjs",
+      "limit": "5267 B"
+    },
+    {
+      "name": "core",
+      "path": [
+        "dist/*.mjs",
+        "!dist/react.mjs",
+        "!dist/tanstack-query.mjs",
+        "!dist/tanstack-router.mjs",
+        "!dist/drizzle.mjs",
+        "!dist/remotion.mjs"
+      ],
+      "limit": "30119 B"
+    }
+  ],
+  "engines": {
+    "node": ">=26"
+  }
+}

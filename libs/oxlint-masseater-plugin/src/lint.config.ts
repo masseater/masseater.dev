@@ -193,6 +193,11 @@ const generated = [
   "tools/pod-rattle-parity/engine.gen.js",
   "**/*.d.rpp.ts",
   "**/src-tauri/gen/**",
+  "libs/oxlint-typed-rules/upstream/src/__tests__/**",
+  "libs/oxlint-typed-rules/upstream/react/**",
+  "libs/oxlint-typed-rules/upstream/{tanstack-*,drizzle,remotion}/**",
+  "libs/vite-plus-adopt/upstream/**",
+  "libs/oxlint-plugin-decision*/example/**",
 ];
 
 const asErrors = (names: readonly string[]): Readonly<Record<string, "error">> =>

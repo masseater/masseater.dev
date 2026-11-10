@@ -1,0 +1,41 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src", "tests", "*.ts"],
+  "compilerOptions": {
+    "types": ["node"],
+    "declaration": true,
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/platform-node-shared/NodeCrypto#layerDigest",
+          "@effect/platform-node/NodeHttpServer#layerTest",
+          "@effect/platform-node/NodeServices#layer",
+          "@effect/vitest#layer",
+          "@effect/vitest/utils#assertInclude",
+          "@effect/vitest/utils#deepStrictEqual",
+          "@effect/vitest/utils#strictEqual",
+          "@effect/vitest/utils#throws",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/PlatformError#PlatformError",
+          "effect/crypto/Digest#Digest",
+          "effect/crypto/Digest#sha256",
+          "effect/http/FetchHttpClient#layer",
+          "effect/http/HttpRouter#add",
+          "effect/http/HttpServerError#HttpServerError",
+          "effect/http/HttpServerError#ServeError",
+          "effect/http/HttpRouter#serve",
+          "effect/http/HttpServer#addressFormattedWith",
+          "effect/http/HttpServerRequest#HttpServerRequest",
+          "effect/http/HttpServerResponse#HttpServerResponse",
+          "effect/http/HttpServerResponse#jsonUnsafe",
+          "effect/observability/OtlpSerialization#layerJson",
+          "effect/observability/OtlpTracer#layerFromConfig",
+          "effect/process/ChildProcess#make",
+          "effect/process/ChildProcessSpawner#ChildProcessSpawner"
+        ]
+      }
+    ]
+  }
+}

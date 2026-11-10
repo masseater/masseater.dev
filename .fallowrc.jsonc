@@ -1,7 +1,32 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "production": true,
-  "dynamicallyLoaded": ["**/*.d.rpp.ts", "libs/workers-tracing/src/fixture/*.worker.ts"],
+  "dynamicallyLoaded": [
+    "**/*.d.rpp.ts",
+    "libs/workers-tracing/src/fixture/*.worker.ts",
+    "libs/oxlint-plugin-decision/src/openrouter-worker.ts",
+    "libs/oxlint-typed-rules/src/ts-api-utils.ts",
+    "libs/oxlint-typed-rules/src/ts-compat.ts",
+    "libs/oxlint-typed-rules/src/typescript-eslint-utils.ts",
+    "libs/vite-plus-adopt/src/attw/compiler-hosts.ts",
+    "libs/vite-plus-adopt/src/attw/typescript.ts",
+    "libs/vite-plus-adopt/src/fsd-typescript.ts",
+  ],
+  "usedClassMembers": [
+    { "implements": "LegacySymbol", "members": ["getName", "getDeclarations"] },
+    {
+      "implements": "LegacyType",
+      "members": [
+        "symbol",
+        "aliasSymbol",
+        "types",
+        "getSymbol",
+        "getProperty",
+        "getProperties",
+        "getCallSignatures",
+      ],
+    },
+  ],
   "ignoreExports": [
     { "file": "libs/vitest-otlp/src/generated/**", "exports": ["*"] },
     { "file": "libs/workers-tracing/src/tanstack-start.plain.ts", "exports": ["traceServerFn"] },
@@ -12,6 +37,32 @@
   "ignoreDependencies": ["@effect/language-service"],
   "workspaces": {
     "settings": {
+      "libs/oxlint-typed-rules": {
+        "ignoreDependencies": [
+          "@tsconfig/strictest",
+          "@types/react",
+          "@typescript-eslint/parser",
+          "@typescript-eslint/types",
+          "@typescript-eslint/typescript-estree",
+          "combinate",
+          "dedent",
+          "publint",
+        ],
+      },
+      "libs/vite-plus-adopt": {
+        "ignoreDependencies": [
+          "@andrewbranch/untar.js",
+          "@feature-sliced/filesystem",
+          "@loaderkit/resolve",
+          "cjs-module-lexer",
+          "fastest-levenshtein",
+          "fflate",
+          "pluralize",
+          "tsconfck",
+          "validate-npm-package-name",
+          "web-tree-sitter",
+        ],
+      },
       "apps/labs": {
         "ignoreDependencies": [
           "@fontsource/dela-gothic-one",
@@ -47,6 +98,9 @@
     ".claude/**",
     "apps/aredoko-unity/**",
     "apps/zenn-articles/**",
+    "libs/oxlint-plugin-decision*/example/**",
+    "libs/oxlint-typed-rules/upstream/{react,tanstack-query,tanstack-router,drizzle,remotion}/**",
+    "libs/vite-plus-adopt/upstream/**",
     "tools/mosaic/**",
     "tools/seikin-dance/**",
   ],

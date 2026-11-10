@@ -1,3 +1,5 @@
+import { lintToolReadonlyAllow } from "./readonly-lint-tools.config.ts";
+
 const WEBGPU_HANDLES: readonly string[] = [
   "GPUDevice",
   "GPUCanvasContext",
@@ -145,7 +147,7 @@ const readonlyParameterAllow = [
     ],
   },
   { from: "package" as const, package: "@codemirror/autocomplete", name: "CompletionContext" },
-  { from: "package" as const, package: "@oxlint/plugins", name: ["Context", "Node", "RuleMeta"] },
+  ...lintToolReadonlyAllow,
   {
     from: "package" as const,
     package: "react",

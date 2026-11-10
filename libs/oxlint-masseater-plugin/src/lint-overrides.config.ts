@@ -58,7 +58,13 @@ const pluginEntryOverrides: {
     },
   },
   {
-    files: ["libs/textlint-rule-no-taigendome/src/index.ts"],
+    files: [
+      "libs/textlint-rule-no-taigendome/src/index.ts",
+      "libs/oxlint-plugin-decision/src/index.ts",
+      "libs/oxlint-plugin-decision-presets/src/*.ts",
+      "libs/oxlint-typed-rules/src/{drizzle,react,remotion,tanstack-query,tanstack-router,tanstack-start,ts-compat}.ts",
+      "libs/vite-plus-adopt/src/{attw/typescript,fsd,fsd-typescript}.ts",
+    ],
     rules: { "import/no-default-export": "off" },
   },
 ];

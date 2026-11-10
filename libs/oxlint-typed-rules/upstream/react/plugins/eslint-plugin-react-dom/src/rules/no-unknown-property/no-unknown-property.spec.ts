@@ -1,0 +1,1045 @@
+// Ported from https://github.com/jsx-eslint/eslint-plugin-react/blob/master/tests/lib/rules/no-unknown-property.js
+import tsx from "dedent";
+
+import { ruleTester } from "@local/testkit";
+import rule, { RULE_NAME } from "./no-unknown-property";
+
+ruleTester.run(RULE_NAME, rule, {
+  invalid: [
+    {
+      code: '<div abc="should not be allowed property"></div>;',
+      errors: [
+        {
+          data: {
+            name: "abc",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    {
+      code: '<div someProp="bar"></div>;',
+      errors: [
+        {
+          data: {
+            name: "someProp",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    {
+      code: '<div aria-fake="should not be allowed property"></div>;',
+      errors: [
+        {
+          data: {
+            name: "aria-fake",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    // Non-data dashed attribute
+    {
+      code: '<div foo-bar="baz" />',
+      errors: [{
+        data: { name: "foo-bar" },
+        messageId: "unknown-prop",
+      }],
+    },
+    // kebab-case SVG attribute gets fixed to the React camelCase name
+    {
+      code: '<svg rendering-intent="auto" />;',
+      errors: [
+        {
+          data: {
+            name: "rendering-intent",
+            standardName: "renderingIntent",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<svg renderingIntent="auto" />;',
+    },
+    // All-lowercase variant: `getStandardName` matches DOM property names
+    // case-insensitively, so it is reported and fixed to `renderingIntent`
+    {
+      code: '<svg renderingintent="auto" />;',
+      errors: [
+        {
+          data: {
+            name: "renderingintent",
+            standardName: "renderingIntent",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<svg renderingIntent="auto" />;',
+    },
+    {
+      code: '<div data-xml-anything="invalid" />',
+      errors: [
+        {
+          data: {
+            name: "data-xml-anything",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    {
+      code: '<div hasOwnProperty="should not be allowed property"></div>;',
+      errors: [
+        {
+          data: {
+            name: "hasOwnProperty",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    {
+      code: '<div class="bar"></div>;',
+      errors: [
+        {
+          data: {
+            name: "class",
+            standardName: "className",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<div className="bar"></div>;',
+    },
+    {
+      code: '<div for="bar"></div>;',
+      errors: [
+        {
+          data: {
+            name: "for",
+            standardName: "htmlFor",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<div htmlFor="bar"></div>;',
+    },
+    {
+      code: '<div onclick="bar"></div>;',
+      errors: [
+        {
+          data: {
+            name: "onclick",
+            standardName: "onClick",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<div onClick="bar"></div>;',
+    },
+    {
+      code: '<div onmousedown="bar"></div>;',
+      errors: [
+        {
+          data: {
+            name: "onmousedown",
+            standardName: "onMouseDown",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<div onMouseDown="bar"></div>;',
+    },
+    {
+      code: '<div onMousedown="bar"></div>;',
+      errors: [
+        {
+          data: {
+            name: "onMousedown",
+            standardName: "onMouseDown",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<div onMouseDown="bar"></div>;',
+    },
+    {
+      code: '<div accept-charset="bar"></div>;',
+      errors: [
+        {
+          data: {
+            name: "accept-charset",
+            standardName: "acceptCharset",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<div acceptCharset="bar"></div>;',
+    },
+    {
+      code: '<div http-equiv="bar"></div>;',
+      errors: [
+        {
+          data: {
+            name: "http-equiv",
+            standardName: "httpEquiv",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<div httpEquiv="bar"></div>;',
+    },
+    {
+      code: '<div accesskey="bar"></div>;',
+      errors: [
+        {
+          data: {
+            name: "accesskey",
+            standardName: "accessKey",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<div accessKey="bar"></div>;',
+    },
+    {
+      code: "<div crossorigin />",
+      errors: [
+        {
+          data: {
+            name: "crossorigin",
+            standardName: "crossOrigin",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: "<div crossOrigin />",
+    },
+    {
+      code: "<script crossorigin nomodule />",
+      errors: [
+        {
+          data: {
+            name: "crossorigin",
+            standardName: "crossOrigin",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+        {
+          data: {
+            name: "nomodule",
+            standardName: "noModule",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: "<script crossOrigin noModule />",
+    },
+    {
+      code: '<use xlink:href="bar" />;',
+      errors: [
+        {
+          data: {
+            name: "xlink:href",
+            standardName: "xlinkHref",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<use xlinkHref="bar" />;',
+    },
+    {
+      code: '<rect clip-path="bar" />;',
+      errors: [
+        {
+          data: {
+            name: "clip-path",
+            standardName: "clipPath",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<rect clipPath="bar" />;',
+    },
+    {
+      code: "<div crossOrigin />",
+      errors: [
+        {
+          data: {
+            name: "crossOrigin",
+            allowedTags: "script, img, video, audio, link, image",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: "<div onLoad={this.load} />",
+      errors: [
+        {
+          data: {
+            name: "onLoad",
+            allowedTags: "script, img, link, picture, iframe, object, source, body",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div download="foo" />',
+      errors: [
+        {
+          data: {
+            name: "download",
+            allowedTags: "a, area",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div as="audio" />',
+      errors: [
+        {
+          data: {
+            name: "as",
+            allowedTags: "link",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div abbr="abbr" />',
+      errors: [
+        {
+          data: {
+            name: "abbr",
+            allowedTags: "th, td",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div webkitDirectory="" />',
+      errors: [
+        {
+          data: {
+            name: "webkitDirectory",
+            allowedTags: "input",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div webkitdirectory="" />',
+      errors: [
+        {
+          data: {
+            name: "webkitdirectory",
+            allowedTags: "input",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div imageSrcSet="someImageSrcSet" />',
+      errors: [
+        {
+          data: {
+            name: "imageSrcSet",
+            allowedTags: "link",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div imageSizes="someImageSizes" />',
+      errors: [
+        {
+          data: {
+            name: "imageSizes",
+            allowedTags: "link",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div fill="pink" />',
+      errors: [
+        {
+          data: {
+            name: "fill",
+            allowedTags:
+              "altGlyph, circle, ellipse, g, line, marker, mask, path, polygon, polyline, rect, svg, symbol, text, textPath, tref, tspan, use, animate, animateColor, animateMotion, animateTransform, set",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div precedence="medium" />',
+      errors: [
+        {
+          data: {
+            name: "precedence",
+            allowedTags: "link, style",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div blocking="render" />',
+      errors: [
+        {
+          data: {
+            name: "blocking",
+            allowedTags: "link, script, style",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code:
+        "<div onAbort={this.abort} onDurationChange={this.durationChange} onEmptied={this.emptied} onEnded={this.end} onResize={this.resize} onError={this.error} />",
+      errors: [
+        {
+          data: {
+            name: "onAbort",
+            allowedTags: "audio, video",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+        {
+          data: {
+            name: "onDurationChange",
+            allowedTags: "audio, video",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+        {
+          data: {
+            name: "onEmptied",
+            allowedTags: "audio, video",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+        {
+          data: {
+            name: "onEnded",
+            allowedTags: "audio, video",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+        {
+          data: {
+            name: "onResize",
+            allowedTags: "audio, video",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+        {
+          data: {
+            name: "onError",
+            allowedTags: "audio, video, img, link, source, script, picture, iframe",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: "<div controls={this.controls} loop={true} muted={false} src={this.videoSrc} playsInline={true} allowFullScreen></div>",
+      errors: [
+        {
+          data: {
+            name: "controls",
+            allowedTags: "audio, video",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+        {
+          data: {
+            name: "loop",
+            allowedTags: "audio, video",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+        {
+          data: {
+            name: "muted",
+            allowedTags: "audio, video",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+        {
+          data: {
+            name: "playsInline",
+            allowedTags: "video",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+        {
+          data: {
+            name: "allowFullScreen",
+            allowedTags: "iframe, video",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: '<div data-testID="bar" data-under_sCoRe="bar" dataNotAnDataAttribute="yes" />;',
+      errors: [
+        {
+          data: {
+            name: "data-testID",
+            lowerCaseName: "data-testid",
+          },
+          messageId: "data-lowercase-required",
+        },
+        {
+          data: {
+            name: "data-under_sCoRe",
+            lowerCaseName: "data-under_score",
+          },
+          messageId: "data-lowercase-required",
+        },
+        {
+          data: {
+            name: "dataNotAnDataAttribute",
+            lowerCaseName: "datanotandataattribute",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+      options: [{ requireDataLowercase: true }],
+    },
+    {
+      code: '<App data-testID="bar" data-under_sCoRe="bar" dataNotAnDataAttribute="yes" />;',
+      errors: [
+        {
+          data: {
+            name: "data-testID",
+            lowerCaseName: "data-testid",
+          },
+          messageId: "data-lowercase-required",
+        },
+        {
+          data: {
+            name: "data-under_sCoRe",
+            lowerCaseName: "data-under_score",
+          },
+          messageId: "data-lowercase-required",
+        },
+      ],
+      options: [{ requireDataLowercase: true }],
+    },
+    {
+      code: '<style precedence="default">{`body { color: red; }`}</style>',
+      settings: {
+        "react-x": {
+          version: "18.3.1",
+        },
+      },
+      errors: [
+        {
+          data: {
+            name: "precedence",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    {
+      code: '<script blocking="render" />',
+      settings: {
+        "react-x": {
+          version: "18.3.1",
+        },
+      },
+      errors: [
+        {
+          data: {
+            name: "blocking",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    // React 19.3 properties are unknown under older React versions
+    {
+      code: "<div onFullscreenChange={handler} />",
+      settings: {
+        "react-x": {
+          version: "19.2.0",
+        },
+      },
+      errors: [
+        {
+          data: {
+            name: "onFullscreenChange",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    {
+      code: '<iframe credentialless src="https://example.com" />',
+      settings: {
+        "react-x": {
+          version: "19.2.0",
+        },
+      },
+      errors: [
+        {
+          data: {
+            name: "credentialless",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    {
+      code: '<mask maskType="alpha" />',
+      settings: {
+        "react-x": {
+          version: "19.2.0",
+        },
+      },
+      errors: [
+        {
+          data: {
+            name: "maskType",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    // No `maskType` hint before React 19.3
+    {
+      code: '<mask mask-type="alpha" />',
+      settings: {
+        "react-x": {
+          version: "19.2.0",
+        },
+      },
+      errors: [
+        {
+          data: {
+            name: "mask-type",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    },
+    // React 19.3: `credentialless` is only allowed on `iframe`
+    {
+      code: "<div credentialless />",
+      settings: {
+        "react-x": {
+          version: "19.3.0",
+        },
+      },
+      errors: [
+        {
+          data: {
+            name: "credentialless",
+            allowedTags: "iframe",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    // React 19.3: React warns on `credentialLess`, the standard name is lowercase
+    {
+      code: '<iframe credentialLess src="https://example.com" />',
+      settings: {
+        "react-x": {
+          version: "19.3.0",
+        },
+      },
+      errors: [
+        {
+          data: {
+            name: "credentialLess",
+            standardName: "credentialless",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<iframe credentialless src="https://example.com" />',
+    },
+    // React 19.3: `mask-type` gets a casing hint to `maskType`
+    {
+      code: '<mask mask-type="alpha" />',
+      settings: {
+        "react-x": {
+          version: "19.3.0",
+        },
+      },
+      errors: [
+        {
+          data: {
+            name: "mask-type",
+            standardName: "maskType",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: '<mask maskType="alpha" />',
+    },
+    {
+      code: "<div onfullscreenchange={handler} />",
+      settings: {
+        "react-x": {
+          version: "19.3.0",
+        },
+      },
+      errors: [
+        {
+          data: {
+            name: "onfullscreenchange",
+            standardName: "onFullscreenChange",
+          },
+          messageId: "unknown-prop-with-standard-name",
+        },
+      ],
+      output: "<div onFullscreenChange={handler} />",
+    },
+    // `closedby` is only allowed on `dialog`
+    {
+      code: '<div closedby="any" />',
+      errors: [
+        {
+          data: {
+            name: "closedby",
+            allowedTags: "dialog",
+            tagName: "div",
+          },
+          messageId: "invalid-prop-on-tag",
+        },
+      ],
+    },
+    {
+      code: tsx`
+      <div className="App" data-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash:c="customValue">
+        Hello, world!
+      </div>
+    `,
+      errors: [
+        {
+          data: {
+            name:
+              "data-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash:c",
+          },
+          messageId: "unknown-prop",
+        },
+      ],
+    }, // Boundary: JSXAttribute with empty expression container should still be checked
+    {
+      code: "<div class={}></div>",
+      errors: [{
+        data: { name: "class", standardName: "className" },
+        messageId: "unknown-prop-with-standard-name",
+      }],
+      output: "<div className={}></div>",
+    },
+  ],
+  valid: [
+    // Some HTML/DOM elements with common attributes should work
+    { code: '<div className="bar"></div>;' },
+    { code: "<div onMouseDown={this._onMouseDown}></div>;" },
+    { code: '<a href="someLink" download="foo">Read more</a>' },
+    { code: '<area download="foo" />' },
+    { code: '<img src="cat_keyboard.jpeg" alt="A cat sleeping on a keyboard" align="top" fetchPriority="high" />' },
+    { code: '<input type="password" required />' },
+    { code: '<input ref={this.input} type="radio" />' },
+    { code: '<input type="file" webkitdirectory="" />' },
+    { code: '<input type="file" webkitDirectory="" />' },
+    { code: '<div inert children="anything" />' },
+    { code: '<iframe scrolling="?" onLoad={a} onError={b} align="top" />' },
+    { code: '<input key="bar" type="radio" />' },
+    { code: "<button disabled>You cannot click me</button>;" },
+    {
+      code:
+        '<svg key="lock" viewBox="box" fill={10} d="d" stroke={1} strokeWidth={2} strokeLinecap={3} strokeLinejoin={4} transform="something" clipRule="else" x1={5} x2="6" y1="7" y2="8"></svg>',
+    },
+    { code: '<g fill="#7B82A0" fillRule="evenodd"></g>' },
+    { code: '<mask fill="#7B82A0"></mask>' },
+    { code: '<symbol fill="#7B82A0"></symbol>' },
+    // React's camelCase name for the SVG 'rendering-intent' attribute
+    { code: '<svg renderingIntent="auto" />' },
+    // `renderingIntent` is listed in DOM_PROPERTY_NAMES_TWO_WORDS without a per-tag
+    // restriction (no ATTRIBUTE_TAGS_MAP entry), so the rule also accepts it on
+    // non-SVG elements even though it is only meaningful on SVG
+    { code: '<div renderingIntent="auto" />' },
+    { code: '<meta property="og:type" content="website" />' },
+    { code: '<input type="checkbox" checked={checked} disabled={disabled} id={id} onChange={onChange} />' },
+    { code: "<video playsInline />" },
+    { code: "<img onError={foo} onLoad={bar} />" },
+    { code: "<picture inert={false} onError={foo} onLoad={bar} />" },
+    { code: "<iframe onError={foo} onLoad={bar} />" },
+    { code: "<script onLoad={bar} onError={foo} />" },
+    { code: "<source onLoad={bar} onError={foo} />" },
+    { code: "<link onLoad={bar} onError={foo} />" },
+    {
+      code: '<link rel="preload" as="image" href="someHref" imageSrcSet="someImageSrcSet" imageSizes="someImageSizes" />',
+    },
+    { code: "<object onLoad={bar} />" },
+    { code: "<video allowFullScreen webkitAllowFullScreen mozAllowFullScreen />" },
+    { code: "<iframe allowFullScreen webkitAllowFullScreen mozAllowFullScreen />" },
+    { code: '<table border="1" />' },
+    { code: '<th abbr="abbr" />' },
+    { code: '<td abbr="abbr" />' },
+    // Standard HTML attributes
+    {
+      code: '<div role="button" />',
+    },
+    {
+      code: "<div tabIndex={0} />",
+    },
+    {
+      code: "<div contentEditable />",
+    },
+    // aria-* attributes should work
+    { code: '<button aria-haspopup="true">Click me to open pop up</button>;' },
+    { code: '<button aria-label="Close" onClick={someThing.close} />;' },
+    // data-* attributes should work
+    { code: '<div data-foo="bar"></div>;' },
+    { code: '<div data-foo-bar="baz"></div>;' },
+    { code: '<div data-parent="parent"></div>;' },
+    { code: '<div data-index-number="1234"></div>;' },
+    { code: '<div data-e2e-id="5678"></div>;' },
+    { code: '<div data-testID="bar" data-under_sCoRe="bar" />;' },
+    {
+      code: '<div data-testID="bar" data-under_sCoRe="bar" />;',
+      options: [{ requireDataLowercase: false }],
+    },
+    // React related attributes
+    { code: "<div onPointerDown={this.onDown} onPointerUp={this.onUp} />" },
+    { code: '<input type="checkbox" defaultChecked={this.state.checkbox} />' },
+    {
+      code:
+        "<div onTouchStart={this.startAnimation} onTouchEnd={this.stopAnimation} onTouchCancel={this.cancel} onTouchMove={this.move} onMouseMoveCapture={this.capture} onTouchCancelCapture={this.log} />",
+    },
+    //
+    // React components and their props/attributes should be fine
+    { code: '<App class="bar" />;' },
+    { code: '<App for="bar" />;' },
+    { code: '<App someProp="bar" />;' },
+    { code: '<Foo.bar for="bar" />;' },
+    { code: '<App accept-charset="bar" />;' },
+    { code: '<App http-equiv="bar" />;' },
+    {
+      code: '<App xlink:href="bar" />;',
+    },
+    { code: '<App clip-path="bar" />;' },
+    {
+      code: '<App dataNotAnDataAttribute="yes" />;',
+      options: [{ requireDataLowercase: true }],
+    },
+    // Attributes on allowed elements should work
+    { code: "<script crossOrigin noModule />" },
+    { code: "<audio crossOrigin />" },
+    { code: "<svg focusable><image crossOrigin /></svg>" },
+    { code: "<details onToggle={this.onToggle}>Some details</details>" },
+    {
+      code: '<path fill="pink" d="M 10,30 A 20,20 0,0,1 50,30 A 20,20 0,0,1 90,30 Q 90,60 50,90 Q 10,60 10,30 z"></path>',
+    },
+    { code: '<line fill="pink" x1="0" y1="80" x2="100" y2="20"></line>' },
+    { code: '<link as="audio">Audio content</link>' },
+    { code: '<link rel="stylesheet" href="styles.css" precedence="medium" />' },
+    { code: '<style href="style.css" precedence="default">{`body { color: red; }`}</style>' },
+    { code: '<script async src="script.js" blocking="render" />' },
+    {
+      code:
+        '<video controlsList="nodownload" controls={this.controls} loop={true} muted={false} src={this.videoSrc} playsInline={true} onResize={this.onResize}></video>',
+    },
+    {
+      code:
+        '<audio controlsList="nodownload" controls={this.controls} crossOrigin="anonymous" disableRemotePlayback loop muted preload="none" src="something" onAbort={this.abort} onDurationChange={this.durationChange} onEmptied={this.emptied} onEnded={this.end} onError={this.error} onResize={this.onResize}></audio>',
+    },
+    {
+      code: '<marker id={markerId} viewBox="0 0 2 2" refX="1" refY="1" markerWidth="1" markerHeight="1" orient="auto" />',
+    },
+    { code: '<pattern id="pattern" viewBox="0,0,10,10" width="10%" height="10%" />' },
+    { code: '<symbol id="myDot" width="10" height="10" viewBox="0 0 2 2" />' },
+    { code: '<view id="one" viewBox="0 0 100 100" />' },
+    { code: '<hr align="top" />' },
+    { code: '<applet align="top" />' },
+    { code: '<marker fill="#000" />' },
+    { code: '<dialog onClose={handler} open id="dialog" returnValue="something" onCancel={handler2} />' },
+    { code: '<dialog closedby="any" />' },
+    { code: '<template shadowrootmode="open" shadowrootclonable shadowrootdelegatesfocus shadowrootserializable />' },
+    { code: "<div onScrollEnd={handler} onScrollEndCapture={handler} />" },
+    { code: "<body onLoad={handler} />" },
+    // React 19.3: fullscreen change/error events
+    {
+      code: "<div onFullscreenChange={handler} onFullscreenError={handler} />",
+      settings: {
+        "react-x": {
+          version: "19.3.0",
+        },
+      },
+    },
+    {
+      code: "<div onFullscreenChangeCapture={handler} onFullscreenErrorCapture={handler} />",
+      settings: {
+        "react-x": {
+          version: "19.3.0",
+        },
+      },
+    },
+    // React 19.3: `credentialless` on `iframe`
+    {
+      code: '<iframe credentialless src="https://example.com" />',
+      settings: {
+        "react-x": {
+          version: "19.3.0",
+        },
+      },
+    },
+    // React 19.3: `maskType` on SVG `<mask>`
+    {
+      code: '<mask maskType="alpha" />',
+      settings: {
+        "react-x": {
+          version: "19.3.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        <table align="top">
+          <caption align="top">Table Caption</caption>
+          <colgroup valign="top" align="top">
+            <col valign="top" align="top"/>
+          </colgroup>
+          <thead valign="top" align="top">
+            <tr valign="top" align="top">
+              <th valign="top" align="top">Header</th>
+              <td valign="top" align="top">Cell</td>
+            </tr>
+          </thead>
+          <tbody valign="top" align="top" />
+          <tfoot valign="top" align="top" />
+        </table>
+      `,
+    },
+    // Case ignored attributes, for `charset` discussion see https://github.com/jsx-eslint/eslint-plugin-react/pull/1863
+    { code: '<meta charset="utf-8" />;' },
+    { code: '<meta charSet="utf-8" />;' },
+    // Some custom web components that are allowed to use `class` instead of `className`
+    { code: '<div class="foo" is="my-elem"></div>;' },
+    { code: '<div {...this.props} class="foo" is="my-elem"></div>;' },
+    { code: '<atom-panel class="foo"></atom-panel>;' },
+    // Ignoring should work
+    {
+      code: '<div class="bar"></div>;',
+      options: [{ ignore: ["class"] }],
+    },
+    {
+      code: '<div someProp="bar"></div>;',
+      options: [{ ignore: ["someProp"] }],
+    },
+    {
+      code: "<div css={{flex: 1}}></div>;",
+      options: [{ ignore: ["css"] }],
+    },
+    // fbt
+    { code: '<fbt desc="foo" doNotExtract />;' },
+    // fbs
+    { code: '<fbs desc="foo" doNotExtract />;' },
+    { code: '<math displaystyle="true" />;' },
+    {
+      code: tsx`
+        <div className="App" data-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash-crash="customValue">
+          Hello, world!
+        </div>
+      `,
+    },
+    {
+      code: tsx`
+        <div>
+          <button popovertarget="my-popover" popovertargetaction="toggle">Open Popover</button>
+
+          <div popover id="my-popover">Greetings, one and all!</div>
+        </div>
+      `,
+      settings: {
+        "react-x": {
+          version: "18.3.1",
+        },
+      },
+    },
+    {
+      code: tsx`
+        <div>
+          <button popoverTarget="my-popover" popoverTargetAction="toggle">Open Popover</button>
+
+          <div popover id="my-popover">Greetings, one and all!</div>
+        </div>
+      `,
+      settings: {
+        "react-x": {
+          version: "19.0.0-rc.0",
+        },
+      },
+    },
+    // Boundary: JSXAttribute with no value (boolean attribute shorthand)
+    {
+      code: "<input disabled />",
+    },
+    {
+      code: "<input readOnly />",
+    },
+    {
+      code: "<button disabled>Click</button>",
+    },
+    // Boundary: JSXAttribute with empty expression container
+    {
+      code: "<div data-foo={}></div>",
+    },
+    {
+      code: "<div aria-label={}></div>",
+    },
+    // Boundary: custom component attributes (parent is not HTML tag)
+    {
+      code: '<Foo unknownProp="bar" />',
+    },
+    {
+      code: '<Foo.Bar abc="def" />',
+    },
+  ],
+});

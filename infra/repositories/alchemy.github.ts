@@ -71,6 +71,7 @@ const CREATES: readonly string[] = [];
 const ARCHIVES: ReadonlySet<string> = new Set([
   "aredoko",
   "decision-experiments",
+  "lint-kit",
   "measure-everything",
   "medley-database",
   "mst-ja-decision-bench",

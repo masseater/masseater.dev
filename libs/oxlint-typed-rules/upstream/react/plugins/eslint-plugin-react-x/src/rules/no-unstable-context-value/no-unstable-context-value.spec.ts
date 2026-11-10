@@ -1,0 +1,474 @@
+import tsx from "dedent";
+
+import { ruleTester } from "@local/testkit";
+import rule, { RULE_NAME } from "./no-unstable-context-value";
+
+ruleTester.run(RULE_NAME, rule, {
+  invalid: [
+    {
+      code: tsx`
+          function App() {
+            const foo = {}
+            return <Context.Provider value={foo}></Context.Provider>;
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "object expression",
+          suggestion: "Consider wrapping it in a useMemo hook.",
+        },
+        messageId: "unstable-context-value",
+      }],
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = []
+            return <Context.Provider value={foo}></Context.Provider>
+        }
+      `,
+      errors: [
+        {
+          data: {
+            kind: "array expression",
+            suggestion: "Consider wrapping it in a useMemo hook.",
+          },
+          messageId: "unstable-context-value",
+        },
+      ],
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = () => {}
+            return <Context.Provider value={foo}></Context.Provider>
+        }
+      `,
+      errors: [
+        {
+          data: {
+            kind: "arrow function expression",
+            suggestion: "Consider wrapping it in a useCallback hook.",
+          },
+          messageId: "unstable-context-value",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        function App() {
+            const foo = new Object();
+            return <Context.Provider value={foo}></Context.Provider>
+        }
+      `,
+      errors: [
+        {
+          data: {
+            kind: "new expression",
+            suggestion: "Consider wrapping it in a useMemo hook.",
+          },
+          messageId: "unstable-context-value",
+        },
+      ],
+    },
+    {
+      code: tsx`
+        function App() {
+            const foo = {
+                bar: () => {}
+            }
+            return <Context.Provider value={foo.bar}></Context.Provider>
+        }
+      `,
+      errors: [
+        {
+          data: {
+            kind: "object expression",
+            suggestion: "Consider wrapping it in a useMemo hook.",
+          },
+          messageId: "unstable-context-value",
+        },
+      ],
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = {}
+            return <Context value={foo}></Context>;
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "object expression",
+          suggestion: "Consider wrapping it in a useMemo hook.",
+        },
+        messageId: "unstable-context-value",
+      }],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = []
+            return <ThemeContext value={foo}></ThemeContext>
+        }
+      `,
+      errors: [
+        {
+          data: {
+            kind: "array expression",
+            suggestion: "Consider wrapping it in a useMemo hook.",
+          },
+          messageId: "unstable-context-value",
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = []
+            return <CONTEXT value={foo}></CONTEXT>
+        }
+      `,
+      errors: [
+        {
+          data: {
+            kind: "array expression",
+            suggestion: "Consider wrapping it in a useMemo hook.",
+          },
+          messageId: "unstable-context-value",
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = []
+            return <THEME_CONTEXT value={foo}></THEME_CONTEXT>
+        }
+      `,
+      errors: [
+        {
+          data: {
+            kind: "array expression",
+            suggestion: "Consider wrapping it in a useMemo hook.",
+          },
+          messageId: "unstable-context-value",
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = {}
+            return <Context.Provider value={foo}></Context.Provider>;
+        }
+      `,
+      errors: [
+        {
+          data: {
+            kind: "object expression",
+            suggestion: "Consider wrapping it in a useMemo hook.",
+          },
+          messageId: "unstable-context-value",
+        },
+      ],
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    // Ported from https://github.com/oxc-project/oxc/issues/26575
+    // oxlint (like upstream eslint-plugin-react) misses the React 19 shorthand when the
+    // context is imported; our rule recognizes it via the `*Context` name heuristic
+    {
+      code: tsx`
+        import { ImportedContext } from './context';
+
+        export function Repro() {
+          return (
+            <>
+              <ImportedContext value={{}} />
+              <ImportedContext.Provider value={{}} />
+            </>
+          );
+        }
+      `,
+      errors: [
+        {
+          data: {
+            kind: "object expression",
+            suggestion: "Consider wrapping it in a useMemo hook.",
+          },
+          messageId: "unstable-context-value",
+        },
+        {
+          data: {
+            kind: "object expression",
+            suggestion: "Consider wrapping it in a useMemo hook.",
+          },
+          messageId: "unstable-context-value",
+        },
+      ],
+      settings: {
+        "react-x": {
+          version: "19.0.0",
+        },
+      },
+    },
+    // A class declaration is a per-render construction as well.
+    {
+      code: tsx`
+        function App() {
+          class Foo {}
+          return <Context.Provider value={Foo}></Context.Provider>;
+        }
+      `,
+      errors: [{
+        data: {
+          kind: "class declaration",
+          suggestion: "Consider wrapping it in a useMemo hook.",
+        },
+        messageId: "unstable-context-value",
+      }],
+    },
+  ],
+  valid: [
+    {
+      code: tsx`
+          const foo = {}
+          function App() {
+            return <Context.Provider value={foo}></Context.Provider>;
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    {
+      code: tsx`
+          const foo = []
+          function App() {
+            return <Context.Provider value={foo}></Context.Provider>;
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    {
+      code: tsx`
+          const foo = new Object()
+          function App() {
+            return <Context.Provider value={foo}></Context.Provider>;
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    {
+      code: tsx`
+        const foo = () => {}
+              function App() {
+                  return <Context.Provider value={foo}></Context.Provider>;
+              }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = useMemo(() => ({}), [])
+            return <Context.Provider value={foo}></Context.Provider>
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = useMemo(() => [], [])
+            return <Context.Provider value={foo}></Context.Provider>
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            "use memo";
+            const foo = {}
+            return <Context.Provider value={foo}></Context.Provider>;
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    {
+      code: tsx`
+          "use memo";
+          function App() {
+            const foo = {}
+            return <Context.Provider value={foo}></Context.Provider>;
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = {}
+            return <Context.Provider value={foo}></Context.Provider>;
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "all",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = Boolean({})
+            return <Context.Provider value={foo}></Context.Provider>;
+        }
+      `,
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = {}
+            return <Context value={foo}></Context>;
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+          version: "18.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = []
+            return <ThemeContext value={foo}></ThemeContext>
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+          version: "18.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = []
+            return <CONTEXT value={foo}></CONTEXT>
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+          version: "18.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+          function App() {
+            const foo = []
+            return <THEME_CONTEXT value={foo}></THEME_CONTEXT>
+        }
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+          version: "18.0.0",
+        },
+      },
+    },
+    {
+      code: tsx`
+        const Provider = ({foo, children}: {foo: {}, children: React.ReactNode}) => {
+          return <Context value={foo}>{children}</Context>;
+        };
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+    {
+      code: tsx`
+        const MyContext = React.createContext<string>("");
+
+        export function MyFunctionComponent({ children, x }: { children: React.ReactNode; x: string }) {
+          return <MyContext value={x}>{children}</MyContext>;
+        }
+
+        export const MyConstComponent: React.FunctionComponent<{
+          children: React.ReactNode;
+          x: string;
+        }> = ({ children, x }) => {
+          return <MyContext value={x}>{children}</MyContext>;
+        };
+      `,
+      settings: {
+        "react-x": {
+          compilationMode: "annotation",
+        },
+      },
+    },
+  ],
+});

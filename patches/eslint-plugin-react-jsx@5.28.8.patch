@@ -1,0 +1,18 @@
+diff --git a/dist/index.js b/dist/index.js
+index 50102bb24adb9cc2ad2a3126802e732e1bb7a187..3e7431160dcc91cc5caaa66d3453dd54b46ca50d 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1,3 +1,4 @@
++import { decodeHTMLStrict } from "entities/decode";
+ import { DEFAULT_ESLINT_REACT_SETTINGS } from "@eslint-react/shared";
+ import * as ESLintUtils from "@typescript-eslint/utils/eslint-utils";
+ import * as core from "@eslint-react/core";
+@@ -150,7 +151,7 @@ function create$6(context) {
+ }
+ function getChildrenText(context, attribute) {
+ 	const { value } = attribute;
+-	if (value?.type === AST_NODE_TYPES.Literal) return escapeJSXText(String(value.value));
++	if (value?.type === AST_NODE_TYPES.Literal) return escapeJSXText(decodeHTMLStrict(value.raw.slice(1, -1)));
+ 	if (value?.type === AST_NODE_TYPES.JSXExpressionContainer && value.expression.type !== AST_NODE_TYPES.JSXEmptyExpression) {
+ 		const exprText = getText(context, value.expression);
+ 		return Check.isJSXElementOrFragment(value.expression) ? exprText : `{${exprText}}`;
