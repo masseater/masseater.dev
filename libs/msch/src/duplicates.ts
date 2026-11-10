@@ -79,7 +79,7 @@ const duplicateProblems =
                 line: site.line,
                 column: site.column,
                 rule: "duplicate-value-set",
-                message: `The values ${formatValues(site.values)} are also declared at ${others}. Register one owner with @${OWNER_TAG} and derive the others from it.`,
+                message: `The values ${formatValues(site.values)} are also declared at ${others}. Register one owner with /** @${OWNER_TAG} <concept> */ and derive the others from it.`,
               },
             ];
           }),

@@ -102,6 +102,7 @@ export default defineConfig({
             "oxlint-disable",
             "eslint-disable",
             String.raw`\* @internal \*?$`,
+            String.raw`\* @msch \S+ \*?$`,
             "/usr/bin/env node$",
           ],
         },
@@ -137,6 +138,7 @@ export default defineConfig({
       "node/no-top-level-await": "off",
       "eslint/one-var": ["error", "never"],
       "eslint/id-length": ["error", { exceptions: ["x", "y"] }],
+      "jsdoc/check-tag-names": ["error", { definedTags: ["msch"] }],
       "eslint/no-restricted-imports": ["error", restrictedImports],
       "typescript/prefer-readonly-parameter-types": [
         "error",
