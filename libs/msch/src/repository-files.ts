@@ -30,7 +30,7 @@ class RepositoryFiles extends Context.Service<
     readonly dirname: (file: string) => string;
     readonly basename: (file: string) => string;
   }
->()("@msch/core/repository-files/RepositoryFiles") {}
+>()("@r_masseater/msch/repository-files/RepositoryFiles") {}
 
 const nodeRepositoryFiles = Layer.effect(
   RepositoryFiles,
