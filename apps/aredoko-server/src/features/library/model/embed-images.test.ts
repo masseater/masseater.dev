@@ -1,7 +1,7 @@
 import { expect, layer } from "@effect/vitest";
-import { Array, Effect, Ref, pipe } from "effect";
+import { Array, Effect, MutableRef, Ref, String, Tracer, pipe } from "effect";
 
-import { EMBEDDING } from "#shared/database";
+import { ASSET_ORDER, EMBEDDING } from "#shared/database";
 import { Embedder } from "#shared/embedding";
 
 import { embedImages, retryFailedImages } from "./embed-images.ts";
@@ -17,6 +17,7 @@ import {
 
 const GOOD = 1;
 const FLAKY = 2;
+const MISSHAPEN = 3;
 const BROKEN = 4;
 const KIND_BYTE = 0;
 const UNIT = 1;
@@ -26,6 +27,9 @@ const TWICE = 2;
 const SECOND = 2;
 const THIRD = 3;
 const MANY_STARTS = 4;
+const ONE_BATCH = 8;
+const FOUR_BATCHES = 32;
+const QUERY_TEXT = "db.query.text";
 
 const { done: DONE, failed: FAILED } = EMBEDDING;
 
@@ -96,6 +100,46 @@ const embedAfterAdding = Effect.fn("embedAfterAdding")(function* embedAfterAddin
   yield* embed.pipe(Effect.provideService(Embedder, embedder));
 });
 
+const misshapingEmbedder = embedderOf({
+  embedImages: (pngs) =>
+    vectorsFor(pngs).pipe(
+      Effect.map((vectors) =>
+        pipe(
+          vectors,
+          Array.zip(pngs),
+          Array.map(([vector, image]) => {
+            if (isKind(MISSHAPEN)(image)) {
+              return [UNIT];
+            }
+            return vector;
+          }),
+        ),
+      ),
+    ),
+});
+
+const orderedSelectsIn = Effect.fn("orderedSelectsIn")(function* countOrderedSelects<
+  Failure,
+  Requirements,
+>(run: Effect.Effect<void, Failure, Requirements>) {
+  const spans = MutableRef.make<readonly Tracer.NativeSpan[]>([]);
+  const tracer = Tracer.make({
+    span: (options) => {
+      const span = new Tracer.NativeSpan(options);
+      MutableRef.update(spans, Array.append(span));
+      return span;
+    },
+  });
+  yield* Effect.withTracer(run, tracer);
+  return pipe(
+    MutableRef.get(spans),
+    Array.filter((span) =>
+      pipe(globalThis.String(span.attributes.get(QUERY_TEXT)), String.includes(ASSET_ORDER)),
+    ),
+    Array.length,
+  );
+});
+
 layer(indexInTemporaryFolder, { excludeTestServices: true })(
   "embedImages after a passing failure",
   (it) => {
@@ -160,6 +204,49 @@ layer(indexInTemporaryFolder, { excludeTestServices: true })(
           const restarted = yield* imageStates;
           expect(restarted).toStrictEqual([DONE, DONE]);
         }),
+    );
+  },
+);
+
+layer(indexInTemporaryFolder, { excludeTestServices: true })(
+  "embedImages with a vector that cannot be saved",
+  (it) => {
+    it.effect("同じバッチの保存できたはずの画像を失敗扱いにしない", () =>
+      Effect.gen(function* keepsSavable() {
+        const packageId = yield* addPackage;
+        yield* addImages({ packageId, offset: FIRST, pngs: [png(GOOD), png(MISSHAPEN)] });
+        yield* embed.pipe(Effect.provideService(Embedder, misshapingEmbedder));
+        const states = yield* imageStates;
+        expect(states).toStrictEqual([DONE, FAILED]);
+      }),
+    );
+  },
+);
+
+layer(indexInTemporaryFolder, { excludeTestServices: true })(
+  "embedImages over several batches",
+  (it) => {
+    it.effect("未処理の画像を並べ直す回数がバッチの数で増えない", () =>
+      Effect.gen(function* selectsOncePerRun() {
+        const packageId = yield* addPackage;
+        const run = embed.pipe(Effect.provideService(Embedder, embedderOf({})));
+        yield* addImages({
+          packageId,
+          offset: FIRST,
+          pngs: Array.makeBy(ONE_BATCH, () => png(GOOD)),
+        });
+        const single = yield* orderedSelectsIn(run);
+        yield* addImages({
+          packageId,
+          offset: ONE_BATCH,
+          pngs: Array.makeBy(FOUR_BATCHES, () => png(GOOD)),
+        });
+        const several = yield* orderedSelectsIn(run);
+        expect(single).toBeGreaterThan(NONE);
+        expect(several).toBe(single);
+        const states = yield* imageStates;
+        expect(states).toStrictEqual(Array.makeBy(ONE_BATCH + FOUR_BATCHES, () => DONE));
+      }),
     );
   },
 );
