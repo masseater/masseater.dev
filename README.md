@@ -12,6 +12,7 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 - サムネのモザイクアート: https://masseater.dev/mosaic/
 - rpp-kit のデモ: https://masseater.dev/rpp-kit/
 - メドDB: https://medley-manager.masseater.dev
+- ニコニコ動画と YouTube の再生数の一覧（nimado）: https://masseater.dev/nimado/
 - decision モデルの実験: https://masseater.dev/injection-bisect/ 、 https://masseater.dev/ocr-decide/ 、 https://masseater.dev/decision-bench/
 - npm の injection-bisect: https://www.npmjs.com/package/@r_masseater/injection-bisect
 - npm の計測の部品: https://www.npmjs.com/package/@r_masseater/vitest-otlp 、 https://www.npmjs.com/package/@r_masseater/web-vitals-flow 、 https://www.npmjs.com/package/@r_masseater/workers-tracing

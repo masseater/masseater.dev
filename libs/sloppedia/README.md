@@ -61,11 +61,11 @@ infobox:
 ---
 ```
 
-Vite では、`remark-mdx-frontmatter` が export する `frontmatter` を `import.meta.glob` で集めて `articlesOf` に渡す。すると、ファイル名を slug にした公開済みの記事が新しい順に返る。
+Vite では、`remark-mdx-frontmatter` が export する `frontmatter` を `import.meta.glob` で集めて `articlesOf` に渡す。すると、ファイル名を slug にした公開済みの記事を新しい順に並べた配列の Effect が返る。
 
 ```ts
-const articles = articlesOf(
-  import.meta.glob("/content/wiki/*.md", { eager: true, import: "frontmatter" }),
+const articles = await Effect.runPromise(
+  articlesOf(import.meta.glob("/content/wiki/*.md", { eager: true, import: "frontmatter" })),
 );
 ```
 
