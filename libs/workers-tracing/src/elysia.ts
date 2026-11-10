@@ -1,15 +1,21 @@
 import type { Span } from "@cloudflare/workers-types/index.ts";
 import { tracing } from "cloudflare:workers";
-import { Option, pipe } from "effect";
+import { Option, Predicate, pipe } from "effect";
 import { Elysia as PlainElysia } from "elysia";
 import type { ElysiaConfig } from "elysia";
 
+import { isServerError } from "./failure.ts";
 import type { Handle } from "./route-handlers.ts";
 import { markFailed, recordStatus, requestSpans, traced } from "./span.ts";
 
 type Fetch = PlainElysia["fetch"];
 
 const activeSpan = (): Option.Option<Span> => Option.fromUndefinedOr(tracing.getActiveSpan());
+
+const answersBelowServerError = (error: unknown): boolean =>
+  Predicate.hasProperty(error, "status") &&
+  Predicate.isNumber(error.status) &&
+  !isServerError(error.status);
 
 const routeNames = new PlainElysia({ name: "@r_masseater/workers-tracing/elysia" })
   .onBeforeHandle({ as: "global" }, ({ request, route }) => {
@@ -18,7 +24,11 @@ const routeNames = new PlainElysia({ name: "@r_masseater/workers-tracing/elysia"
     );
   })
   .onError({ as: "global" }, ({ error }) => {
-    pipe(activeSpan(), Option.map(markFailed(error)));
+    pipe(
+      activeSpan(),
+      Option.filter(() => !answersBelowServerError(error)),
+      Option.map(markFailed(error)),
+    );
   });
 
 const ownSpan = (inner: Fetch, request: Request): Promise<Response> =>
