@@ -5,6 +5,7 @@ members = [
   "apps/yakusu/src-tauri",
   "apps/pod-rattle-plugin",
   "libs/pod-rattle-engine",
+  "tools/mosaic",
   "tools/pod-rattle-host",
   "tools/xtask",
 ]

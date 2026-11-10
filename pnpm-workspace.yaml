@@ -49,6 +49,7 @@ catalog:
   modern-tar: 0.8.6
   "@zip.js/zip.js": 2.24.0
   sharp: 0.35.5
+  hyparquet: 1.32.0
   fzstd: 0.1.1
   "@types/three": 0.187.0
   sqlite-vec: 0.1.9
