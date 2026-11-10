@@ -10,7 +10,7 @@ const escaped = (value: string): string =>
   pipe(
     value,
     Str.replaceAll("\\", String.raw`\\`),
-    Str.replaceAll(";", ";"),
+    Str.replaceAll(";", String.raw`\;`),
     Str.replaceAll(",", String.raw`\,`),
     Str.replaceAll("\n", String.raw`\n`),
   );

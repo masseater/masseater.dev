@@ -20,6 +20,15 @@ test("reads the text properties of a calendar event, folded lines included", () 
   ).toStrictEqual(["定例 会議", "第二会議室", "資料は前日までに\r\n 共有してください。"]);
 });
 
+test("reads a text property whose value has an escaped semicolon", () => {
+  const summary = String.raw`定例会議\; 資料の確認`;
+  expect(
+    textsOf(
+      `BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:abc@example.com\r\nSUMMARY:${summary}\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n`,
+    ),
+  ).toStrictEqual([summary]);
+});
+
 test("finds and removes an injection in a contact note", () =>
   Effect.runPromise(
     Effect.gen(function* vcard() {

@@ -55,10 +55,22 @@ const tableName = (word: DataView): string => {
   return "0Table";
 };
 
+const prcEnd = (clx: DataView, position: number): number => {
+  const data = position + BYTE + SHORT;
+  if (data > clx.byteLength) {
+    return clx.byteLength;
+  }
+  const length = clx.getInt16(position + BYTE, LITTLE_ENDIAN);
+  if (length < NONE) {
+    return clx.byteLength;
+  }
+  return data + length;
+};
+
 const pcdtStart = (clx: DataView): number => {
   let position = NONE;
   while (position < clx.byteLength && clx.getUint8(position) === PRC) {
-    position += BYTE + SHORT + clx.getInt16(position + BYTE, LITTLE_ENDIAN);
+    position = prcEnd(clx, position);
   }
   return position;
 };
