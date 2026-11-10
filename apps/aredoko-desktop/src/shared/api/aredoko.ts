@@ -34,6 +34,7 @@ import { ServerError } from "./server-error.ts";
 
 const STATUS_TIMEOUT = Duration.fromInputUnsafe("3 seconds");
 const REQUEST_TIMEOUT = Duration.fromInputUnsafe("15 seconds");
+const LONG_REQUEST_TIMEOUT = Duration.fromInputUnsafe("10 minutes");
 const UNREACHABLE = "接続できません";
 
 const unreachable = (): ServerError => ServerError.make({ message: UNREACHABLE });
@@ -77,23 +78,30 @@ const runtime = ManagedRuntime.make(
 );
 
 const run = <Value>(
+  duration: Duration.Duration,
   request: Effect.Effect<Value, { readonly message: string }, AredokoClient>,
 ): Promise<Value> =>
   runtime.runPromise(
     request.pipe(
       Effect.timeoutOrElse({
-        duration: REQUEST_TIMEOUT,
+        duration,
         orElse: () => Effect.fail({ message: UNREACHABLE }),
       }),
       Effect.mapError(({ message }) => ServerError.make({ message })),
     ),
   );
 
-const call = <Value>(
-  request: (
-    client: typeof AredokoClient.Service,
-  ) => Effect.Effect<Value, { readonly message: string }>,
-): Promise<Value> => run(AredokoClient.pipe(Effect.flatMap(request)));
+const callWithin =
+  (duration: Duration.Duration) =>
+  <Value>(
+    request: (
+      client: typeof AredokoClient.Service,
+    ) => Effect.Effect<Value, { readonly message: string }>,
+  ): Promise<Value> =>
+    run(duration, AredokoClient.pipe(Effect.flatMap(request)));
+
+const call = callWithin(REQUEST_TIMEOUT);
+const callLong = callWithin(LONG_REQUEST_TIMEOUT);
 
 const getStatus = (): Promise<typeof Status.Type> =>
   call(({ GetStatus: getStatusRpc }) =>
@@ -132,7 +140,7 @@ const getLibrary = (): Promise<LibraryInfo> =>
   );
 
 const importFiles = (paths: readonly string[]): Promise<number> =>
-  call(({ ImportFiles: importFilesRpc }) =>
+  callLong(({ ImportFiles: importFilesRpc }) =>
     Effect.map(importFilesRpc({ paths }), ({ packages }) => packages),
   );
 
@@ -165,7 +173,7 @@ const listAssets = (query: {
 const extract = (
   assetIds: readonly number[],
 ): Promise<Readonly<{ path: string; assets: number }>> =>
-  call(({ Extract: extractRpc }) => extractRpc({ assetIds }));
+  callLong(({ Extract: extractRpc }) => extractRpc({ assetIds }));
 
 const listRenderJobs = (): Promise<readonly Readonly<{ assetId: number; pathname: string }>[]> =>
   call(({ ListRenderJobs: listRenderJobsRpc }) =>

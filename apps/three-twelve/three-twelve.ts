@@ -5,7 +5,8 @@ const ZONE = "masseater.dev";
 const BASE_PATH = "/three-twelve";
 
 const PLAY_AT = { hour: 18, minute: 12 } as const;
-const ARM_LEAD = { minutes: 1 } as const;
+const ARM_LEAD = { minutes: 3 } as const;
+const STARTUP = { probes: 90, spacing: { seconds: 1 } } as const;
 const CRON = `${PLAY_AT.minute - ARM_LEAD.minutes} ${PLAY_AT.hour} * * *`;
 
 const PLAYER_IMAGE = "PlayerImage";
@@ -32,5 +33,6 @@ export {
   PLAYER_ENTRYPOINT,
   PLAYER_IMAGE,
   PLAY_AT,
+  STARTUP,
   ZONE,
 };

@@ -122,6 +122,7 @@ const ownSpans = (text: string, node: Node): readonly Span[] =>
 
 const childrenOf = (node: Node): readonly Node[] =>
   Match.value(node).pipe(
+    Match.when({ content: Match.defined }, ({ content }) => content.childNodes),
     Match.when({ childNodes: Match.defined }, ({ childNodes }) => childNodes),
     Match.orElse(() => []),
   );

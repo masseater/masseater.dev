@@ -1,2 +1,2 @@
-vp staged
+GOMEMLIMIT=4GiB vp staged
 vp run betterleaks:staged
