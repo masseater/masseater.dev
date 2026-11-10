@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ArticleView } from "sloppedia";
 
 import { EntryBody } from "#/entities/entry";
-import { wiki } from "#/shared/config";
+import { wiki } from "#/shared/wiki";
 
 const route = getRouteApi("/sloppedia/$slug");
 
