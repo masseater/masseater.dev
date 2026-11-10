@@ -1,0 +1,9 @@
+{
+  "name": "@masseater.dev/mosaic-build",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "vite-plus": "catalog:stack"
+  }
+}

@@ -470,9 +470,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: .github/scripts/mosaic-superseded.sh
       - if: steps.start.outputs.superseded != 'true'
-        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        run: rustup toolchain install
+      - if: steps.start.outputs.superseded != 'true'
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
-          enable-cache: false
+          shared-key: mosaic
+          save-if: ${{ strategy.job-index == 0 }}
+      - if: steps.start.outputs.superseded != 'true'
+        run: cargo build --release --locked -p mosaic
       - id: pool
         if: steps.start.outputs.superseded != 'true'
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -493,24 +498,20 @@ jobs:
         env:
           JOB_INDEX: ${{ strategy.job-index }}
       - if: steps.start.outputs.superseded != 'true'
-        run: uv run mosaic songs "$SLUG"
+        run: target/release/mosaic songs "$SLUG"
         timeout-minutes: 30
         continue-on-error: true
-        working-directory: tools/mosaic
       - id: build-pool
         if: steps.start.outputs.superseded != 'true'
-        run: uv run mosaic pool "$SLUG"
-        working-directory: tools/mosaic
+        run: target/release/mosaic pool "$SLUG"
       - if: steps.start.outputs.superseded != 'true'
-        run: uv run mosaic solve "$SLUG"
-        working-directory: tools/mosaic
+        run: target/release/mosaic solve "$SLUG"
       - if: steps.start.outputs.superseded != 'true'
-        run: uv run mosaic site "$SLUG"
-        working-directory: tools/mosaic
+        run: target/release/mosaic site "$SLUG"
       - if: always() && steps.build-pool.outcome != 'skipped'
         run: |
           files=()
-          for file in small target.png vocadb/songs.json vocadb/progress.json thumbs.npz niconico-og.json; do
+          for file in small target.png vocadb/songs.json vocadb/progress.json thumbs.json niconico-og.json; do
             if [ -e "$SLUG/$file" ]; then
               files+=("$SLUG/$file")
             fi
@@ -521,7 +522,7 @@ jobs:
         if: always() && steps.build-pool.outcome != 'skipped'
         run: echo "key=mosaic-pool-$SLUG-$POOL_HASH" >> "$GITHUB_OUTPUT"
         env:
-          POOL_HASH: ${{ hashFiles(format('tools/mosaic/.cache/{0}/vocadb/songs.json', matrix.slug), format('tools/mosaic/.cache/{0}/thumbs.npz', matrix.slug), format('tools/mosaic/.cache/{0}/niconico-og.json', matrix.slug)) }}
+          POOL_HASH: ${{ hashFiles(format('tools/mosaic/.cache/{0}/vocadb/songs.json', matrix.slug), format('tools/mosaic/.cache/{0}/thumbs.json', matrix.slug), format('tools/mosaic/.cache/{0}/niconico-og.json', matrix.slug)) }}
       - id: save-pool
         if: always() && steps.build-pool.outcome != 'skipped' && steps.pool-key.outputs.key != steps.pool.outputs.cache-matched-key
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0

@@ -31,7 +31,7 @@
 - parity テストの参照音は、`tools/pod-rattle-parity` が labs のページから `createEngine` を切り出して鳴らした音である。labs の音を変えたら `libs/pod-rattle-engine` も合わせる。計算の順序を変えると標本単位で一致しなくなるので、速くするときも浮動小数点の演算順は保つ。いずれ labs が `libs/pod-rattle-engine` を wasm で鳴らし、エンジンを 1 本にする。
 - `apps/watashi-mcp`（`watashi.masseater.dev/mcp`）は持ち主の個人データの MCP で、人生の記録（`life_*`）と AI の作業メモ（`memory_*`）を D1 に置く。作業メモから人生の記録を書かない。逆はよく、根拠を `evidence` に残す。表への書き込みは `*-writer.server.ts` だけが行い、`revision` 表への追加と同じ D1 の batch に入れる（lint が強制する）。パスキーを登録できるのは招待の文字列を持つ最初の 1 人だけである。会話履歴の仕組みは `apps/watashi-mcp/docs/conversations.md` にある。
 - `apps/personal-mcp`（`personal-mcp.masseater.dev/mcp`）は Sloppedia・アクセス解析・スライド検索の MCP で、個人データは置かない。スライドのサイトと同じ Access（mydecklist スタックの `OwnerPolicy`）の managed OAuth で守る。
-- `apps/mosaic`（`masseater.dev/mosaic`）はサムネイルのモザイクアートのサイトで、main の verify の `mosaic-character` ジョブがキャラごとに `tools/mosaic`（Python、uv）で配るファイルを作って `alchemy.files.ts` をキャラの slug のステージで当て、`mosaic-deploy` ジョブが画面を当てる。
+- `apps/mosaic`（`masseater.dev/mosaic`）はサムネイルのモザイクアートのサイトで、main の verify の `mosaic-character` ジョブがキャラごとに `tools/mosaic`（Rust）で配るファイルを作って `alchemy.files.ts` をキャラの slug のステージで当て、`mosaic-deploy` ジョブが画面を当てる。
 - `apps/nimado`（`masseater.dev/nimado`）と、そのデータを作る `tools/nimado-collect` の決まりは `apps/nimado/AGENTS.md` にある。
 - `apps/zenn-articles` はパッケージではない。main の verify が通ると、中身が `zenn` ブランチの直下へ写される。
 - `libs/textlint-rule-no-taigendome` はこのリポの検査では使わず、masseater/personal-space が git の subpath 依存で読むので、パスとパッケージ名を動かさない。
@@ -40,7 +40,7 @@
 
 - `libs/injection-bisect` は文書を `Parser` で区間に分け、区間の並びを √n 個の枝に割り、確率が `cutoff` 以上の枝だけを再帰的に細かく問い直す。`apps/injection-bisect-demo` のデモと `tools/injection-bisect-cli` が使う。npm には `dist` を出し、version を上げてから `publish.yml` を package に `injection-bisect` を選んで main で手動実行する。
 - `libs/ocr-decide` は請求書の画像を OCR で断片にし、decision モデルで項目に割り当てる。`apps/ocr-decide` はこれをブラウザーで動かし、計測結果も表示する。計測は `tools/ocr-measure` で行う。`render` が `data/` の請求書を画像にし、`measure` が `results/details.json` と `libs/ocr-measurements/summary.json` を書き、`rescore` はモデルに問い合わせず details.json から summary.json を書き直す。
-- OCR エンジンの日本語の読み取りは `tools/ocr-ja-bench` で測る。`render` が合成ページを、`prepare-data` が JaWildText の写真を `.cache/` に用意し、`measure [エンジン ID...]` が `results/` と `libs/ocr-measurements/ja-bench.json` を書く。ローカルのエンジンは `engines/<名前>/run.py` を uv で動かし、Surya は llama.cpp の要る Mac で測る。
+- OCR エンジンの日本語の読み取りは `tools/ocr-ja-bench` で測る。`render` が合成ページを、`prepare-data` が JaWildText の写真を `.cache/` に用意し、`measure [エンジン ID...]` が `results/` と `libs/ocr-measurements/ja-bench.json` を書く。Indra OCR・NDLOCR-Lite・PaddleOCR・Surya は Python でしか動かないので測る手段を外し、`results/` の記録だけを残している。
 - `tools/decision-bench-runner` は日本語 decision model のベンチで、`vp run bench` で動かす。モデルごとの結果を `results/<モデル>.json` にコミットし、再実行ではそこで答えの出た問題を呼び直さない。問いの文面や読み取り方を変えたら、そのモデルのファイルを消して測り直す。`cache/` はコミットしない。終わると `docs/decision-bench.md` の `results:start`〜`results:end` の表と `libs/bench-summary/summary.json` を書き換え、`apps/decision-bench` がその JSON からリーダーボードを `/decision-bench` に出す。
 - 3 つのデモは `infra/start-site` の Vite と Alchemy の設定と `libs/web-ui` の部品を共有し、main の verify の `decision-experiments` ジョブが stage production で当てる。スタック名と `APP_NAME` は元のリポのまま（`injection-bisect`・`ocr-decide`・`mst-ja-decision-bench`）にしている。
 - injection-bisect の入力の形式ごとの処理は `segment.ts` に足さず、`Parser` として並びに加える。形式の読み取りは自前で書かず、officeparser・SheetJS・papaparse・ical.js・srt-vtt-parser・ass-compiler・nbformat・linguist-languages と refractor・file-type などのライブラリを使う。

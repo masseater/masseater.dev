@@ -20,7 +20,8 @@
           "effect/PlatformError#PlatformError",
           "effect/reactivity/Atom",
           "effect/http/FetchHttpClient",
-          "effect/http/HttpClient"
+          "effect/http/HttpClient",
+          "effect/http/HttpClientResponse"
         ]
       }
     ]
