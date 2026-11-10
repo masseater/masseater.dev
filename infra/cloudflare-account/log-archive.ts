@@ -29,16 +29,21 @@ const FIELD_NAMES = [
   "Exceptions",
 ];
 
+const DEFAULT_JURISDICTION = "default";
+
+const bucketNameOf = (appName: string): string => `${appName}-worker-logs`;
+
 const writerToken = Effect.fn("writerToken")(function* writerToken(appName: string) {
   const { accountId } = yield* yield* CloudflareEnvironment;
+  const bucketKey = `${accountId}_${DEFAULT_JURISDICTION}_${bucketNameOf(appName)}`;
   return yield* ApiToken.AccountApiToken("WorkerLogsWriter", {
     name: `${appName}-worker-logs-writer`,
     accountId,
     policies: [
       {
         effect: "allow",
-        permissionGroups: ["Workers R2 Storage Write"],
-        resources: { [`com.cloudflare.api.account.${accountId}`]: "*" },
+        permissionGroups: ["Workers R2 Storage Bucket Item Write"],
+        resources: { [`com.cloudflare.edge.r2.bucket.${bucketKey}`]: "*" },
       },
     ],
   });
@@ -47,7 +52,7 @@ const writerToken = Effect.fn("writerToken")(function* writerToken(appName: stri
 const logArchive = Effect.fn("logArchive")(function* logArchive(appName: string) {
   const { accountId } = yield* yield* CloudflareEnvironment;
   const bucket = yield* R2.Bucket("WorkerLogs", {
-    name: `${appName}-worker-logs`,
+    name: bucketNameOf(appName),
     lifecycleRules: [
       {
         id: "expire",

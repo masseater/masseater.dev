@@ -6,7 +6,7 @@ import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 import { contains } from "./life-filter";
 import type { Body, Entry } from "./life-filter";
 import { itemOf } from "./life-item";
-import { SCAN_LIMIT, scanRecords } from "./life-store.server";
+import { SCAN_LIMIT, scanCapped } from "./life-store.server";
 import { todayJst } from "./life-time";
 import { DEFAULT_MEMORY_LIMIT } from "./memory-input";
 import type { WatashiSearchValue } from "./memory-input";
@@ -57,7 +57,7 @@ const watashiSearch = (input: WatashiSearchValue): Effect.Effect<Body, StorageFa
     const limit = input.limit ?? DEFAULT_MEMORY_LIMIT;
     const today = yield* todayJst;
     const none = Option.none();
-    const life = yield* scanRecords({
+    const life = yield* scanCapped({
       records: SEARCHED_RECORDS,
       from: none,
       to: none,
@@ -65,7 +65,7 @@ const watashiSearch = (input: WatashiSearchValue): Effect.Effect<Body, StorageFa
       limit: SCAN_LIMIT,
     });
     const memos = yield* searchMemories({ query: input.query, project: none, limit });
-    const lifeItems = pipe(life, Arr.map(lifeScored(terms, today)));
+    const lifeItems = pipe(life.entries, Arr.map(lifeScored(terms, today)));
     const memoItems = pipe(memos, Arr.map(memoryScored(terms)));
     return {
       total: Arr.length(lifeItems) + Arr.length(memoItems),
@@ -76,6 +76,7 @@ const watashiSearch = (input: WatashiSearchValue): Effect.Effect<Body, StorageFa
         Arr.take(limit),
         Arr.map(itemOfScored),
       ),
+      ...life.limited,
     };
   });
 

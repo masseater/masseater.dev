@@ -42,13 +42,19 @@ download() {
   curl --fail --silent --show-error --location --retry 3 --output "$2" "$1"
 }
 
-download "https://github.com/ggml-org/llama.cpp/releases/download/$llama_tag/$asset" "$downloads/$asset"
-checksum "$asset_sha256" "$downloads/$asset"
+archive="$resources/archives/$asset"
+if ! { [ -f "$archive" ] && checksum "$asset_sha256" "$archive"; }; then
+  rm -rf "$resources/archives"
+  mkdir -p "$resources/archives"
+  download "https://github.com/ggml-org/llama.cpp/releases/download/$llama_tag/$asset" "$downloads/$asset"
+  checksum "$asset_sha256" "$downloads/$asset"
+  mv "$downloads/$asset" "$archive"
+fi
 rm -rf "$resources/llama"
 mkdir -p "$resources/llama" "$resources/licenses"
 case "$asset" in
-  *.zip) unzip -q "$downloads/$asset" -d "$resources/llama" ;;
-  *) tar -xzf "$downloads/$asset" -C "$resources/llama" --strip-components=1 ;;
+  *.zip) unzip -q "$archive" -d "$resources/llama" ;;
+  *) tar -xzf "$archive" -C "$resources/llama" --strip-components=1 ;;
 esac
 
 if ! { [ -f "$resources/model.gguf" ] && checksum "$model_sha256" "$resources/model.gguf"; }; then

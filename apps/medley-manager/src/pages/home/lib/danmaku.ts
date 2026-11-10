@@ -13,6 +13,7 @@ const COMMENT_COLORS: readonly string[] = [
 
 const LANE_COUNT = 4;
 const SONGS_PER_LANE = 8;
+const DANMAKU_SONGS = LANE_COUNT * SONGS_PER_LANE;
 
 type Comment = Readonly<{ key: string; text: string; color: string }>;
 
@@ -43,4 +44,4 @@ const danmakuLanes = (songTitles: readonly string[]): readonly Lane[] =>
   }));
 
 export type { Comment, Lane };
-export { danmakuLanes };
+export { DANMAKU_SONGS, danmakuLanes };
