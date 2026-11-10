@@ -19,6 +19,7 @@ import type { PlatformError } from "effect/PlatformError";
 import { ChildProcess } from "effect/process";
 import type { ChildProcessSpawner } from "effect/process";
 
+import { CACHE_DIR } from "#src/cache.ts";
 import { toJson } from "#src/runtime.ts";
 import type { DecisionPluginSetup } from "#src/types.ts";
 
@@ -61,8 +62,6 @@ const PASSED_ENV = [
 
 const DECISION_PLUGINS = ["decision", "team"] as const;
 
-const CACHE_SEGMENTS = ["node_modules", ".cache", "oxlint-plugin-decision"] as const;
-
 const inPackage = (...segments: readonly string[]): Effect.Effect<string, never, Path.Path> =>
   Effect.gen(function* resolve() {
     const path = yield* Path.Path;
@@ -72,7 +71,7 @@ const inPackage = (...segments: readonly string[]): Effect.Effect<string, never,
 const packageRoot = inPackage();
 const pluginPath = inPackage("dist", "index.mjs");
 const cacheDirOf = (root: string): Effect.Effect<string, never, Path.Path> =>
-  Path.Path.pipe(Effect.map((path) => path.join(root, ...CACHE_SEGMENTS)));
+  Path.Path.pipe(Effect.map((path) => path.join(root, ...CACHE_DIR)));
 
 const inheritedEnv: Effect.Effect<Readonly<Record<string, string>>> = Effect.map(
   pipe(

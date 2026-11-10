@@ -35,14 +35,9 @@ type WorkspaceServices =
   | FileSystem.FileSystem
   | Path.Path;
 
-const Specifiers = Schema.optionalKey(Schema.Record(Schema.String, Schema.String));
+const Manifest = Schema.Record(Schema.String, Schema.Unknown);
 
-const Manifest = Schema.Struct({
-  dependencies: Specifiers,
-  devDependencies: Specifiers,
-  optionalDependencies: Specifiers,
-  peerDependencies: Specifiers,
-});
+const decodeSpecifiers = Schema.decodeUnknownEffect(Schema.Record(Schema.String, Schema.String));
 
 const Workspace = Schema.Struct({
   packages: Schema.optionalKey(Schema.Array(Schema.String)),
@@ -83,15 +78,20 @@ const listManifests = (
 
 const dependenciesOf =
   (manifest: string) =>
-  (specifiers: typeof Manifest.Type): readonly Dependency[] =>
+  (fields: typeof Manifest.Type): Effect.Effect<readonly Dependency[], Schema.SchemaError> =>
     pipe(
       DEPENDENCY_FIELDS,
-      Arr.flatMap((field) =>
-        pipe(
-          Rec.toEntries(specifiers[field] ?? {}),
-          Arr.map(([name, specifier]) => ({ manifest, field, name, specifier })),
+      Effect.forEach((field) =>
+        decodeSpecifiers(fields[field] ?? {}).pipe(
+          Effect.map((specifiers) =>
+            pipe(
+              Rec.toEntries(specifiers),
+              Arr.map(([name, specifier]) => ({ manifest, field, name, specifier })),
+            ),
+          ),
         ),
       ),
+      Effect.map(Arr.flatten),
     );
 
 const listDependencies = (
@@ -110,7 +110,7 @@ const listDependencies = (
       Effect.forEach((manifest) =>
         fs
           .readFileString(path.join(root, manifest))
-          .pipe(Effect.flatMap(decodeManifest), Effect.map(dependenciesOf(manifest))),
+          .pipe(Effect.flatMap(decodeManifest), Effect.flatMap(dependenciesOf(manifest))),
       ),
     );
     return Arr.flatten(parsed);

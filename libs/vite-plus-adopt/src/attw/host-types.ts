@@ -1,5 +1,6 @@
 import type { Option } from "effect";
 import type { SourceFile } from "typescript/ast";
+import type { RawCompilerOptions } from "typescript/sync";
 
 import type { ModeOptions } from "./module-mode.ts";
 import type { ModuleNameRequest, TypeReferenceLookup } from "./program-build.ts";
@@ -10,6 +11,8 @@ import type {
   ResolverHost,
 } from "./resolution-types.ts";
 import type { ResolvedTypeReference } from "./type-reference.ts";
+
+type ExtraOptions = Readonly<Pick<RawCompilerOptions, "allowJs" | "checkJs" | "noDtsResolution">>;
 
 interface PackageFileSystem {
   readonly fileExists: (path: string) => boolean;
@@ -73,6 +76,7 @@ const LIB_FILE_NAME = "/node_modules/typescript/lib/lib.d.ts";
 export { LIB_FILE_NAME };
 export type {
   CachedResolution,
+  ExtraOptions,
   TsPackageId,
   HostWrapperCore,
   ModuleKindInfo,

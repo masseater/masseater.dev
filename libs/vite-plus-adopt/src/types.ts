@@ -6,6 +6,8 @@ import type {
 } from "markdownlint";
 import type { defineConfig as defineSteigerConfig } from "steiger";
 
+import type { DependencyField } from "./workspace.ts";
+
 interface CommitlintConfig extends Readonly<CommitlintUserConfig> {}
 
 type SteigerConfig = readonly ReturnType<typeof defineSteigerConfig>[number][];
@@ -59,11 +61,7 @@ interface SteigerSection {
 
 type FallowConfig = Readonly<Record<string, unknown>>;
 
-type ManifestField =
-  | "dependencies"
-  | "devDependencies"
-  | "optionalDependencies"
-  | "peerDependencies";
+type ManifestField = DependencyField;
 
 interface AllowedDependencies {
   readonly workspaces: readonly string[];

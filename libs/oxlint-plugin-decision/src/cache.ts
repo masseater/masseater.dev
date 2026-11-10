@@ -70,6 +70,6 @@ const writeCache = Effect.fn("writeCache")(function* writeCache(
 type CacheServices = Digest.Digest | FileSystem.FileSystem | Path.Path;
 
 /** @internal */
-export { cacheFile, isComplete, readCache, writeCache };
+export { CACHE_DIR, cacheFile, isComplete, readCache, writeCache };
 /** @internal */
 export type { CacheServices };

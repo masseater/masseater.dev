@@ -3,6 +3,8 @@ import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 
+import type { CiBehavior } from "#src/types.ts";
+
 import { FAILED, PASSED, TIMEOUT, withMock } from "./fixtures.ts";
 import type { MockTest } from "./fixtures.ts";
 import {
@@ -29,7 +31,7 @@ const LINE_SEPARATOR = String.fromCodePoint(LINE_SEPARATOR_CODE);
 const PARAGRAPH_SEPARATOR = String.fromCodePoint(PARAGRAPH_SEPARATOR_CODE);
 
 interface Truncation {
-  readonly ci: "fail" | "skip";
+  readonly ci: CiBehavior;
   readonly maxSnippetChars: number;
 }
 

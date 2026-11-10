@@ -229,13 +229,11 @@ overrides:
   "@feature-sliced/filesystem>typescript": "catalog:stack"
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-"
   "@remotion/eslint-plugin>typescript": "-"
-  "@tanstack/eslint-plugin-start>globals": 16.4.0
   workerd: 1.20261106.1
   vite@*: "catalog:"
   eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
   fflate@>=0.7.0 <0.7.5: ^0.8.0
   glob@>=9.0.0 <=14.0.1: ^14.0.2
-  "steiger>@feature-sliced/steiger-plugin": "-"
   "capnp-es>typescript": "-"
   minimatch@<11.0.1: ^11.0.1
   postcss-selector-parser@<6.1.5: ^6.1.5

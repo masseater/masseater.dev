@@ -4,7 +4,7 @@ import type { SourceFile } from "typescript/ast";
 import { createProgram } from "./compiler-program.ts";
 import type { CachedProgram, Program, ProgramSite } from "./compiler-program.ts";
 import { toTsResolution } from "./host-resolutions.ts";
-import type { HostWrapperCore, ModuleKindInfo, TsResolution } from "./host-types.ts";
+import type { ExtraOptions, HostWrapperCore, ModuleKindInfo, TsResolution } from "./host-types.ts";
 import { toPath } from "./paths.ts";
 import type { ProgramOptions, ResolvedModuleEntry } from "./program-build.ts";
 import { modeKey } from "./resolution-cache.ts";
@@ -12,12 +12,6 @@ import { modeFromNumber } from "./resolution-mode-numbers.ts";
 import type { ResolutionMode } from "./resolution-types.ts";
 
 const DATA_FIRST_ARITY = 2;
-
-interface ExtraOptions {
-  readonly allowJs?: boolean;
-  readonly checkJs?: boolean;
-  readonly noDtsResolution?: boolean;
-}
 
 interface ModuleNameResolution {
   readonly resolution: TsResolution;
@@ -172,4 +166,4 @@ const wrapHost: {
 );
 
 export { wrapHost };
-export type { CompilerHostWrapper, ExtraOptions, ModuleNameResolution, ResolveModuleNameArguments };
+export type { CompilerHostWrapper, ModuleNameResolution, ResolveModuleNameArguments };

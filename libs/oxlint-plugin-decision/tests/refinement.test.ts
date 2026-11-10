@@ -14,6 +14,7 @@ import {
 } from "effect";
 
 import { toJson } from "#src/runtime.ts";
+import type { CiBehavior } from "#src/types.ts";
 
 import { FAILED, TIMEOUT, outputOf, withMock } from "./fixtures.ts";
 import type { MockTest } from "./fixtures.ts";
@@ -40,7 +41,7 @@ const SHORT_TIMEOUT_MS = 5000;
 const LONG_TIMEOUT_MS = 60_000;
 
 interface FailedRefinement {
-  readonly ci: "fail" | "skip";
+  readonly ci: CiBehavior;
   readonly token: string;
   readonly reason: string;
   readonly reported: number;

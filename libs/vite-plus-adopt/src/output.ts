@@ -6,16 +6,16 @@ import type { Report } from "./report.ts";
 
 const DATA_FIRST_ARITY = 2;
 
+type Sink = "stdout" | "stderr";
+
 const writeTo: {
-  (text: string): (sink: "stdout" | "stderr") => Effect.Effect<void, never, Stdio.Stdio>;
-  (sink: "stdout" | "stderr", text: string): Effect.Effect<void, never, Stdio.Stdio>;
-} = Fn.dual(
-  DATA_FIRST_ARITY,
-  (sink: "stdout" | "stderr", text: string): Effect.Effect<void, never, Stdio.Stdio> =>
-    Effect.gen(function* write() {
-      const stdio = yield* Stdio.Stdio;
-      yield* Stream.make(text).pipe(Stream.run(stdio[sink]()), Effect.orDie);
-    }),
+  (text: string): (sink: Sink) => Effect.Effect<void, never, Stdio.Stdio>;
+  (sink: Sink, text: string): Effect.Effect<void, never, Stdio.Stdio>;
+} = Fn.dual(DATA_FIRST_ARITY, (sink: Sink, text: string): Effect.Effect<void, never, Stdio.Stdio> =>
+  Effect.gen(function* write() {
+    const stdio = yield* Stdio.Stdio;
+    yield* Stream.make(text).pipe(Stream.run(stdio[sink]()), Effect.orDie);
+  }),
 );
 
 const finish = (report: Report): Effect.Effect<void, VpToolsError, Stdio.Stdio> => {
@@ -30,3 +30,5 @@ const finish = (report: Report): Effect.Effect<void, VpToolsError, Stdio.Stdio> 
 
 /** @internal */
 export { finish, writeTo };
+/** @internal */
+export type { Sink };

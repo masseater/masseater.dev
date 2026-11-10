@@ -1,4 +1,5 @@
 import type { Option } from "effect";
+import type { PackageId as TsPackageId } from "typescript/sync";
 
 import type { Extensions } from "./extensions.ts";
 
@@ -25,12 +26,7 @@ interface ResolverOptions {
   readonly noDtsResolution: boolean;
 }
 
-interface PackageId {
-  readonly name: string;
-  readonly subModuleName: string;
-  readonly version: string;
-  readonly peerDependencies: string;
-}
+type PackageId = Readonly<TsPackageId>;
 
 interface CandidateRequest {
   readonly extensions: Extensions;
