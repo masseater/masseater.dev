@@ -5,7 +5,6 @@
     "licenseFile": "../../../LICENSE",
     "resources": {
       "resources/llama/": "llama/",
-      "resources/model.gguf": "model.gguf",
       "resources/licenses/": "licenses/"
     },
     "windows": {

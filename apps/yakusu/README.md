@@ -24,13 +24,14 @@
 | macOS（Apple Silicon） | `yakusu_x.y.z_aarch64.dmg`   |
 | Linux（x64）           | `.deb` または `.AppImage`    |
 
-インストーラーにはモデルと [llama.cpp][llama] の llama-server が入っていて、ほかに入れるものは無い。
+インストーラーには [llama.cpp][llama] の llama-server が入っている。
+モデル（約 570 MB）は初回の起動で Hugging Face から取得するので、初回だけネットワークが要る。
 macOS では署名をしていないので、初回は Finder でアプリを右クリックして「開く」を選ぶ。
 
 ## ライセンス
 
 アプリは AGPL-3.0-only で配る。
-モデルは [PLaMo Community License][license] に従って同梱していて、ライセンスの写しはインストール先の `licenses/` にある。
+モデルは [PLaMo Community License][license] に従って使っていて、ライセンスの写しはインストール先の `licenses/` にある。
 
 Built with PLaMo
 

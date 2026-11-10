@@ -6,6 +6,7 @@ use std::sync::Mutex;
 use std::time::Duration;
 
 use reqwest::StatusCode;
+use yakusu::model::{self, Model};
 use yakusu::prompt::{Direction, Form, Lang};
 use yakusu::server::{self, Server};
 use yakusu::{Runtime, spawn_server, translate};
@@ -47,14 +48,22 @@ struct Running {
 }
 
 async fn start() -> Running {
-    let runtime =
-        Runtime::in_directory(&PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("resources"));
+    let resources = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("resources");
+    let runtime = Runtime::in_directory(&resources);
+    let model = model::ensure(
+        &reqwest::Client::new(),
+        &Model::plamo(),
+        &resources.join("models"),
+        |_| {},
+    )
+    .await
+    .unwrap();
     let log = File::create(std::env::temp_dir().join("yakusu-engine-test.log")).unwrap();
     let process = Mutex::new(Process::default());
     let server = server::start(
         Duration::from_mins(2),
         |launch| {
-            let child = spawn_server(&runtime, launch, log.try_clone()?)?;
+            let child = spawn_server(&runtime, &model, launch, log.try_clone()?)?;
             process.lock().unwrap().replace(child, launch.port());
             Ok(())
         },
@@ -86,8 +95,8 @@ async fn run(running: &Running, direction: &Direction, text: &str) -> String {
 }
 
 #[tokio::test]
-#[ignore = "needs llama-server and the model in resources/, which fetch-runtime downloads"]
-async fn translates_with_the_bundled_model() {
+#[ignore = "needs llama-server in resources/, which fetch-runtime downloads, and downloads the model"]
+async fn translates_with_the_downloaded_model() {
     let running = start().await;
 
     let keyless = reqwest::get(format!("http://127.0.0.1:{}/props", running.process.port))
