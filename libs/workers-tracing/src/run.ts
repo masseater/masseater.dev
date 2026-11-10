@@ -1,4 +1,6 @@
-import { Effect, Layer, ManagedRuntime } from "effect";
+import { Effect, Layer, ManagedRuntime, Option, pipe } from "effect";
+
+import { failures } from "./failure.ts";
 
 type Run<Services> = <Success, Failure>(
   effect: Effect.Effect<Success, Failure, Services>,
@@ -12,7 +14,17 @@ const runnerWith =
     const runtime = ManagedRuntime.make(Layer.mergeAll(services, tracing));
     return (effect) =>
       runtime.runPromise(
-        effect.pipe(Effect.tapCause((cause) => Effect.logError("request failed", cause))),
+        effect.pipe(
+          Effect.tapCause((cause) =>
+            pipe(
+              failures(cause),
+              Option.match({
+                onNone: () => Effect.void,
+                onSome: (failed) => Effect.logError("request failed", failed),
+              }),
+            ),
+          ),
+        ),
       );
   };
 
