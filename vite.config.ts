@@ -43,21 +43,8 @@ export default defineConfig({
         "fallow dupes --fail-on-issues --quiet --format compact",
         "fallow security --fail-on-issues --quiet",
       ],
-      "actions-lint": {
-        command:
-          'vpa actionlint && vpa zizmor $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
-        cache: {
-          env: ["CLAUDE_CODE_REMOTE"],
-          untrackedEnv: [
-            "GH_TOKEN",
-            "HTTPS_PROXY",
-            "https_proxy",
-            "NO_PROXY",
-            "no_proxy",
-            "SSL_CERT_FILE",
-          ],
-        },
-      },
+      "workflow-rules":
+        "ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows",
       verify: {
         command: "GOMEMLIMIT=4GiB vp check --deny-warnings",
         cache: {
@@ -75,15 +62,13 @@ export default defineConfig({
         },
         dependsOn: [
           "test",
-          "dependency-rules",
-          "markdown-lint",
+          "vpa",
+          "yomiyasu",
           "renovate",
-          "actions-lint",
-          "steiger",
+          "workflow-rules",
           "db-check-all",
           "fallow",
           "msch",
-          "betterleaks",
           "ignored-sources",
           "audit",
           ...packageChecks,
