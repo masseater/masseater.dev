@@ -10,8 +10,9 @@ import { db } from "#/shared/db/index.server";
 import { columnsOf } from "./life-record";
 import type { Body } from "./life-record";
 import type { LifeEntry } from "./life-store.server";
-import { commit } from "./revision-writer.server";
-import { encodeJson, nextAfterMax, nowIso, query } from "./storage.server";
+import { commit, numbered } from "./revision-writer.server";
+import { attempt, encodeJson, nextAfterMax, nowIso } from "./storage.server";
+import type { WriteFailure } from "./storage.server";
 
 const Snapshot = Schema.Struct({
   source: Schema.Literals(SOURCES),
@@ -30,7 +31,7 @@ type Replacement = Readonly<{ entry: LifeEntry; snapshot: SnapshotValue; op: Rev
 
 const NO_REASON = "";
 
-const nextId: Effect.Effect<number, StorageFailed> = query(() =>
+const nextId: Effect.Effect<number, WriteFailure> = attempt(() =>
   db.select({ max: max(lifeRecord.id) }).from(lifeRecord),
 ).pipe(Effect.map(nextAfterMax));
 
@@ -64,7 +65,7 @@ const insertRecord =
         at: now,
       })(db.insert(lifeRecord).values({ ...row, createdAt: now, updatedAt: now }));
       return id;
-    });
+    }).pipe(numbered);
 
 const replaceRecord =
   ({ actor }: Writer) =>
@@ -80,7 +81,7 @@ const replaceRecord =
           .set({ ...snapshot, ...columns, updatedAt: now })
           .where(eq(lifeRecord.id, id)),
       );
-    });
+    }).pipe(numbered);
 
 export { Snapshot, insertRecord, replaceRecord, snapshotOf };
 export type { NewRecord, Replacement, SnapshotValue, Writer };

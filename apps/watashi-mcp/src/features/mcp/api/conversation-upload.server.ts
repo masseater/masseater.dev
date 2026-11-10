@@ -6,10 +6,10 @@ import type { ChunkParams } from "./conversation-query";
 import { chunkAt, committedEnd } from "./conversation-store.server";
 import type { FileKey } from "./conversation-store.server";
 import { appendChunk } from "./conversation-writer.server";
-import type { AppendFailure } from "./conversation-writer.server";
 import { BAD_REQUEST, CONFLICT, TOO_LARGE, json, storageFailed, withStatus } from "./http-json";
 import type { Principal } from "./request-auth.server";
 import { nowIso } from "./storage.server";
+import type { WriteFailure } from "./storage.server";
 
 type UploadStatus = "ok" | "conflict" | "error";
 
@@ -60,7 +60,7 @@ const discardLoser = ({ key, params, objectKey }: Placed): Effect.Effect<void> =
 
 const onAppendFailure =
   (placed: Placed) =>
-  (failure: AppendFailure): Effect.Effect<Stored> =>
+  (failure: WriteFailure): Effect.Effect<Stored> =>
     Option.match(
       Option.liftPredicate(failure, (value) => value.duplicate),
       {
