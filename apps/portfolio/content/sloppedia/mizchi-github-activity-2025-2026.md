@@ -106,7 +106,7 @@ GitHub の検索 API で、作者が mizchi のコミット・プルリクエス
 
 vibe のリポジトリには期間内に2,371件のプルリクエストと1,697件の issue を作り、8月だけでプルリクエストは713件だった[^search-issues]。9月下旬から v0.1.0 のリリース候補を出し、10月からはコンパイラーの種を「seed」のタグで出している[^releases]。
 
-ほかに形式手法の試みも増えた。7月の dspec は型付きの形式モデルを仕様の正本にする道具で、8月の [uneffect](https://github.com/mizchi/uneffect) は既存の TypeScript に副作用と契約の検査を足す[^dspec][^uneffect]。uneffect には8月と9月で1,210件をコミットした[^search-commits]。
+ほかに形式手法の試みも増えた。7月の dspec は型付きの形式モデルを仕様の基準にする道具で、8月の [uneffect](https://github.com/mizchi/uneffect) は既存の TypeScript に副作用と契約の検査を足す[^dspec][^uneffect]。uneffect には8月と9月で1,210件をコミットした[^search-commits]。
 
 9月には TypeSafe AI のモデル Jev を使う道具を並べた。[jev-lint](https://github.com/mizchi/jev-lint) は、構文解析では決められない規則を Jev に確率で判定させる lint である[^jev-lint]。jev-test-filter は差分から動かすべきテストを Jev に選ばせる。9月24日には、AI が書いた内容を人に説明するスキル集 [explainer](https://github.com/mizchi/explainer) を出し、465のスターを集めた[^explainer]。
 
