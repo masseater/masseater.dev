@@ -2,19 +2,19 @@ import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from
 import { afterAll, beforeEach, expect, test, vi } from "vite-plus/test";
 
 import {
-  HTMLRewriter,
   MISSING_ARTICLE,
   changeSalt,
   closeDatabase,
   lastAssetRequest,
   resetSite,
   storedVisitors,
+  stubRewriter,
 } from "./site.worker.test.support.ts";
 import worker from "./site.worker.ts";
 
 vi.mock("cloudflare:workers", () => import("./site.worker.test.support.ts"));
 
-vi.stubGlobal("HTMLRewriter", HTMLRewriter);
+stubRewriter();
 
 beforeEach(() => Effect.runPromise(resetSite));
 

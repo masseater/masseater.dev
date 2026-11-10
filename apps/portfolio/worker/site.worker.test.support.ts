@@ -1,5 +1,6 @@
 import { makeD1 } from "@masseater.dev/d1-test";
 import { Array as Arr, Effect, MutableRef, Option, Schema, String as Str, pipe } from "effect";
+import { vi } from "vite-plus/test";
 
 type Element = Readonly<{ setAttribute: (name: string, value: string) => void }>;
 
@@ -153,8 +154,11 @@ const HTMLRewriter = function HTMLRewriter(): Rewriter {
   return rewriterWith([]);
 };
 
+const stubRewriter = (): void => {
+  vi.stubGlobal("HTMLRewriter", HTMLRewriter);
+};
+
 export {
-  HTMLRewriter,
   MISSING_ARTICLE,
   changeSalt,
   closeDatabase,
@@ -162,4 +166,5 @@ export {
   lastAssetRequest,
   resetSite,
   storedVisitors,
+  stubRewriter,
 };
