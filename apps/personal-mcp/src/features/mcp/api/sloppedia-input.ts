@@ -10,6 +10,7 @@ const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
 const SENTENCE_END = /[。！？]$/u;
 const BARE_URL = /(?<!\]\()https?:\/\//u;
 const MDX_SYNTAX = /[{}<]/u;
+const MARKDOWN_LINK = /\[[^\]]*\]\(/u;
 const NUMERIC_FOOTNOTE = /\[\^\d+\]/u;
 const TOP_HEADING = /^#\s/mu;
 const BOLD_LEAD = /^\s*\*\*/u;
@@ -38,6 +39,7 @@ const Description = Schema.NonEmptyString.check(
   requires((text) => SENTENCE_END.test(text), "文末は「。」で終える"),
   rejects(hasBareUrl, "リンクや記号を入れない"),
   rejects(hasMdxSyntax, "リンクや記号を入れない"),
+  rejects((text) => MARKDOWN_LINK.test(text), "リンクや記号を入れない"),
 ).annotate({ description: "一覧とOGPに出る1文の説明。リンクを入れない平文" });
 
 const Body = Schema.NonEmptyString.check(
