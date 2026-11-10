@@ -1,6 +1,5 @@
 import { createToken, deleteToken, listTokens } from "@distilled.cloud/cloudflare/accounts";
 import type { CloudflareOpContext, CreateTokenError } from "@distilled.cloud/cloudflare/accounts";
-import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import {
   Array as Arr,
@@ -9,17 +8,17 @@ import {
   Layer,
   Logger,
   Option,
-  Redacted,
   Schema,
   Stream,
   String as Str,
   flow,
   pipe,
 } from "effect";
-import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
 import { atprotoRoute, issueAppPassword } from "./atproto.ts";
 import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
+import { cloudflare } from "./cloudflare-root.ts";
+import { issueKinds, selectKinds } from "./credential-kinds.ts";
 import { route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
 import type { Claims } from "./github-oidc.ts";
@@ -77,15 +76,6 @@ const Grants = Schema.fromJsonString(
 );
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
-
-const cloudflare = (env: CredentialBrokerEnv): Layer.Layer<CloudflareOpContext> =>
-  Layer.unwrap(
-    Effect.promise(() => env.ROOT_TOKEN.get()).pipe(
-      Effect.map((apiToken) =>
-        Layer.mergeAll(fromApiToken({ apiToken: Redacted.make(apiToken) }), fetchHttpClient),
-      ),
-    ),
-  );
 
 const toTokenTime = flow(
   DateTime.add(TOKEN_LIFETIME),
@@ -180,30 +170,26 @@ const issueNpmToken = (
     ),
   );
 
-const issueGranted = (
+const issueAtproto = (
   env: CredentialBrokerEnv,
   claims: typeof Claims.Type,
-): Effect.Effect<readonly Issued[], IssueError, BrokerContext> =>
-  Effect.all([
-    issueCloudflareToken(env, claims),
-    issueGitHubToken(env, claims),
-    issueNpmToken(env, claims),
-    decodeGrants(env).pipe(
-      Effect.flatMap((grants) =>
-        issueAppPassword({ env, granted: isListed(claims, grants.atproto) }),
-      ),
+): Effect.Effect<Option.Option<Issued>, Schema.SchemaError> =>
+  decodeGrants(env).pipe(
+    Effect.flatMap((grants) =>
+      issueAppPassword({ env, granted: isListed(claims, grants.atproto) }),
     ),
-  ]).pipe(Effect.map(Arr.getSomes));
+  );
 
-const sharedKeys = (env: CredentialBrokerEnv): Effect.Effect<Readonly<Record<string, string>>> =>
+const sharedKeys = (env: CredentialBrokerEnv): Effect.Effect<Option.Option<Issued>> =>
   Effect.promise(() =>
     Promise.all([env.OPENROUTER_API_KEY.get(), env.CLAUDE_CODE_OAUTH_TOKEN.get()]),
   ).pipe(
-    Effect.map(([openrouterApiKey, claudeCodeOauthToken]) => ({
-      openrouterApiKey,
-      claudeCodeOauthToken,
-    })),
+    Effect.map(([openrouterApiKey, claudeCodeOauthToken]) =>
+      Option.some({ openrouterApiKey, claudeCodeOauthToken }),
+    ),
   );
+
+const BAD_REQUEST = 400;
 
 const issue = (
   request: Request,
@@ -215,16 +201,31 @@ const issue = (
     if (!isGranted(grants)(claims)) {
       return yield* Rejected.make({ reason: `no grant for ${claims.repository}` });
     }
-    const issued = yield* issueGranted(env, claims);
-    const keys = yield* sharedKeys(env);
-    return Response.json(Object.assign({}, ...issued, keys));
+    const kinds = yield* selectKinds(new URL(request.url).searchParams);
+    const issued = yield* issueKinds({
+      kinds,
+      issuers: {
+        cloudflare: issueCloudflareToken(env, claims),
+        github: issueGitHubToken(env, claims),
+        npm: issueNpmToken(env, claims),
+        atproto: issueAtproto(env, claims),
+        shared: sharedKeys(env),
+      },
+    });
+    return Response.json(issued);
   }).pipe(
-    Effect.catchTag("Rejected", (rejected) =>
-      Effect.logWarning("credential.unauthorized").pipe(
-        Effect.annotateLogs({ reason: rejected.reason }),
-        Effect.as(new Response("", { status: 401 })),
-      ),
-    ),
+    Effect.catchTags({
+      Rejected: (rejected) =>
+        Effect.logWarning("credential.unauthorized").pipe(
+          Effect.annotateLogs({ reason: rejected.reason }),
+          Effect.as(new Response("", { status: 401 })),
+        ),
+      UnknownKind: ({ names }) =>
+        Effect.logWarning("credential.unknown_kind").pipe(
+          Effect.annotateLogs({ names }),
+          Effect.as(new Response("", { status: BAD_REQUEST })),
+        ),
+    }),
     Effect.catchCause((cause) =>
       Effect.logError("credential.failed", cause).pipe(
         Effect.as(new Response("", { status: 502 })),
