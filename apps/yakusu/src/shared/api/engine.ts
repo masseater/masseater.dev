@@ -10,7 +10,12 @@ type TranslateRequest = Readonly<{
   form: Option.Option<Form>;
 }>;
 
-type Engine = Readonly<{ translate: (request: TranslateRequest) => AsyncIterable<string> }>;
+type Progress = Readonly<{ received: number; total: number }>;
+
+type Engine = Readonly<{
+  prepare: () => AsyncIterable<Progress>;
+  translate: (request: TranslateRequest) => AsyncIterable<string>;
+}>;
 
 const taggedError = Schema.TaggedError;
 
@@ -29,28 +34,38 @@ const engineError = (cause: unknown): EngineError =>
     ),
   });
 
-const tauriEngine: Engine = {
-  translate: (request) =>
-    Stream.toAsyncIterable(
-      Stream.callback<string, EngineError>((queue) =>
-        Effect.tryPromise({
-          try: () =>
-            invoke("translate", {
-              request: {
-                text: request.text,
-                source: Option.getOrUndefined(request.source),
-                target: request.target,
-                form: Option.getOrUndefined(request.form),
-              },
-              onDelta: new Channel<string>((delta) => {
-                Queue.offerUnsafe(queue, delta);
-              }),
+const invokeStream = <Item>(
+  command: string,
+  channel: string,
+  rest: Readonly<Record<string, unknown>>,
+): AsyncIterable<Item> =>
+  Stream.toAsyncIterable(
+    Stream.callback<Item, EngineError>((queue) =>
+      Effect.tryPromise({
+        try: () =>
+          invoke(command, {
+            ...rest,
+            [channel]: new Channel<Item>((item) => {
+              Queue.offerUnsafe(queue, item);
             }),
-          catch: engineError,
-        }).pipe(Effect.andThen(Queue.end(queue))),
-      ),
+          }),
+        catch: engineError,
+      }).pipe(Effect.andThen(Queue.end(queue))),
     ),
+  );
+
+const tauriEngine: Engine = {
+  prepare: () => invokeStream<Progress>("prepare", "onProgress", {}),
+  translate: (request) =>
+    invokeStream<string>("translate", "onDelta", {
+      request: {
+        text: request.text,
+        source: Option.getOrUndefined(request.source),
+        target: request.target,
+        form: Option.getOrUndefined(request.form),
+      },
+    }),
 };
 
 export { tauriEngine };
-export type { Engine, Form, TranslateRequest };
+export type { Engine, Form, Progress, TranslateRequest };

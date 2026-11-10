@@ -1,6 +1,6 @@
 import { Option, Stream, String, pipe } from "effect";
 
-import type { Engine } from "#/shared/api";
+import type { Engine, Progress } from "#/shared/api";
 
 type TranslateRequest = Engine["translate"] extends (request: infer Request) => unknown
   ? Request
@@ -30,11 +30,16 @@ const reply = (request: TranslateRequest): Stream.Stream<string, Readonly<{ mess
 
 type FakeEngine = Readonly<{ engine: Engine; requests: readonly TranslateRequest[] }>;
 
-const fakeEngine = (): FakeEngine => {
+type Failure = Readonly<{ message: string }>;
+
+type Prepare = () => Stream.Stream<Progress, Failure>;
+
+const fakeEngineWith = (prepare: Prepare): FakeEngine => {
   const requests: TranslateRequest[] = [];
   return {
     requests,
     engine: {
+      prepare: () => Stream.toAsyncIterable(prepare()),
       translate: (request) => {
         requests.push(request);
         return Stream.toAsyncIterable(reply(request));
@@ -43,5 +48,7 @@ const fakeEngine = (): FakeEngine => {
   };
 };
 
-export { fakeEngine };
-export type { FakeEngine, TranslateRequest };
+const fakeEngine = (): FakeEngine => fakeEngineWith(() => Stream.empty);
+
+export { fakeEngine, fakeEngineWith };
+export type { FakeEngine, Failure, Prepare, TranslateRequest };
