@@ -14,7 +14,13 @@ if [ -z "$base" ]; then
   exit 0
 fi
 echo "last mosaic deploy: $base"
-if gh api "repos/$GITHUB_REPOSITORY/compare/$base...$HEAD_SHA" --jq '.files[].filename' \
-  | grep -E '^((apps|libs|tools)/mosaic/|\.github/scripts/mosaic-touched\.sh$)'; then
+compare_file_limit=300
+if ! files="$(gh api "repos/$GITHUB_REPOSITORY/compare/$base...$HEAD_SHA" --jq '.files[].filename')" \
+  || [ "$(grep -c . <<<"$files")" -ge "$compare_file_limit" ]; then
+  echo "::warning::The files changed since $base could not be listed completely, so mosaic is rebuilt"
+  echo "mosaic=true" >> "$GITHUB_OUTPUT"
+  exit 0
+fi
+if grep -E '^((apps|libs|tools)/mosaic/|\.github/scripts/mosaic-touched\.sh$)' <<<"$files"; then
   echo "mosaic=true" >> "$GITHUB_OUTPUT"
 fi
