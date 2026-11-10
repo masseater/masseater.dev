@@ -1,0 +1,21 @@
+{
+  "name": "@masseater.dev/mcp-tool-call",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "catalog:",
+    "@r_masseater/workers-tracing": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/vitest": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0"
+  }
+}

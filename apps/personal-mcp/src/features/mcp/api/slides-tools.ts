@@ -1,12 +1,11 @@
+import type { Caller } from "@masseater.dev/mcp-tool-call";
+import { failedAt, NO_PROJECT, READ_ONLY } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Option, Order, Schema, pipe } from "effect";
 
-import { failedAt } from "#/features/mcp/model/upstream-failed";
-
-import type { Caller } from "./caller";
 import { DEFAULT_SLIDE_LIMIT, DeckInput, SlideSearchInput } from "./slides-input";
-import { NO_PROJECT, READ_ONLY, runTool, meteredInput } from "./tool-call.server";
+import { meteredInput, runTool } from "./tool-call";
 
 type SearchQuery = Readonly<{ query: string; limit: number; deck: Option.Option<string> }>;
 

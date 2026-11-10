@@ -20,3 +20,4 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 - Standard.site: https://bsky.app/profile/masseater.bsky.social
 - Zenn: https://zenn.dev/masseater
 - 個人データの MCP サーバー（watashi-mcp）: https://watashi.masseater.dev/mcp
+- Sloppedia・アクセス解析・スライドの MCP サーバー（personal-mcp）: https://personal-mcp.masseater.dev/mcp

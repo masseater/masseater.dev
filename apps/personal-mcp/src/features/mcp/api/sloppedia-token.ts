@@ -1,9 +1,8 @@
+import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
+import { failedAt } from "@masseater.dev/mcp-tool-call";
 import type { SloppediaGitHub } from "@masseater.dev/repositories/credential-broker.worker";
 import { env } from "cloudflare:workers";
 import { Effect } from "effect";
-
-import { failedAt } from "#/features/mcp/model/upstream-failed";
-import type { UpstreamFailed } from "#/features/mcp/model/upstream-failed";
 
 const broker = (): Service<SloppediaGitHub> => env.SLOPPEDIA_GITHUB;
 
