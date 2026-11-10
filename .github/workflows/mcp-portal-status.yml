@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@ac0ce93ca37cd143ce9734d747510e7e3d33f2fe
+      - uses: masseater/typescript-template/.github/actions/credentials@93a7576dd44543a8e3017807a91fbb8a68c4a2d6
       - name: Sync each server and print its state
         run: |
           api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access/ai-controls/mcp/servers"
@@ -47,6 +47,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ac0ce93ca37cd143ce9734d747510e7e3d33f2fe
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@93a7576dd44543a8e3017807a91fbb8a68c4a2d6
         with:
           github-token: ${{ github.token }}
