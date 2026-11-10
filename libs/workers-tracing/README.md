@@ -249,6 +249,40 @@ account then rarely pushes the request's trace out of the spans read. If it
 still does, raise `--limit`. If the sink Worker has another name than
 `workers-tracing-sink`, pass it with `--sink` or `WORKERS_TRACES_SINK`.
 
+### 5. Call Workers AI through the package
+
+Workers AI runs on shared machines. When they are busy, a call fails with error
+3040, `Capacity temporarily exceeded`. The REST API answers it with HTTP 429. The
+[error table](https://developers.cloudflare.com/workers-ai/platform/errors/)
+calls it temporary, so the call is worth repeating. `runWorkersAi` repeats it for you.
+
+```ts
+import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
+
+const answer =
+  yield *
+  runWorkersAi("daily summary 2026-10-01", () =>
+    env.AI.run("@cf/google/gemma-4-26b-a4b-it", { messages, max_tokens: 400 }),
+  );
+```
+
+| What happens                                 | What `runWorkersAi` does                                  |
+| -------------------------------------------- | --------------------------------------------------------- |
+| Error 3040, from the binding or the REST API | Logs a warning, then retries after 2, 4, 8 and 16 seconds |
+| Any other error                              | Fails at once with `WorkersAiError`                       |
+| The answer was cut off                       | Logs a warning                                            |
+
+An answer counts as cut off when its `finish_reason` is neither `stop` nor
+`tool_calls`. The warning carries `label`, the reason and the number of output
+tokens. `label` names what the model was writing, so the warning tells you which
+answer was cut off.
+
+`WorkersAiError` carries the label and the original error as `cause`. Its
+`outOfCapacity` is `true` when the four retries were used up.
+
+The lint preset exports `restrictedSyntax`. Pass it to `no-restricted-syntax`
+to flag every `env.AI.run` call outside `runWorkersAi`.
+
 ## How it works
 
 Cloudflare offers [custom
