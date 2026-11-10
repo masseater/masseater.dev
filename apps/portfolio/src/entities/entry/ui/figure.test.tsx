@@ -9,6 +9,8 @@ const FRAME = "--cascade-aspect:452 / 840";
 
 const FLOW = "react-flow";
 
+const COLD_IMPORT = 60_000;
+
 const rendered = (): string =>
   renderToStaticMarkup(<Figure caption="連鎖" name="cascade-failure" />);
 
@@ -18,7 +20,7 @@ test("図を読み込む前は、図と同じ大きさの枠だけを出す", ()
   expect(html).not.toContain(FLOW);
 });
 
-test("図を読み込んだ後は、図そのものを HTML に出す", () => {
+test("図を読み込んだ後は、図そのものを HTML に出す", { timeout: COLD_IMPORT }, () => {
   const html = Effect.andThen(importFigures, Effect.sync(rendered));
   return expect(Effect.runPromise(html)).resolves.toContain(FLOW);
 });
