@@ -1,0 +1,18 @@
+{
+  "name": "@masseater.dev/d1-test",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@effect/sql-sqlite-node": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

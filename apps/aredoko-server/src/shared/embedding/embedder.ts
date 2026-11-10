@@ -12,6 +12,13 @@ import { Array, Context, Effect, Layer, Option, Predicate, Schema, pipe } from "
 import { EmbeddingFailed } from "./embedding-failed.ts";
 
 const MODEL_ID = "onnx-community/embeddinggemma-2-ONNX";
+const MODEL_REVISION = "daa72c51243991dfcaf9f9137d2c573d8f7790c0";
+const PINNED_REMOTE_PATH = `{model}/resolve/${MODEL_REVISION}/`;
+const REVISION_CACHE = pipe(
+  Option.fromNullOr(env.cacheDir),
+  Option.map((shared) => `${shared}/${MODEL_REVISION}`),
+  Option.getOrNull,
+);
 const DTYPE = "q4";
 const DEVICES = ["dml", "cpu"] as const satisfies readonly DeviceType[];
 const IMAGE_SOFT_TOKENS = 70;
@@ -56,7 +63,16 @@ const documentPrompt = (text: string): string => `title: none | text: ${text}`;
 const FETCH_DEVICE = "cpu";
 
 const preferLocalModels = (directory: string): void => {
-  Object.assign(env, { localModelPath: directory, allowRemoteModels: false, useFSCache: false });
+  Object.assign(env, {
+    localModelPath: directory,
+    allowLocalModels: true,
+    allowRemoteModels: false,
+    useFSCache: false,
+  });
+};
+
+const downloadPinned = (): void => {
+  Object.assign(env, { cacheDir: REVISION_CACHE, remotePathTemplate: PINNED_REMOTE_PATH });
 };
 
 const loadModel = (
@@ -137,7 +153,12 @@ const loadConfig = Effect.gen(function* loadConfig() {
 /** @internal */
 const fetchModel = Effect.fn("fetchModel")(function* fetchModelFiles(directory: string) {
   yield* Effect.sync(() => {
-    Object.assign(env, { cacheDir: directory, allowLocalModels: false, allowRemoteModels: true });
+    Object.assign(env, {
+      cacheDir: directory,
+      allowLocalModels: false,
+      allowRemoteModels: true,
+      remotePathTemplate: PINNED_REMOTE_PATH,
+    });
   });
   const config = yield* loadConfig;
   yield* loadProcessor;
@@ -153,7 +174,7 @@ const localEmbedderLayer = (
     Embedder,
     Effect.gen(function* embedder() {
       yield* Effect.sync(() => {
-        pipe(modelDirectory, Option.map(preferLocalModels));
+        pipe(modelDirectory, Option.match({ onNone: downloadPinned, onSome: preferLocalModels }));
       });
       const config = yield* loadConfig;
       const { processor, imageToken } = yield* loadProcessor;

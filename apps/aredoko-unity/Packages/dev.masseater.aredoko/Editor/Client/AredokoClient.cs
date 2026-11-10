@@ -123,7 +123,7 @@ namespace Aredoko.Client
         static Uri ReadEndpoint()
         {
             var endpoint = JsonConvert.DeserializeObject<ServerEndpoint>(File.ReadAllText(EndpointPath), Converter.Settings)!;
-            return new Uri($"ws://{EndpointFile.Host}:{endpoint.Port}");
+            return new Uri($"ws://{EndpointFile.Host}:{endpoint.Port}/?{EndpointFile.TokenParameter}={Uri.EscapeDataString(endpoint.Token)}");
         }
 
         async Task Send(ClientWebSocket target, string text)

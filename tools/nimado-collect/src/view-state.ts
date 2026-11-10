@@ -60,21 +60,55 @@ const pickVideos = ({
   );
 };
 
+const observation = ({
+  previous,
+  found,
+  date,
+  keepAfter,
+}: Readonly<{
+  previous: Option.Option<ObservationValue>;
+  found: Option.Option<number>;
+  date: string;
+  keepAfter: string;
+}>): ObservationValue =>
+  Option.match(found, {
+    onSome: (views) => [Option.some(views), date],
+    onNone: () =>
+      pipe(
+        previous,
+        Option.filter(([, at]) => at > keepAfter),
+        Option.getOrElse((): ObservationValue => [Option.none(), date]),
+      ),
+  });
+
 const observe = ({
   state,
   ids,
   views,
   date,
+  keepAfter,
 }: Readonly<{
   state: ViewStateValue;
   ids: readonly string[];
   views: Readonly<Record<string, number>>;
   date: string;
+  keepAfter: string;
 }>): ViewStateValue => ({
   ...state,
   ...pipe(
     ids,
-    Arr.map((id) => [id, [Record.get(views, id), date] as ObservationValue] as const),
+    Arr.map(
+      (id) =>
+        [
+          id,
+          observation({
+            previous: Record.get(state, id),
+            found: Record.get(views, id),
+            date,
+            keepAfter,
+          }),
+        ] as const,
+    ),
     Record.fromEntries,
   ),
 });

@@ -1,7 +1,8 @@
 use std::fs::{self, File};
+use std::io;
 use std::path::PathBuf;
-use std::process::{Child, Command, Stdio};
-use std::sync::Mutex;
+use std::process::{Child, ExitStatus, Stdio};
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use serde::Deserialize;
@@ -17,13 +18,14 @@ pub mod server;
 pub mod translate;
 
 use prompt::Direction;
-use server::Server;
+use server::{Launch, Server};
 
 const MAIN_WINDOW: &str = "main";
 const SERVER_LOG: &str = "llama-server.log";
 const STARTUP_TIMEOUT: Duration = Duration::from_mins(2);
 const CANCELLED: &str = "cancelled";
 const STARTING: &str = "翻訳エンジンを起動しています";
+const STOPPED: &str = "翻訳エンジンは停止しています";
 
 #[cfg(windows)]
 const SERVER_BINARY: &str = "llama-server.exe";
@@ -64,15 +66,14 @@ fn runtime(app: &AppHandle) -> Runtime {
     Runtime::in_directory(&resources)
 }
 
-/// Starts llama-server with the translation model on `port`, writing its log to `log`.
+/// Starts llama-server with the translation model as `launch` says, writing its log to `log`.
 ///
 /// # Errors
 ///
 /// Returns an error when the process cannot start.
-pub fn spawn_server(runtime: &Runtime, port: u16, log: File) -> std::io::Result<Child> {
-    let mut command = Command::new(&runtime.server);
+pub fn spawn_server(runtime: &Runtime, launch: &Launch, log: File) -> io::Result<Child> {
+    let mut command = launch.command(&runtime.server, &runtime.model);
     command
-        .args(server::arguments(&runtime.model, port))
         .stdin(Stdio::null())
         .stdout(log.try_clone()?)
         .stderr(log);
@@ -86,9 +87,50 @@ pub fn spawn_server(runtime: &Runtime, port: u16, log: File) -> std::io::Result<
 
 type Readiness = Option<Result<Server, String>>;
 
+/// The llama-server process. Once the app has stopped it, no other is started.
+enum Process {
+    Idle,
+    Running(Child),
+    Stopped,
+}
+
+impl Process {
+    fn stopped() -> io::Error {
+        io::Error::other(STOPPED)
+    }
+
+    fn kill(&mut self) {
+        if let Self::Running(child) = self {
+            let _ = child.kill();
+            let _ = child.wait();
+        }
+    }
+
+    fn stop(&mut self) {
+        self.kill();
+        *self = Self::Stopped;
+    }
+
+    fn replace(&mut self, spawn: impl FnOnce() -> io::Result<Child>) -> io::Result<()> {
+        if matches!(self, Self::Stopped) {
+            return Err(Self::stopped());
+        }
+        self.kill();
+        *self = Self::Running(spawn()?);
+        Ok(())
+    }
+
+    fn exited(&mut self) -> io::Result<Option<ExitStatus>> {
+        match self {
+            Self::Running(child) => child.try_wait(),
+            Self::Idle | Self::Stopped => Err(Self::stopped()),
+        }
+    }
+}
+
 struct Engine {
     ready: watch::Receiver<Readiness>,
-    child: Mutex<Option<Child>>,
+    process: Arc<Mutex<Process>>,
     inflight: Mutex<Option<AbortHandle>>,
 }
 
@@ -143,24 +185,32 @@ async fn translate(
     )
 }
 
-fn start_engine(app: &AppHandle) -> Result<(Child, Server), String> {
+async fn start_engine(app: &AppHandle, process: &Mutex<Process>) -> Result<Server, String> {
     let logs = app
         .path()
         .app_log_dir()
         .map_err(|error| error.to_string())?;
     fs::create_dir_all(&logs).map_err(|error| error.to_string())?;
     let log = File::create(logs.join(SERVER_LOG)).map_err(|error| error.to_string())?;
-    let port = server::free_port().map_err(|error| error.to_string())?;
-    let child = spawn_server(&runtime(app), port, log).map_err(|error| error.to_string())?;
-    Ok((child, Server::new(port)))
+    let runtime = runtime(app);
+    server::start(
+        STARTUP_TIMEOUT,
+        |launch| {
+            process
+                .lock()
+                .map_err(|_| Process::stopped())?
+                .replace(|| spawn_server(&runtime, launch, log.try_clone()?))
+        },
+        || process.lock().map_err(|_| Process::stopped())?.exited(),
+    )
+    .await
+    .map_err(|error| error.to_string())
 }
 
 fn stop_engine(app: &AppHandle) {
     let engine = app.state::<Engine>();
-    let child = engine.child.lock().ok().and_then(|mut slot| slot.take());
-    if let Some(mut child) = child {
-        let _ = child.kill();
-        let _ = child.wait();
+    if let Ok(mut process) = engine.process.lock() {
+        process.stop();
     }
 }
 
@@ -174,26 +224,18 @@ fn show_main(app: &AppHandle) {
 
 fn setup(app: &App) {
     let (publish, ready) = watch::channel(None);
-    let child = match start_engine(app.handle()) {
-        Ok((child, server)) => {
-            async_runtime::spawn(async move {
-                let readiness = server
-                    .wait_ready(STARTUP_TIMEOUT)
-                    .await
-                    .map(|()| server)
-                    .map_err(|error| error.to_string());
-                publish.send_replace(Some(readiness));
-            });
-            Some(child)
+    let process = Arc::new(Mutex::new(Process::Idle));
+    async_runtime::spawn({
+        let app = app.handle().clone();
+        let process = Arc::clone(&process);
+        async move {
+            let readiness = start_engine(&app, &process).await;
+            publish.send_replace(Some(readiness));
         }
-        Err(message) => {
-            publish.send_replace(Some(Err(message)));
-            None
-        }
-    };
+    });
     app.manage(Engine {
         ready,
-        child: Mutex::new(child),
+        process,
         inflight: Mutex::new(None),
     });
 }
@@ -222,4 +264,21 @@ pub fn run() -> tauri::Result<()> {
         }
     });
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn starts_no_process_once_the_app_has_stopped_it() {
+        let mut process = Process::Idle;
+        process.stop();
+        assert!(
+            process
+                .replace(|| unreachable!("spawned after the stop"))
+                .is_err()
+        );
+        assert!(process.exited().is_err());
+    }
 }

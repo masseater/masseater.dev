@@ -1,38 +1,71 @@
 use std::fs::File;
+use std::io;
 use std::path::PathBuf;
-use std::process::Child;
+use std::process::{Child, ExitStatus};
+use std::sync::Mutex;
 use std::time::Duration;
 
+use reqwest::StatusCode;
 use yakusu::prompt::{Direction, Form, Lang};
 use yakusu::server::{self, Server};
 use yakusu::{Runtime, spawn_server, translate};
 
-struct Running {
-    child: Child,
-    server: Server,
+#[derive(Default)]
+struct Process {
+    child: Option<Child>,
+    port: u16,
 }
 
-impl Drop for Running {
-    fn drop(&mut self) {
-        let _ = self.child.kill();
-        let _ = self.child.wait();
+impl Process {
+    fn stop(&mut self) {
+        if let Some(mut child) = self.child.take() {
+            let _ = child.kill();
+            let _ = child.wait();
+        }
     }
+
+    fn replace(&mut self, child: Child, port: u16) {
+        self.stop();
+        self.child = Some(child);
+        self.port = port;
+    }
+
+    fn exited(&mut self) -> io::Result<Option<ExitStatus>> {
+        self.child.as_mut().map_or(Ok(None), Child::try_wait)
+    }
+}
+
+impl Drop for Process {
+    fn drop(&mut self) {
+        self.stop();
+    }
+}
+
+struct Running {
+    process: Process,
+    server: Server,
 }
 
 async fn start() -> Running {
     let runtime =
         Runtime::in_directory(&PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("resources"));
-    let port = server::free_port().unwrap();
     let log = File::create(std::env::temp_dir().join("yakusu-engine-test.log")).unwrap();
-    let child = spawn_server(&runtime, port, log).unwrap();
-    let server = Server::new(port);
-    let running = Running { child, server };
-    running
-        .server
-        .wait_ready(Duration::from_mins(2))
-        .await
-        .unwrap();
-    running
+    let process = Mutex::new(Process::default());
+    let server = server::start(
+        Duration::from_mins(2),
+        |launch| {
+            let child = spawn_server(&runtime, launch, log.try_clone()?)?;
+            process.lock().unwrap().replace(child, launch.port());
+            Ok(())
+        },
+        || process.lock().unwrap().exited(),
+    )
+    .await
+    .unwrap();
+    Running {
+        process: process.into_inner().unwrap(),
+        server,
+    }
 }
 
 fn lang(code: &str) -> Lang {
@@ -56,6 +89,11 @@ async fn run(running: &Running, direction: &Direction, text: &str) -> String {
 #[ignore = "needs llama-server and the model in resources/, which fetch-runtime downloads"]
 async fn translates_with_the_bundled_model() {
     let running = start().await;
+
+    let keyless = reqwest::get(format!("http://127.0.0.1:{}/props", running.process.port))
+        .await
+        .unwrap();
+    assert_eq!(keyless.status(), StatusCode::UNAUTHORIZED);
 
     let english = run(
         &running,

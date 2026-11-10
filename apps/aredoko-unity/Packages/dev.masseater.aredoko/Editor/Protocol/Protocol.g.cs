@@ -207,6 +207,9 @@ namespace Aredoko.Protocol
     {
         [JsonProperty("port")]
         public long Port { get; set; }
+
+        [JsonProperty("token")]
+        public string Token { get; set; }
     }
 
     public partial class ExtractPayload
@@ -876,6 +879,7 @@ namespace Aredoko.Protocol
         public const string Directory = "dev.masseater.aredoko";
         public const string Name = "endpoint.json";
         public const string Host = "127.0.0.1";
+        public const string TokenParameter = "token";
     }
 
     public static class AredokoRpcs

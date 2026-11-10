@@ -26,6 +26,7 @@
           "effect/cli/Command#run",
           "effect/cli/Flag#String",
           "effect/cli/Flag#optional",
+          "effect/crypto/Mac#timingSafeEqual",
           "effect/http/FetchHttpClient#layer",
           "effect/http/HttpClient",
           "effect/http/HttpClientResponse",
