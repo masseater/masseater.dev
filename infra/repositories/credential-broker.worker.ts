@@ -15,9 +15,9 @@ import {
   pipe,
 } from "effect";
 
+import { accessOAuthRoute } from "./access-oauth.ts";
 import { atprotoRoute, issueAppPassword } from "./atproto.ts";
-import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
-import { cloudflare } from "./cloudflare-root.ts";
+import { ISSUED_TOKEN_PREFIX, cloudflare } from "./cloudflare-root.ts";
 import { issueKinds, selectKinds } from "./credential-kinds.ts";
 import { route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
@@ -32,7 +32,6 @@ import {
 } from "./github-oidc.ts";
 import { mintGitHubToken } from "./github-token.ts";
 
-const TOKEN_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
 const TOKEN_LIFETIME = { hours: 1 } as const;
 
 type CredentialBrokerEnv = GitHubAppEnv &
@@ -122,7 +121,7 @@ const issueCloudflareToken = (
     }
     const created = yield* createToken({
       accountId: env.ACCOUNT_ID,
-      name: `${TOKEN_PREFIX}${repository}:${claims.run_id}:${claims.run_attempt}`,
+      name: `${ISSUED_TOKEN_PREFIX}${repository}:${claims.run_id}:${claims.run_attempt}`,
       policies: policies.value,
       expiresOn: yield* expiry,
     });
@@ -238,7 +237,12 @@ const handle = (
   env: CredentialBrokerEnv,
 ): Effect.Effect<Response, never, BrokerContext> =>
   Option.match(route({ request, env }), {
-    onNone: () => Option.getOrElse(atprotoRoute({ request, env }), () => issue(request, env)),
+    onNone: () =>
+      pipe(
+        atprotoRoute({ request, env }),
+        Option.orElse(() => accessOAuthRoute({ request, env })),
+        Option.getOrElse(() => issue(request, env)),
+      ),
     onSome: (handled) =>
       handled.pipe(
         Effect.catchCause((cause) =>
@@ -256,7 +260,7 @@ const sweep = (env: CredentialBrokerEnv): Effect.Effect<void, never, CloudflareO
       listTokens.items({ accountId: env.ACCOUNT_ID }),
       Stream.filter(
         (token) =>
-          Str.startsWith(TOKEN_PREFIX)(token.name ?? "") &&
+          Str.startsWith(ISSUED_TOKEN_PREFIX)(token.name ?? "") &&
           Option.exists(DateTime.make(token.expiresOn ?? ""), DateTime.isLessThan(now)),
       ),
       Stream.runCollect,
@@ -282,5 +286,6 @@ const worker = {
     run(env, sweep(env)),
 };
 
+export { AccessOAuth } from "./access-oauth.ts";
 export { SloppediaGitHub } from "./github-token.ts";
 export default worker;

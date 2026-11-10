@@ -9,7 +9,10 @@ import {
 } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
-import type { SloppediaGitHub } from "@masseater.dev/repositories/credential-broker.worker";
+import type {
+  AccessOAuth,
+  SloppediaGitHub,
+} from "@masseater.dev/repositories/credential-broker.worker";
 import { Stack } from "alchemy";
 import { Effect } from "effect";
 
@@ -80,6 +83,7 @@ const upstreams = Effect.gen(function* upstreams() {
   return {
     SLIDE_INDEX,
     SLOPPEDIA_GITHUB: Workers.WorkerEntrypoint<SloppediaGitHub>(broker, "SloppediaGitHub"),
+    ACCESS_OAUTH: Workers.WorkerEntrypoint<AccessOAuth>(broker, "AccessOAuth"),
     WEB_ANALYTICS_TOKEN: Workers.WorkerEntrypoint(webAnalyticsToken),
   };
 });
