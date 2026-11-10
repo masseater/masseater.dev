@@ -57,6 +57,7 @@ const FAKE_BETTERLEAKS = lines(
   'case "$1" in',
   `  git) test "$6" = --ignore-file && grep -qx ${ZEROS} "$7" ;;`,
   "  stdin) ! grep -q AKIA ;;",
+  '  dir) ! grep -rq --exclude-dir=vendor AKIA "$2" ;;',
   "  *) exit 2 ;;",
   "esac",
 );
@@ -120,6 +121,9 @@ const statusLines = (output: string): readonly string[] =>
     Arr.filter((line) => Str.startsWith("✓ ")(line) || Str.startsWith("✗ ")(line)),
   );
 
+const failedChecksOf = (output: string): readonly string[] =>
+  pipe(statusLines(output), Arr.filter(Str.startsWith("✗ ")));
+
 const passesEveryConfiguredCheck = Effect.gen(function* passesEveryConfiguredCheck() {
   const root = yield* repositoryWith({}, ["feat: second"]);
   const { exit, output } = yield* run(root, []);
@@ -141,7 +145,7 @@ const namesTheFailingChecks = Effect.gen(function* namesTheFailingChecks() {
   );
   const { exit, output } = yield* run(root, []);
   assertFalse(Exit.isSuccess(exit));
-  const failed = pipe(statusLines(output), Arr.filter(Str.startsWith("✗ ")));
+  const failed = failedChecksOf(output);
   deepStrictEqual(failed, ["✗ commitlint", "✗ dependencies", "✗ markdownlint"]);
 });
 
@@ -175,6 +179,28 @@ const scansTheStagedChanges = Effect.gen(function* scansTheStagedChanges() {
   assertFalse(Exit.isSuccess(leaked.exit));
 });
 
+const shallowCloneOf = (
+  files: Readonly<Record<string, string>>,
+): Effect.Effect<string, never, CommandServices | Scope.Scope> =>
+  Effect.gen(function* shallowClone() {
+    const origin = yield* repositoryWith(files, []);
+    yield* runGit(origin, ["add", "-A"]);
+    yield* commitEmpty(origin, "feat: add the files");
+    const fs = yield* FileSystem.FileSystem;
+    const parent = yield* fs.makeTempDirectoryScoped({ prefix: "vpa-clone-" }).pipe(Effect.orDie);
+    yield* runGit(parent, ["clone", "-q", "--depth", "1", `file://${origin}`, "clone"]);
+    return `${parent}/clone`;
+  });
+
+const scansTheTreeOfAShallowClone = Effect.gen(function* scansTheTreeOfAShallowClone() {
+  const clean = yield* shallowCloneOf({ "clean.txt": "hello\n" });
+  const leaked = yield* shallowCloneOf({ "leak.txt": "AKIAEXAMPLE\n" });
+  const cleanRun = yield* run(clean, []);
+  const leakedRun = yield* run(leaked, []);
+  deepStrictEqual(failedChecksOf(cleanRun.output), []);
+  deepStrictEqual(failedChecksOf(leakedRun.output), ["✗ betterleaks"]);
+});
+
 layer(fixtureLayer)("vpa", (it) => {
   it.effect(
     "runs every check configured in vite.config.ts and passes",
@@ -183,4 +209,8 @@ layer(fixtureLayer)("vpa", (it) => {
   it.effect("reports each failing check by name", () => namesTheFailingChecks);
   it.effect("lints a commit message file for the commit-msg hook", () => lintsTheCommitMessageFile);
   it.effect("scans the staged changes for the pre-commit hook", () => scansTheStagedChanges);
+  it.effect(
+    "scans the committed tree when the clone has no history to diff",
+    () => scansTheTreeOfAShallowClone,
+  );
 });

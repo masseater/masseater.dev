@@ -24,7 +24,7 @@ class FixtureFiles extends Context.Service<
     readonly symlink: (target: string, link: string) => Effect.Effect<void>;
     readonly commitAll: (root: string) => Effect.Effect<void>;
   }
->()("@msch/core/repository.test.support/FixtureFiles") {}
+>()("@r_masseater/msch/repository.test.support/FixtureFiles") {}
 
 const fixtureFiles = Layer.effect(
   FixtureFiles,

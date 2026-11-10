@@ -1,7 +1,9 @@
-import { POSITION_BASE, describeFinding } from "@msch/core";
-import type { Problem } from "@msch/core";
 import { Array as Arr, pipe } from "effect";
 import type { Diagnostic, Plugin, Rule } from "vite-plus/lint/plugins";
+
+import { describeFinding } from "./problem.ts";
+import type { Problem } from "./problem.ts";
+import { POSITION_BASE } from "./syntax.ts";
 
 type ProblemLoader = (cwd: string) => readonly Problem[];
 

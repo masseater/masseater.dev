@@ -140,6 +140,7 @@ TypeScript 5 をこのリポの依存に入れないため、作る仕組みは�
 | fallow       | `fallow` セクション          | セクションを一時ファイルに書いて `-c` で渡し、使う側の `fallow` で全体・`dead-code --no-production`・`dupes`・`security` を検査し、コンポーネントの props の受け渡しの指摘も失敗にする     |
 
 基準のコミットは環境変数 `VPA_BASE` で渡す。無いときや解決できないときは `origin/main` を使う。
+CI の浅い clone や partial clone のように履歴を持たないときは、Betterleaks は `HEAD` のツリーを丸ごと検査する。
 `vpa --staged` は `git diff --cached` を Betterleaks に渡し、`vpa --commit-msg <ファイル>` はそのコミットメッセージを `commitlint` セクションで検査する。`#` で始まる行は読まない。
 postinstall が動いていないと、Betterleaks・actionlint・zizmor の検査は `allowBuilds` に足すよう告げて失敗する。
 バイナリのバージョンは `src/binaries.ts` で固定し、vite-plus-adopt のバージョンを上げて変える。
