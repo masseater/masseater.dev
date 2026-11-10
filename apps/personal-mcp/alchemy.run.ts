@@ -41,7 +41,7 @@ const ownerAccess = Effect.gen(function* ownerAccess() {
   const google = yield* Access.IdentityProvider.ref("Google", personalSpace);
   const team = yield* Access.Organization.ref("ZeroTrust", personalSpace);
   const application = yield* defineApplication("McpAccess", {
-    name: "personal-mcp",
+    name: `${PREFIX}access`,
     type: "self_hosted",
     domain: SITE_HOST,
     destinations: [{ type: "public", uri: SITE_HOST }],
