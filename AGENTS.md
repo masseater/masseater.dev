@@ -77,6 +77,12 @@
 - npm へは version を上げてから `publish.yml` を package に選んで main で手動実行する。Trusted Publisher が無い間は broker が environment `npm` のジョブに npm のトークンを出す。
 - 場面ごとの使い分けは masseater/skills の `measure-everything` スキルにある。部品や勧める手段を変えたら、スキルも直す。
 
+## lint の部品
+
+- `libs/oxlint-plugin-decision` は自然文のルールをモデルに判定させる oxlint のプラグインで、`libs/oxlint-plugin-decision-presets` がそのルール集である。`libs/oxlint-typed-rules` は型情報の要る ESLint のルールを TypeScript 7 の `typescript/sync` の上で oxlint に載せる。元のリポのテストは `upstream/` に手を入れずに置き、すべて通す。`libs/vite-plus-adopt` はルートの設定ファイルを `vite.config.ts` に寄せるための `vpa` で、引数なしの 1 回で設定済みの検査を全部動かす。サブコマンドは作らない。元は masseater/lint-kit にあった。
+- 4 つとも npm の `@r_masseater/<名前>` として出す。version を上げてから `publish.yml` を package に選んで main で手動実行する。テストとビルドは各パッケージの `test`・`build` タスクで、ルートの `vp test` からは外している。
+- `vite-plus-adopt` が使う betterleaks・actionlint・zizmor は postinstall で入れ、pnpm の `allowBuilds` で許可する。実行時にダウンロードしない。
+
 ## 記事
 
 - 記事の日付は frontmatter に書かない。`apps/portfolio/vite-plugins/markdown/remark-git-date.ts` がビルド時に、そのファイルを最初に追加したコミットの日付を `date` として入れる。未コミットのファイルは当日の日付になる。

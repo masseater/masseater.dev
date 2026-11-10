@@ -1,0 +1,128 @@
+{
+  "name": "@r_masseater/vite-plus-adopt",
+  "version": "0.3.0",
+  "description": "Adopt Betterleaks, actionlint, zizmor, commitlint, textlint, Steiger and dependency checks into Vite+ through the settings in vite.config.ts, and ship the Feature-Sliced Design Steiger plugin and @arethetypeswrong/core for TypeScript 7.",
+  "keywords": [
+    "actionlint",
+    "arethetypeswrong",
+    "attw",
+    "betterleaks",
+    "commitlint",
+    "feature-sliced",
+    "steiger",
+    "textlint",
+    "vite-plus",
+    "zizmor"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/vite-plus-adopt#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/vite-plus-adopt"
+  },
+  "bin": {
+    "vpa": "./dist/cli.mjs"
+  },
+  "files": [
+    "dist",
+    "THIRD-PARTY-NOTICES"
+  ],
+  "type": "module",
+  "imports": {
+    "#attw-upstream/*": "./upstream/attw-core/lib/*",
+    "#src/*": "./src/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./fsd": {
+      "types": "./dist/fsd.d.mts",
+      "default": "./dist/fsd.mjs"
+    },
+    "./attw": {
+      "types": "./dist/attw.d.mts",
+      "default": "./dist/attw.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build",
+    "postinstall": "node -e \"require('fs').existsSync('dist/postinstall.mjs') && import('./dist/postinstall.mjs')\""
+  },
+  "dependencies": {
+    "@andrewbranch/untar.js": "catalog:",
+    "@commitlint/format": "catalog:",
+    "@commitlint/lint": "catalog:",
+    "@commitlint/load": "catalog:",
+    "@commitlint/types": "catalog:",
+    "@effect/platform-node": "catalog:",
+    "@loaderkit/resolve": "catalog:",
+    "@textlint/config-loader": "catalog:",
+    "@textlint/kernel": "catalog:",
+    "cjs-module-lexer": "catalog:",
+    "effect": "catalog:stack",
+    "fastest-levenshtein": "catalog:",
+    "fflate": "catalog:",
+    "markdownlint": "catalog:",
+    "minimatch": "catalog:",
+    "pluralize": "catalog:",
+    "semver": "catalog:",
+    "smol-toml": "catalog:",
+    "steiger": "catalog:",
+    "textlint": "catalog:",
+    "tsconfck": "catalog:",
+    "typescript": "catalog:stack",
+    "validate-npm-package-name": "catalog:",
+    "web-tree-sitter": "catalog:",
+    "yaml": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@feature-sliced/filesystem": "catalog:",
+    "@feature-sliced/steiger-plugin": "catalog:",
+    "@size-limit/file": "catalog:",
+    "@types/node": "catalog:",
+    "@types/semver": "catalog:",
+    "size-limit": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "vite": "*",
+    "vite-plus": ">=1.5.0"
+  },
+  "size-limit": [
+    {
+      "name": "tools",
+      "path": [
+        "dist/*.mjs",
+        "!dist/fsd.mjs",
+        "!dist/attw.mjs"
+      ],
+      "limit": "10402 B"
+    },
+    {
+      "name": "fsd",
+      "path": "dist/fsd.mjs",
+      "limit": "9396 B"
+    },
+    {
+      "name": "attw",
+      "path": "dist/attw.mjs",
+      "limit": "47100 B"
+    }
+  ],
+  "engines": {
+    "node": ">=26"
+  }
+}
