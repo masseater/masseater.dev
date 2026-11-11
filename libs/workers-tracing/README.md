@@ -43,10 +43,11 @@ vp add @r_masseater/workers-tracing
 ### 1. Turn tracing on for every Worker of the stack
 
 In your Alchemy stack file, usually `alchemy.run.ts`, pass the providers through
-`withWorkersTracing`. Every Worker the stack declares then has logs and traces
-turned on. That includes Workers made for you by `Website` and the other
-helpers. Workers with no compatibility date, or one older than 2026-08-25, get
-that date.
+`withWorkersTracing`. Every Worker the stack declares then has logs, traces and
+[Workers Issues](https://developers.cloudflare.com/workers/observability/issues/)
+turned on. Issues groups uncaught exceptions, 5xx responses and logged errors.
+That includes Workers made for you by `Website` and the other helpers. Workers
+with no compatibility date, or one older than 2026-08-25, get that date.
 
 If you will check spans in CI (step 4), deploy the trace sink first and name its
 destination here, as step 4 shows.
@@ -65,9 +66,11 @@ export default Stack(
 
 A Worker keeps what it sets itself. That covers its log settings,
 `traces.persist`, extra trace destinations and a later compatibility date. Two
-kinds of Worker are left as they are. One is a Worker that sets
-`observability.traces.enabled: false`, which is how a Worker opts out. The other
-is a version uploaded to another Worker (`version.parent`).
+kinds of Worker are not traced. One is a Worker that sets
+`observability.traces.enabled: false`, which is how a Worker opts out. It still
+gets Issues, unless it sets `observability.issues.enabled: false`. The other is a
+version uploaded to another Worker (`version.parent`), which keeps the settings
+of that Worker.
 
 ### 2. Trace pages and server functions
 

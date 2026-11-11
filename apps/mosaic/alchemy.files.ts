@@ -1,5 +1,5 @@
-import { Workers, providers, state } from "@alchemy.run/cloudflare";
-import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
+import { Workers } from "@alchemy.run/cloudflare";
+import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { CHARACTERS, slugPath } from "@thumb-mosaic/mosaic";
 import { Stack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
@@ -12,10 +12,7 @@ import { ZONE } from "./cloudflare.ts";
 
 export default Stack(
   APP_NAME,
-  {
-    providers: tracedProviders(providers()),
-    state: state(),
-  },
+  tracedStackProps,
   Effect.gen(function* stack() {
     const { stage } = yield* Stack;
     const character = yield* Option.match(

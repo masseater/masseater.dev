@@ -1,5 +1,5 @@
-import { Containers, R2, Workers, providers, state } from "@alchemy.run/cloudflare";
-import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
+import { Containers, R2, Workers } from "@alchemy.run/cloudflare";
+import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import davey from "@snazzah/davey/package.json" with { type: "json" };
 import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
@@ -29,10 +29,7 @@ const PlayerImage = Containers.Container(
 
 export default Stack(
   APP_NAME,
-  {
-    providers: tracedProviders(providers()),
-    state: state(),
-  },
+  tracedStackProps,
   Effect.gen(function* stack() {
     const AUDIO = yield* R2.Bucket("Audio", { name: `${PREFIX}audio` });
     const { url } = yield* Workers.Worker("ThreeTwelve", {

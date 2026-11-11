@@ -1,4 +1,4 @@
-import { D1, Website, Workers, providers, state } from "@alchemy.run/cloudflare";
+import { D1, Website, Workers } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import {
   cloudflareReader,
@@ -6,7 +6,7 @@ import {
 } from "@masseater.dev/cloudflare-account/account-readers";
 import { edgeGuard } from "@masseater.dev/cloudflare-account/edge-guard";
 import { logArchive } from "@masseater.dev/cloudflare-account/log-archive";
-import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
+import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { Stack, Stage, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { Effect, Option } from "effect";
@@ -51,10 +51,7 @@ type WebEnv = InferEnv<typeof web>;
 
 const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   APP_NAME,
-  {
-    providers: tracedProviders(providers()),
-    state: state(),
-  },
+  tracedStackProps,
   Effect.gen(function* stack() {
     const { url } = yield* web;
     if ((yield* Stage) === PRODUCTION_STAGE) {

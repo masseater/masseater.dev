@@ -34,6 +34,7 @@ const traceSink = Effect.fn("traceSink")(function* traceSink({
       enabled: true,
       logs: { enabled: true, invocationLogs: false, persist: true },
       traces: { enabled: false },
+      issues: { enabled: true },
     },
   });
   return yield* Workers.ObservabilityDestination("Traces", {

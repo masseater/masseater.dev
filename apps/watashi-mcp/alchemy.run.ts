@@ -1,7 +1,7 @@
-import { AnalyticsEngine, D1, R2, providers, state } from "@alchemy.run/cloudflare";
+import { AnalyticsEngine, D1, R2 } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { authSite } from "@masseater.dev/cloudflare-account/auth-site";
-import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
+import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { Stack } from "alchemy";
 import { Effect, Option } from "effect";
 
@@ -37,10 +37,7 @@ type WebEnv = InferEnv<typeof web>;
 export type { WebEnv };
 export default Stack(
   APP_NAME,
-  {
-    providers: tracedProviders(providers()),
-    state: state(),
-  },
+  tracedStackProps,
   Effect.gen(function* stack() {
     const site = yield* web;
     yield* requireAppPrefix;
