@@ -110,5 +110,4 @@ const bodyOf = (request: Request): Promise<unknown> =>
 const logTraceRequest = ({ resourceSpans }: typeof TraceRequest.Type): Effect.Effect<void> =>
   Effect.forEach(pipe(resourceSpans, Arr.flatMap(spansOf)), logSpan, { discard: true });
 
-export type { ReceivedSpan };
 export { ResourceSpans, TraceRequest, UnreadableBody, bodyOf, logTraceRequest, serviceOf };
