@@ -205,7 +205,10 @@ const mcpPortal = gen(function* mcpPortal() {
       enabled: true,
       dynamicClientRegistration: {
         enabled: true,
-        allowedUris: ["https://agent.meta.ai/api/hatch/oauth/callback"],
+        allowedUris: [
+          "https://claude.ai/api/mcp/auth_callback",
+          "https://agent.meta.ai/api/hatch/oauth/callback",
+        ],
       },
     },
   });
