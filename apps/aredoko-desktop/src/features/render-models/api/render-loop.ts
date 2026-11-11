@@ -1,8 +1,8 @@
-import { Array, Duration, Effect, Fiber, pipe } from "effect";
+import { Array, Cause, Duration, Effect, Exit, Fiber, pipe } from "effect";
 
 import { loadModel } from "#/features/render-models/model/load-model";
 import { renderViews } from "#/features/render-models/model/render-views";
-import { listRenderJobs, putRender, readModel } from "#/shared/api";
+import { failRender, listRenderJobs, putRender, readModel } from "#/shared/api";
 
 const BUSY = Duration.fromInputUnsafe("1 second");
 const IDLE = Duration.fromInputUnsafe("10 seconds");
@@ -19,14 +19,14 @@ const rendered = Effect.fn("rendered")(function* renderJob({ assetId, pathname }
 }, Effect.scoped);
 
 const renderOne = Effect.fn("renderOne")(function* renderOne(job: Job) {
-  const pngs = yield* rendered(job).pipe(
-    Effect.catchCause((cause) =>
-      Effect.logWarning("render failed", job.pathname, cause).pipe(
-        Effect.as<readonly Uint8Array[]>([]),
-      ),
-    ),
-  );
-  yield* Effect.promise(() => putRender({ assetId: job.assetId, pngs }));
+  const exit = yield* Effect.exit(rendered(job));
+  if (Exit.isSuccess(exit)) {
+    const pngs = exit.value;
+    return yield* Effect.promise(() => putRender({ assetId: job.assetId, pngs }));
+  }
+  const reason = Cause.pretty(exit.cause);
+  yield* Effect.logWarning("render failed", job.pathname, reason);
+  return yield* Effect.promise(() => failRender({ assetId: job.assetId, reason }));
 });
 
 const renderPending = Effect.gen(function* renderPending() {

@@ -47,7 +47,19 @@ const embedTexts = Effect.fn("embedTexts")(function* embedMissingTexts(
       where ${inPackage}
       and not exists (select 1 from text_vectors v where v.rowid = a.id)`,
   );
-  yield* pipe(rows, Array.chunksOf(TEXT_BATCH), Effect.forEach(embedBatch));
+  const embedded = yield* pipe(
+    rows,
+    Array.chunksOf(TEXT_BATCH),
+    Effect.forEach((batch) =>
+      embedBatch(batch).pipe(
+        Effect.as(true),
+        Effect.catchCause((cause) =>
+          Effect.logWarning("text embedding failed, retrying later", cause).pipe(Effect.as(false)),
+        ),
+      ),
+    ),
+  );
+  return pipe(embedded, Array.every(Boolean));
 });
 
 export { embedTexts };

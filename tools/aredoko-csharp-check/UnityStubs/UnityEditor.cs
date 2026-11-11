@@ -103,6 +103,7 @@ namespace UnityEditor
         public static Texture2D GetAssetPreview(Object asset) => throw null;
         public static Texture2D GetMiniThumbnail(Object obj) => throw null;
         public static bool IsLoadingAssetPreview(int instanceID) => throw null;
+        public static void SetPreviewTextureCacheSize(int size) => throw null;
     }
 
     public sealed class Selection

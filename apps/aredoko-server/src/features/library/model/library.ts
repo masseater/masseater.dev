@@ -1,12 +1,24 @@
-import { Context, Effect, HashMap, HashSet, Layer, Option, Queue, Ref, pipe } from "effect";
+import {
+  Context,
+  Duration,
+  Effect,
+  FiberHandle,
+  HashMap,
+  HashSet,
+  Layer,
+  Option,
+  Queue,
+  Ref,
+  pipe,
+} from "effect";
 
-import { retryFailedImages } from "./embed-images.ts";
 import { blmLinker } from "./link-blm.ts";
 import { scanLibrary } from "./scan-library.ts";
 import type { Activity } from "./scan-library.ts";
 import { watchSources } from "./watch-folders.ts";
 
 const PENDING_REQUESTS = 1;
+const FAILED_SCAN_RETRY = Duration.fromInputUnsafe("1 minute");
 
 interface ProjectGuids {
   readonly projectPath: string;
@@ -41,9 +53,26 @@ const remember =
     return [all, HashMap.set(seen, projectPath, all)];
   };
 
-const retried = retryFailedImages.pipe(
-  Effect.catchCause((cause) => Effect.logError("retry failed", cause)),
-);
+const retryingScan = Effect.fn("retryingScan")(function* retryingScan({
+  activity,
+  requestScan,
+}: Readonly<{ activity: Ref.Ref<Activity>; requestScan: Effect.Effect<void> }>) {
+  const blm = yield* blmLinker;
+  const retry = yield* FiberHandle.make();
+  const scheduleScan = (wait: Duration.Duration): Effect.Effect<void> =>
+    FiberHandle.run(retry, Effect.andThen(Effect.sleep(wait), requestScan)).pipe(Effect.asVoid);
+  const scan = scanLibrary({
+    blm,
+    report: (current) => Ref.set(activity, current),
+  }).pipe(
+    Effect.catchCause((cause) =>
+      Effect.logError("scan failed", cause).pipe(Effect.as(Option.some(FAILED_SCAN_RETRY))),
+    ),
+    Effect.ensuring(Ref.set(activity, IDLE)),
+    Effect.flatMap(Option.match({ onNone: () => Effect.void, onSome: scheduleScan })),
+  );
+  return { scan };
+});
 
 /** @internal */
 const libraryLayer = Layer.effect(
@@ -52,18 +81,11 @@ const libraryLayer = Layer.effect(
     const activity = yield* Ref.make<Activity>(IDLE);
     const requests = yield* Queue.sliding<boolean>(PENDING_REQUESTS);
     const seen = yield* Ref.make<Seen>(HashMap.empty());
-    const blm = yield* blmLinker;
-    const scan = scanLibrary({
-      blm,
-      report: (current) => Ref.set(activity, current),
-    }).pipe(
-      Effect.catchCause((cause) => Effect.logError("scan failed", cause)),
-      Effect.ensuring(Ref.set(activity, IDLE)),
-    );
-    yield* Queue.take(requests).pipe(Effect.andThen(scan), Effect.forever, Effect.forkScoped);
     const requestScan = Queue.offer(requests, true).pipe(Effect.asVoid);
+    const { scan } = yield* retryingScan({ activity, requestScan });
+    yield* Queue.take(requests).pipe(Effect.andThen(scan), Effect.forever, Effect.forkScoped);
     const { sourcesChanged } = yield* watchSources(requestScan);
-    yield* Effect.andThen(retried, requestScan);
+    yield* requestScan;
     return Library.of({
       activity: Ref.get(activity),
       requestScan,

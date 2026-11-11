@@ -1,7 +1,7 @@
-import { Array, Effect, pipe } from "effect";
+import { Array, Clock, Duration, Effect, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { ASSET_ORDER, EMBEDDING, vectorBytes } from "#shared/database";
+import { ASSET_ORDER, EMBEDDING, RETRY, vectorBytes } from "#shared/database";
 import { Embedder } from "#shared/embedding";
 import { decodeRows } from "#shared/sql";
 
@@ -9,8 +9,8 @@ import { ImageRow, PendingImageRow } from "./rows.ts";
 
 const IMAGE_BATCH = 8;
 const NO_IMAGES = 0;
-const MAX_ATTEMPTS = 3;
-const NO_ATTEMPTS = 0;
+
+const NextRetryRow = Schema.Struct({ retry_at: Schema.NullOr(Schema.Int) });
 
 type Image = typeof ImageRow.Type;
 
@@ -33,22 +33,10 @@ const save = Effect.fn("saveImageVector")(function* saveImageVector([{ id }, vec
 
 const markFailed = Effect.fn("markImageFailed")(function* markImageFailed({ id }: Image) {
   const sql = yield* SqlClient.SqlClient;
-  yield* sql`update images set embedded = ${EMBEDDING.failed}, attempts = attempts + 1
+  const now = yield* Clock.currentTimeMillis;
+  yield* sql`update images set attempts = attempts + 1, retry_at = ${now} + min(${RETRY.firstMillis} << min(attempts, ${RETRY.doublings}), ${RETRY.longestMillis})
     where id = ${id}`;
 });
-
-/** @internal */
-const retryFailedImages = Effect.gen(function* retryFailedImages() {
-  const sql = yield* SqlClient.SqlClient;
-  yield* sql`update images set embedded = ${EMBEDDING.pending}, attempts = ${NO_ATTEMPTS}
-    where embedded = ${EMBEDDING.failed}`;
-}).pipe(Effect.withSpan("retryFailedImages"));
-
-const retryAfterSuccess = Effect.gen(function* retryAfterSuccess() {
-  const sql = yield* SqlClient.SqlClient;
-  yield* sql`update images set embedded = ${EMBEDDING.pending}
-    where embedded = ${EMBEDDING.failed} and attempts < ${MAX_ATTEMPTS}`;
-}).pipe(Effect.withSpan("retryAfterSuccess"));
 
 const embedBatch = Effect.fn("embedBatch")(function* embedImageBatch(images: readonly Image[]) {
   const sql = yield* SqlClient.SqlClient;
@@ -73,16 +61,18 @@ const embedBatch = Effect.fn("embedBatch")(function* embedImageBatch(images: rea
 });
 
 const embedOneByOne = Effect.fn("embedOneByOne")(function* embedOneByOne(images: readonly Image[]) {
-  const saved = yield* pipe(
+  yield* pipe(
     images,
     Effect.forEach((image) =>
       embedBatch([image]).pipe(
-        Effect.as(true),
-        Effect.catchCause(() => markFailed(image).pipe(Effect.as(false))),
+        Effect.catchCause((cause) =>
+          Effect.logWarning("image embedding failed, retrying later", image.id, cause).pipe(
+            Effect.andThen(markFailed(image)),
+          ),
+        ),
       ),
     ),
   );
-  return pipe(saved, Array.some(Boolean));
 });
 
 const loadImages = Effect.fn("loadImages")(function* loadPendingImages(
@@ -102,13 +92,7 @@ const loadImages = Effect.fn("loadImages")(function* loadPendingImages(
 const embedLoaded = Effect.fn("embedLoaded")(function* embedLoadedImages(
   images: Array.NonEmptyReadonlyArray<Image>,
 ) {
-  const embedded = yield* embedBatch(images).pipe(
-    Effect.as(true),
-    Effect.catchCause(() => embedOneByOne(images)),
-  );
-  if (embedded) {
-    yield* retryAfterSuccess;
-  }
+  yield* embedBatch(images).pipe(Effect.catchCause(() => embedOneByOne(images)));
 });
 
 const analyze = Effect.fn("analyzeBatch")(function* analyzeBatch(
@@ -131,9 +115,10 @@ const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
   onBatch: (batch: AnalyzedBatch) => Effect.Effect<void>,
 ) {
   const sql = yield* SqlClient.SqlClient;
+  const now = yield* Clock.currentTimeMillis;
   const pending = yield* decodeRows(PendingImageRow)(
     sql`select i.id, i.asset_id, a.pathname from images i join assets a on a.id = i.asset_id
-      where i.embedded = ${EMBEDDING.pending}
+      where i.embedded = ${EMBEDDING.pending} and i.retry_at <= ${now}
       order by ${sql.literal(ASSET_ORDER)}, i.id`,
   );
   yield* pipe(
@@ -144,12 +129,26 @@ const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
   return pending.length;
 });
 
+const nextRetry = Effect.gen(function* nextRetry() {
+  const sql = yield* SqlClient.SqlClient;
+  const now = yield* Clock.currentTimeMillis;
+  const rows = yield* decodeRows(NextRetryRow)(
+    sql`select min(retry_at) as retry_at from images where embedded = ${EMBEDDING.pending}`,
+  );
+  return pipe(
+    Array.head(rows),
+    Option.flatMap(({ retry_at: retryAt }) => Option.fromNullOr(retryAt)),
+    Option.map((retryAt) => Duration.millis(Math.max(retryAt - now, NO_IMAGES))),
+  );
+}).pipe(Effect.withSpan("nextImageRetry"));
+
 /** @internal */
 const embedImages = Effect.fn("embedImages")(function* embedAllImages(
   onBatch: (batch: AnalyzedBatch) => Effect.Effect<void>,
 ) {
   yield* embedPending(onBatch).pipe(Effect.repeat({ while: (count) => count > NO_IMAGES }));
+  return yield* nextRetry;
 });
 
-export { embedImages, retryFailedImages };
+export { embedImages };
 export type { AnalyzedBatch };

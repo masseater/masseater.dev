@@ -16,6 +16,7 @@ import type {
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appLocalDataDir, join } from "@tauri-apps/api/path";
 import {
+  Array,
   ConfigProvider,
   Duration,
   Effect,
@@ -180,16 +181,83 @@ const listRenderJobs = (): Promise<readonly Readonly<{ assetId: number; pathname
     Effect.map(listRenderJobsRpc(), ({ jobs }) => jobs),
   );
 
+type ReadPart<Failure> = (query: {
+  readonly assetId: number;
+  readonly file: string | null;
+  readonly offset: number;
+}) => Effect.Effect<Readonly<{ data: Uint8Array }>, Failure>;
+
+const START = 0;
+const WHOLE_MODEL = Option.getOrNull(Option.none<string>());
+
+const partsFrom = <Failure>(
+  readPart: ReadPart<Failure>,
+  query: Readonly<{ assetId: number; file: string | null; size: number; offset: number }>,
+): Effect.Effect<readonly Uint8Array[], Failure> => {
+  if (query.offset >= query.size) {
+    return Effect.succeed([]);
+  }
+  return readPart(query).pipe(
+    Effect.flatMap(({ data }) =>
+      partsFrom(readPart, { ...query, offset: query.offset + data.length }).pipe(
+        Effect.map(Array.prepend(data)),
+      ),
+    ),
+  );
+};
+
+interface WholeFile {
+  readonly assetId: number;
+  readonly file: string | null;
+  readonly size: number;
+}
+
+const joined = (parts: readonly Uint8Array[]): Effect.Effect<Uint8Array> =>
+  Effect.promise(() =>
+    new Blob(
+      pipe(
+        parts,
+        Array.map((part) => Uint8Array.from(part)),
+      ),
+    ).arrayBuffer(),
+  ).pipe(Effect.map((buffer) => new Uint8Array(buffer)));
+
+const readWhole = <Failure>(
+  readPart: ReadPart<Failure>,
+  whole: WholeFile,
+): Effect.Effect<Uint8Array, Failure> =>
+  partsFrom(readPart, { ...whole, offset: START }).pipe(Effect.flatMap(joined));
+
 const readModel = (
   assetId: number,
 ): Promise<
   Readonly<{ model: Uint8Array; files: readonly Readonly<{ name: string; data: Uint8Array }>[] }>
-> => call(({ ReadModel: readModelRpc }) => readModelRpc({ assetId }));
+> =>
+  callLong(({ ReadModel: readModelRpc, ReadModelPart: readPart }) =>
+    Effect.gen(function* readModelInParts() {
+      const { size, files } = yield* readModelRpc({ assetId });
+      const model = yield* readWhole(readPart, { assetId, file: WHOLE_MODEL, size });
+      const companions = yield* pipe(
+        files,
+        Effect.forEach(({ name, size: fileSize }) =>
+          readWhole(readPart, { assetId, file: name, size: fileSize }).pipe(
+            Effect.map((data) => ({ name, data })),
+          ),
+        ),
+      );
+      return { model, files: companions };
+    }),
+  );
 
 const putRender = (rendered: {
   readonly assetId: number;
   readonly pngs: readonly Uint8Array[];
 }): Promise<void> => call(({ PutRender: putRenderRpc }) => putRenderRpc(rendered));
+
+const failRender = (failure: {
+  readonly assetId: number;
+  readonly reason: string;
+}): Promise<void> => call(({ FailRender: failRenderRpc }) => failRenderRpc(failure));
 
 const encodeBase64 = Schema.encodeEffect(Schema.Uint8ArrayFromBase64);
 
@@ -204,6 +272,7 @@ const getPreview = (assetId: number): Promise<string> =>
 export {
   addSource,
   extract,
+  failRender,
   getPreview,
   getLibrary,
   getStatus,

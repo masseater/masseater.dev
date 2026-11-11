@@ -1,6 +1,7 @@
 export {
   addSource,
   extract,
+  failRender,
   getLibrary,
   getPreview,
   importFiles,
