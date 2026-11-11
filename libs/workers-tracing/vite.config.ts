@@ -12,6 +12,7 @@ export default defineConfig({
   pack: {
     entry: [
       "src/alchemy.ts",
+      "src/browser-spans.ts",
       "src/effect.ts",
       "src/effect.plain.ts",
       "src/elysia.ts",
