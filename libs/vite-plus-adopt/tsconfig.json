@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "include": ["src", "tests", "*.ts"],
   "compilerOptions": {
-    "types": ["node"],
+    "types": ["node", "@r_masseater/msch/vite"],
     "resolveJsonModule": true,
     "plugins": [
       {

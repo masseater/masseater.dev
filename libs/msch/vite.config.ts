@@ -2,6 +2,7 @@ import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  msch: { readme: true },
   plugins: [otlp()],
   resolve: {
     dedupe: ["vitest"],
