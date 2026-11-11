@@ -42,6 +42,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   konomi: "deploy",
   "masseater.dev": "deploy",
   "masseater.dev/decision-experiments": "deploy",
+  "masseater.dev/kikite": "access",
   "masseater.dev/zone": "transforms",
   "masseater.dev/mcp-portal": "access",
   "masseater.dev/personal-mcp": "access",

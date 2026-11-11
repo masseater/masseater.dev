@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
+  "extends": "../../tsconfig.json",
+  "include": ["*.ts", "server/*.ts", "worker/*.ts", "src"],
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["node", "vite/client", "@cloudflare/workers-types", "dom-speech-recognition"],
+    "paths": {
+      "#/*": ["./src/*"]
+    },
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/atom-react",
+          "@effect/vitest#it",
+          "@effect/platform-node/NodeHttpServer",
+          "@effect/platform-node/NodeRuntime",
+          "effect/FileSystem",
+          "effect/http/FetchHttpClient",
+          "effect/http/HttpClient",
+          "effect/http/HttpClientRequest",
+          "effect/http/HttpClientResponse",
+          "effect/http/HttpRouter",
+          "effect/http/HttpServerError",
+          "effect/http/HttpServerRequest",
+          "effect/http/HttpServerResponse",
+          "effect/reactivity/AsyncResult",
+          "effect/reactivity/Atom",
+          "effect/reactivity/AtomRegistry"
+        ]
+      }
+    ]
+  }
+}
