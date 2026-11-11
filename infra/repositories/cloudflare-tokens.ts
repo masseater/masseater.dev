@@ -28,7 +28,7 @@ import {
 } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
-import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
+import { ISSUED_TOKEN_PREFIX } from "./cloudflare-root.ts";
 
 type Token = Readonly<{
   id?: string | null;
@@ -37,9 +37,8 @@ type Token = Readonly<{
   lastUsedOn?: string | null;
 }>;
 
-const BROKER_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
-
-const isBrokerIssued = (token: Token): boolean => Str.startsWith(BROKER_PREFIX)(token.name ?? "");
+const isBrokerIssued = (token: Token): boolean =>
+  Str.startsWith(ISSUED_TOKEN_PREFIX)(token.name ?? "");
 
 const show =
   (scope: string) =>

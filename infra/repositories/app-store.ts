@@ -28,6 +28,8 @@ type SealedEntry = StoreRow & Readonly<{ plaintext: string }>;
 
 type RowSwap = StoreRow & Readonly<{ expected: Option.Option<string>; value: string }>;
 
+type SealedSwap = SealedEntry & Readonly<{ expected: Option.Option<string> }>;
+
 const decodeCell = Schema.decodeUnknownEffect(Schema.NullOr(Schema.String));
 
 const cell = (bound: BoundStatement, column: string): Effect.Effect<Option.Option<string>> =>
@@ -68,6 +70,9 @@ const writeSealed = (entry: SealedEntry): Effect.Effect<void, SealFailed> =>
     ),
     Effect.asVoid,
   );
+
+const swapSealed = (entry: SealedSwap): Effect.Effect<boolean, SealFailed> =>
+  sealChecked(entry).pipe(Effect.flatMap((value) => swapRow({ ...entry, value })));
 
 const migrationFailed = (name: string, reason: string): Effect.Effect<void> =>
   Effect.logWarning("app_store.migration_failed").pipe(Effect.annotateLogs({ name, reason }));
@@ -110,5 +115,5 @@ const readSealed = (row: StoreRow): Effect.Effect<Option.Option<string>, SealFai
     ),
   );
 
-export { readRow, readSealed, swapRow, writeSealed };
-export type { AppStoreEnv, BoundStatement, RowSwap, SealedEntry, StoreRow };
+export { readRow, readSealed, swapRow, swapSealed, writeSealed };
+export type { AppStoreEnv, BoundStatement, RowSwap, SealedEntry, SealedSwap, StoreRow };
