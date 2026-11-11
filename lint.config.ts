@@ -99,6 +99,7 @@ const overrides = [
   {
     files: [
       "libs/textlint-rule-no-taigendome/src/index.ts",
+      "libs/textlint-rule-yomiyasu/src/index.ts",
       "libs/oxlint-plugin-decision/src/index.ts",
       "libs/oxlint-plugin-decision-presets/src/*.ts",
       "libs/oxlint-typed-rules/src/{drizzle,react,remotion,tanstack-query,tanstack-router,tanstack-start,ts-compat}.ts",
@@ -149,6 +150,7 @@ const lint = {
     "libs/oxlint-typed-rules/upstream/react/**",
     "libs/oxlint-typed-rules/upstream/{tanstack-*,drizzle,remotion}/**",
     "libs/vite-plus-adopt/upstream/**",
+    "libs/textlint-rule-yomiyasu/upstream/**",
     "libs/oxlint-plugin-decision*/example/**",
   ],
   rules: {

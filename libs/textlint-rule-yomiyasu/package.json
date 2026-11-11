@@ -1,0 +1,23 @@
+{
+  "name": "@masseater.dev/textlint-rule-yomiyasu",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "imports": {
+    "#upstream/*": "./upstream/*"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@textlint/types": "catalog:",
+    "effect": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0"
+  }
+}

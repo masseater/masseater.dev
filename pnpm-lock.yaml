@@ -912,6 +912,9 @@ importers:
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.67.5
+      '@masseater.dev/textlint-rule-yomiyasu':
+        specifier: workspace:*
+        version: link:libs/textlint-rule-yomiyasu
       '@r_masseater/msch':
         specifier: workspace:*
         version: link:libs/msch
@@ -3227,6 +3230,21 @@ importers:
       '@textlint/ast-node-types':
         specifier: 'catalog:'
         version: 15.8.0
+      '@textlint/types':
+        specifier: 'catalog:'
+        version: 15.8.0
+      effect:
+        specifier: catalog:stack
+        version: 4.1.2
+      typescript:
+        specifier: catalog:stack
+        version: 7.1.0-beta
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  libs/textlint-rule-yomiyasu:
+    devDependencies:
       '@textlint/types':
         specifier: 'catalog:'
         version: 15.8.0
