@@ -35,12 +35,17 @@ const optsOutOfTraces = ({ observability }: WorkerProps): boolean =>
     Option.exists(({ enabled }) => enabled === false),
   );
 
-const traced =
-  (options: TracingOptions = {}) =>
+const withIssues = (props: WorkerProps): WorkerProps => {
+  const { observability = {} } = props;
+  return {
+    ...props,
+    observability: { ...observability, issues: { enabled: true, ...observability.issues } },
+  };
+};
+
+const withTraces =
+  (options: TracingOptions) =>
   (props: WorkerProps): WorkerProps => {
-    if (isVersionOfAnotherWorker(props) || optsOutOfTraces(props)) {
-      return props;
-    }
     const { observability = {}, compatibility = {} } = props;
     const { logs, traces } = observability;
     const destinations = pipe(
@@ -66,6 +71,19 @@ const traced =
         },
       },
     };
+  };
+
+const traced =
+  (options: TracingOptions = {}) =>
+  (props: WorkerProps): WorkerProps => {
+    if (isVersionOfAnotherWorker(props)) {
+      return props;
+    }
+    const issued = withIssues(props);
+    if (optsOutOfTraces(props)) {
+      return issued;
+    }
+    return withTraces(options)(issued);
   };
 
 type WorkerService = ProviderService<Worker>;
