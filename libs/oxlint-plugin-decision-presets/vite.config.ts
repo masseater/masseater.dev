@@ -1,7 +1,7 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
-  msch: { readme: true },
+  msch: { publish: true },
   pack: {
     entry: [
       "src/index.ts",
