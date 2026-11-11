@@ -1,0 +1,43 @@
+{
+  "name": "kikite",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#config": "./kikite.ts",
+    "#protocol": "./protocol.ts",
+    "#strategies": "./strategies.ts",
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "catalog:",
+    "@effect/atom-react": "catalog:stack",
+    "@effect/platform-node": "catalog:",
+    "@masseater.dev/ui": "workspace:*",
+    "@r_masseater/workers-tracing": "workspace:*",
+    "effect": "catalog:stack",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "scheduler": "catalog:",
+    "tailwindcss": "catalog:stack",
+    "tw-animate-css": "catalog:"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/cloudflare-account": "workspace:*",
+    "@tailwindcss/vite": "catalog:",
+    "@types/dom-speech-recognition": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "alchemy": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
