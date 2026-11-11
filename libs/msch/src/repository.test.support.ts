@@ -137,4 +137,13 @@ const findingsInGitRepository = Effect.fn("findingsInGitRepository")(
   },
 );
 
-export { directoryWith, findingsIn, findingsInGitRepository, fixtureLayer };
+const gitRepositoryWith = Effect.fn("gitRepositoryWith")(function* gitRepositoryWith(
+  files: Readonly<Record<string, string>>,
+) {
+  const fixtures = yield* FixtureFiles;
+  const root = yield* directoryWith(files);
+  yield* fixtures.commitAll(root);
+  return root;
+});
+
+export { directoryWith, findingsIn, findingsInGitRepository, fixtureLayer, gitRepositoryWith };
