@@ -77,7 +77,7 @@ const query = Effect.fn("workers-traces.query")(function* query({
         equals("$metadata.message", "otlp.span"),
         ...pipe(
           service,
-          Option.map((name) => equals("service", name)),
+          Option.map((name) => equals("annotations.service", name)),
           Option.toArray,
         ),
       ],
