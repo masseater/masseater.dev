@@ -153,6 +153,38 @@ const reportsObjectShapesCopiedFromALibraryTyp = Effect.gen(
   },
 );
 
+const acceptsSchemasTiedToALibraryType = Effect.gen(function* acceptsSchemasTiedToALibraryType() {
+  const sorterManifest = yield* SORTER_MANIFEST;
+  const packageJson = yield* dependingOn("sorter");
+  const findings = yield* findingsIn({
+    ...sorterWith(sorterManifest),
+    "package.json": packageJson,
+    "src/a.ts": pipe(
+      [
+        'import type { Order, Page } from "sorter";',
+        "interface Decoder<T> { readonly Type: T }",
+        "declare function struct<T>(fields: T): Decoder<T>;",
+        "declare const order: Order;",
+        "declare const count: number;",
+        "declare const text: string;",
+        "export const Copied = struct({ order, limit: count, offset: count, cursor: text });",
+        "export const Tied = struct({ order, limit: count, offset: count }) satisfies Decoder<",
+        '  Pick<Page, "order" | "limit" | "offset">',
+        ">;",
+        "export const Annotated: Decoder<Page> = struct({",
+        "  order,",
+        "  limit: count,",
+        "  offset: count,",
+        "  cursor: text,",
+        "});",
+        "",
+      ],
+      Arr.join("\n"),
+    ),
+  });
+  expect(findings).toStrictEqual(["src/a.ts:7 library-shape"]);
+});
+
 const acceptsKeySelectionsAndLooseLibraryContr = Effect.gen(
   function* acceptsKeySelectionsAndLooseLibraryContr() {
     const sorterManifest = yield* SORTER_MANIFEST;
@@ -233,6 +265,7 @@ layer(fixtureLayer)("dependency types", (it) => {
     "reports object shapes copied from a library type",
     () => reportsObjectShapesCopiedFromALibraryTyp,
   );
+  it.effect("accepts schemas tied to a library type", () => acceptsSchemasTiedToALibraryType);
   it.effect(
     "accepts key selections and implementations of loose library contracts",
     () => acceptsKeySelectionsAndLooseLibraryContr,

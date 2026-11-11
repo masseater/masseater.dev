@@ -7,6 +7,7 @@ import {
   isEnumDeclaration,
   isIdentifier,
   isPropertyAccessExpression,
+  isSpreadElement,
   isTypeReferenceNode,
   isUnionTypeNode,
 } from "./compiler.ts";
@@ -58,10 +59,16 @@ const hasFiniteContext =
       Option.isSome,
     );
 
-const isNamedValue = (element: Expression): boolean =>
-  isIdentifier(element) ||
-  isPropertyAccessExpression(element) ||
-  isElementAccessExpression(element);
+const isNamedValue = (element: Expression): boolean => {
+  if (isSpreadElement(element)) {
+    return isNamedValue(element.expression);
+  }
+  return (
+    isIdentifier(element) ||
+    isPropertyAccessExpression(element) ||
+    isElementAccessExpression(element)
+  );
+};
 
 const namesEveryElement = (array: ArrayLiteralExpression): boolean =>
   pipe(
