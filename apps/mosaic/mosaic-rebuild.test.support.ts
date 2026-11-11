@@ -49,11 +49,13 @@ type JobFixture = RunFixture["jobs"][number];
 interface Trigger {
   readonly event: string;
   readonly before: string;
+  readonly superseding: string;
 }
 
 interface Scenario {
   readonly event: string;
   readonly before: string;
+  readonly superseding: string;
   readonly runs: readonly RunFixture[];
   readonly compares: Readonly<Record<string, readonly string[]>>;
 }
@@ -62,22 +64,23 @@ type FixtureFile = readonly [name: string, text: string];
 
 const CURRENT_RUN: RunFixture = { number: CURRENT, status: "in_progress", jobs: [] };
 
-const planJob = (rebuild: string): JobFixture => ({
+const planJob = (rebuild: string, web = rebuild): JobFixture => ({
   name: "mosaic-plan",
   status: "completed",
   steps: [
     { name: "Run .github/scripts/mosaic-touched.sh", conclusion: "success" },
     { name: "rebuild", conclusion: rebuild },
+    { name: "web", conclusion: web },
   ],
 });
 
 const deployJob = (deploy: string): JobFixture => ({
-  name: "mosaic-deploy",
+  name: "mosaic-refresh",
   status: "completed",
   steps: [{ name: "deploy", conclusion: deploy }],
 });
 
-const QUEUED_DEPLOY: JobFixture = { name: "mosaic-deploy", status: "queued", steps: [] };
+const QUEUED_DEPLOY: JobFixture = { name: "mosaic-refresh", status: "queued", steps: [] };
 
 const unrelated = (number: number): RunFixture => ({
   number,
@@ -95,6 +98,12 @@ const rebuilding = (number: number): RunFixture => ({
   number,
   status: "in_progress",
   jobs: [planJob("success")],
+});
+
+const deployingWeb = (number: number): RunFixture => ({
+  number,
+  status: "in_progress",
+  jobs: [planJob("skipped", "success")],
 });
 
 const awaitingDeploy = (number: number): RunFixture => ({
@@ -213,6 +222,7 @@ const decide = Effect.fn("decide")(function* decide(
       GITHUB_EVENT_NAME: trigger.event,
       HEAD_SHA,
       BEFORE_SHA: trigger.before,
+      SUPERSEDING_STEPS: trigger.superseding,
     },
   });
   const [log] = yield* Effect.all([textOf(handle.stdout), textOf(handle.stderr), handle.exitCode], {
@@ -231,7 +241,7 @@ const decisionIn = Effect.fn("decisionIn")(function* decisionIn(
   return yield* decide(script, files, scenario);
 });
 
-const UNREADABLE: Trigger = { event: "push", before: BEFORE_SHA };
+const UNREADABLE: Trigger = { event: "push", before: BEFORE_SHA, superseding: "" };
 
 /** @internal */
 const decisionWithoutTheApi = Effect.fn("decisionWithoutTheApi")(function* decisionWithoutTheApi(
@@ -248,6 +258,7 @@ export {
   decisionIn,
   decisionWithoutTheApi,
   deployed,
+  deployingWeb,
   failedDeploy,
   rebuilding,
   shaOf,

@@ -1,2 +1,2 @@
 /** @internal */
-export { InterviewerFailed, questionText, requestSummary } from "./interviewer.ts";
+export { questionText, requestSummary } from "./interviewer.ts";

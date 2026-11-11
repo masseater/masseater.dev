@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/msch",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "masseater's check policy: points every finite value set and object shape at its one owner, and ships the oxlint preset of plugins and rules.",
   "keywords": [
     "lint",
@@ -21,7 +21,8 @@
     "msch": "./src/cli.ts"
   },
   "files": [
-    "dist"
+    "dist",
+    "src/vite.d.ts"
   ],
   "type": "module",
   "exports": {
@@ -29,6 +30,9 @@
     "./decision-rules": "./src/lint/decision-rules.ts",
     "./lint": "./src/lint/index.ts",
     "./oxlint": "./src/oxlint.ts",
+    "./vite": {
+      "types": "./src/vite.d.ts"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -48,6 +52,9 @@
       "./oxlint": {
         "types": "./dist/oxlint.d.mts",
         "default": "./dist/oxlint.mjs"
+      },
+      "./vite": {
+        "types": "./src/vite.d.ts"
       },
       "./package.json": "./package.json"
     },
@@ -76,9 +83,11 @@
     "@effect/vitest": "catalog:",
     "@r_masseater/vitest-otlp": "workspace:*",
     "@types/node": "catalog:",
+    "vite": "catalog:",
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {
+    "vite": "*",
     "vite-plus": ">=1.5.0"
   },
   "engines": {

@@ -2,6 +2,7 @@ import { checkPackage, createPackageFromTarballData } from "@r_masseater/vite-pl
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  msch: { publish: true },
   run: {
     tasks: {
       build: { command: "vp pack", cache: false },

@@ -109,6 +109,18 @@ const acceptsArraysBuiltFromNamedValues = Effect.gen(function* acceptsArraysBuil
       'import { FLAGS } from "./flags.ts";\nexport const a = [FLAGS.read, FLAGS.write];\n',
     "src/b.ts":
       'import { FLAGS } from "./flags.ts";\nexport const b = [FLAGS.write, FLAGS.read];\n',
+    "src/c.ts": pipe(
+      [
+        'import { FLAGS } from "./flags.ts";',
+        "type Flag = (typeof FLAGS)[keyof typeof FLAGS];",
+        "const READ: ReadonlySet<Flag> = new Set([FLAGS.read]);",
+        "const WRITE: ReadonlySet<Flag> = new Set([FLAGS.write]);",
+        "export const both = new Set([...READ, ...WRITE]);",
+        "export const listed = [...both];",
+        "",
+      ],
+      Arr.join("\n"),
+    ),
   });
   expect(findings).toStrictEqual([]);
 });

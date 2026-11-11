@@ -1,16 +1,17 @@
 import { describe, expect, it } from "@effect/vitest";
+import { Option } from "effect";
 
 import type { Entry } from "./atoms.ts";
 import { rated } from "./rate.ts";
 
 const QUESTION_ID = 1;
 
-const SPEECH: Entry = { kind: "speech", id: 0, at: 0, text: "" };
+const SPEECH: Entry = { kind: "speech", id: 0, at: 0, text: "", by: "voice" };
 const QUESTION: Entry = {
   kind: "question",
   id: QUESTION_ID,
   at: 0,
-  strategy: "concrete",
+  strategy: Option.some("concrete"),
   reason: "",
   question: "",
   rating: "unrated",

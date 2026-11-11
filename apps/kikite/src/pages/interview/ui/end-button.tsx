@@ -9,8 +9,9 @@ const LABEL = "終える";
 const EndButton = (): ReactNode => {
   const onClick = useEnd();
   return (
-    <Button variant="ghost" size="icon-sm" aria-label={LABEL} title={LABEL} onClick={onClick}>
-      <Square />
+    <Button variant="ghost" size="sm" onClick={onClick}>
+      <Square className="fill-current" />
+      {LABEL}
     </Button>
   );
 };

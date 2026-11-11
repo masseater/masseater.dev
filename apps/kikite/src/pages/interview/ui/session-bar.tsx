@@ -1,18 +1,17 @@
 import type { ReactNode } from "react";
 
-import { useSettingsOpen } from "#/pages/interview/model/hooks";
+import { EndButton } from "./end-button.tsx";
+import { HeaderRing } from "./header-ring.tsx";
+import { SessionTheme } from "./session-theme.tsx";
+import { SpeakerToggle } from "./speaker-toggle.tsx";
 
-import { SessionControls } from "./session-controls.tsx";
-import { SettingsFields } from "./settings-fields.tsx";
-
-const SessionBar = (): ReactNode => {
-  const open = useSettingsOpen();
-  return (
-    <header className="flex flex-col gap-3 border-b px-4 py-3">
-      <SessionControls />
-      {open && <SettingsFields />}
-    </header>
-  );
-};
+const SessionBar = (): ReactNode => (
+  <header className="flex h-14 items-center gap-3 px-4">
+    <HeaderRing />
+    <SessionTheme />
+    <SpeakerToggle />
+    <EndButton />
+  </header>
+);
 
 export { SessionBar };

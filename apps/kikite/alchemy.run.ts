@@ -1,12 +1,5 @@
-import {
-  Access,
-  Containers,
-  SecretsStore,
-  Workers,
-  providers,
-  state,
-} from "@alchemy.run/cloudflare";
-import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
+import { Access, Containers, SecretsStore, Workers } from "@alchemy.run/cloudflare";
+import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect, FileSystem, Schema } from "effect";
@@ -18,6 +11,8 @@ const { Application: defineApplication } = Access;
 
 const PROD = "prod";
 const SESSION_DURATION = "720h";
+const ACCESS_TOKEN_LIFETIME = "15m";
+const BROKER_CALLBACK = "https://credentials.masseater.dev/access-oauth/callback";
 
 const personalSpace = { stack: "mydecklist", stage: PROD };
 const broker = { stack: "masseater-dev-credential-broker", stage: PROD };
@@ -65,15 +60,22 @@ const ownerOnly = Effect.gen(function* ownerOnly() {
     allowedIdps: [google.identityProviderId],
     autoRedirectToIdentity: true,
     policies: [owner],
+    oauthConfiguration: {
+      enabled: true,
+      grant: { sessionDuration: SESSION_DURATION, accessTokenLifetime: ACCESS_TOKEN_LIFETIME },
+      dynamicClientRegistration: {
+        enabled: true,
+        allowedUris: [BROKER_CALLBACK],
+        allowAnyOnLocalhost: false,
+        allowAnyOnLoopback: false,
+      },
+    },
   });
 });
 
 export default Stack(
   APP_NAME,
-  {
-    providers: tracedProviders(providers()),
-    state: state(),
-  },
+  tracedStackProps,
   Effect.gen(function* stack() {
     yield* ownerOnly;
     const CLAUDE_CODE_OAUTH_TOKEN = yield* SecretsStore.Secret.ref(

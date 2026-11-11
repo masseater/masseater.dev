@@ -35,11 +35,11 @@ const COMPARE_FILE_LIMIT = 300;
 const NO_BEFORE = "0000000000000000000000000000000000000000";
 
 const UNRELATED_FILES = ["apps/portfolio/src/app/router.tsx", "libs/mosaic-like/src/index.ts"];
-const MOSAIC_FILES = ["AGENTS.md", "apps/mosaic/src/pages/home/ui/home.tsx"];
+const MOSAIC_FILES = ["AGENTS.md", "tools/mosaic/src/site.rs"];
 const TOO_MANY_FILES = Arr.makeBy(COMPARE_FILE_LIMIT, (index) => `docs/${String(index)}.md`);
 
-const REBUILT = "mosaic=true\n";
-const NOT_REBUILT = "mosaic=false\n";
+const REBUILT = "mosaic=true\nweb=true\n";
+const NOT_REBUILT = "mosaic=false\nweb=false\n";
 const STOPPED = "superseded=true\n";
 const NOT_STOPPED = "superseded=false\n";
 
@@ -55,6 +55,7 @@ const push = (runs: readonly RunFixture[], compares: Scenario["compares"]): Scen
   compares,
   event: "push",
   before: BEFORE_SHA,
+  superseding: "",
 });
 
 const weekly = (scenario: Scenario): Scenario => ({ ...scenario, event: "schedule", before: "" });
@@ -244,7 +245,12 @@ const Step = Schema.Struct({
 const Job = Schema.Struct({ steps: Schema.Array(Step) });
 
 const Workflow = Schema.Struct({
-  jobs: Schema.Struct({ "mosaic-plan": Job, "mosaic-character": Job, "mosaic-deploy": Job }),
+  jobs: Schema.Struct({
+    "mosaic-plan": Job,
+    "mosaic-character": Job,
+    "mosaic-deploy": Job,
+    "mosaic-refresh": Job,
+  }),
 });
 
 const namesOf = (job: typeof Job.Type): readonly string[] =>
@@ -261,10 +267,11 @@ const workflowMatchesTheScripts = Effect.gen(function* workflowMatchesTheScripts
   const file = path.resolve(import.meta.dirname, "../../.github/workflows/verify.yml");
   const source = yield* fs.readFileString(file);
   const { jobs } = yield* Schema.decodeUnknownEffect(Workflow)(parse(source));
-  expect(namesOf(jobs["mosaic-plan"])).toStrictEqual(["rebuild"]);
+  expect(namesOf(jobs["mosaic-plan"])).toStrictEqual(["rebuild", "web"]);
   expect(namesOf(jobs["mosaic-deploy"])).toStrictEqual(["deploy"]);
+  expect(namesOf(jobs["mosaic-refresh"])).toStrictEqual(["deploy"]);
   const actions = pipe(
-    [jobs["mosaic-plan"], jobs["mosaic-character"], jobs["mosaic-deploy"]],
+    [jobs["mosaic-plan"], jobs["mosaic-character"], jobs["mosaic-deploy"], jobs["mosaic-refresh"]],
     Arr.flatMap((job) => job.steps),
     Arr.flatMap((step) => Arr.fromNullishOr(step.uses)),
   );

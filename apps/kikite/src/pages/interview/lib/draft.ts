@@ -1,10 +1,17 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-import { ERROR_LABEL, QUESTION_LABEL, REASON_LABEL } from "#protocol";
+import { ERROR_LABEL, QUESTION_LABEL, REASON_LABEL, STRATEGY_LABEL } from "#protocol";
+import { strategyOf } from "#strategies";
+import type { StrategyId } from "#strategies";
 
-type ParsedDraft = Readonly<{ reason: string; question: string; error: Option.Option<string> }>;
+type ParsedDraft = Readonly<{
+  strategy: Option.Option<StrategyId>;
+  reason: string;
+  question: string;
+  error: Option.Option<string>;
+}>;
 
-const LABELS = [REASON_LABEL, QUESTION_LABEL, ERROR_LABEL] as const;
+const LABELS = [STRATEGY_LABEL, REASON_LABEL, QUESTION_LABEL, ERROR_LABEL] as const;
 const BODY_GROUP = 1;
 const START = 0;
 
@@ -37,16 +44,15 @@ const unlabeledQuestion = (text: string): string => {
 };
 
 const parseDraft = (text: string): ParsedDraft => {
+  const strategy = section(text, STRATEGY_LABEL);
   const reason = section(text, REASON_LABEL);
   const question = section(text, QUESTION_LABEL);
-  const fallback = Option.match(
-    Option.orElse(reason, () => question),
-    {
-      onNone: () => unlabeledQuestion(text),
-      onSome: () => "",
-    },
-  );
+  const fallback = Option.match(Option.firstSomeOf([strategy, reason, question]), {
+    onNone: () => unlabeledQuestion(text),
+    onSome: () => "",
+  });
   return {
+    strategy: pipe(strategy, Option.flatMap(strategyOf)),
     reason: Option.getOrElse(reason, () => ""),
     question: Option.getOrElse(question, () => fallback),
     error: section(text, ERROR_LABEL),
