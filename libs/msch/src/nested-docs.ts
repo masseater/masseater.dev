@@ -12,8 +12,8 @@ const READ_CONCURRENCY = 64;
 const AGENT_DOCS = /^(?:AGENTS|CLAUDE)(?:\.[^/]+)?\.md$/iu;
 const README = /^README(?:\.[^/]+)?$/iu;
 
-const ReadmeAllowed = Schema.Struct({ readme: Schema.Literal(true) });
-const WorkspaceConfig = Schema.Struct({ msch: ReadmeAllowed });
+const Published = Schema.Struct({ publish: Schema.Literal(true) });
+const WorkspaceConfig = Schema.Struct({ msch: Published });
 
 const taggedError = Schema.TaggedError;
 
@@ -24,7 +24,7 @@ class WorkspaceConfigUnreadable extends taggedError<
 
 const isNested = (name: string): boolean => Str.includes(SEPARATOR)(name);
 
-const allowsReadme = Effect.fn("allowsReadme")(function* allowsReadme(
+const isPublished = Effect.fn("isPublished")(function* isPublished(
   root: string,
   directory: string,
 ) {
@@ -51,7 +51,7 @@ const problemFor = (file: string, message: string): Problem => ({
 const AGENT_DOCS_MESSAGE =
   "belongs only at the repository root. Move what agents need into the root AGENTS.md and delete this file.";
 const README_MESSAGE =
-  "is allowed below the root only next to a vite.config.ts that sets msch: { readme: true }. Set it there, or move the content into the root README.md and delete this file.";
+  "is allowed below the root only in a workspace published to npm, marked by msch: { publish: true } in its vite.config.ts. Set it there if the workspace is published, or move the content into the root README.md and delete this file.";
 
 const problemIn = Effect.fn("problemIn")(function* problemIn(root: string, name: string) {
   const files = yield* RepositoryFiles;
@@ -63,7 +63,7 @@ const problemIn = Effect.fn("problemIn")(function* problemIn(root: string, name:
   if (!README.test(base)) {
     return Option.none<Problem>();
   }
-  if (yield* allowsReadme(root, files.dirname(name))) {
+  if (yield* isPublished(root, files.dirname(name))) {
     return Option.none<Problem>();
   }
   return Option.some(problemFor(file, `${base} ${README_MESSAGE}`));

@@ -1,5 +1,5 @@
 interface MschConfig {
-  readonly readme?: boolean;
+  readonly publish?: boolean;
 }
 
 declare module "vite" {

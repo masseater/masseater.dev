@@ -210,7 +210,7 @@ const upstreamDrizzleRules = {
 } as const;
 
 export default defineConfig({
-  msch: { readme: true },
+  msch: { publish: true },
   plugins: [
     upstreamReactRules,
     upstreamTanstackModules,
