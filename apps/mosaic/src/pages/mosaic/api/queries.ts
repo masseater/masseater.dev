@@ -6,12 +6,13 @@ import {
   slugPath,
   versionPath,
 } from "@thumb-mosaic/mosaic";
-import { Array, Effect, ManagedRuntime, Option, pipe } from "effect";
+import { Array, Effect, Option, pipe } from "effect";
 import type { Schema } from "effect";
-import { FetchHttpClient, HttpClient, HttpClientResponse } from "effect/http";
+import { HttpClient, HttpClientResponse } from "effect/http";
 import type { HttpClientError } from "effect/http";
 
 import { BASE_PATH } from "#/shared/config";
+import { runtime } from "#/shared/lib/telemetry";
 
 type Mosaic = typeof PublishedMosaic.Type;
 type TileList = typeof Tiles.Type;
@@ -31,8 +32,6 @@ interface VariantFile {
 }
 
 const MISSING = "";
-
-const runtime = ManagedRuntime.make(FetchHttpClient.layer);
 
 const fetchMosaic = (path: string): Effect.Effect<Mosaic, FetchError, HttpClient.HttpClient> =>
   HttpClient.get(`${BASE_PATH}/${path}`).pipe(
