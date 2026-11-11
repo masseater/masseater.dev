@@ -111,6 +111,7 @@ const builtAttw = {
 };
 
 export default defineConfig({
+  msch: { readme: true },
   tsconfig: "tsconfig.json",
   plugins: [attwUpstream, typescriptShim],
   pack: {

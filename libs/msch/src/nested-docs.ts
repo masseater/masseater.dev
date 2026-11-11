@@ -1,33 +1,43 @@
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
+import { resolveConfigFromFile } from "vite-plus";
 
 import type { Problem, RuleName } from "./problem.ts";
 import { RepositoryFiles } from "./repository-files.ts";
 
 const RULE: RuleName = "nested-docs";
 const SEPARATOR = "/";
-const MANIFEST_FILE = "package.json";
+const CONFIG_FILE = "vite.config.ts";
 const FIRST = 1;
 const READ_CONCURRENCY = 64;
 const AGENT_DOCS = /^(?:AGENTS|CLAUDE)(?:\.[^/]+)?\.md$/iu;
 const README = /^README(?:\.[^/]+)?$/iu;
 
-const PublishedManifest = Schema.fromJsonString(
-  Schema.Struct({ private: Schema.optional(Schema.Boolean) }),
-);
+const ReadmeAllowed = Schema.Struct({ readme: Schema.Literal(true) });
+const WorkspaceConfig = Schema.Struct({ msch: ReadmeAllowed });
+
+const taggedError = Schema.TaggedError;
+
+class WorkspaceConfigUnreadable extends taggedError<
+  WorkspaceConfigUnreadable,
+  { readonly brand: unique symbol }
+>()("WorkspaceConfigUnreadable", { file: Schema.String }) {}
 
 const isNested = (name: string): boolean => Str.includes(SEPARATOR)(name);
 
-const isPublishedPackage = Effect.fn("isPublishedPackage")(function* isPublishedPackage(
+const allowsReadme = Effect.fn("allowsReadme")(function* allowsReadme(
   root: string,
   directory: string,
 ) {
   const files = yield* RepositoryFiles;
-  const text = yield* files.readFile(files.join(root, directory, MANIFEST_FILE));
-  return pipe(
-    text,
-    Option.flatMap(Schema.decodeUnknownOption(PublishedManifest)),
-    Option.exists((manifest) => manifest.private !== true),
-  );
+  const file = files.join(root, directory, CONFIG_FILE);
+  if (!(yield* files.exists(file))) {
+    return false;
+  }
+  const config = yield* Effect.tryPromise({
+    try: () => resolveConfigFromFile(file),
+    catch: () => WorkspaceConfigUnreadable.make({ file }),
+  }).pipe(Effect.option);
+  return pipe(config, Option.flatMap(Schema.decodeUnknownOption(WorkspaceConfig)), Option.isSome);
 });
 
 const problemFor = (file: string, message: string): Problem => ({
@@ -41,7 +51,7 @@ const problemFor = (file: string, message: string): Problem => ({
 const AGENT_DOCS_MESSAGE =
   "belongs only at the repository root. Move what agents need into the root AGENTS.md and delete this file.";
 const README_MESSAGE =
-  "belongs only at the repository root or next to the package.json of a published package. Move its content into the root README.md and delete this file.";
+  "is allowed below the root only next to a vite.config.ts that sets msch: { readme: true }. Set it there, or move the content into the root README.md and delete this file.";
 
 const problemIn = Effect.fn("problemIn")(function* problemIn(root: string, name: string) {
   const files = yield* RepositoryFiles;
@@ -53,7 +63,7 @@ const problemIn = Effect.fn("problemIn")(function* problemIn(root: string, name:
   if (!README.test(base)) {
     return Option.none<Problem>();
   }
-  if (yield* isPublishedPackage(root, files.dirname(name))) {
+  if (yield* allowsReadme(root, files.dirname(name))) {
     return Option.none<Problem>();
   }
   return Option.some(problemFor(file, `${base} ${README_MESSAGE}`));
