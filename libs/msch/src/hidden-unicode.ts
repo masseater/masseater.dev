@@ -2,6 +2,7 @@ import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 
 import type { Problem, RuleName } from "./problem.ts";
 import { RepositoryFiles } from "./repository-files.ts";
+import { positionOf } from "./text-position.ts";
 
 const HIDDEN =
   /[\u00AD\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]|[\u{E0000}-\u{E007F}]/gu;
@@ -10,7 +11,6 @@ const NUL = "\0";
 const START = 0;
 const HEX = 16;
 const CODE_POINT_WIDTH = 4;
-const FIRST_COLUMN = 1;
 const READ_CONCURRENCY = 64;
 const RULE: RuleName = "hidden-unicode";
 
@@ -23,24 +23,13 @@ const hexOf = (character: string): string =>
     Str.padStart(CODE_POINT_WIDTH, "0"),
   );
 
-const positionOf = (source: string, index: number): Pick<Problem, "line" | "column"> => {
-  const before = pipe(source, Str.slice(START, index), Str.split("\n"));
-  return {
-    line: before.length,
-    column: pipe(
-      Arr.last(before),
-      Option.match({ onNone: () => FIRST_COLUMN, onSome: (last) => last.length + FIRST_COLUMN }),
-    ),
-  };
-};
-
 const problemOf =
   (file: string, source: string) =>
   (found: RegExpMatchArray): Problem => {
     const hex = hexOf(found[START]);
     return {
       file,
-      ...positionOf(source, found.index ?? START),
+      ...positionOf(source)(found.index ?? START),
       rule: RULE,
       message: `U+${hex} is invisible in editors and reviews and can change what the text means. Remove it, or write it as the escape \\u${hex}.`,
     };
