@@ -1,10 +1,18 @@
-const STRATEGY_IDS = ["concrete", "ladder", "coverage", "hypothesis", "episode"] as const;
+import type { Option } from "effect";
+import { Array as Arr } from "effect";
+
+const STRATEGY_IDS = ["find", "concrete", "ladder", "coverage", "hypothesis", "episode"] as const;
 
 type StrategyId = (typeof STRATEGY_IDS)[number];
 
 type Strategy = Readonly<{ label: string; policy: string }>;
 
 const STRATEGIES: Readonly<Record<StrategyId, Strategy>> = {
+  find: {
+    label: "テーマを探す",
+    policy:
+      "まだ何の話か本人にも分かっていない。発言の中でいちばん引っかかっている言葉を 1 つ拾い、それが出てきた場面か、それの何が気になるのかを聞く。テーマを決めつけない。",
+  },
   concrete: {
     label: "具体化",
     policy:
@@ -18,7 +26,7 @@ const STRATEGIES: Readonly<Record<StrategyId, Strategy>> = {
   coverage: {
     label: "論点を埋める",
     policy:
-      "要約の「まだ聞いていない論点」から、ゴールに最も効くものを 1 つ選び、直前の話から橋渡しして聞く。直前の話題をそれ以上掘り下げない。",
+      "要約の「まだ聞いていない論点」から、テーマに最も効くものを 1 つ選び、直前の話から橋渡しして聞く。直前の話題をそれ以上掘り下げない。",
   },
   hypothesis: {
     label: "仮説をぶつける",
@@ -32,9 +40,8 @@ const STRATEGIES: Readonly<Record<StrategyId, Strategy>> = {
   },
 };
 
-const MODEL_IDS = ["haiku", "sonnet", "opus"] as const;
+const strategyOf = (text: string): Option.Option<StrategyId> =>
+  Arr.findFirst(STRATEGY_IDS, (id) => id === text);
 
-type ModelId = (typeof MODEL_IDS)[number];
-
-export { MODEL_IDS, STRATEGIES, STRATEGY_IDS };
-export type { ModelId, Strategy, StrategyId };
+export { STRATEGIES, STRATEGY_IDS, strategyOf };
+export type { Strategy, StrategyId };

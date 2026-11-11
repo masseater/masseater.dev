@@ -1,81 +1,87 @@
-import { Effect, Option, Stream } from "effect";
+import { Array as Arr, Clock, Effect, Option, Stream, pipe } from "effect";
 import type { HttpClient } from "effect/http";
 import type { AtomRegistry } from "effect/reactivity";
 
+import { parseDraft } from "#/pages/interview/lib/draft";
+import type { ParsedDraft } from "#/pages/interview/lib/draft";
 import { questionText } from "#/shared/api";
-import type { InterviewerFailed } from "#/shared/api";
-import type { InterviewSetup, QuestionBody } from "#protocol";
-import { STRATEGY_IDS } from "#strategies";
-import type { StrategyId } from "#strategies";
+import type { QuestionBody } from "#protocol";
 
-import {
-  askingAtom,
-  entriesAtom,
-  heardAtom,
-  settingsAtom,
-  summaryAtom,
-  summaryOf,
-} from "./atoms.ts";
-import { IDLE, draftingFor, settled, withDraft } from "./drafts.ts";
+import { askingAtom, entriesAtom, heardAtom, summaryAtom, summaryOf } from "./atoms.ts";
+import type { Entry } from "./atoms.ts";
 import { modify, read, write } from "./registry.ts";
 import { askedOf, recentOf } from "./transcript.ts";
 
-type Services = AtomRegistry.AtomRegistry | HttpClient.HttpClient;
-type DraftText = Stream.Stream<string, InterviewerFailed, HttpClient.HttpClient>;
+type Registered = Effect.Effect<void, never, AtomRegistry.AtomRegistry>;
 
-const strategiesFor = (compare: boolean, strategy: StrategyId): readonly StrategyId[] => {
-  if (compare) {
-    return STRATEGY_IDS;
-  }
-  return [strategy];
-};
+const IDLE = { status: "idle" } as const;
 
-const bodyFor = Effect.fn("kikite.questionBody")(function* bodyFor(setup: InterviewSetup) {
+const bodyNow = Effect.gen(function* bodyNow() {
   const entries = yield* read(entriesAtom);
   const summary = yield* read(summaryAtom);
-  const { model } = yield* read(settingsAtom);
-  return (strategy: StrategyId): QuestionBody => ({
-    setup,
-    strategy,
-    model,
+  const body: QuestionBody = {
     summary: summaryOf(summary),
     recent: recentOf(entries),
     asked: askedOf(entries),
-  });
+  };
+  return body;
 });
 
-const textFor = (body: QuestionBody): DraftText => questionText(body);
-
-const draft = (body: QuestionBody): Effect.Effect<void, never, Services> =>
-  textFor(body).pipe(
-    Stream.runForEach((text) => modify(askingAtom, withDraft(body.strategy, { text }))),
-    Effect.matchEffect({
-      onSuccess: () => modify(askingAtom, withDraft(body.strategy, { status: "done" })),
-      onFailure: ({ message }) =>
-        modify(askingAtom, withDraft(body.strategy, { status: "failed", text: message })),
-    }),
+const pushQuestion = (draft: ParsedDraft): Registered =>
+  pipe(
+    Clock.currentTimeMillis,
+    Effect.flatMap((at) =>
+      modify(entriesAtom, (entries) => {
+        const entry: Entry = {
+          kind: "question",
+          id: entries.length,
+          at,
+          strategy: draft.strategy,
+          reason: draft.reason,
+          question: draft.question,
+          rating: "unrated",
+        };
+        return Arr.append(entries, entry);
+      }),
+    ),
   );
 
-const begin = Effect.fn("kikite.beginAsking")(function* begin(strategies: readonly StrategyId[]) {
-  yield* write(askingAtom, draftingFor(strategies));
-  yield* modify(heardAtom, (heard) => ({ ...heard, spokeSinceQuestion: false }));
+const settle = Effect.fn("kikite.settleQuestion")(function* settle(text: string) {
+  const draft = parseDraft(text);
+  if (Option.isSome(draft.error) || draft.question === "") {
+    yield* write(askingAtom, {
+      status: "failed",
+      message: Option.getOrElse(draft.error, () => text),
+    });
+    return Option.none<string>();
+  }
+  yield* pushQuestion(draft);
+  yield* write(askingAtom, IDLE);
+  return Option.some(draft.question);
 });
 
-const ask = Effect.fn("kikite.ask")(function* ask(setup: InterviewSetup) {
+const streamed = (
+  body: QuestionBody,
+): Effect.Effect<Option.Option<string>, never, AtomRegistry.AtomRegistry | HttpClient.HttpClient> =>
+  questionText(body).pipe(
+    Stream.tap((text) => write(askingAtom, { status: "drafting", text })),
+    Stream.runLast,
+    Effect.flatMap((last) => settle(Option.getOrElse(last, () => ""))),
+    Effect.catchTag("InterviewerFailed", ({ message }) =>
+      Effect.as(write(askingAtom, { status: "failed", message }), Option.none<string>()),
+    ),
+    Effect.onInterrupt(() => write(askingAtom, IDLE)),
+  );
+
+const ask = Effect.fn("kikite.ask")(function* ask() {
   const asking = yield* read(askingAtom);
-  if (asking.status !== "idle") {
-    return Option.none<StrategyId>();
+  if (asking.status === "drafting") {
+    return Option.none<string>();
   }
-  const { compare, strategy } = yield* read(settingsAtom);
-  const strategies = strategiesFor(compare, strategy);
-  yield* begin(strategies);
-  const body = yield* bodyFor(setup);
-  yield* Effect.forEach(strategies, (id) => draft(body(id)), {
-    concurrency: "unbounded",
-    discard: true,
-  }).pipe(Effect.onInterrupt(() => write(askingAtom, IDLE)));
-  yield* modify(askingAtom, settled);
-  return Option.liftPredicate(strategy, () => !compare);
+  yield* write(askingAtom, { status: "drafting", text: "" });
+  yield* modify(heardAtom, (heard) => ({ ...heard, spokeSinceQuestion: false }));
+  const body = yield* bodyNow;
+  return yield* streamed(body);
 });
 
 /** @internal */

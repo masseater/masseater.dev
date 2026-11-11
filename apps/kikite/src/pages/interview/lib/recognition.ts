@@ -7,6 +7,7 @@ type RecognitionHandlers = Readonly<{
   onFinal: (text: string) => void;
   onInterim: (text: string) => void;
   onFailed: (message: string) => void;
+  onSound: (hearing: boolean) => void;
 }>;
 
 interface Recognition {
@@ -17,7 +18,11 @@ interface Recognition {
 type RecognizerClass = new () => SpeechRecognition;
 
 const LANGUAGE = "ja-JP";
-const QUIET_ERRORS: ReadonlySet<string> = new Set(["no-speech", "aborted"]);
+const FATAL_ERRORS: ReadonlySet<string> = new Set([
+  "not-allowed",
+  "service-not-allowed",
+  "audio-capture",
+]);
 
 const recognizerClass = (): Option.Option<RecognizerClass> =>
   Option.firstSomeOf([
@@ -38,9 +43,7 @@ class Listener implements Recognition {
     this.#recognizer.lang = LANGUAGE;
     this.#recognizer.continuous = true;
     this.#recognizer.interimResults = true;
-    this.#recognizer.addEventListener("result", this.#heard);
-    this.#recognizer.addEventListener("error", this.#failed);
-    this.#recognizer.addEventListener("end", this.#ended);
+    this.#subscribe();
     this.#resume();
   }
 
@@ -59,6 +62,14 @@ class Listener implements Recognition {
     this.#recognizer.abort();
   };
 
+  readonly #subscribe = (): void => {
+    this.#recognizer.addEventListener("result", this.#heard);
+    this.#recognizer.addEventListener("error", this.#failed);
+    this.#recognizer.addEventListener("end", this.#ended);
+    this.#recognizer.addEventListener("soundstart", this.#soundStarted);
+    this.#recognizer.addEventListener("soundend", this.#soundEnded);
+  };
+
   readonly #heard = (event: SpeechRecognitionEvent): void => {
     if (this.#muted) {
       return;
@@ -71,13 +82,23 @@ class Listener implements Recognition {
   };
 
   readonly #failed = (event: Readonly<{ error: string }>): void => {
-    if (!QUIET_ERRORS.has(event.error)) {
+    if (FATAL_ERRORS.has(event.error)) {
+      this.#wanted = false;
       this.#handlers.onFailed(event.error);
     }
   };
 
+  readonly #soundStarted = (): void => {
+    this.#handlers.onSound(true);
+  };
+
+  readonly #soundEnded = (): void => {
+    this.#handlers.onSound(false);
+  };
+
   readonly #ended = (): void => {
     this.#running = false;
+    this.#handlers.onSound(false);
     this.#resume();
   };
 

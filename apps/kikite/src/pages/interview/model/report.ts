@@ -3,7 +3,7 @@ import { Array as Arr, Number as Num, Option, Order, pipe } from "effect";
 import { STRATEGY_IDS } from "#strategies";
 import type { StrategyId } from "#strategies";
 
-import type { Choice, Entry, Progress } from "./atoms.ts";
+import type { Entry, Progress } from "./atoms.ts";
 
 type QuestionEntry = Extract<Entry, { kind: "question" }>;
 
@@ -12,7 +12,6 @@ type StrategyRow = Readonly<{
   asked: number;
   good: number;
   off: number;
-  picked: number;
 }>;
 
 type Wait = Readonly<{ medianMs: number; maxMs: number }>;
@@ -28,7 +27,6 @@ type Report = Readonly<{
 
 type Sources = Readonly<{
   entries: readonly Entry[];
-  choices: readonly Choice[];
   progress: readonly Progress[];
   withdrawn: number;
 }>;
@@ -45,22 +43,21 @@ const countOf =
     pipe(items, Arr.filter(keep), Arr.length);
 
 const rowOf =
-  (questions: readonly QuestionEntry[], choices: readonly Choice[]) =>
+  (questions: readonly QuestionEntry[]) =>
   (strategy: StrategyId): StrategyRow => {
     const mine = pipe(
       questions,
-      Arr.filter((question) => question.strategy === strategy),
+      Arr.filter((question) => Option.contains(question.strategy, strategy)),
     );
     return {
       strategy,
       asked: mine.length,
       good: countOf((question: QuestionEntry) => question.rating === "good")(mine),
       off: countOf((question: QuestionEntry) => question.rating === "off")(mine),
-      picked: countOf((choice: Choice) => choice.chosen === strategy)(choices),
     };
   };
 
-const used = (row: StrategyRow): boolean => row.asked > NONE || row.picked > NONE;
+const used = (row: StrategyRow): boolean => row.asked > NONE;
 
 const waitAfter =
   (entries: readonly Entry[]) =>
@@ -101,15 +98,10 @@ const changeOf = (progress: readonly Progress[]): Option.Option<Change> =>
 
 const byAsked = Order.mapInput(Order.flip(Num.Order), (row: StrategyRow) => row.asked);
 
-const reportOf = ({ entries, choices, progress, withdrawn }: Sources): Report => {
+const reportOf = ({ entries, progress, withdrawn }: Sources): Report => {
   const questions = pipe(entries, Arr.filter(isQuestion));
   return {
-    rows: pipe(
-      STRATEGY_IDS,
-      Arr.map(rowOf(questions, choices)),
-      Arr.filter(used),
-      Arr.sortBy(byAsked),
-    ),
+    rows: pipe(STRATEGY_IDS, Arr.map(rowOf(questions)), Arr.filter(used), Arr.sortBy(byAsked)),
     wait: waitOf(entries, questions),
     withdrawn,
     change: changeOf(progress),

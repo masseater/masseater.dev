@@ -1,15 +1,24 @@
 import type { ReactNode } from "react";
 
-import { AnswerBox } from "./answer-box.tsx";
-import { QuestionStage } from "./question-stage.tsx";
-import { Timeline } from "./timeline.tsx";
+import { useAsked } from "#/pages/interview/model/hooks";
 
-const ConversationColumn = (): ReactNode => (
-  <div className="flex min-w-0 flex-1 flex-col gap-6">
-    <QuestionStage />
-    <AnswerBox />
-    <Timeline />
-  </div>
-);
+import { AnswerBox } from "./answer-box.tsx";
+import { History } from "./history.tsx";
+import { OpeningStage } from "./opening-stage.tsx";
+import { QuestionStage } from "./question-stage.tsx";
+import { Said } from "./said.tsx";
+
+const ConversationColumn = (): ReactNode => {
+  const asked = useAsked();
+  return (
+    <div className="mx-auto flex w-full max-w-2xl min-w-0 flex-1 flex-col gap-6">
+      {asked && <History />}
+      {asked && <QuestionStage />}
+      {!asked && <OpeningStage />}
+      <Said />
+      <AnswerBox />
+    </div>
+  );
+};
 
 export { ConversationColumn };

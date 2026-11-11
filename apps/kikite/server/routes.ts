@@ -1,7 +1,7 @@
 import { Effect, Option, Schema, Stream, String as Str } from "effect";
 import { HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/http";
 
-import { SUMMARY_MODEL } from "#config";
+import { QUESTION_MODEL, SUMMARY_MODEL } from "#config";
 import {
   ERROR_LABEL,
   QUESTION_PATH,
@@ -49,7 +49,7 @@ const ask = Effect.gen(function* ask() {
   const request = yield* HttpServerRequest.schemaBodyJson(QuestionRequest);
   const generator = yield* Generator;
   const text = generator
-    .stream({ prompt: questionPrompt(request), model: request.model })
+    .stream({ prompt: questionPrompt(request), model: QUESTION_MODEL })
     .pipe(Stream.catchTag("GenerationFailed", errorLine));
   return HttpServerResponse.stream(Stream.encodeText(text), {
     contentType: "text/plain; charset=utf-8",

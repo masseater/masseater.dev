@@ -7,7 +7,7 @@ import { StrategyHeading } from "./strategy-heading.tsx";
 import { StrategyRow } from "./strategy-row.tsx";
 
 const StrategyTable = ({ rows }: Readonly<{ rows: readonly Row[] }>): ReactNode => (
-  <div className="grid grid-cols-5 items-center gap-x-6 gap-y-2 text-sm">
+  <div className="grid grid-cols-4 items-center gap-x-6 gap-y-2 text-sm">
     <StrategyHeading />
     {pipe(
       rows,

@@ -2,9 +2,17 @@ import { Array as Arr, Clock, Effect, Option, pipe } from "effect";
 import type { AtomRegistry } from "effect/reactivity";
 
 import { requestSummary } from "#/shared/api";
-import type { InterviewSetup, InterviewSummary } from "#protocol";
+import type { InterviewSummary } from "#protocol";
 
-import { entriesAtom, heardAtom, progressAtom, summaryAtom, summaryOf } from "./atoms.ts";
+import {
+  entriesAtom,
+  heardAtom,
+  previousThemeAtom,
+  progressAtom,
+  summaryAtom,
+  summaryOf,
+} from "./atoms.ts";
+import { rememberTheme } from "./memory.ts";
 import { modify, read, write } from "./registry.ts";
 import { linesOf, speechAfter } from "./transcript.ts";
 
@@ -28,7 +36,16 @@ const tracked = (
     ),
   );
 
-const summarize = Effect.fn("kikite.summarize")(function* summarize(setup: InterviewSetup) {
+const remembered = Effect.fn("kikite.rememberTheme")(function* remembered(
+  summary: InterviewSummary,
+) {
+  if (summary.theme !== "") {
+    yield* rememberTheme(summary.theme);
+    yield* write(previousThemeAtom, Option.some(summary.theme));
+  }
+});
+
+const summarize = Effect.fn("kikite.summarize")(function* summarize() {
   const fresh = yield* freshSpeech();
   const last = Arr.last(fresh);
   if (Option.isNone(last)) {
@@ -37,13 +54,14 @@ const summarize = Effect.fn("kikite.summarize")(function* summarize(setup: Inter
   const state = yield* read(summaryAtom);
   const previous = summaryOf(state);
   yield* write(summaryAtom, { status: "updating", summary: previous });
-  yield* requestSummary({ setup, previous, transcript: linesOf(fresh) }).pipe(
+  yield* requestSummary({ previous, transcript: linesOf(fresh) }).pipe(
     Effect.matchEffect({
       onSuccess: (summary) =>
         Effect.all([
           write(summaryAtom, { status: "ready", summary: Option.some(summary) }),
           modify(heardAtom, (current) => ({ ...current, summarizedThrough: last.value.id })),
           tracked(summary),
+          remembered(summary),
         ]),
       onFailure: ({ message }) =>
         write(summaryAtom, { status: "failed", summary: previous, message }),

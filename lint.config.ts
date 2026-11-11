@@ -76,6 +76,20 @@ const overrides = [
     rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
   },
   {
+    files: ["apps/kikite/src/pages/interview/lib/screen-hold.ts"],
+    rules: {
+      "baseline-js/use-baseline": [
+        "error",
+        {
+          available: "widely",
+          includeWebApis: { preset: "auto" },
+          includeJsBuiltins: { preset: "auto" },
+          ignoreFeatures: ["screen-wake-lock"],
+        },
+      ],
+    },
+  },
+  {
     files: ["apps/kikite/server/serve.ts"],
     rules: {
       "import/no-nodejs-modules": ["error", { allow: ["node:http"] }],

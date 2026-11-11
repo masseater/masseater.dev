@@ -1,56 +1,86 @@
-import { Effect, Option } from "effect";
+import { Effect, Option, pipe } from "effect";
 
-import type { InterviewSetup } from "#protocol";
-import type { StrategyId } from "#strategies";
+import { activatedNow } from "#/pages/interview/lib/activation";
 
 import { ask } from "./ask.ts";
-import { choose } from "./choose.ts";
+import { activatedAtom, heardAtom, hearingAtom, speakerAtom } from "./atoms.ts";
 import { heardFailure, heardInterim, heardSpeech } from "./heard.ts";
+import { nudge } from "./nudge.ts";
+import { read, write } from "./registry.ts";
 import { runners } from "./runners.ts";
 import { summarize } from "./summarize.ts";
-import { voice } from "./voice.ts";
+import { typing, voice } from "./voice.ts";
 
 type Actions = Readonly<{
   answer: (text: string) => void;
+  typed: (text: string) => void;
+  typing: (text: string) => void;
   ask: () => void;
-  choose: (strategy: StrategyId) => void;
   summarize: () => void;
+  nudge: (level: number) => void;
   interim: (text: string) => void;
   failed: (message: string) => void;
+  sound: (hearing: boolean) => void;
+  activate: () => void;
 }>;
 
-const actionsFor = Effect.fn("kikite.actions")(function* actionsFor(setup: InterviewSetup) {
+const voiceIfWanted = Effect.fn("kikite.voiceIfWanted")(function* voiceIfWanted(text: string) {
+  const speaker = yield* read(speakerAtom);
+  const { lastInput } = yield* read(heardAtom);
+  if (speaker && lastInput === "voice" && activatedNow()) {
+    yield* voice(text);
+  }
+});
+
+const typedAnswer = Effect.fn("kikite.typedAnswer")(function* typedAnswer(text: string) {
+  yield* heardSpeech(text, "typed");
+  yield* typing("");
+});
+
+const actionsFor = Effect.gen(function* actionsFor() {
   const run = yield* runners;
   const spoken = (question: Option.Option<string>): Effect.Effect<void> =>
     Effect.sync(() => {
-      Option.match(question, { onNone: () => false, onSome: (text) => run.voicing(voice(text)) });
+      pipe(
+        question,
+        Option.map((text) => run.voicing(voiceIfWanted(text))),
+      );
     });
-  const chosen = (strategy: StrategyId): ReturnType<typeof choose> =>
-    Effect.tap(choose(strategy), spoken);
-  const asked = ask(setup).pipe(
-    Effect.flatMap(Option.match({ onNone: () => Effect.void, onSome: chosen })),
-  );
+  const asked = Effect.flatMap(ask(), spoken);
+  const askNow = (): void => {
+    run.asking(asked, { onlyIfMissing: true });
+  };
   const cancelDrafting = Effect.sync(() => {
     run.asking(Effect.void);
   });
   const actions: Actions = {
-    ask: () => {
-      run.asking(asked, { onlyIfMissing: true });
-    },
+    ask: askNow,
     summarize: () => {
-      run.summarizing(summarize(setup), { onlyIfMissing: true });
+      run.summarizing(summarize(), { onlyIfMissing: true });
     },
-    choose: (strategy) => {
-      run.events(chosen(strategy));
+    nudge: (level) => {
+      run.events(nudge(level));
     },
     answer: (text) => {
-      run.events(heardSpeech(text));
+      run.events(heardSpeech(text, "voice"));
+    },
+    typed: (text) => {
+      run.events(Effect.tap(typedAnswer(text), Effect.sync(askNow)));
+    },
+    typing: (text) => {
+      run.events(typing(text));
     },
     interim: (text) => {
       run.events(heardInterim(text, cancelDrafting));
     },
     failed: (message) => {
       run.events(heardFailure(message));
+    },
+    sound: (hearing) => {
+      run.events(write(hearingAtom, hearing));
+    },
+    activate: () => {
+      run.events(write(activatedAtom, true));
     },
   };
   return actions;

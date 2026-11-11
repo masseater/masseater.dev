@@ -9,7 +9,6 @@ const StrategyRow = ({ row }: Readonly<{ row: Row }>): ReactNode => (
     <span className="text-right tabular-nums">{row.asked}</span>
     <span className="text-right tabular-nums">{row.good}</span>
     <span className="text-right tabular-nums">{row.off}</span>
-    <span className="text-right tabular-nums">{row.picked}</span>
   </>
 );
 
