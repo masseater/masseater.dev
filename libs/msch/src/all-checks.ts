@@ -7,17 +7,30 @@ import { checkOverrides } from "./overrides.ts";
 import type { Problem } from "./problem.ts";
 import { checkPython } from "./python.ts";
 
-type Check =
-  | ReturnType<typeof checkRepository>
-  | ReturnType<typeof checkOverrides>
-  | ReturnType<typeof checkHiddenUnicode>;
-
 /** @internal */
 const checkAll: (
   root: string,
-) => Effect.Effect<readonly Problem[], Effect.Error<Check>, Effect.Services<Check>> = Effect.fn(
-  "checkAll",
-)(function* checkAll(root: string) {
+) => Effect.Effect<
+  readonly Problem[],
+  Effect.Error<
+    ReturnType<
+      | typeof checkRepository
+      | typeof checkOverrides
+      | typeof checkHiddenUnicode
+      | typeof checkPython
+      | typeof checkNestedDocs
+    >
+  >,
+  Effect.Services<
+    ReturnType<
+      | typeof checkRepository
+      | typeof checkOverrides
+      | typeof checkHiddenUnicode
+      | typeof checkPython
+      | typeof checkNestedDocs
+    >
+  >
+> = Effect.fn("checkAll")(function* checkAll(root: string) {
   const found = yield* Effect.all(
     [
       checkRepository(root),
