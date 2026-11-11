@@ -75,12 +75,12 @@ const planJob = (rebuild: string, web = rebuild): JobFixture => ({
 });
 
 const deployJob = (deploy: string): JobFixture => ({
-  name: "mosaic-deploy",
+  name: "mosaic-refresh",
   status: "completed",
   steps: [{ name: "deploy", conclusion: deploy }],
 });
 
-const QUEUED_DEPLOY: JobFixture = { name: "mosaic-deploy", status: "queued", steps: [] };
+const QUEUED_DEPLOY: JobFixture = { name: "mosaic-refresh", status: "queued", steps: [] };
 
 const unrelated = (number: number): RunFixture => ({
   number,

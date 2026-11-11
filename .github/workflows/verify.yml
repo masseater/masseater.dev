@@ -585,8 +585,41 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   mosaic-deploy:
+    needs: mosaic-plan
+    if: needs.mosaic-plan.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    concurrency:
+      group: mosaic-deploy
+      queue: max
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SUPERSEDING_STEPS: rebuild web
+        run: .github/scripts/mosaic-superseded.sh
+      - if: steps.head.outputs.superseded != 'true'
+        uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - if: steps.head.outputs.superseded != 'true'
+        run: .github/scripts/mosaic-live.sh
+      - name: deploy
+        if: steps.head.outputs.superseded != 'true'
+        run: vp exec alchemy deploy --stage production --yes
+        working-directory: apps/mosaic
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  mosaic-refresh:
     needs: [mosaic-plan, mosaic-character]
-    if: always() && (needs.mosaic-plan.outputs.rebuild == 'true' || needs.mosaic-plan.outputs.web == 'true')
+    if: always() && needs.mosaic-plan.outputs.rebuild == 'true'
     runs-on: ubuntu-latest
     permissions:
       actions: read
