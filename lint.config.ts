@@ -76,6 +76,13 @@ const overrides = [
     rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
   },
   {
+    files: ["apps/kikite/server/serve.ts"],
+    rules: {
+      "import/no-nodejs-modules": ["error", { allow: ["node:http"] }],
+      "effecttsgo/node-builtin-import": "off",
+    },
+  },
+  {
     files: ["libs/msch/src/oxlint.ts"],
     rules: {
       "import/no-default-export": "off",

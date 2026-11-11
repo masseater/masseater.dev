@@ -25,6 +25,7 @@ masseater が作ったものと書いた文章を載せる個人サイトであ�
 | Zenn                                                             | https://zenn.dev/masseater                                                                                                                                                                                                                                                    |
 | 個人データの MCP サーバー（watashi-mcp）                         | https://watashi.masseater.dev/mcp                                                                                                                                                                                                                                             |
 | Sloppedia・アクセス解析・スライドの MCP サーバー（personal-mcp） | https://personal-mcp.masseater.dev/mcp                                                                                                                                                                                                                                        |
+| 声で答えるヒアリングの聞き手（kikite、本人だけ）                 | https://kikite.masseater.dev                                                                                                                                                                                                                                                  |
 
 ## aredoko
 
