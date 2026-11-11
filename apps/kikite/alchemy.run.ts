@@ -2,7 +2,6 @@ import {
   Access,
   Containers,
   SecretsStore,
-  Website,
   Workers,
   providers,
   state,
@@ -81,9 +80,12 @@ export default Stack(
       "CiClaudeCodeOauthToken",
       broker,
     );
-    const { url } = yield* Website.StaticSite("Kikite", {
+    const client = yield* Build("ClientBuild", {
       command: "vp build",
       outdir: "dist/client",
+      memo: false,
+    });
+    const { url } = yield* Workers.Worker("Kikite", {
       main: "./worker/kikite.worker.ts",
       logpush: true,
       domain: HOST,
@@ -92,8 +94,11 @@ export default Stack(
         INTERVIEWER: Workers.DurableObject("Interviewer", { containers: [InterviewerImage] }),
         CLAUDE_CODE_OAUTH_TOKEN,
       },
-      assets: { notFoundHandling: "single-page-application", runWorkerFirst: ["/api/*"] },
-      dev: { command: "vp dev" },
+      assets: {
+        directory: client.outdir,
+        notFoundHandling: "single-page-application",
+        runWorkerFirst: ["/api/*"],
+      },
     });
     yield* requireAppPrefix;
     return { url };
