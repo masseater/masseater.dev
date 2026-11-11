@@ -22,6 +22,7 @@ jq -c '.result.events.events // [] | .[] | {
   service: .["$metadata"].service,
   message: .["$metadata"].message,
   error: .["$metadata"].error,
+  reason: .source.annotations.reason,
   url: (.["$metadata"].url // .["$workers"].event.request.url // null),
   outcome: .["$workers"].outcome,
   status: .["$workers"].event.response.status,

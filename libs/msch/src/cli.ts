@@ -8,6 +8,7 @@ import { ProblemsFound, writeStdout } from "./output.ts";
 import { checkOverrides } from "./overrides.ts";
 import { ProblemList, formatProblem, sortProblems } from "./problem.ts";
 import type { Problem } from "./problem.ts";
+import { checkPython } from "./python.ts";
 import { RepositoryFiles } from "./repository-files.ts";
 import { runCli } from "./runtime.ts";
 
@@ -39,7 +40,7 @@ const msch = Effect.gen(function* msch() {
   const args = yield* stdio.args;
   const root = files.resolve(".");
   const found = yield* Effect.all(
-    [checkRepository(root), checkOverrides(root), checkHiddenUnicode(root)],
+    [checkRepository(root), checkOverrides(root), checkHiddenUnicode(root), checkPython(root)],
     {
       concurrency: "unbounded",
     },

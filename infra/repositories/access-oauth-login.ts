@@ -1,4 +1,4 @@
-import { Clock, Effect, Option, Record as Rec, Schema, pipe } from "effect";
+import { Array as Arr, Clock, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 import {
   authorizationCodeGrantRequest,
   calculatePKCECodeChallenge,
@@ -17,6 +17,7 @@ import {
   CALLBACK_URL,
   LOGIN_PATH,
   connect,
+  loginUrlOf,
   promised,
   resourceOf,
 } from "./access-oauth-server.ts";
@@ -26,7 +27,7 @@ import type { AppStoreEnv } from "./app-store.ts";
 import type { RouteInput } from "./github-app.ts";
 import { unseal } from "./sealed-value.ts";
 
-const PENDING_LIFETIME_MS = 600_000;
+const PENDING_LIFETIME_MS = 3_600_000;
 const CONSUMED = "";
 const BAD_REQUEST = 400;
 const FOUND = 302;
@@ -186,10 +187,24 @@ const callback = ({ request, env }: RouteInput): Effect.Effect<Response, AccessO
     });
   });
 
+const LOGIN_URLS = pipe(
+  ACCESS_SITES,
+  Arr.map((site) => loginUrlOf(site)),
+);
+
+const rejectionOf = (message: string): Response =>
+  new Response(
+    Arr.join([`ログインに失敗しました: ${message}`, "最初からやり直す:", ...LOGIN_URLS], "\n"),
+    {
+      status: BAD_REQUEST,
+      headers: { "content-type": "text/plain; charset=utf-8" },
+    },
+  );
+
 const rejected = ({ message }: Readonly<{ message: string }>): Effect.Effect<Response> =>
   Effect.logWarning("access_oauth.rejected").pipe(
     Effect.annotateLogs({ reason: message }),
-    Effect.as(new Response("", { status: BAD_REQUEST })),
+    Effect.as(rejectionOf(message)),
   );
 
 const HANDLERS: Readonly<
