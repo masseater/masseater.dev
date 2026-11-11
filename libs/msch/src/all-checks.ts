@@ -4,10 +4,25 @@ import { checkRepository } from "./check.ts";
 import { checkHiddenUnicode } from "./hidden-unicode.ts";
 import { checkNestedDocs } from "./nested-docs.ts";
 import { checkOverrides } from "./overrides.ts";
+import type { Problem } from "./problem.ts";
 import { checkPython } from "./python.ts";
 
 /** @internal */
-const checkAll = Effect.fn("checkAll")(function* checkAll(root: string) {
+const checkAll: (
+  root: string,
+) => Effect.Effect<
+  readonly Problem[],
+  Effect.Error<
+    | ReturnType<typeof checkRepository>
+    | ReturnType<typeof checkOverrides>
+    | ReturnType<typeof checkHiddenUnicode>
+  >,
+  Effect.Services<
+    | ReturnType<typeof checkRepository>
+    | ReturnType<typeof checkOverrides>
+    | ReturnType<typeof checkHiddenUnicode>
+  >
+> = Effect.fn("checkAll")(function* checkAll(root: string) {
   const found = yield* Effect.all(
     [
       checkRepository(root),
