@@ -109,6 +109,7 @@ const packageChecks: readonly string[] = [
   "@r_masseater/oxlint-typed-rules#size",
   "@r_masseater/vite-plus-adopt#test",
   "@r_masseater/vite-plus-adopt#size",
+  "@r_masseater/msch#build",
   "@masseater.dev/pod-rattle-engine#cargo",
   "@masseater.dev/pod-rattle-plugin#cargo",
   "@masseater.dev/pod-rattle-host#cargo",
