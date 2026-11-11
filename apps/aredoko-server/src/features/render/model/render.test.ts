@@ -169,7 +169,7 @@ layer(dataInTemporaryFolder, { excludeTestServices: true })("model reads", (it) 
         texture: RED_PIXEL,
         names: new Set([MATERIAL, TEXTURE]),
       });
-      expect(joined).toStrictEqual(model);
+      expect(Buffer.from(joined).equals(model)).toBe(true);
     }),
   );
 
