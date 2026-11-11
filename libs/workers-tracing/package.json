@@ -31,6 +31,7 @@
   "type": "module",
   "exports": {
     "./alchemy": "./src/alchemy.ts",
+    "./browser-spans": "./src/browser-spans.ts",
     "./elysia": {
       "workerd": "./src/elysia.ts",
       "node": "./src/elysia.plain.ts",
@@ -61,6 +62,10 @@
       "./alchemy": {
         "types": "./dist/alchemy.d.ts",
         "default": "./dist/alchemy.js"
+      },
+      "./browser-spans": {
+        "types": "./dist/browser-spans.d.ts",
+        "default": "./dist/browser-spans.js"
       },
       "./elysia": {
         "types": "./dist/elysia.d.ts",

@@ -18,6 +18,7 @@ const web = Effect.gen(function* web() {
     memo: false,
   });
   return yield* Workers.Worker("Web", {
+    main: "./worker/web.worker.ts",
     logpush: true,
     routes: [{ pattern: `${ZONE}${BASE_PATH}*`, zoneName: ZONE }],
     assets: {

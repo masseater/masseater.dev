@@ -1,13 +1,12 @@
 import { Effect, Option, Record } from "effect";
 
-import type { Mosaic } from "#/pages/mosaic/api/queries";
 import type { Visit } from "#/pages/mosaic/lib/files";
 import type { ViewerStore } from "#/pages/mosaic/model/viewer";
+import { runtime } from "#/shared/lib/telemetry";
 
 import type { Point, Size } from "./camera";
 import { leave, pointerDown, pointerMove, pointerUp } from "./gesture";
 import { createInvalidation, startLoop } from "./loop";
-import type { Invalidation } from "./loop";
 import { createRenderer } from "./renderer";
 import type { Scene } from "./scene";
 import { createScene, flyHome, resize, select, settle, zoomAt, zoomInAt } from "./scene";
@@ -176,10 +175,10 @@ const revealWhenReady = ({
   invalidation,
 }: Readonly<
   Omit<Mount, "visit"> & {
-    mosaic: Mosaic;
+    mosaic: Visit["mosaic"];
     sprites: Sprites;
     signal: AbortSignal;
-    invalidation: Invalidation;
+    invalidation: ReturnType<typeof createInvalidation>;
   }
 >): Effect.Effect<void> =>
   Effect.gen(function* reveal() {
@@ -218,7 +217,7 @@ const mountViewer = ({ canvas, visit, store }: Mount): (() => void) => {
   const sprites = createSprites({ visit, onLoad: invalidation.mark });
   store.write({ status: "loading" });
   bindAll(canvas, store, controller.signal);
-  Effect.runFork(
+  runtime.runFork(
     revealWhenReady({
       canvas,
       mosaic,

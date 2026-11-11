@@ -1,5 +1,7 @@
 import { Array, Effect, MutableHashMap, Number as Num, Option, Order, pipe } from "effect";
 
+import { runtime } from "#/shared/lib/telemetry";
+
 import { drawGroup } from "./gpu-pipelines";
 import type { Pipelines } from "./gpu-pipelines";
 
@@ -149,7 +151,7 @@ const lookup =
     Option.match(slots.get(image), {
       onNone: () => {
         slots.set(image, { status: "pending" });
-        Effect.runFork(register(context, slots)(image));
+        runtime.runFork(register(context, slots)(image));
         return Option.none();
       },
       onSome: (slot) => {

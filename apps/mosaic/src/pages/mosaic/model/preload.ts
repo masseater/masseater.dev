@@ -8,6 +8,7 @@ import type { Visit } from "#/pages/mosaic/lib/files";
 import { BASE_PATH, SITE_ORIGIN } from "#/shared/config";
 import { optionalCardMeta } from "#/shared/lib/card";
 import type { Card, Meta } from "#/shared/lib/card";
+import { runtime } from "#/shared/lib/telemetry";
 
 import { loadVisit } from "./visit";
 import type { Assignment, Loaded } from "./visit";
@@ -82,7 +83,7 @@ const loadMosaic = ({
   slug: string;
   seed: Option.Option<number>;
 }>): Promise<Preload> =>
-  Effect.runPromise(
+  runtime.runPromise(
     loadVisit({ queryClient, slug, seed }).pipe(Effect.map((loaded) => preloadOf(slug, loaded))),
   );
 
