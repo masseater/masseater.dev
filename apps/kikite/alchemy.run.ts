@@ -1,12 +1,5 @@
-import {
-  Access,
-  Containers,
-  SecretsStore,
-  Workers,
-  providers,
-  state,
-} from "@alchemy.run/cloudflare";
-import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
+import { Access, Containers, SecretsStore, Workers } from "@alchemy.run/cloudflare";
+import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect, FileSystem, Schema } from "effect";
@@ -82,10 +75,7 @@ const ownerOnly = Effect.gen(function* ownerOnly() {
 
 export default Stack(
   APP_NAME,
-  {
-    providers: tracedProviders(providers()),
-    state: state(),
-  },
+  tracedStackProps,
   Effect.gen(function* stack() {
     yield* ownerOnly;
     const CLAUDE_CODE_OAUTH_TOKEN = yield* SecretsStore.Secret.ref(

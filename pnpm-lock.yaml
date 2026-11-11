@@ -1174,6 +1174,9 @@ importers:
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.67.5
+      '@masseater.dev/cloudflare-account':
+        specifier: workspace:*
+        version: link:../../infra/cloudflare-account
       '@masseater.dev/start-site':
         specifier: workspace:*
         version: link:../../infra/start-site
@@ -1262,6 +1265,9 @@ importers:
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.67.5
+      '@masseater.dev/cloudflare-account':
+        specifier: workspace:*
+        version: link:../../infra/cloudflare-account
       '@masseater.dev/start-site':
         specifier: workspace:*
         version: link:../../infra/start-site
@@ -1832,6 +1838,9 @@ importers:
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.67.5
+      '@masseater.dev/cloudflare-account':
+        specifier: workspace:*
+        version: link:../../infra/cloudflare-account
       '@masseater.dev/start-site':
         specifier: workspace:*
         version: link:../../infra/start-site
@@ -2213,6 +2222,9 @@ importers:
       '@masseater.dev/alchemy-app-name':
         specifier: workspace:*
         version: link:../../infra/alchemy-app-name
+      '@masseater.dev/cloudflare-account':
+        specifier: workspace:*
+        version: link:../../infra/cloudflare-account
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.3.5(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
