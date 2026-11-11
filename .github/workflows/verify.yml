@@ -438,6 +438,7 @@ jobs:
     outputs:
       rebuild: ${{ steps.slugs.outputs.rebuild }}
       slugs: ${{ steps.slugs.outputs.slugs }}
+      web: ${{ steps.web.outputs.web }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -464,6 +465,10 @@ jobs:
         run: |
           echo "rebuild=true" >> "$GITHUB_OUTPUT"
           echo "slugs=$(jq -c '[.[].slug]' libs/mosaic/src/characters.json)" >> "$GITHUB_OUTPUT"
+      - name: web
+        id: web
+        if: steps.touched.outputs.web == 'true'
+        run: echo "web=true" >> "$GITHUB_OUTPUT"
 
   mosaic-character:
     needs: mosaic-plan
@@ -578,21 +583,10 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - if: steps.start.outputs.superseded != 'true'
-        run: |
-          mkdir -p "$RUNNER_TEMP/live/$SLUG"
-          cp "apps/mosaic/public/files/$SLUG/manifest.json" "apps/mosaic/public/files/$SLUG/candidates.json" "$RUNNER_TEMP/live/$SLUG/"
-      - if: steps.start.outputs.superseded != 'true'
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: mosaic-live-${{ matrix.slug }}
-          path: ${{ runner.temp }}/live/
-          if-no-files-found: error
-          retention-days: 1
 
   mosaic-deploy:
     needs: [mosaic-plan, mosaic-character]
-    if: always() && needs.mosaic-plan.outputs.rebuild == 'true'
+    if: always() && (needs.mosaic-plan.outputs.rebuild == 'true' || needs.mosaic-plan.outputs.web == 'true')
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -607,17 +601,14 @@ jobs:
       - id: head
         env:
           GH_TOKEN: ${{ github.token }}
+          SUPERSEDING_STEPS: rebuild web
         run: .github/scripts/mosaic-superseded.sh
       - if: steps.head.outputs.superseded != 'true'
         uses: $/.github/actions/setup
         with:
           native: "false"
       - if: steps.head.outputs.superseded != 'true'
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          pattern: mosaic-live-*
-          path: apps/mosaic/public/files
-          merge-multiple: true
+        run: .github/scripts/mosaic-live.sh
       - name: deploy
         if: steps.head.outputs.superseded != 'true'
         run: vp exec alchemy deploy --stage production --yes

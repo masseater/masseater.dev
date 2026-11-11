@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 api="repos/$GITHUB_REPOSITORY/actions"
+steps="$(jq -cn --arg steps "${SUPERSEDING_STEPS:-rebuild}" '$steps | split(" ")')"
+export STEPS="$steps"
 newer_rebuild() {
   local newer run rebuilds
   newer="$(gh api "$api/workflows/verify.yml/runs?branch=main&per_page=100" \
@@ -10,9 +12,9 @@ newer_rebuild() {
       continue
     fi
     rebuilds="$(gh api "$api/runs/$run/jobs?per_page=100" \
-      --jq '.jobs[] | select(.name == "mosaic-plan") | .steps[]? | select(.name == "rebuild" and .conclusion == "success") | .number')" || return 2
+      --jq '.jobs[] | select(.name == "mosaic-plan") | .steps[]? | select((.name as $name | env.STEPS | fromjson | index($name)) and .conclusion == "success") | .number')" || return 2
     if [ -n "$rebuilds" ]; then
-      echo "run $run is newer and rebuilds mosaic, so it supersedes this one"
+      echo "run $run is newer and also deploys mosaic, so it supersedes this one"
       return 0
     fi
   done <<<"$newer"
