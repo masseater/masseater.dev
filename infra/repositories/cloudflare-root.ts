@@ -3,6 +3,10 @@ import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
 import { Effect, Layer, Redacted, flow } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
+import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
+
+const ISSUED_TOKEN_PREFIX = `${CREDENTIAL_BROKER_AUDIENCE}:`;
+
 type RootEnv = Readonly<{ ROOT_TOKEN: SecretsStoreSecret }>;
 
 const rootToken = (env: RootEnv): Effect.Effect<string> =>
@@ -17,5 +21,5 @@ const cloudflare: (env: RootEnv) => Layer.Layer<CloudflareOpContext> = flow(
   Layer.unwrap,
 );
 
-export { cloudflare };
+export { ISSUED_TOKEN_PREFIX, cloudflare };
 export type { RootEnv };
