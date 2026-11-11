@@ -9,7 +9,6 @@ const MAX_BATCH = 64;
 
 const keepAlive = Layer.succeed(FetchHttpClient.RequestInit, { keepalive: true });
 
-/** @internal */
 const browserTelemetry = Layer.mergeAll(
   FetchHttpClient.layer,
   keepAlive,
@@ -43,4 +42,4 @@ const flushTraces = Effect.gen(function* flushTraces() {
   yield* flusher.flush;
 });
 
-export { browserTelemetry, flushTraces, runtime };
+export { flushTraces, runtime };
