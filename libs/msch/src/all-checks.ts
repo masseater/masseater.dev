@@ -13,22 +13,14 @@ const checkAll: (
 ) => Effect.Effect<
   readonly Problem[],
   Effect.Error<
-    ReturnType<
-      | typeof checkRepository
-      | typeof checkOverrides
-      | typeof checkHiddenUnicode
-      | typeof checkPython
-      | typeof checkNestedDocs
-    >
+    | ReturnType<typeof checkRepository>
+    | ReturnType<typeof checkOverrides>
+    | ReturnType<typeof checkHiddenUnicode>
   >,
   Effect.Services<
-    ReturnType<
-      | typeof checkRepository
-      | typeof checkOverrides
-      | typeof checkHiddenUnicode
-      | typeof checkPython
-      | typeof checkNestedDocs
-    >
+    | ReturnType<typeof checkRepository>
+    | ReturnType<typeof checkOverrides>
+    | ReturnType<typeof checkHiddenUnicode>
   >
 > = Effect.fn("checkAll")(function* checkAll(root: string) {
   const found = yield* Effect.all(
