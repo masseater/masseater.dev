@@ -44,6 +44,7 @@ const readonlyParameterAllow = [
       "RegExpExecArray",
       "RegExpMatchArray",
       "Date",
+      "SpeechRecognitionResult",
       ...BROWSER_HANDLES,
     ],
   },
@@ -161,6 +162,16 @@ const readonlyParameterAllow = [
     ],
   },
   { from: "package" as const, package: "clsx", name: "ClassValue" },
+  {
+    from: "package" as const,
+    package: "@anthropic-ai/claude-agent-sdk",
+    name: ["SDKMessage", "SDKResultMessage"],
+  },
+  {
+    from: "package" as const,
+    package: "@types/dom-speech-recognition",
+    name: ["SpeechRecognition", "SpeechRecognitionEvent", "SpeechRecognitionResult"],
+  },
   { from: "package" as const, package: "@modelcontextprotocol/server", name: "McpServer" },
   { from: "package" as const, package: "discord.js", name: ["Client", "Guild"] },
   {
@@ -234,6 +245,7 @@ const readonlyParameterAllow = [
     from: "package" as const,
     package: "effect",
     name: [
+      "Atom",
       "Cause",
       "Context",
       "Duration",
@@ -242,6 +254,7 @@ const readonlyParameterAllow = [
       "Fiber",
       "HashMap",
       "HashSet",
+      "HttpClientRequest",
       "HttpServerRequest",
       "HttpServerResponse",
       "Layer",
@@ -252,6 +265,7 @@ const readonlyParameterAllow = [
       "Ref",
       "Stream",
       "Utc",
+      "Writable",
     ],
   },
 ];

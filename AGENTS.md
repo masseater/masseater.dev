@@ -30,6 +30,7 @@
 - オーディオスレッドで確保をしない。配列は初期化で確保し、`no_alloc` テストで確かめる。
 - parity テストの参照音は、`tools/pod-rattle-parity` が labs のページから `createEngine` を切り出して鳴らした音である。labs の音を変えたら `libs/pod-rattle-engine` も合わせる。計算の順序を変えると標本単位で一致しなくなるので、速くするときも浮動小数点の演算順は保つ。いずれ labs が `libs/pod-rattle-engine` を wasm で鳴らし、エンジンを 1 本にする。
 - `apps/watashi-mcp`（`watashi.masseater.dev/mcp`）は持ち主の個人データの MCP で、人生の記録（`life_*`）と AI の作業メモ（`memory_*`）を D1 に置く。作業メモから人生の記録を書かない。逆はよく、根拠を `evidence` に残す。表への書き込みは `*-writer.server.ts` だけが行い、`revision` 表への追加と同じ D1 の batch に入れる（lint が強制する）。パスキーを登録できるのは招待の文字列を持つ最初の 1 人だけである。会話履歴の仕組みは `apps/watashi-mcp/docs/conversations.md` にある。
+- `apps/kikite`（`kikite.masseater.dev`）は声で答えるヒアリングの聞き手のモックで、決まりは `apps/kikite/AGENTS.md` にある。Access（mydecklist スタックの `OwnerPolicy`）の背後に置き、Worker が Containers の中の Agent SDK に要約と質問を作らせる。トークンは broker の Secrets Store にある `CiClaudeCodeOauthToken` を `SecretsStore.Secret.ref` で引く。
 - `apps/personal-mcp`（`personal-mcp.masseater.dev/mcp`）は Sloppedia・アクセス解析・スライド検索の MCP で、個人データは置かない。スライドのサイトと同じ Access（mydecklist スタックの `OwnerPolicy`）の managed OAuth で守る。
 - `apps/mosaic`（`masseater.dev/mosaic`）はサムネイルのモザイクアートのサイトで、main の verify の `mosaic-character` ジョブがキャラごとに `tools/mosaic`（Rust）で配るファイルを作って `alchemy.files.ts` をキャラの slug のステージで当て、`mosaic-deploy` ジョブが画面を当てる。
 - `apps/nimado`（`masseater.dev/nimado`）と、そのデータを作る `tools/nimado-collect` の決まりは `apps/nimado/AGENTS.md` にある。
