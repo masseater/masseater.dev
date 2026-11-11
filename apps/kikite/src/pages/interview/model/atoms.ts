@@ -14,15 +14,21 @@ type Settings = Readonly<{
   summarySeconds: number;
 }>;
 
+type Rating = "unrated" | "good" | "off";
+
 type Entry =
-  | Readonly<{ kind: "speech"; id: number; text: string }>
+  | Readonly<{ kind: "speech"; id: number; at: number; text: string }>
   | Readonly<{
       kind: "question";
       id: number;
+      at: number;
       strategy: StrategyId;
       reason: string;
       question: string;
+      rating: Rating;
     }>;
+
+type Progress = Readonly<{ at: number; open: number; next: number }>;
 
 type Draft = Readonly<{
   strategy: StrategyId;
@@ -54,13 +60,15 @@ type Choice = Readonly<{ chosen: StrategyId; candidates: readonly Candidate[] }>
 
 type Phase =
   | Readonly<{ status: "setup" }>
-  | Readonly<{ status: "interview"; setup: InterviewSetup }>;
+  | Readonly<{ status: "interview"; setup: InterviewSetup }>
+  | Readonly<{ status: "report"; setup: InterviewSetup }>;
 
 type Heard = Readonly<{
   lastSpeechAt: number;
   spokeSinceQuestion: boolean;
   lastSummaryAt: number;
   summarizedThrough: number;
+  withdrawn: number;
 }>;
 
 const DEFAULT_SETTINGS: Settings = {
@@ -79,6 +87,7 @@ const FRESH_HEARD: Heard = {
   spokeSinceQuestion: false,
   lastSummaryAt: 0,
   summarizedThrough: NOTHING_SUMMARIZED,
+  withdrawn: 0,
 };
 
 const keep = <Value>(initial: Value): Atom.Writable<Value> => Atom.keepAlive(Atom.make(initial));
@@ -96,6 +105,7 @@ const recognitionAtom = keep<Option.Option<Recognition>>(Option.none());
 const setupDraftAtom = keep<InterviewSetup>({ theme: "", goal: "" });
 const answerDraftAtom = keep("");
 const settingsOpenAtom = keep(false);
+const progressAtom = keep<readonly Progress[]>([]);
 
 const summaryOf = (state: SummaryState): Option.Option<InterviewSummary> => {
   if (state.status === "empty") {
@@ -115,6 +125,7 @@ export {
   interimAtom,
   listeningAtom,
   phaseAtom,
+  progressAtom,
   recognitionAtom,
   settingsAtom,
   settingsOpenAtom,
@@ -131,6 +142,8 @@ export type {
   Heard,
   Listening,
   Phase,
+  Progress,
+  Rating,
   Settings,
   SummaryState,
 };

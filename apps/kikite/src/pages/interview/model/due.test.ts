@@ -20,6 +20,7 @@ const base = {
     spokeSinceQuestion: true,
     lastSummaryAt: 0,
     summarizedThrough: NOTHING_SUMMARIZED,
+    withdrawn: 0,
   },
   settings: {
     strategy: "concrete",

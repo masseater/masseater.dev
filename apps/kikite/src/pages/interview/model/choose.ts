@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Clock, Effect, Option, pipe } from "effect";
 import type { AtomRegistry } from "effect/reactivity";
 
 import type { StrategyId } from "#strategies";
@@ -19,10 +19,21 @@ const recordChoice = (strategy: StrategyId, candidates: readonly Candidate[]): R
   ).pipe(Effect.asVoid);
 
 const pushQuestion = (candidate: Candidate): Registered =>
-  modify(entriesAtom, (entries) => {
-    const entry: Entry = { kind: "question", id: entries.length, ...candidate };
-    return Arr.append(entries, entry);
-  });
+  pipe(
+    Clock.currentTimeMillis,
+    Effect.flatMap((at) =>
+      modify(entriesAtom, (entries) => {
+        const entry: Entry = {
+          kind: "question",
+          id: entries.length,
+          at,
+          rating: "unrated",
+          ...candidate,
+        };
+        return Arr.append(entries, entry);
+      }),
+    ),
+  );
 
 const takeCandidates = Effect.fn("kikite.takeCandidates")(function* takeCandidates() {
   const asking = yield* read(askingAtom);

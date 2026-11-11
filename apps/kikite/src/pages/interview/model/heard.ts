@@ -4,10 +4,12 @@ import { askingAtom, entriesAtom, heardAtom, interimAtom, listeningAtom } from "
 import type { Entry } from "./atoms.ts";
 import { modify, read, write } from "./registry.ts";
 
+const ONE = 1;
+
 const heardSpeech = Effect.fn("kikite.heardSpeech")(function* heardSpeech(text: string) {
   const now = yield* Clock.currentTimeMillis;
   yield* modify(entriesAtom, (entries) => {
-    const entry: Entry = { kind: "speech", id: entries.length, text };
+    const entry: Entry = { kind: "speech", id: entries.length, at: now, text };
     return Arr.append(entries, entry);
   });
   yield* modify(heardAtom, (heard) => ({ ...heard, lastSpeechAt: now, spokeSinceQuestion: true }));
@@ -27,6 +29,7 @@ const heardInterim = Effect.fn("kikite.heardInterim")(function* heardInterim(
   const asking = yield* read(askingAtom);
   if (asking.status === "drafting") {
     yield* cancelDrafting;
+    yield* modify(heardAtom, (heard) => ({ ...heard, withdrawn: heard.withdrawn + ONE }));
   }
 });
 

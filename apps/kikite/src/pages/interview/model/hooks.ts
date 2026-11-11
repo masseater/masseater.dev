@@ -40,10 +40,10 @@ const usePhase = (): Phase => useAtomValue(phaseAtom);
 
 const useTheme = (): string => {
   const phase = usePhase();
-  if (phase.status === "interview") {
-    return phase.setup.theme;
+  if (phase.status === "setup") {
+    return "";
   }
-  return "";
+  return phase.setup.theme;
 };
 
 const useStart = (): (() => void) => {
@@ -57,7 +57,12 @@ const useStart = (): (() => void) => {
 const useEnd = (): (() => void) => {
   const setPhase = useAtomSet(phaseAtom);
   return useCallback(() => {
-    setPhase({ status: "setup" });
+    setPhase((phase) => {
+      if (phase.status === "interview") {
+        return { status: "report", setup: phase.setup };
+      }
+      return phase;
+    });
   }, [setPhase]);
 };
 
