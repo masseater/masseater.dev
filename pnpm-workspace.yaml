@@ -42,7 +42,7 @@ catalog:
   discord-api-types: 0.38.58
   oxlint-plugin-eslint: 1.92.0
   "@ast-grep/cli": 0.51.1
-  "@cloudflare/workers-types": 5.20261107.1
+  "@cloudflare/workers-types": 5.20261108.1
   "@effect/platform-node": 4.1.2
   "@effect/sql-sqlite-node": 4.1.2
   "@effect/vitest": 4.1.2
@@ -207,7 +207,7 @@ catalog:
   "@types/react-dom": 19.3.0
   scheduler: 0.28.0
   "@tanstack/react-router": 1.170.46
-  "@tanstack/react-router-devtools": 1.167.2
+  "@tanstack/react-router-devtools": 1.167.3
   "@tanstack/react-router-ssr-query": 1.167.3
   "@tanstack/react-devtools": 0.10.14
   "@tanstack/devtools-vite": 0.8.6
@@ -248,7 +248,7 @@ overrides:
   "@feature-sliced/filesystem>typescript": "catalog:stack"
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-"
   "@remotion/eslint-plugin>typescript": "-"
-  workerd: 1.20261107.1
+  workerd: 1.20261108.1
   vite@*: "catalog:"
   eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
   fflate@>=0.7.0 <0.7.5: ^0.8.0
