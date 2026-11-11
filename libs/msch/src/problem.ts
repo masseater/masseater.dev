@@ -16,6 +16,7 @@ const RuleNameSchema = Schema.Literals([
   "hidden-unicode",
   "python-file",
   "python-command",
+  "nested-docs",
 ]);
 
 type RuleName = typeof RuleNameSchema.Type;

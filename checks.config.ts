@@ -17,7 +17,7 @@ const FAKE_SECRET_FIXTURES = [
 const UNTRACKED_SKILL_EXAMPLE = String.raw`(attributes["git.sha"] == "f4ab1c402143011a6264a0660f598fc02eb48bff" && attributes["path"] == "docs/skills/measure-dont-guess/SKILL.md")`;
 
 const MARKDOWN_IGNORES = [
-  "**/AGENTS.md",
+  "AGENTS.md",
   ".agents/skills/**",
   ".claude/worktrees/**",
   "apps/zenn-articles/**",
