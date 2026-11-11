@@ -7,7 +7,7 @@ import { sortProblems } from "./problem.ts";
 import { RepositoryFiles } from "./repository-files.ts";
 import { fixtureLayer, gitRepositoryWith } from "./repository.test.support.ts";
 
-const README_ALLOWED = "export default { msch: { readme: true } };\n";
+const PUBLISHED_CONFIG = "export default { msch: { publish: true } };\n";
 const README_NOT_SET = "export default { msch: {} };\n";
 const PUBLISHED_PACKAGE = '{ "name": "published" }';
 
@@ -51,7 +51,7 @@ const passesRootDocsAndPublishedReadmes = Effect.gen(function* passesRootDocsAnd
     "AGENTS.md": "# repo\n",
     "CLAUDE.md": "@AGENTS.md\n",
     "README.md": "# repo\n",
-    "libs/published/vite.config.ts": README_ALLOWED,
+    "libs/published/vite.config.ts": PUBLISHED_CONFIG,
     "libs/published/README.md": "# published\n",
     "apps/site/public/avatars/claude.svg": "<svg/>",
     "docs/agents.md.example": "example\n",
@@ -61,11 +61,11 @@ const passesRootDocsAndPublishedReadmes = Effect.gen(function* passesRootDocsAnd
 
 layer(fixtureLayer)("nested docs", (it) => {
   it.effect(
-    "flags AGENTS.md and CLAUDE.md below the root, and README files without msch.readme in vite.config.ts",
+    "flags AGENTS.md and CLAUDE.md below the root, and README files without msch.publish in vite.config.ts",
     () => flagsNestedDocs,
   );
   it.effect(
-    "passes the root documents and a README whose vite.config.ts sets msch.readme",
+    "passes the root documents and a README whose vite.config.ts sets msch.publish",
     () => passesRootDocsAndPublishedReadmes,
   );
 });
