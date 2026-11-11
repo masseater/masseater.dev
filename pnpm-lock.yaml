@@ -306,8 +306,8 @@ catalogs:
       specifier: 22.0.1
       version: 22.0.1
     '@openrouter/sdk':
-      specifier: 1.5.66
-      version: 1.5.66
+      specifier: 1.5.67
+      version: 1.5.67
     '@opentelemetry/api':
       specifier: 1.10.0
       version: 1.10.0
@@ -2974,7 +2974,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.66
+        version: 1.5.67
       effect:
         specifier: catalog:stack
         version: 4.1.2
@@ -3633,7 +3633,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.66
+        version: 1.5.67
       '@r_masseater/oxlint-plugin-decision':
         specifier: workspace:*
         version: link:../../libs/oxlint-plugin-decision
@@ -6138,8 +6138,8 @@ packages:
     resolution: {integrity: sha512-hAX0pT/73190NLqBPPWSdBVGtbY6VOhWYK3qqHqtXQ1gK7kS2yz4+ivsN07hpJ6I3aeMtKP6J6npsEKOAzuTLA==}
     engines: {node: '>=20.0'}
 
-  '@openrouter/sdk@1.5.66':
-    resolution: {integrity: sha512-9wZSZ+6fP983sBMICSK0RA0k+Lmb9UoXlFdXBGj4I5GwuPr1q1CwP2tAzuzfdjhXBNk470kJtWNiHkc7fGrpzQ==}
+  '@openrouter/sdk@1.5.67':
+    resolution: {integrity: sha512-RaNNACVhknU0/GG7I9X8l3Z1PDBkBYd2oEpO02z4Q7I2bX8Nr3Z/Wx9iBR/tWpGPuh3jHNxq7jcPjkE9nkPQ2w==}
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -18826,7 +18826,7 @@ snapshots:
 
   '@oozcitak/util@10.0.0': {}
 
-  '@openrouter/sdk@1.5.66':
+  '@openrouter/sdk@1.5.67':
     dependencies:
       zod: 4.6.7
 
