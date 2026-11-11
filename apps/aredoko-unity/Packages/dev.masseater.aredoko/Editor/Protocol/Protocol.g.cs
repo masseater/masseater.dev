@@ -46,6 +46,12 @@ namespace Aredoko.Protocol
         [JsonProperty("ExtractSuccess")]
         public ExtractSuccess ExtractSuccess { get; set; }
 
+        [JsonProperty("FailRenderError")]
+        public RequestFailedEncoded FailRenderError { get; set; }
+
+        [JsonProperty("FailRenderPayload")]
+        public FailRenderPayload FailRenderPayload { get; set; }
+
         [JsonProperty("GetLibraryError")]
         public RequestFailedEncoded GetLibraryError { get; set; }
 
@@ -142,6 +148,15 @@ namespace Aredoko.Protocol
         [JsonProperty("ReadModelError")]
         public RequestFailedEncoded ReadModelError { get; set; }
 
+        [JsonProperty("ReadModelPartError")]
+        public RequestFailedEncoded ReadModelPartError { get; set; }
+
+        [JsonProperty("ReadModelPartPayload")]
+        public ReadModelPartPayload ReadModelPartPayload { get; set; }
+
+        [JsonProperty("ReadModelPartSuccess")]
+        public ReadModelPartSuccess ReadModelPartSuccess { get; set; }
+
         [JsonProperty("ReadModelPayload")]
         public ReadModelPayload ReadModelPayload { get; set; }
 
@@ -165,12 +180,21 @@ namespace Aredoko.Protocol
 
         [JsonProperty("SearchSuccess")]
         public SearchSuccess SearchSuccess { get; set; }
+
+        [JsonProperty("WireCauseReason")]
+        public RpcCauseReason WireCauseReason { get; set; }
+
+        [JsonProperty("WireRequest")]
+        public RpcRequest WireRequest { get; set; }
+
+        [JsonProperty("WireResponse")]
+        public RpcResponse WireResponse { get; set; }
     }
 
     public partial class RequestFailedEncoded
     {
         [JsonProperty("_tag")]
-        public Tag Tag { get; set; }
+        public AddSourceErrorTag Tag { get; set; }
 
         [JsonProperty("message")]
         public string Message { get; set; }
@@ -228,6 +252,15 @@ namespace Aredoko.Protocol
 
         [JsonProperty("path")]
         public string Path { get; set; }
+    }
+
+    public partial class FailRenderPayload
+    {
+        [JsonProperty("assetId")]
+        public long AssetId { get; set; }
+
+        [JsonProperty("reason")]
+        public string Reason { get; set; }
     }
 
     public partial class GetLibrarySuccess
@@ -512,6 +545,24 @@ namespace Aredoko.Protocol
         public string[] Pngs { get; set; }
     }
 
+    public partial class ReadModelPartPayload
+    {
+        [JsonProperty("assetId")]
+        public long AssetId { get; set; }
+
+        [JsonProperty("file")]
+        public string? File { get; set; }
+
+        [JsonProperty("offset")]
+        public long Offset { get; set; }
+    }
+
+    public partial class ReadModelPartSuccess
+    {
+        [JsonProperty("data")]
+        public string Data { get; set; }
+    }
+
     public partial class ReadModelPayload
     {
         [JsonProperty("assetId")]
@@ -523,17 +574,17 @@ namespace Aredoko.Protocol
         [JsonProperty("files")]
         public ModelFile[] Files { get; set; }
 
-        [JsonProperty("model")]
-        public string Model { get; set; }
+        [JsonProperty("size")]
+        public long Size { get; set; }
     }
 
     public partial class ModelFile
     {
-        [JsonProperty("data")]
-        public string Data { get; set; }
-
         [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("size")]
+        public long Size { get; set; }
     }
 
     public partial class RemoveSourcePayload
@@ -563,15 +614,84 @@ namespace Aredoko.Protocol
         public SearchResult[] Results { get; set; }
     }
 
+    public partial class RpcCauseReason
+    {
+        [JsonProperty("_tag")]
+        public WireCauseReasonTag Tag { get; set; }
+
+        [JsonProperty("error")]
+        public object? Error { get; set; }
+    }
+
+    public partial class RpcRequest
+    {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("jsonrpc")]
+        public Jsonrpc Jsonrpc { get; set; }
+
+        [JsonProperty("method")]
+        public string Method { get; set; }
+
+        [JsonProperty("params")]
+        public object Params { get; set; }
+
+        [JsonProperty("sampled")]
+        public bool Sampled { get; set; }
+
+        [JsonProperty("spanId")]
+        public string SpanId { get; set; }
+
+        [JsonProperty("traceId")]
+        public string TraceId { get; set; }
+    }
+
+    public partial class RpcResponse
+    {
+        [JsonProperty("error")]
+        public RpcError? Error { get; set; }
+
+        [JsonProperty("id")]
+        public long? Id { get; set; }
+
+        [JsonProperty("jsonrpc")]
+        public Jsonrpc Jsonrpc { get; set; }
+
+        [JsonProperty("result")]
+        public object? Result { get; set; }
+    }
+
+    public partial class RpcError
+    {
+        [JsonProperty("_tag")]
+        public RpcErrorTag Tag { get; set; }
+
+        [JsonProperty("code")]
+        public long Code { get; set; }
+
+        [JsonProperty("data")]
+        public object? Data { get; set; }
+
+        [JsonProperty("message")]
+        public string Message { get; set; }
+    }
+
     public enum Reason { Failed, Invalid, NotFound };
 
-    public enum Tag { RequestFailed };
+    public enum AddSourceErrorTag { RequestFailed };
 
     public enum SourceKind { Folder, Project };
 
     public enum PackageKind { Files, Project, Unitypackage };
 
     public enum AssetKind { Animation, Audio, Material, Model, Other, Prefab, Scene, Script, Shader, Texture };
+
+    public enum WireCauseReasonTag { Die, Fail, Interrupt };
+
+    public enum Jsonrpc { The20 };
+
+    public enum RpcErrorTag { Cause, Defect };
 
     public partial class ProtocolRoots
     {
@@ -591,19 +711,22 @@ namespace Aredoko.Protocol
             DateParseHandling = DateParseHandling.None,
             Converters =
             {
-                TagConverter.Singleton,
+                AddSourceErrorTagConverter.Singleton,
                 ReasonConverter.Singleton,
                 SourceKindConverter.Singleton,
                 PackageKindConverter.Singleton,
                 AssetKindConverter.Singleton,
+                WireCauseReasonTagConverter.Singleton,
+                JsonrpcConverter.Singleton,
+                RpcErrorTagConverter.Singleton,
                 new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
             },
         };
     }
 
-    internal class TagConverter : JsonConverter
+    internal class AddSourceErrorTagConverter : JsonConverter
     {
-        public override bool CanConvert(Type t) => t == typeof(Tag) || t == typeof(Tag?);
+        public override bool CanConvert(Type t) => t == typeof(AddSourceErrorTag) || t == typeof(AddSourceErrorTag?);
 
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
         {
@@ -611,9 +734,9 @@ namespace Aredoko.Protocol
             var value = serializer.Deserialize<string>(reader);
             if (value == "RequestFailed")
             {
-                return Tag.RequestFailed;
+                return AddSourceErrorTag.RequestFailed;
             }
-            throw new Exception("Cannot unmarshal type Tag");
+            throw new Exception("Cannot unmarshal type AddSourceErrorTag");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -623,16 +746,16 @@ namespace Aredoko.Protocol
                 serializer.Serialize(writer, null);
                 return;
             }
-            var value = (Tag)untypedValue;
-            if (value == Tag.RequestFailed)
+            var value = (AddSourceErrorTag)untypedValue;
+            if (value == AddSourceErrorTag.RequestFailed)
             {
                 serializer.Serialize(writer, "RequestFailed");
                 return;
             }
-            throw new Exception("Cannot marshal type Tag");
+            throw new Exception("Cannot marshal type AddSourceErrorTag");
         }
 
-        public static readonly TagConverter Singleton = new TagConverter();
+        public static readonly AddSourceErrorTagConverter Singleton = new AddSourceErrorTagConverter();
     }
 
     internal class ReasonConverter : JsonConverter
@@ -848,6 +971,127 @@ namespace Aredoko.Protocol
 
         public static readonly AssetKindConverter Singleton = new AssetKindConverter();
     }
+
+    internal class WireCauseReasonTagConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(WireCauseReasonTag) || t == typeof(WireCauseReasonTag?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "Die":
+                    return WireCauseReasonTag.Die;
+                case "Fail":
+                    return WireCauseReasonTag.Fail;
+                case "Interrupt":
+                    return WireCauseReasonTag.Interrupt;
+            }
+            throw new Exception("Cannot unmarshal type WireCauseReasonTag");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (WireCauseReasonTag)untypedValue;
+            switch (value)
+            {
+                case WireCauseReasonTag.Die:
+                    serializer.Serialize(writer, "Die");
+                    return;
+                case WireCauseReasonTag.Fail:
+                    serializer.Serialize(writer, "Fail");
+                    return;
+                case WireCauseReasonTag.Interrupt:
+                    serializer.Serialize(writer, "Interrupt");
+                    return;
+            }
+            throw new Exception("Cannot marshal type WireCauseReasonTag");
+        }
+
+        public static readonly WireCauseReasonTagConverter Singleton = new WireCauseReasonTagConverter();
+    }
+
+    internal class JsonrpcConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(Jsonrpc) || t == typeof(Jsonrpc?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            if (value == "2.0")
+            {
+                return Jsonrpc.The20;
+            }
+            throw new Exception("Cannot unmarshal type Jsonrpc");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (Jsonrpc)untypedValue;
+            if (value == Jsonrpc.The20)
+            {
+                serializer.Serialize(writer, "2.0");
+                return;
+            }
+            throw new Exception("Cannot marshal type Jsonrpc");
+        }
+
+        public static readonly JsonrpcConverter Singleton = new JsonrpcConverter();
+    }
+
+    internal class RpcErrorTagConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(RpcErrorTag) || t == typeof(RpcErrorTag?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "Cause":
+                    return RpcErrorTag.Cause;
+                case "Defect":
+                    return RpcErrorTag.Defect;
+            }
+            throw new Exception("Cannot unmarshal type RpcErrorTag");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (RpcErrorTag)untypedValue;
+            switch (value)
+            {
+                case RpcErrorTag.Cause:
+                    serializer.Serialize(writer, "Cause");
+                    return;
+                case RpcErrorTag.Defect:
+                    serializer.Serialize(writer, "Defect");
+                    return;
+            }
+            throw new Exception("Cannot marshal type RpcErrorTag");
+        }
+
+        public static readonly RpcErrorTagConverter Singleton = new RpcErrorTagConverter();
+    }
 }
 #pragma warning restore CS8618
 #pragma warning restore CS8601
@@ -901,7 +1145,9 @@ namespace Aredoko.Protocol
         public static readonly Rpc<PutProjectAssetsPayload, Empty, RequestFailedEncoded> PutProjectAssets = new Rpc<PutProjectAssetsPayload, Empty, RequestFailedEncoded>("PutProjectAssets");
         public static readonly Rpc<Empty, ListRenderJobsSuccess, RequestFailedEncoded> ListRenderJobs = new Rpc<Empty, ListRenderJobsSuccess, RequestFailedEncoded>("ListRenderJobs");
         public static readonly Rpc<ReadModelPayload, ReadModelSuccess, RequestFailedEncoded> ReadModel = new Rpc<ReadModelPayload, ReadModelSuccess, RequestFailedEncoded>("ReadModel");
+        public static readonly Rpc<ReadModelPartPayload, ReadModelPartSuccess, RequestFailedEncoded> ReadModelPart = new Rpc<ReadModelPartPayload, ReadModelPartSuccess, RequestFailedEncoded>("ReadModelPart");
         public static readonly Rpc<PutRenderPayload, Empty, RequestFailedEncoded> PutRender = new Rpc<PutRenderPayload, Empty, RequestFailedEncoded>("PutRender");
+        public static readonly Rpc<FailRenderPayload, Empty, RequestFailedEncoded> FailRender = new Rpc<FailRenderPayload, Empty, RequestFailedEncoded>("FailRender");
         public static readonly Rpc<PutAssetStorePayload, Empty, RequestFailedEncoded> PutAssetStore = new Rpc<PutAssetStorePayload, Empty, RequestFailedEncoded>("PutAssetStore");
     }
 }

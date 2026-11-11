@@ -88,6 +88,20 @@ const attempts = Effect.gen(function* attempts() {
   yield* sql`alter table images add column attempts integer not null default 0`;
 });
 
+const OLD_FAILED = -1;
+const PENDING_EMBEDDING = 0;
+const PENDING_RENDER = 1;
+
+const retries = Effect.gen(function* retries() {
+  const sql = yield* SqlClient.SqlClient;
+  yield* sql`alter table images add column retry_at integer not null default 0`;
+  yield* sql`update images set embedded = ${PENDING_EMBEDDING}, attempts = 0
+    where embedded = ${OLD_FAILED}`;
+  yield* sql`alter table assets add column render_attempts integer not null default 0`;
+  yield* sql`alter table assets add column render_retry_at integer not null default 0`;
+  yield* sql`update assets set render = ${PENDING_RENDER} where render = ${OLD_FAILED}`;
+});
+
 const init = Effect.all([vectors, library, assets, images], { discard: true });
 
 /** @internal */
@@ -96,4 +110,5 @@ export const loader: Migrator.Loader = Migrator.fromRecord({
   "2_files": files,
   "3_settings": settings,
   "4_attempts": attempts,
+  "5_retries": retries,
 });

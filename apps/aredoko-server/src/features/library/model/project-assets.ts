@@ -2,6 +2,7 @@ import { Array, Effect, HashSet, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { encodeSummary, kindOf, listedEntry, searchableText } from "#entities/package";
+import { normalizePng } from "#shared/preview";
 import { decodeRows, firstId, ids } from "#shared/sql";
 
 import { embedTexts } from "./embed-texts.ts";
@@ -72,8 +73,18 @@ const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAss
   const sql = yield* SqlClient.SqlClient;
   const packageId = yield* projectPackage(projectPath);
   const packageName = nameOf(projectPath);
-  const changed = yield* pipe(
+  const normalized = yield* pipe(
     assets,
+    Effect.forEach((asset) =>
+      pipe(
+        asset.previews,
+        Effect.forEach((png) => normalizePng(asset.pathname, png)),
+        Effect.map((previews) => ({ ...asset, previews })),
+      ),
+    ),
+  );
+  const changed = yield* pipe(
+    normalized,
     Array.map(plainAsset),
     Effect.filter((asset) => isChanged({ packageId, packageName, asset })),
   );

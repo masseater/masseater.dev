@@ -2,6 +2,9 @@ import {
   AredokoRpcs,
   ENDPOINT_FILE,
   HOST,
+  RpcCauseReason,
+  RpcRequest,
+  RpcResponse,
   ServerEndpoint,
   TOKEN_PARAMETER,
 } from "@masseater.dev/aredoko-protocol";
@@ -62,7 +65,12 @@ const roots = pipe(
     { name: `${tag}Success`, object: true, ast: rpc.successSchema.ast },
     { name: `${tag}Error`, object: false, ast: rpc.errorSchema.ast },
   ]),
-  Array.append({ name: "EndpointFileContent", object: true, ast: ServerEndpoint.ast }),
+  Array.appendAll([
+    { name: "EndpointFileContent", object: true, ast: ServerEndpoint.ast },
+    { name: "WireRequest", object: true, ast: RpcRequest.ast },
+    { name: "WireResponse", object: true, ast: RpcResponse.ast },
+    { name: "WireCauseReason", object: true, ast: RpcCauseReason.ast },
+  ]),
   Array.filter(({ ast }) => !SchemaAST.isVoid(ast)),
 );
 

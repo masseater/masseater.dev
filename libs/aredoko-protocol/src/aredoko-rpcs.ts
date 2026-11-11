@@ -60,17 +60,17 @@ const RenderJob = Schema.Struct({ assetId: Id, pathname: Schema.String }).annota
 
 const RenderJobs = Schema.Struct({ jobs: Schema.Array(RenderJob) });
 
-const ModelFile = Schema.Struct({
-  name: Schema.String,
-  data: Schema.Uint8ArrayFromBase64,
-}).annotate({
+const Size = Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_OFFSET));
+
+const ModelFile = Schema.Struct({ name: Schema.String, size: Size }).annotate({
   identifier: "ModelFile",
 });
 
-const ModelFiles = Schema.Struct({
-  model: Schema.Uint8ArrayFromBase64,
-  files: Schema.Array(ModelFile),
-});
+const ModelFiles = Schema.Struct({ size: Size, files: Schema.Array(ModelFile) });
+
+const ModelPartQuery = { assetId: Id, file: Schema.NullOr(Schema.String), offset: Size };
+
+const ModelPart = Schema.Struct({ data: Schema.Uint8ArrayFromBase64 });
 
 const Rendered = {
   assetId: Id,
@@ -120,6 +120,15 @@ export class AredokoRpcs extends RpcGroup.make(
   Rpc.make("PutProjectAssets", { payload: ProjectAssets, error: RequestFailed }),
   Rpc.make("ListRenderJobs", { success: RenderJobs, error: RequestFailed }),
   Rpc.make("ReadModel", { payload: { assetId: Id }, success: ModelFiles, error: RequestFailed }),
+  Rpc.make("ReadModelPart", {
+    payload: ModelPartQuery,
+    success: ModelPart,
+    error: RequestFailed,
+  }),
   Rpc.make("PutRender", { payload: Rendered, error: RequestFailed }),
+  Rpc.make("FailRender", {
+    payload: { assetId: Id, reason: Schema.String },
+    error: RequestFailed,
+  }),
   Rpc.make("PutAssetStore", { payload: { path: Schema.String }, error: RequestFailed }),
 ) {}
