@@ -9,6 +9,7 @@
     "./badge": "./src/badge.tsx",
     "./button": "./src/button.tsx",
     "./cn": "./src/cn.ts",
+    "./color-scheme": "./src/color-scheme.ts",
     "./portfolio": "./src/portfolio.ts",
     "./styles.css": "./src/styles.css",
     "./theme.css": "./src/theme.css",

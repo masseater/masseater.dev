@@ -5,13 +5,15 @@ import { useRunSession } from "#/pages/interview/model/hooks";
 import { ConversationColumn } from "./conversation-column.tsx";
 import { SessionBar } from "./session-bar.tsx";
 import { SummaryPanel } from "./summary-panel.tsx";
+import { useTypeAnywhere } from "./type-anywhere.ts";
 
 const SessionView = (): ReactNode => {
   useRunSession();
+  useTypeAnywhere();
   return (
     <div className="flex min-h-dvh flex-col">
       <SessionBar />
-      <main className="flex flex-1 flex-col gap-6 px-4 py-6 lg:flex-row">
+      <main className="flex flex-1 gap-10 px-4 pb-8 lg:px-10">
         <ConversationColumn />
         <SummaryPanel />
       </main>

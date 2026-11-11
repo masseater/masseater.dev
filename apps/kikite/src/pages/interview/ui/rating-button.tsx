@@ -25,12 +25,9 @@ const RatingButton = ({
   const active = current === value;
   return (
     <Button
-      variant="outline"
-      className={cn(
-        active &&
-          "border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-      )}
-      size="icon-sm"
+      variant="ghost"
+      className={cn("text-muted-foreground/60", active && "text-foreground")}
+      size="icon-xs"
       aria-label={label}
       aria-pressed={active}
       title={label}

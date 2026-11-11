@@ -8,6 +8,7 @@ describe("parseDraft", () => {
     expect(
       parseDraft("根拠: 「散らかる」と話していたので聞きます。\n質問: どこに書いていますか？"),
     ).toStrictEqual({
+      strategy: Option.none(),
       reason: "「散らかる」と話していたので聞きます。",
       question: "どこに書いていますか？",
       error: Option.none(),
@@ -32,6 +33,25 @@ describe("parseDraft", () => {
 
   it("treats text without labels as the question", () => {
     expect(parseDraft("いつ見返しますか？").question).toBe("いつ見返しますか？");
+  });
+});
+
+describe("parseDraft strategy", () => {
+  it("reads the strategy the model picked", () => {
+    expect(parseDraft("方針: episode\n根拠: 「疲れ」\n質問: いつですか？").strategy).toStrictEqual(
+      Option.some("episode"),
+    );
+  });
+
+  it("drops a strategy that is not on the list", () => {
+    expect(parseDraft("方針: guess\n質問: いつですか？")).toMatchObject({
+      strategy: Option.none(),
+      question: "いつですか？",
+    });
+  });
+
+  it("shows nothing while only the strategy has arrived", () => {
+    expect(parseDraft("方針: conc").question).toBe("");
   });
 
   it("reads the error the server appends", () => {

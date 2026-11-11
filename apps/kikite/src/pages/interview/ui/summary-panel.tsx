@@ -1,18 +1,24 @@
+import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSummaryState } from "#/pages/interview/model/hooks";
-
-import { SummaryBody } from "./summary-body.tsx";
-import { SummaryHeading } from "./summary-heading.tsx";
+import { summaryOf, useSummaryState } from "#/pages/interview/model/hooks";
 
 const SummaryPanel = (): ReactNode => {
-  const state = useSummaryState();
+  const points = pipe(
+    summaryOf(useSummaryState()),
+    Option.match({ onNone: Arr.empty<string>, onSome: (summary) => summary.points }),
+  );
   return (
-    <aside className="bg-card flex flex-col gap-4 rounded-lg border p-4 lg:w-88 lg:shrink-0">
-      <SummaryHeading updating={state.status === "updating"} />
-      {state.status === "failed" && <p className="text-destructive text-xs">{state.message}</p>}
-      <SummaryBody state={state} />
-    </aside>
+    Arr.isReadonlyArrayNonEmpty(points) && (
+      <aside className="hidden w-72 shrink-0 pt-6 lg:block">
+        <ul className="text-muted-foreground flex flex-col gap-2 text-sm leading-relaxed">
+          {pipe(
+            points,
+            Arr.map((point) => <li key={point}>{point}</li>),
+          )}
+        </ul>
+      </aside>
+    )
   );
 };
 

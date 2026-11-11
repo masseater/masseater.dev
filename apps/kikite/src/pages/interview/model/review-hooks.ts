@@ -1,7 +1,7 @@
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { useCallback, useMemo } from "react";
 
-import { choicesAtom, entriesAtom, heardAtom, phaseAtom, progressAtom } from "./atoms.ts";
+import { entriesAtom, heardAtom, phaseAtom, progressAtom } from "./atoms.ts";
 import type { Rating } from "./atoms.ts";
 import { rated } from "./rate.ts";
 import { saveAtom } from "./record.ts";
@@ -28,19 +28,15 @@ const useSave = (): (() => void) => {
 const useRestart = (): (() => void) => {
   const setPhase = useAtomSet(phaseAtom);
   return useCallback(() => {
-    setPhase({ status: "setup" });
+    setPhase({ status: "interview" });
   }, [setPhase]);
 };
 
 const useReport = (): Report => {
   const entries = useAtomValue(entriesAtom);
-  const choices = useAtomValue(choicesAtom);
   const progress = useAtomValue(progressAtom);
   const { withdrawn } = useAtomValue(heardAtom);
-  return useMemo(
-    () => reportOf({ entries, choices, progress, withdrawn }),
-    [entries, choices, progress, withdrawn],
-  );
+  return useMemo(() => reportOf({ entries, progress, withdrawn }), [entries, progress, withdrawn]);
 };
 
 export { useRate, useReport, useRestart, useSave };

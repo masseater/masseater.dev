@@ -32,14 +32,21 @@ const STEPS: readonly Step[] = [
 
 const entryOf = (step: Step, id: number): Entry => {
   if ("strategy" in step) {
-    return { kind: "question", id, reason: "", question: "", ...step };
+    return {
+      kind: "question",
+      id,
+      at: step.at,
+      strategy: Option.some(step.strategy),
+      rating: step.rating,
+      reason: "",
+      question: "",
+    };
   }
-  return { kind: "speech", id, text: "", ...step };
+  return { kind: "speech", id, text: "", by: "voice", ...step };
 };
 
 const REPORT = reportOf({
   entries: pipe(STEPS, Arr.map(entryOf)),
-  choices: [{ chosen: "hypothesis", candidates: [] }],
   progress: [
     { at: 0, open: OPEN_FIRST, next: NEXT_FIRST },
     { at: LATER, open: OPEN_LAST, next: NEXT_LAST },
@@ -50,8 +57,8 @@ const REPORT = reportOf({
 describe("reportOf", () => {
   it("counts questions and ratings per strategy, most asked first", () => {
     expect(REPORT.rows).toStrictEqual([
-      { strategy: "concrete", asked: ASKED_CONCRETE, good: 1, off: 1, picked: 0 },
-      { strategy: "hypothesis", asked: 1, good: 1, off: 0, picked: 1 },
+      { strategy: "concrete", asked: ASKED_CONCRETE, good: 1, off: 1 },
+      { strategy: "hypothesis", asked: 1, good: 1, off: 0 },
     ]);
   });
 
@@ -66,7 +73,7 @@ describe("reportOf", () => {
   });
 
   it("has no wait or change before anything was said", () => {
-    const empty = reportOf({ entries: [], choices: [], progress: [], withdrawn: 0 });
+    const empty = reportOf({ entries: [], progress: [], withdrawn: 0 });
     expect([empty.rows, empty.wait, empty.change]).toStrictEqual([
       [],
       Option.none(),
