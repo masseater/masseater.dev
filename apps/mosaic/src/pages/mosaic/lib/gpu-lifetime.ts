@@ -1,5 +1,7 @@
 import { Option, Predicate } from "effect";
 
+import { destroyDevice } from "./gpu-telemetry";
+
 interface Held {
   readonly device: Pick<GPUDevice, "destroy">;
   readonly context: Pick<GPUCanvasContext, "unconfigure">;
@@ -9,7 +11,7 @@ const whileMounted =
   (signal: AbortSignal) =>
   <Device extends Held["device"]>(device: Device): Option.Option<Device> => {
     if (signal.aborted) {
-      device.destroy();
+      destroyDevice(device);
       return Option.none();
     }
     return Option.some(device);
@@ -22,7 +24,7 @@ const releaseOnUnmount =
       "abort",
       () => {
         gpu.context.unconfigure();
-        gpu.device.destroy();
+        destroyDevice(gpu.device);
       },
       { once: true },
     );

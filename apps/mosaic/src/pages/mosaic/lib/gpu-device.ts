@@ -1,6 +1,7 @@
 import { Effect, Option, Schema, flow } from "effect";
 
 import { releaseOnUnmount, whileMounted } from "./gpu-lifetime";
+import { destroyDevice, trackDevice } from "./gpu-telemetry";
 
 interface Gpu {
   readonly device: GPUDevice;
@@ -37,7 +38,7 @@ const requestDevice = (): Effect.Effect<Option.Option<GPUDevice>> =>
 const configure = (canvas: HTMLCanvasElement, device: GPUDevice): Option.Option<Gpu> =>
   Option.match(Option.fromNullishOr(canvas.getContext("webgpu")), {
     onNone: () => {
-      device.destroy();
+      destroyDevice(device);
       return Option.none();
     },
     onSome: (context) => {
@@ -59,6 +60,7 @@ const acquireGpu = ({
     requestDevice(),
     flow(
       Option.flatMap(mounted),
+      Option.map(trackDevice),
       Option.flatMap((device) => configure(canvas, device)),
       Option.map(held),
     ),
