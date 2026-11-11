@@ -17,6 +17,7 @@ const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]
 const runLogged = runner(logger);
 
 const SERVICE_UNAVAILABLE = 503;
+const CONTAINER_ORIGIN = "http://interviewer";
 
 const STARTUP_RETRY = {
   schedule: Schedule.spaced(INTERVIEWER_STARTUP.spacing),
@@ -52,6 +53,11 @@ const start = Effect.fn("kikite.startInterviewer")(function* start(container: Co
   });
 });
 
+const containerUrl = (url: string): string => {
+  const { pathname, search } = new URL(url);
+  return `${CONTAINER_ORIGIN}${pathname}${search}`;
+};
+
 const containerOf = (ctx: DurableObjectState): Effect.Effect<Container, InterviewerDown> =>
   Effect.fromOption(Option.fromUndefinedOr(ctx.container), () =>
     down("the durable object has no container"),
@@ -65,7 +71,7 @@ const forward = Effect.fn("kikite.forward")(function* forward(
   const body = yield* Effect.tryPromise({ try: () => request.arrayBuffer(), catch: down });
   return yield* Effect.tryPromise({
     try: () =>
-      container.getTcpPort(API_PORT).fetch(request.url, {
+      container.getTcpPort(API_PORT).fetch(containerUrl(request.url), {
         method: request.method,
         headers: request.headers,
         body,
