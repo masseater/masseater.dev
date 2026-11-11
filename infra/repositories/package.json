@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./access-sites": "./access-sites.ts",
     "./credential-grants": "./credential-grants.ts",
     "./github-oidc": "./github-oidc.ts",
     "./credential-broker.worker": "./credential-broker.worker.ts"
@@ -22,6 +23,7 @@
     "alchemy": "catalog:stack",
     "effect": "catalog:stack",
     "jose": "catalog:",
+    "oauth4webapi": "catalog:",
     "universal-github-app-jwt": "catalog:"
   },
   "devDependencies": {

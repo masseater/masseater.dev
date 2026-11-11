@@ -306,8 +306,8 @@ catalogs:
       specifier: 22.0.1
       version: 22.0.1
     '@openrouter/sdk':
-      specifier: 1.5.65
-      version: 1.5.65
+      specifier: 1.5.66
+      version: 1.5.66
     '@opentelemetry/api':
       specifier: 1.10.0
       version: 1.10.0
@@ -647,6 +647,9 @@ catalogs:
     nanotar:
       specifier: ^0.3.0
       version: 0.3.0
+    oauth4webapi:
+      specifier: ^3.8.8
+      version: 3.8.8
     officeparser:
       specifier: ^8.1.1
       version: 8.6.0
@@ -661,7 +664,7 @@ catalogs:
       version: 5.7.0
     parse5:
       specifier: ^8.1.0
-      version: 8.1.0
+      version: 8.1.1
     playwright-core:
       specifier: 1.65.0
       version: 1.65.0
@@ -2581,6 +2584,9 @@ importers:
       jose:
         specifier: 'catalog:'
         version: 6.2.15
+      oauth4webapi:
+        specifier: 'catalog:'
+        version: 3.8.8
       universal-github-app-jwt:
         specifier: 'catalog:'
         version: 2.2.2
@@ -2753,7 +2759,7 @@ importers:
         version: 5.7.0
       parse5:
         specifier: 'catalog:'
-        version: 8.1.0
+        version: 8.1.1
       postal-mime:
         specifier: 'catalog:'
         version: 4.2.0
@@ -2965,7 +2971,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.65
+        version: 1.5.66
       effect:
         specifier: catalog:stack
         version: 4.1.2
@@ -3609,7 +3615,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.65
+        version: 1.5.66
       '@r_masseater/oxlint-plugin-decision':
         specifier: workspace:*
         version: link:../../libs/oxlint-plugin-decision
@@ -3786,6 +3792,15 @@ importers:
       effect:
         specifier: catalog:stack
         version: 4.1.2
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  tools/seikin-dance:
+    devDependencies:
+      '@mediapipe/tasks-vision':
+        specifier: 1.2.2
+        version: 1.2.2
       vite-plus:
         specifier: catalog:stack
         version: 1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -5878,6 +5893,9 @@ packages:
     peerDependencies:
       rollup: '>=2'
 
+  '@mediapipe/tasks-vision@1.2.2':
+    resolution: {integrity: sha512-Z7BikxnTvlKgc3d/Nw+LV6B0xyAACxYeAHHUu/xUhm1SV7jlExa9M37beiF/wZFoy0H+cs1PlIT2Z4km02UEHQ==}
+
   '@modelcontextprotocol/core@2.4.0':
     resolution: {integrity: sha512-z8QBKqdfXLPzkLQuG4xp8hrVEMm1PZ1IgxMN2sMbJiFiAKOWXnAzogXn2W4aqIBlP1ea6U5yiqVquvUNM1Cj6Q==}
     engines: {node: '>=20'}
@@ -6102,8 +6120,8 @@ packages:
     resolution: {integrity: sha512-hAX0pT/73190NLqBPPWSdBVGtbY6VOhWYK3qqHqtXQ1gK7kS2yz4+ivsN07hpJ6I3aeMtKP6J6npsEKOAzuTLA==}
     engines: {node: '>=20.0'}
 
-  '@openrouter/sdk@1.5.65':
-    resolution: {integrity: sha512-Nub6/tOJGjJ2yAIKciYVLGA7T9X5XAQwpNu0k71AX1zFZGGcaERe0IUwUo1hrh4qAK4jzL8WZWraU6VvM52FRQ==}
+  '@openrouter/sdk@1.5.66':
+    resolution: {integrity: sha512-9wZSZ+6fP983sBMICSK0RA0k+Lmb9UoXlFdXBGj4I5GwuPr1q1CwP2tAzuzfdjhXBNk470kJtWNiHkc7fGrpzQ==}
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -13984,6 +14002,9 @@ packages:
     resolution: {integrity: sha512-GX0gsdbGVCgnRgbeGaubfjpBXyYRWOOCVeYh08bSQvDZqxz5ndXs1OTfAt/h36G1xvI94YIspsI0sVFqAV9+RQ==}
     engines: {node: '>=20.19.0'}
 
+  oauth4webapi@3.8.8:
+    resolution: {integrity: sha512-8N28E+a/oxfXWBgOMt+ZP/JUf/XR+IFbvkAEPP3gznXOMv9BpAAwiIj0TFNz3tGTPc0ZQ8zmWBNgN1nAys0gng==}
+
   object-assign@3.0.0:
     resolution: {integrity: sha512-jHP15vXVGeVh1HuaA2wY6lxk+whK/x4KBG88VXeRma7CCun7iGD5qPc4eYykQ9sdQvg8jkwFKsSxHln2ybW3xQ==}
     engines: {node: '>=0.10.0'}
@@ -14247,8 +14268,8 @@ packages:
   parse5@5.1.1:
     resolution: {integrity: sha512-ugq4DFI0Ptb+WWjAdOK16+u/nHfiIrcE+sh8kZMaM0WllQKLI9rOUq6c2b7cwPkXdzfQESqvoqK6ug7U/Yyzug==}
 
-  parse5@8.1.0:
-    resolution: {integrity: sha512-sq3qBFpee5jeocbFbO48VHlGr8sT7mbXS0vxlKN6sottBtJzrOG3998sr0llSZcQAGgfpdmEYAIZE0P9z0dE8w==}
+  parse5@8.1.1:
+    resolution: {integrity: sha512-EcR/6WDcU7b2N3vQSxKALCk9lXGtUMQxXio008OEMBE0kavu/7JLfBEeFPzi43nMqVDSbEn3QCK+BMCc9zO//w==}
 
   parseurl@1.3.3:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
@@ -18583,6 +18604,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@mediapipe/tasks-vision@1.2.2': {}
+
   '@modelcontextprotocol/core@2.4.0':
     dependencies:
       zod: 4.6.7
@@ -18797,7 +18820,7 @@ snapshots:
 
   '@oozcitak/util@10.0.0': {}
 
-  '@openrouter/sdk@1.5.65':
+  '@openrouter/sdk@1.5.66':
     dependencies:
       zod: 4.6.7
 
@@ -27015,6 +27038,8 @@ snapshots:
     dependencies:
       boolbase: 2.0.0
 
+  oauth4webapi@3.8.8: {}
+
   object-assign@3.0.0: {}
 
   object-assign@4.1.1: {}
@@ -27384,7 +27409,7 @@ snapshots:
 
   parse5@5.1.1: {}
 
-  parse5@8.1.0:
+  parse5@8.1.1:
     dependencies:
       entities: 9.0.0
 
