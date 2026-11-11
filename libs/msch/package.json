@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/msch",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "masseater's check policy: points every finite value set and object shape at its one owner, and ships the oxlint preset of plugins and rules.",
   "keywords": [
     "lint",

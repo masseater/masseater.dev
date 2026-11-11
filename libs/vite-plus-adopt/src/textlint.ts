@@ -50,6 +50,7 @@ const lintTexts: {
     Effect.gen(function* lint() {
       const path = yield* Path.Path;
       const { ignores: _ignores, ...rawConfig } = config;
+      yield* attempt("textlint")(() => import("vite-plus/register"));
       const loaded = yield* attempt("textlint")(() =>
         loadPackagesFromRawConfig({ rawConfig, node_moduleDir: path.join(root, "node_modules") }),
       );

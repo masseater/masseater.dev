@@ -14,6 +14,8 @@ const RuleNameSchema = Schema.Literals([
   "unused-override",
   "removable-override",
   "hidden-unicode",
+  "python-file",
+  "python-command",
 ]);
 
 type RuleName = typeof RuleNameSchema.Type;
