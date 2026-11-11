@@ -1,5 +1,5 @@
-import { Workers, providers, state } from "@alchemy.run/cloudflare";
-import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
+import { Workers } from "@alchemy.run/cloudflare";
+import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect } from "effect";
@@ -32,10 +32,7 @@ const web = Effect.gen(function* web() {
 
 export default Stack(
   APP_NAME,
-  {
-    providers: tracedProviders(providers()),
-    state: state(),
-  },
+  tracedStackProps,
   Effect.gen(function* stack() {
     const { url } = yield* web;
     yield* requireAppPrefix;

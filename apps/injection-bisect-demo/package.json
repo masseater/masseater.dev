@@ -28,6 +28,7 @@
     "@cloudflare/workers-types": "catalog:",
     "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
+    "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/start-site": "workspace:*",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

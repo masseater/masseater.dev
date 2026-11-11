@@ -15,7 +15,7 @@ const OLD_DATE = "2026-01-01";
 const NEW_DATE = "2026-12-01";
 const MODES = 3;
 
-test("a Worker gets logs, traces, the trace destination and a new enough compatibility date", () => {
+test("a Worker gets logs, traces, Issues, the trace destination and a new enough compatibility date", () => {
   expect(traced(OPTIONS)({ main: "worker.ts", compatibility: { date: OLD_DATE } })).toMatchObject({
     main: "worker.ts",
     compatibility: { date: COMPATIBILITY_DATE },
@@ -23,6 +23,7 @@ test("a Worker gets logs, traces, the trace destination and a new enough compati
       enabled: true,
       logs: { enabled: true, invocationLogs: true, persist: true },
       traces: { enabled: true, persist: true, destinations: [TRACE_DESTINATION] },
+      issues: { enabled: true },
     },
   });
 });
@@ -50,9 +51,16 @@ test("a version of another Worker is left alone", () => {
   expect(traced(OPTIONS)(props)).toBe(props);
 });
 
-test("a Worker that turns its traces off is left alone", () => {
-  const props: WorkerProps = { observability: { traces: { enabled: false } } };
-  expect(traced(OPTIONS)(props)).toBe(props);
+test("a Worker that turns its traces off still gets Issues and nothing else", () => {
+  expect(traced(OPTIONS)({ observability: { traces: { enabled: false } } })).toStrictEqual({
+    observability: { traces: { enabled: false }, issues: { enabled: true } },
+  });
+});
+
+test("a Worker that turns Issues off keeps it off", () => {
+  expect(traced(OPTIONS)({ observability: { issues: { enabled: false } } })).toMatchObject({
+    observability: { issues: { enabled: false }, traces: { enabled: true } },
+  });
 });
 
 test("a Worker that tags its own versions is still traced", () => {

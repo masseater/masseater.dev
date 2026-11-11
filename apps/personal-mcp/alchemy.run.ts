@@ -4,11 +4,9 @@ import {
   CloudflareEnvironment,
   Vectorize,
   Workers,
-  providers,
-  state,
 } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
-import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
+import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import type {
   AccessOAuth,
   SloppediaGitHub,
@@ -110,10 +108,7 @@ type WorkerEnv = InferEnv<typeof worker>;
 export type { WorkerEnv };
 export default Stack(
   APP_NAME,
-  {
-    providers: tracedProviders(providers()),
-    state: state(),
-  },
+  tracedStackProps,
   Effect.gen(function* stack() {
     yield* worker;
     yield* requireAppPrefix;

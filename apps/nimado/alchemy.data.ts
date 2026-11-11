@@ -1,5 +1,5 @@
-import { Workers, providers, state } from "@alchemy.run/cloudflare";
-import { tracedProviders } from "@masseater.dev/cloudflare-account/traced-providers";
+import { Workers } from "@alchemy.run/cloudflare";
+import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { DATA_DIR, DATA_WORKER } from "@masseater.dev/nimado";
 import { Stack } from "alchemy";
 import { Array as Arr, Effect, pipe } from "effect";
@@ -25,10 +25,7 @@ const DATA_HEADERS = pipe(
 
 export default Stack(
   APP_NAME,
-  {
-    providers: tracedProviders(providers()),
-    state: state(),
-  },
+  tracedStackProps,
   Effect.gen(function* stack() {
     const { url } = yield* Workers.Worker("Data", {
       name: DATA_WORKER,
