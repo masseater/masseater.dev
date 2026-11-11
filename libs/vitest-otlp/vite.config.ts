@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 import { otlp } from "./src/index.ts";
 
 export default defineConfig({
-  msch: { readme: true },
+  msch: { publish: true },
   run: {
     tasks: {
       build: { command: "vp pack", cache: false },
