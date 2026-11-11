@@ -303,8 +303,8 @@ catalogs:
       specifier: 22.0.1
       version: 22.0.1
     '@openrouter/sdk':
-      specifier: 1.5.65
-      version: 1.5.65
+      specifier: 1.5.66
+      version: 1.5.66
     '@opentelemetry/api':
       specifier: 1.10.0
       version: 1.10.0
@@ -655,7 +655,7 @@ catalogs:
       version: 5.7.0
     parse5:
       specifier: ^8.1.0
-      version: 8.1.0
+      version: 8.1.1
     playwright-core:
       specifier: 1.65.0
       version: 1.65.0
@@ -2662,7 +2662,7 @@ importers:
         version: 5.7.0
       parse5:
         specifier: 'catalog:'
-        version: 8.1.0
+        version: 8.1.1
       postal-mime:
         specifier: 'catalog:'
         version: 4.2.0
@@ -2874,7 +2874,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.65
+        version: 1.5.66
       effect:
         specifier: catalog:stack
         version: 4.1.2
@@ -3518,7 +3518,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.65
+        version: 1.5.66
       '@r_masseater/oxlint-plugin-decision':
         specifier: workspace:*
         version: link:../../libs/oxlint-plugin-decision
@@ -5946,8 +5946,8 @@ packages:
     resolution: {integrity: sha512-hAX0pT/73190NLqBPPWSdBVGtbY6VOhWYK3qqHqtXQ1gK7kS2yz4+ivsN07hpJ6I3aeMtKP6J6npsEKOAzuTLA==}
     engines: {node: '>=20.0'}
 
-  '@openrouter/sdk@1.5.65':
-    resolution: {integrity: sha512-Nub6/tOJGjJ2yAIKciYVLGA7T9X5XAQwpNu0k71AX1zFZGGcaERe0IUwUo1hrh4qAK4jzL8WZWraU6VvM52FRQ==}
+  '@openrouter/sdk@1.5.66':
+    resolution: {integrity: sha512-9wZSZ+6fP983sBMICSK0RA0k+Lmb9UoXlFdXBGj4I5GwuPr1q1CwP2tAzuzfdjhXBNk470kJtWNiHkc7fGrpzQ==}
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -13947,8 +13947,8 @@ packages:
   parse5@5.1.1:
     resolution: {integrity: sha512-ugq4DFI0Ptb+WWjAdOK16+u/nHfiIrcE+sh8kZMaM0WllQKLI9rOUq6c2b7cwPkXdzfQESqvoqK6ug7U/Yyzug==}
 
-  parse5@8.1.0:
-    resolution: {integrity: sha512-sq3qBFpee5jeocbFbO48VHlGr8sT7mbXS0vxlKN6sottBtJzrOG3998sr0llSZcQAGgfpdmEYAIZE0P9z0dE8w==}
+  parse5@8.1.1:
+    resolution: {integrity: sha512-EcR/6WDcU7b2N3vQSxKALCk9lXGtUMQxXio008OEMBE0kavu/7JLfBEeFPzi43nMqVDSbEn3QCK+BMCc9zO//w==}
 
   path-exists@4.0.0:
     resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
@@ -18355,7 +18355,7 @@ snapshots:
 
   '@oozcitak/util@10.0.0': {}
 
-  '@openrouter/sdk@1.5.65':
+  '@openrouter/sdk@1.5.66':
     dependencies:
       zod: 4.6.7
 
@@ -26786,7 +26786,7 @@ snapshots:
 
   parse5@5.1.1: {}
 
-  parse5@8.1.0:
+  parse5@8.1.1:
     dependencies:
       entities: 9.0.0
 
