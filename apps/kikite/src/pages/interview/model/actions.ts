@@ -6,7 +6,6 @@ import type { StrategyId } from "#strategies";
 import { ask } from "./ask.ts";
 import { choose } from "./choose.ts";
 import { heardFailure, heardInterim, heardSpeech } from "./heard.ts";
-import { saveRecord } from "./record.ts";
 import { runners } from "./runners.ts";
 import { summarize } from "./summarize.ts";
 import { voice } from "./voice.ts";
@@ -15,7 +14,6 @@ type Actions = Readonly<{
   answer: (text: string) => void;
   ask: () => void;
   choose: (strategy: StrategyId) => void;
-  save: () => void;
   summarize: () => void;
   interim: (text: string) => void;
   failed: (message: string) => void;
@@ -50,9 +48,6 @@ const actionsFor = Effect.fn("kikite.actions")(function* actionsFor(setup: Inter
     },
     interim: (text) => {
       run.events(heardInterim(text, cancelDrafting));
-    },
-    save: () => {
-      run.events(saveRecord(setup));
     },
     failed: (message) => {
       run.events(heardFailure(message));

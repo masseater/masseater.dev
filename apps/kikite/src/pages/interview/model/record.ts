@@ -1,8 +1,18 @@
 import { DateTime, Effect, Option, Schema, pipe } from "effect";
+import { Atom } from "effect/reactivity";
 
 import type { InterviewSetup } from "#protocol";
 
-import { choicesAtom, entriesAtom, settingsAtom, summaryAtom, summaryOf } from "./atoms.ts";
+import {
+  choicesAtom,
+  entriesAtom,
+  heardAtom,
+  phaseAtom,
+  progressAtom,
+  settingsAtom,
+  summaryAtom,
+  summaryOf,
+} from "./atoms.ts";
 import { read } from "./registry.ts";
 
 const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
@@ -22,6 +32,8 @@ const saveRecord = Effect.fn("kikite.saveRecord")(function* saveRecord(setup: In
     settings: yield* read(settingsAtom),
     entries: yield* read(entriesAtom),
     choices: yield* read(choicesAtom),
+    progress: yield* read(progressAtom),
+    withdrawn: (yield* read(heardAtom)).withdrawn,
     summary: yield* pipe(
       read(summaryAtom),
       Effect.map((state) => Option.getOrNull(summaryOf(state))),
@@ -32,5 +44,14 @@ const saveRecord = Effect.fn("kikite.saveRecord")(function* saveRecord(setup: In
   yield* download(json, `kikite-${DateTime.formatIso(now)}.json`);
 });
 
+const saveAtom = Atom.fn(
+  Effect.fnUntraced(function* save() {
+    const phase = yield* read(phaseAtom);
+    if (phase.status !== "setup") {
+      yield* saveRecord(phase.setup);
+    }
+  }),
+);
+
 /** @internal */
-export { saveRecord };
+export { saveAtom };
