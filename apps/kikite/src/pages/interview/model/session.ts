@@ -9,7 +9,7 @@ import type { Phase } from "./atoms.ts";
 import { due } from "./due.ts";
 import { release, reset, startListening } from "./lifecycle.ts";
 
-type Session = Pick<Actions, "answer" | "ask" | "choose" | "save">;
+type Session = Pick<Actions, "answer" | "ask" | "choose">;
 
 const TICK = "250 millis";
 
