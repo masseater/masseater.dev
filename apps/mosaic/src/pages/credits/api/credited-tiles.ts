@@ -8,12 +8,13 @@ import {
   slugPath,
   versionPath,
 } from "@thumb-mosaic/mosaic";
-import { Effect, ManagedRuntime } from "effect";
+import { Effect } from "effect";
 import type { Schema } from "effect";
-import { FetchHttpClient, HttpClient, HttpClientResponse } from "effect/http";
+import { HttpClient, HttpClientResponse } from "effect/http";
 import type { HttpClientError } from "effect/http";
 
 import { BASE_PATH } from "#/shared/config";
+import { runtime } from "#/shared/lib/telemetry";
 
 type TileList = typeof Tiles.Type;
 type FetchError = HttpClientError.HttpClientError | Schema.SchemaError;
@@ -24,8 +25,6 @@ interface Request {
 }
 
 const NO_TILES: TileList = [];
-
-const runtime = ManagedRuntime.make(FetchHttpClient.layer);
 
 const fetchJson =
   <Model extends Schema.Decoder<unknown>>(schema: Model) =>
