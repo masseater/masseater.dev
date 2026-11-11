@@ -245,7 +245,12 @@ const Step = Schema.Struct({
 const Job = Schema.Struct({ steps: Schema.Array(Step) });
 
 const Workflow = Schema.Struct({
-  jobs: Schema.Struct({ "mosaic-plan": Job, "mosaic-character": Job, "mosaic-deploy": Job }),
+  jobs: Schema.Struct({
+    "mosaic-plan": Job,
+    "mosaic-character": Job,
+    "mosaic-deploy": Job,
+    "mosaic-refresh": Job,
+  }),
 });
 
 const namesOf = (job: typeof Job.Type): readonly string[] =>
@@ -264,8 +269,9 @@ const workflowMatchesTheScripts = Effect.gen(function* workflowMatchesTheScripts
   const { jobs } = yield* Schema.decodeUnknownEffect(Workflow)(parse(source));
   expect(namesOf(jobs["mosaic-plan"])).toStrictEqual(["rebuild", "web"]);
   expect(namesOf(jobs["mosaic-deploy"])).toStrictEqual(["deploy"]);
+  expect(namesOf(jobs["mosaic-refresh"])).toStrictEqual(["deploy"]);
   const actions = pipe(
-    [jobs["mosaic-plan"], jobs["mosaic-character"], jobs["mosaic-deploy"]],
+    [jobs["mosaic-plan"], jobs["mosaic-character"], jobs["mosaic-deploy"], jobs["mosaic-refresh"]],
     Arr.flatMap((job) => job.steps),
     Arr.flatMap((step) => Arr.fromNullishOr(step.uses)),
   );

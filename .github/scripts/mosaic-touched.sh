@@ -29,7 +29,7 @@ while read -r run sha status; do
   fi
   if [ -n "$(RUN_STATUS="$status" gh api "$api/actions/runs/$run/jobs?per_page=100" --jq '
     select(any(.jobs[] | select(.name == "mosaic-plan") | .steps[]?; .name == "rebuild" and .conclusion == "success"))
-    | [.jobs[] | select(.name == "mosaic-deploy")]
+    | [.jobs[] | select(.name == "mosaic-refresh")]
     | select(
         any(.[] | .steps[]?; .name == "deploy" and .conclusion == "success")
         or (env.RUN_STATUS != "completed" and all(.status != "completed"))
