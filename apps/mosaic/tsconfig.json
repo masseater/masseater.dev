@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@effect/tsgo/schema.json",
   "extends": "../../tsconfig.json",
-  "include": ["src", "*.ts"],
+  "include": ["src", "*.ts", "worker"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["vite/client", "@cloudflare/workers-types", "@webgpu/types"],
@@ -25,7 +25,12 @@
           "effect/http/HttpClient#HttpClient",
           "effect/http/HttpClientError#HttpClientError",
           "effect/http/HttpClientResponse#filterStatusOk",
-          "effect/http/HttpClientResponse#schemaBodyJson"
+          "effect/http/HttpClientResponse#schemaBodyJson",
+          "effect/http/FetchHttpClient#RequestInit",
+          "effect/observability/OtlpExporter#Flusher",
+          "effect/observability/OtlpExporter#layerFlusher",
+          "effect/observability/OtlpSerialization#layerJson",
+          "effect/observability/OtlpTracer#layer"
         ]
       }
     ]

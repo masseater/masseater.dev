@@ -1,6 +1,7 @@
 import { Array, Effect, Option, Record, pipe } from "effect";
 
 import type { Mosaic } from "#/pages/mosaic/api/queries";
+import { runtime } from "#/shared/lib/telemetry";
 
 import { composeBlock } from "./compose";
 import { variantFile } from "./files";
@@ -95,7 +96,7 @@ const blockOf = (
         const show = (url: string): void => {
           image.src = url;
         };
-        Effect.runFork(
+        runtime.runFork(
           Effect.when(whenLoaded(image), Effect.succeed(first)).pipe(
             Effect.andThen(composed),
             Effect.tap((url) =>
