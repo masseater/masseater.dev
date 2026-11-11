@@ -128,15 +128,26 @@ const takePending = (
     return pending;
   });
 
-const exchange = (
-  env: AppStoreEnv,
-  callbackUrl: string,
-  pending: PendingLogin,
-): Effect.Effect<Awaited<ReturnType<typeof processAuthorizationCodeResponse>>, AccessOAuthFailed> =>
+type TakenLogin = Readonly<{
+  env: AppStoreEnv;
+  callbackUrl: string;
+  state: string;
+  pending: PendingLogin;
+}>;
+
+const exchange = ({
+  env,
+  callbackUrl,
+  state,
+  pending,
+}: TakenLogin): Effect.Effect<
+  Awaited<ReturnType<typeof processAuthorizationCodeResponse>>,
+  AccessOAuthFailed
+> =>
   connect({ env, site: pending.site }).pipe(
     Effect.flatMap(({ server, client }) =>
       Effect.try({
-        try: () => validateAuthResponse(server, client, new URL(callbackUrl)),
+        try: () => validateAuthResponse(server, client, new URL(callbackUrl), state),
         catch: failed,
       }).pipe(
         Effect.flatMap((parameters) =>
@@ -163,9 +174,10 @@ const exchange = (
 
 const callback = ({ request, env }: RouteInput): Effect.Effect<Response, AccessOAuthFailed> =>
   Effect.gen(function* finishLogin() {
-    const state = new URL(request.url).searchParams.get("state") ?? CONSUMED;
+    const callbackUrl = request.url;
+    const state = new URL(callbackUrl).searchParams.get("state") ?? CONSUMED;
     const pending = yield* takePending(env, state);
-    const tokens = yield* exchange(env, request.url, pending);
+    const tokens = yield* exchange({ env, callbackUrl, state, pending });
     const grant = yield* grantFrom({ tokens, previous: Option.none() });
     yield* saveGrant({ env, site: pending.site, expected: Option.none(), grant });
     yield* Effect.logInfo("access_oauth.granted").pipe(Effect.annotateLogs({ site: pending.site }));
