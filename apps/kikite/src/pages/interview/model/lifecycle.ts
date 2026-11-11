@@ -9,6 +9,7 @@ import {
   entriesAtom,
   heardAtom,
   interimAtom,
+  progressAtom,
   listeningAtom,
   recognitionAtom,
   summaryAtom,
@@ -33,6 +34,7 @@ const reset = Effect.all([
   write(interimAtom, ""),
   write(askingAtom, IDLE),
   write(heardAtom, FRESH_HEARD),
+  write(progressAtom, []),
 ]);
 
 const release = Effect.all([
