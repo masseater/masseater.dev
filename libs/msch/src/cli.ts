@@ -4,6 +4,7 @@ import { Effect, Schema, Stdio, Array as Arr, pipe } from "effect";
 import { checkRepository } from "./check.ts";
 import { JSON_FLAG } from "./cli-contract.ts";
 import { checkHiddenUnicode } from "./hidden-unicode.ts";
+import { checkNestedDocs } from "./nested-docs.ts";
 import { ProblemsFound, writeStdout } from "./output.ts";
 import { checkOverrides } from "./overrides.ts";
 import { ProblemList, formatProblem, sortProblems } from "./problem.ts";
@@ -39,7 +40,7 @@ const msch = Effect.gen(function* msch() {
   const args = yield* stdio.args;
   const root = files.resolve(".");
   const found = yield* Effect.all(
-    [checkRepository(root), checkOverrides(root), checkHiddenUnicode(root)],
+    [checkRepository(root), checkOverrides(root), checkHiddenUnicode(root), checkNestedDocs(root)],
     {
       concurrency: "unbounded",
     },

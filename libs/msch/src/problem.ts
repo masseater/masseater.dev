@@ -14,6 +14,7 @@ const RuleNameSchema = Schema.Literals([
   "unused-override",
   "removable-override",
   "hidden-unicode",
+  "nested-docs",
 ]);
 
 type RuleName = typeof RuleNameSchema.Type;
