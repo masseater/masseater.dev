@@ -5,3 +5,4 @@
 - デプロイ: kikite.masseater.dev（Cloudflare Access で本人だけ。Worker と Containers）
 - 文字起こしはブラウザーの Web Speech API、要約と質問は Claude Agent SDK で作る
 - ローカルは `vp dev` で、手元の Claude Code のログインを使う。本番は broker の `CiClaudeCodeOauthToken` をコンテナに渡す
+- よい聞き手かどうかは 4 つの軸で比べる。聞いてほしいことを聞いたか（比較で選ばれた方針）、話を受けた質問か（質問ごとの良い・ずれの評価）、間が気持ちよいか（最後の発言から質問が出るまでの時間と、話の途中で引っ込めた質問の数）、話すほど整理されたか（要約の「あいまい」「まだ聞いていない」の件数の最初と最後）である。終えると `model/report.ts` の `reportOf` が集計し、記録の JSON にも元のデータを残す
