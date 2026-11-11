@@ -10,6 +10,7 @@
     "@ast-grep/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",
     "@effect/tsgo": "catalog:stack",
+    "@masseater.dev/textlint-rule-yomiyasu": "workspace:*",
     "@r_masseater/msch": "workspace:*",
     "@r_masseater/vite-plus-adopt": "catalog:",
     "@r_masseater/workers-tracing": "workspace:*",

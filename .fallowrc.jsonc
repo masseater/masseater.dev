@@ -35,7 +35,7 @@
   "overrides": [
     { "files": ["libs/vitest-otlp/src/generated/**"], "rules": { "unused-enum-members": "off" } },
   ],
-  "ignoreDependencies": ["@effect/language-service"],
+  "ignoreDependencies": ["@effect/language-service", "@masseater.dev/textlint-rule-yomiyasu"],
   "workspaces": {
     "settings": {
       "libs/msch": {
@@ -108,6 +108,7 @@
     "libs/oxlint-plugin-decision*/example/**",
     "libs/oxlint-typed-rules/upstream/{react,tanstack-query,tanstack-router,drizzle,remotion}/**",
     "libs/vite-plus-adopt/upstream/**",
+    "libs/textlint-rule-yomiyasu/upstream/**",
   ],
   "audit": { "gate": "all" },
   "security": {

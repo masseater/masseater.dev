@@ -61,7 +61,6 @@ export default defineConfig({
         dependsOn: [
           "test",
           "vpa",
-          "yomiyasu",
           "renovate",
           "workflow-rules",
           "cargo-checks",
