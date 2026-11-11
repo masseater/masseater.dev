@@ -23,17 +23,12 @@ import type {
   TypeAliasDeclaration,
   VariableDeclaration,
 } from "./compiler.ts";
-import { declarationKey, describeLibraryType, isObjectType, locationOf } from "./library.ts";
+import { derivedDeclarationsOf } from "./derivation.ts";
+import { declarationKey, describeLibraryType, isObjectType } from "./library.ts";
 import type { DeclarationLocation, LibraryShape } from "./library.ts";
 import { CANDIDATE_LIMIT, problemAt } from "./problem.ts";
 import type { Problem } from "./problem.ts";
-import {
-  declarationsOf,
-  descendantsOf,
-  isGenericDeclaration,
-  isTypeDeclaration,
-  referencedSymbols,
-} from "./syntax.ts";
+import { descendantsOf, isGenericDeclaration, isTypeDeclaration } from "./syntax.ts";
 import { schemaTypeOf } from "./values.ts";
 
 interface ShapeContext {
@@ -225,17 +220,6 @@ const localPropertiesOf =
       Arr.map(([symbol, type]) => ({ name: symbol.name, type })),
     );
 
-const derivedDeclarationsOf =
-  (checker: Checker) =>
-  (node: Node): ReadonlySet<string> =>
-    new Set(
-      pipe(
-        referencedSymbols(checker)(node),
-        Arr.flatMap((symbol) => declarationsOf(symbol)),
-        Arr.map((declaration) => declarationKey(locationOf(declaration))),
-      ),
-    );
-
 const matchOrder = Order.mapInput(Order.Number, (match: ShapeMatch) => match.extra);
 
 const shapeProblem = (site: ShapeSite, matches: readonly ShapeMatch[]): Problem => {
@@ -257,6 +241,27 @@ const shapeProblem = (site: ShapeSite, matches: readonly ShapeMatch[]): Problem 
   );
 };
 
+const candidatesOf =
+  (context: ShapeContext, open: OpenTypeIds) =>
+  (site: ShapeSite, locals: readonly LocalProperty[]): readonly ShapeMatch[] => {
+    const derived = derivedDeclarationsOf(context.checker)(site.node);
+    const named = pipe(context.shapes, Arr.filter(hasEveryName(locals)));
+    if (
+      pipe(
+        named,
+        Arr.some((shape) => derived.has(declarationKey(shape.declaration))),
+      )
+    ) {
+      return [];
+    }
+    const candidates = pipe(
+      named,
+      Arr.map((shape) => matchOf(context, open)(locals, shape)),
+      Arr.getSomes,
+    );
+    return Arr.sort(candidates, matchOrder);
+  };
+
 const shapeProblemOf =
   (context: ShapeContext, open: OpenTypeIds) =>
   (site: ShapeSite): Option.Option<Problem> => {
@@ -265,18 +270,10 @@ const shapeProblemOf =
       return Option.none();
     }
     const locals = localPropertiesOf(context.checker)(symbols);
-    const derived = derivedDeclarationsOf(context.checker)(site.node);
-    const candidates = pipe(
-      context.shapes,
-      Arr.filter(hasEveryName(locals)),
-      Arr.filter((shape) => !derived.has(declarationKey(shape.declaration))),
-      Arr.map((shape) => matchOf(context, open)(locals, shape)),
-      Arr.getSomes,
-    );
-    const matches = Arr.sort(candidates, matchOrder);
-    return Option.liftPredicate(matches, Arr.isReadonlyArrayNonEmpty).pipe(
-      Option.map((found) => shapeProblem(site, found)),
-    );
+    return Option.liftPredicate(
+      candidatesOf(context, open)(site, locals),
+      Arr.isReadonlyArrayNonEmpty,
+    ).pipe(Option.map((found) => shapeProblem(site, found)));
   };
 
 const shapeProblemsIn =
