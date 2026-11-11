@@ -12,11 +12,10 @@ interface Pixels {
   readonly rgba: Uint8Array;
 }
 
-/** @internal */
-const imagePreview = Effect.fn("imagePreview")(function* imagePreview(path: string) {
+const fitted = Effect.fn("fitted")(function* fitted(path: string, input: string | Uint8Array) {
   const buffer = yield* Effect.tryPromise({
     try: () =>
-      sharp(path)
+      sharp(input)
         .rotate()
         .resize({
           width: PREVIEW_SIDE,
@@ -29,6 +28,19 @@ const imagePreview = Effect.fn("imagePreview")(function* imagePreview(path: stri
     catch: (cause) => PreviewFailed.make({ path, cause }),
   });
   return Uint8Array.from(buffer);
+});
+
+/** @internal */
+const imagePreview = Effect.fn("imagePreview")(function* imagePreview(path: string) {
+  return yield* fitted(path, path);
+});
+
+/** @internal */
+const normalizePng = Effect.fn("normalizePng")(function* normalizePng(
+  path: string,
+  image: Uint8Array,
+) {
+  return yield* fitted(path, image);
 });
 
 /** @internal */
@@ -47,5 +59,5 @@ const pixelsPreview = Effect.fn("pixelsPreview")(function* pixelsPreview(
   return Uint8Array.from(buffer);
 });
 
-export { imagePreview, pixelsPreview };
+export { imagePreview, normalizePng, pixelsPreview };
 export type { Pixels };

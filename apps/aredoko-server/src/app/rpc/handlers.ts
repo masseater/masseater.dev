@@ -5,7 +5,7 @@ import { addSource, listSources, preview, progress, removeSource } from "#featur
 import { ensureLibraryFolder, intake, rememberAssetStore } from "#features/intake";
 import { Library } from "#features/library";
 import type { Activity } from "#features/library";
-import { putRender, readModel, renderJobs } from "#features/render";
+import { failRender, putRender, readModel, readModelPart, renderJobs } from "#features/render";
 import { browse, search } from "#features/search";
 import { Embedder } from "#shared/embedding";
 
@@ -113,9 +113,11 @@ const handlersLayer = AredokoRpcs.toLayer(
       PutProjectAssets: putAssets,
       ListRenderJobs: () => failed(renderJobs()).pipe(Effect.map((jobs) => ({ jobs }))),
       ReadModel: ({ assetId }) => failed(readModel(assetId)),
+      ReadModelPart: (part) => failed(readModelPart(part)),
       PutAssetStore: ({ path }) => failed(rememberAssetStore(path)),
       PutRender: (rendered) =>
         failed(putRender(rendered)).pipe(Effect.tap(() => library.requestScan)),
+      FailRender: (failure) => failed(failRender(failure)),
     });
   }),
 );

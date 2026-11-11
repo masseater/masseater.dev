@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Predicate } from "effect";
 
 interface Held {
   readonly device: Pick<GPUDevice, "destroy">;
@@ -29,4 +29,25 @@ const releaseOnUnmount =
     return gpu;
   };
 
-export { releaseOnUnmount, whileMounted };
+type PageEvents = Readonly<Pick<EventTarget, "addEventListener" | "removeEventListener">>;
+
+const whenPersisted =
+  (type: "pagehide" | "pageshow") =>
+  (page: PageEvents) =>
+  (run: () => void): (() => void) => {
+    const listener = (event: unknown): void => {
+      if (Predicate.hasProperty(event, "persisted") && event.persisted === true) {
+        run();
+      }
+    };
+    page.addEventListener(type, listener);
+    return () => {
+      page.removeEventListener(type, listener);
+    };
+  };
+
+const onCached = whenPersisted("pagehide");
+
+const onRestored = whenPersisted("pageshow");
+
+export { onCached, onRestored, releaseOnUnmount, whileMounted };

@@ -35,7 +35,7 @@ namespace Aredoko.Client
             EndpointFile.Name);
 
         readonly JsonSerializer serializer = JsonSerializer.Create(Converter.Settings);
-        readonly Dictionary<long, TaskCompletionSource<JToken>> pending = new Dictionary<long, TaskCompletionSource<JToken>>();
+        readonly Dictionary<long, TaskCompletionSource<RpcResponse>> pending = new Dictionary<long, TaskCompletionSource<RpcResponse>>();
         readonly SemaphoreSlim connecting = new SemaphoreSlim(1, 1);
         readonly SemaphoreSlim sending = new SemaphoreSlim(1, 1);
         ClientWebSocket? socket;
@@ -63,7 +63,7 @@ namespace Aredoko.Client
         {
             var connected = await Connect();
             var id = Interlocked.Increment(ref nextId);
-            var completion = new TaskCompletionSource<JToken>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var completion = new TaskCompletionSource<RpcResponse>(TaskCreationOptions.RunContinuationsAsynchronously);
             lock (pending)
             {
                 pending[id] = completion;
@@ -71,24 +71,30 @@ namespace Aredoko.Client
 
             try
             {
-                var request = new JObject
+                var request = new RpcRequest
                 {
-                    ["jsonrpc"] = "2.0",
-                    ["id"] = id,
-                    ["method"] = rpc.Method,
-                    ["params"] = payload is Empty ? JValue.CreateNull() : JToken.FromObject(payload!, serializer),
-                    ["traceId"] = traceId,
-                    ["spanId"] = Guid.NewGuid().ToString("N").Substring(0, SpanIdLength),
-                    ["sampled"] = true,
+                    Jsonrpc = Jsonrpc.The20,
+                    Id = id,
+                    Method = rpc.Method,
+                    Params = payload is Empty ? null! : JToken.FromObject(payload!, serializer),
+                    TraceId = traceId,
+                    SpanId = Guid.NewGuid().ToString("N").Substring(0, SpanIdLength),
+                    Sampled = true,
                 };
                 var timeout = LongMethods.Contains(rpc.Method) ? LongRequestTimeout : RequestTimeout;
-                var result = await Within(Exchange(connected, request.ToString(Formatting.None), completion.Task), timeout);
+                var text = JsonConvert.SerializeObject(request, Converter.Settings);
+                var response = await Within(Exchange(connected, text, completion.Task), timeout);
+                if (response.Error != null)
+                {
+                    throw new AredokoException(MessageOf<TError>(response.Error));
+                }
+
                 if (typeof(TSuccess) == typeof(Empty))
                 {
                     return (TSuccess)(object)new Empty();
                 }
 
-                return result.ToObject<TSuccess>(serializer)!;
+                return TokenOf(response.Result).ToObject<TSuccess>(serializer)!;
             }
             finally
             {
@@ -99,13 +105,15 @@ namespace Aredoko.Client
             }
         }
 
-        async Task<JToken> Exchange(ClientWebSocket target, string text, Task<JToken> response)
+        static JToken TokenOf(object? value) => value as JToken ?? JValue.CreateNull();
+
+        async Task<RpcResponse> Exchange(ClientWebSocket target, string text, Task<RpcResponse> response)
         {
             await Send(target, text);
             return await response;
         }
 
-        static async Task<JToken> Within(Task<JToken> response, TimeSpan timeout)
+        static async Task<RpcResponse> Within(Task<RpcResponse> response, TimeSpan timeout)
         {
             using var timer = new CancellationTokenSource();
             var finished = await Task.WhenAny(response, Task.Delay(timeout, timer.Token));
@@ -219,14 +227,14 @@ namespace Aredoko.Client
 
         void Dispatch(string text)
         {
-            var response = JObject.Parse(text);
-            var id = response.Value<long?>("id");
-            if (id == null)
+            var response = JsonConvert.DeserializeObject<RpcResponse>(text, Converter.Settings);
+            var id = response?.Id;
+            if (response == null || id == null)
             {
                 return;
             }
 
-            TaskCompletionSource<JToken>? completion;
+            TaskCompletionSource<RpcResponse>? completion;
             lock (pending)
             {
                 if (!pending.TryGetValue(id.Value, out completion))
@@ -237,21 +245,15 @@ namespace Aredoko.Client
                 pending.Remove(id.Value);
             }
 
-            if (response.TryGetValue("error", out var error))
-            {
-                completion.TrySetException(new AredokoException(MessageOf(error)));
-                return;
-            }
-
-            completion.TrySetResult(response["result"] ?? JValue.CreateNull());
+            completion.TrySetResult(response);
         }
 
         void FailAll()
         {
-            List<TaskCompletionSource<JToken>> failed;
+            List<TaskCompletionSource<RpcResponse>> failed;
             lock (pending)
             {
-                failed = new List<TaskCompletionSource<JToken>>(pending.Values);
+                failed = new List<TaskCompletionSource<RpcResponse>>(pending.Values);
                 pending.Clear();
             }
 
@@ -261,15 +263,23 @@ namespace Aredoko.Client
             }
         }
 
-        static string MessageOf(JToken error)
+        string MessageOf<TError>(RpcError error)
         {
-            var failure = error.SelectToken("data[0].error");
-            if (failure != null && failure.Value<string>("_tag") == "RequestFailed")
+            if (error.Tag != RpcErrorTag.Cause)
             {
-                return failure.Value<string>("message") ?? "処理に失敗しました";
+                return error.Message;
             }
 
-            return error.Value<string>("message") ?? "処理に失敗しました";
+            var reasons = TokenOf(error.Data).ToObject<RpcCauseReason[]>(serializer) ?? Array.Empty<RpcCauseReason>();
+            foreach (var reason in reasons)
+            {
+                if (reason.Tag == WireCauseReasonTag.Fail && TokenOf(reason.Error).ToObject<TError>(serializer) is RequestFailedEncoded failed)
+                {
+                    return failed.Message;
+                }
+            }
+
+            return error.Message;
         }
     }
 }
