@@ -28,7 +28,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: .github/scripts/worker-logs.sh
           sparse-checkout-cone-mode: false
-      - uses: masseater/typescript-template/.github/actions/credentials@82c407d629f4eb4d013ed5f7074e9a6212680571
+      - uses: masseater/typescript-template/.github/actions/credentials@b77702f6b236f8c55096abed4aa408458d15d3c3
       - run: .github/scripts/worker-logs.sh
         env:
           MINUTES: ${{ inputs.minutes }}
@@ -44,6 +44,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@82c407d629f4eb4d013ed5f7074e9a6212680571
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b77702f6b236f8c55096abed4aa408458d15d3c3
         with:
           github-token: ${{ github.token }}
