@@ -14,6 +14,7 @@ const SessionView = (): ReactNode => {
     <div className="flex min-h-dvh flex-col">
       <SessionBar />
       <main className="flex flex-1 gap-10 px-4 pb-8 lg:px-10">
+        <div className="hidden w-72 shrink-0 lg:block" />
         <ConversationColumn />
         <SummaryPanel />
       </main>
