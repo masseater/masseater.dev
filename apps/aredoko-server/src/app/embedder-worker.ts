@@ -1,5 +1,5 @@
 import { NodeWorkerRunner } from "@effect/platform-node";
-import { runMain } from "@masseater.dev/aredoko-runtime";
+import { runMain } from "@masseater.dev/node-main";
 import { Effect, Layer } from "effect";
 import { RpcServer, RpcWorker } from "effect/rpc";
 

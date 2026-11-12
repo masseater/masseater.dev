@@ -3,6 +3,7 @@ resolver = "3"
 members = [
   "apps/aredoko-desktop/src-tauri",
   "apps/yakusu/src-tauri",
+  "apps/yohaku-desktop/src-tauri",
   "apps/pod-rattle-plugin",
   "libs/pod-rattle-engine",
   "tools/mosaic",

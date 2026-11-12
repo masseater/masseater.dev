@@ -1,5 +1,5 @@
 import { Effect } from "effect";
-import { Migrator, SqlClient } from "effect/sql";
+import { SqlClient } from "effect/sql";
 
 import { VECTOR_DIMENSIONS } from "./vector.ts";
 
@@ -105,10 +105,10 @@ const retries = Effect.gen(function* retries() {
 const init = Effect.all([vectors, library, assets, images], { discard: true });
 
 /** @internal */
-export const loader: Migrator.Loader = Migrator.fromRecord({
+export const migrations = {
   "1_init": init,
   "2_files": files,
   "3_settings": settings,
   "4_attempts": attempts,
   "5_retries": retries,
-});
+};

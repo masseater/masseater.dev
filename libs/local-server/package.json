@@ -1,0 +1,18 @@
+{
+  "name": "@masseater.dev/local-server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./node": "./src/node.ts"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@effect/sql-sqlite-node": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "vite-plus": "catalog:stack"
+  }
+}

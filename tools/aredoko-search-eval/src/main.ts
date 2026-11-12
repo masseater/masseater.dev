@@ -1,4 +1,4 @@
-import { runMain } from "@masseater.dev/aredoko-runtime";
+import { runMain } from "@masseater.dev/node-main";
 import { Effect, Layer, Record, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 import { FetchHttpClient } from "effect/http";
