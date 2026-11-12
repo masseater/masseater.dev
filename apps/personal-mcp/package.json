@@ -9,6 +9,7 @@
   "dependencies": {
     "@distilled.cloud/github": "catalog:",
     "@masseater.dev/mcp-tool-call": "workspace:*",
+    "@masseater.dev/plamo-translate-protocol": "workspace:*",
     "@modelcontextprotocol/server": "catalog:",
     "@r_masseater/workers-tracing": "workspace:*",
     "effect": "catalog:stack",

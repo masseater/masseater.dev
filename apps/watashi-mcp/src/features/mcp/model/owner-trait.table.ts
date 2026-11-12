@@ -54,6 +54,15 @@ const ownerTraitVector = sqliteTable("owner_trait_vector", {
   updatedAt: text("updated_at").notNull(),
 });
 
+const ownerTraitJa = sqliteTable("owner_trait_ja", {
+  traitId: integer("trait_id").primaryKey(),
+  sourceStatement: text("source_statement").notNull(),
+  sourceWhy: text("source_why").notNull(),
+  statement: text("statement").notNull(),
+  why: text("why").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
 const traitCursor = sqliteTable("trait_cursor", {
   origin: text("origin", { enum: TRAIT_ORIGINS }).primaryKey(),
   position: text("position").notNull(),
@@ -63,6 +72,8 @@ const traitCursor = sqliteTable("trait_cursor", {
 type OwnerTrait = typeof ownerTrait.$inferSelect;
 
 type OwnerTraitEvidence = typeof ownerTraitEvidence.$inferSelect;
+
+type OwnerTraitJa = typeof ownerTraitJa.$inferSelect;
 
 type TraitKind = OwnerTrait["kind"];
 
@@ -79,7 +90,16 @@ export {
   TRAIT_STATUSES,
   ownerTrait,
   ownerTraitEvidence,
+  ownerTraitJa,
   ownerTraitVector,
   traitCursor,
 };
-export type { OwnerTrait, OwnerTraitEvidence, Stance, TraitKind, TraitOrigin, TraitStatus };
+export type {
+  OwnerTrait,
+  OwnerTraitEvidence,
+  OwnerTraitJa,
+  Stance,
+  TraitKind,
+  TraitOrigin,
+  TraitStatus,
+};

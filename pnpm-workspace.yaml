@@ -63,7 +63,7 @@ catalog:
   "@html-eslint/eslint-plugin-react": 0.68.0
   "@commitlint/config-conventional": 21.2.4
   "@tanstack/react-query-devtools": 5.107.1
-  "@vitejs/plugin-react": 6.2.1
+  "@vitejs/plugin-react": 6.3.0
   "@vitejs/plugin-rsc": 0.5.39
   skills: 1.7.6
   "@tanstack/intent": 0.5.6

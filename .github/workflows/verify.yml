@@ -184,7 +184,7 @@ jobs:
       - run: vp exec --filter three-twelve alchemy deploy --stage prod --yes
 
   watashi-mcp:
-    needs: deploy
+    needs: [deploy, plamo-translate]
     if: needs.deploy.outputs.latest == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -203,7 +203,7 @@ jobs:
       - run: vp exec --filter watashi-mcp alchemy deploy --stage prod --yes
 
   personal-mcp:
-    needs: deploy
+    needs: [deploy, plamo-translate]
     if: needs.deploy.outputs.latest == 'true'
     runs-on: ubuntu-latest
     environment: personal-mcp
@@ -243,6 +243,27 @@ jobs:
           native: "false"
       - run: vp exec --filter kikite alchemy deploy --stage prod --yes
       - run: vp run --filter kikite access-check
+
+  plamo-translate:
+    needs: deploy
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    environment: plamo-translate
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: plamo-translate
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@7869b83bb47ca2956701700aec8e4484db0593a1
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp exec --filter plamo-translate alchemy deploy --stage prod --yes
+      - run: vp run --filter plamo-translate access-check
 
   medley-manager:
     needs: deploy
@@ -721,6 +742,7 @@ jobs:
         watashi-mcp,
         personal-mcp,
         kikite,
+        plamo-translate,
         rpp-kit,
         nimado,
         medley-manager,
@@ -781,6 +803,7 @@ jobs:
         watashi-mcp,
         personal-mcp,
         kikite,
+        plamo-translate,
         rpp-kit,
         nimado,
         medley-manager,
