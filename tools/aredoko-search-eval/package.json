@@ -5,7 +5,7 @@
   "type": "module",
   "dependencies": {
     "@masseater.dev/aredoko-protocol": "workspace:*",
-    "@masseater.dev/aredoko-runtime": "workspace:*",
+    "@masseater.dev/node-main": "workspace:*",
     "effect": "catalog:stack"
   },
   "devDependencies": {

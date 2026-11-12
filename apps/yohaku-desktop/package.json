@@ -1,0 +1,37 @@
+{
+  "name": "yohaku-desktop",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@codemirror/commands": "catalog:",
+    "@codemirror/state": "catalog:",
+    "@codemirror/view": "catalog:",
+    "@effect/atom-react": "catalog:stack",
+    "@fontsource/noto-sans-jp": "catalog:",
+    "@fontsource/noto-serif-jp": "catalog:",
+    "@masseater.dev/ui": "workspace:*",
+    "@masseater.dev/yohaku-protocol": "workspace:*",
+    "@tanstack/react-query": "catalog:stack",
+    "@tauri-apps/api": "catalog:",
+    "effect": "catalog:stack",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "scheduler": "catalog:",
+    "tailwindcss": "catalog:stack"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@masseater.dev/tauri-app": "workspace:*",
+    "@tauri-apps/cli": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

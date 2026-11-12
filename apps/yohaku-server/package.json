@@ -1,0 +1,30 @@
+{
+  "name": "yohaku-server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#entities/*": "./src/entities/*/index.ts",
+    "#features/*": "./src/features/*/index.ts",
+    "#shared/*": "./src/shared/*/index.ts"
+  },
+  "exports": {
+    ".": "./src/app/main.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "catalog:",
+    "@effect/platform-node": "catalog:",
+    "@masseater.dev/claude-agent": "workspace:*",
+    "@masseater.dev/local-server": "workspace:*",
+    "@masseater.dev/node-main": "workspace:*",
+    "@masseater.dev/yohaku-protocol": "workspace:*",
+    "@modelcontextprotocol/server": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

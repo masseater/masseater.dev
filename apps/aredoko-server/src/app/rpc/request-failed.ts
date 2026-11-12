@@ -1,23 +1,5 @@
-import { RequestFailed } from "@masseater.dev/aredoko-protocol";
-import { Array, Cause, Effect, Option, Schema, pipe } from "effect";
-
-const isRequestFailed = Schema.is(RequestFailed);
-
-const failure = (error: unknown): RequestFailed =>
-  pipe(
-    Option.liftPredicate(error, isRequestFailed),
-    Option.getOrElse(() =>
-      RequestFailed.make({ reason: "Failed", message: Cause.pretty(Cause.fail(error)) }),
-    ),
-  );
-
-const failed = <Value, Failure, Requirements>(
-  effect: Effect.Effect<Value, Failure, Requirements>,
-): Effect.Effect<Value, RequestFailed, Requirements> =>
-  effect.pipe(
-    Effect.tapError((problem) => Effect.logError("request failed", problem)),
-    Effect.mapError(failure),
-  );
+import { RequestFailed, failed } from "@masseater.dev/local-server";
+import { Array, Effect, pipe } from "effect";
 
 const firstOr =
   (message: string) =>
@@ -34,4 +16,4 @@ const firstOr =
       ),
     );
 
-export { failed, firstOr };
+export { firstOr };

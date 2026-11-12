@@ -1,0 +1,26 @@
+{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
+  "extends": "../../tsconfig.json",
+  "include": ["src", "*.ts"],
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "paths": {
+      "#/*": ["./src/*"]
+    },
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/atom-react",
+          "@effect/vitest#it",
+          "effect/crypto/SecureRandom",
+          "effect/http/FetchHttpClient",
+          "effect/http/HttpClient",
+          "effect/reactivity/Atom",
+          "effect/rpc/RpcClientError"
+        ]
+      }
+    ]
+  }
+}

@@ -1,8 +1,8 @@
+import { RequestFailed } from "@masseater.dev/local-server";
 import { Array, Effect, Exit, Option, Predicate, Schema, pipe } from "effect";
 import { RpcSerialization } from "effect/rpc";
 import { expect, test } from "vite-plus/test";
 
-import { RequestFailed } from "./request-failed.ts";
 import { RpcCauseReason, RpcRequest, RpcResponse } from "./wire.ts";
 
 const REQUEST_ID = 7;
