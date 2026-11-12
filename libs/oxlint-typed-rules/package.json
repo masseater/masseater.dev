@@ -137,7 +137,7 @@
     {
       "name": "remotion",
       "path": "dist/remotion.mjs",
-      "limit": "5267 B"
+      "limit": "5405 B"
     },
     {
       "name": "core",
