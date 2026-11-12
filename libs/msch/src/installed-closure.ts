@@ -175,3 +175,4 @@ const installedSize = (directory: string): Effect.Effect<number, never, Reposito
 };
 
 export { installedClosure, installedSize, keysOf };
+export type { ClosureRoot };

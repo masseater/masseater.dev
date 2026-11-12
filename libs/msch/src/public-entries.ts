@@ -103,4 +103,4 @@ const publicEntriesOf = (lookup: EntryLookup): readonly PublicEntry[] =>
   );
 
 export { publicEntriesOf };
-export type { PublicEntry };
+export type { EntryLookup, EntryManifest, PublicEntry };
