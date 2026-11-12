@@ -2,7 +2,7 @@ import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core"
 
 import { LIFE_RECORDS } from "./life-record.table";
 
-const REVISION_ENTITIES = [...LIFE_RECORDS, "memory"] as const;
+const REVISION_ENTITIES = [...LIFE_RECORDS, "memory", "owner_trait"] as const;
 
 const REVISION_OPS = ["create", "update", "restore", "retract"] as const;
 

@@ -131,4 +131,4 @@ const listConversations = (
   page: SessionPage,
 ): Effect.Effect<readonly SessionSummary[], StorageFailed> => listSessions(page);
 
-export { listConversations, readConversation };
+export { listConversations, readConversation, textOf as chunkText };

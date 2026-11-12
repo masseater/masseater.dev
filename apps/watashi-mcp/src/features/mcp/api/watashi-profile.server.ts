@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Option, Order, Record as Rec, pipe } from "effect";
 
-import type { StorageFailed } from "#/features/mcp/model/storage-failed";
+import type { StoreFailure } from "#/features/mcp/model/tool-failure";
 
 import { factStateOf, stringsAt } from "./life-filter";
 import type { Entry } from "./life-filter";
@@ -11,15 +11,14 @@ import type { Body } from "./life-record";
 import { loadStatsData } from "./life-stats-data.server";
 import { scanAll } from "./life-store.server";
 import { todayJst } from "./life-time";
-import { findMemory, memoryItem } from "./memory-store.server";
+import { profileTraits } from "./trait-read.server";
+import type { Wanted } from "./trait-read.server";
 
 type ProfileContext = Readonly<{ entries: readonly Entry[]; today: string }>;
 
 const TOP_PEOPLE = 10;
 
 const CURRENT_PERIOD = 1;
-
-const SUMMARY_KEY = { project: "assistant", name: "owner-summary" } as const;
 
 const ofRecord =
   (record: string) =>
@@ -47,7 +46,7 @@ const isActiveGoal =
     Rec.get(entry.body, "active").pipe(Option.getOrElse(() => true)) !== false &&
     (entry.row.dayEnd === "" || entry.row.dayEnd >= today);
 
-const activeGoals = (context: ProfileContext): Effect.Effect<readonly Body[], StorageFailed> =>
+const activeGoals = (context: ProfileContext): Effect.Effect<readonly Body[], StoreFailure> =>
   loadStatsData.pipe(
     Effect.map((data) => {
       const periodsOf = goalPeriods({ data, today: context.today, count: CURRENT_PERIOD });
@@ -117,30 +116,26 @@ const recentMedia = (context: ProfileContext): readonly Body[] =>
     Arr.map(itemOf(context.today)),
   );
 
-const aiSummary: Effect.Effect<Option.Option<Body>, StorageFailed> = findMemory(SUMMARY_KEY).pipe(
-  Effect.map(Option.map(memoryItem)),
-);
+const ownerProfile = (wanted: Wanted): Effect.Effect<Body, StoreFailure> =>
+  Effect.gen(function* profileOfOwner() {
+    const today = yield* todayJst;
+    const entries = yield* scanAll([
+      "profile_fact",
+      "metric_goal",
+      "todo",
+      "media_item",
+      "life_event",
+    ]);
+    const context = { entries, today };
+    const goals = yield* activeGoals(context);
+    return {
+      ownerFacts: ownerFacts(context),
+      activeGoals: goals,
+      openTodos: openTodos(context),
+      people: people(context),
+      recentMedia: recentMedia(context),
+      traits: yield* profileTraits(wanted),
+    };
+  });
 
-const watashiProfile: Effect.Effect<Body, StorageFailed> = Effect.gen(function* profileOfOwner() {
-  const today = yield* todayJst;
-  const entries = yield* scanAll([
-    "profile_fact",
-    "metric_goal",
-    "todo",
-    "media_item",
-    "life_event",
-  ]);
-  const context = { entries, today };
-  const goals = yield* activeGoals(context);
-  const summary = yield* aiSummary;
-  return {
-    ownerFacts: ownerFacts(context),
-    activeGoals: goals,
-    openTodos: openTodos(context),
-    people: people(context),
-    recentMedia: recentMedia(context),
-    aiSummary: Option.getOrNull(summary),
-  };
-});
-
-export { watashiProfile };
+export { ownerProfile };
