@@ -1,6 +1,6 @@
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
-const TOKEN_SCOPES = ["conversation:write"] as const;
+const TOKEN_SCOPES = ["conversation:write", "memory:write"] as const;
 
 const apiToken = sqliteTable(
   "api_token",
