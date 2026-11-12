@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node-shared/NodeRuntime";
 import { Array, Console, Effect, FileSystem, Layer, Path, Schema, String, pipe } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
 import { FetchHttpClient } from "effect/http";
@@ -7,6 +7,7 @@ import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
 import { measureFlow } from "./flow.ts";
 import { summarize } from "./metrics.ts";
+import { nodeServicesLayer } from "./node-services.ts";
 
 const MINIMUM_URLS = 1;
 const FIRST_RUN = 1;
@@ -23,7 +24,7 @@ const tracing = OtlpTracer.layerFromConfig({
   resource: { serviceName: "web-vitals-flow" },
 }).pipe(Layer.provide(OtlpSerialization.layerJson), Layer.provide(FetchHttpClient.layer));
 
-const services = Layer.mergeAll(tracing, NodeServices.layer);
+const services = Layer.mergeAll(tracing, nodeServicesLayer);
 
 const encodeJson = Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown));
 
@@ -77,7 +78,7 @@ const command = Command.make(
     }),
 );
 
-NodeRuntime.runMain(
+runMain(
   Layer.build(services).pipe(
     Effect.flatMap((context) =>
       Effect.provideContext(Command.run(command, { version: "0.0.0" }), context),

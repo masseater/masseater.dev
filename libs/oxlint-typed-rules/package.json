@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/oxlint-typed-rules",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Run ESLint rules that need type information as oxlint JS plugins on TypeScript 7, including TanStack Start's React Server Component rules, TanStack Query, TanStack Router, Drizzle, Remotion and ESLint React.",
   "keywords": [
     "drizzle",
@@ -81,9 +81,7 @@
   "scripts": {
     "prepublishOnly": "vp run build"
   },
-  "dependencies": {
-    "effect": "catalog:stack"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@effect/platform-node": "catalog:",
     "@effect/vitest": "catalog:",
@@ -103,6 +101,7 @@
     "@typescript-eslint/utils": "catalog:",
     "combinate": "catalog:",
     "dedent": "catalog:",
+    "effect": "catalog:stack",
     "eslint": "catalog:",
     "eslint-plugin-drizzle": "catalog:",
     "publint": "catalog:",
@@ -111,6 +110,7 @@
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {
+    "effect": "^4.1.2",
     "typescript": ">=7.1.0-beta"
   },
   "size-limit": [

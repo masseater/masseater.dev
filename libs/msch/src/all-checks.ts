@@ -2,6 +2,7 @@ import { Array as Arr, Effect } from "effect";
 
 import { checkRepository } from "./check.ts";
 import { checkHiddenUnicode } from "./hidden-unicode.ts";
+import { checkPublishedPackages } from "./install-size.ts";
 import { checkNestedDocs } from "./nested-docs.ts";
 import { checkOverrides } from "./overrides.ts";
 import type { Problem } from "./problem.ts";
@@ -30,6 +31,7 @@ const checkAll: (
       checkHiddenUnicode(root),
       checkPython(root),
       checkNestedDocs(root),
+      checkPublishedPackages(root),
     ],
     { concurrency: "unbounded" },
   );
