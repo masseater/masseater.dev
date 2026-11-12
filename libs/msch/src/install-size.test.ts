@@ -73,7 +73,7 @@ const flagsOverBudget = Effect.gen(function* flagsOverBudget() {
   const [stack, size] = findings;
   expect(findings).toHaveLength(EXPECTED_FINDINGS);
   expect(stack).toMatch(
-    /^libs\/published\/package\.json:1 stack-dependency shared comes from the stack catalog/u,
+    /^libs\/published\/package\.json:4 stack-dependency shared comes from the stack catalog/u,
   );
   expect(size).toContain(
     "libs/published/vite.config.ts:1 install-size installing this package adds 0.3 MB of dependencies besides its peers, over the 100 kB in msch.publish.installSize. Largest: heavy 0.3 MB (imported only from ./extra), light 0.0 MB (imported only from .), shared 0.0 MB.",

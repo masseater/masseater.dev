@@ -22,10 +22,9 @@ const reportFailure = <Failure>(
 };
 
 const runCli = <Failure>(program: Effect.Effect<void, Failure, CommandServices>): void => {
+  const reported = program.pipe(Effect.tapCause(reportFailure));
   const main = Layer.build(nodeServicesLayer).pipe(
-    Effect.flatMap((context) =>
-      Effect.provideContext(program.pipe(Effect.tapCause(reportFailure)), context),
-    ),
+    Effect.flatMap((services) => Effect.provideContext(reported, services)),
     Effect.scoped,
   );
   runMain(main, { disableErrorReporting: true });
