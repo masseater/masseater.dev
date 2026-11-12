@@ -70,7 +70,7 @@ const writeArticle = Effect.gen(function* writeArticle() {
   const body = yield* encodeJson(toolCall);
   const response = yield* Effect.promise(() =>
     createMcpHandler(() => registerTools(CALLER)).fetch(
-      new Request("https://personal-mcp.masseater.dev/mcp", {
+      new Request("https://sundries.masseater.dev/mcp", {
         method: "POST",
         headers: {
           "content-type": "application/json",

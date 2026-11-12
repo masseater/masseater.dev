@@ -126,7 +126,7 @@ jobs:
       - run: vp exec --filter portfolio alchemy deploy --config alchemy.zone.ts --stage prod --yes
 
   mcp-portal:
-    needs: [deploy, watashi-mcp, personal-mcp]
+    needs: [deploy, watashi-mcp, sundries]
     if: needs.deploy.outputs.latest == 'true'
     runs-on: ubuntu-latest
     environment: mcp-portal
@@ -202,16 +202,16 @@ jobs:
           native: "false"
       - run: vp exec --filter watashi-mcp alchemy deploy --stage prod --yes
 
-  personal-mcp:
+  sundries:
     needs: [deploy, plamo-translate]
     if: needs.deploy.outputs.latest == 'true'
     runs-on: ubuntu-latest
-    environment: personal-mcp
+    environment: sundries
     permissions:
       contents: read
       id-token: write
     concurrency:
-      group: personal-mcp
+      group: sundries
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -220,8 +220,9 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - run: vp exec --filter personal-mcp alchemy deploy --stage prod --yes
-      - run: vp run --filter personal-mcp access-check
+      - run: vp exec --filter sundries alchemy deploy --stage prod --yes
+      - run: vp run --filter sundries access-check
+      - run: vp exec --filter sundries alchemy destroy alchemy.retired.ts --stage prod --yes
 
   kikite:
     needs: deploy
@@ -740,7 +741,7 @@ jobs:
         trace-check,
         three-twelve,
         watashi-mcp,
-        personal-mcp,
+        sundries,
         kikite,
         plamo-translate,
         rpp-kit,
@@ -801,7 +802,7 @@ jobs:
         trace-check,
         three-twelve,
         watashi-mcp,
-        personal-mcp,
+        sundries,
         kikite,
         plamo-translate,
         rpp-kit,

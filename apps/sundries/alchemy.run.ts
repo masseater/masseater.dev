@@ -23,7 +23,7 @@ const { Application: defineApplication } = Access;
 const PROD = "prod";
 const SESSION_DURATION = "720h";
 const ACCESS_TOKEN_LIFETIME = "1h";
-const PORTAL_SERVER_ID = "personal";
+const PORTAL_SERVER_ID = "sundries";
 const SHARED_OAUTH_CALLBACK =
   "https://oauth-callbacks.cloudflareaccess.com/cdn-cgi/access/outbound-oauth-callback";
 const CLIENT_CALLBACKS = [
@@ -96,7 +96,7 @@ const worker = Effect.gen(function* worker() {
   const TOOL_CALLS = yield* AnalyticsEngine.Dataset("ToolCalls", { dataset: TOOL_CALL_DATASET });
   return yield* Workers.Worker("Mcp", {
     name: `${PREFIX}worker`,
-    main: "./src/app/personal-mcp.worker.ts",
+    main: "./src/app/sundries.worker.ts",
     logpush: true,
     domain: SITE_HOST,
     workersDev: false,

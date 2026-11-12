@@ -26,7 +26,7 @@ const REPO = "masseater.dev";
 const BASE = "main";
 const SITE = "https://masseater.dev";
 const GRAPHQL_URL = "https://api.github.com/graphql";
-const USER_AGENT = "personal-mcp";
+const USER_AGENT = "sundries";
 
 const ENABLE_AUTO_MERGE = `mutation ($id: ID!, $headline: String!) {
   enablePullRequestAutoMerge(input: { pullRequestId: $id, mergeMethod: SQUASH, commitHeadline: $headline }) {
