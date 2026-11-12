@@ -4,7 +4,7 @@
 
 ## 流れ
 
-送る側は `libs/watashi-cli` で、npm の `@r_masseater/watashi-cli` として出し、Claude Code のプラグイン `watashi` を兼ねる。このプラグインが Stop フックで `watashi hook stop` を非同期に動かす。モデルは関わらないので、トークンを使わず送り忘れもない。送るのは環境変数 `WATASHI_SEND_CONVERSATIONS=1` を置いた環境だけで、既定では送らない。仕事の環境には置かない。
+送る側は `libs/watashi` で、npm の `@r_masseater/watashi` として出し、Claude Code のプラグイン `watashi` を兼ねる。このプラグインが Stop フックで `watashi hook stop` を非同期に動かす。モデルは関わらないので、トークンを使わず送り忘れもない。送るのは環境変数 `WATASHI_SEND_CONVERSATIONS=1` を置いた環境だけで、既定では送らない。仕事の環境には置かない。
 
 CLI は、前回送った位置から後ろの完全な行だけを読み、書きかけの行は次の Stop に回す。subagent のトランスクリプト（`<セッション>/subagents/agent-*.jsonl`）も別のファイルとして送る。送る前に手元で Betterleaks（版は CLI の `BETTERLEAKS_VERSION`）を通し、見つかった秘密を `[REDACTED:<規則>]` に置き換える。Betterleaks が無いときや、伏せても検出が消えないときは送らないので、生の秘密は手元から出ない。
 
@@ -18,7 +18,7 @@ Betterleaks の既定の規則に、2 つの規則を足して使う。1 つは 
 
 検査には JSON の文字列を取り出した形を渡すので、エスケープされた改行や、JSON の中の JSON に埋まった秘密も見つかる。画像の base64 は、検査と置き換えのどちらにも回さない。base64 などで符号化された秘密は、検出された範囲をまるごと置き換える。範囲が文字列をまたいで置き換えられないときは、`uuid`・`parentUuid`・`type`・`timestamp` だけを残してその行を伏せる。
 
-`libs/watashi-cli/src/mask.test.ts` は、15 種の偽の秘密を 5 通りの埋め込み方で入れ、送る本文に 1 つも残らないことを確かめる。偽の秘密はテストの実行時に作るので、リポジトリには入らない。
+`libs/watashi/src/mask.test.ts` は、15 種の偽の秘密を 5 通りの埋め込み方で入れ、送る本文に 1 つも残らないことを確かめる。偽の秘密はテストの実行時に作るので、リポジトリには入らない。
 
 ## 送り方の約束
 

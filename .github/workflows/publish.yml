@@ -20,7 +20,7 @@ on:
             oxlint-typed-rules,
             vite-plus-adopt,
             msch,
-            watashi-cli,
+            watashi,
           ]
       ref:
         description: Tag or commit to publish

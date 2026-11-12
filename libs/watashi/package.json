@@ -1,5 +1,5 @@
 {
-  "name": "@r_masseater/watashi-cli",
+  "name": "@r_masseater/watashi",
   "version": "0.1.0",
   "description": "CLI for watashi (watashi.masseater.dev). Sends Claude Code transcripts from a Stop hook after masking secrets locally with Betterleaks, and manages login and API tokens.",
   "keywords": [
@@ -7,7 +7,7 @@
     "claude-code",
     "watashi"
   ],
-  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/watashi-cli#readme",
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/watashi#readme",
   "bugs": {
     "url": "https://github.com/masseater/masseater.dev/issues"
   },
@@ -15,7 +15,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/masseater/masseater.dev.git",
-    "directory": "libs/watashi-cli"
+    "directory": "libs/watashi"
   },
   "bin": {
     "watashi": "./dist/main.mjs"

@@ -1,4 +1,4 @@
-# @r_masseater/watashi-cli
+# @r_masseater/watashi
 
 The command-line client of [watashi](https://watashi.masseater.dev). watashi is
 the owner's personal data service. A Stop hook sends Claude Code transcripts to
@@ -29,10 +29,10 @@ is missing or a finding cannot be masked, it sends nothing. The reason goes to
 ## As a command
 
 ```sh
-npx @r_masseater/watashi-cli login
-npx @r_masseater/watashi-cli token issue --scope conversation:write --label cloud
-npx @r_masseater/watashi-cli conversation push --kind claude-code --session <id> <transcript.jsonl>
-npx @r_masseater/watashi-cli mask < transcript.jsonl
+npx @r_masseater/watashi login
+npx @r_masseater/watashi token issue --scope conversation:write --label cloud
+npx @r_masseater/watashi conversation push --kind claude-code --session <id> <transcript.jsonl>
+npx @r_masseater/watashi mask < transcript.jsonl
 ```
 
 `login` signs in through the browser with OAuth. It uses dynamic client
