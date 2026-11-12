@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": ["effect/rpc/Rpc", "effect/rpc/RpcClient", "effect/rpc/RpcGroup"]
+      }
+    ]
+  }
+}
