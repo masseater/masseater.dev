@@ -1,4 +1,4 @@
-import { Effect, Option, Schema } from "effect";
+import { Array as Arr, Effect, Equal, Option, Schema } from "effect";
 
 import { InvalidRecord } from "#/features/mcp/model/invalid-record";
 import { MemoryNotFound } from "#/features/mcp/model/memory-not-found";
@@ -12,10 +12,11 @@ import {
   MemorySnapshot,
   NOT_RETRACTED,
   create as createMemo,
+  resultOf,
   save,
   snapshotOf,
 } from "./memory-writer.server";
-import type { MemoryResult, Writer } from "./memory-writer.server";
+import type { MemoryResult, MemorySnapshotValue, Writer } from "./memory-writer.server";
 import { nowIso } from "./storage.server";
 
 const decodeSnapshot = Schema.decodeUnknownEffect(Schema.fromJsonString(MemorySnapshot));
@@ -73,21 +74,28 @@ const retract =
       });
     });
 
+const isUnchanged = (current: MemorySnapshotValue, next: MemorySnapshotValue): boolean =>
+  current.description === next.description &&
+  current.content === next.content &&
+  current.retractedAt === next.retractedAt &&
+  Arr.makeEquivalence(Equal.equals)(current.evidence, next.evidence);
+
 const update =
   (writer: Writer, row: Memory) =>
   (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure> => {
     const current = snapshotOf(row);
-    return save({ writer, op: "update" })({
-      id: row.id,
-      snapshot: {
-        ...current,
-        description: input.description ?? current.description,
-        content: input.content ?? current.content,
-        evidence: input.evidence ?? current.evidence,
-        retractedAt: NOT_RETRACTED,
-        retractReason: "",
-      },
-    });
+    const next = {
+      ...current,
+      description: input.description ?? current.description,
+      content: input.content ?? current.content,
+      evidence: input.evidence ?? current.evidence,
+      retractedAt: NOT_RETRACTED,
+      retractReason: "",
+    };
+    if (isUnchanged(current, next)) {
+      return Effect.succeed(resultOf(row.id));
+    }
+    return save({ writer, op: "update" })({ id: row.id, snapshot: next });
   };
 
 const change =
