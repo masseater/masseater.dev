@@ -210,7 +210,7 @@ const upstreamDrizzleRules = {
 } as const;
 
 export default defineConfig({
-  msch: { publish: true },
+  msch: { publish: { installSize: "0 B" } },
   plugins: [
     upstreamReactRules,
     upstreamTanstackModules,

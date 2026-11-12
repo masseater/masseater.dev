@@ -38,11 +38,13 @@ oxlint のバージョンは、@effect/tsgo が対応するものに合わせる
 
 ## msch の検査
 
-リポジトリのルートで `msch` を実行すると、値の集合と形の重複、overrides の要不要、テストのためだけのコード、見えない文字、Python の使用、ルート以外の案内文書を調べる。
+リポジトリのルートで `msch` を実行すると、値の集合と形の重複、overrides の要不要、テストのためだけのコード、見えない文字、Python の使用、ルート以外の案内文書、npm に出すパッケージの依存の重さを調べる。
 外部から読んだ値を Effect Schema で確かめるときは、`satisfies Schema.Decoder<ライブラリの型>` か変数の型注釈でライブラリの型に結びつける。結びつけた Schema は、ライブラリの形の写しとして指摘しない。
 見えない文字は、ゼロ幅の文字・書字方向を変える制御文字・タグ文字のように、エディタやレビューで見えずに意味を変えうる文字で、`git ls-files` に載るテキストのファイルから探す。ファイル先頭の BOM と、NUL を含むバイナリは対象にしない。
 Python は使わない方針なので、`.py`・`pyproject.toml`・`uv.lock` などのファイルを指摘する。スクリプト・CI・設定の中で `python3`・`pip`・`uv`・`poetry` を呼ぶ箇所と、`actions/setup-python` などの action、`mise.toml` に書いた Python の道具も指摘する。
 案内文書は、`AGENTS.md`・`CLAUDE.md` をルートにだけ置かせる。
-README は、ルートか、npm に出すワークスペース（`vite.config.ts` に `msch: { publish: true }` と書いたもの）にだけ置かせる。
+README は、ルートか、npm に出すワークスペース（`private` でなく、`vite.config.ts` に `msch: { publish: { installSize: "10 MB" } }` と書いたもの）にだけ置かせる。
+npm に出すワークスペースでは、インストールした側に増える依存の容量を `installSize` の予算と比べる。容量は、`dependencies`・`optionalDependencies`・必須の peer を node_modules からたどった合計で、そのパッケージ自身の `peerDependencies` に書いたものは数えない。予算を超えると、重い順に依存を並べ、公開の入口（`exports` と `bin`）の一部からしか import されないものにはその入口を添える。
+`dependencies` に `catalog:stack` の依存があると、使う側がすでに持っているものとして、`peerDependencies` へ移すよう指摘する。
 `tsconfig.json` の `types` に `@r_masseater/msch/vite` を足すと、`defineConfig` の `msch` に型が付く。
 指摘があれば終了コードは 1 になる。`--json` を付けると結果を JSON で出す。

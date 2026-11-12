@@ -17,6 +17,8 @@ const RuleNameSchema = Schema.Literals([
   "python-file",
   "python-command",
   "nested-docs",
+  "stack-dependency",
+  "install-size",
 ]);
 
 type RuleName = typeof RuleNameSchema.Type;

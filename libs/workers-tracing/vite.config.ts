@@ -3,7 +3,7 @@ import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
-  msch: { publish: true },
+  msch: { publish: { installSize: "0 B" } },
   run: {
     tasks: {
       build: { command: "vp pack", cache: false },

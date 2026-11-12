@@ -7,7 +7,7 @@ import { sortProblems } from "./problem.ts";
 import { RepositoryFiles } from "./repository-files.ts";
 import { fixtureLayer, gitRepositoryWith } from "./repository.test.support.ts";
 
-const PUBLISHED_CONFIG = "export default { msch: { publish: true } };\n";
+const PUBLISHED_CONFIG = `export default { msch: { publish: { installSize: "0 B" } } };\n`;
 const README_NOT_SET = "export default { msch: {} };\n";
 const PUBLISHED_PACKAGE = '{ "name": "published" }';
 
@@ -51,6 +51,7 @@ const passesRootDocsAndPublishedReadmes = Effect.gen(function* passesRootDocsAnd
     "AGENTS.md": "# repo\n",
     "CLAUDE.md": "@AGENTS.md\n",
     "README.md": "# repo\n",
+    "libs/published/package.json": PUBLISHED_PACKAGE,
     "libs/published/vite.config.ts": PUBLISHED_CONFIG,
     "libs/published/README.md": "# published\n",
     "apps/site/public/avatars/claude.svg": "<svg/>",

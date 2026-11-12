@@ -1,11 +1,11 @@
-import { runMain } from "@effect/platform-node/NodeRuntime";
-import { layer as nodeServicesLayer } from "@effect/platform-node/NodeServices";
+import { runMain } from "@effect/platform-node-shared/NodeRuntime";
 import { Cause, Effect, Layer, Option, Schema, Stdio, Stream } from "effect";
 import type { FileSystem, Path } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { Otlp, OtlpSerialization } from "effect/observability";
 import type { ChildProcessSpawner } from "effect/process";
 
+import { nodeServicesLayer } from "./node-services.ts";
 import { ProblemsFound } from "./output.ts";
 import { nodeRepositoryFiles } from "./repository-files.ts";
 import type { RepositoryFiles } from "./repository-files.ts";

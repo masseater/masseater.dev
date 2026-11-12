@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 import { otlp } from "./src/index.ts";
 
 export default defineConfig({
-  msch: { publish: true },
+  msch: { publish: { installSize: "16.5 MB" } },
   run: {
     tasks: {
       build: { command: "vp pack", cache: false },

@@ -1,4 +1,3 @@
-import { layer as nodeServicesLayer } from "@effect/platform-node/NodeServices";
 import {
   Array as Arr,
   Context,
@@ -13,6 +12,9 @@ import {
 import type { Option } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
+import { nodeServicesLayer } from "./node-services.ts";
+
+const MISSING_SIZE = 0;
 const GENERATED_PATHSPEC = ":(attr:linguist-generated)";
 const LISTED_ARGS = ["--cached", "--others", "--exclude-standard"];
 
@@ -26,6 +28,7 @@ class RepositoryFiles extends Context.Service<
     readonly generatedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly listedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly isDirectory: (file: string) => Effect.Effect<Option.Option<boolean>>;
+    readonly fileSize: (file: string) => Effect.Effect<number>;
     readonly join: (...segments: readonly string[]) => string;
     readonly resolve: (...segments: readonly string[]) => string;
     readonly relative: (from: string, to: string) => string;
@@ -68,6 +71,11 @@ const nodeRepositoryFiles = Layer.effect(
         fs.stat(file).pipe(
           Effect.map((info) => info.type === "Directory"),
           Effect.option,
+        ),
+      fileSize: (file) =>
+        fs.stat(file).pipe(
+          Effect.map((info) => Number(info.size)),
+          Effect.orElseSucceed(() => MISSING_SIZE),
         ),
       join: (...segments) => path.join(...segments),
       resolve: (...segments) => path.resolve(...segments),

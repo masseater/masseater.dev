@@ -342,4 +342,4 @@ patchedDependencies:
   "@tanstack/eslint-plugin-start@0.1.0": patches/@tanstack__eslint-plugin-start@0.1.0.patch
   eslint-plugin-drizzle@0.2.3: patches/eslint-plugin-drizzle@0.2.3.patch
   eslint-plugin-react-jsx@5.28.8: patches/eslint-plugin-react-jsx@5.28.8.patch
-  "@voidzero-dev/vite-plus-core@1.5.0": patches/@voidzero-dev__vite-plus-core@1.5.0.patch
+  "@voidzero-dev/vite-plus-core@1.5.1": patches/@voidzero-dev__vite-plus-core@1.5.1.patch
