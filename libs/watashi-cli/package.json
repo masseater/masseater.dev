@@ -1,0 +1,51 @@
+{
+  "name": "@r_masseater/watashi-cli",
+  "version": "0.1.0",
+  "description": "CLI for watashi (watashi.masseater.dev). Sends Claude Code transcripts from a Stop hook after masking secrets locally with Betterleaks, and manages login and API tokens.",
+  "keywords": [
+    "betterleaks",
+    "claude-code",
+    "watashi"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/watashi-cli#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/watashi-cli"
+  },
+  "bin": {
+    "watashi": "./dist/main.mjs"
+  },
+  "files": [
+    "dist",
+    ".claude-plugin",
+    "hooks"
+  ],
+  "type": "module",
+  "imports": {
+    "#package.json": "./package.json",
+    "#plugin.json": "./.claude-plugin/plugin.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build"
+  },
+  "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@masseater.dev/watashi-protocol": "workspace:*",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}

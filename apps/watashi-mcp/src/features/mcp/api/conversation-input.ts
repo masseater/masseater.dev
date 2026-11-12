@@ -1,6 +1,6 @@
+import { CONVERSATION_KINDS } from "@masseater.dev/watashi-protocol";
 import { Schema } from "effect";
 
-import { CONVERSATION_KINDS } from "#/features/mcp/model/conversation.table";
 import type { ConversationKind } from "#/features/mcp/model/conversation.table";
 
 const DEFAULT_SESSION_LIMIT = 20;

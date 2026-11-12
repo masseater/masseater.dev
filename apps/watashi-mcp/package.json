@@ -13,6 +13,7 @@
     "@masseater.dev/mcp-tool-call": "workspace:*",
     "@masseater.dev/owner-auth": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
+    "@masseater.dev/watashi-protocol": "workspace:*",
     "@modelcontextprotocol/server": "catalog:",
     "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/react-query": "catalog:stack",

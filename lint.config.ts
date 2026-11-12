@@ -90,7 +90,7 @@ const overrides = [
     },
   },
   {
-    files: ["apps/kikite/server/serve.ts"],
+    files: ["apps/kikite/server/serve.ts", "libs/watashi-cli/src/callback-server.ts"],
     rules: {
       "import/no-nodejs-modules": ["error", { allow: ["node:http"] }],
       "effecttsgo/node-builtin-import": "off",
