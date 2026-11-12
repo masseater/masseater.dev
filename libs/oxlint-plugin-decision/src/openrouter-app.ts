@@ -1,4 +1,3 @@
-import { HTTPClient } from "@openrouter/sdk/lib/http.js";
 import {
   Array as Arr,
   Config,
@@ -18,11 +17,6 @@ const SEPARATORS = /[/:]/u;
 const SLUG_PARTS = 2;
 const GITDIR = /^gitdir:\s*(?<dir>.+)$/mu;
 const ORIGIN_URL = /\[remote "origin"\][^[]*?\burl\s*=\s*(?<url>\S+)/u;
-
-const hiddenApp = (): HTTPClient =>
-  new HTTPClient().addHook("beforeRequest", (request) => {
-    request.headers.set("X-OpenRouter-App-Visibility", "hidden");
-  });
 
 const isSet = (name: string): Effect.Effect<boolean> =>
   Config.option(Config.NonEmptyString(name)).pipe(
@@ -133,11 +127,9 @@ const repoOf = Effect.gen(function* repoOf() {
   return yield* remoteSlug;
 });
 
-interface OpenRouterApp {
-  readonly httpReferer: string;
-  readonly appTitle: string;
-  readonly httpClient: HTTPClient;
-}
+type OpenRouterApp = Readonly<
+  Record<"HTTP-Referer" | "X-OpenRouter-Title" | "X-OpenRouter-App-Visibility", string>
+>;
 
 const openRouterApp = (tool: string): Effect.Effect<OpenRouterApp, never, AppServices> =>
   Effect.gen(function* attribution() {
@@ -145,9 +137,9 @@ const openRouterApp = (tool: string): Effect.Effect<OpenRouterApp, never, AppSer
     const repo = yield* repoOf;
     const slug = Option.getOrElse(repo, () => SELF);
     return {
-      httpReferer: `${GITHUB}/${slug}/${tool}/${context}`,
-      appTitle: `${Option.getOrElse(repo, () => "unknown")} ${context} ${tool}`,
-      httpClient: hiddenApp(),
+      "HTTP-Referer": `${GITHUB}/${slug}/${tool}/${context}`,
+      "X-OpenRouter-Title": `${Option.getOrElse(repo, () => "unknown")} ${context} ${tool}`,
+      "X-OpenRouter-App-Visibility": "hidden",
     };
   });
 

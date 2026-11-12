@@ -1,4 +1,3 @@
-import type { DecisionsRequest } from "@openrouter/sdk/models";
 import { Array as Arr, Option, Predicate, pipe, Record as Rec, Function as Fn } from "effect";
 
 import { snippetRefOf } from "./request.ts";
@@ -21,7 +20,7 @@ const DATA_FIRST_ARITY = 2;
 
 type State = DecisionRequest["state"];
 
-interface WireRequest extends Readonly<Pick<DecisionsRequest, "model" | "state" | "questions">> {
+interface WireRequest extends Readonly<Pick<DecisionRequest, "model">> {
   readonly state: DecisionRequest["state"] | string;
   readonly questions: Readonly<Record<string, Question>>;
 }

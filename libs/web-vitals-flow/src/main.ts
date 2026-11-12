@@ -55,7 +55,7 @@ const command = Command.make(
       yield* fileSystem.makeDirectory(reportDirectory, { recursive: true });
       const results = yield* Effect.forEach(Array.range(FIRST_RUN, runs), (run) =>
         Effect.gen(function* measureRun() {
-          const { result, html } = yield* measureFlow(urls, flags);
+          const { result, html, unclickable } = yield* measureFlow(urls, flags);
           yield* fileSystem.writeFileString(
             path.join(reportDirectory, `flow-${run.toString()}.html`),
             html,
@@ -65,7 +65,7 @@ const command = Command.make(
             path.join(reportDirectory, `flow-${run.toString()}.json`),
             json,
           );
-          return result;
+          return { result, unclickable };
         }),
       );
       const { table, failures } = summarize(results);

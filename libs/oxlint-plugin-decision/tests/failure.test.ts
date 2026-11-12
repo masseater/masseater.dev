@@ -7,7 +7,7 @@ import { FAILED, PASSED, TIMEOUT, callRule, lintProject, outputOf, withMock } fr
 import { decisionLines, mockEnv } from "./oxlint.ts";
 
 const SOURCE = "console.log(user.email, user.phone);\n";
-const REASON = "http 401: Response validation failed";
+const REASON = "http 401: InvalidKey: Verify your API key is correct. bad key";
 
 const warnsAndPasses = Effect.gen(function* test() {
   const env = yield* mockEnv("unauthorized");
@@ -39,7 +39,7 @@ const explainsTheFailure = Effect.gen(function* test() {
     options: { explain: "json", rules: [callRule] },
     env,
   });
-  assertInclude(run.stderr, `"error":"${REASON}"`);
+  assertInclude(run.stderr, `"error":"${REASON} (POST `);
   assertInclude(run.stderr, '"reported":false');
 });
 

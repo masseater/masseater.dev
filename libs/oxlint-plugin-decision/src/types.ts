@@ -1,11 +1,10 @@
 import type {
-  DecisionsChoiceAnswer,
-  DecisionsChoiceQuestion,
-  DecisionsNoulAnswer,
-  DecisionsNoulQuestion,
-  DecisionsRequest,
-  DecisionsResponse,
-} from "@openrouter/sdk/models";
+  Answer as WireAnswerSchema,
+  ChoiceQuestion as ChoiceQuestionSchema,
+  DecisionsRequest as DecisionsRequestSchema,
+  DecisionsResponse as DecisionsResponseSchema,
+  NoulQuestion as NoulQuestionSchema,
+} from "@effect/ai-openrouter/OpenRouterSchema";
 import type { Context, ESTree, Location, Range } from "@oxlint/plugins";
 
 import type {
@@ -74,12 +73,14 @@ interface DecisionOptions {
   readonly explain?: ExplainSetting;
 }
 
-interface NoulQuestion extends Readonly<Pick<DecisionsNoulQuestion, "type" | "instructions">> {
+interface NoulQuestion extends Readonly<
+  Pick<typeof NoulQuestionSchema.Encoded, "type" | "instructions">
+> {
   readonly instructions: string;
 }
 
 interface ChoiceQuestion extends Readonly<
-  Pick<DecisionsChoiceQuestion, "type" | "instructions" | "criteria">
+  Pick<typeof ChoiceQuestionSchema.Encoded, "type" | "instructions" | "criteria">
 > {
   readonly instructions: string;
   readonly criteria: Readonly<Record<string, string | null>>;
@@ -88,7 +89,7 @@ interface ChoiceQuestion extends Readonly<
 type Question = NoulQuestion | ChoiceQuestion;
 
 interface DecisionRequest extends Readonly<
-  Pick<DecisionsRequest, "model" | "state" | "questions">
+  Pick<typeof DecisionsRequestSchema.Encoded, "model" | "state" | "questions">
 > {
   readonly state: {
     readonly snippets: Readonly<Record<string, string>>;
@@ -97,15 +98,15 @@ interface DecisionRequest extends Readonly<
   readonly questions: Readonly<Record<string, Question>>;
 }
 
-type DecisionResponse = Frozen<Pick<DecisionsResponse, "model" | "answers">>;
+type DecisionResponse = Pick<typeof DecisionsResponseSchema.Type, "model" | "answers">;
 
 type Answers = DecisionResponse["answers"];
 
 type Answer = Answers[string];
 
-type NoulAnswer = Frozen<DecisionsNoulAnswer>;
+type NoulAnswer = Frozen<Extract<typeof WireAnswerSchema.Type, { readonly type: "noul" }>>;
 
-type ChoiceAnswer = Frozen<DecisionsChoiceAnswer>;
+type ChoiceAnswer = Frozen<Extract<typeof WireAnswerSchema.Type, { readonly type: "choice" }>>;
 
 type DecideResult =
   | { readonly ok: true; readonly response: DecisionResponse; readonly cached?: boolean }

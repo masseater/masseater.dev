@@ -44,6 +44,7 @@ catalog:
   "@ast-grep/cli": 0.51.1
   "@cloudflare/workers-types": 5.20261109.1
   "@effect/platform-node": 4.1.2
+  "@effect/platform-node-shared": 4.1.2
   "@effect/sql-sqlite-node": 4.1.2
   "@effect/vitest": 4.1.2
   modern-tar: 0.8.6

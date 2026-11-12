@@ -1,4 +1,5 @@
 import { OpenRouter } from "@openrouter/sdk";
+import { HTTPClient } from "@openrouter/sdk/lib/http.js";
 import type { DecisionsRequest, DecisionsResponse } from "@openrouter/sdk/models";
 import { openRouterApp } from "@r_masseater/oxlint-plugin-decision/openrouter-app";
 import { isSplitChoice } from "bench-summary/schema";
@@ -197,7 +198,12 @@ const makeOpenRouterAdapter = Effect.fn("makeOpenRouterAdapter")(function* makeO
 ) {
   const apiKey = yield* Config.Redacted("OPENROUTER_API_KEY");
   const headers = yield* attribution;
-  const client = new OpenRouter({ apiKey: Redacted.value(apiKey), ...headers });
+  const httpClient = new HTTPClient().addHook("beforeRequest", (request) => {
+    for (const [name, value] of Rec.toEntries(headers)) {
+      request.headers.set(name, value);
+    }
+  });
+  const client = new OpenRouter({ apiKey: Redacted.value(apiKey), httpClient });
   const create = (item: Readonly<Item>): Promise<DecisionsResponse> =>
     client.systemOne.create({
       decisionsRequest: { model, state: item.text, questions: questionsOf(item, via) },

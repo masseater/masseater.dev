@@ -1,8 +1,8 @@
 import { Launcher } from "chrome-launcher";
-import { Array, Effect, Option, Schema, pipe } from "effect";
+import { Array, Effect, Option, Result, Schema, pipe } from "effect";
 import { startFlow } from "lighthouse";
 import { launch } from "puppeteer-core";
-import type { Browser, Page } from "puppeteer-core";
+import type { Browser, ElementHandle, Page, Point } from "puppeteer-core";
 
 const taggedError = Schema.TaggedError;
 
@@ -30,9 +30,6 @@ const openBrowser = (chromeFlags: readonly string[]): Effect.Effect<Browser, Bro
     );
     return yield* attempt(() => launch({ executablePath, args: [...chromeFlags] }));
   });
-
-const missingLink = (target: string): BrowserError =>
-  BrowserError.make({ cause: `No link to ${target} was found` });
 
 const withoutHash = (url: string): string => {
   const parsed = new URL(url);
@@ -63,36 +60,113 @@ const linksOn = (page: Page): Effect.Effect<readonly string[], BrowserError> =>
     ),
   );
 
-const clickLink = (page: Page, target: string): Effect.Effect<void, BrowserError> =>
-  Effect.gen(function* click() {
+interface Session {
+  readonly page: Page;
+  readonly flow: Awaited<ReturnType<typeof startFlow>>;
+}
+
+const isTopmostAt = (
+  anchor: ElementHandle<HTMLAnchorElement>,
+  { x, y }: Readonly<Point>,
+): Effect.Effect<boolean, BrowserError> =>
+  attempt(() =>
+    anchor.evaluate(
+      (element, pointX, pointY) => {
+        const hit = document.elementFromPoint(pointX, pointY);
+        return hit !== null && element.contains(hit);
+      },
+      x,
+      y,
+    ),
+  );
+
+const pointToClick = (
+  anchor: ElementHandle<HTMLAnchorElement>,
+): Effect.Effect<Option.Option<Point>, BrowserError> =>
+  Effect.gen(function* point() {
+    yield* attempt(() => anchor.scrollIntoView());
+    const center = yield* Effect.option(attempt(() => anchor.clickablePoint()));
+    if (Option.isNone(center)) {
+      return center;
+    }
+    const topmost = yield* isTopmostAt(anchor, center.value);
+    if (!topmost) {
+      return Option.none<Point>();
+    }
+    return center;
+  });
+
+const clickablePointTo = (
+  page: Page,
+  target: string,
+): Effect.Effect<Option.Option<Point>, BrowserError> =>
+  Effect.gen(function* find() {
     const anchors = yield* attempt(() => page.$$("a[href]"));
-    const reads = pipe(
-      anchors,
-      Array.map((anchor) => anchor.evaluate((element) => element.href)),
+    return yield* Effect.findFirstFilter(anchors, (anchor) =>
+      Effect.gen(function* candidate() {
+        const href = yield* attempt(() => anchor.evaluate((element) => element.href));
+        if (withoutHash(href) !== target) {
+          return Result.fail(anchor);
+        }
+        const point = yield* pointToClick(anchor);
+        return Result.fromOption(point, () => anchor);
+      }),
     );
-    const hrefs = yield* attempt(() => Promise.all(reads));
-    const index = yield* Array.findFirstIndex(hrefs, (href) => withoutHash(href) === target).pipe(
-      Effect.fromOption,
-      Effect.mapError(() => missingLink(target)),
+  });
+
+const clickAt = (
+  page: Page,
+  target: string,
+  { x, y }: Readonly<Point>,
+): Effect.Effect<void, BrowserError> =>
+  attempt(() =>
+    Promise.all([
+      page.waitForFunction(
+        (href) => {
+          const here = new URL(location.href);
+          here.hash = "";
+          return here.href === href && document.readyState === "complete";
+        },
+        {},
+        target,
+      ),
+      page.mouse.click(x, y),
+    ]),
+  );
+
+const measureTransition = (
+  { page, flow }: Session,
+  url: string,
+  link: string,
+): Effect.Effect<Option.Option<string>, BrowserError> =>
+  Effect.gen(function* transition() {
+    const name = `${url} -> ${link}`;
+    yield* attempt(() => page.goto(url, { waitUntil: "load" }));
+    const point = yield* clickablePointTo(page, link);
+    yield* Effect.annotateCurrentSpan("web_vitals.link.clickable", Option.isSome(point));
+    if (Option.isNone(point)) {
+      return Option.some(name);
+    }
+    yield* attempt(() => flow.startTimespan({ name }));
+    yield* clickAt(page, link, point.value);
+    yield* attempt(() => flow.endTimespan());
+    return Option.none<string>();
+  }).pipe(Effect.withSpan("web-vitals.transition", { attributes: { from: url, to: link } }));
+
+const measurePage = (
+  session: Session,
+  url: string,
+): Effect.Effect<readonly string[], BrowserError> =>
+  Effect.gen(function* visit() {
+    yield* attempt(() => session.flow.navigate(url, { name: `load ${url}` })).pipe(
+      Effect.withSpan("web-vitals.load", { attributes: { url } }),
     );
-    const anchor = yield* Array.get(anchors, index).pipe(
-      Effect.fromOption,
-      Effect.mapError(() => missingLink(target)),
+    const links = yield* linksOn(session.page);
+    const skipped = yield* pipe(
+      links,
+      Effect.forEach((link) => measureTransition(session, url, link)),
     );
-    yield* attempt(() =>
-      Promise.all([
-        page.waitForFunction(
-          (href) => {
-            const here = new URL(location.href);
-            here.hash = "";
-            return here.href === href && document.readyState === "complete";
-          },
-          {},
-          target,
-        ),
-        anchor.click(),
-      ]),
-    );
+    return Array.getSomes(skipped);
   });
 
 const measureFlow = Effect.fn("web-vitals.flow")(function* measureFlow(
@@ -104,24 +178,15 @@ const measureFlow = Effect.fn("web-vitals.flow")(function* measureFlow(
   );
   const page = yield* attempt(() => browser.newPage());
   const flow = yield* attempt(() => startFlow(page, { name: "web-vitals" }));
-  for (const url of urls) {
-    yield* attempt(() => flow.navigate(url, { name: `load ${url}` })).pipe(
-      Effect.withSpan("web-vitals.load", { attributes: { url } }),
-    );
-    for (const link of yield* linksOn(page)) {
-      yield* Effect.gen(function* transition() {
-        yield* attempt(() => page.goto(url, { waitUntil: "load" }));
-        yield* attempt(() => flow.startTimespan({ name: `${url} -> ${link}` }));
-        yield* clickLink(page, link);
-        yield* attempt(() => flow.endTimespan());
-      }).pipe(Effect.withSpan("web-vitals.transition", { attributes: { from: url, to: link } }));
-    }
-  }
+  const skipped = yield* pipe(
+    urls,
+    Effect.forEach((url) => measurePage({ page, flow }, url)),
+  );
   const result = yield* attempt(() => flow.createFlowResult()).pipe(
     Effect.withSpan("web-vitals.audit"),
   );
   const html = yield* attempt(() => flow.generateReport());
-  return { result, html };
+  return { result, html, unclickable: Array.flatten(skipped) };
 }, Effect.scoped);
 
 export { measureFlow };
