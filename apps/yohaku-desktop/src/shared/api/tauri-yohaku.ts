@@ -7,12 +7,14 @@ import {
 } from "@masseater.dev/yohaku-protocol";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appLocalDataDir, join } from "@tauri-apps/api/path";
+import { openUrl } from "@tauri-apps/plugin-opener";
 import { Effect, Layer, ManagedRuntime, Schema, Stream } from "effect";
 import { FetchHttpClient, HttpClient } from "effect/http";
 
 import type { Failure, Yohaku } from "./yohaku.ts";
 
 const UNREACHABLE = "余白のサーバーに接続できません";
+const NOT_OPENED = "ブラウザーを開けません";
 
 const taggedError = Schema.TaggedError;
 
@@ -88,6 +90,13 @@ const tauriYohaku: Yohaku = {
   ingestText: (text) => call(({ IngestText: ingest }) => ingest({ text })),
   revertSource: (id) => call(({ RevertSource: revert }) => revert({ id })),
   getMcp: () => call(({ GetMcp: get }) => get()),
+  syncStatus: () => call(({ ReadSyncStatus: read }) => read()),
+  beginSyncSignIn: () =>
+    call(({ BeginSyncSignIn: begin }) => begin()).pipe(
+      Effect.flatMap(({ url }) =>
+        Effect.tryPromise({ try: () => openUrl(url), catch: () => ({ message: NOT_OPENED }) }),
+      ),
+    ),
 };
 
 export { tauriYohaku };

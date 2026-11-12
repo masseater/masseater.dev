@@ -12,6 +12,7 @@ import {
   Source,
   SourceId,
 } from "./models.ts";
+import { SyncStatus } from "./sync.ts";
 
 const Manuscripts = Schema.Struct({ manuscripts: Schema.Array(Manuscript) });
 
@@ -20,6 +21,8 @@ const Opened = Schema.Struct({ manuscript: Manuscript, paragraphs: Schema.Array(
 const Sources = Schema.Struct({ sources: Schema.Array(Source) });
 
 const Mcp = Schema.Struct({ url: Schema.String, token: Schema.String });
+
+const SignIn = Schema.Struct({ url: Schema.String });
 
 const ParagraphTarget = { id: ManuscriptId, paragraphId: ParagraphId };
 
@@ -71,4 +74,6 @@ export class YohakuRpcs extends RpcGroup.make(
   }),
   Rpc.make("RevertSource", { payload: { id: SourceId }, error: RequestFailed }),
   Rpc.make("GetMcp", { success: Mcp, error: RequestFailed }),
+  Rpc.make("ReadSyncStatus", { success: SyncStatus, error: RequestFailed }),
+  Rpc.make("BeginSyncSignIn", { success: SignIn, error: RequestFailed }),
 ) {}

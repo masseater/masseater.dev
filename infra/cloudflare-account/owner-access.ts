@@ -1,7 +1,12 @@
 import { Access } from "@alchemy.run/cloudflare";
 import { Effect } from "effect";
 
-type OwnerAccessProps = Readonly<{ id: string; name: string; host: string }>;
+type OwnerAccessProps = Readonly<{
+  id: string;
+  name: string;
+  host: string;
+  loopbackClients: boolean;
+}>;
 
 const { Application: defineApplication } = Access;
 
@@ -16,6 +21,7 @@ const ownerAccess = Effect.fn("ownerAccess")(function* ownerAccess({
   id,
   name,
   host,
+  loopbackClients,
 }: OwnerAccessProps) {
   const owner = yield* Access.Policy.ref("OwnerPolicy", personalSpace);
   const google = yield* Access.IdentityProvider.ref("Google", personalSpace);
@@ -35,7 +41,7 @@ const ownerAccess = Effect.fn("ownerAccess")(function* ownerAccess({
         enabled: true,
         allowedUris: [BROKER_CALLBACK],
         allowAnyOnLocalhost: false,
-        allowAnyOnLoopback: false,
+        allowAnyOnLoopback: loopbackClients,
       },
     },
   });

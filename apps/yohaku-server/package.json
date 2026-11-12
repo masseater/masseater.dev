@@ -19,7 +19,8 @@
     "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/yohaku-protocol": "workspace:*",
     "@modelcontextprotocol/server": "catalog:",
-    "effect": "catalog:stack"
+    "effect": "catalog:stack",
+    "oauth4webapi": "catalog:"
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",

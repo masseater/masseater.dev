@@ -265,6 +265,27 @@ jobs:
       - run: vp exec --filter plamo-translate alchemy deploy --stage prod --yes
       - run: vp run --filter plamo-translate access-check
 
+  yohaku-sync:
+    needs: deploy
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    environment: yohaku-sync
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: yohaku-sync
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@82c407d629f4eb4d013ed5f7074e9a6212680571
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp exec --filter yohaku-sync alchemy deploy --stage prod --yes
+      - run: vp run --filter yohaku-sync access-check
+
   medley-manager:
     needs: deploy
     if: needs.deploy.outputs.latest == 'true'
@@ -743,6 +764,7 @@ jobs:
         sundries,
         kikite,
         plamo-translate,
+        yohaku-sync,
         rpp-kit,
         nimado,
         medley-manager,
@@ -804,6 +826,7 @@ jobs:
         sundries,
         kikite,
         plamo-translate,
+        yohaku-sync,
         rpp-kit,
         nimado,
         medley-manager,
