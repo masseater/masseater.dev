@@ -1,0 +1,45 @@
+@import "tailwindcss";
+@import "@masseater.dev/ui/theme.css";
+@import "@fontsource/noto-sans-jp/400.css";
+@import "@fontsource/noto-sans-jp/700.css";
+@import "@fontsource/noto-serif-jp/400.css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --remark: oklch(0.52 0.13 60);
+  --draft: oklch(0.45 0.01 286);
+}
+
+.dark {
+  --remark: oklch(0.8 0.12 70);
+  --draft: oklch(0.78 0.01 286);
+}
+
+@theme inline {
+  --color-remark: var(--remark);
+  --color-draft: var(--draft);
+  --font-sans: "Noto Sans JP", sans-serif;
+  --font-serif: "Noto Serif JP", serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  .yohaku-draft {
+    @apply -mt-3 mb-7 flex flex-col gap-3 rounded-lg border p-4 font-sans;
+  }
+
+  .yohaku-draft-text {
+    @apply font-serif text-base text-draft;
+    line-height: 2.1;
+  }
+}

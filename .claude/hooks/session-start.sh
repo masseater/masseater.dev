@@ -29,6 +29,7 @@ if ! command -v mise >/dev/null 2>&1; then
 fi
 mise trust --quiet mise.toml
 mise install --locked >&2
+rustup toolchain install >&2
 echo "export PATH=\"$HOME/.local/bin:$HOME/.local/share/mise/shims:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1" >>"$CLAUDE_ENV_FILE"
 vp env on >&2
 vp install --frozen-lockfile >&2
