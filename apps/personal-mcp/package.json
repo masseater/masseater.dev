@@ -23,6 +23,7 @@
     "@effect/vitest": "catalog:",
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
+    "@masseater.dev/plamo-translate": "workspace:*",
     "@masseater.dev/repositories": "workspace:*",
     "alchemy": "catalog:stack",
     "typescript": "catalog:stack",

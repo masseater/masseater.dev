@@ -1,0 +1,25 @@
+{
+  "name": "@masseater.dev/plamo-translate",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./request": "./request.ts",
+    "./translator.worker": "./translator.worker.ts"
+  },
+  "dependencies": {
+    "@r_masseater/workers-tracing": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/cloudflare-account": "workspace:*",
+    "@types/node": "catalog:",
+    "alchemy": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}
