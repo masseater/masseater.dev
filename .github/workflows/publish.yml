@@ -95,11 +95,7 @@ jobs:
             echo "$name@$version is already published, skipping"
             exit 0
           fi
-          if npm view "$name" name >/dev/null 2>&1; then
-            npm publish "$RUNNER_TEMP/package.tgz" --provenance --access public
-          else
-            npm stage publish "$RUNNER_TEMP/package.tgz" --provenance --access public
-          fi
+          npm publish "$RUNNER_TEMP/package.tgz" --provenance --access public
 
   ci-telemetry:
     needs: [publish]
