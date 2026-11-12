@@ -117,12 +117,12 @@
     {
       "name": "react",
       "path": "dist/react.mjs",
-      "limit": "169098 B"
+      "limit": "170753 B"
     },
     {
       "name": "tanstack-query",
       "path": "dist/tanstack-query.mjs",
-      "limit": "11827 B"
+      "limit": "11833 B"
     },
     {
       "name": "tanstack-router",
