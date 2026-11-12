@@ -1,0 +1,17 @@
+{
+  "description": "watashi plugin hooks",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/dist/main.mjs", "hook", "stop"],
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
