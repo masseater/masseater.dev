@@ -23,8 +23,6 @@ type Frozen<Value> = Value extends (...args: never) => unknown
     ? { readonly [Key in keyof Value]: Frozen<Value[Key]> }
     : Value;
 
-type WireAnswer = typeof WireAnswerSchema.Type;
-
 type SelectedNode = Frozen<ESTree.Node>;
 
 interface SelectMatch {
@@ -106,9 +104,9 @@ type Answers = DecisionResponse["answers"];
 
 type Answer = Answers[string];
 
-type NoulAnswer = Frozen<Extract<WireAnswer, { readonly type: "noul" }>>;
+type NoulAnswer = Frozen<Extract<typeof WireAnswerSchema.Type, { readonly type: "noul" }>>;
 
-type ChoiceAnswer = Frozen<Extract<WireAnswer, { readonly type: "choice" }>>;
+type ChoiceAnswer = Frozen<Extract<typeof WireAnswerSchema.Type, { readonly type: "choice" }>>;
 
 type DecideResult =
   | { readonly ok: true; readonly response: DecisionResponse; readonly cached?: boolean }

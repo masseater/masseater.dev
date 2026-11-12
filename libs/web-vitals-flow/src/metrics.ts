@@ -153,13 +153,8 @@ const unclickableOf = (transitions: readonly string[]): readonly string[] =>
     ],
   });
 
-interface MeasuredFlow {
-  readonly result: FlowResult;
-  readonly unclickable: readonly string[];
-}
-
 const summarize = (
-  flows: readonly MeasuredFlow[],
+  flows: readonly { readonly result: FlowResult; readonly unclickable: readonly string[] }[],
 ): { readonly table: string; readonly failures: readonly string[] } => {
   const steps = medianVitalsOf(
     pipe(

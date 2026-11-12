@@ -228,8 +228,9 @@ Logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/
 then named after it, as `<destination>-sink`, unless you also pass `workerName`.
 `logpush: true` also sends the sink's logs through Logpush.
 
-The CLI reads the spans through the Cloudflare API and runs on Node.js. It needs
-two more packages, which the other parts of the package do not:
+The CLI reads the spans through the Cloudflare API and runs on Node.js. Only the
+CLI needs `@distilled.cloud/cloudflare` and `@effect/platform-node`, so add them
+to the project that runs it.
 
 ```sh
 vp add -D @distilled.cloud/cloudflare @effect/platform-node
