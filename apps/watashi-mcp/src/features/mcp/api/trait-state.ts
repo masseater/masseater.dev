@@ -42,11 +42,11 @@ const TRAIT_PREFIX = "owner_trait:";
 
 const GLOBAL = "global";
 
-const refOf = (id: number): string => `${TRAIT_PREFIX}${id}`;
+const traitRefOf = (id: number): string => `${TRAIT_PREFIX}${id}`;
 
 const keyText = (key: TraitKey): string => {
   if ("existing" in key) {
-    return refOf(key.existing);
+    return traitRefOf(key.existing);
   }
   return `new:${key.created}`;
 };
@@ -104,7 +104,7 @@ export {
   isActive,
   isCreated,
   keyText,
-  refOf,
+  traitRefOf,
   sameKey,
   supportsOf,
   updateWhere,

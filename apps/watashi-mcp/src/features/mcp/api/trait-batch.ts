@@ -10,6 +10,7 @@ import {
 } from "effect";
 
 import type { TraitOrigin } from "#/features/mcp/model/owner-trait.table";
+import { TRAIT_STEP_CHARACTERS } from "#/shared/config";
 
 import type { BatchSource } from "./trait-state";
 
@@ -27,8 +28,6 @@ type Packing<Item> = Readonly<{
 }>;
 
 type Packed<Item> = Readonly<{ items: readonly Item[]; size: number; full: boolean }>;
-
-const STEP_CHARACTERS = 60_000;
 
 const SETTLE_MINUTES = 1;
 
@@ -93,7 +92,7 @@ const packStep =
       return packed;
     }
     const size = packed.size + sizeOf(batchOf(item));
-    if (Arr.isReadonlyArrayNonEmpty(packed.items) && size > STEP_CHARACTERS) {
+    if (Arr.isReadonlyArrayNonEmpty(packed.items) && size > TRAIT_STEP_CHARACTERS) {
       return { ...packed, full: true };
     }
     return { items: [...packed.items, item], size, full: false };
@@ -123,7 +122,6 @@ const collect = <Item>({
 };
 
 export {
-  STEP_CHARACTERS,
   chunkPositionFrom,
   chunkPositionText,
   collect,
@@ -131,4 +129,4 @@ export {
   rowPositionText,
   settledBefore,
 };
-export type { ChunkPositionValue, Collected, RowPositionValue };
+export type { ChunkPositionValue, Collected, Packing, RowPositionValue };

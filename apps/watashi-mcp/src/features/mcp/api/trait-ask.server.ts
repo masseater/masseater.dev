@@ -80,3 +80,4 @@ const askAbout = (
   });
 
 export { askAbout };
+export type { Asked };

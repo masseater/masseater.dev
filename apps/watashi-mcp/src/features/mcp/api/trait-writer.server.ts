@@ -184,4 +184,4 @@ const saveTraits = ({ plan, vectors, cursor, actor }: Saving): Effect.Effect<voi
   }).pipe(Effect.mapError(toStorageFailed));
 
 export { saveTraits };
-export type { Cursor, VectorTexts };
+export type { Cursor, Saving, VectorTexts };

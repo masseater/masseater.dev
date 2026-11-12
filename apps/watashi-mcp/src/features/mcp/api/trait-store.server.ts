@@ -16,7 +16,7 @@ import type { StorageFailed } from "#/features/mcp/model/storage-failed";
 import { db } from "#/shared/db/index.server";
 
 import { query } from "./storage.server";
-import { refOf } from "./trait-state";
+import { traitRefOf } from "./trait-state";
 import type { Evidence, TraitState } from "./trait-state";
 import type { Vector } from "./trait-vector";
 
@@ -72,7 +72,7 @@ const loadTraitVectors: Effect.Effect<Readonly<Record<string, Vector>>, StorageF
         Arr.flatMap((row) =>
           pipe(
             decodeVector(row.vector),
-            Option.map((vector) => [refOf(row.traitId), vector] as const),
+            Option.map((vector) => [traitRefOf(row.traitId), vector] as const),
             Option.toArray,
           ),
         ),

@@ -105,7 +105,7 @@ type ObservationValue = typeof Observation.Type;
 
 type AnalysisResultValue = typeof AnalysisResult.Type;
 
-export { AnalysisRequest, AnalysisResult, KnownTrait, Observation, TraitSource };
+export { AnalysisResult };
 export type {
   AnalysisRequestValue,
   AnalysisResultValue,

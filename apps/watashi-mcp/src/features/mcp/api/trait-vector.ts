@@ -154,5 +154,5 @@ const relatedTo = ({
 const unionOf = (candidates: Candidates): HashSet.HashSet<string> =>
   HashSet.fromIterable(pipe(Rec.values(candidates), Arr.flatten));
 
-export { candidatesOf, groupOf, meanOf, piecesOf, relatedTo, unionOf };
-export type { Located, Vector };
+export { candidatesOf, meanOf, piecesOf, relatedTo, unionOf };
+export type { Located, Neighbourhood, Vector };

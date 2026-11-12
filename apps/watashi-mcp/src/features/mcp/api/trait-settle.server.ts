@@ -35,3 +35,4 @@ const settle = (step: Step): Effect.Effect<Settled, UpstreamFailed> => {
 };
 
 export { settle };
+export type { Settled };

@@ -11,6 +11,7 @@ import {
   MCP_URL,
   SITE_HOST,
   TOOL_CALL_DATASET,
+  TRAIT_CRON,
 } from "./src/shared/config/index.ts";
 
 const web = Effect.gen(function* web() {
@@ -19,6 +20,18 @@ const web = Effect.gen(function* web() {
   const CONVERSATIONS = yield* R2.Bucket("Conversations", { name: `${PREFIX}conversations` });
   const CONVERSATION_UPLOADS = yield* AnalyticsEngine.Dataset("ConversationUploads", {
     dataset: CONVERSATION_UPLOAD_DATASET,
+  });
+  yield* Workers.Worker("TraitBuilder", {
+    name: `${PREFIX}trait-builder`,
+    main: "./src/features/mcp/api/trait-builder.worker.ts",
+    logpush: true,
+    crons: [TRAIT_CRON],
+    env: {
+      DB,
+      CONVERSATIONS,
+      AI: Workers.AI(),
+      TRAIT_BUILDER: Workers.DurableObject("TraitBuilder"),
+    },
   });
   return yield* authSite({
     domain: SITE_HOST,

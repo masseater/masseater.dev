@@ -78,4 +78,4 @@ const numbered = <Value>(
   );
 
 export { commit, commitAll, commitWith, numbered };
-export type { RevisedWrite, RevisionRecord, Statement };
+export type { Commit, RevisedWrite, RevisionRecord, Statement };

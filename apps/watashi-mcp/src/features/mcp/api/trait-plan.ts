@@ -17,7 +17,7 @@ import type { BatchSource, Evidence, Plan, Step, TraitKey, TraitState } from "./
 
 type Drafted = Extract<ObservationValue, Readonly<{ action: "new" | "replace" }>>;
 
-type Linked = Extract<ObservationValue, Readonly<{ action: "supports" | "contradicts" }>>;
+type Linked = Extract<ObservationValue, Readonly<{ action: Stance }>>;
 
 type Placed = Readonly<{ traits: readonly TraitState[]; key: TraitKey }>;
 

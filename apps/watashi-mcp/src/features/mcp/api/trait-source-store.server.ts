@@ -90,3 +90,4 @@ const chunksAfter = ({
   );
 
 export { chunksAfter, lifeAfter, memoriesAfter };
+export type { Window };

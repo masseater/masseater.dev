@@ -1,0 +1,5 @@
+const TRAIT_CRON = "*/15 * * * *";
+
+const TRAIT_STEP_CHARACTERS = 60_000;
+
+export { TRAIT_CRON, TRAIT_STEP_CHARACTERS };

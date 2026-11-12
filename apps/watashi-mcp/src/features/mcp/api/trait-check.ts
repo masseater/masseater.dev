@@ -76,3 +76,4 @@ const checkObservations = (checking: Checking): Checked => {
 };
 
 export { checkObservations, knownTraits };
+export type { Checking };

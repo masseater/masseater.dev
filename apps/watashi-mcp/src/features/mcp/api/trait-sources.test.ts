@@ -2,10 +2,11 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Number as Num, Option, String as Str, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
+import { TRAIT_STEP_CHARACTERS } from "#/shared/config";
+
 import { writeLife } from "./life-write.server";
 import { writeMemory } from "./memory-write.server";
 import { watashiProfile } from "./profile-read.server";
-import { STEP_CHARACTERS } from "./trait-batch";
 import {
   drain,
   forgetRequests,
@@ -117,8 +118,8 @@ it.effect("会話からは本人の発言だけを読み、AI の発言の引用
 it.effect("一度に読める量を超える源も切り捨てずにすべて読む", () =>
   Effect.gen(function* readsEverything() {
     yield* fresh;
-    const big = Str.repeat(STEP_CHARACTERS / HALF - MARGIN)("あ");
-    const huge = Str.repeat(STEP_CHARACTERS + PAST_LIMIT)("い");
+    const big = Str.repeat(TRAIT_STEP_CHARACTERS / HALF - MARGIN)("あ");
+    const huge = Str.repeat(TRAIT_STEP_CHARACTERS + PAST_LIMIT)("い");
     yield* Effect.forEach(["one", "two", "three"], (name) =>
       writeMemory(writer)({ project: "assistant", name, description: name, content: big }),
     );
@@ -137,7 +138,7 @@ it.effect("一度に読める量を超える源も切り捨てずにすべて読
         Arr.map((source) => Str.length(source.text)),
       ),
     );
-    expect(read).toBeGreaterThan(STEP_CHARACTERS * HALF);
+    expect(read).toBeGreaterThan(TRAIT_STEP_CHARACTERS * HALF);
   }),
 );
 
