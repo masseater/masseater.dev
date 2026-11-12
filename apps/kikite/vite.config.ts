@@ -1,3 +1,4 @@
+import { ownerSiteRun } from "@masseater.dev/cloudflare-account/owner-site-run";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
 import { String as Str } from "effect";
@@ -8,13 +9,7 @@ import { DEV_PROXY, interviewerDev } from "./server/dev.ts";
 const AGENT_SDK = "@anthropic-ai/claude-agent-sdk";
 
 export default defineConfig({
-  run: {
-    tasks: {
-      deploy: { command: "alchemy deploy", cache: false },
-      destroy: { command: "alchemy destroy", cache: false },
-      "access-check": { command: "sh scripts/access-check.sh", cache: false },
-    },
-  },
+  run: ownerSiteRun,
   resolve: { tsconfigPaths: true },
   plugins: [tailwindcss(), viteReact(), interviewerDev()],
   server: { proxy: DEV_PROXY },
