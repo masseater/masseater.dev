@@ -27,7 +27,7 @@ type Target = Readonly<{ url: string; authorization: Redacted.Redacted }>;
 const RETRIES = 3;
 const CONFLICT = 409;
 
-const RetryDelay = Context.Reference<Duration.Input>("watashi-cli/RetryDelay", {
+const RetryDelay = Context.Reference<Duration.Input>("watashi/RetryDelay", {
   defaultValue: () => "1 second",
 });
 
