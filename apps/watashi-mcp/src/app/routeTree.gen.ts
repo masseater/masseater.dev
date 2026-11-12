@@ -9,6 +9,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as DotwellKnownSplatRouteImport } from './routes/[.]well-known/$'
 import { Route as ApiConversationsRouteImport } from './routes/api.conversations'
+import { Route as ApiMemoriesRouteImport } from './routes/api.memories'
 import { Route as ApiTokensRouteImport } from './routes/api.tokens'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 
@@ -42,6 +43,11 @@ const ApiConversationsRoute = ApiConversationsRouteImport.update({
   path: '/api/conversations',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMemoriesRoute = ApiMemoriesRouteImport.update({
+  id: '/api/memories',
+  path: '/api/memories',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTokensRoute = ApiTokensRouteImport.update({
   id: '/api/tokens',
   path: '/api/tokens',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
   '/api/conversations': typeof ApiConversationsRoute
+  '/api/memories': typeof ApiMemoriesRoute
   '/api/tokens': typeof ApiTokensRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
   '/api/conversations': typeof ApiConversationsRoute
+  '/api/memories': typeof ApiMemoriesRoute
   '/api/tokens': typeof ApiTokensRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -81,6 +89,7 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
   '/api/conversations': typeof ApiConversationsRoute
+  '/api/memories': typeof ApiMemoriesRoute
   '/api/tokens': typeof ApiTokensRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -93,6 +102,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/.well-known/$'
     | '/api/conversations'
+    | '/api/memories'
     | '/api/tokens'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/.well-known/$'
     | '/api/conversations'
+    | '/api/memories'
     | '/api/tokens'
     | '/api/auth/$'
   id:
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/.well-known/$'
     | '/api/conversations'
+    | '/api/memories'
     | '/api/tokens'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
@@ -124,6 +136,7 @@ export interface RootRouteChildren {
   SignInRoute: typeof SignInRoute
   DotwellKnownSplatRoute: typeof DotwellKnownSplatRoute
   ApiConversationsRoute: typeof ApiConversationsRoute
+  ApiMemoriesRoute: typeof ApiMemoriesRoute
   ApiTokensRoute: typeof ApiTokensRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiConversationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/memories': {
+      id: '/api/memories'
+      path: '/api/memories'
+      fullPath: '/api/memories'
+      preLoaderRoute: typeof ApiMemoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/tokens': {
       id: '/api/tokens'
       path: '/api/tokens'
@@ -196,6 +216,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignInRoute: SignInRoute,
   DotwellKnownSplatRoute: DotwellKnownSplatRoute,
   ApiConversationsRoute: ApiConversationsRoute,
+  ApiMemoriesRoute: ApiMemoriesRoute,
   ApiTokensRoute: ApiTokensRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }

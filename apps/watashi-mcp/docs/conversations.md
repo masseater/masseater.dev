@@ -28,7 +28,7 @@ Betterleaks の既定の規則に、2 つの規則を足して使う。1 つは 
 
 手元の PC では `watashi login` で OAuth（動的登録と PKCE）を通し、リフレッシュトークンを `~/.config/watashi/oauth.json` に置く。
 
-クラウドのセッションは使い捨てなので、長期のトークンをクラウド環境の環境変数 `WATASHI_TOKEN` に入れる。トークンは手元で `watashi token issue --scope conversation:write` を実行するか、MCP の `conversation_token_issue` を呼んで発行する。MCP の接続は持ち主の OAuth を通っているので、パスキーを使えないクラウドのセッションからでも発行できる。このトークンでできるのは、会話履歴の送信と受け取り済みの位置の確認だけである。D1 の `api_token` には SHA-256 の値だけを置き、`watashi token revoke <id>` で失効させる。
+クラウドのセッションは使い捨てなので、長期のトークンをクラウド環境の環境変数 `WATASHI_TOKEN` に入れる。トークンは手元で `watashi token issue --scope conversation:write` を実行して発行する。MCP の `api_token_issue` を `scope: "conversation:write"` で呼んでもよい。MCP の接続は持ち主の OAuth を通っているので、パスキーを使えないクラウドのセッションからでも発行できる。このトークンでできるのは、会話履歴の送信と受け取り済みの位置の確認だけである。D1 の `api_token` には SHA-256 の値だけを置き、`watashi token revoke <id>` で失効させる。
 
 ## 送信と読み出しの記録
 
