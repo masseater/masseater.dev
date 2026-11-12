@@ -1,12 +1,10 @@
 import type { Caller } from "@masseater.dev/mcp-tool-call";
 import { NO_PROJECT, one, WRITE } from "@masseater.dev/mcp-tool-call";
+import { Label, TOKEN_SCOPES } from "@masseater.dev/watashi-protocol";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { Option, Schema } from "effect";
 
-import { TOKEN_SCOPES } from "#/features/mcp/model/api-token.table";
-
 import { mintToken } from "./api-token-api.server";
-import { Label } from "./conversation-query";
 import { meteredInput, runTool } from "./tool-call.server";
 
 const TOOL = "api_token_issue";

@@ -1,6 +1,5 @@
+import { TOKEN_SCOPES } from "@masseater.dev/watashi-protocol";
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
-
-const TOKEN_SCOPES = ["conversation:write", "memory:write"] as const;
 
 const apiToken = sqliteTable(
   "api_token",
@@ -19,5 +18,5 @@ type ApiToken = typeof apiToken.$inferSelect;
 
 type TokenScope = ApiToken["scope"];
 
-export { TOKEN_SCOPES, apiToken };
+export { apiToken };
 export type { ApiToken, TokenScope };

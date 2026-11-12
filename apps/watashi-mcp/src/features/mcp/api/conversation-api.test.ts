@@ -59,7 +59,7 @@ const offsetWith = (token: string): Effect.Effect<Reply> =>
 
 const chunk = (token: string, range: Readonly<{ start: number; end: number }>): Request =>
   new Request(
-    `${ENDPOINT}?${FILE}&start=${range.start}&end=${range.end}&redactions=0&cwd=%2Fhome&source=cli&remoteSession=`,
+    `${ENDPOINT}?${FILE}&start=${range.start}&end=${range.end}&redactions=0&cwd=%2Fhome&source=claude-code-local&remoteSession=`,
     { method: "PUT", headers: authorized(token), body: GZIP },
   );
 

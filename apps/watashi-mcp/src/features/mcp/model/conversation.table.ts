@@ -1,6 +1,5 @@
+import { CONVERSATION_KINDS } from "@masseater.dev/watashi-protocol";
 import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
-
-const CONVERSATION_KINDS = ["claude-code"] as const;
 
 const conversationSession = sqliteTable(
   "conversation_session",
@@ -41,5 +40,5 @@ type ConversationChunk = typeof conversationChunk.$inferSelect;
 
 type ConversationKind = ConversationChunk["kind"];
 
-export { CONVERSATION_KINDS, conversationChunk, conversationSession };
+export { conversationChunk, conversationSession };
 export type { ConversationChunk, ConversationKind, ConversationSession };

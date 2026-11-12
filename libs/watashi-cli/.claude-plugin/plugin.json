@@ -1,0 +1,12 @@
+{
+  "name": "watashi",
+  "description": "watashi（watashi.masseater.dev）の CLI。Claude Code の会話履歴を、秘密を伏せてから Stop フックで送る",
+  "version": "0.1.0",
+  "author": {
+    "name": "masseater",
+    "url": "https://github.com/masseater"
+  },
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/watashi-cli#readme",
+  "repository": "https://github.com/masseater/masseater.dev",
+  "license": "AGPL-3.0-only"
+}
