@@ -222,7 +222,6 @@ jobs:
           native: "false"
       - run: vp exec --filter sundries alchemy deploy --stage prod --yes
       - run: vp run --filter sundries access-check
-      - run: vp exec --filter sundries alchemy destroy alchemy.retired.ts --stage prod --yes
 
   kikite:
     needs: deploy
