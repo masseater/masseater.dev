@@ -26,13 +26,10 @@
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",
-    "@tailwindcss/vite": "catalog:",
+    "@masseater.dev/tauri-app": "workspace:*",
     "@tauri-apps/cli": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "catalog:",
-    "@vitest/browser-playwright": "5.1.0",
-    "playwright": "1.65.0",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"

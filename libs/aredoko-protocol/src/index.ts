@@ -1,6 +1,7 @@
 export {
   ENDPOINT_FILE,
   HOST,
+  RequestFailed,
   ServerEndpoint,
   ServerUrl,
   TOKEN_PARAMETER,
@@ -23,5 +24,4 @@ export {
   Status,
   Summary,
 } from "./models.ts";
-export { RequestFailed } from "./request-failed.ts";
 export { RpcCauseReason, RpcError, RpcRequest, RpcResponse } from "./wire.ts";

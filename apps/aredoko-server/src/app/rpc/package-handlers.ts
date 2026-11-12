@@ -1,5 +1,6 @@
 import { RequestFailed } from "@masseater.dev/aredoko-protocol";
 import type { ProjectAsset } from "@masseater.dev/aredoko-protocol";
+import { failed } from "@masseater.dev/local-server";
 import { Array, Effect, Option, Path, pipe } from "effect";
 
 import { fetchItem } from "#entities/booth";
@@ -9,7 +10,7 @@ import { findAssetStore } from "#features/intake";
 import { Blm, Library, linkBooth, pruneProject, putProjectAssets } from "#features/library";
 import { Settings } from "#shared/settings";
 
-import { failed, firstOr } from "./request-failed.ts";
+import { firstOr } from "./request-failed.ts";
 
 const EXTRACTED_DIRECTORY = "extracted";
 const NO_PACKAGE = "パッケージが見つかりません";

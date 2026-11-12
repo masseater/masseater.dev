@@ -14,7 +14,7 @@
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "catalog:",
     "@effect/platform-node": "catalog:",
-    "@effect/sql-sqlite-node": "catalog:",
+    "@masseater.dev/claude-agent": "workspace:*",
     "@masseater.dev/local-server": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/yohaku-protocol": "workspace:*",

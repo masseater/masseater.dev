@@ -1,5 +1,6 @@
 import { query } from "@anthropic-ai/claude-agent-sdk";
-import type { Options, SDKMessage } from "@anthropic-ai/claude-agent-sdk";
+import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
+import { QUIET_OPTIONS, textStream } from "@masseater.dev/claude-agent";
 import { Context, Effect, Layer, Option, Result, Schema, Stream } from "effect";
 
 import { AgentFailed, agentFailed } from "./agent-failed.ts";
@@ -27,41 +28,13 @@ class Agent extends Context.Service<
   }
 >()("yohaku-server/shared/agent/agent") {}
 
-const QUIET_OPTIONS = {
-  settingSources: [],
-  persistSession: false,
-  thinking: { type: "disabled" },
-} satisfies Options;
-
-const textOf = (message: SDKMessage): Effect.Effect<Result.Result<string, void>, AgentFailed> => {
-  if (message.type === "result" && message.is_error) {
-    return Effect.fail(AgentFailed.make({ message: message.subtype }));
-  }
-  if (
-    message.type === "stream_event" &&
-    message.event.type === "content_block_delta" &&
-    message.event.delta.type === "text_delta"
-  ) {
-    return Effect.succeed(Result.succeed(message.event.delta.text));
-  }
-  return Effect.succeed(Result.failVoid);
-};
-
 const write = ({ system, prompt }: Instruction): Stream.Stream<string, AgentFailed> =>
-  Stream.fromAsyncIterable(
-    query({
-      prompt,
-      options: {
-        ...QUIET_OPTIONS,
-        tools: [],
-        maxTurns: 1,
-        includePartialMessages: true,
-        model: WRITING_MODEL,
-        systemPrompt: system,
-      },
-    }),
-    agentFailed,
-  ).pipe(Stream.filterMapEffect(textOf));
+  textStream({
+    prompt,
+    system,
+    model: WRITING_MODEL,
+    failure: agentFailed,
+  });
 
 const structuredOf = (
   message: SDKMessage,

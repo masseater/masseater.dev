@@ -1,22 +1,7 @@
-import { RequestFailed } from "@masseater.dev/yohaku-protocol";
-import { Cause, Effect, Option, Schema, Stream } from "effect";
+import { RequestFailed, asRequestFailed, failed } from "@masseater.dev/local-server";
+import { Effect, Option, Stream } from "effect";
 
 const NOT_FOUND = "見つかりません";
-
-const asRequestFailed = (problem: unknown): RequestFailed => {
-  if (Schema.is(RequestFailed)(problem)) {
-    return problem;
-  }
-  return RequestFailed.make({ reason: "Failed", message: Cause.pretty(Cause.fail(problem)) });
-};
-
-const failed = <Value, Failure, Requirements>(
-  effect: Effect.Effect<Value, Failure, Requirements>,
-): Effect.Effect<Value, RequestFailed, Requirements> =>
-  effect.pipe(
-    Effect.tapError((problem) => Effect.logError("request failed", problem)),
-    Effect.mapError(asRequestFailed),
-  );
 
 const found = <Value, Failure, Requirements>(
   effect: Effect.Effect<Option.Option<Value>, Failure, Requirements>,
@@ -35,4 +20,4 @@ const failedStream = <Value, Failure, Requirements>(
 ): Stream.Stream<Value, RequestFailed, Requirements> =>
   stream.pipe(Stream.mapError(asRequestFailed));
 
-export { failed, failedStream, found };
+export { failedStream, found };

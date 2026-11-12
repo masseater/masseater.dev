@@ -1,4 +1,5 @@
-import type { RequestFailed } from "@masseater.dev/yohaku-protocol";
+import { failed } from "@masseater.dev/local-server";
+import type { RequestFailed } from "@masseater.dev/local-server";
 import { Array, Effect, Option, Stream, pipe } from "effect";
 import type { SqlClient } from "effect/sql";
 
@@ -8,7 +9,7 @@ import type { Agent } from "#shared/agent";
 
 import { paragraphOf } from "./annotation-handlers.ts";
 import type { Handlers } from "./handler-types.ts";
-import { failed, failedStream } from "./request-failed.ts";
+import { failedStream } from "./request-failed.ts";
 import { contextFor } from "./understanding.ts";
 
 interface Target {

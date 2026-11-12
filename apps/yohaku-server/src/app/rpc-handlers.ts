@@ -1,3 +1,4 @@
+import { failed } from "@masseater.dev/local-server";
 import { YohakuRpcs } from "@masseater.dev/yohaku-protocol";
 import type { Reaction } from "@masseater.dev/yohaku-protocol";
 import { Effect } from "effect";
@@ -5,7 +6,6 @@ import { Effect } from "effect";
 import { annotations, dismissRemark } from "./annotation-handlers.ts";
 import { manuscriptHandlers } from "./manuscript-handlers.ts";
 import { logReaction } from "./reactions.ts";
-import { failed } from "./request-failed.ts";
 import { sourceHandlers } from "./source-handlers.ts";
 import { writingHandlers } from "./writing-handlers.ts";
 

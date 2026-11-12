@@ -1,3 +1,4 @@
+import { failed } from "@masseater.dev/local-server";
 import type { Paragraph, Title } from "@masseater.dev/yohaku-protocol";
 import { Effect, Option, String } from "effect";
 
@@ -11,7 +12,7 @@ import {
 } from "#entities/manuscript";
 
 import type { Handlers } from "./handler-types.ts";
-import { failed, found } from "./request-failed.ts";
+import { found } from "./request-failed.ts";
 import { Understanding } from "./understanding.ts";
 
 const WRITER: typeof Title.Type.by = "writer";

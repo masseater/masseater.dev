@@ -7,8 +7,11 @@
         "name": "@effect/language-service",
         "allowedUnstableApis": [
           "@effect/platform-node-shared/NodeSocketServer#layerWebSocket",
+          "@effect/sql-sqlite-node/SqliteClient",
+          "@effect/sql-sqlite-node/SqliteMigrator",
           "effect/FileSystem#FileSystem",
           "effect/Path#Path",
+          "effect/PlatformError#PlatformError",
           "effect/crypto/Mac#timingSafeEqual",
           "effect/net/NetAddress#SocketAddress",
           "effect/rpc/RpcClient",
@@ -16,7 +19,10 @@
           "effect/rpc/RpcSerialization",
           "effect/rpc/RpcServer",
           "effect/socket/Socket",
-          "effect/socket/SocketServer#SocketServer"
+          "effect/socket/SocketServer#SocketServer",
+          "effect/sql/Migrator",
+          "effect/sql/SqlClient",
+          "effect/sql/SqlError"
         ]
       }
     ]

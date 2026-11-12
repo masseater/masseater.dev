@@ -1,19 +1,14 @@
-import { Effect, FileSystem, Layer, Match, Option, Path, Redacted, Schema } from "effect";
-import type { NetAddress } from "effect/net";
+import { Effect, FileSystem, Layer, Path, Redacted, Schema } from "effect";
 import { SocketServer } from "effect/socket";
 
 import { EndpointDirectory } from "./endpoint-directory.ts";
 import { ENDPOINT_FILE, ServerEndpoint } from "./endpoint.ts";
 import { ServerToken } from "./server-token.ts";
+import { portOf } from "./socket-port.ts";
 
 const OWNER_ONLY = 0o600;
 
 const encodeEndpoint = Schema.encodeEffect(Schema.fromJsonString(ServerEndpoint));
-
-const portOf = Match.type<NetAddress.SocketAddress>().pipe(
-  Match.tag("UnixPathAddress", () => Option.none<number>()),
-  Match.orElse(({ port }) => Option.some(port)),
-);
 
 const endpointText = Effect.gen(function* endpointText() {
   const { address } = yield* SocketServer.SocketServer;

@@ -13,6 +13,7 @@
     "@anthropic-ai/claude-agent-sdk": "catalog:",
     "@effect/atom-react": "catalog:stack",
     "@effect/platform-node": "catalog:",
+    "@masseater.dev/claude-agent": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "effect": "catalog:stack",

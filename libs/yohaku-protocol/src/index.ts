@@ -1,6 +1,7 @@
 export {
   ENDPOINT_FILE,
   HOST,
+  RequestFailed,
   ServerUrl,
   TOKEN_PARAMETER,
   awaitEndpoint,
@@ -23,6 +24,5 @@ export {
   SourceOrigin,
   Title,
 } from "./models.ts";
-export { RequestFailed } from "./request-failed.ts";
 export { MCP_PATH, MCP_PORT, SERVER_FLAGS } from "./server-flags.ts";
 export { YohakuRpcs } from "./yohaku-rpcs.ts";

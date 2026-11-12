@@ -1,4 +1,5 @@
 import { AredokoRpcs, RequestFailed } from "@masseater.dev/aredoko-protocol";
+import { failed } from "@masseater.dev/local-server";
 import { Effect, Option, pipe } from "effect";
 
 import { addSource, listSources, preview, progress, removeSource } from "#features/catalog";
@@ -17,7 +18,6 @@ import {
   packageById,
   putAssets,
 } from "./package-handlers.ts";
-import { failed } from "./request-failed.ts";
 
 const VERSION = "0.1.0";
 const NO_PREVIEW = "プレビューがありません";

@@ -1,5 +1,5 @@
 import { Effect } from "effect";
-import { Migrator, SqlClient } from "effect/sql";
+import { SqlClient } from "effect/sql";
 
 const manuscripts = Effect.gen(function* manuscripts() {
   const sql = yield* SqlClient.SqlClient;
@@ -59,6 +59,6 @@ const reactions = Effect.gen(function* reactions() {
 });
 
 /** @internal */
-export const loader: Migrator.Loader = Migrator.fromRecord({
+export const migrations = {
   "1_init": Effect.all([manuscripts, understanding, reactions], { discard: true }),
-});
+};

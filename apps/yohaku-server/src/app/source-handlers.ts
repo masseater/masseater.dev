@@ -1,3 +1,4 @@
+import { failed } from "@masseater.dev/local-server";
 import { Effect } from "effect";
 
 import { listSources, revertSource } from "#entities/source";
@@ -5,7 +6,6 @@ import { ingestText } from "#features/ingest";
 
 import type { Handlers } from "./handler-types.ts";
 import { McpEndpoint } from "./mcp-endpoint.ts";
-import { failed } from "./request-failed.ts";
 
 const listed = Effect.fn("listed")(function* listed() {
   const sources = yield* failed(listSources());

@@ -1,3 +1,4 @@
+import { RequestFailed } from "@masseater.dev/local-server";
 import { Schema } from "effect";
 import { Rpc, RpcGroup } from "effect/rpc";
 
@@ -11,7 +12,6 @@ import {
   SourceKind,
   Status,
 } from "./models.ts";
-import { RequestFailed } from "./request-failed.ts";
 
 const MAX_RESULTS = 200;
 const FIRST_OFFSET = 0;
