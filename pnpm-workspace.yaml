@@ -40,7 +40,7 @@ catalog:
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
   discord-api-types: 0.38.58
-  oxlint-plugin-eslint: 1.92.0
+  oxlint-plugin-eslint: 1.93.0
   "@ast-grep/cli": 0.51.1
   "@cloudflare/workers-types": 5.20261109.1
   "@effect/platform-node": 4.1.2
@@ -57,7 +57,7 @@ catalog:
   "@shadcn/lint": 0.2.5
   "@types/node": 26.6.6
   eslint-plugin-react-hooks: 7.1.1
-  vite: npm:@voidzero-dev/vite-plus-core@1.5.0
+  vite: npm:@voidzero-dev/vite-plus-core@1.5.1
   eslint-plugin-no-comments: 1.2.1
   eslint-plugin-baseline-js: 0.7.7
   "@html-eslint/eslint-plugin-react": 0.68.0
@@ -155,7 +155,7 @@ catalog:
   "@fontsource/zen-kurenaido": ^5.3.1
   fastest-levenshtein: ^1.0.16
   "@cfworker/json-schema": ^4.1.6
-  "@openrouter/sdk": 1.5.70
+  "@openrouter/sdk": 1.5.71
   recharts: 3.10.1
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -167,7 +167,7 @@ catalog:
   "@oxlint/plugins": 1.92.0
   oxlint: 1.92.0
   "@eslint-react/eslint-plugin": 5.28.8
-  "@remotion/eslint-plugin": 4.0.541
+  "@remotion/eslint-plugin": 4.0.542
   "@tanstack/eslint-plugin-query": 5.107.1
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/eslint-plugin-start": 0.1.0
@@ -247,11 +247,11 @@ catalogs:
     effect: 4.1.2
     elysia: 1.4.31
     fallow: 3.41.0
-    renovate: 44.222.5
+    renovate: 44.223.1
     radix-ui: 1.8.1
     tailwindcss: 4.3.5
     typescript: 7.1.0-beta
-    vite-plus: 1.5.0
+    vite-plus: 1.5.1
 overrides:
   "@feature-sliced/filesystem>typescript": "catalog:stack"
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-"
