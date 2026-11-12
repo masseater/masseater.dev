@@ -1,4 +1,4 @@
-import { runMain } from "@masseater.dev/aredoko-runtime";
+import { runMain } from "@masseater.dev/node-main";
 import { Command, Flag } from "effect/cli";
 
 import { fetchModel } from "#shared/embedding";

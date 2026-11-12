@@ -1,7 +1,8 @@
-import { TOKEN_PARAMETER } from "@masseater.dev/aredoko-protocol";
 import { Context, Layer, Option, Redacted, String, pipe } from "effect";
 import { Mac } from "effect/crypto";
 import { Hex } from "effect/encoding";
+
+import { TOKEN_PARAMETER } from "./endpoint.ts";
 
 const TOKEN_BYTES = 32;
 const QUERY_MARK = "?";
@@ -16,7 +17,7 @@ class ServerToken extends Context.Service<
     readonly token: Redacted.Redacted;
     readonly presentedBy: (handshake: Handshake) => boolean;
   }
->()("aredoko-server/app/rpc/server-token/ServerToken") {}
+>()("@masseater.dev/local-server/server-token/ServerToken") {}
 
 const encoder = new TextEncoder();
 

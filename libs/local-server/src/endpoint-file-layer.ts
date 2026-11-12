@@ -1,10 +1,9 @@
-import { ENDPOINT_FILE, ServerEndpoint } from "@masseater.dev/aredoko-protocol";
 import { Effect, FileSystem, Layer, Match, Option, Path, Redacted, Schema } from "effect";
 import type { NetAddress } from "effect/net";
 import { SocketServer } from "effect/socket";
 
-import { Settings } from "#shared/settings";
-
+import { EndpointDirectory } from "./endpoint-directory.ts";
+import { ENDPOINT_FILE, ServerEndpoint } from "./endpoint.ts";
 import { ServerToken } from "./server-token.ts";
 
 const OWNER_ONLY = 0o600;
@@ -26,7 +25,7 @@ const endpointText = Effect.gen(function* endpointText() {
 /** @internal */
 const endpointFileLayer = Layer.effectDiscard(
   Effect.gen(function* endpointFile() {
-    const { dataDirectory } = yield* Settings;
+    const dataDirectory = yield* EndpointDirectory;
     const path = yield* Path.Path;
     const fs = yield* FileSystem.FileSystem;
     const text = yield* endpointText;

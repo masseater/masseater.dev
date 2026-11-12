@@ -1,9 +1,8 @@
-import { Context, Effect, Layer } from "effect";
-import { RpcClient, RpcSerialization } from "effect/rpc";
-import { Socket } from "effect/socket";
+import { socketProtocolLayer } from "@masseater.dev/local-server";
+import { Context, Layer } from "effect";
+import { RpcClient } from "effect/rpc";
 
 import { AredokoRpcs } from "./aredoko-rpcs.ts";
-import { ServerUrl } from "./server-url.ts";
 
 /** @internal */
 class AredokoClient extends Context.Service<AredokoClient>()(
@@ -13,19 +12,9 @@ class AredokoClient extends Context.Service<AredokoClient>()(
   },
 ) {}
 
-const socketLayer = Layer.unwrap(
-  Effect.gen(function* socket() {
-    const { url } = yield* ServerUrl;
-    return Socket.layerWebSocket(url);
-  }),
-);
-
 /** @internal */
 const aredokoClientLayer = Layer.effect(AredokoClient, AredokoClient.make).pipe(
-  Layer.provide(RpcClient.layerProtocolSocket({ retryTransientErrors: true })),
-  Layer.provide(RpcSerialization.layerJsonRpc()),
-  Layer.provide(socketLayer),
-  Layer.provide(Socket.layerWebSocketConstructorGlobal),
+  Layer.provide(socketProtocolLayer),
 );
 
 export { AredokoClient, aredokoClientLayer };

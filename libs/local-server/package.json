@@ -1,10 +1,11 @@
 {
-  "name": "@masseater.dev/aredoko-runtime",
+  "name": "@masseater.dev/local-server",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./node": "./src/node.ts"
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",

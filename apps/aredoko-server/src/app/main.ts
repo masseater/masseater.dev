@@ -1,5 +1,5 @@
 import { SERVER_FLAGS } from "@masseater.dev/aredoko-protocol";
-import { runMain } from "@masseater.dev/aredoko-runtime";
+import { runMain } from "@masseater.dev/node-main";
 import { Duration, Effect, Layer, Option, Schedule, String, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 

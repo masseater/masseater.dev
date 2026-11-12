@@ -6,7 +6,7 @@
   "main": "src/main.ts",
   "dependencies": {
     "@masseater.dev/aredoko-protocol": "workspace:*",
-    "@masseater.dev/aredoko-runtime": "workspace:*",
+    "@masseater.dev/node-main": "workspace:*",
     "effect": "catalog:stack",
     "quicktype-core": "26.0.0"
   },
