@@ -4,19 +4,10 @@ import { SqlClient, SqlSchema } from "effect/sql";
 
 const Dismissal = Schema.Struct({ text: Schema.String, rule: Schema.String });
 
-interface Dismissed {
-  readonly text: string;
-  readonly rule: string;
-}
-
-interface Filtering {
-  readonly remarks: readonly (typeof Remark.Type)[];
-  readonly textOf: (remark: typeof Remark.Type) => string;
-}
-
 const SEPARATOR = "\u0000";
 
-const keyOf = ({ text, rule }: Dismissed): string => `${rule}${SEPARATOR}${text}`;
+const keyOf = ({ text, rule }: Readonly<{ text: string; rule: string }>): string =>
+  `${rule}${SEPARATOR}${text}`;
 
 const selectDismissals = SqlSchema.findAll({
   Request: Schema.Void,
@@ -26,7 +17,10 @@ const selectDismissals = SqlSchema.findAll({
 });
 
 /** @internal */
-const dismiss = Effect.fn("dismiss")(function* dismiss({ text, rule }: Dismissed) {
+const dismiss = Effect.fn("dismiss")(function* dismiss({
+  text,
+  rule,
+}: Readonly<{ text: string; rule: string }>) {
   const sql = yield* SqlClient.SqlClient;
   yield* sql`insert into dismissals (text, rule) values (${text}, ${rule}) on conflict do nothing`;
 });
@@ -35,7 +29,10 @@ const dismiss = Effect.fn("dismiss")(function* dismiss({ text, rule }: Dismissed
 const withoutDismissed = Effect.fn("withoutDismissed")(function* withoutDismissed({
   remarks,
   textOf,
-}: Filtering) {
+}: Readonly<{
+  remarks: readonly (typeof Remark.Type)[];
+  textOf: (remark: typeof Remark.Type) => string;
+}>) {
   const rows = yield* selectDismissals();
   const dismissed = pipe(rows, Array.map(keyOf), HashSet.fromIterable);
   return pipe(

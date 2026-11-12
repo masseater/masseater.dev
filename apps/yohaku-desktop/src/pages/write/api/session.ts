@@ -10,6 +10,7 @@ import {
   draftRequestAtom,
   keptAtom,
   manuscriptIdAtom,
+  openedParagraphsAtom,
   placedAtom,
   rewritingAtom,
   titleAtom,
@@ -69,7 +70,9 @@ const useResetters = (): ((opening: Opening, session: number) => void) => {
   const setPlaced = useAtomSet(placedAtom);
   const setRewriting = useAtomSet(rewritingAtom);
   const setReady = useAtomSet(readySessionAtom);
-  return ({ id, title }, session) => {
+  const setOpened = useAtomSet(openedParagraphsAtom);
+  return ({ id, title, paragraphs }, session) => {
+    setOpened(paragraphs);
     setId(id);
     setTitle(title);
     setKept(HashSet.empty());
@@ -80,7 +83,7 @@ const useResetters = (): ((opening: Opening, session: number) => void) => {
   };
 };
 
-const useSession = (): Option.Option<Paragraphs> => {
+const useSession = (): boolean => {
   const [{ session }] = useScreen();
   const opening = useOpening();
   const [ready] = useAtom(readySessionAtom);
@@ -95,11 +98,7 @@ const useSession = (): Option.Option<Paragraphs> => {
       reset(pending.value, session);
     }
   }, [ready, session, loaded, reset]);
-  return pipe(
-    opening,
-    Option.filter(() => ready === session),
-    Option.map(({ paragraphs }) => paragraphs),
-  );
+  return Option.isSome(opening) && ready === session;
 };
 
 export { useSession };

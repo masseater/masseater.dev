@@ -41,7 +41,8 @@ const remarksBy =
 const remarksIn = (paragraph: typeof Paragraph.Type): readonly Found[] =>
   pipe(NOVEL_RULES, Array.flatMap(remarksBy(paragraph)));
 
-const remarksOf = (paragraphs: readonly (typeof Paragraph.Type)[]): readonly Found[] =>
-  pipe(paragraphs, Array.flatMap(remarksIn));
+const remarksOf = (
+  paragraphs: readonly (typeof Paragraph.Type)[],
+): readonly (typeof Remark.Type)[] => pipe(paragraphs, Array.flatMap(remarksIn));
 
 export { remarksOf };

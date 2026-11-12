@@ -14,11 +14,6 @@ const LINE_BREAK = "\n";
 
 const Extraction = Schema.Struct({ label: Schema.String, facts: Schema.Array(Fact) });
 
-interface ManuscriptProse {
-  readonly manuscriptId: string;
-  readonly prose: readonly string[];
-}
-
 const FACT_GUIDE = `次の種類ごとに、作品を書くときに参照する事実を取り出してください。
 - character: 人物そのもの（名前・立場・関係）。subject は人物名。
 - voice: 人物の口調・一人称・口癖。body には実際の言い回しの例を入れる。
@@ -56,7 +51,7 @@ const ingestText = Effect.fn("ingestText")(function* ingestText(text: string) {
 const extractManuscript = Effect.fn("extractManuscript")(function* extractManuscript({
   manuscriptId,
   prose,
-}: ManuscriptProse) {
+}: Readonly<{ manuscriptId: string; prose: readonly string[] }>) {
   if (Array.isReadonlyArrayEmpty(prose)) {
     return;
   }

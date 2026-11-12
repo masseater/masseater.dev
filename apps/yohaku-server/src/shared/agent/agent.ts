@@ -103,13 +103,11 @@ const judge = ({ system, prompt, schema, tools }: Judgement): Effect.Effect<unkn
 
 const agentLayer = Layer.succeed(Agent, Agent.of({ write, judge }));
 
-interface Asked extends Instruction {
-  readonly tools: readonly string[];
-}
-
 const judgeAs =
   <Shape extends Schema.Top & { readonly DecodingServices: never }>(shape: Shape) =>
-  (asked: Asked): Effect.Effect<Shape["Type"], AgentFailed, Agent> =>
+  (
+    asked: Readonly<{ system: string; prompt: string; tools: readonly string[] }>,
+  ): Effect.Effect<Shape["Type"], AgentFailed, Agent> =>
     Effect.gen(function* judged() {
       const agent = yield* Agent;
       const { schema, definitions } = Schema.toJsonSchemaDocument(shape);
@@ -118,4 +116,3 @@ const judgeAs =
     });
 
 export { Agent, agentLayer, judgeAs };
-export type { Instruction };

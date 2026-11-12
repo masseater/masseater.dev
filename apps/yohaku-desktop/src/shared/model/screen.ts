@@ -36,5 +36,5 @@ const opened =
     session: screen.session + NEXT_SESSION,
   });
 
-export { BLANK_PAGE, NEW_MANUSCRIPT, opened, screenAtom, useScreen };
+export { NEW_MANUSCRIPT, opened, screenAtom, useScreen };
 export type { Page, Screen };

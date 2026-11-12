@@ -17,16 +17,6 @@ const ManuscriptRow = Schema.Struct({
   excerpt: Schema.NullOr(Schema.String),
 });
 
-interface Saved {
-  readonly id: string;
-  readonly paragraphs: readonly (typeof Paragraph.Type)[];
-}
-
-interface Titled {
-  readonly id: string;
-  readonly title: typeof Title.Type | null;
-}
-
 const titleOf = (row: typeof ManuscriptRow.Type): typeof Title.Type | null =>
   pipe(
     Option.all({ text: Option.fromNullOr(row.title), by: Option.fromNullOr(row.title_by) }),
@@ -102,7 +92,7 @@ const createManuscript = Effect.fn("createManuscript")(function* createManuscrip
 const saveParagraphs = Effect.fn("saveParagraphs")(function* saveParagraphs({
   id,
   paragraphs,
-}: Saved) {
+}: Readonly<{ id: string; paragraphs: readonly (typeof Paragraph.Type)[] }>) {
   const sql = yield* SqlClient.SqlClient;
   const now = yield* Clock.currentTimeMillis;
   yield* sql.withTransaction(
@@ -121,7 +111,10 @@ const saveParagraphs = Effect.fn("saveParagraphs")(function* saveParagraphs({
 });
 
 /** @internal */
-const setTitle = Effect.fn("setTitle")(function* setTitle({ id, title }: Titled) {
+const setTitle = Effect.fn("setTitle")(function* setTitle({
+  id,
+  title,
+}: Readonly<{ id: string; title: typeof Title.Type | null }>) {
   const sql = yield* SqlClient.SqlClient;
   const text = pipe(
     Option.fromNullOr(title),

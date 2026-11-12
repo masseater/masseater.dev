@@ -34,6 +34,8 @@ const keptAtom = Atom.make(HashSet.empty<string>());
 const titleAtom = Atom.make<typeof Title.Type | null>(NO_TITLE);
 /** @internal */
 const rewritingAtom = Atom.make(Option.none<string>());
+/** @internal */
+const openedParagraphsAtom = Atom.make<readonly (typeof Paragraph.Type)[]>([]);
 
 export {
   NO_TITLE,
@@ -41,6 +43,7 @@ export {
   editorAtom,
   keptAtom,
   manuscriptIdAtom,
+  openedParagraphsAtom,
   paragraphsAtom,
   pausedAtom,
   placedAtom,

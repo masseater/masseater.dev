@@ -6,31 +6,16 @@ import type { AgentFailed } from "#shared/agent";
 
 const LINE_BREAK = "\n";
 
-interface KnownFact {
-  readonly kind: string;
-  readonly subject: string;
-  readonly body: string;
-  readonly at: string | null;
-  readonly label: string;
-}
-
 interface Context {
   readonly paragraphs: readonly (typeof Paragraph.Type)[];
   readonly prose: readonly string[];
-  readonly facts: readonly KnownFact[];
-}
-
-interface Drafting {
-  readonly context: Context;
-  readonly memo: typeof Paragraph.Type;
-}
-
-interface Rewriting {
-  readonly context: Context;
-  readonly paragraph: typeof Paragraph.Type;
-  readonly from: number;
-  readonly to: number;
-  readonly problem: string;
+  readonly facts: readonly Readonly<{
+    kind: string;
+    subject: string;
+    body: string;
+    at: string | null;
+    label: string;
+  }>[];
 }
 
 const STYLE_RULES = `守ること:
@@ -48,7 +33,7 @@ const REWRITE_SYSTEM = `あなたは書き手の文章を直す担当編集で�
 指示された箇所だけを書き直し、置き換える文章だけを出力してください。前後の文はそのまま残るので繰り返さない。
 ${STYLE_RULES}`;
 
-const factLine = ({ kind, subject, body, at, label }: KnownFact): string =>
+const factLine = ({ kind, subject, body, at, label }: Context["facts"][number]): string =>
   pipe(
     Option.fromNullOr(at),
     Option.match({
@@ -66,13 +51,20 @@ const proseBefore = (context: Context, paragraphId: string): string =>
     Array.join(LINE_BREAK),
   );
 
-const factsSection = (facts: readonly KnownFact[]): string =>
+const factsSection = (facts: Context["facts"]): string =>
   pipe(facts, Array.map(factLine), Array.join(LINE_BREAK), (lines) => `資料:${LINE_BREAK}${lines}`);
 
 const written = (system: string, prompt: string): Stream.Stream<string, AgentFailed, Agent> =>
   Stream.unwrap(Agent.pipe(Effect.map((agent) => agent.write({ system, prompt }))));
 
-const draftFromMemo = ({ context, memo }: Drafting): Stream.Stream<string, AgentFailed, Agent> =>
+const draftFromMemo = ({
+  context,
+  memo,
+}: Readonly<{ context: Context; memo: typeof Paragraph.Type }>): Stream.Stream<
+  string,
+  AgentFailed,
+  Agent
+> =>
   written(
     DRAFT_SYSTEM,
     `${factsSection(context.facts)}
@@ -90,7 +82,13 @@ const rewriteSpan = ({
   from,
   to,
   problem,
-}: Rewriting): Stream.Stream<string, AgentFailed, Agent> =>
+}: Readonly<{
+  context: Context;
+  paragraph: typeof Paragraph.Type;
+  from: number;
+  to: number;
+  problem: string;
+}>): Stream.Stream<string, AgentFailed, Agent> =>
   written(
     REWRITE_SYSTEM,
     `${factsSection(context.facts)}
@@ -106,4 +104,4 @@ ${pipe(paragraph.text, String.slice(from, to))}`,
   );
 
 export { draftFromMemo, rewriteSpan };
-export type { Context, KnownFact };
+export type { Context };

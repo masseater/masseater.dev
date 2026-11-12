@@ -1,6 +1,6 @@
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { useAtomSet } from "@effect/atom-react";
+import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import type { Paragraph } from "@masseater.dev/yohaku-protocol";
 import { Array, Option, pipe } from "effect";
 import { useCallback, useRef } from "react";
@@ -10,7 +10,12 @@ import { useStableDraftActions } from "#/pages/write/api/draft-actions.ts";
 import { extensionsFor } from "#/pages/write/model/editor.ts";
 import type { Wiring } from "#/pages/write/model/editor.ts";
 import { paragraphsOf, textOf } from "#/pages/write/model/paragraph-ids.ts";
-import { editorAtom, paragraphsAtom, placedAtom } from "#/pages/write/model/writing-atoms.ts";
+import {
+  editorAtom,
+  openedParagraphsAtom,
+  paragraphsAtom,
+  placedAtom,
+} from "#/pages/write/model/writing-atoms.ts";
 
 type Paragraphs = readonly (typeof Paragraph.Type)[];
 
@@ -35,7 +40,8 @@ const started = (
   return view;
 };
 
-const EditorSurface = ({ initial }: Readonly<{ initial: Paragraphs }>): ReactNode => {
+const EditorSurface = (): ReactNode => {
+  const initial = useAtomValue(openedParagraphsAtom);
   const setEditor = useAtomSet(editorAtom);
   const setParagraphs = useAtomSet(paragraphsAtom);
   const setPlaced = useAtomSet(placedAtom);

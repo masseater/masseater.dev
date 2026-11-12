@@ -47,5 +47,5 @@ const NOVEL_RULES: readonly NovelRule[] = [
   },
 ];
 
-export { EMOTION_EXPLAINED, NOVEL_RULES };
+export { NOVEL_RULES };
 export type { NovelRule };

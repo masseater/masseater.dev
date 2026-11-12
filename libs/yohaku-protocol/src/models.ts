@@ -99,5 +99,4 @@ export {
   SourceId,
   SourceOrigin,
   Title,
-  TitleAuthor,
 };

@@ -10,11 +10,15 @@ import { Array, Context, Effect, FileSystem, Layer, Path, Ref, String, pipe } fr
 import { SecureRandom } from "effect/crypto";
 import { FetchHttpClient, HttpClient, HttpClientRequest } from "effect/http";
 
-import type { Instruction } from "#shared/agent";
+import type { Agent } from "#shared/agent";
 import { Settings } from "#shared/settings";
 
 import { fakeAgent } from "./fake-agent.test.support.ts";
 import { appLayer, platformLayer } from "./server-layer.ts";
+
+type Instruction = (typeof Agent.Service)["write"] extends (instruction: infer Given) => unknown
+  ? Given
+  : never;
 
 const ANY_PORT = 0;
 const REQUEST_ID = 1;

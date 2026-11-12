@@ -14,11 +14,6 @@ interface Untitled {
   readonly prose: readonly string[];
 }
 
-interface Target {
-  readonly id: string;
-  readonly paragraphId: string;
-}
-
 const AI_TITLE: typeof Title.Type.by = "ai";
 
 const textIn =
@@ -65,7 +60,10 @@ const annotations = Effect.fn("annotations")(function* annotations(id: string) {
 });
 
 /** @internal */
-const paragraphOf = Effect.fn("paragraphOf")(function* paragraphOf({ id, paragraphId }: Target) {
+const paragraphOf = Effect.fn("paragraphOf")(function* paragraphOf({
+  id,
+  paragraphId,
+}: Readonly<{ id: string; paragraphId: string }>) {
   const paragraphs = yield* readParagraphs(id);
   const paragraph = pipe(
     paragraphs,
@@ -76,7 +74,7 @@ const paragraphOf = Effect.fn("paragraphOf")(function* paragraphOf({ id, paragra
 
 /** @internal */
 const dismissRemark = Effect.fn("dismissRemark")(function* dismissRemark(
-  target: Target & { readonly rule: string },
+  target: Readonly<{ id: string; paragraphId: string }> & { readonly rule: string },
 ) {
   const paragraph = yield* paragraphOf(target);
   yield* dismiss({ text: paragraph.text, rule: target.rule });

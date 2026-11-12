@@ -1,4 +1,3 @@
-import type { Paragraph } from "@masseater.dev/yohaku-protocol";
 import type { ReactNode } from "react";
 
 import { useAutosave } from "#/pages/write/api/autosave.ts";
@@ -8,9 +7,7 @@ import { AppHeader } from "#/shared/ui";
 import { TitleField } from "./title-field.tsx";
 import { WritingColumns } from "./writing-columns.tsx";
 
-const Writing = ({
-  initial,
-}: Readonly<{ initial: readonly (typeof Paragraph.Type)[] }>): ReactNode => {
+const Writing = (): ReactNode => {
   useAutosave();
   useDrafts();
   return (
@@ -19,7 +16,7 @@ const Writing = ({
         <TitleField />
       </AppHeader>
       <main className="grow overflow-y-auto py-14">
-        <WritingColumns initial={initial} />
+        <WritingColumns />
       </main>
     </div>
   );

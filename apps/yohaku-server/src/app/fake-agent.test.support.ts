@@ -1,7 +1,10 @@
 import { Array, Effect, Layer, Option, Ref, Stream, String, pipe } from "effect";
 
 import { Agent } from "#shared/agent";
-import type { Instruction } from "#shared/agent";
+
+type Instruction = (typeof Agent.Service)["write"] extends (instruction: infer Given) => unknown
+  ? Given
+  : never;
 
 const DRAFT = ["彩葉の声に、", "かぐやの顔のまま振り向いてしまった。"] as const;
 const TITLE = "保管庫のアバター";

@@ -6,8 +6,8 @@ import { RpcServer } from "effect/rpc";
 
 import { databaseLayer } from "#shared/database";
 
-import { handlersLayer } from "./rpc-handlers.ts";
 import { mcpLayer } from "./mcp-layer.ts";
+import { handlersLayer } from "./rpc-handlers.ts";
 import { rpcTransportLayer } from "./transport.ts";
 import { understandingLayer } from "./understanding.ts";
 

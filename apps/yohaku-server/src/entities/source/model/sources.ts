@@ -6,14 +6,6 @@ import { SqlClient, SqlSchema } from "effect/sql";
 const NO_MANUSCRIPT = Option.getOrNull(Option.none<string>());
 const MANUSCRIPT_ORIGIN: typeof SourceOrigin.Type = "manuscript";
 
-interface NewSource {
-  readonly label: string;
-  readonly origin: typeof SourceOrigin.Type;
-  readonly client: string;
-  readonly manuscriptId: string | null;
-  readonly facts: readonly (typeof Fact.Type)[];
-}
-
 const SourceRow = Schema.Struct({
   id: Schema.String,
   label: Schema.String,
@@ -77,7 +69,15 @@ const listFacts = Effect.fn("listFacts")(function* listFacts() {
   return yield* selectFacts();
 });
 
-const insertSource = Effect.fn("insertSource")(function* insertSource(source: NewSource) {
+const insertSource = Effect.fn("insertSource")(function* insertSource(
+  source: Readonly<{
+    label: string;
+    origin: typeof SourceOrigin.Type;
+    client: string;
+    manuscriptId: string | null;
+    facts: readonly (typeof Fact.Type)[];
+  }>,
+) {
   const sql = yield* SqlClient.SqlClient;
   const random = yield* SecureRandom.SecureRandom;
   const now = yield* Clock.currentTimeMillis;
@@ -102,7 +102,15 @@ const insertSource = Effect.fn("insertSource")(function* insertSource(source: Ne
 });
 
 /** @internal */
-const addSource = Effect.fn("addSource")(function* addSource(source: NewSource) {
+const addSource = Effect.fn("addSource")(function* addSource(
+  source: Readonly<{
+    label: string;
+    origin: typeof SourceOrigin.Type;
+    client: string;
+    manuscriptId: string | null;
+    facts: readonly (typeof Fact.Type)[];
+  }>,
+) {
   const sql = yield* SqlClient.SqlClient;
   return yield* sql.withTransaction(insertSource(source));
 });
@@ -115,7 +123,13 @@ const revertSource = Effect.fn("revertSource")(function* revertSource(id: string
 
 /** @internal */
 const replaceManuscriptSource = Effect.fn("replaceManuscriptSource")(function* replace(
-  source: NewSource,
+  source: Readonly<{
+    label: string;
+    origin: typeof SourceOrigin.Type;
+    client: string;
+    manuscriptId: string | null;
+    facts: readonly (typeof Fact.Type)[];
+  }>,
 ) {
   const sql = yield* SqlClient.SqlClient;
   const swap = Effect.gen(function* swap() {
@@ -127,4 +141,3 @@ const replaceManuscriptSource = Effect.fn("replaceManuscriptSource")(function* r
 });
 
 export { NO_MANUSCRIPT, addSource, listFacts, listSources, replaceManuscriptSource, revertSource };
-export type { NewSource };

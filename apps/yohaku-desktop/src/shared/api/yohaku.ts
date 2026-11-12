@@ -7,41 +7,21 @@ import type {
 } from "@masseater.dev/yohaku-protocol";
 import type { Effect, Stream } from "effect";
 
-type ManuscriptType = typeof Manuscript.Type;
-type Paragraphs = readonly (typeof Paragraph.Type)[];
-
 interface Failure {
   readonly message: string;
 }
 
 interface Opened {
-  readonly manuscript: ManuscriptType;
-  readonly paragraphs: Paragraphs;
+  readonly manuscript: typeof Manuscript.Type;
+  readonly paragraphs: readonly (typeof Paragraph.Type)[];
 }
 
-interface Target {
+interface SpanTarget {
   readonly id: string;
   readonly paragraphId: string;
-}
-
-interface SpanTarget extends Target {
   readonly from: number;
   readonly to: number;
   readonly rule: string;
-}
-
-interface Dismissal extends Target {
-  readonly rule: string;
-}
-
-interface Saving {
-  readonly id: string;
-  readonly paragraphs: Paragraphs;
-}
-
-interface Titling {
-  readonly id: string;
-  readonly text: string;
 }
 
 interface Mcp {
@@ -49,34 +29,29 @@ interface Mcp {
   readonly token: string;
 }
 
-type Call<Value> = Effect.Effect<Value, Failure>;
-
 type Yohaku = Readonly<{
-  listManuscripts: () => Call<readonly ManuscriptType[]>;
-  createManuscript: () => Call<ManuscriptType>;
-  openManuscript: (id: string) => Call<Opened>;
-  saveParagraphs: (saving: Saving) => Call<void>;
-  setTitle: (titling: Titling) => Call<ManuscriptType>;
-  getAnnotations: (id: string) => Call<typeof Annotations.Type>;
-  draftFromMemo: (target: Target) => Stream.Stream<string, Failure>;
+  listManuscripts: () => Effect.Effect<readonly (typeof Manuscript.Type)[], Failure>;
+  createManuscript: () => Effect.Effect<typeof Manuscript.Type, Failure>;
+  openManuscript: (id: string) => Effect.Effect<Opened, Failure>;
+  saveParagraphs: (
+    saving: Readonly<{ id: string; paragraphs: Opened["paragraphs"] }>,
+  ) => Effect.Effect<void, Failure>;
+  setTitle: (
+    titling: Readonly<{ id: string; text: string }>,
+  ) => Effect.Effect<typeof Manuscript.Type, Failure>;
+  getAnnotations: (id: string) => Effect.Effect<typeof Annotations.Type, Failure>;
+  draftFromMemo: (
+    target: Readonly<{ id: string; paragraphId: string }>,
+  ) => Stream.Stream<string, Failure>;
   rewriteRemark: (target: SpanTarget) => Stream.Stream<string, Failure>;
-  dismissRemark: (dismissal: Dismissal) => Call<void>;
-  logReaction: (reaction: typeof Reaction.Type) => Call<void>;
-  listSources: () => Call<readonly (typeof Source.Type)[]>;
-  ingestText: (text: string) => Call<typeof Source.Type>;
-  revertSource: (id: string) => Call<void>;
-  getMcp: () => Call<Mcp>;
+  dismissRemark: (
+    dismissal: Readonly<{ id: string; paragraphId: string; rule: string }>,
+  ) => Effect.Effect<void, Failure>;
+  logReaction: (reaction: typeof Reaction.Type) => Effect.Effect<void, Failure>;
+  listSources: () => Effect.Effect<readonly (typeof Source.Type)[], Failure>;
+  ingestText: (text: string) => Effect.Effect<typeof Source.Type, Failure>;
+  revertSource: (id: string) => Effect.Effect<void, Failure>;
+  getMcp: () => Effect.Effect<Mcp, Failure>;
 }>;
 
-export type {
-  Dismissal,
-  Failure,
-  Mcp,
-  Opened,
-  Paragraphs,
-  Saving,
-  SpanTarget,
-  Target,
-  Titling,
-  Yohaku,
-};
+export type { Failure, Mcp, Opened, SpanTarget, Yohaku };

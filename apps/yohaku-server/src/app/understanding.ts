@@ -92,4 +92,3 @@ const understandingLayer = Layer.effect(
 );
 
 export { Understanding, contextFor, read, understandingLayer };
-export type { Reading };
