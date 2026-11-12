@@ -7,6 +7,7 @@ import { annotations, dismissRemark } from "./annotation-handlers.ts";
 import { manuscriptHandlers } from "./manuscript-handlers.ts";
 import { logReaction } from "./reactions.ts";
 import { sourceHandlers } from "./source-handlers.ts";
+import { syncHandlers } from "./sync-handlers.ts";
 import { writingHandlers } from "./writing-handlers.ts";
 
 const DISMISSED: typeof Reaction.Type = "remark-dismissed";
@@ -28,6 +29,7 @@ const handlersLayer = YohakuRpcs.toLayer(
     YohakuRpcs.of({
       ...manuscriptHandlers,
       ...sourceHandlers,
+      ...syncHandlers,
       ...writingHandlers,
       GetAnnotations: ({ id }) => failed(annotations(id)),
       DismissRemark: dismissed,

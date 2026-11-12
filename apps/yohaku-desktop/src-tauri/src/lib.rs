@@ -118,6 +118,7 @@ pub fn run() -> tauri::Result<()> {
                 show_main(app);
             },
         ))
+        .plugin(tauri_plugin_opener::init())
         .setup(setup)
         .build(tauri::generate_context!())?;
     app.run(|app, event| {

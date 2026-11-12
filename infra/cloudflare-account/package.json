@@ -10,7 +10,8 @@
     "./trace-destination": "./trace-destination.ts",
     "./traced-providers": "./traced-providers.ts",
     "./account-readers": "./account-readers.ts",
-    "./owner-access": "./owner-access.ts"
+    "./owner-access": "./owner-access.ts",
+    "./owner-site-run": "./owner-site-run.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
-    "@types/node": "catalog:"
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
   }
 }

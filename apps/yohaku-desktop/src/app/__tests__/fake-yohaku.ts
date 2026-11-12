@@ -4,6 +4,7 @@ import type {
   Paragraph,
   Reaction,
   Source,
+  SyncStatus,
 } from "@masseater.dev/yohaku-protocol";
 import { Array, Effect, Option, Record, Stream, String, pipe } from "effect";
 
@@ -21,6 +22,13 @@ const MCP_URL = "http://127.0.0.1:47210/mcp";
 const MCP_TOKEN = "token";
 const NEVER = 0;
 const INGESTED_FACTS = 2;
+const SYNCED_AT = 1_794_472_200_000;
+const SIGNED_OUT: typeof SyncStatus.Type = {
+  connected: false,
+  syncedAt: Option.getOrNull(Option.none<number>()),
+  pending: NEVER,
+  problem: Option.getOrNull(Option.none<string>()),
+};
 const NO_TITLE = Option.getOrNull(Option.none<ManuscriptType["title"]>());
 
 interface Calls {
@@ -33,6 +41,7 @@ interface Store {
   readonly manuscripts: Readonly<Record<string, ManuscriptType>>;
   readonly paragraphs: Readonly<Record<string, Paragraphs>>;
   readonly sources: readonly SourceType[];
+  readonly sync: typeof SyncStatus.Type;
 }
 
 interface Backing {
@@ -165,6 +174,17 @@ const sourceCalls = ({
   getMcp: () => Effect.succeed({ url: MCP_URL, token: MCP_TOKEN }),
 });
 
+const syncCalls = ({ read, write }: Backing): Pick<Yohaku, "beginSyncSignIn" | "syncStatus"> => ({
+  syncStatus: () => Effect.sync(() => read().sync),
+  beginSyncSignIn: () =>
+    Effect.sync(() => {
+      write((store) => ({
+        ...store,
+        sync: { ...store.sync, connected: true, syncedAt: SYNCED_AT },
+      }));
+    }),
+});
+
 const writingCalls = ({
   read,
   dismiss,
@@ -197,7 +217,12 @@ const fakeYohaku = (
   }>;
 }> => {
   const calls: Calls = { reactions: [], dismissed: [], saved: [] };
-  let store: Store = { manuscripts: Record.empty(), paragraphs: Record.empty(), sources };
+  let store: Store = {
+    manuscripts: Record.empty(),
+    paragraphs: Record.empty(),
+    sources,
+    sync: SIGNED_OUT,
+  };
   const backing: Backing = {
     read: () => store,
     write: (update) => {
@@ -215,7 +240,12 @@ const fakeYohaku = (
   };
   return {
     calls,
-    yohaku: { ...manuscriptCalls(backing), ...sourceCalls(backing), ...writingCalls(backing) },
+    yohaku: {
+      ...manuscriptCalls(backing),
+      ...sourceCalls(backing),
+      ...syncCalls(backing),
+      ...writingCalls(backing),
+    },
   };
 };
 

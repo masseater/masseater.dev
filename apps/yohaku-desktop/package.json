@@ -17,6 +17,7 @@
     "@masseater.dev/yohaku-protocol": "workspace:*",
     "@tanstack/react-query": "catalog:stack",
     "@tauri-apps/api": "catalog:",
+    "@tauri-apps/plugin-opener": "catalog:",
     "effect": "catalog:stack",
     "lucide-react": "catalog:",
     "react": "catalog:",

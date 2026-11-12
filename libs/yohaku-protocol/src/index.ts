@@ -25,4 +25,5 @@ export {
   Title,
 } from "./models.ts";
 export { MCP_PATH, MCP_PORT, SERVER_FLAGS } from "./server-flags.ts";
+export { SyncStatus } from "./sync.ts";
 export { YohakuRpcs } from "./yohaku-rpcs.ts";

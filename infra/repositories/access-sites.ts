@@ -2,6 +2,7 @@ const ACCESS_SITES = [
   "personal.masseater.dev",
   "kikite.masseater.dev",
   "translate.masseater.dev",
+  "yohaku.masseater.dev",
 ] as const;
 
 const ACCESS_TEAM_ORIGIN = "https://masseater.cloudflareaccess.com";
