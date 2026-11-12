@@ -2,6 +2,8 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 import { vi } from "vite-plus/test";
 
+import type { TokenScope } from "#/features/mcp/model/api-token.table";
+
 import { mintToken } from "./api-token-api.server";
 import { serveMemories } from "./conversation-api.server";
 import { readMemory } from "./memory-read.server";
@@ -54,7 +56,7 @@ const put =
       Effect.flatMap(replyOf),
     );
 
-const issued = (scope: "conversation:write" | "memory:write"): Effect.Effect<Issued> =>
+const issued = (scope: TokenScope): Effect.Effect<Issued> =>
   resetDatabase.pipe(Effect.andThen(mintToken({ scope, label: "test" })), Effect.orDie);
 
 const revisionsOf = (name: string): Effect.Effect<unknown> =>
