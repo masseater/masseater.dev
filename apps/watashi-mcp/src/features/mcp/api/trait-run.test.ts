@@ -4,7 +4,7 @@ import { Array as Arr, Effect, Option, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
 import { writeMemory } from "./memory-write.server";
-import { settle } from "./trait-build.test.support";
+import { pastBudget, settle } from "./trait-build.test.support";
 import { RECORD_TOOL, traitRegistry } from "./trait-pi";
 import { profileTraits } from "./trait-read.server";
 import { buildTraits } from "./trait-run.server";
@@ -113,6 +113,37 @@ it.effect("記録の呼び出しが無ければ失敗し、源を読んだ印を
     const retried = fake(() => [recorded]);
     const summary = yield* buildTraits({ conversation: retried.conversation, translator });
     expect(summary).toStrictEqual({ steps: ONCE, idle: true, translated: ONCE });
+  }),
+);
+
+const nothingFound = assistant([call({ observations: [] })]);
+
+const refusing = {
+  translate: (): Promise<Readonly<{ text: string }>> => Promise.reject(new Error("down")),
+};
+
+it.effect("作るのに時間を使い切っても、前の回に作った特性を先に訳す", () =>
+  Effect.gen(function* translatesBeforeBuilding() {
+    yield* setUp;
+    const first = fake(() => [recorded]);
+    yield* Effect.flip(buildTraits({ conversation: first.conversation, translator: refusing }));
+    yield* writeMemory({ actor: "test" })({
+      project: "assistant",
+      name: "terminal",
+      description: "端末",
+      content: "端末は Ghostty を使う",
+    });
+    yield* settle;
+    const services = yield* Effect.context();
+    const slow: Conversation = {
+      reset: () => Promise.resolve(),
+      prompt: () =>
+        Effect.runPromiseWith(services)(
+          pastBudget.pipe(Effect.as({ status: "done", messages: [nothingFound] })),
+        ),
+    };
+    const summary = yield* buildTraits({ conversation: slow, translator });
+    expect(summary).toStrictEqual({ steps: ONCE, idle: false, translated: ONCE });
   }),
 );
 
