@@ -85,10 +85,14 @@ const keepsLaterFindings = Effect.scoped(
       pipe(
         diagnostics,
         Arr.map((diagnostic) => [
-          Str.replace(
-            /: http 401: .* while/u,
-            ": http 401 while",
-          )(pipe(Str.split(diagnostic.message, "]"), Arr.take(ONE), Arr.join(""))),
+          pipe(
+            Str.split(
+              Str.replace(/: http 401: .* while/u, ": http 401 while")(diagnostic.message),
+              "]",
+            ),
+            Arr.take(ONE),
+            Arr.join(""),
+          ),
           firstSpan(diagnostic).line,
         ]),
       ),
