@@ -296,45 +296,6 @@ packageExtensions:
   safer-buffer@2.1.2:
     dependencies:
       buffer: ^6.0.3
-minimumReleaseAgeExclude:
-  - "@r_masseater/oxlint-typed-rules@0.3.0"
-  - "@r_masseater/vite-plus-adopt@0.3.2"
-  - "@alchemy.run/acme@2.0.0-beta.85"
-  - "@alchemy.run/cloudflare-runtime@2.0.0-beta.85"
-  - "@alchemy.run/cloudflare@2.0.0-beta.85"
-  - "@alchemy.run/docker@2.0.0-beta.85"
-  - "@alchemy.run/github@2.0.0-beta.85"
-  - "@alchemy.run/node-utils@2.0.0-beta.85"
-  - "@alchemy.run/sql@2.0.0-beta.85"
-  - "@distilled.cloud/acme@1.0.0-rc.18"
-  - "@distilled.cloud/aws4signer@1.0.0-rc.18"
-  - "@distilled.cloud/aws@1.0.0-rc.18"
-  - "@distilled.cloud/cloudflare@1.0.0-rc.18"
-  - "@distilled.cloud/core@1.0.0-rc.18"
-  - "@distilled.cloud/github@1.0.0-rc.18"
-  - "@distilled.cloud/iceberg@1.0.0-rc.18"
-  - alchemy@2.0.0-beta.85
-  - "@xyflow/react@12.12.1"
-  - "@xyflow/system@0.0.84"
-  - "@containerbase/base@14.66.11"
-  - "@renovatebot/base-image@13.161.7"
-  - "@tanstack/react-start-client@1.168.45"
-  - "@tanstack/react-start-rsc@0.1.66"
-  - "@tanstack/react-start@1.169.5"
-  - "@tanstack/router-generator@1.168.0"
-  - "@tanstack/router-plugin@1.169.0"
-  - "@tanstack/router-utils@1.163.0"
-  - "@tanstack/start-plugin-core@1.171.56"
-  - renovate@44.222.5
-  - "@anthropic-ai/claude-agent-sdk-darwin-arm64@0.3.322"
-  - "@anthropic-ai/claude-agent-sdk-darwin-x64@0.3.322"
-  - "@anthropic-ai/claude-agent-sdk-linux-arm64-musl@0.3.322"
-  - "@anthropic-ai/claude-agent-sdk-linux-arm64@0.3.322"
-  - "@anthropic-ai/claude-agent-sdk-linux-x64-musl@0.3.322"
-  - "@anthropic-ai/claude-agent-sdk-linux-x64@0.3.322"
-  - "@anthropic-ai/claude-agent-sdk-win32-arm64@0.3.322"
-  - "@anthropic-ai/claude-agent-sdk-win32-x64@0.3.322"
-  - "@anthropic-ai/claude-agent-sdk@0.3.322"
 audit:
   ignorePrune: true
   ignore:
