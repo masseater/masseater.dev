@@ -9,7 +9,8 @@
     "./log-archive": "./log-archive.ts",
     "./trace-destination": "./trace-destination.ts",
     "./traced-providers": "./traced-providers.ts",
-    "./account-readers": "./account-readers.ts"
+    "./account-readers": "./account-readers.ts",
+    "./owner-access": "./owner-access.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

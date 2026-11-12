@@ -17,9 +17,9 @@ import { listHistory } from "./history-store.server";
 import type { HistoryEntry } from "./history-store.server";
 import type { Body } from "./life-record";
 import { timeOut } from "./life-time";
-import { GLOBAL, TRAIT_PREFIX, isActive, keyText } from "./trait-state";
-import type { Evidence, TraitState } from "./trait-state";
-import { loadTraitVectors, loadTraits } from "./trait-store.server";
+import { GLOBAL, TRAIT_PREFIX, isActive, japaneseOf, keyText } from "./trait-state";
+import type { Evidence, JaRows, Japanese, TraitState } from "./trait-state";
+import { loadTraitJa, loadTraitVectors, loadTraits } from "./trait-store.server";
 import { relatedTo } from "./trait-vector";
 import type { Vector } from "./trait-vector";
 
@@ -54,19 +54,27 @@ const lastSeenOf = (trait: TraitState): Option.Option<string> =>
     Arr.last,
   );
 
-const summaryOf = (trait: TraitState): Body => ({
-  ref: keyText(trait.key),
-  store: STORE,
-  scope: trait.scope,
-  statement: trait.statement,
-  ...textField("why", trait.why),
-  supports: countOf("supports")(trait),
-  ...fieldOf(
-    "contradicts",
-    Option.liftPredicate(countOf("contradicts")(trait), (count) => count > NONE),
-  ),
-  ...fieldOf("lastSeen", pipe(lastSeenOf(trait), Option.map(timeOut))),
+const japaneseField = (japanese: Japanese): Body => ({
+  statement: japanese.statement,
+  ...textField("why", japanese.why),
 });
+
+const summaryOf =
+  (rows: JaRows) =>
+  (trait: TraitState): Body => ({
+    ref: keyText(trait.key),
+    store: STORE,
+    scope: trait.scope,
+    statement: trait.statement,
+    ...textField("why", trait.why),
+    ...fieldOf("ja", pipe(japaneseOf(rows)(trait), Option.map(japaneseField))),
+    supports: countOf("supports")(trait),
+    ...fieldOf(
+      "contradicts",
+      Option.liftPredicate(countOf("contradicts")(trait), (count) => count > NONE),
+    ),
+    ...fieldOf("lastSeen", pipe(lastSeenOf(trait), Option.map(timeOut))),
+  });
 
 const inScope =
   (scope: Option.Option<string>) =>
@@ -77,13 +85,13 @@ const inScope =
     });
 
 const ofKind =
-  (active: readonly TraitState[]) =>
+  (active: readonly TraitState[], rows: JaRows) =>
   (kind: TraitState["kind"]): readonly [string, readonly Body[]] => [
     kind,
     pipe(
       active,
       Arr.filter((trait) => trait.kind === kind),
-      Arr.map(summaryOf),
+      Arr.map(summaryOf(rows)),
     ),
   ];
 
@@ -97,10 +105,15 @@ const inTopic =
       onSome: (refs) => HashSet.has(refs, keyText(trait.key)),
     });
 
+type Loaded = Readonly<{
+  traits: readonly TraitState[];
+  rows: JaRows;
+  related: Option.Option<HashSet.HashSet<string>>;
+}>;
+
 const grouped = (
   { scope }: Wanted,
-  traits: readonly TraitState[],
-  related: Option.Option<HashSet.HashSet<string>>,
+  { traits, rows, related }: Loaded,
 ): Readonly<Record<string, readonly Body[]>> => {
   const active = pipe(
     traits,
@@ -111,7 +124,7 @@ const grouped = (
   );
   return pipe(
     TRAIT_KINDS,
-    Arr.map(ofKind(active)),
+    Arr.map(ofKind(active, rows)),
     Arr.filter(([, items]) => Arr.isReadonlyArrayNonEmpty(items)),
     Rec.fromEntries,
   );
@@ -134,8 +147,9 @@ const profileTraits = (
 ): Effect.Effect<Readonly<Record<string, readonly Body[]>>, StoreFailure> =>
   Effect.gen(function* traitsOfOwner() {
     const traits = yield* loadTraits;
+    const rows = yield* loadTraitJa;
     const related = yield* relatedOf(traits, wanted.topic);
-    return grouped(wanted, traits, related);
+    return grouped(wanted, { traits, rows, related });
   });
 
 const evidenceItem = (item: Evidence): Body => ({
@@ -172,9 +186,10 @@ const traitDetail = (ref: string): Effect.Effect<Body, StoreFailure> =>
     const trait = yield* Effect.fromOption(
       Arr.findFirst(traits, (item) => keyText(item.key) === ref),
     ).pipe(Effect.mapError(missing(ref)));
+    const rows = yield* loadTraitJa;
     const history = yield* listHistory({ entity: "owner_trait", id, limit: HISTORY_LIMIT });
     return {
-      ...summaryOf(trait),
+      ...summaryOf(rows)(trait),
       kind: trait.kind,
       status: trait.status,
       ...fieldOf("supersededBy", pipe(trait.supersededBy, Option.map(keyText))),

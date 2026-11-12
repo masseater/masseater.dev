@@ -13,6 +13,7 @@ const {
     "revision",
     "owner_trait",
     "owner_trait_evidence",
+    "owner_trait_ja",
     "owner_trait_vector",
     "trait_cursor",
     "conversation_chunk",

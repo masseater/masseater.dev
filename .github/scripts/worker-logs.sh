@@ -15,7 +15,7 @@ response="$(curl -sS -X POST \
   "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/observability/telemetry/query" \
   -d "$body")"
 jq -c '{ success, errors, count: (.result.events.events // [] | length) }' <<<"$response"
-jq -r '.result.events.events // [] | .[0] // {} | [paths(scalars) | map(tostring) | join(".")] | .[]' <<<"$response" | sed 's/^/key: /' | head -80
+jq -r '.result.events.events // [] | .[0] // {} | [paths(scalars) | map(tostring) | join(".")] | .[:80][] | "key: " + .' <<<"$response"
 jq -c '.result.events.events // [] | .[] | {
   t: .timestamp,
   level: .["$metadata"].level,

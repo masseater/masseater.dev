@@ -16,6 +16,7 @@
     "@earendil-works/pi-schema": "catalog:",
     "@masseater.dev/mcp-tool-call": "workspace:*",
     "@masseater.dev/owner-auth": "workspace:*",
+    "@masseater.dev/plamo-translate-protocol": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@masseater.dev/watashi-protocol": "workspace:*",
     "@modelcontextprotocol/server": "catalog:",

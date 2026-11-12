@@ -1,6 +1,11 @@
-import { Array as Arr, Option, pipe } from "effect";
+import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
-import type { Stance, TraitKind, TraitStatus } from "#/features/mcp/model/owner-trait.table";
+import type {
+  OwnerTraitJa,
+  Stance,
+  TraitKind,
+  TraitStatus,
+} from "#/features/mcp/model/owner-trait.table";
 import type { ObservationValue, TraitSourceValue } from "#/features/mcp/model/trait-analysis";
 
 type Evidence = Readonly<{
@@ -38,6 +43,10 @@ type Step = Readonly<{
   observations: readonly ObservationValue[];
 }>;
 
+type Japanese = Readonly<{ statement: string; why: string }>;
+
+type JaRows = Readonly<Record<string, OwnerTraitJa>>;
+
 const TRAIT_PREFIX = "owner_trait:";
 
 const GLOBAL = "global";
@@ -52,6 +61,25 @@ const keyText = (key: TraitKey): string => {
 };
 
 const isActive = (trait: TraitState): boolean => trait.status === "active";
+
+const idOf = (trait: TraitState): Option.Option<number> => {
+  if ("existing" in trait.key) {
+    return Option.some(trait.key.existing);
+  }
+  return Option.none();
+};
+
+const japaneseOf =
+  (rows: JaRows) =>
+  (trait: TraitState): Option.Option<Japanese> =>
+    pipe(
+      idOf(trait),
+      Option.flatMap((id) => Rec.get(rows, String(id))),
+      Option.filter(
+        (row) => row.sourceStatement === trait.statement && row.sourceWhy === trait.why,
+      ),
+      Option.map((row) => ({ statement: row.statement, why: row.why })),
+    );
 
 const isCreated = (trait: TraitState): boolean => "created" in trait.key;
 
@@ -101,8 +129,10 @@ const withEvidence =
 export {
   GLOBAL,
   TRAIT_PREFIX,
+  idOf,
   isActive,
   isCreated,
+  japaneseOf,
   keyText,
   traitRefOf,
   sameKey,
@@ -110,4 +140,15 @@ export {
   updateWhere,
   withEvidence,
 };
-export type { BatchSource, Candidates, Checked, Evidence, Plan, Step, TraitKey, TraitState };
+export type {
+  BatchSource,
+  Candidates,
+  Checked,
+  Evidence,
+  JaRows,
+  Japanese,
+  Plan,
+  Step,
+  TraitKey,
+  TraitState,
+};

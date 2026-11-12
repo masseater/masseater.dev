@@ -4,6 +4,7 @@ import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effec
 import {
   ownerTrait,
   ownerTraitEvidence,
+  ownerTraitJa,
   ownerTraitVector,
   traitCursor,
 } from "#/features/mcp/model/owner-trait.table";
@@ -17,7 +18,7 @@ import { db } from "#/shared/db/index.server";
 
 import { query } from "./storage.server";
 import { traitRefOf } from "./trait-state";
-import type { Evidence, TraitState } from "./trait-state";
+import type { Evidence, JaRows, TraitState } from "./trait-state";
 import type { Vector } from "./trait-vector";
 
 const ONE_ROW = 1;
@@ -97,4 +98,15 @@ const cursorOf = (origin: TraitOrigin): Effect.Effect<Option.Option<string>, Sto
     ),
   );
 
-export { cursorOf, loadTraitVectors, loadTraits };
+const loadTraitJa: Effect.Effect<JaRows, StorageFailed> = query(() =>
+  db.select().from(ownerTraitJa),
+).pipe(
+  Effect.map((rows) =>
+    pipe(
+      rows,
+      Rec.fromIterableBy((row) => String(row.traitId)),
+    ),
+  ),
+);
+
+export { cursorOf, loadTraitJa, loadTraitVectors, loadTraits };

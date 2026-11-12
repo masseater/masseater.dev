@@ -46,6 +46,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "masseater.dev/zone": "transforms",
   "masseater.dev/mcp-portal": "access",
   "masseater.dev/personal-mcp": "access",
+  "masseater.dev/plamo-translate": "access",
   mirucord: "deploy",
   msa: "deploy",
   "personal-space": "access",

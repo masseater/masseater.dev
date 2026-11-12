@@ -1,4 +1,5 @@
-import { Access, Containers, SecretsStore, Workers } from "@alchemy.run/cloudflare";
+import { Containers, SecretsStore, Workers } from "@alchemy.run/cloudflare";
+import { ownerAccess } from "@masseater.dev/cloudflare-account/owner-access";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
@@ -7,14 +8,8 @@ import { Effect, FileSystem, Schema } from "effect";
 import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
 import { HOST, INTERVIEWER_IMAGE } from "./kikite.ts";
 
-const { Application: defineApplication } = Access;
-
 const PROD = "prod";
-const SESSION_DURATION = "720h";
-const ACCESS_TOKEN_LIFETIME = "15m";
-const BROKER_CALLBACK = "https://credentials.masseater.dev/access-oauth/callback";
 
-const personalSpace = { stack: "mydecklist", stage: PROD };
 const broker = { stack: "masseater-dev-credential-broker", stage: PROD };
 
 const SdkPackage = Schema.fromJsonString(Schema.Struct({ version: Schema.String }));
@@ -48,36 +43,11 @@ const InterviewerImage = Containers.Container(
   }),
 );
 
-const ownerOnly = Effect.gen(function* ownerOnly() {
-  const owner = yield* Access.Policy.ref("OwnerPolicy", personalSpace);
-  const google = yield* Access.IdentityProvider.ref("Google", personalSpace);
-  yield* defineApplication("KikiteAccess", {
-    name: `${PREFIX}access`,
-    type: "self_hosted",
-    domain: HOST,
-    destinations: [{ type: "public", uri: HOST }],
-    sessionDuration: SESSION_DURATION,
-    allowedIdps: [google.identityProviderId],
-    autoRedirectToIdentity: true,
-    policies: [owner],
-    oauthConfiguration: {
-      enabled: true,
-      grant: { sessionDuration: SESSION_DURATION, accessTokenLifetime: ACCESS_TOKEN_LIFETIME },
-      dynamicClientRegistration: {
-        enabled: true,
-        allowedUris: [BROKER_CALLBACK],
-        allowAnyOnLocalhost: false,
-        allowAnyOnLoopback: false,
-      },
-    },
-  });
-});
-
 export default Stack(
   APP_NAME,
   tracedStackProps,
   Effect.gen(function* stack() {
-    yield* ownerOnly;
+    yield* ownerAccess({ id: "KikiteAccess", name: `${PREFIX}access`, host: HOST });
     const CLAUDE_CODE_OAUTH_TOKEN = yield* SecretsStore.Secret.ref(
       "CiClaudeCodeOauthToken",
       broker,
