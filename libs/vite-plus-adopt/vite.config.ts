@@ -111,7 +111,7 @@ const builtAttw = {
 };
 
 export default defineConfig({
-  msch: { publish: true },
+  msch: { publish: { installSize: "75 MB" } },
   tsconfig: "tsconfig.json",
   plugins: [attwUpstream, typescriptShim],
   pack: {

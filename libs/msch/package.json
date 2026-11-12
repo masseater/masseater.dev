@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/msch",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "masseater's check policy: points every finite value set and object shape at its one owner, and ships the oxlint preset of plugins and rules.",
   "keywords": [
     "lint",
@@ -65,29 +65,32 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@effect/platform-node": "catalog:",
     "@effect/platform-node-shared": "catalog:",
-    "@effect/tsgo": "catalog:stack",
     "@html-eslint/eslint-plugin-react": "catalog:",
     "@r_masseater/oxlint-plugin-decision": "workspace:*",
     "@r_masseater/oxlint-typed-rules": "catalog:",
     "@shadcn/lint": "catalog:",
-    "effect": "catalog:stack",
     "eslint-plugin-baseline-js": "catalog:",
     "eslint-plugin-no-comments": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
     "oxlint-plugin-eslint": "catalog:",
-    "typescript": "catalog:stack",
     "yaml": "catalog:"
   },
   "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "@effect/tsgo": "catalog:stack",
     "@effect/vitest": "catalog:",
     "@r_masseater/vitest-otlp": "workspace:*",
     "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {
+    "@effect/tsgo": ">=0.67.5",
+    "effect": "^4.1.2",
+    "typescript": ">=7.1.0-beta",
     "vite": "*",
     "vite-plus": ">=1.5.0"
   },

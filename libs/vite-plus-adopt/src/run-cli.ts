@@ -1,10 +1,10 @@
-import { runMain } from "@effect/platform-node/NodeRuntime";
-import { layer as nodeServicesLayer } from "@effect/platform-node/NodeServices";
-import { Cause, Effect, Option, Schema, pipe } from "effect";
+import { runMain } from "@effect/platform-node-shared/NodeRuntime";
+import { Cause, Effect, Layer, Option, Schema, pipe } from "effect";
 import type { Stdio } from "effect";
 
 import type { CommandServices } from "./command.ts";
 import { VpToolsError } from "./errors.ts";
+import { nodeServicesLayer } from "./node-services.ts";
 import { writeTo } from "./output.ts";
 
 const reportFailure = <Failure>(
@@ -22,9 +22,12 @@ const reportFailure = <Failure>(
 };
 
 const runCli = <Failure>(program: Effect.Effect<void, Failure, CommandServices>): void => {
-  runMain(program.pipe(Effect.tapCause(reportFailure), Effect.provide(nodeServicesLayer)), {
-    disableErrorReporting: true,
-  });
+  const reported = program.pipe(Effect.tapCause(reportFailure));
+  const main = Layer.build(nodeServicesLayer).pipe(
+    Effect.flatMap((services) => Effect.provideContext(reported, services)),
+    Effect.scoped,
+  );
+  runMain(main, { disableErrorReporting: true });
 };
 
 /** @internal */

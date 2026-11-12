@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/vite-plus-adopt",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "Adopt Betterleaks, actionlint, zizmor, commitlint, textlint, Steiger and dependency checks into Vite+ through the settings in vite.config.ts, and ship the Feature-Sliced Design Steiger plugin and @arethetypeswrong/core for TypeScript 7.",
   "keywords": [
     "actionlint",
@@ -65,12 +65,11 @@
     "@commitlint/lint": "catalog:",
     "@commitlint/load": "catalog:",
     "@commitlint/types": "catalog:",
-    "@effect/platform-node": "catalog:",
+    "@effect/platform-node-shared": "catalog:",
     "@loaderkit/resolve": "catalog:",
     "@textlint/config-loader": "catalog:",
     "@textlint/kernel": "catalog:",
     "cjs-module-lexer": "catalog:",
-    "effect": "catalog:stack",
     "fastest-levenshtein": "catalog:",
     "fflate": "catalog:",
     "markdownlint": "catalog:",
@@ -81,23 +80,27 @@
     "steiger": "catalog:",
     "textlint": "catalog:",
     "tsconfck": "catalog:",
-    "typescript": "catalog:stack",
     "validate-npm-package-name": "catalog:",
     "web-tree-sitter": "catalog:",
     "yaml": "catalog:"
   },
   "devDependencies": {
+    "@effect/platform-node": "catalog:",
     "@effect/vitest": "catalog:",
     "@feature-sliced/filesystem": "catalog:",
     "@feature-sliced/steiger-plugin": "catalog:",
     "@size-limit/file": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
+    "effect": "catalog:stack",
     "size-limit": "catalog:",
+    "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {
+    "effect": "^4.1.2",
+    "typescript": ">=7.1.0-beta",
     "vite": "*",
     "vite-plus": ">=1.5.0"
   },
@@ -109,7 +112,7 @@
         "!dist/fsd.mjs",
         "!dist/attw.mjs"
       ],
-      "limit": "10712 B"
+      "limit": "10826 B"
     },
     {
       "name": "fsd",

@@ -2,7 +2,7 @@ import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
-  msch: { publish: true },
+  msch: { publish: { installSize: "111 MB" } },
   plugins: [otlp()],
   resolve: {
     dedupe: ["vitest"],

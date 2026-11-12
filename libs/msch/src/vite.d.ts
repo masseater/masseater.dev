@@ -1,5 +1,11 @@
+type InstallSize = `${number} ${"B" | "kB" | "MB"}`;
+
+interface PublishSettings {
+  readonly installSize: InstallSize;
+}
+
 interface MschConfig {
-  readonly publish?: boolean;
+  readonly publish?: PublishSettings;
 }
 
 declare module "vite" {
@@ -8,4 +14,4 @@ declare module "vite" {
   }
 }
 
-export type { MschConfig };
+export type { InstallSize, MschConfig, PublishSettings };
