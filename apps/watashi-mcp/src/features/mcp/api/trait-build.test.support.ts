@@ -23,6 +23,10 @@ const forgetRequests = Effect.sync(() => {
 
 const settle = TestClock.adjust(SETTLED);
 
+const PAST_BUDGET = "11 minutes";
+
+const pastBudget = TestClock.adjust(PAST_BUDGET);
+
 const step = (respond: Respond): Effect.Effect<StepOutcome, StepFailure> =>
   buildStep.pipe(
     Effect.provideService(
@@ -71,5 +75,16 @@ const sourcesOf = (outcomes: readonly StepOutcome[]): readonly number[] =>
 
 const requestAt = (index: number): Option.Option<AnalysisRequestValue> => Arr.get(requests, index);
 
-export { drain, forgetRequests, nothing, requestAt, requests, settle, sourceWith, sourcesOf, step };
+export {
+  drain,
+  forgetRequests,
+  nothing,
+  requestAt,
+  requests,
+  pastBudget,
+  settle,
+  sourceWith,
+  sourcesOf,
+  step,
+};
 export type { Respond };
