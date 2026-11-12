@@ -16,7 +16,12 @@ export default Stack(
   APP_NAME,
   tracedStackProps,
   Effect.gen(function* stack() {
-    yield* ownerAccess({ id: "TranslateAccess", name: `${PREFIX}access`, host: HOST });
+    yield* ownerAccess({
+      id: "TranslateAccess",
+      name: `${PREFIX}access`,
+      host: HOST,
+      loopbackClients: false,
+    });
     const { url } = yield* Workers.Worker("Translate", {
       name: `${PREFIX}worker`,
       main: "./translator.worker.ts",

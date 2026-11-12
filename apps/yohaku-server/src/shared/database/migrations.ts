@@ -1,6 +1,8 @@
 import { Effect } from "effect";
 import { SqlClient } from "effect/sql";
 
+import { sync } from "./sync-migration.ts";
+
 const manuscripts = Effect.gen(function* manuscripts() {
   const sql = yield* SqlClient.SqlClient;
   yield* sql`create table manuscripts (
@@ -61,4 +63,5 @@ const reactions = Effect.gen(function* reactions() {
 /** @internal */
 export const migrations = {
   "1_init": Effect.all([manuscripts, understanding, reactions], { discard: true }),
+  "2_sync": sync,
 };

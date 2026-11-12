@@ -1,0 +1,24 @@
+{
+  "name": "yohaku-sync",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@masseater.dev/yohaku-protocol": "workspace:*",
+    "@r_masseater/workers-tracing": "workspace:*",
+    "drizzle-orm": "catalog:stack",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/cloudflare-account": "workspace:*",
+    "@masseater.dev/d1-test": "workspace:*",
+    "@types/node": "catalog:",
+    "alchemy": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

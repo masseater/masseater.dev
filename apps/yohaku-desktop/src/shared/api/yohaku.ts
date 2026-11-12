@@ -4,6 +4,7 @@ import type {
   Paragraph,
   Reaction,
   Source,
+  SyncStatus,
 } from "@masseater.dev/yohaku-protocol";
 import type { Effect, Stream } from "effect";
 
@@ -52,6 +53,8 @@ type Yohaku = Readonly<{
   ingestText: (text: string) => Effect.Effect<typeof Source.Type, Failure>;
   revertSource: (id: string) => Effect.Effect<void, Failure>;
   getMcp: () => Effect.Effect<Mcp, Failure>;
+  syncStatus: () => Effect.Effect<typeof SyncStatus.Type, Failure>;
+  beginSyncSignIn: () => Effect.Effect<void, Failure>;
 }>;
 
 export type { Failure, Mcp, Opened, SpanTarget, Yohaku };

@@ -47,7 +47,12 @@ export default Stack(
   APP_NAME,
   tracedStackProps,
   Effect.gen(function* stack() {
-    yield* ownerAccess({ id: "KikiteAccess", name: `${PREFIX}access`, host: HOST });
+    yield* ownerAccess({
+      id: "KikiteAccess",
+      name: `${PREFIX}access`,
+      host: HOST,
+      loopbackClients: false,
+    });
     const CLAUDE_CODE_OAUTH_TOKEN = yield* SecretsStore.Secret.ref(
       "CiClaudeCodeOauthToken",
       broker,
