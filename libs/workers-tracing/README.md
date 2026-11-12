@@ -228,6 +228,14 @@ Logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/
 then named after it, as `<destination>-sink`, unless you also pass `workerName`.
 `logpush: true` also sends the sink's logs through Logpush.
 
+The CLI reads the spans through the Cloudflare API and runs on Node.js. Only the
+CLI needs `@distilled.cloud/cloudflare` and `@effect/platform-node`, so add them
+to the project that runs it.
+
+```sh
+vp add -D @distilled.cloud/cloudflare @effect/platform-node
+```
+
 After each deploy, run the CLI. It sends a GET request to the URL and waits up
 to `--wait` seconds for its trace. Then it prints the trace as the tree at the
 top. It fails unless every span named with `--expect` arrived. Without `--wait`

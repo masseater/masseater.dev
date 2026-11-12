@@ -1,4 +1,3 @@
-import type { DecisionsChoiceAnswer } from "@openrouter/sdk/models";
 import { Option, Result, Schema, Record as Rec, Function as Fn } from "effect";
 
 import { Probability, RuleAnswerSchema } from "./schema.ts";
@@ -44,7 +43,7 @@ const ChoiceAnswerSchema = Schema.Struct({
   type: Schema.Literal("choice"),
   choice: Schema.String,
   probabilities: Schema.optional(Schema.Record(Schema.String, Probability)),
-} satisfies Partial<Record<keyof DecisionsChoiceAnswer, Schema.Top>>);
+} satisfies Partial<Record<keyof ChoiceAnswer, Schema.Top>>);
 
 const AnswerSchema = Schema.Union([NoulAnswerSchema, ChoiceAnswerSchema]);
 

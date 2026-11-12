@@ -405,7 +405,7 @@ Each file gets one request per model, with every match for that model in it. Res
 
 Answers are cached under `node_modules/.cache/oxlint-plugin-decision`, keyed by the endpoint and the request. Changing a snippet, its context, a question or an answer kind re-asks that file. Changing a cutoff or an `id` does not. Malformed answers are never cached, and malformed entries already on disk are asked again. See [Cost and caching](#cost-and-caching) for how to keep the cost down.
 
-Requests go through the official [`@openrouter/sdk`](https://www.npmjs.com/package/@openrouter/sdk) client, which retries rate limits and server errors within `timeoutMs`.
+Requests go through Effect's [`@effect/ai-openrouter`](https://www.npmjs.com/package/@effect/ai-openrouter) client, which retries rate limits and server errors within `timeoutMs`.
 
 A model may not be reachable, because the key is missing, the request times out or the API errors. Then the plugin prints one warning and reports nothing for that model on that file. Under CI the run fails instead, unless `ci` is `"skip"`.
 

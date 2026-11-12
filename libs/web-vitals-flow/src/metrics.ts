@@ -141,11 +141,35 @@ const tableOf = (steps: readonly StepVitals[]): string =>
     Array.join("\n"),
   );
 
+const unclickableOf = (transitions: readonly string[]): readonly string[] =>
+  Array.match(Array.dedupe(transitions), {
+    onEmpty: () => [],
+    onNonEmpty: (skipped) => [
+      "Not measured: no clickable link",
+      ...pipe(
+        skipped,
+        Array.map((transition) => `  ${transition}`),
+      ),
+    ],
+  });
+
 const summarize = (
-  flows: readonly FlowResult[],
+  flows: readonly { readonly result: FlowResult; readonly unclickable: readonly string[] }[],
 ): { readonly table: string; readonly failures: readonly string[] } => {
-  const steps = medianVitalsOf(flows);
-  return { table: tableOf(steps), failures: failuresOf(steps) };
+  const steps = medianVitalsOf(
+    pipe(
+      flows,
+      Array.map(({ result }) => result),
+    ),
+  );
+  const unclickable = pipe(
+    flows,
+    Array.flatMap((flow) => flow.unclickable),
+  );
+  return {
+    table: pipe([tableOf(steps), ...unclickableOf(unclickable)], Array.join("\n")),
+    failures: failuresOf(steps),
+  };
 };
 
 export { summarize };

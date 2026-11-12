@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/workers-tracing",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Put Effect spans, TanStack Start requests and server functions, and Elysia routes into the automatic traces of Cloudflare Workers, nested with the platform's own D1, KV and fetch spans.",
   "keywords": [
     "cloudflare-workers",
@@ -104,13 +104,11 @@
   "scripts": {
     "prepublishOnly": "node -e \"if (!process.env.npm_config_user_agent?.startsWith('pnpm/')) { console.error('npm publish leaves catalog: in dependencies. Publish the tarball from vp pm pack instead.'); process.exit(1) }\" && vp run build"
   },
-  "dependencies": {
-    "@distilled.cloud/cloudflare": "catalog:stack",
-    "@effect/platform-node": "catalog:"
-  },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
+    "@distilled.cloud/cloudflare": "catalog:stack",
+    "@effect/platform-node": "catalog:",
     "@r_masseater/vite-plus-adopt": "catalog:",
     "@r_masseater/vitest-otlp": "workspace:*",
     "@tanstack/react-start": "catalog:stack",
@@ -126,6 +124,8 @@
   },
   "peerDependencies": {
     "@alchemy.run/cloudflare": "^2.0.0-beta.85",
+    "@distilled.cloud/cloudflare": "^1.0.0-rc.18",
+    "@effect/platform-node": "^4.1.2",
     "@tanstack/react-start": "^1.169.4",
     "alchemy": "^2.0.0-beta.85",
     "effect": "^4.1.2",
@@ -133,6 +133,12 @@
   },
   "peerDependenciesMeta": {
     "@alchemy.run/cloudflare": {
+      "optional": true
+    },
+    "@distilled.cloud/cloudflare": {
+      "optional": true
+    },
+    "@effect/platform-node": {
       "optional": true
     },
     "@tanstack/react-start": {
