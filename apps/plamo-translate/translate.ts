@@ -1,3 +1,4 @@
+import type { TranslateRequestValue } from "@masseater.dev/plamo-translate-protocol";
 import { Array as Arr, Effect, Option } from "effect";
 
 import { split } from "./chunk.ts";
@@ -5,7 +6,6 @@ import type { Part } from "./chunk.ts";
 import { CHUNK_CHARACTERS, MAX_TOKENS, SPARE_TOKENS, TOKENS_PER_CHARACTER } from "./config.ts";
 import { promptOf } from "./prompt.ts";
 import type { Direction, Pair } from "./prompt.ts";
-import type { TranslateRequestValue } from "./request.ts";
 
 type Complete<Failure> = (
   request: Readonly<{ prompt: string; maxTokens: number }>,

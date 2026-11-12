@@ -1,3 +1,5 @@
+import { TranslateRequest } from "@masseater.dev/plamo-translate-protocol";
+import type { TranslateResultValue, TranslatorRpc } from "@masseater.dev/plamo-translate-protocol";
 import { WorkerEntrypoint, env } from "cloudflare:workers";
 import { Effect, Schema } from "effect";
 
@@ -6,22 +8,20 @@ import { down } from "./model-down.ts";
 import type { ModelDown } from "./model-down.ts";
 import { TEMPERATURE } from "./plamo-model.ts";
 import type { Asked } from "./plamo-model.ts";
-import { TranslateRequest } from "./request.ts";
-import type { TranslateResultValue } from "./request.ts";
 import { runLogged } from "./run.ts";
 import { translateWith } from "./translate.ts";
+import type { PlamoModel } from "./translator.worker.ts";
 
 const OK = 200;
 const BAD_REQUEST = 400;
-const NOT_FOUND = 404;
 const BAD_GATEWAY = 502;
-const TRANSLATE_PATH = "/translate";
-const ATTRIBUTION = "Built with PLaMo";
+
+const model = (): DurableObjectStub<PlamoModel> => env.MODEL.getByName(MODEL_NAME);
 
 const textCompletion = ({ prompt, maxTokens }: Asked): Effect.Effect<string, ModelDown> =>
   Effect.gen(function* completeText() {
     const completion = yield* Effect.tryPromise({
-      try: () => env.MODEL.getByName(MODEL_NAME).complete({ prompt, maxTokens }),
+      try: () => model().complete({ prompt, maxTokens }),
       catch: down,
     });
     yield* Effect.annotateCurrentSpan({
@@ -50,7 +50,7 @@ const translate = Effect.fn("plamo.translate")(function* translate(input: unknow
   return result;
 });
 
-class Translator extends WorkerEntrypoint {
+class Translator extends WorkerEntrypoint implements TranslatorRpc {
   public translate(input: unknown): Promise<TranslateResultValue> {
     return runLogged(translate(input).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })));
   }
@@ -74,19 +74,4 @@ const answer = (read: () => Promise<unknown>): Effect.Effect<Response> =>
     }),
   );
 
-const worker = {
-  fetch: (request: Request): Promise<Response> => {
-    const { pathname } = new URL(request.url);
-    if (request.method === "POST" && pathname === TRANSLATE_PATH) {
-      return runLogged(answer(() => request.json()));
-    }
-    if (request.method === "GET" && pathname === "/") {
-      return Promise.resolve(new Response(ATTRIBUTION));
-    }
-    return Promise.resolve(new Response("Not Found", { status: NOT_FOUND }));
-  },
-} satisfies ExportedHandler;
-
-export { PlamoModel } from "./plamo-model.ts";
-export { Translator };
-export default worker;
+export { Translator, answer };

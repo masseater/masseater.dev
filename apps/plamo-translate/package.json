@@ -1,13 +1,10 @@
 {
-  "name": "@masseater.dev/plamo-translate",
+  "name": "plamo-translate",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "exports": {
-    "./request": "./request.ts",
-    "./translator.worker": "./translator.worker.ts"
-  },
   "dependencies": {
+    "@masseater.dev/plamo-translate-protocol": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "effect": "catalog:stack"
   },

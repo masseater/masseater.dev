@@ -262,8 +262,8 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - run: vp exec --filter @masseater.dev/plamo-translate alchemy deploy --stage prod --yes
-      - run: vp run --filter @masseater.dev/plamo-translate access-check
+      - run: vp exec --filter plamo-translate alchemy deploy --stage prod --yes
+      - run: vp run --filter plamo-translate access-check
 
   medley-manager:
     needs: deploy

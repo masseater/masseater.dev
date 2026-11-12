@@ -7,7 +7,7 @@ import {
 } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
-import type { Translator } from "@masseater.dev/plamo-translate/translator.worker";
+import type { TranslatorRpc } from "@masseater.dev/plamo-translate-protocol";
 import type {
   AccessOAuth,
   SloppediaGitHub,
@@ -88,7 +88,7 @@ const upstreams = Effect.gen(function* upstreams() {
     SLOPPEDIA_GITHUB: Workers.WorkerEntrypoint<SloppediaGitHub>(broker, "SloppediaGitHub"),
     ACCESS_OAUTH: Workers.WorkerEntrypoint<AccessOAuth>(broker, "AccessOAuth"),
     WEB_ANALYTICS_TOKEN: Workers.WorkerEntrypoint(webAnalyticsToken),
-    TRANSLATOR: Workers.WorkerEntrypoint<Translator>(translate, "Translator"),
+    TRANSLATOR: Workers.WorkerEntrypoint<TranslatorRpc>(translate, "Translator"),
   };
 });
 

@@ -1,7 +1,7 @@
 import type { Caller, UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { failedAt, NO_PROJECT } from "@masseater.dev/mcp-tool-call";
-import { TranslateRequest } from "@masseater.dev/plamo-translate/request";
-import type { TranslateRequestValue } from "@masseater.dev/plamo-translate/request";
+import { TranslateRequest } from "@masseater.dev/plamo-translate-protocol";
+import type { TranslateRequestValue } from "@masseater.dev/plamo-translate-protocol";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { env } from "cloudflare:workers";
 import { Effect, Schema } from "effect";

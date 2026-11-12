@@ -114,4 +114,4 @@ const buildTraits = ({
   );
 
 export { buildTraits };
-export type { Answer, Conversation, RunSummary };
+export type { Answer, BuildSummary, Conversation, RunSummary };

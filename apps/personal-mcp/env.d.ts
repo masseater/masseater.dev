@@ -1,4 +1,4 @@
-import type { Translator } from "@masseater.dev/plamo-translate/translator.worker";
+import type { TranslatorRpc } from "@masseater.dev/plamo-translate-protocol";
 import type {
   AccessOAuth,
   SloppediaGitHub,
@@ -14,7 +14,7 @@ type BoundEnv = Omit<
     SLIDE_INDEX: VectorizeIndex;
     SLOPPEDIA_GITHUB: Service<SloppediaGitHub>;
     ACCESS_OAUTH: Service<AccessOAuth>;
-    TRANSLATOR: Service<Translator>;
+    TRANSLATOR: Service<TranslatorRpc>;
   }>;
 
 declare module "cloudflare:workers" {

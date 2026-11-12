@@ -2,7 +2,7 @@ import { AnalyticsEngine, D1, R2, Workers } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { authSite } from "@masseater.dev/cloudflare-account/auth-site";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
-import type { Translator } from "@masseater.dev/plamo-translate/translator.worker";
+import type { TranslatorRpc } from "@masseater.dev/plamo-translate-protocol";
 import { Stack } from "alchemy";
 import { Effect, Option } from "effect";
 
@@ -36,7 +36,7 @@ const web = Effect.gen(function* web() {
       CONVERSATIONS,
       AI: Workers.AI(),
       TRAIT_BUILDER: Workers.DurableObject("TraitBuilder"),
-      TRANSLATOR: Workers.WorkerEntrypoint<Translator>(translate, "Translator"),
+      TRANSLATOR: Workers.WorkerEntrypoint<TranslatorRpc>(translate, "Translator"),
     },
   });
   return yield* authSite({

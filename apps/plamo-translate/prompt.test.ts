@@ -1,8 +1,8 @@
 import { describe, expect, it } from "@effect/vitest";
+import { TranslateRequest } from "@masseater.dev/plamo-translate-protocol";
 import { Array as Arr, Option, Result, Schema } from "effect";
 
 import { promptOf } from "./prompt.ts";
-import { TranslateRequest } from "./request.ts";
 
 const decode = Schema.decodeUnknownResult(TranslateRequest);
 

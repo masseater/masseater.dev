@@ -3,7 +3,7 @@ import { failedAt } from "@masseater.dev/mcp-tool-call";
 import type {
   TranslateRequestValue,
   TranslateResultValue,
-} from "@masseater.dev/plamo-translate/request";
+} from "@masseater.dev/plamo-translate-protocol";
 import { Context, Effect } from "effect";
 
 type TranslatorBinding = Readonly<{

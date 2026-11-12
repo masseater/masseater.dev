@@ -1,13 +1,10 @@
-import { DurableObject } from "cloudflare:workers";
 import { Duration, Effect, Option, Schedule, Schema } from "effect";
 
 import { Completion } from "./completion.ts";
-import type { CompletionValue } from "./completion.ts";
 import { MODEL_IDLE, MODEL_IMAGE, MODEL_INSTANCE, MODEL_PORT, MODEL_STARTUP } from "./config.ts";
 import { down } from "./model-down.ts";
 import type { ModelDown } from "./model-down.ts";
 import { STOP } from "./prompt.ts";
-import { runLogged } from "./run.ts";
 
 type Asked = Readonly<{ prompt: string; maxTokens: number }>;
 
@@ -89,13 +86,5 @@ const complete = Effect.fn("plamo.complete")(function* complete(
   return yield* decodeCompletion(answer).pipe(Effect.mapError(down));
 });
 
-class PlamoModel extends DurableObject {
-  public complete(asked: Asked): Promise<CompletionValue> {
-    return runLogged(
-      containerOf(this.ctx).pipe(Effect.flatMap((container) => complete(container, asked))),
-    );
-  }
-}
-
-export { PlamoModel, TEMPERATURE };
+export { TEMPERATURE, complete, containerOf };
 export type { Asked };

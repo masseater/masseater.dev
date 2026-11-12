@@ -1,6 +1,5 @@
+import type { TranslateRequestValue } from "@masseater.dev/plamo-translate-protocol";
 import { Array as Arr, Option, pipe } from "effect";
-
-import type { TranslateRequestValue } from "./request.ts";
 
 type Direction = Omit<TranslateRequestValue, "text">;
 
