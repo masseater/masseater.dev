@@ -84,7 +84,9 @@ const applyOne = Effect.fn("applyOne")(function* applyOne(document: Stored) {
 });
 
 /** @internal */
-const applyRemote = Effect.fn("applyRemote")(function* applyRemote(documents: readonly Stored[]) {
+const applyRemote = Effect.fn("applyRemote")(function* applyRemote(
+  documents: readonly (typeof StoredDocument.Type)[],
+) {
   const sql = yield* SqlClient.SqlClient;
   const applying = Effect.gen(function* applying() {
     yield* sql`insert into sync_applying (flag) values (1)`;
