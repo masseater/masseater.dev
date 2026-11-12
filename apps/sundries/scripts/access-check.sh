@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-origin="https://personal-mcp.masseater.dev"
+origin="https://sundries.masseater.dev"
 
 status() {
   curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$@"

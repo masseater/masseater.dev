@@ -1,6 +1,6 @@
 import { appNamed } from "@masseater.dev/alchemy-app-name";
 
-const APP_NAME = "masseater-dev-personal-mcp";
+const APP_NAME = "masseater-dev-sundries";
 
 const { prefix: PREFIX, requireAppPrefix } = appNamed(APP_NAME);
 

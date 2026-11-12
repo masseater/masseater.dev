@@ -11,7 +11,7 @@ type Signer = Readonly<{ sign: (claims: Claims) => Promise<string>; keys: JWTVer
 
 const ACCESS_HEADER = "cf-access-jwt-assertion";
 const TEAM = "team.cloudflareaccess.com";
-const AUDIENCE = "aud-personal-mcp";
+const AUDIENCE = "aud-sundries";
 const KEY_ID = "key-1";
 const ALGORITHM = "RS256";
 
@@ -36,7 +36,7 @@ const signer = Effect.promise(() => generateKeyPair(ALGORITHM)).pipe(
 );
 
 const requestWith = (token: Option.Option<string>): Request =>
-  new Request("https://personal-mcp.masseater.dev/mcp", {
+  new Request("https://sundries.masseater.dev/mcp", {
     method: "POST",
     headers: Option.match(token, {
       onNone: () => ({}),
