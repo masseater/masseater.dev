@@ -4,8 +4,8 @@ import type { Scope } from "effect";
 import { createRoot } from "react-dom/client";
 import type { Root } from "react-dom/client";
 
-import { Providers } from "#/app/state.tsx";
 import { Screens } from "#/app/screens.tsx";
+import { Providers } from "#/app/state.tsx";
 import type { Yohaku } from "#/shared/api";
 
 import styles from "#/app/styles.css?inline";

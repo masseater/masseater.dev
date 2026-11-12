@@ -5,8 +5,8 @@ import { createRoot } from "react-dom/client";
 
 import { tauriYohaku } from "#/shared/api";
 
-import { Providers } from "./state.tsx";
 import { Screens } from "./screens.tsx";
+import { Providers } from "./state.tsx";
 
 followColorScheme();
 
