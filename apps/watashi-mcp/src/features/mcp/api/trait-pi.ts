@@ -1,5 +1,5 @@
-import { defineExtension, defineTool, section } from "@earendil-works/pi-durable";
-import type { Extension } from "@earendil-works/pi-durable";
+import { createRegistry, defineExtension, defineTool, section } from "@earendil-works/pi-durable";
+import type { Extension, Registry } from "@earendil-works/pi-durable";
 import { Array as Arr, Number as Num, Option, Schema, pipe } from "effect";
 
 import { AnalysisResult } from "#/features/mcp/model/trait-analysis";
@@ -33,9 +33,15 @@ const recordTool = defineTool({
 const traitExtension = (): Extension =>
   defineExtension({
     name: "watashi.traits",
-    sections: [section("instructions", () => INSTRUCTIONS, { tag: false })],
+    sections: [section("trait_rules", () => INSTRUCTIONS, { tag: false })],
     tools: [recordTool],
   });
+
+const traitRegistry = (): Registry => {
+  const registry = createRegistry();
+  registry.install(traitExtension());
+  return registry;
+};
 
 const Turn = Schema.Struct({
   role: Schema.Literal("assistant"),
@@ -104,5 +110,5 @@ const readTranscript = (entries: readonly unknown[]): Transcript => {
   };
 };
 
-export { RECORD_TOOL, TRAIT_MODEL, readTranscript, traitExtension };
+export { RECORD_TOOL, TRAIT_MODEL, readTranscript, traitRegistry };
 export type { Transcript };
