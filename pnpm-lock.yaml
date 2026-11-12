@@ -254,6 +254,9 @@ catalogs:
     '@effect/platform-node':
       specifier: 4.1.2
       version: 4.1.2
+    '@effect/platform-node-shared':
+      specifier: 4.1.2
+      version: 4.1.2
     '@effect/sql-sqlite-node':
       specifier: 4.1.2
       version: 4.1.2
@@ -3018,19 +3021,19 @@ importers:
 
   libs/oxlint-plugin-decision:
     dependencies:
-      '@effect/platform-node':
+      '@effect/ai-openrouter':
         specifier: 'catalog:'
-        version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@openrouter/sdk':
-        specifier: 'catalog:'
-        version: 1.5.70
-      effect:
-        specifier: catalog:stack
-        version: 4.1.2
+        version: 4.1.2(effect@4.1.2)
       synckit:
         specifier: 'catalog:'
         version: 0.12.3
     devDependencies:
+      '@effect/platform-node':
+        specifier: 'catalog:'
+        version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@effect/platform-node-shared':
+        specifier: 'catalog:'
+        version: 4.1.2(effect@4.1.2)
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.67.5
@@ -3043,6 +3046,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+      effect:
+        specifier: catalog:stack
+        version: 4.1.2
       oxlint:
         specifier: 'catalog:'
         version: 1.92.0(oxlint-tsgolint@7.0.2005)(vite-plus@1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
