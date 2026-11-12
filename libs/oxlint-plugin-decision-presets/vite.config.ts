@@ -24,8 +24,15 @@ export default defineConfig({
   run: {
     tasks: {
       build: { command: "vp pack", cache: false },
-      test: { command: "vp test run --exclude='tests/*live.test.ts'", dependsOn: ["build"] },
-      "test:live": { command: "vp test run live.test", dependsOn: ["build"], cache: false },
+      test: {
+        command: "vp test run --exclude='tests/*live.test.ts'",
+        dependsOn: ["build", "@r_masseater/oxlint-plugin-decision#build"],
+      },
+      "test:live": {
+        command: "vp test run live.test",
+        dependsOn: ["build", "@r_masseater/oxlint-plugin-decision#build"],
+        cache: false,
+      },
     },
   },
 });
