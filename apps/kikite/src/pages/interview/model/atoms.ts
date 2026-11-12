@@ -40,6 +40,7 @@ type SummaryState =
 type Listening =
   | Readonly<{ status: "off" }>
   | Readonly<{ status: "listening" }>
+  | Readonly<{ status: "paused" }>
   | Readonly<{ status: "speaking" }>
   | Readonly<{ status: "typing" }>
   | Readonly<{ status: "unsupported" }>

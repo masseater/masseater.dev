@@ -1,13 +1,16 @@
-import { Array as Arr, Option, pipe } from "effect";
+import { Array as Arr, Option, pipe, String as Str } from "effect";
 
 type Transcripts = Readonly<{ finals: readonly string[]; interim: string }>;
 
 const FIRST_ALTERNATIVE = 0;
+const SPACE_BETWEEN_WIDE = /(?<=[^\p{ASCII}])\s+(?=[^\p{ASCII}])/gu;
+
+const tidy = (text: string): string => pipe(text, Str.replaceAll(SPACE_BETWEEN_WIDE, ""), Str.trim);
 
 const textOf = (result: SpeechRecognitionResult): string =>
   pipe(
     Option.fromUndefinedOr(result[FIRST_ALTERNATIVE]),
-    Option.match({ onNone: () => "", onSome: (alternative) => alternative.transcript }),
+    Option.match({ onNone: () => "", onSome: (alternative) => tidy(alternative.transcript) }),
   );
 
 const resultsOf = (event: SpeechRecognitionEvent): readonly SpeechRecognitionResult[] =>

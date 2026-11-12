@@ -5,6 +5,7 @@ import type { ChangeEvent, ReactNode, SubmitEvent } from "react";
 
 import { useAnswerDraft, useSession } from "#/pages/interview/model/hooks";
 
+import { SendButton } from "./send-button.tsx";
 import { ANSWER_ID } from "./type-anywhere.ts";
 
 const LABEL = "文字で答える";
@@ -20,6 +21,7 @@ const AnswerBox = (): ReactNode => {
     },
     [session],
   );
+  const empty = Str.isEmpty(Str.trim(text));
   const onSubmit = useCallback(
     (event: SubmitEvent<HTMLFormElement>) => {
       event.preventDefault();
@@ -32,7 +34,7 @@ const AnswerBox = (): ReactNode => {
   );
   return (
     <form
-      className="text-muted-foreground focus-within:text-foreground flex items-center gap-3"
+      className="bg-background text-muted-foreground focus-within:border-foreground/40 focus-within:text-foreground sticky bottom-4 mt-auto flex items-center gap-3 rounded-full border py-1 pr-1 pl-4 shadow-sm"
       onSubmit={onSubmit}
     >
       <Keyboard className="size-5 shrink-0" />
@@ -45,6 +47,7 @@ const AnswerBox = (): ReactNode => {
         value={text}
         onChange={onChange}
       />
+      <SendButton empty={empty} />
     </form>
   );
 };

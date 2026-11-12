@@ -19,6 +19,7 @@ import {
   summaryOf,
 } from "./atoms.ts";
 import type { Asking, Entry, Listening, Nudge, Phase, SummaryState } from "./atoms.ts";
+import { toggleMicAtom } from "./mic-toggle.ts";
 import { sessionAtom } from "./session.ts";
 import type { Session } from "./session.ts";
 import { toggleVoiceAtom } from "./voice-toggle.ts";
@@ -105,6 +106,13 @@ const useToggleVoice = (): (() => void) => {
   }, [toggle]);
 };
 
+const useToggleMic = (): (() => void) => {
+  const toggle = useAtomSet(toggleMicAtom);
+  return useCallback(() => {
+    toggle();
+  }, [toggle]);
+};
+
 export {
   useAnswerDraft,
   useAsked,
@@ -121,6 +129,7 @@ export {
   useStale,
   useSummaryState,
   useTheme,
+  useToggleMic,
   useToggleVoice,
   useVoiceOn,
 };
