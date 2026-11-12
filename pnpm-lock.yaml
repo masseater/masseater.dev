@@ -1893,6 +1893,9 @@ importers:
       '@masseater.dev/mcp-tool-call':
         specifier: workspace:*
         version: link:../../libs/mcp-tool-call
+      '@masseater.dev/plamo-translate-protocol':
+        specifier: workspace:*
+        version: link:../../libs/plamo-translate-protocol
       '@modelcontextprotocol/server':
         specifier: 'catalog:'
         version: 2.4.0
@@ -1933,6 +1936,46 @@ importers:
       '@masseater.dev/repositories':
         specifier: workspace:*
         version: link:../../infra/repositories
+      alchemy:
+        specifier: catalog:stack
+        version: 2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.2)(ws@8.22.1)
+      typescript:
+        specifier: catalog:stack
+        version: 7.1.0-beta
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  apps/plamo-translate:
+    dependencies:
+      '@masseater.dev/plamo-translate-protocol':
+        specifier: workspace:*
+        version: link:../../libs/plamo-translate-protocol
+      '@r_masseater/workers-tracing':
+        specifier: workspace:*
+        version: link:../../libs/workers-tracing
+      effect:
+        specifier: catalog:stack
+        version: 4.1.2
+    devDependencies:
+      '@alchemy.run/cloudflare':
+        specifier: catalog:stack
+        version: 2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(alchemy@2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.2)(ws@8.22.1))(effect@4.1.2)
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 5.20261109.1
+      '@effect/vitest':
+        specifier: 'catalog:'
+        version: 4.1.2(effect@4.1.2)(vitest@5.1.0)
+      '@masseater.dev/alchemy-app-name':
+        specifier: workspace:*
+        version: link:../../infra/alchemy-app-name
+      '@masseater.dev/cloudflare-account':
+        specifier: workspace:*
+        version: link:../../infra/cloudflare-account
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
       alchemy:
         specifier: catalog:stack
         version: 2.0.0-beta.85(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.5.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.2)(ws@8.22.1)
@@ -2353,6 +2396,9 @@ importers:
       '@masseater.dev/owner-auth':
         specifier: workspace:*
         version: link:../../libs/owner-auth
+      '@masseater.dev/plamo-translate-protocol':
+        specifier: workspace:*
+        version: link:../../libs/plamo-translate-protocol
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -3155,6 +3201,19 @@ importers:
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  libs/plamo-translate-protocol:
+    dependencies:
+      effect:
+        specifier: catalog:stack
+        version: 4.1.2
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 5.20261109.1
       vite-plus:
         specifier: catalog:stack
         version: 1.5.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)

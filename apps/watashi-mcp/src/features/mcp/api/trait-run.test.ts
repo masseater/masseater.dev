@@ -23,6 +23,8 @@ const SOURCE = "memory:1";
 
 const ONCE = 1;
 
+const NONE = 0;
+
 const assistant = (content: readonly unknown[]): unknown => ({
   kind: "pi.assistant",
   model: [{ role: "assistant", content, usage: USAGE }],
@@ -43,6 +45,12 @@ const created = (source: string): unknown => ({
     },
   ],
 });
+
+const JAPANESE = "エディタは Neovim を使う。";
+
+const translator = {
+  translate: (): Promise<Readonly<{ text: string }>> => Promise.resolve({ text: JAPANESE }),
+};
 
 const recorded = assistant([{ type: "text", text: "retrying" }, call(created(SOURCE))]);
 
@@ -82,11 +90,15 @@ it.effect("会話の最後の正しい記録の呼び出しから特性を作る
       assistant([call({ observations: [{ action: "new" }] })]),
       recorded,
     ]);
-    const summary = yield* buildTraits(conversation);
-    expect(summary).toStrictEqual({ steps: ONCE, idle: true });
+    const summary = yield* buildTraits({ conversation, translator });
+    expect(summary).toStrictEqual({ steps: ONCE, idle: true, translated: ONCE });
     expect(resets()).toBe(ONCE);
     const traits = yield* profileTraits({ scope: Option.none(), topic: Option.none() });
-    expect(traits).toMatchObject({ stack: [{ statement: "Use Neovim as the editor." }] });
+    expect(traits).toMatchObject({
+      stack: [{ statement: "Use Neovim as the editor.", ja: { statement: JAPANESE } }],
+    });
+    const again = yield* buildTraits({ conversation, translator });
+    expect(again).toStrictEqual({ steps: NONE, idle: true, translated: NONE });
   }),
 );
 
@@ -94,11 +106,13 @@ it.effect("記録の呼び出しが無ければ失敗し、源を読んだ印を
   Effect.gen(function* failsWithoutCall() {
     yield* setUp;
     const silent = fake(() => [assistant([{ type: "text", text: "done" }])]);
-    const failure = yield* Effect.flip(buildTraits(silent.conversation));
+    const failure = yield* Effect.flip(
+      buildTraits({ conversation: silent.conversation, translator }),
+    );
     expect(failure).toMatchObject({ _tag: "AnalystFailed" });
     const retried = fake(() => [recorded]);
-    const summary = yield* buildTraits(retried.conversation);
-    expect(summary).toStrictEqual({ steps: ONCE, idle: true });
+    const summary = yield* buildTraits({ conversation: retried.conversation, translator });
+    expect(summary).toStrictEqual({ steps: ONCE, idle: true, translated: ONCE });
   }),
 );
 
