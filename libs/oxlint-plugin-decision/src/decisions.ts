@@ -1,5 +1,5 @@
 import { make as makeOpenRouter } from "@effect/ai-openrouter/OpenRouterClient";
-import { Config, Effect, Option, Schedule } from "effect";
+import { Config, Effect, Option, Schedule, Schema } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/http";
 
 import { openRouterApp } from "./openrouter-app.ts";
@@ -14,18 +14,36 @@ const RETRY_EXPONENT = 2;
 
 const attribution = openRouterApp(TOOL).pipe(Effect.cached, Effect.runSync);
 
-interface FailureReason {
-  readonly message: string;
-  readonly http?: { readonly response?: { readonly status: number } | undefined } | undefined;
+const ErrorBody = Schema.Struct({ error: Schema.Struct({ message: Schema.String }) });
+
+const decodeErrorBody = Schema.decodeOption(Schema.fromJsonString(ErrorBody));
+
+interface HttpFailure {
+  readonly response?: { readonly status: number } | undefined;
+  readonly body?: string | undefined;
 }
 
-const reasonFor = ({ message, http }: FailureReason): string =>
+interface FailureReason {
+  readonly _tag: string;
+  readonly message: string;
+  readonly http?: HttpFailure | undefined;
+}
+
+const serverMessageOf = (body: string | undefined, fallback: string): string =>
+  Option.fromUndefinedOr(body).pipe(
+    Option.flatMap(decodeErrorBody),
+    Option.match({ onNone: () => fallback, onSome: ({ error }) => error.message }),
+  );
+
+const reasonFor = ({ _tag, message, http }: FailureReason): string =>
   Option.fromUndefinedOr(http).pipe(
-    Option.flatMap(({ response }) => Option.fromUndefinedOr(response)),
-    Option.match({
-      onSome: ({ status }) => `http ${String(status)}: ${message}`,
-      onNone: () => `network: ${message}`,
-    }),
+    Option.flatMap(({ response, body }) =>
+      Option.map(
+        Option.fromUndefinedOr(response),
+        ({ status }) => `http ${String(status)}: ${serverMessageOf(body, _tag)}`,
+      ),
+    ),
+    Option.getOrElse(() => `network: ${message}`),
   );
 
 const send = Effect.fn("send")(function* send(
