@@ -1,6 +1,5 @@
 import { createModels } from "@earendil-works/pi-ai/models";
-import { Harness, createRegistry } from "@earendil-works/pi-durable";
-import type { Registry } from "@earendil-works/pi-durable";
+import { Harness } from "@earendil-works/pi-durable";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { PiHarness } from "agents/harness/pi";
 import { Lifecycle } from "agents/lifecycle";
@@ -8,7 +7,7 @@ import { createAI } from "agents/models/pi-ai";
 import { DurableObject, env } from "cloudflare:workers";
 import { Effect, Logger, Option, Semaphore } from "effect";
 
-import { TRAIT_MODEL, traitExtension } from "./trait-pi";
+import { TRAIT_MODEL, traitRegistry } from "./trait-pi";
 import { buildTraits } from "./trait-run.server";
 import type { Conversation, RunSummary } from "./trait-run.server";
 
@@ -24,12 +23,6 @@ const busy = (): RunResult => BUSY;
 
 const logRun = (summary: RunResult): Effect.Effect<void> =>
   Effect.logInfo("watashi.traits.run").pipe(Effect.annotateLogs({ summary }));
-
-const traitRegistry = (): Registry => {
-  const registry = createRegistry();
-  registry.install(traitExtension());
-  return registry;
-};
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 const runLogged = runner(logger);
