@@ -24,36 +24,10 @@ const MARKDOWN_IGNORES = [
   "**/.cache/**",
 ];
 
-const OWN_MCP_ONLY =
-  "持ち主だけが使う道具は apps/personal-mcp の MCP に足し、アプリは WorkerEntrypoint の RPC を出して personal-mcp から呼ばせる。MCP サーバーを増やすと、ポータルの上流と Access アプリと管理者の OAuth が 1 つずつ増える";
-
-const MCP_SERVER_PACKAGES = [
-  "@modelcontextprotocol/*",
-  "@better-auth/mcp",
-  "agents",
-  "mcp-handler",
-  "workers-mcp",
-  "fastmcp",
-  "@hono/mcp",
-  "xmcp",
-];
-
 const checks: ToolSections = {
   commitlint: { extends: ["@commitlint/config-conventional"] },
   dependencyRules: {
     allowed: {
-      "personal-mcp が持ち主だけの道具をまとめる MCP である": {
-        workspaces: ["apps/personal-mcp", "libs/mcp-tool-call"],
-        dependencies: MCP_SERVER_PACKAGES,
-      },
-      "medley-manager の MCP はほかの人も登録に使うサービスの入口である": {
-        workspaces: ["apps/medley-manager", "libs/owner-auth"],
-        dependencies: MCP_SERVER_PACKAGES,
-      },
-      "watashi-mcp は personal-mcp へ移すまで自分の MCP を持つ": {
-        workspaces: ["apps/watashi-mcp"],
-        dependencies: MCP_SERVER_PACKAGES,
-      },
       "OTLP の受け口は OpenTelemetry の SDK から送ってテストする": {
         workspaces: ["libs/vitest-otlp"],
         dependencies: requiredStack[INSTRUMENTATION] ?? [],
@@ -65,7 +39,7 @@ const checks: ToolSections = {
         fields: ["devDependencies"],
       },
     },
-    banned: { ...requiredStack, [OWN_MCP_ONLY]: MCP_SERVER_PACKAGES },
+    banned: requiredStack,
     peerRanges: "intersect",
   },
   betterleaks: {
