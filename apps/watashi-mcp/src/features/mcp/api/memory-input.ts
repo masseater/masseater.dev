@@ -60,13 +60,34 @@ const WatashiSearchInput = Schema.Struct({
   limit: Schema.optionalKey(Limit),
 });
 
-const WatashiProfileInput = Schema.Struct({});
+const TraitRef = Schema.String.check(Schema.isPattern(/^owner_trait:\d+$/u)).annotate({
+  description:
+    "A trait ref (owner_trait:12). Returns that trait with its quoted evidence and revisions",
+});
+
+const WatashiProfileInput = Schema.Struct({
+  scope: Schema.optionalKey(
+    Schema.NonEmptyString.annotate({
+      description:
+        "A repository or project name. Returns global traits plus the traits of this scope. Omit to return every scope",
+    }),
+  ),
+  topic: Schema.optionalKey(
+    Schema.NonEmptyString.annotate({
+      description:
+        "Natural words about the work at hand. Narrows traits to those near the words and their neighbours in the evidence graph",
+    }),
+  ),
+  trait: Schema.optionalKey(TraitRef),
+});
 
 type MemoryWriteValue = typeof MemoryWriteInput.Type;
 
 type MemoryReadValue = typeof MemoryReadInput.Type;
 
 type WatashiSearchValue = typeof WatashiSearchInput.Type;
+
+type WatashiProfileValue = typeof WatashiProfileInput.Type;
 
 export {
   DEFAULT_MEMORY_LIMIT,
@@ -75,4 +96,4 @@ export {
   WatashiProfileInput,
   WatashiSearchInput,
 };
-export type { MemoryReadValue, MemoryWriteValue, WatashiSearchValue };
+export type { MemoryReadValue, MemoryWriteValue, WatashiProfileValue, WatashiSearchValue };

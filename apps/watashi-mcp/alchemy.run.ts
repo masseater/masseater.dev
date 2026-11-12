@@ -1,4 +1,4 @@
-import { AnalyticsEngine, D1, R2 } from "@alchemy.run/cloudflare";
+import { AnalyticsEngine, D1, R2, Workers } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { authSite } from "@masseater.dev/cloudflare-account/auth-site";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
@@ -28,6 +28,7 @@ const web = Effect.gen(function* web() {
       TOOL_CALLS,
       CONVERSATIONS,
       CONVERSATION_UPLOADS,
+      AI: Workers.AI(),
     },
   });
 });

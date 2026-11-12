@@ -45,15 +45,24 @@ const statementsOf = ({
     return [write, db.insert(revision).values({ ...record, rev, body })];
   });
 
-const commitAll = (
-  writes: Arr.NonEmptyReadonlyArray<RevisedWrite>,
-): Effect.Effect<void, WriteFailure> =>
+type Commit = Readonly<{
+  writes: Arr.NonEmptyReadonlyArray<RevisedWrite>;
+  extra: readonly Statement[];
+}>;
+
+const commitWith = ({ writes, extra }: Commit): Effect.Effect<void, WriteFailure> =>
   pipe(
     writes,
     Effect.forEach(statementsOf),
-    Effect.flatMap((statements) => attempt(() => db.batch(Arr.flatten(statements)))),
+    Effect.flatMap((statements) =>
+      attempt(() => db.batch(Arr.appendAll(Arr.flatten(statements), extra))),
+    ),
     Effect.asVoid,
   );
+
+const commitAll = (
+  writes: Arr.NonEmptyReadonlyArray<RevisedWrite>,
+): Effect.Effect<void, WriteFailure> => commitWith({ writes, extra: [] });
 
 const commit =
   (record: RevisionRecord) =>
@@ -68,5 +77,5 @@ const numbered = <Value>(
     Effect.mapError(toStorageFailed),
   );
 
-export { commit, commitAll, numbered };
+export { commit, commitAll, commitWith, numbered };
 export type { RevisedWrite, RevisionRecord, Statement };
