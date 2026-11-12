@@ -84,3 +84,4 @@ const fakeAgent = (calls: Ref.Ref<readonly Instruction[]>): Layer.Layer<Agent> =
   );
 
 export { DRAFT, TITLE, fakeAgent };
+export type { Instruction };

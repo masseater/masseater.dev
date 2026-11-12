@@ -10,15 +10,11 @@ import { Array, Context, Effect, FileSystem, Layer, Path, Ref, String, pipe } fr
 import { SecureRandom } from "effect/crypto";
 import { FetchHttpClient, HttpClient, HttpClientRequest } from "effect/http";
 
-import type { Agent } from "#shared/agent";
 import { Settings } from "#shared/settings";
 
 import { fakeAgent } from "./fake-agent.test.support.ts";
+import type { Instruction } from "./fake-agent.test.support.ts";
 import { appLayer, platformLayer } from "./server-layer.ts";
-
-type Instruction = (typeof Agent.Service)["write"] extends (instruction: infer Given) => unknown
-  ? Given
-  : never;
 
 const ANY_PORT = 0;
 const REQUEST_ID = 1;
@@ -81,14 +77,16 @@ const written = Effect.fn("written")(function* written(texts: readonly string[])
   return { id: manuscript.id, paragraphs };
 });
 
-interface McpCall {
-  readonly name: string;
-  readonly args: Readonly<Record<string, unknown>>;
-  readonly headers: Readonly<Record<string, string>>;
-}
-
 /** @internal */
-const mcpCall = Effect.fn("mcpCall")(function* mcpCall({ name, args, headers }: McpCall) {
+const mcpCall = Effect.fn("mcpCall")(function* mcpCall({
+  name,
+  args,
+  headers,
+}: Readonly<{
+  name: string;
+  args: Readonly<Record<string, unknown>>;
+  headers: Readonly<Record<string, string>>;
+}>) {
   const { GetMcp: getMcp } = yield* YohakuClient;
   const http = yield* HttpClient.HttpClient;
   const { url } = yield* getMcp();

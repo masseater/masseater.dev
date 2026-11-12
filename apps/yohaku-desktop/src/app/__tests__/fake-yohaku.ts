@@ -29,11 +29,6 @@ interface Calls {
   readonly saved: Paragraphs[];
 }
 
-interface FakeYohaku {
-  readonly yohaku: Yohaku;
-  readonly calls: Calls;
-}
-
 interface Store {
   readonly manuscripts: Readonly<Record<string, ManuscriptType>>;
   readonly paragraphs: Readonly<Record<string, Paragraphs>>;
@@ -191,7 +186,16 @@ const writingCalls = ({
     }),
 });
 
-const fakeYohaku = (sources: readonly SourceType[]): FakeYohaku => {
+const fakeYohaku = (
+  sources: readonly (typeof Source.Type)[],
+): Readonly<{
+  yohaku: Yohaku;
+  calls: Readonly<{
+    reactions: (typeof Reaction.Type)[];
+    dismissed: string[];
+    saved: (readonly (typeof Paragraph.Type)[])[];
+  }>;
+}> => {
   const calls: Calls = { reactions: [], dismissed: [], saved: [] };
   let store: Store = { manuscripts: Record.empty(), paragraphs: Record.empty(), sources };
   const backing: Backing = {
@@ -216,4 +220,3 @@ const fakeYohaku = (sources: readonly SourceType[]): FakeYohaku => {
 };
 
 export { DRAFT, EMOTION, REWRITE, fakeYohaku };
-export type { FakeYohaku };
