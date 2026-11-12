@@ -49,7 +49,7 @@ const spoke = (entries: readonly Entry[]): boolean =>
   );
 
 const nudgeLevel = (snapshot: Snapshot): number => {
-  if (spoke(snapshot.entries) || !quiet(snapshot)) {
+  if (spoke(snapshot.entries) || !quiet(snapshot) || snapshot.listening.status === "paused") {
     return NO_NUDGE;
   }
   return pipe(

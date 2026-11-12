@@ -1,9 +1,9 @@
-import { Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, pipe } from "effect";
 
 import { activatedNow } from "#/pages/interview/lib/activation";
 
 import { ask } from "./ask.ts";
-import { activatedAtom, heardAtom, hearingAtom, speakerAtom } from "./atoms.ts";
+import { activatedAtom, heardAtom, hearingAtom, listeningAtom, speakerAtom } from "./atoms.ts";
 import { heardFailure, heardInterim, heardSpeech } from "./heard.ts";
 import { nudge } from "./nudge.ts";
 import { read, write } from "./registry.ts";
@@ -27,7 +27,9 @@ type Actions = Readonly<{
 const voiceIfWanted = Effect.fn("kikite.voiceIfWanted")(function* voiceIfWanted(text: string) {
   const speaker = yield* read(speakerAtom);
   const { lastInput } = yield* read(heardAtom);
-  if (speaker && lastInput === "voice" && activatedNow()) {
+  const { status } = yield* read(listeningAtom);
+  const wanted = [speaker, lastInput === "voice", status !== "paused", activatedNow()];
+  if (pipe(wanted, Arr.every(Boolean))) {
     yield* voice(text);
   }
 });
