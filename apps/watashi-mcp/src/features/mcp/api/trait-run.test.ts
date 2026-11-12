@@ -5,7 +5,7 @@ import { vi } from "vite-plus/test";
 
 import { writeMemory } from "./memory-write.server";
 import { settle } from "./trait-build.test.support";
-import { RECORD_TOOL, traitExtension } from "./trait-pi";
+import { RECORD_TOOL, traitRegistry } from "./trait-pi";
 import { profileTraits } from "./trait-read.server";
 import { buildTraits } from "./trait-run.server";
 import type { Conversation } from "./trait-run.server";
@@ -118,9 +118,9 @@ it.effect("記録の呼び出しが無ければ失敗し、源を読んだ印を
 
 it("記録の道具の引数は、Pi の検査でも Effect Schema と同じ形だけを通す", () => {
   const parameters = pipe(
-    Option.fromUndefinedOr(traitExtension().tools),
-    Option.flatMap(Arr.head),
-    Option.map((tool) => tool.parameters),
+    traitRegistry().snapshot().tools(),
+    Arr.head,
+    Option.map((installed) => installed.tool.parameters),
     Option.getOrThrow,
   );
   const validator = compile(parameters);
@@ -129,4 +129,8 @@ it("記録の道具の引数は、Pi の検査でも Effect Schema と同じ形�
     validator.check({ observations: [{ action: "new", source: SOURCE }] }),
     validator.check({ observations: [{ action: "guess", source: SOURCE, quote: EDITOR }] }),
   ]).toStrictEqual([true, false, false]);
+});
+
+it("特性の拡張は Pi の registry に入れられる", () => {
+  expect(traitRegistry).not.toThrow();
 });
