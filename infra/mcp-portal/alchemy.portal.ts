@@ -60,7 +60,7 @@ const cloudflareReader = ApiToken.AccountApiToken.ref("CloudflareReader", {
 
 const upstreams = [
   { id: "watashi", url: "https://watashi.masseater.dev/mcp", auth: oauth },
-  { id: "personal", url: "https://personal-mcp.masseater.dev/mcp", auth: oauth },
+  { id: "sundries", url: "https://sundries.masseater.dev/mcp", auth: oauth },
   { id: "mirucord", url: "https://mirucord.masseater.dev/mcp", auth: oauth },
   { id: "medley", url: "https://medley-manager.masseater.dev/mcp", auth: oauth },
   { id: "twilog-masseater", url: "https://twilog-mcp.togetter.dev/mcp", auth: oauth },
