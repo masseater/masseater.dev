@@ -7,7 +7,7 @@ import { routeLifeRead } from "./life-read-route.server";
 import { writeLife } from "./life-write.server";
 import { readMemory } from "./memory-read.server";
 import { writeMemory } from "./memory-write.server";
-import { watashiProfile } from "./watashi-profile.server";
+import { ownerProfile } from "./watashi-profile.server";
 import { watashiSearch } from "./watashi-search.server";
 
 vi.mock("cloudflare:workers", () => import("./d1.test.support.ts"));
@@ -44,12 +44,12 @@ it.effect("語彙・振り返りの材料・概要を返す", () =>
     expect(vocabulary).toMatchObject({ metrics: [{ metric: "drinks", count: 1 }] });
     const digest = yield* routeLifeRead({ record: "digest", from: "2026-11-02", to: NIGHT });
     expect(digest).toMatchObject({ kindCounts: { met: 1 } });
-    const profile = yield* watashiProfile;
+    const profile = yield* ownerProfile({ scope: Option.none(), topic: Option.none() });
     expect(profile).toMatchObject({
       openTodos: [{ title: "確定申告" }],
       recentMedia: [{ title: "三体" }],
     });
-    expect(Option.fromNullishOr(profile["aiSummary"])).toStrictEqual(Option.none());
+    expect(profile["traits"]).toStrictEqual({});
   }),
 );
 
