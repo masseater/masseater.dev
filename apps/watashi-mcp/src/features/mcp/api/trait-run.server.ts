@@ -104,9 +104,10 @@ const buildTraits = ({
   Effect.gen(function* buildAll() {
     const start = yield* Clock.currentTimeMillis;
     const deadline = start + Duration.toMillis(BUDGET);
+    const earlier = yield* translateTraits(deadline);
     const built = yield* stepsUntil(deadline, NONE_YET);
-    const translated = yield* translateTraits(deadline);
-    return { ...built, translated };
+    const later = yield* translateTraits(deadline);
+    return { ...built, translated: earlier + later };
   }).pipe(
     Effect.provideService(TraitAnalyst, analystOf(conversation)),
     Effect.provideService(TraitTranslator, translatorOf(translator)),
