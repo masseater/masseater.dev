@@ -1,7 +1,8 @@
 import { Facet, StateEffect, StateField } from "@codemirror/state";
 import type { EditorState } from "@codemirror/state";
 import { Decoration, EditorView, WidgetType } from "@codemirror/view";
-import { Array, HashMap, Option, pipe } from "effect";
+import type { DecorationSet } from "@codemirror/view";
+import { Array, Option, Record, pipe } from "effect";
 
 import { lineOf } from "./paragraph-ids.ts";
 
@@ -16,50 +17,68 @@ interface DraftActions {
   readonly keep: (paragraphId: string) => void;
 }
 
-const NO_ACTIONS: DraftActions = { accept: () => {}, rewrite: () => {}, keep: () => {} };
-const AFTER_LINE = 1;
+type Drafts = Readonly<Record<string, Draft>>;
 
-const draftActions = Facet.define<DraftActions, DraftActions>({
-  combine: (values) => pipe(Array.head(values), Option.getOrElse(() => NO_ACTIONS)),
+const AFTER_LINE = 1;
+const ACCEPT = "本文にする";
+const REWRITE = "書き直させる";
+const KEEP = "メモのまま";
+const PRIMARY =
+  "h-8 rounded-md bg-primary px-3.5 text-sm text-primary-foreground disabled:opacity-50";
+const SECONDARY = "h-8 rounded-md border px-3.5 text-sm disabled:opacity-50";
+
+const draftActions = Facet.define<DraftActions, Option.Option<DraftActions>>({
+  combine: (values) => Array.head(values),
 });
 
 const draftSet = StateEffect.define<Readonly<{ paragraphId: string; draft: Draft }>>();
 const draftClosed = StateEffect.define<string>();
 
-type Drafts = HashMap.HashMap<string, Draft>;
-
 const applied = (drafts: Drafts, effect: StateEffect<unknown>): Drafts => {
   if (effect.is(draftSet)) {
-    return HashMap.set(drafts, effect.value.paragraphId, effect.value.draft);
+    return Record.set(drafts, effect.value.paragraphId, effect.value.draft);
   }
   if (effect.is(draftClosed)) {
-    return HashMap.remove(drafts, effect.value);
+    return Record.remove(drafts, effect.value);
   }
   return drafts;
 };
 
-const button = (label: string, primary: boolean, onClick: () => void): HTMLButtonElement => {
+interface ButtonSpec {
+  readonly label: string;
+  readonly style: string;
+  readonly enabled: boolean;
+  readonly press: () => void;
+}
+
+const buttonOf = ({ label, style, enabled, press }: ButtonSpec): HTMLButtonElement => {
   const element = document.createElement("button");
   element.type = "button";
   element.textContent = label;
-  element.className = primary
-    ? "h-8 rounded-md bg-primary px-3.5 text-sm text-primary-foreground disabled:opacity-50"
-    : "h-8 rounded-md border px-3.5 text-sm disabled:opacity-50";
-  element.addEventListener("click", onClick);
+  element.className = style;
+  element.disabled = !enabled;
+  element.addEventListener("click", press);
   return element;
 };
 
-class DraftWidget extends WidgetType {
-  readonly paragraphId: string;
-  readonly draft: Draft;
+const paragraphOf = (content: string): HTMLParagraphElement => {
+  const text = document.createElement("p");
+  text.className = "yohaku-draft-text";
+  text.textContent = content;
+  return text;
+};
 
-  constructor(paragraphId: string, draft: Draft) {
+class DraftWidget extends WidgetType {
+  public readonly paragraphId: string;
+  public readonly draft: Draft;
+
+  public constructor(paragraphId: string, draft: Draft) {
     super();
     this.paragraphId = paragraphId;
     this.draft = draft;
   }
 
-  override eq(other: WidgetType): boolean {
+  public override eq(other: WidgetType): boolean {
     return (
       other instanceof DraftWidget &&
       other.paragraphId === this.paragraphId &&
@@ -68,37 +87,59 @@ class DraftWidget extends WidgetType {
     );
   }
 
-  override toDOM(view: EditorView): HTMLElement {
-    const actions = view.state.facet(draftActions);
+  public override toDOM(view: EditorView): HTMLElement {
     const box = document.createElement("section");
     box.className = "yohaku-draft";
     box.setAttribute("aria-label", "下書き");
-    const text = document.createElement("p");
-    text.className = "yohaku-draft-text";
-    text.textContent = this.draft.text;
-    const row = document.createElement("div");
-    row.className = "flex gap-2";
-    const accept = button("本文にする", true, () => actions.accept(this.paragraphId));
-    const rewrite = button("書き直させる", false, () => actions.rewrite(this.paragraphId));
-    accept.disabled = !this.draft.done;
-    rewrite.disabled = !this.draft.done;
-    row.append(accept, rewrite, button("メモのまま", false, () => actions.keep(this.paragraphId)));
-    box.append(text, row);
+    box.append(paragraphOf(this.draft.text));
+    const actions = view.state.facet(draftActions);
+    if (Option.isSome(actions)) {
+      box.append(this.buttons(actions.value));
+    }
     return box;
   }
 
-  override ignoreEvent(): boolean {
-    return true;
+  private buttons({ accept, rewrite, keep }: DraftActions): HTMLElement {
+    const row = document.createElement("div");
+    row.className = "flex gap-2";
+    const { paragraphId, draft } = this;
+    row.append(
+      buttonOf({
+        label: ACCEPT,
+        style: PRIMARY,
+        enabled: draft.done,
+        press: () => {
+          accept(paragraphId);
+        },
+      }),
+      buttonOf({
+        label: REWRITE,
+        style: SECONDARY,
+        enabled: draft.done,
+        press: () => {
+          rewrite(paragraphId);
+        },
+      }),
+      buttonOf({
+        label: KEEP,
+        style: SECONDARY,
+        enabled: true,
+        press: () => {
+          keep(paragraphId);
+        },
+      }),
+    );
+    return row;
   }
 }
 
-const widgetsOf = (state: EditorState, drafts: Drafts): ReturnType<typeof Decoration.set> =>
+const widgetsOf = (state: EditorState, drafts: Drafts): DecorationSet =>
   Decoration.set(
     pipe(
-      HashMap.toEntries(drafts),
+      Record.toEntries(drafts),
       Array.map(([paragraphId, draft]) =>
         pipe(
-          lineOf(state, paragraphId),
+          lineOf(paragraphId)(state),
           Option.map((number) =>
             Decoration.widget({
               widget: new DraftWidget(paragraphId, draft),
@@ -114,14 +155,22 @@ const widgetsOf = (state: EditorState, drafts: Drafts): ReturnType<typeof Decora
   );
 
 const draftsField = StateField.define<Drafts>({
-  create: () => HashMap.empty(),
-  update: (drafts, transaction) => pipe(transaction.effects, Array.reduce(drafts, applied)),
+  create: () => Record.empty(),
+  update: (drafts, transaction) => {
+    let next = drafts;
+    for (const effect of transaction.effects) {
+      next = applied(next, effect);
+    }
+    return next;
+  },
   provide: (field) =>
     EditorView.decorations.compute([field], (state) => widgetsOf(state, state.field(field))),
 });
 
-const draftOf = (state: EditorState, paragraphId: string): Option.Option<Draft> =>
-  HashMap.get(state.field(draftsField), paragraphId);
+const draftOf =
+  (paragraphId: string) =>
+  (state: EditorState): Option.Option<Draft> =>
+    Record.get(state.field(draftsField), paragraphId);
 
 export { draftActions, draftClosed, draftOf, draftSet, draftsField };
 export type { Draft, DraftActions };

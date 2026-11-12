@@ -18,7 +18,9 @@ const WATCHING_MEMO = {
 const sourcesList = page.getByRole("list", { name: "取り込んだ資料" });
 
 const openSources = Effect.promise(() =>
-  userEvent.click(page.getByRole("navigation", { name: "画面" }).getByRole("button", { name: "資料" })),
+  userEvent.click(
+    page.getByRole("navigation", { name: "画面" }).getByRole("button", { name: "資料" }),
+  ),
 );
 
 describe("sources", () => {
@@ -26,7 +28,9 @@ describe("sources", () => {
     Effect.gen(function* test() {
       yield* mount(fakeYohaku([WATCHING_MEMO]).yohaku);
       yield* openSources;
-      yield* Effect.promise(() => expect.element(sourcesList.getByText("Claude Code")).toBeVisible());
+      yield* Effect.promise(() =>
+        expect.element(sourcesList.getByText("Claude Code")).toBeVisible(),
+      );
       yield* settled;
       yield* Effect.promise(() => expect(main).toMatchScreenshot("sources"));
     }),
@@ -37,7 +41,10 @@ describe("sources", () => {
       yield* mount(fakeYohaku([WATCHING_MEMO]).yohaku);
       yield* openSources;
       yield* Effect.promise(() =>
-        userEvent.fill(page.getByRole("textbox", { name: "URL か文章" }), "https://dic.pixiv.net/a/ヤチヨ"),
+        userEvent.fill(
+          page.getByRole("textbox", { name: "URL か文章" }),
+          "https://dic.pixiv.net/a/ヤチヨ",
+        ),
       );
       yield* Effect.promise(() => userEvent.click(page.getByRole("button", { name: "取り込む" })));
       yield* Effect.promise(() =>

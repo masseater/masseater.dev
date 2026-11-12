@@ -88,8 +88,16 @@ const readonlyParameterAllow = [
   { from: "package" as const, package: "@types/node", name: ["Request", "Response"] },
   { from: "package" as const, package: "@better-auth/drizzle-adapter", name: "DB" },
   { from: "package" as const, package: "@tanstack/query-core", name: "QueryClient" },
-  { from: "package" as const, package: "@codemirror/view", name: ["EditorView", "ViewUpdate"] },
-  { from: "package" as const, package: "@codemirror/state", name: ["Extension", "Text"] },
+  {
+    from: "package" as const,
+    package: "@codemirror/view",
+    name: ["Decoration", "EditorView", "GutterMarker", "ViewUpdate", "WidgetType"],
+  },
+  {
+    from: "package" as const,
+    package: "@codemirror/state",
+    name: ["ChangeDesc", "EditorState", "Extension", "StateEffect", "Text", "Transaction"],
+  },
   { from: "package" as const, package: "@codemirror/lint", name: "Diagnostic" },
   { from: "package" as const, package: "comlink", name: "Remote" },
   {
@@ -161,6 +169,7 @@ const readonlyParameterAllow = [
       "ButtonHTMLAttributes",
       "ChangeEvent",
       "ClassAttributes",
+      "FocusEvent",
       "KeyboardEvent",
       "SubmitEvent",
     ],

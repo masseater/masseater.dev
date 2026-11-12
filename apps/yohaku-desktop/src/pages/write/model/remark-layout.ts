@@ -13,10 +13,8 @@ interface Placed {
 
 type Layout = (placed: readonly Placed[]) => void;
 
-const NO_LAYOUT: Layout = () => {};
-
-const remarkLayout = Facet.define<Layout, Layout>({
-  combine: (values) => pipe(Array.head(values), Option.getOrElse(() => NO_LAYOUT)),
+const remarkLayout = Facet.define<Layout, Option.Option<Layout>>({
+  combine: (values) => Array.head(values),
 });
 
 const placedIn = (view: EditorView): readonly Placed[] =>
@@ -29,16 +27,22 @@ const measure = (view: EditorView): void => {
   view.requestMeasure({
     read: placedIn,
     write: (placed) => {
-      view.state.facet(remarkLayout)(placed);
+      const layout = view.state.facet(remarkLayout);
+      if (Option.isSome(layout)) {
+        layout.value(placed);
+      }
     },
   });
 };
 
+const moved = (update: ViewUpdate): boolean =>
+  update.docChanged || update.geometryChanged || Array.isReadonlyArrayNonEmpty(update.transactions);
+
 const remarkLayoutPlugin = ViewPlugin.define((view) => {
   measure(view);
   return {
-    update: (update: ViewUpdate) => {
-      if (update.docChanged || update.geometryChanged || update.transactions.length > 0) {
+    update: (update: ViewUpdate): void => {
+      if (moved(update)) {
         measure(update.view);
       }
     },

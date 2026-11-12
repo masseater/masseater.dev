@@ -1,10 +1,11 @@
 import { useAtom, useAtomSet, useAtomValue } from "@effect/atom-react";
-import type { Paragraph } from "@masseater.dev/yohaku-protocol";
+import type { Annotations, Paragraph } from "@masseater.dev/yohaku-protocol";
 import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
-import { Array, HashMap, Option, String, pipe } from "effect";
-import { useEffect } from "react";
+import { Array, Effect, Option, Record, String, pipe } from "effect";
+import { useCallback, useEffect } from "react";
 
 import { received } from "#/pages/write/model/annotations.ts";
+import type { Texts } from "#/pages/write/model/annotations.ts";
 import {
   editorAtom,
   manuscriptIdAtom,
@@ -12,7 +13,7 @@ import {
   titleAtom,
 } from "#/pages/write/model/writing-atoms.ts";
 import { useYohaku } from "#/shared/api";
-import type { Yohaku } from "#/shared/api";
+import type { Failure, Yohaku } from "#/shared/api";
 import { screenAtom } from "#/shared/model";
 
 type Paragraphs = readonly (typeof Paragraph.Type)[];
@@ -22,49 +23,67 @@ interface Saved {
   readonly paragraphs: Paragraphs;
 }
 
-const isBlank = (paragraphs: Paragraphs): boolean =>
-  Array.every(paragraphs, ({ text }) => String.isEmpty(String.trim(text)));
+type Fetched = typeof Annotations.Type & Readonly<{ texts: Texts }>;
 
-const textsOf = (paragraphs: Paragraphs): HashMap.HashMap<string, string> =>
+const isBlank = (paragraphs: Paragraphs): boolean =>
+  pipe(
+    paragraphs,
+    Array.every(({ text }) => pipe(text, String.trim, String.isEmpty)),
+  );
+
+const textsOf = (paragraphs: Paragraphs): Texts =>
   pipe(
     paragraphs,
     Array.map(({ id, text }) => [id, text] as const),
-    HashMap.fromIterable,
+    Record.fromEntries,
   );
 
-const useManuscriptId = (yohaku: Yohaku): (() => Promise<string>) => {
+const useManuscriptId = (yohaku: Yohaku): Effect.Effect<string, Failure> => {
   const [id, setId] = useAtom(manuscriptIdAtom);
   const setScreen = useAtomSet(screenAtom);
-  return async () => {
-    if (Option.isSome(id)) {
-      return id.value;
-    }
-    const created = await yohaku.createManuscript();
-    setId(Option.some(created.id));
-    setScreen((screen) => ({ ...screen, manuscript: created.id }));
-    return created.id;
-  };
+  const created = yohaku.createManuscript().pipe(
+    Effect.tap(({ id: createdId }) =>
+      Effect.sync(() => {
+        setId(Option.some(createdId));
+        setScreen((screen) => ({ ...screen, manuscript: createdId }));
+      }),
+    ),
+    Effect.map(({ id: createdId }) => createdId),
+  );
+  return pipe(id, Option.match({ onNone: () => created, onSome: Effect.succeed }));
 };
 
 const useSave = (): Option.Option<Saved> => {
   const yohaku = useYohaku();
   const paused = useAtomValue(pausedAtom);
   const manuscriptId = useManuscriptId(yohaku);
-  const save = useMutation({
-    mutationFn: async (paragraphs: Paragraphs): Promise<Saved> => {
-      const id = await manuscriptId();
-      await yohaku.saveParagraphs({ id, paragraphs });
-      return { id, paragraphs };
-    },
-  });
-  const { mutate } = save;
+  const saving = useCallback(
+    (paragraphs: Paragraphs): Promise<Saved> =>
+      Effect.runPromise(
+        manuscriptId.pipe(
+          Effect.tap((id) => yohaku.saveParagraphs({ id, paragraphs })),
+          Effect.map((id) => ({ id, paragraphs })),
+        ),
+      ),
+    [manuscriptId, yohaku],
+  );
+  const { mutate, data } = useMutation({ mutationFn: saving });
   useEffect(() => {
     if (!isBlank(paused)) {
       mutate(paused);
     }
   }, [paused, mutate]);
-  return Option.fromNullishOr(save.data);
+  return Option.fromNullishOr(data);
 };
+
+const fetchedWith =
+  (paragraphs: Paragraphs) =>
+  ({ title, kinds, remarks }: typeof Annotations.Type): Fetched => ({
+    title,
+    kinds,
+    remarks,
+    texts: textsOf(paragraphs),
+  });
 
 const useAutosave = (): void => {
   const yohaku = useYohaku();
@@ -74,10 +93,10 @@ const useAutosave = (): void => {
   const { data } = useQuery(
     queryOptions({
       queryKey: ["annotations", Option.getOrNull(saved)],
-      queryFn: async () => {
-        const current = Option.getOrThrow(saved);
-        const annotations = await yohaku.getAnnotations(current.id);
-        return { annotations, texts: textsOf(current.paragraphs) };
+      queryFn: () => {
+        const { id, paragraphs } = Option.getOrThrow(saved);
+        const fetching = yohaku.getAnnotations(id).pipe(Effect.map(fetchedWith(paragraphs)));
+        return Effect.runPromise(fetching);
       },
       enabled: Option.isSome(saved),
       staleTime: Number.POSITIVE_INFINITY,
@@ -86,10 +105,11 @@ const useAutosave = (): void => {
   );
   useEffect(() => {
     const current = Option.all({ view: editor, result: Option.fromNullishOr(data) });
-    Option.map(current, ({ view, result }) => {
-      view.dispatch({ effects: received.of({ ...result.annotations, texts: result.texts }) });
-      setTitle(result.annotations.title);
-    });
+    if (Option.isSome(current)) {
+      const { view, result } = current.value;
+      view.dispatch({ effects: received.of(result) });
+      setTitle(result.title);
+    }
   }, [data, editor, setTitle]);
 };
 

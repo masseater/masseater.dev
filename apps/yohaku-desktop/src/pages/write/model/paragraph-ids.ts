@@ -2,16 +2,21 @@ import { Facet, MapMode, StateField } from "@codemirror/state";
 import type { ChangeDesc, EditorState, Text, Transaction } from "@codemirror/state";
 import type { Paragraph } from "@masseater.dev/yohaku-protocol";
 import { Array, HashMap, Option, pipe } from "effect";
+import { SecureRandom } from "effect/crypto";
 
 const LINE_BREAK = "\n";
 const FIRST_LINE = 1;
 const BEFORE = -1;
 const NO_IDS: readonly string[] = [];
 
-const freshId = (): string => globalThis.crypto.randomUUID();
+const freshId = (): string => SecureRandom.uuidV7Unsafe();
 
 const initialIds = Facet.define<readonly string[], readonly string[]>({
-  combine: (values) => pipe(Array.head(values), Option.getOrElse(() => NO_IDS)),
+  combine: (values) =>
+    pipe(
+      Array.head(values),
+      Option.getOrElse(() => NO_IDS),
+    ),
 });
 
 const carriedLine =
@@ -45,7 +50,12 @@ const paragraphIdsField = StateField.define<readonly string[]>({
     Array.makeBy(state.doc.lines, (index) =>
       pipe(Array.get(state.facet(initialIds), index), Option.getOrElse(freshId)),
     ),
-  update: (ids, transaction) => (transaction.docChanged ? remapped(ids, transaction) : ids),
+  update: (ids, transaction) => {
+    if (transaction.docChanged) {
+      return remapped(ids, transaction);
+    }
+    return ids;
+  },
 });
 
 const textOf = (paragraphs: readonly (typeof Paragraph.Type)[]): string =>
@@ -61,11 +71,13 @@ const paragraphsOf = (state: EditorState): readonly (typeof Paragraph.Type)[] =>
     Array.map((id, index) => ({ id, text: state.doc.line(index + FIRST_LINE).text })),
   );
 
-const lineOf = (state: EditorState, paragraphId: string): Option.Option<number> =>
-  pipe(
-    state.field(paragraphIdsField),
-    Array.findFirstIndex((id) => id === paragraphId),
-    Option.map((index) => index + FIRST_LINE),
-  );
+const lineOf =
+  (paragraphId: string) =>
+  (state: EditorState): Option.Option<number> =>
+    pipe(
+      state.field(paragraphIdsField),
+      Array.findFirstIndex((id) => id === paragraphId),
+      Option.map((index) => index + FIRST_LINE),
+    );
 
 export { FIRST_LINE, initialIds, lineOf, paragraphIdsField, paragraphsOf, textOf };

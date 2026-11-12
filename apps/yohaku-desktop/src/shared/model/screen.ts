@@ -13,6 +13,7 @@ interface Screen {
 
 const NEW_MANUSCRIPT = Option.getOrNull(Option.none<string>());
 const FIRST_SESSION = 0;
+const NEXT_SESSION = 1;
 
 const BLANK_PAGE: Screen = {
   page: "write",
@@ -26,12 +27,14 @@ const screenAtom = Atom.make<Screen>(BLANK_PAGE);
 
 const useScreen = (): readonly [Screen, (next: Screen) => void] => useAtom(screenAtom);
 
-const opened = (screen: Screen, manuscript: string | null): Screen => ({
-  page: "write",
-  manuscript,
-  opening: manuscript,
-  session: screen.session + 1,
-});
+const opened =
+  (manuscript: string | null) =>
+  (screen: Screen): Screen => ({
+    page: "write",
+    manuscript,
+    opening: manuscript,
+    session: screen.session + NEXT_SESSION,
+  });
 
 export { BLANK_PAGE, NEW_MANUSCRIPT, opened, screenAtom, useScreen };
 export type { Page, Screen };

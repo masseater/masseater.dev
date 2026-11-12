@@ -1,33 +1,34 @@
 import type { Source } from "@masseater.dev/yohaku-protocol";
-import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-import { useRevert } from "#/pages/sources/api/sources.ts";
+import { RevertButton } from "./revert-button.tsx";
 
-const ORIGINS: Readonly<Record<(typeof Source.Type)["origin"], string>> = {
+type SourceType = typeof Source.Type;
+
+const ORIGINS: Readonly<Record<SourceType["origin"], string>> = {
   manuscript: "本文",
   mcp: "MCP",
   agent: "取り込み",
 };
 
-const SourceRow = ({ source }: Readonly<{ source: typeof Source.Type }>): ReactNode => {
-  const revert = useRevert();
-  return (
-    <li className="grid grid-cols-[minmax(0,1fr)_10rem_6rem_5rem] items-center gap-3 border-b py-2.5">
-      <span className="truncate font-medium">{source.label}</span>
-      <span className="text-muted-foreground">
-        {source.origin === "mcp" ? source.client : ORIGINS[source.origin]}
-      </span>
-      <span className="text-muted-foreground">{source.facts} 件</span>
-      {source.origin === "manuscript" ? (
-        <span />
-      ) : (
-        <Button size="sm" variant="outline" onClick={() => revert(source.id)}>
-          戻す
-        </Button>
-      )}
-    </li>
-  );
+const FACTS_UNIT = " 件";
+
+const addedBy = ({ origin, client }: SourceType): string => {
+  if (origin === "mcp") {
+    return client;
+  }
+  return ORIGINS[origin];
 };
+
+const SourceRow = ({ source }: Readonly<{ source: SourceType }>): ReactNode => (
+  <li className="flex items-center gap-3 border-b py-2.5">
+    <span className="min-w-0 grow truncate font-medium">{source.label}</span>
+    <span className="text-muted-foreground w-40 shrink-0">{addedBy(source)}</span>
+    <span className="text-muted-foreground w-24 shrink-0">{`${source.facts.toString()}${FACTS_UNIT}`}</span>
+    <span className="w-20 shrink-0">
+      <RevertButton source={source} />
+    </span>
+  </li>
+);
 
 export { SourceRow };

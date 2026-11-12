@@ -5,8 +5,6 @@ const body = page.getByRole("textbox", { name: "本文" });
 
 const main = page.getByRole("main");
 
-const settled = Effect.promise(async () => {
-  await document.fonts.ready;
-});
+const settled = Effect.promise(() => document.fonts.ready);
 
 export { body, main, settled };

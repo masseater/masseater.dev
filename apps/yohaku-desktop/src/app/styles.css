@@ -39,7 +39,7 @@
   }
 
   .yohaku-draft-text {
-    @apply font-serif text-base text-draft;
+    @apply text-draft font-serif text-base;
     line-height: 2.1;
   }
 }

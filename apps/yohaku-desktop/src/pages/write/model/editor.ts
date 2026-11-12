@@ -8,8 +8,8 @@ import { draftActions, draftsField } from "./memo-draft.ts";
 import type { DraftActions } from "./memo-draft.ts";
 import { initialIds, paragraphIdsField } from "./paragraph-ids.ts";
 import { remarkLayout, remarkLayoutPlugin } from "./remark-layout.ts";
-import { writingTheme } from "./theme.ts";
 import type { Placed } from "./remark-layout.ts";
+import { writingTheme } from "./theme.ts";
 
 interface Wiring {
   readonly ids: readonly string[];

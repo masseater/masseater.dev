@@ -7,14 +7,21 @@ import {
 } from "@masseater.dev/yohaku-protocol";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appLocalDataDir, join } from "@tauri-apps/api/path";
-import { Effect, Layer, ManagedRuntime, Stream } from "effect";
+import { Effect, Layer, ManagedRuntime, Schema, Stream } from "effect";
 import { FetchHttpClient, HttpClient } from "effect/http";
 
-import type { Yohaku } from "./yohaku.ts";
+import type { Failure, Yohaku } from "./yohaku.ts";
 
 const UNREACHABLE = "余白のサーバーに接続できません";
 
-const unreachable = (): Error => new Error(UNREACHABLE);
+const taggedError = Schema.TaggedError;
+
+class Unreachable extends taggedError<Unreachable, { readonly brand: unique symbol }>()(
+  "Unreachable",
+  { message: Schema.String },
+) {}
+
+const unreachable = (): Unreachable => Unreachable.make({ message: UNREACHABLE });
 
 const endpointText = Effect.gen(function* endpointText() {
   const http = yield* HttpClient.HttpClient;
@@ -41,16 +48,28 @@ const runtime = ManagedRuntime.make(
 
 type Client = typeof YohakuClient.Service;
 
-const call = <Value>(
-  request: (client: Client) => Effect.Effect<Value, unknown>,
-): Promise<Value> => runtime.runPromise(YohakuClient.pipe(Effect.flatMap(request)));
+const failureOf = ({ message }: Failure): Failure => ({ message });
 
-async function* streamed(
-  request: (client: Client) => Stream.Stream<string, unknown>,
-): AsyncGenerator<string> {
-  const stream = Stream.unwrap(YohakuClient.pipe(Effect.map(request)));
-  yield* await runtime.runPromise(Stream.toAsyncIterableEffect(stream));
-}
+const call = <Value>(
+  request: (client: Client) => Effect.Effect<Value, Failure>,
+): Effect.Effect<Value, Failure> =>
+  runtime.contextEffect.pipe(
+    Effect.flatMap((context) =>
+      YohakuClient.pipe(Effect.flatMap(request), Effect.provideContext(context)),
+    ),
+    Effect.mapError(failureOf),
+  );
+
+const streamed = (
+  request: (client: Client) => Stream.Stream<string, Failure>,
+): Stream.Stream<string, Failure> =>
+  Stream.unwrap(
+    runtime.contextEffect.pipe(
+      Effect.map((context) =>
+        Stream.unwrap(YohakuClient.pipe(Effect.map(request))).pipe(Stream.provideContext(context)),
+      ),
+    ),
+  ).pipe(Stream.mapError(failureOf));
 
 const tauriYohaku: Yohaku = {
   listManuscripts: () =>
@@ -62,7 +81,7 @@ const tauriYohaku: Yohaku = {
   getAnnotations: (id) => call(({ GetAnnotations: get }) => get({ id })),
   draftFromMemo: (target) => streamed(({ DraftFromMemo: draft }) => draft(target)),
   rewriteRemark: (target) => streamed(({ RewriteRemark: rewrite }) => rewrite(target)),
-  dismissRemark: (target) => call(({ DismissRemark: dismiss }) => dismiss(target)),
+  dismissRemark: (dismissal) => call(({ DismissRemark: dismiss }) => dismiss(dismissal)),
   logReaction: (reaction) => call(({ LogReaction: log }) => log({ reaction })),
   listSources: () =>
     call(({ ListSources: list }) => list().pipe(Effect.map(({ sources }) => sources))),

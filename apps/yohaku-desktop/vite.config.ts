@@ -47,6 +47,7 @@ export default defineConfig({
     },
   },
   resolve: { tsconfigPaths: true },
+  optimizeDeps: { include: ["effect/crypto"] },
   plugins: [tailwindcss(), viteReact()],
   clearScreen: false,
   server: {

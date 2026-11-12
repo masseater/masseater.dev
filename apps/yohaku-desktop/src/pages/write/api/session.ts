@@ -1,7 +1,7 @@
 import { useAtom, useAtomSet } from "@effect/atom-react";
 import type { Paragraph, Title } from "@masseater.dev/yohaku-protocol";
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { HashSet, Option } from "effect";
+import { Effect, HashSet, Option, pipe } from "effect";
 import { Atom } from "effect/reactivity";
 import { useEffect } from "react";
 
@@ -15,6 +15,7 @@ import {
   titleAtom,
 } from "#/pages/write/model/writing-atoms.ts";
 import { useYohaku } from "#/shared/api";
+import type { Opened } from "#/shared/api";
 import { useScreen } from "#/shared/model";
 
 type Paragraphs = readonly (typeof Paragraph.Type)[];
@@ -27,8 +28,17 @@ interface Opening {
 
 const NOT_READY = -1;
 const NOTHING_WRITTEN: Paragraphs = [];
+const FRESH = 0;
 
 const readySessionAtom = Atom.make(NOT_READY);
+
+const openingOf =
+  (id: Option.Option<string>) =>
+  ({ manuscript, paragraphs }: Opened): Opening => ({
+    id,
+    title: manuscript.title,
+    paragraphs,
+  });
 
 const useOpening = (): Option.Option<Opening> => {
   const yohaku = useYohaku();
@@ -37,50 +47,58 @@ const useOpening = (): Option.Option<Opening> => {
   const { data } = useQuery(
     queryOptions({
       queryKey: ["manuscript", opening],
-      queryFn: () => yohaku.openManuscript(Option.getOrThrow(id)),
+      queryFn: () => {
+        const wanted = Option.getOrThrow(Option.fromNullishOr(opening));
+        return Effect.runPromise(yohaku.openManuscript(wanted));
+      },
       enabled: Option.isSome(id),
-      staleTime: 0,
+      staleTime: FRESH,
     }),
   );
   if (Option.isNone(id)) {
     return Option.some({ id, title: NO_TITLE, paragraphs: NOTHING_WRITTEN });
   }
-  return Option.map(Option.fromNullishOr(data), (opened) => ({
-    id,
-    title: opened.manuscript.title,
-    paragraphs: opened.paragraphs,
-  }));
+  return pipe(Option.fromNullishOr(data), Option.map(openingOf(id)));
 };
 
-const useResetSession = (session: number, opening: Option.Option<Opening>): void => {
+const useResetters = (): ((opening: Opening, session: number) => void) => {
   const setId = useAtomSet(manuscriptIdAtom);
   const setTitle = useAtomSet(titleAtom);
   const setKept = useAtomSet(keptAtom);
   const setRequest = useAtomSet(draftRequestAtom);
   const setPlaced = useAtomSet(placedAtom);
   const setRewriting = useAtomSet(rewritingAtom);
-  const [, setReady] = useAtom(readySessionAtom);
-  const loaded = Option.isSome(opening);
-  useEffect(() => {
-    Option.map(opening, ({ id, title }) => {
-      setId(id);
-      setTitle(title);
-      setKept(HashSet.empty());
-      setRequest(Option.none());
-      setPlaced([]);
-      setRewriting(Option.none());
-      setReady(session);
-    });
-  }, [session, loaded]);
+  const setReady = useAtomSet(readySessionAtom);
+  return ({ id, title }, session) => {
+    setId(id);
+    setTitle(title);
+    setKept(HashSet.empty());
+    setRequest(Option.none());
+    setPlaced([]);
+    setRewriting(Option.none());
+    setReady(session);
+  };
 };
 
 const useSession = (): Option.Option<Paragraphs> => {
   const [{ session }] = useScreen();
   const opening = useOpening();
   const [ready] = useAtom(readySessionAtom);
-  useResetSession(session, opening);
-  return Option.flatMap(opening, ({ paragraphs }) =>
-    ready === session ? Option.some(paragraphs) : Option.none(),
+  const reset = useResetters();
+  const loaded = Option.getOrNull(opening);
+  useEffect(() => {
+    const pending = pipe(
+      Option.fromNullishOr(loaded),
+      Option.filter(() => ready !== session),
+    );
+    if (Option.isSome(pending)) {
+      reset(pending.value, session);
+    }
+  }, [ready, session, loaded, reset]);
+  return pipe(
+    opening,
+    Option.filter(() => ready === session),
+    Option.map(({ paragraphs }) => paragraphs),
   );
 };
 

@@ -5,9 +5,8 @@ import { useAutosave } from "#/pages/write/api/autosave.ts";
 import { useDrafts } from "#/pages/write/api/drafts.ts";
 import { AppHeader } from "#/shared/ui";
 
-import { EditorSurface } from "./editor-surface.tsx";
-import { MarginNotes } from "./margin-notes.tsx";
 import { TitleField } from "./title-field.tsx";
+import { WritingColumns } from "./writing-columns.tsx";
 
 const Writing = ({
   initial,
@@ -20,10 +19,7 @@ const Writing = ({
         <TitleField />
       </AppHeader>
       <main className="grow overflow-y-auto py-14">
-        <div className="mx-auto grid w-fit grid-cols-[52.5rem_18.75rem] gap-x-8">
-          <EditorSurface initial={initial} />
-          <MarginNotes />
-        </div>
+        <WritingColumns initial={initial} />
       </main>
     </div>
   );
