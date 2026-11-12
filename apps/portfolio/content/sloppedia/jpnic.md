@@ -47,7 +47,7 @@ JPNIC（日本ネットワークインフォメーションセンター）は、
 
 1990年代の後半、インターネットが急に広がると、JP ドメイン名にも使い勝手のよさが求められるようになった。JPNIC は会員との議論を経て、2000年12月22日の総会で、新しい会社を作って JP ドメイン名の登録管理業務を移すと決めた[^ikan]。4日後の12月26日に JPRS が設立された。2001年2月には、1つの組織が複数を取れる汎用 JP ドメイン名（example.jp の形）の登録を JPRS が始めた[^history]。
 
-移管には ICANN の承認が要った。.jp の管理者として委任を受けていたのは、当時の JPNIC 理事長の村井純個人である。ICANN は村井と日本政府に確かめ、両者は JPRS を承認する書簡を返した[^ikan]。2002年2月27日に ICANN と JPRS が ccTLD スポンサ契約を結び、4月1日に登録管理業務は JPRS へ移った[^ikan]。
+移管には ICANN の承認が要った。.jp の管理者として委任を受けていたのは、当時の JPNIC 理事長の村井純個人である。ICANN は村井と日本政府に確かめ、両者は JPRS を承認する書簡を返した[^ikan]。2002年2月27日に ICANN と JPRS が ccTLD スポンサ契約を結び、4月1日に登録管理業務は JPRS へ移った[^ikan]。JPNIC は今も JPRS の主な株主の1つである[^jprs]。
 
 ### 一般社団法人へ
 
@@ -110,6 +110,8 @@ JPNIC は2000年に ICANN の横浜会合を主催した。2019年には、ICANN
 [^ikan]: JPNIC「[JPNICからJPRSへのJPドメイン名登録管理業務の移管について](https://www.nic.ad.jp/ja/dom/ikan.html)」2026年11月12日に閲覧。
 
 [^domain-intro]: JPNIC「[JPNICが行っているドメイン名関連事業紹介](https://www.nic.ad.jp/ja/dom/intro.html)」2026年11月12日に閲覧。
+
+[^jprs]: JPRS「[会社情報](https://jprs.co.jp/company/)」2026年11月12日に閲覧。
 
 [^officers]: JPNIC「[JPNIC役員改選結果および役員人事のお知らせ](https://www.nic.ad.jp/ja/topics/2026/20260616-01.html)」2026年6月16日。
 
