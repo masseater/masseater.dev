@@ -1,12 +1,11 @@
+import { TOKEN_SCOPES, TokenRequest } from "@masseater.dev/watashi-protocol";
+import type { TokenFields } from "@masseater.dev/watashi-protocol";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
-
-import { TOKEN_SCOPES } from "#/features/mcp/model/api-token.table";
 
 import { hashApiToken, newApiToken } from "./api-token";
 import { listApiTokens } from "./api-token-store.server";
 import { createApiToken, revokeApiToken } from "./api-token-writer.server";
-import { TokenRequest, paramsOf } from "./conversation-query";
-import type { TokenFields } from "./conversation-query";
+import { paramsOf } from "./conversation-query";
 import { BAD_REQUEST, NOT_FOUND, json, withStatus } from "./http-json";
 import { nowIso } from "./storage.server";
 

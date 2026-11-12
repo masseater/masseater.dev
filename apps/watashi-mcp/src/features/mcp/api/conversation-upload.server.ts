@@ -1,8 +1,9 @@
+import { ChunkQuery, FileQuery } from "@masseater.dev/watashi-protocol";
+import type { ChunkParams } from "@masseater.dev/watashi-protocol";
 import { env } from "cloudflare:workers";
 import { Clock, Effect, Option, Schema, String as Str, pipe } from "effect";
 
-import { ChunkQuery, FileQuery, fileKeyOf, paramsOf } from "./conversation-query";
-import type { ChunkParams } from "./conversation-query";
+import { fileKeyOf, paramsOf } from "./conversation-query";
 import { chunkAt, committedEnd } from "./conversation-store.server";
 import type { FileKey } from "./conversation-store.server";
 import { appendChunk } from "./conversation-writer.server";

@@ -1,7 +1,6 @@
+import { ChunkQuery, FileQuery, TokenRequest } from "@masseater.dev/watashi-protocol";
 import { Option, Schema } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-
-import { ChunkQuery, FileQuery, TokenRequest } from "./conversation-query";
 
 const SESSION = "6df4989a-c0a7-5129-89d5-965ab358d4fe";
 
