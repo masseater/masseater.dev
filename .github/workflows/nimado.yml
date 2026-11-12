@@ -78,7 +78,7 @@ jobs:
       - name: publish
         run: node src/main.ts publish --state "$STATE" --out "$GITHUB_WORKSPACE/apps/nimado/published"
         working-directory: tools/nimado-collect
-      - uses: masseater/typescript-template/.github/actions/credentials@69734b13ccd5a17157d1666faaa3a479f3d7bdad
+      - uses: masseater/typescript-template/.github/actions/credentials@82c407d629f4eb4d013ed5f7074e9a6212680571
       - name: deploy data
         run: vp exec alchemy deploy alchemy.data.ts --stage data --yes
         working-directory: apps/nimado
@@ -131,6 +131,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@69734b13ccd5a17157d1666faaa3a479f3d7bdad
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@82c407d629f4eb4d013ed5f7074e9a6212680571
         with:
           github-token: ${{ github.token }}
