@@ -5144,7 +5144,6 @@ dependencies = [
 name = "pod_rattle"
 version = "0.0.3"
 dependencies = [
- "atomic_float",
  "egui",
  "nice-plug",
  "nice-plug-egui",

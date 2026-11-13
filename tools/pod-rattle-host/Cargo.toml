@@ -12,6 +12,7 @@ pod_rattle = { path = "../../apps/pod-rattle-plugin" }
 pod-rattle-engine = { path = "../../libs/pod-rattle-engine" }
 vst3-host = { version = "0.11.1", default-features = false }
 hound = "3.5.1"
+nice-plug = "0.4.2"
 
 [lints.clippy]
 pedantic = { level = "warn", priority = -1 }
@@ -26,5 +27,4 @@ needless_range_loop = "allow"
 [dev-dependencies]
 egui = "0.37.0"
 egui_kittest = { version = "0.37.0", features = ["wgpu", "snapshot"] }
-nice-plug = "0.4.2"
 triple_buffer = "9"

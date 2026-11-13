@@ -1,3 +1,4 @@
+use nice_plug::prelude::{FloatParam, Param};
 use pod_rattle::RattleParams;
 use pod_rattle_engine::Engine;
 use std::path::{Path, PathBuf};
@@ -23,19 +24,73 @@ const NOTES: [(u32, u8); 8] = [
     (1500, 80),
 ];
 
+const MOVES: [(u32, Axis, f64); 7] = [
+    (100, Axis::X, 0.6),
+    (400, Axis::Z, 0.4),
+    (700, Axis::Y, 0.75),
+    (900, Axis::Z, 0.6),
+    (1200, Axis::X, 0.5),
+    (1300, Axis::Y, 0.625),
+    (1400, Axis::Z, 0.5),
+];
+
+#[derive(Clone, Copy)]
+enum Axis {
+    X,
+    Y,
+    Z,
+}
+
+impl Axis {
+    const fn name(self) -> &'static str {
+        match self {
+            Self::X => "Hand X",
+            Self::Y => "Hand Y",
+            Self::Z => "Hand Z",
+        }
+    }
+
+    const fn param(self, params: &RattleParams) -> &FloatParam {
+        match self {
+            Self::X => &params.hand_x,
+            Self::Y => &params.hand_y,
+            Self::Z => &params.hand_z,
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+enum Event {
+    Move(Axis, f64),
+    Note(u8),
+}
+
 struct Scenario {
     name: &'static str,
     auto_shake: bool,
+    moves: &'static [(u32, Axis, f64)],
 }
 
-const SCENARIOS: [Scenario; 2] = [
+const SCENARIOS: [Scenario; 4] = [
     Scenario {
         name: "notes",
         auto_shake: false,
+        moves: &[],
     },
     Scenario {
         name: "auto-shake",
         auto_shake: true,
+        moves: &[],
+    },
+    Scenario {
+        name: "hand-automation",
+        auto_shake: false,
+        moves: &MOVES,
+    },
+    Scenario {
+        name: "auto-shake-automation",
+        auto_shake: true,
+        moves: &MOVES,
     },
 ];
 
@@ -112,14 +167,23 @@ fn render_in_host(scenario: &Scenario, plugin: &Path) -> Result<(Vec<f32>, Vec<f
         host.set_parameter_by_name("Auto shake", 1.0)
             .map_err(|e| format!("set Auto shake: {e}"))?;
     }
+    let mut moves = Vec::with_capacity(scenario.moves.len());
+    for &(tick, axis, normalized) in scenario.moves {
+        let id = host
+            .find_parameter(axis.name())
+            .map_err(|e| format!("find {}: {e}", axis.name()))?
+            .id;
+        moves.push((tick as usize * SAMPLES_PER_TICK, id, normalized));
+    }
     host.start_processing()
         .map_err(|e| format!("start processing: {e}"))?;
 
     let last = NOTES
         .iter()
-        .map(|&(tick, _)| tick as usize)
+        .map(|&(tick, _)| tick)
+        .chain(scenario.moves.iter().map(|&(tick, ..)| tick))
         .max()
-        .unwrap_or(0);
+        .unwrap_or(0) as usize;
     let total = last * SAMPLES_PER_TICK + TAIL_SECONDS * SAMPLE_RATE as usize;
     let mut left = Vec::with_capacity(total);
     let mut right = Vec::with_capacity(total);
@@ -145,6 +209,12 @@ fn render_in_host(scenario: &Scenario, plugin: &Path) -> Result<(Vec<f32>, Vec<f
                     host.send_midi_event_at(event, offset)
                         .map_err(|e| format!("send a note: {e}"))?;
                 }
+            }
+        }
+        for &(at, id, normalized) in &moves {
+            if (start..start + frames).contains(&at) {
+                host.set_parameter_at(id, normalized, (at - start) as i32)
+                    .map_err(|e| format!("automate a parameter: {e}"))?;
             }
         }
         let mut buffers = vst3_host::audio::AudioBuffers::new(0, 2, frames, f64::from(SAMPLE_RATE));
@@ -178,15 +248,36 @@ fn render_reference(scenario: &Scenario, len: usize) -> (Vec<f32>, Vec<f32>) {
     let mut auto = params.auto_shake();
     auto.on = scenario.auto_shake;
     let mut engine = Engine::new(f64::from(SAMPLE_RATE), params.engine_params(), auto);
+    let mut events: Vec<(usize, Event)> = scenario
+        .moves
+        .iter()
+        .map(|&(tick, axis, normalized)| (tick, Event::Move(axis, normalized)))
+        .chain(
+            NOTES
+                .iter()
+                .map(|&(tick, velocity)| (tick, Event::Note(velocity))),
+        )
+        .map(|(tick, event)| (tick as usize * SAMPLES_PER_TICK, event))
+        .collect();
+    events.sort_by_key(|&(at, _)| at);
+    let mut position = params.position();
     let mut left = vec![0.0; len];
     let mut right = vec![0.0; len];
     let mut pos = 0;
-    for (tick, velocity) in NOTES {
-        let at = (tick as usize * SAMPLES_PER_TICK).min(len);
+    for (at, event) in events {
+        let at = at.min(len);
         engine.render(&mut left[pos..at], &mut right[pos..at]);
         pos = at;
-        if !scenario.auto_shake {
-            engine.stroke(f64::from(f32::from(velocity) / 127.0));
+        match event {
+            Event::Move(axis, normalized) => {
+                position[axis as usize] =
+                    f64::from(axis.param(&params).preview_plain(normalized as f32));
+                engine.set_position(position[0], position[1], position[2]);
+            }
+            Event::Note(velocity) if !scenario.auto_shake => {
+                engine.stroke(f64::from(f32::from(velocity) / 127.0));
+            }
+            Event::Note(_) => {}
         }
     }
     engine.render(&mut left[pos..], &mut right[pos..]);
