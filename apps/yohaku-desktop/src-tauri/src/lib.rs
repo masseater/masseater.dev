@@ -1,103 +1,49 @@
-use std::fs::{self, File};
-use std::io;
-use std::path::PathBuf;
-use std::process::{Child, Command, Stdio};
-use std::sync::Mutex;
+use std::path::Path;
 
-use tauri::{App, AppHandle, Manager, RunEvent};
+use tauri::{App, AppHandle, Manager, async_runtime};
+use tauri_specta::{Builder, ErrorHandlingMode, collect_commands};
 
-mod claude;
-mod protocol;
+mod commands;
+mod failure;
+mod mcp;
+mod model;
+mod store;
+mod sync;
+mod text;
+mod writing;
+
+use commands::Yohaku;
+use failure::Failure;
+use store::Store;
+use sync::Syncer;
+use writing::claude::Claude;
+use writing::locate::installed;
+use writing::understanding::Understanding;
 
 const MAIN_WINDOW: &str = "main";
-const SERVER_LOG: &str = "server.log";
+const WORK_DIRECTORY: &str = "work";
 
-#[cfg(windows)]
-const CREATE_NO_WINDOW: u32 = 0x0800_0000;
-
-struct Server(Mutex<Option<Child>>);
-
-struct Entry {
-    node: PathBuf,
-    script: PathBuf,
-}
-
-#[cfg(debug_assertions)]
-fn debug_script() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .join("yohaku-server/src/app/main.ts")
-}
-
-#[cfg(debug_assertions)]
-fn entry(_app: &AppHandle) -> Entry {
-    Entry {
-        node: PathBuf::from("node"),
-        script: debug_script(),
-    }
-}
-
-#[cfg(not(debug_assertions))]
-fn entry(app: &AppHandle) -> Entry {
-    let resources = app.path().resource_dir().map_or_else(
-        |_| PathBuf::from("."),
-        |path| dunce::simplified(&path).to_path_buf(),
-    );
-    let node = if cfg!(windows) {
-        "runtime/node.exe"
-    } else {
-        "runtime/node"
-    };
-    Entry {
-        node: resources.join(node),
-        script: resources.join("server/main.mjs"),
-    }
-}
-
-fn spawn_server(app: &AppHandle) -> tauri::Result<Child> {
-    let data = app.path().app_local_data_dir()?;
-    let logs = app.path().app_log_dir()?;
-    fs::create_dir_all(&logs)?;
-    let log = File::create(logs.join(SERVER_LOG))?;
-    let Entry { node, script } = entry(app);
-    if !script.is_file() {
-        return Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            format!("server script not found: {}", script.display()),
-        )
-        .into());
-    }
-    let mut command = Command::new(node);
-    command
-        .arg(script)
-        .arg(protocol::DATA_DIRECTORY_FLAG)
-        .arg(data)
-        .arg(protocol::PARENT_PID_FLAG)
-        .arg(std::process::id().to_string())
-        .stdin(Stdio::null())
-        .stdout(log.try_clone()?)
-        .stderr(log);
-    if let Some(claude) = claude::installed(
-        std::env::var_os("PATH"),
-        app.path().home_dir().ok().as_deref(),
-    ) {
-        command.arg(protocol::CLAUDE_FLAG).arg(claude);
-    }
-    #[cfg(windows)]
-    {
-        use std::os::windows::process::CommandExt;
-        command.creation_flags(CREATE_NO_WINDOW);
-    }
-    Ok(command.spawn()?)
-}
-
-fn stop_server(app: &AppHandle) {
-    let server = app.state::<Server>();
-    let child = server.0.lock().ok().and_then(|mut slot| slot.take());
-    if let Some(mut child) = child {
-        let _ = child.kill();
-        let _ = child.wait();
-    }
+fn builder() -> Builder<tauri::Wry> {
+    Builder::<tauri::Wry>::new()
+        .error_handling(ErrorHandlingMode::Result)
+        .commands(collect_commands![
+            commands::list_manuscripts,
+            commands::create_manuscript,
+            commands::open_manuscript,
+            commands::save_paragraphs,
+            commands::set_title,
+            commands::get_annotations,
+            commands::draft_from_memo,
+            commands::rewrite_remark,
+            commands::dismiss_remark,
+            commands::log_reaction,
+            commands::list_sources,
+            commands::ingest_text,
+            commands::revert_source,
+            commands::get_mcp,
+            commands::sync_status,
+            commands::begin_sync_sign_in,
+        ])
 }
 
 fn show_main(app: &AppHandle) {
@@ -107,42 +53,92 @@ fn show_main(app: &AppHandle) {
     }
 }
 
+fn yohaku(data: &Path, home: Option<&Path>) -> Result<Yohaku, Failure> {
+    let store = Store::open(data)?;
+    let executable = installed(std::env::var_os("PATH"), home);
+    let claude = Claude::new(executable, data.join(WORK_DIRECTORY));
+    let understanding = Understanding::new(store.clone(), claude.clone());
+    let syncer = Syncer::new(store.clone(), mcp::PORT)?;
+    let mcp_token = mcp::token(data)?;
+    Ok(Yohaku {
+        store,
+        claude,
+        understanding,
+        syncer,
+        mcp_token,
+    })
+}
+
 fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
-    let child = spawn_server(app.handle())?;
-    app.manage(Server(Mutex::new(Some(child))));
+    let data = app.path().app_local_data_dir()?;
+    let home = app.path().home_dir().ok();
+    let state = yohaku(&data, home.as_deref()).map_err(|failure| failure.message)?;
+    let serving = (
+        state.store.clone(),
+        state.syncer.clone(),
+        state.mcp_token.clone(),
+    );
+    async_runtime::spawn(async move {
+        let (store, syncer, token) = serving;
+        if let Err(failure) = mcp::serve(store, syncer, token).await {
+            eprintln!("mcp server stopped: {failure}");
+        }
+    });
+    state.syncer.start();
+    app.manage(state);
     Ok(())
 }
 
-/// Starts the yohaku editor and the writing server that runs while the window is open.
+/// Starts the yohaku editor.
 ///
 /// # Errors
 ///
 /// Returns an error when Tauri cannot create the window or run the event loop.
 pub fn run() -> tauri::Result<()> {
-    let app = tauri::Builder::default()
+    let builder = builder();
+    tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(
             |app, _arguments, _cwd| {
                 show_main(app);
             },
         ))
         .plugin(tauri_plugin_opener::init())
+        .invoke_handler(builder.invoke_handler())
         .setup(setup)
-        .build(tauri::generate_context!())?;
-    app.run(|app, event| {
-        if matches!(event, RunEvent::Exit) {
-            stop_server(app);
-        }
-    });
-    Ok(())
+        .run(tauri::generate_context!())
 }
 
-#[cfg(all(test, debug_assertions))]
+#[cfg(test)]
 mod tests {
-    use super::debug_script;
+    use std::fs;
+    use std::path::PathBuf;
+
+    use specta_typescript::Typescript;
+
+    use super::builder;
+
+    const BINDINGS: &str = "../src/shared/api/generated/bindings.ts";
 
     #[test]
-    fn debug_entry_script_exists() {
-        let script = debug_script();
-        assert!(script.is_file(), "{} is not a file", script.display());
+    fn typescript_bindings_are_current() {
+        let committed = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(BINDINGS);
+        let generated =
+            std::env::temp_dir().join(format!("yohaku-bindings-{}.ts", std::process::id()));
+        builder()
+            .export(
+                Typescript::default()
+                    .header("// @generated by apps/yohaku-desktop/src-tauri. Do not edit."),
+                &generated,
+            )
+            .expect("export bindings");
+        let fresh = fs::read_to_string(&generated).expect("read generated bindings");
+        if std::env::var_os("UPDATE_BINDINGS").is_some() {
+            fs::write(&committed, &fresh).expect("write bindings");
+        }
+        let current = fs::read_to_string(&committed).unwrap_or_default();
+        assert!(
+            current == fresh,
+            "{BINDINGS} is stale: run UPDATE_BINDINGS=1 cargo test -p yohaku-desktop"
+        );
     }
 }

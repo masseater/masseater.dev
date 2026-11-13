@@ -13,10 +13,33 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
+axum = "0.8"
+constant_time_eq = "0.6"
 dunce = "1"
-tauri = { version = "2", features = ["protocol-asset"] }
+getrandom = "0.4"
+oauth2 = { version = "5", default-features = false }
+regex = "1"
+reqwest = { version = "0.13", default-features = false, features = [
+  "form",
+  "query",
+  "json",
+  "rustls",
+  "system-proxy",
+] }
+rmcp = { version = "3.10", features = ["macros", "server", "transport-streamable-http-server"] }
+rusqlite = { version = "0.42", features = ["bundled"] }
+schemars = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+specta = { version = "=2.0.0-rc.28", features = ["derive"] }
+specta-typescript = "0.0.15"
+tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 tauri-plugin-single-instance = "2"
+tauri-specta = { version = "=2.0.0-rc.28", features = ["derive", "typescript"] }
+tokio = { version = "1", features = ["io-util", "macros", "net", "process", "rt", "sync", "time"] }
+url = "2"
+uuid = { version = "1", features = ["v7"] }
 
 [lints.rust]
 unsafe_code = "forbid"

@@ -1,102 +1,68 @@
-import {
-  ENDPOINT_FILE,
-  ServerUrl,
-  YohakuClient,
-  awaitEndpoint,
-  yohakuClientLayer,
-} from "@masseater.dev/yohaku-protocol";
-import { convertFileSrc } from "@tauri-apps/api/core";
-import { appLocalDataDir, join } from "@tauri-apps/api/path";
+import { Channel } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { Effect, Layer, ManagedRuntime, Schema, Stream } from "effect";
-import { FetchHttpClient, HttpClient } from "effect/http";
+import { Effect, Queue, Stream } from "effect";
 
+import { commands } from "./generated/bindings.ts";
+import type { Failure as CommandFailure } from "./generated/bindings.ts";
 import type { Failure, Yohaku } from "./yohaku.ts";
 
-const UNREACHABLE = "余白のサーバーに接続できません";
+const UNREACHABLE = "余白に問い合わせられません";
 const NOT_OPENED = "ブラウザーを開けません";
 
-const taggedError = Schema.TaggedError;
+type Settled<Value> =
+  | Readonly<{ status: "ok"; data: Value }>
+  | Readonly<{ status: "error"; error: CommandFailure }>;
 
-class Unreachable extends taggedError<Unreachable, { readonly brand: unique symbol }>()(
-  "Unreachable",
-  { message: Schema.String },
-) {}
+const unreachable = (): Failure => ({ message: UNREACHABLE });
 
-const unreachable = (): Unreachable => Unreachable.make({ message: UNREACHABLE });
-
-const endpointText = Effect.gen(function* endpointText() {
-  const http = yield* HttpClient.HttpClient;
-  const directory = yield* Effect.tryPromise({ try: appLocalDataDir, catch: unreachable });
-  const file = yield* Effect.tryPromise({
-    try: () => join(directory, ENDPOINT_FILE),
-    catch: unreachable,
-  });
-  const response = yield* HttpClient.filterStatusOk(http).get(convertFileSrc(file));
-  return yield* response.text;
-}).pipe(Effect.provideService(FetchHttpClient.RequestInit, { cache: "no-store" }));
-
-const serverUrlLayer = Layer.effect(
-  ServerUrl,
-  Effect.gen(function* serverUrl() {
-    const context = yield* Effect.context<HttpClient.HttpClient>();
-    return { url: awaitEndpoint(Effect.provideContext(endpointText, context)) };
-  }),
-);
-
-const runtime = ManagedRuntime.make(
-  yohakuClientLayer.pipe(Layer.provide(serverUrlLayer), Layer.provide(FetchHttpClient.layer)),
-);
-
-type Client = typeof YohakuClient.Service;
-
-const failureOf = ({ message }: Failure): Failure => ({ message });
-
-const call = <Value>(
-  request: (client: Client) => Effect.Effect<Value, Failure>,
-): Effect.Effect<Value, Failure> =>
-  runtime.contextEffect.pipe(
-    Effect.flatMap((context) =>
-      YohakuClient.pipe(Effect.flatMap(request), Effect.provideContext(context)),
-    ),
-    Effect.mapError(failureOf),
+const call = <Value>(run: () => Promise<Settled<Value>>): Effect.Effect<Value, Failure> =>
+  Effect.tryPromise({ try: run, catch: unreachable }).pipe(
+    Effect.flatMap((answer) => {
+      if (answer.status === "ok") {
+        return Effect.succeed(answer.data);
+      }
+      return Effect.fail({ message: answer.error.message });
+    }),
   );
 
 const streamed = (
-  request: (client: Client) => Stream.Stream<string, Failure>,
+  run: (onText: (text: string) => void) => Promise<Settled<null>>,
 ): Stream.Stream<string, Failure> =>
-  Stream.unwrap(
-    runtime.contextEffect.pipe(
-      Effect.map((context) =>
-        Stream.unwrap(YohakuClient.pipe(Effect.map(request))).pipe(Stream.provideContext(context)),
-      ),
-    ),
-  ).pipe(Stream.mapError(failureOf));
+  Stream.callback<string, Failure>((queue) =>
+    call(() =>
+      run((text) => {
+        Queue.offerUnsafe(queue, text);
+      }),
+    ).pipe(Effect.andThen(Queue.end(queue))),
+  );
+
+const opened = (url: string): Effect.Effect<void, Failure> =>
+  Effect.tryPromise({ try: () => openUrl(url), catch: () => ({ message: NOT_OPENED }) });
 
 const tauriYohaku: Yohaku = {
-  listManuscripts: () =>
-    call(({ ListManuscripts: list }) => list().pipe(Effect.map(({ manuscripts }) => manuscripts))),
-  createManuscript: () => call(({ CreateManuscript: create }) => create()),
-  openManuscript: (id) => call(({ OpenManuscript: open }) => open({ id })),
-  saveParagraphs: (saving) => call(({ SaveParagraphs: save }) => save(saving)),
-  setTitle: (titling) => call(({ SetTitle: set }) => set(titling)),
-  getAnnotations: (id) => call(({ GetAnnotations: get }) => get({ id })),
-  draftFromMemo: (target) => streamed(({ DraftFromMemo: draft }) => draft(target)),
-  rewriteRemark: (target) => streamed(({ RewriteRemark: rewrite }) => rewrite(target)),
-  dismissRemark: (dismissal) => call(({ DismissRemark: dismiss }) => dismiss(dismissal)),
-  logReaction: (reaction) => call(({ LogReaction: log }) => log({ reaction })),
-  listSources: () =>
-    call(({ ListSources: list }) => list().pipe(Effect.map(({ sources }) => sources))),
-  ingestText: (text) => call(({ IngestText: ingest }) => ingest({ text })),
-  revertSource: (id) => call(({ RevertSource: revert }) => revert({ id })),
-  getMcp: () => call(({ GetMcp: get }) => get()),
-  syncStatus: () => call(({ ReadSyncStatus: read }) => read()),
-  beginSyncSignIn: () =>
-    call(({ BeginSyncSignIn: begin }) => begin()).pipe(
-      Effect.flatMap(({ url }) =>
-        Effect.tryPromise({ try: () => openUrl(url), catch: () => ({ message: NOT_OPENED }) }),
-      ),
+  listManuscripts: () => call(() => commands.listManuscripts()),
+  createManuscript: () => call(() => commands.createManuscript()),
+  openManuscript: (id) => call(() => commands.openManuscript(id)),
+  saveParagraphs: ({ id, paragraphs }) =>
+    call(() => commands.saveParagraphs(id, [...paragraphs])).pipe(Effect.asVoid),
+  setTitle: ({ id, text }) => call(() => commands.setTitle(id, text)),
+  getAnnotations: (id) => call(() => commands.getAnnotations(id)),
+  draftFromMemo: ({ id, paragraphId }) =>
+    streamed((onText) => commands.draftFromMemo(id, paragraphId, new Channel(onText))),
+  rewriteRemark: ({ id, paragraphId, from, to, rule }) =>
+    streamed((onText) =>
+      commands.rewriteRemark(id, paragraphId, from, to, rule, new Channel(onText)),
     ),
+  dismissRemark: ({ id, paragraphId, rule }) =>
+    call(() => commands.dismissRemark(id, paragraphId, rule)).pipe(Effect.asVoid),
+  logReaction: (reaction) => call(() => commands.logReaction(reaction)).pipe(Effect.asVoid),
+  listSources: () => call(() => commands.listSources()),
+  ingestText: (text) => call(() => commands.ingestText(text)),
+  revertSource: (id) => call(() => commands.revertSource(id)).pipe(Effect.asVoid),
+  getMcp: () => call(() => commands.getMcp()),
+  syncStatus: () => call(() => commands.syncStatus()),
+  beginSyncSignIn: () =>
+    call(() => commands.beginSyncSignIn()).pipe(Effect.flatMap(({ url }) => opened(url))),
 };
 
 export { tauriYohaku };
