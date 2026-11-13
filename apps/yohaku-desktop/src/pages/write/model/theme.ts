@@ -1,7 +1,7 @@
 import { EditorView } from "@codemirror/view";
 
-const SERIF = "'Noto Serif JP', serif";
-const SANS = "'Noto Sans JP', sans-serif";
+const SERIF = "'Noto Serif JP Variable', serif";
+const SANS = "'Noto Sans JP Variable', sans-serif";
 
 const writingTheme = EditorView.theme({
   "&": {
