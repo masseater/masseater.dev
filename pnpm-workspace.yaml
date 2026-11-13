@@ -257,6 +257,8 @@ catalogs:
     typescript: 7.1.0-beta
     vite-plus: 1.5.1
 overrides:
+  "@effect/platform-node": "catalog:"
+  effect: "catalog:stack"
   "@feature-sliced/filesystem>typescript": "catalog:stack"
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-"
   "@remotion/eslint-plugin>typescript": "-"
