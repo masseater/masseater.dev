@@ -11,10 +11,9 @@ use nice_plug_egui::{
     EguiEditor, EguiEditorState, EguiNiceSettings, Frame, NiceEguiApp, RepaintNotifier,
     create_egui_editor,
 };
-use pod_rattle_engine::{HAND_X, HAND_Y, Material, Snapshot};
+use pod_rattle_engine::{Material, Snapshot};
 use std::f32::consts::PI;
 use std::sync::Arc;
-use std::sync::atomic::Ordering;
 
 const BG: Color32 = Color32::from_rgb(0x14, 0x11, 0x0f);
 const HEADER: Color32 = Color32::from_rgb(0x0e, 0x0c, 0x0b);
@@ -40,12 +39,14 @@ const SWEEP: f32 = 1.5 * PI;
 const START_ANGLE: f32 = 0.75 * PI;
 const DRAG_PIXELS: f32 = 180.0;
 const FINE_DRAG: f32 = 0.1;
+const DEPTH_PER_SCROLL: f32 = 0.0005;
 pub const EDITOR_SIZE: LogicalSize<f32> = LogicalSize::new(960.0, 600.0);
 
 #[derive(Default)]
 struct EditorState {
     snapshot: Snapshot,
     grab: Option<Grab>,
+    scrolling: bool,
 }
 
 struct Grab {
@@ -126,8 +127,8 @@ impl EditorView {
     }
 
     pub fn show(&mut self, ui: &mut egui::Ui, setter: &ParamSetter) {
-        let (params, telemetry, state) = (&self.params, &self.telemetry, &mut self.state);
-        if let Ok(mut output) = telemetry.snapshot.lock() {
+        let (params, state) = (&self.params, &mut self.state);
+        if let Ok(mut output) = self.telemetry.snapshot.lock() {
             state.snapshot = *output.read();
         }
         egui::Panel::top("header")
@@ -146,7 +147,7 @@ impl EditorView {
             .show(ui, |ui| rail(ui, params, setter));
         egui::CentralPanel::default()
             .frame(egui::Frame::new().fill(STAGE))
-            .show(ui, |ui| stage(ui, params, setter, telemetry, state));
+            .show(ui, |ui| stage(ui, params, setter, state));
     }
 }
 
@@ -464,13 +465,7 @@ fn power(ui: &mut egui::Ui, param: &BoolParam, setter: &ParamSetter) -> Response
     response
 }
 
-fn stage(
-    ui: &mut egui::Ui,
-    params: &RattleParams,
-    setter: &ParamSetter,
-    telemetry: &Telemetry,
-    state: &mut EditorState,
-) {
+fn stage(ui: &mut egui::Ui, params: &RattleParams, setter: &ParamSetter, state: &mut EditorState) {
     let (response, painter) = ui.allocate_painter(ui.available_size(), Sense::drag());
     let view = View::new(response.rect);
     let s = &state.snapshot;
@@ -486,23 +481,35 @@ fn stage(
                 pointer: view.world(p),
                 hand: Vec2::new(s.hand[0], s.hand[1]),
             });
+            setter.begin_set_parameter(&params.hand_x);
+            setter.begin_set_parameter(&params.hand_y);
         }
     }
     if let (Some(grab), Some(p)) = (&state.grab, response.interact_pointer_pos()) {
         let target = grab.hand + view.world(p) - grab.pointer;
-        telemetry.target_x.store(
-            target.x.clamp(HAND_X.0 as f32, HAND_X.1 as f32),
-            Ordering::Relaxed,
-        );
-        telemetry.target_y.store(
-            target.y.clamp(HAND_Y.0 as f32, HAND_Y.1 as f32),
-            Ordering::Relaxed,
-        );
-        telemetry.grabbing.store(true, Ordering::Relaxed);
+        setter.set_parameter(&params.hand_x, target.x);
+        setter.set_parameter(&params.hand_y, target.y);
     }
-    if response.drag_stopped() {
-        state.grab = None;
-        telemetry.grabbing.store(false, Ordering::Relaxed);
+    if response.drag_stopped() && state.grab.take().is_some() {
+        setter.end_set_parameter(&params.hand_x);
+        setter.end_set_parameter(&params.hand_y);
+    }
+
+    let scroll = if response.hovered() {
+        ui.input(|i| i.smooth_scroll_delta.y)
+    } else {
+        0.0
+    };
+    if scroll != 0.0 {
+        if !state.scrolling {
+            state.scrolling = true;
+            setter.begin_set_parameter(&params.hand_z);
+        }
+        let z = params.hand_z.unmodulated_plain_value() + scroll * DEPTH_PER_SCROLL;
+        setter.set_parameter(&params.hand_z, z);
+    } else if state.scrolling {
+        state.scrolling = false;
+        setter.end_set_parameter(&params.hand_z);
     }
 
     draw(&painter, &view, s);

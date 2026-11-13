@@ -17,6 +17,7 @@ const METAL_RATIOS: [f64; MODES] = [
 ];
 pub const HAND_X: (f64, f64) = (-0.3, 0.3);
 pub const HAND_Y: (f64, f64) = (-0.2, 0.12);
+pub const HAND_Z: (f64, f64) = (-0.3, 0.3);
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Params {
@@ -145,8 +146,6 @@ struct Hand {
     vx: f64,
     vy: f64,
     vz: f64,
-    tx: f64,
-    ty: f64,
 }
 
 #[derive(Clone, Copy)]
@@ -217,6 +216,8 @@ pub struct Engine {
     phase: f64,
     side: f64,
     recoil: f64,
+    kick: [f64; 2],
+    position: [f64; 3],
     hand: Hand,
     pods: [Pod; MAX_PODS],
     modes: Box<[Mode]>,
@@ -247,6 +248,8 @@ impl Engine {
             phase: 0.0,
             side: -1.0,
             recoil: 0.0,
+            kick: [0.0; 2],
+            position: [0.0; 3],
             hand: Hand::default(),
             pods: [POD; MAX_PODS],
             modes: vec![Mode::default(); MAX_PODS * MODES].into_boxed_slice(),
@@ -277,6 +280,8 @@ impl Engine {
         self.phase = 0.0;
         self.side = -1.0;
         self.recoil = 0.0;
+        self.kick = [0.0; 2];
+        self.position = [0.0; 3];
         self.hand = Hand::default();
         self.pods = [POD; MAX_PODS];
         self.modes.fill(Mode::default());
@@ -324,23 +329,40 @@ impl Engine {
         self.auto = auto;
     }
 
-    pub fn set_target(&mut self, x: f64, y: f64) {
-        self.auto.on = false;
-        self.recoil = 0.0;
-        self.hand.tx = x.clamp(HAND_X.0, HAND_X.1);
-        self.hand.ty = y.clamp(HAND_Y.0, HAND_Y.1);
+    /// Moves the point the hand rests at. Auto shake and strokes swing the hand around it.
+    pub fn set_position(&mut self, x: f64, y: f64, z: f64) {
+        self.position = [
+            x.clamp(HAND_X.0, HAND_X.1),
+            y.clamp(HAND_Y.0, HAND_Y.1),
+            z.clamp(HAND_Z.0, HAND_Z.1),
+        ];
     }
 
-    pub fn stroke(&mut self, strength: f64) {
-        self.side = -self.side;
-        let reach = self.auto.amp * strength.clamp(0.0, 1.0);
-        self.set_target(self.side * 0.1 * reach, 0.028 * reach);
-        self.recoil = STROKE_SECONDS;
+    /// Moves the hand and every pod to the position at once, so nothing swings on the way.
+    pub fn place(&mut self, x: f64, y: f64, z: f64) {
+        self.set_position(x, y, z);
+        let [x, y, z] = self.position;
+        let delta = [x - self.hand.x, y - self.hand.y, z - self.hand.z];
+        let h = &mut self.hand;
+        (h.x, h.y, h.z) = (x, y, z);
+        for pod in &mut self.pods[..self.n] {
+            for a in 0..3 {
+                pod.p[a] += delta[a];
+            }
+        }
     }
 
     #[must_use]
-    pub fn hand_target(&self) -> (f64, f64) {
-        (self.hand.tx, self.hand.ty)
+    pub const fn position(&self) -> [f64; 3] {
+        self.position
+    }
+
+    pub fn stroke(&mut self, strength: f64) {
+        self.auto.on = false;
+        self.side = -self.side;
+        let reach = self.auto.amp * strength.clamp(0.0, 1.0);
+        self.kick = [self.side * 0.1 * reach, 0.028 * reach];
+        self.recoil = STROKE_SECONDS;
     }
 
     #[must_use]
@@ -552,28 +574,34 @@ impl Engine {
 
     fn physics(&mut self) {
         let dt = self.dt;
-        if self.auto.on {
-            self.phase += 2.0 * PI * self.auto.rate * dt;
-            let a = self.auto.amp;
-            self.hand.tx = a * 0.1 * self.phase.sin() + a * 0.012 * (self.phase * 2.7 + 1.3).sin();
-            self.hand.ty = a * 0.028 * (2.0 * self.phase + 0.6).sin();
-        }
         if self.recoil > 0.0 {
             self.recoil -= dt;
-            if self.recoil <= 0.0 {
-                self.hand.tx = 0.0;
-                self.hand.ty = 0.0;
-            }
         }
+        let swing = if self.auto.on {
+            self.phase += 2.0 * PI * self.auto.rate * dt;
+            let a = self.auto.amp;
+            [
+                a * 0.1 * self.phase.sin() + a * 0.012 * (self.phase * 2.7 + 1.3).sin(),
+                a * 0.028 * (2.0 * self.phase + 0.6).sin(),
+            ]
+        } else if self.recoil > 0.0 {
+            self.kick
+        } else {
+            [0.0; 2]
+        };
+        let [x, y, z] = self.position;
+        let (tx, ty) = (x + swing[0], y + swing[1]);
         let follow = 1.0 - (-dt * 70.0).exp();
         let h = &mut self.hand;
-        let nx = h.x + (h.tx - h.x) * follow;
-        let ny = h.y + (h.ty - h.y) * follow;
+        let nx = h.x + (tx - h.x) * follow;
+        let ny = h.y + (ty - h.y) * follow;
+        let nz = h.z + (z - h.z) * follow;
         h.vx = (nx - h.x) / dt;
         h.vy = (ny - h.y) / dt;
-        h.vz = 0.0;
+        h.vz = (nz - h.z) / dt;
         h.x = nx;
         h.y = ny;
+        h.z = nz;
         let hand = *h;
         let damp = 1.0 - dt * 0.35;
         let len = self.params.len;

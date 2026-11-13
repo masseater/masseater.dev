@@ -21,7 +21,7 @@ fn render_never_allocates() {
                 });
             }
             if block == 200 {
-                engine.set_target(0.1, 0.02);
+                engine.set_position(0.1, 0.02, -0.05);
             }
             if block == 300 {
                 engine.reset(Params::default(), AutoShake::default());

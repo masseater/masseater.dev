@@ -23,7 +23,7 @@ fn reset_sounds_like_a_new_engine() {
         },
         auto,
     );
-    used.set_target(0.1, 0.02);
+    used.set_position(0.1, 0.02, -0.05);
     let _ = render(&mut used);
     used.reset(params, auto);
     assert_eq!(render(&mut used), expected);

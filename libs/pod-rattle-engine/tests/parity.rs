@@ -99,7 +99,14 @@ fn render(s: &Scenario) -> Vec<f64> {
                 continue;
             }
             match e {
-                Event::Target { x, y, .. } => engine.set_target(*x, *y),
+                Event::Target { x, y, .. } => {
+                    engine.set_auto(AutoShake {
+                        on: false,
+                        rate: s.auto.rate,
+                        amp: s.auto.amp,
+                    });
+                    engine.set_position(*x, *y, 0.0);
+                }
                 Event::Params { p, .. } => {
                     let mut next = *engine.params();
                     p.apply(&mut next);
