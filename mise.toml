@@ -4,3 +4,8 @@ dotnet = "11.0.100"
 
 [settings]
 lockfile = true
+
+[settings.url_replacements]
+# mise の core:dotnet は dot.net の短縮 URL から dotnet-install.sh を取るが、dot.net は
+# CI から時間切れで落ちることがある。転送先の builds.dotnet.microsoft.com から直接取る。
+"https://dot.net/v1/" = "https://builds.dotnet.microsoft.com/dotnet/scripts/v1/"
