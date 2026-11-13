@@ -69,12 +69,6 @@ jobs:
           mkdir -p "$RESOURCES/runtime" "$RESOURCES/server"
           cp "$(node -p "process.execPath")" "$RESOURCES/runtime/$NODE_FILE"
           cp apps/yohaku-server/dist/*.mjs "$RESOURCES/server/"
-          version="$(node -p "require('./apps/yohaku-server/node_modules/@anthropic-ai/claude-agent-sdk/package.json').version")"
-          printf '{"name":"yohaku-server","private":true,"type":"module","dependencies":{"@anthropic-ai/claude-agent-sdk":"%s"}}\n' "$version" > "$RESOURCES/server/package.json"
-          printf 'nodeLinker: hoisted\n' > "$RESOURCES/server/pnpm-workspace.yaml"
-      - name: Install the Agent SDK for this platform
-        run: vp install --prod --no-frozen-lockfile
-        working-directory: apps/yohaku-desktop/src-tauri/resources/server
       - name: Start the bundled server with the bundled Node
         env:
           NODE_FILE: ${{ matrix.node }}

@@ -10,7 +10,6 @@ export default defineConfig({
     deps: {
       alwaysBundle: [/./u],
       onlyBundle: false,
-      neverBundle: ["@anthropic-ai/claude-agent-sdk"],
     },
   },
   run: {
