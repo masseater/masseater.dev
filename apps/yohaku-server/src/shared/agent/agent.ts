@@ -1,6 +1,6 @@
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
-import { QUIET_OPTIONS, textStream } from "@masseater.dev/claude-agent";
+import { QUIET_OPTIONS, executableOptions, textStream } from "@masseater.dev/claude-agent";
 import { Context, Effect, Layer, Option, Result, Schema, Stream } from "effect";
 
 import { AgentFailed, agentFailed } from "./agent-failed.ts";
@@ -28,13 +28,16 @@ class Agent extends Context.Service<
   }
 >()("yohaku-server/shared/agent/agent") {}
 
-const write = ({ system, prompt }: Instruction): Stream.Stream<string, AgentFailed> =>
-  textStream({
-    prompt,
-    system,
-    model: WRITING_MODEL,
-    failure: agentFailed,
-  });
+const writeWith =
+  (executable: Option.Option<string>) =>
+  ({ system, prompt }: Instruction): Stream.Stream<string, AgentFailed> =>
+    textStream({
+      prompt,
+      system,
+      model: WRITING_MODEL,
+      executable,
+      failure: agentFailed,
+    });
 
 const structuredOf = (
   message: SDKMessage,
@@ -48,33 +51,37 @@ const structuredOf = (
   return Result.succeed(Effect.fail(AgentFailed.make({ message: message.subtype })));
 };
 
-const judge = ({ system, prompt, schema, tools }: Judgement): Effect.Effect<unknown, AgentFailed> =>
-  Stream.fromAsyncIterable(
-    query({
-      prompt,
-      options: {
-        ...QUIET_OPTIONS,
-        tools: [...tools],
-        allowedTools: [...tools],
-        maxTurns: JUDGING_TURNS,
-        model: JUDGING_MODEL,
-        systemPrompt: system,
-        outputFormat: { type: "json_schema", schema: { ...schema } },
-      },
-    }),
-    agentFailed,
-  ).pipe(
-    Stream.filterMap(structuredOf),
-    Stream.runHead,
-    Effect.flatMap(
-      Option.match({
-        onNone: () => Effect.fail(AgentFailed.make({ message: NO_RESULT })),
-        onSome: (outcome) => outcome,
+const judgeWith =
+  (executable: Option.Option<string>) =>
+  ({ system, prompt, schema, tools }: Judgement): Effect.Effect<unknown, AgentFailed> =>
+    Stream.fromAsyncIterable(
+      query({
+        prompt,
+        options: {
+          ...QUIET_OPTIONS,
+          ...executableOptions(executable),
+          tools: [...tools],
+          allowedTools: [...tools],
+          maxTurns: JUDGING_TURNS,
+          model: JUDGING_MODEL,
+          systemPrompt: system,
+          outputFormat: { type: "json_schema", schema: { ...schema } },
+        },
       }),
-    ),
-  );
+      agentFailed,
+    ).pipe(
+      Stream.filterMap(structuredOf),
+      Stream.runHead,
+      Effect.flatMap(
+        Option.match({
+          onNone: () => Effect.fail(AgentFailed.make({ message: NO_RESULT })),
+          onSome: (outcome) => outcome,
+        }),
+      ),
+    );
 
-const agentLayer = Layer.succeed(Agent, Agent.of({ write, judge }));
+const agentLayer = (executable: Option.Option<string>): Layer.Layer<Agent> =>
+  Layer.succeed(Agent, Agent.of({ write: writeWith(executable), judge: judgeWith(executable) }));
 
 const judgeAs =
   <Shape extends Schema.Top & { readonly DecodingServices: never }>(shape: Shape) =>

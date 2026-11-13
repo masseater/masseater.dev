@@ -1,6 +1,7 @@
 const SERVER_FLAGS = {
   dataDirectory: "data-dir",
   parentPid: "parent-pid",
+  claude: "claude",
 } as const;
 
 const MCP_PORT = 47_210;

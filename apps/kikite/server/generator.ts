@@ -1,6 +1,6 @@
 import { textStream } from "@masseater.dev/claude-agent";
 import type { Stream } from "effect";
-import { Context, Layer } from "effect";
+import { Context, Layer, Option } from "effect";
 
 import { failed } from "./generation-failed.ts";
 import type { GenerationFailed } from "./generation-failed.ts";
@@ -20,6 +20,7 @@ const agentStream = ({ prompt, model }: Generation): Stream.Stream<string, Gener
     prompt: prompt.user,
     system: prompt.system,
     model,
+    executable: Option.none(),
     failure: failed,
   });
 
