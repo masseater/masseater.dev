@@ -275,6 +275,12 @@ catalogs:
     '@feature-sliced/steiger-plugin':
       specifier: 0.8.2
       version: 0.8.2
+    '@fontsource-variable/noto-sans-jp':
+      specifier: 5.3.1
+      version: 5.3.1
+    '@fontsource-variable/noto-serif-jp':
+      specifier: 5.3.1
+      version: 5.3.1
     '@fontsource/dela-gothic-one':
       specifier: 5.3.0
       version: 5.3.0
@@ -2596,10 +2602,10 @@ importers:
       '@effect/atom-react':
         specifier: catalog:stack
         version: 4.1.2(effect@4.1.2)(react@19.3.1)(scheduler@0.28.0)
-      '@fontsource/noto-sans-jp':
+      '@fontsource-variable/noto-sans-jp':
         specifier: 'catalog:'
         version: 5.3.1
-      '@fontsource/noto-serif-jp':
+      '@fontsource-variable/noto-serif-jp':
         specifier: 'catalog:'
         version: 5.3.1
       '@masseater.dev/ui':
@@ -5959,6 +5965,12 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@fontsource-variable/noto-sans-jp@5.3.1':
+    resolution: {integrity: sha512-/anGvJFc5y36f8DJ+3TSh2+KAvaRLA9PaLUMvneeY5s4j8m+8X4F3lE/sjTuG9YI5BX4sykvCk4TuJMG7ecMRQ==}
+
+  '@fontsource-variable/noto-serif-jp@5.3.1':
+    resolution: {integrity: sha512-quU5uIezSqZFgPaDDI2C3hQfIJHzyXVYuvMZsDDF++og8yechsAwcmCkLLdofPboUB1xHOWV3xohJyIVBi3b4g==}
 
   '@fontsource-variable/roboto-flex@5.3.0':
     resolution: {integrity: sha512-bOxckUy0qXNRjhV6e4pcHGSvptix4ZRD1uaj5Za8h+p3qrb2GL4U4TQdpVmPSy0SmqwldfD+JJqEKdF68EyiAw==}
@@ -19144,6 +19156,10 @@ snapshots:
       react-dom: 19.3.1(react@19.3.1)
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@fontsource-variable/noto-sans-jp@5.3.1': {}
+
+  '@fontsource-variable/noto-serif-jp@5.3.1': {}
 
   '@fontsource-variable/roboto-flex@5.3.0': {}
 
