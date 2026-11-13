@@ -29,12 +29,12 @@ catalog:
   codemirror: 6.0.2
   comlink: 4.4.2
   typescript-wasm: npm:typescript@7.1.0-dev.20261106.1
-  "@better-auth/drizzle-adapter": 1.7.18
-  "@better-auth/mcp": 1.7.18
-  "@better-auth/oauth-provider": 1.7.18
-  "@better-auth/passkey": 1.7.18
+  "@better-auth/drizzle-adapter": 1.7.19
+  "@better-auth/mcp": 1.7.19
+  "@better-auth/oauth-provider": 1.7.19
+  "@better-auth/passkey": 1.7.19
   "@modelcontextprotocol/server": 2.4.0
-  auth: 1.7.18
+  auth: 1.7.19
   "@r_masseater/oxlint-typed-rules": 0.3.0
   "@r_masseater/vite-plus-adopt": 0.3.2
   "@discordjs/voice": 0.19.2
@@ -156,7 +156,7 @@ catalog:
   "@fontsource/zen-kurenaido": ^5.3.1
   fastest-levenshtein: ^1.0.16
   "@cfworker/json-schema": ^4.1.6
-  "@openrouter/sdk": 1.5.71
+  "@openrouter/sdk": 1.5.73
   recharts: 3.10.1
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -239,7 +239,7 @@ catalogs:
     "@elysiajs/eden": 1.4.9
     "@tanstack/react-query": 5.107.1
     "@tanstack/react-start": 1.169.5
-    better-auth: 1.7.18
+    better-auth: 1.7.19
     "@alchemy.run/cloudflare": 2.0.0-beta.85
     "@alchemy.run/github": 2.0.0-beta.85
     alchemy: 2.0.0-beta.85
@@ -249,7 +249,7 @@ catalogs:
     effect: 4.1.2
     elysia: 1.4.31
     fallow: 3.41.0
-    renovate: 44.224.1
+    renovate: 44.224.2
     radix-ui: 1.8.1
     tailwindcss: 4.3.5
     typescript: 7.1.0-beta
