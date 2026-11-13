@@ -10,6 +10,7 @@ export default defineConfig({
           input: [
             "Cargo.toml",
             "src/**",
+            "tests/**",
             { pattern: "Cargo.lock", base: "workspace" },
             { pattern: "Cargo.toml", base: "workspace" },
             { pattern: "rust-toolchain.toml", base: "workspace" },
