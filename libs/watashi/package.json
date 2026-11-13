@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/watashi",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI for watashi (watashi.masseater.dev). Sends Claude Code transcripts from a Stop hook after masking secrets locally with Betterleaks, and manages login and API tokens.",
   "keywords": [
     "betterleaks",
