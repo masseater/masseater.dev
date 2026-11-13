@@ -45,7 +45,7 @@
         <!-- Harmony パッチの対象メソッド名・引数名・__instance の型を検査するアナライザ -->
         <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.6.1" PrivateAssets="All" />
         <!-- 一般的なバグ・性能・API の誤用を検出するアナライザ (.NET 標準の CA ルールに加えて) -->
-        <PackageReference Include="Meziantou.Analyzer" Version="3.0.322" PrivateAssets="All" />
+        <PackageReference Include="Meziantou.Analyzer" Version="3.0.324" PrivateAssets="All" />
     </ItemGroup>
 
     <!-- カード・レリックなどのローカライズ漏れを検査するアナライザ。ローカライズ (アセットフォルダ) を持つ Mod だけに付ける -->
