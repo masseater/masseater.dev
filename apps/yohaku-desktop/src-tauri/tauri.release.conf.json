@@ -3,10 +3,6 @@
   "bundle": {
     "license": "AGPL-3.0-only",
     "licenseFile": "../../../LICENSE",
-    "resources": {
-      "resources/runtime/": "runtime/",
-      "resources/server/": "server/"
-    },
     "windows": {
       "nsis": {
         "installMode": "currentUser",

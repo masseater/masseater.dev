@@ -30,6 +30,7 @@
   ],
   "ignoreExports": [
     { "file": "libs/vitest-otlp/src/generated/**", "exports": ["*"] },
+    { "file": "apps/yohaku-desktop/src/shared/api/generated/**", "exports": ["*"] },
     { "file": "libs/workers-tracing/src/tanstack-start.plain.ts", "exports": ["traceServerFn"] },
   ],
   "overrides": [

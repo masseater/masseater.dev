@@ -1,1 +1,1 @@
-export { QUIET_OPTIONS, executableOptions, textStream } from "./text-stream.ts";
+export { QUIET_OPTIONS, textStream } from "./text-stream.ts";

@@ -90,11 +90,7 @@ const overrides = [
     },
   },
   {
-    files: [
-      "apps/kikite/server/serve.ts",
-      "apps/yohaku-server/src/app/mcp-layer.ts",
-      "libs/watashi/src/callback-server.ts",
-    ],
+    files: ["apps/kikite/server/serve.ts", "libs/watashi/src/callback-server.ts"],
     rules: {
       "import/no-nodejs-modules": ["error", { allow: ["node:http"] }],
       "effecttsgo/node-builtin-import": "off",
