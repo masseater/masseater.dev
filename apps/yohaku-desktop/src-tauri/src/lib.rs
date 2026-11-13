@@ -6,6 +6,7 @@ use std::sync::Mutex;
 
 use tauri::{App, AppHandle, Manager, RunEvent};
 
+mod claude;
 mod protocol;
 
 const MAIN_WINDOW: &str = "main";
@@ -76,6 +77,12 @@ fn spawn_server(app: &AppHandle) -> tauri::Result<Child> {
         .stdin(Stdio::null())
         .stdout(log.try_clone()?)
         .stderr(log);
+    if let Some(claude) = claude::installed(
+        std::env::var_os("PATH"),
+        app.path().home_dir().ok().as_deref(),
+    ) {
+        command.arg(protocol::CLAUDE_FLAG).arg(claude);
+    }
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;

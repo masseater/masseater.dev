@@ -15,10 +15,12 @@ const command = Command.make(
   {
     dataDirectory: Flag.String(SERVER_FLAGS.dataDirectory),
     parentPid: Flag.String(SERVER_FLAGS.parentPid).pipe(Flag.optional),
+    claude: Flag.String(SERVER_FLAGS.claude).pipe(Flag.optional),
   },
-  ({ dataDirectory, parentPid }) => {
+  ({ dataDirectory, parentPid, claude }) => {
+    const agent = agentLayer(claude);
     const server = Layer.launch(
-      appLayer.pipe(Layer.provide(agentLayer), Layer.provide(platformLayer)),
+      appLayer.pipe(Layer.provide(agent), Layer.provide(platformLayer)),
     ).pipe(Effect.provideService(Settings, { dataDirectory, mcpPort: MCP_PORT }));
     return whileParentAlive(parentPid)(server);
   },
