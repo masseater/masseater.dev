@@ -61,8 +61,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       output: '<svg renderingIntent="auto" />;',
     },
-    // All-lowercase variant: `getStandardName` matches DOM property names
-    // case-insensitively, so it is reported and fixed to `renderingIntent`
+    // All-lowercase variant: `getStandardName` matches DOM property names case-insensitively, so it is reported and fixed to `renderingIntent`
     {
       code: '<svg renderingintent="auto" />;',
       errors: [
@@ -962,7 +961,6 @@ ruleTester.run(RULE_NAME, rule, {
     { code: '<meta charSet="utf-8" />;' },
     // Some custom web components that are allowed to use `class` instead of `className`
     { code: '<div class="foo" is="my-elem"></div>;' },
-    { code: '<div {...this.props} class="foo" is="my-elem"></div>;' },
     { code: '<atom-panel class="foo"></atom-panel>;' },
     // Ignoring should work
     {
@@ -1040,6 +1038,23 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: '<Foo.Bar abc="def" />',
+    },
+    // Invalid version settings must not throw when no attribute reaches the version-dependent attribute-tags lookup.
+    {
+      code: "const x = 1;",
+      settings: {
+        "react-x": {
+          version: "latest",
+        },
+      },
+    },
+    {
+      code: '<Foo someProp="bar" />',
+      settings: {
+        "react-x": {
+          version: "latest",
+        },
+      },
     },
   ],
 });

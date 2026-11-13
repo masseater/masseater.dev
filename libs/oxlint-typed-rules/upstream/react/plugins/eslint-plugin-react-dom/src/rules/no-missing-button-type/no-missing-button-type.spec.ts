@@ -55,6 +55,58 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    // The suggestion is inserted after the element name even when a spread attribute is present
+    {
+      code: tsx`<button {...props} />;`,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              data: { type: "button" },
+              messageId: "suggest",
+              output: tsx`<button type="button" {...props} />;`,
+            },
+            {
+              data: { type: "submit" },
+              messageId: "suggest",
+              output: tsx`<button type="submit" {...props} />;`,
+            },
+            {
+              data: { type: "reset" },
+              messageId: "suggest",
+              output: tsx`<button type="reset" {...props} />;`,
+            },
+          ],
+        },
+      ],
+    },
+    // A `type` provided through an inline spread is ignored as well
+    {
+      code: tsx`<button {...{ type: "button" }} />;`,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              data: { type: "button" },
+              messageId: "suggest",
+              output: tsx`<button type="button" {...{ type: "button" }} />;`,
+            },
+            {
+              data: { type: "submit" },
+              messageId: "suggest",
+              output: tsx`<button type="submit" {...{ type: "button" }} />;`,
+            },
+            {
+              data: { type: "reset" },
+              messageId: "suggest",
+              output: tsx`<button type="reset" {...{ type: "button" }} />;`,
+            },
+          ],
+        },
+      ],
+    },
     {
       code: tsx`<PolyComponent as="button">Click me</PolyComponent>;`,
       errors: [
@@ -169,21 +221,6 @@ ruleTester.run(RULE_NAME, rule, {
           return <button type={props.type}>Click me</button>;
       }
     `,
-    tsx`
-      const props = {
-        type: "button",
-      };
-
-      function App() {
-          return <button {...props}>Click me</button>;
-      }
-    `,
-    tsx`
-      const buttonAttrs = { type: "button" };
-      function App() {
-          return <button {...buttonAttrs}>Click me</button>;
-      }
-    `,
     "<a />;",
     "<span />;",
     // Not a button element
@@ -202,6 +239,8 @@ ruleTester.run(RULE_NAME, rule, {
     tsx`<button type="">Click me</button>;`,
     // Boolean shorthand type (attribute exists)
     tsx`<button type>Click me</button>;`,
+    // A direct `type` is still recognized when a spread is also present
+    tsx`<button type="button" {...props}>Click me</button>;`,
     // Expression type (attribute exists)
     tsx`<button type={undefined}>Click me</button>;`,
     // https://github.com/oxc-project/oxc/issues/20938

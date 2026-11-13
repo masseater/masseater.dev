@@ -18,6 +18,30 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ messageId: "default" }],
     },
     {
+      code: tsx`const ctx = createContext(), other = 1;`,
+      errors: [{ messageId: "default" }],
+      output: tsx`
+        const ctx = createContext(), other = 1;
+        ctx.displayName = "ctx";
+      `,
+    },
+    {
+      code: tsx`export const ctx = createContext();`,
+      errors: [{ messageId: "default" }],
+      output: tsx`
+        export const ctx = createContext();
+        ctx.displayName = "ctx";
+      `,
+    },
+    {
+      code: tsx`export const ctx = createContext(), other = 1;`,
+      errors: [{ messageId: "default" }],
+      output: tsx`
+        export const ctx = createContext(), other = 1;
+        ctx.displayName = "ctx";
+      `,
+    },
+    {
       code: tsx`
         const ctx1 = createContext();
         const ctx2 = createContext();
@@ -84,6 +108,7 @@ ruleTester.run(RULE_NAME, rule, {
   ],
   valid: [
     tsx`const ctx = createContext(); ctx.displayName = "ctx";`,
+    tsx`export const ctx = createContext(); ctx.displayName = "ctx";`,
     tsx`
       const ctx = createContext();
       const displayName = "ctx";
