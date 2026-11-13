@@ -168,9 +168,26 @@ ruleTester.run(RULE_NAME, rule, {
       code: '<div href="javascript:void(0)"></div>',
       errors: [{ messageId: "default" }],
     },
+    // Namespaced attributes are checked too
+    {
+      code: '<svg><use xlink:href="javascript:alert(1)" /></svg>',
+      errors: [{ messageId: "default" }],
+    },
+    // The check applies to namespaced attribute values in expression containers
+    {
+      code: '<svg><use xlink:href={"javascript:alert(1)"} /></svg>',
+      errors: [{ messageId: "default" }],
+    },
+    // Every namespaced attribute is inspected, not only `xlink:href`
+    {
+      code: '<div xml:lang="javascript:alert(1)" />',
+      errors: [{ messageId: "default" }],
+    },
   ],
   valid: [
     '<a href="https://react.dev"></a>',
+    // Safe namespaced attributes are not reported
+    '<svg><use xlink:href="https://example.com/icon.svg#icon" /></svg>',
     '<a href="#"></a>',
     '<a href=""></a>',
     '<a href="mailto:foo@bar.com"></a>',
@@ -204,6 +221,13 @@ ruleTester.run(RULE_NAME, rule, {
       const props = { href: "javascript:void(0)" };
       <a {...props}></a>
     `,
+    tsx`
+      const props = { href: "javascript:void(0)" };
+      <svg><use {...props} /></svg>
+    `,
+    // Namespaced attributes with non-static or missing values are not reported
+    "<svg><use xlink:href={href} /></svg>",
+    "<svg><use xlink:href /></svg>",
     // Data URI (not javascript:)
     '<a href="data:text/html,<h1>Hello</h1>"></a>',
     // About blank
@@ -226,7 +250,7 @@ ruleTester.run(RULE_NAME, rule, {
     // Boundary: JSXAttribute with empty expression container
     "<a href={}>Link</a>",
     "<div href={}></div>",
-    // Boundary: JSXAttribute with a fragment value (parser-tolerated; resolveAttributeValue reports kind "element")
+    // Boundary: JSXAttribute with a fragment value (parser-tolerated; getAttributeValue reports kind "element")
     "<a href=<></> />;",
   ],
 });

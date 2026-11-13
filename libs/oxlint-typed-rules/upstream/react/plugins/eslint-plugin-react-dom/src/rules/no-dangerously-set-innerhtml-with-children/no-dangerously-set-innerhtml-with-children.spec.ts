@@ -32,34 +32,6 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ messageId: "default" }],
     },
     {
-      code: tsx`
-        const props = { dangerouslySetInnerHTML: { __html: "HTML" } }
-        ;<div {...props}>Children</div>
-      `,
-      errors: [{ messageId: "default" }],
-    },
-    {
-      code: tsx`
-        const props = { children: "Children", dangerouslySetInnerHTML: { __html: "HTML" } }
-        ;<div {...props} />
-      `,
-      errors: [{ messageId: "default" }],
-    },
-    // Alias chains in spread props are followed
-    {
-      code: tsx`
-        const inner = { children: "Children", dangerouslySetInnerHTML: { __html: "HTML" } }
-        const props = inner
-        ;<div {...props} />
-      `,
-      errors: [{ messageId: "default" }],
-    },
-    // Statically evaluable computed keys in spread props are recognized
-    {
-      code: tsx`<div dangerouslySetInnerHTML={{ __html: "HTML" }} {...{ ["children"]: "Children" }} />`,
-      errors: [{ messageId: "default" }],
-    },
-    {
       // https://github.com/Rel1cx/eslint-react/issues/1163
       code: tsx`
         function Abc() {
@@ -87,9 +59,24 @@ ruleTester.run(RULE_NAME, rule, {
       code: tsx`<App dangerouslySetInnerHTML={{ __html: "HTML" }}> </App>`,
       errors: [{ messageId: "default" }],
     },
-    // Comment expression container as child (JSXEmptyExpression is not whitespace)
+    // Empty string expressions still produce a children value at runtime
     {
-      code: tsx`<div dangerouslySetInnerHTML={{ __html: "HTML" }}>{/* comment */}</div>`,
+      code: '<div dangerouslySetInnerHTML={{ __html: "HTML" }}>{""}</div>',
+      errors: [{ messageId: "default" }],
+    },
+    // Any non-empty expression container counts, even when it renders nothing
+    {
+      code: '<div dangerouslySetInnerHTML={{ __html: "HTML" }}>{null}</div>',
+      errors: [{ messageId: "default" }],
+    },
+    // Same-line whitespace inside an expression container is not padding
+    {
+      code: '<div dangerouslySetInnerHTML={{ __html: "HTML" }}>{" "}</div>',
+      errors: [{ messageId: "default" }],
+    },
+    // Entity text is content even when its decoded value is whitespace
+    {
+      code: '<div dangerouslySetInnerHTML={{ __html: "HTML" }}>&nbsp;</div>',
       errors: [{ messageId: "default" }],
     },
   ],
@@ -99,6 +86,7 @@ ruleTester.run(RULE_NAME, rule, {
     '<div children="Children" />',
     "<App>Children</App>",
     '<App dangerouslySetInnerHTML={{ __html: "HTML" }} />',
+    // Spread props are not resolved
     "<div {...props} />",
     tsx`
       const props = { dangerouslySetInnerHTML: { __html: "HTML" } }
@@ -117,6 +105,16 @@ ruleTester.run(RULE_NAME, rule, {
     // Empty tag with dangerouslySetInnerHTML (no children)
     '<div dangerouslySetInnerHTML={{ __html: "HTML" }}></div>',
     '<App dangerouslySetInnerHTML={{ __html: "HTML" }}>\n</App>',
+    // Comments and empty expression containers are omitted by the JSX transform
+    '<div dangerouslySetInnerHTML={{ __html: "HTML" }}>{/* comment */}</div>',
+    '<div dangerouslySetInnerHTML={{ __html: "HTML" }}>{}</div>',
+    tsx`
+      <div dangerouslySetInnerHTML={{ __html: "HTML" }}>
+        {/* comment */}
+      </div>
+    `,
+    // Only direct `children` attributes are inspected; a spread may provide it
+    '<div dangerouslySetInnerHTML={{ __html: "HTML" }} {...{ children: "Children" }} />',
     "<App {...undefined}>Children</App>",
   ],
 });

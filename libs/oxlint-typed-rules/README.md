@@ -18,7 +18,7 @@ ESLint を入れずに、型情報を使うルールを oxlint だけで回せ�
 | `@r_masseater/oxlint-typed-rules/tanstack-router` | [@tanstack/eslint-plugin-router][tanstack-router] 1.162.0 の全ルールと configs |
 | `@r_masseater/oxlint-typed-rules/drizzle`         | [eslint-plugin-drizzle][drizzle] 0.2.3 の全ルールと configs                    |
 | `@r_masseater/oxlint-typed-rules/remotion`        | [@remotion/eslint-plugin][remotion] 4.0.541 の全ルールと configs               |
-| `@r_masseater/oxlint-typed-rules/react`           | [@eslint-react/eslint-plugin][eslint-react] 5.28.8 の全ルールと configs        |
+| `@r_masseater/oxlint-typed-rules/react`           | [@eslint-react/eslint-plugin][eslint-react] 5.30.1 の全ルールと configs        |
 
 ## 性能
 

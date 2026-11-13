@@ -20,6 +20,38 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    // The suggestion is inserted after the element name even when a spread attribute is present
+    {
+      code: tsx`<iframe {...props} />;`,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              data: { value: "" },
+              messageId: "suggest",
+              output: tsx`<iframe sandbox="" {...props} />;`,
+            },
+          ],
+        },
+      ],
+    },
+    // A `sandbox` provided through an inline spread is ignored as well
+    {
+      code: tsx`<iframe {...{ sandbox: "allow-downloads" }} />;`,
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            {
+              data: { value: "" },
+              messageId: "suggest",
+              output: tsx`<iframe sandbox="" {...{ sandbox: "allow-downloads" }} />;`,
+            },
+          ],
+        },
+      ],
+    },
     {
       code: tsx`<iframe sandbox />;`,
       errors: [
@@ -115,7 +147,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       },
     },
-    // Boundary: JSXAttribute with empty expression container (resolveAttributeValue handles JSXEmptyExpression)
+    // Boundary: JSXAttribute with empty expression container (getAttributeValue handles JSXEmptyExpression)
     {
       code: tsx`
         function App() {
@@ -223,6 +255,8 @@ ruleTester.run(RULE_NAME, rule, {
     "<iframe sandbox={`allow-downloads`} />;",
     '<iframe sandbox="allow-downloads allow-scripts" />;',
     '<iframe sandbox="allow-downloads allow-scripts allow-forms" />;',
+    // A direct `sandbox` is still recognized when a spread is also present
+    '<iframe sandbox="allow-downloads" {...props} />;',
     "<a />;",
     "<span />;",
     '<button type="button">Click me</button>;',
@@ -240,48 +274,6 @@ ruleTester.run(RULE_NAME, rule, {
         },
       },
     },
-    {
-      code: tsx`
-        const props = {
-          sandbox: "allow-downloads",
-        };
-
-        function App() {
-            return <PolyComponent as="iframe" {...props} />;
-        }
-      `,
-      settings: {
-        "react-x": {
-          polymorphicPropName: "as",
-        },
-      },
-    },
-    {
-      code: tsx`
-        const props = {
-          sandbox: "allow-downloads",
-        };
-
-        function App() {
-            return <iframe {...props} />;
-        }
-      `,
-    },
-    // Alias chains in spread props are followed
-    {
-      code: tsx`
-        const inner = { sandbox: "allow-downloads" };
-        const props = inner;
-
-        function App() {
-            return <iframe {...props} />;
-        }
-      `,
-    },
-    // Statically evaluable computed keys in spread props count as providing 'sandbox'
-    tsx`<iframe {...{ ["sandbox"]: "allow-downloads" }} />;`,
-    // String literal keys in spread props count as providing 'sandbox'
-    tsx`<iframe {...{ "sandbox": "allow-downloads" }} />;`,
     // Not an iframe
     tsx`<div sandbox />;`,
     // Boundary: member expression without a polymorphic prop is not an iframe

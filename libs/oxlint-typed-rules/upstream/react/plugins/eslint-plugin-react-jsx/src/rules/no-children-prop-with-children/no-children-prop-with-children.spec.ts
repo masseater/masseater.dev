@@ -355,18 +355,32 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-    // JSX spread attribute containing children (no safe auto-fix, only report)
+    // createElement props with a statically resolvable computed key
     {
-      code: '<div {...{ children: "x" }}>text</div>;',
+      code: 'const propName = "children"; React.createElement("div", { [propName]: "Children" }, "text");',
       errors: [{ messageId: "default" }],
     },
-    // JSX spread variable resolved to object containing children
+    // Statically evaluable computed keys are matched beyond identifiers
     {
-      code: tsx`
-        const props = { children: "x" };
-        <div {...props}>text</div>;
-      `,
+      code: 'React.createElement("div", { ["chi" + "ldren"]: "Children" }, "text");',
       errors: [{ messageId: "default" }],
+    },
+    // A direct `children` property is inspected even when a spread is also present
+    {
+      code: 'React.createElement("div", { children: "Children", ...props }, "text");',
+      errors: [{ messageId: "default" }],
+    },
+    {
+      code: '<div children="Children" {...props}>text</div>;',
+      errors: [
+        {
+          messageId: "default",
+          suggestions: [
+            { messageId: "remove-children-prop", output: "<div {...props}>text</div>;" },
+            { messageId: "remove-children-content", output: '<div children="Children" {...props}></div>;' },
+          ],
+        },
+      ],
     },
     // Empty string mixed with meaningful children still counts as having children (PR #1805)
     {
@@ -605,14 +619,21 @@ ruleTester.run(RULE_NAME, rule, {
     // createElement with no props arg
     'React.createElement("div");',
     'createElement("div");',
-    // createElement with computed identifier key is not a static children prop
-    'const propName = "children"; React.createElement("div", { [propName]: "Children" }, "text");',
+    // createElement with a non-static computed identifier key
+    'function render(propName: string) { return React.createElement("div", { [propName]: "Children" }, "text"); }',
+    // A computed key that statically resolves to a non-string is not a match
+    'React.createElement("div", { [0]: "Children" }, "text");',
     // createElement with variable props (not ObjectExpression) – cannot inspect
     tsx`
       const props = { children: "x" };
       React.createElement("div", props, "text");
     `,
-    // createElement with children hidden inside a spread in props
+    // Spread props are not resolved
+    '<div {...{ children: "x" }}>text</div>;',
     'React.createElement("div", { ...{ children: "x" } }, "text");',
+    tsx`
+      const props = { children: "x" };
+      <div {...props}>text</div>;
+    `,
   ],
 });

@@ -32,8 +32,8 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ messageId: "default" }],
     },
     {
-      name: "missing key with spread props in array literal",
-      code: tsx`[<App {...key} />];`,
+      name: "array-level spread does not exempt an element",
+      code: tsx`[...items, <App />];`,
       errors: [{ messageId: "default" }],
     },
     {
@@ -173,8 +173,7 @@ ruleTester.run(RULE_NAME, rule, {
     // --- Nested arrays and other iteration methods -------------------------------------------
     {
       name: "missing key in nested array returned from map",
-      // A nested array returned from `.map` is reported exactly once
-      // (by the ArrayExpression visitor, not the callback check)
+      // A nested array returned from `.map` is reported exactly once (by the ArrayExpression visitor, not the callback check)
       code: tsx`[1, 2 ,3].map(x => [<App />]);`,
       errors: [{ messageId: "default" }],
     },
@@ -660,14 +659,40 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       name: "map inside nested Children.toArray",
-      // Exiting a nested `Children.toArray` must not resume checks
-      // while still inside the outer `Children.toArray`
+      // Exiting a nested `Children.toArray` must not resume checks while still inside the outer `Children.toArray`
       code: tsx`
         import { Children } from "react";
         Children.toArray([Children.toArray([1].map(x => <App />)), [2].map(x => <App />)]);
       `,
     },
+    // --- Children.map handling ---------------------------------------------------------------
+    {
+      name: "elements inside React.Children.map callbacks",
+      // React.Children.map prefixes the returned elements' keys per child, so the callback result does not need a key of its own
+      code: tsx`
+        React.Children.map(children, (child) => <div>{child}</div>);
+      `,
+    },
+    {
+      name: "elements inside named Children.map callbacks",
+      code: tsx`
+        import { Children } from "react";
+        Children.map(children, (child) => <div>{child}</div>);
+      `,
+    },
     // --- Spread and nested-array edge cases --------------------------------------------------
+    {
+      name: "spread props may provide key in array literal",
+      code: tsx`[<App {...key} />];`,
+    },
+    {
+      name: "spread props may provide key in map callback",
+      code: tsx`[1, 2, 3].map((x) => <App {...x} />);`,
+    },
+    {
+      name: "spread props may provide key on a fragment factory element",
+      code: tsx`[<React.Fragment {...props} />];`,
+    },
     {
       name: "spread element alongside keyed element in array",
       code: tsx`[...items, <App key="1" />];`,
@@ -724,16 +749,11 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     // Ported from https://github.com/oxc-project/oxc/issues/23973
-    // oxlint's `react/jsx-key` reported this as a false positive even though `key`
-    // is present inside the spread object (closed as not planned: upstream
-    // eslint-plugin-react only misses it because it skips `return` statements
-    // nested in `switch` cases, and oxlint kept its deeper detection). Our rule
-    // does not have this problem: it collects switch-case returns AND resolves
-    // the spread identifier to its object literal, finds `key` inside, and
-    // correctly stays silent. A variant without `key` in the spread object is
-    // still reported on both branches (verified during porting).
+    // Any spread attribute may provide `key`, so the rule stays silent without
+    // inspecting the spread's contents; these cases pin that the switch-case
+    // return collection is still exercised on spread-bearing elements.
     {
-      name: "spread props with key inside object in switch-case returns",
+      name: "spread props in switch-case returns",
       code: tsx`
         const items = [
             { id: 'a', type: 'foo' },
@@ -755,10 +775,9 @@ ruleTester.run(RULE_NAME, rule, {
         );
       `,
     },
-    // Same pattern without the `switch` (upstream eslint-plugin-react reports
-    // this one; our rule still resolves the spread and stays silent)
+    // Same pattern without the `switch`; the spread exemption applies here too
     {
-      name: "spread props with key inside object in map callback",
+      name: "spread props in map callback",
       code: tsx`
         items.map((item) => {
           const props = { key: item.id, className: 'x' };
@@ -799,8 +818,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       name: "JSX returned from IIFE in map callback is not checked",
-      // The callback's return argument is a CallExpression with nothing to
-      // check; the nested arrow's returns belong to a different function
+      // The callback's return argument is a CallExpression with nothing to check; the nested arrow's returns belong to a different function
       code: tsx`[1, 2, 3].map(x => { return (() => <Inner />)(); });`,
     },
     {

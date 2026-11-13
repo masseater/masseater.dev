@@ -63,7 +63,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      code: tsx`<img {...props} children="Foo" />;`,
+      code: tsx`<img children="Foo" />;`,
       errors: [
         {
           data: { elementType: "img" },
@@ -72,7 +72,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      code: tsx`<PolyComponent as="img" {...props} children="Foo" />;`,
+      code: tsx`<PolyComponent as="img" children="Foo" />;`,
       errors: [
         {
           data: { elementType: "img" },
@@ -115,6 +115,36 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    // Empty string expressions still produce a children value at runtime
+    {
+      code: tsx`<br>{""}</br>;`,
+      errors: [
+        {
+          data: { elementType: "br" },
+          messageId: "default",
+        },
+      ],
+    },
+    // Any non-empty expression container counts as a child, even when it renders nothing
+    {
+      code: tsx`<br>{null}</br>;`,
+      errors: [
+        {
+          data: { elementType: "br" },
+          messageId: "default",
+        },
+      ],
+    },
+    // Same-line JSX whitespace is not padding, even next to an empty container
+    {
+      code: tsx`<br> {} </br>;`,
+      errors: [
+        {
+          data: { elementType: "br" },
+          messageId: "default",
+        },
+      ],
+    },
   ],
   valid: [
     "<div>Foo</div>;",
@@ -125,6 +155,15 @@ ruleTester.run(RULE_NAME, rule, {
     "<input />;",
     "<img />;",
     "<hr />;",
+    // Formatting whitespace and empty expression containers are omitted by the JSX transform
+    tsx`<br>{/* comment */}</br>;`,
+    tsx`<br>{}</br>;`,
+    tsx`<br>
+    </br>;`,
+    // Only direct `children`/`dangerouslySetInnerHTML` attributes are inspected; spreads may provide them
+    tsx`<img {...props} />;`,
+    tsx`<img {...{ children: "Foo" }} />;`,
+    tsx`<img {...{ dangerouslySetInnerHTML: { __html: "Foo" } }} />;`,
     {
       code: tsx`<PolyComponent as="div" children="Foo" />;`,
       settings: {
