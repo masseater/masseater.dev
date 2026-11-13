@@ -47,19 +47,23 @@ fn linear(name: &str, default: f64, min: f32, max: f32, step: f32) -> FloatParam
     FloatParam::new(name, default as f32, FloatRange::Linear { min, max }).with_step_size(step)
 }
 
-fn two_decimals() -> Arc<dyn Fn(f32) -> String + Send + Sync> {
-    Arc::new(|v| {
-        let text = format!("{v:.2}");
+fn decimals(places: usize, scale: f32) -> Arc<dyn Fn(f32) -> String + Send + Sync> {
+    Arc::new(move |v| {
+        let text = format!("{:.places$}", v * scale);
         text.strip_prefix("-")
             .filter(|digits| digits.chars().all(|c| c == '0' || c == '.'))
             .map_or(text.clone(), str::to_owned)
     })
 }
 
+fn two_decimals() -> Arc<dyn Fn(f32) -> String + Send + Sync> {
+    decimals(2, 1.0)
+}
+
 fn hand(name: &str, (min, max): (f64, f64)) -> FloatParam {
     linear(name, 0.0, min as f32, max as f32, FINE_STEP)
         .with_unit(" cm")
-        .with_value_to_string(Arc::new(|v| format!("{:.1}", v * 100.0)))
+        .with_value_to_string(decimals(1, 100.0))
         .with_string_to_value(Arc::new(|s| {
             s.trim()
                 .trim_end_matches("cm")
