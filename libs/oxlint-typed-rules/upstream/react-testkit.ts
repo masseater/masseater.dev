@@ -1,5 +1,4 @@
 import { Array as Arr, Match, Option, Predicate, pipe } from "effect";
-import { JsxEmit } from "typescript/sync";
 import type { Rule } from "vite-plus/lint/plugins";
 import { RuleTester as OxlintRuleTester } from "vite-plus/lint/plugins-dev";
 
@@ -84,23 +83,27 @@ class RuleTester {
   }
 }
 
-const PROJECTS: Readonly<Record<number, string>> = {
-  [JsxEmit.React]: "jsx-react",
-  [JsxEmit.ReactNative]: "jsx-react-native",
-  [JsxEmit.Preserve]: "jsx-preserve",
-};
+const PROJECTS = {
+  preact: Option.some("jsx-preact"),
+  preserve: Option.some("jsx-preserve"),
+  "react-classic": Option.some("jsx-react"),
+  "react-jsx": Option.none(),
+  "react-native": Option.some("jsx-react-native"),
+} as const satisfies Readonly<Record<string, Option.Option<string>>>;
+
+type TsconfigFixtureName = keyof typeof PROJECTS;
 
 const ruleTester = new RuleTester(SAMPLES);
 
 const ruleTesterWithTypes = ruleTester;
 
-const createRuleTesterForJSXEmit = (jsxEmit: number): RuleTester =>
-  Option.fromNullishOr(PROJECTS[jsxEmit]).pipe(
+const createRuleTesterForTsconfig = (name: TsconfigFixtureName): RuleTester =>
+  PROJECTS[name].pipe(
     Option.match({
       onNone: () => ruleTester,
       onSome: (project) => new RuleTester(local(`react/testing/${project}`)),
     }),
   );
 
-export type { InvalidCase, RuleTester, UpstreamCases, ValidCase };
-export { createRuleTesterForJSXEmit, ruleTester, ruleTesterWithTypes };
+export type { InvalidCase, RuleTester, TsconfigFixtureName, UpstreamCases, ValidCase };
+export { createRuleTesterForTsconfig, ruleTester, ruleTesterWithTypes };

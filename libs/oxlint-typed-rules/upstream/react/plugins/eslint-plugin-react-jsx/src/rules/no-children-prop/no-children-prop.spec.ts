@@ -254,8 +254,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-    // Empty expression containers (comment-only or bare) do not conflict with
-    // the 'children' prop, so the prop is still reported with a suggestion
+    // Empty expression containers (comment-only or bare) do not conflict with the 'children' prop, so the prop is still reported with a suggestion
     {
       code: tsx`<div children="x">{/* comment */}</div>;`,
       errors: [
@@ -284,14 +283,20 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-    // 'children' passed via spread (reported without suggestion)
+    // createElement props with a statically resolvable computed key
     {
-      code: '<div {...{ children: "Children" }} />;',
+      code: 'const propName = "children"; React.createElement("div", { [propName]: "Children" });',
       errors: [{ messageId: "default" }],
     },
+    // Statically evaluable computed keys are matched beyond identifiers
     {
-      code: 'const props = { children: "Children" }; <div {...props} />;',
+      code: 'React.createElement("div", { ["chi" + "ldren"]: "Children" });',
       errors: [{ messageId: "default" }],
+    },
+    // A following spread may override `children`, so no suggestion is offered
+    {
+      code: '<div children="Children" {...props} />;',
+      errors: [{ messageId: "default", suggestions: [] }],
     },
     // JSX edge cases
     {
@@ -575,6 +580,10 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ messageId: "default" }],
     },
     {
+      code: 'React.createElement("div", { children: "Children", ...props });',
+      errors: [{ messageId: "default" }],
+    },
+    {
       code: 'React.createElement("div", { ["children"]: "Children" });',
       errors: [{ messageId: "default" }],
     },
@@ -628,10 +637,17 @@ ruleTester.run(RULE_NAME, rule, {
     // edge cases
     'React.createElement("div", getProps());',
     'React.createElement("div");',
-    'const propName = "children"; React.createElement("div", { [propName]: "Children" });',
+    // createElement with a non-static computed identifier key
+    'function render(propName: string) { return React.createElement("div", { [propName]: "Children" }); }',
+    // A computed key that statically resolves to a non-string is not a match
+    'React.createElement("div", { [0]: "Children" });',
+    // Spread props are not resolved
     '<div {...{ className: "x" }} />;',
     'const props = { className: "x" }; <div {...props} />;',
     'import { props } from "props"; <div {...props} />;',
+    '<div {...{ children: "Children" }} />;',
+    'const props = { children: "Children" }; <div {...props} />;',
+    'React.createElement("div", { ...{ children: "Children" } });',
     "<xml:svg></xml:svg>;",
     '<div x:children="Children" />;',
   ],

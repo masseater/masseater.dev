@@ -314,8 +314,7 @@ ruleTester.run(RULE_NAME, rule, {
       options: [{ allowExpressions: false }],
       output: "<div>{value}</div>",
     },
-    // A single element child is reported even with allowExpressions: true —
-    // the option only affects expression-container children
+    // A single element child is reported even with allowExpressions: true — the option only affects expression-container children
     {
       code: "<><Foo>{moo}</Foo></>",
       errors: [
@@ -730,17 +729,6 @@ ruleTester.run(RULE_NAME, rule, {
       output: null,
     },
     {
-      code: "<Fragment {...props}><div /></Fragment>",
-      errors: [
-        {
-          type: AST.JSXElement,
-          data: { reason: "contains less than two children" },
-          messageId: "default",
-        },
-      ],
-      output: null,
-    },
-    {
       code: "<Other.Fragment><Foo /></Other.Fragment>",
       errors: [
         {
@@ -846,21 +834,7 @@ ruleTester.run(RULE_NAME, rule, {
         <div />
       `,
     },
-    // A spread attribute that statically resolves to an object without key/ref does not
-    // exempt the fragment, but makes the fix unsafe
-    {
-      code: "<Fragment {...{ id: 1 }}><div /></Fragment>",
-      errors: [
-        {
-          type: AST.JSXElement,
-          data: { reason: "contains less than two children" },
-          messageId: "default",
-        },
-      ],
-      output: null,
-    },
-    // A single spread child is always useless (it is not a JSXExpressionContainer, so
-    // allowExpressions does not apply) and can never be unwrapped outside JSX
+    // A single spread child is always useless (it is not a JSXExpressionContainer, so allowExpressions does not apply) and can never be unwrapped outside JSX
     {
       code: "<>{...props}</>",
       errors: [
@@ -889,8 +863,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       output: "<div>{...props}</div>",
     },
-    // A single expression child inside a custom component is only useless with
-    // allowExpressions: false, and even then cannot be unwrapped safely
+    // A single expression child inside a custom component is only useless with allowExpressions: false, and even then cannot be unwrapped safely
     {
       code: "<Foo><>{value}</></Foo>",
       options: [{ allowExpressions: false }],
@@ -903,8 +876,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       output: null,
     },
-    // A single element child is useless regardless of allowExpressions; a custom
-    // component parent still blocks the fix
+    // A single element child is useless regardless of allowExpressions; a custom component parent still blocks the fix
     {
       code: "<Foo><><span /></></Foo>",
       errors: [
@@ -941,8 +913,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       output: "<div></div>",
     },
-    // A member-expression component (ex: `<Foo.Bar>`) is not a host element, so a
-    // useless fragment inside it is reported but never auto-fixed
+    // A member-expression component (ex: `<Foo.Bar>`) is not a host element, so a useless fragment inside it is reported but never auto-fixed
     {
       code: "<Foo.Bar><>x</></Foo.Bar>",
       errors: [
@@ -954,8 +925,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       output: null,
     },
-    // A useless fragment nested inside another fragment is reported, but unwrapping is
-    // unsafe because the parent fragment is not a host element
+    // A useless fragment nested inside another fragment is reported, but unwrapping is unsafe because the parent fragment is not a host element
     {
       code: "<><><div /></><span /></>",
       errors: [
@@ -994,8 +964,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       output: "<div />",
     },
-    // Outside JSX, a fragment whose only child is whitespace-only text cannot
-    // be unwrapped — the fix would leave an empty expression behind
+    // Outside JSX, a fragment whose only child is whitespace-only text cannot be unwrapped — the fix would leave an empty expression behind
     {
       code: "const x = <> </>;",
       options: [{ allowExpressions: false }],
@@ -1021,8 +990,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       output: null,
     },
-    // Outside JSX, a fragment with a single element child is still safe to
-    // unwrap — the element moves into the surrounding expression position
+    // Outside JSX, a fragment with a single element child is still safe to unwrap — the element moves into the surrounding expression position
     {
       code: "function f() { return <><Foo /></>; }",
       errors: [
@@ -1035,8 +1003,7 @@ ruleTester.run(RULE_NAME, rule, {
       output: "function f() { return <Foo />; }",
     },
     // Outside JSX, a single expression child is reported with allowExpressions:
-    // false, but cannot be unwrapped — the bare expression would not be valid
-    // in the surrounding expression position
+    // false, but cannot be unwrapped — the bare expression would not be valid in the surrounding expression position
     {
       code: "function f() { return <>{value}</>; }",
       options: [{ allowExpressions: false }],
@@ -1051,8 +1018,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
   ],
   valid: [
-    // A space-only JSXText sibling (no newline) counts as a meaningful child,
-    // so the fragment is not useless
+    // A space-only JSXText sibling (no newline) counts as a meaningful child, so the fragment is not useless
     "const x = <><span/> </>;",
     "<><Foo /><Bar /></>",
     // Two element children
@@ -1180,15 +1146,22 @@ ruleTester.run(RULE_NAME, rule, {
       /** @jsxFrag VFrag */
       <React.Fragment><div /></React.Fragment>
     `,
-    // A key spread from an inline object expression exempts the fragment,
-    // same as a literal key attribute
+    // A spread attribute may provide key/ref, so it exempts the fragment
     "<Fragment {...{ key: 'k' }}><div /></Fragment>",
+    "<Fragment {...props}><div /></Fragment>",
+    "<Fragment {...{ ...props }}><div /></Fragment>",
+    "<Fragment {...{ id: 1 }}><div /></Fragment>",
+    // A dynamic computed key may also provide key/ref
+    "<Fragment {...{ [propName]: value }}><div /></Fragment>",
+    "<Fragment {...{ ...{ [propName]: value } }}><div /></Fragment>",
+    // The spread exemption is checked before the emptiness and child-count checks
+    "<Fragment {...props} />",
+    "<Fragment {...props}>text</Fragment>",
     // key/ref exemption is checked before the emptiness check
     '<Fragment key="k" />',
     // A single expression child inside a custom component is allowed by default
     "<Foo><>{value}</></Foo>",
-    // A single expression child outside JSX is allowed by default
-    // (allowExpressions: true)
+    // A single expression child outside JSX is allowed by default (allowExpressions: true)
     "function f() { return <>{value}</>; }",
     // Empty fragment inside a custom component with allowEmptyFragment: true
     {

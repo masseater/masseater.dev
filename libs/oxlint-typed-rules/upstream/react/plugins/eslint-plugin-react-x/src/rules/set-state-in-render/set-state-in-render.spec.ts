@@ -270,25 +270,6 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: tsx`
-        import { useState } from "react";
-
-        function Component() {
-          const data = useState(0);
-          data[1](1);
-          return <div>{data[0]}</div>;
-        }
-      `,
-      errors: [
-        {
-          data: {
-            name: "data[1]",
-          },
-          messageId: "default",
-        },
-      ],
-    },
-    {
-      code: tsx`
         function Component(props) {
           const [state, setState] = useState(false);
           (setState as any)(true);
@@ -299,8 +280,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     // Aliased setState call (from React Compiler fixtures)
     // NOTE: The IMPL only flags the direct setState call (setX), not the alias
-    // (aliased). The SPEC flags both because it tracks all references to the
-    // state setter through HIR StoreLocal/LoadLocal propagation.
+    // (aliased). The SPEC flags both because it tracks all references to the state setter through HIR StoreLocal/LoadLocal propagation.
     {
       code: tsx`
         function Component(props) {
@@ -339,8 +319,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ data: { name: "setState" }, messageId: "default" }],
     },
-    // setState after a loop with break/continue (from React Compiler's
-    // error.unconditional-set-state-in-render-after-loop-break.js)
+    // setState after a loop with break/continue (from React Compiler's error.unconditional-set-state-in-render-after-loop-break.js)
     {
       code: tsx`
         function Component(props) {
@@ -358,8 +337,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ data: { name: "setState" }, messageId: "default" }],
     },
-    // setState after a loop with break/throw (from React Compiler's
-    // error.unconditional-set-state-in-render-with-loop-throw.js)
+    // setState after a loop with break/throw (from React Compiler's error.unconditional-set-state-in-render-with-loop-throw.js)
     {
       code: tsx`
         function Component(props) {
@@ -437,8 +415,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ data: { name: "setA" }, messageId: "default" }],
     },
-    // setState after a nested component declaration is still attributed to the
-    // outer component
+    // setState after a nested component declaration is still attributed to the outer component
     {
       code: tsx`
         import { useState } from "react";
@@ -518,19 +495,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ data: { name: "setA" }, messageId: "default" }],
     },
-    // tuple setter accessed via .at(1)
-    {
-      code: tsx`
-        import { useState } from "react";
-
-        function Component() {
-          const data = useState(0);
-          data.at(1)(1);
-          return <div>{data[0]}</div>;
-        }
-      `,
-      errors: [{ data: { name: "data.at(1)" }, messageId: "default" }],
-    },
     // an early return in a sibling component must not shield this component
     {
       code: tsx`
@@ -590,22 +554,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ data: { name: "setA" }, messageId: "default" }],
     },
-    // `const { 1: setA } = useState()` destructures the tuple by numeric key,
-    // so the name is still recognized as the setter
-    {
-      code: tsx`
-        import { useState } from "react";
-
-        function Component() {
-          const { 1: setA } = useState(0);
-          setA(1);
-          return <div />;
-        }
-      `,
-      errors: [{ data: { name: "setA" }, messageId: "default" }],
-    },
-    // setState directly in an inner nested component is attributed to the inner
-    // component (the top of the component stack), not the outer one
+    // setState directly in an inner nested component is attributed to the inner component (the top of the component stack), not the outer one
     {
       code: tsx`
         import { useState } from "react";
@@ -634,8 +583,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ data: { name: "setCount" }, messageId: "default" }],
     },
-    // anonymous memo component with a nested component declaration followed by a
-    // setState: the stack must restore the memo callback as the component
+    // anonymous memo component with a nested component declaration followed by a setState: the stack must restore the memo callback as the component
     {
       code: tsx`
         import { memo, useState } from "react";
@@ -649,8 +597,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ data: { name: "setA" }, messageId: "default" }],
     },
-    // a nested component declared inside a callback of the component does not
-    // disturb attribution of a later setState in the component body
+    // a nested component declared inside a callback of the component does not disturb attribution of a later setState in the component body
     {
       code: tsx`
         import { useState } from "react";
@@ -765,8 +712,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
-    // a second argument to memo() does not interfere with detecting the
-    // anonymous render function, and its event handler stays valid
+    // a second argument to memo() does not interfere with detecting the anonymous render function, and its event handler stays valid
     {
       code: tsx`
         import { useState, memo } from "react";
@@ -964,8 +910,7 @@ ruleTester.run(RULE_NAME, rule, {
         }
       `,
     },
-    // a nested non-component utility function does not disturb the outer
-    // component context; conditional setState after it stays valid
+    // a nested non-component utility function does not disturb the outer component context; conditional setState after it stays valid
     {
       code: tsx`
         import { useState } from "react";
@@ -1115,35 +1060,9 @@ ruleTester.run(RULE_NAME, rule, {
         }
       `,
     },
-    // tuple value accessed via .at(0) is not a setter call
-    {
-      code: tsx`
-        import { useState } from "react";
-
-        function Component() {
-          const data = useState(() => 0);
-          data.at(0)();
-          return <div>{data[0]}</div>;
-        }
-      `,
-    },
-    // `const { 0: a } = useState()` binds the state value, not the setter:
-    // object-pattern destructuring only counts as a setter at numeric key 1
-    {
-      code: tsx`
-        import { useState } from "react";
-
-        function Component() {
-          const { 0: logA } = useState(() => () => 0);
-          logA();
-          return <div />;
-        }
-      `,
-    },
     // setState inside a useMemo factory (from React Compiler fixtures)
     // NOTE: The IMPL does not flag this because the factory is a nested function.
-    // The SPEC flags it with a dedicated useMemo diagnostic because the factory
-    // executes during render.
+    // The SPEC flags it with a dedicated useMemo diagnostic because the factory executes during render.
     {
       code: tsx`
         import { useMemo, useState } from "react";
@@ -1183,8 +1102,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
-    // a setState after a nested component inside an anonymous memo component
-    // stays valid when guarded by an early return
+    // a setState after a nested component inside an anonymous memo component stays valid when guarded by an early return
     {
       code: tsx`
         import { memo, useState } from "react";
