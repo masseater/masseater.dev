@@ -10,7 +10,6 @@ use pod_rattle::RattleParams;
 use pod_rattle::Telemetry;
 use pod_rattle::editor::{EDITOR_SIZE, EditorView};
 use pod_rattle_engine::{Engine, Material};
-use std::sync::atomic::Ordering;
 use std::sync::{Arc, Mutex};
 
 const SAMPLE_RATE: f64 = 48_000.0;
@@ -186,11 +185,41 @@ fn dragging_the_stage_moves_the_hand() {
     let from = Pos2::new(300.0, 200.0);
     let to = Pos2::new(360.0, 240.0);
     drag(&mut harness, from, to);
-    assert!(f.telemetry.grabbing.load(Ordering::Relaxed));
-    let x = f.telemetry.target_x.load(Ordering::Relaxed);
-    let y = f.telemetry.target_y.load(Ordering::Relaxed);
     release(&mut harness, to);
-    assert!(!f.telemetry.grabbing.load(Ordering::Relaxed));
-    assert!(x > 0.0, "hand x {x} should move right");
-    assert!(y < 0.0, "hand y {y} should move down");
+    let x = f.params.hand_x.value();
+    let y = f.params.hand_y.value();
+    assert!(x > 0.0, "Hand X {x} should move right");
+    assert!(y < 0.0, "Hand Y {y} should move down");
+    let edits = f.host.take();
+    for name in ["Hand X", "Hand Y"] {
+        assert!(
+            edits.iter().any(|(edited, _)| edited == name),
+            "{name} is not recorded: {edits:?}"
+        );
+    }
+}
+
+#[test]
+fn scrolling_the_stage_moves_the_hand_in_depth() {
+    let f = fixture();
+    let mut harness = harness(&f);
+    harness.event(Event::PointerMoved(Pos2::new(300.0, 200.0)));
+    harness.run();
+    harness.event(Event::MouseWheel {
+        unit: egui::MouseWheelUnit::Point,
+        delta: Vec2::new(0.0, 200.0),
+        phase: egui::TouchPhase::Move,
+        source: egui::MouseWheelSource::Wheel,
+        modifiers: Modifiers::NONE,
+    });
+    for _ in 0..60 {
+        harness.run();
+    }
+    let z = f.params.hand_z.value();
+    assert!(z > 0.05, "Hand Z {z} should move back");
+    let edits = f.host.take();
+    assert!(
+        !edits.is_empty() && edits.iter().all(|(name, _)| name == "Hand Z"),
+        "edits: {edits:?}"
+    );
 }

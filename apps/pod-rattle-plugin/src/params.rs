@@ -1,5 +1,5 @@
 use nice_plug::prelude::*;
-use pod_rattle_engine::{AutoShake, Material, Params as EngineParams};
+use pod_rattle_engine::{AutoShake, HAND_X, HAND_Y, HAND_Z, Material, Params as EngineParams};
 use std::sync::Arc;
 
 #[derive(Params)]
@@ -30,6 +30,12 @@ pub struct RattleParams {
     pub rate: FloatParam,
     #[id = "amp"]
     pub amp: FloatParam,
+    #[id = "handX"]
+    pub hand_x: FloatParam,
+    #[id = "handY"]
+    pub hand_y: FloatParam,
+    #[id = "handZ"]
+    pub hand_z: FloatParam,
     #[id = "gain"]
     pub gain: FloatParam,
 }
@@ -48,6 +54,20 @@ fn two_decimals() -> Arc<dyn Fn(f32) -> String + Send + Sync> {
             .filter(|digits| digits.chars().all(|c| c == '0' || c == '.'))
             .map_or(text.clone(), str::to_owned)
     })
+}
+
+fn hand(name: &str, (min, max): (f64, f64)) -> FloatParam {
+    linear(name, 0.0, min as f32, max as f32, FINE_STEP)
+        .with_unit(" cm")
+        .with_value_to_string(Arc::new(|v| format!("{:.1}", v * 100.0)))
+        .with_string_to_value(Arc::new(|s| {
+            s.trim()
+                .trim_end_matches("cm")
+                .trim()
+                .parse::<f32>()
+                .ok()
+                .map(|cm| cm / 100.0)
+        }))
 }
 
 impl Default for RattleParams {
@@ -83,6 +103,9 @@ impl Default for RattleParams {
                         .ok()
                         .map(|cm| cm / 10.0)
                 })),
+            hand_x: hand("Hand X", HAND_X),
+            hand_y: hand("Hand Y", HAND_Y),
+            hand_z: hand("Hand Z", HAND_Z),
             gain: linear("Volume", p.gain, 0.0, 2.0, STEP)
                 .with_unit(" %")
                 .with_value_to_string(formatters::v2s_f32_percentage(0))
@@ -114,6 +137,10 @@ impl RattleParams {
             rate: f64::from(self.rate.value()),
             amp: f64::from(self.amp.value()),
         }
+    }
+
+    pub fn position(&self) -> [f64; 3] {
+        [&self.hand_x, &self.hand_y, &self.hand_z].map(|p| f64::from(p.value()))
     }
 
     pub fn material_fields(&self, material: Material) -> [(&FloatParam, f32); 8] {

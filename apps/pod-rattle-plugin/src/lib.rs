@@ -1,10 +1,8 @@
 pub mod editor;
 mod params;
 
-use atomic_float::AtomicF32;
 use nice_plug::prelude::*;
 use pod_rattle_engine::{Engine, Snapshot};
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use triple_buffer::TripleBuffer;
 
@@ -14,9 +12,6 @@ const SNAPSHOT_RATE: f32 = 60.0;
 
 pub struct Telemetry {
     pub snapshot: Mutex<triple_buffer::Output<Snapshot>>,
-    pub grabbing: AtomicBool,
-    pub target_x: AtomicF32,
-    pub target_y: AtomicF32,
 }
 
 impl Telemetry {
@@ -25,9 +20,6 @@ impl Telemetry {
         let (input, output) = TripleBuffer::new(&Snapshot::default()).split();
         let telemetry = Self {
             snapshot: Mutex::new(output),
-            grabbing: AtomicBool::new(false),
-            target_x: AtomicF32::new(0.0),
-            target_y: AtomicF32::new(0.0),
         };
         (telemetry, input)
     }
@@ -70,7 +62,7 @@ impl Plugin for PodRattle {
     }];
 
     const MIDI_INPUT: MidiConfig = MidiConfig::Basic;
-    const SAMPLE_ACCURATE_AUTOMATION: bool = false;
+    const SAMPLE_ACCURATE_AUTOMATION: bool = true;
 
     type Editor = editor::RattleEditor;
     type SysExMessage = ();
@@ -91,17 +83,22 @@ impl Plugin for PodRattle {
         _context: &mut impl ActivateContext<Self>,
     ) -> bool {
         self.sample_rate = buffer_config.sample_rate;
-        self.engine = Some(Engine::new(
+        let mut engine = Engine::new(
             f64::from(buffer_config.sample_rate),
             self.params.engine_params(),
             self.params.auto_shake(),
-        ));
+        );
+        let [x, y, z] = self.params.position();
+        engine.place(x, y, z);
+        self.engine = Some(engine);
         true
     }
 
     fn reset(&mut self) {
         if let Some(engine) = self.engine.as_mut() {
             engine.reset(self.params.engine_params(), self.params.auto_shake());
+            let [x, y, z] = self.params.position();
+            engine.place(x, y, z);
         }
     }
 
@@ -117,13 +114,8 @@ impl Plugin for PodRattle {
         engine.set_params(self.params.engine_params());
         let auto = self.params.auto_shake();
         engine.set_auto(auto);
-        let telemetry = &self.telemetry;
-        if telemetry.grabbing.load(Ordering::Relaxed) {
-            engine.set_target(
-                f64::from(telemetry.target_x.load(Ordering::Relaxed)),
-                f64::from(telemetry.target_y.load(Ordering::Relaxed)),
-            );
-        }
+        let [x, y, z] = self.params.position();
+        engine.set_position(x, y, z);
 
         let samples = buffer.samples();
         let [left, right] = buffer.as_slice() else {
