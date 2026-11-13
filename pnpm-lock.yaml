@@ -330,8 +330,8 @@ catalogs:
       specifier: 22.0.1
       version: 22.0.1
     '@openrouter/sdk':
-      specifier: 1.5.75
-      version: 1.5.75
+      specifier: 1.5.79
+      version: 1.5.79
     '@opentelemetry/api':
       specifier: 1.10.0
       version: 1.10.0
@@ -663,8 +663,8 @@ catalogs:
       specifier: 4.20260730.0
       version: 4.20260730.0
     minimatch:
-      specifier: 11.0.5
-      version: 11.0.5
+      specifier: 11.0.6
+      version: 11.0.6
     ml-confusion-matrix:
       specifier: 2.0.0
       version: 2.0.0
@@ -703,13 +703,13 @@ catalogs:
       version: 8.0.0
     postal-mime:
       specifier: ^4.2.0
-      version: 4.2.0
+      version: 4.2.1
     publint:
       specifier: 0.3.25
       version: 0.3.25
     puppeteer-core:
-      specifier: 25.16.0
-      version: 25.16.0
+      specifier: 25.17.0
+      version: 25.17.0
     react:
       specifier: 19.3.1
       version: 19.3.1
@@ -771,8 +771,8 @@ catalogs:
       specifier: 14.3.0
       version: 14.3.0
     skills:
-      specifier: 1.7.6
-      version: 1.7.6
+      specifier: 1.8.0
+      version: 1.8.0
     smol-toml:
       specifier: 1.9.1
       version: 1.9.1
@@ -892,8 +892,8 @@ catalogs:
       specifier: 1.8.1
       version: 1.8.1
     renovate:
-      specifier: 44.225.1
-      version: 44.225.1
+      specifier: 44.227.4
+      version: 44.227.4
     tailwindcss:
       specifier: 4.3.5
       version: 4.3.5
@@ -972,10 +972,10 @@ importers:
         version: 3.42.0
       renovate:
         specifier: catalog:stack
-        version: 44.225.1(supports-color@7.2.0)(typanion@3.14.0)
+        version: 44.227.4(supports-color@7.2.0)(typanion@3.14.0)
       skills:
         specifier: 'catalog:'
-        version: 1.7.6
+        version: 1.8.0
       textlint-rule-preset-ja-technical-writing:
         specifier: 12.0.2
         version: 12.0.2(supports-color@7.2.0)
@@ -3018,7 +3018,7 @@ importers:
         version: 8.1.1
       postal-mime:
         specifier: 'catalog:'
-        version: 4.2.0
+        version: 4.2.1
       refractor:
         specifier: 'catalog:'
         version: 5.0.0
@@ -3650,7 +3650,7 @@ importers:
         version: 0.42.1(supports-color@10.2.2)
       minimatch:
         specifier: 'catalog:'
-        version: 11.0.5
+        version: 11.0.6
       pluralize:
         specifier: 'catalog:'
         version: 8.0.0
@@ -3843,7 +3843,7 @@ importers:
         version: 13.6.0(rollup@4.64.5)(supports-color@7.2.0)(webpack@5.111.1(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(uglify-js@3.19.3))(yauzl@3.4.0)
       puppeteer-core:
         specifier: 'catalog:'
-        version: 25.16.0(yauzl@3.4.0)
+        version: 25.17.0(yauzl@3.4.0)
     devDependencies:
       '@effect/platform-node':
         specifier: 'catalog:'
@@ -3982,7 +3982,7 @@ importers:
         version: 4.1.3(effect@4.1.3)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.75
+        version: 1.5.79
       '@r_masseater/oxlint-plugin-decision':
         specifier: workspace:*
         version: link:../../libs/oxlint-plugin-decision
@@ -5258,8 +5258,8 @@ packages:
     resolution: {integrity: sha512-sGEA473TlCvhCGNoTBY9OXZVWdscIXdGt0dm8EpB+2MRfmt8LNh/X56P/T3nCtEB+eH5qGEa3odphSAoUxSfSQ==}
     engines: {node: '>=22.12.0'}
 
-  '@containerbase/base@14.66.13':
-    resolution: {integrity: sha512-mgPqAAtXlJnd5wtJG+9v+nYsO7m9HNJqiHYx0ZztvyIEeNjw85/Ycvbmgn4UfvLQnaLtDWXV59KmOmM6ZXV4rA==}
+  '@containerbase/base@14.66.14':
+    resolution: {integrity: sha512-ukyoTYn0rNoNBqKS8A70uCJBukfgtkvUqjIT2qs9ncZja9tZThFy6m023YfLJtqU/QzCOd+PrFEPB52DuIkpBw==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.6.6
@@ -5267,8 +5267,8 @@ packages:
       zod:
         optional: true
 
-  '@containerbase/base@14.66.14':
-    resolution: {integrity: sha512-ukyoTYn0rNoNBqKS8A70uCJBukfgtkvUqjIT2qs9ncZja9tZThFy6m023YfLJtqU/QzCOd+PrFEPB52DuIkpBw==}
+  '@containerbase/base@14.66.16':
+    resolution: {integrity: sha512-90xFit8D4PnfOll2GrE5O9v4bhZvlRm6C5Q/kq0yXrTq4LJ4l8+rqODA0i3cUMq2KXC73dVR72UBkkkJ25gxHQ==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.6.6
@@ -6686,8 +6686,8 @@ packages:
     resolution: {integrity: sha512-hAX0pT/73190NLqBPPWSdBVGtbY6VOhWYK3qqHqtXQ1gK7kS2yz4+ivsN07hpJ6I3aeMtKP6J6npsEKOAzuTLA==}
     engines: {node: '>=20.0'}
 
-  '@openrouter/sdk@1.5.75':
-    resolution: {integrity: sha512-QoQqsCpVQH0xyMWyExIg7loDDTHC28zpY+FUO/vfa7QhcaAtQaIt5M414OpR5FfpYWXMeX5kzAjz0W5yJN/VYA==}
+  '@openrouter/sdk@1.5.79':
+    resolution: {integrity: sha512-vLiXzEoEWfuwQI4bwSEaVA7MZYMW4K7TlLuWQAJmZAiFhmeMFygm9ckVT2UaVhJETYLAK4M5wASPqTDwi/rq1A==}
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -7977,6 +7977,19 @@ packages:
       yauzl:
         optional: true
 
+  '@puppeteer/browsers@3.2.7':
+    resolution: {integrity: sha512-B3C/v8OEEaJYcN1IzzgbPmt+GbFANr4Mf/NrqNuGk/dIchrv6quNqxgT+A6qE0Ge0MN95NjKUddcR1JMpYRMWA==}
+    engines: {node: '>=22.12.0'}
+    hasBin: true
+    peerDependencies:
+      proxy-agent: '>=8.0.1'
+      yauzl: ^2.10.0 || ^3.4.0
+    peerDependenciesMeta:
+      proxy-agent:
+        optional: true
+      yauzl:
+        optional: true
+
   '@qnighy/marshal@0.1.3':
     resolution: {integrity: sha512-uaDZTJYtD2UgQTGemmgWeth+e2WapZm+GkAq8UU8AJ55PKRFaf1GkH7X/uzA+Ygu8iInzIlM2FGyCUnruyMKMg==}
 
@@ -8754,8 +8767,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  '@renovatebot/base-image@13.163.1':
-    resolution: {integrity: sha512-lZf2+mnCkzDF2vuCnFuNt4BxpbA8womcJpBbXoh5xJLLeXrlxHOgmMPSHYEFi56g25cW91J80Q9Ak52ovEs/Bw==}
+  '@renovatebot/base-image@13.163.7':
+    resolution: {integrity: sha512-L8f/L6m+THcdHXSGvcDP/P/FTw4+ZSqj0SXjW/uvahUUckuNAfepdAUlBPjdxEP4UBwE85jQxoOOY1pjRVYrlA==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.6.6
@@ -12202,8 +12215,8 @@ packages:
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
 
-  devtools-protocol@0.0.1704951:
-    resolution: {integrity: sha512-GQhQOs9u/Mvm1zMtJIH872JS4AskuZdUSsPNPk4ChahtWAUqgz6atEtIsMt+nO7MqF1Ic4HxII/k8Cu36JivNg==}
+  devtools-protocol@0.0.1717327:
+    resolution: {integrity: sha512-3RDLDzyvv8XAYf1L+TL1og0EEk0eOW1Jn0yi88uG6Bj8fUKO1ZKfgNtwbJkqf5SWdPDS4VGEPxwdUWz78V6Xcg==}
 
   devtools-protocol@0.0.1727723:
     resolution: {integrity: sha512-laxmpDN+zItbpy5klVbHqBsZ38O2rC6VwI9W5daM11Pc3Dj2gruc2wwnHW48CB8wYiWHALDkA6vRg92U2cfdLA==}
@@ -13196,8 +13209,8 @@ packages:
     resolution: {integrity: sha512-i1ydyHrqcIxXkWh/uBmVkzCvIuq5yiK2ATndIe5XxKholrG/MTYP9xGYka4sQhrbIAgGjL2B6NOE7rFaiF3fXw==}
     engines: {node: '>=18'}
 
-  google-auth-library@11.3.2:
-    resolution: {integrity: sha512-rbm+5boOZzFvDFg2tvCGkgHtG+RrmDqCDi6voK+ILpoCDqGxxc5pcMH6WZzCQXGNqQqZcYJl5WNvb159rkriuA==}
+  google-auth-library@11.3.3:
+    resolution: {integrity: sha512-VxjQ5+zHeR4RcRi001qnT/6KRKy2CIjQ5I7/wFErvRqr0+setlRqjDOAzvjzWEzyvsWswZE6WMQJtS8OpeTqAQ==}
     engines: {node: '>=22'}
 
   google-logging-utils@1.1.3:
@@ -14136,6 +14149,9 @@ packages:
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
 
+  markdown-table@3.1.0:
+    resolution: {integrity: sha512-xpeSCdM+B+6P3ncfgaB7FoDbtJ30xAe6Z18TGT7AgXJsHqCElCICZovQqdRMm7kHgpTyYv36EupqewoFFSB8vw==}
+
   markdownlint@0.42.1:
     resolution: {integrity: sha512-Otolm9JX12iO2NG5cetlKfzGygpiLSlHuqXKxoT6HGhN5HtbxprJPicKZqqCQd88qOvUi/TEs3o1AmcYioVscA==}
     engines: {node: '>=22'}
@@ -14468,6 +14484,10 @@ packages:
     resolution: {integrity: sha512-snPlVppFcYWfLLFQGhDxUyBcHNtMlWmn3jtj7pEaO+DP8pqL0IvAzXhMYmn1z9ASNtgmwLBdFxSf4tMUB0OTKA==}
     engines: {node: 20 || >=22}
 
+  minimatch@11.0.6:
+    resolution: {integrity: sha512-6NZbDPQIRnsJFjJ9wbd5659OKaTHCqpPHdldE3WwArjxr5wLxHIwnx4eTGcPebpVBZZQbITvQQIx8K0VGXoT3Q==}
+    engines: {node: 20 || >=22}
+
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
@@ -14712,6 +14732,9 @@ packages:
   normalize-url@8.1.1:
     resolution: {integrity: sha512-JYc0DPlpGWB40kH5g07gGTrYuMqV653k3uBKY6uITPWds3M0ov3GaWGp9lbE3Bzngx8+XkfzgvASb9vk9JDFXQ==}
     engines: {node: '>=14.16'}
+
+  nostics@1.3.0:
+    resolution: {integrity: sha512-wzRsrJwNlFbqIRQt8aCeL2WE8USip/uuvGSOZV1D02CxX8ABTMbw8IywKjH7yWHETMXbWJI4OBpihg9rmz2Vyg==}
 
   npm-run-path@6.0.0:
     resolution: {integrity: sha512-9qny7Z9DsQU8Ou39ERsPU4OZQlSTP47ShQzuKZ6PRXpYLtIFgl/DEBYEXKlvcEa+9tHVcK8CF81Y2V72qaZhWA==}
@@ -15126,8 +15149,8 @@ packages:
   postal-mime@2.7.6:
     resolution: {integrity: sha512-UUlyE2KlxmvwMGq060onF/VWU3zD6dVW31FwokQ5v26jWd35fbs2MoTFzh+jXnPwAyV2MULMKXcBInGOl5TO6Q==}
 
-  postal-mime@4.2.0:
-    resolution: {integrity: sha512-QG5Rh8wY/zjwFF1lKWcBbwWcAWR5jWodmMPL4gMik43XDLebtWoAAPyG0lrE2kYYZ5IHTASrepGuGO0YIwNKAg==}
+  postal-mime@4.2.1:
+    resolution: {integrity: sha512-uFQnu6TPJe5IGzj3ZIjzAYCk7qnVYM3KFvo0JpRFftJKtxJcUSMgTaWsIXDakTKfN71fUULhjNNVbNonim5f0Q==}
     engines: {node: '>=20'}
 
   postcss-selector-parser@6.1.5:
@@ -15248,8 +15271,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  puppeteer-core@25.16.0:
-    resolution: {integrity: sha512-VA5Pf54N8shfopNkZZXCdiiwfnnY8ZJYAMqFQRhlH5mGUhfwf53Ar770GPtdpTDLUqvQeYpIBtC9/G2Jij2IJw==}
+  puppeteer-core@25.17.0:
+    resolution: {integrity: sha512-YAgBitkd+K9gxRt+wzBAFTTkGjkC8aC2o4OxofsU8JUy2nnK/RflTCJ9bRCvCMNbq9TPhqFk4Phz98otN9FrGg==}
     engines: {node: '>=22.12.0'}
 
   pvtsutils@1.3.6:
@@ -15519,8 +15542,8 @@ packages:
   remove-accents@0.5.0:
     resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
 
-  renovate@44.225.1:
-    resolution: {integrity: sha512-vcN7BZMPVLG7p0LHwakNEnf72WDvuqXXxYK0ZKZJgHsxfMwEhfdBsSYOOBHVjQ8BQdanyS6yd9rLcaADRe73ag==}
+  renovate@44.227.4:
+    resolution: {integrity: sha512-+62GEWYQzXo/FEoGVBkDyZts25B1F9PlwaEiEe+eK71JS6i5A2zaEgEHavUNTn2wFYdP1zrPsyJAeyHm7UyGCA==}
     engines: {node: ^24.11.0 || ^26.13.0, pnpm: ^11.0.0}
     hasBin: true
 
@@ -15684,11 +15707,6 @@ packages:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
 
-  semver@7.8.5:
-    resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   semver@7.8.6:
     resolution: {integrity: sha512-9lpSSU4Mly3mrtruwLs1eLK6+gzbzqeBFwRNjIjE+9LuDpWdYctrQlQ3ej1Ilgi7gknpsTRnPoLP8DpCHqHIJw==}
     engines: {node: '>=10'}
@@ -15835,8 +15853,8 @@ packages:
     engines: {node: ^22.19.0 || ^24.5.0 || >=26.0.0}
     hasBin: true
 
-  skills@1.7.6:
-    resolution: {integrity: sha512-dAee29yRGin7ub6VHwmifLEfHrysGD41yq4RkY0gg7QQh0wyQKWfhiORGb/r6uNpKWc9A1GY8yowV07Lh+4rCg==}
+  skills@1.8.0:
+    resolution: {integrity: sha512-SOF4o+gtsCq2ggS416zGj+Em2ryAzewVbIIvxlf+72R6g/9HfmINaVQgFqgXdy6fd6y2J6A7IBM8VocK8c0Dmw==}
     engines: {node: '>=22.20.0'}
     hasBin: true
 
@@ -16806,8 +16824,8 @@ packages:
   web-tree-sitter@0.27.2:
     resolution: {integrity: sha512-ZRo86GKI4aOSBAqOrPmCtriExI3xIzu1sNw/V6v3b4QGxrEmO19FGwbMNdyhw3MJLAZIw0xAV0oSpqX361eAyQ==}
 
-  webdriver-bidi-protocol@1.0.1:
-    resolution: {integrity: sha512-WXWs/aXF2a6Al1Z2/V/7Gp2oPZOAAmHjJOTmv4KCXRJ122IMj3tSSMc6a4q3K4QOmhQbse/Ahr+oTVJOU2dUiw==}
+  webdriver-bidi-protocol@1.0.2:
+    resolution: {integrity: sha512-nghazPI+J5RrLZ+qb6vMjC6l1/tnwqr2muVEax4Ufd6eIdcjeqNnhLsAxTG9s+7Zf4umgf0DrEwDC8CoU91nAA==}
 
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -18536,15 +18554,15 @@ snapshots:
       conventional-commits-parser: 7.1.2
       picocolors: 1.1.1
 
-  '@containerbase/base@14.66.13(zod@4.6.7)':
+  '@containerbase/base@14.66.14(zod@4.6.7)':
     dependencies:
-      semver: 7.8.5
+      semver: 7.8.6
     optionalDependencies:
       zod: 4.6.7
 
-  '@containerbase/base@14.66.14(zod@4.6.7)':
+  '@containerbase/base@14.66.16(zod@4.6.7)':
     dependencies:
-      semver: 7.8.5
+      semver: 7.8.6
     optionalDependencies:
       zod: 4.6.7
 
@@ -19101,7 +19119,7 @@ snapshots:
     dependencies:
       '@eslint/object-schema': 3.0.5
       debug: 4.4.3(supports-color@10.2.2)
-      minimatch: 11.0.5
+      minimatch: 11.0.6
     transitivePeerDependencies:
       - supports-color
 
@@ -19834,7 +19852,7 @@ snapshots:
 
   '@npmcli/fs@5.0.0':
     dependencies:
-      semver: 7.8.5
+      semver: 7.8.6
 
   '@octokit/auth-token@6.0.0': {}
 
@@ -19924,7 +19942,7 @@ snapshots:
 
   '@oozcitak/util@10.0.0': {}
 
-  '@openrouter/sdk@1.5.75':
+  '@openrouter/sdk@1.5.79':
     dependencies:
       zod: 4.6.7
 
@@ -20906,6 +20924,13 @@ snapshots:
     optionalDependencies:
       yauzl: 3.4.0
 
+  '@puppeteer/browsers@3.2.7(yauzl@3.4.0)':
+    dependencies:
+      modern-tar: 0.8.6
+      yargs: 18.2.0
+    optionalDependencies:
+      yauzl: 3.4.0
+
   '@qnighy/marshal@0.1.3':
     dependencies:
       '@babel/runtime-corejs3': 7.29.7
@@ -21778,9 +21803,9 @@ snapshots:
     dependencies:
       eslint: 10.14.0(jiti@2.7.0)(supports-color@10.2.2)
 
-  '@renovatebot/base-image@13.163.1(zod@4.6.7)':
+  '@renovatebot/base-image@13.163.7(zod@4.6.7)':
     dependencies:
-      '@containerbase/base': 14.66.14(zod@4.6.7)
+      '@containerbase/base': 14.66.16(zod@4.6.7)
     optionalDependencies:
       zod: 4.6.7
 
@@ -21800,7 +21825,7 @@ snapshots:
 
   '@renovatebot/osv-offline-db@4.5.10(supports-color@7.2.0)(zod@4.6.7)':
     dependencies:
-      '@containerbase/base': 14.66.13(zod@4.6.7)
+      '@containerbase/base': 14.66.14(zod@4.6.7)
       debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
@@ -23594,7 +23619,7 @@ snapshots:
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/visitor-keys': 8.72.2
       debug: 4.4.3(supports-color@10.2.2)
-      minimatch: 11.0.5
+      minimatch: 11.0.6
       semver: 7.8.6
       tinyglobby: 0.2.17
       ts-api-utils: 2.5.0(typescript@7.1.0-beta)
@@ -24070,7 +24095,7 @@ snapshots:
       hpagent: 1.2.0
       micromatch: 4.0.8
       p-limit: 2.3.0
-      semver: 7.8.5
+      semver: 7.8.6
       strip-ansi: 6.0.1
       tar: 7.5.22
       tinylogic: 2.0.0
@@ -24568,7 +24593,7 @@ snapshots:
 
   builtins@5.1.0:
     dependencies:
-      semver: 7.8.5
+      semver: 7.8.6
 
   bundle-name@4.1.1:
     dependencies:
@@ -24753,9 +24778,9 @@ snapshots:
   chrome-trace-event@1.0.4:
     optional: true
 
-  chromium-bidi@157.0.8090-0(devtools-protocol@0.0.1704951):
+  chromium-bidi@157.0.8090-0(devtools-protocol@0.0.1717327):
     dependencies:
-      devtools-protocol: 0.0.1704951
+      devtools-protocol: 0.0.1717327
       mitt: 3.0.1
       zod: 4.6.7
 
@@ -25157,7 +25182,7 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
-  devtools-protocol@0.0.1704951: {}
+  devtools-protocol@0.0.1717327: {}
 
   devtools-protocol@0.0.1727723: {}
 
@@ -25288,7 +25313,7 @@ snapshots:
       '@one-ini/wasm': 0.2.1
       commander: 14.0.3
       minimatch: 11.0.5
-      semver: 7.8.5
+      semver: 7.8.6
 
   ee-first@1.1.1: {}
 
@@ -25716,7 +25741,7 @@ snapshots:
       imurmurhash: 0.1.4
       is-glob: 4.0.3
       json-stable-stringify-without-jsonify: 1.0.1
-      minimatch: 11.0.5
+      minimatch: 11.0.6
       natural-compare: 1.4.0
       optionator: 0.9.4
     optionalDependencies:
@@ -26282,7 +26307,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.8.5
+      semver: 7.8.6
       serialize-error: 7.0.1
 
   global-agent@4.1.6:
@@ -26328,7 +26353,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  google-auth-library@11.3.2(supports-color@7.2.0):
+  google-auth-library@11.3.3(supports-color@7.2.0):
     dependencies:
       base64-js: 1.5.1
       ecdsa-sig-formatter: 1.0.11
@@ -27132,7 +27157,7 @@ snapshots:
       lighthouse-logger: 2.0.2(supports-color@7.2.0)
       lighthouse-stack-packs: 1.12.3
       open: 11.0.4
-      puppeteer-core: 25.16.0(yauzl@3.4.0)
+      puppeteer-core: 25.17.0(yauzl@3.4.0)
       robots-parser: 3.0.1
       speedline-core: 1.4.3
       third-party-web: 0.30.0
@@ -27302,6 +27327,8 @@ snapshots:
       repeat-string: 1.6.1
 
   markdown-table@3.0.4: {}
+
+  markdown-table@3.1.0: {}
 
   markdownlint@0.42.1(supports-color@10.2.2):
     dependencies:
@@ -28138,6 +28165,11 @@ snapshots:
       '@isaacs/nonrecursive-glob-match': 1.1.0
       brace-expansion: 5.0.12
 
+  minimatch@11.0.6:
+    dependencies:
+      '@isaacs/nonrecursive-glob-match': 1.1.0
+      brace-expansion: 5.0.12
+
   minimist@1.2.8: {}
 
   minimizer-webpack-plugin@5.12.0(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(uglify-js@3.19.3)(webpack@5.111.1(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(uglify-js@3.19.3)):
@@ -28278,7 +28310,7 @@ snapshots:
       graceful-fs: 4.2.11
       nopt: 10.0.1
       proc-log: 7.0.0
-      semver: 7.8.5
+      semver: 7.8.6
       tar: 7.5.22
       tinyglobby: 0.2.17
       undici: 8.12.4
@@ -28317,6 +28349,8 @@ snapshots:
   normalize-url@6.1.0: {}
 
   normalize-url@8.1.1: {}
+
+  nostics@1.3.0: {}
 
   npm-run-path@6.0.0:
     dependencies:
@@ -28791,7 +28825,7 @@ snapshots:
 
   postal-mime@2.7.6: {}
 
-  postal-mime@4.2.0: {}
+  postal-mime@4.2.1: {}
 
   postcss-selector-parser@6.1.5:
     dependencies:
@@ -28894,13 +28928,13 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  puppeteer-core@25.16.0(yauzl@3.4.0):
+  puppeteer-core@25.17.0(yauzl@3.4.0):
     dependencies:
-      '@puppeteer/browsers': 3.2.6(yauzl@3.4.0)
-      chromium-bidi: 157.0.8090-0(devtools-protocol@0.0.1704951)
-      devtools-protocol: 0.0.1704951
+      '@puppeteer/browsers': 3.2.7(yauzl@3.4.0)
+      chromium-bidi: 157.0.8090-0(devtools-protocol@0.0.1717327)
+      devtools-protocol: 0.0.1717327
       typed-query-selector: 2.12.3
-      webdriver-bidi-protocol: 1.0.1
+      webdriver-bidi-protocol: 1.0.2
       ws: 8.22.1
     transitivePeerDependencies:
       - bufferutil
@@ -29398,7 +29432,7 @@ snapshots:
 
   remove-accents@0.5.0: {}
 
-  renovate@44.225.1(supports-color@7.2.0)(typanion@3.14.0):
+  renovate@44.227.4(supports-color@7.2.0)(typanion@3.14.0):
     dependencies:
       '@aws-sdk/client-codecommit': 3.1139.0
       '@aws-sdk/client-ec2': 3.1139.0
@@ -29431,7 +29465,7 @@ snapshots:
       '@pnpm/parse-overrides': 1001.0.4
       '@qnighy/marshal': 0.1.3
       '@redis/client': 6.3.1(@opentelemetry/api@1.10.0)
-      '@renovatebot/base-image': 13.163.1(zod@4.6.7)
+      '@renovatebot/base-image': 13.163.7(zod@4.6.7)
       '@renovatebot/detect-tools': 5.0.0
       '@renovatebot/good-enough-parser': 4.0.3
       '@renovatebot/osv-offline': 4.5.10(supports-color@7.2.0)(zod@4.6.7)
@@ -29472,7 +29506,7 @@ snapshots:
       github-url-from-git: 1.5.0
       glob: 14.0.3
       global-agent: 3.0.0
-      google-auth-library: 11.3.2(supports-color@7.2.0)
+      google-auth-library: 11.3.3(supports-color@7.2.0)
       got: 16.2.0
       graph-data-structure: 4.5.0
       handlebars: 4.7.10
@@ -29486,7 +29520,7 @@ snapshots:
       klona: 2.0.6
       luxon: 3.7.2
       markdown-it: 15.0.3
-      markdown-table: 3.0.4
+      markdown-table: 3.1.0
       minimatch: 11.0.5
       moo: 0.5.3
       ms: 2.1.3
@@ -29505,7 +29539,7 @@ snapshots:
       remark-github: 12.0.0
       safe-stable-stringify: 2.5.0
       sax: 1.6.1
-      semver: 7.8.5
+      semver: 7.8.6
       semver-stable: 3.0.0
       semver-utils: 1.1.4
       shlex: 3.0.0
@@ -29749,8 +29783,6 @@ snapshots:
 
   semver@6.3.1: {}
 
-  semver@7.8.5: {}
-
   semver@7.8.6: {}
 
   send@1.2.1(supports-color@10.2.2):
@@ -29802,7 +29834,7 @@ snapshots:
       glob: 14.0.3
       js-yaml: 4.3.2
       mime-types: 2.1.35
-      minimatch: 11.0.5
+      minimatch: 11.0.6
       open: 11.0.4
       remark: 15.0.1(supports-color@7.2.0)
       remark-gfm: 4.0.1(supports-color@7.2.0)
@@ -29991,8 +30023,9 @@ snapshots:
       lilconfig: 3.1.4
       nanospinner: 1.2.2
 
-  skills@1.7.6:
+  skills@1.8.0:
     dependencies:
+      nostics: 1.3.0
       tar: 7.5.22
       yaml: 2.9.1
 
@@ -31218,7 +31251,7 @@ snapshots:
 
   web-tree-sitter@0.27.2: {}
 
-  webdriver-bidi-protocol@1.0.1: {}
+  webdriver-bidi-protocol@1.0.2: {}
 
   webidl-conversions@3.0.1: {}
 
