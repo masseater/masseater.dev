@@ -8,7 +8,6 @@
     "./sync": "./src/sync.ts"
   },
   "dependencies": {
-    "@masseater.dev/local-server": "workspace:*",
     "effect": "catalog:stack"
   },
   "devDependencies": {

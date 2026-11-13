@@ -1,6 +1,6 @@
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { Options, SDKMessage, SDKResultMessage } from "@anthropic-ai/claude-agent-sdk";
-import { Effect, Option, Result, Stream, pipe } from "effect";
+import { Effect, Result, Stream } from "effect";
 
 const QUIET_OPTIONS = {
   settingSources: [],
@@ -14,15 +14,6 @@ const TEXT_OPTIONS = {
   maxTurns: 1,
   includePartialMessages: true,
 } satisfies Options;
-
-const executableOptions = (executable: Option.Option<string>): Options =>
-  pipe(
-    executable,
-    Option.match({
-      onNone: () => ({}),
-      onSome: (path) => ({ pathToClaudeCodeExecutable: path }),
-    }),
-  );
 
 const reasonOf = (message: SDKResultMessage): string => {
   if (message.subtype === "success") {
@@ -51,21 +42,16 @@ const textStream = <Failure>({
   prompt,
   system,
   model,
-  executable,
   failure,
 }: Readonly<{
   prompt: string;
   system: string;
   model: string;
-  executable: Option.Option<string>;
   failure: (cause: unknown) => Failure;
 }>): Stream.Stream<string, Failure> =>
   Stream.fromAsyncIterable(
-    query({
-      prompt,
-      options: { ...TEXT_OPTIONS, ...executableOptions(executable), model, systemPrompt: system },
-    }),
+    query({ prompt, options: { ...TEXT_OPTIONS, model, systemPrompt: system } }),
     failure,
   ).pipe(Stream.filterMapEffect(textOf(failure)));
 
-export { QUIET_OPTIONS, executableOptions, textStream };
+export { QUIET_OPTIONS, textStream };

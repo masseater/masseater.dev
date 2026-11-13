@@ -2661,49 +2661,6 @@ importers:
         specifier: catalog:stack
         version: 1.5.1(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  apps/yohaku-server:
-    dependencies:
-      '@anthropic-ai/claude-agent-sdk':
-        specifier: 'catalog:'
-        version: 0.3.322(@anthropic-ai/sdk@0.129.0(zod@4.6.7))(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(zod@4.6.7)
-      '@effect/platform-node':
-        specifier: 'catalog:'
-        version: 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@masseater.dev/claude-agent':
-        specifier: workspace:*
-        version: link:../../libs/claude-agent
-      '@masseater.dev/local-server':
-        specifier: workspace:*
-        version: link:../../libs/local-server
-      '@masseater.dev/node-main':
-        specifier: workspace:*
-        version: link:../../libs/node-main
-      '@masseater.dev/yohaku-protocol':
-        specifier: workspace:*
-        version: link:../../libs/yohaku-protocol
-      '@modelcontextprotocol/server':
-        specifier: 'catalog:'
-        version: 2.4.0
-      effect:
-        specifier: catalog:stack
-        version: 4.1.2
-      oauth4webapi:
-        specifier: 'catalog:'
-        version: 3.8.8
-    devDependencies:
-      '@effect/vitest':
-        specifier: 'catalog:'
-        version: 4.1.2(effect@4.1.2)(vitest@5.1.0)
-      '@types/node':
-        specifier: 'catalog:'
-        version: 26.6.6
-      typescript:
-        specifier: catalog:stack
-        version: 7.1.0-beta
-      vite-plus:
-        specifier: catalog:stack
-        version: 1.5.1(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
-
   apps/yohaku-sync:
     dependencies:
       '@masseater.dev/yohaku-protocol':
@@ -3951,9 +3908,6 @@ importers:
 
   libs/yohaku-protocol:
     dependencies:
-      '@masseater.dev/local-server':
-        specifier: workspace:*
-        version: link:../local-server
       effect:
         specifier: catalog:stack
         version: 4.1.2
