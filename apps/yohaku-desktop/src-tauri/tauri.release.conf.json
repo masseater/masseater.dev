@@ -8,6 +8,7 @@
         "installMode": "currentUser",
         "languages": ["Japanese"]
       }
-    }
+    },
+    "createUpdaterArtifacts": true
   }
 }

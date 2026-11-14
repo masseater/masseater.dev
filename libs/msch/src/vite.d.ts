@@ -27,6 +27,7 @@ interface MschConfig {
   readonly publish?: PublishSettings;
   readonly lint?: WorkspaceLintSettings;
   readonly devDependencies?: Readonly<Record<string, DevDependencyAllowance>>;
+  readonly workspaceAgentsMd?: true;
 }
 
 declare module "vite" {
