@@ -6,8 +6,9 @@ on:
     paths:
       - "apps/yohaku-desktop/**"
       - "libs/yohaku-protocol/**"
+      - ".github/release-please/yohaku-*.json"
+      - ".github/scripts/yohaku-*.sh"
       - ".github/workflows/yohaku-desktop.yml"
-    tags: ["yohaku-v*"]
   workflow_dispatch:
 
 permissions: {}
@@ -27,16 +28,13 @@ jobs:
           - os: windows-latest
             platform: windows-x64
             bundles: nsis
-            artifacts: target/release/bundle/nsis
-            extension: exe
           - os: macos-latest
             platform: macos-arm64
-            bundles: dmg
-            artifacts: target/release/bundle/dmg
-            extension: dmg
+            bundles: app,dmg
     runs-on: ${{ matrix.os }}
+    environment: yohaku-release
     permissions:
-      contents: write
+      contents: read
     defaults:
       run:
         shell: bash
@@ -53,29 +51,65 @@ jobs:
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: yohaku-${{ matrix.platform }}
-          lookup-only: ${{ startsWith(github.ref, 'refs/tags/') }}
-          save-if: ${{ !startsWith(github.ref, 'refs/tags/') }}
       - name: Build the installer
         env:
           BUNDLES: ${{ matrix.bundles }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
         run: vp exec tauri build --bundles "$BUNDLES" --config src-tauri/tauri.release.conf.json
         working-directory: apps/yohaku-desktop
+      - run: .github/scripts/yohaku-collect.sh
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: yohaku-${{ matrix.platform }}
-          path: ${{ matrix.artifacts }}/*.${{ matrix.extension }}
+          path: dist/*
           if-no-files-found: error
-      - if: startsWith(github.ref, 'refs/tags/')
-        env:
+
+  release:
+    needs: installer
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: yohaku-release
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    concurrency:
+      group: yohaku-release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: yohaku-*
+          path: dist
+          merge-multiple: true
+      - env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
-          ARTIFACTS: ${{ matrix.artifacts }}
-          EXTENSION: ${{ matrix.extension }}
+        run: .github/scripts/yohaku-release.sh
+      - id: app-token
         run: |
-          gh release upload "$TAG" "$ARTIFACTS"/*."$EXTENSION" --clobber --repo "$GITHUB_REPOSITORY"
+          oidc="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=masseater-dev-credential-broker" | jq -er .value)"
+          echo "::add-mask::$oidc"
+          token="$(curl -fsS --retry 3 -X POST -H "Authorization: Bearer $oidc" \
+            "https://credentials.masseater.dev/" | jq -er '.githubToken // empty')"
+          if [ -n "$token" ]; then
+            echo "::add-mask::$token"
+            echo "token=$token" >>"$GITHUB_OUTPUT"
+          fi
+      - if: steps.app-token.outputs.token != ''
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          config-file: .github/release-please/yohaku-config.json
+          manifest-file: .github/release-please/yohaku-manifest.json
+          skip-github-release: true
 
   ci-telemetry:
-    needs: [installer]
+    needs: [installer, release]
     if: always()
     runs-on: ubuntu-latest
     permissions:
