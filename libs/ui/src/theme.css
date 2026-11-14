@@ -1,4 +1,4 @@
-@source "./button.tsx";
+@source "./ui/button.tsx";
 
 :root {
   --background: oklch(1 0 0);

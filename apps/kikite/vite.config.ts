@@ -9,6 +9,33 @@ import { DEV_PROXY, interviewerDev } from "./server/dev.ts";
 const AGENT_SDK = "@anthropic-ai/claude-agent-sdk";
 
 export default defineConfig({
+  msch: {
+    lint: {
+      overrides: [
+        {
+          files: ["src/pages/interview/lib/screen-hold.ts"],
+          rules: {
+            "baseline-js/use-baseline": [
+              "error",
+              {
+                available: "widely",
+                includeWebApis: { preset: "auto" },
+                includeJsBuiltins: { preset: "auto" },
+                ignoreFeatures: ["screen-wake-lock"],
+              },
+            ],
+          },
+        },
+        {
+          files: ["server/serve.ts"],
+          rules: {
+            "import/no-nodejs-modules": ["error", { allow: ["node:http"] }],
+            "effecttsgo/node-builtin-import": "off",
+          },
+        },
+      ],
+    },
+  },
   run: ownerSiteRun,
   resolve: { tsconfigPaths: true },
   plugins: [tailwindcss(), viteReact(), interviewerDev()],

@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src"],
+  "include": ["src", "*.ts"],
   "compilerOptions": {
-    "types": []
+    "types": ["@r_masseater/msch/vite"]
   }
 }

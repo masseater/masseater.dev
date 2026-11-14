@@ -2,9 +2,9 @@
 
 ## コマンド
 
-- `vp run verify` は `vp check` と、`vite.config.ts` の `verify` タスクの `dependsOn` に並ぶ検査をすべて動かす。パッケージごとの検査（`<パッケージ>#<タスク>`）は `vite.config.ts` の `packageChecks` に並べる。lint・checks・タスクの設定は `vite.config.ts` 1 つに置き、別のファイルに分けない。pre-push フックも同じものを動かす。
+- `vp run verify` は `vp check` と、`vite.config.ts` の `verify` タスクの `dependsOn` に並ぶ検査をすべて動かす。パッケージごとの検査（`<パッケージ>#<タスク>`）は `vite.config.ts` の `packageChecks` に並べる。リポ全体の lint・checks・タスクの設定はルートの `vite.config.ts` 1 つに置き、別のファイルに分けない。1 つのワークスペースだけに効く lint の例外と ignore は、そのワークスペースの `vite.config.ts` の `msch.lint` に書き、ルートに置かない（書き方は `libs/msch/README.md`）。pre-push フックも同じものを動かす。
 - `verify` タスクと pre-commit フックは、lint を `GOMEMLIMIT=4GiB` で動かす。tsgolint は制限が無いと約 7 GB まで膨らみ、メモリが 14 GB のクラウドのセッションでは OOM で落ちる。4 GiB にすると約 3.9 GB に収まり、かかる時間は変わらない。
-- `vp check` の decision ルールは `apps/portfolio/src` だけに掛かり、`OPENROUTER_API_KEY` で判定する。
+- `vp check` の decision ルールは `apps/portfolio` の `msch.lint` が `use` で選んだファイルだけに掛かり、`OPENROUTER_API_KEY` で判定する。
 - 1 つのテストは、そのパッケージのディレクトリで `vp test run <ファイル>` で動かす。
 
 ## 構成

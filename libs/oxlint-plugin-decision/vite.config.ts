@@ -1,7 +1,13 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
-  msch: { publish: { installSize: "13 MB" } },
+  msch: {
+    publish: { installSize: "13 MB" },
+    lint: {
+      ignorePatterns: ["example/**"],
+      overrides: [{ files: ["src/index.ts"], rules: { "import/no-default-export": "off" } }],
+    },
+  },
   pack: {
     entry: ["src/index.ts", "src/openrouter-app.ts", "src/openrouter-worker.ts"],
     platform: "node",

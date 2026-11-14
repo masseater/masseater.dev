@@ -22,6 +22,51 @@ const appPlugins = (mode: string): PluginOption[] => {
 };
 
 export default defineConfig(({ mode }) => ({
+  msch: {
+    lint: {
+      overrides: [
+        {
+          files: ["src/**/*.{ts,tsx}"],
+          excludeFiles: ["src/features/mcp/api/*-writer.server.ts"],
+          rules: {
+            "eslint/no-restricted-properties": [
+              "error",
+              {
+                object: "db",
+                property: "insert",
+                message:
+                  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため",
+              },
+              {
+                object: "db",
+                property: "update",
+                message:
+                  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため",
+              },
+              {
+                object: "db",
+                property: "delete",
+                message:
+                  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため",
+              },
+              {
+                object: "db",
+                property: "batch",
+                message:
+                  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため",
+              },
+              {
+                object: "db",
+                property: "run",
+                message:
+                  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため",
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
   run: {
     tasks: {
       dev: { command: "alchemy dev", cache: false },

@@ -2,7 +2,27 @@ import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
-  msch: { publish: { installSize: "111 MB" } },
+  msch: {
+    publish: { installSize: "111 MB" },
+    lint: {
+      overrides: [
+        {
+          files: ["src/oxlint.ts"],
+          rules: {
+            "import/no-default-export": "off",
+            "import/no-nodejs-modules": "off",
+            "node/no-sync": "off",
+            "effecttsgo/node-builtin-import": "off",
+            "effecttsgo/schema-sync": "off",
+          },
+        },
+        {
+          files: ["src/lint/preset.ts"],
+          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:url"] }] },
+        },
+      ],
+    },
+  },
   plugins: [otlp()],
   resolve: {
     dedupe: ["vitest"],
@@ -13,6 +33,7 @@ export default defineConfig({
       oxlint: "src/oxlint.ts",
       lint: "src/lint/index.ts",
       "decision-rules": "src/lint/decision-rules.ts",
+      "workspace-lint": "src/workspace-lint.ts",
     },
     platform: "node",
     sourcemap: true,

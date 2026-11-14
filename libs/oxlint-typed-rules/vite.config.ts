@@ -210,7 +210,24 @@ const upstreamDrizzleRules = {
 } as const;
 
 export default defineConfig({
-  msch: { publish: { installSize: "0 B" } },
+  msch: {
+    publish: { installSize: "0 B" },
+    lint: {
+      ignorePatterns: [
+        "upstream/src/__tests__/**",
+        "upstream/react/**",
+        "upstream/{tanstack-*,drizzle,remotion}/**",
+      ],
+      overrides: [
+        {
+          files: [
+            "src/{drizzle,react,remotion,tanstack-query,tanstack-router,tanstack-start,ts-compat}.ts",
+          ],
+          rules: { "import/no-default-export": "off" },
+        },
+      ],
+    },
+  },
   plugins: [
     upstreamReactRules,
     upstreamTanstackModules,

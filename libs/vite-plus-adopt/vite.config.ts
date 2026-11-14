@@ -111,7 +111,18 @@ const builtAttw = {
 };
 
 export default defineConfig({
-  msch: { publish: { installSize: "75 MB" } },
+  msch: {
+    publish: { installSize: "75 MB" },
+    lint: {
+      ignorePatterns: ["upstream/**"],
+      overrides: [
+        {
+          files: ["src/{attw/typescript,fsd,fsd-typescript}.ts"],
+          rules: { "import/no-default-export": "off" },
+        },
+      ],
+    },
+  },
   tsconfig: "tsconfig.json",
   plugins: [attwUpstream, typescriptShim],
   pack: {

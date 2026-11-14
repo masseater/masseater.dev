@@ -1,6 +1,16 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  msch: {
+    lint: {
+      overrides: [
+        {
+          files: ["src/app/**"],
+          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
+        },
+      ],
+    },
+  },
   test: { server: { deps: { inline: ["@effect/vitest"] } } },
   pack: {
     entry: { main: "src/app/main.ts", "embedder-worker": "src/app/embedder-worker.ts" },
