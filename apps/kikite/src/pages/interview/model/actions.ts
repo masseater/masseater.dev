@@ -8,8 +8,10 @@ import { write } from "./registry.ts";
 import { runners } from "./runners.ts";
 import { summarize } from "./summarize.ts";
 import { typing } from "./typing.ts";
+import { wrapUp, wrapUpIfAsked } from "./wrap.ts";
 
 type Actions = Readonly<{
+  wrapUp: () => void;
   answer: (text: string) => void;
   typed: (text: string) => void;
   typing: (text: string) => void;
@@ -28,7 +30,7 @@ const typedAnswer = Effect.fn("kikite.typedAnswer")(function* typedAnswer(text: 
 
 const actionsFor = Effect.gen(function* actionsFor() {
   const run = yield* runners;
-  const asked = Effect.asVoid(ask());
+  const asked = Effect.andThen(ask(), wrapUpIfAsked());
   const askNow = (): void => {
     run.asking(asked, { onlyIfMissing: true });
   };
@@ -36,6 +38,9 @@ const actionsFor = Effect.gen(function* actionsFor() {
     run.asking(Effect.void);
   });
   const actions: Actions = {
+    wrapUp: () => {
+      run.asking(wrapUp());
+    },
     ask: askNow,
     summarize: () => {
       run.summarizing(summarize(), { onlyIfMissing: true });

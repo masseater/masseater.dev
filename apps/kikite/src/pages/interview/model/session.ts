@@ -14,7 +14,7 @@ import type { Due } from "./due.ts";
 import { release, reset, startListening } from "./lifecycle.ts";
 import { read, write } from "./registry.ts";
 
-type Session = Pick<Actions, "typed" | "typing">;
+type Session = Pick<Actions, "typed" | "typing" | "wrapUp">;
 
 const TICK = "250 millis";
 const NO_NUDGE = 0;

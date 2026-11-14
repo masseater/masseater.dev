@@ -1,8 +1,11 @@
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
+import { Effect, Option, pipe } from "effect";
 import { useCallback, useMemo } from "react";
 
 import { entriesAtom, heardAtom, phaseAtom, progressAtom } from "./atoms.ts";
 import type { Rating } from "./atoms.ts";
+import { handoffOf } from "./handoff.ts";
+import { useSummary } from "./hooks.ts";
 import { rated } from "./rate.ts";
 import { saveAtom } from "./record.ts";
 import { reportOf } from "./report.ts";
@@ -25,6 +28,24 @@ const useSave = (): (() => void) => {
   }, [save]);
 };
 
+const copied = (text: string): Effect.Effect<void> =>
+  Effect.ignore(
+    Effect.tryPromise({
+      try: () => navigator.clipboard.writeText(text),
+      catch: String,
+    }),
+  );
+
+const useCopyHandoff = (): (() => void) => {
+  const summary = useSummary();
+  return useCallback(() => {
+    pipe(
+      summary,
+      Option.map((current) => Effect.runFork(copied(handoffOf(current)))),
+    );
+  }, [summary]);
+};
+
 const useRestart = (): (() => void) => {
   const setPhase = useAtomSet(phaseAtom);
   return useCallback(() => {
@@ -39,6 +60,6 @@ const useReport = (): Report => {
   return useMemo(() => reportOf({ entries, progress, withdrawn }), [entries, progress, withdrawn]);
 };
 
-export { useRate, useReport, useRestart, useSave };
+export { useCopyHandoff, useRate, useReport, useRestart, useSave };
 export type { Rating } from "./atoms.ts";
 export type { Change, Report, StrategyRow, Wait } from "./report.ts";

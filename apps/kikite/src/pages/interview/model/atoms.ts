@@ -46,6 +46,8 @@ type Listening =
 
 type Phase = Readonly<{ status: "interview" }> | Readonly<{ status: "report" }>;
 
+type Panel = "points" | "open" | "transcript";
+
 type Nudge = Readonly<{ level: number; text: string }>;
 
 type Heard = Readonly<{
@@ -83,6 +85,7 @@ const progressAtom = keep<readonly Progress[]>([]);
 const nudgeAtom = keep<Option.Option<Nudge>>(Option.none());
 const staleAtom = keep(false);
 const previousThemeAtom = keep(storedPrevious());
+const panelAtom = keep<Panel>("points");
 
 const summaryOf = (state: SummaryState): Option.Option<InterviewSummary> => {
   if (state.status === "empty") {
@@ -102,6 +105,7 @@ export {
   interimAtom,
   listeningAtom,
   nudgeAtom,
+  panelAtom,
   phaseAtom,
   previousThemeAtom,
   progressAtom,
@@ -117,6 +121,7 @@ export type {
   Input,
   Listening,
   Nudge,
+  Panel,
   Phase,
   Progress,
   Rating,
