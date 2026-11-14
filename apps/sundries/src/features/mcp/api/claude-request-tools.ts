@@ -1,17 +1,18 @@
 import type { Caller } from "@masseater.dev/mcp-tool-call";
 import { NO_PROJECT, READ_ONLY, WRITE, one } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
-import { Option, Schema, pipe } from "effect";
+import { Effect, Option, Schema, pipe } from "effect";
 
-import { ListInput, ReplyInput, SendInput, TakeInput } from "./claude-request-input";
+import { ListInput, ReplyInput, RoutineInput, SendInput, TakeInput } from "./claude-request-input";
 import { answer, enqueue, listed, take } from "./claude-requests";
 import type { ClaudeRequest } from "./claude-requests";
+import { registerRoutine, wakeProject } from "./claude-routine";
 import { meteredInput, runTool } from "./tool-call";
 
 type Register = (caller: Caller) => (server: McpServer) => McpServer;
 
 const SEND_DESCRIPTION =
-  "持ち主の masseater の Claude Code プロジェクト「個人PJ」へ依頼を送る。1 時間以内にプロジェクトのスレッドが受け取って実行し、結果を返事として書く。返事は list_claude_replies で読む。返り値の id で返事を見分ける。";
+  "持ち主の masseater の Claude Code プロジェクト「個人PJ」へ依頼を送る。送るとすぐにプロジェクトのスレッドが立って依頼を実行し、結果を返事として書く。返事は list_claude_replies で読む。返り値の id で返事を見分け、woke が fired でなければスレッドはまだ立っていない（1 時間ごとの見回りで拾われる）。";
 
 const TAKE_DESCRIPTION =
   "Claude Code のプロジェクト「個人PJ」のスレッドが使う。まだ誰も受け取っていない依頼をすべて受け取り済みにして古い順に返す。受け取った依頼は自分で実行し、reply_to_request で返事を書く。";
@@ -28,6 +29,11 @@ const TAKE_SCHEMA = TakeInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJ
 
 const REPLY_SCHEMA = ReplyInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
+const ROUTINE_DESCRIPTION =
+  "send_to_claude が依頼を積んだ直後に押す、プロジェクト外の中継タスクを登録する。持ち主が claude.ai の routines で中継タスクを作り直したときだけ使う。トークンは broker が封をして置く。";
+
+const ROUTINE_SCHEMA = RoutineInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+
 const LIST_SCHEMA = ListInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
 const count = (requests: readonly ClaudeRequest[]): number => requests.length;
@@ -43,6 +49,7 @@ const registerSend: Register = (caller) => (server) => {
     },
     (input) =>
       enqueue({ text: input.text, sender: caller.client }).pipe(
+        Effect.flatMap(({ id }) => wakeProject.pipe(Effect.map((woke) => ({ id, woke })))),
         runTool({ ...meter, input, count: one }),
       ),
   );
@@ -91,6 +98,20 @@ const registerList: Register = (caller) => (server) => {
   return server;
 };
 
+const registerRoutineTool: Register = (caller) => (server) => {
+  const meter = { tool: "register_claude_routine", caller, project: NO_PROJECT } as const;
+  server.registerTool(
+    "register_claude_routine",
+    {
+      description: ROUTINE_DESCRIPTION,
+      inputSchema: meteredInput(meter)(ROUTINE_SCHEMA),
+      annotations: WRITE,
+    },
+    (input) => registerRoutine(input).pipe(runTool({ ...meter, input, count: one })),
+  );
+  return server;
+};
+
 const registerClaudeRequestTools: Register = (caller) => (server) =>
   pipe(
     server,
@@ -98,6 +119,7 @@ const registerClaudeRequestTools: Register = (caller) => (server) =>
     registerTake(caller),
     registerReply(caller),
     registerList(caller),
+    registerRoutineTool(caller),
   );
 
 export { registerClaudeRequestTools };
