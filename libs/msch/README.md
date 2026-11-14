@@ -58,7 +58,8 @@ Python は使わない方針なので、`.py`・`pyproject.toml`・`uv.lock` な
 ルートの `vite.config.ts` の文字列がワークスペースの中を指していると指摘する。そのワークスペースだけの設定は、そのワークスペースの `vite.config.ts` に移す。
 Cargo のワークスペースがあれば、`verify` タスクを持つワークスペースの中にない crate を指摘する。
 ルートの `vite.config.ts` に `msch: { workspaceAgentsMd: true }` と書くと、ワークスペース（`package.json` のあるディレクトリ）の直下にも `AGENTS.md` を置ける。`CLAUDE.md` はルートだけに置く。
-README は、ルートか、npm に出すワークスペース（`private` でなく、`vite.config.ts` に `msch: { publish: { installSize: "10 MB" } }` と書いたもの）にだけ置かせる。
+README はルートまたはワークスペースのディレクトリ（`git ls-files` に載る `package.json` が格納されているディレクトリ）でのみ許可される。
+msch は、ワークスペースのパス、ディレクトリ名、パッケージ名のいずれかを記載したルートの README を指摘する。ルートの README はリポジトリ全体について説明し、各ワークスペースの使用方法はそのワークスペースの README に記載する。
 npm に出すワークスペースでは、インストールした側に増える依存の容量を `installSize` の予算と比べる。容量は、`dependencies`・`optionalDependencies`・必須の peer を node_modules からたどった合計で、そのパッケージ自身の `peerDependencies` に書いたものは数えない。予算を超えると、重い順に依存を並べ、公開の入口（`exports` と `bin`）の一部からしか import されないものにはその入口を添える。
 `dependencies` に `catalog:stack` の依存があると、使う側がすでに持っているものとして、`peerDependencies` へ移すよう指摘する。
 `tsconfig.json` の `types` に `@r_masseater/msch/vite` を足すと、`defineConfig` の `msch` に型が付く。

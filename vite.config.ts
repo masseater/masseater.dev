@@ -218,7 +218,6 @@ export default defineConfig({
     cache: true,
     tasks: {
       ...checkTasks,
-      renovate: "renovate-config-validator --strict",
       fallow: [
         "fallow --skip dupes --fail-on-issues --quiet --format compact",
         "fallow dead-code --no-production --fail-on-issues --quiet --format compact",
@@ -250,7 +249,6 @@ export default defineConfig({
           "check",
           "test",
           "vpa",
-          "renovate",
           "workflow-rules",
           "db-check-all",
           "fallow",

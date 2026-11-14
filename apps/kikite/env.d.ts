@@ -5,6 +5,7 @@ declare module "cloudflare:workers" {
     interface Env {
       INTERVIEWER: DurableObjectNamespace<Interviewer>;
       CLAUDE_CODE_OAUTH_TOKEN: SecretsStoreSecret;
+      SESSIONS: D1Database;
     }
   }
 }

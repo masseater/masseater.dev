@@ -18,6 +18,7 @@ type Project = Readonly<{
 const SITE = "https://masseater.dev";
 const GITHUB = "https://github.com/masseater";
 const NPM = "https://www.npmjs.com/package";
+const SOURCE = `${GITHUB}/masseater.dev/tree/main`;
 
 const npm = (name: string): ProjectLink => ({ label: "npm", href: `${NPM}/${name}` });
 
@@ -29,7 +30,7 @@ const projects: readonly Project[] = [
     tags: ["site", "plugin"],
     description: "紐で吊った殻がぶつかる音を、録音を使わず物理演算とモーダル合成で鳴らすシンセ",
     href: `${SITE}/pod-rattle/`,
-    links: [{ label: "VST3・CLAP", href: `${GITHUB}/masseater.dev/releases?q=pod-rattle` }],
+    links: [{ label: "VST3・CLAP", href: `${SOURCE}/apps/pod-rattle-plugin` }],
     blogs: [],
   },
   {
@@ -62,6 +63,14 @@ const projects: readonly Project[] = [
     tags: ["site"],
     description: "ニコメドや合作動画で使われた曲と動画を逆引きするデータベース",
     href: "https://medley-manager.masseater.dev",
+    links: [],
+    blogs: [],
+  },
+  {
+    name: "nimado",
+    tags: ["site"],
+    description: "ニコニコ動画と YouTube の再生数を曲ごとに並べる一覧",
+    href: `${SITE}/nimado/`,
     links: [],
     blogs: [],
   },
@@ -111,7 +120,15 @@ const projects: readonly Project[] = [
     name: "aredoko",
     tags: ["app"],
     description: "Unity エディタの中で、アセットを見た目の言葉で探す検索",
-    href: `${GITHUB}/masseater.dev/releases?q=aredoko`,
+    href: `${SOURCE}/apps/aredoko-desktop`,
+    links: [],
+    blogs: [],
+  },
+  {
+    name: "yakusu",
+    tags: ["app"],
+    description: "PLaMo 3 Translate を手元の PC で動かし、文章を外へ出さずに訳すデスクトップアプリ",
+    href: `${SOURCE}/apps/yakusu`,
     links: [],
     blogs: [],
   },

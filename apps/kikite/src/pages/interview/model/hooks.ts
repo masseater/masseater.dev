@@ -3,6 +3,8 @@ import { Array as Arr, Option, pipe } from "effect";
 import { AsyncResult } from "effect/reactivity";
 import { useCallback } from "react";
 
+import type { InterviewSummary } from "#protocol";
+
 import {
   answerDraftAtom,
   askingAtom,
@@ -11,12 +13,23 @@ import {
   interimAtom,
   listeningAtom,
   nudgeAtom,
+  panelAtom,
   phaseAtom,
+  savingAtom,
   staleAtom,
   summaryAtom,
   summaryOf,
 } from "./atoms.ts";
-import type { Asking, Entry, Listening, Nudge, Phase, SummaryState } from "./atoms.ts";
+import type {
+  Asking,
+  Entry,
+  Listening,
+  Nudge,
+  Panel,
+  Phase,
+  Saving,
+  SummaryState,
+} from "./atoms.ts";
 import { toggleMicAtom } from "./mic-toggle.ts";
 import { sessionAtom } from "./session.ts";
 import type { Session } from "./session.ts";
@@ -46,12 +59,26 @@ const useTheme = (): string =>
     onSome: (summary) => summary.theme,
   });
 
-const useEnd = (): (() => void) => {
+const useWrapUp = (): (() => void) => {
+  const session = useSession();
   const setPhase = useAtomSet(phaseAtom);
   return useCallback(() => {
-    setPhase({ status: "report" });
-  }, [setPhase]);
+    Option.match(session, {
+      onNone: () => {
+        setPhase({ status: "report" });
+      },
+      onSome: (current) => {
+        current.wrapUp();
+      },
+    });
+  }, [session, setPhase]);
 };
+
+const useSummary = (): Option.Option<InterviewSummary> => summaryOf(useSummaryState());
+
+const usePanel = (): Panel => useAtomValue(panelAtom);
+
+const useSetPanel = (): ((panel: Panel) => void) => useAtomSet(panelAtom);
 
 const useAnswerDraft = (): string => useAtomValue(answerDraftAtom);
 
@@ -90,6 +117,18 @@ const useStage = (): Stage => stageOf(useEntries());
 
 const useAsked = (): boolean => pipe(useEntries(), Arr.some(isQuestion));
 
+const useCheckpoint = (): boolean => {
+  const { question, said } = useStage();
+  const asking = useAsking();
+  return (
+    asking.status !== "drafting" &&
+    Arr.isReadonlyArrayEmpty(said) &&
+    Option.exists(question, (entry) => Option.contains(entry.strategy, "checkpoint"))
+  );
+};
+
+const useSaving = (): Saving => useAtomValue(savingAtom);
+
 const useToggleMic = (): (() => void) => {
   const toggle = useAtomSet(toggleMicAtom);
   return useCallback(() => {
@@ -101,21 +140,25 @@ export {
   useAnswerDraft,
   useAsked,
   useAsking,
-  useEnd,
+  useCheckpoint,
+  useEntries,
   useHearing,
   useInterim,
   useListening,
   useNudge,
+  usePanel,
   usePhase,
   useRunSession,
+  useSaving,
   useSession,
+  useSetPanel,
   useStage,
   useStale,
-  useSummaryState,
+  useSummary,
   useTheme,
   useToggleMic,
+  useWrapUp,
 };
 export type { QuestionEntry, SpeechEntry, Stage };
-export { summaryOf } from "./atoms.ts";
-export type { Asking, Entry, Listening, SummaryState } from "./atoms.ts";
+export type { Asking, Entry, Listening, Panel, Saving } from "./atoms.ts";
 export type { Session } from "./session.ts";

@@ -250,9 +250,8 @@ catalogs:
     drizzle-orm: 1.0.0-rc.5-ab785fc
     eden-tanstack-react-query: 0.5.1
     effect: 4.1.4
-    elysia: 1.4.31
+    elysia: 1.4.32
     fallow: 3.42.0
-    renovate: 44.232.0
     radix-ui: 1.8.1
     tailwindcss: 4.3.5
     typescript: 7.1.0-beta
@@ -301,9 +300,6 @@ packageExtensions:
       buffer: ^6.0.3
 audit:
   ignorePrune: true
-  ignore:
-    # deepmerge の mergeObject() が返すオブジェクトの prototype を汚染できる（深刻度は低）。最新の 4.3.1 も該当し、修正版が無い。
-    - GHSA-gcqx-w48m-w2h4
 patchedDependencies:
   "@tanstack/eslint-plugin-start@0.1.0": patches/@tanstack__eslint-plugin-start@0.1.0.patch
   eslint-plugin-drizzle@0.2.3: patches/eslint-plugin-drizzle@0.2.3.patch

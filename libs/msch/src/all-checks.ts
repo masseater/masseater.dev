@@ -1,14 +1,14 @@
 import { Array as Arr, Effect } from "effect";
 
 import { checkRepository } from "./check.ts";
-import { checkCrates } from "./crates.ts";
 import { checkHiddenUnicode } from "./hidden-unicode.ts";
 import { checkPublishedPackages } from "./install-size.ts";
 import { checkNestedDocs } from "./nested-docs.ts";
 import { checkOverrides } from "./overrides.ts";
 import type { Problem } from "./problem.ts";
 import { checkPython } from "./python.ts";
-import { checkRootWorkspacePaths } from "./root-workspace-paths.ts";
+import { checkRootReadme } from "./root-readme.ts";
+import { checkWorkspaces } from "./workspace-checks.ts";
 
 /** @internal */
 const checkAll: (
@@ -19,7 +19,7 @@ const checkAll: (
     | ReturnType<typeof checkRepository>
     | ReturnType<typeof checkOverrides>
     | ReturnType<typeof checkHiddenUnicode>
-    | ReturnType<typeof checkCrates>
+    | ReturnType<typeof checkWorkspaces>
   >,
   Effect.Services<
     | ReturnType<typeof checkRepository>
@@ -34,9 +34,9 @@ const checkAll: (
       checkHiddenUnicode(root),
       checkPython(root),
       checkNestedDocs(root),
+      checkRootReadme(root),
       checkPublishedPackages(root),
-      checkCrates(root),
-      checkRootWorkspacePaths(root),
+      checkWorkspaces(root),
     ],
     { concurrency: "unbounded" },
   );

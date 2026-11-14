@@ -17,6 +17,7 @@ const RuleNameSchema = Schema.Literals([
   "python-file",
   "python-command",
   "nested-docs",
+  "root-readme",
   "stack-dependency",
   "install-size",
   "unverified-crate",
