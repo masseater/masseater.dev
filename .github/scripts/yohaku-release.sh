@@ -1,28 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
-version="$(gh api -H "Accept: application/vnd.github.raw" \
-  "repos/$GITHUB_REPOSITORY/contents/.github/release-please/yohaku-manifest.json?ref=$GITHUB_SHA" |
-  jq -er '."apps/yohaku-desktop"')"
-tag="yohaku-v$version"
-feed="yohaku-updater"
-if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" >/dev/null 2>&1; then
-  gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/$tag" -f "sha=$GITHUB_SHA"
-fi
-if ! gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-  gh release create "$tag" --repo "$GITHUB_REPOSITORY" --verify-tag --latest=false \
-    --title "余白: v$version" --notes ""
-fi
-gh pr list --repo "$GITHUB_REPOSITORY" --state merged --label "autorelease: pending" \
-  --head release-please--branches--main--components--yohaku --json number --jq '.[].number' |
-  while read -r pr; do
-    gh pr edit "$pr" --repo "$GITHUB_REPOSITORY" \
-      --remove-label "autorelease: pending" --add-label "autorelease: tagged"
-  done
-assets="$(gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets | length')"
-if [ "$assets" -ne 0 ]; then
-  echo "$tag is already published"
+tag="$(.github/scripts/component-release.sh yohaku apps/yohaku-desktop 余白)"
+if [ -z "$tag" ]; then
   exit 0
 fi
+version="${tag#yohaku-v}"
+feed="yohaku-updater"
 for file in "dist/yohaku_${version}_x64-setup.exe" "dist/yohaku_${version}_aarch64.app.tar.gz"; do
   if [ ! -f "$file" ] || [ ! -f "$file.sig" ]; then
     echo "::error::$file and its signature are missing; the installers were built from another revision"

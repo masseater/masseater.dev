@@ -33,4 +33,13 @@ const ListInput = Schema.Struct({
   ),
 });
 
-export { ListInput, ReplyInput, SendInput, TakeInput };
+const RoutineInput = Schema.Struct({
+  triggerId: Schema.NonEmptyString.annotate({
+    description: "claude.ai の routines で作った、プロジェクト外の中継タスクの trig_ から始まる ID",
+  }),
+  token: Schema.NonEmptyString.annotate({
+    description: "その中継タスクの API トリガーで発行した sk-ant-oat01- から始まるトークン",
+  }),
+});
+
+export { ListInput, ReplyInput, RoutineInput, SendInput, TakeInput };

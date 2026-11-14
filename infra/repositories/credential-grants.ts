@@ -81,6 +81,8 @@ type GitHubGrant = Readonly<{
 
 const RELEASE_REPOSITORIES: readonly string[] = ["lint-kit", "typescript-template"];
 
+const RELEASE_COMPONENTS: readonly string[] = ["pod-rattle", "yakusu", "yohaku"];
+
 const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
   repository,
   {
@@ -88,6 +90,8 @@ const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
     repositories: [repository],
   },
 ];
+
+const [, MASSEATER_DEV_GITHUB_GRANT] = releaseGrant("masseater.dev");
 
 const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
   "masseater.dev/github": {
@@ -102,18 +106,14 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
       metadata: "read",
     },
   },
-  "masseater.dev/pod-rattle-release": {
-    permissions: { contents: "write", pull_requests: "write", metadata: "read" },
-    repositories: ["masseater.dev"],
-  },
-  "masseater.dev/yohaku-release": {
-    permissions: { contents: "write", pull_requests: "write", metadata: "read" },
-    repositories: ["masseater.dev"],
-  },
+  ...Rec.fromEntries(
+    pipe(
+      RELEASE_COMPONENTS,
+      Arr.map((component) => [`masseater.dev/${component}-release`, MASSEATER_DEV_GITHUB_GRANT]),
+    ),
+  ),
   ...Rec.fromEntries(pipe(RELEASE_REPOSITORIES, Arr.map(releaseGrant))),
 };
-
-const [, SLOPPEDIA_GITHUB_GRANT] = releaseGrant("masseater.dev");
 
 const BOT_PERMISSIONS = {
   contents: "write",
@@ -192,5 +192,10 @@ const grantPolicies = ({
   atproto: ATPROTO_GRANTS,
 });
 
-export { GITHUB_APP_PERMISSIONS, SLOPPEDIA_GITHUB_GRANT, WORKFLOW_GITHUB_GRANTS, grantPolicies };
+export {
+  GITHUB_APP_PERMISSIONS,
+  MASSEATER_DEV_GITHUB_GRANT,
+  WORKFLOW_GITHUB_GRANTS,
+  grantPolicies,
+};
 export type { GitHubGrant, Grants, Policy };
