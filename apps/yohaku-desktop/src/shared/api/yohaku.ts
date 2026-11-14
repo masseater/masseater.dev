@@ -1,5 +1,6 @@
 import type {
   Annotations,
+  Fact,
   Manuscript,
   Paragraph,
   Reaction,
@@ -30,6 +31,13 @@ interface Mcp {
   readonly token: string;
 }
 
+type OnboardingStep = "setup" | "idea-hint" | "source-hint";
+
+interface ClaudeStatus {
+  readonly installed: boolean;
+  readonly loggedIn: boolean;
+}
+
 type Yohaku = Readonly<{
   listManuscripts: () => Effect.Effect<readonly (typeof Manuscript.Type)[], Failure>;
   createManuscript: () => Effect.Effect<typeof Manuscript.Type, Failure>;
@@ -55,6 +63,11 @@ type Yohaku = Readonly<{
   getMcp: () => Effect.Effect<Mcp, Failure>;
   syncStatus: () => Effect.Effect<typeof SyncStatus.Type, Failure>;
   beginSyncSignIn: () => Effect.Effect<void, Failure>;
+  sourceFacts: (id: string) => Effect.Effect<readonly (typeof Fact.Type)[], Failure>;
+  claudeStatus: () => Effect.Effect<ClaudeStatus, Failure>;
+  onboardingDone: () => Effect.Effect<readonly OnboardingStep[], Failure>;
+  completeOnboardingStep: (step: OnboardingStep) => Effect.Effect<void, Failure>;
+  openExternal: (url: string) => Effect.Effect<void, Failure>;
 }>;
 
-export type { Failure, Mcp, Opened, SpanTarget, Yohaku };
+export type { ClaudeStatus, Failure, Mcp, OnboardingStep, Opened, SpanTarget, Yohaku };

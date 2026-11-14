@@ -17,7 +17,6 @@ use failure::Failure;
 use store::Store;
 use sync::Syncer;
 use writing::claude::Claude;
-use writing::locate::installed;
 use writing::understanding::Understanding;
 
 const MAIN_WINDOW: &str = "main";
@@ -43,6 +42,10 @@ fn builder() -> Builder<tauri::Wry> {
             commands::get_mcp,
             commands::sync_status,
             commands::begin_sync_sign_in,
+            commands::source_facts,
+            commands::claude_status,
+            commands::onboarding_done,
+            commands::complete_onboarding_step,
         ])
 }
 
@@ -55,8 +58,7 @@ fn show_main(app: &AppHandle) {
 
 fn yohaku(data: &Path, home: Option<&Path>) -> Result<Yohaku, Failure> {
     let store = Store::open(data)?;
-    let executable = installed(std::env::var_os("PATH"), home);
-    let claude = Claude::new(executable, data.join(WORK_DIRECTORY));
+    let claude = Claude::new(home.map(Path::to_path_buf), data.join(WORK_DIRECTORY));
     let understanding = Understanding::new(store.clone(), claude.clone());
     let syncer = Syncer::new(store.clone(), mcp::PORT)?;
     let mcp_token = mcp::token(data)?;

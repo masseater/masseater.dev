@@ -1,9 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { useMcp } from "#/pages/sources/api/sources.ts";
-
-import { McpCommand } from "./mcp-command.tsx";
+import { McpCommand, useMcp } from "#/entities/mcp";
 
 const TITLE = "MCP";
 

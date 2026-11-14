@@ -91,6 +91,7 @@ catalog:
   "@fontsource/noto-sans-jp": 5.3.1
   "@fontsource-variable/noto-sans-jp": 5.3.1
   "@fontsource-variable/noto-serif-jp": 5.3.1
+  driver.js: 1.12.1
   yaml: 2.9.1
   mdast-util-directive: ^3.2.0
   remark-directive: ^4.0.0

@@ -1,5 +1,6 @@
 import type {
   Annotations,
+  Fact,
   Manuscript,
   Paragraph,
   Reaction,
@@ -8,20 +9,18 @@ import type {
 } from "@masseater.dev/yohaku-protocol";
 import { Array, Effect, Option, Record, Stream, String, pipe } from "effect";
 
-import type { Yohaku } from "#/shared/api";
+import type { ClaudeStatus, OnboardingStep, Yohaku } from "#/shared/api";
 
 type ManuscriptType = typeof Manuscript.Type;
 type Paragraphs = readonly (typeof Paragraph.Type)[];
 type SourceType = typeof Source.Type;
 
 const MEMO_SPACE = "　";
+const IDEA = "ネタ：";
 const EMOTION = "胸の奥がじんわりと温かくなった。";
 const DRAFT = ["彩葉の声に、", "かぐやの顔のまま振り向いてしまった。"] as const;
 const REWRITE = ["胸に手を当てて、", "鏡から目をそらした。"] as const;
-const MCP_URL = "http://127.0.0.1:47210/mcp";
-const MCP_TOKEN = "token";
 const NEVER = 0;
-const INGESTED_FACTS = 2;
 const SYNCED_AT = 1_794_472_200_000;
 const SIGNED_OUT: typeof SyncStatus.Type = {
   connected: false,
@@ -30,11 +29,21 @@ const SIGNED_OUT: typeof SyncStatus.Type = {
   problem: Option.getOrNull(Option.none<string>()),
 };
 const NO_TITLE = Option.getOrNull(Option.none<ManuscriptType["title"]>());
+const NO_WHEN = Option.getOrNull(Option.none<string>());
+const INGESTED: readonly (typeof Fact.Type)[] = [
+  { kind: "character", subject: "ヤチヨ", body: "8000 年後のかぐや", when: NO_WHEN },
+  { kind: "setting", subject: "ツクヨミ", body: "ヤチヨが管理する仮想空間", when: NO_WHEN },
+];
+const ALL_STEPS: readonly OnboardingStep[] = ["setup", "idea-hint", "source-hint"];
+const READY: ClaudeStatus = { installed: true, loggedIn: true };
+
+type Setup = Partial<Pick<Store, "claude" | "onboarding">>;
 
 interface Calls {
   readonly reactions: (typeof Reaction.Type)[];
   readonly dismissed: string[];
   readonly saved: Paragraphs[];
+  readonly opened: string[];
 }
 
 interface Store {
@@ -42,6 +51,8 @@ interface Store {
   readonly paragraphs: Readonly<Record<string, Paragraphs>>;
   readonly sources: readonly SourceType[];
   readonly sync: typeof SyncStatus.Type;
+  readonly onboarding: readonly OnboardingStep[];
+  readonly claude: ClaudeStatus;
 }
 
 interface Backing {
@@ -50,9 +61,13 @@ interface Backing {
   readonly save: (paragraphs: Paragraphs) => void;
   readonly dismiss: (rule: string) => void;
   readonly react: (reaction: typeof Reaction.Type) => void;
+  readonly open: (url: string) => void;
 }
 
-const kindOf = (text: string): "memo" | "prose" => {
+const kindOf = (text: string): "idea" | "memo" | "prose" => {
+  if (String.startsWith(IDEA)(text)) {
+    return "idea";
+  }
   if (String.includes(MEMO_SPACE)(text)) {
     return "memo";
   }
@@ -108,7 +123,7 @@ const ingestedSource = (store: Readonly<Store>, text: string): SourceType => ({
   label: text,
   origin: "agent",
   client: "余白",
-  facts: INGESTED_FACTS,
+  facts: INGESTED.length,
   createdAt: NEVER,
 });
 
@@ -153,7 +168,10 @@ const manuscriptCalls = ({
 const sourceCalls = ({
   read,
   write,
-}: Backing): Pick<Yohaku, "getMcp" | "ingestText" | "listSources" | "revertSource"> => ({
+}: Backing): Pick<
+  Yohaku,
+  "getMcp" | "ingestText" | "listSources" | "revertSource" | "sourceFacts"
+> => ({
   listSources: () => Effect.sync(() => read().sources),
   ingestText: (text) =>
     Effect.sync(() => {
@@ -171,7 +189,28 @@ const sourceCalls = ({
         ),
       }));
     }),
-  getMcp: () => Effect.succeed({ url: MCP_URL, token: MCP_TOKEN }),
+  getMcp: () => Effect.succeed({ url: "http://127.0.0.1:47210/mcp", token: "token" }),
+  sourceFacts: () => Effect.succeed(INGESTED),
+});
+
+const onboardingCalls = ({
+  read,
+  write,
+  open,
+}: Backing): Pick<
+  Yohaku,
+  "claudeStatus" | "completeOnboardingStep" | "onboardingDone" | "openExternal"
+> => ({
+  claudeStatus: () => Effect.sync(() => read().claude),
+  onboardingDone: () => Effect.sync(() => read().onboarding),
+  completeOnboardingStep: (step) =>
+    Effect.sync(() => {
+      write((store) => ({ ...store, onboarding: pipe(store.onboarding, Array.append(step)) }));
+    }),
+  openExternal: (url) =>
+    Effect.sync(() => {
+      open(url);
+    }),
 });
 
 const syncCalls = ({ read, write }: Backing): Pick<Yohaku, "beginSyncSignIn" | "syncStatus"> => ({
@@ -206,22 +245,17 @@ const writingCalls = ({
     }),
 });
 
-const fakeYohaku = (
-  sources: readonly (typeof Source.Type)[],
-): Readonly<{
-  yohaku: Yohaku;
-  calls: Readonly<{
-    reactions: (typeof Reaction.Type)[];
-    dismissed: string[];
-    saved: (readonly (typeof Paragraph.Type)[])[];
-  }>;
-}> => {
-  const calls: Calls = { reactions: [], dismissed: [], saved: [] };
+type Fake = Readonly<{ yohaku: Yohaku; calls: Readonly<Calls> }>;
+
+const built = (sources: readonly (typeof Source.Type)[], setup: Setup): Fake => {
+  const calls: Calls = { reactions: [], dismissed: [], saved: [], opened: [] };
   let store: Store = {
     manuscripts: Record.empty(),
     paragraphs: Record.empty(),
     sources,
     sync: SIGNED_OUT,
+    onboarding: setup.onboarding ?? ALL_STEPS,
+    claude: setup.claude ?? READY,
   };
   const backing: Backing = {
     read: () => store,
@@ -237,6 +271,9 @@ const fakeYohaku = (
     react: (reaction) => {
       calls.reactions.push(reaction);
     },
+    open: (url) => {
+      calls.opened.push(url);
+    },
   };
   return {
     calls,
@@ -245,8 +282,15 @@ const fakeYohaku = (
       ...sourceCalls(backing),
       ...syncCalls(backing),
       ...writingCalls(backing),
+      ...onboardingCalls(backing),
     },
   };
 };
 
-export { DRAFT, EMOTION, REWRITE, fakeYohaku };
+const fakeYohaku = (sources: readonly (typeof Source.Type)[]): Fake => built(sources, {});
+
+const firstRun = (claude: ClaudeStatus): Fake => built([], { onboarding: [], claude });
+
+const ideaHintPending = (): Fake => built([], { onboarding: ["setup", "source-hint"] });
+
+export { DRAFT, EMOTION, IDEA, READY, REWRITE, fakeYohaku, firstRun, ideaHintPending };

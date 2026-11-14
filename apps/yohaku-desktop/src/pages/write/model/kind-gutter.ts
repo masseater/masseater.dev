@@ -15,10 +15,13 @@ const LABELS: Readonly<Record<Kind, Option.Option<string>>> = {
 };
 
 class KindMarker extends GutterMarker {
+  public readonly kind: Kind;
+
   public readonly label: string;
 
-  public constructor(label: string) {
+  public constructor(kind: Kind, label: string) {
     super();
+    this.kind = kind;
     this.label = label;
   }
 
@@ -27,22 +30,27 @@ class KindMarker extends GutterMarker {
   }
 
   public override toDOM(): Node {
-    return document.createTextNode(this.label);
+    const marker = document.createElement("span");
+    marker.dataset["kind"] = this.kind;
+    marker.textContent = this.label;
+    return marker;
   }
 }
 
 const kindGutter: Extension = gutter({
   class: "yohaku-kinds",
-  lineMarker: (view, line) =>
-    pipe(
-      LABELS[kindAt(view.state.doc.lineAt(line.from).number)(view.state)],
-      Option.map((label) => new KindMarker(label)),
+  lineMarker: (view, line) => {
+    const kind = kindAt(view.state.doc.lineAt(line.from).number)(view.state);
+    return pipe(
+      LABELS[kind],
+      Option.map((label) => new KindMarker(kind, label)),
       Option.getOrNull,
-    ),
+    );
+  },
   lineMarkerChange: (update) =>
     update.state.field(annotationsField) !== update.startState.field(annotationsField) ||
     update.state.field(paragraphIdsField) !== update.startState.field(paragraphIdsField),
-  initialSpacer: () => new KindMarker(MEMO_LABEL),
+  initialSpacer: () => new KindMarker("memo", MEMO_LABEL),
 });
 
 export { kindGutter };

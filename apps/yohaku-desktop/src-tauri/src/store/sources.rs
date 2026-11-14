@@ -133,6 +133,19 @@ pub fn revert(connection: &Connection, id: &str) -> rusqlite::Result<()> {
     Ok(())
 }
 
+pub fn facts_of(connection: &Connection, source_id: &str) -> rusqlite::Result<Vec<Fact>> {
+    connection
+        .prepare_cached(
+            "select kind, subject, body, at from facts where source_id = ?1 order by id",
+        )?
+        .query_map(params![source_id], |row| {
+            let kind: String = row.get(0)?;
+            Ok(fact_of(&kind, row.get(1)?, row.get(2)?, row.get(3)?))
+        })?
+        .filter_map(Result::transpose)
+        .collect()
+}
+
 pub fn fact_of(kind: &str, subject: String, body: String, when: Option<String>) -> Option<Fact> {
     Some(Fact {
         kind: FactKind::parse(kind)?,
