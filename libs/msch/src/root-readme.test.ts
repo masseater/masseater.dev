@@ -32,13 +32,13 @@ const WORKSPACES = {
 const flagsWorkspaceNames = Effect.gen(function* flagsWorkspaceNames() {
   const findings = yield* findingsFor({
     ...WORKSPACES,
-    "README.md": [
+    "README.md": Arr.join("\n")([
       "# repo",
       "",
       "| site | https://example.com/site/ |",
       "See `apps/site-demo` and toolkit.",
       "Install @repo/site.",
-    ].join("\n"),
+    ]),
   });
   expect(findings).toStrictEqual([
     "README.md:3:3 root-readme",
