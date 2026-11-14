@@ -7,6 +7,7 @@ on:
       - "apps/yakusu/**"
       - ".github/release-please/yakusu-*.json"
       - ".github/scripts/component-release.sh"
+      - ".github/scripts/release-please-ready.sh"
       - ".github/workflows/yakusu.yml"
   workflow_dispatch:
 
@@ -142,7 +143,12 @@ jobs:
             fi
           done
           gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
+      - id: ready
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/release-please-ready.sh yakusu apps/yakusu
       - id: app-token
+        if: steps.ready.outputs.ready == 'true'
         run: |
           oidc="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
             "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=masseater-dev-credential-broker" | jq -er .value)"

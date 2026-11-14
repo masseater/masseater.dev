@@ -136,7 +136,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.release.outputs.tag }}
         run: gh release upload "$TAG" pod-rattle-*.zip --repo "$GITHUB_REPOSITORY" --clobber
+      - id: ready
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/release-please-ready.sh pod-rattle apps/pod-rattle-plugin
       - id: app-token
+        if: steps.ready.outputs.ready == 'true'
         run: |
           oidc="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
             "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=masseater-dev-credential-broker" | jq -er .value)"
