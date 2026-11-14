@@ -22,7 +22,6 @@ const HALOS: Readonly<Record<RingState, string>> = {
   listening: "ring-4 ring-muted",
   hearing: "ring-12 ring-primary/15",
   thinking: "border-muted",
-  speaking: "ring-8 ring-primary/10",
   typing: "border-dashed border-muted-foreground/60 text-muted-foreground",
   paused: "border-dashed border-muted-foreground/60 text-muted-foreground",
   deaf: "border-dashed border-muted-foreground/60 text-muted-foreground",

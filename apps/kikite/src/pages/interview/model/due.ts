@@ -36,11 +36,8 @@ const NO_NUDGE = 0;
 const elapsed = (now: number, since: number, seconds: number): boolean =>
   Duration.isGreaterThanOrEqualTo(Duration.millis(now - since), Duration.seconds(seconds));
 
-const quiet = ({ interim, typing, listening, asking }: Snapshot): boolean =>
-  interim === "" &&
-  typing === "" &&
-  listening.status !== "speaking" &&
-  asking.status !== "drafting";
+const quiet = ({ interim, typing, asking }: Snapshot): boolean =>
+  interim === "" && typing === "" && asking.status !== "drafting";
 
 const spoke = (entries: readonly Entry[]): boolean =>
   pipe(

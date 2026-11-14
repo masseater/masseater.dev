@@ -1,9 +1,9 @@
-import { Effect, Schedule, pipe } from "effect";
+import { Effect, Layer, Schedule, pipe } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { Atom } from "effect/reactivity";
 
-import { onActivation } from "#/pages/interview/lib/activation";
 import { holdScreen } from "#/pages/interview/lib/screen-hold";
+import { telemetry } from "#/pages/interview/lib/telemetry";
 
 import { actionsFor } from "./actions.ts";
 import type { Actions } from "./actions.ts";
@@ -54,7 +54,7 @@ const interviewing = (phase: Phase): Effect.Effect<void> => {
   return Effect.interrupt;
 };
 
-const runtime = Atom.runtime(FetchHttpClient.layer);
+const runtime = Atom.runtime(Layer.mergeAll(FetchHttpClient.layer, telemetry));
 
 const sessionAtom = runtime.atom(
   Effect.fnUntraced(function* session(get) {
@@ -64,7 +64,6 @@ const sessionAtom = runtime.atom(
     const actions = yield* actionsFor;
     yield* startListening(actions);
     yield* holdScreen;
-    yield* onActivation(actions.activate);
     yield* Effect.forkScoped(pipe(actions, ticking));
     const current: Session = actions;
     return current;
