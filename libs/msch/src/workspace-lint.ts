@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 import { parse } from "vite-plus";
-import type { OxlintOverride } from "vite-plus/lint";
+import type { AllowWarnDeny, OxlintOverride } from "vite-plus/lint";
 
 import { literalOf, nestedValues } from "./config-literal.ts";
 import { RepositoryFiles, nodeRepositoryFiles } from "./repository-files.ts";
@@ -17,7 +17,16 @@ const READ_CONCURRENCY = 16;
 const SINGLE = 1;
 const MSCH_LINT = ["msch", "lint"] as const;
 
-const Severity = Schema.Literals(["off", "allow", "warn", "error", "deny"]);
+type SeverityName = Extract<AllowWarnDeny, string>;
+
+const SEVERITY_NAMES: Readonly<Record<SeverityName, true>> = {
+  off: true,
+  allow: true,
+  warn: true,
+  error: true,
+  deny: true,
+};
+const Severity = Schema.Literals<readonly SeverityName[]>(Rec.keys(SEVERITY_NAMES));
 const SeverityWithOptions = Schema.mutable(
   Schema.TupleWithRest(Schema.Tuple([Severity]), [Schema.Unknown]),
 );
