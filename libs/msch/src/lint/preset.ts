@@ -109,6 +109,10 @@ const overrides = [
     rules: { "import/no-default-export": "off" },
   },
   scriptsOverride,
+  {
+    files: ["**/vite.config.ts"],
+    rules: { "eslint/max-lines": "off" },
+  },
 ] satisfies LintConfig["overrides"];
 
 const lint = {

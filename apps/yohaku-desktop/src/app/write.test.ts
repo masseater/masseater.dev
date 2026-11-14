@@ -2,7 +2,8 @@ import { describe, expect, it } from "@effect/vitest";
 import { Array, Effect, String, pipe } from "effect";
 import { page, userEvent } from "vite-plus/test/browser";
 
-import { DRAFT, EMOTION, REWRITE, fakeYohaku } from "#/app/__tests__/fake-yohaku.ts";
+import { DRAFT, EMOTION, REWRITE } from "#/app/__tests__/fake-data.ts";
+import { fakeYohaku } from "#/app/__tests__/fake-yohaku.ts";
 import { mount } from "#/app/__tests__/mount.tsx";
 import { body, main, settled } from "#/app/__tests__/screen.ts";
 

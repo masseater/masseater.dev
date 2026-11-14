@@ -16,18 +16,19 @@ jobs:
   logs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: workers-builds-logs
     permissions:
       contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           sparse-checkout: .github/scripts/workers-builds-logs.sh
           sparse-checkout-cone-mode: false
+      - uses: masseater/typescript-template/.github/actions/credentials@8807d1fbbb0254e6c5f40a18ffaa4146954a48e3
       - run: .github/scripts/workers-builds-logs.sh
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           WORKER: ${{ inputs.worker }}
           COUNT: ${{ inputs.count }}
           BUCKET: masseater-dev-worker-logs

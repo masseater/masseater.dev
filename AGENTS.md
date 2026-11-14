@@ -2,7 +2,7 @@
 
 ## コマンド
 
-- `vp run verify` は `vp check` と、`vite.config.ts` の `verify` タスクの `dependsOn` に並ぶ検査をすべて動かす。パッケージごとの検査（`<パッケージ>#<タスク>`）は `checks.config.ts` の `packageChecks` に並べる。pre-push フックも同じものを動かす。
+- `vp run verify` は `vp check` と、`vite.config.ts` の `verify` タスクの `dependsOn` に並ぶ検査をすべて動かす。パッケージごとの検査（`<パッケージ>#<タスク>`）は `vite.config.ts` の `packageChecks` に並べる。lint・checks・タスクの設定は `vite.config.ts` 1 つに置き、別のファイルに分けない。pre-push フックも同じものを動かす。
 - `verify` タスクと pre-commit フックは、lint を `GOMEMLIMIT=4GiB` で動かす。tsgolint は制限が無いと約 7 GB まで膨らみ、メモリが 14 GB のクラウドのセッションでは OOM で落ちる。4 GiB にすると約 3.9 GB に収まり、かかる時間は変わらない。
 - `vp check` の decision ルールは `apps/portfolio/src` だけに掛かり、`OPENROUTER_API_KEY` で判定する。
 - 1 つのテストは、そのパッケージのディレクトリで `vp test run <ファイル>` で動かす。
@@ -86,8 +86,8 @@
 ## lint の部品
 
 - `libs/oxlint-plugin-decision` は自然文のルールをモデルに判定させる oxlint のプラグインで、`libs/oxlint-plugin-decision-presets` がそのルール集である。`libs/oxlint-typed-rules` は型情報の要る ESLint のルールを TypeScript 7 の `typescript/sync` の上で oxlint に載せる。元のリポのテストは `upstream/` に手を入れずに置き、すべて通す。`libs/vite-plus-adopt` はルートの設定ファイルを `vite.config.ts` に寄せるための `vpa` で、引数なしの 1 回で設定済みの検査を全部動かす。サブコマンドは作らない。元は masseater/lint-kit にあった。
-- `libs/textlint-rule-yomiyasu` は、nanaism/yomiyasu の lint（Python）のうち `--strict` が落とす warn と error の規則を TypeScript に写した textlint のルールで、`checks.config.ts` の textlint が `@masseater.dev/yomiyasu` として使う。写した本体は `upstream/` に置いて lint から外し、元のテストから写した例を `upstream/lint.test.ts` で確かめる。ほかのリポは git の subpath 依存で読むので、パスとパッケージ名を動かさない。
-- `libs/msch`（npm の `@r_masseater/msch`）は検査の方針をまとめたパッケージで、値の集合と形の持ち主を調べる `msch` と、Vite+ の `lint` に渡す oxlint のプリセットを持つ。プリセットの JS プラグインは msch の依存から解決するので、使う側は msch だけを入れればよい。ルートの `lint.config.ts` は、プリセットに masseater.dev だけのルールと overrides を足す。
+- `libs/textlint-rule-yomiyasu` は、nanaism/yomiyasu の lint（Python）のうち `--strict` が落とす warn と error の規則を TypeScript に写した textlint のルールで、`vite.config.ts` の textlint が `@masseater.dev/yomiyasu` として使う。写した本体は `upstream/` に置いて lint から外し、元のテストから写した例を `upstream/lint.test.ts` で確かめる。ほかのリポは git の subpath 依存で読むので、パスとパッケージ名を動かさない。
+- `libs/msch`（npm の `@r_masseater/msch`）は検査の方針をまとめたパッケージで、値の集合と形の持ち主を調べる `msch` と、Vite+ の `lint` に渡す oxlint のプリセットを持つ。プリセットの JS プラグインは msch の依存から解決するので、使う側は msch だけを入れればよい。ルートの `vite.config.ts` の `lint` は、プリセットに masseater.dev だけのルールと overrides を足す。
 - msch と 4 つの部品は npm の `@r_masseater/<名前>` として出す。version を上げてから `publish.yml` を package に選んで main で手動実行する。ビルドは各パッケージの `build` タスクである。4 つの部品のテストは各パッケージの `test` タスクで、ルートの `vp test` からは外している。
 - `vite-plus-adopt` が使う betterleaks・actionlint・zizmor は postinstall で入れ、pnpm の `allowBuilds` で許可する。実行時にダウンロードしない。
 

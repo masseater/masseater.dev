@@ -25,6 +25,8 @@ export const commands = {
 	claudeStatus: () => typedError<ClaudeStatus, Failure>(__TAURI_INVOKE("claude_status")),
 	onboardingDone: () => typedError<OnboardingStep[], Failure>(__TAURI_INVOKE("onboarding_done")),
 	completeOnboardingStep: (step: OnboardingStep) => typedError<null, Failure>(__TAURI_INVOKE("complete_onboarding_step", { step })),
+	checkUpdate: () => typedError<Release | null, Failure>(__TAURI_INVOKE("check_update")),
+	installUpdate: (onProgress: Channel<number>) => typedError<null, Failure>(__TAURI_INVOKE("install_update", { onProgress })),
 };
 
 /* Types */
@@ -117,6 +119,10 @@ export type Paragraph = {
 export type ParagraphKind = "prose" | "memo" | "idea";
 
 export type Reaction = "draft-accepted" | "draft-rewritten" | "draft-kept" | "remark-dismissed" | "remark-rewritten" | "question-deferred";
+
+export type Release = {
+	version: string,
+};
 
 export type Remark = {
 	paragraphId: string,

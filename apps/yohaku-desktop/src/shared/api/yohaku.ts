@@ -7,7 +7,7 @@ import type {
   Source,
   SyncStatus,
 } from "@masseater.dev/yohaku-protocol";
-import type { Effect, Stream } from "effect";
+import type { Effect, Option, Stream } from "effect";
 
 interface Failure {
   readonly message: string;
@@ -36,6 +36,10 @@ type OnboardingStep = "setup" | "idea-hint" | "source-hint";
 interface ClaudeStatus {
   readonly installed: boolean;
   readonly loggedIn: boolean;
+}
+
+interface Release {
+  readonly version: string;
 }
 
 type Yohaku = Readonly<{
@@ -68,6 +72,8 @@ type Yohaku = Readonly<{
   onboardingDone: () => Effect.Effect<readonly OnboardingStep[], Failure>;
   completeOnboardingStep: (step: OnboardingStep) => Effect.Effect<void, Failure>;
   openExternal: (url: string) => Effect.Effect<void, Failure>;
+  checkUpdate: () => Effect.Effect<Option.Option<Release>, Failure>;
+  installUpdate: () => Stream.Stream<number, Failure>;
 }>;
 
-export type { ClaudeStatus, Failure, Mcp, OnboardingStep, Opened, SpanTarget, Yohaku };
+export type { ClaudeStatus, Failure, Mcp, OnboardingStep, Opened, Release, SpanTarget, Yohaku };
