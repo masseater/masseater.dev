@@ -328,7 +328,7 @@ const packageChecks: readonly string[] = [
   "aredoko-desktop#cargo",
   "yakusu#cargo",
   "yohaku-desktop#cargo",
-  "aredoko-protocol-codegen#codegen:check",
+  "protocol-codegen#codegen:check",
   "medley-manager#auth:check",
   "watashi-mcp#auth:check",
   "aredoko-csharp-check#cs:check",

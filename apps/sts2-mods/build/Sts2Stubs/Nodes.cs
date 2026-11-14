@@ -9,22 +9,43 @@ namespace MegaCrit.Sts2.Core.Nodes
     {
         public static NGame? Instance => throw null!;
 
+        public NSceneContainer RootSceneContainer => throw null!;
+
         public NRun? CurrentRunNode => throw null!;
+
+        public NTransition Transition => throw null!;
+    }
+
+    public class NTransition : ColorRect
+    {
+        public bool InTransition => throw null!;
     }
 
     public class NRun : Control
     {
         public static NRun? Instance => throw null!;
     }
+
+    public class NSceneContainer : Control
+    {
+        public Control? CurrentScene => throw null!;
+    }
 }
 
 namespace MegaCrit.Sts2.Core.Nodes.Screens.Map
 {
     using Godot;
+    using MegaCrit.Sts2.Core.Map;
+    using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
     using MegaCrit.Sts2.Core.Multiplayer.Game;
     using MegaCrit.Sts2.Core.Multiplayer.Game.PeerInput;
     using MegaCrit.Sts2.Core.Multiplayer.Messages.Game.Flavor;
     using MegaCrit.Sts2.Core.Runs;
+
+    public abstract class NMapPoint : NButton
+    {
+        public MapPoint Point => throw null!;
+    }
 
     public enum DrawingMode
     {
@@ -95,5 +116,78 @@ namespace MegaCrit.Sts2.Core.Nodes.Screens.Map
 
         // マップ切り替え時に全員分を消す
         public void ClearAllLines() => throw null!;
+    }
+}
+
+namespace MegaCrit.Sts2.Core.Nodes.GodotExtensions
+{
+    using Godot;
+
+    public class NClickableControl : Control
+    {
+        public bool IsEnabled => throw null!;
+
+        public void ForceClick() => throw null!;
+    }
+
+    public class NButton : NClickableControl
+    {
+    }
+}
+
+namespace MegaCrit.Sts2.Core.Nodes.Cards.Holders
+{
+    using Godot;
+    using MegaCrit.Sts2.Core.Models;
+
+    public abstract class NCardHolder : Control
+    {
+        public new class SignalName : Control.SignalName
+        {
+            public static readonly StringName Pressed = "Pressed";
+        }
+
+        public virtual CardModel? CardModel => throw null!;
+    }
+
+    public class NHandCardHolder : NCardHolder
+    {
+    }
+}
+
+namespace MegaCrit.Sts2.Core.Nodes.Screens.ScreenContext
+{
+    public interface IScreenContext
+    {
+    }
+}
+
+namespace MegaCrit.Sts2.Core.Nodes.Screens.Overlays
+{
+    using Godot;
+    using MegaCrit.Sts2.Core.Nodes.Screens.ScreenContext;
+
+    public interface IOverlayScreen : IScreenContext
+    {
+    }
+
+    public class NOverlayStack : Control
+    {
+        public static NOverlayStack? Instance => throw null!;
+
+        public IOverlayScreen? Peek() => throw null!;
+    }
+}
+
+namespace MegaCrit.Sts2.Core.Nodes.CommonUi
+{
+    using Godot;
+    using MegaCrit.Sts2.Core.Nodes.Screens.ScreenContext;
+
+    public class NModalContainer : Control
+    {
+        public static NModalContainer? Instance => throw null!;
+
+        public IScreenContext? OpenModal => throw null!;
     }
 }

@@ -14,6 +14,11 @@
       "type": "http",
       "url": "https://observability.mcp.cloudflare.com/mcp",
       "headersHelper": "node .claude/hooks/cloudflare-mcp-headers.ts"
+    },
+    "sts2": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["tools/sts2-mcp/src/main.ts"]
     }
   }
 }

@@ -1,0 +1,19 @@
+{
+  "name": "sts2-mcp",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/main.ts",
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@masseater.dev/node-main": "workspace:*",
+    "@masseater.dev/sts2-protocol": "workspace:*",
+    "@modelcontextprotocol/server": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
