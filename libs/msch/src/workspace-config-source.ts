@@ -97,7 +97,8 @@ const programOf = Effect.fn("programOf")(function* programOf(file: string, text:
   if (Arr.isReadonlyArrayNonEmpty(parsed.errors)) {
     return yield* settingsInvalid(file)("vite.config.ts does not parse.");
   }
-  return parsed.program;
+  const program: unknown = parsed.program;
+  return program;
 });
 
 export { literalSettings, settingsInvalid, merged, programOf, usedFrom };
