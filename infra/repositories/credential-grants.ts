@@ -29,10 +29,16 @@ const extend = (extra: Partial<Grant>): Grant => ({
   zone: [...DEPLOY.zone, ...(extra.zone ?? [])],
 });
 
+const BUILDS_LOGS: Grant = {
+  account: ["Workers CI Read", "Workers Scripts Read", "Workers R2 Storage Write"],
+  zone: [],
+};
+
 const PROFILES = {
   deploy: DEPLOY,
   transforms: extend({ zone: ["Zone Transform Rules Write"] }),
   access: extend({ account: ["Access: Apps and Policies Write", "MCP Portals Write"] }),
+  buildsLogs: BUILDS_LOGS,
 } as const satisfies Readonly<Record<string, Grant>>;
 
 const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
@@ -48,6 +54,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "masseater.dev/plamo-translate": "access",
   "masseater.dev/yohaku-sync": "access",
   "masseater.dev/sundries": "access",
+  "masseater.dev/workers-builds-logs": "buildsLogs",
   mirucord: "deploy",
   msa: "deploy",
   "personal-space": "access",
