@@ -33,3 +33,6 @@ rustup toolchain install >&2
 echo "export PATH=\"$HOME/.local/bin:$HOME/.local/share/mise/shims:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 VP_RUN_CONCURRENCY_LIMIT=1" >>"$CLAUDE_ENV_FILE"
 vp env on >&2
 vp install --frozen-lockfile >&2
+if ! claude mcp get sts2 >/dev/null 2>&1; then
+  claude mcp add --scope user sts2 -- node "$CLAUDE_PROJECT_DIR/tools/sts2-mcp/src/main.ts" >&2
+fi
