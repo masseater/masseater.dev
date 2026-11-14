@@ -8,7 +8,11 @@ type ToolName =
   | "search_slides"
   | "get_deck"
   | "get_access_token"
-  | "translate";
+  | "translate"
+  | "send_to_claude"
+  | "take_claude_requests"
+  | "reply_to_request"
+  | "list_claude_replies";
 
 const { meteredInput, runToolIn, runTool } = toolCalls<ToolName, UpstreamFailed>({
   dataset: () => env.TOOL_CALLS,
