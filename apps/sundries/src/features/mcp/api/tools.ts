@@ -6,6 +6,7 @@ import { SERVER_NAME } from "#/shared/config";
 
 import { registerAccessTokenTools } from "./access-token-tools";
 import { registerAnalyticsTools } from "./analytics-tools";
+import { registerClaudeRequestTools } from "./claude-request-tools";
 import { registerSlideTools } from "./slides-tools";
 import { registerSloppediaTools } from "./sloppedia-tools";
 import { registerTranslateTools } from "./translate-tools";
@@ -20,6 +21,7 @@ const registerTools = (caller: Caller): McpServer =>
     registerSlideTools(caller),
     registerAccessTokenTools(caller),
     registerTranslateTools(caller),
+    registerClaudeRequestTools(caller),
   );
 
 export { registerTools };

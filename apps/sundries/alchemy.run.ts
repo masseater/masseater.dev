@@ -2,6 +2,7 @@ import {
   Access,
   AnalyticsEngine,
   CloudflareEnvironment,
+  D1,
   Vectorize,
   Workers,
 } from "@alchemy.run/cloudflare";
@@ -94,6 +95,7 @@ const upstreams = Effect.gen(function* upstreams() {
 
 const worker = Effect.gen(function* worker() {
   const TOOL_CALLS = yield* AnalyticsEngine.Dataset("ToolCalls", { dataset: TOOL_CALL_DATASET });
+  const CLAUDE_REQUESTS = yield* D1.Database("ClaudeRequests", { migrations: "./migrations" });
   return yield* Workers.Worker("Mcp", {
     name: `${PREFIX}worker`,
     main: "./src/app/sundries.worker.ts",
@@ -102,6 +104,7 @@ const worker = Effect.gen(function* worker() {
     workersDev: false,
     env: {
       TOOL_CALLS,
+      CLAUDE_REQUESTS,
       AI: Workers.AI(),
       ...(yield* ownerAccess),
       ...(yield* upstreams),
