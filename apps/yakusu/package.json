@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
-    "@fontsource/noto-sans-jp": "catalog:",
     "@masseater.dev/ui": "workspace:*",
     "@tanstack/react-query": "catalog:stack",
     "@tauri-apps/api": "catalog:",
@@ -22,6 +21,7 @@
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",
+    "@fontsource-variable/noto-sans-jp": "catalog:",
     "@masseater.dev/tauri-app": "workspace:*",
     "@tauri-apps/cli": "catalog:",
     "@types/react": "catalog:",

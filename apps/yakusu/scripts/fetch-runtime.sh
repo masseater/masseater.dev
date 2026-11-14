@@ -40,6 +40,53 @@ download() {
   curl --fail --silent --show-error --location --retry 3 --output "$2" "$1"
 }
 
+keep_server_closure() {
+  local llama="$1" licenses="$2" file link target name user changed
+  for file in "$llama"/LICENSE-*; do
+    [ -e "$file" ] || continue
+    name="$(basename "$file")"
+    mv "$file" "$licenses/${name#LICENSE-}-LICENSE.txt"
+  done
+  local -a direct=()
+  for link in "$llama"/*; do
+    [ -L "$link" ] || continue
+    target="$llama/$(readlink "$link")"
+    [ -L "$target" ] || direct+=("$link")
+  done
+  for link in "${direct[@]}"; do
+    target="$llama/$(readlink "$link")"
+    rm "$link"
+    mv "$target" "$link"
+  done
+  find "$llama" -type l -delete
+  local -A kept=()
+  for file in "$llama"/llama-server "$llama"/llama-server.exe "$llama"/*ggml-cpu*; do
+    [ -f "$file" ] && kept["$(basename "$file")"]=1
+  done
+  changed=1
+  while [ "$changed" -eq 1 ]; do
+    changed=0
+    for file in "$llama"/*; do
+      name="$(basename "$file")"
+      case "$name" in
+        *.so | *.so.* | *.dylib | *.dll) ;;
+        *) continue ;;
+      esac
+      [ -n "${kept[$name]:-}" ] && continue
+      for user in "${!kept[@]}"; do
+        if grep -qaF "$name" "$llama/$user"; then
+          kept["$name"]=1
+          changed=1
+          break
+        fi
+      done
+    done
+  done
+  for file in "$llama"/*; do
+    [ -n "${kept[$(basename "$file")]:-}" ] || rm "$file"
+  done
+}
+
 archive="$resources/archives/$asset"
 if ! { [ -f "$archive" ] && checksum "$asset_sha256" "$archive"; }; then
   rm -rf "$resources/archives"
@@ -54,6 +101,7 @@ case "$asset" in
   *.zip) unzip -q "$archive" -d "$resources/llama" ;;
   *) tar -xzf "$archive" -C "$resources/llama" --strip-components=1 ;;
 esac
+keep_server_closure "$resources/llama" "$resources/licenses"
 
 download "https://huggingface.co/$model_repository/resolve/$model_revision/LICENSE/ja" "$resources/licenses/PLaMo-Community-License-ja.txt"
 download "https://huggingface.co/$model_repository/resolve/$model_revision/LICENSE/en" "$resources/licenses/PLaMo-Community-License-en.txt"
