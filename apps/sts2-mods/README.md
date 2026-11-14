@@ -12,12 +12,9 @@ Slay the Spire 2（Steam の AppID 2868840、Godot/MegaDot と C#）向けの Mo
 
 ## ビルド
 
-ゲームと Steam が入っている PC で行う。
+ゲームとSteamがインストール済みのPCでビルドする。まず、[.NET SDK 10.0](https://dotnet.microsoft.com/download)、[MegaDot 4.5.1](https://megadot.megacrit.com/)、[Vite+](https://viteplus.dev)をインストールする。Macの場合は、`curl -fsSL https://megadot.megacrit.com/install.sh | sh` でMegaDotをインストールする。その後、Steamで[BaseLib](https://steamcommunity.com/sharedfiles/filedetails/?id=3737335127)をサブスクライブする。
 
-1. [.NET SDK 10.0](https://dotnet.microsoft.com/download)、[MegaDot 4.5.1](https://megadot.megacrit.com/)、[Vite+](https://viteplus.dev) を入れる。Mac の MegaDot は `curl -fsSL https://megadot.megacrit.com/install.sh | sh` で入る。
-2. Steam で [BaseLib](https://steamcommunity.com/sharedfiles/filedetails/?id=3737335127) をサブスクライブする。
-3. `local.props.example` を `local.props` に写し、`GodotPath`（要れば `Sts2Path`）を書き換える。Mac で既定の場所に入れたなら要らない。
-4. リポジトリのルートで `vp install` を実行し、以降はこのディレクトリで実行する。
+`local.props.example` を `local.props` にコピーし、`GodotPath`（ゲームが既定の場所に無い場合は `Sts2Path` も）を設定する。Mac のデフォルトの場所にインストールした場合は、この手順は不要である。リポジトリのルートで `vp install` を実行し、このディレクトリで以下のコマンドを実行する。
 
 ```sh
 vp run build                 # 全 Mod

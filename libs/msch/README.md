@@ -44,8 +44,8 @@ oxlint のバージョンは、@effect/tsgo が対応するものに合わせる
 Python は使わない方針なので、`.py`・`pyproject.toml`・`uv.lock` などのファイルを指摘する。スクリプト・CI・設定の中で `python3`・`pip`・`uv`・`poetry` を呼ぶ箇所と、`actions/setup-python` などの action、`mise.toml` に書いた Python の道具も指摘する。
 案内文書は、`AGENTS.md`・`CLAUDE.md` をルートにだけ置かせる。
 ルートの `vite.config.ts` に `msch: { workspaceAgentsMd: true }` と書くと、ワークスペース（`package.json` のあるディレクトリ）の直下にも `AGENTS.md` を置ける。`CLAUDE.md` はルートだけに置く。
-README は、ルートか、ワークスペースのディレクトリ（`git ls-files` に載る `package.json` のあるディレクトリ）にだけ置かせる。
-ルートの README にワークスペースのパス・ディレクトリ名・パッケージ名を書くと指摘する。ルートの README はリポジトリ全体を書き、ワークスペースごとの使い方はそのワークスペースの README に書く。
+README はルートまたはワークスペースのディレクトリ（`git ls-files` に載る `package.json` が格納されているディレクトリ）でのみ許可される。
+msch は、ワークスペースのパス、ディレクトリ名、パッケージ名のいずれかを記載したルートの README を指摘する。ルートの README はリポジトリ全体について説明し、各ワークスペースの使用方法はそのワークスペースの README に記載する。
 npm に出すワークスペースでは、インストールした側に増える依存の容量を `installSize` の予算と比べる。容量は、`dependencies`・`optionalDependencies`・必須の peer を node_modules からたどった合計で、そのパッケージ自身の `peerDependencies` に書いたものは数えない。予算を超えると、重い順に依存を並べ、公開の入口（`exports` と `bin`）の一部からしか import されないものにはその入口を添える。
 `dependencies` に `catalog:stack` の依存があると、使う側がすでに持っているものとして、`peerDependencies` へ移すよう指摘する。
 `tsconfig.json` の `types` に `@r_masseater/msch/vite` を足すと、`defineConfig` の `msch` に型が付く。

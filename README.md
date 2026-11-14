@@ -1,8 +1,8 @@
 # masseater.dev
 
-masseater が作ったものと書いた文章を載せる個人サイト [masseater.dev](https://masseater.dev) と、そこで公開しているものを置くモノレポである。
+このモノレポには、masseater の個人サイト [masseater.dev](https://masseater.dev) と、そこで公開しているものがある。masseater はこのサイトに、自作したものや執筆したものを投稿している。
 
-作ったものの一覧は [masseater.dev/projects](https://masseater.dev/projects) にある。配っているアプリやパッケージの導入手順は、それぞれのディレクトリの README.md にある。
+masseater が作成したものの一覧は [masseater.dev/projects](https://masseater.dev/projects) にある。配布されている各アプリやパッケージのインストール手順は、そのディレクトリの README.md に記載されている。
 
 ## ライセンス
 
