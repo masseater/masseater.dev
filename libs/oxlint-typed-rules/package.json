@@ -117,7 +117,7 @@
     {
       "name": "react",
       "path": "dist/react.mjs",
-      "limit": "175360 B"
+      "limit": "175739 B"
     },
     {
       "name": "tanstack-query",

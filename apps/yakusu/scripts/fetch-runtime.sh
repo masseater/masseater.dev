@@ -41,27 +41,30 @@ download() {
 }
 
 keep_server_closure() {
-  local llama="$1" licenses="$2" file link target name user changed
+  local llama="$1" licenses="$2" kept="$1.kept" file link target name user changed direct=""
   for file in "$llama"/LICENSE-*; do
     [ -e "$file" ] || continue
     name="$(basename "$file")"
     mv "$file" "$licenses/${name#LICENSE-}-LICENSE.txt"
   done
-  local -a direct=()
   for link in "$llama"/*; do
-    [ -L "$link" ] || continue
-    target="$llama/$(readlink "$link")"
-    [ -L "$target" ] || direct+=("$link")
+    if [ -L "$link" ] && [ ! -L "$llama/$(readlink "$link")" ]; then
+      direct="$direct$link"$'\n'
+    fi
   done
-  for link in "${direct[@]}"; do
+  while read -r link; do
+    [ -n "$link" ] || continue
     target="$llama/$(readlink "$link")"
     rm "$link"
     mv "$target" "$link"
-  done
+  done <<<"$direct"
   find "$llama" -type l -delete
-  local -A kept=()
+  rm -rf "$kept"
+  mkdir "$kept"
   for file in "$llama"/llama-server "$llama"/llama-server.exe "$llama"/*ggml-cpu*; do
-    [ -f "$file" ] && kept["$(basename "$file")"]=1
+    if [ -f "$file" ]; then
+      mv "$file" "$kept/"
+    fi
   done
   changed=1
   while [ "$changed" -eq 1 ]; do
@@ -72,19 +75,17 @@ keep_server_closure() {
         *.so | *.so.* | *.dylib | *.dll) ;;
         *) continue ;;
       esac
-      [ -n "${kept[$name]:-}" ] && continue
-      for user in "${!kept[@]}"; do
-        if grep -qaF "$name" "$llama/$user"; then
-          kept["$name"]=1
+      for user in "$kept"/*; do
+        if grep -qaF "$name" "$user"; then
+          mv "$file" "$kept/"
           changed=1
           break
         fi
       done
     done
   done
-  for file in "$llama"/*; do
-    [ -n "${kept[$(basename "$file")]:-}" ] || rm "$file"
-  done
+  rm -rf "$llama"
+  mv "$kept" "$llama"
 }
 
 archive="$resources/archives/$asset"
