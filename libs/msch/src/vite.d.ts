@@ -6,6 +6,7 @@ interface PublishSettings {
 
 interface MschConfig {
   readonly publish?: PublishSettings;
+  readonly workspaceAgentsMd?: true;
 }
 
 declare module "vite" {
