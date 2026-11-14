@@ -8,6 +8,8 @@ import {
   requiredStack,
   restrictedImports,
 } from "@r_masseater/msch/lint";
+import { workspaceSettings } from "@r_masseater/msch/workspace-settings";
+import type { RuleSets } from "@r_masseater/msch/workspace-settings";
 import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import fsd from "@r_masseater/vite-plus-adopt/fsd";
 import {
@@ -15,14 +17,11 @@ import {
   restrictedProperties as untracedProperties,
   restrictedSyntax as unguardedWorkersAi,
 } from "@r_masseater/workers-tracing/oxlint";
-import { Array as Arr, String as Str, pipe } from "effect";
+import { Array as Arr, Record as Rec, pipe } from "effect";
 import { defineConfig } from "vite-plus";
 import type { UserConfig } from "vite-plus";
 
 type LintConfig = NonNullable<UserConfig["lint"]>;
-
-const WRITE_THROUGH_WRITER =
-  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため";
 
 const isOtlpInterop = ({ message }: Readonly<{ message: string }>): boolean =>
   message !== INSTRUMENTATION && message !== INFRASTRUCTURE;
@@ -32,126 +31,35 @@ const otlpInteropImports = {
   patterns: pipe(restrictedImports.patterns, Arr.filter(isOtlpInterop)),
 };
 
+const ruleSets: RuleSets = {
+  decision: decisionRules,
+  traced: {
+    "eslint/no-restricted-imports": [
+      "error",
+      { ...restrictedImports, paths: [...restrictedImports.paths, ...untracedImports] },
+    ],
+    "eslint/no-restricted-properties": ["error", ...untracedProperties],
+  },
+  otlpInterop: { "eslint/no-restricted-imports": ["error", otlpInteropImports] },
+};
+
+const workspace = await workspaceSettings({
+  root: import.meta.dirname,
+  ruleSets,
+  dependencySets: { instrumentation: requiredStack[INSTRUMENTATION] ?? [] },
+});
+
 const overrides = [
   {
-    files: ["**/shared/ui/**", "libs/ui/src/{badge,button}.tsx", "libs/web-ui/src/ui/**"],
+    files: ["**/shared/ui/**", ...workspace.lint.shadcnUi],
     rules: { "shadcn/no-restyle": "off", "react/jsx-props-no-spreading": "off" },
-  },
-  {
-    files: ["apps/portfolio/src/**/*.{ts,tsx}"],
-    rules: decisionRules,
-  },
-  {
-    files: [
-      "apps/portfolio/worker/**/*.ts",
-      "apps/portfolio/src/**/*.server.ts",
-      "infra/repositories/*.worker.ts",
-    ],
-    excludeFiles: ["**/*.test.ts"],
-    rules: {
-      "eslint/no-restricted-imports": [
-        "error",
-        { ...restrictedImports, paths: [...restrictedImports.paths, ...untracedImports] },
-      ],
-      "eslint/no-restricted-properties": ["error", ...untracedProperties],
-    },
   },
   {
     files: ["apps/*/src/**/*.{ts,tsx}", "apps/*/worker/**/*.ts"],
     excludeFiles: ["**/*.test.ts"],
     rules: { "eslint-js/no-restricted-syntax": ["error", ...unguardedWorkersAi] },
   },
-  {
-    files: ["apps/watashi-mcp/src/**/*.{ts,tsx}"],
-    excludeFiles: ["apps/watashi-mcp/src/features/mcp/api/*-writer.server.ts"],
-    rules: {
-      "eslint/no-restricted-properties": [
-        "error",
-        { object: "db", property: "insert", message: WRITE_THROUGH_WRITER },
-        { object: "db", property: "update", message: WRITE_THROUGH_WRITER },
-        { object: "db", property: "delete", message: WRITE_THROUGH_WRITER },
-        { object: "db", property: "batch", message: WRITE_THROUGH_WRITER },
-        { object: "db", property: "run", message: WRITE_THROUGH_WRITER },
-      ],
-    },
-  },
-  {
-    files: ["apps/aredoko-server/src/app/**"],
-    rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
-  },
-  {
-    files: ["apps/kikite/src/pages/interview/lib/screen-hold.ts"],
-    rules: {
-      "baseline-js/use-baseline": [
-        "error",
-        {
-          available: "widely",
-          includeWebApis: { preset: "auto" },
-          includeJsBuiltins: { preset: "auto" },
-          ignoreFeatures: ["screen-wake-lock"],
-        },
-      ],
-    },
-  },
-  {
-    files: ["apps/kikite/server/serve.ts", "libs/watashi/src/callback-server.ts"],
-    rules: {
-      "import/no-nodejs-modules": ["error", { allow: ["node:http"] }],
-      "effecttsgo/node-builtin-import": "off",
-    },
-  },
-  {
-    files: ["libs/msch/src/oxlint.ts"],
-    rules: {
-      "import/no-default-export": "off",
-      "import/no-nodejs-modules": "off",
-      "node/no-sync": "off",
-      "effecttsgo/node-builtin-import": "off",
-      "effecttsgo/schema-sync": "off",
-    },
-  },
-  {
-    files: ["libs/msch/src/lint/preset.ts"],
-    rules: { "import/no-nodejs-modules": ["error", { allow: ["node:url"] }] },
-  },
-  {
-    files: [
-      "libs/textlint-rule-no-taigendome/src/index.ts",
-      "libs/textlint-rule-yomiyasu/src/index.ts",
-      "libs/oxlint-plugin-decision/src/index.ts",
-      "libs/oxlint-plugin-decision-presets/src/*.ts",
-      "libs/oxlint-typed-rules/src/{drizzle,react,remotion,tanstack-query,tanstack-router,tanstack-start,ts-compat}.ts",
-      "libs/vite-plus-adopt/src/{attw/typescript,fsd,fsd-typescript}.ts",
-    ],
-    rules: { "import/no-default-export": "off" },
-  },
-  {
-    files: ["libs/vitest-otlp/src/**/*.test.ts", "libs/workers-tracing/src/**/*.test.ts"],
-    rules: { "eslint/no-restricted-imports": ["error", otlpInteropImports] },
-  },
-  {
-    files: [
-      "libs/vitest-otlp/src/grpc.ts",
-      "libs/vitest-otlp/src/forward.ts",
-      "libs/vitest-otlp/src/workers.ts",
-    ],
-    rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http2", "node:url"] }] },
-  },
-  {
-    files: ["libs/workers-tracing/src/context.ts"],
-    rules: { "import/no-nodejs-modules": ["error", { allow: ["node:async_hooks"] }] },
-  },
-  {
-    files: ["libs/workers-tracing/src/**/*.test.ts"],
-    rules: { "import/no-nodejs-modules": ["error", { allow: ["node:url"] }] },
-  },
-  {
-    files: ["libs/vitest-otlp/src/setup.ts"],
-    rules: {
-      "node/no-process-env": "off",
-      "baseline-js/use-baseline": ["error", { ignoreFeatures: ["top-level-await"] }],
-    },
-  },
+  ...workspace.lint.overrides,
   {
     files: ["**/*.test.ts"],
     rules: decisionTestRules,
@@ -160,17 +68,7 @@ const overrides = [
 
 const lint = {
   ...preset,
-  ignorePatterns: [
-    ...generated,
-    ".claude/hooks/fallow-gate.sh",
-    "tools/pod-rattle-parity/engine.gen.js",
-    "libs/oxlint-typed-rules/upstream/src/__tests__/**",
-    "libs/oxlint-typed-rules/upstream/react/**",
-    "libs/oxlint-typed-rules/upstream/{tanstack-*,drizzle,remotion}/**",
-    "libs/vite-plus-adopt/upstream/**",
-    "libs/textlint-rule-yomiyasu/upstream/**",
-    "libs/oxlint-plugin-decision*/example/**",
-  ],
+  ignorePatterns: [...generated, ...workspace.lint.ignorePatterns],
   rules: {
     ...preset.rules,
     "import/no-namespace": ["error", { ignore: ["linguist-languages"] }],
@@ -209,36 +107,23 @@ const PUBLIC_VALUES = [
   String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`,
 ];
 
-const FAKE_SECRET_FIXTURES = [
-  String.raw`(^|/)libs/vite-plus-adopt/upstream/attw-core/fixtures/[^/]+\.tgz!`,
-  String.raw`(^|/)libs/oxlint-plugin-decision-presets/example/fail\.js$`,
-];
+const FAKE_SECRET_FIXTURES = [String.raw`(^|/)fixtures/[^/]+\.tgz!`];
 
 const UNTRACKED_SKILL_EXAMPLE = String.raw`(attributes["git.sha"] == "f4ab1c402143011a6264a0660f598fc02eb48bff" && attributes["path"] == "docs/skills/measure-dont-guess/SKILL.md")`;
 
-const MARKDOWN_IGNORES = [
-  "AGENTS.md",
-  ".agents/skills/**",
-  ".claude/worktrees/**",
-  "apps/zenn-articles/**",
-  "**/.cache/**",
-];
+const MARKDOWN_IGNORES = ["AGENTS.md", "apps/zenn-articles/**", "**/.cache/**"];
 
 const checks: ToolSections = {
   commitlint: { extends: ["@commitlint/config-conventional"] },
   dependencyRules: {
-    allowed: {
-      "OTLP の受け口は OpenTelemetry の SDK から送ってテストする": {
-        workspaces: ["libs/vitest-otlp"],
-        dependencies: requiredStack[INSTRUMENTATION] ?? [],
-        fields: ["devDependencies"],
-      },
-      "Workers のスパンは Miniflare で Worker を動かしてテストする": {
-        workspaces: ["libs/vitest-otlp", "libs/workers-tracing"],
-        dependencies: ["miniflare"],
-        fields: ["devDependencies"],
-      },
-    },
+    allowed: pipe(
+      workspace.devDependencies,
+      Rec.map(({ workspaces, dependencies }) => ({
+        workspaces,
+        dependencies,
+        fields: ["devDependencies"] as const,
+      })),
+    ),
     banned: requiredStack,
     peerRanges: "intersect",
   },
@@ -306,48 +191,9 @@ const checks: ToolSections = {
   },
 };
 
-const CARGO_TASK = "#cargo";
-
-const packageChecks: readonly string[] = [
-  "sloppedia#size",
-  "@r_masseater/oxlint-plugin-decision#test",
-  "@r_masseater/oxlint-plugin-decision-presets#test",
-  "@r_masseater/oxlint-typed-rules#test",
-  "@r_masseater/oxlint-typed-rules#size",
-  "@r_masseater/vite-plus-adopt#test",
-  "@r_masseater/vite-plus-adopt#size",
-  "@r_masseater/msch#build",
-  "@masseater.dev/pod-rattle-engine#cargo",
-  "@masseater.dev/pod-rattle-plugin#cargo",
-  "@masseater.dev/pod-rattle-host#cargo",
-  "@masseater.dev/mosaic-build#cargo",
-  "@masseater.dev/seikin-dance#cargo",
-  "@masseater.dev/xtask#cargo",
-  "rpp-kit-demo#typecheck",
-  "sts2-mods#dotnet",
-  "aredoko-desktop#cargo",
-  "yakusu#cargo",
-  "yohaku-desktop#cargo",
-  "protocol-codegen#codegen:check",
-  "medley-manager#auth:check",
-  "watashi-mcp#auth:check",
-  "aredoko-csharp-check#cs:check",
-];
-
-const cargoChecks = pipe(
-  packageChecks,
-  Arr.filter(Str.endsWith(CARGO_TASK)),
-  Arr.map((check) => `'${check}'`),
-  Arr.join(" "),
-);
-
 const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
   vpa: {
     command: "vpa",
-    cache: false,
-  },
-  "cargo-checks": {
-    command: String.raw`crates="$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[].manifest_path' | while read -r manifest; do directory="$(dirname "$manifest")"; until [ -f "$directory/package.json" ]; do directory="$(dirname "$directory")"; done; jq -r '.name + "${CARGO_TASK}"' "$directory/package.json"; done | LC_ALL=C sort)"; listed="$(printf '%s\n' ${cargoChecks} | LC_ALL=C sort)"; if [ "$crates" != "$listed" ]; then printf 'The crates in Cargo.toml need these tasks:\n%s\npackageChecks in vite.config.ts lists these:\n%s\n' "$crates" "$listed" >&2; echo "The two lists must match. Give the package of each crate a cargo task and list it in packageChecks, or verify never lints or tests the crate." >&2; exit 1; fi`,
     cache: false,
   },
 };
@@ -356,17 +202,7 @@ export default defineConfig({
   ...checks,
   msch: { workspaceAgentsMd: true },
   test: {
-    projects: [
-      "apps/*",
-      "libs/*",
-      "infra/*",
-      "tools/*",
-      "!apps/zenn-articles",
-      "!libs/oxlint-plugin-decision",
-      "!libs/oxlint-plugin-decision-presets",
-      "!libs/oxlint-typed-rules",
-      "!libs/vite-plus-adopt",
-    ],
+    projects: [...workspace.testProjects],
     passWithNoTests: true,
   },
   staged: {
@@ -392,7 +228,7 @@ export default defineConfig({
       ],
       "workflow-rules":
         "ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows",
-      verify: {
+      check: {
         command: "GOMEMLIMIT=4GiB vp check --deny-warnings",
         cache: {
           env: ["OPENROUTER_API_KEY"],
@@ -407,22 +243,24 @@ export default defineConfig({
             "NODE_EXTRA_CA_CERTS",
           ],
         },
+      },
+      verify: {
+        command: "vp run -r verify",
         dependsOn: [
+          "check",
           "test",
           "vpa",
           "workflow-rules",
-          "cargo-checks",
           "db-check-all",
           "fallow",
           "msch",
           "ignored-sources",
           "audit",
-          ...packageChecks,
         ],
       },
       test: "vp test run",
       msch: {
-        command: "node libs/msch/src/cli.ts",
+        command: "msch",
         cache: {
           untrackedEnv: ["HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy", "SSL_CERT_FILE"],
         },

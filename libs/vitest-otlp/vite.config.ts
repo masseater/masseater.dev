@@ -3,7 +3,31 @@ import { defineConfig } from "vite-plus";
 import { otlp } from "./src/index.ts";
 
 export default defineConfig({
-  msch: { publish: { installSize: "16.5 MB" } },
+  msch: {
+    publish: { installSize: "16.5 MB" },
+    devDependencies: {
+      "OTLP の受け口は OpenTelemetry の SDK から送ってテストする": { use: ["instrumentation"] },
+      "Workers のスパンは Miniflare で Worker を動かしてテストする": {
+        dependencies: ["miniflare"],
+      },
+    },
+    lint: {
+      overrides: [
+        { files: ["src/**/*.test.ts"], use: ["otlpInterop"] },
+        {
+          files: ["src/grpc.ts", "src/forward.ts", "src/workers.ts"],
+          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http2", "node:url"] }] },
+        },
+        {
+          files: ["src/setup.ts"],
+          rules: {
+            "node/no-process-env": "off",
+            "baseline-js/use-baseline": ["error", { ignoreFeatures: ["top-level-await"] }],
+          },
+        },
+      ],
+    },
+  },
   run: {
     tasks: {
       build: { command: "vp pack", cache: false },

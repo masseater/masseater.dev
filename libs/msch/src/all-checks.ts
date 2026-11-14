@@ -8,6 +8,7 @@ import { checkOverrides } from "./overrides.ts";
 import type { Problem } from "./problem.ts";
 import { checkPython } from "./python.ts";
 import { checkRootReadme } from "./root-readme.ts";
+import { checkWorkspaces } from "./workspace-checks.ts";
 
 /** @internal */
 const checkAll: (
@@ -18,6 +19,7 @@ const checkAll: (
     | ReturnType<typeof checkRepository>
     | ReturnType<typeof checkOverrides>
     | ReturnType<typeof checkHiddenUnicode>
+    | ReturnType<typeof checkWorkspaces>
   >,
   Effect.Services<
     | ReturnType<typeof checkRepository>
@@ -34,6 +36,7 @@ const checkAll: (
       checkNestedDocs(root),
       checkRootReadme(root),
       checkPublishedPackages(root),
+      checkWorkspaces(root),
     ],
     { concurrency: "unbounded" },
   );

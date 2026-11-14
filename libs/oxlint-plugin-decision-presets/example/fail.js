@@ -1,6 +1,6 @@
 import { db, mailer, llm } from "./deps.js";
 
-const STRIPE_SECRET_KEY = "sk_live_51HxQ2bF7kQ9vR3mT8yL0pZ";
+const STRIPE_SECRET_KEY = "sk_live_51HxQ2bF7kQ9vR3mT8yL0pZ"; // betterleaks:allow
 
 export async function getUser(id) {
   const user = await db.users.find(id);

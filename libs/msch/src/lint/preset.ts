@@ -111,7 +111,11 @@ const overrides = [
   scriptsOverride,
   {
     files: ["**/vite.config.ts"],
-    rules: { "eslint/max-lines": "off" },
+    rules: {
+      "eslint/max-lines": "off",
+      "eslint/max-lines-per-function": "off",
+      "baseline-js/use-baseline": "off",
+    },
   },
 ] satisfies LintConfig["overrides"];
 

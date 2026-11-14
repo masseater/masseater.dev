@@ -11,6 +11,18 @@ import { pages, sitemap, withLastmod } from "./vite-plugins/prerender.ts";
 import { seikinTechniques } from "./vite-plugins/seikin/seikin-techniques.ts";
 
 export default defineConfig({
+  msch: {
+    lint: {
+      overrides: [
+        { files: ["src/**/*.{ts,tsx}"], use: ["decision"] },
+        {
+          files: ["worker/**/*.ts", "src/**/*.server.ts"],
+          excludeFiles: ["**/*.test.ts"],
+          use: ["traced"],
+        },
+      ],
+    },
+  },
   run: {
     tasks: {
       dev: { command: "alchemy dev", cache: false },

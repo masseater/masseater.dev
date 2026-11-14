@@ -20,6 +20,8 @@ const RuleNameSchema = Schema.Literals([
   "root-readme",
   "stack-dependency",
   "install-size",
+  "unverified-crate",
+  "root-workspace-path",
 ]);
 
 type RuleName = typeof RuleNameSchema.Type;

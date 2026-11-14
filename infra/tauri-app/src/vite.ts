@@ -43,6 +43,7 @@ const tauriAppConfig = ({
   const base: UserConfig = {
     run: {
       tasks: {
+        verify: { command: [], dependsOn: ["cargo"] },
         cargo: {
           command: cargoCommand(crate),
           cache: {
