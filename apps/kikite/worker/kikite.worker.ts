@@ -1,3 +1,4 @@
+import { browserSpans } from "@r_masseater/workers-tracing/browser-spans";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { DurableObject, env } from "cloudflare:workers";
 import { Duration, Effect, Logger, Option, Schedule } from "effect";
@@ -8,10 +9,13 @@ import {
   INTERVIEWER_IMAGE,
   INTERVIEWER_INSTANCE,
   INTERVIEWER_STARTUP,
+  TELEMETRY_SERVICE,
+  TRACES_PATH,
 } from "#config";
 
 import { down } from "./interviewer-down.ts";
 import type { InterviewerDown } from "./interviewer-down.ts";
+import { isSessionsPath, sessionRoutes } from "./session-routes.ts";
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 const runLogged = runner(logger);
@@ -96,9 +100,19 @@ class Interviewer extends DurableObject {
   }
 }
 
+const receiveSpans = browserSpans({ service: TELEMETRY_SERVICE });
+
 const worker = {
-  fetch: (request: Request): Promise<Response> =>
-    env.INTERVIEWER.getByName("interviewer").fetch(request),
+  fetch: (request: Request): Promise<Response> => {
+    const { pathname } = new URL(request.url);
+    if (pathname === TRACES_PATH) {
+      return receiveSpans(request);
+    }
+    if (isSessionsPath(pathname)) {
+      return runLogged(sessionRoutes(request));
+    }
+    return env.INTERVIEWER.getByName("interviewer").fetch(request);
+  },
 };
 
 export { Interviewer };

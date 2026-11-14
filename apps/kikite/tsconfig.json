@@ -14,9 +14,11 @@
         "allowedUnstableApis": [
           "@effect/atom-react",
           "@effect/vitest#it",
+          "@effect/vitest#layer",
           "@effect/platform-node/NodeHttpServer",
           "@effect/platform-node/NodeRuntime",
           "effect/FileSystem",
+          "effect/crypto/SecureRandom",
           "effect/http/FetchHttpClient",
           "effect/http/HttpClient",
           "effect/http/HttpClientRequest",
@@ -25,6 +27,8 @@
           "effect/http/HttpServerError",
           "effect/http/HttpServerRequest",
           "effect/http/HttpServerResponse",
+          "effect/observability/OtlpSerialization",
+          "effect/observability/OtlpTracer",
           "effect/reactivity/AsyncResult",
           "effect/reactivity/Atom",
           "effect/reactivity/AtomRegistry"
