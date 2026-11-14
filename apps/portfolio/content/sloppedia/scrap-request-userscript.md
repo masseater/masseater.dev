@@ -28,7 +28,7 @@ Sloppedia の記事の多くは、このスクリプトから頼まれて Claude
 
 中継への送信は、ユーザースクリプトの管理アプリの GM.xmlHttpRequest で行う。中継は [Cloudflare Access](/sloppedia/cloudflare-access) の後ろにあり、ログインしていなければログインの画面に転送されるので、スクリプトはそれを見てログインを促す。ルーチンを起動するためのトークンはスクリプトには無く、中継の側が持っている[^userscript]。
 
-依頼を受けたルーチンは、personal-space の [MCP](/sloppedia/model-context-protocol) の書き込みのツールで Sloppedia に記事の PR を出す。
+依頼を受けたルーチンは、持ち主の [MCP](/sloppedia/model-context-protocol) の書き込みのツールで Sloppedia に記事の PR を出す。
 
 ## 配布
 

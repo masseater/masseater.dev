@@ -42,6 +42,7 @@ const PROFILES = {
 } as const satisfies Readonly<Record<string, Grant>>;
 
 const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
+  "1403864815": "access",
   "ai-produced": "deploy",
   cdmm: "deploy",
   "geigeki-kaiiki": "deploy",
@@ -57,7 +58,6 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "masseater.dev/workers-builds-logs": "buildsLogs",
   mirucord: "deploy",
   msa: "deploy",
-  "personal-space": "access",
   "typescript-template": "deploy",
 };
 

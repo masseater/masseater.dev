@@ -18,6 +18,7 @@ import type {
   AccessAiControlsMcpPortalsUpdateRequestServersList,
   CreateAccessApplicationForAccountRequest,
 } from "@distilled.cloud/cloudflare/zero-trust";
+import { ownerStack } from "@masseater.dev/owner-stack";
 import { Resource as defineResource, Stack as defineStack } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { succeed as succeedProvider } from "alchemy/Provider";
@@ -45,8 +46,8 @@ const { McpPortal: defineMcpPortal, McpServer: defineMcpServer, Policy: definePo
 const { Record: defineRecord } = DNS;
 const { resolveZoneId } = Zone;
 
-const MCP_ACCESS_APP = "PersonalSpace.McpAccessApplication";
-const PORTAL_SERVERS = "PersonalSpace.McpPortalServers";
+const MCP_ACCESS_APP = "MasseaterDev.McpAccessApplication";
+const PORTAL_SERVERS = "MasseaterDev.McpPortalServers";
 const PORTAL_HOST = "mcp.masseater.dev";
 const PORTAL_GATEWAY = "gateway.agents.cloudflare.com";
 const sessionDuration = "720h";
@@ -84,7 +85,9 @@ type McpAccessApplicationResource = defineResource<
   Readonly<{ accountId: string; appId: string }>
 >;
 
-const mcpAccessApplication = defineResource<McpAccessApplicationResource>(MCP_ACCESS_APP);
+const mcpAccessApplication = defineResource<McpAccessApplicationResource>(MCP_ACCESS_APP, {
+  aliases: ["PersonalSpace.McpAccessApplication"],
+});
 
 type PortalServersResource = defineResource<
   typeof PORTAL_SERVERS,
@@ -96,7 +99,9 @@ type PortalServersResource = defineResource<
   Readonly<{ accountId: string; portalId: string }>
 >;
 
-const portalServers = defineResource<PortalServersResource>(PORTAL_SERVERS);
+const portalServers = defineResource<PortalServersResource>(PORTAL_SERVERS, {
+  aliases: ["PersonalSpace.McpPortalServers"],
+});
 
 const accountIdOf = flatten(CloudflareEnvironment).pipe(map(({ accountId }) => accountId));
 
@@ -146,9 +151,10 @@ const portalServersProvider = succeedProvider(portalServers, {
 
 const mcpPortalProviders = mergeAll(mcpAccessApplicationProvider, portalServersProvider);
 
-const viewerPolicy = definePolicy
-  .ref("OwnerPolicy", { stack: "mydecklist", stage: "prod" })
-  .pipe(map(({ policyId }) => [{ id: policyId, precedence: 1 }]));
+const viewerPolicy = ownerStack.pipe(
+  flatMap((holder) => definePolicy.ref("OwnerPolicy", holder)),
+  map(({ policyId }) => [{ id: policyId, precedence: 1 }]),
+);
 
 const portalDns = gen(function* portalDns() {
   const accountId = yield* accountIdOf;

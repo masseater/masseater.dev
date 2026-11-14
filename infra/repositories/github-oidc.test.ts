@@ -9,6 +9,7 @@ const PUSH: typeof Claims.Type = {
   repository_owner: "masseater",
   repository_owner_id: "62135405",
   repository: "masseater/masseater.dev",
+  repository_id: "1411948414",
   event_name: "push",
   ref: "refs/heads/main",
   run_id: "1",
@@ -27,7 +28,7 @@ const grantFor = (claims: typeof Claims.Type): Option.Option<string> =>
   Arr.findFirst(grantKeys(claims), (key) => Rec.get(GRANTS, key));
 
 test("a job without an environment is looked up by repository", () => {
-  expect(grantKeys(PUSH)).toStrictEqual(["masseater.dev"]);
+  expect(grantKeys(PUSH)).toStrictEqual(["masseater.dev", "1411948414"]);
   expect(grantFor(PUSH)).toStrictEqual(Option.some("deploy"));
 });
 
@@ -39,8 +40,19 @@ test("an environment without its own grant falls back to the repository", () => 
   expect(grantKeys(inEnvironment("production"))).toStrictEqual([
     "masseater.dev/production",
     "masseater.dev",
+    "1411948414/production",
+    "1411948414",
   ]);
   expect(grantFor(inEnvironment("production"))).toStrictEqual(Option.some("deploy"));
+});
+
+const ID_GRANTS: Readonly<Record<string, string>> = { "42": "access" };
+
+test("a repository granted by its id is found without its name in the grants", () => {
+  const unnamed = { ...PUSH, repository: "masseater/unnamed", repository_id: "42" };
+  expect(Arr.findFirst(grantKeys(unnamed), (key) => Rec.get(ID_GRANTS, key))).toStrictEqual(
+    Option.some("access"),
+  );
 });
 
 test("the workflow file is read from the workflow ref", () => {
