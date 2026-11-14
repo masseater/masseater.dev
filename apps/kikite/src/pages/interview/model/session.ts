@@ -1,20 +1,19 @@
 import { Effect, Schedule, pipe } from "effect";
-import { FetchHttpClient } from "effect/http";
-import { Atom } from "effect/reactivity";
 
-import { onActivation } from "#/pages/interview/lib/activation";
 import { holdScreen } from "#/pages/interview/lib/screen-hold";
 
 import { actionsFor } from "./actions.ts";
 import type { Actions } from "./actions.ts";
 import { phaseAtom, staleAtom } from "./atoms.ts";
 import type { Phase } from "./atoms.ts";
+import { autosaving, upload } from "./autosave.ts";
 import { due } from "./due.ts";
 import type { Due } from "./due.ts";
 import { release, reset, startListening } from "./lifecycle.ts";
 import { read, write } from "./registry.ts";
+import { runtime } from "./runtime.ts";
 
-type Session = Pick<Actions, "typed" | "typing">;
+type Session = Pick<Actions, "typed" | "typing" | "wrapUp">;
 
 const TICK = "250 millis";
 const NO_NUDGE = 0;
@@ -54,8 +53,6 @@ const interviewing = (phase: Phase): Effect.Effect<void> => {
   return Effect.interrupt;
 };
 
-const runtime = Atom.runtime(FetchHttpClient.layer);
-
 const sessionAtom = runtime.atom(
   Effect.fnUntraced(function* session(get) {
     yield* interviewing(get(phaseAtom));
@@ -64,13 +61,15 @@ const sessionAtom = runtime.atom(
     const actions = yield* actionsFor;
     yield* startListening(actions);
     yield* holdScreen;
-    yield* onActivation(actions.activate);
     yield* Effect.forkScoped(pipe(actions, ticking));
+    yield* Effect.forkScoped(autosaving);
     const current: Session = actions;
     return current;
   }),
 );
 
+const uploadAtom = runtime.fn(() => upload());
+
 /** @internal */
-export { sessionAtom };
+export { sessionAtom, uploadAtom };
 export type { Session };
