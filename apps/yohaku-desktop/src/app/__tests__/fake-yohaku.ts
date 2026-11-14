@@ -1,6 +1,5 @@
 import type {
   Annotations,
-  Fact,
   Manuscript,
   Paragraph,
   ParagraphKind,
@@ -12,6 +11,7 @@ import { Array, Effect, Option, Record, Stream, String, pipe } from "effect";
 
 import type { ClaudeStatus, OnboardingStep, Release, Yohaku } from "#/shared/api";
 
+import { DRAFT, EMOTION, INGESTED, REWRITE } from "./fake-data.ts";
 import { updateCalls } from "./fake-update.ts";
 
 type ManuscriptType = typeof Manuscript.Type;
@@ -20,9 +20,6 @@ type SourceType = typeof Source.Type;
 
 const MEMO_SPACE = "　";
 const IDEA = "ネタ：";
-const EMOTION = "胸の奥がじんわりと温かくなった。";
-const DRAFT = ["彩葉の声に、", "かぐやの顔のまま振り向いてしまった。"] as const;
-const REWRITE = ["胸に手を当てて、", "鏡から目をそらした。"] as const;
 const NEVER = 0;
 const SYNCED_AT = 1_794_472_200_000;
 const SIGNED_OUT: typeof SyncStatus.Type = {
@@ -32,15 +29,14 @@ const SIGNED_OUT: typeof SyncStatus.Type = {
   problem: Option.getOrNull(Option.none<string>()),
 };
 const NO_TITLE = Option.getOrNull(Option.none<ManuscriptType["title"]>());
-const NO_WHEN = Option.getOrNull(Option.none<string>());
-const INGESTED: readonly (typeof Fact.Type)[] = [
-  { kind: "character", subject: "ヤチヨ", body: "8000 年後のかぐや", when: NO_WHEN },
-  { kind: "setting", subject: "ツクヨミ", body: "ヤチヨが管理する仮想空間", when: NO_WHEN },
-];
 const ALL_STEPS: readonly OnboardingStep[] = ["setup", "idea-hint", "source-hint"];
 const READY: ClaudeStatus = { installed: true, loggedIn: true };
 
-type Setup = Partial<Pick<Store, "claude" | "onboarding"> & { release: Release }>;
+type Setup = Partial<{
+  claude: ClaudeStatus;
+  onboarding: readonly OnboardingStep[];
+  release: Release;
+}>;
 
 interface Calls {
   readonly reactions: (typeof Reaction.Type)[];
@@ -295,5 +291,5 @@ const fakeYohaku = (sources: readonly (typeof Source.Type)[]): Fake => built(sou
 
 const fakeWith = (setup: Setup): Fake => built([], setup);
 
-export { DRAFT, EMOTION, IDEA, READY, REWRITE, fakeWith, fakeYohaku };
+export { IDEA, READY, fakeWith, fakeYohaku };
 export type { Calls, Fake, Paragraphs, Setup };

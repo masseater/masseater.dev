@@ -5,8 +5,6 @@ import type { ReactNode } from "react";
 const LABEL = "更新して再起動";
 const RETRY = "更新をやり直す";
 
-type Props = Readonly<{ failed: boolean; install: () => void }>;
-
 const labelOf = (failed: boolean): string => {
   if (failed) {
     return RETRY;
@@ -14,7 +12,10 @@ const labelOf = (failed: boolean): string => {
   return LABEL;
 };
 
-const InstallButton = ({ failed, install }: Props): ReactNode => (
+const InstallButton = ({
+  failed,
+  install,
+}: Readonly<{ failed: boolean; install: () => void }>): ReactNode => (
   <Button size="sm" onClick={install}>
     <RotateCw aria-hidden="true" />
     {labelOf(failed)}
