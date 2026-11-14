@@ -68,3 +68,4 @@ const useSourceFacts = (id: string): readonly (typeof Fact.Type)[] => {
 };
 
 export { useIngest, useRevert, useSourceFacts, useSources };
+export type { Sources };

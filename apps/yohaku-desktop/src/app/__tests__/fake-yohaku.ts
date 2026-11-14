@@ -3,6 +3,7 @@ import type {
   Fact,
   Manuscript,
   Paragraph,
+  ParagraphKind,
   Reaction,
   Source,
   SyncStatus,
@@ -64,7 +65,7 @@ interface Backing {
   readonly open: (url: string) => void;
 }
 
-const kindOf = (text: string): "idea" | "memo" | "prose" => {
+const kindOf = (text: string): typeof ParagraphKind.Type => {
   if (String.startsWith(IDEA)(text)) {
     return "idea";
   }
@@ -294,3 +295,4 @@ const firstRun = (claude: ClaudeStatus): Fake => built([], { onboarding: [], cla
 const ideaHintPending = (): Fake => built([], { onboarding: ["setup", "source-hint"] });
 
 export { DRAFT, EMOTION, IDEA, READY, REWRITE, fakeYohaku, firstRun, ideaHintPending };
+export type { Calls, Fake, Paragraphs };

@@ -58,3 +58,4 @@ const useClaudeStatus = (): Checked => {
 };
 
 export { useClaudeStatus, useCompleteStep, useOnboardingDone, useStepPending };
+export type { Checked };

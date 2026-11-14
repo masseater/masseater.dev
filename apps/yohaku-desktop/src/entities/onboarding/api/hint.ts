@@ -58,3 +58,4 @@ const useHint = ({ step, find, title, description }: Hint): void => {
 };
 
 export { useHint };
+export type { Hint };
