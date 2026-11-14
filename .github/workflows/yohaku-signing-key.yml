@@ -1,0 +1,40 @@
+name: yohaku-signing-key
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: github
+
+jobs:
+  generate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: github
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: .github/scripts/github-token.sh
+      - run: .github/scripts/yohaku-signing-key.sh
+
+  ci-telemetry:
+    needs: [generate]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@8807d1fbbb0254e6c5f40a18ffaa4146954a48e3
+        with:
+          github-token: ${{ github.token }}

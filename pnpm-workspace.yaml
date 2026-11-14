@@ -308,6 +308,6 @@ patchedDependencies:
   "@tanstack/eslint-plugin-start@0.1.0": patches/@tanstack__eslint-plugin-start@0.1.0.patch
   eslint-plugin-drizzle@0.2.3: patches/eslint-plugin-drizzle@0.2.3.patch
   eslint-plugin-react-jsx@5.30.1: patches/eslint-plugin-react-jsx@5.30.1.patch
-  "@voidzero-dev/vite-plus-core@1.5.1": patches/@voidzero-dev__vite-plus-core@1.5.1.patch
+  "@voidzero-dev/vite-plus-core@1.6.0": patches/@voidzero-dev__vite-plus-core@1.6.0.patch
 minimumReleaseAgeExclude:
   - "@r_masseater/oxlint-typed-rules@0.4.0"
