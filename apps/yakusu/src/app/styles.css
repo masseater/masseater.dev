@@ -1,7 +1,5 @@
 @import "tailwindcss";
 @import "@masseater.dev/ui/theme.css";
-@import "@fontsource/noto-sans-jp/400.css";
-@import "@fontsource/noto-sans-jp/500.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -15,7 +13,10 @@
 
 @theme inline {
   --color-highlight: var(--highlight);
-  --font-sans: "Noto Sans JP", sans-serif;
+}
+
+@theme static {
+  --font-sans: "Hiragino Sans", "Yu Gothic UI", "Meiryo UI", sans-serif;
 }
 
 @layer base {
