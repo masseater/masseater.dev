@@ -10,6 +10,7 @@ import { externalizeInlineScripts } from "./inline-scripts.ts";
 export default defineConfig({
   run: {
     tasks: {
+      verify: { command: [], dependsOn: ["typecheck"] },
       typecheck: "tsc --runExternalCode",
       deploy: { command: "alchemy deploy", cache: false },
       destroy: { command: "alchemy destroy", cache: false },

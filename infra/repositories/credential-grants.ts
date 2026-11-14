@@ -176,10 +176,15 @@ const grantPolicies = ({
 }: Readonly<{ accountId: string; zoneId: string }>): Grants => ({
   profiles: pipe(
     PROFILES,
-    Rec.map((grant: Grant) => [
-      policy(ACCOUNT_SCOPE, `${ACCOUNT_SCOPE}.${accountId}`, grant.account),
-      policy(ZONE_SCOPE, `${ZONE_SCOPE}.${zoneId}`, grant.zone),
-    ]),
+    Rec.map((grant: Grant) =>
+      pipe(
+        [
+          policy(ACCOUNT_SCOPE, `${ACCOUNT_SCOPE}.${accountId}`, grant.account),
+          policy(ZONE_SCOPE, `${ZONE_SCOPE}.${zoneId}`, grant.zone),
+        ],
+        Arr.filter(({ permissionGroups }) => Arr.isReadonlyArrayNonEmpty(permissionGroups)),
+      ),
+    ),
   ),
   repositories: CREDENTIAL_GRANTS,
   github: GITHUB_GRANTS,

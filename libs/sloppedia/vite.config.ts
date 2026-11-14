@@ -5,6 +5,7 @@ export default defineConfig({
   msch: { publish: { installSize: "0 B" } },
   run: {
     tasks: {
+      verify: { command: [], dependsOn: ["size"] },
       build: { command: "vp pack", cache: false },
       size: { command: "size-limit", dependsOn: ["build"], cache: false },
     },

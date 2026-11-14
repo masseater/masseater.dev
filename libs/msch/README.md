@@ -32,6 +32,18 @@ export default defineConfig({ lint });
 decision ルールは呼ぶたびに費用がかかるので、プリセットは有効にしない。
 `decisionRules` を掛けたいファイルの overrides に渡す。
 
+Vite+ はワークスペースの `vite.config.ts` の `lint` を使わない。
+1 つのワークスペースだけに効く設定は、そのワークスペースの `vite.config.ts` の `msch` にリテラルで書く。
+ルートの `vite.config.ts` は `@r_masseater/msch/workspace-settings` の `workspaceSettings` でそれを読む。
+ワークスペースは `pnpm-workspace.yaml` の `packages` から求める。
+ワークスペースの `vite.config.ts` は実行しないので、アプリの重いプラグインを読み込まずに済む。
+`msch.lint` には overrides と ignorePatterns を書く。読んだパスの前には、ワークスペースのディレクトリが付く。
+`msch.devDependencies` には、ルートが禁じた依存を devDependencies にだけ許す理由を鍵にして、許す依存を書く。
+`use` は、ルートが `workspaceSettings` に渡す `ruleSets` と `dependencySets` の名前を指す。
+import した値が要る規則と依存は、ルートの集合に名前を付けて置く。
+`test` タスクを持たないワークスペースは `testProjects` に入り、ルートの `vp test` が動かす。
+`components.json` の `aliases.ui` は `package.json` の `imports` で解決し、shadcn の部品の置き場を `lint.shadcnUi` として返す。
+
 `effecttsgo` のルールは、@effect/tsgo が手を入れた oxlint でだけ動く。
 `prepare` で `effect-tsgo patch --typescript --oxlint` を実行するか、`effect-tsgo vp check` で動かす。
 oxlint のバージョンは、@effect/tsgo が対応するものに合わせる。
@@ -43,6 +55,8 @@ oxlint のバージョンは、@effect/tsgo が対応するものに合わせる
 見えない文字は、ゼロ幅の文字・書字方向を変える制御文字・タグ文字のように、エディタやレビューで見えずに意味を変えうる文字で、`git ls-files` に載るテキストのファイルから探す。ファイル先頭の BOM と、NUL を含むバイナリは対象にしない。
 Python は使わない方針なので、`.py`・`pyproject.toml`・`uv.lock` などのファイルを指摘する。スクリプト・CI・設定の中で `python3`・`pip`・`uv`・`poetry` を呼ぶ箇所と、`actions/setup-python` などの action、`mise.toml` に書いた Python の道具も指摘する。
 案内文書は、`AGENTS.md`・`CLAUDE.md` をルートにだけ置かせる。
+ルートの `vite.config.ts` の文字列がワークスペースの中を指していると指摘する。そのワークスペースだけの設定は、そのワークスペースの `vite.config.ts` に移す。
+Cargo のワークスペースがあれば、`verify` タスクを持つワークスペースの中にない crate を指摘する。
 ルートの `vite.config.ts` に `msch: { workspaceAgentsMd: true }` と書くと、ワークスペース（`package.json` のあるディレクトリ）の直下にも `AGENTS.md` を置ける。`CLAUDE.md` はルートだけに置く。
 README はルートまたはワークスペースのディレクトリ（`git ls-files` に載る `package.json` が格納されているディレクトリ）でのみ許可される。
 msch は、ワークスペースのパス、ディレクトリ名、パッケージ名のいずれかを記載したルートの README を指摘する。ルートの README はリポジトリ全体について説明し、各ワークスペースの使用方法はそのワークスペースの README に記載する。

@@ -3,6 +3,7 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   run: {
     tasks: {
+      verify: { command: [], dependsOn: ["cargo"] },
       cargo: {
         command:
           "cargo fmt -p mosaic --check && cargo clippy -p mosaic --all-targets -- -D warnings && cargo test -p mosaic",

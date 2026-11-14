@@ -16,7 +16,15 @@ const lintToolReadonlyAllow = [
   {
     from: "package" as const,
     package: "oxlint",
-    name: ["InvalidTestCase", "Rule", "TestCases", "ValidTestCase"],
+    name: [
+      "DummyRule",
+      "DummyRuleMap",
+      "InvalidTestCase",
+      "OxlintOverride",
+      "Rule",
+      "TestCases",
+      "ValidTestCase",
+    ],
   },
   { from: "package" as const, package: "@commitlint/types", name: ["QualifiedConfig"] },
   {

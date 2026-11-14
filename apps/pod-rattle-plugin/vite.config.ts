@@ -3,6 +3,7 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   run: {
     tasks: {
+      verify: { command: [], dependsOn: ["cargo"] },
       cargo: {
         command:
           "cargo fmt -p pod_rattle --check && cargo clippy -p pod_rattle --all-targets -- -D warnings && cargo test -p pod_rattle",

@@ -11,10 +11,12 @@ import {
 const CLOUDFLARE_ID = "0123456789abcdef0123456789abcdef";
 const TEXT_BINDING_LIMIT = 5120;
 
-const SCOPES = [
-  { "com.cloudflare.api.account.account": "*" },
-  { "com.cloudflare.api.account.zone.zone": "*" },
-];
+const ACCOUNT_RESOURCE = "com.cloudflare.api.account.account";
+const SCOPES: readonly string[] = [ACCOUNT_RESOURCE, "com.cloudflare.api.account.zone.zone"];
+
+const resourceKeys = Arr.flatMap(
+  ({ resources }: Readonly<{ resources: Readonly<Record<string, string>> }>) => Rec.keys(resources),
+);
 
 const encodeJson = Schema.encodeOption(Schema.fromJsonString(Schema.Unknown));
 
@@ -29,14 +31,14 @@ test("encoded grants stay under the Workers text binding limit", () => {
 
 test("every grant resolves to account and zone policies with known permission groups", () => {
   const grants = grantPolicies({ accountId: "account", zoneId: "zone" });
-  const policies = Rec.values(grants.profiles);
-  const resourcesOf = Arr.map((policy: (typeof policies)[number][number]) => policy.resources);
-  expect(pipe(policies, Arr.map(resourcesOf))).toStrictEqual(
+  const policies = pipe(Rec.values(grants.profiles), Arr.flatten);
+  expect(
     pipe(
       policies,
-      Arr.map(() => SCOPES),
+      Arr.every(({ permissionGroups }) => Arr.isReadonlyArrayNonEmpty(permissionGroups)),
     ),
-  );
+  ).toBe(true);
+  expect(pipe(resourceKeys(policies), Arr.difference(SCOPES))).toStrictEqual([]);
   expect(Arr.isReadonlyArrayNonEmpty(policies)).toBe(true);
   expect(
     pipe(
@@ -44,6 +46,12 @@ test("every grant resolves to account and zone policies with known permission gr
       Arr.every((profile) => Rec.has(grants.profiles, profile)),
     ),
   ).toBe(true);
+});
+
+test("a profile without zone permissions issues no zone policy", () => {
+  const grants = grantPolicies({ accountId: "account", zoneId: "zone" });
+  const buildsLogs = Rec.get(grants.profiles, "buildsLogs");
+  expect(pipe(buildsLogs, Option.map(resourceKeys))).toStrictEqual(Option.some([ACCOUNT_RESOURCE]));
 });
 
 const DECISION_EXPERIMENTS = "masseater.dev/decision-experiments";

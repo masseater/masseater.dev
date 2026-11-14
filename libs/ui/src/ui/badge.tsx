@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from "react";
 
-import { cn } from "./cn.ts";
+import { cn } from "#/cn.ts";
 
 type BadgeProps<Variant extends string> = ComponentProps<"span"> &
   Readonly<{ variant: Variant; variants: (props: Readonly<{ variant: Variant }>) => string }>;

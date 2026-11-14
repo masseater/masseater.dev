@@ -3,6 +3,7 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   run: {
     tasks: {
+      verify: { command: [], dependsOn: ["codegen:check"] },
       codegen: {
         command: "node src/main.ts",
         cache: false,

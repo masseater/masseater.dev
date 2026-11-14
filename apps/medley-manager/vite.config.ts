@@ -33,6 +33,7 @@ const appPlugins = (mode: string): PluginOption[] => {
 export default defineConfig(({ mode }) => ({
   run: {
     tasks: {
+      verify: { command: [], dependsOn: ["auth:check"] },
       dev: { command: "alchemy dev", cache: false },
       "db:generate": { command: "drizzle-kit generate", cache: false },
       "auth:generate": {

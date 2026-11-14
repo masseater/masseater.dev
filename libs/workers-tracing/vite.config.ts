@@ -3,7 +3,27 @@ import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
-  msch: { publish: { installSize: "0 B" } },
+  msch: {
+    publish: { installSize: "0 B" },
+    devDependencies: {
+      "Workers のスパンは Miniflare で Worker を動かしてテストする": {
+        dependencies: ["miniflare"],
+      },
+    },
+    lint: {
+      overrides: [
+        {
+          files: ["src/**/*.test.ts"],
+          use: ["otlpInterop"],
+          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:url"] }] },
+        },
+        {
+          files: ["src/context.ts"],
+          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:async_hooks"] }] },
+        },
+      ],
+    },
+  },
   run: {
     tasks: {
       build: { command: "vp pack", cache: false },
