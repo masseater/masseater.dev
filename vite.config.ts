@@ -182,6 +182,7 @@ const checks: ToolSections = {
             "日本情報経済社会推進協会",
             "国立研究開発法人",
             "大学共同利用機関",
+            "北陸先端科学技術大学院大学",
           ],
         },
         "no-exclamation-question-mark": { allow: ["ぶいあーる!", "超かぐや姫!", "超かぐや姫！"] },
