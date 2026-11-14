@@ -8,6 +8,7 @@ on:
       - "libs/yohaku-protocol/**"
       - ".github/release-please/yohaku-*.json"
       - ".github/scripts/yohaku-*.sh"
+      - ".github/scripts/component-release.sh"
       - ".github/workflows/yohaku-desktop.yml"
   workflow_dispatch:
 

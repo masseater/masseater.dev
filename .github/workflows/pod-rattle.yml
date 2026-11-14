@@ -116,30 +116,16 @@ jobs:
     concurrency:
       group: pod-rattle-release
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github
       - id: release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          version="$(gh api -H "Accept: application/vnd.github.raw" \
-            "repos/$GITHUB_REPOSITORY/contents/.github/release-please/pod-rattle-manifest.json?ref=$GITHUB_SHA" |
-            jq -er '."apps/pod-rattle-plugin"')"
-          tag="pod-rattle-v$version"
-          if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" >/dev/null 2>&1; then
-            gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/$tag" -f "sha=$GITHUB_SHA"
-          fi
-          if ! gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --verify-tag --title "pod-rattle: v$version" --notes ""
-          fi
-          gh pr list --repo "$GITHUB_REPOSITORY" --state merged --label "autorelease: pending" \
-            --head release-please--branches--main--components--pod-rattle --json number --jq '.[].number' |
-            while read -r pr; do
-              gh pr edit "$pr" --repo "$GITHUB_REPOSITORY" \
-                --remove-label "autorelease: pending" --add-label "autorelease: tagged"
-            done
-          assets="$(gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets | length')"
-          if [ "$assets" -eq 0 ]; then
-            echo "tag=$tag" >>"$GITHUB_OUTPUT"
-          fi
+          tag="$(.github/scripts/component-release.sh pod-rattle apps/pod-rattle-plugin pod-rattle)"
+          echo "tag=$tag" >>"$GITHUB_OUTPUT"
       - if: steps.release.outputs.tag != ''
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:

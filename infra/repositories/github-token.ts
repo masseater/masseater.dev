@@ -6,7 +6,7 @@ import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Layer, Logger, Option, pipe } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
-import { SLOPPEDIA_GITHUB_GRANT } from "./credential-grants.ts";
+import { MASSEATER_DEV_GITHUB_GRANT } from "./credential-grants.ts";
 import type { GitHubGrant } from "./credential-grants.ts";
 import { gitHubAppCredentials, readApp } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
@@ -78,7 +78,7 @@ const mintGitHubToken = (input: MintInput): Promise<Option.Option<string>> =>
 const BAD_GATEWAY = 502;
 
 const sloppediaToken = (env: GitHubAppEnv): Effect.Effect<Response, never, GithubOpContext> =>
-  mint({ env, grant: SLOPPEDIA_GITHUB_GRANT }).pipe(
+  mint({ env, grant: MASSEATER_DEV_GITHUB_GRANT }).pipe(
     Effect.map(
       Option.match({
         onNone: () => new Response("", { status: BAD_GATEWAY }),
