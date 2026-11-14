@@ -895,8 +895,8 @@ catalogs:
       specifier: 1.8.1
       version: 1.8.1
     renovate:
-      specifier: 44.229.0
-      version: 44.229.0
+      specifier: 44.230.0
+      version: 44.230.0
     tailwindcss:
       specifier: 4.3.5
       version: 4.3.5
@@ -975,7 +975,7 @@ importers:
         version: 3.42.0
       renovate:
         specifier: catalog:stack
-        version: 44.229.0(supports-color@7.2.0)(typanion@3.14.0)
+        version: 44.230.0(supports-color@7.2.0)(typanion@3.14.0)
       skills:
         specifier: 'catalog:'
         version: 1.8.1
@@ -14378,10 +14378,6 @@ packages:
     resolution: {integrity: sha512-snPlVppFcYWfLLFQGhDxUyBcHNtMlWmn3jtj7pEaO+DP8pqL0IvAzXhMYmn1z9ASNtgmwLBdFxSf4tMUB0OTKA==}
     engines: {node: 20 || >=22}
 
-  minimatch@11.0.6:
-    resolution: {integrity: sha512-6NZbDPQIRnsJFjJ9wbd5659OKaTHCqpPHdldE3WwArjxr5wLxHIwnx4eTGcPebpVBZZQbITvQQIx8K0VGXoT3Q==}
-    engines: {node: 20 || >=22}
-
   minimatch@11.0.8:
     resolution: {integrity: sha512-nFQuYSTVrGvysVBps5Ih+0BdnYFN/Cj3C816r6+p7yK+FHrVLGE4O4N9AFwykrlNlvM2HYt+Rad1Uiro6h88Ig==}
     engines: {node: 20 || >=22}
@@ -15427,8 +15423,8 @@ packages:
   remove-accents@0.5.0:
     resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
 
-  renovate@44.229.0:
-    resolution: {integrity: sha512-7PcKD6xIpS4g6dEwwkvTx7Ekjg3ofXCfZJk66cSLAWN4lu2swNUaKOYvUqQh2OxaKVZUilLWXrmGTgSIOz8T1g==}
+  renovate@44.230.0:
+    resolution: {integrity: sha512-jfOF2AV9acSPxwZ9BlTKxEoK8aC8w7o+J3Z5bguSHXFMR2SpEZE8Pr5hfpuQLWImWCVgxjlY4pHmItgMfiGKPw==}
     engines: {node: ^24.11.0 || ^26.13.0, pnpm: ^11.0.0}
     hasBin: true
 
@@ -25142,7 +25138,7 @@ snapshots:
     dependencies:
       '@one-ini/wasm': 0.2.1
       commander: 14.0.3
-      minimatch: 11.0.6
+      minimatch: 11.0.8
       semver: 7.8.6
 
   ee-first@1.1.1: {}
@@ -26118,7 +26114,7 @@ snapshots:
 
   glob@14.0.3:
     dependencies:
-      minimatch: 11.0.6
+      minimatch: 11.0.8
       minipass: 7.1.3
       path-scurry: 3.0.0
 
@@ -26126,7 +26122,7 @@ snapshots:
     dependencies:
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 11.0.6
+      minimatch: 11.0.8
       once: 1.4.0
       path-is-absolute: 1.0.1
     optional: true
@@ -27995,11 +27991,6 @@ snapshots:
       '@isaacs/nonrecursive-glob-match': 1.1.0
       brace-expansion: 5.0.12
 
-  minimatch@11.0.6:
-    dependencies:
-      '@isaacs/nonrecursive-glob-match': 1.1.0
-      brace-expansion: 5.0.12
-
   minimatch@11.0.8:
     dependencies:
       '@isaacs/nonrecursive-glob-match': 1.1.0
@@ -29243,7 +29234,7 @@ snapshots:
 
   remove-accents@0.5.0: {}
 
-  renovate@44.229.0(supports-color@7.2.0)(typanion@3.14.0):
+  renovate@44.230.0(supports-color@7.2.0)(typanion@3.14.0):
     dependencies:
       '@aws-sdk/client-codecommit': 3.1139.0
       '@aws-sdk/client-ec2': 3.1139.0
@@ -29332,7 +29323,7 @@ snapshots:
       luxon: 3.7.2
       markdown-it: 15.0.3
       markdown-table: 3.1.0
-      minimatch: 11.0.6
+      minimatch: 11.0.8
       moo: 0.5.3
       ms: 2.1.3
       neotraverse: 1.0.1
