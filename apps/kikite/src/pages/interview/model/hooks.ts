@@ -4,7 +4,6 @@ import { AsyncResult } from "effect/reactivity";
 import { useCallback } from "react";
 
 import {
-  activatedAtom,
   answerDraftAtom,
   askingAtom,
   entriesAtom,
@@ -13,7 +12,6 @@ import {
   listeningAtom,
   nudgeAtom,
   phaseAtom,
-  speakerAtom,
   staleAtom,
   summaryAtom,
   summaryOf,
@@ -22,7 +20,6 @@ import type { Asking, Entry, Listening, Nudge, Phase, SummaryState } from "./ato
 import { toggleMicAtom } from "./mic-toggle.ts";
 import { sessionAtom } from "./session.ts";
 import type { Session } from "./session.ts";
-import { toggleVoiceAtom } from "./voice-toggle.ts";
 
 type QuestionEntry = Extract<Entry, { kind: "question" }>;
 type SpeechEntry = Extract<Entry, { kind: "speech" }>;
@@ -93,19 +90,6 @@ const useStage = (): Stage => stageOf(useEntries());
 
 const useAsked = (): boolean => pipe(useEntries(), Arr.some(isQuestion));
 
-const useVoiceOn = (): boolean => {
-  const speaker = useAtomValue(speakerAtom);
-  const activated = useAtomValue(activatedAtom);
-  return speaker && activated;
-};
-
-const useToggleVoice = (): (() => void) => {
-  const toggle = useAtomSet(toggleVoiceAtom);
-  return useCallback(() => {
-    toggle();
-  }, [toggle]);
-};
-
 const useToggleMic = (): (() => void) => {
   const toggle = useAtomSet(toggleMicAtom);
   return useCallback(() => {
@@ -130,8 +114,6 @@ export {
   useSummaryState,
   useTheme,
   useToggleMic,
-  useToggleVoice,
-  useVoiceOn,
 };
 export type { QuestionEntry, SpeechEntry, Stage };
 export { summaryOf } from "./atoms.ts";
