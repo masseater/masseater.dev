@@ -54,7 +54,7 @@ const heardSpeech = Effect.fn("kikite.heardSpeech")(function* heardSpeech(text: 
     const entry: Entry = { kind: "speech", id: entries.length, at: now, text, by };
     return Arr.append(entries, entry);
   });
-  yield* modify(heardAtom, (heard) => ({ ...heard, spokeSinceQuestion: true, lastInput: by }));
+  yield* modify(heardAtom, (heard) => ({ ...heard, spokeSinceQuestion: true }));
 });
 
 const withdrawable = (asking: Asking): boolean =>

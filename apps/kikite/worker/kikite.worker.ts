@@ -1,3 +1,4 @@
+import { browserSpans } from "@r_masseater/workers-tracing/browser-spans";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { DurableObject, env } from "cloudflare:workers";
 import { Duration, Effect, Logger, Option, Schedule } from "effect";
@@ -8,6 +9,8 @@ import {
   INTERVIEWER_IMAGE,
   INTERVIEWER_INSTANCE,
   INTERVIEWER_STARTUP,
+  TELEMETRY_SERVICE,
+  TRACES_PATH,
 } from "#config";
 
 import { down } from "./interviewer-down.ts";
@@ -96,9 +99,15 @@ class Interviewer extends DurableObject {
   }
 }
 
+const receiveSpans = browserSpans({ service: TELEMETRY_SERVICE });
+
 const worker = {
-  fetch: (request: Request): Promise<Response> =>
-    env.INTERVIEWER.getByName("interviewer").fetch(request),
+  fetch: (request: Request): Promise<Response> => {
+    if (new URL(request.url).pathname === TRACES_PATH) {
+      return receiveSpans(request);
+    }
+    return env.INTERVIEWER.getByName("interviewer").fetch(request);
+  },
 };
 
 export { Interviewer };
