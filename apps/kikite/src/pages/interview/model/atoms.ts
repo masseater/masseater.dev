@@ -1,12 +1,11 @@
 import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 
-import { activatedNow } from "#/pages/interview/lib/activation";
 import type { Recognition } from "#/pages/interview/lib/recognition";
 import type { InterviewSummary } from "#protocol";
 import type { StrategyId } from "#strategies";
 
-import { storedPrevious, storedSpeaker } from "./memory.ts";
+import { storedPrevious } from "./memory.ts";
 
 type Rating = "unrated" | "good" | "off";
 
@@ -41,7 +40,6 @@ type Listening =
   | Readonly<{ status: "off" }>
   | Readonly<{ status: "listening" }>
   | Readonly<{ status: "paused" }>
-  | Readonly<{ status: "speaking" }>
   | Readonly<{ status: "typing" }>
   | Readonly<{ status: "unsupported" }>
   | Readonly<{ status: "failed"; message: string }>;
@@ -53,7 +51,6 @@ type Nudge = Readonly<{ level: number; text: string }>;
 type Heard = Readonly<{
   lastActivityAt: number;
   spokeSinceQuestion: boolean;
-  lastInput: Input;
   lastSummaryAt: number;
   summarizedThrough: number;
   withdrawn: number;
@@ -65,7 +62,6 @@ const NEVER = 0;
 const freshHeard = (now: number): Heard => ({
   lastActivityAt: now,
   spokeSinceQuestion: false,
-  lastInput: "voice",
   lastSummaryAt: now,
   summarizedThrough: NOTHING_SUMMARIZED,
   withdrawn: 0,
@@ -86,8 +82,6 @@ const answerDraftAtom = keep("");
 const progressAtom = keep<readonly Progress[]>([]);
 const nudgeAtom = keep<Option.Option<Nudge>>(Option.none());
 const staleAtom = keep(false);
-const speakerAtom = keep(storedSpeaker());
-const activatedAtom = keep(activatedNow());
 const previousThemeAtom = keep(storedPrevious());
 
 const summaryOf = (state: SummaryState): Option.Option<InterviewSummary> => {
@@ -99,7 +93,6 @@ const summaryOf = (state: SummaryState): Option.Option<InterviewSummary> => {
 
 /** @internal */
 export {
-  activatedAtom,
   answerDraftAtom,
   askingAtom,
   entriesAtom,
@@ -113,7 +106,6 @@ export {
   previousThemeAtom,
   progressAtom,
   recognitionAtom,
-  speakerAtom,
   staleAtom,
   summaryAtom,
   summaryOf,
