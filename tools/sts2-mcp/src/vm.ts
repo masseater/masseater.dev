@@ -36,6 +36,8 @@ const SSH_HOST = "win";
 const HOST_SCRIPT = new URL("../vm/host.ps1", import.meta.url);
 const SSH_OPTIONS = ["-o", "BatchMode=yes", "-o", "ServerAliveInterval=15"] as const;
 const SUCCESS = 0;
+const TUNNEL_READY = "sts2-mcp tunnel ready";
+const TUNNEL_TIMEOUT = "1 minute";
 const HOST_PRELUDE =
   "[Console]::OutputEncoding = [Text.Encoding]::UTF8; $PSStyle.OutputRendering = 'PlainText'; $ProgressPreference = 'SilentlyContinue'";
 
@@ -84,12 +86,32 @@ const decodePng = ({ exitCode, output }: Output): Effect.Effect<Uint8Array, Sts2
   return Effect.succeed(new Uint8Array(bytes));
 };
 
+const tunnelReady = <Failure>(
+  lines: Stream.Stream<string, Failure>,
+): Effect.Effect<void, Sts2Failed> =>
+  lines.pipe(
+    Stream.splitLines,
+    Stream.map(Str.trim),
+    Stream.takeUntil((line) => line === TUNNEL_READY),
+    Stream.runCollect,
+    Effect.mapError(failed),
+    Effect.filterOrFail(Arr.contains(TUNNEL_READY), (collected) =>
+      Sts2Failed.make({ message: Arr.join(collected, "\n") }),
+    ),
+    Effect.timeoutOrElse({
+      duration: TUNNEL_TIMEOUT,
+      orElse: () => Effect.fail(Sts2Failed.make({ message: "the tunnel did not open" })),
+    }),
+    Effect.asVoid,
+  );
+
 const spawnTunnel = Effect.fn("vm.spawnTunnel")(function* spawnTunnel(
   script: string,
   instances: number,
+  newScope: () => Effect.Effect<Scope.Closeable>,
 ) {
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-  const scope = yield* Scope.make();
+  const scope = yield* newScope();
   const portList = pipe(ports(instances), Arr.map(String), Arr.join(","));
   const command = ChildProcess.make("ssh", [
     ...SSH_OPTIONS,
@@ -100,6 +122,7 @@ const spawnTunnel = Effect.fn("vm.spawnTunnel")(function* spawnTunnel(
     hostCommand(script, `-Mode tunnel -Ports ${portList}`),
   ]);
   const handle = yield* spawner.spawn(command).pipe(Scope.provide(scope), Effect.mapError(failed));
+  yield* tunnelReady(Stream.decodeText(handle.all));
   const running = handle.isRunning.pipe(Effect.orElseSucceed(() => false));
   const tunnel: Tunnel = { instances, scope, running };
   return tunnel;
@@ -108,13 +131,14 @@ const spawnTunnel = Effect.fn("vm.spawnTunnel")(function* spawnTunnel(
 const make = Effect.gen(function* makeVm() {
   const fs = yield* FileSystem.FileSystem;
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
+  const layerScope = yield* Effect.scope;
   const script = yield* fs.readFileString(HOST_SCRIPT.pathname).pipe(Effect.mapError(failed));
   const tunnel = yield* SynchronizedRef.make(Option.none<Tunnel>());
   const withSpawner = Effect.provideService(ChildProcessSpawner.ChildProcessSpawner, spawner);
   const run = (parameters: string): Effect.Effect<Output, Sts2Failed> =>
     runHost(script, parameters).pipe(withSpawner);
   const spawn = (instances: number): Effect.Effect<Tunnel, Sts2Failed> =>
-    spawnTunnel(script, instances).pipe(withSpawner);
+    spawnTunnel(script, instances, () => Scope.fork(layerScope)).pipe(withSpawner);
   const openTunnel = (instances: number): Effect.Effect<void, Sts2Failed> =>
     SynchronizedRef.updateEffect(tunnel, (current) =>
       Effect.gen(function* refresh() {

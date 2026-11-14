@@ -4,6 +4,7 @@ import { Array as Arr, Effect, Schema, pipe } from "effect";
 import type { HttpClient } from "effect/http";
 
 import { act, screenshot, settle, state, waitReady } from "./bridge.ts";
+import { Sts2Failed } from "./errors.ts";
 import { deployScript, launchScript, logScript, stopScript } from "./guest-scripts.ts";
 import {
   ACT_SCHEMA,
@@ -93,6 +94,9 @@ const summary = (states: readonly GameStateType[]): string =>
     Arr.join("\n"),
   );
 
+const allReady = (count: number): Effect.Effect<readonly GameStateType[], Sts2Failed, Services> =>
+  Effect.forEach(Arr.makeBy(count, Number), waitReady, { concurrency: "unbounded" });
+
 const launch = Effect.fn("tools.launch")(
   function* launch({ instances, mods }: LaunchRequest) {
     const count = instances ?? MIN_INSTANCES;
@@ -101,10 +105,12 @@ const launch = Effect.fn("tools.launch")(
     if (output.exitCode !== SUCCESS) {
       return fromOutput(output);
     }
-    yield* vm.openTunnel(count);
-    const states = yield* Effect.forEach(Arr.makeBy(count, Number), waitReady, {
-      concurrency: "unbounded",
-    });
+    const states = yield* vm.openTunnel(count).pipe(
+      Effect.andThen(allReady(count)),
+      Effect.mapError(({ message }) =>
+        Sts2Failed.make({ message: `${output.output}\n${message}` }),
+      ),
+    );
     return text(`${output.output}\n${summary(states)}`);
   },
   Effect.catchTag("Sts2Failed", recovered),

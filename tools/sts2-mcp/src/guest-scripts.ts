@@ -73,7 +73,7 @@ const stopScript = lines([
 
 const logScript = ({ instance, lines: tail }: Logs): string =>
   lines([
-    `$entry = Get-Content ${quote(INSTANCES_FILE)} -Raw | ConvertFrom-Json | Where-Object instance -eq ${String(instance)}`,
+    `$entry = (Get-Content ${quote(INSTANCES_FILE)} -Raw | ConvertFrom-Json) | Where-Object { $_.instance -eq ${String(instance)} }`,
     `if (-not $entry) { Write-Output 'instance ${String(instance)} has not been launched'; exit 1 }`,
     `Get-Content $entry.log -Tail ${String(tail)} -Encoding UTF8`,
   ]);
