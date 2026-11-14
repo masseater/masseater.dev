@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
+using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 
 namespace AgentBridge.AgentBridgeCode;
 
@@ -15,13 +16,15 @@ internal static class Controls
 {
     private const int MaxTextLength = 120;
 
+    private sealed record Scan(Rect2 Screen, HashSet<Node> Covered);
+
     public static Protocol.Control[] Collect()
     {
         var tree = (SceneTree)Engine.GetMainLoop();
         Rect2 screen = tree.Root.GetVisibleRect();
         var found = new List<Protocol.Control>();
         Node top = NModalContainer.Instance?.OpenModal as Node ?? tree.Root;
-        Walk(top, screen, found);
+        Walk(top, new Scan(screen, CoveredOverlays()), found);
         return [.. found];
     }
 
@@ -40,9 +43,21 @@ internal static class Controls
         _ => false,
     };
 
-    private static void Walk(Node node, Rect2 screen, List<Protocol.Control> found)
+    /// <summary>重なった画面のうち一番上より下にあるものは押せないので外す。</summary>
+    private static HashSet<Node> CoveredOverlays()
     {
-        if (node is CanvasItem { Visible: false })
+        NOverlayStack? stack = NOverlayStack.Instance;
+        if (stack is null)
+        {
+            return [];
+        }
+        IOverlayScreen? top = stack.Peek();
+        return [.. stack.GetChildren().OfType<IOverlayScreen>().Where(overlay => !ReferenceEquals(overlay, top)).OfType<Node>()];
+    }
+
+    private static void Walk(Node node, Scan scan, List<Protocol.Control> found)
+    {
+        if (node is CanvasItem { Visible: false } || scan.Covered.Contains(node))
         {
             return;
         }
@@ -50,7 +65,7 @@ internal static class Controls
         {
             Rect2 rect = control.GetGlobalRect();
             string id = target.GetPath().ToString();
-            if (rect.HasArea() && screen.Intersects(rect) && !found.Exists(known => string.Equals(known.Id, id, StringComparison.Ordinal)))
+            if (rect.HasArea() && scan.Screen.Intersects(rect) && !found.Exists(known => string.Equals(known.Id, id, StringComparison.Ordinal)))
             {
                 found.Add(new Protocol.Control
                 {
@@ -66,7 +81,7 @@ internal static class Controls
         }
         foreach (Node child in node.GetChildren())
         {
-            Walk(child, screen, found);
+            Walk(child, scan, found);
         }
     }
 

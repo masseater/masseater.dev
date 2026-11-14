@@ -174,6 +174,8 @@ namespace MegaCrit.Sts2.Core.Nodes.Screens.Overlays
     public class NOverlayStack : Control
     {
         public static NOverlayStack? Instance => throw null!;
+
+        public IOverlayScreen? Peek() => throw null!;
     }
 }
 
