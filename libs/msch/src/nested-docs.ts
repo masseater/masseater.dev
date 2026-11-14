@@ -3,7 +3,6 @@ import { resolveConfigFromFile } from "vite-plus";
 
 import { MANIFEST_FILE } from "./dependencies.ts";
 import type { Problem, RuleName } from "./problem.ts";
-import { publishedWorkspaces } from "./published.ts";
 import { RepositoryFiles } from "./repository-files.ts";
 
 const RULE: RuleName = "nested-docs";
@@ -41,11 +40,11 @@ const AGENT_DOCS_MESSAGE =
 const WORKSPACE_AGENT_DOCS_MESSAGE =
   "belongs only at the repository root or as AGENTS.md directly in a workspace, the directory that holds its package.json. Move what agents need there and delete this file.";
 const README_MESSAGE =
-  "is allowed below the root only in a workspace published to npm, marked by msch: { publish: { installSize } } in its vite.config.ts. Set it there if the workspace is published, or move the content into the root README.md and delete this file.";
+  "is allowed below the root only in a workspace, the directory that holds its package.json. Move it into the workspace it describes.";
 
 interface Allowed {
-  readonly workspaceAgentDocs: Option.Option<HashSet.HashSet<string>>;
-  readonly published: HashSet.HashSet<string>;
+  readonly workspaces: HashSet.HashSet<string>;
+  readonly workspaceAgentDocs: boolean;
 }
 
 interface NestedDoc {
@@ -57,22 +56,21 @@ interface NestedDoc {
 const agentDocProblem = (
   { file, base, directory }: NestedDoc,
   allowed: Allowed,
-): Option.Option<Problem> =>
-  Option.match(allowed.workspaceAgentDocs, {
-    onNone: () => Option.some(problemFor(file, `${base} ${AGENT_DOCS_MESSAGE}`)),
-    onSome: (workspaces) => {
-      if (base === WORKSPACE_AGENT_DOC && HashSet.has(workspaces, directory)) {
-        return Option.none<Problem>();
-      }
-      return Option.some(problemFor(file, `${base} ${WORKSPACE_AGENT_DOCS_MESSAGE}`));
-    },
-  });
+): Option.Option<Problem> => {
+  if (!allowed.workspaceAgentDocs) {
+    return Option.some(problemFor(file, `${base} ${AGENT_DOCS_MESSAGE}`));
+  }
+  if (base === WORKSPACE_AGENT_DOC && HashSet.has(allowed.workspaces, directory)) {
+    return Option.none<Problem>();
+  }
+  return Option.some(problemFor(file, `${base} ${WORKSPACE_AGENT_DOCS_MESSAGE}`));
+};
 
 const readmeProblem = (
   { file, base, directory }: NestedDoc,
   allowed: Allowed,
 ): Option.Option<Problem> => {
-  if (!README.test(base) || HashSet.has(allowed.published, directory)) {
+  if (!README.test(base) || HashSet.has(allowed.workspaces, directory)) {
     return Option.none<Problem>();
   }
   return Option.some(problemFor(file, `${base} ${README_MESSAGE}`));
@@ -113,23 +111,15 @@ const checkNestedDocs = Effect.fn("checkNestedDocs")(function* checkNestedDocs(r
   const files = yield* RepositoryFiles;
   const names = yield* files.listedFiles(root);
   const nested = pipe(names, Arr.filter(isNested));
-  const workspaces = yield* publishedWorkspaces(root);
   const workspaceAgentDocs = yield* allowsWorkspaceAgentDocs(root);
   const allowed: Allowed = {
-    published: pipe(
-      workspaces,
-      Arr.map((workspace) => workspace.directory),
+    workspaces: pipe(
+      nested,
+      Arr.filter((name) => files.basename(name) === MANIFEST_FILE),
+      Arr.map((name) => files.dirname(files.join(root, name))),
       HashSet.fromIterable,
     ),
-    workspaceAgentDocs: Option.liftPredicate(
-      pipe(
-        nested,
-        Arr.filter((name) => files.basename(name) === MANIFEST_FILE),
-        Arr.map((name) => files.dirname(files.join(root, name))),
-        HashSet.fromIterable,
-      ),
-      () => workspaceAgentDocs,
-    ),
+    workspaceAgentDocs,
   };
   const found = yield* Effect.forEach(nested, (name) => problemIn(root, allowed, name), {
     concurrency: READ_CONCURRENCY,
