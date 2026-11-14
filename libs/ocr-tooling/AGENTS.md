@@ -1,3 +1,3 @@
 # @ocr-decide/tooling
 
-This workspace provides tools that the OCR measurements share, such as starting a browser.
+このワークスペースでは、ブラウザの起動など、OCR 計測で共通して利用できるツールが提供されている。

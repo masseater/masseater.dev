@@ -1,3 +1,3 @@
 # @r_masseater/watashi
 
-This workspace is the command and plugin that send Claude Code conversations to `watashi-mcp`.
+このワークスペースは、Claude Code の会話を `watashi-mcp` に送信するコマンドとプラグインである。

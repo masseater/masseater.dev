@@ -1,3 +1,3 @@
 # @masseater.dev/textlint-rule-yomiyasu
 
-This workspace is a textlint rule ported from yomiyasu. It points out Japanese text that is hard to read.
+このワークスペースは yomiyasu から移植した textlint のルールである。読みにくい日本語のテキストを指摘してくれる。

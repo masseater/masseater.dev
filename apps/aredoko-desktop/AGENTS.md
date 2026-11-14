@@ -1,3 +1,3 @@
 # aredoko-desktop
 
-This workspace is the aredoko desktop app made with Tauri. It starts and stops the aredoko search server on the user's PC.
+このワークスペースは、Tauri 製の aredoko デスクトップアプリである。ユーザーの PC 上で aredoko の検索サーバーを起動・停止させる。

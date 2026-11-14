@@ -1,3 +1,3 @@
 # @r_masseater/msch
 
-This workspace is `msch`, the owner's check policy. It finds problems in a repository, such as the same set of values written twice, and provides the shared oxlint settings.
+このワークスペースは `msch` で、持ち主のチェックポリシーである。リポジトリ内の問題（例えば同一の値セットが 2 回書き込まれているなど）を検出し、共有の oxlint 設定を提供する。

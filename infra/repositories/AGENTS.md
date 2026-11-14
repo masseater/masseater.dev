@@ -1,3 +1,3 @@
 # @masseater.dev/repositories
 
-This workspace manages the owner's GitHub account and repositories. It also holds the broker that hands tokens to CI and agents.
+このワークスペースは、持ち主の GitHub アカウントとリポジトリを管理する。また、CI やエージェントにトークンを渡すブローカーも保持している。

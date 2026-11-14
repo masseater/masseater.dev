@@ -1,3 +1,3 @@
 # @masseater.dev/pod-rattle-engine
 
-This workspace is the sound engine of Pod Rattle, written in Rust.
+このワークスペースは、Rust で書かれた Pod Rattle のサウンドエンジンである。

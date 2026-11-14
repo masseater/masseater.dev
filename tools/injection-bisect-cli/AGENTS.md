@@ -1,3 +1,3 @@
 # injection-bisect-cli
 
-This workspace is a command that runs `injection-bisect` on files.
+このワークスペースは、ファイルに対して `injection-bisect` を実行するコマンドである。

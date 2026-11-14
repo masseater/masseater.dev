@@ -1,3 +1,3 @@
 # decision-bench
 
-This workspace is the page at `masseater.dev/decision-bench`. It shows how well each Japanese decision model did on the benchmark.
+このワークスペースは `masseater.dev/decision-bench` のページである。日本語の各 decision モデルがベンチマークでどの程度の性能を示したかを示している。

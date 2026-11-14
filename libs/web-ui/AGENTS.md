@@ -1,3 +1,3 @@
 # @masseater.dev/web-ui
 
-This workspace provides the shared frame and parts of the pages of the decision model demos.
+このワークスペースには、decision モデルのデモの共有フレームとページの一部が用意されている。

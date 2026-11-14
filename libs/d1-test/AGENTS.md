@@ -1,3 +1,3 @@
 # @masseater.dev/d1-test
 
-This workspace provides a stand-in for Cloudflare D1 that runs on local SQLite. Tests use it in place of D1.
+このワークスペースは、ローカルの SQLite で動作する Cloudflare D1 の代替として提供される。テストでは D1 の代わりにこれを使用している。

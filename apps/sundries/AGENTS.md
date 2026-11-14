@@ -1,3 +1,3 @@
 # sundries
 
-This workspace is the MCP server `sundries.masseater.dev/mcp`. It collects the owner's small tools, such as Sloppedia, analytics, slide search and translation.
+このワークスペースは MCP サーバー `sundries.masseater.dev/mcp` である。Sloppedia、アナリティクス、スライド検索、翻訳など、持ち主の小規模なツールを集約している。

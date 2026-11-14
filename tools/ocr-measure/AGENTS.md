@@ -1,3 +1,3 @@
 # @ocr-decide/measure
 
-This workspace measures how well `ocr-decide` reads sample invoices.
+このワークスペースは、`ocr-decide` がサンプル請求書をどの程度読み取れるかを測定する。

@@ -1,3 +1,3 @@
 # @masseater.dev/cloudflare-account
 
-This workspace holds Cloudflare settings that act on the whole zone or account, such as WAF rules, log storage and read-only tokens.
+このワークスペースには、WAF ルール、ログストレージ、読み取り専用トークンなど、ゾーンやアカウント全体に適用される Cloudflare の設定が保持されている。

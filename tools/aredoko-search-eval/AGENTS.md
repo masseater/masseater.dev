@@ -1,3 +1,3 @@
 # aredoko-search-eval
 
-This workspace measures how well aredoko finds the right assets. It uses pairs of search words and the assets that should be found.
+このワークスペースは、aredoko が正しいアセットをどれだけ見つけられるかを測定する。検索ワードのペアと、見つけ出すべきアセットを用いている。

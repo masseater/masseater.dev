@@ -1,3 +1,3 @@
 # @ocr-decide/measurements
 
-This workspace holds the measured results of `ocr-decide` and of the Japanese OCR benchmark, which the demo shows.
+このワークスペースには、`ocr-decide` と日本語 OCR ベンチマークの計測結果が格納されており、デモがそれを表示する。

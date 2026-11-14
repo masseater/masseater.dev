@@ -1,3 +1,3 @@
 # injection-bisect-demo
 
-This workspace is a browser demo of `injection-bisect`. It shows where a prompt injection hides in a document.
+このワークスペースは `injection-bisect` のブラウザデモである。ドキュメントのどこにプロンプトインジェクションが隠れているかを示している。

@@ -1,3 +1,3 @@
 # @ocr-decide/ja-bench
 
-This workspace measures how well OCR engines read Japanese.
+このワークスペースは、OCR エンジンが日本語をどれだけうまく読み取れるかを測定する。

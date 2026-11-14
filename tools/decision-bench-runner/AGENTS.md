@@ -1,3 +1,3 @@
 # decision-bench-runner
 
-This workspace runs the Japanese decision model benchmark and writes the results.
+このワークスペースでは、日本語の decision モデルベンチマークを実行し、結果を出力している。

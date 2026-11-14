@@ -1,3 +1,3 @@
 # medley-manager
 
-This workspace is `medley-manager.masseater.dev`. It is a database that tells which songs and videos were used in Nico Nico medleys and collaborations.
+このワークスペースは `medley-manager.masseater.dev` である。ニコニコメドレーやコラボでどの曲や動画が使われたかを教えてくれるデータベースである。

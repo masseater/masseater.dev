@@ -1,3 +1,3 @@
 # plamo-translate
 
-This workspace is `translate.masseater.dev`. It runs PLaMo 3 Translate and translates text for other Workers and for the owner.
+このワークスペースは `translate.masseater.dev` である。PLaMo 3 Translate を実行し、他の Worker や持ち主向けにテキストを翻訳する。

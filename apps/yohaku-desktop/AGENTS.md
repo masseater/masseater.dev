@@ -1,3 +1,3 @@
 # yohaku-desktop
 
-This workspace is Yohaku, a desktop app for writing novels. It writes and reviews manuscripts with Claude Code on the user's PC.
+このワークスペースは、小説執筆用のデスクトップアプリ「余白」である。ユーザーの PC 上で Claude Code を使って原稿を書き、レビューする。

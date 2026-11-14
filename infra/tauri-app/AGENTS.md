@@ -1,3 +1,3 @@
 # @masseater.dev/tauri-app
 
-This workspace holds the shared Vite settings for Tauri apps, such as screenshot tests of the screens.
+このワークスペースには、画面のスクリーンショットテストなど、Tauri アプリ共通の Vite 設定が保持されている。

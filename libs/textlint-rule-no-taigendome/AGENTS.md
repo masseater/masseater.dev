@@ -1,3 +1,3 @@
 # @masseater.dev/textlint-rule-no-taigendome
 
-This workspace is a textlint rule. It forbids Japanese sentences that put a comma and then end with a noun.
+このワークスペースは textlint のルールである。読点を入れて名詞で終わる日本語の文を禁止している。

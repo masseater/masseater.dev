@@ -1,3 +1,3 @@
 # aredoko-protocol-codegen
 
-This workspace makes the C# and Rust types of aredoko from `aredoko-protocol`.
+このワークスペースは、`aredoko-protocol` から aredoko の C# と Rust の型を作る。

@@ -1,3 +1,3 @@
 # @masseater.dev/claude-agent
 
-This workspace provides a small helper that runs the Claude Agent SDK and reads its answer as text.
+このワークスペースには、Claude Agent SDK を実行し、その回答をテキストとして読み取る小規模なヘルパーが用意されている。

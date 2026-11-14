@@ -1,3 +1,3 @@
 # rpp-kit-demo
 
-This workspace is the demo of `rpp-kit` at `masseater.dev/rpp-kit`. It shows REAPER projects read in the browser.
+このワークスペースは、`masseater.dev/rpp-kit` にある `rpp-kit` のデモである。ブラウザで読み込まれた REAPER プロジェクトが表示されている。

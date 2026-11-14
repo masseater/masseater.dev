@@ -1,3 +1,3 @@
 # @r_masseater/vite-plus-adopt
 
-This workspace is `vpa`. It brings outside checks such as Betterleaks, actionlint and zizmor into Vite+, and runs all checks with one command.
+このワークスペースは `vpa` である。Betterleaks、actionlint、zizmor といった外部チェックを Vite+ に取り込み、すべてのチェックを単一のコマンドで実行する。

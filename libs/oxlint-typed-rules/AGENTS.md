@@ -1,3 +1,3 @@
 # @r_masseater/oxlint-typed-rules
 
-This workspace runs ESLint rules that need type information as oxlint plugins on TypeScript 7.
+このワークスペースは、型情報を必要とする ESLint ルールを、TypeScript 7 の上で oxlint のプラグインとして動かす。

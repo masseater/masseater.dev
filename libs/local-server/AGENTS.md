@@ -1,3 +1,3 @@
 # @masseater.dev/local-server
 
-This workspace provides what apps need to talk to a server on the same PC, such as finding its address and token.
+このワークスペースは、アドレスやトークンの取得など、アプリが同一 PC 上のサーバーと通信するために必要なものを提供する。

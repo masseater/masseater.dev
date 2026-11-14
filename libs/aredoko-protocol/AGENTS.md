@@ -1,3 +1,3 @@
 # @masseater.dev/aredoko-protocol
 
-This workspace holds the types that the parts of aredoko share. The C# and Rust types are made from it.
+このワークスペースは、aredoko の各部分で共有する型を格納している。C# と Rust の型はここから作られている。

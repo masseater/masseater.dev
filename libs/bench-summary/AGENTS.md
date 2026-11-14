@@ -1,3 +1,3 @@
 # bench-summary
 
-This workspace holds the summary of the decision model benchmark. The benchmark runner writes it, and the leaderboard page reads it.
+このワークスペースには、decision モデルのベンチマークの概要が格納されている。ベンチマークランナーがそれを書き込み、リーダーボードページがそれを読み取る。

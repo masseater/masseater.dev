@@ -1,3 +1,3 @@
 # three-twelve
 
-This workspace is a Discord bot. At 3:12 every morning (JST), it joins a voice channel with people in it, plays one song and leaves.
+このワークスペースは Discord ボットである。毎朝 3 時 12 分（JST）に、参加者がいるボイスチャンネルに参加し、1 曲流して退出する。

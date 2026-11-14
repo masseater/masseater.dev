@@ -1,3 +1,3 @@
 # @masseater.dev/owner-auth
 
-This workspace provides sign-in with a passkey for the owner alone, and the screen where the owner allows an MCP client. Apps that only the owner may write to use it.
+このワークスペースでは、持ち主専用のパスキーによるサインインと、持ち主が MCP クライアントを許可する画面が提供されている。持ち主のみが書き込めるアプリがこれを使う。

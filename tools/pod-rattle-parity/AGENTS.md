@@ -1,3 +1,3 @@
 # @masseater.dev/pod-rattle-parity
 
-This workspace makes the reference sound of Pod Rattle from the labs page. Tests use it to check that the plugin sounds the same.
+このワークスペースは、labs のページから Pod Rattle のリファレンス音を作る。テストでは、プラグインの音が同じであることを確認するのに、このワークスペースが使われている。

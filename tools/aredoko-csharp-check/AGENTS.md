@@ -1,3 +1,3 @@
 # aredoko-csharp-check
 
-This workspace checks the types of the C# in the aredoko Unity editor extension without Unity.
+このワークスペースでは、Unity を介さずに aredoko の Unity エディタ拡張機能の C# の型を検査できる。

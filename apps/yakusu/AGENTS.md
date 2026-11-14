@@ -1,3 +1,3 @@
 # yakusu
 
-This workspace is yakusu, a desktop app that translates text with PLaMo 3 Translate on the user's own PC.
+このワークスペースは yakusu で、ユーザー自身の PC 上で PLaMo 3 Translate を使ってテキストを翻訳するデスクトップアプリである。

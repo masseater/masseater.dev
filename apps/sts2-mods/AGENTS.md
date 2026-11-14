@@ -1,3 +1,3 @@
 # sts2-mods
 
-This workspace holds mods for Slay the Spire 2.
+このワークスペースには『Slay the Spire 2』の MOD が入っている。

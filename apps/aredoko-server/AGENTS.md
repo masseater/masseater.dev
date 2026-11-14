@@ -1,3 +1,3 @@
 # aredoko-server
 
-This workspace is the aredoko server that runs on the same PC as Unity. It indexes the user's assets, finds assets that match the words of a search, and gives the results to the Unity editor extension.
+このワークスペースは、Unity と同じ PC 上で動作する aredoko サーバーである。ユーザーのアセットをインデックス化し、検索ワードに一致するアセットを探し、その結果を Unity エディタ拡張機能に渡す。

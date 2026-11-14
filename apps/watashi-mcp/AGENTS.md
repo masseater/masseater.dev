@@ -1,3 +1,3 @@
 # watashi-mcp
 
-This workspace is the MCP server `watashi.masseater.dev/mcp`. It keeps the owner's personal data, such as the record of their life and the work notes of AI agents.
+このワークスペースは MCP サーバー `watashi.masseater.dev/mcp` である。そこには、持ち主の人生の記録や AI エージェントの作業メモといった個人データが保持されている。

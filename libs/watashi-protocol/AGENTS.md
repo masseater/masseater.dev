@@ -1,3 +1,3 @@
 # @masseater.dev/watashi-protocol
 
-This workspace holds the API shapes that `watashi-mcp` and its command share.
+このワークスペースには、`watashi-mcp` とそのコマンドが共有する API の形が格納されている。

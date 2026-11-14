@@ -1,3 +1,3 @@
 # @masseater.dev/mcp-portal
 
-This workspace is `mcp.masseater.dev`. It puts the owner's MCP servers behind one entry.
+このワークスペースは `mcp.masseater.dev` である。持ち主の MCP サーバーを 1 つのエントリにまとめている。
