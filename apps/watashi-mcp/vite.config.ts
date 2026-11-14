@@ -69,6 +69,7 @@ export default defineConfig(({ mode }) => ({
   },
   run: {
     tasks: {
+      verify: { command: [], dependsOn: ["auth:check"] },
       dev: { command: "alchemy dev", cache: false },
       deploy: { command: "alchemy deploy", cache: false },
       destroy: { command: "alchemy destroy", cache: false },

@@ -27,6 +27,10 @@ class RepositoryFiles extends Context.Service<
     readonly readDirectory: (directory: string) => Effect.Effect<readonly string[]>;
     readonly generatedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly listedFiles: (root: string) => Effect.Effect<readonly string[]>;
+    readonly matchingFiles: (
+      root: string,
+      pathspecs: readonly string[],
+    ) => Effect.Effect<readonly string[]>;
     readonly isDirectory: (file: string) => Effect.Effect<Option.Option<boolean>>;
     readonly fileSize: (file: string) => Effect.Effect<number>;
     readonly join: (...segments: readonly string[]) => string;
@@ -62,6 +66,7 @@ const nodeRepositoryFiles = Layer.effect(
           Effect.map(Arr.map((file) => path.join(root, file))),
         ),
       listedFiles: (root) => gitFiles(root, LISTED_ARGS),
+      matchingFiles: (root, pathspecs) => gitFiles(root, [...LISTED_ARGS, "--", ...pathspecs]),
       readFile: (file) => fs.readFileString(file).pipe(Effect.option),
       exists: (file) => fs.exists(file).pipe(Effect.orElseSucceed(() => false)),
       realPath: (file) => fs.realPath(file).pipe(Effect.orElseSucceed(() => file)),

@@ -33,13 +33,16 @@ decision ルールは呼ぶたびに費用がかかるので、プリセット�
 `decisionRules` を掛けたいファイルの overrides に渡す。
 
 Vite+ はワークスペースの `vite.config.ts` の `lint` を使わない。
-1 つのワークスペースだけに効く overrides と ignorePatterns は、そのワークスペースの `vite.config.ts` の `msch.lint` にリテラルで書く。
-ルートの `vite.config.ts` は `@r_masseater/msch/workspace-lint` の `workspaceLint` でそれを読む。
-読んだ overrides と ignorePatterns は、パスの前にワークスペースのディレクトリが付いている。
+1 つのワークスペースだけに効く設定は、そのワークスペースの `vite.config.ts` の `msch` にリテラルで書く。
+ルートの `vite.config.ts` は `@r_masseater/msch/workspace-settings` の `workspaceSettings` でそれを読む。
+ワークスペースは `pnpm-workspace.yaml` の `packages` から求める。
 ワークスペースの `vite.config.ts` は実行しないので、アプリの重いプラグインを読み込まずに済む。
-overrides の `use` は、ルートが `workspaceLint` に渡す `ruleSets` の名前を指す。
-import した値が要る規則は、ルートの `ruleSets` に名前を付けて置く。
-`workspaceLint` は `components.json` の `aliases.ui` を `package.json` の `imports` で解決し、shadcn の部品の置き場を `shadcnUi` として返す。
+`msch.lint` には overrides と ignorePatterns を書く。読んだパスの前には、ワークスペースのディレクトリが付く。
+`msch.devDependencies` には、ルートが禁じた依存を devDependencies にだけ許す理由を鍵にして、許す依存を書く。
+`use` は、ルートが `workspaceSettings` に渡す `ruleSets` と `dependencySets` の名前を指す。
+import した値が要る規則と依存は、ルートの集合に名前を付けて置く。
+`test` タスクを持たないワークスペースは `testProjects` に入り、ルートの `vp test` が動かす。
+`components.json` の `aliases.ui` は `package.json` の `imports` で解決し、shadcn の部品の置き場を `lint.shadcnUi` として返す。
 
 `effecttsgo` のルールは、@effect/tsgo が手を入れた oxlint でだけ動く。
 `prepare` で `effect-tsgo patch --typescript --oxlint` を実行するか、`effect-tsgo vp check` で動かす。
@@ -52,6 +55,8 @@ oxlint のバージョンは、@effect/tsgo が対応するものに合わせる
 見えない文字は、ゼロ幅の文字・書字方向を変える制御文字・タグ文字のように、エディタやレビューで見えずに意味を変えうる文字で、`git ls-files` に載るテキストのファイルから探す。ファイル先頭の BOM と、NUL を含むバイナリは対象にしない。
 Python は使わない方針なので、`.py`・`pyproject.toml`・`uv.lock` などのファイルを指摘する。スクリプト・CI・設定の中で `python3`・`pip`・`uv`・`poetry` を呼ぶ箇所と、`actions/setup-python` などの action、`mise.toml` に書いた Python の道具も指摘する。
 案内文書は、`AGENTS.md`・`CLAUDE.md` をルートにだけ置かせる。
+ルートの `vite.config.ts` の文字列がワークスペースの中を指していると指摘する。そのワークスペースだけの設定は、そのワークスペースの `vite.config.ts` に移す。
+Cargo のワークスペースがあれば、`verify` タスクを持つワークスペースの中にない crate を指摘する。
 README は、ルートか、npm に出すワークスペース（`private` でなく、`vite.config.ts` に `msch: { publish: { installSize: "10 MB" } }` と書いたもの）にだけ置かせる。
 npm に出すワークスペースでは、インストールした側に増える依存の容量を `installSize` の予算と比べる。容量は、`dependencies`・`optionalDependencies`・必須の peer を node_modules からたどった合計で、そのパッケージ自身の `peerDependencies` に書いたものは数えない。予算を超えると、重い順に依存を並べ、公開の入口（`exports` と `bin`）の一部からしか import されないものにはその入口を添える。
 `dependencies` に `catalog:stack` の依存があると、使う側がすでに持っているものとして、`peerDependencies` へ移すよう指摘する。

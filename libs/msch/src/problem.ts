@@ -19,6 +19,8 @@ const RuleNameSchema = Schema.Literals([
   "nested-docs",
   "stack-dependency",
   "install-size",
+  "unverified-crate",
+  "root-workspace-path",
 ]);
 
 type RuleName = typeof RuleNameSchema.Type;

@@ -5,6 +5,11 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   msch: {
     publish: { installSize: "0 B" },
+    devDependencies: {
+      "Workers のスパンは Miniflare で Worker を動かしてテストする": {
+        dependencies: ["miniflare"],
+      },
+    },
     lint: {
       overrides: [
         {

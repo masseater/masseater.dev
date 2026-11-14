@@ -236,6 +236,7 @@ export default defineConfig({
   ],
   run: {
     tasks: {
+      verify: { command: [], dependsOn: ["test", "size"] },
       build: {
         command: "vp pack",
         dependsOn: ["@r_masseater/vite-plus-adopt#build"],

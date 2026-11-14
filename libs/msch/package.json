@@ -33,7 +33,7 @@
     "./vite": {
       "types": "./src/vite.d.ts"
     },
-    "./workspace-lint": "./src/workspace-lint.ts",
+    "./workspace-settings": "./src/workspace-settings.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -54,9 +54,9 @@
         "types": "./dist/oxlint.d.mts",
         "default": "./dist/oxlint.mjs"
       },
-      "./workspace-lint": {
-        "types": "./dist/workspace-lint.d.mts",
-        "default": "./dist/workspace-lint.mjs"
+      "./workspace-settings": {
+        "types": "./dist/workspace-settings.d.mts",
+        "default": "./dist/workspace-settings.mjs"
       },
       "./vite": {
         "types": "./src/vite.d.ts"

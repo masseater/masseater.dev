@@ -33,7 +33,7 @@ export default defineConfig({
       oxlint: "src/oxlint.ts",
       lint: "src/lint/index.ts",
       "decision-rules": "src/lint/decision-rules.ts",
-      "workspace-lint": "src/workspace-lint.ts",
+      "workspace-settings": "src/workspace-settings.ts",
     },
     platform: "node",
     sourcemap: true,
@@ -50,6 +50,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
+      verify: { command: [], dependsOn: ["build"] },
       build: { command: "vp pack", cache: false },
     },
   },

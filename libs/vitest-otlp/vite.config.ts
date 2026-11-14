@@ -5,6 +5,12 @@ import { otlp } from "./src/index.ts";
 export default defineConfig({
   msch: {
     publish: { installSize: "16.5 MB" },
+    devDependencies: {
+      "OTLP の受け口は OpenTelemetry の SDK から送ってテストする": { use: ["instrumentation"] },
+      "Workers のスパンは Miniflare で Worker を動かしてテストする": {
+        dependencies: ["miniflare"],
+      },
+    },
     lint: {
       overrides: [
         { files: ["src/**/*.test.ts"], use: ["otlpInterop"] },

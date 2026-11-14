@@ -18,9 +18,15 @@ interface WorkspaceLintSettings {
   readonly overrides?: readonly WorkspaceLintOverride[];
 }
 
+interface DevDependencyAllowance {
+  readonly use?: readonly string[];
+  readonly dependencies?: readonly string[];
+}
+
 interface MschConfig {
   readonly publish?: PublishSettings;
   readonly lint?: WorkspaceLintSettings;
+  readonly devDependencies?: Readonly<Record<string, DevDependencyAllowance>>;
 }
 
 declare module "vite" {
@@ -30,6 +36,7 @@ declare module "vite" {
 }
 
 export type {
+  DevDependencyAllowance,
   InstallSize,
   MschConfig,
   PublishSettings,
