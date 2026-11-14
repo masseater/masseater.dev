@@ -90,6 +90,7 @@ jobs:
         run: |
           mkdir -p dist
           while read -r pattern; do
+            [ -n "$pattern" ] || continue
             while read -r file; do cp "$file" dist/; done < <(compgen -G "$pattern")
           done <<<"$FILES"
           ls -l dist
