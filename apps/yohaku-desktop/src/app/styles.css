@@ -1,7 +1,5 @@
 @import "tailwindcss";
 @import "@masseater.dev/ui/theme.css";
-@import "@fontsource-variable/noto-sans-jp/wght.css";
-@import "@fontsource-variable/noto-serif-jp/wght.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -18,8 +16,11 @@
 @theme inline {
   --color-remark: var(--remark);
   --color-draft: var(--draft);
-  --font-sans: "Noto Sans JP Variable", sans-serif;
-  --font-serif: "Noto Serif JP Variable", serif;
+}
+
+@theme static {
+  --font-sans: "Hiragino Sans", "Yu Gothic UI", "Meiryo UI", sans-serif;
+  --font-serif: "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
 
 @layer base {

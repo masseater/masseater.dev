@@ -6,7 +6,7 @@ const app = tauriAppConfig({
   crate: "yohaku-desktop",
   devPort: 1440,
   viewport: Option.some({ width: 1280, height: 800 }),
-  workspaceInputs: ["libs/yohaku-protocol/src/server-flags.ts"],
+  workspaceInputs: [],
 });
 
 export default defineConfig(mergeConfig(app, { optimizeDeps: { include: ["effect/crypto"] } }));

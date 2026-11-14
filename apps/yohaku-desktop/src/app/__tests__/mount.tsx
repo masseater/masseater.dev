@@ -8,6 +8,7 @@ import { Screens } from "#/app/screens.tsx";
 import { Providers } from "#/app/state.tsx";
 import type { Yohaku } from "#/shared/api";
 
+import fixedFonts from "#/app/__tests__/fixed-fonts.css?inline";
 import styles from "#/app/styles.css?inline";
 
 type Mounted = Readonly<{ style: HTMLStyleElement; container: HTMLDivElement; root: Root }>;
@@ -15,7 +16,7 @@ type Mounted = Readonly<{ style: HTMLStyleElement; container: HTMLDivElement; ro
 const attach = (yohaku: Yohaku): Effect.Effect<Mounted> =>
   Effect.sync(() => {
     const style = document.createElement("style");
-    style.textContent = styles;
+    style.textContent = styles + fixedFonts;
     document.head.append(style);
     const container = document.createElement("div");
     document.body.append(container);
