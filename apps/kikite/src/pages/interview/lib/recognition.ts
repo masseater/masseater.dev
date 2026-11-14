@@ -1,4 +1,4 @@
-import { Effect, Option } from "effect";
+import { Effect, FiberHandle, Option, Result } from "effect";
 import type { Scope } from "effect";
 
 import { transcriptsOf } from "./transcripts.ts";
@@ -15,9 +15,25 @@ interface Recognition {
   readonly unmute: () => void;
 }
 
-type RecognizerClass = new () => SpeechRecognition;
+type Recognizer = Pick<
+  SpeechRecognition,
+  | "lang"
+  | "continuous"
+  | "interimResults"
+  | "start"
+  | "abort"
+  | "addEventListener"
+  | "removeEventListener"
+>;
+
+type RecognizerClass = new () => Recognizer;
+
+type Later = (effect: Effect.Effect<void>) => unknown;
 
 const LANGUAGE = "ja-JP";
+const RETRY = "500 millis";
+const START_TIMEOUT = "3 seconds";
+const UNCONFIRMED = "start was not confirmed";
 const FATAL_ERRORS: ReadonlySet<string> = new Set([
   "not-allowed",
   "service-not-allowed",
@@ -31,19 +47,19 @@ const recognizerClass = (): Option.Option<RecognizerClass> =>
   ]);
 
 class Listener implements Recognition {
-  readonly #recognizer: SpeechRecognition;
+  readonly #Recognizer: RecognizerClass;
   readonly #handlers: RecognitionHandlers;
+  readonly #later: Later;
+  #recognizer: Recognizer;
   #wanted = true;
   #muted = false;
   #running = false;
 
-  public constructor(Recognizer: RecognizerClass, handlers: RecognitionHandlers) {
-    this.#recognizer = new Recognizer();
+  public constructor(Recognizer: RecognizerClass, handlers: RecognitionHandlers, later: Later) {
+    this.#Recognizer = Recognizer;
     this.#handlers = handlers;
-    this.#recognizer.lang = LANGUAGE;
-    this.#recognizer.continuous = true;
-    this.#recognizer.interimResults = true;
-    this.#subscribe();
+    this.#later = later;
+    this.#recognizer = this.#fresh();
     this.#resume();
   }
 
@@ -62,12 +78,44 @@ class Listener implements Recognition {
     this.#recognizer.abort();
   };
 
-  readonly #subscribe = (): void => {
-    this.#recognizer.addEventListener("result", this.#heard);
-    this.#recognizer.addEventListener("error", this.#failed);
-    this.#recognizer.addEventListener("end", this.#ended);
-    this.#recognizer.addEventListener("soundstart", this.#soundStarted);
-    this.#recognizer.addEventListener("soundend", this.#soundEnded);
+  readonly #fresh = (): Recognizer => {
+    const recognizer = new this.#Recognizer();
+    recognizer.lang = LANGUAGE;
+    recognizer.continuous = true;
+    recognizer.interimResults = true;
+    this.#subscribe(recognizer);
+    return recognizer;
+  };
+
+  readonly #subscribe = (recognizer: Recognizer): void => {
+    recognizer.addEventListener("result", this.#heard);
+    recognizer.addEventListener("error", this.#failed);
+    recognizer.addEventListener("start", this.#started);
+    recognizer.addEventListener("end", this.#ended);
+    recognizer.addEventListener("soundstart", this.#soundStarted);
+    recognizer.addEventListener("soundend", this.#soundEnded);
+  };
+
+  readonly #discard = (recognizer: Recognizer): void => {
+    recognizer.removeEventListener("result", this.#heard);
+    recognizer.removeEventListener("error", this.#failed);
+    recognizer.removeEventListener("start", this.#started);
+    recognizer.removeEventListener("end", this.#ended);
+    recognizer.removeEventListener("soundstart", this.#soundStarted);
+    recognizer.removeEventListener("soundend", this.#soundEnded);
+    recognizer.abort();
+  };
+
+  readonly #renew = (reason: string): void => {
+    this.#discard(this.#recognizer);
+    this.#recognizer = this.#fresh();
+    this.#running = false;
+    this.#handlers.onSound(false);
+    this.#later(
+      Effect.delay(Effect.sync(this.#resume), RETRY).pipe(
+        Effect.withSpan("kikite.recognition.renew", { attributes: { "kikite.reason": reason } }),
+      ),
+    );
   };
 
   readonly #heard = (event: SpeechRecognitionEvent): void => {
@@ -88,6 +136,10 @@ class Listener implements Recognition {
     }
   };
 
+  readonly #started = (): void => {
+    this.#later(Effect.void);
+  };
+
   readonly #soundStarted = (): void => {
     this.#handlers.onSound(true);
   };
@@ -97,34 +149,55 @@ class Listener implements Recognition {
   };
 
   readonly #ended = (): void => {
+    this.#later(Effect.void);
     this.#running = false;
     this.#handlers.onSound(false);
     this.#resume();
   };
 
   readonly #resume = (): void => {
-    if (this.#wanted && !this.#muted && !this.#running) {
-      this.#running = true;
-      this.#recognizer.start();
+    if (!this.#wanted || this.#muted || this.#running) {
+      return;
+    }
+    this.#running = true;
+    this.#later(
+      Effect.delay(
+        Effect.sync(() => {
+          this.#renew(UNCONFIRMED);
+        }),
+        START_TIMEOUT,
+      ),
+    );
+    const recognizer = this.#recognizer;
+    const started = Result.try({
+      try: () => {
+        recognizer.start();
+      },
+      catch: String,
+    });
+    if (Result.isFailure(started)) {
+      this.#renew(started.failure);
     }
   };
 }
 
-const open = (
-  Recognizer: RecognizerClass,
-  handlers: RecognitionHandlers,
+const listenWith = (
+  options: Readonly<{ Recognizer: RecognizerClass; handlers: RecognitionHandlers }>,
 ): Effect.Effect<Recognition, never, Scope.Scope> =>
-  Effect.acquireRelease(
-    Effect.sync(() => new Listener(Recognizer, handlers)),
-    (listener) => Effect.sync(listener.stop),
-  );
+  Effect.gen(function* listening() {
+    const later = yield* FiberHandle.makeRuntime<never>();
+    return yield* Effect.acquireRelease(
+      Effect.sync(() => new Listener(options.Recognizer, options.handlers, later)),
+      (listener) => Effect.sync(listener.stop),
+    );
+  });
 
 const listen = (
   handlers: RecognitionHandlers,
 ): Effect.Effect<Option.Option<Recognition>, never, Scope.Scope> =>
   Option.match(recognizerClass(), {
     onNone: () => Effect.succeedNone,
-    onSome: (Recognizer) => Effect.asSome(open(Recognizer, handlers)),
+    onSome: (Recognizer) => Effect.asSome(listenWith({ Recognizer, handlers })),
   });
 
 export { listen };

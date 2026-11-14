@@ -1,17 +1,17 @@
-import { Array as Arr, Effect, Option, pipe } from "effect";
-
-import { activatedNow } from "#/pages/interview/lib/activation";
+import { Effect } from "effect";
 
 import { ask } from "./ask.ts";
-import { activatedAtom, heardAtom, hearingAtom, listeningAtom, speakerAtom } from "./atoms.ts";
+import { hearingAtom } from "./atoms.ts";
 import { heardFailure, heardInterim, heardSpeech } from "./heard.ts";
 import { nudge } from "./nudge.ts";
-import { read, write } from "./registry.ts";
+import { write } from "./registry.ts";
 import { runners } from "./runners.ts";
 import { summarize } from "./summarize.ts";
-import { typing, voice } from "./voice.ts";
+import { typing } from "./typing.ts";
+import { wrapUp, wrapUpIfAsked } from "./wrap.ts";
 
 type Actions = Readonly<{
+  wrapUp: () => void;
   answer: (text: string) => void;
   typed: (text: string) => void;
   typing: (text: string) => void;
@@ -21,18 +21,7 @@ type Actions = Readonly<{
   interim: (text: string) => void;
   failed: (message: string) => void;
   sound: (hearing: boolean) => void;
-  activate: () => void;
 }>;
-
-const voiceIfWanted = Effect.fn("kikite.voiceIfWanted")(function* voiceIfWanted(text: string) {
-  const speaker = yield* read(speakerAtom);
-  const { lastInput } = yield* read(heardAtom);
-  const { status } = yield* read(listeningAtom);
-  const wanted = [speaker, lastInput === "voice", status !== "paused", activatedNow()];
-  if (pipe(wanted, Arr.every(Boolean))) {
-    yield* voice(text);
-  }
-});
 
 const typedAnswer = Effect.fn("kikite.typedAnswer")(function* typedAnswer(text: string) {
   yield* heardSpeech(text, "typed");
@@ -41,14 +30,7 @@ const typedAnswer = Effect.fn("kikite.typedAnswer")(function* typedAnswer(text: 
 
 const actionsFor = Effect.gen(function* actionsFor() {
   const run = yield* runners;
-  const spoken = (question: Option.Option<string>): Effect.Effect<void> =>
-    Effect.sync(() => {
-      pipe(
-        question,
-        Option.map((text) => run.voicing(voiceIfWanted(text))),
-      );
-    });
-  const asked = Effect.flatMap(ask(), spoken);
+  const asked = Effect.andThen(ask(), wrapUpIfAsked());
   const askNow = (): void => {
     run.asking(asked, { onlyIfMissing: true });
   };
@@ -56,6 +38,9 @@ const actionsFor = Effect.gen(function* actionsFor() {
     run.asking(Effect.void);
   });
   const actions: Actions = {
+    wrapUp: () => {
+      run.asking(wrapUp());
+    },
     ask: askNow,
     summarize: () => {
       run.summarizing(summarize(), { onlyIfMissing: true });
@@ -80,9 +65,6 @@ const actionsFor = Effect.gen(function* actionsFor() {
     },
     sound: (hearing) => {
       run.events(write(hearingAtom, hearing));
-    },
-    activate: () => {
-      run.events(write(activatedAtom, true));
     },
   };
   return actions;

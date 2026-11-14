@@ -8,7 +8,6 @@ const runners = Effect.gen(function* runners() {
   return {
     asking: yield* FiberHandle.makeRuntime<Services>(),
     summarizing: yield* FiberHandle.makeRuntime<Services>(),
-    voicing: yield* FiberHandle.makeRuntime<AtomRegistry.AtomRegistry>(),
     events: yield* FiberSet.makeRuntime<Services>(),
   };
 });
