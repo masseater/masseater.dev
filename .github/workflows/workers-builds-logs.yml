@@ -27,6 +27,7 @@ jobs:
       - run: .github/scripts/workers-builds-logs.sh
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_BUILDS_TOKEN: ${{ secrets.CLOUDFLARE_BUILDS_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           WORKER: ${{ inputs.worker }}
           COUNT: ${{ inputs.count }}
