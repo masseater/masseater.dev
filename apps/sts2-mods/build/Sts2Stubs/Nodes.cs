@@ -169,3 +169,16 @@ namespace MegaCrit.Sts2.Core.Nodes.Screens.Overlays
         public static NOverlayStack? Instance => throw null!;
     }
 }
+
+namespace MegaCrit.Sts2.Core.Nodes.CommonUi
+{
+    using Godot;
+    using MegaCrit.Sts2.Core.Nodes.Screens.ScreenContext;
+
+    public class NModalContainer : Control
+    {
+        public static NModalContainer? Instance => throw null!;
+
+        public IScreenContext? OpenModal => throw null!;
+    }
+}

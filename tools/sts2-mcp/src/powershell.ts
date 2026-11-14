@@ -10,4 +10,17 @@ const quote = (value: string): string => `'${pipe(value, Str.replaceAll("'", "''
 
 const list = (values: readonly string[]): string => pipe(values, Arr.map(quote), Arr.join(","));
 
-export { encodePowerShell, list, quote };
+const withTextOutput = (script: string): string =>
+  pipe(
+    [
+      "$ProgressPreference = 'SilentlyContinue'",
+      "[Console]::OutputEncoding = [Text.Encoding]::UTF8",
+      "& {",
+      script,
+      "} *>&1 | Out-String -Stream -Width 4096",
+      "exit $LASTEXITCODE",
+    ],
+    Arr.join("\n"),
+  );
+
+export { encodePowerShell, list, quote, withTextOutput };

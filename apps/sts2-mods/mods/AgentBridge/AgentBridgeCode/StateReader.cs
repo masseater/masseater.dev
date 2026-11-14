@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Debug;
 using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Runs;
 
@@ -43,11 +44,8 @@ internal static class StateReader
 
     private static string[] Overlays()
     {
-        NOverlayStack? stack = NOverlayStack.Instance;
-        if (stack is null)
-        {
-            return [];
-        }
-        return [.. stack.GetChildren().OfType<IOverlayScreen>().Select(screen => screen.GetType().Name)];
+        IEnumerable<object> overlays = NOverlayStack.Instance?.GetChildren().OfType<IOverlayScreen>() ?? [];
+        IEnumerable<object> modal = NModalContainer.Instance?.OpenModal is { } open ? [open] : [];
+        return [.. overlays.Concat(modal).Select(screen => screen.GetType().Name)];
     }
 }

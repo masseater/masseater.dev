@@ -16,7 +16,7 @@ import {
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
 import { Sts2Failed } from "./errors.ts";
-import { encodePowerShell, quote } from "./powershell.ts";
+import { encodePowerShell, quote, withTextOutput } from "./powershell.ts";
 
 type Output = Readonly<{ exitCode: number; output: string }>;
 
@@ -36,13 +36,20 @@ const SSH_HOST = "win";
 const HOST_SCRIPT = new URL("../vm/host.ps1", import.meta.url);
 const SSH_OPTIONS = ["-o", "BatchMode=yes", "-o", "ServerAliveInterval=15"] as const;
 const SUCCESS = 0;
+const HOST_PRELUDE =
+  "[Console]::OutputEncoding = [Text.Encoding]::UTF8; $PSStyle.OutputRendering = 'PlainText'; $ProgressPreference = 'SilentlyContinue'";
 
 class Vm extends Context.Service<Vm, VmShape>()("sts2-mcp/vm") {}
 
 const failed = (cause: unknown): Sts2Failed => Sts2Failed.make({ message: String(cause) });
 
 const hostCommand = (script: string, parameters: string): string =>
-  `pwsh -NoProfile -NonInteractive -EncodedCommand ${encodePowerShell(`& {\n${script}\n} ${parameters}`)}`;
+  `pwsh -NoProfile -NonInteractive -OutputFormat Text -EncodedCommand ${encodePowerShell(`${HOST_PRELUDE}\n& {\n${script}\n} ${parameters}`)}`;
+
+const guestParameters = (script: string): string => {
+  const encoded = encodePowerShell(withTextOutput(script));
+  return `-Mode guest -GuestScript ${quote(encoded)}`;
+};
 
 const ports = (instances: number): readonly number[] => Arr.makeBy(instances, bridgePort);
 
@@ -124,7 +131,7 @@ const make = Effect.gen(function* makeVm() {
       }),
     );
   return Vm.of({
-    guest: (guestScript) => run(`-Mode guest -GuestScript ${quote(encodePowerShell(guestScript))}`),
+    guest: (guestScript) => run(guestParameters(guestScript)),
     desktopScreenshot: run("-Mode screenshot").pipe(Effect.flatMap(decodePng)),
     openTunnel,
   });

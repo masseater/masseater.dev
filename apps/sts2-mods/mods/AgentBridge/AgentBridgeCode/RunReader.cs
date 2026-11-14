@@ -13,7 +13,6 @@ internal static class RunReader
     public static Run Read(RunState run)
     {
         MapPoint? position = run.CurrentMapPoint;
-        IEnumerable<MapPoint> next = position is null ? run.Map.GetPointsInRow(0) : position.Children;
         return new Run
         {
             Act = run.CurrentActIndex + 1,
@@ -22,8 +21,28 @@ internal static class RunReader
             Room = run.CurrentRoom?.RoomType.ToString() ?? "None",
             Players = [.. run.Players.Select(ReadPlayer)],
             MapPosition = position is null ? null : Node(position),
-            NextNodes = [.. next.OrderBy(point => point.coord.col).Select(Node)],
+            NextNodes = [.. NextPoints(run).OrderBy(point => point.coord.col).Select(Node)],
         };
+    }
+
+    /// <summary>NMapScreen.RecalculateTravelability と同じ順で、次に進めるマップの点を求める。</summary>
+    private static IEnumerable<MapPoint> NextPoints(RunState run)
+    {
+        ActMap map = run.Map;
+        if (run.VisitedMapCoords.Count == 0)
+        {
+            return [map.StartingMapPoint];
+        }
+        MapCoord last = run.VisitedMapCoords[^1];
+        if (map.SecondBossMapPoint is { } secondBoss && last == map.BossMapPoint.coord)
+        {
+            return [secondBoss];
+        }
+        if (last.row == map.GetRowCount() - 1)
+        {
+            return [map.BossMapPoint];
+        }
+        return map.GetPoint(last) is { } point ? MapTravel.GetTravelablePointsFrom(run, point) : [];
     }
 
     private static MapNode Node(MapPoint point) => new()

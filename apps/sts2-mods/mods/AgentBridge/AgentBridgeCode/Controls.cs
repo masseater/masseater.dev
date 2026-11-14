@@ -1,6 +1,7 @@
 using System.Globalization;
 using Godot;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
+using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 
@@ -19,7 +20,8 @@ internal static class Controls
         var tree = (SceneTree)Engine.GetMainLoop();
         Rect2 screen = tree.Root.GetVisibleRect();
         var found = new List<Protocol.Control>();
-        Walk(tree.Root, screen, found);
+        Node top = NModalContainer.Instance?.OpenModal as Node ?? tree.Root;
+        Walk(top, screen, found);
         return [.. found];
     }
 

@@ -86,6 +86,14 @@ namespace MegaCrit.Sts2.Core.Map
         public MapCoord(int col, int row) => throw null!;
 
         public readonly bool Equals(MapCoord other) => throw null!;
+
+        public static bool operator ==(MapCoord first, MapCoord second) => throw null!;
+
+        public static bool operator !=(MapCoord first, MapCoord second) => throw null!;
+
+        public override readonly bool Equals(object? obj) => throw null!;
+
+        public override readonly int GetHashCode() => throw null!;
     }
 
     public enum MapPointType
@@ -113,6 +121,21 @@ namespace MegaCrit.Sts2.Core.Map
     public abstract class ActMap
     {
         public IEnumerable<MapPoint> GetPointsInRow(int row) => throw null!;
+
+        public abstract MapPoint BossMapPoint { get; }
+
+        public abstract MapPoint StartingMapPoint { get; }
+
+        public virtual MapPoint? SecondBossMapPoint => throw null!;
+
+        public int GetRowCount() => throw null!;
+
+        public virtual MapPoint? GetPoint(MapCoord coord) => throw null!;
+    }
+
+    public static class MapTravel
+    {
+        public static IEnumerable<MapPoint> GetTravelablePointsFrom(MegaCrit.Sts2.Core.Runs.IRunState runState, MapPoint currentPoint) => throw null!;
     }
 }
 
@@ -294,8 +317,14 @@ namespace MegaCrit.Sts2.Core.Runs
         Player? GetPlayer(ulong netId);
     }
 
-    public class RunState : IPlayerCollection
+    public interface IRunState
     {
+    }
+
+    public class RunState : IRunState, IPlayerCollection
+    {
+        public IReadOnlyList<MegaCrit.Sts2.Core.Map.MapCoord> VisitedMapCoords => throw null!;
+
         public IReadOnlyList<Player> Players => throw null!;
 
         public int CurrentActIndex => throw null!;
