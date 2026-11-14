@@ -8,6 +8,9 @@ const INTERVIEWER_INSTANCE = "standard-1";
 const INTERVIEWER_IDLE = { minutes: 10 } as const;
 const INTERVIEWER_STARTUP = { probes: 60, spacing: "500 millis" } as const;
 
+const TELEMETRY_SERVICE = "kikite-web";
+const TRACES_PATH = "/api/otlp/v1/traces";
+
 const SUMMARY_MODEL = "sonnet";
 const QUESTION_MODEL = "sonnet";
 
@@ -21,4 +24,6 @@ export {
   INTERVIEWER_STARTUP,
   QUESTION_MODEL,
   SUMMARY_MODEL,
+  TELEMETRY_SERVICE,
+  TRACES_PATH,
 };

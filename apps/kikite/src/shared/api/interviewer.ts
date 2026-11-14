@@ -49,4 +49,4 @@ const questionText = (
   );
 
 /** @internal */
-export { InterviewerFailed, questionText, requestSummary };
+export { InterviewerFailed, questionText, requestSummary, send };

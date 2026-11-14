@@ -1,4 +1,4 @@
-import { Array as Arr, String as Str, pipe } from "effect";
+import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import type { Entry } from "./atoms.ts";
 
@@ -18,7 +18,12 @@ const recentOf = (entries: readonly Entry[]): string => Str.slice(-RECENT_CHARS)
 
 const questionOf = (entry: Entry): readonly string[] => {
   if (entry.kind === "question") {
-    return [entry.question];
+    return [
+      Option.match(entry.strategy, {
+        onNone: () => entry.question,
+        onSome: (strategy) => `[${strategy}] ${entry.question}`,
+      }),
+    ];
   }
   return [];
 };

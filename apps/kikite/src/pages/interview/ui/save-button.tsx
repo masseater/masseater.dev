@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { useSave } from "#/pages/interview/model/review-hooks";
 
-const LABEL = "記録を保存";
+const LABEL = "JSON を書き出す";
 
 const SaveButton = (): ReactNode => {
   const onClick = useSave();

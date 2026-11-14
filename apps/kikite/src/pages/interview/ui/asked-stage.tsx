@@ -1,15 +1,15 @@
 import type { ReactNode } from "react";
 
-import { History } from "./history.tsx";
+import { CheckpointActions } from "./checkpoint-actions.tsx";
+import { NextTopics } from "./next-topics.tsx";
 import { QuestionStage } from "./question-stage.tsx";
-import { Said } from "./said.tsx";
 
 const AskedStage = (): ReactNode => (
-  <>
-    <History />
+  <div className="flex shrink-0 flex-col gap-6 pt-6 lg:flex-1 lg:justify-center lg:pt-0">
     <QuestionStage />
-    <Said align="start" />
-  </>
+    <CheckpointActions />
+    <NextTopics />
+  </div>
 );
 
 export { AskedStage };
