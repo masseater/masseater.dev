@@ -5,10 +5,10 @@ import { nestedValues } from "./config-literal.ts";
 import { RepositoryFiles, nodeRepositoryFiles } from "./repository-files.ts";
 import { shadcnUiIn } from "./shadcn-ui.ts";
 import {
-  WorkspaceSettingsInvalid,
   literalSettings,
   merged,
   programOf,
+  settingsInvalid,
   usedFrom,
 } from "./workspace-config-source.ts";
 import type { WorkspaceSource } from "./workspace-config-source.ts";
@@ -95,7 +95,7 @@ const overrideOf = Effect.fn("overrideOf")(function* overrideOf(
   const { file, directory } = source;
   const fromSets = yield* usedFrom(file, ruleSets, override.use ?? []);
   const rules = yield* decodeRules(merged([...fromSets, override.rules ?? {}])).pipe(
-    Effect.mapError((error) => WorkspaceSettingsInvalid.make({ file, reason: error.message })),
+    Effect.mapError((error) => settingsInvalid(file)(error.message)),
   );
   const files = pipe(override.files, Arr.map(prefixed(directory)));
   return pipe(

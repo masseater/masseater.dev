@@ -10,11 +10,12 @@ const taggedError = Schema.TaggedError;
 class WorkspaceSettingsInvalid extends taggedError<
   WorkspaceSettingsInvalid,
   { readonly brand: unique symbol }
->()("WorkspaceSettingsInvalid", { file: Schema.String, reason: Schema.String }) {
-  public override get message(): string {
-    return `${this.file}: ${this.reason}`;
-  }
-}
+>()("WorkspaceSettingsInvalid", { file: Schema.String, message: Schema.String }) {}
+
+const settingsInvalid =
+  (file: string) =>
+  (reason: string): WorkspaceSettingsInvalid =>
+    WorkspaceSettingsInvalid.make({ file, message: `${file}: ${reason}` });
 
 interface WorkspaceSource {
   readonly file: string;
@@ -41,10 +42,9 @@ const usedFrom = Effect.fn("usedFrom")(function* usedFrom<Value>(
     Arr.filter((name) => !Rec.has(sets, name)),
   );
   if (Arr.isReadonlyArrayNonEmpty(unknownSets)) {
-    return yield* WorkspaceSettingsInvalid.make({
-      file,
-      reason: `msch uses sets the root does not define: ${Arr.join(unknownSets, ", ")}. Defined: ${Arr.join(Rec.keys(sets), ", ")}.`,
-    });
+    return yield* settingsInvalid(file)(
+      `msch uses sets the root does not define: ${Arr.join(unknownSets, ", ")}. Defined: ${Arr.join(Rec.keys(sets), ", ")}.`,
+    );
   }
   return pipe(
     used,
@@ -58,10 +58,7 @@ const singleValue = Effect.fn("singleValue")(function* singleValue(
 ) {
   const found = nestedValues(path)(source.program);
   if (found.length > SINGLE) {
-    return yield* WorkspaceSettingsInvalid.make({
-      file: source.file,
-      reason: `${Arr.join(path, ".")} appears more than once.`,
-    });
+    return yield* settingsInvalid(source.file)(`${Arr.join(path, ".")} appears more than once.`);
   }
   return Arr.head(found);
 });
@@ -87,12 +84,10 @@ const literalSettings = <Settings>({
     }
     const literal = literalOf(node.value);
     if (Option.isNone(literal)) {
-      return yield* WorkspaceSettingsInvalid.make({ file: source.file, reason: notLiteral(path) });
+      return yield* settingsInvalid(source.file)(notLiteral(path));
     }
     const settings = yield* decode(literal.value).pipe(
-      Effect.mapError((error) =>
-        WorkspaceSettingsInvalid.make({ file: source.file, reason: error.message }),
-      ),
+      Effect.mapError((error) => settingsInvalid(source.file)(error.message)),
     );
     return Option.some(settings);
   });
@@ -100,10 +95,10 @@ const literalSettings = <Settings>({
 const programOf = Effect.fn("programOf")(function* programOf(file: string, text: string) {
   const parsed = yield* Effect.promise(() => parse(file, text, { lang: "ts" }));
   if (Arr.isReadonlyArrayNonEmpty(parsed.errors)) {
-    return yield* WorkspaceSettingsInvalid.make({ file, reason: "vite.config.ts does not parse." });
+    return yield* settingsInvalid(file)("vite.config.ts does not parse.");
   }
   return parsed.program;
 });
 
-export { WorkspaceSettingsInvalid, literalSettings, merged, programOf, usedFrom };
-export type { WorkspaceSource };
+export { literalSettings, settingsInvalid, merged, programOf, usedFrom };
+export type { LiteralSettingsRequest, SettingsPath, WorkspaceSettingsInvalid, WorkspaceSource };

@@ -4,7 +4,7 @@ import { resolveConfigFromFile } from "vite-plus";
 
 import type { Problem, RuleName } from "./problem.ts";
 import { RepositoryFiles } from "./repository-files.ts";
-import { WorkspaceSettingsInvalid } from "./workspace-config-source.ts";
+import { settingsInvalid } from "./workspace-config-source.ts";
 import { workspaceDirectories } from "./workspace-directories.ts";
 
 const RULE: RuleName = "unverified-crate";
@@ -55,7 +55,7 @@ const owningWorkspace =
 const hasVerifyTask = Effect.fn("hasVerifyTask")(function* hasVerifyTask(file: string) {
   const config = yield* Effect.tryPromise({
     try: () => resolveConfigFromFile(file),
-    catch: () => WorkspaceSettingsInvalid.make({ file, reason: "vite.config.ts does not load." }),
+    catch: () => settingsInvalid(file)("vite.config.ts does not load."),
   }).pipe(Effect.option);
   return Option.exists(config, isVerified);
 });
