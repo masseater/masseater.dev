@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, HashSet, Option, String as Str, pipe } from "effect";
 
+import { MANIFEST_FILE } from "./dependencies.ts";
 import type { Problem, RuleName } from "./problem.ts";
-import { publishedWorkspaces } from "./published.ts";
 import { RepositoryFiles } from "./repository-files.ts";
 
 const RULE: RuleName = "nested-docs";
@@ -24,11 +24,11 @@ const problemFor = (file: string, message: string): Problem => ({
 const AGENT_DOCS_MESSAGE =
   "belongs only at the repository root. Move what agents need into the root AGENTS.md and delete this file.";
 const README_MESSAGE =
-  "is allowed below the root only in a workspace published to npm, marked by msch: { publish: { installSize } } in its vite.config.ts. Set it there if the workspace is published, or move the content into the root README.md and delete this file.";
+  "is allowed below the root only in a workspace directory, next to its package.json. Move it into the workspace it describes.";
 
 const problemIn = Effect.fn("problemIn")(function* problemIn(
   root: string,
-  published: HashSet.HashSet<string>,
+  workspaces: HashSet.HashSet<string>,
   name: string,
 ) {
   const files = yield* RepositoryFiles;
@@ -40,7 +40,7 @@ const problemIn = Effect.fn("problemIn")(function* problemIn(
   if (!README.test(base)) {
     return Option.none<Problem>();
   }
-  if (HashSet.has(published, files.dirname(file))) {
+  if (HashSet.has(workspaces, files.dirname(name))) {
     return Option.none<Problem>();
   }
   return Option.some(problemFor(file, `${base} ${README_MESSAGE}`));
@@ -51,13 +51,13 @@ const checkNestedDocs = Effect.fn("checkNestedDocs")(function* checkNestedDocs(r
   const files = yield* RepositoryFiles;
   const names = yield* files.listedFiles(root);
   const nested = pipe(names, Arr.filter(isNested));
-  const workspaces = yield* publishedWorkspaces(root);
-  const published = pipe(
-    workspaces,
-    Arr.map((workspace) => workspace.directory),
+  const workspaces = pipe(
+    nested,
+    Arr.filter((name) => files.basename(name) === MANIFEST_FILE),
+    Arr.map((name) => files.dirname(name)),
     HashSet.fromIterable,
   );
-  const found = yield* Effect.forEach(nested, (name) => problemIn(root, published, name), {
+  const found = yield* Effect.forEach(nested, (name) => problemIn(root, workspaces, name), {
     concurrency: READ_CONCURRENCY,
   });
   return Arr.getSomes(found);
