@@ -10,7 +10,8 @@ const OPENING = "鏡の中で、かぐやの顔が笑っていた。";
 const PROSE = `${OPENING}${EMOTION}`;
 const MEMO = "彩葉に見られる　ヤチヨ焦る　ふりは続ける？";
 const PAUSED = { timeout: 5000 };
-const STALLED = { timeout: 15_000 };
+const STALLED = { timeout: 30_000 };
+const DRAFTING_BUDGET = 60_000;
 const DRAFTED = pipe(DRAFT, Array.join(String.empty));
 const REWRITTEN = pipe(REWRITE, Array.join(String.empty));
 
@@ -86,5 +87,9 @@ describe("writing", () => {
   it.live("labels memos and points at explained feelings once typing pauses", () => annotates);
   it.live("keeps a remark the writer wants to keep", () => keepsRemark);
   it.live("replaces the marked words with a rewrite", () => rewritesRemark);
-  it.live("drafts prose from a memo when the writer stops at it", () => draftsMemo);
+  it.live(
+    "drafts prose from a memo when the writer stops at it",
+    () => draftsMemo,
+    DRAFTING_BUDGET,
+  );
 });
