@@ -7,6 +7,7 @@ import { checkNestedDocs } from "./nested-docs.ts";
 import { checkOverrides } from "./overrides.ts";
 import type { Problem } from "./problem.ts";
 import { checkPython } from "./python.ts";
+import { checkRootReadme } from "./root-readme.ts";
 
 /** @internal */
 const checkAll: (
@@ -31,6 +32,7 @@ const checkAll: (
       checkHiddenUnicode(root),
       checkPython(root),
       checkNestedDocs(root),
+      checkRootReadme(root),
       checkPublishedPackages(root),
     ],
     { concurrency: "unbounded" },
