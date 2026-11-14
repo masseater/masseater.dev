@@ -353,6 +353,7 @@ const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
 
 export default defineConfig({
   ...checks,
+  msch: { workspaceAgentsMd: true },
   test: {
     projects: [
       "apps/*",
@@ -381,7 +382,6 @@ export default defineConfig({
     cache: true,
     tasks: {
       ...checkTasks,
-      renovate: "renovate-config-validator --strict",
       fallow: [
         "fallow --skip dupes --fail-on-issues --quiet --format compact",
         "fallow dead-code --no-production --fail-on-issues --quiet --format compact",
@@ -409,7 +409,6 @@ export default defineConfig({
         dependsOn: [
           "test",
           "vpa",
-          "renovate",
           "workflow-rules",
           "cargo-checks",
           "db-check-all",

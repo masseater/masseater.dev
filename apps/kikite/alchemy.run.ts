@@ -1,4 +1,4 @@
-import { Containers, SecretsStore, Workers } from "@alchemy.run/cloudflare";
+import { Containers, D1, SecretsStore, Workers } from "@alchemy.run/cloudflare";
 import { ownerAccess } from "@masseater.dev/cloudflare-account/owner-access";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { Stack } from "alchemy";
@@ -57,6 +57,7 @@ export default Stack(
       "CiClaudeCodeOauthToken",
       broker,
     );
+    const SESSIONS = yield* D1.Database("Sessions", { migrations: "./migrations" });
     const client = yield* Build("ClientBuild", {
       command: "vp build",
       outdir: "dist/client",
@@ -70,6 +71,7 @@ export default Stack(
       env: {
         INTERVIEWER: Workers.DurableObject("Interviewer", { containers: [InterviewerImage] }),
         CLAUDE_CODE_OAUTH_TOKEN,
+        SESSIONS,
       },
       assets: {
         directory: client.outdir,

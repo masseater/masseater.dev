@@ -1,30 +1,18 @@
 import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 
-import { activatedNow } from "#/pages/interview/lib/activation";
 import type { Recognition } from "#/pages/interview/lib/recognition";
-import type { InterviewSummary } from "#protocol";
-import type { StrategyId } from "#strategies";
+import type { InterviewSummary, RecordedEntry, RecordedProgress } from "#protocol";
 
-import { storedPrevious, storedSpeaker } from "./memory.ts";
+import { storedPrevious } from "./memory.ts";
 
-type Rating = "unrated" | "good" | "off";
+type Entry = RecordedEntry;
 
-type Input = "voice" | "typed";
+type Rating = Extract<Entry, { kind: "question" }>["rating"];
 
-type Entry =
-  | Readonly<{ kind: "speech"; id: number; at: number; text: string; by: Input }>
-  | Readonly<{
-      kind: "question";
-      id: number;
-      at: number;
-      strategy: Option.Option<StrategyId>;
-      reason: string;
-      question: string;
-      rating: Rating;
-    }>;
+type Input = Extract<Entry, { kind: "speech" }>["by"];
 
-type Progress = Readonly<{ at: number; open: number; next: number }>;
+type Progress = RecordedProgress;
 
 type Asking =
   | Readonly<{ status: "idle" }>
@@ -41,19 +29,27 @@ type Listening =
   | Readonly<{ status: "off" }>
   | Readonly<{ status: "listening" }>
   | Readonly<{ status: "paused" }>
-  | Readonly<{ status: "speaking" }>
   | Readonly<{ status: "typing" }>
   | Readonly<{ status: "unsupported" }>
   | Readonly<{ status: "failed"; message: string }>;
 
 type Phase = Readonly<{ status: "interview" }> | Readonly<{ status: "report" }>;
 
+type Panel = "points" | "open" | "transcript";
+
+type Saving =
+  | Readonly<{ status: "idle" }>
+  | Readonly<{ status: "saving" }>
+  | Readonly<{ status: "saved" }>
+  | Readonly<{ status: "failed"; message: string }>;
+
+type Recording = Readonly<{ id: string; startedAt: number }>;
+
 type Nudge = Readonly<{ level: number; text: string }>;
 
 type Heard = Readonly<{
   lastActivityAt: number;
   spokeSinceQuestion: boolean;
-  lastInput: Input;
   lastSummaryAt: number;
   summarizedThrough: number;
   withdrawn: number;
@@ -65,7 +61,6 @@ const NEVER = 0;
 const freshHeard = (now: number): Heard => ({
   lastActivityAt: now,
   spokeSinceQuestion: false,
-  lastInput: "voice",
   lastSummaryAt: now,
   summarizedThrough: NOTHING_SUMMARIZED,
   withdrawn: 0,
@@ -86,9 +81,10 @@ const answerDraftAtom = keep("");
 const progressAtom = keep<readonly Progress[]>([]);
 const nudgeAtom = keep<Option.Option<Nudge>>(Option.none());
 const staleAtom = keep(false);
-const speakerAtom = keep(storedSpeaker());
-const activatedAtom = keep(activatedNow());
 const previousThemeAtom = keep(storedPrevious());
+const panelAtom = keep<Panel>("points");
+const savingAtom = keep<Saving>({ status: "idle" });
+const recordingAtom = keep<Recording>({ id: "", startedAt: NEVER });
 
 const summaryOf = (state: SummaryState): Option.Option<InterviewSummary> => {
   if (state.status === "empty") {
@@ -99,7 +95,6 @@ const summaryOf = (state: SummaryState): Option.Option<InterviewSummary> => {
 
 /** @internal */
 export {
-  activatedAtom,
   answerDraftAtom,
   askingAtom,
   entriesAtom,
@@ -109,11 +104,13 @@ export {
   interimAtom,
   listeningAtom,
   nudgeAtom,
+  panelAtom,
   phaseAtom,
   previousThemeAtom,
   progressAtom,
   recognitionAtom,
-  speakerAtom,
+  recordingAtom,
+  savingAtom,
   staleAtom,
   summaryAtom,
   summaryOf,
@@ -125,8 +122,11 @@ export type {
   Input,
   Listening,
   Nudge,
+  Panel,
   Phase,
   Progress,
   Rating,
+  Recording,
+  Saving,
   SummaryState,
 };

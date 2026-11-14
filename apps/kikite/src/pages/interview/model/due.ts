@@ -26,7 +26,7 @@ type Snapshot = Readonly<{
 type Due = Readonly<{ ask: boolean; summarize: boolean; nudge: number; stale: boolean }>;
 
 const SILENCE_SECONDS = 2.5;
-const SUMMARY_SECONDS = 20;
+const SUMMARY_SECONDS = 8;
 const STALE_SECONDS = 15;
 const FIRST_NUDGE_SECONDS = 10;
 const SECOND_NUDGE_SECONDS = 30;
@@ -36,11 +36,8 @@ const NO_NUDGE = 0;
 const elapsed = (now: number, since: number, seconds: number): boolean =>
   Duration.isGreaterThanOrEqualTo(Duration.millis(now - since), Duration.seconds(seconds));
 
-const quiet = ({ interim, typing, listening, asking }: Snapshot): boolean =>
-  interim === "" &&
-  typing === "" &&
-  listening.status !== "speaking" &&
-  asking.status !== "drafting";
+const quiet = ({ interim, typing, asking }: Snapshot): boolean =>
+  interim === "" && typing === "" && asking.status !== "drafting";
 
 const spoke = (entries: readonly Entry[]): boolean =>
   pipe(
@@ -74,12 +71,15 @@ const staleAt = (snapshot: Snapshot): boolean =>
     ),
   );
 
+const askDue = (snapshot: Snapshot): boolean =>
+  snapshot.heard.spokeSinceQuestion &&
+  quiet(snapshot) &&
+  elapsed(snapshot.now, snapshot.heard.lastActivityAt, SILENCE_SECONDS);
+
 const dueAt = (snapshot: Snapshot): Due => ({
-  ask:
-    snapshot.heard.spokeSinceQuestion &&
-    quiet(snapshot) &&
-    elapsed(snapshot.now, snapshot.heard.lastActivityAt, SILENCE_SECONDS),
-  summarize: elapsed(snapshot.now, snapshot.heard.lastSummaryAt, SUMMARY_SECONDS),
+  ask: askDue(snapshot),
+  summarize:
+    askDue(snapshot) || elapsed(snapshot.now, snapshot.heard.lastSummaryAt, SUMMARY_SECONDS),
   nudge: nudgeLevel(snapshot),
   stale: staleAt(snapshot),
 });
