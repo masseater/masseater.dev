@@ -4,10 +4,10 @@ use tauri::ipc::Channel;
 use crate::failure::{Failure, Outcome};
 use crate::mcp;
 use crate::model::{
-    Annotations, Manuscript, Mcp, Opened, Paragraph, Reaction, SignIn, Source, SyncStatus, Title,
-    TitleAuthor,
+    Annotations, ClaudeStatus, Fact, Manuscript, Mcp, OnboardingStep, Opened, Paragraph, Reaction,
+    SignIn, Source, SyncStatus, Title, TitleAuthor,
 };
-use crate::store::{Store, dismissals, manuscripts, reactions, sources};
+use crate::store::{Store, dismissals, manuscripts, onboarding, reactions, sources};
 use crate::sync::Syncer;
 use crate::writing::claude::Claude;
 use crate::writing::draft::{Rewrite, draft_from_memo as draft, rewrite_span};
@@ -260,4 +260,35 @@ pub async fn begin_sync_sign_in(yohaku: State<'_, Yohaku>) -> Answer<SignIn> {
     Ok(SignIn {
         url: yohaku.syncer.sign_in().await?,
     })
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn source_facts(yohaku: State<'_, Yohaku>, id: String) -> Answer<Vec<Fact>> {
+    yohaku
+        .store
+        .with(|connection| sources::facts_of(connection, &id))
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn claude_status(yohaku: State<'_, Yohaku>) -> Answer<ClaudeStatus> {
+    Ok(yohaku.claude.status().await)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn onboarding_done(yohaku: State<'_, Yohaku>) -> Answer<Vec<OnboardingStep>> {
+    yohaku.store.with(|connection| onboarding::done(connection))
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn complete_onboarding_step(
+    yohaku: State<'_, Yohaku>,
+    step: OnboardingStep,
+) -> Answer<()> {
+    yohaku
+        .store
+        .with(|connection| onboarding::complete(connection, step))
 }

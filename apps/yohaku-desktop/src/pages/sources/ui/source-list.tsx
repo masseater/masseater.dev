@@ -1,7 +1,7 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSources } from "#/pages/sources/api/sources.ts";
+import { useSources } from "#/entities/source";
 
 import { SourceRow } from "./source-row.tsx";
 

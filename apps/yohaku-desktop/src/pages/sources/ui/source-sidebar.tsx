@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
-import { IngestForm } from "./ingest-form.tsx";
+import { IngestForm } from "#/entities/source";
+
 import { McpSetting } from "./mcp-setting.tsx";
 
 const SourceSidebar = (): ReactNode => (

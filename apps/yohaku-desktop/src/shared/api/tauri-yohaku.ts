@@ -63,6 +63,12 @@ const tauriYohaku: Yohaku = {
   syncStatus: () => call(() => commands.syncStatus()),
   beginSyncSignIn: () =>
     call(() => commands.beginSyncSignIn()).pipe(Effect.flatMap(({ url }) => opened(url))),
+  sourceFacts: (id) => call(() => commands.sourceFacts(id)),
+  claudeStatus: () => call(() => commands.claudeStatus()),
+  onboardingDone: () => call(() => commands.onboardingDone()),
+  completeOnboardingStep: (step) =>
+    call(() => commands.completeOnboardingStep(step)).pipe(Effect.asVoid),
+  openExternal: opened,
 };
 
 export { tauriYohaku };
