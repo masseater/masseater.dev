@@ -12,6 +12,13 @@ namespace MegaCrit.Sts2.Core.Nodes
         public NSceneContainer RootSceneContainer => throw null!;
 
         public NRun? CurrentRunNode => throw null!;
+
+        public NTransition Transition => throw null!;
+    }
+
+    public class NTransition : ColorRect
+    {
+        public bool InTransition => throw null!;
     }
 
     public class NRun : Control

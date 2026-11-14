@@ -38,6 +38,10 @@ internal static class StateReader
 
     private static bool IsBusy()
     {
+        if (NGame.Instance?.Transition.InTransition == true)
+        {
+            return true;
+        }
         RunManager runManager = RunManager.Instance;
         return runManager.IsInProgress && (runManager.ActionExecutor.IsRunning || !runManager.ActionQueueSet.IsEmpty);
     }
