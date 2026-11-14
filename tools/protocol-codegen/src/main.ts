@@ -4,10 +4,12 @@ import { Command, Flag } from "effect/cli";
 
 import { csharp } from "./csharp.ts";
 import { rust } from "./rust.ts";
+import { sts2 } from "./sts2.ts";
 
 const CSHARP_OUTPUT =
   "../../apps/aredoko-unity/Packages/dev.masseater.aredoko/Editor/Protocol/Protocol.g.cs";
 const RUST_OUTPUT = "../../apps/aredoko-desktop/src-tauri/src/protocol.rs";
+const STS2_OUTPUT = "../../apps/sts2-mods/mods/AgentBridge/AgentBridgeCode/Protocol.g.cs";
 const TAURI_CONFIG = new URL(
   "../../../apps/aredoko-desktop/src-tauri/tauri.conf.json",
   import.meta.url,
@@ -58,9 +60,11 @@ const command = Command.make(
     Effect.gen(function* codegen() {
       const identifier = yield* appIdentifier();
       const csharpSource = yield* csharp(identifier);
+      const sts2Source = yield* sts2();
       const outputs: readonly Output[] = [
         { path: CSHARP_OUTPUT, source: csharpSource },
         { path: RUST_OUTPUT, source: rust() },
+        { path: STS2_OUTPUT, source: sts2Source },
       ];
       if (check) {
         return yield* Effect.forEach(outputs, verify, { discard: true });

@@ -1,4 +1,4 @@
-{
+﻿{
   "id": "MapDrawUndo",
   "name": "MapDrawUndo",
   "author": "masseater",
@@ -7,6 +7,6 @@
   "min_game_version": "0.107.0",
   "has_pck": false,
   "has_dll": true,
-  "dependencies": [{ "id": "BaseLib", "min_version": "3.3.0" }],
+  "dependencies": [{ "id": "BaseLib", "min_version": "3.4.7" }],
   "affects_gameplay": false
 }

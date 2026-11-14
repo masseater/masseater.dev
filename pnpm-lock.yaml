@@ -3558,6 +3558,16 @@ importers:
         specifier: 'catalog:'
         version: 19.3.1
 
+  libs/sts2-protocol:
+    dependencies:
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+    devDependencies:
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
   libs/textlint-rule-no-taigendome:
     dependencies:
       kuromojin:
@@ -3965,28 +3975,6 @@ importers:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  tools/aredoko-protocol-codegen:
-    dependencies:
-      '@masseater.dev/aredoko-protocol':
-        specifier: workspace:*
-        version: link:../../libs/aredoko-protocol
-      '@masseater.dev/node-main':
-        specifier: workspace:*
-        version: link:../../libs/node-main
-      effect:
-        specifier: catalog:stack
-        version: 4.1.4
-      quicktype-core:
-        specifier: 26.0.0
-        version: 26.0.0
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 26.6.6
-      vite-plus:
-        specifier: catalog:stack
-        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
-
   tools/aredoko-search-eval:
     dependencies:
       '@masseater.dev/aredoko-protocol':
@@ -4200,11 +4188,64 @@ importers:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
+  tools/protocol-codegen:
+    dependencies:
+      '@masseater.dev/aredoko-protocol':
+        specifier: workspace:*
+        version: link:../../libs/aredoko-protocol
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
+      '@masseater.dev/sts2-protocol':
+        specifier: workspace:*
+        version: link:../../libs/sts2-protocol
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+      quicktype-core:
+        specifier: 26.0.0
+        version: 26.0.0
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
   tools/seikin-dance:
     devDependencies:
       '@mediapipe/tasks-vision':
         specifier: 1.2.2
         version: 1.2.2
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  tools/sts2-mcp:
+    dependencies:
+      '@effect/platform-node':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
+      '@masseater.dev/sts2-protocol':
+        specifier: workspace:*
+        version: link:../../libs/sts2-protocol
+      '@modelcontextprotocol/server':
+        specifier: 'catalog:'
+        version: 2.4.0
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+    devDependencies:
+      '@effect/vitest':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
