@@ -32,9 +32,11 @@ export default defineConfig({ lint });
 decision ルールは呼ぶたびに費用がかかるので、プリセットは有効にしない。
 `decisionRules` を掛けたいファイルの overrides に渡す。
 
-Vite+ はワークスペースの `vite.config.ts` の `lint` を使わないので、1 つのワークスペースだけに効く overrides と ignorePatterns は、そのワークスペースの `vite.config.ts` に `msch: { lint: { ignorePatterns, overrides } }` とリテラルで書く。
-ルートの `vite.config.ts` は `@r_masseater/msch/workspace-lint` の `workspaceLint` でそれを実行せずに読み、パスの前にワークスペースのディレクトリを付けた overrides と ignorePatterns を受け取る。
-ワークスペースの設定を実行しないので、アプリの重いプラグインを読み込まずに済む。
+Vite+ はワークスペースの `vite.config.ts` の `lint` を使わない。
+1 つのワークスペースだけに効く overrides と ignorePatterns は、そのワークスペースの `vite.config.ts` の `msch.lint` にリテラルで書く。
+ルートの `vite.config.ts` は `@r_masseater/msch/workspace-lint` の `workspaceLint` でそれを読む。
+読んだ overrides と ignorePatterns は、パスの前にワークスペースのディレクトリが付いている。
+ワークスペースの `vite.config.ts` は実行しないので、アプリの重いプラグインを読み込まずに済む。
 overrides の `use` は、ルートが `workspaceLint` に渡す `ruleSets` の名前を指す。
 import した値が要る規則は、ルートの `ruleSets` に名前を付けて置く。
 `workspaceLint` は `components.json` の `aliases.ui` を `package.json` の `imports` で解決し、shadcn の部品の置き場を `shadcnUi` として返す。
