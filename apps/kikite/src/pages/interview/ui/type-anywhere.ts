@@ -46,4 +46,4 @@ const useTypeAnywhere = (): void => {
   }, []);
 };
 
-export { ANSWER_ID, useTypeAnywhere };
+export { ANSWER_ID, focusAnswer, useTypeAnywhere };

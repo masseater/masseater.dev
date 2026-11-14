@@ -15,6 +15,7 @@ import {
 
 import { down } from "./interviewer-down.ts";
 import type { InterviewerDown } from "./interviewer-down.ts";
+import { isSessionsPath, sessionRoutes } from "./session-routes.ts";
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 const runLogged = runner(logger);
@@ -103,8 +104,12 @@ const receiveSpans = browserSpans({ service: TELEMETRY_SERVICE });
 
 const worker = {
   fetch: (request: Request): Promise<Response> => {
-    if (new URL(request.url).pathname === TRACES_PATH) {
+    const { pathname } = new URL(request.url);
+    if (pathname === TRACES_PATH) {
       return receiveSpans(request);
+    }
+    if (isSessionsPath(pathname)) {
+      return runLogged(sessionRoutes(request));
     }
     return env.INTERVIEWER.getByName("interviewer").fetch(request);
   },
