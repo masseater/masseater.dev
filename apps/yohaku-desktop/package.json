@@ -11,8 +11,6 @@
     "@codemirror/state": "catalog:",
     "@codemirror/view": "catalog:",
     "@effect/atom-react": "catalog:stack",
-    "@fontsource-variable/noto-sans-jp": "catalog:",
-    "@fontsource-variable/noto-serif-jp": "catalog:",
     "@masseater.dev/ui": "workspace:*",
     "@masseater.dev/yohaku-protocol": "workspace:*",
     "@tanstack/react-query": "catalog:stack",
@@ -27,6 +25,8 @@
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",
+    "@fontsource-variable/noto-sans-jp": "catalog:",
+    "@fontsource-variable/noto-serif-jp": "catalog:",
     "@masseater.dev/tauri-app": "workspace:*",
     "@tauri-apps/cli": "catalog:",
     "@types/react": "catalog:",
