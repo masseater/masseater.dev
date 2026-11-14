@@ -264,3 +264,9 @@ pub struct ClaudeStatus {
     pub installed: bool,
     pub logged_in: bool,
 }
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Type)]
+#[serde(rename_all = "camelCase")]
+pub struct Release {
+    pub version: String,
+}

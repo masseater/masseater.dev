@@ -5,6 +5,7 @@ export type {
   Mcp,
   OnboardingStep,
   Opened,
+  Release,
   SpanTarget,
   Yohaku,
 } from "./yohaku.ts";

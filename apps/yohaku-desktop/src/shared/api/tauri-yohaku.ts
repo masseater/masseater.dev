@@ -1,6 +1,6 @@
 import { Channel } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { Effect, Queue, Stream } from "effect";
+import { Effect, Option, Queue, Stream } from "effect";
 
 import { commands } from "./generated/bindings.ts";
 import type { Failure as CommandFailure } from "./generated/bindings.ts";
@@ -25,13 +25,13 @@ const call = <Value>(run: () => Promise<Settled<Value>>): Effect.Effect<Value, F
     }),
   );
 
-const streamed = (
-  run: (onText: (text: string) => void) => Promise<Settled<null>>,
-): Stream.Stream<string, Failure> =>
-  Stream.callback<string, Failure>((queue) =>
+const streamed = <Item>(
+  run: (onItem: (item: Item) => void) => Promise<Settled<null>>,
+): Stream.Stream<Item, Failure> =>
+  Stream.callback<Item, Failure>((queue) =>
     call(() =>
-      run((text) => {
-        Queue.offerUnsafe(queue, text);
+      run((item) => {
+        Queue.offerUnsafe(queue, item);
       }),
     ).pipe(Effect.andThen(Queue.end(queue))),
   );
@@ -69,6 +69,8 @@ const tauriYohaku: Yohaku = {
   completeOnboardingStep: (step) =>
     call(() => commands.completeOnboardingStep(step)).pipe(Effect.asVoid),
   openExternal: opened,
+  checkUpdate: () => call(() => commands.checkUpdate()).pipe(Effect.map(Option.fromNullOr)),
+  installUpdate: () => streamed((onProgress) => commands.installUpdate(new Channel(onProgress))),
 };
 
 export { tauriYohaku };
