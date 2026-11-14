@@ -8,6 +8,7 @@ import { Providers } from "#/app/state.tsx";
 import { TranslatorPage } from "#/pages/translator";
 import type { Engine } from "#/shared/api";
 
+import fixedFonts from "#/app/__tests__/fixed-fonts.css?inline";
 import styles from "#/app/styles.css?inline";
 
 type Mounted = Readonly<{ style: HTMLStyleElement; container: HTMLDivElement; root: Root }>;
@@ -15,7 +16,7 @@ type Mounted = Readonly<{ style: HTMLStyleElement; container: HTMLDivElement; ro
 const attach = (engine: Engine): Effect.Effect<Mounted> =>
   Effect.sync(() => {
     const style = document.createElement("style");
-    style.textContent = styles;
+    style.textContent = styles + fixedFonts;
     document.head.append(style);
     const container = document.createElement("div");
     document.body.append(container);

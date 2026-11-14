@@ -3,8 +3,11 @@ name: yakusu
 on:
   push:
     branches: [main]
-    paths: ["apps/yakusu/**", ".github/workflows/yakusu.yml"]
-    tags: ["yakusu-v*"]
+    paths:
+      - "apps/yakusu/**"
+      - ".github/release-please/yakusu-*.json"
+      - ".github/scripts/component-release.sh"
+      - ".github/workflows/yakusu.yml"
   workflow_dispatch:
 
 permissions: {}
@@ -37,7 +40,7 @@ jobs:
             files: target/release/bundle/dmg/*.dmg
     runs-on: ${{ matrix.os }}
     permissions:
-      contents: write
+      contents: read
     defaults:
       run:
         shell: bash
@@ -56,8 +59,6 @@ jobs:
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: ${{ matrix.platform }}
-          lookup-only: ${{ startsWith(github.ref, 'refs/tags/') }}
-          save-if: ${{ !startsWith(github.ref, 'refs/tags/') }}
       - id: runtime
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -83,26 +84,84 @@ jobs:
         working-directory: apps/yakusu
         env:
           BUNDLES: ${{ matrix.bundles }}
+      - name: Collect the installers
+        env:
+          FILES: ${{ matrix.files }}
+        run: |
+          mkdir -p dist
+          while read -r pattern; do
+            while read -r file; do cp "$file" dist/; done < <(compgen -G "$pattern")
+          done <<<"$FILES"
+          ls -l dist
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: yakusu-${{ matrix.platform }}
-          path: ${{ matrix.files }}
+          path: dist/*
           if-no-files-found: error
           compression-level: 0
-      - if: startsWith(github.ref, 'refs/tags/')
+
+  release:
+    needs: installer
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: yakusu-release
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    concurrency:
+      group: yakusu-release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github
+      - id: release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
-          FILES: ${{ matrix.files }}
         run: |
-          files=()
-          while read -r pattern; do
-            while read -r file; do files+=("$file"); done < <(compgen -G "$pattern")
-          done <<< "$FILES"
-          gh release upload "$TAG" "${files[@]}" --clobber --repo "$GITHUB_REPOSITORY"
+          tag="$(.github/scripts/component-release.sh yakusu apps/yakusu yakusu)"
+          echo "tag=$tag" >>"$GITHUB_OUTPUT"
+      - if: steps.release.outputs.tag != ''
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: yakusu-*
+          path: dist
+          merge-multiple: true
+      - if: steps.release.outputs.tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          version="${TAG#yakusu-v}"
+          for file in dist/*; do
+            if [[ "$(basename "$file")" != *_"$version"_* ]]; then
+              echo "::error::$file was not built as $version; the installers were built from another revision"
+              exit 1
+            fi
+          done
+          gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
+      - id: app-token
+        run: |
+          oidc="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=masseater-dev-credential-broker" | jq -er .value)"
+          echo "::add-mask::$oidc"
+          token="$(curl -fsS --retry 3 -X POST -H "Authorization: Bearer $oidc" \
+            "https://credentials.masseater.dev/" | jq -er '.githubToken // empty')"
+          if [ -n "$token" ]; then
+            echo "::add-mask::$token"
+            echo "token=$token" >>"$GITHUB_OUTPUT"
+          fi
+      - if: steps.app-token.outputs.token != ''
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          config-file: .github/release-please/yakusu-config.json
+          manifest-file: .github/release-please/yakusu-manifest.json
+          skip-github-release: true
 
   ci-telemetry:
-    needs: [installer]
+    needs: [installer, release]
     if: always()
     runs-on: ubuntu-latest
     permissions:
