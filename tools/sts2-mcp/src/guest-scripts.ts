@@ -79,3 +79,4 @@ const logScript = ({ instance, lines: tail }: Logs): string =>
   ]);
 
 export { deployScript, launchScript, logScript, stopScript };
+export type { Deploy, Launch, Logs };

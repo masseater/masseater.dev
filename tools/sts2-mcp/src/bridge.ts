@@ -105,3 +105,4 @@ const waitReady = Effect.fn("bridge.waitReady")(function* waitReady(instance: nu
 
 /** @internal */
 export { act, screenshot, settle, state, waitReady };
+export type { Act };

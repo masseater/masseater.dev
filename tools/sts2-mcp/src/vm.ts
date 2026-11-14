@@ -165,4 +165,4 @@ const vmLayer = Layer.effect(Vm, make);
 
 /** @internal */
 export { Vm, vmLayer };
-export type { Output, VmShape };
+export type { Output };

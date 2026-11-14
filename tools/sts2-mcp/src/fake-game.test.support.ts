@@ -110,4 +110,4 @@ const fakeGame = (scene: Partial<Scene> = {}): FakeGame => {
 /** @internal */
 export { fakeGame, gameState };
 /** @internal */
-export type { FakeGame };
+export type { Fake, FakeGame, Scene, Sent };

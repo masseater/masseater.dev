@@ -130,4 +130,4 @@ const csharpTypes = Effect.fn("csharpTypes")(function* csharpTypes(target: Targe
 });
 
 export { csharpTypes };
-export type { Root };
+export type { Root, Target };
