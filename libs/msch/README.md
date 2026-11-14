@@ -43,6 +43,7 @@ oxlint のバージョンは、@effect/tsgo が対応するものに合わせる
 見えない文字は、ゼロ幅の文字・書字方向を変える制御文字・タグ文字のように、エディタやレビューで見えずに意味を変えうる文字で、`git ls-files` に載るテキストのファイルから探す。ファイル先頭の BOM と、NUL を含むバイナリは対象にしない。
 Python は使わない方針なので、`.py`・`pyproject.toml`・`uv.lock` などのファイルを指摘する。スクリプト・CI・設定の中で `python3`・`pip`・`uv`・`poetry` を呼ぶ箇所と、`actions/setup-python` などの action、`mise.toml` に書いた Python の道具も指摘する。
 案内文書は、`AGENTS.md`・`CLAUDE.md` をルートにだけ置かせる。
+ルートの `vite.config.ts` に `msch: { workspaceAgentsMd: true }` と書くと、ワークスペース（`package.json` のあるディレクトリ）の直下にも `AGENTS.md` を置ける。`CLAUDE.md` はルートだけに置く。
 README は、ルートか、npm に出すワークスペース（`private` でなく、`vite.config.ts` に `msch: { publish: { installSize: "10 MB" } }` と書いたもの）にだけ置かせる。
 npm に出すワークスペースでは、インストールした側に増える依存の容量を `installSize` の予算と比べる。容量は、`dependencies`・`optionalDependencies`・必須の peer を node_modules からたどった合計で、そのパッケージ自身の `peerDependencies` に書いたものは数えない。予算を超えると、重い順に依存を並べ、公開の入口（`exports` と `bin`）の一部からしか import されないものにはその入口を添える。
 `dependencies` に `catalog:stack` の依存があると、使う側がすでに持っているものとして、`peerDependencies` へ移すよう指摘する。
