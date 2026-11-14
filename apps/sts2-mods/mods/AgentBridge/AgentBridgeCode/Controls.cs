@@ -46,16 +46,17 @@ internal static class Controls
         {
             return;
         }
-        if (node is Godot.Control control && IsPressable(control))
+        if (node is Godot.Control control && IsPressable(control) && Target(control) is { } target)
         {
             Rect2 rect = control.GetGlobalRect();
-            if (rect.HasArea() && screen.Intersects(rect))
+            string id = target.GetPath().ToString();
+            if (rect.HasArea() && screen.Intersects(rect) && !found.Exists(known => string.Equals(known.Id, id, StringComparison.Ordinal)))
             {
                 found.Add(new Protocol.Control
                 {
-                    Id = control.GetPath().ToString(),
-                    Kind = control.GetType().Name,
-                    Text = Label(control),
+                    Id = id,
+                    Kind = target.GetType().Name,
+                    Text = Label(target),
                     X = (long)rect.Position.X,
                     Y = (long)rect.Position.Y,
                     Width = (long)rect.Size.X,
@@ -69,6 +70,18 @@ internal static class Controls
         }
     }
 
+    /// <summary>
+    /// カードの当たり判定 (NCardHolderHitbox) は押しても選ばれず、持ち主の NCardHolder の Pressed で選ばれるので、持ち主を返す。
+    /// 手札のカードは play_card で出すので外す。
+    /// </summary>
+    private static Godot.Control? Target(Godot.Control control) => control switch
+    {
+        NHandCardHolder => null,
+        _ when control.GetParent() is NHandCardHolder => null,
+        _ when control.GetParent() is NCardHolder holder => holder,
+        _ => control,
+    };
+
     private static string Label(Godot.Control control)
     {
         string text = control switch
@@ -77,6 +90,10 @@ internal static class Controls
             NCardHolder { CardModel: { } card } => card.Title,
             _ => string.Join(" ", Texts(control).Where(value => !string.IsNullOrWhiteSpace(value)).Distinct(StringComparer.Ordinal)),
         };
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            text = control.Name.ToString();
+        }
         return text.Length > MaxTextLength ? text[..MaxTextLength] : text;
     }
 
