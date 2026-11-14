@@ -1,0 +1,7 @@
+@import "@fontsource-variable/noto-sans-jp/wght.css";
+@import "@fontsource-variable/noto-serif-jp/wght.css";
+
+:root {
+  --font-sans: "Noto Sans JP Variable", sans-serif;
+  --font-serif: "Noto Serif JP Variable", serif;
+}
