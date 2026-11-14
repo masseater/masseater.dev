@@ -1,12 +1,12 @@
 import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-import { useEnd } from "#/pages/interview/model/hooks";
+import { useWrapUp } from "#/pages/interview/model/hooks";
 
-const LABEL = "終える";
+const LABEL = "切り上げる";
 
 const EndButton = (): ReactNode => {
-  const onClick = useEnd();
+  const onClick = useWrapUp();
   return (
     <Button variant="outline" size="sm" onClick={onClick}>
       {LABEL}
