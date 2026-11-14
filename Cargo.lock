@@ -9096,7 +9096,7 @@ dependencies = [
 
 [[package]]
 name = "yakusu"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "dunce",
  "futures-util",

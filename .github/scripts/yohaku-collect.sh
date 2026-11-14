@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-version="$(jq -er .version apps/yohaku-desktop/src-tauri/tauri.conf.json)"
+version="$(jq -er '."apps/yohaku-desktop"' .github/release-please/yohaku-manifest.json)"
 bundle="target/release/bundle"
 mkdir -p dist
 case "$RUNNER_OS" in
