@@ -36,7 +36,6 @@ const base = {
   heard: {
     lastActivityAt: SPOKE_AT,
     spokeSinceQuestion: true,
-    lastInput: "voice",
     lastSummaryAt: 0,
     summarizedThrough: NOTHING_SUMMARIZED,
     withdrawn: 0,
