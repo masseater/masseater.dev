@@ -1,0 +1,17 @@
+{
+  "name": "@masseater.dev/owner-stack",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "alchemy": "catalog:stack",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

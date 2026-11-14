@@ -16,6 +16,7 @@
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@distilled.cloud/cloudflare": "catalog:stack",
+    "@masseater.dev/owner-stack": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "alchemy": "catalog:stack",
     "effect": "catalog:stack"
