@@ -1,4 +1,5 @@
 import { Access } from "@alchemy.run/cloudflare";
+import { ownerStack } from "@masseater.dev/owner-stack";
 import { Effect } from "effect";
 
 type OwnerAccessProps = Readonly<{
@@ -10,12 +11,9 @@ type OwnerAccessProps = Readonly<{
 
 const { Application: defineApplication } = Access;
 
-const PROD = "prod";
 const SESSION_DURATION = "720h";
 const ACCESS_TOKEN_LIFETIME = "15m";
 const BROKER_CALLBACK = "https://credentials.masseater.dev/access-oauth/callback";
-
-const personalSpace = { stack: "mydecklist", stage: PROD };
 
 const ownerAccess = Effect.fn("ownerAccess")(function* ownerAccess({
   id,
@@ -23,8 +21,9 @@ const ownerAccess = Effect.fn("ownerAccess")(function* ownerAccess({
   host,
   loopbackClients,
 }: OwnerAccessProps) {
-  const owner = yield* Access.Policy.ref("OwnerPolicy", personalSpace);
-  const google = yield* Access.IdentityProvider.ref("Google", personalSpace);
+  const holder = yield* ownerStack;
+  const owner = yield* Access.Policy.ref("OwnerPolicy", holder);
+  const google = yield* Access.IdentityProvider.ref("Google", holder);
   return yield* defineApplication(id, {
     name,
     type: "self_hosted",

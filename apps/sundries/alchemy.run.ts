@@ -8,6 +8,7 @@ import {
 } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
+import { ownerStack } from "@masseater.dev/owner-stack";
 import type { TranslatorRpc } from "@masseater.dev/plamo-translate-protocol";
 import type {
   AccessOAuth,
@@ -33,16 +34,15 @@ const CLIENT_CALLBACKS = [
   SHARED_OAUTH_CALLBACK,
 ];
 
-const personalSpace = { stack: "mydecklist", stage: PROD };
-
 const portalCallback = (accountId: string): string =>
   `https://dash.cloudflare.com/${accountId}/one/access-controls/ai-controls/mcp-server/oauth-callback/${PORTAL_SERVER_ID}`;
 
 const ownerAccess = Effect.gen(function* ownerAccess() {
   const { accountId } = yield* yield* CloudflareEnvironment;
-  const owner = yield* Access.Policy.ref("OwnerPolicy", personalSpace);
-  const google = yield* Access.IdentityProvider.ref("Google", personalSpace);
-  const team = yield* Access.Organization.ref("ZeroTrust", personalSpace);
+  const holder = yield* ownerStack;
+  const owner = yield* Access.Policy.ref("OwnerPolicy", holder);
+  const google = yield* Access.IdentityProvider.ref("Google", holder);
+  const team = yield* Access.Organization.ref("ZeroTrust", holder);
   const application = yield* defineApplication("McpAccess", {
     name: `${PREFIX}access`,
     type: "self_hosted",
@@ -71,7 +71,8 @@ const ownerAccess = Effect.gen(function* ownerAccess() {
 });
 
 const upstreams = Effect.gen(function* upstreams() {
-  const SLIDE_INDEX = yield* Vectorize.Index.ref("DeckSearchIndex", personalSpace);
+  const holder = yield* ownerStack;
+  const SLIDE_INDEX = yield* Vectorize.Index.ref("DeckSearchIndex", holder);
   const broker = yield* Workers.Worker.ref("CredentialBroker", {
     stack: "masseater-dev-credential-broker",
     stage: PROD,

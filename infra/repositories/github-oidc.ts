@@ -15,6 +15,7 @@ const Claims = Schema.Struct({
   repository_owner: Schema.String,
   repository_owner_id: Schema.String,
   repository: Schema.String,
+  repository_id: Schema.String,
   event_name: Schema.String,
   ref: Schema.String,
   run_id: Schema.String,
@@ -63,14 +64,14 @@ const verify = (
 const repositoryName = (claims: typeof Claims.Type): string =>
   Str.replace(`${OWNER}/`, "")(claims.repository);
 
-const grantKeys = (claims: typeof Claims.Type): readonly string[] => {
-  const repository = repositoryName(claims);
-  return pipe(
-    Option.fromNullishOr(claims.environment),
-    Option.map((environment) => [`${repository}/${environment}`, repository]),
-    Option.getOrElse(() => [repository]),
+const grantKeys = (claims: typeof Claims.Type): readonly string[] =>
+  Arr.flatMap([repositoryName(claims), claims.repository_id], (repository) =>
+    pipe(
+      Option.fromNullishOr(claims.environment),
+      Option.map((environment) => [`${repository}/${environment}`, repository]),
+      Option.getOrElse(() => [repository]),
+    ),
   );
-};
 
 const WORKFLOWS_DIRECTORY = "/.github/workflows/";
 
