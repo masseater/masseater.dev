@@ -99,6 +99,10 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
     permissions: { contents: "write", pull_requests: "write", metadata: "read" },
     repositories: ["masseater.dev"],
   },
+  "masseater.dev/yohaku-release": {
+    permissions: { contents: "write", pull_requests: "write", metadata: "read" },
+    repositories: ["masseater.dev"],
+  },
   ...Rec.fromEntries(pipe(RELEASE_REPOSITORIES, Arr.map(releaseGrant))),
 };
 
