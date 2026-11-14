@@ -7,7 +7,7 @@ import { brokerFailed } from "./broker-response";
 
 type Routine = Readonly<{ triggerId: string; token: string }>;
 
-type Woken = "fired" | "missing" | "rejected";
+type Woken = Awaited<ReturnType<ClaudeRoutine["fire"]>>;
 
 const broker = (): Service<ClaudeRoutine> => env.CLAUDE_ROUTINE;
 
@@ -29,4 +29,4 @@ const registerRoutine = (
   }).pipe(Effect.map((registered) => ({ registered })));
 
 export { registerRoutine, wakeProject };
-export type { Woken };
+export type { Routine, Woken };

@@ -23,6 +23,11 @@ const WakeBody = Schema.Struct({ text: Schema.String });
 
 type FireOutcome = "fired" | "missing" | "rejected";
 
+interface ClaudeRoutineRpc extends Rpc.WorkerEntrypointBranded {
+  register: (routine: unknown) => Promise<boolean>;
+  fire: () => Promise<FireOutcome>;
+}
+
 const registerRoutine = ({
   env,
   routine,
@@ -79,4 +84,4 @@ const fireRoutine = Effect.fn("claude_routine.fire")(function* fire(env: AppStor
 });
 
 export { fireRoutine, registerRoutine };
-export type { FireOutcome };
+export type { ClaudeRoutineRpc, FireOutcome };
