@@ -233,3 +233,34 @@ pub struct Mcp {
 pub struct SignIn {
     pub url: String,
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Type)]
+#[serde(rename_all = "kebab-case")]
+pub enum OnboardingStep {
+    Setup,
+    IdeaHint,
+    SourceHint,
+}
+
+impl OnboardingStep {
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Setup => "setup",
+            Self::IdeaHint => "idea-hint",
+            Self::SourceHint => "source-hint",
+        }
+    }
+
+    pub fn parse(value: &str) -> Option<Self> {
+        [Self::Setup, Self::IdeaHint, Self::SourceHint]
+            .into_iter()
+            .find(|step| step.as_str() == value)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Type)]
+#[serde(rename_all = "camelCase")]
+pub struct ClaudeStatus {
+    pub installed: bool,
+    pub logged_in: bool,
+}

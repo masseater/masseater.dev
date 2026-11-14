@@ -157,7 +157,16 @@ fn sync(transaction: &Transaction<'_>) -> rusqlite::Result<()> {
 
 type Step = fn(&Transaction<'_>) -> rusqlite::Result<()>;
 
-const MIGRATIONS: [(i64, &str, Step); 2] = [(1, "init", init), (2, "sync", sync)];
+fn onboarding(transaction: &Transaction<'_>) -> rusqlite::Result<()> {
+    transaction
+        .execute_batch("create table onboarding (step text primary key, done_at integer not null)")
+}
+
+const MIGRATIONS: [(i64, &str, Step); 3] = [
+    (1, "init", init),
+    (2, "sync", sync),
+    (3, "onboarding", onboarding),
+];
 
 fn applied(connection: &Connection) -> rusqlite::Result<i64> {
     connection.query_row(

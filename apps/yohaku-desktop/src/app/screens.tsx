@@ -1,19 +1,21 @@
+import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { ManuscriptsPage } from "#/pages/manuscripts";
-import { SourcesPage } from "#/pages/sources";
-import { WritePage } from "#/pages/write";
-import { useScreen } from "#/shared/model";
+import { useStepPending, useOnboardingDone } from "#/entities/onboarding";
+import { OnboardingPage } from "#/pages/onboarding";
+
+import { Pages } from "./pages.tsx";
 
 const Screens = (): ReactNode => {
-  const [{ page }] = useScreen();
-  if (page === "manuscripts") {
-    return <ManuscriptsPage />;
+  const loaded = Option.isSome(useOnboardingDone());
+  const setup = useStepPending("setup");
+  if (!loaded) {
+    return false;
   }
-  if (page === "sources") {
-    return <SourcesPage />;
+  if (setup) {
+    return <OnboardingPage />;
   }
-  return <WritePage />;
+  return <Pages />;
 };
 
 export { Screens };

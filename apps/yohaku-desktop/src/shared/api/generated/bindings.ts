@@ -21,6 +21,10 @@ export const commands = {
 	getMcp: () => typedError<Mcp, Failure>(__TAURI_INVOKE("get_mcp")),
 	syncStatus: () => typedError<SyncStatus_Serialize, Failure>(__TAURI_INVOKE("sync_status")),
 	beginSyncSignIn: () => typedError<SignIn, Failure>(__TAURI_INVOKE("begin_sync_sign_in")),
+	sourceFacts: (id: string) => typedError<Fact_Serialize[], Failure>(__TAURI_INVOKE("source_facts", { id })),
+	claudeStatus: () => typedError<ClaudeStatus, Failure>(__TAURI_INVOKE("claude_status")),
+	onboardingDone: () => typedError<OnboardingStep[], Failure>(__TAURI_INVOKE("onboarding_done")),
+	completeOnboardingStep: (step: OnboardingStep) => typedError<null, Failure>(__TAURI_INVOKE("complete_onboarding_step", { step })),
 };
 
 /* Types */
@@ -41,6 +45,29 @@ export type Annotations_Serialize = {
 export type Classified = {
 	paragraphId: string,
 	kind: ParagraphKind,
+};
+
+export type ClaudeStatus = {
+	installed: boolean,
+	loggedIn: boolean,
+};
+
+export type Fact = Fact_Serialize | Fact_Deserialize;
+
+export type FactKind = "character" | "voice" | "event" | "knowledge" | "setting" | "idea";
+
+export type Fact_Deserialize = {
+	kind: FactKind,
+	subject: string,
+	body: string,
+	when?: string | null,
+};
+
+export type Fact_Serialize = {
+	kind: FactKind,
+	subject: string,
+	body: string,
+	when: string | null,
 };
 
 export type Failure = {
@@ -67,6 +94,8 @@ export type Mcp = {
 	url: string,
 	token: string,
 };
+
+export type OnboardingStep = "setup" | "idea-hint" | "source-hint";
 
 export type Opened = Opened_Serialize | Opened_Deserialize;
 

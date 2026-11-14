@@ -2,7 +2,7 @@ use rusqlite::{Connection, OptionalExtension, params};
 
 use crate::model::SourceOrigin;
 use crate::store::manuscripts::{paragraphs, title_of};
-use crate::store::sources::fact_of;
+use crate::store::sources::facts_of;
 
 use super::documents::{DocumentKind, ManuscriptBody, SourceBody, SyncDocument};
 
@@ -81,16 +81,7 @@ fn source_body(connection: &Connection, id: &str) -> rusqlite::Result<Option<Str
     let Some((manuscript_id, label, origin, client, created_at)) = found else {
         return Ok(None);
     };
-    let facts = connection
-        .prepare_cached(
-            "select kind, subject, body, at from facts where source_id = ?1 order by id",
-        )?
-        .query_map(params![id], |row| {
-            let kind: String = row.get(0)?;
-            Ok(fact_of(&kind, row.get(1)?, row.get(2)?, row.get(3)?))
-        })?
-        .filter_map(Result::transpose)
-        .collect::<rusqlite::Result<Vec<_>>>()?;
+    let facts = facts_of(connection, id)?;
     let body = SourceBody {
         manuscript_id,
         label,

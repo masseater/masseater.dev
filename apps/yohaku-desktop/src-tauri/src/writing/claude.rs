@@ -1,17 +1,32 @@
+use std::env;
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
+use std::time::Duration;
 
 use serde_json::Value;
 use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
 use tokio::process::{Child, Command};
+use tokio::time::timeout;
 
 use crate::failure::{Failure, Outcome};
+use crate::model::ClaudeStatus;
+
+use super::locate::installed;
 
 #[cfg(windows)]
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
 const NOT_INSTALLED: &str =
     "Claude Code が見つかりません。Claude Code を入れてから、もう一度試してください";
+
+const STATUS_TIMEOUT: Duration = Duration::from_secs(10);
+
+fn logged_in(stdout: &[u8]) -> bool {
+    serde_json::from_slice::<Value>(stdout)
+        .ok()
+        .and_then(|status| status.get("loggedIn")?.as_bool())
+        .unwrap_or(false)
+}
 
 pub struct Ask<'a> {
     pub system: &'a str,
@@ -25,7 +40,7 @@ pub struct Ask<'a> {
 
 #[derive(Clone)]
 pub struct Claude {
-    executable: Option<PathBuf>,
+    home: Option<PathBuf>,
     directory: PathBuf,
 }
 
@@ -118,10 +133,35 @@ async fn stderr_of(child: &mut Child) -> String {
 }
 
 impl Claude {
-    pub const fn new(executable: Option<PathBuf>, directory: PathBuf) -> Self {
-        Self {
-            executable,
-            directory,
+    pub const fn new(home: Option<PathBuf>, directory: PathBuf) -> Self {
+        Self { home, directory }
+    }
+
+    fn executable(&self) -> Option<PathBuf> {
+        installed(env::var_os("PATH"), self.home.as_deref())
+    }
+
+    pub async fn status(&self) -> ClaudeStatus {
+        let Some(executable) = self.executable() else {
+            return ClaudeStatus {
+                installed: false,
+                logged_in: false,
+            };
+        };
+        let mut command = Command::new(executable);
+        command
+            .args(["auth", "status"])
+            .stdin(Stdio::null())
+            .kill_on_drop(true);
+        #[cfg(windows)]
+        command.creation_flags(CREATE_NO_WINDOW);
+        let output = timeout(STATUS_TIMEOUT, command.output()).await;
+        ClaudeStatus {
+            installed: true,
+            logged_in: output
+                .ok()
+                .and_then(Result::ok)
+                .is_some_and(|output| logged_in(&output.stdout)),
         }
     }
 
@@ -141,11 +181,10 @@ impl Claude {
 
     async fn spawned(&self, ask: &Ask<'_>) -> Outcome<Child> {
         let executable = self
-            .executable
-            .as_deref()
+            .executable()
             .ok_or_else(|| Failure::new(NOT_INSTALLED))?;
         std::fs::create_dir_all(&self.directory)?;
-        let mut child = self.command(executable, ask).spawn()?;
+        let mut child = self.command(&executable, ask).spawn()?;
         if let Some(mut stdin) = child.stdin.take() {
             stdin.write_all(ask.prompt.as_bytes()).await?;
         }
@@ -178,7 +217,16 @@ impl Claude {
 
 #[cfg(test)]
 mod tests {
-    use super::{Line, parse};
+    use super::{Line, logged_in, parse};
+
+    #[test]
+    fn reads_the_login_from_auth_status() {
+        assert!(logged_in(
+            br#"{"loggedIn": true, "authMethod": "oauth_token"}"#
+        ));
+        assert!(!logged_in(br#"{"loggedIn": false, "authMethod": "none"}"#));
+        assert!(!logged_in(b"Invalid API key"));
+    }
 
     #[test]
     fn reads_text_deltas_and_the_structured_result() {

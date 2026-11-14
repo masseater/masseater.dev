@@ -11,6 +11,7 @@ pub mod dismissals;
 pub mod kinds;
 pub mod manuscripts;
 mod migrations;
+pub mod onboarding;
 pub mod reactions;
 pub mod sources;
 

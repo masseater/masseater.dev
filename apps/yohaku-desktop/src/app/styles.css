@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@masseater.dev/ui/theme.css";
+@import "driver.js/dist/hints.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -42,4 +43,31 @@
     @apply text-draft font-serif text-base;
     line-height: 2.1;
   }
+}
+
+.driver-hint {
+  --driver-hint-color: var(--remark);
+}
+
+.driver-popover.yohaku-hint {
+  font-family: var(--font-sans);
+  color: var(--popover-foreground);
+  background-color: var(--popover);
+  border: 1px solid var(--border);
+}
+
+.driver-popover.yohaku-hint .driver-popover-arrow {
+  border-color: var(--popover);
+}
+
+.driver-popover.yohaku-hint .driver-popover-title {
+  font-size: 15px;
+}
+
+.driver-popover.yohaku-hint .driver-popover-footer-btn {
+  color: var(--foreground);
+  background-color: var(--background);
+  border-color: var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 4px 10px;
 }
