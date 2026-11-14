@@ -1,4 +1,5 @@
 import { Clock, Effect, Option } from "effect";
+import { SecureRandom } from "effect/crypto";
 
 import { listen } from "#/pages/interview/lib/recognition";
 
@@ -14,6 +15,8 @@ import {
   nudgeAtom,
   progressAtom,
   recognitionAtom,
+  recordingAtom,
+  savingAtom,
   staleAtom,
   summaryAtom,
 } from "./atoms.ts";
@@ -33,6 +36,8 @@ const IDLE = { status: "idle" } as const;
 
 const reset = Effect.gen(function* reset() {
   const now = yield* Clock.currentTimeMillis;
+  const random = yield* SecureRandom.SecureRandom;
+  const id = yield* random.uuidV4();
   yield* Effect.all([
     write(entriesAtom, []),
     write(summaryAtom, { status: "empty" }),
@@ -43,6 +48,8 @@ const reset = Effect.gen(function* reset() {
     write(progressAtom, []),
     write(nudgeAtom, Option.none()),
     write(staleAtom, false),
+    write(recordingAtom, { id, startedAt: now }),
+    write(savingAtom, { status: "idle" }),
   ]);
 });
 

@@ -1,7 +1,17 @@
 import type { Option } from "effect";
 import { Array as Arr } from "effect";
 
-const STRATEGY_IDS = ["find", "concrete", "ladder", "coverage", "hypothesis", "episode"] as const;
+const STRATEGY_IDS = [
+  "find",
+  "concrete",
+  "ladder",
+  "coverage",
+  "hypothesis",
+  "episode",
+  "confirm",
+  "checkpoint",
+  "wrap",
+] as const;
 
 type StrategyId = (typeof STRATEGY_IDS)[number];
 
@@ -37,6 +47,21 @@ const STRATEGIES: Readonly<Record<StrategyId, Strategy>> = {
     label: "出来事から",
     policy:
       "抽象的な話を、過去の具体的な 1 回の出来事に引き戻す。形は「最後に〜したのはいつで、そのとき何が起きましたか」。そこから見たこと・判断したことを時系列で聞く。",
+  },
+  confirm: {
+    label: "理解を確かめる",
+    policy:
+      "直前の話を本人の言葉で言い換えて理解が合っているかを確かめ、合っている前提で一歩先を聞く。形は「〜ということで合っていますか。その場合、〜はどうしますか（どう思いますか）」。言い換えに本人が言っていないことを足さない。",
+  },
+  checkpoint: {
+    label: "区切って要約する",
+    policy:
+      "今の話題で分かったことを 2〜3 点に要約し、合っているかを確かめてから、要約の「まだ聞いていない論点」から次の話題を示す。形は「ここまでを、〜と〜とまとめました。合っていますか。合っていれば、次は〜について聞かせてください」。",
+  },
+  wrap: {
+    label: "切り上げる",
+    policy:
+      "話し手が終わりたい・切り上げたい・まとめてほしいと言ったときだけ選ぶ。質問は作らず、「ここまでをまとめます。」とだけ書く。",
   },
 };
 

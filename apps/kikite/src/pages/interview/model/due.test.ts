@@ -9,8 +9,9 @@ const SPOKE_AT = 10_000;
 const TOO_SOON = 12_000;
 const BEFORE_NUDGE = 5000;
 const AFTER_SILENCE = 13_000;
-const BEFORE_SUMMARY = 19_000;
-const SUMMARY_DUE = 20_000;
+const BEFORE_SUMMARY = 7000;
+const SUMMARY_DUE = 8000;
+const SUMMARIZED_AT = 12_000;
 const FIRST_NUDGE = 10_000;
 const SECOND_NUDGE = 30_000;
 const ASKED_AT = 30_000;
@@ -73,6 +74,12 @@ describe("dueAt", () => {
   it("summarizes on the summary interval", () => {
     expect(dueAt({ ...base, now: BEFORE_SUMMARY }).summarize).toBe(false);
     expect(dueAt({ ...base, now: SUMMARY_DUE }).summarize).toBe(true);
+  });
+
+  it("summarizes as soon as the speaker pauses, without waiting for the interval", () => {
+    const heard = { ...base.heard, lastSummaryAt: SUMMARIZED_AT };
+    expect(dueAt({ ...base, heard }).summarize).toBe(true);
+    expect(dueAt({ ...base, heard, interim: "えっと" }).summarize).toBe(false);
   });
 
   it("nudges after 10 and 30 seconds of silence before anything is said", () => {
