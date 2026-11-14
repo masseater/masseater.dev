@@ -2,6 +2,7 @@ import { Array as Arr, Effect, Option, pipe } from "effect";
 
 import { entriesAtom, phaseAtom } from "./atoms.ts";
 import type { Entry } from "./atoms.ts";
+import { upload } from "./autosave.ts";
 import { read, write } from "./registry.ts";
 import { summarize } from "./summarize.ts";
 
@@ -12,6 +13,7 @@ const wrapsUp = (entry: Entry): boolean =>
 
 const wrapUp = Effect.fn("kikite.wrapUp")(function* wrapUp() {
   yield* summarize();
+  yield* upload();
   yield* write(phaseAtom, { status: "report" });
 });
 

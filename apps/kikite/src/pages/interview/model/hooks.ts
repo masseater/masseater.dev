@@ -15,11 +15,21 @@ import {
   nudgeAtom,
   panelAtom,
   phaseAtom,
+  savingAtom,
   staleAtom,
   summaryAtom,
   summaryOf,
 } from "./atoms.ts";
-import type { Asking, Entry, Listening, Nudge, Panel, Phase, SummaryState } from "./atoms.ts";
+import type {
+  Asking,
+  Entry,
+  Listening,
+  Nudge,
+  Panel,
+  Phase,
+  Saving,
+  SummaryState,
+} from "./atoms.ts";
 import { toggleMicAtom } from "./mic-toggle.ts";
 import { sessionAtom } from "./session.ts";
 import type { Session } from "./session.ts";
@@ -117,6 +127,8 @@ const useCheckpoint = (): boolean => {
   );
 };
 
+const useSaving = (): Saving => useAtomValue(savingAtom);
+
 const useToggleMic = (): (() => void) => {
   const toggle = useAtomSet(toggleMicAtom);
   return useCallback(() => {
@@ -137,6 +149,7 @@ export {
   usePanel,
   usePhase,
   useRunSession,
+  useSaving,
   useSession,
   useSetPanel,
   useStage,
@@ -147,5 +160,5 @@ export {
   useWrapUp,
 };
 export type { QuestionEntry, SpeechEntry, Stage };
-export type { Asking, Entry, Listening, Panel } from "./atoms.ts";
+export type { Asking, Entry, Listening, Panel, Saving } from "./atoms.ts";
 export type { Session } from "./session.ts";

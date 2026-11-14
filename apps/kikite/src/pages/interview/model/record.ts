@@ -1,11 +1,21 @@
-import { Array as Arr, DateTime, Effect, Option, Schema, pipe } from "effect";
+import { DateTime, Effect, Schema } from "effect";
 import { Atom } from "effect/reactivity";
 
-import { entriesAtom, heardAtom, progressAtom, summaryAtom, summaryOf } from "./atoms.ts";
-import type { Entry } from "./atoms.ts";
+import { SessionRecord } from "#protocol";
+import type { RecordedSession } from "#protocol";
+
+import {
+  entriesAtom,
+  heardAtom,
+  progressAtom,
+  recordingAtom,
+  summaryAtom,
+  summaryOf,
+} from "./atoms.ts";
 import { read } from "./registry.ts";
 
-const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
+const encodeRecord = (record: RecordedSession): Effect.Effect<string> =>
+  Schema.encodeEffect(Schema.fromJsonString(SessionRecord))(record).pipe(Effect.orDie);
 
 const download = (json: string, name: string): Effect.Effect<void> =>
   Effect.sync(() => {
@@ -16,25 +26,20 @@ const download = (json: string, name: string): Effect.Effect<void> =>
     URL.revokeObjectURL(link.href);
   });
 
-const plain = (entry: Entry): Readonly<Record<string, unknown>> => {
-  if (entry.kind === "question") {
-    return { ...entry, strategy: Option.getOrNull(entry.strategy) };
-  }
-  return entry;
-};
-
-const saveRecord = Effect.gen(function* saveRecord() {
-  const entries = yield* read(entriesAtom);
-  const record = {
-    entries: pipe(entries, Arr.map(plain)),
+const recordOf = Effect.gen(function* recordOf() {
+  const state = yield* read(summaryAtom);
+  const record: RecordedSession = {
+    startedAt: (yield* read(recordingAtom)).startedAt,
+    entries: yield* read(entriesAtom),
     progress: yield* read(progressAtom),
     withdrawn: (yield* read(heardAtom)).withdrawn,
-    summary: yield* pipe(
-      read(summaryAtom),
-      Effect.map((state) => Option.getOrNull(summaryOf(state))),
-    ),
+    summary: summaryOf(state),
   };
-  const json = yield* encodeJson(record).pipe(Effect.orDie);
+  return record;
+});
+
+const saveRecord = Effect.gen(function* saveRecord() {
+  const json = yield* recordOf.pipe(Effect.flatMap(encodeRecord));
   const now = yield* DateTime.now;
   yield* download(json, `kikite-${DateTime.formatIso(now)}.json`);
 });
@@ -42,4 +47,4 @@ const saveRecord = Effect.gen(function* saveRecord() {
 const saveAtom = Atom.fn(() => saveRecord);
 
 /** @internal */
-export { saveAtom };
+export { encodeRecord, recordOf, saveAtom };

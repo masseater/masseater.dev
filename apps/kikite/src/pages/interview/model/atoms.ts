@@ -2,28 +2,17 @@ import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 
 import type { Recognition } from "#/pages/interview/lib/recognition";
-import type { InterviewSummary } from "#protocol";
-import type { StrategyId } from "#strategies";
+import type { InterviewSummary, RecordedEntry, RecordedProgress } from "#protocol";
 
 import { storedPrevious } from "./memory.ts";
 
-type Rating = "unrated" | "good" | "off";
+type Entry = RecordedEntry;
 
-type Input = "voice" | "typed";
+type Rating = Extract<Entry, { kind: "question" }>["rating"];
 
-type Entry =
-  | Readonly<{ kind: "speech"; id: number; at: number; text: string; by: Input }>
-  | Readonly<{
-      kind: "question";
-      id: number;
-      at: number;
-      strategy: Option.Option<StrategyId>;
-      reason: string;
-      question: string;
-      rating: Rating;
-    }>;
+type Input = Extract<Entry, { kind: "speech" }>["by"];
 
-type Progress = Readonly<{ at: number; open: number; next: number }>;
+type Progress = RecordedProgress;
 
 type Asking =
   | Readonly<{ status: "idle" }>
@@ -47,6 +36,14 @@ type Listening =
 type Phase = Readonly<{ status: "interview" }> | Readonly<{ status: "report" }>;
 
 type Panel = "points" | "open" | "transcript";
+
+type Saving =
+  | Readonly<{ status: "idle" }>
+  | Readonly<{ status: "saving" }>
+  | Readonly<{ status: "saved" }>
+  | Readonly<{ status: "failed"; message: string }>;
+
+type Recording = Readonly<{ id: string; startedAt: number }>;
 
 type Nudge = Readonly<{ level: number; text: string }>;
 
@@ -86,6 +83,8 @@ const nudgeAtom = keep<Option.Option<Nudge>>(Option.none());
 const staleAtom = keep(false);
 const previousThemeAtom = keep(storedPrevious());
 const panelAtom = keep<Panel>("points");
+const savingAtom = keep<Saving>({ status: "idle" });
+const recordingAtom = keep<Recording>({ id: "", startedAt: NEVER });
 
 const summaryOf = (state: SummaryState): Option.Option<InterviewSummary> => {
   if (state.status === "empty") {
@@ -110,6 +109,8 @@ export {
   previousThemeAtom,
   progressAtom,
   recognitionAtom,
+  recordingAtom,
+  savingAtom,
   staleAtom,
   summaryAtom,
   summaryOf,
@@ -125,5 +126,7 @@ export type {
   Phase,
   Progress,
   Rating,
+  Recording,
+  Saving,
   SummaryState,
 };

@@ -10,14 +10,17 @@ import { rated } from "./rate.ts";
 import { saveAtom } from "./record.ts";
 import { reportOf } from "./report.ts";
 import type { Report } from "./report.ts";
+import { uploadAtom } from "./session.ts";
 
 const useRate = (id: number): ((rating: Rating) => void) => {
   const setEntries = useAtomSet(entriesAtom);
+  const upload = useAtomSet(uploadAtom);
   return useCallback(
     (rating: Rating) => {
       setEntries(rated({ id, rating }));
+      upload();
     },
-    [setEntries, id],
+    [setEntries, upload, id],
   );
 };
 
