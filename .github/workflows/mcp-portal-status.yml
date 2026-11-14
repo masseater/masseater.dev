@@ -22,13 +22,7 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@8807d1fbbb0254e6c5f40a18ffaa4146954a48e3
       - name: Sync each server and print its state
-        run: |
-          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access/ai-controls/mcp/servers"
-          auth="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
-          for id in $(curl -fsS -H "$auth" "$api?per_page=100" | jq -r '.result[].id'); do
-            echo "== $id"
-            curl -sS -X POST -H "$auth" "$api/$id/sync" | jq -c .
-          done
+        run: .github/scripts/mcp-portal-sync.sh
       - name: Print portals and Access applications
         run: |
           base="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access"

@@ -144,6 +144,7 @@ jobs:
         with:
           native: "false"
       - run: vp exec --filter @masseater.dev/mcp-portal alchemy deploy --config alchemy.portal.ts --stage prod --yes
+      - run: .github/scripts/mcp-portal-sync.sh
 
   traces:
     needs: deploy
