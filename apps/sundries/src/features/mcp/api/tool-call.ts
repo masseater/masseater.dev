@@ -10,6 +10,7 @@ type ToolName =
   | "get_access_token"
   | "translate"
   | "send_to_claude"
+  | "register_claude_routine"
   | "take_claude_requests"
   | "reply_to_request"
   | "list_claude_replies";

@@ -11,6 +11,7 @@ import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-provi
 import type { TranslatorRpc } from "@masseater.dev/plamo-translate-protocol";
 import type {
   AccessOAuth,
+  ClaudeRoutine,
   SloppediaGitHub,
 } from "@masseater.dev/repositories/credential-broker.worker";
 import { Stack } from "alchemy";
@@ -88,6 +89,7 @@ const upstreams = Effect.gen(function* upstreams() {
     SLIDE_INDEX,
     SLOPPEDIA_GITHUB: Workers.WorkerEntrypoint<SloppediaGitHub>(broker, "SloppediaGitHub"),
     ACCESS_OAUTH: Workers.WorkerEntrypoint<AccessOAuth>(broker, "AccessOAuth"),
+    CLAUDE_ROUTINE: Workers.WorkerEntrypoint<ClaudeRoutine>(broker, "ClaudeRoutine"),
     WEB_ANALYTICS_TOKEN: Workers.WorkerEntrypoint(webAnalyticsToken),
     TRANSLATOR: Workers.WorkerEntrypoint<TranslatorRpc>(translate, "Translator"),
   };

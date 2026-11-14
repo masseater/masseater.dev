@@ -61,6 +61,10 @@ const decodeRows = Schema.decodeUnknownEffect(Schema.Array(RequestRow));
 
 const decodeId = Schema.decodeUnknownEffect(Schema.Struct({ id: Schema.Int }));
 
+const decodeSent = Schema.decodeUnknownEffect(
+  Schema.Struct({ id: Schema.Int, woke: Schema.String }),
+);
+
 const mcpRequest = (body: string): Request =>
   new Request("https://sundries.masseater.dev/mcp", {
     method: "POST",
@@ -190,5 +194,25 @@ it.effect("空の依頼は受け付けない", () =>
     const taken = yield* take;
     expect(isError).toBe(true);
     expect(taken).toStrictEqual([]);
+  }),
+);
+
+it.effect("送った依頼は積んだ直後にプロジェクトを起こす", () =>
+  Effect.gen(function* woken() {
+    const sent = yield* value(MUSE, "send_to_claude", { text: "記事を直して" }).pipe(
+      Effect.flatMap(decodeSent),
+      Effect.orDie,
+    );
+    expect(sent.woke).toBe("fired");
+  }),
+);
+
+it.effect("中継のルーティンを broker に登録する", () =>
+  Effect.gen(function* registered() {
+    const result = yield* value(MUSE, "register_claude_routine", {
+      triggerId: "trig_01Test",
+      token: "sk-ant-oat01-test",
+    });
+    expect(result).toStrictEqual({ registered: true });
   }),
 );
