@@ -10,7 +10,9 @@ import type {
 } from "@masseater.dev/yohaku-protocol";
 import { Array, Effect, Option, Record, Stream, String, pipe } from "effect";
 
-import type { ClaudeStatus, OnboardingStep, Yohaku } from "#/shared/api";
+import type { ClaudeStatus, OnboardingStep, Release, Yohaku } from "#/shared/api";
+
+import { updateCalls } from "./fake-update.ts";
 
 type ManuscriptType = typeof Manuscript.Type;
 type Paragraphs = readonly (typeof Paragraph.Type)[];
@@ -38,7 +40,7 @@ const INGESTED: readonly (typeof Fact.Type)[] = [
 const ALL_STEPS: readonly OnboardingStep[] = ["setup", "idea-hint", "source-hint"];
 const READY: ClaudeStatus = { installed: true, loggedIn: true };
 
-type Setup = Partial<Pick<Store, "claude" | "onboarding">>;
+type Setup = Partial<Pick<Store, "claude" | "onboarding"> & { release: Release }>;
 
 interface Calls {
   readonly reactions: (typeof Reaction.Type)[];
@@ -284,15 +286,14 @@ const built = (sources: readonly (typeof Source.Type)[], setup: Setup): Fake => 
       ...syncCalls(backing),
       ...writingCalls(backing),
       ...onboardingCalls(backing),
+      ...updateCalls(Option.fromUndefinedOr(setup.release)),
     },
   };
 };
 
 const fakeYohaku = (sources: readonly (typeof Source.Type)[]): Fake => built(sources, {});
 
-const firstRun = (claude: ClaudeStatus): Fake => built([], { onboarding: [], claude });
+const fakeWith = (setup: Setup): Fake => built([], setup);
 
-const ideaHintPending = (): Fake => built([], { onboarding: ["setup", "source-hint"] });
-
-export { DRAFT, EMOTION, IDEA, READY, REWRITE, fakeYohaku, firstRun, ideaHintPending };
-export type { Calls, Fake, Paragraphs };
+export { DRAFT, EMOTION, IDEA, READY, REWRITE, fakeWith, fakeYohaku };
+export type { Calls, Fake, Paragraphs, Setup };

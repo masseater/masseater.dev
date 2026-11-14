@@ -5,10 +5,11 @@ use crate::failure::{Failure, Outcome};
 use crate::mcp;
 use crate::model::{
     Annotations, ClaudeStatus, Fact, Manuscript, Mcp, OnboardingStep, Opened, Paragraph, Reaction,
-    SignIn, Source, SyncStatus, Title, TitleAuthor,
+    Release, SignIn, Source, SyncStatus, Title, TitleAuthor,
 };
 use crate::store::{Store, dismissals, manuscripts, onboarding, reactions, sources};
 use crate::sync::Syncer;
+use crate::updates;
 use crate::writing::claude::Claude;
 use crate::writing::draft::{Rewrite, draft_from_memo as draft, rewrite_span};
 use crate::writing::ingest::ingest_text as ingest;
@@ -291,4 +292,19 @@ pub async fn complete_onboarding_step(
     yohaku
         .store
         .with(|connection| onboarding::complete(connection, step))
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn check_update(app: tauri::AppHandle) -> Answer<Option<Release>> {
+    Ok(updates::available(&app).await)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn install_update(app: tauri::AppHandle, on_progress: Channel<u8>) -> Answer<()> {
+    updates::install(&app, |done| {
+        let _ = on_progress.send(done);
+    })
+    .await
 }

@@ -2,7 +2,8 @@ import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 import { page, userEvent } from "vite-plus/test/browser";
 
-import { IDEA, READY, firstRun, ideaHintPending } from "#/app/__tests__/fake-yohaku.ts";
+import { firstRun, ideaHintPending } from "#/app/__tests__/fake-setups.ts";
+import { IDEA, READY } from "#/app/__tests__/fake-yohaku.ts";
 import { mount } from "#/app/__tests__/mount.tsx";
 import { body, main, settled } from "#/app/__tests__/screen.ts";
 
