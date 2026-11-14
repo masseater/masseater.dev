@@ -1,5 +1,5 @@
 {
-  "name": "aredoko-protocol-codegen",
+  "name": "protocol-codegen",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -7,6 +7,7 @@
   "dependencies": {
     "@masseater.dev/aredoko-protocol": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",
+    "@masseater.dev/sts2-protocol": "workspace:*",
     "effect": "catalog:stack",
     "quicktype-core": "26.0.0"
   },

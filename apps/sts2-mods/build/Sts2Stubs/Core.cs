@@ -56,6 +56,8 @@ namespace MegaCrit.Sts2.Core.Localization
         public string GetFormattedText() => throw null!;
 
         public string GetRawText() => throw null!;
+
+        public string LocEntryKey => throw null!;
     }
 }
 
@@ -85,21 +87,69 @@ namespace MegaCrit.Sts2.Core.Map
 
         public readonly bool Equals(MapCoord other) => throw null!;
     }
+
+    public enum MapPointType
+    {
+        Unassigned,
+        Unknown,
+        Shop,
+        Treasure,
+        RestSite,
+        Monster,
+        Elite,
+        Boss,
+        Ancient,
+    }
+
+    public class MapPoint
+    {
+        public MapCoord coord;
+
+        public MapPointType PointType => throw null!;
+
+        public HashSet<MapPoint> Children => throw null!;
+    }
+
+    public abstract class ActMap
+    {
+        public IEnumerable<MapPoint> GetPointsInRow(int row) => throw null!;
+    }
 }
 
 namespace MegaCrit.Sts2.Core.Models
 {
     using Godot;
     using MegaCrit.Sts2.Core.Localization;
+    using MegaCrit.Sts2.Core.Entities.Cards;
+    using MegaCrit.Sts2.Core.Entities.Creatures;
+    using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
+
+    public record ModelId
+    {
+        public string Entry => throw null!;
+    }
 
     public abstract class AbstractModel
     {
+        public ModelId Id => throw null!;
     }
 
     public abstract class CardModel : AbstractModel
     {
         // 強化済みなら "+" 付きの表示名
         public string Title => throw null!;
+
+        public bool IsUpgraded => throw null!;
+
+        public CardEnergyCost EnergyCost => throw null!;
+
+        public virtual TargetType TargetType => throw null!;
+
+        public bool CanPlay(out UnplayableReason reason, out AbstractModel? preventer) => throw null!;
+
+        public bool TryManualPlay(Creature? target) => throw null!;
+
+        public string GetDescriptionForPile(PileType pileType, Creature? target = null) => throw null!;
     }
 
     public abstract class RelicModel : AbstractModel
@@ -110,6 +160,10 @@ namespace MegaCrit.Sts2.Core.Models
     public abstract class PotionModel : AbstractModel
     {
         public LocString Title => throw null!;
+
+        public abstract TargetType TargetType { get; }
+
+        public void EnqueueManualUse(Creature? target) => throw null!;
     }
 
     public abstract class CharacterModel : AbstractModel
@@ -120,17 +174,65 @@ namespace MegaCrit.Sts2.Core.Models
 
         public virtual Color MapDrawingColor => throw null!;
     }
+
+    public abstract class PowerModel : AbstractModel
+    {
+        public virtual LocString Title => throw null!;
+
+        public virtual int DisplayAmount => throw null!;
+    }
+
+    public abstract class MonsterModel : AbstractModel
+    {
+        public MoveState NextMove => throw null!;
+    }
 }
 
 namespace MegaCrit.Sts2.Core.Entities.Players
 {
     using MegaCrit.Sts2.Core.Models;
+    using MegaCrit.Sts2.Core.Combat;
+    using MegaCrit.Sts2.Core.Entities.Cards;
+    using MegaCrit.Sts2.Core.Entities.Creatures;
 
     public class Player
     {
         public CharacterModel Character => throw null!;
 
         public ulong NetId => throw null!;
+
+        public Creature Creature => throw null!;
+
+        public PlayerCombatState? PlayerCombatState => throw null!;
+
+        public IReadOnlyList<RelicModel> Relics => throw null!;
+
+        public IReadOnlyList<PotionModel?> PotionSlots => throw null!;
+
+        public CardPile Deck => throw null!;
+
+        public int Gold => throw null!;
+
+        public int MaxEnergy => throw null!;
+    }
+
+    public class PlayerCombatState
+    {
+        public int TurnNumber => throw null!;
+
+        public PlayerTurnPhase Phase => throw null!;
+
+        public int Energy => throw null!;
+
+        public int Stars => throw null!;
+
+        public CardPile Hand => throw null!;
+
+        public CardPile DrawPile => throw null!;
+
+        public CardPile DiscardPile => throw null!;
+
+        public CardPile ExhaustPile => throw null!;
     }
 }
 
@@ -167,6 +269,8 @@ namespace MegaCrit.Sts2.Core.Context
 
         public static Player? GetMe(IPlayerCollection? playerCollection) => throw null!;
 
+        public static Player? GetMe(IEnumerable<Player> players) => throw null!;
+
         public static bool IsMe(Player? player) => throw null!;
     }
 }
@@ -174,6 +278,10 @@ namespace MegaCrit.Sts2.Core.Context
 namespace MegaCrit.Sts2.Core.Runs
 {
     using MegaCrit.Sts2.Core.Entities.Players;
+    using MegaCrit.Sts2.Core.GameActions;
+    using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+    using MegaCrit.Sts2.Core.Map;
+    using MegaCrit.Sts2.Core.Rooms;
     using MegaCrit.Sts2.Core.Multiplayer.Game;
     using MegaCrit.Sts2.Core.Multiplayer.Game.PeerInput;
 
@@ -189,6 +297,18 @@ namespace MegaCrit.Sts2.Core.Runs
     public class RunState : IPlayerCollection
     {
         public IReadOnlyList<Player> Players => throw null!;
+
+        public int CurrentActIndex => throw null!;
+
+        public int ActFloor => throw null!;
+
+        public int AscensionLevel => throw null!;
+
+        public ActMap Map => throw null!;
+
+        public MapPoint? CurrentMapPoint => throw null!;
+
+        public AbstractRoom? CurrentRoom => throw null!;
 
         public int GetPlayerSlotIndex(Player player) => throw null!;
 
@@ -208,5 +328,13 @@ namespace MegaCrit.Sts2.Core.Runs
         public PeerInputSynchronizer InputSynchronizer => throw null!;
 
         public HoveredModelTracker HoveredModelTracker => throw null!;
+
+        public ActionExecutor ActionExecutor => throw null!;
+
+        public ActionQueueSet ActionQueueSet => throw null!;
+
+        public ActionQueueSynchronizer ActionQueueSynchronizer => throw null!;
+
+        public RunState? DebugOnlyGetState() => throw null!;
     }
 }

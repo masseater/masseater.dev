@@ -11,7 +11,7 @@
   "permissions": {
     "deny": ["Bash(pnpm *)", "Bash(pnpx *)", "Bash(pn *)", "Bash(pnx *)"]
   },
-  "enabledMcpjsonServers": ["fallow"],
+  "enabledMcpjsonServers": ["fallow", "sts2"],
   "extraKnownMarketplaces": {
     "cc-jev-teacher": {
       "source": {

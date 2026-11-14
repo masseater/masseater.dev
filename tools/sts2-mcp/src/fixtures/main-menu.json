@@ -1,0 +1,10 @@
+{
+  "bridge": { "version": "0.1.0", "gameVersion": "v0.107.1", "clientId": null, "port": 47100 },
+  "frame": 0,
+  "busy": false,
+  "scene": "NMainMenu",
+  "overlays": [],
+  "run": null,
+  "combat": null,
+  "controls": []
+}
