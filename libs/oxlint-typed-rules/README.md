@@ -26,7 +26,7 @@ ESLint を入れずに、型情報を使うルールを oxlint だけで回せ�
 計測は 2026-11-03 に、次の条件で行った。
 
 - 対象は [masseater.dev][masseater-dev] の `apps/portfolio/src`（238 ファイル）と、
-  personal-space の `apps/slides/src`（1,434 ファイル、5.2 万行）である
+  持ち主の非公開のリポジトリにあるスライドの React アプリ（1,434 ファイル、5.2 万行）である
 - oxlint の側は oxlint 1.90.0、oxlint-tsgolint 7.0.2005、TypeScript 7.1.0-beta で測った
 - ESLint の側は ESLint 9.39.5、typescript-eslint 8.72.1（`projectService`）で測った
 - `@tanstack/eslint-plugin-start` 0.1.0 が ESLint 10 に対応していないので、ESLint は 9 にした。
@@ -51,7 +51,7 @@ masseater.dev の `apps/portfolio/src` の結果は次のとおりである。
 | 3 ルール・このパッケージと tsgolint  | 2.84 秒 | 2.59 秒 | 1,449 MB |
 | 3 ルール・ESLint                     | 7.53 秒 | 6.64 秒 | 1,416 MB |
 
-personal-space の `apps/slides/src` の結果は次のとおりである。
+スライドの React アプリの結果は次のとおりである。
 
 | ルールとツール                       |     cold |     warm |   メモリ |
 | ------------------------------------ | -------: | -------: | -------: |
