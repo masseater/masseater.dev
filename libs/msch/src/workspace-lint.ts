@@ -54,7 +54,9 @@ interface WorkspaceSettings {
   readonly overrides: readonly OxlintOverride[];
 }
 
-interface WorkspaceLint extends WorkspaceSettings {
+interface WorkspaceLint {
+  readonly ignorePatterns: readonly string[];
+  readonly overrides: readonly OxlintOverride[];
   readonly shadcnUi: readonly string[];
 }
 
@@ -198,4 +200,4 @@ const workspaceLint = (
   );
 
 export { workspaceLint };
-export type { RuleSets, WorkspaceLint };
+export type { RuleSet, RuleSets, WorkspaceLint };

@@ -142,4 +142,4 @@ const nestedValues =
   };
 
 export { literalOf, nestedValues };
-export type { Literal };
+export type { Literal, LiteralObject };
