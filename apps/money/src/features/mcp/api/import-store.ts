@@ -88,4 +88,5 @@ const deleteImport = Effect.fn("deleteImport")(function* deleteImport(importId: 
   return { deleted: deletedRows.length };
 });
 
+/** @internal */
 export { deleteImport, importEntries };

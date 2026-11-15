@@ -55,4 +55,5 @@ const lengthOf = (values: readonly unknown[]): number => values.length;
 
 /** @internal */
 export { lengthOf, registerAll, tool };
+/** @internal */
 export type { Annotations, Register, Tool };
