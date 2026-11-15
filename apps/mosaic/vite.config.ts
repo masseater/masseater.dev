@@ -29,17 +29,11 @@ export default defineConfig({
     tasks: {
       ...alchemyTasks,
       build: { command: "vp build && node bin/write-asset-headers.ts", cache: false },
-      "mosaic-plan": { command: "node bin/plan.ts", cache: false },
-      "mosaic-superseded": { command: "node bin/superseded.ts", cache: false },
-      "mosaic-character": {
-        command: ["cargo build --release --locked -p mosaic", "node bin/character.ts"],
-        cache: false,
-      },
-      "mosaic-finish": { command: "node bin/finish.ts", cache: false },
-      "deploy:mosaic-site": {
+      "deploy:production": {
         command: ["node bin/live.ts", "alchemy deploy --stage production --yes"],
         cache: false,
       },
+      "daily:after": { command: [], dependsOn: ["deploy:production"] },
       "deploy:mosaic-files": { command: "alchemy deploy alchemy.files.ts --yes", cache: false },
     },
   },

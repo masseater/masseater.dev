@@ -1,5 +1,5 @@
-import { Array as Arr, Match, Option, Result, String as Str, pipe } from "effect";
-import { parse } from "papaparse";
+import { Array as Arr, Effect, Match, Option, Result, Stream, String as Str, pipe } from "effect";
+import { Csv } from "effect/encoding";
 
 import { indexesOf } from "#/entities/ledger";
 import type { AmountIndexes, Columns, Indexes, Lookup } from "#/entities/ledger";
@@ -139,9 +139,18 @@ const skippedLines = (
     Arr.map(([{ line }]) => line),
   );
 
+const recordsOf = (csv: string): Result.Result<readonly Cells[], string> =>
+  Stream.make(csv).pipe(
+    Stream.pipeThroughChannel(Csv.decodeString()),
+    Stream.runCollect,
+    Effect.result,
+    Effect.runSync,
+    Result.mapError(({ line, message }) => `${line} 行目の CSV を読めません: ${message}`),
+  );
+
 export const parseCsv = ({ csv, headerRow, columns }: CsvLayout): Result.Result<Parsed, string> =>
   Result.gen(function* parsed() {
-    const { data } = parse<string[]>(csv, { skipEmptyLines: false });
+    const data = yield* recordsOf(csv);
     const header = yield* Result.fromOption(
       Arr.get(data, headerRow - FIRST_LINE),
       () => `${headerRow} 行目に見出しがありません`,

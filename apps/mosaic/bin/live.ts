@@ -7,10 +7,9 @@ import { HttpClient, HttpClientResponse } from "effect/http";
 
 import { BASE_PATH } from "#base-path";
 
-import { PUBLISHED, inRepository } from "./lib/repository.ts";
-
 const ORIGIN = `https://masseater.dev${BASE_PATH}`;
 const RETRIES = 3;
+const PUBLISHED = "../public";
 
 const Manifest = Schema.fromJsonString(Schema.Struct({ candidates: Schema.String }));
 
@@ -30,7 +29,7 @@ const retried = (
 const published = Effect.fn("published")(function* published(file: string, text: string) {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const root = yield* inRepository(PUBLISHED);
+  const root = path.resolve(import.meta.dirname, PUBLISHED);
   const target = path.join(root, file);
   yield* fs.makeDirectory(path.dirname(target), { recursive: true });
   yield* fs.writeFileString(target, text);

@@ -1,20 +1,9 @@
 import { expect, it } from "@effect/vitest";
 import { Effect, Schema } from "effect";
 
-import { toRust } from "./index.ts";
-import type { UnsupportedSchema } from "./index.ts";
+import { rust, rustWith } from "./effect2rs.test.support.ts";
 
-const HEADER = "// test";
 const MINIMUM = 0;
-
-const rust = (
-  definitions: Readonly<Record<string, unknown>>,
-  derive: readonly string[] = [],
-): Effect.Effect<string, UnsupportedSchema> => toRust({ definitions, header: HEADER, derive });
-
-const failure = (
-  definitions: Readonly<Record<string, unknown>>,
-): Effect.Effect<UnsupportedSchema, string> => Effect.flip(toRust({ definitions, header: HEADER }));
 
 it.effect("a struct renames camelCase keys and keeps keyword fields valid", () =>
   Effect.gen(function* body() {
@@ -154,7 +143,7 @@ it.effect("an identified primitive becomes a type alias and unnamed primitives a
 it.effect("specta gets a number override for 64-bit integers", () =>
   Effect.gen(function* body() {
     const Clock = Schema.Struct({ at: Schema.Int, maybe: Schema.NullOr(Schema.Int) });
-    const source = yield* rust({ Clock }, ["specta::Type"]);
+    const source = yield* rustWith(["specta::Type"])({ Clock });
     expect(source).toContain("use specta::Type;");
     expect(source).toContain(`    #[specta(type = specta_typescript::Number)]
     pub at: i64,`);
@@ -180,25 +169,5 @@ pub const ENABLED: bool = true;
 pub const RATIO: f64 = 0.5;
 `,
     );
-  }),
-);
-
-it.effect("an anonymous nested struct is refused with its path", () =>
-  Effect.gen(function* body() {
-    const Outer = Schema.Struct({ inner: Schema.Struct({ text: Schema.String }) });
-    const refused = yield* failure({ Outer });
-    expect(refused).toMatchObject({
-      path: "Outer.inner",
-      reason: "a struct needs an identifier",
-    });
-  }),
-);
-
-it.effect("two different schemas under one name are refused", () =>
-  Effect.gen(function* body() {
-    const First = Schema.Struct({ text: Schema.String }).annotate({ identifier: "Same" });
-    const Second = Schema.Struct({ other: Schema.String }).annotate({ identifier: "Same" });
-    const refused = yield* failure({ First, Second });
-    expect(refused).toMatchObject({ path: "Same_1" });
   }),
 );

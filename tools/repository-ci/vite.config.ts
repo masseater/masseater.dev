@@ -8,7 +8,8 @@ export default defineConfig({
       "deploy-stacks": { command: "node bin/deploy-stacks.ts", cache: false },
       "record-deployment": { command: "node bin/record-deployment.ts", cache: false },
       "release-components": { command: "node bin/release-components.ts", cache: false },
-      "zenn-publish": { command: "node bin/zenn-publish.ts", cache: false },
+      "task-packages": { command: "node bin/task-packages.ts", cache: false },
+      "deploy:github": { command: "node bin/zenn-publish.ts", cache: false },
     },
   },
 });
