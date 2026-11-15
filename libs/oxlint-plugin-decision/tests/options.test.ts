@@ -2,6 +2,7 @@ import { layer } from "@effect/vitest";
 import { deepStrictEqual, strictEqual, throws } from "@effect/vitest/utils";
 import { Effect, Layer, Array as Arr, pipe } from "effect";
 
+import { cloudflare } from "#src/cloudflare.ts";
 import { REPORT_LOC, snippetNodeFor } from "#src/nodes.ts";
 import { openRouter } from "#src/openrouter.ts";
 import { resolveOptions } from "#src/options.ts";
@@ -18,7 +19,7 @@ const START = 0;
 const TIMEOUT_MS = 5;
 
 const rule: DecisionRule = { id: "a", target: "call", question: "Is it bad?", cutoff: 0.8 };
-const providers = { openrouter: openRouter };
+const providers = { cloudflare, openrouter: openRouter };
 
 const noSettings = { options: {} };
 
@@ -37,7 +38,7 @@ const resolvesDefaults = Effect.sync(() => {
     ),
     [
       {
-        models: [{ id: "openrouter/~typesafe/jev-latest", model: "~typesafe/jev-latest" }],
+        models: [{ id: "cloudflare/@cf/qwen/qwen3.8-27b", model: "@cf/qwen/qwen3.8-27b" }],
         answer: { kind: "boolean" },
       },
     ],

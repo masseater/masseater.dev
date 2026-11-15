@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-origin="https://twilog.masseater.dev"
+origin="https://money.masseater.dev"
 
 status() {
   curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$@"

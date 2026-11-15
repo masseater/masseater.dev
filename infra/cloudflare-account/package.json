@@ -2,14 +2,16 @@
   "name": "@masseater.dev/cloudflare-account",
   "version": "0.0.0",
   "private": true,
+  "bin": {
+    "access-check": "./access-check.ts"
+  },
   "type": "module",
   "exports": {
+    "./account": "./account.ts",
     "./auth-site": "./auth-site.ts",
     "./edge-guard": "./edge-guard.ts",
-    "./log-archive": "./log-archive.ts",
     "./trace-destination": "./trace-destination.ts",
     "./traced-providers": "./traced-providers.ts",
-    "./account-readers": "./account-readers.ts",
     "./owner-access": "./owner-access.ts",
     "./owner-site-run": "./owner-site-run.ts",
     "./run-tasks": "./run-tasks.ts"
@@ -17,6 +19,7 @@
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@distilled.cloud/cloudflare": "catalog:stack",
+    "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/owner-stack": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "alchemy": "catalog:stack",

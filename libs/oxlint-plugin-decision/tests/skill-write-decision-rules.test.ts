@@ -29,7 +29,8 @@ const pluginSource = (
 ): string => `import { createDecisionPlugin, defineDecisionRule } from ${toJson(dist)};
 
 export default createDecisionPlugin({
-  name: "team",${setupExtra}
+  name: "team",
+  model: "openrouter/~typesafe/jev-latest",${setupExtra}
   rules: [
     defineDecisionRule({
       id: "no-pii-in-logs",

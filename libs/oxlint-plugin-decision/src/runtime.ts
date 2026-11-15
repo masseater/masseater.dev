@@ -79,4 +79,16 @@ const messageOf = (error: unknown): string => {
   return String(error);
 };
 
-export { envNameOf, envOf, failsInCi, messageOf, nowMs, runOrElse, toJson, warnOnce };
+const captured: {
+  (name: string): (match: Option.Option<RegExpMatchArray>) => Option.Option<string>;
+  (match: Option.Option<RegExpMatchArray>, name: string): Option.Option<string>;
+} = Fn.dual(
+  DATA_FIRST_ARITY,
+  (match: Option.Option<RegExpMatchArray>, name: string): Option.Option<string> =>
+    match.pipe(
+      Option.flatMap((found) => Option.fromNullishOr(found.groups)),
+      Option.flatMap((groups) => Option.fromNullishOr(groups[name])),
+    ),
+);
+
+export { captured, envNameOf, envOf, failsInCi, messageOf, nowMs, runOrElse, toJson, warnOnce };
