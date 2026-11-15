@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { embedUrl, watchUrl } from "#/entities/catalog";
+import { embedUrl, watchUrl } from "#/entities/video";
 import { Button } from "#/shared/ui/button";
 
 const OPEN = "元動画を開く ↗";

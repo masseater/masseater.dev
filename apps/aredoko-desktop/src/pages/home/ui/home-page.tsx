@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
-import { DropZone } from "./drop-zone.tsx";
+import { DropZone } from "#/features/library";
+
 import { HomeBody } from "./home-body.tsx";
 import { SearchBar } from "./search-bar.tsx";
 

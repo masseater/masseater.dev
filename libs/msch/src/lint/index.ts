@@ -10,4 +10,5 @@ export {
   requiredStack,
   restrictedImports,
 } from "./lint.config.ts";
+export { fsdRules } from "./fsd-rules.ts";
 export { readonlyParameterAllow } from "./readonly-types.config.ts";

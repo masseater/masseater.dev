@@ -1,4 +1,4 @@
-import type { Panel } from "#/pages/interview/model/hooks";
+import type { Panel } from "#/entities/interview";
 
 type PanelLabel = Readonly<{ id: Panel; label: string }>;
 

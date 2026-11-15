@@ -1,9 +1,9 @@
 import { Effect, Array as Arr, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { zipOf } from "./__tests__/archive.ts";
-import { INJECTION, fakeJudge, foundIn, outcomeIn } from "./__tests__/fake-judge.ts";
+import { zipOf } from "./archive.test.support.ts";
 import { detect } from "./detect.ts";
+import { INJECTION, fakeJudge, foundIn, outcomeIn } from "./fake-judge.test.support.ts";
 import { InjectionJudge } from "./judge.ts";
 import { outcomeOf } from "./outcome.ts";
 import type { Document } from "./parser.ts";

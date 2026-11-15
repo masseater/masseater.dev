@@ -26,8 +26,8 @@ const runFixture = (
   Effect.gen(function* fixtureRun() {
     const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
     const handle = yield* spawner.spawn(
-      ChildProcess.make("vp", ["test", "run", "--root", "src/semconv-fixture", "-t", fixture], {
-        cwd: `${import.meta.dirname}/..`,
+      ChildProcess.make("vp", ["test", "run", "--root", "./semconv-fixture", "-t", fixture], {
+        cwd: import.meta.dirname,
       }),
     );
     const output = yield* handle.all.pipe(Stream.decodeText, Stream.mkString);

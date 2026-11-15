@@ -2,13 +2,12 @@ import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 import type { Track } from "rpp-kit";
 
-import { lane } from "#/pages/demo/model/content";
-import { fillOf } from "#/pages/demo/model/format";
-import { song } from "#/pages/demo/model/song";
+import { fillOf, song } from "#/entities/song";
+import { TimeCursor } from "#/features/playback";
+import { lane } from "#/shared/config";
 
 import { LaneLabel } from "./lane-label";
 import { NoteRects } from "./note-rects";
-import { TimeCursor } from "./time-cursor";
 
 const HEIGHT = 40;
 

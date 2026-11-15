@@ -1,7 +1,7 @@
 import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-import { useWrapUp } from "#/pages/interview/model/hooks";
+import { useWrapUp } from "#/pages/interview/model/session-hooks";
 
 const LABEL = "切り上げる";
 

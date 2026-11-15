@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { SongLink } from "#/entities/catalog";
+import { SongLink } from "#/entities/song";
 
 type SongRef = Readonly<{ id: number; title: string }>;
 

@@ -1,9 +1,9 @@
 import { Effect, String as Str, Array as Arr, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { ENGLISH_MARK, foundIn } from "./__tests__/fake-judge.ts";
-import { SCANNED_PDF, SCANNED_PNG } from "./__tests__/scans.ts";
+import { ENGLISH_MARK, foundIn } from "./fake-judge.test.support.ts";
 import { readersWith } from "./readers.ts";
+import { SCANNED_PDF, SCANNED_PNG } from "./scans.test.support.ts";
 
 const OCR_TIMEOUT = 120_000;
 

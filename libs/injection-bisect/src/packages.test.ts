@@ -2,8 +2,8 @@ import { Effect, Array as Arr, String as Str, pipe } from "effect";
 import { createTar } from "nanotar";
 import { expect, test } from "vite-plus/test";
 
-import { gzipOf, zipOf } from "./__tests__/archive.ts";
-import { INJECTION, INJECTION_MARK, foundIn } from "./__tests__/fake-judge.ts";
+import { gzipOf, zipOf } from "./archive.test.support.ts";
+import { INJECTION, INJECTION_MARK, foundIn } from "./fake-judge.test.support.ts";
 
 const encoder = new TextEncoder();
 

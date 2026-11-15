@@ -1,9 +1,9 @@
 import { Array as Arr, Effect, Option } from "effect";
 
-import { keywordOf } from "./db.server";
-import { listPeople } from "./people.server";
-import { listSongs } from "./songs.server";
-import { listVideos } from "./videos.server";
+import { listPeople } from "#/entities/person/@x/catalog";
+import { listSongs } from "#/entities/song/@x/catalog";
+import { listVideos } from "#/entities/video/@x/catalog";
+import { keywordOf } from "#/shared/db/index.server";
 
 const SEARCH_LIMIT = 20;
 
