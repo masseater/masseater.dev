@@ -3,4 +3,4 @@ export type { DeclarationLocation, LibraryShape, LibraryVocabulary } from "./mod
 export { nearestManifestDirectory, projectInputs } from "./model/inputs.ts";
 export type { ProjectInputs } from "./model/inputs.ts";
 export { listConfigFiles, mentions, typeScriptCompiler, withProject } from "./model/project.ts";
-export type { Project, Workspace } from "./model/project.ts";
+export type { Project, SourceCheck, Workspace } from "./model/project.ts";

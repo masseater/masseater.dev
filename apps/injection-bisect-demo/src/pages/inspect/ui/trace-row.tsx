@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { NO_FOCUS, useSetFocus, formatPercent } from "#/entities/inspection";
+import { NO_FOCUS, useSetFocus, PERCENT } from "#/entities/inspection";
 import type { Answer, Row } from "#/entities/inspection";
 
 import { ProbeBar } from "./probe-bar";
@@ -12,7 +12,7 @@ const DEEPEST = DEPTH_INDENT.length - DEPTH_INDENT.indexOf("pl-3");
 
 const probabilityOf = (answer: Answer): string => {
   if (answer.status === "answered") {
-    return formatPercent(answer.probability);
+    return PERCENT.format(answer.probability);
   }
   return "…";
 };

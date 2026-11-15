@@ -3,7 +3,7 @@ import { Array as Arr, pipe } from "effect";
 import { finding } from "./fingerprint.ts";
 import type { Finding, Scene } from "./fingerprint.ts";
 import type { AccessApp, AccessPolicy, Inventory } from "./inventory.ts";
-import { accessApps, isCovered, routeHost } from "./surface.ts";
+import { accessApps, hostOf, isCovered } from "./surface.ts";
 
 const ALLOWING_DECISIONS: readonly string[] = ["allow"];
 const RESTRICTING_DECISIONS: readonly string[] = ["deny"];
@@ -18,7 +18,7 @@ const isServed =
     ) ||
     pipe(
       inventory.routes,
-      Arr.some((route) => routeHost(route.pattern) === host),
+      Arr.some((route) => hostOf(route.pattern) === host),
     ) ||
     pipe(
       inventory.records,

@@ -2,7 +2,7 @@ import { Array as Arr, Match, Option, String as Str, Record as Rec, pipe, Order 
 import { Parser as YamlParser, isCollection, parseDocument } from "yaml";
 
 import type { Parser, Span, Unit } from "./parser.ts";
-import { looksLikeProse } from "./prose.ts";
+import { PROSE } from "./prose.ts";
 
 const ENTRIES = 2;
 
@@ -96,7 +96,7 @@ const yamlUnitsOf = (text: string): readonly Unit[] => {
   const spans = pipe(
     [...new YamlParser().parse(text)],
     Arr.flatMap((token) => spansIn(text, token)),
-    Arr.filter(({ start, end }) => looksLikeProse(Str.slice(start, end)(text))),
+    Arr.filter(({ start, end }) => PROSE.test(Str.slice(start, end)(text))),
   );
   return pipe(
     Arr.sort(spans, byStart),
