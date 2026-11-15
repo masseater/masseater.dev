@@ -38,3 +38,4 @@ jobs:
         uses: $/.github/actions/setup
         with:
           native: "false"
+          cache: "false"
