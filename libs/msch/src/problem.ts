@@ -21,6 +21,7 @@ const RuleNameSchema = Schema.Literals([
   "stack-dependency",
   "install-size",
   "unverified-crate",
+  "hidden-verify",
   "root-workspace-path",
 ]);
 

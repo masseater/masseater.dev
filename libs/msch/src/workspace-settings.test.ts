@@ -62,12 +62,30 @@ export default defineConfig(({ mode }) => ({
       shadcnUi: ["apps/web/src/shared/ui/**"],
     },
     testProjects: ["apps/web"],
+    tasks: { verify: [], builtExports: [] },
     devDependencies: {
       "apps/web: spans are sent from the SDK in tests": {
         workspaces: ["apps/web"],
         dependencies: ["@opentelemetry/sdk-trace-base", "miniflare"],
       },
     },
+  });
+});
+
+const BUILD = `export default { run: { tasks: { build: { command: "vp pack", cache: false } } } };\n`;
+
+const readsTasks = Effect.gen(function* readsTasks() {
+  const settings = yield* settingsOf({
+    "libs/own/package.json": `{ "name": "own" }`,
+    "libs/own/vite.config.ts": `export default { run: { tasks: { verify: { command: [], dependsOn: ["lint"] } } } };\n`,
+    "libs/built/package.json": `{ "name": "@scope/built", "exports": { ".": { "types": "./dist/index.d.mts", "default": "./dist/index.mjs" } } }`,
+    "libs/built/vite.config.ts": BUILD,
+    "libs/source/package.json": `{ "name": "source", "exports": { ".": "./src/index.ts" } }`,
+    "libs/source/vite.config.ts": BUILD,
+  });
+  expect(settings.tasks).toStrictEqual({
+    verify: ["own#verify"],
+    builtExports: ["@scope/built#build"],
   });
 });
 
@@ -93,8 +111,12 @@ const rejectsUnknownSets = Effect.gen(function* rejectsUnknownSets() {
 
 layer(fixtureLayer)("workspace settings", (it) => {
   it.effect(
-    "reads msch settings of each workspace without running it, roots its patterns and leaves out workspaces that test themselves",
+    "reads msch settings and tasks of each workspace without running it, roots its patterns and leaves out workspaces that test themselves",
     () => readsLiteralSettings,
+  );
+  it.effect(
+    "names the verify task of each workspace and the build of each workspace that exports dist",
+    () => readsTasks,
   );
   it.effect("rejects msch settings that need the file to run", () => rejectsRunningCode);
   it.effect("rejects a set the root does not define", () => rejectsUnknownSets);
