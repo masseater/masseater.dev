@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: Package directory under libs/ that has an npm:publish task
+        description: Package directory under libs/
         required: true
         type: string
       ref:
@@ -41,7 +41,7 @@ jobs:
           node-version: 26
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
-      - run: vp run npm:publish
+      - run: node ../../tools/npm-publish/src/main.ts
 
   ci-telemetry:
     needs: [publish]

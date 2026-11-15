@@ -49,11 +49,6 @@ export default defineConfig({
   run: {
     tasks: {
       test: "vp test run",
-      "npm:publish": {
-        command: "node ../../tools/npm-publish/src/main.ts",
-        dependsOn: ["test", "build"],
-        cache: false,
-      },
       verify: { command: [], dependsOn: ["build"] },
       build: "vp pack",
     },

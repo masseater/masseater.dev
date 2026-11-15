@@ -7,6 +7,7 @@ import {
   FileSystem,
   Option,
   Path,
+  Predicate,
   Redacted,
   Schema,
   pipe,
@@ -26,7 +27,11 @@ class PublishFailed extends taggedError<PublishFailed, { readonly brand: unique 
   { message: Schema.String },
 ) {}
 
-const Manifest = Schema.Struct({ name: Schema.String, version: Schema.String });
+const Manifest = Schema.Struct({
+  name: Schema.String,
+  version: Schema.String,
+  "size-limit": Schema.optional(Schema.Unknown),
+});
 const IdToken = Schema.Struct({ value: Schema.String });
 const Grants = Schema.Struct({ npmToken: Schema.optional(Schema.String) });
 
@@ -115,12 +120,22 @@ const pack = Effect.fn("pack")(function* pack() {
   return tarball;
 });
 
+const check = Effect.fn("check")(function* check(hasSizeLimit: boolean) {
+  yield* runOrFail("vp", ["run", "build"]);
+  yield* runOrFail("vp", ["run", "test"]);
+  if (hasSizeLimit) {
+    yield* runOrFail("vp", ["run", "size"]);
+  }
+});
+
 const publish = Effect.fn("publish")(function* publish() {
-  const { name, version } = yield* manifestOf();
+  const manifest = yield* manifestOf();
+  const { name, version } = manifest;
   const published = yield* exitCodeOf("npm", ["view", `${name}@${version}`, "version"]);
   if (published === SUCCESS) {
     return yield* Console.log(`${name}@${version} is already published, skipping`);
   }
+  yield* check(Predicate.isNotUndefined(manifest["size-limit"]));
   const tarball = yield* pack();
   const token = yield* npmToken();
   const env = Option.match(token, {
