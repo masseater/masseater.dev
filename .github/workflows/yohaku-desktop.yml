@@ -13,10 +13,6 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: yohaku-desktop
-  cancel-in-progress: false
-
 env:
   CARGO_TERM_COLOR: always
   GIT_CONFIG_COUNT: 1
@@ -54,6 +50,9 @@ jobs:
             platform: macos-arm64
             bundles: app,dmg
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: yohaku-installer-${{ matrix.platform }}
+      cancel-in-progress: true
     environment: yohaku-release
     permissions:
       contents: read

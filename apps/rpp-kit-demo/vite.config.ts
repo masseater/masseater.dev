@@ -1,4 +1,4 @@
-import { alchemyTasks } from "@masseater.dev/cloudflare-account/run-tasks";
+import { alchemyTasks, deployTo } from "@masseater.dev/cloudflare-account/run-tasks";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -12,6 +12,7 @@ export default defineConfig({
   run: {
     tasks: {
       ...alchemyTasks,
+      "deploy:production": deployTo("production"),
       verify: { command: [], dependsOn: ["typecheck"] },
       typecheck: "tsc --runExternalCode",
     },

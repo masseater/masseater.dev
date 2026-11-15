@@ -10,6 +10,8 @@ export const commands = {
 	openManuscript: (id: string) => typedError<Opened_Serialize, Failure>(__TAURI_INVOKE("open_manuscript", { id })),
 	saveParagraphs: (id: string, paragraphs: Paragraph[]) => typedError<null, Failure>(__TAURI_INVOKE("save_paragraphs", { id, paragraphs })),
 	exportManuscript: (id: string) => typedError<boolean, Failure>(__TAURI_INVOKE("export_manuscript", { id })),
+	listRevisions: (id: string) => typedError<Revision[], Failure>(__TAURI_INVOKE("list_revisions", { id })),
+	restoreRevision: (id: string, revision: string) => typedError<null, Failure>(__TAURI_INVOKE("restore_revision", { id, revision })),
 	setTitle: (id: string, text: string) => typedError<Manuscript_Serialize, Failure>(__TAURI_INVOKE("set_title", { id, text })),
 	getAnnotations: (id: string) => typedError<Annotations_Serialize, Failure>(__TAURI_INVOKE("get_annotations", { id })),
 	draftFromMemo: (id: string, paragraphId: string, onText: Channel<string>) => typedError<null, Failure>(__TAURI_INVOKE("draft_from_memo", { id, paragraphId, onText })),
@@ -133,6 +135,13 @@ export type Remark = {
 	to: number,
 	rule: string,
 	message: string,
+};
+
+export type Revision = {
+	id: string,
+	savedAt: number,
+	excerpt: string,
+	characters: number,
 };
 
 export type SignIn = {
