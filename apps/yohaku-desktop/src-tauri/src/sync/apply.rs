@@ -4,11 +4,11 @@ use crate::failure::{Failure, Outcome};
 use crate::store::manuscripts::insert_paragraphs;
 use crate::store::sources::insert_facts;
 
-use super::documents::{DocumentKind, ManuscriptBody, SourceBody, StoredDocument, SyncDocument};
+use crate::protocol::{DocumentKind, ManuscriptBody, SourceBody, StoredDocument};
 
 fn pending_since(
     connection: &Connection,
-    document: &SyncDocument,
+    document: &StoredDocument,
 ) -> rusqlite::Result<Option<i64>> {
     connection
         .query_row(
@@ -19,7 +19,7 @@ fn pending_since(
         .optional()
 }
 
-fn apply_manuscript(transaction: &Transaction<'_>, document: &SyncDocument) -> Outcome<()> {
+fn apply_manuscript(transaction: &Transaction<'_>, document: &StoredDocument) -> Outcome<()> {
     if document.deleted {
         transaction.execute(
             "delete from manuscripts where id = ?1",
@@ -45,7 +45,7 @@ fn apply_manuscript(transaction: &Transaction<'_>, document: &SyncDocument) -> O
     Ok(())
 }
 
-fn apply_source(transaction: &Transaction<'_>, document: &SyncDocument) -> Outcome<()> {
+fn apply_source(transaction: &Transaction<'_>, document: &StoredDocument) -> Outcome<()> {
     transaction.execute("delete from sources where id = ?1", params![document.id])?;
     if document.deleted {
         return Ok(());
@@ -67,7 +67,7 @@ fn apply_source(transaction: &Transaction<'_>, document: &SyncDocument) -> Outco
     Ok(())
 }
 
-fn apply_one(transaction: &Transaction<'_>, document: &SyncDocument) -> Outcome<()> {
+fn apply_one(transaction: &Transaction<'_>, document: &StoredDocument) -> Outcome<()> {
     let newer_here = pending_since(transaction, document)?
         .is_some_and(|changed_at| changed_at >= document.updated_at);
     if newer_here {
@@ -84,14 +84,14 @@ pub fn apply_remote(connection: &mut Connection, documents: &[StoredDocument]) -
     transaction.execute("insert into sync_applying (flag) values (1)", [])?;
     let ordered = documents
         .iter()
-        .filter(|stored| stored.document.kind == DocumentKind::Manuscript)
+        .filter(|stored| stored.kind == DocumentKind::Manuscript)
         .chain(
             documents
                 .iter()
-                .filter(|stored| stored.document.kind == DocumentKind::Source),
+                .filter(|stored| stored.kind == DocumentKind::Source),
         );
     for stored in ordered {
-        apply_one(&transaction, &stored.document)?;
+        apply_one(&transaction, stored)?;
     }
     transaction.execute("delete from sync_applying", [])?;
     transaction.commit().map_err(Failure::from)
@@ -99,9 +99,8 @@ pub fn apply_remote(connection: &mut Connection, documents: &[StoredDocument]) -
 
 #[cfg(test)]
 mod tests {
-    use crate::model::Paragraph;
+    use crate::protocol::{DocumentKind, ManuscriptBody, Paragraph, StoredDocument};
     use crate::store::{Store, manuscripts};
-    use crate::sync::documents::{DocumentKind, ManuscriptBody, StoredDocument, SyncDocument};
     use crate::sync::outbox::{mark_pushed, pending_count, pending_documents};
 
     fn remote_manuscript(id: &str, text: &str, updated_at: i64) -> StoredDocument {
@@ -114,13 +113,11 @@ mod tests {
             }],
         };
         StoredDocument {
-            document: SyncDocument {
-                kind: DocumentKind::Manuscript,
-                id: id.into(),
-                updated_at,
-                deleted: false,
-                body: serde_json::to_string(&body).expect("body"),
-            },
+            kind: DocumentKind::Manuscript,
+            id: id.into(),
+            updated_at,
+            deleted: false,
+            body: serde_json::to_string(&body).expect("body"),
             revision: 1,
         }
     }

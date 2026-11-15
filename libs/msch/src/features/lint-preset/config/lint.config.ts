@@ -211,6 +211,7 @@ export const generated = [
   "AGENTS.md",
   "skills-lock.json",
   ".github/release-please/*manifest.json",
+  "**/.release-please-manifest.json",
   "**/*.d.rpp.ts",
   "**/src-tauri/gen/**",
 ];

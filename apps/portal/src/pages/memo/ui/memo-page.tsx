@@ -12,7 +12,7 @@ export const MemoPage = (): ReactNode => {
   return pipe(
     Arr.head(memo),
     Option.match({
-      onNone: () => <p className="text-foreground/60">{MISSING}</p>,
+      onNone: () => <p className="text-muted-foreground">{MISSING}</p>,
       onSome: (found) => <MemoArticle memo={found} revisions={revisions} />,
     }),
   );

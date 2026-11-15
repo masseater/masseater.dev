@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 
 const PILL =
-  "ring-foreground/10 text-foreground/60 hover:text-foreground aria-[current=page]:ring-foreground/60 aria-[current=page]:text-foreground inline-block rounded-full px-3 py-1 ring-1 transition-colors";
+  "border-line-strong hover:bg-muted aria-[current=page]:bg-primary aria-[current=page]:border-primary aria-[current=page]:text-primary-foreground inline-flex h-8 items-center gap-1.5 rounded-full border bg-white px-3 text-sm";
 
 export const TagItem = ({
   active,

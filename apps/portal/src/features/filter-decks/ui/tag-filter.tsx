@@ -15,7 +15,7 @@ export const TagFilter = ({
   tag,
 }: Readonly<{ decks: readonly DeckValue[]; tag: Option.Option<string> }>): ReactNode => (
   <nav aria-label={TEXT.label}>
-    <ul className="font-display flex flex-wrap gap-2 text-xs tracking-widest">
+    <ul className="flex flex-wrap gap-2 text-xs">
       <TagItem active={Option.isNone(tag)} label={TEXT.all} tag={EVERY} />
       {pipe(
         tagsOf(decks),

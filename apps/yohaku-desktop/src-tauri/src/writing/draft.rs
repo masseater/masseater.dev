@@ -1,5 +1,5 @@
 use crate::failure::Outcome;
-use crate::model::Paragraph;
+use crate::protocol::Paragraph;
 use crate::store::sources::KnownFact;
 use crate::text::utf16_slice;
 

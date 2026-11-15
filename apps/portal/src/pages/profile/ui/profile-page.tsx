@@ -5,9 +5,12 @@ import { useProfile } from "#/pages/profile/api/profile-query";
 
 import { LifeSection } from "./life-section";
 import { PeopleSection } from "./people-section";
+import { ProfileColumn } from "./profile-column";
 import { TraitSection } from "./trait-section";
 
 const TEXT = {
+  recorded: "記録にあること",
+  inferred: "AI の推定",
   facts: "わたしについて",
   goals: "続けている目標",
   todos: "やること",
@@ -17,16 +20,20 @@ const TEXT = {
 export const ProfilePage = (): ReactNode => {
   const profile = useProfile();
   return (
-    <div className="flex flex-col gap-12">
-      <LifeSection items={profile.ownerFacts} title={TEXT.facts} />
-      <LifeSection items={profile.activeGoals} title={TEXT.goals} />
-      <LifeSection items={profile.openTodos} title={TEXT.todos} />
-      <LifeSection items={profile.recentMedia} title={TEXT.media} />
-      <PeopleSection people={profile.people} />
-      {pipe(
-        Rec.toEntries(profile.traits),
-        Arr.map(([kind, traits]) => <TraitSection key={kind} kind={kind} traits={traits} />),
-      )}
+    <div className="grid items-start gap-5 xl:grid-cols-2">
+      <ProfileColumn title={TEXT.recorded}>
+        <LifeSection items={profile.ownerFacts} title={TEXT.facts} />
+        <LifeSection items={profile.activeGoals} title={TEXT.goals} />
+        <LifeSection items={profile.openTodos} title={TEXT.todos} />
+        <LifeSection items={profile.recentMedia} title={TEXT.media} />
+        <PeopleSection people={profile.people} />
+      </ProfileColumn>
+      <ProfileColumn title={TEXT.inferred}>
+        {pipe(
+          Rec.toEntries(profile.traits),
+          Arr.map(([kind, traits]) => <TraitSection key={kind} kind={kind} traits={traits} />),
+        )}
+      </ProfileColumn>
     </div>
   );
 };
