@@ -1,0 +1,101 @@
+{
+  "valid": {
+    "points": [
+      {
+        "updatedAt": -1700000000000,
+        "type": "full",
+        "URL": "https://example.test/a?b=c",
+        "count": 4294967295,
+        "offset": -7,
+        "total": 9007199254,
+        "ratio": 0.25,
+        "title": "名前 \"quoted\" \\ back",
+        "note": "kept",
+        "tags": ["a", "b"],
+        "byKind": { "left": "first-kind", "right": "second-kind" },
+        "pair": ["pair", true],
+        "extra": { "nested": [1, null, "x"] },
+        "shape": { "_tag": "Label", "textValue": "hello", "level": "VERY_HIGH" },
+        "owner": "user-1",
+        "seen": 1700000000000,
+        "at": "2023-11-14T22:13:20.000Z",
+        "maybeKind": "second-kind"
+      },
+      {
+        "updatedAt": 0,
+        "type": "sparse",
+        "URL": "",
+        "count": 0,
+        "offset": 2147483647,
+        "total": 0,
+        "ratio": -0.25,
+        "title": null,
+        "byKind": {},
+        "pair": ["", false],
+        "extra": null,
+        "shape": { "_tag": "Empty" },
+        "owner": "",
+        "seen": 0,
+        "at": "2023-11-14T22:13:20.000Z",
+        "maybeKind": null
+      }
+    ],
+    "shapes": [
+      { "_tag": "Circle", "radius": 1.5 },
+      { "_tag": "Label", "textValue": "", "level": "LOW" },
+      { "_tag": "Stamped", "at": -1 },
+      { "_tag": "Empty" }
+    ],
+    "trees": [
+      {
+        "label": "root",
+        "children": [
+          { "label": "leaf", "children": [] },
+          { "label": "branch", "children": [{ "label": "deep", "children": [] }] }
+        ]
+      }
+    ],
+    "kinds": ["first-kind", "second-kind"],
+    "mixed": ["a-b", "c_d", "plain"],
+    "levels": ["LOW", "VERY_HIGH"],
+    "awkward": ["self", "Self", "1x", "with space", "ä", "crate", "type"],
+    "keys": [
+      {
+        "1st": "a",
+        "self": "b",
+        "Self": "c",
+        "with-dash": "d",
+        "über": "e",
+        "-ü": "f",
+        "_private": "g",
+        "crate": "h",
+        "type": "i",
+        "super": "j"
+      }
+    ],
+    "odd": [{ "_tag": "self" }, { "_tag": "Self", "self": "x" }]
+  },
+  "invalid": [
+    { "reason": "a negative u32", "set": { "count": -1 } },
+    { "reason": "a u32 above its range", "set": { "count": 4294967296 } },
+    { "reason": "an i32 above its range", "set": { "offset": 2147483648 } },
+    { "reason": "a fraction where an integer is expected", "set": { "updatedAt": 0.25 } },
+    { "reason": "a fraction in an aliased integer", "set": { "seen": 0.5 } },
+    { "reason": "a string where a number is expected", "set": { "ratio": "0.25" } },
+    { "reason": "an unknown literal", "set": { "maybeKind": "third-kind" } },
+    { "reason": "an unknown tag", "set": { "shape": { "_tag": "Square" } } },
+    { "reason": "a variant without its field", "set": { "shape": { "_tag": "Circle" } } },
+    {
+      "reason": "a variant with a wrong field",
+      "set": { "shape": { "_tag": "Label", "textValue": "x", "level": "MID" } }
+    },
+    { "reason": "a missing required key", "remove": "type" },
+    { "reason": "a missing union key", "remove": "shape" },
+    { "reason": "a null where null is not allowed", "set": { "URL": null } },
+    { "reason": "a tuple with an extra element", "set": { "pair": ["a", true, 1] } },
+    { "reason": "a tuple with a missing element", "set": { "pair": ["a"] } },
+    { "reason": "a list with a wrong element", "set": { "tags": [42] } },
+    { "reason": "a map with a wrong value", "set": { "byKind": { "left": "none" } } },
+    { "reason": "an optional key with a wrong value", "set": { "note": 1 } }
+  ]
+}

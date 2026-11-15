@@ -89,7 +89,7 @@ const textOf = <Err, Req>(
 
 const mschIn = Effect.fn("mschIn")(function* mschIn(root: string, args: readonly string[]) {
   const path = yield* Path.Path;
-  const cli = path.join(import.meta.dirname, "cli.ts");
+  const cli = path.join(import.meta.dirname, "..", "..", "bin", "msch.ts");
   const handle = yield* ChildProcess.make(process.execPath, [cli, ...args], {
     cwd: root,
     extendEnv: true,

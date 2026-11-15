@@ -33,6 +33,7 @@ export default defineConfig({
   run: {
     tasks: {
       ...alchemyTasks,
+      "alchemy-state-rm": { command: 'alchemy state rm --no-input "$STATE_PATH"', cache: false },
       "deploy:bootstrap": {
         command: "ALCHEMY_STAGE=prod alchemy deploy --yes",
         cache: false,
@@ -51,8 +52,8 @@ export default defineConfig({
       },
       build: "vp build && sequoia inject",
       ...d1Tasks,
-      "standard-site": { command: "vpx scripts/standard-site.ts && sequoia publish", cache: false },
-      "technique-examples": { command: "vpx scripts/technique-examples.ts", cache: false },
+      "standard-site": { command: "vpx bin/standard-site.ts && sequoia publish", cache: false },
+      "technique-examples": { command: "vpx bin/technique-examples.ts", cache: false },
     },
   },
   resolve: { tsconfigPaths: true },

@@ -27,18 +27,18 @@ export default defineConfig({
       },
       "release:linux": {
         command:
-          "node scripts/bundle.ts && node scripts/pluginval.ts && node scripts/host.ts && node scripts/clap-validator.ts && node scripts/archive.ts linux-x86_64",
+          "node bin/bundle.ts && node bin/pluginval.ts && node bin/host.ts && node bin/clap-validator.ts && node bin/archive.ts linux-x86_64",
         dependsOn: ["@masseater.dev/cargo-tools#build"],
         cache: false,
       },
       "release:windows": {
         command:
-          "node scripts/bundle.ts && node scripts/pluginval.ts && node scripts/host.ts && node scripts/archive.ts windows-x86_64",
+          "node bin/bundle.ts && node bin/pluginval.ts && node bin/host.ts && node bin/archive.ts windows-x86_64",
         cache: false,
       },
       "release:macos": {
         command:
-          "node scripts/bundle.ts && node scripts/codesign.ts && node scripts/pluginval.ts && node scripts/host.ts && node scripts/clap-validator.ts && node scripts/archive.ts macos-universal",
+          "node bin/bundle.ts && node bin/codesign.ts && node bin/pluginval.ts && node bin/host.ts && node bin/clap-validator.ts && node bin/archive.ts macos-universal",
         dependsOn: ["@masseater.dev/cargo-tools#build"],
         cache: false,
       },

@@ -7,11 +7,12 @@ import {
   typeScriptCompiler,
   withProject,
 } from "#/entities/project/index.ts";
-import type { Project, Workspace } from "#/entities/project/index.ts";
+import type { Project, SourceCheck, Workspace } from "#/entities/project/index.ts";
 import { sortProblems } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 import { analyzeProject } from "./analysis.ts";
+import type { ProjectChecks } from "./analysis.ts";
 import { analysisCache, keyOf, pruneAnalyses, readAnalysis, writeAnalysis } from "./cache.ts";
 import type { Analysis, AnalysisCache } from "./cache.ts";
 import { duplicateProblems, unownedSiteOf } from "./duplicates.ts";
@@ -44,16 +45,17 @@ const scopeOf = (project: Project, configPath: string): PackageScope => ({
 interface Context {
   readonly workspace: Workspace;
   readonly owners: readonly Owner[];
+  readonly sourceChecks: readonly SourceCheck[];
   readonly cache: AnalysisCache;
   readonly listed: readonly string[];
 }
 
 const freshAnalysis =
-  ({ workspace, owners }: Context) =>
+  ({ workspace, owners, sourceChecks }: Context) =>
   (configPath: string): Effect.Effect<Option.Option<Analysis>, never, RepositoryFiles> =>
     withProject(workspace)(configPath)((project) =>
       Effect.sync(() => {
-        const analysis = analyzeProject(owners)(project);
+        const analysis = analyzeProject({ owners, sourceChecks })(project);
         const scope = scopeOf(project, configPath);
         return {
           problems: analysis.problems,
@@ -112,7 +114,7 @@ const cacheFor = Effect.fn("cacheFor")(function* cacheFor(root: string, owners: 
 
 const analyzeProjects = Effect.fn("analyzeProjects")(function* analyzeProjects(
   workspace: Workspace,
-  owners: readonly Owner[],
+  { owners, sourceChecks }: ProjectChecks,
   configPaths: readonly string[],
 ) {
   const files = yield* RepositoryFiles;
@@ -120,7 +122,7 @@ const analyzeProjects = Effect.fn("analyzeProjects")(function* analyzeProjects(
   const listed = yield* files.listedFiles(workspace.root);
   const keyed = yield* pipe(
     configPaths,
-    Effect.forEach(analyzeConfig({ workspace, owners, cache, listed })),
+    Effect.forEach(analyzeConfig({ workspace, owners, sourceChecks, cache, listed })),
   );
   const found = Arr.getSomes(keyed);
   yield* pruneAnalyses(cache)(
@@ -137,6 +139,7 @@ const analyzeProjects = Effect.fn("analyzeProjects")(function* analyzeProjects(
 
 export const checkRepository = Effect.fn("checkRepository")(function* checkRepository(
   root: string,
+  sourceChecks: readonly SourceCheck[] = [],
 ) {
   const files = yield* RepositoryFiles;
   const compiler = yield* typeScriptCompiler;
@@ -144,7 +147,11 @@ export const checkRepository = Effect.fn("checkRepository")(function* checkRepos
   const workspace: Workspace = { compiler, root, generated };
   const configPaths = yield* listConfigFiles(root);
   const ownerScan: OwnerScan = yield* scanOwners(workspace, configPaths);
-  const analyses = yield* analyzeProjects(workspace, ownerScan.owners, configPaths);
+  const analyses = yield* analyzeProjects(
+    workspace,
+    { owners: ownerScan.owners, sourceChecks },
+    configPaths,
+  );
   const relative = (file: string): string => files.relative(root, file);
   const unowned = pipe(
     analyses,

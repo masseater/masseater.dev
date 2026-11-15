@@ -3,13 +3,15 @@ import type { InferEnv } from "@alchemy.run/cloudflare";
 import { ownerAccess } from "@masseater.dev/cloudflare-account/owner-access";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { SYNC_HOST } from "@masseater.dev/yohaku-protocol/sync";
-import { Stack } from "alchemy";
+import { RemovalPolicy, Stack } from "alchemy";
 import { Effect } from "effect";
 
 import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
 
 const worker = Effect.gen(function* worker() {
-  const DB = yield* D1.Database("Documents", { migrations: "./migrations" });
+  const DB = yield* D1.Database("Documents", { migrations: "./migrations" }).pipe(
+    RemovalPolicy.protect(),
+  );
   return yield* Workers.Worker("Sync", {
     name: `${PREFIX}worker`,
     main: "./sync.worker.ts",

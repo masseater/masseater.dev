@@ -11,8 +11,8 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: read
+      deployments: read
     concurrency:
       group: release-plan
       cancel-in-progress: true
@@ -40,8 +40,8 @@ jobs:
       matrix:
         component: ${{ fromJSON(needs.plan.outputs.components) }}
     permissions:
-      actions: write
       contents: write
+      deployments: write
       id-token: write
       pull-requests: write
     uses: $/.github/workflows/release-component.yml
@@ -57,6 +57,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ee56f90bdf77bf747e158391c0ae8a846732b988
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@7fcbe8b01560680a11fcbce97403eca0cd37da90
         with:
           github-token: ${{ github.token }}
