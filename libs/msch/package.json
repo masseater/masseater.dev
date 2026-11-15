@@ -18,23 +18,26 @@
     "directory": "libs/msch"
   },
   "bin": {
-    "msch": "./src/cli.ts"
+    "msch": "./src/app/cli.ts"
   },
   "files": [
     "dist",
-    "src/vite.d.ts"
+    "src/app/vite.d.ts"
   ],
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    "./cli": "./src/cli.ts",
-    "./decision-rules": "./src/lint/decision-rules.ts",
-    "./inline-exports": "./src/lint/inline-exports.ts",
-    "./lint": "./src/lint/index.ts",
-    "./oxlint": "./src/oxlint.ts",
+    "./cli": "./src/app/cli.ts",
+    "./decision-rules": "./src/features/lint-preset/config/decision-rules.ts",
+    "./inline-exports": "./src/features/inline-exports/index.ts",
+    "./lint": "./src/features/lint-preset/index.ts",
+    "./oxlint": "./src/app/oxlint.ts",
     "./vite": {
-      "types": "./src/vite.d.ts"
+      "types": "./src/app/vite.d.ts"
     },
-    "./workspace-settings": "./src/workspace-settings.ts",
+    "./workspace-settings": "./src/features/workspace-settings/index.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -64,7 +67,7 @@
         "default": "./dist/workspace-settings.mjs"
       },
       "./vite": {
-        "types": "./src/vite.d.ts"
+        "types": "./src/app/vite.d.ts"
       },
       "./package.json": "./package.json"
     },
