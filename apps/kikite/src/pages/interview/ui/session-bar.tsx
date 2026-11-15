@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 
+import { SaveStatus } from "#/features/save-session";
+
 import { EndButton } from "./end-button.tsx";
 import { HeaderRing } from "./header-ring.tsx";
-import { SaveStatus } from "./save-status.tsx";
 import { SessionTheme } from "./session-theme.tsx";
 
 const SessionBar = (): ReactNode => (

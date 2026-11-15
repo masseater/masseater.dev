@@ -2,7 +2,7 @@ import type { BoothItem } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, Schema, pipe } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";
 
-import { capture } from "#shared/text";
+import { capture } from "#/shared/text/index.ts";
 
 const ItemJson = Schema.Struct({
   id: Schema.Int,

@@ -1,11 +1,11 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useEntries, useInterim } from "#/pages/interview/model/hooks";
+import { useEntries, useInterim } from "#/entities/interview";
+import { useStickToBottom } from "#/shared/lib/stick-to-bottom";
 
 import { HistoryItem } from "./history-item.tsx";
 import { InterimItem } from "./interim-item.tsx";
-import { useStickToBottom } from "./stick-to-bottom.ts";
 
 const Transcript = (): ReactNode => {
   const entries = useEntries();

@@ -21,6 +21,6 @@ export {
   LIBRARY_POLL,
   PACKAGES_KEY,
   SOURCES_KEY,
-  STATUS_KEY,
+  useRefreshLibrary,
   useStatus,
 } from "./queries.ts";

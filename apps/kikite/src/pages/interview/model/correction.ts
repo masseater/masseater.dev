@@ -1,11 +1,10 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
+import { entriesAtom, heardAtom, leadsAtom, summaryAtom, summaryOf } from "#/entities/interview";
+import type { Entry, Lead } from "#/entities/interview";
 import { requestCorrection } from "#/shared/api";
+import { modify, read } from "#/shared/lib/registry";
 import type { HeardText, InterviewSummary } from "#protocol";
-
-import { entriesAtom, heardAtom, leadsAtom, summaryAtom, summaryOf } from "./atoms.ts";
-import type { Entry, Lead } from "./atoms.ts";
-import { modify, read } from "./registry.ts";
 
 const heardLine = (entry: Entry): readonly HeardText[] => {
   if (entry.kind === "speech" && entry.by === "voice") {

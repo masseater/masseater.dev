@@ -2,9 +2,9 @@ import { describe, expect, it } from "@effect/vitest";
 import { Array, Effect, Option, pipe } from "effect";
 import { page, userEvent } from "vite-plus/test/browser";
 
-import { fakeEngine } from "#/app/__tests__/fake-engine.ts";
-import { mount } from "#/app/__tests__/mount.tsx";
-import { output, source } from "#/app/__tests__/screen.ts";
+import { fakeEngine } from "./fake-engine.test.support.ts";
+import { mount } from "./mount.test.support.tsx";
+import { output, source } from "./screen.test.support.ts";
 
 describe("editing", () => {
   it.live("swaps the languages and moves the translation into the source", () =>
