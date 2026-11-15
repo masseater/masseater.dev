@@ -2923,6 +2923,9 @@ importers:
       '@distilled.cloud/github':
         specifier: 'catalog:'
         version: 1.0.0-rc.20(effect@4.1.4)
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
       '@octokit/rest':
         specifier: 'catalog:'
         version: 22.0.1

@@ -9,6 +9,7 @@ export default defineConfig({
   run: {
     tasks: {
       tokens: { command: "vpx cloudflare-tokens.ts", cache: false },
+      "github-token": { command: "node broker-github-token.ts", cache: false },
     },
   },
 });

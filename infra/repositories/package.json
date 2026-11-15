@@ -2,6 +2,9 @@
   "name": "@masseater.dev/repositories",
   "version": "0.0.0",
   "private": true,
+  "bin": {
+    "broker-github-token": "./broker-github-token.ts"
+  },
   "type": "module",
   "exports": {
     "./access-sites": "./access-sites.ts",
@@ -16,6 +19,7 @@
     "@atproto/api": "catalog:",
     "@distilled.cloud/cloudflare": "catalog:stack",
     "@distilled.cloud/github": "catalog:",
+    "@masseater.dev/node-main": "workspace:*",
     "@octokit/rest": "catalog:",
     "@peculiar/asn1-pkcs8": "catalog:",
     "@peculiar/asn1-rsa": "catalog:",
