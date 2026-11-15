@@ -1,8 +1,5 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import { requestResearch } from "#/shared/api";
-import type { InterviewSummary } from "#protocol";
-
 import {
   entriesAtom,
   heardAtom,
@@ -10,10 +7,12 @@ import {
   researchingAtom,
   summaryAtom,
   summaryOf,
-} from "./atoms.ts";
-import type { Lead } from "./atoms.ts";
-import { modify, read, write } from "./registry.ts";
-import { recentOf } from "./transcript.ts";
+  recentOf,
+} from "#/entities/interview";
+import type { Lead } from "#/entities/interview";
+import { requestResearch } from "#/shared/api";
+import { modify, read, write } from "#/shared/lib/registry";
+import type { InterviewSummary } from "#protocol";
 
 const KEPT_LEADS = 12;
 

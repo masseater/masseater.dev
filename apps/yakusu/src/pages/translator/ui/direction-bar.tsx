@@ -1,9 +1,8 @@
 import type { ReactNode } from "react";
 
-import { useDirection } from "#/pages/translator/api/translation.ts";
-
-import { LanguageBar } from "./language-bar.tsx";
-import { SwapButton } from "./swap-button.tsx";
+import { useDirection } from "#/entities/translation";
+import { LanguageBar } from "#/features/pick-language";
+import { SwapButton } from "#/features/swap-languages";
 
 const DirectionBar = (): ReactNode => {
   const { detected, target } = useDirection();

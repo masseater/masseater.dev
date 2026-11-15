@@ -2,12 +2,12 @@ import { NodeServices } from "@effect/platform-node";
 import { Array, Effect, FileSystem, Layer, Option, Path, Ref, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { databaseLayer } from "#shared/database";
-import { Embedder } from "#shared/embedding";
-import { Settings } from "#shared/settings";
-import { decodeRows, firstId } from "#shared/sql";
-import { writePackage } from "#shared/unitypackage";
-import type { LooseFile } from "#shared/unitypackage";
+import { databaseLayer } from "#/shared/database/index.ts";
+import { Embedder } from "#/shared/embedding/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
+import { decodeRows, firstId } from "#/shared/sql/index.ts";
+import { writePackage } from "#/shared/unitypackage/index.ts";
+import type { LooseFile } from "#/shared/unitypackage/index.ts";
 
 const VECTOR_DIMENSIONS = 768;
 const UNIT = 1;

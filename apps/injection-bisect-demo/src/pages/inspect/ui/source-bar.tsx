@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { ExampleList } from "./example-list";
-import { FormatField } from "./format-field";
-import { OpenFile } from "./open-file";
+import { FormatField } from "#/features/configure-run";
+import { OpenFile } from "#/features/open-file";
+import { ExampleList } from "#/features/pick-example";
 
 const SourceBar = (): ReactNode => (
   <div className="flex flex-wrap gap-2">

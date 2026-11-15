@@ -3,7 +3,7 @@ import { followColorScheme } from "@masseater.dev/ui/color-scheme";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { InterviewPage } from "#/pages/interview";
+import { Screen } from "./screen.tsx";
 
 followColorScheme();
 
@@ -13,7 +13,7 @@ if (root !== null) {
   createRoot(root).render(
     <StrictMode>
       <RegistryProvider>
-        <InterviewPage />
+        <Screen />
       </RegistryProvider>
     </StrictMode>,
   );

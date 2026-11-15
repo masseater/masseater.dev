@@ -1,7 +1,7 @@
 import { expect, layer } from "@effect/vitest";
 import { Array, Effect, FileSystem, Path, pipe } from "effect";
 
-import type { LooseFile } from "#shared/unitypackage";
+import type { LooseFile } from "#/shared/unitypackage/index.ts";
 
 import { readModel, readModelPart } from "./read-model.ts";
 import { putRender } from "./render-jobs.ts";

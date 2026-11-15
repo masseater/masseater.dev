@@ -1,10 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { fillOf, percentOf } from "#/pages/demo/model/format";
-import { song } from "#/pages/demo/model/song";
-
-import { Playhead } from "./playhead";
+import { fillOf, percentOf, song } from "#/entities/song";
+import { Playhead } from "#/features/playback";
 
 const LABEL_OFFSET = 4;
 

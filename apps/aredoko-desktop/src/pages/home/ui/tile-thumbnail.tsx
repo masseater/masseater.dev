@@ -2,9 +2,8 @@ import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import { cn } from "@masseater.dev/ui/cn";
 import type { ReactNode } from "react";
 
+import { ResultPreview } from "#/entities/asset";
 import { useAnalysis } from "#/features/indexing";
-
-import { ResultPreview } from "./result-preview.tsx";
 
 const TileThumbnail = ({
   result,
