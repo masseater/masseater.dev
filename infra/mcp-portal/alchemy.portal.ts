@@ -64,6 +64,7 @@ const upstreams = [
   { id: "sundries", url: "https://sundries.masseater.dev/mcp", auth: oauth },
   { id: "mirucord", url: "https://mirucord.masseater.dev/mcp", auth: oauth },
   { id: "medley", url: "https://medley-manager.masseater.dev/mcp", auth: oauth },
+  { id: "money", url: "https://money.masseater.dev/mcp", auth: oauth },
   { id: "twilog-masseater", url: "https://twilog-mcp.togetter.dev/mcp", auth: oauth },
   { id: "twilog-u1-mas", url: "https://twilog-mcp.togetter.dev/mcp", auth: oauth },
   { id: "atra", url: "https://mcp.atra.bot/mcp", auth: oauth },

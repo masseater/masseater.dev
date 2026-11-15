@@ -52,6 +52,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "masseater.dev/kikite": "access",
   "masseater.dev/zone": "transforms",
   "masseater.dev/mcp-portal": "access",
+  "masseater.dev/money": "access",
   "masseater.dev/plamo-translate": "access",
   "masseater.dev/yohaku-sync": "access",
   "masseater.dev/sundries": "access",

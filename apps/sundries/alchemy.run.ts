@@ -1,12 +1,6 @@
-import {
-  Access,
-  AnalyticsEngine,
-  CloudflareEnvironment,
-  D1,
-  Vectorize,
-  Workers,
-} from "@alchemy.run/cloudflare";
+import { AnalyticsEngine, D1, Vectorize, Workers } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
+import { ownerMcpAccess } from "@masseater.dev/cloudflare-account/owner-access";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { ownerStack } from "@masseater.dev/owner-stack";
 import type { TranslatorRpc } from "@masseater.dev/plamo-translate-protocol";
@@ -21,54 +15,14 @@ import { Effect } from "effect";
 import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
 import { MCP_URL, SITE_HOST, TOOL_CALL_DATASET } from "./src/shared/config/index.ts";
 
-const { Application: defineApplication } = Access;
-
 const PROD = "prod";
-const SESSION_DURATION = "720h";
-const ACCESS_TOKEN_LIFETIME = "1h";
 const PORTAL_SERVER_ID = "sundries";
-const SHARED_OAUTH_CALLBACK =
-  "https://oauth-callbacks.cloudflareaccess.com/cdn-cgi/access/outbound-oauth-callback";
-const CLIENT_CALLBACKS = [
-  "https://claude.ai/api/mcp/auth_callback",
-  "https://agent.meta.ai/api/hatch/oauth/callback",
-  SHARED_OAUTH_CALLBACK,
-];
 
-const portalCallback = (accountId: string): string =>
-  `https://dash.cloudflare.com/${accountId}/one/access-controls/ai-controls/mcp-server/oauth-callback/${PORTAL_SERVER_ID}`;
-
-const ownerAccess = Effect.gen(function* ownerAccess() {
-  const { accountId } = yield* yield* CloudflareEnvironment;
-  const holder = yield* ownerStack;
-  const owner = yield* Access.Policy.ref("OwnerPolicy", holder);
-  const google = yield* Access.IdentityProvider.ref("Google", holder);
-  const team = yield* Access.Organization.ref("ZeroTrust", holder);
-  const application = yield* defineApplication("McpAccess", {
-    name: `${PREFIX}access`,
-    type: "self_hosted",
-    domain: SITE_HOST,
-    destinations: [{ type: "public", uri: SITE_HOST }],
-    sessionDuration: SESSION_DURATION,
-    allowedIdps: [google.identityProviderId],
-    autoRedirectToIdentity: true,
-    policies: [owner],
-    oauthConfiguration: {
-      enabled: true,
-      grant: { sessionDuration: SESSION_DURATION, accessTokenLifetime: ACCESS_TOKEN_LIFETIME },
-      dynamicClientRegistration: {
-        enabled: true,
-        allowedUris: [...CLIENT_CALLBACKS, portalCallback(accountId)],
-        allowAnyOnLocalhost: true,
-        allowAnyOnLoopback: true,
-      },
-    },
-  });
-  return {
-    CLOUDFLARE_ACCOUNT_ID: accountId,
-    ACCESS_TEAM_DOMAIN: team.authDomain,
-    ACCESS_AUDIENCE: application.aud,
-  };
+const ownerAccess = ownerMcpAccess({
+  id: "McpAccess",
+  name: `${PREFIX}access`,
+  host: SITE_HOST,
+  portalServerId: PORTAL_SERVER_ID,
 });
 
 const upstreams = Effect.gen(function* upstreams() {
