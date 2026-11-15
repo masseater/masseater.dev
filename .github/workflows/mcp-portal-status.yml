@@ -21,16 +21,11 @@ jobs:
         with:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@93ede91739120dbe2102f1a4a5dbcfcb67641f36
-      - name: Sync each server and print its state
-        run: infra/mcp-portal/scripts/sync.sh
-      - name: Print portals and Access applications
-        run: |
-          base="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access"
-          auth="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
-          curl -sS -H "$auth" "$base/ai-controls/mcp/portals?per_page=100" |
-            jq -c '.errors, (.result[]? | {id, hostname, code_mode, allow_code_mode, servers})'
-          curl -sS -H "$auth" "$base/apps?per_page=100" |
-            jq -c '.errors, (.result[]? | {name, type, domain, aud, destinations, oauth: .oauth_configuration})'
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - name: Sync each server and print the portals and Access applications
+        run: vp run --filter @masseater.dev/mcp-portal status
 
   ci-telemetry:
     needs: [status]
