@@ -7,6 +7,10 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: pod-rattle
+  cancel-in-progress: true
+
 env:
   CARGO_TERM_COLOR: always
 
