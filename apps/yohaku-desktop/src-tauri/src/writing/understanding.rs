@@ -24,7 +24,7 @@ pub async fn read(store: &Store, claude: &Claude, paragraphs: &[Paragraph]) -> R
     let kinds = classify(store, claude, paragraphs)
         .await
         .unwrap_or_else(|failure| {
-            eprintln!("classify failed: {failure}");
+            log::warn!("classify failed: {failure}");
             Vec::new()
         });
     let kind_of: HashMap<&str, ParagraphKind> = kinds
@@ -69,7 +69,7 @@ async fn extract_after_settling(store: Store, claude: Claude, id: String) {
         extract_manuscript(&store, &claude, &id, &texts(&prose)).await
     };
     if let Err(failure) = extracted.await {
-        eprintln!("extract failed: {failure}");
+        log::warn!("extract failed: {failure}");
     }
 }
 

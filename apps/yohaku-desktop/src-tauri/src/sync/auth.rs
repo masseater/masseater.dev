@@ -45,6 +45,7 @@ impl From<Failure> for SyncProblem {
 
 pub struct Issued {
     pub access_token: String,
+    pub refresh_token: Option<String>,
     pub expires_in: Option<std::time::Duration>,
 }
 
@@ -196,14 +197,14 @@ pub async fn authorization_request(
     Ok((url.to_string(), login))
 }
 
-fn issued_from(store: &Store, token: &impl TokenResponse) -> Outcome<Issued> {
-    if let Some(refresh) = token.refresh_token() {
-        store.with(|connection| state::write(connection, Key::RefreshToken, refresh.secret()))?;
-    }
-    Ok(Issued {
+fn issued_from(token: &impl TokenResponse) -> Issued {
+    Issued {
         access_token: token.access_token().secret().clone(),
+        refresh_token: token
+            .refresh_token()
+            .map(|refresh| refresh.secret().clone()),
         expires_in: token.expires_in(),
-    })
+    }
 }
 
 fn code_of(callback: &str, expected_state: &str) -> Outcome<String> {
@@ -238,7 +239,7 @@ pub async fn exchange_code(
         .request_async(&Http(http.clone()))
         .await
         .map_err(|error| Failure::new(error.to_string()))?;
-    issued_from(store, &token)
+    Ok(issued_from(&token))
 }
 
 pub async fn refresh(
@@ -264,7 +265,7 @@ pub async fn refresh(
                 signed_out,
             }
         })?;
-    Ok(issued_from(store, &token)?)
+    Ok(issued_from(&token))
 }
 
 #[cfg(test)]
