@@ -8,6 +8,7 @@
     "apps/medley-manager/auth.config.ts",
     "apps/watashi-mcp/auth.config.ts",
     "apps/aredoko-server/src/app/fetch-model.ts",
+    "apps/aredoko-server/src/app/installer-resources.ts",
     "tools/pod-rattle-parity/extract.ts",
     "tools/pod-rattle-parity/render.ts",
     "tools/decision-bench-runner/src/run.ts",
@@ -22,6 +23,8 @@
     "tools/ocr-measure/src/measure.ts",
     "tools/ocr-measure/src/rescore.ts",
     "tools/injection-bisect-cli/src/main.ts",
+    "apps/pod-rattle-plugin/scripts/*.ts",
+    "apps/yohaku-desktop/scripts/*.ts",
   ],
   "entryPointRole": "runtime",
 }

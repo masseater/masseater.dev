@@ -38,6 +38,7 @@ const SUB_TOKEN_FORBIDDEN = new Set(["Account API Tokens Read"]);
 const isReadPermission = (name: string): boolean =>
   Str.endsWith(" Read")(name) && !SUB_TOKEN_FORBIDDEN.has(name);
 
+/** @internal */
 const cloudflareReader = Effect.fn("cloudflareReader")(function* cloudflareReader(appName: string) {
   const { accountId } = yield* yield* CloudflareEnvironment;
   const account = `${ACCOUNT_SCOPE}.${accountId}`;

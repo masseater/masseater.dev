@@ -10,7 +10,7 @@ import { NavLabel } from "./nav-label";
 
 const LINK_CLASS = {
   row: "px-2 py-3",
-  header: "px-1.5 py-3 max-sm:text-xs max-sm:tracking-wider sm:px-2",
+  header: "px-1 py-3 max-sm:text-[0.6875rem] max-sm:tracking-normal sm:px-2",
 } as const;
 
 const ACTIVE_PROPS = { className: "text-foreground" } as const;

@@ -1,3 +1,3 @@
 # twilog-mcp
 
-このワークスペースはMCPサーバー `twilog.masseater.dev/mcp` である。各アカウントに対して公式の twilog-mcp を1回ずつ呼び出し、Twilog上のオーナーのXアカウントを1回の呼び出しで検索する。クレデンシャルブローカーはアカウントごとに個別のログイン情報を管理しており、アカウントは `infra/repositories/oauth-targets.ts` の `TWILOG_ACCOUNTS` に一覧表示される。
+このワークスペースはMCPサーバー `twilog.masseater.dev/mcp` である。1つのツールを用いて、Twilog上の持ち主のXアカウントを検索する。アカウントを追加するには、`TWILOG_ACCOUNTS` に追加し、持ち主にそのアカウントで一度だけクレデンシャルブローカーへログインしてもらう。

@@ -6,6 +6,7 @@ import { useCallback } from "react";
 
 import { useYohaku } from "#/shared/api";
 import type { Release } from "#/shared/api";
+import { flushAll } from "#/shared/model";
 
 const UPDATE_KEY = ["update"] as const;
 const RECHECK_INTERVAL = 21_600_000;
@@ -36,13 +37,12 @@ const useInstall = (): Installing => {
   const [progress, setProgress] = useAtom(progressAtom);
   const installing = useCallback(() => {
     setProgress(Option.some(STARTED));
-    return Effect.runPromise(
-      Stream.runForEach(yohaku.installUpdate(), (done) =>
-        Effect.sync(() => {
-          setProgress(Option.some(done));
-        }),
-      ),
-    );
+    const report = (done: number): Effect.Effect<void> =>
+      Effect.sync(() => {
+        setProgress(Option.some(done));
+      });
+    const download = Stream.runForEach(yohaku.installUpdate(), report);
+    return Effect.runPromise(flushAll.pipe(Effect.andThen(download)));
   }, [setProgress, yohaku]);
   const stopped = useCallback(() => {
     setProgress(Option.none());
