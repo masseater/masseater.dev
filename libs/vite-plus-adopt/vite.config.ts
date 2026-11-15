@@ -117,7 +117,7 @@ export default defineConfig({
       ignorePatterns: ["upstream/**"],
       overrides: [
         {
-          files: ["src/{attw/typescript,fsd,fsd-typescript}.ts"],
+          files: ["src/{attw/typescript,fsd-typescript}.ts"],
           rules: { "import/no-default-export": "off" },
         },
       ],

@@ -51,8 +51,12 @@ const workspace = await workspaceSettings({
 
 const overrides = [
   {
-    files: ["**/shared/ui/**", ...workspace.lint.shadcnUi],
-    rules: { "shadcn/no-restyle": "off", "react/jsx-props-no-spreading": "off" },
+    files: [...workspace.lint.shadcnUi],
+    rules: { "react/jsx-props-no-spreading": "off" },
+  },
+  {
+    files: [...workspace.lint.publicEntries],
+    rules: { "import/no-default-export": "off" },
   },
   {
     files: ["apps/*/src/**/*.{ts,tsx}", "apps/*/worker/**/*.ts"],
@@ -69,36 +73,6 @@ const overrides = [
 const lint = {
   ...preset,
   ignorePatterns: [...generated, ...workspace.lint.ignorePatterns],
-  rules: {
-    ...preset.rules,
-    "import/no-namespace": ["error", { ignore: ["linguist-languages"] }],
-    "baseline-js/use-baseline": [
-      "error",
-      {
-        available: "widely",
-        includeWebApis: { preset: "auto" },
-        includeJsBuiltins: { preset: "auto" },
-        ignoreFeatures: ["webgpu"],
-      },
-    ],
-    "eslint/new-cap": [
-      "error",
-      {
-        capIsNewExceptions: [
-          "App",
-          "Build",
-          "CloudflareApiLive",
-          "Repository",
-          "RepositorySettings",
-          "Resource",
-          "Ruleset",
-          "Secret",
-          "Stack",
-        ],
-        capIsNewExceptionPattern: String.raw`^(Argument|Config|Containers|Context|Data|Flag|Persistable|Schema|AnalyticsEngine|ApiToken|D1|KV|Logpush|R2|Ruleset|Rules|SecretsStore|Website|Workers|Zone)\.`,
-      },
-    ],
-  },
   overrides: [...preset.overrides, ...overrides],
 } satisfies LintConfig;
 
@@ -108,8 +82,6 @@ const PUBLIC_VALUES = [
 ];
 
 const FAKE_SECRET_FIXTURES = [String.raw`(^|/)fixtures/[^/]+\.tgz!`];
-
-const UNTRACKED_SKILL_EXAMPLE = String.raw`(attributes["git.sha"] == "f4ab1c402143011a6264a0660f598fc02eb48bff" && attributes["path"] == "docs/skills/measure-dont-guess/SKILL.md")`;
 
 const MARKDOWN_IGNORES = ["AGENTS.md", "apps/zenn-articles/**", "**/.cache/**"];
 
@@ -137,7 +109,7 @@ const checks: ToolSections = {
       FAKE_SECRET_FIXTURES,
       Arr.map((pattern) => `\`${pattern}\``),
       Arr.join(", "),
-    )}]) || ${UNTRACKED_SKILL_EXAMPLE}`,
+    )}])`,
   },
   steiger: {
     paths: ["apps/*/src"],
@@ -164,15 +136,7 @@ const checks: ToolSections = {
         "max-kanji-continuous-len": {
           max: 6,
           allow: [
-            "外国電子決済手段",
-            "電子決済手段等取引業",
-            "前払式支払手段",
-            "犯罪収益移転防止法",
-            "事業者間取引適正化等法",
             "個人情報保護法",
-            "特定商取引法",
-            "電気通信利用役務",
-            "特定業務委託事業者",
             "中小企業基盤整備機構",
             "小規模企業共済",
             "中小企業倒産防止共済",
@@ -182,7 +146,6 @@ const checks: ToolSections = {
             "日本情報経済社会推進協会",
             "国立研究開発法人",
             "大学共同利用機関",
-            "北陸先端科学技術大学院大学",
           ],
         },
         "no-exclamation-question-mark": { allow: ["ぶいあーる!", "超かぐや姫!", "超かぐや姫！"] },

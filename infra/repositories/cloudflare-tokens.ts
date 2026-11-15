@@ -31,10 +31,10 @@ import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 import { ISSUED_TOKEN_PREFIX } from "./cloudflare-root.ts";
 
 type Token = Readonly<{
-  id?: string | null;
-  name?: string | null;
-  status?: string | null;
-  lastUsedOn?: string | null;
+  id?: string | null | undefined;
+  name?: string | null | undefined;
+  status?: string | null | undefined;
+  lastUsedOn?: string | null | undefined;
 }>;
 
 const isBrokerIssued = (token: Token): boolean =>
@@ -72,7 +72,7 @@ const inventory = <Failure>(
 
 type Policy = Readonly<{
   effect: string;
-  permissionGroups: readonly Readonly<{ id: string; name?: string | null }>[];
+  permissionGroups: readonly Readonly<{ id: string; name?: string | null | undefined }>[];
   resources: Readonly<Record<string, unknown>>;
 }>;
 

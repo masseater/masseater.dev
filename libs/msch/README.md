@@ -30,6 +30,8 @@ export default defineConfig({ lint });
 
 リポジトリに固有のルールや overrides は、`lint` を広げてから足す。
 decision ルールは呼ぶたびに費用がかかるので、プリセットは有効にしない。
+`import/no-nodejs-modules` は使わず、Effect に代わりのある Node.js の組み込みだけを `effecttsgo/node-builtin-import` で止める。
+`eslint/new-cap` は `capIsNew` を切る。`new` なしでクラスを呼ぶ誤りは型検査が落とすので、大文字で始まる関数の呼び出しを例外として並べずに済む。
 `decisionRules` を掛けたいファイルの overrides に渡す。
 
 Vite+ はワークスペースの `vite.config.ts` の `lint` を使わない。
@@ -43,6 +45,7 @@ Vite+ はワークスペースの `vite.config.ts` の `lint` を使わない。
 import した値が要る規則と依存は、ルートの集合に名前を付けて置く。
 `test` タスクを持たないワークスペースは `testProjects` に入り、ルートの `vp test` が動かす。
 `components.json` の `aliases.ui` は `package.json` の `imports` で解決し、shadcn の部品の置き場を `lint.shadcnUi` として返す。
+`package.json` の `exports` と `bin` が指すファイルは `lint.publicEntries` として返す。`dist` を指す入口は、`pack.entry` から元のファイルをたどる。プラグインや textlint のルールのように、読み込む側が default export を求める入口に使う。
 
 `effecttsgo` のルールは、@effect/tsgo が手を入れた oxlint でだけ動く。
 `prepare` で `effect-tsgo patch --typescript --oxlint` を実行するか、`effect-tsgo vp check` で動かす。

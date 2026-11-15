@@ -28,10 +28,7 @@ export default defineConfig({
         },
         {
           files: ["server/serve.ts"],
-          rules: {
-            "import/no-nodejs-modules": ["error", { allow: ["node:http"] }],
-            "effecttsgo/node-builtin-import": "off",
-          },
+          rules: { "effecttsgo/node-builtin-import": "off" },
         },
       ],
     },

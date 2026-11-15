@@ -111,7 +111,7 @@ catalog:
   "@fontsource/dela-gothic-one": 5.3.0
   "@fontsource/shippori-mincho-b1": 5.3.0
   "@fontsource/ibm-plex-mono": 5.3.0
-  "@distilled.cloud/github": 1.0.0-rc.19
+  "@distilled.cloud/github": 1.0.0-rc.20
   universal-github-app-jwt: 2.2.2
   "@octokit/rest": 22.0.1
   simple-icons: 16.37.0
@@ -240,7 +240,7 @@ catalog:
   "@earendil-works/chord": 1.5.2
 catalogs:
   stack:
-    "@distilled.cloud/cloudflare": 1.0.0-rc.19
+    "@distilled.cloud/cloudflare": 1.0.0-rc.20
     "@effect/atom-react": 4.1.4
     "@huggingface/transformers": 4.3.2
     "@effect/tsgo": 0.68.1
@@ -248,9 +248,9 @@ catalogs:
     "@tanstack/react-query": 5.107.1
     "@tanstack/react-start": 1.169.5
     better-auth: 1.7.21
-    "@alchemy.run/cloudflare": 2.0.0-beta.85
-    "@alchemy.run/github": 2.0.0-beta.85
-    alchemy: 2.0.0-beta.85
+    "@alchemy.run/cloudflare": 2.0.0-beta.87
+    "@alchemy.run/github": 2.0.0-beta.87
+    alchemy: 2.0.0-beta.87
     drizzle-kit: 1.0.0-rc.5-ab785fc
     drizzle-orm: 1.0.0-rc.5-ab785fc
     eden-tanstack-react-query: 0.5.1

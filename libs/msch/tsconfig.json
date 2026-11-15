@@ -2,29 +2,6 @@
   "extends": "../../tsconfig.json",
   "include": ["src", "*.ts"],
   "compilerOptions": {
-    "types": ["node", "@r_masseater/msch/vite"],
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "allowedUnstableApis": [
-          "@effect/platform-node-shared/NodeChildProcessSpawner#layer",
-          "@effect/platform-node-shared/NodeFileSystem#layer",
-          "@effect/platform-node-shared/NodePath#layer",
-          "@effect/platform-node-shared/NodeRuntime#runMain",
-          "@effect/platform-node-shared/NodeStdio#layer",
-          "@effect/platform-node/NodeServices#layer",
-          "@effect/vitest#layer",
-          "effect/FileSystem#FileSystem",
-          "effect/Path#Path",
-          "effect/PlatformError#PlatformError",
-          "effect/Stdio#Stdio",
-          "effect/http/FetchHttpClient#layer",
-          "effect/observability/Otlp#layerFromConfig",
-          "effect/observability/OtlpSerialization#layerJson",
-          "effect/process/ChildProcess#make",
-          "effect/process/ChildProcessSpawner#ChildProcessSpawner"
-        ]
-      }
-    ]
+    "types": ["node", "@r_masseater/msch/vite"]
   }
 }

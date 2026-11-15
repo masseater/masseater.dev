@@ -9,23 +9,14 @@ export default defineConfig({
         {
           files: ["src/oxlint.ts"],
           rules: {
-            "import/no-default-export": "off",
-            "import/no-nodejs-modules": "off",
             "node/no-sync": "off",
             "effecttsgo/node-builtin-import": "off",
             "effecttsgo/schema-sync": "off",
           },
         },
         {
-          files: ["src/lint/preset.ts", "src/comment-readers.ts"],
-          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:url"] }] },
-        },
-        {
           files: ["src/comments.ts"],
-          rules: {
-            "import/no-nodejs-modules": ["error", { allow: ["node:path"] }],
-            "effecttsgo/node-builtin-import": "off",
-          },
+          rules: { "effecttsgo/node-builtin-import": "off" },
         },
       ],
     },
