@@ -1,9 +1,9 @@
 import { Option } from "effect";
 
-import { categoryMeta, categoryPath, entryOgImagePath, entryPath } from "#/entities/entry";
+import { categoryMeta, entryOgImagePath, entryPath } from "#/entities/entry";
 import type { Entry } from "#/entities/entry";
 import type { FoundEntry } from "#/pages/entry/api/load-entry";
-import { site } from "#/shared/config";
+import { sectionPath, site } from "#/shared/config";
 import { absoluteUrl, author, notFoundHead, pageTitle, seo } from "#/shared/lib";
 import type { JsonLd, Head } from "#/shared/lib";
 
@@ -15,7 +15,7 @@ const breadcrumb = (entry: Entry): JsonLd => ({
       "@type": "ListItem",
       position: 2,
       name: categoryMeta[entry.category].title,
-      item: absoluteUrl(categoryPath(entry.category)),
+      item: absoluteUrl(sectionPath(entry.category)),
     },
     { "@type": "ListItem", position: 3, name: entry.title },
   ],

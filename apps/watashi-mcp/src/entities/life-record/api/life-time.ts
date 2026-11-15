@@ -55,8 +55,6 @@ const parseInstant = (input: string, assumedZone: boolean): Result.Result<TimeVa
 
 const ZONE = /(?:Z|[+-]\d{2}:?\d{2})$/u;
 
-const hasZone = (input: string): boolean => ZONE.test(input);
-
 const precisionOf = (date: string): Precision => {
   if (YEAR.test(date)) {
     return "year";
@@ -76,7 +74,7 @@ export const parseTime = (input: string): Result.Result<TimeValue, string> => {
   if (!INSTANT.test(input)) {
     return Result.fail(`"${input}" is not a valid time. ${TIME_FORMAT}`);
   }
-  if (hasZone(input)) {
+  if (ZONE.test(input)) {
     return parseInstant(input, false);
   }
   return parseInstant(`${input}${JST_SUFFIX}`, true);
