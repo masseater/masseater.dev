@@ -113,6 +113,7 @@ catalog:
   "@fontsource/shippori-mincho-b1": 5.3.0
   "@fontsource/ibm-plex-mono": 5.3.0
   "@distilled.cloud/github": 1.0.0-rc.20
+  "@distilled.cloud/tailscale": 1.0.0-rc.20
   universal-github-app-jwt: 2.2.2
   "@octokit/rest": 22.0.1
   simple-icons: 16.37.0

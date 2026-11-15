@@ -11,12 +11,13 @@ import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
 import { Stack, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
-import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
+import { Config, Effect, Layer, Option, Redacted, Schema, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
 import { CREDENTIAL_BROKER_AUDIENCE, PREFIX, TRACE_DESTINATION } from "./broker-names.ts";
 import { grantPolicies, WORKFLOW_GITHUB_GRANTS } from "./credential-grants.ts";
 import type { GitHubAppEnv } from "./github-app.ts";
+import { agentTrust, tailscaleProviders } from "./tailscale-trust.ts";
 
 const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
@@ -56,10 +57,14 @@ const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.Store) {
   };
 });
 
+const tracedProviders = withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers());
+
+const brokerProviders = tailscaleProviders.pipe(Layer.provideMerge(tracedProviders));
+
 const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   CREDENTIAL_BROKER_AUDIENCE,
   {
-    providers: withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers()),
+    providers: brokerProviders,
     state: state(),
   },
   Effect.gen(function* stack() {
@@ -74,6 +79,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       value: yield* Config.Redacted("CLOUDFLARE_API_TOKEN"),
     });
     const keys = yield* ciKeys(store);
+    const tailnet = yield* agentTrust;
     const appStore = {
       GITHUB_APP: yield* D1.Database("GitHubApp", {
         name: GITHUB_APP_DATABASE,
@@ -98,6 +104,8 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
         ACCOUNT_ID: accountId,
         GRANTS,
         WORKFLOW_GRANTS,
+        TAILNET_CLIENT_ID: tailnet.keyId,
+        TAILNET_AUDIENCE: tailnet.audience,
       },
     });
     return { url };
