@@ -23,13 +23,16 @@
     "directory": "libs/web-vitals-flow"
   },
   "bin": {
-    "web-vitals-flow": "./src/main.ts"
+    "web-vitals-flow": "./bin/web-vitals-flow.ts"
   },
   "files": [
     "dist",
     "LICENSE"
   ],
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "publishConfig": {
     "bin": {
       "web-vitals-flow": "./dist/main.mjs"

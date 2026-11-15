@@ -8,7 +8,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      "cloudflare-tokens": { command: "node cloudflare-tokens.ts", cache: false },
+      "cloudflare-tokens": { command: "node bin/cloudflare-tokens.ts", cache: false },
       "deploy:broker": {
         command: "alchemy deploy --config alchemy.broker.ts --stage prod --yes",
         cache: false,
@@ -21,11 +21,11 @@ export default defineConfig({
         command: "alchemy deploy --config alchemy.github.ts --stage prod --yes",
         cache: false,
       },
-      "github-token": { command: "node scripts/github-token.ts", cache: false },
-      "atproto-password": { command: "node scripts/atproto-password.ts", cache: false },
-      "private-names": { command: "node scripts/private-names.ts", cache: false },
-      "delete-repositories": { command: "node scripts/delete-repositories.ts", cache: false },
-      "delete-secrets": { command: "node scripts/delete-secrets.ts", cache: false },
+      "github-token": { command: "node bin/github-token.ts", cache: false },
+      "atproto-password": { command: "node bin/atproto-password.ts", cache: false },
+      "private-names": { command: "node bin/private-names.ts", cache: false },
+      "delete-repositories": { command: "node bin/delete-repositories.ts", cache: false },
+      "delete-secrets": { command: "node bin/delete-secrets.ts", cache: false },
     },
   },
 });

@@ -11,7 +11,7 @@ export default defineConfig({
   },
   plugins: [otlp()],
   pack: {
-    entry: ["src/main.ts"],
+    entry: { main: "bin/web-vitals-flow.ts" },
     platform: "node",
     sourcemap: true,
   },
