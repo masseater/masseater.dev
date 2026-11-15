@@ -1,0 +1,22 @@
+{
+  "name": "@masseater.dev/daw-view",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "dependencies": {
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@masseater.dev/browser-test": "workspace:*",
+    "@tailwindcss/vite": "catalog:",
+    "tailwindcss": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
