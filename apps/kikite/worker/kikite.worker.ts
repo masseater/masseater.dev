@@ -12,9 +12,11 @@ import {
   TELEMETRY_SERVICE,
   TRACES_PATH,
 } from "#config";
+import { RESEARCH_PATH } from "#protocol";
 
 import { down } from "./interviewer-down.ts";
 import type { InterviewerDown } from "./interviewer-down.ts";
+import { researched } from "./research-memory.ts";
 import { isSessionsPath, sessionRoutes } from "./session-routes.ts";
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
@@ -111,7 +113,11 @@ const worker = {
     if (isSessionsPath(pathname)) {
       return runLogged(sessionRoutes(request));
     }
-    return env.INTERVIEWER.getByName("interviewer").fetch(request);
+    const interviewer = env.INTERVIEWER.getByName("interviewer");
+    if (pathname === RESEARCH_PATH) {
+      return runLogged(researched((next) => interviewer.fetch(next))(request));
+    }
+    return interviewer.fetch(request);
   },
 };
 

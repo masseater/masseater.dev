@@ -1,4 +1,11 @@
-export { bundleFolder, companionNamesOf, companionPath, companionsOf } from "./model/companions.ts";
+export {
+  bundleFolder,
+  companionNamesOf,
+  companionPath,
+  companionsOf,
+  mentionedIn,
+} from "./model/companions.ts";
+export type { Folder } from "./model/companions.ts";
 export { hasExtension, isPackage, isZip, partsOf } from "./model/file-name.ts";
 export { kindOf } from "./model/kind.ts";
 export { isCompanion, isLoose } from "./model/loose.ts";

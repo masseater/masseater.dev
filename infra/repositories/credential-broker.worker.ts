@@ -31,16 +31,19 @@ import {
 } from "./github-oidc.ts";
 import { mintGitHubToken } from "./github-token.ts";
 import { sideRoute } from "./side-routes.ts";
+import type { SideRouteInput } from "./side-routes.ts";
 
 const TOKEN_LIFETIME = { hours: 1 } as const;
 
 type CredentialBrokerEnv = GitHubAppEnv &
+  SideRouteInput["env"] &
   Readonly<{
     ROOT_TOKEN: SecretsStoreSecret;
     CLAUDE_CODE_OAUTH_TOKEN: SecretsStoreSecret;
     NPM_TOKEN?: SecretsStoreSecret;
     ACCOUNT_ID: string;
     GRANTS: string;
+    GRANT_PROFILES: string;
     WORKFLOW_GRANTS: string;
   }>;
 
@@ -63,9 +66,10 @@ const GitHubGrant = Schema.Struct({
   repositories: Schema.optionalKey(RepositoryNames),
 });
 
+const Profiles = Schema.fromJsonString(Schema.Record(Schema.String, Policies));
+
 const Grants = Schema.fromJsonString(
   Schema.Struct({
-    profiles: Schema.Record(Schema.String, Policies),
     repositories: Schema.Record(Schema.String, Schema.String),
     github: Schema.Record(Schema.String, GitHubGrant),
     npm: Schema.Array(Schema.String),
@@ -97,13 +101,15 @@ const WorkflowGrants = Schema.fromJsonString(Schema.Record(Schema.String, Permis
 const decodeGrants = (
   env: CredentialBrokerEnv,
 ): Effect.Effect<
-  typeof Grants.Type & Readonly<{ workflows: typeof WorkflowGrants.Type }>,
+  typeof Grants.Type &
+    Readonly<{ profiles: typeof Profiles.Type; workflows: typeof WorkflowGrants.Type }>,
   Schema.SchemaError
 > =>
   Effect.all({
     grants: Schema.decodeEffect(Grants)(env.GRANTS),
+    profiles: Schema.decodeEffect(Profiles)(env.GRANT_PROFILES),
     workflows: Schema.decodeEffect(WorkflowGrants)(env.WORKFLOW_GRANTS),
-  }).pipe(Effect.map(({ grants, workflows }) => ({ ...grants, workflows })));
+  }).pipe(Effect.map(({ grants, profiles, workflows }) => ({ ...grants, profiles, workflows })));
 
 const issueCloudflareToken = (
   env: CredentialBrokerEnv,

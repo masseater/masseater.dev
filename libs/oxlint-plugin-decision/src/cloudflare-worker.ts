@@ -1,10 +1,10 @@
 import { endpointOf, sendChat } from "./cloudflare-chat.ts";
 import { serveDecisions } from "./serve-decisions.ts";
-import { mergeYesNo, yesNoRequestsFor } from "./wire.ts";
+import { mergeYesNo, yesNoRequestFor } from "./wire.ts";
 
 serveDecisions({
   endpoint: endpointOf,
-  wires: yesNoRequestsFor,
+  wires: yesNoRequestFor,
   combine: mergeYesNo,
   send: sendChat,
 });
