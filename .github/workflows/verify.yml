@@ -55,6 +55,7 @@ jobs:
   deploy:
     if: github.event_name == 'push'
     permissions:
+      actions: read
       contents: read
       id-token: write
     concurrency:
@@ -92,7 +93,7 @@ jobs:
       - run: vp run -r github-token
       - run: vp run -r private-names
         env:
-          CHECKOUTS: . .skills-checkout
+          CHECKOUTS: ${{ github.workspace }} ${{ github.workspace }}/.skills-checkout
 
   zenn:
     if: github.event_name == 'push'
