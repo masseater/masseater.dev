@@ -2,7 +2,7 @@ import { layer } from "@effect/vitest";
 import { Effect, Array as Arr, pipe } from "effect";
 import { expect } from "vite-plus/test";
 
-import { findingsIn, findingsInGitRepository, fixtureLayer } from "./repository.test.support.ts";
+import { findingsIn, fixtureLayer } from "./repository.test.support.ts";
 
 const STATUS_OWNER = pipe(
   [
@@ -126,7 +126,7 @@ const acceptsArraysBuiltFromNamedValues = Effect.gen(function* acceptsArraysBuil
 });
 
 const ignoresFilesMarkedAsGenerated = Effect.gen(function* ignoresFilesMarkedAsGenerated() {
-  const findings = yield* findingsInGitRepository({
+  const findings = yield* findingsIn({
     ".gitattributes": "*.gen.ts linguist-generated\n",
     "src/routes.gen.ts": 'export type Paths = "/" | "/feed";\nexport type To = "/" | "/feed";\n',
     "src/a.ts": 'export type Mode = "light" | "dark";\n',

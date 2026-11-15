@@ -5,7 +5,7 @@ export default defineConfig({
   msch: { publish: { installSize: "173 MB" } },
   run: {
     tasks: {
-      build: { command: "vp pack", cache: false },
+      build: "vp pack",
     },
   },
   plugins: [otlp()],
