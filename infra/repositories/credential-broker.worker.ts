@@ -15,8 +15,7 @@ import {
   pipe,
 } from "effect";
 
-import { accessOAuthRoute } from "./access-oauth.ts";
-import { atprotoRoute, issueAppPassword } from "./atproto.ts";
+import { issueAppPassword } from "./atproto.ts";
 import { ISSUED_TOKEN_PREFIX, cloudflare } from "./cloudflare-root.ts";
 import { issueKinds, selectKinds } from "./credential-kinds.ts";
 import { route } from "./github-app.ts";
@@ -31,6 +30,7 @@ import {
   workflowGrant,
 } from "./github-oidc.ts";
 import { mintGitHubToken } from "./github-token.ts";
+import { sideRoute } from "./side-routes.ts";
 
 const TOKEN_LIFETIME = { hours: 1 } as const;
 
@@ -234,8 +234,7 @@ const handle = (
   Option.match(route({ request, env }), {
     onNone: () =>
       pipe(
-        atprotoRoute({ request, env }),
-        Option.orElse(() => accessOAuthRoute({ request, env })),
+        sideRoute({ request, env }),
         Option.getOrElse(() => issue(request, env)),
       ),
     onSome: (handled) =>
