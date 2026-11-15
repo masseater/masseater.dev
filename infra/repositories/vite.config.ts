@@ -13,6 +13,10 @@ export default defineConfig({
         command: "alchemy deploy --config alchemy.broker.ts --stage prod --yes",
         cache: false,
       },
+      "deploy:tailnet": {
+        command: "alchemy deploy --config alchemy.tailnet.ts --stage prod --yes",
+        cache: false,
+      },
       "deploy:github": {
         command: "alchemy deploy --config alchemy.github.ts --stage prod --yes",
         cache: false,
