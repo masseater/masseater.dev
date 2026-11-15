@@ -7,10 +7,10 @@ export default defineConfig({
   },
   pack: {
     entry: [
-      "src/index.ts",
-      "src/openrouter-app.ts",
-      "src/openrouter-worker.ts",
-      "src/cloudflare-worker.ts",
+      "src/app/index.ts",
+      "src/app/openrouter-app.ts",
+      "src/app/openrouter-worker.ts",
+      "src/app/cloudflare-worker.ts",
     ],
     platform: "node",
     sourcemap: true,

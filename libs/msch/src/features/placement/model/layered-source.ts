@@ -22,6 +22,7 @@ const PUBLIC_ENTRY =
 const EXCLUDED: readonly string[] = [
   ":(exclude,attr:linguist-vendored)",
   ":(exclude,attr:linguist-generated)",
+  ":(exclude,attr:linguist-documentation)",
 ];
 
 const OUTSIDE_MESSAGE =

@@ -28,11 +28,12 @@
   ],
   "type": "module",
   "imports": {
-    "#src/*": "./src/*"
+    "#src/*": "./src/*",
+    "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./openrouter-app": "./src/openrouter-app.ts",
+    ".": "./src/app/index.ts",
+    "./openrouter-app": "./src/app/openrouter-app.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
