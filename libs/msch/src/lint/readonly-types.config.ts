@@ -1,5 +1,31 @@
-import { BROWSER_HANDLES, WEBGPU_HANDLES } from "./readonly-browser.config.ts";
+import { BINARY_DATA } from "./readonly-binary.config.ts";
 import { lintToolReadonlyAllow } from "./readonly-lint-tools.config.ts";
+
+const WEBGPU_HANDLES: readonly string[] = [
+  "GPUDevice",
+  "GPUCanvasContext",
+  "GPUTexture",
+  "GPUBuffer",
+  "GPUBindGroup",
+  "GPUBindGroupLayout",
+  "GPUPipelineLayout",
+  "GPURenderPipeline",
+  "GPUSampler",
+];
+
+const BROWSER_HANDLES: readonly string[] = [
+  "HTMLCanvasElement",
+  "HTMLImageElement",
+  "HTMLAnchorElement",
+  "CanvasRenderingContext2D",
+  "PointerEvent",
+  "WheelEvent",
+  "KeyboardEvent",
+  "MouseEvent",
+  "AbortSignal",
+  "ImageBitmap",
+  ...WEBGPU_HANDLES,
+];
 
 const readonlyParameterAllow = [
   {
@@ -11,11 +37,8 @@ const readonlyParameterAllow = [
       "ReadableStream",
       "Request",
       "Response",
-      "Float64Array",
-      "ArrayBuffer",
+      ...BINARY_DATA,
       "RegExp",
-      "Uint8Array",
-      "DataView",
       "RegExpExecArray",
       "RegExpMatchArray",
       "Date",

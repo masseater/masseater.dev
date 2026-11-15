@@ -2,13 +2,13 @@ import { Array, Effect, Option, String, pipe } from "effect";
 import type { LoadingManager, Object3D } from "three";
 import { ColladaLoader } from "three/examples/jsm/loaders/ColladaLoader.js";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { TDSLoader } from "three/examples/jsm/loaders/TDSLoader.js";
 
 import type { ModelFile } from "./file-urls.ts";
-import { ModelUnreadable } from "./model-unreadable.ts";
+import { gltfScene, unreadable, vrmScene } from "./gltf-scene.ts";
+import type { ModelUnreadable } from "./model-unreadable.ts";
 
 interface ModelSource {
   readonly pathname: string;
@@ -45,11 +45,6 @@ const objLoader = (files: readonly ModelFile[], manager: LoadingManager): OBJLoa
   );
 };
 
-const unreadable =
-  (pathname: string) =>
-  (cause: unknown): ModelUnreadable =>
-    ModelUnreadable.make({ pathname, cause });
-
 const attempt = <Value>(
   pathname: string,
   evaluate: () => Value,
@@ -57,10 +52,10 @@ const attempt = <Value>(
   Effect.try({ try: evaluate, catch: unreadable(pathname) });
 
 const parseGltf: Parse = ({ model, pathname }, manager) =>
-  Effect.tryPromise({
-    try: () => new GLTFLoader(manager).parseAsync(bufferOf(model), BASE),
-    catch: unreadable(pathname),
-  }).pipe(Effect.map(({ scene }) => scene));
+  gltfScene({ buffer: bufferOf(model), pathname, manager });
+
+const parseVrm: Parse = ({ model, pathname }, manager) =>
+  vrmScene({ buffer: bufferOf(model), pathname, manager });
 
 const parseCollada: Parse = ({ model, pathname }, manager) =>
   pipe(
@@ -86,10 +81,10 @@ const PARSERS: Readonly<Record<string, Parse>> = {
   obj: parseObj,
   glb: parseGltf,
   gltf: parseGltf,
-  vrm: parseGltf,
+  vrm: parseVrm,
   dae: parseCollada,
   "3ds": parseTds,
 };
 
-export { PARSERS, unreadable };
+export { PARSERS };
 export type { ModelSource, Parse };

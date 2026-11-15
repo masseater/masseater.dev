@@ -1,12 +1,10 @@
-import { Array, Effect, FileSystem, Option, Path, Schema, pipe } from "effect";
-import { SqlClient } from "effect/sql";
+import { Effect, FileSystem, Option, Path, Schema, pipe } from "effect";
 
-import { bundleFolder, companionNamesOf, companionPath } from "#entities/package";
-import { decodeRows } from "#shared/sql";
+import { companionNamesOf, companionPath } from "#entities/package";
+
+import { sourceOf, stage } from "./model-source.ts";
 
 const PART_BYTES = 8_388_608;
-
-const ModelRow = Schema.Struct({ file: Schema.String, package_path: Schema.String });
 
 const taggedError = Schema.TaggedError;
 
@@ -14,16 +12,6 @@ class NotACompanion extends taggedError<NotACompanion, { readonly brand: unique 
   "NotACompanion",
   { file: Schema.String },
 ) {}
-
-const modelOf = Effect.fn("modelOf")(function* findModel(assetId: number) {
-  const sql = yield* SqlClient.SqlClient;
-  const rows = yield* decodeRows(ModelRow)(
-    sql`select a.file, p.path as package_path from assets a
-      join packages p on p.id = a.package_id
-      where a.id = ${assetId} and a.file is not null`,
-  );
-  return yield* Effect.fromOption(Array.head(rows));
-});
 
 const sizeOf = Effect.fn("sizeOf")(function* sizeOfFile(file: string) {
   const fileSystem = yield* FileSystem.FileSystem;
@@ -35,9 +23,9 @@ const sizeOf = Effect.fn("sizeOf")(function* sizeOfFile(file: string) {
 const readModel = Effect.fn("readModel")(function* readModelFiles(assetId: number) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const { file, package_path: packagePath } = yield* modelOf(assetId);
-  const model = yield* fileSystem.readFile(file);
-  const folder = yield* bundleFolder(packagePath);
+  yield* stage(assetId);
+  const { main, folder } = yield* sourceOf(assetId);
+  const model = yield* fileSystem.readFile(main);
   const names = yield* companionNamesOf(folder, model);
   const files = yield* pipe(
     names,
@@ -45,15 +33,14 @@ const readModel = Effect.fn("readModel")(function* readModelFiles(assetId: numbe
       sizeOf(path.join(folder.path, name)).pipe(Effect.map((size) => ({ name, size }))),
     ),
   );
-  return { size: model.length, files };
+  return { name: path.basename(main), size: model.length, files };
 });
 
 const partPath = Effect.fn("partPath")(function* partPathOf(assetId: number, file: string | null) {
-  const { file: model, package_path: packagePath } = yield* modelOf(assetId);
+  const { main, folder } = yield* sourceOf(assetId);
   if (file === null) {
-    return model;
+    return main;
   }
-  const folder = yield* bundleFolder(packagePath);
   const companion = yield* companionPath(folder, file);
   return yield* Effect.fromOption(companion).pipe(
     Effect.mapError(() => NotACompanion.make({ file })),

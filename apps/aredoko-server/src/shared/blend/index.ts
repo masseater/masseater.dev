@@ -1,1 +1,1 @@
-export { blendPreview } from "./read-blend.ts";
+export { blendModel, blendPreview } from "./read-blend.ts";
