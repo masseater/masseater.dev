@@ -1,11 +1,15 @@
 import type { ReactNode } from "react";
 
+import { Card } from "./card";
+import { CardHeader } from "./card-header";
+
 export const Section = ({
   children,
+  meta,
   title,
-}: Readonly<{ children: ReactNode; title: string }>): ReactNode => (
-  <section className="flex flex-col gap-4">
-    <h2 className="font-display text-foreground/50 text-xs tracking-widest uppercase">{title}</h2>
+}: Readonly<{ children: ReactNode; meta?: string | undefined; title: string }>): ReactNode => (
+  <Card>
+    <CardHeader meta={meta} title={title} />
     {children}
-  </section>
+  </Card>
 );
