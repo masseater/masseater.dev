@@ -1,4 +1,4 @@
-import { createToken, deleteToken, listTokens } from "@distilled.cloud/cloudflare/accounts";
+import { createToken } from "@distilled.cloud/cloudflare/accounts";
 import type { CloudflareOpContext, CreateTokenError } from "@distilled.cloud/cloudflare/accounts";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import {
@@ -9,14 +9,13 @@ import {
   Logger,
   Option,
   Schema,
-  Stream,
   String as Str,
   flow,
   pipe,
 } from "effect";
 
 import { issueAppPassword } from "./atproto.ts";
-import { ISSUED_TOKEN_PREFIX, cloudflare } from "./cloudflare-root.ts";
+import { ISSUED_TOKEN_PREFIX, cloudflare, sweepIssuedTokens } from "./cloudflare-root.ts";
 import { issueKinds, selectKinds } from "./credential-kinds.ts";
 import { route } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
@@ -29,7 +28,7 @@ import {
   verify,
   workflowGrant,
 } from "./github-oidc.ts";
-import { mintGitHubToken } from "./github-token.ts";
+import { dispatchExposure, mintGitHubToken } from "./github-token.ts";
 import { sideRoute } from "./side-routes.ts";
 import type { SideRouteInput } from "./side-routes.ts";
 
@@ -253,27 +252,6 @@ const handle = (
       ),
   });
 
-const sweep = (env: CredentialBrokerEnv): Effect.Effect<void, never, CloudflareOpContext> =>
-  Effect.gen(function* sweepExpired() {
-    const now = yield* DateTime.now;
-    const expired = yield* pipe(
-      listTokens.items({ accountId: env.ACCOUNT_ID }),
-      Stream.filter(
-        (token) =>
-          Str.startsWith(ISSUED_TOKEN_PREFIX)(token.name ?? "") &&
-          Option.exists(DateTime.make(token.expiresOn ?? ""), DateTime.isLessThan(now)),
-      ),
-      Stream.runCollect,
-    );
-    yield* pipe(
-      expired,
-      Effect.forEach((token) =>
-        deleteToken({ accountId: env.ACCOUNT_ID, tokenId: token.id ?? "" }),
-      ),
-    );
-    yield* Effect.logInfo("credential.swept").pipe(Effect.annotateLogs({ count: expired.length }));
-  }).pipe(Effect.catchCause((cause) => Effect.logError("credential.sweep_failed", cause)));
-
 const run = <Value>(
   env: CredentialBrokerEnv,
   effect: Effect.Effect<Value, never, BrokerContext>,
@@ -283,7 +261,13 @@ const worker = {
   fetch: (request: Request, env: CredentialBrokerEnv): Promise<Response> =>
     run(env, handle(request, env)),
   scheduled: (_controller: unknown, env: CredentialBrokerEnv): Promise<void> =>
-    run(env, sweep(env)),
+    run(
+      env,
+      Effect.andThen(
+        sweepIssuedTokens(env.ACCOUNT_ID),
+        Effect.promise(() => dispatchExposure(env)),
+      ),
+    ),
 };
 
 export { AccessOAuth } from "./access-oauth.ts";

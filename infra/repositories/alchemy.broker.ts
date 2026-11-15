@@ -103,7 +103,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       main: "./credential-broker.worker.ts",
       logpush: true,
       domain: CREDENTIAL_BROKER_HOST,
-      crons: ["17 18 * * *"],
+      crons: ["41 * * * *"],
       env: {
         ROOT_TOKEN,
         ...keys,
