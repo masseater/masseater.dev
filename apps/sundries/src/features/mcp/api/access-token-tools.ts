@@ -1,15 +1,15 @@
 import type { Caller, UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { NO_PROJECT } from "@masseater.dev/mcp-tool-call";
 import type { AccessSite } from "@masseater.dev/repositories/access-sites";
+import type { SiteToken } from "@masseater.dev/repositories/credential-broker.worker";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { env } from "cloudflare:workers";
-import { Effect, Schema } from "effect";
+import { Effect, Match, Schema } from "effect";
 
-import { AccessTokenInput, SiteToken } from "./access-token-input";
-import { brokerFailed, brokerResponse } from "./broker-response";
+import { AccessTokenInput } from "./access-token-input";
+import { brokerFailed } from "./broker-response";
 import { meteredInput, runTool } from "./tool-call";
 
-const TOKEN_URL = "https://credentials.masseater.dev/access-oauth/token";
 const ONE_TOKEN = 1;
 
 const DESCRIPTION =
@@ -20,15 +20,21 @@ const INPUT_SCHEMA = AccessTokenInput.pipe(
   Schema.toStandardJSONSchemaV1,
 );
 
-const siteToken = (site: AccessSite): Effect.Effect<typeof SiteToken.Type, UpstreamFailed> =>
-  brokerResponse(() => env.ACCESS_OAUTH.fetch(`${TOKEN_URL}?site=${site}`)).pipe(
-    Effect.flatMap((response) =>
-      Effect.tryPromise({ try: () => response.json(), catch: brokerFailed }),
+type IssuedToken = Exclude<SiteToken, Readonly<{ status: "failed" }>>;
+
+const issued = (token: SiteToken): Effect.Effect<IssuedToken, UpstreamFailed> =>
+  Match.value(token).pipe(
+    Match.discriminator("status")("failed", ({ message }) =>
+      Effect.fail(brokerFailed(new Error(message))),
     ),
-    Effect.flatMap((body) =>
-      Schema.decodeUnknownEffect(SiteToken)(body).pipe(Effect.mapError(brokerFailed)),
-    ),
+    Match.orElse((rest) => Effect.succeed(rest)),
   );
+
+const siteToken = (site: AccessSite): Effect.Effect<IssuedToken, UpstreamFailed> =>
+  Effect.tryPromise({
+    try: (): Promise<SiteToken> => env.ACCESS_OAUTH.token(site),
+    catch: brokerFailed,
+  }).pipe(Effect.flatMap(issued));
 
 const registerAccessTokenTools =
   (caller: Caller) =>
