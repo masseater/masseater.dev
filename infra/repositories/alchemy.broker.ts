@@ -1,6 +1,5 @@
 import {
   CloudflareEnvironment,
-  D1,
   SecretsStore,
   Workers,
   Zone,
@@ -9,65 +8,19 @@ import {
 } from "@alchemy.run/cloudflare";
 import type { ClaudeRequestsRpc } from "@masseater.dev/exposure-protocol/claude-requests";
 import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
-import { Stack, makeRandom } from "alchemy";
+import { Stack } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
-import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
+import { Config, Effect } from "effect";
 import type { ConfigError } from "effect/Config";
 
+import { ciKeys, encodedGrants, githubAppStore } from "./broker-env.ts";
 import { CREDENTIAL_BROKER_AUDIENCE, PREFIX, TRACE_DESTINATION } from "./broker-names.ts";
-import { grantBindings, WORKFLOW_GITHUB_GRANTS } from "./credential-grants.ts";
-import type { GitHubAppEnv } from "./github-app.ts";
-
-const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
+import { tailnetFederation } from "./tailnet-federation.ts";
 
 const DOMAIN = "masseater.dev";
 const CREDENTIAL_BROKER_HOST = `credentials.${DOMAIN}`;
-const GITHUB_APP_DATABASE = `${PREFIX}GitHubApp-prod-zcxmorxkzgzaqw2z`;
-const SEAL_KEY_BYTES = 32;
 const SUNDRIES = { stack: "masseater-dev-sundries", stage: "prod" } as const;
-
-const npmTokenBinding = Effect.fn("npmTokenBinding")(function* npmTokenBinding(
-  store: SecretsStore.Store,
-) {
-  const token = yield* Config.option(Config.Redacted("NPM_TOKEN"));
-  const filled = pipe(
-    token,
-    Option.filter((value) => Redacted.value(value) !== ""),
-  );
-  if (Option.isNone(filled)) {
-    return {};
-  }
-  const NPM_TOKEN = yield* SecretsStore.Secret("CiNpmToken", {
-    store,
-    name: `${PREFIX}ci-npm-token`,
-    value: filled.value,
-  });
-  return { NPM_TOKEN };
-});
-
-const encodedGrants = Effect.fn("encodedGrants")(function* encodedGrants(
-  ids: Readonly<{ accountId: string; zoneId: string }>,
-) {
-  const bindings = grantBindings(ids);
-  return yield* Effect.all({
-    GRANTS: encodeJson(bindings.GRANTS),
-    GRANT_PROFILES: encodeJson(bindings.GRANT_PROFILES),
-    WORKFLOW_GRANTS: encodeJson(WORKFLOW_GITHUB_GRANTS),
-  }).pipe(Effect.orDie);
-});
-
-const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.Store) {
-  const CLAUDE_CODE_OAUTH_TOKEN = yield* SecretsStore.Secret("CiClaudeCodeOauthToken", {
-    store,
-    name: `${PREFIX}ci-claude-code-oauth-token`,
-    value: yield* Config.Redacted("CLAUDE_CODE_OAUTH_TOKEN"),
-  });
-  return {
-    CLAUDE_CODE_OAUTH_TOKEN,
-    ...(yield* npmTokenBinding(store)),
-  };
-});
 
 const tracedProviders = withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers());
 
@@ -89,13 +42,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       value: yield* Config.Redacted("CLOUDFLARE_API_TOKEN"),
     });
     const keys = yield* ciKeys(store);
-    const appStore = {
-      GITHUB_APP: yield* D1.Database("GitHubApp", {
-        name: GITHUB_APP_DATABASE,
-        migrations: "./github-app-migrations",
-      }),
-      SEAL_KEY: yield* makeRandom("SealKey", { bytes: SEAL_KEY_BYTES }),
-    } satisfies Readonly<Record<keyof GitHubAppEnv, unknown>>;
+    const appStore = yield* githubAppStore;
     const grants = yield* encodedGrants({ accountId, zoneId });
     const sundries = yield* Workers.Worker.ref("Mcp", SUNDRIES);
     const { url } = yield* Workers.Worker("CredentialBroker", {
@@ -110,6 +57,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
         ...appStore,
         ACCOUNT_ID: accountId,
         ...grants,
+        ...(yield* tailnetFederation),
         CLAUDE_REQUESTS: Workers.WorkerEntrypoint<ClaudeRequestsRpc>(sundries, "ClaudeRequests"),
       },
     });
