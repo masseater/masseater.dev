@@ -15,6 +15,11 @@ export default defineConfig(
     run: {
       tasks: {
         verify: { command: [], dependsOn: ["cargo"] },
+        installer: {
+          command: "tauri build --config src-tauri/tauri.release.conf.json",
+          dependsOn: ["aredoko-server#installer:resources"],
+          cache: false,
+        },
         "dev:app": {
           command:
             "set WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222&& set OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318&& set OTEL_TRACES_EXPORTER=otlp&& tauri dev",

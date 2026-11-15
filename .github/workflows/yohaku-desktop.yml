@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "apps/yohaku-desktop/**"
+      - "libs/component-release/**"
+      - "!**/*.md"
       - ".github/release-please/yohaku-*.json"
       - ".github/workflows/yohaku-desktop.yml"
   workflow_dispatch:
@@ -13,7 +15,7 @@ permissions: {}
 
 concurrency:
   group: yohaku-desktop
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   CARGO_TERM_COLOR: always
@@ -133,6 +135,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@93ede91739120dbe2102f1a4a5dbcfcb67641f36
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@988d10d667dd956eb17a81ec39e8b8cbba5c898a
         with:
           github-token: ${{ github.token }}

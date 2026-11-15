@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "apps/yakusu/**"
+      - "libs/component-release/**"
+      - "!**/*.md"
       - ".github/actions/linux-packages/**"
       - ".github/release-please/yakusu-*.json"
       - ".github/workflows/yakusu.yml"
@@ -14,7 +16,7 @@ permissions: {}
 
 concurrency:
   group: yakusu
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   CARGO_TERM_COLOR: always
@@ -84,13 +86,15 @@ jobs:
           path: |
             apps/yakusu/src-tauri/resources/archives
             apps/yakusu/src-tauri/resources/models
-          key: yakusu-runtime-${{ matrix.platform }}-${{ hashFiles('apps/yakusu/scripts/fetch-runtime.sh', 'apps/yakusu/src-tauri/src/model.rs') }}
+          key: yakusu-runtime-${{ matrix.platform }}-${{ hashFiles('apps/yakusu/scripts/archive.ts', 'apps/yakusu/scripts/fetch-runtime.ts', 'apps/yakusu/src-tauri/src/model.rs') }}
       - name: Download llama-server and the licenses
-        run: apps/yakusu/scripts/fetch-runtime.sh "$PLATFORM"
+        run: vp run ci:runtime "$PLATFORM"
+        working-directory: apps/yakusu
         env:
           PLATFORM: ${{ matrix.platform }}
       - name: Download the model as the app does and translate with it
-        run: cargo test --package yakusu --test engine --locked -- --ignored
+        run: vp run ci:engine
+        working-directory: apps/yakusu
       - if: steps.runtime.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -132,20 +136,23 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: apps/yakusu/scripts
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: yakusu-${{ matrix.platform }}
-          path: dist
+          path: apps/yakusu/dist
       - name: Install the installer, launch the app and wait for its engine
-        run: apps/yakusu/scripts/launch-installed.sh "$PLATFORM" dist launch
+        run: vp run ci:launch "$PLATFORM" dist
+        working-directory: apps/yakusu
         env:
           PLATFORM: ${{ matrix.platform }}
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: launch-yakusu-${{ matrix.platform }}
-          path: launch/*
+          path: apps/yakusu/launch/*
           if-no-files-found: ignore
 
   release:
@@ -198,6 +205,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@93ede91739120dbe2102f1a4a5dbcfcb67641f36
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@988d10d667dd956eb17a81ec39e8b8cbba5c898a
         with:
           github-token: ${{ github.token }}
