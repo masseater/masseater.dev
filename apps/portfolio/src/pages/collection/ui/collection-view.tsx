@@ -9,7 +9,7 @@ import type { TagSearch } from "#/features/tag-filter";
 
 import { IdeaList } from "./idea-list";
 
-const CollectionView = ({
+export const CollectionView = ({
   activeTag,
   category,
   entries,
@@ -46,5 +46,3 @@ const CollectionView = ({
     </div>
   );
 };
-
-export { CollectionView };

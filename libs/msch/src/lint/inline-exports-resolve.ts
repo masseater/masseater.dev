@@ -9,23 +9,23 @@ import type {
   Statement,
 } from "./inline-exports-source.ts";
 
-interface DeclarationResolution {
+export interface DeclarationResolution {
   readonly kind: "declaration";
   readonly statements: readonly Declaration[];
 }
 
-interface ImportResolution {
+export interface ImportResolution {
   readonly kind: "import";
   readonly statement: Import;
   readonly binding: ImportBinding;
 }
 
-interface DefaultResolution {
+export interface DefaultResolution {
   readonly kind: "default";
   readonly name: string;
 }
 
-type Resolution = DeclarationResolution | ImportResolution | DefaultResolution;
+export type Resolution = DeclarationResolution | ImportResolution | DefaultResolution;
 
 export interface Resolved {
   readonly specifier: Specifier;
@@ -33,6 +33,7 @@ export interface Resolved {
 }
 
 const DEFAULT_NAME = "default";
+const CLASS_DECLARATION = "ClassDeclaration";
 const TYPE_DECLARATIONS: ReadonlySet<string> = new Set([
   "TSTypeAliasDeclaration",
   "TSInterfaceDeclaration",
@@ -93,6 +94,24 @@ const importIn =
       Option.map((binding): Resolution => ({ kind: "import", statement, binding })),
     );
   };
+
+export const isTypeOnlyClass =
+  (list: ExportList) =>
+  (specifier: Specifier): boolean =>
+    isTypeOnly(list)(specifier) &&
+    pipe(
+      specifier.local,
+      Option.exists((local) => {
+        const statements = declarationsNamed(list, local);
+        return (
+          Arr.isReadonlyArrayNonEmpty(statements) &&
+          pipe(
+            statements,
+            Arr.every((statement) => statement.type === CLASS_DECLARATION),
+          )
+        );
+      }),
+    );
 
 const resolutionOf =
   (list: ExportList) =>

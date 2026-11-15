@@ -15,7 +15,7 @@ const failed = (cause: unknown): StoreFailed =>
 
 const db = drizzle(env.DB);
 
-const changesAfter = (after: number): Effect.Effect<typeof Changes.Type, StoreFailed> =>
+export const changesAfter = (after: number): Effect.Effect<typeof Changes.Type, StoreFailed> =>
   Effect.tryPromise({
     try: () =>
       db
@@ -40,7 +40,9 @@ const replacing = ({ kind, id, updatedAt }: typeof SyncDocument.Type): BatchItem
 const inserting = (document: typeof SyncDocument.Type): BatchItem<"sqlite"> =>
   db.insert(documents).values(document).onConflictDoNothing();
 
-const store = (pushed: readonly (typeof SyncDocument.Type)[]): Effect.Effect<void, StoreFailed> =>
+export const store = (
+  pushed: readonly (typeof SyncDocument.Type)[],
+): Effect.Effect<void, StoreFailed> =>
   pipe(
     pushed,
     Array.flatMap((document) => [replacing(document), inserting(document)]),
@@ -50,5 +52,3 @@ const store = (pushed: readonly (typeof SyncDocument.Type)[]): Effect.Effect<voi
         Effect.tryPromise({ try: () => db.batch(statements), catch: failed }).pipe(Effect.asVoid),
     }),
   );
-
-export { changesAfter, store };

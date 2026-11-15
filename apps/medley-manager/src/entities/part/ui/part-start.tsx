@@ -5,7 +5,9 @@ import type { PartStartLink } from "#/entities/video/@x/part";
 
 const CHIP = "rounded-full bg-screen px-2 py-0.5 text-xs font-bold text-comment-cyan tabular-nums";
 
-const PartStart = ({ start }: Readonly<{ start: Option.Option<PartStartLink> }>): ReactNode =>
+export const PartStart = ({
+  start,
+}: Readonly<{ start: Option.Option<PartStartLink> }>): ReactNode =>
   start.pipe(
     Option.match({
       onNone: () => false,
@@ -22,5 +24,3 @@ const PartStart = ({ start }: Readonly<{ start: Option.Option<PartStartLink> }>)
         ),
     }),
   );
-
-export { PartStart };

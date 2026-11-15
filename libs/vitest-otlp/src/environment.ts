@@ -2,7 +2,7 @@ import { Option, Predicate, Record, pipe } from "effect";
 
 import type { ReceiverAddress } from "./telemetry.ts";
 
-type Environment = Readonly<Record<string, string | undefined>>;
+export type Environment = Readonly<Record<string, string | undefined>>;
 
 const UNSET = "";
 
@@ -30,7 +30,7 @@ const endpointFor =
       { onNone: () => address.httpEndpoint, onSome: () => address.grpcEndpoint },
     );
 
-const receiverEnvironment =
+export const receiverEnvironment =
   (address: ReceiverAddress) =>
   (env: Environment): Readonly<Record<string, string>> => ({
     ...pipe(
@@ -40,6 +40,3 @@ const receiverEnvironment =
     ...POINTED,
     OTEL_EXPORTER_OTLP_ENDPOINT: endpointFor(address)(env),
   });
-
-export { receiverEnvironment };
-export type { Environment };

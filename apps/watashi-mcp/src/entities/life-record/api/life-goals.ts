@@ -8,11 +8,12 @@ import { computeStats } from "./life-stats";
 import type { MetricStats, StatsData } from "./life-stats";
 import { dayRangeOf } from "./life-time";
 
-type GoalPeriod = Period & Readonly<{ value?: number; achieved?: boolean; inProgress?: boolean }>;
+export type GoalPeriod = Period &
+  Readonly<{ value?: number; achieved?: boolean; inProgress?: boolean }>;
 
 type GoalScope = Readonly<{ today: string; count: number; start: string; end: string }>;
 
-type Goal = Readonly<{ body: Body; dayStart: string; dayEnd: string }>;
+export type Goal = Readonly<{ body: Body; dayStart: string; dayEnd: string }>;
 
 type GoalTarget = Readonly<{ target: number; comparison: string; today: string }>;
 
@@ -141,9 +142,9 @@ const progressOf =
     };
   };
 
-type GoalContext = Readonly<{ data: StatsData; today: string; count: number }>;
+export type GoalContext = Readonly<{ data: StatsData; today: string; count: number }>;
 
-const goalPeriods =
+export const goalPeriods =
   ({ data, today, count }: GoalContext) =>
   ({ body, dayStart, dayEnd }: Goal): readonly GoalPeriod[] => {
     const scope: GoalScope = { today, count, start: dayStart, end: dayEnd };
@@ -160,6 +161,3 @@ const goalPeriods =
       Arr.map(progress),
     );
   };
-
-export { goalPeriods };
-export type { Goal, GoalContext, GoalPeriod };

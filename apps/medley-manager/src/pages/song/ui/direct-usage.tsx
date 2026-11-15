@@ -5,7 +5,7 @@ import { useSong } from "#/pages/song/api/use-song";
 import { describeDirect } from "#/pages/song/lib/describe";
 import { SectionHeading } from "#/shared/ui/section-heading";
 
-const DirectUsage = (): ReactNode => {
+export const DirectUsage = (): ReactNode => {
   const { direct } = useSong();
   return (
     <section className="flex flex-col gap-4">
@@ -14,5 +14,3 @@ const DirectUsage = (): ReactNode => {
     </section>
   );
 };
-
-export { DirectUsage };

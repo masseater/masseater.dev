@@ -162,7 +162,7 @@ const textOf = (word: Uint8Array, table: Uint8Array): string => {
   );
 };
 
-const docReader: Reader = {
+export const docReader: Reader = {
   format: "doc",
   extensions: [".doc", ".dot"],
   accepts: hasStream((name) => name === WORD_DOCUMENT),
@@ -174,5 +174,3 @@ const docReader: Reader = {
       return { text: textOf(word, table), format: "plain" };
     }),
 };
-
-export { docReader };

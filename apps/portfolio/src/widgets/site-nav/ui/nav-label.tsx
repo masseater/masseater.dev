@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { sectionMeta } from "#/shared/config";
 import type { Section } from "#/shared/config";
 
-const NavLabel = ({
+export const NavLabel = ({
   active,
   section,
 }: Readonly<{ active: boolean; section: Section }>): ReactNode => (
@@ -17,5 +17,3 @@ const NavLabel = ({
     )}
   </span>
 );
-
-export { NavLabel };

@@ -35,7 +35,7 @@ const resolvedAlias = (
 ): Option.Option<string> =>
   pipe(Rec.toEntries(imports), Arr.findFirst(importTarget(alias)), Option.map(withoutRelative));
 
-const shadcnUiIn = Effect.fn("shadcnUiIn")(function* shadcnUiIn(root: string, name: string) {
+export const shadcnUiIn = Effect.fn("shadcnUiIn")(function* shadcnUiIn(root: string, name: string) {
   const files = yield* RepositoryFiles;
   const directory = files.dirname(name);
   const configText = yield* files.readFile(files.join(root, name));
@@ -58,5 +58,3 @@ const shadcnUiIn = Effect.fn("shadcnUiIn")(function* shadcnUiIn(root: string, na
     Option.map((target) => `${prefixed(directory)(target)}${EVERYTHING}`),
   );
 });
-
-export { shadcnUiIn };

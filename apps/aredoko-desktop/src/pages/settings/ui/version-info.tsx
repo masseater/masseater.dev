@@ -5,7 +5,7 @@ import { useStatus } from "#/shared/api";
 
 const NAME = "aredoko";
 
-const VersionInfo = (): ReactNode => {
+export const VersionInfo = (): ReactNode => {
   const status = useStatus();
   const label = pipe(
     Option.fromUndefinedOr(status.data),
@@ -14,5 +14,3 @@ const VersionInfo = (): ReactNode => {
   );
   return <p className="text-muted-foreground text-xs">{label}</p>;
 };
-
-export { VersionInfo };

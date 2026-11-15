@@ -9,7 +9,7 @@ import { ModelApi } from "./model-api.ts";
 import type { Part } from "./model-api.ts";
 import { ModelError } from "./model-error.ts";
 
-const PRODUCT_NAME = "ocr-decide";
+export const PRODUCT_NAME = "ocr-decide";
 
 const REPOSITORY_URL = "https://github.com/masseater/masseater.dev";
 
@@ -194,7 +194,7 @@ const modelApiLayer = Layer.effect(
 
 const keyedClient = layerConfig({ apiKey: Config.Redacted("OPENROUTER_API_KEY"), ...site });
 
-const openRouter = modelApiLayer.pipe(
+export const openRouter = modelApiLayer.pipe(
   Layer.provide(keyedClient),
   Layer.provide(FetchHttpClient.layer),
 );
@@ -204,7 +204,5 @@ const clientWithKey = (apiKey: string): ReturnType<typeof layerConfig> => {
   return layerConfig({ apiKey: fixedKey, ...site });
 };
 
-const openRouterWithKey = (apiKey: string): Layer.Layer<ModelApi, Config.ConfigError> =>
+export const openRouterWithKey = (apiKey: string): Layer.Layer<ModelApi, Config.ConfigError> =>
   modelApiLayer.pipe(Layer.provide(clientWithKey(apiKey)), Layer.provide(FetchHttpClient.layer));
-
-export { PRODUCT_NAME, openRouter, openRouterWithKey };

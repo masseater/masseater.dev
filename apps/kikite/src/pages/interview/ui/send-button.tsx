@@ -11,7 +11,7 @@ const variantOf = (empty: boolean): "ghost" | "default" => {
   return "default";
 };
 
-const SendButton = ({ empty }: Readonly<{ empty: boolean }>): ReactNode => (
+export const SendButton = ({ empty }: Readonly<{ empty: boolean }>): ReactNode => (
   <Button
     type="submit"
     size="icon"
@@ -24,5 +24,3 @@ const SendButton = ({ empty }: Readonly<{ empty: boolean }>): ReactNode => (
     <ArrowUp />
   </Button>
 );
-
-export { SendButton };

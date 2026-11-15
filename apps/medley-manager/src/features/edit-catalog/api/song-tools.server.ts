@@ -19,7 +19,7 @@ const UPDATE_SCHEMA = UpdateSongInput.pipe(
 const ID_SCHEMA = IdInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 const MERGE_SCHEMA = MergeInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
-const registerSongTools = (server: McpServer): McpServer => {
+export const registerSongTools = (server: McpServer): McpServer => {
   server.registerTool(
     "create_song",
     {
@@ -59,5 +59,3 @@ const registerSongTools = (server: McpServer): McpServer => {
   );
   return server;
 };
-
-export { registerSongTools };

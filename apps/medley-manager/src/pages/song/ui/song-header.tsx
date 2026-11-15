@@ -11,7 +11,7 @@ import { UsageCounter } from "./usage-counter";
 
 const KICKER = "♪ 曲";
 
-const SongHeader = (): ReactNode => {
+export const SongHeader = (): ReactNode => {
   const song = useSong();
   const facts = useMemo(() => [song.artist, song.genre], [song]);
   return (
@@ -31,5 +31,3 @@ const SongHeader = (): ReactNode => {
     </header>
   );
 };
-
-export { SongHeader };

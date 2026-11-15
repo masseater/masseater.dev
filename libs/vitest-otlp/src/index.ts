@@ -16,14 +16,14 @@ import type {
 
 const taggedError = Schema.TaggedError;
 
-class TelemetryNotReceived extends taggedError<
+export class TelemetryNotReceived extends taggedError<
   TelemetryNotReceived,
   { readonly brand: unique symbol }
 >()("TelemetryNotReceived", { message: Schema.String }) {}
 
-type ReadError = ReceiverNotRunning | Schema.SchemaError;
+export type ReadError = ReceiverNotRunning | Schema.SchemaError;
 
-interface WaitOptions<Item> {
+export interface WaitOptions<Item> {
   readonly where?: (item: Item) => boolean;
   readonly count?: number;
   readonly timeout?: Duration.Duration;
@@ -47,7 +47,7 @@ const DEFAULT_SEMCONV: ResolvedSemconv = {
   failOn: "violation",
 };
 
-interface OtlpOptions {
+export interface OtlpOptions {
   readonly semconv?: SemconvOptions | true;
 }
 
@@ -59,7 +59,7 @@ const semconvConfig = (semconv: SemconvOptions | true): ResolvedSemconv => ({
   ),
 });
 
-const otlp = (options: OtlpOptions = {}): Plugin => ({
+export const otlp = (options: OtlpOptions = {}): Plugin => ({
   name: "@r_masseater/vitest-otlp",
   config: () => ({
     test: {
@@ -120,34 +120,21 @@ const waitFor =
     return received.pipe(Effect.flatMap(check), Effect.retry({ while: isNotReceived, schedule }));
   };
 
-const receiverAddress: Effect.Effect<ReceiverAddress, ReceiverNotRunning> = currentReceiver.pipe(
-  Effect.map((receiver) => receiver.address),
-);
+export const receiverAddress: Effect.Effect<ReceiverAddress, ReceiverNotRunning> =
+  currentReceiver.pipe(Effect.map((receiver) => receiver.address));
 
-const receivedSpans = spans.received;
-const receivedLogs = logs.received;
-const receivedMetrics = metrics.received;
+export const receivedSpans = spans.received;
+export const receivedLogs = logs.received;
+export const receivedMetrics = metrics.received;
 
-const waitForSpans = waitFor(spans);
-const waitForLogs = waitFor(logs);
-const waitForMetrics = waitFor(metrics);
+export const waitForSpans = waitFor(spans);
+export const waitForLogs = waitFor(logs);
+export const waitForMetrics = waitFor(metrics);
 
-const clearTelemetry: Effect.Effect<void, ReceiverNotRunning> = currentReceiver.pipe(
+export const clearTelemetry: Effect.Effect<void, ReceiverNotRunning> = currentReceiver.pipe(
   Effect.flatMap((receiver) => receiver.clear),
 );
 
-export {
-  TelemetryNotReceived,
-  clearTelemetry,
-  otlp,
-  receiverAddress,
-  receivedLogs,
-  receivedMetrics,
-  receivedSpans,
-  waitForLogs,
-  waitForMetrics,
-  waitForSpans,
-};
 export { ReceiverNotRunning } from "./store.ts";
 export type {
   Attributes,
@@ -157,5 +144,4 @@ export type {
   ReceivedSpan,
   ReceiverAddress,
 } from "./telemetry.ts";
-export type { OtlpOptions, ReadError, WaitOptions };
 export type { SemconvLevel, SemconvOptions } from "./context.ts";

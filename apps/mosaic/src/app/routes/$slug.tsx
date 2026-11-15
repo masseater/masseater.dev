@@ -10,7 +10,7 @@ import {
 } from "#/pages/mosaic";
 import { seedOf } from "#/shared/lib/seed";
 
-const Route = createFileRoute("/$slug")({
+export const Route = createFileRoute("/$slug")({
   validateSearch: mosaicSearch,
   ssr: false,
   shouldReload: false,
@@ -24,5 +24,3 @@ const Route = createFileRoute("/$slug")({
   pendingComponent: MosaicPending,
   component: MosaicPage,
 });
-
-export { Route };

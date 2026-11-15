@@ -11,7 +11,7 @@ const LABELS = {
   paused: "マイクをつける",
 } as const;
 
-const MicButton = ({ size }: Readonly<{ size: RingSize }>): ReactNode => {
+export const MicButton = ({ size }: Readonly<{ size: RingSize }>): ReactNode => {
   const { status } = useListening();
   const toggle = useToggleMic();
   if (status !== "listening" && status !== "paused") {
@@ -30,5 +30,3 @@ const MicButton = ({ size }: Readonly<{ size: RingSize }>): ReactNode => {
     </button>
   );
 };
-
-export { MicButton };

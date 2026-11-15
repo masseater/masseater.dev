@@ -8,18 +8,16 @@ const FRAGMENT_MARK = "#";
 
 const inviteFromLocation = (): string => Str.replace(FRAGMENT_MARK, "")(globalThis.location.hash);
 
-const registerPasskey = (): Promise<unknown> =>
+export const registerPasskey = (): Promise<unknown> =>
   run(
     Effect.promise(() =>
       authClient.passkey.addPasskey({ context: inviteFromLocation(), createSession: true }),
     ).pipe(Effect.flatMap(requireAuthSuccess)),
   );
 
-const signInWithPasskey = (): Promise<unknown> =>
+export const signInWithPasskey = (): Promise<unknown> =>
   run(
     Effect.promise(() => authClient.signIn.passkey({ autoFill: false })).pipe(
       Effect.flatMap(requireAuthSuccess),
     ),
   );
-
-export { registerPasskey, signInWithPasskey };

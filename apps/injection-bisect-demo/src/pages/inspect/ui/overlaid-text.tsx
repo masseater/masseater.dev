@@ -23,7 +23,7 @@ const overlayOf = (text: string, state: InspectState, focus: Focus): readonly Pi
   return piecesOf({ text, run: Option.some(state.trace), focus });
 };
 
-const OverlaidText = ({ state }: Readonly<{ state: InspectState }>): ReactNode => {
+export const OverlaidText = ({ state }: Readonly<{ state: InspectState }>): ReactNode => {
   const text = useDraftText();
   const setText = useSetDraftText();
   const focus = useFocus();
@@ -49,5 +49,3 @@ const OverlaidText = ({ state }: Readonly<{ state: InspectState }>): ReactNode =
     </HighlightTextarea>
   );
 };
-
-export { OverlaidText };

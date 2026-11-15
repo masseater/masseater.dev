@@ -7,19 +7,19 @@ const TOP_SHOWN = 3;
 const NOT_FOUND = 0;
 const FIRST_RANK = 1;
 
-interface Ranked {
+export interface Ranked {
   readonly query: string;
   readonly expected: readonly string[];
   readonly results: readonly string[];
 }
 
-interface QueryScore {
+export interface QueryScore {
   readonly query: string;
   readonly rank: number;
   readonly top: readonly string[];
 }
 
-interface Scores {
+export interface Scores {
   readonly hitAt1: number;
   readonly hitAt5: number;
   readonly hitAt10: number;
@@ -55,7 +55,7 @@ const scoreOf = (entry: Ranked): QueryScore => ({
   top: Array.take(entry.results, TOP_SHOWN),
 });
 
-const score = (ranked: readonly Ranked[]): Scores => {
+export const score = (ranked: readonly Ranked[]): Scores => {
   const queries = pipe(ranked, Array.map(scoreOf));
   const ranks = pipe(
     queries,
@@ -69,6 +69,3 @@ const score = (ranked: readonly Ranked[]): Scores => {
     queries,
   };
 };
-
-export { score };
-export type { QueryScore, Ranked, Scores };

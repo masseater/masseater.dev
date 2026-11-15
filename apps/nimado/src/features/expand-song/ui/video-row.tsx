@@ -12,7 +12,10 @@ const spanOf = (youtube: boolean): number => {
   return NICO_COLUMNS;
 };
 
-const VideoRow = ({ id, youtube }: Readonly<{ id: number; youtube: boolean }>): ReactNode => (
+export const VideoRow = ({
+  id,
+  youtube,
+}: Readonly<{ id: number; youtube: boolean }>): ReactNode => (
   <tr className="border-b">
     <td aria-hidden />
     <td colSpan={spanOf(youtube)} className="pb-3">
@@ -20,5 +23,3 @@ const VideoRow = ({ id, youtube }: Readonly<{ id: number; youtube: boolean }>): 
     </td>
   </tr>
 );
-
-export { VideoRow };

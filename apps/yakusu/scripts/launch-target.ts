@@ -2,26 +2,33 @@ import { Array as Arr, Effect, FileSystem, Option, Path, String as Str, pipe } f
 import type { PlatformError, Scope } from "effect";
 import type { ChildProcessSpawner } from "effect/process";
 
-const IDENTIFIER = "dev.masseater.yakusu";
-const LOG = "llama-server.log";
-const OUTPUT = "launch";
+/** @internal */
+export const IDENTIFIER = "dev.masseater.yakusu";
+/** @internal */
+export const LOG = "llama-server.log";
+/** @internal */
+export const OUTPUT = "launch";
 
-type Requirements =
+/** @internal */
+export type Requirements =
   | FileSystem.FileSystem
   | Path.Path
   | ChildProcessSpawner.ChildProcessSpawner
   | Scope.Scope;
 
-type Step<Value> = Effect.Effect<Value, PlatformError.PlatformError | Error, Requirements>;
+/** @internal */
+export type Step<Value> = Effect.Effect<Value, PlatformError.PlatformError | Error, Requirements>;
 
-type Target = Readonly<{
+/** @internal */
+export type Target = Readonly<{
   start: (installers: string) => Step<void>;
   log: Step<string>;
   screenshot: (file: string) => Step<void>;
   processes: Step<string>;
 }>;
 
-const firstWith = Effect.fn("launch.firstWith")(function* firstWith(
+/** @internal */
+export const firstWith = Effect.fn("launch.firstWith")(function* firstWith(
   directory: string,
   suffix: string,
 ) {
@@ -34,8 +41,3 @@ const firstWith = Effect.fn("launch.firstWith")(function* firstWith(
   }
   return path.join(directory, found.value);
 });
-
-/** @internal */
-export { IDENTIFIER, LOG, OUTPUT, firstWith };
-/** @internal */
-export type { Requirements, Step, Target };

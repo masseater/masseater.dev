@@ -1,7 +1,7 @@
 import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-const ActionButton = ({
+export const ActionButton = ({
   onClick,
   children,
 }: Readonly<{ onClick: () => void; children: ReactNode }>): ReactNode => (
@@ -9,5 +9,3 @@ const ActionButton = ({
     {children}
   </Button>
 );
-
-export { ActionButton };

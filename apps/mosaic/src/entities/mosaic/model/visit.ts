@@ -6,21 +6,21 @@ import { bundledCandidates, bundledMosaic } from "#/entities/mosaic/api/bundled"
 import { candidatesQuery, mosaicQuery } from "#/entities/mosaic/api/queries";
 import type { CandidateList, Mosaic, Query } from "#/entities/mosaic/api/queries";
 
-interface Assignment {
+export interface Assignment {
   readonly seed: number;
   readonly choice: readonly number[];
 }
 
-interface Loaded extends Assignment {
+export interface Loaded extends Assignment {
   readonly mosaic: Option.Option<Mosaic>;
 }
 
-interface Load {
+export interface Load {
   readonly queryClient: QueryClient;
   readonly slug: string;
 }
 
-interface VisitLoad extends Load {
+export interface VisitLoad extends Load {
   readonly seed: Option.Option<number>;
 }
 
@@ -84,7 +84,7 @@ const choiceOf = ({
       ),
   });
 
-const loadVisit = ({ seed: given, ...load }: VisitLoad): Effect.Effect<Loaded> =>
+export const loadVisit = ({ seed: given, ...load }: VisitLoad): Effect.Effect<Loaded> =>
   Effect.gen(function* visit() {
     const seed = yield* Option.match(given, {
       onNone: () => Random.nextInt,
@@ -94,6 +94,3 @@ const loadVisit = ({ seed: given, ...load }: VisitLoad): Effect.Effect<Loaded> =
     const choice = yield* choiceOf({ load, mosaic, seed });
     return { seed, choice, mosaic };
   });
-
-export type { Assignment, Load, Loaded, VisitLoad };
-export { loadVisit };

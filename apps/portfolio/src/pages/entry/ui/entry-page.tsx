@@ -8,7 +8,7 @@ import { EntryTitleBar } from "./entry-title-bar";
 
 const route = getRouteApi("/_stage/_site/$category/$slug");
 
-const EntryPage = (): ReactNode => {
+export const EntryPage = (): ReactNode => {
   const { entry } = route.useLoaderData();
   return (
     <article className="entry-title-scope flex w-full justify-center gap-8" data-wide>
@@ -19,5 +19,3 @@ const EntryPage = (): ReactNode => {
     </article>
   );
 };
-
-export { EntryPage };

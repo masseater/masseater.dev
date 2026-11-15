@@ -36,17 +36,17 @@ const FIRST_LINE = 1;
 const LOCATION_SUFFIX = "_location";
 const TRUNCATION_MARKER = "/* ...truncated */";
 
-const refAt = (index: number): string => `s${String(index)}`;
+export const refAt = (index: number): string => `s${String(index)}`;
 
-const locationRefOf = (ref: string): string => `${ref}${LOCATION_SUFFIX}`;
+export const locationRefOf = (ref: string): string => `${ref}${LOCATION_SUFFIX}`;
 
-const snippetRefOf = (questionId: string): string =>
+export const snippetRefOf = (questionId: string): string =>
   Bool.match(Str.endsWith(LOCATION_SUFFIX)(questionId), {
     onTrue: () => Str.slice(Num.decrement(FIRST_LINE), -LOCATION_SUFFIX.length)(questionId),
     onFalse: () => questionId,
   });
 
-const truncateSnippet: {
+export const truncateSnippet: {
   (maxChars: number): (text: string) => string;
   (text: string, maxChars: number): string;
 } = Fn.dual(DATA_FIRST_ARITY, (text: string, maxChars: number): string =>
@@ -118,7 +118,7 @@ const contextsOf = (
   return { contexts: Rec.fromEntries(contexts) };
 };
 
-const buildRequest: {
+export const buildRequest: {
   (matches: readonly RequestMatch[]): (model: string) => DecisionRequest;
   (model: string, matches: readonly RequestMatch[]): DecisionRequest;
 } = Fn.dual(
@@ -173,7 +173,7 @@ const resultOf = (
   ),
 ];
 
-const parseVerdicts: {
+export const parseVerdicts: {
   (request: DecisionRequest): (response: DecisionResponse) => Verdicts;
   (response: DecisionResponse, request: DecisionRequest): Verdicts;
 } = Fn.dual(DATA_FIRST_ARITY, (response: DecisionResponse, request: DecisionRequest): Verdicts => {
@@ -193,5 +193,3 @@ const parseVerdicts: {
   );
   return { model, results, answers, complete };
 });
-
-export { buildRequest, locationRefOf, parseVerdicts, refAt, snippetRefOf, truncateSnippet };

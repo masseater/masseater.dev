@@ -4,9 +4,9 @@ import type { Heading } from "sloppedia";
 import { entryOf, foundOrNotFound, loadedHeadings, preloadBody } from "#/entities/entry";
 import type { Entry } from "#/entities/entry";
 
-type FoundArticle = Readonly<{ entry: Entry; headings: readonly Heading[] }>;
+export type FoundArticle = Readonly<{ entry: Entry; headings: readonly Heading[] }>;
 
-const loadArticle = ({ slug }: Readonly<{ slug: string }>): Promise<FoundArticle> =>
+export const loadArticle = ({ slug }: Readonly<{ slug: string }>): Promise<FoundArticle> =>
   Effect.runPromise(
     entryOf({ category: "sloppedia", slug }).pipe(
       Effect.flatMap(foundOrNotFound),
@@ -14,6 +14,3 @@ const loadArticle = ({ slug }: Readonly<{ slug: string }>): Promise<FoundArticle
       Effect.map(({ entry }) => ({ entry, headings: loadedHeadings(entry) })),
     ),
   );
-
-export type { FoundArticle };
-export { loadArticle };

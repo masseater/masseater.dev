@@ -17,7 +17,7 @@ const detectLabel = (detected: Option.Option<LanguageCode>): string =>
     Option.getOrElse(() => DETECT),
   );
 
-const DetectTab = ({
+export const DetectTab = ({
   detected,
 }: Readonly<{ detected: Option.Option<LanguageCode> }>): ReactNode => {
   const source = useSource();
@@ -33,5 +33,3 @@ const DetectTab = ({
     />
   );
 };
-
-export { DetectTab };

@@ -2,8 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { LeaderboardPage } from "#/pages/leaderboard";
 
-const Route = createFileRoute("/")({
+export const Route = createFileRoute("/")({
   component: LeaderboardPage,
 });
-
-export { Route };

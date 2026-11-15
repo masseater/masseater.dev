@@ -1,3 +1,1 @@
-const BASE_PATH = "/mosaic";
-
-export { BASE_PATH };
+export const BASE_PATH = "/mosaic";

@@ -7,7 +7,7 @@ import { TITLE } from "#/pages/seikin-index/model/copy";
 
 import { ArticleSection } from "./article-section";
 
-const SeikinIndexPage = (): ReactNode => (
+export const SeikinIndexPage = (): ReactNode => (
   <div className="flex w-full max-w-5xl flex-col gap-12">
     <header className="flex flex-col gap-4">
       <h1 className="font-display text-4xl leading-tight font-light text-balance sm:text-6xl">
@@ -21,5 +21,3 @@ const SeikinIndexPage = (): ReactNode => (
     )}
   </div>
 );
-
-export { SeikinIndexPage };

@@ -23,27 +23,27 @@ const DescriptionColumns = Schema.NonEmptyArray(Schema.NonEmptyString).annotate(
 
 const MemoColumn = Schema.NonEmptyString.annotate({ description: "メモの列の見出し" });
 
-const ColumnsSchema = Schema.Struct({
+export const ColumnsSchema = Schema.Struct({
   date: Schema.NonEmptyString.annotate({ description: "日付の列の見出し" }),
   description: DescriptionColumns,
   memo: Schema.optionalKey(MemoColumn),
   amount: Schema.Union([SignedAmount, SplitAmount]),
 });
 
-type Columns = typeof ColumnsSchema.Type;
+export type Columns = typeof ColumnsSchema.Type;
 
-type AmountIndexes =
+export type AmountIndexes =
   | Readonly<{ kind: "signed"; index: number; outflowPositive: boolean }>
   | Readonly<{ kind: "split"; outflow: number; inflow: number }>;
 
-type Indexes = Readonly<{
+export type Indexes = Readonly<{
   date: number;
   description: readonly number[];
   memo: Option.Option<number>;
   amount: AmountIndexes;
 }>;
 
-type Lookup = (name: string) => Result.Result<number, string>;
+export type Lookup = (name: string) => Result.Result<number, string>;
 
 const amountIndexes = (
   amount: Columns["amount"],
@@ -77,7 +77,7 @@ const memoIndex = (
     onSome: (name) => pipe(lookup(name), Result.map(Option.some)),
   });
 
-const indexesOf = ({
+export const indexesOf = ({
   columns,
   lookup,
 }: Readonly<{ columns: Columns; lookup: Lookup }>): Result.Result<Indexes, string> =>
@@ -88,6 +88,3 @@ const indexesOf = ({
     const amount = yield* amountIndexes(columns.amount, lookup);
     return { date, description, memo, amount };
   });
-
-export { ColumnsSchema, indexesOf };
-export type { AmountIndexes, Columns, Indexes, Lookup };

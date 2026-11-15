@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { findEntry } from "#/entities/entry/api/entries";
 import { entryPath } from "#/entities/entry/model/entry";
 
-const WikiLink = ({
+export const WikiLink = ({
   slug,
   hash,
   children,
@@ -29,5 +29,3 @@ const WikiLink = ({
       </a>
     ),
   });
-
-export { WikiLink };

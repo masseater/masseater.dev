@@ -97,7 +97,7 @@ export function groupProblemsByKind<K extends ProblemKind>(
   return result;
 }
 
-export type { ParsedPackageSpec };
+export type { ParsedPackageSpec } from "./types.js";
 export function parsePackageSpec(input: string): Failable<ParsedPackageSpec> {
   let name;
   let version;

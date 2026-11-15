@@ -120,7 +120,7 @@ const run = Effect.fn("run")(function* runCondition(
 });
 
 /** @internal */
-const evaluate = Effect.fn("evaluate")(function* evaluateCondition(
+export const evaluate = Effect.fn("evaluate")(function* evaluateCondition(
   condition: Condition,
   assets: readonly LibraryAsset[],
   queries: readonly Query[],
@@ -139,5 +139,3 @@ const evaluate = Effect.fn("evaluate")(function* evaluateCondition(
     Effect.provideContext(context),
   );
 }, Effect.scoped);
-
-export { evaluate };

@@ -31,7 +31,7 @@ interface Report {
   readonly documents: readonly Document[];
 }
 
-class Results extends Context.Service<
+export class Results extends Context.Service<
   Results,
   {
     readonly documents: Effect.Effect<readonly Document[], ResultsError>;
@@ -96,6 +96,6 @@ const makeResults = Effect.gen(function* makeResults() {
   });
 });
 
-const resultsLayer = Layer.effect(Results, makeResults).pipe(Layer.provide(NodeServices.layer));
-
-export { Results, resultsLayer };
+export const resultsLayer = Layer.effect(Results, makeResults).pipe(
+  Layer.provide(NodeServices.layer),
+);

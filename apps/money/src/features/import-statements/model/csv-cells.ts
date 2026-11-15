@@ -20,7 +20,7 @@ const POSITIVE = 1;
 
 const ZERO = 0;
 
-const clean = (cell: string): string => pipe(cell, Str.normalize("NFKC"), Str.trim);
+export const clean = (cell: string): string => pipe(cell, Str.normalize("NFKC"), Str.trim);
 
 const groupsOf = (cell: string): Option.Option<Readonly<Record<string, string>>> =>
   pipe(
@@ -34,7 +34,7 @@ const isoOf = (groups: Readonly<Record<string, string>>): string => {
   return `${groups["year"] ?? ""}-${part("month")}-${part("day")}`;
 };
 
-const dateOf = (cell: string): Option.Option<string> =>
+export const dateOf = (cell: string): Option.Option<string> =>
   pipe(
     groupsOf(cell),
     Option.map(isoOf),
@@ -46,7 +46,7 @@ const dateOf = (cell: string): Option.Option<string> =>
 const signOf = (cell: string): number =>
   Option.match(Str.match(MINUS_MARK)(cell), { onNone: () => POSITIVE, onSome: () => NEGATIVE });
 
-const amountOf = (cell: string): Option.Option<number> =>
+export const amountOf = (cell: string): Option.Option<number> =>
   pipe(
     cell,
     Str.replace(MINUS_MARK, ""),
@@ -55,10 +55,8 @@ const amountOf = (cell: string): Option.Option<number> =>
     Option.map((digits) => Number.parseInt(digits, DECIMAL) * signOf(cell)),
   );
 
-const optionalAmountOf = (cell: string): Option.Option<number> =>
+export const optionalAmountOf = (cell: string): Option.Option<number> =>
   Option.match(Option.liftPredicate(cell, Str.isNonEmpty), {
     onNone: () => Option.some(ZERO),
     onSome: amountOf,
   });
-
-export { amountOf, clean, dateOf, optionalAmountOf };

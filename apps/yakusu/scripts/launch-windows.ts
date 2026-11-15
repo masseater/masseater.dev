@@ -70,12 +70,10 @@ const processes = Effect.map(capture({ file: "tasklist", args: [] }), (listed) =
   ),
 );
 
-const windows: Target = {
+/** @internal */
+export const windows: Target = {
   start,
   log,
   screenshot: (file) => Effect.asVoid(screenshot(file)),
   processes,
 };
-
-/** @internal */
-export { windows };

@@ -37,11 +37,9 @@ const revisionsOf = (key: IdKey): Effect.Effect<readonly Body[], StoreFailure> =
   );
 };
 
-const lifeRevisions = (ref: string): Effect.Effect<Body, StoreFailure> =>
+export const lifeRevisions = (ref: string): Effect.Effect<Body, StoreFailure> =>
   pipe(
     lifeKeyOf(ref),
     Effect.flatMap(revisionsOf),
     Effect.map((revisions) => ({ ref, revisions })),
   );
-
-export { lifeRevisions };

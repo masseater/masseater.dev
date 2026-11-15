@@ -169,7 +169,7 @@ const measurePage = (
     return Array.getSomes(skipped);
   });
 
-const measureFlow = Effect.fn("web-vitals.flow")(function* measureFlow(
+export const measureFlow = Effect.fn("web-vitals.flow")(function* measureFlow(
   urls: readonly string[],
   chromeFlags: readonly string[],
 ) {
@@ -188,5 +188,3 @@ const measureFlow = Effect.fn("web-vitals.flow")(function* measureFlow(
   const html = yield* attempt(() => flow.generateReport());
   return { result, html, unclickable: Array.flatten(skipped) };
 }, Effect.scoped);
-
-export { measureFlow };

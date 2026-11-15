@@ -8,7 +8,7 @@ import { VersionInfo } from "./version-info.tsx";
 
 const TITLE = "設定";
 
-const SettingsPage = (): ReactNode => (
+export const SettingsPage = (): ReactNode => (
   <section className="flex max-w-2xl flex-col gap-4">
     <PageHeader title={TITLE} />
     <FolderSetting />
@@ -17,5 +17,3 @@ const SettingsPage = (): ReactNode => (
     <VersionInfo />
   </section>
 );
-
-export { SettingsPage };

@@ -30,7 +30,7 @@ const relativeEntries = (
 
 const EMPTY_DECLARATIONS = "";
 
-const readsTheRootTypesConditionOfAnExportMap = Effect.gen(
+export const readsTheRootTypesConditionOfAnExportMap = Effect.gen(
   function* readsTheRootTypesConditionOfAnExportMap() {
     const manifestText1 = yield* manifest({ dependencies: { oxlint: "1.0.0" } });
     const manifestText2 = yield* manifest({
@@ -48,7 +48,7 @@ const readsTheRootTypesConditionOfAnExportMap = Effect.gen(
   },
 );
 
-const readsAnExportMapSpelledAsOnePathAsTheRoo = Effect.gen(
+export const readsAnExportMapSpelledAsOnePathAsTheRoo = Effect.gen(
   function* readsAnExportMapSpelledAsOnePathAsTheRoo() {
     const manifestText3 = yield* manifest({ dependencies: { oxlint: "1.0.0" } });
     const manifestText4 = yield* manifest({ exports: "./dist/index.js" });
@@ -64,7 +64,7 @@ const readsAnExportMapSpelledAsOnePathAsTheRoo = Effect.gen(
   },
 );
 
-const readsConditionsWrittenWithoutASubpathAsT = Effect.gen(
+export const readsConditionsWrittenWithoutASubpathAsT = Effect.gen(
   function* readsConditionsWrittenWithoutASubpathAsT() {
     const manifestText5 = yield* manifest({ dependencies: { oxlint: "1.0.0" } });
     const manifestText6 = yield* manifest({
@@ -82,7 +82,7 @@ const readsConditionsWrittenWithoutASubpathAsT = Effect.gen(
   },
 );
 
-const readsEveryPublishedSubpathAndLeavesWildc = Effect.gen(
+export const readsEveryPublishedSubpathAndLeavesWildc = Effect.gen(
   function* readsEveryPublishedSubpathAndLeavesWildc() {
     const manifestText7 = yield* manifest({ dependencies: { effect: "4.0.0" } });
     const manifestText8 = yield* manifest({
@@ -110,7 +110,7 @@ const readsEveryPublishedSubpathAndLeavesWildc = Effect.gen(
   },
 );
 
-const letsTheTypesFieldNameTheRootWhenTheExpor = Effect.gen(
+export const letsTheTypesFieldNameTheRootWhenTheExpor = Effect.gen(
   function* letsTheTypesFieldNameTheRootWhenTheExpor() {
     const manifestText9 = yield* manifest({ dependencies: { oxlint: "1.0.0" } });
     const manifestText10 = yield* manifest({
@@ -131,7 +131,7 @@ const letsTheTypesFieldNameTheRootWhenTheExpor = Effect.gen(
   },
 );
 
-const letsTheTypesFieldDecideWhenTheExportMapN = Effect.gen(
+export const letsTheTypesFieldDecideWhenTheExportMapN = Effect.gen(
   function* letsTheTypesFieldDecideWhenTheExportMapN() {
     const manifestText11 = yield* manifest({ dependencies: { oxlint: "1.0.0", vite: "1.0.0" } });
     const manifestText12 = yield* manifest({
@@ -153,7 +153,7 @@ const letsTheTypesFieldDecideWhenTheExportMapN = Effect.gen(
   },
 );
 
-const findsATypesConditionNestedUnderAnotherCo = Effect.gen(
+export const findsATypesConditionNestedUnderAnotherCo = Effect.gen(
   function* findsATypesConditionNestedUnderAnotherCo() {
     const manifestText13 = yield* manifest({ dependencies: { oxlint: "1.0.0" } });
     const manifestText14 = yield* manifest({
@@ -173,7 +173,7 @@ const findsATypesConditionNestedUnderAnotherCo = Effect.gen(
   },
 );
 
-const pointsARuntimeOnlyMainEntryAtTheDeclarat = Effect.gen(
+export const pointsARuntimeOnlyMainEntryAtTheDeclarat = Effect.gen(
   function* pointsARuntimeOnlyMainEntryAtTheDeclarat() {
     const manifestText15 = yield* manifest({ dependencies: { nested: "1.0.0" } });
     const manifestText16 = yield* manifest({ main: "./lib/main.cjs" });
@@ -189,7 +189,7 @@ const pointsARuntimeOnlyMainEntryAtTheDeclarat = Effect.gen(
   },
 );
 
-const readsDevelopmentAndPeerDependenciesTheSa = Effect.gen(
+export const readsDevelopmentAndPeerDependenciesTheSa = Effect.gen(
   function* readsDevelopmentAndPeerDependenciesTheSa() {
     const manifestText17 = yield* manifest({
       devDependencies: { oxlint: "1.0.0" },
@@ -212,7 +212,7 @@ const readsDevelopmentAndPeerDependenciesTheSa = Effect.gen(
   },
 );
 
-const leavesWorkspaceDependenciesToTheReposito = Effect.gen(
+export const leavesWorkspaceDependenciesToTheReposito = Effect.gen(
   function* leavesWorkspaceDependenciesToTheReposito() {
     const manifestText20 = yield* manifest({ dependencies: { "@repo/shared": "workspace:*" } });
     const manifestText21 = yield* manifest({ types: "./index.d.ts" });
@@ -226,7 +226,7 @@ const leavesWorkspaceDependenciesToTheReposito = Effect.gen(
   },
 );
 
-const skipsPackagesThatShipNoDeclarationsOrAre = Effect.gen(
+export const skipsPackagesThatShipNoDeclarationsOrAre = Effect.gen(
   function* skipsPackagesThatShipNoDeclarationsOrAre() {
     const manifestText22 = yield* manifest({
       dependencies: { untyped: "1.0.0", absent: "1.0.0", rootonly: "1.0.0" },
@@ -246,7 +246,7 @@ const skipsPackagesThatShipNoDeclarationsOrAre = Effect.gen(
   },
 );
 
-const sortsEntriesByPackageName = Effect.gen(function* sortsEntriesByPackageName() {
+export const sortsEntriesByPackageName = Effect.gen(function* sortsEntriesByPackageName() {
   const manifestText25 = yield* manifest({
     dependencies: { zod: "1.0.0", alpha: "1.0.0", mid: "1.0.0" },
   });
@@ -271,7 +271,7 @@ const sortsEntriesByPackageName = Effect.gen(function* sortsEntriesByPackageName
   ).toStrictEqual(["alpha", "mid", "zod"]);
 });
 
-const hasNothingToOfferWithoutDependenciesOrWi = Effect.gen(
+export const hasNothingToOfferWithoutDependenciesOrWi = Effect.gen(
   function* hasNothingToOfferWithoutDependenciesOrWi() {
     const manifestText29 = yield* manifest({ name: "x" });
     const withoutDependencies = yield* directoryWith({ "package.json": manifestText29 });
@@ -282,19 +282,3 @@ const hasNothingToOfferWithoutDependenciesOrWi = Effect.gen(
     expect(actual13).toStrictEqual([]);
   },
 );
-
-export {
-  readsTheRootTypesConditionOfAnExportMap,
-  readsAnExportMapSpelledAsOnePathAsTheRoo,
-  readsConditionsWrittenWithoutASubpathAsT,
-  readsEveryPublishedSubpathAndLeavesWildc,
-  letsTheTypesFieldNameTheRootWhenTheExpor,
-  letsTheTypesFieldDecideWhenTheExportMapN,
-  findsATypesConditionNestedUnderAnotherCo,
-  pointsARuntimeOnlyMainEntryAtTheDeclarat,
-  readsDevelopmentAndPeerDependenciesTheSa,
-  leavesWorkspaceDependenciesToTheReposito,
-  skipsPackagesThatShipNoDeclarationsOrAre,
-  sortsEntriesByPackageName,
-  hasNothingToOfferWithoutDependenciesOrWi,
-};

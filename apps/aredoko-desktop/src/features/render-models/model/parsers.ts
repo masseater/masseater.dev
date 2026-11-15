@@ -10,13 +10,13 @@ import type { ModelFile } from "./file-urls.ts";
 import { gltfScene, unreadable, vrmScene } from "./gltf-scene.ts";
 import type { ModelUnreadable } from "./model-unreadable.ts";
 
-interface ModelSource {
+export interface ModelSource {
   readonly pathname: string;
   readonly model: Uint8Array;
   readonly files: readonly ModelFile[];
 }
 
-type Parse = (
+export type Parse = (
   source: ModelSource,
   manager: LoadingManager,
 ) => Effect.Effect<Object3D, ModelUnreadable>;
@@ -76,7 +76,7 @@ const parseTds: Parse = ({ model, pathname }, manager) =>
   attempt(pathname, () => new TDSLoader(manager).parse(bufferOf(model), BASE));
 
 /** @internal */
-const PARSERS: Readonly<Record<string, Parse>> = {
+export const PARSERS: Readonly<Record<string, Parse>> = {
   fbx: parseFbx,
   obj: parseObj,
   glb: parseGltf,
@@ -85,6 +85,3 @@ const PARSERS: Readonly<Record<string, Parse>> = {
   dae: parseCollada,
   "3ds": parseTds,
 };
-
-export { PARSERS };
-export type { ModelSource, Parse };

@@ -48,7 +48,7 @@ const isReady = ({
 }: Readonly<{ state: InspectState; text: string; apiKey: string; model: string }>): boolean =>
   !isRunning(state) && NON_BLANK.test(text) && apiKey !== "" && NON_BLANK.test(model);
 
-const InspectForm = ({ state }: Readonly<{ state: InspectState }>): ReactNode => {
+export const InspectForm = ({ state }: Readonly<{ state: InspectState }>): ReactNode => {
   const text = useDraftText();
   const apiKey = useApiKey();
   const model = useModel();
@@ -85,5 +85,3 @@ const InspectForm = ({ state }: Readonly<{ state: InspectState }>): ReactNode =>
     </section>
   );
 };
-
-export { InspectForm };

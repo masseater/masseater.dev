@@ -105,11 +105,9 @@ const sharedStorage = (scene: Scene): readonly Finding[] => {
   );
 };
 
-const workerFindings = (scene: Scene): readonly Finding[] => [
+export const workerFindings = (scene: Scene): readonly Finding[] => [
   ...pipe(privateScripts(scene), Arr.flatMap(alternateUrls(scene.inventory))),
   ...pipe(privateScripts(scene), Arr.flatMap(unprotectedDomains(scene.inventory))),
   ...pipe(privateScripts(scene), Arr.flatMap(unprotectedRoutes(scene.inventory))),
   ...sharedStorage(scene),
 ];
-
-export { workerFindings };

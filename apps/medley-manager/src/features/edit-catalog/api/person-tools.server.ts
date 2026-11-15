@@ -14,7 +14,7 @@ const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint:
 const KEYWORD_SCHEMA = KeywordInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 const ID_SCHEMA = IdInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
-const registerPersonTools = (server: McpServer): McpServer => {
+export const registerPersonTools = (server: McpServer): McpServer => {
   server.registerTool(
     "search_people",
     {
@@ -49,5 +49,3 @@ const registerPersonTools = (server: McpServer): McpServer => {
   );
   return server;
 };
-
-export { registerPersonTools };

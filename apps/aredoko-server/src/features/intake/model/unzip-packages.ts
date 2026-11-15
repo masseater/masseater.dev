@@ -115,7 +115,7 @@ const openZip = Effect.fn("openZip")(function* openZip(zip: string) {
 });
 
 /** @internal */
-const unzipPackages = Effect.fn("unzipPackages")(function* unzipPackagesInto(
+export const unzipPackages = Effect.fn("unzipPackages")(function* unzipPackagesInto(
   zip: string,
   library: string,
 ) {
@@ -137,5 +137,3 @@ const unzipPackages = Effect.fn("unzipPackages")(function* unzipPackagesInto(
   );
   return placedCount(packages) + bundleCount(assets);
 }, Effect.scoped);
-
-export { unzipPackages };

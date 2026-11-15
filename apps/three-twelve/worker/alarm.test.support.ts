@@ -10,7 +10,7 @@ import type { PlayerContainer } from "./run-player.ts";
 
 type PlayerProcess = Awaited<ReturnType<PlayerContainer["exec"]>>;
 
-type Scene = Readonly<{
+export type Scene = Readonly<{
   stage: Readonly<{ storage: PlayerStorage; container: PlayerContainer }>;
   plays: () => number;
 }>;
@@ -19,7 +19,7 @@ const EXIT_OK = 0;
 const NO_PLAYS = 0;
 const PID = 1;
 
-const OUTCOMES = [{ status: "empty", guildId: "1", guildName: "作業鯖" }] as const;
+export const OUTCOMES = [{ status: "empty", guildId: "1", guildName: "作業鯖" }] as const;
 
 const encoder = new TextEncoder();
 
@@ -42,7 +42,7 @@ const exited = (stdout: string): PlayerProcess => ({
   resize: constVoid,
 });
 
-const storageWith = (
+export const storageWith = (
   entries: Readonly<Record<string, unknown>>,
 ): Readonly<{ storage: PlayerStorage; alarmAt: () => Option.Option<number> }> => {
   const stored = new Map(Rec.toEntries(entries));
@@ -63,7 +63,7 @@ const storageWith = (
   };
 };
 
-const sceneAt = (startAt: number): Scene => {
+export const sceneAt = (startAt: number): Scene => {
   const plays = MutableRef.make(NO_PLAYS);
   const running = MutableRef.make(false);
   const { storage } = storageWith({ token: "bot-token", startAt });
@@ -94,7 +94,7 @@ const sceneAt = (startAt: number): Scene => {
   };
 };
 
-const sceneWithBrokenContainer = (startAt: number): Scene => {
+export const sceneWithBrokenContainer = (startAt: number): Scene => {
   const scene = sceneAt(startAt);
   return {
     stage: {
@@ -110,11 +110,8 @@ const sceneWithBrokenContainer = (startAt: number): Scene => {
   };
 };
 
-const audio: AudioBucket = { get: () => Promise.resolve({ body: new ReadableStream() }) };
+export const audio: AudioBucket = { get: () => Promise.resolve({ body: new ReadableStream() }) };
 
-const audioRejecting = (reason: string): AudioBucket => ({
+export const audioRejecting = (reason: string): AudioBucket => ({
   get: () => Promise.reject(new Error(reason)),
 });
-
-export { OUTCOMES, audio, audioRejecting, sceneAt, sceneWithBrokenContainer, storageWith };
-export type { Scene };

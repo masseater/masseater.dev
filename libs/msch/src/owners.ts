@@ -26,7 +26,7 @@ import { columnOf, descendantsOf, lineOf } from "./syntax.ts";
 import { finiteValuesOf, formatValues, literalValuesOf, sameValues } from "./values.ts";
 import type { Value } from "./values.ts";
 
-interface Owner {
+export interface Owner {
   readonly conceptId: string;
   readonly key: string;
   readonly name: string;
@@ -37,7 +37,7 @@ interface Owner {
   readonly values: readonly Value[];
 }
 
-interface OwnerScan {
+export interface OwnerScan {
   readonly owners: readonly Owner[];
   readonly problems: readonly Problem[];
 }
@@ -47,10 +47,10 @@ interface Annotated {
   readonly conceptId: string;
 }
 
-const OWNER_TAG = "msch";
+export const OWNER_TAG = "msch";
 const FIRST_OWNER_COUNT = 1;
 
-const ownerKeyOf = (declaration: Declaration): Option.Option<string> => {
+export const ownerKeyOf = (declaration: Declaration): Option.Option<string> => {
   if (!isVariableDeclaration(declaration) || !isIdentifier(declaration.name)) {
     return Option.none();
   }
@@ -207,7 +207,7 @@ const conflictProblems = (owners: readonly Owner[]): readonly Problem[] =>
     }),
   );
 
-const ownersIn = (project: Project): OwnerScan => {
+export const ownersIn = (project: Project): OwnerScan => {
   const results = pipe(
     project.sourceFiles,
     Arr.flatMap((sourceFile) =>
@@ -229,7 +229,7 @@ const ownersIn = (project: Project): OwnerScan => {
   );
 };
 
-const combineOwnerScans = (scans: readonly OwnerScan[]): OwnerScan => {
+export const combineOwnerScans = (scans: readonly OwnerScan[]): OwnerScan => {
   const owners = Arr.dedupeWith(
     pipe(
       scans,
@@ -246,6 +246,3 @@ const combineOwnerScans = (scans: readonly OwnerScan[]): OwnerScan => {
   ];
   return { owners, problems };
 };
-
-export { OWNER_TAG, combineOwnerScans, ownerKeyOf, ownersIn };
-export type { Owner, OwnerScan };

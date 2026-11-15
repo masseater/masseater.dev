@@ -6,18 +6,18 @@ import type { Reader } from "./parser.ts";
 import type { ReadError } from "./read-error.ts";
 import { readErrorOf } from "./read-error.ts";
 
-interface OcrOptions {
+export interface OcrOptions {
   readonly languages?: readonly string[];
   readonly worker?: Partial<WorkerOptions>;
 }
 
 const DEFAULT_LANGUAGES = ["jpn", "eng"] as const;
 
-const PAGE_BREAK = "\n\n";
+export const PAGE_BREAK = "\n\n";
 
-const ONE_AT_A_TIME = { concurrency: 1 } as const;
+export const ONE_AT_A_TIME = { concurrency: 1 } as const;
 
-const recognizedText =
+export const recognizedText =
   ({ languages = DEFAULT_LANGUAGES, worker = {} }: OcrOptions) =>
   (images: readonly Uint8Array[]): Effect.Effect<string, ReadError> =>
     Effect.acquireUseRelease(
@@ -43,12 +43,9 @@ const recognizedText =
       (tesseract) => Effect.promise(() => tesseract.terminate()),
     ).pipe(Effect.withSpan("injection-bisect.ocr"));
 
-const imageReaderOf = (options: OcrOptions): Reader => ({
+export const imageReaderOf = (options: OcrOptions): Reader => ({
   format: "image",
   extensions: [".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tif", ".tiff"],
   read: (bytes) =>
     recognizedText(options)([bytes]).pipe(Effect.map((text) => ({ text, format: "plain" }))),
 });
-
-export { ONE_AT_A_TIME, PAGE_BREAK, imageReaderOf, recognizedText };
-export type { OcrOptions };

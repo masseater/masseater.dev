@@ -2,6 +2,7 @@ import { Array as Arr, Option, pipe } from "effect";
 import type { Context, ESTree, Plugin, Rule } from "vite-plus/lint/plugins";
 
 import { editsOf } from "./inline-exports-plan.ts";
+import { isTypeOnlyClass } from "./inline-exports-resolve.ts";
 import { exportListOf } from "./inline-exports-source.ts";
 import type { ExportList, Range } from "./inline-exports-source.ts";
 import type { Source } from "./inline-exports-text.ts";
@@ -71,7 +72,10 @@ const inlineExports: Rule = {
   create: (context) => ({
     ExportNamedDeclaration: (node): void => {
       const list = exportListOf(node);
-      if (Option.isSome(list)) {
+      if (
+        Option.isSome(list) &&
+        !pipe(list.value.specifiers, Arr.every(isTypeOnlyClass(list.value)))
+      ) {
         reportList(context, node, list.value);
       }
     },

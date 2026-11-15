@@ -197,7 +197,7 @@ const activeKeys = (traits: readonly TraitState[]): HashSet.HashSet<string> =>
     ),
   );
 
-const planTraits = ({ traits, batch, observations }: Step): Plan => {
+export const planTraits = ({ traits, batch, observations }: Step): Plan => {
   const sources = HashSet.fromIterable(
     pipe(
       batch,
@@ -224,5 +224,3 @@ const planTraits = ({ traits, batch, observations }: Step): Plan => {
     ).length,
   };
 };
-
-export { planTraits };

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type { SloppediaConfig } from "./config.ts";
 import { WikiHeader } from "./wiki-header.tsx";
 
-const WikiLayout = ({
+export const WikiLayout = ({
   config,
   children,
 }: Readonly<{ config: SloppediaConfig; children: ReactNode }>): ReactNode => (
@@ -12,5 +12,3 @@ const WikiLayout = ({
     {children}
   </div>
 );
-
-export { WikiLayout };

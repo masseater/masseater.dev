@@ -4,7 +4,7 @@ import type { CatalogSongValue } from "./catalog.ts";
 import { getJson } from "./client.ts";
 
 const API = "https://vocadb.net/api";
-const PAGE_SIZE = 100;
+export const PAGE_SIZE = 100;
 const PAUSE_SECONDS = 1;
 const BACKOFF_SECONDS = 5;
 const PAUSE = Duration.seconds(PAUSE_SECONDS);
@@ -42,7 +42,7 @@ const Activity = Schema.Struct({
 const ActivityPage = Schema.Struct({ items: Schema.Array(Activity) });
 
 type PvValue = typeof Pv.Type;
-type ActivityValue = typeof Activity.Type;
+export type ActivityValue = typeof Activity.Type;
 
 const isLiveOn =
   (service: string) =>
@@ -78,7 +78,7 @@ const publishedOf = (pvs: readonly PvValue[]): string =>
     Option.getOrElse(() => ""),
   );
 
-const toCatalogSong = (song: typeof Song.Type): CatalogSongValue => {
+export const toCatalogSong = (song: typeof Song.Type): CatalogSongValue => {
   const pvs = song.pvs ?? [];
   return {
     id: song.id,
@@ -92,7 +92,7 @@ const toCatalogSong = (song: typeof Song.Type): CatalogSongValue => {
 };
 
 /** @internal */
-const songPage = Effect.fn("vocadb.songs")(function* songsFrom(start: number) {
+export const songPage = Effect.fn("vocadb.songs")(function* songsFrom(start: number) {
   const { items } = yield* getJson({
     codec: SongPage,
     url: `${API}/songs`,
@@ -114,7 +114,7 @@ const beforeParam = (before: Option.Option<string>): Readonly<Record<string, str
   Option.match(before, { onNone: () => ({}), onSome: (value) => ({ before: value }) });
 
 /** @internal */
-const activityPage = Effect.fn("vocadb.activity")(function* activityBefore({
+export const activityPage = Effect.fn("vocadb.activity")(function* activityBefore({
   since,
   before,
 }: Readonly<{ since: string; before: Option.Option<string> }>) {
@@ -134,6 +134,3 @@ const activityPage = Effect.fn("vocadb.activity")(function* activityBefore({
   yield* Effect.sleep(PAUSE);
   return items;
 });
-
-export type { ActivityValue };
-export { PAGE_SIZE, activityPage, songPage, toCatalogSong };

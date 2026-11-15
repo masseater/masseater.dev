@@ -9,7 +9,7 @@ import { remarkGitDate } from "./remark-git-date.ts";
 import { remarkWikiLink } from "./remark-wiki-link.ts";
 import { remarkYouTube } from "./remark-youtube.ts";
 
-const remarkPlugins = [
+export const remarkPlugins = [
   remarkFrontmatter,
   remarkGitDate,
   remarkMdxFrontmatter,
@@ -20,5 +20,3 @@ const remarkPlugins = [
   remarkFigure,
   remarkDialogue,
 ] as const;
-
-export { remarkPlugins };

@@ -42,6 +42,7 @@ new RuleTester({ languageOptions: { parserOptions: { lang: "ts" } } }).run("inli
     'export { a } from "./a.ts";\nexport type { B } from "./b.ts";\nexport * from "./c.ts";\n',
     "export {};\n",
     "const a = 1;\nexport default a;\n",
+    "class A {}\nexport type { A };\n",
   ],
   invalid: [
     invalid(
@@ -67,7 +68,6 @@ new RuleTester({ languageOptions: { parserOptions: { lang: "ts" } } }).run("inli
       "const a = 1;\nconst c = 2;\nexport { a as b, c };\n",
       "const a = 1;\nexport const c = 2;\nexport { a as b };\n",
     ),
-    unfixable("class A {}\nexport type { A };\n"),
     invalid("const a = 1;\nexport { a as default };\n", "const a = 1;\nexport default a;\n"),
     invalid(
       'import { a, b as c } from "./a.ts";\nexport { a, c };\n',

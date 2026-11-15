@@ -5,14 +5,14 @@ import { use, useMemo } from "react";
 
 import type { Scene, Step } from "#/entities/mosaic/lib/scene";
 
-type Viewer =
+export type Viewer =
   | Readonly<{ status: "empty" }>
   | Readonly<{ status: "loading" }>
   | Readonly<{ status: "ready"; scene: Scene }>;
 
-type Arrival = "pending" | "arrived";
+export type Arrival = "pending" | "arrived";
 
-interface ViewerStore {
+export interface ViewerStore {
   readonly read: () => Viewer;
   readonly write: (viewer: Viewer) => void;
   readonly step: (step: Step) => void;
@@ -44,9 +44,9 @@ const onScene =
     return viewer;
   };
 
-const useSelection = (): Option.Option<number> => useAtomValue(selectionAtom);
+export const useSelection = (): Option.Option<number> => useAtomValue(selectionAtom);
 
-const useViewerStore = (): ViewerStore => {
+export const useViewerStore = (): ViewerStore => {
   const registry = use(RegistryContext);
   return useMemo(
     (): ViewerStore => ({
@@ -68,13 +68,10 @@ const useViewerStore = (): ViewerStore => {
   );
 };
 
-const useViewerStatus = (): Viewer["status"] => useAtomValue(statusAtom);
+export const useViewerStatus = (): Viewer["status"] => useAtomValue(statusAtom);
 
-const useArrival = (): Arrival => useAtomValue(arrivalAtom);
+export const useArrival = (): Arrival => useAtomValue(arrivalAtom);
 
-const useSearch = (): string => useAtomValue(searchAtom);
+export const useSearch = (): string => useAtomValue(searchAtom);
 
-const useSetSearch = (): ((query: string) => void) => useAtomSet(searchAtom);
-
-export type { Arrival, Viewer, ViewerStore };
-export { useArrival, useSearch, useSelection, useSetSearch, useViewerStatus, useViewerStore };
+export const useSetSearch = (): ((query: string) => void) => useAtomSet(searchAtom);

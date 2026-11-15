@@ -5,7 +5,7 @@ import { Array as Arr, Effect, Option, Predicate } from "effect";
 const PROD = "prod";
 const OWNER_POLICY = "OwnerPolicy";
 
-type StackRef = Readonly<{ stack: string; stage: string }>;
+export type StackRef = Readonly<{ stack: string; stage: string }>;
 
 const holdsOwnerPolicy =
   (state: Readonly<StateService>) =>
@@ -38,11 +38,8 @@ const stateOf = Option.match({
   onSome: (state: Effect.Effect<StateService>) => state,
 });
 
-const ownerStack: Effect.Effect<StackRef> = Effect.serviceOption(State).pipe(
+export const ownerStack: Effect.Effect<StackRef> = Effect.serviceOption(State).pipe(
   Effect.flatMap(stateOf),
   Effect.flatMap(holdersOf),
   Effect.flatMap(onlyHolder),
 );
-
-export { ownerStack };
-export type { StackRef };

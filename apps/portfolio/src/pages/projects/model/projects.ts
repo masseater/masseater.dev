@@ -1,12 +1,12 @@
-type ProjectLink = Readonly<{ label: string; href: string }>;
+export type ProjectLink = Readonly<{ label: string; href: string }>;
 
-type BlogRef = Readonly<{ category: "blogs"; slug: string }>;
+export type BlogRef = Readonly<{ category: "blogs"; slug: string }>;
 
 const projectTags = ["site", "package", "plugin", "app", "mcp", "template", "skill"] as const;
 
-type ProjectTag = (typeof projectTags)[number];
+export type ProjectTag = (typeof projectTags)[number];
 
-type Project = Readonly<{
+export type Project = Readonly<{
   name: string;
   tags: readonly ProjectTag[];
   description: string;
@@ -24,7 +24,7 @@ const npm = (name: string): ProjectLink => ({ label: "npm", href: `${NPM}/${name
 
 const blog = (slug: string): BlogRef => ({ category: "blogs", slug });
 
-const projects: readonly Project[] = [
+export const projects: readonly Project[] = [
   {
     name: "Pod Rattle",
     tags: ["site", "plugin"],
@@ -216,6 +216,3 @@ const projects: readonly Project[] = [
     blogs: [],
   },
 ];
-
-export type { BlogRef, Project, ProjectLink, ProjectTag };
-export { projects };

@@ -35,18 +35,16 @@ const fieldsOf = (text: string, delimiter: Delimiter): readonly Unit[] =>
     ),
   );
 
-const csvParser: Parser = {
+export const csvParser: Parser = {
   format: "csv",
   extensions: [".csv"],
   accepts: looksLikeTable("comma"),
   unitsOf: (text) => fieldsOf(text, "comma"),
 };
 
-const tsvParser: Parser = {
+export const tsvParser: Parser = {
   format: "tsv",
   extensions: [".tsv", ".tab"],
   accepts: looksLikeTable("tab"),
   unitsOf: (text) => fieldsOf(text, "tab"),
 };
-
-export { csvParser, tsvParser };

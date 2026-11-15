@@ -8,7 +8,7 @@ import { site } from "#/shared/config";
 
 import appCss from "#/app/styles.css?url";
 
-const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf8" },
@@ -33,5 +33,3 @@ const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   shellComponent: RootDocument,
   notFoundComponent: RootNotFound,
 });
-
-export { Route };

@@ -12,7 +12,7 @@ const LOOKS = {
   off: { Icon: ThumbsDown, label: "ずれている" },
 } as const;
 
-const RatingButton = ({
+export const RatingButton = ({
   id,
   current,
   value,
@@ -37,5 +37,3 @@ const RatingButton = ({
     </Button>
   );
 };
-
-export { RatingButton };

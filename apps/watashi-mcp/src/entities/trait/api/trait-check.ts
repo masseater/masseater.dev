@@ -5,7 +5,7 @@ import type { KnownTraitValue, ObservationValue } from "#/entities/trait/model/t
 import { isActive, keyText } from "./trait-state";
 import type { BatchSource, Candidates, Checked, Step, TraitState } from "./trait-state";
 
-type Checking = Step & Readonly<{ candidates: Candidates }>;
+export type Checking = Step & Readonly<{ candidates: Candidates }>;
 
 const MIN_QUOTE_LENGTH = 4;
 
@@ -17,7 +17,7 @@ const knownOf = (trait: TraitState): KnownTraitValue => ({
   statement: trait.statement,
 });
 
-const knownTraits = ({
+export const knownTraits = ({
   traits,
   wanted,
 }: Readonly<{
@@ -70,10 +70,7 @@ const validIn = ({ batch, candidates }: Omit<Checking, "observations" | "traits"
   };
 };
 
-const checkObservations = (checking: Checking): Checked => {
+export const checkObservations = (checking: Checking): Checked => {
   const accepted = pipe(checking.observations, Arr.filter(validIn(checking)));
   return { accepted, rejected: checking.observations.length - accepted.length };
 };
-
-export { checkObservations, knownTraits };
-export type { Checking };

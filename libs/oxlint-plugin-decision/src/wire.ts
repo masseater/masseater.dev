@@ -21,7 +21,7 @@ const DATA_FIRST_ARITY = 2;
 
 type State = DecisionRequest["state"];
 
-interface WireRequest extends Readonly<Pick<DecisionRequest, "model">> {
+export interface WireRequest extends Readonly<Pick<DecisionRequest, "model">> {
   readonly state: DecisionRequest["state"] | string;
   readonly questions: Readonly<Record<string, Question>>;
 }
@@ -110,7 +110,9 @@ const asYesNo = ([id, question]: readonly [string, Question]): readonly (readonl
   return [[id, question]];
 };
 
-const yesNoRequestsFor = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<WireRequest> => {
+export const yesNoRequestsFor = (
+  request: DecisionRequest,
+): Arr.NonEmptyReadonlyArray<WireRequest> => {
   const bySnippet = Arr.groupBy(Rec.toEntries(request.questions), ([id]) => snippetRefOf(id));
   const wires = pipe(
     Rec.values(bySnippet),
@@ -134,7 +136,9 @@ const yesNoRequestsFor = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<W
   return [request];
 };
 
-const yesNoRequestFor = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<WireRequest> => [
+export const yesNoRequestFor = (
+  request: DecisionRequest,
+): Arr.NonEmptyReadonlyArray<WireRequest> => [
   {
     model: request.model,
     state: stateAsText(request.state),
@@ -147,7 +151,9 @@ const yesNoRequestFor = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<Wi
   },
 ];
 
-const wireRequestsFor = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<WireRequest> => {
+export const wireRequestsFor = (
+  request: DecisionRequest,
+): Arr.NonEmptyReadonlyArray<WireRequest> => {
   if (isRespan(request.model)) {
     return yesNoRequestsFor(request);
   }
@@ -176,7 +182,7 @@ const merging =
     ),
   });
 
-interface Merge {
+export interface Merge {
   (
     responses: Arr.NonEmptyReadonlyArray<DecisionResponse>,
   ): (request: DecisionRequest) => DecisionResponse;
@@ -186,9 +192,6 @@ interface Merge {
   ): DecisionResponse;
 }
 
-const mergeResponses: Merge = Fn.dual(DATA_FIRST_ARITY, merging(withChoices));
+export const mergeResponses: Merge = Fn.dual(DATA_FIRST_ARITY, merging(withChoices));
 
-const mergeYesNo: Merge = Fn.dual(DATA_FIRST_ARITY, merging(collapseChoices));
-
-export { mergeResponses, mergeYesNo, wireRequestsFor, yesNoRequestFor, yesNoRequestsFor };
-export type { Merge, WireRequest };
+export const mergeYesNo: Merge = Fn.dual(DATA_FIRST_ARITY, merging(collapseChoices));

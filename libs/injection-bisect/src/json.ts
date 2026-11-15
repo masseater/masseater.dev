@@ -46,7 +46,7 @@ const jsonUnitsOf = (text: string): readonly Unit[] => {
   return proseUnitsIn(text)(spans);
 };
 
-const jsonParser: Parser = {
+export const jsonParser: Parser = {
   format: "json",
   extensions: [".json", ".jsonc", ".jsonld", ".geojson", ".har", ".webmanifest"],
   accepts: looksLikeJson,
@@ -77,7 +77,7 @@ const looksLikeJsonLines = (text: string): boolean => {
   );
 };
 
-const jsonLinesParser: Parser = {
+export const jsonLinesParser: Parser = {
   format: "jsonl",
   aliases: ["ndjson"],
   extensions: [".jsonl", ".ndjson"],
@@ -88,5 +88,3 @@ const jsonLinesParser: Parser = {
       Arr.map(({ start, end }): Unit => ({ kind: "nested", format: "json", start, end })),
     ),
 };
-
-export { jsonLinesParser, jsonParser };

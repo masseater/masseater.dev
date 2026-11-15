@@ -4,7 +4,7 @@ import { AddKnownFolderButton, AddFolderButton, SourceList } from "#/features/li
 
 const TITLE = "フォルダ";
 
-const FolderSetting = (): ReactNode => (
+export const FolderSetting = (): ReactNode => (
   <section className="flex flex-col gap-2">
     <h3 className="text-sm font-medium">{TITLE}</h3>
     <SourceList />
@@ -15,5 +15,3 @@ const FolderSetting = (): ReactNode => (
     </div>
   </section>
 );
-
-export { FolderSetting };

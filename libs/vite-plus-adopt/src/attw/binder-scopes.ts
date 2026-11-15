@@ -60,12 +60,12 @@ const BLOCK_SCOPE_KINDS: ReadonlySet<SyntaxKind> = new Set([
   SyntaxKind.CaseBlock,
 ]);
 
-const isContainer = (node: Node): boolean => CONTAINER_KINDS.has(node.kind);
+export const isContainer = (node: Node): boolean => CONTAINER_KINDS.has(node.kind);
 
-const isFunctionLike = (node: Node | undefined): node is Node =>
+export const isFunctionLike = (node: Node | undefined): node is Node =>
   Predicate.isNotUndefined(node) && FUNCTION_LIKE_KINDS.has(node.kind);
 
-const isBlockScopeContainer = (node: Node): boolean =>
+export const isBlockScopeContainer = (node: Node): boolean =>
   isContainer(node) ||
   BLOCK_SCOPE_KINDS.has(node.kind) ||
   (node.kind === SyntaxKind.Block && !isFunctionLike(node.parent));
@@ -81,8 +81,6 @@ const hasAncestor = (node: Node, predicate: (candidate: Node) => boolean): boole
   return false;
 };
 
-const containerIsFile = (node: Node): boolean => !hasAncestor(node, isContainer);
+export const containerIsFile = (node: Node): boolean => !hasAncestor(node, isContainer);
 
-const blockScopeIsFile = (node: Node): boolean => !hasAncestor(node, isBlockScopeContainer);
-
-export { blockScopeIsFile, containerIsFile, isBlockScopeContainer, isContainer, isFunctionLike };
+export const blockScopeIsFile = (node: Node): boolean => !hasAncestor(node, isBlockScopeContainer);

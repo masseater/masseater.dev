@@ -9,7 +9,7 @@ import { TraceRow } from "./trace-row";
 
 const MIN_SPAN = 1;
 
-const TraceView = ({ text, trace }: Readonly<{ text: string; trace: Trace }>): ReactNode => (
+export const TraceView = ({ text, trace }: Readonly<{ text: string; trace: Trace }>): ReactNode => (
   <div className="flex flex-col gap-2">
     <h2 className="text-lg font-semibold">{COPY.trace}</h2>
     <Legend />
@@ -28,5 +28,3 @@ const TraceView = ({ text, trace }: Readonly<{ text: string; trace: Trace }>): R
     </ol>
   </div>
 );
-
-export { TraceView };

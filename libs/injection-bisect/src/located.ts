@@ -11,7 +11,7 @@ const FOLD = /(?:\r\n|\r|\n)[ \t]/gu;
 
 const NOTHING = /(?!)/gu;
 
-interface Located {
+export interface Located {
   readonly text: string;
   readonly folded?: boolean;
 }
@@ -73,7 +73,7 @@ const locatorOf = (view: View): ((value: string) => Option.Option<Span>) => {
   };
 };
 
-const proseUnitsOf =
+export const proseUnitsOf =
   (located: Located) =>
   (values: readonly string[]): readonly Unit[] => {
     const locate = locatorOf(viewOf(located));
@@ -86,6 +86,3 @@ const proseUnitsOf =
       Arr.map(({ start, end }) => ({ kind: "prose", start, end })),
     );
   };
-
-export { proseUnitsOf };
-export type { Located };

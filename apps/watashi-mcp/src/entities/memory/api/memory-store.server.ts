@@ -16,9 +16,13 @@ import { memory } from "#/shared/db";
 import type { Memory, StorageFailed } from "#/shared/db";
 import { db, anyTermMatches, query, termsOf } from "#/shared/db/index.server";
 
-type MemoryQuery = Readonly<{ query: string; project: Option.Option<string>; limit: number }>;
+export type MemoryQuery = Readonly<{
+  query: string;
+  project: Option.Option<string>;
+  limit: number;
+}>;
 
-type MemoryKey = Readonly<{ project: string; name: string }>;
+export type MemoryKey = Readonly<{ project: string; name: string }>;
 
 const CANDIDATE_LIMIT = 200;
 
@@ -38,13 +42,13 @@ const decodeEvidence = Schema.decodeUnknownOption(
   Schema.fromJsonString(Schema.Array(Schema.String)),
 );
 
-const evidenceOf = (row: Memory): readonly string[] =>
+export const evidenceOf = (row: Memory): readonly string[] =>
   pipe(
     decodeEvidence(row.evidence),
     Option.getOrElse((): readonly string[] => []),
   );
 
-const memoryItem = (row: Memory): Body => ({
+export const memoryItem = (row: Memory): Body => ({
   ref: `memory:${row.id}`,
   store: "memory",
   project: row.project,
@@ -80,7 +84,7 @@ const scoreOf =
   (row: Memory): number =>
     pipe(terms, Arr.map(termScore(row)), Num.sumAll);
 
-const findMemory = ({
+export const findMemory = ({
   project,
   name,
 }: MemoryKey): Effect.Effect<Option.Option<Memory>, StorageFailed> =>
@@ -92,7 +96,7 @@ const findMemory = ({
       .limit(ONE_ROW),
   ).pipe(Effect.map(Arr.head));
 
-const searchMemories = ({
+export const searchMemories = ({
   query: text,
   project,
   limit,
@@ -126,6 +130,3 @@ const searchMemories = ({
     ),
   );
 };
-
-export { evidenceOf, findMemory, memoryItem, searchMemories };
-export type { MemoryKey, MemoryQuery };

@@ -17,7 +17,8 @@ import { InterviewerFailed, send } from "./interviewer.ts";
 const failed = (cause: unknown): InterviewerFailed =>
   InterviewerFailed.make({ message: String(cause) });
 
-const requestResearch = (
+/** @internal */
+export const requestResearch = (
   body: ResearchAskBody,
 ): Effect.Effect<readonly InterviewLead[], InterviewerFailed, HttpClient.HttpClient> =>
   HttpClientRequest.post(RESEARCH_PATH).pipe(
@@ -27,7 +28,8 @@ const requestResearch = (
     Effect.mapBoth({ onSuccess: ({ leads }) => leads, onFailure: failed }),
   );
 
-const requestCorrection = (
+/** @internal */
+export const requestCorrection = (
   body: CorrectionBody,
 ): Effect.Effect<readonly HeardText[], InterviewerFailed, HttpClient.HttpClient> =>
   HttpClientRequest.post(CORRECTION_PATH).pipe(
@@ -36,6 +38,3 @@ const requestCorrection = (
     Effect.flatMap(HttpClientResponse.schemaBodyJson(Correction)),
     Effect.mapBoth({ onSuccess: ({ lines }) => lines, onFailure: failed }),
   );
-
-/** @internal */
-export { requestCorrection, requestResearch };

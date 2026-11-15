@@ -13,11 +13,11 @@ import {
 
 import { registerTools } from "./tools";
 
-type Args = Readonly<Record<string, unknown>>;
+export type Args = Readonly<Record<string, unknown>>;
 
-type Called = Readonly<{ isError: boolean; text: string }>;
+export type Called = Readonly<{ isError: boolean; text: string }>;
 
-type Decodable = Schema.ConstraintDecoder<unknown> & Schema.Constraint;
+export type Decodable = Schema.ConstraintDecoder<unknown> & Schema.Constraint;
 
 const OWNER: Caller = { client: "claude-code", userAgent: "vitest" };
 
@@ -55,7 +55,7 @@ const payloadOf = (text: string): string =>
 const respond = (body: string): Promise<Response> =>
   createMcpHandler(() => registerTools(OWNER)).fetch(mcpRequest(body));
 
-const call =
+export const call =
   (name: string) =>
   (args: Args): Effect.Effect<Called> =>
     Effect.gen(function* called() {
@@ -76,7 +76,7 @@ const call =
       return { isError: result.isError ?? false, text: joined };
     }).pipe(Effect.orDie);
 
-const value =
+export const value =
   (name: string) =>
   (args: Args): Effect.Effect<unknown> =>
     call(name)(args).pipe(
@@ -88,11 +88,8 @@ const value =
       ),
     );
 
-const decoded =
+export const decoded =
   <Target extends Decodable>(schema: Target) =>
   (name: string) =>
   (args: Args): Effect.Effect<Target["Type"]> =>
     value(name)(args).pipe(Effect.flatMap(Schema.decodeUnknownEffect(schema)), Effect.orDie);
-
-export { call, decoded, value };
-export type { Args, Called, Decodable };

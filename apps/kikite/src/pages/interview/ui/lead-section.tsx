@@ -9,7 +9,7 @@ import { LeadItem } from "./lead-item.tsx";
 const LABEL = "調べたこと";
 const RUNNING = "調べています";
 
-const LeadSection = ({ className }: Readonly<{ className?: string }>): ReactNode => {
+export const LeadSection = ({ className }: Readonly<{ className?: string }>): ReactNode => {
   const leads = useLeads();
   const running = useResearching().status === "running";
   return (
@@ -28,5 +28,3 @@ const LeadSection = ({ className }: Readonly<{ className?: string }>): ReactNode
     </section>
   );
 };
-
-export { LeadSection };

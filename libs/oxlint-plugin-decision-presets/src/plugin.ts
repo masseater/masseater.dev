@@ -5,7 +5,5 @@ import type { Preset } from "./presets.ts";
 
 const PLUGIN_NAME = "decision-presets";
 
-const presetPlugin = (rules: Preset): DecisionPlugin =>
+export const presetPlugin = (rules: Preset): DecisionPlugin =>
   createDecisionPlugin({ name: PLUGIN_NAME, rules });
-
-export { presetPlugin };

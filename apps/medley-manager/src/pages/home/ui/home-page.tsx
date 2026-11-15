@@ -5,7 +5,7 @@ import { Hero } from "./hero";
 import { PeopleRanking } from "./people-ranking";
 import { SongRanking } from "./song-ranking";
 
-const HomePage = (): ReactNode => (
+export const HomePage = (): ReactNode => (
   <div className="flex flex-col gap-12">
     <Hero />
     <FeaturedVideos />
@@ -15,5 +15,3 @@ const HomePage = (): ReactNode => (
     </div>
   </div>
 );
-
-export { HomePage };

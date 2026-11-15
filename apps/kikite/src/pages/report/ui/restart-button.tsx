@@ -6,7 +6,7 @@ import { useRestart } from "#/pages/report/model/review-hooks";
 
 const LABEL = "新しく聞く";
 
-const RestartButton = (): ReactNode => {
+export const RestartButton = (): ReactNode => {
   const onClick = useRestart();
   return (
     <Button size="sm" onClick={onClick}>
@@ -15,5 +15,3 @@ const RestartButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { RestartButton };

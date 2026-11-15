@@ -1,12 +1,12 @@
 import { Option, pipe } from "effect";
 
-interface Layout {
+export interface Layout {
   readonly start: number;
   readonly little: boolean;
   readonly head: "small4" | "small8" | "large8";
 }
 
-interface Block {
+export interface Block {
   readonly code: string;
   readonly data: number;
   readonly length: number;
@@ -15,7 +15,7 @@ interface Block {
   readonly count: number;
 }
 
-interface Located {
+export interface Located {
   readonly bytes: Uint8Array;
   readonly offset: number;
   readonly layout: Layout;
@@ -59,19 +59,19 @@ const LARGE_ENDIAN_OFFSET = 12;
 
 const ascii = new TextDecoder("latin1");
 
-const textAt = ({
+export const textAt = ({
   bytes,
   start,
   length,
 }: Readonly<{ bytes: Uint8Array; start: number; length: number }>): string =>
   ascii.decode(bytes.subarray(start, start + length));
 
-const viewOf = (bytes: Uint8Array): DataView =>
+export const viewOf = (bytes: Uint8Array): DataView =>
   new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 
 const charAt = (bytes: Uint8Array, start: number): string => textAt({ bytes, start, length: CHAR });
 
-const layoutOf = (bytes: Uint8Array): Option.Option<Layout> => {
+export const layoutOf = (bytes: Uint8Array): Option.Option<Layout> => {
   if (
     bytes.length < LARGE_HEADER ||
     textAt({ bytes, start: FILE_START, length: MAGIC.length }) !== MAGIC
@@ -95,9 +95,9 @@ const layoutOf = (bytes: Uint8Array): Option.Option<Layout> => {
   );
 };
 
-const pointerBytes = (layout: Layout): number => POINTER_BYTES[layout.head];
+export const pointerBytes = (layout: Layout): number => POINTER_BYTES[layout.head];
 
-const pointerAt = ({ bytes, offset, layout }: Located): bigint => {
+export const pointerAt = ({ bytes, offset, layout }: Located): bigint => {
   const view = viewOf(bytes);
   if (pointerBytes(layout) === POINTER_BYTES.small4) {
     return BigInt(view.getUint32(offset, layout.little));
@@ -133,7 +133,7 @@ const headerAt = (located: Located): Header => {
   return smallHeader(located);
 };
 
-const blockAt = (located: Located): Option.Option<Block> => {
+export const blockAt = (located: Located): Option.Option<Block> => {
   const { bytes, offset, layout } = located;
   const size = HEAD_BYTES[layout.head];
   if (offset < FILE_START || offset + size > bytes.length) {
@@ -146,7 +146,7 @@ const blockAt = (located: Located): Option.Option<Block> => {
 const isReadable = (bytes: Uint8Array, block: Block): boolean =>
   block.code !== END && block.length >= FILE_START && block.data + block.length <= bytes.length;
 
-const blocksOf = ({
+export const blocksOf = ({
   bytes,
   layout,
 }: Readonly<{ bytes: Uint8Array; layout: Layout }>): readonly Block[] => {
@@ -159,6 +159,3 @@ const blocksOf = ({
   }
   return blocks;
 };
-
-export { blockAt, blocksOf, layoutOf, pointerAt, pointerBytes, textAt, viewOf };
-export type { Block, Layout, Located };

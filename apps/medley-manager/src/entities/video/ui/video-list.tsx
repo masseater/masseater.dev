@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { VideoListItem } from "./video-list-item";
 import type { VideoSummary } from "./video-list-item";
 
-const VideoList = <Item extends VideoSummary>({
+export const VideoList = <Item extends VideoSummary>({
   videos,
   describe,
 }: Readonly<{ videos: readonly Item[]; describe: (item: Item) => string }>): ReactNode => (
@@ -15,5 +15,3 @@ const VideoList = <Item extends VideoSummary>({
     )}
   </ul>
 );
-
-export { VideoList };

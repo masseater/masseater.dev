@@ -27,25 +27,23 @@ const packagesOf = (text: string): readonly string[] => {
 };
 
 /** @internal */
-const workspaceDirectories = Effect.fn("workspaceDirectories")(function* workspaceDirectories(
-  root: string,
-) {
-  const files = yield* RepositoryFiles;
-  const text = yield* files.readFile(files.join(root, WORKSPACE_FILE));
-  const patterns = pipe(
-    text,
-    Option.map(packagesOf),
-    Option.getOrElse((): readonly string[] => []),
-  );
-  if (!Arr.isReadonlyArrayNonEmpty(patterns)) {
-    return [];
-  }
-  const manifests = yield* files.matchingFiles(root, pipe(patterns, Arr.map(manifestPathspec)));
-  const directories = pipe(
-    manifests,
-    Arr.map((manifest) => files.dirname(manifest)),
-  );
-  return Arr.sort(directories, Str.Order);
-});
-
-export { workspaceDirectories };
+export const workspaceDirectories = Effect.fn("workspaceDirectories")(
+  function* workspaceDirectories(root: string) {
+    const files = yield* RepositoryFiles;
+    const text = yield* files.readFile(files.join(root, WORKSPACE_FILE));
+    const patterns = pipe(
+      text,
+      Option.map(packagesOf),
+      Option.getOrElse((): readonly string[] => []),
+    );
+    if (!Arr.isReadonlyArrayNonEmpty(patterns)) {
+      return [];
+    }
+    const manifests = yield* files.matchingFiles(root, pipe(patterns, Arr.map(manifestPathspec)));
+    const directories = pipe(
+      manifests,
+      Arr.map((manifest) => files.dirname(manifest)),
+    );
+    return Arr.sort(directories, Str.Order);
+  },
+);

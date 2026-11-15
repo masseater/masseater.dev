@@ -19,7 +19,7 @@ const keepNativeMenuOnlyInText = (event: MouseEvent): void => {
 const closing = (quit: boolean): Effect.Effect<unknown> =>
   flushAll.pipe(Effect.andThen(tauriWindow.finishClosing(quit)));
 
-const behaveLikeAnApp = (): void => {
+export const behaveLikeAnApp = (): void => {
   document.addEventListener("contextmenu", keepNativeMenuOnlyInText);
   if (!isTauri()) {
     return;
@@ -33,12 +33,10 @@ const behaveLikeAnApp = (): void => {
   );
 };
 
-const useShownOnceReady = (ready: boolean): void => {
+export const useShownOnceReady = (ready: boolean): void => {
   useEffect(() => {
     if (ready && isTauri()) {
       Effect.runFork(tauriWindow.ready());
     }
   }, [ready]);
 };
-
-export { behaveLikeAnApp, useShownOnceReady };

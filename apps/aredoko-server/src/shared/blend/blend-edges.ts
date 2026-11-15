@@ -4,7 +4,7 @@ import { attribute, floatArray, intArray, named } from "./blend-attributes.ts";
 import { elementsOf, follow, intOf } from "./blend-structs.ts";
 import type { Instance } from "./blend-structs.ts";
 
-interface Edge {
+export interface Edge {
   readonly from: number;
   readonly to: number;
   readonly crease: number;
@@ -60,7 +60,7 @@ const modernEdges = (mesh: Instance, count: number): Option.Option<readonly Edge
     })).slice(NONE, count);
   });
 
-const markedEdges = (mesh: Instance): readonly Edge[] => {
+export const markedEdges = (mesh: Instance): readonly Edge[] => {
   const names = ["totedge", "edges_num"];
   const count = Option.getOrElse(intOf({ instance: mesh, names }), () => NONE);
   return pipe(
@@ -70,6 +70,3 @@ const markedEdges = (mesh: Instance): readonly Edge[] => {
     Array.filter(({ crease, weight }) => crease > NONE || weight > NONE),
   );
 };
-
-export { markedEdges };
-export type { Edge };

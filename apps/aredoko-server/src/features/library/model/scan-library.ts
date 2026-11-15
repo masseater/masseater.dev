@@ -8,13 +8,13 @@ import type { ScannedFile } from "./scan-folders.ts";
 
 const TEXT_RETRY = Duration.fromInputUnsafe("30 seconds");
 
-type Activity =
+export type Activity =
   | { readonly status: "idle" }
   | { readonly status: "scanning"; readonly file: ScannedFile }
   | { readonly status: "analyzing"; readonly batch: Option.Option<AnalyzedBatch> };
 
 /** @internal */
-const scanLibrary = Effect.fn("scanLibrary")(function* scanWholeLibrary<
+export const scanLibrary = Effect.fn("scanLibrary")(function* scanWholeLibrary<
   Failure,
   Requirements,
   LinkableRequirements,
@@ -46,6 +46,3 @@ const scanLibrary = Effect.fn("scanLibrary")(function* scanWholeLibrary<
     }),
   );
 });
-
-export { scanLibrary };
-export type { Activity };

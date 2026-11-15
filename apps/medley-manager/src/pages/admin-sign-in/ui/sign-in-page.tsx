@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { Button } from "#/shared/ui/button";
 
-const SignInPage = (): ReactNode => (
+export const SignInPage = (): ReactNode => (
   <div className="max-w-sm">
     <ActionPanel
       button={Button}
@@ -16,5 +16,3 @@ const SignInPage = (): ReactNode => (
     />
   </div>
 );
-
-export { SignInPage };

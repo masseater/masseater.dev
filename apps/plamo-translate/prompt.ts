@@ -1,16 +1,16 @@
 import type { TranslateRequestValue } from "@masseater.dev/plamo-translate-protocol";
 import { Array as Arr, Option, pipe } from "effect";
 
-type Direction = Omit<TranslateRequestValue, "text">;
+export type Direction = Omit<TranslateRequestValue, "text">;
 
-type Pair = Readonly<{ source: string; translation: string }>;
+export type Pair = Readonly<{ source: string; translation: string }>;
 
 const TAG = "<|plamo:tag|>";
 const KEY = "<|plamo:key|>";
 const VAL = "<|plamo:val|>";
 const MSG = "<|plamo:msg|>";
 
-const STOP: readonly string[] = [TAG, "<|plamo:bos|>"];
+export const STOP: readonly string[] = [TAG, "<|plamo:bos|>"];
 
 const field = (key: string, value: string | undefined): string =>
   pipe(
@@ -28,9 +28,13 @@ const turn =
   (pair: Pair): string =>
     `${input(direction, pair.source)}${output(direction)}${MSG}${pair.translation}`;
 
-type Asking = Readonly<{ direction: Direction; previous: Option.Option<Pair>; text: string }>;
+export type Asking = Readonly<{
+  direction: Direction;
+  previous: Option.Option<Pair>;
+  text: string;
+}>;
 
-const promptOf = ({ direction, previous, text }: Asking): string =>
+export const promptOf = ({ direction, previous, text }: Asking): string =>
   Arr.join(
     [
       `${TAG}dataset${MSG}translation`,
@@ -42,6 +46,3 @@ const promptOf = ({ direction, previous, text }: Asking): string =>
     ],
     "",
   );
-
-export { STOP, promptOf };
-export type { Asking, Direction, Pair };

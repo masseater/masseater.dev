@@ -2,12 +2,12 @@ import { Array as Arr, DateTime, Option, Order, String as Str, pipe } from "effe
 
 import type { PeriodValue, RankingSearch } from "./search";
 
-interface Window {
+export interface Window {
   readonly start: string;
   readonly end: string;
 }
 
-type Input = Readonly<{ search: RankingSearch; dates: readonly string[] }>;
+export type Input = Readonly<{ search: RankingSearch; dates: readonly string[] }>;
 
 const DATE_START = 0;
 const DATE_LENGTH = 10;
@@ -59,7 +59,7 @@ const orElse = (chosen: string, fallback: Option.Option<string>): string =>
     Option.getOrElse(() => chosen),
   );
 
-const customRange = ({ search, dates }: Input): Window => ({
+export const customRange = ({ search, dates }: Input): Window => ({
   start: orElse(search.from, earliest(dates)),
   end: orElse(search.to, latest(dates)),
 });
@@ -77,13 +77,11 @@ const PERIODS: Readonly<Record<PeriodValue, (input: Input) => Option.Option<Wind
   custom,
 };
 
-const windowOf = (input: Input): Option.Option<Window> => PERIODS[input.search.period](input);
+export const windowOf = (input: Input): Option.Option<Window> =>
+  PERIODS[input.search.period](input);
 
-const covers = ({
+export const covers = ({
   window,
   dates,
 }: Readonly<{ window: Window; dates: readonly string[] }>): boolean =>
   Arr.contains(dates, window.start) && Arr.contains(dates, window.end);
-
-export type { Input, Window };
-export { covers, customRange, windowOf };

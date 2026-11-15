@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Order, pipe } from "effect";
 
-type VoiceRoom = Readonly<{
+export type VoiceRoom = Readonly<{
   id: string;
   name: string;
   listeners: number;
@@ -12,7 +12,7 @@ const NOBODY = 0;
 
 const byListeners = Order.mapInput(Order.Number, (room: VoiceRoom) => room.listeners);
 
-const pickRoom = (rooms: readonly VoiceRoom[]): Option.Option<VoiceRoom> =>
+export const pickRoom = (rooms: readonly VoiceRoom[]): Option.Option<VoiceRoom> =>
   pipe(
     rooms,
     Arr.filter((room) => room.joinable && !room.afk && room.listeners > NOBODY),
@@ -21,6 +21,3 @@ const pickRoom = (rooms: readonly VoiceRoom[]): Option.Option<VoiceRoom> =>
       onNonEmpty: (candidates) => Option.some(Arr.max(candidates, byListeners)),
     }),
   );
-
-export { pickRoom };
-export type { VoiceRoom };

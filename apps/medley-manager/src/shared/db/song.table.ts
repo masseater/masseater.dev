@@ -1,6 +1,6 @@
 import { index, integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 
-const song = sqliteTable("song", {
+export const song = sqliteTable("song", {
   id: integer().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
   artist: text(),
@@ -9,7 +9,7 @@ const song = sqliteTable("song", {
   note: text(),
 });
 
-const songAlias = sqliteTable(
+export const songAlias = sqliteTable(
   "song_alias",
   {
     id: integer().primaryKey({ autoIncrement: true }),
@@ -23,5 +23,3 @@ const songAlias = sqliteTable(
     index("song_alias_alias_idx").on(table.alias),
   ],
 );
-
-export { song, songAlias };

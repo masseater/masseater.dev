@@ -26,13 +26,13 @@ const GRAMMARS = [
   "typescript",
 ] as const;
 
-type Grammar = (typeof GRAMMARS)[number];
+export type Grammar = (typeof GRAMMARS)[number];
 
-type Markup = "html" | "xml";
+export type Markup = "html" | "xml";
 
-type Reader = Grammar | Markup | "yaml" | "toml" | "sql" | "dockerfile";
+export type Reader = Grammar | Markup | "yaml" | "toml" | "sql" | "dockerfile";
 
-type Grammars = (grammar: Grammar) => Option.Option<treeSitter.Language>;
+export type Grammars = (grammar: Grammar) => Option.Option<treeSitter.Language>;
 
 const COMMENT_NODES = ["comment", "line_comment", "block_comment", "multiline_comment"];
 const START = 0;
@@ -50,7 +50,7 @@ const loadGrammar = (
     catch: unreadable(grammar),
   }).pipe(Effect.map((language) => [grammar, language] as const));
 
-const loadGrammars = Effect.fn("loadGrammars")(function* loadGrammars() {
+export const loadGrammars = Effect.fn("loadGrammars")(function* loadGrammars() {
   yield* Effect.tryPromise({
     try: () => treeSitter.Parser.init(),
     catch: unreadable("javascript"),
@@ -175,7 +175,7 @@ const markupComments =
 
 const isGrammar = (reader: Reader): reader is Grammar => pipe(GRAMMARS, Arr.contains(reader));
 
-const commentsWith =
+export const commentsWith =
   (grammars: Grammars) =>
   (reader: Reader, source: string): Found => {
     if (isGrammar(reader)) {
@@ -191,6 +191,3 @@ const commentsWith =
     } satisfies Record<Exclude<Reader, Grammar>, (text: string) => Found>;
     return readers[reader](source);
   };
-
-export { commentsWith, loadGrammars };
-export type { Grammar, Grammars, Markup, Reader };

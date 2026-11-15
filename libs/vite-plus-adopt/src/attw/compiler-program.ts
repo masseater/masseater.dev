@@ -10,18 +10,18 @@ import type { MountedFileSystem } from "./ts-api.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface Program {
+export interface Program {
   readonly getSourceFiles: () => readonly ProgramFile[];
   readonly getTypeChecker: () => TypeCheckerFacade;
 }
 
-interface ProgramSite {
+export interface ProgramSite {
   readonly core: HostWrapperCore;
   readonly mounted: MountedFileSystem;
   readonly options: ProgramOptions;
 }
 
-interface CachedProgram {
+export interface CachedProgram {
   readonly program: Program;
   readonly resolvedModules: ProgramFiles["resolvedModules"];
   readonly dispose: () => void;
@@ -37,7 +37,7 @@ const buildProgramFiles = (site: ProgramSite, rootNames: readonly string[]): Pro
     packageJsonScopeFor: site.core.packageJsonScopeFor,
   });
 
-const createProgram: {
+export const createProgram: {
   (rootNames: readonly string[]): (site: ProgramSite) => CachedProgram;
   (site: ProgramSite, rootNames: readonly string[]): CachedProgram;
 } = Fn.dual(DATA_FIRST_ARITY, (site: ProgramSite, rootNames: readonly string[]): CachedProgram => {
@@ -60,6 +60,3 @@ const createProgram: {
     },
   };
 });
-
-export { createProgram };
-export type { CachedProgram, Program, ProgramSite };

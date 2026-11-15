@@ -6,7 +6,7 @@ import { indexFrom } from "./text-search.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface PackageNameParts {
+export interface PackageNameParts {
   readonly packageName: string;
   readonly rest: string;
 }
@@ -24,7 +24,7 @@ const packageNameEnd = (moduleName: string): Option.Option<number> => {
   return first;
 };
 
-const parsePackageName = (moduleName: string): PackageNameParts =>
+export const parsePackageName = (moduleName: string): PackageNameParts =>
   Option.match(packageNameEnd(moduleName), {
     onNone: () => ({ packageName: moduleName, rest: "" }),
     onSome: (end) => ({
@@ -33,7 +33,7 @@ const parsePackageName = (moduleName: string): PackageNameParts =>
     }),
   });
 
-const mangleScopedPackageName = (packageName: string): string => {
+export const mangleScopedPackageName = (packageName: string): string => {
   if (!Str.startsWith("@")(packageName)) {
     return packageName;
   }
@@ -44,17 +44,17 @@ const mangleScopedPackageName = (packageName: string): string => {
   return Str.slice(SCOPE_MARKER_LENGTH)(replaced);
 };
 
-const unmangleScopedPackageName = (typesPackageName: string): string => {
+export const unmangleScopedPackageName = (typesPackageName: string): string => {
   if (!Str.includes(SCOPE_SEPARATOR)(typesPackageName)) {
     return typesPackageName;
   }
   return `@${Str.replace(SCOPE_SEPARATOR, "/")(typesPackageName)}`;
 };
 
-const getTypesPackageName = (packageName: string): string =>
+export const getTypesPackageName = (packageName: string): string =>
   `@types/${mangleScopedPackageName(packageName)}`;
 
-const mangleScopedPackageNameWithTrace: {
+export const mangleScopedPackageNameWithTrace: {
   (state: ResolutionState): (packageName: string) => string;
   (packageName: string, state: ResolutionState): string;
 } = Fn.dual(DATA_FIRST_ARITY, (packageName: string, state: ResolutionState): string => {
@@ -64,12 +64,3 @@ const mangleScopedPackageNameWithTrace: {
   }
   return mangled;
 });
-
-export {
-  getTypesPackageName,
-  mangleScopedPackageName,
-  mangleScopedPackageNameWithTrace,
-  parsePackageName,
-  unmangleScopedPackageName,
-};
-export type { PackageNameParts };

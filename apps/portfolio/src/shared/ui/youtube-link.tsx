@@ -9,7 +9,7 @@ const watchUrl = (id: string): string =>
 const thumbnailUrl = (id: string): string =>
   `https://i.ytimg.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`;
 
-const YouTubeLink = ({ id, title }: Readonly<{ id: string; title: string }>): ReactNode => (
+export const YouTubeLink = ({ id, title }: Readonly<{ id: string; title: string }>): ReactNode => (
   <a
     className="group relative block aspect-video overflow-hidden rounded-lg bg-black"
     href={watchUrl(id)}
@@ -33,5 +33,3 @@ const YouTubeLink = ({ id, title }: Readonly<{ id: string; title: string }>): Re
     />
   </a>
 );
-
-export { YouTubeLink };

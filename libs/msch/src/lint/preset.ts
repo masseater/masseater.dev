@@ -84,6 +84,8 @@ const rules = {
   "eslint/one-var": ["error", "never"],
   "eslint/id-length": ["error", { exceptions: ["x", "y"] }],
   "jsdoc/check-tag-names": ["error", { definedTags: ["msch"] }],
+  "jsdoc/require-param": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],
+  "jsdoc/require-returns": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],
   "eslint/no-restricted-imports": ["error", restrictedImports],
   "typescript/prefer-readonly-parameter-types": [
     "error",

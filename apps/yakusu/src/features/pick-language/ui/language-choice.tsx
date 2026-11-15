@@ -19,7 +19,7 @@ const isChosen = ({
   return selection.source.kind === "language" && selection.source.code === language.code;
 };
 
-const LanguageChoice = ({
+export const LanguageChoice = ({
   language,
   side,
 }: Readonly<{ language: Language; side: Side }>): ReactNode => {
@@ -43,5 +43,3 @@ const LanguageChoice = ({
     />
   );
 };
-
-export { LanguageChoice };

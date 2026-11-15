@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { PortfolioSectionLink } from "./portfolio-section-link.tsx";
 import { portfolio } from "./portfolio.ts";
 
-const PortfolioSectionLinks = (): ReactNode => (
+export const PortfolioSectionLinks = (): ReactNode => (
   <nav aria-label={portfolio.name}>
     <ul className="flex flex-wrap justify-center gap-x-4">
       {Arr.map(Rec.toEntries(portfolio.sections), ([category, title]) => (
@@ -13,5 +13,3 @@ const PortfolioSectionLinks = (): ReactNode => (
     </ul>
   </nav>
 );
-
-export { PortfolioSectionLinks };

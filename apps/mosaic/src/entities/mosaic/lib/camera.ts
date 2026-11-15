@@ -1,35 +1,35 @@
 import { Option } from "effect";
 
-const CELL_WIDTH = 16;
-const CELL_HEIGHT = 9;
+export const CELL_WIDTH = 16;
+export const CELL_HEIGHT = 9;
 const FIT_MARGIN = 0.94;
 const MIN_ZOOM_OF_FIT = 0.6;
 const MAX_TILE_PIXELS = 640;
 const HALF = 0.5;
 const FIRST = 0;
 
-interface Size {
+export interface Size {
   readonly width: number;
   readonly height: number;
 }
 
-interface Point {
+export interface Point {
   readonly left: number;
   readonly top: number;
 }
 
-interface Camera {
+export interface Camera {
   readonly scale: number;
   readonly left: number;
   readonly top: number;
 }
 
-interface Grid {
+export interface Grid {
   readonly cols: number;
   readonly rows: number;
 }
 
-interface View {
+export interface View {
   readonly viewport: Size;
   readonly grid: Grid;
 }
@@ -39,12 +39,12 @@ const worldOf = ({ cols, rows }: Grid): Size => ({
   height: rows * CELL_HEIGHT,
 });
 
-const fitScale = ({ viewport, grid }: View): number => {
+export const fitScale = ({ viewport, grid }: View): number => {
   const world = worldOf(grid);
   return Math.min(viewport.width / world.width, viewport.height / world.height) * FIT_MARGIN;
 };
 
-const centeredOn = ({
+export const centeredOn = ({
   viewport,
   center,
   scale,
@@ -54,25 +54,25 @@ const centeredOn = ({
   top: viewport.height * HALF - center.top * scale,
 });
 
-const worldCenter = (grid: Grid): Point => {
+export const worldCenter = (grid: Grid): Point => {
   const world = worldOf(grid);
   return { left: world.width * HALF, top: world.height * HALF };
 };
 
-const fitCamera = (view: View): Camera =>
+export const fitCamera = (view: View): Camera =>
   centeredOn({ viewport: view.viewport, center: worldCenter(view.grid), scale: fitScale(view) });
 
-const maxScale = (devicePixelRatio: number): number =>
+export const maxScale = (devicePixelRatio: number): number =>
   MAX_TILE_PIXELS / CELL_WIDTH / devicePixelRatio;
 
-const clampScale = ({
+export const clampScale = ({
   scale,
   fit,
   max,
 }: Readonly<{ scale: number; fit: number; max: number }>): number =>
   Math.min(max, Math.max(fit * MIN_ZOOM_OF_FIT, scale));
 
-const zoomAround = ({
+export const zoomAround = ({
   camera,
   point,
   scale,
@@ -82,12 +82,12 @@ const zoomAround = ({
   top: point.top - (point.top - camera.top) * (scale / camera.scale),
 });
 
-const toWorld = ({ camera, point }: Readonly<{ camera: Camera; point: Point }>): Point => ({
+export const toWorld = ({ camera, point }: Readonly<{ camera: Camera; point: Point }>): Point => ({
   left: (point.left - camera.left) / camera.scale,
   top: (point.top - camera.top) / camera.scale,
 });
 
-const cellCenter = ({ cell, grid }: Readonly<{ cell: number; grid: Grid }>): Point => ({
+export const cellCenter = ({ cell, grid }: Readonly<{ cell: number; grid: Grid }>): Point => ({
   left: ((cell % grid.cols) + HALF) * CELL_WIDTH,
   top: (Math.floor(cell / grid.cols) + HALF) * CELL_HEIGHT,
 });
@@ -95,7 +95,7 @@ const cellCenter = ({ cell, grid }: Readonly<{ cell: number; grid: Grid }>): Poi
 const inGrid = ({ col, row, grid }: Readonly<{ col: number; row: number; grid: Grid }>): boolean =>
   col >= FIRST && row >= FIRST && col < grid.cols && row < grid.rows;
 
-const cellAt = ({
+export const cellAt = ({
   camera,
   point,
   grid,
@@ -104,20 +104,4 @@ const cellAt = ({
   const col = Math.floor(world.left / CELL_WIDTH);
   const row = Math.floor(world.top / CELL_HEIGHT);
   return Option.liftPredicate(row * grid.cols + col, () => inGrid({ col, row, grid }));
-};
-
-export type { Camera, Grid, Point, Size, View };
-export {
-  CELL_HEIGHT,
-  CELL_WIDTH,
-  cellAt,
-  cellCenter,
-  centeredOn,
-  clampScale,
-  fitCamera,
-  fitScale,
-  maxScale,
-  toWorld,
-  worldCenter,
-  zoomAround,
 };
