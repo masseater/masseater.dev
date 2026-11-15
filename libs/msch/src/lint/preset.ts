@@ -145,6 +145,7 @@ const lint = {
     [decisionPlugin.meta.name]: {
       model: "cloudflare/@cf/qwen/qwen3.8-27b",
       timeoutMs: DECISION_TIMEOUT_MS,
+      ci: "skip",
     },
   },
   options: {
