@@ -2,8 +2,12 @@
   "name": "@masseater.dev/start-site",
   "version": "0.0.0",
   "private": true,
+  "bin": {
+    "write-asset-headers": "./bin/write-asset-headers.ts"
+  },
   "type": "module",
   "imports": {
+    "#/*": "./src/*",
     "#package.json": "./package.json"
   },
   "exports": {

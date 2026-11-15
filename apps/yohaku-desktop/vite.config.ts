@@ -15,17 +15,17 @@ export default defineConfig({
       "release:tag": { command: "component-tag yohaku", cache: false },
       "release:windows": {
         command:
-          "tauri build --bundles nsis --config src-tauri/tauri.release.conf.json && node scripts/collect.ts",
+          "tauri build --bundles nsis --config src-tauri/tauri.release.conf.json && node bin/collect.ts",
         cache: false,
       },
       "release:macos": {
         command:
-          "tauri build --bundles app,dmg --config src-tauri/tauri.release.conf.json && node scripts/collect.ts",
+          "tauri build --bundles app,dmg --config src-tauri/tauri.release.conf.json && node bin/collect.ts",
         cache: false,
       },
-      "release:publish": { command: "node scripts/release.ts", cache: false },
+      "release:publish": { command: "node bin/release.ts", cache: false },
       "release:token": { command: "release-please-token yohaku", cache: false },
-      "signing-key": { command: "node scripts/signing-key.ts", cache: false },
+      "signing-key": { command: "node bin/signing-key.ts", cache: false },
     },
   },
 });

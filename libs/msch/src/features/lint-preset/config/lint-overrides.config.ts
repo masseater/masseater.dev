@@ -44,11 +44,11 @@ export const alchemyOverride: {
   },
 };
 
-export const scriptsOverride: {
+export const commandsOverride: {
   files: string[];
   rules: Readonly<Record<string, "off">>;
 } = {
-  files: ["scripts/**"],
+  files: ["bin/**"],
   rules: {
     "node/no-process-env": "off",
     "node/no-sync": "off",
