@@ -12,7 +12,7 @@ export const UtteranceList = ({
   utterances,
 }: Readonly<{ utterances: readonly UtteranceValue[] }>): ReactNode =>
   Arr.match(utterances, {
-    onEmpty: () => <p className="text-foreground/60 text-sm">{TEXT.empty}</p>,
+    onEmpty: () => <p className="text-muted-foreground text-sm">{TEXT.empty}</p>,
     onNonEmpty: (spoken) => (
       <RowList label={TEXT.label}>
         {pipe(

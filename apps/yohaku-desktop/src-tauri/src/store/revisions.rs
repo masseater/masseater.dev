@@ -2,7 +2,8 @@ use rusqlite::{Connection, OptionalExtension, params};
 
 use super::manuscripts::{insert_paragraphs, paragraphs};
 use super::{fresh_id, now};
-use crate::model::{Paragraph, Revision};
+use crate::model::Revision;
+use crate::protocol::Paragraph;
 
 const KEEP_EVERY: i64 = 10 * 60 * 1000;
 const EXCERPT_LENGTH: usize = 60;
@@ -126,7 +127,7 @@ pub fn restore(connection: &mut Connection, id: &str, revision: &str) -> rusqlit
 #[cfg(test)]
 mod tests {
     use super::{KEEP_EVERY, Keep, keep, list, restore};
-    use crate::model::Paragraph;
+    use crate::protocol::Paragraph;
     use crate::store::{Store, manuscripts};
 
     fn written(text: &str) -> Vec<Paragraph> {

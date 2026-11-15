@@ -11,7 +11,7 @@ infobox:
   - label: "公開の告知"
     value: "2026年10月20日"
   - label: "最新のリリース"
-    value: "0.23.0-ts7.1.0-beta（2026年11月7日）"
+    value: "0.25.0-ts7.1.0-beta（2026年11月12日）"
   - label: "移植元"
     value: "TypeScript 7.1 ベータ"
   - label: "言語"
@@ -53,9 +53,15 @@ Rust で書かれているので WebAssembly にしやすい[^cf]。ブラウザ
 
 ## 2026年11月の状況
 
-npm のバージョンは `0.23.0-ts7.1.0-beta` のように、移植元の TypeScript のバージョンを後ろに付ける[^npm]。10月10日から11月7日までに、10を超えるリリースが出た[^npm]。
+npm のバージョンは `0.23.0-ts7.1.0-beta` のように、移植元の TypeScript のバージョンを後ろに付ける[^npm]。10月10日から11月12日にかけて、0.12.0 から 0.25.0 までの14バージョンがリリースされた[^npm]。
 
 0.22.0 で、`oxlint --type-aware --type-check` が `tsrs --noEmit` と同じ型のエラーを出せるようになった[^status]。VoidZero は、いずれ [Oxlint](/sloppedia/oxlint) の型情報を使う lint を [tsgolint](/sloppedia/tsgolint) から tsrs に移すとしている[^recap-oct]。
+
+バージョン 0.23.0 では、両方のリントモードがプログラム全体をチェックするようになった[^status]。11月12日にリリースされたバージョン 0.25.0 では、ARM64 上の Windows 向けパッケージが追加された[^status]。そのリリースビルドは、8つのネイティブターゲットと WebAssembly に対応している[^status]。
+
+## 報道
+
+日本では、Publickey が2026年10月22日に発表を報じた[^publickey]。その見出しでは、tsrs が TypeScript 7 よりも最大8倍高速であり、メモリ使用量を最大70%削減できる点が強調された[^publickey]。また、同記事では、言語サーバーを含むすべての TypeScript 機能を単一のパッケージでサポートするという Cloudflare の計画についても言及された[^publickey]。
 
 [^typechecker]: Oxc「[Type Checker](https://oxc.rs/docs/guide/usage/typechecker.html)」。2026年11月7日に閲覧。
 
@@ -63,8 +69,10 @@ npm のバージョンは `0.23.0-ts7.1.0-beta` のように、移植元の Type
 
 [^cf]: Boshen Chen ほか「[Introducing tsrs: A port of TypeScript to Rust](https://blog.cloudflare.com/typescript-rust-port/)」Cloudflare Blog、2026年10月20日。
 
-[^status]: tsrs「[Release notes](https://github.com/oxc-project/tsrs/blob/main/docs/STATUS.md)」。2026年11月7日に閲覧。
+[^status]: tsrs「[Release notes](https://github.com/oxc-project/tsrs/blob/main/docs/STATUS.md)」。2026年11月15日に閲覧。
 
-[^npm]: npm「[tsrs](https://www.npmjs.com/package/tsrs)」。2026年11月7日に閲覧。
+[^npm]: npm「[tsrs](https://www.npmjs.com/package/tsrs)」。2026年11月15日に閲覧。
 
 [^recap-oct]: Alexander Lichter「[Tales from the Void: October 2026 Recap](https://voidzero.dev/posts/whats-new-oct-2026)」VoidZero、2026年11月5日。
+
+[^publickey]: Publickey「[Cloudflare、TypeScriptをRustに移植した「tsrs」を発表](https://www.publickey1.jp/blog/26/cloudflaretypescriptrusttsrstypescript_7708lsptypescript.html)」、2026年10月22日。

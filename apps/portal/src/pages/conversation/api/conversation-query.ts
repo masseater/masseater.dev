@@ -10,7 +10,7 @@ type ConversationKey = Readonly<{ sessionId: string; search: ConversationSearchV
 
 type ConversationLoad = ConversationKey & Readonly<{ queryClient: QueryClient }>;
 
-const route = getRouteApi("/_watashi/conversations/$session");
+const route = getRouteApi("/conversations/$session");
 
 const cursorOf = (search: ConversationSearchValue): Readonly<{ cursor?: number }> =>
   pipe({ cursor: Option.fromUndefinedOr(search.cursor) }, Rec.getSomes);
