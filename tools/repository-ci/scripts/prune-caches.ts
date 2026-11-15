@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { getJson, remove } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
-import { Array as Arr, Console, Effect, Schema, pipe } from "effect";
+import { Array as Arr, Console, Effect, Schema, String as Str, pipe } from "effect";
 
 const MAIN = "refs/heads/main";
 const PREFIXES = ["vite-plus-", "vite-task-", "msch-"];
@@ -37,6 +37,27 @@ const pruneOlder = Effect.fn("pruneOlder")(function* pruneOlder(prefix: string) 
   yield* Effect.forEach(pipe(actions_caches, Arr.drop(NEWEST)), removeCache, { discard: true });
 });
 
+const PERSIST = "persist-";
+const RUN_SUFFIX = /-\d+$/u;
+
+const prunePersisted = Effect.gen(function* prunePersisted() {
+  const { actions_caches } = yield* getJson(Caches)(
+    `actions/caches?ref=${MAIN}&key=${PERSIST}&sort=created_at&direction=desc&per_page=100`,
+  );
+  const groupOf = ({ key }: { readonly key: string }): string => Str.replace(RUN_SUFFIX, "")(key);
+  const older = pipe(
+    actions_caches,
+    Arr.filter((cache, index) =>
+      pipe(
+        actions_caches,
+        Arr.take(index),
+        Arr.some((newer) => groupOf(newer) === groupOf(cache)),
+      ),
+    ),
+  );
+  yield* Effect.forEach(older, removeCache, { discard: true });
+});
+
 const pruneBranches = Effect.gen(function* pruneBranches() {
   const { actions_caches } = yield* getJson(Caches)("actions/caches?per_page=100");
   const branches = pipe(
@@ -64,6 +85,7 @@ const reportUsage = Effect.gen(function* reportUsage() {
 
 runMain("prune-caches")(
   Effect.forEach(PREFIXES, pruneOlder, { discard: true }).pipe(
+    Effect.andThen(prunePersisted),
     Effect.andThen(pruneBranches),
     Effect.andThen(reportUsage),
   ),

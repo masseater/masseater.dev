@@ -1,0 +1,90 @@
+name: daily
+
+on:
+  schedule:
+    - cron: "30 23 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  plan:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      packages: ${{ steps.packages.outputs.packages }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - id: packages
+        run: vp run -r task-packages daily
+
+  run:
+    needs: plan
+    if: needs.plan.outputs.packages != '' && needs.plan.outputs.packages != '[]'
+    name: ${{ matrix.package.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.plan.outputs.packages) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    environment: daily
+    concurrency:
+      group: daily-${{ matrix.package.name }}
+    permissions:
+      actions: write
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - uses: masseater/typescript-template/.github/actions/credentials@d931a8843e20a6675286de4aae013da4778a72d6
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ matrix.package.directory }}/.persist
+          key: persist-${{ matrix.package.name }}-${{ github.run_id }}
+          restore-keys: |
+            persist-${{ matrix.package.name }}-
+      - run: vp run --filter "./$DIRECTORY" daily
+        env:
+          DIRECTORY: ${{ matrix.package.directory }}
+          GH_TOKEN: ${{ github.token }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      - if: ${{ !cancelled() && matrix.package.finally }}
+        run: vp run --filter "./$DIRECTORY" daily:finally
+        env:
+          DIRECTORY: ${{ matrix.package.directory }}
+          GH_TOKEN: ${{ github.token }}
+      - if: ${{ !cancelled() && hashFiles(format('{0}/.persist/**', matrix.package.directory)) != '' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ matrix.package.directory }}/.persist
+          key: persist-${{ matrix.package.name }}-${{ github.run_id }}
+      - if: ${{ !cancelled() }}
+        run: vp run -r prune-caches
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  ci-telemetry:
+    needs: [plan, run]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@d931a8843e20a6675286de4aae013da4778a72d6
+        with:
+          github-token: ${{ github.token }}
