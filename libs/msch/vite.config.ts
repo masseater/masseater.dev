@@ -49,7 +49,7 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["build"] },
-      build: { command: "vp pack", cache: false },
+      build: "vp pack",
     },
   },
 });

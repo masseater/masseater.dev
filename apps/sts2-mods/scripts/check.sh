@@ -14,7 +14,7 @@ for arg in "$@"; do
   esac
 done
 
-export DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1
+export DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0
 failed=()
 step() { printf '\n== %s ==\n' "$*"; }
 fail() { echo "NG: $*" >&2; failed+=("$*"); }
@@ -65,14 +65,14 @@ for mod in "${mods[@]}"; do
 
   step "$mod"
   if [ "$typed" = true ]; then
-    dotnet restore "$proj" -v q >/dev/null || { fail "$mod: restore"; continue; }
+    dotnet restore "$proj" --disable-build-servers -v q >/dev/null || { fail "$mod: restore"; continue; }
     format_args=("$proj" --no-restore -v q)
     [ "$strict_style" = true ] || format_args=(whitespace "${format_args[@]}")
     if [ "$fix" = true ]; then
       dotnet format "${format_args[@]}" || fail "$mod: dotnet format"
     fi
     dotnet format "${format_args[@]}" --verify-no-changes || fail "$mod: 整形・コードスタイル (scripts/check.sh --fix で直せます)"
-    dotnet build "$proj" --no-restore -v q -clp:ErrorsOnly -p:CopyToModsFolder=false || fail "$mod: ビルド (型エラー・アナライザ)"
+    dotnet build "$proj" --no-restore --disable-build-servers -v q -clp:ErrorsOnly -p:CopyToModsFolder=false || fail "$mod: ビルド (型エラー・アナライザ)"
   else
     if [ "$fix" = true ]; then
       dotnet format whitespace "mods/$mod" --folder -v q || fail "$mod: dotnet format"
