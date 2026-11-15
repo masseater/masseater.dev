@@ -10,7 +10,6 @@ const MAX_TOKENS: usize = 8192;
 const TOKENS_PER_CHAR: usize = 3;
 const SPARE_TOKENS: usize = 256;
 
-/// The reason a translation stopped.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Error {
     Invalid(Invalid),
@@ -34,20 +33,11 @@ impl From<Invalid> for Error {
     }
 }
 
-/// The number of tokens the model may generate for `text`.
 #[must_use]
 pub fn max_tokens(text: &str) -> usize {
     (text.chars().count() * TOKENS_PER_CHAR + SPARE_TOKENS).min(MAX_TOKENS)
 }
 
-/// Translates `text` piece by piece, handing each delta to `emit` as the model produces it.
-///
-/// Every request after the first carries the previous piece and its translation, so the
-/// wording stays consistent across pieces.
-///
-/// # Errors
-///
-/// Returns an error when the text cannot go into a prompt or the completion fails.
 pub async fn translate<Complete, Deltas>(
     direction: &Direction,
     text: &str,

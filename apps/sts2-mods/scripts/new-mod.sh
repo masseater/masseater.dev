@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# templates/mod から新しい Mod を作り、ルートの sts2-mods.sln とワークショップ用ワークスペースに登録する。
-#
-# 使い方: scripts/new-mod.sh <ModName>
-#   ModName は英数字のみ (スペース・アンダースコア不可)
 set -euo pipefail
 
 mod="${1:?使い方: scripts/new-mod.sh <ModName>}"
@@ -11,7 +7,6 @@ repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 dst="$repo_root/mods/$mod"
 [ -e "$dst" ] && { echo "既にあります: $dst" >&2; exit 1; }
 
-# テンプレートをコピーし、ファイル名と中身の __MOD__ を置き換える
 cp -R "$repo_root/templates/mod" "$dst"
 find "$dst" -depth -name '*__MOD__*' | while read -r p; do
   mv "$p" "$(dirname "$p")/$(basename "$p" | sed "s/__MOD__/$mod/g")"
@@ -20,7 +15,6 @@ find "$dst" -type f | while read -r f; do
   sed -i.bak "s/__MOD__/$mod/g" "$f" && rm -f "$f.bak"
 done
 
-# ワークショップ用ワークスペース
 ws="$repo_root/workshop/$mod"
 mkdir -p "$ws/content"
 touch "$ws/content/.gitkeep"

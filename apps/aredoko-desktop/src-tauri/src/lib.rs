@@ -143,11 +143,6 @@ fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// Starts the aredoko management app, which keeps the search server running while it is open.
-///
-/// # Errors
-///
-/// Returns an error when Tauri cannot create the window or run the event loop.
 pub fn run() -> tauri::Result<()> {
     let app = tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(

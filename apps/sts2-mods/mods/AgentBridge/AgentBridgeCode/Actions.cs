@@ -14,10 +14,6 @@ using GamePlayer = MegaCrit.Sts2.Core.Entities.Players.Player;
 
 namespace AgentBridge.AgentBridgeCode;
 
-/// <summary>
-/// エージェントの操作をゲームに渡す。どれも人が画面で操作したときと同じ入口
-/// (部品のクリック・カードの手動プレイ・ターン終了のアクション・開発者コンソール) を通すので、協力プレイでも同期される。
-/// </summary>
 internal static class Actions
 {
     private static readonly Lazy<DevConsole> Console = new(() => new DevConsole(shouldAllowDebugCommands: true));

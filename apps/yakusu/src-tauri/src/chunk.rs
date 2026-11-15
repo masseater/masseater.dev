@@ -1,7 +1,5 @@
-/// The number of characters above which a source text is split into separate requests.
 pub const CHUNK_CHARS: usize = 1000;
 
-/// A slice of the source text: text to translate, or whitespace that is copied as it is.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Part<'a> {
     Text(&'a str),
@@ -29,8 +27,6 @@ fn char_count(text: &str, start: usize, end: usize) -> usize {
     text[start..end].chars().count()
 }
 
-/// Splits `text` at blank lines into pieces of at most `limit` characters, keeping each
-/// paragraph whole. Joining the parts gives back `text`.
 #[must_use]
 pub fn split(text: &str, limit: usize) -> Vec<Part<'_>> {
     let start = text.len() - text.trim_start().len();
