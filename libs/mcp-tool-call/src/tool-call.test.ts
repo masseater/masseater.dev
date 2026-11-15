@@ -23,7 +23,7 @@ const LATENCY_COLUMNS = 1;
 type Recorded = Readonly<{
   points: AnalyticsEngineDataPoint[];
   withoutLatency: () => readonly unknown[];
-  calls: ToolCalls<"lookup", Missing>;
+  calls: ToolCalls<Missing>;
 }>;
 
 const recorded = (): Recorded => {
@@ -33,7 +33,7 @@ const recorded = (): Recorded => {
       points.push(point ?? {});
     },
   };
-  const calls = toolCalls<"lookup", Missing>({
+  const calls = toolCalls<Missing>({
     dataset: () => dataset,
     describe: ({ key }) => ({ errorTag: "Missing", text: `${key} was not found` }),
   });
