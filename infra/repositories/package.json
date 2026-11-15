@@ -16,6 +16,7 @@
     "@atproto/api": "catalog:",
     "@distilled.cloud/cloudflare": "catalog:stack",
     "@distilled.cloud/github": "catalog:",
+    "@distilled.cloud/tailscale": "catalog:",
     "@masseater.dev/exposure-protocol": "workspace:*",
     "@octokit/rest": "catalog:",
     "@peculiar/asn1-pkcs8": "catalog:",
@@ -25,11 +26,14 @@
     "alchemy": "catalog:stack",
     "effect": "catalog:stack",
     "jose": "catalog:",
+    "jsonc-parser": "catalog:",
     "oauth4webapi": "catalog:",
     "universal-github-app-jwt": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
+    "@effect/platform-node": "catalog:",
+    "@effect/vitest": "catalog:",
     "@types/node": "catalog:"
   }
 }

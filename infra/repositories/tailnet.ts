@@ -82,4 +82,4 @@ const tailnetRoute = ({ request, env }: RouteInput): Option.Option<Effect.Effect
   return Option.none();
 };
 
-export { tailnetRoute };
+export { JWT_ALGORITHM, oidcSigner, publicJwk, sshCaKey, tailnetRoute };
