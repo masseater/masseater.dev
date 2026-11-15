@@ -148,6 +148,21 @@ export const requiredStack: Readonly<Record<string, readonly string[]>> = {
     "@lemonsqueezy/*",
     "square",
   ],
+  "整形は Vite+ の vp fmt だけで扱う": [
+    "prettier",
+    "prettier-plugin-*",
+    "@prettier/*",
+    "@biomejs/*",
+    "dprint",
+  ],
+  "lint は Vite+ の vp lint だけで扱い、ESLint のプラグインは oxlint の JS プラグインとして読む": [
+    "eslint",
+    "@eslint/*",
+    "eslint-config-*",
+    "tslint",
+    "standard",
+    "xo",
+  ],
   [INSTRUMENTATION]: ["@opentelemetry/*", "dd-trace", "newrelic"],
   [INFRASTRUCTURE]: [
     "wrangler",

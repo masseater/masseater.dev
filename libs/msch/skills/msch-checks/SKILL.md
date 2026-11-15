@@ -7,7 +7,7 @@ description: >
 metadata:
   type: core
   library: "@r_masseater/msch"
-  library_version: 0.15.0
+  library_version: 0.16.0
 sources:
   - src/app/cli.ts
   - README.md
