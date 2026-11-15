@@ -1,10 +1,8 @@
 use rusqlite::{Connection, OptionalExtension, params};
 
-use crate::model::SourceOrigin;
+use crate::protocol::{DocumentKind, ManuscriptBody, SourceBody, SourceOrigin, SyncDocument};
 use crate::store::manuscripts::{paragraphs, title_of};
 use crate::store::sources::facts_of;
-
-use super::documents::{DocumentKind, ManuscriptBody, SourceBody, SyncDocument};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Entry {
@@ -127,4 +125,26 @@ pub fn mark_pushed(connection: &Connection, pushed: &[Entry]) -> rusqlite::Resul
 
 pub fn pending_count(connection: &Connection) -> rusqlite::Result<u32> {
     connection.query_row("select count(*) from sync_outbox", [], |row| row.get(0))
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::protocol::{ManuscriptBody, SourceBody};
+
+    #[test]
+    fn writes_bodies_in_the_shape_other_devices_read() {
+        let manuscript: ManuscriptBody = serde_json::from_str(
+            r#"{"title":{"text":"雨","by":"ai"},"createdAt":1,"paragraphs":[{"id":"p","text":"雨"}]}"#,
+        )
+        .expect("manuscript");
+        assert_eq!(
+            serde_json::to_string(&manuscript).expect("encode"),
+            r#"{"title":{"text":"雨","by":"ai"},"createdAt":1,"paragraphs":[{"id":"p","text":"雨"}]}"#
+        );
+        let source: SourceBody = serde_json::from_str(
+            r#"{"manuscriptId":null,"label":"資料","origin":"mcp","client":"Claude Code","createdAt":2,"facts":[{"kind":"voice","subject":"A","body":"だよ","when":null}]}"#,
+        )
+        .expect("source");
+        assert_eq!(source.facts.len(), 1);
+    }
 }
