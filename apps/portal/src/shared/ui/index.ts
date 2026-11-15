@@ -7,7 +7,6 @@ export { RowList } from "./row-list";
 export { SearchField } from "./search-field";
 export { Section } from "./section";
 export { SelectField } from "./select-field";
-export type { Choice } from "./select-field";
 export { Stat } from "./stat";
 export { TableFrame } from "./table-frame";
 export { TableHead } from "./table-head";

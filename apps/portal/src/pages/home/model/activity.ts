@@ -40,7 +40,7 @@ const TIME_START = 11;
 
 const TIME_END = 16;
 
-export const dayOf = (activity: Activity): string => Str.slice(DAY_START, DAY_END)(activity.stamp);
+const dayOf = (activity: Activity): string => Str.slice(DAY_START, DAY_END)(activity.stamp);
 
 export const timeOf = (activity: Activity): string =>
   Str.slice(TIME_START, TIME_END)(activity.stamp);

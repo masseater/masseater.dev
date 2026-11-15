@@ -2,7 +2,7 @@ import { Schema } from "effect";
 
 const Month = Schema.String.check(Schema.isPattern(/^\d{4}-(?:0[1-9]|1[0-2])$/u));
 
-export const FLOW_VIEWS = ["detail", "summary"] as const;
+const FLOW_VIEWS = ["detail", "summary"] as const;
 
 export const MoneySearch = Schema.Struct({
   from: Schema.optionalKey(Month),

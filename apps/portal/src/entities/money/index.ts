@@ -1,5 +1,5 @@
 export { moneyQueries } from "./api/queries";
-export { FLOW_VIEWS, MoneySearch } from "./model/money";
+export { MoneySearch } from "./model/money";
 export type {
   AccountBalanceValue,
   BalanceSheetValue,
