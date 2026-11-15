@@ -11,11 +11,13 @@ import {
   heardAtom,
   hearingAtom,
   interimAtom,
+  leadsAtom,
   listeningAtom,
   nudgeAtom,
   progressAtom,
   recognitionAtom,
   recordingAtom,
+  researchingAtom,
   savingAtom,
   staleAtom,
   summaryAtom,
@@ -50,6 +52,8 @@ const reset = Effect.gen(function* reset() {
     write(staleAtom, false),
     write(recordingAtom, { id, startedAt: now }),
     write(savingAtom, { status: "idle" }),
+    write(leadsAtom, []),
+    write(researchingAtom, IDLE),
   ]);
 });
 

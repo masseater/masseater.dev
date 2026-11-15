@@ -7,6 +7,7 @@ import { tauriYohaku } from "#/shared/api";
 
 import { Screens } from "./screens.tsx";
 import { Providers } from "./state.tsx";
+import { behaveLikeAnApp } from "./window.ts";
 
 followColorScheme();
 
@@ -20,4 +21,5 @@ if (root !== null) {
       </Providers>
     </StrictMode>,
   );
+  behaveLikeAnApp();
 }
