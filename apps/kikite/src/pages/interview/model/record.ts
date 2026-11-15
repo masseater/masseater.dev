@@ -7,6 +7,7 @@ import type { RecordedSession } from "#protocol";
 import {
   entriesAtom,
   heardAtom,
+  leadsAtom,
   progressAtom,
   recordingAtom,
   summaryAtom,
@@ -34,6 +35,7 @@ const recordOf = Effect.gen(function* recordOf() {
     progress: yield* read(progressAtom),
     withdrawn: (yield* read(heardAtom)).withdrawn,
     summary: summaryOf(state),
+    leads: yield* read(leadsAtom),
   };
   return record;
 });
