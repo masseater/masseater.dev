@@ -1,3 +1,23 @@
+const LOGPUSH = 'Property[key.name="logpush"]:not([value.value=false])';
+const LOGPUSH_MESSAGE =
+  "Worker には logpush: true を付ける。付けないと、その Worker のログが Logpush に流れない";
+
+export const cloudflareResourceSyntax: readonly Readonly<{ selector: string; message: string }>[] =
+  [
+    {
+      selector: `CallExpression[callee.object.name="Workers"][callee.property.name="Worker"] > ObjectExpression.arguments:not(:has(${LOGPUSH}))`,
+      message: LOGPUSH_MESSAGE,
+    },
+    {
+      selector: `CallExpression[callee.object.name="Website"] > ObjectExpression.arguments:not(:has(${LOGPUSH}))`,
+      message: LOGPUSH_MESSAGE,
+    },
+    {
+      selector: 'MemberExpression[object.name="Rum"][property.name="Site"]',
+      message:
+        "Rum.Site は使わない。CI のトークンに Account Settings Write が要る。Cloudflare API でホストごとに一度サイトを作り、トークンを CF_BEACON_TOKEN に置く",
+    },
+  ];
 export const removalPolicySyntax: Readonly<{ selector: string; message: string }> = {
   selector:
     'CallExpression[callee.object.name=/^(D1|R2)$/][callee.property.name=/^(Database|Bucket)$/]:not(CallExpression[callee.property.name="pipe"][arguments.0.callee.object.name="RemovalPolicy"] > MemberExpression.callee > CallExpression.object)',
@@ -23,6 +43,7 @@ export const alchemyOverride: {
   rules: {
     "eslint-js/no-restricted-syntax": [
       "error",
+      ...cloudflareResourceSyntax,
       removalPolicySyntax,
       {
         selector: 'CallExpression[callee.name="Stack"]:not([arguments.0.name="APP_NAME"])',

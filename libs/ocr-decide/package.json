@@ -55,5 +55,8 @@
   },
   "peerDependencies": {
     "effect": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=26"
   }
 }

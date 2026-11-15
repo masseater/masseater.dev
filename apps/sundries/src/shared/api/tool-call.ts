@@ -2,21 +2,7 @@ import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { toolCalls } from "@masseater.dev/mcp-tool-call";
 import { env } from "cloudflare:workers";
 
-export type ToolName =
-  | "write_sloppedia_article"
-  | "read_web_analytics"
-  | "search_slides"
-  | "get_deck"
-  | "get_access_token"
-  | "translate"
-  | "join_tailnet"
-  | "send_to_claude"
-  | "register_claude_routine"
-  | "take_claude_requests"
-  | "reply_to_request"
-  | "list_claude_replies";
-
-export const { meteredInput, runToolIn, runTool } = toolCalls<ToolName, UpstreamFailed>({
+export const { meteredInput, runToolIn, runTool } = toolCalls<UpstreamFailed>({
   dataset: () => env.TOOL_CALLS,
   describe: ({ service, message }) => ({
     errorTag: "UpstreamFailed",
