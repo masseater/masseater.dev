@@ -4,7 +4,7 @@ import { Effect } from "effect";
 import { VST3, bundlesWith, cargo } from "./lib/bundled.ts";
 
 const render = (bundle: string): ReturnType<typeof cargo> =>
-  cargo(["--package", "pod-rattle-host", "--release", "--", bundle, "host-report"]);
+  cargo(["--package", "pod-rattle-host", "--release", "--", bundle, "release-reports/host"]);
 
 runMain("pod-rattle-host")(
   Effect.gen(function* host() {

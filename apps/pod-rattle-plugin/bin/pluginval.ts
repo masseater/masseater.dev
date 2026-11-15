@@ -10,7 +10,7 @@ const VERSION = "v1.0.4";
 const ARCHIVE = "pluginval.zip";
 const TIMEOUT_MS = "300000";
 const STRICTNESS = "10";
-const REPORT = "pluginval-report";
+const REPORT = "release-reports/pluginval";
 
 type Command = readonly [string, ...string[]];
 

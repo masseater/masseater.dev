@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "bin": {
+    "bundle-collect": "./bin/bundle-collect.ts",
     "component-release": "./bin/component-release.ts",
     "component-tag": "./bin/component-tag.ts",
     "release-please-token": "./bin/release-please-token.ts"
