@@ -21,7 +21,7 @@ export type Component = Readonly<{ name: string; root: string; workspace: string
 /** @internal */
 export type Release = Readonly<{ name: string; version: string }>;
 
-const manifestPath = (name: string): string => `.github/release-please/${name}-manifest.json`;
+const manifestPath = (workspace: string): string => `${workspace}/.release-please-manifest.json`;
 
 const versionIn = Effect.fn("manifest.versionIn")(function* versionIn(
   text: string,
@@ -48,17 +48,16 @@ export const component = Effect.fn("manifest.component")(function* component(nam
 
 /** @internal */
 export const checkedOutVersion = Effect.fn("manifest.checkedOutVersion")(
-  function* checkedOutVersion({ name, root, workspace }: Component) {
+  function* checkedOutVersion({ root, workspace }: Component) {
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const text = yield* fileSystem.readFileString(path.join(root, manifestPath(name)));
+    const text = yield* fileSystem.readFileString(path.join(root, manifestPath(workspace)));
     return yield* versionIn(text, workspace);
   },
 );
 
 /** @internal */
 export const mainVersion = Effect.fn("manifest.mainVersion")(function* mainVersion({
-  name,
   workspace,
 }: Component) {
   const repository = yield* Config.String("GITHUB_REPOSITORY");
@@ -66,7 +65,7 @@ export const mainVersion = Effect.fn("manifest.mainVersion")(function* mainVersi
     "api",
     "-H",
     "Accept: application/vnd.github.raw",
-    `repos/${repository}/contents/${manifestPath(name)}?ref=main`,
+    `repos/${repository}/contents/${manifestPath(workspace)}?ref=main`,
   ]);
   return yield* versionIn(text, workspace);
 });

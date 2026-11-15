@@ -35,6 +35,8 @@ const SETUP_PATTERNS: readonly RegExp[] = [
   /\buses:\s*["']?(?:dtolnay\/rust-toolchain|actions-rust-lang\/setup-rust-toolchain|actions-rs\/toolchain|moonrepo\/setup-rust)\b/gu,
 ];
 
+const INSTALL_PATTERNS: readonly RegExp[] = [/(?<![\w./@-])cargo[ \t]+b?install\b/gu];
+
 const TOOL_PATTERNS: readonly RegExp[] = [
   /^[ \t]*["']?(?:rust|rustup)["']?[ \t]*(?:=|[ \t]+\S)/gmu,
 ];
@@ -111,13 +113,19 @@ const cargoOutsidePnpm = problemAtStart(
 );
 
 const setupProblem =
-  ({ file }: Listed, source: string) =>
+  ({ file }: Listed, source: string, advice: (command: string) => string) =>
   (found: RegExpMatchArray): Problem => ({
     file,
     ...positionOf(source)(found.index ?? WHOLE_MATCH),
     rule: SETUP_RULE,
-    message: `pnpm install already installs the toolchain in rust-toolchain.toml and vendors the crates in Cargo.lock. Remove \`${Str.trim(found[WHOLE_MATCH])}\`.`,
+    message: advice(Str.trim(found[WHOLE_MATCH])),
   });
+
+const removeSetup = (command: string): string =>
+  `pnpm install already installs the toolchain in rust-toolchain.toml and vendors the crates in Cargo.lock. Remove \`${command}\`.`;
+
+const buildInstead = (command: string): string =>
+  `\`${command}\` fetches crates that pnpm does not vendor. Add the tool as a dependency of a Cargo workspace that pnpm vendors, and build its binary there with \`cargo build -p <crate> --bin <name>\`.`;
 
 const setupPatternsFor = (entry: Listed): readonly RegExp[] => {
   if (isToolVersions(entry)) {
@@ -126,13 +134,27 @@ const setupPatternsFor = (entry: Listed): readonly RegExp[] => {
   return SETUP_PATTERNS;
 };
 
-const setupProblems = (entry: Listed, source: string): readonly Problem[] =>
-  pipe(
-    setupPatternsFor(entry),
-    Arr.flatMap((pattern) => Arr.fromIterable(Str.matchAll(pattern)(source))),
-    Arr.map(setupProblem(entry, source)),
+const matchesOf =
+  (source: string) =>
+  (patterns: readonly RegExp[]): readonly RegExpMatchArray[] =>
+    pipe(
+      patterns,
+      Arr.flatMap((pattern) => Arr.fromIterable(Str.matchAll(pattern)(source))),
+    );
+
+const setupProblems = (entry: Listed, source: string): readonly Problem[] => {
+  const found = matchesOf(source);
+  const installs = pipe(
+    found(INSTALL_PATTERNS),
+    Arr.map(setupProblem(entry, source, buildInstead)),
+  );
+  return pipe(
+    found(setupPatternsFor(entry)),
+    Arr.map(setupProblem(entry, source, removeSetup)),
+    Arr.appendAll(installs),
     Arr.appendAll(generatedCargoConfig(entry, source)),
   );
+};
 
 const matches =
   (pattern: RegExp) =>
@@ -163,7 +185,10 @@ const readsCargoLock =
       ancestorsOf(directory),
       Arr.some((ancestor) => Arr.contains(workspaces, ancestor)),
     );
-    return Arr.contains(manifests, directory) && !insideWorkspace;
+    return (
+      Arr.contains(manifests, directory) &&
+      (Arr.contains(workspaces, directory) || !insideWorkspace)
+    );
   };
 
 const isWorkspaceManifest = (source: Option.Option<string>): boolean =>

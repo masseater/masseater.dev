@@ -39,6 +39,11 @@
       "groupName": "protobuf-es"
     },
     {
+      "description": "gungraun は同じ版の gungraun-runner でしか動かない。runner は tools/cargo-tools で別の Cargo.lock に固定しているので、組で上げる。",
+      "matchPackageNames": ["gungraun", "gungraun-runner"],
+      "groupName": "gungraun"
+    },
+    {
       "matchPackageNames": ["@paper-design/**"],
       "groupName": "paper shaders"
     },

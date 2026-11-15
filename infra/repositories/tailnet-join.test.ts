@@ -52,3 +52,11 @@ test("公開鍵が文字列でなければ断る", () =>
       expect(refusal).toBe(true);
     }),
   ));
+
+test("tailnet のスタックが当たっていなければ断る", () =>
+  Effect.runPromise(
+    Effect.gen(function* unconfigured() {
+      const refusal = yield* fails(joinTailnet(USER_KEY)(memoryStore().env));
+      expect(refusal).toBe(true);
+    }),
+  ));

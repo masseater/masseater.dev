@@ -136,7 +136,9 @@ export const keyOf =
         ),
       );
       const header = [cache.salt, files.relative(cache.root, configPath), inputs.options];
-      return yield* cache.hash(Arr.join([...header, ...entries], LINE_SEPARATOR));
+      return yield* cache.hash(
+        Arr.join([...header, ...inputs.dependencies, ...entries], LINE_SEPARATOR),
+      );
     });
 
 const entryFile = (cache: AnalysisCache, key: string): string =>

@@ -14,9 +14,10 @@ import type {
   TailscaleOpContext,
   ValidateAndTestPolicyFileError,
 } from "@distilled.cloud/tailscale";
+import { map as mapOutput } from "alchemy/Output";
 import { succeed } from "alchemy/Provider";
 import { Resource } from "alchemy/Resource";
-import { Config, Effect, Layer, Option, Redacted, Schema, pipe } from "effect";
+import { Config, Effect, Layer, Option, Record, Redacted, Schema, pipe } from "effect";
 import {
   FetchHttpClient,
   HttpBody,
@@ -25,8 +26,14 @@ import {
   HttpClientResponse,
 } from "effect/http";
 
-import { AGENT_SUBJECT, AGENT_TAG, SSH_PORT, TAILNET_ISSUER } from "./tailnet-names.ts";
-import { ensureEntries, removeEntries } from "./tailnet-policy.ts";
+import {
+  AGENT_SUBJECT,
+  AGENT_TAG,
+  SSH_PORT,
+  TAILNET_ISSUER,
+  WINDOWS_HOST,
+} from "./tailnet-names.ts";
+import { ensureEntries, removeEntries, replaceEntries } from "./tailnet-policy.ts";
 import type { PolicyEntries } from "./tailnet-policy.ts";
 
 const TAILNET = "-";
@@ -37,7 +44,7 @@ const CI_AUDIENCE = `api.tailscale.com/${CI_CLIENT_ID}`;
 
 const AGENT_POLICY: PolicyEntries = {
   tagOwners: { [AGENT_TAG]: ["autogroup:admin"] },
-  grants: [{ src: [AGENT_TAG], dst: ["autogroup:member"], ip: [`tcp:${String(SSH_PORT)}`] }],
+  grants: [{ src: [AGENT_TAG], dst: [WINDOWS_HOST], ip: [`tcp:${String(SSH_PORT)}`] }],
 };
 
 type FederatedIdentityProps = Readonly<{
@@ -126,7 +133,13 @@ const rewritePolicy = (
   });
 
 const policyEntriesProvider = succeed(TailnetPolicyEntries, {
-  reconcile: ({ news }) => rewritePolicy(ensureEntries(news)).pipe(Effect.as(news)),
+  reconcile: ({ news, output }) =>
+    rewritePolicy(
+      Option.match(Option.fromNullishOr(output), {
+        onNone: () => ensureEntries(news),
+        onSome: (previous) => replaceEntries(previous)(news),
+      }),
+    ).pipe(Effect.as(news)),
   delete: ({ output }) => rewritePolicy(removeEntries(output)),
 });
 
@@ -180,12 +193,15 @@ export const tailscaleProviders = Layer.mergeAll(
 ).pipe(Layer.provideMerge(tailscaleCredentials), Layer.provideMerge(FetchHttpClient.layer));
 
 export const agentTrust = Effect.gen(function* trust() {
-  yield* TailnetPolicyEntries("TailnetAgentPolicy", AGENT_POLICY);
+  const policy = yield* TailnetPolicyEntries("TailnetAgentPolicy", AGENT_POLICY);
   return yield* FederatedIdentity("TailnetAgentIdentity", {
     description: "agents via sundries",
     issuer: TAILNET_ISSUER,
     subject: AGENT_SUBJECT,
     scopes: ["auth_keys"],
-    tags: [AGENT_TAG],
+    tags: pipe(
+      policy.tagOwners,
+      mapOutput((owners) => Record.keys(owners)),
+    ),
   });
 });

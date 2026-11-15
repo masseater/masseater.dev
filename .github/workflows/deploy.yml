@@ -47,8 +47,25 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+  tailnet:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r deploy:tailnet
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
   broker:
-    needs: bootstrap
+    needs: [bootstrap, tailnet]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
@@ -87,17 +104,18 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@d931a8843e20a6675286de4aae013da4778a72d6
+      - uses: masseater/typescript-template/.github/actions/credentials@ee56f90bdf77bf747e158391c0ae8a846732b988
       - uses: $/.github/actions/setup
         with:
           native: "false"
       - run: vp run --log labeled --filter "$FILTER" deploy:production
         env:
           FILTER: ${{ matrix.stack.filter }}
-      - run: vp run -r record-deploy
+      - run: vp run -r record-deployment
         env:
           GH_TOKEN: ${{ github.token }}
-          STACK: ${{ matrix.stack.name }}
+          DEPLOYMENT_ENVIRONMENT: production
+          DEPLOYMENT_TASK: deploy:${{ matrix.stack.name }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -118,7 +136,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@d931a8843e20a6675286de4aae013da4778a72d6
+      - uses: masseater/typescript-template/.github/actions/credentials@ee56f90bdf77bf747e158391c0ae8a846732b988
       - uses: $/.github/actions/setup
         with:
           native: "false"
