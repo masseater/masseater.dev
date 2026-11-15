@@ -18,16 +18,16 @@ import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 import type { JsonError } from "./errors.ts";
 import { okBody } from "./http-json.ts";
 
-type Upload =
+export type Upload =
   | Readonly<{ status: "ok"; committed: number }>
   | Readonly<{ status: "conflict"; expected: number }>;
 
-type Target = Readonly<{ url: string; authorization: Redacted.Redacted }>;
+export type Target = Readonly<{ url: string; authorization: Redacted.Redacted }>;
 
 const RETRIES = 3;
 const CONFLICT = 409;
 
-const RetryDelay = Context.Reference<Duration.Input>("watashi/RetryDelay", {
+export const RetryDelay = Context.Reference<Duration.Input>("watashi/RetryDelay", {
   defaultValue: () => "1 second",
 });
 
@@ -49,7 +49,7 @@ const watashiClient = (
     );
   });
 
-const asWatashi =
+export const asWatashi =
   (target: Target) =>
   <Value, Failure, Requirement>(
     effect: Effect.Effect<Value, Failure, Requirement>,
@@ -58,7 +58,7 @@ const asWatashi =
       Effect.flatMap((client) => Effect.provideService(effect, HttpClient.HttpClient, client)),
     );
 
-const committedOffset = (
+export const committedOffset = (
   key: FileParams,
 ): Effect.Effect<number, JsonError, HttpClient.HttpClient> =>
   Schema.encodeEffect(FileQuery)(key).pipe(
@@ -81,7 +81,7 @@ const uploaded = (
   );
 };
 
-const uploadChunk = (
+export const uploadChunk = (
   upload: Readonly<{ params: ChunkParams; body: Uint8Array }>,
 ): Effect.Effect<Upload, JsonError, HttpClient.HttpClient> =>
   Schema.encodeEffect(ChunkQuery)(upload.params).pipe(
@@ -94,7 +94,7 @@ const uploadChunk = (
     Effect.flatMap(uploaded),
   );
 
-const issueToken = (
+export const issueToken = (
   fields: TokenFields,
 ): Effect.Effect<typeof IssuedToken.Type, JsonError, HttpClient.HttpClient> =>
   HttpClientRequest.post(TOKENS_PATH).pipe(
@@ -103,10 +103,10 @@ const issueToken = (
     Effect.flatMap(okBody({ schema: IssuedToken, url: TOKENS_PATH })),
   );
 
-const listTokens: Effect.Effect<typeof TokenList.Type, JsonError, HttpClient.HttpClient> =
+export const listTokens: Effect.Effect<typeof TokenList.Type, JsonError, HttpClient.HttpClient> =
   HttpClient.get(TOKENS_PATH).pipe(Effect.flatMap(okBody({ schema: TokenList, url: TOKENS_PATH })));
 
-const revokeToken = (
+export const revokeToken = (
   id: string,
 ): Effect.Effect<typeof Revoked.Type, JsonError, HttpClient.HttpClient> =>
   HttpClient.execute(HttpClientRequest.delete(TOKENS_PATH, { urlParams: { id } })).pipe(
@@ -114,6 +114,4 @@ const revokeToken = (
   );
 
 /** @internal */
-export { RetryDelay, asWatashi, committedOffset, issueToken, listTokens, revokeToken, uploadChunk };
 /** @internal */
-export type { Target, Upload };

@@ -12,7 +12,7 @@ import { commit, numbered } from "./revision-writer.server";
 import { attempt, encodeJson, nextAfterMax, nowIso } from "./storage.server";
 import type { WriteFailure } from "./storage.server";
 
-const MemorySnapshot = Schema.Struct({
+export const MemorySnapshot = Schema.Struct({
   project: Schema.String,
   name: Schema.String,
   description: Schema.String,
@@ -22,23 +22,23 @@ const MemorySnapshot = Schema.Struct({
   retractReason: Schema.String,
 });
 
-type MemorySnapshotValue = typeof MemorySnapshot.Type;
+export type MemorySnapshotValue = typeof MemorySnapshot.Type;
 
-type Writer = Readonly<{ actor: string }>;
+export type Writer = Readonly<{ actor: string }>;
 
-type Target = Readonly<{ writer: Writer; op: RevisionOp }>;
+export type Target = Readonly<{ writer: Writer; op: RevisionOp }>;
 
-type Saved = Readonly<{ id: number; snapshot: MemorySnapshotValue }>;
+export type Saved = Readonly<{ id: number; snapshot: MemorySnapshotValue }>;
 
-type MemoryResult = Readonly<{ written: readonly string[]; notices: readonly never[] }>;
+export type MemoryResult = Readonly<{ written: readonly string[]; notices: readonly never[] }>;
 
-const NOT_RETRACTED = "";
+export const NOT_RETRACTED = "";
 
 const nextId: Effect.Effect<number, WriteFailure> = attempt(() =>
   db.select({ max: max(memory.id) }).from(memory),
 ).pipe(Effect.map(nextAfterMax));
 
-const snapshotOf = (row: Memory): MemorySnapshotValue => ({
+export const snapshotOf = (row: Memory): MemorySnapshotValue => ({
   project: row.project,
   name: row.name,
   description: row.description,
@@ -48,7 +48,7 @@ const snapshotOf = (row: Memory): MemorySnapshotValue => ({
   retractReason: row.retractReason,
 });
 
-const resultOf = (id: number): MemoryResult => ({ written: [`memory:${id}`], notices: [] });
+export const resultOf = (id: number): MemoryResult => ({ written: [`memory:${id}`], notices: [] });
 
 const write =
   ({ writer, op }: Target) =>
@@ -69,18 +69,15 @@ const write =
       return resultOf(id);
     });
 
-const save =
+export const save =
   (target: Target) =>
   (saved: Saved): Effect.Effect<MemoryResult, StorageFailed> =>
     numbered(write(target)(saved));
 
-const create =
+export const create =
   (writer: Writer) =>
   (snapshot: MemorySnapshotValue): Effect.Effect<MemoryResult, StorageFailed> =>
     nextId.pipe(
       Effect.flatMap((id) => write({ writer, op: "create" })({ id, snapshot })),
       numbered,
     );
-
-export { MemorySnapshot, NOT_RETRACTED, create, resultOf, save, snapshotOf };
-export type { MemoryResult, MemorySnapshotValue, Saved, Target, Writer };

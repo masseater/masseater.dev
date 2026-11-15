@@ -22,7 +22,7 @@ const textOf = (grade: Grade): string =>
     }),
   );
 
-const GradeLine = ({ text, phase }: Readonly<{ text: string; phase: Phase }>): ReactNode => {
+export const GradeLine = ({ text, phase }: Readonly<{ text: string; phase: Phase }>): ReactNode => {
   const grade = gradeOf({ text, phase });
   if (grade.status === "unknown" || grade.status === "pending") {
     return "";
@@ -33,5 +33,3 @@ const GradeLine = ({ text, phase }: Readonly<{ text: string; phase: Phase }>): R
     </Note>
   );
 };
-
-export { GradeLine };

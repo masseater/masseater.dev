@@ -5,7 +5,7 @@ import { focus } from "#/pages/mosaic/lib/scene";
 import type { Hit } from "#/pages/mosaic/lib/search";
 import { useSetSearch, useViewerStore } from "#/pages/mosaic/model/viewer";
 
-const SearchResult = ({ hit }: Readonly<{ hit: Hit }>): ReactNode => {
+export const SearchResult = ({ hit }: Readonly<{ hit: Hit }>): ReactNode => {
   const store = useViewerStore();
   const setQuery = useSetSearch();
   const choose = useCallback<MouseEventHandler<HTMLButtonElement>>(
@@ -28,5 +28,3 @@ const SearchResult = ({ hit }: Readonly<{ hit: Hit }>): ReactNode => {
     </li>
   );
 };
-
-export { SearchResult };

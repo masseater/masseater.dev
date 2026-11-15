@@ -37,7 +37,7 @@ class KindMarker extends GutterMarker {
   }
 }
 
-const kindGutter: Extension = gutter({
+export const kindGutter: Extension = gutter({
   class: "yohaku-kinds",
   lineMarker: (view, line) => {
     const kind = kindAt(view.state.doc.lineAt(line.from).number)(view.state);
@@ -52,5 +52,3 @@ const kindGutter: Extension = gutter({
     update.state.field(paragraphIdsField) !== update.startState.field(paragraphIdsField),
   initialSpacer: () => new KindMarker("memo", MEMO_LABEL),
 });
-
-export { kindGutter };

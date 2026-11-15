@@ -10,7 +10,7 @@ import { RankingItem } from "./ranking-item";
 
 const usesLabel = (count: number): string => `${count.toString()} 本`;
 
-const SongRankingList = (): ReactNode => {
+export const SongRankingList = (): ReactNode => {
   const { data: songs } = useSuspenseQuery(songsQuery);
   return (
     <ol className="flex flex-col divide-y">
@@ -26,5 +26,3 @@ const SongRankingList = (): ReactNode => {
     </ol>
   );
 };
-
-export { SongRankingList };

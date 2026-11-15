@@ -6,9 +6,7 @@ import type { SongDetail } from "#/entities/catalog";
 
 const route = getRouteApi("/songs/$id");
 
-const useSong = (): SongDetail => {
+export const useSong = (): SongDetail => {
   const { id } = route.useParams();
   return useSuspenseQuery(catalogQueries.songs({ id }).get.queryOptions()).data;
 };
-
-export { useSong };

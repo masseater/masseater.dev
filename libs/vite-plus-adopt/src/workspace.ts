@@ -21,16 +21,16 @@ const DEPENDENCY_FIELDS = [
   "peerDependencies",
 ] as const;
 
-type DependencyField = (typeof DEPENDENCY_FIELDS)[number];
+export type DependencyField = (typeof DEPENDENCY_FIELDS)[number];
 
-interface Dependency {
+export interface Dependency {
   readonly manifest: string;
   readonly field: DependencyField;
   readonly name: string;
   readonly specifier: string;
 }
 
-type WorkspaceServices =
+export type WorkspaceServices =
   | ChildProcessSpawner.ChildProcessSpawner
   | FileSystem.FileSystem
   | Path.Path;
@@ -94,7 +94,7 @@ const dependenciesOf =
       Effect.map(Arr.flatten),
     );
 
-const listDependencies = (
+export const listDependencies = (
   root: string,
 ): Effect.Effect<
   readonly Dependency[],
@@ -117,6 +117,4 @@ const listDependencies = (
   });
 
 /** @internal */
-export { listDependencies };
 /** @internal */
-export type { Dependency, DependencyField, WorkspaceServices };

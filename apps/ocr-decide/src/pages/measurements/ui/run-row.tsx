@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { wayOf } from "#/pages/measurements/model/summary";
 import type { Column } from "#/pages/measurements/model/tables";
 
-const RunRow = ({
+export const RunRow = ({
   run,
   columns,
 }: Readonly<{ run: Run; columns: readonly Column[] }>): ReactNode => (
@@ -21,5 +21,3 @@ const RunRow = ({
     )}
   </tr>
 );
-
-export { RunRow };

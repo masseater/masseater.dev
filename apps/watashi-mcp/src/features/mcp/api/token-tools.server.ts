@@ -36,7 +36,7 @@ const issuing = (caller: Caller, input: IssueRequest): Promise<CallToolResult> =
     label: Option.getOrElse(Option.fromUndefinedOr(input.label), () => ""),
   }).pipe(runTool({ tool: TOOL, caller, project: NO_PROJECT, input, count: one }));
 
-const registerTokenTools =
+export const registerTokenTools =
   (caller: Caller) =>
   (server: McpServer): McpServer => {
     server.registerTool(
@@ -50,5 +50,3 @@ const registerTokenTools =
     );
     return server;
   };
-
-export { registerTokenTools };

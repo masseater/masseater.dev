@@ -95,7 +95,7 @@ const ofKind =
     ),
   ];
 
-type Wanted = Readonly<{ scope: Option.Option<string>; topic: Option.Option<Vector> }>;
+export type Wanted = Readonly<{ scope: Option.Option<string>; topic: Option.Option<Vector> }>;
 
 const inTopic =
   (related: Option.Option<HashSet.HashSet<string>>) =>
@@ -142,7 +142,7 @@ const relatedOf = (
       ),
   });
 
-const profileTraits = (
+export const profileTraits = (
   wanted: Wanted,
 ): Effect.Effect<Readonly<Record<string, readonly Body[]>>, StoreFailure> =>
   Effect.gen(function* traitsOfOwner() {
@@ -179,7 +179,7 @@ const idOf = (ref: string): Option.Option<number> =>
 
 const missing = (ref: string) => (): RecordNotFound => RecordNotFound.make({ ref });
 
-const traitDetail = (ref: string): Effect.Effect<Body, StoreFailure> =>
+export const traitDetail = (ref: string): Effect.Effect<Body, StoreFailure> =>
   Effect.gen(function* readTraitDetail() {
     const id = yield* Effect.fromOption(idOf(ref)).pipe(Effect.mapError(missing(ref)));
     const traits = yield* loadTraits;
@@ -197,6 +197,3 @@ const traitDetail = (ref: string): Effect.Effect<Body, StoreFailure> =>
       revisions: pipe(history, Arr.map(revisionItem)),
     };
   });
-
-export { profileTraits, traitDetail };
-export type { Wanted };

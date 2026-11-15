@@ -7,16 +7,14 @@ const ID_BYTES = 8;
 
 const randomBytes = (length: number): Uint8Array => crypto.getRandomValues(new Uint8Array(length));
 
-const newApiToken = (): Readonly<{ id: string; token: string }> => ({
+export const newApiToken = (): Readonly<{ id: string; token: string }> => ({
   id: `${ID_PREFIX}${Hex.encode(randomBytes(ID_BYTES))}`,
   token: `${API_TOKEN_PREFIX}${Base64Url.encode(randomBytes(API_TOKEN_BYTES))}`,
 });
 
-const hashApiToken = (token: string): Effect.Effect<string> =>
+export const hashApiToken = (token: string): Effect.Effect<string> =>
   Effect.promise(() => crypto.subtle.digest("SHA-256", new TextEncoder().encode(token))).pipe(
     Effect.map((digest) => Hex.encode(new Uint8Array(digest))),
   );
 
-const isApiToken: (token: string) => boolean = Str.startsWith(API_TOKEN_PREFIX);
-
-export { hashApiToken, isApiToken, newApiToken };
+export const isApiToken: (token: string) => boolean = Str.startsWith(API_TOKEN_PREFIX);

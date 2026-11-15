@@ -97,7 +97,7 @@ const destinationIn = Effect.fn("destinationIn")(function* destinationIn(directo
 });
 
 /** @internal */
-const extract = Effect.fn("extract")(function* extractAssets(
+export const extract = Effect.fn("extract")(function* extractAssets(
   assetIds: readonly number[],
   directory: string,
 ) {
@@ -130,5 +130,3 @@ const extract = Effect.fn("extract")(function* extractAssets(
     ),
   };
 });
-
-export { extract };

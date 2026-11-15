@@ -46,18 +46,16 @@ const isFolder = Effect.fn("isFolder")(function* isFolder(candidate: string) {
 });
 
 /** @internal */
-const findAssetStore = Effect.fn("findAssetStore")(function* findAssetStoreFolder() {
+export const findAssetStore = Effect.fn("findAssetStore")(function* findAssetStoreFolder() {
   const found = yield* candidates;
   return yield* Effect.findFirst(found, isFolder);
 });
 
 /** @internal */
-const rememberAssetStore = Effect.fn("rememberAssetStore")(function* rememberAssetStore(
+export const rememberAssetStore = Effect.fn("rememberAssetStore")(function* rememberAssetStore(
   location: string,
 ) {
   const sql = yield* SqlClient.SqlClient;
   yield* sql`insert into settings(key, value) values (${SETTING}, ${location})
     on conflict(key) do update set value = excluded.value`;
 });
-
-export { findAssetStore, rememberAssetStore };

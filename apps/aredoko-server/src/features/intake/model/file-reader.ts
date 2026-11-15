@@ -1,9 +1,9 @@
 import { Reader } from "@zip.js/zip.js";
 
-type ReadRange = (index: number, length: number) => Promise<Uint8Array>;
+export type ReadRange = (index: number, length: number) => Promise<Uint8Array>;
 
 /** @internal */
-class FileReader extends Reader<ReadRange> {
+export class FileReader extends Reader<ReadRange> {
   readonly #read: ReadRange;
 
   public constructor(read: ReadRange, size: number) {
@@ -16,6 +16,3 @@ class FileReader extends Reader<ReadRange> {
     return this.#read(index, length);
   }
 }
-
-export { FileReader };
-export type { ReadRange };

@@ -8,7 +8,7 @@ import { ALL_PACKAGES, ScopeOption } from "./scope-option.tsx";
 
 const ALL_LABEL = "すべてのパッケージ";
 
-const ScopeOptions = (): ReactNode => {
+export const ScopeOptions = (): ReactNode => {
   const packages = usePackages();
   return (
     <Select.Viewport className="p-1">
@@ -27,5 +27,3 @@ const ScopeOptions = (): ReactNode => {
     </Select.Viewport>
   );
 };
-
-export { ScopeOptions };

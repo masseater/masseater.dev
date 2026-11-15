@@ -7,7 +7,7 @@ import { metaQuery } from "#/shared/api";
 import { Note } from "./note";
 import { RankingBody } from "./ranking-body";
 
-const MetaState = (): ReactNode => {
+export const MetaState = (): ReactNode => {
   const meta = useQuery(metaQuery);
   if (meta.status === "pending") {
     return <Note text={TEXT.loading} />;
@@ -17,5 +17,3 @@ const MetaState = (): ReactNode => {
   }
   return <RankingBody meta={meta.data} />;
 };
-
-export { MetaState };

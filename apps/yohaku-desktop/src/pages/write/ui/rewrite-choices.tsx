@@ -6,7 +6,7 @@ import type { RemarkActions } from "#/pages/write/api/remark-actions.ts";
 const REPLACE = "置き換える";
 const CANCEL = "やめる";
 
-const RewriteChoices = ({ actions }: Readonly<{ actions: RemarkActions }>): ReactNode => {
+export const RewriteChoices = ({ actions }: Readonly<{ actions: RemarkActions }>): ReactNode => {
   const { done, replace, cancel } = actions;
   return (
     <div className="flex gap-1.5">
@@ -19,5 +19,3 @@ const RewriteChoices = ({ actions }: Readonly<{ actions: RemarkActions }>): Reac
     </div>
   );
 };
-
-export { RewriteChoices };

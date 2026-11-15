@@ -8,9 +8,9 @@ const Stage = Schema.Literals(["article", "idea"]).pipe(
   Schema.withDecodingDefaultKey(Effect.succeed("article" as const)),
 );
 
-const Frontmatter = Schema.Struct({ ...ArticleFrontmatter.fields, stage: Stage });
+export const Frontmatter = Schema.Struct({ ...ArticleFrontmatter.fields, stage: Stage });
 
-type Entry = Readonly<
+export type Entry = Readonly<
   Omit<typeof Frontmatter.Type, "published" | "stage"> & {
     category: Category;
     slug: string;
@@ -18,19 +18,16 @@ type Entry = Readonly<
   }
 >;
 
-type Missing = Readonly<{ status: "missing" }>;
+export type Missing = Readonly<{ status: "missing" }>;
 
-type CollectionResult =
+export type CollectionResult =
   | Readonly<{ status: "found"; category: Category; entries: readonly Entry[] }>
   | Missing;
 
-type EntryResult = Readonly<{ status: "found"; entry: Entry }> | Missing;
+export type EntryResult = Readonly<{ status: "found"; entry: Entry }> | Missing;
 
-const entryPath = ({ category, slug }: Readonly<Pick<Entry, "category" | "slug">>): string =>
+export const entryPath = ({ category, slug }: Readonly<Pick<Entry, "category" | "slug">>): string =>
   `${categoryPath(category)}/${slug}`;
 
-const entryOgImagePath = (entry: Readonly<Pick<Entry, "category" | "slug">>): string =>
+export const entryOgImagePath = (entry: Readonly<Pick<Entry, "category" | "slug">>): string =>
   `/og${entryPath(entry)}.png`;
-
-export type { CollectionResult, Entry, EntryResult, Missing };
-export { entryOgImagePath, entryPath, Frontmatter };

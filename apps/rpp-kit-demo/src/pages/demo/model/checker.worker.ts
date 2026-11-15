@@ -69,8 +69,6 @@ const checker = {
   transpile: (code: string): Promise<string> => using((current) => current.transpile(code)),
 };
 
-type CheckerWorker = typeof checker;
+export type CheckerWorker = typeof checker;
 
 expose(checker);
-
-export type { CheckerWorker };

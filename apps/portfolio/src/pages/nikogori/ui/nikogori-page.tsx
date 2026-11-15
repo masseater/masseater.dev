@@ -6,7 +6,7 @@ import { sectionMeta } from "#/shared/config";
 
 import { WorkItem } from "./work-item";
 
-const NikogoriPage = (): ReactNode => (
+export const NikogoriPage = (): ReactNode => (
   <div className="flex flex-col" data-wide>
     <h1 className="sr-only">{sectionMeta.nikogori.title}</h1>
     <ul className="flex flex-col gap-8">
@@ -17,5 +17,3 @@ const NikogoriPage = (): ReactNode => (
     </ul>
   </div>
 );
-
-export { NikogoriPage };

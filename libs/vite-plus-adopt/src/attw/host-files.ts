@@ -17,13 +17,13 @@ import type {
 import { NO_FEATURES, createOutcome } from "./resolver-state.ts";
 import { resolveNestedModule } from "./resolver.ts";
 
-interface FileFormatSource {
+export interface FileFormatSource {
   readonly host: ResolverHost;
   readonly kind: ResolutionKind;
   readonly packageJsonCache: PackageJsonCache;
 }
 
-interface FileFormats {
+export interface FileFormats {
   readonly impliedFormat: (fileName: string) => Option.Option<ResolutionMode>;
   readonly moduleKind: (fileName: string) => Option.Option<ModuleKindInfo>;
   readonly packageJsonScopeFor: (fileName: string) => Option.Option<PackageJsonInfo>;
@@ -136,11 +136,8 @@ const packageJsonScopeOf = (
   return getPackageScopeForPath(getDirectoryPath(path), lookupState(source, Option.none()));
 };
 
-const createFileFormats = (source: FileFormatSource): FileFormats => ({
+export const createFileFormats = (source: FileFormatSource): FileFormats => ({
   impliedFormat: (fileName) => impliedFormatOf(source, fileName),
   moduleKind: (fileName) => moduleKindOf(source, fileName),
   packageJsonScopeFor: (fileName) => packageJsonScopeOf(source, fileName),
 });
-
-export { createFileFormats };
-export type { FileFormatSource, FileFormats };

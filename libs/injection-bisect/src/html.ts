@@ -145,7 +145,7 @@ const htmlUnitsOf = (text: string): readonly Span[] => {
   return Arr.sort(spans, byStart);
 };
 
-const htmlParser: Parser = {
+export const htmlParser: Parser = {
   format: "html",
   extensions: [".html", ".htm", ".xhtml", ".vue", ".svelte", ".astro"],
   accepts: looksLikeHtml,
@@ -155,5 +155,3 @@ const htmlParser: Parser = {
       Arr.map(({ start, end }) => ({ kind: "prose", start, end })),
     ),
 };
-
-export { htmlParser };

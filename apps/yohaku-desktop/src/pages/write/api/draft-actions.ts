@@ -80,7 +80,7 @@ const useDraftActions = (view: () => Option.Option<EditorView>): DraftActions =>
   };
 };
 
-const useStableDraftActions = (view: () => Option.Option<EditorView>): DraftActions => {
+export const useStableDraftActions = (view: () => Option.Option<EditorView>): DraftActions => {
   const actions = useDraftActions(view);
   const latestRef = useRef(actions);
   useEffect(() => {
@@ -101,5 +101,3 @@ const useStableDraftActions = (view: () => Option.Option<EditorView>): DraftActi
     [],
   );
 };
-
-export { useStableDraftActions };

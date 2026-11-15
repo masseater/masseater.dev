@@ -5,7 +5,7 @@ import { SongLink } from "#/entities/catalog";
 
 type SongRef = Readonly<{ id: number; title: string }>;
 
-const CreditMaterial = ({
+export const CreditMaterial = ({
   song,
   label,
 }: Readonly<{ song: SongRef | null; label: string | null }>): ReactNode =>
@@ -15,5 +15,3 @@ const CreditMaterial = ({
       onSome: (found) => <SongLink id={found.id} title={found.title} />,
     }),
   );
-
-export { CreditMaterial };

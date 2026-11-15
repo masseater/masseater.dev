@@ -17,7 +17,7 @@ const isFormChoice = (value: string): value is FormChoice =>
     Array.some(({ choice }) => choice === value),
   );
 
-const FormChoiceGroup = (): ReactNode => {
+export const FormChoiceGroup = (): ReactNode => {
   const { target } = useDirection();
   const current = useFormChoice();
   const setChoice = useSetFormChoice();
@@ -47,5 +47,3 @@ const FormChoiceGroup = (): ReactNode => {
     </ToggleGroup.Root>
   );
 };
-
-export { FormChoiceGroup };

@@ -9,15 +9,15 @@ import type { Failure } from "./database";
 import { accounts, balances, transactions } from "./ledger.table";
 import { rejected } from "./rejected";
 
-type Account = typeof accounts.$inferSelect;
+export type Account = typeof accounts.$inferSelect;
 
-type Balance = typeof balances.$inferSelect;
+export type Balance = typeof balances.$inferSelect;
 
 const ONE_ROW = 1;
 
 type DailyMovement = Readonly<{ accountId: string; date: string; amount: number | null }>;
 
-const accountNamed = (id: string): Effect.Effect<Account, Failure> =>
+export const accountNamed = (id: string): Effect.Effect<Account, Failure> =>
   query(() => db.select().from(accounts).where(eq(accounts.id, id)).limit(ONE_ROW)).pipe(
     Effect.flatMap((rows) =>
       Effect.fromOption(Arr.head(rows)).pipe(
@@ -26,7 +26,7 @@ const accountNamed = (id: string): Effect.Effect<Account, Failure> =>
     ),
   );
 
-const upsertAccount = (account: Account): Effect.Effect<Account, UpstreamFailed> =>
+export const upsertAccount = (account: Account): Effect.Effect<Account, UpstreamFailed> =>
   query(() =>
     db
       .insert(accounts)
@@ -37,7 +37,7 @@ const upsertAccount = (account: Account): Effect.Effect<Account, UpstreamFailed>
       }),
   ).pipe(Effect.as(account));
 
-const recordBalance = Effect.fn("recordBalance")(function* recordBalance(balance: Balance) {
+export const recordBalance = Effect.fn("recordBalance")(function* recordBalance(balance: Balance) {
   yield* accountNamed(balance.accountId);
   yield* query(() =>
     db
@@ -77,7 +77,7 @@ const movementOf = (
     Num.sumAll,
   );
 
-const positions = Effect.fn("positions")(function* positions(asOf: string) {
+export const positions = Effect.fn("positions")(function* positions(asOf: string) {
   const [accountRows, balanceRows, dailyRows] = yield* query(() =>
     db.batch([
       db.select().from(accounts).orderBy(asc(accounts.id)),
@@ -103,7 +103,4 @@ const positions = Effect.fn("positions")(function* positions(asOf: string) {
   );
 });
 
-const listAccounts = query(() => db.select().from(accounts).orderBy(asc(accounts.id)));
-
-export { accountNamed, listAccounts, positions, recordBalance, upsertAccount };
-export type { Account, Balance };
+export const listAccounts = query(() => db.select().from(accounts).orderBy(asc(accounts.id)));

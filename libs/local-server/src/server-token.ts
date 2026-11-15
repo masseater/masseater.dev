@@ -11,7 +11,7 @@ interface Handshake {
   readonly req: { readonly url?: string | undefined };
 }
 
-class ServerToken extends Context.Service<
+export class ServerToken extends Context.Service<
   ServerToken,
   {
     readonly token: Redacted.Redacted;
@@ -29,7 +29,7 @@ const tokenIn = (target: string): Option.Option<string> =>
     Option.flatMapNullishOr((query) => query.get(TOKEN_PARAMETER)),
   );
 
-const serverTokenLayer = Layer.sync(ServerToken, () => {
+export const serverTokenLayer = Layer.sync(ServerToken, () => {
   const token = Hex.encode(crypto.getRandomValues(new Uint8Array(TOKEN_BYTES)));
   const expected = encoder.encode(token);
   return ServerToken.of({
@@ -42,5 +42,3 @@ const serverTokenLayer = Layer.sync(ServerToken, () => {
       ),
   });
 });
-
-export { ServerToken, serverTokenLayer };

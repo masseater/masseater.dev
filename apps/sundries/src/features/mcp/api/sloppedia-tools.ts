@@ -168,7 +168,7 @@ const writeArticle = Effect.fn("writeArticle")(function* writeArticle(article: A
 
 const runGithubTool = runToolIn(githubLayer);
 
-const registerSloppediaTools =
+export const registerSloppediaTools =
   (caller: Caller) =>
   (server: McpServer): McpServer => {
     server.registerTool(
@@ -193,5 +193,3 @@ const registerSloppediaTools =
     );
     return server;
   };
-
-export { registerSloppediaTools };

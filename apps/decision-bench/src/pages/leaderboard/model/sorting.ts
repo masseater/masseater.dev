@@ -2,18 +2,18 @@ import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Array, Order, pipe } from "effect";
 import { Atom } from "effect/reactivity";
 
-type SortDirection = "asc" | "desc" | "none";
+export type SortDirection = "asc" | "desc" | "none";
 
-type TableColumn<Row> = Readonly<{
+export type TableColumn<Row> = Readonly<{
   id: string;
   header: string;
   sortValue: (row: Row) => number;
   display: (row: Row) => string;
 }>;
 
-const LABEL_ID = "label";
+export const LABEL_ID = "label";
 
-type Sort =
+export type Sort =
   | Readonly<{ status: "default" }>
   | Readonly<{ status: "sorted"; column: string; direction: "asc" | "desc" }>;
 
@@ -31,18 +31,21 @@ const nextSort = ({ current, column }: Readonly<{ current: Sort; column: string 
   return DEFAULT_SORT;
 };
 
-const directionOf = ({ sort, column }: Readonly<{ sort: Sort; column: string }>): SortDirection => {
+export const directionOf = ({
+  sort,
+  column,
+}: Readonly<{ sort: Sort; column: string }>): SortDirection => {
   if (sort.status === "default" || sort.column !== column) {
     return "none";
   }
   return sort.direction;
 };
 
-const useSort = (table: string): Sort => useAtomValue(sortAtom(table));
+export const useSort = (table: string): Sort => useAtomValue(sortAtom(table));
 
 type SortEvent = Readonly<{ currentTarget: Readonly<{ value: string }> }>;
 
-const useSortClick = (table: string): ((event: SortEvent) => void) => {
+export const useSortClick = (table: string): ((event: SortEvent) => void) => {
   const current = useSort(table);
   const set = useAtomSet(sortAtom(table));
   return (event) => {
@@ -71,7 +74,7 @@ const orderOf = <Row>({
   );
 };
 
-const sortRows = <Row>({
+export const sortRows = <Row>({
   rows,
   sort,
   columns,
@@ -91,6 +94,3 @@ const sortRows = <Row>({
   }
   return Array.sort(rows, Order.flip(order));
 };
-
-export { directionOf, LABEL_ID, sortRows, useSort, useSortClick };
-export type { Sort, SortDirection, TableColumn };

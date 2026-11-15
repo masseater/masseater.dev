@@ -83,7 +83,7 @@ const useResetters = (): ((opening: Opening, session: number) => void) => {
   };
 };
 
-const useSession = (): boolean => {
+export const useSession = (): boolean => {
   const [{ session }] = useScreen();
   const opening = useOpening();
   const [ready] = useAtom(readySessionAtom);
@@ -100,5 +100,3 @@ const useSession = (): boolean => {
   }, [ready, session, loaded, reset]);
   return Option.isSome(opening) && ready === session;
 };
-
-export { useSession };

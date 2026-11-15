@@ -6,7 +6,7 @@ interface DropHandlers {
   readonly onDrop: (paths: readonly string[]) => void;
 }
 
-const subscribeDrops = ({ onHover, onDrop }: DropHandlers): (() => void) => {
+export const subscribeDrops = ({ onHover, onDrop }: DropHandlers): (() => void) => {
   const listening = Effect.acquireRelease(
     Effect.promise(() =>
       getCurrentWebview().onDragDropEvent(({ payload }) => {
@@ -25,5 +25,3 @@ const subscribeDrops = ({ onHover, onDrop }: DropHandlers): (() => void) => {
     Effect.runFork(Fiber.interrupt(fiber));
   };
 };
-
-export { subscribeDrops };

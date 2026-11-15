@@ -63,7 +63,7 @@ const plainPrefix = Effect.fn("plainPrefix")(function* plainPrefix(path: string)
 });
 
 /** @internal */
-const blendPreview = Effect.fn("blendPreview")(function* blendPreview(path: string) {
+export const blendPreview = Effect.fn("blendPreview")(function* blendPreview(path: string) {
   const plain = yield* plainPrefix(path);
   return yield* Option.match(blendThumbnail(plain), {
     onNone: () => Effect.succeedNone,
@@ -89,12 +89,10 @@ const plainFile = Effect.fn("plainFile")(function* plainFile(path: string) {
 });
 
 /** @internal */
-const blendModel = Effect.fn("blendModel")(function* blendModel(path: string) {
+export const blendModel = Effect.fn("blendModel")(function* blendModel(path: string) {
   const plain = yield* plainFile(path);
   const file = yield* Effect.fromOption(openBlend(plain)).pipe(
     Effect.mapError((cause) => BlendUnreadable.make({ path, cause })),
   );
   return yield* glbOf(sceneOf(file));
 });
-
-export { blendModel, blendPreview };

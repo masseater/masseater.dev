@@ -34,7 +34,7 @@ const compareRests = (left: string, right: string): number => {
   );
 };
 
-const comparePathsCaseInsensitive: {
+export const comparePathsCaseInsensitive: {
   (right: string): (left: string) => number;
   (left: string, right: string): number;
 } = Fn.dual(DATA_FIRST_ARITY, (left: string, right: string): number => {
@@ -49,5 +49,3 @@ const comparePathsCaseInsensitive: {
     ),
   );
 });
-
-export { comparePathsCaseInsensitive };

@@ -4,7 +4,7 @@ import { COPY } from "#/pages/why/model/copy";
 
 const CELL = "px-3 py-2 text-left font-medium";
 
-const ResultsHead = (): ReactNode => (
+export const ResultsHead = (): ReactNode => (
   <thead className="bg-muted">
     <tr>
       <th className={CELL}>{COPY.results.corner}</th>
@@ -13,5 +13,3 @@ const ResultsHead = (): ReactNode => (
     </tr>
   </thead>
 );
-
-export { ResultsHead };

@@ -11,7 +11,7 @@ import { MAX_CHARS } from "./models";
 
 const FIRST = 0;
 
-interface Picked {
+export interface Picked {
   readonly name: string;
   readonly load: () => Promise<ArrayBuffer>;
 }
@@ -54,7 +54,7 @@ const failedOf =
   (name: string) =>
   (reason: string): Opening => ({ status: "failed", name, reason });
 
-const pickedOf = (files: Readonly<Pick<FileList, "item">> | null): Option.Option<Picked> =>
+export const pickedOf = (files: Readonly<Pick<FileList, "item">> | null): Option.Option<Picked> =>
   Option.fromNullishOr(files).pipe(
     Option.flatMapNullishOr((list) => list.item(FIRST)),
     Option.map((file): Picked => ({
@@ -77,7 +77,7 @@ const reading = (picked: Picked, sink: Sink): Effect.Effect<void> =>
     Effect.map(sink.opening),
   );
 
-const openerOf = (sink: Sink): ((picked: Picked) => void) => {
+export const openerOf = (sink: Sink): ((picked: Picked) => void) => {
   const running = MutableRef.make(Option.none<Fiber.Fiber<void>>());
   return (picked) => {
     Option.map(MutableRef.get(running), (fiber) => {
@@ -88,6 +88,3 @@ const openerOf = (sink: Sink): ((picked: Picked) => void) => {
     MutableRef.set(running, Option.some(fiber));
   };
 };
-
-export { openerOf, pickedOf };
-export type { Picked };

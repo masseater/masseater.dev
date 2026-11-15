@@ -2,9 +2,9 @@ import { Array as Arr, Option, pipe } from "effect";
 
 import type { Change, Report, Wait } from "#/pages/interview/model/review-hooks";
 
-type FactKey = "wait" | "withdrawn" | "open" | "next";
+export type FactKey = "wait" | "withdrawn" | "open" | "next";
 
-type Fact = Readonly<{ key: FactKey; label: string; value: string }>;
+export type Fact = Readonly<{ key: FactKey; label: string; value: string }>;
 
 const MS_PER_SECOND = 1000;
 const DIGITS = 1;
@@ -24,7 +24,7 @@ const changeFacts = (change: Change): readonly Fact[] => [
   { key: "next", label: "まだ聞いていない", value: shrink(change.next) },
 ];
 
-const factsOf = (report: Report): readonly Fact[] =>
+export const factsOf = (report: Report): readonly Fact[] =>
   Arr.flatten([
     pipe(report.wait, Option.map(waitFact), Option.toArray),
     [
@@ -36,6 +36,3 @@ const factsOf = (report: Report): readonly Fact[] =>
     ],
     pipe(report.change, Option.map(changeFacts), Option.getOrElse(Arr.empty<Fact>)),
   ]);
-
-export { factsOf };
-export type { Fact, FactKey };

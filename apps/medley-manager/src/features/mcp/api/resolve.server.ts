@@ -33,7 +33,7 @@ const findOrCreate = (lookup: Lookup): Effect.Effect<number, ToolError> =>
     Effect.map((row) => row.id),
   );
 
-const songByTitle = (title: string): Effect.Effect<number, ToolError> =>
+export const songByTitle = (title: string): Effect.Effect<number, ToolError> =>
   findOrCreate({
     find: () =>
       catalogDb
@@ -45,7 +45,7 @@ const songByTitle = (title: string): Effect.Effect<number, ToolError> =>
     create: () => catalogDb.insert(song).values({ title }).returning({ id: song.id }).get(),
   });
 
-const videoByTitle = (title: string): Effect.Effect<number, ToolError> =>
+export const videoByTitle = (title: string): Effect.Effect<number, ToolError> =>
   findOrCreate({
     find: () =>
       catalogDb
@@ -61,7 +61,7 @@ const videoByTitle = (title: string): Effect.Effect<number, ToolError> =>
         .get(),
   });
 
-const personByName = (name: string): Effect.Effect<number, ToolError> =>
+export const personByName = (name: string): Effect.Effect<number, ToolError> =>
   findOrCreate({
     find: () =>
       catalogDb
@@ -72,5 +72,3 @@ const personByName = (name: string): Effect.Effect<number, ToolError> =>
         .get(),
     create: () => catalogDb.insert(person).values({ name }).returning({ id: person.id }).get(),
   });
-
-export { personByName, songByTitle, videoByTitle };

@@ -9,17 +9,17 @@ const ALGORITHM = "AES-GCM";
 const KEY_BYTES = 32;
 const IV_BYTES = 12;
 
-type Sealable = Readonly<{ key: string; name: string; plaintext: string }>;
+export type Sealable = Readonly<{ key: string; name: string; plaintext: string }>;
 
-type Stored = Readonly<{ key: string; name: string; stored: string }>;
+export type Stored = Readonly<{ key: string; name: string; stored: string }>;
 
-type Unsealed = Readonly<{ status: "legacy" | "sealed"; plaintext: string }>;
+export type Unsealed = Readonly<{ status: "legacy" | "sealed"; plaintext: string }>;
 
 type Envelope = Readonly<{ iv: Uint8Array; ciphertext: Uint8Array }>;
 
 const taggedError = Schema.TaggedError;
 
-class SealFailed extends taggedError<SealFailed, { readonly brand: unique symbol }>()(
+export class SealFailed extends taggedError<SealFailed, { readonly brand: unique symbol }>()(
   "SealFailed",
   { message: Schema.String },
 ) {}
@@ -68,7 +68,7 @@ const envelope = (iv: Uint8Array, ciphertext: ArrayBuffer): string =>
     Arr.join(SEPARATOR),
   );
 
-const seal = ({ key, name, plaintext }: Sealable): Effect.Effect<string, SealFailed> =>
+export const seal = ({ key, name, plaintext }: Sealable): Effect.Effect<string, SealFailed> =>
   Effect.gen(function* sealValue() {
     const cryptoKey = yield* importKey(key);
     const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
@@ -109,7 +109,7 @@ const open = ({ key, name, stored }: Stored): Effect.Effect<string, SealFailed> 
     return yield* Effect.try({ try: () => decoder.decode(plaintext), catch: malformed });
   });
 
-const unseal = (sealed: Stored): Effect.Effect<Unsealed, SealFailed> => {
+export const unseal = (sealed: Stored): Effect.Effect<Unsealed, SealFailed> => {
   if (Str.startsWith(ENVELOPE_PREFIX)(sealed.stored)) {
     return open(sealed).pipe(
       Effect.map((plaintext): Unsealed => ({ status: "sealed", plaintext })),
@@ -117,6 +117,3 @@ const unseal = (sealed: Stored): Effect.Effect<Unsealed, SealFailed> => {
   }
   return Effect.succeed({ status: "legacy", plaintext: sealed.stored });
 };
-
-export { SealFailed, seal, unseal };
-export type { Sealable, Stored, Unsealed };

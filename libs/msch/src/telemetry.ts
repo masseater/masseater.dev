@@ -52,7 +52,7 @@ const annotateMemory = Effect.gen(function* annotateMemory() {
   });
 });
 
-const annotateResources = (api: API): Effect.Effect<void, never, RepositoryFiles> =>
+export const annotateResources = (api: API): Effect.Effect<void, never, RepositoryFiles> =>
   Effect.gen(function* annotateCompiler() {
     yield* annotateMemory;
     const { totals } = api.getTimingInfo();
@@ -62,5 +62,3 @@ const annotateResources = (api: API): Effect.Effect<void, never, RepositoryFiles
       "msch.compiler.server_ms": totals.serverTimeMs,
     });
   });
-
-export { annotateResources };

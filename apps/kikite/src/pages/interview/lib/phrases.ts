@@ -34,7 +34,7 @@ const withBreak =
     return segment;
   };
 
-const phrased = (text: string): string => {
+export const phrased = (text: string): string => {
   const segments = pipe(
     Arr.fromIterable(segmenter.segment(text)),
     Arr.map((part) => part.segment),
@@ -46,5 +46,3 @@ const phrased = (text: string): string => {
     Str.replace(new RegExp(`^${BREAK_OPPORTUNITY}`, "u"), ""),
   );
 };
-
-export { phrased };

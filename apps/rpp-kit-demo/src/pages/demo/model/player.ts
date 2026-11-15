@@ -6,7 +6,7 @@ import { song } from "./song";
 
 type Scheduled = Readonly<{ track: string; note: Note }>;
 
-type Player = Readonly<{ stop: () => void }>;
+export type Player = Readonly<{ stop: () => void }>;
 
 type StartOptions = Readonly<{
   from: number;
@@ -44,7 +44,7 @@ const unsorted: readonly Scheduled[] = pipe(
 
 const scheduled = Arr.sortWith(unsorted, (entry) => entry, byStart);
 
-const startPlayer = ({ from, onTick, onEnd }: StartOptions): Player => {
+export const startPlayer = ({ from, onTick, onEnd }: StartOptions): Player => {
   const engine = createEngine();
   const origin = engine.now() + LEAD_IN - from;
   let next = Option.getOrElse(
@@ -73,6 +73,3 @@ const startPlayer = ({ from, onTick, onEnd }: StartOptions): Player => {
     },
   };
 };
-
-export { startPlayer };
-export type { Player };

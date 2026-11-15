@@ -12,7 +12,7 @@ const LABELS: Readonly<Record<Side, string>> = {
   target: "翻訳先の言語を選ぶ",
 };
 
-const PickerToggle = ({ side }: Readonly<{ side: Side }>): ReactNode => {
+export const PickerToggle = ({ side }: Readonly<{ side: Side }>): ReactNode => {
   const picker = usePicker();
   const setPicker = useSetPicker();
   const open = picker.kind === "open" && picker.side === side;
@@ -36,5 +36,3 @@ const PickerToggle = ({ side }: Readonly<{ side: Side }>): ReactNode => {
     </Button>
   );
 };
-
-export { PickerToggle };

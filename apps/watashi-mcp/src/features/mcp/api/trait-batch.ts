@@ -14,13 +14,13 @@ import { TRAIT_STEP_CHARACTERS } from "#/shared/config";
 
 import type { BatchSource } from "./trait-state";
 
-type Collected = Readonly<{
+export type Collected = Readonly<{
   origin: TraitOrigin;
   batch: readonly BatchSource[];
   position: string;
 }>;
 
-type Packing<Item> = Readonly<{
+export type Packing<Item> = Readonly<{
   origin: TraitOrigin;
   items: readonly Item[];
   batchOf: (item: Item) => readonly BatchSource[];
@@ -31,7 +31,7 @@ type Packed<Item> = Readonly<{ items: readonly Item[]; size: number; full: boole
 
 const SETTLE_MINUTES = 1;
 
-const settledBefore: Effect.Effect<string> = DateTime.now.pipe(
+export const settledBefore: Effect.Effect<string> = DateTime.now.pipe(
   Effect.map(DateTime.subtract({ minutes: SETTLE_MINUTES })),
   Effect.map(DateTime.formatIso),
 );
@@ -45,9 +45,9 @@ const ChunkPosition = Schema.Struct({
   start: Schema.Int,
 });
 
-type RowPositionValue = typeof RowPosition.Type;
+export type RowPositionValue = typeof RowPosition.Type;
 
-type ChunkPositionValue = typeof ChunkPosition.Type;
+export type ChunkPositionValue = typeof ChunkPosition.Type;
 
 const ROW_START: RowPositionValue = { at: "", id: 0 };
 
@@ -57,24 +57,24 @@ const RowJson = Schema.fromJsonString(RowPosition);
 
 const ChunkJson = Schema.fromJsonString(ChunkPosition);
 
-const rowPositionFrom = (stored: Option.Option<string>): RowPositionValue =>
+export const rowPositionFrom = (stored: Option.Option<string>): RowPositionValue =>
   pipe(
     stored,
     Option.flatMap(Schema.decodeUnknownOption(RowJson)),
     Option.getOrElse(() => ROW_START),
   );
 
-const chunkPositionFrom = (stored: Option.Option<string>): ChunkPositionValue =>
+export const chunkPositionFrom = (stored: Option.Option<string>): ChunkPositionValue =>
   pipe(
     stored,
     Option.flatMap(Schema.decodeUnknownOption(ChunkJson)),
     Option.getOrElse(() => CHUNK_START),
   );
 
-const rowPositionText = (position: RowPositionValue): Effect.Effect<string> =>
+export const rowPositionText = (position: RowPositionValue): Effect.Effect<string> =>
   Schema.encodeEffect(RowJson)(position).pipe(Effect.orDie);
 
-const chunkPositionText = (position: ChunkPositionValue): Effect.Effect<string> =>
+export const chunkPositionText = (position: ChunkPositionValue): Effect.Effect<string> =>
   Schema.encodeEffect(ChunkJson)(position).pipe(Effect.orDie);
 
 const sizeOf = (batch: readonly BatchSource[]): number =>
@@ -98,7 +98,7 @@ const packStep =
     return { items: [...packed.items, item], size, full: false };
   };
 
-const collect = <Item>({
+export const collect = <Item>({
   origin,
   items,
   batchOf,
@@ -120,13 +120,3 @@ const collect = <Item>({
       ),
   });
 };
-
-export {
-  chunkPositionFrom,
-  chunkPositionText,
-  collect,
-  rowPositionFrom,
-  rowPositionText,
-  settledBefore,
-};
-export type { ChunkPositionValue, Collected, Packing, RowPositionValue };

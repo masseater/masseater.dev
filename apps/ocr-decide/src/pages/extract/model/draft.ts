@@ -3,7 +3,7 @@ import { Atom } from "effect/reactivity";
 
 import { DIRECT } from "./ways";
 
-type Choice =
+export type Choice =
   | { readonly status: "none" }
   | { readonly status: "chosen"; readonly name: string; readonly url: string };
 
@@ -15,17 +15,14 @@ const apiKeyAtom = Atom.make("");
 
 const wayAtom = Atom.make(DIRECT.key);
 
-const useChoice = (): Choice => useAtomValue(choiceAtom);
+export const useChoice = (): Choice => useAtomValue(choiceAtom);
 
-const useSetChoice = (): ((choice: Choice) => void) => useAtomSet(choiceAtom);
+export const useSetChoice = (): ((choice: Choice) => void) => useAtomSet(choiceAtom);
 
-const useApiKey = (): string => useAtomValue(apiKeyAtom);
+export const useApiKey = (): string => useAtomValue(apiKeyAtom);
 
-const useSetApiKey = (): ((apiKey: string) => void) => useAtomSet(apiKeyAtom);
+export const useSetApiKey = (): ((apiKey: string) => void) => useAtomSet(apiKeyAtom);
 
-const useWay = (): string => useAtomValue(wayAtom);
+export const useWay = (): string => useAtomValue(wayAtom);
 
-const useSetWay = (): ((way: string) => void) => useAtomSet(wayAtom);
-
-export type { Choice };
-export { useApiKey, useChoice, useSetApiKey, useSetChoice, useSetWay, useWay };
+export const useSetWay = (): ((way: string) => void) => useAtomSet(wayAtom);

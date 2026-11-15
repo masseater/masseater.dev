@@ -6,7 +6,7 @@ import type { LanguageCode } from "#/pages/translator/model/languages.ts";
 import { SourceTabs } from "./source-tabs.tsx";
 import { TargetTabs } from "./target-tabs.tsx";
 
-const LanguageBar = ({
+export const LanguageBar = ({
   children,
   detected,
   target,
@@ -21,5 +21,3 @@ const LanguageBar = ({
     <TargetTabs target={target} />
   </div>
 );
-
-export { LanguageBar };

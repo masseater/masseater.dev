@@ -16,7 +16,7 @@ const gzipped = (source: string | Uint8Array): Effect.Effect<Uint8Array<ArrayBuf
     ).bytes(),
   );
 
-const gzipTscWasm = (): Plugin => ({
+export const gzipTscWasm = (): Plugin => ({
   name: "gzip-tsc-wasm",
   apply: "build",
   applyToEnvironment: (environment) => environment.config.consumer === "client",
@@ -42,5 +42,3 @@ const gzipTscWasm = (): Plugin => ({
       ),
     ),
 });
-
-export { gzipTscWasm };

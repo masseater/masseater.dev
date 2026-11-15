@@ -1,22 +1,22 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-type Pass = Readonly<{
+export type Pass = Readonly<{
   frag: string;
   target: Option.Option<string>;
   persistent: boolean;
 }>;
 
-type TextRow = Readonly<{ text: string; cells: boolean }>;
+export type TextRow = Readonly<{ text: string; cells: boolean }>;
 
-type GpuPass = Readonly<{ code: string; inputs: readonly string[] }>;
+export type GpuPass = Readonly<{ code: string; inputs: readonly string[] }>;
 
-type GpuCompute = Readonly<{ code: string; workgroups: number }>;
+export type GpuCompute = Readonly<{ code: string; workgroups: number }>;
 
-type GpuEffect = Readonly<{ passes: readonly GpuPass[]; computes: readonly GpuCompute[] }>;
+export type GpuEffect = Readonly<{ passes: readonly GpuPass[]; computes: readonly GpuCompute[] }>;
 
-const SCREEN = { width: 1920, height: 1080 } as const;
+export const SCREEN = { width: 1920, height: 1080 } as const;
 
-type DanceEffect = Readonly<{
+export type DanceEffect = Readonly<{
   note: string;
   texts: readonly TextRow[];
   passes: readonly Pass[];
@@ -95,7 +95,7 @@ const textRowOf = (line: string): TextRow => {
   return { text: headerValue(TEXT)(line), cells: false };
 };
 
-const parseEffect = (source: string): DanceEffect => {
+export const parseEffect = (source: string): DanceEffect => {
   const lines = Str.split(source, "\n");
   const note = pipe(
     lines,
@@ -110,6 +110,3 @@ const parseEffect = (source: string): DanceEffect => {
   );
   return { note, texts, passes: pipe(draftsOf(body), Arr.map(passOf)) };
 };
-
-export type { DanceEffect, GpuCompute, GpuEffect, GpuPass, Pass, TextRow };
-export { parseEffect, SCREEN };

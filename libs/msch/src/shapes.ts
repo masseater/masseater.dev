@@ -31,7 +31,7 @@ import type { Problem } from "./problem.ts";
 import { descendantsOf, isGenericDeclaration, isTypeDeclaration } from "./syntax.ts";
 import { schemaTypeOf } from "./values.ts";
 
-interface ShapeContext {
+export interface ShapeContext {
   readonly checker: Checker;
   readonly program: Program;
   readonly shapes: readonly LibraryShape[];
@@ -276,7 +276,7 @@ const shapeProblemOf =
     ).pipe(Option.map((found) => shapeProblem(site, found)));
   };
 
-const shapeProblemsIn =
+export const shapeProblemsIn =
   (context: ShapeContext) =>
   (sourceFile: SourceFile): readonly Problem[] => {
     const sites = shapeSitesIn(context.checker)(sourceFile);
@@ -291,6 +291,3 @@ const shapeProblemsIn =
       ),
     );
   };
-
-export { shapeProblemsIn };
-export type { ShapeContext };

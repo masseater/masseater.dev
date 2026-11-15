@@ -16,7 +16,7 @@ const contractOf = (node: Node): readonly Node[] => {
   return [];
 };
 
-const derivedDeclarationsOf =
+export const derivedDeclarationsOf =
   (checker: Checker) =>
   (node: Node): ReadonlySet<string> => {
     const scopes = Arr.prepend(contractOf(node), node);
@@ -29,5 +29,3 @@ const derivedDeclarationsOf =
       ),
     );
   };
-
-export { derivedDeclarationsOf };

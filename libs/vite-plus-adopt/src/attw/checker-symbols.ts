@@ -32,13 +32,14 @@ import { hasFlag } from "./flags.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-type AnySymbol = BoundSymbol | CheckerSymbol;
+export type AnySymbol = BoundSymbol | CheckerSymbol;
 
 type SymbolConverter = (session: CheckerSession, symbol: AnySymbol) => CheckerSymbol;
 
-const EXPORT_EQUALS = "export=";
+export const EXPORT_EQUALS = "export=";
 
-const isCheckerSymbol = (symbol: AnySymbol): symbol is CheckerSymbol => "getExports" in symbol;
+export const isCheckerSymbol = (symbol: AnySymbol): symbol is CheckerSymbol =>
+  "getExports" in symbol;
 
 const sourceFileOf = (node: Node): SourceFile => {
   let current = node;
@@ -141,7 +142,7 @@ const fromBound = (
   );
 };
 
-const toCheckerSymbol: {
+export const toCheckerSymbol: {
   (symbol: AnySymbol): (session: CheckerSession) => CheckerSymbol;
   (session: CheckerSession, symbol: AnySymbol): CheckerSymbol;
 } = Fn.dual(DATA_FIRST_ARITY, (session: CheckerSession, symbol: AnySymbol): CheckerSymbol => {
@@ -172,7 +173,7 @@ const localNamed = (identifier: Node): Option.Option<BoundSymbol> =>
     ),
   );
 
-const boundExpandoExports = (moduleSymbol: BoundSymbol): readonly BoundSymbol[] =>
+export const boundExpandoExports = (moduleSymbol: BoundSymbol): readonly BoundSymbol[] =>
   Option.fromNullishOr(moduleSymbol.exports).pipe(
     Option.flatMap((exports) => Option.fromNullishOr(exports.get(EXPORT_EQUALS))),
     Option.flatMap((exportEquals) => firstDeclaration(exportEquals)),
@@ -187,6 +188,3 @@ const boundExpandoExports = (moduleSymbol: BoundSymbol): readonly BoundSymbol[] 
     ),
     Option.getOrElse((): readonly BoundSymbol[] => []),
   );
-
-export { EXPORT_EQUALS, boundExpandoExports, isCheckerSymbol, toCheckerSymbol };
-export type { AnySymbol };

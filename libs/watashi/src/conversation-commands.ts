@@ -9,9 +9,10 @@ import { maskWith } from "./mask.ts";
 import { detectorOf, pushSession, summaryOf } from "./session.ts";
 import { settings } from "./settings.ts";
 
-const readStdin: Effect.Effect<string, PlatformError.PlatformError, Stdio.Stdio> = Effect.service(
-  Stdio.Stdio,
-).pipe(Effect.flatMap((stdio) => stdio.stdin.pipe(Stream.decodeText, Stream.mkString)));
+export const readStdin: Effect.Effect<string, PlatformError.PlatformError, Stdio.Stdio> =
+  Effect.service(Stdio.Stdio).pipe(
+    Effect.flatMap((stdio) => stdio.stdin.pipe(Stream.decodeText, Stream.mkString)),
+  );
 
 const pushCommand = Command.make(
   "push",
@@ -39,12 +40,12 @@ const pushCommand = Command.make(
     }),
 ).pipe(Command.withDescription("会話履歴の増えた行を、秘密を伏せてから送る"));
 
-const conversationCommand = Command.make("conversation").pipe(
+export const conversationCommand = Command.make("conversation").pipe(
   Command.withDescription("会話履歴を扱う"),
   Command.withSubcommands([pushCommand]),
 );
 
-const maskCommand = Command.make("mask", {}, () =>
+export const maskCommand = Command.make("mask", {}, () =>
   Effect.gen(function* mask() {
     const current = yield* settings;
     const detect = yield* detectorOf(current);
@@ -56,4 +57,3 @@ const maskCommand = Command.make("mask", {}, () =>
 ).pipe(Command.withDescription("標準入力の JSONL の秘密を伏せて標準出力に書く"));
 
 /** @internal */
-export { conversationCommand, maskCommand, readStdin };

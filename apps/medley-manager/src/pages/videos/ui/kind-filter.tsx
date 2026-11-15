@@ -9,7 +9,7 @@ import { KindFilterLink } from "./kind-filter-link";
 
 const route = getRouteApi("/videos/");
 
-const KindFilter = (): ReactNode => {
+export const KindFilter = (): ReactNode => {
   const { kind: current } = route.useSearch();
   return (
     <nav className="flex flex-wrap gap-2" aria-label="種類">
@@ -28,5 +28,3 @@ const KindFilter = (): ReactNode => {
     </nav>
   );
 };
-
-export { KindFilter };

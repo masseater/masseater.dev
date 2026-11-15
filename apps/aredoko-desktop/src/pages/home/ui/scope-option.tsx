@@ -1,9 +1,9 @@
 import { Select } from "radix-ui";
 import type { ReactNode } from "react";
 
-const ALL_PACKAGES = "all";
+export const ALL_PACKAGES = "all";
 
-const ScopeOption = ({
+export const ScopeOption = ({
   value,
   label,
   count,
@@ -16,5 +16,3 @@ const ScopeOption = ({
     <span className="text-muted-foreground">{count}</span>
   </Select.Item>
 );
-
-export { ALL_PACKAGES, ScopeOption };

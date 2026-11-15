@@ -19,12 +19,12 @@ import { usePreparation } from "./preparation.ts";
 
 const appendDelta = (translation: string, delta: string): string => `${translation}${delta}`;
 
-const useDirection = (): Direction => {
+export const useDirection = (): Direction => {
   const { source, target } = useSelection();
   return resolveDirection({ text: useSettledDraft(), source, target });
 };
 
-const useTranslation = (): Output => {
+export const useTranslation = (): Output => {
   const engine = useEngine();
   const text = useSettledDraft();
   const direction = useDirection();
@@ -58,5 +58,3 @@ const useTranslation = (): Output => {
     },
   });
 };
-
-export { useDirection, useTranslation };

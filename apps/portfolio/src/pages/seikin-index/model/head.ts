@@ -4,7 +4,7 @@ import type { Head } from "#/shared/lib";
 
 import { INTRO, TITLE } from "./copy";
 
-const seikinIndexHead: Head = seo({
+export const seikinIndexHead: Head = seo({
   title: pageTitle(TITLE),
   description: INTRO,
   path: `${ROOT}/`,
@@ -13,5 +13,3 @@ const seikinIndexHead: Head = seo({
   extra: [],
   structuredData: [],
 });
-
-export { seikinIndexHead };

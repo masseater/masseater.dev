@@ -5,7 +5,7 @@ import { useDragOver } from "#/pages/home/model";
 
 const DROP_HERE = "ここにドロップ";
 
-const DropOverlay = (): ReactNode => {
+export const DropOverlay = (): ReactNode => {
   if (!useDragOver()) {
     return false;
   }
@@ -16,5 +16,3 @@ const DropOverlay = (): ReactNode => {
     </div>
   );
 };
-
-export { DropOverlay };

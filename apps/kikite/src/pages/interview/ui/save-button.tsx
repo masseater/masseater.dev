@@ -6,7 +6,7 @@ import { useSave } from "#/pages/interview/model/review-hooks";
 
 const LABEL = "JSON を書き出す";
 
-const SaveButton = (): ReactNode => {
+export const SaveButton = (): ReactNode => {
   const onClick = useSave();
   return (
     <Button variant="ghost" size="icon-sm" aria-label={LABEL} title={LABEL} onClick={onClick}>
@@ -14,5 +14,3 @@ const SaveButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { SaveButton };

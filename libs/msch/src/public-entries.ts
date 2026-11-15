@@ -9,18 +9,18 @@ const SEPARATOR = "/";
 const ROOT_SUBPATH = ".";
 const BIN_LABEL = "bin";
 
-interface PublicEntry {
+export interface PublicEntry {
   readonly label: string;
   readonly source: string;
 }
 
-interface EntryManifest {
+export interface EntryManifest {
   readonly name?: string | undefined;
   readonly exports?: unknown;
   readonly bin?: unknown;
 }
 
-interface EntryLookup {
+export interface EntryLookup {
   readonly manifest: EntryManifest;
   readonly join: (target: string) => string;
   readonly packEntries: readonly PackEntrySource[];
@@ -88,7 +88,7 @@ const sourceOf =
     );
   };
 
-const publicEntriesOf = (lookup: EntryLookup): readonly PublicEntry[] =>
+export const publicEntriesOf = (lookup: EntryLookup): readonly PublicEntry[] =>
   pipe(
     [...subpathsOf(lookup.manifest.exports), ...binsOf(lookup.manifest)],
     Arr.flatMap(([label, held]) =>
@@ -101,6 +101,3 @@ const publicEntriesOf = (lookup: EntryLookup): readonly PublicEntry[] =>
     ),
     Arr.dedupeWith((left, right) => left.label === right.label && left.source === right.source),
   );
-
-export { publicEntriesOf };
-export type { EntryLookup, EntryManifest, PublicEntry };

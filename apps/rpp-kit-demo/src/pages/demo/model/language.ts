@@ -59,7 +59,7 @@ const tooltipsAt = (
   return Effect.runPromise(hoversAt(pane, view, position).pipe(Effect.map(tooltips)));
 };
 
-const typeHover = (pane: Pane): Extension =>
+export const typeHover = (pane: Pane): Extension =>
   hoverTooltip((view, position) => tooltipsAt(pane, view, position));
 
 const diagnosticOf = ({ from, to, severity, message }: Lint): Diagnostic => ({
@@ -69,7 +69,7 @@ const diagnosticOf = ({ from, to, severity, message }: Lint): Diagnostic => ({
   message,
 });
 
-const lintsOf =
+export const lintsOf =
   ({ worker, path }: Pane) =>
   (view: EditorView): Effect.Effect<readonly Diagnostic[]> =>
     Effect.promise(() => worker.lint({ path, code: view.state.doc.toString() })).pipe(
@@ -92,7 +92,7 @@ const resultOf = ({ from, options }: Completion): CompletionResult => ({
   options: [...options],
 });
 
-const typeCompletion = (pane: Pane): Extension =>
+export const typeCompletion = (pane: Pane): Extension =>
   autocompletion({
     override: [
       (context): Promise<CompletionResult> =>
@@ -104,5 +104,3 @@ const typeCompletion = (pane: Pane): Extension =>
         ),
     ],
   });
-
-export { lintsOf, typeCompletion, typeHover };

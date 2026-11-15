@@ -5,20 +5,20 @@ import { Effect, Redacted } from "effect";
 
 import { COMPATIBILITY_DATE } from "./compatibility.ts";
 
-interface TraceSinkProps {
+export interface TraceSinkProps {
   readonly destination?: string;
   readonly workerName?: string;
   readonly logpush?: boolean;
 }
 
-const DEFAULT_DESTINATION = "workers-tracing";
+export const DEFAULT_DESTINATION = "workers-tracing";
 
 const sinkMain = (): string =>
   decodeURIComponent(
     new URL(import.meta.resolve("@r_masseater/workers-tracing/trace-sink-worker")).pathname,
   );
 
-const traceSink = Effect.fn("traceSink")(function* traceSink({
+export const traceSink = Effect.fn("traceSink")(function* traceSink({
   destination = DEFAULT_DESTINATION,
   workerName = `${destination}-sink`,
   logpush = false,
@@ -46,6 +46,3 @@ const traceSink = Effect.fn("traceSink")(function* traceSink({
     logpushDataset: "opentelemetry-traces",
   });
 });
-
-export type { TraceSinkProps };
-export { DEFAULT_DESTINATION, traceSink };

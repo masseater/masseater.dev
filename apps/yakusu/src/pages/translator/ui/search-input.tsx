@@ -5,7 +5,7 @@ import { useClosePicker, useQueryText, useSetQueryText } from "#/pages/translato
 
 const LABEL = "言語を検索";
 
-const SearchInput = (): ReactNode => {
+export const SearchInput = (): ReactNode => {
   const query = useQueryText();
   const setQuery = useSetQueryText();
   const close = useClosePicker();
@@ -34,5 +34,3 @@ const SearchInput = (): ReactNode => {
     />
   );
 };
-
-export { SearchInput };

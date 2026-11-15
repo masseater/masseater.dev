@@ -3,15 +3,15 @@ import { Array as Arr, Match, Option, Schema, String as Str, pipe } from "effect
 import type { SongOutline, Spanned } from "./outline.ts";
 import type { Param } from "./parse.ts";
 
-type Segment =
+export type Segment =
   | Readonly<{ kind: "text"; text: string }>
   | Readonly<{ kind: "verbatim"; start: number; end: number }>
   | Readonly<{ kind: "alias"; text: string; start: number; end: number }>
   | Readonly<{ kind: "atom"; text: string; start: number; end: number }>;
 
-type Rendering = Readonly<{ content: string; segments: readonly Segment[] }>;
+export type Rendering = Readonly<{ content: string; segments: readonly Segment[] }>;
 
-type VirtualInput = Readonly<{ outline: SongOutline; missing: readonly Param[] }>;
+export type VirtualInput = Readonly<{ outline: SongOutline; missing: readonly Param[] }>;
 
 const PLAIN_NAME = /^[^"\\\r\n]*$/u;
 
@@ -92,7 +92,7 @@ const missingSegments = (missing: readonly Param[]): readonly Segment[] =>
     ]),
   );
 
-const segmentsOf = ({ outline, missing }: VirtualInput): readonly Segment[] => [
+export const segmentsOf = ({ outline, missing }: VirtualInput): readonly Segment[] => [
   text('import type { Marker, Region, Section, TempoPoint, Track } from "rpp-kit";\n'),
   text('declare function assetExists(file: "このパスに素材のファイルがありません"): void;\n'),
   text("declare const song: {\n"),
@@ -109,7 +109,7 @@ const segmentsOf = ({ outline, missing }: VirtualInput): readonly Segment[] => [
   ...missingSegments(missing),
 ];
 
-const renderSegments = ({ content, segments }: Rendering): string =>
+export const renderSegments = ({ content, segments }: Rendering): string =>
   pipe(
     segments,
     Arr.map((segment) =>
@@ -124,6 +124,3 @@ const renderSegments = ({ content, segments }: Rendering): string =>
     ),
     Arr.join(""),
   );
-
-export { renderSegments, segmentsOf };
-export type { Rendering, Segment, VirtualInput };

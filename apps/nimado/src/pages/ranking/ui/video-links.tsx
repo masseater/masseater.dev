@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { views } from "#/pages/ranking/model/format";
 import { ExternalLink } from "#/shared/ui/external-link";
 
-const VideoLinks = ({
+export const VideoLinks = ({
   label,
   base,
   videos,
@@ -26,5 +26,3 @@ const VideoLinks = ({
     )}
   </ul>
 );
-
-export { VideoLinks };

@@ -1,6 +1,6 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-const sessions = sqliteTable("sessions", {
+export const sessions = sqliteTable("sessions", {
   id: text("id").primaryKey(),
   startedAt: integer("started_at").notNull(),
   updatedAt: integer("updated_at").notNull(),
@@ -8,5 +8,3 @@ const sessions = sqliteTable("sessions", {
   entries: integer("entries").notNull(),
   record: text("record").notNull(),
 });
-
-export { sessions };

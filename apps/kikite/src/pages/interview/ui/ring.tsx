@@ -6,7 +6,7 @@ import { useAsking, useHearing, useListening } from "#/pages/interview/model/hoo
 import { LOOKS, ringStateOf } from "./ring-look.ts";
 import type { RingState } from "./ring-look.ts";
 
-type RingSize = "sm" | "lg";
+export type RingSize = "sm" | "lg";
 
 const SIZES: Readonly<Record<RingSize, string>> = {
   sm: "size-8 border-2 [&_svg]:size-4",
@@ -27,7 +27,7 @@ const HALOS: Readonly<Record<RingState, string>> = {
   deaf: "border-dashed border-muted-foreground/60 text-muted-foreground",
 };
 
-const Ring = ({ size }: Readonly<{ size: RingSize }>): ReactNode => {
+export const Ring = ({ size }: Readonly<{ size: RingSize }>): ReactNode => {
   const state = ringStateOf({
     listening: useListening(),
     asking: useAsking(),
@@ -55,6 +55,3 @@ const Ring = ({ size }: Readonly<{ size: RingSize }>): ReactNode => {
     </span>
   );
 };
-
-export { Ring };
-export type { RingSize };

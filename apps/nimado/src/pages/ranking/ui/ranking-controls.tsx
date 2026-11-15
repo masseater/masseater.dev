@@ -7,7 +7,7 @@ import { ChoiceGroup } from "./choice-group";
 import { CustomPeriod } from "./custom-period";
 import { KindAndSearch } from "./kind-and-search";
 
-const RankingControls = ({
+export const RankingControls = ({
   dates,
   youtube,
 }: Readonly<{ dates: readonly string[]; youtube: boolean }>): ReactNode => {
@@ -36,5 +36,3 @@ const RankingControls = ({
     </div>
   );
 };
-
-export { RankingControls };

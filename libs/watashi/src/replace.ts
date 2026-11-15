@@ -3,13 +3,13 @@ import { Array as Arr, Effect, Option, Order, Record as Rec, String as Str, pipe
 import { encodeJson, isJsonArray, isObject, isOpaque } from "./json-lines.ts";
 import type { Json, Line } from "./json-lines.ts";
 
-type Replaced<Value> = Readonly<{ value: Value; count: number }>;
+export type Replaced<Value> = Readonly<{ value: Value; count: number }>;
 
 type Replacer = (text: string) => Replaced<string>;
 
-type Target = readonly [secret: string, ruleId: string];
+export type Target = readonly [secret: string, ruleId: string];
 
-type Targets = readonly Target[];
+export type Targets = readonly Target[];
 
 const NONE = 0;
 const ONE = 1;
@@ -100,7 +100,7 @@ const replaceLine =
       },
     });
 
-const applyTargets =
+export const applyTargets =
   (targets: Targets) =>
   (lines: readonly Line[]): Effect.Effect<Replaced<readonly Line[]>> => {
     const replace = replaceLine(replacerOf(targets));
@@ -112,6 +112,4 @@ const applyTargets =
   };
 
 /** @internal */
-export { applyTargets };
 /** @internal */
-export type { Replaced, Target, Targets };

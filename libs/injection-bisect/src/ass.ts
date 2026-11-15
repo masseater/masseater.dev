@@ -23,12 +23,10 @@ const textsOf = (text: string): readonly string[] =>
 
 const assUnitsOf = (text: string): readonly Unit[] => proseUnitsOf({ text })(textsOf(text));
 
-const assParser: Parser = {
+export const assParser: Parser = {
   format: "ass",
   extensions: [".ass", ".ssa"],
   aliases: ["ssa"],
   accepts: (text) => SCRIPT_INFO.test(text),
   unitsOf: assUnitsOf,
 };
-
-export { assParser };

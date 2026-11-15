@@ -78,9 +78,8 @@ const worker = Effect.gen(function* worker() {
   });
 });
 
-type WorkerEnv = InferEnv<typeof worker>;
+export type WorkerEnv = InferEnv<typeof worker>;
 
-export type { WorkerEnv };
 export default Stack(
   APP_NAME,
   tracedStackProps,

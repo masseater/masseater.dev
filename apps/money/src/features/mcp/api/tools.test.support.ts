@@ -8,11 +8,9 @@ const d1 = makeD1({
   tables: ["transactions", "imports", "balances", "category_rules", "accounts"],
 });
 
-const { closeDatabase, resetDatabase } = d1;
+export const { closeDatabase, resetDatabase } = d1;
 
-const env = {
+export const env = {
   LEDGER: d1.env.DB,
   TOOL_CALLS: { writeDataPoint: constVoid },
 };
-
-export { closeDatabase, env, resetDatabase };

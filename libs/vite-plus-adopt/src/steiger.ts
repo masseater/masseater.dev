@@ -31,7 +31,7 @@ const reportOf = (
   output: pipe(diagnostics, Arr.map(formatDiagnostic(relative)), Arr.join("\n")),
 });
 
-const checkSlices: {
+export const checkSlices: {
   (
     root: string,
     targets: readonly string[],
@@ -62,4 +62,3 @@ const checkSlices: {
 );
 
 /** @internal */
-export { checkSlices };

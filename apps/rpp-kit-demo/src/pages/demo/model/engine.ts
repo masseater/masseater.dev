@@ -3,7 +3,7 @@ import type { Note } from "rpp-kit";
 
 type Voice = Readonly<{ wave: OscillatorType; gain: number; attack: number; release: number }>;
 
-type Hit = Readonly<{ track: string; note: Note; at: number }>;
+export type Hit = Readonly<{ track: string; note: Note; at: number }>;
 
 type NoiseShape = Readonly<{
   filter: BiquadFilterType;
@@ -12,7 +12,7 @@ type NoiseShape = Readonly<{
   gain: number;
 }>;
 
-type Engine = Readonly<{
+export type Engine = Readonly<{
   tone: (hit: Hit, voice: Voice) => void;
   kick: (hit: Hit) => void;
   hiss: (hit: Hit, shape: NoiseShape) => void;
@@ -69,7 +69,7 @@ const MONO = 1;
 
 const level = (note: Note, gain: number): number => gain * (note.velocity / MAX_VELOCITY);
 
-const createEngine = (): Engine => {
+export const createEngine = (): Engine => {
   const context = new AudioContext();
   const master = new GainNode(context, { gain: MASTER_GAIN });
   master.connect(context.destination);
@@ -132,7 +132,7 @@ const drumOf = (pitch: number): "kick" | "snare" | "hat" =>
     Match.orElse(() => "hat" as const),
   );
 
-const play =
+export const play =
   (engine: Engine) =>
   (hit: Hit): void => {
     const instrument = instrumentOf(hit.track);
@@ -147,6 +147,3 @@ const play =
     }
     engine.hiss(hit, NOISE_SHAPE[drum]);
   };
-
-export { createEngine, play };
-export type { Engine, Hit };

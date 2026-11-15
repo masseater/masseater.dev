@@ -16,7 +16,7 @@ import { Snapshot, replaceRecord, snapshotOf } from "./life-writer.server";
 import type { SnapshotValue, Writer } from "./life-writer.server";
 import { nowIso } from "./storage.server";
 
-type ChangeFailure = Exclude<StoreFailure, Readonly<{ _tag: "MemoryNotFound" }>>;
+export type ChangeFailure = Exclude<StoreFailure, Readonly<{ _tag: "MemoryNotFound" }>>;
 
 type LifeRecordName = LifeEntry["row"]["record"];
 
@@ -140,15 +140,12 @@ const checkOf = (checkValues: ValuesCheck, change: ChangeValue): Check =>
 const entryOf = (change: ChangeValue): Effect.Effect<LifeEntry, ChangeFailure> =>
   lifeKeyOf(change.ref).pipe(Effect.flatMap(findRecord));
 
-const checkChange =
+export const checkChange =
   (checkValues: ValuesCheck) =>
   (change: ChangeValue): Effect.Effect<void, ChangeFailure> =>
     entryOf(change).pipe(Effect.flatMap(checkOf(checkValues, change)));
 
-const changeItem =
+export const changeItem =
   (writer: Writer) =>
   (change: ChangeValue): Effect.Effect<ItemResult, ChangeFailure> =>
     entryOf(change).pipe(Effect.flatMap(actionOf(writer, change)));
-
-export { changeItem, checkChange };
-export type { ChangeFailure };

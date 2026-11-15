@@ -13,7 +13,7 @@ const SKILL_TITLE = "skill";
 const LATENCY_TITLE = "skill × p50 レイテンシ";
 const COST_TITLE = "skill × タスク全体の費用";
 
-const TaskCharts = ({ entries }: Readonly<{ entries: readonly TaskEntry[] }>): ReactNode => (
+export const TaskCharts = ({ entries }: Readonly<{ entries: readonly TaskEntry[] }>): ReactNode => (
   <div className="flex flex-col gap-10">
     <ChartFigure title={SKILL_TITLE}>
       <BarChart title={SKILL_TITLE} rows={skillRows(entries)} />
@@ -43,5 +43,3 @@ const TaskCharts = ({ entries }: Readonly<{ entries: readonly TaskEntry[] }>): R
     <ModelKey entries={entries} />
   </div>
 );
-
-export { TaskCharts };

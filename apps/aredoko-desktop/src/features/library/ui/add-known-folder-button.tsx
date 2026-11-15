@@ -18,7 +18,7 @@ const LABELS: Readonly<Record<KnownFolder, Labelled>> = {
   blm: { label: "BOOTH Library Manager を追加", Icon: Library },
 };
 
-const AddKnownFolderButton = ({
+export const AddKnownFolderButton = ({
   folder,
   size = "default",
 }: Readonly<{
@@ -43,5 +43,3 @@ const AddKnownFolderButton = ({
     </Button>
   );
 };
-
-export { AddKnownFolderButton };

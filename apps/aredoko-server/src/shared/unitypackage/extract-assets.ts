@@ -33,7 +33,7 @@ const writeBody = (
   });
 
 /** @internal */
-const extractAssets = Effect.fn("extractAssets")(function* extractAssets({
+export const extractAssets = Effect.fn("extractAssets")(function* extractAssets({
   path,
   destinations,
 }: {
@@ -54,5 +54,3 @@ const extractAssets = Effect.fn("extractAssets")(function* extractAssets({
     Stream.runDrain,
   );
 });
-
-export { extractAssets };

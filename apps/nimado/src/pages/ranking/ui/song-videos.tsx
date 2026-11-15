@@ -10,7 +10,7 @@ import { ExternalLink } from "#/shared/ui/external-link";
 
 import { VideoLinks } from "./video-links";
 
-const SongVideos = ({ id }: Readonly<{ id: number }>): ReactNode => {
+export const SongVideos = ({ id }: Readonly<{ id: number }>): ReactNode => {
   const query = useQuery(shardQuery(shardOf(id)));
   const song = pipe(
     Option.fromNullishOr(query.data),
@@ -28,5 +28,3 @@ const SongVideos = ({ id }: Readonly<{ id: number }>): ReactNode => {
     </div>
   );
 };
-
-export { SongVideos };

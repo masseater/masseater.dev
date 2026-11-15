@@ -36,7 +36,7 @@ const claim = (directory: string): Effect.Effect<boolean, never, FileSystem.File
     return yield* made(directory);
   });
 
-const lock = (
+export const lock = (
   held: Readonly<{ home: string; name: string }>,
 ): Effect.Effect<
   boolean,
@@ -57,4 +57,3 @@ const lock = (
   });
 
 /** @internal */
-export { lock };

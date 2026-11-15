@@ -15,15 +15,15 @@ import type { PlatformError } from "effect/PlatformError";
 import { SqlClient } from "effect/sql";
 import type { SqlError } from "effect/sql/SqlError";
 
-type Params = readonly unknown[];
+export type Params = readonly unknown[];
 
-type Query = Readonly<{ sql: string; params: Params }>;
+export type Query = Readonly<{ sql: string; params: Params }>;
 
-type Row = Readonly<Record<string, unknown>>;
+export type Row = Readonly<Record<string, unknown>>;
 
-type Result = Readonly<{ results: readonly Row[]; success: true }>;
+export type Result = Readonly<{ results: readonly Row[]; success: true }>;
 
-type Statement = Readonly<{
+export type Statement = Readonly<{
   query: Query;
   bind: (...params: Params) => Statement;
   all: () => Promise<Result>;
@@ -32,14 +32,14 @@ type Statement = Readonly<{
   raw: () => Promise<readonly (readonly unknown[])[]>;
 }>;
 
-type Database = Readonly<{
+export type Database = Readonly<{
   prepare: (sql: string) => Statement;
   batch: (statements: readonly Statement[]) => Promise<readonly Result[]>;
 }>;
 
-type Source = Readonly<{ migrations: string; tables: readonly string[] }>;
+export type Source = Readonly<{ migrations: string; tables: readonly string[] }>;
 
-type D1 = Readonly<{
+export type D1 = Readonly<{
   env: { DB: Database };
   resetDatabase: Effect.Effect<readonly (readonly Row[])[]>;
   closeDatabase: Effect.Effect<void>;
@@ -107,7 +107,7 @@ const resultsOf = Arr.map(resultOf);
 
 const deleteAll = (table: string): Query => plain(`DELETE FROM ${table}`);
 
-const makeD1 = (source: Source): D1 => {
+export const makeD1 = (source: Source): D1 => {
   const migrated = Layer.effectDiscard(
     migrationStatements(source.migrations).pipe(Effect.map(plainAll), Effect.flatMap(executeAll)),
   );
@@ -137,6 +137,3 @@ const makeD1 = (source: Source): D1 => {
     closeDatabase: Effect.promise(() => runtime.dispose()),
   };
 };
-
-export { makeD1 };
-export type { D1, Database, Params, Query, Result, Row, Source, Statement };

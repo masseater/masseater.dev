@@ -13,12 +13,10 @@ const MARK_COLORS: readonly string[] = [
 const markColor = (position: number): string =>
   Option.getOrElse(Array.get(MARK_COLORS, position % MARK_COLORS.length), () => "bg-comment-pink");
 
-const PositionMark = ({ position }: Readonly<{ position: number }>): ReactNode => (
+export const PositionMark = ({ position }: Readonly<{ position: number }>): ReactNode => (
   <span
     className={`font-display text-primary-foreground flex size-8 shrink-0 items-center justify-center rounded-full text-sm ${markColor(position)}`}
   >
     {position}
   </span>
 );
-
-export { PositionMark };

@@ -72,6 +72,4 @@ const TOOLS = [
   }),
 ];
 
-const registerCategoryTools = registerAll(TOOLS);
-
-export { registerCategoryTools };
+export const registerCategoryTools = registerAll(TOOLS);

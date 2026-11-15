@@ -10,7 +10,7 @@ import { RemarkProposal } from "./remark-proposal.tsx";
 
 const NOTE_TOP = "--note-top";
 
-const RemarkNote = ({ placed }: Readonly<{ placed: Placed }>): ReactNode => {
+export const RemarkNote = ({ placed }: Readonly<{ placed: Placed }>): ReactNode => {
   const actions = useRemarkActions(placed.marked);
   const { top } = placed;
   const placeRef = useCallback(
@@ -34,5 +34,3 @@ const RemarkNote = ({ placed }: Readonly<{ placed: Placed }>): ReactNode => {
     </aside>
   );
 };
-
-export { RemarkNote };

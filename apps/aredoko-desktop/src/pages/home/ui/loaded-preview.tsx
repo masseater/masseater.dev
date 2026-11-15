@@ -6,12 +6,12 @@ import { usePreview } from "#/pages/home/api/queries";
 
 import { PreviewImage } from "./preview-image.tsx";
 
-const LoadedPreview = ({ result }: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => {
+export const LoadedPreview = ({
+  result,
+}: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => {
   const preview = usePreview(result.assetId);
   if (!preview.isSuccess) {
     return <ImageOff className="text-muted-foreground size-8" />;
   }
   return <PreviewImage source={preview.data} alt={result.pathname} />;
 };
-
-export { LoadedPreview };

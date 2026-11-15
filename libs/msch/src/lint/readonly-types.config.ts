@@ -27,7 +27,7 @@ const BROWSER_HANDLES: readonly string[] = [
   ...WEBGPU_HANDLES,
 ];
 
-const readonlyParameterAllow = [
+export const readonlyParameterAllow = [
   {
     from: "lib" as const,
     name: [
@@ -295,5 +295,3 @@ const readonlyParameterAllow = [
     ],
   },
 ];
-
-export { readonlyParameterAllow };

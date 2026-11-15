@@ -11,7 +11,7 @@ type Ramp = Readonly<{ time: number; bpm: number; slope: number; duration: numbe
 
 type Segment = Ramp & Readonly<{ beat: number }>;
 
-type TempoMap = Readonly<{
+export type TempoMap = Readonly<{
   outline: TempoOutline;
   points: readonly TempoPoint[];
   beatAt: (seconds: number) => number;
@@ -140,7 +140,7 @@ const lastWhere = (segments: readonly Segment[], reached: (segment: Segment) => 
     })),
   );
 
-const tempoMapOf = (root: Chunk): TempoMap => {
+export const tempoMapOf = (root: Chunk): TempoMap => {
   const project = projectTempo(root);
   const envelope = envelopeOf(root, project);
   const points = Arr.match(envelope.points, {
@@ -181,6 +181,3 @@ const tempoMapOf = (root: Chunk): TempoMap => {
     },
   };
 };
-
-export { tempoMapOf };
-export type { TempoMap };

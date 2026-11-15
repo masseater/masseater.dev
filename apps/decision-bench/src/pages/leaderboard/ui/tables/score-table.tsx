@@ -74,7 +74,7 @@ const columnsOf = (task: Readonly<TaskInfo>): readonly TableColumn<TaskEntry>[] 
   },
 ];
 
-const ScoreTable = ({
+export const ScoreTable = ({
   task,
   entries,
 }: Readonly<{ task: TaskInfo; entries: readonly TaskEntry[] }>): ReactNode => (
@@ -89,5 +89,3 @@ const ScoreTable = ({
     columns={columnsOf(task)}
   />
 );
-
-export { ScoreTable };

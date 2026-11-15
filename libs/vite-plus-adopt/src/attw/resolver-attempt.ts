@@ -30,12 +30,12 @@ import type { WorkerRequest } from "./resolver-state.ts";
 const DATA_FIRST_ARITY = 2;
 const DATA_FIRST_ARITY_3 = 3;
 
-interface Found {
+export interface Found {
   readonly resolved: Resolved;
   readonly isExternalLibraryImport: boolean;
 }
 
-type FoundResult = Option.Option<Option.Option<Found>>;
+export type FoundResult = Option.Option<Option.Option<Found>>;
 
 const EMPTY = 0;
 
@@ -119,7 +119,7 @@ const tryNonEmpty = (
   return tryResolve(extensions, request, state);
 };
 
-const resolveWithPriority: {
+export const resolveWithPriority: {
   (state: ResolutionState): (request: WorkerRequest) => FoundResult;
   (request: WorkerRequest, state: ResolutionState): FoundResult;
 } = Fn.dual(DATA_FIRST_ARITY, (request: WorkerRequest, state: ResolutionState): FoundResult => {
@@ -178,7 +178,7 @@ const retryWithBundler = (
   });
 };
 
-const resolveAlternateResultWithTrace: {
+export const resolveAlternateResultWithTrace: {
   (
     result: Option.Option<Found>,
     state: ResolutionState,
@@ -209,6 +209,3 @@ const resolveAlternateResultWithTrace: {
     return Option.none();
   },
 );
-
-export { resolveAlternateResultWithTrace, resolveWithPriority };
-export type { Found, FoundResult };

@@ -128,7 +128,7 @@ const answerQuestion = ask.pipe(
   Effect.catchTags({ SchemaError: badRequest, HttpServerError: badRequest }),
 );
 
-const routes = HttpRouter.addAll([
+export const routes = HttpRouter.addAll([
   HttpRouter.route("POST", SUMMARY_PATH, answerSummary),
   HttpRouter.route("POST", QUESTION_PATH, answerQuestion),
   HttpRouter.route("POST", RESEARCH_PATH, answerResearch),
@@ -136,4 +136,3 @@ const routes = HttpRouter.addAll([
 ]);
 
 /** @internal */
-export { routes };

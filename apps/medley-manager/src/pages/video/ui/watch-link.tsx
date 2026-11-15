@@ -8,7 +8,7 @@ const OPEN = "元動画を開く ↗";
 
 type Watchable = Readonly<{ videoId: string | null; url: string }>;
 
-const WatchLink = ({ video }: Readonly<{ video: Watchable }>): ReactNode =>
+export const WatchLink = ({ video }: Readonly<{ video: Watchable }>): ReactNode =>
   Option.match(
     watchUrl({ target: video, start: Option.none() }).pipe(
       Option.filter(() => Option.isNone(embedUrl(video))),
@@ -24,5 +24,3 @@ const WatchLink = ({ video }: Readonly<{ video: Watchable }>): ReactNode =>
       ),
     },
   );
-
-export { WatchLink };

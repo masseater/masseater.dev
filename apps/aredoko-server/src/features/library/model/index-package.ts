@@ -19,7 +19,7 @@ const packagedAsset = ({ guid, pathname, preview, references }: PackageEntry): A
 });
 
 /** @internal */
-const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(
+export const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(
   file: PackageFile,
   linkable: boolean,
 ) {
@@ -39,7 +39,7 @@ const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(
 });
 
 /** @internal */
-const indexBundle = Effect.fn("indexBundle")(function* indexLooseFiles(
+export const indexBundle = Effect.fn("indexBundle")(function* indexLooseFiles(
   bundle: Bundle,
   linkable: boolean,
 ) {
@@ -56,5 +56,3 @@ const indexBundle = Effect.fn("indexBundle")(function* indexLooseFiles(
     linkable,
   });
 });
-
-export { indexBundle, indexPackage };

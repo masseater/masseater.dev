@@ -18,7 +18,7 @@ import { modify, read, write } from "./registry.ts";
 
 const ONE = 1;
 
-const touch = Effect.fn("kikite.touch")(function* touch() {
+export const touch = Effect.fn("kikite.touch")(function* touch() {
   const now = yield* Clock.currentTimeMillis;
   yield* modify(heardAtom, (heard) => ({ ...heard, lastActivityAt: now }));
   yield* write(staleAtom, false);
@@ -43,7 +43,10 @@ const nudgeAnswered = Effect.fn("kikite.nudgeAnswered")(function* nudgeAnswered(
   }
 });
 
-const heardSpeech = Effect.fn("kikite.heardSpeech")(function* heardSpeech(text: string, by: Input) {
+export const heardSpeech = Effect.fn("kikite.heardSpeech")(function* heardSpeech(
+  text: string,
+  by: Input,
+) {
   yield* write(interimAtom, "");
   yield* touch();
   if (isFiller(text)) {
@@ -61,7 +64,7 @@ const heardSpeech = Effect.fn("kikite.heardSpeech")(function* heardSpeech(text: 
 const withdrawable = (asking: Asking): boolean =>
   asking.status === "drafting" && parseDraft(asking.text).question === "";
 
-const heardInterim = Effect.fn("kikite.heardInterim")(function* heardInterim(
+export const heardInterim = Effect.fn("kikite.heardInterim")(function* heardInterim(
   text: string,
   cancelDrafting: Effect.Effect<void>,
 ) {
@@ -80,13 +83,14 @@ const heardInterim = Effect.fn("kikite.heardInterim")(function* heardInterim(
   }
 });
 
-const heardFailure = Effect.fn("kikite.heardFailure")(function* heardFailure(message: string) {
+export const heardFailure = Effect.fn("kikite.heardFailure")(function* heardFailure(
+  message: string,
+) {
   yield* write(listeningAtom, { status: "failed", message });
 });
 
-const heardSound = Effect.fn("kikite.heardSound")(function* heardSound(hearing: boolean) {
+export const heardSound = Effect.fn("kikite.heardSound")(function* heardSound(hearing: boolean) {
   yield* write(hearingAtom, hearing);
 });
 
 /** @internal */
-export { heardFailure, heardInterim, heardSound, heardSpeech, touch };

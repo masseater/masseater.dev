@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { COPY } from "#/pages/why/model/copy";
 
-const Actions = (): ReactNode => (
+export const Actions = (): ReactNode => (
   <div className="flex flex-wrap gap-3">
     <Button asChild>
       <Link to="/">{COPY.demo}</Link>
@@ -14,5 +14,3 @@ const Actions = (): ReactNode => (
     </Button>
   </div>
 );
-
-export { Actions };

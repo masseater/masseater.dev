@@ -8,7 +8,7 @@ const SECONDS_PER_DAY = 86_400;
 
 const KEPT_LOGS = 100_000;
 
-const aiGateway = AI.Gateway("DefaultAiGateway", {
+export const aiGateway = AI.Gateway("DefaultAiGateway", {
   id: DEFAULT_GATEWAY_ID,
   authentication: true,
   collectLogs: true,
@@ -16,5 +16,3 @@ const aiGateway = AI.Gateway("DefaultAiGateway", {
   logManagement: KEPT_LOGS,
   logManagementStrategy: "DELETE_OLDEST",
 });
-
-export { aiGateway };

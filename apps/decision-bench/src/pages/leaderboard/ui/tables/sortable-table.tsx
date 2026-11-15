@@ -13,7 +13,7 @@ import { TableHeader } from "#/shared/ui/table-header";
 import { SortBodyRow } from "./sort-body-row";
 import { SortHeaderRow } from "./sort-header-row";
 
-const SortableTable = <Row,>({
+export const SortableTable = <Row,>({
   id,
   caption,
   label,
@@ -56,5 +56,3 @@ const SortableTable = <Row,>({
     </Table>
   );
 };
-
-export { SortableTable };

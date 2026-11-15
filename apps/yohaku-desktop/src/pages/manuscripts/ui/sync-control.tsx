@@ -14,6 +14,5 @@ const shown = (status: typeof SyncStatus.Type): ReactNode => {
   return <ConnectSyncButton />;
 };
 
-const SyncControl = (): ReactNode => pipe(useSyncStatus(), Option.map(shown), Option.getOrNull);
-
-export { SyncControl };
+export const SyncControl = (): ReactNode =>
+  pipe(useSyncStatus(), Option.map(shown), Option.getOrNull);

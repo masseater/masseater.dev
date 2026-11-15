@@ -5,7 +5,7 @@ import { MAX_CHARACTERS, useDraft, useSetDraft } from "#/pages/translator/model/
 
 const LABEL = "原文";
 
-const SourceText = (): ReactNode => {
+export const SourceText = (): ReactNode => {
   const draft = useDraft();
   const setDraft = useSetDraft();
   const onChange = useCallback(
@@ -25,5 +25,3 @@ const SourceText = (): ReactNode => {
     />
   );
 };
-
-export { SourceText };

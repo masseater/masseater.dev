@@ -5,7 +5,7 @@ import type { Choices } from "#/pages/ranking/model/labels";
 
 import { ChoiceButton } from "./choice-button";
 
-const ChoiceGroup = <Value extends string>({
+export const ChoiceGroup = <Value extends string>({
   label,
   labels,
   value,
@@ -32,5 +32,3 @@ const ChoiceGroup = <Value extends string>({
     )}
   </fieldset>
 );
-
-export { ChoiceGroup };

@@ -6,9 +6,9 @@ import type { Report } from "./report.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-type Sink = "stdout" | "stderr";
+export type Sink = "stdout" | "stderr";
 
-const writeTo: {
+export const writeTo: {
   (text: string): (sink: Sink) => Effect.Effect<void, never, Stdio.Stdio>;
   (sink: Sink, text: string): Effect.Effect<void, never, Stdio.Stdio>;
 } = Fn.dual(DATA_FIRST_ARITY, (sink: Sink, text: string): Effect.Effect<void, never, Stdio.Stdio> =>
@@ -18,7 +18,7 @@ const writeTo: {
   }),
 );
 
-const finish = (report: Report): Effect.Effect<void, VpToolsError, Stdio.Stdio> => {
+export const finish = (report: Report): Effect.Effect<void, VpToolsError, Stdio.Stdio> => {
   if (!report.valid) {
     return Effect.fail(checksFailed(report.output));
   }
@@ -29,6 +29,4 @@ const finish = (report: Report): Effect.Effect<void, VpToolsError, Stdio.Stdio> 
 };
 
 /** @internal */
-export { finish, writeTo };
 /** @internal */
-export type { Sink };

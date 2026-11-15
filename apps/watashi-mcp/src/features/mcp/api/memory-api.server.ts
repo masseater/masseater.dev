@@ -43,7 +43,7 @@ const responseOf = ({ written, failure }: Imported): Response =>
       ),
   });
 
-const importMemos = Effect.fn("memory.import")(function* importMemos(
+export const importMemos = Effect.fn("memory.import")(function* importMemos(
   request: Request,
   principal: Principal,
 ) {
@@ -73,5 +73,3 @@ const importMemos = Effect.fn("memory.import")(function* importMemos(
   );
   return responseOf(imported);
 });
-
-export { importMemos };

@@ -6,7 +6,7 @@ import type { OnboardingStep } from "#/shared/api";
 
 import { useCompleteStep, useStepPending } from "./onboarding.ts";
 
-type Hint = Readonly<{
+export type Hint = Readonly<{
   step: OnboardingStep;
   find: () => Option.Option<Element>;
   title: string;
@@ -16,7 +16,7 @@ type Hint = Readonly<{
 const POPOVER_CLASS = "yohaku-hint";
 const BUTTON = "わかった";
 
-const useHint = ({ step, find, title, description }: Hint): void => {
+export const useHint = ({ step, find, title, description }: Hint): void => {
   const pending = useStepPending(step);
   const complete = useCompleteStep();
   useEffect(() => {
@@ -56,6 +56,3 @@ const useHint = ({ step, find, title, description }: Hint): void => {
     };
   }, [pending, complete, step, find, title, description]);
 };
-
-export { useHint };
-export type { Hint };

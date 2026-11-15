@@ -43,7 +43,7 @@ const researchFor = Effect.fn("kikite.research")(function* researchFor(summary: 
   );
 });
 
-const research = Effect.fn("kikite.researchIfChanged")(function* research() {
+export const research = Effect.fn("kikite.researchIfChanged")(function* research() {
   const state = yield* read(summaryAtom);
   const summary = summaryOf(state);
   const heard = yield* read(heardAtom);
@@ -58,4 +58,3 @@ const research = Effect.fn("kikite.researchIfChanged")(function* research() {
 });
 
 /** @internal */
-export { research };

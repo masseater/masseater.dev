@@ -7,7 +7,7 @@ import { useSummary } from "#/pages/interview/model/hooks";
 import { NoteList } from "./note-list.tsx";
 import type { Note } from "./notes.ts";
 
-const NoteSection = ({
+export const NoteSection = ({
   note,
   className,
 }: Readonly<{ note: Note; className?: string }>): ReactNode => {
@@ -24,5 +24,3 @@ const NoteSection = ({
     </section>
   );
 };
-
-export { NoteSection };

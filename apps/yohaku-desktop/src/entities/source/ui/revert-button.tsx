@@ -7,7 +7,7 @@ import { useRevert } from "#/entities/source/api/sources.ts";
 
 const LABEL = "戻す";
 
-const RevertButton = ({ source }: Readonly<{ source: typeof Source.Type }>): ReactNode => {
+export const RevertButton = ({ source }: Readonly<{ source: typeof Source.Type }>): ReactNode => {
   const revert = useRevert();
   const onClick = useCallback(() => {
     revert(source.id);
@@ -21,5 +21,3 @@ const RevertButton = ({ source }: Readonly<{ source: typeof Source.Type }>): Rea
     </Button>
   );
 };
-
-export { RevertButton };

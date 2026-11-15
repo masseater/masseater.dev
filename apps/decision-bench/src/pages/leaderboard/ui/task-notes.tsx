@@ -34,7 +34,7 @@ const splitNotes = (task: Readonly<TaskInfo>): readonly Note[] => {
 
 const count = (value: number): string => value.toLocaleString("ja-JP");
 
-const notesOf = (task: Readonly<TaskInfo>): readonly Note[] => [
+export const notesOf = (task: Readonly<TaskInfo>): readonly Note[] => [
   { icon: <Ruler aria-hidden="true" />, text: `${METRIC_NAMES[task.metric]} で採点` },
   {
     icon: <ListChecks aria-hidden="true" />,
@@ -47,5 +47,3 @@ const notesOf = (task: Readonly<TaskInfo>): readonly Note[] => [
   ),
   ...splitNotes(task),
 ];
-
-export { notesOf };

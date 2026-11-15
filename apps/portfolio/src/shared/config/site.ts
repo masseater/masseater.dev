@@ -2,7 +2,7 @@ import { portfolio } from "@masseater.dev/ui/portfolio";
 
 const { url } = portfolio;
 
-const site = {
+export const site = {
   url,
   name: portfolio.name,
   description:
@@ -18,5 +18,3 @@ const site = {
   xHandle: `@${portfolio.xUser}`,
   links: portfolio.links,
 } as const;
-
-export { site };

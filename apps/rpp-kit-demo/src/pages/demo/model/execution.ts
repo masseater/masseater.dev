@@ -43,10 +43,8 @@ const execute = ({ worker, song, report }: Execution, checked: Checked): Effect.
     });
   });
 
-const executor =
+export const executor =
   (execution: Execution) =>
   (checked: Checked): void => {
     execution.fork(execute(execution, checked));
   };
-
-export { executor };

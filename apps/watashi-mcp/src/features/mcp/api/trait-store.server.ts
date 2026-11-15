@@ -55,7 +55,7 @@ const stateOf =
     ),
   });
 
-const loadTraits: Effect.Effect<readonly TraitState[], StorageFailed> = Effect.gen(
+export const loadTraits: Effect.Effect<readonly TraitState[], StorageFailed> = Effect.gen(
   function* loadAllTraits() {
     const rows = yield* query(() => db.select().from(ownerTrait).orderBy(asc(ownerTrait.id)));
     const evidence = yield* query(() => db.select().from(ownerTraitEvidence));
@@ -63,9 +63,10 @@ const loadTraits: Effect.Effect<readonly TraitState[], StorageFailed> = Effect.g
   },
 );
 
-const loadTraitVectors: Effect.Effect<Readonly<Record<string, Vector>>, StorageFailed> = query(() =>
-  db.select().from(ownerTraitVector),
-).pipe(
+export const loadTraitVectors: Effect.Effect<
+  Readonly<Record<string, Vector>>,
+  StorageFailed
+> = query(() => db.select().from(ownerTraitVector)).pipe(
   Effect.map((rows) =>
     Rec.fromEntries(
       pipe(
@@ -82,7 +83,9 @@ const loadTraitVectors: Effect.Effect<Readonly<Record<string, Vector>>, StorageF
   ),
 );
 
-const cursorOf = (origin: TraitOrigin): Effect.Effect<Option.Option<string>, StorageFailed> =>
+export const cursorOf = (
+  origin: TraitOrigin,
+): Effect.Effect<Option.Option<string>, StorageFailed> =>
   query(() =>
     db
       .select({ position: traitCursor.position })
@@ -98,7 +101,7 @@ const cursorOf = (origin: TraitOrigin): Effect.Effect<Option.Option<string>, Sto
     ),
   );
 
-const loadTraitJa: Effect.Effect<JaRows, StorageFailed> = query(() =>
+export const loadTraitJa: Effect.Effect<JaRows, StorageFailed> = query(() =>
   db.select().from(ownerTraitJa),
 ).pipe(
   Effect.map((rows) =>
@@ -108,5 +111,3 @@ const loadTraitJa: Effect.Effect<JaRows, StorageFailed> = query(() =>
     ),
   ),
 );
-
-export { cursorOf, loadTraitJa, loadTraitVectors, loadTraits };

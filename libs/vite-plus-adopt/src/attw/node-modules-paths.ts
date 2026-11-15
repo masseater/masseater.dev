@@ -19,13 +19,12 @@ const packageDirectoryEnd = (path: string, nodeModulesIndex: number): number => 
   return afterName;
 };
 
-const parseNodeModuleFromPath = (resolved: string): Option.Option<string> => {
+export const parseNodeModuleFromPath = (resolved: string): Option.Option<string> => {
   const path = normalizePath(resolved);
   return Option.map(Str.lastIndexOf(NODE_MODULES_PART)(path), (index) =>
     Str.slice(START, packageDirectoryEnd(path, index))(path),
   );
 };
 
-const pathContainsNodeModules = (path: string): boolean => Str.includes(NODE_MODULES_PART)(path);
-
-export { parseNodeModuleFromPath, pathContainsNodeModules };
+export const pathContainsNodeModules = (path: string): boolean =>
+  Str.includes(NODE_MODULES_PART)(path);

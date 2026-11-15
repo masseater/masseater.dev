@@ -59,7 +59,7 @@ const useOpenFile = (): ((picked: Picked) => void) => {
   );
 };
 
-const OpenFile = (): ReactNode => {
+export const OpenFile = (): ReactNode => {
   const opening = useOpening();
   const openFile = useOpenFile();
   const open = useCallback(
@@ -80,5 +80,3 @@ const OpenFile = (): ReactNode => {
     </div>
   );
 };
-
-export { OpenFile };

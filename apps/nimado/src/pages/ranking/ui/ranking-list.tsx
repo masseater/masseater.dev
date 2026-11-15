@@ -9,7 +9,7 @@ import { RankingTable } from "./ranking-table";
 const PAGE_SIZE = 100;
 const FIRST_PAGE = 1;
 
-const RankingList = ({
+export const RankingList = ({
   entries,
   page,
   youtube,
@@ -28,5 +28,3 @@ const RankingList = ({
     </>
   );
 };
-
-export { RankingList };

@@ -5,13 +5,13 @@ import { Effect } from "effect";
 
 import { brokerFailed } from "./broker-response";
 
-type Routine = Readonly<{ triggerId: string; token: string }>;
+export type Routine = Readonly<{ triggerId: string; token: string }>;
 
-type Woken = Awaited<ReturnType<ClaudeRoutine["fire"]>>;
+export type Woken = Awaited<ReturnType<ClaudeRoutine["fire"]>>;
 
 const broker = (): Service<ClaudeRoutine> => env.CLAUDE_ROUTINE;
 
-const wakeProject: Effect.Effect<Woken> = Effect.tryPromise({
+export const wakeProject: Effect.Effect<Woken> = Effect.tryPromise({
   try: () => broker().fire(),
   catch: brokerFailed,
 }).pipe(
@@ -20,13 +20,10 @@ const wakeProject: Effect.Effect<Woken> = Effect.tryPromise({
   ),
 );
 
-const registerRoutine = (
+export const registerRoutine = (
   routine: Routine,
 ): Effect.Effect<Readonly<{ registered: boolean }>, UpstreamFailed> =>
   Effect.tryPromise({
     try: () => broker().register({ triggerId: routine.triggerId, token: routine.token }),
     catch: brokerFailed,
   }).pipe(Effect.map((registered) => ({ registered })));
-
-export { registerRoutine, wakeProject };
-export type { Routine, Woken };

@@ -8,7 +8,7 @@ import { createVideo, deleteVideo, updateVideo } from "./video-write.server";
 const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
 const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
 
-const registerVideoTools = (server: McpServer): McpServer => {
+export const registerVideoTools = (server: McpServer): McpServer => {
   server.registerTool(
     "create_video",
     {
@@ -39,5 +39,3 @@ const registerVideoTools = (server: McpServer): McpServer => {
   );
   return server;
 };
-
-export { registerVideoTools };

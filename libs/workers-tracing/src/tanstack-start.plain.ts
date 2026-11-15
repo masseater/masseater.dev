@@ -5,7 +5,8 @@ const passThrough = <Result>({
 }: Readonly<{ next: () => PromiseLike<Result> | Result }>): Promise<Result> =>
   Promise.resolve(next());
 
-const requestSpan = createMiddleware().server(passThrough);
-const serverFnSpan = createMiddleware({ type: "function" }).server(passThrough);
+export const requestSpan = createMiddleware().server(passThrough);
+export const serverFnSpan = createMiddleware({ type: "function" }).server(passThrough);
 
-export { passThrough as traceRequest, passThrough as traceServerFn, requestSpan, serverFnSpan };
+export const traceRequest = passThrough;
+export const traceServerFn = passThrough;

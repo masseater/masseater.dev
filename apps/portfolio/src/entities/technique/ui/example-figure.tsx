@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const ExampleFigure = ({
+export const ExampleFigure = ({
   src,
   alt,
   children,
@@ -10,5 +10,3 @@ const ExampleFigure = ({
     <figcaption className="text-muted-foreground text-xs leading-relaxed">{children}</figcaption>
   </figure>
 );
-
-export { ExampleFigure };

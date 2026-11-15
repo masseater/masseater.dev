@@ -3,21 +3,21 @@ import type { ReactNode } from "react";
 
 import { AnchorLink } from "./anchor-link.tsx";
 
-type Target =
+export type Target =
   | Readonly<{ page: "main" }>
   | Readonly<{ page: "categories" }>
   | Readonly<{ page: "category"; name: string }>
   | Readonly<{ page: "article"; slug: string }>
   | Readonly<{ page: "home" }>;
 
-type LinkProps = Readonly<{
+export type LinkProps = Readonly<{
   target: Target;
   href: string;
   className: string;
   children: ReactNode;
 }>;
 
-type Labels = Readonly<{
+export type Labels = Readonly<{
   nav: (name: string) => string;
   mainPage: string;
   categories: string;
@@ -33,11 +33,11 @@ type Labels = Readonly<{
   count: (count: number) => string;
 }>;
 
-type RenderLink = (props: LinkProps) => ReactNode;
+export type RenderLink = (props: LinkProps) => ReactNode;
 
-type HomeLink = Readonly<{ label: string; href: string }>;
+export type HomeLink = Readonly<{ label: string; href: string }>;
 
-type SloppediaOptions = Readonly<{
+export type SloppediaOptions = Readonly<{
   name: string;
   tagline: string;
   basePath: string;
@@ -50,7 +50,7 @@ type SloppediaOptions = Readonly<{
   link?: RenderLink;
 }>;
 
-type SloppediaConfig = Readonly<{
+export type SloppediaConfig = Readonly<{
   name: string;
   tagline: string;
   basePath: string;
@@ -63,7 +63,7 @@ type SloppediaConfig = Readonly<{
   Link: RenderLink;
 }>;
 
-const defaultLabels: Labels = {
+export const defaultLabels: Labels = {
   nav: (name) => `${name} の案内`,
   mainPage: "メインページ",
   categories: "カテゴリ一覧",
@@ -83,7 +83,7 @@ const DEFAULT_LOCALE = "ja-JP";
 
 const LOGO_LETTERS = 1;
 
-const defineSloppedia = (options: SloppediaOptions): SloppediaConfig => ({
+export const defineSloppedia = (options: SloppediaOptions): SloppediaConfig => ({
   name: options.name,
   tagline: options.tagline,
   basePath: options.basePath,
@@ -96,7 +96,7 @@ const defineSloppedia = (options: SloppediaOptions): SloppediaConfig => ({
   Link: options.link ?? AnchorLink,
 });
 
-const targets = {
+export const targets = {
   main: { page: "main" },
   categories: { page: "categories" },
   home: { page: "home" },
@@ -104,14 +104,14 @@ const targets = {
   article: (slug: string): Target => ({ page: "article", slug }),
 } as const satisfies Readonly<Record<string, Target | ((key: string) => Target)>>;
 
-type GitHubSource = Readonly<{
+export type GitHubSource = Readonly<{
   repository: string;
   directory: string;
   branch?: string;
   extension?: string;
 }>;
 
-const githubSource = ({
+export const githubSource = ({
   repository,
   directory,
   branch = "main",
@@ -123,15 +123,3 @@ const githubSource = ({
   sourceOf: (slug) => `${repository}/blob/${branch}/${directory}/${slug}${extension}`,
   historyOf: (slug) => `${repository}/commits/${branch}/${directory}/${slug}${extension}`,
 });
-
-export type {
-  GitHubSource,
-  HomeLink,
-  Labels,
-  LinkProps,
-  RenderLink,
-  SloppediaConfig,
-  SloppediaOptions,
-  Target,
-};
-export { defaultLabels, defineSloppedia, githubSource, targets };

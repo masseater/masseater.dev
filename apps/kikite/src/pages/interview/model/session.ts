@@ -13,7 +13,7 @@ import { release, reset, startListening } from "./lifecycle.ts";
 import { read, write } from "./registry.ts";
 import { runtime } from "./runtime.ts";
 
-type Session = Pick<Actions, "typed" | "typing" | "wrapUp">;
+export type Session = Pick<Actions, "typed" | "typing" | "wrapUp">;
 
 const TICK = "250 millis";
 const NO_NUDGE = 0;
@@ -53,7 +53,7 @@ const interviewing = (phase: Phase): Effect.Effect<void> => {
   return Effect.interrupt;
 };
 
-const sessionAtom = runtime.atom(
+export const sessionAtom = runtime.atom(
   Effect.fnUntraced(function* session(get) {
     yield* interviewing(get(phaseAtom));
     yield* reset;
@@ -68,8 +68,6 @@ const sessionAtom = runtime.atom(
   }),
 );
 
-const uploadAtom = runtime.fn(() => upload());
+export const uploadAtom = runtime.fn(() => upload());
 
 /** @internal */
-export { sessionAtom, uploadAtom };
-export type { Session };

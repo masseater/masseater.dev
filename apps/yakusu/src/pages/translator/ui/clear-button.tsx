@@ -7,7 +7,7 @@ import { useDraft, useSetDraft } from "#/pages/translator/model/draft.ts";
 
 const LABEL = "消去";
 
-const ClearButton = (): ReactNode => {
+export const ClearButton = (): ReactNode => {
   const draft = useDraft();
   const setDraft = useSetDraft();
   const onClick = useCallback(() => {
@@ -28,5 +28,3 @@ const ClearButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { ClearButton };

@@ -2,7 +2,7 @@ import { Array as Arr, Option, Schema, Record as Rec, String as Str, pipe } from
 import { HttpServerResponse } from "effect/http";
 
 const BAD_REQUEST = 400;
-const LOCATION_SUFFIX = "_location";
+export const LOCATION_SUFFIX = "_location";
 
 const QuestionSchema = Schema.Struct({
   type: Schema.String,
@@ -19,7 +19,7 @@ const StateSchema = Schema.Struct({
 
 const Questions = Schema.Record(Schema.String, QuestionSchema);
 
-const RawBodySchema = Schema.Struct({
+export const RawBodySchema = Schema.Struct({
   model: Schema.String,
   state: Schema.Union([Schema.String, StateSchema]),
   questions: Questions,
@@ -31,8 +31,8 @@ const BodySchema = Schema.Struct({
   questions: Questions,
 });
 
-type RawBody = typeof RawBodySchema.Type;
-type Body = typeof BodySchema.Type;
+export type RawBody = typeof RawBodySchema.Type;
+export type Body = typeof BodySchema.Type;
 
 const TEXT_STATE_PREFIX = "respan/";
 
@@ -56,7 +56,7 @@ const badChoice = HttpServerResponse.jsonUnsafe(
   { status: BAD_REQUEST },
 );
 
-const rejectionOf = (raw: RawBody): Option.Option<HttpServerResponse.HttpServerResponse> => {
+export const rejectionOf = (raw: RawBody): Option.Option<HttpServerResponse.HttpServerResponse> => {
   if (rejectsState(raw)) {
     return Option.some(badState);
   }
@@ -83,7 +83,7 @@ const sectionsOf = (text: string, kind: string): Readonly<Record<string, string>
     ),
   );
 
-const normalized = (raw: RawBody): Body => {
+export const normalized = (raw: RawBody): Body => {
   if (typeof raw.state !== "string") {
     return { ...raw, state: raw.state };
   }
@@ -95,9 +95,7 @@ const normalized = (raw: RawBody): Body => {
   return { ...raw, state: { snippets, contexts } };
 };
 
-type Question = typeof QuestionSchema.Type;
+export type Question = typeof QuestionSchema.Type;
 
 /** @internal */
-export { LOCATION_SUFFIX, RawBodySchema, normalized, rejectionOf };
 /** @internal */
-export type { Body, Question, RawBody };

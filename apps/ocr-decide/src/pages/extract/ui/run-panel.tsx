@@ -18,7 +18,7 @@ const labelOf = (running: boolean): string => {
   return COPY.run;
 };
 
-const RunPanel = (): ReactNode => {
+export const RunPanel = (): ReactNode => {
   const picture = usePicture();
   const apiKey = useApiKey();
   const wayKey = useWay();
@@ -40,5 +40,3 @@ const RunPanel = (): ReactNode => {
     </div>
   );
 };
-
-export { RunPanel };

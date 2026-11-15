@@ -106,11 +106,11 @@ const declarationIsExpando = (node: Node): boolean => {
   );
 };
 
-const isExpandoSymbol = (symbol: BoundSymbol): boolean =>
+export const isExpandoSymbol = (symbol: BoundSymbol): boolean =>
   hasFlag(symbol.flags, EXPANDO_FLAGS) ||
   Option.exists(Option.fromNullishOr(symbol.valueDeclaration), declarationIsExpando);
 
-const isFunctionSymbol = (symbol: Option.Option<BoundSymbol>): boolean =>
+export const isFunctionSymbol = (symbol: Option.Option<BoundSymbol>): boolean =>
   symbol.pipe(
     Option.flatMap((found) => Option.fromNullishOr(found.valueDeclaration)),
     Option.exists(
@@ -120,7 +120,5 @@ const isFunctionSymbol = (symbol: Option.Option<BoundSymbol>): boolean =>
     ),
   );
 
-const hasFunctionLikeExpandoInitializer = (declaration: Node): boolean =>
+export const hasFunctionLikeExpandoInitializer = (declaration: Node): boolean =>
   Option.exists(assignedExpandoInitializer(declaration), isFunctionOrArrow);
-
-export { hasFunctionLikeExpandoInitializer, isExpandoSymbol, isFunctionSymbol };

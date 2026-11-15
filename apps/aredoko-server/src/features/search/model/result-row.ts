@@ -21,7 +21,7 @@ const ResultRow = Schema.Struct({
 
 const CountRow = Schema.Struct({ total: Schema.Int });
 
-interface Scope {
+export interface Scope {
   readonly packageId: number | null;
   readonly kinds: readonly string[];
 }
@@ -34,7 +34,7 @@ const NO_SCORES = HashMap.empty<number, number>();
 type ResultRecord = typeof ResultRow.Type;
 
 /** @internal */
-const scopeOf = Effect.fn("scopeOf")(function* scopeClause({ packageId, kinds }: Scope) {
+export const scopeOf = Effect.fn("scopeOf")(function* scopeClause({ packageId, kinds }: Scope) {
   const sql = yield* SqlClient.SqlClient;
   const ofKinds = Array.match(kinds, {
     onEmpty: () => sql`1 = 1`,
@@ -44,7 +44,7 @@ const scopeOf = Effect.fn("scopeOf")(function* scopeClause({ packageId, kinds }:
 });
 
 /** @internal */
-const scopedPage = Effect.fn("scopedPage")(function* selectScopedPage({
+export const scopedPage = Effect.fn("scopedPage")(function* selectScopedPage({
   scope,
   offset,
   limit,
@@ -84,7 +84,7 @@ const rowsOf = Effect.fn("rowsOf")(function* selectRows(ids: readonly number[], 
 });
 
 /** @internal */
-const rowsInOrder = Effect.fn("rowsInOrder")(function* selectRowsInOrder(
+export const rowsInOrder = Effect.fn("rowsInOrder")(function* selectRowsInOrder(
   ids: readonly number[],
   scope: Scope,
 ) {
@@ -102,7 +102,7 @@ const rowsInOrder = Effect.fn("rowsInOrder")(function* selectRowsInOrder(
   );
 });
 
-const resultOf =
+export const resultOf =
   (scores: HashMap.HashMap<number, number>) =>
   (row: typeof ResultRow.Type): typeof SearchResult.Type => ({
     assetId: row.id,
@@ -122,7 +122,4 @@ const resultOf =
   });
 
 /** @internal */
-const unscored = resultOf(NO_SCORES);
-
-export { resultOf, rowsInOrder, scopeOf, scopedPage, unscored };
-export type { Scope };
+export const unscored = resultOf(NO_SCORES);

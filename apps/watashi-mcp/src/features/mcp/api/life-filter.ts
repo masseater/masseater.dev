@@ -5,11 +5,11 @@ import type { LifeRow } from "#/features/mcp/model/life-record.table";
 import { NONE, lower, stringAt, textAt } from "./life-record";
 import type { Body } from "./life-record";
 
-type Entry = Readonly<{ row: LifeRow; body: Body }>;
+export type Entry = Readonly<{ row: LifeRow; body: Body }>;
 
-type Filter = (entry: Entry) => boolean;
+export type Filter = (entry: Entry) => boolean;
 
-type FilterInput = Readonly<{
+export type FilterInput = Readonly<{
   kinds?: readonly string[];
   people?: readonly string[];
   place?: string;
@@ -21,15 +21,19 @@ type FilterInput = Readonly<{
   creator?: string;
 }>;
 
-type FactView = Readonly<{ asOf: Option.Option<string>; withHistory: boolean; today: string }>;
+export type FactView = Readonly<{
+  asOf: Option.Option<string>;
+  withHistory: boolean;
+  today: string;
+}>;
 
-type FactState = "current" | "upcoming" | "ended";
+export type FactState = "current" | "upcoming" | "ended";
 
 const pass: Filter = () => true;
 
 const isList = (value: unknown): value is readonly unknown[] => Arr.isArray(value);
 
-const stringsAt =
+export const stringsAt =
   (key: string) =>
   (body: Body): readonly string[] =>
     pipe(
@@ -39,7 +43,7 @@ const stringsAt =
       Option.getOrElse((): readonly string[] => []),
     );
 
-const contains =
+export const contains =
   (needle: string) =>
   (hay: string): boolean =>
     Str.includes(lower(needle))(lower(hay));
@@ -58,7 +62,7 @@ const optionalFilter = <Value>(
 const kindFilter = (kinds: readonly string[]): Filter =>
   onRecord("life_event", (entry) => pipe(kinds, Arr.contains(entry.row.label)));
 
-const peopleFilter =
+export const peopleFilter =
   (people: readonly string[]): Filter =>
   (entry) => {
     const names = [...stringsAt("people")(entry.body), entry.row.about];
@@ -96,7 +100,7 @@ const equalFilter =
   (entry) =>
     stringAt(key)(entry.body).pipe(Option.contains(wanted));
 
-const filtersOf = (input: FilterInput): readonly Filter[] => [
+export const filtersOf = (input: FilterInput): readonly Filter[] => [
   optionalFilter(input.kinds, kindFilter),
   optionalFilter(input.people, peopleFilter),
   optionalFilter(input.place, textFilter("place")),
@@ -108,7 +112,7 @@ const filtersOf = (input: FilterInput): readonly Filter[] => [
   optionalFilter(input.creator, textFilter("creator")),
 ];
 
-const factStateOf =
+export const factStateOf =
   (today: string) =>
   ({ row }: Entry): FactState => {
     if (row.dayStart > today) {
@@ -125,7 +129,7 @@ const holdsOn =
   ({ row }: Entry): boolean =>
     row.dayStart <= day && (row.dayEnd === NONE || day < row.dayEnd);
 
-const factFilter = ({ asOf, withHistory, today }: FactView): Filter => {
+export const factFilter = ({ asOf, withHistory, today }: FactView): Filter => {
   if (withHistory) {
     return pass;
   }
@@ -135,7 +139,7 @@ const factFilter = ({ asOf, withHistory, today }: FactView): Filter => {
   });
 };
 
-const matchesAll =
+export const matchesAll =
   (filters: readonly Filter[]) =>
   (entry: Entry): boolean =>
     pipe(
@@ -152,7 +156,7 @@ const scoreOf =
       Arr.length,
     );
 
-const ordered =
+export const ordered =
   ({ order, terms }: Readonly<{ order: string; terms: readonly string[] }>) =>
   (entries: readonly Entry[]): readonly Entry[] => {
     if (order === "time") {
@@ -167,7 +171,7 @@ const ordered =
     return entries;
   };
 
-const defaultOrder = (terms: readonly string[]): string =>
+export const defaultOrder = (terms: readonly string[]): string =>
   Arr.match(terms, { onEmpty: () => "recent", onNonEmpty: () => "relevance" });
 
 const nestedValue = (value: unknown, rest: readonly string[]): Option.Option<unknown> =>
@@ -213,7 +217,7 @@ const mergeInto = (out: Body, [key, value]: readonly [string, unknown]): Body =>
   return { ...out, [key]: merged };
 };
 
-const projected =
+export const projected =
   (fields: readonly string[]) =>
   (item: Body): Body => {
     const picked = pipe(fields, Arr.map(pathValue(item)), Arr.getSomes);
@@ -224,17 +228,4 @@ const projected =
     return Arr.reduce(picked, base, mergeInto);
   };
 
-export {
-  contains,
-  peopleFilter,
-  defaultOrder,
-  factFilter,
-  factStateOf,
-  filtersOf,
-  matchesAll,
-  ordered,
-  projected,
-  stringsAt,
-};
-export type { Entry, FactState, FactView, Filter, FilterInput };
 export type { Body } from "./life-record";

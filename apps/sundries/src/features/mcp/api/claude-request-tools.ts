@@ -9,7 +9,7 @@ import type { ClaudeRequest } from "./claude-requests";
 import { registerRoutine, wakeProject } from "./claude-routine";
 import { meteredInput, runTool } from "./tool-call";
 
-type Register = (caller: Caller) => (server: McpServer) => McpServer;
+export type Register = (caller: Caller) => (server: McpServer) => McpServer;
 
 const SEND_DESCRIPTION =
   "持ち主の masseater の Claude Code プロジェクト「個人PJ」へ依頼を送る。送るとすぐにプロジェクトのスレッドが立って依頼を実行し、結果を返事として書く。返事は list_claude_replies で読む。返り値の id で返事を見分け、woke が fired でなければスレッドはまだ立っていない（1 時間ごとの見回りで拾われる）。";
@@ -112,7 +112,7 @@ const registerRoutineTool: Register = (caller) => (server) => {
   return server;
 };
 
-const registerClaudeRequestTools: Register = (caller) => (server) =>
+export const registerClaudeRequestTools: Register = (caller) => (server) =>
   pipe(
     server,
     registerSend(caller),
@@ -121,6 +121,3 @@ const registerClaudeRequestTools: Register = (caller) => (server) =>
     registerList(caller),
     registerRoutineTool(caller),
   );
-
-export { registerClaudeRequestTools };
-export type { Register };

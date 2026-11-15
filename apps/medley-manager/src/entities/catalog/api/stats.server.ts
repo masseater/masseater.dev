@@ -7,7 +7,7 @@ import { video } from "#/entities/catalog/model/video.table";
 
 import { catalogDb } from "./db.server";
 
-const getStats = Effect.all(
+export const getStats = Effect.all(
   {
     songs: Effect.promise(() => catalogDb.$count(song)),
     videos: Effect.promise(() => catalogDb.$count(video)),
@@ -16,5 +16,3 @@ const getStats = Effect.all(
   },
   { concurrency: "unbounded" },
 ).pipe(Effect.withSpan("catalog.stats"));
-
-export { getStats };

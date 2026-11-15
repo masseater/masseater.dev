@@ -16,20 +16,17 @@ const QuerySchema = Schema.Struct({
 const Queries = Schema.Array(QuerySchema);
 
 /** @internal */
-const readLibrary = Effect.gen(function* readLibrary() {
+export const readLibrary = Effect.gen(function* readLibrary() {
   const fileSystem = yield* FileSystem.FileSystem;
   const text = yield* fileSystem.readFileString(LIBRARY_FILE);
   return yield* Schema.decodeEffect(Schema.fromJsonString(Library))(text);
 });
 
 /** @internal */
-const readQueries = Effect.gen(function* readQueries() {
+export const readQueries = Effect.gen(function* readQueries() {
   const fileSystem = yield* FileSystem.FileSystem;
   const text = yield* fileSystem.readFileString(QUERIES_FILE);
   return yield* Schema.decodeEffect(Schema.fromJsonString(Queries))(text);
 });
 
-type Query = typeof QuerySchema.Type;
-
-export { readLibrary, readQueries };
-export type { Query };
+export type Query = typeof QuerySchema.Type;

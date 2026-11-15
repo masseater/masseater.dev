@@ -12,7 +12,7 @@ class HandlerFailed extends taggedError<HandlerFailed, { readonly brand: unique 
 
 type Exception = Readonly<Pick<Error, "name" | "message" | "stack">>;
 
-const requestSpans = new WeakMap<Request, Span>();
+export const requestSpans = new WeakMap<Request, Span>();
 
 const exceptionOf = (error: unknown): Exception =>
   pipe(
@@ -30,7 +30,7 @@ const exceptionOf = (error: unknown): Exception =>
     }),
   );
 
-const markFailed =
+export const markFailed =
   (error: unknown) =>
   (span: Span): void => {
     const exception = exceptionOf(error);
@@ -39,7 +39,7 @@ const markFailed =
     span.recordException(exception);
   };
 
-const markCause =
+export const markCause =
   (cause: Cause.Cause<unknown>) =>
   (span: Span): void => {
     const error = pipe(
@@ -51,7 +51,7 @@ const markCause =
     }
   };
 
-const recordStatus =
+export const recordStatus =
   (status: number) =>
   (span: Span): void => {
     span.setAttribute("http.response.status_code", status);
@@ -70,7 +70,7 @@ const markThrown =
     )(span);
   };
 
-const traced =
+export const traced =
   <Result>(observe: (result: Result) => (span: Span) => void) =>
   (run: () => PromiseLike<Result> | Result) =>
   (span: Span): Promise<Result> =>
@@ -92,5 +92,3 @@ const traced =
         Effect.catchTag("HandlerFailed", ({ cause }) => Effect.die(cause)),
       ),
     );
-
-export { markCause, markFailed, recordStatus, requestSpans, traced };

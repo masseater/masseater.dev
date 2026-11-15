@@ -165,10 +165,8 @@ const publish = Effect.fn("command.publish")(function* publishSite({ state, out 
 });
 
 /** @internal */
-const publishCommand = Command.make(
+export const publishCommand = Command.make(
   "publish",
   { state: stateFlag, out: Flag.String("out") },
   publish,
 );
-
-export { publishCommand };

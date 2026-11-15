@@ -8,7 +8,7 @@ const DATE_LINES = /^(?:date|updated):.*\n?/gmu;
 
 const git = simpleGit();
 
-type Dates = Readonly<{ date: string; updated: string }>;
+export type Dates = Readonly<{ date: string; updated: string }>;
 
 const taggedError = Schema.TaggedError;
 
@@ -28,7 +28,7 @@ const commitDates = (path: string): Effect.Effect<readonly string[]> =>
 
 const today: Effect.Effect<string> = DateTime.now.pipe(Effect.map(DateTime.formatIsoDateUtc));
 
-const entryDates = (path: string): Effect.Effect<Dates> =>
+export const entryDates = (path: string): Effect.Effect<Dates> =>
   Effect.all({ commits: commitDates(path), fallback: today }).pipe(
     Effect.map(({ commits, fallback }) => ({
       date: pipe(
@@ -68,8 +68,5 @@ const dated = (tree: Root, dates: Dates): Root => ({
   ],
 });
 
-const remarkGitDate: Plugin<[], Root> = () => (tree: Root, file: VFile) =>
+export const remarkGitDate: Plugin<[], Root> = () => (tree: Root, file: VFile) =>
   Effect.runPromise(entryDates(file.path).pipe(Effect.map((dates) => dated(tree, dates))));
-
-export type { Dates };
-export { entryDates, remarkGitDate };

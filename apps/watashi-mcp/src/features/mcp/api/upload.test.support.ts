@@ -1,17 +1,16 @@
 import { makeD1 } from "@masseater.dev/d1-test";
 
-const {
-  closeDatabase,
-  env: database,
-  resetDatabase,
-} = makeD1({
+const testD1 = makeD1({
   migrations: new URL("../../../../drizzle/", import.meta.url).href,
   tables: ["conversation_chunk", "conversation_session", "api_token"],
 });
 
-const objects = new Map<string, Uint8Array>();
+export const { closeDatabase, resetDatabase } = testD1;
+const { env: database } = testD1;
 
-const refusedPuts = new Set<string>();
+export const objects = new Map<string, Uint8Array>();
+
+export const refusedPuts = new Set<string>();
 
 const CONVERSATIONS = {
   put: (key: string, body: Uint8Array): Promise<void> => {
@@ -27,7 +26,7 @@ const CONVERSATIONS = {
   },
 };
 
-const points: unknown[] = [];
+export const points: unknown[] = [];
 
 const CONVERSATION_UPLOADS = {
   writeDataPoint: (point: unknown): void => {
@@ -35,6 +34,4 @@ const CONVERSATION_UPLOADS = {
   },
 };
 
-const env = { ...database, CONVERSATIONS, CONVERSATION_UPLOADS };
-
-export { closeDatabase, env, objects, points, refusedPuts, resetDatabase };
+export const env = { ...database, CONVERSATIONS, CONVERSATION_UPLOADS };

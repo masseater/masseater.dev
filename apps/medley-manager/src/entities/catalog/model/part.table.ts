@@ -4,7 +4,7 @@ import { person } from "./person.table";
 import { song } from "./song.table";
 import { video } from "./video.table";
 
-const part = sqliteTable(
+export const part = sqliteTable(
   "part",
   {
     id: integer().primaryKey({ autoIncrement: true }),
@@ -29,7 +29,7 @@ const part = sqliteTable(
   ],
 );
 
-const partStaff = sqliteTable(
+export const partStaff = sqliteTable(
   "part_staff",
   {
     id: integer().primaryKey({ autoIncrement: true }),
@@ -46,5 +46,3 @@ const partStaff = sqliteTable(
     index("part_staff_person_idx").on(table.personId),
   ],
 );
-
-export { part, partStaff };

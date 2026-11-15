@@ -32,10 +32,10 @@ const sourcesWhere = Effect.fn("sourcesWhere")(function* selectSources(
 });
 
 /** @internal */
-const listSources = sourcesWhere(Option.none());
+export const listSources = sourcesWhere(Option.none());
 
 /** @internal */
-const addSource = Effect.fn("addSource")(function* insertSource(
+export const addSource = Effect.fn("addSource")(function* insertSource(
   path: string,
   kind: typeof Source.Type.kind,
 ) {
@@ -46,13 +46,13 @@ const addSource = Effect.fn("addSource")(function* insertSource(
 });
 
 /** @internal */
-const removeSource = Effect.fn("removeSource")(function* deleteSource(id: number) {
+export const removeSource = Effect.fn("removeSource")(function* deleteSource(id: number) {
   const sql = yield* SqlClient.SqlClient;
   yield* sql`delete from sources where id = ${id}`;
 });
 
 /** @internal */
-const preview = Effect.fn("preview")(function* selectPreview(assetId: number) {
+export const preview = Effect.fn("preview")(function* selectPreview(assetId: number) {
   const sql = yield* SqlClient.SqlClient;
   const rows = yield* decodeRows(PreviewRow)(
     sql`select png from images where asset_id = ${assetId} order by id limit 1`,
@@ -65,7 +65,7 @@ const preview = Effect.fn("preview")(function* selectPreview(assetId: number) {
 });
 
 /** @internal */
-const progress = Effect.gen(function* countProgress() {
+export const progress = Effect.gen(function* countProgress() {
   const sql = yield* SqlClient.SqlClient;
   const [packages = NOTHING] = yield* decodeRows(TotalRow)(
     sql`select count(*) as total from packages`,
@@ -75,5 +75,3 @@ const progress = Effect.gen(function* countProgress() {
   );
   return { packages: packages.total, images };
 });
-
-export { addSource, listSources, preview, progress, removeSource };

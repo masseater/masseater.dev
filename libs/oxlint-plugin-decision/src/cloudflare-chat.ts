@@ -73,9 +73,9 @@ const ErrorBody = Schema.Struct({
 
 const decodeErrorBody = Schema.decodeUnknownOption(ErrorBody);
 
-type Token = typeof TokenLogprob.Type;
+export type Token = typeof TokenLogprob.Type;
 
-type YesNo = "yes" | "no";
+export type YesNo = "yes" | "no";
 
 type Mass = Readonly<Record<YesNo, number>>;
 
@@ -91,7 +91,7 @@ const labelOf = (index: number): string => `q${String(Num.sum(index, FIRST_LABEL
 const accountUrl = ({ api, account }: Readonly<{ api: string; account: string }>): string =>
   `${Str.replace(TRAILING_SLASHES, "")(Str.trim(api))}/accounts/${Str.trim(account)}`;
 
-const endpointOf = (env: DecideInput["env"]): Config.Config<string> =>
+export const endpointOf = (env: DecideInput["env"]): Config.Config<string> =>
   Config.all({
     api: Config.String(envNameOf(env, "CLOUDFLARE_API_BASE_URL")).pipe(
       Config.withDefault(DEFAULT_API_URL),
@@ -138,7 +138,7 @@ const labelIndexOf = (text: string): Option.Option<number> =>
     Option.map((index) => Num.subtract(Number(index), FIRST_LABEL)),
   );
 
-const yesByLabel = (tokens: readonly Token[]): ReadonlyMap<number, number> => {
+export const yesByLabel = (tokens: readonly Token[]): ReadonlyMap<number, number> => {
   const found = new Map<number, number>();
   let text = "";
   for (const token of tokens) {
@@ -262,7 +262,7 @@ const post = Effect.fn("post")(function* post(
   );
 });
 
-const sendChat = Effect.fn("sendChat")(function* sendChat(
+export const sendChat = Effect.fn("sendChat")(function* sendChat(
   endpoint: string,
   wire: WireRequest,
   input: Pick<DecideInput, "env">,
@@ -281,6 +281,4 @@ const sendChat = Effect.fn("sendChat")(function* sendChat(
 });
 
 /** @internal */
-export { endpointOf, sendChat, yesByLabel };
 /** @internal */
-export type { Token, YesNo };

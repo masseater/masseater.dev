@@ -10,21 +10,21 @@ import {
 import type { CompletionEntry, Diagnostic, Program } from "typescript-wasm/sync";
 import { WasmTransport, instantiateWasm } from "typescript-wasm/wasm";
 
-type Source = Readonly<{ path: string; code: string }>;
+export type Source = Readonly<{ path: string; code: string }>;
 
-type At = Source & Readonly<{ position: number }>;
+export type At = Source & Readonly<{ position: number }>;
 
-type Severity = EditorDiagnostic["severity"];
+export type Severity = EditorDiagnostic["severity"];
 
-type Lint = Readonly<{ from: number; to: number; severity: Severity; message: string }>;
+export type Lint = Readonly<{ from: number; to: number; severity: Severity; message: string }>;
 
 type CompletionOption = Readonly<{ label: string; type: string; detail?: string }>;
 
-type Completion = Readonly<{ from: number; options: readonly CompletionOption[] }>;
+export type Completion = Readonly<{ from: number; options: readonly CompletionOption[] }>;
 
-type Hover = Readonly<{ text: string; documentation: string }>;
+export type Hover = Readonly<{ text: string; documentation: string }>;
 
-type Checker = Readonly<{
+export type Checker = Readonly<{
   updateFile: (source: Source) => void;
   lint: (source: Source) => readonly Lint[];
   complete: (at: At) => Completion;
@@ -209,7 +209,7 @@ const checkerOf = (session: Session): Checker => {
   };
 };
 
-const createChecker = ({ wasm, files }: Setup): Effect.Effect<Checker> =>
+export const createChecker = ({ wasm, files }: Setup): Effect.Effect<Checker> =>
   Effect.promise(() => WebAssembly.compile(wasm)).pipe(
     Effect.flatMap((module) => Effect.promise(() => instantiateWasm(module))),
     Effect.map((instance) => {
@@ -220,6 +220,3 @@ const createChecker = ({ wasm, files }: Setup): Effect.Effect<Checker> =>
       return checkerOf({ transport, api: new API({ transport }) });
     }),
   );
-
-export { createChecker };
-export type { At, Checker, Completion, Hover, Lint, Severity, Source };

@@ -23,7 +23,7 @@ const statusOf = (picture: Picture): string => {
   return picture.name;
 };
 
-const PicturePicker = (): ReactNode => {
+export const PicturePicker = (): ReactNode => {
   const picture = usePicture();
   const choose = useSetChoice();
   const pick = useCallback(
@@ -52,5 +52,3 @@ const PicturePicker = (): ReactNode => {
     </div>
   );
 };
-
-export { PicturePicker };

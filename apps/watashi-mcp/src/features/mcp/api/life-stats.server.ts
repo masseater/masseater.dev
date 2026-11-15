@@ -55,9 +55,9 @@ const requestOf = (input: LifeStatsValue): Effect.Effect<StatsRequest, StoreFail
     };
   });
 
-const lifeStats = (input: LifeStatsValue): Effect.Effect<readonly MetricStats[], StoreFailure> =>
+export const lifeStats = (
+  input: LifeStatsValue,
+): Effect.Effect<readonly MetricStats[], StoreFailure> =>
   Effect.all({ request: requestOf(input), data: loadStatsData }).pipe(
     Effect.map(({ request, data }) => computeStats(request)(data)),
   );
-
-export { lifeStats };

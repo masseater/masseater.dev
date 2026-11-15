@@ -22,7 +22,7 @@ import type { AccessExpression } from "./binder-syntax.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-const AssignmentKind = {
+export const AssignmentKind = {
   None: "None",
   ExportsProperty: "ExportsProperty",
   ModuleExports: "ModuleExports",
@@ -35,11 +35,11 @@ const AssignmentKind = {
   ObjectDefinePrototypeProperty: "ObjectDefinePrototypeProperty",
 } as const;
 
-type AssignmentDeclarationKind = (typeof AssignmentKind)[keyof typeof AssignmentKind];
+export type AssignmentDeclarationKind = (typeof AssignmentKind)[keyof typeof AssignmentKind];
 
 const PROTOTYPE = "prototype";
 
-const isPrototypeAccess = (node: Node): boolean =>
+export const isPrototypeAccess = (node: Node): boolean =>
   isAccessExpression(node) &&
   isBindableStatic(node, STATIC_ACCESS) &&
   Option.contains(getElementOrPropertyAccessName(node), PROTOTYPE);
@@ -158,7 +158,7 @@ const binaryAssignmentKind = (node: BinaryExpression): AssignmentDeclarationKind
     Option.getOrElse((): AssignmentDeclarationKind => AssignmentKind.None),
   );
 
-const getAssignmentDeclarationKind: {
+export const getAssignmentDeclarationKind: {
   (inJsFile: boolean): (node: BinaryExpression | CallExpression) => AssignmentDeclarationKind;
   (node: BinaryExpression | CallExpression, inJsFile: boolean): AssignmentDeclarationKind;
 } = Fn.dual(
@@ -178,6 +178,3 @@ const getAssignmentDeclarationKind: {
     return AssignmentKind.None;
   },
 );
-
-export { AssignmentKind, getAssignmentDeclarationKind, isPrototypeAccess };
-export type { AssignmentDeclarationKind };

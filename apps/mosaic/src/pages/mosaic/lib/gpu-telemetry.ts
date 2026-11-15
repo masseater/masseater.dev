@@ -44,7 +44,7 @@ const lifetime = (device: GPUDevice): Effect.Effect<void> =>
     Effect.withSpan("mosaic.gpu.device"),
   );
 
-const trackDevice = (device: GPUDevice): GPUDevice => {
+export const trackDevice = (device: GPUDevice): GPUDevice => {
   tracked.add(device);
   live.devices += ONE;
   watchPageHide();
@@ -52,11 +52,9 @@ const trackDevice = (device: GPUDevice): GPUDevice => {
   return device;
 };
 
-const destroyDevice = (device: Releasable): void => {
+export const destroyDevice = (device: Releasable): void => {
   if (tracked.delete(device)) {
     live.devices -= ONE;
   }
   device.destroy();
 };
-
-export { destroyDevice, trackDevice };

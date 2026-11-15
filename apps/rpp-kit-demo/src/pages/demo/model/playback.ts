@@ -5,7 +5,7 @@ import { useCallback } from "react";
 import { startPlayer } from "./player";
 import type { Player } from "./player";
 
-type Playback =
+export type Playback =
   | Readonly<{ status: "stopped"; position: number }>
   | Readonly<{ status: "playing"; position: number; player: Player }>;
 
@@ -23,9 +23,9 @@ const halt = (playback: Playback): void => {
   }
 };
 
-const usePlayback = (): Playback => useAtomValue(playbackAtom);
+export const usePlayback = (): Playback => useAtomValue(playbackAtom);
 
-const usePlaybackControls = (): Controls => {
+export const usePlaybackControls = (): Controls => {
   const playback = useAtomValue(playbackAtom);
   const set = useAtomSet(playbackAtom);
   const begin = useCallback(
@@ -65,6 +65,3 @@ const usePlaybackControls = (): Controls => {
   );
   return { toggle, seek };
 };
-
-export { usePlayback, usePlaybackControls };
-export type { Playback };

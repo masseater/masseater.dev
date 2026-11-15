@@ -179,12 +179,10 @@ const assemble = (
   return glb;
 };
 
-const glbOf = Effect.fn("glbOf")(function* glbOf(parts: readonly Part[]) {
+export const glbOf = Effect.fn("glbOf")(function* glbOf(parts: readonly Part[]) {
   const document = documentOf(parts);
   const layout = offsetsOf(document.views);
   const [offsets, length] = layout;
   const json = yield* encodeJson(jsonOf(document, offsets, length));
   return assemble(document, new TextEncoder().encode(json), layout);
 });
-
-export { glbOf };

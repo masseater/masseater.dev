@@ -5,8 +5,6 @@ import type { Engine } from "./engine.ts";
 import { tauriEngine } from "./engine.ts";
 
 /** @internal */
-const engineAtom = Atom.make<Engine>(tauriEngine);
+export const engineAtom = Atom.make<Engine>(tauriEngine);
 
-const useEngine = (): Engine => useAtomValue(engineAtom);
-
-export { engineAtom, useEngine };
+export const useEngine = (): Engine => useAtomValue(engineAtom);

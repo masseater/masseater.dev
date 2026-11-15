@@ -1,4 +1,4 @@
-const BINARY_DATA: readonly string[] = [
+export const BINARY_DATA: readonly string[] = [
   "ArrayBuffer",
   "DataView",
   "Float32Array",
@@ -7,5 +7,3 @@ const BINARY_DATA: readonly string[] = [
   "Uint8Array",
   "Uint32Array",
 ];
-
-export { BINARY_DATA };

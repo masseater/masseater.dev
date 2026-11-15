@@ -28,9 +28,11 @@ import type {
 import { Vm } from "./vm.ts";
 import type { Output } from "./vm.ts";
 
-type Services = Vm | HttpClient.HttpClient;
+export type Services = Vm | HttpClient.HttpClient;
 
-type Runner = (effect: Effect.Effect<CallToolResult, never, Services>) => Promise<CallToolResult>;
+export type Runner = (
+  effect: Effect.Effect<CallToolResult, never, Services>,
+) => Promise<CallToolResult>;
 
 const SUCCESS = 0;
 const NO_MODS: readonly string[] = [];
@@ -251,12 +253,10 @@ const registerGameTools =
     return server;
   };
 
-const registerTools =
+export const registerTools =
   (run: Runner) =>
   (server: McpServer): McpServer =>
     pipe(server, registerVmTools(run), registerGameTools(run));
 
 /** @internal */
-export { registerTools };
 /** @internal */
-export type { Runner, Services };

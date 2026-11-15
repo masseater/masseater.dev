@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const Section = ({
+export const Section = ({
   id,
   title,
   children,
@@ -12,5 +12,3 @@ const Section = ({
     {children}
   </section>
 );
-
-export { Section };

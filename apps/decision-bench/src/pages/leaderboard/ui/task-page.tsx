@@ -24,12 +24,10 @@ const pageOf = (info: TaskInfo): ReactNode => (
   </PageShell>
 );
 
-const TaskPage = (): ReactNode => {
+export const TaskPage = (): ReactNode => {
   const { task } = route.useParams();
   return Option.match(
     Array.findFirst(tasks, (candidate) => candidate.task === task),
     { onNone: () => <Navigate to="/" />, onSome: pageOf },
   );
 };
-
-export { TaskPage };

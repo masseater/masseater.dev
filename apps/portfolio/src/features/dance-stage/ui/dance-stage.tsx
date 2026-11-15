@@ -10,7 +10,7 @@ import { emptyTrack, trackQuery } from "#/features/dance-stage/model/track";
 const WIDTH = 960;
 const HEIGHT = 540;
 
-const DanceStage = ({
+export const DanceStage = ({
   slug,
   source,
   label,
@@ -37,5 +37,3 @@ const DanceStage = ({
     />
   );
 };
-
-export { DanceStage };

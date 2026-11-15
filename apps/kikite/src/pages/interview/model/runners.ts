@@ -4,7 +4,7 @@ import type { AtomRegistry } from "effect/reactivity";
 
 type Services = AtomRegistry.AtomRegistry | HttpClient.HttpClient;
 
-const runners = Effect.gen(function* runners() {
+export const runners = Effect.gen(function* runners() {
   return {
     asking: yield* FiberHandle.makeRuntime<Services>(),
     summarizing: yield* FiberHandle.makeRuntime<Services>(),
@@ -15,4 +15,3 @@ const runners = Effect.gen(function* runners() {
 });
 
 /** @internal */
-export { runners };

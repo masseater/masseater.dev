@@ -8,7 +8,7 @@ import { ActionButton } from "./action-button.tsx";
 
 const LABEL = "パッケージを表示";
 
-const ShowPackageButton = ({ id }: Readonly<{ id: number }>): ReactNode => {
+export const ShowPackageButton = ({ id }: Readonly<{ id: number }>): ReactNode => {
   const showPackage = useShowPackage();
   const onClick = useCallback(() => {
     showPackage(id);
@@ -20,5 +20,3 @@ const ShowPackageButton = ({ id }: Readonly<{ id: number }>): ReactNode => {
     </ActionButton>
   );
 };
-
-export { ShowPackageButton };

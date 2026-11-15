@@ -23,7 +23,7 @@ const NONE = 0;
 const levelOf = (shown: Option.Option<Nudge>): number =>
   Option.match(shown, { onNone: () => NONE, onSome: (current) => current.level });
 
-const nudge = Effect.fn("kikite.nudge")(function* nudge(level: number) {
+export const nudge = Effect.fn("kikite.nudge")(function* nudge(level: number) {
   const shown = yield* read(nudgeAtom);
   if (level <= levelOf(shown)) {
     return;
@@ -34,4 +34,3 @@ const nudge = Effect.fn("kikite.nudge")(function* nudge(level: number) {
 });
 
 /** @internal */
-export { nudge };

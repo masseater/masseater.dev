@@ -7,7 +7,7 @@ import { useRecentTargets } from "#/pages/translator/model/selection.ts";
 import { PickerToggle } from "./picker-toggle.tsx";
 import { TargetTab } from "./target-tab.tsx";
 
-const TargetTabs = ({ target }: Readonly<{ target: LanguageCode }>): ReactNode => (
+export const TargetTabs = ({ target }: Readonly<{ target: LanguageCode }>): ReactNode => (
   <div className="flex min-w-0 flex-1 items-center overflow-hidden pl-2">
     {pipe(
       useRecentTargets(),
@@ -16,5 +16,3 @@ const TargetTabs = ({ target }: Readonly<{ target: LanguageCode }>): ReactNode =
     <PickerToggle side="target" />
   </div>
 );
-
-export { TargetTabs };

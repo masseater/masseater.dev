@@ -7,7 +7,7 @@ import type { Endpoint } from "./protocol.ts";
 
 const taggedError = Schema.TaggedError;
 
-class ForwardFailed extends taggedError<ForwardFailed, { readonly brand: unique symbol }>()(
+export class ForwardFailed extends taggedError<ForwardFailed, { readonly brand: unique symbol }>()(
   "ForwardFailed",
   { message: Schema.String },
 ) {}
@@ -83,12 +83,10 @@ const exportTo =
         }),
     );
 
-const forwardTo =
+export const forwardTo =
   (origins: readonly string[]) =>
   (endpoint: Endpoint) =>
   (message: Uint8Array): Effect.Effect<void, ForwardFailed> =>
     Effect.forEach(origins, (origin) => exportTo(origin, endpoint)(message), {
       discard: true,
     }).pipe(Effect.withSpan("vitest-otlp.forward"));
-
-export { ForwardFailed, forwardTo };

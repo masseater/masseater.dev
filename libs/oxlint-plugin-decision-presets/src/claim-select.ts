@@ -24,12 +24,12 @@ const endsWith =
   (name) =>
     Str.endsWith(word)(name);
 
-interface NameWords {
+export interface NameWords {
   readonly prefixes: readonly string[];
   readonly suffixes?: readonly string[];
 }
 
-const namedLike = ({ prefixes, suffixes = [] }: NameWords): Select => {
+export const namedLike = ({ prefixes, suffixes = [] }: NameWords): Select => {
   const matchers = [
     ...pipe(
       prefixes,
@@ -102,7 +102,7 @@ const logCallOf = (callee: SelectedNode): Option.Option<LogCall> =>
     Match.orElse(() => Option.none()),
   );
 
-const isLogCall: DualSelect = dualSelect((node) =>
+export const isLogCall: DualSelect = dualSelect((node) =>
   Option.exists(Option.flatMap(calleeOf(node), logCallOf), ({ level, logger }) =>
     Predicate.and(
       () => Option.exists(level, (found) => LOG_LEVELS.has(found)),
@@ -127,7 +127,7 @@ const isCatch: NodeTest = (node) =>
     Match.orElse(() => false),
   );
 
-const hasCatch: DualSelect = dualSelect(containing(isCatch));
+export const hasCatch: DualSelect = dualSelect(containing(isCatch));
 
 const hasCallbackArgument: Select = (node) =>
   Match.value(node).pipe(
@@ -140,14 +140,11 @@ const hasCallbackArgument: Select = (node) =>
     Match.orElse(() => false),
   );
 
-const isTestCall: DualSelect = dualSelect((node, match) =>
+export const isTestCall: DualSelect = dualSelect((node, match) =>
   pipe(
     [callingAny(["it", "test"]), hasCallbackArgument],
     Arr.every((select) => select(node, match)),
   ),
 );
 
-const isDescribeCall: DualSelect = dualSelect(callingAny(["describe"]));
-
-export { hasCatch, isDescribeCall, isLogCall, isTestCall, namedLike };
-export type { NameWords };
+export const isDescribeCall: DualSelect = dualSelect(callingAny(["describe"]));

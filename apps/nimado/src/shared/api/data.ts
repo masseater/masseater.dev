@@ -15,16 +15,16 @@ import { FetchHttpClient, HttpClient, HttpClientResponse } from "effect/http";
 
 import { BASE_PATH } from "#/shared/config";
 
-interface Query<Value> {
+export interface Query<Value> {
   readonly queryKey: readonly string[];
   readonly queryFn: (context: Readonly<{ signal: AbortSignal }>) => Promise<Value>;
   readonly staleTime: number;
 }
 
-type MetaValue = typeof Meta.Type;
-type TableValue = typeof Table.Type;
-type DayValue = typeof DayViews.Type;
-type ShardValue = typeof Shard.Type;
+export type MetaValue = typeof Meta.Type;
+export type TableValue = typeof Table.Type;
+export type DayValue = typeof DayViews.Type;
+export type ShardValue = typeof Shard.Type;
 
 const STALE_TIME = 600_000;
 
@@ -46,19 +46,21 @@ const loadTable = loader(Table);
 const loadDay = loader(DayViews);
 const loadShard = loader(Shard);
 
-const metaQuery: Query<MetaValue> = {
+export const metaQuery: Query<MetaValue> = {
   queryKey: ["nimado", metaPath],
   queryFn: ({ signal }) => loadMeta({ path: metaPath, signal }),
   staleTime: STALE_TIME,
 };
 
-const tableQuery: Query<TableValue> = {
+export const tableQuery: Query<TableValue> = {
   queryKey: ["nimado", tablePath],
   queryFn: ({ signal }) => loadTable({ path: tablePath, signal }),
   staleTime: STALE_TIME,
 };
 
-const dayQuery = (day: Readonly<{ platform: PlatformName; date: string }>): Query<DayValue> => {
+export const dayQuery = (
+  day: Readonly<{ platform: PlatformName; date: string }>,
+): Query<DayValue> => {
   const path = dayPath(day);
   return {
     queryKey: ["nimado", path],
@@ -67,7 +69,7 @@ const dayQuery = (day: Readonly<{ platform: PlatformName; date: string }>): Quer
   };
 };
 
-const shardQuery = (shard: number): Query<ShardValue> => {
+export const shardQuery = (shard: number): Query<ShardValue> => {
   const path = shardPath(shard);
   return {
     queryKey: ["nimado", path],
@@ -75,6 +77,3 @@ const shardQuery = (shard: number): Query<ShardValue> => {
     staleTime: STALE_TIME,
   };
 };
-
-export type { DayValue, MetaValue, Query, ShardValue, TableValue };
-export { dayQuery, metaQuery, shardQuery, tableQuery };

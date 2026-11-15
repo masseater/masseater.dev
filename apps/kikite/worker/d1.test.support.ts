@@ -1,14 +1,11 @@
 import { makeD1 } from "@masseater.dev/d1-test";
 
-const {
-  closeDatabase,
-  env: d1,
-  resetDatabase,
-} = makeD1({
+const testD1 = makeD1({
   migrations: new URL("../migrations/", import.meta.url).href,
   tables: ["sessions"],
 });
 
-const env = { SESSIONS: d1.DB };
+export const { closeDatabase, resetDatabase } = testD1;
+const { env: d1 } = testD1;
 
-export { closeDatabase, env, resetDatabase };
+export const env = { SESSIONS: d1.DB };

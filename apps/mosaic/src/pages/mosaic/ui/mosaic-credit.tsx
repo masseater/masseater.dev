@@ -7,7 +7,7 @@ import { CREDITS, CreditsLink } from "./credits-link";
 
 const SOURCE = "ソースコード";
 
-const MosaicCredit = ({
+export const MosaicCredit = ({
   slug,
   seed,
 }: Readonly<{ slug: string; seed: Option.Option<number> }>): ReactNode => (
@@ -27,5 +27,3 @@ const MosaicCredit = ({
     </span>
   </footer>
 );
-
-export { MosaicCredit };

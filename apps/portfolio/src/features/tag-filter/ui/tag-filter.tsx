@@ -11,7 +11,7 @@ const LABEL = "タグで絞り込む";
 
 const ALL_LABEL = "すべて";
 
-const TagFilter = ({
+export const TagFilter = ({
   activeTag,
   counts,
   onSelect,
@@ -42,5 +42,3 @@ const TagFilter = ({
     )}
   </ul>
 );
-
-export { TagFilter };

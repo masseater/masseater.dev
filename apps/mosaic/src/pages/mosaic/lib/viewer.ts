@@ -210,7 +210,7 @@ const revealWhenReady = ({
     }
   });
 
-const mountViewer = ({ canvas, visit, store }: Mount): (() => void) => {
+export const mountViewer = ({ canvas, visit, store }: Mount): (() => void) => {
   const { mosaic } = visit;
   const controller = new AbortController();
   const invalidation = createInvalidation();
@@ -232,5 +232,3 @@ const mountViewer = ({ canvas, visit, store }: Mount): (() => void) => {
     controller.abort();
   };
 };
-
-export { mountViewer };

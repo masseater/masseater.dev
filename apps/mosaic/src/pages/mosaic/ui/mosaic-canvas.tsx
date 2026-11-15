@@ -24,7 +24,7 @@ const restoreCount = (): number => restores.count;
 
 const serverRestoreCount = (): number => NEVER_RESTORED;
 
-const MosaicCanvas = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
+export const MosaicCanvas = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
   const store = useViewerStore();
   const restored = useSyncExternalStore(subscribeRestores, restoreCount, serverRestoreCount);
   const attach = useCallback(
@@ -47,5 +47,3 @@ const MosaicCanvas = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
     />
   );
 };
-
-export { MosaicCanvas };

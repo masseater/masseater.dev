@@ -13,7 +13,7 @@ import { registerTranslateTools } from "./translate-tools";
 
 const SERVER_INFO = { name: SERVER_NAME, version: "0.0.0" };
 
-const registerTools = (caller: Caller): McpServer =>
+export const registerTools = (caller: Caller): McpServer =>
   pipe(
     new McpServer(SERVER_INFO),
     registerSloppediaTools(caller),
@@ -23,5 +23,3 @@ const registerTools = (caller: Caller): McpServer =>
     registerTranslateTools(caller),
     registerClaudeRequestTools(caller),
   );
-
-export { registerTools };

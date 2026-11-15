@@ -17,7 +17,7 @@ const RunSchema = Schema.Struct({
   failed: Schema.Finite,
 });
 
-const SummarySchema = Schema.Struct({
+export const SummarySchema = Schema.Struct({
   generatedAt: Schema.String,
   documents: Schema.Finite,
   generatorModel: Schema.String,
@@ -28,11 +28,8 @@ const SummarySchema = Schema.Struct({
   runs: Schema.Array(RunSchema),
 });
 
-type Method = typeof MethodSchema.Type;
+export type Method = typeof MethodSchema.Type;
 
-type Run = typeof RunSchema.Type;
+export type Run = typeof RunSchema.Type;
 
-type Summary = typeof SummarySchema.Type;
-
-export { SummarySchema };
-export type { Method, Run, Summary };
+export type Summary = typeof SummarySchema.Type;

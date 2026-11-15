@@ -1,3 +1,1 @@
-const GALLERY_TITLE = "サムネイルのモザイクアート";
-
-export { GALLERY_TITLE };
+export const GALLERY_TITLE = "サムネイルのモザイクアート";

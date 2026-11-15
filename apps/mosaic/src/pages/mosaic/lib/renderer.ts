@@ -22,11 +22,9 @@ const fallback = ({ canvas, signal }: Target, accent: string): Option.Option<Ren
   return canvasRenderer(canvas, accent);
 };
 
-const createRenderer = (target: Target): Effect.Effect<Option.Option<Renderer>> => {
+export const createRenderer = (target: Target): Effect.Effect<Option.Option<Renderer>> => {
   const accent = getComputedStyle(target.canvas).getPropertyValue(ACCENT_PROPERTY);
   return Effect.map(createGpuRenderer({ ...target, accent }), (gpu) =>
     Option.orElse(gpu, () => fallback(target, accent)),
   );
 };
-
-export { createRenderer };

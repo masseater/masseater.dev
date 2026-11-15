@@ -12,7 +12,7 @@ const HALVING = 2;
 const FIRST = 0;
 const UNUSED = -1;
 
-interface Uploaded {
+export interface Uploaded {
   readonly texture: GPUTexture;
   readonly group: GPUBindGroup;
 }
@@ -31,7 +31,7 @@ interface Slots {
 
 type Usage = readonly [HTMLImageElement, number];
 
-interface Textures {
+export interface Textures {
   readonly get: (image: HTMLImageElement, frame: number) => Option.Option<Uploaded>;
   readonly ensure: (image: HTMLImageElement) => Effect.Effect<void>;
   readonly sweep: (frame: number) => void;
@@ -178,7 +178,7 @@ const createSlots = (): Slots => {
   };
 };
 
-const createTextures = (context: Context): Textures => {
+export const createTextures = (context: Context): Textures => {
   const slots = createSlots();
   return {
     get: lookup(context, slots),
@@ -190,6 +190,3 @@ const createTextures = (context: Context): Textures => {
     },
   };
 };
-
-export type { Textures, Uploaded };
-export { createTextures };

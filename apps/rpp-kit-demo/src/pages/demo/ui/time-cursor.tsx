@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { usePlayback } from "#/pages/demo/model/playback";
 
-const TimeCursor = (): ReactNode => {
+export const TimeCursor = (): ReactNode => {
   const { position } = usePlayback();
   return (
     <line
@@ -15,5 +15,3 @@ const TimeCursor = (): ReactNode => {
     />
   );
 };
-
-export { TimeCursor };

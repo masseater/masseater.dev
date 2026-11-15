@@ -22,10 +22,8 @@ const listing = (input: LifeReadValue): Effect.Effect<Body, StoreFailure> => {
   return lifeRead(input);
 };
 
-const routeLifeRead = (input: LifeReadValue): Effect.Effect<Body, StoreFailure> =>
+export const routeLifeRead = (input: LifeReadValue): Effect.Effect<Body, StoreFailure> =>
   Option.match(revisionsRef(input), {
     onSome: lifeRevisions,
     onNone: () => listing(input),
   });
-
-export { routeLifeRead };

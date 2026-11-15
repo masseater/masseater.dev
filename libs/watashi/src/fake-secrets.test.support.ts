@@ -5,15 +5,15 @@ import { BETTERLEAKS_VERSION } from "./betterleaks-config.ts";
 import { encodeJson } from "./json-lines.ts";
 import type { Json } from "./json-lines.ts";
 
-type FakeSecret = Readonly<{ name: string; value: string; context: string }>;
+export type FakeSecret = Readonly<{ name: string; value: string; context: string }>;
 
-type Placement = Readonly<{
+export type Placement = Readonly<{
   name: string;
   line: (secret: FakeSecret) => Effect.Effect<string>;
   needle: (secret: FakeSecret) => Effect.Effect<string>;
 }>;
 
-const ALNUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+export const ALNUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const LOWER_ALNUM = "abcdefghijklmnopqrstuvwxyz0123456789";
 const UPPER_BASE32 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 const HEX = "0123456789abcdef";
@@ -58,7 +58,7 @@ const charOf =
   (value: number): string =>
     Option.getOrElse(Str.charAt(value % alphabet.length)(alphabet), () => "");
 
-const pick =
+export const pick =
   (alphabet: string) =>
   (length: number): string =>
     pipe(
@@ -148,7 +148,7 @@ const bareSecrets = (): readonly FakeSecret[] => [
   },
 ];
 
-const fakeSecrets: Effect.Effect<readonly FakeSecret[]> = Effect.all([jwt, privateKey]).pipe(
+export const fakeSecrets: Effect.Effect<readonly FakeSecret[]> = Effect.all([jwt, privateKey]).pipe(
   Effect.map(([token, pem]) => [
     ...prefixedSecrets(),
     ...bareSecrets(),
@@ -157,9 +157,9 @@ const fakeSecrets: Effect.Effect<readonly FakeSecret[]> = Effect.all([jwt, priva
   ]),
 );
 
-const githubToken = (): string => `ghp_${mixed(ALNUM)(GITHUB_PAT)}`;
+export const githubToken = (): string => `ghp_${mixed(ALNUM)(GITHUB_PAT)}`;
 
-const NON_SECRETS: readonly string[] = [
+export const NON_SECRETS: readonly string[] = [
   "session_01vHd0ME4KuyZzvP1w9o0XmG",
   TOOL_USE_ID,
   "cmsg_01JV6n1Ceo5OrwXjQX1DZxpguMvPy1qPd0MPwJj4Za5R2k",
@@ -185,7 +185,7 @@ const toolResult = (content: string): Json => ({
   content: [{ type: "tool_result", tool_use_id: TOOL_USE_ID, content }],
 });
 
-const userMessage: Placement = {
+export const userMessage: Placement = {
   name: "user message",
   line: ({ value, context }) =>
     encodeJson({
@@ -196,7 +196,7 @@ const userMessage: Placement = {
   needle: plain,
 };
 
-const PLACEMENTS: readonly Placement[] = [
+export const PLACEMENTS: readonly Placement[] = [
   userMessage,
   {
     name: "Bash tool input",
@@ -242,13 +242,13 @@ const PLACEMENTS: readonly Placement[] = [
   },
 ];
 
-const nonSecretLine: Effect.Effect<string> = encodeJson({
+export const nonSecretLine: Effect.Effect<string> = encodeJson({
   type: "assistant",
   ...IDS,
   message: { role: "assistant", content: Arr.join(NON_SECRETS, "\n") },
 });
 
-const imageLine = (data: string): Effect.Effect<string> =>
+export const imageLine = (data: string): Effect.Effect<string> =>
   encodeJson({
     type: "user",
     ...IDS,
@@ -258,7 +258,9 @@ const imageLine = (data: string): Effect.Effect<string> =>
     },
   });
 
-const vendoredBetterleaks: Effect.Effect<string, never, Path.Path> = Effect.service(Path.Path).pipe(
+export const vendoredBetterleaks: Effect.Effect<string, never, Path.Path> = Effect.service(
+  Path.Path,
+).pipe(
   Effect.map((path) =>
     path.resolve(
       import.meta.dirname,
@@ -270,17 +272,4 @@ const vendoredBetterleaks: Effect.Effect<string, never, Path.Path> = Effect.serv
 );
 
 /** @internal */
-export {
-  ALNUM,
-  NON_SECRETS,
-  PLACEMENTS,
-  fakeSecrets,
-  githubToken,
-  imageLine,
-  nonSecretLine,
-  pick,
-  userMessage,
-  vendoredBetterleaks,
-};
 /** @internal */
-export type { FakeSecret, Placement };

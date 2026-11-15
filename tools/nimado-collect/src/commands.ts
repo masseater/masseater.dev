@@ -16,13 +16,13 @@ const CHECKPOINT_REQUESTS = 100;
 const EPOCH = "0000-00-00";
 
 /** @internal */
-const stateFlag = Flag.String("state").pipe(Flag.withDefault(".state"));
+export const stateFlag = Flag.String("state").pipe(Flag.withDefault(".state"));
 
 const budgetFlag = (fallback: number): Flag.Flag<number> =>
   Flag.Int("budget").pipe(Flag.withDefault(fallback));
 
 /** @internal */
-const catalogCommand = Command.make(
+export const catalogCommand = Command.make(
   "catalog",
   { state: stateFlag, budget: budgetFlag(VOCADB_REQUESTS) },
   ({ state, budget }) =>
@@ -45,7 +45,7 @@ const catalogCommand = Command.make(
 );
 
 /** @internal */
-const nicoCommand = Command.make(
+export const nicoCommand = Command.make(
   "nico",
   { state: stateFlag, budget: budgetFlag(NICO_REQUESTS) },
   ({ state, budget }) =>
@@ -66,7 +66,7 @@ const nicoCommand = Command.make(
 );
 
 /** @internal */
-const youtubeCommand = Command.make(
+export const youtubeCommand = Command.make(
   "youtube",
   { state: stateFlag, budget: budgetFlag(YOUTUBE_UNITS) },
   ({ state, budget }) =>
@@ -89,5 +89,3 @@ const youtubeCommand = Command.make(
       });
     }),
 );
-
-export { catalogCommand, nicoCommand, stateFlag, youtubeCommand };

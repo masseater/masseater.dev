@@ -10,7 +10,7 @@ const PLACEHOLDER = "https://booth.pm/ja/items/…";
 const LABEL = "BOOTH の商品ページの URL";
 const SUBMIT = "紐づける";
 
-const BoothLinkForm = ({ packageId }: Readonly<{ packageId: number }>): ReactNode => {
+export const BoothLinkForm = ({ packageId }: Readonly<{ packageId: number }>): ReactNode => {
   const url = useBoothDraft(packageId);
   const setDraft = useSetBoothDraft();
   const link = useLinkBooth();
@@ -40,5 +40,3 @@ const BoothLinkForm = ({ packageId }: Readonly<{ packageId: number }>): ReactNod
     </form>
   );
 };
-
-export { BoothLinkForm };

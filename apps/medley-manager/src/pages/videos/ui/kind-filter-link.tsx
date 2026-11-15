@@ -7,7 +7,7 @@ import type { VideoKind } from "#/entities/catalog";
 import { variantOf } from "#/pages/videos/lib/variant";
 import { Button } from "#/shared/ui/button";
 
-const KindFilterLink = ({
+export const KindFilterLink = ({
   kind,
   selected,
 }: Readonly<{ kind: VideoKind; selected: boolean }>): ReactNode => {
@@ -20,5 +20,3 @@ const KindFilterLink = ({
     </Button>
   );
 };
-
-export { KindFilterLink };

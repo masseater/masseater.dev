@@ -73,6 +73,4 @@ const createSourceFile = (
     Option.liftPredicate(parseArguments[SCRIPT_KIND_AFTER_TEXT], isScriptKind),
   );
 
-const fileFunctions = { bindSourceFile, createSourceFile, getModeForUsageLocation };
-
-export { fileFunctions };
+export const fileFunctions = { bindSourceFile, createSourceFile, getModeForUsageLocation };

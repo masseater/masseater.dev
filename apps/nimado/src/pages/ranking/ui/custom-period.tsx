@@ -9,7 +9,7 @@ import type { Update } from "#/pages/ranking/model/update";
 
 import { DateSelect } from "./date-select";
 
-const CustomPeriod = ({
+export const CustomPeriod = ({
   dates,
   search,
   update,
@@ -25,5 +25,3 @@ const CustomPeriod = ({
     </div>
   );
 };
-
-export { CustomPeriod };

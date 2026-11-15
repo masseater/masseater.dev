@@ -9,7 +9,7 @@ import { useArrival, useSelection } from "#/pages/mosaic/model/viewer";
 import { MosaicChrome } from "./mosaic-chrome";
 import { TileCard } from "./tile-card";
 
-const MosaicOverlay = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
+export const MosaicOverlay = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
   const selection = useSelection();
   const selected = Option.all({
     tile: useTile(selection),
@@ -28,5 +28,3 @@ const MosaicOverlay = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
     </>
   );
 };
-
-export { MosaicOverlay };

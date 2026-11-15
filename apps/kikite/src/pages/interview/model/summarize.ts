@@ -45,7 +45,7 @@ const remembered = Effect.fn("kikite.rememberTheme")(function* remembered(
   }
 });
 
-const summarize = Effect.fn("kikite.summarize")(function* summarize() {
+export const summarize = Effect.fn("kikite.summarize")(function* summarize() {
   const fresh = yield* freshSpeech();
   const last = Arr.last(fresh);
   if (Option.isNone(last)) {
@@ -70,4 +70,3 @@ const summarize = Effect.fn("kikite.summarize")(function* summarize() {
 });
 
 /** @internal */
-export { summarize };

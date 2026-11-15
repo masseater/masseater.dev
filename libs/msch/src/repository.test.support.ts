@@ -54,7 +54,7 @@ const fixtureFiles = Layer.effect(
   }),
 );
 
-const fixtureLayer = fixtureFiles.pipe(
+export const fixtureLayer = fixtureFiles.pipe(
   Layer.provideMerge(nodeRepositoryFiles),
   Layer.provide(nodeServicesLayer),
 );
@@ -77,7 +77,7 @@ const defaultFiles = Effect.gen(function* defaultFiles() {
   return { "package.json": packageJson, "tsconfig.json": tsconfig };
 });
 
-const directoryWith = Effect.fn("directoryWith")(function* directoryWith(
+export const directoryWith = Effect.fn("directoryWith")(function* directoryWith(
   files: Readonly<Record<string, string>>,
 ) {
   const fixtures = yield* FixtureFiles;
@@ -105,7 +105,7 @@ const fixtureRepository = Effect.fn("fixtureRepository")(function* fixtureReposi
   return root;
 });
 
-const findingsIn = Effect.fn("findingsIn")(function* findingsIn(
+export const findingsIn = Effect.fn("findingsIn")(function* findingsIn(
   files: Readonly<Record<string, string>>,
 ) {
   const fixtures = yield* FixtureFiles;
@@ -122,7 +122,7 @@ const findingsIn = Effect.fn("findingsIn")(function* findingsIn(
   );
 });
 
-const gitRepositoryWith = Effect.fn("gitRepositoryWith")(function* gitRepositoryWith(
+export const gitRepositoryWith = Effect.fn("gitRepositoryWith")(function* gitRepositoryWith(
   files: Readonly<Record<string, string>>,
 ) {
   const fixtures = yield* FixtureFiles;
@@ -130,5 +130,3 @@ const gitRepositoryWith = Effect.fn("gitRepositoryWith")(function* gitRepository
   yield* fixtures.commitAll(root);
   return root;
 });
-
-export { directoryWith, findingsIn, fixtureLayer, gitRepositoryWith };

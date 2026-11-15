@@ -13,7 +13,7 @@ const ITEMS: readonly (readonly [Tone, string])[] = [
   ["injection", COPY.regions],
 ];
 
-const Legend = (): ReactNode => (
+export const Legend = (): ReactNode => (
   <ul className="text-muted-foreground flex flex-wrap gap-4 text-xs">
     {pipe(
       ITEMS,
@@ -30,5 +30,3 @@ const Legend = (): ReactNode => (
     </li>
   </ul>
 );
-
-export { Legend };

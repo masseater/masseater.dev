@@ -7,7 +7,5 @@ import { registerSearchTools } from "./search-tools";
 
 const SERVER_INFO = { name: SERVER_NAME, version: "0.0.0" };
 
-const registerTools = (caller: Caller): McpServer =>
+export const registerTools = (caller: Caller): McpServer =>
   registerSearchTools(caller)(new McpServer(SERVER_INFO));
-
-export { registerTools };

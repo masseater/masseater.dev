@@ -63,7 +63,7 @@ const COLUMNS: readonly TableColumn<TaskEntry>[] = [
   },
 ];
 
-const ProfileTable = ({
+export const ProfileTable = ({
   task,
   entries,
 }: Readonly<{ task: TaskInfo; entries: readonly TaskEntry[] }>): ReactNode => (
@@ -78,5 +78,3 @@ const ProfileTable = ({
     columns={COLUMNS}
   />
 );
-
-export { ProfileTable };

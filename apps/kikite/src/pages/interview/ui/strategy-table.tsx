@@ -6,7 +6,7 @@ import type { StrategyRow as Row } from "#/pages/interview/model/review-hooks";
 import { StrategyHeading } from "./strategy-heading.tsx";
 import { StrategyRow } from "./strategy-row.tsx";
 
-const StrategyTable = ({ rows }: Readonly<{ rows: readonly Row[] }>): ReactNode => (
+export const StrategyTable = ({ rows }: Readonly<{ rows: readonly Row[] }>): ReactNode => (
   <div className="grid grid-cols-4 items-center gap-x-6 gap-y-2 text-sm">
     <StrategyHeading />
     {pipe(
@@ -15,5 +15,3 @@ const StrategyTable = ({ rows }: Readonly<{ rows: readonly Row[] }>): ReactNode 
     )}
   </div>
 );
-
-export { StrategyTable };

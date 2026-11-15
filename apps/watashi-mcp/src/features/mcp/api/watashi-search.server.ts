@@ -51,7 +51,7 @@ const scoreOf = (scored: Scored): number => scored.score;
 
 const itemOfScored = (scored: Scored): Body => scored.item;
 
-const watashiSearch = (input: WatashiSearchValue): Effect.Effect<Body, StorageFailed> =>
+export const watashiSearch = (input: WatashiSearchValue): Effect.Effect<Body, StorageFailed> =>
   Effect.gen(function* searchWatashi() {
     const terms = termsOf(input.query);
     const limit = input.limit ?? DEFAULT_MEMORY_LIMIT;
@@ -79,5 +79,3 @@ const watashiSearch = (input: WatashiSearchValue): Effect.Effect<Body, StorageFa
       ...life.limited,
     };
   });
-
-export { watashiSearch };

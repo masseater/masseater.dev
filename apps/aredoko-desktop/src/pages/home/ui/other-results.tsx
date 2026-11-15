@@ -11,7 +11,7 @@ const OTHERS = "ほかの候補";
 
 type Results = readonly (typeof SearchResult.Type)[];
 
-const OtherResults = ({
+export const OtherResults = ({
   others,
   nothingClose,
 }: Readonly<{ others: Results; nothingClose: boolean }>): ReactNode => {
@@ -29,5 +29,3 @@ const OtherResults = ({
     </section>
   );
 };
-
-export { OtherResults };

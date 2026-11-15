@@ -1,8 +1,8 @@
 import { Array as Arr, Match, Option, String as Str, pipe } from "effect";
 
-type Param = Readonly<{ text: string; start: number; end: number }>;
+export type Param = Readonly<{ text: string; start: number; end: number }>;
 
-type Line = Readonly<{
+export type Line = Readonly<{
   kind: "line";
   token: string;
   params: readonly Param[];
@@ -10,7 +10,7 @@ type Line = Readonly<{
   end: number;
 }>;
 
-type Chunk = Readonly<{
+export type Chunk = Readonly<{
   kind: "chunk";
   token: string;
   params: readonly Param[];
@@ -19,11 +19,11 @@ type Chunk = Readonly<{
   end: number;
 }>;
 
-type Node = Chunk | Line;
+export type Node = Chunk | Line;
 
-type ParseError = Readonly<{ message: string; start: number; end: number }>;
+export type ParseError = Readonly<{ message: string; start: number; end: number }>;
 
-type ParseResult =
+export type ParseResult =
   | Readonly<{ status: "ok"; root: Chunk }>
   | Readonly<{ status: "error"; error: ParseError }>;
 
@@ -167,8 +167,5 @@ const finish = (state: State): ParseResult =>
     },
   );
 
-const parseRpp = (source: string): ParseResult =>
+export const parseRpp = (source: string): ParseResult =>
   finish(Arr.reduce(spans(source, "line", START), EMPTY_STATE, step));
-
-export { parseRpp };
-export type { Chunk, Line, Node, Param, ParseError, ParseResult };

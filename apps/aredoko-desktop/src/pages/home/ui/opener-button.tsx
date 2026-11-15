@@ -21,7 +21,7 @@ const OPENERS = {
   reveal: { open: revealItemInDir, Icon: FolderSearch, label: "エクスプローラーで表示" },
 } as const satisfies Record<string, Opener>;
 
-const OpenerButton = ({
+export const OpenerButton = ({
   opens,
   target,
 }: Readonly<{ opens: keyof typeof OPENERS; target: string }>): ReactNode => {
@@ -44,5 +44,3 @@ const OpenerButton = ({
     </>
   );
 };
-
-export { OpenerButton };

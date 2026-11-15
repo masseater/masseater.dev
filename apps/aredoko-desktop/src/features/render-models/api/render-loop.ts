@@ -37,11 +37,9 @@ const renderPending = Effect.gen(function* renderPending() {
 
 const renderLoop = renderPending.pipe(Effect.flatMap(Effect.sleep), Effect.forever);
 
-const startRendering = (): (() => void) => {
+export const startRendering = (): (() => void) => {
   const fiber = Effect.runFork(renderLoop);
   return (): void => {
     Effect.runFork(Fiber.interrupt(fiber));
   };
 };
-
-export { startRendering };

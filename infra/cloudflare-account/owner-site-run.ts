@@ -3,7 +3,7 @@ import type { UserConfig } from "vite-plus";
 
 import { alchemyTasks } from "./run-tasks.ts";
 
-const ownerSiteRun = ({
+export const ownerSiteRun = ({
   host,
   paths,
 }: Readonly<{ host: string; paths: readonly string[] }>): NonNullable<UserConfig["run"]> => ({
@@ -15,5 +15,3 @@ const ownerSiteRun = ({
     },
   },
 });
-
-export { ownerSiteRun };

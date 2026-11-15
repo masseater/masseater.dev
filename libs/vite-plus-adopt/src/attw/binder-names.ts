@@ -28,7 +28,7 @@ import { EMPTY, hasFlag, withFlags } from "./flags.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-const isNodeValue = (value: unknown): value is Node =>
+export const isNodeValue = (value: unknown): value is Node =>
   Predicate.hasProperty(value, "kind") && Predicate.isNumber(value.kind);
 
 const declaredName = (node: Node): Option.Option<Node> => {
@@ -45,7 +45,7 @@ const syntacticModifierFlags = (node: Node): number => {
   return EMPTY;
 };
 
-const hasSyntacticModifier: {
+export const hasSyntacticModifier: {
   (flag: number): (node: Node) => boolean;
   (node: Node, flag: number): boolean;
 } = Fn.dual(DATA_FIRST_ARITY, (node: Node, flag: number): boolean =>
@@ -74,7 +74,7 @@ const combinedModifierFlags = (node: Node): number => {
   return withList;
 };
 
-const hasExportModifier = (node: Node): boolean =>
+export const hasExportModifier = (node: Node): boolean =>
   hasFlag(combinedModifierFlags(node), ModifierFlags.Export);
 
 const nameOfAccess = (node: AccessExpression): Node => {
@@ -125,7 +125,7 @@ const isGlobalScopeAugmentation = (node: ModuleDeclaration): boolean =>
   node.name.text === "global" &&
   node.keyword !== SyntaxKind.NamespaceKeyword;
 
-const isAmbientModule = (node: Node): node is ModuleDeclaration =>
+export const isAmbientModule = (node: Node): node is ModuleDeclaration =>
   isModuleDeclaration(node) && (isStringLiteral(node.name) || isGlobalScopeAugmentation(node));
 
 const ambientModuleName = (name: Node): string => {
@@ -155,7 +155,7 @@ const unnamedDeclarationName = (node: Node): Option.Option<string> => {
   return Option.none();
 };
 
-const declarationName: {
+export const declarationName: {
   (inJsFile: boolean): (node: Node) => Option.Option<string>;
   (node: Node, inJsFile: boolean): Option.Option<string>;
 } = Fn.dual(DATA_FIRST_ARITY, (node: Node, inJsFile: boolean): Option.Option<string> => {
@@ -175,5 +175,3 @@ const declarationName: {
     onSome: (name) => nameOfNamedDeclaration(node, name),
   });
 });
-
-export { declarationName, hasExportModifier, hasSyntacticModifier, isAmbientModule, isNodeValue };

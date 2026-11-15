@@ -28,7 +28,7 @@ type EnglishScore = Reference["models"][number];
 
 type Scores = Readonly<{ accuracy: number; pairAccuracy: number }>;
 
-type EnglishRow = Readonly<{
+export type EnglishRow = Readonly<{
   model: ModelResult;
   entry: string;
   english: Scores;
@@ -67,7 +67,7 @@ const rowsOf = (model: ModelResult, score: EnglishScore): readonly EnglishRow[] 
     })),
   );
 
-const englishRows: readonly EnglishRow[] = pipe(
+export const englishRows: readonly EnglishRow[] = pipe(
   rankedModels,
   Arr.flatMap((model) =>
     pipe(
@@ -78,7 +78,4 @@ const englishRows: readonly EnglishRow[] = pipe(
   ),
 );
 
-const englishSource = reference.source;
-
-export { englishRows, englishSource };
-export type { EnglishRow };
+export const englishSource = reference.source;

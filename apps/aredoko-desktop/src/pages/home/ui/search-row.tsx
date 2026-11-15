@@ -4,7 +4,7 @@ import { PickFilesButton } from "#/features/library";
 
 import { SearchForm } from "./search-form.tsx";
 
-const SearchRow = (): ReactNode => (
+export const SearchRow = (): ReactNode => (
   <div className="flex gap-2">
     <div className="min-w-0 flex-1">
       <SearchForm />
@@ -12,5 +12,3 @@ const SearchRow = (): ReactNode => (
     <PickFilesButton variant="outline" />
   </div>
 );
-
-export { SearchRow };

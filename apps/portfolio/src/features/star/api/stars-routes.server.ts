@@ -85,9 +85,6 @@ const starRoutes = new Elysia({ prefix: site.starsApiPath, adapter: CloudflareAd
     respond((target) => changed(request, target, removeStar), params),
   );
 
-const handleStars = starRoutes.handle;
+export const handleStars = starRoutes.handle;
 
-type StarRoutes = typeof starRoutes;
-
-export type { StarRoutes };
-export { handleStars };
+export type StarRoutes = typeof starRoutes;

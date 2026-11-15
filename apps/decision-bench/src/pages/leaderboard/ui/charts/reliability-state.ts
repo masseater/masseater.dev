@@ -8,7 +8,7 @@ type LegendItem = Readonly<{ value: string | undefined }>;
 
 type SeriesKey = Readonly<{ model: string; name: string }>;
 
-type SeriesState = Readonly<{
+export type SeriesState = Readonly<{
   hidden: boolean;
   focus: "plain" | "focused" | "faded";
   handleMouseEnter: () => void;
@@ -65,7 +65,9 @@ const modelNamed = ({
   return found ?? NO_FOCUS;
 };
 
-const useSeriesState = ({ task }: Readonly<{ task: string }>): ((model: string) => SeriesState) => {
+export const useSeriesState = ({
+  task,
+}: Readonly<{ task: string }>): ((model: string) => SeriesState) => {
   const hidden = useAtomValue(hiddenAtom(task));
   const focus = useAtomValue(focusAtom(task));
   const setFocus = useAtomSet(focusAtom(task));
@@ -81,7 +83,7 @@ const useSeriesState = ({ task }: Readonly<{ task: string }>): ((model: string) 
   });
 };
 
-const useLegendHandlers = ({
+export const useLegendHandlers = ({
   task,
   series,
 }: Readonly<{ task: string; series: readonly SeriesKey[] }>): LegendHandlers => {
@@ -102,6 +104,3 @@ const useLegendHandlers = ({
     },
   };
 };
-
-export { useLegendHandlers, useSeriesState };
-export type { SeriesState };

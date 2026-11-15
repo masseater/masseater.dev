@@ -34,12 +34,10 @@ const telemetryLayer = (): typeof browserTelemetry | typeof serverTelemetry => {
 };
 
 /** @internal */
-const runtime = ManagedRuntime.make(telemetryLayer());
+export const runtime = ManagedRuntime.make(telemetryLayer());
 
 /** @internal */
-const flushTraces = Effect.gen(function* flushTraces() {
+export const flushTraces = Effect.gen(function* flushTraces() {
   const flusher = yield* OtlpExporter.Flusher;
   yield* flusher.flush;
 });
-
-export { flushTraces, runtime };

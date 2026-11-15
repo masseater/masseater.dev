@@ -6,7 +6,7 @@ import type { PartRow, StaffRole } from "#/entities/catalog/lib/part";
 
 import { PersonLink } from "./person-link";
 
-const PartStaff = ({
+export const PartStaff = ({
   part,
   staffRole,
 }: Readonly<{ part: PartRow; staffRole: StaffRole }>): ReactNode => {
@@ -30,5 +30,3 @@ const PartStaff = ({
     )
   );
 };
-
-export { PartStaff };

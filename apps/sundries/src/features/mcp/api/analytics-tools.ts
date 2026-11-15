@@ -135,7 +135,7 @@ const readReport = Effect.fn("readReport")(function* readReport(query: Query) {
 
 const runHttpTool = runToolIn(FetchHttpClient.layer);
 
-const registerAnalyticsTools =
+export const registerAnalyticsTools =
   (caller: Caller) =>
   (server: McpServer): McpServer => {
     server.registerTool(
@@ -163,5 +163,3 @@ const registerAnalyticsTools =
     );
     return server;
   };
-
-export { registerAnalyticsTools };

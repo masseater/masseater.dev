@@ -23,7 +23,7 @@ const stateOf = (entry: Entry, today: string): Body => {
   return {};
 };
 
-const itemOf =
+export const itemOf =
   (today: string) =>
   (entry: Entry): Body => ({
     ref: refOf(entry.row),
@@ -32,5 +32,3 @@ const itemOf =
     ...stateOf(entry, today),
     ...retractedOf(entry),
   });
-
-export { itemOf };

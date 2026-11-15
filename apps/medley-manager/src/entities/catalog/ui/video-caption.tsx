@@ -4,7 +4,7 @@ import type { VideoKind } from "#/entities/catalog/lib/video-kind";
 
 import { KindBadge } from "./kind-badge";
 
-const VideoCaption = ({
+export const VideoCaption = ({
   video,
   detail,
 }: Readonly<{
@@ -19,5 +19,3 @@ const VideoCaption = ({
     </span>
   </span>
 );
-
-export { VideoCaption };

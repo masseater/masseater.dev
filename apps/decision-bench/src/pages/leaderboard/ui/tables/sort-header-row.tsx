@@ -18,7 +18,7 @@ const ICONS = {
   none: <ArrowUpDown data-icon="inline-end" aria-hidden="true" />,
 } as const;
 
-const SortHeaderRow = <Row,>({
+export const SortHeaderRow = <Row,>({
   table,
   label,
   columns,
@@ -51,5 +51,3 @@ const SortHeaderRow = <Row,>({
     </TableRow>
   );
 };
-
-export { SortHeaderRow };

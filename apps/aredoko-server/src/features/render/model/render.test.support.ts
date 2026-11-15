@@ -9,13 +9,13 @@ import { decodeRows, firstId } from "#shared/sql";
 import { writePackage } from "#shared/unitypackage";
 import type { LooseFile } from "#shared/unitypackage";
 
-const NO_SIZE = 0;
-const FIRST = 0;
-const TEXTURE = "wall.png";
-const MATERIAL = "wall.mtl";
-const MAIN_FILE = Option.getOrNull(Option.none<string>());
+export const NO_SIZE = 0;
+export const FIRST = 0;
+export const TEXTURE = "wall.png";
+export const MATERIAL = "wall.mtl";
+export const MAIN_FILE = Option.getOrNull(Option.none<string>());
 
-const RED_PIXEL = Result.getOrThrow(
+export const RED_PIXEL = Result.getOrThrow(
   Base64.decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADElEQVQImWP4z8AAAAMBAQCc479ZAAAAAElFTkSuQmCC",
   ),
@@ -23,10 +23,10 @@ const RED_PIXEL = Result.getOrThrow(
 
 const StateRow = Schema.Struct({ render: Schema.Int, images: Schema.Int });
 
-const encoded = (text: string): Uint8Array => new TextEncoder().encode(text);
+export const encoded = (text: string): Uint8Array => new TextEncoder().encode(text);
 
 /** @internal */
-const dataInTemporaryFolder = Layer.unwrap(
+export const dataInTemporaryFolder = Layer.unwrap(
   Effect.gen(function* temporaryData() {
     const fileSystem = yield* FileSystem.FileSystem;
     const dataDirectory = yield* fileSystem.makeTempDirectoryScoped();
@@ -40,7 +40,7 @@ const dataInTemporaryFolder = Layer.unwrap(
 ).pipe(Layer.provideMerge(NodeServices.layer));
 
 /** @internal */
-const stateOf = Effect.fn("stateOf")(function* stateOf(assetId: number) {
+export const stateOf = Effect.fn("stateOf")(function* stateOf(assetId: number) {
   const sql = yield* SqlClient.SqlClient;
   const rows = yield* decodeRows(StateRow)(
     sql`select render, (select count(*) from images where asset_id = a.id) as images
@@ -50,7 +50,9 @@ const stateOf = Effect.fn("stateOf")(function* stateOf(assetId: number) {
 });
 
 /** @internal */
-const addPackage = Effect.fn("addPackage")(function* addPackage(files: readonly LooseFile[]) {
+export const addPackage = Effect.fn("addPackage")(function* addPackage(
+  files: readonly LooseFile[],
+) {
   const sql = yield* SqlClient.SqlClient;
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
@@ -76,24 +78,10 @@ const addPackage = Effect.fn("addPackage")(function* addPackage(files: readonly 
 });
 
 /** @internal */
-const stagingExists = Effect.gen(function* stagingExists() {
+export const stagingExists = Effect.gen(function* stagingExists() {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const { dataDirectory } = yield* Settings;
   const entries = yield* fileSystem.readDirectory(path.join(dataDirectory, "render"));
   return entries.length > FIRST;
 });
-
-export {
-  FIRST,
-  MAIN_FILE,
-  MATERIAL,
-  NO_SIZE,
-  RED_PIXEL,
-  TEXTURE,
-  addPackage,
-  dataInTemporaryFolder,
-  encoded,
-  stagingExists,
-  stateOf,
-};

@@ -10,20 +10,20 @@ import {
 
 import type { Aggregate } from "#/features/mcp/model/life-body";
 
-type StatEvent = Readonly<{
+export type StatEvent = Readonly<{
   kind: string;
   day: string;
   values: Readonly<Record<string, unknown>>;
 }>;
 
-type MetricSpec =
+export type MetricSpec =
   | Readonly<{ type: "metric"; metric: string }>
   | Readonly<{ type: "count"; kind: string }>
   | Readonly<{ type: "days"; target: string }>;
 
-type Daily = Readonly<Record<string, number>>;
+export type Daily = Readonly<Record<string, number>>;
 
-type Summary = Readonly<{
+export type Summary = Readonly<{
   value?: number;
   total: number;
   perLoggedDay?: number;
@@ -33,7 +33,7 @@ type Summary = Readonly<{
   daysLogged: number;
 }>;
 
-type DailyInput = Readonly<{
+export type DailyInput = Readonly<{
   spec: MetricSpec;
   aggregate: Aggregate;
   events: readonly StatEvent[];
@@ -47,9 +47,9 @@ const ZERO = 0;
 
 const PRESENT = 1;
 
-const DEFAULT_AGGREGATE: Aggregate = "sum";
+export const DEFAULT_AGGREGATE: Aggregate = "sum";
 
-const parseSpec = (spec: string): MetricSpec => {
+export const parseSpec = (spec: string): MetricSpec => {
   if (pipe(spec, Str.startsWith(COUNT_PREFIX))) {
     return { type: "count", kind: pipe(spec, Str.slice(Str.length(COUNT_PREFIX))) };
   }
@@ -59,7 +59,7 @@ const parseSpec = (spec: string): MetricSpec => {
   return { type: "metric", metric: spec };
 };
 
-const aggregateFor =
+export const aggregateFor =
   (aggregates: Readonly<Record<string, Aggregate>>) =>
   (spec: MetricSpec): Aggregate => {
     if (spec.type === "metric") {
@@ -131,7 +131,7 @@ const dayValue =
     return combine(aggregate, pipe(dayEvents, Arr.map(toNumber), Arr.getSomes));
   };
 
-const dailyOf = ({ events, ...input }: DailyInput): Daily =>
+export const dailyOf = ({ events, ...input }: DailyInput): Daily =>
   pipe(
     events,
     Arr.groupBy((event) => event.day),
@@ -161,7 +161,7 @@ const field = <Key extends string>(
     onSome: (present) => Rec.singleton(key, present),
   });
 
-const summarize =
+export const summarize =
   ({ aggregate, daily }: Readonly<{ aggregate: Aggregate; daily: Daily }>) =>
   (days: readonly string[]): Summary => {
     const values = valuesOn(daily, days);
@@ -177,6 +177,3 @@ const summarize =
       daysLogged,
     };
   };
-
-export { DEFAULT_AGGREGATE, aggregateFor, dailyOf, parseSpec, summarize };
-export type { Daily, DailyInput, MetricSpec, StatEvent, Summary };

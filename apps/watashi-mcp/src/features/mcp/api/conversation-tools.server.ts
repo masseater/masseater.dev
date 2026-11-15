@@ -30,7 +30,7 @@ const reading = (caller: Caller, input: Input, sessionId: string): Promise<CallT
     runTool({ tool: "conversation_read", caller, project: NO_PROJECT, input, count: one }),
   );
 
-const registerConversationTools =
+export const registerConversationTools =
   (caller: Caller) =>
   (server: McpServer): McpServer => {
     server.registerTool(
@@ -50,5 +50,3 @@ const registerConversationTools =
     );
     return server;
   };
-
-export { registerConversationTools };

@@ -11,13 +11,13 @@ const SECOND_DIGITS = 2;
 
 const NONE = 0;
 
-interface Column {
+export interface Column {
   readonly id: string;
   readonly label: string;
   readonly cell: (run: EngineRun) => string;
 }
 
-interface Table {
+export interface Table {
   readonly id: string;
   readonly title: string;
   readonly columns: readonly Column[];
@@ -59,11 +59,8 @@ const categoryTable = ({
   ),
 });
 
-const tablesOf = (summary: JaBenchSummary): readonly Table[] => [
+export const tablesOf = (summary: JaBenchSummary): readonly Table[] => [
   OVERALL,
   categoryTable({ summary, id: "synthetic", title: COPY.synthetic }),
   categoryTable({ summary, id: "jawildtext", title: COPY.jaWildText }),
 ];
-
-export { tablesOf };
-export type { Column, Table };

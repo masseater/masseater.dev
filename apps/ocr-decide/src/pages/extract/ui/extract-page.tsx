@@ -9,7 +9,7 @@ import { PicturePreview } from "./picture-preview";
 import { RunPanel } from "./run-panel";
 import { WayField } from "./way-field";
 
-const ExtractPage = (): ReactNode => (
+export const ExtractPage = (): ReactNode => (
   <main className="vt-match mx-auto flex max-w-2xl flex-col gap-6 px-4 py-12 md:px-8">
     <h1 className="text-2xl font-bold">{COPY.title}</h1>
     <PicturePicker />
@@ -25,5 +25,3 @@ const ExtractPage = (): ReactNode => (
     </Link>
   </main>
 );
-
-export { ExtractPage };

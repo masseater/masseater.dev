@@ -36,7 +36,7 @@ const article = (entry: Entry): JsonLd => ({
   publisher: author,
 });
 
-const entryHead = (loaded: FoundEntry | undefined): Head =>
+export const entryHead = (loaded: FoundEntry | undefined): Head =>
   Option.match(Option.fromUndefinedOr(loaded), {
     onNone: () => notFoundHead,
     onSome: ({ entry }) =>
@@ -54,5 +54,3 @@ const entryHead = (loaded: FoundEntry | undefined): Head =>
         structuredData: [article(entry), breadcrumb(entry)],
       }),
   });
-
-export { entryHead };

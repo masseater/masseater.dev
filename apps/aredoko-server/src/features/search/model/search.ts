@@ -98,7 +98,7 @@ const nameRanking = Effect.fn("nameRanking")(function* rankByName(
 });
 
 /** @internal */
-const search = Effect.fn("search")(function* searchAssets({
+export const search = Effect.fn("search")(function* searchAssets({
   query,
   limit,
   kinds,
@@ -121,5 +121,3 @@ const search = Effect.fn("search")(function* searchAssets({
   const scores = HashMap.fromIterable(ranked);
   return pipe(rows, Array.take(limit), Array.map(resultOf(scores)));
 });
-
-export { search };

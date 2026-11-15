@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useJaBench } from "#/pages/ocr-engines/api/ja-bench-query";
 import type { Column } from "#/pages/ocr-engines/model/tables";
 
-const EngineRows = ({ columns }: Readonly<{ columns: readonly Column[] }>): ReactNode => {
+export const EngineRows = ({ columns }: Readonly<{ columns: readonly Column[] }>): ReactNode => {
   const { runs } = useJaBench();
   return (
     <tbody>
@@ -27,5 +27,3 @@ const EngineRows = ({ columns }: Readonly<{ columns: readonly Column[] }>): Reac
     </tbody>
   );
 };
-
-export { EngineRows };

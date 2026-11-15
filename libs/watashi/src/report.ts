@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Schema, String as Str, pipe } from "effect";
 
-type Finding = Readonly<{
+export type Finding = Readonly<{
   ruleId: string;
   secret: string;
   encoded: boolean;
@@ -70,10 +70,10 @@ const toFinding = (raw: typeof Reported.Type): Finding => {
   };
 };
 
-const parseReport = (stdout: string): Effect.Effect<readonly Finding[], Schema.SchemaError> =>
+export const parseReport = (
+  stdout: string,
+): Effect.Effect<readonly Finding[], Schema.SchemaError> =>
   decodeReport(stdout).pipe(Effect.map(({ findings }) => pipe(findings ?? [], Arr.map(toFinding))));
 
 /** @internal */
-export { parseReport };
 /** @internal */
-export type { Finding };

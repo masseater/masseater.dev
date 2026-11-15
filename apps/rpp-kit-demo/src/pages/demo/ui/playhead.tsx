@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { percentOf } from "#/pages/demo/model/format";
 import { usePlayback } from "#/pages/demo/model/playback";
 
-const Playhead = (): ReactNode => {
+export const Playhead = (): ReactNode => {
   const { position } = usePlayback();
   return (
     <line
@@ -15,5 +15,3 @@ const Playhead = (): ReactNode => {
     />
   );
 };
-
-export { Playhead };

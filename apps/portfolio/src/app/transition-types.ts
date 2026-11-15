@@ -25,7 +25,7 @@ const fromIndex = (
 ): Option.Option<number> =>
   Option.flatMap(Option.fromNullishOr(location), ({ pathname }) => sectionIndex(pathname));
 
-const transitionTypes = ({
+export const transitionTypes = ({
   fromLocation,
   toLocation,
 }: Readonly<{
@@ -36,5 +36,3 @@ const transitionTypes = ({
     onNone: () => ["drift"],
     onSome: ([from, to]) => [direction(from, to)],
   });
-
-export { transitionTypes };

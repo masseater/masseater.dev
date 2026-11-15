@@ -71,7 +71,7 @@ const useDraftText = (): Readonly<{ text: Option.Option<string>; done: boolean }
   return { text: Option.fromNullishOr(query.data), done: query.fetchStatus === "idle" };
 };
 
-const useDrafts = (): void => {
+export const useDrafts = (): void => {
   useStallDraft();
   const editor = useAtomValue(editorAtom);
   const request = useAtomValue(draftRequestAtom);
@@ -89,5 +89,3 @@ const useDrafts = (): void => {
     }
   }, [editor, request, shown, done]);
 };
-
-export { useDrafts };

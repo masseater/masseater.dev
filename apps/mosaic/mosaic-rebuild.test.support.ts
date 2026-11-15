@@ -31,10 +31,10 @@ const EXECUTABLE = 0o755;
 const RUN_ID_BASE = 7000;
 
 const CURRENT = 100;
-const HEAD_SHA = "head-sha";
-const BEFORE_SHA = "before-sha";
+export const HEAD_SHA = "head-sha";
+export const BEFORE_SHA = "before-sha";
 
-interface RunFixture {
+export interface RunFixture {
   readonly number: number;
   readonly status: string;
   readonly jobs: readonly {
@@ -52,7 +52,7 @@ interface Trigger {
   readonly superseding: string;
 }
 
-interface Scenario {
+export interface Scenario {
   readonly event: string;
   readonly before: string;
   readonly superseding: string;
@@ -82,55 +82,55 @@ const deployJob = (deploy: string): JobFixture => ({
 
 const QUEUED_DEPLOY: JobFixture = { name: "mosaic-refresh", status: "queued", steps: [] };
 
-const unrelated = (number: number): RunFixture => ({
+export const unrelated = (number: number): RunFixture => ({
   number,
   status: "completed",
   jobs: [planJob("skipped")],
 });
 
-const deployed = (number: number): RunFixture => ({
+export const deployed = (number: number): RunFixture => ({
   number,
   status: "completed",
   jobs: [planJob("success"), deployJob("success")],
 });
 
-const rebuilding = (number: number): RunFixture => ({
+export const rebuilding = (number: number): RunFixture => ({
   number,
   status: "in_progress",
   jobs: [planJob("success")],
 });
 
-const deployingWeb = (number: number): RunFixture => ({
+export const deployingWeb = (number: number): RunFixture => ({
   number,
   status: "in_progress",
   jobs: [planJob("skipped", "success")],
 });
 
-const awaitingDeploy = (number: number): RunFixture => ({
+export const awaitingDeploy = (number: number): RunFixture => ({
   number,
   status: "in_progress",
   jobs: [planJob("success"), QUEUED_DEPLOY],
 });
 
-const skippedDeploy = (number: number): RunFixture => ({
+export const skippedDeploy = (number: number): RunFixture => ({
   number,
   status: "completed",
   jobs: [planJob("success"), deployJob("skipped")],
 });
 
-const failedDeploy = (number: number): RunFixture => ({
+export const failedDeploy = (number: number): RunFixture => ({
   number,
   status: "completed",
   jobs: [planJob("success"), deployJob("failure")],
 });
 
-const cancelled = (number: number): RunFixture => ({
+export const cancelled = (number: number): RunFixture => ({
   number,
   status: "completed",
   jobs: [planJob("success")],
 });
 
-const shaOf = (number: number): string => `sha-${String(number)}`;
+export const shaOf = (number: number): string => `sha-${String(number)}`;
 
 const idOf = (number: number): number => RUN_ID_BASE + number;
 
@@ -233,7 +233,7 @@ const decide = Effect.fn("decide")(function* decide(
 });
 
 /** @internal */
-const decisionIn = Effect.fn("decisionIn")(function* decisionIn(
+export const decisionIn = Effect.fn("decisionIn")(function* decisionIn(
   script: string,
   scenario: Scenario,
 ) {
@@ -244,25 +244,8 @@ const decisionIn = Effect.fn("decisionIn")(function* decisionIn(
 const UNREADABLE: Trigger = { event: "push", before: BEFORE_SHA, superseding: "" };
 
 /** @internal */
-const decisionWithoutTheApi = Effect.fn("decisionWithoutTheApi")(function* decisionWithoutTheApi(
-  script: string,
-) {
-  return yield* decide(script, [], UNREADABLE);
-});
-
-export {
-  BEFORE_SHA,
-  HEAD_SHA,
-  awaitingDeploy,
-  cancelled,
-  decisionIn,
-  decisionWithoutTheApi,
-  deployed,
-  deployingWeb,
-  failedDeploy,
-  rebuilding,
-  shaOf,
-  skippedDeploy,
-  unrelated,
-};
-export type { RunFixture, Scenario };
+export const decisionWithoutTheApi = Effect.fn("decisionWithoutTheApi")(
+  function* decisionWithoutTheApi(script: string) {
+    return yield* decide(script, [], UNREADABLE);
+  },
+);

@@ -10,13 +10,13 @@ import {
 import { ACCOUNT_CLASSES } from "#/features/mcp/model/accounts";
 import { CATEGORIES } from "#/features/mcp/model/categories";
 
-const accounts = sqliteTable("accounts", {
+export const accounts = sqliteTable("accounts", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   class: text("class", { enum: ACCOUNT_CLASSES }).notNull(),
 });
 
-const imports = sqliteTable("imports", {
+export const imports = sqliteTable("imports", {
   id: text("id").primaryKey(),
   accountId: text("account_id")
     .notNull()
@@ -25,7 +25,7 @@ const imports = sqliteTable("imports", {
   createdAt: integer("created_at").notNull(),
 });
 
-const transactions = sqliteTable(
+export const transactions = sqliteTable(
   "transactions",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
@@ -52,7 +52,7 @@ const transactions = sqliteTable(
   ],
 );
 
-const balances = sqliteTable(
+export const balances = sqliteTable(
   "balances",
   {
     accountId: text("account_id")
@@ -64,11 +64,9 @@ const balances = sqliteTable(
   (table) => [primaryKey({ columns: [table.accountId, table.date] })],
 );
 
-const categoryRules = sqliteTable("category_rules", {
+export const categoryRules = sqliteTable("category_rules", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   pattern: text("pattern").notNull().unique(),
   category: text("category", { enum: CATEGORIES }).notNull(),
   label: text("label"),
 });
-
-export { accounts, balances, categoryRules, imports, transactions };

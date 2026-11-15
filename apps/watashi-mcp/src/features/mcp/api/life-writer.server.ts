@@ -15,22 +15,22 @@ import type { RevisedWrite } from "./revision-writer.server";
 import { attempt, encodeJson, nextAfterMax, nowIso } from "./storage.server";
 import type { WriteFailure } from "./storage.server";
 
-const Snapshot = Schema.Struct({
+export const Snapshot = Schema.Struct({
   source: Schema.Literals(SOURCES),
   body: Schema.Record(Schema.String, Schema.Unknown),
   retractedAt: Schema.String,
   retractReason: Schema.String,
 });
 
-type SnapshotValue = typeof Snapshot.Type;
+export type SnapshotValue = typeof Snapshot.Type;
 
-type NewRecord = Readonly<{ record: LifeRecordName; source: Source; body: Body }>;
+export type NewRecord = Readonly<{ record: LifeRecordName; source: Source; body: Body }>;
 
-type Writer = Readonly<{ actor: string }>;
+export type Writer = Readonly<{ actor: string }>;
 
-type Replacement = Readonly<{ entry: LifeEntry; snapshot: SnapshotValue; op: RevisionOp }>;
+export type Replacement = Readonly<{ entry: LifeEntry; snapshot: SnapshotValue; op: RevisionOp }>;
 
-type Succession = Readonly<{ ended: Replacement; created: NewRecord }>;
+export type Succession = Readonly<{ ended: Replacement; created: NewRecord }>;
 
 type Stamp = Readonly<{ actor: string; now: string }>;
 
@@ -42,7 +42,7 @@ const nextId: Effect.Effect<number, WriteFailure> = attempt(() =>
   db.select({ max: max(lifeRecord.id) }).from(lifeRecord),
 ).pipe(Effect.map(nextAfterMax));
 
-const snapshotOf = ({ row, body }: LifeEntry): SnapshotValue => ({
+export const snapshotOf = ({ row, body }: LifeEntry): SnapshotValue => ({
   source: row.source,
   body,
   retractedAt: row.retractedAt,
@@ -90,7 +90,7 @@ const replacement =
       };
     });
 
-const insertRecord =
+export const insertRecord =
   ({ actor }: Writer) =>
   (created: NewRecord): Effect.Effect<number, StorageFailed> =>
     Effect.gen(function* insertLifeRecord() {
@@ -101,7 +101,7 @@ const insertRecord =
       return id;
     }).pipe(numbered);
 
-const replaceRecord =
+export const replaceRecord =
   ({ actor }: Writer) =>
   (replaced: Replacement): Effect.Effect<void, StorageFailed> =>
     Effect.gen(function* replaceLifeRecord() {
@@ -110,7 +110,7 @@ const replaceRecord =
       yield* commitAll([changed]);
     }).pipe(numbered);
 
-const succeedRecord =
+export const succeedRecord =
   ({ actor }: Writer) =>
   ({ ended, created }: Succession): Effect.Effect<number, StorageFailed> =>
     Effect.gen(function* succeedLifeRecord() {
@@ -121,6 +121,3 @@ const succeedRecord =
       yield* commitAll([changed, inserted]);
       return id;
     }).pipe(numbered);
-
-export { Snapshot, insertRecord, replaceRecord, snapshotOf, succeedRecord };
-export type { NewRecord, Replacement, SnapshotValue, Succession, Writer };

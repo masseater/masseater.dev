@@ -3,7 +3,7 @@ import type { ChangeEventHandler, ReactNode } from "react";
 
 import { TEXT } from "#/pages/ranking/model/labels";
 
-const SongSearch = ({
+export const SongSearch = ({
   query,
   onChange,
 }: Readonly<{ query: string; onChange: (query: string) => void }>): ReactNode => {
@@ -24,5 +24,3 @@ const SongSearch = ({
     />
   );
 };
-
-export { SongSearch };

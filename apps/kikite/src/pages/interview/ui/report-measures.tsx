@@ -7,7 +7,7 @@ import { FactLine } from "./fact-line.tsx";
 import { factsOf } from "./facts.ts";
 import { StrategyTable } from "./strategy-table.tsx";
 
-const ReportMeasures = (): ReactNode => {
+export const ReportMeasures = (): ReactNode => {
   const report = useReport();
   return (
     <section className="text-muted-foreground flex flex-col gap-6 border-t pt-8 text-sm">
@@ -21,5 +21,3 @@ const ReportMeasures = (): ReactNode => {
     </section>
   );
 };
-
-export { ReportMeasures };

@@ -7,7 +7,7 @@ import { Sts2Failed } from "./errors.ts";
 
 type Observation = Readonly<{ state: GameStateType; print: string; stable: number }>;
 
-type Act = Readonly<{ instance: number; action: ActionType }>;
+export type Act = Readonly<{ instance: number; action: ActionType }>;
 
 const LOCALHOST = "http://127.0.0.1";
 const POLL = "300 millis";
@@ -24,13 +24,13 @@ const urlOf = (instance: number, path: string): string =>
 
 const failed = (cause: unknown): Sts2Failed => Sts2Failed.make({ message: String(cause) });
 
-const state = Effect.fn("bridge.state")(function* state(instance: number) {
+export const state = Effect.fn("bridge.state")(function* state(instance: number) {
   const response = yield* HttpClient.get(urlOf(instance, "/state"));
   const ok = yield* HttpClientResponse.filterStatusOk(response);
   return yield* HttpClientResponse.schemaBodyJson(GameState)(ok);
 }, Effect.mapError(failed));
 
-const act = Effect.fn("bridge.act")(function* act({ instance, action }: Act) {
+export const act = Effect.fn("bridge.act")(function* act({ instance, action }: Act) {
   const request = yield* HttpClientRequest.schemaBodyJson(Action)(action)(
     HttpClientRequest.post(urlOf(instance, "/action")),
   );
@@ -39,7 +39,7 @@ const act = Effect.fn("bridge.act")(function* act({ instance, action }: Act) {
   return yield* HttpClientResponse.schemaBodyJson(ActionResult)(ok);
 }, Effect.mapError(failed));
 
-const screenshot = Effect.fn("bridge.screenshot")(function* screenshot(instance: number) {
+export const screenshot = Effect.fn("bridge.screenshot")(function* screenshot(instance: number) {
   const response = yield* HttpClient.get(urlOf(instance, "/screenshot"));
   const ok = yield* HttpClientResponse.filterStatusOk(response);
   const buffer = yield* ok.arrayBuffer;
@@ -74,7 +74,7 @@ const observe = Effect.fn("bridge.observe")(function* observe(
   return observation;
 });
 
-const settle = Effect.fn("bridge.settle")(function* settle(instance: number) {
+export const settle = Effect.fn("bridge.settle")(function* settle(instance: number) {
   const last = yield* Ref.make(Option.none<Observation>());
   const settled = yield* observe(instance, last).pipe(
     Effect.repeat({
@@ -90,7 +90,7 @@ const settle = Effect.fn("bridge.settle")(function* settle(instance: number) {
   });
 });
 
-const waitReady = Effect.fn("bridge.waitReady")(function* waitReady(instance: number) {
+export const waitReady = Effect.fn("bridge.waitReady")(function* waitReady(instance: number) {
   return yield* state(instance).pipe(
     Effect.retry(Schedule.spaced(RETRY)),
     Effect.timeoutOrElse({
@@ -104,5 +104,3 @@ const waitReady = Effect.fn("bridge.waitReady")(function* waitReady(instance: nu
 });
 
 /** @internal */
-export { act, screenshot, settle, state, waitReady };
-export type { Act };

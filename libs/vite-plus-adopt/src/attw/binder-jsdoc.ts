@@ -53,7 +53,7 @@ const declaresFileTypeAlias = (site: TypeAliasTagSite): boolean =>
   containerIsFile(site.host) &&
   blockScopeIsFile(site.host);
 
-const bindJSDocTypeAliases: {
+export const bindJSDocTypeAliases: {
   (hosts: readonly Node[]): (binding: FileBinding) => void;
   (binding: FileBinding, hosts: readonly Node[]): void;
 } = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, hosts: readonly Node[]): void => {
@@ -63,5 +63,3 @@ const bindJSDocTypeAliases: {
     }
   }
 });
-
-export { bindJSDocTypeAliases };

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { useAsking } from "#/pages/interview/model/hooks";
 
-const AskFailed = (): ReactNode => {
+export const AskFailed = (): ReactNode => {
   const asking = useAsking();
   return (
     asking.status === "failed" && (
@@ -14,5 +14,3 @@ const AskFailed = (): ReactNode => {
     )
   );
 };
-
-export { AskFailed };

@@ -1,6 +1,6 @@
 import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
-const memory = sqliteTable(
+export const memory = sqliteTable(
   "memory",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
@@ -17,7 +17,4 @@ const memory = sqliteTable(
   (table) => [uniqueIndex("memory_project_name_idx").on(table.project, table.name)],
 );
 
-type Memory = typeof memory.$inferSelect;
-
-export { memory };
-export type { Memory };
+export type Memory = typeof memory.$inferSelect;
