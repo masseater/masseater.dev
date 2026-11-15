@@ -20,6 +20,11 @@ export default defineConfig(
           dependsOn: ["aredoko-server#installer:resources"],
           cache: false,
         },
+        "release:windows": {
+          command: "bundle-collect nsis",
+          dependsOn: ["installer"],
+          cache: false,
+        },
         "dev:app": {
           command:
             "set WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222&& set OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318&& set OTEL_TRACES_EXPORTER=otlp&& tauri dev",

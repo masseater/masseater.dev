@@ -1,18 +1,18 @@
 import { run } from "@masseater.dev/component-release";
 import { runMain } from "@masseater.dev/node-main";
-import { Config, Effect, FileSystem, Path, String as Str, pipe } from "effect";
+import { Effect, FileSystem, Path, String as Str, pipe } from "effect";
+import { Argument, Command } from "effect/cli";
 
 import { CLAP, VST3, bundlesWith } from "./bundled.ts";
 
-const OUTPUT = "plugins";
+const OUTPUT = "release-assets";
 
 const slugOf = (name: string): string => pipe(name, Str.toLowerCase, Str.replaceAll(" ", "-"));
 
-runMain("pod-rattle-archive")(
+const command = Command.make("pod-rattle-archive", { platform: Argument.String("platform") }, ({ platform }) =>
   Effect.gen(function* archive() {
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const platform = yield* Config.String("PLATFORM");
     const output = path.resolve(OUTPUT);
     yield* fileSystem.makeDirectory(output, { recursive: true });
     const bundles = yield* bundlesWith(VST3);
@@ -29,3 +29,5 @@ runMain("pod-rattle-archive")(
     );
   }),
 );
+
+runMain("pod-rattle-archive")(Command.run(command, { version: "0.0.0" }));

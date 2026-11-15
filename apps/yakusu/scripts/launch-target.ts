@@ -7,7 +7,7 @@ export const IDENTIFIER = "dev.masseater.yakusu";
 /** @internal */
 export const LOG = "llama-server.log";
 /** @internal */
-export const OUTPUT = "launch";
+export const OUTPUT = "release-reports";
 
 /** @internal */
 export type Requirements =

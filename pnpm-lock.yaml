@@ -1109,6 +1109,9 @@ importers:
       '@effect/vitest':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
+      '@masseater.dev/component-release':
+        specifier: workspace:*
+        version: link:../../libs/component-release
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
@@ -2068,6 +2071,15 @@ importers:
       '@masseater.dev/node-main':
         specifier: workspace:*
         version: link:../../libs/node-main
+      '@masseater.dev/pod-rattle-engine':
+        specifier: workspace:*
+        version: link:../../libs/pod-rattle-engine
+      '@masseater.dev/pod-rattle-host':
+        specifier: workspace:*
+        version: link:../../tools/pod-rattle-host
+      '@masseater.dev/xtask':
+        specifier: workspace:*
+        version: link:../../tools/xtask
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6

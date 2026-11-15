@@ -16,7 +16,16 @@ export default defineConfig(
       tasks: {
         verify: { command: [], dependsOn: ["cargo"] },
         "release:tag": { command: "component-tag yohaku", cache: false },
-        "release:collect": { command: "node scripts/collect.ts", cache: false },
+        "release:windows": {
+          command:
+            "tauri build --bundles nsis --config src-tauri/tauri.release.conf.json && node scripts/collect.ts",
+          cache: false,
+        },
+        "release:macos": {
+          command:
+            "tauri build --bundles app,dmg --config src-tauri/tauri.release.conf.json && node scripts/collect.ts",
+          cache: false,
+        },
         "release:publish": { command: "node scripts/release.ts", cache: false },
         "release:token": { command: "release-please-token yohaku", cache: false },
         "signing-key": { command: "node scripts/signing-key.ts", cache: false },
