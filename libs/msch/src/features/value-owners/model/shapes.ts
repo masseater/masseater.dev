@@ -183,7 +183,8 @@ const matchOf =
             Option.fromUndefinedOr(checker.getPropertyOfType(shapeType, local.name)).pipe(
               Option.exists(
                 (library) =>
-                  declaredBy(shape)(library) && sameProperty(checker, open)(local.type, library),
+                  declaredBy(shape)(library) &&
+                  sameProperty({ checker, open })(local.type, library),
               ),
             ),
           ),

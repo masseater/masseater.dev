@@ -14,8 +14,13 @@ export const openTypeIdsOf = (checker: Checker): OpenTypeIds => ({
   unknown: checker.getUnknownType().id,
 });
 
+export interface PropertyContext {
+  readonly checker: Checker;
+  readonly open: OpenTypeIds;
+}
+
 export const sameProperty =
-  (checker: Checker, open: OpenTypeIds) =>
+  ({ checker, open }: PropertyContext) =>
   (localType: Type, library: TypeSymbol): boolean => {
     const libraryType = checker.getTypeOfSymbol(library);
     return (

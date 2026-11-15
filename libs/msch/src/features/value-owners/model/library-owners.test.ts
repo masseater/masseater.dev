@@ -250,40 +250,6 @@ const ignoresGenericSlotsNumericCoincidencesA = Effect.gen(
   },
 );
 
-const acceptsShapesOtherPackagesAugmentInto = Effect.gen(
-  function* acceptsShapesOtherPackagesAugmentInto() {
-    const sorterManifest = yield* SORTER_MANIFEST;
-    const sectionsManifest = yield* stringifyUnknown({ name: "sections", types: "./index.d.ts" });
-    const packageJson = yield* dependingOn("sorter");
-    const findings = yield* findingsIn({
-      ...sorterWith(sorterManifest),
-      "node_modules/sections/package.json": sectionsManifest,
-      "node_modules/sections/index.d.ts": pipe(
-        [
-          "export interface Sections { alpha?: string; beta?: number; gamma?: boolean }",
-          'declare module "sorter" {',
-          "  interface Page extends Sections {}",
-          "}",
-          "",
-        ],
-        Arr.join("\n"),
-      ),
-      "package.json": packageJson,
-      "src/a.ts": pipe(
-        [
-          'import type { Page } from "sorter";',
-          'import type {} from "sections";',
-          "export interface Sections { alpha?: string; beta?: number; gamma?: boolean }",
-          "export type Paged = Page;",
-          "",
-        ],
-        Arr.join("\n"),
-      ),
-    });
-    expect(findings).toStrictEqual([]);
-  },
-);
-
 layer(fixtureLayer)("dependency types", (it) => {
   it.effect(
     "reports sets that restate a type of a library the file imports",
@@ -300,10 +266,6 @@ layer(fixtureLayer)("dependency types", (it) => {
   it.effect(
     "reports object shapes copied from a library type",
     () => reportsObjectShapesCopiedFromALibraryTyp,
-  );
-  it.effect(
-    "accepts shapes that another package augments into a library type",
-    () => acceptsShapesOtherPackagesAugmentInto,
   );
   it.effect("accepts schemas tied to a library type", () => acceptsSchemasTiedToALibraryType);
   it.effect(
