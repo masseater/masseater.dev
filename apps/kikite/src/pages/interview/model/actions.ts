@@ -1,13 +1,11 @@
 import { Effect } from "effect";
 
-import { ask } from "./ask.ts";
+import { heardFailure, heardInterim, heardSound, heardSpeech } from "#/entities/interview";
+import { ask, nudge, summarize, wrapUp, wrapUpIfAsked } from "#/features/ask-question";
+import { typing } from "#/features/voice-input";
+import { runners } from "#/shared/lib/runners";
+
 import { assistWith } from "./assist.ts";
-import { heardFailure, heardInterim, heardSound, heardSpeech } from "./heard.ts";
-import { nudge } from "./nudge.ts";
-import { runners } from "./runners.ts";
-import { summarize } from "./summarize.ts";
-import { typing } from "./typing.ts";
-import { wrapUp, wrapUpIfAsked } from "./wrap.ts";
 
 type Actions = Readonly<{
   wrapUp: () => void;

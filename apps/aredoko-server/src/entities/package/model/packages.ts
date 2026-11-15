@@ -3,7 +3,7 @@ import type { Package } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, Option, Record, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { decodeRows } from "#shared/sql";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 import { StoredSummary } from "./summary.ts";
 

@@ -3,7 +3,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { mosaicQuery } from "#/pages/mosaic/api/queries";
+import { mosaicQuery } from "#/entities/mosaic";
 
 import { MosaicCredit } from "./mosaic-credit";
 import { MosaicLoading } from "./mosaic-loading";

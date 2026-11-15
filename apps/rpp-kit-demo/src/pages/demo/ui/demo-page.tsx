@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 
+import { Playground } from "#/features/playground";
+
 import { Arrangement } from "./arrangement";
 import { Hero } from "./hero";
-import { Playground } from "./playground";
 import { SongCredit } from "./song-credit";
 
 const DemoPage = (): ReactNode => (

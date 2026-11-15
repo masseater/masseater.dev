@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => ({
       overrides: [
         {
           files: ["src/**/*.{ts,tsx}"],
-          excludeFiles: ["src/features/mcp/api/*-writer.server.ts"],
+          excludeFiles: ["src/**/*-writer.server.ts"],
           rules: {
             "eslint/no-restricted-properties": [
               "error",

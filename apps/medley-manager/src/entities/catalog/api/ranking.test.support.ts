@@ -1,12 +1,8 @@
 import { Effect } from "effect";
 
-import { part, partStaff } from "#/entities/catalog/model/part.table";
-import { person } from "#/entities/catalog/model/person.table";
-import { song } from "#/entities/catalog/model/song.table";
-import { video } from "#/entities/catalog/model/video.table";
-
-import { resetDatabase } from "./d1.test.support";
-import { catalogDb } from "./db.server";
+import { part, partStaff, person, song, video } from "#/shared/db";
+import { catalogDb } from "#/shared/db/index.server";
+import { resetDatabase } from "#/shared/db/index.test.support";
 
 type Songs = Readonly<{ unused: number; once: number; twiceLater: number; twiceEarlier: number }>;
 

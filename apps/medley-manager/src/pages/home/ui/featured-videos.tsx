@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/catalog";
+import { VideoList } from "#/entities/video";
 import { videosQuery } from "#/pages/home/api/loader";
 import { SectionHeading } from "#/shared/ui/section-heading";
 

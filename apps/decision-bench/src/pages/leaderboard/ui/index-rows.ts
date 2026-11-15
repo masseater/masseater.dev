@@ -1,10 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 
-import { colorOf } from "#/pages/leaderboard/model/model-color";
-import type { ModelResult } from "#/pages/leaderboard/model/summary";
-
-import type { ChartRow } from "./charts/chart-row";
-import { indexDetail } from "./charts/model-detail";
+import { colorOf, indexDetail } from "#/entities/benchmark";
+import type { ModelResult, ChartRow } from "#/entities/benchmark";
 
 const rowsOf = (models: readonly ModelResult[]): readonly ChartRow[] =>
   pipe(

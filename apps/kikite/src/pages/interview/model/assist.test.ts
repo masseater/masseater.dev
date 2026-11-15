@@ -5,10 +5,12 @@ import type { HttpClientRequest } from "effect/http";
 import { AtomRegistry } from "effect/reactivity";
 import { vi } from "vite-plus/test";
 
-import { entriesAtom, heardAtom, leadsAtom, summaryAtom } from "./atoms.ts";
-import type { Entry, Input } from "./atoms.ts";
+import { entriesAtom, heardAtom, leadsAtom, summaryAtom } from "#/entities/interview";
+import type { Entry } from "#/entities/interview";
+import type { Input } from "#/entities/interview/index.test.support";
+import { read, write } from "#/shared/lib/registry";
+
 import { correct } from "./correction.ts";
-import { read, write } from "./registry.ts";
 import { research } from "./research.ts";
 
 const ORIGIN = "https://kikite.test";

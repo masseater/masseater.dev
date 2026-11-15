@@ -2,7 +2,7 @@ import { Option } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { KindBadge } from "#/entities/catalog";
+import { KindBadge } from "#/entities/video";
 import { useVideo } from "#/pages/video/api/use-video";
 import { formatDate } from "#/shared/lib/date";
 import { Facts } from "#/shared/ui/facts";

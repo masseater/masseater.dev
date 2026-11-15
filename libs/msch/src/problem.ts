@@ -26,6 +26,7 @@ const RuleNameSchema = Schema.Literals([
   "unverified-crate",
   "hidden-verify",
   "root-workspace-path",
+  "colocated-test",
   "comment",
 ]);
 

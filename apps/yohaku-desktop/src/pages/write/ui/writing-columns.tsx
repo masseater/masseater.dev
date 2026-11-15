@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
-import { EditorSurface } from "./editor-surface.tsx";
+import { EditorSurface } from "#/features/edit-draft";
+
 import { MarginNotes } from "./margin-notes.tsx";
 
 const WritingColumns = (): ReactNode => (

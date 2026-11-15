@@ -1,12 +1,12 @@
 import { Array, Effect, FileSystem, HashMap, Option, Path, Schema, String, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { bundleFolder, hasExtension, mentionedIn } from "#entities/package";
-import type { Folder } from "#entities/package";
-import { blendImageNames, blendModel } from "#shared/blend";
-import { Settings } from "#shared/settings";
-import { decodeRows } from "#shared/sql";
-import { extractAssets } from "#shared/unitypackage";
+import { bundleFolder, hasExtension, mentionedIn } from "#/entities/package/index.ts";
+import type { Folder } from "#/entities/package/index.ts";
+import { blendImageNames, blendModel } from "#/shared/blend/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
+import { extractAssets } from "#/shared/unitypackage/index.ts";
 
 const STAGING = "render";
 const RENDERED = "model";
