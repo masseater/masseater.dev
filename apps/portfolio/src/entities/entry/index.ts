@@ -12,3 +12,6 @@ export { EntryList } from "./ui/entry-list";
 export { EntryMeta } from "./ui/entry-meta";
 export { entryTitleTransition } from "./ui/entry-transition";
 export { Frontmatter } from "./model/entry.ts";
+export { isUnindexedPath } from "./model/category.ts";
+export { FigureNameSchema } from "./model/figure.ts";
+export { SpeakerSchema } from "./model/speaker.ts";

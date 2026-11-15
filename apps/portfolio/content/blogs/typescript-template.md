@@ -38,7 +38,7 @@ D1 のスキーマは `*.table.ts` に書き、`vp run db:generate` でマイグ
 
 ## インフラ
 
-Cloudflare のリソースは [Alchemy](https://alchemy.run) でコードとして定義し、wrangler は使わない。`alchemy.run.ts` が D1 と Worker を定義し、`vp exec alchemy deploy --stage production` でデプロイする。リソース名はすべて `app-name.ts` の `APP_NAME` から組み立て、別の名前が混ざらないことをテストで確かめている[^alchemy]。
+Cloudflare のリソースは [Alchemy](https://alchemy.run) でコードとして定義し、wrangler は使わない。`alchemy.run.ts` が D1 と Worker を定義し、`vp exec alchemy deploy --stage production` でデプロイする。リソース名はすべて `src/shared/config/app-name.ts` の `APP_NAME` から組み立て、別の名前が混ざらないことをテストで確かめている[^alchemy]。
 
 本番の Worker には最初から守りと記録が付いている。独自ドメインのゾーンを持つリポジトリでは、脆弱性スキャナが探る典型的なパスの一覧から WAF のカスタムルールを生成する。生成されるのは次のような式である。
 

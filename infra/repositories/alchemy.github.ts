@@ -7,9 +7,16 @@ import { adopt } from "alchemy/AdoptPolicy";
 import { Array as Arr, Effect, Layer, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { OWNER, hasUpToDateWorkflow, repositories } from "./github-repositories.ts";
-import type { ManagedRepository } from "./github-repositories.ts";
-import { settingsOf, settingsProvider } from "./github-repository-settings.ts";
+import {
+  OWNER,
+  hasUpToDateWorkflow,
+  repositories,
+} from "./src/features/manage-repositories/model/github-repositories.ts";
+import type { ManagedRepository } from "./src/features/manage-repositories/model/github-repositories.ts";
+import {
+  settingsOf,
+  settingsProvider,
+} from "./src/features/manage-repositories/model/github-repository-settings.ts";
 
 const GITHUB_ACTIONS_APP_ID = 15_368;
 

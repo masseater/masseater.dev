@@ -30,9 +30,12 @@
   "sideEffects": [
     "*.css"
   ],
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts",
-    "./schema": "./src/schema.ts",
+    ".": "./src/app/index.ts",
+    "./schema": "./src/entities/article/model/schema.ts",
     "./styles.css": "./src/styles.css",
     "./package.json": "./package.json"
   },

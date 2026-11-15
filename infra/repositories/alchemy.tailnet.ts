@@ -4,9 +4,12 @@ import type { CompiledStack } from "alchemy";
 import { Effect, Layer } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { TAILNET_STACK } from "./tailnet-federation.ts";
-import type { Federation } from "./tailnet-federation.ts";
-import { agentTrust, tailscaleProviders } from "./tailscale-trust.ts";
+import { TAILNET_STACK } from "./src/features/join-tailnet/model/tailnet-federation.ts";
+import type { Federation } from "./src/features/join-tailnet/model/tailnet-federation.ts";
+import {
+  agentTrust,
+  tailscaleProviders,
+} from "./src/features/trust-tailscale/model/tailscale-trust.ts";
 
 const tailnetProviders = Layer.provideMerge(tailscaleProviders, providers());
 
