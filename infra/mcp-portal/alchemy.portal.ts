@@ -65,6 +65,7 @@ const upstreams = [
   { id: "mirucord", url: "https://mirucord.masseater.dev/mcp", auth: oauth },
   { id: "medley", url: "https://medley-manager.masseater.dev/mcp", auth: oauth },
   { id: "twilog", url: "https://twilog.masseater.dev/mcp", auth: oauth },
+  { id: "money", url: "https://money.masseater.dev/mcp", auth: oauth },
   { id: "twilog-masseater", url: "https://twilog-mcp.togetter.dev/mcp", auth: oauth },
   { id: "twilog-u1-mas", url: "https://twilog-mcp.togetter.dev/mcp", auth: oauth },
   { id: "atra", url: "https://mcp.atra.bot/mcp", auth: oauth },
@@ -86,9 +87,7 @@ type McpAccessApplicationResource = defineResource<
   Readonly<{ accountId: string; appId: string }>
 >;
 
-const mcpAccessApplication = defineResource<McpAccessApplicationResource>(MCP_ACCESS_APP, {
-  aliases: ["PersonalSpace.McpAccessApplication"],
-});
+const mcpAccessApplication = defineResource<McpAccessApplicationResource>(MCP_ACCESS_APP);
 
 type PortalServersResource = defineResource<
   typeof PORTAL_SERVERS,
@@ -100,9 +99,7 @@ type PortalServersResource = defineResource<
   Readonly<{ accountId: string; portalId: string }>
 >;
 
-const portalServers = defineResource<PortalServersResource>(PORTAL_SERVERS, {
-  aliases: ["PersonalSpace.McpPortalServers"],
-});
+const portalServers = defineResource<PortalServersResource>(PORTAL_SERVERS);
 
 const accountIdOf = flatten(CloudflareEnvironment).pipe(map(({ accountId }) => accountId));
 

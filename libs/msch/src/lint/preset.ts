@@ -23,6 +23,8 @@ type LintConfig = NonNullable<UserConfig["lint"]>;
 
 const resolved = (specifier: string): string => fileURLToPath(import.meta.resolve(specifier));
 
+const DECISION_TIMEOUT_MS = 50_000;
+
 const typedRules = "@r_masseater/oxlint-typed-rules";
 
 const jsPlugins = [
@@ -140,7 +142,10 @@ const lint = {
   rules,
   overrides,
   settings: {
-    [decisionPlugin.meta.name]: { model: "openrouter/typesafe/jev-1.14" },
+    [decisionPlugin.meta.name]: {
+      model: "cloudflare/@cf/qwen/qwen3.8-27b",
+      timeoutMs: DECISION_TIMEOUT_MS,
+    },
   },
   options: {
     typeAware: true,

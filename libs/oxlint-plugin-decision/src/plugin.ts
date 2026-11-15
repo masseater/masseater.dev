@@ -1,6 +1,7 @@
 import type { Plugin, RuleMeta } from "@oxlint/plugins";
 import { Predicate, Array as Arr, Record as Rec, Struct, pipe } from "effect";
 
+import { cloudflare } from "./cloudflare.ts";
 import { openRouter } from "./openrouter.ts";
 import { PREFIX, checkRules, resolveOptions } from "./options.ts";
 import { RULE_OPTIONS_SCHEMA, overrideRule } from "./override.ts";
@@ -69,7 +70,7 @@ const createDecisionPlugin = (setup: DecisionPluginSetup): DecisionPlugin => {
   const name = setup.name ?? DEFAULT_NAME;
   const providers: Readonly<Record<string, DecisionProvider>> = Rec.fromEntries(
     pipe(
-      [openRouter, ...(setup.providers ?? [])],
+      [cloudflare, openRouter, ...(setup.providers ?? [])],
       Arr.map((provider) => [provider.name, provider]),
     ),
   );

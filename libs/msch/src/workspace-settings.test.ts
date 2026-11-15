@@ -21,9 +21,7 @@ const settingsOf = Effect.fn("settingsOf")(function* settingsOf(
   );
 });
 
-const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
-  const settings = yield* settingsOf({
-    "apps/web/vite.config.ts": `import { defineConfig } from "vite-plus";
+const WEB_CONFIG = `import { defineConfig } from "vite-plus";
 
 export default defineConfig(({ mode }) => ({
   msch: {
@@ -38,7 +36,11 @@ export default defineConfig(({ mode }) => ({
   },
   mode,
 }));
-`,
+`;
+
+const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
+  const settings = yield* settingsOf({
+    "apps/web/vite.config.ts": WEB_CONFIG,
     "apps/web/components.json": SHADCN,
     "apps/web/package.json": MANIFEST,
     "libs/own/package.json": `{ "name": "own" }`,
@@ -63,6 +65,7 @@ export default defineConfig(({ mode }) => ({
       publicEntries: [],
     },
     testProjects: ["apps/web"],
+    tasks: { verify: [] },
     devDependencies: {
       "apps/web: spans are sent from the SDK in tests": {
         workspaces: ["apps/web"],
@@ -70,6 +73,16 @@ export default defineConfig(({ mode }) => ({
       },
     },
   });
+});
+
+const readsTasks = Effect.gen(function* readsTasks() {
+  const settings = yield* settingsOf({
+    "libs/own/package.json": `{ "name": "own" }`,
+    "libs/own/vite.config.ts": `export default { run: { tasks: { verify: { command: [], dependsOn: ["lint"] } } } };\n`,
+    "libs/other/package.json": `{ "name": "other" }`,
+    "libs/other/vite.config.ts": `export default { run: { tasks: { build: { command: "vp pack" } } } };\n`,
+  });
+  expect(settings.tasks).toStrictEqual({ verify: ["own#verify"] });
 });
 
 const rejectsRunningCode = Effect.gen(function* rejectsRunningCode() {
@@ -108,8 +121,12 @@ const listsPublicEntries = Effect.gen(function* listsPublicEntries() {
 
 layer(fixtureLayer)("workspace settings", (it) => {
   it.effect(
-    "reads msch settings of each workspace without running it, roots its patterns and leaves out workspaces that test themselves",
+    "reads msch settings and tasks of each workspace without running it, roots its patterns and leaves out workspaces that test themselves",
     () => readsLiteralSettings,
+  );
+  it.effect(
+    "names the verify task of each workspace and the build of each workspace that exports dist",
+    () => readsTasks,
   );
   it.effect("rejects msch settings that need the file to run", () => rejectsRunningCode);
   it.effect("rejects a set the root does not define", () => rejectsUnknownSets);
