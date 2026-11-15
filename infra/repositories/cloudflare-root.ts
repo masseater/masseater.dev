@@ -1,6 +1,17 @@
+import { deleteToken, listTokens } from "@distilled.cloud/cloudflare/accounts";
 import type { CloudflareOpContext } from "@distilled.cloud/cloudflare/accounts";
 import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
-import { Effect, Layer, Redacted, flow } from "effect";
+import {
+  DateTime,
+  Effect,
+  Layer,
+  Option,
+  Redacted,
+  Stream,
+  String as Str,
+  flow,
+  pipe,
+} from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
 import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
@@ -20,3 +31,25 @@ export const cloudflare: (env: RootEnv) => Layer.Layer<CloudflareOpContext> = fl
   ),
   Layer.unwrap,
 );
+
+/** @internal */
+export const sweepIssuedTokens = (
+  accountId: string,
+): Effect.Effect<void, never, CloudflareOpContext> =>
+  Effect.gen(function* sweepExpired() {
+    const now = yield* DateTime.now;
+    const expired = yield* pipe(
+      listTokens.items({ accountId }),
+      Stream.filter(
+        (token) =>
+          Str.startsWith(ISSUED_TOKEN_PREFIX)(token.name ?? "") &&
+          Option.exists(DateTime.make(token.expiresOn ?? ""), DateTime.isLessThan(now)),
+      ),
+      Stream.runCollect,
+    );
+    yield* pipe(
+      expired,
+      Effect.forEach((token) => deleteToken({ accountId, tokenId: token.id ?? "" })),
+    );
+    yield* Effect.logInfo("credential.swept").pipe(Effect.annotateLogs({ count: expired.length }));
+  }).pipe(Effect.catchCause((cause) => Effect.logError("credential.sweep_failed", cause)));
