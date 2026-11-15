@@ -111,3 +111,5 @@ export {
   rowOf,
   setUpAccounts,
 };
+
+export type { Row };

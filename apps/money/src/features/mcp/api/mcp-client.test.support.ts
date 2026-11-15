@@ -95,3 +95,4 @@ const decoded =
     value(name)(args).pipe(Effect.flatMap(Schema.decodeUnknownEffect(schema)), Effect.orDie);
 
 export { call, decoded, value };
+export type { Args, Called, Decodable };
