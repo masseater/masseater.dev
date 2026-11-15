@@ -9,7 +9,6 @@ permissions: {}
 
 concurrency:
   group: nimado
-  queue: max
 
 jobs:
   collect:
