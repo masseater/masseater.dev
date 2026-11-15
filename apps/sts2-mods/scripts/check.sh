@@ -1,17 +1,4 @@
 #!/usr/bin/env bash
-# 静的検査をまとめて走らせる。vp run dotnet と masseater.dev の verify が使う。
-#
-#   1. マニフェスト (mods/<Mod>/<Mod>.json) の中身とフォルダ構成が合っているか
-#   2. 整形 (.editorconfig) … 全 Mod
-#   3. 型チェックとアナライザ (警告はすべてエラー)
-#        - ゲームがある PC: 本物の sts2.dll でビルド
-#        - ゲームが無い環境 (CI・クラウド): build/Sts2Stubs に対してビルド (スタブ対応の Mod だけ)
-#   4. シェルスクリプト (shellcheck が入っていれば)
-#
-# 使い方:
-#   scripts/check.sh            検査だけ
-#   scripts/check.sh --fix      整形とコードスタイルを自動で直してから検査
-#   scripts/check.sh --stubs    ゲームがあってもスタブで検査する (CI と同じ条件)
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
@@ -38,7 +25,6 @@ for dir in mods/*/; do
   [ -f "mods/$mod/$mod.csproj" ] && mods+=("$mod")
 done
 
-# ---- 1. マニフェスト ----
 step "マニフェスト"
 json_bool() { grep -Eq "\"$2\"[[:space:]]*:[[:space:]]*true" "$1"; }
 for mod in "${mods[@]}"; do
@@ -56,7 +42,6 @@ for mod in "${mods[@]}"; do
   fi
 done
 
-# ゲームがあるかどうか (Sts2PathDiscovery.props が見つけた場所を使う)
 data_dir="$(dotnet msbuild "mods/${mods[0]}/${mods[0]}.csproj" -getProperty:Sts2DataDir 2>/dev/null || true)"
 use_stubs=true
 if [ "$force_stubs" = false ] && [ -n "$data_dir" ] && [ -f "$data_dir/sts2.dll" ]; then
@@ -75,11 +60,9 @@ for mod in "${mods[@]}"; do
   if [ "$use_stubs" = true ] && [ "$(dotnet msbuild "$proj" -getProperty:SupportsSts2Stubs)" != "true" ]; then
     typed=false
   fi
-  # コードスタイルを強制しない Mod (テンプレートのままの MyFirstMod など) は整形だけを見る
   strict_style=true
   [ "$(dotnet msbuild "$proj" -getProperty:EnforceCodeStyleInBuild)" = "true" ] || strict_style=false
 
-  # ---- 2. 整形 / 3. 型チェック ----
   step "$mod"
   if [ "$typed" = true ]; then
     dotnet restore "$proj" --disable-build-servers -v q >/dev/null || { fail "$mod: restore"; continue; }
@@ -99,7 +82,6 @@ for mod in "${mods[@]}"; do
   fi
 done
 
-# ---- 4. シェルスクリプト ----
 step "シェルスクリプト"
 if command -v shellcheck >/dev/null; then
   shellcheck scripts/*.sh || fail "shellcheck"

@@ -1,6 +1,3 @@
-// sts2.dll の型の形だけを写したスタブ。Sts2Stubs.csproj の説明を参照。
-// 各型の出典は公開デコンパイルの decompiled/<名前空間>/<型名>.cs
-
 namespace MegaCrit.Sts2.Core.Modding
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
@@ -159,7 +156,6 @@ namespace MegaCrit.Sts2.Core.Models
 
     public abstract class CardModel : AbstractModel
     {
-        // 強化済みなら "+" 付きの表示名
         public string Title => throw null!;
 
         public bool IsUpgraded => throw null!;

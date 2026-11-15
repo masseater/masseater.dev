@@ -23,7 +23,12 @@ interface DevDependencyAllowance {
   readonly dependencies?: readonly string[];
 }
 
+interface CommentSettings {
+  readonly allow: readonly string[];
+}
+
 interface MschConfig {
+  readonly comments?: CommentSettings;
   readonly publish?: PublishSettings;
   readonly lint?: WorkspaceLintSettings;
   readonly devDependencies?: Readonly<Record<string, DevDependencyAllowance>>;
@@ -37,6 +42,7 @@ declare module "vite" {
 }
 
 export type {
+  CommentSettings,
   DevDependencyAllowance,
   InstallSize,
   MschConfig,

@@ -509,6 +509,9 @@ catalogs:
     '@vitejs/plugin-rsc':
       specifier: 0.5.39
       version: 0.5.39
+    '@vscode/tree-sitter-wasm':
+      specifier: 0.3.1
+      version: 0.3.1
     '@webgpu/types':
       specifier: 0.1.74
       version: 0.1.74
@@ -578,6 +581,12 @@ catalogs:
     discord.js:
       specifier: 14.28.1
       version: 14.28.1
+    dockerfile-ast:
+      specifier: 0.7.1
+      version: 0.7.1
+    domhandler:
+      specifier: 6.0.1
+      version: 6.0.1
     driver.js:
       specifier: 1.12.1
       version: 1.12.1
@@ -791,6 +800,9 @@ catalogs:
     smol-toml:
       specifier: 1.9.1
       version: 1.9.1
+    sql-parser-cst:
+      specifier: 0.44.1
+      version: 0.44.1
     sqlite-vec:
       specifier: 0.1.9
       version: 0.1.9
@@ -812,6 +824,9 @@ catalogs:
     three:
       specifier: 0.187.0
       version: 0.187.0
+    toml-eslint-parser:
+      specifier: 1.0.3
+      version: 1.0.3
     tsconfck:
       specifier: 3.1.6
       version: 3.1.6
@@ -3252,6 +3267,15 @@ importers:
       '@shadcn/lint':
         specifier: 'catalog:'
         version: 0.2.5(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))
+      '@vscode/tree-sitter-wasm':
+        specifier: 'catalog:'
+        version: 0.3.1
+      dockerfile-ast:
+        specifier: 'catalog:'
+        version: 0.7.1
+      domhandler:
+        specifier: 'catalog:'
+        version: 6.0.1
       eslint-plugin-baseline-js:
         specifier: 'catalog:'
         version: 0.7.7(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))
@@ -3261,9 +3285,18 @@ importers:
       eslint-plugin-react-hooks:
         specifier: 'catalog:'
         version: 7.1.1(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      htmlparser2:
+        specifier: 'catalog:'
+        version: 12.0.0
       oxlint-plugin-eslint:
         specifier: 'catalog:'
         version: 1.93.0
+      sql-parser-cst:
+        specifier: 'catalog:'
+        version: 0.44.1
+      toml-eslint-parser:
+        specifier: 'catalog:'
+        version: 1.0.3
       yaml:
         specifier: 'catalog:'
         version: 2.9.1
@@ -10632,6 +10665,9 @@ packages:
   '@vscode/l10n@0.0.18':
     resolution: {integrity: sha512-KYSIHVmslkaCDyw013pphY+d7x1qV8IZupYfeIfzNA+nsaWHbn5uPuQRvdRFsa9zFzGeudPuoGoZ1Op4jrJXIQ==}
 
+  '@vscode/tree-sitter-wasm@0.3.1':
+    resolution: {integrity: sha512-RJFoomET6FajjG511fmQxeBQfU6M24a0aFZPqpid+ttIxanWf1VGytBG0UmsGjt07qmIPJS8U31D+aecuCucsQ==}
+
   '@webassemblyjs/ast@1.14.1':
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
 
@@ -11763,6 +11799,9 @@ packages:
   discord.js@14.28.1:
     resolution: {integrity: sha512-Je5OcqgurnIUQK4vR+gQnmzOf/lNQsD6d/UkV8ZOj+bFa5zJXPyiGXlbywp2EagwshVT18y7YNQNSRd3FjYkDw==}
     engines: {node: '>=18'}
+
+  dockerfile-ast@0.7.1:
+    resolution: {integrity: sha512-oX/A4I0EhSkGqrFv0YuvPkBUSYp1XiY8O8zAKc8Djglx8ocz+JfOr8gP0ryRMC2myqvDLagmnZaU9ot1vG2ijw==}
 
   dom-accessibility-api@0.5.16:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
@@ -14917,6 +14956,9 @@ packages:
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
 
+  sql-parser-cst@0.44.1:
+    resolution: {integrity: sha512-hhvRcrtESchH3+xOjXB1OSHpef4jPxe5nAQ04HFhm18x4FGT6AaX+aRWMQdTSJYxXyBMbKhedWzhx/i+0NxM3w==}
+
   sqlite-vec-darwin-arm64@0.1.9:
     resolution: {integrity: sha512-jSsZpE42OfBkGL/ItyJTVCUwl6o6Ka3U5rc4j+UBDIQzC1ulSSKMEhQLthsOnF/MdAf1MuAkYhkdKmmcjaIZQg==}
     cpu: [arm64]
@@ -15242,6 +15284,10 @@ packages:
   token-types@6.1.2:
     resolution: {integrity: sha512-dRXchy+C0IgK8WPC6xvCHFRIWYUbqqdEIKPaKo/AcTUNzwLTK6AH7RjdLWsEZcAN/TBdtfUw3PYEgPr5VPr6ww==}
     engines: {node: '>=14.16'}
+
+  toml-eslint-parser@1.0.3:
+    resolution: {integrity: sha512-A5F0cM6+mDleacLIEUkmfpkBbnHJFV1d2rprHU2MXNk7mlxHq2zGojA+SRvQD1RoMo9gqjZPWEaKG4v1BQ48lw==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
@@ -22071,6 +22117,8 @@ snapshots:
 
   '@vscode/l10n@0.0.18': {}
 
+  '@vscode/tree-sitter-wasm@0.3.1': {}
+
   '@webassemblyjs/ast@1.14.1':
     dependencies:
       '@webassemblyjs/helper-numbers': 1.13.2
@@ -23167,6 +23215,11 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  dockerfile-ast@0.7.1:
+    dependencies:
+      vscode-languageserver-textdocument: 1.0.15
+      vscode-languageserver-types: 3.17.5
 
   dom-accessibility-api@0.5.16: {}
 
@@ -27088,6 +27141,8 @@ snapshots:
 
   sprintf-js@1.0.3: {}
 
+  sql-parser-cst@0.44.1: {}
+
   sqlite-vec-darwin-arm64@0.1.9:
     optional: true
 
@@ -27593,6 +27648,10 @@ snapshots:
       '@borewit/text-codec': 0.2.2
       '@tokenizer/token': 0.3.0
       ieee754: 1.2.1
+
+  toml-eslint-parser@1.0.3:
+    dependencies:
+      eslint-visitor-keys: 5.0.1
 
   totalist@3.0.1: {}
 

@@ -2,7 +2,6 @@ using Godot;
 
 namespace AgentBridge.AgentBridgeCode;
 
-/// <summary>このインスタンスのウィンドウに描かれた画面を PNG にする。</summary>
 internal static class Screenshot
 {
     public static byte[] Capture()
