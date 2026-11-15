@@ -1,6 +1,6 @@
 import { portfolio } from "@masseater.dev/ui/portfolio";
 
-export const sections = ["projects", "blogs", "sloppedia", "nikogori"] as const;
+export const sections = ["projects", "blogs", "sloppedia", "nikogori", "ai-produced"] as const;
 
 export type Section = (typeof sections)[number];
 
@@ -24,6 +24,11 @@ export const sectionMeta = {
     title: portfolio.sections.nikogori,
     description: "AI がコードだけで描いた絵",
     titleTransition: "vt-category-nikogori",
+  },
+  "ai-produced": {
+    title: portfolio.sections["ai-produced"],
+    description: "AI がコードだけで作った曲",
+    titleTransition: "vt-category-ai-produced",
   },
 } as const satisfies Record<
   Section,
