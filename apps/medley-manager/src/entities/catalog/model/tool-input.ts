@@ -1,13 +1,13 @@
 import { Schema } from "effect";
 
-import { VIDEO_KINDS } from "#/entities/video/@x/catalog";
+import { video } from "#/shared/db";
 
 const MIN_ID = 1;
 
 const Id = Schema.Int.check(Schema.isGreaterThanOrEqualTo(MIN_ID));
 const Text = Schema.optionalKey(Schema.String);
 const ClearableText = Schema.optionalKey(Schema.NullOr(Schema.String));
-const Kind = Schema.Literals(VIDEO_KINDS).annotate({
+const Kind = Schema.Literals(video.kind.enumValues).annotate({
   description: "medley=メドレー、collab=合作、single=単品、other=その他",
 });
 const Names = Schema.optionalKey(Schema.Array(Schema.String));
