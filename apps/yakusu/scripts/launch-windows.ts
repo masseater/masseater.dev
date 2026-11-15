@@ -36,7 +36,8 @@ const installed = Effect.fn("launch.windows.installed")(function* installed(loca
 
 const start = Effect.fn("launch.windows.start")(function* start(installers: string) {
   const localAppData = yield* Config.String("LOCALAPPDATA");
-  const installer = yield* firstWith(installers, ".exe");
+  const path = yield* Path.Path;
+  const installer = yield* firstWith(path.join(installers, "nsis"), ".exe");
   yield* succeed({ file: installer, args: ["/S"] });
   const app = yield* installed(localAppData);
   yield* powershell(`Start-Process -FilePath '${app}'`);
