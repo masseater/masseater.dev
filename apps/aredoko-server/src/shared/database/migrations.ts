@@ -102,6 +102,16 @@ const retries = Effect.gen(function* retries() {
   yield* sql`update assets set render = ${PENDING_RENDER} where render = ${OLD_FAILED}`;
 });
 
+const MODEL = "model";
+const RENDERED_ELSEWHERE = "project";
+
+const renderAllModels = Effect.gen(function* renderAllModels() {
+  const sql = yield* SqlClient.SqlClient;
+  yield* sql`update assets set render = ${PENDING_RENDER}, render_attempts = 0, render_retry_at = 0
+    where kind = ${MODEL} and render != ${PENDING_RENDER}
+    and package_id in (select id from packages where kind != ${RENDERED_ELSEWHERE})`;
+});
+
 const init = Effect.all([vectors, library, assets, images], { discard: true });
 
 /** @internal */
@@ -111,4 +121,5 @@ export const migrations = {
   "3_settings": settings,
   "4_attempts": attempts,
   "5_retries": retries,
+  "6_render_all_models": renderAllModels,
 };

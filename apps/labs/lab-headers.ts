@@ -12,7 +12,7 @@ import { CF_BEACON_TOKEN } from "./cloudflare.ts";
 import { ASSETS_DIR, PAGE_SCRIPT_SOURCES } from "./pages.ts";
 
 const HEADERS_FILE = "_headers";
-const PAGE_HTML = /^(?<page>[^/]+)\/index\.html$/u;
+const PAGE_HTML = /^(?<page>.+)\/index\.html$/u;
 const INLINE_STYLE = /<style[^>]*>(?<body>[\s\S]*?)<\/style>/gu;
 
 type PageStyles = Readonly<{ page: string; hashes: readonly string[] }>;

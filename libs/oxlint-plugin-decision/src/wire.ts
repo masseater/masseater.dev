@@ -134,6 +134,19 @@ const yesNoRequestsFor = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<W
   return [request];
 };
 
+const yesNoRequestFor = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<WireRequest> => [
+  {
+    model: request.model,
+    state: stateAsText(request.state),
+    questions: Rec.fromEntries(
+      pipe(
+        Rec.toEntries(request.questions),
+        Arr.flatMap((entry) => asYesNo(entry)),
+      ),
+    ),
+  },
+];
+
 const wireRequestsFor = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<WireRequest> => {
   if (isRespan(request.model)) {
     return yesNoRequestsFor(request);
@@ -177,5 +190,5 @@ const mergeResponses: Merge = Fn.dual(DATA_FIRST_ARITY, merging(withChoices));
 
 const mergeYesNo: Merge = Fn.dual(DATA_FIRST_ARITY, merging(collapseChoices));
 
-export { mergeResponses, mergeYesNo, wireRequestsFor, yesNoRequestsFor };
+export { mergeResponses, mergeYesNo, wireRequestsFor, yesNoRequestFor, yesNoRequestsFor };
 export type { Merge, WireRequest };

@@ -129,6 +129,10 @@
   view-transition-name: category-sloppedia;
 }
 
+@utility vt-category-nikogori {
+  view-transition-name: category-nikogori;
+}
+
 @utility vt-feed {
   view-transition-name: feed-link;
 }
@@ -219,7 +223,8 @@
 ::view-transition-group(nav-indicator),
 ::view-transition-group(category-projects),
 ::view-transition-group(category-blogs),
-::view-transition-group(category-sloppedia) {
+::view-transition-group(category-sloppedia),
+::view-transition-group(category-nikogori) {
   z-index: 2;
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/oxlint-plugin-decision",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Oxlint JS plugin that lints code with plain-English rules answered by models on Cloudflare AI Gateway or decision models on OpenRouter.",
   "keywords": [
     "ai-gateway",
