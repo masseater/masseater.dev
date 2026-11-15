@@ -220,9 +220,7 @@ export default defineConfig({
       ],
       overrides: [
         {
-          files: [
-            "src/{drizzle,react,remotion,tanstack-query,tanstack-router,tanstack-start,ts-compat}.ts",
-          ],
+          files: ["src/ts-compat.ts"],
           rules: { "import/no-default-export": "off" },
         },
       ],
@@ -237,13 +235,9 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["test", "size"] },
-      build: {
-        command: "vp pack",
-        dependsOn: ["@r_masseater/vite-plus-adopt#build"],
-        cache: false,
-      },
+      build: "vp pack",
       test: { command: "vp test run", dependsOn: ["build"] },
-      size: { command: "size-limit", dependsOn: ["build"], cache: false },
+      size: { command: "size-limit", dependsOn: ["build"] },
     },
   },
   pack: {

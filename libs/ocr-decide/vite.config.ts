@@ -4,7 +4,7 @@ export default defineConfig({
   msch: { publish: { installSize: "67 MB" } },
   run: {
     tasks: {
-      build: { command: "vp pack", cache: false },
+      build: "vp pack",
     },
   },
   pack: {

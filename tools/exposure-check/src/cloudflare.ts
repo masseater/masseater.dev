@@ -33,11 +33,11 @@ const collect = <Item, Failure, Context>(
 
 type RawBinding = Readonly<{
   type: string;
-  databaseId?: string | null;
-  namespaceId?: string | null;
-  bucketName?: string | null;
-  indexName?: string | null;
-  id?: string | null;
+  databaseId?: string | null | undefined;
+  namespaceId?: string | null | undefined;
+  bucketName?: string | null | undefined;
+  indexName?: string | null | undefined;
+  id?: string | null | undefined;
 }>;
 
 const STORAGE_KEYS: Readonly<Record<string, keyof RawBinding>> = {
@@ -117,10 +117,10 @@ const bucketsOf = Effect.fn("exposure.buckets")(function* bucketsOf(accountId: s
 });
 
 type RawRecord = Readonly<{
-  name?: string | null;
-  type?: string | null;
-  content?: string | null;
-  proxied?: boolean | null;
+  name?: string | null | undefined;
+  type?: string | null | undefined;
+  content?: string | null | undefined;
+  proxied?: boolean | null | undefined;
 }>;
 
 const recordOf = (record: RawRecord): DnsRecord => ({
@@ -130,7 +130,7 @@ const recordOf = (record: RawRecord): DnsRecord => ({
   proxied: record.proxied === true,
 });
 
-type RawRoute = Readonly<{ pattern: string; script?: string | null }>;
+type RawRoute = Readonly<{ pattern: string; script?: string | null | undefined }>;
 
 const routeOf = (route: RawRoute): readonly WorkerRoute[] =>
   pipe(

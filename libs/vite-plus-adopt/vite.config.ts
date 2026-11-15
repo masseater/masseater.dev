@@ -117,7 +117,7 @@ export default defineConfig({
       ignorePatterns: ["upstream/**"],
       overrides: [
         {
-          files: ["src/{attw/typescript,fsd,fsd-typescript}.ts"],
+          files: ["src/{attw/typescript,fsd-typescript}.ts"],
           rules: { "import/no-default-export": "off" },
         },
       ],
@@ -175,9 +175,9 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["test", "size"] },
-      build: { command: "vp pack", cache: false },
+      build: "vp pack",
       test: { command: "vp test run", dependsOn: ["build"] },
-      size: { command: "size-limit", dependsOn: ["build"], cache: false },
+      size: { command: "size-limit", dependsOn: ["build"] },
     },
   },
 });

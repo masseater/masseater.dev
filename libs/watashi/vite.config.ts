@@ -7,10 +7,7 @@ export default defineConfig({
       overrides: [
         {
           files: ["src/callback-server.ts"],
-          rules: {
-            "import/no-nodejs-modules": ["error", { allow: ["node:http"] }],
-            "effecttsgo/node-builtin-import": "off",
-          },
+          rules: { "effecttsgo/node-builtin-import": "off" },
         },
       ],
     },
@@ -26,7 +23,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      build: { command: "vp pack", cache: false },
+      build: "vp pack",
     },
   },
 });

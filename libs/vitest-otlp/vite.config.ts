@@ -15,10 +15,6 @@ export default defineConfig({
       overrides: [
         { files: ["src/**/*.test.ts"], use: ["otlpInterop"] },
         {
-          files: ["src/grpc.ts", "src/forward.ts", "src/workers.ts"],
-          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http2", "node:url"] }] },
-        },
-        {
           files: ["src/setup.ts"],
           rules: {
             "node/no-process-env": "off",
@@ -30,7 +26,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      build: { command: "vp pack", cache: false },
+      build: "vp pack",
       generate: { command: "buf generate", cache: false },
     },
   },

@@ -3,10 +3,7 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   msch: {
     publish: { installSize: "13 MB" },
-    lint: {
-      ignorePatterns: ["example/**"],
-      overrides: [{ files: ["src/index.ts"], rules: { "import/no-default-export": "off" } }],
-    },
+    lint: { ignorePatterns: ["example/**"] },
   },
   pack: {
     entry: ["src/index.ts", "src/openrouter-app.ts", "src/openrouter-worker.ts"],
@@ -23,7 +20,7 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["test"] },
-      build: { command: "vp pack", cache: false },
+      build: "vp pack",
       test: { command: "vp test run --exclude='tests/*live.test.ts'", dependsOn: ["build"] },
       "test:live": { command: "vp test run live.test", dependsOn: ["build"], cache: false },
     },
