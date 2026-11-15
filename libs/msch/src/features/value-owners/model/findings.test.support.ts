@@ -78,3 +78,26 @@ export const findingsAfterEdit = Effect.fn("findingsAfterEdit")(function* findin
   const after = yield* checkRepository(root);
   return [describe(before), describe(after)] as const;
 });
+
+export type Change = (root: string) => Effect.Effect<void, never, FixtureFiles | RepositoryFiles>;
+
+const cacheEntries = Effect.fn("cacheEntries")(function* cacheEntries(root: string) {
+  const repositoryFiles = yield* RepositoryFiles;
+  yield* checkRepository(root);
+  return yield* repositoryFiles.readDirectory(
+    repositoryFiles.join(root, "node_modules", ".cache", "msch", "value-owners"),
+  );
+});
+
+export const cacheEntriesAfter = Effect.fn("cacheEntriesAfter")(function* cacheEntriesAfter(
+  files: Readonly<Record<string, string>>,
+  change: Change,
+) {
+  const fixtures = yield* FixtureFiles;
+  const root = yield* fixtureRepository(files);
+  yield* fixtures.commitAll(root);
+  const before = yield* cacheEntries(root);
+  yield* change(root);
+  const after = yield* cacheEntries(root);
+  return { before, after };
+});
