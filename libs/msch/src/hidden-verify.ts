@@ -1,8 +1,7 @@
 import { Array as Arr, Effect, Option } from "effect";
 
 import type { Problem, RuleName } from "./problem.ts";
-import { RepositoryFiles } from "./repository-files.ts";
-import { programOf } from "./workspace-config-source.ts";
+import { workspaceConfigOf } from "./workspace-config-source.ts";
 import { workspaceDirectories } from "./workspace-directories.ts";
 import { VERIFY_TASK, definesTask, hasVerifyTask } from "./workspace-tasks.ts";
 
@@ -12,13 +11,11 @@ const FIRST = 1;
 const READ_CONCURRENCY = 8;
 
 const problemIn = Effect.fn("problemIn")(function* problemIn(root: string, directory: string) {
-  const files = yield* RepositoryFiles;
-  const file = files.join(root, directory, CONFIG_FILE);
-  const text = yield* files.readFile(file);
-  if (Option.isNone(text)) {
+  const config = yield* workspaceConfigOf(root, directory);
+  if (Option.isNone(config)) {
     return Option.none<Problem>();
   }
-  const program = yield* programOf(file, text.value);
+  const { file, program } = config.value;
   if (definesTask(VERIFY_TASK)(program)) {
     return Option.none<Problem>();
   }
