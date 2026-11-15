@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",
+    "@masseater.dev/component-release": "workspace:*",
     "@masseater.dev/tauri-app": "workspace:*",
     "@tauri-apps/cli": "catalog:",
     "@types/react": "catalog:",

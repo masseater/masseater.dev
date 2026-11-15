@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use rusqlite::{Connection, params};
 
-use crate::model::ParagraphKind;
+use crate::protocol::ParagraphKind;
 
 pub fn known(
     connection: &Connection,
