@@ -237,8 +237,8 @@ catalogs:
       specifier: 0.19.2
       version: 0.19.2
     '@distilled.cloud/github':
-      specifier: 1.0.0-rc.18
-      version: 1.0.0-rc.18
+      specifier: 1.0.0-rc.19
+      version: 1.0.0-rc.19
     '@earendil-works/chord':
       specifier: 1.5.2
       version: 1.5.2
@@ -847,8 +847,8 @@ catalogs:
       specifier: 2.0.0-beta.85
       version: 2.0.0-beta.85
     '@distilled.cloud/cloudflare':
-      specifier: 1.0.0-rc.18
-      version: 1.0.0-rc.18
+      specifier: 1.0.0-rc.19
+      version: 1.0.0-rc.19
     '@effect/atom-react':
       specifier: 4.1.4
       version: 4.1.4
@@ -990,7 +990,7 @@ importers:
         version: 2.0.0-beta.85(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(alchemy@2.0.0-beta.85(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(ws@8.22.1))(effect@4.1.4)
       '@distilled.cloud/cloudflare':
         specifier: catalog:stack
-        version: 1.0.0-rc.18(effect@4.1.4)
+        version: 1.0.0-rc.19(effect@4.1.4)
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -2285,7 +2285,7 @@ importers:
     dependencies:
       '@distilled.cloud/github':
         specifier: 'catalog:'
-        version: 1.0.0-rc.18(effect@4.1.4)
+        version: 1.0.0-rc.19(effect@4.1.4)
       '@masseater.dev/mcp-tool-call':
         specifier: workspace:*
         version: link:../../libs/mcp-tool-call
@@ -2747,7 +2747,7 @@ importers:
         version: 2.0.0-beta.85(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(alchemy@2.0.0-beta.85(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(ws@8.22.1))(effect@4.1.4)
       '@distilled.cloud/cloudflare':
         specifier: catalog:stack
-        version: 1.0.0-rc.18(effect@4.1.4)
+        version: 1.0.0-rc.19(effect@4.1.4)
       '@masseater.dev/owner-stack':
         specifier: workspace:*
         version: link:../../libs/owner-stack
@@ -2778,7 +2778,7 @@ importers:
         version: 2.0.0-beta.85(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(alchemy@2.0.0-beta.85(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(ws@8.22.1))(effect@4.1.4)
       '@distilled.cloud/cloudflare':
         specifier: catalog:stack
-        version: 1.0.0-rc.18(effect@4.1.4)
+        version: 1.0.0-rc.19(effect@4.1.4)
       '@masseater.dev/owner-stack':
         specifier: workspace:*
         version: link:../../libs/owner-stack
@@ -2809,10 +2809,10 @@ importers:
         version: 0.31.2
       '@distilled.cloud/cloudflare':
         specifier: catalog:stack
-        version: 1.0.0-rc.18(effect@4.1.4)
+        version: 1.0.0-rc.19(effect@4.1.4)
       '@distilled.cloud/github':
         specifier: 'catalog:'
-        version: 1.0.0-rc.18(effect@4.1.4)
+        version: 1.0.0-rc.19(effect@4.1.4)
       '@octokit/rest':
         specifier: 'catalog:'
         version: 22.0.1
@@ -3918,7 +3918,7 @@ importers:
         version: 5.20261110.1
       '@distilled.cloud/cloudflare':
         specifier: catalog:stack
-        version: 1.0.0-rc.18(effect@4.1.4)
+        version: 1.0.0-rc.19(effect@4.1.4)
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -4069,7 +4069,7 @@ importers:
     dependencies:
       '@distilled.cloud/cloudflare':
         specifier: catalog:stack
-        version: 1.0.0-rc.18(effect@4.1.4)
+        version: 1.0.0-rc.19(effect@4.1.4)
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -5347,6 +5347,11 @@ packages:
     peerDependencies:
       effect: ^4.0.5
 
+  '@distilled.cloud/aws4signer@1.0.0-rc.19':
+    resolution: {integrity: sha512-QZ4qOOGp1i8JQeDw+wGl2ha6oIM8aU8V9XSFR0cDoMOD+G7be6lqm2zWlEOYlA08k3eGN9Z/83OGpwukmgCgcg==}
+    peerDependencies:
+      effect: ^4.1.2
+
   '@distilled.cloud/aws@1.0.0-rc.18':
     resolution: {integrity: sha512-VZDlOGEXvXvTdY/0sTEoTWnPCGde+fjvq1ZIW3wgiZK/X8ChbbonGArg+Sc9OO4E9tr1WBymASrZ906uLnLWFw==}
     peerDependencies:
@@ -5357,20 +5362,40 @@ packages:
     peerDependencies:
       effect: ^4.0.5
 
+  '@distilled.cloud/cloudflare@1.0.0-rc.19':
+    resolution: {integrity: sha512-J/pidhpALhW3t9L4FSQt4yt5cbIu3fEAQ/3z+a6ae6Zf8DAXSmMW8aNYX/NHKJ5KP1Qy4/Bq0gLbHILSY8EV7A==}
+    peerDependencies:
+      effect: ^4.1.2
+
   '@distilled.cloud/core@1.0.0-rc.18':
     resolution: {integrity: sha512-Iui60+sNl1CwUu7NKGLuFf3VC4H9xYzfm0Fc8ZQvd87qwf1sDMB3EAWZrq/QFgrwzSY16z2mJ0PNHaBUnGet8A==}
     peerDependencies:
       effect: ^4.0.5
+
+  '@distilled.cloud/core@1.0.0-rc.19':
+    resolution: {integrity: sha512-BO/Q8Q/9Zsv30RyLj8ZddDRBimlsQOGE6SZSVxJJxT0XARErZp/+Hr0xZTqvvhYHO0thSxUas5DteyEs5Z36rQ==}
+    peerDependencies:
+      effect: ^4.1.2
 
   '@distilled.cloud/github@1.0.0-rc.18':
     resolution: {integrity: sha512-SX5EofqqjaHRnTw0RC83qvEQZr11/RcNxqjdsn7kteHvni+1DIgnlRfeHoUD2rVyQEyEPWCYnIOFWysgXUOvSg==}
     peerDependencies:
       effect: ^4.0.5
 
+  '@distilled.cloud/github@1.0.0-rc.19':
+    resolution: {integrity: sha512-N2QfwqrQN+UJkW8V1QrX9llAonVqnqPuBfz53lB7DyQEdzHgSvk188ixIalJmWPot4dDeJrTpWPBjeZRpdCk1Q==}
+    peerDependencies:
+      effect: ^4.1.2
+
   '@distilled.cloud/iceberg@1.0.0-rc.18':
     resolution: {integrity: sha512-XjUJ/vEOylhIZbAm85O9H6YqXKWGfVROT5BE9BGA/RXvo0bLK2+sUcjC6BoN77a99lImJkrXJuvbHBhNebObEA==}
     peerDependencies:
       effect: ^4.0.5
+
+  '@distilled.cloud/s3@1.0.0-rc.19':
+    resolution: {integrity: sha512-p5nk+8jMKvsD/yg69E+qyTTdrlf45YfACWdrjK4A6DsGBcYHL2SlfdPdizdxuIji3EiL9bbqEW/m471CIFvrvQ==}
+    peerDependencies:
+      effect: ^4.1.2
 
   '@drizzle-team/brocli@0.12.1':
     resolution: {integrity: sha512-yHwomvolVafvUXhy5TdiJVkuNCxXn+bKOs2aWiWEQh/5YaV97Oa/abJz3dmx7lxgIUsUlS1Jl4mEfvJPo3YsVw==}
@@ -17211,6 +17236,11 @@ snapshots:
       '@distilled.cloud/core': 1.0.0-rc.18(effect@4.1.4)
       effect: 4.1.4
 
+  '@distilled.cloud/aws4signer@1.0.0-rc.19(effect@4.1.4)':
+    dependencies:
+      '@distilled.cloud/core': 1.0.0-rc.19(effect@4.1.4)
+      effect: 4.1.4
+
   '@distilled.cloud/aws@1.0.0-rc.18(effect@4.1.4)':
     dependencies:
       '@distilled.cloud/aws4signer': 1.0.0-rc.18(effect@4.1.4)
@@ -17222,7 +17252,17 @@ snapshots:
       '@distilled.cloud/core': 1.0.0-rc.18(effect@4.1.4)
       effect: 4.1.4
 
+  '@distilled.cloud/cloudflare@1.0.0-rc.19(effect@4.1.4)':
+    dependencies:
+      '@distilled.cloud/core': 1.0.0-rc.19(effect@4.1.4)
+      '@distilled.cloud/s3': 1.0.0-rc.19(effect@4.1.4)
+      effect: 4.1.4
+
   '@distilled.cloud/core@1.0.0-rc.18(effect@4.1.4)':
+    dependencies:
+      effect: 4.1.4
+
+  '@distilled.cloud/core@1.0.0-rc.19(effect@4.1.4)':
     dependencies:
       effect: 4.1.4
 
@@ -17231,9 +17271,20 @@ snapshots:
       '@distilled.cloud/core': 1.0.0-rc.18(effect@4.1.4)
       effect: 4.1.4
 
+  '@distilled.cloud/github@1.0.0-rc.19(effect@4.1.4)':
+    dependencies:
+      '@distilled.cloud/core': 1.0.0-rc.19(effect@4.1.4)
+      effect: 4.1.4
+
   '@distilled.cloud/iceberg@1.0.0-rc.18(effect@4.1.4)':
     dependencies:
       '@distilled.cloud/core': 1.0.0-rc.18(effect@4.1.4)
+      effect: 4.1.4
+
+  '@distilled.cloud/s3@1.0.0-rc.19(effect@4.1.4)':
+    dependencies:
+      '@distilled.cloud/aws4signer': 1.0.0-rc.19(effect@4.1.4)
+      '@distilled.cloud/core': 1.0.0-rc.19(effect@4.1.4)
       effect: 4.1.4
 
   '@drizzle-team/brocli@0.12.1': {}
