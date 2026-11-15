@@ -10,6 +10,8 @@ import { conversationRead } from "./portal-conversation.server";
 import { lifeRead, memoryRead, memoryWrite, profile } from "./portal-operations.server";
 import { settled } from "./portal-settled.server";
 
+export { MoneyPortal } from "./money-portal.server";
+
 const NOT_FOUND = 404;
 
 const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));

@@ -8,17 +8,16 @@ import { Array as Arr, Clock, Effect, Layer, Match, Option, Predicate, Schema, p
 
 import type { Caller } from "./caller.ts";
 
-export type ToolCall<Tool extends string> = Readonly<{
-  tool: Tool;
+export type ToolCall = Readonly<{
+  tool: string;
   caller: Caller;
   project: string;
   input: unknown;
 }>;
 
-export type MeteredTool<Tool extends string, Value> = ToolCall<Tool> &
-  Readonly<{ count: (value: Value) => number }>;
+export type MeteredTool<Value> = ToolCall & Readonly<{ count: (value: Value) => number }>;
 
-export type InputMeter<Tool extends string> = Omit<ToolCall<Tool>, "input">;
+export type InputMeter = Omit<ToolCall, "input">;
 
 export type FailureText = Readonly<{ errorTag: string; text: string }>;
 
@@ -33,18 +32,18 @@ export type Meter<Failure> = Readonly<{
   describe: (failure: Failure) => FailureText;
 }>;
 
-export type ToolRunner<Tool extends string, Failure, Services> = <Value>(
-  call: MeteredTool<Tool, Value>,
+export type ToolRunner<Failure, Services> = <Value>(
+  call: MeteredTool<Value>,
 ) => (effect: Effect.Effect<Value, Failure, Services>) => Promise<CallToolResult>;
 
-export type ToolCalls<Tool extends string, Failure> = Readonly<{
+export type ToolCalls<Failure> = Readonly<{
   meteredInput: (
-    meter: InputMeter<Tool>,
+    meter: InputMeter,
   ) => <Input, Output>(
     schema: StandardSchemaWithJSON<Input, Output>,
   ) => StandardSchemaWithJSON<Input, Output>;
-  runToolIn: <Services>(services: Layer.Layer<Services>) => ToolRunner<Tool, Failure, Services>;
-  runTool: ToolRunner<Tool, Failure, never>;
+  runToolIn: <Services>(services: Layer.Layer<Services>) => ToolRunner<Failure, Services>;
+  runTool: ToolRunner<Failure, never>;
 }>;
 
 const NO_ERROR = "";
@@ -122,8 +121,8 @@ const toOutcome =
 
 const record =
   (dataset: Meter<unknown>["dataset"]) =>
-  <Tool extends string>(
-    { tool, caller, project, input }: ToolCall<Tool>,
+  (
+    { tool, caller, project, input }: ToolCall,
     outcome: ToolOutcome,
     latencyMs: number,
   ): Effect.Effect<void> =>
@@ -158,11 +157,7 @@ const record =
     );
 
 const recordRejected =
-  <Tool extends string>(
-    dataset: Meter<unknown>["dataset"],
-    meter: InputMeter<Tool>,
-    input: unknown,
-  ) =>
+  (dataset: Meter<unknown>["dataset"], meter: InputMeter, input: unknown) =>
   <Output>(
     result: StandardSchemaV1.Result<Output>,
   ): Effect.Effect<StandardSchemaV1.Result<Output>> =>
@@ -177,7 +172,7 @@ const recordRejected =
     });
 
 const checked =
-  <Tool extends string>(dataset: Meter<unknown>["dataset"], meter: InputMeter<Tool>) =>
+  (dataset: Meter<unknown>["dataset"], meter: InputMeter) =>
   <Input, Output>(
     schema: StandardSchemaWithJSON<Input, Output>,
     value: unknown,
@@ -188,8 +183,8 @@ const checked =
     );
 
 const meteredInputOf =
-  <Tool extends string>(dataset: Meter<unknown>["dataset"]) =>
-  (meter: InputMeter<Tool>) =>
+  (dataset: Meter<unknown>["dataset"]) =>
+  (meter: InputMeter) =>
   <Input, Output>(
     schema: StandardSchemaWithJSON<Input, Output>,
   ): StandardSchemaWithJSON<Input, Output> => ({
@@ -200,9 +195,9 @@ const meteredInputOf =
   });
 
 const runToolInOf =
-  <Tool extends string, Failure>({ dataset, describe }: Meter<Failure>) =>
-  <Services>(services: Layer.Layer<Services>): ToolRunner<Tool, Failure, Services> =>
-  <Value>({ count, ...call }: MeteredTool<Tool, Value>) =>
+  <Failure>({ dataset, describe }: Meter<Failure>) =>
+  <Services>(services: Layer.Layer<Services>): ToolRunner<Failure, Services> =>
+  <Value>({ count, ...call }: MeteredTool<Value>) =>
   (effect: Effect.Effect<Value, Failure, Services>): Promise<CallToolResult> =>
     runner(services)(
       Effect.gen(function* meteredTool() {
@@ -218,12 +213,10 @@ const runToolInOf =
       ),
     );
 
-export const toolCalls = <Tool extends string, Failure>(
-  meter: Meter<Failure>,
-): ToolCalls<Tool, Failure> => {
-  const runToolIn = runToolInOf<Tool, Failure>(meter);
+export const toolCalls = <Failure>(meter: Meter<Failure>): ToolCalls<Failure> => {
+  const runToolIn = runToolInOf<Failure>(meter);
   return {
-    meteredInput: meteredInputOf<Tool>(meter.dataset),
+    meteredInput: meteredInputOf(meter.dataset),
     runToolIn,
     runTool: runToolIn(Layer.empty),
   };
