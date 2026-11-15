@@ -1,9 +1,12 @@
 import { Array as Arr, Option, pipe } from "effect";
-import type { SankeyData } from "recharts";
+import type { SankeyData, TextAnchor, YAxisOrientation } from "recharts";
 
 import type { FlowNodeValue, MoneyFlowValue } from "#/entities/money";
 
-export type Placement = Readonly<{ anchor: "start" | "end"; side: "left" | "right" }>;
+export type Placement = Readonly<{
+  anchor: Exclude<TextAnchor, "middle">;
+  side: YAxisOrientation;
+}>;
 
 const ROW_HEIGHT = 34;
 
