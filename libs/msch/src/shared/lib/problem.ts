@@ -34,6 +34,7 @@ const RuleNameSchema = Schema.Literals([
   "workflow-path",
   "colocated-test",
   "comment",
+  "pass-through-wrapper",
 ]);
 
 export type RuleName = typeof RuleNameSchema.Type;

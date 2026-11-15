@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { signedYen, yen } from "#/entities/money";
+import { SIGNED_YEN, YEN } from "#/entities/money";
 import { useCredentials, useOverview, useRecords } from "#/pages/home/api/home-query";
 import { activitiesOf } from "#/pages/home/model/activity";
 import { weekCount } from "#/pages/home/model/week-count";
@@ -44,8 +44,8 @@ export const HomeStats = (): ReactNode => {
     <div className="grid min-w-0 gap-5 sm:grid-cols-2 xl:grid-cols-4">
       <Stat
         label={TEXT.balance}
-        note={`収入 ${yen(month.income)} ・ 支出 ${yen(month.expense)}`}
-        value={signedYen(month.income - month.expense)}
+        note={`収入 ${YEN.format(month.income)} ・ 支出 ${YEN.format(month.expense)}`}
+        value={SIGNED_YEN.format(month.income - month.expense)}
       />
       <Stat
         label={TEXT.records}

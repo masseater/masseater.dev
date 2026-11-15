@@ -1,7 +1,7 @@
 import { Number as Num, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { yen } from "#/entities/money";
+import { YEN } from "#/entities/money";
 
 type SheetLabelProps = Readonly<{
   x?: number | string;
@@ -60,7 +60,7 @@ export const SheetLabel = ({ height, title, value, width, x, y }: SheetLabelProp
         {title}
       </tspan>
       <tspan className="tabular-nums" dy={LINE * HALF} x={center.x}>
-        {yen(amount)}
+        {YEN.format(amount)}
       </tspan>
     </text>
   );

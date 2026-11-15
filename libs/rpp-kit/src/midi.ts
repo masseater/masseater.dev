@@ -67,17 +67,17 @@ const silentOf = (node: Node): Event => ({
   velocity: ZERO,
 });
 
-const isNote = (token: string): boolean => NOTE_EVENTS.has(token);
-
-const isMuted = (token: string): boolean => MUTED_EVENTS.has(token);
-
-const isExtended = (token: string): boolean => EXTENDED_EVENTS.has(token);
-
 const eventsOf = (node: Node): readonly Event[] =>
   Match.value(node).pipe(
-    Match.when({ kind: "line", token: isNote }, (line) => [eventOf(line)]),
-    Match.when({ kind: "line", token: isMuted }, (line) => [silentOf(line)]),
-    Match.when({ kind: "chunk", token: isExtended }, (chunk) => [silentOf(chunk)]),
+    Match.when({ kind: "line", token: (token) => NOTE_EVENTS.has(token) }, (line) => [
+      eventOf(line),
+    ]),
+    Match.when({ kind: "line", token: (token) => MUTED_EVENTS.has(token) }, (line) => [
+      silentOf(line),
+    ]),
+    Match.when({ kind: "chunk", token: (token) => EXTENDED_EVENTS.has(token) }, (chunk) => [
+      silentOf(chunk),
+    ]),
     Match.orElse(() => []),
   );
 
