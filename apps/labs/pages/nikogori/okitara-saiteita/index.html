@@ -1,0 +1,2130 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>起きたら咲いていた | masseater.dev</title>
+    <style>
+      /* one sheet of toned pastel paper hung on a quiet wall; nothing else on the page */
+      :root {
+        --wall: #cdc7be;
+        --shade: rgba(40, 30, 50, 0.34);
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --wall: #131217;
+          --shade: rgba(0, 0, 0, 0.7);
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --wall: #131217;
+        --shade: rgba(0, 0, 0, 0.7);
+        color-scheme: dark;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        box-sizing: border-box;
+        background: var(--wall);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        padding-block: 16px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+      }
+      canvas {
+        display: block;
+        width: min(100%, calc((100vh - 32px)*16/9));
+        width: min(100%, calc((100dvh - 32px)*16/9));
+        height: auto;
+        aspect-ratio: 16/9;
+        box-shadow:
+          0 1px 2px var(--shade),
+          0 14px 44px var(--shade);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas
+      id="c"
+      width="2560"
+      height="1440"
+      role="img"
+      aria-label="藍色の紙にパステルと色鉛筆で描いた、夜の側から朝の光の側へ咲きひろがる朝顔"
+    ></canvas>
+    <script type="module">
+      (() => {
+        "use strict";
+        /* Media: hand-rolled soft pastel sticks, pastel pencil, willow charcoal and white chalk
+         on a sheet of indigo-grey sanded paper. Every mark below is a stroke of one of those. */
+        const W = 2560,
+          H = 1440,
+          PI = Math.PI,
+          TAU = PI * 2;
+        const cv = document.getElementById("c"),
+          g = cv.getContext("2d");
+        const mk = (w, h) => {
+          const c = document.createElement("canvas");
+          c.width = Math.max(1, Math.round(w));
+          c.height = Math.max(1, Math.round(h));
+          return c;
+        };
+        const S = mk(W, H),
+          s = S.getContext("2d");
+
+        /* ---------- hand jitter ---------- */
+        let sd = 0x51f15eed;
+        const R = () => {
+          sd = (sd + 0x6d2b79f5) | 0;
+          let t = Math.imul(sd ^ (sd >>> 15), 1 | sd);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+        const rr = (a, b) => a + (b - a) * R();
+        const gs = () => (R() + R() + R() + R() - 2) * 1.732;
+        const cl = (v, a = 0, b = 1) => (v < a ? a : v > b ? b : v);
+        const lerp = (a, b, t) => a + (b - a) * t;
+        const sst = (a, b, x) => {
+          const t = cl((x - a) / (b - a));
+          return t * t * (3 - 2 * t);
+        };
+        const h2 = (x, y, k) => {
+          let n =
+            (Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(k, 1442695041)) | 0;
+          n = Math.imul(n ^ (n >>> 13), 1274126177);
+          return ((n ^ (n >>> 16)) >>> 0) / 4294967296;
+        };
+        function vn(x, y, k = 0) {
+          const ix = Math.floor(x),
+            iy = Math.floor(y),
+            fx = x - ix,
+            fy = y - iy,
+            u = fx * fx * (3 - 2 * fx),
+            v = fy * fy * (3 - 2 * fy);
+          const a = h2(ix, iy, k),
+            b = h2(ix + 1, iy, k),
+            c = h2(ix, iy + 1, k),
+            d = h2(ix + 1, iy + 1, k);
+          return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+        }
+        function fbm(x, y, k = 0, o = 3) {
+          let v = 0,
+            a = 0.5,
+            f = 1,
+            n = 0;
+          for (let i = 0; i < o; i++) {
+            v += a * vn(x * f, y * f, k + i * 17);
+            n += a;
+            a *= 0.5;
+            f *= 2;
+          }
+          return v / n;
+        }
+        const tick = () => new Promise((r) => setTimeout(r, 0));
+
+        /* ---------- pigments ---------- */
+        const mix = (a, b, t) => [
+          a[0] + (b[0] - a[0]) * t,
+          a[1] + (b[1] - a[1]) * t,
+          a[2] + (b[2] - a[2]) * t,
+        ];
+        const css = (c, a = 1, d = 0) =>
+          "rgba(" +
+          (cl(c[0] + d, 0, 255) | 0) +
+          "," +
+          (cl(c[1] + d, 0, 255) | 0) +
+          "," +
+          (cl(c[2] + d, 0, 255) | 0) +
+          "," +
+          cl(a).toFixed(3) +
+          ")";
+        const ODD = [
+          [255, 150, 90],
+          [90, 210, 200],
+          [240, 110, 170],
+          [120, 110, 230],
+          [250, 220, 110],
+          [70, 150, 120],
+        ];
+        function jit(c, k = 1) {
+          const d = gs() * 8 * k,
+            w = gs() * 7 * k;
+          let o = [cl(c[0] + d + w, 0, 255), cl(c[1] + d, 0, 255), cl(c[2] + d - w, 0, 255)];
+          if (R() < 0.07 * k) o = mix(o, ODD[(R() * ODD.length) | 0], 0.22);
+          return o;
+        }
+        const PAPER = [43, 41, 69];
+        function tone(c, L) {
+          const d = mix([c[0] * 0.42, c[1] * 0.44, c[2] * 0.62], [26, 30, 96], 0.28),
+            l = mix(c, [255, 238, 206], 0.36);
+          return L < 0.5 ? mix(d, c, L * 2) : mix(c, l, (L - 0.5) * 2);
+        }
+
+        /* ---------- the light: low, warm, from beyond the upper-left corner ---------- */
+        const P0 = [-500, -520];
+        const SH = [
+          [32, 3.4, 1.25],
+          [21.5, 1.8, 0.75],
+          [44, 2.6, 0.8],
+          [56, 1.6, 0.55],
+          [13, 1.3, 0.5],
+          [67, 2.2, 0.45],
+        ];
+        function shaft(x, y) {
+          const th = Math.atan2(y - P0[1], x - P0[0]) * 57.29578;
+          let v = 0;
+          for (const b of SH) {
+            const d = (th - b[0]) / b[1],
+              e = Math.exp(-d * d) * b[2];
+            if (e > v) v = e;
+          }
+          return v;
+        }
+        function LT(x, y) {
+          const d = Math.hypot(x - P0[0], y - P0[1]),
+            base = cl(1.22 - d / 2600),
+            n = fbm(x / 260, y / 260, 7, 3);
+          return cl(base * (0.62 + 0.56 * n) + shaft(x, y) * (0.3 + 0.5 * base) + (n - 0.5) * 0.1);
+        }
+        const RAMP = [
+          [0, [17, 21, 52]],
+          [0.13, [25, 44, 92]],
+          [0.27, [58, 60, 128]],
+          [0.41, [120, 86, 150]],
+          [0.55, [194, 116, 142]],
+          [0.69, [240, 158, 134]],
+          [0.84, [252, 204, 152]],
+          [1, [255, 238, 196]],
+        ];
+        function ramp(t) {
+          t = cl(t);
+          for (let i = 1; i < RAMP.length; i++)
+            if (t <= RAMP[i][0]) {
+              const a = RAMP[i - 1],
+                b = RAMP[i];
+              return mix(a[1], b[1], (t - a[0]) / (b[0] - a[0]));
+            }
+          return RAMP[RAMP.length - 1][1];
+        }
+        function BG(x, y) {
+          let L = LT(x, y);
+          const m = fbm(x / 380 + 9, y / 380 + 3, 21, 3);
+          L = cl(L * (0.55 + 0.9 * m));
+          let c = ramp(L);
+          const tl = fbm(x / 520, y / 300, 33, 2);
+          return mix(c, [20, 74, 82], cl((tl - 0.45) * 2.2) * (1 - L) * 0.75);
+        }
+
+        /* ---------- paper tooth ---------- */
+        const T = 1024,
+          hg = new Float32Array(T * T);
+        (() => {
+          const vt = (x, y, k, p) => {
+            const ix = Math.floor(x),
+              iy = Math.floor(y),
+              fx = x - ix,
+              fy = y - iy,
+              u = fx * fx * (3 - 2 * fx),
+              v = fy * fy * (3 - 2 * fy),
+              x0 = ((ix % p) + p) % p,
+              x1 = (x0 + 1) % p,
+              y0 = ((iy % p) + p) % p,
+              y1 = (y0 + 1) % p;
+            const a = h2(x0, y0, k),
+              b = h2(x1, y0, k),
+              c = h2(x0, y1, k),
+              d = h2(x1, y1, k);
+            return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+          };
+          for (let y = 0; y < T; y++)
+            for (let x = 0; x < T; x++)
+              hg[y * T + x] =
+                0.32 * vt(x / 2, y / 2, 11, T / 2) +
+                0.26 * vt(x / 4, y / 4, 12, T / 4) +
+                0.15 * vt(x / 8, y / 8, 13, T / 8) +
+                0.1 * vt(x / 32, y / 32, 14, T / 32) +
+                0.06 * vt(x / 128, y / 128, 15, T / 128) +
+                0.11 * h2(x, y, 16);
+          const bins = new Uint32Array(2048);
+          for (let i = 0; i < T * T; i++) bins[Math.min(2047, (hg[i] * 2048) | 0)]++;
+          const cdf = new Float32Array(2048);
+          let acc = 0;
+          for (let i = 0; i < 2048; i++) {
+            acc += bins[i];
+            cdf[i] = acc / (T * T);
+          }
+          for (let i = 0; i < T * T; i++) hg[i] = cdf[Math.min(2047, (hg[i] * 2048) | 0)];
+        })();
+        const COV = [0.14, 0.27, 0.42, 0.58, 0.74, 0.88, 0.975];
+        const tooth = COV.map((c) => {
+          const t = mk(T, T),
+            x = t.getContext("2d"),
+            im = x.createImageData(T, T),
+            d = im.data,
+            th = 1 - c;
+          for (let i = 0; i < T * T; i++) {
+            d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = 255;
+            d[i * 4 + 3] = cl((hg[i] - th) / 0.1 + 0.5) * 255;
+          }
+          x.putImageData(im, 0, 0);
+          return s.createPattern(t, "repeat");
+        });
+        const relief = (() => {
+          const t = mk(T, T),
+            x = t.getContext("2d"),
+            im = x.createImageData(T, T),
+            d = im.data;
+          for (let y = 0; y < T; y++)
+            for (let xx = 0; xx < T; xx++) {
+              const a = hg[((y + T - 1) % T) * T + ((xx + T - 1) % T)],
+                b = hg[((y + 1) % T) * T + ((xx + 1) % T)],
+                v = cl(0.5 + (a - b) * 0.3) * 255,
+                i = (y * T + xx) * 4;
+              d[i] = d[i + 1] = d[i + 2] = v;
+              d[i + 3] = 255;
+            }
+          x.putImageData(im, 0, 0);
+          return g.createPattern(t, "repeat");
+        })();
+
+        /* ---------- laying a mark down: draw on a scratch sheet, let the tooth bite it, press it onto the paper ---------- */
+        let bb = null;
+        const tch = (x, y, r) => {
+          if (!bb) bb = [x - r, y - r, x + r, y + r];
+          else {
+            if (x - r < bb[0]) bb[0] = x - r;
+            if (y - r < bb[1]) bb[1] = y - r;
+            if (x + r > bb[2]) bb[2] = x + r;
+            if (y + r > bb[3]) bb[3] = y + r;
+          }
+        };
+        function commit(lv, al = 1) {
+          if (!bb) return;
+          const x0 = Math.max(0, Math.floor(bb[0] - 3)),
+            y0 = Math.max(0, Math.floor(bb[1] - 3)),
+            x1 = Math.min(W, Math.ceil(bb[2] + 3)),
+            y1 = Math.min(H, Math.ceil(bb[3] + 3));
+          bb = null;
+          const w = x1 - x0,
+            h = y1 - y0;
+          if (w <= 0 || h <= 0) return;
+          s.save();
+          s.beginPath();
+          s.rect(x0, y0, w, h);
+          s.clip();
+          s.globalCompositeOperation = "destination-in";
+          s.fillStyle = tooth[lv];
+          s.fillRect(x0, y0, w, h);
+          s.restore();
+          g.globalAlpha = al;
+          g.drawImage(S, x0, y0, w, h, x0, y0, w, h);
+          g.globalAlpha = 1;
+          s.clearRect(x0, y0, w, h);
+        }
+        function nrm(p) {
+          const n = p.length,
+            o = new Array(n);
+          for (let i = 0; i < n; i++) {
+            const a = p[Math.max(0, i - 1)],
+              b = p[Math.min(n - 1, i + 1)],
+              dx = b[0] - a[0],
+              dy = b[1] - a[1],
+              l = Math.hypot(dx, dy) || 1;
+            o[i] = [-dy / l, dx / l];
+          }
+          return o;
+        }
+        /* the side or the end of a pastel stick: a bundle of streaks, some missing, ends ragged */
+        function pastel(p, wd, col, al = 1, gap = 0.14, gr = 2.4) {
+          const L = p.length;
+          if (L < 2) return;
+          const n = Math.max(2, Math.round(wd / gr)),
+            N = nrm(p);
+          s.lineCap = "butt";
+          s.lineJoin = "round";
+          for (let i = 0; i < n; i++) {
+            if (R() < gap) continue;
+            const e = Math.abs((2 * (i + 0.5)) / n - 1),
+              off = ((i + rr(0.1, 0.9)) / n - 0.5) * wd,
+              a = al * rr(0.5, 1) * (1 - 0.55 * e * e * e);
+            const t0 = R() < 0.45 ? 0 : (R() * L * 0.16) | 0,
+              t1 = L - 1 - (R() < 0.45 ? 0 : (R() * L * 0.16) | 0);
+            if (t1 - t0 < 1) continue;
+            s.strokeStyle = css(col, a, gs() * 6);
+            s.lineWidth = (wd / n) * rr(1.1, 2.2);
+            const wb = rr(-1, 1) * wd * 0.035,
+              ph = R() * 9;
+            s.beginPath();
+            for (let k = t0; k <= t1; k++) {
+              const q = off + wb * Math.sin(k * 0.8 + ph),
+                X = p[k][0] + N[k][0] * q,
+                Y = p[k][1] + N[k][1] * q;
+              k === t0 ? s.moveTo(X, Y) : s.lineTo(X, Y);
+            }
+            s.stroke();
+          }
+          for (let k = 0; k < L; k += 2) tch(p[k][0], p[k][1], wd);
+          tch(p[L - 1][0], p[L - 1][1], wd);
+        }
+        /* a sharpened pastel pencil: light at both ends, firmer in the middle */
+        function pencil(p, wd, col, al = 0.8) {
+          const L = p.length;
+          if (L < 2) return;
+          s.lineCap = "round";
+          s.lineJoin = "round";
+          s.strokeStyle = css(col, al * 0.5);
+          s.lineWidth = wd;
+          s.beginPath();
+          s.moveTo(p[0][0], p[0][1]);
+          for (let k = 1; k < L; k++) s.lineTo(p[k][0], p[k][1]);
+          s.stroke();
+          if (L > 3) {
+            const a = Math.max(1, (L * 0.14) | 0),
+              b = L - 1 - Math.max(1, (L * 0.1) | 0);
+            if (b > a) {
+              s.strokeStyle = css(col, al);
+              s.lineWidth = wd * 0.62;
+              s.beginPath();
+              s.moveTo(p[a][0], p[a][1]);
+              for (let k = a + 1; k <= b; k++) s.lineTo(p[k][0], p[k][1]);
+              s.stroke();
+            }
+          }
+          for (let k = 0; k < L; k += 2) tch(p[k][0], p[k][1], wd + 1);
+          tch(p[L - 1][0], p[L - 1][1], wd + 1);
+        }
+        function dot(x, y, r, col, al = 1) {
+          s.fillStyle = css(col, al);
+          s.beginPath();
+          s.ellipse(x, y, r * rr(0.8, 1.2), r * rr(0.8, 1.2), R() * 3, 0, TAU);
+          s.fill();
+          tch(x, y, r + 2);
+        }
+        /* a line as a wrist draws it: a slight arc and a slow wander */
+        function seg(x0, y0, x1, y1, wob = 0, bend = 0, n) {
+          const L = Math.hypot(x1 - x0, y1 - y0) || 1;
+          n = n || Math.max(4, Math.ceil(L / 14));
+          const nx = -(y1 - y0) / L,
+            ny = (x1 - x0) / L,
+            o = R() * 999,
+            p = [];
+          for (let i = 0; i <= n; i++) {
+            const t = i / n,
+              q = bend * Math.sin(PI * t) + wob * (vn((t * L) / 90 + o, o) - 0.5) * 2;
+            p.push([x0 + (x1 - x0) * t + nx * q, y0 + (y1 - y0) * t + ny * q]);
+          }
+          return p;
+        }
+        function crom(P, per = 6, closed = false) {
+          const n = P.length,
+            o = [],
+            m = closed ? n : n - 1,
+            G = (i) => (closed ? P[((i % n) + n) % n] : P[cl(i, 0, n - 1)]);
+          for (let i = 0; i < m; i++) {
+            const a = G(i - 1),
+              b = G(i),
+              c = G(i + 1),
+              d = G(i + 2);
+            for (let j = 0; j < per; j++) {
+              const t = j / per,
+                t2 = t * t,
+                t3 = t2 * t;
+              o.push([
+                0.5 *
+                  (2 * b[0] +
+                    (c[0] - a[0]) * t +
+                    (2 * a[0] - 5 * b[0] + 4 * c[0] - d[0]) * t2 +
+                    (3 * b[0] - a[0] - 3 * c[0] + d[0]) * t3),
+                0.5 *
+                  (2 * b[1] +
+                    (c[1] - a[1]) * t +
+                    (2 * a[1] - 5 * b[1] + 4 * c[1] - d[1]) * t2 +
+                    (3 * b[1] - a[1] - 3 * c[1] + d[1]) * t3),
+              ]);
+            }
+          }
+          if (!closed) o.push(P[n - 1].slice());
+          return o;
+        }
+        /* fill a shape the only way a stick can: stroke after stroke, overshooting the edge a little */
+        function hatch(poly, ang, sp, fn) {
+          const c = Math.cos(ang),
+            sn = Math.sin(ang),
+            q = poly.map((p) => [p[0] * c + p[1] * sn, -p[0] * sn + p[1] * c]);
+          let lo = 1e9,
+            hi = -1e9;
+          for (const p of q) {
+            if (p[1] < lo) lo = p[1];
+            if (p[1] > hi) hi = p[1];
+          }
+          for (let y = lo + sp * R(); y < hi; y += sp * rr(0.75, 1.25)) {
+            const xs = [];
+            for (let i = 0; i < q.length; i++) {
+              const a = q[i],
+                b = q[(i + 1) % q.length];
+              if ((a[1] <= y && b[1] > y) || (b[1] <= y && a[1] > y))
+                xs.push(a[0] + ((y - a[1]) / (b[1] - a[1])) * (b[0] - a[0]));
+            }
+            xs.sort((a, b) => a - b);
+            for (let i = 0; i + 1 < xs.length; i += 2) {
+              const xa = xs[i] - sp * rr(-0.3, 0.6),
+                xb = xs[i + 1] + sp * rr(-0.3, 0.6);
+              if (xb - xa < sp * 0.4) continue;
+              fn(xa * c - y * sn, xa * sn + y * c, xb * c - y * sn, xb * sn + y * c);
+            }
+          }
+        }
+        /* a fingertip: rub what is already on the paper */
+        function down(src, sx, sy, sw, sh, k) {
+          let c = mk(Math.ceil(sw / 2), Math.ceil(sh / 2)),
+            x = c.getContext("2d");
+          x.imageSmoothingQuality = "high";
+          x.drawImage(src, sx, sy, sw, sh, 0, 0, c.width, c.height);
+          for (let i = 1; i < k; i++) {
+            const d = mk(Math.ceil(c.width / 2), Math.ceil(c.height / 2)),
+              dx = d.getContext("2d");
+            dx.imageSmoothingQuality = "high";
+            dx.drawImage(c, 0, 0, d.width, d.height);
+            c = d;
+          }
+          for (let i = 1; i < k; i++) {
+            const d = mk(c.width * 2, c.height * 2),
+              dx = d.getContext("2d");
+            dx.imageSmoothingQuality = "high";
+            dx.drawImage(c, 0, 0, d.width, d.height);
+            c = d;
+          }
+          return c;
+        }
+        function blur(k, al) {
+          const c = down(cv, 0, 0, W, H, k);
+          g.globalAlpha = al;
+          g.drawImage(c, 0, 0, c.width, c.height, 0, 0, W, H);
+          g.globalAlpha = 1;
+        }
+        function soften(cx, cy, rad, k, al, dx = 0, dy = 0) {
+          const x0 = Math.max(0, Math.floor(cx - rad)),
+            y0 = Math.max(0, Math.floor(cy - rad)),
+            x1 = Math.min(W, Math.ceil(cx + rad)),
+            y1 = Math.min(H, Math.ceil(cy + rad)),
+            w = x1 - x0,
+            h = y1 - y0;
+          if (w < 8 || h < 8) return;
+          const c = down(cv, x0, y0, w, h, k),
+            t = mk(w, h),
+            x = t.getContext("2d");
+          x.drawImage(c, 0, 0, c.width, c.height, 0, 0, w, h);
+          if (dx || dy)
+            for (let i = 1; i <= 4; i++) {
+              x.globalAlpha = 1 / (i + 1);
+              x.drawImage(c, 0, 0, c.width, c.height, (dx * i) / 4, (dy * i) / 4, w, h);
+            }
+          x.globalAlpha = 1;
+          const gr = x.createRadialGradient(cx - x0, cy - y0, rad * 0.25, cx - x0, cy - y0, rad);
+          gr.addColorStop(0, "rgba(0,0,0,1)");
+          gr.addColorStop(1, "rgba(0,0,0,0)");
+          x.globalCompositeOperation = "destination-in";
+          x.fillStyle = gr;
+          x.fillRect(0, 0, w, h);
+          g.globalAlpha = al;
+          g.drawImage(t, x0, y0);
+          g.globalAlpha = 1;
+        }
+        function hgroup(x, y, col, al, lv, len, cnt, ang = -0.92) {
+          const a = ang + gs() * 0.12,
+            sp = rr(4, 7),
+            c = Math.cos(a),
+            sn = Math.sin(a);
+          for (let i = 0; i < cnt; i++) {
+            const ox = -sn * i * sp + gs() * 1.2,
+              oy = c * i * sp + gs() * 1.2,
+              l = len * rr(0.7, 1.1);
+            pencil(
+              seg(
+                x + ox - (c * l) / 2,
+                y + oy - (sn * l) / 2,
+                x + ox + (c * l) / 2,
+                y + oy + (sn * l) / 2,
+                0.8,
+                rr(-2, 2),
+                7,
+              ),
+              rr(1.1, 1.9),
+              col,
+              al * rr(0.6, 1),
+            );
+          }
+          commit(lv);
+        }
+
+        /* ---------- the sheet ---------- */
+        function paper() {
+          g.fillStyle = css(PAPER);
+          g.fillRect(0, 0, W, H);
+          for (let i = 0; i < 260; i++) {
+            const x = rr(0, W),
+              y = rr(0, H),
+              r = rr(60, 260),
+              gr = g.createRadialGradient(x, y, 0, x, y, r);
+            gr.addColorStop(0, R() < 0.5 ? "rgba(255,240,255,.035)" : "rgba(0,0,20,.05)");
+            gr.addColorStop(1, "rgba(0,0,0,0)");
+            g.fillStyle = gr;
+            g.fillRect(x - r, y - r, 2 * r, 2 * r);
+          }
+          g.lineCap = "round";
+          for (let i = 0; i < 2600; i++) {
+            const x = rr(0, W),
+              y = rr(0, H),
+              a = R() * TAU,
+              l = rr(5, 22);
+            g.strokeStyle =
+              R() < 0.6
+                ? "rgba(210,200,240," + rr(0.04, 0.12).toFixed(3) + ")"
+                : "rgba(10,8,30," + rr(0.06, 0.16).toFixed(3) + ")";
+            g.lineWidth = rr(0.5, 1.2);
+            g.beginPath();
+            g.moveTo(x, y);
+            g.quadraticCurveTo(
+              x + Math.cos(a) * l * 0.5 + rr(-4, 4),
+              y + Math.sin(a) * l * 0.5 + rr(-4, 4),
+              x + Math.cos(a) * l,
+              y + Math.sin(a) * l,
+            );
+            g.stroke();
+          }
+        }
+
+        /* ---------- the ground: broad side-strokes, rubbed in, then scumbled ---------- */
+        async function background() {
+          for (let pass = 0; pass < 3; pass++) {
+            const N = [820, 620, 380][pass];
+            for (let i = 0; i < N; i++) {
+              const x = rr(-60, W + 60),
+                y = rr(-60, H + 60);
+              const a =
+                Math.atan2(y - P0[1], x - P0[0]) +
+                (fbm(x / 520, y / 520, 5, 2) - 0.5) * 2.6 +
+                rr(-0.3, 0.3) * pass;
+              const len = [rr(300, 700), rr(160, 420), rr(90, 260)][pass],
+                wd = [rr(70, 140), rr(30, 70), rr(14, 40)][pass];
+              const hx = (Math.cos(a) * len) / 2,
+                hy = (Math.sin(a) * len) / 2;
+              pastel(
+                seg(x - hx, y - hy, x + hx, y + hy, wd * 0.1, rr(-0.1, 0.1) * len),
+                wd,
+                jit(BG(x, y), [1.1, 1.5, 1.8][pass]),
+                [0.95, 0.9, 0.75][pass],
+                0.12,
+              );
+              if (i % 20 === 19) commit([5, 3, 2][pass]);
+              if (i % 160 === 159) await tick();
+            }
+            commit([5, 3, 2][pass]);
+            if (pass === 0) blur(4, 0.82);
+            else if (pass === 1) blur(2, 0.4);
+            await tick();
+          }
+          for (let i = 0, k = 0; i < 2600; i++) {
+            const x = rr(-40, W + 40),
+              y = rr(-40, H + 40);
+            if (fbm(x / 230 + 50, y / 230, 77, 3) < 0.5) continue;
+            const L = LT(x, y),
+              b = BG(x, y),
+              u = R();
+            let c;
+            if (u < 0.55) c = mix(b, L > 0.5 ? [70, 96, 70] : [10, 30, 52], 0.55);
+            else if (u < 0.85) c = mix(b, L > 0.5 ? [226, 216, 120] : [40, 90, 110], 0.45);
+            else c = mix(b, L > 0.5 ? [255, 214, 170] : [96, 84, 170], 0.4);
+            const a = R() * TAU,
+              len = rr(46, 130),
+              wd = rr(22, 58);
+            pastel(
+              seg(
+                x - (Math.cos(a) * len) / 2,
+                y - (Math.sin(a) * len) / 2,
+                x + (Math.cos(a) * len) / 2,
+                y + (Math.sin(a) * len) / 2,
+                3,
+                rr(-0.2, 0.2) * len,
+              ),
+              wd,
+              jit(c, 1),
+              0.9,
+              0.1,
+            );
+            if (++k % 16 === 0) commit(4);
+            if (i % 400 === 399) await tick();
+          }
+          commit(4);
+          blur(3, 0.6);
+          for (let i = 0; i < 70; i++) {
+            const x = rr(0, W),
+              y = rr(0, H),
+              L = LT(x, y);
+            if (L < 0.45 || R() > L) continue;
+            const r = rr(22, 74),
+              c = mix([255, 226, 170], [255, 246, 224], R());
+            for (let k = 0; k < 5; k++) {
+              const rad = (r * (k + 0.5)) / 5,
+                p = [],
+                a0 = R() * TAU;
+              for (let j = 0; j <= 14; j++) {
+                const a = a0 + (j / 14) * TAU;
+                p.push([x + Math.cos(a) * rad, y + Math.sin(a) * rad]);
+              }
+              pastel(p, r / 4.2, c, 0.5, 0.1);
+            }
+            commit(1, 0.55);
+          }
+        }
+        function shafts(n, lv, al, ws) {
+          for (const b of SH) {
+            const cnt = Math.round(n * b[2]);
+            for (let i = 0; i < cnt; i++) {
+              const th = (b[0] + gs() * b[1] * 0.7) / 57.29578,
+                d0 = rr(600, 3000),
+                len = rr(500, 1500) * (0.6 + b[2] * 0.5);
+              const x0 = P0[0] + Math.cos(th) * d0,
+                y0 = P0[1] + Math.sin(th) * d0,
+                x1 = P0[0] + Math.cos(th) * (d0 + len),
+                y1 = P0[1] + Math.sin(th) * (d0 + len),
+                mx = (x0 + x1) / 2,
+                my = (y0 + y1) / 2;
+              if (mx < -100 || mx > W + 100 || my < -100 || my > H + 100) continue;
+              const L = cl(1.22 - Math.hypot(mx - P0[0], my - P0[1]) / 2600);
+              const c = mix(
+                mix([150, 140, 214], [246, 176, 160], sst(0.03, 0.3, L)),
+                [255, 236, 190],
+                sst(0.25, 0.7, L),
+              );
+              pastel(seg(x0, y0, x1, y1, 3, 0), rr(10, 46) * ws, jit(c, 0.6), al * rr(0.5, 1), 0.3);
+            }
+            commit(lv);
+          }
+        }
+
+        /* ---------- the frame the plant climbs ---------- */
+        const POLES = [
+          { x: 330, t: 0.035, w: 25 },
+          { x: 820, t: -0.02, w: 21 },
+          { x: 1370, t: 0.012, w: 26 },
+          { x: 1930, t: -0.03, w: 22 },
+          { x: 2390, t: 0.02, w: 24 },
+        ];
+        const px = (p, y) => p.x + p.t * (y - H / 2) + Math.sin(y / 470 + p.x) * 9;
+        const BARS = [
+          { y: 250, t: 0.014, w: 17 },
+          { y: 742, t: -0.02, w: 18 },
+          { y: 1215, t: 0.012, w: 16 },
+        ];
+        const by = (b, x) => b.y + b.t * (x - W / 2) + Math.sin(x / 640 + b.y) * 11;
+        function bamboo(x0, y0, x1, y1, w) {
+          const mx = (x0 + x1) / 2,
+            my = (y0 + y1) / 2;
+          if (mx < -200 || mx > W + 200 || my < -200 || my > H + 200) return;
+          const L = LT(mx, my),
+            len = Math.hypot(x1 - x0, y1 - y0);
+          let nx = -(y1 - y0) / len,
+            ny = (x1 - x0) / len;
+          if (nx * (P0[0] - mx) + ny * (P0[1] - my) < 0) {
+            nx = -nx;
+            ny = -ny;
+          }
+          let c = mix([44, 58, 86], [226, 200, 128], sst(0.04, 0.8, L));
+          c = mix(c, [150, 170, 110], 0.18);
+          pastel(seg(x0, y0, x1, y1, 1, rr(-2, 2)), w, jit(c, 0.6), 1, 0.05, 2.1);
+          commit(5);
+          pastel(
+            seg(x0 - nx * w * 0.3, y0 - ny * w * 0.3, x1 - nx * w * 0.3, y1 - ny * w * 0.3, 1, 0),
+            w * 0.38,
+            mix(c, [20, 24, 66], 0.55),
+            0.8,
+            0.1,
+          );
+          commit(4);
+          pastel(
+            seg(
+              x0 + nx * w * 0.26,
+              y0 + ny * w * 0.26,
+              x1 + nx * w * 0.26,
+              y1 + ny * w * 0.26,
+              1,
+              0,
+            ),
+            w * 0.24,
+            mix(c, [255, 246, 214], 0.4 + 0.4 * L),
+            0.9,
+            0.2,
+          );
+          commit(4);
+          for (let k = 0; k < 3; k++) {
+            const f = rr(-0.4, 0.4) * w,
+              u = rr(0.5, 1);
+            pencil(
+              seg(
+                x0 + nx * f,
+                y0 + ny * f,
+                lerp(x0, x1, u) + nx * f,
+                lerp(y0, y1, u) + ny * f,
+                0.6,
+                0,
+              ),
+              1,
+              mix(c, [30, 30, 60], 0.4),
+              0.3,
+            );
+          }
+          pencil(
+            seg(
+              x1 - nx * w * 0.62,
+              y1 - ny * w * 0.62,
+              x1 + nx * w * 0.62,
+              y1 + ny * w * 0.62,
+              0.6,
+              rr(-1.5, 1.5),
+              5,
+            ),
+            2.4,
+            mix(c, [18, 18, 52], 0.7),
+            0.8,
+          );
+          const ax = ((x1 - x0) / len) * 3.2,
+            ay = ((y1 - y0) / len) * 3.2;
+          pencil(
+            seg(
+              x1 - nx * w * 0.5 - ax,
+              y1 - ny * w * 0.5 - ay,
+              x1 + nx * w * 0.5 - ax,
+              y1 + ny * w * 0.5 - ay,
+              0.6,
+              0,
+              5,
+            ),
+            1.6,
+            mix(c, [255, 244, 210], 0.5),
+            0.6,
+          );
+          commit(6);
+        }
+        function trellis() {
+          for (const p of POLES) {
+            let y = -60 + rr(0, 120);
+            while (y < H + 40) {
+              const y1 = y + rr(230, 330);
+              bamboo(px(p, y), y, px(p, y1), y1, p.w);
+              y = y1;
+            }
+          }
+          for (const b of BARS) {
+            let x = -60 + rr(0, 150);
+            while (x < W + 40) {
+              const x1 = x + rr(260, 380);
+              bamboo(x, by(b, x), x1, by(b, x1), b.w);
+              x = x1;
+            }
+          }
+          for (const sx of [575, 1095, 1650, 2160]) {
+            const o = R() * 99,
+              p = [],
+              tl = rr(-0.02, 0.02);
+            for (let y = -20; y <= H + 20; y += 36)
+              p.push([sx + (vn(y / 260, o) - 0.5) * 46 + (y - H / 2) * tl, y]);
+            for (let i = 0; i < p.length - 1; i += 6) {
+              const ch = p.slice(i, i + 7),
+                m = ch[ch.length >> 1],
+                L = LT(m[0], m[1]);
+              pencil(ch, 2.1, jit(mix([78, 84, 112], [238, 216, 164], L), 0.5), 0.55);
+            }
+            commit(5);
+          }
+          for (const p of POLES)
+            for (const b of BARS) {
+              const x = px(p, b.y),
+                y = by(b, x),
+                L = LT(x, y),
+                c = mix([70, 70, 96], [226, 200, 150], L);
+              for (let k = 0; k < 7; k++) {
+                const a = rr(0, PI);
+                pencil(
+                  seg(
+                    x - Math.cos(a) * 16,
+                    y - Math.sin(a) * 16,
+                    x + Math.cos(a) * 16,
+                    y + Math.sin(a) * 16,
+                    1.5,
+                    rr(-5, 5),
+                    6,
+                  ),
+                  rr(1.6, 2.6),
+                  jit(c, 0.6),
+                  0.75,
+                );
+              }
+              pencil(seg(x, y, x + rr(-26, 26), y + rr(18, 40), 2, 4, 6), 1.6, c, 0.7);
+            }
+          commit(6);
+        }
+
+        /* ---------- the plant ---------- */
+        const FT = [
+          {
+            rim: [50, 118, 226],
+            mid: [98, 170, 240],
+            ray: [196, 206, 255],
+            throat: [255, 250, 236],
+          },
+          {
+            rim: [60, 40, 152],
+            mid: [106, 72, 198],
+            ray: [216, 122, 216],
+            throat: [250, 238, 250],
+          },
+          {
+            rim: [214, 46, 120],
+            mid: [240, 104, 150],
+            ray: [255, 190, 206],
+            throat: [255, 246, 236],
+            edge: [255, 244, 240],
+          },
+          {
+            rim: [170, 140, 226],
+            mid: [206, 186, 244],
+            ray: [250, 236, 255],
+            throat: [255, 252, 240],
+          },
+          {
+            rim: [244, 126, 118],
+            mid: [250, 170, 150],
+            ray: [255, 224, 202],
+            throat: [255, 248, 230],
+          },
+        ];
+        const pickType = (L) => {
+          const u = R();
+          if (L < 0.3) return u < 0.5 ? 1 : u < 0.85 ? 0 : 3;
+          if (L < 0.6) return u < 0.3 ? 0 : u < 0.5 ? 1 : u < 0.75 ? 2 : u < 0.9 ? 3 : 4;
+          return u < 0.3 ? 2 : u < 0.55 ? 4 : u < 0.8 ? 3 : 0;
+        };
+        const GL = [];
+        function drop(x, y, r, L) {
+          const la = Math.atan2(P0[1] - y, P0[0] - x),
+            ux = Math.cos(la),
+            uy = Math.sin(la);
+          const arc = (a0, a1, rad, n = 7) => {
+            const o = [];
+            for (let i = 0; i <= n; i++) {
+              const t = a0 + ((a1 - a0) * i) / n;
+              o.push([
+                x + Math.cos(t) * rad * rr(0.93, 1.07),
+                y + Math.sin(t) * rad * rr(0.93, 1.07),
+              ]);
+            }
+            return o;
+          };
+          pencil(
+            arc(la + PI - 1.2, la + PI + 1.2, r * 1.14),
+            Math.max(1, r * 0.3),
+            [16, 22, 50],
+            0.5,
+          );
+          pencil(arc(la - 1.3, la + 1.3, r * 0.92), Math.max(1, r * 0.28), [20, 30, 60], 0.45);
+          pencil(
+            arc(la + PI - 1, la + PI + 1, r * 0.6),
+            Math.max(1.2, r * 0.42),
+            mix([150, 200, 170], [255, 246, 200], L),
+            0.5 + 0.4 * L,
+          );
+          dot(x + ux * r * 0.45, y + uy * r * 0.45, Math.max(0.9, r * 0.25), [255, 255, 250], 0.95);
+          commit(6);
+          if (L > 0.5 && r > 3) GL.push([x + ux * r * 0.45, y + uy * r * 0.45, L, r]);
+        }
+        const LOBE = [
+          [0, 0.05],
+          [0.13, -0.04],
+          [0.35, -0.03],
+          [0.55, 0.1],
+          [0.67, 0.29],
+          [0.53, 0.4],
+          [0.37, 0.43],
+          [0.35, 0.56],
+          [0.31, 0.71],
+          [0.18, 0.87],
+          [0, 1],
+        ];
+        const HEART = [
+          [0, 0.05],
+          [0.15, -0.05],
+          [0.38, -0.03],
+          [0.54, 0.12],
+          [0.6, 0.3],
+          [0.57, 0.43],
+          [0.5, 0.54],
+          [0.42, 0.65],
+          [0.31, 0.77],
+          [0.17, 0.89],
+          [0, 1],
+        ];
+        function leaf(x, y, size, ang, o) {
+          const dp = o.dp,
+            fg = !!o.fg,
+            dx = Math.cos(ang),
+            dy = Math.sin(ang),
+            nx = -dy,
+            ny = dx,
+            cx = x + dx * size * 0.5,
+            cy = y + dy * size * 0.5;
+          if (cx < -size || cx > W + size || cy < -size || cy > H + size) return;
+          const lb = o.lobe ?? (R() < 0.72 ? rr(0.6, 1) : rr(0, 0.4)),
+            fl = rr(0.5, 1),
+            fr = rr(0.5, 1),
+            curl = gs() * 0.5;
+          const M = (t) => curl * Math.sin(PI * t) * 0.15,
+            Wp = (lx, ly) => [x + size * (ly * dx + lx * nx), y + size * (ly * dy + lx * ny)];
+          const half = (sg) => {
+            const f = sg > 0 ? fr : fl;
+            return crom(
+              LOBE.map((p, i) => {
+                const h = HEART[i],
+                  e = i > 0 && i < 10,
+                  py = lerp(h[1], p[1], lb) + (e ? gs() * 0.012 : 0);
+                return Wp(
+                  sg * lerp(h[0], p[0], lb) * (1 + (e ? gs() * 0.05 : 0)) * f + M(cl(py)),
+                  py,
+                );
+              }),
+              5,
+            );
+          };
+          const A = half(1),
+            B = half(-1),
+            mid = [];
+          for (let i = 0; i <= 12; i++) {
+            const t = 0.05 + (0.95 * i) / 12;
+            mid.push(Wp(M(t), t));
+          }
+          const L = cl(LT(cx, cy) + gs() * 0.07);
+          let lit = mix([58, 112, 70], [164, 196, 92], sst(0.25, 0.9, L));
+          if (L > 0.5 && R() < 0.5) lit = mix(lit, [232, 224, 118], 0.45);
+          const shd = mix([14, 36, 62], [36, 92, 84], sst(0, 0.75, L));
+          let cA = mix(mix(shd, lit, cl(L * 1.15)), [40, 50, 120], (1 - L) * 0.22),
+            cB = mix(mix(shd, lit, cl(L * 1.15 - 0.4)), [30, 36, 104], (1 - L) * 0.3);
+          if (dp === 0) {
+            const b = BG(cx, cy);
+            cA = mix(cA, b, 0.5);
+            cB = mix(cB, b, 0.55);
+          }
+          if (fg) {
+            cA = [24, 50, 58];
+            cB = [15, 30, 48];
+          }
+          const sl = (nx * (P0[0] - cx) + ny * (P0[1] - cy) > 0 ? 1 : -1) * (R() < 0.22 ? -1 : 1);
+          const lv = fg ? 6 : dp === 0 ? 4 : 5,
+            wd = Math.max(3, size * (fg ? 0.05 : 0.075));
+          const halves = [
+            [A.concat(mid.slice().reverse()), 1],
+            [B.concat(mid.slice().reverse()), -1],
+          ];
+          for (const [poly, sg] of halves) {
+            const col = sg === sl ? cA : cB,
+              ha = Math.atan2(0.62 * dy + sg * 0.78 * ny, 0.62 * dx + sg * 0.78 * nx);
+            hatch(poly, ha, wd * 0.62, (a, b, c, d) =>
+              pastel(
+                seg(a, b, c, d, wd * 0.12, rr(-0.2, 0.2) * wd),
+                wd,
+                jit(col, fg ? 0.3 : 0.6),
+                1,
+                0.1,
+              ),
+            );
+            if (fg)
+              hatch(poly, ha + 1.2, wd * 0.62, (a, b, c, d) =>
+                pastel(seg(a, b, c, d, wd * 0.12, 0), wd, jit(col, 0.3), 0.9, 0.1),
+              );
+          }
+          commit(lv);
+          const out = A.concat(B.slice().reverse()),
+            la = Math.atan2(P0[1] - cy, P0[0] - cx);
+          if (dp > 0) {
+            for (const [poly, sg] of halves) {
+              const lt = sg === sl,
+                ha =
+                  Math.atan2(0.62 * dy + sg * 0.78 * ny, 0.62 * dx + sg * 0.78 * nx) +
+                  (lt ? 0 : 0.5);
+              hatch(poly, ha, wd * (lt ? 2.2 : 2.6) * rr(0.8, 1.3), (a, b, c, d) =>
+                pastel(
+                  seg(a, b, c, d, wd * 0.1, 0),
+                  wd * rr(0.4, 0.8),
+                  jit(lt ? mix(cA, [255, 240, 170], 0.3) : mix(cB, [10, 16, 50], 0.24), 0.8),
+                  0.8,
+                  0.25,
+                ),
+              );
+            }
+            commit(2);
+            {
+              const q = Wp(M(0.12), 0.12),
+                e = Wp(M(0.3), 0.3);
+              for (let i = 0; i < 5; i++)
+                pastel(
+                  seg(
+                    q[0] + gs() * wd,
+                    q[1] + gs() * wd,
+                    e[0] + gs() * wd * 2,
+                    e[1] + gs() * wd * 2,
+                    wd * 0.2,
+                    0,
+                  ),
+                  wd * 1.2,
+                  mix(cB, [12, 16, 50], 0.4),
+                  0.6,
+                  0.3,
+                );
+              commit(2);
+            }
+          }
+          const vc = fg
+              ? [52, 92, 84]
+              : L > 0.55
+                ? mix(cA, [255, 246, 190], 0.5)
+                : mix(cA, [200, 220, 150], 0.35),
+            vw = Math.max(1, size * 0.012);
+          pencil(mid, vw * 1.5, vc, 0.75);
+          if (dp > 0)
+            for (const sg of [1, -1]) {
+              const f = sg > 0 ? fr : fl;
+              pencil(
+                crom(
+                  [
+                    Wp(M(0.07), 0.07),
+                    Wp(sg * 0.3 * f + M(0.15), 0.15),
+                    Wp(sg * 0.6 * f * lerp(0.92, 1, lb) + M(0.28), 0.28),
+                  ],
+                  6,
+                ),
+                vw * 1.1,
+                vc,
+                0.6,
+              );
+              for (const t of [0.3, 0.46, 0.62, 0.76]) {
+                const e = 0.34 - (t - 0.3) * 0.42;
+                pencil(
+                  crom(
+                    [
+                      Wp(M(t), t),
+                      Wp(sg * e * 0.55 * f + M(t), t + 0.08),
+                      Wp(sg * e * f + M(t), t + 0.13),
+                    ],
+                    5,
+                  ),
+                  vw * 0.8,
+                  vc,
+                  0.45,
+                );
+              }
+            }
+          commit(5);
+          for (let i = 0; i < out.length - 1;) {
+            const n = 4 + ((R() * 7) | 0),
+              ch = out.slice(i, i + n + 1);
+            i += n;
+            if (ch.length < 2) continue;
+            const m = ch[ch.length >> 1],
+              lf = Math.cos(Math.atan2(m[1] - cy, m[0] - cx) - la);
+            if (!fg && L > 0.4 && lf > 0.5 && R() < 0.5)
+              pencil(ch, Math.max(1.2, size * 0.014), [255, 240, 200], 0.7 * L + 0.2);
+            else if (R() < (dp === 0 ? 0.35 : 0.62))
+              pencil(
+                ch,
+                Math.max(1.1, size * rr(0.008, 0.02)),
+                mix(cB, [14, 14, 46], 0.6),
+                dp === 0 ? 0.35 : 0.6,
+              );
+          }
+          commit(6);
+          if (fg) {
+            soften(cx, cy, size * 0.95, 3, 0.9);
+            for (let i = 0; i < out.length - 1;) {
+              const n = 5 + ((R() * 8) | 0),
+                ch = out.slice(i, i + n + 1);
+              i += n;
+              const m = ch[ch.length >> 1],
+                lf = Math.cos(Math.atan2(m[1] - cy, m[0] - cx) - la);
+              if (lf > 0.1 && ch.length > 2)
+                pastel(
+                  ch,
+                  size * 0.03,
+                  jit(mix([120, 160, 110], [255, 214, 170], 0.3 + 0.6 * L), 0.8),
+                  0.5 * lf + 0.15,
+                  0.25,
+                );
+            }
+            commit(2);
+            return;
+          }
+          if (dp > 0 && R() < 0.45) {
+            const n = 1 + ((R() * 4) | 0);
+            for (let i = 0; i < n; i++) {
+              const sg = R() < 0.5 ? 1 : -1,
+                q = Wp(sg * rr(0.05, 0.3) * (sg > 0 ? fr : fl), rr(0.2, 0.8));
+              drop(q[0], q[1], (rr(2.5, 6.5) * size) / 120, L);
+            }
+          }
+        }
+        function flower(x, y, r, o) {
+          if (x < -r * 2 || x > W + r * 2 || y < -r * 2 || y > H + r * 2) return;
+          const q = o.q,
+            phi = o.phi,
+            ft = FT[o.t],
+            dp = o.dp,
+            sc = r / 90;
+          const cp = Math.cos(phi),
+            sp = Math.sin(phi),
+            csh = r * (1 - q) * 0.5,
+            th0 = R() * TAU,
+            ns = R() * 500;
+          const rimR = (th) =>
+            r * (1 + 0.05 * Math.cos(5 * (th - th0)) + 0.07 * (vn(th * 1.7 + ns, ns) - 0.5));
+          const P = (rad, th) => {
+            const f = 1 - cl(rad / r),
+              lx = Math.cos(th) * rad,
+              ly = Math.sin(th) * rad * q + csh * f * Math.sqrt(f);
+            return [x + lx * cp - ly * sp, y + lx * sp + ly * cp];
+          };
+          const Q = (lx, ly) => [x + lx * cp - ly * sp, y + lx * sp + ly * cp];
+          const la = Math.atan2(P0[1] - y, P0[0] - x),
+            ux = Math.cos(la),
+            uy = Math.sin(la);
+          const L = cl((o.L ?? LT(x, y)) + gs() * 0.05),
+            bgc = dp === 0 ? BG(x, y) : null;
+          const tn = (c, l) => {
+            const k = tone(c, cl(l));
+            return bgc ? mix(k, bgc, 0.42) : k;
+          };
+          const lfOf = (th) => {
+            const e = P(r, th);
+            return 0.5 + 0.5 * Math.cos(Math.atan2(e[1] - y, e[0] - x) - la);
+          };
+          const Ls = (th) => {
+            const f = lfOf(th);
+            return L * (0.45 + 0.8 * f) + (f - 0.5) * 0.2;
+          };
+          const rad2 = (th, r0, r1, n = 6, bd = 0) => {
+            const p = [];
+            for (let k = 0; k <= n; k++) {
+              const u = k / n;
+              p.push(P(lerp(r0, r1, u), th + bd * (u - 0.5)));
+            }
+            return p;
+          };
+          if (q < 0.84) {
+            const tl = r * 1.75 * Math.sqrt(1 - q * q),
+              ax = -sp,
+              ay = cp,
+              tc = tn(mix(ft.mid, [250, 246, 238], 0.6), L * 0.85 + 0.1);
+            hatch(
+              [
+                Q(-0.66 * r, 0.22 * r * q),
+                Q(0.66 * r, 0.22 * r * q),
+                Q(0.12 * r, tl),
+                Q(-0.12 * r, tl),
+              ],
+              Math.atan2(ay, ax),
+              r * 0.07,
+              (a, b, c, d) => pastel(seg(a, b, c, d, 1, 0), r * 0.085, jit(tc, 0.7), 1),
+            );
+            commit(dp ? 5 : 4);
+            for (const f of [-0.45, 0, 0.45])
+              pencil(
+                [Q(f * 0.6 * r, 0.3 * r * q), Q(f * 0.3 * r, tl * 0.6), Q(f * 0.1 * r, tl)],
+                Math.max(1, 1.6 * sc),
+                tn(ft.rim, L * 0.8),
+                0.4,
+              );
+            const b = Q(0, tl),
+              gc = tn([120, 160, 80], L);
+            for (const a of [-0.55, -0.2, 0.2, 0.55]) {
+              const aa = Math.atan2(-ay, -ax) + a;
+              pencil(
+                seg(
+                  b[0],
+                  b[1],
+                  b[0] + Math.cos(aa) * r * 0.42,
+                  b[1] + Math.sin(aa) * r * 0.42,
+                  0.6,
+                  0,
+                  5,
+                ),
+                Math.max(1.5, r * 0.035),
+                jit(gc, 0.5),
+                0.9,
+              );
+            }
+            const e = Q(gs() * 0.1 * r, tl + r * 0.5);
+            pencil(seg(b[0], b[1], e[0], e[1], 1, r * 0.05, 6), Math.max(1.6, r * 0.03), gc, 0.9);
+            commit(6);
+          }
+          if (dp > 0) {
+            for (let i = 0; i < 18; i++) {
+              const th = R() * TAU;
+              if (lfOf(th) > 0.5) continue;
+              const p = [];
+              for (let k = 0; k <= 6; k++) {
+                const e = P(r * 1.05, th + (k / 6 - 0.5) * 0.6);
+                p.push([e[0] - ux * r * 0.1, e[1] - uy * r * 0.1]);
+              }
+              pastel(p, r * rr(0.14, 0.26), [14, 18, 52], 0.42, 0.25);
+            }
+            commit(2);
+            if (r > 50) {
+              const p = [],
+                a0 = R() * TAU;
+              for (let k = 0; k <= 40; k++)
+                p.push(P(r * (1.05 + 0.02 * Math.sin(k)), a0 + (k / 40) * TAU * 1.12));
+              pencil(p, 1.3, [226, 206, 170], 0.24);
+              const e0 = P(r * 1.12, th0),
+                e1 = P(r * 1.12, th0 + PI);
+              pencil(seg(e0[0], e0[1], e1[0], e1[1], 1, 0), 1.1, [226, 206, 170], 0.2);
+              commit(4);
+            }
+          }
+          const nst = Math.round(34 + r * 0.12);
+          for (let i = 0; i < nst; i++) {
+            const th = (i / nst) * TAU + gs() * 0.06;
+            pastel(
+              rad2(th, 0.2 * r, rimR(th) * rr(0.93, 1.03), 6, rr(-0.12, 0.12)),
+              r * 0.17,
+              jit(tn(mix(ft.mid, ft.rim, rr(0.3, 1)), Ls(th)), 0.8),
+              1,
+            );
+          }
+          commit(dp === 2 && r > 100 ? 6 : dp ? 5 : 4);
+          if (dp === 2 && r > 100) soften(x, y, r * 1.05, 1, 0.55);
+          for (let i = 0; i < nst + 10; i++) {
+            const th = R() * TAU;
+            pastel(
+              rad2(th, r * rr(0.58, 0.7), rimR(th) * rr(0.95, 1.02), 5, rr(-0.1, 0.1)),
+              r * 0.11,
+              jit(tn(ft.rim, Ls(th) * rr(0.8, 1.1)), 0.9),
+              0.9,
+            );
+          }
+          commit(4);
+          for (let i = 0; i < 26; i++) {
+            const th = R() * TAU;
+            pastel(
+              rad2(th, r * 0.28, r * rr(0.52, 0.66), 5, rr(-0.1, 0.1)),
+              r * 0.12,
+              jit(tn(mix(ft.mid, ft.throat, 0.35), Ls(th) + 0.08), 0.7),
+              0.9,
+            );
+          }
+          commit(3);
+          if (L > 0.45 && dp > 0) {
+            for (let i = 0; i < 30; i++) {
+              const th = R() * TAU;
+              if (lfOf(th) < 0.55) continue;
+              pastel(
+                rad2(th, r * rr(0.55, 0.75), rimR(th) * rr(0.94, 1.01), 5, rr(-0.1, 0.1)),
+                r * 0.07,
+                jit(mix(tn(ft.mid, 1), [255, 206, 180], 0.55), 0.6),
+                0.8,
+                0.2,
+              );
+            }
+            commit(2);
+          }
+          if (ft.edge) {
+            for (let i = 0; i < 110; i++) {
+              const th = R() * TAU,
+                ra = rimR(th);
+              pastel(
+                rad2(th, ra * rr(0.8, 0.88), ra * rr(0.98, 1.02), 4, rr(-0.08, 0.08)),
+                r * 0.04,
+                jit(tn(ft.edge, Ls(th) + 0.2), 0.5),
+                1,
+                0.1,
+              );
+            }
+            commit(5);
+          }
+          for (let k = 0; k < 5; k++) {
+            const th = th0 + (k * TAU) / 5,
+              c = tn(ft.ray, Ls(th) + 0.15);
+            pastel(
+              rad2(th, 0.16 * r, rimR(th) * 0.96, 7, rr(-0.05, 0.05)),
+              r * 0.06,
+              jit(c, 0.4),
+              1,
+              0.05,
+            );
+            pastel(rad2(th - 0.04, 0.16 * r, r * 0.8, 6), r * 0.045, jit(c, 0.5), 0.8, 0.1);
+            pastel(rad2(th + 0.04, 0.16 * r, r * 0.8, 6), r * 0.045, jit(c, 0.5), 0.8, 0.1);
+            if (dp > 0) {
+              const tm = th + TAU / 10;
+              pencil(
+                rad2(tm, 0.4 * r, rimR(tm) * 0.95, 6, rr(-0.06, 0.06)),
+                Math.max(1.5, r * 0.02),
+                tn(mix(ft.rim, [24, 20, 80], 0.5), Ls(tm) * 0.8),
+                0.25,
+              );
+            }
+          }
+          commit(5);
+          const thc = cl(0.55 + 0.5 * L);
+          let tc0 = tn(ft.throat, thc);
+          tc0 = mix(tc0, [176, 194, 255], (1 - L) * 0.4);
+          for (let i = 0; i < 44; i++) {
+            const th = (i / 44) * TAU + gs() * 0.1;
+            pastel(
+              rad2(
+                th,
+                0.02 * r,
+                r * (rr(0.22, 0.38) + 0.11 * Math.max(0, Math.cos(5 * (th - th0)))),
+                5,
+              ),
+              r * 0.045,
+              jit(tc0, 0.4),
+              rr(0.6, 1),
+              0.12,
+            );
+          }
+          commit(6);
+          if (dp === 2 && r > 100) {
+            soften(x + -sp * csh, y + cp * csh, r * 0.55, 2, 0.6);
+            for (let i = 0; i < 26; i++) {
+              const th = R() * TAU;
+              pastel(rad2(th, 0.03 * r, r * rr(0.2, 0.34), 5), r * 0.03, jit(tc0, 0.3), 0.9, 0.1);
+            }
+            commit(5);
+          }
+          for (let i = 0; i < 12; i++) {
+            const th = R() * TAU;
+            pastel(
+              rad2(th, 0, r * rr(0.12, 0.19), 4),
+              r * 0.07,
+              jit(mix([255, 232, 140], [204, 216, 112], R() * 0.6), 0.5),
+              1,
+              0.05,
+            );
+          }
+          commit(6);
+          for (let i = 0; i < 8; i++) {
+            const th = la - phi + PI + rr(-1, 1);
+            pastel(rad2(th, r * 0.09, r * rr(0.2, 0.28), 4), r * 0.06, [150, 140, 196], 0.5);
+          }
+          commit(4);
+          for (let i = 0; i < 5; i++) {
+            const e = P(r * rr(0, 0.07), R() * TAU);
+            dot(e[0], e[1], Math.max(1, r * 0.022), [255, 250, 222], 0.95);
+          }
+          {
+            const e = P(r * 0.03, R() * TAU);
+            dot(e[0], e[1], Math.max(1, r * 0.02), [126, 116, 60], 0.8);
+          }
+          commit(6);
+          if (dp > 0) {
+            const nv = Math.round(18 + r * 0.1);
+            for (let i = 0; i < nv; i++) {
+              const th = R() * TAU;
+              pencil(
+                rad2(th, r * rr(0.38, 0.5), rimR(th) * 0.97, 6, rr(-0.08, 0.08)),
+                rr(1, 1.8) * Math.max(0.8, sc),
+                tn(mix(ft.rim, [24, 20, 80], 0.45), Ls(th) * 0.75),
+                0.3,
+              );
+            }
+            for (let i = 0; i < nv / 2; i++) {
+              const th = R() * TAU;
+              if (lfOf(th) < 0.5) continue;
+              pencil(
+                rad2(th, r * rr(0.4, 0.6), rimR(th) * 0.95, 6, rr(-0.08, 0.08)),
+                rr(1, 1.6) * Math.max(0.8, sc),
+                [255, 244, 226],
+                0.28,
+              );
+            }
+            commit(5);
+          }
+          for (let i = 0; i < 80;) {
+            const n = 3 + ((R() * 5) | 0),
+              p = [];
+            for (let k = i; k <= i + n && k <= 80; k++) {
+              const th = (k / 80) * TAU;
+              p.push(P(rimR(th), th));
+            }
+            const thm = ((i + n / 2) / 80) * TAU,
+              f = lfOf(thm);
+            i += n;
+            if (p.length < 2) continue;
+            if (L > 0.4 && f > 0.62 && dp > 0 && R() < 0.7)
+              pencil(p, Math.max(1.2, r * rr(0.008, 0.018)), [255, 242, 216], rr(0.5, 0.85));
+            else if (R() < (dp ? 0.78 : 0.4))
+              pencil(
+                p,
+                Math.max(1.1, r * rr(0.008, 0.016)),
+                mix(tn(ft.rim, L * 0.5), [28, 22, 78], 0.55),
+                dp ? 0.6 : 0.35,
+              );
+          }
+          commit(6);
+          if (dp > 0) {
+            const nd = R() < 0.6 ? (R() * 4) | 0 : 0;
+            for (let i = 0; i < nd; i++) {
+              const e = P(r * rr(0.45, 0.9), R() * TAU);
+              drop(e[0], e[1], rr(2.4, 5.5) * Math.max(0.8, sc), L);
+            }
+            if (L > 0.55) {
+              for (let i = 0; i < 16; i++) {
+                const th = R() * TAU;
+                if (lfOf(th) < 0.45) continue;
+                const p = [];
+                for (let k = 0; k <= 6; k++) p.push(P(r * rr(1.1, 1.3), th + (k / 6 - 0.5) * 0.7));
+                pastel(p, r * 0.14, [255, 236, 200], 0.4, 0.25);
+              }
+              commit(0, 0.8);
+            }
+          }
+        }
+        function bud(x, y, len, ang, t, dp) {
+          const dx = Math.cos(ang),
+            dy = Math.sin(ang),
+            nx = -dy,
+            ny = dx,
+            ft = FT[t],
+            L = cl(LT(x + dx * len * 0.5, y + dy * len * 0.5) + gs() * 0.06),
+            bend = gs() * 0.08;
+          const Pt = (tt, off) => {
+            const b = bend * len * Math.sin(PI * tt);
+            return [x + dx * len * tt + nx * (off + b), y + dy * len * tt + ny * (off + b)];
+          };
+          const wf = (tt) =>
+            len * 0.115 * Math.pow(Math.sin(PI * Math.pow(tt, 0.62)), 0.9) + len * 0.01;
+          let pale = tone(mix(ft.throat, ft.mid, 0.25), cl(0.3 + L * 0.7)),
+            colr = tone(ft.rim, L);
+          if (dp === 0) {
+            const b = BG(x, y);
+            pale = mix(pale, b, 0.45);
+            colr = mix(colr, b, 0.45);
+          }
+          for (let k = -2; k <= 2; k++) {
+            const f = (k / 2) * 0.62,
+              p1 = [],
+              p2 = [];
+            for (let i = 0; i <= 8; i++) {
+              const tt = i / 8,
+                t1 = tt * 0.6,
+                t2 = 0.38 + tt * 0.62;
+              p1.push(Pt(t1, wf(t1) * f));
+              p2.push(Pt(t2, wf(t2) * f));
+            }
+            pastel(p1, len * 0.06, jit(pale, 0.6), 1);
+            pastel(p2, len * 0.06, jit(mix(pale, colr, 0.5 + 0.5 * R()), 0.6), 1);
+          }
+          commit(dp ? 5 : 4);
+          for (let k = 0; k < 6; k++) {
+            const t0 = 0.2 + k * 0.12,
+              p = [];
+            for (let i = 0; i <= 6; i++) {
+              const u = i / 6,
+                tt = t0 + u * 0.24;
+              if (tt > 1) break;
+              p.push(Pt(tt, wf(tt) * (u * 2 - 1) * 0.95));
+            }
+            if (p.length > 2)
+              pencil(p, Math.max(1, len * 0.014), mix(colr, [30, 24, 90], 0.4), 0.55);
+          }
+          if (L > 0.4) {
+            const p = [];
+            for (let i = 0; i <= 8; i++) {
+              const tt = 0.1 + (i / 8) * 0.85;
+              p.push(Pt(tt, wf(tt) * (nx * (P0[0] - x) + ny * (P0[1] - y) > 0 ? 1 : -1)));
+            }
+            pencil(p, Math.max(1.2, len * 0.012), [255, 242, 216], 0.7);
+          }
+          const gc = mix([30, 70, 60], [140, 170, 84], L);
+          for (const a of [-0.5, -0.2, 0.15, 0.45]) {
+            const aa = ang + a * 0.9;
+            pencil(
+              seg(x, y, x + Math.cos(aa) * len * 0.3, y + Math.sin(aa) * len * 0.3, 0.6, 0, 5),
+              Math.max(1.5, len * 0.03),
+              jit(gc, 0.5),
+              0.9,
+            );
+          }
+          commit(6);
+        }
+        function vine(v) {
+          const p = v.pts,
+            sc = v.sc;
+          for (let i = 0; i < p.length - 1; i += 10) {
+            const ch = p.slice(i, Math.min(p.length, i + 11)),
+              m = ch[ch.length >> 1];
+            if (m[0] < -60 || m[0] > W + 60 || m[1] < -60 || m[1] > H + 60) continue;
+            const L = LT(m[0], m[1]);
+            let c = mix(
+              mix([30, 58, 60], [150, 170, 84], sst(0.1, 0.9, L)),
+              [132, 84, 80],
+              v.old * 0.35,
+            );
+            if (v.dp === 0) c = mix(c, BG(m[0], m[1]), 0.5);
+            const tip = i > p.length - 30,
+              la = Math.atan2(P0[1] - m[1], P0[0] - m[0]),
+              ux = Math.cos(la) * 1.3 * sc,
+              uy = Math.sin(la) * 1.3 * sc;
+            if (v.dp > 0)
+              pencil(
+                ch.map((q) => [q[0] - ux, q[1] - uy]),
+                (tip ? 2 : rr(3.2, 4.6)) * sc,
+                mix(c, [12, 14, 44], 0.6),
+                0.5,
+              );
+            pencil(ch, (tip ? 2.2 : rr(3.4, 5)) * sc, jit(c, 0.5), 0.95);
+            if (L > 0.3 && v.dp > 0)
+              pencil(
+                ch.map((q) => [q[0] + ux, q[1] + uy]),
+                1.3 * sc,
+                mix(c, [255, 240, 190], 0.5),
+                0.55,
+              );
+          }
+          commit(6);
+        }
+        function grow(x, y, a, len, sc, dp, climb) {
+          const pts = [[x, y]],
+            nodes = [],
+            ns = R() * 999,
+            st = 13 * sc,
+            a0 = a;
+          let dist = 0,
+            next = rr(40, 110) * sc,
+            side = R() < 0.5 ? 1 : -1;
+          const pole = climb
+            ? POLES.reduce((b, p) => (Math.abs(px(p, y) - x) < Math.abs(px(b, y) - x) ? p : b))
+            : null;
+          for (let i = 0; dist < len; i++) {
+            const tg = pole
+              ? -PI / 2 + cl((px(pole, y) - x) / 90, -1, 1) * 0.75 + Math.sin(i * 0.33 + ns) * 0.55
+              : a0 + (fbm(x / 300 + ns, y / 300, 91, 2) - 0.5) * 3.2;
+            let d = tg - a;
+            d = Math.atan2(Math.sin(d), Math.cos(d));
+            a += d * 0.22 + (vn(i * 0.21, ns) - 0.5) * 0.28;
+            x += Math.cos(a) * st;
+            y += Math.sin(a) * st;
+            pts.push([x, y]);
+            dist += st;
+            if (dist > next) {
+              nodes.push({ x, y, a, side });
+              side = -side;
+              next = dist + rr(62, 128) * sc;
+            }
+            if (x < -180 || x > W + 180 || y < -180 || y > H + 180) break;
+          }
+          let ta = a;
+          const tr = rr(0.16, 0.3) * (R() < 0.5 ? 1 : -1);
+          for (let i = 0; i < 26; i++) {
+            ta += tr * (1 + i * 0.07);
+            x += Math.cos(ta) * st * 0.55;
+            y += Math.sin(ta) * st * 0.55;
+            pts.push([x, y]);
+          }
+          return { pts, nodes, sc, dp, old: R() };
+        }
+        const WEB = [2110, 440, 232],
+          VINES = [],
+          ITEMS = [[], [], []];
+        (() => {
+          const spec = [
+            { dp: 0, sc: 0.56, n: 17, fp: 0.2 },
+            { dp: 1, sc: 0.86, n: 14, fp: 0.24 },
+            { dp: 2, sc: 1.22, n: 8, fp: 0.3 },
+          ];
+          for (const sp of spec)
+            for (let i = 0; i < sp.n; i++) {
+              const m = R();
+              let v;
+              if (m < 0.55)
+                v = grow(
+                  rr(-60, W + 60),
+                  H + rr(20, 120),
+                  -PI / 2 + rr(-0.3, 0.3),
+                  rr(900, 1900),
+                  sp.sc,
+                  sp.dp,
+                  true,
+                );
+              else if (m < 0.75) {
+                const lf = R() < 0.5;
+                v = grow(
+                  lf ? -80 : W + 80,
+                  rr(200, H),
+                  lf ? rr(-0.6, 0.1) : PI + rr(-0.1, 0.6),
+                  rr(700, 1500),
+                  sp.sc,
+                  sp.dp,
+                  false,
+                );
+              } else
+                v = grow(
+                  rr(0, W),
+                  -rr(30, 120),
+                  PI / 2 + rr(-0.5, 0.5),
+                  rr(400, 1000),
+                  sp.sc,
+                  sp.dp,
+                  false,
+                );
+              VINES.push(v);
+              for (const nd of v.nodes) {
+                const dp = sp.dp,
+                  sc = sp.sc,
+                  blocked = (X, Y) => dp > 0 && Math.hypot(X - WEB[0], Y - WEB[1]) < WEB[2] * 0.88;
+                const pa = nd.a + nd.side * rr(1, 1.75),
+                  pl = rr(26, 64) * sc,
+                  bx = nd.x + Math.cos(pa) * pl,
+                  by = nd.y + Math.sin(pa) * pl;
+                const la = Math.atan2(Math.sin(pa) * 0.55 + 0.85, Math.cos(pa) * 0.55) + gs() * 0.3,
+                  size = rr(84, 150) * sc * (dp === 2 ? 1.1 : 1);
+                if (!blocked(bx + Math.cos(la) * size * 0.5, by + Math.sin(la) * size * 0.5))
+                  ITEMS[dp].push({ k: 0, nx: nd.x, ny: nd.y, x: bx, y: by, size, ang: la });
+                const u = R();
+                if (u < sp.fp) {
+                  const fa = nd.a - nd.side * rr(0.6, 1.4),
+                    fl = rr(40, 80) * sc,
+                    fx = nd.x + Math.cos(fa) * fl,
+                    fy = nd.y + Math.sin(fa) * fl - rr(0, 20) * sc;
+                  if (!blocked(fx, fy))
+                    ITEMS[dp].push({
+                      k: 1,
+                      nx: nd.x,
+                      ny: nd.y,
+                      x: fx,
+                      y: fy,
+                      r: rr(52, 88) * sc,
+                      q: rr(0.48, 1),
+                      phi: Math.atan2(nd.y - fy, nd.x - fx) - PI / 2 + gs() * 0.25,
+                      t: pickType(LT(fx, fy)),
+                    });
+                } else if (u < sp.fp + 0.14 && !blocked(nd.x, nd.y))
+                  ITEMS[dp].push({
+                    k: 2,
+                    x: nd.x,
+                    y: nd.y,
+                    len: rr(70, 120) * sc,
+                    ang: -PI / 2 + nd.side * rr(0.1, 0.9),
+                    t: pickType(LT(nd.x, nd.y)),
+                  });
+              }
+            }
+        })();
+        async function layer(dp) {
+          let c = 0;
+          for (const v of VINES)
+            if (v.dp === dp) {
+              vine(v);
+              if (++c % 4 === 0) await tick();
+            }
+          const it = ITEMS[dp];
+          for (const o of it)
+            if (o.k === 0) {
+              const L = LT(o.x, o.y);
+              let col = mix([30, 62, 60], [146, 170, 84], L);
+              if (dp === 0) col = mix(col, BG(o.x, o.y), 0.5);
+              pencil(
+                seg(o.nx, o.ny, o.x, o.y, 1, (rr(-6, 6) * o.size) / 100, 6),
+                Math.max(1.4, o.size * 0.022),
+                col,
+                0.9,
+              );
+            }
+          commit(6);
+          for (const o of it)
+            if (o.k === 0) {
+              leaf(o.x, o.y, o.size, o.ang, { dp });
+              if (++c % 10 === 0) await tick();
+            }
+          for (const o of it) if (o.k === 2) bud(o.x, o.y, o.len, o.ang, o.t, dp);
+          await tick();
+          for (const o of it)
+            if (o.k === 1) {
+              flower(o.x, o.y, o.r, { q: o.q, phi: o.phi, t: o.t, dp });
+              if (++c % 5 === 0) await tick();
+            }
+        }
+        function web(cx, cy, RW) {
+          const n = 26,
+            rad = [];
+          let a = R() * TAU;
+          for (let i = 0; i < n; i++) {
+            a += (TAU / n) * rr(0.7, 1.3);
+            rad.push({ a, l: RW * rr(0.85, 1.12) });
+          }
+          const pt = (i, q) => {
+            const d = rad[(i + n) % n];
+            return [cx + Math.cos(d.a) * q, cy + Math.sin(d.a) * q * 0.94];
+          };
+          const col = (x, y) => {
+            const L = cl(LT(x, y) * 1.7);
+            return [mix([150, 170, 226], [255, 244, 214], L), L];
+          };
+          for (let i = 0; i < n; i++) {
+            const d = rad[i],
+              ext = i % 6 === 0 ? rr(1.5, 2.2) : 1,
+              e = [cx + Math.cos(d.a) * d.l * ext, cy + Math.sin(d.a) * d.l * 0.94 * ext],
+              [c, L] = col((cx + e[0]) / 2, (cy + e[1]) / 2);
+            pencil(seg(cx, cy, e[0], e[1], 0.8, rr(-3, 3)), 1.1, c, 0.3 + 0.3 * L);
+          }
+          commit(5);
+          const miss = (R() * n) | 0;
+          let ring = 0,
+            jr = rad.map(() => 0);
+          for (let r0 = RW * 0.1; r0 < RW * 0.93; r0 += rr(8, 12.5)) {
+            jr = jr.map(() => rr(-2, 2));
+            for (let i = 0; i < n; i++) {
+              if (((i - miss + n) % n < 3 && r0 > RW * 0.35 && r0 < RW * 0.8) || R() < 0.05)
+                continue;
+              if (r0 > rad[i].l || r0 > rad[(i + 1) % n].l) continue;
+              const A = pt(i, r0 + jr[i]),
+                B = pt(i + 1, r0 + jr[(i + 1) % n]),
+                mx = (A[0] + B[0]) / 2,
+                my = (A[1] + B[1]) / 2,
+                sag = 0.06 + R() * 0.06,
+                C = [mx + (cx - mx) * sag, my + (cy - my) * sag + 1.5];
+              const bz = (t) => {
+                  const u = 1 - t;
+                  return [
+                    u * u * A[0] + 2 * u * t * C[0] + t * t * B[0],
+                    u * u * A[1] + 2 * u * t * C[1] + t * t * B[1],
+                  ];
+                },
+                p = [];
+              for (let k = 0; k <= 6; k++) p.push(bz(k / 6));
+              const [c, L] = col(mx, my);
+              pencil(p, rr(0.8, 1.2), c, 0.22 + 0.35 * L);
+              const nb = 1 + ((R() * 3.4) | 0);
+              for (let k = 0; k < nb; k++) {
+                const b = bz(R()),
+                  br = rr(0.7, 2.3) * rr(0.6, 1) * (L > 0.5 ? 1.25 : 1);
+                dot(
+                  b[0],
+                  b[1],
+                  br,
+                  L > 0.4 ? [255, 250, 232] : [170, 190, 240],
+                  L > 0.4 ? 0.95 : 0.42,
+                );
+                if (L > 0.6 && br > 2.2 && R() < 0.12) GL.push([b[0], b[1], L, 5]);
+              }
+            }
+            if (++ring % 4 === 0) commit(6);
+          }
+          commit(6);
+          for (let i = 0; i < 5; i++) {
+            const p = [];
+            const a0 = R() * TAU;
+            for (let k = 0; k <= 12; k++) {
+              const t = a0 + (k / 12) * TAU;
+              p.push([
+                cx + Math.cos(t) * (4 + i * 3 + rr(-1, 1)),
+                cy + Math.sin(t) * (4 + i * 3 + rr(-1, 1)),
+              ]);
+            }
+            pencil(p, 1, [200, 210, 240], 0.4);
+          }
+          commit(5);
+        }
+        async function hero() {
+          const lv = [
+            [1735, 410, 300, 1.95, 0.9],
+            [1290, 870, 310, 2.5, 0.8],
+            [1850, 815, 280, 0.5, 0.9],
+            [1500, 1060, 290, 1.3, 0.3],
+            [1385, 335, 250, -2.55, 0.9],
+            [1010, 640, 240, 2.85, 0.8],
+            [2080, 1160, 250, 0.9, 0.9],
+            [1640, 1180, 230, 2.2, 0.2],
+          ];
+          for (const l of lv) {
+            leaf(l[0], l[1], l[2], l[3], { dp: 2, lobe: l[4] });
+            await tick();
+          }
+          vine({
+            pts: crom(
+              [
+                [1480, 1500],
+                [1500, 1280],
+                [1440, 1080],
+                [1500, 900],
+                [1600, 700],
+                [1680, 520],
+                [1740, 400],
+                [1760, 250],
+                [1700, 120],
+                [1720, -40],
+              ],
+              8,
+            ),
+            sc: 1.5,
+            dp: 2,
+            old: 0.2,
+          });
+          vine({
+            pts: crom(
+              [
+                [2000, 1500],
+                [1960, 1330],
+                [1900, 1200],
+                [1830, 1080],
+                [1800, 900],
+                [1840, 800],
+              ],
+              8,
+            ),
+            sc: 1.4,
+            dp: 2,
+            old: 0.5,
+          });
+          vine({
+            pts: crom(
+              [
+                [1100, 1500],
+                [1150, 1300],
+                [1215, 1210],
+                [1240, 1000],
+                [1200, 820],
+                [1250, 700],
+                [1300, 600],
+                [1360, 380],
+              ],
+              8,
+            ),
+            sc: 1.4,
+            dp: 2,
+            old: 0.1,
+          });
+          bud(1800, 585, 180, -1.15, 0, 2);
+          bud(1425, 1015, 150, -2, 2, 2);
+          bud(1090, 930, 130, -1.5, 1, 2);
+          flower(1262, 585, 150, { q: 0.66, phi: -0.75, t: 3, dp: 2 });
+          await tick();
+          flower(1235, 1125, 120, { q: 0.5, phi: 0.35, t: 1, dp: 2 });
+          await tick();
+          flower(1935, 1020, 166, { q: 0.74, phi: 0.55, t: 2, dp: 2 });
+          await tick();
+          flower(1570, 775, 220, { q: 0.9, phi: -0.2, t: 0, dp: 2, L: 0.86 });
+          await tick();
+        }
+        const HEROES = [
+          [1262, 585, 150],
+          [1235, 1125, 120],
+          [1935, 1020, 166],
+          [1570, 775, 220],
+        ];
+        const onHero = (x, y) => HEROES.some((h) => Math.hypot(x - h[0], y - h[1]) < h[2] * 1.08);
+        function corners() {
+          leaf(-90, 1130, 600, 0.72, { dp: 2, fg: 1, lobe: 0.9 });
+          leaf(2640, 40, 520, 2.45, { dp: 2, fg: 1, lobe: 0.8 });
+          leaf(2330, 1520, 470, -2.25, { dp: 2, fg: 1, lobe: 0.3 });
+        }
+        function glint(x, y, z) {
+          const a = rr(-0.25, 0.25);
+          for (let i = 0; i < 8; i++) {
+            const p = [],
+              a0 = R() * TAU,
+              rad = z * rr(0.2, 0.5);
+            for (let k = 0; k <= 8; k++) {
+              const t = a0 + (k / 8) * 2.4;
+              p.push([x + Math.cos(t) * rad, y + Math.sin(t) * rad]);
+            }
+            pastel(p, z * 0.3, [255, 240, 204], 0.5, 0.2);
+          }
+          commit(1, 0.7);
+          for (let k = 0; k < 2; k++) {
+            const b = a + (k * PI) / 2,
+              l = z * (k ? 0.62 : 1),
+              c = Math.cos(b),
+              sn = Math.sin(b);
+            pencil(
+              seg(x - c * l, y - sn * l, x + c * l, y + sn * l, 0.4, 0, 6),
+              1.5,
+              [255, 252, 236],
+              0.85,
+            );
+            pencil(
+              seg(x - c * l * 0.4, y - sn * l * 0.4, x + c * l * 0.4, y + sn * l * 0.4, 0.3, 0, 4),
+              2.6,
+              [255, 255, 250],
+              0.9,
+            );
+          }
+          dot(x, y, Math.max(1.6, z * 0.15), [255, 255, 255], 1);
+          commit(6);
+        }
+        function glare() {
+          for (let i = 0; i < 90; i++) {
+            const a = rr(0.1, 1.45),
+              d = rr(0, 900) * Math.sqrt(R()),
+              x = Math.cos(a) * d,
+              y = Math.sin(a) * d,
+              len = rr(120, 420),
+              b = Math.atan2(y - P0[1], x - P0[0]) + rr(-0.2, 0.2);
+            pastel(
+              seg(x, y, x + Math.cos(b) * len, y + Math.sin(b) * len, 4, 0),
+              rr(30, 90),
+              jit([255, 242, 204], 0.5),
+              0.5 * (1 - d / 1000),
+              0.3,
+            );
+            if (i % 10 === 9) commit(1, 0.7);
+          }
+          commit(1, 0.7);
+        }
+        function sparkle() {
+          let k = 0;
+          for (let i = 0; i < 2600; i++) {
+            const x = rr(0, W),
+              y = rr(0, H),
+              L = LT(x, y);
+            if (R() > shaft(x, y) * L * 1.6) continue;
+            const big = R() < 0.07;
+            dot(
+              x,
+              y,
+              big ? rr(2.4, 4) : rr(0.7, 1.9),
+              mix([255, 236, 180], [255, 255, 244], R()),
+              rr(0.5, 0.95),
+            );
+            if (big && R() < 0.4) GL.push([x, y, L, 4]);
+            if (++k % 40 === 0) commit(6);
+          }
+          commit(6);
+          GL.sort((a, b) => b[2] * b[3] - a[2] * a[3]);
+          const used = [];
+          for (const p of GL) {
+            if (used.length >= 26) break;
+            if (used.some((u) => Math.hypot(u[0] - p[0], u[1] - p[1]) < 90)) continue;
+            used.push(p);
+            glint(p[0], p[1], rr(14, 30) * (0.6 + p[2] * 0.6));
+          }
+        }
+        function accents() {
+          for (let i = 0; i < 300; i++) {
+            const x = rr(0, W),
+              y = rr(0, H);
+            if (onHero(x, y)) continue;
+            const L = LT(x, y);
+            if (L < 0.22 && R() < 0.6)
+              hgroup(x, y, [12, 14, 44], 0.45, 4, rr(40, 100), 5 + ((R() * 8) | 0));
+            else if (L > 0.7 && R() < 0.25)
+              hgroup(x, y, [255, 246, 220], 0.3, 3, rr(40, 90), 5 + ((R() * 6) | 0));
+          }
+        }
+        function dust() {
+          for (let i = 0; i < 2400; i++) {
+            const x = rr(0, W),
+              y = rr(0, H),
+              c = R() < 0.5 ? jit(BG(x, y), 3) : ODD[(R() * ODD.length) | 0];
+            g.fillStyle = css(c, rr(0.15, 0.55));
+            const z = rr(0.6, 1.8);
+            g.fillRect(x, y, z, z * rr(0.6, 1.4));
+          }
+          for (let i = 0; i < 26; i++)
+            soften(rr(0, W), rr(0, H), rr(30, 80), 1, 0.5, rr(-10, 10), rr(-6, 6));
+        }
+        function sign() {
+          const x = W - 176,
+            y = H - 56;
+          pencil(
+            crom(
+              [
+                [0, 0],
+                [10, -22],
+                [22, -38],
+                [30, -30],
+                [18, -8],
+                [14, 14],
+                [20, 2],
+                [34, -6],
+                [46, -12],
+                [44, 2],
+                [54, 4],
+                [62, -10],
+                [60, 4],
+                [72, 2],
+                [84, -14],
+                [80, 6],
+                [96, 0],
+              ].map((q) => [x + q[0] * 1.1, y + q[1] * 1.1]),
+              5,
+            ),
+            1.8,
+            [236, 226, 204],
+            0.6,
+          );
+          pencil(seg(x - 6, y + 16, x + 112, y + 10, 1.2, 3), 1.3, [236, 226, 204], 0.45);
+          dot(x + 120, y + 4, 1.6, [236, 226, 204], 0.6);
+          commit(5);
+        }
+        function emboss() {
+          g.save();
+          g.globalCompositeOperation = "overlay";
+          g.globalAlpha = 0.5;
+          g.fillStyle = relief;
+          g.fillRect(0, 0, W, H);
+          g.restore();
+        }
+
+        (async () => {
+          paper();
+          await tick();
+          await background();
+          for (let i = 0; i < 300; i++) {
+            const x = rr(0, W),
+              y = rr(0, H),
+              L = LT(x, y);
+            hgroup(
+              x,
+              y,
+              jit(L > 0.6 ? [255, 240, 206] : L > 0.35 ? [236, 160, 190] : [70, 100, 190], 1),
+              0.3,
+              4,
+              rr(50, 130),
+              6 + ((R() * 10) | 0),
+            );
+          }
+          await tick();
+          shafts(70, 2, 0.6, 1.4);
+          await tick();
+          await layer(0);
+          blur(2, 0.4);
+          shafts(26, 1, 0.45, 1.6);
+          trellis();
+          await tick();
+          await layer(1);
+          for (let i = 0; i < 40; i++)
+            soften(rr(0, W), rr(0, H), rr(60, 150), 2, 0.5, rr(-8, 8), rr(-8, 8));
+          web(WEB[0], WEB[1], WEB[2]);
+          await tick();
+          shafts(22, 1, 0.34, 1.1);
+          await layer(2);
+          await tick();
+          await hero();
+          corners();
+          await tick();
+          shafts(22, 0, 0.4, 1);
+          glare();
+          sparkle();
+          accents();
+          dust();
+          sign();
+          emboss();
+          cv.dataset.done = "1";
+        })();
+      })();
+    </script>
+  </body>
+</html>
