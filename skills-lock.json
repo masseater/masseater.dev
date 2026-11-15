@@ -314,7 +314,7 @@
       "ref": "d1d953117b46c5f1579c6a8d1433e231b4fa4601",
       "sourceType": "github",
       "skillPath": "plugins/masseater-skills/skills/vite-plus/SKILL.md",
-      "computedHash": "80d9dc1e764c62f08ac1169766e44b31e0db168246cdccb0de416d3af660bdff"
+      "computedHash": "9a29bd7a384830b277e55fc82d7cffc6ee7bf52a96ccdc48b1ea422d0ca6d279"
     },
     "workers-best-practices": {
       "source": "cloudflare/skills",
