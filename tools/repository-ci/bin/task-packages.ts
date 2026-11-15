@@ -3,7 +3,6 @@ import { mustSucceed, writeOutputs } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
 import {
   Array as Arr,
-  Config,
   Effect,
   FileSystem,
   Option,
@@ -15,21 +14,13 @@ import {
 } from "effect";
 import { Argument, Command } from "effect/cli";
 
-import { isChanged, nameOf, workspace } from "./lib/changes.ts";
-import type { Packages, Tasks } from "./lib/changes.ts";
-import type { DeploymentRecord } from "./lib/deployment.ts";
+import { nameOf, workspace } from "./lib/changes.ts";
+import type { Tasks } from "./lib/changes.ts";
 
 const FINALLY = ":finally";
 const ITEMS = ":items";
 const ITEMS_OUTPUT = "items=";
-const PUSH = "push";
 const NO_ITEM = "";
-const WORKFLOWS = [".github/workflows/daily.yml"];
-
-const ranDaily = (name: string): DeploymentRecord => ({
-  environment: "daily",
-  task: `daily:${name}`,
-});
 
 const Entry = Schema.Struct({
   name: Schema.String,
@@ -85,31 +76,6 @@ const itemsOf = Effect.fn("itemsOf")(function* itemsOf(
   );
 });
 
-const changedOnly = Effect.fn("changedOnly")(function* changedOnly(
-  packages: Packages,
-  directories: readonly string[],
-) {
-  const event = yield* Config.String("GITHUB_EVENT_NAME").pipe(Config.withDefault(PUSH));
-  if (event !== PUSH) {
-    return directories;
-  }
-  return yield* pipe(
-    directories,
-    Effect.filter((directory) =>
-      isChanged(
-        { packages, record: ranDaily, workflows: WORKFLOWS },
-        { name: nameOf(directory), directories: [directory] },
-      ),
-    ),
-  );
-});
-
-const keyOf = (name: string, item: string): string =>
-  pipe(
-    Option.liftPredicate(item, Str.isNonEmpty),
-    Option.match({ onNone: () => name, onSome: (value) => `${name}-${value}` }),
-  );
-
 const entriesOf = Effect.fn("entriesOf")(function* entriesOf(
   { root, tasks }: Readonly<{ root: string; tasks: Tasks }>,
   task: string,
@@ -133,15 +99,14 @@ const entriesOf = Effect.fn("entriesOf")(function* entriesOf(
 
 const command = Command.make("task-packages", { task: Argument.String("task") }, ({ task }) =>
   Effect.gen(function* taskPackages() {
-    const { workspaceRoot, packages, tasks } = yield* workspace;
+    const { workspaceRoot, tasks } = yield* workspace;
     const defining = pipe(
       Rec.values(tasks),
       Arr.filter(({ name }) => name === task),
       Arr.map(({ package: directory }) => directory),
     );
-    const directories = yield* changedOnly(packages, defining);
     const found = yield* pipe(
-      directories,
+      defining,
       Effect.forEach((directory) => entriesOf({ root: workspaceRoot, tasks }, task, directory)),
     );
     const entries = yield* Schema.encodeEffect(Entries)(Arr.flatten(found));
