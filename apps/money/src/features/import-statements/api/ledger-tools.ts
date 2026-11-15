@@ -64,7 +64,8 @@ const addTransactions = Effect.fn("addTransactions")(function* addTransactions({
   return yield* importEntries({ accountId: account, source, entries });
 });
 
-const TOOLS = [
+/** @internal */
+export const LEDGER_TOOLS = [
   tool({
     name: "upsert_account",
     description:
@@ -111,4 +112,5 @@ const TOOLS = [
   }),
 ];
 
-export const registerLedgerTools = registerAll(TOOLS);
+/** @internal */
+export const registerLedgerTools = registerAll(LEDGER_TOOLS);

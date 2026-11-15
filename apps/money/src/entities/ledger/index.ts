@@ -22,11 +22,12 @@ export {
   ListTransactionsInput,
   Period,
 } from "./api/input";
-export { registerAll, tool, lengthOf } from "./api/tool";
+export { registerAll, services, tool, lengthOf } from "./api/tool";
+export type { DefinedTool } from "./api/tool";
 export { fingerprints } from "./model/fingerprint";
 export type { Entry, Fingerprint } from "./model/fingerprint";
 export { db, query, runAll, summedAmount, yenOf } from "./api/database";
-export type { Failure } from "./api/database";
+export type { Failure, Services } from "./api/database";
 export { transactions, imports } from "./api/ledger.table";
 export { balanceSheet } from "./model/balance-sheet";
 export { indexesOf } from "./model/csv-columns";
