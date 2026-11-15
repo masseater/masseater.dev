@@ -121,6 +121,7 @@ interface DecideInput {
 interface DecisionProvider {
   readonly name: string;
   readonly requiredEnv: readonly string[];
+  readonly yesNo?: boolean;
   readonly decide: (input: DecideInput) => DecideResult;
   readonly decideAll?: (inputs: readonly DecideInput[]) => readonly DecideResult[];
 }

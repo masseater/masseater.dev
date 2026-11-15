@@ -3,7 +3,7 @@
 > [!WARNING]
 > This package is experimental. Use at your own risk.
 
-Ready-made [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) rules for [@r_masseater/oxlint-plugin-decision](https://www.npmjs.com/package/@r_masseater/oxlint-plugin-decision), answered by decision models on [OpenRouter](https://openrouter.ai).
+Ready-made [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) rules for [@r_masseater/oxlint-plugin-decision](https://www.npmjs.com/package/@r_masseater/oxlint-plugin-decision), answered through [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/) or [OpenRouter](https://openrouter.ai).
 
 Each preset is a list of plain-English questions about your code. The plugin asks a decision model each question for every match. It reports an error when the answer clears the rule's cutoff. Pick a preset to start linting without writing any rules. Add your own rules when you need them.
 
@@ -11,10 +11,11 @@ Each preset is a list of plain-English questions about your code. The plugin ask
 
 ```sh
 npm i -D oxlint @r_masseater/oxlint-plugin-decision @r_masseater/oxlint-plugin-decision-presets
-export OPENROUTER_API_KEY="..."   # https://openrouter.ai/settings/keys
+export CLOUDFLARE_ACCOUNT_ID="..."
+export CLOUDFLARE_API_TOKEN="..."   # an account API token with Workers AI Read
 ```
 
-The plugin reads the key from the `OPENROUTER_API_KEY` environment variable. To read it from a variable with another name, set `env` under `settings["decision-presets"]`. For example, `{ "OPENROUTER_API_KEY": "TEAM_OPENROUTER_KEY" }` reads `TEAM_OPENROUTER_KEY`. Without a key, the plugin warns once and reports nothing. In CI (when the `CI` environment variable is set), a run that could not reach a model fails. It does not pass quietly.
+The plugin reads the account and the token from `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`. `openrouter/...` models read `OPENROUTER_API_KEY` instead. To read them from variables with other names, set `env` under `settings["decision-presets"]`. For example, `{ "CLOUDFLARE_API_TOKEN": "TEAM_CLOUDFLARE_TOKEN" }` reads `TEAM_CLOUDFLARE_TOKEN`. Without them, the plugin warns once and reports nothing. In CI (when the `CI` environment variable is set), a run that could not reach a model fails. It does not pass quietly.
 
 ## Use a preset
 
@@ -189,9 +190,9 @@ export default defineConfig({
 
 ## Models
 
-The presets use the plugin's default model, `openrouter/~typesafe/jev-latest`, which supports every preset. Set `model` under `settings["decision-presets"]` to use another one.
+The presets use the plugin's default model, `cloudflare/@cf/qwen/qwen3.8-27b` on Workers AI, which supports every preset. Set `model` under `settings["decision-presets"]` to use another one. The questions were tuned on OpenRouter decision models, so check the cutoffs on your code after switching.
 
-Respan models, such as the free `openrouter/respan/span-01-lite`, answer only yes/no questions. `untrusted-input-risk` is the one `severity` rule. The plugin asks it of them as one yes/no question per level, so every preset works with them.
+Cloudflare models and Respan models, such as `openrouter/respan/span-01-lite`, answer only yes/no questions. `untrusted-input-risk` is the one `severity` rule. The plugin asks it of them as one yes/no question per level, so every preset works with them.
 
 ```ts
 // oxlint.config.ts
@@ -293,7 +294,7 @@ The rules that check a claim the code makes about itself are adapted from [jev-l
 | Code   | `fn-name-promises` `pure-name-is-pure` `safe-name-is-safe` `idempotent-name` `catch-hides-failure` `error-message-matches-condition` `log-level-matches-event` `log-message-matches-event` `comment-describes-block` `comment-describes-declaration` `doc-errors-match-body` `var-name-describes-value` |
 | Tests  | `describe-names-subject` `test-name-describes-code` `test-name-verifies-claim` `snapshot-only-behaviour-claim` `test-mocks-subject`                                                                                                                                                                     |
 
-Their questions come from jev-lint, which tuned them on the default model, `openrouter/~typesafe/jev-latest`. Every rule reports only at 0.8 or above, the lowest cutoff the plugin accepts. It does not use jev-lint's cutoffs. Some jev-lint rules look across files. Others look at types, classes, other languages, documents or commits. Those rules are not here.
+Their questions come from jev-lint, which tuned them on `openrouter/~typesafe/jev-latest`. Every rule reports only at 0.8 or above, the lowest cutoff the plugin accepts. It does not use jev-lint's cutoffs. Some jev-lint rules look across files. Others look at types, classes, other languages, documents or commits. Those rules are not here.
 
 ## License
 

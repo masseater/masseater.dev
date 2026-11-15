@@ -4,7 +4,7 @@
 
 - `vp run verify` は `vp check` と、`vite.config.ts` の `verify` タスクの `dependsOn` に並ぶ検査をすべて動かす。パッケージごとの検査は、そのパッケージの `vite.config.ts` の `verify` タスクの `dependsOn` に並べ、ルートの `verify` が `vp run -r verify` で集める。リポ全体の lint・checks・タスクの設定はルートの `vite.config.ts` 1 つに置き、別のファイルに分けない。1 つのワークスペースだけに効く lint の例外・ignore・devDependencies の許可は、そのワークスペースの `vite.config.ts` の `msch` に書き、ルートに置かない。ルートがワークスペースの中を指すと msch が落とす（書き方は `libs/msch/README.md`）。pre-push フックも同じものを動かす。
 - `verify` タスクと pre-commit フックは、lint を `GOMEMLIMIT=4GiB` で動かす。tsgolint は制限が無いと約 7 GB まで膨らみ、メモリが 14 GB のクラウドのセッションでは OOM で落ちる。4 GiB にすると約 3.9 GB に収まり、かかる時間は変わらない。それでも lint とテストが並ぶとセッションの上限 13.6 GB を超えるので、クラウドでは session-start フックが `VP_RUN_CONCURRENCY_LIMIT=1` でタスクを 1 つずつ動かす。
-- `vp check` の decision ルールは `apps/portfolio` の `msch.lint` が `use` で選んだファイルだけに掛かり、`OPENROUTER_API_KEY` で判定する。
+- `vp check` の decision ルールは `apps/portfolio` の `msch.lint` が `use` で選んだファイルだけに掛かり、Cloudflare AI Gateway の Workers AI のモデルが `CLOUDFLARE_API_TOKEN`（Workers AI Read）で判定する。OpenRouter は使わない。
 - 1 つのテストは、そのパッケージのディレクトリで `vp test run <ファイル>` で動かす。
 
 ## 構成

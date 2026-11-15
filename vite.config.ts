@@ -194,8 +194,9 @@ export default defineConfig({
       check: {
         command: "GOMEMLIMIT=4GiB vp check --deny-warnings",
         cache: {
-          env: ["OPENROUTER_API_KEY"],
+          env: ["CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_AI_GATEWAY_ID"],
           untrackedEnv: [
+            "CLOUDFLARE_API_TOKEN",
             "CLAUDECODE",
             "CLAUDE_CODE_REMOTE",
             "HTTPS_PROXY",

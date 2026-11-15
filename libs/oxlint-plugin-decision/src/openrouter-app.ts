@@ -10,6 +10,8 @@ import {
 } from "effect";
 import type { PlatformError } from "effect/PlatformError";
 
+import { captured } from "./runtime.ts";
+
 const GITHUB = "https://github.com";
 const SELF = "masseater/masseater.dev";
 const GIT_SUFFIX = /\.git\/?$/u;
@@ -50,12 +52,6 @@ const slugOf = (url: string): Option.Option<string> => {
   }
   return Option.some(pipe(Arr.takeRight(parts, SLUG_PARTS), Arr.join("/")));
 };
-
-const captured = (match: Option.Option<RegExpMatchArray>, name: string): Option.Option<string> =>
-  match.pipe(
-    Option.flatMap((found) => Option.fromNullishOr(found.groups)),
-    Option.flatMap((groups) => Option.fromNullishOr(groups[name])),
-  );
 
 const linkedGitDir = Effect.fn("linkedGitDir")(function* linkedGitDir(dir: string, dotGit: string) {
   const fs = yield* FileSystem.FileSystem;
@@ -127,6 +123,17 @@ const repoOf = Effect.gen(function* repoOf() {
   return yield* remoteSlug;
 });
 
+interface AppContext {
+  readonly repo: string;
+  readonly context: string;
+}
+
+const appContext: Effect.Effect<AppContext, never, AppServices> = Effect.gen(function* app() {
+  const context = yield* contextOf;
+  const repo = yield* repoOf;
+  return { repo: Option.getOrElse(repo, () => SELF), context };
+});
+
 type OpenRouterApp = Readonly<
   Record<"HTTP-Referer" | "X-OpenRouter-Title" | "X-OpenRouter-App-Visibility", string>
 >;
@@ -144,6 +151,6 @@ const openRouterApp = (tool: string): Effect.Effect<OpenRouterApp, never, AppSer
   });
 
 /** @internal */
-export { openRouterApp };
+export { appContext, openRouterApp };
 /** @internal */
-export type { AppServices, OpenRouterApp };
+export type { AppContext, AppServices, OpenRouterApp };
