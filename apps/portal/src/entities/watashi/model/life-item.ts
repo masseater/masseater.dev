@@ -4,7 +4,7 @@ import { TimeOut } from "#/shared/model";
 
 const Names = Schema.Array(Schema.String);
 
-export const LifeItem = Schema.Struct({
+const LifeItem = Schema.Struct({
   ref: Schema.String,
   source: Schema.String,
   text: Schema.optionalKey(Schema.String),

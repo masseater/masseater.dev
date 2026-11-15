@@ -33,3 +33,5 @@ export type {
   OwnerTraitEvidence,
 } from "./owner-trait.table";
 export type { RevisionNotFound } from "./revision-not-found";
+export { ownerProfile } from "./owner-profile.table";
+export type { OwnerProfile } from "./owner-profile.table";
