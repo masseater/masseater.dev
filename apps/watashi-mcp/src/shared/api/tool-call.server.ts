@@ -13,7 +13,20 @@ export type ToolName =
   | "watashi_search"
   | "watashi_profile"
   | "conversation_read"
-  | "api_token_issue";
+  | "api_token_issue"
+  | "money_upsert_account"
+  | "money_import_csv"
+  | "money_add_transactions"
+  | "money_delete_import"
+  | "money_record_balance"
+  | "money_set_category"
+  | "money_set_category_rule"
+  | "money_delete_category_rule"
+  | "money_settings"
+  | "money_transactions"
+  | "money_flow"
+  | "money_monthly_totals"
+  | "money_balance_sheet";
 
 export const describeFailure = Match.type<ToolFailure>().pipe(
   Match.tagsExhaustive({
@@ -41,7 +54,7 @@ export const describeFailure = Match.type<ToolFailure>().pipe(
   }),
 );
 
-export const { meteredInput, runTool } = toolCalls<ToolName, ToolFailure>({
+export const { meteredInput, runTool, runToolIn } = toolCalls<ToolName, ToolFailure>({
   dataset: () => env.TOOL_CALLS,
   describe: describeFailure,
 });

@@ -29,13 +29,16 @@ const overview = (input: PeriodInputValue): Effect.Effect<OverviewValue, PortalF
         flow: rpcBody({ schema: MoneyFlow, call: () => money().read("money_flow", period) }),
         months: rpcBody({
           schema: MonthTotals,
-          call: () => money().read("monthly_totals", period),
+          call: () => money().read("money_monthly_totals", period),
         }),
         sheet: rpcBody({
           schema: BalanceSheet,
-          call: () => money().read("balance_sheet", { asOf }),
+          call: () => money().read("money_balance_sheet", { asOf }),
         }),
-        settings: rpcBody({ schema: Settings, call: () => money().read("get_settings", NO_INPUT) }),
+        settings: rpcBody({
+          schema: Settings,
+          call: () => money().read("money_settings", NO_INPUT),
+        }),
       },
       { concurrency: "unbounded" },
     );
@@ -50,7 +53,7 @@ export const moneyRoutes = createRouter("/api/money")
     "/transactions",
     ({ query }) =>
       respond(
-        rpcBody({ schema: TransactionPage, call: () => money().read("list_transactions", query) }),
+        rpcBody({ schema: TransactionPage, call: () => money().read("money_transactions", query) }),
       ),
     { query: Schema.toStandardSchemaV1(TransactionsInput) },
   );
