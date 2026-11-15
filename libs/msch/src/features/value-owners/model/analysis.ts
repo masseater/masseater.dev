@@ -1,6 +1,6 @@
 import { Option, Array as Arr, pipe } from "effect";
 
-import type { Project } from "#/entities/project/index.ts";
+import type { Project, SourceCheck } from "#/entities/project/index.ts";
 import { isVariableDeclaration } from "#/shared/lib/compiler.ts";
 import type { Checker, Node, VariableDeclaration } from "#/shared/lib/compiler.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
@@ -77,8 +77,13 @@ const nodesOf = (sites: readonly ValueSite[]): readonly Node[] =>
     Arr.map((site) => site.node),
   );
 
+export interface ProjectChecks {
+  readonly owners: readonly Owner[];
+  readonly sourceChecks: readonly SourceCheck[];
+}
+
 export const analyzeProject =
-  (owners: readonly Owner[]) =>
+  ({ owners, sourceChecks }: ProjectChecks) =>
   (project: Project): ProjectAnalysis => {
     const { checker } = project;
     const ownerDeclarations = ownerDeclarationsIn(project, owners);
@@ -113,6 +118,10 @@ export const analyzeProject =
           Arr.flatMap((sourceFile) => [
             ...ownedLiteralProblems(context)(sourceFile, excluded),
             ...shapeProblemsIn(shapeContext)(sourceFile),
+            ...pipe(
+              sourceChecks,
+              Arr.flatMap((check) => check(checker)(sourceFile)),
+            ),
           ]),
         ),
       ],

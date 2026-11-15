@@ -13,6 +13,7 @@ export default mergeConfig(
   {
     run: {
       tasks: {
+        verify: { command: [], dependsOn: ["build"] },
         "deploy:data": {
           command: "alchemy deploy alchemy.data.ts --stage data --yes",
           cache: false,

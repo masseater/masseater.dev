@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { signedYen, yen } from "#/entities/money";
+import { SIGNED_YEN, YEN } from "#/entities/money";
 import type { BalanceSheetValue, MoneyFlowValue } from "#/entities/money";
 import { Stat } from "#/shared/ui";
 
@@ -16,12 +16,12 @@ export const MoneyStats = ({
   sheet,
 }: Readonly<{ flow: MoneyFlowValue; sheet: BalanceSheetValue }>): ReactNode => (
   <div className="grid min-w-0 gap-5 md:grid-cols-3">
-    <Stat label={TEXT.income} tone="income" value={yen(flow.income)} />
-    <Stat label={TEXT.expense} tone="expense" value={yen(flow.expense)} />
+    <Stat label={TEXT.income} tone="income" value={YEN.format(flow.income)} />
+    <Stat label={TEXT.expense} tone="expense" value={YEN.format(flow.expense)} />
     <Stat
       label={TEXT.balance}
-      note={`${TEXT.cash} ${yen(sheet.left.currentAssets)}`}
-      value={signedYen(flow.income - flow.expense)}
+      note={`${TEXT.cash} ${YEN.format(sheet.left.currentAssets)}`}
+      value={SIGNED_YEN.format(flow.income - flow.expense)}
     />
   </div>
 );
