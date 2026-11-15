@@ -18,6 +18,8 @@ interface Preview {
 
 const NO_PREVIEW: Preview = { previews: [], render: false };
 
+const RENDER_ONLY: Preview = { previews: [], render: true };
+
 const isBlend = hasExtension(BLEND_EXTENSION);
 
 const previewOf = ({
@@ -37,12 +39,12 @@ const previewOf = ({
     return Effect.succeed(NO_PREVIEW);
   }
   if (!isBlend(pathname)) {
-    return Effect.succeed({ previews: [], render: true });
+    return Effect.succeed(RENDER_ONLY);
   }
   return blendPreview(file).pipe(
-    Effect.map((png): Preview => ({ previews: Option.toArray(png), render: false })),
+    Effect.map((png): Preview => ({ previews: Option.toArray(png), render: true })),
     Effect.catchCause((cause) =>
-      Effect.logDebug("no blend thumbnail", file, cause).pipe(Effect.as(NO_PREVIEW)),
+      Effect.logDebug("no blend thumbnail", file, cause).pipe(Effect.as(RENDER_ONLY)),
     ),
   );
 };
