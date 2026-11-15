@@ -33,6 +33,10 @@ export class RepositoryFiles extends Context.Service<
       root: string,
       pathspecs: readonly string[],
     ) => Effect.Effect<readonly string[]>;
+    readonly ignoredPaths: (
+      root: string,
+      paths: readonly string[],
+    ) => Effect.Effect<readonly string[]>;
     readonly isDirectory: (file: string) => Effect.Effect<Option.Option<boolean>>;
     readonly fileSize: (file: string) => Effect.Effect<number>;
     readonly join: (...segments: readonly string[]) => string;
@@ -43,25 +47,33 @@ export class RepositoryFiles extends Context.Service<
   }
 >()("@r_masseater/msch/shared/lib/repository-files/RepositoryFiles") {}
 
+type GitPaths = (
+  root: string,
+  args: readonly string[],
+  separator: string,
+) => Effect.Effect<readonly string[]>;
+
 export const nodeRepositoryFiles = Layer.effect(
   RepositoryFiles,
   Effect.gen(function* nodeRepositoryFiles() {
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-    const gitFiles = (root: string, args: readonly string[]): Effect.Effect<readonly string[]> =>
-      Effect.gen(function* listFiles() {
-        const handle = yield* ChildProcess.make("git", ["ls-files", "-z", ...args], {
+    const gitPaths: GitPaths = (root, args, separator) =>
+      Effect.gen(function* listPaths() {
+        const handle = yield* ChildProcess.make("git", args, {
           cwd: root,
           stdin: "ignore",
         });
         const listed = yield* handle.stdout.pipe(Stream.decodeText(), Stream.mkString);
-        return pipe(Str.split(listed, "\0"), Arr.filter(Str.isNonEmpty));
+        return pipe(Str.split(listed, separator), Arr.filter(Str.isNonEmpty));
       }).pipe(
         Effect.scoped,
         Effect.provideService(ChildProcessSpawner.ChildProcessSpawner, spawner),
         Effect.orElseSucceed((): readonly string[] => []),
       );
+    const gitFiles = (root: string, args: readonly string[]): Effect.Effect<readonly string[]> =>
+      gitPaths(root, ["ls-files", "-z", ...args], "\0");
     return RepositoryFiles.of({
       generatedFiles: (root) =>
         gitFiles(root, ["--", GENERATED_PATHSPEC]).pipe(
@@ -69,6 +81,7 @@ export const nodeRepositoryFiles = Layer.effect(
         ),
       listedFiles: (root) => gitFiles(root, LISTED_ARGS),
       matchingFiles: (root, pathspecs) => gitFiles(root, [...LISTED_ARGS, "--", ...pathspecs]),
+      ignoredPaths: (root, paths) => gitPaths(root, ["check-ignore", "--", ...paths], "\n"),
       readFile: (file) => fs.readFileString(file).pipe(Effect.option),
       exists: (file) => fs.exists(file).pipe(Effect.orElseSucceed(() => false)),
       realPath: (file) => fs.realPath(file).pipe(Effect.orElseSucceed(() => file)),

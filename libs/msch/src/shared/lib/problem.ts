@@ -30,6 +30,7 @@ const RuleNameSchema = Schema.Literals([
   "hidden-verify",
   "root-workspace-path",
   "shared-uncached-task",
+  "workflow-path",
   "colocated-test",
   "comment",
 ]);
