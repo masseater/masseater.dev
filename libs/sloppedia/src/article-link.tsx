@@ -5,7 +5,7 @@ import { targets } from "./config.ts";
 import type { SloppediaConfig } from "./config.ts";
 import { WikiLink } from "./wiki-link.tsx";
 
-const ArticleLink = ({
+export const ArticleLink = ({
   config,
   article,
 }: Readonly<{ config: SloppediaConfig; article: Article }>): ReactNode => (
@@ -13,5 +13,3 @@ const ArticleLink = ({
     {article.title}
   </WikiLink>
 );
-
-export { ArticleLink };

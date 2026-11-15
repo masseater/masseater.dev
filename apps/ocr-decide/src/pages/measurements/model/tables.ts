@@ -4,13 +4,13 @@ import { Array as Arr, pipe } from "effect";
 import { COPY } from "./copy";
 import { dollars, percent, rateIn, seconds } from "./summary";
 
-interface Column {
+export interface Column {
   readonly id: string;
   readonly label: string;
   readonly cell: (run: Run) => string;
 }
 
-interface Table {
+export interface Table {
   readonly id: string;
   readonly title: string;
   readonly columns: readonly Column[];
@@ -26,7 +26,7 @@ const OVERALL: Table = {
   ],
 };
 
-const tablesOf = (summary: Summary): readonly Table[] => [
+export const tablesOf = (summary: Summary): readonly Table[] => [
   OVERALL,
   {
     id: "group",
@@ -53,6 +53,3 @@ const tablesOf = (summary: Summary): readonly Table[] => [
     ),
   },
 ];
-
-export { tablesOf };
-export type { Column, Table };

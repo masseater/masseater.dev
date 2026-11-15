@@ -15,9 +15,9 @@ const EXIT_OK = 0;
 
 const decoder = new TextDecoder();
 
-type PlayRequest = Readonly<{ token: string; startAt: number; audio: ReadableStream }>;
+export type PlayRequest = Readonly<{ token: string; startAt: number; audio: ReadableStream }>;
 
-type PlayerContainer = Readonly<{
+export type PlayerContainer = Readonly<{
   running: Container["running"];
   images: Readonly<Container["images"]>;
   start: Container["start"];
@@ -89,7 +89,7 @@ const release = (container: PlayerContainer): Effect.Effect<void> =>
     ),
   );
 
-const runPlayer = Effect.fn("three-twelve.runPlayer")(function* runPlayer(
+export const runPlayer = Effect.fn("three-twelve.runPlayer")(function* runPlayer(
   container: PlayerContainer,
   request: PlayRequest,
 ) {
@@ -99,6 +99,3 @@ const runPlayer = Effect.fn("three-twelve.runPlayer")(function* runPlayer(
     release,
   );
 });
-
-export { runPlayer };
-export type { PlayRequest, PlayerContainer };

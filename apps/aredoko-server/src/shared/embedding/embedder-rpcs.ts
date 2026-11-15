@@ -6,10 +6,10 @@ import { EmbeddingFailed } from "./embedding-failed.ts";
 const VectorSchema = Schema.Array(Schema.Finite);
 
 /** @internal */
-const WorkerSettings = Schema.Struct({ modelDirectory: Schema.Option(Schema.String) });
+export const WorkerSettings = Schema.Struct({ modelDirectory: Schema.Option(Schema.String) });
 
 /** @internal */
-class EmbedderRpcs extends RpcGroup.make(
+export class EmbedderRpcs extends RpcGroup.make(
   Rpc.make("Device", { success: Schema.String }),
   Rpc.make("EmbedQuery", {
     payload: { query: Schema.String },
@@ -27,5 +27,3 @@ class EmbedderRpcs extends RpcGroup.make(
     error: EmbeddingFailed,
   }),
 ) {}
-
-export { EmbedderRpcs, WorkerSettings };

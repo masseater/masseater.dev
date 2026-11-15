@@ -8,7 +8,7 @@ import { useStickToBottom } from "#/shared/lib/stick-to-bottom";
 import { HistoryItem } from "./history-item.tsx";
 import { InterimItem } from "./interim-item.tsx";
 
-const CurrentAnswer = (): ReactNode => {
+export const CurrentAnswer = (): ReactNode => {
   const { said } = useStage();
   const interim = useInterim();
   const ref = useStickToBottom();
@@ -32,5 +32,3 @@ const CurrentAnswer = (): ReactNode => {
     </div>
   );
 };
-
-export { CurrentAnswer };

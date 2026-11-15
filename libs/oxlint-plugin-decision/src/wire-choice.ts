@@ -16,20 +16,20 @@ import type { Answers, ChoiceAnswer, ChoiceQuestion, DecisionRequest } from "./t
 
 const DATA_FIRST_ARITY = 2;
 
-type ChoiceCriteria = ChoiceQuestion["criteria"];
+export type ChoiceCriteria = ChoiceQuestion["criteria"];
 
 const RESPAN_MODELS = ["respan/"] as const;
 const OPTION_SEPARATOR = "__";
 const CERTAIN = 1;
 const NO_SEVERITY = "none";
 
-const isRespan = (model: string): boolean =>
+export const isRespan = (model: string): boolean =>
   pipe(
     RESPAN_MODELS,
     Arr.some((prefix) => Str.startsWith(prefix)(model)),
   );
 
-const optionIdOf: {
+export const optionIdOf: {
   (label: string): (id: string) => string;
   (id: string, label: string): string;
 } = Fn.dual(
@@ -37,10 +37,12 @@ const optionIdOf: {
   (id: string, label: string): string => `${id}${OPTION_SEPARATOR}${label}`,
 );
 
-const isSeverityScale = (criteria: ChoiceCriteria): boolean =>
+export const isSeverityScale = (criteria: ChoiceCriteria): boolean =>
   pipe(Rec.keys(criteria), Arr.join(",")) === pipe(SEVERITY_ORDER, Arr.join(","));
 
-const levelsAboveNone = (criteria: ChoiceCriteria): readonly (readonly [string, string | null])[] =>
+export const levelsAboveNone = (
+  criteria: ChoiceCriteria,
+): readonly (readonly [string, string | null])[] =>
   pipe(
     Rec.toEntries(criteria),
     Arr.filter(([label]) => label !== NO_SEVERITY),
@@ -155,7 +157,7 @@ const choiceQuestionsOf = (
     }),
   );
 
-const collapseChoices: {
+export const collapseChoices: {
   (answers: Answers): (request: DecisionRequest) => Answers;
   (request: DecisionRequest, answers: Answers): Answers;
 } = Fn.dual(DATA_FIRST_ARITY, (request: DecisionRequest, answers: Answers): Answers => ({
@@ -168,7 +170,7 @@ const collapseChoices: {
   ),
 }));
 
-const withChoices: {
+export const withChoices: {
   (answers: Answers): (request: DecisionRequest) => Answers;
   (request: DecisionRequest, answers: Answers): Answers;
 } = Fn.dual(DATA_FIRST_ARITY, (request: DecisionRequest, answers: Answers): Answers => {
@@ -177,6 +179,3 @@ const withChoices: {
   }
   return collapseChoices(request, answers);
 });
-
-export { collapseChoices, isRespan, isSeverityScale, levelsAboveNone, optionIdOf, withChoices };
-export type { ChoiceCriteria };

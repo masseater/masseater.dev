@@ -27,7 +27,5 @@ const frontmatter = (article: Article): string =>
 const markdown = (article: Article): string =>
   Arr.join(["---", Str.trimEnd(frontmatter(article)), "---", "", Str.trim(article.body), ""], "\n");
 
-const articleContent = (article: typeof ArticleInput.Type): string =>
+export const articleContent = (article: typeof ArticleInput.Type): string =>
   Base64.encode(markdown(article));
-
-export { articleContent };

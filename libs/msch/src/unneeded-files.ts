@@ -253,7 +253,7 @@ const unneededIn = Effect.fn("unneededIn")(function* unneededIn(root: string, wo
 });
 
 /** @internal */
-const checkUnneededFiles = Effect.fn("checkUnneededFiles")(function* checkUnneededFiles(
+export const checkUnneededFiles = Effect.fn("checkUnneededFiles")(function* checkUnneededFiles(
   root: string,
 ) {
   const files = yield* RepositoryFiles;
@@ -263,5 +263,3 @@ const checkUnneededFiles = Effect.fn("checkUnneededFiles")(function* checkUnneed
   }
   return yield* unneededIn(root, workspace.value);
 });
-
-export { checkUnneededFiles };

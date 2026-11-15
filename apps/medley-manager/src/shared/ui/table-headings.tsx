@@ -5,7 +5,7 @@ import { TableHead } from "./table-head";
 import { TableHeader } from "./table-header";
 import { TableRow } from "./table-row";
 
-const TableHeadings = ({ labels }: Readonly<{ labels: readonly string[] }>): ReactNode => (
+export const TableHeadings = ({ labels }: Readonly<{ labels: readonly string[] }>): ReactNode => (
   <TableHeader>
     <TableRow>
       {pipe(
@@ -15,5 +15,3 @@ const TableHeadings = ({ labels }: Readonly<{ labels: readonly string[] }>): Rea
     </TableRow>
   </TableHeader>
 );
-
-export { TableHeadings };

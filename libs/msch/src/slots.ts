@@ -38,7 +38,7 @@ const ANNOTATED_KINDS: ReadonlySet<SyntaxKind> = new Set([
 const isAnnotated = (declaration: Declaration): declaration is AnnotatedDeclaration =>
   ANNOTATED_KINDS.has(declaration.kind);
 
-const annotationOf = (declaration: Declaration): Option.Option<TypeNode> =>
+export const annotationOf = (declaration: Declaration): Option.Option<TypeNode> =>
   Option.liftPredicate(declaration, isAnnotated).pipe(
     Option.flatMap((annotated) => Option.fromUndefinedOr(annotated.type)),
   );
@@ -83,7 +83,7 @@ const variableSlot = (expression: Expression): Option.Option<Declaration> => {
   return Option.some(declaration);
 };
 
-const slotOf =
+export const slotOf =
   (checker: Checker) =>
   (expression: Expression): Option.Option<Declaration> =>
     argumentSlot(checker)(expression).pipe(
@@ -91,7 +91,7 @@ const slotOf =
       Option.orElse(() => variableSlot(expression)),
     );
 
-const contextSymbolsOf =
+export const contextSymbolsOf =
   (checker: Checker) =>
   (expression: Expression): readonly TypeSymbol[] => {
     const alias = Option.fromUndefinedOr(checker.getContextualType(expression)).pipe(
@@ -106,5 +106,3 @@ const contextSymbolsOf =
       Option.getOrElse(() => []),
     );
   };
-
-export { annotationOf, contextSymbolsOf, slotOf };

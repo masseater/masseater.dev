@@ -6,7 +6,7 @@ import { BoothSection } from "#/features/link-booth";
 
 import { PackageHeader } from "./package-header.tsx";
 
-const ScopeHeader = (): ReactNode => {
+export const ScopeHeader = (): ReactNode => {
   const item = usePackage(useSelectedPackage());
   if (Option.isNone(item)) {
     return false;
@@ -23,5 +23,3 @@ const ScopeHeader = (): ReactNode => {
     </section>
   );
 };
-
-export { ScopeHeader };

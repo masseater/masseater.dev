@@ -19,7 +19,7 @@ const draftText = (asking: Asking): string => {
   return "";
 };
 
-const useShownQuestion = (): Shown => {
+export const useShownQuestion = (): Shown => {
   const asking = useAsking();
   const stale = useStale();
   const current = Option.match(useStage().question, {
@@ -32,5 +32,3 @@ const useShownQuestion = (): Shown => {
     faded: stale || (asking.status === "drafting" && drafted === ""),
   };
 };
-
-export { useShownQuestion };

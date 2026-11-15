@@ -29,7 +29,7 @@ const attach = (yohaku: Yohaku): Effect.Effect<Mounted> =>
     return { style, container, root };
   });
 
-const mount = (yohaku: Yohaku): Effect.Effect<void, never, Scope.Scope> =>
+export const mount = (yohaku: Yohaku): Effect.Effect<void, never, Scope.Scope> =>
   Effect.acquireRelease(attach(yohaku), ({ style, container, root }) =>
     Effect.sync(() => {
       root.unmount();
@@ -38,5 +38,3 @@ const mount = (yohaku: Yohaku): Effect.Effect<void, never, Scope.Scope> =>
       document.documentElement.classList.remove("dark");
     }),
   ).pipe(Effect.asVoid);
-
-export { mount };

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { InfoboxRow } from "./article.ts";
 
-const InfoboxValue = ({ row }: Readonly<{ row: InfoboxRow }>): ReactNode =>
+export const InfoboxValue = ({ row }: Readonly<{ row: InfoboxRow }>): ReactNode =>
   Option.match(Option.fromUndefinedOr(row.href), {
     onNone: () => row.value,
     onSome: (href) => (
@@ -12,5 +12,3 @@ const InfoboxValue = ({ row }: Readonly<{ row: InfoboxRow }>): ReactNode =>
       </a>
     ),
   });
-
-export { InfoboxValue };

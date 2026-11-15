@@ -18,7 +18,7 @@ import type { Creators } from "./life-create.server.ts";
 import { createFact } from "./life-fact.server.ts";
 import { locating } from "./life-write-failure";
 
-type WriteResult = Readonly<{ written: readonly string[]; notices: readonly Notice[] }>;
+export type WriteResult = Readonly<{ written: readonly string[]; notices: readonly Notice[] }>;
 
 const CREATORS: Creators = {
   life_event: createEvent,
@@ -111,10 +111,7 @@ const resultOf = (results: readonly ItemResult[]): WriteResult => ({
   ),
 });
 
-const writeLife =
+export const writeLife =
   (writer: Writer) =>
   (records: readonly WriteItemValue[]): Effect.Effect<WriteResult, StoreFailure> =>
     checkAll(records).pipe(Effect.andThen(writeAll(writer)(records)), Effect.map(resultOf));
-
-export { writeLife };
-export type { WriteResult };

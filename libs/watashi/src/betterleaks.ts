@@ -7,9 +7,11 @@ import { WatashiFailed } from "./errors.ts";
 import { parseReport } from "./report.ts";
 import type { Finding } from "./report.ts";
 
-type Detector = (text: string) => Effect.Effect<readonly Finding[], WatashiFailed>;
+/** @internal */
+export type Detector = (text: string) => Effect.Effect<readonly Finding[], WatashiFailed>;
 
-type Command = readonly [string, ...string[]];
+/** @internal */
+export type Command = readonly [string, ...string[]];
 
 type Output = Readonly<{ exitCode: number; stdout: string; stderr: string }>;
 
@@ -85,7 +87,8 @@ const candidatesOf = (explicit: Option.Option<string>): readonly Command[] =>
     onNone: () => INSTALLED,
   });
 
-const resolveBetterleaks = (
+/** @internal */
+export const resolveBetterleaks = (
   explicit: Option.Option<string>,
 ): Effect.Effect<Command, WatashiFailed, ChildProcessSpawner.ChildProcessSpawner> =>
   Effect.findFirst(candidatesOf(explicit), works).pipe(
@@ -110,7 +113,8 @@ const reportOf = (output: Output): Effect.Effect<readonly Finding[], WatashiFail
   );
 };
 
-const betterleaksDetector = (
+/** @internal */
+export const betterleaksDetector = (
   command: Command,
 ): Effect.Effect<
   Detector,
@@ -134,8 +138,3 @@ const betterleaksDetector = (
       );
     return detect;
   });
-
-/** @internal */
-export { betterleaksDetector, resolveBetterleaks };
-/** @internal */
-export type { Command, Detector };

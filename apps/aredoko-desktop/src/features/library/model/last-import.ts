@@ -1,13 +1,13 @@
 import type { MutationStatus } from "@tanstack/react-query";
 import { Option, Predicate, Schema, pipe } from "effect";
 
-type LastImport =
+export type LastImport =
   | { readonly status: "none" }
   | { readonly status: "pending" }
   | { readonly status: "placed"; readonly packages: number }
   | { readonly status: "failed"; readonly message: string };
 
-const NO_IMPORT: LastImport = { status: "none" };
+export const NO_IMPORT: LastImport = { status: "none" };
 
 const FAILED = "取り込めませんでした";
 
@@ -20,7 +20,7 @@ const messageOf = (error: unknown): string =>
     Option.getOrElse(() => FAILED),
   );
 
-const lastImportOf = ({
+export const lastImportOf = ({
   status,
   data,
   error,
@@ -36,6 +36,3 @@ const lastImportOf = ({
   }
   return NO_IMPORT;
 };
-
-export { NO_IMPORT, lastImportOf };
-export type { LastImport };

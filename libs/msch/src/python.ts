@@ -71,11 +71,9 @@ const isPython = ({ name }: Listed): boolean => PYTHON_FILE.test(name);
 const isScanned = (entry: Listed): boolean => !isPython(entry) && isScannedText(entry);
 
 /** @internal */
-const checkPython = Effect.fn("checkPython")(function* checkPython(root: string) {
+export const checkPython = Effect.fn("checkPython")(function* checkPython(root: string) {
   const listed = yield* listedFiles(root);
   const scanned = yield* scanText(pipe(listed, Arr.filter(isScanned)), commandProblems);
   const present = yield* presentFiles(pipe(listed, Arr.filter(isPython)));
   return [...pipe(present, Arr.map(fileProblem)), ...scanned];
 });
-
-export { checkPython };

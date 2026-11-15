@@ -4,7 +4,7 @@ import type { Heading } from "sloppedia";
 
 import { TocItem } from "./toc-item";
 
-const TocList = ({ headings }: Readonly<{ headings: readonly Heading[] }>): ReactNode => (
+export const TocList = ({ headings }: Readonly<{ headings: readonly Heading[] }>): ReactNode => (
   <ol className="flex flex-col gap-2">
     {pipe(
       headings,
@@ -12,5 +12,3 @@ const TocList = ({ headings }: Readonly<{ headings: readonly Heading[] }>): Reac
     )}
   </ol>
 );
-
-export { TocList };

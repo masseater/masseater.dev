@@ -22,7 +22,7 @@ const UNSET = Object.freeze({
   enumerable: true,
 });
 
-const attachFileInfo: {
+export const attachFileInfo: {
   (impliedNodeFormat: Option.Option<ResolutionMode>): (sourceFile: SourceFile) => SourceFile;
   (sourceFile: SourceFile, impliedNodeFormat: Option.Option<ResolutionMode>): SourceFile;
 } = Fn.dual(
@@ -43,13 +43,13 @@ const attachFileInfo: {
 const infoOf = (sourceFile: SourceFile): Option.Option<FileInfo> =>
   Option.fromNullishOr(infos.get(sourceFile));
 
-const impliedNodeFormatOf = (sourceFile: SourceFile): Option.Option<ResolutionMode> =>
+export const impliedNodeFormatOf = (sourceFile: SourceFile): Option.Option<ResolutionMode> =>
   Option.flatMap(infoOf(sourceFile), (info) => info.impliedNodeFormat);
 
-const packageJsonScopeOf = (sourceFile: SourceFile): Option.Option<PackageJsonInfo> =>
+export const packageJsonScopeOf = (sourceFile: SourceFile): Option.Option<PackageJsonInfo> =>
   Option.flatMap(infoOf(sourceFile), (info) => info.packageJsonScope);
 
-const setPackageJsonScope: {
+export const setPackageJsonScope: {
   (scope: Option.Option<PackageJsonInfo>): (sourceFile: SourceFile) => void;
   (sourceFile: SourceFile, scope: Option.Option<PackageJsonInfo>): void;
 } = Fn.dual(
@@ -61,7 +61,7 @@ const setPackageJsonScope: {
   },
 );
 
-const collectExternalModuleReferences = (sourceFile: SourceFile): void => {
+export const collectExternalModuleReferences = (sourceFile: SourceFile): void => {
   Option.map(infoOf(sourceFile), (info) => {
     Object.defineProperty(sourceFile, "imports", { ...UNSET, value: info.imports });
     Object.defineProperty(sourceFile, "moduleAugmentations", {
@@ -72,31 +72,19 @@ const collectExternalModuleReferences = (sourceFile: SourceFile): void => {
   });
 };
 
-const importsOf = (sourceFile: SourceFile): readonly Node[] =>
+export const importsOf = (sourceFile: SourceFile): readonly Node[] =>
   Option.match(infoOf(sourceFile), {
     onNone: () => sourceFile.imports,
     onSome: (info) => info.imports,
   });
 
-const moduleAugmentationsOf = (sourceFile: SourceFile): readonly Node[] =>
+export const moduleAugmentationsOf = (sourceFile: SourceFile): readonly Node[] =>
   Option.match(infoOf(sourceFile), {
     onNone: () => sourceFile.moduleAugmentations,
     onSome: (info) => info.moduleAugmentations,
   });
 
-const isSourceFileJS = (sourceFile: SourceFile): boolean =>
+export const isSourceFileJS = (sourceFile: SourceFile): boolean =>
   sourceFile.scriptKind === ScriptKind.JS || sourceFile.scriptKind === ScriptKind.JSX;
 
-const isJSDocNode = (node: Node): boolean => hasFlag(node.flags, NodeFlags.JSDoc);
-
-export {
-  attachFileInfo,
-  collectExternalModuleReferences,
-  impliedNodeFormatOf,
-  importsOf,
-  isJSDocNode,
-  isSourceFileJS,
-  moduleAugmentationsOf,
-  packageJsonScopeOf,
-  setPackageJsonScope,
-};
+export const isJSDocNode = (node: Node): boolean => hasFlag(node.flags, NodeFlags.JSDoc);

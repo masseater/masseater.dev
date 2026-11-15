@@ -4,9 +4,9 @@ import type { Scope } from "effect";
 
 const INDENT = 2;
 
-type Cached<Value> = (key: unknown, compute: Effect.Effect<Value>) => Effect.Effect<Value>;
+export type Cached<Value> = (key: unknown, compute: Effect.Effect<Value>) => Effect.Effect<Value>;
 
-class BenchStore extends Context.Service<
+export class BenchStore extends Context.Service<
   BenchStore,
   {
     readonly benchPath: (...segments: readonly string[]) => string;
@@ -22,30 +22,32 @@ class BenchStore extends Context.Service<
   }
 >()("decision-bench-runner/store/BenchStore") {}
 
-const benchPath = Effect.fn("benchPath")(function* benchPath(...segments: readonly string[]) {
+export const benchPath = Effect.fn("benchPath")(function* benchPath(
+  ...segments: readonly string[]
+) {
   const store = yield* BenchStore;
   return store.benchPath(...segments);
 });
 
-const dataPath = ({
+export const dataPath = ({
   task,
   extension,
 }: Readonly<{ task: TaskId; extension: "jsonl" | "stats.json" }>): ReturnType<typeof benchPath> =>
   benchPath("data", `${task}.${extension}`);
 
-const modelSlug = (model: string): string => pipe(model, Str.replaceAll("/", "__"));
+export const modelSlug = (model: string): string => pipe(model, Str.replaceAll("/", "__"));
 
-const readText = Effect.fn("readText")(function* readText(file: string) {
+export const readText = Effect.fn("readText")(function* readText(file: string) {
   const store = yield* BenchStore;
   return yield* store.readText(file);
 });
 
-const writeText = Effect.fn("writeText")(function* writeText(file: string, text: string) {
+export const writeText = Effect.fn("writeText")(function* writeText(file: string, text: string) {
   const store = yield* BenchStore;
   yield* store.writeText(file, text);
 });
 
-const readJsonl = Effect.fn("readJsonl")(function* readJsonl<Codec extends Schema.Top>(
+export const readJsonl = Effect.fn("readJsonl")(function* readJsonl<Codec extends Schema.Top>(
   schema: Codec,
   file: string,
 ) {
@@ -65,7 +67,7 @@ const readJsonl = Effect.fn("readJsonl")(function* readJsonl<Codec extends Schem
   );
 });
 
-const readJson = Effect.fn("readJson")(function* readJson<Codec extends Schema.Top>(
+export const readJson = Effect.fn("readJson")(function* readJson<Codec extends Schema.Top>(
   schema: Codec,
   file: string,
 ) {
@@ -78,7 +80,7 @@ const readJson = Effect.fn("readJson")(function* readJson<Codec extends Schema.T
   return Option.some(value);
 });
 
-const writeJsonl = Effect.fn("writeJsonl")(function* writeJsonl<Codec extends Schema.Top>(
+export const writeJsonl = Effect.fn("writeJsonl")(function* writeJsonl<Codec extends Schema.Top>(
   schema: Codec,
   file: string,
   rows: readonly Codec["Type"][],
@@ -95,7 +97,7 @@ const writeJsonl = Effect.fn("writeJsonl")(function* writeJsonl<Codec extends Sc
   );
 });
 
-const writeJson = Effect.fn("writeJson")(function* writeJson<Codec extends Schema.Top>(
+export const writeJson = Effect.fn("writeJson")(function* writeJson<Codec extends Schema.Top>(
   schema: Codec,
   file: string,
   value: Codec["Type"],
@@ -106,34 +108,18 @@ const writeJson = Effect.fn("writeJson")(function* writeJson<Codec extends Schem
 
 const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
-const toJson = (value: unknown): Effect.Effect<string, Schema.SchemaError> => encodeJson(value);
+export const toJson = (value: unknown): Effect.Effect<string, Schema.SchemaError> =>
+  encodeJson(value);
 
-const sha256 = Effect.fn("sha256")(function* sha256(value: unknown) {
+export const sha256 = Effect.fn("sha256")(function* sha256(value: unknown) {
   const store = yield* BenchStore;
   const json = yield* toJson(value);
   return yield* store.sha256Hex(json);
 });
 
-const makeCache = Effect.fn("makeCache")(function* makeCache<
+export const makeCache = Effect.fn("makeCache")(function* makeCache<
   Codec extends Schema.Codec<unknown, unknown>,
 >(storeId: string, success: Codec, keep: (value: Codec["Type"]) => boolean) {
   const store = yield* BenchStore;
   return yield* store.cache(storeId, success, keep);
 });
-
-export {
-  BenchStore,
-  benchPath,
-  dataPath,
-  makeCache,
-  modelSlug,
-  readJson,
-  readJsonl,
-  readText,
-  sha256,
-  toJson,
-  writeJson,
-  writeJsonl,
-  writeText,
-};
-export type { Cached };

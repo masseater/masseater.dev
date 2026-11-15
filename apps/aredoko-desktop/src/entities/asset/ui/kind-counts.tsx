@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { KIND_LABELS } from "#/entities/asset/config/asset-kinds";
 import { Badge } from "#/shared/ui/badge";
 
-const KindCounts = ({
+export const KindCounts = ({
   counts,
 }: Readonly<{ counts: (typeof Summary.Type)["counts"] }>): ReactNode => (
   <div className="flex flex-wrap gap-1.5">
@@ -18,5 +18,3 @@ const KindCounts = ({
     )}
   </div>
 );
-
-export { KindCounts };

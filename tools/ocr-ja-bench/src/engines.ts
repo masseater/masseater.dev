@@ -1,11 +1,11 @@
 import { String as Str } from "effect";
 
-type Engine =
+export type Engine =
   | Readonly<{ kind: "recorded"; id: string; label: string }>
   | Readonly<{ kind: "tesseract"; id: string; label: string }>
   | Readonly<{ kind: "vlm"; id: string; label: string }>;
 
-const ENGINES: readonly Engine[] = [
+export const ENGINES: readonly Engine[] = [
   { kind: "recorded", id: "indra-ocr", label: "Indra OCR 1.1" },
   { kind: "recorded", id: "ndlocr-lite", label: "NDLOCR-Lite 1.3" },
   { kind: "recorded", id: "paddleocr", label: "PaddleOCR 3.7（PP-OCRv6）" },
@@ -18,7 +18,4 @@ const ENGINES: readonly Engine[] = [
   { kind: "vlm", id: "anthropic/claude-haiku-5.5", label: "Claude Haiku 5.5" },
 ];
 
-const fileNameOf = (id: string): string => `${Str.replaceAll("/", "__")(id)}.json`;
-
-export { ENGINES, fileNameOf };
-export type { Engine };
+export const fileNameOf = (id: string): string => `${Str.replaceAll("/", "__")(id)}.json`;

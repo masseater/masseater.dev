@@ -2,7 +2,7 @@ import { Array as Arr, pipe } from "effect";
 
 import type { InterviewSummary } from "#protocol";
 
-const SECTIONS = [
+export const SECTIONS = [
   { key: "points", heading: "分かったこと" },
   { key: "open", heading: "気になること" },
   { key: "next", heading: "まだ聞いていないこと" },
@@ -14,7 +14,7 @@ const bulleted = (items: readonly string[]): readonly string[] =>
     Arr.map((item) => `- ${item}`),
   );
 
-const handoffOf = (summary: InterviewSummary): string =>
+export const handoffOf = (summary: InterviewSummary): string =>
   pipe(
     SECTIONS,
     Arr.filter(({ key }) => Arr.isReadonlyArrayNonEmpty(summary[key])),
@@ -22,5 +22,3 @@ const handoffOf = (summary: InterviewSummary): string =>
     Arr.prepend(`# ${summary.theme}`),
     Arr.join("\n"),
   );
-
-export { SECTIONS, handoffOf };

@@ -12,7 +12,7 @@ const FADE_MS = 600;
 const HOVER_COLOR = "rgba(255, 255, 255, 0.95)";
 const DRAW = "source-over";
 
-interface Frame extends Source {
+export interface Frame extends Source {
   readonly context: CanvasRenderingContext2D;
   readonly now: number;
   readonly accent: string;
@@ -72,7 +72,7 @@ const clear = (context: CanvasRenderingContext2D): void => {
   context.imageSmoothingQuality = "high";
 };
 
-const drawScene = (frame: Frame): void => {
+export const drawScene = (frame: Frame): void => {
   clear(frame.context);
   drawMosaic(frame);
   for (const item of planOutlines(frame.scene)) {
@@ -80,10 +80,7 @@ const drawScene = (frame: Frame): void => {
   }
 };
 
-const isFading =
+export const isFading =
   (now: number) =>
   (scene: Scene): boolean =>
     now < scene.reveal + FADE_MS;
-
-export type { Frame };
-export { drawScene, isFading };

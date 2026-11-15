@@ -6,11 +6,11 @@ const YOUTUBE_ID = /^[\w-]{11}$/u;
 const SECONDS_PER_MINUTE = 60;
 const TIME_DIGITS = 2;
 
-type Watchable = Readonly<{ videoId: string | null; url: string }>;
+export type Watchable = Readonly<{ videoId: string | null; url: string }>;
 
-type WatchTarget = Readonly<{ target: Watchable; start: Option.Option<number> }>;
+export type WatchTarget = Readonly<{ target: Watchable; start: Option.Option<number> }>;
 
-type PartStartLink = Readonly<{ label: string; href: Option.Option<string> }>;
+export type PartStartLink = Readonly<{ label: string; href: Option.Option<string> }>;
 
 type VideoSource = Readonly<{ site: "niconico" | "youtube"; id: string }>;
 
@@ -35,7 +35,7 @@ const youtubeUrl = ({ target, start }: WatchTarget): Option.Option<string> =>
 const registeredUrl = ({ target }: WatchTarget): Option.Option<string> =>
   Option.some(target.url).pipe(Option.filter((url) => url !== UNKNOWN_URL));
 
-const watchUrl = (watch: WatchTarget): Option.Option<string> =>
+export const watchUrl = (watch: WatchTarget): Option.Option<string> =>
   niconicoUrl(watch).pipe(
     Option.orElse(() => youtubeUrl(watch)),
     Option.orElse(() => registeredUrl(watch)),
@@ -58,16 +58,16 @@ const EMBED_BASE: Readonly<Record<VideoSource["site"], string>> = {
   youtube: "https://www.youtube-nocookie.com/embed/",
 };
 
-const embedUrl = (target: Watchable): Option.Option<string> =>
+export const embedUrl = (target: Watchable): Option.Option<string> =>
   videoSource(target).pipe(Option.map((source) => `${EMBED_BASE[source.site]}${source.id}`));
 
-const formatTime = (seconds: number): string => {
+export const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
   const rest = Math.floor(seconds % SECONDS_PER_MINUTE);
   return `${minutes.toString()}:${pipe(rest.toString(), Str.padStart(TIME_DIGITS, "0"))}`;
 };
 
-const partStart = ({
+export const partStart = ({
   source,
   startSec,
 }: Readonly<{ source: Watchable; startSec: number | null }>): Option.Option<PartStartLink> =>
@@ -77,6 +77,3 @@ const partStart = ({
       href: watchUrl({ target: source, start: Option.some(start) }),
     })),
   );
-
-export type { PartStartLink, Watchable, WatchTarget };
-export { embedUrl, formatTime, partStart, watchUrl };

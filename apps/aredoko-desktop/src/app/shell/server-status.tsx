@@ -7,7 +7,7 @@ import { Unreachable } from "./unreachable.tsx";
 
 const STARTING = "起動しています…";
 
-const ServerStatus = (): ReactNode => {
+export const ServerStatus = (): ReactNode => {
   const status = useStatus();
   useFollowAnalysis();
   if (status.isPending) {
@@ -18,5 +18,3 @@ const ServerStatus = (): ReactNode => {
   }
   return <IndexingProgress size="xs" />;
 };
-
-export { ServerStatus };

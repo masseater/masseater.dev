@@ -5,9 +5,9 @@ import { Array as Arr, Number as Num, Option, Schema, pipe } from "effect";
 import { AnalysisResult } from "#/entities/trait";
 import type { AnalysisResultValue } from "#/entities/trait";
 
-const TRAIT_MODEL = "@cf/zai-org/glm-5.3-flash";
+export const TRAIT_MODEL = "@cf/zai-org/glm-5.3-flash";
 
-const RECORD_TOOL = "record_observations";
+export const RECORD_TOOL = "record_observations";
 
 const INSTRUCTIONS = Arr.join(
   [
@@ -37,7 +37,7 @@ const traitExtension = (): Extension =>
     tools: [recordTool],
   });
 
-const traitRegistry = (): Registry => {
+export const traitRegistry = (): Registry => {
   const registry = createRegistry();
   registry.install(traitExtension());
   return registry;
@@ -55,7 +55,7 @@ const RecordCall = Schema.Struct({
   arguments: AnalysisResult,
 });
 
-type Transcript = Readonly<{
+export type Transcript = Readonly<{
   result: Option.Option<AnalysisResultValue>;
   inputTokens: number;
   outputTokens: number;
@@ -94,7 +94,7 @@ const tokensOf = (
     Num.sumAll,
   );
 
-const readTranscript = (entries: readonly unknown[]): Transcript => {
+export const readTranscript = (entries: readonly unknown[]): Transcript => {
   const turns = turnsOf(entries);
   return {
     result: pipe(
@@ -109,6 +109,3 @@ const readTranscript = (entries: readonly unknown[]): Transcript => {
     outputTokens: tokensOf(turns, "output"),
   };
 };
-
-export { RECORD_TOOL, TRAIT_MODEL, readTranscript, traitRegistry };
-export type { Transcript };

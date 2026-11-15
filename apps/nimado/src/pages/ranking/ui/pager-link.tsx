@@ -6,7 +6,7 @@ import type { RankingSearch } from "#/entities/ranking";
 
 const route = getRouteApi("/");
 
-const PagerLink = ({
+export const PagerLink = ({
   page,
   enabled,
   text,
@@ -24,5 +24,3 @@ const PagerLink = ({
     </route.Link>
   );
 };
-
-export { PagerLink };

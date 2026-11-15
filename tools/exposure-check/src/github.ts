@@ -4,7 +4,7 @@ import { Array as Arr, Effect, Stream, pipe } from "effect";
 import type { Repository } from "./inventory.ts";
 
 /** @internal */
-const repositories = Stream.runCollect(listReposAccessibleToInstallation.items({})).pipe(
+export const repositories = Stream.runCollect(listReposAccessibleToInstallation.items({})).pipe(
   Effect.map((items) =>
     pipe(
       Arr.fromIterable(items),
@@ -17,5 +17,3 @@ const repositories = Stream.runCollect(listReposAccessibleToInstallation.items({
   ),
   Effect.withSpan("exposure.github"),
 );
-
-export { repositories };

@@ -12,13 +12,13 @@ import type {
 } from "@r_masseater/injection-bisect";
 import { Clock, Effect, Queue, Stream } from "effect";
 
-type Finished =
+export type Finished =
   | { readonly type: "done"; readonly detection: Detection }
   | { readonly type: "failed"; readonly reason: string };
 
-type InspectEvent = (ProbeEvent | Finished) & { readonly at: number };
+export type InspectEvent = (ProbeEvent | Finished) & { readonly at: number };
 
-interface Request {
+export interface Request {
   readonly text: string;
   readonly model: string;
   readonly format: string;
@@ -38,7 +38,7 @@ const finish = ({
     ),
   );
 
-const inspectEvents = ({
+export const inspectEvents = ({
   text,
   apiKey,
   model,
@@ -60,6 +60,3 @@ const inspectEvents = ({
       yield* Queue.end(queue);
     }).pipe(withApiKey(apiKey)),
   ).pipe(Stream.provide(openRouterPerRequest), Stream.toAsyncIterable);
-
-export type { Finished, InspectEvent, Request };
-export { inspectEvents };

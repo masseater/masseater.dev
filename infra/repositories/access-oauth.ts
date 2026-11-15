@@ -19,12 +19,12 @@ import type { OAuthTargetId } from "./oauth-targets.ts";
 
 const REFRESH_MARGIN_MS = 60_000;
 
-type SiteToken =
+export type SiteToken =
   | Readonly<{ status: "ok"; site: OAuthTargetId; accessToken: string; expiresAt: string }>
   | Readonly<{ status: "login"; site: OAuthTargetId; loginUrl: string }>
   | Readonly<{ status: "failed"; site: OAuthTargetId; message: string }>;
 
-interface AccessOAuthRpc extends Rpc.WorkerEntrypointBranded {
+export interface AccessOAuthRpc extends Rpc.WorkerEntrypointBranded {
   token: (site: OAuthTargetId) => Promise<SiteToken>;
 }
 
@@ -122,7 +122,7 @@ const tokenFor = ({ env, site }: SiteContext): Effect.Effect<SiteToken, AccessOA
     return yield* rotate({ env, site, stored, grant });
   });
 
-class AccessOAuth extends WorkerEntrypoint<AppStoreEnv> implements AccessOAuthRpc {
+export class AccessOAuth extends WorkerEntrypoint<AppStoreEnv> implements AccessOAuthRpc {
   public token(site: OAuthTargetId): Promise<SiteToken> {
     const { env } = this;
     return runner(logger)(
@@ -140,6 +140,4 @@ class AccessOAuth extends WorkerEntrypoint<AppStoreEnv> implements AccessOAuthRp
   }
 }
 
-export { AccessOAuth };
-export type { AccessOAuthRpc, SiteToken };
 export { accessOAuthRoute } from "./access-oauth-login.ts";

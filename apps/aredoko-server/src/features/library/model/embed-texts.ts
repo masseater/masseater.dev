@@ -34,7 +34,7 @@ const embedBatch = Effect.fn("embedTextBatch")(function* embedTextBatch(
 });
 
 /** @internal */
-const embedTexts = Effect.fn("embedTexts")(function* embedMissingTexts(
+export const embedTexts = Effect.fn("embedTexts")(function* embedMissingTexts(
   packageId: Option.Option<number>,
 ) {
   const sql = yield* SqlClient.SqlClient;
@@ -61,5 +61,3 @@ const embedTexts = Effect.fn("embedTexts")(function* embedMissingTexts(
   );
   return pipe(embedded, Array.every(Boolean));
 });
-
-export { embedTexts };

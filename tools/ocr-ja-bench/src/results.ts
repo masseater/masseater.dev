@@ -32,11 +32,11 @@ const EngineResultsSchema = Schema.Struct({
 
 const EngineResultsJson = Schema.fromJsonString(EngineResultsSchema, INDENT);
 
-type Reading = typeof ReadingSchema.Type;
+export type Reading = typeof ReadingSchema.Type;
 
-type EngineResults = typeof EngineResultsSchema.Type;
+export type EngineResults = typeof EngineResultsSchema.Type;
 
-class Results extends Context.Service<
+export class Results extends Context.Service<
   Results,
   {
     readonly pages: Effect.Effect<readonly Page[], ResultsError>;
@@ -109,7 +109,6 @@ const makeResults = Effect.gen(function* makeResults() {
   });
 });
 
-const resultsLayer = Layer.effect(Results, makeResults).pipe(Layer.provide(NodeServices.layer));
-
-export { Results, resultsLayer };
-export type { EngineResults, Reading };
+export const resultsLayer = Layer.effect(Results, makeResults).pipe(
+  Layer.provide(NodeServices.layer),
+);

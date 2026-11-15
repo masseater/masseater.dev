@@ -2,11 +2,14 @@ import { CONVERSATIONS_PATH } from "@masseater.dev/watashi-protocol";
 import { Array as Arr, Effect, Option, Record as Rec, Ref, String as Str, pipe } from "effect";
 import { Headers, HttpClient, HttpClientRequest, HttpClientResponse, UrlParams } from "effect/http";
 
-type Query = Readonly<Record<string, string>>;
+/** @internal */
+export type Query = Readonly<Record<string, string>>;
 
-type Stored = Readonly<{ start: number; end: number; body: string; query: Query }>;
+/** @internal */
+export type Stored = Readonly<{ start: number; end: number; body: string; query: Query }>;
 
-type Recorded = Readonly<{ method: string; path: string; authorization: string }>;
+/** @internal */
+export type Recorded = Readonly<{ method: string; path: string; authorization: string }>;
 
 type State = Readonly<{
   requests: readonly Recorded[];
@@ -14,7 +17,8 @@ type State = Readonly<{
   conflictNext: boolean;
 }>;
 
-type FakeWatashi = Readonly<{
+/** @internal */
+export type FakeWatashi = Readonly<{
   client: HttpClient.HttpClient;
   count: (method: string) => number;
   requests: () => readonly Recorded[];
@@ -115,7 +119,8 @@ const clientOf = (ref: Ref.Ref<State>): HttpClient.HttpClient =>
     ),
   );
 
-const fakeWatashi = (): FakeWatashi => {
+/** @internal */
+export const fakeWatashi = (): FakeWatashi => {
   const ref = Ref.makeUnsafe<State>({ requests: [], chunks: {}, conflictNext: false });
   const now = (): State => Ref.getUnsafe(ref);
   const chunksOf = (key: string): readonly Stored[] => chunksIn(now())(key);
@@ -143,9 +148,5 @@ const fakeWatashi = (): FakeWatashi => {
   };
 };
 
-const endsWithNewline = (chunk: Stored): boolean => Str.endsWith("\n")(chunk.body);
-
 /** @internal */
-export { endsWithNewline, fakeWatashi };
-/** @internal */
-export type { FakeWatashi, Query, Recorded, Stored };
+export const endsWithNewline = (chunk: Stored): boolean => Str.endsWith("\n")(chunk.body);

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { TagSearch } from "#/features/tag-filter/model/search";
 
-const TagFilterButton = ({
+export const TagFilterButton = ({
   active,
   children,
   onSelect,
@@ -31,5 +31,3 @@ const TagFilterButton = ({
     </li>
   );
 };
-
-export { TagFilterButton };

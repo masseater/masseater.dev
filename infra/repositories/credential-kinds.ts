@@ -5,11 +5,11 @@ const KINDS = ["cloudflare", "github", "npm", "atproto", "shared"] as const;
 const ONLY = "only";
 const SEPARATOR = ",";
 
-type Kind = (typeof KINDS)[number];
+export type Kind = (typeof KINDS)[number];
 
-type Issued = Readonly<Record<string, unknown>>;
+export type Issued = Readonly<Record<string, unknown>>;
 
-type Issuance<Failure, Context> = Readonly<{
+export type Issuance<Failure, Context> = Readonly<{
   kinds: readonly Kind[];
   issuers: Readonly<Record<Kind, Effect.Effect<Option.Option<Issued>, Failure, Context>>>;
 }>;
@@ -39,7 +39,7 @@ const narrowed = (names: readonly string[]): Effect.Effect<readonly Kind[], Unkn
   );
 };
 
-const selectKinds = (
+export const selectKinds = (
   query: Readonly<Pick<URLSearchParams, "getAll">>,
 ): Effect.Effect<readonly Kind[], UnknownKind> => {
   const names = pipe(query.getAll(ONLY), Arr.flatMap(Str.split(SEPARATOR)));
@@ -52,7 +52,7 @@ const selectKinds = (
 const merged = (issued: readonly Option.Option<Issued>[]): Issued =>
   pipe(Arr.getSomes(issued), Arr.flatMap(Rec.toEntries), Rec.fromEntries);
 
-const issueKinds = <Failure, Context>({
+export const issueKinds = <Failure, Context>({
   kinds,
   issuers,
 }: Issuance<Failure, Context>): Effect.Effect<Issued, Failure, Context> =>
@@ -62,5 +62,4 @@ const issueKinds = <Failure, Context>({
     Effect.map(merged),
   );
 
-export { issueKinds, selectKinds };
-export type { Issuance, Issued, Kind, UnknownKind };
+export type { UnknownKind };

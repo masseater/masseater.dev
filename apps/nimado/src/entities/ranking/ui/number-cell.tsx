@@ -1,7 +1,7 @@
 import { cn } from "@masseater.dev/ui/cn";
 import type { ReactNode } from "react";
 
-const NumberCell = ({
+export const NumberCell = ({
   full,
   compact,
   tone = "",
@@ -11,5 +11,3 @@ const NumberCell = ({
     <span className="hidden sm:inline">{full}</span>
   </td>
 );
-
-export { NumberCell };

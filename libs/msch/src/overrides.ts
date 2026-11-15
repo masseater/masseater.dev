@@ -150,7 +150,7 @@ const problemsFor = Effect.fn("problemsFor")(function* problemsFor(
 });
 
 /** @internal */
-const checkOverrides = Effect.fn("checkOverrides")(function* checkOverrides(root: string) {
+export const checkOverrides = Effect.fn("checkOverrides")(function* checkOverrides(root: string) {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const manifest = yield* fs.readFileString(path.join(root, WORKSPACE_FILE)).pipe(Effect.option);
@@ -160,5 +160,3 @@ const checkOverrides = Effect.fn("checkOverrides")(function* checkOverrides(root
   }
   return yield* problemsFor(root, manifest.value, keys);
 });
-
-export { checkOverrides };

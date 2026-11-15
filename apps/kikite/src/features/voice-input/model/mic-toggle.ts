@@ -35,11 +35,9 @@ const toggleMic = Effect.fn("kikite.toggleMic")(function* toggleMic() {
 
 const toggleMicAtom = Atom.fn(() => toggleMic());
 
-const useToggleMic = (): (() => void) => {
+export const useToggleMic = (): (() => void) => {
   const toggle = useAtomSet(toggleMicAtom);
   return useCallback(() => {
     toggle();
   }, [toggle]);
 };
-
-export { useToggleMic };

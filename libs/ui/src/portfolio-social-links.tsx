@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { nameTransition } from "./name-transition.ts";
 import { portfolio } from "./portfolio.ts";
 
-const PortfolioSocialLinks = (): ReactNode => (
+export const PortfolioSocialLinks = (): ReactNode => (
   <ul className="flex justify-end sm:gap-x-4">
     {pipe(
       portfolio.links,
@@ -23,5 +23,3 @@ const PortfolioSocialLinks = (): ReactNode => (
     )}
   </ul>
 );
-
-export { PortfolioSocialLinks };

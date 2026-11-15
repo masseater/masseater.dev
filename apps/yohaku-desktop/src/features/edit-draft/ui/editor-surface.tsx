@@ -41,7 +41,7 @@ const started = (
   return view;
 };
 
-const EditorSurface = (): ReactNode => {
+export const EditorSurface = (): ReactNode => {
   const initial = useAtomValue(openedParagraphsAtom);
   const setEditor = useAtomSet(editorAtom);
   const setParagraphs = useAtomSet(paragraphsAtom);
@@ -70,5 +70,3 @@ const EditorSurface = (): ReactNode => {
   );
   return <div ref={mount} className="min-h-120 w-210 shrink-0" />;
 };
-
-export { EditorSurface };

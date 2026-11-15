@@ -20,7 +20,7 @@ const useVisit = (): Visit => {
   return { slug, seed, choice, mosaic: useSuspenseQuery(mosaicQuery(slug)).data };
 };
 
-const useTiles = (): TileList => {
+export const useTiles = (): TileList => {
   const visit = useVisit();
   const variants = Array.range(FIRST, visit.mosaic.variants.length - NEXT);
   return useQueries({
@@ -39,7 +39,7 @@ const useTiles = (): TileList => {
   });
 };
 
-const useTile = (index: Option.Option<number>): Option.Option<TileList[number]> => {
+export const useTile = (index: Option.Option<number>): Option.Option<TileList[number]> => {
   const visit = useVisit();
   const at = Option.getOrElse(index, () => FIRST);
   const query = useQuery({
@@ -51,5 +51,3 @@ const useTile = (index: Option.Option<number>): Option.Option<TileList[number]> 
     Option.flatMap((found) => Array.get(query.data ?? NO_TILES, found % visit.mosaic.chunk.size)),
   );
 };
-
-export { useTile, useTiles };

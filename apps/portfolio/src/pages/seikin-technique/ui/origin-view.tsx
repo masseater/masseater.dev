@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { articleTitles, blogPath } from "#/entities/technique";
 import type { Origin } from "#/entities/technique";
 
-const OriginView = ({ origin }: Readonly<{ origin: Origin }>): ReactNode => (
+export const OriginView = ({ origin }: Readonly<{ origin: Origin }>): ReactNode => (
   <section className="flex flex-col gap-3">
     <h2 className="text-muted-foreground text-sm">
       <a
@@ -25,5 +25,3 @@ const OriginView = ({ origin }: Readonly<{ origin: Origin }>): ReactNode => (
     )}
   </section>
 );
-
-export { OriginView };

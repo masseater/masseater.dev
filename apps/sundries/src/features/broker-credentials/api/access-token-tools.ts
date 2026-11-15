@@ -36,7 +36,7 @@ const siteToken = (site: AccessSite): Effect.Effect<IssuedToken, UpstreamFailed>
     catch: brokerFailed,
   }).pipe(Effect.flatMap(issued));
 
-const registerAccessTokenTools =
+export const registerAccessTokenTools =
   (caller: Caller) =>
   (server: McpServer): McpServer => {
     server.registerTool(
@@ -61,5 +61,3 @@ const registerAccessTokenTools =
     );
     return server;
   };
-
-export { registerAccessTokenTools };

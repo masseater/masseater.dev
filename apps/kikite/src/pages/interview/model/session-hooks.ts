@@ -8,13 +8,14 @@ import { phaseAtom } from "#/entities/interview";
 import { sessionAtom } from "./session.ts";
 import type { Session } from "./session.ts";
 
-const useRunSession = (): void => {
+export const useRunSession = (): void => {
   useAtomMount(sessionAtom);
 };
 
-const useSession = (): Option.Option<Session> => AsyncResult.value(useAtomValue(sessionAtom));
+export const useSession = (): Option.Option<Session> =>
+  AsyncResult.value(useAtomValue(sessionAtom));
 
-const useWrapUp = (): (() => void) => {
+export const useWrapUp = (): (() => void) => {
   const session = useSession();
   const setPhase = useAtomSet(phaseAtom);
   return useCallback(() => {
@@ -28,5 +29,3 @@ const useWrapUp = (): (() => void) => {
     });
   }, [session, setPhase]);
 };
-
-export { useRunSession, useSession, useWrapUp };

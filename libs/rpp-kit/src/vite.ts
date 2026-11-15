@@ -11,7 +11,7 @@ const RPP_EXTENSION = /\.rpp$/iu;
 
 const DECLARATION_EXTENSION = ".d.rpp.ts";
 
-const declarationPath = (id: string): string =>
+export const declarationPath = (id: string): string =>
   pipe(id, Str.replace(RPP_EXTENSION, DECLARATION_EXTENSION));
 
 const writeIfChanged = Effect.fn("writeIfChanged")(function* writeIfChanged(
@@ -51,7 +51,7 @@ const runtime = ManagedRuntime.make(NodeServices.layer);
 const transformRpp = (content: string, id: string): Promise<Readonly<{ code: string }>> =>
   runtime.runPromise(loadRpp({ id, content }));
 
-const rpp = (): Plugin => ({
+export const rpp = (): Plugin => ({
   name: "rpp-kit",
   transform: { filter: { id: RPP_EXTENSION }, handler: transformRpp },
   configureVitest: ({ defineCacheKeyGenerator }) => {
@@ -66,5 +66,3 @@ const rpp = (): Plugin => ({
     );
   },
 });
-
-export { declarationPath, rpp };

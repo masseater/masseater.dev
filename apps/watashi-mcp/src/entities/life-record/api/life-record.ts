@@ -14,9 +14,9 @@ import type { LifeRecordName } from "#/shared/db";
 import { dayRangeOf, parseTime, storedOf, timeOut } from "./life-time";
 import type { DayRange, TimeValue } from "./life-time";
 
-type Body = Readonly<Record<string, unknown>>;
+export type Body = Readonly<Record<string, unknown>>;
 
-type Columns = Readonly<{
+export type Columns = Readonly<{
   label: string;
   about: string;
   dayStart: string;
@@ -24,19 +24,19 @@ type Columns = Readonly<{
   searchText: string;
 }>;
 
-type Normalized = Readonly<{ body: Body; assumed: readonly string[] }>;
+export type Normalized = Readonly<{ body: Body; assumed: readonly string[] }>;
 
 type Span = Readonly<{ start: string; end: string; open: boolean; untilStart: boolean }>;
 
 const REFERABLE = [...LIFE_RECORDS, "memory"] as const;
 
-type Referable = (typeof REFERABLE)[number];
+export type Referable = (typeof REFERABLE)[number];
 
-type Ref = Readonly<{ record: Referable; id: number }>;
+export type Ref = Readonly<{ record: Referable; id: number }>;
 
-const NONE = "";
+export const NONE = "";
 
-const SELF = "self";
+export const SELF = "self";
 
 const REF_PATTERN = /^(?<record>[a-z_]+):(?<id>\d+)$/u;
 
@@ -95,12 +95,12 @@ const DEFAULTS: Readonly<Record<LifeRecordName, Body>> = {
   metric_definition: {},
 };
 
-const stringAt =
+export const stringAt =
   (key: string) =>
   (body: Body): Option.Option<string> =>
     pipe(Rec.get(body, key), Option.filter(Predicate.isString));
 
-const textAt =
+export const textAt =
   (key: string) =>
   (body: Body): string =>
     pipe(
@@ -138,7 +138,7 @@ const normalizeField =
 const initialOf = (body: Body): Result.Result<Normalized, string> =>
   Result.succeed({ body, assumed: [] });
 
-const normalizeTimes =
+export const normalizeTimes =
   (record: LifeRecordName) =>
   (body: Body): Result.Result<Normalized, string> =>
     Arr.reduce(TIME_FIELDS[record], initialOf(body), (state, key) =>
@@ -153,7 +153,7 @@ const fieldOut =
       onSome: (stored) => ({ ...out, [key]: timeOut(stored) }),
     });
 
-const timesOut =
+export const timesOut =
   (record: LifeRecordName) =>
   (body: Body): Body =>
     Arr.reduce(TIME_FIELDS[record], body, fieldOut(body));
@@ -206,7 +206,7 @@ const stringsIn = (value: unknown): readonly string[] => {
   return [];
 };
 
-const columnsOf =
+export const columnsOf =
   (record: LifeRecordName) =>
   (body: Body): Columns => {
     const span = SPANS[record];
@@ -219,17 +219,17 @@ const columnsOf =
     };
   };
 
-const withDefaults =
+export const withDefaults =
   (record: LifeRecordName) =>
   (body: Body): Body => ({ ...DEFAULTS[record], ...body });
 
 const isReferable = (record: string): record is Referable =>
   pipe(REFERABLE, Arr.contains<string>(record));
 
-const refOf = ({ record, id }: Readonly<{ record: string; id: number }>): string =>
+export const refOf = ({ record, id }: Readonly<{ record: string; id: number }>): string =>
   `${record}:${id}`;
 
-const parseRef = (ref: string): Option.Option<Ref> =>
+export const parseRef = (ref: string): Option.Option<Ref> =>
   pipe(
     Option.fromNullishOr(REF_PATTERN.exec(ref)),
     Option.flatMap((match) => Option.fromNullishOr(match.groups)),
@@ -241,22 +241,6 @@ const parseRef = (ref: string): Option.Option<Ref> =>
     ),
   );
 
-const isLifeRecord = (record: Referable): record is LifeRecordName => record !== "memory";
+export const isLifeRecord = (record: Referable): record is LifeRecordName => record !== "memory";
 
-const lower = Str.toLowerCase;
-
-export {
-  NONE,
-  SELF,
-  columnsOf,
-  isLifeRecord,
-  lower,
-  normalizeTimes,
-  parseRef,
-  refOf,
-  stringAt,
-  textAt,
-  timesOut,
-  withDefaults,
-};
-export type { Body, Columns, Normalized, Ref, Referable };
+export const lower = Str.toLowerCase;

@@ -17,41 +17,41 @@ import type {
   TargetSchema,
 } from "./schema.ts";
 
-type Frozen<Value> = Value extends (...args: never) => unknown
+export type Frozen<Value> = Value extends (...args: never) => unknown
   ? Value
   : Value extends object
     ? { readonly [Key in keyof Value]: Frozen<Value[Key]> }
     : Value;
 
-type SelectedNode = Frozen<ESTree.Node>;
+export type SelectedNode = Frozen<ESTree.Node>;
 
-interface SelectMatch {
+export interface SelectMatch {
   readonly name: string | undefined;
   readonly context: Context;
 }
 
-type Target = typeof TargetSchema.Type;
+export type Target = typeof TargetSchema.Type;
 
-type CiBehavior = typeof CiBehaviorSchema.Type;
+export type CiBehavior = typeof CiBehaviorSchema.Type;
 
-type ModelSpec = string | readonly string[];
+export type ModelSpec = string | readonly string[];
 
-type ExplainSetting = typeof ExplainSettingSchema.Type;
+export type ExplainSetting = typeof ExplainSettingSchema.Type;
 
-interface RuleLocation {
+export interface RuleLocation {
   readonly question: string;
   readonly cutoff: number;
 }
 
-type EnclosingKind = typeof EnclosingKindSchema.Type;
+export type EnclosingKind = typeof EnclosingKindSchema.Type;
 
-type RuleContext = typeof RuleContextSchema.Type;
+export type RuleContext = typeof RuleContextSchema.Type;
 
-type Severity = typeof SeveritySchema.Type;
+export type Severity = typeof SeveritySchema.Type;
 
-type RuleAnswer = typeof RuleAnswerSchema.Type;
+export type RuleAnswer = typeof RuleAnswerSchema.Type;
 
-interface DecisionRule {
+export interface DecisionRule {
   readonly id: string;
   readonly target: Target;
   readonly question: string;
@@ -64,7 +64,7 @@ interface DecisionRule {
   readonly answer?: RuleAnswer;
 }
 
-interface DecisionOptions {
+export interface DecisionOptions {
   readonly ci?: CiBehavior;
   readonly timeoutMs?: number;
   readonly maxSnippetChars?: number;
@@ -73,22 +73,22 @@ interface DecisionOptions {
   readonly explain?: ExplainSetting;
 }
 
-interface NoulQuestion extends Readonly<
+export interface NoulQuestion extends Readonly<
   Pick<typeof NoulQuestionSchema.Encoded, "type" | "instructions">
 > {
   readonly instructions: string;
 }
 
-interface ChoiceQuestion extends Readonly<
+export interface ChoiceQuestion extends Readonly<
   Pick<typeof ChoiceQuestionSchema.Encoded, "type" | "instructions" | "criteria">
 > {
   readonly instructions: string;
   readonly criteria: Readonly<Record<string, string | null>>;
 }
 
-type Question = NoulQuestion | ChoiceQuestion;
+export type Question = NoulQuestion | ChoiceQuestion;
 
-interface DecisionRequest extends Readonly<
+export interface DecisionRequest extends Readonly<
   Pick<typeof DecisionsRequestSchema.Encoded, "model" | "state" | "questions">
 > {
   readonly state: {
@@ -98,27 +98,29 @@ interface DecisionRequest extends Readonly<
   readonly questions: Readonly<Record<string, Question>>;
 }
 
-type DecisionResponse = Pick<typeof DecisionsResponseSchema.Type, "model" | "answers">;
+export type DecisionResponse = Pick<typeof DecisionsResponseSchema.Type, "model" | "answers">;
 
-type Answers = DecisionResponse["answers"];
+export type Answers = DecisionResponse["answers"];
 
-type Answer = Answers[string];
+export type Answer = Answers[string];
 
-type NoulAnswer = Frozen<Extract<typeof WireAnswerSchema.Type, { readonly type: "noul" }>>;
+export type NoulAnswer = Frozen<Extract<typeof WireAnswerSchema.Type, { readonly type: "noul" }>>;
 
-type ChoiceAnswer = Frozen<Extract<typeof WireAnswerSchema.Type, { readonly type: "choice" }>>;
+export type ChoiceAnswer = Frozen<
+  Extract<typeof WireAnswerSchema.Type, { readonly type: "choice" }>
+>;
 
-type DecideResult =
+export type DecideResult =
   | { readonly ok: true; readonly response: DecisionResponse; readonly cached?: boolean }
   | { readonly ok: false; readonly reason: string };
 
-interface DecideInput {
+export interface DecideInput {
   readonly request: DecisionRequest;
   readonly timeoutMs: number;
   readonly env: Readonly<Record<string, string>>;
 }
 
-interface DecisionProvider {
+export interface DecisionProvider {
   readonly name: string;
   readonly requiredEnv: readonly string[];
   readonly yesNo?: boolean;
@@ -126,29 +128,29 @@ interface DecisionProvider {
   readonly decideAll?: (inputs: readonly DecideInput[]) => readonly DecideResult[];
 }
 
-interface DecisionPluginSetup extends DecisionOptions {
+export interface DecisionPluginSetup extends DecisionOptions {
   readonly name?: string;
   readonly rules: readonly DecisionRule[];
   readonly providers?: readonly DecisionProvider[];
 }
 
-interface DecisionPlugin {
+export interface DecisionPlugin {
   readonly meta: { readonly name: string };
   readonly rules: Readonly<Record<string, object>>;
 }
 
-interface ModelRef {
+export interface ModelRef {
   readonly id: string;
   readonly provider: DecisionProvider;
   readonly model: string;
 }
 
-interface ResolvedRule extends DecisionRule {
+export interface ResolvedRule extends DecisionRule {
   readonly models: readonly ModelRef[];
   readonly answer: RuleAnswer;
 }
 
-interface ResolvedOptions {
+export interface ResolvedOptions {
   readonly ci: CiBehavior;
   readonly timeoutMs: number;
   readonly maxSnippetChars: number;
@@ -157,36 +159,36 @@ interface ResolvedOptions {
   readonly rules: readonly ResolvedRule[];
 }
 
-interface RequestMatch {
+export interface RequestMatch {
   readonly rule: Pick<ResolvedRule, "question" | "location" | "answer">;
   readonly snippet: string;
   readonly truncated: boolean;
   readonly context?: string;
 }
 
-interface Match extends RequestMatch {
+export interface Match extends RequestMatch {
   readonly rule: ResolvedRule;
   readonly loc: Location;
 }
 
-interface Verdict {
+export interface Verdict {
   readonly answer: string;
   readonly probability: number;
 }
 
-interface Verdicts {
+export interface Verdicts {
   readonly model: string;
   readonly results: Readonly<Record<string, Verdict>>;
   readonly answers: Answers;
   readonly complete: boolean;
 }
 
-interface LineRange {
+export interface LineRange {
   readonly start: number;
   readonly end: number;
 }
 
-interface AstNode {
+export interface AstNode {
   readonly type: string;
   readonly range: Range;
   readonly loc: Location;
@@ -198,43 +200,3 @@ interface AstNode {
   readonly callee?: AstNode;
   readonly openingElement?: { readonly loc: Location; readonly name?: AstNode } | null;
 }
-
-export type {
-  Answer,
-  Answers,
-  AstNode,
-  ChoiceAnswer,
-  Frozen,
-  SelectedNode,
-  SelectMatch,
-  ChoiceQuestion,
-  CiBehavior,
-  DecideInput,
-  DecideResult,
-  DecisionOptions,
-  DecisionPlugin,
-  DecisionPluginSetup,
-  DecisionProvider,
-  DecisionRequest,
-  DecisionResponse,
-  DecisionRule,
-  EnclosingKind,
-  ExplainSetting,
-  LineRange,
-  Match,
-  ModelRef,
-  ModelSpec,
-  NoulAnswer,
-  NoulQuestion,
-  Question,
-  RequestMatch,
-  ResolvedOptions,
-  ResolvedRule,
-  RuleAnswer,
-  RuleContext,
-  RuleLocation,
-  Severity,
-  Target,
-  Verdict,
-  Verdicts,
-};

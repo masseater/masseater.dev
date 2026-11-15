@@ -24,14 +24,14 @@ const DetailSchema = Schema.Struct({
   values: ValuesSchema,
 });
 
-const DetailsSchema = Schema.fromJsonString(Schema.Array(DetailSchema), { space: 2 });
+export const DetailsSchema = Schema.fromJsonString(Schema.Array(DetailSchema), { space: 2 });
 
-type Detail = typeof DetailSchema.Type;
+export type Detail = typeof DetailSchema.Type;
 
 const isFailure = (values: Detail["values"]): values is Readonly<{ failed: string }> =>
   "failed" in values && typeof values.failed === "string";
 
-const detailOf = (outcome: Outcome): Detail => {
+export const detailOf = (outcome: Outcome): Detail => {
   const { id, method, model, seconds, costUsd, extraction } = outcome;
   if (extraction.status === "failed") {
     return { id, method, model, seconds, costUsd, values: { failed: extraction.reason } };
@@ -39,7 +39,7 @@ const detailOf = (outcome: Outcome): Detail => {
   return { id, method, model, seconds, costUsd, values: extraction.value.values };
 };
 
-const outcomeOf = (detail: Detail): Outcome => {
+export const outcomeOf = (detail: Detail): Outcome => {
   const { values, ...rest } = detail;
   const base = { ...rest, label: labelOf(rest.model) };
   if (isFailure(values)) {
@@ -51,6 +51,3 @@ const outcomeOf = (detail: Detail): Outcome => {
     extraction: { status: "done", value: { values: read, costUsd: rest.costUsd } },
   };
 };
-
-export { DetailsSchema, detailOf, outcomeOf };
-export type { Detail };

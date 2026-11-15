@@ -174,12 +174,12 @@ const tailscaleCredentials = Layer.effect(
 );
 
 /** @internal */
-const tailscaleProviders = Layer.mergeAll(federatedIdentityProvider, policyEntriesProvider).pipe(
-  Layer.provideMerge(tailscaleCredentials),
-  Layer.provideMerge(FetchHttpClient.layer),
-);
+export const tailscaleProviders = Layer.mergeAll(
+  federatedIdentityProvider,
+  policyEntriesProvider,
+).pipe(Layer.provideMerge(tailscaleCredentials), Layer.provideMerge(FetchHttpClient.layer));
 
-const agentTrust = Effect.gen(function* trust() {
+export const agentTrust = Effect.gen(function* trust() {
   yield* TailnetPolicyEntries("TailnetAgentPolicy", AGENT_POLICY);
   return yield* FederatedIdentity("TailnetAgentIdentity", {
     description: "agents via sundries",
@@ -189,5 +189,3 @@ const agentTrust = Effect.gen(function* trust() {
     tags: [AGENT_TAG],
   });
 });
-
-export { agentTrust, tailscaleProviders };

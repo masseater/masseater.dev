@@ -16,11 +16,11 @@ import type { RevisedWrite, Statement, WriteFailure } from "#/shared/db/index.se
 import { keyText } from "./trait-state";
 import type { Plan, TraitKey, TraitState } from "./trait-state";
 
-type Cursor = Readonly<{ origin: TraitOrigin; position: string }>;
+export type Cursor = Readonly<{ origin: TraitOrigin; position: string }>;
 
-type VectorTexts = Readonly<Record<string, string>>;
+export type VectorTexts = Readonly<Record<string, string>>;
 
-type Saving = Readonly<{ plan: Plan; vectors: VectorTexts; cursor: Cursor; actor: string }>;
+export type Saving = Readonly<{ plan: Plan; vectors: VectorTexts; cursor: Cursor; actor: string }>;
 
 type Stamp = Readonly<{
   idOf: (key: TraitKey) => number;
@@ -167,7 +167,12 @@ const commitTraits = (
     ],
   });
 
-const saveTraits = ({ plan, vectors, cursor, actor }: Saving): Effect.Effect<void, StorageFailed> =>
+export const saveTraits = ({
+  plan,
+  vectors,
+  cursor,
+  actor,
+}: Saving): Effect.Effect<void, StorageFailed> =>
   Effect.gen(function* saveTraitPlan() {
     const at = yield* nowIso;
     const first = yield* nextId;
@@ -179,6 +184,3 @@ const saveTraits = ({ plan, vectors, cursor, actor }: Saving): Effect.Effect<voi
       onNonEmpty: (nonEmpty) => commitTraits(nonEmpty, advance),
     });
   }).pipe(Effect.mapError(toStorageFailed));
-
-export { saveTraits };
-export type { Cursor, Saving, VectorTexts };

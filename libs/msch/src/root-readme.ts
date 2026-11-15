@@ -81,7 +81,9 @@ const problemsInReadme = Effect.fn("problemsInReadme")(function* problemsInReadm
 });
 
 /** @internal */
-const checkRootReadme = Effect.fn("checkRootReadme")(function* checkRootReadme(root: string) {
+export const checkRootReadme = Effect.fn("checkRootReadme")(function* checkRootReadme(
+  root: string,
+) {
   const files = yield* RepositoryFiles;
   const names = yield* files.listedFiles(root);
   const readmes = pipe(
@@ -102,5 +104,3 @@ const checkRootReadme = Effect.fn("checkRootReadme")(function* checkRootReadme(r
   );
   return Arr.flatten(found);
 });
-
-export { checkRootReadme };

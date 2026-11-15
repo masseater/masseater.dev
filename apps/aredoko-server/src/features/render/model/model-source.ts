@@ -78,7 +78,7 @@ const renderedName = (path: Path.Path, model: Model): string => {
 };
 
 /** @internal */
-const sourceOf = Effect.fn("sourceOf")(function* sourceOf(assetId: number) {
+export const sourceOf = Effect.fn("sourceOf")(function* sourceOf(assetId: number) {
   const path = yield* Path.Path;
   const model = yield* modelOf(assetId);
   if (!isStaged(model)) {
@@ -221,7 +221,7 @@ const freshStaging = Effect.fn("freshStaging")(function* freshStaging(assetId: n
 });
 
 /** @internal */
-const stage = Effect.fn("stage")(function* stage(assetId: number) {
+export const stage = Effect.fn("stage")(function* stage(assetId: number) {
   const model = yield* modelOf(assetId);
   if (!isStaged(model)) {
     return;
@@ -236,10 +236,10 @@ const stage = Effect.fn("stage")(function* stage(assetId: number) {
 });
 
 /** @internal */
-const discardStaging = Effect.fn("discardStaging")(function* discardStaging(assetId: number) {
+export const discardStaging = Effect.fn("discardStaging")(function* discardStaging(
+  assetId: number,
+) {
   const fileSystem = yield* FileSystem.FileSystem;
   const staging = yield* stagingOf(assetId);
   yield* fileSystem.remove(staging, { recursive: true, force: true });
 });
-
-export { discardStaging, sourceOf, stage };

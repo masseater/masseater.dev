@@ -6,17 +6,17 @@ import type { ResolutionMode } from "./resolution-types.ts";
 import { attachFileInfo } from "./source-file.ts";
 import { parseSourceFile } from "./ts-api.ts";
 
-interface SourceFileOrigin {
+export interface SourceFileOrigin {
   readonly read: (fileName: string) => Option.Option<string>;
   readonly impliedFormat: (fileName: string) => Option.Option<ResolutionMode>;
 }
 
-interface SourceFileStore {
+export interface SourceFileStore {
   readonly open: (fileName: string) => Option.Option<SourceFile>;
   readonly cached: (fileName: string) => Option.Option<SourceFile>;
 }
 
-const createSourceFileStore = (origin: SourceFileOrigin): SourceFileStore => {
+export const createSourceFileStore = (origin: SourceFileOrigin): SourceFileStore => {
   const sourceFiles = new Map<string, SourceFile>();
   const cached = (fileName: string): Option.Option<SourceFile> =>
     Option.fromNullishOr(sourceFiles.get(toPath(fileName)));
@@ -34,6 +34,3 @@ const createSourceFileStore = (origin: SourceFileOrigin): SourceFileStore => {
     cached,
   };
 };
-
-export { createSourceFileStore };
-export type { SourceFileOrigin, SourceFileStore };

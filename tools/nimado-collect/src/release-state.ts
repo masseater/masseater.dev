@@ -130,7 +130,7 @@ const download = Effect.fn("state.download")(function* download(state: string, r
 });
 
 /** @internal */
-const restoreState = Effect.fn("state.restore")(function* restoreStateInto(state: string) {
+export const restoreState = Effect.fn("state.restore")(function* restoreStateInto(state: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const repo = yield* repository;
   yield* fileSystem.makeDirectory(state, { recursive: true });
@@ -222,9 +222,7 @@ const dropOldYoutubeState = Effect.fn("state.cache.prune")(function* dropOldCach
 });
 
 /** @internal */
-const saveState = Effect.fn("state.save")(function* saveStateOf(state: string) {
+export const saveState = Effect.fn("state.save")(function* saveStateOf(state: string) {
   yield* Effect.scoped(uploadState(state));
   yield* dropOldYoutubeState();
 });
-
-export { restoreState, saveState };

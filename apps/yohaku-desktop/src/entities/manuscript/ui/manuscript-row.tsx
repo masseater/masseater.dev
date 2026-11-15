@@ -13,7 +13,7 @@ const nameOf = ({ title, excerpt }: typeof Manuscript.Type): string =>
     Option.match({ onNone: () => excerpt, onSome: ({ text }) => text }),
   );
 
-const ManuscriptRow = ({
+export const ManuscriptRow = ({
   manuscript,
   children,
 }: Readonly<{ manuscript: typeof Manuscript.Type; children: ReactNode }>): ReactNode => {
@@ -35,5 +35,3 @@ const ManuscriptRow = ({
     </li>
   );
 };
-
-export { ManuscriptRow };

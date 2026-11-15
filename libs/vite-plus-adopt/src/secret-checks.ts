@@ -105,7 +105,8 @@ const scanCommittedTree = (
     return yield* scanSecrets({ config, root, args: [directory] });
   }).pipe(Effect.scoped);
 
-const betterleaksCheck = withSection("betterleaks", (config, { root, base }) =>
+/** @internal */
+export const betterleaksCheck = withSection("betterleaks", (config, { root, base }) =>
   lacksHistory(root).pipe(
     Effect.flatMap((partial) => {
       if (partial) {
@@ -126,7 +127,8 @@ const STAGED_DIFF = [
   "--dst-prefix=b/",
 ];
 
-const scanStagedSecrets: {
+/** @internal */
+export const scanStagedSecrets: {
   (root: string): (config: BetterleaksConfig) => Effect.Effect<Report, CheckError, CheckServices>;
   (config: BetterleaksConfig, root: string): Effect.Effect<Report, CheckError, CheckServices>;
 } = Fn.dual(
@@ -138,6 +140,3 @@ const scanStagedSecrets: {
       return yield* scanSecrets({ config, root, args: ["stdin", "--git-diff"], input: diff });
     }),
 );
-
-/** @internal */
-export { betterleaksCheck, scanStagedSecrets };

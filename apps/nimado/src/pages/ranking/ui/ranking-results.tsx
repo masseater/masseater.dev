@@ -13,7 +13,7 @@ const NOTES: Readonly<Record<Exclude<Entries["status"], "success">, string>> = {
   short: TEXT.short,
 };
 
-const RankingResults = ({
+export const RankingResults = ({
   meta,
   youtube,
 }: Readonly<{ meta: typeof Meta.Type; youtube: boolean }>): ReactNode => {
@@ -27,5 +27,3 @@ const RankingResults = ({
   }
   return <RankingList entries={result.entries} page={search.page} youtube={youtube} />;
 };
-
-export { RankingResults };

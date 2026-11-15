@@ -4,7 +4,7 @@ import { defineSloppedia, githubSource } from "sloppedia";
 import { site } from "#/shared/config";
 import { SloppediaLink } from "#/shared/ui";
 
-const wiki = defineSloppedia({
+export const wiki = defineSloppedia({
   name: portfolio.sections.sloppedia,
   tagline: "趣味嗜好に偏った個人の百科事典もどき",
   basePath: "/sloppedia",
@@ -15,5 +15,3 @@ const wiki = defineSloppedia({
     directory: "apps/portfolio/content/sloppedia",
   }),
 });
-
-export { wiki };

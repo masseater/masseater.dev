@@ -7,27 +7,27 @@ import type { ObservationValue } from "#/entities/trait/index.test.support";
 import { buildStep } from "#/features/build-traits/index.test.support";
 import type { StepFailure, StepOutcome } from "#/features/build-traits/index.test.support";
 
-type Respond = (request: AnalysisRequestValue) => readonly ObservationValue[];
+export type Respond = (request: AnalysisRequestValue) => readonly ObservationValue[];
 
 const SETTLED = "2 minutes";
 
 const NO_REQUESTS = 0;
 
-const requests: AnalysisRequestValue[] = [];
+export const requests: AnalysisRequestValue[] = [];
 
-const nothing: Respond = () => [];
+export const nothing: Respond = () => [];
 
-const forgetRequests = Effect.sync(() => {
+export const forgetRequests = Effect.sync(() => {
   requests.splice(NO_REQUESTS);
 });
 
-const settle = TestClock.adjust(SETTLED);
+export const settle = TestClock.adjust(SETTLED);
 
 const PAST_BUDGET = "11 minutes";
 
-const pastBudget = TestClock.adjust(PAST_BUDGET);
+export const pastBudget = TestClock.adjust(PAST_BUDGET);
 
-const step = (respond: Respond): Effect.Effect<StepOutcome, StepFailure> =>
+export const step = (respond: Respond): Effect.Effect<StepOutcome, StepFailure> =>
   buildStep.pipe(
     Effect.provideService(
       TraitAnalyst,
@@ -41,7 +41,7 @@ const step = (respond: Respond): Effect.Effect<StepOutcome, StepFailure> =>
     ),
   );
 
-const drain = (respond: Respond): Effect.Effect<readonly StepOutcome[], StepFailure> =>
+export const drain = (respond: Respond): Effect.Effect<readonly StepOutcome[], StepFailure> =>
   Effect.gen(function* drainSteps() {
     yield* settle;
     const outcomes: StepOutcome[] = [];
@@ -53,7 +53,7 @@ const drain = (respond: Respond): Effect.Effect<readonly StepOutcome[], StepFail
     return outcomes;
   });
 
-const sourceWith =
+export const sourceWith =
   (words: string) =>
   (request: AnalysisRequestValue): string =>
     pipe(
@@ -62,7 +62,7 @@ const sourceWith =
       Option.match({ onNone: () => "missing", onSome: (source) => source.ref }),
     );
 
-const sourcesOf = (outcomes: readonly StepOutcome[]): readonly number[] =>
+export const sourcesOf = (outcomes: readonly StepOutcome[]): readonly number[] =>
   pipe(
     outcomes,
     Arr.flatMap((outcome) => {
@@ -73,18 +73,5 @@ const sourcesOf = (outcomes: readonly StepOutcome[]): readonly number[] =>
     }),
   );
 
-const requestAt = (index: number): Option.Option<AnalysisRequestValue> => Arr.get(requests, index);
-
-export {
-  drain,
-  forgetRequests,
-  nothing,
-  requestAt,
-  requests,
-  pastBudget,
-  settle,
-  sourceWith,
-  sourcesOf,
-  step,
-};
-export type { Respond };
+export const requestAt = (index: number): Option.Option<AnalysisRequestValue> =>
+  Arr.get(requests, index);

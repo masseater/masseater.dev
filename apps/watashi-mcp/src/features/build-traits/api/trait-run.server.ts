@@ -19,16 +19,16 @@ import type { StepFailure, StepOutcome } from "./trait-build.server.ts";
 import { RECORD_TOOL, TRAIT_MODEL, readTranscript } from "./trait-pi";
 import { translateTraits } from "./trait-translate.server.ts";
 
-type Answer = Readonly<{ status: string; reason?: string; messages: readonly unknown[] }>;
+export type Answer = Readonly<{ status: string; reason?: string; messages: readonly unknown[] }>;
 
-type Conversation = Readonly<{
+export type Conversation = Readonly<{
   reset: () => Promise<void>;
   prompt: (input: string) => Promise<Answer>;
 }>;
 
-type BuildSummary = Readonly<{ steps: number; idle: boolean }>;
+export type BuildSummary = Readonly<{ steps: number; idle: boolean }>;
 
-type RunSummary = BuildSummary & Readonly<{ translated: number }>;
+export type RunSummary = BuildSummary & Readonly<{ translated: number }>;
 
 const AGENT = "trait-builder";
 
@@ -98,7 +98,7 @@ const stepsUntil = (
     return yield* stepsUntil(deadline, done + ONE_MORE);
   });
 
-const buildTraits = ({
+export const buildTraits = ({
   conversation,
   translator,
 }: Readonly<{
@@ -117,6 +117,3 @@ const buildTraits = ({
     Effect.provideService(TraitTranslator, translatorOf(translator)),
     Effect.withSpan("watashi.traits.build"),
   );
-
-export { buildTraits };
-export type { Answer, BuildSummary, Conversation, RunSummary };

@@ -4,7 +4,7 @@ import { APIError } from "better-auth/api";
 import { generateRandomString, verifyPassword } from "better-auth/crypto";
 import { Effect, Option } from "effect";
 
-interface OwnerPasskeyConfig {
+export interface OwnerPasskeyConfig {
   readonly inviteHash: string;
   readonly ownerName: string;
   readonly rpName: string;
@@ -35,7 +35,7 @@ const requireOwnerInvite = (
 
 const undeliverableEmail = (userId: string): string => `${userId}@${UNDELIVERABLE_EMAIL_DOMAIN}`;
 
-const ownerPasskey = ({
+export const ownerPasskey = ({
   inviteHash,
   ownerName,
   rpName,
@@ -83,6 +83,3 @@ const ownerPasskey = ({
         ),
     },
   });
-
-export { ownerPasskey };
-export type { OwnerPasskeyConfig };

@@ -12,9 +12,9 @@ const NONE_REVOKED = 0;
 
 const SCOPE_LIST = pipe(TOKEN_SCOPES, Arr.join("・"));
 
-const listTokens = listApiTokens.pipe(Effect.map((rows) => json({ tokens: rows })));
+export const listTokens = listApiTokens.pipe(Effect.map((rows) => json({ tokens: rows })));
 
-const mintToken = Effect.fn("apiToken.mint")(function* mintToken(fields: TokenFields) {
+export const mintToken = Effect.fn("apiToken.mint")(function* mintToken(fields: TokenFields) {
   const { id, token } = newApiToken();
   const tokenHash = yield* hashApiToken(token);
   const createdAt = yield* nowIso;
@@ -22,7 +22,7 @@ const mintToken = Effect.fn("apiToken.mint")(function* mintToken(fields: TokenFi
   return { id, token, ...fields };
 });
 
-const issueToken = Effect.fn("apiToken.issue")(function* issueToken(request: Request) {
+export const issueToken = Effect.fn("apiToken.issue")(function* issueToken(request: Request) {
   const text = yield* Effect.promise(() => request.text());
   const decoded = Schema.decodeOption(TokenRequest)(text);
   if (Option.isNone(decoded)) {
@@ -32,7 +32,7 @@ const issueToken = Effect.fn("apiToken.issue")(function* issueToken(request: Req
   return json(issued);
 });
 
-const revokeToken = Effect.fn("apiToken.revoke")(function* revokeToken(request: Request) {
+export const revokeToken = Effect.fn("apiToken.revoke")(function* revokeToken(request: Request) {
   const id = Option.fromNullishOr(paramsOf(request)["id"]);
   if (Option.isNone(id)) {
     return withStatus(BAD_REQUEST)({ error: "id を送る" });
@@ -47,5 +47,3 @@ const revokeToken = Effect.fn("apiToken.revoke")(function* revokeToken(request: 
     },
   );
 });
-
-export { issueToken, listTokens, mintToken, revokeToken };

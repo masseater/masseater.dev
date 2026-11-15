@@ -10,7 +10,7 @@ const DetailSchema = Schema.Struct({ detail: InnerSchema });
 
 const hasDetail = Schema.is(DetailSchema);
 
-const DetailTooltip = ({
+export const DetailTooltip = ({
   active,
   payload,
 }: Readonly<Pick<TooltipContentProps, "active" | "payload">>): ReactNode => {
@@ -37,5 +37,3 @@ const DetailTooltip = ({
     </div>
   );
 };
-
-export { DetailTooltip };

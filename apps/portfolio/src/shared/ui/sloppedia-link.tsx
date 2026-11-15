@@ -3,7 +3,7 @@ import { Match, pipe } from "effect";
 import type { ReactNode } from "react";
 import type { LinkProps } from "sloppedia";
 
-const SloppediaLink = ({ target, className, children }: LinkProps): ReactNode =>
+export const SloppediaLink = ({ target, className, children }: LinkProps): ReactNode =>
   pipe(
     Match.value(target),
     Match.discriminatorsExhaustive("page")({
@@ -34,5 +34,3 @@ const SloppediaLink = ({ target, className, children }: LinkProps): ReactNode =>
       ),
     }),
   );
-
-export { SloppediaLink };

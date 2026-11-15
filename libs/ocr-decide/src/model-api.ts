@@ -3,7 +3,9 @@ import type { Effect } from "effect";
 
 import type { ModelError } from "./model-error.ts";
 
-type Part = Readonly<{ type: "text"; text: string }> | Readonly<{ type: "png"; png: Uint8Array }>;
+export type Part =
+  | Readonly<{ type: "text"; text: string }>
+  | Readonly<{ type: "png"; png: Uint8Array }>;
 
 interface Choice {
   readonly choice: string;
@@ -21,7 +23,7 @@ interface Generated {
   readonly costUsd: number;
 }
 
-class ModelApi extends Context.Service<
+export class ModelApi extends Context.Service<
   ModelApi,
   {
     readonly choose: (
@@ -40,6 +42,3 @@ class ModelApi extends Context.Service<
     ) => Effect.Effect<Generated, ModelError>;
   }
 >()("@r_masseater/ocr-decide/model-api/ModelApi") {}
-
-export { ModelApi };
-export type { Part };

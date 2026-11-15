@@ -2,7 +2,7 @@ import { defineDecisionRule } from "@r_masseater/oxlint-plugin-decision";
 
 import { namedLike } from "./claim-select.ts";
 
-const noPiiInLogs = defineDecisionRule({
+export const noPiiInLogs = defineDecisionRule({
   id: "no-pii-in-logs",
   target: "call",
   question:
@@ -10,7 +10,7 @@ const noPiiInLogs = defineDecisionRule({
   cutoff: 0.8,
 });
 
-const noPromptInjection = defineDecisionRule({
+export const noPromptInjection = defineDecisionRule({
   id: "no-prompt-injection",
   target: "function",
   question:
@@ -18,7 +18,7 @@ const noPromptInjection = defineDecisionRule({
   cutoff: 0.8,
 });
 
-const noHardcodedSecrets = defineDecisionRule({
+export const noHardcodedSecrets = defineDecisionRule({
   id: "no-hardcoded-secrets",
   target: "file",
   question:
@@ -26,7 +26,7 @@ const noHardcodedSecrets = defineDecisionRule({
   cutoff: 0.8,
 });
 
-const nameMatchesBehavior = defineDecisionRule({
+export const nameMatchesBehavior = defineDecisionRule({
   id: "name-matches-behavior",
   target: "function",
   select: namedLike({
@@ -37,7 +37,7 @@ const nameMatchesBehavior = defineDecisionRule({
   cutoff: 0.8,
 });
 
-const untrustedInputRisk = defineDecisionRule({
+export const untrustedInputRisk = defineDecisionRule({
   id: "untrusted-input-risk",
   target: "function",
   question:
@@ -46,7 +46,7 @@ const untrustedInputRisk = defineDecisionRule({
   answer: { kind: "severity", minimum: "warn" },
 });
 
-const domainNaming = defineDecisionRule({
+export const domainNaming = defineDecisionRule({
   id: "domain-naming",
   target: "function",
   question:
@@ -54,20 +54,10 @@ const domainNaming = defineDecisionRule({
   cutoff: 0.8,
 });
 
-const preferSchemaValidation = defineDecisionRule({
+export const preferSchemaValidation = defineDecisionRule({
   id: "prefer-schema-validation",
   target: "function",
   question:
     "Does this function check the shape or values of untyped data, such as parsed JSON, a request body, config, or an API response, with a long hand-written chain of typeof, instanceof, in, or field checks joined by && or ||, where a schema from a validation library would state the same rules more simply? A single simple check does not count.",
   cutoff: 0.8,
 });
-
-export {
-  domainNaming,
-  nameMatchesBehavior,
-  noHardcodedSecrets,
-  noPiiInLogs,
-  noPromptInjection,
-  preferSchemaValidation,
-  untrustedInputRisk,
-};

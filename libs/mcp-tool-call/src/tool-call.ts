@@ -8,19 +8,19 @@ import { Array as Arr, Clock, Effect, Layer, Match, Option, Schema, pipe } from 
 
 import type { Caller } from "./caller.ts";
 
-type ToolCall<Tool extends string> = Readonly<{
+export type ToolCall<Tool extends string> = Readonly<{
   tool: Tool;
   caller: Caller;
   project: string;
   input: unknown;
 }>;
 
-type MeteredTool<Tool extends string, Value> = ToolCall<Tool> &
+export type MeteredTool<Tool extends string, Value> = ToolCall<Tool> &
   Readonly<{ count: (value: Value) => number }>;
 
-type InputMeter<Tool extends string> = Omit<ToolCall<Tool>, "input">;
+export type InputMeter<Tool extends string> = Omit<ToolCall<Tool>, "input">;
 
-type FailureText = Readonly<{ errorTag: string; text: string }>;
+export type FailureText = Readonly<{ errorTag: string; text: string }>;
 
 type ToolOutcome =
   | Readonly<{ status: "ok"; resultCount: number; text: string }>
@@ -28,16 +28,16 @@ type ToolOutcome =
 
 type ToolMetrics = Readonly<{ errorTag: string; resultCount: number }>;
 
-type Meter<Failure> = Readonly<{
+export type Meter<Failure> = Readonly<{
   dataset: () => AnalyticsEngineDataset;
   describe: (failure: Failure) => FailureText;
 }>;
 
-type ToolRunner<Tool extends string, Failure, Services> = <Value>(
+export type ToolRunner<Tool extends string, Failure, Services> = <Value>(
   call: MeteredTool<Tool, Value>,
 ) => (effect: Effect.Effect<Value, Failure, Services>) => Promise<CallToolResult>;
 
-type ToolCalls<Tool extends string, Failure> = Readonly<{
+export type ToolCalls<Tool extends string, Failure> = Readonly<{
   meteredInput: (
     meter: InputMeter<Tool>,
   ) => <Input, Output>(
@@ -55,19 +55,19 @@ const NO_RESULTS = 0;
 
 const ONE = 1;
 
-const NO_PROJECT = "";
+export const NO_PROJECT = "";
 
 const INVALID_INPUT = "InvalidInput";
 
-const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
+export const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
 
-const OVERWRITE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
+export const OVERWRITE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
 
-const READ_ONLY = { readOnlyHint: true, openWorldHint: false };
+export const READ_ONLY = { readOnlyHint: true, openWorldHint: false };
 
-const one = (): number => ONE;
+export const one = (): number => ONE;
 
-const encodeJson = (value: unknown): Effect.Effect<string> =>
+export const encodeJson = (value: unknown): Effect.Effect<string> =>
   Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
 
 const byteLength = (text: string): number => new TextEncoder().encode(text).byteLength;
@@ -212,7 +212,7 @@ const runToolInOf =
       ),
     );
 
-const toolCalls = <Tool extends string, Failure>(
+export const toolCalls = <Tool extends string, Failure>(
   meter: Meter<Failure>,
 ): ToolCalls<Tool, Failure> => {
   const runToolIn = runToolInOf<Tool, Failure>(meter);
@@ -222,6 +222,3 @@ const toolCalls = <Tool extends string, Failure>(
     runTool: runToolIn(Layer.empty),
   };
 };
-
-export { NO_PROJECT, OVERWRITE, READ_ONLY, WRITE, encodeJson, one, toolCalls };
-export type { FailureText, InputMeter, Meter, MeteredTool, ToolCall, ToolCalls, ToolRunner };

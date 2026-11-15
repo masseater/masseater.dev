@@ -37,7 +37,7 @@ catalog:
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.25
   "@r_masseater/oxlint-typed-rules": 0.4.0
-  "@r_masseater/vite-plus-adopt": 0.4.0
+  "@r_masseater/vite-plus-adopt": 0.4.1
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
@@ -270,7 +270,6 @@ overrides:
   "@remotion/eslint-plugin>typescript": "-"
   workerd: 1.20261112.1
   vite@*: "catalog:"
-  eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
   fflate@>=0.7.0 <0.7.5: ^0.8.0
   glob@>=9.0.0 <=14.0.1: ^14.0.2
   "capnp-es>typescript": "-"
@@ -315,6 +314,7 @@ patchedDependencies:
   "@voidzero-dev/vite-plus-core@1.6.0": patches/@voidzero-dev__vite-plus-core@1.6.0.patch
 minimumReleaseAgeExclude:
   - "@r_masseater/oxlint-typed-rules@0.4.0"
+  - "@r_masseater/vite-plus-adopt@0.4.1"
   - "@better-auth/core@1.7.25"
   - "@better-auth/drizzle-adapter@1.7.25"
   - "@better-auth/kysely-adapter@1.7.25"

@@ -3,7 +3,7 @@ import { ErrorBar } from "recharts";
 
 import { ERROR_WIDTH, REFERENCE_COLOR } from "./chart-style";
 
-const intervalBar = (direction: "x" | "y"): ReactNode => (
+export const intervalBar = (direction: "x" | "y"): ReactNode => (
   <ErrorBar
     isAnimationActive={false}
     dataKey="error"
@@ -13,7 +13,7 @@ const intervalBar = (direction: "x" | "y"): ReactNode => (
   />
 );
 
-const errorOf = ({
+export const errorOf = ({
   value,
   lower,
   upper,
@@ -21,5 +21,3 @@ const errorOf = ({
   value - lower,
   upper - value,
 ];
-
-export { errorOf, intervalBar };

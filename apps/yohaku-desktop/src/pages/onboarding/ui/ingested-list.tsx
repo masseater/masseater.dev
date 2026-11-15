@@ -7,7 +7,7 @@ import { SourceFacts } from "./source-facts.tsx";
 
 const LABEL = "入れた設定";
 
-const IngestedList = (): ReactNode => {
+export const IngestedList = (): ReactNode => {
   const sources = pipe(
     useSources(),
     Array.filter(({ origin }) => origin !== "manuscript"),
@@ -24,5 +24,3 @@ const IngestedList = (): ReactNode => {
     </ul>
   );
 };
-
-export { IngestedList };

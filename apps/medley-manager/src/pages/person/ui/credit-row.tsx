@@ -21,7 +21,7 @@ type Credit = Readonly<{
   }>;
 }>;
 
-const CreditRow = ({ credit }: Readonly<{ credit: Credit }>): ReactNode => (
+export const CreditRow = ({ credit }: Readonly<{ credit: Credit }>): ReactNode => (
   <TableRow>
     <TableCell>
       <VideoLink id={credit.part.video.id} title={credit.part.video.title} />
@@ -35,5 +35,3 @@ const CreditRow = ({ credit }: Readonly<{ credit: Credit }>): ReactNode => (
     </TableCell>
   </TableRow>
 );
-
-export { CreditRow };

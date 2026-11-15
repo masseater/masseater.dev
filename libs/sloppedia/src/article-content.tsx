@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type { Article } from "./article.ts";
 import { Infobox } from "./infobox.tsx";
 
-const ArticleContent = ({
+export const ArticleContent = ({
   article,
   children,
 }: Readonly<{ article: Article; children: ReactNode }>): ReactNode => (
@@ -12,5 +12,3 @@ const ArticleContent = ({
     <div className="wiki-prose">{children}</div>
   </div>
 );
-
-export { ArticleContent };

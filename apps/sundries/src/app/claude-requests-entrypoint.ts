@@ -11,7 +11,7 @@ import type { Woken } from "#/features/claude-request";
 
 const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
 
-class ClaudeRequests extends WorkerEntrypoint implements ClaudeRequestsRpc {
+export class ClaudeRequests extends WorkerEntrypoint implements ClaudeRequestsRpc {
   public send(request: ClaudeRequest): Promise<Readonly<{ id: number; woke: Woken }>> {
     return runLogged(
       enqueue(request).pipe(
@@ -22,5 +22,3 @@ class ClaudeRequests extends WorkerEntrypoint implements ClaudeRequestsRpc {
     );
   }
 }
-
-export { ClaudeRequests };

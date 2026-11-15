@@ -10,7 +10,7 @@ const LABEL = "URL か文章";
 const SUBMIT = "取り込む";
 const ROWS = 4;
 
-const IngestForm = (): ReactNode => {
+export const IngestForm = (): ReactNode => {
   const { ingest, pending } = useIngest();
   const onSubmit = useCallback(
     (event: SubmitEvent<HTMLFormElement>) => {
@@ -44,5 +44,3 @@ const IngestForm = (): ReactNode => {
     </form>
   );
 };
-
-export { IngestForm };

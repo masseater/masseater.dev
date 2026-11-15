@@ -11,7 +11,7 @@ const NOT_FOUND = 404;
 const TRANSLATE_PATH = "/translate";
 const ATTRIBUTION = "Built with PLaMo";
 
-class PlamoModel extends DurableObject {
+export class PlamoModel extends DurableObject {
   public complete(asked: Asked): Promise<CompletionValue> {
     return runLogged(
       containerOf(this.ctx).pipe(Effect.flatMap((container) => complete(container, asked))),
@@ -33,6 +33,5 @@ const worker = {
     (ROUTES[`${request.method} ${new URL(request.url).pathname}`] ?? notFound)(request),
 } satisfies ExportedHandler;
 
-export { PlamoModel };
 export { Translator } from "./translation.ts";
 export default worker;

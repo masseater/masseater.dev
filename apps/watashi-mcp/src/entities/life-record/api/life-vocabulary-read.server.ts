@@ -59,12 +59,10 @@ const vocabularyOf = (entries: readonly Entry[]): Body => {
   };
 };
 
-const readVocabulary: Effect.Effect<Body, StorageFailed> = scanAll([
+export const readVocabulary: Effect.Effect<Body, StorageFailed> = scanAll([
   "event_kind",
   "metric_definition",
   "life_event",
   "profile_fact",
   "media_item",
 ]).pipe(Effect.map(vocabularyOf));
-
-export { readVocabulary };

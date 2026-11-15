@@ -5,7 +5,7 @@ import { betterleaksCheck } from "./secret-checks.ts";
 import { commitlintCheck, markdownlintCheck, textlintCheck } from "./text-checks.ts";
 import { actionlintCheck, zizmorCheck } from "./workflow-checks.ts";
 
-const CHECKS: readonly NamedCheck[] = [
+export const CHECKS: readonly NamedCheck[] = [
   { name: "betterleaks", run: betterleaksCheck },
   { name: "commitlint", run: commitlintCheck },
   { name: "actionlint", run: actionlintCheck },
@@ -16,5 +16,3 @@ const CHECKS: readonly NamedCheck[] = [
   { name: "markdownlint", run: markdownlintCheck },
   { name: "fallow", run: fallowCheck },
 ];
-
-export { CHECKS };

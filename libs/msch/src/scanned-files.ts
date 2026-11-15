@@ -12,18 +12,18 @@ const TOOL_VERSIONS = /(?:^|\/)(?:\.?mise(?:\.[^/]+)?\.toml|\.tool-versions)$/u;
 
 const READ_CONCURRENCY = 64;
 
-interface Listed {
+export interface Listed {
   readonly name: string;
   readonly file: string;
 }
 
-const isScannedText = ({ name }: Listed): boolean =>
+export const isScannedText = ({ name }: Listed): boolean =>
   SCANNED_FILE.test(name) && !LOCKFILE.test(name);
 
-const isToolVersions = ({ name }: Listed): boolean => TOOL_VERSIONS.test(name);
+export const isToolVersions = ({ name }: Listed): boolean => TOOL_VERSIONS.test(name);
 
 /** @internal */
-const listedFiles = Effect.fn("listedFiles")(function* listedFiles(root: string) {
+export const listedFiles = Effect.fn("listedFiles")(function* listedFiles(root: string) {
   const files = yield* RepositoryFiles;
   const names = yield* files.listedFiles(root);
   return pipe(
@@ -33,7 +33,7 @@ const listedFiles = Effect.fn("listedFiles")(function* listedFiles(root: string)
 });
 
 /** @internal */
-const presentFiles = Effect.fn("presentFiles")(function* presentFiles(listed: readonly Listed[]) {
+export const presentFiles = Effect.fn("presentFiles")(function* presentFiles(listed: readonly Listed[]) {
   const files = yield* RepositoryFiles;
   return yield* pipe(
     listed,
@@ -42,7 +42,7 @@ const presentFiles = Effect.fn("presentFiles")(function* presentFiles(listed: re
 });
 
 /** @internal */
-const scanText = Effect.fn("scanText")(function* scanText(
+export const scanText = Effect.fn("scanText")(function* scanText(
   listed: readonly Listed[],
   problemsIn: (entry: Listed, source: string) => readonly Problem[],
 ) {
@@ -62,6 +62,3 @@ const scanText = Effect.fn("scanText")(function* scanText(
   );
   return Arr.flatten(found);
 });
-
-export type { Listed };
-export { isScannedText, isToolVersions, listedFiles, presentFiles, scanText };

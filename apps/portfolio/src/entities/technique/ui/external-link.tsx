@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const ExternalLink = ({
+export const ExternalLink = ({
   href,
   children,
 }: Readonly<{ href: string; children: ReactNode }>): ReactNode => (
@@ -13,5 +13,3 @@ const ExternalLink = ({
     {children}
   </a>
 );
-
-export { ExternalLink };

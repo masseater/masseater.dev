@@ -35,12 +35,12 @@ import {
 } from "./syntax.ts";
 import { isSubsetOf, vocabularyOf } from "./values.ts";
 
-interface Flow {
+export interface Flow {
   readonly site: ValueSite;
   readonly target: string;
 }
 
-interface FlowContext {
+export interface FlowContext {
   readonly checker: Checker;
   readonly program: Program;
   readonly sites: readonly ValueSite[];
@@ -175,7 +175,7 @@ const flowOf =
       ),
     );
 
-const flowsIn =
+export const flowsIn =
   (context: FlowContext) =>
   (sourceFile: SourceFile): readonly Flow[] =>
     Arr.getSomes(
@@ -185,6 +185,3 @@ const flowsIn =
         Arr.map((node) => flowOf(context)(node)),
       ),
     );
-
-export { flowsIn };
-export type { Flow, FlowContext };

@@ -7,10 +7,8 @@ import { runRequest } from "#/shared/observability/index.server";
 import { getVideo } from "./video.server.ts";
 import { listVideos } from "./videos.server.ts";
 
-const videoRoutes = createRouter("/videos")
+export const videoRoutes = createRouter("/videos")
   .get("/", ({ query }) => runRequest(listVideos(query)), {
     query: Schema.toStandardSchemaV1(VideoSearch),
   })
   .get("/:id", ({ params }) => respondFound(getVideo(params.id)), { params: IdParams });
-
-export { videoRoutes };

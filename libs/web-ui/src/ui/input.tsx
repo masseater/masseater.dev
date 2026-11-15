@@ -1,7 +1,7 @@
 import { cn } from "@masseater.dev/ui/cn";
 import type { ComponentProps, ReactNode } from "react";
 
-const Input = ({ className, type, ...props }: ComponentProps<"input">): ReactNode => (
+export const Input = ({ className, type, ...props }: ComponentProps<"input">): ReactNode => (
   <input
     type={type}
     data-slot="input"
@@ -14,5 +14,3 @@ const Input = ({ className, type, ...props }: ComponentProps<"input">): ReactNod
     {...props}
   />
 );
-
-export { Input };

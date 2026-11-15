@@ -9,18 +9,16 @@ const FILTER = {
 
 const FOLDER_TITLE = "アセットを置いているフォルダ";
 
-const pickFiles = (): Promise<Option.Option<Array.NonEmptyReadonlyArray<string>>> =>
+export const pickFiles = (): Promise<Option.Option<Array.NonEmptyReadonlyArray<string>>> =>
   Effect.runPromise(
     Effect.promise(() => open({ multiple: true, directory: false, filters: [FILTER] })).pipe(
       Effect.map((picked) => pipe(Option.fromNullOr(picked), Option.filter(Array.isArrayNonEmpty))),
     ),
   );
 
-const pickFolder = (): Promise<Option.Option<string>> =>
+export const pickFolder = (): Promise<Option.Option<string>> =>
   Effect.runPromise(
     Effect.promise(() => open({ directory: true, multiple: false, title: FOLDER_TITLE })).pipe(
       Effect.map(Option.fromNullOr),
     ),
   );
-
-export { pickFiles, pickFolder };

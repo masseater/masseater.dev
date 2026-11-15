@@ -6,7 +6,7 @@ import { PreviewFailed } from "./preview-failed.ts";
 const PREVIEW_SIDE = 512;
 const CHANNELS = 4;
 
-interface Pixels {
+export interface Pixels {
   readonly width: number;
   readonly height: number;
   readonly rgba: Uint8Array;
@@ -31,12 +31,12 @@ const fitted = Effect.fn("fitted")(function* fitted(path: string, input: string 
 });
 
 /** @internal */
-const imagePreview = Effect.fn("imagePreview")(function* imagePreview(path: string) {
+export const imagePreview = Effect.fn("imagePreview")(function* imagePreview(path: string) {
   return yield* fitted(path, path);
 });
 
 /** @internal */
-const normalizePng = Effect.fn("normalizePng")(function* normalizePng(
+export const normalizePng = Effect.fn("normalizePng")(function* normalizePng(
   path: string,
   image: Uint8Array,
 ) {
@@ -44,7 +44,7 @@ const normalizePng = Effect.fn("normalizePng")(function* normalizePng(
 });
 
 /** @internal */
-const pixelsPreview = Effect.fn("pixelsPreview")(function* pixelsPreview(
+export const pixelsPreview = Effect.fn("pixelsPreview")(function* pixelsPreview(
   path: string,
   { width, height, rgba }: Pixels,
 ) {
@@ -58,6 +58,3 @@ const pixelsPreview = Effect.fn("pixelsPreview")(function* pixelsPreview(
   });
   return Uint8Array.from(buffer);
 });
-
-export { imagePreview, normalizePng, pixelsPreview };
-export type { Pixels };

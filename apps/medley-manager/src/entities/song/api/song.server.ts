@@ -76,7 +76,7 @@ const indirectUsage = (reach: readonly QuotePair[]): Effect.Effect<readonly Indi
     }),
   );
 
-const getSong = Effect.fn("catalog.song")(function* getSong(id: number) {
+export const getSong = Effect.fn("catalog.song")(function* getSong(id: number) {
   const found = yield* findSong(id);
   if (Option.isNone(found)) {
     return Option.none();
@@ -104,5 +104,3 @@ const getSong = Effect.fn("catalog.song")(function* getSong(id: number) {
     indirect,
   });
 });
-
-export { getSong };

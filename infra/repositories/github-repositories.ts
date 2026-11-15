@@ -10,12 +10,12 @@ import type { UpdateRequest } from "@distilled.cloud/github/repos";
 import { Array as Arr, Effect, Layer, ManagedRuntime, Option, pipe } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
-const OWNER = "masseater";
+export const OWNER = "masseater";
 const PAGE_SIZE = 100;
 const FIRST_PAGE = 1;
 const UP_TO_DATE_WORKFLOW = ".github/workflows/up-to-date.yml";
 
-type ManagedRepository = Readonly<{
+export type ManagedRepository = Readonly<{
   id: number;
   name: string;
   private: boolean;
@@ -44,11 +44,11 @@ const listFrom = (
 
 const gitHubApi = ManagedRuntime.make(Layer.mergeAll(CredentialsFromEnv, fetchHttpClient));
 
-const repositories: Effect.Effect<readonly ManagedRepository[]> = Effect.promise(() =>
+export const repositories: Effect.Effect<readonly ManagedRepository[]> = Effect.promise(() =>
   gitHubApi.runPromise(listFrom(FIRST_PAGE)),
 ).pipe(Effect.map(Arr.filter(isManaged)));
 
-const hasUpToDateWorkflow = (repository: ManagedRepository): Effect.Effect<boolean> =>
+export const hasUpToDateWorkflow = (repository: ManagedRepository): Effect.Effect<boolean> =>
   Effect.promise(() =>
     gitHubApi.runPromise(
       listRepoWorkflows({ owner: OWNER, repo: repository.name, per_page: PAGE_SIZE }).pipe(
@@ -64,7 +64,7 @@ const hasUpToDateWorkflow = (repository: ManagedRepository): Effect.Effect<boole
     ),
   );
 
-type RepositorySettingsProps = Readonly<{
+export type RepositorySettingsProps = Readonly<{
   owner: string;
   name: string;
   allowUpdateBranch: boolean;
@@ -103,8 +103,5 @@ const applySettings = (
     }),
   ).pipe(Effect.orDie, Effect.asVoid);
 
-const updateRepository = (settings: RepositorySettingsProps): Effect.Effect<void> =>
+export const updateRepository = (settings: RepositorySettingsProps): Effect.Effect<void> =>
   Effect.promise(() => gitHubApi.runPromise(applySettings(settings)));
-
-export { OWNER, hasUpToDateWorkflow, repositories, updateRepository };
-export type { ManagedRepository, RepositorySettingsProps };

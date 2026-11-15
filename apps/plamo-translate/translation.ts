@@ -50,7 +50,7 @@ const translate = Effect.fn("plamo.translate")(function* translate(input: unknow
   return result;
 });
 
-class Translator extends WorkerEntrypoint implements TranslatorRpc {
+export class Translator extends WorkerEntrypoint implements TranslatorRpc {
   public translate(input: unknown): Promise<TranslateResultValue> {
     return runLogged(translate(input).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })));
   }
@@ -64,7 +64,7 @@ const modelDown = (message: string): Effect.Effect<Response> =>
     Effect.as(json({ message }, BAD_GATEWAY)),
   );
 
-const answer = (read: () => Promise<unknown>): Effect.Effect<Response> =>
+export const answer = (read: () => Promise<unknown>): Effect.Effect<Response> =>
   Effect.tryPromise({ try: read, catch: down }).pipe(
     Effect.flatMap(translate),
     Effect.map((result) => json(result, OK)),
@@ -73,5 +73,3 @@ const answer = (read: () => Promise<unknown>): Effect.Effect<Response> =>
       ModelDown: ({ message }) => modelDown(message),
     }),
   );
-
-export { Translator, answer };

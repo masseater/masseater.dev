@@ -13,7 +13,7 @@ const isHidden = (name: string): boolean =>
     Array.some((part) => pipe(part, String.startsWith(HIDDEN))),
   );
 
-const isLoose = (name: string): boolean =>
+export const isLoose = (name: string): boolean =>
   pipe(
     LOOSE_KINDS,
     Array.some((kind) => kind === kindOf(name)),
@@ -21,6 +21,5 @@ const isLoose = (name: string): boolean =>
 
 const hasCompanionExtension = hasExtension(...COMPANION_EXTENSIONS);
 
-const isCompanion = (name: string): boolean => hasCompanionExtension(name) && !isHidden(name);
-
-export { isCompanion, isLoose };
+export const isCompanion = (name: string): boolean =>
+  hasCompanionExtension(name) && !isHidden(name);

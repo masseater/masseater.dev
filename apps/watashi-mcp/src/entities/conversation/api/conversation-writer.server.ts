@@ -5,10 +5,10 @@ import type { ConversationChunk, ConversationSession } from "#/shared/db";
 import { db, attempt } from "#/shared/db/index.server";
 import type { WriteFailure } from "#/shared/db/index.server";
 
-type ChunkRecord = ConversationChunk &
+export type ChunkRecord = ConversationChunk &
   Pick<ConversationSession, "cwd" | "source" | "remoteSession">;
 
-const appendChunk = ({
+export const appendChunk = ({
   cwd,
   source,
   remoteSession,
@@ -34,6 +34,3 @@ const appendChunk = ({
       db.insert(conversationChunk).values(chunk),
     ]),
   ).pipe(Effect.asVoid);
-
-export { appendChunk };
-export type { ChunkRecord };

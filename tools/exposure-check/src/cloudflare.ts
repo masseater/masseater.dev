@@ -225,6 +225,4 @@ const inventoryOf = Effect.fn("exposure.cloudflare")(function* inventoryOf(accou
 });
 
 /** @internal */
-const cloudflareInventory = inventoryOf;
-
-export { cloudflareInventory };
+export const cloudflareInventory = inventoryOf;

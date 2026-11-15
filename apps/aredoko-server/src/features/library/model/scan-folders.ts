@@ -23,7 +23,7 @@ interface Listing {
   readonly files: readonly Scanned[];
 }
 
-interface ScannedFile {
+export interface ScannedFile {
   readonly path: string;
   readonly done: number;
   readonly total: number;
@@ -68,7 +68,7 @@ const filesOf = Effect.fn("filesOf")(function* listPackageFiles(source: Source) 
 });
 
 /** @internal */
-const folderSources = Effect.fn("folderSources")(function* listFolderSources() {
+export const folderSources = Effect.fn("folderSources")(function* listFolderSources() {
   const sql = yield* SqlClient.SqlClient;
   return yield* decodeRows(SourcePathRow)(sql`select id, path from sources where kind = 'folder'`);
 });
@@ -137,7 +137,7 @@ const indexScanned = Effect.fn("indexScanned")(function* indexScannedFile(
 });
 
 /** @internal */
-const scanFolders = Effect.fn("scanFolders")(function* scanSourceFolders(
+export const scanFolders = Effect.fn("scanFolders")(function* scanSourceFolders(
   onFile: (file: ScannedFile) => Effect.Effect<void>,
   linkable: (packagePath: string) => boolean,
 ) {
@@ -169,6 +169,3 @@ const scanFolders = Effect.fn("scanFolders")(function* scanSourceFolders(
     ),
   );
 });
-
-export { folderSources, scanFolders };
-export type { ScannedFile };

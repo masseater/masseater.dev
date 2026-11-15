@@ -24,7 +24,7 @@ const detailOf = (saving: Saving): string => {
   return "";
 };
 
-const SaveStatus = (): ReactNode => {
+export const SaveStatus = (): ReactNode => {
   const saving = useSaving();
   return (
     <output
@@ -35,5 +35,3 @@ const SaveStatus = (): ReactNode => {
     </output>
   );
 };
-
-export { SaveStatus };

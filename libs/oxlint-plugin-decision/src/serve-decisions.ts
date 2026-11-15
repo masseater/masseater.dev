@@ -11,11 +11,13 @@ import { workerServices } from "./services.ts";
 import type { DecideInput, DecideResult, DecisionRequest, DecisionResponse } from "./types.ts";
 import type { WireRequest } from "./wire.ts";
 
-type Services = AppServices | CacheServices | HttpClient.HttpClient;
+/** @internal */
+export type Services = AppServices | CacheServices | HttpClient.HttpClient;
 
 type Inputs = Arr.NonEmptyReadonlyArray<DecideInput>;
 
-interface Transport {
+/** @internal */
+export interface Transport {
   readonly endpoint: (env: DecideInput["env"]) => Config.Config<string>;
   readonly wires: (request: DecisionRequest) => Arr.NonEmptyReadonlyArray<WireRequest>;
   readonly combine: (
@@ -101,13 +103,9 @@ const decideEach = (
     { concurrency: "unbounded" },
   ).pipe(Effect.provide(workerServices));
 
-const serveDecisions = (transport: Transport): void => {
+/** @internal */
+export const serveDecisions = (transport: Transport): void => {
   runAsWorker((inputs: Inputs): Promise<Arr.NonEmptyReadonlyArray<DecideResult>> =>
     Effect.runPromise(decideEach(transport, inputs)),
   );
 };
-
-/** @internal */
-export { serveDecisions };
-/** @internal */
-export type { Services, Transport };

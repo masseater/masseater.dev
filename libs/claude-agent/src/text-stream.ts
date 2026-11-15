@@ -2,7 +2,7 @@ import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { Options, SDKMessage, SDKResultMessage } from "@anthropic-ai/claude-agent-sdk";
 import { Effect, Result, Stream } from "effect";
 
-const QUIET_OPTIONS = {
+export const QUIET_OPTIONS = {
   settingSources: [],
   persistSession: false,
   thinking: { type: "disabled" },
@@ -36,16 +36,16 @@ const textOf =
     return Effect.succeed(Result.failVoid);
   };
 
-type Generation<Failure> = Readonly<{
+export type Generation<Failure> = Readonly<{
   prompt: string;
   system: string;
   model: string;
   failure: (cause: unknown) => Failure;
 }>;
 
-type Tooling = Readonly<{ tools: readonly string[]; maxTurns: number }>;
+export type Tooling = Readonly<{ tools: readonly string[]; maxTurns: number }>;
 
-const textStream = <Failure>({
+export const textStream = <Failure>({
   prompt,
   system,
   model,
@@ -71,7 +71,7 @@ const finalOf =
     return Effect.fail(failure(reasonOf(message)));
   };
 
-const toolResult =
+export const toolResult =
   ({ tools, maxTurns }: Tooling) =>
   <Failure>({
     prompt,
@@ -93,6 +93,3 @@ const toolResult =
       }),
       failure,
     ).pipe(Stream.filterMapEffect(finalOf(failure)), Stream.mkString);
-
-export { QUIET_OPTIONS, textStream, toolResult };
-export type { Generation, Tooling };

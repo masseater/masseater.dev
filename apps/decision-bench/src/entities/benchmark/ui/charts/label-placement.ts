@@ -2,9 +2,14 @@ import { Array as Arr, pipe, Number as Num, Order } from "effect";
 
 type Box = Readonly<{ left: number; right: number; top: number; bottom: number }>;
 
-type Anchor = Readonly<{ across: number; down: number; whiskerTop: number; whiskerBottom: number }>;
+export type Anchor = Readonly<{
+  across: number;
+  down: number;
+  whiskerTop: number;
+  whiskerBottom: number;
+}>;
 
-type LabelSpot = Readonly<{ dx: number; dy: number; ring: "near" | "far" }>;
+export type LabelSpot = Readonly<{ dx: number; dy: number; ring: "near" | "far" }>;
 
 const NEAR_RADIUS = 16;
 const FAR_RADIUS = 32;
@@ -54,7 +59,7 @@ const overlaps = (one: Box, other: Box): boolean =>
   one.top < other.bottom &&
   other.top < one.bottom;
 
-const placeLabels = (anchors: readonly Anchor[]): readonly LabelSpot[] => {
+export const placeLabels = (anchors: readonly Anchor[]): readonly LabelSpot[] => {
   const marks = pipe(
     anchors,
     Arr.flatMap((anchor) => obstaclesOf(anchor)),
@@ -75,6 +80,3 @@ const placeLabels = (anchors: readonly Anchor[]): readonly LabelSpot[] => {
     }),
   );
 };
-
-export { placeLabels };
-export type { Anchor, LabelSpot };

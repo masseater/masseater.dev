@@ -8,7 +8,7 @@ import { COMPATIBILITY_DATE } from "./compatibility.ts";
 
 const laterDate = Order.max(Order.String);
 
-interface TracingOptions {
+export interface TracingOptions {
   readonly destinations?: readonly string[];
 }
 
@@ -73,7 +73,7 @@ const withTraces =
     };
   };
 
-const traced =
+export const traced =
   (options: TracingOptions = {}) =>
   (props: WorkerProps): WorkerProps => {
     if (isVersionOfAnotherWorker(props)) {
@@ -86,7 +86,7 @@ const traced =
     return withTraces(options)(issued);
   };
 
-type WorkerService = ProviderService<Worker>;
+export type WorkerService = ProviderService<Worker>;
 
 type Tunable = Readonly<{ news: WorkerProps; olds?: WorkerProps | undefined }>;
 
@@ -124,7 +124,7 @@ const tunedPrecreate =
       }),
     );
 
-const tuneService =
+export const tuneService =
   (options: TracingOptions) =>
   <Service extends WorkerService>(service: Service): Service => ({
     ...service,
@@ -154,13 +154,11 @@ const tracingProvider = (options: TracingOptions): Layer.Layer<never> => {
   );
 };
 
-const withWorkersTracing =
+export const withWorkersTracing =
   (options: TracingOptions = {}) =>
   <Out, Error, In>(providers: Layer.Layer<Out, Error, In>): Layer.Layer<Out, Error, In> =>
     Layer.provideMerge(tracingProvider(options), providers);
 
-export type { TracingOptions, WorkerService };
-export { traced, tuneService, withWorkersTracing };
 export { COMPATIBILITY_DATE } from "./compatibility.ts";
 export { DEFAULT_DESTINATION, traceSink } from "./trace-sink.ts";
 export type { TraceSinkProps } from "./trace-sink.ts";

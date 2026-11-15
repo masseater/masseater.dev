@@ -4,14 +4,14 @@ const SEPARATOR = "/";
 const NEGATION = "!";
 const RELATIVE = "./";
 
-const withoutRelative = (target: string): string => {
+export const withoutRelative = (target: string): string => {
   if (Str.startsWith(RELATIVE)(target)) {
     return Str.slice(RELATIVE.length)(target);
   }
   return target;
 };
 
-const prefixed =
+export const prefixed =
   (directory: string) =>
   (pattern: string): string => {
     if (Str.startsWith(NEGATION)(pattern)) {
@@ -19,5 +19,3 @@ const prefixed =
     }
     return `${directory}${SEPARATOR}${withoutRelative(pattern)}`;
   };
-
-export { prefixed, withoutRelative };

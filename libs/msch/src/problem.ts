@@ -30,7 +30,7 @@ const RuleNameSchema = Schema.Literals([
   "comment",
 ]);
 
-type RuleName = typeof RuleNameSchema.Type;
+export type RuleName = typeof RuleNameSchema.Type;
 
 const ProblemSchema = Schema.Struct({
   file: Schema.String,
@@ -40,18 +40,18 @@ const ProblemSchema = Schema.Struct({
   message: Schema.String,
 });
 
-type Problem = typeof ProblemSchema.Type;
+export type Problem = typeof ProblemSchema.Type;
 
-const ProblemList = Schema.Array(ProblemSchema);
+export const ProblemList = Schema.Array(ProblemSchema);
 
-const CANDIDATE_LIMIT = 3;
+export const CANDIDATE_LIMIT = 3;
 
-interface Finding {
+export interface Finding {
   readonly rule: RuleName;
   readonly message: string;
 }
 
-const problemAt =
+export const problemAt =
   ({ rule, message }: Finding) =>
   (node: Node): Problem => ({
     file: node.getSourceFile().fileName,
@@ -75,18 +75,15 @@ const problemKey = (problem: Problem): string =>
     Arr.join("\0"),
   );
 
-const sortProblems = (problems: readonly Problem[]): readonly Problem[] =>
+export const sortProblems = (problems: readonly Problem[]): readonly Problem[] =>
   Arr.sort(
     Arr.dedupeWith(problems, (left, right) => problemKey(left) === problemKey(right)),
     problemOrder,
   );
 
-const describeFinding = (problem: Problem): string => `[${problem.rule}] ${problem.message}`;
+export const describeFinding = (problem: Problem): string => `[${problem.rule}] ${problem.message}`;
 
-const formatProblem =
+export const formatProblem =
   (relative: (file: string) => string) =>
   (problem: Problem): string =>
     `${relative(problem.file)}:${String(problem.line)}:${String(problem.column)} ${describeFinding(problem)}`;
-
-export { CANDIDATE_LIMIT, ProblemList, describeFinding, formatProblem, problemAt, sortProblems };
-export type { Finding, Problem, RuleName };

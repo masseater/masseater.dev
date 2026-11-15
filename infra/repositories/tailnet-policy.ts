@@ -2,9 +2,13 @@ import { Array as Arr, Equal, Option, Record, Schema, pipe } from "effect";
 import { applyEdits, modify, parse } from "jsonc-parser";
 import type { FormattingOptions } from "jsonc-parser";
 
-type Grant = Readonly<{ src: readonly string[]; dst: readonly string[]; ip: readonly string[] }>;
+export type Grant = Readonly<{
+  src: readonly string[];
+  dst: readonly string[];
+  ip: readonly string[];
+}>;
 
-type PolicyEntries = Readonly<{
+export type PolicyEntries = Readonly<{
   tagOwners: Readonly<Record<string, readonly string[]>>;
   grants: readonly Grant[];
 }>;
@@ -75,7 +79,7 @@ const withGrants =
   (body: string): string =>
     Arr.reduce(entries.grants, body, (current, grant) => withGrant(grant)(current));
 
-const ensureEntries =
+export const ensureEntries =
   (entries: PolicyEntries) =>
   (body: string): string =>
     pipe(body, withTagOwners(entries), withGrants(entries));
@@ -107,10 +111,7 @@ const withoutTagOwners =
       return edited({ path: ["tagOwners", tag] })(current);
     });
 
-const removeEntries =
+export const removeEntries =
   (entries: PolicyEntries) =>
   (body: string): string =>
     pipe(body, withoutGrants(entries), withoutTagOwners(entries));
-
-export { ensureEntries, removeEntries };
-export type { Grant, PolicyEntries };

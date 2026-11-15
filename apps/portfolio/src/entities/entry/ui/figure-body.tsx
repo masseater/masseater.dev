@@ -6,7 +6,5 @@ import type { FigureName } from "#/entities/entry/model/figure";
 
 import { importFigure, importedFigure } from "./figure-chunks";
 
-const FigureBody = ({ name }: Readonly<{ name: FigureName }>): ReactNode =>
+export const FigureBody = ({ name }: Readonly<{ name: FigureName }>): ReactNode =>
   Option.getOrElse(importedFigure(name), () => use(importFigure(name)));
-
-export { FigureBody };

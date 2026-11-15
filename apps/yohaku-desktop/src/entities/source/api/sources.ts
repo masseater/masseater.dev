@@ -5,12 +5,12 @@ import { useCallback } from "react";
 
 import { useYohaku } from "#/shared/api";
 
-type Sources = readonly (typeof Source.Type)[];
+export type Sources = readonly (typeof Source.Type)[];
 
 const SOURCES_KEY = ["sources"] as const;
 const NONE_YET: Sources = [];
 
-const useSources = (): Sources => {
+export const useSources = (): Sources => {
   const yohaku = useYohaku();
   const { data } = useQuery(
     queryOptions({
@@ -29,7 +29,7 @@ const useRefreshSources = (): (() => Promise<void>) => {
   return useCallback(() => client.invalidateQueries({ queryKey: SOURCES_KEY }), [client]);
 };
 
-const useRevert = (): ((id: string) => void) => {
+export const useRevert = (): ((id: string) => void) => {
   const yohaku = useYohaku();
   const refresh = useRefreshSources();
   const reverted = useCallback(
@@ -40,7 +40,7 @@ const useRevert = (): ((id: string) => void) => {
   return mutate;
 };
 
-const useIngest = (): Readonly<{ ingest: (text: string) => void; pending: boolean }> => {
+export const useIngest = (): Readonly<{ ingest: (text: string) => void; pending: boolean }> => {
   const yohaku = useYohaku();
   const refresh = useRefreshSources();
   const ingested = useCallback(
@@ -53,7 +53,7 @@ const useIngest = (): Readonly<{ ingest: (text: string) => void; pending: boolea
 
 const NO_FACTS: readonly (typeof Fact.Type)[] = [];
 
-const useSourceFacts = (id: string): readonly (typeof Fact.Type)[] => {
+export const useSourceFacts = (id: string): readonly (typeof Fact.Type)[] => {
   const yohaku = useYohaku();
   const { data } = useQuery(
     queryOptions({
@@ -66,6 +66,3 @@ const useSourceFacts = (id: string): readonly (typeof Fact.Type)[] => {
     Option.getOrElse(() => NO_FACTS),
   );
 };
-
-export { useIngest, useRevert, useSourceFacts, useSources };
-export type { Sources };

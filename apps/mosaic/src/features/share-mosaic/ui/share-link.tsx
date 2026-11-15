@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { ShareIcon } from "./share-icon";
 
-const ShareLink = ({
+export const ShareLink = ({
   name,
   path,
   href,
@@ -14,5 +14,3 @@ const ShareLink = ({
     </a>
   </Button>
 );
-
-export { ShareLink };

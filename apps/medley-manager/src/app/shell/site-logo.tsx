@@ -4,7 +4,7 @@ import { SITE_NAME } from "#/shared/config";
 
 const PLAY_MARK = "▶";
 
-const SiteLogo = (): ReactNode => (
+export const SiteLogo = (): ReactNode => (
   <span className="flex items-center gap-2">
     <span
       aria-hidden="true"
@@ -15,5 +15,3 @@ const SiteLogo = (): ReactNode => (
     <span className="font-display text-xl tracking-wide">{SITE_NAME}</span>
   </span>
 );
-
-export { SiteLogo };

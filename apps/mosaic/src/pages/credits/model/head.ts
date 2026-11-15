@@ -11,7 +11,7 @@ const creditsCard = (slug: string, mosaic: Card): Card => ({
   url: `${SITE_ORIGIN}${BASE_PATH}/${slug}/credits`,
 });
 
-const creditsHead = ({
+export const creditsHead = ({
   slug,
   mosaic,
 }: Readonly<{ slug: string; mosaic: Option.Option<Card> }>): Readonly<{ meta: Meta[] }> => ({
@@ -22,5 +22,3 @@ const creditsHead = ({
     ),
   ),
 });
-
-export { creditsHead };

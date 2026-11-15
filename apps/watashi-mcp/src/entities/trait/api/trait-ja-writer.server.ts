@@ -4,7 +4,7 @@ import { ownerTraitJa } from "#/shared/db";
 import type { OwnerTraitJa, StorageFailed } from "#/shared/db";
 import { db, query } from "#/shared/db/index.server";
 
-const saveTraitJa = (row: OwnerTraitJa): Effect.Effect<void, StorageFailed> =>
+export const saveTraitJa = (row: OwnerTraitJa): Effect.Effect<void, StorageFailed> =>
   query(() =>
     db
       .insert(ownerTraitJa)
@@ -20,5 +20,3 @@ const saveTraitJa = (row: OwnerTraitJa): Effect.Effect<void, StorageFailed> =>
         },
       }),
   ).pipe(Effect.asVoid);
-
-export { saveTraitJa };

@@ -10,7 +10,7 @@ import { Choice } from "./choice.tsx";
 
 const DETECT = "言語を検出";
 
-const DetectChoice = ({ side }: Readonly<{ side: Side }>): ReactNode => {
+export const DetectChoice = ({ side }: Readonly<{ side: Side }>): ReactNode => {
   const source = useSource();
   const chooseSource = useChooseSource();
   const setQuery = useSetQueryText();
@@ -24,5 +24,3 @@ const DetectChoice = ({ side }: Readonly<{ side: Side }>): ReactNode => {
   }
   return <Choice chosen={source.kind === "detect"} label={DETECT} onChoose={onChoose} />;
 };
-
-export { DetectChoice };
