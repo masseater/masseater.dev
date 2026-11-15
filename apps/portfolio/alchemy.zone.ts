@@ -1,4 +1,5 @@
 import { Ruleset, Zone, providers, state } from "@alchemy.run/cloudflare";
+import { aiGateway } from "@masseater.dev/cloudflare-account/ai-gateway";
 import { Stack } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
@@ -24,6 +25,7 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
   `${PREFIX}zone`,
   { providers: providers(), state: state() },
   Effect.gen(function* zone() {
+    yield* aiGateway;
     const owned = yield* Zone.Zone("Zone", { name: DOMAIN }).pipe(adopt(true));
     yield* Ruleset.Ruleset("CloudflareResponseHeaders", {
       zone: owned,

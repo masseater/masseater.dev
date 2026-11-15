@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./account": "./account.ts",
+    "./ai-gateway": "./ai-gateway.ts",
     "./auth-site": "./auth-site.ts",
     "./edge-guard": "./edge-guard.ts",
     "./trace-destination": "./trace-destination.ts",
