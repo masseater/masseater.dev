@@ -1,4 +1,4 @@
-const LOGPUSH = 'Property[key.name="logpush"][value.value=true]';
+const LOGPUSH = 'Property[key.name="logpush"]:not([value.value=false])';
 const LOGPUSH_MESSAGE =
   "Worker には logpush: true を付ける。付けないと、その Worker のログが Logpush に流れない";
 
