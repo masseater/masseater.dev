@@ -1,3 +1,4 @@
+import { Button } from "@masseater.dev/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { Effect } from "effect";
 import { useCallback } from "react";
@@ -37,21 +38,17 @@ export const MemoRetract = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode 
   );
   return (
     <form className="flex flex-col gap-2" onSubmit={submit}>
-      <div className="flex items-baseline gap-4">
+      <div className="flex items-center gap-2">
         <input
           aria-label={TEXT.reason}
-          className="border-foreground/20 focus-visible:border-foreground min-w-0 flex-1 border-b bg-transparent py-2 text-sm outline-none"
+          className="border-input focus-visible:ring-ring h-10 min-w-0 flex-1 rounded-md border bg-white px-3 text-sm outline-none focus-visible:ring-2"
           name="reason"
           placeholder={TEXT.reason}
           required
         />
-        <button
-          className="stage-link text-destructive/80 hover:text-destructive"
-          disabled={retract.isPending}
-          type="submit"
-        >
+        <Button disabled={retract.isPending} type="submit" variant="destructive">
           {TEXT.retract}
-        </button>
+        </Button>
       </div>
       <FailedNote error={retract.error} />
     </form>

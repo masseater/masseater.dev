@@ -14,3 +14,5 @@ export type {
   TransactionValue,
 } from "./model/money";
 export { signedYen, yen } from "./model/yen";
+export { monthLabel } from "./model/month-label";
+export { MoneyLink } from "./ui/money-link";

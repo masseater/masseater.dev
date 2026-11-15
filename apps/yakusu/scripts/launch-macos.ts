@@ -10,7 +10,7 @@ const AGREE = "Y\n";
 const install = Effect.fn("launch.macos.install")(function* install(installers: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const dmg = yield* firstWith(installers, ".dmg");
+  const dmg = yield* firstWith(path.join(installers, "dmg"), ".dmg");
   const mount = yield* fileSystem.makeTempDirectoryScoped();
   yield* succeed({
     file: "hdiutil",

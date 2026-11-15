@@ -19,7 +19,7 @@ export const TraitRow = ({ trait }: Readonly<{ trait: TraitValue }>): ReactNode 
   const tags = useMemo(() => scopeTags(trait), [trait]);
   return (
     <Row lead={`${SUPPORTS} ${String(trait.supports)}`}>
-      <p className="text-foreground/90 text-sm leading-relaxed">{statementOf(trait)}</p>
+      <p className="text-foreground text-sm leading-relaxed">{statementOf(trait)}</p>
       <TraitWhy trait={trait} />
       <TagList tags={tags} />
     </Row>
