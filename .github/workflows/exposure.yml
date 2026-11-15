@@ -27,7 +27,7 @@ jobs:
         with:
           native: "false"
       - run: vp run -r github-token
-      - run: vp run --filter exposure-check check
+      - run: vp run -r exposure
 
   ci-telemetry:
     needs: [check]
