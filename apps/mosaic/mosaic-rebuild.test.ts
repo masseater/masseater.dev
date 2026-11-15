@@ -38,8 +38,8 @@ const UNRELATED_FILES = ["apps/portfolio/src/app/router.tsx", "libs/mosaic-like/
 const MOSAIC_FILES = ["AGENTS.md", "tools/mosaic/src/site.rs"];
 const TOO_MANY_FILES = Arr.makeBy(COMPARE_FILE_LIMIT, (index) => `docs/${String(index)}.md`);
 
-const REBUILT = "mosaic=true\nweb=true\n";
-const NOT_REBUILT = "mosaic=false\nweb=false\n";
+const REBUILT = "rebuild=true\nweb=true\n";
+const NOT_REBUILT = "rebuild=false\nweb=false\n";
 const STOPPED = "superseded=true\n";
 const NOT_STOPPED = "superseded=false\n";
 

@@ -51,13 +51,13 @@ const CASES: readonly Case[] = [
     name: "画面だけが変わっていれば、キャラを作り直さずに画面だけを当てる",
     script: "mosaic-touched.sh",
     scenario: changedSinceEarlier(WEB_FILES),
-    expected: "mosaic=false\nweb=true\n",
+    expected: "rebuild=false\nweb=true\n",
   },
   {
     name: "Markdown だけが変わっていれば、作り直しも画面のデプロイもしない",
     script: "mosaic-touched.sh",
     scenario: changedSinceEarlier(DOCS_FILES),
-    expected: "mosaic=false\nweb=false\n",
+    expected: "rebuild=false\nweb=false\n",
   },
   {
     name: "キャラの作り直しは、新しい実行が画面だけを当てても止めない",

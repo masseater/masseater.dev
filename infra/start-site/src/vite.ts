@@ -30,6 +30,10 @@ const startSiteConfig = ({
           command: `vp build && vpx ../../infra/start-site/src/write-asset-headers.ts ${assetHeaderArgs}`,
         },
         deploy: { command: "alchemy deploy", cache: false },
+        "deploy:production": {
+          command: "alchemy deploy --stage production --yes",
+          cache: false,
+        },
         destroy: { command: "alchemy destroy", cache: false },
       },
     },

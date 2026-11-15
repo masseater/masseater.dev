@@ -29,6 +29,11 @@ export default defineConfig({
     tasks: {
       ...alchemyTasks,
       build: { command: "vp build && node ./write-asset-headers.ts", cache: false },
+      "deploy:mosaic-site": {
+        command: ["scripts/live.sh", "alchemy deploy --stage production --yes"],
+        cache: false,
+      },
+      "deploy:mosaic-files": { command: "scripts/deploy-files.sh", cache: false },
     },
   },
   base: `${BASE_PATH}/`,

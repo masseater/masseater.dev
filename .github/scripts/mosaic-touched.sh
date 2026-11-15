@@ -4,7 +4,7 @@ api="repos/$GITHUB_REPOSITORY"
 window=50
 compare_file_limit=300
 decide() {
-  echo "mosaic=$1" >> "$GITHUB_OUTPUT"
+  echo "rebuild=$1" >> "$GITHUB_OUTPUT"
   echo "web=$2" >> "$GITHUB_OUTPUT"
   exit 0
 }
@@ -58,7 +58,7 @@ files="$(grep -v '\.md$' <<<"$files" || true)"
 if grep -E '^((libs|tools)/mosaic/|\.github/scripts/mosaic-touched\.sh$)' <<<"$files"; then
   decide true true
 fi
-if grep -E '^(apps/mosaic/|\.github/scripts/mosaic-live\.sh$)' <<<"$files"; then
+if grep -E '^apps/mosaic/' <<<"$files"; then
   decide false true
 fi
 decide false false
