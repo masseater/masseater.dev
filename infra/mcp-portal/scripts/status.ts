@@ -13,10 +13,17 @@ const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 const print = (label: string, value: unknown): Effect.Effect<void, Schema.SchemaError> =>
   encodeJson(value).pipe(Effect.flatMap((json) => Console.log(`${label} ${json}`)));
 
-const syncServer = Effect.fn("syncServer")(function* syncServer(accountId: string, id: string) {
-  const result = yield* syncAccessAiControlMcpServer({ accountId, id });
-  yield* print(id, result);
-});
+const syncServer = Effect.fn("syncServer")(
+  function* syncServer(accountId: string, id: string) {
+    const result = yield* syncAccessAiControlMcpServer({ accountId, id });
+    yield* print(id, result);
+  },
+  (effect, _accountId, id) =>
+    effect.pipe(
+      Effect.tapError((failure) => Console.log(id, failure)),
+      Effect.ignore,
+    ),
+);
 
 const status = Effect.gen(function* status() {
   const accountId = yield* Config.String("CLOUDFLARE_ACCOUNT_ID");
