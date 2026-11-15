@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "apps/yakusu/**"
+      - "libs/component-release/**"
+      - "!**/*.md"
       - ".github/actions/linux-packages/**"
       - ".github/release-please/yakusu-*.json"
       - ".github/workflows/yakusu.yml"
@@ -14,7 +16,7 @@ permissions: {}
 
 concurrency:
   group: yakusu
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   CARGO_TERM_COLOR: always

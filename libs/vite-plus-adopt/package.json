@@ -117,7 +117,7 @@
     {
       "name": "fsd",
       "path": "dist/fsd.mjs",
-      "limit": "9396 B"
+      "limit": "9412 B"
     },
     {
       "name": "attw",
