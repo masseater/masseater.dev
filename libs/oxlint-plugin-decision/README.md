@@ -22,7 +22,7 @@ export OPENROUTER_API_KEY="..."   # https://openrouter.ai/settings/keys
 
 The plugin reads the key from the `OPENROUTER_API_KEY` environment variable. Without it, the plugin warns once and reports nothing. To read the key from a variable with another name, set `env` (see [Settings](#settings)). The key itself is never passed in code or config.
 
-In CI (when the `CI` environment variable is set), a run that could not reach a model fails instead of passing quietly. Set `ci: "skip"` to only warn there too. A provider that refuses because its credits or budget are spent (HTTP 402, or 403 naming the budget) only warns, even in CI, since no change to the code can fix it.
+In CI (when the `CI` environment variable is set), a run that could not reach a model fails instead of passing quietly. Set `ci: "skip"` to only warn there too. A provider that refuses for a spent budget only warns, even in CI. That is HTTP 402, or a 403 that names the budget.
 
 ## Write your rules
 
