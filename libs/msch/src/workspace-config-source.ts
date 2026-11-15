@@ -124,10 +124,4 @@ const workspaceConfigOf = Effect.fn("workspaceConfigOf")(function* workspaceConf
 });
 
 export { literalSettings, settingsInvalid, merged, programOf, usedFrom, workspaceConfigOf };
-export type {
-  LiteralSettingsRequest,
-  SettingsPath,
-  WorkspaceConfig,
-  WorkspaceSettingsInvalid,
-  WorkspaceSource,
-};
+export type { LiteralSettingsRequest, SettingsPath, WorkspaceSettingsInvalid, WorkspaceSource };
