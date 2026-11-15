@@ -10,8 +10,6 @@ const QUIET_OPTIONS = {
 
 const TEXT_OPTIONS = {
   ...QUIET_OPTIONS,
-  tools: [],
-  maxTurns: 1,
   includePartialMessages: true,
 } satisfies Options;
 
@@ -38,20 +36,63 @@ const textOf =
     return Effect.succeed(Result.failVoid);
   };
 
+type Generation<Failure> = Readonly<{
+  prompt: string;
+  system: string;
+  model: string;
+  failure: (cause: unknown) => Failure;
+}>;
+
+type Tooling = Readonly<{ tools: readonly string[]; maxTurns: number }>;
+
 const textStream = <Failure>({
   prompt,
   system,
   model,
   failure,
-}: Readonly<{
-  prompt: string;
-  system: string;
-  model: string;
-  failure: (cause: unknown) => Failure;
-}>): Stream.Stream<string, Failure> =>
+}: Generation<Failure>): Stream.Stream<string, Failure> =>
   Stream.fromAsyncIterable(
-    query({ prompt, options: { ...TEXT_OPTIONS, model, systemPrompt: system } }),
+    query({
+      prompt,
+      options: { ...TEXT_OPTIONS, tools: [], maxTurns: 1, model, systemPrompt: system },
+    }),
     failure,
   ).pipe(Stream.filterMapEffect(textOf(failure)));
 
-export { QUIET_OPTIONS, textStream };
+const finalOf =
+  <Failure>(failure: (cause: unknown) => Failure) =>
+  (message: SDKMessage): Effect.Effect<Result.Result<string, void>, Failure> => {
+    if (message.type !== "result") {
+      return Effect.succeed(Result.failVoid);
+    }
+    if (message.subtype === "success" && !message.is_error) {
+      return Effect.succeed(Result.succeed(message.result));
+    }
+    return Effect.fail(failure(reasonOf(message)));
+  };
+
+const toolResult =
+  ({ tools, maxTurns }: Tooling) =>
+  <Failure>({
+    prompt,
+    system,
+    model,
+    failure,
+  }: Generation<Failure>): Effect.Effect<string, Failure> =>
+    Stream.fromAsyncIterable(
+      query({
+        prompt,
+        options: {
+          ...QUIET_OPTIONS,
+          tools: [...tools],
+          allowedTools: [...tools],
+          maxTurns,
+          model,
+          systemPrompt: system,
+        },
+      }),
+      failure,
+    ).pipe(Stream.filterMapEffect(finalOf(failure)), Stream.mkString);
+
+export { QUIET_OPTIONS, textStream, toolResult };
+export type { Generation, Tooling };

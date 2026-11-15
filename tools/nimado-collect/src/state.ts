@@ -69,4 +69,14 @@ const saveViews = Effect.fn("state.views.save")(function* saveViewsTo({
   yield* writeJson({ codec: ViewState, file: path.join(state, file), value });
 });
 
-export { NICO_FILE, TODAY, YOUTUBE_FILE, jstDate, loadCatalog, loadViews, saveCatalog, saveViews };
+export {
+  CATALOG_FILE,
+  NICO_FILE,
+  TODAY,
+  YOUTUBE_FILE,
+  jstDate,
+  loadCatalog,
+  loadViews,
+  saveCatalog,
+  saveViews,
+};

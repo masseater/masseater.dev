@@ -1,6 +1,7 @@
 use tauri::State;
 use tauri::ipc::Channel;
 
+use crate::export;
 use crate::failure::{Failure, Outcome};
 use crate::mcp;
 use crate::model::{
@@ -10,6 +11,7 @@ use crate::model::{
 use crate::store::{Store, dismissals, manuscripts, onboarding, reactions, sources};
 use crate::sync::Syncer;
 use crate::updates;
+use crate::window;
 use crate::writing::claude::Claude;
 use crate::writing::draft::{Rewrite, draft_from_memo as draft, rewrite_span};
 use crate::writing::ingest::ingest_text as ingest;
@@ -96,6 +98,20 @@ pub async fn save_paragraphs(
 
 #[tauri::command]
 #[specta::specta]
+pub async fn export_manuscript(
+    app: tauri::AppHandle,
+    yohaku: State<'_, Yohaku>,
+    id: String,
+) -> Answer<bool> {
+    let current = manuscript(&yohaku.store, &id)?;
+    let paragraphs = yohaku
+        .store
+        .with(|connection| manuscripts::paragraphs(connection, &id))?;
+    export::save(app, &current, &paragraphs).await
+}
+
+#[tauri::command]
+#[specta::specta]
 pub async fn set_title(yohaku: State<'_, Yohaku>, id: String, text: String) -> Answer<Manuscript> {
     let trimmed = text.trim();
     let title = (!trimmed.is_empty()).then(|| Title {
@@ -115,7 +131,7 @@ async fn titled(yohaku: &Yohaku, current: Manuscript, prose: &[String]) -> Outco
     let proposed = propose_title(&yohaku.claude, prose)
         .await
         .unwrap_or_else(|failure| {
-            eprintln!("title failed: {failure}");
+            log::warn!("title failed: {failure}");
             String::new()
         });
     if proposed.is_empty() {
@@ -306,4 +322,18 @@ pub async fn install_update(app: tauri::AppHandle, on_progress: Channel<u8>) -> 
         let _ = on_progress.send(done);
     })
     .await
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn window_ready(app: tauri::AppHandle) -> Answer<()> {
+    window::show(&app);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn finish_closing(app: tauri::AppHandle, quit: bool) -> Answer<()> {
+    window::finish_close(&app, quit);
+    Ok(())
 }

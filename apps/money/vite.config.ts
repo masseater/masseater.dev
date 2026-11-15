@@ -1,20 +1,13 @@
 import { ownerSiteRun } from "@masseater.dev/cloudflare-account/owner-site-run";
+import { d1Tasks } from "@masseater.dev/cloudflare-account/run-tasks";
 import { defineConfig } from "vite-plus";
-
-import { MCP_PATH, SITE_HOST } from "./src/shared/config/index.ts";
-
-const siteRun = ownerSiteRun({ host: SITE_HOST, paths: [MCP_PATH] });
 
 export default defineConfig({
   run: {
     tasks: {
-      ...siteRun.tasks,
+      ...ownerSiteRun.tasks,
+      ...d1Tasks,
       verify: { command: [], dependsOn: ["db:check"] },
-      "db:generate": { command: "drizzle-kit generate", cache: false },
-      "db:check": [
-        "drizzle-kit check",
-        `drizzle-kit generate --explain --output json | grep -q '"status":"no_changes"'`,
-      ],
     },
   },
   resolve: { tsconfigPaths: true },

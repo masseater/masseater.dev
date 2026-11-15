@@ -46,6 +46,7 @@ type Yohaku = Readonly<{
   listManuscripts: () => Effect.Effect<readonly (typeof Manuscript.Type)[], Failure>;
   createManuscript: () => Effect.Effect<typeof Manuscript.Type, Failure>;
   openManuscript: (id: string) => Effect.Effect<Opened, Failure>;
+  exportManuscript: (id: string) => Effect.Effect<boolean, Failure>;
   saveParagraphs: (
     saving: Readonly<{ id: string; paragraphs: Opened["paragraphs"] }>,
   ) => Effect.Effect<void, Failure>;

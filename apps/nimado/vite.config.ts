@@ -1,10 +1,23 @@
 import { startSiteConfig } from "@masseater.dev/start-site/vite";
 import { Option } from "effect";
+import { mergeConfig } from "vite-plus";
 
 import { BASE_PATH } from "./base-path.ts";
 
-export default startSiteConfig({
-  assetHeaderArgs: "",
-  basePath: BASE_PATH,
-  searchIndexOrigin: Option.none(),
-});
+export default mergeConfig(
+  startSiteConfig({
+    assetHeaderArgs: "",
+    basePath: BASE_PATH,
+    searchIndexOrigin: Option.none(),
+  }),
+  {
+    run: {
+      tasks: {
+        "deploy:data": {
+          command: "alchemy deploy alchemy.data.ts --stage data --yes",
+          cache: false,
+        },
+      },
+    },
+  },
+);

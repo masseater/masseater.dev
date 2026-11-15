@@ -12,9 +12,9 @@ interface Job {
   readonly pathname: string;
 }
 
-const rendered = Effect.fn("rendered")(function* renderJob({ assetId, pathname }: Job) {
-  const { model, files } = yield* Effect.promise(() => readModel(assetId));
-  const object = yield* loadModel({ pathname, model, files });
+const rendered = Effect.fn("rendered")(function* renderJob({ assetId }: Job) {
+  const { name, model, files } = yield* Effect.promise(() => readModel(assetId));
+  const object = yield* loadModel({ pathname: name, model, files });
   return yield* renderViews(object);
 }, Effect.scoped);
 
