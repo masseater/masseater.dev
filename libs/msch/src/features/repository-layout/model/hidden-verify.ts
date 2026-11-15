@@ -1,14 +1,13 @@
 import { Array as Arr, Effect, Option } from "effect";
 
 import {
-  programOf,
+  workspaceConfigOf,
   workspaceDirectories,
   VERIFY_TASK,
   definesTask,
   hasVerifyTask,
 } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
-import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 const RULE: RuleName = "hidden-verify";
 const CONFIG_FILE = "vite.config.ts";
@@ -16,13 +15,11 @@ const FIRST = 1;
 const READ_CONCURRENCY = 8;
 
 const problemIn = Effect.fn("problemIn")(function* problemIn(root: string, directory: string) {
-  const files = yield* RepositoryFiles;
-  const file = files.join(root, directory, CONFIG_FILE);
-  const text = yield* files.readFile(file);
-  if (Option.isNone(text)) {
+  const config = yield* workspaceConfigOf(root, directory);
+  if (Option.isNone(config)) {
     return Option.none<Problem>();
   }
-  const program = yield* programOf(file, text.value);
+  const { file, program } = config.value;
   if (definesTask(VERIFY_TASK)(program)) {
     return Option.none<Problem>();
   }

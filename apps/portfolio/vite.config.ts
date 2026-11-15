@@ -33,6 +33,22 @@ export default defineConfig({
   run: {
     tasks: {
       ...alchemyTasks,
+      "deploy:bootstrap": {
+        command: "ALCHEMY_STAGE=prod alchemy deploy --yes",
+        cache: false,
+        dependsOn: ["labs#deploy:bootstrap"],
+      },
+      "deploy:production": {
+        command: [
+          "alchemy deploy --config alchemy.traces.ts --stage prod --yes",
+          "WORKERS_TRACES_SINK=masseater-dev-trace-sink workers-traces --request https://masseater.dev/ --expect GET --wait 300",
+        ],
+        cache: false,
+      },
+      "deploy:zone": {
+        command: "alchemy deploy --config alchemy.zone.ts --stage prod --yes",
+        cache: false,
+      },
       build: "vp build && sequoia inject",
       ...d1Tasks,
       "standard-site": { command: "vpx scripts/standard-site.ts && sequoia publish", cache: false },

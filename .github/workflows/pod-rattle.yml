@@ -19,10 +19,6 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: pod-rattle
-  cancel-in-progress: false
-
 env:
   CARGO_TERM_COLOR: always
 
@@ -56,6 +52,9 @@ jobs:
           - os: macos-latest
             platform: macos-universal
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: pod-rattle-bundle-${{ matrix.platform }}
+      cancel-in-progress: true
     permissions:
       contents: read
     defaults:
@@ -72,9 +71,6 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - run: rustup toolchain install
-      - if: runner.os == 'macOS'
-        run: rustup target add x86_64-apple-darwin aarch64-apple-darwin
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: ${{ matrix.platform }}
@@ -155,6 +151,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
         with:
           github-token: ${{ github.token }}

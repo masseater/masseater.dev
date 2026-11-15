@@ -14,10 +14,6 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: yakusu
-  cancel-in-progress: false
-
 env:
   CARGO_TERM_COLOR: always
   GIT_CONFIG_COUNT: 1
@@ -63,6 +59,9 @@ jobs:
             bundles: dmg
             files: target/release/bundle/dmg/*.dmg
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: yakusu-installer-${{ matrix.platform }}
+      cancel-in-progress: true
     permissions:
       contents: read
     defaults:
@@ -74,12 +73,9 @@ jobs:
           persist-credentials: false
       - if: runner.os == 'Linux'
         uses: $/.github/actions/linux-packages
-      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+      - uses: $/.github/actions/setup
         with:
-          cache: true
-          run-install: |
-            - args: ['--frozen-lockfile']
-      - run: rustup toolchain install
+          native: "false"
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: ${{ matrix.platform }}
@@ -130,6 +126,9 @@ jobs:
           - os: macos-latest
             platform: macos-arm64
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: yakusu-launch-${{ matrix.platform }}
+      cancel-in-progress: true
     permissions:
       contents: read
     defaults:
@@ -208,6 +207,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
         with:
           github-token: ${{ github.token }}

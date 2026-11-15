@@ -15,12 +15,15 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    concurrency:
+      group: verify-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
-      - uses: masseater/typescript-template/.github/actions/verify@a76b6452b4c008062dc453dc5f116557b8056978
+      - uses: masseater/typescript-template/.github/actions/verify@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -50,426 +53,27 @@ jobs:
           -f run_id="$FAILED_RUN_ID" -f branch="$HEAD_BRANCH" -f sha="$HEAD_SHA"
 
   deploy:
-    needs: verify
     if: github.event_name == 'push'
-    runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       id-token: write
     concurrency:
       group: deploy
-      queue: max
-    outputs:
-      latest: ${{ steps.head.outputs.latest }}
-    steps:
-      - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@a76b6452b4c008062dc453dc5f116557b8056978
-        with:
-          github-token: ${{ github.token }}
-      - if: steps.head.outputs.latest == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - if: steps.head.outputs.latest == 'true'
-        run: git fetch --unshallow --filter=blob:none origin
-      - if: steps.head.outputs.latest == 'true'
-        uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - if: steps.head.outputs.latest == 'true'
-        run: .github/scripts/atproto-password.sh
-        continue-on-error: true
-      - if: steps.head.outputs.latest == 'true' && env.ATP_APP_PASSWORD != ''
-        run: vp run --no-cache --filter portfolio standard-site
-        continue-on-error: true
-        env:
-          ATP_IDENTIFIER: did:plc:sz2kxumpsjbch3kgnsjjed5z
-      - if: steps.head.outputs.latest == 'true'
-        run: vp exec --filter labs alchemy deploy --stage prod --yes
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - if: steps.head.outputs.latest == 'true'
-        run: vp exec --filter portfolio alchemy deploy --yes
-        env:
-          ALCHEMY_STAGE: prod
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - if: steps.head.outputs.latest == 'true'
-        run: vp exec --filter @masseater.dev/repositories alchemy deploy --config alchemy.broker.ts --stage prod --yes
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  zone:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: zone
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: zone
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter portfolio alchemy deploy --config alchemy.zone.ts --stage prod --yes
-
-  mcp-portal:
-    needs: [deploy, watashi-mcp, sundries, twilog-mcp, money]
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: mcp-portal
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: mcp-portal
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter @masseater.dev/mcp-portal alchemy deploy --config alchemy.portal.ts --stage prod --yes
-      - run: .github/scripts/mcp-portal-sync.sh
-
-  traces:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: traces
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter portfolio alchemy deploy --config alchemy.traces.ts --stage prod --yes
-
-  three-twelve:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: three-twelve
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter three-twelve alchemy deploy --stage prod --yes
-
-  watashi-mcp:
-    needs: [deploy, plamo-translate]
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: watashi-mcp
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter watashi-mcp alchemy deploy --stage prod --yes
-
-  sundries:
-    needs: [deploy, plamo-translate]
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: sundries
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: sundries
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter sundries alchemy deploy --stage prod --yes
-
-  twilog-mcp:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: twilog-mcp
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: twilog-mcp
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter twilog-mcp alchemy deploy --stage prod --yes
-
-  money:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: money
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: money
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter money alchemy deploy --stage prod --yes
-  kikite:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: kikite
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: kikite
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter kikite alchemy deploy --stage prod --yes
-
-  plamo-translate:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: plamo-translate
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: plamo-translate
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter plamo-translate alchemy deploy --stage prod --yes
-
-  yohaku-sync:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: yohaku-sync
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: yohaku-sync
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter yohaku-sync alchemy deploy --stage prod --yes
-
-  medley-manager:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: medley-manager
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter medley-manager alchemy deploy --stage production --yes
-
-  decision-experiments:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: decision-experiments
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: decision-experiments
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter injection-bisect-demo alchemy deploy --stage production --yes
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - run: vp exec --filter ocr-decide alchemy deploy --stage production --yes
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - run: vp exec --filter decision-bench alchemy deploy --stage production --yes
-
-  rpp-kit:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: rpp-kit
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter rpp-kit-demo alchemy deploy --stage production --yes
-
-  nimado:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: nimado-site
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter nimado alchemy deploy --stage production --yes
-
-  web-vitals:
-    needs: rpp-kit
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run measure https://masseater.dev/rpp-kit/
-        working-directory: tools/web-vitals-measure
-      - if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: web-vitals
-          path: tools/web-vitals-measure/report/
-          if-no-files-found: ignore
-
-  trace-check:
-    needs: [deploy, traces]
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec workers-traces --request https://masseater.dev/ --expect GET --wait 300
-        working-directory: apps/portfolio
-        env:
-          WORKERS_TRACES_SINK: masseater-dev-trace-sink
-
-  github:
-    needs: deploy
-    if: needs.deploy.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: github
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: github
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - run: .github/scripts/github-token.sh
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp exec --filter @masseater.dev/repositories alchemy deploy --config alchemy.github.ts --stage prod --yes
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    uses: $/.github/workflows/deploy.yml
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   private-names:
     needs: deploy
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
+    concurrency:
+      group: private-names
+      cancel-in-progress: true
     environment: private-names
     permissions:
       contents: read
@@ -478,95 +82,106 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          path: masseater.dev
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           repository: masseater/skills
-          path: skills
-      - run: masseater.dev/.github/scripts/github-token.sh
-      - run: masseater.dev/.github/scripts/private-names.sh masseater.dev skills
+          path: .skills-checkout
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r github-token
+      - run: vp run -r private-names
+        env:
+          CHECKOUTS: ${{ github.workspace }} ${{ github.workspace }}/.skills-checkout
 
   zenn:
-    needs: verify
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: write
     concurrency:
       group: zenn
-      queue: max
+      cancel-in-progress: true
     steps:
-      - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@a76b6452b4c008062dc453dc5f116557b8056978
-        with:
-          github-token: ${{ github.token }}
-      - if: steps.head.outputs.latest == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - if: steps.head.outputs.latest == 'true'
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r zenn-publish
         env:
           GH_TOKEN: ${{ github.token }}
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
           GIT_COMMITTER_NAME: github-actions[bot]
           GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
-        run: |
-          gh auth setup-git
-          tree="$(git rev-parse HEAD:apps/zenn-articles)"
-          parent=()
-          if git fetch --no-tags --depth=1 origin zenn; then
-            if [ "$(git rev-parse 'FETCH_HEAD^{tree}')" = "$tree" ]; then
-              exit 0
-            fi
-            parent=(-p FETCH_HEAD)
-          fi
-          commit="$(git commit-tree "$tree" "${parent[@]}" -m "deploy: $GITHUB_SHA")"
-          git push origin "$commit:refs/heads/zenn"
 
-  mosaic-plan:
-    needs: verify
-    if: github.event_name == 'push' || github.event_name == 'schedule'
+  sts2-pck:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    concurrency:
+      group: sts2-pck
+      cancel-in-progress: true
     permissions:
-      actions: write
       contents: read
-    outputs:
-      rebuild: ${{ steps.slugs.outputs.rebuild }}
-      slugs: ${{ steps.slugs.outputs.slugs }}
-      web: ${{ steps.web.outputs.web }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: |
-            .github/scripts/mosaic-superseded.sh
-            .github/scripts/mosaic-touched.sh
-            libs/mosaic/src/characters.json
-          sparse-checkout-cone-mode: false
-      - id: touched
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          fetch_from_github: false
+          install_args: dotnet
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r pck:all
+        env:
+          PCK_OUT: ${{ runner.temp }}/sts2-pck
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sts2-pck
+          path: ${{ runner.temp }}/sts2-pck/
+          if-no-files-found: ignore
+
+  mosaic-plan:
+    if: github.event_name == 'push' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: mosaic-plan
+      cancel-in-progress: true
+    permissions:
+      actions: write
+      contents: read
+    outputs:
+      rebuild: ${{ steps.plan.outputs.rebuild }}
+      web: ${{ steps.plan.outputs.web }}
+      slugs: ${{ steps.plan.outputs.slugs }}
+      pool: ${{ steps.plan.outputs.pool }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - id: plan
         env:
           GH_TOKEN: ${{ github.token }}
           HEAD_SHA: ${{ github.sha }}
           BEFORE_SHA: ${{ github.event.before }}
-        run: .github/scripts/mosaic-touched.sh
+        run: vp run -r mosaic-plan
       - env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          gh cache list --repo "$GITHUB_REPOSITORY" --ref refs/heads/main --key vite-plus- --sort created_at --order desc --limit 100 --json key --jq '.[1:][].key' |
-            xargs -r -n 1 gh cache delete --repo "$GITHUB_REPOSITORY"
+        run: vp run -r prune-caches
       - name: rebuild
-        id: slugs
-        if: steps.touched.outputs.mosaic == 'true'
-        run: |
-          echo "rebuild=true" >> "$GITHUB_OUTPUT"
-          echo "slugs=$(jq -c '[.[].slug]' libs/mosaic/src/characters.json)" >> "$GITHUB_OUTPUT"
+        if: steps.plan.outputs.rebuild == 'true'
+        run: echo "the character files are rebuilt"
       - name: web
-        id: web
-        if: steps.touched.outputs.web == 'true'
-        run: echo "web=true" >> "$GITHUB_OUTPUT"
+        if: steps.plan.outputs.web == 'true'
+        run: echo "the site is redeployed"
 
   mosaic-character:
     needs: mosaic-plan
@@ -577,110 +192,23 @@ jobs:
       contents: read
     concurrency:
       group: mosaic-character-${{ matrix.slug }}
-      queue: max
     strategy:
       fail-fast: false
       max-parallel: 6
       matrix:
         slug: ${{ fromJSON(needs.mosaic-plan.outputs.slugs) }}
-    env:
-      SLUG: ${{ matrix.slug }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - id: start
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/mosaic-superseded.sh
-      - if: steps.start.outputs.superseded != 'true'
-        run: rustup toolchain install
-      - if: steps.start.outputs.superseded != 'true'
-        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - uses: $/.github/actions/mosaic-character
         with:
-          shared-key: mosaic
-          save-if: ${{ strategy.job-index == 0 }}
-      - if: steps.start.outputs.superseded != 'true'
-        run: cargo build --release --locked -p mosaic
-      - id: pool
-        if: steps.start.outputs.superseded != 'true'
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: tools/mosaic/.cache/pool.tar
-          key: mosaic-pool-${{ matrix.slug }}-${{ github.run_id }}
-          restore-keys: |
-            mosaic-pool-${{ matrix.slug }}-
-      - if: steps.start.outputs.superseded != 'true' && steps.pool.outputs.cache-matched-key != ''
-        run: |
-          if tar -tf pool.tar -- "$SLUG" > /dev/null; then
-            tar -xf pool.tar -- "$SLUG"
-          fi
-          rm pool.tar
-        working-directory: tools/mosaic/.cache
-      - if: steps.start.outputs.superseded != 'true'
-        run: sleep "$((JOB_INDEX % 6 * 30))"
-        env:
-          JOB_INDEX: ${{ strategy.job-index }}
-      - if: steps.start.outputs.superseded != 'true'
-        run: target/release/mosaic songs "$SLUG"
-        timeout-minutes: 180
-        continue-on-error: true
-      - id: build-pool
-        if: steps.start.outputs.superseded != 'true'
-        run: target/release/mosaic pool "$SLUG"
-      - if: steps.start.outputs.superseded != 'true'
-        run: target/release/mosaic solve "$SLUG"
-      - if: steps.start.outputs.superseded != 'true'
-        run: target/release/mosaic site "$SLUG"
-      - if: always() && steps.build-pool.outcome != 'skipped'
-        run: |
-          files=()
-          for file in small target.png vocadb/songs.json vocadb/progress.json thumbs.json niconico-og.json; do
-            if [ -e "$SLUG/$file" ]; then
-              files+=("$SLUG/$file")
-            fi
-          done
-          tar -cf pool.tar -- "${files[@]}"
-        working-directory: tools/mosaic/.cache
-      - id: pool-key
-        if: always() && steps.build-pool.outcome != 'skipped'
-        run: echo "key=mosaic-pool-$SLUG-$POOL_HASH" >> "$GITHUB_OUTPUT"
-        env:
-          POOL_HASH: ${{ hashFiles(format('tools/mosaic/.cache/{0}/vocadb/songs.json', matrix.slug), format('tools/mosaic/.cache/{0}/thumbs.json', matrix.slug), format('tools/mosaic/.cache/{0}/niconico-og.json', matrix.slug)) }}
-      - id: save-pool
-        if: always() && steps.build-pool.outcome != 'skipped' && steps.pool-key.outputs.key != steps.pool.outputs.cache-matched-key
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: tools/mosaic/.cache/pool.tar
-          key: ${{ steps.pool-key.outputs.key }}
-      - if: always() && steps.save-pool.outcome == 'success'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          KEEP: ${{ steps.pool-key.outputs.key }}
-        run: |
-          gh cache list --repo "$GITHUB_REPOSITORY" --key "mosaic-pool-$SLUG-" --limit 100 --json key --jq '.[].key' |
-            { grep -xE "mosaic-pool-$SLUG-[0-9a-f]{64}" || true; } | { grep -vxF "$KEEP" || true; } |
-            xargs -r -n 1 gh cache delete --repo "$GITHUB_REPOSITORY"
-      - id: changed
-        if: steps.start.outputs.superseded != 'true'
-        run: |
-          rm -rf tools/mosaic/.cache
-          if [ -d "apps/mosaic/public/files/$SLUG/0" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-      - if: steps.changed.outputs.changed == 'true'
-        uses: $/.github/actions/setup
-      - id: still
-        if: steps.changed.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/mosaic-superseded.sh
-      - if: steps.changed.outputs.changed == 'true' && steps.still.outputs.superseded != 'true'
-        run: vp exec alchemy deploy alchemy.files.ts --stage "$SLUG" --yes
-        working-directory: apps/mosaic
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          slug: ${{ matrix.slug }}
+          pool: ${{ needs.mosaic-plan.outputs.pool }}
+          job-index: ${{ strategy.job-index }}
+          github-token: ${{ github.token }}
+          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   mosaic-deploy:
     needs: mosaic-plan
@@ -691,26 +219,21 @@ jobs:
       contents: read
     concurrency:
       group: mosaic-deploy
-      queue: max
-    steps:
+    steps: &mosaic-site
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - id: head
         env:
           GH_TOKEN: ${{ github.token }}
           SUPERSEDING_STEPS: rebuild web
-        run: .github/scripts/mosaic-superseded.sh
-      - if: steps.head.outputs.superseded != 'true'
-        uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - if: steps.head.outputs.superseded != 'true'
-        run: .github/scripts/mosaic-live.sh
+        run: vp run -r mosaic-superseded
       - name: deploy
         if: steps.head.outputs.superseded != 'true'
-        run: vp exec alchemy deploy --stage production --yes
-        working-directory: apps/mosaic
+        run: vp run -r deploy:mosaic-site
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -724,116 +247,11 @@ jobs:
       contents: read
     concurrency:
       group: mosaic-deploy
-      queue: max
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - id: head
-        env:
-          GH_TOKEN: ${{ github.token }}
-          SUPERSEDING_STEPS: rebuild web
-        run: .github/scripts/mosaic-superseded.sh
-      - if: steps.head.outputs.superseded != 'true'
-        uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - if: steps.head.outputs.superseded != 'true'
-        run: .github/scripts/mosaic-live.sh
-      - name: deploy
-        if: steps.head.outputs.superseded != 'true'
-        run: vp exec alchemy deploy --stage production --yes
-        working-directory: apps/mosaic
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-  release:
-    needs: verify
-    if: github.repository == 'masseater/typescript-template'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    concurrency:
-      group: release
-    steps:
-      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
-        with:
-          config-file: .github/release-please/config.json
-          manifest-file: .github/release-please/manifest.json
-          skip-github-pull-request: true
-      - if: github.event_name == 'workflow_dispatch'
-        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
-        with:
-          config-file: .github/release-please/config.json
-          manifest-file: .github/release-please/manifest.json
-          skip-github-release: true
-
-  sts2-pck:
-    needs: verify
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    env:
-      MEGADOT_VERSION: 4.5.1-m.14
-      MEGADOT_SHA256: d245de0cd79ebffa83c87ae505e944fefd6beafd1496e9ce413f3a6c272dec3c
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
-        with:
-          fetch_from_github: false
-          install_args: dotnet
-      - run: |
-          mkdir -p ~/megadot && cd ~/megadot
-          curl -fsSL -o megadot.zip "https://megadot.megacrit.com/${MEGADOT_VERSION}/megadot-${MEGADOT_VERSION}-linux-x86_64-editor-csharp.zip"
-          echo "$MEGADOT_SHA256  megadot.zip" | sha256sum --check --quiet -
-          unzip -q megadot.zip && rm megadot.zip
-      - working-directory: apps/sts2-mods
-        run: |
-          GODOT_PATH="$(ls ~/megadot/MegaDot_*_mono_linux.x86_64)"
-          export GODOT_PATH
-          for dir in mods/*/; do
-            mod="$(basename "$dir")"
-            [ -d "mods/$mod/$mod" ] || continue
-            scripts/export-pck.sh "$mod" "out/$mod"
-          done
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: sts2-pck
-          path: apps/sts2-mods/out/
-          if-no-files-found: ignore
+    steps: *mosaic-site
 
   exposure:
-    needs:
-      [
-        deploy,
-        zone,
-        mcp-portal,
-        traces,
-        trace-check,
-        three-twelve,
-        watashi-mcp,
-        sundries,
-        kikite,
-        plamo-translate,
-        yohaku-sync,
-        rpp-kit,
-        nimado,
-        medley-manager,
-        decision-experiments,
-        web-vitals,
-        sts2-pck,
-        github,
-        zenn,
-        mosaic-plan,
-        mosaic-character,
-        mosaic-deploy,
-      ]
-    if: ${{ !cancelled() && needs.deploy.outputs.latest == 'true' }}
+    needs: [deploy, zenn, sts2-pck, mosaic-plan, mosaic-character, mosaic-deploy]
+    if: ${{ !cancelled() }}
     permissions:
       actions: read
       contents: read
@@ -844,64 +262,34 @@ jobs:
     needs:
       [
         deploy,
-        zone,
-        mcp-portal,
-        traces,
-        trace-check,
-        three-twelve,
-        watashi-mcp,
-        sundries,
-        twilog-mcp,
-        money,
-        kikite,
-        plamo-translate,
-        yohaku-sync,
-        rpp-kit,
-        nimado,
-        medley-manager,
-        decision-experiments,
-        web-vitals,
-        sts2-pck,
-        github,
         private-names,
         zenn,
+        sts2-pck,
         mosaic-plan,
         mosaic-character,
         mosaic-deploy,
+        mosaic-refresh,
       ]
     if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       issues: write
     concurrency:
       group: deploy-failure
-      queue: max
+      cancel-in-progress: true
     steps:
-      - env:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r deploy-failure
+        env:
           GH_TOKEN: ${{ github.token }}
-          JOB_LINE: "^- `([^`]+)`$"
-          LABEL: deploy-failure
           NEEDS: ${{ toJSON(needs) }}
-          OWNER: ${{ github.repository_owner }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
-        run: |
-          failed="$(jq --raw-output 'to_entries | map(select(.value.result == "failure") | "- `\(.key)`") | join("\n")' <<< "$NEEDS")"
-          body="$(printf 'main の verify で、次のジョブが失敗した。\n\n%s\n\n- 実行: %s\n- コミット: %s\n' "$failed" "$RUN_URL" "$GITHUB_SHA")"
-          number="$(gh issue list --repo "$GITHUB_REPOSITORY" --label "$LABEL" --state open --limit 1 --json number --jq '.[0].number // empty')"
-          if [ -n "$failed" ]; then
-            gh label create "$LABEL" --repo "$GITHUB_REPOSITORY" --color B60205 --description "main のデプロイが失敗した" --force
-            if [ -n "$number" ]; then
-              gh issue comment "$number" --repo "$GITHUB_REPOSITORY" --body "$body"
-            else
-              gh issue create --repo "$GITHUB_REPOSITORY" --title "main のデプロイが失敗した" --label "$LABEL" --assignee "$OWNER" --body "$body"
-            fi
-          elif [ -n "$number" ]; then
-            reported="$(gh issue view "$number" --repo "$GITHUB_REPOSITORY" --json body,comments --jq '[.body, .comments[].body] | join("\n")' | sed -nE "s/$JOB_LINE/\\1/p" | sort -u)"
-            pending="$(jq --raw-output --arg reported "$reported" '. as $needs | [($reported | split("\n"))[] | select(. != "" and $needs[.].result != "success")] | join(" ")' <<< "$NEEDS")"
-            if [ -z "$pending" ]; then
-              gh issue close "$number" --repo "$GITHUB_REPOSITORY" --reason completed --comment "$(printf '失敗したジョブがすべて main で通った。\n\n- 実行: %s\n- コミット: %s\n' "$RUN_URL" "$GITHUB_SHA")"
-            fi
-          fi
 
   ci-telemetry:
     needs:
@@ -909,30 +297,13 @@ jobs:
         verify,
         autofix,
         deploy,
-        zone,
-        mcp-portal,
-        traces,
-        trace-check,
-        three-twelve,
-        watashi-mcp,
-        sundries,
-        twilog-mcp,
-        kikite,
-        plamo-translate,
-        yohaku-sync,
-        rpp-kit,
-        nimado,
-        medley-manager,
-        decision-experiments,
-        web-vitals,
-        sts2-pck,
-        github,
         private-names,
         zenn,
+        sts2-pck,
         mosaic-plan,
         mosaic-character,
         mosaic-deploy,
-        release,
+        mosaic-refresh,
         exposure,
         deploy-failure,
       ]
@@ -943,6 +314,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
         with:
           github-token: ${{ github.token }}

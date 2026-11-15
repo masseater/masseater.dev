@@ -20,17 +20,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
-      - name: Sync each server and print its state
-        run: .github/scripts/mcp-portal-sync.sh
-      - name: Print portals and Access applications
-        run: |
-          base="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access"
-          auth="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
-          curl -sS -H "$auth" "$base/ai-controls/mcp/portals?per_page=100" |
-            jq -c '.errors, (.result[]? | {id, hostname, code_mode, allow_code_mode, servers})'
-          curl -sS -H "$auth" "$base/apps?per_page=100" |
-            jq -c '.errors, (.result[]? | {name, type, domain, aud, destinations, oauth: .oauth_configuration})'
+      - uses: masseater/typescript-template/.github/actions/credentials@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - name: Sync each server and print the portals and Access applications
+        run: vp run -r portal-status
 
   ci-telemetry:
     needs: [status]
@@ -41,6 +36,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
         with:
           github-token: ${{ github.token }}

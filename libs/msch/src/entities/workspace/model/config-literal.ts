@@ -8,7 +8,7 @@ export interface LiteralObject {
 
 const WRAPPERS = ["TSAsExpression", "TSSatisfiesExpression", "ParenthesizedExpression"] as const;
 
-const KeySchema = Schema.Union([
+export const KeySchema = Schema.Union([
   Schema.Struct({ type: Schema.Literal("Identifier"), name: Schema.String }),
   Schema.Struct({ type: Schema.Literal("Literal"), value: Schema.String }),
 ]);
@@ -52,7 +52,7 @@ const decodeObject = Schema.decodeUnknownOption(
   }),
 );
 
-const keyName = (key: typeof KeySchema.Type): string =>
+export const keyName = (key: typeof KeySchema.Type): string =>
   Match.value(key).pipe(
     Match.discriminatorsExhaustive("type")({
       Identifier: (identifier) => identifier.name,
