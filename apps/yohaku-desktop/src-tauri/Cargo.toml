@@ -1,6 +1,6 @@
 [package]
 name = "yohaku-desktop"
-version = "0.1.3"
+version = "0.1.4"
 license = "AGPL-3.0-only"
 edition = "2024"
 publish = false
