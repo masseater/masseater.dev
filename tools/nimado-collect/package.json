@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "imports": {
+    "#/*": "./src/*",
     "#package.json": "./package.json"
   },
   "dependencies": {
