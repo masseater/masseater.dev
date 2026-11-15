@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "@modelcontextprotocol/server": "catalog:",
-    "@r_masseater/workers-tracing": "workspace:*"
+    "@r_masseater/workers-tracing": "workspace:*",
+    "jose": "catalog:",
+    "security-headers": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
