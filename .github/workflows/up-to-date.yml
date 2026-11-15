@@ -24,7 +24,9 @@ jobs:
           filters: |
             skills-lock:
               - skills-lock.json
-      - if: steps.changed.outputs.skills-lock == 'true'
+            lockfile:
+              - pnpm-lock.yaml
+      - if: steps.changed.outputs.skills-lock == 'true' || steps.changed.outputs.lockfile == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -32,3 +34,7 @@ jobs:
         uses: masseater/typescript-template/.github/actions/skills-lock@988d10d667dd956eb17a81ec39e8b8cbba5c898a
         with:
           branch: ${{ github.head_ref }}
+      - if: steps.changed.outputs.lockfile == 'true'
+        uses: $/.github/actions/setup
+        with:
+          native: "false"

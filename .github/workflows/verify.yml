@@ -53,10 +53,8 @@ jobs:
           -f run_id="$FAILED_RUN_ID" -f branch="$HEAD_BRANCH" -f sha="$HEAD_SHA"
 
   deploy:
-    needs: verify
     if: github.event_name == 'push'
     permissions:
-      actions: read
       contents: read
       id-token: write
     concurrency:
@@ -93,30 +91,21 @@ jobs:
           CHECKOUTS: . .skills-checkout
 
   zenn:
-    needs: verify
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: write
     concurrency:
       group: zenn
       cancel-in-progress: true
     steps:
-      - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@988d10d667dd956eb17a81ec39e8b8cbba5c898a
-        with:
-          github-token: ${{ github.token }}
-      - if: steps.head.outputs.latest == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - if: steps.head.outputs.latest == 'true'
-        uses: $/.github/actions/setup
+      - uses: $/.github/actions/setup
         with:
           native: "false"
-      - if: steps.head.outputs.latest == 'true'
-        run: vp run -r zenn-publish
+      - run: vp run -r zenn-publish
         env:
           GH_TOKEN: ${{ github.token }}
           GIT_AUTHOR_NAME: github-actions[bot]
@@ -125,7 +114,6 @@ jobs:
           GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
 
   sts2-pck:
-    needs: verify
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     concurrency:
@@ -154,7 +142,6 @@ jobs:
           if-no-files-found: ignore
 
   mosaic-plan:
-    needs: verify
     if: github.event_name == 'push' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     concurrency:
@@ -259,7 +246,7 @@ jobs:
 
   exposure:
     needs: [deploy, zenn, sts2-pck, mosaic-plan, mosaic-character, mosaic-deploy]
-    if: ${{ !cancelled() && needs.deploy.outputs.latest == 'true' }}
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     permissions:
       actions: read
       contents: read
