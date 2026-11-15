@@ -287,6 +287,7 @@ const worker = {
 };
 
 export { AccessOAuth } from "./access-oauth.ts";
+export type { AccessOAuthRpc, SiteToken } from "./access-oauth.ts";
 export { ClaudeRoutine } from "./claude-routine-entrypoint.ts";
 export { SloppediaGitHub } from "./github-token.ts";
 export default worker;

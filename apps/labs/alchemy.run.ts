@@ -13,7 +13,7 @@ const route = (path: string): Readonly<{ pattern: string; zoneName: string }> =>
 });
 
 const site = Website.StaticSite("Labs", {
-  command: "vp run build",
+  command: "vp build",
   outdir: "dist",
   logpush: true,
   routes: pipe([...PAGES, ASSETS_DIR], Arr.map(route)),
