@@ -1,7 +1,7 @@
 import { mcpWorker } from "@masseater.dev/mcp-tool-call";
 
-import { serveMcp } from "#/app/mcp";
-import { MCP_PATH } from "#/shared/config";
+import { serveMcp } from "#/app/mcp/index.ts";
+import { MCP_PATH } from "#/shared/config/index.ts";
 
 export { ClaudeRequests } from "./claude-requests-entrypoint.ts";
 export { Slides } from "./slides-entrypoint.ts";

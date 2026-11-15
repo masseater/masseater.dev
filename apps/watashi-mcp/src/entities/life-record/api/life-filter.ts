@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Order, Predicate, Record as Rec, String as Str, pipe } from "effect";
 
-import type { LifeRow } from "#/shared/db";
+import type { LifeRow } from "#/shared/db/index.ts";
 
 import { NONE, lower, stringAt, textAt } from "./life-record";
 import type { Body } from "./life-record";

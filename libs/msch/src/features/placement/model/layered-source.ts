@@ -1,6 +1,7 @@
 import { Array as Arr, Effect, Option, Order, Schema, String as Str, pipe } from "effect";
 
 import { MANIFEST_FILE, publicEntriesOf } from "#/entities/package/index.ts";
+import type { PublicEntry } from "#/entities/package/index.ts";
 import { workspaceDirectories } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
@@ -11,23 +12,25 @@ const FIRST = 1;
 const ROOT_WORKSPACE = ".";
 const SOURCE_DIRECTORY = "src";
 const SEPARATOR = "/";
+const LOOSE_DEPTH = 2;
 const LAYERS: readonly string[] = ["app", "pages", "widgets", "features", "entities", "shared"];
 const SCRIPT = /\.[cm]?[jt]sx?$/u;
-const ROOT_ALLOWED = /^(?:[^/]+\.config\.[cm]?[jt]s|alchemy\.[^/]+\.ts|[^/]+\.d\.[cm]?ts)$/u;
+const ROOT_ALLOWED =
+  /^(?:[^/]+\.config\.[cm]?[jt]s|alchemy\.[^/]+\.ts|[^/]+\.d\.[cm]?ts|bin\/.+)$/u;
 const PUBLIC_ENTRY =
-  /^src\/(?:app\/[^/]+|(?:pages|widgets|features|entities)\/[^/]+\/index(?:\.[a-z]+)*\.tsx?|shared\/[^/]+\/index(?:\.[a-z]+)*\.tsx?|shared\/(?:ui|lib)\/.+)$/u;
+  /^(?:bin\/[^/]+|src\/(?:app\/[^/]+|(?:pages|widgets|features|entities)\/[^/]+\/index(?:\.[a-z]+)*\.tsx?|shared\/[^/]+\/index(?:\.[a-z]+)*\.tsx?|shared\/(?:ui|lib)\/.+))$/u;
 const EXCLUDED: readonly string[] = [
   ":(exclude,attr:linguist-vendored)",
   ":(exclude,attr:linguist-generated)",
 ];
 
 const OUTSIDE_MESSAGE =
-  "sits outside src/. Put every module of a workspace under src/ in an FSD layer; only *.config.ts, alchemy.*.ts and *.d.ts may stay at the workspace root.";
+  "sits outside src/. Put every module of a workspace under src/ in an FSD layer; only bin/, *.config.ts, alchemy.*.ts and *.d.ts may stay at the workspace root.";
 const LOOSE_MESSAGE =
   "sits directly in src/. Put it in a layer: app/ for entry points and wiring, features/<verb>-<object>/ for one operation, entities/<noun>/ for a shared domain object, or shared/<segment>/ for code without domain rules.";
 const LAYER_MESSAGE = `is not an FSD layer. src/ holds only ${Arr.join(LAYERS, ", ")}.`;
 const ENTRY_MESSAGE =
-  "is a package entry that points inside a slice. Point exports and bin at src/app/<entry>.ts or at a slice's index.ts.";
+  "is a package entry that points inside a slice. Point exports and bin at bin/<name>.ts, src/app/<entry>.ts or a slice's index.ts.";
 
 const Manifest = Schema.Struct({
   name: Schema.optional(Schema.String),
@@ -58,7 +61,10 @@ const ownerOf =
       workspaces,
       Arr.filter((workspace) => Str.startsWith(`${workspace}${SEPARATOR}`)(name)),
       (owners) => Arr.last(Arr.sort(owners, byLength)),
-      Option.map((workspace) => ({ workspace, inner: Str.slice(workspace.length + 1)(name) })),
+      Option.map((workspace) => ({
+        workspace,
+        inner: Str.slice(workspace.length + SEPARATOR.length)(name),
+      })),
     );
 
 const layerProblemOf = (owned: Owned): Option.Option<readonly [string, string]> => {
@@ -70,7 +76,7 @@ const layerProblemOf = (owned: Owned): Option.Option<readonly [string, string]> 
       () => !ROOT_ALLOWED.test(owned.inner),
     );
   }
-  if (parts.length === 2) {
+  if (parts.length === LOOSE_DEPTH) {
     return Option.some([`${owned.workspace}${SEPARATOR}${owned.inner}`, LOOSE_MESSAGE] as const);
   }
   return Option.liftPredicate(
@@ -94,7 +100,7 @@ const entryProblems = Effect.fn("entryProblems")(function* entryProblems(
     text,
     Option.flatMap(decodeManifest),
     Option.map((manifest) => publicEntriesOf({ manifest, join, packEntries: [] })),
-    Option.getOrElse(() => []),
+    Option.getOrElse((): readonly PublicEntry[] => []),
     Arr.filter(({ source }) => !PUBLIC_ENTRY.test(files.relative(directory, source))),
     Arr.map(({ label, source }) => problemAt(source, ENTRY_RULE, `${label} ${ENTRY_MESSAGE}`)),
   );
@@ -105,8 +111,9 @@ export const checkLayeredSource = Effect.fn("checkLayeredSource")(function* chec
   root: string,
 ) {
   const files = yield* RepositoryFiles;
+  const declared = yield* workspaceDirectories(root);
   const workspaces = pipe(
-    yield* workspaceDirectories(root),
+    declared,
     Arr.filter((workspace) => workspace !== ROOT_WORKSPACE),
   );
   const listed = yield* files.matchingFiles(root, EXCLUDED);
@@ -120,6 +127,9 @@ export const checkLayeredSource = Effect.fn("checkLayeredSource")(function* chec
     Arr.dedupeWith(([left], [right]) => left === right),
     Arr.map(([file, message]) => problemAt(files.join(root, file), LAYERED_RULE, message)),
   );
-  const entries = yield* Effect.forEach(workspaces, (workspace) => entryProblems(root, workspace));
+  const entries = yield* pipe(
+    workspaces,
+    Effect.forEach((workspace) => entryProblems(root, workspace)),
+  );
   return [...layered, ...Arr.flatten(entries)];
 });

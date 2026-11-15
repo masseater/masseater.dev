@@ -1,6 +1,6 @@
-import { ROOT } from "#/entities/technique";
-import { defaultImage, pageTitle, seo } from "#/shared/lib";
-import type { Head } from "#/shared/lib";
+import { ROOT } from "#/entities/technique/index.ts";
+import { defaultImage, pageTitle, seo } from "#/shared/lib/index.ts";
+import type { Head } from "#/shared/lib/index.ts";
 
 import { INTRO, TITLE } from "./copy";
 

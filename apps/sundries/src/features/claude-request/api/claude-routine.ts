@@ -3,7 +3,7 @@ import type { ClaudeRoutine } from "@masseater.dev/repositories/credential-broke
 import { env } from "cloudflare:workers";
 import { Effect } from "effect";
 
-import { brokerFailed } from "#/shared/api";
+import { brokerFailed } from "#/shared/api/index.ts";
 
 export type Routine = Readonly<{ triggerId: string; token: string }>;
 

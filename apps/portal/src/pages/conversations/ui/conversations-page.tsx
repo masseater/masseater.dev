@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSessions } from "#/pages/conversations/api/sessions-query";
-import { RowList, Section } from "#/shared/ui";
+import { useSessions } from "#/pages/conversations/api/sessions-query.ts";
+import { RowList, Section } from "#/shared/ui/index.ts";
 
 import { SessionRow } from "./session-row";
 

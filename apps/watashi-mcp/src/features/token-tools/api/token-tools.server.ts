@@ -4,7 +4,7 @@ import { Label, TOKEN_SCOPES } from "@masseater.dev/watashi-protocol";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { Option, Schema } from "effect";
 
-import { meteredInput, runTool } from "#/shared/api/index.server";
+import { meteredInput, runTool } from "#/shared/api/index.server.ts";
 
 import { mintToken } from "./api-token-api.server.ts";
 

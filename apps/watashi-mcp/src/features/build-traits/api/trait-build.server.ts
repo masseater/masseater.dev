@@ -1,9 +1,9 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Effect, Option } from "effect";
 
-import type { AnalystFailed, TraitAnalyst, Collected } from "#/entities/trait";
-import { saveTraits } from "#/entities/trait/index.server";
-import type { StorageFailed } from "#/shared/db";
+import { saveTraits } from "#/entities/trait/index.server.ts";
+import type { AnalystFailed, TraitAnalyst, Collected } from "#/entities/trait/index.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { askAbout } from "./trait-ask.server.ts";
 import { settle } from "./trait-settle.server.ts";

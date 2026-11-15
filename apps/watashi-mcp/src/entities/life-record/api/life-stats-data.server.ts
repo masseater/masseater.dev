@@ -1,8 +1,8 @@
 import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
-import { AGGREGATES } from "#/entities/life-record/model/life-body";
-import type { Aggregate } from "#/entities/life-record/model/life-body";
-import type { StorageFailed } from "#/shared/db";
+import { AGGREGATES } from "#/entities/life-record/model/life-body.ts";
+import type { Aggregate } from "#/entities/life-record/model/life-body.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 import type { StatEvent } from "./life-daily";
 import { stringAt } from "./life-record";

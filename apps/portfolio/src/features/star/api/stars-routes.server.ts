@@ -5,8 +5,8 @@ import { Effect, Option, Schema } from "effect";
 import { Hex } from "effect/encoding";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 
-import { categories } from "#/entities/entry";
-import { site } from "#/shared/config";
+import { categories } from "#/entities/entry/index.ts";
+import { site } from "#/shared/config/index.ts";
 
 import { addStar, read, readCounts, removeStar } from "./stars-store.server";
 import type { Change, Counts, Stars, Target } from "./stars-store.server";

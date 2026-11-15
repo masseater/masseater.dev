@@ -1,9 +1,15 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import { entriesAtom, heardAtom, leadsAtom, summaryAtom, summaryOf } from "#/entities/interview";
-import type { Entry, Lead } from "#/entities/interview";
-import { requestCorrection } from "#/shared/api";
-import { modify, read } from "#/shared/lib/registry";
+import {
+  entriesAtom,
+  heardAtom,
+  leadsAtom,
+  summaryAtom,
+  summaryOf,
+} from "#/entities/interview/index.ts";
+import type { Entry, Lead } from "#/entities/interview/index.ts";
+import { requestCorrection } from "#/shared/api/index.ts";
+import { modify, read } from "#/shared/lib/registry.ts";
 import type { HeardText, InterviewSummary } from "#protocol";
 
 const heardLine = (entry: Entry): readonly HeardText[] => {

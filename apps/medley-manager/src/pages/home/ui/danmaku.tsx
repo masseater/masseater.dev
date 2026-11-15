@@ -3,8 +3,8 @@ import { Array, pipe } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { songsQuery } from "#/pages/home/api/loader";
-import { danmakuLanes } from "#/pages/home/lib/danmaku";
+import { songsQuery } from "#/pages/home/api/loader.ts";
+import { danmakuLanes } from "#/pages/home/lib/danmaku.ts";
 
 import { DanmakuLane } from "./danmaku-lane";
 

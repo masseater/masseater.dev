@@ -1,7 +1,7 @@
 import { Array as Arr, Duration, Effect, Fiber, Option, Order, Schedule, pipe } from "effect";
 import type { Note } from "rpp-kit";
 
-import { song } from "#/entities/song";
+import { song } from "#/entities/song/index.ts";
 
 import { createEngine, play } from "./engine";
 

@@ -2,13 +2,13 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Effect, Option } from "effect";
 import { vi } from "vite-plus/test";
 
-import { routeLifeRead, writeLife } from "#/features/life-tools/index.test.support";
+import { routeLifeRead, writeLife } from "#/features/life-tools/index.test.support.ts";
 import {
   readMemory,
   writeMemory,
   ownerProfile,
   watashiSearch,
-} from "#/features/memory-tools/index.test.support";
+} from "#/features/memory-tools/index.test.support.ts";
 
 import { closeDatabase, resetDatabase } from "./d1.test.support.ts";
 

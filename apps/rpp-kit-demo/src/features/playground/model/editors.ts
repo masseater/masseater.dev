@@ -10,7 +10,7 @@ import type { Remote } from "comlink";
 import { Array as Arr, Effect, pipe } from "effect";
 import type { Scope } from "effect";
 
-import { playground } from "#/shared/config";
+import { playground } from "#/shared/config/index.ts";
 
 import type { CheckerWorker } from "./checker.worker.ts";
 import { lintsOf, typeCompletion, typeHover } from "./language";

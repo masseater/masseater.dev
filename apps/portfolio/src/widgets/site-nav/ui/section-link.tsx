@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { pipe, Record } from "effect";
 import type { ReactNode } from "react";
 
-import { sectionMeta } from "#/shared/config";
-import type { Section } from "#/shared/config";
-import type { Direction } from "#/widgets/site-nav/model/direction";
+import { sectionMeta } from "#/shared/config/index.ts";
+import type { Section } from "#/shared/config/index.ts";
+import type { Direction } from "#/widgets/site-nav/model/direction.ts";
 
 import { NavLabel } from "./nav-label";
 

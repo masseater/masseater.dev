@@ -1,4 +1,4 @@
-import type { Choices } from "#/shared/ui/choice-group";
+import type { Choices } from "#/shared/ui/choice-group.tsx";
 
 import type { KindValue, PeriodValue, SortValue } from "./search";
 

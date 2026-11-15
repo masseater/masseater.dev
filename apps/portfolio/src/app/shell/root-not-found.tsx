@@ -1,7 +1,7 @@
 import { SiteStage } from "@masseater.dev/ui";
 import type { ReactNode } from "react";
 
-import { NotFound } from "#/widgets/not-found";
+import { NotFound } from "#/widgets/not-found/index.ts";
 
 import { SiteHeader } from "./site-header";
 

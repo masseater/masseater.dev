@@ -1,7 +1,7 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 import type { SankeyData, TextAnchor, YAxisOrientation } from "recharts";
 
-import type { FlowNodeValue, MoneyFlowValue } from "#/entities/money";
+import type { FlowNodeValue, MoneyFlowValue } from "#/entities/money/index.ts";
 
 export type Placement = Readonly<{
   anchor: Exclude<TextAnchor, "middle">;

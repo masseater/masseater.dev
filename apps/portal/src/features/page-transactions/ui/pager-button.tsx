@@ -2,8 +2,8 @@ import { Button } from "@masseater.dev/ui/button";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { MoneySearchValue } from "#/entities/money";
-import { MoneyLink } from "#/entities/money";
+import type { MoneySearchValue } from "#/entities/money/index.ts";
+import { MoneyLink } from "#/entities/money/index.ts";
 
 export const PagerButton = ({
   label,

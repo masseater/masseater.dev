@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { PersonLink } from "#/entities/person";
-import { TableCell } from "#/shared/ui/table-cell";
-import { TableRow } from "#/shared/ui/table-row";
+import { PersonLink } from "#/entities/person/index.ts";
+import { TableCell } from "#/shared/ui/table-cell.tsx";
+import { TableRow } from "#/shared/ui/table-row.tsx";
 
 type PersonSummary = Readonly<{ id: number; name: string; creditCount: number }>;
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { InspectState } from "#/features/run-inspection";
+import type { InspectState } from "#/features/run-inspection/index.ts";
 
 import { EventLog } from "./event-log";
 import { RunSummary } from "./run-summary";

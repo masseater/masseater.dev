@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { TEXT } from "#/entities/ranking";
+import { TEXT } from "#/entities/ranking/index.ts";
 
 const NUMBER_CELL = "py-2 pl-2 text-right font-normal";
 

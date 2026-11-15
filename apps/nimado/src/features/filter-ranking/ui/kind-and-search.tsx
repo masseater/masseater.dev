@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { KIND_LABELS, TEXT, usePick } from "#/entities/ranking";
-import type { RankingSearch, Update } from "#/entities/ranking";
-import { ChoiceGroup } from "#/shared/ui/choice-group";
+import { KIND_LABELS, TEXT, usePick } from "#/entities/ranking/index.ts";
+import type { RankingSearch, Update } from "#/entities/ranking/index.ts";
+import { ChoiceGroup } from "#/shared/ui/choice-group.tsx";
 
 import { SongSearch } from "./song-search";
 

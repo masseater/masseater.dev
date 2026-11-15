@@ -1,6 +1,6 @@
 import { siBluesky, siX } from "simple-icons";
 
-import { BASE_PATH, SITE_ORIGIN } from "#/shared/config";
+import { BASE_PATH, SITE_ORIGIN } from "#/shared/config/index.ts";
 
 export interface ShareTarget {
   readonly name: string;

@@ -1,10 +1,10 @@
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 import { constVoid } from "effect/Function";
 
-import { SCREEN } from "#/features/dance-stage/model/effect";
-import type { DanceEffect } from "#/features/dance-stage/model/effect";
-import { loadGpuEffect } from "#/features/dance-stage/model/effects";
-import type { DanceTrack } from "#/features/dance-stage/model/track";
+import { SCREEN } from "#/features/dance-stage/model/effect.ts";
+import type { DanceEffect } from "#/features/dance-stage/model/effect.ts";
+import { loadGpuEffect } from "#/features/dance-stage/model/effects.ts";
+import type { DanceTrack } from "#/features/dance-stage/model/track.ts";
 
 import type { Fn } from "./fn";
 import type { Size } from "./gl";

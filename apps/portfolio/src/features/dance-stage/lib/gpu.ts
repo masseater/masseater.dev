@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import type { GpuEffect, GpuPass, Pass } from "#/features/dance-stage/model/effect";
+import type { GpuEffect, GpuPass, Pass } from "#/features/dance-stage/model/effect.ts";
 
 import type { Fn } from "./fn";
 import type { Size } from "./gl";

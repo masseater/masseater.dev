@@ -1,7 +1,7 @@
 import { DateTime, Effect, Schema } from "effect";
 import { Atom } from "effect/reactivity";
 
-import { read } from "#/shared/lib/registry";
+import { read } from "#/shared/lib/registry.ts";
 import { SessionRecord } from "#protocol";
 import type { RecordedSession } from "#protocol";
 

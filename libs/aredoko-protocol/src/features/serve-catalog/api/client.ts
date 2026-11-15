@@ -6,7 +6,7 @@ import { AredokoRpcs } from "#/features/serve-catalog/model/aredoko-rpcs.ts";
 
 /** @internal */
 export class AredokoClient extends Context.Service<AredokoClient>()(
-  "@masseater.dev/aredoko-protocol/client/AredokoClient",
+  "@masseater.dev/aredoko-protocol/features/serve-catalog/api/client/AredokoClient",
   {
     make: RpcClient.make(AredokoRpcs),
   },

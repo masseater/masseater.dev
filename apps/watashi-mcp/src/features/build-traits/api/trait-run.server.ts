@@ -6,13 +6,13 @@ import {
   TraitAnalyst,
   TraitTranslator,
   translatorOf,
-} from "#/entities/trait";
+} from "#/entities/trait/index.ts";
 import type {
   AnalysisRequestValue,
   AnalysisResultValue,
   TranslatorBinding,
-} from "#/entities/trait";
-import { encodeJson } from "#/shared/db/index.server";
+} from "#/entities/trait/index.ts";
+import { encodeJson } from "#/shared/db/index.server.ts";
 
 import { buildStep } from "./trait-build.server.ts";
 import type { StepFailure, StepOutcome } from "./trait-build.server.ts";

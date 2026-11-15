@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { SITE_DESCRIPTION, SITE_NAME } from "#/shared/config";
-import { KeywordForm } from "#/shared/ui/keyword-form";
+import { SITE_DESCRIPTION, SITE_NAME } from "#/shared/config/index.ts";
+import { KeywordForm } from "#/shared/ui/keyword-form.tsx";
 
 import { StatChips } from "./stat-chips";
 

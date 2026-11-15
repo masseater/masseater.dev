@@ -11,9 +11,9 @@ import {
   rememberTheme,
   linesOf,
   speechAfter,
-} from "#/entities/interview";
-import { requestSummary } from "#/shared/api";
-import { modify, read, write } from "#/shared/lib/registry";
+} from "#/entities/interview/index.ts";
+import { requestSummary } from "#/shared/api/index.ts";
+import { modify, read, write } from "#/shared/lib/registry.ts";
 import type { InterviewSummary } from "#protocol";
 
 const freshSpeech = Effect.fn("kikite.freshSpeech")(function* freshSpeech() {

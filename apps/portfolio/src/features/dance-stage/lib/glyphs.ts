@@ -1,6 +1,6 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { TextRow } from "#/features/dance-stage/model/effect";
+import type { TextRow } from "#/features/dance-stage/model/effect.ts";
 
 import type { Fn } from "./fn";
 import { TEXT_ROWS } from "./renderer";

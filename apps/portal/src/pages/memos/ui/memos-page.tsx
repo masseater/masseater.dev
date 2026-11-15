@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { ProjectList } from "#/features/filter-memos";
+import { ProjectList } from "#/features/filter-memos/index.ts";
 
 import { MemoList } from "./memo-list";
 

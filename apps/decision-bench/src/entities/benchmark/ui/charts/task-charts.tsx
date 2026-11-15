@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { TaskEntry } from "#/entities/benchmark/model/ranking";
+import type { TaskEntry } from "#/entities/benchmark/model/ranking.ts";
 
 import { BarChart } from "./bar-chart";
 import { ChartFigure } from "./chart-figure";

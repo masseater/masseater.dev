@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { articles } from "#/entities/technique";
-import { DanceCredit } from "#/features/dance-stage";
-import { TITLE } from "#/pages/seikin-index/model/copy";
+import { articles } from "#/entities/technique/index.ts";
+import { DanceCredit } from "#/features/dance-stage/index.ts";
+import { TITLE } from "#/pages/seikin-index/model/copy.ts";
 
 import { ArticleSection } from "./article-section";
 

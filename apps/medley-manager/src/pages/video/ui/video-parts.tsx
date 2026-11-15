@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { useVideo } from "#/pages/video/api/use-video";
-import { SectionHeading } from "#/shared/ui/section-heading";
+import { useVideo } from "#/pages/video/api/use-video.ts";
+import { SectionHeading } from "#/shared/ui/section-heading.tsx";
 
 import { VideoSetlist } from "./video-setlist";
 

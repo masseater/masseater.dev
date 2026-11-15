@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { playground } from "#/shared/config";
+import { playground } from "#/shared/config/index.ts";
 
 import { Pane } from "./pane";
 import { Panel } from "./panel";

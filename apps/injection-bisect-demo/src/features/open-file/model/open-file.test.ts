@@ -2,8 +2,8 @@ import { Array as Arr, Effect, String as Str, pipe } from "effect";
 import { expect, test, vi } from "vite-plus/test";
 import type { Mock } from "vite-plus/test";
 
-import type { Opening } from "#/entities/inspection";
-import { MAX_CHARS } from "#/entities/inspection";
+import type { Opening } from "#/entities/inspection/index.ts";
+import { MAX_CHARS } from "#/entities/inspection/index.ts";
 
 import { openerOf } from "./open-file";
 import type { Picked } from "./open-file";

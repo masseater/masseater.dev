@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { toneOf } from "#/entities/inspection";
-import type { Answer, Row } from "#/entities/inspection";
+import { toneOf } from "#/entities/inspection/index.ts";
+import type { Answer, Row } from "#/entities/inspection/index.ts";
 
 import { BAR_CLASS } from "./tone";
 

@@ -1,12 +1,17 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { SIGNED_YEN, YEN } from "#/entities/money";
-import { useCredentials, useOverview, useRecords, useSessions } from "#/pages/home/api/home-query";
-import { activitiesOf, countSince } from "#/pages/home/model/activity";
-import type { ActivityKind } from "#/pages/home/model/activity";
-import { previousWeekStart, weekStart } from "#/pages/home/model/week";
-import { Stat } from "#/shared/ui";
+import { SIGNED_YEN, YEN } from "#/entities/money/index.ts";
+import {
+  useCredentials,
+  useOverview,
+  useRecords,
+  useSessions,
+} from "#/pages/home/api/home-query.ts";
+import { activitiesOf, countSince } from "#/pages/home/model/activity.ts";
+import type { ActivityKind } from "#/pages/home/model/activity.ts";
+import { previousWeekStart, weekStart } from "#/pages/home/model/week.ts";
+import { Stat } from "#/shared/ui/index.ts";
 
 const TEXT = {
   balance: "今月の収支",

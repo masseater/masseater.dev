@@ -3,15 +3,15 @@ import { Array as Arr, Effect, pipe, String as Str } from "effect";
 import type { Cause } from "effect";
 import { vi } from "vite-plus/test";
 
-import type { VideoPartsInput } from "#/entities/catalog";
-import { getVideo } from "#/entities/video/index.server";
-import { partStaff, video } from "#/shared/db";
-import { catalogDb } from "#/shared/db/index.server";
-import { closeDatabase, resetDatabase } from "#/shared/db/index.test.support";
+import type { VideoPartsInput } from "#/entities/catalog/index.ts";
+import { getVideo } from "#/entities/video/index.server.ts";
+import { catalogDb } from "#/shared/db/index.server.ts";
+import { closeDatabase, resetDatabase } from "#/shared/db/index.test.support.ts";
+import { partStaff, video } from "#/shared/db/index.ts";
 
 import { addParts, setVideoParts, updatePart } from "./part-write.server.ts";
 
-vi.mock("cloudflare:workers", () => import("#/shared/db/index.test.support"));
+vi.mock("cloudflare:workers", () => import("#/shared/db/index.test.support.ts"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Column } from "#/pages/ocr-engines/model/tables";
+import type { Column } from "#/pages/ocr-engines/model/tables.ts";
 
 import { EngineRows } from "./engine-rows";
 import { EnginesHead } from "./engines-head";

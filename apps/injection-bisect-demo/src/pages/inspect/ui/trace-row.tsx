@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { NO_FOCUS, useSetFocus, PERCENT } from "#/entities/inspection";
-import type { Answer, Row } from "#/entities/inspection";
+import { NO_FOCUS, useSetFocus, PERCENT } from "#/entities/inspection/index.ts";
+import type { Answer, Row } from "#/entities/inspection/index.ts";
 
 import { ProbeBar } from "./probe-bar";
 

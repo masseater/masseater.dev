@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { articleTitles, blogPath } from "#/entities/technique";
-import type { Article } from "#/entities/technique";
-import { groupsOf } from "#/pages/seikin-index/model/groups";
+import { articleTitles, blogPath } from "#/entities/technique/index.ts";
+import type { Article } from "#/entities/technique/index.ts";
+import { groupsOf } from "#/pages/seikin-index/model/groups.ts";
 
 import { TechniqueGroup } from "./technique-group";
 

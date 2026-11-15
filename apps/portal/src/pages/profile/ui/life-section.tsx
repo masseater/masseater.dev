@@ -1,9 +1,9 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import { LifeList } from "#/entities/watashi";
-import type { LifeItemValue } from "#/entities/watashi";
-import { Section } from "#/shared/ui";
+import { LifeList } from "#/entities/watashi/index.ts";
+import type { LifeItemValue } from "#/entities/watashi/index.ts";
+import { Section } from "#/shared/ui/index.ts";
 
 export const LifeSection = ({
   items,

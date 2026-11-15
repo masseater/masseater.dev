@@ -30,7 +30,6 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-  resolve: { tsconfigPaths: true },
   test: { include: ["src/**/*.test.{ts,tsx}"] },
   plugins: appPlugins(mode),
 }));

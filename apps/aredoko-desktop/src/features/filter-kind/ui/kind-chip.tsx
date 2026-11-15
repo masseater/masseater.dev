@@ -4,7 +4,7 @@ import { Array } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { KIND_LABELS, useKinds, useToggleKind } from "#/entities/asset";
+import { KIND_LABELS, useKinds, useToggleKind } from "#/entities/asset/index.ts";
 
 const variantOf = (selected: boolean): "secondary" | "outline" => {
   if (selected) {

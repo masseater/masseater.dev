@@ -1,6 +1,6 @@
 import { Option, pipe } from "effect";
 
-import { NOT_RETRACTED } from "#/shared/db";
+import { NOT_RETRACTED } from "#/shared/db/index.ts";
 
 import { factStateOf } from "./life-filter";
 import type { Entry } from "./life-filter";

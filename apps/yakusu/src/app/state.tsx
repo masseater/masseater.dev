@@ -4,8 +4,8 @@ import type { QueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { engineAtom } from "#/shared/api";
-import type { Engine } from "#/shared/api";
+import { engineAtom } from "#/shared/api/index.ts";
+import type { Engine } from "#/shared/api/index.ts";
 
 export const Providers = ({
   children,

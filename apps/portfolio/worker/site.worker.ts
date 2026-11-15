@@ -3,9 +3,9 @@ import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 import { Base64 } from "effect/encoding";
 
-import { isUnindexedPath } from "#/entities/entry/model/category";
-import { handleStars } from "#/features/star/index.server";
-import { site } from "#/shared/config";
+import { isUnindexedPath } from "#/entities/entry/model/category.ts";
+import { handleStars } from "#/features/star/index.server.ts";
+import { site } from "#/shared/config/index.ts";
 
 import { IMAGE_HEADERS, SECURITY_HEADERS, contentSecurityPolicy } from "./security-headers.ts";
 

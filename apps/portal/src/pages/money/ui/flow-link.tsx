@@ -1,8 +1,8 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import type { MoneyFlowValue } from "#/entities/money";
-import { LINK_FILLS, linkTone } from "#/pages/money/model/flow";
+import type { MoneyFlowValue } from "#/entities/money/index.ts";
+import { LINK_FILLS, linkTone } from "#/pages/money/model/flow.ts";
 
 type FlowLinkProps = Readonly<{
   flow: MoneyFlowValue;

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { PackageScope } from "#/features/choose-scope";
-import { KindChips } from "#/features/filter-kind";
+import { PackageScope } from "#/features/choose-scope/index.ts";
+import { KindChips } from "#/features/filter-kind/index.ts";
 
 import { SearchRow } from "./search-row.tsx";
 

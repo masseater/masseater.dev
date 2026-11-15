@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-import { TEXT, Note } from "#/entities/ranking";
-import { metaQuery } from "#/shared/api";
+import { TEXT, Note } from "#/entities/ranking/index.ts";
+import { metaQuery } from "#/shared/api/index.ts";
 
 import { RankingBody } from "./ranking-body";
 

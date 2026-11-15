@@ -1,6 +1,6 @@
-import { sectionMeta, sectionPath } from "#/shared/config";
-import { defaultImage, pageTitle, seo } from "#/shared/lib";
-import type { Head } from "#/shared/lib";
+import { sectionMeta, sectionPath } from "#/shared/config/index.ts";
+import { defaultImage, pageTitle, seo } from "#/shared/lib/index.ts";
+import type { Head } from "#/shared/lib/index.ts";
 
 export const nikogoriHead = (): Head =>
   seo({

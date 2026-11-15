@@ -1,8 +1,8 @@
 import { Array as Arr, String as Str, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Trace } from "#/entities/inspection";
-import { COPY } from "#/shared/config";
+import type { Trace } from "#/entities/inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
 
 import { Legend } from "./legend";
 import { TraceRow } from "./trace-row";

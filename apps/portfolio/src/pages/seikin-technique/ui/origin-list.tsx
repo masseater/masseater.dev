@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Origin } from "#/entities/technique";
+import type { Origin } from "#/entities/technique/index.ts";
 
 import { OriginView } from "./origin-view";
 

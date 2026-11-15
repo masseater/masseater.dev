@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import type { Technique } from "#/entities/technique";
-import { DanceStage, parseEffect } from "#/features/dance-stage";
+import type { Technique } from "#/entities/technique/index.ts";
+import { DanceStage, parseEffect } from "#/features/dance-stage/index.ts";
 
 export const Reproduction = ({
   technique,

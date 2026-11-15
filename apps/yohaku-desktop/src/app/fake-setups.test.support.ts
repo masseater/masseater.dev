@@ -1,4 +1,4 @@
-import type { ClaudeStatus, Release } from "#/shared/api";
+import type { ClaudeStatus, Release } from "#/shared/api/index.ts";
 
 import { fakeWith } from "./fake-yohaku.test.support.ts";
 import type { Fake } from "./fake-yohaku.test.support.ts";

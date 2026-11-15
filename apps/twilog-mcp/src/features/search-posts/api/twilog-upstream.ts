@@ -6,7 +6,7 @@ import { Client, StreamableHTTPClientTransport } from "@modelcontextprotocol/cli
 import type { ContentBlock, TextContent } from "@modelcontextprotocol/client";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
-import { SERVER_NAME } from "#/shared/config";
+import { SERVER_NAME } from "#/shared/config/index.ts";
 
 import type { SearchRequest } from "./search-input";
 import { PostsJson } from "./twilog-posts";

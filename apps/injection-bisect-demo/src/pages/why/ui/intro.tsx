@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { COPY } from "#/pages/why/model/copy";
+import { COPY } from "#/pages/why/model/copy.ts";
 
 import { Actions } from "./actions";
 import { Example } from "./example";

@@ -1,8 +1,8 @@
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 import { expect, test, vi } from "vite-plus/test";
 
-import type { Entry } from "#/entities/entry/model/entry";
-import { site } from "#/shared/config";
+import type { Entry } from "#/entities/entry/model/entry.ts";
+import { site } from "#/shared/config/index.ts";
 
 import { feedResponse } from "./feed.server";
 

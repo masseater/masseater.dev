@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import type { VideoKind } from "#/entities/video/lib/video-kind";
+import type { VideoKind } from "#/entities/video/lib/video-kind.ts";
 
 import { VideoCaption } from "./video-caption";
 import { VideoThumbnail } from "./video-thumbnail";

@@ -1,7 +1,7 @@
 import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-import type { RemarkActions } from "#/features/respond-to-remark/api/remark-actions";
+import type { RemarkActions } from "#/features/respond-to-remark/api/remark-actions.ts";
 
 const REPLACE = "置き換える";
 const CANCEL = "やめる";

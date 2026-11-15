@@ -9,9 +9,9 @@ import {
   OwnerReflectionBody,
   ProfileFactBody,
   TodoBody,
-} from "#/entities/life-record/model/life-body";
-import { InvalidRecord } from "#/shared/api";
-import type { LifeRecordName } from "#/shared/db";
+} from "#/entities/life-record/model/life-body.ts";
+import { InvalidRecord } from "#/shared/api/index.ts";
+import type { LifeRecordName } from "#/shared/db/index.ts";
 
 import { checkMediaIds } from "./life-media-ids";
 import { isLifeRecord, normalizeTimes, parseRef } from "./life-record";

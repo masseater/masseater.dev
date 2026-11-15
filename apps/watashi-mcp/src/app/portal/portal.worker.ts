@@ -3,7 +3,7 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Logger } from "effect";
 
-import type { ToolFailure } from "#/shared/api";
+import type { ToolFailure } from "#/shared/api/index.ts";
 
 import { memoryProjects } from "./memory-projects.server";
 import { conversationRead } from "./portal-conversation.server";

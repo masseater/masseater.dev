@@ -5,7 +5,7 @@ import { McpServer, createMcpHandler } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
 import { afterEach, vi } from "vite-plus/test";
 
-import { PostsJson } from "#/features/search-posts/index.test.support";
+import { PostsJson } from "#/features/search-posts/index.test.support.ts";
 
 import { TOKENS, tokens } from "./search-tools.test.support.ts";
 import { registerTools } from "./tools";

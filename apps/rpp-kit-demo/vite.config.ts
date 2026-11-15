@@ -17,7 +17,6 @@ export default defineConfig({
       typecheck: "tsc --runExternalCode",
     },
   },
-  resolve: { tsconfigPaths: true },
   test: { include: ["*.test.ts"] },
   plugins: [
     rpp(),

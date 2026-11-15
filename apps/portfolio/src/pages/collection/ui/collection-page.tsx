@@ -1,8 +1,8 @@
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { useStarCounts } from "#/features/star";
-import { useTagFilter } from "#/features/tag-filter";
+import { useStarCounts } from "#/features/star/index.ts";
+import { useTagFilter } from "#/features/tag-filter/index.ts";
 
 import { CollectionView } from "./collection-view";
 

@@ -3,10 +3,10 @@ import { and, desc, eq, gte, lt, lte, or } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 
-import type { Category } from "#/entities/ledger";
-import { db, query, summedAmount, yenOf, transactions } from "#/entities/ledger";
-import type { CategoryTotal } from "#/features/report/model/money-flow";
-import type { DayTotal } from "#/features/report/model/monthly";
+import type { Category } from "#/entities/ledger/index.ts";
+import { db, query, summedAmount, yenOf, transactions } from "#/entities/ledger/index.ts";
+import type { CategoryTotal } from "#/features/report/model/money-flow.ts";
+import type { DayTotal } from "#/features/report/model/monthly.ts";
 
 export type Period = Readonly<{ from: string; to: string }>;
 

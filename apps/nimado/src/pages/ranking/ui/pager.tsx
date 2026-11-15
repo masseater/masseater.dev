@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { pageLabel, TEXT } from "#/entities/ranking";
+import { pageLabel, TEXT } from "#/entities/ranking/index.ts";
 
 import { PagerLink } from "./pager-link";
 

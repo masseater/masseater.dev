@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { EditorSurface } from "#/features/edit-draft";
+import { EditorSurface } from "#/features/edit-draft/index.ts";
 
 import { MarginNotes } from "./margin-notes.tsx";
 

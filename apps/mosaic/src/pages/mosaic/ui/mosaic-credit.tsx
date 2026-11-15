@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { SOURCE_URL, THUMBNAIL_RIGHTS } from "#/shared/config";
+import { SOURCE_URL, THUMBNAIL_RIGHTS } from "#/shared/config/index.ts";
 
 import { CREDITS } from "./credits";
 import { CreditsLink } from "./credits-link";

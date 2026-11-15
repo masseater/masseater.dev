@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 
-import { entryOf, foundOrNotFound, preloadBody } from "#/entities/entry";
-import type { EntryResult } from "#/entities/entry";
+import { entryOf, foundOrNotFound, preloadBody } from "#/entities/entry/index.ts";
+import type { EntryResult } from "#/entities/entry/index.ts";
 
 export type FoundEntry = Extract<EntryResult, Readonly<{ status: "found" }>>;
 

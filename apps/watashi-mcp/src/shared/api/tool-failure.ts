@@ -1,6 +1,6 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 
-import type { RevisionNotFound, StorageFailed } from "#/shared/db";
+import type { RevisionNotFound, StorageFailed } from "#/shared/db/index.ts";
 
 import type { InvalidRecord } from "./invalid-record";
 import type { MemoryNotFound } from "./memory-not-found";

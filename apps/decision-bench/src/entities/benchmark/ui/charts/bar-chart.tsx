@@ -4,8 +4,8 @@ import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 import { Bar, CartesianGrid, BarChart as Chart, Tooltip, XAxis, YAxis } from "recharts";
 
-import { pointsOf, toPercentPoints } from "#/entities/benchmark/lib/format";
-import { ChartContainer } from "#/shared/ui/chart";
+import { pointsOf, toPercentPoints } from "#/entities/benchmark/lib/format.ts";
+import { ChartContainer } from "#/shared/ui/chart.tsx";
 
 import type { ChartRow } from "./chart-row";
 import { AXIS_TICK, MARK_RADIUS, ORIGIN, PERCENT_SCALE, SERIES_COLOR } from "./chart-style";

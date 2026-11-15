@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Technique } from "#/entities/technique";
+import type { Technique } from "#/entities/technique/index.ts";
 
 import { ExamplesSection } from "./examples-section";
 import { OriginList } from "./origin-list";

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Entry } from "#/entities/entry/model/entry";
+import type { Entry } from "#/entities/entry/model/entry.ts";
 
 import { EntryModule } from "./entry-module";
 import type { Render } from "./entry-module";

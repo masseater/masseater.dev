@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { traitLabel } from "#/entities/watashi";
-import type { TraitValue } from "#/entities/watashi";
-import { RowList, Section } from "#/shared/ui";
+import { traitLabel } from "#/entities/watashi/index.ts";
+import type { TraitValue } from "#/entities/watashi/index.ts";
+import { RowList, Section } from "#/shared/ui/index.ts";
 
 import { TraitRow } from "./trait-row";
 

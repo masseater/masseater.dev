@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { video } from "#/shared/db";
+import { video } from "#/shared/db/index.ts";
 
 const MIN_ID = 1;
 

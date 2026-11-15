@@ -1,1 +1,1 @@
-export { default } from "./model/rule.ts";
+export { rule as default } from "./model/rule.ts";

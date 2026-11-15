@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { ABOUT_ID } from "#/pages/home/model/about";
+import { ABOUT_ID } from "#/pages/home/model/about.ts";
 
 import { AboutIntro } from "./about-intro";
 import { AboutPreferences } from "./about-preferences";

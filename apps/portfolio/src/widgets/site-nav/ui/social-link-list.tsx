@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Direction } from "#/widgets/site-nav/model/direction";
-import { socialLinks } from "#/widgets/site-nav/model/social-links";
+import type { Direction } from "#/widgets/site-nav/model/direction.ts";
+import { socialLinks } from "#/widgets/site-nav/model/social-links.ts";
 
 import { LinkList } from "./link-list";
 

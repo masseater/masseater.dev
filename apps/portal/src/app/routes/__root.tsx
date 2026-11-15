@@ -1,10 +1,10 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext } from "@tanstack/react-router";
 
-import { RootDocument } from "#/app/shell/root-document";
-import { RouteError } from "#/app/shell/route-error";
-import { readSidebarOpen } from "#/shared/api";
-import { SITE_NAME } from "#/shared/config";
+import { RootDocument } from "#/app/shell/root-document.tsx";
+import { RouteError } from "#/app/shell/route-error.tsx";
+import { readSidebarOpen } from "#/shared/api/index.ts";
+import { SITE_NAME } from "#/shared/config/index.ts";
 
 import appCss from "#/app/styles.css?url";
 

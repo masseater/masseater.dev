@@ -2,7 +2,7 @@ import { hints } from "driver.js/hints";
 import { Function, Option } from "effect";
 import { useEffect } from "react";
 
-import type { OnboardingStep } from "#/shared/api";
+import type { OnboardingStep } from "#/shared/api/index.ts";
 
 import { useCompleteStep, useStepPending } from "./onboarding.ts";
 

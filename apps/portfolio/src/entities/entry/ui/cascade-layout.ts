@@ -10,7 +10,7 @@ import {
   roundOf,
   stages,
   stopDelays,
-} from "#/entities/entry/model/cascade";
+} from "#/entities/entry/model/cascade.ts";
 import type {
   CascadeLink,
   CascadeNode,
@@ -18,7 +18,7 @@ import type {
   Column,
   LinkDirection,
   StopDelays,
-} from "#/entities/entry/model/cascade";
+} from "#/entities/entry/model/cascade.ts";
 
 import {
   ROW_HEIGHT,

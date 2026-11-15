@@ -11,8 +11,8 @@ import {
   paragraphIdsField,
   remarkLayout,
   remarkLayoutPlugin,
-} from "#/entities/manuscript";
-import type { DraftActions, Placed } from "#/entities/manuscript";
+} from "#/entities/manuscript/index.ts";
+import type { DraftActions, Placed } from "#/entities/manuscript/index.ts";
 
 import { kindGutter } from "./kind-gutter.ts";
 import { writingTheme } from "./theme.ts";

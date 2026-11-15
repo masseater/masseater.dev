@@ -22,7 +22,6 @@ export const startSiteConfig = ({
 }: SiteOptions): UserConfig =>
   defineConfig({
     base: `${basePath}/`,
-    resolve: { tsconfigPaths: true },
     run: {
       tasks: {
         dev: { command: "alchemy dev", cache: false },

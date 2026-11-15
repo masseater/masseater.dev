@@ -7,7 +7,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 import type { Digest, SecureRandom } from "effect/crypto";
 
-import type { Rejected } from "#/shared/api";
+import type { Rejected } from "#/shared/api/index.ts";
 
 import { transactions } from "./ledger.table.ts";
 

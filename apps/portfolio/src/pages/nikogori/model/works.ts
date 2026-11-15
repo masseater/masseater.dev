@@ -1,4 +1,4 @@
-import { sectionPath, site } from "#/shared/config";
+import { sectionPath, site } from "#/shared/config/index.ts";
 
 export type Work = Readonly<{ slug: string; title: string; width: number; height: number }>;
 

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { KeywordForm } from "#/shared/ui/keyword-form";
+import { KeywordForm } from "#/shared/ui/keyword-form.tsx";
 
 import { NavLinks } from "./nav-links";
 import { SiteLogo } from "./site-logo";

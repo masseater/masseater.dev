@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { PageTitle } from "#/shared/ui/page-title";
+import { PageTitle } from "#/shared/ui/page-title.tsx";
 
 import { KindFilter } from "./kind-filter";
 import { VideoResults } from "./video-results";

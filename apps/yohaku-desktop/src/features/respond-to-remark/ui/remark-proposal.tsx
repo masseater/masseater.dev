@@ -1,7 +1,7 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { RemarkActions } from "#/features/respond-to-remark/api/remark-actions";
+import type { RemarkActions } from "#/features/respond-to-remark/api/remark-actions.ts";
 
 export const RemarkProposal = ({ actions }: Readonly<{ actions: RemarkActions }>): ReactNode =>
   pipe(

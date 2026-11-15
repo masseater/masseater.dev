@@ -4,13 +4,18 @@ import type { QueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Effect } from "effect";
 
-import { credentialsQueries } from "#/entities/credential";
-import { moneyQueries } from "#/entities/money";
-import type { OverviewValue, TransactionValue } from "#/entities/money";
-import { slidesQueries } from "#/entities/slide";
-import type { DeckValue } from "#/entities/slide";
-import { watashiQueries } from "#/entities/watashi";
-import type { LifeItemValue, MemoValue, ProjectValue, SessionValue } from "#/entities/watashi";
+import { credentialsQueries } from "#/entities/credential/index.ts";
+import { moneyQueries } from "#/entities/money/index.ts";
+import type { OverviewValue, TransactionValue } from "#/entities/money/index.ts";
+import { slidesQueries } from "#/entities/slide/index.ts";
+import type { DeckValue } from "#/entities/slide/index.ts";
+import { watashiQueries } from "#/entities/watashi/index.ts";
+import type {
+  LifeItemValue,
+  MemoValue,
+  ProjectValue,
+  SessionValue,
+} from "#/entities/watashi/index.ts";
 
 const NO_FILTER = {} as const;
 

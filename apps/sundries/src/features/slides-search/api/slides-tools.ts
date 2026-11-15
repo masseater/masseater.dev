@@ -5,7 +5,7 @@ import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Option, Order, Schema, pipe } from "effect";
 
-import { meteredInput, runTool } from "#/shared/api";
+import { meteredInput, runTool } from "#/shared/api/index.ts";
 
 import { DEFAULT_SLIDE_LIMIT, DeckInput, SlideSearchInput } from "./slides-input";
 

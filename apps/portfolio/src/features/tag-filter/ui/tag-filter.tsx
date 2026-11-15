@@ -1,9 +1,9 @@
 import { Array, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { allTags } from "#/features/tag-filter/model/search";
-import type { TagSearch } from "#/features/tag-filter/model/search";
-import type { TagCount } from "#/features/tag-filter/model/tag-filter";
+import { allTags } from "#/features/tag-filter/model/search.ts";
+import type { TagSearch } from "#/features/tag-filter/model/search.ts";
+import type { TagCount } from "#/features/tag-filter/model/tag-filter.ts";
 
 import { TagFilterButton } from "./tag-filter-button";
 

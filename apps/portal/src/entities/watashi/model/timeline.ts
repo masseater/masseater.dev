@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Order, Schema, String as Str, pipe } from "effect";
 
-import { shownTime, sortKey } from "#/shared/model";
+import { shownTime, sortKey } from "#/shared/model/index.ts";
 
 import { headline, labelsOf } from "./life-item";
 import type { LifeItemValue } from "./life-item";

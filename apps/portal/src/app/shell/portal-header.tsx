@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { SearchField } from "#/shared/ui";
-import { SidebarTrigger } from "#/shared/ui/sidebar";
+import { SearchField } from "#/shared/ui/index.ts";
+import { SidebarTrigger } from "#/shared/ui/sidebar/index.ts";
 
 import { PortalBreadcrumb } from "./portal-breadcrumb";
 

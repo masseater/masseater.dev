@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { works } from "#/pages/nikogori/model/works";
-import { sectionMeta } from "#/shared/config";
+import { works } from "#/pages/nikogori/model/works.ts";
+import { sectionMeta } from "#/shared/config/index.ts";
 
 import { WorkItem } from "./work-item";
 

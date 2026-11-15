@@ -1,7 +1,7 @@
 import { cn } from "@masseater.dev/ui/cn";
 import type { ReactNode } from "react";
 
-import { useAsking, useHearing, useListening } from "#/entities/interview";
+import { useAsking, useHearing, useListening } from "#/entities/interview/index.ts";
 
 import { LOOKS, ringStateOf } from "./ring-look.ts";
 import type { RingState } from "./ring-look.ts";

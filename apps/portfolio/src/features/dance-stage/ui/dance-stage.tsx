@@ -3,9 +3,9 @@ import { Option, pipe } from "effect";
 import { useCallback } from "react";
 import type { ReactNode, RefCallback } from "react";
 
-import { startStage } from "#/features/dance-stage/lib/stage";
-import { parseEffect } from "#/features/dance-stage/model/effect";
-import { emptyTrack, trackQuery } from "#/features/dance-stage/model/track";
+import { startStage } from "#/features/dance-stage/lib/stage.ts";
+import { parseEffect } from "#/features/dance-stage/model/effect.ts";
+import { emptyTrack, trackQuery } from "#/features/dance-stage/model/track.ts";
 
 const WIDTH = 960;
 const HEIGHT = 540;

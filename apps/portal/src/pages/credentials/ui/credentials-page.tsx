@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { useCredentials } from "#/pages/credentials/api/credentials-query";
+import { useCredentials } from "#/pages/credentials/api/credentials-query.ts";
 
 import { CredentialSection } from "./credential-section";
 

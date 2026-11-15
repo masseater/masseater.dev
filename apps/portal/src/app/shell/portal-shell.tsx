@@ -1,6 +1,11 @@
 import type { ReactNode } from "react";
 
-import { MobileSidebar, Sidebar, SidebarInset, SidebarProvider } from "#/shared/ui/sidebar";
+import {
+  MobileSidebar,
+  Sidebar,
+  SidebarInset,
+  SidebarProvider,
+} from "#/shared/ui/sidebar/index.ts";
 
 import { PortalHeader } from "./portal-header";
 import { PortalNav } from "./portal-nav";

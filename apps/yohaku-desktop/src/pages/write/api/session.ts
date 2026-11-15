@@ -14,10 +14,10 @@ import {
   placedAtom,
   rewritingAtom,
   titleAtom,
-} from "#/entities/manuscript";
-import { useYohaku } from "#/shared/api";
-import type { Opened } from "#/shared/api";
-import { useScreen } from "#/shared/model";
+} from "#/entities/manuscript/index.ts";
+import { useYohaku } from "#/shared/api/index.ts";
+import type { Opened } from "#/shared/api/index.ts";
+import { useScreen } from "#/shared/model/index.ts";
 
 type Paragraphs = readonly (typeof Paragraph.Type)[];
 

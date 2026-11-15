@@ -3,9 +3,9 @@ import { Array as Arr, Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { usePicture, useApiKey, useWay, WAYS } from "#/entities/extraction";
-import { useExtract } from "#/features/run-extract/api/use-extract";
-import { COPY } from "#/shared/config";
+import { usePicture, useApiKey, useWay, WAYS } from "#/entities/extraction/index.ts";
+import { useExtract } from "#/features/run-extract/api/use-extract.ts";
+import { COPY } from "#/shared/config/index.ts";
 
 import { ExtractResult } from "./extract-result";
 

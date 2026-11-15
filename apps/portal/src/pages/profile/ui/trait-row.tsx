@@ -2,9 +2,9 @@ import { Array as Arr } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { statementOf } from "#/entities/watashi";
-import type { TraitValue } from "#/entities/watashi";
-import { Row, TagList } from "#/shared/ui";
+import { statementOf } from "#/entities/watashi/index.ts";
+import type { TraitValue } from "#/entities/watashi/index.ts";
+import { Row, TagList } from "#/shared/ui/index.ts";
 
 import { TraitWhy } from "./trait-why";
 

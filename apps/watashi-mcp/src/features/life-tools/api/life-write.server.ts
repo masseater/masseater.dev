@@ -1,9 +1,9 @@
 import { Array as Arr, Effect, String as Str, pipe } from "effect";
 
-import type { ItemResult, ChangeValue, WriteItemValue } from "#/entities/life-record";
-import { checkEventValues } from "#/entities/life-record/index.server";
-import type { Notice, ValuesCheck, Writer } from "#/entities/life-record/index.server";
-import type { StoreFailure } from "#/shared/api";
+import { checkEventValues } from "#/entities/life-record/index.server.ts";
+import type { Notice, ValuesCheck, Writer } from "#/entities/life-record/index.server.ts";
+import type { ItemResult, ChangeValue, WriteItemValue } from "#/entities/life-record/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
 
 import { changeItem, checkChange } from "./life-change.server.ts";
 import {

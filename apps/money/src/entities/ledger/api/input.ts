@@ -1,9 +1,9 @@
 import type { StandardSchemaWithJSON } from "@modelcontextprotocol/server";
 import { Schema, pipe } from "effect";
 
-import { AccountClassSchema } from "#/entities/ledger/model/accounts";
-import { CategorySchema } from "#/entities/ledger/model/categories";
-import { ColumnsSchema } from "#/entities/ledger/model/csv-columns";
+import { AccountClassSchema } from "#/entities/ledger/model/accounts.ts";
+import { CategorySchema } from "#/entities/ledger/model/categories.ts";
+import { ColumnsSchema } from "#/entities/ledger/model/csv-columns.ts";
 
 type InputSchema = Schema.ConstraintDecoder<unknown> & Schema.Constraint;
 

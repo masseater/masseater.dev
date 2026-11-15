@@ -28,7 +28,7 @@ const startOf = (starts: readonly number[], line: number): number =>
     Option.getOrElse(() => DOCUMENT_START),
   );
 
-const rule: TextlintRuleModule = (context) => {
+export const rule: TextlintRuleModule = (context) => {
   const { Syntax, RuleError, report, getSource, locator } = context;
   return {
     [Syntax.Document]: (node) => {
@@ -42,5 +42,3 @@ const rule: TextlintRuleModule = (context) => {
     },
   };
 };
-
-export default rule;

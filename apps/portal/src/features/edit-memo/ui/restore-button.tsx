@@ -2,8 +2,8 @@ import { Button } from "@masseater.dev/ui/button";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { MemoValue } from "#/entities/watashi";
-import { useChangeMemo } from "#/features/edit-memo/api/use-change-memo";
+import type { MemoValue } from "#/entities/watashi/index.ts";
+import { useChangeMemo } from "#/features/edit-memo/api/use-change-memo.ts";
 
 const RESTORE = "この版に戻す";
 

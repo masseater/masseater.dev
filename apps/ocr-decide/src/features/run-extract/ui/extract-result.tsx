@@ -1,8 +1,8 @@
 import { CircleX } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { linesOf } from "#/entities/extraction";
-import type { ExtractState } from "#/features/run-extract/api/use-extract";
+import { linesOf } from "#/entities/extraction/index.ts";
+import type { ExtractState } from "#/features/run-extract/api/use-extract.ts";
 
 import { ResultTable } from "./result-table";
 

@@ -3,7 +3,7 @@ import { failedAt } from "@masseater.dev/mcp-tool-call";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Match, Number as Num, Option, pipe } from "effect";
 
-import type { ConversationChunk } from "#/shared/db";
+import type { ConversationChunk } from "#/shared/db/index.ts";
 
 import type { ReadRequest, View } from "./conversation-input";
 import { chunksFrom, filesOf } from "./conversation-store.server.ts";

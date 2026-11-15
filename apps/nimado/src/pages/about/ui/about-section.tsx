@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { paragraphKey } from "#/pages/about/model/content";
-import type { AboutSection } from "#/pages/about/model/content";
+import { paragraphKey } from "#/pages/about/model/content.ts";
+import type { AboutSection } from "#/pages/about/model/content.ts";
 
 import { AboutParagraph } from "./about-paragraph";
 

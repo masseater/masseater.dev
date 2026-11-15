@@ -9,9 +9,9 @@ import {
   useOverview,
   useRecords,
   useSessions,
-} from "#/pages/home/api/home-query";
-import { activitiesOf, byDay } from "#/pages/home/model/activity";
-import { Section } from "#/shared/ui";
+} from "#/pages/home/api/home-query.ts";
+import { activitiesOf, byDay } from "#/pages/home/model/activity.ts";
+import { Section } from "#/shared/ui/index.ts";
 
 import { ActivityDayList } from "./activity-day-list";
 import { KindFilter } from "./kind-filter";

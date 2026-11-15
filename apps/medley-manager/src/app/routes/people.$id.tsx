@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { PersonPage, loadPersonPage } from "#/pages/person";
-import { idParams } from "#/shared/lib/id-params";
+import { PersonPage, loadPersonPage } from "#/pages/person/index.ts";
+import { idParams } from "#/shared/lib/id-params.ts";
 
 export const Route = createFileRoute("/people/$id")({
   params: idParams,

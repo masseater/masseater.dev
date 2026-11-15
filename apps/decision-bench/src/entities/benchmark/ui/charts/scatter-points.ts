@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 
-import { toPercentPoints } from "#/entities/benchmark/lib/format";
-import { displayLabel } from "#/entities/benchmark/model/display-label";
-import { colorOf } from "#/entities/benchmark/model/model-color";
-import type { TaskEntry } from "#/entities/benchmark/model/ranking";
+import { toPercentPoints } from "#/entities/benchmark/lib/format.ts";
+import { displayLabel } from "#/entities/benchmark/model/display-label.ts";
+import { colorOf } from "#/entities/benchmark/model/model-color.ts";
+import type { TaskEntry } from "#/entities/benchmark/model/ranking.ts";
 
 import { ORIGIN } from "./chart-style";
 import { errorOf } from "./interval-bar";

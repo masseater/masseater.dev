@@ -1,7 +1,7 @@
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { Card, CardHeader, SearchField } from "#/shared/ui";
+import { Card, CardHeader, SearchField } from "#/shared/ui/index.ts";
 
 import { SlidesResults } from "./slides-results";
 

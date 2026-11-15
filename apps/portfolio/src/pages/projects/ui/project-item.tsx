@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Project } from "#/pages/projects/model/projects";
+import type { Project } from "#/pages/projects/model/projects.ts";
 
 import { ProjectMeta } from "./project-meta";
 

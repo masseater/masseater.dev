@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useSourceTab } from "#/features/playground/model/tabs";
-import { playground } from "#/shared/config";
+import { useSourceTab } from "#/features/playground/model/tabs.ts";
+import { playground } from "#/shared/config/index.ts";
 
 import { Pane } from "./pane";
 import { Panel } from "./panel";

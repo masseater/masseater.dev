@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { PartRow } from "#/entities/part/lib/part";
+import type { PartRow } from "#/entities/part/lib/part.ts";
 
 import { PartQuote } from "./part-quote";
 import { PartTitle } from "./part-title";

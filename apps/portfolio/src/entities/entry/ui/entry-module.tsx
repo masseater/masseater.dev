@@ -3,8 +3,8 @@ import type { MDXModule } from "mdx/types";
 import { Suspense, use } from "react";
 import type { ReactNode } from "react";
 
-import { findBody, findLoadedBody } from "#/entities/entry/model/body";
-import type { Entry } from "#/entities/entry/model/entry";
+import { findBody, findLoadedBody } from "#/entities/entry/model/body.ts";
+import type { Entry } from "#/entities/entry/model/entry.ts";
 
 export type Render = (module: Readonly<MDXModule>) => ReactNode;
 

@@ -1,11 +1,11 @@
 import { FlaskConical, Tag } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { SITE_TITLE } from "#/shared/config";
-import { MethodLink } from "#/shared/ui/method-link";
-import { NoteList } from "#/shared/ui/note-list";
-import type { Note } from "#/shared/ui/note-list";
-import { PageShell } from "#/widgets/page-shell";
+import { SITE_TITLE } from "#/shared/config/index.ts";
+import { MethodLink } from "#/shared/ui/method-link.tsx";
+import { NoteList } from "#/shared/ui/note-list.tsx";
+import type { Note } from "#/shared/ui/note-list.tsx";
+import { PageShell } from "#/widgets/page-shell/index.ts";
 
 import { EnglishSection } from "./english-section";
 import { IndexSection } from "./index-section";

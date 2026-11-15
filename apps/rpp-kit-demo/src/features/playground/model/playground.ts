@@ -2,8 +2,8 @@ import { Effect, FiberHandle, Match, Ref } from "effect";
 import { mapRpp } from "rpp-kit";
 import type { Mapped } from "rpp-kit";
 
-import { songSource as source } from "#/entities/song";
-import { playground } from "#/shared/config";
+import { songSource as source } from "#/entities/song/index.ts";
+import { playground } from "#/shared/config/index.ts";
 
 import { checkerThread } from "./checker-thread";
 import { generatedPane, mainPane, scopedEditor } from "./editors";

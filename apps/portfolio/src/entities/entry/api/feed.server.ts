@@ -2,10 +2,10 @@ import { run } from "@r_masseater/workers-tracing/effect";
 import { Array as Arr, DateTime, Effect, pipe } from "effect";
 import { Feed } from "feed";
 
-import { categoryMeta } from "#/entities/entry/model/category";
-import type { Entry } from "#/entities/entry/model/entry";
-import { entryOgImagePath, entryPath } from "#/entities/entry/model/entry";
-import { site } from "#/shared/config";
+import { categoryMeta } from "#/entities/entry/model/category.ts";
+import type { Entry } from "#/entities/entry/model/entry.ts";
+import { entryOgImagePath, entryPath } from "#/entities/entry/model/entry.ts";
+import { site } from "#/shared/config/index.ts";
 
 import { allEntries } from "./entries";
 

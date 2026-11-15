@@ -2,10 +2,10 @@ import { getRouteApi, Navigate } from "@tanstack/react-router";
 import { Array, Option } from "effect";
 import type { ReactNode } from "react";
 
-import { tasks } from "#/entities/benchmark";
-import type { TaskInfo } from "#/entities/benchmark";
-import { MethodLink } from "#/shared/ui/method-link";
-import { PageShell } from "#/widgets/page-shell";
+import { tasks } from "#/entities/benchmark/index.ts";
+import type { TaskInfo } from "#/entities/benchmark/index.ts";
+import { MethodLink } from "#/shared/ui/method-link.tsx";
+import { PageShell } from "#/widgets/page-shell/index.ts";
 
 import { TaskBlock } from "./task-block";
 

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import type { MonthTotalValue } from "#/entities/money";
-import { ChartLegend, Section } from "#/shared/ui";
-import type { LegendItem } from "#/shared/ui";
+import type { MonthTotalValue } from "#/entities/money/index.ts";
+import { ChartLegend, Section } from "#/shared/ui/index.ts";
+import type { LegendItem } from "#/shared/ui/index.ts";
 
 import { MonthlyChart } from "./monthly-chart";
 import { MonthlyTable } from "./monthly-table";

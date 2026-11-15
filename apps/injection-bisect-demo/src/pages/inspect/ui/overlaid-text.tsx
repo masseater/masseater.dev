@@ -9,9 +9,9 @@ import {
   useSetDraftText,
   MAX_CHARS,
   piecesOf,
-} from "#/entities/inspection";
-import type { Focus, Piece } from "#/entities/inspection";
-import type { InspectState } from "#/features/run-inspection";
+} from "#/entities/inspection/index.ts";
+import type { Focus, Piece } from "#/entities/inspection/index.ts";
+import type { InspectState } from "#/features/run-inspection/index.ts";
 
 import { HighlightTextarea } from "./highlight-textarea";
 import { ANSWER_CLASS, TONE_CLASS } from "./tone";

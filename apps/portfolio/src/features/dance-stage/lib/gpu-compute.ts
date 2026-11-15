@@ -1,7 +1,7 @@
 import { Array as Arr, Number as Num, pipe } from "effect";
 
-import { SCREEN } from "#/features/dance-stage/model/effect";
-import type { GpuCompute } from "#/features/dance-stage/model/effect";
+import { SCREEN } from "#/features/dance-stage/model/effect.ts";
+import type { GpuCompute } from "#/features/dance-stage/model/effect.ts";
 
 import type { Fn } from "./fn";
 

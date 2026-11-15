@@ -1,6 +1,6 @@
 import { Array as Arr, pipe } from "effect";
 
-import { stages } from "#/entities/entry/model/cascade";
+import { stages } from "#/entities/entry/model/cascade.ts";
 
 export const STAGE_WIDTH = 452;
 

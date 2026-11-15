@@ -3,8 +3,8 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import type { QueryStatus } from "@tanstack/react-query";
 import { Array as Arr, Option, Record, pipe } from "effect";
 
-import { dayQuery, tableQuery } from "#/shared/api";
-import type { DayValue, TableValue } from "#/shared/api";
+import { dayQuery, tableQuery } from "#/shared/api/index.ts";
+import type { DayValue, TableValue } from "#/shared/api/index.ts";
 
 import { covers, windowOf } from "./period";
 import type { Window } from "./period";

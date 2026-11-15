@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { MonthTotalValue } from "#/entities/money";
+import type { MonthTotalValue } from "#/entities/money/index.ts";
 
 import { MonthlyGrid } from "./monthly-grid";
 

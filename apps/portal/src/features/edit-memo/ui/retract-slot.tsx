@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { MemoValue } from "#/entities/watashi";
+import type { MemoValue } from "#/entities/watashi/index.ts";
 
 import { MemoRetract } from "./memo-retract";
 

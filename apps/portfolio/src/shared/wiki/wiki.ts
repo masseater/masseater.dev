@@ -1,8 +1,8 @@
 import { portfolio } from "@masseater.dev/ui/portfolio";
 import { defineSloppedia, githubSource } from "sloppedia";
 
-import { site } from "#/shared/config";
-import { SloppediaLink } from "#/shared/ui";
+import { site } from "#/shared/config/index.ts";
+import { SloppediaLink } from "#/shared/ui/index.ts";
 
 export const wiki = defineSloppedia({
   name: portfolio.sections.sloppedia,

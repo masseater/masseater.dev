@@ -1,8 +1,8 @@
 import type { Effect, Option } from "effect";
 
-import type { getPerson } from "#/entities/person/@x/catalog";
-import type { getSong } from "#/entities/song/@x/catalog";
-import type { getVideo } from "#/entities/video/@x/catalog";
+import type { getPerson } from "#/entities/person/@x/catalog.ts";
+import type { getSong } from "#/entities/song/@x/catalog.ts";
+import type { getVideo } from "#/entities/video/@x/catalog.ts";
 
 import type { search } from "./search.server";
 

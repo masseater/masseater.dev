@@ -1,6 +1,6 @@
 import { Array as Arr, pipe } from "effect";
 
-import { pointsOf } from "#/entities/benchmark/lib/format";
+import { pointsOf } from "#/entities/benchmark/lib/format.ts";
 
 import type { LabelSpot } from "./label-placement";
 import type { Detail } from "./model-detail";

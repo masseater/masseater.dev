@@ -1,7 +1,7 @@
 import { Effect, Schema } from "effect";
 import type { Scope } from "effect";
 
-import { playground } from "#/shared/config";
+import { playground } from "#/shared/config/index.ts";
 
 import { LineSchema } from "./output";
 import type { Line } from "./output";

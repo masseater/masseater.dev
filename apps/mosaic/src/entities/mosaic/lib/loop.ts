@@ -1,6 +1,6 @@
 import { Option } from "effect";
 
-import type { ViewerStore } from "#/entities/mosaic/model/viewer";
+import type { ViewerStore } from "#/entities/mosaic/model/viewer.ts";
 
 import { advance } from "./motion";
 import type { Renderer } from "./renderer-contract";

@@ -2,8 +2,14 @@ import type { Meta } from "@masseater.dev/nimado";
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import { useEntries, TEXT, usableSearch, useRankingSearch, Note } from "#/entities/ranking";
-import type { Entries } from "#/entities/ranking";
+import {
+  useEntries,
+  TEXT,
+  usableSearch,
+  useRankingSearch,
+  Note,
+} from "#/entities/ranking/index.ts";
+import type { Entries } from "#/entities/ranking/index.ts";
 
 import { RankingList } from "./ranking-list";
 

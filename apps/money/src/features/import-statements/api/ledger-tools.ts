@@ -11,9 +11,9 @@ import {
   UpsertAccountInput,
   registerAll,
   tool,
-} from "#/entities/ledger";
-import { parseCsv } from "#/features/import-statements/model/csv";
-import { rejected } from "#/shared/api";
+} from "#/entities/ledger/index.ts";
+import { parseCsv } from "#/features/import-statements/model/csv.ts";
+import { rejected } from "#/shared/api/index.ts";
 
 import { deleteImport, importEntries } from "./import-store";
 

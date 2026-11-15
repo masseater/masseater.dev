@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { PeriodForm } from "#/features/choose-period";
-import { useOverview } from "#/pages/money/api/money-query";
+import { PeriodForm } from "#/features/choose-period/index.ts";
+import { useOverview } from "#/pages/money/api/money-query.ts";
 
 import { FlowCard } from "./flow-card";
 import { MoneyCharts } from "./money-charts";

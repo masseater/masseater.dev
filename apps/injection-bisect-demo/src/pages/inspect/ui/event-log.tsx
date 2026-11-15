@@ -2,9 +2,9 @@ import { Array as Arr, pipe } from "effect";
 import { ArrowDownLeft, ArrowUpRight, CircleCheck, CircleX } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { InspectEvent, LogLine } from "#/entities/inspection";
-import { logOf } from "#/entities/inspection";
-import { COPY } from "#/shared/config";
+import type { InspectEvent, LogLine } from "#/entities/inspection/index.ts";
+import { logOf } from "#/entities/inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
 
 const LINE_CLASS: Readonly<Record<LogLine["tone"], string>> = {
   asked: "text-muted-foreground",

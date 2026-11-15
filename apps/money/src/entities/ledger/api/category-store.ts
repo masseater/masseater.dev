@@ -2,10 +2,10 @@ import { asc, eq, inArray } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import { Array as Arr, Effect, Match, Option, pipe } from "effect";
 
-import { decide, normalized } from "#/entities/ledger/model/categories";
-import type { Category, Decision, Rule } from "#/entities/ledger/model/categories";
-import { rejected } from "#/shared/api";
-import type { Rejected } from "#/shared/api";
+import { decide, normalized } from "#/entities/ledger/model/categories.ts";
+import type { Category, Decision, Rule } from "#/entities/ledger/model/categories.ts";
+import { rejected } from "#/shared/api/index.ts";
+import type { Rejected } from "#/shared/api/index.ts";
 
 import { db, query, runAll } from "./database";
 import { categoryRules, transactions } from "./ledger.table.ts";

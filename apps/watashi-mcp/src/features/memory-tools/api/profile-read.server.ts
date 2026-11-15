@@ -1,10 +1,10 @@
 import { Array as Arr, Effect, Option } from "effect";
 
-import type { Body } from "#/entities/life-record";
-import type { WatashiProfileValue } from "#/entities/memory";
-import type { Vector } from "#/entities/trait";
-import { embedTexts, traitDetail } from "#/entities/trait/index.server";
-import type { ToolFailure } from "#/shared/api";
+import type { Body } from "#/entities/life-record/index.ts";
+import type { WatashiProfileValue } from "#/entities/memory/index.ts";
+import { embedTexts, traitDetail } from "#/entities/trait/index.server.ts";
+import type { Vector } from "#/entities/trait/index.ts";
+import type { ToolFailure } from "#/shared/api/index.ts";
 
 import { ownerProfile } from "./watashi-profile.server.ts";
 

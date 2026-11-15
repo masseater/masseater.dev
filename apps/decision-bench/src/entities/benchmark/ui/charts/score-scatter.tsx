@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { CartesianGrid, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 
-import { ChartContainer } from "#/shared/ui/chart";
+import { ChartContainer } from "#/shared/ui/chart.tsx";
 
 import { AXIS_TICK, PERCENT_SCALE, SERIES_COLOR } from "./chart-style";
 import { DetailTooltip } from "./detail-tooltip";

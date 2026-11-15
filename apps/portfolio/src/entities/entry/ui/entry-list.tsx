@@ -1,7 +1,7 @@
 import { Array, Option, pipe, Record } from "effect";
 import type { ReactNode } from "react";
 
-import type { Entry } from "#/entities/entry/model/entry";
+import type { Entry } from "#/entities/entry/model/entry.ts";
 
 import { EntryListItem } from "./entry-list-item";
 

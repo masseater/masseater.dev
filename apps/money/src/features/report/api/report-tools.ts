@@ -10,9 +10,9 @@ import {
   lengthOf,
   registerAll,
   tool,
-} from "#/entities/ledger";
-import { moneyFlow } from "#/features/report/model/money-flow";
-import { monthlyTotals } from "#/features/report/model/monthly";
+} from "#/entities/ledger/index.ts";
+import { moneyFlow } from "#/features/report/model/money-flow.ts";
+import { monthlyTotals } from "#/features/report/model/monthly.ts";
 
 import { categoryTotals, dayTotals, listTransactions } from "./report-store";
 

@@ -1,7 +1,7 @@
 import { Array as Arr, HashSet, Match, Option, Record as Rec, pipe } from "effect";
 
-import type { ObservationValue, TraitSourceValue } from "#/entities/trait/model/trait-analysis";
-import type { Stance } from "#/shared/db";
+import type { ObservationValue, TraitSourceValue } from "#/entities/trait/model/trait-analysis.ts";
+import type { Stance } from "#/shared/db/index.ts";
 
 import {
   GLOBAL,

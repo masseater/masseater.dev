@@ -1,9 +1,9 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { tileCrop, useTile, useArrival, useSelection } from "#/entities/mosaic";
-import type { Visit } from "#/entities/mosaic";
-import { TileCard } from "#/features/inspect-tile";
+import { tileCrop, useTile, useArrival, useSelection } from "#/entities/mosaic/index.ts";
+import type { Visit } from "#/entities/mosaic/index.ts";
+import { TileCard } from "#/features/inspect-tile/index.ts";
 
 import { MosaicChrome } from "./mosaic-chrome";
 

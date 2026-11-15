@@ -2,12 +2,12 @@ import { eq } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import { Array as Arr, Effect, pipe } from "effect";
 
-import type { PersonDetail, MergeInput } from "#/entities/catalog";
-import { getPerson } from "#/entities/person/index.server";
-import { ToolError } from "#/shared/api";
-import { orMissing, query } from "#/shared/api/index.server";
-import { partStaff, person, personAlias } from "#/shared/db";
-import { catalogDb } from "#/shared/db/index.server";
+import type { PersonDetail, MergeInput } from "#/entities/catalog/index.ts";
+import { getPerson } from "#/entities/person/index.server.ts";
+import { orMissing, query } from "#/shared/api/index.server.ts";
+import { ToolError } from "#/shared/api/index.ts";
+import { catalogDb } from "#/shared/db/index.server.ts";
+import { partStaff, person, personAlias } from "#/shared/db/index.ts";
 
 type Statement = BatchItem<"sqlite">;
 type Credit = Pick<typeof partStaff.$inferSelect, "partId" | "role">;

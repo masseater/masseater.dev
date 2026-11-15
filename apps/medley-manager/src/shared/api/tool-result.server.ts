@@ -1,7 +1,7 @@
 import type { CallToolResult } from "@modelcontextprotocol/server";
 import { Effect, Option, Predicate, Schema } from "effect";
 
-import { runRequest } from "#/shared/observability/index.server";
+import { runRequest } from "#/shared/observability/index.server.ts";
 
 import { ToolError } from "./tool-error";
 

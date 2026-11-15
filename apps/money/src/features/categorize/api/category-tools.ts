@@ -17,8 +17,8 @@ import {
   SetRuleInput,
   registerAll,
   tool,
-} from "#/entities/ledger";
-import type { Rule } from "#/entities/ledger";
+} from "#/entities/ledger/index.ts";
+import type { Rule } from "#/entities/ledger/index.ts";
 
 const CATEGORY_LIST = pipe(
   CATEGORIES,

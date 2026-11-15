@@ -3,7 +3,7 @@ import { NO_PROJECT, READ_ONLY, WRITE, one } from "@masseater.dev/mcp-tool-call"
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Effect, Option, Schema, pipe } from "effect";
 
-import { meteredInput, runTool } from "#/shared/api";
+import { meteredInput, runTool } from "#/shared/api/index.ts";
 
 import { ListInput, ReplyInput, RoutineInput, SendInput, TakeInput } from "./claude-request-input";
 import { answer, enqueue, listed, take } from "./claude-requests";

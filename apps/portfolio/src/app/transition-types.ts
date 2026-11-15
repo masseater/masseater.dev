@@ -1,6 +1,6 @@
 import { Array, Option, String as Str, pipe } from "effect";
 
-import { sectionPath, sections } from "#/shared/config";
+import { sectionPath, sections } from "#/shared/config/index.ts";
 
 const sectionPaths = pipe(sections, Array.map(sectionPath));
 

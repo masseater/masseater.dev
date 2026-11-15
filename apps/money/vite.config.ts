@@ -10,6 +10,5 @@ export default defineConfig({
       verify: { command: [], dependsOn: ["db:check"] },
     },
   },
-  resolve: { tsconfigPaths: true },
   test: { include: ["src/**/*.test.ts"] },
 });

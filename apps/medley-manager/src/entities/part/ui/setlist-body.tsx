@@ -1,8 +1,8 @@
 import type { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { PartRow } from "#/entities/part/lib/part";
-import type { PartStartLink } from "#/entities/video/@x/part";
+import type { PartRow } from "#/entities/part/lib/part.ts";
+import type { PartStartLink } from "#/entities/video/@x/part.ts";
 
 import { PartFacts } from "./part-facts";
 import { PartMaterial } from "./part-material";

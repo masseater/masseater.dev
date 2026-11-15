@@ -2,9 +2,9 @@ import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 import type { Track } from "rpp-kit";
 
-import { fillOf, song } from "#/entities/song";
-import { TimeCursor } from "#/features/playback";
-import { lane } from "#/shared/config";
+import { fillOf, song } from "#/entities/song/index.ts";
+import { TimeCursor } from "#/features/playback/index.ts";
+import { lane } from "#/shared/config/index.ts";
 
 import { LaneLabel } from "./lane-label";
 import { NoteRects } from "./note-rects";

@@ -1,5 +1,6 @@
 import { Array as Arr, Effect, Option, Order, Record as Rec, pipe } from "effect";
 
+import { loadStatsData, scanAll } from "#/entities/life-record/index.server.ts";
 import {
   factStateOf,
   stringsAt,
@@ -8,12 +9,11 @@ import {
   SELF,
   textAt,
   todayJst,
-} from "#/entities/life-record";
-import type { Entry, Body } from "#/entities/life-record";
-import { loadStatsData, scanAll } from "#/entities/life-record/index.server";
-import { profileTraits } from "#/entities/trait/index.server";
-import type { Wanted } from "#/entities/trait/index.server";
-import type { StoreFailure } from "#/shared/api";
+} from "#/entities/life-record/index.ts";
+import type { Entry, Body } from "#/entities/life-record/index.ts";
+import { profileTraits } from "#/entities/trait/index.server.ts";
+import type { Wanted } from "#/entities/trait/index.server.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
 
 type ProfileContext = Readonly<{ entries: readonly Entry[]; today: string }>;
 

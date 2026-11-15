@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import type { MemoValue } from "#/entities/watashi";
-import { shownTime } from "#/shared/model";
-import { Row } from "#/shared/ui";
+import type { MemoValue } from "#/entities/watashi/index.ts";
+import { shownTime } from "#/shared/model/index.ts";
+import { Row } from "#/shared/ui/index.ts";
 
 export const FoundMemoRow = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
   const params = useMemo(

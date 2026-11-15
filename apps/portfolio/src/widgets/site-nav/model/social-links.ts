@@ -1,6 +1,6 @@
 import { Array as Arr, String as Str, pipe } from "effect";
 
-import { site } from "#/shared/config";
+import { site } from "#/shared/config/index.ts";
 
 export type SocialLink = Readonly<{
   label: string;

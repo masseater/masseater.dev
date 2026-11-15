@@ -1,7 +1,7 @@
 import { createQueryRouter } from "@masseater.dev/start-shell/query-router";
 import type { Router } from "@tanstack/react-router";
 
-import { FRESH } from "#/shared/config";
+import { FRESH } from "#/shared/config/index.ts";
 
 import { routeTree } from "./routeTree.gen";
 

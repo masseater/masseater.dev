@@ -2,10 +2,10 @@ import { and, desc, eq, gte, inArray, like, lte, or } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
-import { RecordNotFound } from "#/shared/api";
-import { lifeRecord, NOT_RETRACTED } from "#/shared/db";
-import type { LifeRecordName, LifeRow, StorageFailed } from "#/shared/db";
-import { db, anyTermMatches, firstRow, query } from "#/shared/db/index.server";
+import { RecordNotFound } from "#/shared/api/index.ts";
+import { db, anyTermMatches, firstRow, query } from "#/shared/db/index.server.ts";
+import { lifeRecord, NOT_RETRACTED } from "#/shared/db/index.ts";
+import type { LifeRecordName, LifeRow, StorageFailed } from "#/shared/db/index.ts";
 
 import { NONE, refOf } from "./life-record";
 import type { Body } from "./life-record";

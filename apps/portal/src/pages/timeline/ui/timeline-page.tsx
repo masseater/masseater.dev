@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useTimeline } from "#/pages/timeline/api/timeline-query";
-import { RowList, Section } from "#/shared/ui";
+import { useTimeline } from "#/pages/timeline/api/timeline-query.ts";
+import { RowList, Section } from "#/shared/ui/index.ts";
 
 import { TimelineRow } from "./timeline-row";
 

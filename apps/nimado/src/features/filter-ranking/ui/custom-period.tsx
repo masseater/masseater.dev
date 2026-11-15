@@ -1,8 +1,8 @@
 import { Array as Arr, Order } from "effect";
 import type { ReactNode } from "react";
 
-import { TEXT, customRange, usePick } from "#/entities/ranking";
-import type { RankingSearch, Update } from "#/entities/ranking";
+import { TEXT, customRange, usePick } from "#/entities/ranking/index.ts";
+import type { RankingSearch, Update } from "#/entities/ranking/index.ts";
 
 import { DateSelect } from "./date-select";
 

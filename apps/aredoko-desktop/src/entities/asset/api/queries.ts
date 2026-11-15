@@ -17,7 +17,7 @@ import {
   listAssets,
   listPackages,
   search,
-} from "#/shared/api";
+} from "#/shared/api/index.ts";
 
 const SEARCH_LIMIT = 120;
 const PAGE_SIZE = 120;

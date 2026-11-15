@@ -1,10 +1,10 @@
 import { percent } from "bench-summary/format";
 import type { ReactNode } from "react";
 
-import { displayLabel, withInterval, METRIC_NAMES } from "#/entities/benchmark";
-import type { TaskEntry, TaskInfo } from "#/entities/benchmark";
-import type { TableColumn } from "#/features/sort-table";
-import { SortableTable } from "#/features/sort-table";
+import { displayLabel, withInterval, METRIC_NAMES } from "#/entities/benchmark/index.ts";
+import type { TaskEntry, TaskInfo } from "#/entities/benchmark/index.ts";
+import type { TableColumn } from "#/features/sort-table/index.ts";
+import { SortableTable } from "#/features/sort-table/index.ts";
 
 import { taskEntryColor, taskEntryKey } from "./task-entry";
 

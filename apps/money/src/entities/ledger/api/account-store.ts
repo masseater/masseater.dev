@@ -2,8 +2,8 @@ import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { asc, eq, lte } from "drizzle-orm";
 import { Array as Arr, Effect, Number as Num, Option, Order, pipe } from "effect";
 
-import type { AccountPosition, Snapshot } from "#/entities/ledger/model/balance-sheet";
-import { rejected } from "#/shared/api";
+import type { AccountPosition, Snapshot } from "#/entities/ledger/model/balance-sheet.ts";
+import { rejected } from "#/shared/api/index.ts";
 
 import { db, query, summedAmount, yenOf } from "./database";
 import type { Failure } from "./database";

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { Entry, Rating } from "#/entities/interview";
+import type { Entry, Rating } from "#/entities/interview/index.ts";
 import type { StrategyId } from "#strategies";
 
 import { reportOf } from "./report.ts";

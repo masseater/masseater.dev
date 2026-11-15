@@ -2,8 +2,8 @@ import type { Meta } from "@masseater.dev/nimado";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { generatedAt, TEXT } from "#/entities/ranking";
-import { RankingControls } from "#/features/filter-ranking";
+import { generatedAt, TEXT } from "#/entities/ranking/index.ts";
+import { RankingControls } from "#/features/filter-ranking/index.ts";
 
 import { RankingResults } from "./ranking-results";
 

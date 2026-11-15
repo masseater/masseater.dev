@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Column } from "#/pages/measurements/model/tables";
+import type { Column } from "#/pages/measurements/model/tables.ts";
 
 import { RunRows } from "./run-rows";
 import { TableHead } from "./table-head";

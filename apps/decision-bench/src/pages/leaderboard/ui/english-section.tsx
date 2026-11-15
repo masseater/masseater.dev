@@ -2,10 +2,10 @@ import { String as Str, pipe } from "effect";
 import { CircleAlert, ExternalLink, FlaskConical, Languages, Server, Sigma } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { englishRows, englishSource } from "#/entities/benchmark";
-import { NoteList } from "#/shared/ui/note-list";
-import type { Note } from "#/shared/ui/note-list";
-import { Section } from "#/shared/ui/section";
+import { englishRows, englishSource } from "#/entities/benchmark/index.ts";
+import { NoteList } from "#/shared/ui/note-list.tsx";
+import type { Note } from "#/shared/ui/note-list.tsx";
+import { Section } from "#/shared/ui/section.tsx";
 
 import { EnglishTable } from "./english-table";
 

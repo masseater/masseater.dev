@@ -1,8 +1,8 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import type { Entry } from "#/entities/entry/model/entry";
-import { tocOf } from "#/entities/entry/model/toc";
+import type { Entry } from "#/entities/entry/model/entry.ts";
+import { tocOf } from "#/entities/entry/model/toc.ts";
 
 import { EntryModule } from "./entry-module";
 import type { Render } from "./entry-module";

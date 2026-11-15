@@ -4,11 +4,11 @@ import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 import { Legend, Scatter, ScatterChart } from "recharts";
 
-import { pointsOf, toPercentPoints } from "#/entities/benchmark/lib/format";
-import { displayLabel } from "#/entities/benchmark/model/display-label";
-import { colorOf } from "#/entities/benchmark/model/model-color";
-import type { TaskEntry } from "#/entities/benchmark/model/ranking";
-import { ChartContainer } from "#/shared/ui/chart";
+import { pointsOf, toPercentPoints } from "#/entities/benchmark/lib/format.ts";
+import { displayLabel } from "#/entities/benchmark/model/display-label.ts";
+import { colorOf } from "#/entities/benchmark/model/model-color.ts";
+import type { TaskEntry } from "#/entities/benchmark/model/ranking.ts";
+import { ChartContainer } from "#/shared/ui/chart.tsx";
 
 import { ReliabilityAxes } from "./reliability-axes";
 import { useLegendHandlers, useSeriesState } from "./reliability-state";

@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { Card, CardHeader, ChartLegend } from "#/shared/ui";
-import type { LegendItem } from "#/shared/ui";
+import { Card, CardHeader, ChartLegend } from "#/shared/ui/index.ts";
+import type { LegendItem } from "#/shared/ui/index.ts";
 
 import { MoneyMiniChart } from "./money-mini-chart";
 

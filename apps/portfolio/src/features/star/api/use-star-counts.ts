@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Option } from "effect";
 import type { Record } from "effect";
 
-import type { Category } from "#/entities/entry";
+import type { Category } from "#/entities/entry/index.ts";
 
 import { starQueries } from "./star-queries";
 

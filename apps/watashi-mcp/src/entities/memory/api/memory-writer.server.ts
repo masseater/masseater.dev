@@ -1,8 +1,6 @@
 import { eq, max } from "drizzle-orm";
 import { Effect, Option, Schema } from "effect";
 
-import { memory } from "#/shared/db";
-import type { Memory, RevisionOp, StorageFailed } from "#/shared/db";
 import {
   db,
   commit,
@@ -11,8 +9,10 @@ import {
   encodeJson,
   nextAfterMax,
   nowIso,
-} from "#/shared/db/index.server";
-import type { WriteFailure } from "#/shared/db/index.server";
+} from "#/shared/db/index.server.ts";
+import type { WriteFailure } from "#/shared/db/index.server.ts";
+import { memory } from "#/shared/db/index.ts";
+import type { Memory, RevisionOp, StorageFailed } from "#/shared/db/index.ts";
 
 import { evidenceOf } from "./memory-store.server.ts";
 

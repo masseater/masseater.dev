@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Option, Order, Record as Rec, String as Str, pipe } from "effect";
 
-import type { StorageFailed } from "#/shared/db";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { stringsAt } from "./life-filter";
 import type { Entry } from "./life-filter";

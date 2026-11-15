@@ -1,9 +1,9 @@
 import { Array as Arr, Match, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useOutput } from "#/features/playground/model/output";
-import type { Entry, Output } from "#/features/playground/model/output";
-import { playground } from "#/shared/config";
+import { useOutput } from "#/features/playground/model/output.ts";
+import type { Entry, Output } from "#/features/playground/model/output.ts";
+import { playground } from "#/shared/config/index.ts";
 
 import { ConsoleLine } from "./console-line";
 

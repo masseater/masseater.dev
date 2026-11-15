@@ -3,8 +3,8 @@ import { listen } from "@tauri-apps/api/event";
 import { Effect } from "effect";
 import { useEffect } from "react";
 
-import { tauriWindow } from "#/shared/api";
-import { flushAll } from "#/shared/model";
+import { tauriWindow } from "#/shared/api/index.ts";
+import { flushAll } from "#/shared/model/index.ts";
 
 const CLOSING_EVENT = "yohaku://closing";
 const EDITABLE = 'input, textarea, [contenteditable="true"]';

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { OverviewValue } from "#/entities/money";
+import type { OverviewValue } from "#/entities/money/index.ts";
 
 import { MonthlyCard } from "./monthly-card";
 import { SheetCard } from "./sheet-card";

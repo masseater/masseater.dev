@@ -1,9 +1,9 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { PartRow } from "#/entities/part/lib/part";
-import { partStart } from "#/entities/video/@x/part";
-import type { Watchable } from "#/entities/video/@x/part";
+import type { PartRow } from "#/entities/part/lib/part.ts";
+import { partStart } from "#/entities/video/@x/part.ts";
+import type { Watchable } from "#/entities/video/@x/part.ts";
 
 import { SetlistItem } from "./setlist-item";
 

@@ -2,8 +2,15 @@ import { cn } from "@masseater.dev/ui/cn";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { compactGap, compactViews, gap, views, NumberCell, SongCell } from "#/entities/ranking";
-import type { Ranked } from "#/entities/ranking";
+import {
+  compactGap,
+  compactViews,
+  gap,
+  views,
+  NumberCell,
+  SongCell,
+} from "#/entities/ranking/index.ts";
+import type { Ranked } from "#/entities/ranking/index.ts";
 
 const YOUTUBE_LEADS = "text-youtube-lead";
 const NICO_LEADS = "text-nico-lead";

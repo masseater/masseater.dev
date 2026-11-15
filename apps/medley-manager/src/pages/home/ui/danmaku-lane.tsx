@@ -1,7 +1,7 @@
 import { Array, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Comment } from "#/pages/home/lib/danmaku";
+import type { Comment } from "#/pages/home/lib/danmaku.ts";
 
 import { DanmakuComments } from "./danmaku-comments";
 

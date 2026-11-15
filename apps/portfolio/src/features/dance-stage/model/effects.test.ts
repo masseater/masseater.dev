@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { techniqueList } from "#/entities/technique";
+import { techniqueList } from "#/entities/technique/index.ts";
 
 import { effectLoader } from "./effects";
 

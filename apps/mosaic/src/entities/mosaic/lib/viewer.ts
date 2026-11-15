@@ -1,7 +1,7 @@
 import { Effect, Option, Record } from "effect";
 
-import type { ViewerStore } from "#/entities/mosaic/model/viewer";
-import { runtime } from "#/shared/lib/telemetry";
+import type { ViewerStore } from "#/entities/mosaic/model/viewer.ts";
+import { runtime } from "#/shared/lib/telemetry.ts";
 
 import type { Point, Size } from "./camera";
 import type { Visit } from "./files";

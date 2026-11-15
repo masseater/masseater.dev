@@ -1,8 +1,8 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import { entriesAtom, phaseAtom, upload } from "#/entities/interview";
-import type { Entry } from "#/entities/interview";
-import { read, write } from "#/shared/lib/registry";
+import { entriesAtom, phaseAtom, upload } from "#/entities/interview/index.ts";
+import type { Entry } from "#/entities/interview/index.ts";
+import { read, write } from "#/shared/lib/registry.ts";
 
 import { summarize } from "./summarize.ts";
 

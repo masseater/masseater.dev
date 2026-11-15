@@ -60,7 +60,6 @@ export const tauriAppConfig = ({
   viewport: Option.Option<Readonly<{ width: number; height: number }>>;
 }>): UserConfig => {
   const base: UserConfig = {
-    resolve: { tsconfigPaths: true },
     plugins: [tailwindcss(), viteReact()],
     clearScreen: false,
     server: { port: devPort, strictPort: true, watch: { ignored: ["**/src-tauri/**"] } },

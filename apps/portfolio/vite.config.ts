@@ -56,7 +56,6 @@ export default defineConfig({
       "technique-examples": { command: "vpx bin/technique-examples.ts", cache: false },
     },
   },
-  resolve: { tsconfigPaths: true },
   test: { include: ["src/**/*.test.{ts,tsx}", "vite-plugins/**/*.test.ts", "worker/**/*.test.ts"] },
   plugins: portfolioPlugins(),
 });

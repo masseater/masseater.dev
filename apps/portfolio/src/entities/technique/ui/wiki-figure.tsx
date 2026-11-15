@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { IMAGE_SEPARATOR, imageCredit } from "#/entities/technique/model/credit";
-import type { WikiImage } from "#/entities/technique/model/technique";
+import { IMAGE_SEPARATOR, imageCredit } from "#/entities/technique/model/credit.ts";
+import type { WikiImage } from "#/entities/technique/model/technique.ts";
 
 import { ExampleFigure } from "./example-figure";
 import { ExternalLink } from "./external-link";

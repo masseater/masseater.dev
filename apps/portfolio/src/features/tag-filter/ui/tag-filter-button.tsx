@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { TagSearch } from "#/features/tag-filter/model/search";
+import type { TagSearch } from "#/features/tag-filter/model/search.ts";
 
 export const TagFilterButton = ({
   active,

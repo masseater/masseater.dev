@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useMemoDetail } from "#/pages/memo/api/memo-query";
+import { useMemoDetail } from "#/pages/memo/api/memo-query.ts";
 
 import { MemoArticle } from "./memo-article";
 

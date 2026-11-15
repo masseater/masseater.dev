@@ -2,10 +2,10 @@ import { Array, pipe } from "effect";
 import type { Option, Record } from "effect";
 import type { ReactNode } from "react";
 
-import { categoryMeta, EntryList } from "#/entities/entry";
-import type { Category, Entry } from "#/entities/entry";
-import { TagFilter, tagCounts, withTag } from "#/features/tag-filter";
-import type { TagSearch } from "#/features/tag-filter";
+import { categoryMeta, EntryList } from "#/entities/entry/index.ts";
+import type { Category, Entry } from "#/entities/entry/index.ts";
+import { TagFilter, tagCounts, withTag } from "#/features/tag-filter/index.ts";
+import type { TagSearch } from "#/features/tag-filter/index.ts";
 
 import { IdeaList } from "./idea-list";
 

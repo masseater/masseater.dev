@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Array, Order, pipe } from "effect";
 
-import { LANGUAGES } from "#/entities/language";
+import { LANGUAGES } from "#/entities/language/index.ts";
 
 import { matching } from "./search.ts";
 

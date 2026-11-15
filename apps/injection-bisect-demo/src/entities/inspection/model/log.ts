@@ -2,8 +2,8 @@ import type { Detection, Region } from "@r_masseater/injection-bisect";
 import { cutoffFor, outcomeOf } from "@r_masseater/injection-bisect";
 import { Array as Arr, String as Str, pipe } from "effect";
 
-import type { InspectEvent } from "#/entities/inspection/api/inspect-events";
-import { COPY } from "#/shared/config";
+import type { InspectEvent } from "#/entities/inspection/api/inspect-events.ts";
+import { COPY } from "#/shared/config/index.ts";
 
 import { COUNT, DOLLARS, PERCENT } from "./format";
 

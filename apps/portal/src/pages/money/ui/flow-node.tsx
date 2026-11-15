@@ -1,9 +1,9 @@
 import { Array as Arr, Number as Num, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { FlowNodeValue } from "#/entities/money";
-import { FILLS, PLACEMENTS, TEXT_FILLS, shareOf, toneOf } from "#/pages/money/model/flow";
-import type { Placement } from "#/pages/money/model/flow";
+import type { FlowNodeValue } from "#/entities/money/index.ts";
+import { FILLS, PLACEMENTS, TEXT_FILLS, shareOf, toneOf } from "#/pages/money/model/flow.ts";
+import type { Placement } from "#/pages/money/model/flow.ts";
 
 import { FlowNodeLabel } from "./flow-node-label";
 

@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, pipe } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
-import { entryOf } from "#/entities/entry";
+import { entryOf } from "#/entities/entry/index.ts";
 
 import { projects } from "./projects";
 

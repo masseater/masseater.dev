@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import type { BalanceSheetValue } from "#/entities/money";
-import { leftBlocks, rightBlocks, sideTotal } from "#/pages/money/model/sheet";
-import { Section } from "#/shared/ui";
+import type { BalanceSheetValue } from "#/entities/money/index.ts";
+import { leftBlocks, rightBlocks, sideTotal } from "#/pages/money/model/sheet.ts";
+import { Section } from "#/shared/ui/index.ts";
 
 import { SheetChart } from "./sheet-chart";
 

@@ -39,7 +39,6 @@ export default defineConfig({
   },
   base: `${BASE_PATH}/`,
   build: { copyPublicDir: false },
-  resolve: { tsconfigPaths: true },
   test: { include: ["src/**/*.test.{ts,tsx}", "bin/lib/*.test.ts", "*.test.ts"] },
   plugins: mosaicPlugins(),
 });

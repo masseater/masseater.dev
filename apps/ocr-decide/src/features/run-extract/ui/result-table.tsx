@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Line } from "#/entities/extraction";
+import type { Line } from "#/entities/extraction/index.ts";
 
 import { ResultRows } from "./result-rows";
 

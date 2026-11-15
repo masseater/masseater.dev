@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { playground } from "#/shared/config";
+import { playground } from "#/shared/config/index.ts";
 
 import { ConsoleView } from "./console-view";
 import { Panel } from "./panel";

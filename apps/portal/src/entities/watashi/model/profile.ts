@@ -1,6 +1,6 @@
 import { Option, Schema, pipe } from "effect";
 
-import { TimeOut } from "#/shared/model";
+import { TimeOut } from "#/shared/model/index.ts";
 
 import { LifeItem } from "./life-item";
 

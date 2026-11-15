@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Number, Option, Order, pipe, String as Str, Struct } from "effect";
 
-import { catalogDb } from "#/shared/db/index.server";
+import { catalogDb } from "#/shared/db/index.server.ts";
 
 const VIDEO_COLUMNS = {
   id: true,

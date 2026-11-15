@@ -10,11 +10,11 @@ import {
   pipe,
 } from "effect";
 
-import type { Body } from "#/entities/life-record/@x/memory";
-import { timeOut } from "#/entities/life-record/@x/memory";
-import { memory } from "#/shared/db";
-import type { Memory, StorageFailed } from "#/shared/db";
-import { db, anyTermMatches, query, termsOf } from "#/shared/db/index.server";
+import type { Body } from "#/entities/life-record/@x/memory.ts";
+import { timeOut } from "#/entities/life-record/@x/memory.ts";
+import { db, anyTermMatches, query, termsOf } from "#/shared/db/index.server.ts";
+import { memory } from "#/shared/db/index.ts";
+import type { Memory, StorageFailed } from "#/shared/db/index.ts";
 
 export type MemoryQuery = Readonly<{
   query: string;

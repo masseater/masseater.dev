@@ -2,7 +2,7 @@ import { Effect, Option, Record as Rec } from "effect";
 import { createElement } from "react";
 import type { ReactElement } from "react";
 
-import type { FigureName } from "#/entities/entry/model/figure";
+import type { FigureName } from "#/entities/entry/model/figure.ts";
 
 type FigureChunk =
   | { readonly status: "idle" }

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import type { MemoValue, RevisionValue } from "#/entities/watashi";
-import { MemoEditor, RetractSlot } from "#/features/edit-memo";
-import { Section } from "#/shared/ui";
+import type { MemoValue, RevisionValue } from "#/entities/watashi/index.ts";
+import { MemoEditor, RetractSlot } from "#/features/edit-memo/index.ts";
+import { Section } from "#/shared/ui/index.ts";
 
 import { MemoHeader } from "./memo-header";
 import { RevisionList } from "./revision-list";

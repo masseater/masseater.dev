@@ -2,9 +2,9 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import type { MoneyFlowValue } from "#/entities/money";
-import { hasDetail, summarized } from "#/pages/money/model/flow";
-import { Section } from "#/shared/ui";
+import type { MoneyFlowValue } from "#/entities/money/index.ts";
+import { hasDetail, summarized } from "#/pages/money/model/flow.ts";
+import { Section } from "#/shared/ui/index.ts";
 
 import { FlowChart } from "./flow-chart";
 import { FlowTabs } from "./flow-tabs";

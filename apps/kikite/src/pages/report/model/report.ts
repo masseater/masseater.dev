@@ -1,6 +1,6 @@
 import { Array as Arr, Number as Num, Option, Order, pipe } from "effect";
 
-import type { Entry, Progress } from "#/entities/interview";
+import type { Entry, Progress } from "#/entities/interview/index.ts";
 import { STRATEGY_IDS } from "#strategies";
 import type { StrategyId } from "#strategies";
 

@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { mountPlayground } from "#/features/playground/model/mount";
-import { useReport } from "#/features/playground/model/output";
+import { mountPlayground } from "#/features/playground/model/mount.ts";
+import { useReport } from "#/features/playground/model/output.ts";
 
 import { ConsolePanel } from "./console-panel";
 import { GeneratedPanel } from "./generated-panel";

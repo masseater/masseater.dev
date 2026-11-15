@@ -2,7 +2,7 @@ import { Outlet } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { WikiLayout as SloppediaLayout } from "sloppedia";
 
-import { wiki } from "#/shared/wiki";
+import { wiki } from "#/shared/wiki/index.ts";
 
 export const WikiLayout = (): ReactNode => (
   <SloppediaLayout config={wiki}>

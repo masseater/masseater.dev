@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import type { Aggregate } from "#/entities/life-record/model/life-body";
+import type { Aggregate } from "#/entities/life-record/model/life-body.ts";
 
 import { monthOf, weekStartOf, weekdayOf } from "./life-calendar";
 import { DEFAULT_AGGREGATE, aggregateFor, dailyOf, parseSpec, summarize } from "./life-daily";

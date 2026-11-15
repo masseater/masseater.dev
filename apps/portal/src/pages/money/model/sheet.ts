@@ -1,6 +1,6 @@
 import { Array as Arr, Number as Num, pipe } from "effect";
 
-import type { AccountBalanceValue, BalanceSheetValue } from "#/entities/money";
+import type { AccountBalanceValue, BalanceSheetValue } from "#/entities/money/index.ts";
 
 export type BlockTone =
   | "current-asset"

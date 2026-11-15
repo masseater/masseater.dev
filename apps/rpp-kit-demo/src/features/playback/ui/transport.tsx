@@ -1,9 +1,9 @@
 import { Array as Arr, Option } from "effect";
 import type { ReactNode } from "react";
 
-import { clockOf, song } from "#/entities/song";
-import { usePlayback } from "#/features/playback/model/playback";
-import { transport } from "#/shared/config";
+import { clockOf, song } from "#/entities/song/index.ts";
+import { usePlayback } from "#/features/playback/model/playback.ts";
+import { transport } from "#/shared/config/index.ts";
 
 import { PlayButton } from "./play-button";
 

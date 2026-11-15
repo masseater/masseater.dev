@@ -1,7 +1,7 @@
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
-import type { ObservationValue, TraitSourceValue } from "#/entities/trait/model/trait-analysis";
-import type { OwnerTraitJa, Stance, TraitKind, TraitStatus } from "#/shared/db";
+import type { ObservationValue, TraitSourceValue } from "#/entities/trait/model/trait-analysis.ts";
+import type { OwnerTraitJa, Stance, TraitKind, TraitStatus } from "#/shared/db/index.ts";
 
 export type Evidence = Readonly<{
   source: string;

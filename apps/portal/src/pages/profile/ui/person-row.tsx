@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { headline } from "#/entities/watashi";
-import type { PersonValue } from "#/entities/watashi";
-import { Row } from "#/shared/ui";
+import { headline } from "#/entities/watashi/index.ts";
+import type { PersonValue } from "#/entities/watashi/index.ts";
+import { Row } from "#/shared/ui/index.ts";
 
 const TIMES = "回";
 

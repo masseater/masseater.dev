@@ -34,7 +34,6 @@ export default defineConfig({
     },
   },
   run: ownerSiteRun,
-  resolve: { tsconfigPaths: true },
   plugins: [tailwindcss(), viteReact(), interviewerDev()],
   server: { proxy: DEV_PROXY },
   build: { outDir: "dist/client" },

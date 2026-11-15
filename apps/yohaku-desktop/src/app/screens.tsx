@@ -1,9 +1,9 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { useStepPending, useOnboardingDone } from "#/entities/onboarding";
-import { UpdateNotice } from "#/features/update";
-import { OnboardingPage } from "#/pages/onboarding";
+import { useStepPending, useOnboardingDone } from "#/entities/onboarding/index.ts";
+import { UpdateNotice } from "#/features/update/index.ts";
+import { OnboardingPage } from "#/pages/onboarding/index.ts";
 
 import { Pages } from "./pages.tsx";
 import { useResumed } from "./resume.ts";

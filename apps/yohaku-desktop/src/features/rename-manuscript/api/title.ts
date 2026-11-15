@@ -4,8 +4,8 @@ import { useMutation } from "@tanstack/react-query";
 import { Effect, Option } from "effect";
 import { useCallback } from "react";
 
-import { manuscriptIdAtom, titleAtom } from "#/entities/manuscript";
-import { useYohaku } from "#/shared/api";
+import { manuscriptIdAtom, titleAtom } from "#/entities/manuscript/index.ts";
+import { useYohaku } from "#/shared/api/index.ts";
 
 export interface TitleField {
   readonly title: typeof Title.Type | null;

@@ -1,7 +1,7 @@
 import { Array as Arr, Record as Rec, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useProfile } from "#/pages/profile/api/profile-query";
+import { useProfile } from "#/pages/profile/api/profile-query.ts";
 
 import { LifeSection } from "./life-section";
 import { PeopleSection } from "./people-section";

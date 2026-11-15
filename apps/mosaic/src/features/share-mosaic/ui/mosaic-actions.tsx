@@ -4,7 +4,7 @@ import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 
-import { SHARE_TARGETS, shareText } from "#/features/share-mosaic/lib/share";
+import { SHARE_TARGETS, shareText } from "#/features/share-mosaic/lib/share.ts";
 
 import { ShareLink } from "./share-link";
 

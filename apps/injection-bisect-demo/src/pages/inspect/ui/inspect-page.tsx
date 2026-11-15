@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { useRun } from "#/entities/inspection";
-import { useInspect } from "#/features/run-inspection";
-import { COPY } from "#/shared/config";
+import { useRun } from "#/entities/inspection/index.ts";
+import { useInspect } from "#/features/run-inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
 
 import { InspectForm } from "./inspect-form";
 import { RunView } from "./run-view";

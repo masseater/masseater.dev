@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import type { Technique } from "#/entities/technique";
-import { DanceCredit } from "#/features/dance-stage";
-import { REPRODUCTION_HEADING } from "#/pages/seikin-technique/model/copy";
+import type { Technique } from "#/entities/technique/index.ts";
+import { DanceCredit } from "#/features/dance-stage/index.ts";
+import { REPRODUCTION_HEADING } from "#/pages/seikin-technique/model/copy.ts";
 
 import { Reproduction } from "./reproduction";
 

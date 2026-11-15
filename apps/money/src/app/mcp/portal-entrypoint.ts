@@ -3,8 +3,8 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Layer, Logger, Match } from "effect";
 
-import { services } from "#/entities/ledger";
-import type { Failure, Services } from "#/entities/ledger";
+import { services } from "#/entities/ledger/index.ts";
+import type { Failure, Services } from "#/entities/ledger/index.ts";
 
 import { readTool } from "./portal-tools";
 

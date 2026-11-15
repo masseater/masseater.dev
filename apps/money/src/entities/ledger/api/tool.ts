@@ -4,8 +4,8 @@ import type { McpServer, StandardSchemaWithJSON } from "@modelcontextprotocol/se
 import { Array as Arr, Effect, Layer, pipe } from "effect";
 import { Digest, SecureRandom } from "effect/crypto";
 
-import { meteredInput, rejected, runToolIn } from "#/shared/api";
-import type { ToolName } from "#/shared/api";
+import { meteredInput, rejected, runToolIn } from "#/shared/api/index.ts";
+import type { ToolName } from "#/shared/api/index.ts";
 
 import type { Failure, Services } from "./database";
 

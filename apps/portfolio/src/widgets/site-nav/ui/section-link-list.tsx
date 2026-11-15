@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { sections } from "#/shared/config";
-import type { Direction } from "#/widgets/site-nav/model/direction";
+import { sections } from "#/shared/config/index.ts";
+import type { Direction } from "#/widgets/site-nav/model/direction.ts";
 
 import { LinkList } from "./link-list";
 import { SectionLink } from "./section-link";

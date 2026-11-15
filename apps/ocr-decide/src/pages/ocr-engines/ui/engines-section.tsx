@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Table } from "#/pages/ocr-engines/model/tables";
+import type { Table } from "#/pages/ocr-engines/model/tables.ts";
 
 import { EnginesTable } from "./engines-table";
 

@@ -2,9 +2,9 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { ResponsiveContainer, Sankey, Tooltip } from "recharts";
 
-import { YEN } from "#/entities/money";
-import type { MoneyFlowValue } from "#/entities/money";
-import { flowHeight, sankeyInput } from "#/pages/money/model/flow";
+import { YEN } from "#/entities/money/index.ts";
+import type { MoneyFlowValue } from "#/entities/money/index.ts";
+import { flowHeight, sankeyInput } from "#/pages/money/model/flow.ts";
 
 import { FlowLink } from "./flow-link";
 import { FlowNode } from "./flow-node";

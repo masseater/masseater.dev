@@ -1,8 +1,8 @@
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { KeywordForm } from "#/shared/ui/keyword-form";
-import { PageTitle } from "#/shared/ui/page-title";
+import { KeywordForm } from "#/shared/ui/keyword-form.tsx";
+import { PageTitle } from "#/shared/ui/page-title.tsx";
 
 import { SongsTable } from "./songs-table";
 

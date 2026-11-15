@@ -1,6 +1,6 @@
 import { Array, Effect, Option, Record, pipe } from "effect";
 
-import { runtime } from "#/shared/lib/telemetry";
+import { runtime } from "#/shared/lib/telemetry.ts";
 
 import { composeBlock } from "./compose";
 import type { Level } from "./compose";

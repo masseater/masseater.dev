@@ -5,8 +5,8 @@ import { Array as Arr, pipe } from "effect";
 import { useEffect, useRef } from "react";
 import type { CSSProperties, ReactNode, RefObject } from "react";
 
-import { started } from "#/entities/entry/model/cascade";
-import { useCascadeState, useUpdateCascade } from "#/entities/entry/model/cascade-state";
+import { useCascadeState, useUpdateCascade } from "#/entities/entry/model/cascade-state.ts";
+import { started } from "#/entities/entry/model/cascade.ts";
 
 import { FLOW_HEIGHT, STAGE_WIDTH } from "./cascade-frame";
 import { edgesOf, nodesOf } from "./cascade-layout";

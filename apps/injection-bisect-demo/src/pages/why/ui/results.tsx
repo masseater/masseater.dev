@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { COPY } from "#/pages/why/model/copy";
+import { COPY } from "#/pages/why/model/copy.ts";
 
 import { ResultsTable } from "./results-table";
 import { Section } from "./section";

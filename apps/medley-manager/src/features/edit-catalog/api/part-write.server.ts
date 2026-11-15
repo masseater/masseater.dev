@@ -2,12 +2,17 @@ import { and, eq, max } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import { Array as Arr, Boolean, Effect, Option, pipe, Struct } from "effect";
 
-import type { VideoDetail, PartInput, UpdatePartInput, VideoPartsInput } from "#/entities/catalog";
-import { getVideo } from "#/entities/video/index.server";
-import { ToolError } from "#/shared/api";
-import { orMissing, query } from "#/shared/api/index.server";
-import { part, partStaff } from "#/shared/db";
-import { catalogDb } from "#/shared/db/index.server";
+import type {
+  VideoDetail,
+  PartInput,
+  UpdatePartInput,
+  VideoPartsInput,
+} from "#/entities/catalog/index.ts";
+import { getVideo } from "#/entities/video/index.server.ts";
+import { orMissing, query } from "#/shared/api/index.server.ts";
+import { ToolError } from "#/shared/api/index.ts";
+import { catalogDb } from "#/shared/db/index.server.ts";
+import { part, partStaff } from "#/shared/db/index.ts";
 
 import { personByName, songByTitle, videoByTitle } from "./resolve.server.ts";
 

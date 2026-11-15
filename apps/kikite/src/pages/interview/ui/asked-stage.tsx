@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { CheckpointActions } from "#/features/answer-question";
-import { useAnswering } from "#/pages/interview/model/session-hooks";
+import { CheckpointActions } from "#/features/answer-question/index.ts";
+import { useAnswering } from "#/pages/interview/model/session-hooks.ts";
 
 import { CurrentAnswer } from "./current-answer.tsx";
 import { NextTopics } from "./next-topics.tsx";

@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { CartesianGrid, ReferenceLine, Tooltip, XAxis, YAxis } from "recharts";
 
-import { pointsOf } from "#/entities/benchmark/lib/format";
+import { pointsOf } from "#/entities/benchmark/lib/format.ts";
 
 import {
   AXIS_TICK,

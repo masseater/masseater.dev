@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { ReactNode } from "react";
 
-import type { FigureName } from "#/entities/entry/model/figure";
+import type { FigureName } from "#/entities/entry/model/figure.ts";
 
 import { CascadePlaceholder } from "./cascade-placeholder";
 import { FigureBody } from "./figure-body";

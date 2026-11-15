@@ -1,12 +1,12 @@
 import { Schema } from "effect";
 
-import { LifePage } from "#/entities/watashi/model/life-item";
-import { MemoList, MemoProjects } from "#/entities/watashi/model/memo";
-import { MemoChange, MemoKey, Written } from "#/entities/watashi/model/memo-input";
-import { Profile } from "#/entities/watashi/model/profile";
-import { CursorQuery, MemosSearch, RecordsSearch } from "#/entities/watashi/model/search";
-import { Sessions } from "#/entities/watashi/model/session";
-import { createRouter, respond, rpcBody, watashi } from "#/shared/api/index.server";
+import { LifePage } from "#/entities/watashi/model/life-item.ts";
+import { MemoChange, MemoKey, Written } from "#/entities/watashi/model/memo-input.ts";
+import { MemoList, MemoProjects } from "#/entities/watashi/model/memo.ts";
+import { Profile } from "#/entities/watashi/model/profile.ts";
+import { CursorQuery, MemosSearch, RecordsSearch } from "#/entities/watashi/model/search.ts";
+import { Sessions } from "#/entities/watashi/model/session.ts";
+import { createRouter, respond, rpcBody, watashi } from "#/shared/api/index.server.ts";
 
 import { memosInput, recordsInput } from "./inputs";
 import { conversation, memoDetail, timeline } from "./watashi-reads.server";

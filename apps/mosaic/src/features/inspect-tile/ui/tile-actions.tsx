@@ -3,7 +3,7 @@ import { Option } from "effect";
 import type { ReactNode } from "react";
 import { useCallback } from "react";
 
-import { select, useViewerStore } from "#/entities/mosaic";
+import { select, useViewerStore } from "#/entities/mosaic/index.ts";
 
 import { ServiceLink } from "./service-link";
 

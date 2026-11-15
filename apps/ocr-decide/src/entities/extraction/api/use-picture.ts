@@ -3,8 +3,8 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import { Effect, ManagedRuntime, Option } from "effect";
 import { FetchHttpClient, HttpClient } from "effect/http";
 
-import { useChoice } from "#/entities/extraction/model/draft";
-import type { Choice } from "#/entities/extraction/model/draft";
+import { useChoice } from "#/entities/extraction/model/draft.ts";
+import type { Choice } from "#/entities/extraction/model/draft.ts";
 
 import { asPng } from "./as-png";
 

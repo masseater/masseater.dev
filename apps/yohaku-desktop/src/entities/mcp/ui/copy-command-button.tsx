@@ -4,7 +4,7 @@ import { Copy } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { Mcp } from "#/shared/api";
+import type { Mcp } from "#/shared/api/index.ts";
 
 const LABEL = "コマンドをコピー";
 

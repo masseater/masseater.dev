@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { SECTIONS } from "#/pages/about/model/content";
+import { SECTIONS } from "#/pages/about/model/content.ts";
 
 import { AboutHeader } from "./about-header";
 import { AboutSectionView } from "./about-section";

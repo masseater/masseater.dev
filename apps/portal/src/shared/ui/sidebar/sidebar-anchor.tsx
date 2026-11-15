@@ -2,8 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { NAV_ICONS } from "#/shared/config";
-import type { PortalPath } from "#/shared/config";
+import { NAV_ICONS } from "#/shared/config/index.ts";
+import type { PortalPath } from "#/shared/config/index.ts";
 
 import { useSetMobileOpen } from "./sidebar-state";
 

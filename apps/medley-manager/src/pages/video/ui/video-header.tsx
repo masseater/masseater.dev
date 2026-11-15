@@ -2,11 +2,11 @@ import { Option } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { KindBadge } from "#/entities/video";
-import { useVideo } from "#/pages/video/api/use-video";
-import { formatDate } from "#/shared/lib/date";
-import { Facts } from "#/shared/ui/facts";
-import { Note } from "#/shared/ui/note";
+import { KindBadge } from "#/entities/video/index.ts";
+import { useVideo } from "#/pages/video/api/use-video.ts";
+import { formatDate } from "#/shared/lib/date.ts";
+import { Facts } from "#/shared/ui/facts.tsx";
+import { Note } from "#/shared/ui/note.tsx";
 
 import { VideoPlayer } from "./video-player";
 import { WatchLink } from "./watch-link";

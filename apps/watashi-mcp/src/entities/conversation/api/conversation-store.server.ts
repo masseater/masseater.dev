@@ -1,14 +1,14 @@
 import { and, asc, count, desc, eq, gte, max, sum } from "drizzle-orm";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import { conversationChunk, conversationSession } from "#/shared/db";
+import { db, query } from "#/shared/db/index.server.ts";
+import { conversationChunk, conversationSession } from "#/shared/db/index.ts";
 import type {
   ConversationChunk,
   ConversationKind,
   ConversationSession,
   StorageFailed,
-} from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+} from "#/shared/db/index.ts";
 
 export type SessionKey = Readonly<{ kind: ConversationKind; sessionId: string }>;
 

@@ -3,8 +3,8 @@ import { Search } from "lucide-react";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode, SubmitEvent } from "react";
 
-import { useDraft, useSetDraft, useSubmitQuery } from "#/entities/asset";
-import { Input } from "#/shared/ui/input";
+import { useDraft, useSetDraft, useSubmitQuery } from "#/entities/asset/index.ts";
+import { Input } from "#/shared/ui/input.tsx";
 
 import { ClearSearchButton } from "./clear-search-button.tsx";
 

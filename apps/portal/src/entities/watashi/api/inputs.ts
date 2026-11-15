@@ -1,6 +1,6 @@
 import { Option, Record as Rec, String as Str, pipe } from "effect";
 
-import type { MemosSearchValue, RecordsSearchValue } from "#/entities/watashi/model/search";
+import type { MemosSearchValue, RecordsSearchValue } from "#/entities/watashi/model/search.ts";
 
 const RECORD_LIMIT = 200;
 

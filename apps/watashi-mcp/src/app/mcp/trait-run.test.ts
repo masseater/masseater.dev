@@ -3,14 +3,14 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
-import { profileTraits } from "#/entities/trait/index.server";
+import { profileTraits } from "#/entities/trait/index.server.ts";
 import {
   RECORD_TOOL,
   traitRegistry,
   buildTraits,
-} from "#/features/build-traits/index.test.support";
-import type { Conversation } from "#/features/build-traits/index.test.support";
-import { writeMemory } from "#/features/memory-tools/index.test.support";
+} from "#/features/build-traits/index.test.support.ts";
+import type { Conversation } from "#/features/build-traits/index.test.support.ts";
+import { writeMemory } from "#/features/memory-tools/index.test.support.ts";
 
 import { pastBudget, settle } from "./trait-build.test.support.ts";
 import { closeDatabase, resetDatabase } from "./trait.test.support.ts";

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { SiteLinks } from "#/widgets/site-nav";
+import { SiteLinks } from "#/widgets/site-nav/index.ts";
 
 import { Name } from "./name";
 

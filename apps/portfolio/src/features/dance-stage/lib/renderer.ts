@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
-import type { Pass } from "#/features/dance-stage/model/effect";
+import type { Pass } from "#/features/dance-stage/model/effect.ts";
 
 import type { Fn } from "./fn";
 import { contextOf, link, makeBuffer, makeQuad, makeTexture } from "./gl";
