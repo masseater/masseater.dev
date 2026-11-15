@@ -54,6 +54,7 @@ catalog:
   hyparquet: 1.33.0
   fzstd: 0.1.1
   "@types/three": 0.187.0
+  "@pixiv/three-vrm": 3.5.5
   sqlite-vec: 0.1.9
   "@shadcn/lint": 0.2.5
   "@types/node": 26.6.6

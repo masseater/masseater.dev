@@ -1,55 +1,28 @@
-import { NodeServices } from "@effect/platform-node";
 import { expect, layer } from "@effect/vitest";
-import {
-  Array,
-  Effect,
-  FileSystem,
-  Layer,
-  Option,
-  Path,
-  pipe,
-  Predicate,
-  Result,
-  Schema,
-} from "effect";
-import { Base64 } from "effect/encoding";
+import { Array, Effect, FileSystem, Path, pipe, Predicate } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { RENDER, databaseLayer } from "#shared/database";
-import { Settings } from "#shared/settings";
-import { decodeRows, firstId } from "#shared/sql";
+import { RENDER } from "#shared/database";
+import { firstId } from "#shared/sql";
 
 import { readModel, readModelPart } from "./read-model.ts";
 import { failRender, putRender, renderJobs } from "./render-jobs.ts";
+import {
+  FIRST,
+  MAIN_FILE,
+  MATERIAL,
+  NO_SIZE,
+  RED_PIXEL,
+  TEXTURE,
+  dataInTemporaryFolder,
+  encoded,
+  stateOf,
+} from "./render.test.support.ts";
 
-const NO_SIZE = 0;
-const FIRST = 0;
 const MANY_FAILURES = 12;
 const LARGE_MODEL = 9_437_184;
 const MODEL_BYTE = 7;
-const TEXTURE = "wall.png";
-const MATERIAL = "wall.mtl";
 const OUTSIDE = "../secret.png";
-const pngFromBase64 = (base64: string): Uint8Array => Result.getOrThrow(Base64.decode(base64));
-
-const RED_PIXEL = pngFromBase64(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADElEQVQImWP4z8AAAAMBAQCc479ZAAAAAElFTkSuQmCC",
-);
-
-const StateRow = Schema.Struct({ render: Schema.Int, images: Schema.Int });
-
-const dataInTemporaryFolder = Layer.unwrap(
-  Effect.gen(function* dataInTemporaryFolder() {
-    const fileSystem = yield* FileSystem.FileSystem;
-    const dataDirectory = yield* fileSystem.makeTempDirectoryScoped();
-    const settings = Layer.succeed(Settings, {
-      dataDirectory,
-      modelDirectory: Option.none<string>(),
-      embedderWorker: new URL("file:///unused"),
-    });
-    return databaseLayer.pipe(Layer.provide(settings));
-  }),
-).pipe(Layer.provideMerge(NodeServices.layer));
 
 const writeModelFolder = Effect.fn("writeModelFolder")(function* writeModelFolder(
   model: Uint8Array,
@@ -81,7 +54,7 @@ const addModel = Effect.fn("addModel")(function* addModel(model: Uint8Array) {
   );
 });
 
-const objModel = new TextEncoder().encode(`mtllib ${MATERIAL}\nv 0 0 0\n`);
+const objModel = encoded(`mtllib ${MATERIAL}\nv 0 0 0\n`);
 
 const listed = Effect.map(
   renderJobs(),
@@ -93,17 +66,8 @@ const makeRetriesDue = Effect.gen(function* makeRetriesDue() {
   yield* sql`update assets set render_retry_at = 0`;
 });
 
-const stateOf = Effect.fn("stateOf")(function* stateOf(assetId: number) {
-  const sql = yield* SqlClient.SqlClient;
-  const rows = yield* decodeRows(StateRow)(
-    sql`select render, (select count(*) from images where asset_id = a.id) as images
-      from assets a where id = ${assetId}`,
-  );
-  return yield* Effect.fromOption(Array.head(rows));
-});
-
 const twoParts = Effect.fn("twoParts")(function* twoParts(assetId: number) {
-  const file = Option.getOrNull(Option.none<string>());
+  const file = MAIN_FILE;
   const { data: first } = yield* readModelPart({ assetId, file, offset: FIRST });
   const { data: second } = yield* readModelPart({ assetId, file, offset: first.length });
   const end = first.length + second.length;
@@ -180,6 +144,17 @@ layer(dataInTemporaryFolder, { excludeTestServices: true })("model reads", (it) 
         Effect.flip,
       );
       expect(Predicate.isTagged(refused, "NotACompanion")).toBe(true);
+    }),
+  );
+
+  it.effect("描くものが無かったモデルは、前からある画像を残して描画済みにする", () =>
+    Effect.gen(function* keepsPreviews() {
+      const sql = yield* SqlClient.SqlClient;
+      const assetId = yield* addModel(objModel);
+      yield* sql`insert into images(asset_id, png) values (${assetId}, ${RED_PIXEL})`;
+      yield* putRender({ assetId, pngs: [] });
+      const state = yield* stateOf(assetId);
+      expect(state).toStrictEqual({ render: RENDER.done, images: 1 });
     }),
   );
 });
