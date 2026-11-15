@@ -33,6 +33,7 @@ export default defineConfig({
   run: {
     tasks: {
       ...alchemyTasks,
+      "alchemy-state-rm": { command: 'alchemy state rm --no-input "$STATE_PATH"', cache: false },
       "deploy:bootstrap": {
         command: "ALCHEMY_STAGE=prod alchemy deploy --yes",
         cache: false,

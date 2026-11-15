@@ -119,6 +119,15 @@ export const requiredStack: Readonly<Record<string, readonly string[]>> = {
     "ts-results",
     "purify-ts",
   ],
+  "CSV は effect/encoding の Csv だけで読み書きする": [
+    "papaparse",
+    "csv-parse",
+    "csv-parser",
+    "csv-stringify",
+    "fast-csv",
+    "@fast-csv/*",
+    "d3-dsv",
+  ],
   "フィーチャーフラグは OpenFeature だけで扱う": [
     "launchdarkly-*",
     "@launchdarkly/*",

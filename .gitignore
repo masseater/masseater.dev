@@ -72,3 +72,6 @@ tools/decision-bench-runner/cache/
 # Release builds
 release-assets/
 release-reports/
+
+# State that scheduled tasks keep in the Actions cache
+.persist/

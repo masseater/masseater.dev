@@ -81,6 +81,9 @@ export type Lower = (
   path: string,
 ) => (representation: SchemaRepresentation.Representation) => Lowered;
 
+const UNION_REASON =
+  "only an identified union of string literals, or of structs sharing a literal tag, becomes a Rust enum";
+
 const union =
   (path: string, lower: Lower) =>
   (representation: Representation): Lowered => {
@@ -89,7 +92,7 @@ const union =
       Option.liftPredicate(members, (all) => all.length === SINGLE),
       Option.flatMap(Array.head),
       Option.match({
-        onNone: () => refuse(path)("a union with several members needs an identifier"),
+        onNone: () => refuse(path)(UNION_REASON),
         onSome: (only) =>
           pipe(lower(path)(only), Effect.map(optionalWhen(nullable || undefinable))),
       }),
