@@ -20,7 +20,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
-      - uses: masseater/typescript-template/.github/actions/verify@6c7f35a2fde3e12da835c89d61c46221a6388946
+      - uses: masseater/typescript-template/.github/actions/verify@93ede91739120dbe2102f1a4a5dbcfcb67641f36
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -64,7 +64,7 @@ jobs:
       latest: ${{ steps.head.outputs.latest }}
     steps:
       - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@6c7f35a2fde3e12da835c89d61c46221a6388946
+        uses: masseater/typescript-template/.github/actions/latest-verified@93ede91739120dbe2102f1a4a5dbcfcb67641f36
         with:
           github-token: ${{ github.token }}
       - if: steps.head.outputs.latest == 'true'
@@ -112,7 +112,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@6c7f35a2fde3e12da835c89d61c46221a6388946
+      - uses: masseater/typescript-template/.github/actions/credentials@93ede91739120dbe2102f1a4a5dbcfcb67641f36
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -138,7 +138,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@6c7f35a2fde3e12da835c89d61c46221a6388946
+      - uses: masseater/typescript-template/.github/actions/credentials@93ede91739120dbe2102f1a4a5dbcfcb67641f36
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -200,7 +200,7 @@ jobs:
       queue: max
     steps:
       - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@6c7f35a2fde3e12da835c89d61c46221a6388946
+        uses: masseater/typescript-template/.github/actions/latest-verified@93ede91739120dbe2102f1a4a5dbcfcb67641f36
         with:
           github-token: ${{ github.token }}
       - if: steps.head.outputs.latest == 'true'
@@ -431,6 +431,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@6c7f35a2fde3e12da835c89d61c46221a6388946
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@93ede91739120dbe2102f1a4a5dbcfcb67641f36
         with:
           github-token: ${{ github.token }}

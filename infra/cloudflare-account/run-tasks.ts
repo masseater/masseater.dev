@@ -14,7 +14,7 @@ const deployTo = (stage: "prod" | "production"): { command: string; cache: false
 });
 
 const d1Tasks = {
-  "db:generate": { command: "drizzle-kit generate", cache: false },
+  "db:generate": "drizzle-kit generate",
   "db:check": [
     "drizzle-kit check",
     `drizzle-kit generate --explain --output json | grep -q '"status":"no_changes"'`,

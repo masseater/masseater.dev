@@ -1,19 +1,23 @@
 import { Array, Option, String, pipe } from "effect";
-import { Euler, Matrix4, Quaternion, Vector3 } from "three";
-import type { EulerOrder } from "three";
+import { Matrix4, Vector3 } from "three";
 
-import { GRAY, readMesh } from "./blend-mesh.ts";
-import type { Color, MeshData } from "./blend-mesh.ts";
-import { floatsOf, follow, instanceOf, intOf } from "./blend-structs.ts";
+import { surfaceOf } from "./blend-material.ts";
+import type { Surface } from "./blend-material.ts";
+import { readMesh } from "./blend-mesh.ts";
+import type { MeshData } from "./blend-mesh.ts";
+import { modifiedMesh } from "./blend-modifiers.ts";
+import { follow, instanceOf, intOf } from "./blend-structs.ts";
 import type { BlendFile, Instance } from "./blend-structs.ts";
+import { worldMatrix } from "./blend-transform.ts";
 
 interface Group {
-  readonly color: Color;
+  readonly surface: Surface;
   readonly indices: Uint32Array;
 }
 
 interface Part {
   readonly positions: Float32Array;
+  readonly uvs: Option.Option<Float32Array>;
   readonly groups: readonly Group[];
 }
 
@@ -22,94 +26,12 @@ const MESH_TYPE = 1;
 const HIDE_RENDER = 4;
 const BIT = 2;
 const SOLID = 3;
-const QUATERNION_MODE = 0;
-const AXIS_ANGLE_MODE = -1;
-const XYZ_EULER_MODE = 1;
 const NONE = 0;
 const NEXT = 1;
 const TRIANGLE = 3;
 const XYZ = 3;
-const MAX_DEPTH = 64;
-const UNIT = 1;
 const QUARTER_TURN = -Math.PI / BIT;
-const IDENTITY: readonly number[] = Array.replicate(UNIT, XYZ);
-const ORIGIN: readonly number[] = Array.replicate(NONE, XYZ);
-const UP: readonly number[] = [NONE, UNIT, NONE];
 const Z_UP_TO_Y_UP = new Matrix4().makeRotationX(QUARTER_TURN);
-
-const EULER_ORDERS: Readonly<Record<number, EulerOrder>> = {
-  1: "ZYX",
-  2: "YZX",
-  3: "ZXY",
-  4: "XZY",
-  5: "YXZ",
-  6: "XYZ",
-};
-
-const vector = ([first = NONE, second = NONE, third = NONE]: readonly number[]): Vector3 =>
-  new Vector3(first, second, third);
-
-const floats = (
-  object: Instance,
-  names: readonly string[],
-  fallback: readonly number[],
-): readonly number[] => Option.getOrElse(floatsOf({ instance: object, names }), () => fallback);
-
-const quaternionOf = (object: Instance): Quaternion => {
-  const [real = UNIT, first = NONE, second = NONE, third = NONE] = floats(object, ["quat"], []);
-  return new Quaternion(first, second, third, real).normalize();
-};
-
-const axisAngleOf = (object: Instance): Quaternion => {
-  const axis = vector(floats(object, ["rotAxis"], UP)).normalize();
-  const [angle = NONE] = floats(object, ["rotAngle"], []);
-  return new Quaternion().setFromAxisAngle(axis, angle);
-};
-
-const rotationOf = (object: Instance): Quaternion => {
-  const mode = Option.getOrElse(
-    intOf({ instance: object, names: ["rotmode"] }),
-    () => XYZ_EULER_MODE,
-  );
-  if (mode === QUATERNION_MODE) {
-    return quaternionOf(object);
-  }
-  if (mode === AXIS_ANGLE_MODE) {
-    return axisAngleOf(object);
-  }
-  const [first = NONE, second = NONE, third = NONE] = floats(object, ["rot"], ORIGIN);
-  const order = EULER_ORDERS[mode] ?? "ZYX";
-  return new Quaternion().setFromEuler(new Euler(first, second, third, order));
-};
-
-const localOf = (object: Instance): Matrix4 => {
-  const position = vector(floats(object, ["loc"], ORIGIN)).add(
-    vector(floats(object, ["dloc"], ORIGIN)),
-  );
-  const scale = vector(floats(object, ["size", "scale"], IDENTITY)).multiply(
-    vector(floats(object, ["dscale"], IDENTITY)),
-  );
-  return new Matrix4().compose(position, rotationOf(object), scale);
-};
-
-const worldOf = (object: Instance, depth: number): Matrix4 => {
-  const local = localOf(object);
-  if (depth >= MAX_DEPTH) {
-    return local;
-  }
-  return pipe(
-    follow({ instance: object, names: ["parent"] }),
-    Option.flatMap((block) => instanceOf({ file: object.file, block })),
-    Option.map((parent) => {
-      const identity = new Matrix4().toArray();
-      const inverse = new Matrix4().fromArray(floats(object, ["parentinv"], identity));
-      return worldOf(parent, depth + NEXT)
-        .multiply(inverse)
-        .multiply(local);
-    }),
-    Option.getOrElse(() => local),
-  );
-};
 
 const isShown = (object: Instance): boolean => {
   const names = ["visibility_flag", "restrictflag"];
@@ -128,34 +50,27 @@ const transformed = (positions: Float32Array, elements: readonly number[]): Floa
   return result;
 };
 
-const cornersOf = (mesh: MeshData, face: number): readonly number[] => {
-  const start = mesh.offsets[face] ?? NONE;
-  const end = mesh.offsets[face + NEXT] ?? NONE;
-  return Array.makeBy(Math.max(end - start, NONE), (index) => mesh.corners[start + index] ?? -NEXT);
-};
+const vertexOf = (mesh: MeshData, corner: number): number => mesh.corners[corner] ?? -NEXT;
 
 const trianglesOf = (mesh: MeshData, face: number): readonly number[] => {
-  const corners = cornersOf(mesh, face);
+  const start = mesh.offsets[face] ?? NONE;
+  const total = Math.max((mesh.offsets[face + NEXT] ?? NONE) - start, NONE);
   const vertices = mesh.positions.length / XYZ;
   const valid = pipe(
-    corners,
-    Array.every((corner) => corner >= NONE && corner < vertices),
+    Array.makeBy(total, (index) => vertexOf(mesh, start + index)),
+    Array.every((vertex) => vertex >= NONE && vertex < vertices),
   );
+  if (!valid || total < TRIANGLE) {
+    return [];
+  }
   return pipe(
-    Array.head(corners),
-    Option.filter(() => valid && corners.length >= TRIANGLE),
-    Option.map((first) =>
-      pipe(
-        Array.range(NEXT, corners.length - TRIANGLE + NEXT),
-        Array.flatMap((index) => [first, corners[index] ?? NONE, corners[index + NEXT] ?? NONE]),
-      ),
-    ),
-    Option.getOrElse((): readonly number[] => []),
+    Array.makeBy(total - TRIANGLE + NEXT, (index) => index + NEXT),
+    Array.flatMap((index) => [start, start + index, start + index + NEXT]),
   );
 };
 
 const groupsOf = (mesh: MeshData): readonly Group[] => {
-  const slots = Math.max(mesh.colors.length, NEXT);
+  const slots = Math.max(mesh.slots.length, NEXT);
   const buckets = Array.makeBy(slots, (): number[] => []);
   for (const [face, material] of mesh.materials.entries()) {
     const slot = Math.min(Math.max(material, NONE), slots - NEXT);
@@ -164,11 +79,19 @@ const groupsOf = (mesh: MeshData): readonly Group[] => {
   return pipe(
     buckets,
     Array.map((indices, slot) => ({
-      color: mesh.colors[slot] ?? GRAY,
+      surface: surfaceOf(Option.flatten(Array.get(mesh.slots, slot))),
       indices: Uint32Array.from(indices),
     })),
     Array.filter(({ indices }) => indices.length > NONE),
   );
+};
+
+const expanded = (mesh: MeshData): Float32Array => {
+  const result = new Float32Array(mesh.corners.length * XYZ);
+  for (const [corner, vertex] of mesh.corners.entries()) {
+    result.set(mesh.positions.subarray(vertex * XYZ, vertex * XYZ + XYZ), corner * XYZ);
+  }
+  return result;
 };
 
 const partOf =
@@ -179,13 +102,14 @@ const partOf =
       if (type !== MESH_TYPE || !(withHidden || isShown(object))) {
         return yield* Option.none();
       }
-      const block = yield* follow({ instance: object, names: ["data"] });
-      const mesh = yield* readMesh(yield* instanceOf({ file: object.file, block }));
-      const groups = groupsOf(mesh);
-      if (groups.length === NONE) {
-        return yield* Option.none();
-      }
-      return { positions: transformed(mesh.positions, worldOf(object, NONE).toArray()), groups };
+      const data = yield* Option.flatMap(follow({ instance: object, names: ["data"] }), (block) =>
+        instanceOf({ file: object.file, block }),
+      );
+      const base = yield* readMesh(data);
+      const mesh = modifiedMesh({ object, mesh: base });
+      const groups = yield* Option.liftPredicate(groupsOf(mesh), Array.isReadonlyArrayNonEmpty);
+      const positions = transformed(expanded(mesh), worldMatrix(object).toArray());
+      return { positions, uvs: mesh.uvs, groups };
     });
 
 const partsOf = (file: BlendFile, withHidden: boolean): readonly Part[] =>
