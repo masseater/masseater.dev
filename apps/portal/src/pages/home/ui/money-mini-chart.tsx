@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
-import { monthLabel, yen } from "#/entities/money";
+import { monthLabel, YEN } from "#/entities/money";
 import { useOverview } from "#/pages/home/api/home-query";
 
 const TEXT = { income: "収入", expense: "支出" } as const;
@@ -18,7 +18,7 @@ const STACK = "money";
 
 const TICK = { fill: "var(--muted-foreground)", fontSize: 11 } as const;
 
-const asYen = (value: unknown): string => yen(Math.abs(Number(value)));
+const asYen = (value: unknown): string => YEN.format(Math.abs(Number(value)));
 
 export const MoneyMiniChart = (): ReactNode => {
   const { months } = useOverview();

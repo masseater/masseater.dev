@@ -3,11 +3,11 @@ import { failedAt } from "@masseater.dev/mcp-tool-call";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Match, Number as Num, Option, pipe } from "effect";
 
-import type { ConversationChunk, StorageFailed } from "#/shared/db";
+import type { ConversationChunk } from "#/shared/db";
 
 import type { ReadRequest, View } from "./conversation-input";
-import { chunksFrom, filesOf, listSessions } from "./conversation-store.server.ts";
-import type { FileSummary, SessionPage, SessionSummary } from "./conversation-store.server.ts";
+import { chunksFrom, filesOf } from "./conversation-store.server.ts";
+import type { FileSummary } from "./conversation-store.server.ts";
 import { ownerUtterances } from "./owner-utterance";
 import type { Utterance } from "./owner-utterance";
 
@@ -125,7 +125,3 @@ export const readConversation = Effect.fn("conversation.read")(function* readCon
   };
   return result;
 });
-
-export const listConversations = (
-  page: SessionPage,
-): Effect.Effect<readonly SessionSummary[], StorageFailed> => listSessions(page);
