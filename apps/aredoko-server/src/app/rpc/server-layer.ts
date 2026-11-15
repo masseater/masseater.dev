@@ -19,7 +19,7 @@ const endpointDirectoryLayer = Layer.effect(
 const settingsTransportLayer = transportLayer.pipe(Layer.provide(endpointDirectoryLayer));
 
 /** @internal */
-const serverLayer = RpcServer.layer(AredokoRpcs).pipe(
+export const serverLayer = RpcServer.layer(AredokoRpcs).pipe(
   Layer.provide(handlersLayer),
   Layer.provide(libraryLayer),
   Layer.provideMerge(blmLayer),
@@ -28,5 +28,3 @@ const serverLayer = RpcServer.layer(AredokoRpcs).pipe(
   Layer.provideMerge(databaseLayer),
   Layer.provide(FetchHttpClient.layer),
 );
-
-export { serverLayer };

@@ -5,7 +5,7 @@ import type { Problem } from "./problem.ts";
 const START = 0;
 const FIRST_COLUMN = 1;
 
-const positionOf =
+export const positionOf =
   (source: string) =>
   (index: number): Pick<Problem, "line" | "column"> => {
     const before = pipe(source, Str.slice(START, index), Str.split("\n"));
@@ -17,5 +17,3 @@ const positionOf =
       ),
     };
   };
-
-export { positionOf };

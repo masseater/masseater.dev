@@ -15,7 +15,7 @@ const NEXT = 1;
 const START = 0;
 const ROOT_LENGTH = 1;
 
-const modeKey: {
+export const modeKey: {
   (mode: Option.Option<ResolutionMode>): (name: string) => string;
   (name: string, mode: Option.Option<ResolutionMode>): string;
 } = Fn.dual(
@@ -102,7 +102,7 @@ const createResultTables = (): ResultTables => {
   };
 };
 
-const createModuleResolutionCache = (): ModuleResolutionCache => {
+export const createModuleResolutionCache = (): ModuleResolutionCache => {
   const perDirectory = createResultTables();
   const nonRelative = createResultTables();
   return {
@@ -125,5 +125,3 @@ const createModuleResolutionCache = (): ModuleResolutionCache => {
     },
   };
 };
-
-export { createModuleResolutionCache, modeKey };

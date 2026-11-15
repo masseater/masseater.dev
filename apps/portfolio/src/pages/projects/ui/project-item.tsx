@@ -4,7 +4,7 @@ import type { Project } from "#/pages/projects/model/projects";
 
 import { ProjectMeta } from "./project-meta";
 
-const ProjectItem = ({ project }: Readonly<{ project: Project }>): ReactNode => (
+export const ProjectItem = ({ project }: Readonly<{ project: Project }>): ReactNode => (
   <li className="border-foreground/10 flex flex-col gap-2 border-t py-5 sm:flex-row sm:items-baseline sm:gap-8">
     <a
       className="font-display hover:text-foreground/70 shrink-0 self-start text-xl font-light transition-colors sm:w-64"
@@ -18,5 +18,3 @@ const ProjectItem = ({ project }: Readonly<{ project: Project }>): ReactNode => 
     </div>
   </li>
 );
-
-export { ProjectItem };

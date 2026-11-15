@@ -16,7 +16,7 @@ type Image = typeof ImageRow.Type;
 
 type PendingImage = typeof PendingImageRow.Type;
 
-interface AnalyzedBatch {
+export interface AnalyzedBatch {
   readonly assetIds: readonly number[];
   readonly pathname: string;
 }
@@ -143,12 +143,9 @@ const nextRetry = Effect.gen(function* nextRetry() {
 }).pipe(Effect.withSpan("nextImageRetry"));
 
 /** @internal */
-const embedImages = Effect.fn("embedImages")(function* embedAllImages(
+export const embedImages = Effect.fn("embedImages")(function* embedAllImages(
   onBatch: (batch: AnalyzedBatch) => Effect.Effect<void>,
 ) {
   yield* embedPending(onBatch).pipe(Effect.repeat({ while: (count) => count > NO_IMAGES }));
   return yield* nextRetry;
 });
-
-export { embedImages };
-export type { AnalyzedBatch };

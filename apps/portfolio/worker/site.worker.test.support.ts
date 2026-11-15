@@ -15,21 +15,20 @@ type Rewriter = Readonly<{
 
 const FIRST_SALT = "first-salt";
 
-const MISSING_ARTICLE = "/blogs/missing";
+export const MISSING_ARTICLE = "/blogs/missing";
 
 const NOT_FOUND = 404;
 
 const PAGE =
   '<!doctype html><html><head><style>body{margin:0}</style><script type="module" src="/assets/app.js"></script></head><body><p>本文</p><script>window.ready=true</script></body></html>';
 
-const {
-  closeDatabase,
-  env: d1,
-  resetDatabase,
-} = makeD1({
+const testD1 = makeD1({
   migrations: new URL("../drizzle/", import.meta.url).href,
   tables: ["star"],
 });
+
+export const { closeDatabase } = testD1;
+const { env: d1, resetDatabase } = testD1;
 
 const salt = MutableRef.make(FIRST_SALT);
 
@@ -68,7 +67,7 @@ const assets: Pick<Fetcher, "fetch"> = {
   },
 };
 
-const env = {
+export const env = {
   STARS: d1.DB,
   ASSETS: assets,
   get VISITOR_SALT(): string {
@@ -76,23 +75,25 @@ const env = {
   },
 };
 
-const changeSalt = (next: string): Effect.Effect<void> =>
+export const changeSalt = (next: string): Effect.Effect<void> =>
   Effect.sync(() => {
     MutableRef.set(salt, next);
   });
 
-const resetSite = Effect.sync(() => {
+export const resetSite = Effect.sync(() => {
   MutableRef.set(salt, FIRST_SALT);
   MutableRef.set(assetRequests, []);
 }).pipe(Effect.andThen(resetDatabase));
 
-const lastAssetRequest = Effect.sync(() => Arr.last(MutableRef.get(assetRequests)));
+export const lastAssetRequest = Effect.sync(() => Arr.last(MutableRef.get(assetRequests)));
 
 const StoredStars = Schema.Array(Schema.Struct({ visitor: Schema.String }));
 
 const decodeStoredStars = Schema.decodeUnknownEffect(StoredStars);
 
-const storedVisitors = Effect.promise(() => d1.DB.prepare("SELECT visitor FROM star").all()).pipe(
+export const storedVisitors = Effect.promise(() =>
+  d1.DB.prepare("SELECT visitor FROM star").all(),
+).pipe(
   Effect.flatMap(({ results }) => decodeStoredStars(results)),
   Effect.map(Arr.map(({ visitor }) => visitor)),
   Effect.orDie,
@@ -154,17 +155,6 @@ const HTMLRewriter = function HTMLRewriter(): Rewriter {
   return rewriterWith([]);
 };
 
-const stubRewriter = (): void => {
+export const stubRewriter = (): void => {
   vi.stubGlobal("HTMLRewriter", HTMLRewriter);
-};
-
-export {
-  MISSING_ARTICLE,
-  changeSalt,
-  closeDatabase,
-  env,
-  lastAssetRequest,
-  resetSite,
-  storedVisitors,
-  stubRewriter,
 };

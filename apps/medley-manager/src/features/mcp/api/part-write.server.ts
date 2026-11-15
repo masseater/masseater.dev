@@ -184,7 +184,7 @@ const writeAll = (statements: readonly Statement[]): Effect.Effect<unknown, Tool
     onNonEmpty: (batch) => query(() => catalogDb.batch(batch)),
   });
 
-const setVideoParts = Effect.fn("mcp.parts.set")(function* setVideoParts(
+export const setVideoParts = Effect.fn("mcp.parts.set")(function* setVideoParts(
   input: typeof VideoPartsInput.Type,
 ) {
   yield* videoDetail(input.videoId);
@@ -199,7 +199,9 @@ const setVideoParts = Effect.fn("mcp.parts.set")(function* setVideoParts(
   return yield* videoDetail(input.videoId);
 });
 
-const addParts = Effect.fn("mcp.parts.add")(function* addParts(input: typeof VideoPartsInput.Type) {
+export const addParts = Effect.fn("mcp.parts.add")(function* addParts(
+  input: typeof VideoPartsInput.Type,
+) {
   yield* videoDetail(input.videoId);
   const parts = yield* prepareParts(input.parts);
   const lastId = yield* lastPartId;
@@ -223,7 +225,7 @@ const changedMaterial = Effect.fn("mcp.part.changedMaterial")(function* changedM
   return { ...song, ...refVideo };
 });
 
-const updatePart = Effect.fn("mcp.part.update")(function* updatePart(
+export const updatePart = Effect.fn("mcp.part.update")(function* updatePart(
   input: typeof UpdatePartInput.Type,
 ) {
   const found = yield* query(() =>
@@ -245,11 +247,9 @@ const updatePart = Effect.fn("mcp.part.update")(function* updatePart(
   return yield* videoDetail(videoId);
 });
 
-const deletePart = Effect.fn("mcp.part.delete")(function* deletePart(partId: number) {
+export const deletePart = Effect.fn("mcp.part.delete")(function* deletePart(partId: number) {
   const deleted = yield* query(() =>
     catalogDb.delete(part).where(eq(part.id, partId)).returning({ id: part.id }).get(),
   );
   return yield* Effect.succeed(Option.fromUndefinedOr(deleted)).pipe(orMissing(PART_MISSING));
 });
-
-export { addParts, deletePart, setVideoParts, updatePart };

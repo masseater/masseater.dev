@@ -1,11 +1,7 @@
 import { makeD1 } from "@masseater.dev/d1-test";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-const {
-  closeDatabase,
-  env: database,
-  resetDatabase,
-} = makeD1({
+const testD1 = makeD1({
   migrations: new URL("../../../../drizzle/", import.meta.url).href,
   tables: [
     "life_record",
@@ -21,13 +17,16 @@ const {
   ],
 });
 
+export const { closeDatabase, resetDatabase } = testD1;
+const { env: database } = testD1;
+
 type Embedded = Readonly<{ data: number[][]; shape: number[] }>;
 
 const DIMENSIONS = 64;
 
-const transcripts = new Map<string, string>();
+export const transcripts = new Map<string, string>();
 
-const embeddedTexts: string[] = [];
+export const embeddedTexts: string[] = [];
 
 const gzipped = (text: string): ReadableStream<Uint8Array> =>
   new Blob([text]).stream().pipeThrough(new CompressionStream("gzip"));
@@ -74,6 +73,4 @@ const AI = {
   },
 };
 
-const env = { ...database, CONVERSATIONS, AI };
-
-export { closeDatabase, embeddedTexts, env, resetDatabase, transcripts };
+export const env = { ...database, CONVERSATIONS, AI };

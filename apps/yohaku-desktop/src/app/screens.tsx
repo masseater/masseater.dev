@@ -7,7 +7,7 @@ import { OnboardingPage } from "#/pages/onboarding";
 
 import { Pages } from "./pages.tsx";
 
-const Screens = (): ReactNode => {
+export const Screens = (): ReactNode => {
   const loaded = Option.isSome(useOnboardingDone());
   const setup = useStepPending("setup");
   if (!loaded) {
@@ -23,5 +23,3 @@ const Screens = (): ReactNode => {
     </>
   );
 };
-
-export { Screens };

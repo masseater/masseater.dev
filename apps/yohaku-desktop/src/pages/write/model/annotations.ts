@@ -8,8 +8,8 @@ import { Array, Option, Record, Schema, pipe } from "effect";
 
 import { FIRST_LINE, lineOf, paragraphIdsField } from "./paragraph-ids.ts";
 
-type Kind = typeof ParagraphKind.Type;
-type Texts = Readonly<Record<string, string>>;
+export type Kind = typeof ParagraphKind.Type;
+export type Texts = Readonly<Record<string, string>>;
 type RemarkType = typeof Remark.Type;
 
 interface Annotated {
@@ -17,13 +17,13 @@ interface Annotated {
   readonly remarks: DecorationSet;
 }
 
-interface Received {
+export interface Received {
   readonly kinds: readonly (typeof Classified.Type)[];
   readonly remarks: readonly RemarkType[];
   readonly texts: Texts;
 }
 
-interface Marked {
+export interface Marked {
   readonly key: string;
   readonly paragraphId: string;
   readonly rule: string;
@@ -37,8 +37,8 @@ const PROSE: Kind = "prose";
 const RemarkSpec = Schema.Struct({ key: Schema.String, remark: Remark });
 const specOf = Schema.decodeUnknownOption(RemarkSpec);
 
-const received = StateEffect.define<Received>();
-const dropped = StateEffect.define<string>();
+export const received = StateEffect.define<Received>();
+export const dropped = StateEffect.define<string>();
 
 const keyOf = ({ paragraphId, rule, from }: RemarkType): string =>
   `${paragraphId}:${rule}:${globalThis.String(from)}`;
@@ -85,7 +85,7 @@ const keptUnless =
       Option.exists((spec) => spec.key === key),
     );
 
-const annotationsField = StateField.define<Annotated>({
+export const annotationsField = StateField.define<Annotated>({
   create: () => ({ kinds: Record.empty(), remarks: Decoration.none }),
   update: (value, transaction) => {
     let annotated: Annotated = { ...value, remarks: value.remarks.map(transaction.changes) };
@@ -105,7 +105,7 @@ const annotationsField = StateField.define<Annotated>({
   provide: (field) => EditorView.decorations.from(field, ({ remarks }) => remarks),
 });
 
-const kindAt =
+export const kindAt =
   (lineNumber: number) =>
   (state: EditorState): Kind =>
     pipe(
@@ -116,14 +116,16 @@ const kindAt =
 
 const noteLine = Decoration.line({ class: "yohaku-note" });
 
-const noteLines = EditorView.decorations.compute([annotationsField, paragraphIdsField], (state) =>
-  Decoration.set(
-    pipe(
-      Array.makeBy(state.doc.lines, (index) => index + FIRST_LINE),
-      Array.filter((number) => kindAt(number)(state) !== PROSE),
-      Array.map((number) => noteLine.range(state.doc.line(number).from)),
+export const noteLines = EditorView.decorations.compute(
+  [annotationsField, paragraphIdsField],
+  (state) =>
+    Decoration.set(
+      pipe(
+        Array.makeBy(state.doc.lines, (index) => index + FIRST_LINE),
+        Array.filter((number) => kindAt(number)(state) !== PROSE),
+        Array.map((number) => noteLine.range(state.doc.line(number).from)),
+      ),
     ),
-  ),
 );
 
 const markedFrom = (remark: RemarkType, from: number, to: number): Marked => ({
@@ -145,7 +147,7 @@ const markedAt = ([decoration, from, to]: readonly [
     Option.map(({ remark }) => markedFrom(remark, from, to)),
   );
 
-const remarksIn = (state: EditorState): readonly Marked[] => {
+export const remarksIn = (state: EditorState): readonly Marked[] => {
   const spans: (readonly [Decoration, number, number])[] = [];
   const cursor = state.field(annotationsField).remarks.iter();
   let current = Option.fromNullishOr(cursor.value);
@@ -156,6 +158,3 @@ const remarksIn = (state: EditorState): readonly Marked[] => {
   }
   return pipe(spans, Array.map(markedAt), Array.getSomes);
 };
-
-export { annotationsField, dropped, kindAt, noteLines, received, remarksIn };
-export type { Kind, Marked, Received, Texts };

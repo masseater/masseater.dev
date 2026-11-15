@@ -6,18 +6,18 @@ import type {
 } from "@masseater.dev/plamo-translate-protocol";
 import { Context, Effect } from "effect";
 
-type TranslatorBinding = Readonly<{
+export type TranslatorBinding = Readonly<{
   translate: (request: TranslateRequestValue) => Promise<TranslateResultValue>;
 }>;
 
-class TraitTranslator extends Context.Service<
+export class TraitTranslator extends Context.Service<
   TraitTranslator,
   { readonly toJapanese: (english: string) => Effect.Effect<string, UpstreamFailed> }
 >()("watashi-mcp/features/mcp/api/trait-translator/TraitTranslator") {}
 
 const fail = failedAt("plamo-translate");
 
-const translatorOf = (binding: TranslatorBinding): TraitTranslator["Service"] =>
+export const translatorOf = (binding: TranslatorBinding): TraitTranslator["Service"] =>
   TraitTranslator.of({
     toJapanese: (english) =>
       Effect.tryPromise({
@@ -25,6 +25,3 @@ const translatorOf = (binding: TranslatorBinding): TraitTranslator["Service"] =>
         catch: fail,
       }).pipe(Effect.map(({ text }) => text)),
   });
-
-export { TraitTranslator, translatorOf };
-export type { TranslatorBinding };

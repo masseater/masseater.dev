@@ -7,7 +7,7 @@ import type { PartStartLink } from "#/entities/catalog/lib/watch-url";
 import { PositionMark } from "./position-mark";
 import { SetlistBody } from "./setlist-body";
 
-const SetlistItem = ({
+export const SetlistItem = ({
   part,
   start,
 }: Readonly<{ part: PartRow; start: Option.Option<PartStartLink> }>): ReactNode => (
@@ -16,5 +16,3 @@ const SetlistItem = ({
     <SetlistBody part={part} start={start} />
   </li>
 );
-
-export { SetlistItem };

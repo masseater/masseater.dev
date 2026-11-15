@@ -7,7 +7,7 @@ import { Section } from "./section";
 import { notesOf } from "./task-notes";
 import { taskRoutes } from "./task-routes";
 
-const TaskLinks = (): ReactNode => (
+export const TaskLinks = (): ReactNode => (
   <Section id="tasks" title="タスク">
     {pipe(
       taskRoutes,
@@ -22,5 +22,3 @@ const TaskLinks = (): ReactNode => (
     )}
   </Section>
 );
-
-export { TaskLinks };

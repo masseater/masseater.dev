@@ -52,7 +52,7 @@ interface Asked<Value> {
   readonly costUsd: number;
 }
 
-class Opus extends Context.Service<
+export class Opus extends Context.Service<
   Opus,
   {
     readonly ask: <Codec extends Schema.Codec<unknown, unknown>>(
@@ -205,7 +205,7 @@ const benchLayer = Layer.effect(Opus, makeOpus).pipe(
   Layer.provideMerge(NodeServices.layer),
 );
 
-const runBench = <Failure>(
+export const runBench = <Failure>(
   program: Effect.Effect<
     void,
     Failure,
@@ -221,4 +221,3 @@ const runBench = <Failure>(
 };
 
 /** @internal */
-export { Opus, runBench };

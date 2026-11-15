@@ -42,7 +42,7 @@ const isYamlComment = (value: unknown): value is YamlSourceToken =>
   typeof value["offset"] === "number" &&
   typeof value["source"] === "string";
 
-const yamlComments = (source: string): Found =>
+export const yamlComments = (source: string): Found =>
   Effect.try({
     try: () =>
       pipe(
@@ -53,7 +53,7 @@ const yamlComments = (source: string): Found =>
     catch: unreadable("yaml"),
   });
 
-const tomlComments = (source: string): Found =>
+export const tomlComments = (source: string): Found =>
   Effect.try({
     try: () =>
       pipe(
@@ -76,7 +76,7 @@ const isSqlComment = (value: unknown): value is SqlComment =>
   typeof value["text"] === "string" &&
   Arr.isArray(value["range"]);
 
-const sqlComments = (source: string): Found =>
+export const sqlComments = (source: string): Found =>
   Effect.try({
     try: () => {
       const program = parseSql(source, {
@@ -104,7 +104,7 @@ const offsetAt =
       Num.sumAll,
     );
 
-const dockerfileComments = (source: string): Found =>
+export const dockerfileComments = (source: string): Found =>
   Effect.try({
     try: () => {
       const lines = Str.split(source, "\n");
@@ -120,5 +120,3 @@ const dockerfileComments = (source: string): Found =>
     },
     catch: unreadable("dockerfile"),
   });
-
-export { dockerfileComments, sqlComments, tomlComments, yamlComments };

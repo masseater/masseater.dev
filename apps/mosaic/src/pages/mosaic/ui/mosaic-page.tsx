@@ -15,7 +15,7 @@ const FAILED = "モザイクを読み込めませんでした";
 
 const route = getRouteApi("/$slug");
 
-const MosaicPage = (): ReactNode => {
+export const MosaicPage = (): ReactNode => {
   const { slug } = route.useParams();
   const { seed, choice } = route.useLoaderData();
   const query = useQuery(mosaicQuery(slug));
@@ -31,5 +31,3 @@ const MosaicPage = (): ReactNode => {
     </main>
   );
 };
-
-export { MosaicPage };

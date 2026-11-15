@@ -12,19 +12,24 @@ import { db } from "#/shared/db/index.server";
 
 import { query } from "./storage.server";
 
-type SessionKey = Readonly<{ kind: ConversationKind; sessionId: string }>;
+export type SessionKey = Readonly<{ kind: ConversationKind; sessionId: string }>;
 
-type FileKey = SessionKey & Readonly<{ file: string }>;
+export type FileKey = SessionKey & Readonly<{ file: string }>;
 
-type ChunkKey = FileKey & Readonly<{ start: number }>;
+export type ChunkKey = FileKey & Readonly<{ start: number }>;
 
-type ChunkPage = FileKey & Readonly<{ cursor: number; limit: number }>;
+export type ChunkPage = FileKey & Readonly<{ cursor: number; limit: number }>;
 
-type SessionPage = Readonly<{ kind: ConversationKind; limit: number }>;
+export type SessionPage = Readonly<{ kind: ConversationKind; limit: number }>;
 
-type FileSummary = Readonly<{ file: string; bytes: number; chunks: number; redactions: number }>;
+export type FileSummary = Readonly<{
+  file: string;
+  bytes: number;
+  chunks: number;
+  redactions: number;
+}>;
 
-type SessionSummary = ConversationSession & Readonly<{ files: readonly FileSummary[] }>;
+export type SessionSummary = ConversationSession & Readonly<{ files: readonly FileSummary[] }>;
 
 type FileTotals = Readonly<{
   file: string;
@@ -48,7 +53,7 @@ const orNothing = (value: number | null): number =>
     Option.getOrElse(() => NOTHING),
   );
 
-const committedEnd = (key: FileKey): Effect.Effect<number, StorageFailed> =>
+export const committedEnd = (key: FileKey): Effect.Effect<number, StorageFailed> =>
   query(() =>
     db
       .select({ end: max(conversationChunk.end) })
@@ -63,7 +68,7 @@ const committedEnd = (key: FileKey): Effect.Effect<number, StorageFailed> =>
     ),
   );
 
-const chunkAt = ({
+export const chunkAt = ({
   start,
   ...key
 }: ChunkKey): Effect.Effect<Option.Option<ConversationChunk>, StorageFailed> =>
@@ -84,7 +89,7 @@ const toFileSummary = ({ file, bytes, chunks, redactions }: FileTotals): FileSum
   ),
 });
 
-const filesOf = ({
+export const filesOf = ({
   kind,
   sessionId,
 }: SessionKey): Effect.Effect<readonly FileSummary[], StorageFailed> =>
@@ -105,7 +110,7 @@ const filesOf = ({
 const withFiles = (session: ConversationSession): Effect.Effect<SessionSummary, StorageFailed> =>
   filesOf(session).pipe(Effect.map((files) => ({ ...session, files })));
 
-const listSessions = ({
+export const listSessions = ({
   kind,
   limit,
 }: SessionPage): Effect.Effect<readonly SessionSummary[], StorageFailed> =>
@@ -118,7 +123,7 @@ const listSessions = ({
       .limit(limit),
   ).pipe(Effect.flatMap(Effect.forEach(withFiles)));
 
-const chunksFrom = ({
+export const chunksFrom = ({
   cursor,
   limit,
   ...key
@@ -131,6 +136,3 @@ const chunksFrom = ({
       .orderBy(asc(conversationChunk.start))
       .limit(limit),
   );
-
-export { chunkAt, chunksFrom, committedEnd, filesOf, listSessions };
-export type { ChunkKey, ChunkPage, FileKey, FileSummary, SessionKey, SessionPage, SessionSummary };

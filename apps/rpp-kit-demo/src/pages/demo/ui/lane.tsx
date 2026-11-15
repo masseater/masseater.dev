@@ -14,7 +14,7 @@ const HEIGHT = 40;
 
 const ROW = 1;
 
-const Lane = ({ track, index }: Readonly<{ track: Track; index: number }>): ReactNode => {
+export const Lane = ({ track, index }: Readonly<{ track: Track; index: number }>): ReactNode => {
   const notes = pipe(
     track.items,
     Arr.flatMap((item) => {
@@ -53,5 +53,3 @@ const Lane = ({ track, index }: Readonly<{ track: Track; index: number }>): Reac
     </div>
   );
 };
-
-export { Lane };

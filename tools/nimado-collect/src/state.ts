@@ -10,12 +10,12 @@ const JST_OFFSET_HOURS = 9;
 const DATE_START = 0;
 const DATE_LENGTH = 10;
 const FIRST_PAGE = 0;
-const TODAY = 0;
+export const TODAY = 0;
 const CATALOG_FILE = "catalog.json";
-const NICO_FILE = "nico.json";
-const YOUTUBE_FILE = "youtube.json";
+export const NICO_FILE = "nico.json";
+export const YOUTUBE_FILE = "youtube.json";
 
-const jstDate = (offsetDays: number): Effect.Effect<string> =>
+export const jstDate = (offsetDays: number): Effect.Effect<string> =>
   DateTime.now.pipe(
     Effect.map((now) =>
       pipe(
@@ -33,7 +33,9 @@ const emptyCatalog = (since: string): CatalogValue => ({
 });
 
 /** @internal */
-const loadCatalog = Effect.fn("state.catalog.load")(function* loadCatalogFrom(state: string) {
+export const loadCatalog = Effect.fn("state.catalog.load")(function* loadCatalogFrom(
+  state: string,
+) {
   const path = yield* Path.Path;
   const now = yield* DateTime.now;
   const stored = yield* readJson({ codec: Catalog, file: path.join(state, CATALOG_FILE) });
@@ -41,7 +43,7 @@ const loadCatalog = Effect.fn("state.catalog.load")(function* loadCatalogFrom(st
 });
 
 /** @internal */
-const saveCatalog = Effect.fn("state.catalog.save")(function* saveCatalogTo({
+export const saveCatalog = Effect.fn("state.catalog.save")(function* saveCatalogTo({
   state,
   catalog,
 }: Readonly<{ state: string; catalog: CatalogValue }>) {
@@ -50,7 +52,7 @@ const saveCatalog = Effect.fn("state.catalog.save")(function* saveCatalogTo({
 });
 
 /** @internal */
-const loadViews = Effect.fn("state.views.load")(function* loadViewsFrom({
+export const loadViews = Effect.fn("state.views.load")(function* loadViewsFrom({
   state,
   file,
 }: Readonly<{ state: string; file: string }>) {
@@ -60,7 +62,7 @@ const loadViews = Effect.fn("state.views.load")(function* loadViewsFrom({
 });
 
 /** @internal */
-const saveViews = Effect.fn("state.views.save")(function* saveViewsTo({
+export const saveViews = Effect.fn("state.views.save")(function* saveViewsTo({
   state,
   file,
   value,
@@ -68,5 +70,3 @@ const saveViews = Effect.fn("state.views.save")(function* saveViewsTo({
   const path = yield* Path.Path;
   yield* writeJson({ codec: ViewState, file: path.join(state, file), value });
 });
-
-export { NICO_FILE, TODAY, YOUTUBE_FILE, jstDate, loadCatalog, loadViews, saveCatalog, saveViews };

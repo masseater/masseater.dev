@@ -25,7 +25,7 @@ const switchMic = (recognition: Recognition, text: string): Registered<void> => 
 const needsSwitch = (text: string, status: Listening["status"]): boolean =>
   (text === "" && status === "typing") || (text !== "" && status === "listening");
 
-const typing = Effect.fn("kikite.typing")(function* typing(text: string) {
+export const typing = Effect.fn("kikite.typing")(function* typing(text: string) {
   yield* write(answerDraftAtom, text);
   yield* touch();
   const recognition = yield* read(recognitionAtom);
@@ -36,4 +36,3 @@ const typing = Effect.fn("kikite.typing")(function* typing(text: string) {
 });
 
 /** @internal */
-export { typing };

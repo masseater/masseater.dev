@@ -8,7 +8,7 @@ import { isActive, keyText, supportsOf } from "./trait-state";
 import type { Plan, Step } from "./trait-state";
 import type { VectorTexts } from "./trait-writer.server";
 
-type Settled = Readonly<{ plan: Plan; vectors: VectorTexts }>;
+export type Settled = Readonly<{ plan: Plan; vectors: VectorTexts }>;
 
 const quotesOf = (trait: Plan["touched"][number]): string =>
   pipe(
@@ -29,10 +29,7 @@ const vectorsOf = (plan: Plan): Effect.Effect<VectorTexts, UpstreamFailed> => {
   );
 };
 
-const settle = (step: Step): Effect.Effect<Settled, UpstreamFailed> => {
+export const settle = (step: Step): Effect.Effect<Settled, UpstreamFailed> => {
   const plan = planTraits(step);
   return vectorsOf(plan).pipe(Effect.map((vectors) => ({ plan, vectors })));
 };
-
-export { settle };
-export type { Settled };

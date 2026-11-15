@@ -7,7 +7,7 @@ const BLOB_START = 0;
 
 const taggedError = Schema.TaggedError;
 
-class SshCertificateFailed extends taggedError<
+export class SshCertificateFailed extends taggedError<
   SshCertificateFailed,
   { readonly brand: unique symbol }
 >()("SshCertificateFailed", { message: Schema.String }) {}
@@ -15,7 +15,7 @@ class SshCertificateFailed extends taggedError<
 const failedWith = (message: string) => (): SshCertificateFailed =>
   SshCertificateFailed.make({ message });
 
-type SigningPair = Readonly<CryptoKeyPair>;
+export type SigningPair = Readonly<CryptoKeyPair>;
 
 const encoder = new TextEncoder();
 
@@ -41,11 +41,8 @@ const keyBlob = (raw: Uint8Array): Uint8Array => {
   return joined;
 };
 
-const authorizedKey = (ca: SigningPair): Effect.Effect<string, SshCertificateFailed> =>
+export const authorizedKey = (ca: SigningPair): Effect.Effect<string, SshCertificateFailed> =>
   Effect.tryPromise({
     try: () => crypto.subtle.exportKey("raw", ca.publicKey),
     catch: failedWith("the CA public key could not be exported"),
   }).pipe(Effect.map((raw) => `${KEY_TYPE} ${Base64.encode(keyBlob(new Uint8Array(raw)))}`));
-
-export { SshCertificateFailed, authorizedKey };
-export type { SigningPair };

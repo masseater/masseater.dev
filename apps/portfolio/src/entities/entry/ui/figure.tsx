@@ -11,7 +11,10 @@ const placeholders = {
   "cascade-failure": <CascadePlaceholder />,
 } as const satisfies Record<FigureName, ReactNode>;
 
-const Figure = ({ name, caption }: Readonly<{ name: FigureName; caption: string }>): ReactNode => (
+export const Figure = ({
+  name,
+  caption,
+}: Readonly<{ name: FigureName; caption: string }>): ReactNode => (
   <figure className="my-10">
     <Suspense fallback={placeholders[name]}>
       <FigureBody name={name} />
@@ -19,5 +22,3 @@ const Figure = ({ name, caption }: Readonly<{ name: FigureName; caption: string 
     {caption !== "" && <FigureCaption caption={caption} />}
   </figure>
 );
-
-export { Figure };

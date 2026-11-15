@@ -6,7 +6,7 @@ import { METRIC_NAMES } from "#/pages/leaderboard/ui/metric-names";
 
 type DetailRow = Readonly<{ name: string; value: string }>;
 
-type Detail = Readonly<{ title: string; rows: readonly DetailRow[] }>;
+export type Detail = Readonly<{ title: string; rows: readonly DetailRow[] }>;
 
 const identityRows = (model: Readonly<ModelResult>): readonly DetailRow[] => [
   { name: "provider", value: model.provider },
@@ -58,12 +58,12 @@ const scoreRows = (entry: TaskEntry): readonly DetailRow[] => {
   ];
 };
 
-const taskDetail = (entry: TaskEntry): Detail => ({
+export const taskDetail = (entry: TaskEntry): Detail => ({
   title: `${entry.mark} ${displayLabel(entry)}`,
   rows: [...identityRows(entry.model), ...scoreRows(entry)],
 });
 
-const indexDetail = (model: Readonly<ModelResult>): Detail => ({
+export const indexDetail = (model: Readonly<ModelResult>): Detail => ({
   title: model.label,
   rows: [
     ...identityRows(model),
@@ -71,6 +71,3 @@ const indexDetail = (model: Readonly<ModelResult>): Detail => ({
     { name: "全タスクの費用", value: usd(model.costUsd) },
   ],
 });
-
-export { indexDetail, taskDetail };
-export type { Detail };

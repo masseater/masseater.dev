@@ -9,16 +9,16 @@ import type {
 } from "@masseater.dev/yohaku-protocol";
 import type { Effect, Option, Stream } from "effect";
 
-interface Failure {
+export interface Failure {
   readonly message: string;
 }
 
-interface Opened {
+export interface Opened {
   readonly manuscript: typeof Manuscript.Type;
   readonly paragraphs: readonly (typeof Paragraph.Type)[];
 }
 
-interface SpanTarget {
+export interface SpanTarget {
   readonly id: string;
   readonly paragraphId: string;
   readonly from: number;
@@ -26,23 +26,23 @@ interface SpanTarget {
   readonly rule: string;
 }
 
-interface Mcp {
+export interface Mcp {
   readonly url: string;
   readonly token: string;
 }
 
-type OnboardingStep = "setup" | "idea-hint" | "source-hint";
+export type OnboardingStep = "setup" | "idea-hint" | "source-hint";
 
-interface ClaudeStatus {
+export interface ClaudeStatus {
   readonly installed: boolean;
   readonly loggedIn: boolean;
 }
 
-interface Release {
+export interface Release {
   readonly version: string;
 }
 
-type Yohaku = Readonly<{
+export type Yohaku = Readonly<{
   listManuscripts: () => Effect.Effect<readonly (typeof Manuscript.Type)[], Failure>;
   createManuscript: () => Effect.Effect<typeof Manuscript.Type, Failure>;
   openManuscript: (id: string) => Effect.Effect<Opened, Failure>;
@@ -75,5 +75,3 @@ type Yohaku = Readonly<{
   checkUpdate: () => Effect.Effect<Option.Option<Release>, Failure>;
   installUpdate: () => Stream.Stream<number, Failure>;
 }>;
-
-export type { ClaudeStatus, Failure, Mcp, OnboardingStep, Opened, Release, SpanTarget, Yohaku };

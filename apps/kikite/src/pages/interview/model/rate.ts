@@ -20,7 +20,7 @@ const rateEntry =
     return entry;
   };
 
-const rated =
+export const rated =
   ({ id, rating }: Rate) =>
   (entries: readonly Entry[]): readonly Entry[] =>
     pipe(
@@ -28,5 +28,3 @@ const rated =
       Arr.modify(id, rateEntry(rating)),
       Option.getOrElse(() => entries),
     );
-
-export { rated };

@@ -12,7 +12,5 @@ const identity = ({
 }: RuleTester.ValidTestCase): string =>
   toJson({ code, filename, options, settings, languageOptions });
 
-const distinct = <Case extends RuleTester.ValidTestCase>(cases: readonly Case[]): Case[] =>
+export const distinct = <Case extends RuleTester.ValidTestCase>(cases: readonly Case[]): Case[] =>
   Arr.dedupeWith(cases, (left, right) => identity(left) === identity(right));
-
-export { distinct };

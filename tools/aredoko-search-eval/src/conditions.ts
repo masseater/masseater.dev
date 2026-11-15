@@ -2,19 +2,19 @@ import { Array, String, pipe } from "effect";
 
 import type { AssetType } from "./images.ts";
 
-type Condition = "named" | "anonymous";
+export type Condition = "named" | "anonymous";
 
-const CONDITIONS: readonly Condition[] = ["named", "anonymous"];
+export const CONDITIONS: readonly Condition[] = ["named", "anonymous"];
 
 const GUID_LENGTH = 32;
 const HEX = 16;
 
-interface LibraryAsset {
+export interface LibraryAsset {
   readonly id: string;
   readonly type: AssetType;
 }
 
-interface Placed {
+export interface Placed {
   readonly asset: LibraryAsset;
   readonly index: number;
 }
@@ -29,15 +29,15 @@ const PATHNAMES: Readonly<Record<Condition, (placed: Placed) => string>> = {
     `Assets/${FOLDERS[type]}/asset_${index.toString()}.${EXTENSIONS[type]}`,
 };
 
-const guidOf = (index: number): string =>
+export const guidOf = (index: number): string =>
   pipe(index.toString(HEX), String.padStart(GUID_LENGTH, "0"));
 
-const pathnameOf =
+export const pathnameOf =
   (condition: Condition) =>
   (placed: Placed): string =>
     PATHNAMES[condition](placed);
 
-const libraryAssets = (library: {
+export const libraryAssets = (library: {
   readonly models: readonly string[];
   readonly textures: readonly string[];
 }): readonly LibraryAsset[] => [
@@ -50,6 +50,3 @@ const libraryAssets = (library: {
     Array.map((id): LibraryAsset => ({ id, type: "texture" })),
   ),
 ];
-
-export { CONDITIONS, guidOf, libraryAssets, pathnameOf };
-export type { Condition, LibraryAsset, Placed };

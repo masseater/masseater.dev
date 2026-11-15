@@ -45,7 +45,7 @@ const HOOKS: Readonly<Record<string, (root: string, rest: readonly string[]) => 
   "--commit-msg": commitMessage,
 };
 
-const runVpa: {
+export const runVpa: {
   (args: readonly string[]): (root: string) => CommandEffect;
   (root: string, args: readonly string[]): CommandEffect;
 } = Fn.dual(DATA_FIRST_ARITY, (root: string, args: readonly string[]): CommandEffect =>
@@ -63,4 +63,3 @@ const runVpa: {
 );
 
 /** @internal */
-export { runVpa };

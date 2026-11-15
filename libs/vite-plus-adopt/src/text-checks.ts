@@ -20,23 +20,22 @@ const markdownFiles = (
     ),
   ]);
 
-const textlintCheck = withSection("textlint", (config, { root }) =>
+export const textlintCheck = withSection("textlint", (config, { root }) =>
   markdownFiles(root, config.ignores).pipe(
     Effect.flatMap((files) => lintTexts(config, root, files)),
   ),
 );
 
-const markdownlintCheck = withSection("markdownlint", (config, { root }) =>
+export const markdownlintCheck = withSection("markdownlint", (config, { root }) =>
   markdownFiles(root, config.ignores).pipe(
     Effect.flatMap((files) => lintMarkdown(config, root, files)),
   ),
 );
 
-const commitlintCheck = withSection("commitlint", (config, { root, base }) =>
+export const commitlintCheck = withSection("commitlint", (config, { root, base }) =>
   listCommitMessages(root, `${base}..HEAD`).pipe(
     Effect.flatMap((messages) => lintCommitMessages(config, root, messages)),
   ),
 );
 
 /** @internal */
-export { commitlintCheck, markdownlintCheck, textlintCheck };

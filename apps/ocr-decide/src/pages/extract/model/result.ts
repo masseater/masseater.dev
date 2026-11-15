@@ -8,7 +8,7 @@ const COST_DIGITS = 5;
 
 const SECOND_DIGITS = 1;
 
-interface Line {
+export interface Line {
   readonly label: string;
   readonly value: string;
 }
@@ -21,7 +21,7 @@ const textOf = (value: FieldValue | undefined): string => {
   return COPY.missing;
 };
 
-const linesOf = (
+export const linesOf = (
   result: Readonly<{
     values: Readonly<Record<string, FieldValue>>;
     costUsd: number;
@@ -35,6 +35,3 @@ const linesOf = (
   { label: COPY.seconds, value: `${result.seconds.toFixed(SECOND_DIGITS)} 秒` },
   { label: COPY.cost, value: `$${result.costUsd.toFixed(COST_DIGITS)}` },
 ];
-
-export { linesOf };
-export type { Line };

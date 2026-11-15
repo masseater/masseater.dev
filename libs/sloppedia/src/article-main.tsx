@@ -9,7 +9,7 @@ import type { Heading } from "./headings.ts";
 import { InlineToc } from "./inline-toc.tsx";
 import { UpdatedNote } from "./updated-note.tsx";
 
-const ArticleMain = ({
+export const ArticleMain = ({
   config,
   article,
   headings,
@@ -31,5 +31,3 @@ const ArticleMain = ({
     <UpdatedNote date={article.updated} label={config.labels.updated} locale={config.locale} />
   </article>
 );
-
-export { ArticleMain };

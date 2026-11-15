@@ -1,7 +1,7 @@
 import { Array } from "effect";
 import type { ReactNode } from "react";
 
-const SummaryField = ({
+export const SummaryField = ({
   label,
   values,
 }: Readonly<{ label: string; values: readonly string[] }>): ReactNode => (
@@ -10,5 +10,3 @@ const SummaryField = ({
     <dd className="text-sm">{Array.join(values, "、")}</dd>
   </div>
 );
-
-export { SummaryField };

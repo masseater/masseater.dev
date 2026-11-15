@@ -7,7 +7,7 @@ import type { LanguageCode } from "#/pages/translator/model/languages.ts";
 
 import { LanguageTab } from "./language-tab.tsx";
 
-const TargetTab = ({
+export const TargetTab = ({
   active,
   code,
 }: Readonly<{ active: boolean; code: LanguageCode }>): ReactNode => {
@@ -17,5 +17,3 @@ const TargetTab = ({
   }, [chooseTarget, code]);
   return <LanguageTab active={active} label={languageName(code)} onSelect={onSelect} />;
 };
-
-export { TargetTab };

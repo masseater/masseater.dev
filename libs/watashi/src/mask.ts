@@ -8,7 +8,7 @@ import { applyTargets } from "./replace.ts";
 import type { Target, Targets } from "./replace.ts";
 import type { Finding } from "./report.ts";
 
-type Masked = Readonly<{ text: string; redactions: number }>;
+export type Masked = Readonly<{ text: string; redactions: number }>;
 
 type Pass = Readonly<{ lines: readonly Line[]; redactions: number; done: boolean }>;
 
@@ -156,7 +156,7 @@ const finish =
     return lastResort(detect)(state);
   };
 
-const maskWith =
+export const maskWith =
   (detect: Detector) =>
   (text: string): Effect.Effect<Masked, WatashiFailed> =>
     passes(detect)({ lines: parseLines(text), redactions: NONE, done: false }, NONE).pipe(
@@ -164,6 +164,4 @@ const maskWith =
     );
 
 /** @internal */
-export { maskWith };
 /** @internal */
-export type { Masked };

@@ -20,7 +20,7 @@ type Region = Readonly<Rectangle>;
 
 const failure = (cause: unknown): ImageError => ImageError.make({ reason: String(cause) });
 
-const asPng = (image: Uint8Array): Effect.Effect<Uint8Array, ImageError> => {
+export const asPng = (image: Uint8Array): Effect.Effect<Uint8Array, ImageError> => {
   if (hasPngSignature(image)) {
     return Effect.succeed(image);
   }
@@ -74,12 +74,10 @@ const cutterOf = (png: Uint8Array): Effect.Effect<(box: Box) => Uint8Array, Imag
     }),
   );
 
-const cropPng =
+export const cropPng =
   (image: Uint8Array) =>
   (boxes: readonly Box[]): Effect.Effect<readonly Uint8Array[], ImageError> =>
     asPng(image).pipe(
       Effect.flatMap(cutterOf),
       Effect.flatMap((cut) => Effect.try({ try: () => pipe(boxes, Arr.map(cut)), catch: failure })),
     );
-
-export { asPng, cropPng };

@@ -19,7 +19,7 @@ const byTitle = Order.make<Readonly<{ title: string }>>((left, right) =>
   Number.sign(pipe(left.title, Str.localeCompare(right.title))),
 );
 
-const getVideo = Effect.fn("catalog.video")(function* getVideo(id: number) {
+export const getVideo = Effect.fn("catalog.video")(function* getVideo(id: number) {
   const promiseResult = yield* Effect.promise(() =>
     catalogDb.query.video.findFirst({
       columns: VIDEO_COLUMNS,
@@ -68,5 +68,3 @@ const getVideo = Effect.fn("catalog.video")(function* getVideo(id: number) {
     ),
   );
 });
-
-export { getVideo };

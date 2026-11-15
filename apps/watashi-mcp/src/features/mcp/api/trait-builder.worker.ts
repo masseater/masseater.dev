@@ -17,7 +17,7 @@ const ONE_RUN = 1;
 
 const BUSY = "busy";
 
-type RunResult = RunSummary | typeof BUSY;
+export type RunResult = RunSummary | typeof BUSY;
 
 const busy = (): RunResult => BUSY;
 
@@ -27,7 +27,7 @@ const logRun = (summary: RunResult): Effect.Effect<void> =>
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 const runLogged = runner(logger);
 
-class TraitBuilder extends DurableObject {
+export class TraitBuilder extends DurableObject {
   private readonly ai = createAI({ binding: env.AI });
 
   private readonly registry = traitRegistry();
@@ -66,6 +66,4 @@ const worker = {
   scheduled: (): Promise<RunResult> => builder().run(),
 };
 
-export { TraitBuilder };
 export default worker;
-export type { RunResult };

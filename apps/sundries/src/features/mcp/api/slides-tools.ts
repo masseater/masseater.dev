@@ -162,9 +162,7 @@ const registerGetDeck =
     return server;
   };
 
-const registerSlideTools =
+export const registerSlideTools =
   (caller: Caller) =>
   (server: McpServer): McpServer =>
     pipe(server, registerSearch(caller), registerGetDeck(caller));
-
-export { registerSlideTools };

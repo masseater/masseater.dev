@@ -26,7 +26,7 @@ const throughWorker = <Value>(
   request.pipe(Effect.catchTag("RpcClientError", (cause) => Effect.fail(failed(cause))));
 
 /** @internal */
-const workerEmbedderLayer = Layer.effect(
+export const workerEmbedderLayer = Layer.effect(
   Embedder,
   Effect.gen(function* workerEmbedder() {
     const {
@@ -47,5 +47,3 @@ const workerEmbedderLayer = Layer.effect(
   Layer.provide(RpcClient.layerProtocolWorker({ size: WORKERS })),
   Layer.provide(settingsMessage),
 );
-
-export { workerEmbedderLayer };

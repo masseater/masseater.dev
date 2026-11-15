@@ -7,7 +7,9 @@ import { ActionButton } from "./action-button.tsx";
 
 const SHOW_LABELS = { true: "近いものを見る", false: "ほかの候補を見る" } as const;
 
-const ShowOthersButton = ({ nothingClose }: Readonly<{ nothingClose: boolean }>): ReactNode => {
+export const ShowOthersButton = ({
+  nothingClose,
+}: Readonly<{ nothingClose: boolean }>): ReactNode => {
   const show = useShowOthers();
   const label = SHOW_LABELS[`${nothingClose}`];
   return (
@@ -17,5 +19,3 @@ const ShowOthersButton = ({ nothingClose }: Readonly<{ nothingClose: boolean }>)
     </ActionButton>
   );
 };
-
-export { ShowOthersButton };

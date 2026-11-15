@@ -86,7 +86,7 @@ const forward = Effect.fn("kikite.forward")(function* forward(
   }).pipe(Effect.retry(STARTUP_RETRY));
 });
 
-class Interviewer extends DurableObject {
+export class Interviewer extends DurableObject {
   public override fetch(request: Request): Promise<Response> {
     return runLogged(
       containerOf(this.ctx).pipe(
@@ -121,5 +121,4 @@ const worker = {
   },
 };
 
-export { Interviewer };
 export default worker;

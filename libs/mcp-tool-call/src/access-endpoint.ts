@@ -8,7 +8,7 @@ import { certsUrl, verifyAccess } from "./access.ts";
 import { callerOf } from "./caller.ts";
 import type { Caller } from "./caller.ts";
 
-type AccessMcp = Readonly<{
+export type AccessMcp = Readonly<{
   teamDomain: string;
   audience: string;
   register: (caller: Caller) => McpServer;
@@ -18,7 +18,7 @@ const FORBIDDEN = 403;
 
 const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
 
-const accessMcpEndpoint = ({ teamDomain, audience, register }: AccessMcp) => {
+export const accessMcpEndpoint = ({ teamDomain, audience, register }: AccessMcp) => {
   const verifier = { keys: createRemoteJWKSet(certsUrl(teamDomain)), teamDomain, audience };
   return (request: Request): Promise<Response> =>
     runLogged(
@@ -39,6 +39,3 @@ const accessMcpEndpoint = ({ teamDomain, audience, register }: AccessMcp) => {
       ),
     );
 };
-
-export { accessMcpEndpoint };
-export type { AccessMcp };

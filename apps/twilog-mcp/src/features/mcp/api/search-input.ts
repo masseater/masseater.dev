@@ -15,7 +15,7 @@ const Page = Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_PAGE)).annotat
   description: "Page number, applied to each account. Each account reports its own maxPage.",
 });
 
-const SearchInput = Schema.Struct({
+export const SearchInput = Schema.Struct({
   accounts: Schema.optionalKey(
     Schema.Array(Account).annotate({
       description: "X accounts to search, by handle. Omit to search every linked account.",
@@ -40,7 +40,4 @@ const SearchInput = Schema.Struct({
   ),
 });
 
-type SearchRequest = typeof SearchInput.Type;
-
-export { SearchInput };
-export type { SearchRequest };
+export type SearchRequest = typeof SearchInput.Type;

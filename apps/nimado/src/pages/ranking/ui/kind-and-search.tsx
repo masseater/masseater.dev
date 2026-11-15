@@ -8,7 +8,7 @@ import type { Update } from "#/pages/ranking/model/update";
 import { ChoiceGroup } from "./choice-group";
 import { SongSearch } from "./song-search";
 
-const KindAndSearch = ({
+export const KindAndSearch = ({
   search,
   update,
 }: Readonly<{ search: RankingSearch; update: Update }>): ReactNode => {
@@ -21,5 +21,3 @@ const KindAndSearch = ({
     </div>
   );
 };
-
-export { KindAndSearch };

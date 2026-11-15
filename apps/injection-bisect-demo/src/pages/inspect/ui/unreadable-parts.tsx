@@ -9,7 +9,7 @@ import { Note } from "./note";
 
 const lineOf = ({ name, reason }: Unreadable): string => `${name}　${reason}`;
 
-const UnreadableParts = ({ phase }: Readonly<{ phase: Phase }>): ReactNode => {
+export const UnreadableParts = ({ phase }: Readonly<{ phase: Phase }>): ReactNode => {
   if (phase.status !== "done") {
     return "";
   }
@@ -24,5 +24,3 @@ const UnreadableParts = ({ phase }: Readonly<{ phase: Phase }>): ReactNode => {
     )),
   );
 };
-
-export { UnreadableParts };

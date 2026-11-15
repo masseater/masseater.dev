@@ -7,7 +7,7 @@ import type { RecordedSession } from "#protocol";
 
 import { InterviewerFailed, send } from "./interviewer.ts";
 
-const saveSession = ({
+export const saveSession = ({
   id,
   record,
 }: Readonly<{ id: string; record: RecordedSession }>): Effect.Effect<
@@ -23,4 +23,3 @@ const saveSession = ({
   );
 
 /** @internal */
-export { saveSession };

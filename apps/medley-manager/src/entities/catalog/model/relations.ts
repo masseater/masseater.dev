@@ -5,7 +5,7 @@ import { person, personAlias } from "./person.table";
 import { song, songAlias } from "./song.table";
 import { video } from "./video.table";
 
-const catalogRelations = defineRelations(
+export const catalogRelations = defineRelations(
   { song, songAlias, video, person, personAlias, part, partStaff },
   (relate) => ({
     song: {
@@ -55,5 +55,3 @@ const catalogRelations = defineRelations(
     },
   }),
 );
-
-export { catalogRelations };

@@ -22,7 +22,7 @@ const OWN_PARSERS: readonly Parser[] = [
   htmlParser,
 ];
 
-const DEFAULT_PARSERS: readonly Parser[] = [
+export const DEFAULT_PARSERS: readonly Parser[] = [
   jsonParser,
   jsonLinesParser,
   ...SUBTITLE_PARSERS,
@@ -35,5 +35,3 @@ const DEFAULT_PARSERS: readonly Parser[] = [
   markdownParser,
   htmlParser,
 ];
-
-export { DEFAULT_PARSERS };

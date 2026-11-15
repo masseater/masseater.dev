@@ -7,12 +7,12 @@ import { columnOf, lineOf } from "./syntax.ts";
 import { formatValues, valueKey } from "./values.ts";
 import type { Value } from "./values.ts";
 
-interface PackageScope {
+export interface PackageScope {
   readonly name: string;
   readonly dependencies: readonly string[];
 }
 
-interface UnownedSite {
+export interface UnownedSite {
   readonly scope: PackageScope;
   readonly file: string;
   readonly start: number;
@@ -23,7 +23,7 @@ interface UnownedSite {
 
 const DUPLICATE_THRESHOLD = 1;
 
-const unownedSiteOf =
+export const unownedSiteOf =
   (scope: PackageScope) =>
   (site: ValueSite): UnownedSite => ({
     scope,
@@ -49,7 +49,7 @@ const valueSetKey = (site: UnownedSite): string => {
   return pipe(Arr.sort(keys, Order.String), Arr.join("\0"));
 };
 
-const duplicateProblems =
+export const duplicateProblems =
   (relative: (file: string) => string) =>
   (sites: readonly UnownedSite[]): readonly Problem[] => {
     const unique = Arr.dedupeWith(sites, (left, right) => siteKey(left) === siteKey(right));
@@ -87,6 +87,3 @@ const duplicateProblems =
       ),
     );
   };
-
-export { duplicateProblems, unownedSiteOf };
-export type { PackageScope, UnownedSite };

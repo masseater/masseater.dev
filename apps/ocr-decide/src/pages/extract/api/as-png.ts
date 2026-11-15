@@ -62,11 +62,9 @@ const redrawn = (bytes: Uint8Array<ArrayBuffer>): Effect.Effect<Uint8Array, Pict
     Effect.map((buffer) => new Uint8Array(buffer)),
   );
 
-const asPng = ({ bytes, type }: Loaded): Effect.Effect<Uint8Array, PictureError> => {
+export const asPng = ({ bytes, type }: Loaded): Effect.Effect<Uint8Array, PictureError> => {
   if (type === PNG) {
     return Effect.succeed(bytes);
   }
   return redrawn(bytes);
 };
-
-export { asPng };

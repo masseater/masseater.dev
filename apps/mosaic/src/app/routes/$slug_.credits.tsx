@@ -9,7 +9,7 @@ import {
 } from "#/pages/credits";
 import { bundledPreview } from "#/pages/mosaic";
 
-const Route = createFileRoute("/$slug_/credits")({
+export const Route = createFileRoute("/$slug_/credits")({
   validateSearch: creditsSearch,
   ssr: false,
   loaderDeps: ({ search }) => search,
@@ -19,5 +19,3 @@ const Route = createFileRoute("/$slug_/credits")({
   pendingComponent: CreditsFrame,
   component: CreditsPage,
 });
-
-export { Route };

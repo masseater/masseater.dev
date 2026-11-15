@@ -10,7 +10,7 @@ import { ProfileTable } from "./tables/profile-table";
 import { ScoreTable } from "./tables/score-table";
 import { notesOf } from "./task-notes";
 
-const TaskBlock = ({ task }: Readonly<{ task: TaskInfo }>): ReactNode => {
+export const TaskBlock = ({ task }: Readonly<{ task: TaskInfo }>): ReactNode => {
   const entries = useVisibleEntries(task.task);
   return (
     <>
@@ -22,5 +22,3 @@ const TaskBlock = ({ task }: Readonly<{ task: TaskInfo }>): ReactNode => {
     </>
   );
 };
-
-export { TaskBlock };

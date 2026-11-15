@@ -9,7 +9,7 @@ import { importToUnity } from "#/pages/home/api/import-to-unity";
 const LABEL = "Unity に読み込む";
 const SENT = "ファイルを Unity に渡しました";
 
-const ImportToUnityButton = ({ assetId }: Readonly<{ assetId: number }>): ReactNode => {
+export const ImportToUnityButton = ({ assetId }: Readonly<{ assetId: number }>): ReactNode => {
   const { mutate, isPending, error, data, isSuccess } = useMutation({ mutationFn: importToUnity });
   const onClick = useCallback(() => {
     mutate(assetId);
@@ -30,5 +30,3 @@ const ImportToUnityButton = ({ assetId }: Readonly<{ assetId: number }>): ReactN
     </>
   );
 };
-
-export { ImportToUnityButton };

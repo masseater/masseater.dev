@@ -14,7 +14,7 @@ const route = getRouteApi("/people/");
 
 const HEADINGS = ["名前", "担当パート"];
 
-const PeopleTable = (): ReactNode => {
+export const PeopleTable = (): ReactNode => {
   const filter = route.useSearch();
   const { data: people } = useSuspenseQuery(catalogQueries.people.get.queryOptions(filter));
   return (
@@ -29,5 +29,3 @@ const PeopleTable = (): ReactNode => {
     </Table>
   );
 };
-
-export { PeopleTable };

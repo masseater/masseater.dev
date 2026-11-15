@@ -189,9 +189,13 @@ const MERGED_PARSERS = pipe(
   Arr.map((parsers) => merged(parsers)),
 );
 
-const CODE_PARSERS: readonly Parser[] = Arr.sortWith(MERGED_PARSERS, bySignature, Order.Number);
+export const CODE_PARSERS: readonly Parser[] = Arr.sortWith(
+  MERGED_PARSERS,
+  bySignature,
+  Order.Number,
+);
 
-const codeParsersBesides = (own: readonly Parser[]): readonly Parser[] => {
+export const codeParsersBesides = (own: readonly Parser[]): readonly Parser[] => {
   const claimedNames = new Set(
     pipe(
       own,
@@ -223,5 +227,3 @@ const codeParsersBesides = (own: readonly Parser[]): readonly Parser[] => {
     Arr.map((parser) => unclaimed(parser)),
   );
 };
-
-export { CODE_PARSERS, codeParsersBesides };

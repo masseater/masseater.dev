@@ -10,7 +10,7 @@ import { encoded, normalized } from "./protocol.ts";
 import type { Requests, SignalKey } from "./requests.ts";
 import type { ReceiverAddress } from "./telemetry.ts";
 
-interface Receiver {
+export interface Receiver {
   readonly address: ReceiverAddress;
   readonly requests: Effect.Effect<Requests>;
   readonly clear: Effect.Effect<void>;
@@ -18,7 +18,7 @@ interface Receiver {
 
 const NOTHING_RECEIVED: Requests = { traces: [], logs: [], metrics: [] };
 
-const startReceiver = (
+export const startReceiver = (
   forwardOrigins: readonly string[],
 ): Effect.Effect<Receiver, never, Scope.Scope> =>
   Effect.gen(function* receiverStart() {
@@ -48,6 +48,3 @@ const startReceiver = (
       }),
     };
   }).pipe(Effect.withSpan("vitest-otlp.receiver.start"));
-
-export { startReceiver };
-export type { Receiver };

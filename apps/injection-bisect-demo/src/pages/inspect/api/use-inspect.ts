@@ -13,7 +13,7 @@ import type { Trace } from "#/pages/inspect/model/trace";
 import { inspectEvents } from "./inspect-events";
 import type { InspectEvent } from "./inspect-events";
 
-type InspectState =
+export type InspectState =
   | { readonly status: "idle" }
   | { readonly status: "error"; readonly message: string }
   | {
@@ -49,7 +49,7 @@ const inspectQuery = (run: Run): UseQueryOptions<InspectEvent[], Error, InspectE
     retry: false,
   });
 
-const useInspect = (run: Run): InspectState => {
+export const useInspect = (run: Run): InspectState => {
   const query = useQuery(inspectQuery(run));
   if (run.status === "idle") {
     return { status: "idle" };
@@ -67,6 +67,3 @@ const useInspect = (run: Run): InspectState => {
     trace: traceOf(events),
   };
 };
-
-export type { InspectState };
-export { useInspect };

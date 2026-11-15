@@ -35,13 +35,13 @@ const matchingDirectories = (
     ),
   );
 
-const steigerCheck = withSection("steiger", (section, { root }) =>
+export const steigerCheck = withSection("steiger", (section, { root }) =>
   matchingDirectories(root, section.paths).pipe(
     Effect.flatMap((targets) => checkSlices(section.rules, root, targets)),
   ),
 );
 
-const dependenciesCheck = withSection("dependencyRules", (rules, { root }) =>
+export const dependenciesCheck = withSection("dependencyRules", (rules, { root }) =>
   listDependencies(root).pipe(
     Effect.map((dependencies) => {
       const problems = checkDependencies(rules, dependencies);
@@ -51,4 +51,3 @@ const dependenciesCheck = withSection("dependencyRules", (rules, { root }) =>
 );
 
 /** @internal */
-export { dependenciesCheck, steigerCheck };

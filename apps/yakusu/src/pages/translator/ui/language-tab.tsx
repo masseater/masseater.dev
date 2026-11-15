@@ -1,7 +1,7 @@
 import { cn } from "@masseater.dev/ui/cn";
 import type { ReactNode } from "react";
 
-const LanguageTab = ({
+export const LanguageTab = ({
   active,
   label,
   onSelect,
@@ -19,5 +19,3 @@ const LanguageTab = ({
     {label}
   </button>
 );
-
-export { LanguageTab };

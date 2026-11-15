@@ -5,9 +5,9 @@ import { amountOf, clean, dateOf, optionalAmountOf } from "#/features/mcp/model/
 import { indexesOf } from "#/features/mcp/model/csv-columns";
 import type { AmountIndexes, Columns, Indexes, Lookup } from "#/features/mcp/model/csv-columns";
 
-type CsvLayout = Readonly<{ csv: string; headerRow: number; columns: Columns }>;
+export type CsvLayout = Readonly<{ csv: string; headerRow: number; columns: Columns }>;
 
-type ParsedRow = Readonly<{
+export type ParsedRow = Readonly<{
   line: number;
   date: string;
   amount: number;
@@ -15,7 +15,7 @@ type ParsedRow = Readonly<{
   memo: Option.Option<string>;
 }>;
 
-type Parsed = Readonly<{ rows: readonly ParsedRow[]; skipped: readonly number[] }>;
+export type Parsed = Readonly<{ rows: readonly ParsedRow[]; skipped: readonly number[] }>;
 
 type Cells = readonly string[];
 
@@ -138,7 +138,7 @@ const skippedLines = (
     Arr.map(([{ line }]) => line),
   );
 
-const parseCsv = ({ csv, headerRow, columns }: CsvLayout): Result.Result<Parsed, string> =>
+export const parseCsv = ({ csv, headerRow, columns }: CsvLayout): Result.Result<Parsed, string> =>
   Result.gen(function* parsed() {
     const { data } = parse<string[]>(csv, { skipEmptyLines: false });
     const header = yield* Result.fromOption(
@@ -152,6 +152,3 @@ const parseCsv = ({ csv, headerRow, columns }: CsvLayout): Result.Result<Parsed,
     const results = yield* Result.all(lines);
     return { rows: Arr.getSomes(results), skipped: skippedLines(body, results) };
   });
-
-export { parseCsv };
-export type { CsvLayout, Parsed, ParsedRow };

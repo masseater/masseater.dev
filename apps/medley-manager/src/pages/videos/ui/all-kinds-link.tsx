@@ -8,12 +8,10 @@ const LABEL = "すべて";
 
 const ALL = {};
 
-const AllKindsLink = ({ selected }: Readonly<{ selected: boolean }>): ReactNode => (
+export const AllKindsLink = ({ selected }: Readonly<{ selected: boolean }>): ReactNode => (
   <Button asChild size="sm" variant={variantOf(selected)}>
     <Link to="/videos" search={ALL}>
       {LABEL}
     </Link>
   </Button>
 );
-
-export { AllKindsLink };

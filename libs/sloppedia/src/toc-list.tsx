@@ -5,7 +5,7 @@ import { numbered } from "./headings.ts";
 import type { Heading } from "./headings.ts";
 import { TocItem } from "./toc-item.tsx";
 
-const TocList = ({ headings }: Readonly<{ headings: readonly Heading[] }>): ReactNode => (
+export const TocList = ({ headings }: Readonly<{ headings: readonly Heading[] }>): ReactNode => (
   <ol className="flex flex-col gap-1 text-sm">
     {pipe(
       numbered(headings),
@@ -13,5 +13,3 @@ const TocList = ({ headings }: Readonly<{ headings: readonly Heading[] }>): Reac
     )}
   </ol>
 );
-
-export { TocList };

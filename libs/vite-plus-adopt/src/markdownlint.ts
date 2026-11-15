@@ -33,7 +33,7 @@ const optionsOf = (config: MarkdownlintConfig, files: readonly string[]): Option
   ),
 });
 
-const lintMarkdown: {
+export const lintMarkdown: {
   (
     root: string,
     files: readonly string[],
@@ -70,4 +70,3 @@ const lintMarkdown: {
 );
 
 /** @internal */
-export { lintMarkdown };

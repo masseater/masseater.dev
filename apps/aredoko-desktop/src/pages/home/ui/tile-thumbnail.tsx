@@ -6,7 +6,7 @@ import { useAnalysis } from "#/features/indexing";
 
 import { ResultPreview } from "./result-preview.tsx";
 
-const TileThumbnail = ({
+export const TileThumbnail = ({
   result,
   active,
 }: Readonly<{ result: typeof SearchResult.Type; active: boolean }>): ReactNode => {
@@ -35,5 +35,3 @@ const TileThumbnail = ({
     </span>
   );
 };
-
-export { TileThumbnail };

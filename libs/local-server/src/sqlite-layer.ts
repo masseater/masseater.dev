@@ -44,6 +44,4 @@ const databaseAt = ({
   );
 
 /** @internal */
-const sqliteLayer = databaseAt;
-
-export { sqliteLayer };
+export const sqliteLayer = databaseAt;

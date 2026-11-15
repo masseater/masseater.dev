@@ -58,7 +58,7 @@ const COLUMNS: readonly TableColumn<EnglishRow>[] = [
   },
 ];
 
-const EnglishTable = ({ rows }: Readonly<{ rows: readonly EnglishRow[] }>): ReactNode => (
+export const EnglishTable = ({ rows }: Readonly<{ rows: readonly EnglishRow[] }>): ReactNode => (
   <SortableTable
     id="english"
     caption={CAPTION}
@@ -70,5 +70,3 @@ const EnglishTable = ({ rows }: Readonly<{ rows: readonly EnglishRow[] }>): Reac
     columns={COLUMNS}
   />
 );
-
-export { EnglishTable };

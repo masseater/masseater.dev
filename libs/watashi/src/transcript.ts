@@ -1,18 +1,18 @@
 import { Array as Arr, Effect, FileSystem, Option, Path, String as Str, pipe } from "effect";
 import type { PlatformError, Scope } from "effect";
 
-type Chunk = Readonly<{ start: number; end: number; text: string }>;
+export type Chunk = Readonly<{ start: number; end: number; text: string }>;
 
-type TranscriptFile = Readonly<{ file: string; path: string }>;
+export type TranscriptFile = Readonly<{ file: string; path: string }>;
 
-type Read = Readonly<{ path: string; start: number; maxBytes: number }>;
+export type Read = Readonly<{ path: string; start: number; maxBytes: number }>;
 
 type Reader = (
   position: number,
   size: number,
 ) => Effect.Effect<Uint8Array, PlatformError.PlatformError>;
 
-const MAX_CHUNK_BYTES = 2_097_152;
+export const MAX_CHUNK_BYTES = 2_097_152;
 const NEWLINE = 10;
 const NOT_FOUND = -1;
 const ONE = 1;
@@ -96,7 +96,7 @@ const chunkOf = (view: Uint8Array, request: Read): Option.Option<Chunk> => {
   });
 };
 
-const readChunk = (
+export const readChunk = (
   request: Read,
 ): Effect.Effect<Option.Option<Chunk>, PlatformError.PlatformError, FileSystem.FileSystem> =>
   Effect.gen(function* chunk() {
@@ -140,7 +140,7 @@ const subagentFiles = (
     );
   });
 
-const transcriptFiles = (
+export const transcriptFiles = (
   transcript: TranscriptFile,
 ): Effect.Effect<
   readonly TranscriptFile[],
@@ -160,6 +160,4 @@ const transcriptFiles = (
   });
 
 /** @internal */
-export { MAX_CHUNK_BYTES, readChunk, transcriptFiles };
 /** @internal */
-export type { Chunk, Read, TranscriptFile };

@@ -8,7 +8,7 @@ import { Speech } from "./speech";
 import { WikiLink } from "./wiki-link";
 import { YouTube } from "./you-tube";
 
-const components: MDXComponents = {
+export const components: MDXComponents = {
   Figure,
   FootnoteRef,
   Speech,
@@ -17,5 +17,3 @@ const components: MDXComponents = {
   img: LazyImage,
   table: ScrollTable,
 };
-
-export { components };

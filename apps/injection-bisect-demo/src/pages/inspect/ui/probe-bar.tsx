@@ -18,7 +18,7 @@ const endOf = (answer: Answer, total: number): number => {
   return total;
 };
 
-const ProbeBar = ({ row, total }: Readonly<{ row: Row; total: number }>): ReactNode => (
+export const ProbeBar = ({ row, total }: Readonly<{ row: Row; total: number }>): ReactNode => (
   <svg
     aria-hidden="true"
     className="bg-muted/50 h-2.5 min-w-0 flex-1 rounded-sm"
@@ -33,5 +33,3 @@ const ProbeBar = ({ row, total }: Readonly<{ row: Row; total: number }>): ReactN
     />
   </svg>
 );
-
-export { ProbeBar };

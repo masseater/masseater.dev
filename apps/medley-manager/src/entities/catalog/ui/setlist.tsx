@@ -7,7 +7,7 @@ import type { Watchable } from "#/entities/catalog/lib/watch-url";
 
 import { SetlistItem } from "./setlist-item";
 
-const Setlist = ({
+export const Setlist = ({
   source,
   parts,
 }: Readonly<{ source: Watchable; parts: readonly PartRow[] }>): ReactNode => (
@@ -24,5 +24,3 @@ const Setlist = ({
     )}
   </ol>
 );
-
-export { Setlist };

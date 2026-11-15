@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 
 import { SITE_NAME } from "#/shared/config";
 
-const SignInPage = (): ReactNode => (
+export const SignInPage = (): ReactNode => (
   <ActionPanel
     button={Button}
     title={SITE_NAME}
@@ -15,5 +15,3 @@ const SignInPage = (): ReactNode => (
     action={signInWithPasskey}
   />
 );
-
-export { SignInPage };

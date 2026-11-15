@@ -21,11 +21,11 @@ const describeChanges = (report: OverrideReport): string => {
   return Arr.join([...versions, ...contexts], "; ");
 };
 
-interface LocatedOverride extends OverrideKey {
+export interface LocatedOverride extends OverrideKey {
   readonly file: string;
 }
 
-const overrideProblem =
+export const overrideProblem =
   (located: LocatedOverride) =>
   (report: OverrideReport): Option.Option<Problem> => {
     const at = { file: located.file, line: located.line, column: located.column };
@@ -45,6 +45,3 @@ const overrideProblem =
     }
     return Option.none();
   };
-
-export { overrideProblem };
-export type { LocatedOverride };

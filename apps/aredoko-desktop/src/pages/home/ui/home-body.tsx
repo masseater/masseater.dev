@@ -8,7 +8,7 @@ import { FirstImport } from "./first-import.tsx";
 import { ResultDetail } from "./result-detail.tsx";
 import { ScopeHeader } from "./scope-header.tsx";
 
-const HomeBody = (): ReactNode => {
+export const HomeBody = (): ReactNode => {
   const packages = usePackages();
   if (packages.isSuccess && Array.isReadonlyArrayEmpty(packages.data)) {
     return <FirstImport />;
@@ -23,5 +23,3 @@ const HomeBody = (): ReactNode => {
     </div>
   );
 };
-
-export { HomeBody };

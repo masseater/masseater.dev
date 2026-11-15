@@ -2,9 +2,9 @@ import { Array as Arr, Order, Record as Rec, pipe } from "effect";
 
 import type { Entry } from "./life-filter";
 
-type Usage = Readonly<{ count: number; first: string; last: string }>;
+export type Usage = Readonly<{ count: number; first: string; last: string }>;
 
-type KeysOf = (entry: Entry) => readonly string[];
+export type KeysOf = (entry: Entry) => readonly string[];
 
 const usageOfDays = (days: Arr.NonEmptyReadonlyArray<string>): Usage => ({
   count: Arr.length(days),
@@ -28,7 +28,7 @@ const pairsOf =
       Arr.map((key): readonly [string, string] => [key, entry.row.dayEnd]),
     );
 
-const usageOf =
+export const usageOf =
   (keysOf: KeysOf) =>
   (entries: readonly Entry[]): Readonly<Record<string, Usage>> =>
     pipe(
@@ -38,10 +38,7 @@ const usageOf =
       Rec.map(usageOfPairs),
     );
 
-const countOf =
+export const countOf =
   (keyOf: (entry: Entry) => string) =>
   (entries: readonly Entry[]): Readonly<Record<string, number>> =>
     pipe(entries, Arr.groupBy(keyOf), Rec.map(Arr.length));
-
-export { countOf, usageOf };
-export type { KeysOf, Usage };

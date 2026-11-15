@@ -66,7 +66,7 @@ const describe = ({
     Arr.join("、"),
   )}`;
 
-const BarChart = ({
+export const BarChart = ({
   rows,
   title,
 }: Readonly<{ rows: readonly ChartRow[]; title: string }>): ReactNode => (
@@ -99,5 +99,3 @@ const BarChart = ({
     </Chart>
   </ChartContainer>
 );
-
-export { BarChart };

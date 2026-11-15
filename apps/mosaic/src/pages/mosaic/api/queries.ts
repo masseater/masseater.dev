@@ -14,18 +14,18 @@ import type { HttpClientError } from "effect/http";
 import { BASE_PATH } from "#/shared/config";
 import { runtime } from "#/shared/lib/telemetry";
 
-type Mosaic = typeof PublishedMosaic.Type;
-type TileList = typeof Tiles.Type;
-type CandidateList = typeof Candidates.Type;
+export type Mosaic = typeof PublishedMosaic.Type;
+export type TileList = typeof Tiles.Type;
+export type CandidateList = typeof Candidates.Type;
 type FetchError = HttpClientError.HttpClientError | Schema.SchemaError;
 
-interface Query<Value> {
+export interface Query<Value> {
   readonly queryKey: readonly string[];
   readonly queryFn: (context: Readonly<{ signal: AbortSignal }>) => Promise<Value>;
   readonly staleTime: number;
 }
 
-interface VariantFile {
+export interface VariantFile {
   readonly slug: string;
   readonly mosaic: Mosaic;
   readonly variant: number;
@@ -56,7 +56,7 @@ const fetchTiles = (path: string): Effect.Effect<TileList, FetchError, HttpClien
     Effect.withSpan("mosaic.tiles", { attributes: { path } }),
   );
 
-const mosaicQuery = (slug: string): Query<Mosaic> => {
+export const mosaicQuery = (slug: string): Query<Mosaic> => {
   const path = manifestPath(slug);
   return {
     queryKey: ["mosaic", path],
@@ -65,7 +65,10 @@ const mosaicQuery = (slug: string): Query<Mosaic> => {
   };
 };
 
-const candidatesQuery = ({ slug, mosaic }: Omit<VariantFile, "variant">): Query<CandidateList> => {
+export const candidatesQuery = ({
+  slug,
+  mosaic,
+}: Omit<VariantFile, "variant">): Query<CandidateList> => {
   const path = `${slugPath(slug)}/${mosaic.candidates}`;
   return {
     queryKey: ["candidates", path],
@@ -89,13 +92,10 @@ const tilesAt = (path: string): Query<TileList> => ({
   staleTime: Number.POSITIVE_INFINITY,
 });
 
-const tilesQuery = (file: VariantFile): Query<TileList> =>
+export const tilesQuery = (file: VariantFile): Query<TileList> =>
   tilesAt(`${variantPath(file)}/${file.mosaic.tiles}`);
 
-const tileChunkQuery = (file: VariantFile & { readonly index: number }): Query<TileList> =>
+export const tileChunkQuery = (file: VariantFile & { readonly index: number }): Query<TileList> =>
   tilesAt(
     `${variantPath(file)}/${file.mosaic.chunk.dir}/${Math.floor(file.index / file.mosaic.chunk.size)}.json`,
   );
-
-export type { CandidateList, Mosaic, Query, TileList, VariantFile };
-export { candidatesQuery, mosaicQuery, tileChunkQuery, tilesQuery };

@@ -77,7 +77,7 @@ const documentOf = (fields: FieldsData): Document => {
   });
 };
 
-const outlookReader: Reader = {
+export const outlookReader: Reader = {
   format: "msg",
   extensions: [".msg"],
   accepts: hasStream((name) => Str.startsWith(PROPERTY_STREAM)(name)),
@@ -95,5 +95,3 @@ const outlookReader: Reader = {
       ),
     ),
 };
-
-export { outlookReader };

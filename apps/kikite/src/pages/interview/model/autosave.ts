@@ -8,7 +8,7 @@ import { read, write } from "./registry.ts";
 
 const SAVE_EVERY = "3 seconds";
 
-const upload = Effect.fn("kikite.saveSession")(function* upload() {
+export const upload = Effect.fn("kikite.saveSession")(function* upload() {
   const record = yield* recordOf;
   if (Arr.isReadonlyArrayEmpty(record.entries)) {
     return;
@@ -36,10 +36,9 @@ const saveIfChanged = Effect.fn("kikite.saveIfChanged")(function* saveIfChanged(
   }
 });
 
-const autosaving = Effect.gen(function* autosaving() {
+export const autosaving = Effect.gen(function* autosaving() {
   const last = yield* Ref.make("");
   yield* Effect.repeat(saveIfChanged(last), Schedule.spaced(SAVE_EVERY));
 });
 
 /** @internal */
-export { autosaving, upload };

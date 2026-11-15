@@ -7,7 +7,9 @@ import { OpenerButton } from "./opener-button.tsx";
 import { ShowPackageButton } from "./show-package-button.tsx";
 import { useResultLinks } from "./use-result-links.ts";
 
-const ResultActions = ({ result }: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => {
+export const ResultActions = ({
+  result,
+}: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => {
   const { file, revealed, booth } = useResultLinks(result);
   return (
     <div className="flex flex-col gap-2">
@@ -19,5 +21,3 @@ const ResultActions = ({ result }: Readonly<{ result: typeof SearchResult.Type }
     </div>
   );
 };
-
-export { ResultActions };

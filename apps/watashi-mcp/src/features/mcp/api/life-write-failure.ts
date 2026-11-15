@@ -4,7 +4,7 @@ import { InvalidRecord } from "#/features/mcp/model/invalid-record";
 import { StorageFailed } from "#/features/mcp/model/storage-failed";
 import type { StoreFailure } from "#/features/mcp/model/tool-failure";
 
-type Place = Readonly<{ index: number; written: readonly string[] }>;
+export type Place = Readonly<{ index: number; written: readonly string[] }>;
 
 const writtenNote = (written: readonly string[]): string =>
   Arr.match(written, {
@@ -17,7 +17,7 @@ const locatedMessage =
   (message: string): string =>
     `records[${index}]: ${message}${writtenNote(written)}`;
 
-const locating =
+export const locating =
   (place: Place) =>
   <Value>(write: Effect.Effect<Value, StoreFailure>): Effect.Effect<Value, StoreFailure> => {
     const locate = locatedMessage(place);
@@ -35,6 +35,3 @@ const locating =
       ),
     );
   };
-
-export { locating };
-export type { Place };

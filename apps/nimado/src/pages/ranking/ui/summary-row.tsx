@@ -19,7 +19,7 @@ const gapTone = (value: Option.Option<number>): string =>
     onSome: (count) => cn(count >= ZERO && YOUTUBE_LEADS, count < ZERO && NICO_LEADS),
   });
 
-const SummaryRow = ({
+export const SummaryRow = ({
   entry,
   rank,
   open,
@@ -44,5 +44,3 @@ const SummaryRow = ({
     )}
   </tr>
 );
-
-export { SummaryRow };

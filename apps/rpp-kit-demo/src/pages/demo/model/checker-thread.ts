@@ -20,7 +20,7 @@ const prepare = (worker: Remote<CheckerWorker>, code: string): Effect.Effect<voi
     Effect.andThen(Effect.promise(() => worker.updateFile({ path: GENERATED_PATH, code }))),
   );
 
-const checkerThread = (code: string): Effect.Effect<Remote<CheckerWorker>, never, Scope.Scope> =>
+export const checkerThread = (
+  code: string,
+): Effect.Effect<Remote<CheckerWorker>, never, Scope.Scope> =>
   spawn.pipe(Effect.tap((worker) => prepare(worker, code)));
-
-export { checkerThread };

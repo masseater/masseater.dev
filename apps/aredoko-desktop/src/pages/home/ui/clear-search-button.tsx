@@ -6,7 +6,7 @@ import { useClearSearch, useDraft, useQueryText } from "#/pages/home/model";
 
 const LABEL = "検索をやめる";
 
-const ClearSearchButton = (): ReactNode => {
+export const ClearSearchButton = (): ReactNode => {
   const clear = useClearSearch();
   const draft = useDraft();
   const query = useQueryText();
@@ -26,5 +26,3 @@ const ClearSearchButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { ClearSearchButton };

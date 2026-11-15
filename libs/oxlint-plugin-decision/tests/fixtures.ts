@@ -10,23 +10,23 @@ import type { OxlintRun, Services, TestError } from "./oxlint.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-type Env = Readonly<Record<string, string>>;
+export type Env = Readonly<Record<string, string>>;
 
-type MockTest<Value = void> = Effect.Effect<Value, TestError, Services | MockOpenRouter>;
+export type MockTest<Value = void> = Effect.Effect<Value, TestError, Services | MockOpenRouter>;
 
-const RESPAN = "openrouter/respan/span-01-lite";
-const TIMEOUT = 120_000;
-const PASSED = 0;
-const FAILED = 1;
+export const RESPAN = "openrouter/respan/span-01-lite";
+export const TIMEOUT = 120_000;
+export const PASSED = 0;
+export const FAILED = 1;
 
-const callRule: DecisionRule = {
+export const callRule: DecisionRule = {
   id: "any-call",
   target: "call",
   question: "Does this call write personal data to a log?",
   cutoff: 0.8,
 };
 
-const lintExample: {
+export const lintExample: {
   (format: string): (env: Env) => Effect.Effect<OxlintRun, PlatformError, Services>;
   (env: Env, format: string): Effect.Effect<OxlintRun, PlatformError, Services>;
 } = Fn.dual(
@@ -42,7 +42,7 @@ const lintExample: {
     }),
 );
 
-interface ProjectRun {
+export interface ProjectRun {
   readonly files: Env;
   readonly options: DecisionPluginSetup;
   readonly env: Env;
@@ -50,7 +50,7 @@ interface ProjectRun {
   readonly ruleOptions?: Readonly<Record<string, object>>;
 }
 
-const lintProject = ({
+export const lintProject = ({
   files,
   options,
   env,
@@ -69,11 +69,12 @@ const lintProject = ({
     }),
   );
 
-const questionCount = (request: LoggedRequest): number => Rec.keys(request.body.questions).length;
+export const questionCount = (request: LoggedRequest): number =>
+  Rec.keys(request.body.questions).length;
 
-const modelOf = (request: LoggedRequest): string => request.body.model;
+export const modelOf = (request: LoggedRequest): string => request.body.model;
 
-const withMock = <Value>(
+export const withMock = <Value>(
   effect: Effect.Effect<Value, TestError, MockOpenRouter | Services>,
 ): Effect.Effect<Value, TestError, Services> =>
   Effect.scoped(
@@ -82,21 +83,7 @@ const withMock = <Value>(
     ),
   );
 
-const outputOf = (run: OxlintRun): string => `${run.stdout}${run.stderr}`;
+export const outputOf = (run: OxlintRun): string => `${run.stdout}${run.stderr}`;
 
 /** @internal */
-export {
-  FAILED,
-  PASSED,
-  RESPAN,
-  TIMEOUT,
-  callRule,
-  lintExample,
-  lintProject,
-  modelOf,
-  outputOf,
-  questionCount,
-  withMock,
-};
 /** @internal */
-export type { Env, MockTest, ProjectRun };

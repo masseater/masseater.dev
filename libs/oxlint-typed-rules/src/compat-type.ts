@@ -9,12 +9,12 @@ import type {
 
 import { CompatSymbol } from "./compat-symbol.ts";
 
-interface PseudoBigInt {
+export interface PseudoBigInt {
   readonly negative: boolean;
   readonly base10Value: string;
 }
 
-type LiteralValue = string | number | boolean | PseudoBigInt;
+export type LiteralValue = string | number | boolean | PseudoBigInt;
 
 const ZERO = 0n;
 
@@ -42,12 +42,12 @@ const constituentsOf = (native: NativeType): readonly NativeType[] =>
     Option.getOrElse((): readonly NativeType[] => []),
   );
 
-interface CompatSignature {
+export interface CompatSignature {
   readonly native: NativeSignature;
   readonly getReturnType: () => CompatType;
 }
 
-interface LegacyType {
+export interface LegacyType {
   readonly symbol: CompatSymbol | undefined;
   readonly aliasSymbol: CompatSymbol | undefined;
   readonly types: readonly CompatType[];
@@ -57,7 +57,7 @@ interface LegacyType {
   readonly getCallSignatures: () => readonly CompatSignature[];
 }
 
-class CompatType implements LegacyType {
+export class CompatType implements LegacyType {
   static readonly #interned = new WeakMap<NativeType, CompatType>();
 
   public readonly native: NativeType;
@@ -170,6 +170,3 @@ class CompatType implements LegacyType {
     );
   }
 }
-
-export type { CompatSignature, LegacyType, LiteralValue, PseudoBigInt };
-export { CompatType };

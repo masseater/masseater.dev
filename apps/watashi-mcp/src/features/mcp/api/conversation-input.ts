@@ -50,7 +50,7 @@ const ViewSchema = Schema.Literals(VIEWS).annotate({
     "raw はトランスクリプトの JSONL を text にそのまま返す。owner は持ち主の発言だけを {uuid, timestamp, text} の並びにして utterances に返す。既定は raw",
 });
 
-const ReadInput = Schema.Struct({
+export const ReadInput = Schema.Struct({
   kind: Schema.optionalKey(Kind),
   sessionId: Schema.optionalKey(SessionId),
   file: Schema.optionalKey(File),
@@ -60,9 +60,9 @@ const ReadInput = Schema.Struct({
   view: Schema.optionalKey(ViewSchema),
 });
 
-type Input = typeof ReadInput.Type;
+export type Input = typeof ReadInput.Type;
 
-type ReadRequest = Readonly<{
+export type ReadRequest = Readonly<{
   kind: ConversationKind;
   sessionId: string;
   file: string;
@@ -71,18 +71,20 @@ type ReadRequest = Readonly<{
   view: View;
 }>;
 
-type View = typeof ViewSchema.Type;
+export type View = typeof ViewSchema.Type;
 
-type ListRequest = Readonly<{ kind: ConversationKind; limit: number }>;
+export type ListRequest = Readonly<{ kind: ConversationKind; limit: number }>;
 
 const DEFAULT_KIND: ConversationKind = "claude-code";
 
-const listRequestOf = (input: Input): ListRequest => ({
+export const listRequestOf = (input: Input): ListRequest => ({
   kind: input.kind ?? DEFAULT_KIND,
   limit: input.limit ?? DEFAULT_SESSION_LIMIT,
 });
 
-const readRequestOf = (request: Readonly<{ input: Input; sessionId: string }>): ReadRequest => ({
+export const readRequestOf = (
+  request: Readonly<{ input: Input; sessionId: string }>,
+): ReadRequest => ({
   kind: request.input.kind ?? DEFAULT_KIND,
   sessionId: request.sessionId,
   file: request.input.file ?? request.sessionId,
@@ -90,6 +92,3 @@ const readRequestOf = (request: Readonly<{ input: Input; sessionId: string }>): 
   maxBytes: request.input.maxBytes ?? DEFAULT_MAX_BYTES,
   view: request.input.view ?? "raw",
 });
-
-export { ReadInput, listRequestOf, readRequestOf };
-export type { Input, ListRequest, ReadRequest, View };

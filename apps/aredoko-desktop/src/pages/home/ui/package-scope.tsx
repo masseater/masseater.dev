@@ -19,7 +19,7 @@ const valueOf = (selected: Option.Option<number>): string =>
 const idOf = (value: string): Option.Option<number> =>
   pipe(Option.some(Number(value)), Option.filter(Number.isInteger));
 
-const PackageScope = (): ReactNode => {
+export const PackageScope = (): ReactNode => {
   const selected = useSelectedPackage();
   const select = useSelectPackage();
   const onValueChange = useCallback(
@@ -35,5 +35,3 @@ const PackageScope = (): ReactNode => {
     </Select.Root>
   );
 };
-
-export { PackageScope };

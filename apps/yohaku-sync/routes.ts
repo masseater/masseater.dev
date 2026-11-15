@@ -53,7 +53,7 @@ const ROUTES: ReadonlyMap<string, Route> = new Map([
   [`PUT ${DOCUMENTS_PATH}`, push],
 ]);
 
-const routed = (request: Request): Effect.Effect<Response> =>
+export const routed = (request: Request): Effect.Effect<Response> =>
   pipe(
     routeKey(request),
     (key) => Option.fromUndefinedOr(ROUTES.get(key)),
@@ -62,5 +62,3 @@ const routed = (request: Request): Effect.Effect<Response> =>
       onSome: (route) => route(request),
     }),
   );
-
-export { routed };

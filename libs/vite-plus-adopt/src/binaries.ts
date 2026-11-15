@@ -1,16 +1,16 @@
 import { String as Str } from "effect";
 
-type Platform = "darwin-arm64" | "darwin-x64" | "linux-arm64" | "linux-x64" | "win32-x64";
+export type Platform = "darwin-arm64" | "darwin-x64" | "linux-arm64" | "linux-x64" | "win32-x64";
 
-type Archive = "tar.gz" | "zip";
+export type Archive = "tar.gz" | "zip";
 
-interface BinaryAsset {
+export interface BinaryAsset {
   readonly url: string;
   readonly sha256: string;
   readonly archive: Archive;
 }
 
-interface Binary {
+export interface Binary {
   readonly name: string;
   readonly version: string;
   readonly assets: Readonly<Record<Platform, BinaryAsset>>;
@@ -35,7 +35,7 @@ const betterleaksAsset = releaseAsset(
   "https://github.com/betterleaks/betterleaks/releases/download/v2.0.0-rc.7",
 );
 
-const BETTERLEAKS: Binary = {
+export const BETTERLEAKS: Binary = {
   name: "betterleaks",
   version: "2.0.0-rc.7",
   assets: {
@@ -66,7 +66,7 @@ const actionlintAsset = releaseAsset(
   "https://github.com/rhysd/actionlint/releases/download/v1.7.12",
 );
 
-const ACTIONLINT: Binary = {
+export const ACTIONLINT: Binary = {
   name: "actionlint",
   version: "1.7.12",
   assets: {
@@ -95,7 +95,7 @@ const ACTIONLINT: Binary = {
 
 const zizmorAsset = releaseAsset("https://github.com/zizmorcore/zizmor/releases/download/v1.32.0");
 
-const ZIZMOR: Binary = {
+export const ZIZMOR: Binary = {
   name: "zizmor",
   version: "1.32.0",
   assets: {
@@ -122,13 +122,10 @@ const ZIZMOR: Binary = {
   },
 };
 
-const PLATFORMS: readonly Platform[] = [
+export const PLATFORMS: readonly Platform[] = [
   "darwin-arm64",
   "darwin-x64",
   "linux-arm64",
   "linux-x64",
   "win32-x64",
 ];
-
-export { ACTIONLINT, BETTERLEAKS, PLATFORMS, ZIZMOR };
-export type { Archive, Binary, BinaryAsset, Platform };

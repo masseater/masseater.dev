@@ -84,7 +84,7 @@ const outcome = (thread: Worker): Effect.Effect<readonly Line[]> =>
     Effect.orElseSucceed(() => errorLine(playground.output.broken)),
   );
 
-const runScript = (script: Script): Effect.Effect<readonly Line[]> =>
+export const runScript = (script: Script): Effect.Effect<readonly Line[]> =>
   Effect.scoped(
     sandbox(scriptOf(script)).pipe(
       Effect.flatMap(outcome),
@@ -94,5 +94,3 @@ const runScript = (script: Script): Effect.Effect<readonly Line[]> =>
       }),
     ),
   );
-
-export { runScript };

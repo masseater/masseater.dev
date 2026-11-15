@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { thumbnailPath, workPath } from "#/pages/nikogori/model/works";
 import type { Work } from "#/pages/nikogori/model/works";
 
-const WorkItem = ({ work }: Readonly<{ work: Work }>): ReactNode => (
+export const WorkItem = ({ work }: Readonly<{ work: Work }>): ReactNode => (
   <li>
     <a className="block" href={workPath(work)}>
       <img
@@ -17,5 +17,3 @@ const WorkItem = ({ work }: Readonly<{ work: Work }>): ReactNode => (
     </a>
   </li>
 );
-
-export { WorkItem };

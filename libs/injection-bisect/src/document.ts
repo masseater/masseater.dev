@@ -11,12 +11,12 @@ import { BINARY, called, isBinary, itself, withUnreadable } from "./unreadable.t
 
 const NOT_FOUND = -1;
 
-interface Formats {
+export interface Formats {
   readonly parsers?: readonly Parser[];
   readonly readers?: readonly Reader[];
 }
 
-interface ReadInput extends Formats {
+export interface ReadInput extends Formats {
   readonly bytes: Uint8Array;
   readonly format?: string;
   readonly name?: string;
@@ -70,7 +70,7 @@ const archivesOf = <Archive>(
   return archives;
 };
 
-const formatsOf = (formats: Formats = {}): readonly string[] => [
+export const formatsOf = (formats: Formats = {}): readonly string[] => [
   AUTO,
   ...pipe(
     parsersOf(formats),
@@ -147,8 +147,5 @@ const partOf = (input: ReadInput): Effect.Effect<Document, ReadError> => {
   return named(withArchive, format);
 };
 
-const readDocument = (input: ReadInput): Effect.Effect<Document, ReadError> =>
+export const readDocument = (input: ReadInput): Effect.Effect<Document, ReadError> =>
   partOf(input).pipe(Effect.map(called(input.name ?? "")));
-
-export { formatsOf, readDocument };
-export type { Formats, ReadInput };

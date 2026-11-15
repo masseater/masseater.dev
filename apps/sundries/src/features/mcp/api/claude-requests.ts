@@ -7,11 +7,11 @@ import { Array as Arr, Clock, Effect, Option, Order } from "effect";
 
 import { claudeRequests } from "./claude-requests.table";
 
-type ClaudeRequest = typeof claudeRequests.$inferSelect;
+export type ClaudeRequest = typeof claudeRequests.$inferSelect;
 
-type NewRequest = Readonly<{ text: string; sender: string }>;
+export type NewRequest = Readonly<{ text: string; sender: string }>;
 
-type Reply = Readonly<{ id: number; reply: string; threadUrl: string }>;
+export type Reply = Readonly<{ id: number; reply: string; threadUrl: string }>;
 
 const PAGE_SIZE = 50;
 
@@ -22,7 +22,7 @@ const db = drizzle(env.CLAUDE_REQUESTS);
 const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, UpstreamFailed> =>
   Effect.tryPromise({ try: run, catch: failed });
 
-const enqueue = ({
+export const enqueue = ({
   text,
   sender,
 }: NewRequest): Effect.Effect<Readonly<{ id: number }>, UpstreamFailed> =>
@@ -42,16 +42,21 @@ const enqueue = ({
     ),
   );
 
-const take: Effect.Effect<readonly ClaudeRequest[], UpstreamFailed> = Clock.currentTimeMillis.pipe(
-  Effect.flatMap((takenAt) =>
-    query(() =>
-      db.update(claudeRequests).set({ takenAt }).where(isNull(claudeRequests.takenAt)).returning(),
+export const take: Effect.Effect<readonly ClaudeRequest[], UpstreamFailed> =
+  Clock.currentTimeMillis.pipe(
+    Effect.flatMap((takenAt) =>
+      query(() =>
+        db
+          .update(claudeRequests)
+          .set({ takenAt })
+          .where(isNull(claudeRequests.takenAt))
+          .returning(),
+      ),
     ),
-  ),
-  Effect.map(Arr.sortWith((request: ClaudeRequest) => request.id, Order.Number)),
-);
+    Effect.map(Arr.sortWith((request: ClaudeRequest) => request.id, Order.Number)),
+  );
 
-const answer = ({
+export const answer = ({
   id,
   reply,
   threadUrl,
@@ -83,10 +88,7 @@ const after = (id: number): Effect.Effect<readonly ClaudeRequest[], UpstreamFail
       .limit(PAGE_SIZE),
   );
 
-const listed = (
+export const listed = (
   from: Option.Option<number>,
 ): Effect.Effect<readonly ClaudeRequest[], UpstreamFailed> =>
   Option.match(from, { onNone: () => latest, onSome: after });
-
-export { answer, enqueue, listed, take };
-export type { ClaudeRequest, NewRequest, Reply };

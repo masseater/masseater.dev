@@ -24,6 +24,4 @@ const AllNotes = ({ notes, low, span, fill }: Props): ReactNode =>
     )),
   );
 
-const NoteRects = memo(AllNotes);
-
-export { NoteRects };
+export const NoteRects = memo(AllNotes);

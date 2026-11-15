@@ -3,19 +3,19 @@ import { Array, HashMap, Option, String, pipe } from "effect";
 import { pointerBytes, textAt, viewOf } from "./blend-blocks.ts";
 import type { Block, Layout } from "./blend-blocks.ts";
 
-interface Field {
+export interface Field {
   readonly offset: number;
   readonly size: number;
   readonly pointer: boolean;
   readonly count: number;
 }
 
-interface Struct {
+export interface Struct {
   readonly size: number;
   readonly fields: HashMap.HashMap<string, Field>;
 }
 
-interface Dna {
+export interface Dna {
   readonly structs: HashMap.HashMap<string, Struct>;
   readonly typeOf: readonly string[];
 }
@@ -166,7 +166,7 @@ const parseDna = (reading: Reading, layout: Layout): Option.Option<Dna> =>
     return { structs: HashMap.fromIterable(structs), typeOf };
   });
 
-const dnaOf = ({
+export const dnaOf = ({
   bytes,
   blocks,
   layout,
@@ -178,6 +178,3 @@ const dnaOf = ({
       parseDna({ bytes, little: layout.little, start: block.data }, layout),
     ),
   );
-
-export { dnaOf };
-export type { Dna, Field, Struct };

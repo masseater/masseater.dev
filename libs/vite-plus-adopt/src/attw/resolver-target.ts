@@ -29,20 +29,20 @@ import { RESOLUTION_VERSION } from "./types-versions.ts";
 
 const DATA_FIRST_ARITY_3 = 3;
 
-interface TargetContext {
+export interface TargetContext {
   readonly extensions: Extensions;
   readonly moduleName: string;
   readonly scope: PackageJsonInfo;
   readonly isImports: boolean;
 }
 
-interface TargetRequest {
+export interface TargetRequest {
   readonly subpath: string;
   readonly pattern: boolean;
   readonly key: string;
 }
 
-interface TargetSite {
+export interface TargetSite {
   readonly context: TargetContext;
   readonly request: TargetRequest;
 }
@@ -55,7 +55,7 @@ const RANGE_OPTIONS = { includePrerelease: true } as const;
 const FIRST_SEGMENT = 1;
 const EMPTY = 0;
 
-const notFound: SearchResult = Option.none();
+export const notFound: SearchResult = Option.none();
 
 const asSearchResult = (resolved: Option.Option<Resolved>): SearchResult =>
   resolved.pipe(Option.map((value) => Option.some(value)));
@@ -277,7 +277,7 @@ const loadStructuredTarget =
     return loadScalarTarget(target, site, state);
   };
 
-const loadTarget: {
+export const loadTarget: {
   (site: TargetSite, state: ResolutionState): (target: unknown) => SearchResult;
   (target: unknown, site: TargetSite, state: ResolutionState): SearchResult;
 } = Fn.dual(
@@ -289,6 +289,3 @@ const loadTarget: {
     return loadStructuredTarget(loadTarget)(target, site, state);
   },
 );
-
-export { loadTarget, notFound };
-export type { TargetContext, TargetRequest, TargetSite };

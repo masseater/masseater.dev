@@ -16,7 +16,10 @@ type Results = Arr.NonEmptyReadonlyArray<DecideResult>;
 
 type Worker = (inputs: Inputs) => Promise<Results>;
 
-interface SyncProviderSetup extends Pick<DecisionProvider, "name" | "requiredEnv" | "yesNo"> {
+export interface SyncProviderSetup extends Pick<
+  DecisionProvider,
+  "name" | "requiredEnv" | "yesNo"
+> {
   readonly worker: string;
 }
 
@@ -59,7 +62,7 @@ const askWorker = (worker: string, inputs: Inputs): Results =>
       ),
   );
 
-const syncProvider = ({ worker, ...provider }: SyncProviderSetup): DecisionProvider => ({
+export const syncProvider = ({ worker, ...provider }: SyncProviderSetup): DecisionProvider => ({
   ...provider,
   decide: (input) => Arr.headNonEmpty(askWorker(worker, [input])),
   decideAll: (inputs) =>
@@ -67,6 +70,4 @@ const syncProvider = ({ worker, ...provider }: SyncProviderSetup): DecisionProvi
 });
 
 /** @internal */
-export { syncProvider };
 /** @internal */
-export type { SyncProviderSetup };

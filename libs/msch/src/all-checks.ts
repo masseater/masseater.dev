@@ -10,7 +10,7 @@ import { checkTrackedText } from "./tracked-text.ts";
 import { checkWorkspaces } from "./workspace-checks.ts";
 
 /** @internal */
-const checkAll: (
+export const checkAll: (
   root: string,
 ) => Effect.Effect<
   readonly Problem[],
@@ -40,5 +40,3 @@ const checkAll: (
   );
   return Arr.flatten(found);
 });
-
-export { checkAll };

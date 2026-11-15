@@ -18,7 +18,7 @@ const resultsOf = (event: SpeechRecognitionEvent): readonly SpeechRecognitionRes
     event.results.item(event.resultIndex + offset),
   );
 
-const transcriptsOf = (event: SpeechRecognitionEvent): Transcripts => {
+export const transcriptsOf = (event: SpeechRecognitionEvent): Transcripts => {
   const results = resultsOf(event);
   return {
     finals: pipe(
@@ -34,5 +34,3 @@ const transcriptsOf = (event: SpeechRecognitionEvent): Transcripts => {
     ),
   };
 };
-
-export { transcriptsOf };

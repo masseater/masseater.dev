@@ -1,6 +1,6 @@
 import { makeD1 } from "@masseater.dev/d1-test";
 
-const { closeDatabase, env, resetDatabase } = makeD1({
+export const { closeDatabase, env, resetDatabase } = makeD1({
   migrations: new URL("../../../../drizzle/", import.meta.url).href,
   tables: [
     "life_record",
@@ -11,5 +11,3 @@ const { closeDatabase, env, resetDatabase } = makeD1({
     "trait_cursor",
   ],
 });
-
-export { closeDatabase, env, resetDatabase };

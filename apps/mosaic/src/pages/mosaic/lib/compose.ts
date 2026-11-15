@@ -110,7 +110,7 @@ const paint = ({
   return canvas;
 };
 
-const composeBlock = (spec: BlockSpec): Effect.Effect<string> =>
+export const composeBlock = (spec: BlockSpec): Effect.Effect<string> =>
   Effect.gen(function* compose() {
     const members = membersOf(spec);
     const sources = yield* sourcesOf(spec, members);
@@ -121,5 +121,3 @@ const composeBlock = (spec: BlockSpec): Effect.Effect<string> =>
     const blob = yield* Effect.promise(() => canvas.convertToBlob({ type: PNG }));
     return URL.createObjectURL(blob);
   }).pipe(Effect.withSpan("mosaic.compose", { attributes: { file: spec.file } }));
-
-export { composeBlock };

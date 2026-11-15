@@ -9,7 +9,7 @@ interface CreditItemProps {
   readonly service: string;
 }
 
-const CreditItem = ({ name, artist, url, service }: CreditItemProps): ReactNode => (
+export const CreditItem = ({ name, artist, url, service }: CreditItemProps): ReactNode => (
   <li className="flex flex-col py-2 text-sm sm:flex-row sm:items-baseline sm:gap-3">
     <a href={url} target="_blank" rel="noreferrer" className="font-medium hover:underline">
       {name}
@@ -21,5 +21,3 @@ const CreditItem = ({ name, artist, url, service }: CreditItemProps): ReactNode 
     </span>
   </li>
 );
-
-export { CreditItem };

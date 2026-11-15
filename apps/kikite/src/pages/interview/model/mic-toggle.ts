@@ -33,7 +33,6 @@ const toggleMic = Effect.fn("kikite.toggleMic")(function* toggleMic() {
   }
 });
 
-const toggleMicAtom = Atom.fn(() => toggleMic());
+export const toggleMicAtom = Atom.fn(() => toggleMic());
 
 /** @internal */
-export { toggleMicAtom };

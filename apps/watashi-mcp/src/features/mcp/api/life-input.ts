@@ -21,11 +21,11 @@ import { BUCKETS } from "./life-groups";
 
 const MIN_ONE = 1;
 
-const DEFAULT_READ_LIMIT = 20;
+export const DEFAULT_READ_LIMIT = 20;
 
 const MAX_READ_LIMIT = 1000;
 
-const DEFAULT_PERIODS = 4;
+export const DEFAULT_PERIODS = 4;
 
 const MAX_PERIODS = 24;
 
@@ -124,7 +124,7 @@ const WriteItem = Schema.Union([
   MetricDefinitionCreate,
 ]);
 
-const LifeWriteInput = Schema.Struct({
+export const LifeWriteInput = Schema.Struct({
   records: Schema.Array(WriteItem).check(Schema.isMinLength(MIN_ONE)),
 });
 
@@ -134,7 +134,7 @@ const ReadLimit = Schema.Int.check(
 
 const Periods = Schema.Int.check(Schema.isBetween({ minimum: MIN_ONE, maximum: MAX_PERIODS }));
 
-const LifeReadInput = Schema.Struct({
+export const LifeReadInput = Schema.Struct({
   ref: Schema.optionalKey(Ref),
   revisions: Schema.optionalKey(Schema.Boolean),
   record: Schema.optionalKey(Schema.Literals([...LIFE_RECORDS, "digest"])),
@@ -194,7 +194,7 @@ const CompareTo = Schema.Union([Period, Schema.Literal("previousYear"), Schema.N
   description: "Omit for the previous period of the same length. null for none.",
 });
 
-const LifeStatsInput = Schema.Struct({
+export const LifeStatsInput = Schema.Struct({
   metrics: Metrics,
   from: Time,
   to: Time,
@@ -204,13 +204,10 @@ const LifeStatsInput = Schema.Struct({
   groupBy: Schema.optionalKey(GroupBy),
 });
 
-type WriteItemValue = typeof WriteItem.Type;
+export type WriteItemValue = typeof WriteItem.Type;
 
-type ChangeValue = typeof Change.Type;
+export type ChangeValue = typeof Change.Type;
 
-type LifeReadValue = typeof LifeReadInput.Type;
+export type LifeReadValue = typeof LifeReadInput.Type;
 
-type LifeStatsValue = typeof LifeStatsInput.Type;
-
-export { DEFAULT_PERIODS, DEFAULT_READ_LIMIT, LifeReadInput, LifeStatsInput, LifeWriteInput };
-export type { ChangeValue, LifeReadValue, LifeStatsValue, WriteItemValue };
+export type LifeStatsValue = typeof LifeStatsInput.Type;

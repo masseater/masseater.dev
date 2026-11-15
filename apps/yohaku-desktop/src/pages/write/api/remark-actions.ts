@@ -18,7 +18,7 @@ interface Proposal {
   readonly done: boolean;
 }
 
-interface RemarkActions extends Proposal {
+export interface RemarkActions extends Proposal {
   readonly rewriting: boolean;
   readonly rewrite: () => void;
   readonly replace: () => void;
@@ -71,7 +71,7 @@ const replaced = (marked: Marked, view: EditorView, text: string): void => {
   });
 };
 
-const useRemarkActions = (marked: Marked): RemarkActions => {
+export const useRemarkActions = (marked: Marked): RemarkActions => {
   const yohaku = useYohaku();
   const editor = useAtomValue(editorAtom);
   const id = useAtomValue(manuscriptIdAtom);
@@ -112,6 +112,3 @@ const useRemarkActions = (marked: Marked): RemarkActions => {
     },
   };
 };
-
-export { useRemarkActions };
-export type { RemarkActions };

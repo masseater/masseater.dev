@@ -20,12 +20,12 @@ import type { SignalKey } from "./requests.ts";
 
 const taggedError = Schema.TaggedError;
 
-class MalformedExport extends taggedError<MalformedExport, { readonly brand: unique symbol }>()(
-  "MalformedExport",
-  { message: Schema.String },
-) {}
+export class MalformedExport extends taggedError<
+  MalformedExport,
+  { readonly brand: unique symbol }
+>()("MalformedExport", { message: Schema.String }) {}
 
-interface Endpoint {
+export interface Endpoint {
   readonly key: SignalKey;
   readonly httpPath: string;
   readonly grpcPath: string;
@@ -33,7 +33,7 @@ interface Endpoint {
   readonly response: DescMessage;
 }
 
-const ENDPOINTS: readonly Endpoint[] = [
+export const ENDPOINTS: readonly Endpoint[] = [
   {
     key: "traces",
     httpPath: "/v1/traces",
@@ -65,12 +65,12 @@ const decodeJsonText = Schema.decodeUnknownEffect(Schema.fromJsonString(Schema.M
 const parse = (read: () => Message): Effect.Effect<Message, MalformedExport> =>
   Effect.try({ try: read, catch: malformed });
 
-const fromProtobuf =
+export const fromProtobuf =
   (endpoint: Endpoint) =>
   (body: Uint8Array): Effect.Effect<Message, MalformedExport> =>
     parse(() => fromBinary(endpoint.request, body));
 
-const fromOtlpJson =
+export const fromOtlpJson =
   (endpoint: Endpoint) =>
   (body: Uint8Array): Effect.Effect<Message, MalformedExport> =>
     decodeJsonText(new TextDecoder().decode(body)).pipe(
@@ -82,12 +82,12 @@ const fromOtlpJson =
       ),
     );
 
-const normalized =
+export const normalized =
   (endpoint: Endpoint) =>
   (message: Message): Effect.Effect<JsonValue, MalformedExport> =>
     Effect.try({ try: () => normalize(toJson(endpoint.request, message)), catch: malformed });
 
-const encoded =
+export const encoded =
   (endpoint: Endpoint) =>
   (message: Message): Uint8Array =>
     toBinary(endpoint.request, message);
@@ -101,7 +101,7 @@ const gunzip = (body: Uint8Array): Effect.Effect<Uint8Array, MalformedExport> =>
     catch: malformed,
   });
 
-const gunzipWhen =
+export const gunzipWhen =
   (compressed: boolean) =>
   (body: Uint8Array): Effect.Effect<Uint8Array, MalformedExport> =>
     Option.match(
@@ -112,31 +112,17 @@ const gunzipWhen =
       },
     );
 
-type Store = (
+export type Store = (
   endpoint: Endpoint,
 ) => (message: Message) => Effect.Effect<void, MalformedExport | ForwardFailed>;
 
-const LOOPBACK = "127.0.0.1";
+export const LOOPBACK = "127.0.0.1";
 
-const originOf = (address: object): string =>
+export const originOf = (address: object): string =>
   Option.match(Option.liftPredicate(address, Predicate.hasProperty("port")), {
     onSome: ({ port }) => `http://${LOOPBACK}:${String(port)}`,
     onNone: () => "",
   });
 
-const emptyResponse = (endpoint: Endpoint): Uint8Array =>
+export const emptyResponse = (endpoint: Endpoint): Uint8Array =>
   toBinary(endpoint.response, create(endpoint.response));
-
-export {
-  ENDPOINTS,
-  MalformedExport,
-  encoded,
-  normalized,
-  emptyResponse,
-  fromOtlpJson,
-  fromProtobuf,
-  gunzipWhen,
-  originOf,
-  LOOPBACK,
-};
-export type { Endpoint, Store };

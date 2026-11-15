@@ -9,7 +9,7 @@ import { MODELS } from "#/pages/inspect/model/models";
 
 import { SELECT_CLASS } from "./select-class";
 
-const ModelField = (): ReactNode => {
+export const ModelField = (): ReactNode => {
   const model = useModel();
   const setModel = useSetModel();
   const pick = useCallback(
@@ -36,5 +36,3 @@ const ModelField = (): ReactNode => {
     </select>
   );
 };
-
-export { ModelField };

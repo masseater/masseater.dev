@@ -7,7 +7,7 @@ import { TableCell } from "#/shared/ui/table-cell";
 import { TableHead } from "#/shared/ui/table-head";
 import { TableRow } from "#/shared/ui/table-row";
 
-const SortBodyRow = <Row,>({
+export const SortBodyRow = <Row,>({
   row,
   label,
   color,
@@ -32,5 +32,3 @@ const SortBodyRow = <Row,>({
     )}
   </TableRow>
 );
-
-export { SortBodyRow };

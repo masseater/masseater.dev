@@ -6,12 +6,12 @@ import { Array, Option, Record, pipe } from "effect";
 
 import { lineOf } from "./paragraph-ids.ts";
 
-interface Draft {
+export interface Draft {
   readonly text: string;
   readonly done: boolean;
 }
 
-interface DraftActions {
+export interface DraftActions {
   readonly accept: (paragraphId: string) => void;
   readonly rewrite: (paragraphId: string) => void;
   readonly keep: (paragraphId: string) => void;
@@ -27,12 +27,12 @@ const PRIMARY =
   "h-8 rounded-md bg-primary px-3.5 text-sm text-primary-foreground disabled:opacity-50";
 const SECONDARY = "h-8 rounded-md border px-3.5 text-sm disabled:opacity-50";
 
-const draftActions = Facet.define<DraftActions, Option.Option<DraftActions>>({
+export const draftActions = Facet.define<DraftActions, Option.Option<DraftActions>>({
   combine: (values) => Array.head(values),
 });
 
-const draftSet = StateEffect.define<Readonly<{ paragraphId: string; draft: Draft }>>();
-const draftClosed = StateEffect.define<string>();
+export const draftSet = StateEffect.define<Readonly<{ paragraphId: string; draft: Draft }>>();
+export const draftClosed = StateEffect.define<string>();
 
 const applied = (drafts: Drafts, effect: StateEffect<unknown>): Drafts => {
   if (effect.is(draftSet)) {
@@ -154,7 +154,7 @@ const widgetsOf = (state: EditorState, drafts: Drafts): DecorationSet =>
     true,
   );
 
-const draftsField = StateField.define<Drafts>({
+export const draftsField = StateField.define<Drafts>({
   create: () => Record.empty(),
   update: (drafts, transaction) => {
     let next = drafts;
@@ -167,10 +167,7 @@ const draftsField = StateField.define<Drafts>({
     EditorView.decorations.compute([field], (state) => widgetsOf(state, state.field(field))),
 });
 
-const draftOf =
+export const draftOf =
   (paragraphId: string) =>
   (state: EditorState): Option.Option<Draft> =>
     Record.get(state.field(draftsField), paragraphId);
-
-export { draftActions, draftClosed, draftOf, draftSet, draftsField };
-export type { Draft, DraftActions };

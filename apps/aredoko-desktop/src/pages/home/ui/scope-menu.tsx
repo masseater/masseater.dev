@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { ScopeOptions } from "./scope-options.tsx";
 
-const ScopeMenu = (): ReactNode => (
+export const ScopeMenu = (): ReactNode => (
   <Select.Portal>
     <Select.Content
       position="popper"
@@ -14,5 +14,3 @@ const ScopeMenu = (): ReactNode => (
     </Select.Content>
   </Select.Portal>
 );
-
-export { ScopeMenu };

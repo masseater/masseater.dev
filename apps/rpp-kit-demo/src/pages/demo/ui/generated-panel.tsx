@@ -7,7 +7,7 @@ import { Panel } from "./panel";
 import { PanelBody } from "./panel-body";
 import { PanelLabel } from "./panel-label";
 
-const GeneratedPanel = (): ReactNode => (
+export const GeneratedPanel = (): ReactNode => (
   <Panel className="h-72 lg:h-auto">
     <PanelLabel label={playground.panes.generated} note={playground.generatedNote} />
     <PanelBody>
@@ -15,5 +15,3 @@ const GeneratedPanel = (): ReactNode => (
     </PanelBody>
   </Panel>
 );
-
-export { GeneratedPanel };

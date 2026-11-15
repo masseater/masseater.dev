@@ -1,10 +1,10 @@
 import { Schema } from "effect";
 
-const CONVERSATIONS_PATH = "/api/conversations";
+export const CONVERSATIONS_PATH = "/api/conversations";
 
-const CONVERSATION_KINDS = ["claude-code"] as const;
+export const CONVERSATION_KINDS = ["claude-code"] as const;
 
-const CONVERSATION_SOURCES = ["claude-code-local", "claude-code-cloud"] as const;
+export const CONVERSATION_SOURCES = ["claude-code-local", "claude-code-cloud"] as const;
 
 const NO_OFFSET = 0;
 
@@ -15,13 +15,13 @@ const Offset = Schema.FiniteFromString.check(
 
 const Kind = Schema.Literals(CONVERSATION_KINDS);
 
-const FileQuery = Schema.Struct({
+export const FileQuery = Schema.Struct({
   kind: Kind,
   session: Schema.String.check(Schema.isPattern(/^[\w-]{1,128}$/u)),
   file: Schema.String.check(Schema.isPattern(/^(?:[\w-]{1,128}|subagents\/[\w.-]{1,160})$/u)),
 });
 
-const ChunkQuery = Schema.Struct({
+export const ChunkQuery = Schema.Struct({
   ...FileQuery.fields,
   start: Offset,
   end: Offset,
@@ -31,25 +31,14 @@ const ChunkQuery = Schema.Struct({
   remoteSession: Schema.String,
 });
 
-const Committed = Schema.Struct({ committed: Schema.Int });
+export const Committed = Schema.Struct({ committed: Schema.Int });
 
-const Conflict = Schema.Struct({ expected: Schema.Int });
+export const Conflict = Schema.Struct({ expected: Schema.Int });
 
-type ConversationKind = typeof Kind.Type;
+export type ConversationKind = typeof Kind.Type;
 
-type ConversationSource = (typeof CONVERSATION_SOURCES)[number];
+export type ConversationSource = (typeof CONVERSATION_SOURCES)[number];
 
-type FileParams = typeof FileQuery.Type;
+export type FileParams = typeof FileQuery.Type;
 
-type ChunkParams = typeof ChunkQuery.Type;
-
-export {
-  CONVERSATIONS_PATH,
-  CONVERSATION_KINDS,
-  CONVERSATION_SOURCES,
-  ChunkQuery,
-  Committed,
-  Conflict,
-  FileQuery,
-};
-export type { ChunkParams, ConversationKind, ConversationSource, FileParams };
+export type ChunkParams = typeof ChunkQuery.Type;

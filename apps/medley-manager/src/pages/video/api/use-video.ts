@@ -6,9 +6,7 @@ import type { VideoDetail } from "#/entities/catalog";
 
 const route = getRouteApi("/videos/$id");
 
-const useVideo = (): VideoDetail => {
+export const useVideo = (): VideoDetail => {
   const { id } = route.useParams();
   return useSuspenseQuery(catalogQueries.videos({ id }).get.queryOptions()).data;
 };
-
-export { useVideo };

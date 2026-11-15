@@ -3,7 +3,7 @@ import type { DecisionRule } from "@r_masseater/oxlint-plugin-decision";
 import { claimRule } from "./claim-rule.ts";
 import { isDescribeCall, isTestCall } from "./claim-select.ts";
 
-const describeNamesSubject = claimRule({
+export const describeNamesSubject = claimRule({
   id: "describe-names-subject",
   cutoff: 0.8,
   target: "call",
@@ -13,7 +13,7 @@ const describeNamesSubject = claimRule({
   no: "What the title names is what the tests exercise, directly or through something that reaches it: a feature tested through a public function of another name, a class tested through its factory or an instance created in beforeEach, a title that is a file name, a scenario or a sentence when the tests are about it, or an abbreviation or synonym of what the tests call.",
 });
 
-const testNameDescribesCode = claimRule({
+export const testNameDescribesCode = claimRule({
   id: "test-name-describes-code",
   cutoff: 0.8,
   target: "call",
@@ -23,7 +23,7 @@ const testNameDescribesCode = claimRule({
   no: "The code calls the operation the name says, on the input the name says, and expects the kind of outcome the name says, however weak the assertion is. A one-word title, a synonym for the operation's name, and setup that calls other operations before the named one are all fine.",
 });
 
-const testNameVerifiesClaim = claimRule({
+export const testNameVerifiesClaim = claimRule({
   id: "test-name-verifies-claim",
   cutoff: 0.8,
   target: "call",
@@ -33,7 +33,7 @@ const testNameVerifiesClaim = claimRule({
   no: "The body contains at least one assertion that would fail if the named behaviour were broken. A name that claims only that something renders or matches a snapshot is established by the snapshot; a name that claims an interaction with a collaborator is established by an assertion on that call; a name that claims only that something does not throw is established by calling it.",
 });
 
-const snapshotOnlyBehaviourClaim = claimRule({
+export const snapshotOnlyBehaviourClaim = claimRule({
   id: "snapshot-only-behaviour-claim",
   cutoff: 0.8,
   target: "call",
@@ -43,7 +43,7 @@ const snapshotOnlyBehaviourClaim = claimRule({
   no: "The body uses no snapshot; or the title claims only that the output matches a snapshot or renders, or only names the input; or at least one assertion targets the named behaviour directly; or the inline snapshot is a short literal that is itself the named outcome.",
 });
 
-const testMocksSubject = claimRule({
+export const testMocksSubject = claimRule({
   id: "test-mocks-subject",
   cutoff: 0.8,
   target: "call",
@@ -53,19 +53,10 @@ const testMocksSubject = claimRule({
   no: "The body mocks nothing; or the stub stands in for a collaborator the code under test calls (the network, the clock, a repository, a mailer) and the assertion checks what the real code did with the stub's output; or the title is itself about the collaborator; or the spy has no replacement value and the real method runs.",
 });
 
-const testClaims = [
+export const testClaims = [
   describeNamesSubject,
   testNameDescribesCode,
   testNameVerifiesClaim,
   snapshotOnlyBehaviourClaim,
   testMocksSubject,
 ] as const satisfies readonly DecisionRule[];
-
-export {
-  describeNamesSubject,
-  snapshotOnlyBehaviourClaim,
-  testClaims,
-  testMocksSubject,
-  testNameDescribesCode,
-  testNameVerifiesClaim,
-};

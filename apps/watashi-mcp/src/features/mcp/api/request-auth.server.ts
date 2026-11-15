@@ -10,11 +10,11 @@ import { hashApiToken, isApiToken } from "./api-token";
 import { activeTokenByHash } from "./api-token-store.server";
 import { FORBIDDEN, UNAUTHORIZED, storageFailed, withStatus } from "./http-json";
 
-type Principal = Readonly<{ via: "oauth" | "token" }>;
+export type Principal = Readonly<{ via: "oauth" | "token" }>;
 
-type Handler = (request: Request, principal: Principal) => Effect.Effect<Response>;
+export type Handler = (request: Request, principal: Principal) => Effect.Effect<Response>;
 
-type Guarded = Readonly<{ request: Request; scope: TokenScope; handle: Handler }>;
+export type Guarded = Readonly<{ request: Request; scope: TokenScope; handle: Handler }>;
 
 const BEARER_PREFIX = "Bearer ";
 
@@ -27,7 +27,7 @@ const bearerOf = (request: Request): Option.Option<string> =>
     Option.map(Str.slice(BEARER_PREFIX.length)),
   );
 
-const asOwner =
+export const asOwner =
   (handle: Handler) =>
   (request: Request): Promise<Response> =>
     requireMcpAuth(createAuth(), (authorized) => run(handle(authorized, { via: "oauth" })), {
@@ -68,11 +68,8 @@ const asTokenHolder =
   (token: string): Promise<Response> =>
     run(verified(guarded)(token));
 
-const asOwnerOrTokenHolder = (guarded: Guarded): Promise<Response> =>
+export const asOwnerOrTokenHolder = (guarded: Guarded): Promise<Response> =>
   Option.match(Option.filter(bearerOf(guarded.request), isApiToken), {
     onNone: () => asOwner(guarded.handle)(guarded.request),
     onSome: asTokenHolder(guarded),
   });
-
-export { asOwner, asOwnerOrTokenHolder };
-export type { Guarded, Handler, Principal };

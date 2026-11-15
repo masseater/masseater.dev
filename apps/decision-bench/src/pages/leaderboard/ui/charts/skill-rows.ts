@@ -7,7 +7,7 @@ import type { TaskEntry } from "#/pages/leaderboard/model/ranking";
 import type { ChartRow } from "./chart-row";
 import { taskDetail } from "./model-detail";
 
-const skillRows = (entries: readonly TaskEntry[]): readonly ChartRow[] =>
+export const skillRows = (entries: readonly TaskEntry[]): readonly ChartRow[] =>
   pipe(
     entries,
     Arr.map((entry): ChartRow => {
@@ -26,5 +26,3 @@ const skillRows = (entries: readonly TaskEntry[]): readonly ChartRow[] =>
       };
     }),
   );
-
-export { skillRows };

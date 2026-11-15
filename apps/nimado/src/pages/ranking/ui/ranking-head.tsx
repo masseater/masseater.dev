@@ -4,7 +4,7 @@ import { TEXT } from "#/pages/ranking/model/labels";
 
 const NUMBER_CELL = "py-2 pl-2 text-right font-normal";
 
-const RankingHead = ({ youtube }: Readonly<{ youtube: boolean }>): ReactNode => (
+export const RankingHead = ({ youtube }: Readonly<{ youtube: boolean }>): ReactNode => (
   <thead className="text-muted-foreground border-b text-left text-xs">
     <tr>
       <th className="w-12 py-2 pr-2 text-right font-normal">{TEXT.rank}</th>
@@ -15,5 +15,3 @@ const RankingHead = ({ youtube }: Readonly<{ youtube: boolean }>): ReactNode => 
     </tr>
   </thead>
 );
-
-export { RankingHead };

@@ -36,7 +36,7 @@ const UNSUPPORTED: Listening = { status: "unsupported" };
 const LISTENING: Listening = { status: "listening" };
 const IDLE = { status: "idle" } as const;
 
-const reset = Effect.gen(function* reset() {
+export const reset = Effect.gen(function* reset() {
   const now = yield* Clock.currentTimeMillis;
   const random = yield* SecureRandom.SecureRandom;
   const id = yield* random.uuidV4();
@@ -57,14 +57,14 @@ const reset = Effect.gen(function* reset() {
   ]);
 });
 
-const release = Effect.all([
+export const release = Effect.all([
   write(listeningAtom, { status: "off" }),
   write(recognitionAtom, Option.none()),
   write(askingAtom, IDLE),
   write(hearingAtom, false),
 ]);
 
-const startListening = Effect.fn("kikite.startListening")(function* startListening(
+export const startListening = Effect.fn("kikite.startListening")(function* startListening(
   listeners: Listeners,
 ) {
   const recognition = yield* listen({
@@ -81,4 +81,3 @@ const startListening = Effect.fn("kikite.startListening")(function* startListeni
 });
 
 /** @internal */
-export { release, reset, startListening };

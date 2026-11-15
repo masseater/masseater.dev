@@ -28,7 +28,7 @@ const Report = Schema.Record(Schema.String, ScoresSchema);
 
 const ReportJson = Schema.fromJsonString(Report);
 
-type ReportValue = Readonly<Record<string, Scores>>;
+export type ReportValue = Readonly<Record<string, Scores>>;
 
 const METRICS = ["hitAt1", "hitAt5", "hitAt10", "mrr"] as const;
 
@@ -73,7 +73,7 @@ const readBaseline = Effect.gen(function* readBaseline() {
 const encodeReport = Schema.encodeEffect(Schema.fromJsonString(Report, { space: INDENT }));
 
 /** @internal */
-const writeReport = Effect.fn("writeReport")(function* writeReport(
+export const writeReport = Effect.fn("writeReport")(function* writeReport(
   report: ReportValue,
   updateBaseline: boolean,
 ) {
@@ -87,7 +87,7 @@ const writeReport = Effect.fn("writeReport")(function* writeReport(
 });
 
 /** @internal */
-const printComparison = Effect.fn("printComparison")(function* printComparison(
+export const printComparison = Effect.fn("printComparison")(function* printComparison(
   report: ReportValue,
 ) {
   const baseline = yield* readBaseline;
@@ -112,6 +112,3 @@ const printComparison = Effect.fn("printComparison")(function* printComparison(
   );
   yield* Console.log(Array.join(lines, "\n"));
 });
-
-export { printComparison, writeReport };
-export type { ReportValue };

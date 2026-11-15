@@ -12,7 +12,7 @@ import { reportOf } from "./report.ts";
 import type { Report } from "./report.ts";
 import { uploadAtom } from "./session.ts";
 
-const useRate = (id: number): ((rating: Rating) => void) => {
+export const useRate = (id: number): ((rating: Rating) => void) => {
   const setEntries = useAtomSet(entriesAtom);
   const upload = useAtomSet(uploadAtom);
   return useCallback(
@@ -24,7 +24,7 @@ const useRate = (id: number): ((rating: Rating) => void) => {
   );
 };
 
-const useSave = (): (() => void) => {
+export const useSave = (): (() => void) => {
   const save = useAtomSet(saveAtom);
   return useCallback(() => {
     save();
@@ -39,7 +39,7 @@ const copied = (text: string): Effect.Effect<void> =>
     }),
   );
 
-const useCopyHandoff = (): (() => void) => {
+export const useCopyHandoff = (): (() => void) => {
   const summary = useSummary();
   return useCallback(() => {
     pipe(
@@ -49,20 +49,19 @@ const useCopyHandoff = (): (() => void) => {
   }, [summary]);
 };
 
-const useRestart = (): (() => void) => {
+export const useRestart = (): (() => void) => {
   const setPhase = useAtomSet(phaseAtom);
   return useCallback(() => {
     setPhase({ status: "interview" });
   }, [setPhase]);
 };
 
-const useReport = (): Report => {
+export const useReport = (): Report => {
   const entries = useAtomValue(entriesAtom);
   const progress = useAtomValue(progressAtom);
   const { withdrawn } = useAtomValue(heardAtom);
   return useMemo(() => reportOf({ entries, progress, withdrawn }), [entries, progress, withdrawn]);
 };
 
-export { useCopyHandoff, useRate, useReport, useRestart, useSave };
 export type { Rating } from "./atoms.ts";
 export type { Change, Report, StrategyRow, Wait } from "./report.ts";

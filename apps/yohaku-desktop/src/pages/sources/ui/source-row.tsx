@@ -20,7 +20,7 @@ const addedBy = ({ origin, client }: SourceType): string => {
   return ORIGINS[origin];
 };
 
-const SourceRow = ({ source }: Readonly<{ source: SourceType }>): ReactNode => (
+export const SourceRow = ({ source }: Readonly<{ source: SourceType }>): ReactNode => (
   <li className="flex items-center gap-3 border-b py-2.5">
     <span className="min-w-0 grow truncate font-medium">{source.label}</span>
     <span className="text-muted-foreground w-40 shrink-0">{addedBy(source)}</span>
@@ -30,5 +30,3 @@ const SourceRow = ({ source }: Readonly<{ source: SourceType }>): ReactNode => (
     </span>
   </li>
 );
-
-export { SourceRow };

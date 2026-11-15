@@ -5,7 +5,10 @@ import type { Rating } from "#/pages/interview/model/review-hooks";
 
 import { RatingButton } from "./rating-button.tsx";
 
-const RatingButtons = ({ id, rating }: Readonly<{ id: number; rating: Rating }>): ReactNode => (
+export const RatingButtons = ({
+  id,
+  rating,
+}: Readonly<{ id: number; rating: Rating }>): ReactNode => (
   <span
     className={cn(
       "absolute top-2 right-0 flex gap-0.5 transition-opacity",
@@ -17,5 +20,3 @@ const RatingButtons = ({ id, rating }: Readonly<{ id: number; rating: Rating }>)
     <RatingButton id={id} current={rating} value="off" />
   </span>
 );
-
-export { RatingButtons };

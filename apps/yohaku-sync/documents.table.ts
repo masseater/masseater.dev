@@ -1,6 +1,6 @@
 import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
-const documents = sqliteTable(
+export const documents = sqliteTable(
   "documents",
   {
     revision: integer("revision").primaryKey({ autoIncrement: true }),
@@ -12,5 +12,3 @@ const documents = sqliteTable(
   },
   (table) => [uniqueIndex("documents_kind_id_idx").on(table.kind, table.id)],
 );
-
-export { documents };

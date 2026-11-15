@@ -7,7 +7,7 @@ import { RestartButton } from "./restart-button.tsx";
 import { SaveButton } from "./save-button.tsx";
 import { SaveStatus } from "./save-status.tsx";
 
-const ReportHeader = (): ReactNode => (
+export const ReportHeader = (): ReactNode => (
   <header className="flex items-center gap-3">
     <h1 className="flex-1 text-xl font-semibold">{useTheme()}</h1>
     <SaveStatus />
@@ -16,5 +16,3 @@ const ReportHeader = (): ReactNode => (
     <RestartButton />
   </header>
 );
-
-export { ReportHeader };

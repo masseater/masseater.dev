@@ -5,7 +5,7 @@ import type { Named } from "#/entities/catalog/lib/part";
 
 import { SongLink } from "./song-link";
 
-const PartTitle = ({
+export const PartTitle = ({
   song,
   label,
 }: Readonly<{ song: Named | null; label: string | null }>): ReactNode =>
@@ -20,5 +20,3 @@ const PartTitle = ({
       </span>
     ),
   });
-
-export { PartTitle };

@@ -35,7 +35,7 @@ const between = (
   return { scale, left: centerX - worldX * scale, top: centerY - worldY * scale };
 };
 
-const advance =
+export const advance =
   (now: number): Step =>
   (scene) =>
     Match.value(scene.motion).pipe(
@@ -50,5 +50,3 @@ const advance =
         },
       }),
     );
-
-export { advance };

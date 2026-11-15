@@ -5,7 +5,7 @@ import type { FoundArticle } from "#/pages/wiki-article/api/load-article";
 import { notFoundHead, seo, wikiPageTitle } from "#/shared/lib";
 import type { Head } from "#/shared/lib";
 
-const articleHead = (loaded: FoundArticle | undefined): Head =>
+export const articleHead = (loaded: FoundArticle | undefined): Head =>
   Option.match(Option.fromUndefinedOr(loaded), {
     onNone: () => notFoundHead,
     onSome: ({ entry }) =>
@@ -22,5 +22,3 @@ const articleHead = (loaded: FoundArticle | undefined): Head =>
         structuredData: [],
       }),
   });
-
-export { articleHead };

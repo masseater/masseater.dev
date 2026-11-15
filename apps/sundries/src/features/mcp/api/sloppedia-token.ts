@@ -9,12 +9,10 @@ const broker = (): Service<SloppediaGitHub> => env.SLOPPEDIA_GITHUB;
 
 const BROKER_URL = "https://credentials.masseater.dev/";
 
-const sloppediaToken: Effect.Effect<string, UpstreamFailed> = brokerResponse(() =>
+export const sloppediaToken: Effect.Effect<string, UpstreamFailed> = brokerResponse(() =>
   broker().fetch(BROKER_URL),
 ).pipe(
   Effect.flatMap((response) =>
     Effect.tryPromise({ try: () => response.text(), catch: brokerFailed }),
   ),
 );
-
-export { sloppediaToken };

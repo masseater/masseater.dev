@@ -21,7 +21,7 @@ const reportFailure = <Failure>(
   return writeTo("stderr", `${message}\n`);
 };
 
-const runCli = <Failure>(program: Effect.Effect<void, Failure, CommandServices>): void => {
+export const runCli = <Failure>(program: Effect.Effect<void, Failure, CommandServices>): void => {
   const reported = program.pipe(Effect.tapCause(reportFailure));
   const main = Layer.build(nodeServicesLayer).pipe(
     Effect.flatMap((services) => Effect.provideContext(reported, services)),
@@ -31,4 +31,3 @@ const runCli = <Failure>(program: Effect.Effect<void, Failure, CommandServices>)
 };
 
 /** @internal */
-export { runCli };

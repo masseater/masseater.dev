@@ -169,7 +169,7 @@ const decodeChunkQuery = (request: Request): Option.Option<ChunkParams> =>
     Option.filter((params) => params.end > params.start),
   );
 
-const upload = Effect.fn("conversation.upload")(function* upload(
+export const upload = Effect.fn("conversation.upload")(function* upload(
   request: Request,
   principal: Principal,
 ) {
@@ -187,7 +187,7 @@ const upload = Effect.fn("conversation.upload")(function* upload(
   });
 });
 
-const offset = (request: Request): Effect.Effect<Response> =>
+export const offset = (request: Request): Effect.Effect<Response> =>
   Option.match(Schema.decodeUnknownOption(FileQuery)(paramsOf(request)), {
     onNone: () => Effect.succeed(withStatus(BAD_REQUEST)({ error: "kind・session・file を送る" })),
     onSome: (params) =>
@@ -196,5 +196,3 @@ const offset = (request: Request): Effect.Effect<Response> =>
         Effect.orElseSucceed(storageFailed),
       ),
   });
-
-export { offset, upload };

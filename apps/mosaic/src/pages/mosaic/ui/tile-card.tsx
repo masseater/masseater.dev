@@ -7,7 +7,7 @@ import { TileActions } from "./tile-actions";
 import { TileCrop } from "./tile-crop";
 import { TileText } from "./tile-text";
 
-const TileCard = ({
+export const TileCard = ({
   tile,
   crop,
 }: Readonly<{
@@ -23,5 +23,3 @@ const TileCard = ({
     </aside>
   );
 };
-
-export { TileCard };

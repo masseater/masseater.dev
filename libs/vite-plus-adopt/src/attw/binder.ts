@@ -84,10 +84,10 @@ const exposeOnSourceFile = (binding: FileBinding): void => {
   });
 };
 
-const bindingOf = (file: SourceFile): Option.Option<FileBinding> =>
+export const bindingOf = (file: SourceFile): Option.Option<FileBinding> =>
   Option.fromNullishOr(bindings.get(file));
 
-const bindSourceFile = (file: SourceFile): void => {
+export const bindSourceFile = (file: SourceFile): void => {
   if (bindings.has(file)) {
     return;
   }
@@ -100,5 +100,3 @@ const bindSourceFile = (file: SourceFile): void => {
   }
   exposeOnSourceFile(binding);
 };
-
-export { bindSourceFile, bindingOf };

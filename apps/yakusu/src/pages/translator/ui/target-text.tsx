@@ -4,7 +4,7 @@ import { OutputText } from "./output-text.tsx";
 
 const LABEL = "訳文";
 
-const TargetText = (): ReactNode => (
+export const TargetText = (): ReactNode => (
   <output
     aria-label={LABEL}
     aria-live="polite"
@@ -13,5 +13,3 @@ const TargetText = (): ReactNode => (
     <OutputText />
   </output>
 );
-
-export { TargetText };

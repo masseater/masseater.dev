@@ -37,7 +37,7 @@ const NOTES: readonly Note[] = [
 
 const sourceLabel = `${englishSource.name}（${pipe(englishSource.commit, Str.slice(COMMIT_START, SHORT_COMMIT))}、${englishSource.retrievedAt} 取得、${englishSource.license}）`;
 
-const EnglishSection = (): ReactNode => (
+export const EnglishSection = (): ReactNode => (
   <Section id="english" title="英語との比較（参考）">
     <EnglishTable rows={englishRows} />
     <NoteList notes={NOTES} />
@@ -50,5 +50,3 @@ const EnglishSection = (): ReactNode => (
     </a>
   </Section>
 );
-
-export { EnglishSection };

@@ -12,7 +12,7 @@ import { gains, growth, rank, totals } from "./ranking";
 import type { Ranked } from "./ranking";
 import type { RankingSearch } from "./search";
 
-type Entries =
+export type Entries =
   | Readonly<{ status: "pending" }>
   | Readonly<{ status: "error" }>
   | Readonly<{ status: "short" }>
@@ -148,7 +148,7 @@ const unsettled = (statuses: readonly QueryStatus[]): Exclude<QueryStatus, "succ
   return "pending";
 };
 
-const useEntries = ({
+export const useEntries = ({
   meta,
   search,
 }: Readonly<{ meta: MetaValue; search: RankingSearch }>): Entries => {
@@ -160,6 +160,3 @@ const useEntries = ({
   }
   return { status: unsettled([table.status, days.status]) };
 };
-
-export type { Entries };
-export { useEntries };

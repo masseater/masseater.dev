@@ -8,7 +8,7 @@ import { AppHeader } from "#/shared/ui";
 import { TitleField } from "./title-field.tsx";
 import { WritingColumns } from "./writing-columns.tsx";
 
-const Writing = (): ReactNode => {
+export const Writing = (): ReactNode => {
   useAutosave();
   useDrafts();
   useIdeaHint();
@@ -23,5 +23,3 @@ const Writing = (): ReactNode => {
     </div>
   );
 };
-
-export { Writing };

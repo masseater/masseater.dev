@@ -65,7 +65,10 @@ const failedAs =
       ),
     );
 
-const tailnetRoute = ({ request, env }: RouteInput): Option.Option<Effect.Effect<Response>> => {
+export const tailnetRoute = ({
+  request,
+  env,
+}: RouteInput): Option.Option<Effect.Effect<Response>> => {
   if (request.method !== "GET") {
     return Option.none();
   }
@@ -81,5 +84,3 @@ const tailnetRoute = ({ request, env }: RouteInput): Option.Option<Effect.Effect
   }
   return Option.none();
 };
-
-export { tailnetRoute };

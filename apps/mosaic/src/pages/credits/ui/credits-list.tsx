@@ -23,7 +23,7 @@ const byArtistThenName = Order.combine(
   Order.mapInput(japanese, (entry: Entry) => entry[NAME]),
 );
 
-const CreditsList = ({ tiles }: Readonly<{ tiles: readonly Entry[] }>): ReactNode => {
+export const CreditsList = ({ tiles }: Readonly<{ tiles: readonly Entry[] }>): ReactNode => {
   const sorted = useMemo(() => Array.sort(tiles, byArtistThenName), [tiles]);
   return (
     <ol className="flex flex-col divide-y">
@@ -36,5 +36,3 @@ const CreditsList = ({ tiles }: Readonly<{ tiles: readonly Entry[] }>): ReactNod
     </ol>
   );
 };
-
-export { CreditsList };

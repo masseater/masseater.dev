@@ -6,7 +6,7 @@ import { useSummary } from "#/pages/interview/model/hooks";
 
 import { ReportSection } from "./report-section.tsx";
 
-const ReportSummary = (): ReactNode =>
+export const ReportSummary = (): ReactNode =>
   Option.match(useSummary(), {
     onNone: () => false,
     onSome: (summary) => (
@@ -20,5 +20,3 @@ const ReportSummary = (): ReactNode =>
       </div>
     ),
   });
-
-export { ReportSummary };

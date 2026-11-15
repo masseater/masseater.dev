@@ -10,9 +10,9 @@ import type { Asset } from "./renderer";
 
 const NEXT = 1;
 
-type Images = Record<"dance" | Asset, GPUTexture>;
+export type Images = Record<"dance" | Asset, GPUTexture>;
 
-type Stage = Readonly<{
+export type Stage = Readonly<{
   pass: Pass;
   gpu: GpuPass;
   pipeline: GPURenderPipeline;
@@ -21,7 +21,7 @@ type Stage = Readonly<{
   targets: readonly GPUTexture[];
 }>;
 
-type Context = Readonly<{
+export type Context = Readonly<{
   device: GPUDevice;
   setup: Setup;
   surface: GPUCanvasContext;
@@ -37,12 +37,12 @@ type Context = Readonly<{
   clock: { tick: number };
 }>;
 
-type Sizes = Readonly<{ offscreen: Size; screen: Size }>;
+export type Sizes = Readonly<{ offscreen: Size; screen: Size }>;
 
-const writeTarget: Fn<Readonly<{ stage: Stage; tick: number }>, Option.Option<GPUTexture>> = ({
-  stage,
-  tick,
-}) => Arr.get(stage.targets, tick % Math.max(stage.targets.length, SINGLE));
+export const writeTarget: Fn<
+  Readonly<{ stage: Stage; tick: number }>,
+  Option.Option<GPUTexture>
+> = ({ stage, tick }) => Arr.get(stage.targets, tick % Math.max(stage.targets.length, SINGLE));
 
 const readTarget: Fn<
   Readonly<{ stage: Stage; tick: number; previous: boolean }>,
@@ -69,7 +69,7 @@ const inputTexture: Fn<Readonly<{ context: Context; index: number; name: string 
     Option.getOrElse(() => images.history),
   );
 
-const sharedGroup: Fn<Readonly<{ context: Context; stage: Stage }>, GPUBindGroup> = ({
+export const sharedGroup: Fn<Readonly<{ context: Context; stage: Stage }>, GPUBindGroup> = ({
   context: { device, sharedLayout, sampler, images, density },
   stage,
 }) =>
@@ -85,11 +85,10 @@ const sharedGroup: Fn<Readonly<{ context: Context; stage: Stage }>, GPUBindGroup
     ],
   });
 
-const inputGroup: Fn<Readonly<{ context: Context; stage: Stage; index: number }>, GPUBindGroup> = ({
-  context,
-  stage,
-  index,
-}) => {
+export const inputGroup: Fn<
+  Readonly<{ context: Context; stage: Stage; index: number }>,
+  GPUBindGroup
+> = ({ context, stage, index }) => {
   const entries = pipe(
     stage.gpu.inputs,
     Arr.map((name, binding) => ({
@@ -102,6 +101,3 @@ const inputGroup: Fn<Readonly<{ context: Context; stage: Stage; index: number }>
     entries,
   });
 };
-
-export type { Context, Images, Sizes, Stage };
-export { inputGroup, sharedGroup, writeTarget };

@@ -3,11 +3,11 @@ import { Array as Arr, HashSet, Number as Num, Option, Order, Record as Rec, pip
 import { isActive, keyText } from "./trait-state";
 import type { Candidates, TraitState } from "./trait-state";
 
-type Vector = readonly number[];
+export type Vector = readonly number[];
 
-type Located = Readonly<{ ref: string; vector: Vector }>;
+export type Located = Readonly<{ ref: string; vector: Vector }>;
 
-type Neighbourhood = Readonly<{
+export type Neighbourhood = Readonly<{
   traits: readonly TraitState[];
   vectors: Readonly<Record<string, Vector>>;
   sources: readonly Located[];
@@ -34,7 +34,7 @@ const cosine = (left: Vector, right: Vector): number => {
   return dot(left, right) / size;
 };
 
-const meanOf = (vectors: Arr.NonEmptyReadonlyArray<Vector>): Vector => {
+export const meanOf = (vectors: Arr.NonEmptyReadonlyArray<Vector>): Vector => {
   const [first] = vectors;
   return pipe(
     first,
@@ -55,7 +55,7 @@ const meanOf = (vectors: Arr.NonEmptyReadonlyArray<Vector>): Vector => {
   );
 };
 
-const piecesOf = (text: string): Arr.NonEmptyReadonlyArray<string> =>
+export const piecesOf = (text: string): Arr.NonEmptyReadonlyArray<string> =>
   Arr.match(Arr.chunksOf(Arr.fromIterable(text), EMBED_CHARACTERS), {
     onEmpty: () => Arr.of(text),
     onNonEmpty: Arr.map((chunk: readonly string[]) => Arr.join(chunk, "")),
@@ -103,7 +103,7 @@ const linkedTo =
     );
   };
 
-const candidatesOf = ({ traits, vectors, sources }: Neighbourhood): Candidates => {
+export const candidatesOf = ({ traits, vectors, sources }: Neighbourhood): Candidates => {
   const active = pipe(traits, Arr.filter(isActive));
   const nearest = nearestTo(active, vectors, NEAREST);
   const linked = linkedTo(active);
@@ -119,7 +119,7 @@ const candidatesOf = ({ traits, vectors, sources }: Neighbourhood): Candidates =
 
 const TOPIC_HITS = 15;
 
-const relatedTo = ({
+export const relatedTo = ({
   traits,
   vectors,
   vector,
@@ -151,8 +151,5 @@ const relatedTo = ({
   return HashSet.fromIterable([...hits, ...neighbours]);
 };
 
-const unionOf = (candidates: Candidates): HashSet.HashSet<string> =>
+export const unionOf = (candidates: Candidates): HashSet.HashSet<string> =>
   HashSet.fromIterable(pipe(Rec.values(candidates), Arr.flatten));
-
-export { candidatesOf, meanOf, piecesOf, relatedTo, unionOf };
-export type { Located, Neighbourhood, Vector };

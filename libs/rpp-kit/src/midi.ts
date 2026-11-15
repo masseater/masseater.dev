@@ -3,9 +3,9 @@ import { Array as Arr, Match, Number as Num, Option, Order, Record as Rec, pipe 
 import { PARAM_INDEX, ZERO, numberOr, paramOf } from "./nodes.ts";
 import type { Chunk, Line, Node, Param } from "./parse.ts";
 
-type SourceNote = Readonly<{ pitch: number; velocity: number; start: number; end: number }>;
+export type SourceNote = Readonly<{ pitch: number; velocity: number; start: number; end: number }>;
 
-type MidiClip = Readonly<{ notes: readonly SourceNote[]; length: number }>;
+export type MidiClip = Readonly<{ notes: readonly SourceNote[]; length: number }>;
 
 type Pending = Readonly<{ start: number; velocity: number }>;
 
@@ -126,7 +126,7 @@ const timedEvents = (source: Chunk): readonly Timed[] => {
   }));
 };
 
-const midiNotes = (source: Chunk): MidiClip => {
+export const midiNotes = (source: Chunk): MidiClip => {
   const timed = timedEvents(source);
   let state: MidiState = { open: {}, notes: [] };
   for (const event of timed) {
@@ -137,6 +137,3 @@ const midiNotes = (source: Chunk): MidiClip => {
     length: Option.match(Arr.last(timed), { onNone: () => ZERO, onSome: ({ beat }) => beat }),
   };
 };
-
-export { midiNotes };
-export type { MidiClip, SourceNote };

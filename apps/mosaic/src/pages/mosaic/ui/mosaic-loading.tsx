@@ -16,7 +16,7 @@ const cells = Array.makeBy(SIDE * SIDE, (index) => ({
   delay: `${((index % SIDE) + Math.floor(index / SIDE)) * STEP_SECONDS}s`,
 }));
 
-const MosaicLoading = (): ReactNode => (
+export const MosaicLoading = (): ReactNode => (
   <output aria-label={LABEL} className="absolute inset-0 grid place-items-center">
     <svg viewBox={VIEW_BOX} className="text-primary w-20" aria-hidden="true">
       {pipe(
@@ -28,5 +28,3 @@ const MosaicLoading = (): ReactNode => (
     </svg>
   </output>
 );
-
-export { MosaicLoading };

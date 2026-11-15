@@ -6,12 +6,12 @@ import { bundledCandidates, bundledMosaic } from "#/pages/mosaic/api/bundled";
 import { candidatesQuery, mosaicQuery } from "#/pages/mosaic/api/queries";
 import type { CandidateList, Mosaic, Query } from "#/pages/mosaic/api/queries";
 
-interface Assignment {
+export interface Assignment {
   readonly seed: number;
   readonly choice: readonly number[];
 }
 
-interface Loaded extends Assignment {
+export interface Loaded extends Assignment {
   readonly mosaic: Option.Option<Mosaic>;
 }
 
@@ -84,7 +84,7 @@ const choiceOf = ({
       ),
   });
 
-const loadVisit = ({ seed: given, ...load }: VisitLoad): Effect.Effect<Loaded> =>
+export const loadVisit = ({ seed: given, ...load }: VisitLoad): Effect.Effect<Loaded> =>
   Effect.gen(function* visit() {
     const seed = yield* Option.match(given, {
       onNone: () => Random.nextInt,
@@ -94,6 +94,3 @@ const loadVisit = ({ seed: given, ...load }: VisitLoad): Effect.Effect<Loaded> =
     const choice = yield* choiceOf({ load, mosaic, seed });
     return { seed, choice, mosaic };
   });
-
-export type { Assignment, Loaded };
-export { loadVisit };

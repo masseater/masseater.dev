@@ -10,7 +10,7 @@ import { db } from "#/shared/db/index.server";
 import { attempt, encodeJson, nextAfterMax, toStorageFailed } from "./storage.server";
 import type { WriteFailure } from "./storage.server";
 
-type RevisionRecord = Readonly<{
+export type RevisionRecord = Readonly<{
   entity: RevisionEntity;
   entityId: string;
   op: RevisionOp;
@@ -21,9 +21,9 @@ type RevisionRecord = Readonly<{
 
 type RecordKey = Pick<RevisionRecord, "entity" | "entityId">;
 
-type Statement = BatchItem<"sqlite">;
+export type Statement = BatchItem<"sqlite">;
 
-type RevisedWrite = Readonly<{ record: RevisionRecord; write: Statement }>;
+export type RevisedWrite = Readonly<{ record: RevisionRecord; write: Statement }>;
 
 const COLLISION_RETRIES = 2;
 
@@ -45,12 +45,12 @@ const statementsOf = ({
     return [write, db.insert(revision).values({ ...record, rev, body })];
   });
 
-type Commit = Readonly<{
+export type Commit = Readonly<{
   writes: Arr.NonEmptyReadonlyArray<RevisedWrite>;
   extra: readonly Statement[];
 }>;
 
-const commitWith = ({ writes, extra }: Commit): Effect.Effect<void, WriteFailure> =>
+export const commitWith = ({ writes, extra }: Commit): Effect.Effect<void, WriteFailure> =>
   pipe(
     writes,
     Effect.forEach(statementsOf),
@@ -60,22 +60,19 @@ const commitWith = ({ writes, extra }: Commit): Effect.Effect<void, WriteFailure
     Effect.asVoid,
   );
 
-const commitAll = (
+export const commitAll = (
   writes: Arr.NonEmptyReadonlyArray<RevisedWrite>,
 ): Effect.Effect<void, WriteFailure> => commitWith({ writes, extra: [] });
 
-const commit =
+export const commit =
   (record: RevisionRecord) =>
   (write: Statement): Effect.Effect<void, WriteFailure> =>
     commitAll([{ record, write }]);
 
-const numbered = <Value>(
+export const numbered = <Value>(
   write: Effect.Effect<Value, WriteFailure>,
 ): Effect.Effect<Value, StorageFailed> =>
   write.pipe(
     Effect.retry({ times: COLLISION_RETRIES, while: (failure) => failure.duplicate }),
     Effect.mapError(toStorageFailed),
   );
-
-export { commit, commitAll, commitWith, numbered };
-export type { Commit, RevisedWrite, RevisionRecord, Statement };

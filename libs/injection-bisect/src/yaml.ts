@@ -104,11 +104,9 @@ const yamlUnitsOf = (text: string): readonly Unit[] => {
   );
 };
 
-const yamlParser: Parser = {
+export const yamlParser: Parser = {
   format: "yaml",
   extensions: [".yaml", ".yml"],
   accepts: looksLikeYaml,
   unitsOf: yamlUnitsOf,
 };
-
-export { yamlParser };

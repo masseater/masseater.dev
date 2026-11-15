@@ -6,7 +6,7 @@ import { useClosePicker } from "#/pages/translator/model/search.ts";
 
 const LABEL = "戻る";
 
-const BackButton = (): ReactNode => (
+export const BackButton = (): ReactNode => (
   <Button
     aria-label={LABEL}
     className="rounded-full"
@@ -17,5 +17,3 @@ const BackButton = (): ReactNode => (
     <ArrowLeft className="size-5" />
   </Button>
 );
-
-export { BackButton };

@@ -13,7 +13,7 @@ import { loadStatsData } from "./life-stats-data.server";
 import { scanAll } from "./life-store.server";
 import { readVocabulary } from "./life-vocabulary-read.server";
 
-type ExtrasInput = Readonly<{
+export type ExtrasInput = Readonly<{
   record: Option.Option<LifeRecordName>;
   about: Option.Option<string>;
   periods: number;
@@ -22,7 +22,7 @@ type ExtrasInput = Readonly<{
   today: string;
 }>;
 
-type Extras = Readonly<{ items: readonly Body[]; summary: Body }>;
+export type Extras = Readonly<{ items: readonly Body[]; summary: Body }>;
 
 type Extra = (input: ExtrasInput) => Effect.Effect<Extras, StorageFailed>;
 
@@ -125,11 +125,8 @@ const EXTRAS: Readonly<Record<LifeRecordName, Extra>> = {
   metric_definition: vocabularyExtras,
 };
 
-const extrasOf = (input: ExtrasInput): Effect.Effect<Extras, StorageFailed> =>
+export const extrasOf = (input: ExtrasInput): Effect.Effect<Extras, StorageFailed> =>
   Option.match(input.record, {
     onNone: () => plain(input),
     onSome: (record) => EXTRAS[record](input),
   });
-
-export { extrasOf };
-export type { Extras, ExtrasInput };

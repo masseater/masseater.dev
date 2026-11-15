@@ -9,7 +9,11 @@ import { outlineSong } from "./song.ts";
 import { segmentsOf } from "./virtual.ts";
 import type { Segment } from "./virtual.ts";
 
-type Request = Readonly<{ fileName: string; content: string; positionEncoding: PositionEncoding }>;
+export type Request = Readonly<{
+  fileName: string;
+  content: string;
+  positionEncoding: PositionEncoding;
+}>;
 
 const PARSE_ERROR = 1;
 
@@ -73,8 +77,5 @@ const transformRpp = Effect.fn("transformRpp")(function* transformRpp(request: R
 
 const runtime = ManagedRuntime.make(NodeServices.layer);
 
-const transform = (request: Request): Promise<TransformResult> =>
+export const transform = (request: Request): Promise<TransformResult> =>
   runtime.runPromise(transformRpp(request));
-
-export { transform };
-export type { Request };

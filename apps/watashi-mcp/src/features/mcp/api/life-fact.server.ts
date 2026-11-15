@@ -76,7 +76,7 @@ const startOrToday = (body: Body, today: string): string => {
   return start;
 };
 
-const createFact: Creator = (writer) => (input) =>
+export const createFact: Creator = (writer) => (input) =>
   Effect.gen(function* createProfileFact() {
     const today = yield* todayJst;
     const start = startOrToday(input.body, today);
@@ -96,5 +96,3 @@ const createFact: Creator = (writer) => (input) =>
     });
     return { ref, notices: [...notices, ...scheduledNotices(start, today)(ref)] };
   });
-
-export { createFact };

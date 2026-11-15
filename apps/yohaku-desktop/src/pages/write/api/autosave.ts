@@ -85,7 +85,7 @@ const fetchedWith =
     texts: textsOf(paragraphs),
   });
 
-const useAutosave = (): void => {
+export const useAutosave = (): void => {
   const yohaku = useYohaku();
   const saved = useSave();
   const editor = useAtomValue(editorAtom);
@@ -112,5 +112,3 @@ const useAutosave = (): void => {
     }
   }, [data, editor, setTitle]);
 };
-
-export { useAutosave };

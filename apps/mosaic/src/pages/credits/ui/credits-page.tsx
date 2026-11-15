@@ -6,7 +6,7 @@ import { CreditsList } from "./credits-list";
 
 const route = getRouteApi("/$slug_/credits");
 
-const CreditsPage = (): ReactNode => {
+export const CreditsPage = (): ReactNode => {
   const tiles = route.useLoaderData();
   return (
     <CreditsFrame>
@@ -14,5 +14,3 @@ const CreditsPage = (): ReactNode => {
     </CreditsFrame>
   );
 };
-
-export { CreditsPage };

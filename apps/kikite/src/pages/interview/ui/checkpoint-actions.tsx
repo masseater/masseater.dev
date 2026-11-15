@@ -11,7 +11,7 @@ const AGREE = "合っている";
 const AGREED = "合っています";
 const FIX = "直す";
 
-const CheckpointActions = (): ReactNode => {
+export const CheckpointActions = (): ReactNode => {
   const session = useSession();
   const shown = useCheckpoint();
   const agree = useCallback(() => {
@@ -30,5 +30,3 @@ const CheckpointActions = (): ReactNode => {
     )
   );
 };
-
-export { CheckpointActions };

@@ -33,7 +33,7 @@ const SpanAnnotations = Schema.Struct({
   attributes: Schema.optional(Schema.Unknown),
 });
 
-type ReceivedSpan = typeof SpanAnnotations.Type;
+export type ReceivedSpan = typeof SpanAnnotations.Type;
 
 const SpanEvent = Schema.Struct({
   source: Schema.Struct({ message: Schema.Literal("otlp.span"), annotations: SpanAnnotations }),
@@ -41,7 +41,7 @@ const SpanEvent = Schema.Struct({
 
 const decodeSpanEvent = Schema.decodeUnknownOption(SpanEvent);
 
-const spanOf = (event: unknown): Option.Option<ReceivedSpan> =>
+export const spanOf = (event: unknown): Option.Option<ReceivedSpan> =>
   Option.map(decodeSpanEvent(event), ({ source }) => source.annotations);
 
 const durationOf = ({ startTimeUnixNano, endTimeUnixNano }: ReceivedSpan): string =>
@@ -103,7 +103,7 @@ const renderTrace = ([traceId, members]: readonly [
     "\n",
   );
 
-const render = (spans: readonly ReceivedSpan[]): string =>
+export const render = (spans: readonly ReceivedSpan[]): string =>
   pipe(
     spans,
     Arr.groupBy((span) => span.traceId),
@@ -128,7 +128,7 @@ const MARKER = "workers-traces";
 const MARKED = "1";
 const ID_RADIX = 36;
 
-const markedAt =
+export const markedAt =
   (sentAt: number) =>
   (url: string): string => {
     const marked = new URL(url);
@@ -158,7 +158,7 @@ const startedBy = (url: string) => {
     );
 };
 
-const traceOf =
+export const traceOf =
   (url: string) =>
   (spans: readonly ReceivedSpan[]): readonly ReceivedSpan[] => {
     const traceIds = pipe(
@@ -172,12 +172,9 @@ const traceOf =
     );
   };
 
-const missingOf =
+export const missingOf =
   (expected: readonly string[]) =>
   (spans: readonly ReceivedSpan[]): readonly string[] => {
     const isMissing = Predicate.not(isSeenIn(spans));
     return pipe(expected, Arr.filter(isMissing));
   };
-
-export { markedAt, missingOf, render, spanOf, traceOf };
-export type { ReceivedSpan };

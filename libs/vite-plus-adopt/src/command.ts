@@ -3,15 +3,14 @@ import type { ChildProcessSpawner } from "effect/process";
 
 import type { VpToolsError } from "./errors.ts";
 
-type CommandError = VpToolsError | PlatformError.PlatformError | Schema.SchemaError;
+export type CommandError = VpToolsError | PlatformError.PlatformError | Schema.SchemaError;
 
-type CommandServices =
+export type CommandServices =
   | ChildProcessSpawner.ChildProcessSpawner
   | FileSystem.FileSystem
   | Path.Path
   | Stdio.Stdio;
 
-type CommandEffect = Effect.Effect<void, CommandError, CommandServices>;
+export type CommandEffect = Effect.Effect<void, CommandError, CommandServices>;
 
 /** @internal */
-export type { CommandEffect, CommandError, CommandServices };

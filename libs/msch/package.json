@@ -28,6 +28,7 @@
   "exports": {
     "./cli": "./src/cli.ts",
     "./decision-rules": "./src/lint/decision-rules.ts",
+    "./inline-exports": "./src/lint/inline-exports.ts",
     "./lint": "./src/lint/index.ts",
     "./oxlint": "./src/oxlint.ts",
     "./vite": {
@@ -45,6 +46,10 @@
       "./decision-rules": {
         "types": "./dist/decision-rules.d.mts",
         "default": "./dist/decision-rules.mjs"
+      },
+      "./inline-exports": {
+        "types": "./dist/inline-exports.d.mts",
+        "default": "./dist/inline-exports.mjs"
       },
       "./lint": {
         "types": "./dist/lint.d.mts",

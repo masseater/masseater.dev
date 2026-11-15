@@ -6,7 +6,7 @@ import { useCopyHandoff } from "#/pages/interview/model/review-hooks";
 
 const LABEL = "Markdown をコピー";
 
-const CopyButton = (): ReactNode => {
+export const CopyButton = (): ReactNode => {
   const onClick = useCopyHandoff();
   return (
     <Button variant="ghost" size="icon-sm" aria-label={LABEL} title={LABEL} onClick={onClick}>
@@ -14,5 +14,3 @@ const CopyButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { CopyButton };

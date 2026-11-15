@@ -18,7 +18,7 @@ import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { Sts2Failed } from "./errors.ts";
 import { encodePowerShell, quote, withTextOutput } from "./powershell.ts";
 
-type Output = Readonly<{ exitCode: number; output: string }>;
+export type Output = Readonly<{ exitCode: number; output: string }>;
 
 type Tunnel = Readonly<{
   instances: number;
@@ -41,7 +41,7 @@ const TUNNEL_TIMEOUT = "1 minute";
 const HOST_PRELUDE =
   "[Console]::OutputEncoding = [Text.Encoding]::UTF8; $PSStyle.OutputRendering = 'PlainText'; $ProgressPreference = 'SilentlyContinue'";
 
-class Vm extends Context.Service<Vm, VmShape>()("sts2-mcp/vm") {}
+export class Vm extends Context.Service<Vm, VmShape>()("sts2-mcp/vm") {}
 
 const failed = (cause: unknown): Sts2Failed => Sts2Failed.make({ message: String(cause) });
 
@@ -161,8 +161,6 @@ const make = Effect.gen(function* makeVm() {
   });
 });
 
-const vmLayer = Layer.effect(Vm, make);
+export const vmLayer = Layer.effect(Vm, make);
 
 /** @internal */
-export { Vm, vmLayer };
-export type { Output };

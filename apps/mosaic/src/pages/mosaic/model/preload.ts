@@ -66,7 +66,7 @@ const previewOf = (slug: string, mosaic: Option.Option<Mosaic>): Preview => ({
   ),
 });
 
-const bundledPreview = (slug: string): Preview => previewOf(slug, bundledMosaic(slug));
+export const bundledPreview = (slug: string): Preview => previewOf(slug, bundledMosaic(slug));
 
 const preloadOf = (slug: string, { seed, choice, mosaic }: Loaded): Preload => ({
   seed,
@@ -74,7 +74,7 @@ const preloadOf = (slug: string, { seed, choice, mosaic }: Loaded): Preload => (
   ...previewOf(slug, mosaic),
 });
 
-const loadMosaic = ({
+export const loadMosaic = ({
   queryClient,
   slug,
   seed,
@@ -94,9 +94,7 @@ const preloadLink = (href: string): PreloadLink => ({
   fetchPriority: "high",
 });
 
-const mosaicHead = ({ images, card }: Preview): Head => ({
+export const mosaicHead = ({ images, card }: Preview): Head => ({
   links: pipe(images, Array.map(preloadLink)),
   meta: optionalCardMeta(card),
 });
-
-export { bundledPreview, loadMosaic, mosaicHead };

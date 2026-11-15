@@ -18,6 +18,4 @@ const Failed = Schema.Struct({
   reason: Schema.String,
 });
 
-const Outcomes = Schema.Array(Schema.Union([Played, Empty, Failed]));
-
-export { Outcomes };
+export const Outcomes = Schema.Array(Schema.Union([Played, Empty, Failed]));

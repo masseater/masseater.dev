@@ -5,15 +5,19 @@ import type { Category } from "#/features/mcp/model/categories";
 import { isOn, valueOn } from "#/features/mcp/model/sides";
 import type { Side } from "#/features/mcp/model/sides";
 
-type CategoryTotal = Readonly<{ category: Category; label: Option.Option<string>; amount: number }>;
+export type CategoryTotal = Readonly<{
+  category: Category;
+  label: Option.Option<string>;
+  amount: number;
+}>;
 
-type NodeType = "income" | "income-sub" | "total" | "expense" | "expense-sub";
+export type NodeType = "income" | "income-sub" | "total" | "expense" | "expense-sub";
 
-type FlowNode = Readonly<{ id: string; label: string; nodeType: NodeType }>;
+export type FlowNode = Readonly<{ id: string; label: string; nodeType: NodeType }>;
 
-type FlowLink = Readonly<{ source: string; target: string; value: number }>;
+export type FlowLink = Readonly<{ source: string; target: string; value: number }>;
 
-type MoneyFlow = Readonly<{
+export type MoneyFlow = Readonly<{
   nodes: readonly FlowNode[];
   links: readonly FlowLink[];
   income: number;
@@ -157,7 +161,7 @@ const sumOf = (buckets: readonly Bucket[]): number =>
     Num.sumAll,
   );
 
-const moneyFlow = (totals: readonly CategoryTotal[]): MoneyFlow => {
+export const moneyFlow = (totals: readonly CategoryTotal[]): MoneyFlow => {
   const income = bucketsOf(totals, "income");
   const expense = bucketsOf(totals, "expense");
   const savings = balancing(sumOf(income) - sumOf(expense));
@@ -183,6 +187,3 @@ const moneyFlow = (totals: readonly CategoryTotal[]): MoneyFlow => {
     expense: sumOf(expense),
   };
 };
-
-export { moneyFlow };
-export type { CategoryTotal, FlowLink, FlowNode, MoneyFlow, NodeType };

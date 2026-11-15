@@ -8,14 +8,14 @@ const FIRST = 0;
 const BLOCK_FILE = 2;
 const MISSING = "";
 
-interface Visit {
+export interface Visit {
   readonly slug: string;
   readonly mosaic: Mosaic;
   readonly seed: number;
   readonly choice: readonly number[];
 }
 
-const variantOf = ({ visit, index }: Readonly<{ visit: Visit; index: number }>): number =>
+export const variantOf = ({ visit, index }: Readonly<{ visit: Visit; index: number }>): number =>
   Option.getOrElse(Array.get(visit.choice, index), () => FIRST);
 
 const variantBase = ({
@@ -31,12 +31,12 @@ const variantBase = ({
     }),
   );
 
-const variantFile =
+export const variantFile =
   (visit: Pick<Visit, "slug" | "mosaic">) =>
   (variant: number, file: string): string =>
     `${variantBase({ ...visit, variant })}/${file}`;
 
-interface TileCrop {
+export interface TileCrop {
   readonly url: string;
   readonly left: number;
   readonly top: number;
@@ -44,7 +44,7 @@ interface TileCrop {
   readonly height: number;
 }
 
-const tileCrop = ({
+export const tileCrop = ({
   visit,
   index,
 }: Readonly<{ visit: Visit; index: number }>): Option.Option<TileCrop> =>
@@ -69,10 +69,7 @@ const tileCrop = ({
     };
   });
 
-const slugFile = ({ slug, file }: Readonly<{ slug: string; file: string }>): string =>
+export const slugFile = ({ slug, file }: Readonly<{ slug: string; file: string }>): string =>
   `${BASE_PATH}/${slugPath(slug)}/${file}`;
 
-const mosaicTitle = (slug: string): string => `${slug}.mosaic`;
-
-export type { TileCrop, Visit };
-export { mosaicTitle, slugFile, tileCrop, variantFile, variantOf };
+export const mosaicTitle = (slug: string): string => `${slug}.mosaic`;

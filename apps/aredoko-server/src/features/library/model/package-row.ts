@@ -5,9 +5,9 @@ import { SqlClient } from "effect/sql";
 
 import { decodeRows, firstId } from "#shared/sql";
 
-type StoredKind = Extract<typeof PackageKind.Type, "unitypackage" | "files">;
+export type StoredKind = Extract<typeof PackageKind.Type, "unitypackage" | "files">;
 
-interface PackageFile {
+export interface PackageFile {
   readonly sourceId: number;
   readonly path: string;
   readonly size: number;
@@ -21,14 +21,14 @@ const BoothRow = Schema.Struct({ booth_item: Schema.NullOr(StoredBooth) });
 const encode = Schema.encodeEffect(StoredBooth);
 
 /** @internal */
-const encodeBooth = Effect.fn("encodeBooth")(function* encodeBoothItem(
+export const encodeBooth = Effect.fn("encodeBooth")(function* encodeBoothItem(
   item: typeof BoothItem.Type,
 ) {
   return yield* encode(item);
 });
 
 /** @internal */
-const boothOf = Effect.fn("boothOf")(function* storedBooth(path: string) {
+export const boothOf = Effect.fn("boothOf")(function* storedBooth(path: string) {
   const sql = yield* SqlClient.SqlClient;
   const rows = yield* decodeRows(BoothRow)(
     sql`select booth_item from packages where path = ${path}`,
@@ -40,7 +40,7 @@ const boothOf = Effect.fn("boothOf")(function* storedBooth(path: string) {
 });
 
 /** @internal */
-const insertPackage = Effect.fn("insertPackage")(function* insertPackageRow({
+export const insertPackage = Effect.fn("insertPackage")(function* insertPackageRow({
   kind,
   file,
   name,
@@ -70,6 +70,3 @@ const insertPackage = Effect.fn("insertPackage")(function* insertPackageRow({
       returning id`,
   );
 });
-
-export { boothOf, encodeBooth, insertPackage };
-export type { PackageFile, StoredKind };

@@ -8,7 +8,7 @@ type Manuscripts = readonly (typeof Manuscript.Type)[];
 
 const NONE_YET: Manuscripts = [];
 
-const useManuscripts = (): Manuscripts => {
+export const useManuscripts = (): Manuscripts => {
   const yohaku = useYohaku();
   const { data } = useQuery(
     queryOptions({
@@ -21,5 +21,3 @@ const useManuscripts = (): Manuscripts => {
     Option.getOrElse(() => NONE_YET),
   );
 };
-
-export { useManuscripts };

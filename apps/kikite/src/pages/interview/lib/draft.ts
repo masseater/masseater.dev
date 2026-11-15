@@ -4,7 +4,7 @@ import { ERROR_LABEL, QUESTION_LABEL, REASON_LABEL, STRATEGY_LABEL } from "#prot
 import { strategyOf } from "#strategies";
 import type { StrategyId } from "#strategies";
 
-type ParsedDraft = Readonly<{
+export type ParsedDraft = Readonly<{
   strategy: Option.Option<StrategyId>;
   reason: string;
   question: string;
@@ -43,7 +43,7 @@ const unlabeledQuestion = (text: string): string => {
   return trimmed;
 };
 
-const parseDraft = (text: string): ParsedDraft => {
+export const parseDraft = (text: string): ParsedDraft => {
   const strategy = section(text, STRATEGY_LABEL);
   const reason = section(text, REASON_LABEL);
   const question = section(text, QUESTION_LABEL);
@@ -58,6 +58,3 @@ const parseDraft = (text: string): ParsedDraft => {
     error: section(text, ERROR_LABEL),
   };
 };
-
-export { parseDraft };
-export type { ParsedDraft };

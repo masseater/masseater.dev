@@ -46,7 +46,7 @@ const reasonFor = ({ _tag, message, http }: FailureReason): string =>
     Option.getOrElse(() => `network: ${message}`),
   );
 
-const send = Effect.fn("send")(function* send(
+export const send = Effect.fn("send")(function* send(
   endpoint: string,
   decisionsRequest: WireRequest,
   { env }: Pick<DecideInput, "env">,
@@ -72,4 +72,3 @@ const send = Effect.fn("send")(function* send(
 });
 
 /** @internal */
-export { send };

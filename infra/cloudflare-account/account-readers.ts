@@ -2,9 +2,9 @@ import { ApiToken, CloudflareEnvironment, Workers } from "@alchemy.run/cloudflar
 import { listTokensPermissionGroups } from "@distilled.cloud/cloudflare/accounts";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 
-type WebAnalyticsTokenEnv = Readonly<{ WEB_ANALYTICS_TOKEN: string }>;
+export type WebAnalyticsTokenEnv = Readonly<{ WEB_ANALYTICS_TOKEN: string }>;
 
-const webAnalyticsReader = Effect.fn("webAnalyticsReader")(function* webAnalyticsReader(
+export const webAnalyticsReader = Effect.fn("webAnalyticsReader")(function* webAnalyticsReader(
   appName: string,
 ) {
   const { accountId } = yield* yield* CloudflareEnvironment;
@@ -39,7 +39,9 @@ const isReadPermission = (name: string): boolean =>
   Str.endsWith(" Read")(name) && !SUB_TOKEN_FORBIDDEN.has(name);
 
 /** @internal */
-const cloudflareReader = Effect.fn("cloudflareReader")(function* cloudflareReader(appName: string) {
+export const cloudflareReader = Effect.fn("cloudflareReader")(function* cloudflareReader(
+  appName: string,
+) {
   const { accountId } = yield* yield* CloudflareEnvironment;
   const account = `${ACCOUNT_SCOPE}.${accountId}`;
   const groups = yield* listTokensPermissionGroups({ accountId }).pipe(Effect.orDie);
@@ -77,6 +79,3 @@ const cloudflareReader = Effect.fn("cloudflareReader")(function* cloudflareReade
     ],
   });
 });
-
-export type { WebAnalyticsTokenEnv };
-export { cloudflareReader, webAnalyticsReader };

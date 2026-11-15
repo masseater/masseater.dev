@@ -5,9 +5,9 @@ import { Array as Arr, Option, Order, Record, pipe } from "effect";
 import type { CatalogSongValue } from "./catalog.ts";
 import type { ViewStateValue } from "./view-state.ts";
 
-type States = Readonly<Record<PlatformName, ViewStateValue>>;
+export type States = Readonly<Record<PlatformName, ViewStateValue>>;
 
-interface Measured {
+export interface Measured {
   readonly song: CatalogSongValue;
   readonly nico: Option.Option<number>;
   readonly youtube: Option.Option<number>;
@@ -34,7 +34,7 @@ const highest = (state: ViewStateValue, ids: readonly string[]): Option.Option<n
 const reaches = (views: Option.Option<number>): boolean =>
   Option.exists(views, (count) => count >= VIEW_THRESHOLD);
 
-const measureSongs = ({
+export const measureSongs = ({
   songs,
   states,
 }: Readonly<{ songs: readonly CatalogSongValue[]; states: States }>): readonly Measured[] =>
@@ -48,7 +48,7 @@ const measureSongs = ({
     Arr.filter(({ nico, youtube }) => reaches(nico) || reaches(youtube)),
   );
 
-const tableOf = (songs: readonly Measured[]): readonly (typeof TableRow.Type)[] =>
+export const tableOf = (songs: readonly Measured[]): readonly (typeof TableRow.Type)[] =>
   pipe(
     songs,
     Arr.map(
@@ -75,7 +75,7 @@ const detailOf =
     ),
   });
 
-const shardsOf = ({
+export const shardsOf = ({
   songs,
   states,
 }: Readonly<{ songs: readonly Measured[]; states: States }>): readonly (readonly [
@@ -90,7 +90,7 @@ const shardsOf = ({
     ),
   );
 
-const dayOf =
+export const dayOf =
   (platform: PlatformName) =>
   (songs: readonly Measured[]): typeof DayViews.Type =>
     pipe(
@@ -103,6 +103,3 @@ const dayOf =
         ),
       ),
     );
-
-export type { Measured, States };
-export { dayOf, measureSongs, shardsOf, tableOf };

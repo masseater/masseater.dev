@@ -11,7 +11,7 @@ const DESCRIPTION = "素材として使われた曲の一覧です。使われ�
 
 const route = getRouteApi("/songs/");
 
-const SongsPage = (): ReactNode => {
+export const SongsPage = (): ReactNode => {
   const { keyword } = route.useSearch();
   return (
     <div className="flex flex-col gap-6">
@@ -23,5 +23,3 @@ const SongsPage = (): ReactNode => {
     </div>
   );
 };
-
-export { SongsPage };

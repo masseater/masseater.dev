@@ -23,7 +23,7 @@ const creditOf = (slug: string): readonly string[] =>
     Option.getOrElse((): readonly string[] => []),
   );
 
-const CreditsFrame = ({ children }: Readonly<{ children?: ReactNode }>): ReactNode => {
+export const CreditsFrame = ({ children }: Readonly<{ children?: ReactNode }>): ReactNode => {
   const params = route.useParams();
   const search = route.useSearch();
   return (
@@ -48,5 +48,3 @@ const CreditsFrame = ({ children }: Readonly<{ children?: ReactNode }>): ReactNo
     </main>
   );
 };
-
-export { CreditsFrame };

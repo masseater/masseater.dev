@@ -17,7 +17,7 @@ import { ToggleGroupItem } from "#/shared/ui/toggle-group-item";
 
 const TOTAL = summary.models.length;
 
-const ModelFilter = (): ReactNode => {
+export const ModelFilter = (): ReactNode => {
   const handleQueryChange = useQueryChange();
   const handleScopeChange = useScopeChange();
   return (
@@ -42,5 +42,3 @@ const ModelFilter = (): ReactNode => {
     </section>
   );
 };
-
-export { ModelFilter };

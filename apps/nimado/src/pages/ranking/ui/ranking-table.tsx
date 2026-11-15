@@ -8,7 +8,7 @@ import { SongRow } from "./song-row";
 
 const FIRST_RANK = 1;
 
-const RankingTable = ({
+export const RankingTable = ({
   entries,
   offset,
   youtube,
@@ -30,5 +30,3 @@ const RankingTable = ({
     </tbody>
   </table>
 );
-
-export { RankingTable };

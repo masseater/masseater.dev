@@ -15,7 +15,7 @@ import { SELF } from "./life-record";
 import { query } from "./storage.server";
 import type { ChunkPositionValue, RowPositionValue } from "./trait-batch";
 
-type Window<Position> = Readonly<{ position: Position; before: string }>;
+export type Window<Position> = Readonly<{ position: Position; before: string }>;
 
 const ROW_PAGE = 100;
 
@@ -40,7 +40,7 @@ const chunkAfter = ({ at, sessionId, file, start }: ChunkPositionValue): SQL | u
   return or(gt(conversationChunk.at, at), and(eq(conversationChunk.at, at), laterSession));
 };
 
-const memoriesAfter = ({
+export const memoriesAfter = ({
   position,
   before,
 }: Window<RowPositionValue>): Effect.Effect<readonly Memory[], StorageFailed> =>
@@ -58,7 +58,7 @@ const traitBearing = or(
   and(eq(lifeRecord.record, "profile_fact"), eq(lifeRecord.about, SELF)),
 );
 
-const lifeAfter = ({
+export const lifeAfter = ({
   position,
   before,
 }: Window<RowPositionValue>): Effect.Effect<readonly LifeRow[], StorageFailed> =>
@@ -71,7 +71,7 @@ const lifeAfter = ({
       .limit(ROW_PAGE),
   );
 
-const chunksAfter = ({
+export const chunksAfter = ({
   position,
   before,
 }: Window<ChunkPositionValue>): Effect.Effect<readonly ConversationChunk[], StorageFailed> =>
@@ -88,6 +88,3 @@ const chunksAfter = ({
       )
       .limit(CHUNK_PAGE),
   );
-
-export { chunksAfter, lifeAfter, memoriesAfter };
-export type { Window };

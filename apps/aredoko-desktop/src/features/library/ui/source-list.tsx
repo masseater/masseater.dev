@@ -7,7 +7,7 @@ import { Notice } from "#/shared/ui/notice";
 
 import { SourceRow } from "./source-row.tsx";
 
-const SourceList = (): ReactNode => {
+export const SourceList = (): ReactNode => {
   const sources = useSources();
   const nameOf = useFolderName();
   if (sources.isPending) {
@@ -27,5 +27,3 @@ const SourceList = (): ReactNode => {
     </ul>
   );
 };
-
-export { SourceList };

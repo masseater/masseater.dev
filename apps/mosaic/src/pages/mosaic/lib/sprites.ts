@@ -12,7 +12,7 @@ const SHARPER = 1.2;
 const OVERVIEW = 0;
 const BEST_VARIANT = 0;
 
-type Level = Mosaic["levels"][number];
+export type Level = Mosaic["levels"][number];
 
 interface BlockAt {
   readonly sheet: number;
@@ -26,7 +26,7 @@ interface Sheets {
   readonly block: (at: BlockAt) => Option.Option<HTMLImageElement>;
 }
 
-interface Sprites extends Sheets {
+export interface Sprites extends Sheets {
   readonly ready: Effect.Effect<void>;
   readonly levelFor: (devicePixels: number) => number;
 }
@@ -151,7 +151,7 @@ const levelFinder =
       () => levels.length,
     );
 
-const createSprites = (source: Source): Sprites => {
+export const createSprites = (source: Source): Sprites => {
   const { levels } = source.visit.mosaic;
   const sheets = pipe(levels, Array.map(sheetOf(source)));
   const overview = pipe(
@@ -169,6 +169,3 @@ const createSprites = (source: Source): Sprites => {
     levelFor: levelFinder(levels),
   };
 };
-
-export type { Level, Sprites };
-export { createSprites };

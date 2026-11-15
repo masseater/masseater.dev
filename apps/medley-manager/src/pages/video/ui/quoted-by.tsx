@@ -7,7 +7,7 @@ import { SectionHeading } from "#/shared/ui/section-heading";
 
 const nothing = (): string => "";
 
-const QuotedBy = (): ReactNode => {
+export const QuotedBy = (): ReactNode => {
   const video = useVideo();
   return (
     Arr.isReadonlyArrayNonEmpty(video.quotedBy) && (
@@ -18,5 +18,3 @@ const QuotedBy = (): ReactNode => {
     )
   );
 };
-
-export { QuotedBy };

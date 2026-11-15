@@ -51,7 +51,7 @@ interface Loop {
   readonly signal: AbortSignal;
 }
 
-const startLoop = ({ store, renderer, sprites, dirty, signal }: Loop): void => {
+export const startLoop = ({ store, renderer, sprites, dirty, signal }: Loop): void => {
   const reduced = prefersReducedMotion();
   let drawn: Option.Option<Scene> = Option.none();
   const tick = (scene: Scene, now: number): Option.Option<Scene> => {
@@ -76,12 +76,12 @@ const startLoop = ({ store, renderer, sprites, dirty, signal }: Loop): void => {
   requestAnimationFrame(frame);
 };
 
-interface Invalidation {
+export interface Invalidation {
   readonly mark: () => void;
   readonly take: () => boolean;
 }
 
-const createInvalidation = (): Invalidation => {
+export const createInvalidation = (): Invalidation => {
   let dirty = true;
   return {
     mark: () => {
@@ -94,6 +94,3 @@ const createInvalidation = (): Invalidation => {
     },
   };
 };
-
-export type { Invalidation };
-export { createInvalidation, startLoop };

@@ -5,12 +5,12 @@ import type { Outcome } from "./item.ts";
 import type { DecisionAdapter } from "./openrouter.ts";
 import { readJson } from "./store.ts";
 
-const DetailSchema = Schema.Struct({
+export const DetailSchema = Schema.Struct({
   model: Schema.String,
   outcomes: Schema.Array(Schema.Struct({ id: Schema.String, outcome: OutcomeSchema })),
 });
 
-const reusePrior = Effect.fn("reusePrior")(function* reusePrior(
+export const reusePrior = Effect.fn("reusePrior")(function* reusePrior(
   adapter: DecisionAdapter,
   detailPath: string,
 ) {
@@ -36,5 +36,3 @@ const reusePrior = Effect.fn("reusePrior")(function* reusePrior(
   };
   return reused;
 });
-
-export { DetailSchema, reusePrior };

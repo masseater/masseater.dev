@@ -8,7 +8,7 @@ import { useYohaku } from "#/shared/api";
 const SYNC_KEY = ["sync"] as const;
 const POLL_INTERVAL = 5000;
 
-const useSyncStatus = (): Option.Option<typeof SyncStatus.Type> => {
+export const useSyncStatus = (): Option.Option<typeof SyncStatus.Type> => {
   const yohaku = useYohaku();
   const { data } = useQuery(
     queryOptions({
@@ -20,7 +20,7 @@ const useSyncStatus = (): Option.Option<typeof SyncStatus.Type> => {
   return Option.fromNullishOr(data);
 };
 
-const useSyncSignIn = (): Readonly<{ connect: () => void; pending: boolean }> => {
+export const useSyncSignIn = (): Readonly<{ connect: () => void; pending: boolean }> => {
   const yohaku = useYohaku();
   const client = useQueryClient();
   const connecting = useCallback(() => Effect.runPromise(yohaku.beginSyncSignIn()), [yohaku]);
@@ -31,5 +31,3 @@ const useSyncSignIn = (): Readonly<{ connect: () => void; pending: boolean }> =>
   }, [mutate]);
   return { connect, pending: isPending };
 };
-
-export { useSyncSignIn, useSyncStatus };

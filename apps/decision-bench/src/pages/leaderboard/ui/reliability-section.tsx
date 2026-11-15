@@ -18,7 +18,7 @@ const NOTES: readonly Note[] = [
   },
 ];
 
-const ReliabilitySection = ({
+export const ReliabilitySection = ({
   task,
   entries,
 }: Readonly<{ task: string; entries: readonly TaskEntry[] }>): ReactNode => (
@@ -27,5 +27,3 @@ const ReliabilitySection = ({
     <ReliabilityChart task={task} title={TITLE} entries={entries} />
   </Section>
 );
-
-export { ReliabilitySection };

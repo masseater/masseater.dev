@@ -6,7 +6,7 @@ import type { Entry } from "#/pages/interview/model/hooks";
 
 import { RatingButtons } from "./rating-buttons.tsx";
 
-const HistoryItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => {
+export const HistoryItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => {
   if (entry.kind === "speech") {
     return (
       <li className="text-foreground/85 border-foreground/20 border-l-2 pl-3 leading-relaxed wrap-anywhere break-keep">
@@ -21,5 +21,3 @@ const HistoryItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => {
     </li>
   );
 };
-
-export { HistoryItem };

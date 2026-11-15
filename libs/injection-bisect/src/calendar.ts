@@ -43,7 +43,7 @@ const valueUnitsOf = (text: string): readonly Unit[] =>
     ),
   );
 
-const icsParser: Parser = {
+export const icsParser: Parser = {
   format: "ics",
   extensions: [".ics", ".ical", ".ifb"],
   aliases: ["icalendar", "ical"],
@@ -51,7 +51,7 @@ const icsParser: Parser = {
   unitsOf: valueUnitsOf,
 };
 
-const vcardParser: Parser = {
+export const vcardParser: Parser = {
   format: "vcard",
   extensions: [".vcf", ".vcard"],
   aliases: ["vcf"],
@@ -59,6 +59,4 @@ const vcardParser: Parser = {
   unitsOf: valueUnitsOf,
 };
 
-const CALENDAR_PARSERS: readonly Parser[] = [icsParser, vcardParser];
-
-export { CALENDAR_PARSERS, icsParser, vcardParser };
+export const CALENDAR_PARSERS: readonly Parser[] = [icsParser, vcardParser];

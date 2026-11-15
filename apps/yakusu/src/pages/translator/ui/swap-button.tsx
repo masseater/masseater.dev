@@ -10,7 +10,7 @@ import { swapped } from "#/pages/translator/model/swap";
 
 const LABEL = "言語を入れ替える";
 
-const SwapButton = (): ReactNode => {
+export const SwapButton = (): ReactNode => {
   const source = useSource();
   const direction = useDirection();
   const output = useTranslation();
@@ -34,5 +34,3 @@ const SwapButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { SwapButton };

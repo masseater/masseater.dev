@@ -6,7 +6,7 @@ import { linesOf } from "#/pages/extract/model/result";
 
 import { ResultTable } from "./result-table";
 
-const ExtractResult = ({ state }: Readonly<{ state: ExtractState }>): ReactNode => {
+export const ExtractResult = ({ state }: Readonly<{ state: ExtractState }>): ReactNode => {
   if (state.status !== "finished") {
     return "";
   }
@@ -20,5 +20,3 @@ const ExtractResult = ({ state }: Readonly<{ state: ExtractState }>): ReactNode 
   }
   return <ResultTable lines={linesOf(state.outcome)} />;
 };
-
-export { ExtractResult };

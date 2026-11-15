@@ -58,7 +58,9 @@ const analyzeProjects =
       Effect.map(Arr.getSomes),
     );
 
-const checkRepository = Effect.fn("checkRepository")(function* checkRepository(root: string) {
+export const checkRepository = Effect.fn("checkRepository")(function* checkRepository(
+  root: string,
+) {
   const files = yield* RepositoryFiles;
   const compiler = yield* typeScriptCompiler;
   const generated = yield* files.generatedFiles(root);
@@ -80,5 +82,3 @@ const checkRepository = Effect.fn("checkRepository")(function* checkRepository(r
     ...duplicateProblems(relative)(unowned),
   ]);
 }, Effect.scoped);
-
-export { checkRepository };

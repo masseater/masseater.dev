@@ -13,7 +13,7 @@ import { loadStatsData } from "./life-stats-data.server";
 import { scanAll } from "./life-store.server";
 import { dayBound, jstDayOf, todayJst } from "./life-time";
 
-type DigestInput = Readonly<{ from?: string; to?: string }>;
+export type DigestInput = Readonly<{ from?: string; to?: string }>;
 
 type DigestContext = Readonly<{ period: Period; today: string; entries: readonly Entry[] }>;
 
@@ -160,7 +160,7 @@ const digestOf = (context: DigestContext, data: StatsData): Body => {
   };
 };
 
-const lifeDigest = (input: DigestInput): Effect.Effect<Body, StoreFailure> =>
+export const lifeDigest = (input: DigestInput): Effect.Effect<Body, StoreFailure> =>
   Effect.gen(function* readDigest() {
     const today = yield* todayJst;
     const entries = yield* scanAll([
@@ -175,6 +175,3 @@ const lifeDigest = (input: DigestInput): Effect.Effect<Body, StoreFailure> =>
     const data = yield* loadStatsData;
     return digestOf({ period: periodOf(input, today), today, entries }, data);
   });
-
-export { lifeDigest };
-export type { DigestInput };

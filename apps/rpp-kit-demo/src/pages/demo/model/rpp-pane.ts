@@ -24,7 +24,7 @@ const MIN_ERROR_LENGTH = 1;
 
 const encodeSong = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
-const songOf = (content: string): Effect.Effect<string> =>
+export const songOf = (content: string): Effect.Effect<string> =>
   encodeSong(readSong(content)).pipe(Effect.orDie);
 
 const refreshChecker = (
@@ -45,7 +45,7 @@ const errorAt = ({ start, end, message }: Problem): readonly Diagnostic[] => [
   { from: start, to: Math.max(end, start + MIN_ERROR_LENGTH), severity: "error", message },
 ];
 
-const rppPane = (views: Views): readonly Extension[] => [
+export const rppPane = (views: Views): readonly Extension[] => [
   linter((view): readonly Diagnostic[] => {
     const content = view.state.doc.toString();
     return Match.value(mapRpp(content)).pipe(
@@ -60,5 +60,3 @@ const rppPane = (views: Views): readonly Extension[] => [
     );
   }),
 ];
-
-export { rppPane, songOf };

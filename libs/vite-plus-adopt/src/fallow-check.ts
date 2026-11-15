@@ -85,7 +85,6 @@ const runFallow = (
     };
   }).pipe(Effect.scoped);
 
-const fallowCheck = withSection("fallow", (config, { root }) => runFallow(config, root));
+export const fallowCheck = withSection("fallow", (config, { root }) => runFallow(config, root));
 
 /** @internal */
-export { fallowCheck };

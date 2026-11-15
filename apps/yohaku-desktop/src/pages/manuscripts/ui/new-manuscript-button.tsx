@@ -7,7 +7,7 @@ import { NEW_MANUSCRIPT, opened, useScreen } from "#/shared/model";
 
 const LABEL = "新しく書く";
 
-const NewManuscriptButton = (): ReactNode => {
+export const NewManuscriptButton = (): ReactNode => {
   const [screen, setScreen] = useScreen();
   const onClick = useCallback(() => {
     setScreen(opened(NEW_MANUSCRIPT)(screen));
@@ -19,5 +19,3 @@ const NewManuscriptButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { NewManuscriptButton };

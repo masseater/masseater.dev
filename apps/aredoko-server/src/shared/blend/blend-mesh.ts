@@ -14,9 +14,9 @@ import {
 } from "./blend-structs.ts";
 import type { BlendFile, Instance } from "./blend-structs.ts";
 
-type Color = readonly [red: number, green: number, blue: number];
+export type Color = readonly [red: number, green: number, blue: number];
 
-interface MeshData {
+export interface MeshData {
   readonly positions: Float32Array;
   readonly offsets: Int32Array;
   readonly corners: Int32Array;
@@ -49,7 +49,7 @@ const NONE = 0;
 const NEXT = 1;
 const ARRAY_STORAGE = 0;
 const DEFAULT_SHADE = 0.8;
-const GRAY: Color = [DEFAULT_SHADE, DEFAULT_SHADE, DEFAULT_SHADE];
+export const GRAY: Color = [DEFAULT_SHADE, DEFAULT_SHADE, DEFAULT_SHADE];
 
 const VERTEX_DOMAIN = ["vdata", "vert_data"];
 const FACE_DOMAIN = ["pdata", "face_data"];
@@ -266,7 +266,7 @@ const colorsOf = (mesh: Instance): readonly Color[] =>
     Option.getOrElse((): readonly Color[] => []),
   );
 
-const readMesh = (mesh: Instance): Option.Option<MeshData> =>
+export const readMesh = (mesh: Instance): Option.Option<MeshData> =>
   Option.gen(function* meshData() {
     const counts = countsOf(mesh);
     if (counts.vertices <= NONE || counts.faces <= NONE) {
@@ -281,6 +281,3 @@ const readMesh = (mesh: Instance): Option.Option<MeshData> =>
     const { offsets, corners } = faces;
     return { positions, offsets, corners, materials, colors: colorsOf(mesh) };
   });
-
-export { GRAY, readMesh };
-export type { Color, MeshData };

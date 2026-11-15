@@ -12,7 +12,7 @@ const updatedAt = pipe(
   Str.replace(/T(?<time>\d{2}:\d{2}).*$/u, " $<time> UTC"),
 );
 
-const PageShell = ({
+export const PageShell = ({
   header,
   children,
 }: Readonly<{ header: ReactNode; children: ReactNode }>): ReactNode => (
@@ -29,5 +29,3 @@ const PageShell = ({
     </footer>
   </main>
 );
-
-export { PageShell };

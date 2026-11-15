@@ -1,6 +1,6 @@
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-const LIFE_RECORDS = [
+export const LIFE_RECORDS = [
   "life_event",
   "media_item",
   "profile_fact",
@@ -11,11 +11,11 @@ const LIFE_RECORDS = [
   "metric_definition",
 ] as const;
 
-const SOURCES = ["said", "provided", "imported", "definition"] as const;
+export const SOURCES = ["said", "provided", "imported", "definition"] as const;
 
-const NOT_RETRACTED = "";
+export const NOT_RETRACTED = "";
 
-const lifeRecord = sqliteTable(
+export const lifeRecord = sqliteTable(
   "life_record",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
@@ -38,11 +38,8 @@ const lifeRecord = sqliteTable(
   ],
 );
 
-type LifeRow = typeof lifeRecord.$inferSelect;
+export type LifeRow = typeof lifeRecord.$inferSelect;
 
-type LifeRecordName = LifeRow["record"];
+export type LifeRecordName = LifeRow["record"];
 
-type Source = LifeRow["source"];
-
-export { LIFE_RECORDS, NOT_RETRACTED, SOURCES, lifeRecord };
-export type { LifeRecordName, LifeRow, Source };
+export type Source = LifeRow["source"];

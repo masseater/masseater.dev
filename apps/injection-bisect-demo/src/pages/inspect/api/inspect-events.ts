@@ -16,7 +16,7 @@ type Finished =
   | { readonly type: "done"; readonly detection: Detection }
   | { readonly type: "failed"; readonly reason: string };
 
-type InspectEvent = (ProbeEvent | Finished) & { readonly at: number };
+export type InspectEvent = (ProbeEvent | Finished) & { readonly at: number };
 
 interface Request {
   readonly text: string;
@@ -38,7 +38,7 @@ const finish = ({
     ),
   );
 
-const inspectEvents = ({
+export const inspectEvents = ({
   text,
   apiKey,
   model,
@@ -60,6 +60,3 @@ const inspectEvents = ({
       yield* Queue.end(queue);
     }).pipe(withApiKey(apiKey)),
   ).pipe(Stream.provide(openRouterPerRequest), Stream.toAsyncIterable);
-
-export type { InspectEvent };
-export { inspectEvents };

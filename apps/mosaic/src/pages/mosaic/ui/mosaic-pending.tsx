@@ -7,7 +7,7 @@ import { MosaicLoading } from "./mosaic-loading";
 
 const route = getRouteApi("/$slug");
 
-const MosaicPending = (): ReactNode => {
+export const MosaicPending = (): ReactNode => {
   const { slug } = route.useParams();
   const { seed } = route.useSearch();
   return (
@@ -17,5 +17,3 @@ const MosaicPending = (): ReactNode => {
     </main>
   );
 };
-
-export { MosaicPending };

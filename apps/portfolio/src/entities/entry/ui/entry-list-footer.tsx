@@ -7,7 +7,7 @@ import { Arrow } from "#/shared/ui";
 import { EntryMeta } from "./entry-meta";
 import { EntryStars } from "./entry-stars";
 
-const EntryListFooter = ({
+export const EntryListFooter = ({
   entry,
   stars,
 }: Readonly<{ entry: Entry; stars: Option.Option<number> }>): ReactNode => (
@@ -19,5 +19,3 @@ const EntryListFooter = ({
     </span>
   </span>
 );
-
-export { EntryListFooter };

@@ -19,7 +19,7 @@ import {
   putAssets,
 } from "./package-handlers.ts";
 
-const VERSION = "0.1.0";
+export const VERSION = "0.1.0";
 const NO_PREVIEW = "プレビューがありません";
 
 const NO_ASSETS: readonly number[] = [];
@@ -75,7 +75,7 @@ const getStatus = Effect.fn("GetStatus")(function* status() {
 });
 
 /** @internal */
-const handlersLayer = AredokoRpcs.toLayer(
+export const handlersLayer = AredokoRpcs.toLayer(
   Effect.gen(function* handlers() {
     const library = yield* Library;
     const libraryPath = yield* ensureLibraryFolder;
@@ -121,5 +121,3 @@ const handlersLayer = AredokoRpcs.toLayer(
     });
   }),
 );
-
-export { VERSION, handlersLayer };

@@ -7,6 +7,4 @@ type Tabs<Tab> = readonly [Tab, (tab: Tab) => void];
 
 const sourceTabAtom = Atom.make<SourceTab>("main").pipe(Atom.keepAlive);
 
-const useSourceTab = (): Tabs<SourceTab> => useAtom(sourceTabAtom);
-
-export { useSourceTab };
+export const useSourceTab = (): Tabs<SourceTab> => useAtom(sourceTabAtom);

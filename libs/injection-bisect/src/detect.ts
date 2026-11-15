@@ -12,7 +12,7 @@ import { joinRegions } from "./region.ts";
 import type { Region } from "./region.ts";
 import { AUTO, segmenterOf } from "./segment.ts";
 
-const DEFAULT_MODEL = "respan/span-01-lite";
+export const DEFAULT_MODEL = "respan/span-01-lite";
 
 const MIN_BRANCHES = 2;
 
@@ -22,7 +22,7 @@ const ONE_SENTENCE = 1;
 
 const FIRST = 0;
 
-interface DetectOptions {
+export interface DetectOptions {
   readonly model?: string;
   readonly cutoff?: number;
   readonly branches?: number;
@@ -31,32 +31,32 @@ interface DetectOptions {
   readonly unreadable?: readonly Unreadable[] | undefined;
 }
 
-const branchesFor = (sentenceCount: number): number =>
+export const branchesFor = (sentenceCount: number): number =>
   Math.max(MIN_BRANCHES, Math.ceil(Math.sqrt(sentenceCount)));
 
-const asksTogether = (model: string): boolean =>
+export const asksTogether = (model: string): boolean =>
   pipe(
     SEPARATING_PROVIDERS,
     Arr.some((provider) => Str.startsWith(provider)(model)),
   );
 
-interface Probe extends Span, Verdict {
+export interface Probe extends Span, Verdict {
   readonly depth: number;
   readonly millis: number;
 }
 
-type ProbeEvent =
+export type ProbeEvent =
   | (Span & { readonly type: "asked"; readonly id: number; readonly depth: number })
   | (Probe & { readonly type: "answered"; readonly id: number });
 
 const ignore = (): Effect.Effect<void> => Effect.void;
 
-const ProbeListener = Context.Reference<(event: ProbeEvent) => Effect.Effect<void>>(
+export const ProbeListener = Context.Reference<(event: ProbeEvent) => Effect.Effect<void>>(
   "@r_masseater/injection-bisect/detect/ProbeListener",
   { defaultValue: () => ignore },
 );
 
-type Detection =
+export type Detection =
   | {
       readonly status: "clean";
       readonly probability: number;
@@ -257,7 +257,7 @@ const settingsOf = (
   };
 };
 
-const detect = Effect.fn("injection-bisect.detect")(function* detect(
+export const detect = Effect.fn("injection-bisect.detect")(function* detect(
   text: string,
   options: DetectOptions,
 ) {
@@ -291,6 +291,3 @@ const detect = Effect.fn("injection-bisect.detect")(function* detect(
     ...notedIn(options),
   } satisfies Detection;
 });
-
-export { DEFAULT_MODEL, ProbeListener, asksTogether, branchesFor, detect };
-export type { Detection, DetectOptions, Probe, ProbeEvent };

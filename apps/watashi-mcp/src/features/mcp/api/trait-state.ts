@@ -8,7 +8,7 @@ import type {
 } from "#/features/mcp/model/owner-trait.table";
 import type { ObservationValue, TraitSourceValue } from "#/features/mcp/model/trait-analysis";
 
-type Evidence = Readonly<{
+export type Evidence = Readonly<{
   source: string;
   quote: string;
   stance: Stance;
@@ -16,9 +16,9 @@ type Evidence = Readonly<{
   observedAt: string;
 }>;
 
-type TraitKey = Readonly<{ existing: number }> | Readonly<{ created: number }>;
+export type TraitKey = Readonly<{ existing: number }> | Readonly<{ created: number }>;
 
-type TraitState = Readonly<{
+export type TraitState = Readonly<{
   key: TraitKey;
   kind: TraitKind;
   scope: string;
@@ -29,47 +29,47 @@ type TraitState = Readonly<{
   evidence: readonly Evidence[];
 }>;
 
-type BatchSource = Readonly<{ source: TraitSourceValue; present: boolean }>;
+export type BatchSource = Readonly<{ source: TraitSourceValue; present: boolean }>;
 
-type Checked = Readonly<{ accepted: readonly ObservationValue[]; rejected: number }>;
+export type Checked = Readonly<{ accepted: readonly ObservationValue[]; rejected: number }>;
 
-type Plan = Readonly<{ touched: readonly TraitState[]; created: number; retracted: number }>;
+export type Plan = Readonly<{ touched: readonly TraitState[]; created: number; retracted: number }>;
 
-type Candidates = Readonly<Record<string, readonly string[]>>;
+export type Candidates = Readonly<Record<string, readonly string[]>>;
 
-type Step = Readonly<{
+export type Step = Readonly<{
   traits: readonly TraitState[];
   batch: readonly BatchSource[];
   observations: readonly ObservationValue[];
 }>;
 
-type Japanese = Readonly<{ statement: string; why: string }>;
+export type Japanese = Readonly<{ statement: string; why: string }>;
 
-type JaRows = Readonly<Record<string, OwnerTraitJa>>;
+export type JaRows = Readonly<Record<string, OwnerTraitJa>>;
 
-const TRAIT_PREFIX = "owner_trait:";
+export const TRAIT_PREFIX = "owner_trait:";
 
-const GLOBAL = "global";
+export const GLOBAL = "global";
 
-const traitRefOf = (id: number): string => `${TRAIT_PREFIX}${id}`;
+export const traitRefOf = (id: number): string => `${TRAIT_PREFIX}${id}`;
 
-const keyText = (key: TraitKey): string => {
+export const keyText = (key: TraitKey): string => {
   if ("existing" in key) {
     return traitRefOf(key.existing);
   }
   return `new:${key.created}`;
 };
 
-const isActive = (trait: TraitState): boolean => trait.status === "active";
+export const isActive = (trait: TraitState): boolean => trait.status === "active";
 
-const idOf = (trait: TraitState): Option.Option<number> => {
+export const idOf = (trait: TraitState): Option.Option<number> => {
   if ("existing" in trait.key) {
     return Option.some(trait.key.existing);
   }
   return Option.none();
 };
 
-const japaneseOf =
+export const japaneseOf =
   (rows: JaRows) =>
   (trait: TraitState): Option.Option<Japanese> =>
     pipe(
@@ -81,20 +81,20 @@ const japaneseOf =
       Option.map((row) => ({ statement: row.statement, why: row.why })),
     );
 
-const isCreated = (trait: TraitState): boolean => "created" in trait.key;
+export const isCreated = (trait: TraitState): boolean => "created" in trait.key;
 
-const supportsOf = (trait: TraitState): readonly Evidence[] =>
+export const supportsOf = (trait: TraitState): readonly Evidence[] =>
   pipe(
     trait.evidence,
     Arr.filter((item) => item.stance === "supports"),
   );
 
-const sameKey =
+export const sameKey =
   (key: TraitKey) =>
   (trait: TraitState): boolean =>
     keyText(trait.key) === keyText(key);
 
-const updateWhere =
+export const updateWhere =
   ({
     matches,
     change,
@@ -113,7 +113,7 @@ const updateWhere =
       ),
     );
 
-const withEvidence =
+export const withEvidence =
   (evidence: Evidence) =>
   (trait: TraitState): TraitState => ({
     ...trait,
@@ -125,30 +125,3 @@ const withEvidence =
       evidence,
     ],
   });
-
-export {
-  GLOBAL,
-  TRAIT_PREFIX,
-  idOf,
-  isActive,
-  isCreated,
-  japaneseOf,
-  keyText,
-  traitRefOf,
-  sameKey,
-  supportsOf,
-  updateWhere,
-  withEvidence,
-};
-export type {
-  BatchSource,
-  Candidates,
-  Checked,
-  Evidence,
-  JaRows,
-  Japanese,
-  Plan,
-  Step,
-  TraitKey,
-  TraitState,
-};

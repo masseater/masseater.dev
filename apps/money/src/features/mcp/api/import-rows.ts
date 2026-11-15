@@ -8,25 +8,29 @@ import type { Entry, Fingerprint } from "#/features/mcp/model/fingerprint";
 import { db } from "./database";
 import { transactions } from "./ledger.table";
 
-type LedgerEntry = Entry & Readonly<{ memo: Option.Option<string> }>;
+export type LedgerEntry = Entry & Readonly<{ memo: Option.Option<string> }>;
 
-type ImportRequest = Readonly<{
+export type ImportRequest = Readonly<{
   accountId: string;
   source: string;
   entries: readonly LedgerEntry[];
 }>;
 
-type NewRow = typeof transactions.$inferInsert;
+export type NewRow = typeof transactions.$inferInsert;
 
-type Prepared = Readonly<{ importId: string; rules: readonly Rule[]; request: ImportRequest }>;
+export type Prepared = Readonly<{
+  importId: string;
+  rules: readonly Rule[];
+  request: ImportRequest;
+}>;
 
 const COLUMNS_PER_ROW = 11;
 
 const MAX_PARAMETERS = 100;
 
-const ROWS_PER_INSERT = Math.floor(MAX_PARAMETERS / COLUMNS_PER_ROW);
+export const ROWS_PER_INSERT = Math.floor(MAX_PARAMETERS / COLUMNS_PER_ROW);
 
-const rowOf =
+export const rowOf =
   ({ importId, rules, request }: Prepared) =>
   ([entry, print]: readonly [LedgerEntry, Fingerprint]): NewRow => {
     const { category, label } = decide(rules)({
@@ -54,8 +58,5 @@ const insertOf = (rows: readonly NewRow[]): BatchItem<"sqlite"> =>
     .values([...rows])
     .onConflictDoNothing({ target: transactions.hash });
 
-const insertsOf = (rows: readonly NewRow[]): readonly BatchItem<"sqlite">[] =>
+export const insertsOf = (rows: readonly NewRow[]): readonly BatchItem<"sqlite">[] =>
   pipe(rows, Arr.chunksOf(ROWS_PER_INSERT), Arr.map(insertOf));
-
-export { ROWS_PER_INSERT, insertsOf, rowOf };
-export type { ImportRequest, LedgerEntry, NewRow, Prepared };

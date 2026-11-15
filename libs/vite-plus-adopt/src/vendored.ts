@@ -11,7 +11,7 @@ import type { Report } from "./report.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-const runVendored: {
+export const runVendored: {
   (
     invocation: Omit<Invocation, "file">,
   ): (
@@ -42,4 +42,3 @@ const runVendored: {
 );
 
 /** @internal */
-export { runVendored };

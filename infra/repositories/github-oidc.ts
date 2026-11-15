@@ -4,14 +4,14 @@ import { createRemoteJWKSet, jwtVerify } from "jose";
 import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
 
 const ISSUER = "https://token.actions.githubusercontent.com";
-const OWNER = "masseater";
-const OWNER_ID = "62135405";
+export const OWNER = "masseater";
+export const OWNER_ID = "62135405";
 const UNTRUSTED_EVENTS: ReadonlySet<string> = new Set(["pull_request_target", "workflow_run"]);
 const DEFAULT_BRANCH = "refs/heads/main";
 
 const jwks = createRemoteJWKSet(new URL(`${ISSUER}/.well-known/jwks`));
 
-const Claims = Schema.Struct({
+export const Claims = Schema.Struct({
   repository_owner: Schema.String,
   repository_owner_id: Schema.String,
   repository: Schema.String,
@@ -26,9 +26,12 @@ const Claims = Schema.Struct({
 
 const taggedError = Schema.TaggedError;
 
-class Rejected extends taggedError<Rejected, { readonly brand: unique symbol }>()("Rejected", {
-  reason: Schema.String,
-}) {}
+export class Rejected extends taggedError<Rejected, { readonly brand: unique symbol }>()(
+  "Rejected",
+  {
+    reason: Schema.String,
+  },
+) {}
 
 const bearer = (request: Request): string =>
   Str.replace(/^Bearer /u, "")(request.headers.get("authorization") ?? "");
@@ -43,7 +46,7 @@ const isTrusted = (claims: typeof Claims.Type): boolean =>
   Arr.every(Record.toEntries(TRUSTED_CLAIMS), ([key, value]) => claims[key] === value) &&
   !UNTRUSTED_EVENTS.has(claims.event_name);
 
-const verify = (
+export const verify = (
   request: Request,
 ): Effect.Effect<typeof Claims.Type, Rejected | Schema.SchemaError> =>
   Effect.gen(function* verifyClaims() {
@@ -61,10 +64,10 @@ const verify = (
     return claims;
   });
 
-const repositoryName = (claims: typeof Claims.Type): string =>
+export const repositoryName = (claims: typeof Claims.Type): string =>
   Str.replace(`${OWNER}/`, "")(claims.repository);
 
-const grantKeys = (claims: typeof Claims.Type): readonly string[] =>
+export const grantKeys = (claims: typeof Claims.Type): readonly string[] =>
   Arr.flatMap([repositoryName(claims), claims.repository_id], (repository) =>
     pipe(
       Option.fromNullishOr(claims.environment),
@@ -75,7 +78,7 @@ const grantKeys = (claims: typeof Claims.Type): readonly string[] =>
 
 const WORKFLOWS_DIRECTORY = "/.github/workflows/";
 
-const workflowFile = (claims: typeof Claims.Type): Option.Option<string> =>
+export const workflowFile = (claims: typeof Claims.Type): Option.Option<string> =>
   pipe(
     Str.split("@")(claims.workflow_ref),
     Arr.head,
@@ -84,7 +87,7 @@ const workflowFile = (claims: typeof Claims.Type): Option.Option<string> =>
     Option.flatMap(Arr.last),
   );
 
-const workflowGrant =
+export const workflowGrant =
   (workflows: Readonly<Record<string, Readonly<Record<string, string>>>>) =>
   (
     claims: typeof Claims.Type,
@@ -100,7 +103,7 @@ const workflowGrant =
       Option.map((permissions) => ({ permissions, repositories: [repositoryName(claims)] })),
     );
 
-const isGranted =
+export const isGranted =
   (
     grants: Readonly<{
       repositories: Readonly<Record<string, string>>;
@@ -117,16 +120,3 @@ const isGranted =
         Record.has(grants.github, key) ||
         Arr.contains(grants.npm, key),
     ) || Option.isSome(workflowGrant(grants.workflows)(claims));
-
-export {
-  Claims,
-  OWNER,
-  OWNER_ID,
-  Rejected,
-  grantKeys,
-  isGranted,
-  repositoryName,
-  verify,
-  workflowFile,
-  workflowGrant,
-};

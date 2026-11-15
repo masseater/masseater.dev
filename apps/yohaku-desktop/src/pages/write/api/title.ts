@@ -12,7 +12,7 @@ interface TitleField {
   readonly rename: (text: string) => void;
 }
 
-const useTitle = (): TitleField => {
+export const useTitle = (): TitleField => {
   const yohaku = useYohaku();
   const id = useAtomValue(manuscriptIdAtom);
   const [title, setTitle] = useAtom(titleAtom);
@@ -39,5 +39,3 @@ const useTitle = (): TitleField => {
     },
   };
 };
-
-export { useTitle };

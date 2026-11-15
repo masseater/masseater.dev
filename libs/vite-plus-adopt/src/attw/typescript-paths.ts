@@ -23,7 +23,7 @@ const forEachAncestorDirectory = <Found>(
     forEachAncestor(directory, (ancestor) => Option.fromUndefinedOr(visit(ancestor))),
   );
 
-const pathFunctions = {
+export const pathFunctions = {
   Extension,
   combinePaths,
   comparePathsCaseInsensitive,
@@ -36,5 +36,3 @@ const pathFunctions = {
   pathIsRelative,
   unmangleScopedPackageName,
 };
-
-export { pathFunctions };

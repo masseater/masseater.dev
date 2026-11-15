@@ -9,7 +9,7 @@ import { DetectTab } from "./detect-tab.tsx";
 import { PickerToggle } from "./picker-toggle.tsx";
 import { SourceTab } from "./source-tab.tsx";
 
-const SourceTabs = ({
+export const SourceTabs = ({
   detected,
 }: Readonly<{ detected: Option.Option<LanguageCode> }>): ReactNode => (
   <div className="flex min-w-0 flex-1 items-center overflow-hidden pl-2">
@@ -21,5 +21,3 @@ const SourceTabs = ({
     <PickerToggle side="source" />
   </div>
 );
-
-export { SourceTabs };

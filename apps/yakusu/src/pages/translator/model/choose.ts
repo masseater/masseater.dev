@@ -33,7 +33,7 @@ const targetChoice = ({
   return { source: current.source, target };
 };
 
-const useChooseSource = (): ((source: Source) => void) => {
+export const useChooseSource = (): ((source: Source) => void) => {
   const select = useSelect();
   const current = useSelection();
   return (source) => {
@@ -41,12 +41,10 @@ const useChooseSource = (): ((source: Source) => void) => {
   };
 };
 
-const useChooseTarget = (): ((target: LanguageCode) => void) => {
+export const useChooseTarget = (): ((target: LanguageCode) => void) => {
   const select = useSelect();
   const current = useSelection();
   return (target) => {
     select(targetChoice({ current, target }));
   };
 };
-
-export { useChooseSource, useChooseTarget };

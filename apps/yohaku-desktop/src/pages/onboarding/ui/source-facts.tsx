@@ -6,7 +6,7 @@ import { RevertButton, useSourceFacts } from "#/entities/source";
 
 import { FactRow } from "./fact-row.tsx";
 
-const SourceFacts = ({ source }: Readonly<{ source: typeof Source.Type }>): ReactNode => {
+export const SourceFacts = ({ source }: Readonly<{ source: typeof Source.Type }>): ReactNode => {
   const facts = useSourceFacts(source.id);
   return (
     <li className="flex flex-col gap-2.5 rounded-md border px-4 py-3">
@@ -25,5 +25,3 @@ const SourceFacts = ({ source }: Readonly<{ source: typeof Source.Type }>): Reac
     </li>
   );
 };
-
-export { SourceFacts };

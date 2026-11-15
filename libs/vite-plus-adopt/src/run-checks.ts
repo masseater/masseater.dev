@@ -54,7 +54,9 @@ const runCheck =
   ({ name, run }: NamedCheck): Effect.Effect<Option.Option<Outcome>, CheckError, CheckServices> =>
     run(context).pipe(Effect.map(Option.map((report) => ({ name, report }))));
 
-const runAllChecks = (root: string): Effect.Effect<void, CheckError, CheckServices | Stdio.Stdio> =>
+export const runAllChecks = (
+  root: string,
+): Effect.Effect<void, CheckError, CheckServices | Stdio.Stdio> =>
   Effect.gen(function* all() {
     const config = yield* loadViteConfig(root);
     const base = yield* resolveBase(root);
@@ -76,4 +78,3 @@ const runAllChecks = (root: string): Effect.Effect<void, CheckError, CheckServic
   });
 
 /** @internal */
-export { runAllChecks };

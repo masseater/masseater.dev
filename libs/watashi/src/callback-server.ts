@@ -7,7 +7,10 @@ import { HttpServer, HttpServerRequest, HttpServerResponse } from "effect/http";
 
 import { WatashiFailed } from "./errors.ts";
 
-type Callback = Readonly<{ redirectUri: string; code: Effect.Effect<string, WatashiFailed> }>;
+export type Callback = Readonly<{
+  redirectUri: string;
+  code: Effect.Effect<string, WatashiFailed>;
+}>;
 
 const LOOPBACK = "127.0.0.1";
 const CALLBACK_PATH = "/callback";
@@ -53,7 +56,7 @@ const handlerOf = (
     return yield* respond(expectedState, code)(Rec.fromEntries(url.searchParams));
   });
 
-const listenForCode = (expectedState: string): Effect.Effect<Callback, never, Scope.Scope> =>
+export const listenForCode = (expectedState: string): Effect.Effect<Callback, never, Scope.Scope> =>
   Effect.gen(function* listen() {
     const code = yield* Deferred.make<string, WatashiFailed>();
     const server = yield* Effect.orDie(
@@ -72,6 +75,4 @@ const listenForCode = (expectedState: string): Effect.Effect<Callback, never, Sc
   });
 
 /** @internal */
-export { listenForCode };
 /** @internal */
-export type { Callback };

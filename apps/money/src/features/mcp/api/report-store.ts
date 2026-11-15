@@ -10,14 +10,17 @@ import type { DayTotal } from "#/features/mcp/model/monthly";
 import { db, query, summedAmount, yenOf } from "./database";
 import { transactions } from "./ledger.table";
 
-type Period = Readonly<{ from: string; to: string }>;
+export type Period = Readonly<{ from: string; to: string }>;
 
-type TransactionFilter = Period &
+export type TransactionFilter = Period &
   Readonly<{ account?: string; category?: Category; cursor?: string }>;
 
-type Transaction = Omit<typeof transactions.$inferSelect, "normalized" | "hash">;
+export type Transaction = Omit<typeof transactions.$inferSelect, "normalized" | "hash">;
 
-type TransactionPage = Readonly<{ transactions: readonly Transaction[]; next: string | null }>;
+export type TransactionPage = Readonly<{
+  transactions: readonly Transaction[];
+  next: string | null;
+}>;
 
 const PAGE_SIZE = 100;
 
@@ -66,7 +69,7 @@ const pageOf = (rows: readonly Transaction[]): TransactionPage => {
   };
 };
 
-const listTransactions = (
+export const listTransactions = (
   filter: TransactionFilter,
 ): Effect.Effect<TransactionPage, UpstreamFailed> =>
   query(() =>
@@ -89,7 +92,9 @@ const listTransactions = (
       .limit(PAGE_SIZE + PEEK),
   ).pipe(Effect.map(pageOf));
 
-const categoryTotals = (period: Period): Effect.Effect<readonly CategoryTotal[], UpstreamFailed> =>
+export const categoryTotals = (
+  period: Period,
+): Effect.Effect<readonly CategoryTotal[], UpstreamFailed> =>
   query(() =>
     db
       .select({ category: transactions.category, label: transactions.label, amount: summedAmount })
@@ -106,7 +111,7 @@ const categoryTotals = (period: Period): Effect.Effect<readonly CategoryTotal[],
     ),
   );
 
-const dayTotals = (period: Period): Effect.Effect<readonly DayTotal[], UpstreamFailed> =>
+export const dayTotals = (period: Period): Effect.Effect<readonly DayTotal[], UpstreamFailed> =>
   query(() =>
     db
       .select({ date: transactions.date, category: transactions.category, amount: summedAmount })
@@ -118,6 +123,3 @@ const dayTotals = (period: Period): Effect.Effect<readonly DayTotal[], UpstreamF
       Arr.map(({ date, category, amount }) => ({ date, category, amount: yenOf(amount) })),
     ),
   );
-
-export { categoryTotals, dayTotals, listTransactions };
-export type { Period, Transaction, TransactionFilter, TransactionPage };

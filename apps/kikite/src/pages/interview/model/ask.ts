@@ -74,7 +74,7 @@ const streamed = (
     Effect.onInterrupt(() => write(askingAtom, IDLE)),
   );
 
-const ask = Effect.fn("kikite.ask")(function* ask() {
+export const ask = Effect.fn("kikite.ask")(function* ask() {
   const asking = yield* read(askingAtom);
   if (asking.status === "drafting") {
     return Option.none<string>();
@@ -86,4 +86,3 @@ const ask = Effect.fn("kikite.ask")(function* ask() {
 });
 
 /** @internal */
-export { ask };

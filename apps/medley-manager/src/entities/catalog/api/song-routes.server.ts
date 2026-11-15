@@ -9,10 +9,8 @@ import { IdParams, respondFound } from "./respond.server";
 import { getSong } from "./song.server";
 import { listSongs } from "./songs.server";
 
-const songRoutes = createRouter("/songs")
+export const songRoutes = createRouter("/songs")
   .get("/", ({ query }) => runRequest(keywordOf(query.keyword).pipe(listSongs)), {
     query: Schema.toStandardSchemaV1(TextSearch),
   })
   .get("/:id", ({ params }) => respondFound(getSong(params.id)), { params: IdParams });
-
-export { songRoutes };

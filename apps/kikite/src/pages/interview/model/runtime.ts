@@ -5,9 +5,8 @@ import { Atom } from "effect/reactivity";
 
 import { telemetry } from "#/pages/interview/lib/telemetry";
 
-const runtime = Atom.runtime(
+export const runtime = Atom.runtime(
   Layer.mergeAll(FetchHttpClient.layer, SecureRandom.layerWebCrypto, telemetry),
 );
 
 /** @internal */
-export { runtime };

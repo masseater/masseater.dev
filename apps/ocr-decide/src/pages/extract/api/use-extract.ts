@@ -5,7 +5,7 @@ import { Duration, Effect, Layer } from "effect";
 
 import type { Way } from "#/pages/extract/model/ways";
 
-type Outcome =
+export type Outcome =
   | { readonly status: "failed"; readonly reason: string }
   | {
       readonly status: "done";
@@ -20,7 +20,7 @@ interface Request {
   readonly way: Way;
 }
 
-type ExtractState =
+export type ExtractState =
   | { readonly status: "idle" }
   | { readonly status: "running" }
   | { readonly status: "finished"; readonly outcome: Outcome };
@@ -52,7 +52,10 @@ const outcomeOf = ({ bytes, apiKey, way }: Request): Promise<Outcome> => {
   );
 };
 
-const useExtract = (): Readonly<{ state: ExtractState; start: (request: Request) => void }> => {
+export const useExtract = (): Readonly<{
+  state: ExtractState;
+  start: (request: Request) => void;
+}> => {
   const mutation = useMutation({ mutationFn: outcomeOf });
   if (mutation.status === "pending") {
     return { state: { status: "running" }, start: mutation.mutate };
@@ -68,6 +71,3 @@ const useExtract = (): Readonly<{ state: ExtractState; start: (request: Request)
   }
   return { state: { status: "idle" }, start: mutation.mutate };
 };
-
-export type { ExtractState, Outcome };
-export { useExtract };

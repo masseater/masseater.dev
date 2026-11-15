@@ -24,7 +24,7 @@ import type { ChoiceItem, Decision, Item, Outcome } from "./item.ts";
 import { toRequest } from "./label.ts";
 import { makeCache, modelSlug } from "./store.ts";
 
-interface DecisionAdapter {
+export interface DecisionAdapter {
   readonly model: string;
   readonly decide: (item: Readonly<Item>) => Effect.Effect<Outcome>;
 }
@@ -192,30 +192,27 @@ const cacheKey = (model: string, item: Readonly<Item>, via: ChoiceVia): unknown 
   return { model, request: toRequest(item) };
 };
 
-const makeOpenRouterAdapter = Effect.fn("makeOpenRouterAdapter")(function* makeOpenRouterAdapter(
-  model: string,
-  via: ChoiceVia,
-) {
-  const apiKey = yield* Config.Redacted("OPENROUTER_API_KEY");
-  const headers = yield* attribution;
-  const httpClient = new HTTPClient().addHook("beforeRequest", (request) => {
-    for (const [name, value] of Rec.toEntries(headers)) {
-      request.headers.set(name, value);
-    }
-  });
-  const client = new OpenRouter({ apiKey: Redacted.value(apiKey), httpClient });
-  const create = (item: Readonly<Item>): Promise<DecisionsResponse> =>
-    client.systemOne.create({
-      decisionsRequest: { model, state: item.text, questions: questionsOf(item, via) },
+export const makeOpenRouterAdapter = Effect.fn("makeOpenRouterAdapter")(
+  function* makeOpenRouterAdapter(model: string, via: ChoiceVia) {
+    const apiKey = yield* Config.Redacted("OPENROUTER_API_KEY");
+    const headers = yield* attribution;
+    const httpClient = new HTTPClient().addHook("beforeRequest", (request) => {
+      for (const [name, value] of Rec.toEntries(headers)) {
+        request.headers.set(name, value);
+      }
     });
-  const cached = yield* makeCache(`openrouter-${modelSlug(model)}`, OutcomeSchema, isAnswered);
-  const adapter: DecisionAdapter = {
-    model,
-    decide: (item) => cached(cacheKey(model, item, via), callSystemOne(create, item, via)),
-  };
-  return adapter;
-});
+    const client = new OpenRouter({ apiKey: Redacted.value(apiKey), httpClient });
+    const create = (item: Readonly<Item>): Promise<DecisionsResponse> =>
+      client.systemOne.create({
+        decisionsRequest: { model, state: item.text, questions: questionsOf(item, via) },
+      });
+    const cached = yield* makeCache(`openrouter-${modelSlug(model)}`, OutcomeSchema, isAnswered);
+    const adapter: DecisionAdapter = {
+      model,
+      decide: (item) => cached(cacheKey(model, item, via), callSystemOne(create, item, via)),
+    };
+    return adapter;
+  },
+);
 
 /** @internal */
-export { makeOpenRouterAdapter };
-export type { DecisionAdapter };

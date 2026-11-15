@@ -12,7 +12,7 @@ const notLoggedIn = WatashiFailed.make({
   message: "ログインしていない。watashi login を実行するか WATASHI_TOKEN を設定する。",
 });
 
-const authorization = (
+export const authorization = (
   current: Settings,
 ): Effect.Effect<Option.Option<Redacted.Redacted>, CredentialsError, Services> =>
   Option.match(current.token, {
@@ -20,7 +20,7 @@ const authorization = (
     onNone: () => freshAccessToken(current.home),
   });
 
-const authorized = (
+export const authorized = (
   current: Settings,
 ): Effect.Effect<Redacted.Redacted, CredentialsError | WatashiFailed, Services> =>
   authorization(current).pipe(
@@ -30,4 +30,3 @@ const authorized = (
   );
 
 /** @internal */
-export { authorization, authorized };

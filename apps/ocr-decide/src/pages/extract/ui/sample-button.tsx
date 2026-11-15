@@ -4,7 +4,10 @@ import type { ReactNode } from "react";
 
 import { useSetChoice } from "#/pages/extract/model/draft";
 
-const SampleButton = ({ name, label }: Readonly<{ name: string; label: string }>): ReactNode => {
+export const SampleButton = ({
+  name,
+  label,
+}: Readonly<{ name: string; label: string }>): ReactNode => {
   const choose = useSetChoice();
   const click = useCallback(() => {
     choose({ status: "chosen", name, url: `${import.meta.env.BASE_URL}samples/${name}` });
@@ -15,5 +18,3 @@ const SampleButton = ({ name, label }: Readonly<{ name: string; label: string }>
     </Button>
   );
 };
-
-export { SampleButton };

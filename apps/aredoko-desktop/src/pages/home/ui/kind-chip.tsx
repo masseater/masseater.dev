@@ -14,7 +14,7 @@ const variantOf = (selected: boolean): "secondary" | "outline" => {
   return "outline";
 };
 
-const KindChip = ({ kind }: Readonly<{ kind: typeof AssetKind.Type }>): ReactNode => {
+export const KindChip = ({ kind }: Readonly<{ kind: typeof AssetKind.Type }>): ReactNode => {
   const kinds = useKinds();
   const toggle = useToggleKind();
   const selected = Array.contains(kinds, kind);
@@ -27,5 +27,3 @@ const KindChip = ({ kind }: Readonly<{ kind: typeof AssetKind.Type }>): ReactNod
     </Button>
   );
 };
-
-export { KindChip };
