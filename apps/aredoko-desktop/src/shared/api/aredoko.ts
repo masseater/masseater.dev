@@ -231,11 +231,15 @@ const readWhole = <Failure>(
 const readModel = (
   assetId: number,
 ): Promise<
-  Readonly<{ model: Uint8Array; files: readonly Readonly<{ name: string; data: Uint8Array }>[] }>
+  Readonly<{
+    name: string;
+    model: Uint8Array;
+    files: readonly Readonly<{ name: string; data: Uint8Array }>[];
+  }>
 > =>
   callLong(({ ReadModel: readModelRpc, ReadModelPart: readPart }) =>
     Effect.gen(function* readModelInParts() {
-      const { size, files } = yield* readModelRpc({ assetId });
+      const { name: modelName, size, files } = yield* readModelRpc({ assetId });
       const model = yield* readWhole(readPart, { assetId, file: WHOLE_MODEL, size });
       const companions = yield* pipe(
         files,
@@ -245,7 +249,7 @@ const readModel = (
           ),
         ),
       );
-      return { model, files: companions };
+      return { name: modelName, model, files: companions };
     }),
   );
 
