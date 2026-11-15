@@ -230,7 +230,7 @@
       "ref": "e2feeac4c82c57f929fe90ab11b49c304dcb59b0",
       "sourceType": "github",
       "skillPath": "plugins/masseater-skills/skills/repo-conventions/SKILL.md",
-      "computedHash": "fc944dbfa4d5d6d668b9121cb87d2a97827a4909a3eb0c80d7e3ae8296985de6"
+      "computedHash": "4d5d085b81c2c007fdd94f6a8ca189e1a4586eeff202b6ff11309300cc601b9c"
     },
     "shadcn": {
       "source": "shadcn-ui/ui",
