@@ -1,14 +1,12 @@
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 
 import {
-  KeySchema,
   keyName,
   literalOf,
-  nestedValues,
-  RUN_TASKS,
-  workspaceConfigOf,
+  runTasksOf,
   workspaceDirectories,
 } from "#/entities/workspace/index.ts";
+import type { RunTask } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { positionOf } from "#/shared/lib/text-position.ts";
 
@@ -17,24 +15,11 @@ const READ_CONCURRENCY = 8;
 const SHARED = 2;
 const OWN_PROGRAM = /^(?:node|vpx|bun|deno|tsx)$|\//u;
 
-const TaskProperty = Schema.Struct({
-  type: Schema.Literal("Property"),
-  computed: Schema.Literal(false),
-  key: KeySchema,
-  value: Schema.Unknown,
-  start: Schema.Finite,
-});
-const TaskObject = Schema.Struct({
-  type: Schema.Literal("ObjectExpression"),
-  properties: Schema.Array(Schema.Unknown),
-});
 const UncachedTask = Schema.Struct({
   cache: Schema.Literal(false),
   command: Schema.Union([Schema.String, Schema.NonEmptyArray(Schema.String)]),
 });
 
-const decodeTaskProperty = Schema.decodeUnknownOption(TaskProperty);
-const decodeTaskObject = Schema.decodeUnknownOption(TaskObject);
 const decodeUncachedTask = Schema.decodeUnknownOption(UncachedTask);
 const encodeDefinition = Schema.encodeOption(Schema.fromJsonString(Schema.Unknown));
 
@@ -66,7 +51,7 @@ interface ConfigFile {
 
 const definitionOf =
   ({ directory, file, source }: ConfigFile) =>
-  (task: typeof TaskProperty.Type): Option.Option<UncachedDefinition> =>
+  (task: RunTask): Option.Option<UncachedDefinition> =>
     Option.gen(function* uncachedDefinition() {
       const literal = yield* literalOf(task.value);
       const { command } = yield* decodeUncachedTask(literal);
@@ -89,27 +74,14 @@ const definitionsIn = Effect.fn("definitionsIn")(function* definitionsIn(
   root: string,
   directory: string,
 ) {
-  const config = yield* workspaceConfigOf(root, directory);
-  if (Option.isNone(config)) {
+  const found = yield* runTasksOf(root, directory);
+  if (Option.isNone(found)) {
     return [];
   }
-  const { file, source, program } = config.value;
+  const { file, source, tasks } = found.value;
   return pipe(
-    nestedValues(RUN_TASKS)(program),
-    Arr.flatMap((tasks) =>
-      pipe(
-        decodeTaskObject(tasks),
-        Option.map(({ properties }) => properties),
-        Option.getOrElse((): readonly unknown[] => []),
-      ),
-    ),
-    Arr.flatMap((property) =>
-      pipe(
-        decodeTaskProperty(property),
-        Option.flatMap(definitionOf({ directory, file, source })),
-        Option.toArray,
-      ),
-    ),
+    tasks,
+    Arr.flatMap((task) => Option.toArray(definitionOf({ directory, file, source })(task))),
   );
 });
 
