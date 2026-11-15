@@ -40,12 +40,10 @@ const readerOf = ([format, extensions]: readonly [string, readonly string[]]): R
   read: (bytes) => csvOf(bytes).pipe(Effect.map((text) => ({ text, format: "csv" }))),
 });
 
-const SPREADSHEET_READERS: readonly Reader[] = [
+export const SPREADSHEET_READERS: readonly Reader[] = [
   { ...readerOf(["xls", XLS]), accepts: hasStream((name) => WORKBOOKS.has(name)) },
   ...pipe(
     Rec.toEntries(KINDS),
     Arr.map((kind) => readerOf(kind)),
   ),
 ];
-
-export { SPREADSHEET_READERS };

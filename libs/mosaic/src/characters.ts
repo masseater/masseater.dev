@@ -1,6 +1,6 @@
 import characters from "./characters.json" with { type: "json" };
 
-interface Character {
+export interface Character {
   readonly slug: string;
   readonly name: string;
   readonly vocadbArtistId: number;
@@ -10,7 +10,4 @@ interface Character {
   readonly variants: number;
 }
 
-const CHARACTERS: readonly Character[] = characters;
-
-export type { Character };
-export { CHARACTERS };
+export const CHARACTERS: readonly Character[] = characters;

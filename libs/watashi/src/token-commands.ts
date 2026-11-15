@@ -10,7 +10,8 @@ import type { WatashiFailed } from "./errors.ts";
 import type { Services } from "./services.ts";
 import { settings } from "./settings.ts";
 
-const withWatashi = <Value, Failure, Requirement>(
+/** @internal */
+export const withWatashi = <Value, Failure, Requirement>(
   effect: Effect.Effect<Value, Failure, Requirement>,
 ): Effect.Effect<
   Value,
@@ -62,10 +63,8 @@ const revokeCommand = Command.make("revoke", { id: Argument.String("id") }, ({ i
   ),
 ).pipe(Command.withDescription("トークンを失効させる"));
 
-const tokenCommand = Command.make("token").pipe(
+/** @internal */
+export const tokenCommand = Command.make("token").pipe(
   Command.withDescription("watashi の API トークンを扱う"),
   Command.withSubcommands([issueCommand, listCommand, revokeCommand]),
 );
-
-/** @internal */
-export { tokenCommand, withWatashi };

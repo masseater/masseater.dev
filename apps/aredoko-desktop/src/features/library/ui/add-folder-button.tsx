@@ -8,7 +8,7 @@ import { useAddFolder } from "#/features/library/api/queries";
 
 const LABEL = "フォルダを登録";
 
-const AddFolderButton = ({
+export const AddFolderButton = ({
   size = "default",
 }: Readonly<{ size?: ComponentProps<typeof Button>["size"] }>): ReactNode => {
   const { mutate, isPending } = useAddFolder();
@@ -20,5 +20,3 @@ const AddFolderButton = ({
     </Button>
   );
 };
-
-export { AddFolderButton };

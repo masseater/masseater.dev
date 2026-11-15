@@ -15,13 +15,13 @@ import type {
 } from "./resolution-types.ts";
 import { resolveModuleName } from "./resolver.ts";
 
-interface ResolutionSource {
+export interface ResolutionSource {
   readonly host: ResolverHost;
   readonly kind: ResolutionKind;
   readonly normalCache: ModuleResolutionCache;
 }
 
-interface ResolutionStore {
+export interface ResolutionStore {
   readonly resolve: (request: ModuleNameRequest) => CachedResolution;
   readonly getTrace: (request: ModuleNameRequest) => Option.Option<readonly string[]>;
 }
@@ -47,7 +47,7 @@ const toTsPackageId = (packageId: PackageId): TsPackageId => ({
   ),
 });
 
-const toTsResolution = (result: ResolutionResult): TsResolution => ({
+export const toTsResolution = (result: ResolutionResult): TsResolution => ({
   resolvedModule: result.resolvedModule.pipe(
     Option.map((module) => ({
       resolvedFileName: module.resolvedFileName,
@@ -87,7 +87,7 @@ const resolveWithTrace = (
   return { result, resolution: toTsResolution(result), trace: MutableRef.get(lines) };
 };
 
-const createResolutionStore = (source: ResolutionSource): ResolutionStore => {
+export const createResolutionStore = (source: ResolutionSource): ResolutionStore => {
   const noDtsCache = createModuleResolutionCache();
   const byFile = new Map<string, Map<string, CachedResolution>>();
   const tableFor = (containingFile: string): Map<string, CachedResolution> => {
@@ -115,6 +115,3 @@ const createResolutionStore = (source: ResolutionSource): ResolutionStore => {
     getTrace: (request) => lookup(request).pipe(Option.map((entry) => entry.trace)),
   };
 };
-
-export { createResolutionStore, toTsResolution };
-export type { ResolutionSource, ResolutionStore };

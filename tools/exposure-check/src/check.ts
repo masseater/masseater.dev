@@ -57,6 +57,4 @@ const checkAccount = Effect.fn("exposure.check")(function* checkAccount(accountI
 });
 
 /** @internal */
-const check = checkAccount;
-
-export { check };
+export const check = checkAccount;

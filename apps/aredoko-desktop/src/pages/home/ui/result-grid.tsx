@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { ResultTile } from "./result-tile.tsx";
 
-const ResultGrid = ({
+export const ResultGrid = ({
   results,
 }: Readonly<{ results: readonly (typeof SearchResult.Type)[] }>): ReactNode => (
   <ul className="grid grid-cols-3 gap-4 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
@@ -14,5 +14,3 @@ const ResultGrid = ({
     )}
   </ul>
 );
-
-export { ResultGrid };

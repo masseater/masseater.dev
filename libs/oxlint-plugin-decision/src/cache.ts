@@ -8,12 +8,14 @@ import type { DecisionRequest, DecisionResponse } from "./types.ts";
 const DATA_FIRST_ARITY = 2;
 
 const CACHE_VERSION = 7;
-const CACHE_DIR = ["node_modules", ".cache", "oxlint-plugin-decision"] as const;
+/** @internal */
+export const CACHE_DIR = ["node_modules", ".cache", "oxlint-plugin-decision"] as const;
 
 const encodeJson = (value: unknown): Effect.Effect<string> =>
   Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
 
-const cacheFile = Effect.fn("cacheFile")(function* cacheFile(
+/** @internal */
+export const cacheFile = Effect.fn("cacheFile")(function* cacheFile(
   endpoint: string,
   request: DecisionRequest,
 ) {
@@ -32,7 +34,8 @@ const CachedResponse = Schema.Struct({
 
 const decodeCached = Schema.decodeOption(Schema.fromJsonString(CachedResponse));
 
-const isComplete: {
+/** @internal */
+export const isComplete: {
   (request: DecisionRequest): (response: DecisionResponse) => boolean;
   (response: DecisionResponse, request: DecisionRequest): boolean;
 } = Fn.dual(DATA_FIRST_ARITY, (response: DecisionResponse, request: DecisionRequest): boolean =>
@@ -41,7 +44,8 @@ const isComplete: {
   ),
 );
 
-const readCache = Effect.fn("readCache")(function* readCache(
+/** @internal */
+export const readCache = Effect.fn("readCache")(function* readCache(
   file: string,
   request: DecisionRequest,
 ) {
@@ -53,7 +57,8 @@ const readCache = Effect.fn("readCache")(function* readCache(
   );
 });
 
-const writeCache = Effect.fn("writeCache")(function* writeCache(
+/** @internal */
+export const writeCache = Effect.fn("writeCache")(function* writeCache(
   file: string,
   response: DecisionResponse,
 ) {
@@ -67,9 +72,5 @@ const writeCache = Effect.fn("writeCache")(function* writeCache(
   yield* fs.rename(temp, file);
 });
 
-type CacheServices = Digest.Digest | FileSystem.FileSystem | Path.Path;
-
 /** @internal */
-export { CACHE_DIR, cacheFile, isComplete, readCache, writeCache };
-/** @internal */
-export type { CacheServices };
+export type CacheServices = Digest.Digest | FileSystem.FileSystem | Path.Path;

@@ -92,7 +92,7 @@ const messageOf = (bytes: Uint8Array, index: number): Effect.Effect<Message> => 
   );
 };
 
-const mboxReader: Reader = {
+export const mboxReader: Reader = {
   format: "mbox",
   extensions: [".mbox", ".mbx"],
   accepts: looksLikeMbox,
@@ -115,6 +115,4 @@ const mboxReader: Reader = {
     ),
 };
 
-const MAIL_READERS: readonly Reader[] = [mboxReader, emailReader];
-
-export { MAIL_READERS, mboxReader };
+export const MAIL_READERS: readonly Reader[] = [mboxReader, emailReader];

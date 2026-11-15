@@ -2,7 +2,7 @@ import { Array as Arr, Option, pipe } from "effect";
 
 import type { Entry, Rating } from "./atoms.ts";
 
-type Rate = Readonly<{ id: number; rating: Rating }>;
+export type Rate = Readonly<{ id: number; rating: Rating }>;
 
 const toggled = (current: Rating, chosen: Rating): Rating => {
   if (current === chosen) {
@@ -20,7 +20,7 @@ const rateEntry =
     return entry;
   };
 
-const rated =
+export const rated =
   ({ id, rating }: Rate) =>
   (entries: readonly Entry[]): readonly Entry[] =>
     pipe(
@@ -28,6 +28,3 @@ const rated =
       Arr.modify(id, rateEntry(rating)),
       Option.getOrElse(() => entries),
     );
-
-export { rated };
-export type { Rate };

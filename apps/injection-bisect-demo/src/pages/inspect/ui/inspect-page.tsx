@@ -8,7 +8,7 @@ import { COPY } from "#/shared/config";
 import { InspectForm } from "./inspect-form";
 import { RunView } from "./run-view";
 
-const InspectPage = (): ReactNode => {
+export const InspectPage = (): ReactNode => {
   const state = useInspect(useRun());
   return (
     <main className="vt-match mx-auto flex max-w-7xl flex-col gap-10 px-4 py-10 md:px-8">
@@ -25,5 +25,3 @@ const InspectPage = (): ReactNode => {
     </main>
   );
 };
-
-export { InspectPage };

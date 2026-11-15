@@ -170,7 +170,7 @@ const problemIn = Effect.fn("problemIn")(function* problemIn(context: Context, t
 });
 
 /** @internal */
-const checkColocatedTests = Effect.fn("checkColocatedTests")(function* checkColocatedTests(
+export const checkColocatedTests = Effect.fn("checkColocatedTests")(function* checkColocatedTests(
   root: string,
 ) {
   const files = yield* RepositoryFiles;
@@ -197,5 +197,3 @@ const checkColocatedTests = Effect.fn("checkColocatedTests")(function* checkColo
   });
   return Arr.getSomes(found);
 });
-
-export { checkColocatedTests };

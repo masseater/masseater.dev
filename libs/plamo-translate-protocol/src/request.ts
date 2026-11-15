@@ -14,7 +14,7 @@ const Text = Schema.String.check(
   Schema.makeFilter<string>((text) => !Str.includes(RESERVED)(text) || `text contains ${RESERVED}`),
 );
 
-const TranslateRequest = Schema.Struct({
+export const TranslateRequest = Schema.Struct({
   text: Text,
   to: Lang,
   from: Schema.optionalKey(Lang),
@@ -26,11 +26,8 @@ const TranslateRequest = Schema.Struct({
   ),
 );
 
-const TranslateResult = Schema.Struct({ text: Schema.String });
+export const TranslateResult = Schema.Struct({ text: Schema.String });
 
-type TranslateRequestValue = typeof TranslateRequest.Type;
+export type TranslateRequestValue = typeof TranslateRequest.Type;
 
-type TranslateResultValue = typeof TranslateResult.Type;
-
-export { TranslateRequest, TranslateResult };
-export type { TranslateRequestValue, TranslateResultValue };
+export type TranslateResultValue = typeof TranslateResult.Type;

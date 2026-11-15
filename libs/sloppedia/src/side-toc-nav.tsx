@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type { Heading } from "./headings.ts";
 import { TocList } from "./toc-list.tsx";
 
-const SideTocNav = ({
+export const SideTocNav = ({
   label,
   headings,
 }: Readonly<{ label: string; headings: readonly Heading[] }>): ReactNode => (
@@ -12,5 +12,3 @@ const SideTocNav = ({
     <TocList headings={headings} />
   </nav>
 );
-
-export { SideTocNav };

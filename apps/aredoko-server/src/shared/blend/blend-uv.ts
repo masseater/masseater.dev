@@ -68,7 +68,7 @@ const legacyOf = (mesh: Instance, corners: number): Option.Option<Float32Array> 
     );
   });
 
-const uvsOf = ({
+export const uvsOf = ({
   mesh,
   corners,
 }: Readonly<{ mesh: Instance; corners: number }>): Option.Option<Float32Array> =>
@@ -80,5 +80,3 @@ const uvsOf = ({
     Option.orElse(() => legacyOf(mesh, corners)),
     Option.map(flipped),
   );
-
-export { uvsOf };

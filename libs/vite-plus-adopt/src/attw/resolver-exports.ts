@@ -39,7 +39,7 @@ interface LookupSite {
   readonly context: TargetContext;
 }
 
-interface ExportsRequest {
+export interface ExportsRequest {
   readonly extensions: Extensions;
   readonly subpath: string;
 }
@@ -131,7 +131,7 @@ const loadSubpathExport = (
   );
 };
 
-const loadModuleFromExports: {
+export const loadModuleFromExports: {
   (request: ExportsRequest, state: ResolutionState): (scope: PackageJsonInfo) => SearchResult;
   (scope: PackageJsonInfo, request: ExportsRequest, state: ResolutionState): SearchResult;
 } = Fn.dual(
@@ -203,7 +203,7 @@ const reportMissingScope = (directoryPath: string, state: ResolutionState): Sear
   return notFound;
 };
 
-const resolvePackageImportWithTrace: {
+export const resolvePackageImportWithTrace: {
   (state: ResolutionState): (lookup: ModuleLookup) => SearchResult;
   (lookup: ModuleLookup, state: ResolutionState): SearchResult;
 } = Fn.dual(DATA_FIRST_ARITY, (lookup: ModuleLookup, state: ResolutionState): SearchResult => {
@@ -258,7 +258,7 @@ const loadFromOwnExports = (
     ),
   );
 
-const loadModuleFromSelfNameReference: {
+export const loadModuleFromSelfNameReference: {
   (state: ResolutionState): (lookup: ModuleLookup) => SearchResult;
   (lookup: ModuleLookup, state: ResolutionState): SearchResult;
 } = Fn.dual(DATA_FIRST_ARITY, (lookup: ModuleLookup, state: ResolutionState): SearchResult =>
@@ -274,6 +274,3 @@ const loadModuleFromSelfNameReference: {
     ),
   ),
 );
-
-export { loadModuleFromExports, loadModuleFromSelfNameReference, resolvePackageImportWithTrace };
-export type { ExportsRequest };

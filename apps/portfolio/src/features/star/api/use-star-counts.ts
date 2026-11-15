@@ -6,7 +6,7 @@ import type { Category } from "#/entities/entry";
 
 import { starQueries } from "./star-queries";
 
-const useStarCounts = (
+export const useStarCounts = (
   category: Category,
 ): Option.Option<Record.ReadonlyRecord<string, number>> => {
   const stars = useQuery(starQueries.api.stars({ category }).get.queryOptions());
@@ -15,5 +15,3 @@ const useStarCounts = (
   }
   return Option.some(stars.data.counts);
 };
-
-export { useStarCounts };

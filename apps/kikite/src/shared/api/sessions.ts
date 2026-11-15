@@ -7,7 +7,8 @@ import type { RecordedSession } from "#protocol";
 
 import { InterviewerFailed, send } from "./interviewer.ts";
 
-const saveSession = ({
+/** @internal */
+export const saveSession = ({
   id,
   record,
 }: Readonly<{ id: string; record: RecordedSession }>): Effect.Effect<
@@ -21,6 +22,3 @@ const saveSession = ({
     Effect.asVoid,
     Effect.mapError((cause) => InterviewerFailed.make({ message: String(cause) })),
   );
-
-/** @internal */
-export { saveSession };

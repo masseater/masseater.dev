@@ -60,7 +60,7 @@ const tooltipFormat = (
   item: Readonly<{ payload?: unknown }>,
 ): [string, string] => [`${pointsOf(value)}%`, `${labelOf(item.payload)} ${String(name)}`];
 
-const ReliabilityAxes = ({ lowest }: Readonly<{ lowest: number }>): ReactNode => {
+export const ReliabilityAxes = ({ lowest }: Readonly<{ lowest: number }>): ReactNode => {
   const scale = scaleFrom(lowest);
   return (
     <>
@@ -92,5 +92,3 @@ const ReliabilityAxes = ({ lowest }: Readonly<{ lowest: number }>): ReactNode =>
     </>
   );
 };
-
-export { ReliabilityAxes };

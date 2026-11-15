@@ -27,22 +27,25 @@ import { RESOLUTION_VERSION, getVersionPaths } from "./types-versions.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface RelativeRequest extends CandidateRequest {
+export interface RelativeRequest extends CandidateRequest {
   readonly considerPackageJson: boolean;
 }
 
-type RelativeLoader = (request: RelativeRequest, state: ResolutionState) => Option.Option<Resolved>;
+export type RelativeLoader = (
+  request: RelativeRequest,
+  state: ResolutionState,
+) => Option.Option<Resolved>;
 
-interface PackageDirectoryContents {
+export interface PackageDirectoryContents {
   readonly jsonContent: Option.Option<PackageJsonContent>;
   readonly versionPaths: Option.Option<VersionPaths>;
 }
 
-interface DirectoryLoadRequest extends RelativeRequest {
+export interface DirectoryLoadRequest extends RelativeRequest {
   readonly loadRelative: RelativeLoader;
 }
 
-interface DirectoryWorkerRequest extends CandidateRequest, PackageDirectoryContents {
+export interface DirectoryWorkerRequest extends CandidateRequest, PackageDirectoryContents {
   readonly loadRelative: RelativeLoader;
 }
 
@@ -228,7 +231,7 @@ const fromPackageFileOrIndex = (
     Option.orElse(() => fromIndexFile(request, entry, state)),
   );
 
-const loadNodeModuleFromDirectoryWorker: {
+export const loadNodeModuleFromDirectoryWorker: {
   (state: ResolutionState): (request: DirectoryWorkerRequest) => Option.Option<PathAndExtension>;
   (request: DirectoryWorkerRequest, state: ResolutionState): Option.Option<PathAndExtension>;
 } = Fn.dual(
@@ -241,7 +244,7 @@ const loadNodeModuleFromDirectoryWorker: {
   },
 );
 
-const loadNodeModuleFromDirectory: {
+export const loadNodeModuleFromDirectory: {
   (state: ResolutionState): (request: DirectoryLoadRequest) => Option.Option<Resolved>;
   (request: DirectoryLoadRequest, state: ResolutionState): Option.Option<Resolved>;
 } = Fn.dual(
@@ -265,12 +268,3 @@ const loadNodeModuleFromDirectory: {
     return withPackageId(info, found, state);
   },
 );
-
-export { loadNodeModuleFromDirectory, loadNodeModuleFromDirectoryWorker };
-export type {
-  DirectoryLoadRequest,
-  DirectoryWorkerRequest,
-  PackageDirectoryContents,
-  RelativeLoader,
-  RelativeRequest,
-};

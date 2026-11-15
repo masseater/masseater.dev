@@ -28,22 +28,22 @@ import { escapeLeadingUnderscores } from "./binder-symbols.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-type AccessExpression = PropertyAccessExpression | ElementAccessExpression;
-type LiteralLike = StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral;
+export type AccessExpression = PropertyAccessExpression | ElementAccessExpression;
+export type LiteralLike = StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral;
 
 const REQUIRE_ARGUMENTS = 1;
 const DEFINE_PROPERTY_ARGUMENTS = 3;
 const ZERO_TEXT = "0";
 
-const isStringOrNumericLiteralLike = (node: Node): node is LiteralLike =>
+export const isStringOrNumericLiteralLike = (node: Node): node is LiteralLike =>
   isStringLiteralLikeNode(node) || isNumericLiteral(node);
 
-const isAccessExpression = (node: Node): node is AccessExpression =>
+export const isAccessExpression = (node: Node): node is AccessExpression =>
   isPropertyAccessExpression(node) || isElementAccessExpression(node);
 
-const isThisKeyword = (node: Node): boolean => node.kind === SyntaxKind.ThisKeyword;
+export const isThisKeyword = (node: Node): boolean => node.kind === SyntaxKind.ThisKeyword;
 
-const skipParentheses = (node: Node): Node => {
+export const skipParentheses = (node: Node): Node => {
   let current = node;
   while (isParenthesizedExpression(current)) {
     current = current.expression;
@@ -60,13 +60,16 @@ const isEntityNameExpression = (node: Node): boolean =>
 const isLiteralLikeElementAccess = (node: Node): node is ElementAccessExpression =>
   isElementAccessExpression(node) && isStringOrNumericLiteralLike(node.argumentExpression);
 
-interface BindableStaticRules {
+export interface BindableStaticRules {
   readonly excludeThisKeyword: boolean;
   readonly allowEntityName: boolean;
 }
 
-const STATIC_ACCESS: BindableStaticRules = { excludeThisKeyword: false, allowEntityName: false };
-const STATIC_NAME: BindableStaticRules = { excludeThisKeyword: true, allowEntityName: true };
+export const STATIC_ACCESS: BindableStaticRules = {
+  excludeThisKeyword: false,
+  allowEntityName: false,
+};
+export const STATIC_NAME: BindableStaticRules = { excludeThisKeyword: true, allowEntityName: true };
 
 const isAllowedEntityName = (node: Node, rules: BindableStaticRules): boolean =>
   rules.allowEntityName && isEntityNameExpression(node);
@@ -88,7 +91,7 @@ const hasBindableOwner = (
   isAllowedThis(node.expression, rules) ||
   (hasStaticName(node) && isBindable(node.expression, STATIC_NAME));
 
-const isBindableStatic: {
+export const isBindableStatic: {
   (rules: BindableStaticRules): (node: Node) => boolean;
   (node: Node, rules: BindableStaticRules): boolean;
 } = Fn.dual(
@@ -98,14 +101,14 @@ const isBindableStatic: {
     (isStaticAccess(node) && hasBindableOwner(node, rules, isBindableStatic)),
 );
 
-const nameText = (node: Node): Option.Option<string> => {
+export const nameText = (node: Node): Option.Option<string> => {
   if (isIdentifier(node) || isStringOrNumericLiteralLike(node)) {
     return Option.some(node.text);
   }
   return Option.none();
 };
 
-const getElementOrPropertyAccessName = (node: AccessExpression): Option.Option<string> => {
+export const getElementOrPropertyAccessName = (node: AccessExpression): Option.Option<string> => {
   if (isPropertyAccessExpression(node)) {
     return nameText(node.name).pipe(Option.map(escapeLeadingUnderscores));
   }
@@ -115,7 +118,7 @@ const getElementOrPropertyAccessName = (node: AccessExpression): Option.Option<s
   ).pipe(Option.map((literal) => escapeLeadingUnderscores(literal.text)));
 };
 
-const isNamedIdentifier: {
+export const isNamedIdentifier: {
   (name: string): (node: Node) => node is Identifier;
   (node: Node, name: string): node is Identifier;
 } = Fn.dual(
@@ -123,9 +126,10 @@ const isNamedIdentifier: {
   (node: Node, name: string): node is Identifier => isIdentifier(node) && node.text === name,
 );
 
-const isExportsIdentifier = (node: Node): boolean => isIdentifier(node) && node.text === "exports";
+export const isExportsIdentifier = (node: Node): boolean =>
+  isIdentifier(node) && node.text === "exports";
 
-const isModuleExportsAccessExpression = (node: Node): boolean =>
+export const isModuleExportsAccessExpression = (node: Node): boolean =>
   (isPropertyAccessExpression(node) || isLiteralLikeElementAccess(node)) &&
   isNamedIdentifier(node.expression, "module") &&
   Option.contains(getElementOrPropertyAccessName(node), "exports");
@@ -139,7 +143,7 @@ const hasRequireArgument = (node: CallExpression, requireStringLiteral: boolean)
   );
 };
 
-const isRequireCall: {
+export const isRequireCall: {
   (requireStringLiteral: boolean): (node: Node) => node is CallExpression;
   (node: Node, requireStringLiteral: boolean): node is CallExpression;
 } = Fn.dual(
@@ -150,10 +154,10 @@ const isRequireCall: {
     hasRequireArgument(node, requireStringLiteral),
 );
 
-const isAssignmentExpression = (node: Node): node is BinaryExpression =>
+export const isAssignmentExpression = (node: Node): node is BinaryExpression =>
   isBinaryExpression(node) && node.operatorToken.kind === SyntaxKind.EqualsToken;
 
-const getRightMostAssignedExpression = (node: Node): Node => {
+export const getRightMostAssignedExpression = (node: Node): Node => {
   let current = node;
   while (isAssignmentExpression(current)) {
     current = current.right;
@@ -161,7 +165,7 @@ const getRightMostAssignedExpression = (node: Node): Node => {
   return current;
 };
 
-const isVoidZero = (node: Node): boolean =>
+export const isVoidZero = (node: Node): boolean =>
   isVoidExpression(node) && isNumericLiteral(node.expression) && node.expression.text === ZERO_TEXT;
 
 const isSignedNumericLiteral = (node: Node): boolean =>
@@ -169,7 +173,7 @@ const isSignedNumericLiteral = (node: Node): boolean =>
   (node.operator === SyntaxKind.PlusToken || node.operator === SyntaxKind.MinusToken) &&
   isNumericLiteral(node.operand);
 
-const isDynamicElementAccess = (node: Node): boolean => {
+export const isDynamicElementAccess = (node: Node): boolean => {
   if (!isElementAccessExpression(node)) {
     return false;
   }
@@ -182,7 +186,7 @@ const isObjectDefinePropertyCallee = (node: Node): boolean =>
   isNamedIdentifier(node.expression, "Object") &&
   isNamedIdentifier(node.name, "defineProperty");
 
-const isBindableObjectDefinePropertyCall = (node: CallExpression): boolean => {
+export const isBindableObjectDefinePropertyCall = (node: CallExpression): boolean => {
   const [target, property] = node.arguments;
   return (
     node.arguments.length === DEFINE_PROPERTY_ARGUMENTS &&
@@ -192,28 +196,5 @@ const isBindableObjectDefinePropertyCall = (node: CallExpression): boolean => {
   );
 };
 
-const isAliasableExpression = (node: Node): boolean =>
+export const isAliasableExpression = (node: Node): boolean =>
   isEntityNameExpression(node) || node.kind === SyntaxKind.ClassExpression;
-
-export {
-  STATIC_ACCESS,
-  STATIC_NAME,
-  getElementOrPropertyAccessName,
-  getRightMostAssignedExpression,
-  isAccessExpression,
-  isAliasableExpression,
-  isAssignmentExpression,
-  isBindableObjectDefinePropertyCall,
-  isBindableStatic,
-  isDynamicElementAccess,
-  isExportsIdentifier,
-  isModuleExportsAccessExpression,
-  isNamedIdentifier,
-  isRequireCall,
-  isStringOrNumericLiteralLike,
-  isThisKeyword,
-  isVoidZero,
-  nameText,
-  skipParentheses,
-};
-export type { AccessExpression, BindableStaticRules, LiteralLike };

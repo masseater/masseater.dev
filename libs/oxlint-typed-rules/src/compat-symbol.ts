@@ -8,12 +8,12 @@ const resolveAll = (project: Project, handles: readonly NodeHandle[]): readonly 
     Arr.flatMap((handle) => Option.fromNullishOr(handle.resolve(project)).pipe(Option.toArray)),
   );
 
-interface LegacySymbol {
+export interface LegacySymbol {
   readonly getName: () => string;
   readonly getDeclarations: () => readonly Node[];
 }
 
-class CompatSymbol implements LegacySymbol {
+export class CompatSymbol implements LegacySymbol {
   static readonly #interned = new WeakMap<NativeSymbol, CompatSymbol>();
 
   public readonly native: NativeSymbol;
@@ -66,6 +66,3 @@ class CompatSymbol implements LegacySymbol {
     return this.declarations;
   }
 }
-
-export type { LegacySymbol };
-export { CompatSymbol };

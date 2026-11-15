@@ -3,7 +3,7 @@ import type { Checker, Project } from "typescript/sync";
 
 import { sharedApi } from "./ts-api.ts";
 
-interface CheckerProgram {
+export interface CheckerProgram {
   readonly mountPath: string;
   readonly rootNames: readonly string[];
   readonly compilerOptions: Readonly<Record<string, unknown>>;
@@ -14,14 +14,14 @@ interface CheckerProgram {
   ) => Option.Option<{ readonly resolvedFileName: string }>;
 }
 
-interface CheckerSession {
+export interface CheckerSession {
   readonly checker: Checker;
   readonly project: Project;
   readonly mountPath: string;
   readonly dispose: () => void;
 }
 
-const openCheckerSession = (program: CheckerProgram): CheckerSession => {
+export const openCheckerSession = (program: CheckerProgram): CheckerSession => {
   const api = sharedApi();
   const moduleResolver = api.createModuleResolver(program.compilerOptions, {
     resolveModuleName: (moduleName, containingDirectory, mode) =>
@@ -51,6 +51,3 @@ const openCheckerSession = (program: CheckerProgram): CheckerSession => {
     },
   };
 };
-
-export { openCheckerSession };
-export type { CheckerProgram, CheckerSession };

@@ -3,15 +3,15 @@ import { Array, Option, String, pipe } from "effect";
 import { floatsOf, follow, instanceOf, intOf, listOf, textOf } from "./blend-structs.ts";
 import type { BlendFile, Instance } from "./blend-structs.ts";
 
-type Color = readonly [red: number, green: number, blue: number];
+export type Color = readonly [red: number, green: number, blue: number];
 
-interface ImageSource {
+export interface ImageSource {
   readonly key: number;
   readonly packed: Option.Option<Uint8Array>;
   readonly filepath: string;
 }
 
-interface Surface {
+export interface Surface {
   readonly color: Color;
   readonly image: Option.Option<ImageSource>;
 }
@@ -160,7 +160,7 @@ const viewportColor = (material: Instance): Color =>
     ),
   );
 
-const surfaceOf = (material: Option.Option<Instance>): Surface =>
+export const surfaceOf = (material: Option.Option<Instance>): Surface =>
   Option.match(material, {
     onNone: () => PLAIN,
     onSome: (found) => {
@@ -174,7 +174,7 @@ const surfaceOf = (material: Option.Option<Instance>): Surface =>
     },
   });
 
-const imagesOf = (file: BlendFile): readonly ImageSource[] =>
+export const imagesOf = (file: BlendFile): readonly ImageSource[] =>
   pipe(
     file.blocks,
     Array.filter(({ code }) => pipe(code, String.startsWith(IMAGE_CODE))),
@@ -182,6 +182,3 @@ const imagesOf = (file: BlendFile): readonly ImageSource[] =>
     Array.getSomes,
     Array.map(imageOf),
   );
-
-export { imagesOf, surfaceOf };
-export type { Color, ImageSource, Surface };

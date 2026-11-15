@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const TabButton = ({
+export const TabButton = ({
   label,
   active,
   onSelect,
@@ -15,5 +15,3 @@ const TabButton = ({
     {label}
   </button>
 );
-
-export { TabButton };

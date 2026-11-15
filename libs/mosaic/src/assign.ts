@@ -125,7 +125,7 @@ const choiceOf =
       Option.getOrElse(() => FIRST),
     );
 
-const assignVariants = ({
+export const assignVariants = ({
   candidates,
   seed,
 }: Readonly<{ candidates: typeof CandidatesSchema.Type; seed: number }>): Effect.Effect<
@@ -140,7 +140,7 @@ const assignVariants = ({
     Random.withSeed(seed),
   );
 
-const assignedTiles = <Tile>({
+export const assignedTiles = <Tile>({
   choice,
   lists,
 }: Readonly<{ choice: readonly number[]; lists: readonly (readonly Tile[])[] }>): readonly Tile[] =>
@@ -154,5 +154,3 @@ const assignedTiles = <Tile>({
     ),
     Array.getSomes,
   );
-
-export { assignVariants, assignedTiles };

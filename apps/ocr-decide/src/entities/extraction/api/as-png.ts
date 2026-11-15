@@ -17,7 +17,7 @@ class PictureError extends taggedError<PictureError, { readonly brand: unique sy
   },
 ) {}
 
-interface Loaded {
+export interface Loaded {
   readonly bytes: Uint8Array<ArrayBuffer>;
   readonly type: string;
 }
@@ -62,12 +62,11 @@ const redrawn = (bytes: Uint8Array<ArrayBuffer>): Effect.Effect<Uint8Array, Pict
     Effect.map((buffer) => new Uint8Array(buffer)),
   );
 
-const asPng = ({ bytes, type }: Loaded): Effect.Effect<Uint8Array, PictureError> => {
+export const asPng = ({ bytes, type }: Loaded): Effect.Effect<Uint8Array, PictureError> => {
   if (type === PNG) {
     return Effect.succeed(bytes);
   }
   return redrawn(bytes);
 };
 
-export { asPng };
-export type { Loaded, PictureError };
+export type { PictureError };

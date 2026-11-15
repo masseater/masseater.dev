@@ -6,7 +6,7 @@ import { publish } from "./publish-command.ts";
 import { restoreState, saveState } from "./release-state.ts";
 
 /** @internal */
-const dailyCommand = Command.make(
+export const dailyCommand = Command.make(
   "daily",
   { state: stateFlag, out: Flag.String("out") },
   Effect.fn("command.daily")(function* daily({ state, out }) {
@@ -17,6 +17,6 @@ const dailyCommand = Command.make(
 );
 
 /** @internal */
-const saveCommand = Command.make("save", { state: stateFlag }, ({ state }) => saveState(state));
-
-export { dailyCommand, saveCommand };
+export const saveCommand = Command.make("save", { state: stateFlag }, ({ state }) =>
+  saveState(state),
+);

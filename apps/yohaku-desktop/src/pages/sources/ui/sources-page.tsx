@@ -6,7 +6,7 @@ import { ScreenFrame } from "#/shared/ui";
 import { SourceListPane } from "./source-list-pane.tsx";
 import { SourceSidebar } from "./source-sidebar.tsx";
 
-const SourcesPage = (): ReactNode => {
+export const SourcesPage = (): ReactNode => {
   useSourceHint();
   return (
     <ScreenFrame>
@@ -17,5 +17,3 @@ const SourcesPage = (): ReactNode => {
     </ScreenFrame>
   );
 };
-
-export { SourcesPage };

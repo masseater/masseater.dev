@@ -5,7 +5,7 @@ import { pointsOf } from "#/entities/benchmark/lib/format";
 import type { LabelSpot } from "./label-placement";
 import type { Detail } from "./model-detail";
 
-type ScatterPoint = Readonly<{
+export type ScatterPoint = Readonly<{
   label: string;
   mark: string;
   spot: LabelSpot;
@@ -16,13 +16,13 @@ type ScatterPoint = Readonly<{
   detail: Detail;
 }>;
 
-type Axis = Readonly<{
+export type Axis = Readonly<{
   name: string;
   domain: readonly [number, (dataMax: number) => number];
   format: (value: unknown) => string;
 }>;
 
-const describe = ({
+export const describe = ({
   points,
   axis,
 }: Readonly<{ points: readonly ScatterPoint[]; axis: Axis }>): string =>
@@ -34,6 +34,3 @@ const describe = ({
     ),
     Arr.join("。"),
   );
-
-export { describe };
-export type { Axis, ScatterPoint };

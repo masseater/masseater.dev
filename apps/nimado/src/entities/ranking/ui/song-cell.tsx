@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import type { Ranked } from "#/entities/ranking/model/ranking";
 
-const SongCell = ({
+export const SongCell = ({
   entry,
   open,
   onToggle,
@@ -15,5 +15,3 @@ const SongCell = ({
     </span>
   </button>
 );
-
-export { SongCell };

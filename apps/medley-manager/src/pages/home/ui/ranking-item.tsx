@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { RankMark } from "./rank-mark";
 
-const RankingItem = ({
+export const RankingItem = ({
   rank,
   value,
   children,
@@ -13,5 +13,3 @@ const RankingItem = ({
     <span className="text-muted-foreground shrink-0 text-sm tabular-nums">{value}</span>
   </li>
 );
-
-export { RankingItem };

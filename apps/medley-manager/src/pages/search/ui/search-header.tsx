@@ -5,7 +5,7 @@ import { KeywordForm } from "#/shared/ui/keyword-form";
 
 const route = getRouteApi("/search");
 
-const SearchHeader = (): ReactNode => {
+export const SearchHeader = (): ReactNode => {
   const { keyword } = route.useSearch();
   return (
     <div className="flex flex-col gap-3">
@@ -16,5 +16,3 @@ const SearchHeader = (): ReactNode => {
     </div>
   );
 };
-
-export { SearchHeader };

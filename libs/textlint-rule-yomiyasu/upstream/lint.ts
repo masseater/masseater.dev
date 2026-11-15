@@ -16,8 +16,8 @@ import type { Analysis, Row } from "./markdown-visibility.ts";
 import { finditer, match, pattern, search, sub } from "./py-re.ts";
 import type { Match, Pattern } from "./py-re.ts";
 
-type Severity = "error" | "warn";
-type Finding = { rule: string; line: number; severity: Severity; message: string; snippet: string };
+export type Severity = "error" | "warn";
+export type Finding = { rule: string; line: number; severity: Severity; message: string; snippet: string };
 type Range = readonly [number, number];
 
 const PY_SPACE = /^[\s\u001c-\u001f\u0085]$/u;
@@ -1248,7 +1248,7 @@ const decodeSource = (text: string): string => (text.startsWith("\uFEFF") ? text
 const METAPHOR_MESSAGE = (desc: string): string =>
   `${desc}が検出されました。不自然な比喩動詞であれば、ふだん使う動詞や客観的な表現に書き直してください。ただし、文字どおりの動作や状態変化を表している場合は無理に言い換える必要はありません。`;
 
-const lintText = (source: string): Finding[] => {
+export const lintText = (source: string): Finding[] => {
   const text = decodeSource(source);
   let findings: Finding[] = [];
   const analysis = analyzeMarkdown(text);
@@ -1457,5 +1457,3 @@ const lintText = (source: string): Finding[] => {
   return findings;
 };
 
-export { lintText };
-export type { Finding, Severity };

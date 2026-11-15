@@ -106,10 +106,8 @@ const answered = (request: Request): Effect.Effect<Response, Schema.SchemaError 
   });
 };
 
-const sessionRoutes = (request: Request): Effect.Effect<Response> =>
+export const sessionRoutes = (request: Request): Effect.Effect<Response> =>
   answered(request).pipe(Effect.catchTags({ SchemaError: badRequest, StoreFailed: storeFailed }));
 
-const isSessionsPath = (pathname: string): boolean =>
+export const isSessionsPath = (pathname: string): boolean =>
   pathname === SESSIONS_PATH || Str.startsWith(ONE)(pathname);
-
-export { isSessionsPath, sessionRoutes };

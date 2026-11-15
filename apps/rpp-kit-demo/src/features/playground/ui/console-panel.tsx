@@ -7,7 +7,7 @@ import { Panel } from "./panel";
 import { PanelBody } from "./panel-body";
 import { PanelLabel } from "./panel-label";
 
-const ConsolePanel = (): ReactNode => (
+export const ConsolePanel = (): ReactNode => (
   <Panel className="max-h-96">
     <PanelLabel label={playground.panes.console} />
     <PanelBody>
@@ -15,5 +15,3 @@ const ConsolePanel = (): ReactNode => (
     </PanelBody>
   </Panel>
 );
-
-export { ConsolePanel };

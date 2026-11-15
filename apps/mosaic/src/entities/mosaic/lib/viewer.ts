@@ -24,7 +24,7 @@ const KEY_PAN = 80;
 const NO_PAN = 0;
 const HALF = 0.5;
 
-interface Mount {
+export interface Mount {
   readonly canvas: HTMLCanvasElement;
   readonly visit: Visit;
   readonly store: ViewerStore;
@@ -210,7 +210,7 @@ const revealWhenReady = ({
     }
   });
 
-const mountViewer = ({ canvas, visit, store }: Mount): (() => void) => {
+export const mountViewer = ({ canvas, visit, store }: Mount): (() => void) => {
   const { mosaic } = visit;
   const controller = new AbortController();
   const invalidation = createInvalidation();
@@ -232,6 +232,3 @@ const mountViewer = ({ canvas, visit, store }: Mount): (() => void) => {
     controller.abort();
   };
 };
-
-export { mountViewer };
-export type { Mount };

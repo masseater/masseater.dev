@@ -9,7 +9,7 @@ import type { Daily, StatEvent, Summary } from "./life-daily";
 import { bucketsOf, dailyFor, dailyOfMetric, groupsOf, optional } from "./life-groups";
 import type { Bucket, BucketValue, GroupBy, GroupValue, Measured, StatsData } from "./life-groups";
 
-type Condition = Readonly<{
+export type Condition = Readonly<{
   metric: string;
   gt?: number;
   gte?: number;
@@ -17,7 +17,7 @@ type Condition = Readonly<{
   lte?: number;
 }>;
 
-type StatsRequest = Readonly<{
+export type StatsRequest = Readonly<{
   metrics: readonly string[];
   period: Period;
   bucket: Bucket;
@@ -26,7 +26,7 @@ type StatsRequest = Readonly<{
   groupBy: Option.Option<GroupBy>;
 }>;
 
-type MetricStats = Summary &
+export type MetricStats = Summary &
   Readonly<{
     metric: string;
     aggregate: Aggregate;
@@ -154,7 +154,7 @@ const statsOf =
     };
   };
 
-const computeStats =
+export const computeStats =
   (request: StatsRequest) =>
   (data: StatsData): readonly MetricStats[] => {
     const stats = statsOf(request, keptDaysOf(data)(request.where));
@@ -165,6 +165,4 @@ const computeStats =
     );
   };
 
-export { computeStats };
-export type { Condition, MetricStats, StatsRequest };
 export type { Bucket, GroupBy, StatsData } from "./life-groups";

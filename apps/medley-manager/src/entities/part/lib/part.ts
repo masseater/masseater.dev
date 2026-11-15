@@ -1,10 +1,10 @@
-type Named = Readonly<{ id: number; title: string }>;
+export type Named = Readonly<{ id: number; title: string }>;
 
-type StaffRole = "audio" | "video" | "other";
+export type StaffRole = "audio" | "video" | "other";
 
-type Credit = Readonly<{ role: StaffRole; person: Readonly<{ id: number; name: string }> }>;
+export type Credit = Readonly<{ role: StaffRole; person: Readonly<{ id: number; name: string }> }>;
 
-type PartRow = Readonly<{
+export type PartRow = Readonly<{
   id: number;
   position: number;
   label: string | null;
@@ -18,11 +18,8 @@ type PartRow = Readonly<{
   staff: readonly Credit[];
 }>;
 
-const STAFF_ROLE_LABEL: Readonly<Record<StaffRole, string>> = {
+export const STAFF_ROLE_LABEL: Readonly<Record<StaffRole, string>> = {
   audio: "音",
   video: "映",
   other: "他",
 };
-
-export type { Credit, Named, PartRow, StaffRole };
-export { STAFF_ROLE_LABEL };

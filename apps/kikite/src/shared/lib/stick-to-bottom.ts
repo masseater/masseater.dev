@@ -8,7 +8,7 @@ const WATCHED = { childList: true, subtree: true, characterData: true } as const
 const nearBottom = (element: HTMLElement): boolean =>
   element.scrollHeight - element.scrollTop - element.clientHeight < SLACK;
 
-const useStickToBottom = (): RefObject<HTMLDivElement | null> => {
+export const useStickToBottom = (): RefObject<HTMLDivElement | null> => {
   const ref = useRef<HTMLDivElement>(null);
   const pinnedRef = useRef(true);
   useEffect(() => {
@@ -34,5 +34,3 @@ const useStickToBottom = (): RefObject<HTMLDivElement | null> => {
   }, []);
   return ref;
 };
-
-export { useStickToBottom };

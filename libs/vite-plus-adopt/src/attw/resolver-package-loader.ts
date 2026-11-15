@@ -20,26 +20,26 @@ import { RESOLUTION_VERSION, getVersionPaths } from "./types-versions.ts";
 const DATA_FIRST_ARITY = 2;
 const DATA_FIRST_ARITY_3 = 3;
 
-interface SpecificRequest {
+export interface SpecificRequest {
   readonly extensions: CandidateRequest["extensions"];
   readonly moduleName: string;
   readonly nodeModulesDirectory: string;
   readonly nodeModulesDirectoryExists: boolean;
 }
 
-interface PackagePaths {
+export interface PackagePaths {
   readonly candidate: string;
   readonly rest: string;
   readonly packageDirectory: string;
 }
 
-interface PackageLocation extends PackagePaths {
+export interface PackageLocation extends PackagePaths {
   readonly packageInfo: Option.Option<PackageJsonInfo>;
 }
 
 const EMPTY = 0;
 
-const loadFromDirectory: {
+export const loadFromDirectory: {
   (
     packageInfo: Option.Option<PackageJsonInfo>,
     state: ResolutionState,
@@ -96,7 +96,7 @@ const loadFileFirst = (
   return Option.none();
 };
 
-const specificLoader: {
+export const specificLoader: {
   (rest: string): (packageInfo: Option.Option<PackageJsonInfo>) => Loader<Resolved>;
   (packageInfo: Option.Option<PackageJsonInfo>, rest: string): Loader<Resolved>;
 } = Fn.dual(
@@ -117,7 +117,7 @@ const withoutPackageMetadata = (file: PathAndExtension): Resolved => ({
   originalPath: Option.none(),
 });
 
-const resolveVersionPathsWithTrace: {
+export const resolveVersionPathsWithTrace: {
   (
     location: PackageLocation,
     state: ResolutionState,
@@ -164,6 +164,3 @@ const resolveVersionPathsWithTrace: {
       }),
     ),
 );
-
-export { loadFromDirectory, resolveVersionPathsWithTrace, specificLoader };
-export type { PackageLocation, PackagePaths, SpecificRequest };

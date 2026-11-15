@@ -8,7 +8,7 @@ import { ReproductionSection } from "./reproduction-section";
 import { TechniqueHeader } from "./technique-header";
 import { TechniquePager } from "./technique-pager";
 
-const TechniqueView = ({
+export const TechniqueView = ({
   technique,
   source,
 }: Readonly<{ technique: Technique; source: string }>): ReactNode => (
@@ -22,5 +22,3 @@ const TechniqueView = ({
     <TechniquePager slug={technique.slug} />
   </article>
 );
-
-export { TechniqueView };

@@ -3,7 +3,7 @@ import type { Scope } from "effect";
 import { LoadingManager } from "three";
 import { TGALoader } from "three/examples/jsm/loaders/TGALoader.js";
 
-interface ModelFile {
+export interface ModelFile {
   readonly name: string;
   readonly data: Uint8Array;
 }
@@ -15,7 +15,7 @@ const WHITE_PIXEL =
 
 const decodeUrl = Option.liftThrowable(decodeURIComponent);
 
-const baseName = (name: string): string =>
+export const baseName = (name: string): string =>
   pipe(
     name,
     String.split(/[\\/]/u),
@@ -72,7 +72,7 @@ const revoke = (urls: HashMap.HashMap<string, string>): Effect.Effect<void> =>
     Effect.asVoid,
   );
 
-const managerFor = (
+export const managerFor = (
   files: readonly ModelFile[],
 ): Effect.Effect<LoadingManager, never, Scope.Scope> =>
   Effect.acquireRelease(
@@ -86,6 +86,3 @@ const managerFor = (
       return manager;
     }),
   );
-
-export { baseName, managerFor };
-export type { ModelFile };

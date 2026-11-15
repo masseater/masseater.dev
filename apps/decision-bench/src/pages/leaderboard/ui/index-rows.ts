@@ -3,7 +3,7 @@ import { Array as Arr, pipe } from "effect";
 import { colorOf, indexDetail } from "#/entities/benchmark";
 import type { ModelResult, ChartRow } from "#/entities/benchmark";
 
-const rowsOf = (models: readonly ModelResult[]): readonly ChartRow[] =>
+export const rowsOf = (models: readonly ModelResult[]): readonly ChartRow[] =>
   pipe(
     models,
     Arr.map((model) => ({
@@ -15,5 +15,3 @@ const rowsOf = (models: readonly ModelResult[]): readonly ChartRow[] =>
       ratio: model.index,
     })),
   );
-
-export { rowsOf };

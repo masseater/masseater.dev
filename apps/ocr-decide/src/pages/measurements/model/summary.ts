@@ -8,21 +8,21 @@ const SECOND_DIGITS = 1;
 
 const NONE = 0;
 
-const percent = (rate: number): string => `${Math.round(rate * PERCENT)}%`;
+export const percent = (rate: number): string => `${Math.round(rate * PERCENT)}%`;
 
-const seconds = (value: number): string => `${value.toFixed(SECOND_DIGITS)} 秒`;
+export const seconds = (value: number): string => `${value.toFixed(SECOND_DIGITS)} 秒`;
 
-const dollars = (value: number): string => `$${value.toFixed(COST_DIGITS)}`;
+export const dollars = (value: number): string => `$${value.toFixed(COST_DIGITS)}`;
 
-const rateIn = ({
+export const rateIn = ({
   rates,
   id,
 }: Readonly<{ rates: Readonly<Record<string, number>>; id: string }>): string =>
   percent(rates[id] ?? NONE);
 
-const keyOf = (run: Run): string => `${run.method} ${run.model}`;
+export const keyOf = (run: Run): string => `${run.method} ${run.model}`;
 
-const wayOf = (run: Run): string => {
+export const wayOf = (run: Run): string => {
   if (run.method === "image-generation") {
     return `${run.model} に画像を渡す`;
   }
@@ -31,5 +31,3 @@ const wayOf = (run: Run): string => {
   }
   return `OCR してから ${run.model} が選ぶ`;
 };
-
-export { dollars, keyOf, percent, rateIn, seconds, wayOf };

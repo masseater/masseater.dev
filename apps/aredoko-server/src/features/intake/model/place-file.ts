@@ -6,7 +6,7 @@ const PARTIAL = ".part";
 const ORIGINAL = 1;
 const NEXT = 1;
 
-interface Placement<Failure, Requirements> {
+export interface Placement<Failure, Requirements> {
   readonly folder: string;
   readonly name: string;
   readonly size: number;
@@ -74,7 +74,7 @@ const isAlreadyPlaced = Effect.fn("isAlreadyPlaced")(function* isAlreadyPlaced<
 });
 
 /** @internal */
-const placeFile = Effect.fn("placeFile")(function* placeFileInFolder<Failure, Requirements>({
+export const placeFile = Effect.fn("placeFile")(function* placeFileInFolder<Failure, Requirements>({
   folder,
   name,
   size,
@@ -95,6 +95,3 @@ const placeFile = Effect.fn("placeFile")(function* placeFileInFolder<Failure, Re
   );
   return true;
 });
-
-export { placeFile };
-export type { Placement };

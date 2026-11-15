@@ -6,7 +6,7 @@ import { colorOf } from "#/entities/benchmark/model/model-color";
 import type { TaskEntry } from "#/entities/benchmark/model/ranking";
 import { ModelName } from "#/entities/benchmark/ui/model-name";
 
-const ModelKey = ({ entries }: Readonly<{ entries: readonly TaskEntry[] }>): ReactNode => (
+export const ModelKey = ({ entries }: Readonly<{ entries: readonly TaskEntry[] }>): ReactNode => (
   <ol className="text-muted-foreground grid grid-cols-2 content-start gap-x-4 gap-y-1 self-start text-xs sm:grid-cols-3">
     {pipe(
       entries,
@@ -19,5 +19,3 @@ const ModelKey = ({ entries }: Readonly<{ entries: readonly TaskEntry[] }>): Rea
     )}
   </ol>
 );
-
-export { ModelKey };

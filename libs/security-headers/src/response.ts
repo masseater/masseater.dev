@@ -32,8 +32,6 @@ const securing =
     );
   };
 
-const securedResponse = securing<Response>(Function.identity);
+export const securedResponse = securing<Response>(Function.identity);
 
-const securedResult = securing(({ response }: Readonly<{ response: Response }>) => response);
-
-export { securedResponse, securedResult };
+export const securedResult = securing(({ response }: Readonly<{ response: Response }>) => response);

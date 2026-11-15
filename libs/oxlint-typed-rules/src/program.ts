@@ -15,7 +15,7 @@ const tracing = OtlpTracer.layerFromConfig({
 
 const runtime = ManagedRuntime.make(tracing);
 
-interface Overlay {
+export interface Overlay {
   readonly fileName: string;
   readonly text: string;
 }
@@ -95,13 +95,10 @@ const projectOfFile = (overlay: Overlay): Effect.Effect<Option.Option<Project>> 
     }),
   );
 
-const programFor = (overlay: Overlay): Option.Option<CompatProgram> =>
+export const programFor = (overlay: Overlay): Option.Option<CompatProgram> =>
   Exit.match(runtime.runSyncExit(projectOfFile(overlay)), {
     onSuccess: Option.map(internProgram),
     onFailure: (cause) => {
       throw Cause.squash(cause);
     },
   });
-
-export type { Overlay };
-export { programFor };

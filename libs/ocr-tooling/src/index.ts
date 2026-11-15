@@ -14,14 +14,14 @@ const executablePathOf: Effect.Effect<string> = Config.option(
   Effect.orElseSucceed(() => CHROMIUM),
 );
 
-const launchBrowser: Effect.Effect<Browser, never, Scope.Scope> = Effect.acquireRelease(
+export const launchBrowser: Effect.Effect<Browser, never, Scope.Scope> = Effect.acquireRelease(
   executablePathOf.pipe(
     Effect.flatMap((executablePath) => Effect.promise(() => chromium.launch({ executablePath }))),
   ),
   (opened) => Effect.promise(() => opened.close()),
 );
 
-const provideAtEntry =
+export const provideAtEntry =
   <Provided, LayerError>(layer: Layer.Layer<Provided, LayerError>) =>
   <Success, Failure>(
     program: Effect.Effect<Success, Failure, Provided | Scope.Scope>,
@@ -31,10 +31,8 @@ const provideAtEntry =
       Effect.scoped,
     );
 
-const tracingLayer = (serviceName: string): Layer.Layer<never> =>
+export const tracingLayer = (serviceName: string): Layer.Layer<never> =>
   OtlpTracer.layerFromConfig({ resource: { serviceName } }).pipe(
     Layer.provide(OtlpSerialization.layerJson),
     Layer.provide(FetchHttpClient.layer),
   );
-
-export { launchBrowser, provideAtEntry, tracingLayer };

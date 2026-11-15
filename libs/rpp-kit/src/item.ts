@@ -112,7 +112,7 @@ const placedNotes = (clip: MidiClip, placement: Placement): readonly Note[] => {
   );
 };
 
-const innermost = (source: Chunk): Chunk =>
+export const innermost = (source: Chunk): Chunk =>
   Option.match(Arr.head(chunksOf({ chunk: source, token: "SOURCE" })), {
     onNone: () => source,
     onSome: innermost,
@@ -148,9 +148,9 @@ const offsetOf = (take: Chunk, { position, tempo }: OffsetBase): number =>
     onNone: () => numberOr(ZERO)(firstParam(take, "SOFFS")) * tempo.quartersPerSecondAt(position),
   });
 
-type ItemInput = Readonly<{ item: Chunk; tempo: TempoMap }>;
+export type ItemInput = Readonly<{ item: Chunk; tempo: TempoMap }>;
 
-const readItem = ({ item, tempo }: ItemInput): Item => {
+export const readItem = ({ item, tempo }: ItemInput): Item => {
   const take = selectedTake(item);
   const position = numberOr(ZERO)(firstParam(item, "POSITION"));
   const length = numberOr(ZERO)(firstParam(item, "LENGTH"));
@@ -176,6 +176,3 @@ const readItem = ({ item, tempo }: ItemInput): Item => {
     }),
   };
 };
-
-export { innermost, readItem };
-export type { ItemInput };

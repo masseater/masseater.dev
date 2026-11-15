@@ -137,7 +137,7 @@ const callExpressionSpread = normalizeIndent`
         })`
 
 function getCode({
-  infiniteQueryFunction: infiniteQueryFunction,
+  infiniteQueryFunction,
   properties,
 }: TestCase) {
   function getPropertyCode(

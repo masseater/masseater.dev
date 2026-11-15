@@ -19,7 +19,7 @@ import type { Body, Normalized } from "./life-record";
 import type { IdKey } from "./life-store.server.ts";
 import type { Notice } from "./life-vocabulary.server.ts";
 
-type ItemResult = Readonly<{ ref: string; notices: readonly Notice[] }>;
+export type ItemResult = Readonly<{ ref: string; notices: readonly Notice[] }>;
 
 type Validate = (input: unknown) => Effect.Effect<Body, Schema.SchemaError>;
 
@@ -36,7 +36,7 @@ const VALIDATORS: Readonly<Record<LifeRecordName, Validate>> = {
   metric_definition: Schema.decodeUnknownEffect(MetricDefinitionBody, STRICT),
 };
 
-const invalid = (message: string): InvalidRecord => InvalidRecord.make({ message });
+export const invalid = (message: string): InvalidRecord => InvalidRecord.make({ message });
 
 const accept = (body: Body): Effect.Effect<Body, InvalidRecord> => Effect.succeed(body);
 
@@ -53,12 +53,12 @@ const EXTRA_CHECKS: Readonly<
   metric_definition: accept,
 };
 
-const normalize =
+export const normalize =
   (record: LifeRecordName) =>
   (body: Body): Effect.Effect<Normalized, InvalidRecord> =>
     pipe(normalizeTimes(record)(body), Result.mapError(invalid), Effect.fromResult);
 
-const validateBody =
+export const validateBody =
   (record: LifeRecordName) =>
   (body: Body): Effect.Effect<Body, InvalidRecord> =>
     VALIDATORS[record](body).pipe(
@@ -66,7 +66,7 @@ const validateBody =
       Effect.flatMap(EXTRA_CHECKS[record]),
     );
 
-const assumedNotices =
+export const assumedNotices =
   (ref: string) =>
   (assumed: readonly string[]): readonly Notice[] =>
     Arr.match(assumed, {
@@ -81,7 +81,7 @@ const assumedNotices =
       ],
     });
 
-const lifeKeyOf = (ref: string): Effect.Effect<IdKey, InvalidRecord> =>
+export const lifeKeyOf = (ref: string): Effect.Effect<IdKey, InvalidRecord> =>
   pipe(
     parseRef(ref),
     Option.flatMap((parsed) =>
@@ -95,6 +95,3 @@ const lifeKeyOf = (ref: string): Effect.Effect<IdKey, InvalidRecord> =>
       invalid(`${ref} is not a life record. Change work memos (memory:N) with memory_write.`),
     ),
   );
-
-export { assumedNotices, invalid, lifeKeyOf, normalize, validateBody };
-export type { ItemResult };

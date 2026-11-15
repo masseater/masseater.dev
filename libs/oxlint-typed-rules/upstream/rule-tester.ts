@@ -6,16 +6,16 @@ import { distinct } from "./test-cases.ts";
 
 type TestCase = OxlintRuleTester.ValidTestCase;
 
-type TestCases = OxlintRuleTester.TestCases;
+export type TestCases = OxlintRuleTester.TestCases;
 
-type Hook = (fn: () => void) => void;
+export type Hook = (fn: () => void) => void;
 
-interface UpstreamParserOptions {
+export interface UpstreamParserOptions {
   readonly ecmaFeatures?: Readonly<{ jsx?: boolean | undefined }> | undefined;
   readonly tsconfigRootDir?: string | undefined;
 }
 
-interface UpstreamConfig {
+export interface UpstreamConfig {
   readonly languageOptions?:
     | Readonly<{ parserOptions?: UpstreamParserOptions | undefined }>
     | undefined;
@@ -69,7 +69,7 @@ const asTestCase = (testCase: TestCase | string): TestCase =>
     onSome: (code) => ({ code }),
   });
 
-class RuleTester {
+export class RuleTester {
   public static get describe(): OxlintRuleTester.DescribeFn {
     return OxlintRuleTester.describe;
   }
@@ -114,6 +114,3 @@ class RuleTester {
     });
   }
 }
-
-export type { Hook, TestCases, UpstreamConfig, UpstreamParserOptions };
-export { RuleTester };

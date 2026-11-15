@@ -2,7 +2,7 @@ import type { SiteToken } from "@masseater.dev/repositories/credential-broker.wo
 import type { OAuthTargetId } from "@masseater.dev/repositories/oauth-targets";
 import { constVoid } from "effect/Function";
 
-const TOKENS: Readonly<Record<string, SiteToken>> = {
+export const TOKENS: Readonly<Record<string, SiteToken>> = {
   "twilog/r_masseater": {
     status: "ok",
     site: "twilog/r_masseater",
@@ -16,9 +16,9 @@ const TOKENS: Readonly<Record<string, SiteToken>> = {
   },
 };
 
-const tokens = { current: TOKENS };
+export const tokens = { current: TOKENS };
 
-const env = {
+export const env = {
   TOOL_CALLS: { writeDataPoint: constVoid },
   ACCESS_OAUTH: {
     token: (site: OAuthTargetId): Promise<SiteToken> =>
@@ -27,5 +27,3 @@ const env = {
       ),
   },
 };
-
-export { TOKENS, env, tokens };

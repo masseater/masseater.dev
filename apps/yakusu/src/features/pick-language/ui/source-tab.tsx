@@ -7,7 +7,7 @@ import { useChooseSource } from "#/features/pick-language/model/choose";
 
 import { LanguageTab } from "./language-tab.tsx";
 
-const SourceTab = ({ code }: Readonly<{ code: LanguageCode }>): ReactNode => {
+export const SourceTab = ({ code }: Readonly<{ code: LanguageCode }>): ReactNode => {
   const source = useSource();
   const chooseSource = useChooseSource();
   const onSelect = useCallback(() => {
@@ -21,5 +21,3 @@ const SourceTab = ({ code }: Readonly<{ code: LanguageCode }>): ReactNode => {
     />
   );
 };
-
-export { SourceTab };

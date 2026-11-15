@@ -3,9 +3,9 @@ import { Array as Arr, Number as Num, Option, pipe } from "effect";
 import { flowOf } from "./categories";
 import type { Category } from "./categories";
 
-type Side = "income" | "expense";
+export type Side = "income" | "expense";
 
-type Signed = Readonly<{ category: Category; amount: number }>;
+export type Signed = Readonly<{ category: Category; amount: number }>;
 
 const SIGN: Readonly<Record<Side, number>> = { income: 1, expense: -1 };
 
@@ -17,17 +17,17 @@ const SIDES: Readonly<Record<ReturnType<typeof flowOf>, Option.Option<Side>>> = 
 
 const sideOf = (category: Category): Option.Option<Side> => SIDES[flowOf(category)];
 
-const isOn =
+export const isOn =
   (side: Side) =>
   ({ category }: Signed): boolean =>
     Option.contains(sideOf(category), side);
 
-const valueOn =
+export const valueOn =
   (side: Side) =>
   (amount: number): number =>
     amount * SIGN[side];
 
-const totalOn =
+export const totalOn =
   (side: Side) =>
   (rows: readonly Signed[]): number =>
     pipe(
@@ -36,6 +36,3 @@ const totalOn =
       Arr.map(({ amount }) => valueOn(side)(amount)),
       Num.sumAll,
     );
-
-export { isOn, totalOn, valueOn };
-export type { Side, Signed };

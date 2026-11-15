@@ -1,7 +1,8 @@
 import { API_TOKEN_BYTES, API_TOKEN_PREFIX } from "@masseater.dev/watashi-protocol";
 import { Array as Arr, pipe } from "effect";
 
-const BETTERLEAKS_VERSION = "2.0.0-rc.7";
+/** @internal */
+export const BETTERLEAKS_VERSION = "2.0.0-rc.7";
 
 const BASE64_BITS = 6;
 const BYTE_BITS = 8;
@@ -28,7 +29,8 @@ const ID_PREFIXES = pipe(
   Arr.join("|"),
 );
 
-const BETTERLEAKS_CONFIG = `
+/** @internal */
+export const BETTERLEAKS_CONFIG = `
 [extend]
 useDefault = true
 
@@ -48,6 +50,3 @@ filter = '''
 entropy(finding["secret"]) < 4.0 || !(finding["secret"] matches "[A-Z]" && finding["secret"] matches "[a-z]" && finding["secret"] matches "[0-9]") || matchesAny(finding["secret"], [\`^(?:${ID_PREFIXES})_\`])
 '''
 `;
-
-/** @internal */
-export { BETTERLEAKS_CONFIG, BETTERLEAKS_VERSION };

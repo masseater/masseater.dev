@@ -10,12 +10,10 @@ const noticeVariants = cva("flex items-center gap-1.5", {
   defaultVariants: { tone: "muted", size: "sm" },
 });
 
-const Notice = ({
+export const Notice = ({
   tone,
   size,
   children,
 }: Readonly<VariantProps<typeof noticeVariants> & { children: ReactNode }>): ReactNode => (
   <p className={noticeVariants({ tone, size })}>{children}</p>
 );
-
-export { Notice };

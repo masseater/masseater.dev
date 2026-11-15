@@ -8,7 +8,7 @@ import { ASSETS_KEY, useStatus } from "#/shared/api";
 
 const scannedAtom = Atom.make(HashSet.empty<number>());
 
-const useFollowAnalysis = (): void => {
+export const useFollowAnalysis = (): void => {
   const client = useQueryClient();
   const status = useStatus();
   const setScanned = useAtomSet(scannedAtom);
@@ -33,7 +33,7 @@ const useFollowAnalysis = (): void => {
   }, [data, setScanned]);
 };
 
-const useAnalysis = ({
+export const useAnalysis = ({
   assetId,
   analyzing,
 }: Readonly<{ assetId: number; analyzing: boolean }>): Readonly<{
@@ -45,5 +45,3 @@ const useAnalysis = ({
   const now = status.isSuccess && status.data.analyzingAssetIds.includes(assetId);
   return { waiting: analyzing && !now && !HashSet.has(scanned, assetId), now };
 };
-
-export { useAnalysis, useFollowAnalysis };

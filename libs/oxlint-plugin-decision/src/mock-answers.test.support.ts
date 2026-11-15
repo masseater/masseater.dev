@@ -25,8 +25,8 @@ const YES = 0.95;
 const NO = 0.05;
 const SURE = 0.99;
 const UNSURE = 0.6;
-const NO_HITS = 0;
-const FIRST_HIT = 1;
+export const NO_HITS = 0;
+export const FIRST_HIT = 1;
 const SECOND_HIT = 2;
 const UNKNOWN_CHOICE = "unknown";
 const OPTION_SEPARATOR = "__";
@@ -54,7 +54,7 @@ const scoreFor = (question: string, snippet: string): number =>
     Option.match({ onNone: () => NO, onSome: () => YES }),
   );
 
-const isRefinement = (body: Body): boolean =>
+export const isRefinement = (body: Body): boolean =>
   pipe(
     Rec.keys(body.questions),
     Arr.every((ref) => Str.endsWith(LOCATION_SUFFIX)(ref)),
@@ -158,7 +158,7 @@ const answerOf =
     return [[ref, choiceAnswer(body, ref, token)]];
   };
 
-const answer: {
+export const answer: {
   (token: string, hits: number): (body: Body) => unknown;
   (body: Body, token: string, hits: number): unknown;
 } = Fn.dual(DATA_FIRST_ARITY_3, (body: Body, token: string, hits: number): unknown => {
@@ -178,5 +178,3 @@ const answer: {
     usage: { input_tokens: NO_HITS, output_tokens: NO_HITS, cost: NO_HITS },
   };
 });
-
-export { FIRST_HIT, NO_HITS, answer, isRefinement };

@@ -5,7 +5,7 @@ const SAVED = 0;
 type Progress<Item> = Readonly<{ items: readonly Item[]; unsaved: boolean }>;
 
 /** @internal */
-const collect = Effect.fn("progress.collect")(function* collectItems<
+export const collect = Effect.fn("progress.collect")(function* collectItems<
   Item,
   Failure,
   Services,
@@ -41,5 +41,3 @@ const collect = Effect.fn("progress.collect")(function* collectItems<
     ),
   );
 });
-
-export { collect };

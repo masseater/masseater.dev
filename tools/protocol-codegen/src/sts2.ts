@@ -22,7 +22,7 @@ const constants: readonly string[] = [
   "}",
 ];
 
-const sts2 = Effect.fn("sts2")(function* sts2() {
+export const sts2 = Effect.fn("sts2")(function* sts2() {
   const { lines } = yield* csharpTypes({
     namespace: NAMESPACE,
     framework: "SystemTextJson",
@@ -34,5 +34,3 @@ const sts2 = Effect.fn("sts2")(function* sts2() {
   });
   return Array.join([...lines, "", ...constants, ""], "\n");
 });
-
-export { sts2 };

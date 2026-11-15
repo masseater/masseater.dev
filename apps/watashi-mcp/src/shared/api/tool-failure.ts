@@ -6,7 +6,7 @@ import type { InvalidRecord } from "./invalid-record";
 import type { MemoryNotFound } from "./memory-not-found";
 import type { RecordNotFound } from "./record-not-found";
 
-type ToolFailure =
+export type ToolFailure =
   | InvalidRecord
   | MemoryNotFound
   | RecordNotFound
@@ -14,6 +14,4 @@ type ToolFailure =
   | StorageFailed
   | UpstreamFailed;
 
-type StoreFailure = Exclude<ToolFailure, UpstreamFailed>;
-
-export type { StoreFailure, ToolFailure };
+export type StoreFailure = Exclude<ToolFailure, UpstreamFailed>;

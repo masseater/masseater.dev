@@ -5,7 +5,7 @@ import { RpcClient } from "effect/rpc";
 import { AredokoRpcs } from "./aredoko-rpcs.ts";
 
 /** @internal */
-class AredokoClient extends Context.Service<AredokoClient>()(
+export class AredokoClient extends Context.Service<AredokoClient>()(
   "@masseater.dev/aredoko-protocol/client/AredokoClient",
   {
     make: RpcClient.make(AredokoRpcs),
@@ -13,8 +13,6 @@ class AredokoClient extends Context.Service<AredokoClient>()(
 ) {}
 
 /** @internal */
-const aredokoClientLayer = Layer.effect(AredokoClient, AredokoClient.make).pipe(
+export const aredokoClientLayer = Layer.effect(AredokoClient, AredokoClient.make).pipe(
   Layer.provide(socketProtocolLayer),
 );
-
-export { AredokoClient, aredokoClientLayer };

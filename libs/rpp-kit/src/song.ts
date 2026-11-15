@@ -158,7 +158,7 @@ const lengthOf = ({ markers, regions }: Timeline, tracks: readonly TrackOutline[
   return Math.max(ZERO, ...itemEnds, ...markerTimes, ...regionEnds);
 };
 
-const outlineSong = (root: Chunk): SongOutline => {
+export const outlineSong = (root: Chunk): SongOutline => {
   const tempoMap = tempoMapOf(root);
   const tempo = tempoMap.outline;
   const timeline = timelineOf(root);
@@ -191,5 +191,3 @@ const outlineSong = (root: Chunk): SongOutline => {
   };
   return { song, tempo, markers, tracks, files: filesOf(root) };
 };
-
-export { outlineSong };

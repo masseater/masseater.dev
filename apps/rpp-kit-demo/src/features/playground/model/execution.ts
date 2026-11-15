@@ -8,9 +8,9 @@ import type { Checked } from "./editors";
 import type { Entry, Line, Report } from "./output";
 import { runScript } from "./runner";
 
-type Fork = (effect: Effect.Effect<void>) => unknown;
+export type Fork = (effect: Effect.Effect<void>) => unknown;
 
-type Execution = Readonly<{
+export type Execution = Readonly<{
   worker: Remote<CheckerWorker>;
   song: Ref.Ref<string>;
   report: Report;
@@ -44,11 +44,8 @@ const execute = ({ worker, song, report }: Execution, checked: Checked): Effect.
     });
   });
 
-const executor =
+export const executor =
   (execution: Execution) =>
   (checked: Checked): void => {
     execution.fork(execute(execution, checked));
   };
-
-export { executor };
-export type { Execution, Fork };

@@ -5,10 +5,10 @@ import type { Mosaic } from "#/entities/mosaic/api/queries";
 import { variantFile, variantOf } from "./files";
 import type { Visit } from "./files";
 
-type Level = Mosaic["levels"][number];
+export type Level = Mosaic["levels"][number];
 type Sources = readonly (readonly [number, ImageBitmap])[];
 
-interface BlockSpec {
+export interface BlockSpec {
   readonly visit: Visit;
   readonly level: Level;
   readonly column: number;
@@ -110,7 +110,7 @@ const paint = ({
   return canvas;
 };
 
-const composeBlock = (spec: BlockSpec): Effect.Effect<string> =>
+export const composeBlock = (spec: BlockSpec): Effect.Effect<string> =>
   Effect.gen(function* compose() {
     const members = membersOf(spec);
     const sources = yield* sourcesOf(spec, members);
@@ -121,6 +121,3 @@ const composeBlock = (spec: BlockSpec): Effect.Effect<string> =>
     const blob = yield* Effect.promise(() => canvas.convertToBlob({ type: PNG }));
     return URL.createObjectURL(blob);
   }).pipe(Effect.withSpan("mosaic.compose", { attributes: { file: spec.file } }));
-
-export { composeBlock };
-export type { BlockSpec, Level };

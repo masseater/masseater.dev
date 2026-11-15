@@ -6,7 +6,7 @@ const ONE_SENTENCE = 1;
 
 const FIRST = 0;
 
-interface Part {
+export interface Part {
   readonly from: number;
   readonly to: number;
   readonly span: Span;
@@ -25,7 +25,7 @@ const spanOfRange = (sentences: readonly Span[], { from, to }: Range): Span => (
   }),
 });
 
-const partsOf =
+export const partsOf =
   ({ sentences, branches }: Readonly<{ sentences: readonly Span[]; branches: number }>) =>
   ({ from, to }: Part): readonly Part[] => {
     const count = Math.min(branches, to - from);
@@ -38,7 +38,7 @@ const partsOf =
     });
   };
 
-const unlocatedSpan =
+export const unlocatedSpan =
   (sentences: readonly Span[]) =>
   (found: Part): Span => {
     if (found.to - found.from === ONE_SENTENCE) {
@@ -46,6 +46,3 @@ const unlocatedSpan =
     }
     return found.span;
   };
-
-export { partsOf, unlocatedSpan };
-export type { Part };

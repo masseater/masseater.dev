@@ -7,7 +7,7 @@ import type {
   AnalysisResultValue,
 } from "#/entities/trait/model/trait-analysis";
 
-class TraitAnalyst extends Context.Service<
+export class TraitAnalyst extends Context.Service<
   TraitAnalyst,
   {
     readonly analyze: (
@@ -15,5 +15,3 @@ class TraitAnalyst extends Context.Service<
     ) => Effect.Effect<AnalysisResultValue, AnalystFailed>;
   }
 >()("watashi-mcp/entities/trait/api/trait-analyst/TraitAnalyst") {}
-
-export { TraitAnalyst };

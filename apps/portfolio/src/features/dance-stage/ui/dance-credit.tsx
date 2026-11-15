@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { danceSource } from "#/features/dance-stage/model/source";
 
-const DanceCredit = (): ReactNode => (
+export const DanceCredit = (): ReactNode => (
   <p className="text-muted-foreground text-xs leading-relaxed">
     {`素材は${danceSource.performer}さんの`}
     <a
@@ -15,5 +15,3 @@ const DanceCredit = (): ReactNode => (
     </a>
   </p>
 );
-
-export { DanceCredit };

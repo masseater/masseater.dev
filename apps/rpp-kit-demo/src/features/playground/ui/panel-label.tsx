@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const PanelLabel = ({
+export const PanelLabel = ({
   label,
   note = "",
 }: Readonly<{ label: string; note?: string }>): ReactNode => (
@@ -11,5 +11,3 @@ const PanelLabel = ({
     </span>
   </div>
 );
-
-export { PanelLabel };

@@ -3,9 +3,9 @@ import { Array as Arr, Function as Fn, Option, pipe } from "effect";
 import { IndexKind } from "./compiler.ts";
 import type { Checker, Type } from "./compiler.ts";
 
-type Value = string | number;
+export type Value = string | number;
 
-interface Vocabulary {
+export interface Vocabulary {
   readonly values: readonly Value[];
   readonly admitsUnnamedValues: boolean;
 }
@@ -16,7 +16,7 @@ const MINIMUM_SET_SIZE = 2;
 
 const DATA_FIRST_ARITY = 2;
 
-const valueKey = (value: Value): string => `${typeof value}:${String(value)}`;
+export const valueKey = (value: Value): string => `${typeof value}:${String(value)}`;
 
 const literalValueOf = (type: Type): Option.Option<Value> => {
   if (type.isStringLiteralType() || type.isNumberLiteralType()) {
@@ -25,7 +25,7 @@ const literalValueOf = (type: Type): Option.Option<Value> => {
   return Option.none();
 };
 
-const literalValuesOf = (types: readonly Type[]): Option.Option<readonly Value[]> => {
+export const literalValuesOf = (types: readonly Type[]): Option.Option<readonly Value[]> => {
   const values = pipe(
     types,
     Arr.map((member) => literalValueOf(member)),
@@ -38,7 +38,7 @@ const literalValuesOf = (types: readonly Type[]): Option.Option<readonly Value[]
   return Option.some(values);
 };
 
-const literalUnionOf = (type: Type): Option.Option<readonly Value[]> => {
+export const literalUnionOf = (type: Type): Option.Option<readonly Value[]> => {
   if (!type.isUnionType()) {
     return Option.none();
   }
@@ -52,14 +52,14 @@ const elementTypeOf = (checker: Checker, type: Type): Option.Option<Type> => {
   return Option.fromUndefinedOr(checker.getIndexTypeOfType(type, IndexKind.Number));
 };
 
-const schemaTypeOf =
+export const schemaTypeOf =
   (checker: Checker) =>
   (type: Type): Option.Option<Type> =>
     Arr.findFirst(SCHEMA_TYPE_PROPERTIES, (name) =>
       Option.fromUndefinedOr(checker.getPropertyOfType(type, name)),
     ).pipe(Option.map((property) => checker.getTypeOfSymbol(property)));
 
-const finiteValuesOf =
+export const finiteValuesOf =
   (checker: Checker) =>
   (type: Type): Option.Option<readonly Value[]> =>
     literalUnionOf(type).pipe(
@@ -67,7 +67,7 @@ const finiteValuesOf =
       Option.orElse(() => schemaTypeOf(checker)(type).pipe(Option.flatMap(literalUnionOf))),
     );
 
-const vocabularyOf =
+export const vocabularyOf =
   (checker: Checker) =>
   (type: Type): Option.Option<Vocabulary> => {
     if (!type.isUnionType()) {
@@ -90,7 +90,7 @@ const vocabularyOf =
     return Option.some({ values, admitsUnnamedValues: values.length !== members.length });
   };
 
-const isSubsetOf: {
+export const isSubsetOf: {
   (superset: readonly Value[]): (subset: readonly Value[]) => boolean;
   (subset: readonly Value[], superset: readonly Value[]): boolean;
 } = Fn.dual(DATA_FIRST_ARITY, (subset: readonly Value[], superset: readonly Value[]): boolean => {
@@ -106,7 +106,7 @@ const isSubsetOf: {
   );
 });
 
-const sameValues: {
+export const sameValues: {
   (right: readonly Value[]): (left: readonly Value[]) => boolean;
   (left: readonly Value[], right: readonly Value[]): boolean;
 } = Fn.dual(
@@ -122,18 +122,5 @@ const valueText = (value: Value): string => {
   return String(value);
 };
 
-const formatValues = (values: readonly Value[]): string =>
+export const formatValues = (values: readonly Value[]): string =>
   pipe(values, Arr.map(valueText), Arr.join(" | "));
-
-export {
-  finiteValuesOf,
-  formatValues,
-  isSubsetOf,
-  literalUnionOf,
-  literalValuesOf,
-  sameValues,
-  schemaTypeOf,
-  valueKey,
-  vocabularyOf,
-};
-export type { Value, Vocabulary };

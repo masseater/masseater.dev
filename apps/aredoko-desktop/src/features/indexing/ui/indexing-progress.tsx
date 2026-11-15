@@ -9,7 +9,7 @@ const SIZES = {
   sm: { text: "text-sm", icon: "size-5" },
 } as const;
 
-const IndexingProgress = ({ size }: Readonly<{ size: keyof typeof SIZES }>): ReactNode => {
+export const IndexingProgress = ({ size }: Readonly<{ size: keyof typeof SIZES }>): ReactNode => {
   const status = useStatus();
   if (!status.isSuccess || !status.data.indexing) {
     return false;
@@ -24,5 +24,3 @@ const IndexingProgress = ({ size }: Readonly<{ size: keyof typeof SIZES }>): Rea
     </p>
   );
 };
-
-export { IndexingProgress };

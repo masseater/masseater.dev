@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { Backdrop } from "./backdrop.tsx";
 import { followViewportPointer, releaseStageLayers } from "./pointer.ts";
 
-const SiteStage = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
+export const SiteStage = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
   <div
     className="stage relative isolate flex min-h-dvh flex-col"
     onPointerCancel={releaseStageLayers}
@@ -16,5 +16,3 @@ const SiteStage = ({ children }: Readonly<{ children: ReactNode }>): ReactNode =
     {children}
   </div>
 );
-
-export { SiteStage };

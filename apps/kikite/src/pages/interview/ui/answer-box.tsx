@@ -11,7 +11,7 @@ import { ANSWER_ID } from "./type-anywhere.ts";
 
 const LABEL = "文字で答える";
 
-const AnswerBox = (): ReactNode => {
+export const AnswerBox = (): ReactNode => {
   const session = useSession();
   const text = useAnswerDraft();
   const onChange = useCallback(
@@ -52,5 +52,3 @@ const AnswerBox = (): ReactNode => {
     </form>
   );
 };
-
-export { AnswerBox };

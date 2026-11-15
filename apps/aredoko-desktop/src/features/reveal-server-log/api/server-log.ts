@@ -4,7 +4,7 @@ import { Effect } from "effect";
 
 const SERVER_LOG = "server.log";
 
-const revealServerLog = (): Promise<void> =>
+export const revealServerLog = (): Promise<void> =>
   Effect.runPromise(
     Effect.gen(function* revealServerLogFile() {
       const directory = yield* Effect.promise(appLogDir);
@@ -12,5 +12,3 @@ const revealServerLog = (): Promise<void> =>
       yield* Effect.promise(() => revealItemInDir(path));
     }),
   );
-
-export { revealServerLog };

@@ -7,7 +7,7 @@ import { AskFailed } from "./ask-failed.tsx";
 import { useShownQuestion } from "./shown-question.ts";
 import { useTabTitle } from "./tab-title.ts";
 
-const QuestionStage = (): ReactNode => {
+export const QuestionStage = (): ReactNode => {
   const { question, faded } = useShownQuestion();
   useTabTitle(question);
   return (
@@ -25,5 +25,3 @@ const QuestionStage = (): ReactNode => {
     </section>
   );
 };
-
-export { QuestionStage };

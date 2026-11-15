@@ -37,7 +37,7 @@ const aliasInserts = (personId: number, aliases: readonly string[]): readonly St
     ),
   );
 
-const mergePeople = Effect.fn("mcp.person.merge")(function* mergePeople(
+export const mergePeople = Effect.fn("mcp.person.merge")(function* mergePeople(
   input: typeof MergeInput.Type,
 ) {
   if (input.sourceId === input.targetId) {
@@ -62,5 +62,3 @@ const mergePeople = Effect.fn("mcp.person.merge")(function* mergePeople(
   yield* query(() => catalogDb.batch(statements));
   return yield* personDetail(input.targetId);
 });
-
-export { mergePeople };

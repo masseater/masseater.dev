@@ -5,18 +5,18 @@ import { Atom } from "effect/reactivity";
 import { entriesOf, rankedModels } from "#/entities/benchmark";
 import type { TaskEntry, ModelResult } from "#/entities/benchmark";
 
-type Scope = "top" | "all";
+export type Scope = "top" | "all";
 
-type QueryEvent = Readonly<{ target: Readonly<{ value: string }> }>;
+export type QueryEvent = Readonly<{ target: Readonly<{ value: string }> }>;
 
-const TOP_COUNT = 10;
+export const TOP_COUNT = 10;
 const FIRST = 0;
 
 const scopeAtom = Atom.make<Scope>("top");
 const queryAtom = Atom.make("");
 
-const useScope = (): Scope => useAtomValue(scopeAtom);
-const useScopeChange = (): ((value: string) => void) => {
+export const useScope = (): Scope => useAtomValue(scopeAtom);
+export const useScopeChange = (): ((value: string) => void) => {
   const set = useAtomSet(scopeAtom);
   return (value) => {
     if (value === "top" || value === "all") {
@@ -24,8 +24,8 @@ const useScopeChange = (): ((value: string) => void) => {
     }
   };
 };
-const useQuery = (): string => useAtomValue(queryAtom);
-const useQueryChange = (): ((event: QueryEvent) => void) => {
+export const useQuery = (): string => useAtomValue(queryAtom);
+export const useQueryChange = (): ((event: QueryEvent) => void) => {
   const set = useAtomSet(queryAtom);
   return (event) => {
     set(event.target.value);
@@ -54,7 +54,7 @@ const narrow = <Item>({
   return matches.slice(FIRST, TOP_COUNT);
 };
 
-const useVisibleEntries = (task: string): readonly TaskEntry[] =>
+export const useVisibleEntries = (task: string): readonly TaskEntry[] =>
   narrow({
     items: entriesOf(task),
     labelOf: ({ model }) => model.label,
@@ -62,21 +62,10 @@ const useVisibleEntries = (task: string): readonly TaskEntry[] =>
     query: useQuery(),
   });
 
-const useVisibleModels = (): readonly ModelResult[] =>
+export const useVisibleModels = (): readonly ModelResult[] =>
   narrow({
     items: rankedModels,
     labelOf: ({ label }) => label,
     scope: useScope(),
     query: useQuery(),
   });
-
-export {
-  TOP_COUNT,
-  useQuery,
-  useScope,
-  useQueryChange,
-  useScopeChange,
-  useVisibleEntries,
-  useVisibleModels,
-};
-export type { QueryEvent, Scope };

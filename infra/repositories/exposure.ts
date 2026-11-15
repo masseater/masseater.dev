@@ -11,7 +11,7 @@ const REPORT_PATH = "/exposure/report";
 const UNAUTHORIZED = 401;
 const BAD_GATEWAY = 502;
 
-type ExposureRoute = Readonly<{ request: Request; env: ExposureEnv }>;
+export type ExposureRoute = Readonly<{ request: Request; env: ExposureEnv }>;
 
 const authorized = (
   request: Request,
@@ -46,7 +46,7 @@ const handlers: Readonly<
     body(request, ReportJson).pipe(Effect.flatMap((report) => notify({ env, claims, report }))),
 };
 
-const exposureRoute = (route: ExposureRoute): Option.Option<Effect.Effect<Response>> =>
+export const exposureRoute = (route: ExposureRoute): Option.Option<Effect.Effect<Response>> =>
   pipe(
     Option.liftPredicate(route.request, (request) => request.method === "POST"),
     Option.flatMap((request) => Rec.get(handlers, new URL(request.url).pathname)),
@@ -67,6 +67,3 @@ const exposureRoute = (route: ExposureRoute): Option.Option<Effect.Effect<Respon
       ),
     ),
   );
-
-export { exposureRoute };
-export type { ExposureRoute };

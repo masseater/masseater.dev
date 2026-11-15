@@ -7,7 +7,7 @@ interface Alias {
 
 const LATIN = /^[a-z]+$/u;
 
-const wordsOf = (text: string): readonly string[] =>
+export const wordsOf = (text: string): readonly string[] =>
   pipe(
     text,
     String.replaceAll(/(?<lower>\p{Ll})(?<upper>\p{Lu})/gu, "$<lower> $<upper>"),
@@ -85,8 +85,6 @@ const COLORS: readonly Alias[] = [
   { name: "銀", aliases: ["silver"] },
 ];
 
-const avatarsIn = namesIn(AVATARS);
+export const avatarsIn = namesIn(AVATARS);
 
-const colorsIn = namesIn(COLORS);
-
-export { avatarsIn, colorsIn, wordsOf };
+export const colorsIn = namesIn(COLORS);

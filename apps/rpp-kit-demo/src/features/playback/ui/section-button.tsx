@@ -4,7 +4,7 @@ import type { Section } from "rpp-kit";
 
 import { usePlaybackControls } from "#/features/playback/model/playback";
 
-const SectionButton = ({ section }: Readonly<{ section: Section }>): ReactNode => {
+export const SectionButton = ({ section }: Readonly<{ section: Section }>): ReactNode => {
   const { seek } = usePlaybackControls();
   const jump = useCallback(() => {
     seek(section.start);
@@ -19,5 +19,3 @@ const SectionButton = ({ section }: Readonly<{ section: Section }>): ReactNode =
     </button>
   );
 };
-
-export { SectionButton };

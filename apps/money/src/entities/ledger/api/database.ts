@@ -11,29 +11,33 @@ import type { Rejected } from "#/shared/api";
 
 import { transactions } from "./ledger.table.ts";
 
-type Failure = UpstreamFailed | Rejected;
+/** @internal */
+export type Failure = UpstreamFailed | Rejected;
 
-type Services = Digest.Digest | SecureRandom.SecureRandom;
+/** @internal */
+export type Services = Digest.Digest | SecureRandom.SecureRandom;
 
 const NO_YEN = 0;
 
 const failed = failedAt("ledger");
 
-const summedAmount = sum(transactions.amount).mapWith(Number);
+export const summedAmount = sum(transactions.amount).mapWith(Number);
 
-const yenOf = (value: number | null): number =>
+export const yenOf = (value: number | null): number =>
   pipe(
     value,
     Option.fromNullOr,
     Option.getOrElse(() => NO_YEN),
   );
 
-const db = drizzle(env.LEDGER);
+export const db = drizzle(env.LEDGER);
 
-const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, UpstreamFailed> =>
+export const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, UpstreamFailed> =>
   Effect.tryPromise({ try: run, catch: failed });
 
-const runAll = (items: readonly BatchItem<"sqlite">[]): Effect.Effect<void, UpstreamFailed> =>
+export const runAll = (
+  items: readonly BatchItem<"sqlite">[],
+): Effect.Effect<void, UpstreamFailed> =>
   pipe(
     items,
     Arr.match({
@@ -44,7 +48,3 @@ const runAll = (items: readonly BatchItem<"sqlite">[]): Effect.Effect<void, Upst
         ),
     }),
   );
-
-export { db, query, runAll, summedAmount, yenOf };
-/** @internal */
-export type { Failure, Services };

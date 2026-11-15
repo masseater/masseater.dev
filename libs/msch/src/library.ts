@@ -13,28 +13,28 @@ import {
 import { schemaTypeOf, vocabularyOf } from "./values.ts";
 import type { Vocabulary } from "./values.ts";
 
-interface LibraryType {
+export interface LibraryType {
   readonly specifier: string;
   readonly typeName: string;
 }
 
-interface LibraryVocabulary extends LibraryType {
+export interface LibraryVocabulary extends LibraryType {
   readonly vocabulary: Vocabulary;
 }
 
-interface DeclarationLocation {
+export interface DeclarationLocation {
   readonly file: string;
   readonly pos: number;
   readonly kind: SyntaxKind;
 }
 
-interface LibraryShape extends LibraryType {
+export interface LibraryShape extends LibraryType {
   readonly form: "declared" | "schema";
   readonly declaration: DeclarationLocation;
   readonly propertyNames: readonly string[];
 }
 
-interface LibraryIndex {
+export interface LibraryIndex {
   readonly vocabularies: readonly LibraryVocabulary[];
   readonly shapes: readonly LibraryShape[];
 }
@@ -58,7 +58,7 @@ interface Exported {
 const NAMESPACE_DEPTH_LIMIT = 8;
 const EMPTY_INDEX: LibraryIndex = { vocabularies: [], shapes: [] };
 
-const isObjectType =
+export const isObjectType =
   (checker: Checker) =>
   (type: Type): boolean =>
     !type.isUnionType() &&
@@ -66,16 +66,16 @@ const isObjectType =
     checker.getApparentType(type).id === type.id &&
     Arr.isReadonlyArrayNonEmpty(checker.getPropertiesOfType(type));
 
-const describeLibraryType = (type: LibraryType): string =>
+export const describeLibraryType = (type: LibraryType): string =>
   `${type.typeName} from ${type.specifier}`;
 
-const locationOf = (declaration: Node): DeclarationLocation => ({
+export const locationOf = (declaration: Node): DeclarationLocation => ({
   file: declaration.getSourceFile().fileName,
   pos: declaration.pos,
   kind: declaration.kind,
 });
 
-const declarationKey = (location: DeclarationLocation): string =>
+export const declarationKey = (location: DeclarationLocation): string =>
   `${location.file}#${String(location.pos)}#${String(location.kind)}`;
 
 type ShapeSource = LibraryType & Pick<LibraryShape, "form">;
@@ -201,16 +201,16 @@ const indexOfEntry =
     );
   };
 
-interface CachedIndex {
+export interface CachedIndex {
   readonly index: LibraryIndex;
   readonly cached: boolean;
 }
 
-interface LibraryCache {
+export interface LibraryCache {
   readonly indexOf: (entry: DependencyEntry, compute: () => LibraryIndex) => CachedIndex;
 }
 
-const libraryCache = (): LibraryCache => {
+export const libraryCache = (): LibraryCache => {
   const indexes = new Map<string, LibraryIndex>();
   return {
     indexOf: (entry, compute) =>
@@ -243,7 +243,7 @@ const indexEntry =
       }),
     );
 
-const libraryIndex =
+export const libraryIndex =
   (cache: LibraryCache) =>
   (checker: Checker) =>
   (entries: readonly DependencyEntry[]): Effect.Effect<LibraryIndex> =>
@@ -253,21 +253,3 @@ const libraryIndex =
       Effect.map(mergeIndexes),
       Effect.withSpan("libraryIndex"),
     );
-
-export {
-  declarationKey,
-  describeLibraryType,
-  isObjectType,
-  libraryCache,
-  libraryIndex,
-  locationOf,
-};
-export type {
-  CachedIndex,
-  DeclarationLocation,
-  LibraryCache,
-  LibraryIndex,
-  LibraryShape,
-  LibraryType,
-  LibraryVocabulary,
-};

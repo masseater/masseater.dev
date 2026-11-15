@@ -153,7 +153,7 @@ const unclickableOf = (transitions: readonly string[]): readonly string[] =>
     ],
   });
 
-const summarize = (
+export const summarize = (
   flows: readonly { readonly result: FlowResult; readonly unclickable: readonly string[] }[],
 ): { readonly table: string; readonly failures: readonly string[] } => {
   const steps = medianVitalsOf(
@@ -171,5 +171,3 @@ const summarize = (
     failures: failuresOf(steps),
   };
 };
-
-export { summarize };

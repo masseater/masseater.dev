@@ -6,7 +6,7 @@ const ITEM_CLASS = {
   subsection: "ps-4",
 } as const;
 
-const TocItem = ({ heading }: Readonly<{ heading: Heading }>): ReactNode => (
+export const TocItem = ({ heading }: Readonly<{ heading: Heading }>): ReactNode => (
   <li className={ITEM_CLASS[heading.level]}>
     <a
       className="text-foreground/60 hover:text-foreground focus-visible:text-foreground transition-colors"
@@ -16,5 +16,3 @@ const TocItem = ({ heading }: Readonly<{ heading: Heading }>): ReactNode => (
     </a>
   </li>
 );
-
-export { TocItem };

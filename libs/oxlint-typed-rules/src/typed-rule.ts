@@ -6,18 +6,18 @@ import { createParserServices } from "./parser-services.ts";
 import type { ParserServices } from "./parser-services.ts";
 import { programFor } from "./program.ts";
 
-type TypedSourceCode = Context["sourceCode"] & {
+export type TypedSourceCode = Context["sourceCode"] & {
   readonly parserServices: ParserServices | undefined;
 };
 
-type TypedContext = Omit<Context, "sourceCode"> & { readonly sourceCode: TypedSourceCode };
+export type TypedContext = Omit<Context, "sourceCode"> & { readonly sourceCode: TypedSourceCode };
 
-interface TypedRule {
+export interface TypedRule {
   readonly meta: RuleMeta;
   readonly create: (context: TypedContext) => Visitor;
 }
 
-const isTypedRule = <Rule>(rule: Rule): rule is Rule & TypedRule =>
+export const isTypedRule = <Rule>(rule: Rule): rule is Rule & TypedRule =>
   Predicate.hasProperty(rule, "meta") &&
   Predicate.hasProperty(rule, "create") &&
   Predicate.isFunction(rule.create);
@@ -53,7 +53,7 @@ const withParserServices = (
   ).pipe(Option.getOrThrowWith(() => new TypeError("The rule context has no source code.")));
 };
 
-const withTypeInformation = (rule: TypedRule): CreateRule => ({
+export const withTypeInformation = (rule: TypedRule): CreateRule => ({
   meta: rule.meta,
   create: (context) =>
     parserServicesOf(context).pipe(
@@ -64,7 +64,7 @@ const withTypeInformation = (rule: TypedRule): CreateRule => ({
     ),
 });
 
-const withOptionalTypeInformation = (rule: TypedRule): CreateRule => ({
+export const withOptionalTypeInformation = (rule: TypedRule): CreateRule => ({
   meta: rule.meta,
   create: (context) =>
     rule.create(
@@ -75,21 +75,12 @@ const withOptionalTypeInformation = (rule: TypedRule): CreateRule => ({
     ),
 });
 
-const typedRules = (
+export const typedRules = (
   rules: Record.ReadonlyRecord<string, unknown>,
 ): Record.ReadonlyRecord<string, CreateRule> =>
   pipe(rules, Record.filter(isTypedRule), Record.map(withTypeInformation));
 
-const optionallyTypedRules = (
+export const optionallyTypedRules = (
   rules: Record.ReadonlyRecord<string, unknown>,
 ): Record.ReadonlyRecord<string, CreateRule> =>
   pipe(rules, Record.filter(isTypedRule), Record.map(withOptionalTypeInformation));
-
-export type { TypedContext, TypedRule, TypedSourceCode };
-export {
-  isTypedRule,
-  optionallyTypedRules,
-  typedRules,
-  withOptionalTypeInformation,
-  withTypeInformation,
-};

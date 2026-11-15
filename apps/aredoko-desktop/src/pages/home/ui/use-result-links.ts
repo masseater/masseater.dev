@@ -9,7 +9,7 @@ interface ResultLinks {
   readonly booth: Option.Option<string>;
 }
 
-const useResultLinks = (result: typeof SearchResult.Type): ResultLinks => {
+export const useResultLinks = (result: typeof SearchResult.Type): ResultLinks => {
   const owner = usePackage(Option.some(result.packageId));
   const file = Option.fromNullOr(result.file);
   return {
@@ -30,5 +30,3 @@ const useResultLinks = (result: typeof SearchResult.Type): ResultLinks => {
     ),
   };
 };
-
-export { useResultLinks };

@@ -19,17 +19,17 @@ const FOCUS_TILE_PIXELS = 160;
 const DOUBLE_TAP_ZOOM = 3;
 const EMPTY = -1;
 
-type Motion =
+export type Motion =
   | Readonly<{ status: "still" }>
   | Readonly<{ status: "flying"; start: number; from: Camera; to: Camera }>;
 
-type Gesture =
+export type Gesture =
   | Readonly<{ status: "none" }>
   | Readonly<{ status: "press"; origin: Point; camera: Camera; at: number }>
   | Readonly<{ status: "drag"; origin: Point; camera: Camera }>
   | Readonly<{ status: "pinch"; distance: number; scale: number }>;
 
-interface Scene {
+export interface Scene {
   readonly grid: Grid;
   readonly cells: readonly number[];
   readonly tileOfCell: readonly number[];
@@ -44,10 +44,10 @@ interface Scene {
   readonly reveal: number;
 }
 
-type Step = (scene: Scene) => Scene;
+export type Step = (scene: Scene) => Scene;
 
-const STILL: Motion = { status: "still" };
-const NO_GESTURE: Gesture = { status: "none" };
+export const STILL: Motion = { status: "still" };
+export const NO_GESTURE: Gesture = { status: "none" };
 
 const fitOf = (scene: Scene): number => fitScale({ viewport: scene.viewport, grid: scene.grid });
 
@@ -59,7 +59,7 @@ const tileIndexByCell = (grid: Grid, cells: readonly number[]): readonly number[
   return tileOfCell;
 };
 
-const createScene = ({
+export const createScene = ({
   grid,
   cells,
   viewport,
@@ -86,7 +86,7 @@ const createScene = ({
   reveal,
 });
 
-const tileAt =
+export const tileAt =
   (point: Point) =>
   (scene: Scene): Option.Option<number> =>
     pipe(
@@ -95,7 +95,7 @@ const tileAt =
       Option.filter((tile) => tile !== EMPTY),
     );
 
-const resize =
+export const resize =
   ({ viewport, ratio }: Readonly<{ viewport: Size; ratio: number }>): Step =>
   (scene) => {
     const resized = { ...scene, viewport, ratio };
@@ -105,7 +105,7 @@ const resize =
     return resized;
   };
 
-const zoomAt =
+export const zoomAt =
   ({ point, factor }: Readonly<{ point: Point; factor: number }>): Step =>
   (scene) => ({
     ...scene,
@@ -133,12 +133,12 @@ const flyTo =
     },
   });
 
-const flyHome =
+export const flyHome =
   (now: number): Step =>
   (scene) =>
     flyTo({ center: worldCenter(scene.grid), scale: fitOf(scene), now })(scene);
 
-const focus =
+export const focus =
   ({ tile, now }: Readonly<{ tile: number; now: number }>): Step =>
   (scene) =>
     pipe(
@@ -156,7 +156,7 @@ const focus =
       }),
     );
 
-const zoomInAt =
+export const zoomInAt =
   ({ point, now }: Readonly<{ point: Point; now: number }>): Step =>
   (scene) =>
     flyTo({
@@ -165,25 +165,10 @@ const zoomInAt =
       now,
     })(scene);
 
-const settle =
+export const settle =
   (camera: Camera): Step =>
   (scene) => ({ ...scene, camera, motion: STILL });
 
-const select =
+export const select =
   (selection: Option.Option<number>): Step =>
   (scene) => ({ ...scene, selection });
-
-export type { Gesture, Motion, Scene, Step };
-export {
-  NO_GESTURE,
-  STILL,
-  createScene,
-  flyHome,
-  focus,
-  resize,
-  select,
-  settle,
-  tileAt,
-  zoomAt,
-  zoomInAt,
-};

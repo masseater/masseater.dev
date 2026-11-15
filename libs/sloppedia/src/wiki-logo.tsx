@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const WikiLogo = ({ letter }: Readonly<{ letter: string }>): ReactNode => (
+export const WikiLogo = ({ letter }: Readonly<{ letter: string }>): ReactNode => (
   <svg aria-hidden className="size-12 shrink-0" viewBox="0 0 64 64">
     <path
       className="fill-wiki-surface stroke-wiki-subtle"
@@ -17,5 +17,3 @@ const WikiLogo = ({ letter }: Readonly<{ letter: string }>): ReactNode => (
     </text>
   </svg>
 );
-
-export { WikiLogo };

@@ -44,7 +44,7 @@ const remotionRuleModule = (id: string): Option.Option<string> =>
     ),
   );
 
-const upstreamRemotionRules = {
+export const upstreamRemotionRules = {
   name: "upstream-remotion-rules",
   enforce: "pre",
   resolveId: (id: string, importer: string | undefined): string | undefined =>
@@ -54,5 +54,3 @@ const upstreamRemotionRules = {
     ),
   load: (id: string): string | undefined => Option.getOrUndefined(remotionRuleModule(id)),
 } as const;
-
-export { upstreamRemotionRules };

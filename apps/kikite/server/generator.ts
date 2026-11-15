@@ -9,7 +9,7 @@ import type { Prompt } from "./prompts.ts";
 
 type Generation = Readonly<{ prompt: Prompt; model: string }>;
 
-class Generator extends Context.Service<
+export class Generator extends Context.Service<
   Generator,
   {
     readonly stream: (generation: Generation) => Stream.Stream<string, GenerationFailed>;
@@ -34,9 +34,7 @@ const agentResearch = (
 ): Effect.Effect<string, GenerationFailed> =>
   toolResult(tooling)({ prompt: prompt.user, system: prompt.system, model, failure: failed });
 
-const agentGenerator = Layer.succeed(
+export const agentGenerator = Layer.succeed(
   Generator,
   Generator.of({ stream: agentStream, research: agentResearch }),
 );
-
-export { Generator, agentGenerator };

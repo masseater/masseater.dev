@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { focus, useSetSearch, useViewerStore } from "#/entities/mosaic";
 import type { Hit } from "#/features/search-tiles/lib/search";
 
-const SearchResult = ({ hit }: Readonly<{ hit: Hit }>): ReactNode => {
+export const SearchResult = ({ hit }: Readonly<{ hit: Hit }>): ReactNode => {
   const store = useViewerStore();
   const setQuery = useSetSearch();
   const choose = useCallback<MouseEventHandler<HTMLButtonElement>>(
@@ -27,5 +27,3 @@ const SearchResult = ({ hit }: Readonly<{ hit: Hit }>): ReactNode => {
     </li>
   );
 };
-
-export { SearchResult };

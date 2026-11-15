@@ -21,14 +21,14 @@ const RoutineJson = Schema.fromJsonString(RoutineSchema);
 
 const WakeBody = Schema.Struct({ text: Schema.String });
 
-type FireOutcome = "fired" | "missing" | "rejected";
+export type FireOutcome = "fired" | "missing" | "rejected";
 
-interface ClaudeRoutineRpc extends Rpc.WorkerEntrypointBranded {
+export interface ClaudeRoutineRpc extends Rpc.WorkerEntrypointBranded {
   register: (routine: unknown) => Promise<boolean>;
   fire: () => Promise<FireOutcome>;
 }
 
-const registerRoutine = ({
+export const registerRoutine = ({
   env,
   routine,
 }: Readonly<{ env: AppStoreEnv; routine: unknown }>): Effect.Effect<boolean> =>
@@ -74,7 +74,7 @@ const post = (routine: Routine): Effect.Effect<FireOutcome, never, HttpClient.Ht
   );
 
 /** @internal */
-const fireRoutine = Effect.fn("claude_routine.fire")(function* fire(env: AppStoreEnv) {
+export const fireRoutine = Effect.fn("claude_routine.fire")(function* fire(env: AppStoreEnv) {
   const routine = yield* readRoutine(env);
   return yield* Option.match(routine, {
     onNone: () =>
@@ -82,6 +82,3 @@ const fireRoutine = Effect.fn("claude_routine.fire")(function* fire(env: AppStor
     onSome: post,
   });
 });
-
-export { fireRoutine, registerRoutine };
-export type { ClaudeRoutineRpc, FireOutcome };

@@ -41,7 +41,7 @@ const objectOf = (chunk: ConversationChunk): Effect.Effect<R2ObjectBody, Upstrea
     ),
   );
 
-const textOf = (chunk: ConversationChunk): Effect.Effect<string, UpstreamFailed> =>
+export const chunkText = (chunk: ConversationChunk): Effect.Effect<string, UpstreamFailed> =>
   objectOf(chunk).pipe(
     Effect.flatMap((object) =>
       Effect.tryPromise({
@@ -100,13 +100,13 @@ const bodyOf =
       Match.orElse(() => ({ text: jsonl })),
     );
 
-const readConversation = Effect.fn("conversation.read")(function* readConversation(
+export const readConversation = Effect.fn("conversation.read")(function* readConversation(
   request: ReadRequest,
 ) {
   const files = yield* filesOf(request);
   const candidates = yield* chunksFrom({ ...request, limit: CHUNK_PAGE });
   const taken = takeWithin(request.maxBytes)(candidates);
-  const texts = yield* Effect.forEach(taken.chunks, textOf, { concurrency: READ_CONCURRENCY });
+  const texts = yield* Effect.forEach(taken.chunks, chunkText, { concurrency: READ_CONCURRENCY });
   const first = Arr.head(taken.chunks);
   const result: ConversationText = {
     sessionId: request.sessionId,
@@ -126,8 +126,6 @@ const readConversation = Effect.fn("conversation.read")(function* readConversati
   return result;
 });
 
-const listConversations = (
+export const listConversations = (
   page: SessionPage,
 ): Effect.Effect<readonly SessionSummary[], StorageFailed> => listSessions(page);
-
-export { listConversations, readConversation, textOf as chunkText };

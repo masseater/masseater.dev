@@ -7,11 +7,17 @@ const Level = Schema.Struct({
   blocks: Schema.Array(Schema.Tuple([Schema.Int, Schema.Int, Schema.String])),
 });
 
-const Tile = Schema.Tuple([Schema.Int, Schema.String, Schema.String, Schema.String, Schema.String]);
+export const Tile = Schema.Tuple([
+  Schema.Int,
+  Schema.String,
+  Schema.String,
+  Schema.String,
+  Schema.String,
+]);
 
-const Tiles = Schema.Array(Tile);
+export const Tiles = Schema.Array(Tile);
 
-const PublishedMosaic = Schema.Struct({
+export const PublishedMosaic = Schema.Struct({
   character: Schema.String,
   credit: Schema.String,
   cols: Schema.Int,
@@ -26,6 +32,4 @@ const PublishedMosaic = Schema.Struct({
   chunk: Schema.Struct({ size: Schema.Int, dir: Schema.String }),
 });
 
-const Candidates = Schema.Array(Schema.Array(Schema.Tuple([Schema.Int, Schema.Int])));
-
-export { Candidates, PublishedMosaic, Tile, Tiles };
+export const Candidates = Schema.Array(Schema.Array(Schema.Tuple([Schema.Int, Schema.Int])));
