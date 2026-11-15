@@ -1,3 +1,4 @@
+import { alchemyTasks } from "@masseater.dev/cloudflare-account/alchemy-tasks";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -40,10 +41,8 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      dev: { command: "alchemy dev", cache: false },
+      ...alchemyTasks,
       build: { command: "vp build && node ./write-asset-headers.ts", cache: false },
-      deploy: { command: "alchemy deploy", cache: false },
-      destroy: { command: "alchemy destroy", cache: false },
     },
   },
   base: `${BASE_PATH}/`,

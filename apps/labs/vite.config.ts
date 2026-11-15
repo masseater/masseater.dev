@@ -1,3 +1,4 @@
+import { alchemyTasks } from "@masseater.dev/cloudflare-account/alchemy-tasks";
 import { Array as Arr, Record as Rec, pipe } from "effect";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { defineConfig } from "vite-plus";
@@ -11,9 +12,7 @@ const pagePath = (page: string): string =>
 export default defineConfig({
   run: {
     tasks: {
-      build: { command: "vp build", cache: false },
-      deploy: { command: "alchemy deploy", cache: false },
-      destroy: { command: "alchemy destroy", cache: false },
+      ...alchemyTasks,
     },
   },
   root: "pages",

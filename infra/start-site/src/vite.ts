@@ -26,10 +26,7 @@ const startSiteConfig = ({
     run: {
       tasks: {
         dev: { command: "alchemy dev", cache: false },
-        build: {
-          command: `vp build && vpx ../../infra/start-site/src/write-asset-headers.ts ${assetHeaderArgs}`,
-          cache: false,
-        },
+        build: { command: `vp build && vpx ../../infra/start-site/src/write-asset-headers.ts ${assetHeaderArgs}` },
         deploy: { command: "alchemy deploy", cache: false },
         destroy: { command: "alchemy destroy", cache: false },
       },

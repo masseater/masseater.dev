@@ -1,3 +1,4 @@
+import { alchemyTasks } from "@masseater.dev/cloudflare-account/alchemy-tasks";
 import { String as Str } from "effect";
 import { defineConfig } from "vite-plus";
 
@@ -6,8 +7,7 @@ const NATIVE = "@snazzah/davey";
 export default defineConfig({
   run: {
     tasks: {
-      deploy: { command: "alchemy deploy", cache: false },
-      destroy: { command: "alchemy destroy", cache: false },
+      ...alchemyTasks,
     },
   },
   pack: {
