@@ -15,7 +15,7 @@ const CONTAINER = '[data-slot="sidebar-container"]';
 
 const CLICK_SLOP = 3;
 
-type Pointer = Readonly<{ clientX: number }>;
+export type Pointer = Readonly<{ clientX: number }>;
 
 interface Drag {
   width: number;
