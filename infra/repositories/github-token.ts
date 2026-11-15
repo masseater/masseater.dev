@@ -1,9 +1,15 @@
-import type { GithubOpContext } from "@distilled.cloud/github";
+import {
+  Credentials,
+  DEFAULT_API_BASE_URL,
+  DEFAULT_USER_AGENT,
+  repos,
+} from "@distilled.cloud/github";
+import type { Config, GithubOpContext } from "@distilled.cloud/github";
 import { createInstallationAccessToken, getUserInstallation } from "@distilled.cloud/github/apps";
 import type { Installation } from "@distilled.cloud/github/apps";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
-import { Effect, Layer, Logger, Option, pipe } from "effect";
+import { DateTime, Effect, Layer, Logger, Option, Redacted, pipe } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
 import { MASSEATER_DEV_GITHUB_GRANT } from "./credential-grants.ts";
@@ -71,6 +77,45 @@ const runMint = <Value>(
   effect: Effect.Effect<Value, never, GithubOpContext>,
 ): Promise<Value> =>
   runner(Layer.mergeAll(logger, fetchHttpClient, gitHubAppCredentials(env)))(effect);
+
+const EXPOSURE_REPOSITORY = "masseater.dev";
+
+const DISPATCH_GRANT: GitHubGrant = {
+  permissions: { contents: "write", metadata: "read" },
+  repositories: [EXPOSURE_REPOSITORY],
+};
+
+const installationCredentials = (token: string, issuedAt: number): Effect.Effect<Config> =>
+  Effect.succeed({
+    token: Redacted.make(token),
+    apiBaseUrl: DEFAULT_API_BASE_URL,
+    userAgent: DEFAULT_USER_AGENT,
+    issuedAt,
+  });
+
+const dispatchAs = (token: string): Effect.Effect<void, never, GithubOpContext> =>
+  Effect.gen(function* dispatchEvent() {
+    const now = yield* DateTime.now;
+    const credentials = installationCredentials(token, DateTime.toEpochMillis(now));
+    const request = { owner: OWNER, repo: EXPOSURE_REPOSITORY, event_type: "exposure" };
+    yield* repos
+      .createDispatchEvent(request)
+      .pipe(Effect.provideService(Credentials, credentials), Effect.orDie);
+    yield* Effect.logInfo("exposure.dispatched");
+  });
+
+const dispatch = (env: GitHubAppEnv): Effect.Effect<void, never, GithubOpContext> =>
+  mint({ env, grant: DISPATCH_GRANT }).pipe(
+    Effect.flatMap(
+      Option.match({
+        onNone: () => Effect.logError("exposure.dispatch_unauthorized"),
+        onSome: dispatchAs,
+      }),
+    ),
+    Effect.catchCause((cause) => Effect.logError("exposure.dispatch_failed", cause)),
+  );
+
+export const dispatchExposure = (env: GitHubAppEnv): Promise<void> => runMint(env, dispatch(env));
 
 export const mintGitHubToken = (input: MintInput): Promise<Option.Option<string>> =>
   runMint(input.env, mint(input).pipe(Effect.orDie));
