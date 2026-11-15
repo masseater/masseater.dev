@@ -4,18 +4,17 @@ import {
   SecretsStore,
   Workers,
   Zone,
-  providers,
   state,
 } from "@alchemy.run/cloudflare";
 import type { ClaudeRequestsRpc } from "@masseater.dev/exposure-protocol/claude-requests";
-import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
 import { Stack, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
 import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { CREDENTIAL_BROKER_AUDIENCE, PREFIX, TRACE_DESTINATION } from "./broker-names.ts";
+import { CREDENTIAL_BROKER_AUDIENCE, PREFIX } from "./broker-names.ts";
+import { brokerProviders, tailnetEnv } from "./broker-tailnet.ts";
 import { grantBindings, WORKFLOW_GITHUB_GRANTS } from "./credential-grants.ts";
 import type { GitHubAppEnv } from "./github-app.ts";
 
@@ -72,7 +71,7 @@ const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.Store) {
 const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   CREDENTIAL_BROKER_AUDIENCE,
   {
-    providers: withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers()),
+    providers: brokerProviders,
     state: state(),
   },
   Effect.gen(function* stack() {
@@ -108,6 +107,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
         ...appStore,
         ACCOUNT_ID: accountId,
         ...grants,
+        ...(yield* tailnetEnv),
         CLAUDE_REQUESTS: Workers.WorkerEntrypoint<ClaudeRequestsRpc>(sundries, "ClaudeRequests"),
       },
     });
