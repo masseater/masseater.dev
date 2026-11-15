@@ -2,8 +2,10 @@ import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effec
 import { parse } from "vite-plus";
 
 import { literalOf, nestedValues } from "./config-literal.ts";
+import { RepositoryFiles } from "./repository-files.ts";
 
 const SINGLE = 1;
+const CONFIG_FILE = "vite.config.ts";
 
 const taggedError = Schema.TaggedError;
 
@@ -101,5 +103,31 @@ const programOf = Effect.fn("programOf")(function* programOf(file: string, text:
   return program;
 });
 
-export { literalSettings, settingsInvalid, merged, programOf, usedFrom };
-export type { LiteralSettingsRequest, SettingsPath, WorkspaceSettingsInvalid, WorkspaceSource };
+interface WorkspaceConfig {
+  readonly file: string;
+  readonly source: string;
+  readonly program: unknown;
+}
+
+const workspaceConfigOf = Effect.fn("workspaceConfigOf")(function* workspaceConfigOf(
+  root: string,
+  directory: string,
+) {
+  const files = yield* RepositoryFiles;
+  const file = files.join(root, directory, CONFIG_FILE);
+  const text = yield* files.readFile(file);
+  if (Option.isNone(text)) {
+    return Option.none<WorkspaceConfig>();
+  }
+  const program = yield* programOf(file, text.value);
+  return Option.some<WorkspaceConfig>({ file, source: text.value, program });
+});
+
+export { literalSettings, settingsInvalid, merged, programOf, usedFrom, workspaceConfigOf };
+export type {
+  LiteralSettingsRequest,
+  SettingsPath,
+  WorkspaceConfig,
+  WorkspaceSettingsInvalid,
+  WorkspaceSource,
+};

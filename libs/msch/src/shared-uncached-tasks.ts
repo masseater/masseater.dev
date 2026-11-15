@@ -2,13 +2,11 @@ import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pip
 
 import { KeySchema, keyName, literalOf, nestedValues } from "./config-literal.ts";
 import type { Problem, RuleName } from "./problem.ts";
-import { RepositoryFiles } from "./repository-files.ts";
 import { positionOf } from "./text-position.ts";
-import { programOf } from "./workspace-config-source.ts";
+import { workspaceConfigOf } from "./workspace-config-source.ts";
 import { workspaceDirectories } from "./workspace-directories.ts";
 
 const RULE: RuleName = "shared-uncached-task";
-const CONFIG_FILE = "vite.config.ts";
 const TASKS_PATH = ["run", "tasks"] as const;
 const READ_CONCURRENCY = 8;
 const SHARED = 2;
@@ -86,14 +84,11 @@ const definitionsIn = Effect.fn("definitionsIn")(function* definitionsIn(
   root: string,
   directory: string,
 ) {
-  const files = yield* RepositoryFiles;
-  const file = files.join(root, directory, CONFIG_FILE);
-  const text = yield* files.readFile(file);
-  if (Option.isNone(text)) {
+  const config = yield* workspaceConfigOf(root, directory);
+  if (Option.isNone(config)) {
     return [];
   }
-  const source = text.value;
-  const program = yield* programOf(file, source);
+  const { file, source, program } = config.value;
   return pipe(
     nestedValues(TASKS_PATH)(program),
     Arr.flatMap((tasks) =>
