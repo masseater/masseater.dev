@@ -2,7 +2,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Array as Arr, Predicate, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useProjects } from "#/pages/memos/api/memos-query";
+import { useProjects } from "#/features/filter-memos/api/projects-query";
 
 import { AllProjectsItem } from "./all-projects-item";
 import { ProjectItem } from "./project-item";
