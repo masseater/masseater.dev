@@ -26,7 +26,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      build: { command: "vp pack", cache: false },
+      build: "vp pack",
       generate: { command: "buf generate", cache: false },
     },
   },

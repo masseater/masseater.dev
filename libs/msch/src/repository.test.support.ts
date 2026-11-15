@@ -108,8 +108,10 @@ const fixtureRepository = Effect.fn("fixtureRepository")(function* fixtureReposi
 const findingsIn = Effect.fn("findingsIn")(function* findingsIn(
   files: Readonly<Record<string, string>>,
 ) {
+  const fixtures = yield* FixtureFiles;
   const repositoryFiles = yield* RepositoryFiles;
   const root = yield* fixtureRepository(files);
+  yield* fixtures.commitAll(root);
   const problems = yield* checkRepository(root);
   return pipe(
     problems,
@@ -120,23 +122,6 @@ const findingsIn = Effect.fn("findingsIn")(function* findingsIn(
   );
 });
 
-const findingsInGitRepository = Effect.fn("findingsInGitRepository")(
-  function* findingsInGitRepository(files: Readonly<Record<string, string>>) {
-    const fixtures = yield* FixtureFiles;
-    const repositoryFiles = yield* RepositoryFiles;
-    const root = yield* fixtureRepository(files);
-    yield* fixtures.commitAll(root);
-    const problems = yield* checkRepository(root);
-    return pipe(
-      problems,
-      Arr.map(
-        (problem) =>
-          `${repositoryFiles.relative(root, problem.file)}:${String(problem.line)} ${problem.rule}`,
-      ),
-    );
-  },
-);
-
 const gitRepositoryWith = Effect.fn("gitRepositoryWith")(function* gitRepositoryWith(
   files: Readonly<Record<string, string>>,
 ) {
@@ -146,4 +131,4 @@ const gitRepositoryWith = Effect.fn("gitRepositoryWith")(function* gitRepository
   return root;
 });
 
-export { directoryWith, findingsIn, findingsInGitRepository, fixtureLayer, gitRepositoryWith };
+export { directoryWith, findingsIn, fixtureLayer, gitRepositoryWith };
