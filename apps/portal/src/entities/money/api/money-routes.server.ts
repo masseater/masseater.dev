@@ -14,8 +14,6 @@ import { asOfOf, periodOf, todayJst } from "#/entities/money/model/period";
 import type { PortalFailed } from "#/shared/api/index.server";
 import { createRouter, money, respond, rpcBody } from "#/shared/api/index.server";
 
-const NO_INPUT = {} as const;
-
 const MonthTotals = Schema.Array(MonthTotal);
 
 const overview = (input: PeriodInputValue): Effect.Effect<OverviewValue, PortalFailed> =>
@@ -26,16 +24,19 @@ const overview = (input: PeriodInputValue): Effect.Effect<OverviewValue, PortalF
     const asOf = asOfOf({ period, today });
     const reports = yield* Effect.all(
       {
-        flow: rpcBody({ schema: MoneyFlow, call: () => money().read("money_flow", period) }),
+        flow: rpcBody({ schema: MoneyFlow, call: () => money().read({ view: "flow", ...period }) }),
         months: rpcBody({
           schema: MonthTotals,
-          call: () => money().read("monthly_totals", period),
+          call: () => money().read({ view: "monthly", ...period }),
         }),
         sheet: rpcBody({
           schema: BalanceSheet,
-          call: () => money().read("balance_sheet", { asOf }),
+          call: () => money().read({ view: "balance_sheet", asOf }),
         }),
-        settings: rpcBody({ schema: Settings, call: () => money().read("get_settings", NO_INPUT) }),
+        settings: rpcBody({
+          schema: Settings,
+          call: () => money().read({ view: "settings" }),
+        }),
       },
       { concurrency: "unbounded" },
     );
@@ -50,7 +51,10 @@ export const moneyRoutes = createRouter("/api/money")
     "/transactions",
     ({ query }) =>
       respond(
-        rpcBody({ schema: TransactionPage, call: () => money().read("list_transactions", query) }),
+        rpcBody({
+          schema: TransactionPage,
+          call: () => money().read({ view: "transactions", ...query }),
+        }),
       ),
     { query: Schema.toStandardSchemaV1(TransactionsInput) },
   );

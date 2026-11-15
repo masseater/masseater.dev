@@ -3,7 +3,6 @@ export const ACCESS_SITES = [
   "kikite.masseater.dev",
   "translate.masseater.dev",
   "yohaku.masseater.dev",
-  "money.masseater.dev",
   "portal.masseater.dev",
 ] as const;
 
