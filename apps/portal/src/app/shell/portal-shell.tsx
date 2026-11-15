@@ -1,17 +1,26 @@
-import { SiteStage } from "@masseater.dev/ui";
 import type { ReactNode } from "react";
 
-import { PortalLogo } from "./portal-logo";
+import { MobileSidebar, Sidebar, SidebarInset, SidebarProvider } from "#/shared/ui/sidebar";
+
+import { PortalHeader } from "./portal-header";
 import { PortalNav } from "./portal-nav";
 
-export const PortalShell = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
-  <SiteStage>
-    <header className="bg-background/90 sticky top-0 z-20 flex h-14 items-center justify-between gap-1 px-4 backdrop-blur-xl sm:grid sm:h-15 sm:grid-cols-3 sm:gap-2 sm:px-6">
-      <PortalLogo />
+export const PortalShell = ({
+  children,
+  sidebarOpen,
+}: Readonly<{ children: ReactNode; sidebarOpen: boolean }>): ReactNode => (
+  <SidebarProvider defaultOpen={sidebarOpen}>
+    <Sidebar>
       <PortalNav />
-    </header>
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-4 py-12">
-      {children}
-    </main>
-  </SiteStage>
+    </Sidebar>
+    <MobileSidebar>
+      <PortalNav />
+    </MobileSidebar>
+    <SidebarInset>
+      <PortalHeader />
+      <main className="flex w-full max-w-screen-2xl flex-1 flex-col gap-5 p-4 sm:p-6">
+        {children}
+      </main>
+    </SidebarInset>
+  </SidebarProvider>
 );

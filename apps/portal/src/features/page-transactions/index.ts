@@ -1,1 +1,1 @@
-export { PageLinks } from "./ui/page-links";
+export { TransactionPager } from "./ui/transaction-pager";

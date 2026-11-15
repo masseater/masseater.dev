@@ -2,7 +2,7 @@ use tauri::{AppHandle, async_runtime};
 use tauri_plugin_dialog::DialogExt;
 
 use crate::failure::{Failure, Outcome};
-use crate::model::{Manuscript, Paragraph};
+use crate::protocol::{Manuscript, Paragraph};
 
 const UNTITLED: &str = "無題";
 const EXTENSION: &str = "txt";
@@ -67,7 +67,7 @@ pub async fn save(
 #[cfg(test)]
 mod tests {
     use super::{name_of, text_of};
-    use crate::model::{Manuscript, Paragraph, Title, TitleAuthor};
+    use crate::protocol::{Manuscript, Paragraph, Title, TitleAuthor};
 
     fn manuscript(title: Option<&str>, excerpt: &str) -> Manuscript {
         Manuscript {

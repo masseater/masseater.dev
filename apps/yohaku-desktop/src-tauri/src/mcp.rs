@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 use tokio::net::TcpListener;
 
 use crate::failure::Outcome;
-use crate::model::{Fact, SourceOrigin};
+use crate::protocol::{Fact, SourceOrigin};
 use crate::store::sources::{self, NewSource};
 use crate::store::{Store, manuscripts};
 use crate::sync::{CALLBACK_PATH, Syncer};

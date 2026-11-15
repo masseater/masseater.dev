@@ -6,8 +6,10 @@
   "main": "src/main.ts",
   "dependencies": {
     "@masseater.dev/aredoko-protocol": "workspace:*",
+    "@masseater.dev/effect2rs": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/sts2-protocol": "workspace:*",
+    "@masseater.dev/yohaku-protocol": "workspace:*",
     "effect": "catalog:stack",
     "quicktype-core": "26.0.0"
   },

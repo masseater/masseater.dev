@@ -1,8 +1,21 @@
-import { Array as Arr, pipe } from "effect";
+import { Array as Arr, Number as Num, pipe } from "effect";
 
 import type { AccountBalanceValue, BalanceSheetValue } from "#/entities/money";
 
-export type SheetLine = Readonly<{ label: string; amount: number; classes: readonly string[] }>;
+export type BlockTone =
+  | "current-asset"
+  | "fixed-asset"
+  | "debt-excess"
+  | "current-liability"
+  | "fixed-liability"
+  | "net-assets";
+
+export type SheetBlock = Readonly<{
+  label: string;
+  amount: number;
+  tone: BlockTone;
+  accounts: readonly AccountBalanceValue[];
+}>;
 
 const TEXT = {
   currentAssets: "流動資産",
@@ -15,41 +28,83 @@ const TEXT = {
 
 const NONE = 0;
 
-const shown = (line: SheetLine): boolean =>
-  line.amount !== NONE || Arr.isReadonlyArrayNonEmpty(line.classes);
-
-export const leftLines = (sheet: BalanceSheetValue): readonly SheetLine[] =>
+const accountsOf = ({
+  accounts,
+  tone,
+}: Readonly<{
+  accounts: readonly AccountBalanceValue[];
+  tone: BlockTone;
+}>): readonly AccountBalanceValue[] =>
   pipe(
-    [
-      { label: TEXT.currentAssets, amount: sheet.left.currentAssets, classes: ["current-asset"] },
-      { label: TEXT.fixedAssets, amount: sheet.left.fixedAssets, classes: ["fixed-asset"] },
-      { label: TEXT.debtExcess, amount: sheet.left.debtExcess, classes: [] },
-    ],
-    Arr.filter(shown),
+    accounts,
+    Arr.filter((account) => account.class === tone),
   );
 
-export const rightLines = (sheet: BalanceSheetValue): readonly SheetLine[] =>
+const block = ({
+  accounts,
+  amount,
+  label,
+  tone,
+}: Readonly<{
+  accounts: readonly AccountBalanceValue[];
+  amount: number;
+  label: string;
+  tone: BlockTone;
+}>): SheetBlock => ({ label, amount, tone, accounts: accountsOf({ accounts, tone }) });
+
+const visible = (blocks: readonly SheetBlock[]): readonly SheetBlock[] =>
   pipe(
-    [
-      {
-        label: TEXT.currentLiabilities,
-        amount: sheet.right.currentLiabilities,
-        classes: ["current-liability"],
-      },
-      {
-        label: TEXT.fixedLiabilities,
-        amount: sheet.right.fixedLiabilities,
-        classes: ["fixed-liability"],
-      },
-      { label: TEXT.netAssets, amount: sheet.right.netAssets, classes: [] },
-    ],
-    Arr.filter(shown),
+    blocks,
+    Arr.filter((entry) => entry.amount > NONE),
   );
 
-export const accountsIn =
-  (line: SheetLine) =>
-  (accounts: readonly AccountBalanceValue[]): readonly AccountBalanceValue[] =>
-    pipe(
-      accounts,
-      Arr.filter((account) => Arr.contains(line.classes, account.class)),
-    );
+export const leftBlocks = (sheet: BalanceSheetValue): readonly SheetBlock[] =>
+  visible([
+    block({
+      accounts: sheet.accounts,
+      amount: sheet.left.currentAssets,
+      label: TEXT.currentAssets,
+      tone: "current-asset",
+    }),
+    block({
+      accounts: sheet.accounts,
+      amount: sheet.left.fixedAssets,
+      label: TEXT.fixedAssets,
+      tone: "fixed-asset",
+    }),
+    block({
+      accounts: sheet.accounts,
+      amount: sheet.left.debtExcess,
+      label: TEXT.debtExcess,
+      tone: "debt-excess",
+    }),
+  ]);
+
+export const rightBlocks = (sheet: BalanceSheetValue): readonly SheetBlock[] =>
+  visible([
+    block({
+      accounts: sheet.accounts,
+      amount: sheet.right.currentLiabilities,
+      label: TEXT.currentLiabilities,
+      tone: "current-liability",
+    }),
+    block({
+      accounts: sheet.accounts,
+      amount: sheet.right.fixedLiabilities,
+      label: TEXT.fixedLiabilities,
+      tone: "fixed-liability",
+    }),
+    block({
+      accounts: sheet.accounts,
+      amount: sheet.right.netAssets,
+      label: TEXT.netAssets,
+      tone: "net-assets",
+    }),
+  ]);
+
+export const sideTotal = (blocks: readonly SheetBlock[]): number =>
+  pipe(
+    blocks,
+    Arr.map((entry) => entry.amount),
+    Num.sumAll,
+  );

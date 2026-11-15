@@ -4,9 +4,9 @@ use tauri::ipc::Channel;
 use crate::export;
 use crate::failure::{Failure, Outcome};
 use crate::mcp;
-use crate::model::{
-    Annotations, ClaudeStatus, Fact, Manuscript, Mcp, OnboardingStep, Opened, Paragraph, Reaction,
-    Release, Revision, SignIn, Source, SyncStatus, Title, TitleAuthor,
+use crate::model::{ClaudeStatus, Mcp, OnboardingStep, Opened, Release, Revision, SignIn};
+use crate::protocol::{
+    Annotations, Fact, Manuscript, Paragraph, Reaction, Source, SyncStatus, Title, TitleAuthor,
 };
 use crate::store::{Store, dismissals, manuscripts, onboarding, reactions, revisions, sources};
 use crate::sync::Syncer;
