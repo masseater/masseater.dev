@@ -9,7 +9,7 @@ metadata:
   library: "@r_masseater/msch"
   library_version: 0.18.0
 sources:
-  - src/app/cli.ts
+  - bin/msch.ts
   - README.md
 ---
 

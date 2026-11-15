@@ -4,7 +4,7 @@ export {
   cloudflareResourceSyntax,
   removalPolicyOverride,
   removalPolicySyntax,
-  scriptsOverride,
+  commandsOverride,
 } from "./config/lint-overrides.config.ts";
 export { allRulesOf, decisionRules, decisionTestRules, generated } from "./config/lint.config.ts";
 export {

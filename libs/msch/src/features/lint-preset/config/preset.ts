@@ -10,7 +10,7 @@ import {
   alchemyOverride,
   cloudflareResourceSyntax,
   removalPolicyOverride,
-  scriptsOverride,
+  commandsOverride,
 } from "./lint-overrides.config.ts";
 import {
   COMMENT_DIRECTIVES,
@@ -114,7 +114,7 @@ const overrides = [
     files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "**/decision-rules.ts"],
     rules: { "import/no-default-export": "off" },
   },
-  scriptsOverride,
+  commandsOverride,
   {
     files: ["**/vite.config.ts"],
     rules: {

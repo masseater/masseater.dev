@@ -1,4 +1,5 @@
 import { Array as Arr, Match, Option, Predicate, Record as Rec, Schema, pipe } from "effect";
+import type { ESTree } from "vite-plus/lint/plugins";
 
 export type Literal = string | number | boolean | null | readonly Literal[] | LiteralObject;
 
@@ -140,3 +141,38 @@ export const nestedValues =
     );
     return [...own, ...pipe(childrenOf(node), Arr.flatMap(nestedValues(path)))];
   };
+
+const StringNode = Schema.Union([
+  Schema.Struct({
+    type: Schema.Literal<ESTree.StringLiteral["type"]>("Literal"),
+    value: Schema.String,
+    start: Schema.Finite,
+  }),
+  Schema.Struct({
+    type: Schema.Literal<ESTree.TemplateElement["type"]>("TemplateElement"),
+    value: Schema.Struct({ cooked: Schema.String }),
+    start: Schema.Finite,
+  }),
+]);
+const decodeStringNode = Schema.decodeUnknownOption(StringNode);
+
+export interface FoundString {
+  readonly text: string;
+  readonly start: number;
+}
+
+const textOf = (node: typeof StringNode.Type): string => {
+  if (node.type === "Literal") {
+    return node.value;
+  }
+  return node.value.cooked;
+};
+
+export const stringsIn = (node: unknown): readonly FoundString[] => {
+  const own = pipe(
+    decodeStringNode(node),
+    Option.map((found) => ({ text: textOf(found), start: found.start })),
+    Option.toArray,
+  );
+  return [...own, ...pipe(childrenOf(node), Arr.flatMap(stringsIn))];
+};

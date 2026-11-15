@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src", "vite.config.ts"],
+  "include": ["src", "bin", "vite.config.ts"],
   "compilerOptions": {
     "types": ["node", "@cloudflare/workers-types", "@r_masseater/msch/vite"]
   }

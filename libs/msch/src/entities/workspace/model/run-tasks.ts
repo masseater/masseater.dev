@@ -2,8 +2,7 @@ import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
 import { KeySchema, nestedValues } from "./config-literal.ts";
 import { workspaceConfigOf } from "./workspace-config-source.ts";
-
-const RUN_TASKS = ["run", "tasks"] as const;
+import { RUN_TASKS } from "./workspace-tasks.ts";
 
 const TaskProperty = Schema.Struct({
   type: Schema.Literal("Property"),

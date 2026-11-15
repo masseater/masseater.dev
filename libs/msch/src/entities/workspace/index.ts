@@ -1,10 +1,13 @@
 export {
+  KeySchema,
   childrenOf,
   keyName,
   literalOf,
   nestedValues,
   propertyValue,
+  stringsIn,
 } from "./model/config-literal.ts";
+export type { FoundString } from "./model/config-literal.ts";
 export {
   literalSettings,
   merged,
@@ -20,6 +23,7 @@ export { workspaceDirectories } from "./model/workspace-directories.ts";
 export { prefixed, withoutRelative } from "./model/workspace-patterns.ts";
 export {
   NO_TASKS,
+  RUN_TASKS,
   VERIFY_TASK,
   definesTask,
   hasVerifyTask,
