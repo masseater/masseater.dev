@@ -4,7 +4,12 @@ import {
   listTokens as listAccountTokens,
   verifyToken as verifyAccountToken,
 } from "@distilled.cloud/cloudflare/accounts";
-import type { CloudflareOpContext } from "@distilled.cloud/cloudflare/accounts";
+import type {
+  CloudflareOpContext,
+  MembersCreateResponsePoliciesItemPermissionGroupsItem,
+  TokensGetResponsePoliciesItem,
+  TokensListResultItem,
+} from "@distilled.cloud/cloudflare/accounts";
 import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
 import type { DeleteTokenError as DeleteUserTokenError } from "@distilled.cloud/cloudflare/user";
 import {
@@ -30,12 +35,7 @@ import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
 import { ISSUED_TOKEN_PREFIX } from "./cloudflare-root.ts";
 
-type Token = Readonly<{
-  id?: string | null;
-  name?: string | null;
-  status?: string | null;
-  lastUsedOn?: string | null;
-}>;
+type Token = Readonly<Pick<TokensListResultItem, "id" | "lastUsedOn" | "name" | "status">>;
 
 const isBrokerIssued = (token: Token): boolean =>
   Str.startsWith(ISSUED_TOKEN_PREFIX)(token.name ?? "");
@@ -70,11 +70,16 @@ const inventory = <Failure>(
     Effect.catchCause((cause) => Console.log(`${scope}\tunavailable\t${Cause.pretty(cause)}`)),
   );
 
-type Policy = Readonly<{
-  effect: string;
-  permissionGroups: readonly Readonly<{ id: string; name?: string | null }>[];
-  resources: Readonly<Record<string, unknown>>;
-}>;
+type PermissionGroup = Readonly<
+  Pick<MembersCreateResponsePoliciesItemPermissionGroupsItem, "id" | "name">
+>;
+
+type Policy = Readonly<
+  Pick<TokensGetResponsePoliciesItem, "effect"> & {
+    permissionGroups: readonly PermissionGroup[];
+    resources: Readonly<Record<string, unknown>>;
+  }
+>;
 
 const RESOURCE_ID = /[0-9a-f]{32}/gu;
 
