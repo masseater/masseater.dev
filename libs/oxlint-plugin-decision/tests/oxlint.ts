@@ -62,6 +62,8 @@ const PASSED_ENV = [
 
 const DECISION_PLUGINS = ["decision", "team"] as const;
 
+const OPENROUTER_DEFAULT = "openrouter/~typesafe/jev-latest";
+
 const inPackage = (...segments: readonly string[]): Effect.Effect<string, never, Path.Path> =>
   Effect.gen(function* resolve() {
     const path = yield* Path.Path;
@@ -195,7 +197,7 @@ const projectFilesFor: {
   ): Effect.Effect<Readonly<Record<string, string>>, never, Path.Path> =>
     pluginPath.pipe(
       Effect.map((plugin) => ({
-        "plugin.mjs": `import { createDecisionPlugin } from ${toJson(plugin)};\n\nexport default createDecisionPlugin(${setupSource(setup)});\n`,
+        "plugin.mjs": `import { createDecisionPlugin } from ${toJson(plugin)};\n\nexport default createDecisionPlugin(${setupSource({ model: OPENROUTER_DEFAULT, ...setup })});\n`,
         "oxlint.config.ts": configSource({
           jsPlugins: ["./plugin.mjs"],
           rules: pipe(

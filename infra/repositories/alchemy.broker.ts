@@ -45,18 +45,12 @@ const npmTokenBinding = Effect.fn("npmTokenBinding")(function* npmTokenBinding(
 });
 
 const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.Store) {
-  const OPENROUTER_API_KEY = yield* SecretsStore.Secret("CiOpenrouterApiKey", {
-    store,
-    name: `${PREFIX}ci-openrouter-api-key`,
-    value: yield* Config.Redacted("OPENROUTER_API_KEY"),
-  });
   const CLAUDE_CODE_OAUTH_TOKEN = yield* SecretsStore.Secret("CiClaudeCodeOauthToken", {
     store,
     name: `${PREFIX}ci-claude-code-oauth-token`,
     value: yield* Config.Redacted("CLAUDE_CODE_OAUTH_TOKEN"),
   });
   return {
-    OPENROUTER_API_KEY,
     CLAUDE_CODE_OAUTH_TOKEN,
     ...(yield* npmTokenBinding(store)),
   };

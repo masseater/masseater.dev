@@ -157,7 +157,7 @@ const badConfigs: readonly (readonly [string, DecisionPluginSetup, string])[] = 
   [
     "a model names an unknown provider",
     { model: "acme/model-1", rules: [goodRule] },
-    'oxlint-plugin-decision: model "acme/model-1" must be "<provider>/<model>" with a provider from: openrouter',
+    'oxlint-plugin-decision: model "acme/model-1" must be "<provider>/<model>" with a provider from: cloudflare, openrouter',
   ],
   [
     "a model has no provider prefix",
