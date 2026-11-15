@@ -77,4 +77,4 @@ const placeLabels = (anchors: readonly Anchor[]): readonly LabelSpot[] => {
 };
 
 export { placeLabels };
-export type { LabelSpot };
+export type { Anchor, LabelSpot };

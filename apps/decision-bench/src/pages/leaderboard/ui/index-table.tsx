@@ -1,6 +1,7 @@
+import { percent } from "bench-summary/format";
 import type { ReactNode } from "react";
 
-import { colorOf, percent, usd } from "#/entities/benchmark";
+import { colorOf, usd } from "#/entities/benchmark";
 import type { ModelResult } from "#/entities/benchmark";
 import type { TableColumn } from "#/features/sort-table";
 import { SortableTable } from "#/features/sort-table";

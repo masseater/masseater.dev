@@ -76,5 +76,5 @@ const useSearch = (): string => useAtomValue(searchAtom);
 
 const useSetSearch = (): ((query: string) => void) => useAtomSet(searchAtom);
 
-export type { Viewer, ViewerStore };
+export type { Arrival, Viewer, ViewerStore };
 export { useArrival, useSearch, useSelection, useSetSearch, useViewerStatus, useViewerStore };

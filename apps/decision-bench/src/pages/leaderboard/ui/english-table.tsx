@@ -1,7 +1,8 @@
+import { percent } from "bench-summary/format";
 import type { ReactNode } from "react";
 
 import type { EnglishRow } from "#/entities/benchmark";
-import { colorOf, gap, percent } from "#/entities/benchmark";
+import { colorOf, gap } from "#/entities/benchmark";
 import type { TableColumn } from "#/features/sort-table";
 import { SortableTable } from "#/features/sort-table";
 

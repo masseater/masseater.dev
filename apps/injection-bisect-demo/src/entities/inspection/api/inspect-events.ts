@@ -61,5 +61,5 @@ const inspectEvents = ({
     }).pipe(withApiKey(apiKey)),
   ).pipe(Stream.provide(openRouterPerRequest), Stream.toAsyncIterable);
 
-export type { InspectEvent };
+export type { Finished, InspectEvent, Request };
 export { inspectEvents };

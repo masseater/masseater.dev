@@ -1,9 +1,9 @@
 import type { FileSystem } from "effect";
 import { Effect, Option } from "effect";
 
-import { hasExtension, kindOf } from "#/entities/package";
-import { blendPreview } from "#/shared/blend";
-import { imagePreview } from "#/shared/preview";
+import { hasExtension, kindOf } from "#/entities/package/index.ts";
+import { blendPreview } from "#/shared/blend/index.ts";
+import { imagePreview } from "#/shared/preview/index.ts";
 
 import { plainAsset } from "./insert-assets.ts";
 import type { AssetInput } from "./insert-assets.ts";

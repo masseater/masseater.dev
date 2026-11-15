@@ -81,4 +81,4 @@ const englishRows: readonly EnglishRow[] = pipe(
 const englishSource = reference.source;
 
 export { englishRows, englishSource };
-export type { EnglishRow };
+export type { EnglishRow, Scores };

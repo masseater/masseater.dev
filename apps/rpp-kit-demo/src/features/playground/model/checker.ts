@@ -222,4 +222,4 @@ const createChecker = ({ wasm, files }: Setup): Effect.Effect<Checker> =>
   );
 
 export { createChecker };
-export type { At, Checker, Completion, Hover, Lint, Severity, Source };
+export type { At, Checker, Completion, CompletionOption, Hover, Lint, Setup, Severity, Source };

@@ -1,7 +1,7 @@
 import { Array } from "effect";
 import type { ReactNode } from "react";
 
-import { usePackages } from "#/pages/home/api/queries";
+import { usePackages } from "#/entities/asset";
 
 import { Assets } from "./assets.tsx";
 import { FirstImport } from "./first-import.tsx";

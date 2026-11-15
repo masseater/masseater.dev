@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { useSelectedResult } from "#/pages/home/model";
+import { useSelectedResult } from "#/entities/asset";
 
 import { ResultSummary } from "./result-summary.tsx";
 

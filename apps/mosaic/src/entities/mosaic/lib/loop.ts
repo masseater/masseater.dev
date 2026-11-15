@@ -95,5 +95,5 @@ const createInvalidation = (): Invalidation => {
   };
 };
 
-export type { Invalidation };
+export type { Invalidation, Loop };
 export { createInvalidation, startLoop };

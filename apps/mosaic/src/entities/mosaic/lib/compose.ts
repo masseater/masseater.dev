@@ -123,3 +123,4 @@ const composeBlock = (spec: BlockSpec): Effect.Effect<string> =>
   }).pipe(Effect.withSpan("mosaic.compose", { attributes: { file: spec.file } }));
 
 export { composeBlock };
+export type { BlockSpec, Level };

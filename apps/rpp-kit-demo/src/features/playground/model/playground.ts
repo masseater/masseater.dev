@@ -51,4 +51,4 @@ const runPlayground = Effect.fn("runPlayground")(function* runPlayground({
 });
 
 export { runPlayground };
-export type { Panes };
+export type { Panes, Session };

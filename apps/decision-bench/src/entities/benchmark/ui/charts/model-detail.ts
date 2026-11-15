@@ -1,4 +1,6 @@
-import { decimal, percent, usd, withInterval } from "#/entities/benchmark/lib/format";
+import { percent } from "bench-summary/format";
+
+import { decimal, usd, withInterval } from "#/entities/benchmark/lib/format";
 import { displayLabel } from "#/entities/benchmark/model/display-label";
 import { METRIC_NAMES } from "#/entities/benchmark/model/metric-names";
 import type { TaskEntry } from "#/entities/benchmark/model/ranking";
@@ -73,4 +75,4 @@ const indexDetail = (model: Readonly<ModelResult>): Detail => ({
 });
 
 export { indexDetail, taskDetail };
-export type { Detail };
+export type { Detail, DetailRow };

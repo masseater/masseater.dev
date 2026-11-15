@@ -178,5 +178,5 @@ const drawGpuFrame = ({ bound, frame }: Readonly<{ bound: Bound; frame: GpuFrame
   bound.textures.sweep(frame.number);
 };
 
-export type { Bound, Color };
+export type { Bound, Color, GpuFrame };
 export { drawGpuFrame, isIntro };

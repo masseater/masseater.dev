@@ -95,5 +95,5 @@ const loadVisit = ({ seed: given, ...load }: VisitLoad): Effect.Effect<Loaded> =
     return { seed, choice, mosaic };
   });
 
-export type { Assignment, Loaded };
+export type { Assignment, Load, Loaded, VisitLoad };
 export { loadVisit };

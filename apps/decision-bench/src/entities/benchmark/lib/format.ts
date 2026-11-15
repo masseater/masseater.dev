@@ -28,5 +28,4 @@ const withInterval = ({
 
 const decimal = (value: number): string => value.toFixed(SCORE_DIGITS);
 
-export { percent } from "bench-summary/format";
 export { decimal, gap, pointsOf, toPercentPoints, usd, withInterval };

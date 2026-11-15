@@ -201,4 +201,4 @@ const listen = (
   });
 
 export { listen };
-export type { Recognition };
+export type { Recognition, RecognitionHandlers };

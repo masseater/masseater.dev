@@ -88,4 +88,4 @@ const openerOf = (sink: Sink): ((picked: Picked) => void) => {
 };
 
 export { openerOf, pickedOf };
-export type { Picked };
+export type { Draft, Picked, Sink };

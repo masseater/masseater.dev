@@ -62,3 +62,4 @@ const rppPane = (views: Views): readonly Extension[] => [
 ];
 
 export { rppPane, songOf };
+export type { Views };

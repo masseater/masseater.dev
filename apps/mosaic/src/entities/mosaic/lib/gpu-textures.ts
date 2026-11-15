@@ -191,5 +191,5 @@ const createTextures = (context: Context): Textures => {
   };
 };
 
-export type { Textures, Uploaded };
+export type { Context, Textures, Uploaded };
 export { createTextures };

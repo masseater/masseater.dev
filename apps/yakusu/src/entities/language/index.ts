@@ -1,4 +1,3 @@
-export { resolveDirection } from "./model/direction";
 export type { Direction } from "./model/direction";
 export {
   useSelection,

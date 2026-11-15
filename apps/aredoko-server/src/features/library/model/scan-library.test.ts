@@ -2,8 +2,8 @@ import { expect, layer } from "@effect/vitest";
 import { Array, Effect, Option, String, pipe } from "effect";
 import { HttpClient } from "effect/http";
 
-import { Embedder } from "#/shared/embedding";
-import type { LooseFile } from "#/shared/unitypackage";
+import { Embedder } from "#/shared/embedding/index.ts";
+import type { LooseFile } from "#/shared/unitypackage/index.ts";
 
 import { Blm } from "./blm.ts";
 import {

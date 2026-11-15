@@ -1,6 +1,6 @@
 import { Array, Effect, FileSystem, Number, Path, pipe } from "effect";
 
-import { isCompanion, isLoose, isPackage, isZip } from "#/entities/package";
+import { isCompanion, isLoose, isPackage, isZip } from "#/entities/package/index.ts";
 
 import { digestOfFile } from "./content-digest.ts";
 import { bundleCount, placedCount } from "./counts.ts";

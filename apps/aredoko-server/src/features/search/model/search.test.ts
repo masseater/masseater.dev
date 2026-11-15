@@ -3,10 +3,10 @@ import { expect, layer } from "@effect/vitest";
 import { Array, Effect, FileSystem, Layer, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { EMBEDDING, databaseLayer, vectorBytes } from "#/shared/database";
-import { Embedder } from "#/shared/embedding";
-import { Settings } from "#/shared/settings";
-import { firstId } from "#/shared/sql";
+import { EMBEDDING, databaseLayer, vectorBytes } from "#/shared/database/index.ts";
+import { Embedder } from "#/shared/embedding/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
+import { firstId } from "#/shared/sql/index.ts";
 
 import { search } from "./search.ts";
 

@@ -1,8 +1,8 @@
 import { Array, Effect, FileSystem, Option, Path, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { bundleFolder, companionNamesOf, companionPath } from "#/entities/package";
-import { decodeRows } from "#/shared/sql";
+import { bundleFolder, companionNamesOf, companionPath } from "#/entities/package/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 const PART_BYTES = 8_388_608;
 

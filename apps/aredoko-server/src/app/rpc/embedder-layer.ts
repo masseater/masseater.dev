@@ -3,8 +3,8 @@ import { Worker } from "node:worker_threads";
 import { NodeWorker } from "@effect/platform-node";
 import { Effect, Layer } from "effect";
 
-import { workerEmbedderLayer } from "#/shared/embedding";
-import { Settings } from "#/shared/settings";
+import { workerEmbedderLayer } from "#/shared/embedding/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
 
 /** @internal */
 const embedderLayer = Layer.unwrap(

@@ -14,7 +14,7 @@ import {
 } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { decodeRows } from "#/shared/sql";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 const ROAMING = "APPDATA";
 const DATABASE = ["pm.booth.library-manager", "data.db"] as const;

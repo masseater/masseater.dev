@@ -3,8 +3,8 @@ import type { Cause } from "effect";
 import { Array, Effect, HashMap, HashSet, Option, Path, Ref, Schema, String, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { fetchItem, itemUrl } from "#/entities/booth";
-import { decodeRows } from "#/shared/sql";
+import { fetchItem, itemUrl } from "#/entities/booth/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 import { Blm } from "./blm.ts";
 import type { BlmItem, BlmLibrary } from "./blm.ts";

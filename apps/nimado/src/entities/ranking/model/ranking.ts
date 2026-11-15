@@ -125,5 +125,5 @@ const rank = ({
     Arr.map(([, entry]) => entry),
   );
 
-export type { Ranked };
+export type { Counts, Day, Ranked, Row };
 export { gains, growth, rank, totals };

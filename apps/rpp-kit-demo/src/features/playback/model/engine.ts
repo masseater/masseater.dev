@@ -149,4 +149,4 @@ const play =
   };
 
 export { createEngine, play };
-export type { Engine, Hit };
+export type { Engine, Hit, NoiseShape, Voice };

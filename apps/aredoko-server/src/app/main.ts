@@ -3,7 +3,7 @@ import { runMain, whileParentAlive } from "@masseater.dev/node-main";
 import { Effect, Layer, String, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 
-import { Settings } from "#/shared/settings";
+import { Settings } from "#/shared/settings/index.ts";
 
 import { VERSION } from "./rpc/handlers.ts";
 import { serverLayer } from "./rpc/server-layer.ts";

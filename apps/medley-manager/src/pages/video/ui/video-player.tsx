@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { VideoThumbnail, embedUrl } from "#/entities/catalog";
+import { VideoThumbnail, embedUrl } from "#/entities/video";
 
 type Playable = Readonly<{
   title: string;

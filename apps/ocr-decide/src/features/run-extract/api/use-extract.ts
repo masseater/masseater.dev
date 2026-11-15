@@ -69,5 +69,5 @@ const useExtract = (): Readonly<{ state: ExtractState; start: (request: Request)
   return { state: { status: "idle" }, start: mutation.mutate };
 };
 
-export type { ExtractState, Outcome };
+export type { ExtractState, Outcome, Request };
 export { useExtract };

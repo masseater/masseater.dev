@@ -100,4 +100,4 @@ const due = Effect.gen(function* due() {
 
 /** @internal */
 export { due, dueAt };
-export type { Due };
+export type { Due, Snapshot };

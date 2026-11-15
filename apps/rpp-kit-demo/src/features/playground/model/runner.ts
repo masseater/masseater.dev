@@ -97,3 +97,4 @@ const runScript = (script: Script): Effect.Effect<readonly Line[]> =>
   );
 
 export { runScript };
+export type { Script };

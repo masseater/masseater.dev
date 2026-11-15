@@ -53,3 +53,4 @@ const onCached = whenPersisted("pagehide");
 const onRestored = whenPersisted("pageshow");
 
 export { onCached, onRestored, releaseOnUnmount, whileMounted };
+export type { Held };

@@ -76,4 +76,4 @@ const startPlayer = ({ from, onTick, onEnd }: StartOptions): Player => {
 };
 
 export { startPlayer };
-export type { Player };
+export type { Player, StartOptions };

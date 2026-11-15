@@ -3,7 +3,7 @@ import { runMain } from "@masseater.dev/node-main";
 import { Array, Effect, Layer, pipe } from "effect";
 import { RpcServer } from "effect/rpc";
 
-import { EmbedderRpcs } from "#/shared/embedding";
+import { EmbedderRpcs } from "#/shared/embedding/index.ts";
 
 const DEVICE = "test";
 const VECTOR_DIMENSIONS = 768;

@@ -93,4 +93,4 @@ const sortRows = <Row>({
 };
 
 export { directionOf, LABEL_ID, sortRows, useSort, useSortClick };
-export type { Sort, SortDirection, TableColumn };
+export type { Sort, SortDirection, SortEvent, TableColumn };

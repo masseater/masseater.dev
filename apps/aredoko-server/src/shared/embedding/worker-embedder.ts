@@ -2,7 +2,7 @@ import { Effect, Layer } from "effect";
 import { RpcClient, RpcWorker } from "effect/rpc";
 import type { RpcClientError } from "effect/rpc";
 
-import { Settings } from "#/shared/settings";
+import { Settings } from "#/shared/settings/index.ts";
 
 import { EmbedderRpcs, WorkerSettings } from "./embedder-rpcs.ts";
 import { Embedder } from "./embedder.ts";

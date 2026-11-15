@@ -3,7 +3,12 @@ import { runMain } from "@masseater.dev/node-main";
 import { Effect, Layer } from "effect";
 import { RpcServer, RpcWorker } from "effect/rpc";
 
-import { Embedder, EmbedderRpcs, WorkerSettings, localEmbedderLayer } from "#/shared/embedding";
+import {
+  Embedder,
+  EmbedderRpcs,
+  WorkerSettings,
+  localEmbedderLayer,
+} from "#/shared/embedding/index.ts";
 
 const handlersLayer = EmbedderRpcs.toLayer(
   Effect.gen(function* handlers() {

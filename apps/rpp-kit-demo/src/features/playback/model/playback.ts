@@ -67,4 +67,4 @@ const usePlaybackControls = (): Controls => {
 };
 
 export { usePlayback, usePlaybackControls };
-export type { Playback };
+export type { Controls, Playback };

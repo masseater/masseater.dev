@@ -106,3 +106,4 @@ const typeCompletion = (pane: Pane): Extension =>
   });
 
 export { lintsOf, typeCompletion, typeHover };
+export type { Pane };

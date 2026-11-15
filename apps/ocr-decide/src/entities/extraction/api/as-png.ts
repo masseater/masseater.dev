@@ -70,3 +70,4 @@ const asPng = ({ bytes, type }: Loaded): Effect.Effect<Uint8Array, PictureError>
 };
 
 export { asPng };
+export type { Loaded, PictureError };

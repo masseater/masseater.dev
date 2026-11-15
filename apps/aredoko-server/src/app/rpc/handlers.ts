@@ -2,13 +2,25 @@ import { AredokoRpcs, RequestFailed } from "@masseater.dev/aredoko-protocol";
 import { failed } from "@masseater.dev/local-server";
 import { Effect, Option, pipe } from "effect";
 
-import { addSource, listSources, preview, progress, removeSource } from "#/features/catalog";
-import { ensureLibraryFolder, intake, rememberAssetStore } from "#/features/intake";
-import { Library } from "#/features/library";
-import type { Activity } from "#/features/library";
-import { failRender, putRender, readModel, readModelPart, renderJobs } from "#/features/render";
-import { browse, search } from "#/features/search";
-import { Embedder } from "#/shared/embedding";
+import {
+  addSource,
+  listSources,
+  preview,
+  progress,
+  removeSource,
+} from "#/features/catalog/index.ts";
+import { ensureLibraryFolder, intake, rememberAssetStore } from "#/features/intake/index.ts";
+import { Library } from "#/features/library/index.ts";
+import type { Activity } from "#/features/library/index.ts";
+import {
+  failRender,
+  putRender,
+  readModel,
+  readModelPart,
+  renderJobs,
+} from "#/features/render/index.ts";
+import { browse, search } from "#/features/search/index.ts";
+import { Embedder } from "#/shared/embedding/index.ts";
 
 import {
   extractAssets,

@@ -60,3 +60,4 @@ const destroyDevice = (device: Releasable): void => {
 };
 
 export { destroyDevice, trackDevice };
+export type { Releasable };

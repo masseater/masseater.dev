@@ -78,3 +78,4 @@ const startListening = Effect.fn("kikite.startListening")(function* startListeni
 
 /** @internal */
 export { release, reset, startListening };
+export type { Listeners };

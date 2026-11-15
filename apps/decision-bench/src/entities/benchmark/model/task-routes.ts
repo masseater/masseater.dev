@@ -14,3 +14,4 @@ const taskRoutes: readonly TaskRoute[] = pipe(
 );
 
 export { taskRoutes };
+export type { TaskRoute };

@@ -1,8 +1,9 @@
 import { Array, Option, pipe } from "effect";
 
 import { CELL_HEIGHT, CELL_WIDTH } from "./camera";
+import type { Level } from "./compose";
 import type { Scene } from "./scene";
-import type { Level, Sprites } from "./sprites";
+import type { Sprites } from "./sprites";
 
 const ONE = 1;
 const ORIGIN = 0;

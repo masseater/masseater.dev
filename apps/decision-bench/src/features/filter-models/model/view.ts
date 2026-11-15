@@ -79,4 +79,4 @@ export {
   useVisibleEntries,
   useVisibleModels,
 };
-export type { Scope };
+export type { QueryEvent, Scope };

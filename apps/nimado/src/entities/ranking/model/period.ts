@@ -85,5 +85,5 @@ const covers = ({
 }: Readonly<{ window: Window; dates: readonly string[] }>): boolean =>
   Arr.contains(dates, window.start) && Arr.contains(dates, window.end);
 
-export type { Window };
+export type { Input, Window };
 export { covers, customRange, windowOf };

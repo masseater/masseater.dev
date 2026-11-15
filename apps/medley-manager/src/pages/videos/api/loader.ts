@@ -1,7 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 
 import { catalogQueries } from "#/entities/catalog";
-import type { VideoFilter } from "#/entities/catalog";
+import type { VideoFilter } from "#/entities/video";
 
 const loadVideosPage = ({
   queryClient,

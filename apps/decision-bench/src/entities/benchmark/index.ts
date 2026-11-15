@@ -11,7 +11,7 @@ export { BarChart } from "./ui/charts/bar-chart";
 export { ChartFigure } from "./ui/charts/chart-figure";
 export { TaskNav } from "./ui/task-nav";
 export { ReliabilityChart } from "./ui/charts/reliability-chart";
-export { gap, percent, usd, decimal, withInterval } from "./lib/format";
+export { gap, usd, decimal, withInterval } from "./lib/format";
 export { displayLabel } from "./model/display-label";
 export { METRIC_NAMES } from "./model/metric-names";
 export { ModelName } from "./ui/model-name";

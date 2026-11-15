@@ -34,3 +34,4 @@ const writeStored = ({ key, value }: Stored): Effect.Effect<void> =>
   );
 
 export { readStored, writeStored };
+export type { Stored };

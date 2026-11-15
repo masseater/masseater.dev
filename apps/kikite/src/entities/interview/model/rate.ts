@@ -30,3 +30,4 @@ const rated =
     );
 
 export { rated };
+export type { Rate };

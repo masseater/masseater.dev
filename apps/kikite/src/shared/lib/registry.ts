@@ -45,3 +45,5 @@ const modify: {
 
 /** @internal */
 export { modify, read, write };
+/** @internal */
+export type { Registered };

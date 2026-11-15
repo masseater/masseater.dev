@@ -1,8 +1,8 @@
 import { Array, Effect, FileSystem, HashSet, Option, Path, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { isPackage } from "#/entities/package";
-import { decodeRows } from "#/shared/sql";
+import { isPackage } from "#/entities/package/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 import { indexBundle, indexPackage } from "./index-package.ts";
 import { bundlesIn, statIfPresent } from "./loose-files.ts";

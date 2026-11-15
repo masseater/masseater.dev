@@ -125,3 +125,4 @@ const pointerUp =
 const leave: Step = (scene) => ({ ...scene, hover: Option.none() });
 
 export { leave, pointerDown, pointerMove, pointerUp };
+export type { PointerInput };

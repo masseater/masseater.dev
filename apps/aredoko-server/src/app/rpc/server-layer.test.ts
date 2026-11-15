@@ -12,7 +12,7 @@ import {
 } from "@masseater.dev/aredoko-protocol";
 import { Effect, FileSystem, Layer, Option, Path, Schema, String, pipe } from "effect";
 
-import { Settings } from "#/shared/settings";
+import { Settings } from "#/shared/settings/index.ts";
 
 import { VERSION } from "./handlers.ts";
 import { serverLayer } from "./server-layer.ts";

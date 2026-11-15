@@ -51,3 +51,4 @@ const executor =
   };
 
 export { executor };
+export type { Execution, Fork };

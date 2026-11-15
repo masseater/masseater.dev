@@ -106,5 +106,5 @@ const gradeOf = ({ text, phase }: Readonly<{ text: string; phase: Phase }>): Gra
   });
 };
 
-export type { Grade };
+export type { Grade, Span };
 export { answerOf, gradeOf };

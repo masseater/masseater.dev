@@ -161,5 +161,5 @@ const useEntries = ({
   return { status: unsettled([table.status, days.status]) };
 };
 
-export type { Entries };
+export type { Entries, MetaValue };
 export { useEntries };

@@ -4,9 +4,9 @@ import { Effect, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { RpcServer } from "effect/rpc";
 
-import { blmLayer, libraryLayer } from "#/features/library";
-import { databaseLayer } from "#/shared/database";
-import { Settings } from "#/shared/settings";
+import { blmLayer, libraryLayer } from "#/features/library/index.ts";
+import { databaseLayer } from "#/shared/database/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
 
 import { embedderLayer } from "./embedder-layer.ts";
 import { handlersLayer } from "./handlers.ts";

@@ -1,9 +1,9 @@
 import { Array, Effect, Option, Record, pipe } from "effect";
 
-import type { Mosaic } from "#/entities/mosaic/api/queries";
 import { runtime } from "#/shared/lib/telemetry";
 
 import { composeBlock } from "./compose";
+import type { Level } from "./compose";
 import { variantFile } from "./files";
 import type { Visit } from "./files";
 
@@ -11,8 +11,6 @@ const NO_WIDTH = 0;
 const SHARPER = 1.2;
 const OVERVIEW = 0;
 const BEST_VARIANT = 0;
-
-type Level = Mosaic["levels"][number];
 
 interface BlockAt {
   readonly sheet: number;
@@ -31,7 +29,7 @@ interface Sprites extends Sheets {
   readonly levelFor: (devicePixels: number) => number;
 }
 
-interface Source {
+interface SpriteSource {
   readonly visit: Visit;
   readonly onLoad: () => void;
 }
@@ -76,7 +74,7 @@ const whenLoaded = (image: HTMLImageElement): Effect.Effect<unknown> =>
 const blockKey = (column: number, row: number): string => `${column}_${row}`;
 
 const blockOf = (
-  { visit, onLoad }: Source,
+  { visit, onLoad }: SpriteSource,
   { level, index }: Readonly<{ level: Level; index: number }>,
   at: Level["blocks"][number],
 ): Block => {
@@ -112,7 +110,7 @@ const blockOf = (
 };
 
 const sheetOf =
-  (source: Source) =>
+  (source: SpriteSource) =>
   (level: Level, index: number): Record.ReadonlyRecord<string, Block> =>
     pipe(
       level.blocks,
@@ -151,7 +149,7 @@ const levelFinder =
       () => levels.length,
     );
 
-const createSprites = (source: Source): Sprites => {
+const createSprites = (source: SpriteSource): Sprites => {
   const { levels } = source.visit.mosaic;
   const sheets = pipe(levels, Array.map(sheetOf(source)));
   const overview = pipe(
@@ -170,5 +168,5 @@ const createSprites = (source: Source): Sprites => {
   };
 };
 
-export type { Level, Sprites };
+export type { BlockAt, Sheets, SpriteSource, Sprites };
 export { createSprites };

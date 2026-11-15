@@ -36,3 +36,4 @@ const transcriptsOf = (event: SpeechRecognitionEvent): Transcripts => {
 };
 
 export { transcriptsOf };
+export type { Transcripts };

@@ -1,9 +1,7 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useManuscripts } from "#/pages/manuscripts/api/manuscripts.ts";
-
-import { ManuscriptRow } from "./manuscript-row.tsx";
+import { useManuscripts, ManuscriptRow } from "#/entities/manuscript";
 
 const LABEL = "原稿";
 

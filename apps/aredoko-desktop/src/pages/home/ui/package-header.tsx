@@ -1,7 +1,7 @@
 import type { Package } from "@masseater.dev/aredoko-protocol";
 import type { ReactNode } from "react";
 
-import { OpenerButton } from "./opener-button.tsx";
+import { OpenerButton } from "#/shared/ui/opener-button";
 
 const PackageHeader = ({ item }: Readonly<{ item: typeof Package.Type }>): ReactNode => (
   <header className="flex flex-col gap-2">

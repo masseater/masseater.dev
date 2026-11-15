@@ -31,4 +31,4 @@ const mountPlayground = ({ container, report }: Mount): (() => void) => {
 };
 
 export { mountPlayground };
-export type { Pane };
+export type { Mount, Pane };

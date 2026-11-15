@@ -104,4 +104,4 @@ const useLegendHandlers = ({
 };
 
 export { useLegendHandlers, useSeriesState };
-export type { SeriesState };
+export type { LegendHandlers, LegendItem, SeriesKey, SeriesState };

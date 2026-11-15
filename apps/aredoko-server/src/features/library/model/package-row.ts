@@ -3,7 +3,7 @@ import type { PackageKind } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { decodeRows, firstId } from "#/shared/sql";
+import { decodeRows, firstId } from "#/shared/sql/index.ts";
 
 type StoredKind = Extract<typeof PackageKind.Type, "unitypackage" | "files">;
 

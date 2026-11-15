@@ -39,4 +39,4 @@ const ringStateOf = ({ listening, asking, hearing }: Signals): RingState => {
 };
 
 export { LOOKS, ringStateOf };
-export type { Look, RingState };
+export type { Look, RingState, Signals };

@@ -1,6 +1,7 @@
+import { percent } from "bench-summary/format";
 import type { ReactNode } from "react";
 
-import { displayLabel, percent, withInterval, METRIC_NAMES } from "#/entities/benchmark";
+import { displayLabel, withInterval, METRIC_NAMES } from "#/entities/benchmark";
 import type { TaskEntry, TaskInfo } from "#/entities/benchmark";
 import type { TableColumn } from "#/features/sort-table";
 import { SortableTable } from "#/features/sort-table";

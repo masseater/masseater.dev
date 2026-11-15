@@ -1,7 +1,7 @@
+import { percent } from "bench-summary/format";
 import { Array as Arr, pipe } from "effect";
 import { Asterisk, ListChecks, Ruler, Tag } from "lucide-react";
 
-import { percent } from "#/entities/benchmark/lib/format";
 import { SPLIT_MARK } from "#/entities/benchmark/model/display-label";
 import { METRIC_NAMES } from "#/entities/benchmark/model/metric-names";
 import type { TaskInfo } from "#/entities/benchmark/model/ranking";

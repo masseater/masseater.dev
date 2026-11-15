@@ -15,9 +15,9 @@ import {
 import { Base64 } from "effect/encoding";
 import { SqlClient } from "effect/sql";
 
-import { RENDER, databaseLayer } from "#/shared/database";
-import { Settings } from "#/shared/settings";
-import { decodeRows, firstId } from "#/shared/sql";
+import { RENDER, databaseLayer } from "#/shared/database/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
+import { decodeRows, firstId } from "#/shared/sql/index.ts";
 
 import { readModel, readModelPart } from "./read-model.ts";
 import { failRender, putRender, renderJobs } from "./render-jobs.ts";

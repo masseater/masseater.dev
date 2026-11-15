@@ -2,7 +2,7 @@ import { sqliteLayer } from "@masseater.dev/local-server/node";
 import { Effect, Layer } from "effect";
 import { getLoadablePath } from "sqlite-vec";
 
-import { Settings } from "#/shared/settings";
+import { Settings } from "#/shared/settings/index.ts";
 
 import { migrations } from "./migrations.ts";
 

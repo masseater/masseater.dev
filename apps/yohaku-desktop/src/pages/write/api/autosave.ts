@@ -4,14 +4,14 @@ import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { Array, Effect, Option, Record, String, pipe } from "effect";
 import { useCallback, useEffect } from "react";
 
-import { received } from "#/pages/write/model/annotations.ts";
-import type { Texts } from "#/pages/write/model/annotations.ts";
 import {
+  received,
   editorAtom,
   manuscriptIdAtom,
   pausedAtom,
   titleAtom,
-} from "#/pages/write/model/writing-atoms.ts";
+} from "#/entities/manuscript";
+import type { Texts } from "#/entities/manuscript";
 import { useYohaku } from "#/shared/api";
 import type { Failure, Yohaku } from "#/shared/api";
 import { screenAtom } from "#/shared/model";

@@ -115,4 +115,4 @@ export {
   replaceDocument,
   scopedEditor,
 };
-export type { Checked };
+export type { Checked, Editor, MainPane, Replacement };

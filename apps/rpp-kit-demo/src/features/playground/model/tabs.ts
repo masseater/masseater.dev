@@ -10,3 +10,4 @@ const sourceTabAtom = Atom.make<SourceTab>("main").pipe(Atom.keepAlive);
 const useSourceTab = (): Tabs<SourceTab> => useAtom(sourceTabAtom);
 
 export { useSourceTab };
+export type { SourceTab, Tabs };

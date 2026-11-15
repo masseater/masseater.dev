@@ -1,9 +1,9 @@
 import { Clock, Effect, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { RENDER, RETRY } from "#/shared/database";
-import { normalizePng } from "#/shared/preview";
-import { decodeRows } from "#/shared/sql";
+import { RENDER, RETRY } from "#/shared/database/index.ts";
+import { normalizePng } from "#/shared/preview/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 const JOBS_PER_REQUEST = 8;
 

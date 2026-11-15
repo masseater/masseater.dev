@@ -234,3 +234,4 @@ const mountViewer = ({ canvas, visit, store }: Mount): (() => void) => {
 };
 
 export { mountViewer };
+export type { Mount };
