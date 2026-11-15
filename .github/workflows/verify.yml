@@ -59,7 +59,6 @@ jobs:
       id-token: write
     concurrency:
       group: bootstrap
-      queue: max
     outputs:
       latest: ${{ steps.head.outputs.latest }}
     steps:
@@ -197,7 +196,6 @@ jobs:
       contents: write
     concurrency:
       group: zenn
-      queue: max
     steps:
       - id: head
         uses: masseater/typescript-template/.github/actions/latest-verified@93ede91739120dbe2102f1a4a5dbcfcb67641f36
@@ -290,7 +288,6 @@ jobs:
       contents: read
     concurrency:
       group: mosaic-character-${{ matrix.slug }}
-      queue: max
     strategy:
       fail-fast: false
       max-parallel: 6
@@ -318,7 +315,6 @@ jobs:
       contents: read
     concurrency:
       group: mosaic-deploy
-      queue: max
     steps: &mosaic-site
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -347,7 +343,6 @@ jobs:
       contents: read
     concurrency:
       group: mosaic-deploy
-      queue: max
     steps: *mosaic-site
 
   exposure:
