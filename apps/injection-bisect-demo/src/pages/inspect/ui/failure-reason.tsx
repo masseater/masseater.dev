@@ -5,7 +5,7 @@ import type { Phase } from "#/entities/inspection";
 
 import { Note } from "./note";
 
-const FailureReason = ({ phase }: Readonly<{ phase: Phase }>): ReactNode => {
+export const FailureReason = ({ phase }: Readonly<{ phase: Phase }>): ReactNode => {
   if (phase.status !== "failed") {
     return "";
   }
@@ -15,5 +15,3 @@ const FailureReason = ({ phase }: Readonly<{ phase: Phase }>): ReactNode => {
     </Note>
   );
 };
-
-export { FailureReason };

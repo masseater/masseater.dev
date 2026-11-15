@@ -6,7 +6,7 @@ import { Switch } from "#/shared/ui/switch";
 const ID = "autostart";
 const LABEL = "Windows へのサインイン時に起動する";
 
-const AutostartSetting = (): ReactNode => {
+export const AutostartSetting = (): ReactNode => {
   const autostart = useAutostart();
   const { mutate, isPending } = useSetAutostart();
   return (
@@ -23,5 +23,3 @@ const AutostartSetting = (): ReactNode => {
     </div>
   );
 };
-
-export { AutostartSetting };

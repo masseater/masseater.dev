@@ -116,7 +116,7 @@ const postsIn = (result: AccountResult): number =>
 const postCount = ({ results }: SearchResult): number =>
   pipe(results, Arr.map(postsIn), Num.sumAll);
 
-const registerSearchTools =
+export const registerSearchTools =
   (caller: Caller) =>
   (server: McpServer): McpServer => {
     server.registerTool(
@@ -133,5 +133,3 @@ const registerSearchTools =
     );
     return server;
   };
-
-export { registerSearchTools };

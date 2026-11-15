@@ -195,7 +195,7 @@ const includeSourceFile: IncludeSourceFile = (build, request) => {
   );
 };
 
-const createProgramFiles: {
+export const createProgramFiles: {
   (options: ProgramOptions, host: ProgramHost): (rootNames: readonly string[]) => ProgramFiles;
   (rootNames: readonly string[], options: ProgramOptions, host: ProgramHost): ProgramFiles;
 } = Fn.dual(
@@ -221,5 +221,3 @@ const createProgramFiles: {
     return build.registry.result();
   },
 );
-
-export { createProgramFiles };

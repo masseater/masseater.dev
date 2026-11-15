@@ -8,7 +8,7 @@ import type { Choice } from "#/entities/extraction/model/draft";
 
 import { asPng } from "./as-png";
 
-type Picture =
+export type Picture =
   | { readonly status: "none" }
   | { readonly status: "loading"; readonly name: string }
   | { readonly status: "failed"; readonly name: string; readonly reason: string }
@@ -60,7 +60,7 @@ const useBytes = (url: string): UseQueryResult<Uint8Array> =>
     }),
   );
 
-const usePicture = (): Picture => {
+export const usePicture = (): Picture => {
   const choice = useChoice();
   const query = useBytes(urlOf(choice));
   if (choice.status === "none") {
@@ -75,6 +75,3 @@ const usePicture = (): Picture => {
   }
   return { status: "loading", name };
 };
-
-export type { Picture };
-export { usePicture };

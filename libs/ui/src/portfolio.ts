@@ -1,6 +1,6 @@
 const xUser = "r_masseater";
 
-const portfolio = {
+export const portfolio = {
   url: "https://masseater.dev",
   name: "masseater",
   xUser,
@@ -16,5 +16,3 @@ const portfolio = {
     nikogori: "Nikogori",
   },
 } as const;
-
-export { portfolio };

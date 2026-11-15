@@ -57,7 +57,7 @@ interface ReadRequest {
   readonly record: Record;
 }
 
-class Reader extends Context.Service<
+export class Reader extends Context.Service<
   Reader,
   { readonly read: (request: ReadRequest) => Effect.Effect<void> }
 >()("@ocr-decide/ja-bench/read/Reader") {}
@@ -152,6 +152,4 @@ const makeReader = Effect.gen(function* makeReader() {
   });
 });
 
-const readerLayer = Layer.effect(Reader, makeReader).pipe(Layer.provide(NodeServices.layer));
-
-export { Reader, readerLayer };
+export const readerLayer = Layer.effect(Reader, makeReader).pipe(Layer.provide(NodeServices.layer));

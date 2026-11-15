@@ -14,7 +14,8 @@ import { zip } from "fflate";
 
 const DATA_FIRST_ARITY = 2;
 
-type FixtureServices =
+/** @internal */
+export type FixtureServices =
   | ChildProcessSpawner.ChildProcessSpawner
   | FileSystem.FileSystem
   | Path.Path
@@ -39,7 +40,8 @@ const writeFiles = (
     );
   });
 
-const directoryWith = (
+/** @internal */
+export const directoryWith = (
   files: Readonly<Record<string, string>>,
 ): Effect.Effect<string, never, FixtureServices> =>
   Effect.gen(function* directory() {
@@ -55,7 +57,8 @@ const directoryWith = (
     return root;
   });
 
-const commitEmpty: {
+/** @internal */
+export const commitEmpty: {
   (
     message: string,
   ): (root: string) => Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner>;
@@ -93,7 +96,8 @@ const commitEmpty: {
     }),
 );
 
-const runGit: {
+/** @internal */
+export const runGit: {
   (
     args: readonly string[],
   ): (root: string) => Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner>;
@@ -113,9 +117,11 @@ const runGit: {
     }),
 );
 
-const lines = (...rows: readonly string[]): string => `${Arr.join(rows, "\n")}\n`;
+/** @internal */
+export const lines = (...rows: readonly string[]): string => `${Arr.join(rows, "\n")}\n`;
 
-const zipArchive = (files: Readonly<Record<string, string>>): Effect.Effect<Uint8Array> =>
+/** @internal */
+export const zipArchive = (files: Readonly<Record<string, string>>): Effect.Effect<Uint8Array> =>
   Effect.callback<Uint8Array>((resume) => {
     const encoder = new TextEncoder();
     const entries = pipe(
@@ -127,14 +133,10 @@ const zipArchive = (files: Readonly<Record<string, string>>): Effect.Effect<Uint
     });
   });
 
-const sha256Hex = (data: Uint8Array): Effect.Effect<string> => {
+/** @internal */
+export const sha256Hex = (data: Uint8Array): Effect.Effect<string> => {
   const copy = new Uint8Array(data);
   return Effect.promise(() => crypto.subtle.digest("SHA-256", copy)).pipe(
     Effect.map((digest) => encodeHex(new Uint8Array(digest))),
   );
 };
-
-/** @internal */
-export { commitEmpty, directoryWith, lines, runGit, sha256Hex, zipArchive };
-/** @internal */
-export type { FixtureServices };

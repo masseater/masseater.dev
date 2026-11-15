@@ -7,7 +7,7 @@ import { RankingControls } from "#/features/filter-ranking";
 
 import { RankingResults } from "./ranking-results";
 
-const RankingBody = ({ meta }: Readonly<{ meta: typeof Meta.Type }>): ReactNode => {
+export const RankingBody = ({ meta }: Readonly<{ meta: typeof Meta.Type }>): ReactNode => {
   const youtube = Arr.isReadonlyArrayNonEmpty(meta.days.youtube);
   return (
     <>
@@ -22,5 +22,3 @@ const RankingBody = ({ meta }: Readonly<{ meta: typeof Meta.Type }>): ReactNode 
     </>
   );
 };
-
-export { RankingBody };

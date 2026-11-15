@@ -19,7 +19,7 @@ const MarkSchema = Schema.Struct({
 
 const isMarked = Schema.is(MarkSchema);
 
-const MarkedPoint = ({
+export const MarkedPoint = ({
   cx = ORIGIN,
   cy = ORIGIN,
   fill,
@@ -64,5 +64,3 @@ const MarkedPoint = ({
     </g>
   );
 };
-
-export { MarkedPoint };

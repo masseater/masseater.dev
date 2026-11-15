@@ -5,7 +5,7 @@ import { KindChips } from "#/features/filter-kind";
 
 import { SearchRow } from "./search-row.tsx";
 
-const SearchBar = (): ReactNode => (
+export const SearchBar = (): ReactNode => (
   <div className="flex flex-col gap-2">
     <SearchRow />
     <div className="flex flex-wrap items-center gap-2">
@@ -14,5 +14,3 @@ const SearchBar = (): ReactNode => (
     </div>
   </div>
 );
-
-export { SearchBar };

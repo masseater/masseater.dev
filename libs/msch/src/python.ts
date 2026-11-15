@@ -78,7 +78,7 @@ const isScanned = (entry: Listed): boolean =>
   !isPython(entry) && SCANNED_FILE.test(entry.name) && !LOCKFILE.test(entry.name);
 
 /** @internal */
-const checkPython = Effect.fn("checkPython")(function* checkPython(root: string) {
+export const checkPython = Effect.fn("checkPython")(function* checkPython(root: string) {
   const files = yield* RepositoryFiles;
   const names = yield* files.listedFiles(root);
   const listed = pipe(
@@ -102,5 +102,3 @@ const checkPython = Effect.fn("checkPython")(function* checkPython(root: string)
   );
   return [...pipe(present, Arr.map(fileProblem)), ...Arr.flatten(scanned)];
 });
-
-export { checkPython };

@@ -5,7 +5,7 @@ import type { AstNode, Target } from "./types.ts";
 
 const FIRST_LINE = 1;
 const FIRST_COLUMN = 0;
-const TARGET_NODE_TYPES = {
+export const TARGET_NODE_TYPES = {
   function: ["FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"],
   call: ["CallExpression"],
   jsx: ["JSXElement"],
@@ -39,7 +39,7 @@ const holdsAsName = (parent: AstNode, node: AstNode): boolean => {
   return ANONYMOUS_FUNCTIONS.has(node.type) && parent[field] === node;
 };
 
-const snippetNodeFor = (node: AstNode): AstNode =>
+export const snippetNodeFor = (node: AstNode): AstNode =>
   Option.fromNullishOr(node.parent).pipe(
     Option.filter((parent) => holdsAsName(parent, node)),
     Option.getOrElse((): AstNode => node),
@@ -49,7 +49,7 @@ const headOf = (text: string, line: number, column: number): Location => {
   return { start: { line, column }, end: { line, column: column + first.length } };
 };
 
-const REPORT_LOC = {
+export const REPORT_LOC = {
   function: (node: AstNode, text: string): Location =>
     headOf(text, node.loc.start.line, node.loc.start.column),
   call: (node: AstNode): Location => node.loc,
@@ -57,5 +57,3 @@ const REPORT_LOC = {
     Option.getOrElse(Option.fromNullishOr(node.openingElement), () => node).loc,
   file: (_node: AstNode, text: string): Location => headOf(text, FIRST_LINE, FIRST_COLUMN),
 } as const satisfies Readonly<Record<Target, (node: AstNode, text: string) => Location>>;
-
-export { REPORT_LOC, TARGET_NODE_TYPES, snippetNodeFor };

@@ -69,7 +69,9 @@ const frontmatters = (): Record<string, unknown> =>
 const isVisible = ({ status }: Readonly<Pick<Entry, "status">>): boolean =>
   import.meta.env.DEV || status !== "draft";
 
-const findEntry = (location: Readonly<Pick<Entry, "category" | "slug">>): Option.Option<Entry> =>
+export const findEntry = (
+  location: Readonly<Pick<Entry, "category" | "slug">>,
+): Option.Option<Entry> =>
   pipe(
     Rec.get(frontmatters(), contentPath(location)),
     Option.flatMap(decodeFrontmatterOption),
@@ -77,7 +79,7 @@ const findEntry = (location: Readonly<Pick<Entry, "category" | "slug">>): Option
     Option.filter(isVisible),
   );
 
-const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.suspend(() =>
+export const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.suspend(() =>
   Effect.forEach(Rec.toEntries(frontmatters()), decodeEntry),
 ).pipe(
   Effect.map((entries) =>
@@ -91,7 +93,9 @@ const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.s
 
 const missing: Effect.Effect<Missing> = Effect.succeed({ status: "missing" });
 
-const collectionOf = (category: string): Effect.Effect<CollectionResult, Schema.SchemaError> =>
+export const collectionOf = (
+  category: string,
+): Effect.Effect<CollectionResult, Schema.SchemaError> =>
   Option.match(decodeCategory(category), {
     onNone: (): Effect.Effect<CollectionResult> => missing,
     onSome: (found) =>
@@ -110,7 +114,7 @@ const collectionOf = (category: string): Effect.Effect<CollectionResult, Schema.
 const found = (entry: Entry): Effect.Effect<EntryResult> =>
   Effect.succeed({ status: "found", entry });
 
-const entryOf = ({
+export const entryOf = ({
   category,
   slug,
 }: Readonly<{ category: string; slug: string }>): Effect.Effect<EntryResult, Schema.SchemaError> =>
@@ -122,5 +126,3 @@ const entryOf = ({
       ),
     ),
   );
-
-export { allEntries, collectionOf, entryOf, findEntry };

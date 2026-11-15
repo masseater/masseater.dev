@@ -7,7 +7,7 @@ import { OpenFailed } from "./open-failed.ts";
 
 const CANNOT_OPEN = "Unity で開けませんでした";
 
-const importToUnity = (assetId: number): Promise<number> =>
+export const importToUnity = (assetId: number): Promise<number> =>
   Effect.runPromise(
     Effect.promise(() => extract([assetId])).pipe(
       Effect.flatMap(({ path, assets }) =>
@@ -21,5 +21,3 @@ const importToUnity = (assetId: number): Promise<number> =>
       ),
     ),
   );
-
-export { importToUnity };

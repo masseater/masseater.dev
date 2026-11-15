@@ -2,13 +2,13 @@ import { Website } from "@alchemy.run/cloudflare";
 import { makeRandom } from "alchemy";
 import { Effect, Option } from "effect";
 
-interface AuthSiteProps<Bindings> {
+export interface AuthSiteProps<Bindings> {
   readonly domain: string;
   readonly name: Option.Option<string>;
   readonly bindings: Bindings;
 }
 
-const authSite = Effect.fn("authSite")(function* authSite<Bindings extends object>({
+export const authSite = Effect.fn("authSite")(function* authSite<Bindings extends object>({
   domain,
   name,
   bindings,
@@ -23,6 +23,3 @@ const authSite = Effect.fn("authSite")(function* authSite<Bindings extends objec
     viteEnvironments: { entry: "ssr", children: ["rsc"] },
   });
 });
-
-export { authSite };
-export type { AuthSiteProps };

@@ -3,10 +3,8 @@ import { env } from "cloudflare:workers";
 
 import { registerTools } from "./tools";
 
-const serveMcp = accessMcpEndpoint({
+export const serveMcp = accessMcpEndpoint({
   teamDomain: env.ACCESS_TEAM_DOMAIN,
   audience: env.ACCESS_AUDIENCE,
   register: registerTools,
 });
-
-export { serveMcp };

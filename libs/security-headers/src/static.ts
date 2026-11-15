@@ -3,9 +3,9 @@ import { Base64 } from "effect/encoding";
 
 import { ASSET_CACHE_CONTROL, SECURITY_HEADERS } from "./index.ts";
 
-type PageHeaders = Readonly<{ path: string; headers: Readonly<Record<string, string>> }>;
+export type PageHeaders = Readonly<{ path: string; headers: Readonly<Record<string, string>> }>;
 
-type PageHashes = Readonly<{ page: string; hashes: readonly string[] }>;
+export type PageHashes = Readonly<{ page: string; hashes: readonly string[] }>;
 
 const encoder = new TextEncoder();
 const INDEX_PAGE = /(?<=^|\/)index\.html$/u;
@@ -13,7 +13,7 @@ const HTML_EXTENSION = /\.html$/u;
 const INLINE_SCRIPT = /<script(?![^>]*\ssrc=)[^>]*>(?<body>[\s\S]*?)<\/script>/gu;
 const MAX_RULES = 100;
 
-const headerLines = (headers: Readonly<Record<string, string>>): readonly string[] =>
+export const headerLines = (headers: Readonly<Record<string, string>>): readonly string[] =>
   pipe(
     Rec.toEntries(headers),
     Arr.map(([name, value]) => `  ${name}: ${value}`),
@@ -36,7 +36,7 @@ const immutableRule = (path: string): readonly string[] => [
   `  Cache-Control: ${ASSET_CACHE_CONTROL}`,
 ];
 
-const headersFileFor =
+export const headersFileFor =
   (immutablePaths: readonly string[]) =>
   ({
     documentHeaders,
@@ -56,7 +56,7 @@ const headersFileFor =
     return pipe(rules, Arr.flatten, Arr.append(""), Arr.join("\n"));
   };
 
-const sourceHash = (body: string): Effect.Effect<string> =>
+export const sourceHash = (body: string): Effect.Effect<string> =>
   Effect.promise(() => crypto.subtle.digest("SHA-256", encoder.encode(body))).pipe(
     Effect.map((digest) => `'sha256-${Base64.encode(new Uint8Array(digest))}'`),
   );
@@ -75,13 +75,13 @@ const scriptBodies = (html: string): readonly string[] =>
     ),
   );
 
-const inlineScriptHashes = (html: string): Effect.Effect<readonly string[]> =>
+export const inlineScriptHashes = (html: string): Effect.Effect<readonly string[]> =>
   pipe(scriptBodies(html), Arr.dedupe, Effect.forEach(sourceHash));
 
-const pageSlug = (page: string): string =>
+export const pageSlug = (page: string): string =>
   pipe(page, Str.replace(INDEX_PAGE, ""), Str.replace(HTML_EXTENSION, ""));
 
-const pageHashes = <Failure, Requirements>({
+export const pageHashes = <Failure, Requirements>({
   entries,
   read,
 }: Readonly<{
@@ -98,6 +98,3 @@ const pageHashes = <Failure, Requirements>({
       ),
     ),
   );
-
-export { headerLines, headersFileFor, inlineScriptHashes, pageSlug, pageHashes, sourceHash };
-export type { PageHashes, PageHeaders };

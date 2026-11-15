@@ -1,6 +1,6 @@
 import { Effect, Schema } from "effect";
 
-const decodeRows =
+export const decodeRows =
   <Row extends Schema.Constraint>(
     row: Row,
   ): (<Failure, Requirements>(
@@ -14,5 +14,3 @@ const decodeRows =
     const decode = Schema.decodeUnknownEffect(Schema.Array(row));
     return statement.pipe(Effect.flatMap(decode));
   };
-
-export { decodeRows };

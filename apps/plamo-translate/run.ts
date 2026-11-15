@@ -3,6 +3,4 @@ import { Logger } from "effect";
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 
-const runLogged = runner(logger);
-
-export { runLogged };
+export const runLogged = runner(logger);

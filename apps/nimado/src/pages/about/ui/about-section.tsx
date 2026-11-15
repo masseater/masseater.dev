@@ -6,7 +6,7 @@ import type { AboutSection } from "#/pages/about/model/content";
 
 import { AboutParagraph } from "./about-paragraph";
 
-const AboutSectionView = ({ section }: Readonly<{ section: AboutSection }>): ReactNode => (
+export const AboutSectionView = ({ section }: Readonly<{ section: AboutSection }>): ReactNode => (
   <section className="flex flex-col gap-2">
     <h2 className="text-lg font-bold">{section.title}</h2>
     {pipe(
@@ -15,5 +15,3 @@ const AboutSectionView = ({ section }: Readonly<{ section: AboutSection }>): Rea
     )}
   </section>
 );
-
-export { AboutSectionView };

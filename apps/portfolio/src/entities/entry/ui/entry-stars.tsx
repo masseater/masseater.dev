@@ -7,7 +7,7 @@ const STAR_LABEL = "スター";
 
 const PENDING_COUNT = 0;
 
-const EntryStars = ({ count }: Readonly<{ count: number | undefined }>): ReactNode => {
+export const EntryStars = ({ count }: Readonly<{ count: number | undefined }>): ReactNode => {
   const loaded = Option.fromUndefinedOr(count);
   return (
     <span
@@ -20,5 +20,3 @@ const EntryStars = ({ count }: Readonly<{ count: number | undefined }>): ReactNo
     </span>
   );
 };
-
-export { EntryStars };

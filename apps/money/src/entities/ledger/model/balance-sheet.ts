@@ -3,9 +3,9 @@ import { Array as Arr, Number as Num, Option, pipe } from "effect";
 import { directionOf } from "./accounts";
 import type { AccountClass } from "./accounts";
 
-type Snapshot = Readonly<{ date: string; balance: number }>;
+export type Snapshot = Readonly<{ date: string; balance: number }>;
 
-type AccountPosition = Readonly<{
+export type AccountPosition = Readonly<{
   id: string;
   name: string;
   class: AccountClass;
@@ -13,9 +13,9 @@ type AccountPosition = Readonly<{
   movement: number;
 }>;
 
-type Basis = "snapshot" | "transactions";
+export type Basis = "snapshot" | "transactions";
 
-type AccountBalance = Readonly<{
+export type AccountBalance = Readonly<{
   id: string;
   name: string;
   class: AccountClass;
@@ -23,7 +23,7 @@ type AccountBalance = Readonly<{
   basis: Basis;
 }>;
 
-type BalanceSheet = Readonly<{
+export type BalanceSheet = Readonly<{
   left: Readonly<{ currentAssets: number; fixedAssets: number; debtExcess: number }>;
   right: Readonly<{ currentLiabilities: number; fixedLiabilities: number; netAssets: number }>;
   accounts: readonly AccountBalance[];
@@ -58,7 +58,7 @@ const sumOf =
       Num.sumAll,
     );
 
-const balanceSheet = (positions: readonly AccountPosition[]): BalanceSheet => {
+export const balanceSheet = (positions: readonly AccountPosition[]): BalanceSheet => {
   const accounts = pipe(positions, Arr.map(balanceOf));
   const sum = sumOf(accounts);
   const assets = sum("current-asset") + sum("fixed-asset");
@@ -78,6 +78,3 @@ const balanceSheet = (positions: readonly AccountPosition[]): BalanceSheet => {
     accounts,
   };
 };
-
-export { balanceSheet };
-export type { AccountBalance, AccountPosition, BalanceSheet, Basis, Snapshot };

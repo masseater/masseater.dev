@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type { Heading } from "./headings.ts";
 import { TocList } from "./toc-list.tsx";
 
-const InlineTocBox = ({
+export const InlineTocBox = ({
   label,
   headings,
 }: Readonly<{ label: string; headings: readonly Heading[] }>): ReactNode => (
@@ -14,5 +14,3 @@ const InlineTocBox = ({
     </nav>
   </details>
 );
-
-export { InlineTocBox };

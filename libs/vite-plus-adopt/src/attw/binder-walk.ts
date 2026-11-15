@@ -55,7 +55,7 @@ const bindFrame = (binding: FileBinding, frame: Frame): readonly Frame[] => {
   return childFramesInReverse(frame.node, childScope(frame.node, frame.scope));
 };
 
-const bindFileNodes = (binding: FileBinding): readonly Node[] => {
+export const bindFileNodes = (binding: FileBinding): readonly Node[] => {
   const bound: Node[] = [];
   const stack: Frame[] = [...childFramesInReverse(binding.file, FILE_SCOPE)];
   let frame = stack.pop();
@@ -69,5 +69,3 @@ const bindFileNodes = (binding: FileBinding): readonly Node[] => {
     Arr.filter((node) => !isReparsed(node)),
   );
 };
-
-export { bindFileNodes };

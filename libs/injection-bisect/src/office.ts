@@ -31,7 +31,7 @@ const markdownOf = (bytes: Uint8Array, fileType: Kind): Effect.Effect<string, Re
     Effect.withSpan("injection-bisect.office"),
   );
 
-const OFFICE_READERS: readonly Reader[] = Arr.map(
+export const OFFICE_READERS: readonly Reader[] = Arr.map(
   Record.toEntries(KINDS),
   ([format, extensions]) => ({
     format,
@@ -40,5 +40,3 @@ const OFFICE_READERS: readonly Reader[] = Arr.map(
       markdownOf(bytes, format).pipe(Effect.map((text) => ({ text, format: "markdown" }))),
   }),
 );
-
-export { OFFICE_READERS };

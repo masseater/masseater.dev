@@ -2,7 +2,7 @@ import { Outlet, useChildMatches } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-const SiteMain = (): ReactNode => {
+export const SiteMain = (): ReactNode => {
   const pathname = useChildMatches({
     select: (matches) =>
       Arr.join(
@@ -22,5 +22,3 @@ const SiteMain = (): ReactNode => {
     </main>
   );
 };
-
-export { SiteMain };

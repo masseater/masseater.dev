@@ -53,7 +53,5 @@ const TYPE_ONLY_RULES: readonly TypeOnlyRule[] = [
   rule(isNamespaceExport, (namespace) => isTypeOnlyExportStatement(namespace.parent)),
 ];
 
-const isTypeOnlyImportOrExportDeclaration = (node: Node): boolean =>
+export const isTypeOnlyImportOrExportDeclaration = (node: Node): boolean =>
   Arr.findFirst(TYPE_ONLY_RULES, (check) => check(node)).pipe(Option.getOrElse(() => false));
-
-export { isTypeOnlyImportOrExportDeclaration };

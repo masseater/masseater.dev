@@ -28,6 +28,4 @@ const pruneVersions = Effect.fn("data.prune")(function* pruneOld() {
 });
 
 /** @internal */
-const pruneCommand = Command.make("prune", {}, () => pruneVersions());
-
-export { pruneCommand };
+export const pruneCommand = Command.make("prune", {}, () => pruneVersions());

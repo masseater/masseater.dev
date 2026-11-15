@@ -1,7 +1,7 @@
 import { CONVERSATION_KINDS } from "@masseater.dev/watashi-protocol";
 import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-const conversationSession = sqliteTable(
+export const conversationSession = sqliteTable(
   "conversation_session",
   {
     kind: text("kind", { enum: CONVERSATION_KINDS }).notNull(),
@@ -18,7 +18,7 @@ const conversationSession = sqliteTable(
   ],
 );
 
-const conversationChunk = sqliteTable(
+export const conversationChunk = sqliteTable(
   "conversation_chunk",
   {
     kind: text("kind", { enum: CONVERSATION_KINDS }).notNull(),
@@ -34,11 +34,8 @@ const conversationChunk = sqliteTable(
   (table) => [primaryKey({ columns: [table.kind, table.sessionId, table.file, table.start] })],
 );
 
-type ConversationSession = typeof conversationSession.$inferSelect;
+export type ConversationSession = typeof conversationSession.$inferSelect;
 
-type ConversationChunk = typeof conversationChunk.$inferSelect;
+export type ConversationChunk = typeof conversationChunk.$inferSelect;
 
-type ConversationKind = ConversationChunk["kind"];
-
-export { conversationChunk, conversationSession };
-export type { ConversationChunk, ConversationKind, ConversationSession };
+export type ConversationKind = ConversationChunk["kind"];

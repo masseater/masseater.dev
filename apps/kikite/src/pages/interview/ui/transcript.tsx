@@ -7,7 +7,7 @@ import { useStickToBottom } from "#/shared/lib/stick-to-bottom";
 import { HistoryItem } from "./history-item.tsx";
 import { InterimItem } from "./interim-item.tsx";
 
-const Transcript = (): ReactNode => {
+export const Transcript = (): ReactNode => {
   const entries = useEntries();
   const interim = useInterim();
   const ref = useStickToBottom();
@@ -23,5 +23,3 @@ const Transcript = (): ReactNode => {
     </div>
   );
 };
-
-export { Transcript };

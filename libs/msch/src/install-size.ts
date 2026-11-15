@@ -258,12 +258,10 @@ const workspaceProblems = Effect.fn("workspaceProblems")(function* workspaceProb
 });
 
 /** @internal */
-const checkPublishedPackages = Effect.fn("checkPublishedPackages")(function* checkPublishedPackages(
-  root: string,
-) {
-  const workspaces = yield* publishedWorkspaces(root);
-  const found = yield* pipe(workspaces, Effect.forEach(workspaceProblems));
-  return Arr.flatten(found);
-});
-
-export { checkPublishedPackages };
+export const checkPublishedPackages = Effect.fn("checkPublishedPackages")(
+  function* checkPublishedPackages(root: string) {
+    const workspaces = yield* publishedWorkspaces(root);
+    const found = yield* pipe(workspaces, Effect.forEach(workspaceProblems));
+    return Arr.flatten(found);
+  },
+);

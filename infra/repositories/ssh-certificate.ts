@@ -17,7 +17,7 @@ const EXTENSIONS = ["permit-port-forwarding", "permit-pty", "permit-user-rc"] as
 
 const taggedError = Schema.TaggedError;
 
-class SshCertificateFailed extends taggedError<
+export class SshCertificateFailed extends taggedError<
   SshCertificateFailed,
   { readonly brand: unique symbol }
 >()("SshCertificateFailed", { message: Schema.String }) {}
@@ -25,9 +25,9 @@ class SshCertificateFailed extends taggedError<
 const failedWith = (message: string) => (): SshCertificateFailed =>
   SshCertificateFailed.make({ message });
 
-type SigningPair = Readonly<CryptoKeyPair>;
+export type SigningPair = Readonly<CryptoKeyPair>;
 
-type CertificateRequest = Readonly<{
+export type CertificateRequest = Readonly<{
   ca: SigningPair;
   publicKey: string;
   keyId: string;
@@ -116,7 +116,7 @@ const rawPublicKey = (ca: SigningPair): Effect.Effect<Uint8Array, SshCertificate
     catch: failedWith("the CA public key could not be exported"),
   }).pipe(Effect.map((raw) => new Uint8Array(raw)));
 
-const authorizedKey = (ca: SigningPair): Effect.Effect<string, SshCertificateFailed> =>
+export const authorizedKey = (ca: SigningPair): Effect.Effect<string, SshCertificateFailed> =>
   rawPublicKey(ca).pipe(Effect.map((raw) => `${KEY_TYPE} ${Base64.encode(keyBlob(raw))}`));
 
 const emptyString = bytesString(new Uint8Array());
@@ -153,7 +153,7 @@ const toBeSigned = (
   ]);
 };
 
-const signCertificate = (
+export const signCertificate = (
   request: CertificateRequest,
 ): Effect.Effect<string, SshCertificateFailed> =>
   Effect.gen(function* sign() {
@@ -171,6 +171,3 @@ const signCertificate = (
     const signatureBlob = packed([textString(KEY_TYPE), bytesString(new Uint8Array(signature))]);
     return `${CERT_TYPE} ${Base64.encode(concat([signed, signatureBlob]))} ${request.keyId}`;
   });
-
-export { SshCertificateFailed, authorizedKey, signCertificate };
-export type { CertificateRequest, SigningPair };

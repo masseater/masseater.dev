@@ -23,7 +23,7 @@ const videoIdOf = (url: string): Option.Option<string> =>
 const videoDetail = (id: number): Effect.Effect<VideoDetail, ToolError> =>
   getVideo(id).pipe(orMissing(VIDEO_MISSING));
 
-const createVideo = Effect.fn("mcp.video.create")(function* createVideo(
+export const createVideo = Effect.fn("mcp.video.create")(function* createVideo(
   input: typeof CreateVideoInput.Type,
 ) {
   const videoId = Option.fromUndefinedOr(input.videoId).pipe(
@@ -47,7 +47,7 @@ const derivedVideoId = (input: typeof UpdateVideoInput.Type): Readonly<{ videoId
     Option.match({ onNone: () => ({}), onSome: (videoId) => ({ videoId }) }),
   );
 
-const updateVideo = Effect.fn("mcp.video.update")(function* updateVideo(
+export const updateVideo = Effect.fn("mcp.video.update")(function* updateVideo(
   input: typeof UpdateVideoInput.Type,
 ) {
   const { id, ...fields } = input;
@@ -58,7 +58,7 @@ const updateVideo = Effect.fn("mcp.video.update")(function* updateVideo(
   return yield* videoDetail(id);
 });
 
-const deleteVideo = Effect.fn("mcp.video.delete")(function* deleteVideo(id: number) {
+export const deleteVideo = Effect.fn("mcp.video.delete")(function* deleteVideo(id: number) {
   yield* query(() =>
     catalogDb
       .delete(part)
@@ -69,5 +69,3 @@ const deleteVideo = Effect.fn("mcp.video.delete")(function* deleteVideo(id: numb
   );
   return yield* Effect.succeed(Option.fromUndefinedOr(deleted)).pipe(orMissing(VIDEO_MISSING));
 });
-
-export { createVideo, deleteVideo, updateVideo };

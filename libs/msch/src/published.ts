@@ -31,7 +31,7 @@ const SizeText = Schema.TemplateLiteralParser([
   " ",
   Schema.Literals(["B", "kB", "MB"]),
 ]);
-const PackEntry = Schema.Union([
+export const PackEntry = Schema.Union([
   Schema.String,
   Schema.Array(Schema.String),
   Schema.Record(Schema.String, Schema.String),
@@ -52,12 +52,12 @@ class WorkspaceConfigUnreadable extends taggedError<
   { readonly brand: unique symbol }
 >()("WorkspaceConfigUnreadable", { file: Schema.String }) {}
 
-interface PackEntrySource {
+export interface PackEntrySource {
   readonly name: string;
   readonly source: string;
 }
 
-interface PublishedWorkspace {
+export interface PublishedWorkspace {
   readonly directory: string;
   readonly configFile: string;
   readonly installSize: string;
@@ -81,7 +81,7 @@ const nameOf = (source: string): string =>
     Str.replace(SOURCE_EXTENSION, ""),
   );
 
-const entriesOf = (entry: typeof PackEntry.Type): readonly PackEntrySource[] => {
+export const entriesOf = (entry: typeof PackEntry.Type): readonly PackEntrySource[] => {
   if (Predicate.isString(entry)) {
     return [{ name: nameOf(entry), source: entry }];
   }
@@ -161,7 +161,7 @@ const publishedIn = Effect.fn("publishedIn")(function* publishedIn(
 });
 
 /** @internal */
-const publishedWorkspaces = Effect.fn("publishedWorkspaces")(function* publishedWorkspaces(
+export const publishedWorkspaces = Effect.fn("publishedWorkspaces")(function* publishedWorkspaces(
   root: string,
 ) {
   const files = yield* RepositoryFiles;
@@ -175,6 +175,3 @@ const publishedWorkspaces = Effect.fn("publishedWorkspaces")(function* published
   });
   return Arr.getSomes(found);
 });
-
-export { PackEntry, entriesOf, publishedWorkspaces };
-export type { PackEntrySource, PublishedWorkspace };

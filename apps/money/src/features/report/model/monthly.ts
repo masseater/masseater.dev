@@ -3,11 +3,11 @@ import { Array as Arr, String as Str, pipe } from "effect";
 import type { Category } from "#/entities/ledger";
 import { totalOn } from "#/entities/ledger";
 
-type DayTotal = Readonly<{ date: string; category: Category; amount: number }>;
+export type DayTotal = Readonly<{ date: string; category: Category; amount: number }>;
 
-type Month = Readonly<{ month: string; income: number; expense: number; balance: number }>;
+export type Month = Readonly<{ month: string; income: number; expense: number; balance: number }>;
 
-type MonthRange = Readonly<{ from: string; to: string; totals: readonly DayTotal[] }>;
+export type MonthRange = Readonly<{ from: string; to: string; totals: readonly DayTotal[] }>;
 
 const MONTHS_PER_YEAR = 12;
 
@@ -39,7 +39,7 @@ const MONTH_START = 0;
 
 const monthOf = (date: string): string => pipe(date, Str.slice(MONTH_START, MONTH_LENGTH));
 
-const monthlyTotals = ({ from, to, totals }: MonthRange): readonly Month[] =>
+export const monthlyTotals = ({ from, to, totals }: MonthRange): readonly Month[] =>
   pipe(
     Arr.range(indexOf(from), indexOf(to)),
     Arr.map(monthAt),
@@ -53,6 +53,3 @@ const monthlyTotals = ({ from, to, totals }: MonthRange): readonly Month[] =>
       return { month, income, expense, balance: income - expense };
     }),
   );
-
-export { monthlyTotals };
-export type { DayTotal, Month, MonthRange };

@@ -68,7 +68,7 @@ const textsOf = (stream: Uint8Array): readonly string[] => {
 const tidied = (text: string): string =>
   pipe(text, Str.replaceAll("\r", "\n"), Str.replaceAll("\u000B", "\n"), Str.trim);
 
-const pptReader: Reader = {
+export const pptReader: Reader = {
   format: "ppt",
   extensions: [".ppt", ".pps", ".pot"],
   accepts: hasStream((name) => name === STREAM),
@@ -85,5 +85,3 @@ const pptReader: Reader = {
       })),
     ),
 };
-
-export { pptReader };

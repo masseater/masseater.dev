@@ -13,9 +13,11 @@ const decodeWindow = Schema.decodeOption(WindowJson);
 
 const encodeWindow = Schema.encodeOption(WindowJson);
 
-type Admission = Readonly<{ status: "admitted"; stored: string }> | Readonly<{ status: "limited" }>;
+export type Admission =
+  | Readonly<{ status: "admitted"; stored: string }>
+  | Readonly<{ status: "limited" }>;
 
-type Attempt = Readonly<{ now: number; stored: Option.Option<string> }>;
+export type Attempt = Readonly<{ now: number; stored: Option.Option<string> }>;
 
 const LIMITED: Admission = { status: "limited" };
 
@@ -37,7 +39,7 @@ const counted = ({ start, count }: typeof Window.Type): Admission => {
   return LIMITED;
 };
 
-const admit = ({ now, stored }: Attempt): Admission =>
+export const admit = ({ now, stored }: Attempt): Admission =>
   pipe(
     stored,
     Option.flatMap(decodeWindow),
@@ -47,6 +49,3 @@ const admit = ({ now, stored }: Attempt): Admission =>
       onSome: counted,
     }),
   );
-
-export { admit };
-export type { Admission, Attempt };

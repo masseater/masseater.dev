@@ -1,4 +1,4 @@
-const alchemyOverride: {
+export const alchemyOverride: {
   files: string[];
   rules: Readonly<Record<string, ["error", ...unknown[]]>>;
 } = {
@@ -26,7 +26,7 @@ const alchemyOverride: {
   },
 };
 
-const scriptsOverride: {
+export const scriptsOverride: {
   files: string[];
   rules: Readonly<Record<string, "off">>;
 } = {
@@ -37,5 +37,3 @@ const scriptsOverride: {
     "effecttsgo/node-builtin-import": "off",
   },
 };
-
-export { alchemyOverride, scriptsOverride };

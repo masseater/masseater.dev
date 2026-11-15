@@ -10,7 +10,7 @@ const labelOf = (playing: boolean): string => {
   return transport.play;
 };
 
-const PlayButton = (): ReactNode => {
+export const PlayButton = (): ReactNode => {
   const playback = usePlayback();
   const { toggle } = usePlaybackControls();
   return (
@@ -23,5 +23,3 @@ const PlayButton = (): ReactNode => {
     </button>
   );
 };
-
-export { PlayButton };

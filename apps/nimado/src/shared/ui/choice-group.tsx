@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 
 import { ChoiceButton } from "./choice-button";
 
-type Choices<Value extends string> = readonly (readonly [Value, string])[];
+export type Choices<Value extends string> = readonly (readonly [Value, string])[];
 
-const ChoiceGroup = <Value extends string>({
+export const ChoiceGroup = <Value extends string>({
   label,
   labels,
   value,
@@ -32,6 +32,3 @@ const ChoiceGroup = <Value extends string>({
     )}
   </fieldset>
 );
-
-export { ChoiceGroup };
-export type { Choices };

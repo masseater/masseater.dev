@@ -10,7 +10,7 @@ const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: fals
 const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
 const PARTS_SCHEMA = VideoPartsInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
-const registerPartTools = (server: McpServer): McpServer => {
+export const registerPartTools = (server: McpServer): McpServer => {
   server.registerTool(
     "set_video_parts",
     {
@@ -51,5 +51,3 @@ const registerPartTools = (server: McpServer): McpServer => {
   );
   return server;
 };
-
-export { registerPartTools };

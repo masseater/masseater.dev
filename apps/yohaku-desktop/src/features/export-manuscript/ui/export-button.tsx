@@ -8,7 +8,7 @@ import { useYohaku } from "#/shared/api";
 
 const LABEL = "書き出す";
 
-const ExportButton = ({ id }: Readonly<{ id: string }>): ReactNode => {
+export const ExportButton = ({ id }: Readonly<{ id: string }>): ReactNode => {
   const yohaku = useYohaku();
   const exportText = useCallback(() => {
     Effect.runFork(yohaku.exportManuscript(id));
@@ -19,5 +19,3 @@ const ExportButton = ({ id }: Readonly<{ id: string }>): ReactNode => {
     </Button>
   );
 };
-
-export { ExportButton };

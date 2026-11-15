@@ -9,7 +9,7 @@ const PUBLIC = "../../../../public";
 const decodeMosaic = Schema.decodeUnknownOption(PublishedMosaic);
 const decodeCandidates = Schema.decodeUnknownOption(Candidates);
 
-const bundledMosaic = createIsomorphicFn()
+export const bundledMosaic = createIsomorphicFn()
   .server((slug: string): Option.Option<Mosaic> =>
     Option.flatMap(
       Record.get(
@@ -24,7 +24,7 @@ const bundledMosaic = createIsomorphicFn()
   )
   .client((): Option.Option<Mosaic> => Option.none());
 
-const bundledCandidates = createIsomorphicFn()
+export const bundledCandidates = createIsomorphicFn()
   .server((slug: string, mosaic: Mosaic): Option.Option<CandidateList> =>
     Option.flatMap(
       Record.get(
@@ -38,5 +38,3 @@ const bundledCandidates = createIsomorphicFn()
     ),
   )
   .client((): Option.Option<CandidateList> => Option.none());
-
-export { bundledCandidates, bundledMosaic };

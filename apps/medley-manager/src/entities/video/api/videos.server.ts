@@ -24,7 +24,7 @@ const kindCondition = (filter: VideoFilter): SQL | undefined =>
     Option.getOrUndefined,
   );
 
-const listVideos = Effect.fn("catalog.videos")(function* listVideos(filter: VideoFilter) {
+export const listVideos = Effect.fn("catalog.videos")(function* listVideos(filter: VideoFilter) {
   const [videos, counts] = yield* Effect.all(
     [
       Effect.promise(() =>
@@ -61,5 +61,3 @@ const listVideos = Effect.fn("catalog.videos")(function* listVideos(filter: Vide
     Array.map((row) => Object.assign(row, { partCount: parts.get(row.id) ?? NO_ROWS })),
   );
 });
-
-export { listVideos };

@@ -9,7 +9,7 @@ import { IndexTable } from "./index-table";
 
 const CHART_TITLE = "指数";
 
-const IndexSection = (): ReactNode => {
+export const IndexSection = (): ReactNode => {
   const models = useVisibleModels();
   return (
     <Section id="index" title="総合指数（参考）">
@@ -20,5 +20,3 @@ const IndexSection = (): ReactNode => {
     </Section>
   );
 };
-
-export { IndexSection };

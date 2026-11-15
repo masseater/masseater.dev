@@ -10,6 +10,4 @@ const client = createIsomorphicFn()
   .server(() => treaty<StarRoutes>(site.url))
   .client(() => treaty<StarRoutes>(globalThis.location.origin));
 
-const starQueries = createEdenOptionsProxy<StarRoutes>({ client: client() });
-
-export { starQueries };
+export const starQueries = createEdenOptionsProxy<StarRoutes>({ client: client() });

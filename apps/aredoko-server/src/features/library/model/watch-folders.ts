@@ -7,7 +7,7 @@ const SETTLE_MILLIS = 2000;
 const PENDING_CHANGES = 1;
 
 /** @internal */
-const watchSources = Effect.fn("watchSources")(function* watchSourceFolders(
+export const watchSources = Effect.fn("watchSources")(function* watchSourceFolders(
   onChange: Effect.Effect<void>,
 ) {
   const changes = yield* Queue.sliding<boolean>(PENDING_CHANGES);
@@ -22,5 +22,3 @@ const watchSources = Effect.fn("watchSources")(function* watchSourceFolders(
   yield* watch.pipe(Effect.forever, Effect.forkScoped);
   return { sourcesChanged: Queue.offer(changes, true).pipe(Effect.asVoid) };
 });
-
-export { watchSources };

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 const LABEL = "タグ";
 
-const TagList = ({ tags }: Readonly<{ tags: readonly string[] }>): ReactNode => (
+export const TagList = ({ tags }: Readonly<{ tags: readonly string[] }>): ReactNode => (
   <ul aria-label={LABEL} className="flex max-w-full min-w-0 flex-wrap gap-1.5">
     {pipe(
       tags,
@@ -19,5 +19,3 @@ const TagList = ({ tags }: Readonly<{ tags: readonly string[] }>): ReactNode => 
     )}
   </ul>
 );
-
-export { TagList };

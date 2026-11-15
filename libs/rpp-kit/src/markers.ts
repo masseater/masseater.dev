@@ -5,7 +5,7 @@ import type { MarkerOutline } from "./outline.ts";
 import type { Chunk, Line } from "./parse.ts";
 import type { Marker, Region, Section } from "./types.ts";
 
-type Timeline = Readonly<{ markers: readonly MarkerOutline[]; regions: readonly Region[] }>;
+export type Timeline = Readonly<{ markers: readonly MarkerOutline[]; regions: readonly Region[] }>;
 
 const REGION_FLAG = 2;
 
@@ -46,7 +46,7 @@ const regionsOf = (lines: readonly Line[]): readonly Region[] =>
     Arr.sortWith(({ start }) => start, Order.Number),
   );
 
-const timelineOf = (root: Chunk): Timeline => {
+export const timelineOf = (root: Chunk): Timeline => {
   const lines = linesOf({ chunk: root, token: "MARKER" });
   return {
     markers: pipe(
@@ -58,9 +58,9 @@ const timelineOf = (root: Chunk): Timeline => {
   };
 };
 
-const named = ({ marker }: MarkerOutline): boolean => Str.isNonEmpty(marker.name);
+export const named = ({ marker }: MarkerOutline): boolean => Str.isNonEmpty(marker.name);
 
-type Sectioning = Readonly<{ timeline: Timeline; length: number }>;
+export type Sectioning = Readonly<{ timeline: Timeline; length: number }>;
 
 const markerSections = (markers: readonly MarkerOutline[], length: number): readonly Section[] => {
   const ordered = Arr.sortWith(markers, ({ marker }) => marker, byTime);
@@ -78,7 +78,7 @@ const markerSections = (markers: readonly MarkerOutline[], length: number): read
   );
 };
 
-const sectionsOf = ({ timeline, length }: Sectioning): readonly Section[] =>
+export const sectionsOf = ({ timeline, length }: Sectioning): readonly Section[] =>
   Arr.match(timeline.regions, {
     onEmpty: () => markerSections(timeline.markers, length),
     onNonEmpty: (regions) =>
@@ -88,6 +88,3 @@ const sectionsOf = ({ timeline, length }: Sectioning): readonly Section[] =>
         Arr.map(({ name, start, end }) => ({ name, start, end })),
       ),
   });
-
-export { named, sectionsOf, timelineOf };
-export type { Sectioning, Timeline };

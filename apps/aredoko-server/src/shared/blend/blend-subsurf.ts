@@ -16,7 +16,7 @@ interface Edges {
   readonly keyOf: (from: number, to: number) => number;
 }
 
-interface Rules {
+export interface Rules {
   readonly smooth: boolean;
   readonly corners: boolean;
   readonly creases: boolean;
@@ -230,7 +230,7 @@ const subdividedBy =
     };
   };
 
-const subdivided =
+export const subdivided =
   ({ levels, rules }: Readonly<{ levels: number; rules: Rules }>) =>
   (shape: Shape): Shape => {
     let current = shape;
@@ -239,6 +239,3 @@ const subdivided =
     }
     return current;
   };
-
-export { subdivided };
-export type { Rules };

@@ -13,7 +13,7 @@ const descriptionOf = (technique: Technique): string =>
     Option.getOrElse(() => technique.name),
   );
 
-const techniqueHead = (loaded: FoundTechnique | undefined): Head =>
+export const techniqueHead = (loaded: FoundTechnique | undefined): Head =>
   pipe(
     Option.fromUndefinedOr(loaded),
     Option.flatMap(({ slug }) => techniqueOf(slug)),
@@ -31,5 +31,3 @@ const techniqueHead = (loaded: FoundTechnique | undefined): Head =>
         }),
     }),
   );
-
-export { techniqueHead };

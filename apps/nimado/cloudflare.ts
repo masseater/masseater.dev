@@ -1,3 +1,1 @@
-const ZONE = "masseater.dev";
-
-export { ZONE };
+export const ZONE = "masseater.dev";

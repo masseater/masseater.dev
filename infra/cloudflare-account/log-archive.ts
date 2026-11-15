@@ -49,7 +49,7 @@ const writerToken = Effect.fn("writerToken")(function* writerToken(appName: stri
   });
 });
 
-const logArchive = Effect.fn("logArchive")(function* logArchive(appName: string) {
+export const logArchive = Effect.fn("logArchive")(function* logArchive(appName: string) {
   const { accountId } = yield* yield* CloudflareEnvironment;
   const bucket = yield* R2.Bucket("WorkerLogs", {
     name: bucketNameOf(appName),
@@ -94,5 +94,3 @@ const logArchive = Effect.fn("logArchive")(function* logArchive(appName: string)
     ),
   );
 });
-
-export { logArchive };

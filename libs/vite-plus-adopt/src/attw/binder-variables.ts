@@ -20,7 +20,7 @@ import { hasFlag } from "./flags.ts";
 
 const DATA_FIRST_ARITY_3 = 3;
 
-type VariableLike = VariableDeclaration | BindingElement;
+export type VariableLike = VariableDeclaration | BindingElement;
 
 const ALIAS: SymbolFlagPair = { includes: SymbolFlags.Alias, excludes: SymbolFlags.AliasExcludes };
 const BLOCK_VARIABLE: SymbolFlagPair = {
@@ -35,7 +35,7 @@ const FUNCTION_VARIABLE: SymbolFlagPair = {
 const isBindingPattern = (node: Node | undefined): boolean =>
   Predicate.isNotUndefined(node) && (isObjectBindingPattern(node) || isArrayBindingPattern(node));
 
-const isReparsed = (node: Node): boolean => hasFlag(node.flags, NodeFlags.Reparsed);
+export const isReparsed = (node: Node): boolean => hasFlag(node.flags, NodeFlags.Reparsed);
 
 const declarationOfBinding = (node: Node): Node => {
   let current = node;
@@ -118,7 +118,7 @@ const variableBinderFor = (binding: FileBinding, node: VariableLike): VariableBi
   return bindFunctionVariable;
 };
 
-const bindVariable: {
+export const bindVariable: {
   (node: VariableLike, scope: Scope): (binding: FileBinding) => void;
   (binding: FileBinding, node: VariableLike, scope: Scope): void;
 } = Fn.dual(DATA_FIRST_ARITY_3, (binding: FileBinding, node: VariableLike, scope: Scope): void => {
@@ -126,6 +126,3 @@ const bindVariable: {
     variableBinderFor(binding, node)(binding, node, scope);
   }
 });
-
-export { bindVariable, isReparsed };
-export type { VariableLike };

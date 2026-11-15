@@ -6,11 +6,11 @@ import type { AppStoreEnv } from "./app-store.ts";
 import { SealFailed } from "./sealed-value.ts";
 import type { SigningPair } from "./ssh-certificate.ts";
 
-type SigningKeyKind = Readonly<{ name: string; algorithm: "Ed25519" | "RS256" }>;
+export type SigningKeyKind = Readonly<{ name: string; algorithm: "Ed25519" | "RS256" }>;
 
-const SSH_CA: SigningKeyKind = { name: "tailnet_ssh_ca", algorithm: "Ed25519" };
+export const SSH_CA: SigningKeyKind = { name: "tailnet_ssh_ca", algorithm: "Ed25519" };
 
-const OIDC_SIGNER: SigningKeyKind = { name: "tailnet_oidc_signer", algorithm: "RS256" };
+export const OIDC_SIGNER: SigningKeyKind = { name: "tailnet_oidc_signer", algorithm: "RS256" };
 
 const RS256_MODULUS_BITS = 2048;
 
@@ -112,12 +112,9 @@ const created = (env: AppStoreEnv, kind: SigningKeyKind): Effect.Effect<SigningP
     );
   });
 
-const signingKey =
+export const signingKey =
   (kind: SigningKeyKind) =>
   (env: AppStoreEnv): Effect.Effect<SigningPair, SealFailed> =>
     stored(env, kind).pipe(
       Effect.flatMap(Option.match({ onNone: () => created(env, kind), onSome: Effect.succeed })),
     );
-
-export { OIDC_SIGNER, SSH_CA, signingKey };
-export type { SigningKeyKind };

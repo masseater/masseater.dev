@@ -66,7 +66,7 @@ const memoizedRules = (
   };
 };
 
-const createDecisionPlugin = (setup: DecisionPluginSetup): DecisionPlugin => {
+export const createDecisionPlugin = (setup: DecisionPluginSetup): DecisionPlugin => {
   const name = setup.name ?? DEFAULT_NAME;
   const providers: Readonly<Record<string, DecisionProvider>> = Rec.fromEntries(
     pipe(
@@ -90,5 +90,3 @@ const createDecisionPlugin = (setup: DecisionPluginSetup): DecisionPlugin => {
     ),
   } satisfies Plugin;
 };
-
-export { createDecisionPlugin };

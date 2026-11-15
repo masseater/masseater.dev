@@ -2,15 +2,17 @@ import { Schema } from "effect";
 
 const NO_ID = 0;
 
-const Id = Schema.Int.check(Schema.isGreaterThan(NO_ID));
+export const Id = Schema.Int.check(Schema.isGreaterThan(NO_ID));
 
-const SourceKind = Schema.Literals(["folder", "project"]).annotate({ identifier: "SourceKind" });
+export const SourceKind = Schema.Literals(["folder", "project"]).annotate({
+  identifier: "SourceKind",
+});
 
-const PackageKind = Schema.Literals(["unitypackage", "project", "files"]).annotate({
+export const PackageKind = Schema.Literals(["unitypackage", "project", "files"]).annotate({
   identifier: "PackageKind",
 });
 
-const AssetKind = Schema.Literals([
+export const AssetKind = Schema.Literals([
   "texture",
   "model",
   "material",
@@ -23,7 +25,7 @@ const AssetKind = Schema.Literals([
   "other",
 ]).annotate({ identifier: "AssetKind" });
 
-const Source = Schema.Struct({
+export const Source = Schema.Struct({
   id: Id,
   path: Schema.String,
   kind: SourceKind,
@@ -34,14 +36,14 @@ const KindCount = Schema.Struct({ kind: AssetKind, count: Schema.Int }).annotate
   identifier: "KindCount",
 });
 
-const Summary = Schema.Struct({
+export const Summary = Schema.Struct({
   counts: Schema.Array(KindCount),
   shaders: Schema.Array(Schema.String),
   avatars: Schema.Array(Schema.String),
   colors: Schema.Array(Schema.String),
 }).annotate({ identifier: "Summary" });
 
-const BoothItem = Schema.Struct({
+export const BoothItem = Schema.Struct({
   id: Id,
   url: Schema.String,
   name: Schema.String,
@@ -50,7 +52,7 @@ const BoothItem = Schema.Struct({
   tags: Schema.Array(Schema.String),
 }).annotate({ identifier: "BoothItem" });
 
-const Package = Schema.Struct({
+export const Package = Schema.Struct({
   id: Id,
   kind: PackageKind,
   path: Schema.String,
@@ -60,7 +62,7 @@ const Package = Schema.Struct({
   booth: Schema.NullOr(BoothItem),
 }).annotate({ identifier: "Package" });
 
-const SearchResult = Schema.Struct({
+export const SearchResult = Schema.Struct({
   assetId: Id,
   guid: Schema.String,
   pathname: Schema.String,
@@ -78,7 +80,7 @@ const Progress = Schema.Struct({ done: Schema.Int, total: Schema.Int }).annotate
   identifier: "Progress",
 });
 
-const Status = Schema.Struct({
+export const Status = Schema.Struct({
   version: Schema.String,
   device: Schema.String,
   indexing: Schema.Boolean,
@@ -89,22 +91,8 @@ const Status = Schema.Struct({
   images: Progress,
 }).annotate({ identifier: "Status" });
 
-const ProjectAsset = Schema.Struct({
+export const ProjectAsset = Schema.Struct({
   guid: Schema.String,
   pathname: Schema.String,
   previews: Schema.Array(Schema.Uint8ArrayFromBase64),
 }).annotate({ identifier: "ProjectAsset" });
-
-export {
-  AssetKind,
-  BoothItem,
-  Id,
-  Package,
-  PackageKind,
-  ProjectAsset,
-  SearchResult,
-  Source,
-  SourceKind,
-  Status,
-  Summary,
-};

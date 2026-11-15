@@ -15,7 +15,7 @@ const VIDEO_SEARCH_SCHEMA = VideoSearchInput.pipe(
   Schema.toStandardJSONSchemaV1,
 );
 
-const registerReadTools = (server: McpServer): McpServer => {
+export const registerReadTools = (server: McpServer): McpServer => {
   server.registerTool(
     "search_songs",
     {
@@ -55,5 +55,3 @@ const registerReadTools = (server: McpServer): McpServer => {
   );
   return server;
 };
-
-export { registerReadTools };

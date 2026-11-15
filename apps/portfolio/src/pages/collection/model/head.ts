@@ -5,7 +5,7 @@ import type { FoundCollection } from "#/pages/collection/api/load-collection";
 import { defaultImage, notFoundHead, pageTitle, seo } from "#/shared/lib";
 import type { Head } from "#/shared/lib";
 
-const collectionHead = (loaded: FoundCollection | undefined): Head =>
+export const collectionHead = (loaded: FoundCollection | undefined): Head =>
   Option.match(Option.fromUndefinedOr(loaded), {
     onNone: () => notFoundHead,
     onSome: ({ category }) =>
@@ -19,5 +19,3 @@ const collectionHead = (loaded: FoundCollection | undefined): Head =>
         structuredData: [],
       }),
   });
-
-export { collectionHead };

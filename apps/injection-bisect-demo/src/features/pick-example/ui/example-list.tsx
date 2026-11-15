@@ -20,7 +20,7 @@ const GROUPS = [
 
 const UNPICKED = "";
 
-const ExampleList = (): ReactNode => {
+export const ExampleList = (): ReactNode => {
   const text = useDraftText();
   const setText = useSetDraftText();
   const setOpening = useSetOpening();
@@ -63,5 +63,3 @@ const ExampleList = (): ReactNode => {
     </select>
   );
 };
-
-export { ExampleList };

@@ -2,7 +2,7 @@ import { sectionMeta, sectionPath } from "#/shared/config";
 import { defaultImage, pageTitle, seo } from "#/shared/lib";
 import type { Head } from "#/shared/lib";
 
-const projectsHead = (): Head =>
+export const projectsHead = (): Head =>
   seo({
     title: pageTitle(sectionMeta.projects.title),
     description: sectionMeta.projects.description,
@@ -12,5 +12,3 @@ const projectsHead = (): Head =>
     extra: [],
     structuredData: [],
   });
-
-export { projectsHead };

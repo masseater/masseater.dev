@@ -28,9 +28,9 @@ import { impliedNodeFormatOf, packageJsonScopeOf } from "./source-file.ts";
 const DATA_FIRST_ARITY = 2;
 const DATA_FIRST_ARITY_3 = 3;
 
-type EmitModuleKind = "CommonJS" | "ESNext" | "Node16";
+export type EmitModuleKind = "CommonJS" | "ESNext" | "Node16";
 
-interface ModeOptions {
+export interface ModeOptions {
   readonly moduleResolution: ResolutionKind;
   readonly module: EmitModuleKind;
 }
@@ -185,7 +185,7 @@ const emitSyntaxForUsage = (
   );
 };
 
-const getModeForUsageLocation: {
+export const getModeForUsageLocation: {
   (usage: Node, options: ModeOptions): (sourceFile: SourceFile) => Option.Option<ResolutionMode>;
   (sourceFile: SourceFile, usage: Node, options: ModeOptions): Option.Option<ResolutionMode>;
 } = Fn.dual(
@@ -201,7 +201,7 @@ const getModeForUsageLocation: {
     ),
 );
 
-const getDefaultResolutionModeForFile: {
+export const getDefaultResolutionModeForFile: {
   (options: ModeOptions): (sourceFile: SourceFile) => Option.Option<ResolutionMode>;
   (sourceFile: SourceFile, options: ModeOptions): Option.Option<ResolutionMode>;
 } = Fn.dual(
@@ -211,6 +211,3 @@ const getDefaultResolutionModeForFile: {
       Option.flatMap(() => impliedNodeFormatForEmit(sourceFile, options)),
     ),
 );
-
-export { getDefaultResolutionModeForFile, getModeForUsageLocation };
-export type { EmitModuleKind, ModeOptions };

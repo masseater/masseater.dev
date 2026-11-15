@@ -4,7 +4,7 @@ import { optionallyTypedRules } from "./typed-rule.ts";
 import { upstreamPlugin } from "./upstream-plugin.ts";
 import type { UpstreamPlugin } from "./upstream-plugin.ts";
 
-type ConfigName =
+export type ConfigName =
   | "recommended"
   | "recommendedStrict"
   | "flat/recommended"
@@ -16,5 +16,4 @@ const plugin: UpstreamPlugin<ConfigName> = upstreamPlugin(
   optionallyTypedRules,
 );
 
-export type { ConfigName };
 export default plugin;

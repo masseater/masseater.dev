@@ -3,8 +3,8 @@ import { Number as Num } from "effect";
 import type { Gpu } from "./gpu-device";
 import { SHADER } from "./gpu-shader";
 
-const SLOT_BYTES = 256;
-const MAX_DRAWS = 1024;
+export const SLOT_BYTES = 256;
+export const MAX_DRAWS = 1024;
 const FRAME_BYTES = 64;
 const FRAME_BINDING = 0;
 const SAMPLER_BINDING = 1;
@@ -17,7 +17,7 @@ const BLEND: GPUBlendState = {
   alpha: { srcFactor: "one", dstFactor: "one-minus-src-alpha" },
 };
 
-interface Pipelines {
+export interface Pipelines {
   readonly quad: GPURenderPipeline;
   readonly intro: GPURenderPipeline;
   readonly outline: GPURenderPipeline;
@@ -81,7 +81,7 @@ const bufferOf = (device: GPUDevice, size: number): GPUBuffer =>
     usage: Num.sumAll([GPUBufferUsage.UNIFORM, GPUBufferUsage.COPY_DST]),
   });
 
-const createPipelines = (gpu: Gpu): Pipelines => {
+export const createPipelines = (gpu: Gpu): Pipelines => {
   const { device } = gpu;
   const frameLayout = frameLayoutOf(device);
   const drawLayout = drawLayoutOf(device);
@@ -105,7 +105,7 @@ const createPipelines = (gpu: Gpu): Pipelines => {
   };
 };
 
-const drawGroup = ({
+export const drawGroup = ({
   device,
   pipelines,
   texture,
@@ -118,7 +118,7 @@ const drawGroup = ({
     ],
   });
 
-const cellsBuffer = ({
+export const cellsBuffer = ({
   device,
   cells,
 }: Readonly<{ device: GPUDevice; cells: readonly number[] }>): GPUBuffer => {
@@ -131,7 +131,7 @@ const cellsBuffer = ({
   return buffer;
 };
 
-const frameGroup = ({
+export const frameGroup = ({
   device,
   pipelines,
   cells,
@@ -148,6 +148,3 @@ const frameGroup = ({
       { binding: CELLS_BINDING, resource: { buffer: cells } },
     ],
   });
-
-export type { Pipelines };
-export { MAX_DRAWS, SLOT_BYTES, cellsBuffer, createPipelines, drawGroup, frameGroup };

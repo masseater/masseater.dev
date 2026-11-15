@@ -5,7 +5,9 @@ import { checkHiddenVerify } from "./hidden-verify.ts";
 import { checkRootWorkspacePaths } from "./root-workspace-paths.ts";
 
 /** @internal */
-const checkWorkspaces = Effect.fn("checkWorkspaces")(function* checkWorkspaces(root: string) {
+export const checkWorkspaces = Effect.fn("checkWorkspaces")(function* checkWorkspaces(
+  root: string,
+) {
   const found = yield* Effect.all(
     [checkCrates(root), checkHiddenVerify(root), checkRootWorkspacePaths(root)],
     {
@@ -14,5 +16,3 @@ const checkWorkspaces = Effect.fn("checkWorkspaces")(function* checkWorkspaces(r
   );
   return Arr.flatten(found);
 });
-
-export { checkWorkspaces };

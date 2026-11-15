@@ -5,7 +5,7 @@ import type { AppStoreEnv, BoundStatement } from "./app-store.ts";
 
 const KEY_BYTES = 32;
 
-type MemoryStore = Readonly<{
+export type MemoryStore = Readonly<{
   env: AppStoreEnv;
   rows: Readonly<{
     get: (name: string) => Option.Option<string>;
@@ -15,7 +15,8 @@ type MemoryStore = Readonly<{
 
 type Rows = MemoryStore["rows"];
 
-const randomKey = (): string => Hex.encode(crypto.getRandomValues(new Uint8Array(KEY_BYTES)));
+export const randomKey = (): string =>
+  Hex.encode(crypto.getRandomValues(new Uint8Array(KEY_BYTES)));
 
 const unsupported = (query: string): Promise<never> =>
   Promise.reject(new Error(`the fake store does not run: ${query}`));
@@ -73,7 +74,7 @@ const rowsOf = (seed: Readonly<Record<string, string>>): Rows => {
   };
 };
 
-const memoryStore = (seed: Readonly<Record<string, string>> = {}): MemoryStore => {
+export const memoryStore = (seed: Readonly<Record<string, string>> = {}): MemoryStore => {
   const rows = rowsOf(seed);
   return {
     env: {
@@ -86,8 +87,6 @@ const memoryStore = (seed: Readonly<Record<string, string>> = {}): MemoryStore =
   };
 };
 
-const fails = <Value, Failure>(effect: Effect.Effect<Value, Failure>): Effect.Effect<boolean> =>
-  effect.pipe(Effect.result, Effect.map(Result.isFailure));
-
-export { fails, memoryStore, randomKey };
-export type { MemoryStore };
+export const fails = <Value, Failure>(
+  effect: Effect.Effect<Value, Failure>,
+): Effect.Effect<boolean> => effect.pipe(Effect.result, Effect.map(Result.isFailure));

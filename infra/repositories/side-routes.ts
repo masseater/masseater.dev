@@ -7,15 +7,12 @@ import type { ExposureEnv } from "./exposure-ledger.ts";
 import { exposureRoute } from "./exposure.ts";
 import { tailnetRoute } from "./tailnet.ts";
 
-type SideRouteInput = Readonly<{ request: Request; env: ExposureEnv }>;
+export type SideRouteInput = Readonly<{ request: Request; env: ExposureEnv }>;
 
-const sideRoute = (input: SideRouteInput): Option.Option<Effect.Effect<Response>> =>
+export const sideRoute = (input: SideRouteInput): Option.Option<Effect.Effect<Response>> =>
   pipe(
     atprotoRoute(input),
     Option.orElse(() => accessOAuthRoute(input)),
     Option.orElse(() => tailnetRoute(input)),
     Option.orElse(() => exposureRoute(input)),
   );
-
-export { sideRoute };
-export type { SideRouteInput };

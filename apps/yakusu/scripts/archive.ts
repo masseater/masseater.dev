@@ -2,11 +2,14 @@ import { Effect, FileSystem, Path } from "effect";
 
 import { fetchBytes, sha256 } from "./download.ts";
 
-const LLAMA_TAG = "b12228";
+/** @internal */
+export const LLAMA_TAG = "b12228";
 
-type Asset = Readonly<{ name: string; sha256: string }>;
+/** @internal */
+export type Asset = Readonly<{ name: string; sha256: string }>;
 
-type Archive = Readonly<{ asset: Asset; archives: string }>;
+/** @internal */
+export type Archive = Readonly<{ asset: Asset; archives: string }>;
 
 const matches = Effect.fn("archive.matches")(function* matches(file: string, expected: string) {
   const fileSystem = yield* FileSystem.FileSystem;
@@ -28,7 +31,8 @@ const downloaded = Effect.fn("archive.downloaded")(function* downloaded(asset: A
   return bytes;
 });
 
-const verifiedArchive = Effect.fn("archive.verifiedArchive")(function* verifiedArchive({
+/** @internal */
+export const verifiedArchive = Effect.fn("archive.verifiedArchive")(function* verifiedArchive({
   asset,
   archives,
 }: Archive) {
@@ -44,8 +48,3 @@ const verifiedArchive = Effect.fn("archive.verifiedArchive")(function* verifiedA
   yield* fileSystem.writeFile(archive, bytes);
   return archive;
 });
-
-/** @internal */
-export { LLAMA_TAG, verifiedArchive };
-/** @internal */
-export type { Archive, Asset };

@@ -74,7 +74,7 @@ const byCategory = (
 
 const KIND_OF = { recorded: "local", tesseract: "local", vlm: "vlm" } as const;
 
-const summarizeEngine = ({
+export const summarizeEngine = ({
   engine,
   results,
   pages,
@@ -117,5 +117,3 @@ const summarizeEngine = ({
     failed: pages.length - done.length,
   };
 };
-
-export { summarizeEngine };

@@ -41,7 +41,7 @@ const loadSubpathWithoutExports = (
 const rootHasExports = (rootInfo: Option.Option<PackageJsonInfo>): boolean =>
   Option.exists(rootInfo, (info) => Rec.has(info.contents.packageJsonContent, "exports"));
 
-const resolveInPackage: {
+export const resolveInPackage: {
   (
     location: PackageLocation,
     state: ResolutionState,
@@ -106,7 +106,7 @@ const loadSubpathOfNestedPackage = (
   return resolveInPackage(request, { ...location, packageInfo: rootInfo }, state);
 };
 
-const loadSubpath: {
+export const loadSubpath: {
   (
     location: PackageLocation,
     state: ResolutionState,
@@ -135,5 +135,3 @@ const loadSubpath: {
     return resolveInPackage(request, { ...location, packageInfo }, state);
   },
 );
-
-export { loadSubpath, resolveInPackage };

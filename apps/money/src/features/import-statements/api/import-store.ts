@@ -57,7 +57,10 @@ const dropEmptyImport = (importId: string, added: number): Effect.Effect<void, F
     Effect.succeed(added === NOTHING),
   ).pipe(Effect.asVoid);
 
-const importEntries = Effect.fn("importEntries")(function* importEntries(request: ImportRequest) {
+/** @internal */
+export const importEntries = Effect.fn("importEntries")(function* importEntries(
+  request: ImportRequest,
+) {
   yield* accountNamed(request.accountId);
   yield* withinLimit(request.entries.length);
   const prints = yield* fingerprints({ accountId: request.accountId, entries: request.entries });
@@ -74,7 +77,8 @@ const importEntries = Effect.fn("importEntries")(function* importEntries(request
   };
 });
 
-const deleteImport = Effect.fn("deleteImport")(function* deleteImport(importId: string) {
+/** @internal */
+export const deleteImport = Effect.fn("deleteImport")(function* deleteImport(importId: string) {
   const [deletedRows, deletedImports] = yield* query(() =>
     db.batch([
       db
@@ -92,6 +96,3 @@ const deleteImport = Effect.fn("deleteImport")(function* deleteImport(importId: 
   );
   return { deleted: deletedRows.length };
 });
-
-/** @internal */
-export { deleteImport, importEntries };

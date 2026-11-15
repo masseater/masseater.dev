@@ -5,7 +5,7 @@ import { describeFinding } from "./problem.ts";
 import type { Problem } from "./problem.ts";
 import { POSITION_BASE } from "./syntax.ts";
 
-type ProblemLoader = (cwd: string) => readonly Problem[];
+export type ProblemLoader = (cwd: string) => readonly Problem[];
 
 const diagnosticOf = (problem: Problem): Diagnostic => ({
   message: describeFinding(problem),
@@ -26,10 +26,7 @@ const vocabularyRule = (load: ProblemLoader): Rule => ({
   }),
 });
 
-const mschPlugin = (load: ProblemLoader): Plugin & { rules: { vocabulary: Rule } } => ({
+export const mschPlugin = (load: ProblemLoader): Plugin & { rules: { vocabulary: Rule } } => ({
   meta: { name: "msch" },
   rules: { vocabulary: vocabularyRule(load) },
 });
-
-export { mschPlugin };
-export type { ProblemLoader };

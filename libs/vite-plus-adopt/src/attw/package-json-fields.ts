@@ -6,7 +6,7 @@ import type { PackageJsonContent, ResolutionState } from "./resolution-types.ts"
 
 const DATA_FIRST_ARITY_3 = 3;
 
-interface FieldRequest {
+export interface FieldRequest {
   readonly field: string;
   readonly expected: "string" | "object";
 }
@@ -25,7 +25,7 @@ const typeName = (value: unknown): string => {
   return typeof value;
 };
 
-const resolvePackageJsonFieldWithTrace: {
+export const resolvePackageJsonFieldWithTrace: {
   (
     request: FieldRequest,
     state: ResolutionState,
@@ -83,7 +83,7 @@ const resolvePackageJsonPathWithTrace = (
     Option.flatMap((fileName) => resolvePathWithTrace(fileName, request, state)),
   );
 
-const readPackageJsonTypesFields: {
+export const readPackageJsonTypesFields: {
   (
     baseDirectory: string,
     state: ResolutionState,
@@ -107,7 +107,7 @@ const readPackageJsonTypesFields: {
     ),
 );
 
-const readPackageJsonMainField: {
+export const readPackageJsonMainField: {
   (
     baseDirectory: string,
     state: ResolutionState,
@@ -127,13 +127,5 @@ const readPackageJsonMainField: {
     resolvePackageJsonPathWithTrace(content, { field: "main", baseDirectory }, state),
 );
 
-const asRecord = (value: unknown): Readonly<Record<string, unknown>> =>
+export const asRecord = (value: unknown): Readonly<Record<string, unknown>> =>
   Option.liftPredicate(value, Predicate.isObject).pipe(Option.getOrElse(() => ({})));
-
-export {
-  asRecord,
-  readPackageJsonMainField,
-  readPackageJsonTypesFields,
-  resolvePackageJsonFieldWithTrace,
-};
-export type { FieldRequest };

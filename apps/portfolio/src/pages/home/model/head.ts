@@ -4,7 +4,7 @@ import { site } from "#/shared/config";
 import { author, defaultImage, seo } from "#/shared/lib";
 import type { Head } from "#/shared/lib";
 
-const homeHead: Head = seo({
+export const homeHead: Head = seo({
   title: site.name,
   description: site.description,
   path: "/",
@@ -28,5 +28,3 @@ const homeHead: Head = seo({
     },
   ],
 });
-
-export { homeHead };

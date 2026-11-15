@@ -59,7 +59,7 @@ const isChanged = Effect.fn("isChanged")(function* isChangedSinceStored({
 });
 
 /** @internal */
-const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAssets({
+export const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAssets({
   projectPath,
   assets,
 }: {
@@ -94,7 +94,7 @@ const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAss
 });
 
 /** @internal */
-const pruneProject = Effect.fn("pruneProject")(function* pruneProjectAssets({
+export const pruneProject = Effect.fn("pruneProject")(function* pruneProjectAssets({
   packageId,
   projectPath,
   seen,
@@ -123,5 +123,3 @@ const pruneProject = Effect.fn("pruneProject")(function* pruneProjectAssets({
   const summary = yield* encodeSummary({ name, entries: pipe(kept, Array.map(listedEntry)) });
   yield* sql`update packages set summary = ${summary} where id = ${packageId}`;
 });
-
-export { pruneProject, putProjectAssets };

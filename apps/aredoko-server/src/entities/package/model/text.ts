@@ -16,7 +16,7 @@ const KIND_LABELS: Readonly<Record<AssetKind, string>> = {
   other: "",
 };
 
-const searchableText = ({
+export const searchableText = ({
   pathname,
   kind,
   packageName,
@@ -37,5 +37,3 @@ const searchableText = ({
     Array.filter(String.isNonEmpty),
     Array.join(" "),
   );
-
-export { searchableText };

@@ -6,7 +6,7 @@ import type { TileCrop as Crop } from "#/entities/mosaic";
 
 const ORIGIN = 0;
 
-const TileCrop = ({ crop }: Readonly<{ crop: Crop }>): ReactNode => {
+export const TileCrop = ({ crop }: Readonly<{ crop: Crop }>): ReactNode => {
   const { url, left, top, width, height } = crop;
   const draw = useCallback(
     (canvas: HTMLCanvasElement | null): (() => void) =>
@@ -39,5 +39,3 @@ const TileCrop = ({ crop }: Readonly<{ crop: Crop }>): ReactNode => {
     />
   );
 };
-
-export { TileCrop };

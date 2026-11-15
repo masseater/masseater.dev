@@ -107,7 +107,7 @@ const DETECTORS: readonly ((scene: Scene) => readonly Finding[])[] = [
   publicRepositories,
 ];
 
-const findExposures = (
+export const findExposures = (
   scene: Scene & Readonly<{ probes: readonly ProbeResult[] }>,
 ): readonly Finding[] =>
   pipe(
@@ -121,5 +121,3 @@ const findExposures = (
     Arr.dedupeWith((left, right) => fingerprint(left) === fingerprint(right)),
     Arr.sortWith(fingerprint, Order.String),
   );
-
-export { findExposures };

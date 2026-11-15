@@ -4,7 +4,7 @@ import { Match } from "effect";
 
 import type { ToolFailure } from "./tool-failure";
 
-type ToolName =
+export type ToolName =
   | "life_write"
   | "life_read"
   | "life_stats"
@@ -15,7 +15,7 @@ type ToolName =
   | "conversation_read"
   | "api_token_issue";
 
-const describeFailure = Match.type<ToolFailure>().pipe(
+export const describeFailure = Match.type<ToolFailure>().pipe(
   Match.tagsExhaustive({
     InvalidRecord: ({ message }) => ({ errorTag: "InvalidRecord", text: message }),
     MemoryNotFound: ({ project, memoryName }) => ({
@@ -41,10 +41,7 @@ const describeFailure = Match.type<ToolFailure>().pipe(
   }),
 );
 
-const { meteredInput, runTool } = toolCalls<ToolName, ToolFailure>({
+export const { meteredInput, runTool } = toolCalls<ToolName, ToolFailure>({
   dataset: () => env.TOOL_CALLS,
   describe: describeFailure,
 });
-
-export { describeFailure, meteredInput, runTool };
-export type { ToolName };

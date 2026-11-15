@@ -14,25 +14,25 @@ import type { ResolvedTypeReference } from "./type-reference.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface ProgramOptions {
+export interface ProgramOptions {
   readonly allowJs: boolean;
   readonly noDtsResolution: boolean;
 }
 
-interface ModuleNameRequest {
+export interface ModuleNameRequest {
   readonly moduleName: string;
   readonly containingFile: string;
   readonly mode: Option.Option<ResolutionMode>;
   readonly noDtsResolution: boolean;
 }
 
-interface TypeReferenceLookup {
+export interface TypeReferenceLookup {
   readonly name: string;
   readonly containingFile: string;
   readonly mode: Option.Option<ResolutionMode>;
 }
 
-interface ProgramHost {
+export interface ProgramHost {
   readonly modeOptions: ModeOptions;
   readonly defaultLibFileName: string;
   readonly getSourceFile: (fileName: string) => Option.Option<SourceFile>;
@@ -43,31 +43,31 @@ interface ProgramHost {
   readonly packageJsonScopeFor: (fileName: string) => Option.Option<PackageJsonInfo>;
 }
 
-interface ProgramFile {
+export interface ProgramFile {
   readonly fileName: string;
   readonly sourceFile: SourceFile;
 }
 
-interface ResolvedModuleEntry {
+export interface ResolvedModuleEntry {
   readonly moduleName: string;
   readonly mode: Option.Option<ResolutionMode>;
   readonly resolution: ResolutionResult;
 }
 
-interface ProgramFiles {
+export interface ProgramFiles {
   readonly files: readonly ProgramFile[];
   readonly resolvedModules: ReadonlyMap<string, readonly ResolvedModuleEntry[]>;
 }
 
-interface FileRequest {
+export interface FileRequest {
   readonly fileName: string;
   readonly isDefaultLib: boolean;
   readonly packageId: Option.Option<PackageId>;
 }
 
-type FileFlag = "foundInNodeModules" | "elided";
+export type FileFlag = "foundInNodeModules" | "elided";
 
-interface FileRegistry {
+export interface FileRegistry {
   readonly lookup: (fileName: string) => Option.Option<Option.Option<SourceFile>>;
   readonly record: (request: FileRequest, file: Option.Option<SourceFile>) => void;
   readonly include: (file: ProgramFile, isDefaultLib: boolean) => void;
@@ -78,20 +78,23 @@ interface FileRegistry {
   readonly result: () => ProgramFiles;
 }
 
-interface DepthCounter {
+export interface DepthCounter {
   readonly current: () => number;
   readonly enter: (external: boolean) => void;
   readonly leave: (external: boolean) => void;
 }
 
-interface ProgramBuild {
+export interface ProgramBuild {
   readonly host: ProgramHost;
   readonly options: ProgramOptions;
   readonly registry: FileRegistry;
   readonly depth: DepthCounter;
 }
 
-type IncludeSourceFile = (build: ProgramBuild, request: FileRequest) => Option.Option<SourceFile>;
+export type IncludeSourceFile = (
+  build: ProgramBuild,
+  request: FileRequest,
+) => Option.Option<SourceFile>;
 
 const OUTSIDE_NODE_MODULES = 0;
 
@@ -161,7 +164,7 @@ const createFileRegistry = (): FileRegistry => {
   };
 };
 
-const createProgramBuild: {
+export const createProgramBuild: {
   (options: ProgramOptions): (host: ProgramHost) => ProgramBuild;
   (host: ProgramHost, options: ProgramOptions): ProgramBuild;
 } = Fn.dual(DATA_FIRST_ARITY, (host: ProgramHost, options: ProgramOptions): ProgramBuild => ({
@@ -170,20 +173,3 @@ const createProgramBuild: {
   registry: createFileRegistry(),
   depth: createDepthCounter(),
 }));
-
-export { createProgramBuild };
-export type {
-  DepthCounter,
-  FileFlag,
-  FileRegistry,
-  FileRequest,
-  IncludeSourceFile,
-  ModuleNameRequest,
-  ProgramBuild,
-  ProgramFile,
-  ProgramFiles,
-  ProgramHost,
-  ProgramOptions,
-  ResolvedModuleEntry,
-  TypeReferenceLookup,
-};

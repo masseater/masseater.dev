@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-const CountBadge = ({ count }: Readonly<{ count: number | undefined }>): ReactNode =>
+export const CountBadge = ({ count }: Readonly<{ count: number | undefined }>): ReactNode =>
   Option.match(Option.fromUndefinedOr(count), {
     onNone: () => false,
     onSome: (value) => (
@@ -10,5 +10,3 @@ const CountBadge = ({ count }: Readonly<{ count: number | undefined }>): ReactNo
       </span>
     ),
   });
-
-export { CountBadge };

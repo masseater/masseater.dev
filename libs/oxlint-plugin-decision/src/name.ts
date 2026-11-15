@@ -39,7 +39,7 @@ const nameOf = (node: SelectedNode, context: Context): string | undefined =>
     ),
   );
 
-const isSelected: {
+export const isSelected: {
   (node: SelectedNode, rule: DecisionRule): (context: Context) => boolean;
   (context: Context, node: SelectedNode, rule: DecisionRule): boolean;
 } = Fn.dual(
@@ -50,5 +50,3 @@ const isSelected: {
       onSome: (selects) => selects(node, { name: nameOf(node, context), context }),
     }),
 );
-
-export { isSelected };

@@ -4,7 +4,7 @@ import type { HttpClient, HttpClientError } from "effect/http";
 import { getJson } from "./client.ts";
 
 const ENDPOINT = "https://www.googleapis.com/youtube/v3/videos";
-const BATCH = 50;
+export const YOUTUBE_BATCH = 50;
 const BACKOFF_SECONDS = 5;
 const BACKOFF = Duration.seconds(BACKOFF_SECONDS);
 
@@ -43,12 +43,10 @@ const fetchBatch =
     }).pipe(Effect.map(({ items }) => pipe(items ?? [], Arr.flatMap(countOf))));
 
 /** @internal */
-const fetchYoutubeViews = Effect.fn("youtube.views")(function* youtubeViews({
+export const fetchYoutubeViews = Effect.fn("youtube.views")(function* youtubeViews({
   key,
   ids,
 }: Readonly<{ key: Redacted.Redacted; ids: readonly string[] }>) {
-  const batches = yield* pipe(Arr.chunksOf(ids, BATCH), Effect.forEach(fetchBatch(key)));
+  const batches = yield* pipe(Arr.chunksOf(ids, YOUTUBE_BATCH), Effect.forEach(fetchBatch(key)));
   return Record.fromEntries(Arr.flatten(batches));
 });
-
-export { BATCH as YOUTUBE_BATCH, fetchYoutubeViews };

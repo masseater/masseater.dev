@@ -5,7 +5,7 @@ import type { ButtonComponent } from "./button-component";
 import type { ConsentSearchParams } from "./consent";
 import { ConsentPrompt } from "./consent-prompt";
 
-const ConsentForm = ({
+export const ConsentForm = ({
   button,
   scope,
   search,
@@ -26,5 +26,3 @@ const ConsentForm = ({
       />
     ),
   });
-
-export { ConsentForm };

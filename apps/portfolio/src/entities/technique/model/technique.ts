@@ -6,9 +6,9 @@ import type { CatalogExample, CatalogItem } from "./catalog";
 import examples from "./generated/examples.json";
 import slugTable from "./slugs.json";
 
-const ROOT = "/seikin-techniques";
+export const ROOT = "/seikin-techniques";
 
-type WikiImage = Readonly<{
+export type WikiImage = Readonly<{
   title: string;
   src: string;
   width: number;
@@ -18,18 +18,18 @@ type WikiImage = Readonly<{
   license: string;
 }>;
 
-type Example =
+export type Example =
   | Exclude<CatalogExample, Readonly<{ kind: "link" }>>
   | Readonly<{ kind: "link"; href: string; label: string; image: Option.Option<WikiImage> }>;
 
-type Origin = Readonly<{
+export type Origin = Readonly<{
   article: Article;
   group: string;
   name: string;
   summary: readonly string[];
 }>;
 
-type Technique = Readonly<{
+export type Technique = Readonly<{
   slug: string;
   name: string;
   origins: Arr.NonEmptyReadonlyArray<Origin>;
@@ -102,17 +102,14 @@ const techniqueFrom = (group: Arr.NonEmptyReadonlyArray<Entry>): Technique => {
 
 const grouped = Arr.groupBy(entries, ({ slug }) => slug);
 
-const techniqueOf = (slug: string): Option.Option<Technique> =>
+export const techniqueOf = (slug: string): Option.Option<Technique> =>
   pipe(Rec.get(grouped, slug), Option.map(techniqueFrom));
 
-const techniqueList: readonly Technique[] = pipe(
+export const techniqueList: readonly Technique[] = pipe(
   entries,
   Arr.map(({ slug }) => slug),
   Arr.dedupe,
   Arr.flatMap((slug) => Option.toArray(techniqueOf(slug))),
 );
 
-const techniquePath = (slug: string): string => `${ROOT}/${slug}`;
-
-export type { Example, Origin, Technique, WikiImage };
-export { ROOT, techniqueList, techniqueOf, techniquePath };
+export const techniquePath = (slug: string): string => `${ROOT}/${slug}`;

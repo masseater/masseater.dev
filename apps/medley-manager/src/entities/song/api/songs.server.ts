@@ -8,7 +8,9 @@ const byUsesDescending = Order.flip(
   Order.mapInput(Order.Number, ({ useCount }: Readonly<{ useCount: number }>) => useCount),
 );
 
-const listSongs = Effect.fn("catalog.songs")(function* listSongs(keyword: Option.Option<string>) {
+export const listSongs = Effect.fn("catalog.songs")(function* listSongs(
+  keyword: Option.Option<string>,
+) {
   const where = keyword.pipe(
     Option.match({
       onNone: () => ({}),
@@ -52,5 +54,3 @@ const listSongs = Effect.fn("catalog.songs")(function* listSongs(keyword: Option
     (rows) => Array.sort(rows, byUsesDescending),
   );
 });
-
-export { listSongs };

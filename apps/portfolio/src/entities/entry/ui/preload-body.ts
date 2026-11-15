@@ -12,7 +12,6 @@ const figuresForPrerender = (): Effect.Effect<void> => {
   return Effect.void;
 };
 
-const preloadBody = (location: Readonly<Pick<Entry, "category" | "slug">>): Effect.Effect<void> =>
-  Effect.andThen(preloadModule(location), figuresForPrerender());
-
-export { preloadBody };
+export const preloadBody = (
+  location: Readonly<Pick<Entry, "category" | "slug">>,
+): Effect.Effect<void> => Effect.andThen(preloadModule(location), figuresForPrerender());

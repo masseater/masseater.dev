@@ -25,8 +25,6 @@ const renderToc: Render = (module) => {
   );
 };
 
-const EntryToc = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
+export const EntryToc = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
   <EntryModule entry={entry} render={renderToc} />
 );
-
-export { EntryToc };

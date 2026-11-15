@@ -6,7 +6,7 @@ import { ExportButton } from "#/features/export-manuscript";
 
 const LABEL = "原稿";
 
-const ManuscriptList = (): ReactNode => (
+export const ManuscriptList = (): ReactNode => (
   <ul aria-label={LABEL}>
     {pipe(
       useManuscripts(),
@@ -18,5 +18,3 @@ const ManuscriptList = (): ReactNode => (
     )}
   </ul>
 );
-
-export { ManuscriptList };

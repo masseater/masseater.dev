@@ -98,8 +98,6 @@ const idsAs = (convert: Reader): Readonly<Record<string, Reader>> => ({
   parentSpanId: convert,
 });
 
-const normalize = mapTree({ ...idsAs(toHex), attributes, body: anyValue });
+export const normalize = mapTree({ ...idsAs(toHex), attributes, body: anyValue });
 
-const hexIdsToBase64 = mapTree(idsAs(toBase64));
-
-export { hexIdsToBase64, normalize };
+export const hexIdsToBase64 = mapTree(idsAs(toBase64));

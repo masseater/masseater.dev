@@ -102,9 +102,7 @@ const registerStats =
     return server;
   };
 
-const registerLifeTools =
+export const registerLifeTools =
   (caller: Caller) =>
   (server: McpServer): McpServer =>
     pipe(server, registerWrite(caller), registerRead(caller), registerStats(caller));
-
-export { registerLifeTools };

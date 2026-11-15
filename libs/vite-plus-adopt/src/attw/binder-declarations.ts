@@ -23,7 +23,7 @@ import { hasFlag } from "./flags.ts";
 const DATA_FIRST_ARITY = 2;
 const DATA_FIRST_ARITY_3 = 3;
 
-interface FileBinding {
+export interface FileBinding {
   readonly file: SourceFile;
   readonly locals: SymbolTable;
   readonly isJs: boolean;
@@ -34,22 +34,22 @@ interface FileBinding {
   commonJsModuleIndicator?: Node;
 }
 
-interface Scope {
+export interface Scope {
   readonly containerIsFile: boolean;
   readonly blockIsFile: boolean;
 }
 
-interface DeclarationTarget {
+export interface DeclarationTarget {
   readonly table: Option.Option<SymbolTable>;
   readonly parent: Option.Option<BoundSymbol>;
 }
 
-interface SymbolFlagPair {
+export interface SymbolFlagPair {
   readonly includes: number;
   readonly excludes: number;
 }
 
-interface DeclareRequest {
+export interface DeclareRequest {
   readonly target: DeclarationTarget;
   readonly node: Node;
   readonly flags: SymbolFlagPair;
@@ -57,7 +57,7 @@ interface DeclareRequest {
 
 const DEFAULT_NAME = "default";
 
-const exportsOf = (owner: Option.Option<BoundSymbol>): DeclarationTarget => ({
+export const exportsOf = (owner: Option.Option<BoundSymbol>): DeclarationTarget => ({
   table: owner.pipe(Option.flatMap((symbol) => Option.fromNullishOr(symbol.exports))),
   parent: owner,
 });
@@ -78,7 +78,7 @@ const isDefaultExport = (request: DeclareRequest): boolean =>
   (hasSyntacticModifier(request.node, ModifierFlags.Default) ||
     isExportSpecifierNamedDefault(request.node));
 
-const declare: {
+export const declare: {
   (request: DeclareRequest): (binding: FileBinding) => BoundSymbol;
   (binding: FileBinding, request: DeclareRequest): BoundSymbol;
 } = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, request: DeclareRequest): BoundSymbol => {
@@ -99,7 +99,7 @@ const declare: {
 const declareLocal = (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol =>
   declare(binding, { target: fileLocals(binding), node, flags });
 
-const declareExport: {
+export const declareExport: {
   (node: Node, flags: SymbolFlagPair): (binding: FileBinding) => BoundSymbol;
   (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol;
 } = Fn.dual(
@@ -159,7 +159,7 @@ const declareModuleMember = (
   return declareLocal(binding, node, flags);
 };
 
-const declareSourceFileMember: {
+export const declareSourceFileMember: {
   (node: Node, flags: SymbolFlagPair): (binding: FileBinding) => BoundSymbol;
   (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol;
 } = Fn.dual(
@@ -172,7 +172,7 @@ const declareSourceFileMember: {
   },
 );
 
-const declareBlockScoped: {
+export const declareBlockScoped: {
   (node: Node, flags: SymbolFlagPair): (binding: FileBinding) => BoundSymbol;
   (binding: FileBinding, node: Node, flags: SymbolFlagPair): BoundSymbol;
 } = Fn.dual(
@@ -184,6 +184,3 @@ const declareBlockScoped: {
     return declareLocal(binding, node, flags);
   },
 );
-
-export { declare, declareBlockScoped, declareExport, declareSourceFileMember, exportsOf };
-export type { DeclarationTarget, DeclareRequest, FileBinding, Scope, SymbolFlagPair };

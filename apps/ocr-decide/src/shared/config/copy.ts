@@ -1,4 +1,4 @@
-const COPY = {
+export const COPY = {
   title: "ocr-decide",
   image: "画像を開く",
   receipt: "レシートの例",
@@ -14,5 +14,3 @@ const COPY = {
   ocrEngines: "OCR エンジンの日本語の読み取りを比べた結果",
   unreadable: "画像を開けなかった",
 } as const;
-
-export { COPY };

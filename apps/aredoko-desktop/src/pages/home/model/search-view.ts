@@ -6,9 +6,9 @@ import type { Notice } from "#/shared/ui/notice";
 
 type Results = readonly (typeof SearchResult.Type)[];
 
-type SearchPhase = "idle" | "searching" | "settled";
+export type SearchPhase = "idle" | "searching" | "settled";
 
-type SearchView =
+export type SearchView =
   | Readonly<{ status: "idle" }>
   | Readonly<{
       status: "message";
@@ -32,7 +32,7 @@ const viewOfResults = (results: Results): SearchView => {
   };
 };
 
-const searchViewOf = ({
+export const searchViewOf = ({
   phase,
   failure,
   results,
@@ -56,6 +56,3 @@ const searchViewOf = ({
     }),
   );
 };
-
-export { searchViewOf };
-export type { SearchPhase, SearchView };

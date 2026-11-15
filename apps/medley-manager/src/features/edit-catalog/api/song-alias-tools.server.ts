@@ -10,7 +10,7 @@ const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: fals
 const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
 const ALIAS_SCHEMA = SongAliasInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
-const registerSongAliasTools = (server: McpServer): McpServer => {
+export const registerSongAliasTools = (server: McpServer): McpServer => {
   server.registerTool(
     "add_song_alias",
     {
@@ -27,5 +27,3 @@ const registerSongAliasTools = (server: McpServer): McpServer => {
   );
   return server;
 };
-
-export { registerSongAliasTools };

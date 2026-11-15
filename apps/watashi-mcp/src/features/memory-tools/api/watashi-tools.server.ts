@@ -139,7 +139,7 @@ const registerProfile =
     return server;
   };
 
-const registerWatashiTools =
+export const registerWatashiTools =
   (caller: Caller) =>
   (server: McpServer): McpServer =>
     pipe(
@@ -149,5 +149,3 @@ const registerWatashiTools =
       registerSearch(caller),
       registerProfile(caller),
     );
-
-export { registerWatashiTools };

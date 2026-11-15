@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 const PLAY_MARK = "▶";
 
-const ThumbnailImage = ({ src }: Readonly<{ src: string | null }>): ReactNode =>
+export const ThumbnailImage = ({ src }: Readonly<{ src: string | null }>): ReactNode =>
   Option.match(Option.fromNullOr(src), {
     onNone: () => <span aria-hidden="true">{PLAY_MARK}</span>,
     onSome: (url) => (
@@ -17,5 +17,3 @@ const ThumbnailImage = ({ src }: Readonly<{ src: string | null }>): ReactNode =>
       />
     ),
   });
-
-export { ThumbnailImage };

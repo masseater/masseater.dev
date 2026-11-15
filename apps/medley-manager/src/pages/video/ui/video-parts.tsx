@@ -5,7 +5,7 @@ import { SectionHeading } from "#/shared/ui/section-heading";
 
 import { VideoSetlist } from "./video-setlist";
 
-const VideoParts = (): ReactNode => {
+export const VideoParts = (): ReactNode => {
   const video = useVideo();
   return (
     <section className="flex flex-col gap-4">
@@ -14,5 +14,3 @@ const VideoParts = (): ReactNode => {
     </section>
   );
 };
-
-export { VideoParts };

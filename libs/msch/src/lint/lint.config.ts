@@ -15,10 +15,11 @@ const REACT_STATE_HOOKS: readonly string[] = [
 const HAND_WRITTEN_SQL = "SQL を手書きせず Drizzle のクエリビルダーを使う";
 const UI_STATE = "UI 状態は effect-atom だけで扱う";
 
-const INSTRUMENTATION = "計装は Effect のトレーシングだけで扱う";
-const INFRASTRUCTURE = "インフラは Alchemy の IaC と Cloudflare だけで扱い、wrangler は使わない";
+export const INSTRUMENTATION = "計装は Effect のトレーシングだけで扱う";
+export const INFRASTRUCTURE =
+  "インフラは Alchemy の IaC と Cloudflare だけで扱い、wrangler は使わない";
 
-const requiredStack: Readonly<Record<string, readonly string[]>> = {
+export const requiredStack: Readonly<Record<string, readonly string[]>> = {
   [UI_STATE]: [
     "zustand",
     "jotai",
@@ -166,7 +167,7 @@ const requiredStackPatterns: readonly Readonly<{ group: readonly string[]; messa
     }),
   );
 
-const restrictedImports = {
+export const restrictedImports = {
   paths: [
     {
       name: "react",
@@ -180,7 +181,7 @@ const restrictedImports = {
   patterns: [...requiredStackPatterns],
 };
 
-const generated = [
+export const generated = [
   "**/routeTree.gen.ts",
   "**/generated/**",
   "**/drizzle/**/snapshot.json",
@@ -201,7 +202,7 @@ const asErrors = (names: readonly string[]): Readonly<Record<string, "error">> =
     ),
   );
 
-const allRulesOf = ({
+export const allRulesOf = ({
   prefix,
   rules,
 }: Readonly<{ prefix: string; rules: Readonly<Record<string, unknown>> }>): Readonly<
@@ -233,38 +234,28 @@ const effectRuleNames = pipe(
   Arr.flatMap((preset) => Struct.keys(preset.rules ?? {})),
 );
 
-const pluginRules: Readonly<Record<string, "error">> = {
+export const pluginRules: Readonly<Record<string, "error">> = {
   ...asErrors(Rec.keys(htmlReact.configs.all.rules ?? {})),
   ...reactHooksRules,
   ...asErrors(eslintReactRuleNames),
   ...asErrors(effectRuleNames),
 };
 
-const decisionPluginName = decisionPlugin.meta.name;
+export const decisionPluginName = decisionPlugin.meta.name;
 
-const decisionRules = allRulesOf({ prefix: decisionPluginName, rules: decisionPlugin.rules });
+export const decisionRules = allRulesOf({
+  prefix: decisionPluginName,
+  rules: decisionPlugin.rules,
+});
 
-const decisionTestRules = pipe(
+export const decisionTestRules = pipe(
   decisionRules,
   Rec.map(() => "off" as const),
 );
 
-const shadcnRestyleContracts = [
+export const shadcnRestyleContracts = [
   { pattern: "^Table(Head|Cell)$", allow: ["text-alignment", "fvn-spacing"] },
   { pattern: "^TableCaption$", allow: ["caption", "text-alignment", "mt-*", "mb-*"] },
 ];
 
 export { COMMENT_DIRECTIVES } from "./comment-directives.ts";
-export {
-  INFRASTRUCTURE,
-  INSTRUMENTATION,
-  shadcnRestyleContracts,
-  allRulesOf,
-  decisionPluginName,
-  decisionRules,
-  decisionTestRules,
-  generated,
-  pluginRules,
-  requiredStack,
-  restrictedImports,
-};

@@ -60,7 +60,7 @@ const plainPrefix = Effect.fn("plainPrefix")(function* plainPrefix(path: string)
 });
 
 /** @internal */
-const blendPreview = Effect.fn("blendPreview")(function* blendPreview(path: string) {
+export const blendPreview = Effect.fn("blendPreview")(function* blendPreview(path: string) {
   const plain = yield* plainPrefix(path);
   return yield* Option.match(blendThumbnail(plain), {
     onNone: () => Effect.succeedNone,
@@ -69,7 +69,7 @@ const blendPreview = Effect.fn("blendPreview")(function* blendPreview(path: stri
 });
 
 /** @internal */
-const plainFile = Effect.fn("plainFile")(function* plainFile(path: string) {
+export const plainFile = Effect.fn("plainFile")(function* plainFile(path: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const bytes = yield* fileSystem.readFile(path);
   if (isZstd(bytes)) {
@@ -85,5 +85,3 @@ const plainFile = Effect.fn("plainFile")(function* plainFile(path: string) {
   }
   return bytes;
 });
-
-export { blendPreview, plainFile };

@@ -6,7 +6,7 @@ import { starView } from "#/features/star/model/star-state";
 
 import { StarToggle } from "./star-toggle";
 
-const StarButton = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => {
+export const StarButton = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => {
   const { stars, addStar, removeStar } = useStar(entry);
   const view = starView(stars.data);
   return (
@@ -15,5 +15,3 @@ const StarButton = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => {
     )
   );
 };
-
-export { StarButton };

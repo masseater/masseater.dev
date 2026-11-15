@@ -13,7 +13,7 @@ const byAccuracyDescending = Order.flip(
   Order.mapInput(Order.Number, (run: ReturnType<typeof summarizeEngine>) => run.accuracy),
 );
 
-const writeReport = Effect.gen(function* writeReport() {
+export const writeReport = Effect.gen(function* writeReport() {
   const results = yield* Results;
   const pages = yield* results.pages;
   const read = yield* Effect.forEach(
@@ -46,5 +46,3 @@ const writeReport = Effect.gen(function* writeReport() {
     runs,
   });
 });
-
-export { writeReport };

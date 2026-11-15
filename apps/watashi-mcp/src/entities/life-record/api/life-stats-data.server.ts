@@ -35,7 +35,7 @@ const aggregateOf = (entry: LifeEntry): Aggregate =>
     Option.getOrElse((): Aggregate => "sum"),
   );
 
-const loadStatsData: Effect.Effect<StatsData, StorageFailed> = Effect.all({
+export const loadStatsData: Effect.Effect<StatsData, StorageFailed> = Effect.all({
   events: scanAll(["life_event"]).pipe(Effect.map(statEventsOf)),
   aggregates: scanAll(["metric_definition"]).pipe(
     Effect.map((entries) =>
@@ -43,5 +43,3 @@ const loadStatsData: Effect.Effect<StatsData, StorageFailed> = Effect.all({
     ),
   ),
 });
-
-export { loadStatsData };

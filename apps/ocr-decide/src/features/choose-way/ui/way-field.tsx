@@ -6,7 +6,7 @@ import { useSetWay, useWay, WAYS } from "#/entities/extraction";
 import { COPY } from "#/shared/config";
 import { SELECT_CLASS } from "#/shared/ui/select-class";
 
-const WayField = (): ReactNode => {
+export const WayField = (): ReactNode => {
   const way = useWay();
   const setWay = useSetWay();
   const pick = useCallback(
@@ -28,5 +28,3 @@ const WayField = (): ReactNode => {
     </select>
   );
 };
-
-export { WayField };

@@ -15,7 +15,7 @@ const stopRejecting = Effect.promise(() =>
   env.DB.prepare(`DROP TRIGGER IF EXISTS ${TRIGGER}`).run(),
 );
 
-const whileRejecting =
+export const whileRejecting =
   ({ event, table }: Readonly<{ event: "DELETE" | "INSERT"; table: string }>) =>
   <Value, Failure>(write: Effect.Effect<Value, Failure>): Effect.Effect<Value, Failure> =>
     Effect.acquireUseRelease(
@@ -23,5 +23,3 @@ const whileRejecting =
       () => write,
       () => stopRejecting,
     );
-
-export { whileRejecting };
