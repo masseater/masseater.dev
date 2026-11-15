@@ -72,6 +72,16 @@ const passesRepositoryWideReadme = Effect.gen(function* passesRepositoryWideRead
   expect(findings).toStrictEqual([]);
 });
 
+const passesTheCheckPolicy = Effect.gen(function* passesTheCheckPolicy() {
+  const findings = yield* findingsFor({
+    ...WORKSPACES,
+    "libs/msch/package.json": '{ "name": "@r_masseater/msch" }',
+    "README.md": "# repo\n\nEvery check lives in [msch](libs/msch).\n",
+    "AGENTS.md": "Put every check into msch.\n",
+  });
+  expect(findings).toStrictEqual([]);
+});
+
 layer(fixtureLayer)("root readme", (it) => {
   it.effect(
     "flags a workspace's directory, basename or package name in the root README",
@@ -85,4 +95,5 @@ layer(fixtureLayer)("root readme", (it) => {
     "passes a root README about the whole repository and a workspace's own README",
     () => passesRepositoryWideReadme,
   );
+  it.effect("passes the check policy msch named in the root docs", () => passesTheCheckPolicy);
 });
