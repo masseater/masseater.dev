@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 import type { AllowWarnDeny, OxlintOverride } from "vite-plus/lint";
 
-import { nestedValues } from "./config-literal.ts";
+import { readManifest } from "./dependencies.ts";
 import { RepositoryFiles, nodeRepositoryFiles } from "./repository-files.ts";
 import { shadcnUiIn } from "./shadcn-ui.ts";
 import {
@@ -15,6 +15,8 @@ import type { WorkspaceSource } from "./workspace-config-source.ts";
 import { workspaceDirectories } from "./workspace-directories.ts";
 import { prefixed } from "./workspace-patterns.ts";
 import { publicEntryFiles } from "./workspace-public-entries.ts";
+import { NO_TASKS, definesTask, tasksOf } from "./workspace-tasks.ts";
+import type { WorkspaceTasks } from "./workspace-tasks.ts";
 
 type RuleSet = Readonly<Record<string, unknown>>;
 type RuleSets = Readonly<Record<string, RuleSet>>;
@@ -72,6 +74,7 @@ interface WorkspaceLint {
 interface WorkspaceSettings {
   readonly lint: WorkspaceLint;
   readonly testProjects: readonly string[];
+  readonly tasks: WorkspaceTasks;
   readonly devDependencies: Readonly<Record<string, DevDependencyAllowance>>;
 }
 
@@ -87,6 +90,7 @@ interface Workspace {
   readonly overrides: readonly OxlintOverride[];
   readonly devDependencies: Readonly<Record<string, DevDependencyAllowance>>;
   readonly ownTests: boolean;
+  readonly tasks: WorkspaceTasks;
   readonly publicEntries: readonly string[];
 }
 
@@ -165,8 +169,11 @@ const settingsOf = Effect.fn("settingsOf")(function* settingsOf(
 ) {
   const lint = yield* lintOf(source, options.ruleSets);
   const devDependencies = yield* devDependenciesOf(source, options.dependencySets);
-  const ownTests = Arr.isReadonlyArrayNonEmpty(nestedValues(TEST_TASK)(source.program));
-  return { directory: source.directory, ...lint, devDependencies, ownTests };
+  const ownTests = definesTask(TEST_TASK)(source.program);
+  const files = yield* RepositoryFiles;
+  const manifest = yield* readManifest(files.dirname(source.file));
+  const tasks = tasksOf(manifest)(source.program);
+  return { directory: source.directory, ...lint, devDependencies, ownTests, tasks };
 });
 
 const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(
@@ -184,6 +191,7 @@ const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(
       overrides: [],
       devDependencies: {},
       ownTests: false,
+      tasks: NO_TASKS,
       publicEntries,
     };
   }
@@ -228,6 +236,12 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
         Arr.filter(({ ownTests }) => !ownTests),
         Arr.map(({ directory }) => directory),
       ),
+      tasks: {
+        verify: pipe(
+          found,
+          Arr.flatMap(({ tasks }) => tasks.verify),
+        ),
+      },
       devDependencies: merged(
         pipe(
           found,
@@ -251,3 +265,4 @@ export type {
   WorkspaceLint,
   WorkspaceSettings,
 };
+export type { WorkspaceTasks } from "./workspace-tasks.ts";

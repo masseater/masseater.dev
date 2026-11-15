@@ -1,12 +1,14 @@
 import { tauriAppConfig } from "@masseater.dev/tauri-app/vite";
 import { Option } from "effect";
-import { defineConfig } from "vite-plus";
+import { defineConfig, mergeConfig } from "vite-plus";
+
+const app = tauriAppConfig({
+  crate: "yakusu",
+  devPort: 1430,
+  viewport: Option.some({ width: 1180, height: 760 }),
+  workspaceInputs: [],
+});
 
 export default defineConfig(
-  tauriAppConfig({
-    crate: "yakusu",
-    devPort: 1430,
-    viewport: Option.some({ width: 1180, height: 760 }),
-    workspaceInputs: [],
-  }),
+  mergeConfig(app, { run: { tasks: { verify: { command: [], dependsOn: ["cargo"] } } } }),
 );
