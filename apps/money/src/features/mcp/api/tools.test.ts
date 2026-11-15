@@ -165,7 +165,9 @@ const BANK_CSV = `"普通預金 入出金明細"
 ,,,"合計",
 `;
 
-const CARD_CSV = `利用日,利用店名・商品名,利用金額
+const BYTE_ORDER_MARK = String.fromCodePoint(0xfe_ff);
+
+const CARD_CSV = `${BYTE_ORDER_MARK}利用日,利用店名・商品名,利用金額
 2026/10/03,CLOUDFLARE,"1,520"
 2026/10/05,ＡＮＴＨＲＯＰＩＣ,"30,000"
 2026/10/09,OPENROUTER INC,"1,500"

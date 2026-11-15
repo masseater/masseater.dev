@@ -185,7 +185,7 @@ const readerOf = (columns: Columns, lookup: Lookup): Result.Result<Reader, strin
 
 const parseCsv = (csv: string, { headerRow, columns }: CsvLayout): Result.Result<Parsed, string> =>
   Result.gen(function* parsed() {
-    const { data } = parse<string[]>(csv.replace(/^﻿/u, ""), { skipEmptyLines: false });
+    const { data } = parse<string[]>(csv, { skipEmptyLines: false });
     const header = yield* Result.fromOption(
       Arr.get(data, headerRow - FIRST_LINE),
       () => `${headerRow} 行目に見出しがありません`,
