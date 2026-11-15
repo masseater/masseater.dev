@@ -2,8 +2,6 @@ import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 
 import { PERSONAL_ORIGIN } from "#/shared/config";
 
-type PageRef = Readonly<{ deck: string; page: number }>;
-
 const Deck = Schema.Struct({
   file: Schema.String,
   title: Schema.String,
@@ -49,7 +47,8 @@ const deckUrl = (file: string): string => `${PERSONAL_ORIGIN}/decks/${file}.html
 
 const pdfUrl = (file: string): string => `${PERSONAL_ORIGIN}/decks/${file}.pdf`;
 
-const pageUrl = ({ deck, page }: PageRef): string => `${deckUrl(deck)}#${String(page)}`;
+const pageUrl = ({ deck, page }: Readonly<{ deck: string; page: number }>): string =>
+  `${deckUrl(deck)}#${String(page)}`;
 
 const dayOf = Str.slice(START, DAY_LENGTH);
 

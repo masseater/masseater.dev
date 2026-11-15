@@ -2,7 +2,7 @@ import { Effect } from "effect";
 
 import { Conversation } from "#/entities/watashi/model/conversation";
 import type { ConversationValue } from "#/entities/watashi/model/conversation";
-import { LifeList } from "#/entities/watashi/model/life-item";
+import { LifePage } from "#/entities/watashi/model/life-item";
 import { MemoList } from "#/entities/watashi/model/memo";
 import type { MemoValue } from "#/entities/watashi/model/memo";
 import { Revisions } from "#/entities/watashi/model/memo-input";
@@ -12,10 +12,6 @@ import type { TimelineEntry } from "#/entities/watashi/model/timeline";
 import type { PortalFailed } from "#/shared/api/index.server";
 import { jsonBody, personal, rpcBody, watashi } from "#/shared/api/index.server";
 
-type MemoDetail = Readonly<{ memo: readonly MemoValue[]; revisions: readonly RevisionValue[] }>;
-
-type ConversationPage = Readonly<{ sessionId: string; cursor?: number }>;
-
 const LIFE_EVENTS = { record: "life_event", order: "time", limit: 1000 } as const;
 
 const OWNER_VIEW = "owner";
@@ -23,12 +19,17 @@ const OWNER_VIEW = "owner";
 const timeline: Effect.Effect<readonly TimelineEntry[], PortalFailed> = Effect.all(
   {
     events: jsonBody({ schema: PersonalTimeline, call: () => personal("/timeline.json") }),
-    life: rpcBody({ schema: LifeList, call: () => watashi().lifeRead(LIFE_EVENTS) }),
+    life: rpcBody({ schema: LifePage, call: () => watashi().lifeRead(LIFE_EVENTS) }),
   },
   { concurrency: "unbounded" },
 ).pipe(Effect.map(({ events, life }) => mergeTimeline({ personal: events, life: life.items })));
 
-const memoDetail = (key: MemoKeyValue): Effect.Effect<MemoDetail, PortalFailed> =>
+const memoDetail = (
+  key: MemoKeyValue,
+): Effect.Effect<
+  Readonly<{ memo: readonly MemoValue[]; revisions: readonly RevisionValue[] }>,
+  PortalFailed
+> =>
   Effect.all(
     {
       found: rpcBody({ schema: MemoList, call: () => watashi().memoryRead(key) }),
@@ -40,7 +41,9 @@ const memoDetail = (key: MemoKeyValue): Effect.Effect<MemoDetail, PortalFailed> 
     { concurrency: "unbounded" },
   ).pipe(Effect.map(({ found, history }) => ({ memo: found.items, revisions: history.revisions })));
 
-const conversation = (page: ConversationPage): Effect.Effect<ConversationValue, PortalFailed> =>
+const conversation = (
+  page: Readonly<{ sessionId: string; cursor?: number }>,
+): Effect.Effect<ConversationValue, PortalFailed> =>
   rpcBody({
     schema: Conversation,
     call: () => watashi().conversationRead({ ...page, view: OWNER_VIEW }),

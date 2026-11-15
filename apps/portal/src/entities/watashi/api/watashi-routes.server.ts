@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { LifeList } from "#/entities/watashi/model/life-item";
+import { LifePage } from "#/entities/watashi/model/life-item";
 import { MemoList, MemoProjects } from "#/entities/watashi/model/memo";
 import { MemoChange, MemoKey, Written } from "#/entities/watashi/model/memo-input";
 import { Profile } from "#/entities/watashi/model/profile";
@@ -20,7 +20,7 @@ const watashiRoutes = createRouter("/api/watashi")
   .get(
     "/records",
     ({ query }) =>
-      respond(rpcBody({ schema: LifeList, call: () => watashi().lifeRead(recordsInput(query)) })),
+      respond(rpcBody({ schema: LifePage, call: () => watashi().lifeRead(recordsInput(query)) })),
     { query: Schema.toStandardSchemaV1(RecordsSearch) },
   )
   .get(

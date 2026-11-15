@@ -9,8 +9,6 @@ import { meteredInput, runTool } from "#/shared/api";
 
 import { DEFAULT_SLIDE_LIMIT, DeckInput, SlideSearchInput } from "./slides-input";
 
-type SearchQuery = Readonly<{ query: string; limit: number; deck: Option.Option<string> }>;
-
 const EMBEDDING_MODEL = "@cf/qwen/qwen3-embedding-0.6b";
 const QUERY_INSTRUCTION =
   "Given a search query written in Japanese or English, retrieve presentation slides that answer the query";
@@ -61,13 +59,22 @@ const embed = (query: string): Effect.Effect<number[], ReturnType<typeof fail>> 
     ),
   );
 
-const queryOptions = ({ limit, deck }: SearchQuery): VectorizeQueryOptions =>
+const queryOptions = ({
+  limit,
+  deck,
+}: Readonly<{
+  query: string;
+  limit: number;
+  deck: Option.Option<string>;
+}>): VectorizeQueryOptions =>
   Option.match(deck, {
     onNone: () => ({ topK: limit, returnMetadata: "all" }),
     onSome: (name) => ({ topK: limit, returnMetadata: "all", filter: { deck: name } }),
   });
 
-const searchSlides = Effect.fn("searchSlides")(function* searchSlides(query: SearchQuery) {
+const searchSlides = Effect.fn("searchSlides")(function* searchSlides(
+  query: Readonly<{ query: string; limit: number; deck: Option.Option<string> }>,
+) {
   const vector = yield* embed(query.query);
   const { matches } = yield* Effect.tryPromise({
     try: () => env.SLIDE_INDEX.query(vector, queryOptions(query)),

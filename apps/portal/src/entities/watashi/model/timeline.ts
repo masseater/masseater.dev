@@ -25,11 +25,6 @@ type TimelineEntry = Readonly<{
   labels: readonly string[];
 }>;
 
-type TimelineSources = Readonly<{
-  personal: readonly PersonalEventValue[];
-  life: readonly LifeItemValue[];
-}>;
-
 const DATED = /^\d{4}/u;
 
 const START = "";
@@ -71,8 +66,14 @@ const fromLife = (item: LifeItemValue): readonly TimelineEntry[] =>
 
 const byOrder = Order.mapInput(Str.Order, (entry: TimelineEntry) => entry.order);
 
-const mergeTimeline = ({ personal, life }: TimelineSources): readonly TimelineEntry[] =>
+const mergeTimeline = ({
+  personal,
+  life,
+}: Readonly<{
+  personal: typeof PersonalTimeline.Type;
+  life: readonly LifeItemValue[];
+}>): readonly TimelineEntry[] =>
   pipe([...fromPersonal(personal), ...pipe(life, Arr.flatMap(fromLife))], Arr.sortBy(byOrder));
 
 export { PersonalTimeline, mergeTimeline };
-export type { PersonalEventValue, TimelineEntry };
+export type { TimelineEntry };

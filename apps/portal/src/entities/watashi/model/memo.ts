@@ -25,5 +25,5 @@ type MemoValue = typeof Memo.Type;
 
 type ProjectValue = (typeof MemoProjects.Type)["projects"][number];
 
-export { Memo, MemoList, MemoProjects };
+export { MemoList, MemoProjects };
 export type { MemoValue, ProjectValue };

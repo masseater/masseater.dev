@@ -104,8 +104,6 @@ type PeriodInputValue = typeof PeriodInput.Type;
 
 type PeriodValue = typeof Period.Type;
 
-type TransactionsInputValue = typeof TransactionsInput.Type;
-
 type MoneyFlowValue = typeof MoneyFlow.Type;
 
 type MonthTotalValue = typeof MonthTotal.Type;
@@ -130,7 +128,6 @@ export {
   MoneyFlow,
   MoneySearch,
   MonthTotal,
-  Period,
   PeriodInput,
   Settings,
   TransactionPage,
@@ -149,5 +146,4 @@ export type {
   SettingsValue,
   TransactionPageValue,
   TransactionValue,
-  TransactionsInputValue,
 };

@@ -2,10 +2,6 @@ import { DateTime, Option, Order, String as Str, pipe } from "effect";
 
 import type { PeriodInputValue, PeriodValue } from "./money";
 
-type PeriodRequest = Readonly<{ input: PeriodInputValue; today: string }>;
-
-type AsOfRequest = Readonly<{ period: PeriodValue; today: string }>;
-
 const MONTHS_BEFORE = 11;
 
 const START = 0;
@@ -42,12 +38,16 @@ const lastDayOf = (month: string): string =>
     Option.getOrElse(() => month),
   );
 
-const periodOf = ({ input, today }: PeriodRequest): PeriodValue => {
+const periodOf = ({
+  input,
+  today,
+}: Readonly<{ input: PeriodInputValue; today: string }>): PeriodValue => {
   const to = input.to ?? monthOf(today);
   const from = input.from ?? firstShown(to);
   return { from: earlier(from, to), to };
 };
 
-const asOfOf = ({ period, today }: AsOfRequest): string => earlier(lastDayOf(period.to), today);
+const asOfOf = ({ period, today }: Readonly<{ period: PeriodValue; today: string }>): string =>
+  earlier(lastDayOf(period.to), today);
 
 export { asOfOf, periodOf, todayJst };

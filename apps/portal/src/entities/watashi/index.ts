@@ -1,5 +1,5 @@
 export { watashiQueries } from "./api/queries";
-export { headline, labelsOf, recordLabel } from "./model/life-item";
+export { headline } from "./model/life-item";
 export type { LifeItemValue } from "./model/life-item";
 export type { MemoValue, ProjectValue } from "./model/memo";
 export type { MemoChangeValue, RevisionValue } from "./model/memo-input";
@@ -9,7 +9,6 @@ export { ConversationSearch, MemosSearch, RecordsSearch } from "./model/search";
 export type { ConversationSearchValue, MemosSearchValue, RecordsSearchValue } from "./model/search";
 export { placeOf, sizeOf } from "./model/session";
 export { LifeList } from "./ui/life-list";
-export { LifeRow } from "./ui/life-row";
 export type { TimelineEntry } from "./model/timeline";
 export type { SessionValue } from "./model/session";
 export type { ConversationValue, UtteranceValue } from "./model/conversation";

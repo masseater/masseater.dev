@@ -24,7 +24,7 @@ const LifeItem = Schema.Struct({
   tags: Schema.optionalKey(Names),
 });
 
-const LifeList = Schema.Struct({ total: Schema.Int, items: Schema.Array(LifeItem) });
+const LifePage = Schema.Struct({ total: Schema.Int, items: Schema.Array(LifeItem) });
 
 type LifeItemValue = typeof LifeItem.Type;
 
@@ -62,5 +62,5 @@ const labelsOf = (item: LifeItemValue): readonly string[] =>
     ...pipe(item.tags ?? [], Arr.map(Option.some)),
   ]);
 
-export { LifeItem, LifeList, headline, labelsOf, recordLabel };
+export { LifeItem, LifePage, headline, labelsOf, recordLabel };
 export type { LifeItemValue };

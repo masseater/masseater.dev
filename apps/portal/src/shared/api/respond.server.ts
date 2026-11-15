@@ -7,13 +7,17 @@ import type { PortalFailed } from "./portal-failed";
 
 const BAD_GATEWAY = 502;
 
-type Failed = Readonly<{ errorTag: string; text: string }>;
-
-type UpstreamDown = ElysiaCustomStatusResponse<typeof BAD_GATEWAY, Failed>;
+type UpstreamDown = ElysiaCustomStatusResponse<
+  typeof BAD_GATEWAY,
+  Readonly<{ errorTag: string; text: string }>
+>;
 
 const runRequest = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
 
-const downOf = ({ errorTag, text }: Readonly<Failed>): Effect.Effect<UpstreamDown> =>
+const downOf = ({
+  errorTag,
+  text,
+}: Readonly<Readonly<{ errorTag: string; text: string }>>): Effect.Effect<UpstreamDown> =>
   Effect.logWarning("portal.upstream.failed").pipe(
     Effect.annotateLogs({ errorTag }),
     Effect.as(status(BAD_GATEWAY, { errorTag, text })),
