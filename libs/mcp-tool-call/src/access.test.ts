@@ -3,7 +3,7 @@ import { Effect, Option, Result } from "effect";
 import { SignJWT, createLocalJWKSet, exportJWK, generateKeyPair } from "jose";
 import type { JWTVerifyGetKey } from "jose";
 
-import { verifyAccess } from "./access";
+import { verifyAccess } from "./access.ts";
 
 type Claims = Readonly<{ issuer: string; audience: string; expiresIn: string }>;
 
@@ -11,7 +11,7 @@ type Signer = Readonly<{ sign: (claims: Claims) => Promise<string>; keys: JWTVer
 
 const ACCESS_HEADER = "cf-access-jwt-assertion";
 const TEAM = "team.cloudflareaccess.com";
-const AUDIENCE = "aud-sundries";
+const AUDIENCE = "aud-mcp";
 const KEY_ID = "key-1";
 const ALGORITHM = "RS256";
 
@@ -36,7 +36,7 @@ const signer = Effect.promise(() => generateKeyPair(ALGORITHM)).pipe(
 );
 
 const requestWith = (token: Option.Option<string>): Request =>
-  new Request("https://sundries.masseater.dev/mcp", {
+  new Request("https://mcp.example.com/mcp", {
     method: "POST",
     headers: Option.match(token, {
       onNone: () => ({}),

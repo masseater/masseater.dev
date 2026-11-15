@@ -1,4 +1,5 @@
 export { defineDecisionRule, defineProvider } from "./define.ts";
+export { cloudflare } from "./cloudflare.ts";
 export { openRouter } from "./openrouter.ts";
 export { createDecisionPlugin } from "./plugin.ts";
 export type {

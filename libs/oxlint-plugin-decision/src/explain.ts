@@ -26,7 +26,7 @@ import type {
   Question,
   Verdict,
 } from "./types.ts";
-import { wireRequestsFor } from "./wire.ts";
+import { wireRequestsFor, yesNoRequestsFor } from "./wire.ts";
 import type { WireRequest } from "./wire.ts";
 
 type ExplainFormat = Extract<ExplainSetting, string>;
@@ -64,6 +64,7 @@ interface ExplainPass {
   readonly cwd: string;
   readonly filename: string;
   readonly model: string;
+  readonly yesNo: boolean;
   readonly request: DecisionRequest;
   readonly durationMs: number;
 }
@@ -199,7 +200,10 @@ const printerFor =
   };
 
 const explaining = (pass: ExplainPass, mode: ExplainFormat): Explainer => {
-  const sent = wireRequestsFor(pass.request);
+  const sent = Bool.match(pass.yesNo, {
+    onTrue: () => yesNoRequestsFor(pass.request),
+    onFalse: () => wireRequestsFor(pass.request),
+  });
   const print = printerFor(mode);
   return {
     outcome: (match, at, { served, answers, cached, verdict, reported }) => {

@@ -189,6 +189,11 @@ const readonlyParameterAllow = [
     name: ["SpeechRecognition", "SpeechRecognitionEvent", "SpeechRecognitionResult"],
   },
   { from: "package" as const, package: "@modelcontextprotocol/server", name: "McpServer" },
+  {
+    from: "package" as const,
+    package: "@modelcontextprotocol/client",
+    name: ["CallToolResult", "Client", "ContentBlock"],
+  },
   { from: "package" as const, package: "discord.js", name: ["Client", "Guild"] },
   {
     from: "package" as const,
