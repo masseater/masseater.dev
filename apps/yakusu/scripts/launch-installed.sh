@@ -10,7 +10,7 @@ timeout_seconds=600
 
 case "$platform" in
   linux-x64)
-    sudo apt-get install -y "$installers"/*.deb xvfb imagemagick
+    sudo apt-get install -y "$installers"/deb/*.deb xvfb imagemagick
     export DISPLAY=:99
     Xvfb "$DISPLAY" -screen 0 1280x800x24 &
     sleep 2
@@ -21,7 +21,7 @@ case "$platform" in
     ;;
   macos-arm64)
     mount="$(mktemp -d)"
-    hdiutil attach "$installers"/*.dmg -nobrowse -readonly -mountpoint "$mount"
+    printf "Y\n" | hdiutil attach "$installers"/*.dmg -nobrowse -readonly -mountpoint "$mount" >/dev/null
     cp -R "$mount/yakusu.app" /Applications/
     hdiutil detach "$mount"
     spctl --assess --type execute -vv /Applications/yakusu.app >"$output/gatekeeper.txt" 2>&1 || true
