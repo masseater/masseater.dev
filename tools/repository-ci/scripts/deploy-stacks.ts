@@ -30,7 +30,7 @@ const Caches = Schema.Struct({
 });
 
 const Stacks = Schema.fromJsonString(
-  Schema.Array(Schema.Struct({ name: Schema.String, filters: Schema.String })),
+  Schema.Array(Schema.Struct({ name: Schema.String, filter: Schema.String })),
 );
 
 type Tasks = (typeof Plan.Type)["plan"];
@@ -39,7 +39,7 @@ type Packages = (typeof Workspace.Type)["packages"];
 
 type Labels = Readonly<Record<string, string>>;
 
-type Stack = Readonly<{ name: string; filters: string; directories: readonly string[] }>;
+type Stack = Readonly<{ name: string; filter: string; directories: readonly string[] }>;
 
 const dependenciesOf = (task: typeof Task.Type): readonly string[] => task.dependsOn ?? [];
 
@@ -96,9 +96,9 @@ const stacksOf = (tasks: Tasks): readonly Stack[] => {
       );
       return {
         name: pipe(roots, Arr.map(nameOf), Arr.join("+")),
-        filters: pipe(
+        filter: pipe(
           roots,
-          Arr.map((directory) => `--filter=./${directory}`),
+          Arr.map((directory) => `./${directory}`),
           Arr.join(" "),
         ),
         directories: pipe(members, Arr.flatMap(directoryOf)),
@@ -215,7 +215,7 @@ runMain("deploy-stacks")(
     const stacks = yield* Schema.encodeEffect(Stacks)(
       pipe(
         changed,
-        Arr.map(({ name, filters }) => ({ name, filters })),
+        Arr.map(({ name, filter }) => ({ name, filter })),
       ),
     );
     yield* writeOutputs({ stacks });

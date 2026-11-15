@@ -90,9 +90,9 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - run: vp run --log labeled $FILTERS deploy:production
+      - run: vp run --log labeled --filter "$FILTER" deploy:production
         env:
-          FILTERS: ${{ matrix.stack.filters }}
+          FILTER: ${{ matrix.stack.filter }}
       - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .github/workflows/deploy.yml
