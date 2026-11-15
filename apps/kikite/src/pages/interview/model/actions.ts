@@ -1,10 +1,9 @@
 import { Effect } from "effect";
 
 import { ask } from "./ask.ts";
-import { hearingAtom } from "./atoms.ts";
-import { heardFailure, heardInterim, heardSpeech } from "./heard.ts";
+import { assistWith } from "./assist.ts";
+import { heardFailure, heardInterim, heardSound, heardSpeech } from "./heard.ts";
 import { nudge } from "./nudge.ts";
-import { write } from "./registry.ts";
 import { runners } from "./runners.ts";
 import { summarize } from "./summarize.ts";
 import { typing } from "./typing.ts";
@@ -37,13 +36,14 @@ const actionsFor = Effect.gen(function* actionsFor() {
   const cancelDrafting = Effect.sync(() => {
     run.asking(Effect.void);
   });
+  const assist = assistWith(run);
   const actions: Actions = {
     wrapUp: () => {
       run.asking(wrapUp());
     },
     ask: askNow,
     summarize: () => {
-      run.summarizing(summarize(), { onlyIfMissing: true });
+      run.summarizing(Effect.andThen(summarize(), assist), { onlyIfMissing: true });
     },
     nudge: (level) => {
       run.events(nudge(level));
@@ -64,7 +64,7 @@ const actionsFor = Effect.gen(function* actionsFor() {
       run.events(heardFailure(message));
     },
     sound: (hearing) => {
-      run.events(write(hearingAtom, hearing));
+      run.events(heardSound(hearing));
     },
   };
   return actions;
