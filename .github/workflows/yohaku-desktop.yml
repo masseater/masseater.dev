@@ -25,7 +25,7 @@ env:
 
 jobs:
   tag:
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -90,7 +90,7 @@ jobs:
 
   release:
     needs: [tag, installer]
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: yohaku-release
     permissions:
