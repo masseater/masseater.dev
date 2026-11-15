@@ -9,7 +9,7 @@ export default defineConfig({
     },
   },
   pack: {
-    entry: ["src/index.ts"],
+    entry: ["src/app/index.ts"],
     platform: "neutral",
     sourcemap: true,
     dts: {

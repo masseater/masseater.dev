@@ -11,3 +11,4 @@ export { EntryToc } from "./ui/entry-toc";
 export { EntryList } from "./ui/entry-list";
 export { EntryMeta } from "./ui/entry-meta";
 export { entryTitleTransition } from "./ui/entry-transition";
+export { Frontmatter } from "./model/entry.ts";

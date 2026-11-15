@@ -15,7 +15,7 @@ import {
 import type { PlatformError } from "effect/PlatformError";
 import { parse, stringify } from "yaml";
 
-import { Frontmatter } from "#/entities/entry/model/entry.ts";
+import { Frontmatter } from "#/entities/entry/index.ts";
 import { entryDates } from "#vite-plugins/markdown/remark-git-date.ts";
 import type { Dates } from "#vite-plugins/markdown/remark-git-date.ts";
 

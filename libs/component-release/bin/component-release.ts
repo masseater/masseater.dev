@@ -3,8 +3,8 @@ import { runMain } from "@masseater.dev/node-main";
 import { Effect, Option } from "effect";
 import { Argument, Command } from "effect/cli";
 
-import { component } from "#/entities/component/model/manifest.ts";
-import { filesIn, publishRelease, uploadAssets } from "#/features/publish-release/model/release.ts";
+import { component } from "#/entities/component/index.ts";
+import { filesIn, publishRelease, uploadAssets } from "#/features/publish-release/index.ts";
 
 const command = Command.make(
   "component-release",

@@ -4,7 +4,7 @@ import { contentSecurityPolicy } from "security-headers";
 import { pageSlug, pageHashes } from "security-headers/static";
 import type { PageHeaders } from "security-headers/static";
 
-import { SEARCH_INDEX_ORIGIN } from "#/shared/config/search.ts";
+import { SEARCH_INDEX_ORIGIN } from "#/shared/config/index.ts";
 import { assetHeaders } from "#asset-headers";
 import { BASE_PATH } from "#base-path";
 

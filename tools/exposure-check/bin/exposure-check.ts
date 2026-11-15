@@ -4,7 +4,7 @@ import { runMain } from "@masseater.dev/node-main";
 import { Config, Effect, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 
-import { check } from "#/check.ts";
+import { check } from "#/app/check.ts";
 
 const services = Layer.mergeAll(CloudflareCredentials, GitHubCredentials).pipe(
   Layer.provideMerge(FetchHttpClient.layer),

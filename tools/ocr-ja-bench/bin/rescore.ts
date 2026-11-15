@@ -1,7 +1,7 @@
 import { NodeRuntime } from "@effect/platform-node";
 import { provideAtEntry } from "@ocr-decide/tooling";
 
-import { writeReport } from "#/report.ts";
-import { resultsLayer } from "#/results.ts";
+import { resultsLayer } from "#/entities/bench/index.ts";
+import { writeReport } from "#/features/report-bench/index.ts";
 
 NodeRuntime.runMain(writeReport.pipe(provideAtEntry(resultsLayer)));

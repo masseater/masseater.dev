@@ -5,8 +5,8 @@ import { Argument, Command, Flag } from "effect/cli";
 import { FetchHttpClient } from "effect/http";
 import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
-import { summarize } from "#/entities/web-vitals/model/metrics.ts";
-import { measureFlow } from "#/features/measure-flow/model/flow.ts";
+import { summarize } from "#/entities/web-vitals/index.ts";
+import { measureFlow } from "#/features/measure-flow/index.ts";
 import { nodeServicesLayer } from "#/shared/lib/node-services.ts";
 
 const MINIMUM_URLS = 1;

@@ -3,10 +3,10 @@ import { Effect, Layer, Record, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 import { FetchHttpClient } from "effect/http";
 
-import { CONDITIONS, libraryAssets } from "#/entities/condition/model/conditions.ts";
-import { readLibrary, readQueries } from "#/entities/fixture/model/fixtures.ts";
-import { evaluate } from "#/features/evaluate-search/model/evaluate.ts";
-import { printComparison, writeReport } from "#/features/report-scores/model/report.ts";
+import { CONDITIONS, libraryAssets } from "#/entities/condition/index.ts";
+import { readLibrary, readQueries } from "#/entities/fixture/index.ts";
+import { evaluate } from "#/features/evaluate-search/index.ts";
+import { printComparison, writeReport } from "#/features/report-scores/index.ts";
 
 const evaluateAll = Effect.gen(function* evaluateAll() {
   const library = yield* readLibrary;

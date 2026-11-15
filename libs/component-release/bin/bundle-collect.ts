@@ -12,7 +12,7 @@ import {
 } from "effect";
 import { Argument, Command } from "effect/cli";
 
-import { repositoryRoot } from "#/entities/component/model/manifest.ts";
+import { repositoryRoot } from "#/entities/component/index.ts";
 
 const ASSETS = "release-assets";
 const AT_LEAST_ONE = 1;

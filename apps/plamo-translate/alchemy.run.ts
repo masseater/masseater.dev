@@ -4,8 +4,8 @@ import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-provi
 import { Stack } from "alchemy";
 import { Effect } from "effect";
 
-import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
-import { HOST, MODEL_IMAGE } from "./config.ts";
+import { APP_NAME, PREFIX, requireAppPrefix } from "./src/shared/config/app-name.ts";
+import { HOST, MODEL_IMAGE } from "./src/shared/config/plamo.ts";
 
 const PlamoImage = Containers.Container(MODEL_IMAGE, {
   schedulingPolicy: "durable_object",
@@ -24,7 +24,7 @@ export default Stack(
     });
     const { url } = yield* Workers.Worker("Translate", {
       name: `${PREFIX}worker`,
-      main: "./translator.worker.ts",
+      main: "./src/app/translator.worker.ts",
       logpush: true,
       domain: HOST,
       workersDev: false,

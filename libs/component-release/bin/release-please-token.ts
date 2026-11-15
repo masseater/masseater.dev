@@ -4,9 +4,9 @@ import { Effect, Layer, Option } from "effect";
 import { Argument, Command } from "effect/cli";
 import { FetchHttpClient } from "effect/http";
 
-import { component } from "#/entities/component/model/manifest.ts";
-import { releasedOnMain } from "#/features/publish-release/model/release.ts";
-import { githubToken } from "#/shared/api/broker.ts";
+import { component } from "#/entities/component/index.ts";
+import { releasedOnMain } from "#/features/publish-release/index.ts";
+import { githubToken } from "#/shared/api/index.ts";
 import { setOutput } from "#/shared/lib/actions.ts";
 
 const command = Command.make(
