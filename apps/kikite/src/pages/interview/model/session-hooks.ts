@@ -13,8 +13,7 @@ export const useRunSession = (): void => {
   useAtomMount(sessionAtom);
 };
 
-export const useSession = (): Option.Option<Session> =>
-  AsyncResult.value(useAtomValue(sessionAtom));
+const useSession = (): Option.Option<Session> => AsyncResult.value(useAtomValue(sessionAtom));
 
 export const useWrapUp = (): (() => void) => {
   const session = useSession();
