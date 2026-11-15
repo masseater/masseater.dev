@@ -28,7 +28,7 @@ const COLUMNS: readonly TableColumn<ModelResult>[] = [
   },
 ];
 
-const IndexTable = ({ models }: Readonly<{ models: readonly ModelResult[] }>): ReactNode => (
+export const IndexTable = ({ models }: Readonly<{ models: readonly ModelResult[] }>): ReactNode => (
   <SortableTable
     id="index"
     caption={CAPTION}
@@ -40,5 +40,3 @@ const IndexTable = ({ models }: Readonly<{ models: readonly ModelResult[] }>): R
     columns={COLUMNS}
   />
 );
-
-export { IndexTable };

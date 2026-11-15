@@ -21,9 +21,9 @@ const common = {
   split: Schema.Literals(["test", "hard"]),
 };
 
-const NOUL_CRITERIA = { true: "はい", false: "いいえ" };
+export const NOUL_CRITERIA = { true: "はい", false: "いいえ" };
 
-const NOUL_THRESHOLD = 0.5;
+export const NOUL_THRESHOLD = 0.5;
 
 const ChoiceItemSchema = Schema.Struct({
   ...common,
@@ -46,19 +46,19 @@ const ScoreItemSchema = Schema.Struct({
   gold: Schema.Finite,
 });
 
-const ItemSchema = Schema.Union([ChoiceItemSchema, NoulItemSchema, ScoreItemSchema]);
+export const ItemSchema = Schema.Union([ChoiceItemSchema, NoulItemSchema, ScoreItemSchema]);
 
-type Item = typeof ItemSchema.Type;
-type Question = Item extends infer Each
+export type Item = typeof ItemSchema.Type;
+export type Question = Item extends infer Each
   ? Each extends Item
     ? Pick<Each, "type" | "text" | "criteria" | "options">
     : never
   : never;
-type ChoiceItem = typeof ChoiceItemSchema.Type;
-type NoulItem = typeof NoulItemSchema.Type;
-type ScoreItem = typeof ScoreItemSchema.Type;
+export type ChoiceItem = typeof ChoiceItemSchema.Type;
+export type NoulItem = typeof NoulItemSchema.Type;
+export type ScoreItem = typeof ScoreItemSchema.Type;
 
-type Decision = DecisionsChoiceAnswer | DecisionsNoulAnswer | DecisionsScoreAnswer;
+export type Decision = DecisionsChoiceAnswer | DecisionsNoulAnswer | DecisionsScoreAnswer;
 
 const ANSWER_SCHEMAS = [
   DecisionsChoiceAnswer$inboundSchema,
@@ -72,9 +72,9 @@ const isDecision = (input: unknown): input is Decision =>
     Arr.some((schema) => schema.safeParse(input).success),
   );
 
-const DecisionSchema = Schema.declare(isDecision);
+export const DecisionSchema = Schema.declare(isDecision);
 
-const OutcomeSchema = Schema.Union([
+export const OutcomeSchema = Schema.Union([
   Schema.Struct({
     status: Schema.Literal("answered"),
     decision: DecisionSchema,
@@ -88,12 +88,9 @@ const OutcomeSchema = Schema.Union([
   }),
 ]);
 
-type Outcome = typeof OutcomeSchema.Type;
+export type Outcome = typeof OutcomeSchema.Type;
 
-interface Scored {
+export interface Scored {
   readonly item: Item;
   readonly outcome: Outcome;
 }
-
-export { DecisionSchema, ItemSchema, NOUL_CRITERIA, NOUL_THRESHOLD, OutcomeSchema };
-export type { ChoiceItem, Decision, Item, NoulItem, Outcome, Question, Scored, ScoreItem };

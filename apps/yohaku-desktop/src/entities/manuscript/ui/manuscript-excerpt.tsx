@@ -2,7 +2,7 @@ import type { Manuscript } from "@masseater.dev/yohaku-protocol";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-const ManuscriptExcerpt = ({
+export const ManuscriptExcerpt = ({
   manuscript,
 }: Readonly<{ manuscript: typeof Manuscript.Type }>): ReactNode => {
   if (Option.isNone(Option.fromNullishOr(manuscript.title))) {
@@ -12,5 +12,3 @@ const ManuscriptExcerpt = ({
     <span className="text-muted-foreground truncate font-serif text-sm">{manuscript.excerpt}</span>
   );
 };
-
-export { ManuscriptExcerpt };

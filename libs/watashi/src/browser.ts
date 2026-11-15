@@ -13,7 +13,8 @@ const launchOf = (url: string): Launch => {
   return ["xdg-open", [url]];
 };
 
-const openBrowser = (
+/** @internal */
+export const openBrowser = (
   url: string,
 ): Effect.Effect<void, never, ChildProcessSpawner.ChildProcessSpawner> =>
   Effect.gen(function* launch() {
@@ -21,6 +22,3 @@ const openBrowser = (
     const [file, args] = launchOf(url);
     yield* spawner.exitCode(ChildProcess.make(file, args, { stdin: "ignore" }));
   }).pipe(Effect.ignore);
-
-/** @internal */
-export { openBrowser };

@@ -18,7 +18,7 @@ const SINGLE = 1;
 const QUAD_VERTICES = 6;
 const HOVER_LIGHT = 0.95;
 
-type Color = readonly [number, number, number, number];
+export type Color = readonly [number, number, number, number];
 
 interface Draw {
   readonly pipeline: GPURenderPipeline;
@@ -29,12 +29,12 @@ interface Draw {
   readonly instances: number;
 }
 
-interface GpuFrame extends Source {
+export interface GpuFrame extends Source {
   readonly now: number;
   readonly number: number;
 }
 
-interface Bound {
+export interface Bound {
   readonly gpu: Gpu;
   readonly pipelines: Pipelines;
   readonly textures: Textures;
@@ -119,7 +119,7 @@ const outlineDraw =
     instances: SINGLE,
   });
 
-const isIntro = ({ scene, now }: Readonly<{ scene: Scene; now: number }>): boolean =>
+export const isIntro = ({ scene, now }: Readonly<{ scene: Scene; now: number }>): boolean =>
   now < scene.reveal + INTRO_MS;
 
 const mosaicDraws = (bound: Bound, frame: GpuFrame): readonly Draw[] => {
@@ -170,13 +170,13 @@ const encode = (bound: Bound, draws: readonly Draw[]): void => {
   device.queue.submit([encoder.finish()]);
 };
 
-const drawGpuFrame = ({ bound, frame }: Readonly<{ bound: Bound; frame: GpuFrame }>): void => {
+export const drawGpuFrame = ({
+  bound,
+  frame,
+}: Readonly<{ bound: Bound; frame: GpuFrame }>): void => {
   const draws = drawsOf(bound, frame);
   writeFrame(bound, frame);
   writeDraws(bound, draws);
   encode(bound, draws);
   bound.textures.sweep(frame.number);
 };
-
-export type { Bound, Color, GpuFrame };
-export { drawGpuFrame, isIntro };

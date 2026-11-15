@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-const NoteList = ({
+export const NoteList = ({
   items,
   empty,
 }: Readonly<{ items: readonly string[]; empty: string }>): ReactNode => {
@@ -21,5 +21,3 @@ const NoteList = ({
     </ul>
   );
 };
-
-export { NoteList };

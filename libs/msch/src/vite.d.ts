@@ -1,33 +1,33 @@
 import type { OxlintOverride } from "vite-plus/lint";
 
-type InstallSize = `${number} ${"B" | "kB" | "MB"}`;
+export type InstallSize = `${number} ${"B" | "kB" | "MB"}`;
 
-interface PublishSettings {
+export interface PublishSettings {
   readonly installSize: InstallSize;
 }
 
-interface WorkspaceLintOverride {
+export interface WorkspaceLintOverride {
   readonly files: readonly string[];
   readonly excludeFiles?: readonly string[];
   readonly rules?: OxlintOverride["rules"];
   readonly use?: readonly string[];
 }
 
-interface WorkspaceLintSettings {
+export interface WorkspaceLintSettings {
   readonly ignorePatterns?: readonly string[];
   readonly overrides?: readonly WorkspaceLintOverride[];
 }
 
-interface DevDependencyAllowance {
+export interface DevDependencyAllowance {
   readonly use?: readonly string[];
   readonly dependencies?: readonly string[];
 }
 
-interface CommentSettings {
+export interface CommentSettings {
   readonly allow: readonly string[];
 }
 
-interface MschConfig {
+export interface MschConfig {
   readonly comments?: CommentSettings;
   readonly publish?: PublishSettings;
   readonly lint?: WorkspaceLintSettings;
@@ -40,13 +40,3 @@ declare module "vite" {
     readonly msch?: MschConfig;
   }
 }
-
-export type {
-  CommentSettings,
-  DevDependencyAllowance,
-  InstallSize,
-  MschConfig,
-  PublishSettings,
-  WorkspaceLintOverride,
-  WorkspaceLintSettings,
-};

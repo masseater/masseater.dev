@@ -2,17 +2,17 @@ import { DateTime, Effect, Option, Result, String as Str, pipe } from "effect";
 
 const PRECISIONS = ["day", "month", "year"] as const;
 
-type Precision = (typeof PRECISIONS)[number];
+export type Precision = (typeof PRECISIONS)[number];
 
-type TimeValue =
+export type TimeValue =
   | Readonly<{ kind: "instant"; utc: string; assumedZone: boolean }>
   | Readonly<{ kind: "date"; date: string; precision: Precision }>;
 
-type TimeOut =
+export type TimeOut =
   | Readonly<{ utc: string; jst: string }>
   | Readonly<{ date: string; precision: Precision }>;
 
-type DayRange = Readonly<{ start: string; end: string }>;
+export type DayRange = Readonly<{ start: string; end: string }>;
 
 const MILLIS_PER_HOUR = 3_600_000;
 
@@ -69,7 +69,7 @@ const precisionOf = (date: string): Precision => {
 
 const isDate = (input: string): boolean => YEAR.test(input) || MONTH.test(input) || DAY.test(input);
 
-const parseTime = (input: string): Result.Result<TimeValue, string> => {
+export const parseTime = (input: string): Result.Result<TimeValue, string> => {
   if (isDate(input)) {
     return Result.succeed({ kind: "date", date: input, precision: precisionOf(input) });
   }
@@ -82,7 +82,7 @@ const parseTime = (input: string): Result.Result<TimeValue, string> => {
   return parseInstant(`${input}${JST_SUFFIX}`, true);
 };
 
-const storedOf = (value: TimeValue): string => {
+export const storedOf = (value: TimeValue): string => {
   if (value.kind === "instant") {
     return value.utc;
   }
@@ -104,7 +104,7 @@ const jstIso = (utc: string): string =>
     Option.getOrElse(() => utc),
   );
 
-const jstDayOf = (utc: string): string =>
+export const jstDayOf = (utc: string): string =>
   pipe(
     inJst(utc),
     Option.map(DateTime.formatIsoDate),
@@ -113,7 +113,7 @@ const jstDayOf = (utc: string): string =>
 
 const isInstant = (stored: string): boolean => pipe(stored, Str.includes("T"));
 
-const timeOut = (stored: string): TimeOut => {
+export const timeOut = (stored: string): TimeOut => {
   if (isInstant(stored)) {
     return { utc: stored, jst: jstIso(stored) };
   }
@@ -134,7 +134,7 @@ const lastDayOfMonth = (month: string): string =>
     Option.getOrElse(() => `${month}-${LAST_DAY}`),
   );
 
-const dayRangeOf = (stored: string): DayRange => {
+export const dayRangeOf = (stored: string): DayRange => {
   if (isInstant(stored)) {
     const day = jstDayOf(stored);
     return { start: day, end: day };
@@ -152,11 +152,11 @@ const dayRangeOf = (stored: string): DayRange => {
   return { start: stored, end: stored };
 };
 
-const todayJst: Effect.Effect<string> = DateTime.now.pipe(
+export const todayJst: Effect.Effect<string> = DateTime.now.pipe(
   Effect.map((now) => jstDayOf(DateTime.formatIso(now))),
 );
 
-const dayBound =
+export const dayBound =
   (edge: keyof DayRange) =>
   (input: string | undefined): Option.Option<string> =>
     pipe(
@@ -165,8 +165,5 @@ const dayBound =
       Option.map((time) => dayRangeOf(storedOf(time))[edge]),
     );
 
-const isDayPrecise = (stored: string): boolean =>
+export const isDayPrecise = (stored: string): boolean =>
   isInstant(stored) || precisionOf(stored) === "day";
-
-export { dayBound, dayRangeOf, isDayPrecise, jstDayOf, parseTime, storedOf, timeOut, todayJst };
-export type { DayRange, Precision, TimeOut, TimeValue };

@@ -50,7 +50,7 @@ const entryFilesOf =
     );
   };
 
-const publicEntryFiles = Effect.fn("publicEntryFiles")(function* publicEntryFiles(
+export const publicEntryFiles = Effect.fn("publicEntryFiles")(function* publicEntryFiles(
   root: string,
   directory: string,
   config: Option.Option<unknown>,
@@ -70,5 +70,3 @@ const publicEntryFiles = Effect.fn("publicEntryFiles")(function* publicEntryFile
     Option.getOrElse((): readonly string[] => []),
   );
 });
-
-export { publicEntryFiles };

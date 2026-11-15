@@ -11,7 +11,7 @@ import { rankingRoutes } from "./ranking-routes.server";
 import { search } from "./search.server";
 import { getStats } from "./stats.server";
 
-const catalogRoutes = createRouter("/api/catalog")
+export const catalogRoutes = createRouter("/api/catalog")
   .get("/stats", () => runRequest(getStats))
   .get("/search", ({ query }) => runRequest(search(query.keyword)), {
     query: Schema.toStandardSchemaV1(TextSearch),
@@ -21,7 +21,4 @@ const catalogRoutes = createRouter("/api/catalog")
   .use(personRoutes)
   .use(rankingRoutes);
 
-type CatalogRoutes = typeof catalogRoutes;
-
-export type { CatalogRoutes };
-export { catalogRoutes };
+export type CatalogRoutes = typeof catalogRoutes;

@@ -8,7 +8,7 @@ import { ConsolePanel } from "./console-panel";
 import { GeneratedPanel } from "./generated-panel";
 import { SourcePanel } from "./source-panel";
 
-const Playground = (): ReactNode => {
+export const Playground = (): ReactNode => {
   const report = useReport();
   const mount = useCallback(
     (container: HTMLElement) => mountPlayground({ container, report }),
@@ -24,5 +24,3 @@ const Playground = (): ReactNode => {
     </section>
   );
 };
-
-export { Playground };

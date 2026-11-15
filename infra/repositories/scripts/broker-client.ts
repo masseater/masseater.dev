@@ -42,9 +42,7 @@ const issuedBy = Effect.fn("issuedBy")(function* issuedBy(
 });
 
 /** @internal */
-const brokerIdToken = idToken;
+export const brokerIdToken = idToken;
 
 /** @internal */
-const issued = issuedBy;
-
-export { brokerIdToken, issued };
+export const issued = issuedBy;

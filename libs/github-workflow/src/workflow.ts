@@ -18,10 +18,10 @@ type Appended = Effect.Effect<
 
 const taggedError = Schema.TaggedError;
 
-class WorkflowFailed extends taggedError<WorkflowFailed, { readonly brand: unique symbol }>()(
-  "WorkflowFailed",
-  { message: Schema.String },
-) {}
+export class WorkflowFailed extends taggedError<
+  WorkflowFailed,
+  { readonly brand: unique symbol }
+>()("WorkflowFailed", { message: Schema.String }) {}
 
 const appendTo = (variable: string, entries: Readonly<Record<string, string>>): Appended =>
   Effect.gen(function* appended() {
@@ -42,18 +42,16 @@ const envOf = (variables: Readonly<Record<string, string>>): Appended =>
   appendTo("GITHUB_ENV", variables);
 
 /** @internal */
-const writeOutputs = outputsOf;
+export const writeOutputs = outputsOf;
 
 /** @internal */
-const setEnv = envOf;
+export const setEnv = envOf;
 
-const warn = (message: string): Effect.Effect<void> => Console.log(`::warning::${message}`);
+export const warn = (message: string): Effect.Effect<void> => Console.log(`::warning::${message}`);
 
-const mask = (value: string): Effect.Effect<void> => Console.log(`::add-mask::${value}`);
+export const mask = (value: string): Effect.Effect<void> => Console.log(`::add-mask::${value}`);
 
-const fail = Effect.fn("fail")(function* fail(message: string) {
+export const fail = Effect.fn("fail")(function* fail(message: string) {
   yield* Console.log(`::error::${message}`);
   return yield* WorkflowFailed.make({ message });
 });
-
-export { WorkflowFailed, fail, mask, setEnv, warn, writeOutputs };

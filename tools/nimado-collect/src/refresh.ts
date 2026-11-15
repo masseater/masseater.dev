@@ -11,7 +11,7 @@ const TODAY = 0;
 
 type Batch = Readonly<{ ids: readonly string[]; views: Readonly<Record<string, number>> }>;
 
-const videosOf = ({
+export const videosOf = ({
   catalog,
   pick,
 }: Readonly<{
@@ -51,7 +51,10 @@ const batchesOf = <Failure, Services>({
 };
 
 /** @internal */
-const refresh = Effect.fn("views.refresh")(function* refreshViews<FetchFailure, FetchServices>({
+export const refresh = Effect.fn("views.refresh")(function* refreshViews<
+  FetchFailure,
+  FetchServices,
+>({
   state,
   file,
   ids,
@@ -90,5 +93,3 @@ const refresh = Effect.fn("views.refresh")(function* refreshViews<FetchFailure, 
     }),
   });
 });
-
-export { refresh, videosOf };

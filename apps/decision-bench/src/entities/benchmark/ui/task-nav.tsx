@@ -9,7 +9,7 @@ const LINK_CLASS = "text-muted-foreground hover:text-foreground";
 const ACTIVE_PROPS = { className: "text-foreground font-semibold" } as const;
 const EXACT = { exact: true } as const;
 
-const TaskNav = (): ReactNode => (
+export const TaskNav = (): ReactNode => (
   <nav aria-label="ページ" className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
     <Link to="/" activeOptions={EXACT} className={LINK_CLASS} activeProps={ACTIVE_PROPS}>
       {OVERVIEW}
@@ -30,5 +30,3 @@ const TaskNav = (): ReactNode => (
     )}
   </nav>
 );
-
-export { TaskNav };

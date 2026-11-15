@@ -111,6 +111,4 @@ const TOOLS = [
   }),
 ];
 
-const registerLedgerTools = registerAll(TOOLS);
-
-export { registerLedgerTools };
+export const registerLedgerTools = registerAll(TOOLS);

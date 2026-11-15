@@ -3,7 +3,7 @@ import { Effect, FileSystem, Option, pipe } from "effect";
 const UNKNOWN_TIME = 0;
 
 /** @internal */
-const statOf = Effect.fn("statOf")(function* statFile(file: string) {
+export const statOf = Effect.fn("statOf")(function* statFile(file: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const info = yield* fileSystem.stat(file);
   return {
@@ -15,5 +15,3 @@ const statOf = Effect.fn("statOf")(function* statFile(file: string) {
     ),
   };
 });
-
-export { statOf };

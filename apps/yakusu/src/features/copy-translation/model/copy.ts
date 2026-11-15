@@ -2,7 +2,7 @@ import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Duration, Effect } from "effect";
 import { Atom } from "effect/reactivity";
 
-type Copy = "idle" | "copied";
+export type Copy = "idle" | "copied";
 
 const COPIED_FOR = Duration.fromInputUnsafe("1500 millis");
 
@@ -17,9 +17,6 @@ const copyAtom = Atom.fn<string>()((text, get) =>
   }),
 );
 
-const useCopy = (): Copy => useAtomValue(copiedAtom);
+export const useCopy = (): Copy => useAtomValue(copiedAtom);
 
-const useCopyText = (): ((text: string) => void) => useAtomSet(copyAtom);
-
-export { useCopy, useCopyText };
-export type { Copy };
+export const useCopyText = (): ((text: string) => void) => useAtomSet(copyAtom);

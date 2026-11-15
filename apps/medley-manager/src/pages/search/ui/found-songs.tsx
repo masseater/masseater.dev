@@ -6,7 +6,7 @@ import { SectionHeading } from "#/shared/ui/section-heading";
 
 import { SongPill } from "./song-pill";
 
-const FoundSongs = (): ReactNode => {
+export const FoundSongs = (): ReactNode => {
   const { songs } = useSearchResults();
   return (
     <section className="flex flex-col gap-4">
@@ -20,5 +20,3 @@ const FoundSongs = (): ReactNode => {
     </section>
   );
 };
-
-export { FoundSongs };

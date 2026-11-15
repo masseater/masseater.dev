@@ -41,7 +41,7 @@ const toFeed = (entries: readonly Entry[]): string => {
   return feed.rss2();
 };
 
-const feedResponse = (): Promise<Response> =>
+export const feedResponse = (): Promise<Response> =>
   run(
     allEntries.pipe(
       Effect.map(
@@ -52,5 +52,3 @@ const feedResponse = (): Promise<Response> =>
       ),
     ),
   );
-
-export { feedResponse };

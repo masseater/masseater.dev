@@ -9,7 +9,7 @@ import { useYohaku } from "#/shared/api";
 const GUIDE = "https://code.claude.com/docs/ja/quickstart";
 const LABEL = "Claude Code を入れる";
 
-const InstallButton = (): ReactNode => {
+export const InstallButton = (): ReactNode => {
   const yohaku = useYohaku();
   const onClick = useCallback(() => {
     Effect.runFork(yohaku.openExternal(GUIDE));
@@ -21,5 +21,3 @@ const InstallButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { InstallButton };

@@ -13,7 +13,7 @@ import { Rejected } from "./rejected.ts";
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 const runLogged = runner(logger);
 
-class Player extends DurableObject {
+export class Player extends DurableObject {
   public setToken(token: string): Promise<void> {
     return runLogged(storeToken(this.ctx.storage, token));
   }
@@ -121,5 +121,4 @@ const worker = {
   scheduled: (): Promise<void> => runLogged(schedule()),
 };
 
-export { Player };
 export default worker;

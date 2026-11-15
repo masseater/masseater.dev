@@ -9,8 +9,6 @@ const PDF_BASE64 =
 
 const bytesOf = (base64: string): Uint8Array => Result.getOrThrow(decode(base64));
 
-const SCANNED_PNG = bytesOf(PNG_BASE64);
+export const SCANNED_PNG = bytesOf(PNG_BASE64);
 
-const SCANNED_PDF = bytesOf(PDF_BASE64);
-
-export { SCANNED_PDF, SCANNED_PNG };
+export const SCANNED_PDF = bytesOf(PDF_BASE64);

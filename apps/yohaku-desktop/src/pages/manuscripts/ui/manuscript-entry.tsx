@@ -5,7 +5,7 @@ import { ManuscriptRow } from "#/entities/manuscript";
 import { ExportButton } from "#/features/export-manuscript";
 import { HistoryButton, RevisionList, useHistoryShown } from "#/features/manuscript-history";
 
-const ManuscriptEntry = ({
+export const ManuscriptEntry = ({
   manuscript,
 }: Readonly<{ manuscript: typeof Manuscript.Type }>): ReactNode => {
   const [history, toggleHistory] = useHistoryShown(manuscript.id);
@@ -19,5 +19,3 @@ const ManuscriptEntry = ({
     </li>
   );
 };
-
-export { ManuscriptEntry };

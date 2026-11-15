@@ -20,7 +20,7 @@ const PARAMS = pipe(
   Record.map((_meta, category) => ({ category })),
 );
 
-const SectionLink = ({
+export const SectionLink = ({
   direction,
   section,
 }: Readonly<{ direction: Direction; section: Section }>): ReactNode => (
@@ -35,5 +35,3 @@ const SectionLink = ({
     </Link>
   </li>
 );
-
-export { SectionLink };

@@ -1,10 +1,10 @@
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
-type Column = "left" | "right";
+export type Column = "left" | "right";
 
-type Stage = Readonly<{ id: string; label: string; rows: number }>;
+export type Stage = Readonly<{ id: string; label: string; rows: number }>;
 
-type CascadeNode = Readonly<{
+export type CascadeNode = Readonly<{
   id: string;
   label: string;
   detail: string;
@@ -13,18 +13,18 @@ type CascadeNode = Readonly<{
   row: number;
 }>;
 
-type CascadeLink = Readonly<{ source: string; target: string; label: string }>;
+export type CascadeLink = Readonly<{ source: string; target: string; label: string }>;
 
-type LinkDirection = "down" | "across" | "down-across";
+export type LinkDirection = "down" | "across" | "down-across";
 
-type StopDelays = Readonly<Record<string, number>>;
+export type StopDelays = Readonly<Record<string, number>>;
 
-type CascadeState =
+export type CascadeState =
   | Readonly<{ status: "running" }>
   | Readonly<{ status: "playing"; round: number }>
   | Readonly<{ status: "stopped"; origin: string; round: number }>;
 
-const RUNNING: CascadeState = { status: "running" };
+export const RUNNING: CascadeState = { status: "running" };
 
 const FIRST_ROUND = 1;
 
@@ -38,14 +38,14 @@ const STAGE_GAP = 1400;
 
 const HOP_GAP = 600;
 
-const stages: readonly Stage[] = [
+export const stages: readonly Stage[] = [
   { id: "own", label: "当事者の店", rows: 2 },
   { id: "partner", label: "取引先", rows: 2 },
   { id: "competitor", label: "取引のない競合", rows: 1 },
   { id: "world", label: "世界中", rows: 3 },
 ];
 
-const cascadeNodes: readonly CascadeNode[] = [
+export const cascadeNodes: readonly CascadeNode[] = [
   { id: "allnet", label: "ALL.Net", detail: "2026年11月", stage: "own", column: "left", row: 0 },
   {
     id: "arcade",
@@ -132,7 +132,7 @@ const cascadeNodes: readonly CascadeNode[] = [
   },
 ];
 
-const cascadeLinks: readonly CascadeLink[] = [
+export const cascadeLinks: readonly CascadeLink[] = [
   { source: "allnet", target: "arcade", label: "オンライン" },
   { source: "nichirei", target: "kfc", label: "食品物流" },
   { source: "askul", target: "muji", label: "物流の委託" },
@@ -159,7 +159,7 @@ const nodeOf = (id: string): Option.Option<CascadeNode> =>
     Arr.findFirst((node) => node.id === id),
   );
 
-const linkDirection = (link: CascadeLink): LinkDirection =>
+export const linkDirection = (link: CascadeLink): LinkDirection =>
   pipe(
     Option.all([nodeOf(link.source), nodeOf(link.target)]),
     Option.map(([source, target]) => directionOf(source, target)),
@@ -219,7 +219,7 @@ const originDelays = (origin: string): StopDelays =>
     Rec.fromEntries,
   );
 
-const stopDelays = (state: CascadeState): StopDelays => {
+export const stopDelays = (state: CascadeState): StopDelays => {
   if (state.status === "running") {
     return {};
   }
@@ -229,14 +229,14 @@ const stopDelays = (state: CascadeState): StopDelays => {
   return originDelays(state.origin);
 };
 
-const roundOf = (state: CascadeState): number => {
+export const roundOf = (state: CascadeState): number => {
   if (state.status === "running") {
     return ORIGIN_DEPTH;
   }
   return state.round;
 };
 
-const clicked =
+export const clicked =
   (id: string) =>
   (state: CascadeState): CascadeState => {
     if (Rec.has(stopDelays(state), id)) {
@@ -245,28 +245,14 @@ const clicked =
     return { status: "stopped", origin: id, round: roundOf(state) + NEXT };
   };
 
-const started = (state: CascadeState): CascadeState => {
+export const started = (state: CascadeState): CascadeState => {
   if (state.status === "running") {
     return { status: "playing", round: FIRST_ROUND };
   }
   return state;
 };
 
-const replayed = (state: CascadeState): CascadeState => ({
+export const replayed = (state: CascadeState): CascadeState => ({
   status: "playing",
   round: roundOf(state) + NEXT,
 });
-
-export type { CascadeLink, CascadeNode, CascadeState, Column, LinkDirection, Stage, StopDelays };
-export {
-  RUNNING,
-  cascadeLinks,
-  cascadeNodes,
-  clicked,
-  linkDirection,
-  replayed,
-  roundOf,
-  stages,
-  started,
-  stopDelays,
-};

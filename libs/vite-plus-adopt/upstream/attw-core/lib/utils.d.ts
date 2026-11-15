@@ -11,7 +11,7 @@ export declare function groupProblemsByKind<K extends ProblemKind>(problems: (Pr
 })[]): Partial<Record<K, (Problem & {
     kind: K;
 })[]>>;
-export type { ParsedPackageSpec };
+export type { ParsedPackageSpec } from "./types.js";
 export declare function parsePackageSpec(input: string): Failable<ParsedPackageSpec>;
 export declare const allBuildTools: BuildTool[];
 //# sourceMappingURL=utils.d.ts.map

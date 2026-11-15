@@ -1,5 +1,3 @@
 import type { Button } from "@masseater.dev/ui/button";
 
-type ButtonComponent = typeof Button;
-
-export type { ButtonComponent };
+export type ButtonComponent = typeof Button;

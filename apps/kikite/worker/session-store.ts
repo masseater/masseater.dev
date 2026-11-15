@@ -6,13 +6,13 @@ import { Array as Arr, Effect, Option } from "effect";
 import { sessions } from "./sessions.table.ts";
 import { StoreFailed } from "./store-failed.ts";
 
-type StoredSession = typeof sessions.$inferInsert;
+export type StoredSession = typeof sessions.$inferInsert;
 
 const failed = (cause: unknown): StoreFailed => StoreFailed.make({ message: String(cause) });
 
 const db = drizzle(env.SESSIONS);
 
-const listSessions = Effect.tryPromise({
+export const listSessions = Effect.tryPromise({
   try: () =>
     db
       .select({
@@ -29,7 +29,7 @@ const listSessions = Effect.tryPromise({
 
 const MEMORY_SESSIONS = 20;
 
-const allRecords = Effect.tryPromise({
+export const allRecords = Effect.tryPromise({
   try: () =>
     db
       .select({ id: sessions.id, record: sessions.record })
@@ -38,7 +38,7 @@ const allRecords = Effect.tryPromise({
   catch: failed,
 });
 
-const recentRecords = Effect.tryPromise({
+export const recentRecords = Effect.tryPromise({
   try: () =>
     db
       .select({ record: sessions.record })
@@ -48,13 +48,13 @@ const recentRecords = Effect.tryPromise({
   catch: failed,
 }).pipe(Effect.map(Arr.map(({ record }) => record)));
 
-const readSession = (id: string): Effect.Effect<Option.Option<string>, StoreFailed> =>
+export const readSession = (id: string): Effect.Effect<Option.Option<string>, StoreFailed> =>
   Effect.tryPromise({
     try: () => db.select({ record: sessions.record }).from(sessions).where(eq(sessions.id, id)),
     catch: failed,
   }).pipe(Effect.map((rows) => Option.map(Arr.head(rows), ({ record }) => record)));
 
-const storeSession = (session: StoredSession): Effect.Effect<void, StoreFailed> =>
+export const storeSession = (session: StoredSession): Effect.Effect<void, StoreFailed> =>
   Effect.tryPromise({
     try: () =>
       db
@@ -71,6 +71,3 @@ const storeSession = (session: StoredSession): Effect.Effect<void, StoreFailed> 
         }),
     catch: failed,
   }).pipe(Effect.asVoid);
-
-export { allRecords, listSessions, readSession, recentRecords, storeSession };
-export type { StoredSession };

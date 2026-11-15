@@ -1,7 +1,7 @@
 import { cn } from "@masseater.dev/web-ui";
 import type { ComponentProps, ReactNode } from "react";
 
-const Table = ({ className, ...props }: ComponentProps<"table">): ReactNode => (
+export const Table = ({ className, ...props }: ComponentProps<"table">): ReactNode => (
   <div data-slot="table-container" className="relative w-full overflow-x-auto">
     <table
       data-slot="table"
@@ -10,5 +10,3 @@ const Table = ({ className, ...props }: ComponentProps<"table">): ReactNode => (
     />
   </div>
 );
-
-export { Table };

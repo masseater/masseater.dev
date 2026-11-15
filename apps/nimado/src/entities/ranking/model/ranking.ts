@@ -3,11 +3,11 @@ import { Array as Arr, Option, Order, Record, String as Str, pipe } from "effect
 
 import type { KindValue, SortValue } from "./search";
 
-type Row = typeof TableRow.Type;
-type Day = typeof DayViews.Type;
-type Counts = Readonly<Record<string, number>>;
+export type Row = typeof TableRow.Type;
+export type Day = typeof DayViews.Type;
+export type Counts = Readonly<Record<string, number>>;
 
-type Ranked = Readonly<{
+export type Ranked = Readonly<{
   id: number;
   name: string;
   artist: string;
@@ -31,7 +31,7 @@ const songOf = ([id, name, artist, type, published, nico, youtube]: Row): Ranked
   gap: Option.zipWith(youtube, nico, (left, right) => left - right),
 });
 
-const totals = (rows: readonly Row[]): readonly Ranked[] => pipe(rows, Arr.map(songOf));
+export const totals = (rows: readonly Row[]): readonly Ranked[] => pipe(rows, Arr.map(songOf));
 
 const countsOf = (day: Day): Counts =>
   Record.fromEntries(
@@ -41,7 +41,7 @@ const countsOf = (day: Day): Counts =>
     ),
   );
 
-const gains = ({ start, end }: Readonly<{ start: Day; end: Day }>): Counts => {
+export const gains = ({ start, end }: Readonly<{ start: Day; end: Day }>): Counts => {
   const before = countsOf(start);
   const gained = ([id, views]: readonly [number, number]): readonly (readonly [string, number])[] =>
     pipe(
@@ -52,7 +52,7 @@ const gains = ({ start, end }: Readonly<{ start: Day; end: Day }>): Counts => {
   return Record.fromEntries(pipe(end, Arr.flatMap(gained)));
 };
 
-const growth = ({
+export const growth = ({
   rows,
   nico,
   youtube,
@@ -105,7 +105,7 @@ const keyed =
       Option.toArray,
     );
 
-const rank = ({
+export const rank = ({
   entries,
   sort,
   kind,
@@ -124,6 +124,3 @@ const rank = ({
     Arr.sortWith(([value]) => value, Order.flip(Order.Number)),
     Arr.map(([, entry]) => entry),
   );
-
-export type { Counts, Day, Ranked, Row };
-export { gains, growth, rank, totals };

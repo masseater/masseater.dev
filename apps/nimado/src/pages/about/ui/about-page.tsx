@@ -6,7 +6,7 @@ import { SECTIONS } from "#/pages/about/model/content";
 import { AboutHeader } from "./about-header";
 import { AboutSectionView } from "./about-section";
 
-const AboutPage = (): ReactNode => (
+export const AboutPage = (): ReactNode => (
   <main className="mx-auto flex max-w-2xl flex-col gap-8 px-4 py-8 text-sm leading-relaxed">
     <AboutHeader />
     {pipe(
@@ -15,5 +15,3 @@ const AboutPage = (): ReactNode => (
     )}
   </main>
 );
-
-export { AboutPage };

@@ -27,12 +27,10 @@ const HEADER = (
   </>
 );
 
-const LeaderboardPage = (): ReactNode => (
+export const LeaderboardPage = (): ReactNode => (
   <PageShell header={HEADER}>
     <TaskLinks />
     <IndexSection />
     <EnglishSection />
   </PageShell>
 );
-
-export { LeaderboardPage };

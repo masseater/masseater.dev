@@ -6,9 +6,7 @@ import type { SearchResults } from "#/entities/catalog";
 
 const route = getRouteApi("/search");
 
-const useSearchResults = (): SearchResults => {
+export const useSearchResults = (): SearchResults => {
   const filter = route.useSearch();
   return useSuspenseQuery(catalogQueries.search.get.queryOptions(filter)).data;
 };
-
-export { useSearchResults };

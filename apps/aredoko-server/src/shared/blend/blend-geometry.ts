@@ -3,17 +3,17 @@ import { Array, Option, pipe } from "effect";
 import type { Edge } from "./blend-edges.ts";
 import type { MeshData } from "./blend-mesh.ts";
 
-type Point = readonly [across: number, up: number, depth: number];
+export type Point = readonly [across: number, up: number, depth: number];
 
-type Term = readonly [point: Point, weight: number];
+export type Term = readonly [point: Point, weight: number];
 
-interface Face {
+export interface Face {
   readonly vertices: readonly number[];
   readonly uvs: readonly number[];
   readonly material: number;
 }
 
-interface Shape {
+export interface Shape {
   readonly points: readonly Point[];
   readonly faces: readonly Face[];
   readonly edges: readonly Edge[];
@@ -25,7 +25,7 @@ const NONE = 0;
 const NEXT = 1;
 const ORIGIN: Point = [NONE, NONE, NONE];
 
-const weighted = (terms: readonly Term[]): Point => {
+export const weighted = (terms: readonly Term[]): Point => {
   const total = [NONE, NONE, NONE];
   for (const [point, weight] of terms) {
     for (const [axis, value] of point.entries()) {
@@ -36,7 +36,7 @@ const weighted = (terms: readonly Term[]): Point => {
   return [first, second, third];
 };
 
-const mean = (points: readonly Point[]): Point => {
+export const mean = (points: readonly Point[]): Point => {
   const weight = NEXT / Math.max(points.length, NEXT);
   return weighted(
     pipe(
@@ -52,10 +52,10 @@ const cross = ([[ax, ay, az], [bx, by, bz]]: readonly [Point, Point]): Point => 
   ax * by - ay * bx,
 ];
 
-const dot = ([[ax, ay, az], [bx, by, bz]]: readonly [Point, Point]): number =>
+export const dot = ([[ax, ay, az], [bx, by, bz]]: readonly [Point, Point]): number =>
   ax * bx + ay * by + az * bz;
 
-const normalized = (point: Point): Point => {
+export const normalized = (point: Point): Point => {
   const size = Math.sqrt(dot([point, point]));
   return Option.match(
     Option.liftPredicate(size, (length) => length > NONE),
@@ -63,17 +63,17 @@ const normalized = (point: Point): Point => {
   );
 };
 
-const pointIn =
+export const pointIn =
   (points: readonly Point[]) =>
   (vertex: number): Point =>
     Option.getOrElse(Array.get(points, vertex), () => ORIGIN);
 
-const pairIn =
+export const pairIn =
   (values: readonly number[]) =>
   (index: number): readonly number[] =>
     values.slice(index * UV, index * UV + UV);
 
-const meanUv = (pairs: readonly (readonly number[])[]): readonly number[] => {
+export const meanUv = (pairs: readonly (readonly number[])[]): readonly number[] => {
   const usable = pipe(
     pairs,
     Array.filter((pair) => pair.length === UV),
@@ -90,7 +90,7 @@ const meanUv = (pairs: readonly (readonly number[])[]): readonly number[] => {
   });
 };
 
-const edgeShiftedBy =
+export const edgeShiftedBy =
   (by: number) =>
   (edge: Edge): Edge => ({
     from: edge.from + by,
@@ -99,7 +99,7 @@ const edgeShiftedBy =
     weight: edge.weight,
   });
 
-const flipped = (face: Face): Face => {
+export const flipped = (face: Face): Face => {
   const rest = Array.makeBy(face.vertices.length, (at) => at).slice(NEXT);
   const order = [NONE, ...Array.reverse(rest)];
   return {
@@ -112,7 +112,7 @@ const flipped = (face: Face): Face => {
   };
 };
 
-const shiftedBy =
+export const shiftedBy =
   (by: number) =>
   (face: Face): Face => ({
     vertices: pipe(
@@ -123,7 +123,7 @@ const shiftedBy =
     material: face.material,
   });
 
-const normalIn =
+export const normalIn =
   (points: readonly Point[]) =>
   (face: Face): Point => {
     const corners = pipe(face.vertices, Array.map(pointIn(points)));
@@ -160,7 +160,7 @@ const faceOf = (mesh: MeshData, face: number): Face => {
   };
 };
 
-const shapeOf = (mesh: MeshData): Shape => ({
+export const shapeOf = (mesh: MeshData): Shape => ({
   points: pointsOf(mesh),
   faces: Array.makeBy(mesh.materials.length, (face) => faceOf(mesh, face)),
   edges: mesh.edges,
@@ -174,7 +174,10 @@ const offsetsOf = (faces: readonly Face[]): Int32Array => {
   return Int32Array.from([...starts, total]);
 };
 
-const meshFrom = ({ shape, base }: Readonly<{ shape: Shape; base: MeshData }>): MeshData => ({
+export const meshFrom = ({
+  shape,
+  base,
+}: Readonly<{ shape: Shape; base: MeshData }>): MeshData => ({
   positions: Float32Array.from(Array.flatten(shape.points)),
   offsets: offsetsOf(shape.faces),
   corners: Int32Array.from(
@@ -203,20 +206,3 @@ const meshFrom = ({ shape, base }: Readonly<{ shape: Shape; base: MeshData }>): 
   slots: base.slots,
   edges: shape.edges,
 });
-
-export {
-  edgeShiftedBy,
-  dot,
-  flipped,
-  mean,
-  meanUv,
-  meshFrom,
-  normalIn,
-  normalized,
-  pairIn,
-  pointIn,
-  shapeOf,
-  shiftedBy,
-  weighted,
-};
-export type { Face, Point, Shape, Term };

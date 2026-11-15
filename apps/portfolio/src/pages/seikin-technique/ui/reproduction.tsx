@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type { Technique } from "#/entities/technique";
 import { DanceStage, parseEffect } from "#/features/dance-stage";
 
-const Reproduction = ({
+export const Reproduction = ({
   technique,
   source,
 }: Readonly<{ technique: Technique; source: string }>): ReactNode => (
@@ -16,5 +16,3 @@ const Reproduction = ({
     <p className="text-sm leading-relaxed">{parseEffect(source).note}</p>
   </div>
 );
-
-export { Reproduction };

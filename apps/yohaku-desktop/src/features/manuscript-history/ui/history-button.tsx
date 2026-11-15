@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 const LABEL = "履歴";
 
-const HistoryButton = ({
+export const HistoryButton = ({
   open,
   toggle,
 }: Readonly<{ open: boolean; toggle: () => void }>): ReactNode => (
@@ -19,5 +19,3 @@ const HistoryButton = ({
     <History aria-hidden="true" />
   </Button>
 );
-
-export { HistoryButton };

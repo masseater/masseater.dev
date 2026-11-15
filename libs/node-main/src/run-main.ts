@@ -38,9 +38,7 @@ const runWithTracing = (serviceName: string): Run<never> =>
   runWithTracingAnd({ serviceName, services: Layer.empty });
 
 /** @internal */
-const runMainWith = runWithTracingAnd;
+export const runMainWith = runWithTracingAnd;
 
 /** @internal */
-const runMain = runWithTracing;
-
-export { runMain, runMainWith };
+export const runMain = runWithTracing;

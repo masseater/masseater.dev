@@ -10,17 +10,17 @@ import { authorizedKey } from "./ssh-certificate.ts";
 import type { SigningPair, SshCertificateFailed } from "./ssh-certificate.ts";
 import { AGENT_SUBJECT, TAILNET_ISSUER } from "./tailnet-names.ts";
 
-const JWT_ALGORITHM = "RS256";
+export const JWT_ALGORITHM = "RS256";
 const DISCOVERY_PATH = "/.well-known/openid-configuration";
 const JWKS_PATH = "/.well-known/jwks.json";
 const SSH_CA_PATH = "/tailnet/ssh-ca.pub";
 const CACHE_CONTROL = "public, max-age=300";
 
-const oidcSigner = signingKey(OIDC_SIGNER);
+export const oidcSigner = signingKey(OIDC_SIGNER);
 
-const sshCaKey = signingKey(SSH_CA);
+export const sshCaKey = signingKey(SSH_CA);
 
-const publicJwk = (pair: SigningPair): Effect.Effect<JWK> =>
+export const publicJwk = (pair: SigningPair): Effect.Effect<JWK> =>
   Effect.gen(function* exportPublic() {
     const exported = yield* Effect.promise(() => crypto.subtle.exportKey("jwk", pair.publicKey));
     const jwk: JWK = { ...exported };
@@ -65,7 +65,10 @@ const failedAs =
       ),
     );
 
-const tailnetRoute = ({ request, env }: RouteInput): Option.Option<Effect.Effect<Response>> => {
+export const tailnetRoute = ({
+  request,
+  env,
+}: RouteInput): Option.Option<Effect.Effect<Response>> => {
   if (request.method !== "GET") {
     return Option.none();
   }
@@ -81,5 +84,3 @@ const tailnetRoute = ({ request, env }: RouteInput): Option.Option<Effect.Effect
   }
   return Option.none();
 };
-
-export { JWT_ALGORITHM, oidcSigner, publicJwk, sshCaKey, tailnetRoute };

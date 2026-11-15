@@ -3,7 +3,7 @@
 import { HoverCard as HoverCardPrimitive } from "radix-ui";
 import type { ComponentProps, ReactNode } from "react";
 
-const HoverCardContent = ({
+export const HoverCardContent = ({
   children,
 }: Readonly<Pick<ComponentProps<typeof HoverCardPrimitive.Content>, "children">>): ReactNode => (
   <HoverCardPrimitive.Portal data-slot="hover-card-portal">
@@ -17,5 +17,3 @@ const HoverCardContent = ({
     </HoverCardPrimitive.Content>
   </HoverCardPrimitive.Portal>
 );
-
-export { HoverCardContent };

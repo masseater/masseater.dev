@@ -13,7 +13,7 @@ const when = new Intl.DateTimeFormat("ja-JP", {
   minute: "2-digit",
 });
 
-const RevisionItem = ({
+export const RevisionItem = ({
   revision,
   restore,
 }: Readonly<{ revision: Revision; restore: (revision: string) => void }>): ReactNode => {
@@ -33,5 +33,3 @@ const RevisionItem = ({
     </li>
   );
 };
-
-export { RevisionItem };

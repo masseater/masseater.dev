@@ -12,7 +12,7 @@ import { gitHubAppCredentials, readApp } from "./github-app.ts";
 import type { GitHubAppEnv, GitHubAppFailed } from "./github-app.ts";
 import { OWNER } from "./github-oidc.ts";
 
-type MintInput = Readonly<{ env: GitHubAppEnv; grant: GitHubGrant }>;
+export type MintInput = Readonly<{ env: GitHubAppEnv; grant: GitHubGrant }>;
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 
@@ -72,7 +72,7 @@ const runMint = <Value>(
 ): Promise<Value> =>
   runner(Layer.mergeAll(logger, fetchHttpClient, gitHubAppCredentials(env)))(effect);
 
-const mintGitHubToken = (input: MintInput): Promise<Option.Option<string>> =>
+export const mintGitHubToken = (input: MintInput): Promise<Option.Option<string>> =>
   runMint(input.env, mint(input).pipe(Effect.orDie));
 
 const BAD_GATEWAY = 502;
@@ -92,11 +92,8 @@ const sloppediaToken = (env: GitHubAppEnv): Effect.Effect<Response, never, Githu
     ),
   );
 
-class SloppediaGitHub extends WorkerEntrypoint<GitHubAppEnv> {
+export class SloppediaGitHub extends WorkerEntrypoint<GitHubAppEnv> {
   public override fetch(): Promise<Response> {
     return runMint(this.env, sloppediaToken(this.env));
   }
 }
-
-export { SloppediaGitHub, mintGitHubToken };
-export type { MintInput };

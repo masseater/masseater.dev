@@ -58,7 +58,7 @@ const destinationsOf = (app: unknown): readonly string[] =>
     Arr.dedupe,
   );
 
-const appOf = (app: unknown): AccessApp => ({
+export const appOf = (app: unknown): AccessApp => ({
   name: textField(app, "name"),
   type: textField(app, "type"),
   destinations: destinationsOf(app),
@@ -70,5 +70,3 @@ const appOf = (app: unknown): AccessApp => ({
     Option.exists((enabled) => enabled === true),
   ),
 });
-
-export { appOf };

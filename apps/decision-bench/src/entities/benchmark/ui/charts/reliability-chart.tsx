@@ -105,7 +105,7 @@ const lineOf = ({
   return { opacity, line: { stroke: color, strokeWidth: width, strokeOpacity: opacity } };
 };
 
-const ReliabilityChart = ({
+export const ReliabilityChart = ({
   task,
   entries,
   title,
@@ -150,5 +150,3 @@ const ReliabilityChart = ({
     </ChartContainer>
   );
 };
-
-export { ReliabilityChart };

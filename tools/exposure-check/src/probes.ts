@@ -4,26 +4,26 @@ import type { Scene } from "./fingerprint.ts";
 import type { Inventory } from "./inventory.ts";
 import { WILDCARD, coveringApp, hostOf } from "./surface.ts";
 
-type ProbePurpose = "access" | "mcp" | "oauth-discovery";
+export type ProbePurpose = "access" | "mcp" | "oauth-discovery";
 
-type Probe = Readonly<{
+export type Probe = Readonly<{
   purpose: ProbePurpose;
   subject: string;
   method: "GET" | "POST";
   url: string;
 }>;
 
-type ProbeOutcome =
+export type ProbeOutcome =
   | Readonly<{ _tag: "Answered"; status: number; location: string }>
   | Readonly<{ _tag: "Gone" }>
   | Readonly<{ _tag: "Unreachable"; reason: string }>;
 
-type ProbeResult = Readonly<{ probe: Probe; outcome: ProbeOutcome }>;
+export type ProbeResult = Readonly<{ probe: Probe; outcome: ProbeOutcome }>;
 
 const MCP_PATH = "/mcp";
 const OAUTH_DISCOVERY_PATH = "/.well-known/oauth-protected-resource";
 const MCP_PORTAL = "mcp_portal";
-const MCP_LIST_TOOLS = '{"jsonrpc":"2.0","id":1,"method":"tools/list"}';
+export const MCP_LIST_TOOLS = '{"jsonrpc":"2.0","id":1,"method":"tools/list"}';
 
 const ACCESS_LOGIN_SUFFIX = ".cloudflareaccess.com";
 const UNAUTHORIZED = 401;
@@ -33,7 +33,7 @@ const FOUND = 302;
 const SEE_OTHER = 303;
 const TEMPORARY_REDIRECT = 307;
 const PERMANENT_REDIRECT = 308;
-const OK = 200;
+export const OK = 200;
 const REFUSED: readonly number[] = [UNAUTHORIZED, FORBIDDEN];
 const REDIRECTS: readonly number[] = [
   MOVED,
@@ -99,7 +99,7 @@ const mcpServerProbes = (inventory: Inventory): readonly Probe[] =>
     Arr.map(mcpProbe),
   );
 
-const planProbes = ({
+export const planProbes = ({
   inventory,
   surface,
   nonce,
@@ -118,8 +118,8 @@ const redirectsToAccess = (location: string): boolean =>
     Option.exists((url) => Str.endsWith(ACCESS_LOGIN_SUFFIX)(url.hostname)),
   );
 
-const isRefused = ({ status, location }: Readonly<{ status: number; location: string }>): boolean =>
+export const isRefused = ({
+  status,
+  location,
+}: Readonly<{ status: number; location: string }>): boolean =>
   Arr.contains(REFUSED, status) || (Arr.contains(REDIRECTS, status) && redirectsToAccess(location));
-
-export { MCP_LIST_TOOLS, OK, isRefused, planProbes };
-export type { Probe, ProbeOutcome, ProbePurpose, ProbeResult };

@@ -6,7 +6,9 @@ import { checkRootWorkspacePaths } from "./root-workspace-paths.ts";
 import { checkSharedUncachedTasks } from "./shared-uncached-tasks.ts";
 
 /** @internal */
-const checkWorkspaces = Effect.fn("checkWorkspaces")(function* checkWorkspaces(root: string) {
+export const checkWorkspaces = Effect.fn("checkWorkspaces")(function* checkWorkspaces(
+  root: string,
+) {
   const found = yield* Effect.all(
     [
       checkCrates(root),
@@ -20,5 +22,3 @@ const checkWorkspaces = Effect.fn("checkWorkspaces")(function* checkWorkspaces(r
   );
   return Arr.flatten(found);
 });
-
-export { checkWorkspaces };

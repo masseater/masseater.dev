@@ -38,7 +38,7 @@ const retext = Effect.fn("retext")(function* retextAsset({ id, text }: Relabeled
 });
 
 /** @internal */
-const linkBooth = Effect.fn("linkBooth")(function* linkBoothItem({
+export const linkBooth = Effect.fn("linkBooth")(function* linkBoothItem({
   packageId,
   item,
 }: {
@@ -67,5 +67,3 @@ const linkBooth = Effect.fn("linkBooth")(function* linkBoothItem({
   );
   yield* embedTexts(Option.some(packageId));
 });
-
-export { linkBooth };

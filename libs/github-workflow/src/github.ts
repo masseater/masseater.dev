@@ -71,15 +71,13 @@ const postTo = ({ path, body }: Write): Sent<void> => withBody("POST", path, bod
 const patchAt = ({ path, body }: Write): Sent<void> => withBody("PATCH", path, body);
 
 /** @internal */
-const getJson = getJsonOf;
+export const getJson = getJsonOf;
 
 /** @internal */
-const remove = removeAt;
+export const remove = removeAt;
 
 /** @internal */
-const post = postTo;
+export const post = postTo;
 
 /** @internal */
-const patch = patchAt;
-
-export { getJson, patch, post, remove };
+export const patch = patchAt;

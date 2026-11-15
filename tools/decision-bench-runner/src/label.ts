@@ -28,7 +28,7 @@ const answerKeys = (question: Readonly<Question>): readonly string[] => {
   );
 };
 
-const toRequest = (
+export const toRequest = (
   question: Readonly<Question>,
 ): Readonly<{
   state: string;
@@ -40,7 +40,7 @@ const toRequest = (
 
 const AnswerSchema = Schema.Struct({ answer: Schema.String });
 
-const askThrice = Effect.fn("askThrice")(function* askThrice(question: Readonly<Question>) {
+export const askThrice = Effect.fn("askThrice")(function* askThrice(question: Readonly<Question>) {
   const opus = yield* Opus;
   const prompt = yield* toJson(toRequest(question));
   const jsonSchema = {
@@ -67,7 +67,9 @@ const askThrice = Effect.fn("askThrice")(function* askThrice(question: Readonly<
   };
 });
 
-const tally = (answers: readonly string[]): Readonly<{ mode: string; agreement: number }> => {
+export const tally = (
+  answers: readonly string[],
+): Readonly<{ mode: string; agreement: number }> => {
   const groups = Record.values(Arr.groupBy(answers, (answer) => answer));
   const largest = Arr.reduce(groups, Arr.empty<string>(), Order.max(byGroupSize));
   return {
@@ -79,14 +81,14 @@ const tally = (answers: readonly string[]): Readonly<{ mode: string; agreement: 
   };
 };
 
-const splitOf = (agreement: number): Item["split"] => {
+export const splitOf = (agreement: number): Item["split"] => {
   if (agreement === UNANIMOUS) {
     return "test";
   }
   return "hard";
 };
 
-const writeLabeled = Effect.fn("writeLabeled")(function* writeLabeled(
+export const writeLabeled = Effect.fn("writeLabeled")(function* writeLabeled(
   task: TaskId,
   items: readonly Item[],
   stats: Omit<typeof LabelStatsSchema.Type, "task" | "items" | "hard">,
@@ -104,5 +106,3 @@ const writeLabeled = Effect.fn("writeLabeled")(function* writeLabeled(
     ...stats,
   });
 });
-
-export { askThrice, splitOf, tally, toRequest, writeLabeled };

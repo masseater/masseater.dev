@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { techniquePath } from "#/entities/technique";
 import type { Technique } from "#/entities/technique";
 
-const PagerLink = ({
+export const PagerLink = ({
   technique,
   label,
 }: Readonly<{ technique: Option.Option<Technique>; label: string }>): ReactNode => (
@@ -21,5 +21,3 @@ const PagerLink = ({
     )}
   </div>
 );
-
-export { PagerLink };

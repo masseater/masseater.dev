@@ -79,7 +79,7 @@ const problemIn = Effect.fn("problemIn")(function* problemIn(
 });
 
 /** @internal */
-const checkCrates = Effect.fn("checkCrates")(function* checkCrates(root: string) {
+export const checkCrates = Effect.fn("checkCrates")(function* checkCrates(root: string) {
   const files = yield* RepositoryFiles;
   const cargo = yield* files.exists(files.join(root, CARGO_FILE));
   if (!cargo) {
@@ -92,5 +92,3 @@ const checkCrates = Effect.fn("checkCrates")(function* checkCrates(root: string)
   });
   return Arr.getSomes(found);
 });
-
-export { checkCrates };

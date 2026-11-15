@@ -14,9 +14,9 @@ import { FetchingJSONSchemaStore, InputData, JSONSchemaInput, quicktype } from "
 
 import { NotAnObject } from "./not-an-object.ts";
 
-type Root = Readonly<{ name: string; object: boolean; ast: SchemaAST.AST }>;
+export type Root = Readonly<{ name: string; object: boolean; ast: SchemaAST.AST }>;
 
-type Target = Readonly<{
+export type Target = Readonly<{
   namespace: string;
   framework: "NewtonSoft" | "SystemTextJson";
   roots: () => readonly Root[];
@@ -102,7 +102,7 @@ const rootDocument = (
   $defs,
 });
 
-const csharpTypes = Effect.fn("csharpTypes")(function* csharpTypes(target: Target) {
+export const csharpTypes = Effect.fn("csharpTypes")(function* csharpTypes(target: Target) {
   const { namespace, framework } = target;
   const names = pipe(
     target.roots(),
@@ -128,6 +128,3 @@ const csharpTypes = Effect.fn("csharpTypes")(function* csharpTypes(target: Targe
   );
   return { lines, names: resolvedNames(names, $defs) };
 });
-
-export { csharpTypes };
-export type { Root, Target };

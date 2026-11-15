@@ -10,8 +10,8 @@ const segmentNode = ({ text, href }: Segment): ReactNode =>
     onSome: (url) => <ExternalLink key={url} href={url} text={text} />,
   });
 
-const AboutParagraph = ({ segments }: Readonly<{ segments: readonly Segment[] }>): ReactNode => (
+export const AboutParagraph = ({
+  segments,
+}: Readonly<{ segments: readonly Segment[] }>): ReactNode => (
   <p>{pipe(segments, Arr.map(segmentNode))}</p>
 );
-
-export { AboutParagraph };

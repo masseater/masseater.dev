@@ -2,7 +2,7 @@ import { cn } from "@masseater.dev/ui/cn";
 import { Switch as SwitchPrimitive } from "radix-ui";
 import type { ReactNode } from "react";
 
-const Switch = ({
+export const Switch = ({
   className,
   id,
   checked,
@@ -32,5 +32,3 @@ const Switch = ({
     />
   </SwitchPrimitive.Root>
 );
-
-export { Switch };

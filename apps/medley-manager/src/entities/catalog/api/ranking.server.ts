@@ -10,7 +10,7 @@ const videoParts = count(part.id);
 
 const personCredits = count(partStaff.id);
 
-const rankSongs = Effect.fn("catalog.ranking.songs")(function* rankSongs(limit: number) {
+export const rankSongs = Effect.fn("catalog.ranking.songs")(function* rankSongs(limit: number) {
   return yield* Effect.promise(() =>
     catalogDb
       .select({ id: song.id, title: song.title, useCount: songUses })
@@ -22,7 +22,7 @@ const rankSongs = Effect.fn("catalog.ranking.songs")(function* rankSongs(limit: 
   );
 });
 
-const rankVideos = Effect.fn("catalog.ranking.videos")(function* rankVideos(limit: number) {
+export const rankVideos = Effect.fn("catalog.ranking.videos")(function* rankVideos(limit: number) {
   return yield* Effect.promise(() =>
     catalogDb
       .select({
@@ -40,7 +40,7 @@ const rankVideos = Effect.fn("catalog.ranking.videos")(function* rankVideos(limi
   );
 });
 
-const rankPeople = Effect.fn("catalog.ranking.people")(function* rankPeople(limit: number) {
+export const rankPeople = Effect.fn("catalog.ranking.people")(function* rankPeople(limit: number) {
   return yield* Effect.promise(() =>
     catalogDb
       .select({ id: person.id, name: person.name, creditCount: personCredits })
@@ -51,5 +51,3 @@ const rankPeople = Effect.fn("catalog.ranking.people")(function* rankPeople(limi
       .limit(limit),
   );
 });
-
-export { rankPeople, rankSongs, rankVideos };

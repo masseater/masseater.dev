@@ -11,7 +11,7 @@ import { createModuleResolutionCache } from "./resolution-cache.ts";
 import type { ResolutionKind, ResolverHost } from "./resolution-types.ts";
 import { resolveTypeReferenceDirective } from "./type-reference.ts";
 
-interface HostSource {
+export interface HostSource {
   readonly fs: PackageFileSystem;
   readonly kind: ResolutionKind;
   readonly minimalLib: string;
@@ -60,7 +60,7 @@ const compilerOptionsFor = (kind: ResolutionKind): HostWrapperCore["compilerOpti
   traceResolution: true,
 });
 
-const createHostWrapper = (source: HostSource): HostWrapperCore => {
+export const createHostWrapper = (source: HostSource): HostWrapperCore => {
   const { kind } = source;
   const resolverHost = resolverHostOf(source.fs);
   const normalCache = createModuleResolutionCache();
@@ -92,6 +92,3 @@ const createHostWrapper = (source: HostSource): HostWrapperCore => {
       ),
   };
 };
-
-export { createHostWrapper };
-export type { HostSource };

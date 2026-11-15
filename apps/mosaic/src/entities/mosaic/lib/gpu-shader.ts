@@ -1,6 +1,6 @@
-const INTRO_MS = 1600;
+export const INTRO_MS = 1600;
 
-const SHADER = `
+export const SHADER = `
 struct Frame {
   camera: vec4f,
   viewport: vec4f,
@@ -106,5 +106,3 @@ fn fs_outline(input: Out) -> @location(0) vec4f {
   return draw.color;
 }
 `;
-
-export { INTRO_MS, SHADER };

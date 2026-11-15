@@ -8,9 +8,9 @@ import { ModelApi } from "./model-api.ts";
 import type { Part } from "./model-api.ts";
 import { ModelError } from "./model-error.ts";
 
-const DEFAULT_GENERATOR_MODEL = "google/gemini-3.5-flash-lite";
+export const DEFAULT_GENERATOR_MODEL = "google/gemini-3.5-flash-lite";
 
-const REREAD_BELOW = 0.8;
+export const REREAD_BELOW = 0.8;
 
 const NOTHING_REREAD = 0;
 
@@ -56,7 +56,7 @@ const LINES_JSON_SCHEMA = {
 const REREAD_PROMPT =
   "帳票の画像から切り出した行を順に渡す。それぞれの行に書かれている文字を、画像のとおりに書き起こして lines に同じ順で入れる。";
 
-interface Reread {
+export interface Reread {
   readonly fragments: readonly Fragment[];
   readonly costUsd: number;
   readonly reread: number;
@@ -100,7 +100,7 @@ const promptsOf = (targets: readonly Target[], crops: readonly Uint8Array[]): re
     ]),
   );
 
-const rereadLowConfidence = ({
+export const rereadLowConfidence = ({
   image,
   fragments,
   model = DEFAULT_GENERATOR_MODEL,
@@ -179,7 +179,7 @@ const toValue = (value: Option.Option<string>): FieldValue =>
     }),
   );
 
-const extractFromImage = ({
+export const extractFromImage = ({
   image,
   fields,
   model = DEFAULT_GENERATOR_MODEL,
@@ -208,6 +208,3 @@ const extractFromImage = ({
     })),
     Effect.withSpan("ocr-decide.extract", { attributes: { model } }),
   );
-
-export { DEFAULT_GENERATOR_MODEL, REREAD_BELOW, extractFromImage, rereadLowConfidence };
-export type { Reread };

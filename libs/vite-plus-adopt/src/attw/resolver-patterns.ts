@@ -31,7 +31,7 @@ const KEY_ORDER_RULES: readonly ((pair: KeyPair) => Option.Option<number>)[] = [
   ({ right }) => Option.liftPredicate(BEFORE, () => !Str.includes("*")(right)),
 ];
 
-const comparePatternKeys: {
+export const comparePatternKeys: {
   (right: string): (left: string) => number;
   (left: string, right: string): number;
 } = Fn.dual(DATA_FIRST_ARITY, (left: string, right: string): number =>
@@ -40,7 +40,7 @@ const comparePatternKeys: {
   ),
 );
 
-const hasOneAsterisk = (key: string): boolean =>
+export const hasOneAsterisk = (key: string): boolean =>
   Option.exists(Str.indexOf("*")(key), (first) =>
     Option.contains(Str.lastIndexOf("*")(key), first),
   );
@@ -53,7 +53,7 @@ const matchesPatternWithTrailer = (target: string, name: string): boolean =>
   !Str.endsWith("*")(target) &&
   Option.exists(Str.indexOf("*")(target), (star) => surroundsName(target, star, name));
 
-type Expansion = Option.Option<Omit<TargetRequest, "key">>;
+export type Expansion = Option.Option<Omit<TargetRequest, "key">>;
 
 const trailerExpansion = (key: string, name: string, state: ResolutionState): Expansion =>
   Option.liftPredicate(
@@ -79,7 +79,7 @@ const prefixExpansion = (key: string, name: string): Expansion =>
     Str.startsWith(key)(name),
   );
 
-const expandedSubpath: {
+export const expandedSubpath: {
   (name: string, state: ResolutionState): (key: string) => Expansion;
   (key: string, name: string, state: ResolutionState): Expansion;
 } = Fn.dual(DATA_FIRST_ARITY_3, (key: string, name: string, state: ResolutionState): Expansion =>
@@ -88,6 +88,3 @@ const expandedSubpath: {
     Option.orElse(() => prefixExpansion(key, name)),
   ),
 );
-
-export { comparePatternKeys, expandedSubpath, hasOneAsterisk };
-export type { Expansion };

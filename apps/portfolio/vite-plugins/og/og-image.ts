@@ -149,7 +149,7 @@ const renderCards = (source: Source): Effect.Effect<readonly Png[]> =>
     ),
   );
 
-const ogImage = (): Plugin => {
+export const ogImage = (): Plugin => {
   let root = "";
   return {
     name: "og-image",
@@ -180,5 +180,3 @@ const ogImage = (): Plugin => {
     },
   };
 };
-
-export { ogImage };

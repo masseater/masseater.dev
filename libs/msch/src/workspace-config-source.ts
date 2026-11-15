@@ -14,27 +14,27 @@ class WorkspaceSettingsInvalid extends taggedError<
   { readonly brand: unique symbol }
 >()("WorkspaceSettingsInvalid", { file: Schema.String, message: Schema.String }) {}
 
-const settingsInvalid =
+export const settingsInvalid =
   (file: string) =>
   (reason: string): WorkspaceSettingsInvalid =>
     WorkspaceSettingsInvalid.make({ file, message: `${file}: ${reason}` });
 
-interface WorkspaceSource {
+export interface WorkspaceSource {
   readonly file: string;
   readonly directory: string;
   readonly program: unknown;
 }
 
-type SettingsPath = readonly [string, string];
+export type SettingsPath = readonly [string, string];
 
 const notLiteral = ([outer, inner]: SettingsPath): string =>
   `${outer}.${inner} must be written with literal values, because the root vite.config.ts reads it without running this file. Name a set the root config defines in use instead of importing values.`;
 
-const merged = <Value>(
+export const merged = <Value>(
   records: readonly Readonly<Record<string, Value>>[],
 ): Record<string, Value> => pipe(records, Arr.flatMap(Rec.toEntries), Rec.fromEntries);
 
-const usedFrom = Effect.fn("usedFrom")(function* usedFrom<Value>(
+export const usedFrom = Effect.fn("usedFrom")(function* usedFrom<Value>(
   file: string,
   sets: Readonly<Record<string, Value>>,
   used: readonly string[],
@@ -65,13 +65,13 @@ const singleValue = Effect.fn("singleValue")(function* singleValue(
   return Arr.head(found);
 });
 
-interface LiteralSettingsRequest<Settings> {
+export interface LiteralSettingsRequest<Settings> {
   readonly source: WorkspaceSource;
   readonly path: SettingsPath;
   readonly decode: (input: unknown) => Effect.Effect<Settings, Schema.SchemaError>;
 }
 
-const literalSettings = <Settings>({
+export const literalSettings = <Settings>({
   source,
   path,
   decode,
@@ -94,7 +94,7 @@ const literalSettings = <Settings>({
     return Option.some(settings);
   });
 
-const programOf = Effect.fn("programOf")(function* programOf(file: string, text: string) {
+export const programOf = Effect.fn("programOf")(function* programOf(file: string, text: string) {
   const parsed = yield* Effect.promise(() => parse(file, text, { lang: "ts" }));
   if (Arr.isReadonlyArrayNonEmpty(parsed.errors)) {
     return yield* settingsInvalid(file)("vite.config.ts does not parse.");
@@ -109,7 +109,7 @@ interface WorkspaceConfig {
   readonly program: unknown;
 }
 
-const workspaceConfigOf = Effect.fn("workspaceConfigOf")(function* workspaceConfigOf(
+export const workspaceConfigOf = Effect.fn("workspaceConfigOf")(function* workspaceConfigOf(
   root: string,
   directory: string,
 ) {
@@ -123,5 +123,4 @@ const workspaceConfigOf = Effect.fn("workspaceConfigOf")(function* workspaceConf
   return Option.some<WorkspaceConfig>({ file, source: text.value, program });
 });
 
-export { literalSettings, settingsInvalid, merged, programOf, usedFrom, workspaceConfigOf };
-export type { LiteralSettingsRequest, SettingsPath, WorkspaceSettingsInvalid, WorkspaceSource };
+export type { WorkspaceSettingsInvalid };

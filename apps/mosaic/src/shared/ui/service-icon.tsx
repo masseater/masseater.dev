@@ -10,7 +10,7 @@ const ICONS: Readonly<Record<string, SimpleIcon>> = {
 
 const SIZES = { small: "size-4", medium: "size-5" } as const;
 
-const ServiceIcon = ({
+export const ServiceIcon = ({
   service,
   size,
 }: Readonly<{ service: string; size: keyof typeof SIZES }>): ReactNode =>
@@ -22,5 +22,3 @@ const ServiceIcon = ({
       </svg>
     ),
   });
-
-export { ServiceIcon };

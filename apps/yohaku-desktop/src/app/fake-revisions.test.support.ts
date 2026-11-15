@@ -8,7 +8,7 @@ const KEPT: readonly Revision[] = [
   { id: "r1", savedAt: SAVED_AT, excerpt: "雨の音で目が覚めた。", characters: 120 },
 ];
 
-const revisionCalls = (): Pick<
+export const revisionCalls = (): Pick<
   Yohaku,
   "exportManuscript" | "listRevisions" | "restoreRevision"
 > => ({
@@ -16,5 +16,3 @@ const revisionCalls = (): Pick<
   listRevisions: () => Effect.succeed(KEPT),
   restoreRevision: () => Effect.void,
 });
-
-export { revisionCalls };

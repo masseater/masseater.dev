@@ -9,10 +9,10 @@ import type { Category } from "#/entities/entry/model/category.ts";
 import { sectionMeta, sections } from "#/shared/config/sections.ts";
 import { site } from "#/shared/config/site.ts";
 
-const BOLD = 700;
-const REGULAR = 400;
-const LATIN = "Noto Sans JP Latin";
-const JAPANESE = "Noto Sans JP";
+export const BOLD = 700;
+export const REGULAR = 400;
+export const LATIN = "Noto Sans JP Latin";
+export const JAPANESE = "Noto Sans JP";
 const TITLE_LINES = 4;
 const TITLE_LINE_HEIGHT = 1.4;
 const LONG_TITLE = 32;
@@ -55,7 +55,7 @@ const backdrop = pipe(
 
 const phrases = loadDefaultJapaneseParser();
 
-type Card = Readonly<{ category: Category; slug: string; title: string }>;
+export type Card = Readonly<{ category: Category; slug: string; title: string }>;
 
 const stage = (child: ReactNode): ReactNode =>
   createElement(
@@ -170,7 +170,7 @@ const glassPanel = (...children: readonly ReactNode[]): ReactNode =>
     ...children,
   );
 
-const cardElement =
+export const cardElement =
   (avatar: string) =>
   (card: Card): ReactNode =>
     stage(
@@ -218,7 +218,4 @@ const siteColumn = (avatar: string): ReactNode =>
     tracked(sectionTitles, sizes.sections),
   );
 
-const siteElement = (avatar: string): ReactNode => stage(siteColumn(avatar));
-
-export type { Card };
-export { BOLD, JAPANESE, LATIN, REGULAR, cardElement, siteElement };
+export const siteElement = (avatar: string): ReactNode => stage(siteColumn(avatar));

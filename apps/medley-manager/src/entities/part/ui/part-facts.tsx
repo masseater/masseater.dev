@@ -8,7 +8,7 @@ const FACTS = [
   { key: "bars", label: "小節" },
 ] as const;
 
-const PartFacts = ({ part }: Readonly<{ part: PartRow }>): ReactNode =>
+export const PartFacts = ({ part }: Readonly<{ part: PartRow }>): ReactNode =>
   pipe(
     FACTS,
     Array.flatMap(({ key, label }) =>
@@ -21,5 +21,3 @@ const PartFacts = ({ part }: Readonly<{ part: PartRow }>): ReactNode =>
       </span>
     )),
   );
-
-export { PartFacts };

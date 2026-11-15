@@ -6,14 +6,14 @@ import { Array, Option, pipe } from "effect";
 import { remarksIn } from "./annotations.ts";
 import type { Marked } from "./annotations.ts";
 
-interface Placed {
+export interface Placed {
   readonly marked: Marked;
   readonly top: number;
 }
 
-type Layout = (placed: readonly Placed[]) => void;
+export type Layout = (placed: readonly Placed[]) => void;
 
-const remarkLayout = Facet.define<Layout, Option.Option<Layout>>({
+export const remarkLayout = Facet.define<Layout, Option.Option<Layout>>({
   combine: (values) => Array.head(values),
 });
 
@@ -38,7 +38,7 @@ const measure = (view: EditorView): void => {
 const moved = (update: ViewUpdate): boolean =>
   update.docChanged || update.geometryChanged || Array.isReadonlyArrayNonEmpty(update.transactions);
 
-const remarkLayoutPlugin = ViewPlugin.define((view) => {
+export const remarkLayoutPlugin = ViewPlugin.define((view) => {
   measure(view);
   return {
     update: (update: ViewUpdate): void => {
@@ -48,6 +48,3 @@ const remarkLayoutPlugin = ViewPlugin.define((view) => {
     },
   };
 });
-
-export { remarkLayout, remarkLayoutPlugin };
-export type { Layout, Placed };

@@ -29,7 +29,7 @@ type Seen = HashMap.HashMap<string, HashSet.HashSet<string>>;
 
 const IDLE: Activity = { status: "idle" };
 
-class Library extends Context.Service<
+export class Library extends Context.Service<
   Library,
   {
     readonly activity: Effect.Effect<Activity>;
@@ -75,7 +75,7 @@ const retryingScan = Effect.fn("retryingScan")(function* retryingScan({
 });
 
 /** @internal */
-const libraryLayer = Layer.effect(
+export const libraryLayer = Layer.effect(
   Library,
   Effect.gen(function* makeLibrary() {
     const activity = yield* Ref.make<Activity>(IDLE);
@@ -95,5 +95,3 @@ const libraryLayer = Layer.effect(
     });
   }),
 );
-
-export { Library, libraryLayer };

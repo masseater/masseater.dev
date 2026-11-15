@@ -5,7 +5,7 @@ import { useSummary } from "#/entities/interview";
 
 const LABEL = "次に聞くこと";
 
-const NextTopics = (): ReactNode => {
+export const NextTopics = (): ReactNode => {
   const next = pipe(
     useSummary(),
     Option.match({ onNone: Arr.empty<string>, onSome: (summary) => summary.next }),
@@ -28,5 +28,3 @@ const NextTopics = (): ReactNode => {
     )
   );
 };
-
-export { NextTopics };

@@ -22,14 +22,14 @@ import type {
 
 const DATA_FIRST_ARITY = 2;
 
-interface Collected {
+export interface Collected {
   readonly options: ResolvedOptions;
   readonly contexts: Readonly<Record<string, Context>>;
   readonly rules: Readonly<Record<string, ResolvedRule>>;
   readonly matches: readonly Match[];
 }
 
-interface FileBatch extends Collected {
+export interface FileBatch extends Collected {
   readonly contexts: Record<string, Context>;
   readonly rules: Record<string, ResolvedRule>;
   readonly matches: Match[];
@@ -37,19 +37,19 @@ interface FileBatch extends Collected {
   exits: number;
 }
 
-interface RuleFile {
+export interface RuleFile {
   readonly batch: FileBatch;
   readonly rule: ResolvedRule;
 }
 
-interface SharedFile {
+export interface SharedFile {
   readonly join: (context: Context, id: string) => RuleFile;
   readonly leave: () => void;
 }
 
-type OptionsFor = (settings: Readonly<Record<string, unknown>>) => ResolvedOptions;
+export type OptionsFor = (settings: Readonly<Record<string, unknown>>) => ResolvedOptions;
 
-type RuleFor = (rule: ResolvedRule, options: unknown) => ResolvedRule;
+export type RuleFor = (rule: ResolvedRule, options: unknown) => ResolvedRule;
 
 const raisedMissing = new Set<string>();
 
@@ -162,7 +162,7 @@ const finish = (batch: Collected): void => {
 const ruleIn = (batch: Collected, id: string): ResolvedRule =>
   Option.getOrThrow(Arr.findFirst(batch.options.rules, (rule) => rule.id === id));
 
-const sharedFile: {
+export const sharedFile: {
   (ruleFor: RuleFor): (optionsFor: OptionsFor) => SharedFile;
   (optionsFor: OptionsFor, ruleFor: RuleFor): SharedFile;
 } = Fn.dual(DATA_FIRST_ARITY, (optionsFor: OptionsFor, ruleFor: RuleFor): SharedFile => {
@@ -218,12 +218,12 @@ type Visited = SelectedNode & AstNode;
 const isSkipped = (context: Context, node: Visited, rule: ResolvedRule): boolean =>
   !isSelected(context, node, rule) || lacksComment(context, node, rule);
 
-interface RuleTarget {
+export interface RuleTarget {
   readonly id: string;
   readonly target: Target;
 }
 
-const visitorFor: {
+export const visitorFor: {
   (rule: RuleTarget): (shared: SharedFile) => (context: Context) => VisitorWithHooks;
   (shared: SharedFile, rule: RuleTarget): (context: Context) => VisitorWithHooks;
 } = Fn.dual(
@@ -265,6 +265,3 @@ const visitorFor: {
       };
     },
 );
-
-export { sharedFile, visitorFor };
-export type { Collected, FileBatch, OptionsFor, RuleFile, RuleFor, RuleTarget, SharedFile };

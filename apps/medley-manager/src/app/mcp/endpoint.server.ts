@@ -6,9 +6,7 @@ import { MCP_URL } from "#/shared/config";
 
 import { buildServer } from "./build-server.server.ts";
 
-const serveMcp = (request: Request): Promise<Response> =>
+export const serveMcp = (request: Request): Promise<Response> =>
   requireMcpAuth(createAuth(), (authorized) => createMcpHandler(buildServer).fetch(authorized), {
     resource: MCP_URL,
   })(request);
-
-export { serveMcp };

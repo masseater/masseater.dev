@@ -7,7 +7,7 @@ import { Notice } from "#/shared/ui/notice";
 const NOTHING = "取り込めるアセットがありませんでした";
 const NONE_PLACED = 0;
 
-const ImportResult = (): ReactNode => {
+export const ImportResult = (): ReactNode => {
   const last = useLastImport();
   if (last.status === "failed") {
     return (
@@ -35,5 +35,3 @@ const ImportResult = (): ReactNode => {
     </Notice>
   );
 };
-
-export { ImportResult };

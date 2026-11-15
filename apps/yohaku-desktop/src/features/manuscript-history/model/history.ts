@@ -5,7 +5,7 @@ import { useCallback } from "react";
 
 const historyOfAtom = Atom.make(Option.none<string>());
 
-const useHistoryShown = (id: string): readonly [boolean, () => void] => {
+export const useHistoryShown = (id: string): readonly [boolean, () => void] => {
   const [historyOf, setHistoryOf] = useAtom(historyOfAtom);
   const shown = Option.contains(historyOf, id);
   const toggle = useCallback(() => {
@@ -13,5 +13,3 @@ const useHistoryShown = (id: string): readonly [boolean, () => void] => {
   }, [id, setHistoryOf, shown]);
   return [shown, toggle];
 };
-
-export { useHistoryShown };

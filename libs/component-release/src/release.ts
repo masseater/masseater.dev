@@ -21,11 +21,14 @@ const TAGGED = "autorelease: tagged";
 const AssetCount = Schema.fromJsonString(Schema.Finite);
 const PullNumbers = Schema.fromJsonString(Schema.Array(Schema.Finite));
 
-type Publish = Readonly<{ component: Component; title: string }>;
+/** @internal */
+export type Publish = Readonly<{ component: Component; title: string }>;
 
-type Upload = Readonly<{ tag: string; files: readonly string[] }>;
+/** @internal */
+export type Upload = Readonly<{ tag: string; files: readonly string[] }>;
 
-const releaseExists = Effect.fn("release.exists")(function* releaseExists(tag: string) {
+/** @internal */
+export const releaseExists = Effect.fn("release.exists")(function* releaseExists(tag: string) {
   const repository = yield* Config.String("GITHUB_REPOSITORY");
   return yield* succeeds({ file: "gh", args: ["release", "view", tag, "--repo", repository] });
 });
@@ -37,7 +40,8 @@ const checkedOutTag = Effect.fn("release.checkedOutTag")(function* checkedOutTag
   return { version, tag: tagOf({ name: component.name, version }) };
 });
 
-const tagComponent = Effect.fn("release.tag")(function* tagComponent(component: Component) {
+/** @internal */
+export const tagComponent = Effect.fn("release.tag")(function* tagComponent(component: Component) {
   const repository = yield* Config.String("GITHUB_REPOSITORY");
   const sha = yield* Config.String("GITHUB_SHA");
   const { tag } = yield* checkedOutTag(component);
@@ -127,7 +131,10 @@ const hasAssets = Effect.fn("release.hasAssets")(function* hasAssets(tag: string
   return count !== NO_ASSETS;
 });
 
-const publishRelease = Effect.fn("release.publish")(function* publishRelease(publish: Publish) {
+/** @internal */
+export const publishRelease = Effect.fn("release.publish")(function* publishRelease(
+  publish: Publish,
+) {
   const tag = yield* createRelease(publish);
   yield* markTagged(publish.component.name);
   const published = yield* hasAssets(tag);
@@ -138,12 +145,17 @@ const publishRelease = Effect.fn("release.publish")(function* publishRelease(pub
   return Option.some(tag);
 });
 
-const uploadAssets = Effect.fn("release.upload")(function* uploadAssets({ tag, files }: Upload) {
+/** @internal */
+export const uploadAssets = Effect.fn("release.upload")(function* uploadAssets({
+  tag,
+  files,
+}: Upload) {
   const repository = yield* Config.String("GITHUB_REPOSITORY");
   yield* gh(["release", "upload", tag, ...files, "--repo", repository, "--clobber"]);
 });
 
-const filesIn = Effect.fn("release.filesIn")(function* filesIn(directory: string) {
+/** @internal */
+export const filesIn = Effect.fn("release.filesIn")(function* filesIn(directory: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const names = yield* fileSystem.readDirectory(directory, { recursive: true });
@@ -162,7 +174,8 @@ const filesIn = Effect.fn("release.filesIn")(function* filesIn(directory: string
   return Arr.sort(files, Order.String);
 });
 
-const releasedOnMain = Effect.fn("release.releasedOnMain")(function* releasedOnMain(
+/** @internal */
+export const releasedOnMain = Effect.fn("release.releasedOnMain")(function* releasedOnMain(
   component: Component,
 ) {
   const version = yield* mainVersion(component);
@@ -175,8 +188,3 @@ const releasedOnMain = Effect.fn("release.releasedOnMain")(function* releasedOnM
   }
   return released;
 });
-
-/** @internal */
-export { filesIn, publishRelease, releaseExists, releasedOnMain, tagComponent, uploadAssets };
-/** @internal */
-export type { Publish, Upload };

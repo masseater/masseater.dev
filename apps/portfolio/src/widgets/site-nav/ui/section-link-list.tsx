@@ -9,7 +9,7 @@ import { SectionLink } from "./section-link";
 
 const LABEL = "セクション";
 
-const SectionLinkList = ({ direction }: Readonly<{ direction: Direction }>): ReactNode => (
+export const SectionLinkList = ({ direction }: Readonly<{ direction: Direction }>): ReactNode => (
   <nav aria-label={LABEL}>
     <LinkList direction={direction}>
       {pipe(
@@ -19,5 +19,3 @@ const SectionLinkList = ({ direction }: Readonly<{ direction: Direction }>): Rea
     </LinkList>
   </nav>
 );
-
-export { SectionLinkList };

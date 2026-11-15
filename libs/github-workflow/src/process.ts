@@ -6,12 +6,12 @@ const SUCCESS = 0;
 
 const taggedError = Schema.TaggedError;
 
-class CommandFailed extends taggedError<CommandFailed, { readonly brand: unique symbol }>()(
+export class CommandFailed extends taggedError<CommandFailed, { readonly brand: unique symbol }>()(
   "CommandFailed",
   { message: Schema.String },
 ) {}
 
-interface Command {
+export interface Command {
   readonly command: string;
   readonly args: readonly string[];
   readonly env?: Readonly<Record<string, string>>;
@@ -76,19 +76,16 @@ const outputWith = (command: Command): Spawned<string> =>
   );
 
 /** @internal */
-const succeeds = succeedsWith;
+export const succeeds = succeedsWith;
 
 /** @internal */
-const mustSucceed = mustSucceedWith;
+export const mustSucceed = mustSucceedWith;
 
 const finishedWith = (command: Command): Spawned<Readonly<{ output: string; code: number }>> =>
   Effect.scoped(collected(command));
 
 /** @internal */
-const outputOf = outputWith;
+export const outputOf = outputWith;
 
 /** @internal */
-const finished = finishedWith;
-
-export type { Command };
-export { CommandFailed, finished, mustSucceed, outputOf, succeeds };
+export const finished = finishedWith;

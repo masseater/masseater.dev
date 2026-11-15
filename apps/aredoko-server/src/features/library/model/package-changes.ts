@@ -13,7 +13,7 @@ const watchFolder =
     );
 
 /** @internal */
-const packageChanges = Effect.fn("packageChanges")(function* watchPackages(
+export const packageChanges = Effect.fn("packageChanges")(function* watchPackages(
   paths: readonly string[],
   settleMillis: number,
 ) {
@@ -26,5 +26,3 @@ const packageChanges = Effect.fn("packageChanges")(function* watchPackages(
     Stream.debounce(Duration.millis(settleMillis)),
   );
 });
-
-export { packageChanges };

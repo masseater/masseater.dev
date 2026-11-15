@@ -6,7 +6,7 @@ const FIRST = 0;
 
 const byStart = Order.mapInput(Order.Number, (span: Span) => span.start);
 
-const removeRegions = ({
+export const removeRegions = ({
   text,
   regions,
 }: Readonly<{ text: string; regions: readonly Span[] }>): string => {
@@ -19,5 +19,3 @@ const removeRegions = ({
   }
   return kept + Str.slice(from)(text);
 };
-
-export { removeRegions };

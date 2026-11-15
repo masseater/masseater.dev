@@ -12,23 +12,25 @@ import type {
 } from "./resolution-types.ts";
 import type { ResolvedTypeReference } from "./type-reference.ts";
 
-type ExtraOptions = Readonly<Pick<RawCompilerOptions, "allowJs" | "checkJs" | "noDtsResolution">>;
+export type ExtraOptions = Readonly<
+  Pick<RawCompilerOptions, "allowJs" | "checkJs" | "noDtsResolution">
+>;
 
-interface PackageFileSystem {
+export interface PackageFileSystem {
   readonly fileExists: (path: string) => boolean;
   readonly directoryExists: (path: string) => boolean;
   readonly tryReadFile: (path: string) => string | undefined;
   readonly listFiles: () => readonly string[];
 }
 
-interface TsPackageId {
+export interface TsPackageId {
   readonly name: string;
   readonly subModuleName: string;
   readonly version: string;
   readonly peerDependencies: string | undefined;
 }
 
-interface TsResolvedModule {
+export interface TsResolvedModule {
   readonly resolvedFileName: string;
   readonly originalPath: string | undefined;
   readonly extension: string;
@@ -37,25 +39,25 @@ interface TsResolvedModule {
   readonly resolvedUsingTsExtension: boolean;
 }
 
-interface TsResolution {
+export interface TsResolution {
   readonly resolvedModule: TsResolvedModule | undefined;
 }
 
-interface CachedResolution {
+export interface CachedResolution {
   readonly result: ResolutionResult;
   readonly resolution: TsResolution;
   readonly trace: readonly string[];
 }
 
-type ModuleKindReason = "extension" | "type" | "no:type";
+export type ModuleKindReason = "extension" | "type" | "no:type";
 
-interface ModuleKindInfo {
+export interface ModuleKindInfo {
   readonly detectedKind: number;
   readonly detectedReason: ModuleKindReason;
   readonly reasonFileName: string;
 }
 
-interface HostWrapperCore {
+export interface HostWrapperCore {
   readonly kind: ResolutionKind;
   readonly modeOptions: ModeOptions;
   readonly resolverHost: ResolverHost;
@@ -71,17 +73,4 @@ interface HostWrapperCore {
   ) => Option.Option<ResolvedTypeReference>;
 }
 
-const LIB_FILE_NAME = "/node_modules/typescript/lib/lib.d.ts";
-
-export { LIB_FILE_NAME };
-export type {
-  CachedResolution,
-  ExtraOptions,
-  TsPackageId,
-  HostWrapperCore,
-  ModuleKindInfo,
-  ModuleKindReason,
-  PackageFileSystem,
-  TsResolution,
-  TsResolvedModule,
-};
+export const LIB_FILE_NAME = "/node_modules/typescript/lib/lib.d.ts";

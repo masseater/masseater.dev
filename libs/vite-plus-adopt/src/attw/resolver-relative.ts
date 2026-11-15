@@ -19,7 +19,7 @@ import { normalizePathForCJSResolution } from "./resolver-state.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface RelativeModule {
+export interface RelativeModule {
   readonly resolved: Option.Option<Resolved>;
   readonly insideNodeModules: boolean;
 }
@@ -29,7 +29,7 @@ interface FileAttempt {
   readonly onlyRecordFailures: boolean;
 }
 
-const directoryMissing: {
+export const directoryMissing: {
   (state: ResolutionState): (directory: string) => boolean;
   (directory: string, state: ResolutionState): boolean;
 } = Fn.dual(DATA_FIRST_ARITY, (directory: string, state: ResolutionState): boolean => {
@@ -66,7 +66,7 @@ const fileAttempt = (request: RelativeRequest, state: ResolutionState): FileAtte
   return { found: loadAsFile({ ...request, onlyRecordFailures }, state), onlyRecordFailures };
 };
 
-const nodeLoadModuleByRelativeName: {
+export const nodeLoadModuleByRelativeName: {
   (state: ResolutionState): (request: RelativeRequest) => Option.Option<Resolved>;
   (request: RelativeRequest, state: ResolutionState): Option.Option<Resolved>;
 } = Fn.dual(
@@ -94,7 +94,7 @@ const nodeLoadModuleByRelativeName: {
   },
 );
 
-const loadRelativeModule: {
+export const loadRelativeModule: {
   (state: ResolutionState): (lookup: ModuleLookup) => RelativeModule;
   (lookup: ModuleLookup, state: ResolutionState): RelativeModule;
 } = Fn.dual(DATA_FIRST_ARITY, (lookup: ModuleLookup, state: ResolutionState): RelativeModule => {
@@ -110,6 +110,3 @@ const loadRelativeModule: {
   );
   return { resolved, insideNodeModules: parts.includes("node_modules") };
 });
-
-export { directoryMissing, loadRelativeModule, nodeLoadModuleByRelativeName };
-export type { RelativeModule };

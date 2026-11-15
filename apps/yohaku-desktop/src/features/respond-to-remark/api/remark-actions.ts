@@ -12,12 +12,12 @@ import type { Marked } from "#/entities/manuscript";
 import { useYohaku } from "#/shared/api";
 import type { SpanTarget } from "#/shared/api";
 
-interface Proposal {
+export interface Proposal {
   readonly proposal: Option.Option<string>;
   readonly done: boolean;
 }
 
-interface RemarkActions extends Proposal {
+export interface RemarkActions extends Proposal {
   readonly rewriting: boolean;
   readonly rewrite: () => void;
   readonly replace: () => void;
@@ -70,7 +70,7 @@ const replaced = (marked: Marked, view: EditorView, text: string): void => {
   });
 };
 
-const useRemarkActions = (marked: Marked): RemarkActions => {
+export const useRemarkActions = (marked: Marked): RemarkActions => {
   const yohaku = useYohaku();
   const editor = useAtomValue(editorAtom);
   const id = useAtomValue(manuscriptIdAtom);
@@ -111,6 +111,3 @@ const useRemarkActions = (marked: Marked): RemarkActions => {
     },
   };
 };
-
-export { useRemarkActions };
-export type { Proposal, RemarkActions };

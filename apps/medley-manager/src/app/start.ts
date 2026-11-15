@@ -29,7 +29,7 @@ const webAnalytics = createMiddleware().server(({ next }) =>
 
 const securityHeaders = createMiddleware().server(({ next }) => securedResult(next));
 
-const startInstance = createStart(() => ({
+export const startInstance = createStart(() => ({
   requestMiddleware: [
     requestSpan,
     securityHeaders,
@@ -41,5 +41,3 @@ const startInstance = createStart(() => ({
   ],
   functionMiddleware: [serverFnSpan],
 }));
-
-export { startInstance };

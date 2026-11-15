@@ -6,7 +6,7 @@ import { useSyncSignIn } from "#/features/sync-manuscripts/api/sync";
 
 const LABEL = "同期を始める";
 
-const ConnectSyncButton = (): ReactNode => {
+export const ConnectSyncButton = (): ReactNode => {
   const { connect, pending } = useSyncSignIn();
   return (
     <Button variant="ghost" size="sm" disabled={pending} onClick={connect}>
@@ -15,5 +15,3 @@ const ConnectSyncButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { ConnectSyncButton };

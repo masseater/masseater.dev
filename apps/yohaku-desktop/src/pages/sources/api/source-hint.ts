@@ -5,7 +5,7 @@ import { useHint } from "#/entities/onboarding";
 const findRevert = (): Option.Option<Element> =>
   Option.fromNullishOr(document.querySelector("[data-revert]"));
 
-const useSourceHint = (): void => {
+export const useSourceHint = (): void => {
   useHint({
     step: "source-hint",
     find: findRevert,
@@ -13,5 +13,3 @@ const useSourceHint = (): void => {
     description: "この資料から入った設定をまとめて消す",
   });
 };
-
-export { useSourceHint };

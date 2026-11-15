@@ -9,7 +9,7 @@ type Counted = Readonly<{ partCount: number }>;
 
 const partCount = ({ partCount: count }: Counted): string => `${count.toString()} パート`;
 
-const FeaturedVideos = (): ReactNode => {
+export const FeaturedVideos = (): ReactNode => {
   const { data: videos } = useSuspenseQuery(videosQuery);
   return (
     <section className="flex flex-col gap-4">
@@ -18,5 +18,3 @@ const FeaturedVideos = (): ReactNode => {
     </section>
   );
 };
-
-export { FeaturedVideos };

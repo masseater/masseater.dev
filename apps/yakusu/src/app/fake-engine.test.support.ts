@@ -2,7 +2,7 @@ import { Option, Stream, String, pipe } from "effect";
 
 import type { Engine, Progress } from "#/shared/api";
 
-type TranslateRequest = Engine["translate"] extends (request: infer Request) => unknown
+export type TranslateRequest = Engine["translate"] extends (request: infer Request) => unknown
   ? Request
   : never;
 
@@ -28,13 +28,13 @@ const reply = (request: TranslateRequest): Stream.Stream<string, Readonly<{ mess
     }),
   );
 
-type FakeEngine = Readonly<{ engine: Engine; requests: readonly TranslateRequest[] }>;
+export type FakeEngine = Readonly<{ engine: Engine; requests: readonly TranslateRequest[] }>;
 
-type Failure = Readonly<{ message: string }>;
+export type Failure = Readonly<{ message: string }>;
 
-type Prepare = () => Stream.Stream<Progress, Failure>;
+export type Prepare = () => Stream.Stream<Progress, Failure>;
 
-const fakeEngineWith = (prepare: Prepare): FakeEngine => {
+export const fakeEngineWith = (prepare: Prepare): FakeEngine => {
   const requests: TranslateRequest[] = [];
   return {
     requests,
@@ -48,7 +48,4 @@ const fakeEngineWith = (prepare: Prepare): FakeEngine => {
   };
 };
 
-const fakeEngine = (): FakeEngine => fakeEngineWith(() => Stream.empty);
-
-export { fakeEngine, fakeEngineWith };
-export type { FakeEngine, Failure, Prepare, TranslateRequest };
+export const fakeEngine = (): FakeEngine => fakeEngineWith(() => Stream.empty);

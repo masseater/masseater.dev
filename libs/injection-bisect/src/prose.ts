@@ -4,9 +4,9 @@ import type { Span, Unit } from "./parser.ts";
 
 const PROSE = /\s|[^ -~]/u;
 
-const looksLikeProse = (text: string): boolean => PROSE.test(text);
+export const looksLikeProse = (text: string): boolean => PROSE.test(text);
 
-const proseUnitsIn =
+export const proseUnitsIn =
   (text: string) =>
   (spans: readonly Span[]): readonly Unit[] =>
     pipe(
@@ -14,5 +14,3 @@ const proseUnitsIn =
       Arr.filter(({ start, end }) => looksLikeProse(Str.slice(start, end)(text))),
       Arr.map(({ start, end }): Unit => ({ kind: "prose", start, end })),
     );
-
-export { looksLikeProse, proseUnitsIn };

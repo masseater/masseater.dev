@@ -3,11 +3,11 @@ import { Digest } from "effect/crypto";
 
 import { normalized } from "./categories";
 
-type Entry = Readonly<{ date: string; amount: number; description: string }>;
+export type Entry = Readonly<{ date: string; amount: number; description: string }>;
 
-type Fingerprint = Readonly<{ normalized: string; hash: string }>;
+export type Fingerprint = Readonly<{ normalized: string; hash: string }>;
 
-type Source = Readonly<{ accountId: string; entries: readonly Entry[] }>;
+export type Source = Readonly<{ accountId: string; entries: readonly Entry[] }>;
 
 const SEPARATOR = "\u0000";
 
@@ -54,7 +54,8 @@ const printOf = ([entry, [key, nth]]: readonly [Entry, readonly [string, number]
   );
 };
 
-const fingerprints = ({
+/** @internal */
+export const fingerprints = ({
   accountId,
   entries,
 }: Source): Effect.Effect<readonly Fingerprint[], never, Digest.Digest> => {
@@ -62,7 +63,3 @@ const fingerprints = ({
   const numbered = Arr.zip(keys, occurrences(keys));
   return pipe(Arr.zip(entries, numbered), Effect.forEach(printOf));
 };
-
-/** @internal */
-export { fingerprints };
-export type { Entry, Fingerprint, Source };

@@ -12,7 +12,7 @@ import {
 import type { Asking, Entry, Heard, Listening } from "#/entities/interview";
 import { read } from "#/shared/lib/registry";
 
-type Snapshot = Readonly<{
+export type Snapshot = Readonly<{
   now: number;
   heard: Heard;
   entries: readonly Entry[];
@@ -23,7 +23,7 @@ type Snapshot = Readonly<{
   asking: Asking;
 }>;
 
-type Due = Readonly<{ ask: boolean; summarize: boolean; nudge: number; stale: boolean }>;
+export type Due = Readonly<{ ask: boolean; summarize: boolean; nudge: number; stale: boolean }>;
 
 const SILENCE_SECONDS = 2.5;
 const SUMMARY_SECONDS = 8;
@@ -76,7 +76,8 @@ const askDue = (snapshot: Snapshot): boolean =>
   quiet(snapshot) &&
   elapsed(snapshot.now, snapshot.heard.lastActivityAt, SILENCE_SECONDS);
 
-const dueAt = (snapshot: Snapshot): Due => ({
+/** @internal */
+export const dueAt = (snapshot: Snapshot): Due => ({
   ask: askDue(snapshot),
   summarize:
     askDue(snapshot) || elapsed(snapshot.now, snapshot.heard.lastSummaryAt, SUMMARY_SECONDS),
@@ -84,7 +85,8 @@ const dueAt = (snapshot: Snapshot): Due => ({
   stale: staleAt(snapshot),
 });
 
-const due = Effect.gen(function* due() {
+/** @internal */
+export const due = Effect.gen(function* due() {
   const snapshot: Snapshot = {
     now: yield* Clock.currentTimeMillis,
     heard: yield* read(heardAtom),
@@ -97,7 +99,3 @@ const due = Effect.gen(function* due() {
   };
   return dueAt(snapshot);
 });
-
-/** @internal */
-export { due, dueAt };
-export type { Due, Snapshot };

@@ -10,7 +10,7 @@ const RuleOverrideSchema = Schema.Struct({
   model: Schema.optionalKey(ModelSpecSchema),
 });
 
-const RULE_OPTIONS_SCHEMA = [
+export const RULE_OPTIONS_SCHEMA = [
   {
     type: "object",
     additionalProperties: false,
@@ -27,7 +27,7 @@ const RULE_OPTIONS_SCHEMA = [
 
 const decodeOverride = Schema.decodeUnknownResult(RuleOverrideSchema, STRICT);
 
-const overrideRule: {
+export const overrideRule: {
   (
     raw: unknown,
     providers: Readonly<Record<string, DecisionProvider>>,
@@ -61,5 +61,3 @@ const overrideRule: {
     };
   },
 );
-
-export { RULE_OPTIONS_SCHEMA, overrideRule };

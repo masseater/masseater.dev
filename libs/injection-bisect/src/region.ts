@@ -4,13 +4,13 @@ import type { Span } from "./parser.ts";
 
 const MERGED = 1;
 
-interface Region extends Span {
+export interface Region extends Span {
   readonly probability: number;
 }
 
 const byStart = Order.mapInput(Order.Number, (region: Region) => region.start);
 
-const joinRegions =
+export const joinRegions =
   (text: string) =>
   (regions: readonly Region[]): readonly Region[] => {
     const sorted = Arr.sort(regions, byStart);
@@ -32,6 +32,3 @@ const joinRegions =
     }
     return joined;
   };
-
-export { joinRegions };
-export type { Region };

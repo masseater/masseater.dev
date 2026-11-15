@@ -39,12 +39,10 @@ const log = Effect.gen(function* log() {
   return path.join(home, "Library", "Logs", IDENTIFIER, LOG);
 });
 
-const macos: Target = {
+/** @internal */
+export const macos: Target = {
   start,
   log,
   screenshot: (file) => Effect.asVoid(succeed({ file: "screencapture", args: ["-x", file] })),
   processes: capture({ file: "pgrep", args: ["-fl", "yakusu|llama-server"] }),
 };
-
-/** @internal */
-export { macos };

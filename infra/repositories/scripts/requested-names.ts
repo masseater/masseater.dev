@@ -40,9 +40,7 @@ const installedNamesIn = Effect.fn("installedNamesIn")(function* installedNamesI
 });
 
 /** @internal */
-const requestedNames = namesIn;
+export const requestedNames = namesIn;
 
 /** @internal */
-const requestedRepositories = installedNamesIn;
-
-export { requestedNames, requestedRepositories };
+export const requestedRepositories = installedNamesIn;

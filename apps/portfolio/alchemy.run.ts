@@ -43,7 +43,7 @@ const ciTelemetry = Workers.Worker("CiTelemetry", {
   logpush: true,
 });
 
-type WebEnv = InferEnv<typeof web>;
+export type WebEnv = InferEnv<typeof web>;
 
 const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   APP_NAME,
@@ -63,5 +63,4 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
   }),
 );
 
-export type { WebEnv };
 export default stack;

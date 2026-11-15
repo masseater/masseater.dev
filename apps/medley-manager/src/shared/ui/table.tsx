@@ -2,7 +2,7 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "#/shared/lib/utils";
 
-const Table = ({ className, ...props }: ComponentProps<"table">): ReactNode => (
+export const Table = ({ className, ...props }: ComponentProps<"table">): ReactNode => (
   <div
     data-slot="table-container"
     className="bg-card relative w-full overflow-x-auto rounded-xl border"
@@ -14,5 +14,3 @@ const Table = ({ className, ...props }: ComponentProps<"table">): ReactNode => (
     />
   </div>
 );
-
-export { Table };

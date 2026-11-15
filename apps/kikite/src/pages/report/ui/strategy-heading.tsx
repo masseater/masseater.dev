@@ -6,7 +6,7 @@ const ASKED = "聞いた";
 const GOOD = "聞いてほしかった";
 const OFF = "ずれている";
 
-const StrategyHeading = (): ReactNode => (
+export const StrategyHeading = (): ReactNode => (
   <>
     <span>{STRATEGY}</span>
     <span className="text-right">{ASKED}</span>
@@ -14,5 +14,3 @@ const StrategyHeading = (): ReactNode => (
     <ThumbsDown className="size-4 justify-self-end" aria-label={OFF} />
   </>
 );
-
-export { StrategyHeading };

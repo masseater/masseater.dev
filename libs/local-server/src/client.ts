@@ -12,10 +12,10 @@ const socketLayer = Layer.unwrap(
 );
 
 /** @internal */
-const socketProtocolLayer = RpcClient.layerProtocolSocket({ retryTransientErrors: true }).pipe(
+export const socketProtocolLayer = RpcClient.layerProtocolSocket({
+  retryTransientErrors: true,
+}).pipe(
   Layer.provide(RpcSerialization.layerJsonRpc()),
   Layer.provide(socketLayer),
   Layer.provide(Socket.layerWebSocketConstructorGlobal),
 );
-
-export { socketProtocolLayer };

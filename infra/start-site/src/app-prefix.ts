@@ -15,7 +15,8 @@ const isZone = (resource: unknown): boolean => isResourceOfType(resource, Zone.Z
 
 const decodeNamed = Schema.decodeUnknownOption(Schema.Struct({ name: Schema.String }));
 
-const envPrefixOf = (appName: string): string => `${pipe(appName, Str.replaceAll("-", "_"))}_`;
+export const envPrefixOf = (appName: string): string =>
+  `${pipe(appName, Str.replaceAll("-", "_"))}_`;
 
 const prefixOf = (resource: unknown, appName: string): string =>
   Match.value(resource).pipe(
@@ -34,7 +35,7 @@ const describeUnprefixed = (
     Option.toArray,
   );
 
-const requireAppPrefix = (appName: string): Effect.Effect<readonly string[], never, Stack> =>
+export const requireAppPrefix = (appName: string): Effect.Effect<readonly string[], never, Stack> =>
   Effect.gen(function* checkAppPrefix() {
     const prefix = `${appName}-`;
     const { name, resources } = yield* Stack;
@@ -55,5 +56,3 @@ const requireAppPrefix = (appName: string): Effect.Effect<readonly string[], nev
     }
     return offenders;
   });
-
-export { envPrefixOf, requireAppPrefix };

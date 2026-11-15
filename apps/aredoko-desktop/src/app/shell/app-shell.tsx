@@ -5,7 +5,7 @@ import { useModelRendering } from "#/features/render-models";
 import { CurrentPage } from "./current-page.tsx";
 import { Header } from "./header.tsx";
 
-const AppShell = (): ReactNode => {
+export const AppShell = (): ReactNode => {
   useModelRendering();
   return (
     <div className="flex h-screen flex-col overflow-hidden">
@@ -16,5 +16,3 @@ const AppShell = (): ReactNode => {
     </div>
   );
 };
-
-export { AppShell };

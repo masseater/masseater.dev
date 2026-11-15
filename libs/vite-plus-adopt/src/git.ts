@@ -4,7 +4,8 @@ import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
 const DATA_FIRST_ARITY = 2;
 
-const listGitFiles: {
+/** @internal */
+export const listGitFiles: {
   (
     pathspecs: readonly string[],
   ): (
@@ -54,7 +55,8 @@ const listGitFiles: {
     }),
 );
 
-const listCommitMessages: {
+/** @internal */
+export const listCommitMessages: {
   (
     range: string,
   ): (
@@ -92,6 +94,3 @@ const listCommitMessages: {
       return pipe(Str.split(output, "\0"), Arr.filter(Str.isNonEmpty));
     }),
 );
-
-/** @internal */
-export { listCommitMessages, listGitFiles };

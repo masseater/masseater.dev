@@ -31,6 +31,4 @@ const colors: ReadonlyMap<string, string> = new Map(
   ),
 );
 
-const colorOf = (model: string): string => colors.get(model) ?? FALLBACK;
-
-export { colorOf };
+export const colorOf = (model: string): string => colors.get(model) ?? FALLBACK;

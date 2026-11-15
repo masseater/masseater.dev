@@ -8,23 +8,23 @@ const SECURITY_HEADERS_BASE = {
   "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
 } as const;
 
-const SECURITY_HEADERS = {
+export const SECURITY_HEADERS = {
   ...SECURITY_HEADERS_BASE,
   "Cross-Origin-Opener-Policy": "same-origin",
   "Cross-Origin-Embedder-Policy": "require-corp",
   "Cross-Origin-Resource-Policy": "same-origin",
 } as const;
 
-const SECURITY_HEADERS_CREDENTIALLESS = {
+export const SECURITY_HEADERS_CREDENTIALLESS = {
   ...SECURITY_HEADERS,
   "Cross-Origin-Embedder-Policy": "credentialless",
 } as const;
 
-const ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
+export const ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
-const WEB_ANALYTICS_SCRIPT_ORIGIN = "https://static.cloudflareinsights.com";
+export const WEB_ANALYTICS_SCRIPT_ORIGIN = "https://static.cloudflareinsights.com";
 
-const WEB_ANALYTICS_REPORT_ORIGIN = "https://cloudflareinsights.com";
+export const WEB_ANALYTICS_REPORT_ORIGIN = "https://cloudflareinsights.com";
 
 const OBJECT_SOURCE_NONE = "object-src 'none'";
 
@@ -32,7 +32,7 @@ const BASE_URI_NONE = "base-uri 'none'";
 
 const FRAME_ANCESTORS_NONE = "frame-ancestors 'none'";
 
-const SERVER_RESPONSE_HEADERS = {
+export const SERVER_RESPONSE_HEADERS = {
   ...SECURITY_HEADERS_BASE,
   "Content-Security-Policy": pipe(
     [FRAME_ANCESTORS_NONE, BASE_URI_NONE, OBJECT_SOURCE_NONE],
@@ -47,7 +47,7 @@ const workerDirective = (worker: readonly string[] | undefined): readonly string
     ),
   );
 
-const contentSecurityPolicy = ({
+export const contentSecurityPolicy = ({
   script,
   style,
   worker,
@@ -77,7 +77,7 @@ const contentSecurityPolicy = ({
     Arr.join("; "),
   );
 
-const STATIC_PAGE_HEADERS = {
+export const STATIC_PAGE_HEADERS = {
   ...SECURITY_HEADERS,
   "Content-Security-Policy": contentSecurityPolicy({
     script: ["'wasm-unsafe-eval'"],
@@ -86,7 +86,7 @@ const STATIC_PAGE_HEADERS = {
   }),
 } as const;
 
-const assetHeaders = ({
+export const assetHeaders = ({
   page,
   base = "",
 }: Readonly<{ page: Readonly<Record<string, string>>; base?: string }>): string =>
@@ -103,15 +103,3 @@ const assetHeaders = ({
     ],
     Arr.join("\n"),
   );
-
-export {
-  ASSET_CACHE_CONTROL,
-  WEB_ANALYTICS_REPORT_ORIGIN,
-  WEB_ANALYTICS_SCRIPT_ORIGIN,
-  SECURITY_HEADERS,
-  SECURITY_HEADERS_CREDENTIALLESS,
-  SERVER_RESPONSE_HEADERS,
-  STATIC_PAGE_HEADERS,
-  assetHeaders,
-  contentSecurityPolicy,
-};

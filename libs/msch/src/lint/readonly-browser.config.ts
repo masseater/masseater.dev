@@ -1,4 +1,4 @@
-const WEBGPU_HANDLES: readonly string[] = [
+export const WEBGPU_HANDLES: readonly string[] = [
   "GPUDevice",
   "GPUCanvasContext",
   "GPUTexture",
@@ -10,7 +10,7 @@ const WEBGPU_HANDLES: readonly string[] = [
   "GPUSampler",
 ];
 
-const BROWSER_HANDLES: readonly string[] = [
+export const BROWSER_HANDLES: readonly string[] = [
   "HTMLCanvasElement",
   "HTMLImageElement",
   "HTMLAnchorElement",
@@ -23,5 +23,3 @@ const BROWSER_HANDLES: readonly string[] = [
   "ImageBitmap",
   ...WEBGPU_HANDLES,
 ];
-
-export { BROWSER_HANDLES, WEBGPU_HANDLES };

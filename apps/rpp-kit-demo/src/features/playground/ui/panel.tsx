@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const Panel = ({
+export const Panel = ({
   className,
   children,
 }: Readonly<{ className: string; children: ReactNode }>): ReactNode => (
@@ -10,5 +10,3 @@ const Panel = ({
     {children}
   </div>
 );
-
-export { Panel };

@@ -17,7 +17,9 @@ const fieldsOf = (
     Array.filter(({ values }) => Array.isReadonlyArrayNonEmpty(values)),
   );
 
-const PackageSummary = ({ summary }: Readonly<{ summary: typeof Summary.Type }>): ReactNode => (
+export const PackageSummary = ({
+  summary,
+}: Readonly<{ summary: typeof Summary.Type }>): ReactNode => (
   <div className="flex flex-col gap-4">
     <KindCounts counts={summary.counts} />
     <dl className="flex flex-col gap-3">
@@ -30,5 +32,3 @@ const PackageSummary = ({ summary }: Readonly<{ summary: typeof Summary.Type }>)
     </dl>
   </div>
 );
-
-export { PackageSummary };

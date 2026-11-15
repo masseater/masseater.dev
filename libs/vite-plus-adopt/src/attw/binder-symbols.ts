@@ -9,7 +9,7 @@ import { EMPTY, combineFlags, hasFlag, withFlags } from "./flags.ts";
 const DATA_FIRST_ARITY = 2;
 const DATA_FIRST_ARITY_3 = 3;
 
-interface BoundSymbol {
+export interface BoundSymbol {
   flags: number;
   readonly escapedName: string;
   readonly name: string;
@@ -21,9 +21,9 @@ interface BoundSymbol {
   exportSymbol?: BoundSymbol;
 }
 
-interface SymbolTable extends Map<string, BoundSymbol> {}
+export interface SymbolTable extends Map<string, BoundSymbol> {}
 
-interface SymbolDeclaration {
+export interface SymbolDeclaration {
   readonly table: Option.Option<SymbolTable>;
   readonly parent: Option.Option<BoundSymbol>;
   readonly node: Node;
@@ -37,21 +37,21 @@ const DOUBLE_UNDERSCORE = "__";
 const TRIPLE_UNDERSCORE = "___";
 const MISSING_NAME = "__missing";
 
-const unescapeLeadingUnderscores = (name: string): string => {
+export const unescapeLeadingUnderscores = (name: string): string => {
   if (Str.startsWith(TRIPLE_UNDERSCORE)(name)) {
     return Str.slice(UNDERSCORE.length)(name);
   }
   return name;
 };
 
-const escapeLeadingUnderscores = (name: string): string => {
+export const escapeLeadingUnderscores = (name: string): string => {
   if (Str.startsWith(DOUBLE_UNDERSCORE)(name)) {
     return `${UNDERSCORE}${name}`;
   }
   return name;
 };
 
-const createSymbol: {
+export const createSymbol: {
   (escapedName: string): (flags: number) => BoundSymbol;
   (flags: number, escapedName: string): BoundSymbol;
 } = Fn.dual(DATA_FIRST_ARITY, (flags: number, escapedName: string): BoundSymbol => ({
@@ -98,7 +98,7 @@ const replacesModuleDeclaration = (existing: Node, node: Node): boolean =>
 const replacesValueDeclaration = (existing: Node, node: Node): boolean =>
   replacesAssignmentDeclaration(existing, node) || replacesModuleDeclaration(existing, node);
 
-const setValueDeclaration: {
+export const setValueDeclaration: {
   (node: Node): (symbol: BoundSymbol) => void;
   (symbol: BoundSymbol, node: Node): void;
 } = Fn.dual(DATA_FIRST_ARITY, (symbol: BoundSymbol, node: Node): void => {
@@ -154,7 +154,7 @@ const DECLARATION_EFFECTS: readonly (readonly [
   ],
 ];
 
-const addDeclarationToSymbol: {
+export const addDeclarationToSymbol: {
   (node: Node, flags: number): (symbol: BoundSymbol) => void;
   (symbol: BoundSymbol, node: Node, flags: number): void;
 } = Fn.dual(DATA_FIRST_ARITY_3, (symbol: BoundSymbol, node: Node, flags: number): void => {
@@ -191,7 +191,7 @@ const symbolInTable = (
   return found;
 };
 
-const exportOf: {
+export const exportOf: {
   (name: string): (owner: BoundSymbol) => Option.Option<BoundSymbol>;
   (owner: BoundSymbol, name: string): Option.Option<BoundSymbol>;
 } = Fn.dual(DATA_FIRST_ARITY, (owner: BoundSymbol, name: string): Option.Option<BoundSymbol> =>
@@ -200,7 +200,7 @@ const exportOf: {
   ),
 );
 
-const declareSymbol = (declaration: SymbolDeclaration): BoundSymbol => {
+export const declareSymbol = (declaration: SymbolDeclaration): BoundSymbol => {
   const symbol = Option.getOrElse(
     Option.zipWith(declaration.table, declaration.name, (table, name) =>
       symbolInTable(table, name, declaration),
@@ -213,14 +213,3 @@ const declareSymbol = (declaration: SymbolDeclaration): BoundSymbol => {
   }
   return symbol;
 };
-
-export {
-  addDeclarationToSymbol,
-  createSymbol,
-  declareSymbol,
-  escapeLeadingUnderscores,
-  exportOf,
-  setValueDeclaration,
-  unescapeLeadingUnderscores,
-};
-export type { BoundSymbol, SymbolDeclaration, SymbolTable };

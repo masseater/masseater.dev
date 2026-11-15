@@ -14,9 +14,7 @@ const Limit = Schema.FiniteFromString.check(Schema.isInt(), LimitRange);
 
 const RankingSearch = Schema.toStandardSchemaV1(Schema.Struct({ limit: Limit }));
 
-const rankingRoutes = createRouter("/ranking")
+export const rankingRoutes = createRouter("/ranking")
   .get("/songs", ({ query }) => runRequest(rankSongs(query.limit)), { query: RankingSearch })
   .get("/videos", ({ query }) => runRequest(rankVideos(query.limit)), { query: RankingSearch })
   .get("/people", ({ query }) => runRequest(rankPeople(query.limit)), { query: RankingSearch });
-
-export { rankingRoutes };

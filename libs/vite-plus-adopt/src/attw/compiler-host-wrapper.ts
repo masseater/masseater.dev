@@ -13,19 +13,19 @@ import type { ResolutionMode } from "./resolution-types.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface ModuleNameResolution {
+export interface ModuleNameResolution {
   readonly resolution: TsResolution;
   readonly trace: readonly string[];
 }
 
-type ResolveModuleNameArguments = readonly [
+export type ResolveModuleNameArguments = readonly [
   moduleName: string,
   containingFile: string,
   resolutionMode?: number,
   noDtsResolution?: boolean,
 ];
 
-interface CompilerHostWrapper {
+export interface CompilerHostWrapper {
   readonly getCompilerOptions: () => Readonly<Record<string, number | boolean>>;
   readonly getSourceFile: (fileName: string) => SourceFile | undefined;
   readonly getSourceFileFromCache: (fileName: string) => SourceFile | undefined;
@@ -123,7 +123,7 @@ const resolveModuleNameWith =
     return { resolution: entry.resolution, trace: entry.trace };
   };
 
-const wrapHost: {
+export const wrapHost: {
   (site: Omit<ProgramSite, "core" | "options">): (core: HostWrapperCore) => CompilerHostWrapper;
   (core: HostWrapperCore, site: Omit<ProgramSite, "core" | "options">): CompilerHostWrapper;
 } = Fn.dual(
@@ -164,6 +164,3 @@ const wrapHost: {
     };
   },
 );
-
-export { wrapHost };
-export type { CompilerHostWrapper, ModuleNameResolution, ResolveModuleNameArguments };

@@ -1,6 +1,6 @@
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-const claudeRequests = sqliteTable(
+export const claudeRequests = sqliteTable(
   "claude_requests",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
@@ -14,5 +14,3 @@ const claudeRequests = sqliteTable(
   },
   (table) => [index("claude_requests_taken_at_idx").on(table.takenAt)],
 );
-
-export { claudeRequests };

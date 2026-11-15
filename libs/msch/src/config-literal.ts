@@ -1,14 +1,14 @@
 import { Array as Arr, Match, Option, Predicate, Record as Rec, Schema, pipe } from "effect";
 
-type Literal = string | number | boolean | null | readonly Literal[] | LiteralObject;
+export type Literal = string | number | boolean | null | readonly Literal[] | LiteralObject;
 
-interface LiteralObject {
+export interface LiteralObject {
   readonly [key: string]: Literal;
 }
 
 const WRAPPERS = ["TSAsExpression", "TSSatisfiesExpression", "ParenthesizedExpression"] as const;
 
-const KeySchema = Schema.Union([
+export const KeySchema = Schema.Union([
   Schema.Struct({ type: Schema.Literal("Identifier"), name: Schema.String }),
   Schema.Struct({ type: Schema.Literal("Literal"), value: Schema.String }),
 ]);
@@ -52,7 +52,7 @@ const decodeObject = Schema.decodeUnknownOption(
   }),
 );
 
-const keyName = (key: typeof KeySchema.Type): string =>
+export const keyName = (key: typeof KeySchema.Type): string =>
   Match.value(key).pipe(
     Match.discriminatorsExhaustive("type")({
       Identifier: (identifier) => identifier.name,
@@ -60,7 +60,7 @@ const keyName = (key: typeof KeySchema.Type): string =>
     }),
   );
 
-const literalOf = (node: unknown): Option.Option<Literal> => {
+export const literalOf = (node: unknown): Option.Option<Literal> => {
   const wrapped = decodeWrapped(node);
   if (Option.isSome(wrapped)) {
     return literalOf(wrapped.value.expression);
@@ -118,7 +118,7 @@ const propertyValue =
       ),
     );
 
-const childrenOf = (node: unknown): readonly unknown[] => {
+export const childrenOf = (node: unknown): readonly unknown[] => {
   if (Arr.isArray(node)) {
     return node;
   }
@@ -128,7 +128,7 @@ const childrenOf = (node: unknown): readonly unknown[] => {
   return [];
 };
 
-const nestedValues =
+export const nestedValues =
   (path: readonly [string, string]) =>
   (node: unknown): readonly unknown[] => {
     const [outer, inner] = path;
@@ -140,6 +140,3 @@ const nestedValues =
     );
     return [...own, ...pipe(childrenOf(node), Arr.flatMap(nestedValues(path)))];
   };
-
-export { KeySchema, childrenOf, keyName, literalOf, nestedValues };
-export type { Literal, LiteralObject };

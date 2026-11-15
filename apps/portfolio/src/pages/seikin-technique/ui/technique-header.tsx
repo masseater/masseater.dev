@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { COLLECTION_TITLE } from "#/entities/technique";
 
-const TechniqueHeader = ({ name }: Readonly<{ name: string }>): ReactNode => (
+export const TechniqueHeader = ({ name }: Readonly<{ name: string }>): ReactNode => (
   <header className="flex flex-col gap-3">
     <Link
       className="text-muted-foreground decoration-foreground/30 hover:decoration-foreground text-sm underline underline-offset-4"
@@ -16,5 +16,3 @@ const TechniqueHeader = ({ name }: Readonly<{ name: string }>): ReactNode => (
     </h1>
   </header>
 );
-
-export { TechniqueHeader };

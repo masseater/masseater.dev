@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import { yohakuAtom } from "#/shared/api";
 import type { Yohaku } from "#/shared/api";
 
-const Providers = ({
+export const Providers = ({
   children,
   client,
   yohaku,
@@ -19,5 +19,3 @@ const Providers = ({
     </QueryClientProvider>
   );
 };
-
-export { Providers };

@@ -120,7 +120,7 @@ const createOrFail =
     return create(writer)(input);
   };
 
-const writeMemory =
+export const writeMemory =
   (writer: Writer) =>
   (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure> => {
     const created = createOrFail(writer);
@@ -134,5 +134,3 @@ const writeMemory =
       ),
     );
   };
-
-export { writeMemory };

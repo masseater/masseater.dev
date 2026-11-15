@@ -1,4 +1,4 @@
-const COPY = {
+export const COPY = {
   title: "20 枚で比べた結果",
   way: "読み方",
   overall: "全体",
@@ -9,5 +9,3 @@ const COPY = {
   cost: "1 枚の費用",
   demo: "自分の画像で試す",
 } as const;
-
-export { COPY };

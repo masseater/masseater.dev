@@ -10,7 +10,7 @@ import { pdfReaderOf } from "./pdf.ts";
 import { pptReader } from "./ppt.ts";
 import { SPREADSHEET_READERS } from "./spreadsheet.ts";
 
-const readersWith = (ocr: OcrOptions): readonly Reader[] => [
+export const readersWith = (ocr: OcrOptions): readonly Reader[] => [
   pdfReaderOf(ocr),
   imageReaderOf(ocr),
   ...OFFICE_READERS,
@@ -22,6 +22,4 @@ const readersWith = (ocr: OcrOptions): readonly Reader[] => [
   ...MAIL_READERS,
 ];
 
-const DEFAULT_READERS = readersWith({});
-
-export { DEFAULT_READERS, readersWith };
+export const DEFAULT_READERS = readersWith({});

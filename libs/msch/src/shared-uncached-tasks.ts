@@ -129,7 +129,7 @@ const problemsOf = (definitions: readonly UncachedDefinition[]): readonly Proble
 };
 
 /** @internal */
-const checkSharedUncachedTasks = Effect.fn("checkSharedUncachedTasks")(
+export const checkSharedUncachedTasks = Effect.fn("checkSharedUncachedTasks")(
   function* checkSharedUncachedTasks(root: string) {
     const directories = yield* workspaceDirectories(root);
     const found = yield* Effect.forEach(
@@ -145,5 +145,3 @@ const checkSharedUncachedTasks = Effect.fn("checkSharedUncachedTasks")(
     );
   },
 );
-
-export { checkSharedUncachedTasks };

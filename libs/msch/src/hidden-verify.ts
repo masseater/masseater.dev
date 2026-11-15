@@ -30,12 +30,12 @@ const problemIn = Effect.fn("problemIn")(function* problemIn(root: string, direc
 });
 
 /** @internal */
-const checkHiddenVerify = Effect.fn("checkHiddenVerify")(function* checkHiddenVerify(root: string) {
+export const checkHiddenVerify = Effect.fn("checkHiddenVerify")(function* checkHiddenVerify(
+  root: string,
+) {
   const directories = yield* workspaceDirectories(root);
   const found = yield* Effect.forEach(directories, (directory) => problemIn(root, directory), {
     concurrency: READ_CONCURRENCY,
   });
   return Arr.getSomes(found);
 });
-
-export { checkHiddenVerify };

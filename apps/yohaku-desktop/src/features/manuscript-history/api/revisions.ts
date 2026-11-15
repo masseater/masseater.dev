@@ -8,7 +8,7 @@ import { opened, useScreen } from "#/shared/model";
 
 const NONE_YET: readonly Revision[] = [];
 
-const useRevisions = (id: string): readonly Revision[] => {
+export const useRevisions = (id: string): readonly Revision[] => {
   const yohaku = useYohaku();
   const { data } = useQuery(
     queryOptions({
@@ -23,7 +23,7 @@ const useRevisions = (id: string): readonly Revision[] => {
   );
 };
 
-const useRestore = (id: string): ((revision: string) => void) => {
+export const useRestore = (id: string): ((revision: string) => void) => {
   const yohaku = useYohaku();
   const [screen, setScreen] = useScreen();
   const restoring = useCallback(
@@ -36,5 +36,3 @@ const useRestore = (id: string): ((revision: string) => void) => {
   const { mutate } = useMutation({ mutationFn: restoring, onSuccess: reopen });
   return mutate;
 };
-
-export { useRestore, useRevisions };

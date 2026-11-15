@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { placedAtom } from "#/entities/manuscript";
 import { RemarkNote } from "#/features/respond-to-remark";
 
-const MarginNotes = (): ReactNode => (
+export const MarginNotes = (): ReactNode => (
   <div className="relative w-75 shrink-0">
     {pipe(
       useAtomValue(placedAtom),
@@ -13,5 +13,3 @@ const MarginNotes = (): ReactNode => (
     )}
   </div>
 );
-
-export { MarginNotes };

@@ -3,14 +3,14 @@ import type { JSX } from "react";
 
 import { WEB_ANALYTICS_BEACON } from "./web-analytics.ts";
 
-interface HeadRequest {
+export interface HeadRequest {
   readonly title: string;
   readonly stylesheet: string;
   readonly searchIndexOrigin: Option.Option<string>;
   readonly webAnalyticsToken: unknown;
 }
 
-interface Head {
+export interface Head {
   readonly meta: JSX.IntrinsicElements["meta"][];
   readonly links: JSX.IntrinsicElements["link"][];
   readonly scripts: (JSX.IntrinsicElements["script"] & { readonly "data-cf-beacon": string })[];
@@ -26,7 +26,7 @@ const webAnalyticsBeacon = (token: string): Head["scripts"][number] => ({
   "data-cf-beacon": Option.getOrElse(encodeBeacon({ token }), () => ""),
 });
 
-const rootHead = ({
+export const rootHead = ({
   title,
   stylesheet,
   searchIndexOrigin,
@@ -48,6 +48,3 @@ const rootHead = ({
     Arr.fromOption,
   ),
 });
-
-export { rootHead };
-export type { Head, HeadRequest };

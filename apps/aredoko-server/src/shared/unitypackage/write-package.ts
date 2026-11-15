@@ -5,12 +5,12 @@ import { packTar } from "modern-tar";
 import { bodyOf, skip, tarEntries } from "./tar-stream.ts";
 import { UnityPackageUnreadable } from "./unity-package-unreadable.ts";
 
-interface Selection {
+export interface Selection {
   readonly source: string;
   readonly guids: HashSet.HashSet<string>;
 }
 
-interface LooseFile {
+export interface LooseFile {
   readonly guid: string;
   readonly pathname: string;
   readonly data: Uint8Array;
@@ -66,7 +66,7 @@ const filesOf = Effect.fn("filesOf")(function* selectedFiles({ source, guids }: 
 });
 
 /** @internal */
-const writePackage = Effect.fn("writePackage")(function* writeUnityPackage(
+export const writePackage = Effect.fn("writePackage")(function* writeUnityPackage(
   selections: readonly Selection[],
   loose: readonly LooseFile[],
   destination: string,
@@ -80,6 +80,3 @@ const writePackage = Effect.fn("writePackage")(function* writeUnityPackage(
   const archive = yield* Effect.tryPromise({ try: () => compress(tar), catch: failed });
   yield* fileSystem.writeFile(destination, archive);
 });
-
-export { writePackage };
-export type { LooseFile, Selection };

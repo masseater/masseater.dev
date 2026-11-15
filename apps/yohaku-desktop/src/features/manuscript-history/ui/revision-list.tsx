@@ -8,7 +8,7 @@ import { RevisionItem } from "./revision-item.tsx";
 const LABEL = "履歴";
 const NOTHING_KEPT = "履歴なし";
 
-const RevisionList = ({ id }: Readonly<{ id: string }>): ReactNode => {
+export const RevisionList = ({ id }: Readonly<{ id: string }>): ReactNode => {
   const revisions = useRevisions(id);
   const restore = useRestore(id);
   if (Array.isReadonlyArrayEmpty(revisions)) {
@@ -25,5 +25,3 @@ const RevisionList = ({ id }: Readonly<{ id: string }>): ReactNode => {
     </ol>
   );
 };
-
-export { RevisionList };

@@ -5,7 +5,7 @@ import { ABOUT_ID } from "#/pages/home/model/about";
 import { AboutIntro } from "./about-intro";
 import { AboutPreferences } from "./about-preferences";
 
-const AboutSection = (): ReactNode => (
+export const AboutSection = (): ReactNode => (
   <section
     aria-labelledby={`${ABOUT_ID}-title`}
     className="bg-background grid min-h-dvh snap-start place-items-center px-4 py-16"
@@ -17,5 +17,3 @@ const AboutSection = (): ReactNode => (
     </div>
   </section>
 );
-
-export { AboutSection };

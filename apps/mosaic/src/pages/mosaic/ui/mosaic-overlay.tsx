@@ -7,7 +7,7 @@ import { TileCard } from "#/features/inspect-tile";
 
 import { MosaicChrome } from "./mosaic-chrome";
 
-const MosaicOverlay = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
+export const MosaicOverlay = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
   const selection = useSelection();
   const selected = Option.all({
     tile: useTile(selection),
@@ -26,5 +26,3 @@ const MosaicOverlay = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
     </>
   );
 };
-
-export { MosaicOverlay };
