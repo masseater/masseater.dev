@@ -33,7 +33,9 @@ export const listedFiles = Effect.fn("listedFiles")(function* listedFiles(root: 
 });
 
 /** @internal */
-export const presentFiles = Effect.fn("presentFiles")(function* presentFiles(listed: readonly Listed[]) {
+export const presentFiles = Effect.fn("presentFiles")(function* presentFiles(
+  listed: readonly Listed[],
+) {
   const files = yield* RepositoryFiles;
   return yield* pipe(
     listed,
