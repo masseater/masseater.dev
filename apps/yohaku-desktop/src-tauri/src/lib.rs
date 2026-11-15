@@ -94,11 +94,6 @@ fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// Starts the yohaku editor.
-///
-/// # Errors
-///
-/// Returns an error when Tauri cannot create the window or run the event loop.
 pub fn run() -> tauri::Result<()> {
     let builder = builder();
     tauri::Builder::default()

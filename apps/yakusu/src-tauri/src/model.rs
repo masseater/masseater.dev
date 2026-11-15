@@ -11,7 +11,6 @@ use sha2::{Digest, Sha256};
 
 const READ_BUFFER: usize = 1 << 16;
 
-/// A model file on the network, pinned to the bytes it has to have.
 pub struct Model {
     pub url: String,
     pub sha256: String,
@@ -19,7 +18,6 @@ pub struct Model {
 }
 
 impl Model {
-    /// `PLaMo` 3 Translate 0.8B, quantized to `Q4_K_M`, at a fixed revision.
     #[must_use]
     pub fn plamo() -> Self {
         Self {
@@ -38,14 +36,12 @@ impl Model {
     }
 }
 
-/// How much of the model has arrived.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub struct Progress {
     pub received: u64,
     pub total: u64,
 }
 
-/// The reason the model is not on the disk.
 #[derive(Debug)]
 pub enum Error {
     File(io::Error),
@@ -79,9 +75,6 @@ impl From<reqwest::Error> for Error {
     }
 }
 
-/// The bytes of an unfinished download and their running hash.
-///
-/// The file is not opened for appending, because Windows refuses to empty such a file.
 struct Partial {
     file: File,
     hash: Sha256,
@@ -142,15 +135,6 @@ impl Partial {
     }
 }
 
-/// Returns the model file in `directory`, downloading it first when it is not there.
-///
-/// An interrupted download continues from the bytes that already arrived. The file gets its
-/// name only after its hash matched, so a file with that name is always the whole model.
-///
-/// # Errors
-///
-/// Returns an error when the file cannot be written, the download fails, or the bytes that
-/// arrived are not the pinned ones.
 pub async fn ensure(
     client: &Client,
     model: &Model,

@@ -1,5 +1,3 @@
-// sts2.dll の戦闘・カード・行動まわりの型のスタブ。Sts2Stubs.csproj の説明を参照。
-
 namespace MegaCrit.Sts2.Core.Entities.Cards
 {
     using MegaCrit.Sts2.Core.Models;
