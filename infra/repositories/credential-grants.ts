@@ -34,11 +34,23 @@ const BUILDS_LOGS: Grant = {
   zone: [],
 };
 
+const EXPOSURE: Grant = {
+  account: [
+    "Access: Apps and Policies Read",
+    "MCP Portals Read",
+    "Workers Scripts Read",
+    "Workers R2 Storage Read",
+    "Pages Read",
+  ],
+  zone: ["Zone Read", "DNS Read", "Workers Routes Read"],
+};
+
 const PROFILES = {
   deploy: DEPLOY,
   transforms: extend({ zone: ["Zone Transform Rules Write"] }),
   access: extend({ account: ["Access: Apps and Policies Write", "MCP Portals Write"] }),
   buildsLogs: BUILDS_LOGS,
+  exposure: EXPOSURE,
 } as const satisfies Readonly<Record<string, Grant>>;
 
 const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
@@ -48,6 +60,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "geigeki-kaiiki": "deploy",
   konomi: "deploy",
   "masseater.dev": "deploy",
+  "masseater.dev/exposure": "exposure",
   "masseater.dev/zone": "transforms",
   "masseater.dev/mcp-portal": "access",
   "masseater.dev/production": "access",
@@ -90,6 +103,7 @@ const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
 const [, MASSEATER_DEV_GITHUB_GRANT] = releaseGrant("masseater.dev");
 
 const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
+  "masseater.dev/exposure": { permissions: { metadata: "read" } },
   "masseater.dev/github": {
     permissions: {
       actions: "read",
@@ -189,10 +203,21 @@ const grantPolicies = ({
   atproto: ATPROTO_GRANTS,
 });
 
+type GrantBindings = Readonly<{
+  GRANT_PROFILES: Grants["profiles"];
+  GRANTS: Omit<Grants, "profiles">;
+}>;
+
+const grantBindings = (ids: Readonly<{ accountId: string; zoneId: string }>): GrantBindings => {
+  const { profiles, ...grants } = grantPolicies(ids);
+  return { GRANT_PROFILES: profiles, GRANTS: grants };
+};
+
 export {
   GITHUB_APP_PERMISSIONS,
   MASSEATER_DEV_GITHUB_GRANT,
   WORKFLOW_GITHUB_GRANTS,
+  grantBindings,
   grantPolicies,
 };
-export type { GitHubGrant, Grants, Policy };
+export type { GitHubGrant, GrantBindings, Grants, Policy };

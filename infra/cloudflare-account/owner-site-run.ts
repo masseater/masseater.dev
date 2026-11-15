@@ -1,20 +1,9 @@
-import { Array as Arr } from "effect";
 import type { UserConfig } from "vite-plus";
 
 import { alchemyTasks, deployTo } from "./run-tasks.ts";
 
-const ownerSiteRun = ({
-  host,
-  paths,
-}: Readonly<{ host: string; paths: readonly string[] }>): NonNullable<UserConfig["run"]> => ({
-  tasks: {
-    ...alchemyTasks,
-    "access-check": {
-      command: Arr.join(["access-check", `https://${host}`, ...paths], " "),
-      cache: false,
-    },
-    "deploy:production": deployTo("prod"),
-  },
-});
+const ownerSiteRun: NonNullable<UserConfig["run"]> = {
+  tasks: { ...alchemyTasks, "deploy:production": deployTo("prod") },
+};
 
 export { ownerSiteRun };

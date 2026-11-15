@@ -343,6 +343,26 @@ jobs:
       queue: max
     steps: *mosaic-site
 
+  exposure:
+    needs:
+      [
+        bootstrap,
+        production,
+        zone,
+        github,
+        zenn,
+        sts2-pck,
+        mosaic-plan,
+        mosaic-character,
+        mosaic-deploy,
+      ]
+    if: ${{ !cancelled() && needs.bootstrap.outputs.latest == 'true' }}
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    uses: $/.github/workflows/exposure.yml
+
   deploy-failure:
     needs:
       [
@@ -364,7 +384,6 @@ jobs:
       issues: write
     concurrency:
       group: deploy-failure
-      queue: max
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -393,6 +412,7 @@ jobs:
         mosaic-character,
         mosaic-deploy,
         mosaic-refresh,
+        exposure,
         deploy-failure,
       ]
     if: always()

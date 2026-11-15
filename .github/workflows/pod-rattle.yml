@@ -7,13 +7,12 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: pod-rattle
+  cancel-in-progress: true
+
 env:
   CARGO_TERM_COLOR: always
-  PLUGINVAL_VERSION: v1.0.4
-  PLUGINVAL_SHA256_LINUX: c01c49d8063965c4c2dea8324468336768f5c9139e0b1caebde14c2400b55352
-  PLUGINVAL_SHA256_WINDOWS: c08e61ce3b96db41636f8ec7e76f4c7e2c13ebdac7fa1b5a1f52b4f32ec715ab
-  PLUGINVAL_SHA256_MACOS: 3c4c533bda0c5059eea3ddaea752d757ee2025041f0f47e6bcb0e87f6082b29f
-  CLAP_VALIDATOR_VERSION: 0.4.1
 
 jobs:
   tag:
@@ -24,11 +23,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: .github
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - name: Tag the revision before main changes a workflow file
         env:
           GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/component-tag.sh pod-rattle apps/pod-rattle-plugin
+        run: vp run release:tag
+        working-directory: apps/pod-rattle-plugin
 
   bundle:
     strategy:
@@ -37,86 +39,59 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: linux-x86_64
-            bundle: bundle-all
           - os: windows-latest
             platform: windows-x86_64
-            bundle: bundle-all
           - os: macos-latest
             platform: macos-universal
-            bundle: bundle-universal-all
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
+    defaults:
+      run:
+        working-directory: apps/pod-rattle-plugin
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - if: runner.os == 'Linux'
-        run: sudo apt-get update && xargs -a .github/actions/setup/linux-packages.txt sudo apt-get install -y xvfb
+        uses: $/.github/actions/linux-packages
+        with:
+          extra: xvfb
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - run: rustup toolchain install
       - if: runner.os == 'macOS'
         run: rustup target add x86_64-apple-darwin aarch64-apple-darwin
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: ${{ matrix.platform }}
-      - run: cargo run --package xtask --release -- ${{ matrix.bundle }} --release
+      - run: vp run ci:bundle
       - if: runner.os == 'macOS'
-        working-directory: target/bundled
-        run: |
-          for bundle in *.vst3 *.clap; do codesign --force --deep --sign - "$bundle"; done
+        run: vp run ci:codesign
       - name: pluginval (VST3)
-        shell: bash
-        run: |
-          case "$RUNNER_OS" in
-            Linux) asset=pluginval_Linux.zip; sha256="$PLUGINVAL_SHA256_LINUX"; run=(xvfb-run -a ./pluginval) ;;
-            Windows) asset=pluginval_Windows.zip; sha256="$PLUGINVAL_SHA256_WINDOWS"; run=(./pluginval.exe) ;;
-            macOS) asset=pluginval_macOS.zip; sha256="$PLUGINVAL_SHA256_MACOS"; run=(./pluginval.app/Contents/MacOS/pluginval) ;;
-          esac
-          curl -fsSL -o pluginval.zip "https://github.com/Tracktion/pluginval/releases/download/$PLUGINVAL_VERSION/$asset"
-          if command -v sha256sum >/dev/null; then
-            echo "$sha256  pluginval.zip" | sha256sum --check --quiet -
-          else
-            echo "$sha256  pluginval.zip" | shasum --algorithm 256 --check --quiet -
-          fi
-          unzip -q pluginval.zip
-          for bundle in target/bundled/*.vst3; do
-            "${run[@]}" --strictness-level 10 --validate-in-process --timeout-ms 300000 --output-dir pluginval-report "$bundle"
-          done
+        run: vp run ci:pluginval
       - name: Render MIDI in a VST3 host
-        shell: bash
-        run: |
-          for bundle in target/bundled/*.vst3; do
-            cargo run --package pod-rattle-host --release -- "$bundle" host-report
-          done
+        run: vp run ci:host
       - name: clap-validator
         if: runner.os != 'Windows'
-        run: |
-          cargo install --locked --git https://github.com/free-audio/clap-validator --tag "$CLAP_VALIDATOR_VERSION" clap-validator
-          for bundle in target/bundled/*.clap; do clap-validator validate "$bundle"; done
+        run: vp run ci:clap-validator
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pluginval-${{ matrix.platform }}
           path: |
-            pluginval-report
-            host-report
+            apps/pod-rattle-plugin/pluginval-report
+            apps/pod-rattle-plugin/host-report
           if-no-files-found: ignore
       - name: Archive
-        shell: bash
-        working-directory: target/bundled
         env:
           PLATFORM: ${{ matrix.platform }}
-        run: |
-          mkdir -p ../../dist
-          for vst3 in *.vst3; do
-            name="${vst3%.vst3}"
-            slug="$(tr '[:upper:] ' '[:lower:]-' <<<"$name")"
-            7z a -tzip "../../dist/$slug-$PLATFORM.zip" "$name.vst3" "$name.clap"
-          done
+        run: vp run ci:archive
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: plugins-${{ matrix.platform }}
-          path: dist/*.zip
+          path: apps/pod-rattle-plugin/plugins/*.zip
           if-no-files-found: error
 
   release:
@@ -133,39 +108,24 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: .github
-      - id: release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          tag="$(.github/scripts/component-release.sh pod-rattle apps/pod-rattle-plugin pod-rattle)"
-          echo "tag=$tag" >>"$GITHUB_OUTPUT"
-      - if: steps.release.outputs.tag != ''
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: plugins-*
+          path: apps/pod-rattle-plugin/plugins
           merge-multiple: true
-      - if: steps.release.outputs.tag != ''
+      - name: Publish the release with the plugins unless it has them
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.release.outputs.tag }}
-        run: gh release upload "$TAG" pod-rattle-*.zip --repo "$GITHUB_REPOSITORY" --clobber
-      - id: ready
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/release-please-ready.sh pod-rattle apps/pod-rattle-plugin
+        run: vp run release:publish
+        working-directory: apps/pod-rattle-plugin
       - id: app-token
-        if: steps.ready.outputs.ready == 'true'
-        run: |
-          oidc="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=masseater-dev-credential-broker" | jq -er .value)"
-          echo "::add-mask::$oidc"
-          token="$(curl -fsS --retry 3 -X POST -H "Authorization: Bearer $oidc" \
-            "https://credentials.masseater.dev/" | jq -er '.githubToken // empty')"
-          if [ -n "$token" ]; then
-            echo "::add-mask::$token"
-            echo "token=$token" >>"$GITHUB_OUTPUT"
-          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: vp run release:token
+        working-directory: apps/pod-rattle-plugin
       - if: steps.app-token.outputs.token != ''
         uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:

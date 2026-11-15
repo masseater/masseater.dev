@@ -10,5 +10,14 @@ const app = tauriAppConfig({
 });
 
 export default defineConfig(
-  mergeConfig(app, { run: { tasks: { verify: { command: [], dependsOn: ["cargo"] } } } }),
+  mergeConfig(app, {
+    run: {
+      tasks: {
+        verify: { command: [], dependsOn: ["cargo"] },
+        "release:tag": { command: "component-tag yakusu", cache: false },
+        "release:publish": { command: "component-release yakusu yakusu installers", cache: false },
+        "release:token": { command: "release-please-token yakusu", cache: false },
+      },
+    },
+  }),
 );

@@ -5,6 +5,7 @@ import { expect, test } from "vite-plus/test";
 import {
   GITHUB_APP_PERMISSIONS,
   WORKFLOW_GITHUB_GRANTS,
+  grantBindings,
   grantPolicies,
 } from "./credential-grants.ts";
 
@@ -20,13 +21,24 @@ const resourceKeys = Arr.flatMap(
 
 const encodeJson = Schema.encodeOption(Schema.fromJsonString(Schema.Unknown));
 
-test("encoded grants stay under the Workers text binding limit", () => {
-  const grants = grantPolicies({ accountId: CLOUDFLARE_ID, zoneId: CLOUDFLARE_ID });
-  const encoded = pipe(
-    encodeJson(grants),
-    Option.map((json) => new TextEncoder().encode(json).length),
+test("each encoded grants binding stays under the Workers text binding limit", () => {
+  const bindings = grantBindings({ accountId: CLOUDFLARE_ID, zoneId: CLOUDFLARE_ID });
+  const sizes = pipe(
+    bindings,
+    Rec.map((value: unknown) =>
+      pipe(
+        encodeJson(value),
+        Option.map((json) => new TextEncoder().encode(json).length),
+        Option.getOrThrow,
+      ),
+    ),
   );
-  expect(Option.getOrThrow(encoded)).toBeLessThan(TEXT_BINDING_LIMIT);
+  expect(
+    pipe(
+      sizes,
+      Rec.every((size) => size < TEXT_BINDING_LIMIT),
+    ),
+  ).toBe(true);
 });
 
 test("every grant resolves to account and zone policies with known permission groups", () => {

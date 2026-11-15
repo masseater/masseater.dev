@@ -1,0 +1,16 @@
+name: linux-packages
+description: Install the apt packages in the setup action's list and any extra ones on a Linux runner
+inputs:
+  extra:
+    description: Space-separated apt packages to install as well
+    default: ""
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        EXTRA: ${{ inputs.extra }}
+        PACKAGES: ${{ github.action_path }}/../setup/linux-packages.txt
+      run: |
+        sudo apt-get update
+        xargs -a "$PACKAGES" sudo apt-get install -y $EXTRA
