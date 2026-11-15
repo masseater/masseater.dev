@@ -1679,9 +1679,15 @@ importers:
       '@masseater.dev/mcp-tool-call':
         specifier: workspace:*
         version: link:../../libs/mcp-tool-call
+      '@masseater.dev/portal-protocol':
+        specifier: workspace:*
+        version: link:../../libs/portal-protocol
       '@modelcontextprotocol/server':
         specifier: 'catalog:'
         version: 2.4.0
+      '@r_masseater/workers-tracing':
+        specifier: workspace:*
+        version: link:../../libs/workers-tracing
       drizzle-orm:
         specifier: catalog:stack
         version: 1.0.0-rc.5-ab785fc(@cloudflare/workers-types@5.20261112.1)(@effect/sql-d1@4.1.4(effect@4.1.4))(@effect/sql-sqlite-node@4.1.4(effect@4.1.4))(@electric-sql/pglite@0.3.15)(@libsql/client@0.17.4)(@opentelemetry/api@1.10.0)(@sinclair/typebox@0.34.52)(effect@4.1.4)(valibot@1.5.0(typescript@7.1.0-beta))(zod@4.6.7)
@@ -2072,6 +2078,103 @@ importers:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
+  apps/portal:
+    dependencies:
+      '@alchemy.run/cloudflare':
+        specifier: catalog:stack
+        version: 2.0.0-beta.87(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(alchemy@2.0.0-beta.87(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(ws@8.22.1))(effect@4.1.4)
+      '@elysiajs/eden':
+        specifier: catalog:stack
+        version: 1.4.9(elysia@1.4.32(@sinclair/typebox@0.34.52)(exact-mirror@0.2.9(@sinclair/typebox@0.34.52))(file-type@22.3.0(supports-color@10.2.2))(openapi-types@12.1.3)(typescript@7.1.0-beta))
+      '@masseater.dev/portal-protocol':
+        specifier: workspace:*
+        version: link:../../libs/portal-protocol
+      '@masseater.dev/start-shell':
+        specifier: workspace:*
+        version: link:../../libs/start-shell
+      '@masseater.dev/ui':
+        specifier: workspace:*
+        version: link:../../libs/ui
+      '@r_masseater/workers-tracing':
+        specifier: workspace:*
+        version: link:../../libs/workers-tracing
+      '@tanstack/react-query':
+        specifier: catalog:stack
+        version: 5.107.1(@types/react@19.3.0)(react@19.3.1)
+      '@tanstack/react-router':
+        specifier: 'catalog:'
+        version: 1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@tanstack/react-start':
+        specifier: catalog:stack
+        version: 1.169.5(@vitejs/plugin-rsc@0.5.39(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(esbuild@0.28.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(rolldown@1.2.16)(rollup@4.64.5)(supports-color@10.2.2)(webpack@5.111.1(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(uglify-js@3.19.3))
+      eden-tanstack-react-query:
+        specifier: catalog:stack
+        version: 0.5.1(@elysiajs/eden@1.4.9(elysia@1.4.32(@sinclair/typebox@0.34.52)(exact-mirror@0.2.9(@sinclair/typebox@0.34.52))(file-type@22.3.0(supports-color@10.2.2))(openapi-types@12.1.3)(typescript@7.1.0-beta)))(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(elysia@1.4.32(@sinclair/typebox@0.34.52)(exact-mirror@0.2.9(@sinclair/typebox@0.34.52))(file-type@22.3.0(supports-color@10.2.2))(openapi-types@12.1.3)(typescript@7.1.0-beta))(react@19.3.1)
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+      elysia:
+        specifier: catalog:stack
+        version: 1.4.32(@sinclair/typebox@0.34.52)(exact-mirror@0.2.9(@sinclair/typebox@0.34.52))(file-type@22.3.0(supports-color@10.2.2))(openapi-types@12.1.3)(typescript@7.1.0-beta)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
+      recharts:
+        specifier: 'catalog:'
+        version: 3.10.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react-is@17.0.2)(react@19.3.1)(redux@5.0.1)
+      security-headers:
+        specifier: workspace:*
+        version: link:../../libs/security-headers
+      tailwindcss:
+        specifier: catalog:stack
+        version: 4.3.5
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 5.20261112.1
+      '@effect/tsgo':
+        specifier: catalog:stack
+        version: 0.68.1
+      '@effect/vitest':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
+      '@masseater.dev/alchemy-app-name':
+        specifier: workspace:*
+        version: link:../../infra/alchemy-app-name
+      '@masseater.dev/cloudflare-account':
+        specifier: workspace:*
+        version: link:../../infra/cloudflare-account
+      '@masseater.dev/owner-stack':
+        specifier: workspace:*
+        version: link:../../libs/owner-stack
+      '@tailwindcss/vite':
+        specifier: 'catalog:'
+        version: 4.3.5(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 6.3.0(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
+      alchemy:
+        specifier: catalog:stack
+        version: 2.0.0-beta.87(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(ws@8.22.1)
+      typescript:
+        specifier: catalog:stack
+        version: 7.1.0-beta
+      vite:
+        specifier: 'catalog:'
+        version: '@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
   apps/portfolio:
     dependencies:
       '@alchemy.run/cloudflare':
@@ -2428,6 +2531,9 @@ importers:
       '@masseater.dev/plamo-translate-protocol':
         specifier: workspace:*
         version: link:../../libs/plamo-translate-protocol
+      '@masseater.dev/portal-protocol':
+        specifier: workspace:*
+        version: link:../../libs/portal-protocol
       '@modelcontextprotocol/server':
         specifier: 'catalog:'
         version: 2.4.0
@@ -2602,6 +2708,12 @@ importers:
       '@masseater.dev/plamo-translate-protocol':
         specifier: workspace:*
         version: link:../../libs/plamo-translate-protocol
+      '@masseater.dev/portal-protocol':
+        specifier: workspace:*
+        version: link:../../libs/portal-protocol
+      '@masseater.dev/start-shell':
+        specifier: workspace:*
+        version: link:../../libs/start-shell
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -3016,6 +3128,9 @@ importers:
       '@masseater.dev/node-main':
         specifier: workspace:*
         version: link:../../libs/node-main
+      '@masseater.dev/portal-protocol':
+        specifier: workspace:*
+        version: link:../../libs/portal-protocol
       '@octokit/rest':
         specifier: 'catalog:'
         version: 22.0.1
@@ -3731,6 +3846,15 @@ importers:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
+  libs/portal-protocol:
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 5.20261112.1
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
   libs/rpp-kit:
     dependencies:
       '@effect/platform-node':
@@ -3807,6 +3931,12 @@ importers:
 
   libs/start-shell:
     dependencies:
+      '@elysiajs/eden':
+        specifier: catalog:stack
+        version: 1.4.9(elysia@1.4.32(@sinclair/typebox@0.34.52)(exact-mirror@0.2.9(@sinclair/typebox@0.34.52))(file-type@22.3.0(supports-color@10.2.2))(openapi-types@12.1.3)(typescript@7.1.0-beta))
+      '@r_masseater/workers-tracing':
+        specifier: workspace:*
+        version: link:../workers-tracing
       '@tanstack/react-devtools':
         specifier: 'catalog:'
         version: 0.10.14(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(csstype@3.2.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(solid-js@1.9.18)
@@ -3825,6 +3955,21 @@ importers:
       '@tanstack/react-router-ssr-query':
         specifier: 'catalog:'
         version: 1.167.3(@tanstack/query-core@5.107.1)(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(@tanstack/react-router@1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@tanstack/router-core@1.171.39)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@tanstack/react-start':
+        specifier: catalog:stack
+        version: 1.169.5(@vitejs/plugin-rsc@0.5.39(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(esbuild@0.28.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(rolldown@1.2.16)(rollup@4.64.5)(supports-color@10.2.2)(webpack@5.111.1(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(uglify-js@3.19.3))
+      eden-tanstack-react-query:
+        specifier: catalog:stack
+        version: 0.5.1(@elysiajs/eden@1.4.9(elysia@1.4.32(@sinclair/typebox@0.34.52)(exact-mirror@0.2.9(@sinclair/typebox@0.34.52))(file-type@22.3.0(supports-color@10.2.2))(openapi-types@12.1.3)(typescript@7.1.0-beta)))(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(elysia@1.4.32(@sinclair/typebox@0.34.52)(exact-mirror@0.2.9(@sinclair/typebox@0.34.52))(file-type@22.3.0(supports-color@10.2.2))(openapi-types@12.1.3)(typescript@7.1.0-beta))(react@19.3.1)
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+      elysia:
+        specifier: catalog:stack
+        version: 1.4.32(@sinclair/typebox@0.34.52)(exact-mirror@0.2.9(@sinclair/typebox@0.34.52))(file-type@22.3.0(supports-color@10.2.2))(openapi-types@12.1.3)(typescript@7.1.0-beta)
+      security-headers:
+        specifier: workspace:*
+        version: link:../security-headers
     devDependencies:
       '@types/react':
         specifier: 'catalog:'

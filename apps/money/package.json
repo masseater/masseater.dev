@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "@masseater.dev/mcp-tool-call": "workspace:*",
+    "@masseater.dev/portal-protocol": "workspace:*",
     "@modelcontextprotocol/server": "catalog:",
+    "@r_masseater/workers-tracing": "workspace:*",
     "drizzle-orm": "catalog:stack",
     "effect": "catalog:stack",
     "papaparse": "catalog:"
