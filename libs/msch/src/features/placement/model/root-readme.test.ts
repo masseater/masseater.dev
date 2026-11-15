@@ -50,6 +50,18 @@ const flagsWorkspaceNames = Effect.gen(function* flagsWorkspaceNames() {
   ]);
 });
 
+const flagsWorkspaceNamesInRootAgentDocs = Effect.gen(
+  function* flagsWorkspaceNamesInRootAgentDocs() {
+    const findings = yield* findingsFor({
+      ...WORKSPACES,
+      "AGENTS.md": "Run the check in toolkit.\n",
+      "CLAUDE.md": "@AGENTS.md\n",
+      "apps/site/AGENTS.md": "The site workspace keeps its own rules.\n",
+    });
+    expect(findings).toStrictEqual(["AGENTS.md:1:18 root-readme"]);
+  },
+);
+
 const passesRepositoryWideReadme = Effect.gen(function* passesRepositoryWideReadme() {
   const findings = yield* findingsFor({
     ...WORKSPACES,
@@ -64,6 +76,10 @@ layer(fixtureLayer)("root readme", (it) => {
   it.effect(
     "flags a workspace's directory, basename or package name in the root README",
     () => flagsWorkspaceNames,
+  );
+  it.effect(
+    "flags a workspace named in the root AGENTS.md but not in a workspace AGENTS.md",
+    () => flagsWorkspaceNamesInRootAgentDocs,
   );
   it.effect(
     "passes a root README about the whole repository and a workspace's own README",
