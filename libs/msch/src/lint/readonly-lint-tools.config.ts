@@ -50,6 +50,11 @@ const lintToolReadonlyAllow = [
   },
   {
     from: "file" as const,
+    path: "../vite-plus-adopt/upstream/attw-core/lib/checkPackage.d.ts",
+    name: ["CheckPackageOptions"],
+  },
+  {
+    from: "file" as const,
     path: "src/types.ts",
     name: ["CommitlintConfig", "MarkdownlintConfig", "TextlintConfig", "ToolSections"],
   },
