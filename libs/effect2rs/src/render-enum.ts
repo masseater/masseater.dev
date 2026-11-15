@@ -1,6 +1,7 @@
 import { Array, Boolean, Option, pipe } from "effect";
 
-import { pascalCase, variantRule } from "./names.ts";
+import { distinct, variantIdentifier, variantRule } from "./names.ts";
+import type { Renamed } from "./names.ts";
 import { attribute, docLines, escape } from "./text.ts";
 import type { Enumeration } from "./types.ts";
 
@@ -9,11 +10,15 @@ export interface VariantNaming {
   readonly perVariant: (value: string) => readonly string[];
 }
 
-const ruleFor = (values: readonly string[]): Option.Option<Option.Option<string>> => {
-  const variants = pipe(
+export const variantsOf = (values: readonly string[]): readonly Renamed[] => {
+  const names = pipe(values, Array.map(variantIdentifier), distinct(""));
+  return pipe(
     values,
-    Array.map((value) => ({ variant: pascalCase(value), value })),
+    Array.zipWith(names, (value, variant) => ({ variant, value })),
   );
+};
+
+const ruleFor = (variants: readonly Renamed[]): Option.Option<Option.Option<string>> => {
   const identity = pipe(
     variants,
     Array.every(({ variant, value }) => variant === value),
@@ -24,8 +29,8 @@ const ruleFor = (values: readonly string[]): Option.Option<Option.Option<string>
   });
 };
 
-export const variantNaming = (values: readonly string[]): VariantNaming => {
-  const rule = ruleFor(values);
+export const variantNaming = (variants: readonly Renamed[]): VariantNaming => {
+  const rule = ruleFor(variants);
   return {
     renameAll: pipe(
       rule,
@@ -43,25 +48,25 @@ export const variantNaming = (values: readonly string[]): VariantNaming => {
 
 const ARM = "            ";
 
-const asStr = (values: readonly string[]): readonly string[] => [
+const asStr = (variants: readonly Renamed[]): readonly string[] => [
   "    #[must_use]",
   "    pub const fn as_str(self) -> &'static str {",
   "        match self {",
   ...pipe(
-    values,
-    Array.map((value) => `${ARM}Self::${pascalCase(value)} => "${escape(value)}",`),
+    variants,
+    Array.map(({ variant, value }) => `${ARM}Self::${variant} => "${escape(value)}",`),
   ),
   "        }",
   "    }",
 ];
 
-const parse = (values: readonly string[]): readonly string[] => [
+const parse = (variants: readonly Renamed[]): readonly string[] => [
   "    #[must_use]",
   "    pub fn parse(value: &str) -> Option<Self> {",
   "        match value {",
   ...pipe(
-    values,
-    Array.map((value) => `${ARM}"${escape(value)}" => Some(Self::${pascalCase(value)}),`),
+    variants,
+    Array.map(({ variant, value }) => `${ARM}"${escape(value)}" => Some(Self::${variant}),`),
   ),
   `${ARM}_ => None,`,
   "        }",
@@ -70,28 +75,29 @@ const parse = (values: readonly string[]): readonly string[] => [
 
 const variantLines =
   (naming: VariantNaming) =>
-  (value: string): readonly string[] =>
+  ({ variant, value }: Renamed): readonly string[] =>
     pipe(
       attribute({ name: "serde", parts: naming.perVariant(value), indent: "    " }),
-      Array.append(`    ${pascalCase(value)},`),
+      Array.append(`    ${variant},`),
     );
 
 export const enumLines =
   (derive: string) =>
   ({ name, doc, values }: Enumeration): readonly string[] => {
-    const naming = variantNaming(values);
+    const variants = variantsOf(values);
+    const naming = variantNaming(variants);
     return [
       ...docLines("")(doc),
       derive,
       ...attribute({ name: "serde", parts: naming.renameAll, indent: "" }),
       `pub enum ${name} {`,
-      ...pipe(values, Array.flatMap(variantLines(naming))),
+      ...pipe(variants, Array.flatMap(variantLines(naming))),
       "}",
       "",
       `impl ${name} {`,
-      ...asStr(values),
+      ...asStr(variants),
       "",
-      ...parse(values),
+      ...parse(variants),
       "}",
     ];
   };

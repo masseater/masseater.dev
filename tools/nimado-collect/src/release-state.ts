@@ -1,7 +1,6 @@
 import {
   Array as Arr,
   Config,
-  Console,
   Effect,
   FileSystem,
   Path,
@@ -19,13 +18,10 @@ const TITLE = "nimado data";
 const GZIP = ".gz";
 const NICO_DAYS = "data/days/nico";
 const NICO_DAYS_ARCHIVE = "nico-days.tar.gz";
-const YOUTUBE_CACHE = "nimado-youtube-";
-const CACHE_LIMIT = "100000";
 const SUCCESS = 0;
 const NO_ASSETS = 0;
 const COMPRESSED = [CATALOG_FILE, NICO_FILE];
 const SPACE = " ";
-const LINE = "\n";
 
 const taggedError = Schema.TaggedError;
 
@@ -185,44 +181,7 @@ const uploadState = Effect.fn("state.upload")(function* uploadStateFrom(state: s
   yield* run("gh", ["release", "upload", RELEASE, "--repo", repo, "--clobber", ...files]);
 });
 
-const youtubeCacheKeys = Effect.fn("state.cache.list")(function* youtubeCacheKeys(repo: string) {
-  const listed = yield* output("gh", [
-    "cache",
-    "list",
-    "--repo",
-    repo,
-    "--key",
-    YOUTUBE_CACHE,
-    "--limit",
-    CACHE_LIMIT,
-    "--json",
-    "key",
-    "--jq",
-    ".[].key",
-  ]);
-  return pipe(Str.split(LINE)(listed), Arr.map(Str.trim), Arr.filter(Str.isNonEmpty));
-});
-
-const dropOldYoutubeState = Effect.fn("state.cache.prune")(function* dropOldCaches() {
-  const repo = yield* repository;
-  const runId = yield* Config.String("GITHUB_RUN_ID");
-  const keep = `${YOUTUBE_CACHE}${runId}`;
-  const keys = yield* youtubeCacheKeys(repo);
-  if (!pipe(keys, Arr.contains(keep))) {
-    yield* Console.warn(`The cache ${keep} was not found, so the older youtube state is kept`);
-    return;
-  }
-  const old = pipe(
-    keys,
-    Arr.filter((key) => key !== keep),
-  );
-  yield* Effect.forEach(old, (key) => run("gh", ["cache", "delete", key, "--repo", repo]), {
-    discard: true,
-  });
-});
-
 /** @internal */
 export const saveState = Effect.fn("state.save")(function* saveStateOf(state: string) {
   yield* Effect.scoped(uploadState(state));
-  yield* dropOldYoutubeState();
 });
