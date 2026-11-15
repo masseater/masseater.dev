@@ -10,8 +10,8 @@ import { GITHUB_APP_PERMISSIONS } from "./credential-grants.ts";
 import { OWNER_ID, verify } from "./github-oidc.ts";
 import { toPkcs8 } from "./pkcs8.ts";
 
-const APP_KEY = "app";
-const SETUP_PATH = "/github-app";
+export const APP_KEY = "app";
+export const SETUP_PATH = "/github-app";
 const FINISH_PATH = `${SETUP_PATH}/callback`;
 const IMPORT_PATH = `${SETUP_PATH}/import`;
 const HOMEPAGE = "https://masseater.dev";

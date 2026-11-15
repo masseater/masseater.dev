@@ -12,6 +12,7 @@ export const serverClient = <App extends AnyElysia>(
   load: () => Promise<(request: Request) => Promise<Response>>,
 ): Treaty.Create<App> =>
   treaty<App>(SERVER_ORIGIN, {
+    parseDate: false,
     fetcher: (input, init) =>
       run(
         Effect.promise(load).pipe(
@@ -21,7 +22,7 @@ export const serverClient = <App extends AnyElysia>(
   });
 
 export const browserClient = <App extends AnyElysia>(): Treaty.Create<App> =>
-  treaty<App>(globalThis.location.origin);
+  treaty<App>(globalThis.location.origin, { parseDate: false });
 
 export const createQueries = <App extends AnyElysia>(
   client: Treaty.Create<App>,

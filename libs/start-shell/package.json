@@ -5,15 +5,24 @@
   "type": "module",
   "exports": {
     "./document-shell": "./src/document-shell.tsx",
-    "./query-router": "./src/query-router.ts"
+    "./query-router": "./src/query-router.ts",
+    "./eden-client": "./src/eden-client.ts",
+    "./secured-start": "./src/secured-start.ts"
   },
   "dependencies": {
+    "@elysiajs/eden": "catalog:stack",
+    "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/react-devtools": "catalog:",
     "@tanstack/react-query": "catalog:stack",
     "@tanstack/react-query-devtools": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-router-devtools": "catalog:",
-    "@tanstack/react-router-ssr-query": "catalog:"
+    "@tanstack/react-router-ssr-query": "catalog:",
+    "@tanstack/react-start": "catalog:stack",
+    "eden-tanstack-react-query": "catalog:stack",
+    "effect": "catalog:stack",
+    "elysia": "catalog:stack",
+    "security-headers": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "catalog:",
