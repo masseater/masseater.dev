@@ -1,0 +1,73 @@
+name: task
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: The vp task to run in every workspace that defines it
+        required: true
+        type: string
+      settings:
+        description: Space-separated NAME=value settings the task reads from its environment
+        required: false
+        default: ""
+      credentials:
+        description: The credentials the task gets. root is the account token in the repository secrets
+        required: true
+        type: choice
+        default: repository
+        options:
+          - repository
+          - github
+          - mcp-portal
+          - root
+
+permissions: {}
+
+concurrency:
+  group: task-${{ inputs.task }}
+
+jobs:
+  run:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: ${{ contains(fromJSON('["repository", "root"]'), inputs.credentials) && 'task' || inputs.credentials }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - if: inputs.credentials != 'root'
+        uses: masseater/typescript-template/.github/actions/credentials@ee56f90bdf77bf747e158391c0ae8a846732b988
+      - if: inputs.credentials == 'github'
+        run: vp run -r github-token
+      - if: inputs.credentials != 'root'
+        run: env -S "$SETTINGS" vp run -r "$TASK"
+        env:
+          TASK: ${{ inputs.task }}
+          SETTINGS: ${{ inputs.settings }}
+      - if: inputs.credentials == 'root'
+        run: env -S "$SETTINGS" vp run -r "$TASK"
+        env:
+          TASK: ${{ inputs.task }}
+          SETTINGS: ${{ inputs.settings }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  ci-telemetry:
+    needs: [run]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ee56f90bdf77bf747e158391c0ae8a846732b988
+        with:
+          github-token: ${{ github.token }}
