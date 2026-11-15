@@ -28,7 +28,7 @@ jobs:
           path: node_modules/.cache/msch
           key: msch-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: msch-
-      - uses: masseater/typescript-template/.github/actions/verify@ee56f90bdf77bf747e158391c0ae8a846732b988
+      - uses: masseater/typescript-template/.github/actions/verify@d31880940798de1570171b0bd255ec9e69005d83
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -60,8 +60,8 @@ jobs:
   deploy:
     if: github.event_name == 'push'
     permissions:
-      actions: read
       contents: read
+      deployments: write
       id-token: write
     concurrency:
       group: deploy
@@ -319,6 +319,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ee56f90bdf77bf747e158391c0ae8a846732b988
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@d31880940798de1570171b0bd255ec9e69005d83
         with:
           github-token: ${{ github.token }}

@@ -4,9 +4,9 @@ import { runMain } from "@masseater.dev/node-main";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
 import { isChanged, nameOf, workspace } from "./lib/changes.ts";
+import { deployed } from "./lib/deployment.ts";
 
 const TASK = "deploy:production";
-const MARKER = "deployed-";
 const WORKFLOWS = [".github/workflows/deploy.yml"];
 
 const Task = Schema.Struct({
@@ -93,7 +93,7 @@ runMain("deploy-stacks")(
     }).pipe(Effect.flatMap(Schema.decodeEffect(Plan)));
     const { packages } = yield* workspace;
     const changed = yield* Effect.filter(stacksOf(plan.plan), (stack) =>
-      isChanged({ packages, marker: MARKER, workflows: WORKFLOWS }, stack),
+      isChanged({ packages, record: deployed, workflows: WORKFLOWS }, stack),
     );
     const stacks = yield* Schema.encodeEffect(Stacks)(
       pipe(

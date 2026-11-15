@@ -16,8 +16,8 @@ import {
 
 import { closure, isChanged, nameOf, workspace } from "./lib/changes.ts";
 import type { Tasks } from "./lib/changes.ts";
+import { released } from "./lib/deployment.ts";
 
-const MARKER = "released-";
 const WORKFLOWS = [".github/workflows/release.yml", ".github/workflows/release-component.yml"];
 const BUILD = "release:";
 const CHECK = "release:check:";
@@ -198,7 +198,7 @@ runMain("release-components")(
           );
           const name = nameOf(directory);
           const changed = yield* isChanged(
-            { packages, marker: MARKER, workflows: WORKFLOWS, extra },
+            { packages, record: released, workflows: WORKFLOWS, extra },
             { name, directories: reachedFrom(tasks, ids) },
           );
           const environment = yield* environmentOf(workspaceRoot, directory);
