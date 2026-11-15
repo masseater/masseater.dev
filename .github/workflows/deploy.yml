@@ -18,8 +18,8 @@ jobs:
   bootstrap:
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: read
+      deployments: read
       id-token: write
     outputs:
       stacks: ${{ steps.stacks.outputs.stacks }}
@@ -98,22 +98,25 @@ jobs:
     environment: production
     permissions:
       contents: read
+      deployments: write
       id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@ee56f90bdf77bf747e158391c0ae8a846732b988
+      - uses: masseater/typescript-template/.github/actions/credentials@d31880940798de1570171b0bd255ec9e69005d83
       - uses: $/.github/actions/setup
         with:
           native: "false"
       - run: vp run --log labeled --filter "$FILTER" deploy:production
         env:
           FILTER: ${{ matrix.stack.filter }}
-      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .github/workflows/deploy.yml
-          key: deployed-${{ matrix.stack.name }}-${{ github.sha }}
+      - run: vp run -r record-deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOYMENT_ENVIRONMENT: production
+          DEPLOYMENT_TASK: deploy:${{ matrix.stack.name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -133,7 +136,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@ee56f90bdf77bf747e158391c0ae8a846732b988
+      - uses: masseater/typescript-template/.github/actions/credentials@d31880940798de1570171b0bd255ec9e69005d83
       - uses: $/.github/actions/setup
         with:
           native: "false"
