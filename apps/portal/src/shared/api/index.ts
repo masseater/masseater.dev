@@ -1,2 +1,3 @@
 export { browserClient, createQueries, serverClient } from "@masseater.dev/start-shell/eden-client";
-export { readSidebarOpen, saveSidebarOpen } from "./sidebar-cookie";
+export { readSidebarLayout, saveSidebarOpen, saveSidebarWidth } from "./sidebar-cookie";
+export type { SidebarLayout } from "./sidebar-cookie";

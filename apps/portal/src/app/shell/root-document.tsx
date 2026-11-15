@@ -8,6 +8,6 @@ const root = getRouteApi("__root__");
 
 export const RootDocument = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
   <DocumentShell>
-    <PortalShell sidebarOpen={root.useLoaderData()}>{children}</PortalShell>
+    <PortalShell sidebarOpen={root.useLoaderData().open}>{children}</PortalShell>
   </DocumentShell>
 );
