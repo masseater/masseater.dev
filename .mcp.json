@@ -18,7 +18,7 @@
     "sts2": {
       "type": "stdio",
       "command": "node",
-      "args": ["tools/sts2-mcp/src/main.ts"]
+      "args": ["tools/sts2-mcp/bin/sts2-mcp.ts"]
     }
   }
 }

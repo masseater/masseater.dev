@@ -27,7 +27,7 @@ export const startSiteConfig = ({
       tasks: {
         dev: { command: "alchemy dev", cache: false },
         build: {
-          command: `vp build && vpx ../../infra/start-site/src/app/write-asset-headers.ts ${assetHeaderArgs}`,
+          command: `vp build && write-asset-headers ${assetHeaderArgs}`,
         },
         deploy: { command: "alchemy deploy", cache: false },
         "deploy:production": {
