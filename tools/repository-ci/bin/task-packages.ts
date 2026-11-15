@@ -76,6 +76,12 @@ const itemsOf = Effect.fn("itemsOf")(function* itemsOf(
   );
 });
 
+const keyOf = (name: string, item: string): string =>
+  pipe(
+    Option.liftPredicate(item, Str.isNonEmpty),
+    Option.match({ onNone: () => name, onSome: (value) => `${name}-${value}` }),
+  );
+
 const entriesOf = Effect.fn("entriesOf")(function* entriesOf(
   { root, tasks }: Readonly<{ root: string; tasks: Tasks }>,
   task: string,

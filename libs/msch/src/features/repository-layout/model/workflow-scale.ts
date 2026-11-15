@@ -17,7 +17,8 @@ const WORKFLOW = /^\.github\/workflows\/(?<name>[^/]+)\.ya?ml$/u;
 const ACTION = /^\.github\/actions\/(?<name>[^/]+)\/action\.ya?ml$/u;
 const FILTER_KEYS: readonly string[] = ["paths", "paths-ignore"];
 const PATHS_FILTER_ACTION = /(?:^|\/)paths-filter@/u;
-const PACKAGE_FILTER = /(?:^|\s)(?:--filter|-F)(?:\s+|=)(?<quote>["']?)(?<value>[^\s"'$][^\s"']*)\k<quote>/gu;
+const PACKAGE_FILTER =
+  /(?:^|\s)(?:--filter|-F)(?:\s+|=)(?<quote>["']?)(?<value>[^\s"'$][^\s"']*)\k<quote>/gu;
 const START = 0;
 const READ_CONCURRENCY = 8;
 const SEPARATOR = "/";
@@ -39,8 +40,10 @@ const keysOf = (node: unknown): readonly Located[] =>
     Arr.flatMap(({ key }) => Option.toArray(stringOf(key))),
   );
 
+type Where = Readonly<{ file: string; source: string }>;
+
 const problemAt =
-  (file: string, source: string, rule: RuleName, message: string) =>
+  ({ file, source }: Where, rule: RuleName, message: string) =>
   (offset: number): Problem => ({
     file,
     ...positionOf(source)(offset),
@@ -61,7 +64,7 @@ const pathFiltersIn = (file: string, source: string): readonly Problem[] => {
   );
   return pipe(
     [...triggers, ...actions],
-    Arr.map(({ offset }) => problemAt(file, source, PATH_FILTER, FILTER_MESSAGE)(offset)),
+    Arr.map(({ offset }) => problemAt({ file, source }, PATH_FILTER, FILTER_MESSAGE)(offset)),
   );
 };
 
@@ -115,9 +118,7 @@ const filtersIn = (source: string): readonly Located[] =>
 
 const packagesIn = (
   workspaces: readonly NamedWorkspace[],
-  file: string,
-  name: string,
-  source: string,
+  { file, name, source }: Readonly<{ file: string; name: string; source: string }>,
 ): readonly Problem[] => {
   const fromNames = pipe(
     namesIn(name, source),
@@ -125,7 +126,7 @@ const packagesIn = (
       pipe(
         named(workspaces, text),
         Option.map((directory) =>
-          problemAt(file, source, PACKAGE, packageMessage(`"${text}"`, directory))(offset),
+          problemAt({ file, source }, PACKAGE, packageMessage(`"${text}"`, directory))(offset),
         ),
         Option.toArray,
       ),
@@ -138,7 +139,7 @@ const packagesIn = (
       pipe(
         containing(workspaces, path),
         Option.map((directory) =>
-          problemAt(file, source, PACKAGE, packageMessage(field, directory))(offset),
+          problemAt({ file, source }, PACKAGE, packageMessage(field, directory))(offset),
         ),
         Option.toArray,
       ),
@@ -150,7 +151,11 @@ const packagesIn = (
       pipe(
         matching(workspaces, text),
         Option.map((directory) =>
-          problemAt(file, source, PACKAGE, packageMessage(`--filter ${text}`, directory))(offset),
+          problemAt(
+            { file, source },
+            PACKAGE,
+            packageMessage(`--filter ${text}`, directory),
+          )(offset),
         ),
         Option.toArray,
       ),
@@ -166,15 +171,13 @@ const actionProblems = (
 ): readonly Problem[] =>
   pipe(
     named(workspaces, name),
-    Option.map(
-      (directory): Problem => ({
-        file,
-        line: 1,
-        column: 1,
-        rule: PACKAGE,
-        message: packageMessage(`The action ${name}`, directory),
-      }),
-    ),
+    Option.map((directory): Problem => ({
+      file,
+      line: 1,
+      column: 1,
+      rule: PACKAGE,
+      message: packageMessage(`The action ${name}`, directory),
+    })),
     Option.toArray,
   );
 
@@ -212,7 +215,7 @@ export const checkWorkflowScale = Effect.fn("checkWorkflowScale")(function* chec
           source,
           Option.map((text) => [
             ...pathFiltersIn(file, text),
-            ...packagesIn(workspaces, file, stem, text),
+            ...packagesIn(workspaces, { file, name: stem, source: text }),
           ]),
           Option.getOrElse((): readonly Problem[] => []),
         );

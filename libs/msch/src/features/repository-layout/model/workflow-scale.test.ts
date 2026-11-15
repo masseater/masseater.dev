@@ -1,7 +1,8 @@
 import { layer } from "@effect/vitest";
-import { Array as Arr, Effect, pipe } from "effect";
+import { Array as Arr, Effect, Order, pipe } from "effect";
 import { expect } from "vite-plus/test";
 
+import type { Problem } from "#/shared/lib/problem.ts";
 import { fixtureLayer, gitRepositoryWith } from "#/shared/lib/repository.test.support.ts";
 
 import { checkWorkflowScale } from "./workflow-scale.ts";
@@ -51,8 +52,11 @@ const problemsFor = Effect.fn("problemsFor")(function* problemsFor(
   const problems = yield* checkWorkflowScale(root);
   return pipe(
     problems,
+    Arr.sortBy(
+      Order.mapInput(Order.Number, ({ line }: Problem) => line),
+      Order.mapInput(Order.String, ({ rule }: Problem) => rule),
+    ),
     Arr.map(({ line, rule }) => `${line} ${rule}`),
-    Arr.sort((left: string, right: string) => left.localeCompare(right, "en", { numeric: true })),
   );
 });
 
@@ -88,7 +92,8 @@ layer(fixtureLayer)("workflow scale", (it) => {
     "reports path filters and workflows, jobs, actions and steps that name one workspace",
     () => reportsScopedWorkflows,
   );
-  it.effect("accepts workflows that run the same task in every workspace", () =>
-    acceptsGenericWorkflows,
+  it.effect(
+    "accepts workflows that run the same task in every workspace",
+    () => acceptsGenericWorkflows,
   );
 });
