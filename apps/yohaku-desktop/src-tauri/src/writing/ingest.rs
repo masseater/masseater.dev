@@ -2,7 +2,7 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 
 use crate::failure::Outcome;
-use crate::model::{Fact, Source, SourceOrigin};
+use crate::protocol::{Fact, Source, SourceOrigin};
 use crate::store::Store;
 use crate::store::sources::{self, NewSource};
 use crate::text::utf16_slice;

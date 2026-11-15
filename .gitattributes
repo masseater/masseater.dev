@@ -8,3 +8,4 @@ pnpm-lock.yaml linguist-generated
 **/upstream/** linguist-vendored
 *.g.cs linguist-generated
 apps/aredoko-desktop/src-tauri/src/protocol.rs linguist-generated
+apps/yohaku-desktop/src-tauri/src/protocol.rs linguist-generated

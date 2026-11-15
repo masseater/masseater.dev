@@ -1,7 +1,7 @@
 use rusqlite::{Connection, Transaction, params};
 use serde::Serialize;
 
-use crate::model::{Fact, FactKind, Source, SourceOrigin};
+use crate::protocol::{Fact, FactKind, Source, SourceOrigin};
 
 use super::{fresh_id, now};
 
