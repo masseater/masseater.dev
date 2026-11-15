@@ -7,15 +7,9 @@ import { withSection } from "./section-check.ts";
 import { checkSlices } from "./steiger.ts";
 import { listDependencies } from "./workspace.ts";
 
-const ancestorsOf = (file: string): readonly string[] =>
-  pipe(
-    Str.split(file, "/"),
-    Arr.initNonEmpty,
-    Arr.scan("", (parent, segment) => Arr.join(Arr.filter([parent, segment], Str.isNonEmpty), "/")),
-    Arr.filter(Str.isNonEmpty),
-  );
+const LAYER_FOLDER = /\/(?:app|pages|widgets|features|entities|shared)\//gu;
 
-const matchingDirectories = (
+const layeredDirectories = (
   root: string,
   patterns: readonly string[],
 ): ReturnType<typeof listGitFiles> =>
@@ -23,7 +17,11 @@ const matchingDirectories = (
     Effect.map((files) =>
       pipe(
         files,
-        Arr.flatMap(ancestorsOf),
+        Arr.flatMap((file) =>
+          Arr.map(Arr.fromIterable(Str.matchAll(LAYER_FOLDER)(file)), ({ index }) =>
+            Str.takeLeft(file, index ?? file.length),
+          ),
+        ),
         Arr.dedupe,
         Arr.filter((directory) =>
           pipe(
@@ -37,7 +35,7 @@ const matchingDirectories = (
 
 /** @internal */
 export const steigerCheck = withSection("steiger", (section, { root }) =>
-  matchingDirectories(root, section.paths).pipe(
+  layeredDirectories(root, section.paths).pipe(
     Effect.flatMap((targets) => checkSlices(section.rules, root, targets)),
   ),
 );

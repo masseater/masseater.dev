@@ -8,7 +8,6 @@
     "apps/aredoko-server/src/app/fetch-model.ts",
     "apps/aredoko-server/src/app/installer-resources.ts",
     "tools/cloudflare-logs/src/worker-logs.ts",
-    "tools/cloudflare-logs/src/builds-logs.ts",
     "tools/pod-rattle-parity/extract.ts",
     "tools/pod-rattle-parity/render.ts",
     "tools/decision-bench-runner/src/run.ts",

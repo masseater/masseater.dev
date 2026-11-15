@@ -29,11 +29,6 @@ const extend = (extra: Partial<Grant>): Grant => ({
   zone: [...DEPLOY.zone, ...(extra.zone ?? [])],
 });
 
-const BUILDS_LOGS: Grant = {
-  account: ["Workers CI Read", "Workers Scripts Read", "Workers R2 Storage Write"],
-  zone: [],
-};
-
 const EXPOSURE: Grant = {
   account: [
     "Access: Apps and Policies Read",
@@ -49,7 +44,6 @@ const PROFILES = {
   deploy: DEPLOY,
   transforms: extend({ account: ["AI Gateway Write"], zone: ["Zone Transform Rules Write"] }),
   access: extend({ account: ["Access: Apps and Policies Write", "MCP Portals Write"] }),
-  buildsLogs: BUILDS_LOGS,
   exposure: EXPOSURE,
 } as const satisfies Readonly<Record<string, Grant>>;
 
@@ -64,7 +58,6 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "masseater.dev/zone": "transforms",
   "masseater.dev/mcp-portal": "access",
   "masseater.dev/production": "access",
-  "masseater.dev/workers-builds-logs": "buildsLogs",
   mirucord: "deploy",
   msa: "deploy",
   "typescript-template": "deploy",
