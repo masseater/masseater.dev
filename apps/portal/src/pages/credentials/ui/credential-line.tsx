@@ -14,7 +14,7 @@ export const CredentialLine = ({ state }: Readonly<{ state: CredentialState }>):
     <p className="min-w-0 font-mono text-sm break-all">{state.id}</p>
     <a
       className={cn(
-        "stage-link shrink-0 text-xs",
+        "text-link underline underline-offset-3 shrink-0 text-xs",
         state.status === "missing" && "text-destructive",
       )}
       href={state.actionUrl}

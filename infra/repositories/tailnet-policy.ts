@@ -115,3 +115,9 @@ export const removeEntries =
   (entries: PolicyEntries) =>
   (body: string): string =>
     pipe(body, withoutGrants(entries), withoutTagOwners(entries));
+
+export const replaceEntries =
+  (previous: PolicyEntries) =>
+  (next: PolicyEntries) =>
+  (body: string): string =>
+    pipe(body, removeEntries(previous), ensureEntries(next));

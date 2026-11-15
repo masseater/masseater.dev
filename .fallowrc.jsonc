@@ -159,7 +159,7 @@
       ],
     },
   },
-  "duplicates": { "threshold": 1, "ignore": ["**/generated/**"] },
+  "duplicates": { "threshold": 1, "ignore": ["**/generated/**", "**/routeTree.gen.ts"] },
   "flags": {
     "sdkPatterns": [
       { "function": "getBooleanValue", "nameArg": 0, "provider": "OpenFeature" },

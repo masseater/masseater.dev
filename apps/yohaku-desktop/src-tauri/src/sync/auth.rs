@@ -16,8 +16,8 @@ use serde_json::json;
 use crate::failure::{Failure, Outcome};
 use crate::store::Store;
 
-use super::documents::SYNC_ORIGIN;
 use super::state::{self, Key};
+use crate::protocol::SYNC_ORIGIN;
 
 pub const CALLBACK_PATH: &str = "/oauth/callback";
 const CLIENT_NAME: &str = "余白";

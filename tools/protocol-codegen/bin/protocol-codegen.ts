@@ -1,14 +1,16 @@
+import { effect2rs } from "@masseater.dev/effect2rs";
 import { runMain } from "@masseater.dev/node-main";
 import { Effect, FileSystem, Path, Schema } from "effect";
 import { Command, Flag } from "effect/cli";
 
 import { csharp } from "#/csharp.ts";
-import { rust } from "#/rust.ts";
+import { aredokoRust, yohakuRust } from "#/rust.ts";
 import { sts2 } from "#/sts2.ts";
 
 const CSHARP_OUTPUT =
   "../../apps/aredoko-unity/Packages/dev.masseater.aredoko/Editor/Protocol/Protocol.g.cs";
 const RUST_OUTPUT = "../../apps/aredoko-desktop/src-tauri/src/protocol.rs";
+const YOHAKU_OUTPUT = "../../apps/yohaku-desktop/src-tauri/src/protocol.rs";
 const STS2_OUTPUT = "../../apps/sts2-mods/mods/AgentBridge/AgentBridgeCode/Protocol.g.cs";
 const TAURI_CONFIG = new URL(
   "../../../apps/aredoko-desktop/src-tauri/tauri.conf.json",
@@ -61,9 +63,12 @@ const command = Command.make(
       const identifier = yield* appIdentifier();
       const csharpSource = yield* csharp(identifier);
       const sts2Source = yield* sts2();
+      const aredokoSource = yield* effect2rs(aredokoRust);
+      const yohakuSource = yield* effect2rs(yohakuRust);
       const outputs: readonly Output[] = [
         { path: CSHARP_OUTPUT, source: csharpSource },
-        { path: RUST_OUTPUT, source: rust() },
+        { path: RUST_OUTPUT, source: aredokoSource },
+        { path: YOHAKU_OUTPUT, source: yohakuSource },
         { path: STS2_OUTPUT, source: sts2Source },
       ];
       if (check) {
