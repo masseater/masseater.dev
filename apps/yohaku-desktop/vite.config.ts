@@ -16,10 +16,10 @@ export default defineConfig(
       tasks: {
         verify: { command: [], dependsOn: ["cargo"] },
         "release:tag": { command: "component-tag yohaku", cache: false },
-        "release:collect": { command: "node scripts/collect.ts", cache: false },
-        "release:publish": { command: "node scripts/release.ts", cache: false },
+        "release:collect": { command: "node bin/collect.ts", cache: false },
+        "release:publish": { command: "node bin/release.ts", cache: false },
         "release:token": { command: "release-please-token yohaku", cache: false },
-        "signing-key": { command: "node scripts/signing-key.ts", cache: false },
+        "signing-key": { command: "node bin/signing-key.ts", cache: false },
       },
     },
   }),

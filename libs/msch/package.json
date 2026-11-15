@@ -18,7 +18,7 @@
     "directory": "libs/msch"
   },
   "bin": {
-    "msch": "./src/app/cli.ts"
+    "msch": "./bin/msch.ts"
   },
   "files": [
     "dist",
@@ -29,7 +29,7 @@
     "#/*": "./src/*"
   },
   "exports": {
-    "./cli": "./src/app/cli.ts",
+    "./cli": "./bin/msch.ts",
     "./decision-rules": "./src/features/lint-preset/config/decision-rules.ts",
     "./inline-exports": "./src/features/inline-exports/index.ts",
     "./lint": "./src/features/lint-preset/index.ts",

@@ -31,6 +31,10 @@ const RuleNameSchema = Schema.Literals([
   "root-workspace-path",
   "shared-uncached-task",
   "workflow-path",
+  "command-outside-bin",
+  "unrun-command",
+  "scripts-directory",
+  "listed-entry",
   "colocated-test",
   "comment",
 ]);

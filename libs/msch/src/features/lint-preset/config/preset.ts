@@ -7,7 +7,7 @@ import baselineJs from "eslint-plugin-baseline-js";
 import type { UserConfig } from "vite-plus";
 
 import decisionPlugin from "./decision-rules.ts";
-import { alchemyOverride, scriptsOverride } from "./lint-overrides.config.ts";
+import { alchemyOverride, commandsOverride } from "./lint-overrides.config.ts";
 import {
   COMMENT_DIRECTIVES,
   allRulesOf,
@@ -108,7 +108,7 @@ const overrides = [
     files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "**/decision-rules.ts"],
     rules: { "import/no-default-export": "off" },
   },
-  scriptsOverride,
+  commandsOverride,
   {
     files: ["**/vite.config.ts"],
     rules: {

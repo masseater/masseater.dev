@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   run: {
     tasks: {
-      check: { command: "node src/main.ts", cache: false },
+      check: { command: "node bin/exposure-check.ts", cache: false },
     },
   },
 });

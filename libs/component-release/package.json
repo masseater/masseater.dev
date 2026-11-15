@@ -3,11 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "bin": {
-    "component-release": "./src/release-main.ts",
-    "component-tag": "./src/tag-main.ts",
-    "release-please-token": "./src/token-main.ts"
+    "component-release": "./bin/component-release.ts",
+    "component-tag": "./bin/component-tag.ts",
+    "release-please-token": "./bin/release-please-token.ts"
   },
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
     ".": "./src/index.ts"
   },

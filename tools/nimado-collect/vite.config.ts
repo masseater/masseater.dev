@@ -6,15 +6,15 @@ export default defineConfig({
   run: {
     tasks: {
       daily: {
-        command: `node src/main.ts daily ${STATE} --out ../../apps/nimado/published`,
+        command: `node bin/nimado-collect.ts daily ${STATE} --out ../../apps/nimado/published`,
         cache: false,
       },
       release: {
-        command: "node src/main.ts prune",
+        command: "node bin/nimado-collect.ts prune",
         dependsOn: ["nimado#deploy:data"],
         cache: false,
       },
-      save: { command: `node src/main.ts save ${STATE}`, cache: false },
+      save: { command: `node bin/nimado-collect.ts save ${STATE}`, cache: false },
     },
   },
 });
