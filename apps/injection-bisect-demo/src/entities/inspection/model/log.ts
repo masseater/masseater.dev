@@ -5,7 +5,7 @@ import { Array as Arr, String as Str, pipe } from "effect";
 import type { InspectEvent } from "#/entities/inspection/api/inspect-events";
 import { COPY } from "#/shared/config";
 
-import { formatCount, formatDollars, formatPercent } from "./format";
+import { COUNT, DOLLARS, PERCENT } from "./format";
 
 export interface LogLine {
   readonly key: string;
@@ -42,7 +42,7 @@ const cleanLabelOf = (detection: Detection): string => {
 
 const resultOf = (event: Extract<InspectEvent, { type: "done" }>): string => {
   if (event.detection.status === "clean") {
-    return `${cleanLabelOf(event.detection)}  ${formatPercent(event.detection.probability)}`;
+    return `${cleanLabelOf(event.detection)}  ${PERCENT.format(event.detection.probability)}`;
   }
   const regions = pipe(
     event.detection.regions,
@@ -58,14 +58,14 @@ const lineOf = (event: InspectEvent): LogLine => {
     return {
       key: `asked-${event.id}`,
       tone: "asked",
-      text: `${at}  #${event.id}  ${event.depth + NEXT}${COPY.depth}  ${rangeOf(event)}  ${formatCount(event.end - event.start)}${COPY.chars}`,
+      text: `${at}  #${event.id}  ${event.depth + NEXT}${COPY.depth}  ${rangeOf(event)}  ${COUNT.format(event.end - event.start)}${COPY.chars}`,
     };
   }
   if (event.type === "answered") {
     return {
       key: `answered-${event.id}`,
       tone: "answered",
-      text: `${at}  #${event.id}  ${formatPercent(event.probability)} ${verdictOf(event)}  ${Math.round(event.millis)}ms  ${formatCount(event.inputTokens)} tok  ${formatDollars(event.cost)}  ${event.model}`,
+      text: `${at}  #${event.id}  ${PERCENT.format(event.probability)} ${verdictOf(event)}  ${Math.round(event.millis)}ms  ${COUNT.format(event.inputTokens)} tok  ${DOLLARS.format(event.cost)}  ${event.model}`,
     };
   }
   if (event.type === "done") {

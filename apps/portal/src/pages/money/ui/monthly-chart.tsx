@@ -12,7 +12,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { monthLabel, signedYen, yen } from "#/entities/money";
+import { monthLabel, SIGNED_YEN, YEN } from "#/entities/money";
 import type { MonthTotalValue } from "#/entities/money";
 import { monthlyRows } from "#/pages/money/model/monthly-rows";
 
@@ -45,9 +45,9 @@ const shortYen = (amount: number): string => {
 
 const asYen = (value: unknown, name: unknown): string => {
   if (name === TEXT.balance) {
-    return signedYen(Number(value));
+    return SIGNED_YEN.format(Number(value));
   }
-  return yen(Math.abs(Number(value)));
+  return YEN.format(Math.abs(Number(value)));
 };
 
 export const MonthlyChart = ({

@@ -1,7 +1,7 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { signedYen } from "#/entities/money";
+import { SIGNED_YEN } from "#/entities/money";
 import type { TransactionValue } from "#/entities/money";
 
 export type Labels = Readonly<{
@@ -39,7 +39,7 @@ export const TransactionRow = ({
       className={`${CELL} data-[in=true]:text-income-strong text-right font-bold tabular-nums`}
       data-in={transaction.amount > INCOME}
     >
-      {signedYen(transaction.amount)}
+      {SIGNED_YEN.format(transaction.amount)}
     </td>
   </tr>
 );
