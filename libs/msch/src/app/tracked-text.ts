@@ -5,7 +5,11 @@ import { checkHiddenUnicode } from "#/features/invisible-characters/index.ts";
 import { checkPython } from "#/features/python/index.ts";
 import { checkNodeVersion } from "#/features/runtime-version/index.ts";
 import { checkSkillFiles } from "#/features/skills/index.ts";
-import { checkReplacedTools, checkUnneededFiles } from "#/features/unneeded-files/index.ts";
+import {
+  checkAlchemyPatch,
+  checkReplacedTools,
+  checkUnneededFiles,
+} from "#/features/unneeded-files/index.ts";
 
 /** @internal */
 export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTrackedText(
@@ -17,6 +21,7 @@ export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTra
       checkPython(root),
       checkUnneededFiles(root),
       checkReplacedTools(root),
+      checkAlchemyPatch(root),
       checkNodeVersion(root),
       checkSkillFiles(root),
       checkComments(root),
