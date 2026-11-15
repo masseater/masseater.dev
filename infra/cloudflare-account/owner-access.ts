@@ -109,7 +109,11 @@ const ownerMcpAccess = Effect.fn("ownerMcpAccess")(function* ownerMcpAccess({
     host,
     accessTokenLifetime: MCP_TOKEN_LIFETIME,
     dynamicClientRegistration: {
-      allowedUris: [...MCP_CLIENT_CALLBACKS, portalCallback(accountId, portalServerId)],
+      allowedUris: [
+        BROKER_CALLBACK,
+        ...MCP_CLIENT_CALLBACKS,
+        portalCallback(accountId, portalServerId),
+      ],
       allowAnyOnLocalhost: true,
       allowAnyOnLoopback: true,
     },
