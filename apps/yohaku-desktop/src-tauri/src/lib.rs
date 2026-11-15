@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use tauri::{App, AppHandle, Manager, async_runtime};
+use tauri::{App, Manager, RunEvent, WindowEvent, async_runtime};
 use tauri_specta::{Builder, ErrorHandlingMode, collect_commands};
 
 mod commands;
@@ -11,6 +11,7 @@ mod store;
 mod sync;
 mod text;
 mod updates;
+mod window;
 mod writing;
 
 use commands::Yohaku;
@@ -49,14 +50,9 @@ fn builder() -> Builder<tauri::Wry> {
             commands::complete_onboarding_step,
             commands::check_update,
             commands::install_update,
+            commands::window_ready,
+            commands::finish_closing,
         ])
-}
-
-fn show_main(app: &AppHandle) {
-    if let Some(window) = app.get_webview_window(MAIN_WINDOW) {
-        let _ = window.unminimize();
-        let _ = window.set_focus();
-    }
 }
 
 fn yohaku(data: &Path, home: Option<&Path>) -> Result<Yohaku, Failure> {
@@ -91,6 +87,9 @@ fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     });
     state.syncer.start();
     app.manage(state);
+    app.manage(window::Closing::default());
+    window::paint_like_the_page(app.handle());
+    window::show_if_hidden_later(app.handle());
     Ok(())
 }
 
@@ -104,14 +103,36 @@ pub fn run() -> tauri::Result<()> {
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(
             |app, _arguments, _cwd| {
-                show_main(app);
+                window::show(app);
             },
         ))
+        .plugin(window::state_plugin())
+        .plugin(window::browser_keys_plugin())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .invoke_handler(builder.invoke_handler())
+        .on_window_event(|window, event| {
+            if let WindowEvent::CloseRequested { api, .. } = event
+                && window.label() == MAIN_WINDOW
+            {
+                api.prevent_close();
+                window::request_close(window.app_handle(), false);
+            }
+        })
         .setup(setup)
-        .run(tauri::generate_context!())
+        .build(tauri::generate_context!())?
+        .run(|app, event| match event {
+            RunEvent::ExitRequested {
+                code: None, api, ..
+            } => {
+                api.prevent_exit();
+                window::request_close(app, true);
+            }
+            #[cfg(target_os = "macos")]
+            RunEvent::Reopen { .. } => window::show(app),
+            _ => {}
+        });
+    Ok(())
 }
 
 #[cfg(test)]

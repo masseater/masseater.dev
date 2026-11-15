@@ -6,10 +6,12 @@ import { UpdateNotice } from "#/features/update";
 import { OnboardingPage } from "#/pages/onboarding";
 
 import { Pages } from "./pages.tsx";
+import { useShownOnceReady } from "./window.ts";
 
 const Screens = (): ReactNode => {
   const loaded = Option.isSome(useOnboardingDone());
   const setup = useStepPending("setup");
+  useShownOnceReady(loaded);
   if (!loaded) {
     return false;
   }

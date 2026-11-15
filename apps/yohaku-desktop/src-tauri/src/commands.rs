@@ -10,6 +10,7 @@ use crate::model::{
 use crate::store::{Store, dismissals, manuscripts, onboarding, reactions, sources};
 use crate::sync::Syncer;
 use crate::updates;
+use crate::window;
 use crate::writing::claude::Claude;
 use crate::writing::draft::{Rewrite, draft_from_memo as draft, rewrite_span};
 use crate::writing::ingest::ingest_text as ingest;
@@ -306,4 +307,18 @@ pub async fn install_update(app: tauri::AppHandle, on_progress: Channel<u8>) -> 
         let _ = on_progress.send(done);
     })
     .await
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn window_ready(app: tauri::AppHandle) -> Answer<()> {
+    window::show(&app);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn finish_closing(app: tauri::AppHandle, quit: bool) -> Answer<()> {
+    window::finish_close(&app, quit);
+    Ok(())
 }

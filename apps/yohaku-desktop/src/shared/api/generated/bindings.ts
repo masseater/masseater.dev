@@ -27,6 +27,8 @@ export const commands = {
 	completeOnboardingStep: (step: OnboardingStep) => typedError<null, Failure>(__TAURI_INVOKE("complete_onboarding_step", { step })),
 	checkUpdate: () => typedError<Release | null, Failure>(__TAURI_INVOKE("check_update")),
 	installUpdate: (onProgress: Channel<number>) => typedError<null, Failure>(__TAURI_INVOKE("install_update", { onProgress })),
+	windowReady: () => typedError<null, Failure>(__TAURI_INVOKE("window_ready")),
+	finishClosing: (quit: boolean) => typedError<null, Failure>(__TAURI_INVOKE("finish_closing", { quit })),
 };
 
 /* Types */
