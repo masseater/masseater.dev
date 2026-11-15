@@ -1,7 +1,7 @@
 import { Containers, D1, SecretsStore, Workers } from "@alchemy.run/cloudflare";
 import { ownerAccess } from "@masseater.dev/cloudflare-account/owner-access";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
-import { Stack } from "alchemy";
+import { RemovalPolicy, Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect, FileSystem, Schema } from "effect";
 
@@ -57,7 +57,9 @@ export default Stack(
       "CiClaudeCodeOauthToken",
       broker,
     );
-    const SESSIONS = yield* D1.Database("Sessions", { migrations: "./migrations" });
+    const SESSIONS = yield* D1.Database("Sessions", { migrations: "./migrations" }).pipe(
+      RemovalPolicy.protect(),
+    );
     const client = yield* Build("ClientBuild", {
       command: "vp build",
       outdir: "dist/client",
