@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import { engineAtom } from "#/shared/api";
 import type { Engine } from "#/shared/api";
 
-const Providers = ({
+export const Providers = ({
   children,
   client,
   engine,
@@ -19,5 +19,3 @@ const Providers = ({
     </QueryClientProvider>
   );
 };
-
-export { Providers };

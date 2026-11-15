@@ -20,9 +20,8 @@ const worker = Effect.gen(function* worker() {
   });
 });
 
-type SyncEnv = InferEnv<typeof worker>;
+export type SyncEnv = InferEnv<typeof worker>;
 
-export type { SyncEnv };
 export default Stack(
   APP_NAME,
   tracedStackProps,

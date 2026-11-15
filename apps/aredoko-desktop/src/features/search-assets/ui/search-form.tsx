@@ -12,7 +12,7 @@ const PLACEHOLDER = "木の床、赤いドラム缶、剣";
 const LABEL = "検索語";
 const SUBMIT = "検索する";
 
-const SearchForm = (): ReactNode => {
+export const SearchForm = (): ReactNode => {
   const draft = useDraft();
   const setDraft = useSetDraft();
   const submit = useSubmitQuery();
@@ -47,5 +47,3 @@ const SearchForm = (): ReactNode => {
     </form>
   );
 };
-
-export { SearchForm };

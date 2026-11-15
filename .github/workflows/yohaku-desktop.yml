@@ -25,7 +25,7 @@ env:
 
 jobs:
   tag:
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -90,7 +90,7 @@ jobs:
 
   release:
     needs: [tag, installer]
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: yohaku-release
     permissions:
@@ -138,6 +138,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@577c307ec375535021fe50e34af8bd128fbcfe66
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
         with:
           github-token: ${{ github.token }}

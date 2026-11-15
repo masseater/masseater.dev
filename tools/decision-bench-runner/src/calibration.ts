@@ -89,7 +89,7 @@ const forecastOf = ({ item, outcome }: Readonly<Scored>): Option.Option<Forecast
   return Option.none();
 };
 
-const calibrationOf = (rows: readonly Scored[]): TaskResult["test"]["calibration"] => {
+export const calibrationOf = (rows: readonly Scored[]): TaskResult["test"]["calibration"] => {
   const forecasts = pipe(
     rows,
     Arr.flatMap((row) => Option.toArray(forecastOf(row))),
@@ -122,5 +122,3 @@ const calibrationOf = (rows: readonly Scored[]): TaskResult["test"]["calibration
     ),
   };
 };
-
-export { calibrationOf };

@@ -1,7 +1,7 @@
 import { Array, Effect, Stream, pipe } from "effect";
 
 /** @internal */
-const collectBytes = Effect.fn("collectBytes")(function* collectBytes<Failure, Requirements>(
+export const collectBytes = Effect.fn("collectBytes")(function* collectBytes<Failure, Requirements>(
   stream: Stream.Stream<Uint8Array, Failure, Requirements>,
 ) {
   const chunks = yield* Stream.runCollect(stream);
@@ -14,5 +14,3 @@ const collectBytes = Effect.fn("collectBytes")(function* collectBytes<Failure, R
     ).bytes(),
   );
 });
-
-export { collectBytes };

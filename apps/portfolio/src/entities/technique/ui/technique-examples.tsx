@@ -5,7 +5,9 @@ import type { Example } from "#/entities/technique/model/technique";
 
 import { ExampleView } from "./example-view";
 
-const TechniqueExamples = ({ examples }: Readonly<{ examples: readonly Example[] }>): ReactNode => (
+export const TechniqueExamples = ({
+  examples,
+}: Readonly<{ examples: readonly Example[] }>): ReactNode => (
   <div className="flex flex-col gap-6">
     {pipe(
       examples,
@@ -13,5 +15,3 @@ const TechniqueExamples = ({ examples }: Readonly<{ examples: readonly Example[]
     )}
   </div>
 );
-
-export { TechniqueExamples };

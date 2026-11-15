@@ -5,7 +5,7 @@ import type { Fact } from "./facts.ts";
 
 const ICONS = { wait: Timer, withdrawn: Undo2, open: CircleHelp, next: ListTodo } as const;
 
-const FactLine = ({ fact }: Readonly<{ fact: Fact }>): ReactNode => {
+export const FactLine = ({ fact }: Readonly<{ fact: Fact }>): ReactNode => {
   const Icon = ICONS[fact.key];
   return (
     <li className="flex items-center gap-3 text-sm">
@@ -15,5 +15,3 @@ const FactLine = ({ fact }: Readonly<{ fact: Fact }>): ReactNode => {
     </li>
   );
 };
-
-export { FactLine };

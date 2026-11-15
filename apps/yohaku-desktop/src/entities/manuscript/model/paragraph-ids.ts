@@ -5,13 +5,13 @@ import { Array, HashMap, Option, pipe } from "effect";
 import { SecureRandom } from "effect/crypto";
 
 const LINE_BREAK = "\n";
-const FIRST_LINE = 1;
+export const FIRST_LINE = 1;
 const BEFORE = -1;
 const NO_IDS: readonly string[] = [];
 
 const freshId = (): string => SecureRandom.uuidV7Unsafe();
 
-const initialIds = Facet.define<readonly string[], readonly string[]>({
+export const initialIds = Facet.define<readonly string[], readonly string[]>({
   combine: (values) =>
     pipe(
       Array.head(values),
@@ -45,7 +45,7 @@ const remapped = (ids: readonly string[], transaction: Transaction): readonly st
   );
 };
 
-const paragraphIdsField = StateField.define<readonly string[]>({
+export const paragraphIdsField = StateField.define<readonly string[]>({
   create: (state) =>
     Array.makeBy(state.doc.lines, (index) =>
       pipe(Array.get(state.facet(initialIds), index), Option.getOrElse(freshId)),
@@ -58,20 +58,20 @@ const paragraphIdsField = StateField.define<readonly string[]>({
   },
 });
 
-const textOf = (paragraphs: readonly (typeof Paragraph.Type)[]): string =>
+export const textOf = (paragraphs: readonly (typeof Paragraph.Type)[]): string =>
   pipe(
     paragraphs,
     Array.map(({ text }) => text),
     Array.join(LINE_BREAK),
   );
 
-const paragraphsOf = (state: EditorState): readonly (typeof Paragraph.Type)[] =>
+export const paragraphsOf = (state: EditorState): readonly (typeof Paragraph.Type)[] =>
   pipe(
     state.field(paragraphIdsField),
     Array.map((id, index) => ({ id, text: state.doc.line(index + FIRST_LINE).text })),
   );
 
-const lineOf =
+export const lineOf =
   (paragraphId: string) =>
   (state: EditorState): Option.Option<number> =>
     pipe(
@@ -79,5 +79,3 @@ const lineOf =
       Array.findFirstIndex((id) => id === paragraphId),
       Option.map((index) => index + FIRST_LINE),
     );
-
-export { FIRST_LINE, initialIds, lineOf, paragraphIdsField, paragraphsOf, textOf };

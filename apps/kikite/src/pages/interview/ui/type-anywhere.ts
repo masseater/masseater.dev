@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 
-const ANSWER_ID = "answer";
+export const ANSWER_ID = "answer";
 const INTERACTIVE = "button, a, input, textarea";
 const FIELD = "input, textarea";
 const CHARACTER = 1;
 const IME = "Process";
 
-const focusAnswer = (): void => {
+export const focusAnswer = (): void => {
   const input = document.querySelector<HTMLInputElement>(`#${ANSWER_ID}`);
   if (input !== null) {
     input.focus();
@@ -35,7 +35,7 @@ const onTap = (event: MouseEvent): void => {
   }
 };
 
-const useTypeAnywhere = (): void => {
+export const useTypeAnywhere = (): void => {
   useEffect(() => {
     globalThis.addEventListener("keydown", onKey);
     globalThis.addEventListener("click", onTap);
@@ -45,5 +45,3 @@ const useTypeAnywhere = (): void => {
     };
   }, []);
 };
-
-export { ANSWER_ID, focusAnswer, useTypeAnywhere };

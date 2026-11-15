@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { useScreen } from "#/shared/model";
 import type { Page } from "#/shared/model";
 
-const NavButton = ({ label, page }: Readonly<{ label: string; page: Page }>): ReactNode => {
+export const NavButton = ({ label, page }: Readonly<{ label: string; page: Page }>): ReactNode => {
   const [screen, setScreen] = useScreen();
   const current = screen.page === page;
   const onClick = useCallback(() => {
@@ -25,5 +25,3 @@ const NavButton = ({ label, page }: Readonly<{ label: string; page: Page }>): Re
     </button>
   );
 };
-
-export { NavButton };

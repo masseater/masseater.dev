@@ -6,9 +6,9 @@ import { apiToken } from "#/shared/db";
 import type { ApiToken, StorageFailed } from "#/shared/db";
 import { db, query } from "#/shared/db/index.server";
 
-type TokenSummary = Omit<ApiToken, "tokenHash">;
+export type TokenSummary = Omit<ApiToken, "tokenHash">;
 
-const activeTokenByHash = (
+export const activeTokenByHash = (
   tokenHash: string,
 ): Effect.Effect<Option.Option<ApiToken>, StorageFailed> =>
   query(() =>
@@ -18,7 +18,7 @@ const activeTokenByHash = (
       .where(and(eq(apiToken.tokenHash, tokenHash), isNull(apiToken.revokedAt))),
   ).pipe(Effect.map(Arr.head));
 
-const listApiTokens: Effect.Effect<readonly TokenSummary[], StorageFailed> = query(() =>
+export const listApiTokens: Effect.Effect<readonly TokenSummary[], StorageFailed> = query(() =>
   db
     .select({
       id: apiToken.id,
@@ -30,6 +30,3 @@ const listApiTokens: Effect.Effect<readonly TokenSummary[], StorageFailed> = que
     .from(apiToken)
     .orderBy(desc(apiToken.createdAt)),
 );
-
-export { activeTokenByHash, listApiTokens };
-export type { TokenSummary };

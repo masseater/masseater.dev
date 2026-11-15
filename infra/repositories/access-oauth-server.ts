@@ -17,26 +17,27 @@ import { targetOf } from "./oauth-targets.ts";
 import type { OAuthTargetId } from "./oauth-targets.ts";
 
 const BROKER_ORIGIN = "https://credentials.masseater.dev";
-const LOGIN_PATH = "/access-oauth/login";
-const CALLBACK_PATH = "/access-oauth/callback";
-const CALLBACK_URL = `${BROKER_ORIGIN}${CALLBACK_PATH}`;
+export const LOGIN_PATH = "/access-oauth/login";
+export const CALLBACK_PATH = "/access-oauth/callback";
+export const CALLBACK_URL = `${BROKER_ORIGIN}${CALLBACK_PATH}`;
 const CLIENT_NAME = "masseater.dev credential broker";
 
-type Connection = Readonly<{ server: AuthorizationServer; client: Client }>;
+export type Connection = Readonly<{ server: AuthorizationServer; client: Client }>;
 
-type SiteContext = Readonly<{ env: AppStoreEnv; site: OAuthTargetId }>;
+export type SiteContext = Readonly<{ env: AppStoreEnv; site: OAuthTargetId }>;
 
 const RegisteredClient = Schema.fromJsonString(Schema.Struct({ clientId: Schema.String }));
 
-const resourceOf = (site: OAuthTargetId): string => targetOf(site).resource;
+export const resourceOf = (site: OAuthTargetId): string => targetOf(site).resource;
 
-const loginUrlOf = (site: OAuthTargetId): string =>
+export const loginUrlOf = (site: OAuthTargetId): string =>
   `${BROKER_ORIGIN}${LOGIN_PATH}?${new URLSearchParams({ site }).toString()}`;
 
 const clientKey = (issuer: string): string => `access_oauth_client:${issuer}`;
 
-const promised = <Value>(run: () => Promise<Value>): Effect.Effect<Value, AccessOAuthFailed> =>
-  Effect.tryPromise({ try: run, catch: failed });
+export const promised = <Value>(
+  run: () => Promise<Value>,
+): Effect.Effect<Value, AccessOAuthFailed> => Effect.tryPromise({ try: run, catch: failed });
 
 const issuerOf = (site: OAuthTargetId): Effect.Effect<URL, AccessOAuthFailed> => {
   const resource = new URL(resourceOf(site));
@@ -116,7 +117,7 @@ const registration = {
   token_endpoint_auth_method: "none",
 };
 
-const connect = ({ env, site }: SiteContext): Effect.Effect<Connection, AccessOAuthFailed> =>
+export const connect = ({ env, site }: SiteContext): Effect.Effect<Connection, AccessOAuthFailed> =>
   Effect.gen(function* connectTo() {
     const server = yield* discover(site);
     const known = yield* registered(env, server.issuer);
@@ -128,6 +129,3 @@ const connect = ({ env, site }: SiteContext): Effect.Effect<Connection, AccessOA
     yield* remember(env, server.issuer, created.client_id);
     return { server, client: publicClient(created.client_id) };
   });
-
-export { CALLBACK_PATH, CALLBACK_URL, LOGIN_PATH, connect, loginUrlOf, promised, resourceOf };
-export type { Connection, SiteContext };

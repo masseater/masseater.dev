@@ -13,7 +13,7 @@ const revealWhen =
     }
   };
 
-const SwitcherLink = ({
+export const SwitcherLink = ({
   slug,
   current,
 }: Readonly<{ slug: string; current: boolean }>): ReactNode => {
@@ -32,5 +32,3 @@ const SwitcherLink = ({
     </Link>
   );
 };
-
-export { SwitcherLink };

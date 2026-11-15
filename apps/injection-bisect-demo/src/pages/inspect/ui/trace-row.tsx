@@ -24,7 +24,7 @@ const millisOf = (answer: Answer): string => {
   return "";
 };
 
-const TraceRow = ({
+export const TraceRow = ({
   row,
   excerpt,
   total,
@@ -59,5 +59,3 @@ const TraceRow = ({
     </li>
   );
 };
-
-export { TraceRow };

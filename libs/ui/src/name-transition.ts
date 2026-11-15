@@ -1,6 +1,6 @@
 import { Option, pipe } from "effect";
 
-const nameTransition = (element: HTMLElement | null): void => {
+export const nameTransition = (element: HTMLElement | null): void => {
   const target = Option.fromNullishOr(element);
   const name = pipe(
     target,
@@ -10,5 +10,3 @@ const nameTransition = (element: HTMLElement | null): void => {
     target.value.style.setProperty("view-transition-name", name.value);
   }
 };
-
-export { nameTransition };

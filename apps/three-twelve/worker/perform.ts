@@ -17,9 +17,9 @@ import type { PlayRequest, PlayerContainer } from "./run-player.ts";
 
 const ON_TIME = 0;
 
-type Stage = Readonly<{ storage: PlayerStorage; container?: PlayerContainer }>;
+export type Stage = Readonly<{ storage: PlayerStorage; container?: PlayerContainer }>;
 
-type AudioBucket = Readonly<{
+export type AudioBucket = Readonly<{
   get: (key: string) => Promise<Readonly<{ body: ReadableStream }> | null>;
 }>;
 
@@ -80,7 +80,7 @@ const perform = Effect.fn("three-twelve.perform")(function* perform(
   return yield* playAll(stage, at, { token: token.value, audio: audio.value.body, startAt });
 });
 
-const alarmed = Effect.fn("three-twelve.alarmed")(function* alarmed(
+export const alarmed = Effect.fn("three-twelve.alarmed")(function* alarmed(
   stage: Stage,
   audioBucket: AudioBucket,
 ) {
@@ -102,6 +102,3 @@ const alarmed = Effect.fn("three-twelve.alarmed")(function* alarmed(
     Effect.catchCause((cause) => Effect.logError("three-twelve.lastRunLost", cause)),
   );
 });
-
-export { alarmed };
-export type { AudioBucket, Stage };

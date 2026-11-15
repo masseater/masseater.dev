@@ -16,7 +16,9 @@ const blendFile = Effect.fn("blendFile")(function* blendFile(path: string) {
 });
 
 /** @internal */
-const blendImageNames = Effect.fn("blendImageNames")(function* blendImageNames(path: string) {
+export const blendImageNames = Effect.fn("blendImageNames")(function* blendImageNames(
+  path: string,
+) {
   const paths = yield* Path.Path;
   const file = yield* blendFile(path);
   return pipe(
@@ -29,11 +31,9 @@ const blendImageNames = Effect.fn("blendImageNames")(function* blendImageNames(p
 });
 
 /** @internal */
-const blendModel = Effect.fn("blendModel")(function* blendModel(path: string) {
+export const blendModel = Effect.fn("blendModel")(function* blendModel(path: string) {
   const file = yield* blendFile(path);
   const parts = sceneOf(file);
   const pngs = yield* texturesOf(path, parts);
   return yield* glbOf(parts, pngs);
 });
-
-export { blendImageNames, blendModel };

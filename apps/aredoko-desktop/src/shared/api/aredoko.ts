@@ -104,7 +104,7 @@ const callWithin =
 const call = callWithin(REQUEST_TIMEOUT);
 const callLong = callWithin(LONG_REQUEST_TIMEOUT);
 
-const getStatus = (): Promise<typeof Status.Type> =>
+export const getStatus = (): Promise<typeof Status.Type> =>
   call(({ GetStatus: getStatusRpc }) =>
     getStatusRpc().pipe(
       Effect.timeoutOrElse({
@@ -114,24 +114,24 @@ const getStatus = (): Promise<typeof Status.Type> =>
     ),
   );
 
-const listSources = (): Promise<readonly (typeof Source.Type)[]> =>
+export const listSources = (): Promise<readonly (typeof Source.Type)[]> =>
   call(({ ListSources: listSourcesRpc }) => Effect.map(listSourcesRpc(), ({ sources }) => sources));
 
-const addSource = (source: {
+export const addSource = (source: {
   readonly path: string;
   readonly kind: typeof SourceKind.Type;
 }): Promise<typeof Source.Type> => call(({ AddSource: addSourceRpc }) => addSourceRpc(source));
 
-const removeSource = (id: number): Promise<void> =>
+export const removeSource = (id: number): Promise<void> =>
   call(({ RemoveSource: removeSourceRpc }) => removeSourceRpc({ id }));
 
-interface LibraryInfo {
+export interface LibraryInfo {
   readonly path: string;
   readonly assetStore: Option.Option<string>;
   readonly blm: Option.Option<string>;
 }
 
-const getLibrary = (): Promise<LibraryInfo> =>
+export const getLibrary = (): Promise<LibraryInfo> =>
   call(({ GetLibrary: getLibraryRpc }) =>
     Effect.map(getLibraryRpc(), ({ path, assetStore, blm }) => ({
       path,
@@ -140,22 +140,22 @@ const getLibrary = (): Promise<LibraryInfo> =>
     })),
   );
 
-const importFiles = (paths: readonly string[]): Promise<number> =>
+export const importFiles = (paths: readonly string[]): Promise<number> =>
   callLong(({ ImportFiles: importFilesRpc }) =>
     Effect.map(importFilesRpc({ paths }), ({ packages }) => packages),
   );
 
-const listPackages = (): Promise<readonly (typeof Package.Type)[]> =>
+export const listPackages = (): Promise<readonly (typeof Package.Type)[]> =>
   call(({ ListPackages: listPackagesRpc }) =>
     Effect.map(listPackagesRpc(), ({ packages }) => packages),
   );
 
-const linkBooth = (link: {
+export const linkBooth = (link: {
   readonly packageId: number;
   readonly url: string;
 }): Promise<typeof Package.Type> => call(({ LinkBooth: linkBoothRpc }) => linkBoothRpc(link));
 
-const search = (query: {
+export const search = (query: {
   readonly query: string;
   readonly kinds: readonly (typeof AssetKind.Type)[];
   readonly limit: number;
@@ -163,7 +163,7 @@ const search = (query: {
 }): Promise<readonly (typeof SearchResult.Type)[]> =>
   call(({ Search: searchRpc }) => Effect.map(searchRpc(query), ({ results }) => results));
 
-const listAssets = (query: {
+export const listAssets = (query: {
   readonly packageId: number | null;
   readonly kinds: readonly (typeof AssetKind.Type)[];
   readonly offset: number;
@@ -171,12 +171,14 @@ const listAssets = (query: {
 }): Promise<Readonly<{ assets: readonly (typeof SearchResult.Type)[]; total: number }>> =>
   call(({ ListAssets: listAssetsRpc }) => listAssetsRpc(query));
 
-const extract = (
+export const extract = (
   assetIds: readonly number[],
 ): Promise<Readonly<{ path: string; assets: number }>> =>
   callLong(({ Extract: extractRpc }) => extractRpc({ assetIds }));
 
-const listRenderJobs = (): Promise<readonly Readonly<{ assetId: number; pathname: string }>[]> =>
+export const listRenderJobs = (): Promise<
+  readonly Readonly<{ assetId: number; pathname: string }>[]
+> =>
   call(({ ListRenderJobs: listRenderJobsRpc }) =>
     Effect.map(listRenderJobsRpc(), ({ jobs }) => jobs),
   );
@@ -228,7 +230,7 @@ const readWhole = <Failure>(
 ): Effect.Effect<Uint8Array, Failure> =>
   partsFrom(readPart, { ...whole, offset: START }).pipe(Effect.flatMap(joined));
 
-const readModel = (
+export const readModel = (
   assetId: number,
 ): Promise<
   Readonly<{
@@ -253,42 +255,22 @@ const readModel = (
     }),
   );
 
-const putRender = (rendered: {
+export const putRender = (rendered: {
   readonly assetId: number;
   readonly pngs: readonly Uint8Array[];
 }): Promise<void> => call(({ PutRender: putRenderRpc }) => putRenderRpc(rendered));
 
-const failRender = (failure: {
+export const failRender = (failure: {
   readonly assetId: number;
   readonly reason: string;
 }): Promise<void> => call(({ FailRender: failRenderRpc }) => failRenderRpc(failure));
 
 const encodeBase64 = Schema.encodeEffect(Schema.Uint8ArrayFromBase64);
 
-const getPreview = (assetId: number): Promise<string> =>
+export const getPreview = (assetId: number): Promise<string> =>
   call(({ GetPreview: getPreviewRpc }) =>
     getPreviewRpc({ assetId }).pipe(
       Effect.flatMap(({ png }) => encodeBase64(png)),
       Effect.map((base64) => `data:image/png;base64,${base64}`),
     ),
   );
-
-export {
-  addSource,
-  extract,
-  failRender,
-  getPreview,
-  getLibrary,
-  getStatus,
-  importFiles,
-  linkBooth,
-  listAssets,
-  listPackages,
-  listRenderJobs,
-  listSources,
-  putRender,
-  readModel,
-  removeSource,
-  search,
-};
-export type { LibraryInfo };

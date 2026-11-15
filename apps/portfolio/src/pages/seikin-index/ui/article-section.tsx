@@ -7,7 +7,7 @@ import { groupsOf } from "#/pages/seikin-index/model/groups";
 
 import { TechniqueGroup } from "./technique-group";
 
-const ArticleSection = ({ article }: Readonly<{ article: Article }>): ReactNode => (
+export const ArticleSection = ({ article }: Readonly<{ article: Article }>): ReactNode => (
   <section className="flex flex-col gap-6">
     <h2 className="font-display text-2xl font-light">
       <a className="hover:underline" href={blogPath(article)}>
@@ -20,5 +20,3 @@ const ArticleSection = ({ article }: Readonly<{ article: Article }>): ReactNode 
     )}
   </section>
 );
-
-export { ArticleSection };

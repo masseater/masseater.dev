@@ -3,7 +3,7 @@ import type { Parent, PhrasingContent, Root, RootContent, Text } from "mdast";
 import type { LeafDirective } from "mdast-util-directive";
 import type { MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 
-type Transform<Input, Output> = (input: Input) => Output;
+export type Transform<Input, Output> = (input: Input) => Output;
 
 const isParent: Predicate.Refinement<RootContent, Extract<RootContent, Parent>> = (node) =>
   Predicate.hasProperty(node, "children");
@@ -13,7 +13,7 @@ const withChildren = <Node extends Parent>(
   transform: Transform<RootContent, RootContent>,
 ): Node => ({ ...node, children: pipe(node.children, Arr.map(transform)) });
 
-const mapTree =
+export const mapTree =
   (converted: Transform<RootContent, RootContent>): Transform<Root, Root> =>
   (tree) => {
     const transformNode: Transform<RootContent, RootContent> = (node) =>
@@ -32,7 +32,7 @@ const isLeafDirective: Predicate.Refinement<RootContent, LeafDirective> = (node)
 
 const isText: Predicate.Refinement<PhrasingContent, Text> = (node) => node.type === "text";
 
-const labelOf: Transform<LeafDirective, string> = (node) =>
+export const labelOf: Transform<LeafDirective, string> = (node) =>
   pipe(
     node.children,
     Arr.filter(isText),
@@ -40,7 +40,7 @@ const labelOf: Transform<LeafDirective, string> = (node) =>
     Arr.join(""),
   );
 
-const componentOf = ({
+export const componentOf = ({
   name,
   attributes,
 }: Readonly<{
@@ -56,7 +56,7 @@ const componentOf = ({
   children: [],
 });
 
-const leafDirectiveAs =
+export const leafDirectiveAs =
   ({
     directive,
     element,
@@ -71,6 +71,3 @@ const leafDirectiveAs =
       Option.flatMap(element),
       Option.getOrElse(() => node),
     );
-
-export type { Transform };
-export { componentOf, labelOf, leafDirectiveAs, mapTree };

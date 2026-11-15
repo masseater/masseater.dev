@@ -1,3 +1,1 @@
-const BASE_PATH = "/nimado";
-
-export { BASE_PATH };
+export const BASE_PATH = "/nimado";

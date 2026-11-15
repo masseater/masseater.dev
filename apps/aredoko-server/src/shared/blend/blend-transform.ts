@@ -90,6 +90,4 @@ const worldOf = (object: Instance, depth: number): Matrix4 => {
   );
 };
 
-const worldMatrix = (object: Instance): Matrix4 => worldOf(object, NONE);
-
-export { worldMatrix };
+export const worldMatrix = (object: Instance): Matrix4 => worldOf(object, NONE);

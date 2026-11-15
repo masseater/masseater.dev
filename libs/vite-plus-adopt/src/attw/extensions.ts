@@ -4,7 +4,7 @@ import { getBaseFileName } from "./paths.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-const Extension = {
+export const Extension = {
   Ts: ".ts",
   Tsx: ".tsx",
   Dts: ".d.ts",
@@ -20,9 +20,9 @@ const Extension = {
   Dcts: ".d.cts",
 } as const;
 
-type ExtensionKind = "TypeScript" | "JavaScript" | "Declaration" | "Json";
+export type ExtensionKind = "TypeScript" | "JavaScript" | "Declaration" | "Json";
 
-type Extensions = readonly ExtensionKind[];
+export type Extensions = readonly ExtensionKind[];
 
 const EXTENSION_KIND_ORDER: readonly ExtensionKind[] = [
   "TypeScript",
@@ -38,15 +38,15 @@ const EXTENSION_KIND_NAMES: Readonly<Record<ExtensionKind, string>> = {
   Json: "JSON",
 };
 
-const extensionsOf = (...kinds: readonly ExtensionKind[]): Extensions =>
+export const extensionsOf = (...kinds: readonly ExtensionKind[]): Extensions =>
   pipe(
     EXTENSION_KIND_ORDER,
     Arr.filter((kind) => kinds.includes(kind)),
   );
 
-const PRIORITY_KINDS: Extensions = extensionsOf("TypeScript", "Declaration");
+export const PRIORITY_KINDS: Extensions = extensionsOf("TypeScript", "Declaration");
 
-const intersectExtensions: {
+export const intersectExtensions: {
   (right: Extensions): (left: Extensions) => Extensions;
   (left: Extensions, right: Extensions): Extensions;
 } = Fn.dual(DATA_FIRST_ARITY, (left: Extensions, right: Extensions): Extensions =>
@@ -56,7 +56,7 @@ const intersectExtensions: {
   ),
 );
 
-const subtractExtensions: {
+export const subtractExtensions: {
   (right: Extensions): (left: Extensions) => Extensions;
   (left: Extensions, right: Extensions): Extensions;
 } = Fn.dual(DATA_FIRST_ARITY, (left: Extensions, right: Extensions): Extensions =>
@@ -66,7 +66,7 @@ const subtractExtensions: {
   ),
 );
 
-const formatExtensions = (extensions: Extensions): string =>
+export const formatExtensions = (extensions: Extensions): string =>
   pipe(
     extensions,
     Arr.map((kind) => EXTENSION_KIND_NAMES[kind]),
@@ -124,7 +124,7 @@ const ZERO = 0;
 const fileExtensionIs = (path: string, extension: string): boolean =>
   path.length > extension.length && Str.endsWith(extension)(path);
 
-const fileExtensionIsOneOf: {
+export const fileExtensionIsOneOf: {
   (extensions: readonly string[]): (path: string) => boolean;
   (path: string, extensions: readonly string[]): boolean;
 } = Fn.dual(DATA_FIRST_ARITY, (path: string, extensions: readonly string[]): boolean =>
@@ -137,10 +137,10 @@ const fileExtensionIsOneOf: {
 const findExtension = (path: string, extensions: readonly string[]): Option.Option<string> =>
   Arr.findFirst(extensions, (extension) => fileExtensionIs(path, extension));
 
-const hasTSFileExtension = (fileName: string): boolean =>
+export const hasTSFileExtension = (fileName: string): boolean =>
   fileExtensionIsOneOf(fileName, SUPPORTED_TS);
 
-const hasJSFileExtension = (fileName: string): boolean =>
+export const hasJSFileExtension = (fileName: string): boolean =>
   fileExtensionIsOneOf(fileName, SUPPORTED_JS);
 
 const ARBITRARY_DECLARATION = ".d.";
@@ -159,17 +159,17 @@ const getDeclarationFileExtension = (fileName: string): Option.Option<string> =>
     Option.orElse(() => getArbitraryDeclarationExtension(fileName)),
   );
 
-const isDeclarationFileName = (fileName: string): boolean =>
+export const isDeclarationFileName = (fileName: string): boolean =>
   Option.isSome(getDeclarationFileExtension(fileName));
 
-const getAnyExtensionFromPath = (path: string): string => {
+export const getAnyExtensionFromPath = (path: string): string => {
   const base = getBaseFileName(path);
   return Str.lastIndexOf(".")(base).pipe(
     Option.match({ onNone: () => "", onSome: (index) => Str.slice(index)(base) }),
   );
 };
 
-const removeFileExtension = (path: string): string =>
+export const removeFileExtension = (path: string): string =>
   findExtension(path, REMOVABLE).pipe(
     Option.match({
       onNone: () => path,
@@ -177,13 +177,13 @@ const removeFileExtension = (path: string): string =>
     }),
   );
 
-const tryGetExtensionFromPath = (path: string): Option.Option<string> =>
+export const tryGetExtensionFromPath = (path: string): Option.Option<string> =>
   findExtension(path, REMOVABLE);
 
-const tryExtractTSExtension = (fileName: string): Option.Option<string> =>
+export const tryExtractTSExtension = (fileName: string): Option.Option<string> =>
   findExtension(fileName, EXTRACTABLE_TS);
 
-const isTSFileExtensionForPackageField: {
+export const isTSFileExtensionForPackageField: {
   (candidate: string): (extensions: Extensions) => boolean;
   (extensions: Extensions, candidate: string): boolean;
 } = Fn.dual(
@@ -201,7 +201,7 @@ const EXTENSIONS_FOR_KIND: Readonly<Record<ExtensionKind, readonly string[]>> = 
   Json: [Extension.Json],
 };
 
-const extensionIsOk: {
+export const extensionIsOk: {
   (extension: string): (extensions: Extensions) => boolean;
   (extensions: Extensions, extension: string): boolean;
 } = Fn.dual(DATA_FIRST_ARITY, (extensions: Extensions, extension: string): boolean =>
@@ -210,23 +210,3 @@ const extensionIsOk: {
     Arr.some((kind) => extensions.includes(kind) && EXTENSIONS_FOR_KIND[kind].includes(extension)),
   ),
 );
-
-export {
-  Extension,
-  PRIORITY_KINDS,
-  extensionIsOk,
-  extensionsOf,
-  fileExtensionIsOneOf,
-  formatExtensions,
-  getAnyExtensionFromPath,
-  hasJSFileExtension,
-  hasTSFileExtension,
-  intersectExtensions,
-  isDeclarationFileName,
-  isTSFileExtensionForPackageField,
-  removeFileExtension,
-  subtractExtensions,
-  tryExtractTSExtension,
-  tryGetExtensionFromPath,
-};
-export type { ExtensionKind, Extensions };

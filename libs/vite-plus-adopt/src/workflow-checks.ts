@@ -21,7 +21,8 @@ const onWorkflows =
       return Option.some(ran);
     });
 
-const actionlintCheck = onWorkflows(ACTIONLINT, Effect.succeed([]));
+/** @internal */
+export const actionlintCheck = onWorkflows(ACTIONLINT, Effect.succeed([]));
 
 const zizmorArgs = Effect.gen(function* zizmorArgs() {
   const remote = yield* Config.option(Config.String("CLAUDE_CODE_REMOTE")).pipe(Effect.orDie);
@@ -34,7 +35,5 @@ const zizmorArgs = Effect.gen(function* zizmorArgs() {
   );
 });
 
-const zizmorCheck = onWorkflows(ZIZMOR, zizmorArgs);
-
 /** @internal */
-export { actionlintCheck, zizmorCheck };
+export const zizmorCheck = onWorkflows(ZIZMOR, zizmorArgs);

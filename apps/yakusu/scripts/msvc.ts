@@ -11,9 +11,11 @@ const DEPENDENT = /^ +\S+\.dll$/iu;
 const BINARY = /\.(?:exe|dll)$/iu;
 const API_SET = /^(?:api|ext)-ms-win-/iu;
 
-type Tools = Readonly<{ llama: string; crt: string; dumpbin: string }>;
+/** @internal */
+export type Tools = Readonly<{ llama: string; crt: string; dumpbin: string }>;
 
-type Dependent = Readonly<{ file: string; name: string }>;
+/** @internal */
+export type Dependent = Readonly<{ file: string; name: string }>;
 
 type Requirements = FileSystem.FileSystem | Path.Path | ChildProcessSpawner.ChildProcessSpawner;
 
@@ -145,14 +147,12 @@ const requireShipped = Effect.fn("msvc.requireShipped")(function* requireShipped
   return listed;
 });
 
-const shipMsvcRuntime = Effect.fn("msvc.shipMsvcRuntime")(function* shipMsvcRuntime(llama: string) {
+/** @internal */
+export const shipMsvcRuntime = Effect.fn("msvc.shipMsvcRuntime")(function* shipMsvcRuntime(
+  llama: string,
+) {
   const crt = yield* latest(CRT);
   const dumpbin = yield* latest(DUMPBIN);
   yield* copyRuntime({ llama, crt, dumpbin });
   return yield* requireShipped(llama, dumpbin);
 });
-
-/** @internal */
-export { shipMsvcRuntime };
-/** @internal */
-export type { Dependent, Tools };

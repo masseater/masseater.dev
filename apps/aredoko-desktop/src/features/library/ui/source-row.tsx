@@ -8,7 +8,7 @@ import { Badge } from "#/shared/ui/badge";
 import { RemoveSourceButton } from "./remove-source-button.tsx";
 import { SourceName } from "./source-name.tsx";
 
-const SourceRow = ({
+export const SourceRow = ({
   source,
   named,
 }: Readonly<{ source: typeof Source.Type; named: Option.Option<NamedFolder> }>): ReactNode => {
@@ -24,5 +24,3 @@ const SourceRow = ({
     </li>
   );
 };
-
-export { SourceRow };

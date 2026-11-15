@@ -6,7 +6,7 @@ import { ImageExample } from "./image-example";
 import { LinkExample } from "./link-example";
 import { YouTubeExample } from "./youtube-example";
 
-const ExampleView = ({ example }: Readonly<{ example: Example }>): ReactNode => {
+export const ExampleView = ({ example }: Readonly<{ example: Example }>): ReactNode => {
   if (example.kind === "image") {
     return <ImageExample example={example} />;
   }
@@ -15,5 +15,3 @@ const ExampleView = ({ example }: Readonly<{ example: Example }>): ReactNode => 
   }
   return <LinkExample example={example} />;
 };
-
-export { ExampleView };

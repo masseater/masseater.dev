@@ -29,7 +29,7 @@ const attach = (engine: Engine): Effect.Effect<Mounted> =>
     return { style, container, root };
   });
 
-const mount = (engine: Engine): Effect.Effect<void, never, Scope.Scope> =>
+export const mount = (engine: Engine): Effect.Effect<void, never, Scope.Scope> =>
   Effect.acquireRelease(attach(engine), ({ style, container, root }) =>
     Effect.sync(() => {
       root.unmount();
@@ -42,5 +42,3 @@ const mount = (engine: Engine): Effect.Effect<void, never, Scope.Scope> =>
       Effect.promise(() => Promise.all(Array.from(document.fonts, (face) => face.load()))),
     ),
   );
-
-export { mount };

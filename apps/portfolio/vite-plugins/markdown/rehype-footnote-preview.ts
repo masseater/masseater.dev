@@ -6,7 +6,7 @@ import type {
   MdxJsxTextElementHast,
 } from "mdast-util-mdx-jsx";
 
-type Transform<Input, Output> = (input: Input) => Output;
+export type Transform<Input, Output> = (input: Input) => Output;
 
 type Definitions = ReadonlyMap<string, readonly ElementContent[]>;
 
@@ -143,10 +143,7 @@ const transformElement: Transform<Definitions, Transform<Element, ElementContent
       }),
     );
 
-const rehypeFootnotePreview = (): Transform<Root, Root> => (tree) => {
+export const rehypeFootnotePreview = (): Transform<Root, Root> => (tree) => {
   const transform = onElements<RootContent>(transformElement(definitions(tree)));
   return { ...tree, children: pipe(tree.children, Arr.map(transform)) };
 };
-
-export type { Transform };
-export { rehypeFootnotePreview };

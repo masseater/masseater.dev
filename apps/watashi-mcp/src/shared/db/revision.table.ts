@@ -2,11 +2,11 @@ import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core"
 
 import { LIFE_RECORDS } from "./life-record.table.ts";
 
-const REVISION_ENTITIES = [...LIFE_RECORDS, "memory", "owner_trait"] as const;
+export const REVISION_ENTITIES = [...LIFE_RECORDS, "memory", "owner_trait"] as const;
 
-const REVISION_OPS = ["create", "update", "restore", "retract"] as const;
+export const REVISION_OPS = ["create", "update", "restore", "retract"] as const;
 
-const revision = sqliteTable(
+export const revision = sqliteTable(
   "revision",
   {
     entity: text("entity", { enum: REVISION_ENTITIES }).notNull(),
@@ -20,11 +20,8 @@ const revision = sqliteTable(
   (table) => [primaryKey({ columns: [table.entity, table.entityId, table.rev] })],
 );
 
-type Revision = typeof revision.$inferSelect;
+export type Revision = typeof revision.$inferSelect;
 
-type RevisionEntity = Revision["entity"];
+export type RevisionEntity = Revision["entity"];
 
-type RevisionOp = Revision["op"];
-
-export { REVISION_ENTITIES, REVISION_OPS, revision };
-export type { Revision, RevisionEntity, RevisionOp };
+export type RevisionOp = Revision["op"];

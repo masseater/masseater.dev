@@ -55,7 +55,7 @@ const pngOf = (
   );
 
 /** @internal */
-const texturesOf = Effect.fn("texturesOf")(function* texturesOf(
+export const texturesOf = Effect.fn("texturesOf")(function* texturesOf(
   blend: string,
   parts: readonly Part[],
 ) {
@@ -73,5 +73,3 @@ const texturesOf = Effect.fn("texturesOf")(function* texturesOf(
   );
   return HashMap.fromIterable(Array.getSomes(loaded));
 });
-
-export { texturesOf };

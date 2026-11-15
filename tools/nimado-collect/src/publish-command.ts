@@ -32,7 +32,7 @@ const DATE_START = 0;
 const DATE_LENGTH = 10;
 const PLATFORMS: readonly PlatformName[] = ["nico", "youtube"];
 
-interface Output {
+export interface Output {
   readonly state: string;
   readonly out: string;
 }
@@ -150,7 +150,7 @@ const loadStates = Effect.fn("publish.states")(function* loadStatesOf(state: str
 });
 
 /** @internal */
-const publish = Effect.fn("command.publish")(function* publishSite({ state, out }: Output) {
+export const publish = Effect.fn("command.publish")(function* publishSite({ state, out }: Output) {
   const catalog = yield* loadCatalog(state);
   const states = yield* loadStates(state);
   const songs = measureSongs({ songs: catalog.songs, states });
@@ -162,6 +162,3 @@ const publish = Effect.fn("command.publish")(function* publishSite({ state, out 
   const catalogComplete = Option.isNone(catalog.crawl.next);
   yield* writeMeta({ state, out, songs: songs.length, catalogComplete });
 });
-
-export { publish };
-export type { Output };

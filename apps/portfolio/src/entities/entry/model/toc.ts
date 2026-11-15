@@ -6,10 +6,9 @@ import type { Heading } from "sloppedia";
 import { findLoadedBody } from "./body";
 import type { Entry } from "./entry";
 
-const tocOf = ({ tableOfContents }: Readonly<MDXModule>): readonly Heading[] =>
+export const tocOf = ({ tableOfContents }: Readonly<MDXModule>): readonly Heading[] =>
   headingsOf(tableOfContents);
 
-const loadedHeadings = (entry: Readonly<Pick<Entry, "category" | "slug">>): readonly Heading[] =>
-  Option.match(findLoadedBody(entry), { onNone: Arr.empty, onSome: tocOf });
-
-export { loadedHeadings, tocOf };
+export const loadedHeadings = (
+  entry: Readonly<Pick<Entry, "category" | "slug">>,
+): readonly Heading[] => Option.match(findLoadedBody(entry), { onNone: Arr.empty, onSome: tocOf });

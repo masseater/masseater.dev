@@ -26,21 +26,25 @@ import type { DecisionPluginSetup } from "./types.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface OxlintRun {
+/** @internal */
+export interface OxlintRun {
   readonly status: number;
   readonly stdout: string;
   readonly stderr: string;
 }
 
-interface OxlintCall {
+/** @internal */
+export interface OxlintCall {
   readonly cwd: string;
   readonly args: readonly string[];
   readonly env: Readonly<Record<string, string>>;
 }
 
-type Services = FileSystem.FileSystem | Path.Path | ChildProcessSpawner.ChildProcessSpawner;
+/** @internal */
+export type Services = FileSystem.FileSystem | Path.Path | ChildProcessSpawner.ChildProcessSpawner;
 
-type TestError =
+/** @internal */
+export type TestError =
   | PlatformError
   | Schema.SchemaError
   | Config.ConfigError
@@ -69,9 +73,12 @@ const inPackage = (...segments: readonly string[]): Effect.Effect<string, never,
     return path.join(path.dirname(import.meta.dirname), ...segments);
   });
 
-const packageRoot = inPackage();
-const pluginPath = inPackage("dist", "index.mjs");
-const cacheDirOf = (root: string): Effect.Effect<string, never, Path.Path> =>
+/** @internal */
+export const packageRoot = inPackage();
+/** @internal */
+export const pluginPath = inPackage("dist", "index.mjs");
+/** @internal */
+export const cacheDirOf = (root: string): Effect.Effect<string, never, Path.Path> =>
   Path.Path.pipe(Effect.map((path) => path.join(root, ...CACHE_DIR)));
 
 const inheritedEnv: Effect.Effect<Readonly<Record<string, string>>> = Effect.map(
@@ -95,7 +102,8 @@ const textOf = <Err, Req>(
   stream: Stream.Stream<Uint8Array, Err, Req>,
 ): Effect.Effect<string, Err, Req> => stream.pipe(Stream.decodeText(), Stream.mkString);
 
-const runOxlint = ({
+/** @internal */
+export const runOxlint = ({
   cwd,
   args,
   env,
@@ -117,14 +125,16 @@ const runOxlint = ({
     }),
   );
 
-const removeCache = (root: string): Effect.Effect<void, PlatformError, Services> =>
+/** @internal */
+export const removeCache = (root: string): Effect.Effect<void, PlatformError, Services> =>
   Effect.gen(function* remove() {
     const fs = yield* FileSystem.FileSystem;
     const cacheDir = yield* cacheDirOf(root);
     yield* fs.remove(cacheDir, { recursive: true, force: true });
   });
 
-const writeProject = (
+/** @internal */
+export const writeProject = (
   files: Readonly<Record<string, string>>,
 ): Effect.Effect<string, PlatformError, Services | Scope.Scope> =>
   Effect.gen(function* write() {
@@ -137,7 +147,8 @@ const writeProject = (
     return dir;
   });
 
-const configSource = (config: object): string => `export default ${toJson(config)};\n`;
+/** @internal */
+export const configSource = (config: object): string => `export default ${toJson(config)};\n`;
 
 const ruleEntry = (options: object | undefined): unknown =>
   Option.match(Option.fromUndefinedOr(options), {
@@ -178,7 +189,8 @@ const setupSource = (setup: DecisionPluginSetup): string =>
     Arr.join(""),
   );
 
-const projectFilesFor: {
+/** @internal */
+export const projectFilesFor: {
   (
     ruleOptions: Readonly<Record<string, object>>,
   ): (
@@ -209,14 +221,16 @@ const projectFilesFor: {
     ),
 );
 
-const mockEnv = (
+/** @internal */
+export const mockEnv = (
   token: string,
 ): Effect.Effect<Readonly<Record<string, string>>, never, MockOpenRouter> =>
   MockOpenRouter.pipe(
     Effect.map(({ baseURL }) => ({ OPENROUTER_API_KEY: token, OPENROUTER_BASE_URL: baseURL })),
   );
 
-const decisionLines = (run: OxlintRun): readonly string[] =>
+/** @internal */
+export const decisionLines = (run: OxlintRun): readonly string[] =>
   pipe(
     Str.split(run.stdout, "\n"),
     Arr.filter((line) =>
@@ -242,10 +256,13 @@ const Diagnostic = Schema.Struct({
 
 const Report = Schema.fromJsonString(Schema.Struct({ diagnostics: Schema.Array(Diagnostic) }));
 
-type OxlintDiagnostic = typeof Diagnostic.Type;
-type OxlintSpan = typeof Span.Type;
+/** @internal */
+export type OxlintDiagnostic = typeof Diagnostic.Type;
+/** @internal */
+export type OxlintSpan = typeof Span.Type;
 
-const diagnosticsOf = (
+/** @internal */
+export const diagnosticsOf = (
   run: OxlintRun,
 ): Effect.Effect<readonly OxlintDiagnostic[], Schema.SchemaError> =>
   Schema.decodeEffect(Report)(run.stdout).pipe(
@@ -262,23 +279,6 @@ const diagnosticsOf = (
     ),
   );
 
-const firstSpan = (diagnostic: OxlintDiagnostic): OxlintSpan =>
+/** @internal */
+export const firstSpan = (diagnostic: OxlintDiagnostic): OxlintSpan =>
   Option.getOrThrow(Arr.head(diagnostic.labels)).span;
-
-/** @internal */
-export {
-  cacheDirOf,
-  configSource,
-  decisionLines,
-  diagnosticsOf,
-  firstSpan,
-  mockEnv,
-  packageRoot,
-  pluginPath,
-  projectFilesFor,
-  removeCache,
-  runOxlint,
-  writeProject,
-};
-/** @internal */
-export type { OxlintCall, OxlintDiagnostic, OxlintRun, OxlintSpan, Services, TestError };

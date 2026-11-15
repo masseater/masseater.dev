@@ -6,11 +6,11 @@ import { rulesOf } from "./config-rules.ts";
 import { isTypedRule, withOptionalTypeInformation, withTypeInformation } from "./typed-rule.ts";
 import type { TypedRule } from "./typed-rule.ts";
 
-interface Config {
+export interface Config {
   readonly rules?: Readonly<Record<string, unknown>> | undefined;
 }
 
-type ConfigName =
+export type ConfigName =
   | "all"
   | "disable-conflict-eslint-plugin-react"
   | "disable-conflict-eslint-plugin-react-hooks"
@@ -35,9 +35,9 @@ type ConfigName =
   | "web-api"
   | "x";
 
-type Configs = Readonly<Record<ConfigName, Config>>;
+export type Configs = Readonly<Record<ConfigName, Config>>;
 
-type ReactPlugin = Plugin & {
+export type ReactPlugin = Plugin & {
   readonly meta: { readonly name: string };
   readonly configs: Configs;
 };
@@ -79,5 +79,4 @@ const plugin: ReactPlugin = {
   rules: pipe(upstreamRules, Record.filter(isTypedRule), Record.map(withTypes)),
 };
 
-export type { Config, ConfigName, Configs, ReactPlugin };
 export default plugin;

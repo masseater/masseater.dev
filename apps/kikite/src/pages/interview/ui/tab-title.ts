@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 const TITLE = "kikite";
 
-const useTabTitle = (question: string): void => {
+export const useTabTitle = (question: string): void => {
   useEffect(() => {
     const shown = (): void => {
       if (document.hidden && question !== "") {
@@ -19,5 +19,3 @@ const useTabTitle = (question: string): void => {
     };
   }, [question]);
 };
-
-export { useTabTitle };

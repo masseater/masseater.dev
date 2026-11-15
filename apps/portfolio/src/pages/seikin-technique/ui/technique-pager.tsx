@@ -17,11 +17,9 @@ const neighbor = (slug: string, offset: number): Option.Option<Technique> =>
     Option.flatMap((index) => Arr.get(techniqueList, index + offset)),
   );
 
-const TechniquePager = ({ slug }: Readonly<{ slug: string }>): ReactNode => (
+export const TechniquePager = ({ slug }: Readonly<{ slug: string }>): ReactNode => (
   <nav className="flex justify-between gap-4 border-t pt-6">
     <PagerLink label={PREVIOUS_LABEL} technique={neighbor(slug, PREVIOUS)} />
     <PagerLink label={NEXT_LABEL} technique={neighbor(slug, NEXT)} />
   </nav>
 );
-
-export { TechniquePager };

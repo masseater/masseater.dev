@@ -1,6 +1,6 @@
 import type { Detail } from "./model-detail";
 
-type ChartRow =
+export type ChartRow =
   | Readonly<{
       status: "interval";
       key: string;
@@ -19,5 +19,3 @@ type ChartRow =
       detail: Detail;
     }>
   | Readonly<{ status: "unsupported"; key: string; label: string }>;
-
-export type { ChartRow };

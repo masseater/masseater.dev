@@ -1,8 +1,8 @@
 import { Option, Schema } from "effect";
 
-const KINDS = ["receipt", "invoice"] as const;
+export const KINDS = ["receipt", "invoice"] as const;
 
-const CONDITIONS = ["clean", "degraded"] as const;
+export const CONDITIONS = ["clean", "degraded"] as const;
 
 const DocumentSchema = Schema.Struct({
   id: Schema.String,
@@ -23,12 +23,12 @@ const DocumentSchema = Schema.Struct({
   tilt: Schema.Finite,
 });
 
-const DocumentsSchema = Schema.fromJsonString(Schema.Array(DocumentSchema));
+export const DocumentsSchema = Schema.fromJsonString(Schema.Array(DocumentSchema));
 
-type Document = typeof DocumentSchema.Type;
+export type Document = typeof DocumentSchema.Type;
 
-const truthOf = ({ document, field }: Readonly<{ document: Document; field: string }>): string =>
+export const truthOf = ({
+  document,
+  field,
+}: Readonly<{ document: Document; field: string }>): string =>
   Option.fromNullishOr(document.truth[field]).pipe(Option.getOrElse(() => ""));
-
-export { CONDITIONS, DocumentsSchema, KINDS, truthOf };
-export type { Document };

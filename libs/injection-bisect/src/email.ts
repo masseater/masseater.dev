@@ -21,7 +21,7 @@ const NOT_READ = "attachment is not read";
 
 const latin1 = new TextDecoder("latin1");
 
-const looksLikeEmail = (bytes: Uint8Array): boolean => {
+export const looksLikeEmail = (bytes: Uint8Array): boolean => {
   const head = latin1.decode(bytes.subarray(HEAD.start, HEAD.end));
   return HEADER_START.test(head) && FROM.test(head) && OTHER_HEADER.test(head);
 };
@@ -84,17 +84,15 @@ const documentOf = (email: Email): Document => {
   return withUnreadable(attachmentsOf(email))({ text, format: formatOf(email) });
 };
 
-const emailOf = (bytes: Uint8Array): Effect.Effect<Document, ReadError> =>
+export const emailOf = (bytes: Uint8Array): Effect.Effect<Document, ReadError> =>
   Effect.tryPromise({
     try: () => PostalMime.parse(bytes),
     catch: readErrorOf,
   }).pipe(Effect.map((email) => documentOf(email)));
 
-const emailReader: Reader = {
+export const emailReader: Reader = {
   format: "email",
   extensions: [".eml"],
   accepts: looksLikeEmail,
   read: emailOf,
 };
-
-export { emailOf, emailReader, looksLikeEmail };

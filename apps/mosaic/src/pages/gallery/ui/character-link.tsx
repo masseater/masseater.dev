@@ -2,7 +2,10 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 
-const CharacterLink = ({ slug, name }: Readonly<{ slug: string; name: string }>): ReactNode => {
+export const CharacterLink = ({
+  slug,
+  name,
+}: Readonly<{ slug: string; name: string }>): ReactNode => {
   const params = useMemo(() => ({ slug }), [slug]);
   return (
     <li>
@@ -16,5 +19,3 @@ const CharacterLink = ({ slug, name }: Readonly<{ slug: string; name: string }>)
     </li>
   );
 };
-
-export { CharacterLink };

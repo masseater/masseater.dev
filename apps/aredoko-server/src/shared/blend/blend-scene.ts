@@ -10,12 +10,12 @@ import { follow, instanceOf, intOf } from "./blend-structs.ts";
 import type { BlendFile, Instance } from "./blend-structs.ts";
 import { worldMatrix } from "./blend-transform.ts";
 
-interface Group {
+export interface Group {
   readonly surface: Surface;
   readonly indices: Uint32Array;
 }
 
-interface Part {
+export interface Part {
   readonly positions: Float32Array;
   readonly uvs: Option.Option<Float32Array>;
   readonly groups: readonly Group[];
@@ -120,11 +120,8 @@ const partsOf = (file: BlendFile, withHidden: boolean): readonly Part[] =>
     Array.getSomes,
   );
 
-const sceneOf = (file: BlendFile): readonly Part[] =>
+export const sceneOf = (file: BlendFile): readonly Part[] =>
   Array.match(partsOf(file, false), {
     onEmpty: () => partsOf(file, true),
     onNonEmpty: (parts) => parts,
   });
-
-export { sceneOf };
-export type { Group, Part };

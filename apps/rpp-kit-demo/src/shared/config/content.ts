@@ -1,10 +1,10 @@
-const hero = {
+export const hero = {
   title: "REAPER のプロジェクトを、そのまま import する",
   source: "GitHub で見る",
   href: "https://github.com/masseater/masseater.dev/tree/main/libs/rpp-kit",
 };
 
-const credit = {
+export const credit = {
   mark: "♪",
   title: "Timmy Time Adventure / intro.rpp",
   href: "https://github.com/warrior-rockk/timmy-time-adventure/blob/99e50ba0d3062773f4e08b93a4c31cf7fcd3946f/dev/midi/game/intro/intro.rpp",
@@ -12,11 +12,11 @@ const credit = {
   license: "GPLv3",
 };
 
-const transport = { play: "再生", stop: "停止", bpm: "BPM" };
+export const transport = { play: "再生", stop: "停止", bpm: "BPM" };
 
-const lane = { notes: "ノート" };
+export const lane = { notes: "ノート" };
 
-const playground = {
+export const playground = {
   panes: {
     rpp: "intro.rpp",
     main: "main.ts",
@@ -52,5 +52,3 @@ const time: 16 = cm9.time;
 console.log(cm9.name, time);
 `,
 };
-
-export { credit, hero, lane, playground, transport };

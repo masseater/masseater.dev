@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const AboutRow = ({
+export const AboutRow = ({
   term,
   children,
 }: Readonly<{ term: string; children: ReactNode }>): ReactNode => (
@@ -9,5 +9,3 @@ const AboutRow = ({
     <dd className="sm:col-span-3">{children}</dd>
   </div>
 );
-
-export { AboutRow };

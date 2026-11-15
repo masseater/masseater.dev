@@ -8,7 +8,10 @@ import type { PanelLabel } from "./panels.ts";
 
 const NONE = 0;
 
-const PanelTab = ({ panel, count }: Readonly<{ panel: PanelLabel; count: number }>): ReactNode => {
+export const PanelTab = ({
+  panel,
+  count,
+}: Readonly<{ panel: PanelLabel; count: number }>): ReactNode => {
   const selected = usePanel() === panel.id;
   const setPanel = useSetPanel();
   const select = useCallback(() => {
@@ -30,5 +33,3 @@ const PanelTab = ({ panel, count }: Readonly<{ panel: PanelLabel; count: number 
     </button>
   );
 };
-
-export { PanelTab };

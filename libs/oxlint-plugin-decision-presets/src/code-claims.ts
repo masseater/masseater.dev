@@ -3,7 +3,7 @@ import type { DecisionRule } from "@r_masseater/oxlint-plugin-decision";
 import { COMMENT, ENCLOSING_FUNCTION, claimRule } from "./claim-rule.ts";
 import { hasCatch, isLogCall, namedLike } from "./claim-select.ts";
 
-const fnNamePromises = claimRule({
+export const fnNamePromises = claimRule({
   id: "fn-name-promises",
   cutoff: 0.8,
   ask: "The body of this function does something materially different from what its name promises.",
@@ -11,7 +11,7 @@ const fnNamePromises = claimRule({
   no: "The name and parameter list describe what the body actually does. Someone who read only them would not be surprised by the body, even if a longer or more specific name could be imagined. A terse or conventional name (run, handle, take, len, fmt, toString, a getter) that the body fits is not a violation, and a comment inside the body that is wrong about the body is a wrong comment, not a wrong name.",
 });
 
-const pureNameIsPure = claimRule({
+export const pureNameIsPure = claimRule({
   id: "pure-name-is-pure",
   cutoff: 0.8,
   select: namedLike({ prefixes: ["compute", "calculate", "derive", "format", "to", "parse"] }),
@@ -21,7 +21,7 @@ const pureNameIsPure = claimRule({
   note: "Obtaining a dependency (a module, a client, a parser handed back by a loader) is not an effect; using an acquired client to fetch, read, write or send is. A body that puts its own result into a cache that outlives the call is an effect even when it is only memoisation.",
 });
 
-const safeNameIsSafe = claimRule({
+export const safeNameIsSafe = claimRule({
   id: "safe-name-is-safe",
   cutoff: 0.8,
   select: namedLike({
@@ -34,7 +34,7 @@ const safeNameIsSafe = claimRule({
   note: "A throw on a programmer error, such as an argument of the wrong type, is not the failure such a name promises to absorb. Logging before returning the fallback is fine.",
 });
 
-const idempotentName = claimRule({
+export const idempotentName = claimRule({
   id: "idempotent-name",
   cutoff: 0.8,
   select: namedLike({ prefixes: ["ensure", "upsert", "setup", "install", "register"] }),
@@ -44,7 +44,7 @@ const idempotentName = claimRule({
   note: "A helper whose own name says it is repeat-safe (ensure*, upsert*, put*, set*) is assumed to be. Logging on each call, or returning a fresh object each call, is not a different result.",
 });
 
-const catchHidesFailure = claimRule({
+export const catchHidesFailure = claimRule({
   id: "catch-hides-failure",
   cutoff: 0.8,
   select: hasCatch,
@@ -53,7 +53,7 @@ const catchHidesFailure = claimRule({
   no: "The function has no catch block; or the failure is propagated (rethrown, wrapped, or logged and then rethrown); converted into a value the caller can distinguish from success, such as a Result or null when the return type admits it; or absorbed where absorbing is the point: a cleanup or best-effort step after the real result is in hand, a fallback to the next attempt or source, a catch that swallows only the case in which the goal already holds, or a top-level entry point that reports and exits with a non-zero status. A function named safe*, try* or *OrNull has promised to absorb failure.",
 });
 
-const errorMessageMatchesCondition = claimRule({
+export const errorMessageMatchesCondition = claimRule({
   id: "error-message-matches-condition",
   cutoff: 0.8,
   ask: "The message given to an error thrown in this function misdescribes the condition that leads to the throw.",
@@ -61,7 +61,7 @@ const errorMessageMatchesCondition = claimRule({
   no: "The function throws nothing with a message; or every message describes the condition that leads to its throw, whether it states the failed requirement, its consequence, or the intent the check serves. A message that is short, generic or lacks detail is not wrong, only unhelpful. A message that quotes the offending input, names what cannot proceed, or wraps a caught error with the name of the operation that failed, is a match.",
 });
 
-const logLevelMatchesEvent = claimRule({
+export const logLevelMatchesEvent = claimRule({
   id: "log-level-matches-event",
   target: "call",
   cutoff: 0.8,
@@ -72,7 +72,7 @@ const logLevelMatchesEvent = claimRule({
   no: "The level fits what the code around the call shows: error or warn where something went wrong that an operator should see, even if the function recovers from it; info for routine outcomes; debug or trace for per-item progress and chatter; warn for a degraded or transient condition the code goes on to handle. Whether the message text is well written is not the question.",
 });
 
-const logMessageMatchesEvent = claimRule({
+export const logMessageMatchesEvent = claimRule({
   id: "log-message-matches-event",
   target: "call",
   cutoff: 0.8,
@@ -83,7 +83,7 @@ const logMessageMatchesEvent = claimRule({
   no: "The message is true of the point where it sits: an intent phrased before the operation, a completion phrased after it, a failure on the branch that fails, a templated message whose values are what it calls them, or a terse message on the path it describes. A message that is vague or could say more is not wrong. Whether the level fits is not the question.",
 });
 
-const commentDescribesBlock = claimRule({
+export const commentDescribesBlock = claimRule({
   id: "comment-describes-block",
   cutoff: 0.8,
   ask: "A comment inside this function makes a claim about the code beneath it that the code contradicts.",
@@ -91,7 +91,7 @@ const commentDescribesBlock = claimRule({
   no: "The function has no comment inside its body; or every specific claim in each comment holds for the code beneath it, meaning the run of statements down to the next comment or the end of the block. A comment that gives a reason outside the code, says what the whole function is for, is vague, or summarises the code loosely but not wrongly, makes no claim the code can contradict. A comment at the end of a line belongs to that line.",
 });
 
-const commentDescribesDeclaration = claimRule({
+export const commentDescribesDeclaration = claimRule({
   id: "comment-describes-declaration",
   cutoff: 0.8,
   context: COMMENT,
@@ -101,7 +101,7 @@ const commentDescribesDeclaration = claimRule({
   note: "Only a comment that ends on the line just before the function, or just before the export or declaration that holds it, is directly above it; a comment followed by other code belongs to that code. Judge only claims the code can confirm or contradict. A comment about a caller's obligations, about performance, or about history is not checkable here.",
 });
 
-const docErrorsMatchBody = claimRule({
+export const docErrorsMatchBody = claimRule({
   id: "doc-errors-match-body",
   cutoff: 0.8,
   context: COMMENT,
@@ -111,7 +111,7 @@ const docErrorsMatchBody = claimRule({
   note: "The snippet starts with the documentation directly above the function, and that documentation is what is judged. An error that merely passes through unchanged from a callee is the callee's failure, not a clause this body owes, unless the documentation says the function cannot fail.",
 });
 
-const varNameDescribesValue = claimRule({
+export const varNameDescribesValue = claimRule({
   id: "var-name-describes-value",
   cutoff: 0.8,
   ask: "A binding declared in this function has a name that misdescribes the value it is bound to.",
@@ -119,7 +119,7 @@ const varNameDescribesValue = claimRule({
   no: "Every name is an accurate description of what its initializer produces, even if it is terse or a clearer name could be imagined. Being short or generic is not a mismatch. A plural name on a number names the count of those things; an accumulator, index or buffer name is a convention, not a claim.",
 });
 
-const codeClaims = [
+export const codeClaims = [
   fnNamePromises,
   pureNameIsPure,
   safeNameIsSafe,
@@ -133,19 +133,3 @@ const codeClaims = [
   docErrorsMatchBody,
   varNameDescribesValue,
 ] as const satisfies readonly DecisionRule[];
-
-export {
-  catchHidesFailure,
-  codeClaims,
-  commentDescribesBlock,
-  commentDescribesDeclaration,
-  docErrorsMatchBody,
-  errorMessageMatchesCondition,
-  fnNamePromises,
-  idempotentName,
-  logLevelMatchesEvent,
-  logMessageMatchesEvent,
-  pureNameIsPure,
-  safeNameIsSafe,
-  varNameDescribesValue,
-};

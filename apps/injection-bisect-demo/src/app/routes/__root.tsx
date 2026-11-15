@@ -7,7 +7,7 @@ import { SEARCH_INDEX_ORIGIN } from "#/shared/config";
 
 import appCss from "#/app/styles.css?url";
 
-const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () =>
     rootHead({
       title: "web",
@@ -17,5 +17,3 @@ const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
     }),
   shellComponent: RootDocument,
 });
-
-export { Route };

@@ -66,10 +66,10 @@ const FUNCTION_LIKE_KINDS: ReadonlySet<SyntaxKind> = new Set([
   SyntaxKind.ConstructorType,
 ]);
 
-const isFunctionLike = (node: Node | null | undefined): boolean =>
+export const isFunctionLike = (node: Node | null | undefined): boolean =>
   Option.fromNullishOr(node).pipe(Option.exists(({ kind }) => FUNCTION_LIKE_KINDS.has(kind)));
 
-const forEachChild: {
+export const forEachChild: {
   <Result>(visit: (child: Node) => Result | undefined): (node: Node) => Result | undefined;
   <Result>(node: Node, visit: (child: Node) => Result | undefined): Result | undefined;
 } = Function.dual(
@@ -132,7 +132,6 @@ const ts = {
   TypeFlags,
 } as const;
 
-export { forEachChild, isFunctionLike };
 export {
   isArrayBindingPattern,
   isArrowFunction,

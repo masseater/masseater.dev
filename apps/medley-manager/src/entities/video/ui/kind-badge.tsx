@@ -11,8 +11,6 @@ const KIND_VARIANT = {
   other: "secondary",
 } as const satisfies Readonly<Record<VideoKind, string>>;
 
-const KindBadge = ({ kind }: Readonly<{ kind: VideoKind }>): ReactNode => (
+export const KindBadge = ({ kind }: Readonly<{ kind: VideoKind }>): ReactNode => (
   <Badge variant={KIND_VARIANT[kind]}>{VIDEO_KIND_LABEL[kind]}</Badge>
 );
-
-export { KindBadge };

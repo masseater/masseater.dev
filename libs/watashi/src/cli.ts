@@ -34,7 +34,8 @@ const logoutCommand = Command.make("logout", {}, () =>
   ),
 ).pipe(Command.withDescription("保存したログインを消す"));
 
-const watashi = Command.make("watashi").pipe(
+/** @internal */
+export const watashi = Command.make("watashi").pipe(
   Command.withDescription(
     "watashi（watashi.masseater.dev）の CLI。環境変数は WATASHI_SEND_CONVERSATIONS・WATASHI_TOKEN・WATASHI_URL・WATASHI_HOME・WATASHI_BETTERLEAKS",
   ),
@@ -47,6 +48,3 @@ const watashi = Command.make("watashi").pipe(
     hookCommand,
   ]),
 );
-
-/** @internal */
-export { watashi };

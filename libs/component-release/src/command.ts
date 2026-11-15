@@ -6,15 +6,18 @@ const SUCCESS = 0;
 
 const taggedError = Schema.TaggedError;
 
-class CommandFailed extends taggedError<CommandFailed, { readonly brand: unique symbol }>()(
+/** @internal */
+export class CommandFailed extends taggedError<CommandFailed, { readonly brand: unique symbol }>()(
   "CommandFailed",
   { command: Schema.String, exitCode: Schema.Finite },
   { identifier: "CommandFailed" },
 ) {}
 
-type Invocation = Readonly<{ file: string; args: readonly string[]; cwd?: string }>;
+/** @internal */
+export type Invocation = Readonly<{ file: string; args: readonly string[]; cwd?: string }>;
 
-type Output = Effect.Effect<
+/** @internal */
+export type Output = Effect.Effect<
   string,
   CommandFailed | PlatformError.PlatformError,
   ChildProcessSpawner.ChildProcessSpawner
@@ -43,10 +46,15 @@ const spawnOutput = ({
     return Str.trim(stdout);
   });
 
-const output = (invocation: Invocation): Output =>
+/** @internal */
+export const output = (invocation: Invocation): Output =>
   Effect.scoped(spawnOutput(invocation)).pipe(Effect.withSpan("command.output"));
 
-const succeeds = Effect.fn("command.succeeds")(function* succeeds({ file, args }: Invocation) {
+/** @internal */
+export const succeeds = Effect.fn("command.succeeds")(function* succeeds({
+  file,
+  args,
+}: Invocation) {
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
   const exitCode = yield* spawner.exitCode(
     ChildProcess.make(file, [...args], { stdin: "ignore", stdout: "ignore", stderr: "ignore" }),
@@ -54,7 +62,8 @@ const succeeds = Effect.fn("command.succeeds")(function* succeeds({ file, args }
   return exitCode === SUCCESS;
 });
 
-const run = Effect.fn("command.run")(function* run({ file, args, cwd }: Invocation) {
+/** @internal */
+export const run = Effect.fn("command.run")(function* run({ file, args, cwd }: Invocation) {
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
   const exitCode = yield* spawner.exitCode(
     ChildProcess.make(file, [...args], {
@@ -70,9 +79,5 @@ const run = Effect.fn("command.run")(function* run({ file, args, cwd }: Invocati
   return exitCode;
 });
 
-const gh = (args: readonly string[]): Output => output({ file: "gh", args });
-
 /** @internal */
-export { CommandFailed, gh, output, run, succeeds };
-/** @internal */
-export type { Invocation, Output };
+export const gh = (args: readonly string[]): Output => output({ file: "gh", args });

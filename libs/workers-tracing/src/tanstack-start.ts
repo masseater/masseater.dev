@@ -4,20 +4,20 @@ import { Function } from "effect";
 
 import { recordStatus, requestSpans, traced } from "./span.ts";
 
-interface StartRequest<Result> {
+export interface StartRequest<Result> {
   readonly request: Request;
   readonly pathname: string;
   readonly handlerType: string;
   readonly next: () => PromiseLike<Result> | Result;
 }
 
-interface ServerFnCall<Result> {
+export interface ServerFnCall<Result> {
   readonly method: string;
   readonly serverFnMeta: { readonly id: string; readonly name: string; readonly filename: string };
   readonly next: () => PromiseLike<Result> | Result;
 }
 
-const traceRequest = <Result extends { readonly response: Response }>({
+export const traceRequest = <Result extends { readonly response: Response }>({
   request,
   pathname,
   handlerType,
@@ -33,7 +33,7 @@ const traceRequest = <Result extends { readonly response: Response }>({
     return traced(({ response }: Result) => recordStatus(response.status))(next)(span);
   });
 
-const traceServerFn = <Result>({
+export const traceServerFn = <Result>({
   method,
   serverFnMeta,
   next,
@@ -48,9 +48,6 @@ const traceServerFn = <Result>({
     return traced<Result>(() => Function.constVoid)(next)(span);
   });
 
-const requestSpan = createMiddleware().server(traceRequest);
+export const requestSpan = createMiddleware().server(traceRequest);
 
-const serverFnSpan = createMiddleware({ type: "function" }).server(traceServerFn);
-
-export type { ServerFnCall, StartRequest };
-export { requestSpan, serverFnSpan, traceRequest, traceServerFn };
+export const serverFnSpan = createMiddleware({ type: "function" }).server(traceServerFn);

@@ -6,7 +6,7 @@ import { REPRODUCTION_HEADING } from "#/pages/seikin-technique/model/copy";
 
 import { Reproduction } from "./reproduction";
 
-const ReproductionSection = ({
+export const ReproductionSection = ({
   technique,
   source,
 }: Readonly<{ technique: Technique; source: string }>): ReactNode => (
@@ -16,5 +16,3 @@ const ReproductionSection = ({
     <DanceCredit />
   </section>
 );
-
-export { ReproductionSection };

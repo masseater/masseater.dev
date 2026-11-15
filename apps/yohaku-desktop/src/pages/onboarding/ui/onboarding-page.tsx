@@ -6,7 +6,7 @@ import { StartButton } from "./start-button.tsx";
 
 const TITLE = "余白";
 
-const OnboardingPage = (): ReactNode => (
+export const OnboardingPage = (): ReactNode => (
   <main className="mx-auto flex h-screen max-w-3xl flex-col gap-8 overflow-y-auto px-10 py-16">
     <h1 className="font-serif text-2xl">{TITLE}</h1>
     <ClaudeStep />
@@ -14,5 +14,3 @@ const OnboardingPage = (): ReactNode => (
     <StartButton />
   </main>
 );
-
-export { OnboardingPage };

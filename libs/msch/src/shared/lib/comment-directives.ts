@@ -1,0 +1,16 @@
+export const COMMENT_DIRECTIVES: readonly string[] = [
+  "oxlint-disable",
+  "oxlint-enable",
+  "eslint-disable",
+  "eslint-enable",
+  "textlint-disable",
+  "textlint-enable",
+  String.raw`\* @internal \*?$`,
+  String.raw`\* @msch \S+ \*?$`,
+  "/usr/bin/env node$",
+  String.raw`shellcheck \w`,
+  String.raw`zizmor: ignore\[`,
+  "renovate:",
+  "yaml-language-server:",
+  "> statement-breakpoint$",
+];

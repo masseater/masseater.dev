@@ -14,7 +14,8 @@ const CredentialsShape = Schema.Struct({
   expiresAt: Schema.Finite,
 });
 
-type OAuthCredentials = typeof CredentialsShape.Type;
+/** @internal */
+export type OAuthCredentials = typeof CredentialsShape.Type;
 
 const CredentialsFile = Schema.fromJsonString(CredentialsShape);
 
@@ -22,15 +23,18 @@ const decodeCredentials = Schema.decodeUnknownOption(CredentialsFile);
 
 const encodeCredentials = Schema.encodeEffect(CredentialsFile);
 
-const TokenShape = Schema.Struct({
+/** @internal */
+export const TokenShape = Schema.Struct({
   access_token: Schema.String,
   refresh_token: Schema.optionalKey(Schema.String),
   expires_in: Schema.optionalKey(Schema.Finite),
 });
 
-type TokenResponse = typeof TokenShape.Type;
+/** @internal */
+export type TokenResponse = typeof TokenShape.Type;
 
-type CredentialsError = JsonError | PlatformError.PlatformError;
+/** @internal */
+export type CredentialsError = JsonError | PlatformError.PlatformError;
 
 const REFRESH_MARGIN_MILLIS = 60_000;
 const DEFAULT_EXPIRES_IN_SECONDS = 3600;
@@ -40,7 +44,8 @@ const OWNER_ONLY = 0o600;
 const credentialsPath = (home: string): Effect.Effect<string, never, Path.Path> =>
   Effect.service(Path.Path).pipe(Effect.map((path) => path.join(home, "oauth.json")));
 
-const loadCredentials = (
+/** @internal */
+export const loadCredentials = (
   home: string,
 ): Effect.Effect<Option.Option<OAuthCredentials>, never, FileSystem.FileSystem | Path.Path> =>
   Effect.gen(function* load() {
@@ -50,7 +55,8 @@ const loadCredentials = (
     return text.pipe(Option.flatMap(decodeCredentials));
   });
 
-const saveCredentials = (
+/** @internal */
+export const saveCredentials = (
   saved: Readonly<{ home: string; credentials: OAuthCredentials }>,
 ): Effect.Effect<void, CredentialsError, FileSystem.FileSystem | Path.Path> =>
   Effect.gen(function* save() {
@@ -62,7 +68,8 @@ const saveCredentials = (
     yield* fs.chmod(file, OWNER_ONLY);
   });
 
-const forgetCredentials = (
+/** @internal */
+export const forgetCredentials = (
   home: string,
 ): Effect.Effect<void, PlatformError.PlatformError, FileSystem.FileSystem | Path.Path> =>
   Effect.gen(function* forget() {
@@ -75,7 +82,8 @@ const expiresInMillisOf = (token: TokenResponse): number =>
   Option.getOrElse(Option.fromNullishOr(token.expires_in), () => DEFAULT_EXPIRES_IN_SECONDS) *
   MILLIS_PER_SECOND;
 
-const credentialsOf = (
+/** @internal */
+export const credentialsOf = (
   issued: Readonly<{
     base: Pick<OAuthCredentials, "tokenEndpoint" | "clientId" | "resource" | "refreshToken">;
     token: TokenResponse;
@@ -170,7 +178,8 @@ const renew = (
     return yield* refresh({ home, credentials, refreshToken: refreshToken.value, now });
   });
 
-const freshAccessToken = (
+/** @internal */
+export const freshAccessToken = (
   home: string,
 ): Effect.Effect<Option.Option<Redacted.Redacted>, CredentialsError, Services> =>
   loadCredentials(home).pipe(
@@ -181,15 +190,3 @@ const freshAccessToken = (
       }),
     ),
   );
-
-/** @internal */
-export {
-  TokenShape,
-  credentialsOf,
-  forgetCredentials,
-  freshAccessToken,
-  loadCredentials,
-  saveCredentials,
-};
-/** @internal */
-export type { CredentialsError, OAuthCredentials, TokenResponse };

@@ -6,15 +6,19 @@ import type { InterviewSummary, QuestionBody, SummaryBody } from "#protocol";
 
 const taggedError = Schema.TaggedError;
 
-class InterviewerFailed extends taggedError<InterviewerFailed, { readonly brand: unique symbol }>()(
-  "InterviewerFailed",
-  { message: Schema.String },
-) {}
+/** @internal */
+export class InterviewerFailed extends taggedError<
+  InterviewerFailed,
+  { readonly brand: unique symbol }
+>()("InterviewerFailed", { message: Schema.String }) {}
 
 const failed = (cause: unknown): InterviewerFailed =>
   InterviewerFailed.make({ message: String(cause) });
 
-const send = Effect.fn("kikite.send")(function* send(request: HttpClientRequest.HttpClientRequest) {
+/** @internal */
+export const send = Effect.fn("kikite.send")(function* send(
+  request: HttpClientRequest.HttpClientRequest,
+) {
   const client = (yield* HttpClient.HttpClient).pipe(
     HttpClient.mapRequest(HttpClientRequest.prependUrl(globalThis.location.origin)),
     HttpClient.filterStatusOk,
@@ -22,7 +26,8 @@ const send = Effect.fn("kikite.send")(function* send(request: HttpClientRequest.
   return yield* client.execute(request);
 });
 
-const requestSummary = (
+/** @internal */
+export const requestSummary = (
   body: SummaryBody,
 ): Effect.Effect<InterviewSummary, InterviewerFailed, HttpClient.HttpClient> =>
   HttpClientRequest.post(SUMMARY_PATH).pipe(
@@ -32,7 +37,8 @@ const requestSummary = (
     Effect.mapError(failed),
   );
 
-const questionText = (
+/** @internal */
+export const questionText = (
   body: QuestionBody,
 ): Stream.Stream<string, InterviewerFailed, HttpClient.HttpClient> =>
   HttpClientRequest.post(QUESTION_PATH).pipe(
@@ -47,6 +53,3 @@ const questionText = (
     ),
     Stream.mapError(failed),
   );
-
-/** @internal */
-export { InterviewerFailed, questionText, requestSummary, send };

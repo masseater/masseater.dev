@@ -63,23 +63,25 @@ const Expected = Schema.Struct({
   packageNames: Schema.Array(ExpectedPackageName),
 });
 
-type FixtureData = typeof Fixture.Type;
-type ExpectedLookupData = typeof ExpectedLookup.Type;
-type ExpectedPathData = typeof ExpectedPath.Type;
-type ExpectedPackageNameData = typeof ExpectedPackageName.Type;
+export type FixtureData = typeof Fixture.Type;
+export type ExpectedLookupData = typeof ExpectedLookup.Type;
+export type ExpectedPathData = typeof ExpectedPath.Type;
+export type ExpectedPackageNameData = typeof ExpectedPackageName.Type;
 
 const undecodable = (): TypeError => new TypeError("The differential test data does not decode");
 
-const inputs = Schema.decodeOption(Fixtures)(fixturesJson).pipe(Option.getOrThrowWith(undecodable));
-
-const expected = Schema.decodeOption(Expected)(expectedJson).pipe(
+export const inputs = Schema.decodeOption(Fixtures)(fixturesJson).pipe(
   Option.getOrThrowWith(undecodable),
 );
 
-const asJson = (value: object): unknown =>
+export const expected = Schema.decodeOption(Expected)(expectedJson).pipe(
+  Option.getOrThrowWith(undecodable),
+);
+
+export const asJson = (value: object): unknown =>
   Option.getOrThrowWith(parseJson(toJson(value)), undecodable);
 
-const packageOf = (fixture: FixtureData): Package =>
+export const packageOf = (fixture: FixtureData): Package =>
   new Package(
     { ...fixture.files },
     fixture.packageName,
@@ -88,10 +90,7 @@ const packageOf = (fixture: FixtureData): Package =>
     fixture.typesPackage,
   );
 
-const fixtureNamed = (name: string): FixtureData =>
+export const fixtureNamed = (name: string): FixtureData =>
   Arr.findFirst(inputs.fixtures, (fixture) => fixture.name === name).pipe(
     Option.getOrThrowWith(() => new TypeError(`No fixture named ${name}`)),
   );
-
-export { asJson, expected, fixtureNamed, inputs, packageOf };
-export type { ExpectedLookupData, ExpectedPackageNameData, ExpectedPathData, FixtureData };

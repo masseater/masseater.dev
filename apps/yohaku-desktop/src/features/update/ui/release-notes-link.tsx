@@ -8,7 +8,7 @@ import type { Release } from "#/shared/api";
 
 const RELEASES = "https://github.com/masseater/masseater.dev/releases/tag/yohaku-v";
 
-const ReleaseNotesLink = ({ release }: Readonly<{ release: Release }>): ReactNode => {
+export const ReleaseNotesLink = ({ release }: Readonly<{ release: Release }>): ReactNode => {
   const yohaku = useYohaku();
   const open = useCallback(() => {
     Effect.runFork(yohaku.openExternal(`${RELEASES}${release.version}`));
@@ -19,5 +19,3 @@ const ReleaseNotesLink = ({ release }: Readonly<{ release: Release }>): ReactNod
     </Button>
   );
 };
-
-export { ReleaseNotesLink };

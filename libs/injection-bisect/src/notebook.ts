@@ -95,7 +95,7 @@ const markdownOf = (notebook: INotebookContent): string => {
   return pipe(notebook.cells, Arr.flatMap(textOfCell), Arr.join("\n\n"));
 };
 
-const notebookReader: Reader = {
+export const notebookReader: Reader = {
   format: "ipynb",
   extensions: [".ipynb"],
   accepts: (bytes) => Result.isSuccess(notebookResultOf(decoder.decode(bytes))),
@@ -110,5 +110,3 @@ const notebookReader: Reader = {
       Effect.mapError(readErrorOf),
     ),
 };
-
-export { notebookReader };

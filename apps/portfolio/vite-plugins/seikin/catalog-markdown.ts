@@ -209,7 +209,7 @@ const itemsAt = (children: Nodes, index: number): readonly CatalogItem[] =>
     Option.getOrElse(() => tableItems(children, index)),
   );
 
-const catalogOf = (markdown: string): readonly CatalogItem[] => {
+export const catalogOf = (markdown: string): readonly CatalogItem[] => {
   const { children } = unified()
     .use(remarkParse)
     .use(remarkFrontmatter)
@@ -221,5 +221,3 @@ const catalogOf = (markdown: string): readonly CatalogItem[] => {
     Arr.flatMap((_node, index) => itemsAt(children, index)),
   );
 };
-
-export { catalogOf };

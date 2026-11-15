@@ -26,7 +26,7 @@ import { EMPTY, combineFlags } from "./flags.ts";
 const DATA_FIRST_ARITY = 2;
 const DATA_FIRST_ARITY_3 = 3;
 
-interface EntityNameWalk {
+export interface EntityNameWalk {
   readonly node: Node;
   readonly containerIsFile: boolean;
   readonly action: (
@@ -46,13 +46,13 @@ const EXPORT_PROPERTY: SymbolFlagPair = {
 };
 const EXPORT_ALIAS: SymbolFlagPair = { includes: SymbolFlags.Alias, excludes: EMPTY };
 
-const createFileSymbol = (binding: FileBinding): void => {
+export const createFileSymbol = (binding: FileBinding): void => {
   const symbol = createSymbol(EMPTY, `"${Str.replace(EXTENSION, "")(binding.file.fileName)}"`);
   addDeclarationToSymbol(symbol, binding.file, SymbolFlags.ValueModule);
   binding.symbol = symbol;
 };
 
-const lookupSymbolForName: {
+export const lookupSymbolForName: {
   (name: string): (binding: FileBinding) => Option.Option<BoundSymbol>;
   (binding: FileBinding, name: string): Option.Option<BoundSymbol>;
 } = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, name: string): Option.Option<BoundSymbol> => {
@@ -66,7 +66,7 @@ const lookupSymbolForName: {
   );
 });
 
-const lookupIdentifier: {
+export const lookupIdentifier: {
   (node: Node): (binding: FileBinding) => Option.Option<BoundSymbol>;
   (binding: FileBinding, node: Node): Option.Option<BoundSymbol>;
 } = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, node: Node): Option.Option<BoundSymbol> =>
@@ -75,7 +75,7 @@ const lookupIdentifier: {
   ),
 );
 
-const variableInitializer: {
+export const variableInitializer: {
   (node: Node): (binding: FileBinding) => Option.Option<Node>;
   (binding: FileBinding, node: Node): Option.Option<Node>;
 } = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, node: Node): Option.Option<Node> =>
@@ -115,14 +115,14 @@ const searchExportsAlias = (
   );
 };
 
-const isExportsOrModuleExportsOrAlias: {
+export const isExportsOrModuleExportsOrAlias: {
   (node: Node): (binding: FileBinding) => boolean;
   (binding: FileBinding, node: Node): boolean;
 } = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, node: Node): boolean =>
   searchExportsAlias(binding, [node], EMPTY),
 );
 
-const setCommonJsModuleIndicator: {
+export const setCommonJsModuleIndicator: {
   (node: Node): (binding: FileBinding) => boolean;
   (binding: FileBinding, node: Node): boolean;
 } = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, node: Node): boolean => {
@@ -159,7 +159,7 @@ const memberOfAccess = (
     Option.flatMap((key) => parent.pipe(Option.flatMap((symbol) => exportOf(symbol, key)))),
   );
 
-const forEachIdentifierInEntityName: {
+export const forEachIdentifierInEntityName: {
   (walk: EntityNameWalk): (binding: FileBinding) => Option.Option<BoundSymbol>;
   (binding: FileBinding, walk: EntityNameWalk): Option.Option<BoundSymbol>;
 } = Fn.dual(
@@ -203,7 +203,7 @@ const exportsPropertyFlags = (node: BinaryExpression): SymbolFlagPair => {
   );
 };
 
-const bindExportsPropertyAssignment: {
+export const bindExportsPropertyAssignment: {
   (node: BinaryExpression, scope: Scope): (binding: FileBinding) => void;
   (binding: FileBinding, node: BinaryExpression, scope: Scope): void;
 } = Fn.dual(
@@ -224,7 +224,7 @@ const bindExportsPropertyAssignment: {
   },
 );
 
-const bindObjectDefinePropertyExport: {
+export const bindObjectDefinePropertyExport: {
   (node: CallExpression, scope: Scope): (binding: FileBinding) => void;
   (binding: FileBinding, node: CallExpression, scope: Scope): void;
 } = Fn.dual(
@@ -244,16 +244,3 @@ const bindObjectDefinePropertyExport: {
     }
   },
 );
-
-export {
-  bindExportsPropertyAssignment,
-  bindObjectDefinePropertyExport,
-  createFileSymbol,
-  forEachIdentifierInEntityName,
-  isExportsOrModuleExportsOrAlias,
-  lookupIdentifier,
-  lookupSymbolForName,
-  setCommonJsModuleIndicator,
-  variableInitializer,
-};
-export type { EntityNameWalk };

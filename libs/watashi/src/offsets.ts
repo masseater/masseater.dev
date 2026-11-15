@@ -2,7 +2,8 @@ import type { FileParams } from "@masseater.dev/watashi-protocol";
 import { Effect, FileSystem, Option, Path, Schema, String as Str } from "effect";
 import type { PlatformError } from "effect";
 
-type Saved = Readonly<{ home: string; key: FileParams }>;
+/** @internal */
+export type Saved = Readonly<{ home: string; key: FileParams }>;
 
 const Offsets = Schema.fromJsonString(Schema.Record(Schema.String, Schema.Int));
 
@@ -29,7 +30,8 @@ const readOffsets = (
     );
   });
 
-const savedOffset = (
+/** @internal */
+export const savedOffset = (
   saved: Saved,
 ): Effect.Effect<Option.Option<number>, never, FileSystem.FileSystem | Path.Path> =>
   offsetsFile(saved).pipe(
@@ -37,7 +39,8 @@ const savedOffset = (
     Effect.map((offsets) => Option.fromNullishOr(offsets[saved.key.file])),
   );
 
-const saveOffset = (
+/** @internal */
+export const saveOffset = (
   saved: Saved & Readonly<{ offset: number }>,
 ): Effect.Effect<
   void,
@@ -56,8 +59,3 @@ const saveOffset = (
     yield* fs.writeFileString(temp, next);
     yield* fs.rename(temp, target);
   });
-
-/** @internal */
-export { saveOffset, savedOffset };
-/** @internal */
-export type { Saved };

@@ -12,7 +12,7 @@ import type { SearchRequest } from "./search-input";
 import { PostsJson } from "./twilog-posts";
 import type { TwilogPosts } from "./twilog-posts";
 
-type PostsRequest = Readonly<{
+export type PostsRequest = Readonly<{
   account: TwilogAccount;
   accessToken: string;
   request: SearchRequest;
@@ -96,12 +96,9 @@ const postsOf = ({ content, isError }: ToolResult): Effect.Effect<TwilogPosts, U
   return Schema.decodeEffect(PostsJson)(text).pipe(Effect.mapError(fail));
 };
 
-const twilogPosts = (posts: PostsRequest): Effect.Effect<TwilogPosts, UpstreamFailed> =>
+export const twilogPosts = (posts: PostsRequest): Effect.Effect<TwilogPosts, UpstreamFailed> =>
   Effect.acquireUseRelease(
     connected(posts),
     (client) => called(client, posts.request),
     (client) => Effect.promise(() => client.close()),
   ).pipe(Effect.flatMap(postsOf));
-
-export { twilogPosts };
-export type { PostsRequest };

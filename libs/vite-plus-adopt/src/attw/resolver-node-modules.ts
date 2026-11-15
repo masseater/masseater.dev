@@ -30,7 +30,7 @@ import { directoryMissing } from "./resolver-relative.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface NodeModulesSearch extends ModuleLookup {
+export interface NodeModulesSearch extends ModuleLookup {
   readonly typesScopeOnly: boolean;
 }
 
@@ -202,7 +202,7 @@ const resolveFallbackWithTrace = (
   return lookupAncestors({ ...search, extensions: fallback }, state);
 };
 
-const loadModuleFromNearestNodeModulesDirectory: {
+export const loadModuleFromNearestNodeModulesDirectory: {
   (state: ResolutionState): (search: NodeModulesSearch) => SearchResult;
   (search: NodeModulesSearch, state: ResolutionState): SearchResult;
 } = Fn.dual(DATA_FIRST_ARITY, (search: NodeModulesSearch, state: ResolutionState): SearchResult =>
@@ -210,6 +210,3 @@ const loadModuleFromNearestNodeModulesDirectory: {
     Option.orElse(() => resolveFallbackWithTrace(search, state)),
   ),
 );
-
-export { loadModuleFromNearestNodeModulesDirectory };
-export type { NodeModulesSearch };

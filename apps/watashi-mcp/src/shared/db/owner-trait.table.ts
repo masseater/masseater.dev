@@ -1,6 +1,6 @@
 import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-const TRAIT_KINDS = [
+export const TRAIT_KINDS = [
   "rule",
   "preference",
   "stack",
@@ -10,13 +10,13 @@ const TRAIT_KINDS = [
   "background",
 ] as const;
 
-const TRAIT_STATUSES = ["active", "superseded", "retracted"] as const;
+export const TRAIT_STATUSES = ["active", "superseded", "retracted"] as const;
 
-const STANCES = ["supports", "contradicts"] as const;
+export const STANCES = ["supports", "contradicts"] as const;
 
-const TRAIT_ORIGINS = ["memory", "life", "conversation"] as const;
+export const TRAIT_ORIGINS = ["memory", "life", "conversation"] as const;
 
-const ownerTrait = sqliteTable(
+export const ownerTrait = sqliteTable(
   "owner_trait",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
@@ -32,7 +32,7 @@ const ownerTrait = sqliteTable(
   (table) => [index("owner_trait_status_idx").on(table.status, table.kind)],
 );
 
-const ownerTraitEvidence = sqliteTable(
+export const ownerTraitEvidence = sqliteTable(
   "owner_trait_evidence",
   {
     traitId: integer("trait_id").notNull(),
@@ -48,13 +48,13 @@ const ownerTraitEvidence = sqliteTable(
   ],
 );
 
-const ownerTraitVector = sqliteTable("owner_trait_vector", {
+export const ownerTraitVector = sqliteTable("owner_trait_vector", {
   traitId: integer("trait_id").primaryKey(),
   vector: text("vector").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
 
-const ownerTraitJa = sqliteTable("owner_trait_ja", {
+export const ownerTraitJa = sqliteTable("owner_trait_ja", {
   traitId: integer("trait_id").primaryKey(),
   sourceStatement: text("source_statement").notNull(),
   sourceWhy: text("source_why").notNull(),
@@ -63,43 +63,22 @@ const ownerTraitJa = sqliteTable("owner_trait_ja", {
   updatedAt: text("updated_at").notNull(),
 });
 
-const traitCursor = sqliteTable("trait_cursor", {
+export const traitCursor = sqliteTable("trait_cursor", {
   origin: text("origin", { enum: TRAIT_ORIGINS }).primaryKey(),
   position: text("position").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
 
-type OwnerTrait = typeof ownerTrait.$inferSelect;
+export type OwnerTrait = typeof ownerTrait.$inferSelect;
 
-type OwnerTraitEvidence = typeof ownerTraitEvidence.$inferSelect;
+export type OwnerTraitEvidence = typeof ownerTraitEvidence.$inferSelect;
 
-type OwnerTraitJa = typeof ownerTraitJa.$inferSelect;
+export type OwnerTraitJa = typeof ownerTraitJa.$inferSelect;
 
-type TraitKind = OwnerTrait["kind"];
+export type TraitKind = OwnerTrait["kind"];
 
-type TraitStatus = OwnerTrait["status"];
+export type TraitStatus = OwnerTrait["status"];
 
-type Stance = OwnerTraitEvidence["stance"];
+export type Stance = OwnerTraitEvidence["stance"];
 
-type TraitOrigin = (typeof TRAIT_ORIGINS)[number];
-
-export {
-  STANCES,
-  TRAIT_KINDS,
-  TRAIT_ORIGINS,
-  TRAIT_STATUSES,
-  ownerTrait,
-  ownerTraitEvidence,
-  ownerTraitJa,
-  ownerTraitVector,
-  traitCursor,
-};
-export type {
-  OwnerTrait,
-  OwnerTraitEvidence,
-  OwnerTraitJa,
-  Stance,
-  TraitKind,
-  TraitOrigin,
-  TraitStatus,
-};
+export type TraitOrigin = (typeof TRAIT_ORIGINS)[number];

@@ -42,7 +42,7 @@ const toPackage = (
   );
 
 /** @internal */
-const packagesWhere = Effect.fn("packagesWhere")(function* selectPackages(
+export const packagesWhere = Effect.fn("packagesWhere")(function* selectPackages(
   id: Option.Option<number>,
 ) {
   const sql = yield* SqlClient.SqlClient;
@@ -56,5 +56,3 @@ const packagesWhere = Effect.fn("packagesWhere")(function* selectPackages(
   );
   return yield* pipe(rows, Effect.forEach(toPackage));
 });
-
-export { packagesWhere };

@@ -9,13 +9,11 @@ const tracing = OtlpTracer.layerFromConfig({
   resource: { serviceName: "oxlint-plugin-decision" },
 }).pipe(Layer.provide(OtlpSerialization.layerJson), Layer.provide(FetchHttpClient.layer));
 
-const workerServices: [
+/** @internal */
+export const workerServices: [
   typeof fileSystem,
   typeof path,
   typeof layerDigest,
   typeof FetchHttpClient.layer,
   typeof tracing,
 ] = [fileSystem, path, layerDigest, FetchHttpClient.layer, tracing];
-
-/** @internal */
-export { workerServices };

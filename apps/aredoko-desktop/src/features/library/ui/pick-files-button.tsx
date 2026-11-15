@@ -8,7 +8,7 @@ import { useImportFiles } from "#/features/library/api/queries";
 
 const LABEL = "ファイルを取り込む";
 
-const PickFilesButton = ({
+export const PickFilesButton = ({
   size = "default",
   variant = "default",
 }: Readonly<{
@@ -24,5 +24,3 @@ const PickFilesButton = ({
     </Button>
   );
 };
-
-export { PickFilesButton };

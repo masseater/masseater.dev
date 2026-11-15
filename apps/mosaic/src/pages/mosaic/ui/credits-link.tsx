@@ -2,9 +2,12 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 
-const CREDITS = "クレジット";
+import { CREDITS } from "./credits";
 
-const CreditsLink = ({ slug, seed }: Readonly<{ slug: string; seed: number }>): ReactNode => {
+export const CreditsLink = ({
+  slug,
+  seed,
+}: Readonly<{ slug: string; seed: number }>): ReactNode => {
   const params = useMemo(() => ({ slug }), [slug]);
   const search = useMemo(() => ({ seed }), [seed]);
   return (
@@ -18,5 +21,3 @@ const CreditsLink = ({ slug, seed }: Readonly<{ slug: string; seed: number }>): 
     </Link>
   );
 };
-
-export { CREDITS, CreditsLink };

@@ -11,7 +11,7 @@ import { ResultGrid } from "./result-grid.tsx";
 
 const EMPTY = "該当するアセットがありません";
 
-const AssetBrowser = (): ReactNode => {
+export const AssetBrowser = (): ReactNode => {
   const assets = useAssets({ packageId: useSelectedPackage(), kinds: useKinds() });
   const onEnd = useLoadNext(assets);
   if (assets.isPending) {
@@ -34,5 +34,3 @@ const AssetBrowser = (): ReactNode => {
     </>
   );
 };
-
-export { AssetBrowser };

@@ -1,7 +1,7 @@
 import type { Option } from "effect";
 import { Array as Arr } from "effect";
 
-const STRATEGY_IDS = [
+export const STRATEGY_IDS = [
   "find",
   "concrete",
   "ladder",
@@ -14,11 +14,11 @@ const STRATEGY_IDS = [
   "wrap",
 ] as const;
 
-type StrategyId = (typeof STRATEGY_IDS)[number];
+export type StrategyId = (typeof STRATEGY_IDS)[number];
 
-type Strategy = Readonly<{ label: string; policy: string }>;
+export type Strategy = Readonly<{ label: string; policy: string }>;
 
-const STRATEGIES: Readonly<Record<StrategyId, Strategy>> = {
+export const STRATEGIES: Readonly<Record<StrategyId, Strategy>> = {
   find: {
     label: "テーマを探す",
     policy:
@@ -71,8 +71,5 @@ const STRATEGIES: Readonly<Record<StrategyId, Strategy>> = {
   },
 };
 
-const strategyOf = (text: string): Option.Option<StrategyId> =>
+export const strategyOf = (text: string): Option.Option<StrategyId> =>
   Arr.findFirst(STRATEGY_IDS, (id) => id === text);
-
-export { STRATEGIES, STRATEGY_IDS, strategyOf };
-export type { Strategy, StrategyId };

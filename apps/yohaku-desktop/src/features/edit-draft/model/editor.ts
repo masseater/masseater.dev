@@ -17,14 +17,14 @@ import type { DraftActions, Placed } from "#/entities/manuscript";
 import { kindGutter } from "./kind-gutter.ts";
 import { writingTheme } from "./theme.ts";
 
-interface Wiring {
+export interface Wiring {
   readonly ids: readonly string[];
   readonly actions: DraftActions;
   readonly layout: (placed: readonly Placed[]) => void;
   readonly changed: (state: EditorState) => void;
 }
 
-const extensionsFor = ({ ids, actions, layout, changed }: Wiring): readonly Extension[] => [
+export const extensionsFor = ({ ids, actions, layout, changed }: Wiring): readonly Extension[] => [
   initialIds.of(ids),
   paragraphIdsField,
   annotationsField,
@@ -45,6 +45,3 @@ const extensionsFor = ({ ids, actions, layout, changed }: Wiring): readonly Exte
     }
   }),
 ];
-
-export { extensionsFor };
-export type { Wiring };

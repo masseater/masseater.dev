@@ -5,7 +5,7 @@ import { Array, Option, pipe } from "effect";
 import { GalleryPage, galleryHead } from "#/pages/gallery";
 import { bundledPreview } from "#/pages/mosaic";
 
-const Route = createFileRoute("/")({
+export const Route = createFileRoute("/")({
   head: () =>
     galleryHead(
       pipe(
@@ -15,5 +15,3 @@ const Route = createFileRoute("/")({
     ),
   component: GalleryPage,
 });
-
-export { Route };

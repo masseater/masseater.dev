@@ -113,9 +113,7 @@ const reportFindings = (
   );
 
 /** @internal */
-const remember = rememberSurface;
+export const remember = rememberSurface;
 
 /** @internal */
-const report = reportFindings;
-
-export { remember, report };
+export const report = reportFindings;

@@ -5,11 +5,11 @@ import { Atom } from "effect/reactivity";
 import type { LanguageCode } from "#/entities/language/@x/translation";
 import type { Form } from "#/shared/api";
 
-type FormChoice = "auto" | Form;
+export type FormChoice = "auto" | Form;
 
-type FormOption = Readonly<{ choice: FormChoice; label: string }>;
+export type FormOption = Readonly<{ choice: FormChoice; label: string }>;
 
-const FORM_OPTIONS: readonly FormOption[] = [
+export const FORM_OPTIONS: readonly FormOption[] = [
   { choice: "auto", label: "自動" },
   { choice: "polite", label: "です・ます" },
   { choice: "plain", label: "である" },
@@ -17,7 +17,7 @@ const FORM_OPTIONS: readonly FormOption[] = [
 
 const formChoiceAtom = Atom.make<FormChoice>("auto");
 
-const formFor = ({
+export const formFor = ({
   target,
   choice,
 }: Readonly<{ target: LanguageCode; choice: FormChoice }>): Option.Option<Form> => {
@@ -27,9 +27,6 @@ const formFor = ({
   return Option.some(choice);
 };
 
-const useFormChoice = (): FormChoice => useAtomValue(formChoiceAtom);
+export const useFormChoice = (): FormChoice => useAtomValue(formChoiceAtom);
 
-const useSetFormChoice = (): ((choice: FormChoice) => void) => useAtomSet(formChoiceAtom);
-
-export { FORM_OPTIONS, formFor, useFormChoice, useSetFormChoice };
-export type { FormChoice, FormOption };
+export const useSetFormChoice = (): ((choice: FormChoice) => void) => useAtomSet(formChoiceAtom);

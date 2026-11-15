@@ -23,7 +23,7 @@ const Failed = ({ problem }: Readonly<{ problem: string }>): ReactNode => (
   </span>
 );
 
-const SyncState = ({ status }: Readonly<{ status: typeof SyncStatus.Type }>): ReactNode =>
+export const SyncState = ({ status }: Readonly<{ status: typeof SyncStatus.Type }>): ReactNode =>
   pipe(
     Option.fromNullishOr(status.problem),
     Option.match({
@@ -36,5 +36,3 @@ const SyncState = ({ status }: Readonly<{ status: typeof SyncStatus.Type }>): Re
       ),
     }),
   );
-
-export { SyncState };

@@ -33,7 +33,7 @@ const CONSUMED = "";
 const BAD_REQUEST = 400;
 const FOUND = 302;
 
-const Site = Schema.Literals(OAUTH_TARGET_IDS);
+export const Site = Schema.Literals(OAUTH_TARGET_IDS);
 
 const Pending = Schema.Struct({ site: Site, verifier: Schema.String, createdAt: Schema.Finite });
 
@@ -230,12 +230,10 @@ const HANDLERS: Readonly<
   [`GET ${CALLBACK_PATH}`]: callback,
 };
 
-const accessOAuthRoute = (input: RouteInput): Option.Option<Effect.Effect<Response>> =>
+export const accessOAuthRoute = (input: RouteInput): Option.Option<Effect.Effect<Response>> =>
   pipe(
     Option.fromNullishOr(
       HANDLERS[`${input.request.method} ${new URL(input.request.url).pathname}`],
     ),
     Option.map((handle) => handle(input).pipe(Effect.catchTag("AccessOAuthFailed", rejected))),
   );
-
-export { Site, accessOAuthRoute };

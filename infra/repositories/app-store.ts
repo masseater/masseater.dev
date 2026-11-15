@@ -8,12 +8,12 @@ const UPSERT =
 const SWAP = `${UPSERT} WHERE github_app.value = ? RETURNING key`;
 const ABSENT = "";
 
-type BoundStatement = Readonly<{
+export type BoundStatement = Readonly<{
   first: (column: string) => Promise<unknown>;
   run: () => Promise<unknown>;
 }>;
 
-type AppStoreEnv = Readonly<{
+export type AppStoreEnv = Readonly<{
   GITHUB_APP: Readonly<{
     prepare: (
       query: string,
@@ -22,13 +22,13 @@ type AppStoreEnv = Readonly<{
   SEAL_KEY: string;
 }>;
 
-type StoreRow = Readonly<{ env: AppStoreEnv; name: string }>;
+export type StoreRow = Readonly<{ env: AppStoreEnv; name: string }>;
 
-type SealedEntry = StoreRow & Readonly<{ plaintext: string }>;
+export type SealedEntry = StoreRow & Readonly<{ plaintext: string }>;
 
-type RowSwap = StoreRow & Readonly<{ expected: Option.Option<string>; value: string }>;
+export type RowSwap = StoreRow & Readonly<{ expected: Option.Option<string>; value: string }>;
 
-type SealedSwap = SealedEntry & Readonly<{ expected: Option.Option<string> }>;
+export type SealedSwap = SealedEntry & Readonly<{ expected: Option.Option<string> }>;
 
 const decodeCell = Schema.decodeUnknownEffect(Schema.NullOr(Schema.String));
 
@@ -39,12 +39,12 @@ const cell = (bound: BoundStatement, column: string): Effect.Effect<Option.Optio
     Effect.map(Option.fromNullishOr),
   );
 
-const readRow = ({ env, name }: StoreRow): Effect.Effect<Option.Option<string>> =>
+export const readRow = ({ env, name }: StoreRow): Effect.Effect<Option.Option<string>> =>
   cell(env.GITHUB_APP.prepare(SELECT).bind(name), "value");
 
 const absentOr = Option.getOrElse(() => ABSENT);
 
-const swapRow = ({ env, name, expected, value }: RowSwap): Effect.Effect<boolean> =>
+export const swapRow = ({ env, name, expected, value }: RowSwap): Effect.Effect<boolean> =>
   cell(env.GITHUB_APP.prepare(SWAP).bind(name, value, absentOr(expected)), "key").pipe(
     Effect.map(Option.isSome),
   );
@@ -63,7 +63,7 @@ const sealChecked = ({ env, name, plaintext }: SealedEntry): Effect.Effect<strin
     return yield* mismatched();
   });
 
-const writeSealed = (entry: SealedEntry): Effect.Effect<void, SealFailed> =>
+export const writeSealed = (entry: SealedEntry): Effect.Effect<void, SealFailed> =>
   sealChecked(entry).pipe(
     Effect.flatMap((stored) =>
       Effect.promise(() => entry.env.GITHUB_APP.prepare(UPSERT).bind(entry.name, stored).run()),
@@ -71,7 +71,7 @@ const writeSealed = (entry: SealedEntry): Effect.Effect<void, SealFailed> =>
     Effect.asVoid,
   );
 
-const swapSealed = (entry: SealedSwap): Effect.Effect<boolean, SealFailed> =>
+export const swapSealed = (entry: SealedSwap): Effect.Effect<boolean, SealFailed> =>
   sealChecked(entry).pipe(Effect.flatMap((value) => swapRow({ ...entry, value })));
 
 const migrationFailed = (name: string, reason: string): Effect.Effect<void> =>
@@ -105,7 +105,7 @@ const opened = (row: StoreRow, stored: string): Effect.Effect<Option.Option<stri
     Effect.map(({ plaintext }) => Option.some(plaintext)),
   );
 
-const readSealed = (row: StoreRow): Effect.Effect<Option.Option<string>, SealFailed> =>
+export const readSealed = (row: StoreRow): Effect.Effect<Option.Option<string>, SealFailed> =>
   readRow(row).pipe(
     Effect.flatMap(
       Option.match({
@@ -114,6 +114,3 @@ const readSealed = (row: StoreRow): Effect.Effect<Option.Option<string>, SealFai
       }),
     ),
   );
-
-export { readRow, readSealed, swapRow, swapSealed, writeSealed };
-export type { AppStoreEnv, BoundStatement, RowSwap, SealedEntry, SealedSwap, StoreRow };

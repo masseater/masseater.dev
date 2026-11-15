@@ -14,7 +14,5 @@ const playerOf: Transform<LeafDirective, Option.Option<MdxJsxFlowElement>> = (no
     Option.map((id) => componentOf({ name: "YouTube", attributes: { id, title: labelOf(node) } })),
   );
 
-const remarkYouTube: Plugin<[], Root> = () =>
+export const remarkYouTube: Plugin<[], Root> = () =>
   mapTree(leafDirectiveAs({ directive: "youtube", element: playerOf }));
-
-export { remarkYouTube };

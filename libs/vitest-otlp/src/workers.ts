@@ -8,19 +8,19 @@ import { currentReceiver } from "./store.ts";
 
 const taggedError = Schema.TaggedError;
 
-class TailWorkerBuildFailed extends taggedError<
+export class TailWorkerBuildFailed extends taggedError<
   TailWorkerBuildFailed,
   { readonly brand: unique symbol }
 >()("TailWorkerBuildFailed", { message: Schema.String }) {}
 
-interface TailWorker {
+export interface TailWorker {
   name: string;
   compatibilityDate: string;
   modules: { type: "ESModule"; path: string; contents: string }[];
   bindings: Record<string, string>;
 }
 
-interface TailWorkerOptions {
+export interface TailWorkerOptions {
   readonly name?: string;
   readonly compatibilityDate?: string;
   readonly serviceName?: string;
@@ -73,7 +73,7 @@ const bundle: Effect.Effect<string, TailWorkerBuildFailed> = Effect.tryPromise({
   Effect.withSpan("vitest-otlp.tail-worker.bundle"),
 );
 
-const tailWorker = ({
+export const tailWorker = ({
   name = DEFAULT_NAME,
   compatibilityDate = DEFAULT_COMPATIBILITY_DATE,
   serviceName = DEFAULT_SERVICE_NAME,
@@ -89,6 +89,3 @@ const tailWorker = ({
       },
     })),
   );
-
-export { TailWorkerBuildFailed, tailWorker };
-export type { TailWorker, TailWorkerOptions };

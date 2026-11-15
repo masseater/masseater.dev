@@ -9,7 +9,8 @@ const MAX_BATCH = 64;
 
 const keepAlive = Layer.succeed(FetchHttpClient.RequestInit, { keepalive: true });
 
-const telemetry = OtlpTracer.layer({
+/** @internal */
+export const telemetry = OtlpTracer.layer({
   url: TRACES_PATH,
   resource: { serviceName: TELEMETRY_SERVICE },
   exportInterval: EXPORT_INTERVAL,
@@ -19,6 +20,3 @@ const telemetry = OtlpTracer.layer({
   Layer.provide(FetchHttpClient.layer),
   Layer.provide(keepAlive),
 );
-
-/** @internal */
-export { telemetry };

@@ -25,9 +25,9 @@ const RENOTIFY_AFTER = Duration.toMillis(Duration.fromInputUnsafe("1 day"));
 
 const Reported = Schema.Record(Schema.String, Schema.Finite);
 
-type ClaudeRequests = Readonly<{ send: (request: ClaudeRequest) => Promise<unknown> }>;
+export type ClaudeRequests = Readonly<{ send: (request: ClaudeRequest) => Promise<unknown> }>;
 
-type ExposureEnv = AppStoreEnv & Readonly<{ CLAUDE_REQUESTS: ClaudeRequests }>;
+export type ExposureEnv = AppStoreEnv & Readonly<{ CLAUDE_REQUESTS: ClaudeRequests }>;
 
 type Row<Codec extends Schema.Codec<unknown, string>> = Readonly<{
   env: ExposureEnv;
@@ -36,7 +36,7 @@ type Row<Codec extends Schema.Codec<unknown, string>> = Readonly<{
   empty: Codec["Type"];
 }>;
 
-type Notice = Readonly<{
+export type Notice = Readonly<{
   env: ExposureEnv;
   claims: typeof Claims.Type;
   report: typeof Report.Type;
@@ -49,8 +49,8 @@ class QueueRefused extends taggedError<QueueRefused, { readonly brand: unique sy
   { reason: Schema.String },
 ) {}
 
-const LedgerJson = Schema.fromJsonString(Ledger);
-const ReportJson = Schema.fromJsonString(Report);
+export const LedgerJson = Schema.fromJsonString(Ledger);
+export const ReportJson = Schema.fromJsonString(Report);
 const ReportedJson = Schema.fromJsonString(Reported);
 
 const stored = <Codec extends Schema.Codec<unknown, string>>({
@@ -98,7 +98,7 @@ const merged = (
     Arr.sortWith(entryKey, Order.String),
   );
 
-const remember = ({
+export const remember = ({
   env,
   observed,
 }: Readonly<{
@@ -160,7 +160,7 @@ const stamped =
       ),
     );
 
-const notify = (notice: Notice): Effect.Effect<Response> =>
+export const notify = (notice: Notice): Effect.Effect<Response> =>
   Effect.gen(function* notifyClaude() {
     const now = yield* Clock.currentTimeMillis;
     const current = yield* stored({
@@ -187,6 +187,3 @@ const notify = (notice: Notice): Effect.Effect<Response> =>
     );
     return Response.json({ notified });
   });
-
-export { LedgerJson, ReportJson, notify, remember };
-export type { ClaudeRequests, ExposureEnv, Notice };

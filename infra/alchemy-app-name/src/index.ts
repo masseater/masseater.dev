@@ -4,12 +4,12 @@ import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str } fr
 
 const decodeNamed = Schema.decodeUnknownOption(Schema.Struct({ name: Schema.String }));
 
-type AppNamed = Readonly<{
+export type AppNamed = Readonly<{
   prefix: string;
   requireAppPrefix: Effect.Effect<readonly string[], never, Stack>;
 }>;
 
-const appNamed = (appName: string): AppNamed => {
+export const appNamed = (appName: string): AppNamed => {
   const prefix = `${appName}-`;
   const describeUnprefixed = ({
     FQN,
@@ -39,6 +39,3 @@ const appNamed = (appName: string): AppNamed => {
   });
   return { prefix, requireAppPrefix };
 };
-
-export { appNamed };
-export type { AppNamed };

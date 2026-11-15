@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Option } from "effect";
 import { useCallback } from "react";
 
-const usePickThen = <Picked>({
+export const usePickThen = <Picked>({
   pick,
   onPicked,
   pending,
@@ -25,5 +25,3 @@ const usePickThen = <Picked>({
   }, [mutate]);
   return { onClick, busy: picker.isPending || pending };
 };
-
-export { usePickThen };

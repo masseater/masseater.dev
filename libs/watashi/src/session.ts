@@ -12,7 +12,8 @@ import type { Services } from "./services.ts";
 import type { Settings } from "./settings.ts";
 import { transcriptFiles } from "./transcript.ts";
 
-type PushRequest = Readonly<{
+/** @internal */
+export type PushRequest = Readonly<{
   kind: ConversationKind;
   session: string;
   transcript: string;
@@ -21,7 +22,8 @@ type PushRequest = Readonly<{
 
 const NONE = 0;
 
-const detectorOf = (
+/** @internal */
+export const detectorOf = (
   current: Settings,
 ): Effect.Effect<
   Detector,
@@ -29,7 +31,8 @@ const detectorOf = (
   ChildProcessSpawner.ChildProcessSpawner | FileSystem.FileSystem | Scope.Scope
 > => resolveBetterleaks(current.betterleaks).pipe(Effect.flatMap(betterleaksDetector));
 
-const pushSession =
+/** @internal */
+export const pushSession =
   (current: Settings) =>
   (request: PushRequest): Effect.Effect<readonly PushResult[], PushError, Services> =>
     Effect.gen(function* push() {
@@ -54,7 +57,8 @@ const pushSession =
       );
     }).pipe(Effect.scoped);
 
-const summaryOf = (results: readonly PushResult[]): string => {
+/** @internal */
+export const summaryOf = (results: readonly PushResult[]): string => {
   const total = Arr.reduce(
     results,
     { chunks: NONE, bytes: NONE, redactions: NONE },
@@ -66,8 +70,3 @@ const summaryOf = (results: readonly PushResult[]): string => {
   );
   return `${String(results.length)} files, ${String(total.chunks)} chunks, ${String(total.bytes)} bytes, ${String(total.redactions)} redactions`;
 };
-
-/** @internal */
-export { detectorOf, pushSession, summaryOf };
-/** @internal */
-export type { PushRequest };

@@ -9,19 +9,19 @@ import {
   YOUTUBE_TERMS_URL,
 } from "#/shared/config";
 
-type Segment = Readonly<{ text: string; href?: string }>;
+export type Segment = Readonly<{ text: string; href?: string }>;
 
-interface AboutSection {
+export interface AboutSection {
   readonly title: string;
   readonly paragraphs: readonly (readonly Segment[])[];
 }
 
-const TEXT = {
+export const TEXT = {
   title: "nimado について",
   back: "ランキング",
 } as const;
 
-const SECTIONS: readonly AboutSection[] = [
+export const SECTIONS: readonly AboutSection[] = [
   {
     title: "データ",
     paragraphs: [
@@ -76,13 +76,9 @@ const SECTIONS: readonly AboutSection[] = [
   },
 ];
 
-const paragraphKey = (segments: readonly Segment[]): string =>
+export const paragraphKey = (segments: readonly Segment[]): string =>
   pipe(
     segments,
     Arr.map(({ text }) => text),
     Arr.join(""),
   );
-
-export type { AboutSection, Segment };
-
-export { SECTIONS, TEXT, paragraphKey };

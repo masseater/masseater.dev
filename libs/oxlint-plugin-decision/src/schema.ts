@@ -5,26 +5,29 @@ const MINIMUM_LABELS = 2;
 
 const NonNegativeInt = Schema.Int.check(Schema.isGreaterThanOrEqualTo(NONE));
 
-const Probability = Schema.Finite.check(Schema.isBetween({ minimum: 0, maximum: 1 }));
+export const Probability = Schema.Finite.check(Schema.isBetween({ minimum: 0, maximum: 1 }));
 
-const CONFIDENT = 0.8;
+export const CONFIDENT = 0.8;
 
-const Cutoff = Schema.Finite.check(
+export const Cutoff = Schema.Finite.check(
   Schema.isBetween(
     { minimum: CONFIDENT, maximum: 1 },
     { message: `cutoff must be between ${CONFIDENT} and 1` },
   ),
 );
 
-const TargetSchema = Schema.Literals(["function", "call", "jsx", "file"]);
+export const TargetSchema = Schema.Literals(["function", "call", "jsx", "file"]);
 
-const CiBehaviorSchema = Schema.Literals(["skip", "fail"]);
+export const CiBehaviorSchema = Schema.Literals(["skip", "fail"]);
 
-const ExplainSettingSchema = Schema.Union([Schema.Boolean, Schema.Literals(["text", "json"])]);
+export const ExplainSettingSchema = Schema.Union([
+  Schema.Boolean,
+  Schema.Literals(["text", "json"]),
+]);
 
-const EnclosingKindSchema = Schema.Literals(["function", "class", "block"]);
+export const EnclosingKindSchema = Schema.Literals(["function", "class", "block"]);
 
-const RuleContextSchema = Schema.Union([
+export const RuleContextSchema = Schema.Union([
   Schema.Struct({ scope: Schema.Literals(["node", "file", "comment"]) }),
   Schema.Struct({
     scope: Schema.Literal("lines"),
@@ -34,7 +37,7 @@ const RuleContextSchema = Schema.Union([
   Schema.Struct({ scope: Schema.Literal("enclosing"), kind: EnclosingKindSchema }),
 ]);
 
-const SeveritySchema = Schema.Literals(["info", "warn", "error"]);
+export const SeveritySchema = Schema.Literals(["info", "warn", "error"]);
 
 const Label = Schema.NonEmptyString;
 
@@ -62,17 +65,4 @@ const SeverityAnswer = Schema.Struct({
   minimum: Schema.optionalKey(SeveritySchema),
 });
 
-const RuleAnswerSchema = Schema.Union([BooleanAnswer, ClassifyAnswer, SeverityAnswer]);
-
-export {
-  CONFIDENT,
-  CiBehaviorSchema,
-  Cutoff,
-  EnclosingKindSchema,
-  ExplainSettingSchema,
-  Probability,
-  RuleAnswerSchema,
-  RuleContextSchema,
-  SeveritySchema,
-  TargetSchema,
-};
+export const RuleAnswerSchema = Schema.Union([BooleanAnswer, ClassifyAnswer, SeverityAnswer]);

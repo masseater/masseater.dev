@@ -95,7 +95,7 @@ const workersTracer = Tracer.make({
     contextOf(fiber)(() => primitive["~effect/Effect/evaluate"](fiber)),
 });
 
-const inSpanContext = <Message>(
+export const inSpanContext = <Message>(
   logger: Logger.Logger<Message, void>,
 ): Logger.Logger<Message, void> =>
   Logger.make((options) => {
@@ -106,14 +106,13 @@ const inSpanContext = <Message>(
 
 const consoleLogger = inSpanContext(Logger.withLeveledConsole(Logger.formatStructured));
 
-const layer: Layer.Layer<never> = Layer.mergeAll(
+export const layer: Layer.Layer<never> = Layer.mergeAll(
   Layer.succeed(Tracer.Tracer, workersTracer),
   Logger.layer([consoleLogger]),
 );
 
-const runner: Runner = runnerWith(layer);
+export const runner: Runner = runnerWith(layer);
 
-const run: Run<never> = runner(Layer.empty);
+export const run: Run<never> = runner(Layer.empty);
 
 export type { Run, Runner } from "./run.ts";
-export { inSpanContext, layer, run, runner };

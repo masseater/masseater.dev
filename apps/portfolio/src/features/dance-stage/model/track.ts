@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { Effect } from "effect";
 
-type DanceTrack = Readonly<{
+export type DanceTrack = Readonly<{
   fps: number;
   width: number;
   height: number;
@@ -10,7 +10,7 @@ type DanceTrack = Readonly<{
   beats: readonly number[];
 }>;
 
-const trackQuery = queryOptions({
+export const trackQuery = queryOptions({
   queryKey: ["seikin-techniques", "track"],
   queryFn: (): Promise<DanceTrack> =>
     Effect.runPromise(
@@ -23,7 +23,7 @@ const trackQuery = queryOptions({
 
 const FPS = 30;
 
-const emptyTrack: DanceTrack = {
+export const emptyTrack: DanceTrack = {
   fps: FPS,
   width: 0,
   height: 0,
@@ -31,6 +31,3 @@ const emptyTrack: DanceTrack = {
   audio: [],
   beats: [],
 };
-
-export type { DanceTrack };
-export { emptyTrack, trackQuery };

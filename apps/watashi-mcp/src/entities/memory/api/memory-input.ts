@@ -4,7 +4,7 @@ import { Ref } from "#/entities/life-record/@x/memory";
 
 const MIN_ONE = 1;
 
-const DEFAULT_MEMORY_LIMIT = 20;
+export const DEFAULT_MEMORY_LIMIT = 20;
 
 const MAX_MEMORY_LIMIT = 100;
 
@@ -24,7 +24,7 @@ const RestoreTo = Schema.Int.check(Schema.isGreaterThanOrEqualTo(MIN_ONE)).annot
   description: "Restore the memo to this revision (see memory_read with revisions: true)",
 });
 
-const MemoryWriteInput = Schema.Struct({
+export const MemoryWriteInput = Schema.Struct({
   project: Project,
   name: Name,
   description: Schema.optionalKey(
@@ -43,7 +43,7 @@ const MemoryWriteInput = Schema.Struct({
   restoreTo: Schema.optionalKey(RestoreTo),
 });
 
-const MemoryReadInput = Schema.Struct({
+export const MemoryReadInput = Schema.Struct({
   query: Schema.optionalKey(
     Schema.String.annotate({
       description: "Words to look for. Empty or omitted lists the newest.",
@@ -55,7 +55,7 @@ const MemoryReadInput = Schema.Struct({
   limit: Schema.optionalKey(Limit),
 });
 
-const WatashiSearchInput = Schema.Struct({
+export const WatashiSearchInput = Schema.Struct({
   query: Schema.NonEmptyString.annotate({ description: "Natural words to look for" }),
   limit: Schema.optionalKey(Limit),
 });
@@ -65,7 +65,7 @@ const TraitRef = Schema.String.check(Schema.isPattern(/^owner_trait:\d+$/u)).ann
     "A trait ref (owner_trait:12). Returns that trait with its quoted evidence and revisions",
 });
 
-const WatashiProfileInput = Schema.Struct({
+export const WatashiProfileInput = Schema.Struct({
   scope: Schema.optionalKey(
     Schema.NonEmptyString.annotate({
       description:
@@ -81,19 +81,10 @@ const WatashiProfileInput = Schema.Struct({
   trait: Schema.optionalKey(TraitRef),
 });
 
-type MemoryWriteValue = typeof MemoryWriteInput.Type;
+export type MemoryWriteValue = typeof MemoryWriteInput.Type;
 
-type MemoryReadValue = typeof MemoryReadInput.Type;
+export type MemoryReadValue = typeof MemoryReadInput.Type;
 
-type WatashiSearchValue = typeof WatashiSearchInput.Type;
+export type WatashiSearchValue = typeof WatashiSearchInput.Type;
 
-type WatashiProfileValue = typeof WatashiProfileInput.Type;
-
-export {
-  DEFAULT_MEMORY_LIMIT,
-  MemoryReadInput,
-  MemoryWriteInput,
-  WatashiProfileInput,
-  WatashiSearchInput,
-};
-export type { MemoryReadValue, MemoryWriteValue, WatashiProfileValue, WatashiSearchValue };
+export type WatashiProfileValue = typeof WatashiProfileInput.Type;

@@ -7,7 +7,7 @@ const READY_INTERVAL = Duration.fromInputUnsafe("1 second");
 const READY_ATTEMPTS = 120;
 
 /** @internal */
-const startServer = Effect.fn("startServer")(function* startServer(dataDirectory: string) {
+export const startServer = Effect.fn("startServer")(function* startServer(dataDirectory: string) {
   yield* ChildProcess.make(
     globalThis.process.execPath,
     [SERVER_ENTRY, `--${SERVER_FLAGS.dataDirectory}`, dataDirectory],
@@ -18,5 +18,3 @@ const startServer = Effect.fn("startServer")(function* startServer(dataDirectory
     Effect.retry({ schedule: Schedule.spaced(READY_INTERVAL), times: READY_ATTEMPTS }),
   );
 });
-
-export { startServer };

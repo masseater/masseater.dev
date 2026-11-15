@@ -6,11 +6,11 @@ import { runRequest } from "#/shared/observability/index.server";
 
 const NOT_FOUND = 404;
 
-const IdParams = Schema.toStandardSchemaV1(Schema.Struct({ id: Schema.FiniteFromString }));
+export const IdParams = Schema.toStandardSchemaV1(Schema.Struct({ id: Schema.FiniteFromString }));
 
-type NotFound = ElysiaCustomStatusResponse<typeof NOT_FOUND, "not found">;
+export type NotFound = ElysiaCustomStatusResponse<typeof NOT_FOUND, "not found">;
 
-const respondFound = <Found>(
+export const respondFound = <Found>(
   found: Effect.Effect<Option.Option<Found>>,
 ): Promise<Found | NotFound> =>
   found.pipe(
@@ -22,6 +22,3 @@ const respondFound = <Found>(
     ),
     runRequest,
   );
-
-export type { NotFound };
-export { IdParams, respondFound };

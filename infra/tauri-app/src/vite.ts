@@ -29,7 +29,7 @@ const browserTest = (viewport: Readonly<{ width: number; height: number }>): Use
 const cargoCommand = (crate: string): string =>
   `cargo fmt -p ${crate} --check && cargo clippy -p ${crate} --all-targets --locked -- -D warnings && cargo test -p ${crate} --locked`;
 
-const tauriAppConfig = ({
+export const tauriAppConfig = ({
   crate,
   devPort,
   viewport,
@@ -71,5 +71,3 @@ const tauriAppConfig = ({
     }),
   );
 };
-
-export { tauriAppConfig };

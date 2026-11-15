@@ -7,7 +7,7 @@ import { randomOf } from "./categories.ts";
 import type { SloppediaConfig } from "./config.ts";
 import { MainBox } from "./main-box.tsx";
 
-const RandomBox = ({
+export const RandomBox = ({
   config,
   articles,
 }: Readonly<{ config: SloppediaConfig; articles: readonly Article[] }>): ReactNode => (
@@ -20,5 +20,3 @@ const RandomBox = ({
     </ul>
   </MainBox>
 );
-
-export { RandomBox };

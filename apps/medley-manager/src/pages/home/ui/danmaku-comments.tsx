@@ -3,7 +3,9 @@ import type { ReactNode } from "react";
 
 import type { Comment } from "#/pages/home/lib/danmaku";
 
-const DanmakuComments = ({ comments }: Readonly<{ comments: readonly Comment[] }>): ReactNode => (
+export const DanmakuComments = ({
+  comments,
+}: Readonly<{ comments: readonly Comment[] }>): ReactNode => (
   <span className="flex gap-16 pr-16">
     {pipe(
       comments,
@@ -18,5 +20,3 @@ const DanmakuComments = ({ comments }: Readonly<{ comments: readonly Comment[] }
     )}
   </span>
 );
-
-export { DanmakuComments };

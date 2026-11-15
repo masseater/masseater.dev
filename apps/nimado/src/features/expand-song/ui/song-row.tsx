@@ -6,7 +6,7 @@ import { useExpanded } from "#/features/expand-song/model/expanded";
 import { SummaryRow } from "./summary-row";
 import { VideoRow } from "./video-row";
 
-const SongRow = ({
+export const SongRow = ({
   entry,
   rank,
   youtube,
@@ -19,5 +19,3 @@ const SongRow = ({
     </>
   );
 };
-
-export { SongRow };

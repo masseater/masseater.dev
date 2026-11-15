@@ -1,6 +1,6 @@
 import { PRODUCT_NAME } from "@r_masseater/injection-bisect";
 
-const COPY = {
+export const COPY = {
   title: PRODUCT_NAME,
   why: "計測結果を見る",
   examples: "例",
@@ -45,5 +45,3 @@ const COPY = {
   legendMiss: "閾値未満",
   legendPending: "応答待ち",
 } as const;
-
-export { COPY };

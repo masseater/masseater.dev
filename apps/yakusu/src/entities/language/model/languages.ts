@@ -56,9 +56,9 @@ const LANGUAGE_CODES = [
   "vi",
 ] as const;
 
-type LanguageCode = (typeof LANGUAGE_CODES)[number];
+export type LanguageCode = (typeof LANGUAGE_CODES)[number];
 
-type Language = Readonly<{ code: LanguageCode; name: string }>;
+export type Language = Readonly<{ code: LanguageCode; name: string }>;
 
 const DISPLAY_LOCALE = "ja";
 
@@ -68,7 +68,7 @@ const displayNames = new Intl.DisplayNames([DISPLAY_LOCALE], { type: "language" 
 
 const collator = new Intl.Collator(DISPLAY_LOCALE);
 
-const languageName = (code: LanguageCode): string => displayNames.of(code) ?? code;
+export const languageName = (code: LanguageCode): string => displayNames.of(code) ?? code;
 
 const READINGS: Record.ReadonlyRecord<string, string> = {
   日本語: "にほんご",
@@ -88,18 +88,15 @@ const byName = Order.make<Language>((self, that) =>
   Order.Number(collator.compare(readingOf(self.name), readingOf(that.name)), SAME),
 );
 
-const LANGUAGES: readonly Language[] = pipe(
+export const LANGUAGES: readonly Language[] = pipe(
   LANGUAGE_CODES,
   Array.map((code) => ({ code, name: languageName(code) })),
   Array.sortBy(byName),
 );
 
-const otherOf = (code: LanguageCode): LanguageCode => {
+export const otherOf = (code: LanguageCode): LanguageCode => {
   if (code === "en") {
     return "ja";
   }
   return "en";
 };
-
-export { LANGUAGES, languageName, otherOf };
-export type { Language, LanguageCode };

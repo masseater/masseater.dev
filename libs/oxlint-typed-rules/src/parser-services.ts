@@ -8,17 +8,17 @@ import type { CompatType } from "./compat-type.ts";
 import type { CompatProgram } from "./compat.ts";
 import { lazily, memoizeByKey } from "./memo.ts";
 
-interface RangedNode {
+export interface RangedNode {
   readonly range: Readonly<Range>;
 }
 
-interface MappedNode {
+export interface MappedNode {
   readonly type: string;
   readonly range: Readonly<Range>;
   readonly loc: Location;
 }
 
-interface ParserServices {
+export interface ParserServices {
   readonly program: CompatProgram;
   readonly esTreeNodeToTSNodeMap: { readonly get: (node: RangedNode) => Node };
   readonly tsNodeToESTreeNodeMap: {
@@ -28,7 +28,7 @@ interface ParserServices {
   readonly getSymbolAtLocation: (node: RangedNode) => CompatSymbol | undefined;
 }
 
-interface FileProgram {
+export interface FileProgram {
   readonly context: Context;
   readonly program: CompatProgram;
   readonly sourceFile: SourceFile;
@@ -105,7 +105,7 @@ const esTreeIndex = ({ context }: FileProgram): ReadonlyMap<string, MappedNode> 
   return index;
 };
 
-const createParserServices = (file: FileProgram): ParserServices => {
+export const createParserServices = (file: FileProgram): ParserServices => {
   const esTreeNodes = lazily(() => esTreeIndex(file));
   const toTSNode = memoizeByKey((node: RangedNode) =>
     innermostSpanning(file.sourceFile, node.range),
@@ -131,6 +131,3 @@ const createParserServices = (file: FileProgram): ParserServices => {
     },
   };
 };
-
-export { createParserServices };
-export type { FileProgram, MappedNode, ParserServices, RangedNode };

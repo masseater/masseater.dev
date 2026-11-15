@@ -30,9 +30,9 @@ const formatWith =
       Option.getOrElse(() => NONE),
     );
 
-const views = formatWith("full");
+export const views = formatWith("full");
 
-const compactViews = formatWith("compact");
+export const compactViews = formatWith("compact");
 
 const signOf = (count: number): string => {
   if (count > ZERO) {
@@ -53,18 +53,16 @@ const signedWith =
       Option.getOrElse(() => NONE),
     );
 
-const gap = signedWith("full");
+export const gap = signedWith("full");
 
-const compactGap = signedWith("compact");
+export const compactGap = signedWith("compact");
 
-const pageLabel = ({ page, pages }: Readonly<{ page: number; pages: number }>): string =>
+export const pageLabel = ({ page, pages }: Readonly<{ page: number; pages: number }>): string =>
   `${page.toString()} / ${pages.toString()}`;
 
-const generatedAt = (iso: string): string =>
+export const generatedAt = (iso: string): string =>
   pipe(
     DateTime.make(iso),
     Option.map((time) => DateTime.formatIntl(time, GENERATED_FORMAT)),
     Option.getOrElse(() => iso),
   );
-
-export { compactGap, compactViews, gap, generatedAt, pageLabel, views };

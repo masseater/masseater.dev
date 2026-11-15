@@ -9,7 +9,7 @@ import { CopyIcon } from "./copy-icon.tsx";
 
 const LABEL = "翻訳をコピー";
 
-const CopyButton = (): ReactNode => {
+export const CopyButton = (): ReactNode => {
   const output = useTranslation();
   const copyText = useCopyText();
   const onClick = useCallback(() => {
@@ -32,5 +32,3 @@ const CopyButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { CopyButton };

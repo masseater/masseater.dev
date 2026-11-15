@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 
-const WIDTH = 16;
-const HEIGHT = 9;
+import { HEIGHT, WIDTH } from "./loading-cell-size";
+
 const RADIUS = 1;
 const DIM = 0.15;
 const PULSE = "0.15;1;0.15";
 const DURATION = "1.2s";
 
-const LoadingCell = ({
+export const LoadingCell = ({
   left,
   top,
   delay,
@@ -30,5 +30,3 @@ const LoadingCell = ({
     />
   </rect>
 );
-
-export { HEIGHT, LoadingCell, WIDTH };

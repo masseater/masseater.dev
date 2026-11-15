@@ -1,6 +1,6 @@
 import type { Marker, Region, Section, TempoPoint, Track } from "rpp-kit";
 declare function assetExists(file: "このパスに素材のファイルがありません"): void;
-declare const song: {
+export declare const song: {
   readonly tempo: { readonly bpm: 120.0000000000; readonly numerator: 4; readonly denominator: 4 };
   readonly tempoMap: readonly TempoPoint[];
   readonly sampleRate: 44100;
@@ -43,4 +43,3 @@ declare const song: {
     Track & { readonly index: 5; readonly name: "Melody  (BB)" },
   ];
 };
-export { song };

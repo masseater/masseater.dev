@@ -2,10 +2,10 @@ import { Array as Arr, Option, Order, Record, Schema, pipe } from "effect";
 
 const Observation = Schema.Tuple([Schema.OptionFromNullOr(Schema.Int), Schema.String]);
 
-const ViewState = Schema.Record(Schema.String, Observation);
+export const ViewState = Schema.Record(Schema.String, Observation);
 
 type ObservationValue = typeof Observation.Type;
-type ViewStateValue = typeof ViewState.Type;
+export type ViewStateValue = typeof ViewState.Type;
 
 const HOT_VIEWS = 5000;
 
@@ -14,7 +14,7 @@ const isHot = ([views]: ObservationValue): boolean =>
 
 const fetchedAt = ([, [, at]]: readonly [string, ObservationValue]): string => at;
 
-const pickVideos = ({
+export const pickVideos = ({
   state,
   ids,
   budget,
@@ -81,7 +81,7 @@ const observation = ({
       ),
   });
 
-const observe = ({
+export const observe = ({
   state,
   ids,
   views,
@@ -113,7 +113,7 @@ const observe = ({
   ),
 });
 
-const keepOnly = ({
+export const keepOnly = ({
   state,
   keep,
   since,
@@ -124,6 +124,3 @@ const keepOnly = ({
     Record.filter(([, at], id) => wanted.has(id) && at >= since),
   );
 };
-
-export type { ViewStateValue };
-export { ViewState, keepOnly, observe, pickVideos };
