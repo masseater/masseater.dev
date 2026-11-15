@@ -7,9 +7,8 @@ import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
 import pkg from "#package.json" with { type: "json" };
 
-import { catalogCommand, nicoCommand, youtubeCommand } from "./commands.ts";
+import { dailyCommand, saveCommand } from "./daily-command.ts";
 import { pruneCommand } from "./prune.ts";
-import { publishCommand } from "./publish-command.ts";
 
 const tracing = OtlpTracer.layerFromConfig({
   resource: { serviceName: pkg.name },
@@ -22,13 +21,7 @@ const services = tracing.pipe(
 );
 
 const command = Command.make("nimado-collect").pipe(
-  Command.withSubcommands([
-    catalogCommand,
-    nicoCommand,
-    youtubeCommand,
-    publishCommand,
-    pruneCommand,
-  ]),
+  Command.withSubcommands([dailyCommand, pruneCommand, saveCommand]),
 );
 
 NodeRuntime.runMain(

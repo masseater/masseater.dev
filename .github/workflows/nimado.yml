@@ -11,10 +11,6 @@ concurrency:
   group: nimado
   queue: max
 
-env:
-  STATE: ${{ github.workspace }}/.nimado-state
-  RELEASE: nimado-data
-
 jobs:
   collect:
     if: github.ref == 'refs/heads/main'
@@ -28,32 +24,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+      - uses: $/.github/actions/setup
         with:
-          run-install: |
-            - args: ['--frozen-lockfile', '--filter', 'nimado-collect...', '--filter', 'nimado...']
-      - name: restore state
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p "$STATE"
-          if ! gh release view "$RELEASE" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
-            gh release create "$RELEASE" --repo "$GITHUB_REPOSITORY" --prerelease --title "nimado data" \
-              --notes "nimado の曲の対応表とニコニコの再生数。YouTube の値は置かない。"
-          fi
-          assets="$(gh release view "$RELEASE" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets | length')"
-          if [ "$assets" -gt 0 ]; then
-            gh release download "$RELEASE" --repo "$GITHUB_REPOSITORY" --dir "$STATE" --clobber
-            for file in "$STATE"/*.json.gz; do
-              [ -e "$file" ] && gzip -d -f "$file"
-            done
-            if [ -e "$STATE/nico-days.tar.gz" ]; then
-              tar -xzf "$STATE/nico-days.tar.gz" -C "$STATE"
-              rm "$STATE/nico-days.tar.gz"
-            fi
-          fi
-      - id: youtube-state
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+          native: "false"
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             .nimado-state/youtube.json
@@ -61,47 +35,16 @@ jobs:
           key: nimado-youtube-${{ github.run_id }}
           restore-keys: |
             nimado-youtube-
-      - name: catalog
-        run: node src/main.ts catalog --state "$STATE"
+      - name: collect and publish
+        run: vp run daily
         working-directory: tools/nimado-collect
-        continue-on-error: true
-      - name: niconico
-        run: node src/main.ts nico --state "$STATE"
-        working-directory: tools/nimado-collect
-        continue-on-error: true
-      - name: youtube
-        run: node src/main.ts youtube --state "$STATE"
-        working-directory: tools/nimado-collect
-        continue-on-error: true
-        env:
-          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-      - name: publish
-        run: node src/main.ts publish --state "$STATE" --out "$GITHUB_WORKSPACE/apps/nimado/published"
-        working-directory: tools/nimado-collect
-      - uses: masseater/typescript-template/.github/actions/credentials@6c7f35a2fde3e12da835c89d61c46221a6388946
-      - name: deploy data
-        run: vp exec alchemy deploy alchemy.data.ts --stage data --yes
-        working-directory: apps/nimado
-      - name: drop old data versions
-        run: node src/main.ts prune
-        working-directory: tools/nimado-collect
-      - name: save state
-        if: ${{ !cancelled() }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p "$RUNNER_TEMP/upload"
-          for name in catalog nico; do
-            if [ -e "$STATE/$name.json" ]; then
-              gzip -c "$STATE/$name.json" > "$RUNNER_TEMP/upload/$name.json.gz"
-            fi
-          done
-          if [ -d "$STATE/data/days/nico" ]; then
-            tar -czf "$RUNNER_TEMP/upload/nico-days.tar.gz" -C "$STATE" data/days/nico
-          fi
-          if [ -n "$(ls -A "$RUNNER_TEMP/upload")" ]; then
-            gh release upload "$RELEASE" --repo "$GITHUB_REPOSITORY" --clobber "$RUNNER_TEMP"/upload/*
-          fi
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      - uses: masseater/typescript-template/.github/actions/credentials@93ede91739120dbe2102f1a4a5dbcfcb67641f36
+      - name: deploy data and drop old data versions
+        run: vp run release
+        working-directory: tools/nimado-collect
       - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         if: ${{ !cancelled() }}
         with:
@@ -109,18 +52,12 @@ jobs:
             .nimado-state/youtube.json
             .nimado-state/data/days/youtube
           key: nimado-youtube-${{ github.run_id }}
-      - name: drop old youtube state
+      - name: save state
+        if: ${{ !cancelled() }}
+        run: vp run save
+        working-directory: tools/nimado-collect
         env:
           GH_TOKEN: ${{ github.token }}
-          KEEP: nimado-youtube-${{ github.run_id }}
-        run: |
-          if ! gh cache list --repo "$GITHUB_REPOSITORY" --key "$KEEP" --json key --jq '.[].key' | grep -qxF "$KEEP"; then
-            echo "::warning::The cache $KEEP was not found, so the older youtube state is kept"
-            exit 0
-          fi
-          gh cache list --repo "$GITHUB_REPOSITORY" --key nimado-youtube- --limit 100 --json key --jq '.[].key' |
-            { grep -vxF "$KEEP" || true; } |
-            xargs -r -n 1 gh cache delete --repo "$GITHUB_REPOSITORY"
 
   ci-telemetry:
     needs: [collect]
@@ -131,6 +68,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@6c7f35a2fde3e12da835c89d61c46221a6388946
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@93ede91739120dbe2102f1a4a5dbcfcb67641f36
         with:
           github-token: ${{ github.token }}

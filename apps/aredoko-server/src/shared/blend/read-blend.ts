@@ -4,9 +4,6 @@ import { Decompress, decompress } from "fzstd";
 import { collectBytes } from "#shared/bytes";
 import { PreviewFailed, pixelsPreview } from "#shared/preview";
 
-import { glbOf } from "./blend-glb.ts";
-import { sceneOf } from "./blend-scene.ts";
-import { openBlend } from "./blend-structs.ts";
 import { blendThumbnail } from "./blend-thumbnail.ts";
 import { BlendUnreadable } from "./blend-unreadable.ts";
 
@@ -71,6 +68,7 @@ const blendPreview = Effect.fn("blendPreview")(function* blendPreview(path: stri
   });
 });
 
+/** @internal */
 const plainFile = Effect.fn("plainFile")(function* plainFile(path: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const bytes = yield* fileSystem.readFile(path);
@@ -88,13 +86,4 @@ const plainFile = Effect.fn("plainFile")(function* plainFile(path: string) {
   return bytes;
 });
 
-/** @internal */
-const blendModel = Effect.fn("blendModel")(function* blendModel(path: string) {
-  const plain = yield* plainFile(path);
-  const file = yield* Effect.fromOption(openBlend(plain)).pipe(
-    Effect.mapError((cause) => BlendUnreadable.make({ path, cause })),
-  );
-  return yield* glbOf(sceneOf(file));
-});
-
-export { blendModel, blendPreview };
+export { blendPreview, plainFile };
