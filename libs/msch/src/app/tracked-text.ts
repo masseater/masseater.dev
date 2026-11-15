@@ -5,6 +5,7 @@ import { checkGitSubpath } from "#/features/git-subpath/index.ts";
 import { checkHiddenUnicode } from "#/features/invisible-characters/index.ts";
 import { checkPython } from "#/features/python/index.ts";
 import { checkUnneededFiles } from "#/features/unneeded-files/index.ts";
+import { checkWorkflowQueues } from "#/features/workflow-concurrency/index.ts";
 
 /** @internal */
 export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTrackedText(
@@ -17,6 +18,7 @@ export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTra
       checkUnneededFiles(root),
       checkComments(root),
       checkGitSubpath(root),
+      checkWorkflowQueues(root),
     ],
     { concurrency: "unbounded" },
   );
