@@ -327,7 +327,7 @@ const afterCursor = (cursor: string) => {
 
 const listTransactions = (
   filter: TransactionFilter,
-): Effect.Effect<TransactionPage, UpstreamFailed> => 
+): Effect.Effect<TransactionPage, UpstreamFailed> =>
   query(() =>
     db
       .select({
@@ -368,8 +368,7 @@ const listTransactions = (
           rows.length > PAGE_SIZE ? Option.getOrNull(Option.map(Arr.last(page), cursorOf)) : null,
       };
     }),
-  )
-;
+  );
 
 const categoryTotals = (period: Period): Effect.Effect<readonly CategoryTotal[], UpstreamFailed> =>
   query(() =>
