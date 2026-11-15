@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { NodeRuntime, NodeServices } from "@effect/platform-node";
 import { Array as Arr, Effect, FileSystem, Layer, Path, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
