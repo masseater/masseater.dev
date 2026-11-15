@@ -210,18 +210,11 @@ const listOf = (lookup: Lookup): readonly Instance[] => {
   return items;
 };
 
-const idNameOf = (instance: Instance): Option.Option<string> =>
-  pipe(
-    embedded({ lookup: { instance, names: ["id"] }, structName: "ID" }),
-    Option.flatMap((id) => textOf({ instance: id, names: ["name"] })),
-  );
-
 export {
   elementsOf,
   embedded,
   floatsOf,
   follow,
-  idNameOf,
   instanceOf,
   intOf,
   listOf,

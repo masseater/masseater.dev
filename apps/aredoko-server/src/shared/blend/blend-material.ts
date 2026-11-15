@@ -183,5 +183,5 @@ const imagesOf = (file: BlendFile): readonly ImageSource[] =>
     Array.map(imageOf),
   );
 
-export { GRAY, imagesOf, surfaceOf };
+export { imagesOf, surfaceOf };
 export type { Color, ImageSource, Surface };

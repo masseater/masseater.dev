@@ -4,11 +4,11 @@ import { Array, Effect, FileSystem, HashMap, Option, Path, Result, Schema, pipe 
 import { Base64 } from "effect/encoding";
 
 import { glbOf } from "./blend-glb.ts";
-import { GRAY } from "./blend-material.ts";
 import type { Part } from "./blend-scene.ts";
 import { texturesOf } from "./blend-textures.ts";
 
 const FIRST = 0;
+const SHADE = 0.8;
 const RELATIVE_KEY = 1;
 const WINDOWS_KEY = 2;
 const MISSING_KEY = 3;
@@ -43,7 +43,10 @@ const jsonOf = (glb: Uint8Array): string => {
 };
 
 const textured = (key: number, filepath: string): Part["groups"][number] => ({
-  surface: { color: GRAY, image: Option.some({ key, packed: Option.none(), filepath }) },
+  surface: {
+    color: [SHADE, SHADE, SHADE],
+    image: Option.some({ key, packed: Option.none(), filepath }),
+  },
   indices: Uint32Array.from(TRIANGLE),
 });
 

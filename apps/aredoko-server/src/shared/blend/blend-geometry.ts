@@ -206,7 +206,6 @@ const meshFrom = ({ shape, base }: Readonly<{ shape: Shape; base: MeshData }>): 
 
 export {
   edgeShiftedBy,
-  cross,
   dot,
   flipped,
   mean,

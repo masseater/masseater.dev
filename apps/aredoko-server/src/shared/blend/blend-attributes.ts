@@ -104,4 +104,4 @@ const attribute = (search: Search): Option.Option<Block> =>
   );
 
 export { CORNER_DOMAIN, FACE_DOMAIN, VERTEX_DOMAIN, attribute, floatArray, intArray, named };
-export type { Matches };
+export type { Matches, Search, Sized };
