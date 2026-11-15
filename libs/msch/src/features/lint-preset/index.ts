@@ -3,7 +3,7 @@ export {
   alchemyOverride,
   removalPolicyOverride,
   removalPolicySyntax,
-  scriptsOverride,
+  commandsOverride,
 } from "./config/lint-overrides.config.ts";
 export {
   INFRASTRUCTURE,

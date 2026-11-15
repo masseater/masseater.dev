@@ -22,13 +22,16 @@
     "directory": "libs/workers-tracing"
   },
   "bin": {
-    "workers-traces": "./src/traces.ts"
+    "workers-traces": "./bin/workers-traces.ts"
   },
   "files": [
     "dist",
     "LICENSE"
   ],
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
     "./alchemy": "./src/alchemy.ts",
     "./browser-spans": "./src/browser-spans.ts",
