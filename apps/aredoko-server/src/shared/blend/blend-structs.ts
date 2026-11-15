@@ -29,6 +29,7 @@ const FLOAT_BYTES = 4;
 const INT_BYTES = 4;
 const SHORT_BYTES = 2;
 const NUL = 0;
+const MAX_ITEMS = 1_000_000;
 
 const addressesOf = (blocks: readonly Block[]): HashMap.HashMap<bigint, readonly Block[]> =>
   pipe(
@@ -167,15 +168,15 @@ const elementsOf = ({
     Option.getOrElse((): readonly Instance[] => []),
   );
 
-const latin1 = new TextDecoder("latin1");
+const utf8 = new TextDecoder();
 
 const cString = (bytes: Uint8Array, start: number, length: number): string => {
   const window = bytes.subarray(start, start + length);
   const end = window.indexOf(NUL);
   if (end < NUL) {
-    return latin1.decode(window);
+    return utf8.decode(window);
   }
-  return latin1.decode(window.subarray(NUL, end));
+  return utf8.decode(window.subarray(NUL, end));
 };
 
 const textOf = (lookup: Lookup): Option.Option<string> =>
@@ -188,5 +189,37 @@ const textOf = (lookup: Lookup): Option.Option<string> =>
     return Option.some(cString(bytes, start, size));
   });
 
-export { elementsOf, embedded, floatsOf, follow, instanceOf, intOf, openBlend, resolve, textOf };
+const linkedAt = (file: BlendFile, offset: number): Option.Option<Instance> =>
+  Option.flatMap(
+    resolve({
+      file,
+      address: pointerAt({ bytes: file.bytes, offset, layout: file.layout }),
+      anchor: offset,
+    }),
+    (block) => instanceOf({ file, block }),
+  );
+
+const listOf = (lookup: Lookup): readonly Instance[] => {
+  const { file } = lookup.instance;
+  const items: Instance[] = [];
+  let current = Option.flatMap(placeOf(lookup), (offset) => linkedAt(file, offset));
+  while (Option.isSome(current) && items.length < MAX_ITEMS) {
+    items.push(current.value);
+    current = linkedAt(file, current.value.offset);
+  }
+  return items;
+};
+
+export {
+  elementsOf,
+  embedded,
+  floatsOf,
+  follow,
+  instanceOf,
+  intOf,
+  listOf,
+  openBlend,
+  resolve,
+  textOf,
+};
 export type { BlendFile, Instance, Lookup };
