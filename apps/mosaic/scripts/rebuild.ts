@@ -252,4 +252,4 @@ const rebuildPlan = planOfThisRun;
 const supersededBy = supersededByNewer;
 
 export type { Plan };
-export { rebuildPlan, supersededBy };
+export { DEPLOY_STEPS, REBUILD_STEPS, rebuildPlan, supersededBy };
