@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { MemoList } from "./memo-list";
 import { ProjectList } from "./project-list";
 
-const MemosPage = (): ReactNode => (
+export const MemosPage = (): ReactNode => (
   <div className="flex flex-col gap-8 xl:flex-row xl:items-start">
     <div className="min-w-0 xl:flex-1">
       <MemoList />
@@ -13,5 +13,3 @@ const MemosPage = (): ReactNode => (
     </div>
   </div>
 );
-
-export { MemosPage };

@@ -114,7 +114,7 @@ const boundsOf = (object: Object3D): Option.Option<Sphere> => {
 };
 
 /** @internal */
-const renderViews = Effect.fn("renderViews")(function* renderViews(object: Object3D) {
+export const renderViews = Effect.fn("renderViews")(function* renderViews(object: Object3D) {
   const sphere = boundsOf(object);
   if (Option.isNone(sphere)) {
     return [];
@@ -128,5 +128,3 @@ const renderViews = Effect.fn("renderViews")(function* renderViews(object: Objec
   );
   return yield* pipe(YAWS, Array.map(shoot(stage, sphere.value)), Effect.all);
 });
-
-export { renderViews };

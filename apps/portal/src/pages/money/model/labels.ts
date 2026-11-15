@@ -12,15 +12,13 @@ const labelIn =
       Option.match({ onNone: () => id, onSome: (entry) => entry.label }),
     );
 
-const categoryLabel = (settings: SettingsValue): ((id: string) => string) =>
+export const categoryLabel = (settings: SettingsValue): ((id: string) => string) =>
   labelIn(settings.categories);
 
-const accountLabel = (settings: SettingsValue): ((id: string) => string) =>
+export const accountLabel = (settings: SettingsValue): ((id: string) => string) =>
   labelIn(
     pipe(
       settings.accounts,
       Arr.map((account) => ({ id: account.id, label: account.name })),
     ),
   );
-
-export { accountLabel, categoryLabel };

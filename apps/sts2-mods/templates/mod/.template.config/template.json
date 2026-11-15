@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "masseater",
+  "classifications": ["Game", "Mod"],
+  "identity": "Masseater.Sts2Mod",
+  "name": "Slay the Spire 2 Mod",
+  "shortName": "sts2-mod",
+  "sourceName": "__MOD__",
+  "preferNameDirectory": false,
+  "tags": { "language": "C#", "type": "project" },
+  "primaryOutputs": [{ "path": "mods/__MOD__/__MOD__.csproj" }],
+  "postActions": [
+    {
+      "actionId": "D396686C-DE0E-4DE6-906D-291CD29FC5DE",
+      "description": "sts2-mods.sln に足す",
+      "manualInstructions": [{ "text": "dotnet sln sts2-mods.sln add mods/<Mod>/<Mod>.csproj" }],
+      "continueOnError": false
+    }
+  ]
+}

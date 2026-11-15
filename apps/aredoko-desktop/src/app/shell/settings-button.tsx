@@ -14,7 +14,7 @@ const variantOf = (open: boolean): "secondary" | "ghost" => {
   return "ghost";
 };
 
-const SettingsButton = (): ReactNode => {
+export const SettingsButton = (): ReactNode => {
   const open = usePage() === "settings";
   const openPage = useOpenPage();
   const toggle = useCallback(() => {
@@ -37,5 +37,3 @@ const SettingsButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { SettingsButton };

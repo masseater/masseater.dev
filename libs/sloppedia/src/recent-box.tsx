@@ -7,7 +7,7 @@ import { recentOf } from "./categories.ts";
 import type { SloppediaConfig } from "./config.ts";
 import { MainBox } from "./main-box.tsx";
 
-const RecentBox = ({
+export const RecentBox = ({
   config,
   articles,
 }: Readonly<{ config: SloppediaConfig; articles: readonly Article[] }>): ReactNode => (
@@ -20,5 +20,3 @@ const RecentBox = ({
     </ul>
   </MainBox>
 );
-
-export { RecentBox };

@@ -1,7 +1,7 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-const FailedNote = ({ error }: Readonly<{ error: Readonly<Error> | null }>): ReactNode =>
+export const FailedNote = ({ error }: Readonly<{ error: Readonly<Error> | null }>): ReactNode =>
   pipe(
     Option.fromNullOr(error),
     Option.match({
@@ -13,5 +13,3 @@ const FailedNote = ({ error }: Readonly<{ error: Readonly<Error> | null }>): Rea
       ),
     }),
   );
-
-export { FailedNote };

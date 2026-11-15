@@ -15,15 +15,18 @@ import { playground } from "#/shared/config";
 import type { CheckerWorker } from "./checker.worker.ts";
 import { lintsOf, typeCompletion, typeHover } from "./language";
 
-type Editor = Readonly<{ host: HTMLElement; doc: string; extensions: readonly Extension[] }>;
+export type Editor = Readonly<{ host: HTMLElement; doc: string; extensions: readonly Extension[] }>;
 
-type Checked = Readonly<{ doc: Text; lints: readonly Diagnostic[] }>;
+export type Checked = Readonly<{ doc: Text; lints: readonly Diagnostic[] }>;
 
-type MainPane = Readonly<{ worker: Remote<CheckerWorker>; onChecked: (checked: Checked) => void }>;
+export type MainPane = Readonly<{
+  worker: Remote<CheckerWorker>;
+  onChecked: (checked: Checked) => void;
+}>;
 
-type Replacement = Readonly<{ view: EditorView; code: string }>;
+export type Replacement = Readonly<{ view: EditorView; code: string }>;
 
-const GENERATED_PATH = `/${playground.panes.generated}`;
+export const GENERATED_PATH = `/${playground.panes.generated}`;
 
 const MAIN_PATH = `/${playground.panes.main}`;
 
@@ -51,7 +54,7 @@ const createEditor = ({ host, doc, extensions }: Editor): EditorView => {
   });
 };
 
-const scopedEditor = (editor: Editor): Effect.Effect<EditorView, never, Scope.Scope> =>
+export const scopedEditor = (editor: Editor): Effect.Effect<EditorView, never, Scope.Scope> =>
   Effect.acquireRelease(
     Effect.sync(() => createEditor(editor)),
     (view) =>
@@ -65,7 +68,7 @@ const typescriptPane = (worker: Remote<CheckerWorker>, path: string): readonly E
   typeHover({ worker, path }),
 ];
 
-const generatedPane = (worker: Remote<CheckerWorker>): readonly Extension[] => [
+export const generatedPane = (worker: Remote<CheckerWorker>): readonly Extension[] => [
   EditorState.readOnly.of(true),
   ...typescriptPane(worker, GENERATED_PATH),
 ];
@@ -81,7 +84,7 @@ const changedSong = (update: ViewUpdate): boolean =>
     ),
   );
 
-const mainPane = ({ worker, onChecked }: MainPane): readonly Extension[] => [
+export const mainPane = ({ worker, onChecked }: MainPane): readonly Extension[] => [
   ...typescriptPane(worker, MAIN_PATH),
   linter(
     (view) =>
@@ -99,20 +102,10 @@ const mainPane = ({ worker, onChecked }: MainPane): readonly Extension[] => [
   typeCompletion({ worker, path: MAIN_PATH }),
 ];
 
-const replaceDocument = ({ view, code }: Replacement): void => {
+export const replaceDocument = ({ view, code }: Replacement): void => {
   view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: code } });
 };
 
-const notifySongChanged = (view: EditorView): void => {
+export const notifySongChanged = (view: EditorView): void => {
   view.dispatch({ effects: songChanged.of(true) });
 };
-
-export {
-  GENERATED_PATH,
-  generatedPane,
-  mainPane,
-  notifySongChanged,
-  replaceDocument,
-  scopedEditor,
-};
-export type { Checked, Editor, MainPane, Replacement };

@@ -16,7 +16,7 @@ const earlier = Order.min(Str.Order);
 
 const monthOf = Str.slice(START, MONTH_LENGTH);
 
-const todayJst = (now: DateTime.Utc): string =>
+export const todayJst = (now: DateTime.Utc): string =>
   pipe(now, DateTime.add(JST), DateTime.formatIsoDateUtc);
 
 const monthStart = (month: string): Option.Option<DateTime.Utc> =>
@@ -38,7 +38,7 @@ const lastDayOf = (month: string): string =>
     Option.getOrElse(() => month),
   );
 
-const periodOf = ({
+export const periodOf = ({
   input,
   today,
 }: Readonly<{ input: PeriodInputValue; today: string }>): PeriodValue => {
@@ -47,7 +47,8 @@ const periodOf = ({
   return { from: earlier(from, to), to };
 };
 
-const asOfOf = ({ period, today }: Readonly<{ period: PeriodValue; today: string }>): string =>
+export const asOfOf = ({
+  period,
+  today,
+}: Readonly<{ period: PeriodValue; today: string }>): string =>
   earlier(lastDayOf(period.to), today);
-
-export { asOfOf, periodOf, todayJst };

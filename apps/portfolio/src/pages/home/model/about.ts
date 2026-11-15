@@ -1,10 +1,10 @@
-const ABOUT_ID = "about";
+export const ABOUT_ID = "about";
 
-const ABOUT_TITLE = "About";
+export const ABOUT_TITLE = "About";
 
-const AVATAR_PATH = "/avatars/masseater.png";
+export const AVATAR_PATH = "/avatars/masseater.png";
 
-const PREFERENCES = [
+export const PREFERENCES = [
   {
     term: "好きなもの",
     items: [
@@ -33,5 +33,3 @@ const PREFERENCES = [
     items: ["3Dゲーム（3D酔いするので）"],
   },
 ] as const;
-
-export { ABOUT_ID, ABOUT_TITLE, AVATAR_PATH, PREFERENCES };

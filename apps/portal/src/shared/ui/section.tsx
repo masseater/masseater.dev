@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const Section = ({
+export const Section = ({
   children,
   title,
 }: Readonly<{ children: ReactNode; title: string }>): ReactNode => (
@@ -9,5 +9,3 @@ const Section = ({
     {children}
   </section>
 );
-
-export { Section };

@@ -1,6 +1,6 @@
 import type { PortalResult } from "./result.ts";
 
-interface WatashiPortalRpc extends Rpc.WorkerEntrypointBranded {
+export interface WatashiPortalRpc extends Rpc.WorkerEntrypointBranded {
   lifeRead: (input: unknown) => Promise<PortalResult>;
   memoryRead: (input: unknown) => Promise<PortalResult>;
   memoryWrite: (input: unknown) => Promise<PortalResult>;
@@ -9,7 +9,4 @@ interface WatashiPortalRpc extends Rpc.WorkerEntrypointBranded {
   conversationRead: (input: unknown) => Promise<PortalResult>;
 }
 
-const PORTAL_ACTOR = "portal";
-
-export { PORTAL_ACTOR };
-export type { WatashiPortalRpc };
+export const PORTAL_ACTOR = "portal";

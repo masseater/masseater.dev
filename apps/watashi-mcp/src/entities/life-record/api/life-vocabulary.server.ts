@@ -20,11 +20,11 @@ import type { LifeEntry } from "./life-store.server.ts";
 import { insertRecord } from "./life-writer.server.ts";
 import type { Writer } from "./life-writer.server.ts";
 
-type Notice = Readonly<{ type: string; ref: string } & Record<string, unknown>>;
+export type Notice = Readonly<{ type: string; ref: string } & Record<string, unknown>>;
 
 type Definition = "event_kind" | "metric_definition";
 
-type ValuesCheck = (
+export type ValuesCheck = (
   checked: Readonly<{ record: LifeRecordName; body: Body }>,
 ) => Effect.Effect<void, InvalidRecord | StorageFailed>;
 
@@ -108,14 +108,14 @@ const ensureDefined =
       ),
     );
 
-const valuesOf = (body: Body): Body =>
+export const valuesOf = (body: Body): Body =>
   pipe(
     Rec.get(body, "values"),
     Option.filter(Predicate.isObject),
     Option.getOrElse((): Body => ({})),
   );
 
-const metricNamesOf = (body: Body): readonly string[] =>
+export const metricKeysOf = (body: Body): readonly string[] =>
   pipe(valuesOf(body), Rec.filter(Predicate.isNumber), Rec.keys);
 
 const allowedOf = (schema: Body): string =>
@@ -167,7 +167,7 @@ const checkKindValues =
       Effect.flatMap(validateKind(kind, body)),
     );
 
-const checkEventValues: ValuesCheck = ({ record, body }) => {
+export const checkEventValues: ValuesCheck = ({ record, body }) => {
   if (record !== "life_event") {
     return Effect.void;
   }
@@ -185,7 +185,7 @@ const kindNotices =
       Effect.map(Option.toArray),
     );
 
-const vocabularyNotices =
+export const vocabularyNotices =
   (writer: Writer) =>
   (body: Body): Effect.Effect<readonly Notice[], InvalidRecord | StorageFailed> =>
     Effect.gen(function* registerVocabulary() {
@@ -197,11 +197,8 @@ const vocabularyNotices =
         }),
       );
       const metrics = yield* pipe(
-        metricNamesOf(body),
+        metricKeysOf(body),
         Effect.forEach(ensureDefined(writer, "metric_definition")),
       );
       return [...kinds, ...Arr.getSomes(metrics)];
     });
-
-export { checkEventValues, metricNamesOf as metricKeysOf, valuesOf, vocabularyNotices };
-export type { Notice, ValuesCheck };

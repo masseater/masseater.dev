@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 const MORE = "続き";
 
-const MoreLink = ({
+export const MoreLink = ({
   cursor,
   sessionId,
 }: Readonly<{ cursor: number; sessionId: string }>): ReactNode => {
@@ -21,5 +21,3 @@ const MoreLink = ({
     </Link>
   );
 };
-
-export { MoreLink };

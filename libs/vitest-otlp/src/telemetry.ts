@@ -1,17 +1,17 @@
-interface ReceiverAddress {
+export interface ReceiverAddress {
   readonly httpEndpoint: string;
   readonly grpcEndpoint: string;
 }
 
-type Attributes = Readonly<Record<string, unknown>>;
+export type Attributes = Readonly<Record<string, unknown>>;
 
-interface InstrumentationScope {
+export interface InstrumentationScope {
   readonly name: string;
   readonly version?: string;
   readonly attributes?: Attributes;
 }
 
-interface ReceivedSpan {
+export interface ReceivedSpan {
   readonly traceId: string;
   readonly spanId: string;
   readonly parentSpanId?: string;
@@ -27,7 +27,7 @@ interface ReceivedSpan {
   readonly scope: InstrumentationScope;
 }
 
-interface ReceivedLogRecord {
+export interface ReceivedLogRecord {
   readonly timeUnixNano?: string;
   readonly observedTimeUnixNano?: string;
   readonly severityNumber?: number | string;
@@ -40,7 +40,7 @@ interface ReceivedLogRecord {
   readonly scope: InstrumentationScope;
 }
 
-interface ReceivedMetric {
+export interface ReceivedMetric {
   readonly name: string;
   readonly description?: string;
   readonly unit?: string;
@@ -49,12 +49,3 @@ interface ReceivedMetric {
   readonly resource: Attributes;
   readonly scope: InstrumentationScope;
 }
-
-export type {
-  Attributes,
-  InstrumentationScope,
-  ReceivedLogRecord,
-  ReceivedMetric,
-  ReceivedSpan,
-  ReceiverAddress,
-};

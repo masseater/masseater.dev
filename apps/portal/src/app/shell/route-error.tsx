@@ -10,7 +10,7 @@ const messageOf = (error: unknown): string => {
   return String(error);
 };
 
-const RouteError = ({
+export const RouteError = ({
   error,
   reset,
 }: Readonly<Pick<ErrorComponentProps, "error" | "reset">>): ReactNode => (
@@ -21,5 +21,3 @@ const RouteError = ({
     </button>
   </div>
 );
-
-export { RouteError };

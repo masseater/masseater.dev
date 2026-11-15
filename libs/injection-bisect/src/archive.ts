@@ -8,12 +8,12 @@ import type { ReadError } from "./read-error.ts";
 import { readErrorOf } from "./read-error.ts";
 import { BINARY, isBinary, partsInside, withUnreadable } from "./unreadable.ts";
 
-interface Entry {
+export interface Entry {
   readonly bytes: Uint8Array;
   readonly name: string;
 }
 
-type ReadEntry = (entry: Entry) => Effect.Effect<Document, ReadError>;
+export type ReadEntry = (entry: Entry) => Effect.Effect<Document, ReadError>;
 
 const FENCE = /`+/gu;
 
@@ -21,7 +21,7 @@ const SHORTEST_FENCE = 3;
 
 const LONGER = 1;
 
-const ARCHIVE_FORMATS = ["zip", "tar", "gzip"] as const;
+export const ARCHIVE_FORMATS = ["zip", "tar", "gzip"] as const;
 
 const START = 0;
 
@@ -131,7 +131,7 @@ const gunzipped = (bytes: Uint8Array): Effect.Effect<Uint8Array, ReadError> =>
     });
   });
 
-const archiveReadersOf = (read: ReadEntry): readonly Reader[] => [
+export const archiveReadersOf = (read: ReadEntry): readonly Reader[] => [
   {
     format: "zip",
     extensions: [".zip"],
@@ -171,6 +171,3 @@ const archiveReadersOf = (read: ReadEntry): readonly Reader[] => [
       gunzipped(bytes).pipe(Effect.flatMap((inner) => read({ bytes: inner, name: "" }))),
   },
 ];
-
-export { ARCHIVE_FORMATS, archiveReadersOf };
-export type { Entry, ReadEntry };

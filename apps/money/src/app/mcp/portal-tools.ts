@@ -12,8 +12,6 @@ const READ_TOOLS = pipe(
   Arr.filter(({ annotations }) => annotations === READ_ONLY),
 );
 
-const readTool = (name: string): Option.Option<DefinedTool> =>
-  Arr.findFirst(READ_TOOLS, (defined) => defined.name === name);
-
 /** @internal */
-export { readTool };
+export const readTool = (name: string): Option.Option<DefinedTool> =>
+  Arr.findFirst(READ_TOOLS, (defined) => defined.name === name);

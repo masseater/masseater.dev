@@ -14,7 +14,7 @@ const TEXT = {
   media: "見ている作品",
 } as const;
 
-const ProfilePage = (): ReactNode => {
+export const ProfilePage = (): ReactNode => {
   const profile = useProfile();
   return (
     <div className="flex flex-col gap-12">
@@ -30,5 +30,3 @@ const ProfilePage = (): ReactNode => {
     </div>
   );
 };
-
-export { ProfilePage };

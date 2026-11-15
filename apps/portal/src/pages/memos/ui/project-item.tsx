@@ -6,7 +6,7 @@ import type { ProjectValue } from "#/entities/watashi";
 
 import { PILL } from "./pill";
 
-const ProjectItem = ({
+export const ProjectItem = ({
   active,
   project,
 }: Readonly<{ active: boolean; project: ProjectValue }>): ReactNode => {
@@ -20,5 +20,3 @@ const ProjectItem = ({
     </li>
   );
 };
-
-export { ProjectItem };

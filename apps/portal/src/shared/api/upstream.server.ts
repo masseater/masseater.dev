@@ -9,7 +9,7 @@ const decodeFailed = ({ message }: Readonly<{ message: string }>): PortalFailed 
 const callFailed = (error: unknown): PortalFailed =>
   PortalFailed.make({ errorTag: "UpstreamFailed", text: String(error) });
 
-const attempt = <Result>(call: () => Promise<Result>): Effect.Effect<Result, PortalFailed> =>
+export const attempt = <Result>(call: () => Promise<Result>): Effect.Effect<Result, PortalFailed> =>
   Effect.tryPromise({ try: call, catch: callFailed });
 
 const decoded =
@@ -26,7 +26,7 @@ const bodyOf =
     return decoded(schema)(result.body);
   };
 
-const rpcBody = <Codec extends Schema.Top & Readonly<{ DecodingServices: never }>>({
+export const rpcBody = <Codec extends Schema.Top & Readonly<{ DecodingServices: never }>>({
   schema,
   call,
 }: Readonly<{ schema: Codec; call: () => Promise<PortalResult> }>): Effect.Effect<
@@ -34,7 +34,7 @@ const rpcBody = <Codec extends Schema.Top & Readonly<{ DecodingServices: never }
   PortalFailed
 > => attempt(call).pipe(Effect.flatMap(bodyOf(schema)));
 
-const jsonBody = <Codec extends Schema.Top & Readonly<{ DecodingServices: never }>>({
+export const jsonBody = <Codec extends Schema.Top & Readonly<{ DecodingServices: never }>>({
   schema,
   call,
 }: Readonly<{ schema: Codec; call: () => Promise<Response> }>): Effect.Effect<
@@ -45,5 +45,3 @@ const jsonBody = <Codec extends Schema.Top & Readonly<{ DecodingServices: never 
     Effect.flatMap((response) => attempt(() => response.json())),
     Effect.flatMap(decoded(schema)),
   );
-
-export { attempt, jsonBody, rpcBody };

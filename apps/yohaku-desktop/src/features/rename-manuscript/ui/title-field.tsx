@@ -19,7 +19,7 @@ const titleBy =
 const writerTitle = titleBy("writer");
 const aiTitle = titleBy("ai");
 
-const TitleField = (): ReactNode => {
+export const TitleField = (): ReactNode => {
   const { title, rename } = useTitle();
   const written = writerTitle(title);
   const onBlur = useCallback(
@@ -39,5 +39,3 @@ const TitleField = (): ReactNode => {
     />
   );
 };
-
-export { TitleField };

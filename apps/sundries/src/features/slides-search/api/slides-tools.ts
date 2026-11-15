@@ -72,7 +72,7 @@ const queryOptions = ({
     onSome: (name) => ({ topK: limit, returnMetadata: "all", filter: { deck: name } }),
   });
 
-const searchSlides = Effect.fn("searchSlides")(function* searchSlides(
+export const searchSlides = Effect.fn("searchSlides")(function* searchSlides(
   query: Readonly<{ query: string; limit: number; deck: Option.Option<string> }>,
 ) {
   const vector = yield* embed(query.query);
@@ -170,9 +170,7 @@ const registerGetDeck =
     return server;
   };
 
-const registerSlideTools =
+export const registerSlideTools =
   (caller: Caller) =>
   (server: McpServer): McpServer =>
     pipe(server, registerSearch(caller), registerGetDeck(caller));
-
-export { registerSlideTools, searchSlides };

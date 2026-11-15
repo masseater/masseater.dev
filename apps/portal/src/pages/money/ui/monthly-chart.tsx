@@ -44,7 +44,7 @@ const shortMonth = (month: string): string =>
 
 const asYen = (value: unknown): string => yen(Number(value));
 
-const MonthlyChart = ({
+export const MonthlyChart = ({
   months,
   title,
 }: Readonly<{ months: readonly MonthTotalValue[]; title: string }>): ReactNode => {
@@ -74,5 +74,3 @@ const MonthlyChart = ({
     </ResponsiveContainer>
   );
 };
-
-export { MonthlyChart };

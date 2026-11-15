@@ -6,7 +6,8 @@ import type { Report } from "./report.ts";
 
 const SUCCESS = 0;
 
-interface Invocation {
+/** @internal */
+export interface Invocation {
   readonly root: string;
   readonly file: string;
   readonly args: readonly string[];
@@ -24,7 +25,8 @@ const stdinOf = (input: string | undefined): ChildProcess.CommandInput =>
     }),
   );
 
-const runCaptured = ({
+/** @internal */
+export const runCaptured = ({
   root,
   file,
   args,
@@ -47,8 +49,3 @@ const runCaptured = ({
     );
     return { valid: exitCode === SUCCESS, output: text };
   }).pipe(Effect.scoped);
-
-/** @internal */
-export { runCaptured };
-/** @internal */
-export type { Invocation };

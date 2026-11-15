@@ -4,7 +4,7 @@ import type { MemoValue } from "#/entities/watashi";
 import { RetractedNote } from "#/entities/watashi";
 import { TagList } from "#/shared/ui";
 
-const MemoHeader = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => (
+export const MemoHeader = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => (
   <header className="flex flex-col gap-2">
     <p className="font-display text-foreground/50 text-xs tracking-widest">{memo.project}</p>
     <h1 className="font-display text-3xl font-light break-words">{memo.name}</h1>
@@ -12,5 +12,3 @@ const MemoHeader = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => (
     <RetractedNote memo={memo} />
   </header>
 );
-
-export { MemoHeader };

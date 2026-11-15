@@ -9,11 +9,9 @@ const EMPTY = "見つかりませんでした";
 
 type Results = readonly (typeof SearchResult.Type)[];
 
-const Matches = ({ matches }: Readonly<{ matches: Results }>): ReactNode => {
+export const Matches = ({ matches }: Readonly<{ matches: Results }>): ReactNode => {
   if (Array.isReadonlyArrayEmpty(matches)) {
     return <NothingFound text={EMPTY} />;
   }
   return <ResultGrid results={matches} />;
 };
-
-export { Matches };

@@ -3,13 +3,13 @@ import type { ReactNode } from "react";
 
 import type { PortalPath } from "#/shared/config";
 
-type SubNavEntry = Readonly<{ label: string; to: PortalPath }>;
+export type SubNavEntry = Readonly<{ label: string; to: PortalPath }>;
 
 const ACTIVE = { className: "ring-foreground/60 text-foreground" } as const;
 
 const ACTIVE_OPTIONS = { exact: true } as const;
 
-const SubNavItem = ({ item }: Readonly<{ item: SubNavEntry }>): ReactNode => (
+export const SubNavItem = ({ item }: Readonly<{ item: SubNavEntry }>): ReactNode => (
   <li>
     <Link
       activeOptions={ACTIVE_OPTIONS}
@@ -21,6 +21,3 @@ const SubNavItem = ({ item }: Readonly<{ item: SubNavEntry }>): ReactNode => (
     </Link>
   </li>
 );
-
-export { SubNavItem };
-export type { SubNavEntry };

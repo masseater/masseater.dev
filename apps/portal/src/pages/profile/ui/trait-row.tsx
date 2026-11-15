@@ -15,7 +15,7 @@ const SUPPORTS = "根拠";
 const scopeTags = (trait: TraitValue): readonly string[] =>
   Arr.filter([trait.scope], (scope) => scope !== GLOBAL);
 
-const TraitRow = ({ trait }: Readonly<{ trait: TraitValue }>): ReactNode => {
+export const TraitRow = ({ trait }: Readonly<{ trait: TraitValue }>): ReactNode => {
   const tags = useMemo(() => scopeTags(trait), [trait]);
   return (
     <Row lead={`${SUPPORTS} ${String(trait.supports)}`}>
@@ -25,5 +25,3 @@ const TraitRow = ({ trait }: Readonly<{ trait: TraitValue }>): ReactNode => {
     </Row>
   );
 };
-
-export { TraitRow };

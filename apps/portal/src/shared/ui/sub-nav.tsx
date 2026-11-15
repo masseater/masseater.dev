@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { SubNavItem } from "./sub-nav-item";
 import type { SubNavEntry } from "./sub-nav-item";
 
-const SubNav = ({
+export const SubNav = ({
   items,
   label,
 }: Readonly<{ items: readonly SubNavEntry[]; label: string }>): ReactNode => (
@@ -17,5 +17,3 @@ const SubNav = ({
     </ul>
   </nav>
 );
-
-export { SubNav };

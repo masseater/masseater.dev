@@ -5,7 +5,7 @@ import { useConversation } from "#/pages/conversation/api/conversation-query";
 import { MoreSlot } from "./more-slot";
 import { UtteranceList } from "./utterance-list";
 
-const ConversationPage = (): ReactNode => {
+export const ConversationPage = (): ReactNode => {
   const conversation = useConversation();
   return (
     <article className="flex flex-col gap-6">
@@ -15,5 +15,3 @@ const ConversationPage = (): ReactNode => {
     </article>
   );
 };
-
-export { ConversationPage };

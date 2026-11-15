@@ -1,7 +1,7 @@
 import { Option, Predicate, pipe } from "effect";
 import type { SubmitEvent } from "react";
 
-const formText =
+export const formText =
   (event: SubmitEvent<HTMLFormElement>) =>
   (name: string): string =>
     pipe(
@@ -9,5 +9,3 @@ const formText =
       Option.filter(Predicate.isString),
       Option.getOrElse(() => ""),
     );
-
-export { formText };

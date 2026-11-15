@@ -13,7 +13,7 @@ const commentsIn = (node: SelectedNode, { context }: SelectMatch): readonly stri
   );
 };
 
-const hasCommentInside: DualSelect = dualSelect((node, match) =>
+export const hasCommentInside: DualSelect = dualSelect((node, match) =>
   Arr.isReadonlyArrayNonEmpty(commentsIn(node, match)),
 );
 
@@ -26,7 +26,7 @@ const SUPPRESSIONS = [
   "fallow-ignore",
 ];
 
-const hasSuppression: DualSelect = dualSelect((node, match) =>
+export const hasSuppression: DualSelect = dualSelect((node, match) =>
   pipe(
     commentsIn(node, match),
     Arr.some((comment) =>
@@ -37,5 +37,3 @@ const hasSuppression: DualSelect = dualSelect((node, match) =>
     ),
   ),
 );
-
-export { hasCommentInside, hasSuppression };

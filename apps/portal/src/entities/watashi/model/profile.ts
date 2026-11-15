@@ -27,7 +27,7 @@ const Person = Schema.Struct({
   facts: Schema.Array(LifeItem),
 });
 
-const Profile = Schema.Struct({
+export const Profile = Schema.Struct({
   ownerFacts: Schema.Array(LifeItem),
   activeGoals: Schema.Array(LifeItem),
   openTodos: Schema.Array(LifeItem),
@@ -36,13 +36,13 @@ const Profile = Schema.Struct({
   traits: Schema.Record(Schema.String, Schema.Array(Trait)),
 });
 
-type ProfileValue = typeof Profile.Type;
+export type ProfileValue = typeof Profile.Type;
 
-type TraitValue = typeof Trait.Type;
+export type TraitValue = typeof Trait.Type;
 
 type JapaneseValue = typeof Japanese.Type;
 
-type PersonValue = typeof Person.Type;
+export type PersonValue = typeof Person.Type;
 
 const TRAIT_LABELS: Readonly<Record<string, string>> = {
   rule: "決まり",
@@ -54,23 +54,20 @@ const TRAIT_LABELS: Readonly<Record<string, string>> = {
   background: "経歴",
 };
 
-const traitLabel = (kind: string): string => TRAIT_LABELS[kind] ?? kind;
+export const traitLabel = (kind: string): string => TRAIT_LABELS[kind] ?? kind;
 
 const japaneseOf = (trait: TraitValue): Option.Option<JapaneseValue> =>
   Option.fromUndefinedOr(trait.ja);
 
-const statementOf = (trait: TraitValue): string =>
+export const statementOf = (trait: TraitValue): string =>
   pipe(
     japaneseOf(trait),
     Option.match({ onNone: () => trait.statement, onSome: (ja) => ja.statement }),
   );
 
-const whyOf = (trait: TraitValue): Option.Option<string> =>
+export const whyOf = (trait: TraitValue): Option.Option<string> =>
   pipe(
     japaneseOf(trait),
     Option.flatMap((ja) => Option.fromUndefinedOr(ja.why)),
     Option.orElse(() => Option.fromUndefinedOr(trait.why)),
   );
-
-export { Profile, statementOf, traitLabel, whyOf };
-export type { PersonValue, ProfileValue, TraitValue };

@@ -7,10 +7,10 @@ import type { DeckValue, HitValue, SlidesSearchValue } from "#/entities/slides";
 
 type SlidesLoad = Readonly<{ queryClient: QueryClient; search: SlidesSearchValue }>;
 
-const wanted = (search: SlidesSearchValue): Option.Option<string> =>
+export const wanted = (search: SlidesSearchValue): Option.Option<string> =>
   Option.filter(Option.fromUndefinedOr(search.keyword), Str.isNonEmpty);
 
-const loadSlidesPage = ({ queryClient, search }: SlidesLoad): Promise<unknown> =>
+export const loadSlidesPage = ({ queryClient, search }: SlidesLoad): Promise<unknown> =>
   pipe(
     wanted(search),
     Option.match({
@@ -19,10 +19,8 @@ const loadSlidesPage = ({ queryClient, search }: SlidesLoad): Promise<unknown> =
     }),
   );
 
-const useDecks = (): readonly DeckValue[] =>
+export const useDecks = (): readonly DeckValue[] =>
   useSuspenseQuery(slidesQueries.decks.get.queryOptions()).data;
 
-const useHits = (keyword: string): readonly HitValue[] =>
+export const useHits = (keyword: string): readonly HitValue[] =>
   useSuspenseQuery(slidesQueries.search.get.queryOptions({ keyword })).data;
-
-export { loadSlidesPage, useDecks, useHits, wanted };

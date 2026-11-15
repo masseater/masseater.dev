@@ -29,18 +29,18 @@ import {
   stageTops,
 } from "./cascade-frame";
 
-type Status = "running" | "stopped";
+export type Status = "running" | "stopped";
 
-type ServiceData = Readonly<{
+export type ServiceData = Readonly<{
   label: string;
   detail: string;
   status: Status;
   round: number;
 }>;
 
-type ServiceNode = Node<ServiceData, "service">;
+export type ServiceNode = Node<ServiceData, "service">;
 
-type StageNode = Node<Readonly<{ label: string }>, "stage">;
+export type StageNode = Node<Readonly<{ label: string }>, "stage">;
 
 const NODE_WIDTH = 160;
 
@@ -151,7 +151,7 @@ const serviceNode =
     };
   };
 
-type EdgeClasses = Readonly<Record<Status, string>>;
+export type EdgeClasses = Readonly<Record<Status, string>>;
 
 const edgeOf =
   (delays: StopDelays, round: number, classes: EdgeClasses) =>
@@ -171,17 +171,14 @@ const edgeOf =
     };
   };
 
-const nodesOf = (state: CascadeState): Node[] => {
+export const nodesOf = (state: CascadeState): Node[] => {
   const toNode = serviceNode(stopDelays(state), roundOf(state));
   return [...stageNodes, ...pipe(cascadeNodes, Arr.map(toNode))];
 };
 
-const edgesOf =
+export const edgesOf =
   (classes: EdgeClasses) =>
   (state: CascadeState): Edge[] => {
     const toEdge = edgeOf(stopDelays(state), roundOf(state), classes);
     return pipe(cascadeLinks, Arr.map(toEdge));
   };
-
-export type { EdgeClasses, ServiceData, ServiceNode, StageNode, Status };
-export { edgesOf, nodesOf };

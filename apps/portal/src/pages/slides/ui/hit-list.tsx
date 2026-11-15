@@ -8,7 +8,7 @@ import { HitRow } from "./hit-row";
 
 const LABEL = "見つかったスライド";
 
-const HitList = ({ keyword }: Readonly<{ keyword: string }>): ReactNode => (
+export const HitList = ({ keyword }: Readonly<{ keyword: string }>): ReactNode => (
   <RowList label={LABEL}>
     {pipe(
       useHits(keyword),
@@ -16,5 +16,3 @@ const HitList = ({ keyword }: Readonly<{ keyword: string }>): ReactNode => (
     )}
   </RowList>
 );
-
-export { HitList };

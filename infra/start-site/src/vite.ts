@@ -7,7 +7,7 @@ import { Option } from "effect";
 import { defineConfig } from "vite-plus";
 import type { UserConfig } from "vite-plus";
 
-interface SiteOptions {
+export interface SiteOptions {
   readonly basePath: string;
   readonly searchIndexOrigin: Option.Option<string>;
   readonly assetHeaderArgs: string;
@@ -15,7 +15,7 @@ interface SiteOptions {
 
 const SITEMAP_FILE = "sitemap.xml";
 
-const startSiteConfig = ({
+export const startSiteConfig = ({
   basePath,
   searchIndexOrigin,
   assetHeaderArgs,
@@ -30,6 +30,10 @@ const startSiteConfig = ({
           command: `vp build && vpx ../../infra/start-site/src/write-asset-headers.ts ${assetHeaderArgs}`,
         },
         deploy: { command: "alchemy deploy", cache: false },
+        "deploy:production": {
+          command: "alchemy deploy --stage production --yes",
+          cache: false,
+        },
         destroy: { command: "alchemy destroy", cache: false },
       },
     },
@@ -57,6 +61,3 @@ const startSiteConfig = ({
       viteReact(),
     ],
   });
-
-export { startSiteConfig };
-export type { SiteOptions };

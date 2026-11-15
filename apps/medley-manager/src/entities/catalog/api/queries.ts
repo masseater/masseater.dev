@@ -17,6 +17,4 @@ const client = createIsomorphicFn()
   .server(() => serverClient<CatalogRoutes>(loadCatalogHandle))
   .client(() => browserClient<CatalogRoutes>());
 
-const catalogQueries = createQueries<CatalogRoutes>(client()).api.catalog;
-
-export { catalogQueries };
+export const catalogQueries = createQueries<CatalogRoutes>(client()).api.catalog;

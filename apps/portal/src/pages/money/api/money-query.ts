@@ -30,7 +30,7 @@ const pageQuery = ({
   ...Rec.getSomes({ cursor: Option.fromUndefinedOr(cursor) }),
 });
 
-const loadMoneyPage = ({ queryClient, search }: MoneyLoad): Promise<unknown> =>
+export const loadMoneyPage = ({ queryClient, search }: MoneyLoad): Promise<unknown> =>
   run(
     Effect.promise(() =>
       queryClient.query(moneyQueries.overview.get.queryOptions(periodQuery(search))),
@@ -47,15 +47,13 @@ const loadMoneyPage = ({ queryClient, search }: MoneyLoad): Promise<unknown> =>
     ),
   );
 
-const useOverview = (): OverviewValue => {
+export const useOverview = (): OverviewValue => {
   const input = periodQuery(route.useSearch());
   return useSuspenseQuery(moneyQueries.overview.get.queryOptions(input)).data;
 };
 
-const useTransactions = (period: PeriodValue): TransactionPageValue => {
+export const useTransactions = (period: PeriodValue): TransactionPageValue => {
   const { cursor } = route.useSearch();
   return useSuspenseQuery(moneyQueries.transactions.get.queryOptions(pageQuery({ period, cursor })))
     .data;
 };
-
-export { loadMoneyPage, useOverview, useTransactions };

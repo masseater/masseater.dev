@@ -33,7 +33,8 @@ const optionsOf = (config: MarkdownlintConfig, files: readonly string[]): Option
   ),
 });
 
-const lintMarkdown: {
+/** @internal */
+export const lintMarkdown: {
   (
     root: string,
     files: readonly string[],
@@ -68,6 +69,3 @@ const lintMarkdown: {
       return { valid: Arr.isArrayEmpty(lines), output: Arr.join(lines, "\n") };
     }),
 );
-
-/** @internal */
-export { lintMarkdown };

@@ -98,7 +98,7 @@ const bindCallExpression: ExpressionBinder<CallExpression> = (binding, node, sco
   }
 };
 
-const bindExpression: {
+export const bindExpression: {
   (node: Node, scope: Scope): (binding: FileBinding) => void;
   (binding: FileBinding, node: Node, scope: Scope): void;
 } = Fn.dual(EXPRESSION_ARITY, (binding: FileBinding, node: Node, scope: Scope): void => {
@@ -112,5 +112,3 @@ const bindExpression: {
   }
   bindModuleExportsAccess(binding, node, scope);
 });
-
-export { bindExpression };

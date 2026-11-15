@@ -13,7 +13,7 @@ const timeOf = (item: LifeItemValue): string =>
     Option.match({ onNone: () => recordLabel(item.ref), onSome: shownTime }),
   );
 
-const LifeRow = ({ item }: Readonly<{ item: LifeItemValue }>): ReactNode => {
+export const LifeRow = ({ item }: Readonly<{ item: LifeItemValue }>): ReactNode => {
   const tags = useMemo(() => [recordLabel(item.ref), ...labelsOf(item)], [item]);
   return (
     <Row lead={timeOf(item)}>
@@ -24,5 +24,3 @@ const LifeRow = ({ item }: Readonly<{ item: LifeItemValue }>): ReactNode => {
     </Row>
   );
 };
-
-export { LifeRow };

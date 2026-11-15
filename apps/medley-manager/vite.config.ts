@@ -1,4 +1,4 @@
-import { alchemyTasks, d1Tasks } from "@masseater.dev/cloudflare-account/run-tasks";
+import { alchemyTasks, d1Tasks, deployTo } from "@masseater.dev/cloudflare-account/run-tasks";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -35,6 +35,7 @@ export default defineConfig(({ mode }) => ({
   run: {
     tasks: {
       ...alchemyTasks,
+      "deploy:production": deployTo("production"),
       verify: { command: [], dependsOn: ["auth:check"] },
       ...d1Tasks,
       "auth:generate":

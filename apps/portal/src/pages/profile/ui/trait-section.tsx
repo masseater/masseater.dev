@@ -7,7 +7,7 @@ import { RowList, Section } from "#/shared/ui";
 
 import { TraitRow } from "./trait-row";
 
-const TraitSection = ({
+export const TraitSection = ({
   kind,
   traits,
 }: Readonly<{ kind: string; traits: readonly TraitValue[] }>): ReactNode => (
@@ -20,5 +20,3 @@ const TraitSection = ({
     </RowList>
   </Section>
 );
-
-export { TraitSection };

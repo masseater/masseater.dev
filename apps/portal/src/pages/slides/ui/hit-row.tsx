@@ -4,7 +4,7 @@ import { excerpt, pageUrl } from "#/entities/slides";
 import type { HitValue } from "#/entities/slides";
 import { Row } from "#/shared/ui";
 
-const HitRow = ({ hit }: Readonly<{ hit: HitValue }>): ReactNode => (
+export const HitRow = ({ hit }: Readonly<{ hit: HitValue }>): ReactNode => (
   <Row lead={`${String(hit.page)} / ${String(hit.pages)}`}>
     <a
       className="font-display hover:text-foreground/70 text-lg font-light transition-colors"
@@ -15,5 +15,3 @@ const HitRow = ({ hit }: Readonly<{ hit: HitValue }>): ReactNode => (
     <p className="text-foreground/70 text-sm leading-relaxed">{excerpt(hit.text)}</p>
   </Row>
 );
-
-export { HitRow };

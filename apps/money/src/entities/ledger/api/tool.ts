@@ -9,9 +9,14 @@ import type { ToolName } from "#/shared/api";
 
 import type { Failure, Services } from "./database";
 
-type Annotations = Readonly<typeof READ_ONLY> | Readonly<typeof WRITE> | Readonly<typeof OVERWRITE>;
+/** @internal */
+export type Annotations =
+  | Readonly<typeof READ_ONLY>
+  | Readonly<typeof WRITE>
+  | Readonly<typeof OVERWRITE>;
 
-type Tool<Input, Output, Value> = Readonly<{
+/** @internal */
+export type Tool<Input, Output, Value> = Readonly<{
   name: ToolName;
   description: string;
   input: StandardSchemaWithJSON<Input, Output>;
@@ -20,16 +25,19 @@ type Tool<Input, Output, Value> = Readonly<{
   count: (value: Value) => number;
 }>;
 
-type Register = (caller: Caller) => (server: McpServer) => McpServer;
+/** @internal */
+export type Register = (caller: Caller) => (server: McpServer) => McpServer;
 
-type DefinedTool = Readonly<{
+/** @internal */
+export type DefinedTool = Readonly<{
   name: ToolName;
   annotations: Annotations;
   register: Register;
   call: (input: unknown) => Effect.Effect<unknown, Failure, Services>;
 }>;
 
-const services = Layer.mergeAll(Digest.layerWebCrypto, SecureRandom.layerWebCrypto);
+/** @internal */
+export const services = Layer.mergeAll(Digest.layerWebCrypto, SecureRandom.layerWebCrypto);
 
 const runMoneyTool = runToolIn(services);
 
@@ -52,7 +60,8 @@ const validated =
       }),
     );
 
-const tool = <Input, Output, Value>(spec: Tool<Input, Output, Value>): DefinedTool => ({
+/** @internal */
+export const tool = <Input, Output, Value>(spec: Tool<Input, Output, Value>): DefinedTool => ({
   name: spec.name,
   annotations: spec.annotations,
   register: (caller) => (server) => {
@@ -71,7 +80,8 @@ const tool = <Input, Output, Value>(spec: Tool<Input, Output, Value>): DefinedTo
   call: (input) => validated(spec.input)(input).pipe(Effect.flatMap(spec.run)),
 });
 
-const registerAll =
+/** @internal */
+export const registerAll =
   (tools: readonly DefinedTool[]): Register =>
   (caller) =>
   (server) => {
@@ -81,9 +91,5 @@ const registerAll =
     return server;
   };
 
-const lengthOf = (values: readonly unknown[]): number => values.length;
-
 /** @internal */
-export { lengthOf, registerAll, services, tool };
-/** @internal */
-export type { Annotations, DefinedTool, Register, Tool };
+export const lengthOf = (values: readonly unknown[]): number => values.length;

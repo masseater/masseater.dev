@@ -18,15 +18,15 @@ const Session = Schema.Struct({
   files: Schema.Array(FileSummary),
 });
 
-const Sessions = Schema.Struct({ sessions: Schema.Array(Session) });
+export const Sessions = Schema.Struct({ sessions: Schema.Array(Session) });
 
-type SessionValue = typeof Session.Type;
+export type SessionValue = typeof Session.Type;
 
 const KIB = 1024;
 
 const MIN_KB = 1;
 
-const sizeOf = (session: SessionValue): string => {
+export const sizeOf = (session: SessionValue): string => {
   const bytes = pipe(
     session.files,
     Arr.map((file) => file.bytes),
@@ -35,8 +35,5 @@ const sizeOf = (session: SessionValue): string => {
   return `${String(Math.max(MIN_KB, Math.round(bytes / KIB)))} KB`;
 };
 
-const placeOf = (session: SessionValue): string =>
+export const placeOf = (session: SessionValue): string =>
   pipe(session.cwd, Str.split("/"), Arr.lastNonEmpty);
-
-export { Sessions, placeOf, sizeOf };
-export type { SessionValue };

@@ -49,7 +49,7 @@ const scannerRules = (domain: string): Ruleset.Rule[] => {
   }));
 };
 
-type EdgeGuardProps = Readonly<{ appName: string; domain: string }>;
+export type EdgeGuardProps = Readonly<{ appName: string; domain: string }>;
 
 const honeypot = Effect.fn("honeypot")(function* honeypot({ appName, domain }: EdgeGuardProps) {
   const HONEYPOT = yield* AnalyticsEngine.Dataset("Honeypot", {
@@ -67,7 +67,7 @@ const honeypot = Effect.fn("honeypot")(function* honeypot({ appName, domain }: E
   });
 });
 
-const edgeGuard = Effect.fn("edgeGuard")(function* edgeGuard(props: EdgeGuardProps) {
+export const edgeGuard = Effect.fn("edgeGuard")(function* edgeGuard(props: EdgeGuardProps) {
   const zone = yield* Zone.Zone("Zone", { name: props.domain }).pipe(adopt(true));
   yield* Ruleset.Ruleset("ScannerBlock", {
     zone,
@@ -78,7 +78,4 @@ const edgeGuard = Effect.fn("edgeGuard")(function* edgeGuard(props: EdgeGuardPro
   return yield* honeypot(props);
 });
 
-type HoneypotEnv = InferEnv<ReturnType<typeof honeypot>>;
-
-export type { EdgeGuardProps, HoneypotEnv };
-export { edgeGuard };
+export type HoneypotEnv = InferEnv<ReturnType<typeof honeypot>>;

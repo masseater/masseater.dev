@@ -6,7 +6,7 @@ const MINUTE_END = 16;
 
 const JST = { hours: 9 } as const;
 
-const jstMinute = (iso: string): string =>
+export const jstMinute = (iso: string): string =>
   pipe(
     DateTime.make(iso),
     Option.map((time) =>
@@ -20,5 +20,3 @@ const jstMinute = (iso: string): string =>
     ),
     Option.getOrElse(() => iso),
   );
-
-export { jstMinute };

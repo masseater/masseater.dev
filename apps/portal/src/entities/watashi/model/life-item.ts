@@ -4,7 +4,7 @@ import { TimeOut } from "#/shared/model";
 
 const Names = Schema.Array(Schema.String);
 
-const LifeItem = Schema.Struct({
+export const LifeItem = Schema.Struct({
   ref: Schema.String,
   source: Schema.String,
   text: Schema.optionalKey(Schema.String),
@@ -24,9 +24,9 @@ const LifeItem = Schema.Struct({
   tags: Schema.optionalKey(Names),
 });
 
-const LifePage = Schema.Struct({ total: Schema.Int, items: Schema.Array(LifeItem) });
+export const LifePage = Schema.Struct({ total: Schema.Int, items: Schema.Array(LifeItem) });
 
-type LifeItemValue = typeof LifeItem.Type;
+export type LifeItemValue = typeof LifeItem.Type;
 
 const RECORD_LABELS: Readonly<Record<string, string>> = {
   life_event: "出来事",
@@ -41,9 +41,9 @@ const RECORD_LABELS: Readonly<Record<string, string>> = {
 
 const recordOf = (ref: string): string => pipe(ref, Str.split(":"), Arr.headNonEmpty);
 
-const recordLabel = (ref: string): string => RECORD_LABELS[recordOf(ref)] ?? recordOf(ref);
+export const recordLabel = (ref: string): string => RECORD_LABELS[recordOf(ref)] ?? recordOf(ref);
 
-const headline = (item: LifeItemValue): string =>
+export const headline = (item: LifeItemValue): string =>
   pipe(
     [item.text, item.title, item.statement, item.name],
     Arr.map(Option.fromUndefinedOr),
@@ -51,7 +51,7 @@ const headline = (item: LifeItemValue): string =>
     Option.getOrElse(() => item.ref),
   );
 
-const labelsOf = (item: LifeItemValue): readonly string[] =>
+export const labelsOf = (item: LifeItemValue): readonly string[] =>
   Arr.getSomes([
     Option.fromUndefinedOr(item.kind),
     Option.fromUndefinedOr(item.mediaType),
@@ -61,6 +61,3 @@ const labelsOf = (item: LifeItemValue): readonly string[] =>
     ...pipe(item.people ?? [], Arr.map(Option.some)),
     ...pipe(item.tags ?? [], Arr.map(Option.some)),
   ]);
-
-export { LifeItem, LifePage, headline, labelsOf, recordLabel };
-export type { LifeItemValue };

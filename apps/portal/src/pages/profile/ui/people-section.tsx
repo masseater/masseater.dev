@@ -8,7 +8,9 @@ import { PersonRow } from "./person-row";
 
 const TITLE = "よく会う人";
 
-const PeopleSection = ({ people }: Readonly<{ people: readonly PersonValue[] }>): ReactNode =>
+export const PeopleSection = ({
+  people,
+}: Readonly<{ people: readonly PersonValue[] }>): ReactNode =>
   Arr.isReadonlyArrayNonEmpty(people) && (
     <Section title={TITLE}>
       <RowList label={TITLE}>
@@ -19,5 +21,3 @@ const PeopleSection = ({ people }: Readonly<{ people: readonly PersonValue[] }>)
       </RowList>
     </Section>
   );
-
-export { PeopleSection };

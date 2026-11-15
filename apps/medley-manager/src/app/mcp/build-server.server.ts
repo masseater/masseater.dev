@@ -14,7 +14,7 @@ import { registerReadTools } from "./read-tools.server.ts";
 
 const SERVER_INFO = { name: "medley-manager", version: "0.0.0", websiteUrl: SITE_ORIGIN };
 
-const buildServer = (): McpServer =>
+export const buildServer = (): McpServer =>
   pipe(
     new McpServer(SERVER_INFO),
     registerReadTools,
@@ -24,5 +24,3 @@ const buildServer = (): McpServer =>
     registerVideoTools,
     registerPartTools,
   );
-
-export { buildServer };

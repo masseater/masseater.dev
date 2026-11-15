@@ -89,11 +89,9 @@ const namedOf = (input: MemoryReadValue): Effect.Effect<Option.Option<Named>, In
       ),
   });
 
-const readMemory = (input: MemoryReadValue): Effect.Effect<Body, StoreFailure> => {
+export const readMemory = (input: MemoryReadValue): Effect.Effect<Body, StoreFailure> => {
   const named = readNamed(input);
   return namedOf(input).pipe(
     Effect.flatMap(Option.match({ onNone: () => searchNamed(input), onSome: named })),
   );
 };
-
-export { readMemory };

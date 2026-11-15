@@ -7,7 +7,7 @@ import { Row } from "#/shared/ui";
 
 const TIMES = "回";
 
-const PersonRow = ({ person }: Readonly<{ person: PersonValue }>): ReactNode => (
+export const PersonRow = ({ person }: Readonly<{ person: PersonValue }>): ReactNode => (
   <Row lead={person.lastMet ?? ""}>
     <p className="font-display text-lg font-light">{person.name}</p>
     <p className="text-foreground/50 text-xs tabular-nums">{`${String(person.count)}${TIMES}`}</p>
@@ -21,5 +21,3 @@ const PersonRow = ({ person }: Readonly<{ person: PersonValue }>): ReactNode => 
     )}
   </Row>
 );
-
-export { PersonRow };

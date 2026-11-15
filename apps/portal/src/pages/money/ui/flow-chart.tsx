@@ -22,7 +22,7 @@ const LINK = { stroke: "var(--foreground)", strokeOpacity: 0.12 } as const;
 
 const asYen = (value: unknown): string => yen(Number(value));
 
-const FlowChart = ({
+export const FlowChart = ({
   flow,
   title,
 }: Readonly<{ flow: MoneyFlowValue; title: string }>): ReactNode => {
@@ -49,5 +49,3 @@ const FlowChart = ({
     </ResponsiveContainer>
   );
 };
-
-export { FlowChart };

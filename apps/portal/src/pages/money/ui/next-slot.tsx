@@ -5,7 +5,7 @@ import type { PeriodValue } from "#/entities/money";
 
 import { NextLink } from "./next-link";
 
-const NextSlot = ({
+export const NextSlot = ({
   next,
   period,
 }: Readonly<{ next: Option.Option<string>; period: PeriodValue }>): ReactNode =>
@@ -13,5 +13,3 @@ const NextSlot = ({
     onNone: () => false,
     onSome: (cursor) => <NextLink cursor={cursor} period={period} />,
   });
-
-export { NextSlot };

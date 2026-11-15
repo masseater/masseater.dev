@@ -8,7 +8,7 @@ import { TimelineRow } from "./timeline-row";
 
 const LABEL = "年表";
 
-const TimelinePage = (): ReactNode => (
+export const TimelinePage = (): ReactNode => (
   <RowList label={LABEL}>
     {pipe(
       useTimeline(),
@@ -16,5 +16,3 @@ const TimelinePage = (): ReactNode => (
     )}
   </RowList>
 );
-
-export { TimelinePage };

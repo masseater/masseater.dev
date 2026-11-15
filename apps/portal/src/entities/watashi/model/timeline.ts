@@ -12,11 +12,11 @@ const PersonalEvent = Schema.Struct({
   topics: Schema.Array(Schema.String),
 });
 
-const PersonalTimeline = Schema.Array(PersonalEvent);
+export const PersonalTimeline = Schema.Array(PersonalEvent);
 
 type PersonalEventValue = typeof PersonalEvent.Type;
 
-type TimelineEntry = Readonly<{
+export type TimelineEntry = Readonly<{
   key: string;
   when: string;
   order: string;
@@ -66,7 +66,7 @@ const fromLife = (item: LifeItemValue): readonly TimelineEntry[] =>
 
 const byOrder = Order.mapInput(Str.Order, (entry: TimelineEntry) => entry.order);
 
-const mergeTimeline = ({
+export const mergeTimeline = ({
   personal,
   life,
 }: Readonly<{
@@ -74,6 +74,3 @@ const mergeTimeline = ({
   life: readonly LifeItemValue[];
 }>): readonly TimelineEntry[] =>
   pipe([...fromPersonal(personal), ...pipe(life, Arr.flatMap(fromLife))], Arr.sortBy(byOrder));
-
-export { PersonalTimeline, mergeTimeline };
-export type { TimelineEntry };

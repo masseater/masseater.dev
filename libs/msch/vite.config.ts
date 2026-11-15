@@ -7,7 +7,7 @@ export default defineConfig({
     lint: {
       overrides: [
         {
-          files: ["src/oxlint.ts"],
+          files: ["src/app/oxlint.ts"],
           rules: {
             "node/no-sync": "off",
             "effecttsgo/node-builtin-import": "off",
@@ -15,7 +15,7 @@ export default defineConfig({
           },
         },
         {
-          files: ["src/comments.ts"],
+          files: ["src/features/comments/model/comments.ts"],
           rules: { "effecttsgo/node-builtin-import": "off" },
         },
       ],
@@ -27,11 +27,12 @@ export default defineConfig({
   },
   pack: {
     entry: {
-      cli: "src/cli.ts",
-      oxlint: "src/oxlint.ts",
-      lint: "src/lint/index.ts",
-      "decision-rules": "src/lint/decision-rules.ts",
-      "workspace-settings": "src/workspace-settings.ts",
+      cli: "src/app/cli.ts",
+      oxlint: "src/app/oxlint.ts",
+      lint: "src/features/lint-preset/index.ts",
+      "decision-rules": "src/features/lint-preset/config/decision-rules.ts",
+      "inline-exports": "src/features/inline-exports/index.ts",
+      "workspace-settings": "src/features/workspace-settings/index.ts",
     },
     platform: "node",
     sourcemap: true,

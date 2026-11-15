@@ -14,7 +14,5 @@ const conversationOf = (value: Input): Effect.Effect<unknown, ToolFailure> =>
     onSome: (sessionId) => readConversation(readRequestOf({ input: value, sessionId })),
   });
 
-const conversationRead = (input: unknown): Effect.Effect<unknown, ToolFailure> =>
+export const conversationRead = (input: unknown): Effect.Effect<unknown, ToolFailure> =>
   decoded(ReadInput)(input).pipe(Effect.flatMap(conversationOf));
-
-export { conversationRead };

@@ -8,7 +8,7 @@ const letters = toWavyLetters(NAME);
 
 const logoStyle: CSSProperties = { "--n": NAME.length };
 
-const PortalLogo = (): ReactNode => (
+export const PortalLogo = (): ReactNode => (
   <Link
     aria-label={NAME}
     className="stage font-display inline-block shrink-0 text-2xl whitespace-nowrap select-none sm:text-3xl"
@@ -21,5 +21,3 @@ const PortalLogo = (): ReactNode => (
     <WavyLetters letters={letters} />
   </Link>
 );
-
-export { PortalLogo };

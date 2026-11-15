@@ -87,7 +87,7 @@ const xmlUnitsOf = (text: string): readonly Unit[] => {
   return units;
 };
 
-const xmlParser: Parser = {
+export const xmlParser: Parser = {
   format: "xml",
   extensions: [
     ".xml",
@@ -106,5 +106,3 @@ const xmlParser: Parser = {
   accepts: looksLikeXml,
   unitsOf: xmlUnitsOf,
 };
-
-export { xmlParser };

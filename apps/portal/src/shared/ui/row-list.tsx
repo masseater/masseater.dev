@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const RowList = ({
+export const RowList = ({
   children,
   label,
 }: Readonly<{ children: ReactNode; label: string }>): ReactNode => (
@@ -8,5 +8,3 @@ const RowList = ({
     {children}
   </ul>
 );
-
-export { RowList };

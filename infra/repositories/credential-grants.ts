@@ -60,17 +60,10 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "geigeki-kaiiki": "deploy",
   konomi: "deploy",
   "masseater.dev": "deploy",
-  "masseater.dev/decision-experiments": "deploy",
   "masseater.dev/exposure": "exposure",
-  "masseater.dev/kikite": "access",
   "masseater.dev/zone": "transforms",
   "masseater.dev/mcp-portal": "access",
-  "masseater.dev/money": "access",
-  "masseater.dev/plamo-translate": "access",
-  "masseater.dev/portal": "access",
-  "masseater.dev/yohaku-sync": "access",
-  "masseater.dev/sundries": "access",
-  "masseater.dev/twilog-mcp": "access",
+  "masseater.dev/production": "access",
   "masseater.dev/workers-builds-logs": "buildsLogs",
   mirucord: "deploy",
   msa: "deploy",
@@ -79,7 +72,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
 
 type PermissionLevel = "read" | "write";
 
-const GITHUB_APP_PERMISSIONS = {
+export const GITHUB_APP_PERMISSIONS = {
   actions: "read",
   administration: "write",
   secrets: "write",
@@ -90,7 +83,7 @@ const GITHUB_APP_PERMISSIONS = {
   metadata: "read",
 } as const satisfies Readonly<Record<string, PermissionLevel>>;
 
-type GitHubGrant = Readonly<{
+export type GitHubGrant = Readonly<{
   permissions: Readonly<Record<string, string>>;
   repositories?: readonly string[];
 }>;
@@ -107,7 +100,7 @@ const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
   },
 ];
 
-const [, MASSEATER_DEV_GITHUB_GRANT] = releaseGrant("masseater.dev");
+export const [, MASSEATER_DEV_GITHUB_GRANT] = releaseGrant("masseater.dev");
 
 const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
   "masseater.dev/exposure": { permissions: { metadata: "read" } },
@@ -139,7 +132,7 @@ const BOT_PERMISSIONS = {
   metadata: "read",
 } as const satisfies Readonly<Record<string, PermissionLevel>>;
 
-const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+export const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "autofix.yml": BOT_PERMISSIONS,
   "skills-lock.yml": BOT_PERMISSIONS,
   "update-branches.yml": BOT_PERMISSIONS,
@@ -152,7 +145,7 @@ const ATPROTO_GRANTS: readonly string[] = ["masseater.dev"];
 const ACCOUNT_SCOPE = "com.cloudflare.api.account";
 const ZONE_SCOPE = "com.cloudflare.api.account.zone";
 
-type Policy = Readonly<{
+export type Policy = Readonly<{
   effect: "allow";
   permissionGroups: readonly Readonly<{ id: string }>[];
   resources: Readonly<Record<string, "*">>;
@@ -180,7 +173,7 @@ const policy = (
   resources: { [resource]: "*" },
 });
 
-type Grants = Readonly<{
+export type Grants = Readonly<{
   profiles: Readonly<Record<string, readonly Policy[]>>;
   repositories: Readonly<Record<string, string>>;
   github: Readonly<Record<string, GitHubGrant>>;
@@ -188,7 +181,7 @@ type Grants = Readonly<{
   atproto: readonly string[];
 }>;
 
-const grantPolicies = ({
+export const grantPolicies = ({
   accountId,
   zoneId,
 }: Readonly<{ accountId: string; zoneId: string }>): Grants => ({
@@ -210,21 +203,14 @@ const grantPolicies = ({
   atproto: ATPROTO_GRANTS,
 });
 
-type GrantBindings = Readonly<{
+export type GrantBindings = Readonly<{
   GRANT_PROFILES: Grants["profiles"];
   GRANTS: Omit<Grants, "profiles">;
 }>;
 
-const grantBindings = (ids: Readonly<{ accountId: string; zoneId: string }>): GrantBindings => {
+export const grantBindings = (
+  ids: Readonly<{ accountId: string; zoneId: string }>,
+): GrantBindings => {
   const { profiles, ...grants } = grantPolicies(ids);
   return { GRANT_PROFILES: profiles, GRANTS: grants };
 };
-
-export {
-  GITHUB_APP_PERMISSIONS,
-  MASSEATER_DEV_GITHUB_GRANT,
-  WORKFLOW_GITHUB_GRANTS,
-  grantBindings,
-  grantPolicies,
-};
-export type { GitHubGrant, GrantBindings, Grants, Policy };

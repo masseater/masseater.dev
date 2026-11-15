@@ -9,7 +9,7 @@ const TEXT_CHUNK = 33_554_432;
 const NAME_OVERLAP = 4096;
 const PARENT = "..";
 
-interface Folder {
+export interface Folder {
   readonly path: string;
   readonly recursive: boolean;
 }
@@ -26,7 +26,9 @@ const isMaterialName = hasExtension(MATERIAL_EXTENSION);
 const isNeeded = (name: string): boolean => kindOf(name) === "texture" || isCompanion(name);
 
 /** @internal */
-const bundleFolder = Effect.fn("bundleFolder")(function* bundleFolderOf(packagePath: string) {
+export const bundleFolder = Effect.fn("bundleFolder")(function* bundleFolderOf(
+  packagePath: string,
+) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const info = yield* fileSystem.stat(packagePath);
@@ -78,7 +80,7 @@ const readCompanion = Effect.fn("readCompanion")(function* readCompanionFile(
 });
 
 /** @internal */
-const mentionedIn = Effect.fn("mentionedIn")(function* mentionedIn({
+export const mentionedIn = Effect.fn("mentionedIn")(function* mentionedIn({
   bytes,
   names,
 }: {
@@ -91,7 +93,7 @@ const mentionedIn = Effect.fn("mentionedIn")(function* mentionedIn({
 });
 
 /** @internal */
-const companionNamesOf = Effect.fn("companionNamesOf")(function* companionNamesOfModel(
+export const companionNamesOf = Effect.fn("companionNamesOf")(function* companionNamesOfModel(
   folder: Folder,
   model: Uint8Array,
 ) {
@@ -112,7 +114,7 @@ const companionNamesOf = Effect.fn("companionNamesOf")(function* companionNamesO
 });
 
 /** @internal */
-const companionsOf = Effect.fn("companionsOf")(function* companionsOfModel(
+export const companionsOf = Effect.fn("companionsOf")(function* companionsOfModel(
   folder: Folder,
   model: Uint8Array,
 ) {
@@ -124,7 +126,7 @@ const companionsOf = Effect.fn("companionsOf")(function* companionsOfModel(
 });
 
 /** @internal */
-const companionPath = Effect.fn("companionPath")(function* companionPathIn(
+export const companionPath = Effect.fn("companionPath")(function* companionPathIn(
   folder: Folder,
   name: string,
 ) {
@@ -138,6 +140,3 @@ const companionPath = Effect.fn("companionPath")(function* companionPathIn(
     (folder.recursive || path.dirname(relative) === SAME_FOLDER);
   return Option.liftPredicate(resolved, () => inside);
 });
-
-export { bundleFolder, companionNamesOf, companionPath, companionsOf, mentionedIn };
-export type { Folder };

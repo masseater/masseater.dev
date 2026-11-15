@@ -4,7 +4,10 @@ import { deckUrl, pdfUrl } from "#/entities/slides";
 
 const PDF = "PDF";
 
-const DeckTitle = ({ file, title }: Readonly<{ file: string; title: string }>): ReactNode => (
+export const DeckTitle = ({
+  file,
+  title,
+}: Readonly<{ file: string; title: string }>): ReactNode => (
   <div className="flex items-baseline justify-between gap-4">
     <a
       className="font-display hover:text-foreground/70 min-w-0 text-lg font-light transition-colors"
@@ -17,5 +20,3 @@ const DeckTitle = ({ file, title }: Readonly<{ file: string; title: string }>): 
     </a>
   </div>
 );
-
-export { DeckTitle };

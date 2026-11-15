@@ -17,6 +17,4 @@ const client = createIsomorphicFn()
   .server(() => serverClient<CredentialsRoutes>(loadCredentialsHandle))
   .client(() => browserClient<CredentialsRoutes>());
 
-const credentialsQueries = createQueries<CredentialsRoutes>(client()).api.credentials;
-
-export { credentialsQueries };
+export const credentialsQueries = createQueries<CredentialsRoutes>(client()).api.credentials;

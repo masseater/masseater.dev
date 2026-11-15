@@ -2,9 +2,9 @@ import { isSplitChoice } from "bench-summary/schema";
 
 import type { ModelResult, TaskResult } from "./summary";
 
-const SPLIT_MARK = "*";
+export const SPLIT_MARK = "*";
 
-const displayLabel = ({
+export const displayLabel = ({
   model,
   result,
 }: Readonly<{ model: ModelResult; result: TaskResult }>): string => {
@@ -13,5 +13,3 @@ const displayLabel = ({
   }
   return model.label;
 };
-
-export { displayLabel, SPLIT_MARK };

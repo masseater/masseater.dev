@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 const ACTIVE = "bg-foreground text-background border-foreground";
 const IDLE = "hover:bg-muted text-muted-foreground";
 
-const ChoiceButton = <Value extends string>({
+export const ChoiceButton = <Value extends string>({
   value,
   text,
   selected,
@@ -34,5 +34,3 @@ const ChoiceButton = <Value extends string>({
     </button>
   );
 };
-
-export { ChoiceButton };

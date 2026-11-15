@@ -1,8 +1,6 @@
 import { COPY } from "#/shared/config";
 
-const SAMPLES = [
+export const SAMPLES = [
   { name: "receipt.png", label: COPY.receipt },
   { name: "invoice.png", label: COPY.invoice },
 ] as const;
-
-export { SAMPLES };

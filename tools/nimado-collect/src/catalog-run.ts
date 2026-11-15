@@ -131,7 +131,7 @@ const applyActivity = (
 };
 
 /** @internal */
-const updateCatalog = Effect.fn("catalog.update")(function* updateFrom<
+export const updateCatalog = Effect.fn("catalog.update")(function* updateFrom<
   Failure,
   Services,
   SaveFailure,
@@ -170,5 +170,3 @@ const updateCatalog = Effect.fn("catalog.update")(function* updateFrom<
       }).pipe(Effect.withSpan("catalog.crawl", { attributes: { start, budget } })),
   });
 });
-
-export { updateCatalog };

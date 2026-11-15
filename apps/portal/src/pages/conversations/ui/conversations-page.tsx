@@ -8,7 +8,7 @@ import { SessionRow } from "./session-row";
 
 const LABEL = "Claude Code の会話";
 
-const ConversationsPage = (): ReactNode => (
+export const ConversationsPage = (): ReactNode => (
   <RowList label={LABEL}>
     {pipe(
       useSessions(),
@@ -16,5 +16,3 @@ const ConversationsPage = (): ReactNode => (
     )}
   </RowList>
 );
-
-export { ConversationsPage };

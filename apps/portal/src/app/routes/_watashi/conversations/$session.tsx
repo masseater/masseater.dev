@@ -4,7 +4,7 @@ import { Schema } from "effect";
 import { ConversationSearch } from "#/entities/watashi";
 import { ConversationPage, loadConversationPage } from "#/pages/conversation";
 
-const Route = createFileRoute("/_watashi/conversations/$session")({
+export const Route = createFileRoute("/_watashi/conversations/$session")({
   validateSearch: Schema.toStandardSchemaV1(ConversationSearch),
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps, params }) =>
@@ -15,5 +15,3 @@ const Route = createFileRoute("/_watashi/conversations/$session")({
     }),
   component: ConversationPage,
 });
-
-export { Route };

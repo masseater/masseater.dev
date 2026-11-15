@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-type Note = Readonly<{ icon: ReactNode; text: string }>;
+export type Note = Readonly<{ icon: ReactNode; text: string }>;
 
-const NoteList = ({ notes }: Readonly<{ notes: readonly Note[] }>): ReactNode => (
+export const NoteList = ({ notes }: Readonly<{ notes: readonly Note[] }>): ReactNode => (
   <ul className="text-muted-foreground flex flex-col gap-1.5 text-sm">
     {pipe(
       notes,
@@ -19,6 +19,3 @@ const NoteList = ({ notes }: Readonly<{ notes: readonly Note[] }>): ReactNode =>
     )}
   </ul>
 );
-
-export { NoteList };
-export type { Note };

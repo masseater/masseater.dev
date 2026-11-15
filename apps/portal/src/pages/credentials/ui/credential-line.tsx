@@ -9,7 +9,7 @@ const ACTIONS: Readonly<
   login: { stored: "ログインし直す", missing: "ログインする" },
 };
 
-const CredentialLine = ({ state }: Readonly<{ state: CredentialState }>): ReactNode => (
+export const CredentialLine = ({ state }: Readonly<{ state: CredentialState }>): ReactNode => (
   <div className="flex items-baseline justify-between gap-4">
     <p className="min-w-0 font-mono text-sm break-all">{state.id}</p>
     <a
@@ -23,5 +23,3 @@ const CredentialLine = ({ state }: Readonly<{ state: CredentialState }>): ReactN
     </a>
   </div>
 );
-
-export { CredentialLine };

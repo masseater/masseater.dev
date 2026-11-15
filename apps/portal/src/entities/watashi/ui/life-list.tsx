@@ -6,7 +6,7 @@ import { RowList } from "#/shared/ui";
 
 import { LifeRow } from "./life-row";
 
-const LifeList = ({
+export const LifeList = ({
   items,
   label,
 }: Readonly<{ items: readonly LifeItemValue[]; label: string }>): ReactNode => (
@@ -17,5 +17,3 @@ const LifeList = ({
     )}
   </RowList>
 );
-
-export { LifeList };

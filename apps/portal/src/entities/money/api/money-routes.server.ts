@@ -42,7 +42,7 @@ const overview = (input: PeriodInputValue): Effect.Effect<OverviewValue, PortalF
     return { period, asOf, ...reports };
   });
 
-const moneyRoutes = createRouter("/api/money")
+export const moneyRoutes = createRouter("/api/money")
   .get("/overview", ({ query }) => respond(overview(query)), {
     query: Schema.toStandardSchemaV1(PeriodInput),
   })
@@ -55,7 +55,4 @@ const moneyRoutes = createRouter("/api/money")
     { query: Schema.toStandardSchemaV1(TransactionsInput) },
   );
 
-type MoneyRoutes = typeof moneyRoutes;
-
-export { moneyRoutes };
-export type { MoneyRoutes };
+export type MoneyRoutes = typeof moneyRoutes;

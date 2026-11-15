@@ -4,7 +4,7 @@ import { Effect } from "effect";
 
 import type { Missing } from "#/entities/entry/model/entry";
 
-const foundOrNotFound = <Found extends Readonly<{ status: "found" }>>(
+export const foundOrNotFound = <Found extends Readonly<{ status: "found" }>>(
   result: Found | Missing,
 ): Effect.Effect<Found, NotFoundError> => {
   if (result.status === "missing") {
@@ -12,5 +12,3 @@ const foundOrNotFound = <Found extends Readonly<{ status: "found" }>>(
   }
   return Effect.succeed(result);
 };
-
-export { foundOrNotFound };

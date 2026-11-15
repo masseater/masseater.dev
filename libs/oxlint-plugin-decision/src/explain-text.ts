@@ -5,13 +5,13 @@ import { toJson } from "./runtime.ts";
 import type { Verdict } from "./types.ts";
 
 const DECIMALS = 2;
-interface ExplainQuestion {
+export interface ExplainQuestion {
   readonly id: string;
   readonly question: string;
   readonly probabilities: Readonly<Record<string, number>>;
 }
 
-interface Explanation {
+export interface Explanation {
   readonly file: string;
   readonly line: number;
   readonly column: number;
@@ -72,7 +72,7 @@ const servedText = (served: string | undefined): string =>
     onSome: (id) => ` (served ${id})`,
   });
 
-const asText = (explanation: Explanation): string =>
+export const asText = (explanation: Explanation): string =>
   pipe(
     [
       `${PREFIX} explain: ${explanation.file}:${String(explanation.line)}:${String(explanation.column)} [${explanation.rule}] ${explanation.model}${servedText(explanation.served)} cached=${cachedText(explanation.cached)} ${String(explanation.durationMs)}ms`,
@@ -88,6 +88,3 @@ const asText = (explanation: Explanation): string =>
     ],
     Arr.join("\n"),
   );
-
-export { asText };
-export type { ExplainQuestion, Explanation };

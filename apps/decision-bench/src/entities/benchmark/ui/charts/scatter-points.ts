@@ -23,13 +23,13 @@ const PLOT_WIDTH = 330;
 const PLOT_HEIGHT = 170;
 const NO_SPOT: LabelSpot = { dx: ORIGIN, dy: ORIGIN, ring: "near" };
 
-const LATENCY_AXIS: Axis = {
+export const LATENCY_AXIS: Axis = {
   name: "p50 ms",
   domain: [ORIGIN, (max) => Math.ceil((max * HEADROOM) / LATENCY_STEP) * LATENCY_STEP],
   format: String,
 };
 
-const COST_AXIS: Axis = {
+export const COST_AXIS: Axis = {
   name: "USD",
   domain: [
     ORIGIN,
@@ -69,7 +69,7 @@ const spotsOf = ({
   );
 };
 
-const scatterPoints = ({
+export const scatterPoints = ({
   entries: all,
   axis,
   measureOf,
@@ -105,5 +105,3 @@ const scatterPoints = ({
     }),
   );
 };
-
-export { COST_AXIS, LATENCY_AXIS, scatterPoints };

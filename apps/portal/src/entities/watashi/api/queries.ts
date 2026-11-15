@@ -17,6 +17,4 @@ const client = createIsomorphicFn()
   .server(() => serverClient<WatashiRoutes>(loadWatashiHandle))
   .client(() => browserClient<WatashiRoutes>());
 
-const watashiQueries = createQueries<WatashiRoutes>(client()).api.watashi;
-
-export { watashiQueries };
+export const watashiQueries = createQueries<WatashiRoutes>(client()).api.watashi;

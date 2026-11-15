@@ -11,7 +11,7 @@ const SHOWN = "本文";
 const leadOf = (revision: RevisionValue): string =>
   `${shownTime(revision.at)} r${String(revision.rev)} ${revision.op} ${revision.actor}`;
 
-const RevisionRow = ({
+export const RevisionRow = ({
   memo,
   revision,
 }: Readonly<{ memo: MemoValue; revision: RevisionValue }>): ReactNode => (
@@ -26,5 +26,3 @@ const RevisionRow = ({
     <RestoreButton memo={memo} rev={revision.rev} />
   </Row>
 );
-
-export { RevisionRow };

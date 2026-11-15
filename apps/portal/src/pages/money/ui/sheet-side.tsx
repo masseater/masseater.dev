@@ -6,7 +6,7 @@ import type { SheetLine as Line } from "#/pages/money/model/sheet";
 
 import { SheetLine } from "./sheet-line";
 
-const SheetSide = ({
+export const SheetSide = ({
   accounts,
   lines,
   title,
@@ -25,5 +25,3 @@ const SheetSide = ({
     </dl>
   </div>
 );
-
-export { SheetSide };

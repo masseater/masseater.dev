@@ -6,7 +6,7 @@ import type { PeriodValue } from "#/entities/money";
 
 const FIRST = "最初から";
 
-const FirstLink = ({ period }: Readonly<{ period: PeriodValue }>): ReactNode => {
+export const FirstLink = ({ period }: Readonly<{ period: PeriodValue }>): ReactNode => {
   const search = useMemo(() => ({ from: period.from, to: period.to }), [period]);
   return (
     <Link className="stage-link" search={search} to="/money">
@@ -14,5 +14,3 @@ const FirstLink = ({ period }: Readonly<{ period: PeriodValue }>): ReactNode => 
     </Link>
   );
 };
-
-export { FirstLink };

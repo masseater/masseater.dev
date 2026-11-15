@@ -12,14 +12,15 @@ import { Array, Effect, Option, Record, Stream, String, pipe } from "effect";
 import type { ClaudeStatus, OnboardingStep, Release, Yohaku } from "#/shared/api";
 
 import { DRAFT, EMOTION, INGESTED, REWRITE } from "./fake-data.test.support.ts";
+import { revisionCalls } from "./fake-revisions.test.support.ts";
 import { updateCalls } from "./fake-update.test.support.ts";
 
 type ManuscriptType = typeof Manuscript.Type;
-type Paragraphs = readonly (typeof Paragraph.Type)[];
+export type Paragraphs = readonly (typeof Paragraph.Type)[];
 type SourceType = typeof Source.Type;
 
 const MEMO_SPACE = "　";
-const IDEA = "ネタ：";
+export const IDEA = "ネタ：";
 const NEVER = 0;
 const SYNCED_AT = 1_794_472_200_000;
 const SIGNED_OUT: typeof SyncStatus.Type = {
@@ -30,15 +31,15 @@ const SIGNED_OUT: typeof SyncStatus.Type = {
 };
 const NO_TITLE = Option.getOrNull(Option.none<ManuscriptType["title"]>());
 const ALL_STEPS: readonly OnboardingStep[] = ["setup", "idea-hint", "source-hint"];
-const READY: ClaudeStatus = { installed: true, loggedIn: true };
+export const READY: ClaudeStatus = { installed: true, loggedIn: true };
 
-type Setup = Partial<{
+export type Setup = Partial<{
   claude: ClaudeStatus;
   onboarding: readonly OnboardingStep[];
   release: Release;
 }>;
 
-interface Calls {
+export interface Calls {
   readonly reactions: (typeof Reaction.Type)[];
   readonly dismissed: string[];
   readonly saved: Paragraphs[];
@@ -244,7 +245,7 @@ const writingCalls = ({
     }),
 });
 
-type Fake = Readonly<{ yohaku: Yohaku; calls: Readonly<Calls> }>;
+export type Fake = Readonly<{ yohaku: Yohaku; calls: Readonly<Calls> }>;
 
 const built = (sources: readonly (typeof Source.Type)[], setup: Setup): Fake => {
   const calls: Calls = { reactions: [], dismissed: [], saved: [], opened: [] };
@@ -283,14 +284,11 @@ const built = (sources: readonly (typeof Source.Type)[], setup: Setup): Fake => 
       ...writingCalls(backing),
       ...onboardingCalls(backing),
       ...updateCalls(Option.fromUndefinedOr(setup.release)),
-      exportManuscript: () => Effect.succeed(true),
+      ...revisionCalls(),
     },
   };
 };
 
-const fakeYohaku = (sources: readonly (typeof Source.Type)[]): Fake => built(sources, {});
+export const fakeYohaku = (sources: readonly (typeof Source.Type)[]): Fake => built(sources, {});
 
-const fakeWith = (setup: Setup): Fake => built([], setup);
-
-export { IDEA, READY, fakeWith, fakeYohaku };
-export type { Calls, Fake, Paragraphs, Setup };
+export const fakeWith = (setup: Setup): Fake => built([], setup);

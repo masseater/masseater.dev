@@ -42,7 +42,7 @@ const amountOf = (payload: FlowNodeProps["payload"]): number =>
     Option.getOrElse(() => NONE),
   );
 
-const FlowNode = ({
+export const FlowNode = ({
   nodes,
   x = NONE,
   y = NONE,
@@ -77,5 +77,3 @@ const FlowNode = ({
       ),
     }),
   );
-
-export { FlowNode };

@@ -17,6 +17,4 @@ const client = createIsomorphicFn()
   .server(() => serverClient<SlidesRoutes>(loadSlidesHandle))
   .client(() => browserClient<SlidesRoutes>());
 
-const slidesQueries = createQueries<SlidesRoutes>(client()).api.slides;
-
-export { slidesQueries };
+export const slidesQueries = createQueries<SlidesRoutes>(client()).api.slides;

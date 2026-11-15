@@ -11,7 +11,7 @@ const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]
 
 const services = Layer.mergeAll(logger, FetchHttpClient.layer);
 
-class ClaudeRoutine extends WorkerEntrypoint<AppStoreEnv> implements ClaudeRoutineRpc {
+export class ClaudeRoutine extends WorkerEntrypoint<AppStoreEnv> implements ClaudeRoutineRpc {
   public register(routine: unknown): Promise<boolean> {
     return runner(services)(registerRoutine({ env: this.env, routine }));
   }
@@ -20,5 +20,3 @@ class ClaudeRoutine extends WorkerEntrypoint<AppStoreEnv> implements ClaudeRouti
     return runner(services)(fireRoutine(this.env));
   }
 }
-
-export { ClaudeRoutine };

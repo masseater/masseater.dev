@@ -12,7 +12,7 @@ const TEXT = { description: "説明", content: "本文", save: "保存" } as con
 const FIELD =
   "border-foreground/20 focus-visible:border-foreground w-full border-b bg-transparent py-2 outline-none";
 
-const MemoEditor = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
+export const MemoEditor = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
   const save = useChangeMemo();
   const submit = useCallback(
     (event: SubmitEvent<HTMLFormElement>) => {
@@ -50,5 +50,3 @@ const MemoEditor = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
     </form>
   );
 };
-
-export { MemoEditor };

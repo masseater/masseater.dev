@@ -9,10 +9,8 @@ type RecordsLoad = Readonly<{ queryClient: QueryClient; search: RecordsSearchVal
 
 const route = getRouteApi("/_watashi/records");
 
-const loadRecordsPage = ({ queryClient, search }: RecordsLoad): Promise<unknown> =>
+export const loadRecordsPage = ({ queryClient, search }: RecordsLoad): Promise<unknown> =>
   queryClient.query(watashiQueries.records.get.queryOptions(search));
 
-const useRecords = (): readonly LifeItemValue[] =>
+export const useRecords = (): readonly LifeItemValue[] =>
   useSuspenseQuery(watashiQueries.records.get.queryOptions(route.useSearch())).data.items;
-
-export { loadRecordsPage, useRecords };

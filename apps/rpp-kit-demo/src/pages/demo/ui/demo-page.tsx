@@ -6,7 +6,7 @@ import { Arrangement } from "./arrangement";
 import { Hero } from "./hero";
 import { SongCredit } from "./song-credit";
 
-const DemoPage = (): ReactNode => (
+export const DemoPage = (): ReactNode => (
   <main className="mx-auto flex max-w-5xl flex-col gap-12 px-4 py-12 sm:px-6">
     <Hero />
     <Arrangement />
@@ -14,5 +14,3 @@ const DemoPage = (): ReactNode => (
     <Playground />
   </main>
 );
-
-export { DemoPage };

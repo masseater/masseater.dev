@@ -21,7 +21,7 @@ const phaseOf = ({
   return "searching";
 };
 
-const SearchResults = (): ReactNode => {
+export const SearchResults = (): ReactNode => {
   const query = useQueryText();
   const kinds = useKinds();
   const search = useSearch({ query, kinds, packageId: useSelectedPackage() });
@@ -41,5 +41,3 @@ const SearchResults = (): ReactNode => {
   }
   return <Notice tone={view.tone}>{view.text}</Notice>;
 };
-
-export { SearchResults };

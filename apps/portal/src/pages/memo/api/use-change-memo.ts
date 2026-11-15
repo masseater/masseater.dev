@@ -6,12 +6,10 @@ import type { MemoChangeValue } from "#/entities/watashi";
 
 type Written = Readonly<{ written: readonly string[] }>;
 
-const useChangeMemo = (): UseMutationResult<Written, Error, MemoChangeValue> => {
+export const useChangeMemo = (): UseMutationResult<Written, Error, MemoChangeValue> => {
   const client = useQueryClient();
   return useMutation({
     ...watashiQueries.memos.post.mutationOptions(),
     onSuccess: () => client.invalidateQueries(),
   });
 };
-
-export { useChangeMemo };

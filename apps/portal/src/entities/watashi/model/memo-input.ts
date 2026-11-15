@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-const MemoKey = Schema.Struct({ project: Schema.String, name: Schema.String });
+export const MemoKey = Schema.Struct({ project: Schema.String, name: Schema.String });
 
 const MemoEdit = Schema.Struct({
   project: Schema.String,
@@ -22,7 +22,7 @@ const MemoRestore = Schema.Struct({
   restoreTo: Schema.Int,
 });
 
-const MemoChange = Schema.Union([MemoEdit, MemoRetract, MemoRestore]);
+export const MemoChange = Schema.Union([MemoEdit, MemoRetract, MemoRestore]);
 
 const Revision = Schema.Struct({
   rev: Schema.Int,
@@ -35,15 +35,12 @@ const Revision = Schema.Struct({
   }),
 });
 
-const Revisions = Schema.Struct({ ref: Schema.String, revisions: Schema.Array(Revision) });
+export const Revisions = Schema.Struct({ ref: Schema.String, revisions: Schema.Array(Revision) });
 
-const Written = Schema.Struct({ written: Schema.Array(Schema.String) });
+export const Written = Schema.Struct({ written: Schema.Array(Schema.String) });
 
-type MemoKeyValue = typeof MemoKey.Type;
+export type MemoKeyValue = typeof MemoKey.Type;
 
-type MemoChangeValue = typeof MemoChange.Type;
+export type MemoChangeValue = typeof MemoChange.Type;
 
-type RevisionValue = typeof Revision.Type;
-
-export { MemoChange, MemoKey, Revisions, Written };
-export type { MemoChangeValue, MemoKeyValue, RevisionValue };
+export type RevisionValue = typeof Revision.Type;

@@ -3,11 +3,11 @@ import { Array as Arr, pipe } from "effect";
 
 import type { InspectEvent } from "#/entities/inspection/api/inspect-events";
 
-type Answer =
+export type Answer =
   | { readonly status: "pending" }
   | (Probe & { readonly status: "answered"; readonly answeredAt: number });
 
-interface Row {
+export interface Row {
   readonly id: number;
   readonly depth: number;
   readonly start: number;
@@ -16,12 +16,12 @@ interface Row {
   readonly answer: Answer;
 }
 
-type Phase =
+export type Phase =
   | { readonly status: "running" }
   | { readonly status: "done"; readonly detection: Detection }
   | { readonly status: "failed"; readonly reason: string };
 
-interface Trace {
+export interface Trace {
   readonly rows: readonly Row[];
   readonly phase: Phase;
   readonly elapsed: number;
@@ -62,13 +62,10 @@ const step = (trace: Trace, event: InspectEvent): Trace => {
   return { ...trace, elapsed, phase: { status: "failed", reason: event.reason } };
 };
 
-const traceOf = (events: readonly InspectEvent[]): Trace => {
+export const traceOf = (events: readonly InspectEvent[]): Trace => {
   let trace: Trace = { rows: [], phase: { status: "running" }, elapsed: START };
   for (const event of events) {
     trace = step(trace, event);
   }
   return trace;
 };
-
-export type { Answer, Phase, Row, Trace };
-export { traceOf };

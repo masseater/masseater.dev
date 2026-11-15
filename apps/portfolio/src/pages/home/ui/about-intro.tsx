@@ -5,7 +5,7 @@ import { site } from "#/shared/config";
 
 const AVATAR_SIZE = 64;
 
-const AboutIntro = (): ReactNode => (
+export const AboutIntro = (): ReactNode => (
   <header className="flex flex-col gap-6">
     <h2 className="font-display text-5xl font-light sm:text-7xl" id={`${ABOUT_ID}-title`}>
       {ABOUT_TITLE}
@@ -22,5 +22,3 @@ const AboutIntro = (): ReactNode => (
     </div>
   </header>
 );
-
-export { AboutIntro };

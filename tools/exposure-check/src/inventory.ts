@@ -1,10 +1,10 @@
-type AccessPolicy = Readonly<{
+export type AccessPolicy = Readonly<{
   name: string;
   decision: string;
   include: readonly string[];
 }>;
 
-type AccessApp = Readonly<{
+export type AccessApp = Readonly<{
   name: string;
   type: string;
   destinations: readonly string[];
@@ -13,28 +13,28 @@ type AccessApp = Readonly<{
   oauth: boolean;
 }>;
 
-type WorkerScript = Readonly<{
+export type WorkerScript = Readonly<{
   name: string;
   workersDev: boolean;
   previews: boolean;
   storage: readonly string[];
 }>;
 
-type CustomDomain = Readonly<{ hostname: string; service: string }>;
+export type CustomDomain = Readonly<{ hostname: string; service: string }>;
 
-type WorkerRoute = Readonly<{ pattern: string; script: string }>;
+export type WorkerRoute = Readonly<{ pattern: string; script: string }>;
 
-type Bucket = Readonly<{ name: string; devUrl: boolean; customDomains: readonly string[] }>;
+export type Bucket = Readonly<{ name: string; devUrl: boolean; customDomains: readonly string[] }>;
 
-type DnsRecord = Readonly<{ name: string; type: string; content: string; proxied: boolean }>;
+export type DnsRecord = Readonly<{ name: string; type: string; content: string; proxied: boolean }>;
 
-type McpServer = Readonly<{ name: string; url: string }>;
+export type McpServer = Readonly<{ name: string; url: string }>;
 
-type PagesProject = Readonly<{ name: string; domains: readonly string[] }>;
+export type PagesProject = Readonly<{ name: string; domains: readonly string[] }>;
 
-type Repository = Readonly<{ id: string; name: string; private: boolean }>;
+export type Repository = Readonly<{ id: string; name: string; private: boolean }>;
 
-type Inventory = Readonly<{
+export type Inventory = Readonly<{
   zones: readonly string[];
   workersSubdomain: string;
   apps: readonly AccessApp[];
@@ -47,17 +47,3 @@ type Inventory = Readonly<{
   pages: readonly PagesProject[];
   repositories: readonly Repository[];
 }>;
-
-export type {
-  AccessApp,
-  AccessPolicy,
-  Bucket,
-  CustomDomain,
-  DnsRecord,
-  Inventory,
-  McpServer,
-  PagesProject,
-  Repository,
-  WorkerRoute,
-  WorkerScript,
-};

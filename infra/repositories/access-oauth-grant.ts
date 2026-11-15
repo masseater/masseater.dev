@@ -19,25 +19,25 @@ const Grant = Schema.Struct({
 
 const GrantJson = Schema.fromJsonString(Grant);
 
-type AccessGrant = typeof Grant.Type;
+export type AccessGrant = typeof Grant.Type;
 
-type StoredGrant = Readonly<{ stored: string; grant: AccessGrant }>;
+export type StoredGrant = Readonly<{ stored: string; grant: AccessGrant }>;
 
-type GrantSwap = Readonly<{
+export type GrantSwap = Readonly<{
   env: AppStoreEnv;
   site: OAuthTargetId;
   expected: Option.Option<string>;
   grant: AccessGrant;
 }>;
 
-const grantKey = (site: OAuthTargetId): string => `access_oauth_grant:${site}`;
+export const grantKey = (site: OAuthTargetId): string => `access_oauth_grant:${site}`;
 
-type IssuedTokens = Readonly<{
+export type IssuedTokens = Readonly<{
   tokens: Readonly<Pick<TokenEndpointResponse, "access_token" | "refresh_token" | "expires_in">>;
   previous: Option.Option<string>;
 }>;
 
-const grantFrom = ({
+export const grantFrom = ({
   tokens,
   previous,
 }: IssuedTokens): Effect.Effect<AccessGrant, AccessOAuthFailed> =>
@@ -57,7 +57,7 @@ const grantFrom = ({
     };
   });
 
-const readGrant = ({
+export const readGrant = ({
   env,
   site,
 }: Readonly<{ env: AppStoreEnv; site: OAuthTargetId }>): Effect.Effect<
@@ -80,7 +80,7 @@ const readGrant = ({
     ),
   );
 
-const saveGrant = ({
+export const saveGrant = ({
   env,
   site,
   expected,
@@ -95,6 +95,3 @@ const saveGrant = ({
     ),
     Effect.mapError(failed),
   );
-
-export { grantFrom, grantKey, readGrant, saveGrant };
-export type { AccessGrant, GrantSwap, IssuedTokens, StoredGrant };

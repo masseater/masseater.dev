@@ -250,7 +250,7 @@ const bindableAccess = (
 const isExportsAliasAccess = (binding: FileBinding, left: AccessExpression): boolean =>
   isIdentifier(left.expression) && isExportsOrModuleExportsOrAlias(binding, left.expression);
 
-const bindSpecialPropertyAssignment: {
+export const bindSpecialPropertyAssignment: {
   (node: BinaryExpression, scope: Scope): (binding: FileBinding) => void;
   (binding: FileBinding, node: BinaryExpression, scope: Scope): void;
 } = Fn.dual(
@@ -268,7 +268,7 @@ const bindSpecialPropertyAssignment: {
   },
 );
 
-const bindObjectDefinePropertyAssignment: {
+export const bindObjectDefinePropertyAssignment: {
   (call: CallExpression, scope: Scope): (binding: FileBinding) => void;
   (binding: FileBinding, call: CallExpression, scope: Scope): void;
 } = Fn.dual(
@@ -282,5 +282,3 @@ const bindObjectDefinePropertyAssignment: {
     bindExpandoMember(binding, call, namespaceFor(binding, target, isTopLevel));
   },
 );
-
-export { bindObjectDefinePropertyAssignment, bindSpecialPropertyAssignment };

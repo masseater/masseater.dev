@@ -14,7 +14,7 @@ const STARTED = 0;
 
 const progressAtom = Atom.make(Option.none<number>());
 
-const useRelease = (): Option.Option<Release> => {
+export const useRelease = (): Option.Option<Release> => {
   const yohaku = useYohaku();
   const { data } = useQuery(
     queryOptions({
@@ -26,13 +26,13 @@ const useRelease = (): Option.Option<Release> => {
   return Option.flatten(Option.fromNullishOr(data));
 };
 
-type Installing = Readonly<{
+export type Installing = Readonly<{
   install: () => void;
   progress: Option.Option<number>;
   failed: boolean;
 }>;
 
-const useInstall = (): Installing => {
+export const useInstall = (): Installing => {
   const yohaku = useYohaku();
   const [progress, setProgress] = useAtom(progressAtom);
   const installing = useCallback(() => {
@@ -53,6 +53,3 @@ const useInstall = (): Installing => {
   }, [mutate]);
   return { install, progress, failed: isError };
 };
-
-export { useInstall, useRelease };
-export type { Installing };

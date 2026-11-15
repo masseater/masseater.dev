@@ -11,7 +11,7 @@ import { FailedNote } from "./failed-note";
 
 const TEXT = { reason: "取り消す理由", retract: "取り消す" } as const;
 
-const MemoRetract = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
+export const MemoRetract = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
   const navigate = useNavigate();
   const retract = useChangeMemo();
   const submit = useCallback(
@@ -57,5 +57,3 @@ const MemoRetract = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
     </form>
   );
 };
-
-export { MemoRetract };

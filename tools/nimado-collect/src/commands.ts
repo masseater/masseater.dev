@@ -16,7 +16,7 @@ const CHECKPOINT_REQUESTS = 100;
 const EPOCH = "0000-00-00";
 
 /** @internal */
-const stateFlag = Flag.String("state").pipe(Flag.withDefault(".state"));
+export const stateFlag = Flag.String("state").pipe(Flag.withDefault(".state"));
 
 const collectCatalog = Effect.fn("collect.catalog")(function* collectCatalog(state: string) {
   const catalog = yield* loadCatalog(state);
@@ -79,10 +79,8 @@ const tolerate =
     );
 
 /** @internal */
-const collectAll = Effect.fn("collect.all")(function* collectAll(state: string) {
+export const collectAll = Effect.fn("collect.all")(function* collectAll(state: string) {
   yield* tolerate("catalog")(collectCatalog(state));
   yield* tolerate("nico")(collectNico(state));
   yield* tolerate("youtube")(collectYoutube(state));
 });
-
-export { collectAll, stateFlag };

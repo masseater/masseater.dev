@@ -10,7 +10,7 @@ const PINCH_POINTERS = 2;
 const FIRST = 0;
 const SECOND = 1;
 
-interface PointerInput {
+export interface PointerInput {
   readonly id: string;
   readonly point: Point;
   readonly now: number;
@@ -40,7 +40,7 @@ const startPinch = (scene: Scene): Scene =>
     }),
   });
 
-const pointerDown =
+export const pointerDown =
   ({ id, point, now }: PointerInput): Step =>
   (scene) => {
     const pressed = { ...scene, motion: STILL, pointers: Record.set(scene.pointers, id, point) };
@@ -96,7 +96,7 @@ const trackPointer = (scene: Scene, id: string, point: Point): Scene => {
   return scene;
 };
 
-const pointerMove =
+export const pointerMove =
   ({ id, point }: Readonly<{ id: string; point: Point }>): Step =>
   (scene) => {
     const moved = trackPointer(scene, id, point);
@@ -111,7 +111,7 @@ const pointerMove =
     );
   };
 
-const pointerUp =
+export const pointerUp =
   ({ id, point, now }: PointerInput): Step =>
   (scene) => {
     const released = { ...scene, pointers: Record.remove(scene.pointers, id), gesture: NO_GESTURE };
@@ -122,7 +122,4 @@ const pointerUp =
     return released;
   };
 
-const leave: Step = (scene) => ({ ...scene, hover: Option.none() });
-
-export { leave, pointerDown, pointerMove, pointerUp };
-export type { PointerInput };
+export const leave: Step = (scene) => ({ ...scene, hover: Option.none() });

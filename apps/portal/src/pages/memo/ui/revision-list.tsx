@@ -8,7 +8,7 @@ import { RevisionRow } from "./revision-row";
 
 const LABEL = "履歴";
 
-const RevisionList = ({
+export const RevisionList = ({
   memo,
   revisions,
 }: Readonly<{ memo: MemoValue; revisions: readonly RevisionValue[] }>): ReactNode => (
@@ -19,5 +19,3 @@ const RevisionList = ({
     )}
   </RowList>
 );
-
-export { RevisionList };

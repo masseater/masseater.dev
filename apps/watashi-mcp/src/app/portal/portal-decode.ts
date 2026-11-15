@@ -5,9 +5,7 @@ import { InvalidRecord } from "#/shared/api";
 const invalid = ({ message }: Readonly<{ message: string }>): InvalidRecord =>
   InvalidRecord.make({ message });
 
-const decoded =
+export const decoded =
   <Codec extends Schema.Top & { readonly DecodingServices: never }>(schema: Codec) =>
   (input: unknown): Effect.Effect<Codec["Type"], InvalidRecord> =>
     Schema.decodeUnknownEffect(schema)(input).pipe(Effect.mapError(invalid));
-
-export { decoded };

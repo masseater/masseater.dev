@@ -8,7 +8,7 @@ import { PortalNavItem } from "./portal-nav-item";
 
 const LABEL = "セクション";
 
-const PortalNav = (): ReactNode => {
+export const PortalNav = (): ReactNode => {
   const matched = useRouterState({
     select: (state) =>
       pipe(
@@ -34,5 +34,3 @@ const PortalNav = (): ReactNode => {
     </nav>
   );
 };
-
-export { PortalNav };

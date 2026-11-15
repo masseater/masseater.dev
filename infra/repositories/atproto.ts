@@ -9,7 +9,7 @@ import type { SealFailed } from "./sealed-value.ts";
 
 const ATPROTO_DID = "did:plc:sz2kxumpsjbch3kgnsjjed5z";
 const ATPROTO_SERVICE = "https://bsky.social";
-const APP_PASSWORD_KEY = "atp_app_password";
+export const APP_PASSWORD_KEY = "atp_app_password";
 const ATTEMPTS_KEY = "atp_attempts";
 const APP_PASSWORD_PATH = "/atproto/app-password";
 const NO_CONTENT = 204;
@@ -94,7 +94,10 @@ const submit = (request: Request, env: AppStoreEnv): Effect.Effect<Response> =>
     ),
   );
 
-const atprotoRoute = ({ request, env }: RouteInput): Option.Option<Effect.Effect<Response>> =>
+export const atprotoRoute = ({
+  request,
+  env,
+}: RouteInput): Option.Option<Effect.Effect<Response>> =>
   pipe(
     Option.liftPredicate(
       request,
@@ -109,7 +112,7 @@ const readAppPassword = (env: AppStoreEnv): Effect.Effect<Option.Option<string>>
     Effect.catchTag("SealFailed", () => Effect.succeedNone),
   );
 
-const issueAppPassword = ({
+export const issueAppPassword = ({
   env,
   granted,
 }: Readonly<{ env: AppStoreEnv; granted: boolean }>): Effect.Effect<
@@ -125,5 +128,3 @@ const issueAppPassword = ({
         ),
     }),
   );
-
-export { APP_PASSWORD_KEY, atprotoRoute, issueAppPassword };

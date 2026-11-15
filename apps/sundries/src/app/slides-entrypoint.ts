@@ -19,12 +19,10 @@ const searched = (query: string, limit: number): Effect.Effect<PortalResult> =>
     }),
   );
 
-class Slides extends WorkerEntrypoint implements SlidesRpc {
+export class Slides extends WorkerEntrypoint implements SlidesRpc {
   public search(query: string, limit: number): Promise<PortalResult> {
     return runLogged(
       searched(query, limit).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })),
     );
   }
 }
-
-export { Slides };

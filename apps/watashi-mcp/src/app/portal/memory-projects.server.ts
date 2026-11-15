@@ -11,7 +11,7 @@ const NOT_RETRACTED = "";
 
 const lastUpdated = max(memory.updatedAt);
 
-const memoryProjects: Effect.Effect<Body, StorageFailed> = query(() =>
+export const memoryProjects: Effect.Effect<Body, StorageFailed> = query(() =>
   db
     .select({ project: memory.project, memos: count(), updatedAt: lastUpdated })
     .from(memory)
@@ -30,5 +30,3 @@ const memoryProjects: Effect.Effect<Body, StorageFailed> = query(() =>
     ),
   })),
 );
-
-export { memoryProjects };

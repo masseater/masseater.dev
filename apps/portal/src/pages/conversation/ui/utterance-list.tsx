@@ -8,7 +8,7 @@ import { UtteranceRow } from "./utterance-row";
 
 const TEXT = { label: "持ち主の発言", empty: "発言はない" } as const;
 
-const UtteranceList = ({
+export const UtteranceList = ({
   utterances,
 }: Readonly<{ utterances: readonly UtteranceValue[] }>): ReactNode =>
   Arr.match(utterances, {
@@ -22,5 +22,3 @@ const UtteranceList = ({
       </RowList>
     ),
   });
-
-export { UtteranceList };

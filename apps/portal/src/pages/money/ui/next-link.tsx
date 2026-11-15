@@ -6,7 +6,7 @@ import type { PeriodValue } from "#/entities/money";
 
 const MORE = "続き";
 
-const NextLink = ({
+export const NextLink = ({
   cursor,
   period,
 }: Readonly<{ cursor: string; period: PeriodValue }>): ReactNode => {
@@ -17,5 +17,3 @@ const NextLink = ({
     </Link>
   );
 };
-
-export { NextLink };

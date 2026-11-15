@@ -8,7 +8,8 @@ const LIBRARY = /\.(?:so(?:\.\d+)*|dylib|dll)$/u;
 
 const decoder = new TextDecoder("latin1");
 
-type Directories = Readonly<{ llama: string; licenses: string }>;
+/** @internal */
+export type Directories = Readonly<{ llama: string; licenses: string }>;
 
 type Link = Readonly<{ link: string; target: string }>;
 
@@ -140,15 +141,11 @@ const keepServer = Effect.fn("closure.keepServer")(function* keepServer(llama: s
   );
 });
 
-const keepServerClosure = Effect.fn("closure.keepServerClosure")(function* keepServerClosure(
+/** @internal */
+export const keepServerClosure = Effect.fn("closure.keepServerClosure")(function* keepServerClosure(
   directories: Directories,
 ) {
   yield* moveLicenses(directories);
   yield* flattenLinks(directories.llama);
   yield* keepServer(directories.llama);
 });
-
-/** @internal */
-export { keepServerClosure };
-/** @internal */
-export type { Directories };

@@ -8,7 +8,7 @@ import type { SheetLine as Line } from "#/pages/money/model/sheet";
 
 import { AccountLine } from "./account-line";
 
-const SheetLine = ({
+export const SheetLine = ({
   accounts,
   line,
 }: Readonly<{ accounts: readonly AccountBalanceValue[]; line: Line }>): ReactNode => (
@@ -23,5 +23,3 @@ const SheetLine = ({
     )}
   </div>
 );
-
-export { SheetLine };

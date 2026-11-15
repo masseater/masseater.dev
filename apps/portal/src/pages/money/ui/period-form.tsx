@@ -9,7 +9,7 @@ const ACTION = "/money";
 const FIELD =
   "border-foreground/20 focus-visible:border-foreground w-24 border-b bg-transparent py-1 font-display text-sm tabular-nums outline-none";
 
-const PeriodForm = ({ period }: Readonly<{ period: PeriodValue }>): ReactNode => (
+export const PeriodForm = ({ period }: Readonly<{ period: PeriodValue }>): ReactNode => (
   <form action={ACTION} className="flex flex-wrap items-end gap-4" method="get">
     <input
       aria-label={TEXT.from}
@@ -39,5 +39,3 @@ const PeriodForm = ({ period }: Readonly<{ period: PeriodValue }>): ReactNode =>
     </button>
   </form>
 );
-
-export { PeriodForm };

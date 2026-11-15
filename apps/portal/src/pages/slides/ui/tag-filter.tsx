@@ -10,7 +10,7 @@ const TEXT = { label: "タグで絞る", all: "すべて" } as const;
 
 const EVERY = Option.none<string>();
 
-const TagFilter = ({
+export const TagFilter = ({
   decks,
   tag,
 }: Readonly<{ decks: readonly DeckValue[]; tag: Option.Option<string> }>): ReactNode => (
@@ -31,5 +31,3 @@ const TagFilter = ({
     </ul>
   </nav>
 );
-
-export { TagFilter };

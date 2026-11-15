@@ -16,7 +16,7 @@ const serviceClass = {
   stopped: "cascade-service cascade-service-stopped",
 } as const satisfies Record<Status, string>;
 
-const CascadeService = ({ id, data }: Readonly<NodeProps<ServiceNode>>): ReactNode => {
+export const CascadeService = ({ id, data }: Readonly<NodeProps<ServiceNode>>): ReactNode => {
   const update = useUpdateCascade();
   const toggle = useCallback(() => {
     update(clicked(id));
@@ -40,5 +40,3 @@ const CascadeService = ({ id, data }: Readonly<NodeProps<ServiceNode>>): ReactNo
     </>
   );
 };
-
-export { CascadeService };

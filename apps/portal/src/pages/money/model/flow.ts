@@ -3,7 +3,7 @@ import type { SankeyData } from "recharts";
 
 import type { FlowNodeValue, MoneyFlowValue } from "#/entities/money";
 
-type Placement = Readonly<{ anchor: "start" | "end"; side: "left" | "right" }>;
+export type Placement = Readonly<{ anchor: "start" | "end"; side: "left" | "right" }>;
 
 const ROW_HEIGHT = 34;
 
@@ -11,7 +11,7 @@ const MIN_HEIGHT = 280;
 
 const MISSING = -1;
 
-const FILLS: Readonly<Record<FlowNodeValue["nodeType"], string>> = {
+export const FILLS: Readonly<Record<FlowNodeValue["nodeType"], string>> = {
   income: "var(--chart-income)",
   "income-sub": "var(--chart-income)",
   total: "var(--foreground)",
@@ -23,7 +23,7 @@ const LEFT: Placement = { anchor: "start", side: "left" };
 
 const RIGHT: Placement = { anchor: "end", side: "right" };
 
-const PLACEMENTS: Readonly<Record<FlowNodeValue["nodeType"], Placement>> = {
+export const PLACEMENTS: Readonly<Record<FlowNodeValue["nodeType"], Placement>> = {
   income: LEFT,
   "income-sub": LEFT,
   total: LEFT,
@@ -33,7 +33,7 @@ const PLACEMENTS: Readonly<Record<FlowNodeValue["nodeType"], Placement>> = {
 
 const onRight = (node: FlowNodeValue): boolean => PLACEMENTS[node.nodeType].side === "right";
 
-const sankeyInput = (flow: MoneyFlowValue): SankeyData => {
+export const sankeyInput = (flow: MoneyFlowValue): SankeyData => {
   const indexOf = (id: string): number =>
     pipe(
       Arr.findFirstIndex(flow.nodes, (node) => node.id === id),
@@ -55,10 +55,7 @@ const sankeyInput = (flow: MoneyFlowValue): SankeyData => {
   };
 };
 
-const flowHeight = (flow: MoneyFlowValue): number => {
+export const flowHeight = (flow: MoneyFlowValue): number => {
   const right = pipe(flow.nodes, Arr.filter(onRight)).length;
   return Math.max(MIN_HEIGHT, Math.max(flow.nodes.length - right, right) * ROW_HEIGHT);
 };
-
-export { FILLS, PLACEMENTS, flowHeight, sankeyInput };
-export type { Placement };

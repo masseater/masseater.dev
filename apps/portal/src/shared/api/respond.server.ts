@@ -7,7 +7,7 @@ import type { PortalFailed } from "./portal-failed";
 
 const BAD_GATEWAY = 502;
 
-type UpstreamDown = ElysiaCustomStatusResponse<
+export type UpstreamDown = ElysiaCustomStatusResponse<
   typeof BAD_GATEWAY,
   Readonly<{ errorTag: string; text: string }>
 >;
@@ -23,7 +23,9 @@ const downOf = ({
     Effect.as(status(BAD_GATEWAY, { errorTag, text })),
   );
 
-const respond = <Body>(effect: Effect.Effect<Body, PortalFailed>): Promise<Body | UpstreamDown> =>
+export const respond = <Body>(
+  effect: Effect.Effect<Body, PortalFailed>,
+): Promise<Body | UpstreamDown> =>
   runRequest(
     effect.pipe(
       Effect.matchEffect({
@@ -32,6 +34,3 @@ const respond = <Body>(effect: Effect.Effect<Body, PortalFailed>): Promise<Body 
       }),
     ),
   );
-
-export { respond };
-export type { UpstreamDown };

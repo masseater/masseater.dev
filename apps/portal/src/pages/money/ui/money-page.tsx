@@ -17,7 +17,7 @@ const TEXT = {
   transactions: "取引",
 } as const;
 
-const MoneyPage = (): ReactNode => {
+export const MoneyPage = (): ReactNode => {
   const overview = useOverview();
   return (
     <div className="flex flex-col gap-12">
@@ -37,5 +37,3 @@ const MoneyPage = (): ReactNode => {
     </div>
   );
 };
-
-export { MoneyPage };

@@ -8,7 +8,7 @@ import { danmakuLanes } from "#/pages/home/lib/danmaku";
 
 import { DanmakuLane } from "./danmaku-lane";
 
-const Danmaku = (): ReactNode => {
+export const Danmaku = (): ReactNode => {
   const { data: songs } = useSuspenseQuery(songsQuery);
   const lanes = useMemo(
     () =>
@@ -34,5 +34,3 @@ const Danmaku = (): ReactNode => {
     </div>
   );
 };
-
-export { Danmaku };

@@ -16,7 +16,8 @@ import { monthlyTotals } from "#/features/report/model/monthly";
 
 import { categoryTotals, dayTotals, listTransactions } from "./report-store";
 
-const REPORT_TOOLS = [
+/** @internal */
+export const REPORT_TOOLS = [
   tool({
     name: "list_transactions",
     description:
@@ -58,7 +59,5 @@ const REPORT_TOOLS = [
   }),
 ];
 
-const registerReportTools = registerAll(REPORT_TOOLS);
-
 /** @internal */
-export { REPORT_TOOLS, registerReportTools };
+export const registerReportTools = registerAll(REPORT_TOOLS);

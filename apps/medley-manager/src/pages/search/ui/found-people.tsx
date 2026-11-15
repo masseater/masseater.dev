@@ -6,7 +6,7 @@ import { SectionHeading } from "#/shared/ui/section-heading";
 
 import { PersonPill } from "./person-pill";
 
-const FoundPeople = (): ReactNode => {
+export const FoundPeople = (): ReactNode => {
   const { people } = useSearchResults();
   return (
     <section className="flex flex-col gap-4">
@@ -20,5 +20,3 @@ const FoundPeople = (): ReactNode => {
     </section>
   );
 };
-
-export { FoundPeople };

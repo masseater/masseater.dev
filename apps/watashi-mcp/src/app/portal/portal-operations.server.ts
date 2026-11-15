@@ -11,16 +11,14 @@ import { decoded } from "./portal-decode";
 
 const ownerWrite = writeMemory({ actor: PORTAL_ACTOR });
 
-const lifeRead: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
+export const lifeRead: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
   decoded(LifeReadInput)(input).pipe(Effect.flatMap(routeLifeRead));
 
-const memoryRead: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
+export const memoryRead: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
   decoded(MemoryReadInput)(input).pipe(Effect.flatMap(readMemory));
 
-const memoryWrite: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
+export const memoryWrite: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
   decoded(MemoryWriteInput)(input).pipe(Effect.flatMap(ownerWrite));
 
-const profile: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
+export const profile: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
   decoded(WatashiProfileInput)(input).pipe(Effect.flatMap(watashiProfile));
-
-export { lifeRead, memoryRead, memoryWrite, profile };

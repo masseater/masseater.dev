@@ -4,10 +4,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { credentialsQueries } from "#/entities/credentials";
 
-const loadCredentialsPage = (queryClient: QueryClient): Promise<unknown> =>
+export const loadCredentialsPage = (queryClient: QueryClient): Promise<unknown> =>
   queryClient.query(credentialsQueries.get.queryOptions());
 
-const useCredentials = (): readonly CredentialState[] =>
+export const useCredentials = (): readonly CredentialState[] =>
   useSuspenseQuery(credentialsQueries.get.queryOptions()).data;
-
-export { loadCredentialsPage, useCredentials };

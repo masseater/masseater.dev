@@ -22,14 +22,14 @@ const COMPRESSED_FLAG = 1;
 const FIRST_BYTE = 0;
 const ANY_FREE_PORT = 0;
 
-const GrpcStatus = {
+export const GrpcStatus = {
   ok: "0",
   invalidArgument: "3",
   unimplemented: "12",
   unavailable: "14",
 } as const;
 
-const frame = (message: Uint8Array): Uint8Array => {
+export const frame = (message: Uint8Array): Uint8Array => {
   const framed = new Uint8Array(FRAME_HEADER_BYTES + message.length);
   new DataView(framed.buffer).setUint32(LENGTH_OFFSET, message.length);
   framed.set(message, FRAME_HEADER_BYTES);
@@ -97,11 +97,9 @@ const exportCall = (
     ),
   );
 
-const serveGrpc = (store: Store): Effect.Effect<string, never, Scope.Scope> =>
+export const serveGrpc = (store: Store): Effect.Effect<string, never, Scope.Scope> =>
   NodeHttpServer.make(() => createServer(), { port: ANY_FREE_PORT, host: LOOPBACK }).pipe(
     Effect.orDie,
     Effect.tap((server) => server.serve(exportCall(store))),
     Effect.map((server) => originOf(server.address)),
   );
-
-export { GrpcStatus, frame, serveGrpc };

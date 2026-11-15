@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 const PILL =
   "ring-foreground/10 text-foreground/60 hover:text-foreground aria-[current=page]:ring-foreground/60 aria-[current=page]:text-foreground inline-block rounded-full px-3 py-1 ring-1 transition-colors";
 
-const TagItem = ({
+export const TagItem = ({
   active,
   label,
   tag,
@@ -21,5 +21,3 @@ const TagItem = ({
     </li>
   );
 };
-
-export { TagItem };

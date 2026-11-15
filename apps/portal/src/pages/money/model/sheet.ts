@@ -2,7 +2,7 @@ import { Array as Arr, pipe } from "effect";
 
 import type { AccountBalanceValue, BalanceSheetValue } from "#/entities/money";
 
-type SheetLine = Readonly<{ label: string; amount: number; classes: readonly string[] }>;
+export type SheetLine = Readonly<{ label: string; amount: number; classes: readonly string[] }>;
 
 const TEXT = {
   currentAssets: "流動資産",
@@ -18,7 +18,7 @@ const NONE = 0;
 const shown = (line: SheetLine): boolean =>
   line.amount !== NONE || Arr.isReadonlyArrayNonEmpty(line.classes);
 
-const leftLines = (sheet: BalanceSheetValue): readonly SheetLine[] =>
+export const leftLines = (sheet: BalanceSheetValue): readonly SheetLine[] =>
   pipe(
     [
       { label: TEXT.currentAssets, amount: sheet.left.currentAssets, classes: ["current-asset"] },
@@ -28,7 +28,7 @@ const leftLines = (sheet: BalanceSheetValue): readonly SheetLine[] =>
     Arr.filter(shown),
   );
 
-const rightLines = (sheet: BalanceSheetValue): readonly SheetLine[] =>
+export const rightLines = (sheet: BalanceSheetValue): readonly SheetLine[] =>
   pipe(
     [
       {
@@ -46,13 +46,10 @@ const rightLines = (sheet: BalanceSheetValue): readonly SheetLine[] =>
     Arr.filter(shown),
   );
 
-const accountsIn =
+export const accountsIn =
   (line: SheetLine) =>
   (accounts: readonly AccountBalanceValue[]): readonly AccountBalanceValue[] =>
     pipe(
       accounts,
       Arr.filter((account) => Arr.contains(line.classes, account.class)),
     );
-
-export { accountsIn, leftLines, rightLines };
-export type { SheetLine };

@@ -7,7 +7,7 @@ import { useRemoveSource } from "#/features/library/api/queries";
 
 const LABEL = "登録を外す";
 
-const RemoveSourceButton = ({ id }: Readonly<{ id: number }>): ReactNode => {
+export const RemoveSourceButton = ({ id }: Readonly<{ id: number }>): ReactNode => {
   const remove = useRemoveSource();
   const { mutate } = remove;
   const onClick = useCallback(() => {
@@ -26,5 +26,3 @@ const RemoveSourceButton = ({ id }: Readonly<{ id: number }>): ReactNode => {
     </Button>
   );
 };
-
-export { RemoveSourceButton };

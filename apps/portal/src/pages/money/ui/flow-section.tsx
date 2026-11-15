@@ -7,12 +7,10 @@ import { FlowChart } from "./flow-chart";
 
 const TITLE = "お金の流れ";
 
-const FlowSection = ({ flow }: Readonly<{ flow: MoneyFlowValue }>): ReactNode => (
+export const FlowSection = ({ flow }: Readonly<{ flow: MoneyFlowValue }>): ReactNode => (
   <Section title={TITLE}>
     <div className="overflow-x-auto">
       <FlowChart flow={flow} title={TITLE} />
     </div>
   </Section>
 );
-
-export { FlowSection };

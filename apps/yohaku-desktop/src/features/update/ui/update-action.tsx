@@ -6,7 +6,7 @@ import { useInstall } from "#/features/update/api/update.ts";
 import { InstallButton } from "./install-button.tsx";
 import { InstallProgress } from "./install-progress.tsx";
 
-const UpdateAction = (): ReactNode => {
+export const UpdateAction = (): ReactNode => {
   const { install, progress, failed } = useInstall();
   return pipe(
     progress,
@@ -16,5 +16,3 @@ const UpdateAction = (): ReactNode => {
     }),
   );
 };
-
-export { UpdateAction };

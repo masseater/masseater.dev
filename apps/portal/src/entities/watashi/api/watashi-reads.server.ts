@@ -16,7 +16,7 @@ const LIFE_EVENTS = { record: "life_event", order: "time", limit: 1000 } as cons
 
 const OWNER_VIEW = "owner";
 
-const timeline: Effect.Effect<readonly TimelineEntry[], PortalFailed> = Effect.all(
+export const timeline: Effect.Effect<readonly TimelineEntry[], PortalFailed> = Effect.all(
   {
     events: jsonBody({ schema: PersonalTimeline, call: () => personal("/timeline.json") }),
     life: rpcBody({ schema: LifePage, call: () => watashi().lifeRead(LIFE_EVENTS) }),
@@ -24,7 +24,7 @@ const timeline: Effect.Effect<readonly TimelineEntry[], PortalFailed> = Effect.a
   { concurrency: "unbounded" },
 ).pipe(Effect.map(({ events, life }) => mergeTimeline({ personal: events, life: life.items })));
 
-const memoDetail = (
+export const memoDetail = (
   key: MemoKeyValue,
 ): Effect.Effect<
   Readonly<{ memo: readonly MemoValue[]; revisions: readonly RevisionValue[] }>,
@@ -41,12 +41,10 @@ const memoDetail = (
     { concurrency: "unbounded" },
   ).pipe(Effect.map(({ found, history }) => ({ memo: found.items, revisions: history.revisions })));
 
-const conversation = (
+export const conversation = (
   page: Readonly<{ sessionId: string; cursor?: number }>,
 ): Effect.Effect<ConversationValue, PortalFailed> =>
   rpcBody({
     schema: Conversation,
     call: () => watashi().conversationRead({ ...page, view: OWNER_VIEW }),
   });
-
-export { conversation, memoDetail, timeline };

@@ -7,7 +7,7 @@ import type { SessionValue } from "#/entities/watashi";
 import { jstMinute } from "#/shared/model";
 import { Row, TagList } from "#/shared/ui";
 
-const SessionRow = ({ session }: Readonly<{ session: SessionValue }>): ReactNode => {
+export const SessionRow = ({ session }: Readonly<{ session: SessionValue }>): ReactNode => {
   const params = useMemo(() => ({ session: session.sessionId }), [session.sessionId]);
   const tags = useMemo(() => [session.source, sizeOf(session)], [session]);
   return (
@@ -24,5 +24,3 @@ const SessionRow = ({ session }: Readonly<{ session: SessionValue }>): ReactNode
     </Row>
   );
 };
-
-export { SessionRow };

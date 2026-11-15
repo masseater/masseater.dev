@@ -8,7 +8,9 @@ import { MonthRow } from "./month-row";
 
 const LABEL = "月ごとの数字";
 
-const MonthlyTable = ({ months }: Readonly<{ months: readonly MonthTotalValue[] }>): ReactNode => (
+export const MonthlyTable = ({
+  months,
+}: Readonly<{ months: readonly MonthTotalValue[] }>): ReactNode => (
   <details>
     <summary className="font-display text-foreground/50 hover:text-foreground cursor-pointer text-xs tracking-widest">
       {LABEL}
@@ -21,5 +23,3 @@ const MonthlyTable = ({ months }: Readonly<{ months: readonly MonthTotalValue[] 
     </RowList>
   </details>
 );
-
-export { MonthlyTable };

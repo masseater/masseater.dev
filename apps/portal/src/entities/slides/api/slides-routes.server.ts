@@ -12,7 +12,7 @@ import {
 
 const HIT_LIMIT = 20;
 
-const slidesRoutes = createRouter("/api/slides")
+export const slidesRoutes = createRouter("/api/slides")
   .get("/decks", () =>
     respond(jsonBody({ schema: Decks, call: () => personal("/decks/decks.json") })),
   )
@@ -23,7 +23,4 @@ const slidesRoutes = createRouter("/api/slides")
     { query: Schema.toStandardSchemaV1(SearchQuery) },
   );
 
-type SlidesRoutes = typeof slidesRoutes;
-
-export { slidesRoutes };
-export type { SlidesRoutes };
+export type SlidesRoutes = typeof slidesRoutes;

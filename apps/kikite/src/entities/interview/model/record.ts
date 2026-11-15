@@ -15,7 +15,8 @@ import {
   summaryOf,
 } from "./atoms.ts";
 
-const encodeRecord = (record: RecordedSession): Effect.Effect<string> =>
+/** @internal */
+export const encodeRecord = (record: RecordedSession): Effect.Effect<string> =>
   Schema.encodeEffect(Schema.fromJsonString(SessionRecord))(record).pipe(Effect.orDie);
 
 const download = (json: string, name: string): Effect.Effect<void> =>
@@ -27,7 +28,8 @@ const download = (json: string, name: string): Effect.Effect<void> =>
     URL.revokeObjectURL(link.href);
   });
 
-const recordOf = Effect.gen(function* recordOf() {
+/** @internal */
+export const recordOf = Effect.gen(function* recordOf() {
   const state = yield* read(summaryAtom);
   const record: RecordedSession = {
     startedAt: (yield* read(recordingAtom)).startedAt,
@@ -46,7 +48,5 @@ const saveRecord = Effect.gen(function* saveRecord() {
   yield* download(json, `kikite-${DateTime.formatIso(now)}.json`);
 });
 
-const saveAtom = Atom.fn(() => saveRecord);
-
 /** @internal */
-export { encodeRecord, recordOf, saveAtom };
+export const saveAtom = Atom.fn(() => saveRecord);

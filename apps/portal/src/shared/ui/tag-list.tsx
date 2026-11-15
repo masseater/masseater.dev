@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 const LABEL = "タグ";
 
-const TagList = ({ tags }: Readonly<{ tags: readonly string[] }>): ReactNode =>
+export const TagList = ({ tags }: Readonly<{ tags: readonly string[] }>): ReactNode =>
   Arr.isReadonlyArrayNonEmpty(tags) && (
     <ul
       aria-label={LABEL}
@@ -23,5 +23,3 @@ const TagList = ({ tags }: Readonly<{ tags: readonly string[] }>): ReactNode =>
       )}
     </ul>
   );
-
-export { TagList };

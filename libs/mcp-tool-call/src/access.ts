@@ -2,7 +2,11 @@ import { Effect, Option, Schema } from "effect";
 import { jwtVerify } from "jose";
 import type { JWTVerifyGetKey } from "jose";
 
-type AccessVerifier = Readonly<{ keys: JWTVerifyGetKey; teamDomain: string; audience: string }>;
+export type AccessVerifier = Readonly<{
+  keys: JWTVerifyGetKey;
+  teamDomain: string;
+  audience: string;
+}>;
 
 const ACCESS_HEADER = "cf-access-jwt-assertion";
 
@@ -17,10 +21,10 @@ class AccessDenied extends taggedError<AccessDenied, { readonly brand: unique sy
 
 const issuerOf = (teamDomain: string): string => `https://${teamDomain}`;
 
-const certsUrl = (teamDomain: string): URL =>
+export const certsUrl = (teamDomain: string): URL =>
   new URL(`${issuerOf(teamDomain)}/cdn-cgi/access/certs`);
 
-const verifyAccess = Effect.fn("verifyAccess")(function* verifyAccess(
+export const verifyAccess = Effect.fn("verifyAccess")(function* verifyAccess(
   request: Request,
   { keys, teamDomain, audience }: AccessVerifier,
 ) {
@@ -34,6 +38,3 @@ const verifyAccess = Effect.fn("verifyAccess")(function* verifyAccess(
   });
   return payload;
 });
-
-export { certsUrl, verifyAccess };
-export type { AccessVerifier };

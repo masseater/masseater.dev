@@ -8,7 +8,7 @@ import { SessionBar } from "./session-bar.tsx";
 import { TranscriptColumn } from "./transcript-column.tsx";
 import { useTypeAnywhere } from "./type-anywhere.ts";
 
-const SessionView = (): ReactNode => {
+export const SessionView = (): ReactNode => {
   useRunSession();
   useTypeAnywhere();
   return (
@@ -22,5 +22,3 @@ const SessionView = (): ReactNode => {
     </div>
   );
 };
-
-export { SessionView };

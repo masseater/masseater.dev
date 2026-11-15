@@ -11,7 +11,7 @@ import { TagFilter } from "./tag-filter";
 
 const LABEL = "デッキ";
 
-const DeckList = ({ tag }: Readonly<{ tag: Option.Option<string> }>): ReactNode => {
+export const DeckList = ({ tag }: Readonly<{ tag: Option.Option<string> }>): ReactNode => {
   const decks = useDecks();
   return (
     <div className="flex flex-col gap-6">
@@ -26,5 +26,3 @@ const DeckList = ({ tag }: Readonly<{ tag: Option.Option<string> }>): ReactNode 
     </div>
   );
 };
-
-export { DeckList };

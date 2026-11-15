@@ -42,12 +42,10 @@ const checkType =
     });
   };
 
-const checkMediaIds =
+export const checkMediaIds =
   (fail: (message: string) => InvalidRecord) =>
   (body: Body): Effect.Effect<Body, InvalidRecord> =>
     Option.match(pipe(Rec.get(body, "mediaType"), Option.filter(isMediaType)), {
       onNone: () => Effect.succeed(body),
       onSome: checkType(fail, body),
     });
-
-export { checkMediaIds };

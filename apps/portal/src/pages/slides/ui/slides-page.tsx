@@ -11,7 +11,7 @@ const SEARCH = "スライドを探す";
 
 const ACTION = "/slides";
 
-const SlidesPage = (): ReactNode => {
+export const SlidesPage = (): ReactNode => {
   const search = route.useSearch();
   return (
     <div className="flex flex-col gap-8">
@@ -20,5 +20,3 @@ const SlidesPage = (): ReactNode => {
     </div>
   );
 };
-
-export { SlidesPage };

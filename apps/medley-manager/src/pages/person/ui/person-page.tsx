@@ -8,7 +8,7 @@ import { CreditsTable } from "./credits-table";
 
 const KICKER = "✎ 担当者";
 
-const PersonPage = (): ReactNode => {
+export const PersonPage = (): ReactNode => {
   const person = usePerson();
   return (
     <div className="flex flex-col gap-10">
@@ -26,5 +26,3 @@ const PersonPage = (): ReactNode => {
     </div>
   );
 };
-
-export { PersonPage };

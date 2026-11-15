@@ -7,7 +7,7 @@ import type { WikiCategory } from "./categories.ts";
 import { CategoryHeading } from "./category-heading.tsx";
 import type { SloppediaConfig } from "./config.ts";
 
-const CategorySection = ({
+export const CategorySection = ({
   config,
   category,
 }: Readonly<{ config: SloppediaConfig; category: WikiCategory<Article> }>): ReactNode => (
@@ -21,5 +21,3 @@ const CategorySection = ({
     </ul>
   </section>
 );
-
-export { CategorySection };

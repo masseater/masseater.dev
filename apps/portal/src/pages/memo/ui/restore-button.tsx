@@ -6,7 +6,10 @@ import { useChangeMemo } from "#/pages/memo/api/use-change-memo";
 
 const RESTORE = "この版に戻す";
 
-const RestoreButton = ({ memo, rev }: Readonly<{ memo: MemoValue; rev: number }>): ReactNode => {
+export const RestoreButton = ({
+  memo,
+  rev,
+}: Readonly<{ memo: MemoValue; rev: number }>): ReactNode => {
   const restore = useChangeMemo();
   const click = useCallback(() => {
     restore.mutate({ project: memo.project, name: memo.name, restoreTo: rev });
@@ -22,5 +25,3 @@ const RestoreButton = ({ memo, rev }: Readonly<{ memo: MemoValue; rev: number }>
     </button>
   );
 };
-
-export { RestoreButton };

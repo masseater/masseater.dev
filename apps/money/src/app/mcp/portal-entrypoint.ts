@@ -47,12 +47,10 @@ const readWith = (tool: string, input: unknown): Effect.Effect<PortalResult, nev
     }),
   );
 
-class MoneyPortal extends WorkerEntrypoint implements MoneyPortalRpc {
+export class MoneyPortal extends WorkerEntrypoint implements MoneyPortalRpc {
   public read(tool: string, input: unknown): Promise<PortalResult> {
     return runLogged(
       readWith(tool, input).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })),
     );
   }
 }
-
-export { MoneyPortal };

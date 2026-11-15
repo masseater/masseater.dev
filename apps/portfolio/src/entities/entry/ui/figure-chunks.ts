@@ -28,7 +28,7 @@ const started = (name: FigureName): Promise<ReactElement> => {
   return promise;
 };
 
-const importFigure = (name: FigureName): Promise<ReactElement> => {
+export const importFigure = (name: FigureName): Promise<ReactElement> => {
   const figure = figureOf(name);
   if (figure.status === "idle") {
     return started(name);
@@ -39,7 +39,7 @@ const importFigure = (name: FigureName): Promise<ReactElement> => {
   return Promise.resolve(figure.body);
 };
 
-const importedFigure = (name: FigureName): Option.Option<ReactElement> => {
+export const importedFigure = (name: FigureName): Option.Option<ReactElement> => {
   const figure = figureOf(name);
   if (figure.status === "imported") {
     return Option.some(figure.body);
@@ -47,10 +47,8 @@ const importedFigure = (name: FigureName): Option.Option<ReactElement> => {
   return Option.none();
 };
 
-const importFigures: Effect.Effect<void> = Effect.forEach(
+export const importFigures: Effect.Effect<void> = Effect.forEach(
   Rec.keys(chunks),
   (name) => Effect.promise(() => importFigure(name)),
   { discard: true },
 );
-
-export { importFigure, importFigures, importedFigure };

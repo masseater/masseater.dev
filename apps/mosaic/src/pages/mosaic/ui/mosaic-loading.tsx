@@ -1,7 +1,8 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { HEIGHT, LoadingCell, WIDTH } from "./loading-cell";
+import { LoadingCell } from "./loading-cell";
+import { HEIGHT, WIDTH } from "./loading-cell-size";
 
 const LABEL = "読み込み中";
 const SIDE = 3;
@@ -16,7 +17,7 @@ const cells = Array.makeBy(SIDE * SIDE, (index) => ({
   delay: `${((index % SIDE) + Math.floor(index / SIDE)) * STEP_SECONDS}s`,
 }));
 
-const MosaicLoading = (): ReactNode => (
+export const MosaicLoading = (): ReactNode => (
   <output aria-label={LABEL} className="absolute inset-0 grid place-items-center">
     <svg viewBox={VIEW_BOX} className="text-primary w-20" aria-hidden="true">
       {pipe(
@@ -28,5 +29,3 @@ const MosaicLoading = (): ReactNode => (
     </svg>
   </output>
 );
-
-export { MosaicLoading };

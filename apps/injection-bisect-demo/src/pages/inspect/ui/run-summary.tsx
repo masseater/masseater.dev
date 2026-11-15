@@ -64,7 +64,7 @@ const branchesOf = (model: string, sentences: number): number => {
   return branchesFor(sentences);
 };
 
-const RunSummary = ({
+export const RunSummary = ({
   text,
   model,
   format,
@@ -95,5 +95,3 @@ const RunSummary = ({
     </dl>
   </div>
 );
-
-export { RunSummary };

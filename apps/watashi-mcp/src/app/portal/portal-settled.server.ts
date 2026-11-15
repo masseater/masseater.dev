@@ -14,7 +14,7 @@ const failedWith =
       Effect.as<PortalResult>({ status: "failed", errorTag, text }),
     );
 
-const settled =
+export const settled =
   (operation: string) =>
   (run: Effect.Effect<unknown, ToolFailure>): Effect.Effect<PortalResult> =>
     run.pipe(
@@ -24,5 +24,3 @@ const settled =
         onSuccess: (body) => Effect.succeed<PortalResult>({ status: "ok", body }),
       }),
     );
-
-export { settled };

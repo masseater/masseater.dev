@@ -9,11 +9,11 @@ class StorageBlocked extends taggedError<StorageBlocked, { readonly brand: uniqu
   { message: Schema.String },
 ) {}
 
-type Stored = Readonly<{ key: string; value: string }>;
+export type Stored = Readonly<{ key: string; value: string }>;
 
 const blocked = (cause: unknown): StorageBlocked => StorageBlocked.make({ message: String(cause) });
 
-const readStored = (key: string): Option.Option<string> =>
+export const readStored = (key: string): Option.Option<string> =>
   pipe(
     Result.try({
       try: () => globalThis.localStorage.getItem(`${PREFIX}${key}`),
@@ -23,7 +23,7 @@ const readStored = (key: string): Option.Option<string> =>
     Option.flatMap(Option.fromNullishOr),
   );
 
-const writeStored = ({ key, value }: Stored): Effect.Effect<void> =>
+export const writeStored = ({ key, value }: Stored): Effect.Effect<void> =>
   Effect.ignore(
     Effect.try({
       try: () => {
@@ -32,6 +32,3 @@ const writeStored = ({ key, value }: Stored): Effect.Effect<void> =>
       catch: blocked,
     }),
   );
-
-export { readStored, writeStored };
-export type { Stored };

@@ -4,7 +4,7 @@ import type { HttpClient, HttpClientError } from "effect/http";
 import { getJson } from "./client.ts";
 
 const ENDPOINT = "https://snapshot.search.nicovideo.jp/api/v2/snapshot/video/contents/search";
-const BATCH = 100;
+export const NICO_BATCH = 100;
 const CONTEXT = "nimado";
 const BACKOFF_SECONDS = 10;
 const MIN_PAUSE_MILLIS = 500;
@@ -38,7 +38,7 @@ const fetchBatch = (
       targets: "title",
       fields: "contentId,viewCounter",
       _sort: "-viewCounter",
-      _limit: BATCH.toString(),
+      _limit: NICO_BATCH.toString(),
       _context: CONTEXT,
       ...idParams(ids),
     },
@@ -54,9 +54,9 @@ const fetchBatch = (
   );
 
 /** @internal */
-const fetchNicoViews = Effect.fn("niconico.views")(function* nicoViews(ids: readonly string[]) {
-  const batches = yield* pipe(Arr.chunksOf(ids, BATCH), Effect.forEach(fetchBatch));
+export const fetchNicoViews = Effect.fn("niconico.views")(function* nicoViews(
+  ids: readonly string[],
+) {
+  const batches = yield* pipe(Arr.chunksOf(ids, NICO_BATCH), Effect.forEach(fetchBatch));
   return Record.fromEntries(Arr.flatten(batches));
 });
-
-export { BATCH as NICO_BATCH, fetchNicoViews };

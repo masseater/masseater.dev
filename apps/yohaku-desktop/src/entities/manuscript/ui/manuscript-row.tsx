@@ -13,7 +13,7 @@ const nameOf = ({ title, excerpt }: typeof Manuscript.Type): string =>
     Option.match({ onNone: () => excerpt, onSome: ({ text }) => text }),
   );
 
-const ManuscriptRow = ({
+export const ManuscriptRow = ({
   manuscript,
   children,
 }: Readonly<{ manuscript: typeof Manuscript.Type; children: ReactNode }>): ReactNode => {
@@ -22,7 +22,7 @@ const ManuscriptRow = ({
     setScreen(opened(manuscript.id)(screen));
   }, [manuscript.id, screen, setScreen]);
   return (
-    <li className="flex items-center gap-2 border-b">
+    <div className="flex items-center gap-2">
       <button
         className="flex min-w-0 flex-1 flex-col gap-1 py-3 text-left"
         type="button"
@@ -32,8 +32,6 @@ const ManuscriptRow = ({
         <ManuscriptExcerpt manuscript={manuscript} />
       </button>
       {children}
-    </li>
+    </div>
   );
 };
-
-export { ManuscriptRow };

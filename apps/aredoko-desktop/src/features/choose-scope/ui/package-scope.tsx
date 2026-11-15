@@ -5,8 +5,8 @@ import type { ReactNode } from "react";
 
 import { useSelectPackage, useSelectedPackage } from "#/entities/asset";
 
+import { ALL_PACKAGES } from "./all-packages.ts";
 import { ScopeMenu } from "./scope-menu.tsx";
-import { ALL_PACKAGES } from "./scope-option.tsx";
 import { ScopeTrigger } from "./scope-trigger.tsx";
 
 const valueOf = (selected: Option.Option<number>): string =>
@@ -19,7 +19,7 @@ const valueOf = (selected: Option.Option<number>): string =>
 const idOf = (value: string): Option.Option<number> =>
   pipe(Option.some(Number(value)), Option.filter(Number.isInteger));
 
-const PackageScope = (): ReactNode => {
+export const PackageScope = (): ReactNode => {
   const selected = useSelectedPackage();
   const select = useSelectPackage();
   const onValueChange = useCallback(
@@ -35,5 +35,3 @@ const PackageScope = (): ReactNode => {
     </Select.Root>
   );
 };
-
-export { PackageScope };

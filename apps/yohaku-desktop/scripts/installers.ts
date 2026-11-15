@@ -4,7 +4,8 @@ import { Effect, Path } from "effect";
 const COMPONENT = "yohaku";
 const OUTPUT = "installers";
 
-const installers = Effect.gen(function* installers() {
+/** @internal */
+export const installers = Effect.gen(function* installers() {
   const path = yield* Path.Path;
   const target = yield* component(COMPONENT);
   const version = yield* checkedOutVersion(target);
@@ -19,6 +20,3 @@ const installers = Effect.gen(function* installers() {
     dmg: path.join(output, `yohaku_${version}_aarch64.dmg`),
   };
 });
-
-/** @internal */
-export { installers };

@@ -1,7 +1,7 @@
 import { DateTime } from "effect";
 import type { ReactNode } from "react";
 
-const UpdatedNote = ({
+export const UpdatedNote = ({
   label,
   locale,
   date,
@@ -13,5 +13,3 @@ const UpdatedNote = ({
     </time>
   </p>
 );
-
-export { UpdatedNote };

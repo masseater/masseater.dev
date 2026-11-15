@@ -49,7 +49,7 @@ const pointerReleaser =
     place(targets(currentTarget), { active: false, ratioX: CENTER, ratioY: CENTER });
   };
 
-const followPointer = pointerFollower(
+export const followPointer = pointerFollower(
   ({ clientX, clientY, rect }) => ({
     ratioX: (clientX - rect.left) / rect.width,
     ratioY: (clientY - rect.top) / rect.height,
@@ -57,7 +57,7 @@ const followPointer = pointerFollower(
   self,
 );
 
-const followViewportPointer = pointerFollower(
+export const followViewportPointer = pointerFollower(
   ({ clientX, clientY }) => ({
     ratioX: clientX / globalThis.innerWidth,
     ratioY: clientY / globalThis.innerHeight,
@@ -65,8 +65,6 @@ const followViewportPointer = pointerFollower(
   stageLayers,
 );
 
-const releasePointer = pointerReleaser(self);
+export const releasePointer = pointerReleaser(self);
 
-const releaseStageLayers = pointerReleaser(stageLayers);
-
-export { followPointer, followViewportPointer, releasePointer, releaseStageLayers };
+export const releaseStageLayers = pointerReleaser(stageLayers);

@@ -8,9 +8,9 @@ const route = getRouteApi("/");
 
 const FIRST_PAGE = 1;
 
-type Update = (change: Partial<RankingSearch>) => void;
+export type Update = (change: Partial<RankingSearch>) => void;
 
-const useUpdateSearch = (): Update => {
+export const useUpdateSearch = (): Update => {
   const navigate = route.useNavigate();
   return useCallback<Update>(
     (change) => {
@@ -25,7 +25,7 @@ const useUpdateSearch = (): Update => {
   );
 };
 
-const usePick = <Key extends keyof RankingSearch>({
+export const usePick = <Key extends keyof RankingSearch>({
   update,
   key,
 }: Readonly<{ update: Update; key: Key }>): ((value: RankingSearch[Key]) => void) =>
@@ -36,7 +36,4 @@ const usePick = <Key extends keyof RankingSearch>({
     [update, key],
   );
 
-const useRankingSearch = (): RankingSearch => route.useSearch();
-
-export type { Update };
-export { usePick, useRankingSearch, useUpdateSearch };
+export const useRankingSearch = (): RankingSearch => route.useSearch();

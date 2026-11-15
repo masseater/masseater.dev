@@ -95,12 +95,10 @@ const exportRequest = (
     ),
   );
 
-const serveHttp = (store: Store): Effect.Effect<string, never, Scope.Scope> =>
+export const serveHttp = (store: Store): Effect.Effect<string, never, Scope.Scope> =>
   Layer.build(NodeHttpServer.layerTest).pipe(
     Effect.orDie,
     Effect.map(Context.get(HttpServer.HttpServer)),
     Effect.tap((server) => server.serve(exportRequest(store))),
     Effect.map((server) => originOf(server.address)),
   );
-
-export { serveHttp };

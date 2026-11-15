@@ -17,6 +17,4 @@ const client = createIsomorphicFn()
   .server(() => serverClient<MoneyRoutes>(loadMoneyHandle))
   .client(() => browserClient<MoneyRoutes>());
 
-const moneyQueries = createQueries<MoneyRoutes>(client()).api.money;
-
-export { moneyQueries };
+export const moneyQueries = createQueries<MoneyRoutes>(client()).api.money;

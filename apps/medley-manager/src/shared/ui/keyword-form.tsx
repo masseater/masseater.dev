@@ -5,7 +5,7 @@ import { Input } from "./input";
 
 const SUBMIT = "検索";
 
-const KeywordForm = ({
+export const KeywordForm = ({
   action,
   label,
   keyword,
@@ -23,5 +23,3 @@ const KeywordForm = ({
     </Button>
   </form>
 );
-
-export { KeywordForm };

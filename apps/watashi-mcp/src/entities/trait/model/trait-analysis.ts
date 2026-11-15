@@ -91,25 +91,16 @@ const Replacing = Schema.Struct({
 
 const Observation = Schema.Union([Linked, Created, Replacing]);
 
-const AnalysisResult = Schema.Struct({
+export const AnalysisResult = Schema.Struct({
   observations: Schema.Array(Observation),
 });
 
-type TraitSourceValue = typeof TraitSource.Type;
+export type TraitSourceValue = typeof TraitSource.Type;
 
-type KnownTraitValue = typeof KnownTrait.Type;
+export type KnownTraitValue = typeof KnownTrait.Type;
 
-type AnalysisRequestValue = typeof AnalysisRequest.Type;
+export type AnalysisRequestValue = typeof AnalysisRequest.Type;
 
-type ObservationValue = typeof Observation.Type;
+export type ObservationValue = typeof Observation.Type;
 
-type AnalysisResultValue = typeof AnalysisResult.Type;
-
-export { AnalysisResult };
-export type {
-  AnalysisRequestValue,
-  AnalysisResultValue,
-  KnownTraitValue,
-  ObservationValue,
-  TraitSourceValue,
-};
+export type AnalysisResultValue = typeof AnalysisResult.Type;

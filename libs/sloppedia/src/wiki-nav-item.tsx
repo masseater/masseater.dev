@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type { SloppediaConfig, Target } from "./config.ts";
 import { WikiLink } from "./wiki-link.tsx";
 
-const WikiNavItem = ({
+export const WikiNavItem = ({
   config,
   target,
   label,
@@ -14,5 +14,3 @@ const WikiNavItem = ({
     </WikiLink>
   </li>
 );
-
-export { WikiNavItem };

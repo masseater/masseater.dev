@@ -10,7 +10,7 @@ const Deck = Schema.Struct({
   updatedAt: Schema.String,
 });
 
-const Decks = Schema.Array(Deck);
+export const Decks = Schema.Array(Deck);
 
 const Hit = Schema.Struct({
   deck: Schema.String,
@@ -22,20 +22,20 @@ const Hit = Schema.Struct({
   score: Schema.Finite,
 });
 
-const Hits = Schema.Array(Hit);
+export const Hits = Schema.Array(Hit);
 
-const SlidesSearch = Schema.Struct({
+export const SlidesSearch = Schema.Struct({
   keyword: Schema.optionalKey(Schema.String),
   tag: Schema.optionalKey(Schema.String),
 });
 
-const SearchQuery = Schema.Struct({ keyword: Schema.NonEmptyString });
+export const SearchQuery = Schema.Struct({ keyword: Schema.NonEmptyString });
 
-type DeckValue = typeof Deck.Type;
+export type DeckValue = typeof Deck.Type;
 
-type SlidesSearchValue = typeof SlidesSearch.Type;
+export type SlidesSearchValue = typeof SlidesSearch.Type;
 
-type HitValue = typeof Hit.Type;
+export type HitValue = typeof Hit.Type;
 
 const EXCERPT = 160;
 
@@ -43,23 +43,23 @@ const START = 0;
 
 const DAY_LENGTH = 10;
 
-const deckUrl = (file: string): string => `${PERSONAL_ORIGIN}/decks/${file}.html`;
+export const deckUrl = (file: string): string => `${PERSONAL_ORIGIN}/decks/${file}.html`;
 
-const pdfUrl = (file: string): string => `${PERSONAL_ORIGIN}/decks/${file}.pdf`;
+export const pdfUrl = (file: string): string => `${PERSONAL_ORIGIN}/decks/${file}.pdf`;
 
-const pageUrl = ({ deck, page }: Readonly<{ deck: string; page: number }>): string =>
+export const pageUrl = ({ deck, page }: Readonly<{ deck: string; page: number }>): string =>
   `${deckUrl(deck)}#${String(page)}`;
 
-const dayOf = Str.slice(START, DAY_LENGTH);
+export const dayOf = Str.slice(START, DAY_LENGTH);
 
-const tagsOf = (decks: readonly DeckValue[]): readonly string[] =>
+export const tagsOf = (decks: readonly DeckValue[]): readonly string[] =>
   pipe(
     decks,
     Arr.flatMap((deck) => deck.tags),
     Arr.dedupe,
   );
 
-const withTag =
+export const withTag =
   (tag: Option.Option<string>) =>
   (decks: readonly DeckValue[]): readonly DeckValue[] =>
     Option.match(tag, {
@@ -71,25 +71,10 @@ const withTag =
         ),
     });
 
-const excerpt = (text: string): string => {
+export const excerpt = (text: string): string => {
   const flat = Str.replaceAll("\n", " ")(text);
   return pipe(
     Option.liftPredicate(flat, (line) => line.length > EXCERPT),
     Option.match({ onNone: () => flat, onSome: (line) => `${Str.slice(START, EXCERPT)(line)}…` }),
   );
 };
-
-export {
-  Decks,
-  Hits,
-  SearchQuery,
-  SlidesSearch,
-  dayOf,
-  deckUrl,
-  excerpt,
-  pageUrl,
-  pdfUrl,
-  tagsOf,
-  withTag,
-};
-export type { DeckValue, HitValue, SlidesSearchValue };

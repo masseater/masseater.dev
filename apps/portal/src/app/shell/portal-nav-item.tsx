@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { PortalPath } from "#/shared/config";
 
-const PortalNavItem = ({
+export const PortalNavItem = ({
   active,
   label,
   to,
@@ -18,5 +18,3 @@ const PortalNavItem = ({
     </Link>
   </li>
 );
-
-export { PortalNavItem };

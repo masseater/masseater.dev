@@ -10,7 +10,7 @@ import { RevisionList } from "./revision-list";
 
 const HISTORY = "履歴";
 
-const MemoArticle = ({
+export const MemoArticle = ({
   memo,
   revisions,
 }: Readonly<{ memo: MemoValue; revisions: readonly RevisionValue[] }>): ReactNode => (
@@ -23,5 +23,3 @@ const MemoArticle = ({
     </Section>
   </article>
 );
-
-export { MemoArticle };

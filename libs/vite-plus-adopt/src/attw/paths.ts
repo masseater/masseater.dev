@@ -11,20 +11,21 @@ const FIRST = 0;
 const SECOND = 1;
 const PARENT = "..";
 const CURRENT = ".";
-const RELATIVE_SEGMENT = /\/\/|(?:^|\/)\.\.?(?:$|\/)/u;
+export const RELATIVE_SEGMENT = /\/\/|(?:^|\/)\.\.?(?:$|\/)/u;
 const RELATIVE_NAMES: ReadonlySet<string> = new Set([".", ".."]);
 const RELATIVE_PREFIXES: readonly string[] = ["./", ".\\", "../", "..\\"];
 
-const normalizeSlashes = (path: string): string => Str.replaceAll("\\", SEPARATOR)(path);
+export const normalizeSlashes = (path: string): string => Str.replaceAll("\\", SEPARATOR)(path);
 
-const hasTrailingDirectorySeparator = (path: string): boolean => Str.endsWith(SEPARATOR)(path);
+export const hasTrailingDirectorySeparator = (path: string): boolean =>
+  Str.endsWith(SEPARATOR)(path);
 
 const removeTrailingDirectorySeparator = (path: string): string =>
   Option.liftPredicate(path, hasTrailingDirectorySeparator).pipe(
     Option.match({ onNone: () => path, onSome: (value) => Str.slice(FIRST, NOT_FOUND)(value) }),
   );
 
-const ensureTrailingDirectorySeparator = (path: string): string =>
+export const ensureTrailingDirectorySeparator = (path: string): string =>
   Option.liftPredicate(path, hasTrailingDirectorySeparator).pipe(
     Option.getOrElse(() => `${path}${SEPARATOR}`),
   );
@@ -40,7 +41,7 @@ const combineTwo = (base: string, next: string): string => {
   return `${ensureTrailingDirectorySeparator(base)}${relative}`;
 };
 
-const combinePaths = (path: string, ...paths: readonly string[]): string =>
+export const combinePaths = (path: string, ...paths: readonly string[]): string =>
   Arr.reduce(paths, normalizeSlashes(path), combineTwo);
 
 const pathComponents = (path: string, rootLength: number): readonly string[] => {
@@ -55,7 +56,7 @@ const pathComponents = (path: string, rootLength: number): readonly string[] => 
   ];
 };
 
-const getPathComponents = (path: string): readonly string[] => {
+export const getPathComponents = (path: string): readonly string[] => {
   const normalized = normalizeSlashes(path);
   return pathComponents(normalized, getRootLength(normalized));
 };
@@ -89,7 +90,7 @@ const reduceComponent = (reduced: readonly string[], component: string): readonl
   return applyParent(reduced, component);
 };
 
-const reducePathComponents = (components: readonly string[]): readonly string[] =>
+export const reducePathComponents = (components: readonly string[]): readonly string[] =>
   Arr.match(components, {
     onEmpty: (): readonly string[] => [],
     onNonEmpty: ([root, ...rest]) => Arr.reduce(rest, [root], reduceComponent),
@@ -113,7 +114,7 @@ const normalizeComponents = (path: string): string => {
 const simplifyCurrentSegments = (path: string): string =>
   Str.replace(/^\.\//u, "")(Str.replaceAll("/./", SEPARATOR)(path));
 
-const normalizePath = (path: string): string => {
+export const normalizePath = (path: string): string => {
   const slashed = normalizeSlashes(path);
   if (!RELATIVE_SEGMENT.test(slashed)) {
     return slashed;
@@ -125,7 +126,7 @@ const normalizePath = (path: string): string => {
   return normalizeComponents(simplified);
 };
 
-const getDirectoryPath = (path: string): string => {
+export const getDirectoryPath = (path: string): string => {
   const slashed = normalizeSlashes(path);
   const rootLength = getRootLength(slashed);
   if (rootLength === slashed.length) {
@@ -139,7 +140,7 @@ const getDirectoryPath = (path: string): string => {
   return Str.slice(FIRST, end)(trimmed);
 };
 
-const getBaseFileName = (path: string): string => {
+export const getBaseFileName = (path: string): string => {
   const slashed = normalizeSlashes(path);
   if (getRootLength(slashed) === slashed.length) {
     return "";
@@ -153,7 +154,7 @@ const getBaseFileName = (path: string): string => {
   return Str.slice(start)(trimmed);
 };
 
-const getNormalizedAbsolutePath: {
+export const getNormalizedAbsolutePath: {
   (currentDirectory: string): (path: string) => string;
   (path: string, currentDirectory: string): string;
 } = Fn.dual(DATA_FIRST_ARITY, (path: string, currentDirectory: string): string => {
@@ -161,7 +162,7 @@ const getNormalizedAbsolutePath: {
   return getPathFromPathComponents(reducePathComponents(components));
 });
 
-const toPath = (fileName: string): string =>
+export const toPath = (fileName: string): string =>
   Option.liftPredicate(fileName, isRootedDiskPath).pipe(
     Option.match({
       onNone: () => getNormalizedAbsolutePath(fileName, SEPARATOR),
@@ -170,7 +171,7 @@ const toPath = (fileName: string): string =>
     Str.toLowerCase,
   );
 
-const forEachAncestorDirectory: {
+export const forEachAncestorDirectory: {
   <Found>(
     visit: (ancestor: string) => Option.Option<Found>,
   ): (directory: string) => Option.Option<Found>;
@@ -196,14 +197,14 @@ const forEachAncestorDirectory: {
   },
 );
 
-const pathIsRelative = (path: string): boolean =>
+export const pathIsRelative = (path: string): boolean =>
   RELATIVE_NAMES.has(path) ||
   pipe(
     RELATIVE_PREFIXES,
     Arr.some((prefix) => Str.startsWith(prefix)(path)),
   );
 
-const isExternalModuleNameRelative = (moduleName: string): boolean =>
+export const isExternalModuleNameRelative = (moduleName: string): boolean =>
   pathIsRelative(moduleName) || isRootedDiskPath(moduleName);
 
 const sharedPrefixLength = (from: readonly string[], to: readonly string[]): number => {
@@ -215,7 +216,7 @@ const sharedPrefixLength = (from: readonly string[], to: readonly string[]): num
   return index;
 };
 
-const getRelativePathFromDirectory: {
+export const getRelativePathFromDirectory: {
   (to: string): (fromDirectory: string) => string;
   (fromDirectory: string, to: string): string;
 } = Fn.dual(DATA_FIRST_ARITY, (fromDirectory: string, to: string): string => {
@@ -232,7 +233,7 @@ const getRelativePathFromDirectory: {
   ]);
 });
 
-const containsPath: {
+export const containsPath: {
   (child: string): (parent: string) => boolean;
   (parent: string, child: string): boolean;
 } = Fn.dual(DATA_FIRST_ARITY, (parent: string, child: string): boolean => {
@@ -244,23 +245,3 @@ const containsPath: {
       sharedPrefixLength(parentComponents, childComponents) === parentComponents.length)
   );
 });
-
-export {
-  combinePaths,
-  containsPath,
-  ensureTrailingDirectorySeparator,
-  forEachAncestorDirectory,
-  getBaseFileName,
-  getDirectoryPath,
-  getNormalizedAbsolutePath,
-  getPathComponents,
-  getRelativePathFromDirectory,
-  hasTrailingDirectorySeparator,
-  isExternalModuleNameRelative,
-  normalizePath,
-  normalizeSlashes,
-  pathIsRelative,
-  RELATIVE_SEGMENT,
-  reducePathComponents,
-  toPath,
-};

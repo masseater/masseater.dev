@@ -11,7 +11,8 @@ import type { Report } from "./report.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-const runVendored: {
+/** @internal */
+export const runVendored: {
   (
     invocation: Omit<Invocation, "file">,
   ): (
@@ -40,6 +41,3 @@ const runVendored: {
     ChildProcessSpawner.ChildProcessSpawner | FileSystem.FileSystem | Path.Path
   > => locateBinary(binary).pipe(Effect.flatMap((file) => runCaptured({ ...invocation, file }))),
 );
-
-/** @internal */
-export { runVendored };

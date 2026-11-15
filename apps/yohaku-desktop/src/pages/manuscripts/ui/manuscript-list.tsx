@@ -1,22 +1,17 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useManuscripts, ManuscriptRow } from "#/entities/manuscript";
-import { ExportButton } from "#/features/export-manuscript";
+import { useManuscripts } from "#/entities/manuscript";
+
+import { ManuscriptEntry } from "./manuscript-entry.tsx";
 
 const LABEL = "原稿";
 
-const ManuscriptList = (): ReactNode => (
+export const ManuscriptList = (): ReactNode => (
   <ul aria-label={LABEL}>
     {pipe(
       useManuscripts(),
-      Array.map((manuscript) => (
-        <ManuscriptRow key={manuscript.id} manuscript={manuscript}>
-          <ExportButton id={manuscript.id} />
-        </ManuscriptRow>
-      )),
+      Array.map((manuscript) => <ManuscriptEntry key={manuscript.id} manuscript={manuscript} />),
     )}
   </ul>
 );
-
-export { ManuscriptList };

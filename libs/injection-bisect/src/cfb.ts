@@ -8,12 +8,12 @@ const BIT = 2;
 
 const SET = 1;
 
-const utf16le = new TextDecoder("utf-16le");
+export const utf16le = new TextDecoder("utf-16le");
 
-const viewOf = (bytes: Uint8Array): DataView =>
+export const viewOf = (bytes: Uint8Array): DataView =>
   new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 
-const hasFlag =
+export const hasFlag =
   (flag: number) =>
   (value: number): boolean =>
     Math.floor(value / flag) % BIT === SET;
@@ -24,7 +24,7 @@ const containerOf = (bytes: Uint8Array): Result.Result<CFB$Container, ReadError>
     catch: readErrorOf,
   });
 
-const hasStream =
+export const hasStream =
   (matches: (name: string) => boolean) =>
   (bytes: Uint8Array): boolean =>
     Result.match(containerOf(bytes), {
@@ -36,7 +36,7 @@ const hasStream =
         ),
     });
 
-const streamOf =
+export const streamOf =
   (bytes: Uint8Array) =>
   (name: string): Effect.Effect<Uint8Array, ReadError> =>
     Effect.fromResult(containerOf(bytes)).pipe(
@@ -47,5 +47,3 @@ const streamOf =
       ),
       Effect.map(({ content }) => Uint8Array.from(content)),
     );
-
-export { hasFlag, hasStream, streamOf, utf16le, viewOf };

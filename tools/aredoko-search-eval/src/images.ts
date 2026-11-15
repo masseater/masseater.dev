@@ -16,7 +16,7 @@ const Diffuse = Schema.Struct({ "1k": Resolution });
 
 const TextureFiles = Schema.Struct({ Diffuse });
 
-type AssetType = "model" | "texture";
+export type AssetType = "model" | "texture";
 
 const fetchBytes = Effect.fn("fetchBytes")(function* fetchBytes(url: string) {
   const client = yield* HttpClient.HttpClient;
@@ -40,7 +40,7 @@ const SOURCES = {
 } as const;
 
 /** @internal */
-const imageOf = Effect.fn("imageOf")(function* cachedImage({
+export const imageOf = Effect.fn("imageOf")(function* cachedImage({
   id,
   type,
 }: Readonly<{ id: string; type: AssetType }>) {
@@ -56,6 +56,3 @@ const imageOf = Effect.fn("imageOf")(function* cachedImage({
   yield* fileSystem.writeFile(file, bytes);
   return bytes;
 });
-
-export { imageOf };
-export type { AssetType };

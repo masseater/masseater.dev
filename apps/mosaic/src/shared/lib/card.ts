@@ -1,13 +1,13 @@
 import { Option, pipe } from "effect";
 
-interface Card {
+export interface Card {
   readonly title: string;
   readonly description: string;
   readonly image: string;
   readonly url: string;
 }
 
-type Meta =
+export type Meta =
   | Readonly<{ title: string }>
   | Readonly<{ name: string; content: string }>
   | Readonly<{ property: string; content: string }>;
@@ -23,12 +23,9 @@ const cardMeta = (card: Card): Meta[] => [
   { name: "twitter:card", content: "summary_large_image" },
 ];
 
-const optionalCardMeta = (card: Option.Option<Card>): Meta[] =>
+export const optionalCardMeta = (card: Option.Option<Card>): Meta[] =>
   pipe(
     card,
     Option.map(cardMeta),
     Option.getOrElse((): Meta[] => []),
   );
-
-export type { Card, Meta };
-export { optionalCardMeta };

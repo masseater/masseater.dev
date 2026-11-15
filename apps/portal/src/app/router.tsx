@@ -5,7 +5,7 @@ import { FRESH } from "#/shared/config";
 
 import { routeTree } from "./routeTree.gen";
 
-type AppRouter = Router<typeof routeTree>;
+export type AppRouter = Router<typeof routeTree>;
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -13,11 +13,8 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const getRouter = (): AppRouter => {
+export const getRouter = (): AppRouter => {
   const router = createQueryRouter(routeTree);
   router.options.context.queryClient.setDefaultOptions({ queries: FRESH });
   return router;
 };
-
-export type { AppRouter };
-export { getRouter };

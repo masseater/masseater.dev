@@ -5,7 +5,7 @@ import { signedYen } from "#/entities/money";
 
 const NONE = 0;
 
-const TransactionLine = ({
+export const TransactionLine = ({
   amount,
   description,
 }: Readonly<{ amount: number; description: string }>): ReactNode => (
@@ -16,5 +16,3 @@ const TransactionLine = ({
     </p>
   </div>
 );
-
-export { TransactionLine };

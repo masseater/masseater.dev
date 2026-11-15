@@ -8,7 +8,10 @@ import { Row, TagList } from "#/shared/ui";
 import { TransactionLine } from "./transaction-line";
 import { TransactionMemo } from "./transaction-memo";
 
-type Labels = Readonly<{ category: (id: string) => string; account: (id: string) => string }>;
+export type Labels = Readonly<{
+  category: (id: string) => string;
+  account: (id: string) => string;
+}>;
 
 const tagsOf = (transaction: TransactionValue, labels: Labels): readonly string[] =>
   Arr.getSomes([
@@ -17,7 +20,7 @@ const tagsOf = (transaction: TransactionValue, labels: Labels): readonly string[
     Option.some(labels.account(transaction.accountId)),
   ]);
 
-const TransactionRow = ({
+export const TransactionRow = ({
   labels,
   transaction,
 }: Readonly<{ labels: Labels; transaction: TransactionValue }>): ReactNode => {
@@ -30,6 +33,3 @@ const TransactionRow = ({
     </Row>
   );
 };
-
-export { TransactionRow };
-export type { Labels };

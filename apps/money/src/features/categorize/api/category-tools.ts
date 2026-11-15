@@ -39,7 +39,8 @@ const settings = Effect.all({ accounts: listAccounts, rules: userRules }).pipe(
   })),
 );
 
-const CATEGORY_TOOLS = [
+/** @internal */
+export const CATEGORY_TOOLS = [
   tool({
     name: "set_category",
     description:
@@ -78,7 +79,5 @@ const CATEGORY_TOOLS = [
   }),
 ];
 
-const registerCategoryTools = registerAll(CATEGORY_TOOLS);
-
 /** @internal */
-export { CATEGORY_TOOLS, registerCategoryTools };
+export const registerCategoryTools = registerAll(CATEGORY_TOOLS);

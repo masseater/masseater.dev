@@ -9,7 +9,7 @@ const queryAtom = Atom.make("");
 
 const normalized = (query: string): string => pipe(query, String.trim, String.toLowerCase);
 
-const matching = ({
+export const matching = ({
   languages,
   query,
 }: Readonly<{ languages: readonly Language[]; query: string }>): readonly Language[] => {
@@ -26,13 +26,13 @@ const matching = ({
   );
 };
 
-const useQueryText = (): string => useAtomValue(queryAtom);
+export const useQueryText = (): string => useAtomValue(queryAtom);
 
-const useIsSearching = (): boolean => String.isNonEmpty(normalized(useQueryText()));
+export const useIsSearching = (): boolean => String.isNonEmpty(normalized(useQueryText()));
 
-const useSetQueryText = (): ((query: string) => void) => useAtomSet(queryAtom);
+export const useSetQueryText = (): ((query: string) => void) => useAtomSet(queryAtom);
 
-const useClosePicker = (): (() => void) => {
+export const useClosePicker = (): (() => void) => {
   const setQuery = useSetQueryText();
   const setPicker = useSetPicker();
   return () => {
@@ -40,5 +40,3 @@ const useClosePicker = (): (() => void) => {
     setPicker({ kind: "closed" });
   };
 };
-
-export { matching, useClosePicker, useIsSearching, useQueryText, useSetQueryText };

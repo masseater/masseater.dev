@@ -11,16 +11,14 @@ const route = getRouteApi("/_watashi/memos/");
 
 const projects = watashiQueries["memo-projects"].get;
 
-const loadMemosPage = ({ queryClient, search }: MemosLoad): Promise<unknown> =>
+export const loadMemosPage = ({ queryClient, search }: MemosLoad): Promise<unknown> =>
   Promise.all([
     queryClient.query(watashiQueries.memos.get.queryOptions(search)),
     queryClient.query(projects.queryOptions()),
   ]);
 
-const useMemos = (): readonly MemoValue[] =>
+export const useMemos = (): readonly MemoValue[] =>
   useSuspenseQuery(watashiQueries.memos.get.queryOptions(route.useSearch())).data.items;
 
-const useProjects = (): readonly ProjectValue[] =>
+export const useProjects = (): readonly ProjectValue[] =>
   useSuspenseQuery(projects.queryOptions()).data.projects;
-
-export { loadMemosPage, useMemos, useProjects };

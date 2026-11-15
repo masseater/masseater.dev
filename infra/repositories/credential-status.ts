@@ -53,10 +53,8 @@ const checks = (env: AppStoreEnv): readonly Effect.Effect<CredentialState>[] => 
 const states = (env: AppStoreEnv): Effect.Effect<readonly CredentialState[]> =>
   Effect.all(checks(env));
 
-class CredentialStatus extends WorkerEntrypoint<AppStoreEnv> implements CredentialStatusRpc {
+export class CredentialStatus extends WorkerEntrypoint<AppStoreEnv> implements CredentialStatusRpc {
   public list(): Promise<readonly CredentialState[]> {
     return runLogged(states(this.env));
   }
 }
-
-export { CredentialStatus };

@@ -8,7 +8,7 @@ import { revealServerLog } from "#/features/reveal-server-log/api/server-log";
 
 const LABEL = "ログを表示";
 
-const RevealLogButton = (): ReactNode => {
+export const RevealLogButton = (): ReactNode => {
   const { mutate } = useMutation({ mutationFn: revealServerLog });
   const onClick = useCallback(() => {
     mutate();
@@ -20,5 +20,3 @@ const RevealLogButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { RevealLogButton };

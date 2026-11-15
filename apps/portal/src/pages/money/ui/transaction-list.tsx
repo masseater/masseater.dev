@@ -15,7 +15,7 @@ const route = getRouteApi("/money");
 
 const LABEL = "取引";
 
-const TransactionList = ({
+export const TransactionList = ({
   period,
   settings,
 }: Readonly<{ period: PeriodValue; settings: SettingsValue }>): ReactNode => {
@@ -43,5 +43,3 @@ const TransactionList = ({
     </div>
   );
 };
-
-export { TransactionList };

@@ -222,7 +222,7 @@ const run: Fn<
   };
 };
 
-const startStage: Fn<
+export const startStage: Fn<
   Readonly<{ canvas: HTMLCanvasElement; slug: string; effect: DanceEffect; track: DanceTrack }>,
   () => void
 > = ({ canvas, slug, effect, track }) => {
@@ -243,5 +243,3 @@ const startStage: Fn<
     video.removeAttribute("src");
   };
 };
-
-export { startStage };

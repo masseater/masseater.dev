@@ -10,10 +10,8 @@ const STATUS: Readonly<Record<CredentialState["status"], string>> = {
   missing: "なし",
 };
 
-const CredentialRow = ({ state }: Readonly<{ state: CredentialState }>): ReactNode => (
+export const CredentialRow = ({ state }: Readonly<{ state: CredentialState }>): ReactNode => (
   <Row lead={STATUS[state.status]}>
     <CredentialLine state={state} />
   </Row>
 );
-
-export { CredentialRow };

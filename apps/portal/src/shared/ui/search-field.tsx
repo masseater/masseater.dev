@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 const NOTHING_KEPT: Readonly<Record<string, string>> = {};
 
-const SearchField = ({
+export const SearchField = ({
   action,
   label,
   value,
@@ -33,5 +33,3 @@ const SearchField = ({
     </form>
   </search>
 );
-
-export { SearchField };

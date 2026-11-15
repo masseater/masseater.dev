@@ -62,7 +62,7 @@ const positionOfChunk = ({ chunk }: ReadChunk): Effect.Effect<string> =>
     start: chunk.start,
   });
 
-const collectConversations: Effect.Effect<
+export const collectConversations: Effect.Effect<
   Option.Option<Collected>,
   StorageFailed | UpstreamFailed
 > = Effect.gen(function* collectConversations() {
@@ -77,5 +77,3 @@ const collectConversations: Effect.Effect<
     positionOf: positionOfChunk,
   });
 });
-
-export { collectConversations };

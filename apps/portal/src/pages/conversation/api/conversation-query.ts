@@ -15,19 +15,17 @@ const route = getRouteApi("/_watashi/conversations/$session");
 const cursorOf = (search: ConversationSearchValue): Readonly<{ cursor?: number }> =>
   pipe({ cursor: Option.fromUndefinedOr(search.cursor) }, Rec.getSomes);
 
-const loadConversationPage = ({
+export const loadConversationPage = ({
   queryClient,
   sessionId,
   search,
 }: ConversationLoad): Promise<unknown> =>
   queryClient.query(watashiQueries.conversations({ sessionId }).get.queryOptions(cursorOf(search)));
 
-const useConversation = (): ConversationValue => {
+export const useConversation = (): ConversationValue => {
   const { session: sessionId } = route.useParams();
   const search = route.useSearch();
   return useSuspenseQuery(
     watashiQueries.conversations({ sessionId }).get.queryOptions(cursorOf(search)),
   ).data;
 };
-
-export { loadConversationPage, useConversation };

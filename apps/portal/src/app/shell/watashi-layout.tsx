@@ -13,11 +13,9 @@ const ITEMS: readonly SubNavEntry[] = [
 
 const LABEL = "Watashi";
 
-const WatashiLayout = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
+export const WatashiLayout = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
   <div className="flex flex-col gap-10">
     <SubNav items={ITEMS} label={LABEL} />
     {children}
   </div>
 );
-
-export { WatashiLayout };

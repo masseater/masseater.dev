@@ -7,7 +7,7 @@ import { MemoArticle } from "./memo-article";
 
 const MISSING = "見つからない";
 
-const MemoPage = (): ReactNode => {
+export const MemoPage = (): ReactNode => {
   const { memo, revisions } = useMemoDetail();
   return pipe(
     Arr.head(memo),
@@ -17,5 +17,3 @@ const MemoPage = (): ReactNode => {
     }),
   );
 };
-
-export { MemoPage };

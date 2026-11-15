@@ -13,10 +13,8 @@ const VARIANTS = {
   },
 } as const;
 
-const Arrow = ({ variant }: Readonly<{ variant: keyof typeof VARIANTS }>): ReactNode => (
+export const Arrow = ({ variant }: Readonly<{ variant: keyof typeof VARIANTS }>): ReactNode => (
   <span aria-hidden className={VARIANTS[variant].className}>
     {VARIANTS[variant].glyph}
   </span>
 );
-
-export { Arrow };

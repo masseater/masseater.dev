@@ -6,16 +6,13 @@ const Utterance = Schema.Struct({
   text: Schema.String,
 });
 
-const Conversation = Schema.Struct({
+export const Conversation = Schema.Struct({
   sessionId: Schema.String,
   cursor: Schema.Int,
   utterances: Schema.Array(Utterance),
   nextCursor: Schema.optionalKey(Schema.Int),
 });
 
-type ConversationValue = typeof Conversation.Type;
+export type ConversationValue = typeof Conversation.Type;
 
-type UtteranceValue = typeof Utterance.Type;
-
-export { Conversation };
-export type { ConversationValue, UtteranceValue };
+export type UtteranceValue = typeof Utterance.Type;

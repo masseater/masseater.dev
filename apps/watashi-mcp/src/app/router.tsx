@@ -5,7 +5,7 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 
 import { routeTree } from "./routeTree.gen";
 
-type AppRouter = Router<typeof routeTree>;
+export type AppRouter = Router<typeof routeTree>;
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -13,12 +13,9 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const getRouter = (): AppRouter => {
+export const getRouter = (): AppRouter => {
   const queryClient = new QueryClient();
   const router = createRouter({ routeTree, context: { queryClient }, scrollRestoration: true });
   setupRouterSsrQueryIntegration({ router, queryClient });
   return router;
 };
-
-export type { AppRouter };
-export { getRouter };

@@ -14,7 +14,7 @@ const NOT_FOUND = 404;
 
 const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
 
-class WatashiPortal extends WorkerEntrypoint implements WatashiPortalRpc {
+export class WatashiPortal extends WorkerEntrypoint implements WatashiPortalRpc {
   public lifeRead(input: unknown): Promise<PortalResult> {
     return this.run("life_read", lifeRead(input));
   }
@@ -53,5 +53,4 @@ const worker = {
   fetch: (): Response => new Response("Not Found", { status: NOT_FOUND }),
 };
 
-export { WatashiPortal };
 export default worker;

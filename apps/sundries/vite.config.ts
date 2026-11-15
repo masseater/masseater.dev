@@ -1,8 +1,15 @@
 import { ownerSiteRun } from "@masseater.dev/cloudflare-account/owner-site-run";
-import { defineConfig } from "vite-plus";
+import { defineConfig, mergeConfig } from "vite-plus";
 
-export default defineConfig({
-  run: ownerSiteRun,
-  resolve: { tsconfigPaths: true },
-  test: { include: ["src/**/*.test.ts"] },
-});
+export default defineConfig(
+  mergeConfig(
+    {
+      run: ownerSiteRun,
+      resolve: { tsconfigPaths: true },
+      test: { include: ["src/**/*.test.ts"] },
+    },
+    {
+      run: { tasks: { "deploy:production": { dependsOn: ["plamo-translate#deploy:production"] } } },
+    },
+  ),
+);

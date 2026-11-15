@@ -6,11 +6,9 @@ import { Row, TagList } from "#/shared/ui";
 
 import { DeckTitle } from "./deck-title";
 
-const DeckRow = ({ deck }: Readonly<{ deck: DeckValue }>): ReactNode => (
+export const DeckRow = ({ deck }: Readonly<{ deck: DeckValue }>): ReactNode => (
   <Row lead={dayOf(deck.updatedAt)}>
     <DeckTitle file={deck.file} title={deck.title} />
     <TagList tags={deck.tags} />
   </Row>
 );
-
-export { DeckRow };

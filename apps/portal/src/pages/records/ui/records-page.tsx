@@ -11,7 +11,7 @@ const TEXT = { search: "記録を探す", list: "人生の記録" } as const;
 
 const ACTION = "/records";
 
-const RecordsPage = (): ReactNode => {
+export const RecordsPage = (): ReactNode => {
   const { keyword = "" } = route.useSearch();
   return (
     <div className="flex flex-col gap-6">
@@ -20,5 +20,3 @@ const RecordsPage = (): ReactNode => {
     </div>
   );
 };
-
-export { RecordsPage };

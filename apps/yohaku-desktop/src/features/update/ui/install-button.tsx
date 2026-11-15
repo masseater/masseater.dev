@@ -12,7 +12,7 @@ const labelOf = (failed: boolean): string => {
   return LABEL;
 };
 
-const InstallButton = ({
+export const InstallButton = ({
   failed,
   install,
 }: Readonly<{ failed: boolean; install: () => void }>): ReactNode => (
@@ -21,5 +21,3 @@ const InstallButton = ({
     {labelOf(failed)}
   </Button>
 );
-
-export { InstallButton };

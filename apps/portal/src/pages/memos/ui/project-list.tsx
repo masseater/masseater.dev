@@ -11,7 +11,7 @@ const route = getRouteApi("/_watashi/memos/");
 
 const LABEL = "プロジェクト";
 
-const ProjectList = (): ReactNode => {
+export const ProjectList = (): ReactNode => {
   const { project: active } = route.useSearch();
   return (
     <nav aria-label={LABEL}>
@@ -31,5 +31,3 @@ const ProjectList = (): ReactNode => {
     </nav>
   );
 };
-
-export { ProjectList };

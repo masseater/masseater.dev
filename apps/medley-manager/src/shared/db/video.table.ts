@@ -1,6 +1,6 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-const video = sqliteTable("video", {
+export const video = sqliteTable("video", {
   id: integer().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
   kind: text({ enum: ["medley", "collab", "single", "other"] })
@@ -14,5 +14,3 @@ const video = sqliteTable("video", {
   note: text(),
   comment: text(),
 });
-
-export { video };

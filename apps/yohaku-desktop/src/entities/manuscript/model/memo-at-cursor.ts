@@ -7,7 +7,7 @@ import { FIRST_LINE, paragraphIdsField } from "./paragraph-ids.ts";
 
 const MEMO = "memo";
 
-const memoAtCursor = (state: EditorState): Option.Option<string> => {
+export const memoAtCursor = (state: EditorState): Option.Option<string> => {
   const line = state.doc.lineAt(state.selection.main.head).number;
   return pipe(
     Array.get(state.field(paragraphIdsField), line - FIRST_LINE),
@@ -15,5 +15,3 @@ const memoAtCursor = (state: EditorState): Option.Option<string> => {
     Option.filter((paragraphId) => Option.isNone(draftOf(paragraphId)(state))),
   );
 };
-
-export { memoAtCursor };

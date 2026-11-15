@@ -3,7 +3,9 @@ import type { ReactNode } from "react";
 
 import type { ConsentView } from "./consent";
 
-const ConsentDetails = ({ details }: Readonly<{ details: ConsentView["details"] }>): ReactNode => (
+export const ConsentDetails = ({
+  details,
+}: Readonly<{ details: ConsentView["details"] }>): ReactNode => (
   <dl className="flex flex-col gap-2 text-sm">
     {pipe(
       details,
@@ -23,5 +25,3 @@ const ConsentDetails = ({ details }: Readonly<{ details: ConsentView["details"] 
     )}
   </dl>
 );
-
-export { ConsentDetails };

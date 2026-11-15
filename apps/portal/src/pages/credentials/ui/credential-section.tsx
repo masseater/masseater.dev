@@ -11,7 +11,7 @@ const TITLES: Readonly<Record<CredentialState["kind"], string>> = {
   login: "ログイン",
 };
 
-const CredentialSection = ({
+export const CredentialSection = ({
   kind,
   states,
 }: Readonly<{ kind: CredentialState["kind"]; states: readonly CredentialState[] }>): ReactNode => (
@@ -25,5 +25,3 @@ const CredentialSection = ({
     </RowList>
   </Section>
 );
-
-export { CredentialSection };

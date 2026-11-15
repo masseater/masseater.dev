@@ -1,4 +1,4 @@
-const PAGES = [
+export const PAGES = [
   "satsuei-lab",
   "split-pad",
   "pod-rattle",
@@ -8,10 +8,8 @@ const PAGES = [
   "nikogori/mada-atatakai-v2",
 ] as const;
 
-const ASSETS_DIR = "labs-assets";
+export const ASSETS_DIR = "labs-assets";
 
-const PAGE_SCRIPT_SOURCES: Readonly<Record<string, readonly string[]>> = {
+export const PAGE_SCRIPT_SOURCES: Readonly<Record<string, readonly string[]>> = {
   "pod-rattle": ["blob:"],
 };
-
-export { ASSETS_DIR, PAGES, PAGE_SCRIPT_SOURCES };

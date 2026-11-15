@@ -6,7 +6,7 @@ import type { LastRunValue } from "./last-run.ts";
 import { playerFailed } from "./player-failed.ts";
 import type { PlayerFailed } from "./player-failed.ts";
 
-type PlayerStorage = Readonly<{
+export type PlayerStorage = Readonly<{
   get: (key: string) => Promise<unknown>;
   put: (key: string, value: unknown) => Promise<void>;
   setAlarm: (scheduledTime: number) => Promise<void>;
@@ -35,17 +35,18 @@ const write = (
 ): Effect.Effect<void, PlayerFailed> =>
   Effect.tryPromise({ try: () => storage.put(key, value), catch: playerFailed });
 
-const storedToken = (storage: PlayerStorage): Effect.Effect<Option.Option<string>, PlayerFailed> =>
-  read(storage, "token", decodeToken);
+export const storedToken = (
+  storage: PlayerStorage,
+): Effect.Effect<Option.Option<string>, PlayerFailed> => read(storage, "token", decodeToken);
 
-const storeToken = Effect.fn("three-twelve.storeToken")(function* storeToken(
+export const storeToken = Effect.fn("three-twelve.storeToken")(function* storeToken(
   storage: PlayerStorage,
   token: string,
 ) {
   yield* write(storage, "token", token);
 });
 
-const isStoredToken = Effect.fn("three-twelve.isStoredToken")(function* isStoredToken(
+export const isStoredToken = Effect.fn("three-twelve.isStoredToken")(function* isStoredToken(
   storage: PlayerStorage,
   token: string,
 ) {
@@ -53,11 +54,14 @@ const isStoredToken = Effect.fn("three-twelve.isStoredToken")(function* isStored
   return Option.contains(known, token);
 });
 
-const storedStartAt = (
+export const storedStartAt = (
   storage: PlayerStorage,
 ): Effect.Effect<Option.Option<number>, PlayerFailed> => read(storage, "startAt", decodeTime);
 
-const arm = Effect.fn("three-twelve.arm")(function* arm(storage: PlayerStorage, startAt: number) {
+export const arm = Effect.fn("three-twelve.arm")(function* arm(
+  storage: PlayerStorage,
+  startAt: number,
+) {
   const now = yield* DateTime.now;
   const wakeAt = DateTime.subtract(DateTime.makeUnsafe(startAt), ARM_LEAD);
   yield* write(storage, "startAt", startAt);
@@ -67,35 +71,25 @@ const arm = Effect.fn("three-twelve.arm")(function* arm(storage: PlayerStorage, 
   });
 });
 
-const startedRun = (storage: PlayerStorage): Effect.Effect<Option.Option<number>, PlayerFailed> =>
-  read(storage, "runStartedFor", decodeTime);
+export const startedRun = (
+  storage: PlayerStorage,
+): Effect.Effect<Option.Option<number>, PlayerFailed> => read(storage, "runStartedFor", decodeTime);
 
-const storeStartedRun = Effect.fn("three-twelve.storeStartedRun")(function* storeStartedRun(
+export const storeStartedRun = Effect.fn("three-twelve.storeStartedRun")(function* storeStartedRun(
   storage: PlayerStorage,
   startAt: number,
 ) {
   yield* write(storage, "runStartedFor", startAt);
 });
 
-const lastRun = (storage: PlayerStorage): Effect.Effect<Option.Option<unknown>, PlayerFailed> =>
+export const lastRun = (
+  storage: PlayerStorage,
+): Effect.Effect<Option.Option<unknown>, PlayerFailed> =>
   stored(storage, "lastRun").pipe(Effect.map(Option.fromUndefinedOr));
 
-const storeLastRun = Effect.fn("three-twelve.storeLastRun")(function* storeLastRun(
+export const storeLastRun = Effect.fn("three-twelve.storeLastRun")(function* storeLastRun(
   storage: PlayerStorage,
   value: LastRunValue,
 ) {
   yield* write(storage, "lastRun", value);
 });
-
-export {
-  arm,
-  isStoredToken,
-  lastRun,
-  startedRun,
-  storeLastRun,
-  storeStartedRun,
-  storeToken,
-  storedStartAt,
-  storedToken,
-};
-export type { PlayerStorage };

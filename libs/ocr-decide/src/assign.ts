@@ -5,24 +5,24 @@ import type { Extraction, Field, FieldValue, Fragment } from "./fragment.ts";
 import { ModelApi } from "./model-api.ts";
 import type { ModelError } from "./model-error.ts";
 
-type Via = "choice" | "noul";
+export type Via = "choice" | "noul";
 
-interface DecisionModel {
+export interface DecisionModel {
   readonly id: string;
   readonly label: string;
   readonly via: Via;
 }
 
-const DECISION_MODELS = [
+export const DECISION_MODELS = [
   { id: "respan/span-01-lite", label: "span-01 lite", via: "noul" },
   { id: "typesafe/jev-1.13", label: "Jev 1.13", via: "choice" },
   { id: "perplexity/pplx-decider-v1.1-27b", label: "Decider V1.1 27B", via: "choice" },
   { id: "inception/mercury-decide", label: "Mercury Decide", via: "choice" },
 ] as const satisfies readonly DecisionModel[];
 
-const [DEFAULT_DECISION_MODEL] = DECISION_MODELS;
+export const [DEFAULT_DECISION_MODEL] = DECISION_MODELS;
 
-const CUTOFF = 0.8;
+export const CUTOFF = 0.8;
 
 interface Candidate {
   readonly index: number;
@@ -124,7 +124,7 @@ const assignField = (
   return assignByProbability(model.id, fragments, field);
 };
 
-const assignFields = ({
+export const assignFields = ({
   fragments,
   fields,
   model = DEFAULT_DECISION_MODEL,
@@ -157,6 +157,3 @@ const assignFields = ({
     })),
     Effect.withSpan("ocr-decide.assign", { attributes: { model: model.id } }),
   );
-
-export { CUTOFF, DECISION_MODELS, DEFAULT_DECISION_MODEL, assignFields };
-export type { DecisionModel, Via };

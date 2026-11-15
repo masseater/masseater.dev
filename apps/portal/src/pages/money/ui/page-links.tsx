@@ -6,7 +6,7 @@ import type { PeriodValue } from "#/entities/money";
 import { FirstLink } from "./first-link";
 import { NextSlot } from "./next-slot";
 
-const PageLinks = ({
+export const PageLinks = ({
   next,
   paged,
   period,
@@ -16,5 +16,3 @@ const PageLinks = ({
     <NextSlot next={next} period={period} />
   </div>
 );
-
-export { PageLinks };

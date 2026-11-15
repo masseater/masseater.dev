@@ -15,7 +15,7 @@ const EVERY_SCOPE = {} as const;
 
 const RECENT_SESSIONS = { limit: 100 } as const;
 
-const watashiRoutes = createRouter("/api/watashi")
+export const watashiRoutes = createRouter("/api/watashi")
   .get("/timeline", () => respond(timeline))
   .get(
     "/records",
@@ -52,7 +52,4 @@ const watashiRoutes = createRouter("/api/watashi")
     { query: Schema.toStandardSchemaV1(CursorQuery) },
   );
 
-type WatashiRoutes = typeof watashiRoutes;
-
-export { watashiRoutes };
-export type { WatashiRoutes };
+export type WatashiRoutes = typeof watashiRoutes;

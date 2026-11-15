@@ -10,7 +10,7 @@ const REJECTED = 400;
 const TOO_LARGE = 413;
 const NOT_ALLOWED = 405;
 
-interface BrowserSpansOptions {
+export interface BrowserSpansOptions {
   readonly service: string;
 }
 
@@ -98,10 +98,7 @@ const respond = (service: string, request: Request): Effect.Effect<Response> =>
     Effect.catchTag("RejectedSpans", rejected),
   );
 
-const browserSpans =
+export const browserSpans =
   ({ service }: BrowserSpansOptions) =>
   (request: Request): Promise<Response> =>
     runtime.runPromise(respond(service, request));
-
-export type { BrowserSpansOptions };
-export { browserSpans };

@@ -2,7 +2,7 @@ import { Schema } from "effect";
 
 const TIMES_OF_DAY = ["morning", "afternoon", "evening", "night"] as const;
 
-const MEDIA_TYPES = [
+export const MEDIA_TYPES = [
   "book",
   "comic",
   "anime",
@@ -14,13 +14,13 @@ const MEDIA_TYPES = [
   "podcast",
 ] as const;
 
-const MEDIA_STATUSES = ["want", "doing", "done", "tried", "dropped", "owned"] as const;
+export const MEDIA_STATUSES = ["want", "doing", "done", "tried", "dropped", "owned"] as const;
 
 const BOOK_ID_KEYS = ["isbn", "asin", "ndlBibId"] as const;
 
 const SCREEN_ID_KEYS = ["tmdbId", "imdbId"] as const;
 
-const MEDIA_ID_KEYS = {
+export const MEDIA_ID_KEYS = {
   book: BOOK_ID_KEYS,
   comic: BOOK_ID_KEYS,
   anime: ["annictWorkId", "malId"],
@@ -32,17 +32,17 @@ const MEDIA_ID_KEYS = {
   podcast: ["applePodcastsId", "spotifyId"],
 } as const;
 
-const SHARED_MEDIA_ID_KEYS = ["konomiKey", "url"] as const;
+export const SHARED_MEDIA_ID_KEYS = ["konomiKey", "url"] as const;
 
 const COMPARISONS = ["atLeast", "atMost"] as const;
 
 const GOAL_PERIODS = ["day", "week", "month"] as const;
 
-const TODO_STATUSES = ["open", "done", "canceled"] as const;
+export const TODO_STATUSES = ["open", "done", "canceled"] as const;
 
 const TODO_PRIORITIES = ["high", "normal", "low"] as const;
 
-const AGGREGATES = ["sum", "avg", "last", "max", "min"] as const;
+export const AGGREGATES = ["sum", "avg", "last", "max", "min"] as const;
 
 const MIN_RATING = 1;
 
@@ -52,12 +52,12 @@ const MIN_TIMES = 0;
 
 const Text = Schema.NonEmptyString;
 
-const Time = Schema.NonEmptyString.annotate({
+export const Time = Schema.NonEmptyString.annotate({
   description:
     "ISO 8601 with a time zone (2026-11-08T19:00+09:00 or 2026-11-08T10:00Z), or a date (2026-11-08), month (2024-03) or year (2010). A time without a zone is read as Asia/Tokyo.",
 });
 
-const Ref = Schema.String.check(Schema.isPattern(/^[a-z_]+:\d+$/u)).annotate({
+export const Ref = Schema.String.check(Schema.isPattern(/^[a-z_]+:\d+$/u)).annotate({
   description: "A record reference such as life_event:12 or memory:3",
 });
 
@@ -92,7 +92,7 @@ const MediaIds = Schema.Struct({
     "IDs allowed per mediaType. book/comic: isbn, asin, ndlBibId. anime: annictWorkId, malId. movie/tv: tmdbId, imdbId. game: steamAppId, igdbId, nintendoEshopId. music: musicbrainzId, spotifyId, appleMusicId. video: youtubeVideoId, niconicoVideoId. podcast: applePodcastsId, spotifyId. Any type: konomiKey, url.",
 });
 
-const LifeEventBody = Schema.Struct({
+export const LifeEventBody = Schema.Struct({
   text: Text.annotate({ description: "What happened, close to the owner's own words" }),
   at: Time,
   until: Schema.optionalKey(Time),
@@ -109,7 +109,7 @@ const Rating = Schema.Int.check(Schema.isBetween({ minimum: MIN_RATING, maximum:
 
 const Times = Schema.Int.check(Schema.isGreaterThanOrEqualTo(MIN_TIMES));
 
-const MediaItemBody = Schema.Struct({
+export const MediaItemBody = Schema.Struct({
   mediaType: Schema.Literals(MEDIA_TYPES),
   title: Text,
   creator: Schema.optionalKey(Text),
@@ -125,7 +125,7 @@ const MediaItemBody = Schema.Struct({
   tags: Schema.optionalKey(Names),
 });
 
-const ProfileFactBody = Schema.Struct({
+export const ProfileFactBody = Schema.Struct({
   about: Schema.optionalKey(Text.annotate({ description: "self (default) or a person's name" })),
   topic: Text,
   statement: Text,
@@ -133,7 +133,7 @@ const ProfileFactBody = Schema.Struct({
   until: Schema.optionalKey(Time),
 });
 
-const MetricGoalBody = Schema.Struct({
+export const MetricGoalBody = Schema.Struct({
   name: Text,
   metric: Text,
   target: Schema.Finite,
@@ -149,13 +149,13 @@ const Statement = Schema.Struct({
   evidence: Schema.Array(Ref),
 });
 
-const OwnerReflectionBody = Schema.Struct({
+export const OwnerReflectionBody = Schema.Struct({
   from: Time,
   to: Time,
   statements: Schema.Array(Statement),
 });
 
-const TodoBody = Schema.Struct({
+export const TodoBody = Schema.Struct({
   title: Text,
   note: Schema.optionalKey(Schema.String),
   status: Schema.optionalKey(Schema.Literals(TODO_STATUSES)),
@@ -167,39 +167,19 @@ const ValuesSchema = Schema.Record(Schema.String, Schema.Unknown).annotate({
   description: "JSON Schema for values. Numeric properties should be metric names.",
 });
 
-const EventKindBody = Schema.Struct({
+export const EventKindBody = Schema.Struct({
   kind: Text,
   description: Schema.optionalKey(Text),
   valuesSchema: Schema.optionalKey(ValuesSchema),
 });
 
-const MetricDefinitionBody = Schema.Struct({
+export const MetricDefinitionBody = Schema.Struct({
   metric: Text,
   unit: Schema.optionalKey(Text),
   aggregate: Schema.optionalKey(Schema.Literals(AGGREGATES)),
   description: Schema.optionalKey(Text),
 });
 
-type Aggregate = (typeof AGGREGATES)[number];
+export type Aggregate = (typeof AGGREGATES)[number];
 
-type MediaType = (typeof MEDIA_TYPES)[number];
-
-export {
-  AGGREGATES,
-  MEDIA_ID_KEYS,
-  SHARED_MEDIA_ID_KEYS,
-  EventKindBody,
-  LifeEventBody,
-  MEDIA_STATUSES,
-  MEDIA_TYPES,
-  MediaItemBody,
-  MetricDefinitionBody,
-  MetricGoalBody,
-  OwnerReflectionBody,
-  ProfileFactBody,
-  Ref,
-  TODO_STATUSES,
-  Time,
-  TodoBody,
-};
-export type { Aggregate, MediaType };
+export type MediaType = (typeof MEDIA_TYPES)[number];

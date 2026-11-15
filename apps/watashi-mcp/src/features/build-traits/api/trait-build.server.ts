@@ -9,7 +9,7 @@ import { askAbout } from "./trait-ask.server.ts";
 import { settle } from "./trait-settle.server.ts";
 import { collectSources } from "./trait-sources.server.ts";
 
-type StepOutcome =
+export type StepOutcome =
   | Readonly<{ status: "idle" }>
   | Readonly<{
       status: "progressed";
@@ -22,7 +22,7 @@ type StepOutcome =
       retracted: number;
     }>;
 
-type StepFailure = StorageFailed | UpstreamFailed | AnalystFailed;
+export type StepFailure = StorageFailed | UpstreamFailed | AnalystFailed;
 
 const ACTOR = "trait-builder";
 
@@ -50,7 +50,7 @@ const advance = ({
     return outcome;
   });
 
-const buildStep: Effect.Effect<StepOutcome, StepFailure, TraitAnalyst> = collectSources.pipe(
+export const buildStep: Effect.Effect<StepOutcome, StepFailure, TraitAnalyst> = collectSources.pipe(
   Effect.flatMap(
     Option.match({
       onNone: () => Effect.succeed(IDLE),
@@ -59,6 +59,3 @@ const buildStep: Effect.Effect<StepOutcome, StepFailure, TraitAnalyst> = collect
   ),
   Effect.withSpan("watashi.traits.step"),
 );
-
-export { buildStep };
-export type { StepFailure, StepOutcome };

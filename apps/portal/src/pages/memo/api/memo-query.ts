@@ -13,14 +13,12 @@ type MemoDetail = Readonly<{ memo: readonly MemoValue[]; revisions: readonly Rev
 
 const route = getRouteApi("/_watashi/memos/$project/$name");
 
-const loadMemoPage = ({ queryClient, key }: MemoLoad): Promise<unknown> =>
+export const loadMemoPage = ({ queryClient, key }: MemoLoad): Promise<unknown> =>
   queryClient.query(
     watashiQueries.memos({ project: key.project })({ name: key.name }).get.queryOptions(),
   );
 
-const useMemoDetail = (): MemoDetail => {
+export const useMemoDetail = (): MemoDetail => {
   const { project, name } = route.useParams();
   return useSuspenseQuery(watashiQueries.memos({ project })({ name }).get.queryOptions()).data;
 };
-
-export { loadMemoPage, useMemoDetail };

@@ -5,7 +5,7 @@ import { LifeList } from "#/entities/watashi";
 import type { LifeItemValue } from "#/entities/watashi";
 import { Section } from "#/shared/ui";
 
-const LifeSection = ({
+export const LifeSection = ({
   items,
   title,
 }: Readonly<{ items: readonly LifeItemValue[]; title: string }>): ReactNode =>
@@ -14,5 +14,3 @@ const LifeSection = ({
       <LifeList items={items} label={title} />
     </Section>
   );
-
-export { LifeSection };

@@ -33,7 +33,7 @@ const DATA_FIRST_ARITY_3 = 3;
 
 const DATA_FIRST_ARITY = 2;
 
-const PREFIX = "oxlint-plugin-decision";
+export const PREFIX = "oxlint-plugin-decision";
 const PROVIDER_SEPARATOR = "/";
 const ONE_RULE = 1;
 
@@ -50,7 +50,7 @@ const isSelector = (input: unknown): input is DecisionRule["select"] => Predicat
 
 const RULE_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
 
-const ModelSpecSchema = Schema.Union([
+export const ModelSpecSchema = Schema.Union([
   Schema.NonEmptyString,
   Schema.NonEmptyArray(Schema.NonEmptyString),
 ]);
@@ -85,7 +85,7 @@ const RuleSchema = Schema.Struct({
   answer: Schema.optionalKey(Schema.Unknown),
 });
 
-const STRICT = { onExcessProperty: "error" } as const;
+export const STRICT = { onExcessProperty: "error" } as const;
 
 const decodeOptions = Schema.decodeUnknownResult(OptionsSchema, STRICT);
 const decodeRule = Schema.decodeUnknownResult(RuleSchema, STRICT);
@@ -97,10 +97,10 @@ class OptionsError extends taggedError<OptionsError, { readonly brand: unique sy
   { message: Schema.String },
 ) {}
 
-const optionsError = (message: string): Error =>
+export const optionsError = (message: string): Error =>
   OptionsError.make({ message: `${PREFIX}: ${message}` });
 
-const modelIdsOf = (spec: ModelSpec): readonly string[] => Arr.dedupe(Arr.ensure(spec));
+export const modelIdsOf = (spec: ModelSpec): readonly string[] => Arr.dedupe(Arr.ensure(spec));
 
 const splitModelId = (id: string): Option.Option<readonly [string, string]> => {
   const [provider, ...rest] = Str.split(id, PROVIDER_SEPARATOR);
@@ -111,7 +111,7 @@ const splitModelId = (id: string): Option.Option<readonly [string, string]> => {
   );
 };
 
-const resolveModel: {
+export const resolveModel: {
   (providers: Readonly<Record<string, DecisionProvider>>): (id: string) => ModelRef;
   (id: string, providers: Readonly<Record<string, DecisionProvider>>): ModelRef;
 } = Fn.dual(
@@ -148,9 +148,9 @@ const answerOf = (rule: DecisionRule): RuleAnswer => {
   );
 };
 
-type Decode<Value> = (input: unknown) => Result.Result<Value, Schema.SchemaError>;
+export type Decode<Value> = (input: unknown) => Result.Result<Value, Schema.SchemaError>;
 
-const checked: {
+export const checked: {
   (input: unknown, what: string): <Value>(decode: Decode<Value>) => Value;
   <Value>(decode: Decode<Value>, input: unknown, what: string): Value;
 } = Fn.dual(
@@ -170,7 +170,7 @@ const checkRule = (rule: DecisionRule): DecisionRule => {
   return rule;
 };
 
-const checkRules = (rules: readonly DecisionRule[]): readonly DecisionRule[] => {
+export const checkRules = (rules: readonly DecisionRule[]): readonly DecisionRule[] => {
   if (!Arr.isReadonlyArrayNonEmpty(rules)) {
     throw optionsError("rules must list at least one rule");
   }
@@ -194,7 +194,7 @@ const resolveRule =
     ),
   });
 
-interface Sources {
+export interface Sources {
   readonly options: DecisionOptions;
   readonly settings?: unknown;
 }
@@ -206,7 +206,7 @@ const settingsFrom = (settings: unknown): DecisionOptions => {
   return checked(decodeOptions, settings, "settings");
 };
 
-const resolveOptions: {
+export const resolveOptions: {
   (
     rules: readonly DecisionRule[],
     providers: Readonly<Record<string, DecisionProvider>>,
@@ -238,16 +238,3 @@ const resolveOptions: {
     };
   },
 );
-
-export type { Decode, Sources };
-export {
-  checkRules,
-  optionsError,
-  PREFIX,
-  ModelSpecSchema,
-  STRICT,
-  checked,
-  modelIdsOf,
-  resolveModel,
-  resolveOptions,
-};

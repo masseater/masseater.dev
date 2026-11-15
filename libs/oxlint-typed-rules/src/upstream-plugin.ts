@@ -18,28 +18,30 @@ const Severities: Schema.Literals<readonly ["error", "warn", "off"]> = Schema.Li
   "off",
 ]);
 
-type Severity = typeof Severities.Type;
+export type Severity = typeof Severities.Type;
 
-interface Config {
+export interface Config {
   readonly rules?: Readonly<Record<string, Severity>> | undefined;
 }
 
-type UpstreamPlugin<ConfigName extends string> = Plugin & {
+export type UpstreamPlugin<ConfigName extends string> = Plugin & {
   readonly meta: { readonly name: string };
   readonly configs: Readonly<Record<ConfigName, Config>>;
 };
 
-interface Upstream<ConfigName extends string> {
+export interface Upstream<ConfigName extends string> {
   readonly rules: Readonly<Record<string, unknown>>;
   readonly configs: Readonly<Record<ConfigName, unknown>>;
 }
 
-type RulesOf = (rules: Readonly<Record<string, unknown>>) => Readonly<Record<string, CreateRule>>;
+export type RulesOf = (
+  rules: Readonly<Record<string, unknown>>,
+) => Readonly<Record<string, CreateRule>>;
 
 const isRule = (rule: unknown): rule is CreateRule =>
   Predicate.hasProperty(rule, "create") && Predicate.isFunction(rule.create);
 
-const plainRules: RulesOf = Record.filter(isRule);
+export const plainRules: RulesOf = Record.filter(isRule);
 
 const ruleIdOf = (key: string): string => Arr.lastNonEmpty(Str.split(key, "/"));
 
@@ -58,7 +60,7 @@ const configOf =
 
 const DATA_FIRST_ARITY_3 = 3;
 
-const upstreamPlugin: {
+export const upstreamPlugin: {
   <ConfigName extends string>(
     upstream: Upstream<ConfigName>,
     rulesOfUpstream: RulesOf,
@@ -80,6 +82,3 @@ const upstreamPlugin: {
     rules: rulesOfUpstream(upstream.rules),
   }),
 );
-
-export type { Config, RulesOf, Severity, Upstream, UpstreamPlugin };
-export { plainRules, upstreamPlugin };

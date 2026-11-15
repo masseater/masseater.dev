@@ -13,17 +13,14 @@ const Memo = Schema.Struct({
   retracted: Schema.optionalKey(Schema.Struct({ at: Schema.String, reason: Schema.String })),
 });
 
-const MemoList = Schema.Struct({ total: Schema.Int, items: Schema.Array(Memo) });
+export const MemoList = Schema.Struct({ total: Schema.Int, items: Schema.Array(Memo) });
 
-const MemoProjects = Schema.Struct({
+export const MemoProjects = Schema.Struct({
   projects: Schema.Array(
     Schema.Struct({ project: Schema.String, memos: Schema.Int, updatedAt: TimeOut }),
   ),
 });
 
-type MemoValue = typeof Memo.Type;
+export type MemoValue = typeof Memo.Type;
 
-type ProjectValue = (typeof MemoProjects.Type)["projects"][number];
-
-export { MemoList, MemoProjects };
-export type { MemoValue, ProjectValue };
+export type ProjectValue = (typeof MemoProjects.Type)["projects"][number];

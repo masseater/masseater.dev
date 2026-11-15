@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { Heading } from "./headings.ts";
 import { SideTocNav } from "./side-toc-nav.tsx";
 
-const SideToc = ({
+export const SideToc = ({
   label,
   headings,
 }: Readonly<{ label: string; headings: readonly Heading[] }>): ReactNode => (
@@ -14,5 +14,3 @@ const SideToc = ({
     </div>
   </aside>
 );
-
-export { SideToc };

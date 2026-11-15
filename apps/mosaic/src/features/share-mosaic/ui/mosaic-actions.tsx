@@ -11,7 +11,10 @@ import { ShareLink } from "./share-link";
 const REGENERATE = "再構成";
 const NO_SEED = {};
 
-const MosaicActions = ({ slug, seed }: Readonly<{ slug: string; seed: number }>): ReactNode => {
+export const MosaicActions = ({
+  slug,
+  seed,
+}: Readonly<{ slug: string; seed: number }>): ReactNode => {
   const params = useMemo(() => ({ slug }), [slug]);
   const text = shareText({ slug, seed });
   return (
@@ -35,5 +38,3 @@ const MosaicActions = ({ slug, seed }: Readonly<{ slug: string; seed: number }>)
     </div>
   );
 };
-
-export { MosaicActions };

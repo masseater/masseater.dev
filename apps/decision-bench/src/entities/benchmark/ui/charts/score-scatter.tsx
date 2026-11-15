@@ -22,7 +22,7 @@ const xLabel = (name: string): Readonly<Record<string, number | string>> => ({
   fontSize: 12,
 });
 
-const ScoreScatter = ({
+export const ScoreScatter = ({
   points,
   axis,
   title,
@@ -54,5 +54,3 @@ const ScoreScatter = ({
     </ScatterChart>
   </ChartContainer>
 );
-
-export { ScoreScatter };

@@ -6,8 +6,6 @@ const SIGNED_YEN = new Intl.NumberFormat("ja-JP", {
   signDisplay: "exceptZero",
 });
 
-const yen = (amount: number): string => YEN.format(amount);
+export const yen = (amount: number): string => YEN.format(amount);
 
-const signedYen = (amount: number): string => SIGNED_YEN.format(amount);
-
-export { signedYen, yen };
+export const signedYen = (amount: number): string => SIGNED_YEN.format(amount);

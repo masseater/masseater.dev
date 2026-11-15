@@ -13,7 +13,7 @@ import {
 } from "./blend-geometry.ts";
 import type { Face, Point, Shape } from "./blend-geometry.ts";
 
-interface Solidify {
+export interface Solidify {
   readonly thickness: number;
   readonly factor: number;
   readonly rim: boolean;
@@ -129,7 +129,7 @@ const shellOf =
       material: face.material + solidify.shellMaterial,
     });
 
-const solidified =
+export const solidified =
   (solidify: Solidify) =>
   (shape: Shape): Shape => {
     const total = shape.points.length;
@@ -166,6 +166,3 @@ const solidified =
       edges: [...shape.edges, ...pipe(shape.edges, Array.map(edgeShiftedBy(total)))],
     };
   };
-
-export { solidified };
-export type { Solidify };

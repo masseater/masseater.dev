@@ -3,7 +3,7 @@ import { Effect, Option, Schema, flow } from "effect";
 import { releaseOnUnmount, whileMounted } from "./gpu-lifetime";
 import { destroyDevice, trackDevice } from "./gpu-telemetry";
 
-interface Gpu {
+export interface Gpu {
   readonly device: GPUDevice;
   readonly context: GPUCanvasContext;
   readonly format: GPUTextureFormat;
@@ -48,7 +48,7 @@ const configure = (canvas: HTMLCanvasElement, device: GPUDevice): Option.Option<
     },
   });
 
-const acquireGpu = ({
+export const acquireGpu = ({
   canvas,
   signal,
 }: Readonly<{ canvas: HTMLCanvasElement; signal: AbortSignal }>): Effect.Effect<
@@ -66,6 +66,3 @@ const acquireGpu = ({
     ),
   ).pipe(Effect.withSpan("mosaic.gpu.acquire"));
 };
-
-export type { Gpu };
-export { acquireGpu };

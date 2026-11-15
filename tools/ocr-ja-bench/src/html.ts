@@ -30,7 +30,7 @@ const conditionStyle = (page: SyntheticPage): string =>
     Match.exhaustive,
   );
 
-const htmlOf = (
+export const htmlOf = (
   page: SyntheticPage,
 ): string => `<!doctype html><html lang="ja"><head><meta charset="utf-8">
   <link rel="stylesheet" href="${FONT_CSS[page.font] ?? ""}">
@@ -44,5 +44,3 @@ const htmlOf = (
     Arr.map((line) => `<div class="line">${escapeText(line)}</div>`),
     Arr.join(""),
   )}</div></body></html>`;
-
-export { htmlOf };

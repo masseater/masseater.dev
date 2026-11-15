@@ -7,7 +7,7 @@ import { RetractedNote } from "#/entities/watashi";
 import { shownTime } from "#/shared/model";
 import { Row } from "#/shared/ui";
 
-const MemoRow = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
+export const MemoRow = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
   const params = useMemo(() => ({ project: memo.project, name: memo.name }), [memo]);
   return (
     <Row lead={shownTime(memo.updatedAt)}>
@@ -24,5 +24,3 @@ const MemoRow = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
     </Row>
   );
 };
-
-export { MemoRow };

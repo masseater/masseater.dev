@@ -17,12 +17,12 @@ Slay the Spire 2（Steam の AppID 2868840、Godot/MegaDot と C#）向けの Mo
 `local.props.example` を `local.props` にコピーし、`GodotPath`（ゲームが既定の場所に無い場合は `Sts2Path` も）を設定する。Mac のデフォルトの場所にインストールした場合は、この手順は不要である。リポジトリのルートで `vp install` を実行し、このディレクトリで以下のコマンドを実行する。
 
 ```sh
-vp run build                 # 全 Mod
-vp run build MapDrawUndo     # 1 つだけ
-vp run publish MyFirstMod    # 画像やテキストを変えたとき（.pck も書き出す）
-vp run new-mod NewModName    # templates/mod から mods/ と workshop/ に新しい Mod を作る
+vp run build                      # 全 Mod
+vp run build mods/MapDrawUndo     # 1 つだけ
+vp run publish mods/MyFirstMod    # .pck も書き出し、workshop/ にも写す
+vp run new-mod NewModName         # templates/mod から mods/ と workshop/ に新しい Mod を作る
 ```
 
-ゲームの「設定 → Mod Settings」に Mod が出れば配置できている。ワークショップへは Mega Crit 公式の [sts2-mod-uploader](https://github.com/megacrit/sts2-mod-uploader) で出す。`vp run publish <Mod>` と `vp run stage <Mod>` のあとに `./ModUploader upload -w workshop/<Mod>` を実行する。
+ゲームの「設定 → Mod Settings」に Mod が出れば配置できている。ワークショップへは Mega Crit 公式の [sts2-mod-uploader](https://github.com/megacrit/sts2-mod-uploader) で出す。`vp run publish mods/<Mod>` のあとに `./ModUploader upload -w workshop/<Mod>` を実行する。
 
 参考になる資料は [Alchyr/ModTemplate-StS2 の Wiki](https://github.com/Alchyr/ModTemplate-StS2/wiki)、[BaseLib](https://github.com/Alchyr/BaseLib-StS2)、[Slay the Spire 2 Modding Tutorial](https://fresh-milkshake.github.io/Modding-Tutorial/)、[wiki.gg の Modding Tutorials](https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Modding_Tutorials) である。ゲームのコードは、手元の `sts2.dll` を ILSpy などで読むのが確実である。

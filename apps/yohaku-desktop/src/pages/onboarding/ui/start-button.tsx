@@ -6,7 +6,7 @@ import { useCompleteStep } from "#/entities/onboarding";
 
 const LABEL = "書き始める";
 
-const StartButton = (): ReactNode => {
+export const StartButton = (): ReactNode => {
   const complete = useCompleteStep();
   const onClick = useCallback(() => {
     complete("setup");
@@ -17,5 +17,3 @@ const StartButton = (): ReactNode => {
     </div>
   );
 };
-
-export { StartButton };

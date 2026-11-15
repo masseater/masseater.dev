@@ -5,9 +5,11 @@ import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 import { WatashiFailed } from "./errors.ts";
 import type { JsonError } from "./errors.ts";
 
-type Decodable = Schema.Constraint & { readonly DecodingServices: never };
+/** @internal */
+export type Decodable = Schema.Constraint & { readonly DecodingServices: never };
 
-type Expect<Shape extends Decodable> = Readonly<{ url: string; schema: Shape }>;
+/** @internal */
+export type Expect<Shape extends Decodable> = Readonly<{ url: string; schema: Shape }>;
 
 const START = 0;
 const SHOWN_BODY = 500;
@@ -28,7 +30,8 @@ const unexpected =
       ),
     );
 
-const okBody =
+/** @internal */
+export const okBody =
   <Shape extends Decodable>(expected: Expect<Shape>) =>
   (response: HttpClientResponse.HttpClientResponse): Effect.Effect<Shape["Type"], JsonError> => {
     if (response.status >= OK_FIRST && response.status <= OK_LAST) {
@@ -37,12 +40,14 @@ const okBody =
     return unexpected(expected.url)(response);
   };
 
-const getJson = <Shape extends Decodable>(
+/** @internal */
+export const getJson = <Shape extends Decodable>(
   expected: Expect<Shape>,
 ): Effect.Effect<Shape["Type"], JsonError, HttpClient.HttpClient> =>
   HttpClient.get(expected.url, { acceptJson: true }).pipe(Effect.flatMap(okBody(expected)));
 
-const postForm = <Shape extends Decodable>(
+/** @internal */
+export const postForm = <Shape extends Decodable>(
   request: Expect<Shape> & Readonly<{ form: Readonly<Record<string, string>> }>,
 ): Effect.Effect<Shape["Type"], JsonError, HttpClient.HttpClient> => {
   const post = HttpClientRequest.post(request.url, { acceptJson: true }).pipe(
@@ -51,7 +56,8 @@ const postForm = <Shape extends Decodable>(
   return HttpClient.execute(post).pipe(Effect.flatMap(okBody(request)));
 };
 
-const postJson = <Shape extends Decodable>(
+/** @internal */
+export const postJson = <Shape extends Decodable>(
   request: Expect<Shape> & Readonly<{ body: unknown }>,
 ): Effect.Effect<Shape["Type"], JsonError, HttpClient.HttpClient> =>
   HttpClientRequest.post(request.url, { acceptJson: true }).pipe(
@@ -59,8 +65,3 @@ const postJson = <Shape extends Decodable>(
     Effect.flatMap(HttpClient.execute),
     Effect.flatMap(okBody(request)),
   );
-
-/** @internal */
-export { getJson, okBody, postForm, postJson };
-/** @internal */
-export type { Decodable, Expect };

@@ -3,7 +3,7 @@ import { constVoid } from "effect/Function";
 import { useCallback } from "react";
 import type { ReactNode, RefCallback } from "react";
 
-const NextPageTrigger = ({ onVisible }: Readonly<{ onVisible: () => void }>): ReactNode => {
+export const NextPageTrigger = ({ onVisible }: Readonly<{ onVisible: () => void }>): ReactNode => {
   const watch: RefCallback<HTMLDivElement> = useCallback(
     (element) => {
       const observer = new IntersectionObserver((entries) => {
@@ -30,5 +30,3 @@ const NextPageTrigger = ({ onVisible }: Readonly<{ onVisible: () => void }>): Re
   );
   return <div ref={watch} className="h-px shrink-0" />;
 };
-
-export { NextPageTrigger };

@@ -14,7 +14,7 @@ const TEXT = { search: "作業メモを探す", list: "作業メモ" } as const;
 
 const ACTION = "/memos";
 
-const MemoList = (): ReactNode => {
+export const MemoList = (): ReactNode => {
   const { project, keyword = "" } = route.useSearch();
   const kept = useMemo(() => Rec.getSomes({ project: Option.fromUndefinedOr(project) }), [project]);
   return (
@@ -29,5 +29,3 @@ const MemoList = (): ReactNode => {
     </div>
   );
 };
-
-export { MemoList };

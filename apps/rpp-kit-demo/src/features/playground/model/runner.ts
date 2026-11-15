@@ -6,7 +6,7 @@ import { playground } from "#/shared/config";
 import { LineSchema } from "./output";
 import type { Line } from "./output";
 
-type Script = Readonly<{ code: string; song: string }>;
+export type Script = Readonly<{ code: string; song: string }>;
 
 const Lines = Schema.Array(LineSchema);
 
@@ -85,7 +85,7 @@ const outcome = (thread: Worker): Effect.Effect<readonly Line[]> =>
     Effect.orElseSucceed(() => errorLine(playground.output.broken)),
   );
 
-const runScript = (script: Script): Effect.Effect<readonly Line[]> =>
+export const runScript = (script: Script): Effect.Effect<readonly Line[]> =>
   Effect.scoped(
     sandbox(scriptOf(script)).pipe(
       Effect.flatMap(outcome),
@@ -95,6 +95,3 @@ const runScript = (script: Script): Effect.Effect<readonly Line[]> =>
       }),
     ),
   );
-
-export { runScript };
-export type { Script };
