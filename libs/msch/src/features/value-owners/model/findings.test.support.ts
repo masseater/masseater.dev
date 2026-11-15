@@ -1,5 +1,6 @@
-import { Effect, Schema, Array as Arr, pipe } from "effect";
+import { Effect, Record as Rec, Schema, Array as Arr, pipe } from "effect";
 
+import type { Problem } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import { FixtureFiles, directoryWith } from "#/shared/lib/repository.test.support.ts";
 
@@ -52,4 +53,28 @@ export const findingsIn = Effect.fn("findingsIn")(function* findingsIn(
         `${repositoryFiles.relative(root, problem.file)}:${String(problem.line)} ${problem.rule}`,
     ),
   );
+});
+
+export const findingsAfterEdit = Effect.fn("findingsAfterEdit")(function* findingsAfterEdit(
+  files: Readonly<Record<string, string>>,
+  edits: Readonly<Record<string, string>>,
+) {
+  const fixtures = yield* FixtureFiles;
+  const repositoryFiles = yield* RepositoryFiles;
+  const root = yield* fixtureRepository(files);
+  yield* fixtures.commitAll(root);
+  const describe = (problems: readonly Problem[]): readonly string[] =>
+    pipe(
+      problems,
+      Arr.map(
+        (problem) =>
+          `${repositoryFiles.relative(root, problem.file)}:${String(problem.line)} ${problem.rule}`,
+      ),
+    );
+  const before = yield* checkRepository(root);
+  yield* Effect.forEach(Rec.toEntries(edits), ([file, source]) =>
+    fixtures.writeFile(repositoryFiles.join(root, file), source),
+  );
+  const after = yield* checkRepository(root);
+  return [describe(before), describe(after)] as const;
 });
