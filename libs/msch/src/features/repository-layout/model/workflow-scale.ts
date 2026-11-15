@@ -116,49 +116,37 @@ const filtersIn = (source: string): readonly Located[] =>
     ),
   );
 
+const reported =
+  (where: Where, offset: number, what: string) =>
+  (found: Option.Option<string>): readonly Problem[] =>
+    pipe(
+      found,
+      Option.map((directory) => problemAt(where, PACKAGE, packageMessage(what, directory))(offset)),
+      Option.toArray,
+    );
+
 const packagesIn = (
   workspaces: readonly NamedWorkspace[],
   { file, name, source }: Readonly<{ file: string; name: string; source: string }>,
 ): readonly Problem[] => {
+  const where = { file, source };
   const fromNames = pipe(
     namesIn(name, source),
     Arr.flatMap(({ text, offset }) =>
-      pipe(
-        named(workspaces, text),
-        Option.map((directory) =>
-          problemAt({ file, source }, PACKAGE, packageMessage(`"${text}"`, directory))(offset),
-        ),
-        Option.toArray,
-      ),
+      reported(where, offset, `"${text}"`)(named(workspaces, text)),
     ),
   );
   const referenced = pipe(
     workflowReferences(source),
     Arr.filter(({ field }) => !Str.startsWith("on.")(field)),
     Arr.flatMap(({ field, path, offset }) =>
-      pipe(
-        containing(workspaces, path),
-        Option.map((directory) =>
-          problemAt({ file, source }, PACKAGE, packageMessage(field, directory))(offset),
-        ),
-        Option.toArray,
-      ),
+      reported(where, offset, field)(containing(workspaces, path)),
     ),
   );
   const filtered = pipe(
     filtersIn(source),
     Arr.flatMap(({ text, offset }) =>
-      pipe(
-        matching(workspaces, text),
-        Option.map((directory) =>
-          problemAt(
-            { file, source },
-            PACKAGE,
-            packageMessage(`--filter ${text}`, directory),
-          )(offset),
-        ),
-        Option.toArray,
-      ),
+      reported(where, offset, `--filter ${text}`)(matching(workspaces, text)),
     ),
   );
   return [...fromNames, ...referenced, ...filtered];
