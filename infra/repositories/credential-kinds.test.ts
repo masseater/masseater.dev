@@ -14,7 +14,7 @@ const CLOUDFLARE = { token: "fake-cloudflare-token", accountId: "fake-account" }
 const GITHUB = { githubToken: "fake-github-token" };
 const NPM = { npmToken: "fake-npm-token" };
 const ATPROTO = { atpAppPassword: `fake-${randomKey()}` };
-const SHARED = { openrouterApiKey: "fake-openrouter", claudeCodeOauthToken: "fake-claude" };
+const SHARED = { claudeCodeOauthToken: "fake-claude" };
 
 const encodeJson = Schema.encodeOption(Schema.fromJsonString(Schema.Unknown));
 

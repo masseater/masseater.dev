@@ -37,7 +37,6 @@ const TOKEN_LIFETIME = { hours: 1 } as const;
 type CredentialBrokerEnv = GitHubAppEnv &
   Readonly<{
     ROOT_TOKEN: SecretsStoreSecret;
-    OPENROUTER_API_KEY: SecretsStoreSecret;
     CLAUDE_CODE_OAUTH_TOKEN: SecretsStoreSecret;
     NPM_TOKEN?: SecretsStoreSecret;
     ACCOUNT_ID: string;
@@ -180,12 +179,8 @@ const issueAtproto = (
   );
 
 const sharedKeys = (env: CredentialBrokerEnv): Effect.Effect<Option.Option<Issued>> =>
-  Effect.promise(() =>
-    Promise.all([env.OPENROUTER_API_KEY.get(), env.CLAUDE_CODE_OAUTH_TOKEN.get()]),
-  ).pipe(
-    Effect.map(([openrouterApiKey, claudeCodeOauthToken]) =>
-      Option.some({ openrouterApiKey, claudeCodeOauthToken }),
-    ),
+  Effect.promise(() => env.CLAUDE_CODE_OAUTH_TOKEN.get()).pipe(
+    Effect.map((claudeCodeOauthToken) => Option.some({ claudeCodeOauthToken })),
   );
 
 const BAD_REQUEST = 400;
