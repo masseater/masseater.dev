@@ -6,7 +6,7 @@ use reqwest::Client;
 use tauri::async_runtime;
 
 use crate::failure::{Failure, Outcome};
-use crate::model::SyncStatus;
+use crate::protocol::SyncStatus;
 use crate::store::{Store, now};
 
 use super::apply::apply_remote;
