@@ -7,7 +7,7 @@ import type { ParsedDraft } from "#/pages/interview/lib/draft";
 import { questionText } from "#/shared/api";
 import type { QuestionBody } from "#protocol";
 
-import { askingAtom, entriesAtom, heardAtom, summaryAtom, summaryOf } from "./atoms.ts";
+import { askingAtom, entriesAtom, heardAtom, leadsAtom, summaryAtom, summaryOf } from "./atoms.ts";
 import type { Entry } from "./atoms.ts";
 import { modify, read, write } from "./registry.ts";
 import { askedOf, recentOf } from "./transcript.ts";
@@ -23,6 +23,7 @@ const bodyNow = Effect.gen(function* bodyNow() {
     summary: summaryOf(summary),
     recent: recentOf(entries),
     asked: askedOf(entries),
+    leads: yield* read(leadsAtom),
   };
   return body;
 });
