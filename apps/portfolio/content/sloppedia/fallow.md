@@ -66,6 +66,7 @@ Sloppedia の持ち主の masseater は、自分のリポジトリの検査に f
 
 - [モノレポの構造の可視化](/sloppedia/monorepo-structure-visualization)
 - [Oxlint](/sloppedia/oxlint)
+- [モジュール境界ツール](/sloppedia/module-boundary-tools)
 
 [^docs]: Fallow「[Fallow: codebase analysis for TypeScript and JavaScript](https://fallow.tools/docs/)」。2026年11月9日に閲覧。
 
