@@ -4,10 +4,10 @@ import { Effect, Layer, Option } from "effect";
 import { Argument, Command } from "effect/cli";
 import { FetchHttpClient } from "effect/http";
 
-import { setOutput } from "#/actions.ts";
-import { githubToken } from "#/broker.ts";
-import { component } from "#/manifest.ts";
-import { releasedOnMain } from "#/release.ts";
+import { component } from "#/entities/component/model/manifest.ts";
+import { releasedOnMain } from "#/features/publish-release/model/release.ts";
+import { githubToken } from "#/shared/api/broker.ts";
+import { setOutput } from "#/shared/lib/actions.ts";
 
 const command = Command.make(
   "release-please-token",

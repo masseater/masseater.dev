@@ -3,8 +3,8 @@ import { runMain } from "@masseater.dev/node-main";
 import { Effect } from "effect";
 import { Argument, Command } from "effect/cli";
 
-import { component } from "#/manifest.ts";
-import { tagComponent } from "#/release.ts";
+import { component } from "#/entities/component/model/manifest.ts";
+import { tagComponent } from "#/features/publish-release/model/release.ts";
 
 const command = Command.make("component-tag", { name: Argument.String("component") }, ({ name }) =>
   Effect.gen(function* tag() {

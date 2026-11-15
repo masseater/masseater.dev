@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@effect/tsgo/schema.json",
   "extends": "../../tsconfig.json",
-  "include": ["src", "*.ts", "worker", "bin"],
+  "include": ["src", "*.ts", "bin"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["vite/client", "@cloudflare/workers-types", "@webgpu/types"]

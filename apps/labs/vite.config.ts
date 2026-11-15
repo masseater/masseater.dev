@@ -3,8 +3,8 @@ import { Array as Arr, Record as Rec, pipe } from "effect";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { defineConfig } from "vite-plus";
 
-import { labHeaders } from "./lab-headers.ts";
-import { ASSETS_DIR, PAGES } from "./pages.ts";
+import { labHeaders } from "./src/app/vite/lab-headers.ts";
+import { ASSETS_DIR, PAGES } from "./src/shared/config/pages.ts";
 
 const pagePath = (page: string): string =>
   decodeURIComponent(new URL(`pages/${page}/index.html`, import.meta.url).pathname);

@@ -5,8 +5,8 @@ import viteReact from "@vitejs/plugin-react";
 import { rpp } from "rpp-kit/vite";
 import { defineConfig } from "vite-plus";
 
-import { gzipTscWasm } from "./gzip-tsc-wasm.ts";
-import { externalizeInlineScripts } from "./inline-scripts.ts";
+import { gzipTscWasm } from "./src/app/vite/gzip-tsc-wasm.ts";
+import { externalizeInlineScripts } from "./src/app/vite/inline-scripts.ts";
 
 export default defineConfig({
   run: {
@@ -17,7 +17,7 @@ export default defineConfig({
       typecheck: "tsc --runExternalCode",
     },
   },
-  test: { include: ["*.test.ts"] },
+  test: { include: ["src/**/*.test.ts"] },
   plugins: [
     rpp(),
     tailwindcss(),

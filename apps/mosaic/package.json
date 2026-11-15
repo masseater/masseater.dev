@@ -5,9 +5,9 @@
   "type": "module",
   "imports": {
     "#/*": "./src/*",
-    "#asset-headers": "./asset-headers.ts",
-    "#base-path": "./base-path.ts",
-    "#telemetry": "./telemetry.ts"
+    "#asset-headers": "./src/shared/lib/asset-headers.ts",
+    "#base-path": "./src/shared/config/site-base-path.ts",
+    "#telemetry": "./src/shared/config/telemetry.ts"
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
