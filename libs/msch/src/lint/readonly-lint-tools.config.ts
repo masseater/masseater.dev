@@ -1,9 +1,13 @@
-const lintToolReadonlyAllow = [
+export const lintToolReadonlyAllow = [
   {
     from: "package" as const,
     package: "@oxlint/plugins",
     name: [
       "Context",
+      "ExportNamedDeclaration",
+      "ExportSpecifier",
+      "Statement",
+      "Fixer",
       "Location",
       "Node",
       "Range",
@@ -65,5 +69,3 @@ const lintToolReadonlyAllow = [
     ],
   },
 ];
-
-export { lintToolReadonlyAllow };

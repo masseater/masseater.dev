@@ -41,6 +41,7 @@ const jsPlugins = [
   { name: "@html-eslint/react", specifier: resolved("@html-eslint/eslint-plugin-react") },
   { name: "eslint-js", specifier: resolved("oxlint-plugin-eslint") },
   { name: decisionPluginName, specifier: resolved("@r_masseater/msch/decision-rules") },
+  { name: "msch-lint", specifier: resolved("@r_masseater/msch/inline-exports") },
 ];
 
 const rules = {
@@ -69,6 +70,9 @@ const rules = {
   "eslint/sort-keys": "off",
   "import/no-named-export": "off",
   "import/prefer-default-export": "off",
+  "import/group-exports": "off",
+  "import/exports-last": "off",
+  "msch-lint/inline-exports": "error",
   "react/react-in-jsx-scope": "off",
   "eslint/no-undef": "off",
   "typescript/promise-function-async": "off",
@@ -113,7 +117,7 @@ const overrides = [
   },
 ] satisfies LintConfig["overrides"];
 
-const lint = {
+export const lint = {
   ignorePatterns: generated,
   plugins: [
     "eslint",
@@ -155,5 +159,3 @@ const lint = {
     reportUnusedDisableDirectives: "error",
   },
 } satisfies LintConfig;
-
-export { lint };
