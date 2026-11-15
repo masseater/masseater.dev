@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@mediapipe/tasks-vision": "1.2.2",
+    "@mediapipe/tasks-vision": "1.2.3",
     "vite-plus": "catalog:stack"
   }
 }
