@@ -1,3 +1,4 @@
+export { tauriWindow } from "./tauri-window.ts";
 export { tauriYohaku } from "./tauri-yohaku.ts";
 export type {
   ClaudeStatus,
