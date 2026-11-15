@@ -45,7 +45,7 @@ const Page = ({ article, module }) => (
 
 ## 記事
 
-記事は frontmatter を持つ Markdown である。`Frontmatter` がその Effect Schema で、`title`・`description`・`date`・`updated`・`published` を必ず書く。`tags` はカテゴリになり、`infobox` は `label` と `value`（任意で `href`）の並びである。
+記事は frontmatter を持つ Markdown である。
 
 ```yaml
 ---
@@ -69,8 +69,6 @@ const articles = await Effect.runPromise(
 );
 ```
 
-目次は、MDX を `rehype-slug` と `@stefanprobst/rehype-extract-toc` で変換して出る `tableOfContents` を `headingsOf` に渡して作る。脚注は `remark-gfm` のものに体裁が付く。
-
 ## リンク
 
 部品のリンクは既定では `<a>` である。ルーターのリンクを使うときは `link` に部品を渡す。部品は行き先を表す `target` と、既定の `href` を受け取る。
@@ -85,8 +83,6 @@ const wiki = defineSloppedia({
   ),
 });
 ```
-
-文言は日本語が既定で、`labels` で差し替えられる。日付の書式は `locale` で決まる。
 
 ## ライセンス
 
