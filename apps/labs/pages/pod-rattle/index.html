@@ -10,7 +10,6 @@
       content="録音サンプルを使わず、3D衝突物理とモーダル共鳴器だけで鳴らす種子殻ラトルの物理モデリングシンセ"
     />
     <style>
-      /* Layout: one-screen instrument. Stage (live simulation) fills the left; a narrow control rail on the right, stacked below on phones. */
       :root {
         --bg: #ece7df;
         --stage: #f6f2ec;
@@ -486,7 +485,6 @@
                 vz[i] -= dz * vr * 1.02;
               }
             }
-            // keep pods below the knot
             if (py[i] > qy - rad[i]) {
               py[i] = qy - rad[i];
               if (vy[i] > A.vy) vy[i] = A.vy;
@@ -801,7 +799,6 @@
       refreshOutputs();
       $("auto").setAttribute("aria-pressed", String(auto.on));
 
-      // audio
       async function start() {
         $("start").disabled = true;
         try {
@@ -857,7 +854,6 @@
       }
       $("start").addEventListener("click", start);
 
-      // drawing
       const cv = $("cv"),
         g = cv.getContext("2d"),
         stage = $("stage");
@@ -916,7 +912,6 @@
         const jute = css("--jute"),
           flashC = css("--flash");
         const [kx, ky] = proj(ax, ay, az);
-        // rope up to the top
         g.strokeStyle = jute;
         g.lineCap = "round";
         for (let t = 0; t < 2; t++) {
@@ -934,7 +929,6 @@
         g.ellipse(kx, ky, 7, 9, 0, 0, Math.PI * 2);
         g.fill();
         const idx = [...Array(n).keys()].sort((a, b) => s[6 + b * 7 + 2] - s[6 + a * 7 + 2]);
-        // strings
         g.lineWidth = 1.3;
         g.strokeStyle = jute;
         g.globalAlpha = 0.85;
@@ -989,7 +983,6 @@
       }
       requestAnimationFrame(frame);
 
-      // hand
       function toWorld(e) {
         const r = stage.getBoundingClientRect();
         const x = (e.clientX - r.left - cx) / S,

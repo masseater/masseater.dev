@@ -29,7 +29,6 @@
     <title>背面打ちスプリットパッド</title>
     <meta name="color-scheme" content="light dark" />
     <style>
-      /* Layout: 一画面アプリ。左に3Dビューポート、右に指ごとの割り当てパネル。狭い画面では縦積み。 */
       :root {
         --bg: #e8ebee;
         --panel: #f6f7f8;
@@ -778,7 +777,6 @@
         let reduce = reduceMq.matches;
         const stage = document.getElementById("stage");
 
-        // ---- renderer / scene ----
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
         renderer.shadowMap.enabled = true;
@@ -828,14 +826,13 @@
         floor.receiveShadow = true;
         scene.add(floor);
 
-        // ---- 側面プロファイル（u = 手前方向, v = 上方向, 単位 cm） ----
         const shape = new THREE.Shape();
         shape.moveTo(2.1, 0.0);
-        shape.bezierCurveTo(2.5, 1.3, 1.3, 2.3, -0.1, 2.3); // 親指が乗る前上がりの斜面
-        shape.bezierCurveTo(-1.4, 2.3, -2.5, 1.8, -2.7, 0.6); // 頭頂から背面上端（人差し指）
-        shape.bezierCurveTo(-2.7, -1.4, -2.4, -5.0, -2.0, -7.8); // 背面（中指・薬指）。周長約14cmまで絞る
-        shape.bezierCurveTo(-1.8, -9.6, -0.3, -10.1, 0.7, -9.1); // 底
-        shape.bezierCurveTo(1.3, -7.2, 1.0, -3.6, 1.4, -1.8); // 手前側
+        shape.bezierCurveTo(2.5, 1.3, 1.3, 2.3, -0.1, 2.3);
+        shape.bezierCurveTo(-1.4, 2.3, -2.5, 1.8, -2.7, 0.6);
+        shape.bezierCurveTo(-2.7, -1.4, -2.4, -5.0, -2.0, -7.8);
+        shape.bezierCurveTo(-1.8, -9.6, -0.3, -10.1, 0.7, -9.1);
+        shape.bezierCurveTo(1.3, -7.2, 1.0, -3.6, 1.4, -1.8);
         shape.bezierCurveTo(1.6, -0.8, 1.9, -0.5, 2.1, 0.0);
         const DEPTH = 2.8,
           BEV = 0.55,
@@ -881,8 +878,6 @@
           return (lo + hi) / 2;
         };
 
-        // 本体：側面プロファイルを押し出して角を丸めた立体を距離場で表す。
-        // 手のひら側（+x）にパームスウェルを足し、握った手の基節と手のひらが当たる部分を滑らかに差し引いてから面を張る
         const EDGE_R = 0.6;
         const RIBS = [];
         const sdProfile = (() => {
@@ -946,7 +941,6 @@
               THREE.MathUtils.smoothstep(x, 0.3, HALF_W) *
               Math.exp(-(((y + 3.2) / 3.0) ** 2)) *
               Math.exp(-(((z + 0.2) / 2.4) ** 2));
-          // 薬指と小指を分けるリブ（滑らかに足す）
           for (const rb of RIBS) {
             const ex = rb.b.x - rb.a.x,
               ey = rb.b.y - rb.a.y,
@@ -972,7 +966,6 @@
           }
           return d;
         }
-        // Surface Nets：符号が変わるセルに頂点を1つ置き、隣り合うセルを四角形でつなぐ
         const GRID = (() => {
           const h = 0.11;
           return {
@@ -983,7 +976,6 @@
             nz: Math.ceil(7 / h) + 1,
           };
         })();
-        // occ：握った手の中身を格子上でぼかした値（0 = 外, 1 = 中）。境界付近では距離に換算して本体から差し引く
         const OCC_SIGMA = 0.16,
           OCC_INFLATE = 0.08;
         let lastField = null;
@@ -996,7 +988,6 @@
           }
           g.computeVertexNormals();
         }
-        // 同じ caps の距離場は、手の当たりで削り直すときにも使い回す
         const baseFields = new WeakMap();
         function meshSDF(caps, occ) {
           const { h, org, nx, ny, nz } = GRID;
@@ -1113,7 +1104,6 @@
           g.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
           g.setIndex(tris);
           g.computeVertexNormals();
-          // 体積を保つ平滑化（Taubin）で格子の段々を消す
           {
             const pa = g.attributes.position,
               cnt = pa.count,
@@ -1158,7 +1148,6 @@
             }
             g.computeVertexNormals();
           }
-          // 向きの確認：いちばん上の頂点の法線は上を向くはず
           const pa = g.attributes.position,
             na = g.attributes.normal;
           let top = 0;
@@ -1170,7 +1159,6 @@
         }
         let bodyGeo = meshSDF([]);
 
-        // 本体表面を光線で探る（ボタンも指もこの表面に沿って置く）
         const probe = new THREE.Mesh(
           bodyGeo,
           new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
@@ -1184,7 +1172,6 @@
           if (n.dot(dir) > 0) n.negate();
           return { pos: h.point.clone(), nrm: n };
         }
-        // 断面を一周する角度 φ（0 = 背面中央、負 = 手のひら側、正 = 内側）。列は指先側ほど高くなる
         const SLANT = 0.42;
         function ringAt(y0, phi) {
           const y = y0 + SLANT * phi;
@@ -1198,7 +1185,6 @@
             .normalize();
         }
 
-        // ---- materials ----
         const mat = {
           shell: new THREE.MeshStandardMaterial({ roughness: 0.62, metalness: 0.0 }),
           key: new THREE.MeshStandardMaterial({ roughness: 0.45, metalness: 0.05 }),
@@ -1242,7 +1228,6 @@
           });
         }
 
-        // ---- helpers ----
         const pickables = [],
           buttons = [],
           labels = [],
@@ -1297,7 +1282,6 @@
           return btn;
         }
         const jointGeo = new THREE.SphereGeometry(1, 24, 16);
-        // 指：関節を通る曲線に沿って、幅広で少し平たい断面を流した一本の管。指先は丸く閉じ、関節の背側に節の膨らみ
         const RINGS = 44,
           SEG = 20;
         function fingerTube(parent, radii, material) {
@@ -1376,13 +1360,11 @@
           };
         }
 
-        // ---- 指の定義（右手基準。左は鏡像） ----
-        // 付け根(MCP)は手のひら側の側面。そこから基節・中節・末節の実寸(cm)で本体の断面に巻き付ける
         const HAND = {
           index: { y0: -0.2, lens: [4.0, 2.3, 1.8], radii: [0.86, 0.78, 0.7, 0.62], off: 1.1 },
           middle: { y0: -2.25, lens: [4.5, 2.8, 1.9], radii: [0.9, 0.82, 0.73, 0.65], off: 0.98 },
           ring: { y0: -4.25, lens: [4.2, 2.6, 1.9], radii: [0.86, 0.78, 0.7, 0.62], off: 1.0 },
-          pinky: { y0: -6.75, lens: [3.4, 1.9, 1.7], radii: [0.76, 0.68, 0.6, 0.54], off: 0.72 }, // 薬指とのあいだにリブの分だけ隙間をあける
+          pinky: { y0: -6.75, lens: [3.4, 1.9, 1.7], radii: [0.76, 0.68, 0.6, 0.54], off: 0.72 },
         };
         const MCP_PHI = -92;
         function wrapFinger(def) {
@@ -1414,7 +1396,6 @@
           };
         }
         const FIT = Object.fromEntries(Object.entries(HAND).map(([k, d]) => [k, wrapFinger(d)]));
-        // 手のひらの座標系：付け根の列（人差し指→小指）、手首への向き、手の甲の向き
         function handFrame(fit) {
           const mI = fit.index.rest[0],
             mP = fit.pinky.rest[0];
@@ -1426,7 +1407,6 @@
           const P = (x, y, z) =>
             mcpMid.clone().addScaledVector(dors, x).addScaledVector(up, y).addScaledVector(fwd, z);
           const wristP = P(0.1, 0, 8.6);
-          // 親指の付け根(CMC)と第二関節(MCP)は、手のモデル本来の位置を手首基準でこの手の大きさに写す
           const rp = (n) => new V3(...HAND_REST[n].t).multiplyScalar(100);
           const w0 = rp("wrist"),
             sc = mcpMid.distanceTo(wristP) / rp("middle-finger-phalanx-proximal").distanceTo(w0);
@@ -1454,7 +1434,6 @@
             ],
           };
         }
-        // 手のモデル（WebXR Input Profiles の generic-hand）の関節の静止位置を、GLTFLoader で読んだノードから取る
         const HAND_PATH = "./webxr-input-profiles/dist/profiles/generic-hand/";
         const handGltf = await new GLTFLoader().loadAsync(`${HAND_PATH}right.glb`).catch((err) => {
           document.querySelector("#now .act").textContent = "手のモデルを読み込めませんでした";
@@ -1472,7 +1451,6 @@
             new THREE.Matrix4().makeBasis(x, y, z),
           );
         }
-        // スティックの位置：前上がりの斜面に、親指の付け根側へ約 12° 傾けて置く
         function stickFrame() {
           const st0 = profileSurface([0.62, 0.78], (p) => p.x > 0 && p.y > 0.3);
           const stN = st0.nrm
@@ -1498,8 +1476,6 @@
           const perp = hint.clone().addScaledVector(dir, -hint.dot(dir)).normalize();
           return A.clone().addScaledVector(dir, a).addScaledVector(perp, hh);
         }
-        // 親指：腹をスティックの頭に乗せ、頭を外側から内側へ横切る向きに寝かせる。第一関節は約 25° 曲げて指先で頭を包む。
-        // 付け根(CMC)は手のひらに固定、第二関節(MCP)は骨の長さを保ったまま逆運動学で決める（CMC は可動域が大きく、握ると親指全体が回り込む）
         function thumbPose(hf, cap, n) {
           const pad = cap.clone().addScaledVector(n, 0.68);
           const across = new V3(-1, 0.1, -0.35);
@@ -1514,7 +1490,6 @@
           const mcp = ik(hf.cmc, ip, lm, lp, hf.dors.clone().add(hf.up).add(n).normalize());
           return { mcp, ip, tip };
         }
-        // 人差し指を付け根(MCP)を中心に約 20° 持ち上げ、約 12° 伸ばす（無理なく動く範囲）。push は押し込む分の寄せ
         function liftIndex(rest, k, push) {
           const m = rest[0],
             d = rest[1].clone().sub(m).normalize();
@@ -1535,9 +1510,6 @@
         }
         const HF = handFrame(FIT);
         const SF = stickFrame();
-        // 握ったときに本体へ当たる基節と手のひら（中手骨まわり）を、太さ付きの線分で表して本体から差し引く。
-        // 太さは手のモデルの肉の厚みを骨ごとに測った値
-        // 薬指と小指のあいだのリブ：2本の指の関節位置の中間を、本体の表面に沿って付け根から指先まで這わせる
         {
           const rg = FIT.ring,
             pk = FIT.pinky,
@@ -1568,7 +1540,6 @@
             cap(meta, f.rest[0], 2.3, 1.85);
             cap(f.rest[0], f.rest[1], 1.7, 1.15);
           });
-          // 親指：母指球（中手骨まわり）と基節。基節の先はスティックが中立のときの第一関節
           const tp = thumbPose(HF, SF.st.pos.clone().addScaledVector(SF.stN, 1.05), SF.stN);
           cap(HF.cmc, tp.mcp, 2.85, 1.6);
           cap(tp.mcp, tp.ip, 1.4, 1.05);
@@ -1576,7 +1547,6 @@
           probe.geometry = bodyGeo;
         }
 
-        // 角を丸めた箱（超楕円体）。z = -1 側が広く、+1 側へすぼまる
         const PALM_GEO = (() => {
           const g = new THREE.SphereGeometry(1, 48, 32),
             p = g.attributes.position;
@@ -1665,16 +1635,14 @@
           const R = side === "R";
           const root = new THREE.Group();
           const half = new THREE.Group();
-          if (!R) half.scale.x = -1; // 左は鏡像。内側はローカル -x
+          if (!R) half.scale.x = -1;
           root.add(half);
           const bodyMesh = shadowed(new THREE.Mesh(bodyGeo, mat.shell));
           half.add(bodyMesh);
           bodyMeshes.push(bodyMesh);
 
-          // 指の姿勢を先に決め、ボタンはその関節位置から置く
           const fit = FIT;
 
-          // 親指：スティック。親指の付け根（手のひら側 +x）へ約 12° 傾ける
           const { stN } = SF,
             st = cast(SF.st.pos.clone().addScaledVector(stN, 3), stN.clone().negate());
           const stick = new THREE.Group();
@@ -1727,7 +1695,6 @@
             stN.clone().multiplyScalar(2.3),
           );
 
-          // 人差し指：曲がる弧に沿ったトリガーと、頭頂の後ろ角のバンパー
           const fi = fit.index,
             trigS = [];
           const ta = fi.phis[1] + (fi.phis[2] - fi.phis[1]) * 0.1,
@@ -1751,7 +1718,6 @@
             trig.meshes,
           );
 
-          // バンパーは、人差し指を付け根から無理なく持ち上げたときに中節が来る場所に置く
           const lifted = liftIndex(fit.index.rest, 1, null);
           const lmid = lifted[1].clone().add(lifted[2]).multiplyScalar(0.5);
           const bc = new V3(0, lmid.y, zMid(lmid.y));
@@ -1764,7 +1730,6 @@
               cast(new V3(x, lmid.y, bc.z).addScaledVector(bDir, 12), bDir.clone().negate()),
             );
           const bump = curvedKey(half, bumpS, 0.27, 0.03, mat.finger.index);
-          // 持ち上げた指の腹がバンパーの頭に届くまで、本体側へ寄せる量
           const bHit = cast(lmid.clone().addScaledVector(bDir, 3), bDir.clone().negate());
           const bGap =
             lmid.clone().sub(bHit.pos).dot(bHit.nrm) - HAND.index.radii[1] - (0.03 + 0.54);
@@ -1796,7 +1761,6 @@
             new V3(0, 1.6, -2.2),
           );
 
-          // 中指・薬指：指の腹ボタンは中節の真下、指先ボタンは末節の真下
           const rows = {
             middle: {
               pad: R
@@ -1874,7 +1838,6 @@
             );
           });
 
-          // 内側面：メニューボタン
           const ms = cast(new V3(-12, 0.7, 0.4), new V3(1, 0, 0));
           const mk = makeKey(half, ms, new V3(0, 0, 1), { finger: "thumb", r: 0.3 });
           mk.meshes.forEach((m) => (m.material = mat.key));
@@ -1906,7 +1869,6 @@
           led.position.copy(profileSurface([1, 0.15], (p) => p.x > 0 && p.y > -1.5).pos);
           half.add(led);
 
-          // ---- 手 ----
           const hand = new THREE.Group();
           half.add(hand);
           const fingers = {};
@@ -1922,11 +1884,9 @@
             };
           });
           {
-            // 人差し指がバンパーを押す姿勢
             const f = fingers.index;
             f.bumpPose = (k) => liftIndex(f.rest, k, bPush);
           }
-          // 手のひら：指の付け根の列から手首へ向かってすぼまる板。手のひら側に母指球と小指球
           const { mcpMid, up, fwd, dors, P, span } = HF;
           const palmQ = new THREE.Quaternion().setFromRotationMatrix(
             new THREE.Matrix4().makeBasis(dors, up, fwd),
@@ -1940,14 +1900,11 @@
             return o;
           };
           const palmMesh = blob(PALM_GEO, P(0.0, 0, 4.2), new V3(1.25, span / 2 + 0.9, 4.6));
-          // 親指：中手骨は母指球の肉ごと手のひらの縁に沿わせ、付け根の関節(MCP)を縁に固定する
           const { cmc } = HF;
           const thumb = fingerTube(hand, [1.3, 1.0, 0.86, 0.74], mat.skin);
           const thumbNail = makeNail(hand);
-          // 前腕：グリップの前傾分を戻すと、机に置いた水平な前腕になる向き
           const armDir = new V3(0.12, -0.05, 1).normalize().applyAxisAngle(new V3(1, 0, 0), 0.32);
           const wristP = HF.wristP;
-          // 手首の中から肘へ、楕円断面で太くなる前腕。袖は前腕に重ねる
           const armAt = (d) => wristP.clone().addScaledVector(armDir, d);
           const armUp = dors.clone();
           fingerTube(hand, [1.75, 1.95, 2.35, 2.6], mat.skin).set(
@@ -1959,7 +1916,6 @@
             [armUp, armUp, armUp, armUp],
           );
 
-          // ---- ハンドストラップの固定具：親指の下（頭部の手のひら側、親指と人差し指のあいだのすぐ下）と小指の下（握りの底） ----
           const strap = new THREE.Group();
           half.add(strap);
           const loopG = new THREE.Group();
@@ -1998,7 +1954,7 @@
             mcpMid,
             rig: null,
           };
-          root.rotation.x = -0.32; // グリップを前に約 18° 倒す
+          root.rotation.x = -0.32;
           return root;
         }
 
@@ -2010,8 +1966,6 @@
             f.key = k;
           }),
         );
-        // 仕上げ：握った手（静止姿勢）を本体と同じ格子で中身の詰まった立体にし、ぼかして本体から差し引いて面を張り直す。
-        // 線分の近似では表しきれない、手のひらと母指球が握りの手前を包む当たりまで手の形の凹みになる。左右は鏡像なので一度で済む
         let finished = false;
         function refitBody(h, skin) {
           const hg = new THREE.BufferGeometry().setFromPoints(bakeHand(h, skin));
@@ -2028,7 +1982,6 @@
             bb = hg.boundingBox,
             r = new THREE.Raycaster(),
             dirX = new V3(1, 0, 0);
-          // x 方向の光線で、手の表面を出入りする区間を塗る
           for (let k = 0; k < nz; k++)
             for (let j = 0; j < ny; j++) {
               const y = org.y + j * gh,
@@ -2044,7 +1997,6 @@
                 )
                   occ[id(i, j, k)] = 1;
             }
-          // ガウスぼかし（3軸に分けて）
           const rad = 3,
             ker = [];
           let ks = 0;
@@ -2078,11 +2030,8 @@
           bodyMeshes.forEach((m) => (m.geometry = g));
           return handMesh;
         }
-        // ハンドストラップ：2つの固定具を結ぶ線と手の甲の向きで決まる面で、手と本体の断面を輪ゴムのように包み（凸包）、
-        // その手の甲側をたどる。張った帯と同じ形なので、手にも本体にも食い込まない
         const STRAP_W = 2.4,
           STRAP_T = 0.28;
-        // 帯の中心線と外向きの向きから、角を丸めた長方形断面の帯を張る
         function makeBand(path, outs, en, W, T) {
           const N = path.length - 1,
             SEG = 16,
@@ -2111,15 +2060,11 @@
           g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
           g.setIndex(idx);
           g.computeVertexNormals();
-          // 向きの確認：帯の中ほどの頂点の法線は外を向くはず
           const mi = (N >> 1) * SEG + (SEG >> 2),
             nn = new V3().fromBufferAttribute(g.attributes.normal, mi);
           if (nn.dot(outs[N >> 1]) < 0) flipWinding(g);
           return g;
         }
-        // ---- 2本目の輪：薬指と小指の中節を 1 本ずつ押さえる二股の帯 ----
-        // 付け根側は手の甲を渡る 1 本目のストラップに、指先側は指先の先にある本体の内側面に留める。
-        // 指を浮かせてボタンから離せるよう、輪の内側に LOOP_CLR の余裕を残す（留め具の近くでは 0 へ絞る）
         const LOOP_W = 1.3,
           LOOP_T = 0.22,
           LOOP_CLR = 0.45;
@@ -2154,13 +2099,11 @@
               e1.clone().multiplyScalar(Math.cos(a)).addScaledVector(e2, Math.sin(a));
             const aTip = ang(R[3]),
               sgn = Math.sign(aTip) || 1;
-            // 付け根側の留め具：指の付け根にいちばん近い 1 本目のストラップの外面
             let bi = 0;
             st.path.forEach((q, i) => {
               if (q.distanceTo(R[0]) < st.path[bi].distanceTo(R[0])) bi = i;
             });
             const A = st.path[bi].clone().addScaledVector(st.outs[bi], STRAP_T / 2);
-            // 指先側の留め具：指先から先へ回り、手に覆われていない本体の面
             let aB = aTip + sgn * 0.35,
               B = null,
               Bn = null;
@@ -2174,7 +2117,6 @@
               }
             }
             const aA = ang(A);
-            // 留め具のあいだを指の側から回り、手・本体・1 本目のストラップのいちばん外側を拾う
             const pts2 = [];
             const span = ((aB - aA) * sgn + Math.PI * 4) % (Math.PI * 2);
             for (let t = 0; t <= span; t += 0.03) {
@@ -2197,7 +2139,6 @@
             };
             const A2 = to2(A),
               B2 = to2(B);
-            // 凸包を A から B へ、指の側を通ってたどる
             const hl = hullCCW([A2, B2, ...pts2]);
             const aMid = ang(R[2]);
             const passes = (c) =>
@@ -2263,7 +2204,6 @@
           const to2 = (p) => [p.clone().sub(C).dot(e1), p.clone().sub(C).dot(e2)];
           const lo = Math.min(to2(a1)[0], to2(a2)[0]),
             hi = Math.max(to2(a1)[0], to2(a2)[0]);
-          // 手の甲の方向から帯の幅全体にわたって光線を降ろし、固定点のあいだの手と本体のいちばん高い面を拾う
           for (let u = lo; u <= hi; u += 0.08) {
             let best = -Infinity;
             for (let w = -4; w <= 4; w++) {
@@ -2280,7 +2220,6 @@
             A2 = to2(a2);
           pts.push(A1, A2);
           const chain = hullPath(hullCCW(pts), A1, A2, -1);
-          // 外向きに帯の厚みの半分 + 少しの隙間だけ浮かせ、滑らかに引き直す
           const P3 = chain.map(([u, v]) => C.clone().addScaledVector(e1, u).addScaledVector(e2, v));
           const curve = new THREE.CatmullRomCurve3(P3, false, "centripetal");
           const N = 90,
@@ -2307,7 +2246,6 @@
         function addStrap(h, s) {
           h.strapData = s;
           h.strap.add(shadowed(new THREE.Mesh(s.geo, mat.strap)));
-          // 手の甲側の長さ調整バックル
           const bk = shadowed(
             new THREE.Mesh(new THREE.BoxGeometry(STRAP_W + 0.3, 0.22, 1.2), mat.metal),
           );
@@ -2317,7 +2255,6 @@
           );
           h.strap.add(bk);
         }
-        // ボーンへの反映は three の XRHandMeshModel に任せる。関節（位置と回転）はこのページで計算して joints に書く
         Object.values(hands).forEach((h) => {
           const holder = new THREE.Group();
           holder.scale.setScalar(100);
@@ -2375,7 +2312,6 @@
         setSpread();
         applyTheme();
 
-        // ---- 手のポーズ ----
         function poseFinger(f) {
           const st = f.state;
           const k = st ? Math.sin(st.t * Math.PI) : 0;
@@ -2391,12 +2327,10 @@
               p.forEach((v, i) => v.addScaledVector(f.nrms[i], -depth * k * W[i]));
             }
           }
-          // 手のモデルが読めたら代わりの管と爪は隠れたままなので、ボーンだけを動かす
           if (f.h?.rig) return rigFinger(f.h, f.key, p);
           f.tube.set(p, f.nrms);
           poseNail(f.nail, p[2], p[3], f.nrms[3], f.def.radii[3]);
         }
-        // 手のモデル（WebXR generic-hand）のボーン：-Z が指先方向、+Y が手の甲側。単位はメートル
         const FN = {
           index: "index-finger",
           middle: "middle-finger",
@@ -2468,7 +2402,6 @@
           poseNail(h.thumbNail, ip, tip, n, 0.72);
         }
 
-        // ---- camera presets ----
         const TARGET = new V3(0, -3.2, 1.5);
         const VIEWS = {
           persp: new V3(-20, 15, 34),
@@ -2506,7 +2439,6 @@
             .forEach((b) => b.setAttribute("aria-pressed", "false"));
         });
 
-        // ---- 押す ----
         const info = document.getElementById("info");
         const nowAct = document.querySelector("#now .act");
         const FNAME = { thumb: "親指", index: "人差し指", middle: "中指", ring: "薬指" };
@@ -2569,7 +2501,6 @@
           }),
         );
 
-        // ---- 操作デモ ----
         const SEQ = [
           ["R2"],
           ["R2"],
@@ -2644,11 +2575,6 @@
           attributeFilter: ["data-theme"],
         });
 
-        // ---- 手を振る物理演算（WebGPU） ----
-        // 本体（片側 180 g）を剛体、手を振り方どおりに動く物体として、手の表面の点ごとに接触力を GPU で並列に求める。
-        // 接触は皮膚のやわらかさをばね＋減衰、摩擦は「張り付いた位置」からのずれに比例するばね（上限 μ×法線力、超えると滑る）。
-        // 1 回の dispatch で 1 ワークグループが時間刻み dt を描画 1 フレーム分まとめて進め、合力は共有メモリで足し合わせる。
-        // 計算は右手で行い、左手には同じ結果を鏡像で写す。単位は m・kg・s、形状は cm
         const SIM = { mass: 0.18, k: 300, c: 0.42, dt: 2e-4, settle: 0.4, T: 4.0, fallCm: 3 };
         const P_MOTIONS = [
           [
@@ -2723,7 +2649,6 @@
           be: document.getElementById("p-be"),
         };
         const runBtn = document.getElementById("p-run");
-        // 読み上げは「保持」「落下」などの最終結果だけにする
         const announcer = document.getElementById("p-announce");
         const showResult = (msg, s) => {
           pOut.st.textContent = announcer.textContent = msg;
@@ -2731,7 +2656,7 @@
         };
         const PHYS = { active: false, running: false, ready: false, gpu: null, busy: false };
 
-        const WGSL = /* wgsl */ `
+        const WGSL = `
 struct Seg { a: vec4f, d: vec4f, o: vec4f, e: vec4f };
 struct HM { R: vec4f, T: vec3f };
 @group(0) @binding(0) var<uniform> U: array<vec4f, 16>;
@@ -2851,7 +2776,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
   }
 }`;
 
-        // 手の動き（CPU 側。表示とずれの計算に使う。シェーダーの motion と同じ式）
         const Q = THREE.Quaternion;
         function handMotion(tt, mo, R0) {
           const t = Math.max(0, tt - SIM.settle),
@@ -2868,14 +2792,12 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           return { R: R0.clone().multiply(R), T: T.applyQuaternion(R0) };
         }
 
-        // 準備：形状（距離場・帯）と質量特性は一度だけ求める
         function physInit(h, skin) {
           PHYS.h = h;
           PHYS.skin = skin;
           const F = lastField,
             { h: gh, org, nx, ny, nz } = GRID;
           PHYS.field = F;
-          // 重心と慣性テンソル：距離場の内側を一様な密度とみなす
           let cnt = 0;
           const c = new V3();
           for (let k = 0; k < nz; k++)
@@ -2919,7 +2841,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           });
         }
 
-        // WebGPU のバッファは 16 バイト単位で、空でも 16 バイトは取る
         const gpuBuf = (device, size, usage) =>
           device.createBuffer({ size: Math.max(16, Math.ceil(size / 16) * 16), usage });
         async function physGPU() {
@@ -2963,7 +2884,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           }
         }
 
-        // 指の姿勢を決め、手の表面の点を本体の近くだけ取り出す
         function poseForSim(h, lifts, thumbOff) {
           Object.entries(h.fingers).forEach(([k, f]) => {
             if (!f.rest0) f.rest0 = f.rest;
@@ -2984,7 +2904,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           });
           h.thumbLift = 0;
         }
-        // 骨格で曲げた手の頂点を、本体（half）の座標系で返す
         function bakeHand(h, skin) {
           h.half.updateMatrixWorld(true);
           const inv = new THREE.Matrix4().copy(h.half.matrixWorld).invert();
@@ -3044,7 +2963,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           const h = PHYS.h,
             pts = bakeHand(h, PHYS.skin);
           const segs = segData(document.getElementById("p-loop").checked);
-          // 本体か帯の近くにある点だけを使う
           const sdfCPU = (p) => {
             const { h: gh, org, nx, ny, nz } = GRID,
               F = PHYS.field;
@@ -3113,7 +3031,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
               (buffer, binding) => ({ binding, resource: { buffer } }),
             ),
           });
-          // 振り方・向き・重力（画面の下向きを右手の座標系へ）
           const mo = { ...P_MOTIONS.find((m) => m[0] === selMotion.value)[2] };
           mo.amp = mo.type === 2 ? (mo.amp * Math.PI) / 180 : mo.amp;
           mo.pivotM =
@@ -3145,12 +3062,10 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           setv(6, ax.x, ax.y, ax.z, mo.amp);
           setv(7, mo.pivotM.x, mo.pivotM.y, mo.pivotM.z, mo.hz);
           setv(8, R0.x, R0.y, R0.z, R0.w);
-          // Matrix3.elements は列優先。シェーダーには行を渡す
           for (let r = 0; r < 3; r++) {
             setv(9 + r, e[r], e[r + 3], e[r + 6], 0);
             setv(12 + r, ei[r], ei[r + 3], ei[r + 6], 0);
           }
-          // 初期状態：本体は手の中の静止位置
           const H0 = handMotion(0, mo, R0);
           const x0 = comM.clone().applyQuaternion(H0.R).add(H0.T);
           dev.queue.writeBuffer(
@@ -3200,7 +3115,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
             stage.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
           pOut.st.textContent = "振っています";
           applySimPose();
-          // 振りの範囲全体が収まるよう、少し引いた視点へ
           const tt = mo.type === 2 && mo.pivot[2] > 0 ? new V3(0, -4, 12) : new V3(0, -3.5, 2);
           const dist = mo.type === 2 && mo.pivot[2] > 0 ? 95 : 62;
           if (!reduce)
@@ -3224,7 +3138,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           mTmp = new THREE.Matrix4(),
           MIR = new THREE.Matrix4().makeScale(-1, 1, 1);
         function applySimPose() {
-          // 本体：p_world(m) = q (p_b − 重心) + x。表示の単位は cm
           const comCm = PHYS.com;
           mBody
             .compose(PHYS.x.clone().multiplyScalar(100), PHYS.q, new V3(1, 1, 1))
@@ -3236,7 +3149,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
             h.half.matrix.copy(h === hands.L ? MIR.clone().multiply(mBody) : mBody);
             h.group.matrix.copy(handInBody);
           });
-          // 手に対する本体のずれ（重心）と傾き
           const rel = PHYS.x.clone().sub(H.T).applyQuaternion(H.R.clone().invert()).sub(PHYS.comM);
           const off = rel.length() * 100,
             ang = THREE.MathUtils.radToDeg(H.R.angleTo(PHYS.q));
@@ -3260,7 +3172,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
 
         async function physStep(dt) {
           const G = PHYS.gpu;
-          // 描画 1 フレーム分の時間を進める（ただし 1 回の dispatch は最大 0.02 s）
           const nSub = Math.max(1, Math.min(100, Math.round(dt / SIM.dt)));
           PHYS.U.set([SIM.dt, nSub, PHYS.nP, PHYS.t], 0);
           G.device.queue.writeBuffer(G.uBuf, 0, PHYS.U);
@@ -3331,7 +3242,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
         runBtn.disabled = true;
         pOut.be.textContent = "形状を計算しています";
 
-        // ---- loop ----
         function resize() {
           const w = stage.clientWidth,
             h = stage.clientHeight;
@@ -3352,7 +3262,6 @@ fn main(@builtin(local_invocation_index) tid: u32) {
           if (tween) {
             tween.t = Math.min(1, tween.t + dt * 1.6);
             const k = 1 - Math.pow(1 - tween.t, 3);
-            // 対象のまわりを回り込む（直線で結ぶと途中で手の中を突き抜ける）
             controls.target.lerpVectors(tween.tf, tween.tt || TARGET, k);
             const r = THREE.MathUtils.lerp(tween.from.length(), tween.to.length(), k);
             const a = tween.from.clone().normalize(),
