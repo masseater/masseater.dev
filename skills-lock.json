@@ -197,6 +197,13 @@
       "skillPath": ".agents/skills/m4l-project/SKILL.md",
       "computedHash": "8cc360c1dabd8fdcbf841cf9896da6a197ba15c8255913dfcf34556e8caaff11"
     },
+    "masseater-ecosystem": {
+      "source": "masseater/skills",
+      "ref": "df73d07b97028b39919531671324c2eec9a072ca",
+      "sourceType": "github",
+      "skillPath": "plugins/masseater-skills/skills/masseater-ecosystem/SKILL.md",
+      "computedHash": "468a7d4c990a6dfa222c62ee3443cb37e7420094eaedd66eca4a0a93ad3e155f"
+    },
     "measure-dont-guess": {
       "source": "masseater/skills",
       "ref": "df73d07b97028b39919531671324c2eec9a072ca",

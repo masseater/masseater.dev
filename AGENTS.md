@@ -1,4 +1,12 @@
-作業を開始する前に、`repo-conventions` と `vite-plus` のスキルを読み、それらに従う。どちらも masseater/skills に含まれており、`vp install` で `.agents/skills/` に配置される。
+以下に従うこと。
+
+- `repo-conventions`
+- `vite-plus`
+- `masseater-ecosystem`
+- `measure-dont-guess`
+- `project-checklist`
+
+いずれも masseater/skills のスキルで、`vp install` で `.agents/skills/` に配置される。
 
 各ワークスペースには、その内容と当該ワークスペースにのみ適用されるルールが記載された独自の AGENTS.md がある。ワークスペースを変更する前に、これを確認しておくこと。
 
