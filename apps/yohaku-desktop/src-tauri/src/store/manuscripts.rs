@@ -1,6 +1,6 @@
 use rusqlite::{Connection, Row, params};
 
-use crate::model::{Manuscript, Paragraph, Title, TitleAuthor};
+use crate::protocol::{Manuscript, Paragraph, Title, TitleAuthor};
 use crate::text::utf16_slice;
 
 use super::{fresh_id, now, revisions};
@@ -128,7 +128,7 @@ pub fn set_title(connection: &Connection, id: &str, title: Option<&Title>) -> ru
 
 #[cfg(test)]
 mod tests {
-    use crate::model::{Paragraph, Title, TitleAuthor};
+    use crate::protocol::{Paragraph, Title, TitleAuthor};
     use crate::store::Store;
 
     #[test]
