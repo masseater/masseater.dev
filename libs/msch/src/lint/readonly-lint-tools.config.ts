@@ -44,8 +44,8 @@ const lintToolReadonlyAllow = [
     name: ["CheckPackageOptions"],
   },
   {
-    from: "file" as const,
-    path: "../vite-plus-adopt/dist/attw.d.mts",
+    from: "package" as const,
+    package: "@r_masseater/vite-plus-adopt",
     name: ["CheckPackageOptions"],
   },
   {
