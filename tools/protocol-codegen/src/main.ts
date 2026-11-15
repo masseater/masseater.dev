@@ -1,16 +1,15 @@
-import { effect2rs } from "@masseater.dev/effect2rs";
+import { checkRust, effect2rs } from "@masseater.dev/effect2rs";
 import { runMain } from "@masseater.dev/node-main";
-import { Effect, FileSystem, Path, Schema } from "effect";
+import { Array as Arr, Effect, FileSystem, Path, Schema, String as Str, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 
 import { csharp } from "./csharp.ts";
-import { aredokoRust, yohakuRust } from "./rust.ts";
+import { rustOutputs } from "./rust.ts";
+import type { RustOutput } from "./rust.ts";
 import { sts2 } from "./sts2.ts";
 
 const CSHARP_OUTPUT =
   "../../apps/aredoko-unity/Packages/dev.masseater.aredoko/Editor/Protocol/Protocol.g.cs";
-const RUST_OUTPUT = "../../apps/aredoko-desktop/src-tauri/src/protocol.rs";
-const YOHAKU_OUTPUT = "../../apps/yohaku-desktop/src-tauri/src/protocol.rs";
 const STS2_OUTPUT = "../../apps/sts2-mods/mods/AgentBridge/AgentBridgeCode/Protocol.g.cs";
 const TAURI_CONFIG = new URL(
   "../../../apps/aredoko-desktop/src-tauri/tauri.conf.json",
@@ -55,6 +54,41 @@ const verify = Effect.fn("verify")(function* verify({ path: output, source }: Ou
   );
 });
 
+const RUST_FILE = ".rs";
+
+const writeRust = Effect.fn("writeRust")(function* writeRust(target: RustOutput) {
+  const source = yield* effect2rs(target);
+  yield* write({ path: target.output, source });
+});
+
+const readRust = Effect.fn("readRust")(function* readRust(file: string) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const source = yield* fileSystem.readFileString(file);
+  return { path: file, source };
+});
+
+const siblingsOf = Effect.fn("siblingsOf")(function* siblingsOf(output: string) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const directory = path.dirname(output);
+  const entries = yield* fileSystem.readDirectory(directory, { recursive: true });
+  const files = pipe(
+    entries,
+    Arr.filter(Str.endsWith(RUST_FILE)),
+    Arr.map((entry) => path.join(directory, entry)),
+    Arr.filter((file) => path.resolve(file) !== path.resolve(output)),
+    Arr.sortBy(Str.Order),
+  );
+  return yield* pipe(files, Effect.forEach(readRust));
+});
+
+const checkRustOutput = Effect.fn("checkRustOutput")(function* checkRustOutput(target: RustOutput) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const current = yield* Effect.option(fileSystem.readFileString(target.output));
+  const siblings = yield* siblingsOf(target.output);
+  yield* checkRust({ ...target, path: target.output, current, siblings });
+});
+
 const command = Command.make(
   "protocol-codegen",
   { check: Flag.Boolean("check").pipe(Flag.withDefault(false)) },
@@ -63,17 +97,16 @@ const command = Command.make(
       const identifier = yield* appIdentifier();
       const csharpSource = yield* csharp(identifier);
       const sts2Source = yield* sts2();
-      const aredokoSource = yield* effect2rs(aredokoRust);
-      const yohakuSource = yield* effect2rs(yohakuRust);
+      const rust = yield* rustOutputs;
       const outputs: readonly Output[] = [
         { path: CSHARP_OUTPUT, source: csharpSource },
-        { path: RUST_OUTPUT, source: aredokoSource },
-        { path: YOHAKU_OUTPUT, source: yohakuSource },
         { path: STS2_OUTPUT, source: sts2Source },
       ];
       if (check) {
+        yield* Effect.forEach(rust, checkRustOutput, { discard: true });
         return yield* Effect.forEach(outputs, verify, { discard: true });
       }
+      yield* Effect.forEach(rust, writeRust, { discard: true });
       return yield* Effect.forEach(outputs, write, { discard: true });
     }),
 );
