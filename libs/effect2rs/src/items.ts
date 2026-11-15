@@ -8,7 +8,7 @@ type Representation = SchemaRepresentation.Representation;
 type Objects = SchemaRepresentation.Objects;
 type Built = Effect.Effect<Item, UnsupportedSchema>;
 
-export type Named = readonly [string, Representation];
+type Entry = readonly [string, SchemaRepresentation.Representation];
 
 const MIN_VARIANTS = 2;
 
@@ -105,14 +105,14 @@ const variantOf =
       })),
     );
 
-const alias = ([name, representation]: Named): Built =>
+const alias = ([name, representation]: Entry): Built =>
   pipe(
     lower(name)(representation),
     Effect.map((ty) => ({ _tag: "Alias", name, doc: descriptionOf(representation), ty }) as const),
   );
 
 const tagged =
-  ([name, representation]: Named) =>
+  ([name, representation]: Entry) =>
   (members: readonly Objects[]): Option.Option<Built> =>
     pipe(
       discriminator(members),
@@ -132,7 +132,7 @@ const tagged =
     );
 
 const enumeration =
-  ([name, representation]: Named) =>
+  ([name, representation]: Entry) =>
   (values: readonly Option.Option<string>[]): Option.Option<Built> =>
     pipe(
       allSome(values),
@@ -149,7 +149,7 @@ const enumeration =
 
 const unionItem =
   (references: SchemaRepresentation.References) =>
-  (entry: Named): Built => {
+  (entry: Entry): Built => {
     const [, representation] = entry;
     const { members, nullable, undefinable } = partsOf(representation);
     const resolved = pipe(members, Array.map(resolve(references)));
@@ -164,7 +164,7 @@ const unionItem =
   };
 
 const enumItem =
-  (entry: Named) =>
+  (entry: Entry) =>
   ({ enums }: SchemaRepresentation.Enum): Built => {
     const values = pipe(
       enums,
@@ -176,7 +176,7 @@ const enumItem =
     );
   };
 
-const structItem = (entry: Named): Built => {
+const structItem = (entry: Entry): Built => {
   const [name, representation] = entry;
   return pipe(
     asObjects(representation),
@@ -198,7 +198,9 @@ const structItem = (entry: Named): Built => {
 
 export const itemOf =
   (references: SchemaRepresentation.References) =>
-  (entry: Named): Built => {
+  (
+    entry: readonly [string, SchemaRepresentation.Representation],
+  ): Effect.Effect<Item, UnsupportedSchema> => {
     const [, representation] = entry;
     return Match.value(representation).pipe(
       Match.tag("Union", () => unionItem(references)(entry)),

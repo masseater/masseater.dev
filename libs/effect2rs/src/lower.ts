@@ -37,12 +37,12 @@ const isAbsent = (representation: Representation): boolean =>
   isNull(representation) || isUndefined(representation);
 
 export interface Parts {
-  readonly members: readonly Representation[];
+  readonly members: readonly SchemaRepresentation.Representation[];
   readonly nullable: boolean;
   readonly undefinable: boolean;
 }
 
-export const partsOf = (representation: Representation): Parts =>
+export const partsOf = (representation: SchemaRepresentation.Representation): Parts =>
   Match.value(representation).pipe(
     Match.tag("Union", ({ types }) => ({
       members: pipe(types, Array.filter(Predicate.not(isAbsent))),
@@ -77,7 +77,9 @@ const literal =
       Match.orElse(() => refuse(path)("bigint literals have no JSON form")),
     );
 
-export type Lower = (path: string) => (representation: Representation) => Lowered;
+export type Lower = (
+  path: string,
+) => (representation: SchemaRepresentation.Representation) => Lowered;
 
 const union =
   (path: string, lower: Lower) =>
