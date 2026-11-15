@@ -1,0 +1,11 @@
+[package]
+name = "cargo-tools"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+clap-validator = { git = "https://github.com/free-audio/clap-validator", tag = "0.4.1" }
+gungraun-runner = "=0.20.0"
+
+[workspace]
