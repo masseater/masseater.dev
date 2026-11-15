@@ -2,6 +2,9 @@
   "name": "yakusu",
   "version": "0.0.0",
   "private": true,
+  "bin": {
+    "yakusu-fetch-runtime": "./fetch-runtime.ts"
+  },
   "type": "module",
   "imports": {
     "#/*": "./src/*"
@@ -22,6 +25,7 @@
   "devDependencies": {
     "@effect/vitest": "catalog:",
     "@fontsource-variable/noto-sans-jp": "catalog:",
+    "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/tauri-app": "workspace:*",
     "@tauri-apps/cli": "catalog:",
     "@types/react": "catalog:",

@@ -2685,6 +2685,9 @@ importers:
       '@fontsource-variable/noto-sans-jp':
         specifier: 'catalog:'
         version: 5.3.1
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
