@@ -1,9 +1,13 @@
 #!/usr/bin/env node
-import { outputOf, writeOutputs } from "@masseater.dev/github-workflow";
+import { getJson, outputOf, warn, writeOutputs } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
+import type { ChildProcessSpawner } from "effect/process";
 
 const TASK = "deploy:production";
+const MARKER = "deployed-";
+const SHA = /^[0-9a-f]{40}$/u;
+const ROOT = ".";
 
 const Task = Schema.Struct({
   package: Schema.String,
@@ -12,13 +16,30 @@ const Task = Schema.Struct({
 
 const Plan = Schema.fromJsonString(Schema.Struct({ plan: Schema.Record(Schema.String, Task) }));
 
+const Package = Schema.Struct({
+  dependencies: Schema.optionalKey(Schema.Array(Schema.String)),
+  devDependencies: Schema.optionalKey(Schema.Array(Schema.String)),
+});
+
+const Workspace = Schema.fromJsonString(
+  Schema.Struct({ packages: Schema.Record(Schema.String, Package) }),
+);
+
+const Caches = Schema.Struct({
+  actions_caches: Schema.Array(Schema.Struct({ key: Schema.String })),
+});
+
 const Stacks = Schema.fromJsonString(
   Schema.Array(Schema.Struct({ name: Schema.String, filters: Schema.String })),
 );
 
 type Tasks = (typeof Plan.Type)["plan"];
 
+type Packages = (typeof Workspace.Type)["packages"];
+
 type Labels = Readonly<Record<string, string>>;
+
+type Stack = Readonly<{ name: string; filters: string; directories: readonly string[] }>;
 
 const dependenciesOf = (task: typeof Task.Type): readonly string[] => task.dependsOn ?? [];
 
@@ -51,7 +72,7 @@ const nameOf = (directory: string): string =>
     Option.getOrElse(() => directory),
   );
 
-const stacksOf = (tasks: Tasks): typeof Stacks.Type => {
+const stacksOf = (tasks: Tasks): readonly Stack[] => {
   const ids = Rec.keys(tasks);
   const needed = pipe(Rec.values(tasks), Arr.flatMap(dependenciesOf));
   let labels: Labels = Rec.fromIterableWith(ids, (id) => [id, id]);
@@ -80,19 +101,112 @@ const stacksOf = (tasks: Tasks): typeof Stacks.Type => {
           Arr.map((directory) => `--filter=./${directory}`),
           Arr.join(" "),
         ),
+        directories: pipe(members, Arr.flatMap(directoryOf)),
       };
     }),
   );
 };
 
+const closureOf = (packages: Packages, start: readonly string[]): readonly string[] => {
+  const seen = new Set(start);
+  const queue = [...start];
+  for (const directory of queue) {
+    const { dependencies = [], devDependencies = [] } = packages[directory] ?? {};
+    for (const next of [...dependencies, ...devDependencies]) {
+      if (!seen.has(next)) {
+        seen.add(next);
+        queue.push(next);
+      }
+    }
+  }
+  return [...seen];
+};
+
+const isShared = (file: string): boolean =>
+  file === ".github/workflows/deploy.yml" ||
+  Str.startsWith(".github/actions/")(file) ||
+  Str.startsWith("patches/")(file) ||
+  (!Str.includes("/")(file) && !Str.endsWith(".md")(file));
+
+const lastDeployed = Effect.fn("lastDeployed")(
+  function* lastDeployed(name: string) {
+    const prefix = `${MARKER}${name}-`;
+    const { actions_caches } = yield* getJson(Caches)(
+      `actions/caches?ref=refs/heads/main&key=${encodeURIComponent(prefix)}&sort=created_at&direction=desc&per_page=100`,
+    );
+    return pipe(
+      actions_caches,
+      Arr.map(({ key }) => Str.slice(prefix.length)(key)),
+      Arr.findFirst((sha) => SHA.test(sha)),
+    );
+  },
+  Effect.tapError(() => warn("The deploy markers could not be read, so every stack deploys")),
+  Effect.orElseSucceed(Option.none),
+);
+
+const changedSince = (
+  sha: string,
+): Effect.Effect<
+  Option.Option<readonly string[]>,
+  never,
+  ChildProcessSpawner.ChildProcessSpawner
+> =>
+  outputOf({ command: "git", args: ["diff", "--name-only", "--no-renames", sha, "HEAD"] }).pipe(
+    Effect.map((output) => pipe(Str.split("\n")(output), Arr.filter(Str.isNonEmpty))),
+    Effect.option,
+  );
+
+const touches =
+  (directories: readonly string[]) =>
+  (file: string): boolean =>
+    isShared(file) ||
+    pipe(
+      directories,
+      Arr.some((directory) => Str.startsWith(`${directory}/`)(file)),
+    );
+
+const isChanged = Effect.fn("isChanged")(function* isChanged(packages: Packages, stack: Stack) {
+  const last = yield* lastDeployed(stack.name);
+  const files = yield* pipe(
+    last,
+    Option.match({
+      onNone: () => Effect.succeedNone,
+      onSome: changedSince,
+    }),
+  );
+  const touched = touches(
+    pipe(
+      closureOf(packages, stack.directories),
+      Arr.filter((directory) => directory !== ROOT),
+    ),
+  );
+  return pipe(
+    files,
+    Option.match({
+      onNone: () => true,
+      onSome: (changed: readonly string[]) => pipe(changed, Arr.some(touched)),
+    }),
+  );
+});
+
 runMain("deploy-stacks")(
   Effect.gen(function* deployStacks() {
-    const json = yield* outputOf({
+    const plan = yield* outputOf({
       command: "vp",
       args: ["run", "--dry-run", "--json", "-r", TASK],
-    });
-    const { plan } = yield* Schema.decodeEffect(Plan)(json);
-    const stacks = yield* Schema.encodeEffect(Stacks)(stacksOf(plan));
+    }).pipe(Effect.flatMap(Schema.decodeEffect(Plan)));
+    const { packages } = yield* outputOf({ command: "vp", args: ["run", "--json"] }).pipe(
+      Effect.flatMap(Schema.decodeEffect(Workspace)),
+    );
+    const changed = yield* Effect.filter(stacksOf(plan.plan), (stack) =>
+      isChanged(packages, stack),
+    );
+    const stacks = yield* Schema.encodeEffect(Stacks)(
+      pipe(
+        changed,
+        Arr.map(({ name, filters }) => ({ name, filters })),
+      ),
+    );
     yield* writeOutputs({ stacks });
   }),
 );

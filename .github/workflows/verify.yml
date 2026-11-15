@@ -55,6 +55,7 @@ jobs:
   deploy:
     if: github.event_name == 'push'
     permissions:
+      actions: read
       contents: read
       id-token: write
     concurrency:
