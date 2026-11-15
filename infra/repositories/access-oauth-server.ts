@@ -16,7 +16,7 @@ import type { AppStoreEnv } from "./app-store.ts";
 import { targetOf } from "./oauth-targets.ts";
 import type { OAuthTargetId } from "./oauth-targets.ts";
 
-const BROKER_ORIGIN = "https://credentials.masseater.dev";
+export const BROKER_ORIGIN = "https://credentials.masseater.dev";
 export const LOGIN_PATH = "/access-oauth/login";
 export const CALLBACK_PATH = "/access-oauth/callback";
 export const CALLBACK_URL = `${BROKER_ORIGIN}${CALLBACK_PATH}`;
