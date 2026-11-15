@@ -3,7 +3,7 @@ import type { InferEnv } from "@alchemy.run/cloudflare";
 import { authSite } from "@masseater.dev/cloudflare-account/auth-site";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import type { TranslatorRpc } from "@masseater.dev/plamo-translate-protocol";
-import { Stack } from "alchemy";
+import { RemovalPolicy, Stack } from "alchemy";
 import { Effect, Option } from "effect";
 
 import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
@@ -16,9 +16,13 @@ import {
 } from "./src/shared/config/index.ts";
 
 const web = Effect.gen(function* web() {
-  const DB = yield* D1.Database("DB", { name: `${PREFIX}db`, migrations: "./drizzle" });
+  const DB = yield* D1.Database("DB", { name: `${PREFIX}db`, migrations: "./drizzle" }).pipe(
+    RemovalPolicy.protect(),
+  );
   const TOOL_CALLS = yield* AnalyticsEngine.Dataset("ToolCalls", { dataset: TOOL_CALL_DATASET });
-  const CONVERSATIONS = yield* R2.Bucket("Conversations", { name: `${PREFIX}conversations` });
+  const CONVERSATIONS = yield* R2.Bucket("Conversations", { name: `${PREFIX}conversations` }).pipe(
+    RemovalPolicy.protect(),
+  );
   const CONVERSATION_UPLOADS = yield* AnalyticsEngine.Dataset("ConversationUploads", {
     dataset: CONVERSATION_UPLOAD_DATASET,
   });
