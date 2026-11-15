@@ -407,7 +407,7 @@ Types for all of this are exported. The rule types include `DecisionRule`, `Deci
 
 ## How it works
 
-Each file gets one request per model, with every match for that model in it. Cloudflare and Respan models get one request per question instead. Each of their choice questions becomes yes/no questions. A file rule with `location` adds numbered source and a choice question. Above 254 nonblank lines the model selects a range and refines it in follow-up requests with the same context. All requests share the per-file `timeoutMs` budget.
+Each file gets one request per model, with every match for that model in it. Respan models get one request per match instead. Cloudflare and Respan models split each choice question into yes/no questions. A file rule with `location` adds numbered source and a choice question. Above 254 nonblank lines the model selects a range and refines it in follow-up requests with the same context. All requests share the per-file `timeoutMs` budget.
 
 Answers are cached under `node_modules/.cache/oxlint-plugin-decision`, keyed by the endpoint and the request. Changing a snippet, its context, a question or an answer kind re-asks that file. Changing a cutoff or an `id` does not. Malformed answers are never cached, and malformed entries already on disk are asked again. See [Cost and caching](#cost-and-caching) for how to keep the cost down.
 
