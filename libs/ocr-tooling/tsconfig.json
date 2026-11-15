@@ -1,16 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src"],
-  "compilerOptions": {
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "allowedUnstableApis": [
-          "effect/http/FetchHttpClient#layer",
-          "effect/observability/OtlpSerialization#layerJson",
-          "effect/observability/OtlpTracer#layerFromConfig"
-        ]
-      }
-    ]
-  }
+  "include": ["src"]
 }

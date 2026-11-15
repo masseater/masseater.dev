@@ -176,5 +176,5 @@ const publishedWorkspaces = Effect.fn("publishedWorkspaces")(function* published
   return Arr.getSomes(found);
 });
 
-export { publishedWorkspaces };
+export { PackEntry, entriesOf, publishedWorkspaces };
 export type { PackEntrySource, PublishedWorkspace };

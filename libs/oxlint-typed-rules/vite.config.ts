@@ -220,9 +220,7 @@ export default defineConfig({
       ],
       overrides: [
         {
-          files: [
-            "src/{drizzle,react,remotion,tanstack-query,tanstack-router,tanstack-start,ts-compat}.ts",
-          ],
+          files: ["src/ts-compat.ts"],
           rules: { "import/no-default-export": "off" },
         },
       ],

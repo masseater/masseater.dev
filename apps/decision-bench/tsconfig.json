@@ -8,17 +8,6 @@
     "types": ["vite/client", "@cloudflare/workers-types"],
     "paths": {
       "#/*": ["./src/*"]
-    },
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "allowedUnstableApis": [
-          "@effect/atom-react/Hooks#useAtomSet",
-          "@effect/atom-react/Hooks#useAtomValue",
-          "@effect/atom-react/RegistryContext#RegistryProvider",
-          "effect/reactivity/Atom"
-        ]
-      }
-    ]
+    }
   }
 }

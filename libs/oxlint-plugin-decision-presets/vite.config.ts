@@ -3,10 +3,7 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   msch: {
     publish: { installSize: "0 B" },
-    lint: {
-      ignorePatterns: ["example/**"],
-      overrides: [{ files: ["src/*.ts"], rules: { "import/no-default-export": "off" } }],
-    },
+    lint: { ignorePatterns: ["example/**"] },
   },
   pack: {
     entry: [
