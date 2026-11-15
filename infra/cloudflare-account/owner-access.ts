@@ -16,20 +16,23 @@ type OwnerMcpAccessProps = Readonly<{
   portalServerId: string;
 }>;
 
-type Clients = Readonly<{
-  callbacks: readonly string[];
+type OwnerApplication = Readonly<{
+  id: string;
+  name: string;
+  host: string;
   accessTokenLifetime: string;
-  localhost: boolean;
-  loopback: boolean;
+  dynamicClientRegistration: Readonly<{
+    allowedUris: readonly string[];
+    allowAnyOnLocalhost: boolean;
+    allowAnyOnLoopback: boolean;
+  }>;
 }>;
-
-type ApplicationProps = Readonly<{ id: string; name: string; host: string; clients: Clients }>;
 
 const { Application: defineApplication } = Access;
 
 const SESSION_DURATION = "720h";
-const ACCESS_TOKEN_LIFETIME = "15m";
-const MCP_ACCESS_TOKEN_LIFETIME = "1h";
+const SITE_TOKEN_LIFETIME = "15m";
+const MCP_TOKEN_LIFETIME = "1h";
 const BROKER_CALLBACK = "https://credentials.masseater.dev/access-oauth/callback";
 const MCP_CLIENT_CALLBACKS = [
   "https://claude.ai/api/mcp/auth_callback",
@@ -40,12 +43,13 @@ const MCP_CLIENT_CALLBACKS = [
 const portalCallback = (accountId: string, serverId: string): string =>
   `https://dash.cloudflare.com/${accountId}/one/access-controls/ai-controls/mcp-server/oauth-callback/${serverId}`;
 
-const application = Effect.fn("ownerApplication")(function* application({
+const ownerApplication = Effect.fn("ownerApplication")(function* ownerApplication({
   id,
   name,
   host,
-  clients,
-}: ApplicationProps) {
+  accessTokenLifetime,
+  dynamicClientRegistration,
+}: OwnerApplication) {
   const holder = yield* ownerStack;
   const owner = yield* Access.Policy.ref("OwnerPolicy", holder);
   const google = yield* Access.IdentityProvider.ref("Google", holder);
@@ -60,60 +64,61 @@ const application = Effect.fn("ownerApplication")(function* application({
     policies: [owner],
     oauthConfiguration: {
       enabled: true,
-      grant: {
-        sessionDuration: SESSION_DURATION,
-        accessTokenLifetime: clients.accessTokenLifetime,
-      },
+      grant: { sessionDuration: SESSION_DURATION, accessTokenLifetime },
       dynamicClientRegistration: {
         enabled: true,
-        allowedUris: [...clients.callbacks],
-        allowAnyOnLocalhost: clients.localhost,
-        allowAnyOnLoopback: clients.loopback,
+        allowedUris: [...dynamicClientRegistration.allowedUris],
+        allowAnyOnLocalhost: dynamicClientRegistration.allowAnyOnLocalhost,
+        allowAnyOnLoopback: dynamicClientRegistration.allowAnyOnLoopback,
       },
     },
   });
 });
 
 const ownerAccess = Effect.fn("ownerAccess")(function* ownerAccess({
+  id,
+  name,
+  host,
   loopbackClients,
-  ...site
 }: OwnerAccessProps) {
-  return yield* application({
-    ...site,
-    clients: {
-      callbacks: [BROKER_CALLBACK],
-      accessTokenLifetime: ACCESS_TOKEN_LIFETIME,
-      localhost: false,
-      loopback: loopbackClients,
+  return yield* ownerApplication({
+    id,
+    name,
+    host,
+    accessTokenLifetime: SITE_TOKEN_LIFETIME,
+    dynamicClientRegistration: {
+      allowedUris: [BROKER_CALLBACK],
+      allowAnyOnLocalhost: false,
+      allowAnyOnLoopback: loopbackClients,
     },
   });
 });
 
 const ownerMcpAccess = Effect.fn("ownerMcpAccess")(function* ownerMcpAccess({
+  id,
+  name,
+  host,
   portalServerId,
-  ...site
 }: OwnerMcpAccessProps) {
   const { accountId } = yield* yield* CloudflareEnvironment;
   const holder = yield* ownerStack;
   const team = yield* Access.Organization.ref("ZeroTrust", holder);
-  const app = yield* application({
-    ...site,
-    clients: {
-      callbacks: [
+  const application = yield* ownerApplication({
+    id,
+    name,
+    host,
+    accessTokenLifetime: MCP_TOKEN_LIFETIME,
+    dynamicClientRegistration: {
+      allowedUris: [
         BROKER_CALLBACK,
         ...MCP_CLIENT_CALLBACKS,
         portalCallback(accountId, portalServerId),
       ],
-      accessTokenLifetime: MCP_ACCESS_TOKEN_LIFETIME,
-      localhost: true,
-      loopback: true,
+      allowAnyOnLocalhost: true,
+      allowAnyOnLoopback: true,
     },
   });
-  return {
-    CLOUDFLARE_ACCOUNT_ID: accountId,
-    ACCESS_TEAM_DOMAIN: team.authDomain,
-    ACCESS_AUDIENCE: app.aud,
-  };
+  return { ACCESS_TEAM_DOMAIN: team.authDomain, ACCESS_AUDIENCE: application.aud };
 });
 
 export { ownerAccess, ownerMcpAccess };

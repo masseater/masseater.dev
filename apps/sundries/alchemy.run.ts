@@ -1,4 +1,10 @@
-import { AnalyticsEngine, D1, Vectorize, Workers } from "@alchemy.run/cloudflare";
+import {
+  AnalyticsEngine,
+  CloudflareEnvironment,
+  D1,
+  Vectorize,
+  Workers,
+} from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { ownerMcpAccess } from "@masseater.dev/cloudflare-account/owner-access";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
@@ -13,16 +19,19 @@ import { Stack } from "alchemy";
 import { Effect } from "effect";
 
 import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
-import { MCP_URL, SITE_HOST, TOOL_CALL_DATASET } from "./src/shared/config/index.ts";
+import { MCP_URL, SERVER_NAME, SITE_HOST, TOOL_CALL_DATASET } from "./src/shared/config/index.ts";
 
 const PROD = "prod";
-const PORTAL_SERVER_ID = "sundries";
 
-const ownerAccess = ownerMcpAccess({
-  id: "McpAccess",
-  name: `${PREFIX}access`,
-  host: SITE_HOST,
-  portalServerId: PORTAL_SERVER_ID,
+const ownerAccess = Effect.gen(function* ownerAccess() {
+  const { accountId } = yield* yield* CloudflareEnvironment;
+  const access = yield* ownerMcpAccess({
+    id: "McpAccess",
+    name: `${PREFIX}access`,
+    host: SITE_HOST,
+    portalServerId: SERVER_NAME,
+  });
+  return { CLOUDFLARE_ACCOUNT_ID: accountId, ...access };
 });
 
 const upstreams = Effect.gen(function* upstreams() {

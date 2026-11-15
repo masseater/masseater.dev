@@ -11,7 +11,7 @@ type Signer = Readonly<{ sign: (claims: Claims) => Promise<string>; keys: JWTVer
 
 const ACCESS_HEADER = "cf-access-jwt-assertion";
 const TEAM = "team.cloudflareaccess.com";
-const AUDIENCE = "aud-app";
+const AUDIENCE = "aud-mcp";
 const KEY_ID = "key-1";
 const ALGORITHM = "RS256";
 

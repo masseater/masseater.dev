@@ -56,6 +56,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "masseater.dev/plamo-translate": "access",
   "masseater.dev/yohaku-sync": "access",
   "masseater.dev/sundries": "access",
+  "masseater.dev/twilog-mcp": "access",
   "masseater.dev/workers-builds-logs": "buildsLogs",
   mirucord: "deploy",
   msa: "deploy",

@@ -1,5 +1,8 @@
+export { accessMcpEndpoint } from "./access-endpoint.ts";
+export type { AccessMcp } from "./access-endpoint.ts";
 export { callerOf } from "./caller.ts";
 export type { Caller, CallerSource } from "./caller.ts";
+export { mcpWorker } from "./mcp-worker.ts";
 export {
   NO_PROJECT,
   OVERWRITE,
@@ -19,7 +22,3 @@ export type {
   ToolRunner,
 } from "./tool-call.ts";
 export { UpstreamFailed, failedAt } from "./upstream-failed.ts";
-export { accessMcpEndpoint } from "./access-endpoint.ts";
-export type { AccessEndpoint } from "./access-endpoint.ts";
-export { mcpWorker } from "./mcp-worker.ts";
-export type { McpWorker, Route } from "./mcp-worker.ts";
