@@ -4,28 +4,48 @@ import type { ReactElement } from "react";
 
 import type { FigureName } from "#/entities/entry/model/figure";
 
+type FigureChunk =
+  | { readonly status: "idle" }
+  | { readonly status: "importing"; readonly promise: Promise<ReactElement> }
+  | { readonly status: "imported"; readonly body: ReactElement };
+
 const chunks = {
   "cascade-failure": Effect.promise(() => import("./cascade-failure")).pipe(
     Effect.map(({ CascadeFailure }) => createElement(CascadeFailure)),
   ),
 } as const satisfies Record<FigureName, Effect.Effect<ReactElement>>;
 
-const imported = new Map<FigureName, ReactElement>();
+const figures = new Map<FigureName, FigureChunk>();
 
-const importing = new Map<FigureName, Promise<ReactElement>>();
+const figureOf = (name: FigureName): FigureChunk => figures.get(name) ?? { status: "idle" };
 
 const started = (name: FigureName): Promise<ReactElement> => {
-  const chunk = Effect.tap(chunks[name], (body) => Effect.sync(() => imported.set(name, body)));
+  const chunk = Effect.tap(chunks[name], (body) =>
+    Effect.sync(() => figures.set(name, { status: "imported", body })),
+  );
   const promise = Effect.runPromise(chunk);
-  importing.set(name, promise);
+  figures.set(name, { status: "importing", promise });
   return promise;
 };
 
-const importFigure = (name: FigureName): Promise<ReactElement> =>
-  Option.getOrElse(Option.fromUndefinedOr(importing.get(name)), () => started(name));
+const importFigure = (name: FigureName): Promise<ReactElement> => {
+  const figure = figureOf(name);
+  if (figure.status === "idle") {
+    return started(name);
+  }
+  if (figure.status === "importing") {
+    return figure.promise;
+  }
+  return Promise.resolve(figure.body);
+};
 
-const importedFigure = (name: FigureName): Option.Option<ReactElement> =>
-  Option.fromUndefinedOr(imported.get(name));
+const importedFigure = (name: FigureName): Option.Option<ReactElement> => {
+  const figure = figureOf(name);
+  if (figure.status === "imported") {
+    return Option.some(figure.body);
+  }
+  return Option.none();
+};
 
 const importFigures: Effect.Effect<void> = Effect.forEach(
   Rec.keys(chunks),

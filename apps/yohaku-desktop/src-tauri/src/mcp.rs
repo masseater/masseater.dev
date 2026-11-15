@@ -219,7 +219,7 @@ async fn signed_in(State(syncer): State<Syncer>, RawQuery(query): RawQuery) -> R
     match syncer.callback(&callback).await {
         Ok(()) => SIGNED_IN.into_response(),
         Err(failure) => {
-            eprintln!("sync sign-in failed: {failure}");
+            log::warn!("sync sign-in failed: {failure}");
             (StatusCode::BAD_REQUEST, NOT_SIGNED_IN).into_response()
         }
     }

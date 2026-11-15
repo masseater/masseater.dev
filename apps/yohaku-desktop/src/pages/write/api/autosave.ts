@@ -1,20 +1,21 @@
-import { useAtom, useAtomSet, useAtomValue } from "@effect/atom-react";
+import { RegistryContext, useAtom, useAtomSet, useAtomValue } from "@effect/atom-react";
 import type { Annotations, Paragraph } from "@masseater.dev/yohaku-protocol";
 import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { Array, Effect, Option, Record, String, pipe } from "effect";
-import { useCallback, useEffect } from "react";
+import { use, useCallback, useEffect } from "react";
 
 import { received } from "#/pages/write/model/annotations.ts";
 import type { Texts } from "#/pages/write/model/annotations.ts";
 import {
   editorAtom,
   manuscriptIdAtom,
+  paragraphsAtom,
   pausedAtom,
   titleAtom,
 } from "#/pages/write/model/writing-atoms.ts";
 import { useYohaku } from "#/shared/api";
 import type { Failure, Yohaku } from "#/shared/api";
-import { screenAtom } from "#/shared/model";
+import { beforeClosing, screenAtom } from "#/shared/model";
 
 type Paragraphs = readonly (typeof Paragraph.Type)[];
 
@@ -73,6 +74,21 @@ const useSave = (): Option.Option<Saved> => {
       mutate(paused);
     }
   }, [paused, mutate]);
+  const registry = use(RegistryContext);
+  useEffect(
+    () =>
+      beforeClosing(() => {
+        const latest = registry.get(paragraphsAtom);
+        if (isBlank(latest)) {
+          return Effect.void;
+        }
+        return manuscriptId.pipe(
+          Effect.flatMap((id) => yohaku.saveParagraphs({ id, paragraphs: latest })),
+          Effect.ignore,
+        );
+      }),
+    [registry, manuscriptId, yohaku],
+  );
   return Option.fromNullishOr(data);
 };
 

@@ -29,6 +29,17 @@ describe("update", () => {
     }),
   );
 
+  it.live("opens the notes of the new release", () =>
+    Effect.gen(function* test() {
+      const { yohaku, calls } = updateReady({ version: VERSION });
+      yield* mount(yohaku);
+      yield* Effect.promise(() => userEvent.click(notice.getByRole("button", { name: VERSION })));
+      expect(calls.opened).toStrictEqual([
+        `https://github.com/masseater/masseater.dev/releases/tag/yohaku-v${VERSION}`,
+      ]);
+    }),
+  );
+
   it.live("stays out of the way without a new release", () =>
     Effect.gen(function* test() {
       yield* mount(fakeYohaku([]).yohaku);

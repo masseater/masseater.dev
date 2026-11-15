@@ -29,8 +29,31 @@
     @apply border-border outline-ring/50;
   }
 
+  html,
+  body {
+    overscroll-behavior: none;
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
+    cursor: default;
+  }
+
+  button,
+  label,
+  nav,
+  header,
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"] {
+    user-select: none;
+    cursor: default;
+  }
+
+  img,
+  a {
+    -webkit-user-drag: none;
   }
 }
 

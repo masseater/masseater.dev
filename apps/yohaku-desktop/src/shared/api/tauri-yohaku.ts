@@ -43,6 +43,7 @@ const tauriYohaku: Yohaku = {
   listManuscripts: () => call(() => commands.listManuscripts()),
   createManuscript: () => call(() => commands.createManuscript()),
   openManuscript: (id) => call(() => commands.openManuscript(id)),
+  exportManuscript: (id) => call(() => commands.exportManuscript(id)),
   saveParagraphs: ({ id, paragraphs }) =>
     call(() => commands.saveParagraphs(id, [...paragraphs])).pipe(Effect.asVoid),
   setTitle: ({ id, text }) => call(() => commands.setTitle(id, text)),

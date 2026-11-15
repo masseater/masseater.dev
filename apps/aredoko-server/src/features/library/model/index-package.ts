@@ -1,6 +1,6 @@
 import { Array, Effect, Option, pipe } from "effect";
 
-import { listedEntry } from "#entities/package";
+import { kindOf, listedEntry } from "#entities/package";
 import { readPackage } from "#shared/unitypackage";
 import type { PackageEntry } from "#shared/unitypackage";
 
@@ -15,6 +15,7 @@ import { storePackage } from "./store-package.ts";
 const packagedAsset = ({ guid, pathname, preview, references }: PackageEntry): AssetInput => ({
   ...plainAsset({ guid, pathname, previews: Option.toArray(preview) }),
   references,
+  render: kindOf(pathname) === "model",
 });
 
 /** @internal */

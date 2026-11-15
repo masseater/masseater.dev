@@ -2,7 +2,7 @@ import { Clock, Effect, Option, Schema, String as Str, pipe } from "effect";
 
 import { SESSIONS_PATH, SessionId, SessionListing, SessionRecord } from "#protocol";
 
-import { listSessions, readSession, storeSession } from "./session-store.ts";
+import { allRecords, listSessions, readSession, storeSession } from "./session-store.ts";
 import type { StoreFailed } from "./store-failed.ts";
 
 type Handler = (
@@ -14,10 +14,14 @@ const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
 const SERVER_ERROR = 500;
 const ONE = `${SESSIONS_PATH}/`;
+const ALL = `${SESSIONS_PATH}/all`;
+
+const ExportedSession = Schema.Struct({ id: Schema.String, record: SessionRecord });
 
 const decodeId = Schema.decodeUnknownEffect(SessionId);
 const encodeListing = Schema.encodeEffect(Schema.fromJsonString(Schema.Array(SessionListing)));
 const decodeRecord = Schema.decodeUnknownEffect(Schema.fromJsonString(SessionRecord));
+const encodeExport = Schema.encodeEffect(Schema.fromJsonString(Schema.Array(ExportedSession)));
 
 const status = (code: number, text: string): Response => new Response(text, { status: code });
 
@@ -35,6 +39,16 @@ const json = (body: string): Response =>
   new Response(body, { headers: { "Content-Type": "application/json" } });
 
 const listed = listSessions.pipe(Effect.flatMap(encodeListing), Effect.map(json));
+
+const exported = allRecords.pipe(
+  Effect.flatMap(
+    Effect.forEach(({ id, record }) =>
+      Effect.map(decodeRecord(record), (decoded) => ({ id, record: decoded })),
+    ),
+  ),
+  Effect.flatMap(encodeExport),
+  Effect.map(json),
+);
 
 const fetched: Handler = (_request, id) =>
   readSession(id).pipe(
@@ -82,6 +96,9 @@ const answered = (request: Request): Effect.Effect<Response, Schema.SchemaError 
   const { pathname } = new URL(request.url);
   if (pathname === SESSIONS_PATH && request.method === "GET") {
     return listed;
+  }
+  if (pathname === ALL && request.method === "GET") {
+    return exported;
   }
   return Option.match(idIn(pathname), {
     onNone: notFound,

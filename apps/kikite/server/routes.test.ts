@@ -3,8 +3,17 @@ import { Array as Arr, Effect, Layer, Option, Schema, Stream, pipe } from "effec
 import type { Cause } from "effect";
 import { HttpRouter } from "effect/http";
 
-import { QUESTION_PATH, QuestionRequest, SUMMARY_PATH, SummaryRequest } from "#protocol";
-import type { QuestionBody, SummaryBody } from "#protocol";
+import {
+  CORRECTION_PATH,
+  CorrectionRequest,
+  QUESTION_PATH,
+  QuestionRequest,
+  RESEARCH_PATH,
+  ResearchRequest,
+  SUMMARY_PATH,
+  SummaryRequest,
+} from "#protocol";
+import type { CorrectionBody, QuestionBody, ResearchBody, SummaryBody } from "#protocol";
 
 import { GenerationFailed } from "./generation-failed.ts";
 import { Generator } from "./generator.ts";
@@ -23,6 +32,19 @@ const QUESTION: QuestionBody = {
   summary: Option.none(),
   recent: "本人: メモが散らかっている",
   asked: [],
+  leads: [{ topic: "メモの整理術", detail: "置き場を 1 つに決める", source: "" }],
+};
+
+const RESEARCH: ResearchBody = {
+  summary: { theme: "メモの置き場", points: ["散らかる"], open: [], next: [] },
+  recent: "本人: メモが散らかっている",
+  known: [],
+  memory: ["前回のテーマ: 3D 酔い"],
+};
+
+const CORRECTION: CorrectionBody = {
+  context: "テーマ: 文字起こし",
+  lines: [{ id: 3, text: "右にオゾンコシが出る" }],
 };
 
 const SUMMARY: SummaryBody = {
@@ -32,8 +54,10 @@ const SUMMARY: SummaryBody = {
 
 const questionJson = Schema.encodeEffect(Schema.fromJsonString(QuestionRequest))(QUESTION);
 const summaryJson = Schema.encodeEffect(Schema.fromJsonString(SummaryRequest))(SUMMARY);
+const researchJson = Schema.encodeEffect(Schema.fromJsonString(ResearchRequest))(RESEARCH);
+const correctionJson = Schema.encodeEffect(Schema.fromJsonString(CorrectionRequest))(CORRECTION);
 
-const scripted = (reply: Reply): Scripted => {
+const scripted = (reply: Reply, found = ""): Scripted => {
   const generations: Generation[] = [];
   const layer = Layer.succeed(
     Generator,
@@ -41,6 +65,10 @@ const scripted = (reply: Reply): Scripted => {
       stream: (generation) => {
         generations.push(generation);
         return reply(generation);
+      },
+      research: (generation) => {
+        generations.push(generation);
+        return Effect.succeed(found);
       },
     }),
   );
@@ -89,9 +117,10 @@ const streamsQuestion = Effect.gen(function* streamsQuestion() {
     text: "方針: concrete\n根拠: 「散らかっている」\n質問: どこに？",
   });
   const generation = yield* firstOf(generations);
-  expect(generation.model).toBe("sonnet");
+  expect(generation.model).toBe("opus");
   expect(generation.prompt.system).toContain("find（テーマを探す）");
   expect(generation.prompt.user).toContain("メモが散らかっている");
+  expect(generation.prompt.user).toContain("メモの整理術 / 置き場を 1 つに決める");
 });
 
 const appendsFailure = Effect.gen(function* appendsFailure() {
@@ -114,6 +143,35 @@ const decodesSummary = Effect.gen(function* decodesSummary() {
     text: '{"theme":"メモの置き場","points":["散らかる"],"open":[],"next":["見返す頻度"]}',
   });
   const generation = yield* firstOf(generations);
+  expect(generation.model).toBe("opus");
+});
+
+const decodesResearch = Effect.gen(function* decodesResearch() {
+  const { generations, layer } = scripted(
+    () => Stream.empty,
+    '調べました。\n{"leads":[{"topic":"VR 酔い対策","detail":"視野を狭めると酔いにくい","source":"https://example.com"}]}',
+  );
+  const body = yield* researchJson;
+  const response = yield* post(layer, RESEARCH_PATH, body);
+  expect(response).toStrictEqual({
+    status: OK,
+    text: '{"leads":[{"topic":"VR 酔い対策","detail":"視野を狭めると酔いにくい","source":"https://example.com"}]}',
+  });
+  const generation = yield* firstOf(generations);
+  expect(generation.prompt.user).toContain("前回のテーマ: 3D 酔い");
+});
+
+const decodesCorrection = Effect.gen(function* decodesCorrection() {
+  const { generations, layer } = scripted(() =>
+    Stream.make('{"lines":[{"id":3,"text":"右に文字起こしが出る"}]}'),
+  );
+  const body = yield* correctionJson;
+  const response = yield* post(layer, CORRECTION_PATH, body);
+  expect(response).toStrictEqual({
+    status: OK,
+    text: '{"lines":[{"id":3,"text":"右に文字起こしが出る"}]}',
+  });
+  const generation = yield* firstOf(generations);
   expect(generation.model).toBe("sonnet");
 });
 
@@ -131,5 +189,7 @@ describe("routes", () => {
   );
   it.effect("appends the failure to the question stream", () => appendsFailure);
   it.effect("decodes the summary out of the generated text", () => decodesSummary);
+  it.effect("decodes the leads the researcher found", () => decodesResearch);
+  it.effect("decodes the corrected transcript", () => decodesCorrection);
   it.effect("rejects a body that is not a question request", () => rejectsBody);
 });
