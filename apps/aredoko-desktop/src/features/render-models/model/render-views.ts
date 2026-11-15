@@ -91,18 +91,19 @@ const pngOf = (canvas: HTMLCanvasElement): Effect.Effect<Uint8Array, ModelUnread
 
 const shoot =
   ({ renderer, scene, camera }: Stage, sphere: Sphere) =>
-  (yaw: number): Effect.Effect<Uint8Array, ModelUnreadable> => {
-    const distance = sphere.radius / Math.sin(MathUtils.degToRad(FIELD_OF_VIEW * HALF));
-    const direction = new Vector3().setFromSphericalCoords(
-      distance,
-      MathUtils.degToRad(Number.subtract(HORIZON, PITCH)),
-      MathUtils.degToRad(yaw),
-    );
-    camera.position.copy(sphere.center).add(direction);
-    camera.lookAt(sphere.center);
-    renderer.render(scene, camera);
-    return pngOf(renderer.domElement);
-  };
+  (yaw: number): Effect.Effect<Uint8Array, ModelUnreadable> =>
+    Effect.suspend(() => {
+      const distance = sphere.radius / Math.sin(MathUtils.degToRad(FIELD_OF_VIEW * HALF));
+      const direction = new Vector3().setFromSphericalCoords(
+        distance,
+        MathUtils.degToRad(Number.subtract(HORIZON, PITCH)),
+        MathUtils.degToRad(yaw),
+      );
+      camera.position.copy(sphere.center).add(direction);
+      camera.lookAt(sphere.center);
+      renderer.render(scene, camera);
+      return pngOf(renderer.domElement);
+    });
 
 const boundsOf = (object: Object3D): Option.Option<Sphere> => {
   const sphere = new Box3().setFromObject(object).getBoundingSphere(new Sphere());
