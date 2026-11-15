@@ -69,6 +69,17 @@ const repositoryWith = Effect.fn("repositoryWith")(function* repositoryWith(
     },
     { discard: true },
   );
+  yield* Effect.forEach(
+    [
+      ["init", "-q"],
+      ["add", "-A"],
+    ],
+    (args) =>
+      ChildProcess.make("git", args, { cwd: root, stdin: "ignore" }).pipe(
+        Effect.flatMap((handle) => handle.exitCode),
+      ),
+    { discard: true },
+  );
   return root;
 });
 

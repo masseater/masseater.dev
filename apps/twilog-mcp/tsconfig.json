@@ -4,12 +4,6 @@
   "include": ["src", "*.ts"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "allowedUnstableApis": ["@effect/vitest#it"]
-      }
-    ],
     "types": ["@cloudflare/workers-types"],
     "paths": {
       "#/*": ["./src/*"]

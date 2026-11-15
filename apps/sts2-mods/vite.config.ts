@@ -4,7 +4,7 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["dotnet"] },
-      dotnet: { cache: false, command: "scripts/check.sh" },
+      dotnet: "scripts/check.sh",
       fix: { cache: false, command: "scripts/check.sh --fix" },
       build: { cache: false, command: "scripts/build.sh" },
       publish: { cache: false, command: "scripts/build.sh --publish" },
