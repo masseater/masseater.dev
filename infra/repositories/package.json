@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./access-sites": "./access-sites.ts",
+    "./oauth-targets": "./oauth-targets.ts",
     "./credential-grants": "./credential-grants.ts",
     "./github-oidc": "./github-oidc.ts",
     "./credential-broker.worker": "./credential-broker.worker.ts"

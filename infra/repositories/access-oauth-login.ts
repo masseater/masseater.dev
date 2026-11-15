@@ -21,10 +21,11 @@ import {
   promised,
   resourceOf,
 } from "./access-oauth-server.ts";
-import { ACCESS_SITES, ACCESS_TEAM_ORIGIN } from "./access-sites.ts";
 import { readRow, swapRow, writeSealed } from "./app-store.ts";
 import type { AppStoreEnv } from "./app-store.ts";
 import type { RouteInput } from "./github-app.ts";
+import { OAUTH_TARGET_IDS, targetOf } from "./oauth-targets.ts";
+import type { OAuthTargetId } from "./oauth-targets.ts";
 import { unseal } from "./sealed-value.ts";
 
 const PENDING_LIFETIME_MS = 3_600_000;
@@ -32,7 +33,7 @@ const CONSUMED = "";
 const BAD_REQUEST = 400;
 const FOUND = 302;
 
-const Site = Schema.Literals(ACCESS_SITES);
+const Site = Schema.Literals(OAUTH_TARGET_IDS);
 
 const Pending = Schema.Struct({ site: Site, verifier: Schema.String, createdAt: Schema.Finite });
 
@@ -44,13 +45,20 @@ const pendingKey = (state: string): string => `access_oauth_state:${state}`;
 
 const siteOf = (request: Request): Effect.Effect<PendingLogin["site"], AccessOAuthFailed> =>
   Schema.decodeUnknownEffect(Site)(new URL(request.url).searchParams.get("site")).pipe(
-    Effect.mapError(() => failedWith("site is not one of the Access sites")),
+    Effect.mapError(() => failedWith("site is not one of the OAuth targets")),
   );
 
-const authorizationUrl = (
-  authorizationEndpoint: string | undefined,
-  fields: Readonly<Record<string, string>>,
-): Effect.Effect<string, AccessOAuthFailed> =>
+type AuthorizationRequest = Readonly<{
+  site: OAuthTargetId;
+  authorizationEndpoint: string | undefined;
+  fields: Readonly<Record<string, string>>;
+}>;
+
+const authorizationUrl = ({
+  site,
+  authorizationEndpoint,
+  fields,
+}: AuthorizationRequest): Effect.Effect<string, AccessOAuthFailed> =>
   pipe(
     Option.fromNullishOr(authorizationEndpoint),
     Effect.fromOption,
@@ -59,12 +67,12 @@ const authorizationUrl = (
       onSuccess: (endpoint) => new URL(endpoint),
     }),
     Effect.filterOrFail(
-      (endpoint) => endpoint.origin === ACCESS_TEAM_ORIGIN,
+      (endpoint) => endpoint.origin === targetOf(site).issuer,
       (endpoint) => failedWith(`unexpected authorization endpoint ${endpoint.origin}`),
     ),
     Effect.map(
       (endpoint) =>
-        `${ACCESS_TEAM_ORIGIN}${endpoint.pathname}?${new URLSearchParams(Rec.toEntries(fields)).toString()}`,
+        `${targetOf(site).issuer}${endpoint.pathname}?${new URLSearchParams(Rec.toEntries(fields)).toString()}`,
     ),
   );
 
@@ -87,14 +95,22 @@ const login = ({ request, env }: RouteInput): Effect.Effect<Response, AccessOAut
     const challenge = yield* promised(() => calculatePKCECodeChallenge(verifier));
     const createdAt = yield* Clock.currentTimeMillis;
     yield* remember(env, state, { site, verifier, createdAt });
-    const url = yield* authorizationUrl(connection.server.authorization_endpoint, {
-      client_id: connection.client.client_id,
-      redirect_uri: CALLBACK_URL,
-      response_type: "code",
-      state,
-      code_challenge: challenge,
-      code_challenge_method: "S256",
-      resource: resourceOf(site),
+    const url = yield* authorizationUrl({
+      site,
+      authorizationEndpoint: connection.server.authorization_endpoint,
+      fields: {
+        client_id: connection.client.client_id,
+        redirect_uri: CALLBACK_URL,
+        response_type: "code",
+        state,
+        code_challenge: challenge,
+        code_challenge_method: "S256",
+        resource: resourceOf(site),
+        ...Option.match(targetOf(site).scope, {
+          onNone: () => ({}),
+          onSome: (scope) => ({ scope }),
+        }),
+      },
     });
     return new Response("", { status: FOUND, headers: { location: url } });
   });
@@ -188,7 +204,7 @@ const callback = ({ request, env }: RouteInput): Effect.Effect<Response, AccessO
   });
 
 const LOGIN_URLS = pipe(
-  ACCESS_SITES,
+  OAUTH_TARGET_IDS,
   Arr.map((site) => loginUrlOf(site)),
 );
 
