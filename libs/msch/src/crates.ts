@@ -1,11 +1,10 @@
 import { Array as Arr, Effect, Option, Schema, Stream, String as Str, pipe } from "effect";
 import { ChildProcess } from "effect/process";
-import { resolveConfigFromFile } from "vite-plus";
 
 import type { Problem, RuleName } from "./problem.ts";
 import { RepositoryFiles } from "./repository-files.ts";
-import { settingsInvalid } from "./workspace-config-source.ts";
 import { workspaceDirectories } from "./workspace-directories.ts";
+import { hasVerifyTask } from "./workspace-tasks.ts";
 
 const RULE: RuleName = "unverified-crate";
 const CARGO_FILE = "Cargo.toml";
@@ -17,8 +16,6 @@ const READ_CONCURRENCY = 8;
 const CrateEntry = Schema.Struct({ name: Schema.String, manifest_path: Schema.String });
 const CrateList = Schema.fromJsonString(Schema.Struct({ packages: Schema.Array(CrateEntry) }));
 const decodeCrateList = Schema.decodeUnknownEffect(CrateList);
-const Tasks = Schema.Struct({ verify: Schema.Unknown });
-const isVerified = Schema.is(Schema.Struct({ run: Schema.Struct({ tasks: Tasks }) }));
 
 interface Crate {
   readonly name: string;
@@ -51,14 +48,6 @@ const owningWorkspace =
     );
     return Arr.last(Arr.sort(owners, Str.Order));
   };
-
-const hasVerifyTask = Effect.fn("hasVerifyTask")(function* hasVerifyTask(file: string) {
-  const config = yield* Effect.tryPromise({
-    try: () => resolveConfigFromFile(file),
-    catch: () => settingsInvalid(file)("vite.config.ts does not load."),
-  }).pipe(Effect.option);
-  return Option.exists(config, isVerified);
-});
 
 const problemFor = (crate: Crate, message: string): Problem => ({
   file: crate.manifest,

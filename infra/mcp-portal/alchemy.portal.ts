@@ -87,9 +87,7 @@ type McpAccessApplicationResource = defineResource<
   Readonly<{ accountId: string; appId: string }>
 >;
 
-const mcpAccessApplication = defineResource<McpAccessApplicationResource>(MCP_ACCESS_APP, {
-  aliases: ["PersonalSpace.McpAccessApplication"],
-});
+const mcpAccessApplication = defineResource<McpAccessApplicationResource>(MCP_ACCESS_APP);
 
 type PortalServersResource = defineResource<
   typeof PORTAL_SERVERS,
@@ -101,9 +99,7 @@ type PortalServersResource = defineResource<
   Readonly<{ accountId: string; portalId: string }>
 >;
 
-const portalServers = defineResource<PortalServersResource>(PORTAL_SERVERS, {
-  aliases: ["PersonalSpace.McpPortalServers"],
-});
+const portalServers = defineResource<PortalServersResource>(PORTAL_SERVERS);
 
 const accountIdOf = flatten(CloudflareEnvironment).pipe(map(({ accountId }) => accountId));
 

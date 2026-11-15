@@ -473,6 +473,27 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+  private-names:
+    needs: deploy
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    environment: private-names
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          path: masseater.dev
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          repository: masseater/skills
+          path: skills
+      - run: masseater.dev/.github/scripts/github-token.sh
+      - run: masseater.dev/.github/scripts/private-names.sh masseater.dev skills
+
   zenn:
     needs: verify
     if: github.event_name == 'push'
@@ -816,6 +837,7 @@ jobs:
         web-vitals,
         sts2-pck,
         github,
+        private-names,
         zenn,
         mosaic-plan,
         mosaic-character,
@@ -879,6 +901,7 @@ jobs:
         web-vitals,
         sts2-pck,
         github,
+        private-names,
         zenn,
         mosaic-plan,
         mosaic-character,
