@@ -6,22 +6,7 @@ on:
       package:
         description: Package directory under libs/
         required: true
-        type: choice
-        options:
-          [
-            sloppedia,
-            injection-bisect,
-            ocr-decide,
-            vitest-otlp,
-            web-vitals-flow,
-            workers-tracing,
-            oxlint-plugin-decision,
-            oxlint-plugin-decision-presets,
-            oxlint-typed-rules,
-            vite-plus-adopt,
-            msch,
-            watashi,
-          ]
+        type: string
       ref:
         description: Tag or commit to publish
         required: true
@@ -48,54 +33,15 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
           persist-credentials: false
-      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+      - uses: $/.github/actions/setup
         with:
-          cache: false
-          run-install: |
-            - args: ['--frozen-lockfile']
-      - if: inputs.package == 'vitest-otlp'
-        uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
-        with:
-          fetch_from_github: false
-          install_args: github:open-telemetry/weaver
-          cache: false
-      - if: "!startsWith(inputs.package, 'oxlint-') && inputs.package != 'vite-plus-adopt'"
-        run: vp test run
-      - if: startsWith(inputs.package, 'oxlint-') || inputs.package == 'vite-plus-adopt'
-        run: vp run test
-      - if: inputs.package == 'sloppedia' || inputs.package == 'oxlint-typed-rules' || inputs.package == 'vite-plus-adopt'
-        run: vp run size
-      - if: inputs.package != 'sloppedia'
-        run: vp run build
-      - run: vp pm pack --out "$RUNNER_TEMP/package.tgz"
+          cache: "false"
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 26
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
-      - name: Fetch an npm token for packages without a Trusted Publisher
-        run: |
-          oidc="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=masseater-dev-credential-broker" | jq -er .value)"
-          echo "::add-mask::$oidc"
-          response="$(curl -fsS --retry 3 -X POST -H "Authorization: Bearer $oidc" "https://credentials.masseater.dev/")"
-          token="$(jq -r '.npmToken // empty' <<<"$response")"
-          if [ -n "$token" ]; then
-            echo "::add-mask::$token"
-            echo "NODE_AUTH_TOKEN=$token" >>"$GITHUB_ENV"
-          fi
-      - name: Publish
-        working-directory: ${{ runner.temp }}
-        env:
-          PACKAGE_JSON: ${{ github.workspace }}/libs/${{ inputs.package }}/package.json
-        run: |
-          name="$(jq -r .name "$PACKAGE_JSON")"
-          version="$(jq -r .version "$PACKAGE_JSON")"
-          if npm view "$name@$version" version >/dev/null 2>&1; then
-            echo "$name@$version is already published, skipping"
-            exit 0
-          fi
-          npm publish "$RUNNER_TEMP/package.tgz" --provenance --access public
+      - run: node ../../tools/npm-publish/src/main.ts
 
   ci-telemetry:
     needs: [publish]
