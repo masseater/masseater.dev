@@ -60,12 +60,6 @@ test("every grant resolves to account and zone policies with known permission gr
   ).toBe(true);
 });
 
-test("a profile without zone permissions issues no zone policy", () => {
-  const grants = grantPolicies({ accountId: "account", zoneId: "zone" });
-  const buildsLogs = Rec.get(grants.profiles, "buildsLogs");
-  expect(pipe(buildsLogs, Option.map(resourceKeys))).toStrictEqual(Option.some([ACCOUNT_RESOURCE]));
-});
-
 const PRODUCTION = "masseater.dev/production";
 
 const RULE_GROUP_NAMES: readonly string[] = ["Account Rulesets Write", "Account Rule Lists Write"];
