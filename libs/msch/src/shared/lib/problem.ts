@@ -16,6 +16,7 @@ const RuleNameSchema = Schema.Literals([
   "hidden-unicode",
   "python-file",
   "python-command",
+  "git-subpath-dependency",
   "unneeded-file",
   "unneeded-setup",
   "cargo-outside-pnpm",
