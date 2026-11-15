@@ -23,6 +23,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
+      test: "vp test run",
       build: "vp pack",
     },
   },

@@ -14,6 +14,12 @@ export default defineConfig(
     run: {
       tasks: {
         verify: { command: [], dependsOn: ["cargo"] },
+        "ci:runtime": { command: "node scripts/fetch-runtime.ts", cache: false },
+        "ci:engine": {
+          command: "cargo test --package yakusu --test engine --locked -- --ignored",
+          cache: false,
+        },
+        "ci:launch": { command: "node scripts/launch-installed.ts", cache: false },
         "release:tag": { command: "component-tag yakusu", cache: false },
         "release:publish": { command: "component-release yakusu yakusu installers", cache: false },
         "release:token": { command: "release-please-token yakusu", cache: false },
