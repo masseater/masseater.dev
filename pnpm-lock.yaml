@@ -3002,6 +3002,9 @@ importers:
       '@masseater.dev/exposure-protocol':
         specifier: workspace:*
         version: link:../../libs/exposure-protocol
+      '@masseater.dev/github-workflow':
+        specifier: workspace:*
+        version: link:../../libs/github-workflow
       '@masseater.dev/node-main':
         specifier: workspace:*
         version: link:../../libs/node-main

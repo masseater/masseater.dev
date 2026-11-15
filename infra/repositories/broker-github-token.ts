@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import { Credentials } from "@distilled.cloud/github/Credentials";
+import { fail, mask, setEnv } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
 import { Array as Arr, Config, Effect, Option, Redacted, Schedule, Schema, pipe } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
 import { CREDENTIAL_BROKER_AUDIENCE } from "./broker-names.ts";
 import { installedRepositories } from "./installed-repositories.ts";
-import { fail, mask, setEnv } from "./workflow-commands.ts";
 
 const BROKER = "https://credentials.masseater.dev/?only=github";
 const GITHUB_API = "https://api.github.com";
@@ -68,7 +68,7 @@ const brokerGitHubToken = Effect.gen(function* brokerGitHubToken() {
   });
   yield* mask(token);
   yield* maskPrivateNames(token);
-  yield* setEnv({ name: "GITHUB_TOKEN", value: token });
+  yield* setEnv({ GITHUB_TOKEN: token });
 });
 
 runMain("broker-github-token")(brokerGitHubToken);

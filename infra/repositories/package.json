@@ -21,6 +21,7 @@
     "@distilled.cloud/github": "catalog:",
     "@distilled.cloud/tailscale": "catalog:",
     "@masseater.dev/exposure-protocol": "workspace:*",
+    "@masseater.dev/github-workflow": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",
     "@octokit/rest": "catalog:",
     "@peculiar/asn1-pkcs8": "catalog:",
