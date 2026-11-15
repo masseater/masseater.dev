@@ -2,6 +2,7 @@ import type { Context, Location } from "@oxlint/plugins";
 import { Array as Arr, Boolean as Bool, Option, Record as Rec, pipe } from "effect";
 
 import { isReported } from "./answer.ts";
+import { outOfBudget } from "./budget.ts";
 import { explainerFor } from "./explain.ts";
 import type { ExplainPass, Explainer, Outcome, Placed } from "./explain.ts";
 import { inputOf, locateMatch, verdictsOf } from "./locate.ts";
@@ -44,15 +45,18 @@ interface Answered {
 
 const DECIMALS = 2;
 
+const failsHere = (pass: ModelPass, reason: string): boolean =>
+  failsInCi(pass.options) && !outOfBudget(reason);
+
 const degrade = (pass: ModelPass, reason: string): void => {
-  if (failsInCi(pass.options)) {
+  if (failsHere(pass, reason)) {
     throw optionsError(`${reason} (${pass.filename})`);
   }
   warnOnce(reason, `${reason} (${pass.filename})`);
 };
 
 const reportFailure = (pass: ModelPass, failure: Failure): void => {
-  if (failsInCi(pass.options)) {
+  if (failsHere(pass, failure.reason)) {
     pass.contextOf(failure.match).report({
       loc: failure.loc,
       messageId: "unlocated",
