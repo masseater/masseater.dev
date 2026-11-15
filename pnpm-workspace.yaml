@@ -314,3 +314,6 @@ patchedDependencies:
   "@voidzero-dev/vite-plus-core@1.6.0": patches/@voidzero-dev__vite-plus-core@1.6.0.patch
 minimumReleaseAgeExclude:
   - "@r_masseater/oxlint-typed-rules@0.4.0"
+
+cargo:
+  enabled: true

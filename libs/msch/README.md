@@ -70,6 +70,13 @@ lint のプリセットの `no-comments/disallowComments` も、同じ一覧を�
 `.gitattributes` に `linguist-generated` や `linguist-vendored` とマークされたファイルや、ルートの `lint.ignorePatterns` で除外されたファイルは読み込まない。
 リポジトリがコメントから独自のフォーマットを読み込む際は、ルートの `vite.config.ts` の `msch.comments.allow` に、それらのコメント用の正規表現を記述する。各記述は、コメントマーカー以降のテキストと照合される。
 Python は使わない方針なので、`.py`・`pyproject.toml`・`uv.lock` などのファイルを指摘する。スクリプト・CI・設定の中で `python3`・`pip`・`uv`・`poetry` を呼ぶ箇所と、`actions/setup-python` などの action、`mise.toml` に書いた Python の道具も指摘する。
+リポジトリに pnpm ワークスペースがある場合、msch は他のパッケージマネージャーのロックファイルをフラグ付けする。
+例として、`package-lock.json`、`yarn.lock`、`bun.lock`が挙げられる。
+`cargo.enabled` を設定すると、Cargo が読み込まない `Cargo.lock`、`.cargo/config`、および `.pnpm/` 配下のファイルにもフラグが立つ。
+また、pnpm が書き込むブロックのみを保持する `.cargo/config.toml` もフラグを立てる。
+`pnpm install` がすでに行っているツールチェーンのインストールやクレートの取得もフラグ付けする。
+例としては、`rustup toolchain install`、`rustup target add`、`cargo fetch`、`dtolnay/rust-toolchain`アクション、`mise.toml` の Rust などが挙げられる。
+pnpm ワークスペースにクレートが存在し、`pnpm-workspace.yaml` で `cargo.enabled` が設定されていない場合、msch はルートの `Cargo.toml` をフラグ付けする。
 案内文書は、`AGENTS.md`・`CLAUDE.md` をルートにだけ置かせる。
 ルートの `vite.config.ts` の文字列がワークスペースの中を指していると指摘する。そのワークスペースだけの設定は、そのワークスペースの `vite.config.ts` に移す。
 Cargo のワークスペースがあれば、`verify` タスクを持つワークスペースの中にない crate を指摘する。

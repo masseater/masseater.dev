@@ -1,18 +1,18 @@
-import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, String as Str, pipe } from "effect";
 
 import type { Problem, RuleName } from "./problem.ts";
-import { RepositoryFiles } from "./repository-files.ts";
+import {
+  isScannedText,
+  isToolVersions,
+  listedFiles,
+  presentFiles,
+  scanText,
+} from "./scanned-files.ts";
+import type { Listed } from "./scanned-files.ts";
 import { positionOf } from "./text-position.ts";
 
 const PYTHON_FILE =
   /(?:\.(?:py|pyi|pyw|pyx|ipynb)|(?:^|\/)(?:pyproject\.toml|uv\.lock|uv\.toml|poetry\.lock|Pipfile|Pipfile\.lock|setup\.cfg|tox\.ini|pytest\.ini|\.python-version|requirements[^/]*\.txt))$/u;
-
-const SCANNED_FILE =
-  /(?:\.(?:[cm]?[jt]sx?|jsonc?|toml|ya?ml|sh|bash|zsh|fish|rs|cs|go|mk)|(?:^|\/)(?:Dockerfile[^/]*|Makefile|justfile|\.tool-versions|[^./][^./]*))$/u;
-
-const LOCKFILE = /(?:^|\/)(?:[^/]*\.lock|[^/]*-lock\.(?:json|ya?ml))$/u;
-
-const TOOL_VERSIONS = /(?:^|\/)(?:\.?mise(?:\.[^/]+)?\.toml|\.tool-versions)$/u;
 
 const COMMAND_PATTERNS: readonly RegExp[] = [
   /(?<![\w./@-])python[\d.]*[ \t]+(?:[-"'$./]|\S+\.py\b)/gu,
@@ -29,17 +29,11 @@ const TOOL_PATTERNS: readonly RegExp[] = [
   /^[ \t]*["']?(?:python|uv|pipx|poetry|ruff|pdm|hatch|pipx:[^"'\s=]+)["']?[ \t]*(?:=|[ \t]+\S)/gmu,
 ];
 
-const READ_CONCURRENCY = 64;
 const FIRST_LINE = 1;
 const FIRST_COLUMN = 1;
 const WHOLE_MATCH = 0;
 const FILE_RULE: RuleName = "python-file";
 const COMMAND_RULE: RuleName = "python-command";
-
-interface Listed {
-  readonly name: string;
-  readonly file: string;
-}
 
 const fileProblem = ({ file }: Listed): Problem => ({
   file,
@@ -49,8 +43,8 @@ const fileProblem = ({ file }: Listed): Problem => ({
   message: "Python is not used in this repository. Replace this file with TypeScript or Rust.",
 });
 
-const patternsFor = (name: string): readonly RegExp[] => {
-  if (TOOL_VERSIONS.test(name)) {
+const patternsFor = (entry: Listed): readonly RegExp[] => {
+  if (isToolVersions(entry)) {
     return [...COMMAND_PATTERNS, ...TOOL_PATTERNS];
   }
   return COMMAND_PATTERNS;
@@ -67,40 +61,21 @@ const commandProblem =
 
 const commandProblems = (entry: Listed, source: string): readonly Problem[] =>
   pipe(
-    patternsFor(entry.name),
+    patternsFor(entry),
     Arr.flatMap((pattern) => Arr.fromIterable(Str.matchAll(pattern)(source))),
     Arr.map(commandProblem(entry, source)),
   );
 
 const isPython = ({ name }: Listed): boolean => PYTHON_FILE.test(name);
 
-const isScanned = (entry: Listed): boolean =>
-  !isPython(entry) && SCANNED_FILE.test(entry.name) && !LOCKFILE.test(entry.name);
+const isScanned = (entry: Listed): boolean => !isPython(entry) && isScannedText(entry);
 
 /** @internal */
 const checkPython = Effect.fn("checkPython")(function* checkPython(root: string) {
-  const files = yield* RepositoryFiles;
-  const names = yield* files.listedFiles(root);
-  const listed = pipe(
-    names,
-    Arr.map((name): Listed => ({ name, file: files.join(root, name) })),
-  );
-  const problemsIn = (entry: Listed): Effect.Effect<readonly Problem[]> =>
-    files.readFile(entry.file).pipe(
-      Effect.map(
-        Option.match({
-          onNone: (): readonly Problem[] => [],
-          onSome: (source) => commandProblems(entry, source),
-        }),
-      ),
-    );
-  const scanned = yield* Effect.forEach(pipe(listed, Arr.filter(isScanned)), problemsIn, {
-    concurrency: READ_CONCURRENCY,
-  });
-  const present = yield* Effect.filter(pipe(listed, Arr.filter(isPython)), ({ file }) =>
-    files.exists(file),
-  );
-  return [...pipe(present, Arr.map(fileProblem)), ...Arr.flatten(scanned)];
+  const listed = yield* listedFiles(root);
+  const scanned = yield* scanText(pipe(listed, Arr.filter(isScanned)), commandProblems);
+  const present = yield* presentFiles(pipe(listed, Arr.filter(isPython)));
+  return [...pipe(present, Arr.map(fileProblem)), ...scanned];
 });
 
 export { checkPython };
