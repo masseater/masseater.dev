@@ -28,7 +28,8 @@ type ResolveArguments = readonly [
   host: ResolutionHost,
 ];
 
-const CWD = rootedDirectoryPathFromPath(rootedPathFromNormalized(process.cwd()));
+const WORKING_DIRECTORY = Str.replaceAll("\\", "/")(process.cwd());
+const CWD = rootedDirectoryPathFromPath(rootedPathFromNormalized(WORKING_DIRECTORY));
 
 const PREFIX = `${CWD}/`;
 
