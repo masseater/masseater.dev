@@ -40,4 +40,3 @@ const agentGenerator = Layer.succeed(
 );
 
 export { Generator, agentGenerator };
-export type { Generation };

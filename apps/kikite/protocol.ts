@@ -127,7 +127,6 @@ export {
   Correction,
   CorrectionRequest,
   ERROR_LABEL,
-  Lead,
   RESEARCH_PATH,
   Research,
   ResearchAsk,
