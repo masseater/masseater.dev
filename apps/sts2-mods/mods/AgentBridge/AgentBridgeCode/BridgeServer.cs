@@ -5,10 +5,6 @@ using AgentBridge.Protocol;
 
 namespace AgentBridge.AgentBridgeCode;
 
-/// <summary>
-/// 127.0.0.1 だけで待ち受ける HTTP サーバー。GET /state・POST /action・GET /screenshot を受け、
-/// ゲームに触る処理はすべて <see cref="MainThread"/> に回す。
-/// </summary>
 internal static class BridgeServer
 {
     private static HttpListener? listener;

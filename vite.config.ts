@@ -200,7 +200,10 @@ const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
 
 export default defineConfig({
   ...checks,
-  msch: { workspaceAgentsMd: true },
+  msch: {
+    workspaceAgentsMd: true,
+    comments: { allow: ["(?:note|pass|text|glyphs|dispatch):"] },
+  },
   test: {
     projects: [...workspace.testProjects],
     passWithNoTests: true,

@@ -9,7 +9,6 @@
       content="アニメの1カットを原画・仕上げ・合成・撮影処理の4段階で切り替え、3D背景と撮影処理をリアルタイムで試せるページ。"
     />
     <style>
-      /* layout: one cut on a viewer like a compositing monitor; stage switch above, process toggles and the cut-bag note below */
       :root {
         color-scheme: light dark;
         --bg: #eceef1;
@@ -435,7 +434,6 @@
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.autoClear = true;
 
-      /* ---------- 3D background ---------- */
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(38, 16 / 9, 0.1, 200);
       const target = new THREE.Vector3(0.5, 1.45, 0);
@@ -467,7 +465,6 @@
         frameM = toon(0x6b5650),
         woodM = toon(0x9a7660),
         floorM = toon(0x8c7468);
-      /* back wall with a window opening x .6–2.6, y .9–2.6 */
       add(B(8.2, 0.9, 0.16), wallM, 0, 0.45, 0);
       add(B(8.2, 0.8, 0.16), wallM, 0, 3.0, 0);
       add(B(4.6, 1.8, 0.12), wallM, -1.7, 1.75, -0.02);
@@ -479,9 +476,7 @@
       add(B(0.05, 1.7, 0.12), frameM, 1.6, 1.75, 0);
       add(B(2.0, 0.05, 0.12), frameM, 1.6, 1.75, 0);
       add(B(2.3, 0.05, 0.32), frameM, 1.6, 0.87, 0.12);
-      /* floor */
       add(B(9, 0.05, 7), floorM, 0, -0.02, 3.4);
-      /* desk under the window */
       add(B(2.3, 0.06, 0.75), woodM, 1.6, 0.74, 0.55);
       [
         [0.55, 0.25],
@@ -494,7 +489,6 @@
       add(new THREE.CylinderGeometry(0.045, 0.04, 0.1, 16), toon(0xe8e2da), 0.95, 0.82, 0.45);
       add(new THREE.CylinderGeometry(0.07, 0.055, 0.14, 16), toon(0x8a5f4c), 1.25, 0.84, 0.6);
       add(new THREE.SphereGeometry(0.12, 12, 10), toon(0x5d7a52), 1.25, 1.0, 0.6);
-      /* shelf and poster on the wall */
       add(B(1.3, 0.04, 0.24), woodM, -1.4, 1.55, 0.2);
       add(B(1.3, 0.04, 0.24), woodM, -1.4, 2.05, 0.2);
       [
@@ -509,7 +503,6 @@
       add(B(0.36, 0.26, 0.18), toon(0xd8d0c6), -1.0, 2.2, 0.2);
       add(B(0.7, 0.95, 0.01), toon(0xc9b3ad), -0.35, 2.15, 0.09);
       add(B(0.5, 0.35, 0.012), toon(0x9c8aa6), -0.35, 2.32, 0.1);
-      /* city silhouette */
       const cityM = new THREE.MeshBasicMaterial({ color: 0x6b5577 }),
         cityM2 = new THREE.MeshBasicMaterial({ color: 0x8c6f85 });
       let seed = 7;
@@ -524,7 +517,6 @@
           h = 3 + rnd() * 3;
         add(B(1.1, h, 1), cityM2, x, -4 + h / 2, -22);
       }
-      /* sky */
       const sky = new THREE.Mesh(
         new THREE.PlaneGeometry(200, 90),
         new THREE.ShaderMaterial({
@@ -545,7 +537,6 @@
       fill.position.set(-2, 2, 6);
       scene.add(fill);
 
-      /* ---------- full-screen passes ---------- */
       const qScene = new THREE.Scene(),
         qCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
       const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2));
@@ -724,7 +715,6 @@
           return;
         }
         const st = state.stage;
-        /* background */
         if (st === 1) {
           camera.layers.set(1);
           renderer.setClearColor(0xf6f7f9, 1);
@@ -747,7 +737,6 @@
           pass(compMat, rt.raw);
           if (state.diff) blur(rt.comp, rt.q1, rt.q2, 2.2, 3);
         }
-        /* sun position on screen */
         tmpSun.copy(SUN).project(camera);
         const fu = finalMat.uniforms;
         fu.sun.value.set(tmpSun.x * 0.5 + 0.5, tmpSun.y * 0.5 + 0.5);
@@ -765,7 +754,6 @@
         requestAnimationFrame(frame);
       }
 
-      /* ---------- UI ---------- */
       function syncUI() {
         document
           .querySelectorAll(".stages button")

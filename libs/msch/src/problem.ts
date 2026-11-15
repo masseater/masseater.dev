@@ -22,6 +22,7 @@ const RuleNameSchema = Schema.Literals([
   "install-size",
   "unverified-crate",
   "root-workspace-path",
+  "comment",
 ]);
 
 type RuleName = typeof RuleNameSchema.Type;
