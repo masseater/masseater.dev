@@ -222,7 +222,6 @@ jobs:
         with:
           native: "false"
       - run: vp exec --filter sundries alchemy deploy --stage prod --yes
-      - run: vp run --filter sundries access-check
 
   kikite:
     needs: deploy
@@ -243,7 +242,6 @@ jobs:
         with:
           native: "false"
       - run: vp exec --filter kikite alchemy deploy --stage prod --yes
-      - run: vp run --filter kikite access-check
 
   plamo-translate:
     needs: deploy
@@ -264,7 +262,6 @@ jobs:
         with:
           native: "false"
       - run: vp exec --filter plamo-translate alchemy deploy --stage prod --yes
-      - run: vp run --filter plamo-translate access-check
 
   yohaku-sync:
     needs: deploy
@@ -285,7 +282,6 @@ jobs:
         with:
           native: "false"
       - run: vp exec --filter yohaku-sync alchemy deploy --stage prod --yes
-      - run: vp run --filter yohaku-sync access-check
 
   medley-manager:
     needs: deploy
@@ -752,6 +748,39 @@ jobs:
           path: apps/sts2-mods/out/
           if-no-files-found: ignore
 
+  exposure:
+    needs:
+      [
+        deploy,
+        zone,
+        mcp-portal,
+        traces,
+        trace-check,
+        three-twelve,
+        watashi-mcp,
+        sundries,
+        kikite,
+        plamo-translate,
+        yohaku-sync,
+        rpp-kit,
+        nimado,
+        medley-manager,
+        decision-experiments,
+        web-vitals,
+        sts2-pck,
+        github,
+        zenn,
+        mosaic-plan,
+        mosaic-character,
+        mosaic-deploy,
+      ]
+    if: ${{ !cancelled() && needs.deploy.outputs.latest == 'true' }}
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    uses: $/.github/workflows/exposure.yml
+
   deploy-failure:
     needs:
       [
@@ -840,6 +869,7 @@ jobs:
         mosaic-character,
         mosaic-deploy,
         release,
+        exposure,
         deploy-failure,
       ]
     if: always()

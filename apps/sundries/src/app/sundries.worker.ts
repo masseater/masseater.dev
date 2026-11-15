@@ -11,6 +11,8 @@ const notFound: Route = () => Promise.resolve(new Response("Not Found", { status
 
 const ROUTES: Readonly<Record<string, Route>> = { [MCP_PATH]: serveMcp };
 
+export { ClaudeRequests } from "#/features/mcp";
+
 export default {
   fetch: (request: Request): Promise<Response> =>
     securedResponse(() => (ROUTES[new URL(request.url).pathname] ?? notFound)(request)),
