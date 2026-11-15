@@ -95,7 +95,7 @@ async fn run(running: &Running, direction: &Direction, text: &str) -> String {
 }
 
 #[tokio::test]
-#[ignore = "needs llama-server in resources/, which fetch-runtime downloads, and downloads the model"]
+#[ignore = "needs llama-server in resources/, which the ci:runtime task downloads, and downloads the model"]
 async fn translates_with_the_downloaded_model() {
     let running = start().await;
 
