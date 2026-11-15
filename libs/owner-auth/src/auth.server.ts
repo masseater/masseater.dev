@@ -11,6 +11,7 @@ import { ownerPasskey } from "./passkey.server";
 import type { OwnerPasskeyConfig } from "./passkey.server";
 
 export interface OwnerAuthOptions {
+  [option: string]: unknown;
   baseURL: string;
   database: ReturnType<typeof drizzleAdapter>;
   disabledPaths: string[];
