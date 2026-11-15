@@ -37,19 +37,21 @@ const SKIPPED_DIRECTORIES: ReadonlySet<string> = new Set([NODE_MODULES, "dist", 
 const isVisible = (file: string): boolean =>
   pipe(
     Str.split(file, "/"),
-    Arr.every((segment) => !Str.startsWith(HIDDEN_PREFIX)(segment) && !SKIPPED_DIRECTORIES.has(segment)),
+    Arr.every(
+      (segment) => !Str.startsWith(HIDDEN_PREFIX)(segment) && !SKIPPED_DIRECTORIES.has(segment),
+    ),
   );
 
 const listConfigFiles = (root: string): Effect.Effect<readonly string[], never, RepositoryFiles> =>
   Effect.gen(function* configFilesUnder() {
     const files = yield* RepositoryFiles;
     const listed = yield* files.matchingFiles(root, [CONFIG_PATHSPEC]);
-    return pipe(
+    const visible = pipe(
       listed,
       Arr.filter(isVisible),
       Arr.map((file) => files.join(root, file)),
-      Arr.sort(Order.String),
     );
+    return Arr.sort(visible, Order.String);
   });
 
 const parseConfig =
