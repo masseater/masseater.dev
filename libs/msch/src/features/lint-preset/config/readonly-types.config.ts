@@ -83,6 +83,7 @@ export const readonlyParameterAllow = [
     name: [
       "API",
       "ArrayLiteralExpression",
+      "ArrowFunction",
       "BinaryExpression",
       "BindingElement",
       "CallExpression",
@@ -102,6 +103,9 @@ export const readonlyParameterAllow = [
       "ExportSpecifier",
       "Expression",
       "ExpressionBase",
+      "FunctionDeclaration",
+      "FunctionExpression",
+      "Identifier",
       "InterfaceDeclaration",
       "JSDocCallbackTag",
       "JSDocTagBase",

@@ -13,3 +13,7 @@ export type {
   TextlintConfig,
   ToolSections,
 } from "./types.ts";
+/** @internal */
+export { runVpa } from "./vpa.ts";
+/** @internal */
+export { VpToolsError } from "./errors.ts";
