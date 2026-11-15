@@ -100,111 +100,8 @@ jobs:
         env:
           CHECKOUTS: ${{ github.workspace }} ${{ github.workspace }}/.skills-checkout
 
-  mosaic-plan:
-    if: github.event_name == 'push' || github.event_name == 'schedule'
-    runs-on: ubuntu-latest
-    concurrency:
-      group: mosaic-plan
-      cancel-in-progress: true
-    permissions:
-      actions: write
-      contents: read
-    outputs:
-      rebuild: ${{ steps.plan.outputs.rebuild }}
-      web: ${{ steps.plan.outputs.web }}
-      slugs: ${{ steps.plan.outputs.slugs }}
-      pool: ${{ steps.plan.outputs.pool }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - id: plan
-        env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD_SHA: ${{ github.sha }}
-          BEFORE_SHA: ${{ github.event.before }}
-        run: vp run -r mosaic-plan
-      - env:
-          GH_TOKEN: ${{ github.token }}
-        run: vp run -r prune-caches
-      - name: rebuild
-        if: steps.plan.outputs.rebuild == 'true'
-        run: echo "the character files are rebuilt"
-      - name: web
-        if: steps.plan.outputs.web == 'true'
-        run: echo "the site is redeployed"
-
-  mosaic-character:
-    needs: mosaic-plan
-    if: needs.mosaic-plan.outputs.rebuild == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-      contents: read
-    concurrency:
-      group: mosaic-character-${{ matrix.slug }}
-    strategy:
-      fail-fast: false
-      max-parallel: 6
-      matrix:
-        slug: ${{ fromJSON(needs.mosaic-plan.outputs.slugs) }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/mosaic-character
-        with:
-          slug: ${{ matrix.slug }}
-          pool: ${{ needs.mosaic-plan.outputs.pool }}
-          job-index: ${{ strategy.job-index }}
-          github-token: ${{ github.token }}
-          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-  mosaic-deploy:
-    needs: mosaic-plan
-    if: needs.mosaic-plan.outputs.web == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-    concurrency:
-      group: mosaic-deploy
-    steps: &mosaic-site
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - id: head
-        env:
-          GH_TOKEN: ${{ github.token }}
-          SUPERSEDING_STEPS: rebuild web
-        run: vp run -r mosaic-superseded
-      - name: deploy
-        if: steps.head.outputs.superseded != 'true'
-        run: vp run -r deploy:mosaic-site
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-  mosaic-refresh:
-    needs: [mosaic-plan, mosaic-character]
-    if: always() && needs.mosaic-plan.outputs.rebuild == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-    concurrency:
-      group: mosaic-deploy
-    steps: *mosaic-site
-
   exposure:
-    needs: [deploy, mosaic-plan, mosaic-character, mosaic-deploy]
+    needs: [deploy]
     if: ${{ !cancelled() }}
     permissions:
       actions: read
@@ -217,10 +114,6 @@ jobs:
       [
         deploy,
         private-names,
-        mosaic-plan,
-        mosaic-character,
-        mosaic-deploy,
-        mosaic-refresh,
       ]
     if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
@@ -250,10 +143,6 @@ jobs:
         autofix,
         deploy,
         private-names,
-        mosaic-plan,
-        mosaic-character,
-        mosaic-deploy,
-        mosaic-refresh,
         exposure,
         deploy-failure,
       ]
