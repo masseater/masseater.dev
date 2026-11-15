@@ -3,7 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { Effect } from "effect";
 import { useEffect } from "react";
 
-import { commands } from "#/shared/api/generated/bindings.ts";
+import { tauriWindow } from "#/shared/api";
 import { flushAll } from "#/shared/model";
 
 const CLOSING_EVENT = "yohaku://closing";
@@ -17,7 +17,7 @@ const keepNativeMenuOnlyInText = (event: MouseEvent): void => {
 };
 
 const closing = (quit: boolean): Effect.Effect<unknown> =>
-  flushAll.pipe(Effect.andThen(Effect.promise(() => commands.finishClosing(quit))));
+  flushAll.pipe(Effect.andThen(tauriWindow.finishClosing(quit)));
 
 const behaveLikeAnApp = (): void => {
   document.addEventListener("contextmenu", keepNativeMenuOnlyInText);
@@ -36,7 +36,7 @@ const behaveLikeAnApp = (): void => {
 const useShownOnceReady = (ready: boolean): void => {
   useEffect(() => {
     if (ready && isTauri()) {
-      Effect.runFork(Effect.promise(() => commands.windowReady()));
+      Effect.runFork(tauriWindow.ready());
     }
   }, [ready]);
 };
