@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 
+import { ProjectList } from "#/features/filter-memos";
+
 import { MemoList } from "./memo-list";
-import { ProjectList } from "./project-list";
 
 export const MemosPage = (): ReactNode => (
   <div className="flex flex-col gap-8 xl:flex-row xl:items-start">

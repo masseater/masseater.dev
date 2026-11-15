@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
 import { usePanel } from "#/entities/interview";
+import { LeadSection } from "#/features/research-leads";
 
-import { LeadSection } from "./lead-section.tsx";
 import { NoteSection } from "./note-section.tsx";
 import { OPEN, POINTS } from "./notes.ts";
 import { Transcript } from "./transcript.tsx";

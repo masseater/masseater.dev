@@ -28,6 +28,7 @@ export default defineConfig({
       "release:linux": {
         command:
           "node scripts/bundle.ts && node scripts/pluginval.ts && node scripts/host.ts && node scripts/clap-validator.ts && node scripts/archive.ts linux-x86_64",
+        dependsOn: ["@masseater.dev/cargo-tools#build"],
         cache: false,
       },
       "release:windows": {
@@ -38,6 +39,7 @@ export default defineConfig({
       "release:macos": {
         command:
           "node scripts/bundle.ts && node scripts/codesign.ts && node scripts/pluginval.ts && node scripts/host.ts && node scripts/clap-validator.ts && node scripts/archive.ts macos-universal",
+        dependsOn: ["@masseater.dev/cargo-tools#build"],
         cache: false,
       },
       "release:tag": { command: "component-tag pod-rattle", cache: false },
