@@ -2,7 +2,7 @@ import { checkPackage, createPackageFromTarballData } from "@r_masseater/vite-pl
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
-  msch: { publish: { installSize: "0 B" }, lint: { ignorePatterns: ["upstream/**"] } },
+  msch: { publish: { installSize: "48.1 MB" }, lint: { ignorePatterns: ["upstream/**"] } },
   run: {
     tasks: {
       test: "vp test run",
