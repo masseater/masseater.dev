@@ -16,19 +16,14 @@ use crate::translate::Error;
 const HOST: Ipv4Addr = Ipv4Addr::LOCALHOST;
 const CONTEXT_TOKENS: &str = "16384";
 const POLL_INTERVAL: Duration = Duration::from_millis(250);
-/// llama-server may close a kept-alive connection just as the next request reuses it.
 const IDLE_CONNECTIONS: usize = 0;
-/// The environment variable llama-server reads its API key from.
 const KEY_VARIABLE: &str = "LLAMA_API_KEY";
 const KEY_BYTES: usize = 32;
-/// How many times llama-server is started before giving up on finding a port of its own.
 const START_ATTEMPTS: usize = 3;
-/// llama-server answers this path without asking for the key.
 const HEALTH: &str = "/health";
 const PROPS: &str = "/props";
 const COMPLETION: &str = "/completion";
 
-/// The arguments that start llama-server with the translation model on `port`.
 #[must_use]
 pub fn arguments(model: &Path, port: u16) -> Vec<OsString> {
     vec![
@@ -46,11 +41,6 @@ pub fn arguments(model: &Path, port: u16) -> Vec<OsString> {
     ]
 }
 
-/// A local port that nothing listens on right now.
-///
-/// # Errors
-///
-/// Returns an error when the operating system cannot open a socket.
 pub fn free_port() -> io::Result<u16> {
     Ok(TcpListener::bind((HOST, 0))?.local_addr()?.port())
 }
@@ -66,18 +56,12 @@ fn fresh_key() -> io::Result<String> {
         }))
 }
 
-/// One start of llama-server: the port it listens on and the key it asks for.
 pub struct Launch {
     port: u16,
     key: String,
 }
 
 impl Launch {
-    /// Picks a free port and makes a key that no other start has.
-    ///
-    /// # Errors
-    ///
-    /// Returns an error when the operating system cannot open a socket or give random bytes.
     pub fn new() -> io::Result<Self> {
         Ok(Self {
             port: free_port()?,
@@ -85,16 +69,11 @@ impl Launch {
         })
     }
 
-    /// The port llama-server is told to listen on.
     #[must_use]
     pub const fn port(&self) -> u16 {
         self.port
     }
 
-    /// The command that runs `program` as llama-server with the translation model.
-    ///
-    /// The key goes into the environment of the process and not into its arguments, because
-    /// every user of the computer can read the arguments of a running process.
     #[must_use]
     pub fn command(&self, program: &Path, model: &Path) -> Command {
         let mut command = Command::new(program);
@@ -125,16 +104,11 @@ impl Launch {
     }
 }
 
-/// The reason llama-server did not become ready.
 #[derive(Debug)]
 pub enum StartError {
-    /// The process could not be started or looked at.
     Process(io::Error),
-    /// The process ended before it was ready.
     Exited(ExitStatus),
-    /// What answers on the port does not take the key, so it is not the process that was started.
     Rejected(StatusCode),
-    /// The model was not loaded in time.
     TimedOut,
 }
 
@@ -159,16 +133,6 @@ impl fmt::Display for StartError {
 
 impl std::error::Error for StartError {}
 
-/// Starts llama-server through `spawn` and waits until it has loaded the model.
-///
-/// `exited` gives the exit status of the process that `spawn` started last, or `None` while it
-/// runs. When another program took the port before llama-server could listen on it, `spawn` is
-/// called again with another port and key, and has to stop the process it started before.
-///
-/// # Errors
-///
-/// Returns an error when the process cannot start, ends before it is ready, is not ready within
-/// `timeout`, or still has no port of its own after a few starts.
 pub async fn start(
     timeout: Duration,
     mut spawn: impl FnMut(&Launch) -> io::Result<()>,
@@ -204,18 +168,12 @@ struct Event {
     error: Option<serde_json::Value>,
 }
 
-/// Reads the server-sent events of a streamed completion and returns the generated text.
 #[derive(Default)]
 pub struct Decoder {
     pending: Vec<u8>,
 }
 
 impl Decoder {
-    /// Takes the next bytes of the response and returns the text deltas whose events are complete.
-    ///
-    /// # Errors
-    ///
-    /// Returns an error when an event is not JSON or reports an error.
     pub fn push(&mut self, bytes: &[u8]) -> Result<Vec<String>, Error> {
         self.pending.extend_from_slice(bytes);
         let mut deltas = Vec::new();
@@ -242,7 +200,6 @@ fn server_error(error: &reqwest::Error) -> Error {
     Error::Server(error.to_string())
 }
 
-/// A running llama-server and the key it asks for.
 #[derive(Clone)]
 pub struct Server {
     base: String,
@@ -265,10 +222,6 @@ impl Server {
             .map(|response| response.status())
     }
 
-    /// Waits until the server has loaded the model and takes the key.
-    ///
-    /// llama-server answers the health check without the key, so a second request that needs
-    /// the key shows that the listener on the port is the process that was given the key.
     async fn wait_ready(
         &self,
         timeout: Duration,
@@ -294,7 +247,6 @@ impl Server {
         }
     }
 
-    /// Streams the text the model generates for `prompt`.
     pub fn complete(
         &self,
         prompt: &str,

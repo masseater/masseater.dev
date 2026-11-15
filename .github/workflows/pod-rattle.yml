@@ -16,6 +16,20 @@ env:
   CLAP_VALIDATOR_VERSION: 0.4.1
 
 jobs:
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github
+      - name: Tag the revision before main changes a workflow file
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/component-tag.sh pod-rattle apps/pod-rattle-plugin
+
   bundle:
     strategy:
       fail-fast: false
@@ -106,7 +120,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: bundle
+    needs: [tag, bundle]
     runs-on: ubuntu-latest
     environment: pod-rattle-release
     permissions:
@@ -161,7 +175,7 @@ jobs:
           skip-github-release: true
 
   ci-telemetry:
-    needs: [bundle, release]
+    needs: [tag, bundle, release]
     if: always()
     runs-on: ubuntu-latest
     permissions:

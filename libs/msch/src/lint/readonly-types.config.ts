@@ -1,3 +1,4 @@
+import { BINARY_DATA } from "./readonly-binary.config.ts";
 import { lintToolReadonlyAllow } from "./readonly-lint-tools.config.ts";
 
 const WEBGPU_HANDLES: readonly string[] = [
@@ -36,19 +37,19 @@ const readonlyParameterAllow = [
       "ReadableStream",
       "Request",
       "Response",
-      "Float64Array",
-      "ArrayBuffer",
+      ...BINARY_DATA,
       "RegExp",
-      "Uint8Array",
-      "DataView",
       "RegExpExecArray",
       "RegExpMatchArray",
       "Date",
       "SpeechRecognitionResult",
+      "CryptoKey",
       ...BROWSER_HANDLES,
     ],
   },
   { from: "package" as const, package: "@webgpu/types", name: [...WEBGPU_HANDLES] },
+  { from: "package" as const, package: "@vscode/tree-sitter-wasm", name: "Language" },
+  { from: "package" as const, package: "domhandler", name: ["AnyNode", "Text", "Element"] },
   {
     from: "package" as const,
     package: "@cloudflare/workers-types",
@@ -57,6 +58,7 @@ const readonlyParameterAllow = [
       "Container",
       "DurableObjectState",
       "DurableObjectStorage",
+      "CryptoKey",
       "KVNamespace",
       "R2Bucket",
       "SecretsStoreSecret",

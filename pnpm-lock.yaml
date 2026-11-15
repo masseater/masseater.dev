@@ -342,8 +342,8 @@ catalogs:
       specifier: 22.0.1
       version: 22.0.1
     '@openrouter/sdk':
-      specifier: 1.5.92
-      version: 1.5.92
+      specifier: 1.5.93
+      version: 1.5.93
     '@opentelemetry/api':
       specifier: 1.10.0
       version: 1.10.0
@@ -362,6 +362,9 @@ catalogs:
     '@peculiar/asn1-schema':
       specifier: 3.0.0
       version: 3.0.0
+    '@pixiv/three-vrm':
+      specifier: 3.5.5
+      version: 3.5.5
     '@plussub/srt-vtt-parser':
       specifier: ^2.0.5
       version: 2.0.5
@@ -509,6 +512,9 @@ catalogs:
     '@vitejs/plugin-rsc':
       specifier: 0.5.39
       version: 0.5.39
+    '@vscode/tree-sitter-wasm':
+      specifier: 0.3.1
+      version: 0.3.1
     '@webgpu/types':
       specifier: 0.1.74
       version: 0.1.74
@@ -578,6 +584,12 @@ catalogs:
     discord.js:
       specifier: 14.28.1
       version: 14.28.1
+    dockerfile-ast:
+      specifier: 0.7.1
+      version: 0.7.1
+    domhandler:
+      specifier: 6.0.1
+      version: 6.0.1
     driver.js:
       specifier: 1.12.1
       version: 1.12.1
@@ -791,6 +803,9 @@ catalogs:
     smol-toml:
       specifier: 1.9.1
       version: 1.9.1
+    sql-parser-cst:
+      specifier: 0.44.1
+      version: 0.44.1
     sqlite-vec:
       specifier: 0.1.9
       version: 0.1.9
@@ -812,6 +827,9 @@ catalogs:
     three:
       specifier: 0.187.0
       version: 0.187.0
+    toml-eslint-parser:
+      specifier: 1.0.3
+      version: 1.0.3
     tsconfck:
       specifier: 3.1.6
       version: 3.1.6
@@ -1031,6 +1049,9 @@ importers:
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
+      '@pixiv/three-vrm':
+        specifier: 'catalog:'
+        version: 3.5.5(three@0.187.0)
       '@tanstack/react-query':
         specifier: catalog:stack
         version: 5.107.1(@types/react@19.3.0)(react@19.3.1)
@@ -1143,6 +1164,9 @@ importers:
       sqlite-vec:
         specifier: 'catalog:'
         version: 0.1.9
+      three:
+        specifier: 'catalog:'
+        version: 0.187.0
     devDependencies:
       '@effect/vitest':
         specifier: 'catalog:'
@@ -1150,6 +1174,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+      '@types/three':
+        specifier: 'catalog:'
+        version: 0.187.0
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -2855,6 +2882,9 @@ importers:
       '@distilled.cloud/cloudflare':
         specifier: catalog:stack
         version: 1.0.0-rc.20(effect@4.1.4)
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
       '@masseater.dev/owner-stack':
         specifier: workspace:*
         version: link:../../libs/owner-stack
@@ -3249,6 +3279,15 @@ importers:
       '@shadcn/lint':
         specifier: 'catalog:'
         version: 0.2.5(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))
+      '@vscode/tree-sitter-wasm':
+        specifier: 'catalog:'
+        version: 0.3.1
+      dockerfile-ast:
+        specifier: 'catalog:'
+        version: 0.7.1
+      domhandler:
+        specifier: 'catalog:'
+        version: 6.0.1
       eslint-plugin-baseline-js:
         specifier: 'catalog:'
         version: 0.7.7(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))
@@ -3258,9 +3297,18 @@ importers:
       eslint-plugin-react-hooks:
         specifier: 'catalog:'
         version: 7.1.1(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      htmlparser2:
+        specifier: 'catalog:'
+        version: 12.0.0
       oxlint-plugin-eslint:
         specifier: 'catalog:'
         version: 1.93.0
+      sql-parser-cst:
+        specifier: 'catalog:'
+        version: 0.44.1
+      toml-eslint-parser:
+        specifier: 'catalog:'
+        version: 1.0.3
       yaml:
         specifier: 'catalog:'
         version: 2.9.1
@@ -4120,7 +4168,7 @@ importers:
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.92
+        version: 1.5.93
       '@r_masseater/oxlint-plugin-decision':
         specifier: workspace:*
         version: link:../../libs/oxlint-plugin-decision
@@ -6803,8 +6851,8 @@ packages:
     resolution: {integrity: sha512-hAX0pT/73190NLqBPPWSdBVGtbY6VOhWYK3qqHqtXQ1gK7kS2yz4+ivsN07hpJ6I3aeMtKP6J6npsEKOAzuTLA==}
     engines: {node: '>=20.0'}
 
-  '@openrouter/sdk@1.5.92':
-    resolution: {integrity: sha512-XCht/LsftUKP5f33tPmZia8OCOkdjPky17JgkDloTj/L2LjIUFamWQDro1/UaSYkWNPh1N/WkPev4y5z+KXtvQ==}
+  '@openrouter/sdk@1.5.93':
+    resolution: {integrity: sha512-mmFRaP/9N1Nla7GtCwUoMzhgRrKvJXL+SE4UTXddLDbrvWEFVR9Bp5hZF8lsgMW3rGaQgXId91UzF3SbJAmW4Q==}
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -7720,6 +7768,62 @@ packages:
   '@peculiar/x509@1.14.3':
     resolution: {integrity: sha512-C2Xj8FZ0uHWeCXXqX5B4/gVFQmtSkiuOolzAgutjTfseNOHT3pUjljDZsTSxXFGgio54bCzVFqmEOUrIVk8RDA==}
     engines: {node: '>=20.0.0'}
+
+  '@pixiv/three-vrm-core@3.5.5':
+    resolution: {integrity: sha512-jjaXZbMVRsk2HAGVxqDLmSJyGOJqbMcJpuTHR1TY/TN1FxiKdAzSqdr/ZUcczYipNf8IL9vDT9NX2XmWj+ybRQ==}
+    peerDependencies:
+      three: '>=0.137'
+
+  '@pixiv/three-vrm-materials-hdr-emissive-multiplier@3.5.5':
+    resolution: {integrity: sha512-XnHEqpY4ctYMucpeRcptdphOe0RrW7V5fUvojasD8Ja4MTjjrjCNFxsAvp3+HBkPZbkTM2sDCjJBJNzxN1scrA==}
+    peerDependencies:
+      three: '>=0.137'
+
+  '@pixiv/three-vrm-materials-mtoon@3.5.5':
+    resolution: {integrity: sha512-7lThHf4OKBOsVenD+R6L6HffNUlKO3Twnhr3+z77MnUsSzsOanjVKJtjSIly9QJ6hgl8YJmI6RnxCKqXcpplog==}
+    peerDependencies:
+      three: '>=0.137'
+
+  '@pixiv/three-vrm-materials-v0compat@3.5.5':
+    resolution: {integrity: sha512-NjsTK4P4qdcr+RoL2gEUNgF2CY/aplNvyHHxI99N7D6CxDZ2H93FQ9aIuLCABj5b+4CIvldWMCcnS7YuLIr3Lw==}
+    peerDependencies:
+      three: '>=0.137'
+
+  '@pixiv/three-vrm-node-constraint@3.5.5':
+    resolution: {integrity: sha512-+ShEXioZ5Ctf0EZ5ZViZ4n0jhV/qtJRH0Juw8nRnMNODZXDSr+B3An2lrfRoMhowCzG63GiUG4lXWV9noMXosA==}
+    peerDependencies:
+      three: '>=0.137'
+
+  '@pixiv/three-vrm-springbone@3.5.5':
+    resolution: {integrity: sha512-GWAWrIegGH/u1ZA+Es03Qzc2yafrQOrhtal9jzUIAgU8Wm2DYuqAABOY+du/9RpBRK8D4T8DBPvRGQqvfrQ/uA==}
+    peerDependencies:
+      three: '>=0.137'
+
+  '@pixiv/three-vrm@3.5.5':
+    resolution: {integrity: sha512-RPXy7jYAXs704NIpZlosB0U2ENu21G9DrqGWdQgRe8dShaCo1ugpj+6BVPRCy91nt+MPMA96j5rbsSzEl0HlQA==}
+    peerDependencies:
+      three: '>=0.137'
+
+  '@pixiv/types-vrm-0.0@3.5.5':
+    resolution: {integrity: sha512-2S/0jswMjJTwL9ky8YzDR0CIaP6ZmE+HFuyW/0h+SA+awELf+J7WGgC8lTLM1MXzokO7Z2YVljU2F0fEhlKDIQ==}
+
+  '@pixiv/types-vrmc-materials-hdr-emissive-multiplier-1.0@3.5.5':
+    resolution: {integrity: sha512-IuHw9ehXt2bymqfdFV+f2cCXo8kvJUfh0Zuut8qmKXoEb7HVyLGIQyS4TcQHG5yY22UTWHI1Axo5tQv35lPTgQ==}
+
+  '@pixiv/types-vrmc-materials-mtoon-1.0@3.5.5':
+    resolution: {integrity: sha512-GFVuksAJVhrWTXYmI/ucNsE611/d8N6BoZrzhUAAINndt98loyzapW2+DJu+GsUBO5yxd+vLsL0FB16XD9+TGg==}
+
+  '@pixiv/types-vrmc-node-constraint-1.0@3.5.5':
+    resolution: {integrity: sha512-8EbJ1uzkn9yJQarCChmpG12+mc2c7PimHvQ8H6/tMh/hqp5NtJND0z2lR2KeVxw9A3M+TpF+xgImhLBxGjqwzQ==}
+
+  '@pixiv/types-vrmc-springbone-1.0@3.5.5':
+    resolution: {integrity: sha512-gRQ5Y7PaGiMefvOrJ3hvoSPqpA67jiwyhwh8ItjsPi3yri/Hn3CeXplW3Cbx3ZPbfu+C3Q2MCRa2TqAUOjeMRA==}
+
+  '@pixiv/types-vrmc-springbone-extended-collider-1.0@3.5.5':
+    resolution: {integrity: sha512-+6RxLaAvVguP7upjS/OT4viNPWvac1HBRQY1nmdvfYNQuCMdrMsCZqvy2af0Fcjnda4V9JbKFIpZDC0lrw1+uQ==}
+
+  '@pixiv/types-vrmc-vrm-1.0@3.5.5':
+    resolution: {integrity: sha512-WnemHHo2375BcBdumEhvrupZzsMSzTfdWlokmV9sUX2oC+OAQqJFfBjLF8ppkOhzHpl4MAPJqEfuhBJtNPm9ww==}
 
   '@pkgr/core@0.3.6':
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
@@ -10629,6 +10733,9 @@ packages:
   '@vscode/l10n@0.0.18':
     resolution: {integrity: sha512-KYSIHVmslkaCDyw013pphY+d7x1qV8IZupYfeIfzNA+nsaWHbn5uPuQRvdRFsa9zFzGeudPuoGoZ1Op4jrJXIQ==}
 
+  '@vscode/tree-sitter-wasm@0.3.1':
+    resolution: {integrity: sha512-RJFoomET6FajjG511fmQxeBQfU6M24a0aFZPqpid+ttIxanWf1VGytBG0UmsGjt07qmIPJS8U31D+aecuCucsQ==}
+
   '@webassemblyjs/ast@1.14.1':
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
 
@@ -11760,6 +11867,9 @@ packages:
   discord.js@14.28.1:
     resolution: {integrity: sha512-Je5OcqgurnIUQK4vR+gQnmzOf/lNQsD6d/UkV8ZOj+bFa5zJXPyiGXlbywp2EagwshVT18y7YNQNSRd3FjYkDw==}
     engines: {node: '>=18'}
+
+  dockerfile-ast@0.7.1:
+    resolution: {integrity: sha512-oX/A4I0EhSkGqrFv0YuvPkBUSYp1XiY8O8zAKc8Djglx8ocz+JfOr8gP0ryRMC2myqvDLagmnZaU9ot1vG2ijw==}
 
   dom-accessibility-api@0.5.16:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
@@ -14914,6 +15024,9 @@ packages:
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
 
+  sql-parser-cst@0.44.1:
+    resolution: {integrity: sha512-hhvRcrtESchH3+xOjXB1OSHpef4jPxe5nAQ04HFhm18x4FGT6AaX+aRWMQdTSJYxXyBMbKhedWzhx/i+0NxM3w==}
+
   sqlite-vec-darwin-arm64@0.1.9:
     resolution: {integrity: sha512-jSsZpE42OfBkGL/ItyJTVCUwl6o6Ka3U5rc4j+UBDIQzC1ulSSKMEhQLthsOnF/MdAf1MuAkYhkdKmmcjaIZQg==}
     cpu: [arm64]
@@ -15239,6 +15352,10 @@ packages:
   token-types@6.1.2:
     resolution: {integrity: sha512-dRXchy+C0IgK8WPC6xvCHFRIWYUbqqdEIKPaKo/AcTUNzwLTK6AH7RjdLWsEZcAN/TBdtfUw3PYEgPr5VPr6ww==}
     engines: {node: '>=14.16'}
+
+  toml-eslint-parser@1.0.3:
+    resolution: {integrity: sha512-A5F0cM6+mDleacLIEUkmfpkBbnHJFV1d2rprHU2MXNk7mlxHq2zGojA+SRvQD1RoMo9gqjZPWEaKG4v1BQ48lw==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
@@ -18594,7 +18711,7 @@ snapshots:
 
   '@oozcitak/util@10.0.0': {}
 
-  '@openrouter/sdk@1.5.92':
+  '@openrouter/sdk@1.5.93':
     dependencies:
       zod: 4.6.7
 
@@ -19254,6 +19371,65 @@ snapshots:
       reflect-metadata: 0.2.2
       tslib: 2.8.1
       tsyringe: 4.10.0
+
+  '@pixiv/three-vrm-core@3.5.5(three@0.187.0)':
+    dependencies:
+      '@pixiv/types-vrm-0.0': 3.5.5
+      '@pixiv/types-vrmc-vrm-1.0': 3.5.5
+      three: 0.187.0
+
+  '@pixiv/three-vrm-materials-hdr-emissive-multiplier@3.5.5(three@0.187.0)':
+    dependencies:
+      '@pixiv/types-vrmc-materials-hdr-emissive-multiplier-1.0': 3.5.5
+      three: 0.187.0
+
+  '@pixiv/three-vrm-materials-mtoon@3.5.5(three@0.187.0)':
+    dependencies:
+      '@pixiv/types-vrm-0.0': 3.5.5
+      '@pixiv/types-vrmc-materials-mtoon-1.0': 3.5.5
+      three: 0.187.0
+
+  '@pixiv/three-vrm-materials-v0compat@3.5.5(three@0.187.0)':
+    dependencies:
+      '@pixiv/types-vrm-0.0': 3.5.5
+      '@pixiv/types-vrmc-materials-mtoon-1.0': 3.5.5
+      three: 0.187.0
+
+  '@pixiv/three-vrm-node-constraint@3.5.5(three@0.187.0)':
+    dependencies:
+      '@pixiv/types-vrmc-node-constraint-1.0': 3.5.5
+      three: 0.187.0
+
+  '@pixiv/three-vrm-springbone@3.5.5(three@0.187.0)':
+    dependencies:
+      '@pixiv/types-vrm-0.0': 3.5.5
+      '@pixiv/types-vrmc-springbone-1.0': 3.5.5
+      '@pixiv/types-vrmc-springbone-extended-collider-1.0': 3.5.5
+      three: 0.187.0
+
+  '@pixiv/three-vrm@3.5.5(three@0.187.0)':
+    dependencies:
+      '@pixiv/three-vrm-core': 3.5.5(three@0.187.0)
+      '@pixiv/three-vrm-materials-hdr-emissive-multiplier': 3.5.5(three@0.187.0)
+      '@pixiv/three-vrm-materials-mtoon': 3.5.5(three@0.187.0)
+      '@pixiv/three-vrm-materials-v0compat': 3.5.5(three@0.187.0)
+      '@pixiv/three-vrm-node-constraint': 3.5.5(three@0.187.0)
+      '@pixiv/three-vrm-springbone': 3.5.5(three@0.187.0)
+      three: 0.187.0
+
+  '@pixiv/types-vrm-0.0@3.5.5': {}
+
+  '@pixiv/types-vrmc-materials-hdr-emissive-multiplier-1.0@3.5.5': {}
+
+  '@pixiv/types-vrmc-materials-mtoon-1.0@3.5.5': {}
+
+  '@pixiv/types-vrmc-node-constraint-1.0@3.5.5': {}
+
+  '@pixiv/types-vrmc-springbone-1.0@3.5.5': {}
+
+  '@pixiv/types-vrmc-springbone-extended-collider-1.0@3.5.5': {}
+
+  '@pixiv/types-vrmc-vrm-1.0@3.5.5': {}
 
   '@pkgr/core@0.3.6': {}
 
@@ -22068,6 +22244,8 @@ snapshots:
 
   '@vscode/l10n@0.0.18': {}
 
+  '@vscode/tree-sitter-wasm@0.3.1': {}
+
   '@webassemblyjs/ast@1.14.1':
     dependencies:
       '@webassemblyjs/helper-numbers': 1.13.2
@@ -23164,6 +23342,11 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  dockerfile-ast@0.7.1:
+    dependencies:
+      vscode-languageserver-textdocument: 1.0.15
+      vscode-languageserver-types: 3.17.5
 
   dom-accessibility-api@0.5.16: {}
 
@@ -27085,6 +27268,8 @@ snapshots:
 
   sprintf-js@1.0.3: {}
 
+  sql-parser-cst@0.44.1: {}
+
   sqlite-vec-darwin-arm64@0.1.9:
     optional: true
 
@@ -27590,6 +27775,10 @@ snapshots:
       '@borewit/text-codec': 0.2.2
       '@tokenizer/token': 0.3.0
       ieee754: 1.2.1
+
+  toml-eslint-parser@1.0.3:
+    dependencies:
+      eslint-visitor-keys: 5.0.1
 
   totalist@3.0.1: {}
 

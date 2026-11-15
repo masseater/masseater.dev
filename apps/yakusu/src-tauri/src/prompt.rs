@@ -9,15 +9,12 @@ const MSG: &str = "<|plamo:msg|>";
 const RESERVED: &str = "<|plamo:";
 const EASY_JAPANESE: &str = "ja(easy)";
 
-/// Strings that end a translation in the PFML3 format.
 pub const STOP: [&str; 2] = ["<|plamo:tag|>", "<|plamo:bos|>"];
 
-/// A language code that the model accepts, such as `ja`, `en` or `zh-hans`.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(try_from = "String", into = "String")]
 pub struct Lang(String);
 
-/// The reason a value cannot go into a prompt.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Invalid {
     Lang(String),
@@ -75,7 +72,6 @@ impl Lang {
     }
 }
 
-/// The style of a Japanese translation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Form {
@@ -92,7 +88,6 @@ impl Form {
     }
 }
 
-/// What to translate from and into. Without a source language the model detects it.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Direction {
@@ -101,7 +96,6 @@ pub struct Direction {
     pub form: Option<Form>,
 }
 
-/// A source text and the translation the model already gave for it.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Pair {
     pub source: String,
@@ -138,12 +132,6 @@ fn push_output_header(prompt: &mut String, direction: &Direction) {
     prompt.push_str(&direction.target.0);
 }
 
-/// Builds the PFML3 prompt that translates `text`, following the earlier pairs in `history`.
-///
-/// # Errors
-///
-/// Returns an error when a text contains a reserved PFML3 token, or when a form is given for a
-/// language other than Japanese.
 pub fn build(direction: &Direction, history: &[Pair], text: &str) -> Result<String, Invalid> {
     if direction.form.is_some() && !direction.target.is_japanese() {
         return Err(Invalid::FormOutsideJapanese);

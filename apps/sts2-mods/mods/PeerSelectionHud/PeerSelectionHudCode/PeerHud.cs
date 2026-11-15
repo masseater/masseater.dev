@@ -7,15 +7,6 @@ using MegaCrit.Sts2.Core.Runs;
 
 namespace PeerSelectionHud.PeerSelectionHudCode;
 
-/// <summary>
-/// 画面の左に、仲間ごとの「今いる画面・見ているもの・投票先」を出す。
-/// </summary>
-/// <remarks>
-/// 表示に使うのはゲームがもともと同期しているデータだけなので、仲間がこの Mod を入れていなくても動く。
-/// 出典 (公開デコンパイル): PeerInputSynchronizer (画面・対象選択中か), HoveredModelTracker (カーソルを合わせているカード等),
-/// MapSelectionSynchronizer (マップの投票)。いずれも RunManager.Instance から取れる。
-/// Godot のノードは継承せずに組み立てる (Mod のスクリプトを Godot に登録しなくて済むように)。
-/// </remarks>
 internal sealed class PeerHud
 {
     private const int NameFontSize = 17;
@@ -34,7 +25,6 @@ internal sealed class PeerHud
         this.runState = runState;
         runManager = RunManager.Instance;
 
-        // ゲームの画面 (マップ・カード選択など) より手前に出す。クリックは奥へ素通しする
         layer = new CanvasLayer { Name = MainFile.ModId, Layer = 64 };
         var panel = new PanelContainer
         {
@@ -65,7 +55,6 @@ internal sealed class PeerHud
             list.AddChild(row.Root);
         }
 
-        // ラン中に NMapScreen を作り直すことがあっても二重にならないよう、ノードが消えたら購読もやめる
         layer.TreeExiting += Detach;
         host.CallDeferred(Node.MethodName.AddChild, layer);
 
@@ -79,7 +68,6 @@ internal sealed class PeerHud
         RefreshAll();
     }
 
-    /// <summary>ランの表示を作る。一人プレイでは何も出さない。</summary>
     internal static void Attach(Node host, RunState runState)
     {
         current?.Detach();
@@ -138,8 +126,6 @@ internal sealed class PeerHud
             runManager.MapSelectionSynchronizer.GetVote(player)));
     }
 
-    // 相手の入力状態がまだ届いていないと PeerInputSynchronizer は InvalidOperationException を投げる。
-    // そのときはログに残し、画面には「不明」と出す (PeerStatusText.Describe が null を「不明」にする)
     private NetScreenType? ScreenOf(ulong playerId)
     {
         try
@@ -173,7 +159,6 @@ internal sealed class PeerHud
         return string.IsNullOrWhiteSpace(name) ? character : $"{name} ({character})";
     }
 
-    /// <summary>仲間 1 人ぶんの表示 (名前と、その下の状態)。</summary>
     private sealed class PlayerRow
     {
         private readonly Label detail;
@@ -195,7 +180,6 @@ internal sealed class PeerHud
 
         internal VBoxContainer Root { get; }
 
-        // 相手のマウス移動のたびに呼ばれるので、変わったときだけ書き換える
         internal void SetDetail(string text)
         {
             if (!string.Equals(detail.Text, text, StringComparison.Ordinal))
