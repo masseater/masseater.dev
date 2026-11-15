@@ -28,6 +28,8 @@
     "@effect/vitest": "catalog:",
     "@fontsource-variable/noto-sans-jp": "catalog:",
     "@fontsource-variable/noto-serif-jp": "catalog:",
+    "@masseater.dev/component-release": "workspace:*",
+    "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/tauri-app": "workspace:*",
     "@tauri-apps/cli": "catalog:",
     "@types/react": "catalog:",
