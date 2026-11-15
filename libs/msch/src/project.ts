@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Function as Fn, Option, Order, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, Order, String as Str, pipe } from "effect";
 
 import { API, getLeadingCommentRanges } from "./compiler.ts";
 import type { Checker, ParsedCommandLine, Program, SourceFile } from "./compiler.ts";
@@ -30,44 +30,26 @@ interface PackageInfo {
 }
 
 const CONFIG_FILE = "tsconfig.json";
+const CONFIG_PATHSPEC = `:(glob)**/${CONFIG_FILE}`;
 const HIDDEN_PREFIX = ".";
 const SKIPPED_DIRECTORIES: ReadonlySet<string> = new Set([NODE_MODULES, "dist", "coverage"]);
 
-const listConfigFiles = (
-  directory: string,
-): Effect.Effect<readonly string[], never, RepositoryFiles> =>
+const isVisible = (file: string): boolean =>
+  pipe(
+    Str.split(file, "/"),
+    Arr.every((segment) => !Str.startsWith(HIDDEN_PREFIX)(segment) && !SKIPPED_DIRECTORIES.has(segment)),
+  );
+
+const listConfigFiles = (root: string): Effect.Effect<readonly string[], never, RepositoryFiles> =>
   Effect.gen(function* configFilesUnder() {
     const files = yield* RepositoryFiles;
-    const names = yield* files.readDirectory(directory);
-    const visible = pipe(
-      names,
-      Arr.filter((name) => !Str.startsWith(HIDDEN_PREFIX)(name) && !SKIPPED_DIRECTORIES.has(name)),
-      Arr.map((name) => files.join(directory, name)),
+    const listed = yield* files.matchingFiles(root, [CONFIG_PATHSPEC]);
+    return pipe(
+      listed,
+      Arr.filter(isVisible),
+      Arr.map((file) => files.join(root, file)),
+      Arr.sort(Order.String),
     );
-    const nested = yield* Fn.pipe(
-      visible,
-      Effect.forEach((entryPath) =>
-        files.isDirectory(entryPath).pipe(
-          Effect.flatMap(
-            Option.match({
-              onNone: (): Effect.Effect<readonly string[], never, RepositoryFiles> =>
-                Effect.succeed([]),
-              onSome: (
-                directoryEntry,
-              ): Effect.Effect<readonly string[], never, RepositoryFiles> => {
-                if (directoryEntry) {
-                  return listConfigFiles(entryPath);
-                }
-                return Effect.succeed(
-                  Arr.filter([entryPath], () => files.basename(entryPath) === CONFIG_FILE),
-                );
-              },
-            }),
-          ),
-        ),
-      ),
-    );
-    return Arr.sort(nested.flat(), Order.String);
   });
 
 const parseConfig =
