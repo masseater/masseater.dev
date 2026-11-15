@@ -574,6 +574,9 @@ namespace Aredoko.Protocol
         [JsonProperty("files")]
         public ModelFile[] Files { get; set; }
 
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
         [JsonProperty("size")]
         public long Size { get; set; }
     }
