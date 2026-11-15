@@ -1,6 +1,6 @@
 import { Array as Arr } from "effect";
 
-export const PROFILE_TARGET_CHARACTERS = 6000;
+const PROFILE_TARGET_CHARACTERS = 6000;
 
 export const PROFILE_INSTRUCTIONS = Arr.join(
   [

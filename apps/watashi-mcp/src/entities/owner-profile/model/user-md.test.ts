@@ -1,7 +1,9 @@
 import { expect, it } from "@effect/vitest";
-import { Array as Arr, Option, pipe } from "effect";
+import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import { inScope, isUserMd, parseUserMd, renderUserMd } from "./user-md";
+
+const REFS = "57 86, 9";
 
 const DOCUMENT = Arr.join(
   [
@@ -10,7 +12,7 @@ const DOCUMENT = Arr.join(
     "## Who",
     "- The owner lives in Japan.",
     "## Hard limits",
-    "- Never use Python. [57 86, 9]",
+    `- Never use Python. [${REFS}]`,
     "## How to work with me",
     "- Always fix the root cause. [64]",
     "## Communication",
@@ -21,16 +23,23 @@ const DOCUMENT = Arr.join(
   "\n",
 );
 
+const PYTHON = {
+  text: "Never use Python.",
+  refs: pipe(REFS, Str.split(/[ ,]+/u), Arr.map(Number)),
+};
+
+const titleOf = (section: Readonly<{ title: string }>): string => section.title;
+
 it("見出しと箇条書きと行末の参照番号を読み取る", () => {
   const sections = parseUserMd(DOCUMENT);
-  expect(Arr.map(sections, (section) => section.title)).toStrictEqual([
+  expect(pipe(sections, Arr.map(titleOf))).toStrictEqual([
     "Who",
     "Hard limits",
     "How to work with me",
     "Communication",
     "In masseater.dev",
   ]);
-  expect(sections[1]?.lines).toStrictEqual([{ text: "Never use Python.", refs: [57, 86, 9] }]);
+  expect(sections).toContainEqual({ title: "Hard limits", lines: [PYTHON] });
   expect(isUserMd(sections)).toBe(true);
 });
 
@@ -42,11 +51,7 @@ it("書き戻すと同じ節と行になる", () => {
 it("scope を渡さなければ In の節を外し、渡せばその節だけを残す", () => {
   const sections = parseUserMd(DOCUMENT);
   const titlesIn = (scope: Option.Option<string>): readonly string[] =>
-    pipe(
-      sections,
-      Arr.filter(inScope(scope)),
-      Arr.map((section) => section.title),
-    );
+    pipe(sections, Arr.filter(inScope(scope)), Arr.map(titleOf));
   expect(titlesIn(Option.none())).not.toContain("In masseater.dev");
   expect(titlesIn(Option.some("MASSEATER.DEV"))).toContain("In masseater.dev");
 });

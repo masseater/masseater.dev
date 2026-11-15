@@ -11,12 +11,7 @@ export {
   sectionId,
   sectionsOf,
 } from "./model/profile";
-export type {
-  ProfileLineValue,
-  ProfileSearchValue,
-  ProfileSectionValue,
-  ProfileValue,
-} from "./model/profile";
+export type { ProfileLineValue, ProfileSectionValue, ProfileValue } from "./model/profile";
 export { ConversationSearch, MemosSearch, RecordsSearch } from "./model/search";
 export type { ConversationSearchValue, MemosSearchValue, RecordsSearchValue } from "./model/search";
 export { placeOf, sizeOf } from "./model/session";
