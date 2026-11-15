@@ -1,14 +1,9 @@
 import { Effect, Option } from "effect";
 
+import { ReadInput, listRequestOf, readRequestOf } from "#/entities/conversation";
+import type { Input } from "#/entities/conversation";
+import { listConversations, readConversation } from "#/entities/conversation/index.server";
 import type { ToolFailure } from "#/shared/api";
-import {
-  ReadInput,
-  listConversations,
-  listRequestOf,
-  readConversation,
-  readRequestOf,
-} from "#/entities/conversation/index.server";
-import type { Input } from "#/entities/conversation/index.server";
 
 import { decoded } from "./portal-decode";
 

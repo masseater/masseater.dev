@@ -1,11 +1,11 @@
 import { PORTAL_ACTOR } from "@masseater.dev/portal-protocol";
 import { Effect } from "effect";
 
-import type { ToolFailure } from "#/shared/api";
 import { LifeReadInput } from "#/entities/life-record";
 import { MemoryReadInput, MemoryWriteInput, WatashiProfileInput } from "#/entities/memory";
 import { routeLifeRead } from "#/features/life-tools/index.server";
 import { readMemory, watashiProfile, writeMemory } from "#/features/memory-tools/index.server";
+import type { ToolFailure } from "#/shared/api";
 
 import { decoded } from "./portal-decode";
 
