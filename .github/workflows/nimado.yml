@@ -41,7 +41,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-      - uses: masseater/typescript-template/.github/actions/credentials@d931a8843e20a6675286de4aae013da4778a72d6
+      - uses: masseater/typescript-template/.github/actions/credentials@ee56f90bdf77bf747e158391c0ae8a846732b988
       - name: deploy data and drop old data versions
         run: vp run release
         working-directory: tools/nimado-collect
@@ -68,6 +68,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@d931a8843e20a6675286de4aae013da4778a72d6
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ee56f90bdf77bf747e158391c0ae8a846732b988
         with:
           github-token: ${{ github.token }}
