@@ -3,7 +3,7 @@ import type {
   AccessOAuth,
   ClaudeRoutine,
   SloppediaGitHub,
-  Tailnet,
+  TailnetRpc,
 } from "@masseater.dev/repositories/credential-broker.worker";
 
 import type { WorkerEnv } from "./alchemy.run.ts";
@@ -18,7 +18,7 @@ type BoundEnv = Omit<
     ACCESS_OAUTH: Service<AccessOAuth>;
     CLAUDE_ROUTINE: Service<ClaudeRoutine>;
     TRANSLATOR: Service<TranslatorRpc>;
-    TAILNET: Service<Tailnet>;
+    TAILNET: Service<TailnetRpc>;
   }>;
 
 declare module "cloudflare:workers" {

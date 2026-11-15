@@ -291,5 +291,6 @@ export type { AccessOAuthRpc, SiteToken } from "./access-oauth.ts";
 export { ClaudeRoutine } from "./claude-routine-entrypoint.ts";
 export { SloppediaGitHub } from "./github-token.ts";
 export { Tailnet } from "./tailnet-entrypoint.ts";
+export type { TailnetRpc } from "./tailnet-entrypoint.ts";
 export type { JoinedTailnet } from "./tailnet-join.ts";
 export default worker;

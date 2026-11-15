@@ -77,5 +77,5 @@ const joinTailnet =
       };
     });
 
-export { Joined, joinTailnet };
+export { joinTailnet };
 export type { JoinedTailnet, TailnetEnv };
