@@ -2,18 +2,21 @@ import { Array, Option, String, pipe } from "effect";
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
 import type { EulerOrder } from "three";
 
-import { GRAY, readMesh } from "./blend-mesh.ts";
-import type { Color, MeshData } from "./blend-mesh.ts";
+import { surfaceOf } from "./blend-material.ts";
+import type { Surface } from "./blend-material.ts";
+import { readMesh } from "./blend-mesh.ts";
+import type { MeshData } from "./blend-mesh.ts";
 import { floatsOf, follow, instanceOf, intOf } from "./blend-structs.ts";
 import type { BlendFile, Instance } from "./blend-structs.ts";
 
 interface Group {
-  readonly color: Color;
+  readonly surface: Surface;
   readonly indices: Uint32Array;
 }
 
 interface Part {
   readonly positions: Float32Array;
+  readonly uvs: Option.Option<Float32Array>;
   readonly groups: readonly Group[];
 }
 
@@ -128,34 +131,27 @@ const transformed = (positions: Float32Array, elements: readonly number[]): Floa
   return result;
 };
 
-const cornersOf = (mesh: MeshData, face: number): readonly number[] => {
-  const start = mesh.offsets[face] ?? NONE;
-  const end = mesh.offsets[face + NEXT] ?? NONE;
-  return Array.makeBy(Math.max(end - start, NONE), (index) => mesh.corners[start + index] ?? -NEXT);
-};
+const vertexOf = (mesh: MeshData, corner: number): number => mesh.corners[corner] ?? -NEXT;
 
 const trianglesOf = (mesh: MeshData, face: number): readonly number[] => {
-  const corners = cornersOf(mesh, face);
+  const start = mesh.offsets[face] ?? NONE;
+  const total = Math.max((mesh.offsets[face + NEXT] ?? NONE) - start, NONE);
   const vertices = mesh.positions.length / XYZ;
   const valid = pipe(
-    corners,
-    Array.every((corner) => corner >= NONE && corner < vertices),
+    Array.makeBy(total, (index) => vertexOf(mesh, start + index)),
+    Array.every((vertex) => vertex >= NONE && vertex < vertices),
   );
+  if (!valid || total < TRIANGLE) {
+    return [];
+  }
   return pipe(
-    Array.head(corners),
-    Option.filter(() => valid && corners.length >= TRIANGLE),
-    Option.map((first) =>
-      pipe(
-        Array.range(NEXT, corners.length - TRIANGLE + NEXT),
-        Array.flatMap((index) => [first, corners[index] ?? NONE, corners[index + NEXT] ?? NONE]),
-      ),
-    ),
-    Option.getOrElse((): readonly number[] => []),
+    Array.makeBy(total - TRIANGLE + NEXT, (index) => index + NEXT),
+    Array.flatMap((index) => [start, start + index, start + index + NEXT]),
   );
 };
 
 const groupsOf = (mesh: MeshData): readonly Group[] => {
-  const slots = Math.max(mesh.colors.length, NEXT);
+  const slots = Math.max(mesh.slots.length, NEXT);
   const buckets = Array.makeBy(slots, (): number[] => []);
   for (const [face, material] of mesh.materials.entries()) {
     const slot = Math.min(Math.max(material, NONE), slots - NEXT);
@@ -164,11 +160,19 @@ const groupsOf = (mesh: MeshData): readonly Group[] => {
   return pipe(
     buckets,
     Array.map((indices, slot) => ({
-      color: mesh.colors[slot] ?? GRAY,
+      surface: surfaceOf(Option.flatten(Array.get(mesh.slots, slot))),
       indices: Uint32Array.from(indices),
     })),
     Array.filter(({ indices }) => indices.length > NONE),
   );
+};
+
+const expanded = (mesh: MeshData): Float32Array => {
+  const result = new Float32Array(mesh.corners.length * XYZ);
+  for (const [corner, vertex] of mesh.corners.entries()) {
+    result.set(mesh.positions.subarray(vertex * XYZ, vertex * XYZ + XYZ), corner * XYZ);
+  }
+  return result;
 };
 
 const partOf =
@@ -185,7 +189,8 @@ const partOf =
       if (groups.length === NONE) {
         return yield* Option.none();
       }
-      return { positions: transformed(mesh.positions, worldOf(object, NONE).toArray()), groups };
+      const positions = transformed(expanded(mesh), worldOf(object, NONE).toArray());
+      return { positions, uvs: mesh.uvs, groups };
     });
 
 const partsOf = (file: BlendFile, withHidden: boolean): readonly Part[] =>
