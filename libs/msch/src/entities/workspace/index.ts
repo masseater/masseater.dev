@@ -1,5 +1,4 @@
 export {
-  KeySchema,
   childrenOf,
   keyName,
   literalOf,
