@@ -12,3 +12,4 @@ const mcpWorker = (path: string, serve: Route): ExportedHandler => ({
 });
 
 export { mcpWorker };
+export type { Route };

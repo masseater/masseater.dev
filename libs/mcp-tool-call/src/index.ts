@@ -22,3 +22,4 @@ export { UpstreamFailed, failedAt } from "./upstream-failed.ts";
 export { accessMcpEndpoint } from "./access-endpoint.ts";
 export type { AccessEndpoint } from "./access-endpoint.ts";
 export { mcpWorker } from "./mcp-worker.ts";
+export type { Route } from "./mcp-worker.ts";
