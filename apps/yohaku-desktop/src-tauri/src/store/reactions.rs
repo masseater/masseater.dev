@@ -1,6 +1,6 @@
 use rusqlite::{Connection, params};
 
-use crate::model::Reaction;
+use crate::protocol::Reaction;
 
 use super::now;
 
