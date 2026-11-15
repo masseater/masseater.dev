@@ -52,9 +52,6 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
       description:
         "Claude Code plugin: TypeSafe-judged hooks that make Claude finish the job before it reports",
     },
-    cdmm: {
-      description: "Run multiple Claude Max accounts in the official Claude Desktop on Windows",
-    },
     msa: {
       description: "Masseater agent. based on pi.",
     },
@@ -70,6 +67,7 @@ const CREATES: readonly string[] = [];
 
 const ARCHIVES: ReadonlySet<string> = new Set([
   "aredoko",
+  "cdmm",
   "decision-experiments",
   "lint-kit",
   "measure-everything",
