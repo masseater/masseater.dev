@@ -162,10 +162,23 @@ fn onboarding(transaction: &Transaction<'_>) -> rusqlite::Result<()> {
         .execute_batch("create table onboarding (step text primary key, done_at integer not null)")
 }
 
-const MIGRATIONS: [(i64, &str, Step); 3] = [
+fn revisions(transaction: &Transaction<'_>) -> rusqlite::Result<()> {
+    transaction.execute_batch(
+        "create table revisions (
+  id text primary key,
+  manuscript_id text not null references manuscripts(id) on delete cascade,
+  created_at integer not null,
+  paragraphs text not null
+);
+create index revisions_by_manuscript on revisions (manuscript_id, created_at)",
+    )
+}
+
+const MIGRATIONS: [(i64, &str, Step); 4] = [
     (1, "init", init),
     (2, "sync", sync),
     (3, "onboarding", onboarding),
+    (4, "revisions", revisions),
 ];
 
 fn applied(connection: &Connection) -> rusqlite::Result<i64> {

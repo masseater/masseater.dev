@@ -12,6 +12,7 @@ import { Array, Effect, Option, Record, Stream, String, pipe } from "effect";
 import type { ClaudeStatus, OnboardingStep, Release, Yohaku } from "#/shared/api";
 
 import { DRAFT, EMOTION, INGESTED, REWRITE } from "./fake-data.ts";
+import { revisionCalls } from "./fake-revisions.ts";
 import { updateCalls } from "./fake-update.ts";
 
 type ManuscriptType = typeof Manuscript.Type;
@@ -283,7 +284,7 @@ const built = (sources: readonly (typeof Source.Type)[], setup: Setup): Fake => 
       ...writingCalls(backing),
       ...onboardingCalls(backing),
       ...updateCalls(Option.fromUndefinedOr(setup.release)),
-      exportManuscript: () => Effect.succeed(true),
+      ...revisionCalls(),
     },
   };
 };
