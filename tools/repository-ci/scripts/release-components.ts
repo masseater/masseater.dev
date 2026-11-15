@@ -191,7 +191,7 @@ const unpublished = Effect.fn("unpublished")(function* unpublished(
   }
   const { component, version } = release.value;
   return yield* getJson(PublishedRelease)(`releases/tags/${component}-v${version}`).pipe(
-    Effect.map(({ assets }) => !Arr.isArrayNonEmpty(assets)),
+    Effect.map(({ assets }) => !Arr.isReadonlyArrayNonEmpty(assets)),
     Effect.tapError(() => warn(`${component} v${version} has no release yet, so it is built`)),
     Effect.orElseSucceed(() => true),
   );
