@@ -36,5 +36,5 @@ echo "export PATH=\"$CLAUDE_PROJECT_DIR/.pnpm/rust/bin:$HOME/.local/bin:$HOME/.l
 vp env on >&2
 vp install --frozen-lockfile >&2
 if ! claude mcp get sts2 >/dev/null 2>&1; then
-  claude mcp add --scope user sts2 -- node "$CLAUDE_PROJECT_DIR/tools/sts2-mcp/src/main.ts" >&2
+  claude mcp add --scope user sts2 -- node "$CLAUDE_PROJECT_DIR/tools/sts2-mcp/bin/sts2-mcp.ts" >&2
 fi
