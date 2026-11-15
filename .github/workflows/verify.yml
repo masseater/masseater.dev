@@ -110,11 +110,7 @@ jobs:
     uses: $/.github/workflows/exposure.yml
 
   deploy-failure:
-    needs:
-      [
-        deploy,
-        private-names,
-      ]
+    needs: [deploy, private-names]
     if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
@@ -137,15 +133,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
 
   ci-telemetry:
-    needs:
-      [
-        verify,
-        autofix,
-        deploy,
-        private-names,
-        exposure,
-        deploy-failure,
-      ]
+    needs: [verify, autofix, deploy, private-names, exposure, deploy-failure]
     if: always()
     runs-on: ubuntu-latest
     permissions:
