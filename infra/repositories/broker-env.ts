@@ -1,5 +1,5 @@
 import { D1, SecretsStore } from "@alchemy.run/cloudflare";
-import { makeRandom } from "alchemy";
+import { RemovalPolicy, makeRandom } from "alchemy";
 import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
 
 import { PREFIX } from "./broker-names.ts";
@@ -57,6 +57,6 @@ export const githubAppStore = Effect.all({
   GITHUB_APP: D1.Database("GitHubApp", {
     name: GITHUB_APP_DATABASE,
     migrations: "./github-app-migrations",
-  }),
+  }).pipe(RemovalPolicy.protect()),
   SEAL_KEY: makeRandom("SealKey", { bytes: SEAL_KEY_BYTES }),
 }).pipe(Effect.map((store) => store satisfies Readonly<Record<keyof GitHubAppEnv, unknown>>));
