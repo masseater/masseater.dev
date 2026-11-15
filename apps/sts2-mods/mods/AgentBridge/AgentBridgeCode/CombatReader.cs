@@ -9,7 +9,6 @@ using GamePlayer = MegaCrit.Sts2.Core.Entities.Players.Player;
 
 namespace AgentBridge.AgentBridgeCode;
 
-/// <summary>戦闘中の手札・山・敵味方を読む。</summary>
 internal static partial class CombatReader
 {
     public static Combat? Read(CombatState combat, GamePlayer? me)

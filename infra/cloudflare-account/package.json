@@ -2,6 +2,9 @@
   "name": "@masseater.dev/cloudflare-account",
   "version": "0.0.0",
   "private": true,
+  "bin": {
+    "access-check": "./access-check.ts"
+  },
   "type": "module",
   "exports": {
     "./account": "./account.ts",
@@ -16,6 +19,7 @@
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@distilled.cloud/cloudflare": "catalog:stack",
+    "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/owner-stack": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "alchemy": "catalog:stack",

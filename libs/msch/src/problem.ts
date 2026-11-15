@@ -24,6 +24,7 @@ const RuleNameSchema = Schema.Literals([
   "hidden-verify",
   "root-workspace-path",
   "colocated-test",
+  "comment",
 ]);
 
 type RuleName = typeof RuleNameSchema.Type;

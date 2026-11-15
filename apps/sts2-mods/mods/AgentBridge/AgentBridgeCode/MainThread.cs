@@ -3,7 +3,6 @@ using Godot;
 
 namespace AgentBridge.AgentBridgeCode;
 
-/// <summary>HTTP のスレッドから受けた処理を、ゲームのメインスレッドの次のフレームで動かす。</summary>
 internal static class MainThread
 {
     private static readonly ConcurrentQueue<Task> Queue = new();

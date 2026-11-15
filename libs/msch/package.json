@@ -75,10 +75,16 @@
     "@r_masseater/oxlint-plugin-decision": "workspace:*",
     "@r_masseater/oxlint-typed-rules": "catalog:",
     "@shadcn/lint": "catalog:",
+    "@vscode/tree-sitter-wasm": "catalog:",
+    "dockerfile-ast": "catalog:",
+    "domhandler": "catalog:",
     "eslint-plugin-baseline-js": "catalog:",
     "eslint-plugin-no-comments": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
+    "htmlparser2": "catalog:",
     "oxlint-plugin-eslint": "catalog:",
+    "sql-parser-cst": "catalog:",
+    "toml-eslint-parser": "catalog:",
     "yaml": "catalog:"
   },
   "devDependencies": {
