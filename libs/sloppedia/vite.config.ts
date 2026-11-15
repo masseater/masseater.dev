@@ -6,8 +6,8 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["size"] },
-      build: { command: "vp pack", cache: false },
-      size: { command: "size-limit", dependsOn: ["build"], cache: false },
+      build: "vp pack",
+      size: { command: "size-limit", dependsOn: ["build"] },
     },
   },
   pack: {
