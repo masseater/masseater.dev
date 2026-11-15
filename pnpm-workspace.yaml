@@ -241,6 +241,8 @@ catalog:
   "@earendil-works/pi-durable": 1.5.2
   "@earendil-works/pi-schema": 1.5.2
   "@earendil-works/chord": 1.5.2
+  "@types/sshpk": ^1.17.5
+  sshpk: ^1.18.0
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20
