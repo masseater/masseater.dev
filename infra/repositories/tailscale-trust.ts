@@ -98,7 +98,7 @@ const federatedIdentityProvider = succeed(FederatedIdentity, {
     };
     const saved = Option.match(Option.fromNullishOr(output), {
       onNone: () => createKey(request),
-      onSome: ({ keyId }) => setKey({ ...request, keyId }),
+      onSome: ({ keyId, audience }) => setKey({ ...request, keyId, audience }),
     });
     return pipe(saved, Effect.flatMap(identityOf));
   },
