@@ -10,7 +10,6 @@ using MegaCrit.Sts2.Core.Runs;
 
 namespace AgentBridge.AgentBridgeCode;
 
-/// <summary>メインスレッドでゲームの今の状態を読み、プロトコルの形にする。</summary>
 internal static class StateReader
 {
     public static GameState Read()

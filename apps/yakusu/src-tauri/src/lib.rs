@@ -27,7 +27,6 @@ const SERVER_LOG: &str = "llama-server.log";
 const STARTUP_TIMEOUT: Duration = Duration::from_mins(2);
 const CANCELLED: &str = "cancelled";
 const MODELS: &str = "models";
-/// How often the window hears how much of the model has arrived.
 const PROGRESS_INTERVAL: Duration = Duration::from_millis(100);
 const STOPPED: &str = "翻訳エンジンは停止しています";
 
@@ -39,13 +38,11 @@ const SERVER_BINARY: &str = "llama-server";
 #[cfg(windows)]
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
-/// Where llama-server is.
 pub struct Runtime {
     pub server: PathBuf,
 }
 
 impl Runtime {
-    /// The runtime under `directory`, laid out as the installer and `fetch-runtime` place it.
     #[must_use]
     pub fn in_directory(directory: &Path) -> Self {
         Self {
@@ -68,11 +65,6 @@ fn runtime(app: &AppHandle) -> Runtime {
     Runtime::in_directory(&resources)
 }
 
-/// Starts llama-server with `model` as `launch` says, writing its log to `log`.
-///
-/// # Errors
-///
-/// Returns an error when the process cannot start.
 pub fn spawn_server(
     runtime: &Runtime,
     model: &Path,
@@ -92,7 +84,6 @@ pub fn spawn_server(
     command.spawn()
 }
 
-/// How far the engine is from translating.
 #[derive(Clone)]
 enum Phase {
     Idle,
@@ -107,7 +98,6 @@ impl Phase {
         matches!(self, Self::Ready(_) | Self::Failed(_))
     }
 
-    /// Moves to `Starting` when nothing is under way, and says whether it did.
     fn begin(&mut self) -> bool {
         let begins = matches!(self, Self::Idle | Self::Failed(_));
         if begins {
@@ -117,7 +107,6 @@ impl Phase {
     }
 }
 
-/// The llama-server process. Once the app has stopped it, no other is started.
 enum Process {
     Idle,
     Running(Child),
@@ -265,10 +254,6 @@ async fn boot(
     start_engine(app, process, &model).await
 }
 
-/// Gets the engine ready, downloading the model when it is not on the disk yet.
-///
-/// Calling it again after a failure tries again. Calls made while the engine is getting ready
-/// wait for the same attempt.
 #[tauri::command]
 async fn prepare(
     app: AppHandle,
@@ -318,11 +303,6 @@ fn show_main(app: &AppHandle) {
     }
 }
 
-/// Starts the translator window and the translation engine behind it.
-///
-/// # Errors
-///
-/// Returns an error when Tauri cannot create the window or run the event loop.
 pub fn run() -> tauri::Result<()> {
     let app = tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(

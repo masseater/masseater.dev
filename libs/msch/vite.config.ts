@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   msch: {
-    publish: { installSize: "111 MB" },
+    publish: { installSize: "140 MB" },
     lint: {
       overrides: [
         {
@@ -13,6 +13,10 @@ export default defineConfig({
             "effecttsgo/node-builtin-import": "off",
             "effecttsgo/schema-sync": "off",
           },
+        },
+        {
+          files: ["src/comments.ts"],
+          rules: { "effecttsgo/node-builtin-import": "off" },
         },
       ],
     },

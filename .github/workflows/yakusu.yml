@@ -7,6 +7,7 @@ on:
       - "apps/yakusu/**"
       - ".github/release-please/yakusu-*.json"
       - ".github/scripts/component-release.sh"
+      - ".github/scripts/component-tag.sh"
       - ".github/scripts/release-please-ready.sh"
       - ".github/workflows/yakusu.yml"
   workflow_dispatch:
@@ -20,6 +21,21 @@ env:
   GIT_CONFIG_VALUE_0: "false"
 
 jobs:
+  tag:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github
+      - name: Tag the revision before main changes a workflow file
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/component-tag.sh yakusu apps/yakusu
+
   installer:
     strategy:
       fail-fast: false
@@ -141,7 +157,7 @@ jobs:
           if-no-files-found: ignore
 
   release:
-    needs: [installer, launch]
+    needs: [tag, installer, launch]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     environment: yakusu-release
@@ -206,7 +222,7 @@ jobs:
           skip-github-release: true
 
   ci-telemetry:
-    needs: [installer, launch, release]
+    needs: [tag, installer, launch, release]
     if: always()
     runs-on: ubuntu-latest
     permissions:

@@ -254,6 +254,7 @@ const shadcnRestyleContracts = [
   { pattern: "^TableCaption$", allow: ["caption", "text-alignment", "mt-*", "mb-*"] },
 ];
 
+export { COMMENT_DIRECTIVES } from "./comment-directives.ts";
 export {
   INFRASTRUCTURE,
   INSTRUMENTATION,
