@@ -34,7 +34,7 @@ const execute = Effect.fn("execute")(function* execute(
   return yield* HttpClientResponse.filterStatusOk(response);
 });
 
-const sendBody = Effect.fn("sendBody")(function* sendBody(
+const withBody = Effect.fn("withBody")(function* withBody(
   method: "POST" | "PATCH",
   path: string,
   body: unknown,
@@ -43,9 +43,6 @@ const sendBody = Effect.fn("sendBody")(function* sendBody(
   const filled = yield* HttpClientRequest.bodyJson(request, body);
   return yield* execute(filled);
 });
-
-const withBody = (method: "POST" | "PATCH", path: string, body: unknown): Sent<void> =>
-  sendBody(method, path, body).pipe(Effect.asVoid);
 
 const getJsonOf =
   <Codec extends Schema.Constraint>(schema: Codec) =>
@@ -71,7 +68,7 @@ const postJsonOf =
     Failure | Schema.SchemaError,
     HttpClient.HttpClient | Codec["DecodingServices"]
   > =>
-    sendBody("POST", path, body).pipe(Effect.flatMap(HttpClientResponse.schemaBodyJson(schema)));
+    withBody("POST", path, body).pipe(Effect.flatMap(HttpClientResponse.schemaBodyJson(schema)));
 
 const removeAt = (path: string): Sent<void> =>
   requestTo("DELETE", path).pipe(Effect.flatMap(execute), Effect.asVoid);
@@ -81,9 +78,11 @@ interface Write {
   readonly body: unknown;
 }
 
-const postTo = ({ path, body }: Write): Sent<void> => withBody("POST", path, body);
+const postTo = ({ path, body }: Write): Sent<void> =>
+  withBody("POST", path, body).pipe(Effect.asVoid);
 
-const patchAt = ({ path, body }: Write): Sent<void> => withBody("PATCH", path, body);
+const patchAt = ({ path, body }: Write): Sent<void> =>
+  withBody("PATCH", path, body).pipe(Effect.asVoid);
 
 /** @internal */
 export const getJson = getJsonOf;
