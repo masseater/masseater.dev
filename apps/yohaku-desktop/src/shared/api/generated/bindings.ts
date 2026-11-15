@@ -9,6 +9,7 @@ export const commands = {
 	createManuscript: () => typedError<Manuscript_Serialize, Failure>(__TAURI_INVOKE("create_manuscript")),
 	openManuscript: (id: string) => typedError<Opened_Serialize, Failure>(__TAURI_INVOKE("open_manuscript", { id })),
 	saveParagraphs: (id: string, paragraphs: Paragraph[]) => typedError<null, Failure>(__TAURI_INVOKE("save_paragraphs", { id, paragraphs })),
+	exportManuscript: (id: string) => typedError<boolean, Failure>(__TAURI_INVOKE("export_manuscript", { id })),
 	setTitle: (id: string, text: string) => typedError<Manuscript_Serialize, Failure>(__TAURI_INVOKE("set_title", { id, text })),
 	getAnnotations: (id: string) => typedError<Annotations_Serialize, Failure>(__TAURI_INVOKE("get_annotations", { id })),
 	draftFromMemo: (id: string, paragraphId: string, onText: Channel<string>) => typedError<null, Failure>(__TAURI_INVOKE("draft_from_memo", { id, paragraphId, onText })),
@@ -27,6 +28,8 @@ export const commands = {
 	completeOnboardingStep: (step: OnboardingStep) => typedError<null, Failure>(__TAURI_INVOKE("complete_onboarding_step", { step })),
 	checkUpdate: () => typedError<Release | null, Failure>(__TAURI_INVOKE("check_update")),
 	installUpdate: (onProgress: Channel<number>) => typedError<null, Failure>(__TAURI_INVOKE("install_update", { onProgress })),
+	windowReady: () => typedError<null, Failure>(__TAURI_INVOKE("window_ready")),
+	finishClosing: (quit: boolean) => typedError<null, Failure>(__TAURI_INVOKE("finish_closing", { quit })),
 };
 
 /* Types */

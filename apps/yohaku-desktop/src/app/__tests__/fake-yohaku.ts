@@ -283,6 +283,7 @@ const built = (sources: readonly (typeof Source.Type)[], setup: Setup): Fake => 
       ...writingCalls(backing),
       ...onboardingCalls(backing),
       ...updateCalls(Option.fromUndefinedOr(setup.release)),
+      exportManuscript: () => Effect.succeed(true),
     },
   };
 };
