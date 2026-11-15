@@ -14,6 +14,7 @@ import type {
   AccessOAuth,
   ClaudeRoutine,
   SloppediaGitHub,
+  Tailnet,
 } from "@masseater.dev/repositories/credential-broker.worker";
 import { Stack } from "alchemy";
 import { Effect } from "effect";
@@ -56,6 +57,7 @@ const upstreams = Effect.gen(function* upstreams() {
     CLAUDE_ROUTINE: Workers.WorkerEntrypoint<ClaudeRoutine>(broker, "ClaudeRoutine"),
     WEB_ANALYTICS_TOKEN: Workers.WorkerEntrypoint(webAnalyticsToken),
     TRANSLATOR: Workers.WorkerEntrypoint<TranslatorRpc>(translate, "Translator"),
+    TAILNET: Workers.WorkerEntrypoint<Tailnet>(broker, "Tailnet"),
   };
 });
 

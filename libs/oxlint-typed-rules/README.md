@@ -7,7 +7,7 @@ ESLint を入れずに、型情報を使うルールを oxlint だけで回せ�
 
 ## 公開先
 
-- npm: [@r_masseater/oxlint-typed-rules](https://www.npmjs.com/package/@r_masseater/oxlint-typed-rules)
+npm: [@r_masseater/oxlint-typed-rules](https://www.npmjs.com/package/@r_masseater/oxlint-typed-rules)
 
 ## 移植したルール
 
@@ -25,16 +25,16 @@ ESLint を入れずに、型情報を使うルールを oxlint だけで回せ�
 同じルールを ESLint（typescript-eslint）で動かした場合と比べた。
 計測は 2026-11-03 に、次の条件で行った。
 
-- 対象は [masseater.dev][masseater-dev] の `apps/portfolio/src`（238 ファイル）と、
-  持ち主の非公開のリポジトリにあるスライドの React アプリ（1,434 ファイル、5.2 万行）である
-- oxlint の側は oxlint 1.90.0、oxlint-tsgolint 7.0.2005、TypeScript 7.1.0-beta で測った
-- ESLint の側は ESLint 9.39.5、typescript-eslint 8.72.1（`projectService`）で測った
-- `@tanstack/eslint-plugin-start` 0.1.0 が ESLint 10 に対応していないので、ESLint は 9 にした。
-  ESLint 側にも同じ patch を当て、両者が同じ違反を出すことを確かめた
-- Node.js 26.13.0、4 コア、メモリ 16 GB の Linux で測った
-- cold は OS のページキャッシュを捨ててからの 3 回の中央値である
-- warm はページキャッシュの載った状態での 5 回の中央値で、ESLint の `--cache` は使っていない
-- メモリは子プロセスの tsgo と tsgolint を含めた RSS の合計の最大値である
+対象は [masseater.dev][masseater-dev] の `apps/portfolio/src`（238 ファイル）と、
+持ち主の非公開のリポジトリにあるスライドの React アプリ（1,434 ファイル、5.2 万行）である。
+oxlint の側は oxlint 1.90.0、oxlint-tsgolint 7.0.2005、TypeScript 7.1.0-beta で測った。
+ESLint の側は ESLint 9.39.5、typescript-eslint 8.72.1（`projectService`）で測った。
+`@tanstack/eslint-plugin-start` 0.1.0 が ESLint 10 に対応していないので、ESLint は 9 にした。
+ESLint 側にも同じ patch を当て、両者が同じ違反を出すことを確かめた。
+Node.js 26.13.0、4 コア、メモリ 16 GB の Linux で測った。
+cold は OS のページキャッシュを捨ててからの 3 回の中央値である。
+warm はページキャッシュの載った状態での 5 回の中央値で、ESLint の `--cache` は使っていない。
+メモリは子プロセスの tsgo と tsgolint を含めた RSS の合計の最大値である。
 
 [masseater-dev]: https://github.com/masseater/masseater.dev
 
@@ -65,21 +65,8 @@ masseater.dev の `apps/portfolio/src` の結果は次のとおりである。
 | 3 ルール・ESLint                     | 11.00 秒 | 10.31 秒 | 1,763 MB |
 
 TanStack の 2 ルールは、ESLint の 2.5〜3.6 倍の速さで、メモリは 5〜6 割で済む。
-TypeScript 6 で Program を作っていた 0.0.2 では、
-warm で masseater.dev が 6.37 秒、slides が 8.17 秒だった。
-時間の大半が TypeScript 6 で Program と型検査器を作る処理だったので、そこを tsgo に任せた。
-
-slides の 3.8 秒のうち、tsgo との往復は 1.1 秒で、そのうち tsgo の中の処理は 0.8 秒だった。
-残りは、tsgo から受け取った構文木を JS の側で組み立て、ルールを動かす時間である。
-oxlint のスレッドの数を 1 から 4 に変えても、時間はほぼ変わらなかった。
-
-ESLint の `--cache` が当たると、どの組み合わせも 0.4〜0.5 秒、170〜210 MB で終わる。
-ただし ESLint のキャッシュはファイルの中身だけを見る。
-型の出どころのファイルが変わっても、型を使うルールを検査し直さない。
 
 typescript-eslint のルールで oxlint に同じ名前のものがあれば、tsgolint で動かす。
-tsgolint は Go で書かれた TypeScript 7 で並列に型を調べる。
-ESLint の 6〜9 倍速く、メモリも 4〜6 割で済む。
 このパッケージは、tsgolint に無いルールを ESLint 無しで動かすためのものである。
 tsgolint と併せると、型の情報を tsgo と tsgolint で 2 度作り、メモリはそのぶん増える。
 

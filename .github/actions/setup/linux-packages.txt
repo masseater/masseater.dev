@@ -18,3 +18,4 @@ libwebkit2gtk-4.1-dev
 libxdo-dev
 mesa-vulkan-drivers
 ffmpeg
+openssh-client
