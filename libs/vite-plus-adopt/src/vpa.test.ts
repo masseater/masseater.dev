@@ -169,6 +169,21 @@ const lintsTheCommitMessageFile = Effect.gen(function* lintsTheCommitMessageFile
   );
 });
 
+const lintsAGivenMessage = Effect.gen(function* lintsAGivenMessage() {
+  const root = yield* repositoryWith({}, []);
+  const results = yield* Effect.forEach(
+    [["--message", "feat: add (#7)"], ["--message", "no type (#7)"], ["--message"]],
+    (args) => run(root, args),
+  );
+  deepStrictEqual(
+    pipe(
+      results,
+      Arr.map(({ exit }) => Exit.isSuccess(exit)),
+    ),
+    [true, false, false],
+  );
+});
+
 const scansTheStagedChanges = Effect.gen(function* scansTheStagedChanges() {
   const root = yield* repositoryWith({ "clean.txt": "hello\n", "leak.txt": "AKIAEXAMPLE\n" }, []);
   yield* runGit(root, ["add", "clean.txt"]);
@@ -208,6 +223,7 @@ layer(fixtureLayer)("vpa", (it) => {
   );
   it.effect("reports each failing check by name", () => namesTheFailingChecks);
   it.effect("lints a commit message file for the commit-msg hook", () => lintsTheCommitMessageFile);
+  it.effect("lints a message given on the command line", () => lintsAGivenMessage);
   it.effect("scans the staged changes for the pre-commit hook", () => scansTheStagedChanges);
   it.effect(
     "scans the committed tree when the clone has no history to diff",

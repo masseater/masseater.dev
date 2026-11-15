@@ -34,10 +34,6 @@
             "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/block-pnpm.ts"],
             "timeout": 10,
             "statusMessage": "pnpm の直接実行を確認中"
-          },
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/fallow-gate.sh"
           }
         ]
       },
@@ -113,7 +109,8 @@
           {
             "type": "command",
             "if": "Bash(git commit *)",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/simplify.sh",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/simplify.ts"],
             "asyncRewake": true,
             "timeout": 3600
           }

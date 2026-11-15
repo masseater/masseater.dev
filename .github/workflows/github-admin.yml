@@ -1,0 +1,61 @@
+name: github-admin
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 動かすタスク
+        required: true
+        type: choice
+        options:
+          - delete-repositories
+          - delete-secrets
+          - signing-key
+      repositories:
+        description: 対象のリポの名前（カンマ区切り）。delete-repositories と delete-secrets で使う
+        required: false
+        default: ""
+      secrets:
+        description: 消す secret の名前（カンマ区切り）。delete-secrets で使う
+        required: false
+        default: ""
+
+permissions: {}
+
+concurrency:
+  group: deploy
+
+jobs:
+  run:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: github
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r github-token
+      - run: vp run -r "$TASK"
+        env:
+          TASK: ${{ inputs.task }}
+          REPOSITORIES: ${{ inputs.repositories }}
+          SECRETS: ${{ inputs.secrets }}
+
+  ci-telemetry:
+    needs: [run]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
+        with:
+          github-token: ${{ github.token }}

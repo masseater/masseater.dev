@@ -1,10 +1,11 @@
-export { childrenOf, literalOf, nestedValues } from "./model/config-literal.ts";
+export { KeySchema, childrenOf, keyName, literalOf, nestedValues } from "./model/config-literal.ts";
 export {
   literalSettings,
   merged,
   programOf,
   settingsInvalid,
   usedFrom,
+  workspaceConfigOf,
 } from "./model/workspace-config-source.ts";
 export type { WorkspaceSource } from "./model/workspace-config-source.ts";
 export { workspaceDirectories } from "./model/workspace-directories.ts";

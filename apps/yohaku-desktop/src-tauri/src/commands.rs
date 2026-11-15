@@ -6,9 +6,9 @@ use crate::failure::{Failure, Outcome};
 use crate::mcp;
 use crate::model::{
     Annotations, ClaudeStatus, Fact, Manuscript, Mcp, OnboardingStep, Opened, Paragraph, Reaction,
-    Release, SignIn, Source, SyncStatus, Title, TitleAuthor,
+    Release, Revision, SignIn, Source, SyncStatus, Title, TitleAuthor,
 };
-use crate::store::{Store, dismissals, manuscripts, onboarding, reactions, sources};
+use crate::store::{Store, dismissals, manuscripts, onboarding, reactions, revisions, sources};
 use crate::sync::Syncer;
 use crate::updates;
 use crate::window;
@@ -92,6 +92,31 @@ pub async fn save_paragraphs(
     yohaku
         .store
         .with(|connection| manuscripts::save(connection, &id, &paragraphs))?;
+    yohaku.understanding.changed(&id);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn list_revisions(yohaku: State<'_, Yohaku>, id: String) -> Answer<Vec<Revision>> {
+    yohaku
+        .store
+        .with(|connection| revisions::list(connection, &id))
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn restore_revision(
+    yohaku: State<'_, Yohaku>,
+    id: String,
+    revision: String,
+) -> Answer<()> {
+    let restored = yohaku
+        .store
+        .with(|connection| revisions::restore(connection, &id, &revision))?;
+    if !restored {
+        return Err(Failure::not_found());
+    }
     yohaku.understanding.changed(&id);
     Ok(())
 }

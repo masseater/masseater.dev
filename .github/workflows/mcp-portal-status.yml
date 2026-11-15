@@ -22,7 +22,7 @@ jobs:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
       - name: Sync each server and print its state
-        run: .github/scripts/mcp-portal-sync.sh
+        run: infra/mcp-portal/scripts/sync.sh
       - name: Print portals and Access applications
         run: |
           base="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/access"

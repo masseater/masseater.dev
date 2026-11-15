@@ -9,6 +9,7 @@ use tauri_plugin_prevent_default::Flags;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 use crate::MAIN_WINDOW;
+use crate::commands::Yohaku;
 
 pub const CLOSING_EVENT: &str = "yohaku://closing";
 const SCREEN_GRACE: Duration = Duration::from_secs(3);
@@ -45,6 +46,18 @@ pub fn show(app: &AppHandle) {
         let _ = window.show();
         let _ = window.unminimize();
         let _ = window.set_focus();
+    }
+    rest_while_out_of_sight(app);
+}
+
+pub fn rest_while_out_of_sight(app: &AppHandle) {
+    let Some(window) = app.get_webview_window(MAIN_WINDOW) else {
+        return;
+    };
+    let visible = window.is_visible().unwrap_or(true);
+    let minimized = window.is_minimized().unwrap_or(false);
+    if let Some(yohaku) = app.try_state::<Yohaku>() {
+        yohaku.syncer.rest(!visible || minimized);
     }
 }
 
@@ -92,5 +105,6 @@ pub fn finish_close(app: &AppHandle, quit: bool) {
         app.exit(0);
     } else if let Some(window) = app.get_webview_window(MAIN_WINDOW) {
         let _ = window.hide();
+        rest_while_out_of_sight(app);
     }
 }

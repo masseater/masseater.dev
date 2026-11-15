@@ -4,13 +4,17 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["dotnet"] },
-      dotnet: "scripts/check.sh",
-      fix: { cache: false, command: "scripts/check.sh --fix" },
-      build: { cache: false, command: "scripts/build.sh" },
-      publish: { cache: false, command: "scripts/build.sh --publish" },
-      pck: { cache: false, command: "scripts/export-pck.sh" },
-      stage: { cache: false, command: "scripts/stage.sh" },
-      "new-mod": { cache: false, command: "scripts/new-mod.sh" },
+      dotnet: "dotnet build --disable-build-servers -p:CopyToModsFolder=false",
+      fix: { cache: false, command: "dotnet format --exclude build" },
+      build: { cache: false, command: "dotnet build" },
+      publish: { cache: false, command: "dotnet publish" },
+      pck: { cache: false, command: "dotnet msbuild -restore -t:ExportPck" },
+      "pck:all": { cache: false, command: "node scripts/export-all-pck.ts" },
+      "new-mod": {
+        cache: false,
+        command:
+          "dotnet new install templates/mod --force && dotnet new sts2-mod --output . --name",
+      },
     },
   },
 });

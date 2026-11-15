@@ -1,0 +1,84 @@
+name: mosaic-character
+description: Build one character's files, keep its song pool in the Actions cache, and deploy the files unless a newer run supersedes this one
+inputs:
+  slug:
+    description: The character's slug
+    required: true
+  pool:
+    description: The song pool archive that the Actions cache keeps
+    required: true
+  job-index:
+    description: The matrix job index, used to stagger the song fetches and to pick the job that saves the Rust cache
+    required: true
+  github-token:
+    description: A token that can read the runs of this workflow and manage the Actions cache
+    required: true
+  cloudflare-api-token:
+    description: The Cloudflare API token that deploys the files
+    required: true
+  cloudflare-account-id:
+    description: The Cloudflare account that holds the files
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: $/.github/actions/setup
+      with:
+        native: "false"
+    - id: start
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: vp run -r mosaic-superseded
+    - if: steps.start.outputs.superseded != 'true'
+      shell: bash
+      run: rustup toolchain install
+    - if: steps.start.outputs.superseded != 'true'
+      uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      with:
+        shared-key: mosaic-character
+        save-if: ${{ inputs.job-index == '0' }}
+    - id: pool
+      if: steps.start.outputs.superseded != 'true'
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ inputs.pool }}
+        key: mosaic-pool-${{ inputs.slug }}-${{ github.run_id }}
+        restore-keys: |
+          mosaic-pool-${{ inputs.slug }}-
+    - id: character
+      if: steps.start.outputs.superseded != 'true'
+      shell: bash
+      env:
+        SLUG: ${{ inputs.slug }}
+        JOB_INDEX: ${{ inputs.job-index }}
+        MATCHED: ${{ steps.pool.outputs.cache-matched-key }}
+      run: vp run -r mosaic-character
+    - id: save
+      if: always() && steps.character.outputs.key != '' && steps.character.outputs.key != steps.pool.outputs.cache-matched-key
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ inputs.pool }}
+        key: ${{ steps.character.outputs.key }}
+    - id: finish
+      if: always() && steps.start.outputs.superseded != 'true'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        SLUG: ${{ inputs.slug }}
+        SAVED: ${{ steps.save.outcome }}
+        KEEP: ${{ steps.character.outputs.key }}
+      run: vp run -r mosaic-finish
+    - id: still
+      if: steps.finish.outputs.changed == 'true'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: vp run -r mosaic-superseded
+    - if: steps.finish.outputs.changed == 'true' && steps.still.outputs.superseded != 'true'
+      shell: bash
+      env:
+        ALCHEMY_STAGE: ${{ inputs.slug }}
+        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare-api-token }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare-account-id }}
+      run: vp run -r deploy:mosaic-files
