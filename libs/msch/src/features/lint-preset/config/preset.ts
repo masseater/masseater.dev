@@ -7,7 +7,11 @@ import baselineJs from "eslint-plugin-baseline-js";
 import type { UserConfig } from "vite-plus";
 
 import decisionPlugin from "./decision-rules.ts";
-import { alchemyOverride, commandsOverride } from "./lint-overrides.config.ts";
+import {
+  alchemyOverride,
+  removalPolicyOverride,
+  commandsOverride,
+} from "./lint-overrides.config.ts";
 import {
   COMMENT_DIRECTIVES,
   allRulesOf,
@@ -103,6 +107,7 @@ const rules = {
 } satisfies LintConfig["rules"];
 
 const overrides = [
+  removalPolicyOverride,
   alchemyOverride,
   {
     files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "**/decision-rules.ts"],

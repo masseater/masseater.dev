@@ -63,8 +63,6 @@ const baseName = (name: string): string =>
 
 const hasExtension = (name: string): boolean => EXTENSION.test(baseName(name));
 
-const startsWithShellShebang = (source: string): boolean => SHELL_SHEBANG.test(source);
-
 const problemFor = (file: string): Problem => ({
   file,
   line: FIRST,
@@ -95,7 +93,9 @@ export const checkShellScripts = Effect.fn("checkShellScripts")(function* checkS
     if (hasExtension(name)) {
       return Effect.succeed(false);
     }
-    return files.readFile(file).pipe(Effect.map(Option.exists(startsWithShellShebang)));
+    return files
+      .readFile(file)
+      .pipe(Effect.map(Option.exists((source) => SHELL_SHEBANG.test(source))));
   };
   const candidates = pipe(
     names,

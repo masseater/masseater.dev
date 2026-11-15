@@ -1,5 +1,10 @@
 export { lint } from "./config/preset.ts";
-export { alchemyOverride, commandsOverride } from "./config/lint-overrides.config.ts";
+export {
+  alchemyOverride,
+  removalPolicyOverride,
+  removalPolicySyntax,
+  commandsOverride,
+} from "./config/lint-overrides.config.ts";
 export {
   INFRASTRUCTURE,
   INSTRUMENTATION,

@@ -38,6 +38,7 @@ const RuleNameSchema = Schema.Literals([
   "listed-entry",
   "colocated-test",
   "comment",
+  "pass-through-wrapper",
 ]);
 
 export type RuleName = typeof RuleNameSchema.Type;

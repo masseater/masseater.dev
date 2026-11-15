@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
-import { yen } from "#/entities/money";
+import { YEN } from "#/entities/money";
 import type { SheetBlock } from "#/pages/money/model/sheet";
 import { SHEET_SERIES, sheetRow } from "#/pages/money/model/sheet-chart";
 
@@ -19,7 +19,7 @@ const GAP = "4%";
 
 const TICK = { fill: "var(--foreground)", fontSize: 12, fontWeight: 700 } as const;
 
-const asYen = (value: unknown): string => yen(Number(value));
+const asYen = (value: unknown): string => YEN.format(Number(value));
 
 export const SheetChart = ({
   left,
