@@ -8,11 +8,15 @@ export {
 } from "typescript/ast";
 export type {
   ArrayLiteralExpression,
+  ArrowFunction,
   CallExpression,
   ClassDeclaration,
   Declaration,
   EnumDeclaration,
   Expression,
+  FunctionDeclaration,
+  FunctionExpression,
+  Identifier,
   InterfaceDeclaration,
   Node,
   NumericLiteral,
@@ -30,13 +34,17 @@ export type {
 } from "typescript/ast";
 export {
   isArrayLiteralExpression,
+  isArrowFunction,
   isBinaryExpression,
+  isBlock,
   isCallExpression,
   isClassDeclaration,
   isElementAccessExpression,
   isEnumDeclaration,
   isExportAssignment,
   isExportDeclaration,
+  isFunctionDeclaration,
+  isFunctionExpression,
   isIdentifier,
   isImportDeclaration,
   isInterfaceDeclaration,
@@ -45,8 +53,10 @@ export {
   isNewExpression,
   isNumericLiteral,
   isObjectLiteralExpression,
+  isParenthesizedExpression,
   isPropertyAccessExpression,
   isPropertyAssignment,
+  isReturnStatement,
   isSatisfiesExpression,
   isSignatureDeclaration,
   isSpreadElement,
@@ -60,7 +70,7 @@ export {
   isVariableDeclarationList,
   isVariableStatement,
 } from "typescript/ast/is";
-export { API, IndexKind } from "typescript/sync";
+export { API, IndexKind, SignatureKind } from "typescript/sync";
 export type {
   Checker,
   ParsedCommandLine,

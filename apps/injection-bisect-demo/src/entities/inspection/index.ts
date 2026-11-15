@@ -24,7 +24,7 @@ export type { Trace, Phase, Answer, Row } from "./model/trace";
 export { inspectEvents } from "./api/inspect-events";
 export type { InspectEvent } from "./api/inspect-events";
 export { MAX_CHARS, MODELS } from "./model/models";
-export { formatCount, formatDollars, formatPercent } from "./model/format";
+export { COUNT, DOLLARS, PERCENT } from "./model/format";
 export { logOf } from "./model/log";
 export type { LogLine } from "./model/log";
 export { EXAMPLES } from "./model/examples";

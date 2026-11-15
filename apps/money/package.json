@@ -12,8 +12,7 @@
     "@modelcontextprotocol/server": "catalog:",
     "@r_masseater/workers-tracing": "workspace:*",
     "drizzle-orm": "catalog:stack",
-    "effect": "catalog:stack",
-    "papaparse": "catalog:"
+    "effect": "catalog:stack"
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
@@ -23,7 +22,6 @@
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/d1-test": "workspace:*",
-    "@types/papaparse": "catalog:",
     "alchemy": "catalog:stack",
     "drizzle-kit": "catalog:stack",
     "typescript": "catalog:stack",

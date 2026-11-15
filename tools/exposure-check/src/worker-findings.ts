@@ -3,7 +3,7 @@ import { Array as Arr, pipe } from "effect";
 import { finding, findingIf } from "./fingerprint.ts";
 import type { Finding, Scene } from "./fingerprint.ts";
 import type { Inventory, WorkerScript } from "./inventory.ts";
-import { isCovered, routeHost } from "./surface.ts";
+import { hostOf, isCovered } from "./surface.ts";
 
 const privateScripts = ({ inventory, surface }: Scene): readonly WorkerScript[] =>
   pipe(
@@ -52,7 +52,7 @@ const unprotectedRoutes =
     pipe(
       inventory.routes,
       Arr.filter((route) => route.script === script.name),
-      Arr.filter((route) => !isCovered(inventory)(routeHost(route.pattern))),
+      Arr.filter((route) => !isCovered(inventory)(hostOf(route.pattern))),
       Arr.map((route) =>
         finding({
           kind: "unprotected-entrypoint",

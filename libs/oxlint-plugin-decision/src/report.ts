@@ -2,7 +2,7 @@ import type { Context, Location } from "@oxlint/plugins";
 import { Array as Arr, Boolean as Bool, Option, Record as Rec, pipe } from "effect";
 
 import { isReported } from "./answer.ts";
-import { outOfBudget } from "./budget.ts";
+import { OUT_OF_BUDGET } from "./budget.ts";
 import { explainerFor } from "./explain.ts";
 import type { ExplainPass, Explainer, Outcome, Placed } from "./explain.ts";
 import { inputOf, locateMatch, verdictsOf } from "./locate.ts";
@@ -46,7 +46,7 @@ interface Answered {
 const DECIMALS = 2;
 
 const failsHere = (pass: ModelPass, reason: string): boolean =>
-  failsInCi(pass.options) && !outOfBudget(reason);
+  failsInCi(pass.options) && !OUT_OF_BUDGET.test(reason);
 
 const degrade = (pass: ModelPass, reason: string): void => {
   if (failsHere(pass, reason)) {

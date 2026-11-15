@@ -1,4 +1,4 @@
-import { categoryPath } from "#/entities/entry";
+import { sectionPath } from "#/shared/config";
 import { defaultImage, seo, wikiPageTitle } from "#/shared/lib";
 import type { Head } from "#/shared/lib";
 import { wiki } from "#/shared/wiki";
@@ -6,7 +6,7 @@ import { wiki } from "#/shared/wiki";
 export const mainHead: Head = seo({
   title: wikiPageTitle(wiki.labels.mainPage),
   description: wiki.tagline,
-  path: `${categoryPath("sloppedia")}/`,
+  path: `${sectionPath("sloppedia")}/`,
   type: "website",
   image: defaultImage,
   extra: [],
