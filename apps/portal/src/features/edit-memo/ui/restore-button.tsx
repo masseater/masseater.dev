@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 
 import type { MemoValue } from "#/entities/watashi";
-import { useChangeMemo } from "#/pages/memo/api/use-change-memo";
+import { useChangeMemo } from "#/features/edit-memo/api/use-change-memo";
 
 const RESTORE = "この版に戻す";
 

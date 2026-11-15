@@ -1,11 +1,10 @@
 import type { ReactNode } from "react";
 
 import type { MemoValue, RevisionValue } from "#/entities/watashi";
+import { MemoEditor, RetractSlot } from "#/features/edit-memo";
 import { Section } from "#/shared/ui";
 
-import { MemoEditor } from "./memo-editor";
 import { MemoHeader } from "./memo-header";
-import { RetractSlot } from "./retract-slot";
 import { RevisionList } from "./revision-list";
 
 const HISTORY = "履歴";

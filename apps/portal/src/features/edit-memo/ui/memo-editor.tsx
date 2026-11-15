@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import type { ReactNode, SubmitEvent } from "react";
 
 import type { MemoValue } from "#/entities/watashi";
-import { useChangeMemo } from "#/pages/memo/api/use-change-memo";
+import { useChangeMemo } from "#/features/edit-memo/api/use-change-memo";
 import { formText } from "#/shared/lib";
 
 import { FailedNote } from "./failed-note";

@@ -3,8 +3,7 @@ import { Option } from "effect";
 import type { ReactNode } from "react";
 
 import type { MoneySearchValue } from "#/entities/money";
-
-import { MoneyLink } from "./money-link";
+import { MoneyLink } from "#/entities/money";
 
 export const PagerButton = ({
   label,

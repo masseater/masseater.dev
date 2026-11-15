@@ -3,11 +3,11 @@ import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { withTag } from "#/entities/slide";
+import { TagFilter } from "#/features/filter-decks";
 import { useDecks } from "#/pages/slides/api/slides-query";
 import { RowList } from "#/shared/ui";
 
 import { DeckRow } from "./deck-row";
-import { TagFilter } from "./tag-filter";
 
 const LABEL = "デッキ";
 

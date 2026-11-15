@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 
+import { PeriodForm } from "#/features/choose-period";
 import { useOverview } from "#/pages/money/api/money-query";
 
 import { FlowCard } from "./flow-card";
 import { MoneyCharts } from "./money-charts";
 import { MoneyStats } from "./money-stats";
-import { PeriodForm } from "./period-form";
 import { TransactionsCard } from "./transactions-card";
 
 export const MoneyPage = (): ReactNode => {

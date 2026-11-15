@@ -113,7 +113,7 @@ const checks: ToolSections = {
     )}])`,
   },
   steiger: {
-    paths: ["apps/*/src"],
+    paths: ["apps/*/src", "libs/*/src"],
     rules: [...fsd.configs.recommended, { rules: fsdRules }],
   },
   textlint: {
@@ -185,7 +185,18 @@ export default defineConfig({
           "fallow dupes --fail-on-issues --quiet --format compact",
           "fallow security --fail-on-issues --quiet",
         ],
-        cache: { input: [{ auto: true }, "!.fallow/**", "!target/**"], output: [] },
+        cache: {
+          input: [
+            { auto: true },
+            "!.fallow/**",
+            "!target/**",
+            "!**/dist/**",
+            "!node_modules/.vitest-cache/**",
+            "!node_modules/.cache/**",
+            "!**/.fallow-verified",
+          ],
+          output: [],
+        },
       },
       "workflow-rules":
         "ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows",
@@ -223,11 +234,14 @@ export default defineConfig({
       },
       test: {
         command: "vp test run",
-        cache: { input: [{ auto: true }, "!**/.cache/**", "!target/**"] },
+        cache: {
+          input: [{ auto: true }, "!**/.cache/**", "!target/**", "!node_modules/.vitest-cache/**"],
+        },
       },
       msch: {
         command: "msch",
         cache: {
+          input: [{ auto: true }, "!node_modules/.cache/**"],
           untrackedEnv: ["HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy", "SSL_CERT_FILE"],
         },
       },

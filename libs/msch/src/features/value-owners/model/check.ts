@@ -1,19 +1,21 @@
-import { Effect, Option, Array as Arr, pipe } from "effect";
+import { Effect, Option, Schema, Array as Arr, pipe } from "effect";
 
 import {
   listConfigFiles,
   mentions,
+  projectInputs,
   typeScriptCompiler,
   withProject,
 } from "#/entities/project/index.ts";
 import type { Project, Workspace } from "#/entities/project/index.ts";
 import { sortProblems } from "#/shared/lib/problem.ts";
-import type { Problem } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 import { analyzeProject } from "./analysis.ts";
+import { analysisCache, keyOf, pruneAnalyses, readAnalysis, writeAnalysis } from "./cache.ts";
+import type { Analysis, AnalysisCache } from "./cache.ts";
 import { duplicateProblems, unownedSiteOf } from "./duplicates.ts";
-import type { PackageScope, UnownedSite } from "./duplicates.ts";
+import type { PackageScope } from "./duplicates.ts";
 import { OWNER_TAG, combineOwnerScans, ownersIn } from "./owners.ts";
 import type { Owner, OwnerScan } from "./owners.ts";
 
@@ -39,30 +41,99 @@ const scopeOf = (project: Project, configPath: string): PackageScope => ({
   dependencies: project.workspaceDependencies,
 });
 
-interface Analysis {
-  readonly problems: readonly Problem[];
-  readonly unowned: readonly UnownedSite[];
+interface Context {
+  readonly workspace: Workspace;
+  readonly owners: readonly Owner[];
+  readonly cache: AnalysisCache;
+  readonly listed: readonly string[];
 }
 
-const analyzeProjects =
-  (workspace: Workspace, owners: readonly Owner[]) =>
-  (configPaths: readonly string[]): Effect.Effect<readonly Analysis[], never, RepositoryFiles> =>
-    pipe(
-      configPaths,
-      Effect.forEach((configPath) =>
-        withProject(workspace)(configPath)((project) =>
-          Effect.sync(() => {
-            const analysis = analyzeProject(owners)(project);
-            const scope = scopeOf(project, configPath);
-            return {
-              problems: analysis.problems,
-              unowned: pipe(analysis.unowned, Arr.map(unownedSiteOf(scope))),
-            };
-          }).pipe(Effect.withSpan("analyzeProject")),
-        ),
-      ),
-      Effect.map(Arr.getSomes),
+const freshAnalysis =
+  ({ workspace, owners }: Context) =>
+  (configPath: string): Effect.Effect<Option.Option<Analysis>, never, RepositoryFiles> =>
+    withProject(workspace)(configPath)((project) =>
+      Effect.sync(() => {
+        const analysis = analyzeProject(owners)(project);
+        const scope = scopeOf(project, configPath);
+        return {
+          problems: analysis.problems,
+          unowned: pipe(analysis.unowned, Arr.map(unownedSiteOf(scope))),
+        };
+      }).pipe(Effect.withSpan("analyzeProject")),
     );
+
+const keyedAnalysis =
+  (context: Context) =>
+  (
+    configPath: string,
+    key: string,
+  ): Effect.Effect<Option.Option<Analysis>, never, RepositoryFiles> =>
+    Effect.gen(function* lookupAnalysis() {
+      const cached = yield* readAnalysis(context.cache)(key);
+      if (Option.isSome(cached)) {
+        return cached;
+      }
+      const fresh = yield* freshAnalysis(context)(configPath);
+      yield* Option.match(fresh, {
+        onNone: () => Effect.void,
+        onSome: (analysis) => writeAnalysis(context.cache)(key, analysis),
+      });
+      return fresh;
+    });
+
+const analyzeConfig =
+  (context: Context) =>
+  (
+    configPath: string,
+  ): Effect.Effect<Option.Option<readonly [string, Analysis]>, never, RepositoryFiles> =>
+    Effect.gen(function* analyzeOne() {
+      const inputs = yield* projectInputs(context)(configPath);
+      if (Option.isNone(inputs)) {
+        return Option.none();
+      }
+      const key = yield* keyOf(context.cache)(configPath, inputs.value);
+      const analysis = yield* keyedAnalysis(context)(configPath, key);
+      return pipe(
+        analysis,
+        Option.map((found) => [key, found] as const),
+      );
+    });
+
+const encodeOwners = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
+
+const cacheFor = Effect.fn("cacheFor")(function* cacheFor(root: string, owners: readonly Owner[]) {
+  const plain = pipe(
+    owners,
+    Arr.map((owner) => ({ ...owner, packageName: Option.getOrNull(owner.packageName) })),
+  );
+  const encoded = yield* encodeOwners(plain).pipe(Effect.orElseSucceed(() => ""));
+  return yield* analysisCache(root, encoded);
+});
+
+const analyzeProjects = Effect.fn("analyzeProjects")(function* analyzeProjects(
+  workspace: Workspace,
+  owners: readonly Owner[],
+  configPaths: readonly string[],
+) {
+  const files = yield* RepositoryFiles;
+  const cache = yield* cacheFor(workspace.root, owners);
+  const listed = yield* files.listedFiles(workspace.root);
+  const keyed = yield* pipe(
+    configPaths,
+    Effect.forEach(analyzeConfig({ workspace, owners, cache, listed })),
+  );
+  const found = Arr.getSomes(keyed);
+  yield* pruneAnalyses(cache)(
+    pipe(
+      found,
+      Arr.map(([key]) => key),
+    ),
+  );
+  return pipe(
+    found,
+    Arr.map(([, analysis]) => analysis),
+  );
+});
 
 export const checkRepository = Effect.fn("checkRepository")(function* checkRepository(
   root: string,
@@ -73,7 +144,7 @@ export const checkRepository = Effect.fn("checkRepository")(function* checkRepos
   const workspace: Workspace = { compiler, root, generated };
   const configPaths = yield* listConfigFiles(root);
   const ownerScan: OwnerScan = yield* scanOwners(workspace, configPaths);
-  const analyses = yield* analyzeProjects(workspace, ownerScan.owners)(configPaths);
+  const analyses = yield* analyzeProjects(workspace, ownerScan.owners, configPaths);
   const relative = (file: string): string => files.relative(root, file);
   const unowned = pipe(
     analyses,

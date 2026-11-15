@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 
 import type { PeriodValue } from "#/entities/money";
-import { recentMonths } from "#/pages/money/model/months";
+import { recentMonths } from "#/features/choose-period/model/months";
 
 import { MonthSelect } from "./month-select";
 

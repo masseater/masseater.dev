@@ -23,7 +23,12 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
-      - uses: masseater/typescript-template/.github/actions/verify@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: node_modules/.cache/msch
+          key: msch-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: msch-
+      - uses: masseater/typescript-template/.github/actions/verify@d931a8843e20a6675286de4aae013da4778a72d6
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -130,7 +135,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      - uses: jdx/mise-action@d5574b52816a478f9d4e6529a3f6ff17a8a36785 # v5.2.8
         with:
           fetch_from_github: false
           install_args: dotnet
@@ -314,6 +319,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@d931a8843e20a6675286de4aae013da4778a72d6
         with:
           github-token: ${{ github.token }}

@@ -56,7 +56,7 @@ export const listConfigFiles = (
     return Arr.sort(visible, Order.String);
   });
 
-const parseConfig =
+export const parseConfig =
   (api: API) =>
   (configPath: string): Option.Option<ParsedCommandLine> =>
     Option.some(api.parseConfigFile(configPath)).pipe(
@@ -76,6 +76,11 @@ const nearestPackageDirectory = (
     }
     return yield* nearestPackageDirectory(parent, root);
   });
+
+export const packageDirectoryOf =
+  (root: string) =>
+  (directory: string): Effect.Effect<string, never, RepositoryFiles> =>
+    nearestPackageDirectory(directory, root);
 
 const packageInfoOf = Effect.fn("packageInfoOf")(function* packageInfoOf(
   configPath: string,

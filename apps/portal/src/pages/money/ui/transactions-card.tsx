@@ -4,12 +4,12 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 
 import type { PeriodValue, SettingsValue } from "#/entities/money";
+import { TransactionPager } from "#/features/page-transactions";
 import { useTransactions } from "#/pages/money/api/money-query";
 import { accountLabel, categoryLabel } from "#/pages/money/model/labels";
 import { Section } from "#/shared/ui";
 
 import { TransactionFilters } from "./transaction-filters";
-import { TransactionPager } from "./transaction-pager";
 import { TransactionTable } from "./transaction-table";
 
 const route = getRouteApi("/money");

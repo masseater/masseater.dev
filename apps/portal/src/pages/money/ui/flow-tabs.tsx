@@ -3,7 +3,7 @@ import { Struct } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { MoneyLink } from "./money-link";
+import { MoneyLink } from "#/entities/money";
 
 const route = getRouteApi("/money");
 
