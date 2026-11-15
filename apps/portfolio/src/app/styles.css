@@ -133,6 +133,10 @@
   view-transition-name: category-nikogori;
 }
 
+@utility vt-category-ai-produced {
+  view-transition-name: category-ai-produced;
+}
+
 @utility vt-feed {
   view-transition-name: feed-link;
 }
@@ -224,7 +228,8 @@
 ::view-transition-group(category-projects),
 ::view-transition-group(category-blogs),
 ::view-transition-group(category-sloppedia),
-::view-transition-group(category-nikogori) {
+::view-transition-group(category-nikogori),
+::view-transition-group(category-ai-produced) {
   z-index: 2;
 }
 
