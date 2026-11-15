@@ -23,7 +23,37 @@
     "noUnusedParameters": true,
     "noUncheckedSideEffectImports": true,
     "allowUnreachableCode": false,
-    "allowUnusedLabels": false
+    "allowUnusedLabels": false,
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/ai-openrouter",
+          "@effect/atom-react",
+          "@effect/platform-node",
+          "@effect/platform-node-shared",
+          "@effect/sql-sqlite-node",
+          "@effect/vitest",
+          "effect/Crypto",
+          "effect/FileSystem",
+          "effect/Path",
+          "effect/PlatformError",
+          "effect/Stdio",
+          "effect/ai",
+          "effect/cli",
+          "effect/crypto",
+          "effect/http",
+          "effect/net",
+          "effect/observability",
+          "effect/persistence",
+          "effect/process",
+          "effect/reactivity",
+          "effect/rpc",
+          "effect/socket",
+          "effect/sql"
+        ]
+      }
+    ]
   },
   "include": ["*.ts", "scripts/*.ts"]
 }

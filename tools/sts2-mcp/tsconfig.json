@@ -2,22 +2,6 @@
   "extends": "../../tsconfig.json",
   "include": ["src", "*.ts"],
   "compilerOptions": {
-    "types": ["node"],
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "allowedUnstableApis": [
-          "@effect/vitest#it",
-          "@effect/vitest#layer",
-          "effect/FileSystem#FileSystem",
-          "effect/http/FetchHttpClient#layer",
-          "effect/http/HttpClient",
-          "effect/http/HttpClientRequest",
-          "effect/http/HttpClientResponse",
-          "effect/process/ChildProcess",
-          "effect/process/ChildProcessSpawner"
-        ]
-      }
-    ]
+    "types": ["node"]
   }
 }

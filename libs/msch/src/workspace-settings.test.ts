@@ -21,9 +21,7 @@ const settingsOf = Effect.fn("settingsOf")(function* settingsOf(
   );
 });
 
-const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
-  const settings = yield* settingsOf({
-    "apps/web/vite.config.ts": `import { defineConfig } from "vite-plus";
+const WEB_CONFIG = `import { defineConfig } from "vite-plus";
 
 export default defineConfig(({ mode }) => ({
   msch: {
@@ -38,7 +36,11 @@ export default defineConfig(({ mode }) => ({
   },
   mode,
 }));
-`,
+`;
+
+const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
+  const settings = yield* settingsOf({
+    "apps/web/vite.config.ts": WEB_CONFIG,
     "apps/web/components.json": SHADCN,
     "apps/web/package.json": MANIFEST,
     "libs/own/package.json": `{ "name": "own" }`,
@@ -60,6 +62,7 @@ export default defineConfig(({ mode }) => ({
         },
       ],
       shadcnUi: ["apps/web/src/shared/ui/**"],
+      publicEntries: [],
     },
     testProjects: ["apps/web"],
     tasks: { verify: [] },
@@ -102,6 +105,20 @@ const rejectsUnknownSets = Effect.gen(function* rejectsUnknownSets() {
   expect(String(failure)).toContain("missing");
 });
 
+const listsPublicEntries = Effect.gen(function* listsPublicEntries() {
+  const settings = yield* settingsOf({
+    "libs/rule/package.json": `{ "name": "rule", "exports": { ".": "./src/index.ts", "./package.json": "./package.json" } }`,
+    "libs/built/package.json": `{ "name": "built", "exports": { ".": { "types": "./dist/index.d.mts", "default": "./dist/index.mjs" }, "./strict": "./dist/strict.mjs" }, "bin": { "built": "./dist/cli.mjs" } }`,
+    "libs/built/vite.config.ts": `export default { pack: { entry: ["src/index.ts", "src/strict.ts", "src/cli.ts"] } };\n`,
+  });
+  expect(settings.lint.publicEntries).toStrictEqual([
+    "libs/built/src/index.ts",
+    "libs/built/src/strict.ts",
+    "libs/built/src/cli.ts",
+    "libs/rule/src/index.ts",
+  ]);
+});
+
 layer(fixtureLayer)("workspace settings", (it) => {
   it.effect(
     "reads msch settings and tasks of each workspace without running it, roots its patterns and leaves out workspaces that test themselves",
@@ -113,4 +130,8 @@ layer(fixtureLayer)("workspace settings", (it) => {
   );
   it.effect("rejects msch settings that need the file to run", () => rejectsRunningCode);
   it.effect("rejects a set the root does not define", () => rejectsUnknownSets);
+  it.effect(
+    "lists the source files a package exposes, following dist targets back to pack entries",
+    () => listsPublicEntries,
+  );
 });

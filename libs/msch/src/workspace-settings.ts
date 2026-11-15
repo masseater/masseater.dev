@@ -14,6 +14,7 @@ import {
 import type { WorkspaceSource } from "./workspace-config-source.ts";
 import { workspaceDirectories } from "./workspace-directories.ts";
 import { prefixed } from "./workspace-patterns.ts";
+import { publicEntryFiles } from "./workspace-public-entries.ts";
 import { NO_TASKS, definesTask, tasksOf } from "./workspace-tasks.ts";
 import type { WorkspaceTasks } from "./workspace-tasks.ts";
 
@@ -67,6 +68,7 @@ interface WorkspaceLint {
   readonly ignorePatterns: readonly string[];
   readonly overrides: readonly OxlintOverride[];
   readonly shadcnUi: readonly string[];
+  readonly publicEntries: readonly string[];
 }
 
 interface WorkspaceSettings {
@@ -89,6 +91,7 @@ interface Workspace {
   readonly devDependencies: Readonly<Record<string, DevDependencyAllowance>>;
   readonly ownTests: boolean;
   readonly tasks: WorkspaceTasks;
+  readonly publicEntries: readonly string[];
 }
 
 const overrideOf = Effect.fn("overrideOf")(function* overrideOf(
@@ -181,6 +184,7 @@ const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(
   const file = files.join(options.root, directory, CONFIG_FILE);
   const text = yield* files.readFile(file);
   if (Option.isNone(text)) {
+    const publicEntries = yield* publicEntryFiles(options.root, directory, Option.none());
     return {
       directory,
       ignorePatterns: [],
@@ -188,10 +192,13 @@ const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(
       devDependencies: {},
       ownTests: false,
       tasks: NO_TASKS,
+      publicEntries,
     };
   }
   const program = yield* programOf(file, text.value);
-  return yield* settingsOf({ file, directory, program }, options);
+  const settings = yield* settingsOf({ file, directory, program }, options);
+  const publicEntries = yield* publicEntryFiles(options.root, directory, Option.some(program));
+  return { ...settings, publicEntries };
 });
 
 const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
@@ -219,6 +226,10 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
           Arr.flatMap(({ overrides }) => overrides),
         ),
         shadcnUi: Arr.getSomes(shadcnUi),
+        publicEntries: pipe(
+          found,
+          Arr.flatMap(({ publicEntries }) => publicEntries),
+        ),
       },
       testProjects: pipe(
         found,
