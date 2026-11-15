@@ -15,6 +15,7 @@ const NamedManifest = Schema.fromJsonString(
 export interface NamedWorkspace {
   readonly directory: string;
   readonly pattern: RegExp;
+  readonly packageName: Option.Option<string>;
 }
 
 const patternOf = (names: readonly string[]): RegExp => {
@@ -43,7 +44,7 @@ const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(root: string,
     Arr.getSomes,
     Arr.dedupe,
   );
-  return { directory, pattern: patternOf(names) };
+  return { directory, pattern: patternOf(names), packageName };
 });
 
 /** @internal */

@@ -1,6 +1,5 @@
 mod apply;
 mod auth;
-mod documents;
 mod outbox;
 mod remote;
 mod state;

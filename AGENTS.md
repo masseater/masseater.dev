@@ -1,6 +1,18 @@
-作業を開始する前に、`repo-conventions` と `vite-plus` のスキルを読み、それらに従う。どちらも masseater/skills に含まれており、`vp install` で `.agents/skills/` に配置される。
+以下に従うこと。
+
+- `repo-conventions`
+- `vite-plus`
+- `masseater-ecosystem`
+- `measure-dont-guess`
+- `project-checklist`
+
+いずれも masseater/skills のスキルで、`vp install` で `.agents/skills/` に配置される。
 
 各ワークスペースには、その内容と当該ワークスペースにのみ適用されるルールが記載された独自の AGENTS.md がある。ワークスペースを変更する前に、これを確認しておくこと。
+
+## テックスタック
+
+ベーススタックは TypeScript 7、Effect、Alchemy、Cloudflare である。それ以外の項目については、リントルールとスキルルールに従うこと。
 
 ## コマンド
 
@@ -9,10 +21,9 @@
 
 ## ルール
 
-- Alchemy スタックや `APP_NAME` の名前を変更しないこと。Alchemy はリソースを再作成するため、D1 および R2 のデータが失われる。
+- リントルールや規約チェックなど、リポジトリのあらゆる検査を msch に組み込むこと。それ以外の場所に検査を作らないこと。
 - このリポジトリや masseater/skills 内にプライベートリポジトリの名前を記述しないこと。プライベートリポジトリはリポジトリ ID で参照すること。
 - このリポジトリに持ち主のメールアドレスを記述しないこと。代わりに、再利用可能な Access のポリシー `OwnerPolicy` を参照すること。
 - サービストークンやバイパスポリシーを使用して Cloudflare Access 経由でリクエストを許可しないこと。エージェントはクレデンシャルブローカーを介して持ち主のログイン情報でアクセスする。
 - サイトのリソースはアプリのスタックの隣に配置すること。ゾーンやアカウント全体に影響する部分は、Cloudflare アカウントのスタックに置くこと。
 - 楽曲や元の動画などの著作物をリポジトリに置かないこと。
-- `apps/zenn-articles` はパッケージではない。main に push されると、その内容は `zenn` ブランチのルートにコピーされる。
