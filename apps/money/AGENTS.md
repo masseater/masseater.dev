@@ -1,3 +1,3 @@
 # money
 
-このワークスペースはMCPサーバー `money.masseater.dev/mcp` です。所有者の家計簿を管理しています。
+このワークスペースは、所有者の家計簿を管理するMCPサーバー `money.masseater.dev/mcp` である。
