@@ -1,19 +1,4 @@
-﻿<#
-App Sandbox のゲスト (VM sts2-dev) の中で、Slay the Spire 2 の mod をビルドして入れ、ゲームを起動する。
-tools/sts2-mcp がゲストのリポジトリを指定のコミットにしてから SSH で呼ぶ。
-
-  powershell -NoProfile -ExecutionPolicy Bypass -File dev-loop.ps1 -BridgeBasePort P -JoinClientIdBase B [-Mods A,B] [-Instances N] [-NoLaunch] [-SkipBuild]
-
-- AgentBridge は指定が無くても常にビルドして入れる。エージェントはこの mod を通してゲームを読み、操作する。
-- -Instances 1 (既定) は Steam 経由で 1 つ起動する。ゲストの Steam がオフラインモードでなければ起動しない
-  (同じアカウントで持ち主がホストで遊んでいるとき、オンラインで起動すると持ち主のゲームを止めるため)。
-- -Instances 2 以上は、ゲームの開発用の起動引数で同じゲストに複数起動し、localhost で協力プレイにつなぐ。
-  1 つ目は --fastmp=host_standard (プレイヤー ID 1)、2 つ目以降は --fastmp=join --clientId=1000,1001,... で、
-  --force-steam=off で Steam を使わない (プロファイルとセーブは user://default/<ID>/ に分かれる)。
-- 起動したインスタンスの番号・ログ・ブリッジのポートを C:\dev\logs\instances.json に書く。
-- 最後の 1 行に結果を RESULT={JSON} で出す。終了コードは 0 成功 / 1 ビルド失敗 / 2 起動できない / 3 mod の読み込みや接続を確かめられない。
-#>
-param(
+﻿param(
   [string[]]$Mods = @(),
   [ValidateRange(1, 4)][int]$Instances = 1,
   [switch]$NoLaunch,
@@ -52,7 +37,6 @@ function Finish($code) {
 }
 trap { Say "ERROR $($_.Exception.Message)"; $result.error = $_.Exception.Message; Finish 1 }
 
-# ゲストのデスクトップ (対話セッション) で起動する。SSH のセッションから直接起動すると画面に出ない
 function Start-OnDesktop([string]$exe, [string]$arguments, [string]$name) {
   $a = New-ScheduledTaskAction -Execute $exe -Argument $arguments -WorkingDirectory (Split-Path $exe)
   $p = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive
@@ -67,8 +51,6 @@ $result.ref = (git -C $repo log -1 --format='%h %s')
 Say "source: $($result.ref)"
 
 Stop-Game
-
-# ビルドと導入
 if (-not $SkipBuild) {
   foreach ($mod in $Mods) {
     $proj = Join-Path $modsDir "mods\$mod\$mod.csproj"
@@ -89,7 +71,6 @@ if (-not $SkipBuild) {
 }
 if ($NoLaunch) { Finish 0 }
 
-# 起動
 $modList = @($Mods + 'BaseLib' | Select-Object -Unique | ForEach-Object { [ordered]@{ id = $_; is_enabled = $true; source = 'mods_directory' } })
 function Set-Settings([string]$file, [hashtable]$values) {
   $s = if (Test-Path $file) { Get-Content $file -Raw | ConvertFrom-Json } else { [pscustomobject]@{} }
@@ -132,7 +113,6 @@ if ($Instances -eq 1) {
     $instancesInfo += [pscustomobject]@{ instance = $i; clientId = $(if ($i -eq 0) { $null } else { $id }); role = $role; log = $log; since = (Get-Date 0); port = $BridgeBasePort + $i }
     Say "launched $role (id $id)"
     if ($i -eq 0) {
-      # ホストが協力プレイのホスト画面を開くまで待ってから参加側を起動する
       $d = (Get-Date).AddSeconds(90)
       while (-not ((Read-Lines $log) -match 'multiplayer_host_submenu|StartRunLobby') -and (Get-Date) -lt $d) { Start-Sleep 2 }
       Start-Sleep 5
@@ -146,7 +126,6 @@ $d = (Get-Date).AddSeconds($LaunchTimeoutSec)
 while (@(Get-Process SlayTheSpire2 -ErrorAction SilentlyContinue).Count -lt $Instances -and (Get-Date) -lt $d) { Start-Sleep 2 }
 if (@(Get-Process SlayTheSpire2 -ErrorAction SilentlyContinue).Count -lt $Instances) { Say "ゲームが $Instances つ起動しない"; Finish 2 }
 
-# ログで確かめる: 各インスタンスで mod の初期化が終わったか、複数起動ならホストと参加側がつながったか
 $deadline = (Get-Date).AddSeconds($LoadWaitSec)
 do {
   Start-Sleep 5

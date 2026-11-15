@@ -7,7 +7,6 @@ using GamePlayer = MegaCrit.Sts2.Core.Entities.Players.Player;
 
 namespace AgentBridge.AgentBridgeCode;
 
-/// <summary>ラン全体 (階・プレイヤー・マップ) を読む。</summary>
 internal static class RunReader
 {
     public static Run Read(RunState run)
@@ -25,7 +24,6 @@ internal static class RunReader
         };
     }
 
-    /// <summary>NMapScreen.RecalculateTravelability と同じ順で、次に進めるマップの点を求める。</summary>
     private static IEnumerable<MapPoint> NextPoints(RunState run)
     {
         ActMap map = run.Map;

@@ -1,5 +1,3 @@
-// sts2.dll のマルチプレイ関連の型のスタブ。Sts2Stubs.csproj の説明を参照。
-
 namespace MegaCrit.Sts2.Core.Multiplayer.Transport
 {
     public enum NetTransferMode
@@ -22,8 +20,6 @@ namespace MegaCrit.Sts2.Core.Multiplayer.Serialization
         void Deserialize(PacketReader reader);
     }
 
-    // 公開デコンパイルの版には ShouldBuffer が無いが、v0.106 以降向けの公開 Mod (STS2_oekaki_patch) は実装している。
-    // 新しい版に合わせてスタブにも入れておく (古い版では Mod 側の余分なプロパティになるだけで害は無い)
     public interface INetMessage : IPacketSerializable
     {
         bool ShouldBroadcast { get; }
@@ -130,7 +126,6 @@ namespace MegaCrit.Sts2.Core.Multiplayer.Game.PeerInput
 
         public event Action<ulong, NetScreenType>? ScreenChanged;
 
-        // 状態が無いプレイヤーを渡すと InvalidOperationException
         public NetScreenType GetScreenType(ulong playerId) => throw null!;
 
         public bool GetIsTargeting(ulong playerId) => throw null!;

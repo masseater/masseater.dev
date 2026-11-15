@@ -60,7 +60,7 @@
 - `apps/yakusu` は PLaMo 3 Translate 0.8B を手元で動かす翻訳のデスクトップアプリである。Tauri 2 の Rust 側（`src-tauri`、ルートの Cargo ワークスペースの一員）が llama.cpp の llama-server を子プロセスとして起動し、`/completion` の流れを訳文として画面へ送る。
 - llama-server とライセンスの写しは、`scripts/fetch-runtime.sh` がリビジョンと sha256 を固定して `src-tauri/resources/` に落とし、llama-server が読み込むライブラリだけを残す。Windows では Visual C++ のランタイムを Visual Studio の redist から写し、Windows に無い DLL を読む実行ファイルがあれば落ちる。リポには入れない。
 - モデルはインストーラーに入れない。アプリが初回の起動で Hugging Face から取得し、`src-tauri/src/model.rs` に固定した sha256 と合ったものだけをデータフォルダの `models/` に置く。途中で切れた取得は続きから再開する。実モデルでの翻訳は `cargo test -p yakusu --test engine -- --ignored` で確かめ、このテストもアプリと同じ処理でモデルを取得する。
-- `yakusu` ワークフローが main への push ごとに 3 OS でモデルの取得と実モデルの翻訳を確かめてからインストーラーを作る。作ったインストーラーを入れてアプリを起動し、llama-server がモデルを読み込むまで待ってから、release-please が `yakusu-v<リビジョン>` で出したリリースに付ける。pod-rattle・余白と同じく、タグとリリースは `.github/scripts/component-release.sh` が作る。
+- `yakusu` ワークフローが main への push ごとに 3 OS でモデルの取得と実モデルの翻訳を確かめてからインストーラーを作る。作ったインストーラーを入れてアプリを起動し、llama-server がモデルを読み込むまで待ってから、release-please が `yakusu-v<リビジョン>` で出したリリースに付ける。pod-rattle・余白と同じく、タグは run の最初に `.github/scripts/component-tag.sh` が作り、リリースは `.github/scripts/component-release.sh` が作る。GITHUB_TOKEN は、main がその後にワークフローを変えたリビジョンにはタグを作れないからである。
 - 画面はブラウザーモードの Vitest が偽のエンジンで操作し、`src/app/__screenshots__/` の画像と比べる。
 - PLaMo Community License に従い、画面に「Built with PLaMo」を出し、インストーラーにライセンスの写しを入れる。モデルを変えて派生モデルを配るときは、名前の先頭に「PLaMo」を付ける。
 

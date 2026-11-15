@@ -3,10 +3,12 @@ import { defineConfig } from "vite-plus";
 
 import { MCP_PATH, SITE_HOST } from "./src/shared/config/index.ts";
 
+const siteRun = ownerSiteRun({ host: SITE_HOST, paths: [MCP_PATH] });
+
 export default defineConfig({
   run: {
     tasks: {
-      ...ownerSiteRun({ host: SITE_HOST, paths: [MCP_PATH] }).tasks,
+      ...siteRun.tasks,
       verify: { command: [], dependsOn: ["db:check"] },
       "db:generate": { command: "drizzle-kit generate", cache: false },
       "db:check": [

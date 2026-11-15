@@ -54,9 +54,21 @@ oxlint のバージョンは、@effect/tsgo が対応するものに合わせる
 
 ## msch の検査
 
-リポジトリのルートで `msch` を実行すると、値の集合と形の重複、overrides の要不要、テストのためだけのコード、見えない文字、Python の使用、ルート以外の案内文書、npm に出すパッケージの依存の重さを調べる。
+リポジトリのルートで `msch` を実行すると、値の集合と形の重複、overrides の要不要、テストのためだけのコード、見えない文字、コメント、Python の使用、ルート以外の案内文書、npm に出すパッケージの依存の重さを調べる。
 外部から読んだ値を Effect Schema で確かめるときは、`satisfies Schema.Decoder<ライブラリの型>` か変数の型注釈でライブラリの型に結びつける。結びつけた Schema は、ライブラリの形の写しとして指摘しない。
 見えない文字は、ゼロ幅の文字・書字方向を変える制御文字・タグ文字のように、エディタやレビューで見えずに意味を変えうる文字で、`git ls-files` に載るテキストのファイルから探す。ファイル先頭の BOM と、NUL を含むバイナリは対象にしない。
+コメントは、コード・マークアップ・設定・クエリのどれにも書かない。
+msch は `git ls-files` に載るファイルを、その言語のパーサーで読んでコメントを探す。
+TypeScript・JavaScript・Rust・C#・shell・PowerShell・Go・Java・Ruby・PHP・C・C++・シェーダー・CSS は tree-sitter で読む。
+HTML と XML は htmlparser2 で読み、HTML の中のスクリプトとスタイルも調べる。画像の SVG は調べない。
+YAML・TOML・SQL・Dockerfile は、それぞれのパーサーで読む。
+許すのは、ツールが読むコメントだけである。
+`oxlint-disable`・`/** @internal */`・`/** @msch <概念> */` などの lint のディレクティブと、1 行目のシェバンを許す。
+`shellcheck`・`zizmor: ignore[...]`・`renovate:` も許す。
+コミットに固定した action の後ろに書くバージョンと、drizzle の `--> statement-breakpoint` も許す。
+lint のプリセットの `no-comments/disallowComments` も、同じ一覧を許す。
+`.gitattributes` に `linguist-generated` や `linguist-vendored` とマークされたファイルや、ルートの `lint.ignorePatterns` で除外されたファイルは読み込まない。
+リポジトリがコメントから独自のフォーマットを読み込む際は、ルートの `vite.config.ts` の `msch.comments.allow` に、それらのコメント用の正規表現を記述する。各記述は、コメントマーカー以降のテキストと照合される。
 Python は使わない方針なので、`.py`・`pyproject.toml`・`uv.lock` などのファイルを指摘する。スクリプト・CI・設定の中で `python3`・`pip`・`uv`・`poetry` を呼ぶ箇所と、`actions/setup-python` などの action、`mise.toml` に書いた Python の道具も指摘する。
 案内文書は、`AGENTS.md`・`CLAUDE.md` をルートにだけ置かせる。
 ルートの `vite.config.ts` の文字列がワークスペースの中を指していると指摘する。そのワークスペースだけの設定は、そのワークスペースの `vite.config.ts` に移す。
