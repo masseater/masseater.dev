@@ -25,6 +25,7 @@
     "tools/injection-bisect-cli/src/main.ts",
     "apps/pod-rattle-plugin/scripts/*.ts",
     "apps/yohaku-desktop/scripts/*.ts",
+    "apps/yakusu/scripts/*.ts",
   ],
   "entryPointRole": "runtime",
 }

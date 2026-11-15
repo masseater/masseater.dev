@@ -2733,6 +2733,9 @@ importers:
       '@masseater.dev/component-release':
         specifier: workspace:*
         version: link:../../libs/component-release
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
