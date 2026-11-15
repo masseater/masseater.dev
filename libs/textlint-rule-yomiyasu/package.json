@@ -4,12 +4,13 @@
   "private": true,
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.ts",
+  "main": "./src/features/check-yomiyasu/index.ts",
   "imports": {
-    "#upstream/*": "./upstream/*"
+    "#upstream/*": "./upstream/*",
+    "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/features/check-yomiyasu/index.ts"
   },
   "devDependencies": {
     "@textlint/types": "catalog:",

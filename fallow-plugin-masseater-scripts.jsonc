@@ -13,7 +13,7 @@
     "tools/decision-bench-runner/src/run.ts",
     "tools/decision-bench-runner/src/build-jnli.ts",
     "tools/decision-bench-runner/src/build-rules.ts",
-    "infra/start-site/src/write-asset-headers.ts",
+    "infra/start-site/src/app/write-asset-headers.ts",
     "tools/ocr-ja-bench/src/prepare.ts",
     "tools/ocr-ja-bench/src/render.ts",
     "tools/ocr-ja-bench/src/measure.ts",

@@ -30,6 +30,6 @@ pub(crate) struct Character {
 }
 
 pub(crate) fn characters() -> Result<Vec<Character>> {
-    serde_json::from_str(include_str!("../../../libs/mosaic/src/characters.json"))
+    serde_json::from_str(include_str!("../../../libs/mosaic/src/entities/character/model/characters.json"))
         .context("characters.json を読めなかった")
 }

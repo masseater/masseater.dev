@@ -3,8 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/features/check-taigendome/index.ts"
   },
   "dependencies": {
     "kuromojin": "3.0.1",

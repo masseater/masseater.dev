@@ -33,6 +33,8 @@ const RuleNameSchema = Schema.Literals([
   "shared-uncached-task",
   "workflow-path",
   "colocated-test",
+  "layered-source",
+  "public-entry",
   "comment",
   "pass-through-wrapper",
 ]);

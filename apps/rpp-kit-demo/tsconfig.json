@@ -4,9 +4,6 @@
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["vite/client"],
-    "paths": {
-      "#/*": ["./src/*"]
-    },
     "allowArbitraryExtensions": true
   },
   "contentMappers": [

@@ -12,7 +12,7 @@ import type {
 import { Stack } from "alchemy";
 import { Effect } from "effect";
 
-import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, PREFIX, requireAppPrefix } from "./src/shared/config/app-name.ts";
 import { SITE_HOST } from "./src/shared/config/site.ts";
 
 const PROD = "prod";

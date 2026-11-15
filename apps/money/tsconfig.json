@@ -17,9 +17,6 @@
         ]
       }
     ],
-    "types": ["@cloudflare/workers-types"],
-    "paths": {
-      "#/*": ["./src/*"]
-    }
+    "types": ["@cloudflare/workers-types"]
   }
 }
