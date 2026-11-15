@@ -1,8 +1,10 @@
-import { getJson, outputOf, warn } from "@masseater.dev/github-workflow";
+import { outputOf } from "@masseater.dev/github-workflow";
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
 import type { ChildProcessSpawner } from "effect/process";
 
-const SHA = /^[0-9a-f]{40}$/u;
+import { lastRecorded } from "./deployment.ts";
+import type { DeploymentRecord } from "./deployment.ts";
+
 const ROOT = ".";
 
 const Package = Schema.Struct({
@@ -30,10 +32,6 @@ export type Packages = (typeof Workspace.Type)["packages"];
 
 /** @internal */
 export type Tasks = (typeof Workspace.Type)["tasks"];
-
-const Caches = Schema.Struct({
-  actions_caches: Schema.Array(Schema.Struct({ key: Schema.String })),
-});
 
 /** @internal */
 export const workspace = outputOf({ command: "vp", args: ["run", "--json"] }).pipe(
@@ -79,21 +77,6 @@ const isShared =
       Arr.some((matches) => matches(file)),
     );
 
-const lastMarked = Effect.fn("lastMarked")(
-  function* lastMarked(prefix: string) {
-    const { actions_caches } = yield* getJson(Caches)(
-      `actions/caches?ref=refs/heads/main&key=${encodeURIComponent(prefix)}&sort=created_at&direction=desc&per_page=100`,
-    );
-    return pipe(
-      actions_caches,
-      Arr.map(({ key }) => Str.slice(prefix.length)(key)),
-      Arr.findFirst((sha) => SHA.test(sha)),
-    );
-  },
-  Effect.tapError(() => warn("The markers could not be read, so every stack counts as changed")),
-  Effect.orElseSucceed(Option.none),
-);
-
 const changedSince = (
   sha: string,
 ): Effect.Effect<
@@ -109,17 +92,17 @@ const changedSince = (
 /** @internal */
 export type Changes = Readonly<{
   packages: Packages;
-  marker: string;
+  record: (name: string) => DeploymentRecord;
   workflows: readonly string[];
   extra?: (directory: string) => readonly string[];
 }>;
 
 /** @internal */
 export const isChanged = Effect.fn("isChanged")(function* isChanged(
-  { packages, marker, workflows, extra = (): readonly string[] => [] }: Changes,
+  { packages, record, workflows, extra = (): readonly string[] => [] }: Changes,
   stack: Readonly<{ name: string; directories: readonly string[] }>,
 ) {
-  const last = yield* lastMarked(`${marker}${stack.name}-`);
+  const last = yield* lastRecorded(record(stack.name));
   const files = yield* pipe(
     last,
     Option.match({
