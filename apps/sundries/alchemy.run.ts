@@ -16,7 +16,7 @@ import type {
   SloppediaGitHub,
   Tailnet,
 } from "@masseater.dev/repositories/credential-broker.worker";
-import { Stack } from "alchemy";
+import { RemovalPolicy, Stack } from "alchemy";
 import { Effect } from "effect";
 
 import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
@@ -63,7 +63,9 @@ const upstreams = Effect.gen(function* upstreams() {
 
 const worker = Effect.gen(function* worker() {
   const TOOL_CALLS = yield* AnalyticsEngine.Dataset("ToolCalls", { dataset: TOOL_CALL_DATASET });
-  const CLAUDE_REQUESTS = yield* D1.Database("ClaudeRequests", { migrations: "./migrations" });
+  const CLAUDE_REQUESTS = yield* D1.Database("ClaudeRequests", { migrations: "./migrations" }).pipe(
+    RemovalPolicy.protect(),
+  );
   return yield* Workers.Worker("Mcp", {
     name: `${PREFIX}worker`,
     main: "./src/app/sundries.worker.ts",

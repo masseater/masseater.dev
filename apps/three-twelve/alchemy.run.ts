@@ -1,7 +1,7 @@
 import { Containers, R2, Workers } from "@alchemy.run/cloudflare";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import davey from "@snazzah/davey/package.json" with { type: "json" };
-import { Stack } from "alchemy";
+import { RemovalPolicy, Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect } from "effect";
 
@@ -31,7 +31,9 @@ export default Stack(
   APP_NAME,
   tracedStackProps,
   Effect.gen(function* stack() {
-    const AUDIO = yield* R2.Bucket("Audio", { name: `${PREFIX}audio` });
+    const AUDIO = yield* R2.Bucket("Audio", { name: `${PREFIX}audio` }).pipe(
+      RemovalPolicy.protect(),
+    );
     const { url } = yield* Workers.Worker("ThreeTwelve", {
       name: `${PREFIX}worker`,
       main: "./worker/three-twelve.worker.ts",

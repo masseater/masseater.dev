@@ -3,7 +3,7 @@ import type { InferEnv } from "@alchemy.run/cloudflare";
 import { accountResources } from "@masseater.dev/cloudflare-account/account";
 import { edgeGuard } from "@masseater.dev/cloudflare-account/edge-guard";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
-import { Stack, Stage, makeRandom } from "alchemy";
+import { makeRandom, RemovalPolicy, Stack, Stage } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { Effect, Option } from "effect";
 import type { ConfigError } from "effect/Config";
@@ -19,7 +19,9 @@ const OWNED_ZONE = Option.some(DOMAIN);
 
 const web = Effect.gen(function* web() {
   const production = (yield* Stage) === PRODUCTION_STAGE;
-  const STARS = yield* D1.Database("Stars", { migrations: "./drizzle" });
+  const STARS = yield* D1.Database("Stars", { migrations: "./drizzle" }).pipe(
+    RemovalPolicy.protect(),
+  );
   const VISITOR_SALT = yield* makeRandom("VisitorSalt");
   return yield* Website.StaticSite("Web", {
     ...(production && { domain: { name: DOMAIN, redirects: [`www.${DOMAIN}`] } }),
