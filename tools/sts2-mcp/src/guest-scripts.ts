@@ -17,7 +17,7 @@ export type Launch = Readonly<{ instances: number; mods: readonly string[] }>;
 export type Logs = Readonly<{ instance: number; lines: number }>;
 
 const REPOSITORY = String.raw`C:\dev\masseater.dev`;
-const DEV_LOOP = String.raw`${REPOSITORY}\apps\sts2-mods\scripts\vm\dev-loop.ps1`;
+const DEV_LOOP = String.raw`${REPOSITORY}\apps\sts2-mods\vm\dev-loop.ps1`;
 const INSTANCES_FILE = String.raw`C:\dev\logs\instances.json`;
 const SINGLE = 1;
 

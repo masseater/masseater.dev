@@ -3,7 +3,7 @@ import { mustSucceed } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
 import { Effect, FileSystem, Path } from "effect";
 
-import { CACHE, PERSIST, inRepository } from "./repository.ts";
+import { CACHE, PERSIST, inRepository } from "./lib/repository.ts";
 
 const POOL = "pool.tar";
 

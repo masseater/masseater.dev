@@ -5,6 +5,7 @@
   "type": "module",
   "imports": {
     "#broker-names": "./broker-names.ts",
+    "#cloudflare-root": "./cloudflare-root.ts",
     "#github-oidc": "./github-oidc.ts"
   },
   "exports": {
