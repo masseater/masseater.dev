@@ -8,10 +8,6 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 
 namespace AgentBridge.AgentBridgeCode;
 
-/// <summary>
-/// 画面に見えていて押せる部品を集める。ゲームの部品 (NClickableControl・カードの枠) と Godot の BaseButton を対象にし、
-/// Mod が足した画面も同じ方法で押せるようにする。手札のカードは play_card で出すので外す。
-/// </summary>
 internal static class Controls
 {
     private const int MaxTextLength = 120;
@@ -43,7 +39,6 @@ internal static class Controls
         _ => false,
     };
 
-    /// <summary>重なった画面のうち一番上より下にあるものは押せないので外す。</summary>
     private static HashSet<Node> CoveredOverlays()
     {
         NOverlayStack? stack = NOverlayStack.Instance;
@@ -85,10 +80,6 @@ internal static class Controls
         }
     }
 
-    /// <summary>
-    /// カードの当たり判定 (NCardHolderHitbox) は押しても選ばれず、持ち主の NCardHolder の Pressed で選ばれるので、持ち主を返す。
-    /// 手札のカードは play_card で出すので外す。
-    /// </summary>
     private static Godot.Control? Target(Godot.Control control) => control switch
     {
         NHandCardHolder => null,

@@ -272,8 +272,6 @@ impl Engine {
         engine
     }
 
-    /// Returns the engine to the state [`Engine::new`] builds, reusing its buffers so it is
-    /// safe to call on the audio thread.
     pub fn reset(&mut self, params: Params, auto: AutoShake) {
         self.params = params;
         self.auto = auto;
@@ -329,7 +327,6 @@ impl Engine {
         self.auto = auto;
     }
 
-    /// Moves the point the hand rests at. Auto shake and strokes swing the hand around it.
     pub fn set_position(&mut self, x: f64, y: f64, z: f64) {
         self.position = [
             x.clamp(HAND_X.0, HAND_X.1),
@@ -338,7 +335,6 @@ impl Engine {
         ];
     }
 
-    /// Moves the hand and every pod to the position at once, so nothing swings on the way.
     pub fn place(&mut self, x: f64, y: f64, z: f64) {
         self.set_position(x, y, z);
         let [x, y, z] = self.position;
