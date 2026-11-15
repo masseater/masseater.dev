@@ -25,12 +25,15 @@
     "LICENSE"
   ],
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts",
-    "./setup": "./src/setup.ts",
-    "./semconv": "./src/semconv.ts",
-    "./workers": "./src/workers.ts",
-    "./tail-worker": "./src/tail.worker.ts",
+    ".": "./src/app/index.ts",
+    "./setup": "./src/app/setup.ts",
+    "./semconv": "./src/app/semconv.ts",
+    "./workers": "./src/app/workers.ts",
+    "./tail-worker": "./src/app/tail.worker.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {

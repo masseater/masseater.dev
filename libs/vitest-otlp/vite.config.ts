@@ -1,6 +1,6 @@
 import { defineConfig } from "vite-plus";
 
-import { otlp } from "./src/index.ts";
+import { otlp } from "./src/app/index.ts";
 
 export default defineConfig({
   msch: {
@@ -15,7 +15,7 @@ export default defineConfig({
       overrides: [
         { files: ["src/**/*.test.ts"], use: ["otlpInterop"] },
         {
-          files: ["src/setup.ts"],
+          files: ["src/app/setup.ts"],
           rules: {
             "node/no-process-env": "off",
             "baseline-js/use-baseline": ["error", { ignoreFeatures: ["top-level-await"] }],
@@ -34,12 +34,12 @@ export default defineConfig({
   plugins: [otlp()],
   pack: [
     {
-      entry: ["src/index.ts", "src/setup.ts", "src/semconv.ts", "src/workers.ts"],
+      entry: ["src/app/index.ts", "src/app/setup.ts", "src/app/semconv.ts", "src/app/workers.ts"],
       platform: "node",
       sourcemap: true,
       dts: true,
     },
-    { entry: ["src/tail.worker.ts"], platform: "neutral", sourcemap: true, dts: false },
+    { entry: ["src/app/tail.worker.ts"], platform: "neutral", sourcemap: true, dts: false },
   ],
   test: {
     include: ["src/**/*.test.ts"],

@@ -2,7 +2,7 @@
 import { runMain } from "@masseater.dev/node-main";
 import { Effect, FileSystem, Path } from "effect";
 
-import { YOUTUBE_FILE } from "#/state.ts";
+import { YOUTUBE_FILE } from "#/entities/catalog/index.ts";
 
 const LEGACY = "../../.nimado-state";
 const PERSIST = ".persist";

@@ -74,7 +74,9 @@ layer(NodeServices.layer)("conformance", (it) => {
         derive: ["specta::Type", "schemars::JsonSchema"],
         definitions: conformance,
       });
-      yield* Effect.promise(() => expect(source).toMatchFileSnapshot("../conformance/protocol.rs"));
+      yield* Effect.promise(() =>
+        expect(source).toMatchFileSnapshot("../../conformance/protocol.rs"),
+      );
     }),
   );
 

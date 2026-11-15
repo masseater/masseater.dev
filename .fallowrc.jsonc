@@ -29,12 +29,18 @@
     },
   ],
   "ignoreExports": [
-    { "file": "libs/vitest-otlp/src/generated/**", "exports": ["*"] },
+    { "file": "libs/vitest-otlp/src/shared/api/generated/**", "exports": ["*"] },
     { "file": "apps/yohaku-desktop/src/shared/api/generated/**", "exports": ["*"] },
-    { "file": "libs/workers-tracing/src/tanstack-start.plain.ts", "exports": ["traceServerFn"] },
+    {
+      "file": "libs/workers-tracing/src/app/tanstack-start.plain.ts",
+      "exports": ["traceServerFn"],
+    },
   ],
   "overrides": [
-    { "files": ["libs/vitest-otlp/src/generated/**"], "rules": { "unused-enum-members": "off" } },
+    {
+      "files": ["libs/vitest-otlp/src/shared/api/generated/**"],
+      "rules": { "unused-enum-members": "off" },
+    },
   ],
   "ignoreDependencies": ["@effect/language-service"],
   "workspaces": {
