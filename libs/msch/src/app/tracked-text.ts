@@ -4,7 +4,7 @@ import { checkComments } from "#/features/comments/index.ts";
 import { checkHiddenUnicode } from "#/features/invisible-characters/index.ts";
 import { checkPython } from "#/features/python/index.ts";
 import { checkNodeVersion } from "#/features/runtime-version/index.ts";
-import { checkSkillFiles } from "#/features/skills/index.ts";
+import { checkSkillEntry, checkSkillFiles } from "#/features/skills/index.ts";
 import {
   checkAlchemyPatch,
   checkReplacedTools,
@@ -24,6 +24,7 @@ export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTra
       checkAlchemyPatch(root),
       checkNodeVersion(root),
       checkSkillFiles(root),
+      checkSkillEntry(root),
       checkComments(root),
     ],
     { concurrency: "unbounded" },
