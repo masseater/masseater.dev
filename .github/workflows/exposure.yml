@@ -23,10 +23,10 @@ jobs:
         with:
           persist-credentials: false
       - uses: masseater/typescript-template/.github/actions/credentials@988d10d667dd956eb17a81ec39e8b8cbba5c898a
-      - run: .github/scripts/github-token.sh
       - uses: $/.github/actions/setup
         with:
           native: "false"
+      - run: vp run -r github-token
       - run: vp run --filter exposure-check check
 
   ci-telemetry:

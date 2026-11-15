@@ -2,10 +2,11 @@
   "name": "@masseater.dev/repositories",
   "version": "0.0.0",
   "private": true,
-  "bin": {
-    "broker-github-token": "./broker-github-token.ts"
-  },
   "type": "module",
+  "imports": {
+    "#broker-names": "./broker-names.ts",
+    "#github-oidc": "./github-oidc.ts"
+  },
   "exports": {
     "./access-sites": "./access-sites.ts",
     "./oauth-targets": "./oauth-targets.ts",

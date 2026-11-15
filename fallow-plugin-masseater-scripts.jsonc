@@ -23,6 +23,7 @@
     "tools/injection-bisect-cli/src/main.ts",
     "apps/*/scripts/*.ts",
     "tools/*/scripts/*.ts",
+    "infra/*/scripts/*.ts",
   ],
   "entryPointRole": "runtime",
 }

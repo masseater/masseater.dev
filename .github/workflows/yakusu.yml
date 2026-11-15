@@ -14,10 +14,6 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: yakusu
-  cancel-in-progress: false
-
 env:
   CARGO_TERM_COLOR: always
   GIT_CONFIG_COUNT: 1
@@ -63,6 +59,9 @@ jobs:
             bundles: dmg
             files: target/release/bundle/dmg/*.dmg
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: yakusu-installer-${{ matrix.platform }}
+      cancel-in-progress: true
     permissions:
       contents: read
     defaults:
@@ -130,6 +129,9 @@ jobs:
           - os: macos-latest
             platform: macos-arm64
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: yakusu-launch-${{ matrix.platform }}
+      cancel-in-progress: true
     permissions:
       contents: read
     defaults:

@@ -81,8 +81,14 @@ const succeeds = succeedsWith;
 /** @internal */
 const mustSucceed = mustSucceedWith;
 
+const finishedWith = (command: Command): Spawned<Readonly<{ output: string; code: number }>> =>
+  Effect.scoped(collected(command));
+
 /** @internal */
 const outputOf = outputWith;
 
+/** @internal */
+const finished = finishedWith;
+
 export type { Command };
-export { CommandFailed, mustSucceed, outputOf, succeeds };
+export { CommandFailed, finished, mustSucceed, outputOf, succeeds };

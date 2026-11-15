@@ -17,7 +17,11 @@ export default defineConfig({
         command: "alchemy deploy --config alchemy.github.ts --stage prod --yes",
         cache: false,
       },
-      "github-token": { command: "node broker-github-token.ts", cache: false },
+      "github-token": { command: "node scripts/github-token.ts", cache: false },
+      "atproto-password": { command: "node scripts/atproto-password.ts", cache: false },
+      "private-names": { command: "node scripts/private-names.ts", cache: false },
+      "delete-repositories": { command: "node scripts/delete-repositories.ts", cache: false },
+      "delete-secrets": { command: "node scripts/delete-secrets.ts", cache: false },
     },
   },
 });
