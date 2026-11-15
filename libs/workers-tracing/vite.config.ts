@@ -21,7 +21,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      build: { command: "vp pack", cache: false },
+      build: "vp pack",
     },
   },
   plugins: [otlp()],
