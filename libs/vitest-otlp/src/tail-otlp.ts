@@ -94,7 +94,7 @@ const resourceOf = (invocation: Invocation): KeyValueInit[] => [
   keyValue({ name: "service.name", value: invocation.serviceName }),
 ];
 
-const tracesOf = (invocation: Invocation): ExportTraceServiceRequest => {
+export const tracesOf = (invocation: Invocation): ExportTraceServiceRequest => {
   const spans = pipe(Record.values(invocation.spans), Array.map(spanInit(invocation.traceId)));
   return create(ExportTraceServiceRequestSchema, {
     resourceSpans: [
@@ -106,7 +106,7 @@ const tracesOf = (invocation: Invocation): ExportTraceServiceRequest => {
   });
 };
 
-const logsOf = (invocation: Invocation): ExportLogsServiceRequest => {
+export const logsOf = (invocation: Invocation): ExportLogsServiceRequest => {
   const logRecords = pipe(invocation.logs, Array.map(logInit(invocation.traceId)));
   return create(ExportLogsServiceRequestSchema, {
     resourceLogs: [
@@ -117,5 +117,3 @@ const logsOf = (invocation: Invocation): ExportLogsServiceRequest => {
     ],
   });
 };
-
-export { logsOf, tracesOf };

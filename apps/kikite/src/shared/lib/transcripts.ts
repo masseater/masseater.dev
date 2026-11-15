@@ -1,6 +1,6 @@
 import { Array as Arr, Option, pipe, String as Str } from "effect";
 
-type Transcripts = Readonly<{ finals: readonly string[]; interim: string }>;
+export type Transcripts = Readonly<{ finals: readonly string[]; interim: string }>;
 
 const FIRST_ALTERNATIVE = 0;
 const SPACE_BETWEEN_WIDE = /(?<=[^\p{ASCII}])\s+(?=[^\p{ASCII}])/gu;
@@ -18,7 +18,7 @@ const resultsOf = (event: SpeechRecognitionEvent): readonly SpeechRecognitionRes
     event.results.item(event.resultIndex + offset),
   );
 
-const transcriptsOf = (event: SpeechRecognitionEvent): Transcripts => {
+export const transcriptsOf = (event: SpeechRecognitionEvent): Transcripts => {
   const results = resultsOf(event);
   return {
     finals: pipe(
@@ -34,6 +34,3 @@ const transcriptsOf = (event: SpeechRecognitionEvent): Transcripts => {
     ),
   };
 };
-
-export { transcriptsOf };
-export type { Transcripts };

@@ -11,9 +11,9 @@ import {
 import { constVoid } from "effect/Function";
 import { vi } from "vite-plus/test";
 
-type Answer = Readonly<{ status: number; body: unknown }>;
+export type Answer = Readonly<{ status: number; body: unknown }>;
 
-type Scene = Readonly<{
+export type Scene = Readonly<{
   branches: readonly string[];
   files: Readonly<Record<string, string>>;
   openPulls: Readonly<Record<string, number>>;
@@ -21,7 +21,7 @@ type Scene = Readonly<{
   graphql: Answer;
 }>;
 
-type Sent = Readonly<{ method: string; path: string; body: unknown }>;
+export type Sent = Readonly<{ method: string; path: string; body: unknown }>;
 
 type Route = Readonly<{
   method: string;
@@ -29,11 +29,11 @@ type Route = Readonly<{
   answer: (scene: Scene, match: readonly string[], body: unknown) => Answer;
 }>;
 
-const REPO = "/repos/masseater/masseater.dev";
+export const REPO = "/repos/masseater/masseater.dev";
 
-const MAIN_SHA = "main-sha";
+export const MAIN_SHA = "main-sha";
 
-const NEW_PULL = 41;
+export const NEW_PULL = 41;
 
 const OK = 200;
 
@@ -190,21 +190,18 @@ const fakeGithub: typeof fetch = (input, init) =>
     }),
   );
 
-const stubGithub = (): void => {
+export const stubGithub = (): void => {
   vi.stubGlobal("fetch", fakeGithub);
 };
 
-const setScene = (overrides: Partial<Scene>): void => {
+export const setScene = (overrides: Partial<Scene>): void => {
   MutableRef.set(scene, { ...DEFAULT_SCENE, ...overrides });
   MutableRef.set(sent, []);
 };
 
-const sentRequests = (): readonly Sent[] => MutableRef.get(sent);
+export const sentRequests = (): readonly Sent[] => MutableRef.get(sent);
 
-const env = {
+export const env = {
   TOOL_CALLS: { writeDataPoint: constVoid },
   SLOPPEDIA_GITHUB: { fetch: (): Promise<Response> => Promise.resolve(new Response("token")) },
 };
-
-export { MAIN_SHA, NEW_PULL, REPO, env, sentRequests, setScene, stubGithub };
-export type { Answer, Scene, Sent };

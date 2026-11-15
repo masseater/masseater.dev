@@ -7,7 +7,7 @@ const DOWNLOADING = "モデルを取得中";
 
 const RETRY = "再試行";
 
-const PreparationBar = (): ReactNode => {
+export const PreparationBar = (): ReactNode => {
   const { preparation, retry } = usePreparation();
   if (preparation.status === "downloading") {
     return (
@@ -35,5 +35,3 @@ const PreparationBar = (): ReactNode => {
   }
   return false;
 };
-
-export { PreparationBar };

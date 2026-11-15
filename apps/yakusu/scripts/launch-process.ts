@@ -4,14 +4,16 @@ import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
 const SUCCESS = 0;
 
-type Spawn = Readonly<{
+/** @internal */
+export type Spawn = Readonly<{
   file: string;
   args: readonly string[];
   env?: Readonly<Record<string, string>>;
   stdin?: ChildProcess.CommandInput;
 }>;
 
-type Captured = Effect.Effect<
+/** @internal */
+export type Captured = Effect.Effect<
   string,
   PlatformError.PlatformError,
   ChildProcessSpawner.ChildProcessSpawner
@@ -19,7 +21,8 @@ type Captured = Effect.Effect<
 
 const encoder = new TextEncoder();
 
-const input = (text: string): ChildProcess.CommandInput => Stream.make(encoder.encode(text));
+/** @internal */
+export const input = (text: string): ChildProcess.CommandInput => Stream.make(encoder.encode(text));
 
 const commandOf = (
   { file, args, env, stdin }: Spawn,
@@ -33,12 +36,14 @@ const commandOf = (
     stderr: stdout,
   });
 
-const background = Effect.fn("launch.background")(function* background(spawn: Spawn) {
+/** @internal */
+export const background = Effect.fn("launch.background")(function* background(spawn: Spawn) {
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
   return yield* spawner.spawn(commandOf(spawn, "inherit"));
 });
 
-const succeed = Effect.fn("launch.succeed")(function* succeed(spawn: Spawn) {
+/** @internal */
+export const succeed = Effect.fn("launch.succeed")(function* succeed(spawn: Spawn) {
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
   const exitCode = yield* spawner.exitCode(commandOf(spawn, "inherit"));
   if (exitCode !== SUCCESS) {
@@ -68,9 +73,5 @@ const captureScoped = (
     return text;
   });
 
-const capture = (spawn: Spawn): Captured => Effect.scoped(captureScoped(spawn));
-
 /** @internal */
-export { background, capture, input, succeed };
-/** @internal */
-export type { Captured, Spawn };
+export const capture = (spawn: Spawn): Captured => Effect.scoped(captureScoped(spawn));

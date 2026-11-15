@@ -16,9 +16,6 @@ const Posts = Schema.Struct({
   meta: Schema.Struct({ page: Schema.Finite, maxPage: Schema.Finite }),
 });
 
-const PostsJson = Schema.fromJsonString(Posts);
+export const PostsJson = Schema.fromJsonString(Posts);
 
-type TwilogPosts = typeof Posts.Type;
-
-export { PostsJson };
-export type { TwilogPosts };
+export type TwilogPosts = typeof Posts.Type;

@@ -25,7 +25,7 @@ const translate = (
 ): Effect.Effect<Readonly<{ text: string }>, UpstreamFailed> =>
   Effect.tryPromise({ try: () => env.TRANSLATOR.translate(request), catch: fail });
 
-const registerTranslateTools =
+export const registerTranslateTools =
   (caller: Caller) =>
   (server: McpServer): McpServer => {
     server.registerTool(
@@ -42,5 +42,3 @@ const registerTranslateTools =
     );
     return server;
   };
-
-export { registerTranslateTools };

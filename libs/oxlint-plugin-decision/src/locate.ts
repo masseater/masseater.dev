@@ -26,16 +26,16 @@ const DATA_FIRST_ARITY_3 = 3;
 
 const DATA_FIRST_ARITY = 2;
 
-type VerdictResult =
+export type VerdictResult =
   | { readonly ok: true; readonly verdicts: Verdicts; readonly cached: boolean | undefined }
   | { readonly ok: false; readonly reason: string };
 
-interface Located {
+export interface Located {
   readonly loc: Location;
   readonly failure: Option.Option<string>;
 }
 
-interface Asking {
+export interface Asking {
   readonly model: ModelRef;
   readonly deadline: number;
   readonly env: Readonly<Record<string, string>>;
@@ -52,7 +52,7 @@ const MINIMUM_TIMEOUT_MS = 1;
 
 const remainingMs = (deadline: number): number => Math.max(MINIMUM_TIMEOUT_MS, deadline - nowMs());
 
-const verdictsOf: {
+export const verdictsOf: {
   (request: DecisionRequest): (result: DecideResult) => VerdictResult;
   (result: DecideResult, request: DecisionRequest): VerdictResult;
 } = Fn.dual(DATA_FIRST_ARITY, (result: DecideResult, request: DecisionRequest): VerdictResult => {
@@ -69,7 +69,7 @@ const verdictsOf: {
   );
 });
 
-const inputOf: {
+export const inputOf: {
   (request: DecisionRequest): (asking: Asking) => DecideInput;
   (asking: Asking, request: DecisionRequest): DecideInput;
 } = Fn.dual(DATA_FIRST_ARITY, (asking: Asking, request: DecisionRequest): DecideInput => ({
@@ -126,13 +126,13 @@ const refine = (refinement: Refinement, first: Option.Option<LineRange>): Locate
   };
 };
 
-interface LocateInput {
+export interface LocateInput {
   readonly ref: string;
   readonly verdicts: Verdicts;
   readonly request: DecisionRequest;
 }
 
-const locateMatch: {
+export const locateMatch: {
   (match: Match, input: LocateInput): (asking: Asking) => Located;
   (asking: Asking, match: Match, input: LocateInput): Located;
 } = Fn.dual(
@@ -149,6 +149,3 @@ const locateMatch: {
     return refine({ asking, match, ref, state: request.state }, first);
   },
 );
-
-export { inputOf, locateMatch, verdictsOf };
-export type { Asking, LocateInput, Located, VerdictResult };

@@ -13,7 +13,7 @@ const hostOf = (source: string): Option.Option<string> =>
     Option.map(({ host }) => host),
   );
 
-const LeadSource = ({ source }: Readonly<{ source: string }>): ReactNode => {
+export const LeadSource = ({ source }: Readonly<{ source: string }>): ReactNode => {
   if (source === MEMORY) {
     return <span className="text-muted-foreground/70 text-xs">{MEMORY_LABEL}</span>;
   }
@@ -32,5 +32,3 @@ const LeadSource = ({ source }: Readonly<{ source: string }>): ReactNode => {
     </a>
   );
 };
-
-export { LeadSource };

@@ -6,7 +6,9 @@ import { fileNameOf } from "#/shared/lib";
 
 import { ResultActions } from "./result-actions.tsx";
 
-const ResultSummary = ({ result }: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => (
+export const ResultSummary = ({
+  result,
+}: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => (
   <>
     <div className="bg-muted flex aspect-square items-center justify-center overflow-hidden rounded-lg border">
       <ResultPreview result={result} />
@@ -17,5 +19,3 @@ const ResultSummary = ({ result }: Readonly<{ result: typeof SearchResult.Type }
     <ResultActions result={result} />
   </>
 );
-
-export { ResultSummary };

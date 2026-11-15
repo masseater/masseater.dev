@@ -20,7 +20,7 @@ import type {
   Verdicts,
 } from "./types.ts";
 
-interface ModelPass {
+export interface ModelPass {
   readonly contextOf: (match: Match) => Context;
   readonly filename: string;
   readonly options: ResolvedOptions;
@@ -221,7 +221,7 @@ const reportProvider = (prepared: Arr.NonEmptyReadonlyArray<Prepared>): void => 
   }
 };
 
-const reportModels = (passes: readonly ModelPass[]): void => {
+export const reportModels = (passes: readonly ModelPass[]): void => {
   const byProvider = Arr.groupBy(
     pipe(
       passes,
@@ -233,6 +233,3 @@ const reportModels = (passes: readonly ModelPass[]): void => {
     reportProvider(prepared);
   }
 };
-
-export { reportModels };
-export type { ModelPass };

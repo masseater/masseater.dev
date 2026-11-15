@@ -117,7 +117,7 @@ const recentMedia = (context: ProfileContext): readonly Body[] =>
     Arr.map(itemOf(context.today)),
   );
 
-const ownerProfile = (wanted: Wanted): Effect.Effect<Body, StoreFailure> =>
+export const ownerProfile = (wanted: Wanted): Effect.Effect<Body, StoreFailure> =>
   Effect.gen(function* profileOfOwner() {
     const today = yield* todayJst;
     const entries = yield* scanAll([
@@ -138,5 +138,3 @@ const ownerProfile = (wanted: Wanted): Effect.Effect<Body, StoreFailure> =>
       traits: yield* profileTraits(wanted),
     };
   });
-
-export { ownerProfile };

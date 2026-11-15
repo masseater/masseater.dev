@@ -15,7 +15,7 @@ const bubbleClass = {
   end: "bg-muted rounded-tr-sm",
 } as const satisfies Record<Side, string>;
 
-const Speech = ({
+export const Speech = ({
   speaker,
   children,
 }: Readonly<{ speaker: Speaker; children: ReactNode }>): ReactNode => {
@@ -40,5 +40,3 @@ const Speech = ({
     </figure>
   );
 };
-
-export { Speech };

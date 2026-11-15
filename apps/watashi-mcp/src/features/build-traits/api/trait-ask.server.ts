@@ -12,7 +12,7 @@ import {
 import { embedTexts, loadTraitVectors, loadTraits } from "#/entities/trait/index.server";
 import type { StorageFailed } from "#/shared/db";
 
-type Asked = Readonly<{ traits: readonly TraitState[]; checked: Checked }>;
+export type Asked = Readonly<{ traits: readonly TraitState[]; checked: Checked }>;
 
 type Present = Arr.NonEmptyReadonlyArray<BatchSource>;
 
@@ -68,7 +68,7 @@ const askAnalyst = (
     return checkObservations({ traits, batch, observations: result.observations, candidates });
   });
 
-const askAbout = (
+export const askAbout = (
   batch: readonly BatchSource[],
 ): Effect.Effect<Asked, AnalystFailed | StorageFailed | UpstreamFailed, TraitAnalyst> =>
   Effect.gen(function* askAboutBatch() {
@@ -79,6 +79,3 @@ const askAbout = (
     });
     return { traits, checked };
   });
-
-export { askAbout };
-export type { Asked };

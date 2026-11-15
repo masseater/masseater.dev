@@ -58,6 +58,4 @@ const TOOLS = [
   }),
 ];
 
-const registerReportTools = registerAll(TOOLS);
-
-export { registerReportTools };
+export const registerReportTools = registerAll(TOOLS);

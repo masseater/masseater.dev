@@ -16,7 +16,7 @@ const characterPages = pipe(
   Arr.flatMap(({ slug }) => [{ path: `/${slug}` }, { path: `/${slug}/credits` }]),
 );
 
-const mosaicPlugins = (): PluginOption[] => [
+export const mosaicPlugins = (): PluginOption[] => [
   devtools(),
   tailwindcss(),
   tanstackStart({
@@ -38,5 +38,3 @@ const mosaicPlugins = (): PluginOption[] => [
   rsc(),
   viteReact(),
 ];
-
-export { mosaicPlugins };

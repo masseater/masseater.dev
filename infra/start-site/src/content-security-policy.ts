@@ -25,7 +25,7 @@ const NO_CLIENT_COMPUTE = {
   connect: [],
 } as const;
 
-const contentSecurityPolicy = ({
+export const contentSecurityPolicy = ({
   scriptHashes,
   clientCompute,
 }: Readonly<{ scriptHashes: readonly string[]; clientCompute: boolean }>): string => {
@@ -59,5 +59,3 @@ const contentSecurityPolicy = ({
     Arr.join("; "),
   );
 };
-
-export { contentSecurityPolicy };

@@ -7,7 +7,7 @@ import { CHUNK_CHARACTERS, MAX_TOKENS, SPARE_TOKENS, TOKENS_PER_CHARACTER } from
 import { promptOf } from "./prompt.ts";
 import type { Direction, Pair } from "./prompt.ts";
 
-type Complete<Failure> = (
+export type Complete<Failure> = (
   request: Readonly<{ prompt: string; maxTokens: number }>,
 ) => Effect.Effect<string, Failure>;
 
@@ -31,12 +31,9 @@ const step =
     }));
   };
 
-const translateWith =
+export const translateWith =
   <Failure>(complete: Complete<Failure>) =>
   ({ text, ...direction }: TranslateRequestValue): Effect.Effect<string, Failure> =>
     Effect.reduce(split(CHUNK_CHARACTERS)(text), () => START, step(direction, complete)).pipe(
       Effect.map(({ output }) => Arr.join(output, "")),
     );
-
-export { translateWith };
-export type { Complete };

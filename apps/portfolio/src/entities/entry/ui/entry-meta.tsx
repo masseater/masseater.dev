@@ -10,7 +10,7 @@ const DRAFT_LABEL = "下書き";
 
 const IDEA_LABEL = "アイデア";
 
-const EntryMeta = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
+export const EntryMeta = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
   <div
     className="vt-entry text-foreground/70 font-display flex max-w-full min-w-0 flex-wrap items-center gap-x-4 gap-y-2 self-start text-xs tracking-widest uppercase"
     data-vt={entryMetaTransition(entry)}
@@ -22,5 +22,3 @@ const EntryMeta = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
     <TagList tags={entry.tags} />
   </div>
 );
-
-export { EntryMeta };

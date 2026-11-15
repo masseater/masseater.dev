@@ -30,14 +30,14 @@ import type { WorkerContext, WorkerRequest } from "./resolver-state.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface ResolveModuleNameRequest {
+export interface ResolveModuleNameRequest {
   readonly moduleName: string;
   readonly containingFile: string;
   readonly options: ResolverOptions;
   readonly mode: Option.Option<ResolutionMode>;
 }
 
-interface DirectoryRequest {
+export interface DirectoryRequest {
   readonly moduleName: string;
   readonly containingDirectory: string;
   readonly options: ResolverOptions;
@@ -121,7 +121,7 @@ const nodeModuleNameResolverWorker = (
     .pipe(Option.getOrElse(() => toResolutionResult(result, alternateResult)));
 };
 
-const resolveNestedModule: {
+export const resolveNestedModule: {
   (nested: NestedResolution): (state: ResolutionState) => ResolutionResult;
   (state: ResolutionState, nested: NestedResolution): ResolutionResult;
 } = Fn.dual(
@@ -154,7 +154,7 @@ const conditionsFor = (request: DirectoryRequest): Option.Option<readonly string
   return request.mode.pipe(Option.map((mode) => getConditions(request.options, Option.some(mode))));
 };
 
-const resolveInDirectory: {
+export const resolveInDirectory: {
   (context: WorkerContext): (request: DirectoryRequest) => ResolutionResult;
   (request: DirectoryRequest, context: WorkerContext): ResolutionResult;
 } = Fn.dual(
@@ -234,7 +234,7 @@ const reuseCachedWithTrace = (
   );
 };
 
-const resolveModuleName: {
+export const resolveModuleName: {
   (context: WorkerContext): (request: ResolveModuleNameRequest) => ResolutionResult;
   (request: ResolveModuleNameRequest, context: WorkerContext): ResolutionResult;
 } = Fn.dual(
@@ -248,6 +248,3 @@ const resolveModuleName: {
     return result;
   },
 );
-
-export { resolveInDirectory, resolveModuleName, resolveNestedModule };
-export type { DirectoryRequest, ResolveModuleNameRequest };

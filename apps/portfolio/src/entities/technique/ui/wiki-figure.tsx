@@ -6,7 +6,7 @@ import type { WikiImage } from "#/entities/technique/model/technique";
 import { ExampleFigure } from "./example-figure";
 import { ExternalLink } from "./external-link";
 
-const WikiFigure = ({
+export const WikiFigure = ({
   href,
   label,
   image,
@@ -17,5 +17,3 @@ const WikiFigure = ({
     <ExternalLink href={image.file}>{imageCredit(image)}</ExternalLink>
   </ExampleFigure>
 );
-
-export { WikiFigure };

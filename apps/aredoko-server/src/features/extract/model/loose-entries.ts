@@ -69,7 +69,9 @@ const filesOf = Effect.fn("filesOf")(function* filesOfLoose(loose: Loose) {
 });
 
 /** @internal */
-const looseEntries = Effect.fn("looseEntries")(function* selectLoose(assetIds: readonly number[]) {
+export const looseEntries = Effect.fn("looseEntries")(function* selectLoose(
+  assetIds: readonly number[],
+) {
   const sql = yield* SqlClient.SqlClient;
   const rows = yield* Array.match(assetIds, {
     onEmpty: () => Effect.succeed<readonly Loose[]>([]),
@@ -86,5 +88,3 @@ const looseEntries = Effect.fn("looseEntries")(function* selectLoose(assetIds: r
     Array.dedupeWith((left, right) => left.pathname === right.pathname),
   );
 });
-
-export { looseEntries };

@@ -3,7 +3,8 @@ import type { ConversationSource } from "@masseater.dev/watashi-protocol";
 import { Config, String as Str } from "effect";
 import type { Option, Redacted } from "effect";
 
-type Settings = Readonly<{
+/** @internal */
+export type Settings = Readonly<{
   url: string;
   home: string;
   token: Option.Option<Redacted.Redacted>;
@@ -37,7 +38,8 @@ const url = Config.String("WATASHI_URL").pipe(
   Config.map(Str.replace(/\/+$/u, "")),
 );
 
-const settings: Config.Config<Settings> = Config.all({
+/** @internal */
+export const settings: Config.Config<Settings> = Config.all({
   url,
   home,
   token: Config.option(Config.Redacted("WATASHI_TOKEN")),
@@ -46,8 +48,3 @@ const settings: Config.Config<Settings> = Config.all({
   remoteSession: Config.String("CLAUDE_CODE_REMOTE_SESSION_ID").pipe(Config.withDefault("")),
   betterleaks: Config.option(Config.String("WATASHI_BETTERLEAKS")),
 });
-
-/** @internal */
-export { settings };
-/** @internal */
-export type { Settings };

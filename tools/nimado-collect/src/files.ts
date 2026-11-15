@@ -3,7 +3,7 @@ import { Effect, FileSystem, Option, Path, Schema } from "effect";
 const UNFINISHED = ".tmp";
 
 /** @internal */
-const readJson = Effect.fn("file.read")(function* readJsonFile<
+export const readJson = Effect.fn("file.read")(function* readJsonFile<
   Value extends Schema.Codec<unknown, unknown>,
 >({ codec, file }: Readonly<{ codec: Value; file: string }>) {
   const fileSystem = yield* FileSystem.FileSystem;
@@ -17,7 +17,7 @@ const readJson = Effect.fn("file.read")(function* readJsonFile<
 });
 
 /** @internal */
-const writeJson = Effect.fn("file.write")(function* writeJsonFile<
+export const writeJson = Effect.fn("file.write")(function* writeJsonFile<
   Value extends Schema.Codec<unknown, unknown>,
 >({ codec, file, value }: Readonly<{ codec: Value; file: string; value: Value["Type"] }>) {
   const fileSystem = yield* FileSystem.FileSystem;
@@ -28,5 +28,3 @@ const writeJson = Effect.fn("file.write")(function* writeJsonFile<
   yield* fileSystem.writeFileString(unfinished, text);
   yield* fileSystem.rename(unfinished, file);
 });
-
-export { readJson, writeJson };

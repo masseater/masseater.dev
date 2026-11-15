@@ -1,12 +1,16 @@
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 
-type Json = Schema.Json;
+/** @internal */
+export type Json = Schema.Json;
 
-type JsonObject = Readonly<Record<string, Json>>;
+/** @internal */
+export type JsonObject = Readonly<Record<string, Json>>;
 
-type Line = Readonly<{ raw: string; json: Option.Option<Json> }>;
+/** @internal */
+export type Line = Readonly<{ raw: string; json: Option.Option<Json> }>;
 
-type View = Readonly<{ text: string; owners: readonly number[] }>;
+/** @internal */
+export type View = Readonly<{ text: string; owners: readonly number[] }>;
 
 const JsonText = Schema.fromJsonString(Schema.Json);
 
@@ -14,11 +18,15 @@ const decodeJson = Schema.decodeUnknownOption(JsonText);
 
 const encodeJsonText = Schema.encodeEffect(JsonText);
 
-const encodeJson = (value: Json): Effect.Effect<string> => encodeJsonText(value).pipe(Effect.orDie);
+/** @internal */
+export const encodeJson = (value: Json): Effect.Effect<string> =>
+  encodeJsonText(value).pipe(Effect.orDie);
 
-const isJsonArray = (value: Json): value is readonly Json[] => Arr.isArray(value);
+/** @internal */
+export const isJsonArray = (value: Json): value is readonly Json[] => Arr.isArray(value);
 
-const isObject = (value: Json): value is JsonObject =>
+/** @internal */
+export const isObject = (value: Json): value is JsonObject =>
   typeof value === "object" && value !== null && !isJsonArray(value);
 
 const parseLine = (raw: string): Line => {
@@ -28,10 +36,12 @@ const parseLine = (raw: string): Line => {
   return { raw, json: decodeJson(raw) };
 };
 
-const parseLines = (text: string): readonly Line[] =>
+/** @internal */
+export const parseLines = (text: string): readonly Line[] =>
   pipe(Str.split("\n")(text), Arr.map(parseLine));
 
-const joinLines = (lines: readonly Line[]): string =>
+/** @internal */
+export const joinLines = (lines: readonly Line[]): string =>
   pipe(
     lines,
     Arr.map((line) => line.raw),
@@ -45,7 +55,8 @@ const isThinkingSignature = (parent: JsonObject, key: string): boolean =>
   (key === "signature" && parent["type"] === "thinking") ||
   (key === "data" && parent["type"] === "redacted_thinking");
 
-const isOpaque =
+/** @internal */
+export const isOpaque =
   (parent: JsonObject) =>
   (key: string): boolean =>
     isMediaData(parent, key) || isThinkingSignature(parent, key);
@@ -76,7 +87,8 @@ const ownStrings = (line: Line): readonly string[] =>
 
 const lineCount = (value: string): number => Str.split("\n")(value).length;
 
-const scanView = (lines: readonly Line[]): View => {
+/** @internal */
+export const scanView = (lines: readonly Line[]): View => {
   const owned = pipe(
     lines,
     Arr.flatMap((line, index) =>
@@ -120,24 +132,11 @@ const keptEntry =
 const keptOf = (original: Option.Option<JsonObject>): JsonObject =>
   pipe(KEPT_KEYS, Arr.flatMap(keptEntry(original)), Rec.fromEntries);
 
-const redactedLine = (line: Line): Effect.Effect<Line> => {
+/** @internal */
+export const redactedLine = (line: Line): Effect.Effect<Line> => {
   const kept: JsonObject = {
     type: "watashi-redacted-line",
     ...keptOf(line.json.pipe(Option.filter(isObject))),
   };
   return encodeJson(kept).pipe(Effect.map((raw) => ({ raw, json: Option.some(kept) })));
 };
-
-/** @internal */
-export {
-  encodeJson,
-  isJsonArray,
-  isObject,
-  isOpaque,
-  joinLines,
-  parseLines,
-  redactedLine,
-  scanView,
-};
-/** @internal */
-export type { Json, JsonObject, Line, View };

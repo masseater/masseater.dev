@@ -12,24 +12,24 @@ const SHARPER = 1.2;
 const OVERVIEW = 0;
 const BEST_VARIANT = 0;
 
-interface BlockAt {
+export interface BlockAt {
   readonly sheet: number;
   readonly column: number;
   readonly row: number;
   readonly request: boolean;
 }
 
-interface Sheets {
+export interface Sheets {
   readonly levels: readonly Level[];
   readonly block: (at: BlockAt) => Option.Option<HTMLImageElement>;
 }
 
-interface Sprites extends Sheets {
+export interface Sprites extends Sheets {
   readonly ready: Effect.Effect<void>;
   readonly levelFor: (devicePixels: number) => number;
 }
 
-interface SpriteSource {
+export interface SpriteSource {
   readonly visit: Visit;
   readonly onLoad: () => void;
 }
@@ -149,7 +149,7 @@ const levelFinder =
       () => levels.length,
     );
 
-const createSprites = (source: SpriteSource): Sprites => {
+export const createSprites = (source: SpriteSource): Sprites => {
   const { levels } = source.visit.mosaic;
   const sheets = pipe(levels, Array.map(sheetOf(source)));
   const overview = pipe(
@@ -167,6 +167,3 @@ const createSprites = (source: SpriteSource): Sprites => {
     levelFor: levelFinder(levels),
   };
 };
-
-export type { BlockAt, Sheets, SpriteSource, Sprites };
-export { createSprites };

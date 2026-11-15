@@ -39,7 +39,7 @@ const streamed = <Item>(
 const opened = (url: string): Effect.Effect<void, Failure> =>
   Effect.tryPromise({ try: () => openUrl(url), catch: () => ({ message: NOT_OPENED }) });
 
-const tauriYohaku: Yohaku = {
+export const tauriYohaku: Yohaku = {
   listManuscripts: () => call(() => commands.listManuscripts()),
   createManuscript: () => call(() => commands.createManuscript()),
   openManuscript: (id) => call(() => commands.openManuscript(id)),
@@ -73,5 +73,3 @@ const tauriYohaku: Yohaku = {
   checkUpdate: () => call(() => commands.checkUpdate()).pipe(Effect.map(Option.fromNullOr)),
   installUpdate: () => streamed((onProgress) => commands.installUpdate(new Channel(onProgress))),
 };
-
-export { tauriYohaku };

@@ -7,10 +7,10 @@ import {
   Status_StatusCode,
 } from "./generated/opentelemetry/proto/trace/v1/trace_pb.ts";
 
-type TailEvent = TailStream.TailEvent<TailStream.EventType>;
+export type TailEvent = TailStream.TailEvent<TailStream.EventType>;
 type Attribute = TailStream.Attribute;
 
-interface Draft {
+export interface Draft {
   readonly spanId: string;
   readonly parentSpanId: string;
   readonly name: string;
@@ -21,7 +21,7 @@ interface Draft {
   readonly status: Status_StatusCode;
 }
 
-interface LogDraft {
+export interface LogDraft {
   readonly spanId: string;
   readonly time: bigint;
   readonly severity: SeverityNumber;
@@ -29,7 +29,7 @@ interface LogDraft {
   readonly body: string;
 }
 
-interface Invocation {
+export interface Invocation {
   readonly traceId: string;
   readonly serviceName: string;
   readonly spans: Readonly<Record<string, Draft>>;
@@ -220,7 +220,7 @@ const step = (invocation: Invocation, tail: TailEvent): Invocation => {
   );
 };
 
-const invocationOf =
+export const invocationOf =
   (serviceName: string) =>
   (events: readonly TailEvent[]): Invocation => {
     let invocation: Invocation = { traceId: "", serviceName, spans: {}, logs: [] };
@@ -229,6 +229,3 @@ const invocationOf =
     }
     return invocation;
   };
-
-export { invocationOf };
-export type { Draft, Invocation, LogDraft, TailEvent };

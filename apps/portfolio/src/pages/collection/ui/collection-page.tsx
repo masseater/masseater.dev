@@ -8,7 +8,7 @@ import { CollectionView } from "./collection-view";
 
 const route = getRouteApi("/_stage/_site/$category/");
 
-const CollectionPage = (): ReactNode => {
+export const CollectionPage = (): ReactNode => {
   const { category, entries } = route.useLoaderData();
   const { activeTag, select } = useTagFilter({
     search: route.useSearch(),
@@ -25,5 +25,3 @@ const CollectionPage = (): ReactNode => {
     />
   );
 };
-
-export { CollectionPage };

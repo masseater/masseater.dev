@@ -31,7 +31,8 @@ const reportOf = (
   output: pipe(diagnostics, Arr.map(formatDiagnostic(relative)), Arr.join("\n")),
 });
 
-const checkSlices: {
+/** @internal */
+export const checkSlices: {
   (
     root: string,
     targets: readonly string[],
@@ -60,6 +61,3 @@ const checkSlices: {
       return reportOf(Arr.flatten(perTarget), (file) => path.relative(root, file));
     }),
 );
-
-/** @internal */
-export { checkSlices };

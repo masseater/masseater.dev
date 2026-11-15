@@ -7,7 +7,7 @@ import { keywordOf } from "#/shared/db/index.server";
 
 const SEARCH_LIMIT = 20;
 
-const search = Effect.fn("catalog.search")(function* search(raw: string | undefined) {
+export const search = Effect.fn("catalog.search")(function* search(raw: string | undefined) {
   const keyword = keywordOf(raw);
   if (Option.isNone(keyword)) {
     return { songs: [], videos: [], people: [] };
@@ -26,5 +26,3 @@ const search = Effect.fn("catalog.search")(function* search(raw: string | undefi
     people: Arr.take(found.people, SEARCH_LIMIT),
   };
 });
-
-export { search };

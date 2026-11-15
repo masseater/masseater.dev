@@ -100,7 +100,7 @@ const commentedTextOf = (context: Context, node: AstNode): Option.Option<string>
 const isCommented = ({ context: wanted }: ResolvedRule): boolean =>
   Predicate.isNotUndefined(wanted) && wanted.scope === "comment";
 
-const commentedSnippetOf: {
+export const commentedSnippetOf: {
   (node: AstNode, rule: ResolvedRule): (context: Context) => Option.Option<string>;
   (context: Context, node: AstNode, rule: ResolvedRule): Option.Option<string>;
 } = Fn.dual(
@@ -109,7 +109,7 @@ const commentedSnippetOf: {
     Option.flatMap(Option.liftPredicate(rule, isCommented), () => commentedTextOf(context, node)),
 );
 
-const lacksComment: {
+export const lacksComment: {
   (node: AstNode, rule: ResolvedRule): (context: Context) => boolean;
   (context: Context, node: AstNode, rule: ResolvedRule): boolean;
 } = Fn.dual(
@@ -118,7 +118,7 @@ const lacksComment: {
     isCommented(rule) && Option.isNone(commentedTextOf(context, node)),
 );
 
-const contextOf: {
+export const contextOf: {
   (node: AstNode, rule: RuleContext): (context: Context) => Option.Option<string>;
   (context: Context, node: AstNode, rule: RuleContext): Option.Option<string>;
 } = Fn.dual(
@@ -133,5 +133,3 @@ const contextOf: {
     return Option.liftPredicate(context.sourceCode.text, () => rule.scope === "file");
   },
 );
-
-export { commentedSnippetOf, contextOf, lacksComment };

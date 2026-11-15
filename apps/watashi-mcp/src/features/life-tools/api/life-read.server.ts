@@ -107,7 +107,7 @@ const readOne =
       Effect.map((entry) => ({ total: 1, items: [itemOf(today)(entry)] })),
     );
 
-const lifeRead = (input: LifeReadValue): Effect.Effect<Body, StoreFailure> =>
+export const lifeRead = (input: LifeReadValue): Effect.Effect<Body, StoreFailure> =>
   todayJst.pipe(
     Effect.flatMap((today) =>
       Option.match(Option.fromUndefinedOr(input.ref), {
@@ -116,5 +116,3 @@ const lifeRead = (input: LifeReadValue): Effect.Effect<Body, StoreFailure> =>
       }),
     ),
   );
-
-export { lifeRead };

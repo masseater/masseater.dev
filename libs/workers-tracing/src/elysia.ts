@@ -57,7 +57,7 @@ const install = (app: object, inner: Fetch): Handle => {
   return wrapped;
 };
 
-const Elysia: typeof PlainElysia = new Proxy(PlainElysia, {
+export const Elysia: typeof PlainElysia = new Proxy(PlainElysia, {
   construct: (_target, [config]: readonly ElysiaConfig<string>[]) => {
     const app = new PlainElysia(config);
     const compile = app.compile.bind(app);
@@ -78,4 +78,3 @@ const Elysia: typeof PlainElysia = new Proxy(PlainElysia, {
 
 export type { Handle, RouteHandler, RouteHandlers } from "./route-handlers.ts";
 export { routeHandlers } from "./route-handlers.ts";
-export { Elysia };

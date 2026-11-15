@@ -5,7 +5,7 @@ import type { Group } from "#/pages/seikin-index/model/groups";
 
 import { TechniqueLink } from "./technique-link";
 
-const TechniqueGroup = ({ group }: Readonly<{ group: Group }>): ReactNode => (
+export const TechniqueGroup = ({ group }: Readonly<{ group: Group }>): ReactNode => (
   <div className="flex flex-col gap-2">
     <h3 className="text-muted-foreground text-sm">{group.name}</h3>
     <ul className="flex flex-wrap gap-x-4 gap-y-1">
@@ -16,5 +16,3 @@ const TechniqueGroup = ({ group }: Readonly<{ group: Group }>): ReactNode => (
     </ul>
   </div>
 );
-
-export { TechniqueGroup };

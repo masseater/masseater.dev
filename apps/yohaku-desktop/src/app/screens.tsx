@@ -9,7 +9,7 @@ import { Pages } from "./pages.tsx";
 import { useResumed } from "./resume.ts";
 import { useShownOnceReady } from "./window.ts";
 
-const Screens = (): ReactNode => {
+export const Screens = (): ReactNode => {
   const loaded = Option.isSome(useOnboardingDone());
   const setup = useStepPending("setup");
   const resumed = useResumed();
@@ -28,5 +28,3 @@ const Screens = (): ReactNode => {
     </>
   );
 };
-
-export { Screens };

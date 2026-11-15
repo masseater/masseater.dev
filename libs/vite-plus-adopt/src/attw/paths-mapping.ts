@@ -17,12 +17,12 @@ import { tryFile } from "./resolver-files.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-type Loader<Found = PathAndExtension> = (
+export type Loader<Found = PathAndExtension> = (
   request: CandidateRequest,
   state: ResolutionState,
 ) => Option.Option<Found>;
 
-interface PathsRequest<Found> {
+export interface PathsRequest<Found> {
   readonly extensions: Extensions;
   readonly moduleName: string;
   readonly baseDirectory: string;
@@ -173,7 +173,7 @@ const trySubstitution = <Found>(
   );
 };
 
-const tryLoadModuleUsingPaths: {
+export const tryLoadModuleUsingPaths: {
   (
     state: ResolutionState,
   ): <Found>(context: PathsRequest<Found>) => Option.Option<Option.Option<Found>>;
@@ -204,6 +204,3 @@ const tryLoadModuleUsingPaths: {
     );
   },
 );
-
-export { tryLoadModuleUsingPaths };
-export type { Loader, PathsRequest };

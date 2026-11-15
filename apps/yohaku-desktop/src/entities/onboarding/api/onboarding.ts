@@ -8,7 +8,7 @@ import type { ClaudeStatus, OnboardingStep } from "#/shared/api";
 const DONE_KEY = ["onboarding"] as const;
 const CLAUDE_KEY = ["claude-status"] as const;
 
-const useOnboardingDone = (): Option.Option<readonly OnboardingStep[]> => {
+export const useOnboardingDone = (): Option.Option<readonly OnboardingStep[]> => {
   const yohaku = useYohaku();
   const { data } = useQuery(
     queryOptions({
@@ -19,13 +19,13 @@ const useOnboardingDone = (): Option.Option<readonly OnboardingStep[]> => {
   return Option.fromNullishOr(data);
 };
 
-const useStepPending = (step: OnboardingStep): boolean =>
+export const useStepPending = (step: OnboardingStep): boolean =>
   pipe(
     useOnboardingDone(),
     Option.exists((done) => !pipe(done, Array.contains(step))),
   );
 
-const useCompleteStep = (): ((step: OnboardingStep) => void) => {
+export const useCompleteStep = (): ((step: OnboardingStep) => void) => {
   const yohaku = useYohaku();
   const client = useQueryClient();
   const completed = useCallback(
@@ -37,13 +37,13 @@ const useCompleteStep = (): ((step: OnboardingStep) => void) => {
   return mutate;
 };
 
-type Checked = Readonly<{
+export type Checked = Readonly<{
   status: Option.Option<ClaudeStatus>;
   checking: boolean;
   recheck: () => void;
 }>;
 
-const useClaudeStatus = (): Checked => {
+export const useClaudeStatus = (): Checked => {
   const yohaku = useYohaku();
   const { data, isFetching, refetch } = useQuery(
     queryOptions({
@@ -56,6 +56,3 @@ const useClaudeStatus = (): Checked => {
   }, [refetch]);
   return { status: Option.fromNullishOr(data), checking: isFetching, recheck };
 };
-
-export { useClaudeStatus, useCompleteStep, useOnboardingDone, useStepPending };
-export type { Checked };

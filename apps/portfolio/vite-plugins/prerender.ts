@@ -6,13 +6,16 @@ import { site } from "#/shared/config/site.ts";
 
 const MODIFIED_TIME = /<meta property="article:modified_time" content="(?<date>[^"]+)"/u;
 
-type Page = Readonly<{ path: string; sitemap?: Readonly<Record<string, unknown>> | undefined }>;
+export type Page = Readonly<{
+  path: string;
+  sitemap?: Readonly<Record<string, unknown>> | undefined;
+}>;
 
 const sectionPaths = pipe(sections, Arr.map(sectionPath));
 
 const isUnindexed = ({ path }: Page): boolean => isUnindexedPath(path);
 
-const pages = [
+export const pages = [
   ...pipe(
     ["/", "/seikin-techniques/", ...sectionPaths],
     Arr.map((path) => ({ path })),
@@ -35,7 +38,10 @@ const modifiedTime = (html: string): Option.Option<string> =>
     Option.flatMap((groups) => Rec.get(groups, "date")),
   );
 
-const withLastmod = ({ page, html }: Readonly<{ page: Page; html: string }>): Page | undefined => {
+export const withLastmod = ({
+  page,
+  html,
+}: Readonly<{ page: Page; html: string }>): Page | undefined => {
   if (isUnindexed(page)) {
     return { ...page, sitemap: { ...page.sitemap, exclude: true } };
   }
@@ -46,7 +52,4 @@ const withLastmod = ({ page, html }: Readonly<{ page: Page; html: string }>): Pa
   );
 };
 
-const sitemap = { host: site.url, outputPath: site.sitemapFile } as const;
-
-export type { Page };
-export { pages, sitemap, withLastmod };
+export const sitemap = { host: site.url, outputPath: site.sitemapFile } as const;

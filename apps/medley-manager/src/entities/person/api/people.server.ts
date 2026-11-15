@@ -8,7 +8,7 @@ const byCreditsDescending = Order.flip(
   Order.mapInput(Order.Number, ({ creditCount }: Readonly<{ creditCount: number }>) => creditCount),
 );
 
-const listPeople = Effect.fn("catalog.people")(function* listPeople(
+export const listPeople = Effect.fn("catalog.people")(function* listPeople(
   keyword: Option.Option<string>,
 ) {
   const where = keyword.pipe(
@@ -54,5 +54,3 @@ const listPeople = Effect.fn("catalog.people")(function* listPeople(
     (rows) => Array.sort(rows, byCreditsDescending),
   );
 });
-
-export { listPeople };

@@ -85,10 +85,8 @@ const stopCommand = Command.make("stop", {}, () =>
   ),
 );
 
-const hookCommand = Command.make("hook").pipe(
+/** @internal */
+export const hookCommand = Command.make("hook").pipe(
   Command.withDescription("Claude Code のフックとして動く"),
   Command.withSubcommands([stopCommand]),
 );
-
-/** @internal */
-export { hookCommand };

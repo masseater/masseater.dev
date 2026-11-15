@@ -2,7 +2,7 @@ import { Array as Arr, pipe } from "effect";
 import { useCallback } from "react";
 import type { ChangeEventHandler, ReactNode } from "react";
 
-const DateSelect = ({
+export const DateSelect = ({
   label,
   dates,
   value,
@@ -39,5 +39,3 @@ const DateSelect = ({
     </label>
   );
 };
-
-export { DateSelect };

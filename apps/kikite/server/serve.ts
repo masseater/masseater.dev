@@ -10,11 +10,9 @@ import { routes } from "./routes.ts";
 
 const ANY_HOST = "0.0.0.0";
 
-const serveApi = (port: number): Layer.Layer<never, HttpServerError.ServeError> =>
+/** @internal */
+export const serveApi = (port: number): Layer.Layer<never, HttpServerError.ServeError> =>
   HttpRouter.serve(routes).pipe(
     Layer.provide(agentGenerator),
     Layer.provide(NodeHttpServer.layer(createServer, { port, host: ANY_HOST })),
   );
-
-/** @internal */
-export { serveApi };

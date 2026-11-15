@@ -10,11 +10,11 @@ import type { ModelError } from "./model-error.ts";
 import type { OcrError } from "./ocr-error.ts";
 import { readFragments } from "./ocr.ts";
 
-const METHODS = ["ocr-decision", "ocr-reread-decision", "image-generation"] as const;
+export const METHODS = ["ocr-decision", "ocr-reread-decision", "image-generation"] as const;
 
-type Method = (typeof METHODS)[number];
+export type Method = (typeof METHODS)[number];
 
-interface ExtractRequest {
+export interface ExtractRequest {
   readonly image: Uint8Array;
   readonly fields: readonly Field[];
   readonly method: Method;
@@ -53,7 +53,7 @@ const decide = Effect.fn("ocr-decide.extract.decide")(function* decide(
   return extraction;
 });
 
-const extract = (
+export const extract = (
   request: ExtractRequest,
 ): Effect.Effect<Extraction, ImageError | ModelError | OcrError, ModelApi> => {
   if (request.method === "image-generation") {
@@ -61,6 +61,3 @@ const extract = (
   }
   return decide(request, request.method === "ocr-reread-decision");
 };
-
-export { METHODS, extract };
-export type { ExtractRequest, Method };

@@ -25,7 +25,8 @@ const Registered = Schema.Struct({ client_id: Schema.String });
 
 type Discovered = typeof ServerMetadata.Type & Readonly<{ resource: string }>;
 
-type Login = Readonly<{
+/** @internal */
+export type Login = Readonly<{
   home: string;
   baseUrl: string;
   announce: (url: string) => Effect.Effect<void>;
@@ -148,7 +149,10 @@ const authorize = (
     return { metadata, clientId, redirectUri, verifier, code: received };
   });
 
-const login = (request: Login): Effect.Effect<OAuthCredentials, CredentialsError, Services> =>
+/** @internal */
+export const login = (
+  request: Login,
+): Effect.Effect<OAuthCredentials, CredentialsError, Services> =>
   Effect.gen(function* signIn() {
     const metadata = yield* discover(request.baseUrl);
     const authorized = yield* authorize(request, metadata);
@@ -156,8 +160,3 @@ const login = (request: Login): Effect.Effect<OAuthCredentials, CredentialsError
     yield* saveCredentials({ home: request.home, credentials });
     return credentials;
   }).pipe(Effect.scoped);
-
-/** @internal */
-export { login };
-/** @internal */
-export type { Login };

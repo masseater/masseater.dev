@@ -7,9 +7,9 @@ import type { Focus } from "./draft";
 import { traceOf } from "./trace";
 import type { Answer, Phase, Row, Trace } from "./trace";
 
-type Tone = "none" | "pending" | "miss" | "hit" | "injection";
+export type Tone = "none" | "pending" | "miss" | "hit" | "injection";
 
-interface Piece {
+export interface Piece {
   readonly start: number;
   readonly text: string;
   readonly tone: Tone;
@@ -29,7 +29,7 @@ const LAST = -1;
 
 const byDepth = Order.mapInput(Order.Number, (row: Row) => row.depth);
 
-const toneOf = (answer: Answer): Tone => {
+export const toneOf = (answer: Answer): Tone => {
   if (answer.status === "pending") {
     return "pending";
   }
@@ -87,7 +87,7 @@ const toneAt = (trace: Trace, focus: Focus, at: number): Tone => {
 
 const NOT_RUN = traceOf([]);
 
-const piecesOf = ({
+export const piecesOf = ({
   text,
   run,
   focus,
@@ -117,6 +117,3 @@ const piecesOf = ({
     })),
   );
 };
-
-export type { Piece, Tone };
-export { piecesOf, toneOf };

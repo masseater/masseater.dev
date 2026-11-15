@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const MainBox = ({
+export const MainBox = ({
   title,
   children,
 }: Readonly<{ title: string; children: ReactNode }>): ReactNode => (
@@ -11,5 +11,3 @@ const MainBox = ({
     <div className="p-3">{children}</div>
   </section>
 );
-
-export { MainBox };

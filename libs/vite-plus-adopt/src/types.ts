@@ -8,11 +8,11 @@ import type { defineConfig as defineSteigerConfig } from "steiger";
 
 import type { DependencyField } from "./workspace.ts";
 
-interface CommitlintConfig extends Readonly<CommitlintUserConfig> {}
+export interface CommitlintConfig extends Readonly<CommitlintUserConfig> {}
 
-type SteigerConfig = readonly ReturnType<typeof defineSteigerConfig>[number][];
+export type SteigerConfig = readonly ReturnType<typeof defineSteigerConfig>[number][];
 
-interface BetterleaksRule {
+export interface BetterleaksRule {
   readonly id: string;
   readonly description?: string;
   readonly keywords?: readonly string[];
@@ -29,7 +29,7 @@ interface BetterleaksRule {
   readonly revoke?: string;
 }
 
-interface BetterleaksConfig {
+export interface BetterleaksConfig {
   readonly title?: string;
   readonly description?: string;
   readonly minVersion?: string;
@@ -44,39 +44,39 @@ interface BetterleaksConfig {
   readonly ignoredSecrets?: readonly string[];
 }
 
-interface TextlintConfig extends TextlintRcConfig {
+export interface TextlintConfig extends TextlintRcConfig {
   readonly ignores?: readonly string[];
 }
 
-interface MarkdownlintConfig {
+export interface MarkdownlintConfig {
   readonly config?: MarkdownlintConfiguration;
   readonly customRules?: readonly MarkdownlintRule[];
   readonly ignores?: readonly string[];
 }
 
-interface SteigerSection {
+export interface SteigerSection {
   readonly paths: readonly string[];
   readonly rules: SteigerConfig;
 }
 
-type FallowConfig = Readonly<Record<string, unknown>>;
+export type FallowConfig = Readonly<Record<string, unknown>>;
 
-type ManifestField = DependencyField;
+export type ManifestField = DependencyField;
 
-interface AllowedDependencies {
+export interface AllowedDependencies {
   readonly workspaces: readonly string[];
   readonly dependencies: readonly string[];
   readonly fields?: readonly ManifestField[];
 }
 
-interface DependencyRules {
+export interface DependencyRules {
   readonly allowed?: Readonly<Record<string, AllowedDependencies>>;
   readonly banned?: Readonly<Record<string, readonly string[]>>;
   readonly exactDependencies?: Readonly<Record<string, readonly string[]>>;
   readonly peerRanges?: "identical" | "intersect";
 }
 
-interface ToolSections {
+export interface ToolSections {
   readonly betterleaks?: BetterleaksConfig;
   readonly commitlint?: CommitlintConfig;
   readonly dependencyRules?: DependencyRules;
@@ -90,20 +90,4 @@ declare module "vite" {
   interface UserConfig extends ToolSections {}
 }
 
-type ToolSection = keyof ToolSections;
-
-export type {
-  AllowedDependencies,
-  ManifestField,
-  BetterleaksConfig,
-  BetterleaksRule,
-  CommitlintConfig,
-  DependencyRules,
-  FallowConfig,
-  MarkdownlintConfig,
-  SteigerConfig,
-  SteigerSection,
-  TextlintConfig,
-  ToolSection,
-  ToolSections,
-};
+export type ToolSection = keyof ToolSections;

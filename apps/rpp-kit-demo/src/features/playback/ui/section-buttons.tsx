@@ -5,7 +5,7 @@ import { song } from "#/entities/song";
 
 import { SectionButton } from "./section-button";
 
-const SectionButtons = (): ReactNode => (
+export const SectionButtons = (): ReactNode => (
   <div className="flex flex-wrap gap-1">
     {pipe(
       song.sections,
@@ -13,5 +13,3 @@ const SectionButtons = (): ReactNode => (
     )}
   </div>
 );
-
-export { SectionButtons };

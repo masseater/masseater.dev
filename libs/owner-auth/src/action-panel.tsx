@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import type { ButtonComponent } from "./button-component";
 
-const ActionPanel = ({
+export const ActionPanel = ({
   button: Button,
   title,
   label,
@@ -38,5 +38,3 @@ const ActionPanel = ({
     </section>
   );
 };
-
-export { ActionPanel };

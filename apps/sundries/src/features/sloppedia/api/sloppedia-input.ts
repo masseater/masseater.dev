@@ -68,7 +68,7 @@ const Infobox = Schema.Array(InfoboxRow)
   .check(Schema.isMaxLength(MAX_INFOBOX))
   .annotate({ description: "右上の情報欄。ソフトウェアや組織などで要るときだけ付ける" });
 
-const ArticleInput = Schema.Struct({
+export const ArticleInput = Schema.Struct({
   slug: Slug,
   title: Title,
   description: Description,
@@ -76,5 +76,3 @@ const ArticleInput = Schema.Struct({
   tags: Schema.optionalKey(Tags),
   infobox: Schema.optionalKey(Infobox),
 });
-
-export { ArticleInput };

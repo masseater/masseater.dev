@@ -111,12 +111,10 @@ const rendererOf = (parts: Parts): Renderer => {
   };
 };
 
-const createGpuRenderer = (
+export const createGpuRenderer = (
   target: Readonly<Target & { accent: string }>,
 ): Effect.Effect<Option.Option<Renderer>> =>
   Effect.map(
     acquireGpu(target),
     Option.map((gpu) => rendererOf(partsOf(gpu, target))),
   );
-
-export { createGpuRenderer };

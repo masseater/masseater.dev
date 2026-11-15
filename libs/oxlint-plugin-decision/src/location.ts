@@ -21,22 +21,22 @@ const FIRST_LINE = 1;
 const MINIMUM_WIDTH = 1;
 const UNKNOWN_CHOICE = "unknown";
 
-const sourceLines = (text: string): readonly string[] =>
+export const sourceLines = (text: string): readonly string[] =>
   Str.split(text, /\r\n|[\n\r\u2028\u2029]/u);
 
-type LocatedMatch = RequestMatch & {
+export type LocatedMatch = RequestMatch & {
   readonly rule: { readonly question: string; readonly location: RuleLocation };
 };
 
-const locates = (match: RequestMatch): match is LocatedMatch =>
+export const locates = (match: RequestMatch): match is LocatedMatch =>
   Predicate.isNotUndefined(match.rule.location) && !match.truncated;
 
-interface NumberedLine {
+export interface NumberedLine {
   readonly text: string;
   readonly line: number;
 }
 
-const EVERY_LINE: LineRange = { start: FIRST_LINE, end: Number.POSITIVE_INFINITY };
+export const EVERY_LINE: LineRange = { start: FIRST_LINE, end: Number.POSITIVE_INFINITY };
 
 const isWithin = (line: number, within: LineRange): boolean =>
   Num.between(line, { minimum: within.start, maximum: within.end });
@@ -58,13 +58,13 @@ const rangeOf = (group: Arr.NonEmptyReadonlyArray<NumberedLine>): LineRange => (
   end: Arr.lastNonEmpty(group).line,
 });
 
-const numberedLines = (snippet: string): readonly NumberedLine[] =>
+export const numberedLines = (snippet: string): readonly NumberedLine[] =>
   pipe(
     sourceLines(snippet),
     Arr.map((text, index) => ({ text, line: Num.sum(index, FIRST_LINE) })),
   );
 
-const locationCandidates: {
+export const locationCandidates: {
   (within: LineRange): (snippet: string) => Readonly<Record<string, LineRange>>;
   (snippet: string, within: LineRange): Readonly<Record<string, LineRange>>;
 } = Fn.dual(
@@ -87,7 +87,7 @@ const locationCandidates: {
   },
 );
 
-const locationQuestion: {
+export const locationQuestion: {
   (
     ref: string,
     candidates: Readonly<Record<string, LineRange>>,
@@ -118,9 +118,9 @@ const locationQuestion: {
   }),
 );
 
-type ChoiceCriteria = ChoiceQuestion["criteria"];
+export type ChoiceCriteria = ChoiceQuestion["criteria"];
 
-const validChoice: {
+export const validChoice: {
   (criteria: ChoiceCriteria): (answer: Answer | undefined) => boolean;
   (answer: Answer | undefined, criteria: ChoiceCriteria): boolean;
 } = Fn.dual(DATA_FIRST_ARITY, (answer: Answer | undefined, criteria: ChoiceCriteria): boolean =>
@@ -130,7 +130,7 @@ const validChoice: {
   ),
 );
 
-const selectedLocation: {
+export const selectedLocation: {
   (
     candidates: Readonly<Record<string, LineRange>>,
     cutoff: number,
@@ -157,7 +157,7 @@ const selectedLocation: {
     ),
 );
 
-const locationOfLine: {
+export const locationOfLine: {
   (line: number): (snippet: string) => Location;
   (snippet: string, line: number): Location;
 } = Fn.dual(DATA_FIRST_ARITY, (snippet: string, line: number): Location => {
@@ -170,16 +170,3 @@ const locationOfLine: {
     end: { line, column: Str.trimEnd(text).length },
   };
 });
-
-export {
-  EVERY_LINE,
-  locates,
-  locationCandidates,
-  locationOfLine,
-  locationQuestion,
-  numberedLines,
-  selectedLocation,
-  sourceLines,
-  validChoice,
-};
-export type { ChoiceCriteria, LocatedMatch, NumberedLine };

@@ -11,7 +11,7 @@ import { Note } from "#/shared/ui/note";
 import { VideoPlayer } from "./video-player";
 import { WatchLink } from "./watch-link";
 
-const VideoHeader = (): ReactNode => {
+export const VideoHeader = (): ReactNode => {
   const video = useVideo();
   const facts = useMemo(
     () => [video.uploader, Option.getOrNull(formatDate(video.publishedAt)), video.videoId],
@@ -33,5 +33,3 @@ const VideoHeader = (): ReactNode => {
     </header>
   );
 };
-
-export { VideoHeader };

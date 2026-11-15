@@ -9,7 +9,7 @@ const devtoolsPlugins = [
   { name: "TanStack Query", render: <ReactQueryDevtoolsPanel /> },
 ];
 
-const DocumentShell = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
+export const DocumentShell = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
   <html lang="ja">
     <head>
       <HeadContent />
@@ -21,5 +21,3 @@ const DocumentShell = ({ children }: Readonly<{ children: ReactNode }>): ReactNo
     </body>
   </html>
 );
-
-export { DocumentShell };

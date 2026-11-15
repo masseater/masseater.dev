@@ -68,17 +68,17 @@ const Example = Schema.Struct({
   title: Schema.String,
   width: Schema.optionalKey(Schema.Finite),
 });
-const Examples = Schema.Record(Schema.String, Example);
-const ExamplesFile = Schema.fromJsonString(Examples, INDENT);
+export const Examples = Schema.Record(Schema.String, Example);
+export const ExamplesFile = Schema.fromJsonString(Examples, INDENT);
 
 type StepValue = typeof Step.Type;
 type ImageInfoValue = typeof ImageInfo.Type;
-type ExampleValue = typeof Example.Type;
-type Licensed = Omit<ExampleValue, "title">;
+export type ExampleValue = typeof Example.Type;
+export type Licensed = Omit<ExampleValue, "title">;
 
 const listOf = <Item>(items: readonly Item[] | undefined): readonly Item[] => items ?? [];
 
-const underscored = Str.replaceAll(" ", "_");
+export const underscored = Str.replaceAll(" ", "_");
 
 const query = Effect.fn("wikimedia.query")(function* query<Codec extends Schema.Constraint>(
   codec: Codec,
@@ -151,7 +151,7 @@ const imagesOfPage = ({
 };
 
 /** @internal */
-const pageImages = Effect.fn("pageImages")(function* pageImages(
+export const pageImages = Effect.fn("pageImages")(function* pageImages(
   lang: string,
   titles: readonly string[],
 ) {
@@ -236,7 +236,7 @@ const filesOfPage = ({
 };
 
 /** @internal */
-const commons = Effect.fn("commons")(function* commons(files: readonly string[]) {
+export const commons = Effect.fn("commons")(function* commons(files: readonly string[]) {
   const pages = yield* pipe(
     Arr.chunksOf(files, BATCH),
     Effect.forEach((batch) => {
@@ -255,6 +255,3 @@ const commons = Effect.fn("commons")(function* commons(files: readonly string[])
   );
   return pipe(pages, Arr.flatMap(filesOfPage), Rec.fromEntries);
 });
-
-export { Examples, ExamplesFile, commons, pageImages, underscored };
-export type { ExampleValue, Licensed };

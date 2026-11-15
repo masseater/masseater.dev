@@ -4,11 +4,11 @@ import { Effect, Option, pipe } from "effect";
 
 import { useYohaku } from "#/shared/api";
 
-type Manuscripts = readonly (typeof Manuscript.Type)[];
+export type Manuscripts = readonly (typeof Manuscript.Type)[];
 
 const NONE_YET: Manuscripts = [];
 
-const useManuscripts = (): Manuscripts => {
+export const useManuscripts = (): Manuscripts => {
   const yohaku = useYohaku();
   const { data } = useQuery(
     queryOptions({
@@ -21,6 +21,3 @@ const useManuscripts = (): Manuscripts => {
     Option.getOrElse(() => NONE_YET),
   );
 };
-
-export { useManuscripts };
-export type { Manuscripts };

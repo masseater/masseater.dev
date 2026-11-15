@@ -8,7 +8,7 @@ import { matching, useQueryText } from "#/features/pick-language/model/search";
 import { DetectChoice } from "./detect-choice.tsx";
 import { LanguageChoice } from "./language-choice.tsx";
 
-const PickerChoices = ({ side }: Readonly<{ side: Side }>): ReactNode => (
+export const PickerChoices = ({ side }: Readonly<{ side: Side }>): ReactNode => (
   <div className="columns-2 gap-x-2 p-3 sm:columns-3 lg:columns-5">
     <DetectChoice side={side} />
     {pipe(
@@ -19,5 +19,3 @@ const PickerChoices = ({ side }: Readonly<{ side: Side }>): ReactNode => (
     )}
   </div>
 );
-
-export { PickerChoices };

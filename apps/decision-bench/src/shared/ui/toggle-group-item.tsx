@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 
 import { toggleVariants } from "./toggle-variants";
 
-const ToggleGroupItem = ({
+export const ToggleGroupItem = ({
   value,
   children,
 }: Readonly<{ value: string; children: ReactNode }>): ReactNode => (
@@ -21,5 +21,3 @@ const ToggleGroupItem = ({
     {children}
   </ToggleGroupPrimitive.Item>
 );
-
-export { ToggleGroupItem };

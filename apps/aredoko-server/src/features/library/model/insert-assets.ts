@@ -5,7 +5,7 @@ import { kindOf, searchableText } from "#/entities/package/index.ts";
 import { RENDER } from "#/shared/database/index.ts";
 import { firstId } from "#/shared/sql/index.ts";
 
-interface AssetInput {
+export interface AssetInput {
   readonly guid: string;
   readonly pathname: string;
   readonly previews: readonly Uint8Array[];
@@ -20,7 +20,7 @@ interface OneAsset {
   readonly asset: AssetInput;
 }
 
-const plainAsset = ({
+export const plainAsset = ({
   guid,
   pathname,
   previews,
@@ -67,7 +67,7 @@ const insertAsset = Effect.fn("insertAsset")(function* insertOneAsset({
 });
 
 /** @internal */
-const insertAssets = Effect.fn("insertAssets")(function* insertAllAssets({
+export const insertAssets = Effect.fn("insertAssets")(function* insertAllAssets({
   packageId,
   packageName,
   assets,
@@ -81,6 +81,3 @@ const insertAssets = Effect.fn("insertAssets")(function* insertAllAssets({
     Effect.forEach((asset) => insertAsset({ packageId, packageName, asset })),
   );
 });
-
-export { insertAssets, plainAsset };
-export type { AssetInput };

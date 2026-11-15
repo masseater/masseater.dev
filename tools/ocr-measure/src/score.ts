@@ -1,7 +1,7 @@
 import type { FieldValue, INVOICE_FIELDS } from "@r_masseater/ocr-decide";
 import { Array as Arr, Equivalence, Option, String as Str, pipe } from "effect";
 
-type FieldId = (typeof INVOICE_FIELDS)[number]["id"];
+export type FieldId = (typeof INVOICE_FIELDS)[number]["id"];
 
 const REIWA_OFFSET = 2018;
 
@@ -60,12 +60,9 @@ const matches = (field: FieldId, answer: string, truth: string): boolean => {
   return Str.includes(compact(truth))(compact(answer));
 };
 
-const isCorrect = ({
+export const isCorrect = ({
   field,
   value,
   truth,
 }: Readonly<{ field: FieldId; value: FieldValue; truth: string }>): boolean =>
   value.status === "found" && matches(field, value.text, truth);
-
-export { isCorrect };
-export type { FieldId };

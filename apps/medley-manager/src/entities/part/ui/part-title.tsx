@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { Named } from "#/entities/part/lib/part";
 import { SongLink } from "#/entities/song/@x/part";
 
-const PartTitle = ({
+export const PartTitle = ({
   song,
   label,
 }: Readonly<{ song: Named | null; label: string | null }>): ReactNode =>
@@ -19,5 +19,3 @@ const PartTitle = ({
       </span>
     ),
   });
-
-export { PartTitle };

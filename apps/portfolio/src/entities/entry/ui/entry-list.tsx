@@ -17,7 +17,7 @@ const starsOf =
       Option.map((counts) => Option.getOrElse(Record.get(counts, entry.slug), () => NO_STARS)),
     );
 
-const EntryList = ({
+export const EntryList = ({
   entries,
   starCounts,
 }: Readonly<{
@@ -46,5 +46,3 @@ const EntryList = ({
     </ul>
   );
 };
-
-export { EntryList };

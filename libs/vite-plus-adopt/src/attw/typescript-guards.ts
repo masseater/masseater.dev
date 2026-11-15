@@ -74,7 +74,7 @@ const getNameOfAccessExpression = (node: AccessExpression): Node => {
   return skipParentheses(node.argumentExpression);
 };
 
-const nodeFunctions = {
+export const nodeFunctions = {
   findAncestor,
   forEachChild: (node: Node, visit: (child: Node) => unknown): unknown => node.forEachChild(visit),
   getNameOfAccessExpression,
@@ -101,5 +101,3 @@ const nodeFunctions = {
   isVariableDeclaration: toleratingAbsence(isVariableDeclaration),
   skipParentheses,
 };
-
-export { nodeFunctions };

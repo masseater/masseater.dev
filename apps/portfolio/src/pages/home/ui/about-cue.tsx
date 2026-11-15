@@ -4,7 +4,7 @@ import { ABOUT_ID, ABOUT_TITLE } from "#/pages/home/model/about";
 
 const DOWN = "↓";
 
-const AboutCue = (): ReactNode => (
+export const AboutCue = (): ReactNode => (
   <a
     className="stage-link font-display absolute inset-x-0 bottom-6 mx-auto flex w-fit flex-col items-center gap-1 px-2 py-3 text-xs tracking-widest"
     href={`#${ABOUT_ID}`}
@@ -15,5 +15,3 @@ const AboutCue = (): ReactNode => (
     </span>
   </a>
 );
-
-export { AboutCue };

@@ -19,7 +19,8 @@ import { saveOffset, savedOffset } from "./offsets.ts";
 import { MAX_CHUNK_BYTES, readChunk } from "./transcript.ts";
 import type { Chunk } from "./transcript.ts";
 
-type PushTarget = Readonly<{
+/** @internal */
+export type PushTarget = Readonly<{
   kind: ConversationKind;
   session: string;
   file: string;
@@ -31,16 +32,23 @@ type PushTarget = Readonly<{
 
 type Push = Readonly<{ target: PushTarget; detect: Detector; home: string; maxChunkBytes: number }>;
 
-type PushResult = Readonly<{
+/** @internal */
+export type PushResult = Readonly<{
   chunks: number;
   bytes: number;
   redactions: number;
   committed: number;
 }>;
 
-type PushError = JsonError | WatashiFailed | PlatformError.PlatformError | Schema.SchemaError;
+/** @internal */
+export type PushError =
+  | JsonError
+  | WatashiFailed
+  | PlatformError.PlatformError
+  | Schema.SchemaError;
 
-type PushServices = FileSystem.FileSystem | Path.Path | HttpClient.HttpClient;
+/** @internal */
+export type PushServices = FileSystem.FileSystem | Path.Path | HttpClient.HttpClient;
 
 type Progress = PushResult & Readonly<{ conflicts: number }>;
 
@@ -142,7 +150,8 @@ const loop = (push: Push, progress: Progress): Effect.Effect<Progress, PushError
     ),
   );
 
-const pushFile = (
+/** @internal */
+export const pushFile = (
   push: Readonly<{ target: PushTarget; detect: Detector; home: string; maxChunkBytes?: number }>,
 ): Effect.Effect<PushResult, PushError, PushServices> => {
   const resolved: Push = { ...push, maxChunkBytes: push.maxChunkBytes ?? MAX_CHUNK_BYTES };
@@ -158,8 +167,3 @@ const pushFile = (
     })),
   );
 };
-
-/** @internal */
-export { pushFile };
-/** @internal */
-export type { PushError, PushResult, PushServices, PushTarget };

@@ -3,7 +3,7 @@ import { Array, Option, String, pipe } from "effect";
 
 import { partsOf } from "#/entities/package/index.ts";
 
-const nameOf = (path: string): string =>
+export const nameOf = (path: string): string =>
   pipe(
     partsOf(path),
     Array.last,
@@ -17,7 +17,7 @@ const boothWords = ({ name, shop, tags }: typeof BoothItem.Type): readonly strin
   ...tags,
 ];
 
-const labelOf = ({
+export const labelOf = ({
   name,
   booth,
 }: {
@@ -31,5 +31,3 @@ const labelOf = ({
     Array.prepend(name),
     Array.join(" "),
   );
-
-export { labelOf, nameOf };

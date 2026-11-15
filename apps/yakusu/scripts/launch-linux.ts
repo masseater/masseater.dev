@@ -27,13 +27,11 @@ const log = Effect.gen(function* log() {
   return path.join(home, ".local", "share", IDENTIFIER, "logs", LOG);
 });
 
-const linux: Target = {
+/** @internal */
+export const linux: Target = {
   start,
   log,
   screenshot: (file) =>
     Effect.asVoid(succeed({ file: "import", args: ["-window", "root", file], env: ENV })),
   processes: capture({ file: "pgrep", args: ["-fa", "yakusu|llama-server"] }),
 };
-
-/** @internal */
-export { linux };

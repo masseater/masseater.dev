@@ -40,7 +40,9 @@ const meanAt =
       { onEmpty: (): Vector => [], onNonEmpty: meanOf },
     );
 
-const embedTexts = (texts: readonly string[]): Effect.Effect<readonly Vector[], UpstreamFailed> => {
+export const embedTexts = (
+  texts: readonly string[],
+): Effect.Effect<readonly Vector[], UpstreamFailed> => {
   const owners = pipe(
     texts,
     Arr.flatMap((text, index) =>
@@ -62,5 +64,3 @@ const embedTexts = (texts: readonly string[]): Effect.Effect<readonly Vector[], 
     }),
   );
 };
-
-export { embedTexts };

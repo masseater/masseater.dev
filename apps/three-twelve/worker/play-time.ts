@@ -4,7 +4,7 @@ import { PLAY_AT } from "#config";
 
 const LATE_START = { minutes: 10 } as const;
 
-const nextPlayAt = (now: DateTime.Utc): number => {
+export const nextPlayAt = (now: DateTime.Utc): number => {
   const today = DateTime.setParts(now, {
     hour: PLAY_AT.hour,
     minute: PLAY_AT.minute,
@@ -14,5 +14,3 @@ const nextPlayAt = (now: DateTime.Utc): number => {
   const missed = DateTime.isLessThan(DateTime.add(today, LATE_START), now);
   return DateTime.toEpochMillis(DateTime.add(today, { days: Number(missed) }));
 };
-
-export { nextPlayAt };

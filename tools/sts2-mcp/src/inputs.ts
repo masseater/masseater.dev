@@ -2,13 +2,13 @@ import { Action } from "@masseater.dev/sts2-protocol";
 import { Schema } from "effect";
 
 const MAX_INSTANCES = 4;
-const MIN_INSTANCES = 1;
-const HOST_INSTANCE = 0;
+export const MIN_INSTANCES = 1;
+export const HOST_INSTANCE = 0;
 const LAST_INSTANCE = MAX_INSTANCES - MIN_INSTANCES;
 const MIN_LOG_LINES = 1;
 const MAX_LOG_LINES = 2000;
-const DEFAULT_LOG_LINES = 200;
-const DEFAULT_REF = "main";
+export const DEFAULT_LOG_LINES = 200;
+export const DEFAULT_REF = "main";
 
 const InstanceRange = Schema.isBetween({ minimum: HOST_INSTANCE, maximum: LAST_INSTANCE });
 
@@ -55,41 +55,36 @@ const LogsInput = Schema.Struct({
 
 const EmptyInput = Schema.Struct({});
 
-const DEPLOY_SCHEMA = DeployInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
-
-const LAUNCH_SCHEMA = LaunchInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
-
-const INSTANCE_SCHEMA = InstanceInput.pipe(
+export const DEPLOY_SCHEMA = DeployInput.pipe(
   Schema.toStandardSchemaV1,
   Schema.toStandardJSONSchemaV1,
 );
 
-const ACT_SCHEMA = ActInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+export const LAUNCH_SCHEMA = LaunchInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+);
 
-const LOGS_SCHEMA = LogsInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+export const INSTANCE_SCHEMA = InstanceInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+);
 
-const EMPTY_SCHEMA = EmptyInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+export const ACT_SCHEMA = ActInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
-type DeployRequest = typeof DeployInput.Type;
+export const LOGS_SCHEMA = LogsInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
-type LaunchRequest = typeof LaunchInput.Type;
+export const EMPTY_SCHEMA = EmptyInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+);
 
-type InstanceRequest = typeof InstanceInput.Type;
+export type DeployRequest = typeof DeployInput.Type;
 
-type ActRequest = typeof ActInput.Type;
+export type LaunchRequest = typeof LaunchInput.Type;
 
-type LogsRequest = typeof LogsInput.Type;
+export type InstanceRequest = typeof InstanceInput.Type;
 
-export {
-  ACT_SCHEMA,
-  DEFAULT_LOG_LINES,
-  DEFAULT_REF,
-  DEPLOY_SCHEMA,
-  EMPTY_SCHEMA,
-  HOST_INSTANCE,
-  INSTANCE_SCHEMA,
-  LAUNCH_SCHEMA,
-  LOGS_SCHEMA,
-  MIN_INSTANCES,
-};
-export type { ActRequest, DeployRequest, InstanceRequest, LaunchRequest, LogsRequest };
+export type ActRequest = typeof ActInput.Type;
+
+export type LogsRequest = typeof LogsInput.Type;

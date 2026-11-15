@@ -180,25 +180,23 @@ const metricsOf = ({
     ),
   );
 
-const decodeSpans = (
+export const decodeSpans = (
   normalized: unknown,
 ): Effect.Effect<readonly ReceivedSpan[], Schema.SchemaError> =>
   Schema.decodeUnknownEffect(TraceRequestSchema)(normalized).pipe(
     Effect.map(({ resourceSpans }) => pipe(resourceSpans, Array.flatMap(spansOf))),
   );
 
-const decodeLogs = (
+export const decodeLogs = (
   normalized: unknown,
 ): Effect.Effect<readonly ReceivedLogRecord[], Schema.SchemaError> =>
   Schema.decodeUnknownEffect(LogsRequestSchema)(normalized).pipe(
     Effect.map(({ resourceLogs }) => pipe(resourceLogs, Array.flatMap(logsOf))),
   );
 
-const decodeMetrics = (
+export const decodeMetrics = (
   normalized: unknown,
 ): Effect.Effect<readonly ReceivedMetric[], Schema.SchemaError> =>
   Schema.decodeUnknownEffect(MetricsRequestSchema)(normalized).pipe(
     Effect.map(({ resourceMetrics }) => pipe(resourceMetrics, Array.flatMap(metricsOf))),
   );
-
-export { decodeLogs, decodeMetrics, decodeSpans };

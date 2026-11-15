@@ -5,7 +5,7 @@ import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
 import { SiteMain } from "./site-main";
 
-const SiteLayout = (): ReactNode => (
+export const SiteLayout = (): ReactNode => (
   <>
     <SiteHeader />
     <SiteMain />
@@ -13,5 +13,3 @@ const SiteLayout = (): ReactNode => (
     <FeedLink />
   </>
 );
-
-export { SiteLayout };

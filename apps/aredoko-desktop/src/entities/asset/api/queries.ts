@@ -23,14 +23,14 @@ const SEARCH_LIMIT = 120;
 const PAGE_SIZE = 120;
 const FIRST_PAGE = 0;
 
-type Kind = typeof AssetKind.Type;
+export type Kind = typeof AssetKind.Type;
 
-interface AssetPage {
+export interface AssetPage {
   readonly assets: readonly (typeof SearchResult.Type)[];
   readonly total: number;
 }
 
-const usePackages = (): UseQueryResult<readonly (typeof Package.Type)[]> =>
+export const usePackages = (): UseQueryResult<readonly (typeof Package.Type)[]> =>
   useQuery(
     queryOptions({
       queryKey: PACKAGES_KEY,
@@ -39,7 +39,7 @@ const usePackages = (): UseQueryResult<readonly (typeof Package.Type)[]> =>
     }),
   );
 
-const usePackage = (id: Option.Option<number>): Option.Option<typeof Package.Type> => {
+export const usePackage = (id: Option.Option<number>): Option.Option<typeof Package.Type> => {
   const { data } = usePackages();
   return pipe(
     id,
@@ -65,7 +65,7 @@ const nextOffset = ({ total }: AssetPage, pages: readonly AssetPage[]): number |
   );
 };
 
-const useAssets = ({
+export const useAssets = ({
   packageId,
   kinds,
 }: Readonly<{
@@ -88,7 +88,7 @@ const useAssets = ({
     }),
   );
 
-const useLoadNext = ({
+export const useLoadNext = ({
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
@@ -103,7 +103,7 @@ const useLoadNext = ({
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-const useSearch = ({
+export const useSearch = ({
   query,
   kinds,
   packageId,
@@ -123,7 +123,7 @@ const useSearch = ({
   );
 };
 
-const usePreview = (assetId: number): UseQueryResult<string> =>
+export const usePreview = (assetId: number): UseQueryResult<string> =>
   useQuery(
     queryOptions({
       queryKey: ["preview", assetId],
@@ -131,6 +131,3 @@ const usePreview = (assetId: number): UseQueryResult<string> =>
       staleTime: globalThis.Number.POSITIVE_INFINITY,
     }),
   );
-
-export type { AssetPage, Kind };
-export { useAssets, useLoadNext, usePackage, usePackages, usePreview, useSearch };

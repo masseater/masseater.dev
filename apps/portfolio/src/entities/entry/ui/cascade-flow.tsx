@@ -56,7 +56,7 @@ const usePlayOnView = (): RefObject<HTMLDivElement | null> => {
   return ref;
 };
 
-const CascadeFlow = (): ReactNode => {
+export const CascadeFlow = (): ReactNode => {
   const state = useCascadeState();
   const ref = usePlayOnView();
   return (
@@ -84,5 +84,3 @@ const CascadeFlow = (): ReactNode => {
     </div>
   );
 };
-
-export { CascadeFlow };

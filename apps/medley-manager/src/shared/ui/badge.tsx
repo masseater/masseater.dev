@@ -23,11 +23,9 @@ const badgeVariants = cva(
   },
 );
 
-const Badge = ({
+export const Badge = ({
   variant,
   ...props
 }: ComponentProps<"span"> & Readonly<VariantProps<typeof badgeVariants>>): ReactNode => (
   <BaseBadge variant={variant ?? "default"} variants={badgeVariants} {...props} />
 );
-
-export { Badge };

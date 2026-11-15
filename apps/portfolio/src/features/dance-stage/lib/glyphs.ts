@@ -12,7 +12,7 @@ const HALF = 0.5;
 const LEFT = 0;
 const CELL = ROW_HEIGHT;
 
-type Glyphs = Readonly<{ canvas: HTMLCanvasElement; widths: readonly number[] }>;
+export type Glyphs = Readonly<{ canvas: HTMLCanvasElement; widths: readonly number[] }>;
 
 type RowInput = Readonly<{ context: CanvasRenderingContext2D; row: TextRow; middle: number }>;
 
@@ -30,7 +30,7 @@ const drawRow: Fn<RowInput, number> = ({ context, row, middle }) => {
   return Math.min(characters.length * CELL, WIDTH) / WIDTH;
 };
 
-const drawGlyphs: Fn<readonly TextRow[], Option.Option<Glyphs>> = (texts) => {
+export const drawGlyphs: Fn<readonly TextRow[], Option.Option<Glyphs>> = (texts) => {
   const canvas = document.createElement("canvas");
   canvas.width = WIDTH;
   canvas.height = ROW_HEIGHT * TEXT_ROWS;
@@ -48,6 +48,3 @@ const drawGlyphs: Fn<readonly TextRow[], Option.Option<Glyphs>> = (texts) => {
     }),
   );
 };
-
-export type { Glyphs };
-export { drawGlyphs };

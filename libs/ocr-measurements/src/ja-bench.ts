@@ -1,6 +1,6 @@
 import { Schema, Array as Arr, pipe } from "effect";
 
-const CATEGORIES = [
+export const CATEGORIES = [
   { id: "horizontal-mincho", label: "横書き（明朝）", source: "synthetic" },
   { id: "horizontal-gothic", label: "横書き（ゴシック）", source: "synthetic" },
   { id: "vertical", label: "縦書き", source: "synthetic" },
@@ -14,7 +14,7 @@ const CATEGORIES = [
   { id: "receipt-photo", label: "レシートの写真", source: "jawildtext" },
 ] as const;
 
-const CategoryIdSchema = Schema.Literals(
+export const CategoryIdSchema = Schema.Literals(
   pipe(
     CATEGORIES,
     Arr.map(({ id }) => id),
@@ -37,7 +37,7 @@ const EngineRunSchema = Schema.Struct({
   failed: Schema.Finite,
 });
 
-const JaBenchSummarySchema = Schema.Struct({
+export const JaBenchSummarySchema = Schema.Struct({
   generatedAt: Schema.String,
   pages: Schema.Finite,
   categories: Schema.Array(
@@ -51,11 +51,8 @@ const JaBenchSummarySchema = Schema.Struct({
   runs: Schema.Array(EngineRunSchema),
 });
 
-type CategoryId = typeof CategoryIdSchema.Type;
+export type CategoryId = typeof CategoryIdSchema.Type;
 
-type EngineRun = typeof EngineRunSchema.Type;
+export type EngineRun = typeof EngineRunSchema.Type;
 
-type JaBenchSummary = typeof JaBenchSummarySchema.Type;
-
-export { CATEGORIES, CategoryIdSchema, JaBenchSummarySchema };
-export type { CategoryId, EngineRun, JaBenchSummary };
+export type JaBenchSummary = typeof JaBenchSummarySchema.Type;

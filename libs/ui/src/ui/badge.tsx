@@ -2,10 +2,10 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "#/cn.ts";
 
-type BadgeProps<Variant extends string> = ComponentProps<"span"> &
+export type BadgeProps<Variant extends string> = ComponentProps<"span"> &
   Readonly<{ variant: Variant; variants: (props: Readonly<{ variant: Variant }>) => string }>;
 
-const Badge = <Variant extends string>({
+export const Badge = <Variant extends string>({
   className,
   variant,
   variants,
@@ -18,6 +18,3 @@ const Badge = <Variant extends string>({
     {...props}
   />
 );
-
-export { Badge };
-export type { BadgeProps };

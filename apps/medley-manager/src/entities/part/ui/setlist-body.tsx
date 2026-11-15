@@ -9,7 +9,7 @@ import { PartMaterial } from "./part-material";
 import { PartStaff } from "./part-staff";
 import { PartStart } from "./part-start";
 
-const SetlistBody = ({
+export const SetlistBody = ({
   part,
   start,
 }: Readonly<{ part: PartRow; start: Option.Option<PartStartLink> }>): ReactNode => (
@@ -28,5 +28,3 @@ const SetlistBody = ({
     {part.comment !== null && <span className="text-sm">{part.comment}</span>}
   </span>
 );
-
-export { SetlistBody };

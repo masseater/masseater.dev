@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { InfoboxRow } from "./article.ts";
 import { InfoboxLine } from "./infobox-line.tsx";
 
-const Infobox = ({
+export const Infobox = ({
   title,
   rows,
 }: Readonly<{ title: string; rows: readonly InfoboxRow[] }>): ReactNode =>
@@ -19,5 +19,3 @@ const Infobox = ({
       </tbody>
     </table>
   );
-
-export { Infobox };

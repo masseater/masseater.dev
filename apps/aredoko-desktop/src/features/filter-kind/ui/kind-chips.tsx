@@ -5,7 +5,7 @@ import { SEARCHABLE_KINDS } from "#/entities/asset";
 
 import { KindChip } from "./kind-chip.tsx";
 
-const KindChips = (): ReactNode => (
+export const KindChips = (): ReactNode => (
   <div className="flex flex-wrap gap-1.5">
     {pipe(
       SEARCHABLE_KINDS,
@@ -13,5 +13,3 @@ const KindChips = (): ReactNode => (
     )}
   </div>
 );
-
-export { KindChips };

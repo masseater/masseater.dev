@@ -7,7 +7,7 @@ import { OtherResults } from "./other-results.tsx";
 
 type Results = readonly (typeof SearchResult.Type)[];
 
-const MatchedResults = ({
+export const MatchedResults = ({
   matches,
   others,
 }: Readonly<{ matches: Results; others: Results }>): ReactNode => (
@@ -16,5 +16,3 @@ const MatchedResults = ({
     <OtherResults others={others} nothingClose={Array.isReadonlyArrayEmpty(matches)} />
   </div>
 );
-
-export { MatchedResults };

@@ -6,6 +6,4 @@ import { TRACE_DESTINATION } from "./trace-destination.ts";
 const tracedProviders = withWorkersTracing({ destinations: [TRACE_DESTINATION] });
 
 /** @internal */
-const tracedStackProps = { providers: tracedProviders(providers()), state: state() };
-
-export { tracedStackProps };
+export const tracedStackProps = { providers: tracedProviders(providers()), state: state() };

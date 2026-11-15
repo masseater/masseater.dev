@@ -124,7 +124,7 @@ const followResolvedModule = (
   build.depth.leave(module.isExternalLibraryImport);
 };
 
-const processImportedModules: {
+export const processImportedModules: {
   (importer: SourceFile, include: IncludeSourceFile): (build: ProgramBuild) => void;
   (build: ProgramBuild, importer: SourceFile, include: IncludeSourceFile): void;
 } = Fn.dual(
@@ -154,5 +154,3 @@ const processImportedModules: {
     }
   },
 );
-
-export { processImportedModules };

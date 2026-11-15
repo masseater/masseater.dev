@@ -12,25 +12,25 @@ const HOVER_MIN_TILE_PIXELS = 10;
 const HOVER_WIDTH = 2;
 const SELECTION_WIDTH = 3;
 
-interface Span {
+export interface Span {
   readonly col: number;
   readonly row: number;
   readonly cols: number;
   readonly rows: number;
 }
 
-interface Item {
+export interface Item {
   readonly image: HTMLImageElement;
   readonly span: Span;
 }
 
-interface Outline {
+export interface Outline {
   readonly span: Span;
   readonly width: number;
   readonly kind: "hover" | "selection";
 }
 
-interface Source {
+export interface Source {
   readonly scene: Scene;
   readonly sprites: Sprites;
 }
@@ -121,7 +121,7 @@ const sheetItems = (source: Source, sheet: number, request: boolean): readonly I
       ),
   });
 
-const planImages = (source: Source): readonly Item[] => {
+export const planImages = (source: Source): readonly Item[] => {
   const { scene, sprites } = source;
   const wanted = sprites.levelFor(CELL_WIDTH * scene.camera.scale * scene.ratio);
   const sharpest = Math.min(wanted, sprites.levels.length - ONE);
@@ -131,7 +131,7 @@ const planImages = (source: Source): readonly Item[] => {
   return sheets;
 };
 
-const overview = (source: Source): Option.Option<Item> =>
+export const overview = (source: Source): Option.Option<Item> =>
   Option.flatMap(Array.get(source.sprites.levels, OVERVIEW), (level) =>
     blockItem(source, { sheet: OVERVIEW, level, request: true }, [ORIGIN, ORIGIN]),
   );
@@ -141,7 +141,7 @@ const outlineOf =
   (tile: number, style: Omit<Outline, "span">): Option.Option<Outline> =>
     Option.map(Array.get(scene.cells, tile), (cell) => ({ ...style, span: cellSpan(scene, cell) }));
 
-const planOutlines = (scene: Scene): readonly Outline[] => {
+export const planOutlines = (scene: Scene): readonly Outline[] => {
   const outline = outlineOf(scene);
   const hover = pipe(
     scene.hover,
@@ -154,6 +154,3 @@ const planOutlines = (scene: Scene): readonly Outline[] => {
   );
   return Array.getSomes([hover, selection]);
 };
-
-export type { Item, Outline, Source, Span };
-export { overview, planImages, planOutlines };

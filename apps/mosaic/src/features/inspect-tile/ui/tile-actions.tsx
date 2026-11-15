@@ -9,7 +9,10 @@ import { ServiceLink } from "./service-link";
 
 const CLOSE = "閉じる";
 
-const TileActions = ({ url, service }: Readonly<{ url: string; service: string }>): ReactNode => {
+export const TileActions = ({
+  url,
+  service,
+}: Readonly<{ url: string; service: string }>): ReactNode => {
   const store = useViewerStore();
   const close = useCallback(() => {
     store.step(select(Option.none()));
@@ -23,5 +26,3 @@ const TileActions = ({ url, service }: Readonly<{ url: string; service: string }
     </div>
   );
 };
-
-export { TileActions };

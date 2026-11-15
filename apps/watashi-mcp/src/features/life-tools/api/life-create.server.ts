@@ -31,13 +31,15 @@ import type {
 import type { InvalidRecord } from "#/shared/api";
 import type { LifeRecordName, Source, StorageFailed } from "#/shared/db";
 
-type CreateItem = Exclude<WriteItemValue, ChangeValue>;
+export type CreateItem = Exclude<WriteItemValue, ChangeValue>;
 
-type CreateFailure = InvalidRecord | StorageFailed;
+export type CreateFailure = InvalidRecord | StorageFailed;
 
 type Prepared = Readonly<{ input: NewRecord; assumed: readonly string[] }>;
 
-type Creator = (writer: Writer) => (input: NewRecord) => Effect.Effect<ItemResult, CreateFailure>;
+export type Creator = (
+  writer: Writer,
+) => (input: NewRecord) => Effect.Effect<ItemResult, CreateFailure>;
 
 const DUPLICATE_SCAN = 200;
 
@@ -53,7 +55,7 @@ const bodyOf = (item: CreateItem): Body => {
   return pipe(fields, Rec.remove("record"), Rec.remove("source"));
 };
 
-const plainInsert: Creator = (writer) => (input) =>
+export const plainInsert: Creator = (writer) => (input) =>
   insertRecord(writer)(input).pipe(
     Effect.map((id) => ({ ref: refOf({ record: input.record, id }), notices: [] })),
   );
@@ -103,7 +105,7 @@ const duplicatesOf = (body: Body): Effect.Effect<readonly LifeEntry[], StorageFa
   }).pipe(Effect.map(Arr.filter(same)));
 };
 
-const createEvent: Creator = (writer) => (input) =>
+export const createEvent: Creator = (writer) => (input) =>
   Effect.gen(function* createLifeEvent() {
     const vocabulary = yield* vocabularyNotices(writer)(input.body);
     const duplicates = yield* duplicatesOf(input.body);
@@ -148,7 +150,7 @@ const mediaCandidates = (body: Body): Effect.Effect<readonly LifeEntry[], Storag
   return scanAll(["media_item"]);
 };
 
-const upsertMedia: Creator = (writer) => (input) =>
+export const upsertMedia: Creator = (writer) => (input) =>
   mediaCandidates(input.body).pipe(
     Effect.map(
       Arr.findFirst((entry) => sharesId(input.body)(entry) || sharesTitle(input.body)(entry)),
@@ -161,7 +163,7 @@ const upsertMedia: Creator = (writer) => (input) =>
     ),
   );
 
-const upsertDefinition: Creator = (writer) => (input) =>
+export const upsertDefinition: Creator = (writer) => (input) =>
   findByLabel({ record: input.record, label: columnsOf(input.record)(input.body).label }).pipe(
     Effect.flatMap(
       Option.match({
@@ -171,7 +173,7 @@ const upsertDefinition: Creator = (writer) => (input) =>
     ),
   );
 
-type Creators = Readonly<Record<LifeRecordName, Creator>>;
+export type Creators = Readonly<Record<LifeRecordName, Creator>>;
 
 const preparedOf = (item: CreateItem): Effect.Effect<Prepared, InvalidRecord> =>
   Effect.gen(function* prepareLifeRecord() {
@@ -181,12 +183,12 @@ const preparedOf = (item: CreateItem): Effect.Effect<Prepared, InvalidRecord> =>
     return { input: { record, source: sourceOf(item), body: valid }, assumed };
   });
 
-const checkCreate =
+export const checkCreate =
   (checkValues: ValuesCheck) =>
   (item: CreateItem): Effect.Effect<void, CreateFailure> =>
     preparedOf(item).pipe(Effect.flatMap(({ input }) => checkValues(input)));
 
-const createItem =
+export const createItem =
   ({ writer, creators }: Readonly<{ writer: Writer; creators: Creators }>) =>
   (item: CreateItem): Effect.Effect<ItemResult, CreateFailure> =>
     Effect.gen(function* createLifeRecord() {
@@ -194,6 +196,3 @@ const createItem =
       const result = yield* creators[input.record](writer)(input);
       return { ...result, notices: [...result.notices, ...assumedNotices(result.ref)(assumed)] };
     });
-
-export { checkCreate, createEvent, createItem, plainInsert, upsertDefinition, upsertMedia };
-export type { CreateFailure, CreateItem, Creator, Creators };

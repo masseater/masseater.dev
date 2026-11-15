@@ -50,7 +50,7 @@ const previewOf = ({
 };
 
 /** @internal */
-const looseAsset = Effect.fn("looseAsset")(function* looseAsset(member: Member) {
+export const looseAsset = Effect.fn("looseAsset")(function* looseAsset(member: Member) {
   const { previews, render } = yield* previewOf(member);
   return {
     ...plainAsset({ guid: member.pathname, pathname: member.pathname, previews }),
@@ -58,5 +58,3 @@ const looseAsset = Effect.fn("looseAsset")(function* looseAsset(member: Member) 
     render,
   } satisfies AssetInput;
 });
-
-export { looseAsset };

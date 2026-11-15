@@ -8,10 +8,8 @@ const dollars = new Intl.NumberFormat("en-US", {
 
 const count = new Intl.NumberFormat("ja-JP");
 
-const formatPercent = (value: number): string => percent.format(value);
+export const formatPercent = (value: number): string => percent.format(value);
 
-const formatDollars = (value: number): string => dollars.format(value);
+export const formatDollars = (value: number): string => dollars.format(value);
 
-const formatCount = (value: number): string => count.format(value);
-
-export { formatCount, formatDollars, formatPercent };
+export const formatCount = (value: number): string => count.format(value);

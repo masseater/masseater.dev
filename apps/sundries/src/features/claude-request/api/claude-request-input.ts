@@ -13,27 +13,27 @@ const ThreadUrl = Schema.String.check(Schema.isPattern(HTTPS));
 
 const After = Schema.Int.check(Schema.isGreaterThanOrEqualTo(BEFORE_FIRST));
 
-const SendInput = Schema.Struct({
+export const SendInput = Schema.Struct({
   text: LongText.annotate({
     description: "Claude にやってほしいことの本文。そのまま依頼として読まれる",
   }),
 });
 
-const TakeInput = Schema.Struct({});
+export const TakeInput = Schema.Struct({});
 
-const ReplyInput = Schema.Struct({
+export const ReplyInput = Schema.Struct({
   id: RequestId.annotate({ description: "take_claude_requests が返した依頼の id" }),
   reply: LongText.annotate({ description: "依頼した人に返す結果や質問" }),
   threadUrl: ThreadUrl.annotate({ description: "依頼を受けたスレッドの URL" }),
 });
 
-const ListInput = Schema.Struct({
+export const ListInput = Schema.Struct({
   after: Schema.optionalKey(
     After.annotate({ description: "この id より後の依頼だけを返す。省くと新しい順に返す" }),
   ),
 });
 
-const RoutineInput = Schema.Struct({
+export const RoutineInput = Schema.Struct({
   triggerId: Schema.NonEmptyString.annotate({
     description: "claude.ai の routines で作った、プロジェクト外の中継タスクの trig_ から始まる ID",
   }),
@@ -41,5 +41,3 @@ const RoutineInput = Schema.Struct({
     description: "その中継タスクの API トリガーで発行した sk-ant-oat01- から始まるトークン",
   }),
 });
-
-export { ListInput, ReplyInput, RoutineInput, SendInput, TakeInput };

@@ -8,13 +8,13 @@ import type { Revision, RevisionEntity } from "./revision.table.ts";
 import type { StorageFailed } from "./storage-failed";
 import { firstRow, query } from "./storage.server.ts";
 
-type RecordRef = Readonly<{ entity: RevisionEntity; id: number }>;
+export type RecordRef = Readonly<{ entity: RevisionEntity; id: number }>;
 
-type HistoryQuery = RecordRef & Readonly<{ limit: number }>;
+export type HistoryQuery = RecordRef & Readonly<{ limit: number }>;
 
-type RevisionRef = RecordRef & Readonly<{ rev: number }>;
+export type RevisionRef = RecordRef & Readonly<{ rev: number }>;
 
-type HistoryEntry = Omit<Revision, "body"> & Readonly<{ body: unknown }>;
+export type HistoryEntry = Omit<Revision, "body"> & Readonly<{ body: unknown }>;
 
 const decodeJson = Schema.decodeUnknownEffect(Schema.fromJsonString(Schema.Unknown));
 
@@ -24,7 +24,7 @@ const entryOf = ({ body, ...row }: Revision): Effect.Effect<HistoryEntry> =>
     Effect.map((decoded) => ({ ...row, body: decoded })),
   );
 
-const listHistory = ({
+export const listHistory = ({
   entity,
   id,
   limit,
@@ -35,7 +35,7 @@ const listHistory = ({
   ).pipe(Effect.flatMap(Effect.forEach(entryOf)));
 };
 
-const findRevision = ({
+export const findRevision = ({
   entity,
   id,
   rev,
@@ -50,6 +50,3 @@ const findRevision = ({
     Effect.flatMap(firstRow(() => RevisionNotFound.make({ entity, entityId, rev }))),
   );
 };
-
-export { findRevision, listHistory };
-export type { HistoryEntry, HistoryQuery, RecordRef, RevisionRef };

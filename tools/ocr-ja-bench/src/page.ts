@@ -12,7 +12,7 @@ const SyntheticPageSchema = Schema.Struct({
   lines: Schema.Array(Schema.String),
 });
 
-const SyntheticPagesSchema = Schema.fromJsonString(Schema.Array(SyntheticPageSchema));
+export const SyntheticPagesSchema = Schema.fromJsonString(Schema.Array(SyntheticPageSchema));
 
 const JaWildTextPageSchema = Schema.Struct({
   id: Schema.String,
@@ -20,16 +20,13 @@ const JaWildTextPageSchema = Schema.Struct({
   truth: Schema.String,
 });
 
-const JaWildTextPagesSchema = Schema.fromJsonString(Schema.Array(JaWildTextPageSchema));
+export const JaWildTextPagesSchema = Schema.fromJsonString(Schema.Array(JaWildTextPageSchema));
 
-type SyntheticPage = typeof SyntheticPageSchema.Type;
+export type SyntheticPage = typeof SyntheticPageSchema.Type;
 
-interface Page {
+export interface Page {
   readonly id: string;
   readonly category: CategoryId;
   readonly truth: string;
   readonly image: string;
 }
-
-export { JaWildTextPagesSchema, SyntheticPagesSchema };
-export type { Page, SyntheticPage };

@@ -52,6 +52,4 @@ const converted: Transform<RootContent, RootContent> = (node) =>
     Option.getOrElse(() => node),
   );
 
-const remarkDialogue: Plugin<[], Root> = () => mapTree(converted);
-
-export { remarkDialogue };
+export const remarkDialogue: Plugin<[], Root> = () => mapTree(converted);

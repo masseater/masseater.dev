@@ -2,7 +2,7 @@ import { cn } from "@masseater.dev/ui/cn";
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 
-const Choice = ({
+export const Choice = ({
   chosen,
   label,
   onChoose,
@@ -19,5 +19,3 @@ const Choice = ({
     {label}
   </button>
 );
-
-export { Choice };

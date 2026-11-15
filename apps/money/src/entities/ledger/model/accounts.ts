@@ -1,15 +1,15 @@
 import { Schema } from "effect";
 
-const ACCOUNT_CLASSES = [
+export const ACCOUNT_CLASSES = [
   "current-asset",
   "fixed-asset",
   "current-liability",
   "fixed-liability",
 ] as const;
 
-const AccountClassSchema = Schema.Literals(ACCOUNT_CLASSES);
+export const AccountClassSchema = Schema.Literals(ACCOUNT_CLASSES);
 
-type AccountClass = typeof AccountClassSchema.Type;
+export type AccountClass = typeof AccountClassSchema.Type;
 
 const DIRECTIONS: Readonly<Record<AccountClass, number>> = {
   "current-asset": 1,
@@ -18,7 +18,4 @@ const DIRECTIONS: Readonly<Record<AccountClass, number>> = {
   "fixed-liability": -1,
 };
 
-const directionOf = (accountClass: AccountClass): number => DIRECTIONS[accountClass];
-
-export { ACCOUNT_CLASSES, AccountClassSchema, directionOf };
-export type { AccountClass };
+export const directionOf = (accountClass: AccountClass): number => DIRECTIONS[accountClass];

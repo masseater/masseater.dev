@@ -9,7 +9,7 @@ import { opened, useScreen } from "#/shared/model";
 
 const resumedAtom = Atom.make(false);
 
-const useResumed = (): boolean => {
+export const useResumed = (): boolean => {
   const yohaku = useYohaku();
   const [resumed, setResumed] = useAtom(resumedAtom);
   const [screen, setScreen] = useScreen();
@@ -32,5 +32,3 @@ const useResumed = (): boolean => {
   }, [answered, data, resumed, screen, setResumed, setScreen]);
   return resumed;
 };
-
-export { useResumed };

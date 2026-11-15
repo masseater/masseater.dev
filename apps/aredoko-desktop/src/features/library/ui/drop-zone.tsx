@@ -7,7 +7,7 @@ import { useSetDragOver } from "#/features/library/model/drop-state";
 
 import { DropOverlay } from "./drop-overlay.tsx";
 
-const DropZone = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => {
+export const DropZone = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => {
   const setDragOver = useSetDragOver();
   const { mutate: importFiles } = useImportFiles();
   const listen = useCallback(
@@ -21,5 +21,3 @@ const DropZone = ({ children }: Readonly<{ children: ReactNode }>): ReactNode =>
     </div>
   );
 };
-
-export { DropZone };

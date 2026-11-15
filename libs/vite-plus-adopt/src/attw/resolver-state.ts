@@ -23,7 +23,7 @@ import type {
 const DATA_FIRST_ARITY = 2;
 const DATA_FIRST_ARITY_3 = 3;
 
-interface WorkerRequest {
+export interface WorkerRequest {
   readonly features: Features;
   readonly moduleName: string;
   readonly containingDirectory: string;
@@ -32,7 +32,7 @@ interface WorkerRequest {
   readonly conditions: Option.Option<readonly string[]>;
 }
 
-interface WorkerContext {
+export interface WorkerContext {
   readonly host: ResolverHost;
   readonly trace: Option.Option<TraceSink>;
   readonly cache: Option.Option<ModuleResolutionCache>;
@@ -42,7 +42,7 @@ type OptionalCondition = readonly [string, (options: ResolverOptions) => boolean
 
 const LAST = -1;
 
-const NO_FEATURES: Features = {
+export const NO_FEATURES: Features = {
   imports: false,
   selfName: false,
   exports: false,
@@ -50,7 +50,7 @@ const NO_FEATURES: Features = {
   esmMode: false,
 };
 
-const ALL_FEATURES: Features = {
+export const ALL_FEATURES: Features = {
   imports: true,
   selfName: true,
   exports: true,
@@ -63,7 +63,7 @@ const OPTIONAL_CONDITIONS: readonly OptionalCondition[] = [
   ["node", (options) => options.moduleResolution !== "Bundler"],
 ];
 
-const createOutcome = (): Outcome => {
+export const createOutcome = (): Outcome => {
   const packageDirectory = MutableRef.make(false);
   const cached = MutableRef.make(Option.none<ResolutionResult>());
   return {
@@ -97,7 +97,7 @@ const usesImportCondition = (
     Option.getOrElse(() => options.moduleResolution === "Bundler"),
   );
 
-const getConditions: {
+export const getConditions: {
   (mode: Option.Option<ResolutionMode>): (options: ResolverOptions) => readonly string[];
   (options: ResolverOptions, mode: Option.Option<ResolutionMode>): readonly string[];
 } = Fn.dual(
@@ -115,7 +115,7 @@ const getConditions: {
   },
 );
 
-const normalizePathForCJSResolution: {
+export const normalizePathForCJSResolution: {
   (
     moduleName: string,
   ): (containingDirectory: string) => { readonly path: string; readonly parts: readonly string[] };
@@ -140,7 +140,7 @@ const normalizePathForCJSResolution: {
   },
 );
 
-const workerMode = (request: WorkerRequest): Option.Option<ResolutionMode> => {
+export const workerMode = (request: WorkerRequest): Option.Option<ResolutionMode> => {
   if (request.options.moduleResolution !== "Node16") {
     return Option.none();
   }
@@ -150,7 +150,7 @@ const workerMode = (request: WorkerRequest): Option.Option<ResolutionMode> => {
   return Option.some("CommonJS");
 };
 
-const nestedRequest: {
+export const nestedRequest: {
   (nested: NestedResolution): (state: ResolutionState) => WorkerRequest;
   (state: ResolutionState, nested: NestedResolution): WorkerRequest;
 } = Fn.dual(
@@ -165,13 +165,13 @@ const nestedRequest: {
   }),
 );
 
-const nestedContext = (state: ResolutionState): WorkerContext => ({
+export const nestedContext = (state: ResolutionState): WorkerContext => ({
   host: state.host,
   trace: state.trace,
   cache: state.cache,
 });
 
-const createState: {
+export const createState: {
   (
     context: WorkerContext,
     conditions: readonly string[],
@@ -199,16 +199,3 @@ const createState: {
     outcome: createOutcome(),
   }),
 );
-
-export {
-  ALL_FEATURES,
-  NO_FEATURES,
-  createOutcome,
-  createState,
-  getConditions,
-  nestedContext,
-  nestedRequest,
-  normalizePathForCJSResolution,
-  workerMode,
-};
-export type { WorkerContext, WorkerRequest };

@@ -8,7 +8,7 @@ import { TechniqueView } from "./technique-view";
 
 const route = getRouteApi("/_stage/_site/seikin-techniques/$slug");
 
-const TechniquePage = (): ReactNode => {
+export const TechniquePage = (): ReactNode => {
   const { slug, source } = route.useLoaderData();
   return pipe(
     techniqueOf(slug),
@@ -18,5 +18,3 @@ const TechniquePage = (): ReactNode => {
     )),
   );
 };
-
-export { TechniquePage };

@@ -78,7 +78,7 @@ const bodyOf = (document: Document): string =>
     Match.exhaustive,
   );
 
-const htmlOf = (
+export const htmlOf = (
   document: Document,
 ): string => `<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>
     body { display: inline-block; margin: 0; padding: 24px; background: #f4f1ea; font-family: "${document.font}"; color: #222; }
@@ -97,5 +97,3 @@ const htmlOf = (
     .recipient { font-size: 17px; text-decoration: underline; }
     ${degradation(document)}
   </style></head><body><div class="sheet ${document.kind}">${bodyOf(document)}</div></body></html>`;
-
-export { htmlOf };

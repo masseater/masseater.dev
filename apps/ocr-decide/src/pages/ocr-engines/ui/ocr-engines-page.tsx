@@ -8,7 +8,7 @@ import { tablesOf } from "#/pages/ocr-engines/model/tables";
 
 import { EnginesSection } from "./engines-section";
 
-const OcrEnginesPage = (): ReactNode => {
+export const OcrEnginesPage = (): ReactNode => {
   const summary = useJaBench();
   return (
     <main className="vt-match mx-auto flex max-w-4xl flex-col gap-8 px-4 py-12 md:px-8">
@@ -24,5 +24,3 @@ const OcrEnginesPage = (): ReactNode => {
     </main>
   );
 };
-
-export { OcrEnginesPage };

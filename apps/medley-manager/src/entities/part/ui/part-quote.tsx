@@ -6,7 +6,7 @@ import { VideoLink } from "#/entities/video/@x/part";
 
 const QUOTED = "引用";
 
-const PartQuote = ({ video }: Readonly<{ video: Named | null }>): ReactNode =>
+export const PartQuote = ({ video }: Readonly<{ video: Named | null }>): ReactNode =>
   Option.match(Option.fromNullOr(video), {
     onNone: () => false,
     onSome: (found) => (
@@ -16,5 +16,3 @@ const PartQuote = ({ video }: Readonly<{ video: Named | null }>): ReactNode =>
       </span>
     ),
   });
-
-export { PartQuote };

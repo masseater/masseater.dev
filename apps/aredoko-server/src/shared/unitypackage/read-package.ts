@@ -7,7 +7,7 @@ import type { UnityPackageUnreadable } from "./unity-package-unreadable.ts";
 const INLINE_ASSET_BYTES = 2_097_152;
 const NO_BYTES = 0;
 
-interface PackageEntry {
+export interface PackageEntry {
   readonly guid: string;
   readonly pathname: string;
   readonly hasAsset: boolean;
@@ -156,11 +156,8 @@ const entriesOf = (files: readonly Option.Option<RawFile>[]): readonly PackageEn
   );
 
 /** @internal */
-const readPackage = Effect.fn("readPackage")(function* readUnityPackage(path: string) {
+export const readPackage = Effect.fn("readPackage")(function* readUnityPackage(path: string) {
   const entries = yield* tarEntries(path);
   const files = yield* entries.pipe(Stream.mapEffect(readEntry(path)), Stream.runCollect);
   return entriesOf(files);
 });
-
-export { readPackage };
-export type { PackageEntry };

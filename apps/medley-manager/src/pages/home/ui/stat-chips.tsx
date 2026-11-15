@@ -9,7 +9,7 @@ const ALL = {};
 const CHIP =
   "rounded-full border bg-background/70 px-4 py-1.5 text-sm font-bold backdrop-blur transition-colors hover:border-primary";
 
-const StatChips = (): ReactNode => {
+export const StatChips = (): ReactNode => {
   const { data: stats } = useSuspenseQuery(statsQuery);
   return (
     <div className="flex flex-wrap justify-center gap-2">
@@ -26,5 +26,3 @@ const StatChips = (): ReactNode => {
     </div>
   );
 };
-
-export { StatChips };
