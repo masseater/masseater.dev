@@ -39,6 +39,17 @@ const RuleNameSchema = Schema.Literals([
   "listed-entry",
   "colocated-test",
   "comment",
+  "package-script",
+  "package-manager-command",
+  "skipped-gate",
+  "filter-task",
+  "vite-plus-block",
+  "node-version",
+  "replaced-tool",
+  "missing-hook",
+  "dangling-link",
+  "alchemy-patch",
+  "skill-file",
   "pass-through-wrapper",
 ]);
 
