@@ -35,5 +35,7 @@ export const sizeOf = (session: SessionValue): string => {
   return `${String(Math.max(MIN_KB, Math.round(bytes / KIB)))} KB`;
 };
 
+export const RECENT_SESSION_LIMIT = 100;
+
 export const placeOf = (session: SessionValue): string =>
   pipe(session.cwd, Str.split("/"), Arr.lastNonEmpty);
