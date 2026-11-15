@@ -1,0 +1,2057 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>まだ、あたたかい | masseater.dev</title>
+    <style>
+      :root {
+        --wall: #1b1715;
+        --wall-edge: #0f0c0b;
+        --panel-shadow: rgba(0, 0, 0, 0.55);
+        --bole: #5e2c1e;
+        color-scheme: dark;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        background: radial-gradient(120% 90% at 50% 42%, var(--wall) 0%, var(--wall-edge) 100%)
+          var(--wall-edge);
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        padding-block: 16px;
+        box-sizing: border-box;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      #stage {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        min-width: 0;
+        min-height: 0;
+      }
+      #view {
+        display: block;
+        max-width: 100%;
+        aspect-ratio: 16 / 9;
+        background: var(--bole);
+        box-shadow:
+          0 1px 0 rgba(255, 220, 160, 0.05),
+          0 18px 60px var(--panel-shadow),
+          0 2px 6px var(--panel-shadow);
+        cursor: crosshair;
+        touch-action: none;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <canvas
+        id="view"
+        tabindex="0"
+        role="img"
+        aria-label="金箔の地に、深い群青からあたたかい色へ移っていく抽象画。時間とともに描き足され、触れると応える。"
+      ></canvas>
+    </div>
+    <script type="module">
+      (() => {
+        "use strict";
+        const TAU = Math.PI * 2,
+          NODASH = [];
+        const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+        const lerp = (a, b, t) => a + (b - a) * t;
+        const smooth = (a, b, x) => {
+          x = clamp((x - a) / (b - a), 0, 1);
+          return x * x * (3 - 2 * x);
+        };
+        const angDiff = (a, b) => {
+          let d = (a - b) % TAU;
+          if (d > Math.PI) d -= TAU;
+          if (d < -Math.PI) d += TAU;
+          return d;
+        };
+
+        function mulberry(a) {
+          return function () {
+            a |= 0;
+            a = (a + 0x6d2b79f5) | 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+        function RNG(seed) {
+          const f = mulberry(seed >>> 0);
+          const o = {
+            f,
+            r: (a, b) => a + (b - a) * f(),
+            i: (n) => Math.floor(f() * n),
+            pick: (a) => a[Math.floor(f() * a.length)],
+            g: () => (f() + f() + f() + f() - 2) * 0.866,
+            chance: (p) => f() < p,
+            fork: () => RNG((f() * 4294967296) >>> 0),
+          };
+          return o;
+        }
+
+        let view = document.getElementById("view");
+        const stage = document.getElementById("stage");
+        const reduceMotion =
+          window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const opt = {
+          seed: (Math.random() * 4294967296) >>> 0,
+          ff: reduceMotion ? 110 : 0,
+          light: -1,
+          demo: false,
+        };
+        for (const tok of (location.hash || "").replace("#", "").split("-")) {
+          if (tok === "done") opt.ff = 110;
+          else if (tok === "demo") opt.demo = true;
+          else if (/^s\d+$/.test(tok)) opt.seed = +tok.slice(1) >>> 0;
+          else if (/^t\d+$/.test(tok)) opt.ff = +tok.slice(1);
+          else if (/^l\d$/.test(tok)) opt.light = +tok.slice(1);
+        }
+
+        const dprGuess = Math.min(window.devicePixelRatio || 1, 2);
+        const PW = clamp(
+          Math.round((Math.min(window.innerWidth, (window.innerHeight * 16) / 9) * dprGuess) / 32) *
+            32,
+          1600,
+          2240,
+        );
+        const PH = Math.round((PW * 9) / 16);
+        const U = PW / 1000;
+        const cCan = document.createElement("canvas");
+        cCan.width = PW;
+        cCan.height = PH;
+        const hCan = document.createElement("canvas");
+        hCan.width = PW;
+        hCan.height = PH;
+        const cx = cCan.getContext("2d", { alpha: false });
+        const hx = hCan.getContext("2d", { alpha: false });
+        cx.lineJoin = hx.lineJoin = "round";
+
+        let noise, fbm, core, warmSeedA, warmSeedB;
+        function makeNoise(rand) {
+          const p = new Uint8Array(512),
+            g = new Float32Array(256);
+          for (let i = 0; i < 256; i++) {
+            p[i] = i;
+            g[i] = rand();
+          }
+          for (let i = 255; i > 0; i--) {
+            const j = Math.floor(rand() * (i + 1));
+            const t = p[i];
+            p[i] = p[j];
+            p[j] = t;
+          }
+          for (let i = 0; i < 256; i++) p[i + 256] = p[i];
+          return (x, y) => {
+            const xi = Math.floor(x),
+              yi = Math.floor(y);
+            let fx = x - xi,
+              fy = y - yi;
+            fx = fx * fx * (3 - 2 * fx);
+            fy = fy * fy * (3 - 2 * fy);
+            const X = xi & 255,
+              Y = yi & 255;
+            const a = g[p[p[X] + Y]],
+              b = g[p[p[X + 1] + Y]],
+              c = g[p[p[X] + Y + 1]],
+              d = g[p[p[X + 1] + Y + 1]];
+            return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy;
+          };
+        }
+
+        const rgb = (c) =>
+          `rgb(${clamp(c[0], 0, 255) | 0},${clamp(c[1], 0, 255) | 0},${clamp(c[2], 0, 255) | 0})`;
+        const mix = (a, b, t) => [
+          a[0] + (b[0] - a[0]) * t,
+          a[1] + (b[1] - a[1]) * t,
+          a[2] + (b[2] - a[2]) * t,
+        ];
+        const jit = (c, amt, rng) => {
+          const v = rng.g() * amt;
+          return [
+            c[0] + v + rng.g() * amt * 0.5,
+            c[1] + v + rng.g() * amt * 0.5,
+            c[2] + v + rng.g() * amt * 0.5,
+          ];
+        };
+        const BOLE = [98, 46, 31];
+        const GOLDS = [
+          [206, 167, 84],
+          [198, 158, 76],
+          [212, 174, 92],
+          [192, 150, 70],
+          [208, 164, 88],
+          [201, 166, 96],
+        ];
+        const P = {
+          deep: [
+            [13, 17, 38],
+            [17, 23, 52],
+            [21, 28, 62],
+            [15, 30, 58],
+          ],
+          night: [
+            [22, 32, 86],
+            [27, 42, 108],
+            [18, 27, 66],
+            [38, 31, 82],
+            [16, 40, 70],
+            [30, 47, 124],
+            [24, 28, 58],
+          ],
+          ultra: [
+            [38, 60, 156],
+            [46, 74, 172],
+            [58, 86, 176],
+            [30, 48, 128],
+            [26, 74, 104],
+            [72, 62, 150],
+          ],
+          trans: [
+            [98, 68, 120],
+            [144, 86, 114],
+            [80, 50, 96],
+            [132, 112, 150],
+            [164, 80, 72],
+            [178, 106, 122],
+            [116, 84, 136],
+          ],
+          warm: [
+            [224, 122, 90],
+            [216, 86, 54],
+            [236, 166, 106],
+            [238, 180, 68],
+            [231, 152, 148],
+            [228, 138, 62],
+            [240, 150, 120],
+          ],
+          light: [
+            [244, 231, 200],
+            [246, 219, 196],
+            [243, 216, 146],
+            [246, 237, 180],
+            [248, 242, 229],
+            [250, 227, 208],
+          ],
+          candy: [
+            [42, 166, 160],
+            [232, 80, 138],
+            [244, 214, 52],
+            [47, 95, 208],
+            [240, 120, 40],
+            [120, 190, 96],
+          ],
+          crayon: [
+            [247, 239, 222],
+            [224, 72, 42],
+            [246, 216, 62],
+            [52, 92, 204],
+            [236, 98, 150],
+            [44, 170, 164],
+          ],
+          syrup: [
+            [226, 140, 58],
+            [214, 96, 70],
+            [232, 170, 80],
+            [200, 84, 96],
+          ],
+        };
+
+        function warmth(x, y) {
+          const X = x / PH,
+            Y = y / PH;
+          const dx = (X - core.x) * 0.8,
+            dy = (Y - core.y) * 1.06;
+          let d = Math.hypot(dx, dy);
+          d += (fbm(X * 1.9 + warmSeedA, Y * 1.9 + warmSeedB) - 0.5) * 0.46;
+          d += (noise(X * 6.3 + 3.1, Y * 6.3 + warmSeedA) - 0.5) * 0.1;
+          const p2 = Math.hypot((X - core.px) * 1.0, (Y - core.py) * 1.0);
+          d = Math.min(d, 0.5 + p2 * 1.5);
+          return smooth(0.92, 0.1, d);
+        }
+        function flowAng(x, y) {
+          const X = x / PH,
+            Y = y / PH;
+          const dx = X - core.x,
+            dy = Y - core.y,
+            d = Math.hypot(dx * 0.8, dy * 1.06);
+          const ta = Math.atan2(dy, dx) + (Math.PI / 2) * core.spin;
+          const ba =
+            core.drift +
+            (fbm(X * 1.15 + 11.3, Y * 1.15 + 5.7) - 0.5) * 4.4 +
+            (noise(X * 3.7 + 1.7, Y * 3.7 + 8.8) - 0.5) * 0.9;
+          const wt = 0.46 * smooth(0.8, 0.3, d) * (0.5 + noise(X * 2.1 + 31, Y * 2.1 + 17)) + 0.05;
+          return Math.atan2(
+            Math.sin(ta) * wt + Math.sin(ba) * (1 - wt),
+            Math.cos(ta) * wt + Math.cos(ba) * (1 - wt),
+          );
+        }
+        function drift(x, y) {
+          return smooth(
+            0.56,
+            0.66,
+            fbm((x / PH) * 0.85 + warmSeedB * 1.3 + 40, (y / PH) * 0.85 + warmSeedA * 0.7 + 9),
+          );
+        }
+        function tooth(x, y) {
+          return (
+            0.62 * noise(x / (1.25 * U) + 91.7, y / (1.25 * U) + 13.1) +
+            0.38 * noise(x / (4.1 * U) + 7.7, y / (4.1 * U) + 55.3)
+          );
+        }
+        function paletteAt(w, rng) {
+          if (w < 0.16) return rng.chance(0.45) ? P.deep : P.night;
+          if (w < 0.36) return rng.chance(0.7) ? P.night : P.ultra;
+          if (w < 0.52) return rng.chance(0.6) ? P.trans : rng.chance(0.5) ? P.ultra : P.warm;
+          if (w < 0.78) return rng.chance(0.72) ? P.warm : rng.chance(0.5) ? P.trans : P.light;
+          return rng.chance(0.8) ? P.light : P.warm;
+        }
+        function samplePos(rng, wfn, tries) {
+          let bx = 0,
+            by = 0,
+            bw = -1;
+          for (let i = 0; i < (tries || 24); i++) {
+            const x = rng.r(-0.03, 1.03) * PW,
+              y = rng.r(-0.04, 1.04) * PH;
+            const w = wfn(x, y);
+            if (rng.f() < w) return [x, y];
+            if (w > bw) {
+              bw = w;
+              bx = x;
+              by = y;
+            }
+          }
+          return [bx, by];
+        }
+
+        function polyPath(pts) {
+          const p = new Path2D();
+          p.moveTo(pts[0][0], pts[0][1]);
+          for (let i = 1; i < pts.length; i++) p.lineTo(pts[i][0], pts[i][1]);
+          p.closePath();
+          return p;
+        }
+        function deform(pts, depth, vr, rng) {
+          let p = pts;
+          for (let d = 0; d < depth; d++) {
+            const np = [],
+              m = p.length;
+            for (let i = 0; i < m; i++) {
+              const a = p[i],
+                b = p[(i + 1) % m];
+              const l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+              np.push(a, [
+                (a[0] + b[0]) / 2 + rng.g() * l * vr,
+                (a[1] + b[1]) / 2 + rng.g() * l * vr,
+              ]);
+            }
+            p = np;
+          }
+          return p;
+        }
+        function blob(x, y, r, rng, n, sx) {
+          const b = [];
+          n = n || 9;
+          for (let i = 0; i < n; i++) {
+            const a = (i / n) * TAU + rng.f() * 0.4,
+              rr = r * (0.72 + 0.56 * rng.f());
+            b.push([x + Math.cos(a) * rr * (sx || 1), y + Math.sin(a) * rr]);
+          }
+          return b;
+        }
+        function fieldPath(x, y, len, step, rng, wob, flip, angFn) {
+          const pts = [[x, y]];
+          angFn = angFn || flowAng;
+          let a = angFn(x, y) + (flip ? Math.PI : 0);
+          for (let s = 0; s < len; s += step) {
+            const ta = angFn(x, y) + (flip ? Math.PI : 0);
+            a += angDiff(ta, a) * 0.35 + rng.g() * wob;
+            x += Math.cos(a) * step;
+            y += Math.sin(a) * step;
+            pts.push([x, y]);
+          }
+          return pts;
+        }
+        function normals(pts) {
+          const n = pts.length,
+            nx = new Float32Array(n),
+            ny = new Float32Array(n);
+          for (let i = 0; i < n; i++) {
+            const a = pts[Math.max(0, i - 1)],
+              b = pts[Math.min(n - 1, i + 1)];
+            const dx = b[0] - a[0],
+              dy = b[1] - a[1],
+              l = Math.hypot(dx, dy) || 1;
+            nx[i] = -dy / l;
+            ny[i] = dx / l;
+          }
+          return [nx, ny];
+        }
+
+        function* brush(pts, o, rng) {
+          const n = pts.length;
+          if (n < 3) return;
+          const W = o.w,
+            nb = Math.max(6, Math.round(W / (1.15 * U)));
+          const A = o.c1,
+            B = o.c2 || o.c1,
+            C3 = o.c3 || A;
+          const sN = rng.f() * 200,
+            dry = o.dry || 0;
+          const br = [];
+          for (let i = 0; i < nb; i++) {
+            const u = ((i + 0.5) / nb) * 2 - 1;
+            const m = clamp(noise(sN + u * 1.9, 3.3) * 1.5 - 0.25, 0, 1);
+            let col = m < 0.5 ? mix(A, B, m * 2) : mix(B, C3, (m - 0.5) * 2);
+            const v = 1 + rng.g() * 0.075;
+            col = [col[0] * v, col[1] * v, col[2] * v];
+            const hv = clamp(
+              Math.round(
+                255 *
+                  o.thick *
+                  (1 - 0.55 * dry) *
+                  (0.5 + 0.34 * noise(sN + 40 + u * 3.3, 1.7) + 0.16 * rng.f() + 0.12 * rng.g()) *
+                  (1 - 0.55 * u * u * u * u),
+              ),
+              14,
+              250,
+            );
+            const dash = [];
+            if (dry > 0.12) {
+              const m = 6 + 2 * rng.i(4);
+              for (let q = 0; q < m; q++)
+                dash.push(
+                  q & 1
+                    ? (0.3 + Math.pow(rng.f(), 3) * 30 * dry * dry) * U
+                    : (9 + Math.pow(rng.f(), 1.4) * 170 * (1.25 - dry)) * U,
+                );
+            }
+            br.push({
+              u: u + rng.g() * 0.03,
+              css: rgb(col),
+              hcss: `rgb(${hv},0,${(o.gloss || 60) | 0})`,
+              run: (1.3 - dry) * (0.5 + 0.95 * rng.f()),
+              ph: rng.f() * 60,
+              lw: (W / nb) * (1.25 + rng.f() * 1.5) * (1 - 0.4 * dry),
+              a: o.alpha * (0.62 + 0.38 * rng.f()) * (1 - 0.25 * dry * rng.f()),
+              sh: rng.g() * Math.min(16 * U, W * 0.4),
+              dash,
+              dof: rng.f() * 200 * U,
+            });
+          }
+          const [nx, ny] = normals(pts);
+          const CH = 3,
+            wv = rng.f() * 40;
+          for (let k = 0; k < n - 1; k += CH) {
+            const k1 = Math.min(n - 1, k + CH);
+            cx.lineCap = hx.lineCap = "butt";
+            const t = (k + CH * 0.5) / (n - 1);
+            for (let bi = 0; bi < nb; bi++) {
+              const b = br[bi];
+              let a = b.a;
+              if (t > b.run) a *= Math.max(0, 1 - (t - b.run) / 0.2);
+              a *= smooth(
+                dry * 0.42 - 0.12,
+                dry * 0.42 + 0.14,
+                noise(b.ph + t * n * 0.07, b.ph * 1.7 + b.u * 0.8),
+              );
+              if (a < 0.035) continue;
+              const path = new Path2D();
+              for (let j = k; j <= k1; j++) {
+                const tj = j / (n - 1);
+                const pr =
+                  0.36 +
+                  0.64 *
+                    smooth(0, 0.12, tj) *
+                    smooth(1.02, 0.8, tj) *
+                    (0.66 + 0.6 * noise(wv + tj * n * 0.045, 9.1));
+                const off = b.u * W * 0.5 * pr;
+                const wb = (noise(b.ph * 3.1 + j * 0.31, b.ph) - 0.5) * 2.2 * U;
+                const x = pts[j][0] + nx[j] * (off + wb) + ny[j] * b.sh,
+                  y = pts[j][1] + ny[j] * (off + wb) - nx[j] * b.sh;
+                if (j === k) path.moveTo(x, y);
+                else path.lineTo(x, y);
+              }
+              cx.setLineDash(b.dash);
+              hx.setLineDash(b.dash);
+              cx.lineDashOffset = hx.lineDashOffset = b.dof - k * 6 * U;
+              cx.globalAlpha = a;
+              cx.strokeStyle = b.css;
+              cx.lineWidth = b.lw;
+              cx.stroke(path);
+              hx.globalAlpha = Math.min(1, a * 1.08);
+              hx.strokeStyle = b.hcss;
+              hx.lineWidth = b.lw;
+              hx.stroke(path);
+            }
+            cx.globalAlpha = hx.globalAlpha = 1;
+            cx.setLineDash(NODASH);
+            hx.setLineDash(NODASH);
+            yield o.dt || 0.012;
+          }
+        }
+
+        function dab(x, y, ang, len, w, col, rng, thick) {
+          const nb = Math.max(3, Math.round(w / (1.0 * U)));
+          const ca = Math.cos(ang),
+            sa = Math.sin(ang),
+            bend = rng.g() * 0.22 * len;
+          cx.lineCap = hx.lineCap = "round";
+          const th = (thick == null ? 0.8 : thick) * 0.62;
+          let ex = x,
+            ey = y;
+          for (let i = 0; i < nb; i++) {
+            const u = ((i + 0.5) / nb) * 2 - 1,
+              off = u * w * 0.5 + rng.g() * 0.25 * U;
+            const l = len * (0.5 + 0.7 * rng.f()) * (1 - 0.45 * u * u),
+              s0 = -l / 2 + rng.g() * len * 0.16;
+            const x0 = x + ca * s0 - sa * off,
+              y0 = y + sa * s0 + ca * off;
+            const x1 = x + ca * (s0 + l) - sa * off,
+              y1 = y + sa * (s0 + l) + ca * off;
+            const mx = (x0 + x1) / 2 - sa * bend,
+              my = (y0 + y1) / 2 + ca * bend;
+            const path = new Path2D();
+            path.moveTo(x0, y0);
+            path.quadraticCurveTo(mx, my, x1, y1);
+            const v = 1 + rng.g() * 0.09;
+            const lw = (w / nb) * (1.4 + rng.f() * 1.1);
+            cx.strokeStyle = rgb([col[0] * v, col[1] * v, col[2] * v]);
+            cx.globalAlpha = 0.55 + 0.42 * rng.f();
+            cx.lineWidth = lw;
+            cx.stroke(path);
+            hx.strokeStyle = `rgb(${clamp(255 * th * (0.55 + 0.45 * rng.f()), 20, 250) | 0},0,${90 + rng.i(90)})`;
+            hx.globalAlpha = 0.85;
+            hx.lineWidth = lw;
+            hx.stroke(path);
+            if (i === nb >> 1) {
+              ex = x1;
+              ey = y1;
+            }
+          }
+          hx.globalAlpha = 0.35;
+          hx.fillStyle = `rgb(${clamp(255 * th * 1.5, 30, 250) | 0},0,150)`;
+          hx.beginPath();
+          hx.arc(ex - ca * w * 0.3, ey - sa * w * 0.3, Math.max(0.7 * U, w * 0.22), 0, TAU);
+          hx.fill();
+          cx.globalAlpha = hx.globalAlpha = 1;
+        }
+
+        function* wash(x, y, r, col, layers, alpha, rng, o) {
+          o = o || {};
+          const base = deform(blob(x, y, r, rng, 9, o.sx), 3, 0.5, rng);
+          for (let l = 0; l < layers; l++) {
+            const k = 0.34 + 0.86 * Math.pow(rng.f(), 0.8);
+            const p = deform(
+              base.map((q) => [x + (q[0] - x) * k, y + (q[1] - y) * k]),
+              3,
+              0.55,
+              rng,
+            );
+            cx.globalAlpha = alpha;
+            cx.fillStyle = rgb(jit(col, 7, rng));
+            if (o.mode) cx.globalCompositeOperation = o.mode;
+            cx.fill(polyPath(p));
+            cx.globalCompositeOperation = "source-over";
+            cx.globalAlpha = 1;
+            yield o.dt || 0.05;
+          }
+          for (let k = 0; k < (o.rim || 0); k++) {
+            const p = deform(base, 3, 0.2 + 0.12 * k, rng);
+            cx.globalAlpha = alpha * 1.2;
+            cx.strokeStyle = rgb(mix(col, [30, 20, 30], 0.35));
+            cx.lineWidth = (0.8 + k * 0.5) * U;
+            cx.stroke(polyPath(p));
+            cx.globalAlpha = 1;
+          }
+        }
+
+        function leafTile(tx, ty, s, rng) {
+          const h = s / 2,
+            rot = rng.g() * 0.02,
+            cr = Math.cos(rot),
+            sr = Math.sin(rot);
+          const cs = [
+            [-h, -h],
+            [h, -h],
+            [h, h],
+            [-h, h],
+          ].map((c) => {
+            const x = c[0] + rng.g() * s * 0.012,
+              y = c[1] + rng.g() * s * 0.012;
+            return [tx + x * cr - y * sr, ty + x * sr + y * cr];
+          });
+          const poly = [];
+          for (let e = 0; e < 4; e++) {
+            const a = cs[e],
+              b = cs[(e + 1) % 4];
+            for (let k = 0; k < 7; k++) {
+              const t = k / 7;
+              poly.push([
+                lerp(a[0], b[0], t) + (k ? rng.g() * s * 0.0035 : 0),
+                lerp(a[1], b[1], t) + (k ? rng.g() * s * 0.0035 : 0),
+              ]);
+            }
+          }
+          const path = polyPath(poly);
+          const base = jit(rng.pick(GOLDS), 6, rng);
+          cx.globalAlpha = 0.95;
+          cx.fillStyle = rgb(base);
+          cx.fill(path);
+          hx.globalAlpha = 1;
+          hx.fillStyle = `rgb(${24 + rng.i(9)},255,${rng.i(256)})`;
+          hx.fill(path);
+          for (let k = 0; k < 8; k++) {
+            const bx = tx + rng.r(-0.42, 0.42) * s,
+              by = ty + rng.r(-0.42, 0.42) * s;
+            const pp = deform(blob(bx, by, s * rng.r(0.06, 0.24), rng, 7), 2, 0.5, rng);
+            cx.globalAlpha = rng.r(0.04, 0.1);
+            cx.fillStyle = rgb(
+              rng.chance(0.55) ? mix(base, [140, 96, 44], 0.7) : mix(base, [236, 208, 132], 0.7),
+            );
+            cx.fill(polyPath(pp));
+          }
+          cx.globalAlpha = 0.2;
+          cx.strokeStyle = "rgb(112,78,36)";
+          cx.lineWidth = 1.3 * U;
+          cx.lineCap = "round";
+          cx.beginPath();
+          cx.moveTo(cs[3][0], cs[3][1]);
+          cx.lineTo(cs[0][0], cs[0][1]);
+          cx.moveTo(cs[3][0], cs[3][1]);
+          cx.lineTo(cs[2][0], cs[2][1]);
+          cx.stroke();
+          const nc = rng.chance(0.45) ? 1 : 0;
+          for (let k = 0; k < nc; k++) {
+            const a = rng.f() * TAU,
+              ox = tx + rng.r(-0.3, 0.3) * s,
+              oy = ty + rng.r(-0.3, 0.3) * s,
+              l = s * rng.r(0.08, 0.28);
+            const p = new Path2D();
+            p.moveTo(ox - Math.cos(a) * l, oy - Math.sin(a) * l);
+            p.quadraticCurveTo(
+              ox + rng.g() * s * 0.09,
+              oy + rng.g() * s * 0.09,
+              ox + Math.cos(a) * l,
+              oy + Math.sin(a) * l,
+            );
+            hx.globalAlpha = 0.85;
+            hx.strokeStyle = `rgb(${34 + rng.i(10)},255,${rng.i(256)})`;
+            hx.lineWidth = rng.r(0.7, 1.3) * U;
+            hx.stroke(p);
+          }
+          const nw = rng.chance(0.3) ? 1 + rng.i(2) : 0;
+          for (let k = 0; k < nw; k++) {
+            const e = rng.i(4),
+              t = rng.f(),
+              a = cs[e],
+              b = cs[(e + 1) % 4];
+            const wx = lerp(a[0], b[0], t) + rng.g() * s * 0.03,
+              wy = lerp(a[1], b[1], t) + rng.g() * s * 0.03;
+            const pp = polyPath(
+              deform(
+                blob(wx, wy, s * rng.r(0.004, 0.016), rng, 6, e & 1 ? 0.5 : rng.r(2, 5)),
+                3,
+                0.7,
+                rng,
+              ),
+            );
+            cx.globalAlpha = 0.75;
+            cx.fillStyle = rgb(jit(BOLE, 8, rng));
+            cx.fill(pp);
+            hx.globalAlpha = 1;
+            hx.fillStyle = "rgb(10,0,30)";
+            hx.fill(pp);
+          }
+          for (let k = 0; k < 3; k++) {
+            const ox = tx + rng.r(-0.45, 0.45) * s,
+              oy = ty + rng.r(-0.45, 0.45) * s,
+              a = rng.f() * TAU,
+              l = s * rng.r(0.03, 0.12);
+            cx.globalAlpha = 0.28;
+            cx.strokeStyle = rgb(BOLE);
+            cx.lineWidth = 0.55 * U;
+            cx.beginPath();
+            cx.moveTo(ox, oy);
+            cx.lineTo(ox + Math.cos(a) * l + rng.g() * 2 * U, oy + Math.sin(a) * l);
+            cx.stroke();
+          }
+          cx.globalAlpha = hx.globalAlpha = 1;
+        }
+
+        function fleck(x, y, sz, rng, bright) {
+          const a = rng.f() * TAU,
+            q = [];
+          const n = rng.chance(0.3) ? 3 : 4;
+          for (let i = 0; i < n; i++) {
+            const t = a + (i / n) * TAU + rng.g() * 0.25,
+              r = sz * (0.6 + 0.6 * rng.f());
+            q.push([x + Math.cos(t) * r, y + Math.sin(t) * r * rng.r(0.7, 1)]);
+          }
+          const p = polyPath(q);
+          const c = jit(
+            mix(rng.pick(GOLDS), [236, 204, 122], bright == null ? 0.45 : bright),
+            8,
+            rng,
+          );
+          cx.globalAlpha = 0.96;
+          cx.fillStyle = rgb(c);
+          cx.fill(p);
+          hx.globalAlpha = 1;
+          hx.fillStyle = `rgb(${34 + rng.i(10)},255,${rng.i(256)})`;
+          hx.fill(p);
+          cx.globalAlpha = 1;
+        }
+
+        function scratchLine(pts, w, rng) {
+          const p = new Path2D();
+          p.moveTo(pts[0][0], pts[0][1]);
+          for (let i = 1; i < pts.length; i++)
+            p.lineTo(pts[i][0] + rng.g() * 0.4 * U, pts[i][1] + rng.g() * 0.4 * U);
+          cx.lineCap = hx.lineCap = "round";
+          cx.globalAlpha = 0.3;
+          cx.strokeStyle = "rgb(20,16,30)";
+          cx.lineWidth = w * 2.1;
+          cx.stroke(p);
+          cx.globalAlpha = 0.9;
+          cx.strokeStyle = rgb(jit(rng.pick(GOLDS), 8, rng));
+          cx.lineWidth = w;
+          cx.stroke(p);
+          hx.globalAlpha = 0.22;
+          hx.strokeStyle = "rgb(210,0,90)";
+          hx.lineWidth = w * 2.4;
+          hx.stroke(p);
+          hx.globalAlpha = 1;
+          hx.strokeStyle = `rgb(12,255,${rng.i(256)})`;
+          hx.lineWidth = w;
+          hx.stroke(p);
+          cx.globalAlpha = hx.globalAlpha = 1;
+        }
+
+        let autoScratch = 0;
+        function crayonSeg(x0, y0, x1, y1, w, css, press, rng) {
+          const dist = Math.hypot(x1 - x0, y1 - y0);
+          const steps = Math.max(1, Math.ceil(dist / (0.3 * w)));
+          const thr = lerp(0.56, 0.3, press),
+            per = Math.max(3, Math.round(((w * w) / (U * U)) * 0.26 * (0.5 + press)));
+          cx.fillStyle = css;
+          hx.fillStyle = "rgb(255,0,255)";
+          hx.globalCompositeOperation = "multiply";
+          cx.globalAlpha = 0.16 + 0.3 * press;
+          cx.strokeStyle = css;
+          cx.lineWidth = w * (0.34 + 0.2 * press);
+          cx.lineCap = "round";
+          cx.beginPath();
+          cx.moveTo(x0, y0);
+          cx.lineTo(x1, y1);
+          cx.stroke();
+          hx.globalAlpha = 0.5 * press;
+          hx.strokeStyle = "rgb(255,0,255)";
+          hx.lineWidth = w * 0.4;
+          hx.lineCap = "round";
+          hx.beginPath();
+          hx.moveTo(x0, y0);
+          hx.lineTo(x1, y1);
+          hx.stroke();
+          hx.globalAlpha = 0.9;
+          for (let s = 0; s < steps; s++) {
+            const t = (s + rng.f()) / steps,
+              px = lerp(x0, x1, t),
+              py = lerp(y0, y1, t);
+            for (let k = 0; k < per; k++) {
+              const a = rng.f() * TAU,
+                r = w * 0.5 * Math.sqrt(rng.f());
+              const qx = px + Math.cos(a) * r,
+                qy = py + Math.sin(a) * r;
+              const edge = 1 - (r / (w * 0.5)) * 0.35;
+              if (tooth(qx, qy) * edge < thr) continue;
+              const sz = (0.45 + rng.f() * 0.75) * U;
+              cx.globalAlpha = 0.45 + 0.5 * rng.f();
+              cx.fillRect(qx, qy, sz, sz * (0.7 + 0.6 * rng.f()));
+              hx.fillRect(qx, qy, sz, sz);
+            }
+          }
+          hx.globalCompositeOperation = "source-over";
+          cx.globalAlpha = hx.globalAlpha = 1;
+        }
+        function* crayonLine(pts, w, col, rng, speed, quiet) {
+          const css = rgb(col),
+            sP = rng.f() * 100;
+          let acc = 0;
+          for (let i = 0; i < pts.length - 1; i++) {
+            const a = pts[i],
+              b = pts[i + 1],
+              t = i / pts.length;
+            const press = clamp(
+              0.25 +
+                0.75 * noise(sP + i * 0.021, 2.2) * smooth(0, 0.02, t) * smooth(1, 0.97, t) +
+                0.1,
+              0.1,
+              1,
+            );
+            crayonSeg(a[0], a[1], b[0], b[1], w * (0.8 + 0.3 * press), css, press, rng);
+            if (!quiet) autoScratch = 1;
+            acc +=
+              Math.hypot(b[0] - a[0], b[1] - a[1]) /
+              (speed * U * (0.6 + 0.9 * noise(sP + i * 0.008, 5.5)));
+            if (acc > 0.012) {
+              yield acc;
+              acc = 0;
+            }
+          }
+        }
+        function loopPath(rng, x0, y0, len, R0, angFn, tight) {
+          const pts = [],
+            step = 2.4 * U,
+            s1 = rng.f() * 100,
+            s2 = rng.f() * 100,
+            sgn = rng.chance(0.5) ? 1 : -1;
+          let bx = x0,
+            by = y0,
+            a = angFn(bx, by),
+            phi = rng.f() * TAU;
+          for (let s = 0; s < len; s += step) {
+            a += angDiff(angFn(bx, by), a) * 0.02 + rng.g() * 0.012;
+            const k = (tight || 0.2) + 0.3 * noise((s * 0.0016) / U + s1, 1.3);
+            bx += Math.cos(a) * step * k;
+            by += Math.sin(a) * step * k;
+            const R = R0 * (0.35 + 1.1 * noise((s * 0.0011) / U + s2, 7.7));
+            phi += ((sgn * step) / R) * (1 - k * 0.4);
+            pts.push([
+              bx + Math.cos(phi) * R + rng.g() * 0.25 * U,
+              by + Math.sin(phi) * R * 0.9 + rng.g() * 0.25 * U,
+            ]);
+          }
+          return pts;
+        }
+
+        function* splatter(x, y, ang, spread, reach, n, col, rng) {
+          for (let i = 0; i < n; i++) {
+            const a = ang + rng.g() * spread,
+              d = reach * Math.pow(rng.f(), 0.7);
+            const px = x + Math.cos(a) * d,
+              py = y + Math.sin(a) * d;
+            const sz =
+              clamp(0.5 * U * Math.pow(1 / (rng.f() + 0.012), 0.62), 0.5 * U, 8 * U) *
+              (1 - (0.5 * d) / reach);
+            const el = 1 + rng.f() * (sz > 2.5 * U ? 1.3 : 0.4);
+            const p = new Path2D();
+            p.ellipse(px, py, sz * el, sz, a, 0, TAU);
+            cx.globalAlpha = 0.95;
+            cx.fillStyle = rgb(jit(col, 8, rng));
+            cx.fill(p);
+            hx.globalAlpha = 0.9;
+            hx.fillStyle = `rgb(${clamp(60 + (sz / U) * 22 + rng.i(30), 40, 210) | 0},0,120)`;
+            hx.fill(p);
+            if (sz > 2.4 * U) {
+              hx.globalAlpha = 0.5;
+              hx.fillStyle = "rgb(236,0,150)";
+              hx.beginPath();
+              hx.arc(px, py, sz * 0.5, 0, TAU);
+              hx.fill();
+            }
+            cx.globalAlpha = hx.globalAlpha = 1;
+            if ((i & 7) === 7) yield 0.012;
+          }
+        }
+
+        let tracks = [],
+          paintT = 0,
+          clockT = 0,
+          dirty = true,
+          epoch = 0,
+          forceDraw = true,
+          ffTarget = opt.ff;
+        function spawn(gen, t0) {
+          tracks.push({ g: gen, wake: t0 == null ? clockT : t0 });
+        }
+        function advance(target, budget) {
+          const start = performance.now();
+          let cnt = 0;
+          for (;;) {
+            let m = Infinity;
+            for (const q of tracks) if (q.wake < m) m = q.wake;
+            if (m > target) return target;
+            const sub = Math.min(target, m + 0.03);
+            clockT = sub;
+            for (let any = true; any;) {
+              any = false;
+              for (let i = 0; i < tracks.length; i++) {
+                const tr = tracks[i];
+                if (tr.wake > sub) continue;
+                const r = tr.g.next();
+                any = true;
+                dirty = true;
+                if (r.done) {
+                  tracks[i] = tracks[tracks.length - 1];
+                  tracks.pop();
+                  i--;
+                } else tr.wake += r.value || 0.001;
+                if ((++cnt & 7) === 0 && performance.now() - start > budget) {
+                  let mm = sub;
+                  for (const q of tracks) if (q.wake < mm) mm = q.wake;
+                  return mm;
+                }
+              }
+            }
+          }
+        }
+
+        function* gLeaf(rng) {
+          const rows = 7,
+            s = PH / (rows - 0.42),
+            cols = Math.ceil(PW / (s * 0.962)) + 1;
+          for (let r = 0; r < rows; r++) {
+            const ro = rng.r(-0.02, 0.02) * s;
+            for (let c = 0; c < cols; c++) {
+              leafTile(
+                PW - (c + 0.42) * s * 0.962 + ro + rng.g() * s * 0.006,
+                (r + 0.46) * s * 0.962 + rng.g() * s * 0.006,
+                s,
+                rng,
+              );
+              yield 0.03;
+            }
+          }
+        }
+        function* gWashes(rng, count, kind) {
+          for (let i = 0; i < count; i++) {
+            let pos,
+              col,
+              r,
+              layers,
+              alpha,
+              rim = 0;
+            if (kind === "night") {
+              pos = samplePos(rng, (x, y) => Math.pow(smooth(0.5, 0.05, warmth(x, y)), 1.3), 40);
+              col = rng.pick(rng.chance(0.5) ? P.deep : P.night);
+              r = rng.r(0.12, 0.3) * PH;
+              layers = 30 + rng.i(14);
+              alpha = 0.034;
+            } else if (kind === "trans") {
+              pos = samplePos(rng, (x, y) => {
+                const w = warmth(x, y);
+                return smooth(0.2, 0.42, w) * smooth(0.78, 0.5, w);
+              });
+              col = rng.pick(P.trans);
+              r = rng.r(0.08, 0.22) * PH;
+              layers = 22 + rng.i(10);
+              alpha = 0.026;
+            } else if (kind === "veil") {
+              pos = samplePos(rng, (x, y) => smooth(0.55, 0.85, warmth(x, y)));
+              col = rng.pick(P.light);
+              r = rng.r(0.08, 0.2) * PH;
+              layers = 18 + rng.i(10);
+              alpha = 0.02;
+            } else {
+              pos = samplePos(rng, (x, y) => smooth(0.5, 0.8, warmth(x, y)));
+              col = rng.pick(P.syrup);
+              r = rng.r(0.05, 0.16) * PH;
+              layers = 16 + rng.i(10);
+              alpha = 0.02;
+              rim = 2;
+            }
+            yield* wash(pos[0], pos[1], r, col, layers, alpha, rng, {
+              sx: rng.r(1, 1.7),
+              dt: 0.03,
+              rim,
+            });
+            yield rng.r(0.05, 0.25);
+          }
+        }
+        function* gMass(rng, count, o) {
+          for (let i = 0; i < count; i++) {
+            const pos = samplePos(rng, o.where, 30);
+            const w = warmth(pos[0], pos[1]);
+            const pal = o.pal ? o.pal(w, rng) : paletteAt(w, rng);
+            const c1 = rng.pick(pal),
+              c2 = rng.chance(0.7)
+                ? rng.pick(pal)
+                : rng.pick(paletteAt(clamp(w + rng.r(-0.2, 0.2), 0, 1), rng)),
+              c3 = rng.pick(pal);
+            const len = rng.r(o.len[0], o.len[1]) * PH,
+              width = rng.r(o.w[0], o.w[1]) * U;
+            let pts = fieldPath(pos[0], pos[1], len, 6 * U, rng, o.wob || 0.05, rng.chance(0.5));
+            for (let q = 4; q < pts.length; q++)
+              if (Math.abs(warmth(pts[q][0], pts[q][1]) - w) > (o.stay || 0.3)) {
+                pts = pts.slice(0, q + 2);
+                break;
+              }
+            yield* brush(
+              pts,
+              {
+                w: width,
+                c1,
+                c2,
+                c3,
+                alpha: rng.r(o.alpha[0], o.alpha[1]),
+                dry: clamp(rng.r(o.dry[0], o.dry[1]) + (o.dryW ? o.dryW(w) : 0), 0, 0.98),
+                thick: rng.r(o.thick[0], o.thick[1]),
+                gloss: o.gloss == null ? 50 + rng.i(90) : o.gloss,
+                dt: o.dt || 0.011,
+              },
+              rng,
+            );
+            yield rng.r(0.03, 0.14) * (o.rest || 1);
+          }
+        }
+        function dabColour(w, rng) {
+          if (rng.chance(0.045)) return rng.pick(P.candy);
+          if (w < 0.42)
+            return rng.chance(0.62)
+              ? rng.pick(P.warm)
+              : rng.chance(0.75)
+                ? rng.pick(P.light)
+                : rng.pick(P.trans);
+          if (w < 0.7)
+            return rng.chance(0.4)
+              ? rng.pick(P.light)
+              : rng.chance(0.55)
+                ? rng.pick(P.warm)
+                : rng.pick(P.trans);
+          return rng.chance(0.42)
+            ? rng.pick(P.warm)
+            : rng.chance(0.55)
+              ? rng.pick(P.light)
+              : rng.pick(P.trans);
+        }
+        function* dabString(rng, x, y, n, o) {
+          o = o || {};
+          const flip = rng.chance(0.5),
+            sc = o.scale || 1;
+          let a = flowAng(x, y) + (flip ? Math.PI : 0) + rng.g() * 0.5;
+          const base = dabColour(warmth(x, y), rng),
+            spread = rng.r(5, 18) * U * sc;
+          for (let i = 0; i < n; i++) {
+            a += angDiff(flowAng(x, y) + (flip ? Math.PI : 0), a) * 0.2 + rng.g() * 0.18;
+            const stepL = rng.r(6, 16) * U * sc;
+            x += Math.cos(a) * stepL;
+            y += Math.sin(a) * stepL;
+            const px = x + rng.g() * spread,
+              py = y + rng.g() * spread;
+            const w = warmth(px, py);
+            const col = rng.chance(0.68) ? jit(base, 10, rng) : dabColour(w, rng);
+            dab(
+              px,
+              py,
+              a + rng.g() * 0.45,
+              rng.r(5, 17) * U * sc,
+              rng.r(2, 6.5) * U * sc,
+              col,
+              rng,
+              rng.r(0.5, 0.95),
+            );
+            yield (o.dt || 0.02) * rng.r(0.5, 1.6);
+          }
+        }
+        function* gDabs(rng, strings, t0, span) {
+          const ox = core.px * PH,
+            oy = core.py * PH;
+          let t = 0;
+          for (let i = 0; i < strings; i++) {
+            const f = i / strings;
+            const due = span * Math.pow(f, 0.42);
+            if (due > t) {
+              yield due - t;
+              t = due;
+            }
+            const reach = (0.05 + 1.9 * Math.pow(f, 0.75)) * PH;
+            let pos = i < 4 ? [ox + rng.g() * 14 * U * i, oy + rng.g() * 14 * U * i] : null;
+            for (let k = 0; k < 26 && !pos; k++) {
+              const a = rng.f() * TAU,
+                d = reach * Math.sqrt(rng.f());
+              const x = ox + Math.cos(a) * d,
+                y = oy + Math.sin(a) * d;
+              if (x < -20 || y < -20 || x > PW + 20 || y > PH + 20) continue;
+              const w = warmth(x, y);
+              const mask = lerp(drift(x, y) * 0.985 + 0.015, 0.7, smooth(0.3, 0.52, w));
+              if (rng.f() < (0.2 + 0.8 * smooth(0.92, 0.35, w)) * mask) pos = [x, y];
+            }
+            if (!pos) continue;
+            const n = i < 4 ? 1 + i : 5 + rng.i(i < 20 ? 8 : 30);
+            const sc = rng.chance(0.1) ? rng.r(1.5, 2.1) : rng.chance(0.25) ? rng.r(0.55, 0.8) : 1;
+            spawn(
+              dabString(rng.fork(), pos[0], pos[1], Math.round(n / sc), { dt: 0.03, scale: sc }),
+              t0 + t,
+            );
+          }
+        }
+        function* gScratch(rng, groups) {
+          for (let g = 0; g < groups; g++) {
+            const pos = samplePos(rng, (x, y) => smooth(0.5, 0.2, warmth(x, y)), 40);
+            const n = 1 + rng.i(4),
+              a0 = flowAng(pos[0], pos[1]) + rng.r(0.3, 1.2) * (rng.chance(0.5) ? 1 : -1),
+              gap = rng.r(5, 12) * U;
+            const sN = rng.f() * 90;
+            for (let k = 0; k < n; k++) {
+              const len = rng.r(50, 230) * U,
+                pts = [],
+                lw = rng.r(0.6, 1.5) * U;
+              let x = pos[0] + Math.cos(a0 + Math.PI / 2) * gap * k + rng.g() * 6 * U,
+                y = pos[1] + Math.sin(a0 + Math.PI / 2) * gap * k + rng.g() * 6 * U,
+                a = a0 + rng.g() * 0.2;
+              for (let s = 0; s < len; s += 3 * U) {
+                pts.push([x, y]);
+                a += (noise(sN + (s * 0.012) / U, k * 3.1) - 0.5) * 0.36 + rng.g() * 0.03;
+                x += Math.cos(a) * 3 * U;
+                y += Math.sin(a) * 3 * U;
+              }
+              for (let j = 0; j < pts.length - 1; j += 4) {
+                const pr = noise(sN + j * 0.09, 4.4 + k);
+                if (pr > 0.3) scratchLine(pts.slice(j, j + 5), lw * (0.25 + 1.3 * pr), rng);
+                yield 0.012;
+              }
+              yield 0.06;
+            }
+            yield rng.r(0.2, 0.6);
+          }
+        }
+        function* gToast(rng, x, y, n, o) {
+          o = o || {};
+          const ang = o.ang == null ? rng.f() * TAU : o.ang,
+            spread = o.spread || rng.r(0.5, 1.1),
+            reach = (o.reach || rng.r(60, 150)) * U;
+          for (let i = 0; i < n; i++) {
+            const a = ang + rng.g() * spread,
+              d = reach * (0.15 + Math.pow(rng.f(), 0.6));
+            const sz = (rng.chance(0.12) ? rng.r(2.4, 5.2) : rng.r(0.6, 2.2)) * U * (o.scale || 1);
+            fleck(x + Math.cos(a) * d, y + Math.sin(a) * d * 0.92, sz, rng, rng.r(0.25, 0.7));
+            if ((i & 3) === 3) yield 0.008 + 0.03 * (i / n);
+          }
+        }
+        function* gDust(rng, n) {
+          let p = samplePos(rng, (x, y) => smooth(0.4, 0.1, warmth(x, y)));
+          let a = flowAng(p[0], p[1]);
+          for (let i = 0; i < n; i++) {
+            a += angDiff(flowAng(p[0], p[1]), a) * 0.1 + rng.g() * 0.1;
+            p = [p[0] + Math.cos(a) * 3.2 * U, p[1] + Math.sin(a) * 3.2 * U];
+            if (p[0] < -40 || p[0] > PW + 40 || p[1] < -40 || p[1] > PH + 40) {
+              p = samplePos(rng, (x, y) => smooth(0.5, 0.1, warmth(x, y)));
+              a = flowAng(p[0], p[1]);
+            }
+            const band = rng.r(8, 46) * U * (0.5 + noise(i * 0.01, 3.3));
+            for (let k = 0; k < 3; k++)
+              fleck(
+                p[0] + rng.g() * band,
+                p[1] + rng.g() * band,
+                rng.r(0.45, 1.5) * U,
+                rng,
+                rng.r(0.2, 0.6),
+              );
+            if ((i & 3) === 3) yield 0.01;
+          }
+        }
+        function* gCrayons(rng) {
+          const start = [rng.r(0.04, 0.1) * PW, rng.r(0.3, 0.5) * PH];
+          const circ = (x, y) => flowAng(x, y);
+          spawn(
+            crayonLine(
+              loopPath(
+                rng.fork(),
+                start[0],
+                start[1],
+                9000 * U,
+                48 * U,
+                (x, y) => {
+                  const a = Math.atan2(core.y * PH - y, core.x * PH - x);
+                  return a + 0.9 + (fbm((x / PH) * 1.3 + 3, (y / PH) * 1.3) - 0.5) * 1.6;
+                },
+                0.2,
+              ),
+              5.2 * U,
+              P.crayon[0],
+              rng.fork(),
+              420,
+            ),
+            clockT,
+          );
+          yield 5;
+          const p2 = samplePos(
+            rng,
+            (x, y) =>
+              smooth(0.25, 0.45, warmth(x, y)) *
+              smooth(0.7, 0.5, warmth(x, y)) *
+              (y > PH * 0.55 ? 1 : 0.15),
+          );
+          spawn(
+            crayonLine(
+              loopPath(rng.fork(), p2[0], p2[1], 5200 * U, 26 * U, circ, 0.17),
+              4.4 * U,
+              P.crayon[1],
+              rng.fork(),
+              380,
+            ),
+            clockT,
+          );
+          yield 6;
+          const p3 = samplePos(rng, (x, y) => smooth(0.6, 0.85, warmth(x, y)));
+          spawn(
+            crayonLine(
+              loopPath(rng.fork(), p3[0], p3[1], 3000 * U, 18 * U, circ, 0.24),
+              3.8 * U,
+              P.crayon[3],
+              rng.fork(),
+              360,
+            ),
+            clockT,
+          );
+          yield 4;
+
+          const hx0 = rng.r(0.8, 0.9) * PW,
+            hy0 = rng.r(0.76, 0.86) * PH,
+            ha = rng.r(-1.1, -0.7),
+            pts = [];
+          for (let i = 0; i < 46; i++) {
+            const along = i * 3.3 * U,
+              side = (i & 1 ? 1 : -1) * rng.r(26, 44) * U * (1 - Math.abs(i - 23) / 40);
+            pts.push([
+              hx0 + Math.cos(ha + Math.PI / 2) * along + Math.cos(ha) * side + rng.g() * 2 * U,
+              hy0 + Math.sin(ha + Math.PI / 2) * along + Math.sin(ha) * side + rng.g() * 2 * U,
+            ]);
+          }
+          const dense = [];
+          for (let i = 0; i < pts.length - 1; i++)
+            for (let k = 0; k < 14; k++)
+              dense.push([
+                lerp(pts[i][0], pts[i + 1][0], k / 14),
+                lerp(pts[i][1], pts[i + 1][1], k / 14),
+              ]);
+          spawn(crayonLine(dense, 5 * U, P.crayon[2], rng.fork(), 900), clockT);
+          yield 5;
+          const p5 = samplePos(
+            rng,
+            (x, y) => smooth(0.3, 0.1, warmth(x, y)) * (y < PH * 0.4 ? 1 : 0.1),
+          );
+          spawn(
+            crayonLine(
+              loopPath(rng.fork(), p5[0], p5[1], 2600 * U, 15 * U, circ, 0.3),
+              3.6 * U,
+              P.crayon[4],
+              rng.fork(),
+              340,
+            ),
+            clockT,
+          );
+          yield 4;
+          const p6 = samplePos(
+            rng,
+            (x, y) => smooth(0.35, 0.6, warmth(x, y)) * (x > PW * 0.5 && y < PH * 0.3 ? 1 : 0.05),
+          );
+          spawn(
+            crayonLine(
+              loopPath(rng.fork(), p6[0], p6[1], 2200 * U, 13 * U, circ, 0.34),
+              3.4 * U,
+              P.crayon[5],
+              rng.fork(),
+              340,
+            ),
+            clockT,
+          );
+        }
+        function* gSplatDrip(rng) {
+          for (let i = 0; i < 11; i++) {
+            const pos = samplePos(rng, (x, y) => {
+              const w = warmth(x, y);
+              return 0.2 + 0.8 * smooth(0.2, 0.45, w) * smooth(0.85, 0.55, w);
+            });
+            const w = warmth(pos[0], pos[1]);
+            const col =
+              w > 0.4
+                ? rng.chance(0.6)
+                  ? rng.pick(P.light)
+                  : rng.pick(P.warm)
+                : rng.chance(0.4)
+                  ? rng.pick(P.light)
+                  : rng.chance(0.5)
+                    ? rng.pick(P.warm)
+                    : rng.pick(P.ultra);
+            spawn(
+              splatter(
+                pos[0],
+                pos[1],
+                flowAng(pos[0], pos[1]) + rng.g() * 0.6,
+                rng.r(0.25, 0.7),
+                rng.r(60, 190) * U,
+                30 + rng.i(110),
+                col,
+                rng.fork(),
+              ),
+              clockT,
+            );
+            yield rng.r(0.8, 2.2);
+          }
+        }
+        function* gAfter(rng) {
+          let i = 0;
+          for (;;) {
+            yield rng.r(1.4, 3.6) + Math.min(14, i * 0.07);
+            i++;
+            const k = rng.f();
+            if (k < 0.5) {
+              const p = samplePos(rng, (x, y) => 0.3 + 0.7 * smooth(0.85, 0.3, warmth(x, y)));
+              spawn(dabString(rng.fork(), p[0], p[1], 3 + rng.i(12), { dt: 0.09 }), clockT);
+            } else if (k < 0.72) {
+              const p = samplePos(rng, (x, y) => smooth(0.6, 0.15, warmth(x, y)) + 0.1);
+              spawn(
+                gToast(rng.fork(), p[0], p[1], 8 + rng.i(30), { reach: rng.r(20, 70), scale: 0.8 }),
+                clockT,
+              );
+            } else if (k < 0.88) {
+              const p = samplePos(rng, () => 1);
+              const w = warmth(p[0], p[1]),
+                pal = paletteAt(w, rng);
+              spawn(
+                brush(
+                  fieldPath(p[0], p[1], rng.r(0.08, 0.22) * PH, 6 * U, rng, 0.05, rng.chance(0.5)),
+                  {
+                    w: rng.r(8, 22) * U,
+                    c1: rng.pick(pal),
+                    c2: rng.pick(pal),
+                    alpha: rng.r(0.35, 0.6),
+                    dry: rng.r(0.6, 0.85),
+                    thick: rng.r(0.3, 0.6),
+                    dt: 0.03,
+                  },
+                  rng.fork(),
+                ),
+                clockT,
+              );
+            } else {
+              const p = samplePos(rng, () => 1);
+              spawn(
+                crayonLine(
+                  loopPath(
+                    rng.fork(),
+                    p[0],
+                    p[1],
+                    rng.r(260, 800) * U,
+                    rng.r(8, 20) * U,
+                    flowAng,
+                    0.3,
+                  ),
+                  rng.r(3, 4.6) * U,
+                  rng.pick(P.crayon),
+                  rng.fork(),
+                  300,
+                ),
+                clockT,
+              );
+            }
+          }
+        }
+
+        function compose(seed) {
+          epoch++;
+          tracks = [];
+          paintT = 0;
+          clockT = 0;
+          const R = RNG(seed);
+          noise = makeNoise(R.fork().f);
+          fbm = (x, y) =>
+            (noise(x, y) +
+              0.5 * noise(x * 2.03 + 17.1, y * 2.03 + 9.2) +
+              0.25 * noise(x * 4.1 + 3.3, y * 4.1 + 41.7) +
+              0.125 * noise(x * 8.3 + 71, y * 8.3 + 23)) /
+            1.875;
+          warmSeedA = R.r(0, 100);
+          warmSeedB = R.r(0, 100);
+          core = {
+            x: R.r(1.1, 1.24),
+            y: R.r(0.38, 0.5),
+            px: R.r(0.28, 0.44),
+            py: R.r(0.56, 0.72),
+            spin: R.chance(0.5) ? 1 : -1,
+            drift: R.r(-0.75, -0.3),
+          };
+
+          cx.globalAlpha = 1;
+          cx.globalCompositeOperation = "source-over";
+          cx.fillStyle = rgb(BOLE);
+          cx.fillRect(0, 0, PW, PH);
+          hx.globalAlpha = 1;
+          hx.fillStyle = "rgb(10,0,30)";
+          hx.fillRect(0, 0, PW, PH);
+          const gr = R.fork();
+          for (let i = 0; i < 160; i++) {
+            cx.globalAlpha = 0.06;
+            cx.fillStyle = rgb(jit(gr.chance(0.5) ? [70, 30, 22] : [128, 62, 40], 10, gr));
+            cx.fill(
+              polyPath(
+                deform(blob(gr.f() * PW, gr.f() * PH, gr.r(0.04, 0.2) * PH, gr, 8, 2), 3, 0.5, gr),
+              ),
+            );
+          }
+          cx.globalAlpha = 1;
+
+          spawn(gLeaf(R.fork()), 0.25);
+          for (let i = 0; i < 4; i++) spawn(gWashes(R.fork(), 8, "night"), 2.6 + i * 0.5);
+          for (let i = 0; i < 2; i++) spawn(gWashes(R.fork(), 9, "trans"), 4 + i * 0.8);
+          for (let i = 0; i < 2; i++) spawn(gWashes(R.fork(), 9, "syrup"), 5 + i);
+          spawn(gWashes(R.fork(), 8, "veil"), 31);
+
+          const nightW = (x, y) => Math.pow(smooth(0.55, 0.08, warmth(x, y)), 0.8);
+          for (let i = 0; i < 3; i++)
+            spawn(
+              gMass(R.fork(), 34, {
+                where: nightW,
+                pal: (w, r) => (w < 0.3 ? (r.chance(0.6) ? P.deep : P.night) : P.night),
+                len: [0.3, 0.8],
+                w: [34, 70],
+                alpha: [0.82, 0.97],
+                dry: [0.05, 0.3],
+                dryW: (w) => smooth(0.25, 0.5, w) * 0.5,
+                thick: [0.45, 0.8],
+                dt: 0.01,
+              }),
+              6.5 + i * 0.4,
+            );
+          for (let i = 0; i < 3; i++)
+            spawn(
+              gMass(R.fork(), 44, {
+                where: nightW,
+                pal: (w, r) => (r.chance(0.55) ? P.night : r.chance(0.6) ? P.ultra : P.deep),
+                len: [0.18, 0.55],
+                w: [16, 44],
+                alpha: [0.7, 0.95],
+                dry: [0.2, 0.55],
+                dryW: (w) => smooth(0.25, 0.5, w) * 0.4,
+                thick: [0.5, 0.9],
+                dt: 0.011,
+              }),
+              13 + i * 0.5,
+            );
+          for (let i = 0; i < 2; i++)
+            spawn(
+              gMass(R.fork(), 46, {
+                where: (x, y) => smooth(0.6, 0.15, warmth(x, y)) * 0.9,
+                pal: (w, r) => (r.chance(0.7) ? P.ultra : r.chance(0.5) ? P.trans : P.night),
+                len: [0.08, 0.3],
+                w: [7, 22],
+                alpha: [0.6, 0.9],
+                dry: [0.45, 0.8],
+                thick: [0.55, 0.95],
+                dt: 0.012,
+              }),
+              21 + i * 0.6,
+            );
+
+          for (let i = 0; i < 2; i++)
+            spawn(
+              gMass(R.fork(), 32, {
+                where: (x, y) => {
+                  const w = warmth(x, y);
+                  return smooth(0.22, 0.42, w) * smooth(0.74, 0.5, w);
+                },
+                pal: (w, r) => (r.chance(0.72) ? P.trans : w > 0.48 ? P.warm : P.ultra),
+                len: [0.12, 0.42],
+                w: [12, 40],
+                alpha: [0.55, 0.9],
+                dry: [0.4, 0.78],
+                thick: [0.4, 0.8],
+                dt: 0.011,
+              }),
+              17 + i * 0.7,
+            );
+
+          for (let i = 0; i < 2; i++)
+            spawn(
+              gMass(R.fork(), 28, {
+                where: (x, y) => {
+                  const w = warmth(x, y);
+                  return smooth(0.42, 0.6, w) * (1 - 0.92 * smooth(0.68, 0.86, w));
+                },
+                pal: (w, r) => (r.chance(0.74) ? P.warm : r.chance(0.5) ? P.light : P.trans),
+                len: [0.1, 0.4],
+                w: [12, 42],
+                alpha: [0.45, 0.85],
+                dry: [0.5, 0.86],
+                thick: [0.35, 0.75],
+                dt: 0.011,
+              }),
+              23 + i * 0.8,
+            );
+          spawn(
+            gMass(R.fork(), 12, {
+              where: (x, y) => smooth(0.62, 0.88, warmth(x, y)) * 0.8,
+              pal: (w, r) => (r.chance(0.82) ? P.light : P.warm),
+              len: [0.1, 0.4],
+              w: [14, 52],
+              alpha: [0.3, 0.7],
+              dry: [0.62, 0.92],
+              thick: [0.25, 0.6],
+              dt: 0.012,
+            }),
+            29,
+          );
+
+          spawn(
+            gMass(R.fork(), 14, {
+              where: (x, y) => smooth(0.6, 0.9, warmth(x, y)),
+              pal: (w, r) => (r.chance(0.7) ? P.light : r.chance(0.6) ? P.warm : P.trans),
+              len: [0.04, 0.14],
+              w: [8, 22],
+              alpha: [0.8, 1],
+              dry: [0.3, 0.62],
+              thick: [0.5, 0.8],
+              gloss: 140,
+              wob: 0.13,
+              dt: 0.016,
+              rest: 6,
+            }),
+            36,
+          );
+
+          spawn(
+            gMass(R.fork(), 26, {
+              where: (x, y) => smooth(0.5, 0.15, warmth(x, y)) * 0.6 + 0.05,
+              pal: (w, r) => (r.chance(0.8) ? P.warm : P.candy),
+              len: [0.03, 0.12],
+              w: [5, 14],
+              alpha: [0.85, 1],
+              dry: [0.2, 0.6],
+              thick: [0.75, 1],
+              dt: 0.014,
+              rest: 5,
+            }),
+            40,
+          );
+
+          spawn(gDabs(R.fork(), 132, 27, 50), 27);
+          spawn(gScratch(R.fork(), 16), 38);
+          spawn(gScratch(R.fork(), 12), 47);
+          spawn(gSplatDrip(R.fork()), 46);
+          spawn(gDust(R.fork(), 1500), 50);
+          spawn(gDust(R.fork(), 1100), 58);
+          const tr = R.fork();
+          for (let i = 0; i < 8; i++) {
+            const a = tr.f() * TAU,
+              d = tr.r(0.3, 0.62);
+            const x = clamp(core.x * PH + Math.cos(a) * d * PH * 1.25, 0.04 * PW, 0.96 * PW),
+              y = clamp(core.y * PH + Math.sin(a) * d * PH, 0.06 * PH, 0.94 * PH);
+            spawn(
+              gToast(tr.fork(), x, y, 130 + tr.i(200), { ang: a + tr.g() * 0.5 }),
+              56 + i * tr.r(2.2, 3.4),
+            );
+          }
+          spawn(gCrayons(R.fork()), 60);
+          spawn(gAfter(R.fork()), 104);
+          dirty = true;
+        }
+
+        const userRng = RNG((Math.random() * 4294967296) >>> 0);
+        const ptr = {
+          x: 0.5,
+          y: 0.5,
+          down: false,
+          last: -10,
+          px: 0,
+          py: 0,
+          t0: 0,
+          moved: 0,
+          path: [],
+          col: 0,
+          speed: 0,
+          pool: 0,
+          lastPool: 0,
+        };
+        function toPaint(e) {
+          const r = view.getBoundingClientRect();
+          return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height];
+        }
+        function* gAnswer(path, rng) {
+          yield 0.4;
+          let len = 0;
+          for (let i = 1; i < path.length; i++)
+            len += Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]);
+          const total = Math.min(150, 8 + Math.round(len / (5 * U)));
+          for (let i = 0; i < total; i++) {
+            const f = clamp(i / total + rng.g() * 0.08, 0, 0.999),
+              p = path[Math.floor(f * path.length)];
+            const d = rng.r(8, 34) * U * (rng.chance(0.5) ? 1 : -1),
+              a = flowAng(p[0], p[1]);
+            const x = p[0] + rng.g() * 14 * U - Math.sin(a) * d,
+              y = p[1] + rng.g() * 14 * U + Math.cos(a) * d;
+            const w = warmth(x, y);
+            dab(
+              x,
+              y,
+              a + rng.g() * 0.6,
+              rng.r(3.5, 9) * U,
+              rng.r(2, 4.8) * U,
+              dabColour(w * 0.8, rng),
+              rng,
+              rng.r(0.65, 0.95),
+            );
+            if (rng.chance(0.3))
+              fleck(x + rng.g() * 16 * U, y + rng.g() * 16 * U, rng.r(0.6, 2.4) * U, rng, 0.5);
+            yield 0.012 + rng.f() * 0.06 * (0.4 + i / total);
+          }
+        }
+        function pointerDown(e) {
+          try {
+            view.setPointerCapture(e.pointerId);
+          } catch (err) {}
+          const [nx, ny] = toPaint(e);
+          ptr.x = nx;
+          ptr.y = ny;
+          ptr.down = true;
+          ptr.px = nx * PW;
+          ptr.py = ny * PH;
+          ptr.t0 = performance.now();
+          ptr.moved = 0;
+          ptr.pool = 0;
+          ptr.path = [[ptr.px, ptr.py]];
+          ptr.col = (ptr.col + 1) % P.crayon.length;
+          ptr.last = performance.now();
+          initAudio();
+          e.preventDefault();
+        }
+        function pointerMove(e) {
+          const [nx, ny] = toPaint(e);
+          ptr.x = nx;
+          ptr.y = ny;
+          ptr.last = performance.now();
+          if (!ptr.down) return;
+          const x = nx * PW,
+            y = ny * PH,
+            d = Math.hypot(x - ptr.px, y - ptr.py);
+          if (d < 1.2 * U) return;
+          ptr.moved += d;
+          let press =
+            e.pointerType === "pen" && e.pressure > 0
+              ? clamp(e.pressure * 1.3, 0.15, 1)
+              : clamp(1.05 - d / (26 * U), 0.25, 1);
+          const n = Math.max(1, Math.ceil(d / (5 * U)));
+          const css = rgb(P.crayon[ptr.col]);
+          for (let i = 0; i < n; i++)
+            crayonSeg(
+              lerp(ptr.px, x, i / n),
+              lerp(ptr.py, y, i / n),
+              lerp(ptr.px, x, (i + 1) / n),
+              lerp(ptr.py, y, (i + 1) / n),
+              (5.4 + 2.6 * press) * U,
+              css,
+              press,
+              userRng,
+            );
+          ptr.speed = Math.min(1, ptr.speed + d / (40 * U));
+          ptr.px = x;
+          ptr.py = y;
+          ptr.path.push([x, y]);
+          dirty = true;
+        }
+        function pointerUp() {
+          if (!ptr.down) return;
+          ptr.down = false;
+          if (ptr.pool > 0)
+            spawn(
+              gToast(userRng.fork(), ptr.px, ptr.py, Math.min(420, 60 + ptr.pool * 14), {
+                spread: 3.2,
+                reach: 30 + Math.min(150, ptr.pool * 5),
+              }),
+              paintT + 0.05,
+            );
+          if (ptr.path.length > 3) spawn(gAnswer(ptr.path.slice(), userRng.fork()), clockT);
+          else if (ptr.pool === 0) {
+            spawn(
+              dabString(userRng.fork(), ptr.px, ptr.py, 9 + userRng.i(10), { dt: 0.05 }),
+              paintT + 0.15,
+            );
+            spawn(
+              gToast(userRng.fork(), ptr.px, ptr.py, 26, { spread: 3.2, reach: 34 }),
+              paintT + 0.3,
+            );
+          }
+        }
+        function holdTick(now) {
+          if (!ptr.down || ptr.moved > 5 * U || now - ptr.t0 < 380 || now - ptr.lastPool < 45)
+            return;
+          ptr.lastPool = now;
+          ptr.pool++;
+          const r = (14 + 15 * Math.sqrt(ptr.pool)) * U,
+            col = P.syrup[ptr.col % P.syrup.length];
+          const p = deform(
+            blob(ptr.px, ptr.py, Math.min(r, 150 * U), userRng, 9),
+            5,
+            0.42,
+            userRng,
+          );
+          cx.globalAlpha = 0.07;
+          cx.fillStyle = rgb(jit(col, 8, userRng));
+          cx.fill(polyPath(p));
+          if (ptr.pool % 5 === 0) {
+            cx.globalAlpha = 0.07;
+            cx.strokeStyle = rgb(mix(col, [70, 30, 30], 0.4));
+            cx.lineWidth = 1 * U;
+            cx.stroke(polyPath(p));
+          }
+          cx.globalAlpha = 1;
+          dirty = true;
+        }
+        function bindView() {
+          view.addEventListener("pointerdown", pointerDown);
+          view.addEventListener("pointermove", pointerMove);
+          view.addEventListener("contextmenu", (e) => e.preventDefault());
+        }
+        window.addEventListener("pointerup", pointerUp);
+        window.addEventListener("pointercancel", pointerUp);
+        window.addEventListener("keydown", (e) => {
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+          const k = e.key.toLowerCase();
+          if (k === "n" || k === " ") {
+            e.preventDefault();
+            opt.seed = (Math.random() * 4294967296) >>> 0;
+            ffTarget = 0;
+            compose(opt.seed);
+          } else if (k === "f") {
+            const el = stage;
+            if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+            else if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+          } else if (k === "m") {
+            muted = !muted;
+          } else if (k === "enter") {
+            ffTarget = Math.max(paintT, 110);
+          }
+        });
+        let tilt = null;
+        window.addEventListener("deviceorientation", (e) => {
+          if (e.gamma == null || e.beta == null) return;
+          tilt = [clamp(e.gamma / 35, -1, 1), clamp((e.beta - 40) / 35, -1, 1)];
+        });
+
+        let ac = null,
+          sGain = null,
+          sBand = null,
+          muted = false;
+        function initAudio() {
+          if (ac) {
+            if (ac.state === "suspended") ac.resume().catch(() => {});
+            return;
+          }
+          try {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            ac = new AC();
+            const len = ac.sampleRate * 3,
+              buf = ac.createBuffer(1, len, ac.sampleRate),
+              d = buf.getChannelData(0);
+            let b0 = 0,
+              b1 = 0;
+            for (let i = 0; i < len; i++) {
+              const w = Math.random() * 2 - 1;
+              b0 = 0.985 * b0 + 0.015 * w;
+              b1 = 0.6 * b1 + 0.4 * w;
+              d[i] =
+                (b1 * 0.7 + b0 * 3.2 + w * 0.15) *
+                (0.7 + 0.3 * Math.sin(i * 0.0021) * Math.sin(i * 0.00037));
+            }
+            const src = ac.createBufferSource();
+            src.buffer = buf;
+            src.loop = true;
+            sBand = ac.createBiquadFilter();
+            sBand.type = "bandpass";
+            sBand.frequency.value = 2400;
+            sBand.Q.value = 0.6;
+            const hp = ac.createBiquadFilter();
+            hp.type = "highpass";
+            hp.frequency.value = 500;
+            sGain = ac.createGain();
+            sGain.gain.value = 0;
+            src.connect(sBand);
+            sBand.connect(hp);
+            hp.connect(sGain);
+            sGain.connect(ac.destination);
+            src.start();
+          } catch (err) {
+            ac = null;
+          }
+        }
+        function audioTick() {
+          if (!ac || !sGain) return;
+          const lvl = muted ? 0 : Math.min(0.11, ptr.speed * 0.1 + autoScratch * 0.014);
+          sGain.gain.setTargetAtTime(lvl, ac.currentTime, 0.04);
+          sBand.frequency.setTargetAtTime(
+            1700 + 2600 * ptr.speed + 500 * autoScratch,
+            ac.currentTime,
+            0.06,
+          );
+        }
+
+        const VS =
+          "attribute vec2 p;varying vec2 v;void main(){v=p*0.5+0.5;gl_Position=vec4(p,0.,1.);}";
+        const FS = `precision highp float;
+uniform sampler2D uC,uH;uniform vec2 uTex;uniform vec3 uL;uniform float uDawn,uT,uHour;varying vec2 v;
+float hash(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+float vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
+vec2 gn(vec2 p){const float e=.7;return vec2(vn(p+vec2(e,0.))-vn(p-vec2(e,0.)),vn(p+vec2(0.,e))-vn(p-vec2(0.,e)));}
+void main(){
+ vec2 t=1./uTex;vec3 alb=texture2D(uC,v).rgb;vec4 hm=texture2D(uH,v);
+ vec2 o=t*1.35;
+ float a00=texture2D(uH,v+vec2(-o.x,-o.y)).r,a10=texture2D(uH,v+vec2(0.,-o.y)).r,a20=texture2D(uH,v+vec2(o.x,-o.y)).r;
+ float a01=texture2D(uH,v+vec2(-o.x,0.)).r,a21=texture2D(uH,v+vec2(o.x,0.)).r;
+ float a02=texture2D(uH,v+vec2(-o.x,o.y)).r,a12=texture2D(uH,v+vec2(0.,o.y)).r,a22=texture2D(uH,v+vec2(o.x,o.y)).r;
+ vec2 g=vec2((a20+2.*a21+a22)-(a00+2.*a01+a02),(a02+2.*a12+a22)-(a00+2.*a10+a20))*.36;
+ float gold=smoothstep(.34,.72,hm.g);
+ vec2 p=v*uTex*(1600./uTex.x);
+ vec2 mg=gn(p*.62)*.5+gn(p*1.9)*.32;
+ vec3 L=normalize(uL);
+ vec3 V=normalize(vec3((.5-v)*vec2(1.78,1.)*.5,1.));
+ vec3 Hh=normalize(L+V);
+ vec3 N=normalize(vec3(-g*2.1-mg*.42,1.));
+ float sh=clamp(1.+dot(N.xy,L.xy)*1.25-(1.-N.z)*.22,.55,1.45);
+ float gran=1.+(vn(p*1.05)-.5)*.11+(vn(p*.21)-.5)*.05;
+ float sp=pow(max(dot(N,Hh),0.),34.)*(.03+.22*hm.b);
+ vec3 paint=alb*sh*gran+sp*vec3(1.,.97,.9);
+ // azurite and malachite are crushed stone: the coarse grains flash
+ vec2 cell=floor(p*.62);float hc=hash(cell);
+ vec2 ct=vec2(hash(cell+7.3),hash(cell+19.1))-.5;
+ float sparkle=step(.965,hc)*pow(max(dot(normalize(vec3(N.xy+ct*1.1,1.)),Hh),0.),70.);
+ paint+=sparkle*.5*smoothstep(.05,.3,hm.r)*(alb+.25);
+ float a=hm.b*18.85;float mag=.03+.11*fract(hm.b*5.37);
+ vec2 cr=gn(p*.022)*.5+gn(p*.085)*.16+gn(p*.4)*.05;
+ vec3 Ng=normalize(vec3(-g*.55-mg*.14+vec2(cos(a),sin(a))*mag+cr*.2,1.));
+ float sg=max(dot(Ng,Hh),0.);
+ float lum=dot(alb,vec3(.3,.55,.15));
+ float bro=pow(sg,13.);vec3 goldc=alb*mix(vec3(.62,.50,.36),vec3(1.17,1.08,.9),bro)+vec3(1.,.9,.64)*pow(sg,120.)*.4*smoothstep(.05,.6,lum);
+ goldc*=1.+(vn(p*.9)-.5)*.05;
+ vec3 col=mix(paint,goldc,gold);
+ col*=1.+.09*dot((v-.5)*vec2(1.78,1.),L.xy);
+ float d=uDawn;
+ col*=mix(.84,1.02,d);
+ col=mix(col*vec3(.9,.96,1.09),col*vec3(1.03,1.,.96),d);
+ col*=mix(vec3(.985,.995,1.02),vec3(1.02,1.,.975),uHour);
+ col=pow(col,vec3(mix(1.05,.98,d)));
+ col+=(hash(gl_FragCoord.xy+fract(uT)*91.)-.5)*.012;
+ gl_FragColor=vec4(col,1.);
+}`;
+        let gl = null,
+          prog = null,
+          uni = {},
+          texC = null,
+          texH = null,
+          ctx2d = null,
+          glLost = false;
+        function initGL() {
+          uni = {};
+          try {
+            gl = view.getContext("webgl", {
+              antialias: false,
+              alpha: false,
+              powerPreference: "high-performance",
+            });
+          } catch (e) {
+            gl = null;
+          }
+          if (!gl) {
+            ctx2d = view.getContext("2d");
+            return;
+          }
+          const sh = (type, src) => {
+            const s = gl.createShader(type);
+            gl.shaderSource(s, src);
+            gl.compileShader(s);
+            if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+              throw new Error(gl.getShaderInfoLog(s));
+            return s;
+          };
+          prog = gl.createProgram();
+          gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS));
+          gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+          gl.linkProgram(prog);
+          if (!gl.getProgramParameter(prog, gl.LINK_STATUS))
+            throw new Error(gl.getProgramInfoLog(prog));
+          gl.useProgram(prog);
+          const buf = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+          gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
+            gl.STATIC_DRAW,
+          );
+          const loc = gl.getAttribLocation(prog, "p");
+          gl.enableVertexAttribArray(loc);
+          gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+          for (const n of ["uC", "uH", "uTex", "uL", "uDawn", "uT", "uHour"])
+            uni[n] = gl.getUniformLocation(prog, n);
+          const mk = (unit) => {
+            const t = gl.createTexture();
+            gl.activeTexture(gl.TEXTURE0 + unit);
+            gl.bindTexture(gl.TEXTURE_2D, t);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            return t;
+          };
+          texC = mk(0);
+          texH = mk(1);
+          gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+          gl.uniform1i(uni.uC, 0);
+          gl.uniform1i(uni.uH, 1);
+          gl.uniform2f(uni.uTex, PW, PH);
+        }
+        try {
+          initGL();
+        } catch (err) {
+          gl = null;
+          const c2 = view.cloneNode(false);
+          view.replaceWith(c2);
+          view = c2;
+          ctx2d = c2.getContext("2d");
+        }
+        bindView();
+        view.addEventListener("webglcontextlost", (e) => {
+          e.preventDefault();
+          glLost = true;
+        });
+        view.addEventListener("webglcontextrestored", () => {
+          try {
+            initGL();
+            glLost = false;
+            dirty = true;
+            fit();
+          } catch (err) {
+            glLost = true;
+          }
+        });
+
+        function fit() {
+          const aw = stage.clientWidth,
+            ah = stage.clientHeight;
+          let w = Math.min(aw, (ah * 16) / 9),
+            h = (w * 9) / 16;
+          const el = view;
+          el.style.width = Math.floor(w) + "px";
+          el.style.height = Math.floor(h) + "px";
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const W = clamp(Math.round(w * dpr), 320, 2880),
+            H = Math.round((W * 9) / 16);
+          if (el.width !== W || el.height !== H) {
+            el.width = W;
+            el.height = H;
+            dirty = true;
+            forceDraw = true;
+          }
+          if (gl) gl.viewport(0, 0, W, H);
+        }
+        window.addEventListener("resize", fit);
+        if (window.ResizeObserver) new ResizeObserver(fit).observe(stage);
+        fit();
+
+        const light = [0.25, 0.3],
+          LIGHTS = [
+            [-0.75, 0.55],
+            [0.8, 0.5],
+            [0, 0],
+            [0.7, -0.6],
+            [-0.6, -0.5],
+          ];
+        let lastNow = performance.now(),
+          wall = 0,
+          frameNo = 0;
+        const hour = new Date().getHours() + new Date().getMinutes() / 60;
+        const hourWarm = 0.5 + 0.5 * Math.cos(((hour - 15) / 24) * TAU);
+        compose(opt.seed);
+
+        function frame(now) {
+          requestAnimationFrame(frame);
+          const dt = Math.min(0.1, Math.max(0, (now - lastNow) / 1000));
+          lastNow = now;
+          wall += dt;
+          if (paintT < ffTarget) paintT = advance(ffTarget, 26);
+          else paintT = advance(paintT + dt, 9);
+          holdTick(now);
+          ptr.speed *= Math.pow(0.0005, dt);
+          autoScratch *= Math.pow(0.001, dt);
+          audioTick();
+
+          let tx, ty;
+          const idle = (now - ptr.last) / 1000;
+          const dx = 0.62 * Math.sin(wall * 0.11 + 0.6) + 0.2 * Math.sin(wall * 0.047),
+            dy = 0.34 * Math.cos(wall * 0.083) + 0.2;
+          const k = reduceMotion ? 0 : smooth(2.5, 7, idle);
+          const hxp = tilt ? tilt[0] : (ptr.x - 0.5) * 2,
+            hyp = tilt ? -tilt[1] : -(ptr.y - 0.5) * 2;
+          tx = lerp(hxp * 0.95, dx, k);
+          ty = lerp(hyp * 0.95, dy, k);
+          if (opt.light >= 0) {
+            tx = LIGHTS[opt.light][0];
+            ty = LIGHTS[opt.light][1];
+            light[0] = tx;
+            light[1] = ty;
+          }
+          const e = 1 - Math.pow(0.02, dt);
+          light[0] += (tx - light[0]) * e;
+          light[1] += (ty - light[1]) * e;
+          const dawn = smooth(0, 96, paintT) * (0.955 + 0.045 * Math.sin(wall * 0.05));
+          frameNo++;
+          const calm = !dirty && !forceDraw && idle > 8 && !ptr.down;
+          if (calm && frameNo & 1) return;
+          forceDraw = false;
+          if (gl && !glLost) {
+            if (dirty && (ptr.down || paintT < ffTarget || (frameNo & 1) === 0)) {
+              gl.activeTexture(gl.TEXTURE0);
+              gl.bindTexture(gl.TEXTURE_2D, texC);
+              gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cCan);
+              gl.activeTexture(gl.TEXTURE1);
+              gl.bindTexture(gl.TEXTURE_2D, texH);
+              gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, hCan);
+              dirty = false;
+            }
+            gl.uniform3f(uni.uL, light[0], light[1], 0.8);
+            gl.uniform1f(uni.uDawn, dawn);
+            gl.uniform1f(uni.uT, wall);
+            gl.uniform1f(uni.uHour, hourWarm);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+          } else if (ctx2d && dirty) {
+            ctx2d.drawImage(cCan, 0, 0, view.width, view.height);
+            dirty = false;
+          }
+        }
+        requestAnimationFrame(frame);
+
+        if (opt.demo) {
+          const ev = (type, x, y) => {
+            const r = view.getBoundingClientRect();
+            view.dispatchEvent(
+              new PointerEvent(type, {
+                clientX: r.left + x * r.width,
+                clientY: r.top + y * r.height,
+                bubbles: true,
+                pointerType: "mouse",
+              }),
+            );
+          };
+          let n = 0;
+          const iv = setInterval(() => {
+            if (paintT < ffTarget) return;
+            n++;
+            if (n === 1) ev("pointerdown", 0.12, 0.3);
+            else if (n < 60) ev("pointermove", 0.12 + n * 0.006, 0.3 + 0.12 * Math.sin(n * 0.25));
+            else if (n === 60) window.dispatchEvent(new PointerEvent("pointerup"));
+            else if (n === 70) ev("pointerdown", 0.3, 0.8);
+            else if (n === 130) window.dispatchEvent(new PointerEvent("pointerup"));
+            else if (n === 140) {
+              ev("pointerdown", 0.85, 0.2);
+              window.dispatchEvent(new PointerEvent("pointerup"));
+            } else if (n > 150) clearInterval(iv);
+          }, 16);
+        }
+      })();
+    </script>
+  </body>
+</html>

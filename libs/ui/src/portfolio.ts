@@ -13,6 +13,7 @@ const portfolio = {
     projects: "Projects",
     blogs: "Blogs",
     sloppedia: "Sloppedia",
+    nikogori: "Nikogori",
   },
 } as const;
 
