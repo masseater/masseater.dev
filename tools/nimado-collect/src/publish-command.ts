@@ -164,3 +164,4 @@ const publish = Effect.fn("command.publish")(function* publishSite({ state, out 
 });
 
 export { publish };
+export type { Output };
