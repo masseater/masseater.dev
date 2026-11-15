@@ -1,0 +1,9 @@
+{
+  "title": "__MOD__",
+  "description": "",
+  "visibility": "private",
+  "changeNote": "Initial release",
+  "tags": [],
+  "dependencies": [3737335127],
+  "contentDescriptors": []
+}

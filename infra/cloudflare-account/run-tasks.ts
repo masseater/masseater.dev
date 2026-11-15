@@ -8,6 +8,11 @@ export const alchemyTasks = {
   destroy: { command: "alchemy destroy", cache: false },
 } satisfies Tasks;
 
+export const deployTo = (stage: "prod" | "production"): { command: string; cache: false } => ({
+  command: `alchemy deploy --stage ${stage} --yes`,
+  cache: false,
+});
+
 export const d1Tasks = {
   "db:generate": "drizzle-kit generate",
   "db:check": [

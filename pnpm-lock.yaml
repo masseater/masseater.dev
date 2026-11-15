@@ -1737,6 +1737,12 @@ importers:
       '@masseater.dev/cloudflare-account':
         specifier: workspace:*
         version: link:../../infra/cloudflare-account
+      '@masseater.dev/github-workflow':
+        specifier: workspace:*
+        version: link:../../libs/github-workflow
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
       '@masseater.dev/start-shell':
         specifier: workspace:*
         version: link:../../libs/start-shell
@@ -2384,6 +2390,16 @@ importers:
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
   apps/sts2-mods:
+    dependencies:
+      '@masseater.dev/github-workflow':
+        specifier: workspace:*
+        version: link:../../libs/github-workflow
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
     devDependencies:
       vite-plus:
         specifier: catalog:stack
@@ -2958,6 +2974,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
   infra/repositories:
     dependencies:
@@ -2982,6 +3001,12 @@ importers:
       '@masseater.dev/exposure-protocol':
         specifier: workspace:*
         version: link:../../libs/exposure-protocol
+      '@masseater.dev/github-workflow':
+        specifier: workspace:*
+        version: link:../../libs/github-workflow
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
       '@octokit/rest':
         specifier: 'catalog:'
         version: 22.0.1
@@ -3172,6 +3197,16 @@ importers:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
         version: 5.20261112.1
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  libs/github-workflow:
+    dependencies:
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+    devDependencies:
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4500,6 +4535,22 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  tools/repository-ci:
+    dependencies:
+      '@masseater.dev/github-workflow':
+        specifier: workspace:*
+        version: link:../../libs/github-workflow
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+    devDependencies:
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
