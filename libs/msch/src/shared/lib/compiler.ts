@@ -35,6 +35,7 @@ export {
   isClassDeclaration,
   isElementAccessExpression,
   isEnumDeclaration,
+  isExportAssignment,
   isExportDeclaration,
   isIdentifier,
   isImportDeclaration,
