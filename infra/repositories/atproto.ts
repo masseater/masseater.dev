@@ -9,7 +9,7 @@ import type { SealFailed } from "./sealed-value.ts";
 
 const ATPROTO_DID = "did:plc:sz2kxumpsjbch3kgnsjjed5z";
 const ATPROTO_SERVICE = "https://bsky.social";
-const APP_PASSWORD_KEY = "atp_app_password";
+export const APP_PASSWORD_KEY = "atp_app_password";
 const ATTEMPTS_KEY = "atp_attempts";
 const APP_PASSWORD_PATH = "/atproto/app-password";
 const NO_CONTENT = 204;

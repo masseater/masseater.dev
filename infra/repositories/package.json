@@ -24,6 +24,7 @@
     "@masseater.dev/exposure-protocol": "workspace:*",
     "@masseater.dev/github-workflow": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",
+    "@masseater.dev/portal-protocol": "workspace:*",
     "@octokit/rest": "catalog:",
     "@peculiar/asn1-pkcs8": "catalog:",
     "@peculiar/asn1-rsa": "catalog:",
