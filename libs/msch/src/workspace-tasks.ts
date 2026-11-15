@@ -1,13 +1,4 @@
-import {
-  Array as Arr,
-  Effect,
-  Option,
-  Predicate,
-  Record as Rec,
-  Schema,
-  String as Str,
-  pipe,
-} from "effect";
+import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 import { resolveConfigFromFile } from "vite-plus";
 
 import { nestedValues } from "./config-literal.ts";
@@ -15,15 +6,12 @@ import type { Manifest } from "./dependencies.ts";
 import { settingsInvalid } from "./workspace-config-source.ts";
 
 const VERIFY_TASK = ["tasks", "verify"] as const;
-const BUILD_TASK = ["tasks", "build"] as const;
-const DIST_PREFIX = "./dist/";
 
 interface WorkspaceTasks {
   readonly verify: readonly string[];
-  readonly builtExports: readonly string[];
 }
 
-const NO_TASKS: WorkspaceTasks = { verify: [], builtExports: [] };
+const NO_TASKS: WorkspaceTasks = { verify: [] };
 
 const Tasks = Schema.Struct({ verify: Schema.Unknown });
 const isVerified = Schema.is(Schema.Struct({ run: Schema.Struct({ tasks: Tasks }) }));
@@ -41,32 +29,16 @@ const hasVerifyTask = Effect.fn("hasVerifyTask")(function* hasVerifyTask(file: s
   return Option.exists(config, isVerified);
 });
 
-const pointsIntoDist = (held: unknown): boolean => {
-  if (Predicate.isString(held)) {
-    return Str.startsWith(DIST_PREFIX)(held);
-  }
-  if (Predicate.isObject(held)) {
-    return Arr.some(Rec.values(held), pointsIntoDist);
-  }
-  return false;
-};
-
 const tasksOf =
   (manifest: Option.Option<Manifest>) =>
   (program: unknown): WorkspaceTasks =>
     pipe(
       manifest,
-      Option.flatMap((found) =>
-        Option.map(Option.fromUndefinedOr(found.name), (name) => ({ name, found })),
-      ),
+      Option.flatMap((found) => Option.fromUndefinedOr(found.name)),
       Option.match({
         onNone: () => NO_TASKS,
-        onSome: ({ name, found }) => ({
+        onSome: (name) => ({
           verify: Arr.filter([`${name}#verify`], () => definesTask(VERIFY_TASK)(program)),
-          builtExports: Arr.filter(
-            [`${name}#build`],
-            () => pointsIntoDist(found.exports) && definesTask(BUILD_TASK)(program),
-          ),
         }),
       }),
     );

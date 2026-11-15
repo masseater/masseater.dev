@@ -42,7 +42,7 @@ Vite+ はワークスペースの `vite.config.ts` の `lint` を使わない。
 `use` は、ルートが `workspaceSettings` に渡す `ruleSets` と `dependencySets` の名前を指す。
 import した値が要る規則と依存は、ルートの集合に名前を付けて置く。
 `test` タスクを持たないワークスペースは `testProjects` に入り、ルートの `vp test` が動かす。
-`workspaceSettings` はタスクも返す。`tasks.verify` は、`vite.config.ts` が `verify` タスクを書く各ワークスペースの `verify` タスクを列挙し、ルートの `verify` はそれらに依存する。`tasks.builtExports` は、`package.json` のエクスポート先が `dist` となる各ワークスペースのビルドタスクを列挙し、lint などの型を読み取るタスクはそれらに依存する。
+`workspaceSettings` はタスクも返す。`tasks.verify` は、`vite.config.ts` が `verify` タスクを書く各ワークスペースの `verify` タスクを列挙し、ルートの `verify` はそれらに依存する。
 `components.json` の `aliases.ui` は `package.json` の `imports` で解決し、shadcn の部品の置き場を `lint.shadcnUi` として返す。
 
 `effecttsgo` のルールは、@effect/tsgo が手を入れた oxlint でだけ動く。

@@ -230,7 +230,6 @@ export default defineConfig({
         "ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows",
       check: {
         command: "GOMEMLIMIT=4GiB vp check --deny-warnings",
-        dependsOn: [...workspace.tasks.builtExports],
         cache: {
           env: ["OPENROUTER_API_KEY"],
           untrackedEnv: [
@@ -263,7 +262,6 @@ export default defineConfig({
       test: "vp test run",
       msch: {
         command: "msch",
-        dependsOn: [...workspace.tasks.builtExports],
         cache: {
           untrackedEnv: ["HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy", "SSL_CERT_FILE"],
         },

@@ -230,10 +230,6 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
           found,
           Arr.flatMap(({ tasks }) => tasks.verify),
         ),
-        builtExports: pipe(
-          found,
-          Arr.flatMap(({ tasks }) => tasks.builtExports),
-        ),
       },
       devDependencies: merged(
         pipe(

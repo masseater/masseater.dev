@@ -62,7 +62,7 @@ export default defineConfig(({ mode }) => ({
       shadcnUi: ["apps/web/src/shared/ui/**"],
     },
     testProjects: ["apps/web"],
-    tasks: { verify: [], builtExports: [] },
+    tasks: { verify: [] },
     devDependencies: {
       "apps/web: spans are sent from the SDK in tests": {
         workspaces: ["apps/web"],
@@ -72,21 +72,14 @@ export default defineConfig(({ mode }) => ({
   });
 });
 
-const BUILD = `export default { run: { tasks: { build: { command: "vp pack", cache: false } } } };\n`;
-
 const readsTasks = Effect.gen(function* readsTasks() {
   const settings = yield* settingsOf({
     "libs/own/package.json": `{ "name": "own" }`,
     "libs/own/vite.config.ts": `export default { run: { tasks: { verify: { command: [], dependsOn: ["lint"] } } } };\n`,
-    "libs/built/package.json": `{ "name": "@scope/built", "exports": { ".": { "types": "./dist/index.d.mts", "default": "./dist/index.mjs" } } }`,
-    "libs/built/vite.config.ts": BUILD,
-    "libs/source/package.json": `{ "name": "source", "exports": { ".": "./src/index.ts" } }`,
-    "libs/source/vite.config.ts": BUILD,
+    "libs/other/package.json": `{ "name": "other" }`,
+    "libs/other/vite.config.ts": `export default { run: { tasks: { build: { command: "vp pack" } } } };\n`,
   });
-  expect(settings.tasks).toStrictEqual({
-    verify: ["own#verify"],
-    builtExports: ["@scope/built#build"],
-  });
+  expect(settings.tasks).toStrictEqual({ verify: ["own#verify"] });
 });
 
 const rejectsRunningCode = Effect.gen(function* rejectsRunningCode() {
