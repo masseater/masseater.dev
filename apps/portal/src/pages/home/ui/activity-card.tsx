@@ -33,6 +33,7 @@ export const ActivityCard = (): ReactNode => {
       memos: useMemos(),
       sessions: useSessions(),
       transactions: useMonthTransactions(overview.period.to),
+      categories: overview.settings.categories,
       decks: useDecks(),
     }),
     Arr.filter((activity) => Option.isNone(kind) || Option.contains(kind, activity.kind)),

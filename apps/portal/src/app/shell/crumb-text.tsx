@@ -7,7 +7,10 @@ import type { Crumb } from "./crumbs";
 export const CrumbText = ({ crumb, last }: Readonly<{ crumb: Crumb; last: boolean }>): ReactNode =>
   Option.match(crumb.to, {
     onNone: () => (
-      <span aria-current={last && "page"} className="text-foreground truncate font-bold">
+      <span
+        aria-current={last && "page"}
+        className="text-muted-foreground aria-[current=page]:text-foreground truncate aria-[current=page]:font-bold"
+      >
         {crumb.label}
       </span>
     ),

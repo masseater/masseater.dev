@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Order, Record as Rec, String as Str, pipe } from "effect";
 
-import type { TransactionValue } from "#/entities/money";
+import type { SettingsValue, TransactionValue } from "#/entities/money";
 import type { DeckValue } from "#/entities/slide";
 import type { LifeItemValue, MemoValue, SessionValue } from "#/entities/watashi";
 import { headline, placeOf } from "#/entities/watashi";
@@ -76,14 +76,16 @@ const fromSession = (session: SessionValue): Activity => ({
   link: { kind: "conversation", params: { session: session.sessionId } },
 });
 
-const fromTransaction = (transaction: TransactionValue): Activity => ({
-  key: `transaction:${String(transaction.id)}`,
-  kind: "transaction",
-  stamp: transaction.date,
-  title: transaction.description,
-  context: transaction.label ?? transaction.category,
-  link: { kind: "page", to: "/money" },
-});
+const fromTransaction =
+  (categoryOf: (id: string) => string) =>
+  (transaction: TransactionValue): Activity => ({
+    key: `transaction:${String(transaction.id)}`,
+    kind: "transaction",
+    stamp: transaction.date,
+    title: transaction.description,
+    context: transaction.label ?? categoryOf(transaction.category),
+    link: { kind: "page", to: "/money" },
+  });
 
 const fromDeck = (deck: DeckValue): Activity => ({
   key: deck.file,
@@ -94,18 +96,29 @@ const fromDeck = (deck: DeckValue): Activity => ({
   link: { kind: "page", to: "/slides" },
 });
 
+const categoryIn =
+  (categories: SettingsValue["categories"]) =>
+  (id: string): string =>
+    pipe(
+      categories,
+      Arr.findFirst((category) => category.id === id),
+      Option.match({ onNone: () => id, onSome: (category) => category.label }),
+    );
+
 export type ActivitySources = Readonly<{
   records: readonly LifeItemValue[];
   memos: readonly MemoValue[];
   sessions: readonly SessionValue[];
   transactions: readonly TransactionValue[];
+  categories: SettingsValue["categories"];
   decks: readonly DeckValue[];
 }>;
 
 export const activitiesOf = (sources: ActivitySources): readonly Activity[] => {
   const memos = pipe(sources.memos, Arr.map(fromMemo));
   const sessions = pipe(sources.sessions, Arr.map(fromSession));
-  const transactions = pipe(sources.transactions, Arr.map(fromTransaction));
+  const toActivity = fromTransaction(categoryIn(sources.categories));
+  const transactions = pipe(sources.transactions, Arr.map(toActivity));
   const decks = pipe(sources.decks, Arr.map(fromDeck));
   return pipe(
     sources.records,

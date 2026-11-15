@@ -34,7 +34,14 @@ const BAR_SIZE = 20;
 
 const LINE_WIDTH = 2;
 
-const shortYen = (amount: number): string => `${String(Math.round(amount / MAN))}万`;
+const ZERO = 0;
+
+const shortYen = (amount: number): string => {
+  if (amount === ZERO) {
+    return String(ZERO);
+  }
+  return `${String(Math.round(amount / MAN))}万`;
+};
 
 const asYen = (value: unknown, name: unknown): string => {
   if (name === TEXT.balance) {

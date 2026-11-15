@@ -37,6 +37,7 @@ export const HomeStats = (): ReactNode => {
     sessions: useSessions(),
     transactions: NO_ROWS,
     decks: NO_ROWS,
+    categories: NO_ROWS,
   });
   const count = (kind: ActivityKind): Readonly<{ now: number; before: number }> => {
     const now = countSince({ activities, kind, since: weekStart(today) });
