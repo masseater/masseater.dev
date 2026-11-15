@@ -3,10 +3,9 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Layer, Logger, Match } from "effect";
 
+import { MONEY_READ } from "#/app/mcp/money-tools.server";
 import { services } from "#/entities/ledger/index.server";
 import type { Failure, Services } from "#/entities/ledger/index.server";
-
-import { readTool } from "./money-read-tools.server";
 
 type Described = Readonly<{ errorTag: string; text: string }>;
 
@@ -24,33 +23,23 @@ const describe = Match.type<Failure>().pipe(
   }),
 );
 
-const unknownTool = (tool: string): Described => ({
-  errorTag: "UnknownTool",
-  text: `${tool} is not a read-only money tool`,
-});
+const failedWith = ({ errorTag, text }: Described): Effect.Effect<PortalResult> =>
+  Effect.logWarning("money.portal.failed").pipe(
+    Effect.annotateLogs({ errorTag }),
+    Effect.as<PortalResult>({ status: "failed", errorTag, text }),
+  );
 
-const failedWith =
-  (tool: string) =>
-  ({ errorTag, text }: Described): Effect.Effect<PortalResult> =>
-    Effect.logWarning("money.portal.failed").pipe(
-      Effect.annotateLogs({ tool, errorTag }),
-      Effect.as<PortalResult>({ status: "failed", errorTag, text }),
-    );
-
-const readWith = (tool: string, input: unknown): Effect.Effect<PortalResult, never, Services> =>
-  Effect.fromOption(readTool(tool)).pipe(
-    Effect.mapError(() => unknownTool(tool)),
-    Effect.flatMap((defined) => defined.call(input).pipe(Effect.mapError(describe))),
+const readWith = (input: unknown): Effect.Effect<PortalResult, never, Services> =>
+  MONEY_READ.call(input).pipe(
+    Effect.mapError(describe),
     Effect.matchEffect({
-      onFailure: failedWith(tool),
+      onFailure: failedWith,
       onSuccess: (body) => Effect.succeed<PortalResult>({ status: "ok", body }),
     }),
   );
 
 export class MoneyPortal extends WorkerEntrypoint implements MoneyPortalRpc {
-  public read(tool: string, input: unknown): Promise<PortalResult> {
-    return runLogged(
-      readWith(tool, input).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })),
-    );
+  public read(input: unknown): Promise<PortalResult> {
+    return runLogged(readWith(input).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })));
   }
 }

@@ -4,30 +4,6 @@ import { Match } from "effect";
 
 import type { ToolFailure } from "./tool-failure";
 
-export type ToolName =
-  | "life_write"
-  | "life_read"
-  | "life_stats"
-  | "memory_write"
-  | "memory_read"
-  | "watashi_search"
-  | "watashi_profile"
-  | "conversation_read"
-  | "api_token_issue"
-  | "money_upsert_account"
-  | "money_import_csv"
-  | "money_add_transactions"
-  | "money_delete_import"
-  | "money_record_balance"
-  | "money_set_category"
-  | "money_set_category_rule"
-  | "money_delete_category_rule"
-  | "money_settings"
-  | "money_transactions"
-  | "money_flow"
-  | "money_monthly_totals"
-  | "money_balance_sheet";
-
 export const describeFailure = Match.type<ToolFailure>().pipe(
   Match.tagsExhaustive({
     InvalidRecord: ({ message }) => ({ errorTag: "InvalidRecord", text: message }),
@@ -54,7 +30,7 @@ export const describeFailure = Match.type<ToolFailure>().pipe(
   }),
 );
 
-export const { meteredInput, runTool, runToolIn } = toolCalls<ToolName, ToolFailure>({
+export const { meteredInput, runTool, runToolIn } = toolCalls<ToolFailure>({
   dataset: () => env.TOOL_CALLS,
   describe: describeFailure,
 });

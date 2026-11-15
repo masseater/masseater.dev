@@ -24,7 +24,7 @@ export const accountNamed = (id: string): Effect.Effect<Account, Failure> =>
       Effect.fromOption(Arr.head(rows)).pipe(
         Effect.mapError(() =>
           InvalidRecord.make({
-            message: `口座 ${id} がありません。先に money_upsert_account で作る`,
+            message: `口座 ${id} がありません。先に money_write の op: account で作る`,
           }),
         ),
       ),

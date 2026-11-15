@@ -2,7 +2,7 @@ import { expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 import { afterAll, beforeEach, vi } from "vite-plus/test";
 
-import { call, value } from "./money-client.test.support.ts";
+import { call, value, write, read } from "./money-client.test.support.ts";
 import { closeDatabase, resetDatabase } from "./money-d1.test.support.ts";
 import {
   CARD_COLUMNS,
@@ -89,7 +89,7 @@ it.effect("取り込みを消すとその取引だけが消える", () =>
     yield* setUpAccounts;
     yield* importBank;
     const card = yield* importCard;
-    yield* value("money_delete_import")({ importId: Option.getOrThrow(card.importId) });
+    yield* value(write("delete_import"))({ importId: Option.getOrThrow(card.importId) });
     const rows = yield* allRows;
     expect(rows).toHaveLength(BANK_ROWS);
   }),
@@ -98,7 +98,7 @@ it.effect("取り込みを消すとその取引だけが消える", () =>
 it.effect("読めない日付があれば、何も取り込まずに行の番号を返す", () =>
   Effect.gen(function* broken() {
     yield* setUpAccounts;
-    const { isError, text } = yield* call("money_import_csv")({
+    const { isError, text } = yield* call(write("import_csv"))({
       account: "card",
       source: "broken.csv",
       csv: "利用日,利用店名・商品名,利用金額\n2026/10/03,A,100\n2026/13/01,B,200\n",
@@ -113,14 +113,14 @@ it.effect("読めない日付があれば、何も取り込まずに行の番号
 
 it.effect("無い口座には取り込まない", () =>
   Effect.gen(function* missing() {
-    const { isError, text } = yield* call("money_import_csv")({
+    const { isError, text } = yield* call(write("import_csv"))({
       account: "nowhere",
       source: "card.csv",
       csv: CARD_CSV,
       columns: CARD_COLUMNS,
     });
     expect(isError).toBe(true);
-    expect(text).toContain("money_upsert_account");
+    expect(text).toContain("op: account");
   }),
 );
 
@@ -131,9 +131,9 @@ it.effect("取引は 100 件ずつ、next を渡すと続きを返す", () =>
       Arr.range(FIRST, MANY),
       Arr.map((day) => ({ date: "2026-10-01", amount: -day, description: `item ${day}` })),
     );
-    yield* value("money_add_transactions")({ account: "bank", source: "test", transactions });
-    const first = yield* page("money_transactions")(OCTOBER_TO_NOVEMBER);
-    const second = yield* page("money_transactions")({
+    yield* value(write("transactions"))({ account: "bank", source: "test", transactions });
+    const first = yield* page(read("transactions"))(OCTOBER_TO_NOVEMBER);
+    const second = yield* page(read("transactions"))({
       ...OCTOBER_TO_NOVEMBER,
       cursor: Option.getOrThrow(first.next),
     });

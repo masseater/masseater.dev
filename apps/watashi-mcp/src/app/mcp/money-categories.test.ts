@@ -2,7 +2,7 @@ import { expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 import { afterAll, beforeEach, vi } from "vite-plus/test";
 
-import { value } from "./money-client.test.support.ts";
+import { value, write, read } from "./money-client.test.support.ts";
 import { closeDatabase, resetDatabase } from "./money-d1.test.support.ts";
 import { allRows, importBank, rowOf, setUpAccounts } from "./money-fixtures.test.support.ts";
 
@@ -18,14 +18,14 @@ it.effect("規則を足すと、手で決めた取引を除いて既存の取引
     yield* setUpAccounts;
     yield* importBank;
     const before = yield* allRows;
-    yield* value("money_set_category")({
+    yield* value(write("category"))({
       transactionId: rowOf("ラクテンカ-ドサ-ビス")(before).id,
       category: "transfer",
     });
-    yield* value("money_set_category_rule")({ pattern: "ﾔﾁﾝ", category: "housing" });
-    yield* value("money_set_category_rule")({ pattern: "キュウヨ", category: "salary" });
-    yield* value("money_set_category_rule")({ pattern: "キユウヨ", category: "salary" });
-    yield* value("money_set_category_rule")({ pattern: "らくてん", category: "food" });
+    yield* value(write("rule"))({ pattern: "ﾔﾁﾝ", category: "housing" });
+    yield* value(write("rule"))({ pattern: "キュウヨ", category: "salary" });
+    yield* value(write("rule"))({ pattern: "キユウヨ", category: "salary" });
+    yield* value(write("rule"))({ pattern: "らくてん", category: "food" });
     const after = yield* allRows;
     expect(
       pipe(
@@ -45,16 +45,16 @@ it.effect("auto で手の決定をやめると規則に戻り、規則を消す�
   Effect.gen(function* auto() {
     yield* setUpAccounts;
     yield* importBank;
-    yield* value("money_set_category_rule")({
+    yield* value(write("rule"))({
       pattern: "ヤチン",
       category: "housing",
       label: "家賃",
     });
     const rent = yield* rentRow;
-    yield* value("money_set_category")({ transactionId: rent.id, category: "living" });
-    yield* value("money_set_category")({ transactionId: rent.id, category: "auto" });
+    yield* value(write("category"))({ transactionId: rent.id, category: "living" });
+    yield* value(write("category"))({ transactionId: rent.id, category: "auto" });
     const restored = yield* rentRow;
-    yield* value("money_delete_category_rule")({ pattern: "ヤチン" });
+    yield* value(write("delete_rule"))({ pattern: "ヤチン" });
     const removed = yield* rentRow;
     expect(
       pipe(
@@ -71,8 +71,8 @@ it.effect("auto で手の決定をやめると規則に戻り、規則を消す�
 it.effect("設定は組み込みの規則と自分で足した規則を分けて返す", () =>
   Effect.gen(function* settings() {
     yield* setUpAccounts;
-    yield* value("money_set_category_rule")({ pattern: "ヤチン", category: "housing" });
-    const result = yield* value("money_settings")({});
+    yield* value(write("rule"))({ pattern: "ヤチン", category: "housing" });
+    const result = yield* value(read("settings"))({});
     expect(result).toMatchObject({
       rules: { user: [{ pattern: "ヤチン", category: "housing" }] },
     });

@@ -17,6 +17,8 @@ export type Args = Readonly<Record<string, unknown>>;
 
 export type Called = Readonly<{ isError: boolean; text: string }>;
 
+export type Tool = Readonly<{ name: string; fixed: Args }>;
+
 export type Decodable = Schema.ConstraintDecoder<unknown> & Schema.Constraint;
 
 const OWNER: Caller = { client: "claude-code", userAgent: "vitest" };
@@ -57,15 +59,19 @@ const respond = (body: string): Promise<Response> =>
     pipe(new McpServer({ name: "watashi", version: "0.0.0" }), registerMoneyTools(OWNER)),
   ).fetch(mcpRequest(body));
 
+export const write = (op: string): Tool => ({ name: "money_write", fixed: { op } });
+
+export const read = (view: string): Tool => ({ name: "money_read", fixed: { view } });
+
 export const call =
-  (name: string) =>
+  ({ name, fixed }: Tool) =>
   (args: Args): Effect.Effect<Called> =>
     Effect.gen(function* called() {
       const body = yield* encodeJson({
         jsonrpc: "2.0",
         id: 1,
         method: "tools/call",
-        params: { name, arguments: args },
+        params: { name, arguments: { ...fixed, ...args } },
       });
       const response = yield* Effect.promise(() => respond(body));
       const text = yield* Effect.promise(() => response.text());
@@ -79,9 +85,9 @@ export const call =
     }).pipe(Effect.orDie);
 
 export const value =
-  (name: string) =>
+  (tool: Tool) =>
   (args: Args): Effect.Effect<unknown> =>
-    call(name)(args).pipe(
+    call(tool)(args).pipe(
       Effect.flatMap(({ isError, text }) =>
         Bool.match(isError, {
           onTrue: () => Effect.die(text),
@@ -92,6 +98,6 @@ export const value =
 
 export const decoded =
   <Target extends Decodable>(schema: Target) =>
-  (name: string) =>
+  (tool: Tool) =>
   (args: Args): Effect.Effect<Target["Type"]> =>
-    value(name)(args).pipe(Effect.flatMap(Schema.decodeUnknownEffect(schema)), Effect.orDie);
+    value(tool)(args).pipe(Effect.flatMap(Schema.decodeUnknownEffect(schema)), Effect.orDie);

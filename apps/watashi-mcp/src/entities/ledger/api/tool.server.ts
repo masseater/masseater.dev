@@ -6,7 +6,6 @@ import { Digest, SecureRandom } from "effect/crypto";
 
 import { InvalidRecord } from "#/shared/api";
 import { meteredInput, runToolIn } from "#/shared/api/index.server";
-import type { ToolName } from "#/shared/api/index.server";
 
 import type { Failure, Services } from "./database.server";
 
@@ -18,7 +17,7 @@ export type Annotations =
 
 /** @internal */
 export type Tool<Input, Output, Value> = Readonly<{
-  name: ToolName;
+  name: string;
   description: string;
   input: StandardSchemaWithJSON<Input, Output>;
   annotations: Annotations;
@@ -31,7 +30,7 @@ export type Register = (caller: Caller) => (server: McpServer) => McpServer;
 
 /** @internal */
 export type DefinedTool = Readonly<{
-  name: ToolName;
+  name: string;
   annotations: Annotations;
   register: Register;
   call: (input: unknown) => Effect.Effect<unknown, Failure, Services>;
@@ -91,6 +90,3 @@ export const registerAll =
     }
     return server;
   };
-
-/** @internal */
-export const lengthOf = (values: readonly unknown[]): number => values.length;

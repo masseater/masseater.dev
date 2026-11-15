@@ -1,1 +1,1 @@
-export { CATEGORY_TOOLS, registerCategoryTools } from "./api/category-tools.server";
+export { settings } from "./api/category-settings.server";

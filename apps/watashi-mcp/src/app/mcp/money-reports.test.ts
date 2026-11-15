@@ -2,7 +2,7 @@ import { expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Number as Num, Option, Record as Rec, Schema, pipe } from "effect";
 import { afterAll, beforeEach, vi } from "vite-plus/test";
 
-import { decoded, value } from "./money-client.test.support.ts";
+import { decoded, value, write, read } from "./money-client.test.support.ts";
 import { closeDatabase, resetDatabase } from "./money-d1.test.support.ts";
 import {
   OCTOBER_TO_NOVEMBER,
@@ -64,12 +64,12 @@ const SheetSchema = Schema.Struct({
 
 const sheet = decoded(SheetSchema);
 
-const flowOf = decoded(FlowSchema)("money_flow");
+const flowOf = decoded(FlowSchema)(read("flow"));
 
 const setUpRules = Effect.gen(function* setUpRules() {
-  yield* value("money_set_category_rule")({ pattern: "ヤチン", category: "housing" });
-  yield* value("money_set_category_rule")({ pattern: "キユウヨ", category: "salary" });
-  yield* value("money_set_category_rule")({ pattern: "ラクテンカ", category: "transfer" });
+  yield* value(write("rule"))({ pattern: "ヤチン", category: "housing" });
+  yield* value(write("rule"))({ pattern: "キユウヨ", category: "salary" });
+  yield* value(write("rule"))({ pattern: "ラクテンカ", category: "transfer" });
 });
 
 const totalOf = (links: readonly Link[], matches: (link: Link) => boolean): number =>
@@ -117,7 +117,7 @@ it.effect("月ごとの収支は取引の無い月も 0 で返す", () =>
   Effect.gen(function* months() {
     yield* setUpAccounts;
     yield* importCard;
-    const result = yield* decoded(MonthsSchema)("money_monthly_totals")({
+    const result = yield* decoded(MonthsSchema)(read("monthly"))({
       from: "2026-09",
       to: "2026-11",
     });
@@ -134,8 +134,8 @@ it.effect("貸借対照表は残高の記録に後の取引を足し、負債は
     yield* setUpAccounts;
     yield* importBank;
     yield* importCard;
-    yield* value("money_record_balance")({ account: "bank", date: "2026-10-26", balance: 500_000 });
-    const result = yield* sheet("money_balance_sheet")({ asOf: "2026-10-31" });
+    yield* value(write("balance"))({ account: "bank", date: "2026-10-26", balance: 500_000 });
+    const result = yield* sheet(read("balance_sheet"))({ asOf: "2026-10-31" });
     expect(result.left).toStrictEqual({ currentAssets: 330_000, fixedAssets: 0, debtExcess: 0 });
     expect(result.right).toStrictEqual({
       currentLiabilities: 39_220,
@@ -159,7 +159,7 @@ it.effect("負債が資産を超えると債務超過に出す", () =>
   Effect.gen(function* excess() {
     yield* setUpAccounts;
     yield* importCard;
-    const result = yield* sheet("money_balance_sheet")({ asOf: "2026-11-30" });
+    const result = yield* sheet(read("balance_sheet"))({ asOf: "2026-11-30" });
     expect({ debtExcess: result.left.debtExcess, netAssets: result.right.netAssets }).toStrictEqual(
       {
         debtExcess: 40_820,

@@ -47,8 +47,6 @@ const PERIOD_FIELDS = {
   to: Month.annotate({ description: "最後の月（YYYY-MM）。from と同じか後" }),
 };
 
-const PeriodSchema = Schema.Struct(PERIOD_FIELDS).check(ordered);
-
 const UpsertAccountInputSchema = Schema.Struct({
   id: AccountId,
   name: Schema.NonEmptyString.annotate({ description: "表示する名前（例: 三井住友銀行）" }),
@@ -114,20 +112,43 @@ const SetRuleInputSchema = Schema.Struct({
 
 const DeleteRuleInputSchema = Schema.Struct({ pattern: Schema.NonEmptyString });
 
-const ListTransactionsInputSchema = Schema.Struct({
+const ListTransactionsFields = {
   ...PERIOD_FIELDS,
   account: Schema.optionalKey(AccountId),
   category: Schema.optionalKey(CategorySchema),
   cursor: Schema.optionalKey(
     Schema.NonEmptyString.annotate({ description: "前のページが返した next" }),
   ),
-}).check(ordered);
+};
 
 const BalanceSheetInputSchema = Schema.Struct({
   asOf: Day.annotate({ description: "この日の終わりの残高で表を作る" }),
 });
 
-const EmptyInputSchema = Schema.Struct({});
+const op = <Name extends string>(name: Name): Schema.Literal<Name> =>
+  Schema.Literal(name).annotate({ description: "する操作" });
+
+const view = <Name extends string>(name: Name): Schema.Literal<Name> =>
+  Schema.Literal(name).annotate({ description: "読む表" });
+
+const MoneyWriteInputSchema = Schema.Union([
+  Schema.Struct({ op: op("account"), ...UpsertAccountInputSchema.fields }),
+  Schema.Struct({ op: op("import_csv"), ...ImportCsvInputSchema.fields }),
+  Schema.Struct({ op: op("transactions"), ...AddTransactionsInputSchema.fields }),
+  Schema.Struct({ op: op("delete_import"), ...DeleteImportInputSchema.fields }),
+  Schema.Struct({ op: op("balance"), ...RecordBalanceInputSchema.fields }),
+  Schema.Struct({ op: op("category"), ...SetCategoryInputSchema.fields }),
+  Schema.Struct({ op: op("rule"), ...SetRuleInputSchema.fields }),
+  Schema.Struct({ op: op("delete_rule"), ...DeleteRuleInputSchema.fields }),
+]);
+
+const MoneyReadInputSchema = Schema.Union([
+  Schema.Struct({ view: view("settings") }),
+  Schema.Struct({ view: view("transactions"), ...ListTransactionsFields }).check(ordered),
+  Schema.Struct({ view: view("flow"), ...PERIOD_FIELDS }).check(ordered),
+  Schema.Struct({ view: view("monthly"), ...PERIOD_FIELDS }).check(ordered),
+  Schema.Struct({ view: view("balance_sheet"), ...BalanceSheetInputSchema.fields }),
+]);
 
 type Standard<Target extends InputSchema> = StandardSchemaWithJSON<
   Target["Encoded"],
@@ -138,26 +159,12 @@ type Standard<Target extends InputSchema> = StandardSchemaWithJSON<
 const standard = <Target extends InputSchema>(schema: Target): Standard<Target> =>
   pipe(schema, Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
-export const UpsertAccountInput = standard(UpsertAccountInputSchema);
+export const MoneyWriteInput = standard(MoneyWriteInputSchema);
 
-export const ImportCsvInput = standard(ImportCsvInputSchema);
+export const MoneyReadInput = standard(MoneyReadInputSchema);
 
-export const AddTransactionsInput = standard(AddTransactionsInputSchema);
+export type MoneyWrite = typeof MoneyWriteInputSchema.Type;
 
-export const DeleteImportInput = standard(DeleteImportInputSchema);
+export type MoneyRead = typeof MoneyReadInputSchema.Type;
 
-export const RecordBalanceInput = standard(RecordBalanceInputSchema);
-
-export const SetCategoryInput = standard(SetCategoryInputSchema);
-
-export const SetRuleInput = standard(SetRuleInputSchema);
-
-export const DeleteRuleInput = standard(DeleteRuleInputSchema);
-
-export const ListTransactionsInput = standard(ListTransactionsInputSchema);
-
-export const BalanceSheetInput = standard(BalanceSheetInputSchema);
-
-export const EmptyInput = standard(EmptyInputSchema);
-
-export const Period = standard(PeriodSchema);
+export type MoneyWriteOf<Op extends MoneyWrite["op"]> = Extract<MoneyWrite, Readonly<{ op: Op }>>;

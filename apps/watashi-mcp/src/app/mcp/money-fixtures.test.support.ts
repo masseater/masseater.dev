@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
-import { decoded, value } from "./money-client.test.support.ts";
+import { decoded, value, write, read } from "./money-client.test.support.ts";
 
 export type Row = typeof RowSchema.Type;
 
@@ -68,11 +68,11 @@ const imported = decoded(ImportedSchema);
 export const page = decoded(PageSchema);
 
 export const setUpAccounts = Effect.gen(function* setUpAccounts() {
-  yield* value("money_upsert_account")({ id: "bank", name: "銀行", class: "current-asset" });
-  yield* value("money_upsert_account")({ id: "card", name: "カード", class: "current-liability" });
+  yield* value(write("account"))({ id: "bank", name: "銀行", class: "current-asset" });
+  yield* value(write("account"))({ id: "card", name: "カード", class: "current-liability" });
 });
 
-export const importBank = imported("money_import_csv")({
+export const importBank = imported(write("import_csv"))({
   account: "bank",
   source: "bank.csv",
   csv: BANK_CSV,
@@ -80,14 +80,14 @@ export const importBank = imported("money_import_csv")({
   columns: BANK_COLUMNS,
 });
 
-export const importCard = imported("money_import_csv")({
+export const importCard = imported(write("import_csv"))({
   account: "card",
   source: "card.csv",
   csv: CARD_CSV,
   columns: CARD_COLUMNS,
 });
 
-export const allRows = page("money_transactions")(OCTOBER_TO_NOVEMBER).pipe(
+export const allRows = page(read("transactions"))(OCTOBER_TO_NOVEMBER).pipe(
   Effect.map(({ transactions }) => transactions),
 );
 
