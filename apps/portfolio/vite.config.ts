@@ -16,6 +16,20 @@ export default defineConfig({
       overrides: [
         { files: ["src/**/*.{ts,tsx}"], use: ["decision"] },
         {
+          files: ["src/features/dance-stage/lib/gpu-setup.ts"],
+          rules: {
+            "baseline-js/use-baseline": [
+              "error",
+              {
+                available: "widely",
+                includeWebApis: { preset: "auto" },
+                includeJsBuiltins: { preset: "auto" },
+                ignoreFeatures: ["webgpu"],
+              },
+            ],
+          },
+        },
+        {
           files: ["worker/**/*.ts", "src/**/*.server.ts"],
           excludeFiles: ["**/*.test.ts"],
           use: ["traced"],

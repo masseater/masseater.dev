@@ -7,20 +7,6 @@
     "types": ["vite/client"],
     "paths": {
       "#/*": ["./src/*"]
-    },
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "allowedUnstableApis": [
-          "@effect/atom-react",
-          "@effect/vitest#it",
-          "effect/crypto/SecureRandom",
-          "effect/http/FetchHttpClient",
-          "effect/http/HttpClient",
-          "effect/reactivity/Atom",
-          "effect/rpc/RpcClientError"
-        ]
-      }
-    ]
+    }
   }
 }
