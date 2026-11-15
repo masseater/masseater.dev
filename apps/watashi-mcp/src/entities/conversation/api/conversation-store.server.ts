@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, gte, max, sum } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, max, sum } from "drizzle-orm";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
 import { conversationChunk, conversationSession } from "#/shared/db";
@@ -105,13 +105,12 @@ export const filesOf = ({
       .orderBy(asc(conversationChunk.file)),
   ).pipe(Effect.map(Arr.map(toFileSummary)));
 
-const withFiles = (session: ConversationSession): Effect.Effect<SessionSummary, StorageFailed> =>
-  filesOf(session).pipe(Effect.map((files) => ({ ...session, files })));
+type SessionFileTotals = FileTotals & Readonly<{ sessionId: string }>;
 
-export const listSessions = ({
+const recentSessions = ({
   kind,
   limit,
-}: SessionPage): Effect.Effect<readonly SessionSummary[], StorageFailed> =>
+}: SessionPage): Effect.Effect<readonly ConversationSession[], StorageFailed> =>
   query(() =>
     db
       .select()
@@ -119,7 +118,67 @@ export const listSessions = ({
       .where(eq(conversationSession.kind, kind))
       .orderBy(desc(conversationSession.lastAt))
       .limit(limit),
-  ).pipe(Effect.flatMap(Effect.forEach(withFiles)));
+  );
+
+const recentFiles = ({
+  kind,
+  limit,
+}: SessionPage): Effect.Effect<readonly SessionFileTotals[], StorageFailed> => {
+  const recent = db
+    .select({ sessionId: conversationSession.sessionId })
+    .from(conversationSession)
+    .where(eq(conversationSession.kind, kind))
+    .orderBy(desc(conversationSession.lastAt))
+    .limit(limit);
+  const inPage = and(
+    eq(conversationChunk.kind, kind),
+    inArray(conversationChunk.sessionId, recent),
+  );
+  return query(() =>
+    db
+      .select({
+        sessionId: conversationChunk.sessionId,
+        file: conversationChunk.file,
+        bytes: max(conversationChunk.end),
+        chunks: count(),
+        redactions: sum(conversationChunk.redactions),
+      })
+      .from(conversationChunk)
+      .where(inPage)
+      .groupBy(conversationChunk.sessionId, conversationChunk.file)
+      .orderBy(asc(conversationChunk.file)),
+  );
+};
+
+const NO_FILES: readonly FileSummary[] = [];
+
+const summaryWith =
+  (bySession: Readonly<Record<string, readonly SessionFileTotals[]>>) =>
+  (session: ConversationSession): SessionSummary => ({
+    ...session,
+    files: pipe(
+      Option.fromUndefinedOr(bySession[session.sessionId]),
+      Option.match({ onNone: () => NO_FILES, onSome: Arr.map(toFileSummary) }),
+    ),
+  });
+
+const attachFiles = ([sessions, files]: readonly [
+  readonly ConversationSession[],
+  readonly SessionFileTotals[],
+]): readonly SessionSummary[] => {
+  const bySession = pipe(
+    files,
+    Arr.groupBy((row) => row.sessionId),
+  );
+  return pipe(sessions, Arr.map(summaryWith(bySession)));
+};
+
+export const listSessions = (
+  page: SessionPage,
+): Effect.Effect<readonly SessionSummary[], StorageFailed> =>
+  Effect.all([recentSessions(page), recentFiles(page)], { concurrency: "unbounded" }).pipe(
+    Effect.map(attachFiles),
+  );
 
 export const chunksFrom = ({
   cursor,
