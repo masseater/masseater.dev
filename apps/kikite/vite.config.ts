@@ -4,6 +4,7 @@ import viteReact from "@vitejs/plugin-react";
 import { String as Str } from "effect";
 import { defineConfig } from "vite-plus";
 
+import { HOST } from "./kikite.ts";
 import { DEV_PROXY, interviewerDev } from "./server/dev.ts";
 
 const AGENT_SDK = "@anthropic-ai/claude-agent-sdk";
@@ -33,7 +34,7 @@ export default defineConfig({
       ],
     },
   },
-  run: ownerSiteRun,
+  run: ownerSiteRun({ host: HOST, paths: ["/", "/api/question", "/api/summary"] }),
   resolve: { tsconfigPaths: true },
   plugins: [tailwindcss(), viteReact(), interviewerDev()],
   server: { proxy: DEV_PROXY },
