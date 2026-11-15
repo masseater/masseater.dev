@@ -22,9 +22,7 @@ import {
   String as Str,
   pipe,
 } from "effect";
-import { Command, Flag } from "effect/cli";
 
-import { stateFlag } from "./commands.ts";
 import { writeJson } from "./files.ts";
 import { dayOf, measureSongs, shardsOf, tableOf } from "./publish.ts";
 import type { Measured, States } from "./publish.ts";
@@ -151,6 +149,7 @@ const loadStates = Effect.fn("publish.states")(function* loadStatesOf(state: str
   return states;
 });
 
+/** @internal */
 const publish = Effect.fn("command.publish")(function* publishSite({ state, out }: Output) {
   const catalog = yield* loadCatalog(state);
   const states = yield* loadStates(state);
@@ -164,11 +163,4 @@ const publish = Effect.fn("command.publish")(function* publishSite({ state, out 
   yield* writeMeta({ state, out, songs: songs.length, catalogComplete });
 });
 
-/** @internal */
-const publishCommand = Command.make(
-  "publish",
-  { state: stateFlag, out: Flag.String("out") },
-  publish,
-);
-
-export { publishCommand };
+export { publish };
