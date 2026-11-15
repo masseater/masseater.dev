@@ -8,6 +8,7 @@ on:
       - "libs/pod-rattle-engine/**"
       - "tools/pod-rattle-host/**"
       - "tools/xtask/**"
+      - "tools/cargo-tools/**"
       - "libs/component-release/**"
       - "Cargo.lock"
       - "rust-toolchain.toml"
@@ -74,6 +75,9 @@ jobs:
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: ${{ matrix.platform }}
+          workspaces: |
+            .
+            tools/cargo-tools
       - run: vp run ci:bundle
       - if: runner.os == 'macOS'
         run: vp run ci:codesign
@@ -151,6 +155,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@d931a8843e20a6675286de4aae013da4778a72d6
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ee56f90bdf77bf747e158391c0ae8a846732b988
         with:
           github-token: ${{ github.token }}
