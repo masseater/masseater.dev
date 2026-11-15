@@ -1,10 +1,8 @@
 import { Effect } from "effect";
 
-type Flush = () => Effect.Effect<void>;
+const flushes = new Set<() => Effect.Effect<void>>();
 
-const flushes = new Set<Flush>();
-
-const beforeClosing = (flush: Flush): (() => void) => {
+const beforeClosing = (flush: () => Effect.Effect<void>): (() => void) => {
   flushes.add(flush);
   return () => {
     flushes.delete(flush);
