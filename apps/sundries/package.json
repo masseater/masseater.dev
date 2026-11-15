@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@distilled.cloud/github": "catalog:",
+    "@masseater.dev/exposure-protocol": "workspace:*",
     "@masseater.dev/mcp-tool-call": "workspace:*",
     "@masseater.dev/owner-stack": "workspace:*",
     "@masseater.dev/plamo-translate-protocol": "workspace:*",

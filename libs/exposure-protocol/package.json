@@ -1,0 +1,17 @@
+{
+  "name": "@masseater.dev/exposure-protocol",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./claude-requests": "./src/claude-requests.ts"
+  },
+  "dependencies": {
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
