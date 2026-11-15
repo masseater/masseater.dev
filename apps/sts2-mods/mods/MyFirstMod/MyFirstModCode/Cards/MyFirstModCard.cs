@@ -1,7 +1,7 @@
 using BaseLib.Abstracts;
 using BaseLib.Extensions;
-using MyFirstMod.MyFirstModCode.Extensions;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MyFirstMod.MyFirstModCode.Extensions;
 
 namespace MyFirstMod.MyFirstModCode.Cards;
 

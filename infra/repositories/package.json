@@ -2,6 +2,9 @@
   "name": "@masseater.dev/repositories",
   "version": "0.0.0",
   "private": true,
+  "bin": {
+    "broker-github-token": "./broker-github-token.ts"
+  },
   "type": "module",
   "exports": {
     "./access-sites": "./access-sites.ts",
@@ -18,6 +21,7 @@
     "@distilled.cloud/github": "catalog:",
     "@distilled.cloud/tailscale": "catalog:",
     "@masseater.dev/exposure-protocol": "workspace:*",
+    "@masseater.dev/node-main": "workspace:*",
     "@octokit/rest": "catalog:",
     "@peculiar/asn1-pkcs8": "catalog:",
     "@peculiar/asn1-rsa": "catalog:",

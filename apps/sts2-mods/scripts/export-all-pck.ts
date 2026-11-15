@@ -143,7 +143,6 @@ const exportAllPck = Effect.gen(function* exportAllPck() {
           path.join(root, "mods", mod, `${mod}.csproj`),
           "-restore",
           "-t:ExportPck",
-          "-p:SkipSts2Check=true",
           "-nologo",
           "-v:m",
           `-p:GodotPath=${godot}`,

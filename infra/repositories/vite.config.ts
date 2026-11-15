@@ -17,6 +17,7 @@ export default defineConfig({
         command: "alchemy deploy --config alchemy.github.ts --stage prod --yes",
         cache: false,
       },
+      "github-token": { command: "node broker-github-token.ts", cache: false },
     },
   },
 });
