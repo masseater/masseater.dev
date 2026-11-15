@@ -20,7 +20,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
-      - uses: masseater/typescript-template/.github/actions/verify@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/verify@f873929b6484891defa1f5d4cb09cde8e9fde30e
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -64,7 +64,7 @@ jobs:
       latest: ${{ steps.head.outputs.latest }}
     steps:
       - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@2c85ab1bc850356633eac92af1e7fdde163f7c28
+        uses: masseater/typescript-template/.github/actions/latest-verified@f873929b6484891defa1f5d4cb09cde8e9fde30e
         with:
           github-token: ${{ github.token }}
       - if: steps.head.outputs.latest == 'true'
@@ -119,7 +119,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -139,7 +139,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -159,7 +159,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -178,7 +178,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -197,7 +197,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -217,7 +217,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -259,7 +259,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -280,7 +280,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -301,7 +301,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -321,7 +321,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -341,14 +341,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
       - run: vp exec --filter injection-bisect-demo alchemy deploy --stage production --yes
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - run: vp exec --filter ocr-decide alchemy deploy --stage production --yes
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - run: vp exec --filter decision-bench alchemy deploy --stage production --yes
 
   rpp-kit:
@@ -364,7 +364,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -383,7 +383,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -421,7 +421,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -465,7 +465,7 @@ jobs:
       queue: max
     steps:
       - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@2c85ab1bc850356633eac92af1e7fdde163f7c28
+        uses: masseater/typescript-template/.github/actions/latest-verified@f873929b6484891defa1f5d4cb09cde8e9fde30e
         with:
           github-token: ${{ github.token }}
       - if: steps.head.outputs.latest == 'true'
@@ -872,6 +872,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@2c85ab1bc850356633eac92af1e7fdde163f7c28
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@f873929b6484891defa1f5d4cb09cde8e9fde30e
         with:
           github-token: ${{ github.token }}

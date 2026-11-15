@@ -146,8 +146,7 @@ pub async fn get_annotations(yohaku: State<'_, Yohaku>, id: String) -> Answer<An
         paragraphs
             .iter()
             .find(|paragraph| paragraph.id == paragraph_id)
-            .map(|paragraph| paragraph.text.clone())
-            .unwrap_or_default()
+            .map_or_default(|paragraph| paragraph.text.clone())
     };
     let remarks = without_dismissed(remarks_of(&prose), &dismissed, text_of);
     let title = titled(&yohaku, current, &texts(&prose)).await?;

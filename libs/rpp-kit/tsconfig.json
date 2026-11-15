@@ -2,16 +2,6 @@
   "extends": "../../tsconfig.json",
   "include": ["src", "vite.config.ts"],
   "compilerOptions": {
-    "types": ["node"],
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "allowedUnstableApis": [
-          "@effect/platform-node/NodeServices#layer",
-          "effect/FileSystem#FileSystem",
-          "effect/Path#Path"
-        ]
-      }
-    ]
+    "types": ["node"]
   }
 }

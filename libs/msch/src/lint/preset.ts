@@ -83,6 +83,8 @@ const rules = {
   "react/forbid-component-props": "off",
   "oxc/no-rest-spread-properties": "off",
   "node/no-top-level-await": "off",
+  "import/no-nodejs-modules": "off",
+  "eslint/new-cap": ["error", { capIsNew: false }],
   "eslint/one-var": ["error", "never"],
   "eslint/id-length": ["error", { exceptions: ["x", "y"] }],
   "jsdoc/check-tag-names": ["error", { definedTags: ["msch"] }],

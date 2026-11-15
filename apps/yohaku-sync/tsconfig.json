@@ -3,9 +3,6 @@
   "include": ["*.ts"],
   "compilerOptions": {
     "lib": ["ESNext"],
-    "types": ["node", "@cloudflare/workers-types"],
-    "plugins": [
-      { "name": "@effect/language-service", "allowedUnstableApis": ["@effect/vitest#it"] }
-    ]
+    "types": ["node", "@cloudflare/workers-types"]
   }
 }
