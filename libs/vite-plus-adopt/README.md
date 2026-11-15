@@ -49,6 +49,7 @@ export default defineConfig({
 ```
 
 `import type {} from "@r_masseater/vite-plus-adopt"` で、`defineConfig` に上の 8 つのキーの型が付く。
+Steiger は `steiger.paths` に合うディレクトリのうち、直下に FSD のレイヤー（`app`・`pages`・`widgets`・`features`・`entities`・`shared` など）のフォルダを持つものだけを検査する。
 
 Git のフックは次のように書く。
 
