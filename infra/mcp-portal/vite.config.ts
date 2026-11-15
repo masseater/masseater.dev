@@ -3,7 +3,6 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   run: {
     tasks: {
-      status: { command: "node status.ts", cache: false },
       "deploy:production": {
         command: ["alchemy deploy --config alchemy.portal.ts --stage prod --yes", "node status.ts"],
         cache: false,

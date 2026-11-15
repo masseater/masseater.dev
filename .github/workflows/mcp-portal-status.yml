@@ -25,7 +25,8 @@ jobs:
         with:
           native: "false"
       - name: Sync each server and print the portals and Access applications
-        run: vp run --filter @masseater.dev/mcp-portal status
+        run: node status.ts
+        working-directory: infra/mcp-portal
 
   ci-telemetry:
     needs: [status]
