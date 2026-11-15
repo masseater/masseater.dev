@@ -5,7 +5,7 @@ use std::time::Duration;
 use tauri::async_runtime::{self, JoinHandle};
 
 use crate::failure::Outcome;
-use crate::model::{Classified, Paragraph, ParagraphKind};
+use crate::protocol::{Classified, Paragraph, ParagraphKind};
 use crate::store::{Store, manuscripts, sources};
 
 use super::classify::classify;

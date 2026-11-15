@@ -4,7 +4,7 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 
 use crate::failure::Outcome;
-use crate::model::{Classified, Paragraph, ParagraphKind};
+use crate::protocol::{Classified, Paragraph, ParagraphKind};
 use crate::store::{Store, kinds};
 
 use super::agent::judge;

@@ -6,6 +6,8 @@ export const ParagraphId = Schema.String;
 
 export const SourceId = Schema.String;
 
+export const Count = Schema.Finite.check(Schema.isUint32());
+
 export const ParagraphKind = Schema.Literals(["prose", "memo", "idea"]).annotate({
   identifier: "ParagraphKind",
 });
@@ -35,8 +37,8 @@ export const Classified = Schema.Struct({ paragraphId: ParagraphId, kind: Paragr
 
 export const Remark = Schema.Struct({
   paragraphId: ParagraphId,
-  from: Schema.Int,
-  to: Schema.Int,
+  from: Count,
+  to: Count,
   rule: Schema.String,
   message: Schema.String,
 }).annotate({ identifier: "Remark" });
@@ -81,6 +83,6 @@ export const Source = Schema.Struct({
   label: Schema.String,
   origin: SourceOrigin,
   client: Schema.String,
-  facts: Schema.Int,
+  facts: Count,
   createdAt: Schema.Int,
 }).annotate({ identifier: "Source" });
