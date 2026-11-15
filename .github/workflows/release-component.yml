@@ -45,7 +45,7 @@ jobs:
     environment: ${{ fromJSON(inputs.component).environment }}
     concurrency:
       group: release-build-${{ fromJSON(inputs.component).name }}-${{ matrix.platform.os }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     permissions:
       contents: read
     defaults:
@@ -101,7 +101,7 @@ jobs:
     runs-on: ${{ matrix.platform.runner }}
     concurrency:
       group: release-check-${{ fromJSON(inputs.component).name }}-${{ matrix.platform.os }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     permissions:
       contents: read
     defaults:

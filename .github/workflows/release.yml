@@ -37,6 +37,7 @@ jobs:
     name: ${{ matrix.component.name }}
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         component: ${{ fromJSON(needs.plan.outputs.components) }}
     permissions:
