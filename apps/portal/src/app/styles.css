@@ -1,0 +1,33 @@
+@import "@masseater.dev/ui/styles.css";
+@import "@masseater.dev/ui/theme.css";
+
+@source "../";
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    overflow-y: scroll;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+:root {
+  --chart-income: #2a78d6;
+  --chart-expense: #eb6834;
+}
+
+.dark {
+  --chart-income: #3987e5;
+  --chart-expense: #d95926;
+}
+
+@theme inline {
+  --color-income: var(--chart-income);
+  --color-expense: var(--chart-expense);
+}

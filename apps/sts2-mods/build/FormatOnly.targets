@@ -1,0 +1,6 @@
+<Project>
+    <Target Name="Build">
+        <Message Text="$(MSBuildProjectName) はスタブで型チェックできないので整形だけを確かめます (ゲームのある PC でビルドすると型チェックされます)" Importance="high" />
+        <Exec Command="&quot;$(DOTNET_HOST_PATH)&quot; format whitespace &quot;$(MSBuildProjectDirectory)&quot; --folder --verify-no-changes -v q" />
+    </Target>
+</Project>

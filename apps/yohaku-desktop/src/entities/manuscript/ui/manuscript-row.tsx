@@ -22,7 +22,7 @@ export const ManuscriptRow = ({
     setScreen(opened(manuscript.id)(screen));
   }, [manuscript.id, screen, setScreen]);
   return (
-    <li className="flex items-center gap-2 border-b">
+    <div className="flex items-center gap-2">
       <button
         className="flex min-w-0 flex-1 flex-col gap-1 py-3 text-left"
         type="button"
@@ -32,6 +32,6 @@ export const ManuscriptRow = ({
         <ManuscriptExcerpt manuscript={manuscript} />
       </button>
       {children}
-    </li>
+    </div>
   );
 };
