@@ -1,25 +1,18 @@
-import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import type { MonthTotalValue } from "#/entities/money";
-import { RowList } from "#/shared/ui";
 
-import { MonthRow } from "./month-row";
+import { MonthlyGrid } from "./monthly-grid";
 
-const LABEL = "月ごとの数字";
+const OPEN = "表で見る";
 
 export const MonthlyTable = ({
   months,
 }: Readonly<{ months: readonly MonthTotalValue[] }>): ReactNode => (
-  <details>
-    <summary className="font-display text-foreground/50 hover:text-foreground cursor-pointer text-xs tracking-widest">
-      {LABEL}
+  <details className="group">
+    <summary className="text-link cursor-pointer text-sm underline underline-offset-3 group-open:mb-3">
+      {OPEN}
     </summary>
-    <RowList label={LABEL}>
-      {pipe(
-        months,
-        Arr.map((month) => <MonthRow key={month.month} month={month} />),
-      )}
-    </RowList>
+    <MonthlyGrid months={months} />
   </details>
 );

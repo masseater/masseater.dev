@@ -11,7 +11,7 @@ type MemoLoad = Readonly<{ queryClient: QueryClient; key: MemoKey }>;
 
 type MemoDetail = Readonly<{ memo: readonly MemoValue[]; revisions: readonly RevisionValue[] }>;
 
-const route = getRouteApi("/_watashi/memos/$project/$name");
+const route = getRouteApi("/memos/$project/$name");
 
 export const loadMemoPage = ({ queryClient, key }: MemoLoad): Promise<unknown> =>
   queryClient.query(
