@@ -23,6 +23,11 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: node_modules/.cache/msch
+          key: msch-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: msch-
       - uses: masseater/typescript-template/.github/actions/verify@eeeed3cd1ec6cbeabc464f7b1a0bd727703bfd7c
         with:
           github-token: ${{ github.token }}
