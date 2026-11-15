@@ -2,6 +2,7 @@ import { Array, Effect, Match, Option, Predicate, pipe } from "effect";
 import type { SchemaRepresentation } from "effect";
 
 import { descriptionOf, field, lower, partsOf } from "./lower.ts";
+import { distinct } from "./names.ts";
 import type { Field, Item, UnsupportedSchema, Variant } from "./types.ts";
 
 type Representation = SchemaRepresentation.Representation;
@@ -81,6 +82,18 @@ const discriminator = (members: readonly Objects[]): Option.Option<string> =>
     ),
   );
 
+const withDistinctNames = (fields: readonly Field[]): readonly Field[] => {
+  const names = pipe(
+    fields,
+    Array.map(({ rust }) => rust),
+    distinct("_"),
+  );
+  return pipe(
+    fields,
+    Array.zipWith(names, (entry, rust) => ({ ...entry, rust })),
+  );
+};
+
 const fieldsOf =
   (path: string, skip: Option.Option<string>) =>
   (objects: Objects): Effect.Effect<readonly Field[], UnsupportedSchema> =>
@@ -88,6 +101,7 @@ const fieldsOf =
       objects.propertySignatures,
       Array.filter(({ name }) => !Option.contains(skip, name)),
       Effect.forEach(field(path)),
+      Effect.map(withDistinctNames),
     );
 
 const variantOf =
