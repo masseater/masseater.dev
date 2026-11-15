@@ -9,11 +9,12 @@ import type {
   Question,
 } from "./types.ts";
 import {
+  collapseChoices,
   isRespan,
+  withChoices,
   isSeverityScale,
   levelsAboveNone,
   optionIdOf,
-  withChoices,
 } from "./wire-choice.ts";
 
 const DATA_FIRST_ARITY = 2;
@@ -109,7 +110,7 @@ const asYesNo = ([id, question]: readonly [string, Question]): readonly (readonl
   return [[id, question]];
 };
 
-const perSnippet = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<WireRequest> => {
+const yesNoRequestsFor = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<WireRequest> => {
   const bySnippet = Arr.groupBy(Rec.toEntries(request.questions), ([id]) => snippetRefOf(id));
   const wires = pipe(
     Rec.values(bySnippet),
@@ -135,27 +136,24 @@ const perSnippet = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<WireReq
 
 const wireRequestsFor = (request: DecisionRequest): Arr.NonEmptyReadonlyArray<WireRequest> => {
   if (isRespan(request.model)) {
-    return perSnippet(request);
+    return yesNoRequestsFor(request);
   }
   return [request];
 };
 
-const mergeResponses: {
-  (
-    responses: Arr.NonEmptyReadonlyArray<DecisionResponse>,
-  ): (request: DecisionRequest) => DecisionResponse;
-  (
-    request: DecisionRequest,
-    responses: Arr.NonEmptyReadonlyArray<DecisionResponse>,
-  ): DecisionResponse;
-} = Fn.dual(
-  DATA_FIRST_ARITY,
+type Collapse = (
+  request: DecisionRequest,
+  answers: DecisionResponse["answers"],
+) => DecisionResponse["answers"];
+
+const merging =
+  (collapse: Collapse) =>
   (
     request: DecisionRequest,
     responses: Arr.NonEmptyReadonlyArray<DecisionResponse>,
   ): DecisionResponse => ({
     ...Arr.headNonEmpty(responses),
-    answers: withChoices(
+    answers: collapse(
       request,
       pipe(
         responses,
@@ -163,8 +161,21 @@ const mergeResponses: {
         Rec.fromEntries,
       ),
     ),
-  }),
-);
+  });
 
-export { mergeResponses, wireRequestsFor };
-export type { WireRequest };
+interface Merge {
+  (
+    responses: Arr.NonEmptyReadonlyArray<DecisionResponse>,
+  ): (request: DecisionRequest) => DecisionResponse;
+  (
+    request: DecisionRequest,
+    responses: Arr.NonEmptyReadonlyArray<DecisionResponse>,
+  ): DecisionResponse;
+}
+
+const mergeResponses: Merge = Fn.dual(DATA_FIRST_ARITY, merging(withChoices));
+
+const mergeYesNo: Merge = Fn.dual(DATA_FIRST_ARITY, merging(collapseChoices));
+
+export { mergeResponses, mergeYesNo, wireRequestsFor, yesNoRequestsFor };
+export type { Merge, WireRequest };

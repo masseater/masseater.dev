@@ -41,7 +41,7 @@ const DEFAULTS = {
   ci: "fail",
   timeoutMs: 10_000,
   maxSnippetChars: 4000,
-  model: "openrouter/~typesafe/jev-latest",
+  model: "cloudflare/@cf/qwen/qwen3.8-27b",
   env: {},
   explain: false,
 } as const satisfies Required<DecisionOptions>;

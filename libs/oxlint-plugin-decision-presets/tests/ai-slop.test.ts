@@ -180,7 +180,7 @@ const loadsEntry = Effect.scoped(
     });
     const run = yield* oxlint(cwd, ["-c", "oxlint.config.ts", "a.ts"], { CI: "1" });
     strictEqual(run.status, FAILED, outputOf(run));
-    assertInclude(outputOf(run), "OPENROUTER_API_KEY is not set");
+    assertInclude(outputOf(run), "CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID is not set");
   }),
 );
 

@@ -6,7 +6,12 @@ export default defineConfig({
     lint: { ignorePatterns: ["example/**"] },
   },
   pack: {
-    entry: ["src/index.ts", "src/openrouter-app.ts", "src/openrouter-worker.ts"],
+    entry: [
+      "src/index.ts",
+      "src/openrouter-app.ts",
+      "src/openrouter-worker.ts",
+      "src/cloudflare-worker.ts",
+    ],
     platform: "node",
     sourcemap: true,
     deps: { resolveDepSubpath: true },
