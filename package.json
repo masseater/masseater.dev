@@ -47,7 +47,8 @@
       "@tanstack/virtual-file-routes",
       "@tanstack/router-plugin",
       "@tanstack/start-server-core",
-      "fallow"
+      "fallow",
+      "workspace:@masseater.dev/effect2rs"
     ]
   }
 }

@@ -2,6 +2,18 @@
   "name": "@masseater.dev/effect2rs",
   "version": "0.0.0",
   "private": true,
+  "keywords": [
+    "tanstack-intent"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/effect2rs"
+  },
+  "files": [
+    "src",
+    "skills/share-types-with-rust"
+  ],
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
@@ -10,6 +22,7 @@
     "effect": "catalog:stack"
   },
   "devDependencies": {
+    "@effect/platform-node": "catalog:",
     "@effect/vitest": "catalog:",
     "vite-plus": "catalog:stack"
   }

@@ -4,9 +4,10 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 
-pub const SYNC_ORIGIN: &str = "https://yohaku.masseater.dev";
 pub const CHANGES_PATH: &str = "/api/changes";
 pub const DOCUMENTS_PATH: &str = "/api/documents";
+pub const SYNC_HOST: &str = "yohaku.masseater.dev";
+pub const SYNC_ORIGIN: &str = "https://yohaku.masseater.dev";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
 #[serde(rename_all = "lowercase")]
@@ -93,6 +94,52 @@ pub struct Annotations {
     pub remarks: Vec<Remark>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
+#[serde(rename_all = "lowercase")]
+pub enum FactKind {
+    Character,
+    Voice,
+    Event,
+    Knowledge,
+    Setting,
+    Idea,
+}
+
+impl FactKind {
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Character => "character",
+            Self::Voice => "voice",
+            Self::Event => "event",
+            Self::Knowledge => "knowledge",
+            Self::Setting => "setting",
+            Self::Idea => "idea",
+        }
+    }
+
+    #[must_use]
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "character" => Some(Self::Character),
+            "voice" => Some(Self::Voice),
+            "event" => Some(Self::Event),
+            "knowledge" => Some(Self::Knowledge),
+            "setting" => Some(Self::Setting),
+            "idea" => Some(Self::Idea),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct Fact {
+    pub kind: FactKind,
+    pub subject: String,
+    pub body: String,
+    pub when: Option<String>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Manuscript {
@@ -101,6 +148,50 @@ pub struct Manuscript {
     pub excerpt: String,
     #[specta(type = specta_typescript::Number)]
     pub updated_at: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct Paragraph {
+    pub id: String,
+    pub text: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
+#[serde(rename_all = "kebab-case")]
+pub enum Reaction {
+    DraftAccepted,
+    DraftRewritten,
+    DraftKept,
+    RemarkDismissed,
+    RemarkRewritten,
+    QuestionDeferred,
+}
+
+impl Reaction {
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::DraftAccepted => "draft-accepted",
+            Self::DraftRewritten => "draft-rewritten",
+            Self::DraftKept => "draft-kept",
+            Self::RemarkDismissed => "remark-dismissed",
+            Self::RemarkRewritten => "remark-rewritten",
+            Self::QuestionDeferred => "question-deferred",
+        }
+    }
+
+    #[must_use]
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "draft-accepted" => Some(Self::DraftAccepted),
+            "draft-rewritten" => Some(Self::DraftRewritten),
+            "draft-kept" => Some(Self::DraftKept),
+            "remark-dismissed" => Some(Self::RemarkDismissed),
+            "remark-rewritten" => Some(Self::RemarkRewritten),
+            "question-deferred" => Some(Self::QuestionDeferred),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
@@ -142,44 +233,6 @@ pub struct Source {
     pub facts: u32,
     #[specta(type = specta_typescript::Number)]
     pub created_at: i64,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
-#[serde(rename_all = "kebab-case")]
-pub enum Reaction {
-    DraftAccepted,
-    DraftRewritten,
-    DraftKept,
-    RemarkDismissed,
-    RemarkRewritten,
-    QuestionDeferred,
-}
-
-impl Reaction {
-    #[must_use]
-    pub const fn as_str(self) -> &'static str {
-        match self {
-            Self::DraftAccepted => "draft-accepted",
-            Self::DraftRewritten => "draft-rewritten",
-            Self::DraftKept => "draft-kept",
-            Self::RemarkDismissed => "remark-dismissed",
-            Self::RemarkRewritten => "remark-rewritten",
-            Self::QuestionDeferred => "question-deferred",
-        }
-    }
-
-    #[must_use]
-    pub fn parse(value: &str) -> Option<Self> {
-        match value {
-            "draft-accepted" => Some(Self::DraftAccepted),
-            "draft-rewritten" => Some(Self::DraftRewritten),
-            "draft-kept" => Some(Self::DraftKept),
-            "remark-dismissed" => Some(Self::RemarkDismissed),
-            "remark-rewritten" => Some(Self::RemarkRewritten),
-            "question-deferred" => Some(Self::QuestionDeferred),
-            _ => None,
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
@@ -239,6 +292,15 @@ pub struct Changes {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
 #[serde(rename_all = "camelCase")]
+pub struct ManuscriptBody {
+    pub title: Option<Title>,
+    #[specta(type = specta_typescript::Number)]
+    pub created_at: i64,
+    pub paragraphs: Vec<Paragraph>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
+#[serde(rename_all = "camelCase")]
 pub struct SyncDocument {
     pub kind: DocumentKind,
     pub id: String,
@@ -251,67 +313,6 @@ pub struct SyncDocument {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
 pub struct Pushed {
     pub documents: Vec<SyncDocument>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
-pub struct Paragraph {
-    pub id: String,
-    pub text: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
-#[serde(rename_all = "camelCase")]
-pub struct ManuscriptBody {
-    pub title: Option<Title>,
-    #[specta(type = specta_typescript::Number)]
-    pub created_at: i64,
-    pub paragraphs: Vec<Paragraph>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
-#[serde(rename_all = "lowercase")]
-pub enum FactKind {
-    Character,
-    Voice,
-    Event,
-    Knowledge,
-    Setting,
-    Idea,
-}
-
-impl FactKind {
-    #[must_use]
-    pub const fn as_str(self) -> &'static str {
-        match self {
-            Self::Character => "character",
-            Self::Voice => "voice",
-            Self::Event => "event",
-            Self::Knowledge => "knowledge",
-            Self::Setting => "setting",
-            Self::Idea => "idea",
-        }
-    }
-
-    #[must_use]
-    pub fn parse(value: &str) -> Option<Self> {
-        match value {
-            "character" => Some(Self::Character),
-            "voice" => Some(Self::Voice),
-            "event" => Some(Self::Event),
-            "knowledge" => Some(Self::Knowledge),
-            "setting" => Some(Self::Setting),
-            "idea" => Some(Self::Idea),
-            _ => None,
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
-pub struct Fact {
-    pub kind: FactKind,
-    pub subject: String,
-    pub body: String,
-    pub when: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]

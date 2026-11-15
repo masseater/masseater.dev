@@ -1,12 +1,12 @@
 import { Array, Boolean, pipe } from "effect";
 
 import { plainIdentifier, serdeCamelField } from "./names.ts";
-import { rustType, spectaNumber } from "./rust-type.ts";
+import { rustType } from "./rust-type.ts";
 import { attribute, docLines, escape, when } from "./text.ts";
-import type { Field } from "./types.ts";
+import type { Field, Ty } from "./types.ts";
 
 export interface FieldStyle {
-  readonly specta: boolean;
+  readonly specta: (ty: Ty) => Ty;
   readonly visibility: string;
   readonly indent: string;
   readonly camel: boolean;
@@ -35,8 +35,8 @@ const serdeParts =
 const spectaParts =
   (style: FieldStyle) =>
   (field: Field): readonly string[] => {
-    const override = rustType(spectaNumber(field.ty));
-    return when(style.specta && override !== rustType(field.ty))(() => [`type = ${override}`]);
+    const override = rustType(style.specta(field.ty));
+    return when(override !== rustType(field.ty))(() => [`type = ${override}`]);
   };
 
 export const fieldLines =
