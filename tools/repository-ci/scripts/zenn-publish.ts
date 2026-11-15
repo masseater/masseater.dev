@@ -6,9 +6,17 @@ import { Base64 } from "effect/encoding";
 
 const ARTICLES = "apps/zenn-articles";
 const BRANCH = "zenn";
+const BOT = "github-actions[bot]";
+const BOT_EMAIL = "41898282+github-actions[bot]@users.noreply.github.com";
+const IDENTITY = {
+  GIT_AUTHOR_NAME: BOT,
+  GIT_AUTHOR_EMAIL: BOT_EMAIL,
+  GIT_COMMITTER_NAME: BOT,
+  GIT_COMMITTER_EMAIL: BOT_EMAIL,
+};
 
 const authenticated = Effect.gen(function* authenticated() {
-  const token = yield* Config.Redacted("GH_TOKEN");
+  const token = yield* Config.Redacted("GITHUB_TOKEN");
   const credentials = Base64.encode(`x-access-token:${Redacted.value(token)}`);
   return {
     GIT_CONFIG_COUNT: "1",
@@ -48,7 +56,10 @@ const zennPublish = Effect.gen(function* zennPublish() {
     onNone: (): readonly string[] => [],
     onSome: () => ["-p", "FETCH_HEAD"],
   });
-  const commit = yield* outputOf(git("commit-tree", tree, ...parent, "-m", `deploy: ${sha}`));
+  const commit = yield* outputOf({
+    ...git("commit-tree", tree, ...parent, "-m", `deploy: ${sha}`),
+    env: IDENTITY,
+  });
   yield* mustSucceed({ ...git("push", "origin", `${commit}:refs/heads/${BRANCH}`), env });
 });
 

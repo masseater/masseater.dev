@@ -8,7 +8,6 @@ const KEYWORDS = new Set([
   "break",
   "const",
   "continue",
-  "crate",
   "dyn",
   "else",
   "enum",
@@ -49,6 +48,7 @@ const LEADING_DIGIT = /^[0-9]/u;
 const SCREAMING = /^[A-Z][A-Z0-9_]*$/u;
 const INNER_UPPER = /(?<!^)(?<upper>[A-Z])/gu;
 const RAW_PREFIX = /^r#/u;
+const TRAILING_UNDERSCORES = /_+$/u;
 
 const words = (value: string): readonly string[] =>
   pipe(
@@ -70,9 +70,9 @@ const withLeadingDigit =
 const capitalized = (word: string): string => pipe(word, String.toLowerCase, String.capitalize);
 
 export const snakeCase = (value: string): string =>
-  pipe(words(value), Array.map(String.toLowerCase), Array.join("_"), withLeadingDigit("_"));
+  pipe(words(value), Array.map(String.toLowerCase), Array.join("_"), withLeadingDigit("field_"));
 
-export const pascalCase = (value: string): string =>
+const pascalCase = (value: string): string =>
   pipe(words(value), Array.map(capitalized), Array.join(""), withLeadingDigit("V"));
 
 export const screamingSnakeCase = (value: string): string =>
@@ -81,11 +81,68 @@ export const screamingSnakeCase = (value: string): string =>
     onFalse: () => pipe(value, snakeCase, String.toUpperCase),
   });
 
-export const fieldIdentifier = (snake: string): string =>
-  Boolean.match(KEYWORDS.has(snake), { onTrue: () => `r#${snake}`, onFalse: () => snake });
-
 export const plainIdentifier = (identifier: string): string =>
   pipe(identifier, String.replace(RAW_PREFIX, ""));
+
+const UNRAWABLE = new Set(["self", "super", "crate", "Self"]);
+const FIRST_SUFFIX = 2;
+const NEXT = 1;
+
+const orFallback =
+  (fallback: string) =>
+  (value: string): string =>
+    Boolean.match(String.isNonEmpty(value), { onTrue: () => value, onFalse: () => fallback });
+
+const awayFromKeywords =
+  (suffix: string) =>
+  (value: string): string =>
+    Boolean.match(UNRAWABLE.has(value), {
+      onTrue: () => `${value}${suffix}`,
+      onFalse: () => value,
+    });
+
+export const fieldIdentifier = (snake: string): string => {
+  const safe = pipe(snake, orFallback("value"), awayFromKeywords("_"));
+  return Boolean.match(KEYWORDS.has(safe), { onTrue: () => `r#${safe}`, onFalse: () => safe });
+};
+
+export const variantIdentifier = (value: string): string =>
+  pipe(pascalCase(value), orFallback("Value"), awayFromKeywords("Value"));
+
+const firstFree =
+  (taken: readonly string[]) =>
+  (separator: string) =>
+  (name: string) =>
+  (suffix: number): string => {
+    const candidate = Boolean.match(suffix === FIRST_SUFFIX - NEXT, {
+      onTrue: () => name,
+      onFalse: () =>
+        `${pipe(name, String.replace(TRAILING_UNDERSCORES, ""))}${separator}${globalThis.String(suffix)}`,
+    });
+    const used = pipe(taken, Array.contains(plainIdentifier(candidate)));
+    return Boolean.match(used, {
+      onTrue: () => firstFree(taken)(separator)(name)(Math.max(suffix + NEXT, FIRST_SUFFIX)),
+      onFalse: () => candidate,
+    });
+  };
+
+const distinctFrom =
+  (separator: string) =>
+  (taken: readonly string[]) =>
+  (names: readonly string[]): readonly string[] =>
+    pipe(
+      names,
+      Array.match({
+        onEmpty: (): readonly string[] => [],
+        onNonEmpty: ([name, ...rest]) => {
+          const chosen = firstFree(taken)(separator)(name)(FIRST_SUFFIX - NEXT);
+          return [chosen, ...distinctFrom(separator)([...taken, plainIdentifier(chosen)])(rest)];
+        },
+      }),
+    );
+
+export const distinct = (separator: string): ((names: readonly string[]) => readonly string[]) =>
+  distinctFrom(separator)([]);
 
 export const serdeCamelField = (field: string): string =>
   pipe(field, String.split("_"), Array.map(String.capitalize), Array.join(""), String.uncapitalize);
