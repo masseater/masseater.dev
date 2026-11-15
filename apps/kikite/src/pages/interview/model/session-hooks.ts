@@ -1,9 +1,10 @@
 import { useAtomMount, useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Option } from "effect";
 import { AsyncResult } from "effect/reactivity";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { phaseAtom } from "#/entities/interview";
+import type { Answering } from "#/features/answer-question";
 
 import { sessionAtom } from "./session.ts";
 import type { Session } from "./session.ts";
@@ -28,4 +29,23 @@ export const useWrapUp = (): (() => void) => {
       },
     });
   }, [session, setPhase]);
+};
+
+export const useAnswering = (): Answering => {
+  const session = useSession();
+  return useMemo(
+    () => ({
+      typed: (text: string) => {
+        if (Option.isSome(session)) {
+          session.value.typed(text);
+        }
+      },
+      typing: (text: string) => {
+        if (Option.isSome(session)) {
+          session.value.typing(text);
+        }
+      },
+    }),
+    [session],
+  );
 };
