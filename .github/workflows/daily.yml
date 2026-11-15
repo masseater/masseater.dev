@@ -12,8 +12,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: read
+      deployments: read
     outputs:
       packages: ${{ steps.packages.outputs.packages }}
     steps:
@@ -46,6 +46,7 @@ jobs:
     permissions:
       actions: write
       contents: write
+      deployments: write
       id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -87,11 +88,12 @@ jobs:
         run: vp run -r prune-caches
         env:
           GH_TOKEN: ${{ github.token }}
-      - if: github.event_name == 'push'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .github/workflows/daily.yml
-          key: daily-${{ matrix.package.name }}-${{ github.sha }}
+      - run: vp run -r record-deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOYMENT_ENVIRONMENT: daily
+          DEPLOYMENT_TASK: daily:${{ matrix.package.name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
 
   after:
     needs: run

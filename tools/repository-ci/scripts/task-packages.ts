@@ -17,14 +17,19 @@ import { Argument, Command } from "effect/cli";
 
 import { isChanged, nameOf, workspace } from "./changes.ts";
 import type { Packages, Tasks } from "./changes.ts";
+import type { DeploymentRecord } from "./deployment.ts";
 
 const FINALLY = ":finally";
 const ITEMS = ":items";
 const ITEMS_OUTPUT = "items=";
 const PUSH = "push";
-const MARKER = "daily-";
 const NO_ITEM = "";
 const WORKFLOWS = [".github/workflows/daily.yml"];
+
+const ranDaily = (name: string): DeploymentRecord => ({
+  environment: "daily",
+  task: `daily:${name}`,
+});
 
 const Entry = Schema.Struct({
   name: Schema.String,
@@ -92,7 +97,7 @@ const changedOnly = Effect.fn("changedOnly")(function* changedOnly(
     directories,
     Effect.filter((directory) =>
       isChanged(
-        { packages, marker: MARKER, workflows: WORKFLOWS },
+        { packages, record: ranDaily, workflows: WORKFLOWS },
         { name: nameOf(directory), directories: [directory] },
       ),
     ),
