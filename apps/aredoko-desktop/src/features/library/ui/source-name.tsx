@@ -10,7 +10,7 @@ const KIND_LABELS: Readonly<Record<(typeof Source.Type)["kind"], string>> = {
   project: "Unity プロジェクト",
 };
 
-const SourceName = ({
+export const SourceName = ({
   source,
   named,
 }: Readonly<{ source: typeof Source.Type; named: Option.Option<NamedFolder> }>): ReactNode => {
@@ -30,5 +30,3 @@ const SourceName = ({
     </>
   );
 };
-
-export { SourceName };

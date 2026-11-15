@@ -5,7 +5,7 @@ import type { VideoKind } from "#/entities/video/@x/song";
 import { part } from "#/shared/db";
 import { catalogDb } from "#/shared/db/index.server";
 
-type QuotePair = readonly [videoId: number, source: number];
+export type QuotePair = readonly [videoId: number, source: number];
 
 type QuoteRow = Readonly<{ videoId: number; refVideoId: number | null }>;
 
@@ -16,7 +16,7 @@ type Expansion = Readonly<{
   depth: number;
 }>;
 
-type VideoSummary = Readonly<{
+export type VideoSummary = Readonly<{
   id: number;
   title: string;
   kind: VideoKind;
@@ -45,7 +45,9 @@ const quotingRows = (videoIds: readonly number[]): Effect.Effect<readonly QuoteR
 const pairKey = ([videoId, source]: QuotePair): string =>
   `${videoId.toString()}:${source.toString()}`;
 
-const sourcesByVideo = (pairs: readonly QuotePair[]): ReadonlyMap<number, readonly number[]> => {
+export const sourcesByVideo = (
+  pairs: readonly QuotePair[],
+): ReadonlyMap<number, readonly number[]> => {
   const grouped = new Map<number, number[]>();
   for (const [videoId, source] of pairs) {
     grouped.set(videoId, [...(grouped.get(videoId) ?? NO_SOURCES), source]);
@@ -98,7 +100,7 @@ const expand = (state: Expansion): Effect.Effect<readonly QuotePair[]> => {
   );
 };
 
-const quoteReach = (sources: readonly number[]): Effect.Effect<readonly QuotePair[]> =>
+export const quoteReach = (sources: readonly number[]): Effect.Effect<readonly QuotePair[]> =>
   expand({
     sources,
     frontier: pipe(
@@ -109,7 +111,7 @@ const quoteReach = (sources: readonly number[]): Effect.Effect<readonly QuotePai
     depth: FIRST_DEPTH,
   }).pipe(Effect.withSpan("catalog.quotes"));
 
-const videoSummaries = (
+export const videoSummaries = (
   videoIds: readonly number[],
 ): Effect.Effect<ReadonlyMap<number, VideoSummary>> =>
   Effect.forEach(
@@ -134,6 +136,3 @@ const videoSummaries = (
     ),
     Effect.withSpan("catalog.quotes.titles"),
   );
-
-export type { QuotePair, VideoSummary };
-export { quoteReach, sourcesByVideo, videoSummaries };

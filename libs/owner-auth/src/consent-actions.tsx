@@ -7,7 +7,7 @@ const ALLOW = "許可する";
 const DENY = "拒否する";
 const FAILED = "許可できませんでした";
 
-const ConsentActions = ({
+export const ConsentActions = ({
   button: Button,
   scope,
   allow,
@@ -42,5 +42,3 @@ const ConsentActions = ({
     </>
   );
 };
-
-export { ConsentActions };

@@ -9,7 +9,7 @@ import { ProfileTable } from "./profile-table";
 import { ReliabilitySection } from "./reliability-section";
 import { ScoreTable } from "./score-table";
 
-const TaskBlock = ({ task }: Readonly<{ task: TaskInfo }>): ReactNode => {
+export const TaskBlock = ({ task }: Readonly<{ task: TaskInfo }>): ReactNode => {
   const entries = useVisibleEntries(task.task);
   return (
     <>
@@ -21,5 +21,3 @@ const TaskBlock = ({ task }: Readonly<{ task: TaskInfo }>): ReactNode => {
     </>
   );
 };
-
-export { TaskBlock };

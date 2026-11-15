@@ -10,9 +10,9 @@ const SECONDS_WIDTH = 2;
 
 const ORIGIN = 0;
 
-const percentOf = (time: number): string => `${String((time / song.length) * PERCENT)}%`;
+export const percentOf = (time: number): string => `${String((time / song.length) * PERCENT)}%`;
 
-const clockOf = (time: number): string => {
+export const clockOf = (time: number): string => {
   const whole = Math.max(ORIGIN, Math.floor(time));
   const seconds = Str.padStart(SECONDS_WIDTH, "0")(String(whole % SECONDS_PER_MINUTE));
   return `${String(Math.floor(whole / SECONDS_PER_MINUTE))}:${seconds}`;
@@ -29,7 +29,5 @@ const TRACK_FILLS = [
   "fill-track-8",
 ] as const;
 
-const fillOf = (index: number): string =>
+export const fillOf = (index: number): string =>
   TRACK_FILLS[index % TRACK_FILLS.length] ?? "fill-foreground";
-
-export { clockOf, fillOf, percentOf };

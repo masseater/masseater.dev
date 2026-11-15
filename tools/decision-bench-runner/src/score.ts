@@ -180,7 +180,7 @@ const pairAccuracyOf = (
   };
 };
 
-const metric = (rows: readonly Scored[]): TaskResult["test"] => {
+export const metric = (rows: readonly Scored[]): TaskResult["test"] => {
   const { raw, chance } = rawScore(rows);
   const clusters = Rec.values(Arr.groupBy(rows, clusterKey));
   const samples = resample(clusters);
@@ -229,7 +229,7 @@ const percentile = (values: readonly number[], rank: number): number => {
   );
 };
 
-const usage = (rows: readonly Scored[]): Pick<TaskResult, "p50Ms" | "p95Ms" | "costUsd"> => {
+export const usage = (rows: readonly Scored[]): Pick<TaskResult, "p50Ms" | "p95Ms" | "costUsd"> => {
   const latencies = pipe(
     rows,
     Arr.map(({ outcome }) => outcome.latencyMs),
@@ -246,5 +246,3 @@ const usage = (rows: readonly Scored[]): Pick<TaskResult, "p50Ms" | "p95Ms" | "c
     costUsd,
   };
 };
-
-export { metric, usage };

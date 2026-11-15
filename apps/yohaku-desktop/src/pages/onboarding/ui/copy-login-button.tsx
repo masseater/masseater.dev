@@ -4,10 +4,11 @@ import { Copy } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-const LOGIN = "claude auth login";
+import { LOGIN } from "./login-command.ts";
+
 const LABEL = "コピー";
 
-const CopyLoginButton = (): ReactNode => {
+export const CopyLoginButton = (): ReactNode => {
   const onClick = useCallback(() => {
     Effect.runFork(Effect.promise(() => navigator.clipboard.writeText(LOGIN)));
   }, []);
@@ -18,5 +19,3 @@ const CopyLoginButton = (): ReactNode => {
     </Button>
   );
 };
-
-export { CopyLoginButton, LOGIN };

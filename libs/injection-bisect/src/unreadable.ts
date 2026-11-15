@@ -6,14 +6,14 @@ const ITSELF = "";
 
 const NUL = "\0";
 
-const BINARY = "binary data";
+export const BINARY = "binary data";
 
-const itself = (reason: string): Unreadable => ({ name: ITSELF, reason });
+export const itself = (reason: string): Unreadable => ({ name: ITSELF, reason });
 
 const unreadableIn = ({ unreadable = [] }: Pick<Document, "unreadable">): readonly Unreadable[] =>
   unreadable;
 
-const withUnreadable =
+export const withUnreadable =
   (unreadable: readonly Unreadable[]) =>
   (document: Document): Document => {
     if (Arr.isReadonlyArrayEmpty(unreadable)) {
@@ -22,7 +22,7 @@ const withUnreadable =
     return { ...document, unreadable };
   };
 
-const isBinary = (text: string): boolean => Str.includes(NUL)(text);
+export const isBinary = (text: string): boolean => Str.includes(NUL)(text);
 
 const pathIn = (name: string, part: string): string => {
   if (part === ITSELF) {
@@ -31,7 +31,7 @@ const pathIn = (name: string, part: string): string => {
   return `${name}/${part}`;
 };
 
-const partsInside =
+export const partsInside =
   (name: string) =>
   (document: Document): readonly Unreadable[] =>
     pipe(
@@ -46,7 +46,7 @@ const nameOr = (name: string, part: string): string => {
   return part;
 };
 
-const called =
+export const called =
   (name: string) =>
   (document: Document): Document =>
     withUnreadable(
@@ -55,5 +55,3 @@ const called =
         Arr.map((part) => ({ name: nameOr(name, part.name), reason: part.reason })),
       ),
     )(document);
-
-export { BINARY, called, isBinary, itself, partsInside, withUnreadable };

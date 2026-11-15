@@ -20,7 +20,5 @@ const figureOf: Transform<LeafDirective, Option.Option<MdxJsxFlowElement>> = (no
     ),
   );
 
-const remarkFigure: Plugin<[], Root> = () =>
+export const remarkFigure: Plugin<[], Root> = () =>
   mapTree(leafDirectiveAs({ directive: "figure", element: figureOf }));
-
-export { remarkFigure };

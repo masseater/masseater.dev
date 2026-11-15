@@ -23,10 +23,17 @@ fn main(@builtin(vertex_index) index: u32) -> Corner {
 const ENTRY = "main";
 const TARGET_FORMAT: GPUTextureFormat = "rgba16float";
 const IMAGE_FORMAT: GPUTextureFormat = "rgba8unorm";
-const PING_PONG = 2;
-const SINGLE = 1;
-const SHARED = { block: 0, sampler: 1, dance: 2, history: 3, glyphs: 4, density: 5 } as const;
-const GROUPS = { shared: 0, inputs: 1 } as const;
+export const PING_PONG = 2;
+export const SINGLE = 1;
+export const SHARED = {
+  block: 0,
+  sampler: 1,
+  dance: 2,
+  history: 3,
+  glyphs: 4,
+  density: 5,
+} as const;
+export const GROUPS = { shared: 0, inputs: 1 } as const;
 
 const taggedError = Schema.TaggedError;
 
@@ -35,9 +42,9 @@ class GpuUnavailable extends taggedError<GpuUnavailable, { readonly brand: uniqu
   { step: Schema.String },
 ) {}
 
-const unavailable = (step: string) => (): GpuUnavailable => GpuUnavailable.make({ step });
+export const unavailable = (step: string) => (): GpuUnavailable => GpuUnavailable.make({ step });
 
-type Setup = Readonly<{
+export type Setup = Readonly<{
   device: GPUDevice;
   format: GPUTextureFormat;
   sharedLayout: GPUBindGroupLayout;
@@ -117,7 +124,7 @@ const formatOf: Fn<Readonly<{ pass: Pass; screen: GPUTextureFormat }>, GPUTextur
     onSome: () => TARGET_FORMAT,
   });
 
-const setUp: Fn<
+export const setUp: Fn<
   Readonly<{ passes: readonly Pass[]; gpu: GpuEffect }>,
   Effect.Effect<Setup, GpuUnavailable>
 > = ({ passes, gpu }) =>
@@ -166,9 +173,12 @@ const setUp: Fn<
     return { device, format, sharedLayout, pipelines, computeLayout, computes };
   });
 
-const extentOf: Fn<Size, GPUExtent3DDict> = ([width, height]) => ({ width, height });
+export const extentOf: Fn<Size, GPUExtent3DDict> = ([width, height]) => ({ width, height });
 
-const imageOf: Fn<Readonly<{ device: GPUDevice; size: Size }>, GPUTexture> = ({ device, size }) =>
+export const imageOf: Fn<Readonly<{ device: GPUDevice; size: Size }>, GPUTexture> = ({
+  device,
+  size,
+}) =>
   device.createTexture({
     size: extentOf(size),
     format: IMAGE_FORMAT,
@@ -186,7 +196,7 @@ const targetCount: Fn<Pass, number> = (pass) => {
   return SINGLE;
 };
 
-const targetsOf: Fn<
+export const targetsOf: Fn<
   Readonly<{ device: GPUDevice; pass: Pass; size: Size }>,
   readonly GPUTexture[]
 > = ({ device, pass, size }) => {
@@ -199,7 +209,7 @@ const targetsOf: Fn<
   );
 };
 
-const blockOf: Fn<Readonly<{ device: GPUDevice; bytes: number }>, GPUBuffer> = ({
+export const blockOf: Fn<Readonly<{ device: GPUDevice; bytes: number }>, GPUBuffer> = ({
   device,
   bytes,
 }) =>
@@ -208,16 +218,4 @@ const blockOf: Fn<Readonly<{ device: GPUDevice; bytes: number }>, GPUBuffer> = (
     usage: Num.sumAll([GPUBufferUsage.STORAGE, GPUBufferUsage.COPY_DST]),
   });
 
-export type { GpuUnavailable, Setup };
-export {
-  blockOf,
-  extentOf,
-  unavailable,
-  GROUPS,
-  imageOf,
-  PING_PONG,
-  setUp,
-  SHARED,
-  SINGLE,
-  targetsOf,
-};
+export type { GpuUnavailable };

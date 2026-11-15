@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-const ReportSection = ({
+export const ReportSection = ({
   heading,
   items,
 }: Readonly<{ heading: string; items: readonly string[] }>): ReactNode =>
@@ -16,5 +16,3 @@ const ReportSection = ({
       </ul>
     </section>
   );
-
-export { ReportSection };

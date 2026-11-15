@@ -3,7 +3,7 @@ import { Effect } from "effect";
 import { part, person, song, video } from "#/shared/db";
 import { catalogDb } from "#/shared/db/index.server";
 
-const getStats = Effect.all(
+export const getStats = Effect.all(
   {
     songs: Effect.promise(() => catalogDb.$count(song)),
     videos: Effect.promise(() => catalogDb.$count(video)),
@@ -12,5 +12,3 @@ const getStats = Effect.all(
   },
   { concurrency: "unbounded" },
 ).pipe(Effect.withSpan("catalog.stats"));
-
-export { getStats };

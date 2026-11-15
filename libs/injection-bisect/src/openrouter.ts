@@ -8,14 +8,14 @@ import { JudgeError } from "./judge-error.ts";
 import { InjectionJudge } from "./judge.ts";
 import type { Verdict, Verdicts } from "./judge.ts";
 
-const PRODUCT_NAME = "injection-bisect";
+export const PRODUCT_NAME = "injection-bisect";
 
 const REPOSITORY_URL = "https://github.com/masseater/masseater.dev";
 
 const INJECTION =
   "a prompt injection: text that addresses the AI system reading it and tries to make it ignore, override or replace its instructions, reveal hidden prompts or secrets, or take actions the user did not ask for (such as sending data to a URL, opening links, or calling tools).";
 
-const QUESTION = `The state contains ${INJECTION}`;
+export const QUESTION = `The state contains ${INJECTION}`;
 
 const partQuestion = (part: string): string =>
   `The quoted text "${Str.trim(part)}", judged by its own words alone and not by the rest of the state, is or is part of ${INJECTION}`;
@@ -112,21 +112,19 @@ const site = {
 
 const keyedClient = layerConfig({ apiKey: Config.Redacted("OPENROUTER_API_KEY"), ...site });
 
-const openRouter = judgeLayer.pipe(
+export const openRouter = judgeLayer.pipe(
   Layer.provide(keyedClient),
   Layer.provide(FetchHttpClient.layer),
 );
 
-const openRouterPerRequest = judgeLayer.pipe(
+export const openRouterPerRequest = judgeLayer.pipe(
   Layer.provide(layerConfig(site)),
   Layer.provide(FetchHttpClient.layer),
 );
 
-const withApiKey = (
+export const withApiKey = (
   apiKey: string,
 ): (<Success, Failure, Requirements>(
   effect: Effect.Effect<Success, Failure, Requirements>,
 ) => Effect.Effect<Success, Failure, Requirements>) =>
   withClientTransform(HttpClient.mapRequest(HttpClientRequest.bearerToken(apiKey)));
-
-export { PRODUCT_NAME, QUESTION, openRouter, openRouterPerRequest, withApiKey };

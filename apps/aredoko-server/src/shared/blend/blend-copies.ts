@@ -10,7 +10,7 @@ interface Copy {
   readonly uv: (pair: readonly number[]) => readonly number[];
 }
 
-interface Mirror {
+export interface Mirror {
   readonly axes: readonly number[];
   readonly frame: readonly number[];
   readonly flipU: boolean;
@@ -19,7 +19,7 @@ interface Mirror {
   readonly uvShift: readonly number[];
 }
 
-interface Repeat {
+export interface Repeat {
   readonly count: number;
   readonly offset: readonly number[];
   readonly uvOffset: readonly number[];
@@ -125,7 +125,7 @@ const mirroredUv =
     return [nextU + shiftU, UNIT - (nextV + shiftV)];
   };
 
-const mirrored =
+export const mirrored =
   (mirror: Mirror) =>
   (shape: Shape): Shape => {
     let current = shape;
@@ -143,7 +143,7 @@ const repeatedUv =
     down - offsetV * times,
   ];
 
-const repeated =
+export const repeated =
   (repeat: Repeat) =>
   (shape: Shape): Shape => {
     const offset = new Matrix4().fromArray(repeat.offset);
@@ -159,6 +159,3 @@ const repeated =
     }
     return withCopies(shape, copies);
   };
-
-export { mirrored, repeated };
-export type { Mirror, Repeat };

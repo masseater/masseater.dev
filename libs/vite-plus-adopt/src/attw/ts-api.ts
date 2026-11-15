@@ -9,7 +9,7 @@ import { ensureTrailingDirectorySeparator } from "./paths.ts";
 
 const DATA_FIRST_ARITY_3 = 3;
 
-interface VirtualFileSystem {
+export interface VirtualFileSystem {
   readonly fileExists: (path: string) => boolean;
   readonly directoryExists: (path: string) => boolean;
   readonly readFile: (path: string) => Option.Option<string>;
@@ -21,7 +21,7 @@ interface Mount {
   readonly path: string;
 }
 
-interface MountedFileSystem {
+export interface MountedFileSystem {
   readonly fileSystem: VirtualFileSystem;
   readonly root: string;
 }
@@ -144,7 +144,7 @@ const routedFileSystem: FileSystemCallbacks = {
 
 const holder: { api: Option.Option<API> } = { api: Option.none() };
 
-const sharedApi = (): API =>
+export const sharedApi = (): API =>
   Option.getOrElse(holder.api, () => {
     const created = new API({
       cwd: SEPARATOR,
@@ -155,7 +155,7 @@ const sharedApi = (): API =>
     return created;
   });
 
-const mount = (fileSystem: VirtualFileSystem): MountedFileSystem => {
+export const mount = (fileSystem: VirtualFileSystem): MountedFileSystem => {
   counter.next += SECOND;
   const id = String(counter.next);
   for (const [key, reference] of mounts) {
@@ -167,7 +167,7 @@ const mount = (fileSystem: VirtualFileSystem): MountedFileSystem => {
   return { fileSystem, root: `${MOUNT_ROOT}${SEPARATOR}${id}` };
 };
 
-const parseSourceFile: {
+export const parseSourceFile: {
   (text: string, scriptKind: Option.Option<ScriptKind>): (fileName: string) => SourceFile;
   (fileName: string, text: string, scriptKind: Option.Option<ScriptKind>): SourceFile;
 } = Fn.dual(
@@ -183,6 +183,3 @@ const parseSourceFile: {
     return sourceFile;
   },
 );
-
-export { mount, parseSourceFile, sharedApi };
-export type { MountedFileSystem, VirtualFileSystem };

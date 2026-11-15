@@ -5,15 +5,15 @@ import type { Block } from "./blend-blocks.ts";
 import { elementsOf, embedded, follow, intOf, textOf } from "./blend-structs.ts";
 import type { BlendFile, Instance } from "./blend-structs.ts";
 
-type Matches = (attribute: Instance) => boolean;
+export type Matches = (attribute: Instance) => boolean;
 
-interface Sized {
+export interface Sized {
   readonly file: BlendFile;
   readonly block: Block;
   readonly length: number;
 }
 
-interface Search {
+export interface Search {
   readonly mesh: Instance;
   readonly domain: readonly string[];
   readonly matches: Matches;
@@ -23,11 +23,11 @@ const FLOAT_BYTES = 4;
 const INT_BYTES = 4;
 const ARRAY_STORAGE = 0;
 
-const VERTEX_DOMAIN = ["vdata", "vert_data"];
-const FACE_DOMAIN = ["pdata", "face_data"];
-const CORNER_DOMAIN = ["ldata", "corner_data"];
+export const VERTEX_DOMAIN = ["vdata", "vert_data"];
+export const FACE_DOMAIN = ["pdata", "face_data"];
+export const CORNER_DOMAIN = ["ldata", "corner_data"];
 
-const floatArray = ({ file, block, length }: Sized): Option.Option<Float32Array> => {
+export const floatArray = ({ file, block, length }: Sized): Option.Option<Float32Array> => {
   if (block.length < length * FLOAT_BYTES) {
     return Option.none();
   }
@@ -39,7 +39,7 @@ const floatArray = ({ file, block, length }: Sized): Option.Option<Float32Array>
   return Option.some(values);
 };
 
-const intArray = ({ file, block, length }: Sized): Option.Option<Int32Array> => {
+export const intArray = ({ file, block, length }: Sized): Option.Option<Int32Array> => {
   if (block.length < length * INT_BYTES) {
     return Option.none();
   }
@@ -51,7 +51,7 @@ const intArray = ({ file, block, length }: Sized): Option.Option<Int32Array> => 
   return Option.some(values);
 };
 
-const named =
+export const named =
   (name: string): Matches =>
   (instance) =>
     Option.getOrElse(
@@ -97,11 +97,8 @@ const fromCustomData = ({ mesh, domain, matches }: Search): Option.Option<Block>
     return yield* follow({ instance: layer, names: ["data"] });
   });
 
-const attribute = (search: Search): Option.Option<Block> =>
+export const attribute = (search: Search): Option.Option<Block> =>
   pipe(
     fromStorage(search.mesh, search.matches),
     Option.orElse(() => fromCustomData(search)),
   );
-
-export { CORNER_DOMAIN, FACE_DOMAIN, VERTEX_DOMAIN, attribute, floatArray, intArray, named };
-export type { Matches, Search, Sized };

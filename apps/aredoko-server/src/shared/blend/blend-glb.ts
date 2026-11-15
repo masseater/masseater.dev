@@ -100,7 +100,7 @@ const assemble = (
   return glb;
 };
 
-const glbOf = Effect.fn("glbOf")(function* glbOf(
+export const glbOf = Effect.fn("glbOf")(function* glbOf(
   parts: readonly Part[],
   pngs: HashMap.HashMap<number, Uint8Array>,
 ) {
@@ -110,5 +110,3 @@ const glbOf = Effect.fn("glbOf")(function* glbOf(
   const json = yield* encodeJson(jsonOf(document, offsets, length));
   return assemble(document, new TextEncoder().encode(json), layout);
 });
-
-export { glbOf };

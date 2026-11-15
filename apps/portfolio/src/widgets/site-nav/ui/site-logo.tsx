@@ -8,7 +8,7 @@ const letters = toWavyLetters(site.name);
 
 const logoStyle: CSSProperties = { "--n": site.name.length };
 
-const SiteLogo = (): ReactNode => (
+export const SiteLogo = (): ReactNode => (
   <Link
     aria-label={site.name}
     className="stage vt-site-name font-display inline-block shrink-0 text-xl whitespace-nowrap select-none sm:text-3xl"
@@ -21,5 +21,3 @@ const SiteLogo = (): ReactNode => (
     <WavyLetters letters={letters} />
   </Link>
 );
-
-export { SiteLogo };

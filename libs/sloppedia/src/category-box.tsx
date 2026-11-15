@@ -6,7 +6,7 @@ import { targets } from "./config.ts";
 import type { SloppediaConfig } from "./config.ts";
 import { WikiLink } from "./wiki-link.tsx";
 
-const CategoryBox = ({
+export const CategoryBox = ({
   config,
   tags,
 }: Readonly<{ config: SloppediaConfig; tags: readonly string[] }>): ReactNode =>
@@ -26,5 +26,3 @@ const CategoryBox = ({
       </ul>
     </nav>
   );
-
-export { CategoryBox };

@@ -16,6 +16,4 @@ const LastRun = Schema.Union([
   Schema.Struct({ status: Schema.Literal("failed"), at: Schema.Finite, reason: Schema.String }),
 ]);
 
-type LastRunValue = typeof LastRun.Type;
-
-export type { LastRunValue };
+export type LastRunValue = typeof LastRun.Type;

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const ChartFigure = ({
+export const ChartFigure = ({
   title,
   children,
 }: Readonly<{ title: string; children: ReactNode }>): ReactNode => (
@@ -9,5 +9,3 @@ const ChartFigure = ({
     {children}
   </figure>
 );
-
-export { ChartFigure };

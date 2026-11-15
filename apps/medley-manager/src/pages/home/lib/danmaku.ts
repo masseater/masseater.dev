@@ -13,11 +13,11 @@ const COMMENT_COLORS: readonly string[] = [
 
 const LANE_COUNT = 4;
 const SONGS_PER_LANE = 8;
-const DANMAKU_SONGS = LANE_COUNT * SONGS_PER_LANE;
+export const DANMAKU_SONGS = LANE_COUNT * SONGS_PER_LANE;
 
-type Comment = Readonly<{ key: string; text: string; color: string }>;
+export type Comment = Readonly<{ key: string; text: string; color: string }>;
 
-type Lane = Readonly<{ key: string; comments: readonly Comment[] }>;
+export type Lane = Readonly<{ key: string; comments: readonly Comment[] }>;
 
 const colorAt = (index: number): string =>
   Option.getOrElse(
@@ -37,11 +37,8 @@ const laneComments = (songTitles: readonly string[], lane: number): readonly Com
     })),
   );
 
-const danmakuLanes = (songTitles: readonly string[]): readonly Lane[] =>
+export const danmakuLanes = (songTitles: readonly string[]): readonly Lane[] =>
   Array.makeBy(LANE_COUNT, (lane) => ({
     key: `lane-${lane.toString()}`,
     comments: laneComments(songTitles, lane),
   }));
-
-export type { Comment, Lane };
-export { DANMAKU_SONGS, danmakuLanes };

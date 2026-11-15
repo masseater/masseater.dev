@@ -23,7 +23,7 @@ const INPUT_SCHEMA = TailnetInput.pipe(Schema.toStandardSchemaV1, Schema.toStand
 const join = (publicKey: string): Effect.Effect<JoinedTailnet, UpstreamFailed> =>
   Effect.tryPromise({ try: () => env.TAILNET.join(publicKey), catch: brokerFailed });
 
-const registerTailnetTools =
+export const registerTailnetTools =
   (caller: Caller) =>
   (server: McpServer): McpServer => {
     server.registerTool(
@@ -48,5 +48,3 @@ const registerTailnetTools =
     );
     return server;
   };
-
-export { registerTailnetTools };

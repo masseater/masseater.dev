@@ -4,9 +4,11 @@ import { useCallback } from "react";
 
 import type { TagSearch } from "./search";
 
-type Navigate = (options: Readonly<{ search: TagSearch; resetScroll: false }>) => Promise<void>;
+export type Navigate = (
+  options: Readonly<{ search: TagSearch; resetScroll: false }>,
+) => Promise<void>;
 
-const useTagFilter = ({
+export const useTagFilter = ({
   search,
   navigate,
 }: Readonly<{ search: TagSearch; navigate: Navigate }>): Readonly<{
@@ -26,6 +28,3 @@ const useTagFilter = ({
   );
   return { activeTag, select };
 };
-
-export type { Navigate };
-export { useTagFilter };

@@ -8,10 +8,10 @@ import type { Buffer, Gl, Size } from "./gl";
 
 const QUAD_VERTICES = 4;
 const ORIGIN = 0;
-const POSE_POINTS = 33;
-const POSE_FIELDS = 4;
-const BANDS = 8;
-const TEXT_ROWS = 8;
+export const POSE_POINTS = 33;
+export const POSE_FIELDS = 4;
+export const BANDS = 8;
+export const TEXT_ROWS = 8;
 const PING_PONG = 2;
 const SINGLE = 1;
 const NEXT = 1;
@@ -19,9 +19,9 @@ const FIRST_TICK = 0;
 const UNITS = { dance: 0, history: 1, glyphs: 2 } as const;
 const FIRST_INPUT_UNIT = 3;
 
-const emptyPose = (): Float32Array => new Float32Array(POSE_POINTS * POSE_FIELDS);
+export const emptyPose = (): Float32Array => new Float32Array(POSE_POINTS * POSE_FIELDS);
 
-type Frame = Readonly<{
+export type Frame = Readonly<{
   time: number;
   frame: number;
   pose: Float32Array;
@@ -31,9 +31,9 @@ type Frame = Readonly<{
   beatCount: number;
 }>;
 
-type Asset = "history" | "glyphs";
+export type Asset = "history" | "glyphs";
 
-type Source = HTMLImageElement | HTMLCanvasElement;
+export type Source = HTMLImageElement | HTMLCanvasElement;
 
 type Stage = Readonly<{ pass: Pass; program: WebGLProgram; buffers: readonly Buffer[] }>;
 
@@ -48,7 +48,7 @@ type Context = Readonly<{
   clock: { tick: number };
 }>;
 
-type Renderer = Readonly<{
+export type Renderer = Readonly<{
   draw: Fn<Readonly<{ video: HTMLVideoElement; frame: Frame }>, void>;
   upload: Fn<Readonly<{ asset: Asset; source: Source }>, void>;
   setTextWidths: Fn<readonly number[], void>;
@@ -244,7 +244,7 @@ const contextFor: Fn<Readonly<{ canvas: HTMLCanvasElement; passes: readonly Pass
   };
 };
 
-const createRenderer: Fn<
+export const createRenderer: Fn<
   Readonly<{ canvas: HTMLCanvasElement; passes: readonly Pass[] }>,
   Renderer
 > = (input) => {
@@ -266,7 +266,4 @@ const createRenderer: Fn<
   };
 };
 
-const emptyBands = (): Float32Array => new Float32Array(BANDS);
-
-export type { Asset, Frame, Renderer, Source };
-export { BANDS, createRenderer, emptyBands, emptyPose, POSE_FIELDS, POSE_POINTS, TEXT_ROWS };
+export const emptyBands = (): Float32Array => new Float32Array(BANDS);

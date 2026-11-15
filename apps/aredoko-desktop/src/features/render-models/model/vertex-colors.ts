@@ -15,7 +15,7 @@ const withoutVertexColors = (material: Material): void => {
 
 const isMesh = (object: Object3D): object is Mesh => object instanceof Mesh;
 
-const ignoreVertexColorsOnTextures = (object: Object3D): void => {
+export const ignoreVertexColorsOnTextures = (object: Object3D): void => {
   object.traverse((child) => {
     if (!isMesh(child)) {
       return;
@@ -25,5 +25,3 @@ const ignoreVertexColorsOnTextures = (object: Object3D): void => {
     }
   });
 };
-
-export { ignoreVertexColorsOnTextures };

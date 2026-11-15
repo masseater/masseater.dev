@@ -3,9 +3,9 @@ import type { AssetKind, SearchResult } from "@masseater.dev/aredoko-protocol";
 import { Array, Option, pipe } from "effect";
 import { Atom } from "effect/reactivity";
 
-type Kind = typeof AssetKind.Type;
+export type Kind = typeof AssetKind.Type;
 
-type Result = typeof SearchResult.Type;
+export type Result = typeof SearchResult.Type;
 
 const draftAtom = Atom.make("");
 
@@ -17,13 +17,13 @@ const selectedResultAtom = Atom.make<Option.Option<Result>>(Option.none());
 
 const othersShownAtom = Atom.make(false);
 
-const useDraft = (): string => useAtomValue(draftAtom);
+export const useDraft = (): string => useAtomValue(draftAtom);
 
-const useSetDraft = (): ((draft: string) => void) => useAtomSet(draftAtom);
+export const useSetDraft = (): ((draft: string) => void) => useAtomSet(draftAtom);
 
-const useQueryText = (): string => useAtomValue(queryAtom);
+export const useQueryText = (): string => useAtomValue(queryAtom);
 
-const useSubmitQuery = (): ((query: string) => void) => {
+export const useSubmitQuery = (): ((query: string) => void) => {
   const setQuery = useAtomSet(queryAtom);
   const setSelected = useAtomSet(selectedResultAtom);
   const setOthersShown = useAtomSet(othersShownAtom);
@@ -34,7 +34,7 @@ const useSubmitQuery = (): ((query: string) => void) => {
   };
 };
 
-const useClearSearch = (): (() => void) => {
+export const useClearSearch = (): (() => void) => {
   const setDraft = useAtomSet(draftAtom);
   const submit = useSubmitQuery();
   return () => {
@@ -43,23 +43,23 @@ const useClearSearch = (): (() => void) => {
   };
 };
 
-const useSelectedResult = (): Option.Option<Result> => useAtomValue(selectedResultAtom);
+export const useSelectedResult = (): Option.Option<Result> => useAtomValue(selectedResultAtom);
 
-const useSelectResult = (): ((result: Option.Option<Result>) => void) =>
+export const useSelectResult = (): ((result: Option.Option<Result>) => void) =>
   useAtomSet(selectedResultAtom);
 
-const useOthersShown = (): boolean => useAtomValue(othersShownAtom);
+export const useOthersShown = (): boolean => useAtomValue(othersShownAtom);
 
-const useShowOthers = (): (() => void) => {
+export const useShowOthers = (): (() => void) => {
   const setOthersShown = useAtomSet(othersShownAtom);
   return () => {
     setOthersShown(true);
   };
 };
 
-const useKinds = (): readonly Kind[] => useAtomValue(kindsAtom);
+export const useKinds = (): readonly Kind[] => useAtomValue(kindsAtom);
 
-const useToggleKind = (): ((kind: Kind) => void) => {
+export const useToggleKind = (): ((kind: Kind) => void) => {
   const kinds = useAtomValue(kindsAtom);
   const setKinds = useAtomSet(kindsAtom);
   return (kind) => {
@@ -75,18 +75,3 @@ const useToggleKind = (): ((kind: Kind) => void) => {
     setKinds(Array.append(kinds, kind));
   };
 };
-
-export {
-  useClearSearch,
-  useDraft,
-  useKinds,
-  useOthersShown,
-  useQueryText,
-  useSelectResult,
-  useSelectedResult,
-  useSetDraft,
-  useShowOthers,
-  useSubmitQuery,
-  useToggleKind,
-};
-export type { Kind, Result };

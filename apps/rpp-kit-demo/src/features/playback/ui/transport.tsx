@@ -7,7 +7,7 @@ import { transport } from "#/shared/config";
 
 import { PlayButton } from "./play-button";
 
-const Transport = (): ReactNode => {
+export const Transport = (): ReactNode => {
   const { position } = usePlayback();
   const section = Option.match(
     Arr.findFirst(song.sections, ({ start, end }) => start <= position && position < end),
@@ -27,5 +27,3 @@ const Transport = (): ReactNode => {
     </div>
   );
 };
-
-export { Transport };

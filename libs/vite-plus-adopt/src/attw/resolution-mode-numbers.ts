@@ -13,11 +13,9 @@ const MODES_BY_NUMBER: ReadonlyMap<number, ResolutionMode> = new Map([
   [ModuleKind.ESNext, "ESNext"],
 ]);
 
-const modeFromNumber = (mode: number | undefined): Option.Option<ResolutionMode> =>
+export const modeFromNumber = (mode: number | undefined): Option.Option<ResolutionMode> =>
   Option.fromNullishOr(mode).pipe(
     Option.flatMap((value) => Option.fromNullishOr(MODES_BY_NUMBER.get(value))),
   );
 
-const modeToNumber = (mode: ResolutionMode): ModuleKind => MODE_NUMBERS[mode];
-
-export { modeFromNumber, modeToNumber };
+export const modeToNumber = (mode: ResolutionMode): ModuleKind => MODE_NUMBERS[mode];

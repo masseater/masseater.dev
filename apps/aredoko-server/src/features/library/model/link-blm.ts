@@ -145,7 +145,7 @@ const linkFromBlm = Effect.fn("linkFromBlm")(function* linkBlmPackages(
 });
 
 /** @internal */
-const blmLinker = Ref.make(HashSet.empty<number>()).pipe(
+export const blmLinker = Ref.make(HashSet.empty<number>()).pipe(
   Effect.map((tried) => ({
     link: Ref.get(tried).pipe(
       Effect.flatMap(linkFromBlm),
@@ -154,5 +154,3 @@ const blmLinker = Ref.make(HashSet.empty<number>()).pipe(
     linkable: linkablePaths(),
   })),
 );
-
-export { blmLinker };

@@ -11,7 +11,7 @@ const SIZE_CLASSES = {
 
 const INITIAL_DIMENSION = { width: 320, height: 200 } as const;
 
-const ChartContainer = ({
+export const ChartContainer = ({
   className,
   children,
   size = "default",
@@ -37,5 +37,3 @@ const ChartContainer = ({
     </ResponsiveContainer>
   </div>
 );
-
-export { ChartContainer };

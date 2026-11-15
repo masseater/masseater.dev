@@ -18,7 +18,7 @@ import { holdScreen } from "#/shared/lib/screen-hold";
 import { actionsFor } from "./actions.ts";
 import type { Actions } from "./actions.ts";
 
-type Session = Pick<Actions, "typed" | "typing" | "wrapUp">;
+export type Session = Pick<Actions, "typed" | "typing" | "wrapUp">;
 
 const TICK = "250 millis";
 const NO_NUDGE = 0;
@@ -58,7 +58,8 @@ const interviewing = (phase: Phase): Effect.Effect<void> => {
   return Effect.interrupt;
 };
 
-const sessionAtom = runtime.atom(
+/** @internal */
+export const sessionAtom = runtime.atom(
   Effect.fnUntraced(function* session(get) {
     yield* interviewing(get(phaseAtom));
     yield* reset;
@@ -72,7 +73,3 @@ const sessionAtom = runtime.atom(
     return current;
   }),
 );
-
-/** @internal */
-export { sessionAtom };
-export type { Session };

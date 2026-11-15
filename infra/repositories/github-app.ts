@@ -19,19 +19,19 @@ const INSTALL_URL = `https://github.com/apps/${GITHUB_APP_NAME}/installations/ne
 const CONFLICT = 409;
 const FORBIDDEN = 403;
 
-type GitHubAppEnv = Readonly<{
+export type GitHubAppEnv = Readonly<{
   GITHUB_APP: Readonly<Pick<D1Database, "prepare">>;
   SEAL_KEY: string;
 }>;
 
-type RouteInput = Readonly<{ request: Request; env: AppStoreEnv }>;
+export type RouteInput = Readonly<{ request: Request; env: AppStoreEnv }>;
 
 const taggedError = Schema.TaggedError;
 
-class GitHubAppFailed extends taggedError<GitHubAppFailed, { readonly brand: unique symbol }>()(
-  "GitHubAppFailed",
-  { message: Schema.String },
-) {}
+export class GitHubAppFailed extends taggedError<
+  GitHubAppFailed,
+  { readonly brand: unique symbol }
+>()("GitHubAppFailed", { message: Schema.String }) {}
 
 const StoredApp = Schema.Struct({ id: Schema.Finite, slug: Schema.String, pem: Schema.String });
 
@@ -61,7 +61,7 @@ const decodeStored = (json: string): Effect.Effect<typeof StoredApp.Type, GitHub
     Effect.mapError(() => GitHubAppFailed.make({ message: "the stored GitHub App is malformed" })),
   );
 
-const readApp = (
+export const readApp = (
   env: AppStoreEnv,
 ): Effect.Effect<Option.Option<typeof StoredApp.Type>, GitHubAppFailed> =>
   readSealed({ env, name: APP_KEY }).pipe(
@@ -94,7 +94,7 @@ const appJwt = (env: AppStoreEnv): Effect.Effect<string, GitHubAppFailed> =>
     Effect.map(({ token }) => token),
   );
 
-const gitHubAppCredentials = (env: AppStoreEnv): Layer.Layer<Credentials> =>
+export const gitHubAppCredentials = (env: AppStoreEnv): Layer.Layer<Credentials> =>
   Layer.succeed(
     Credentials,
     appJwt(env).pipe(
@@ -248,13 +248,10 @@ const HANDLERS: Readonly<
   [`POST ${IMPORT_PATH}`]: importApp,
 };
 
-const route = (input: RouteInput): Option.Option<Effect.Effect<Response, GitHubAppFailed>> =>
+export const route = (input: RouteInput): Option.Option<Effect.Effect<Response, GitHubAppFailed>> =>
   pipe(
     Option.fromNullishOr(
       HANDLERS[`${input.request.method} ${new URL(input.request.url).pathname}`],
     ),
     Option.map((handle) => handle(input)),
   );
-
-export { GitHubAppFailed, gitHubAppCredentials, readApp, route };
-export type { GitHubAppEnv, RouteInput };

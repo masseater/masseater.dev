@@ -11,16 +11,16 @@ import {
 
 const DATA_FIRST_ARITY = 2;
 
-type Select = NonNullable<DecisionRule["select"]>;
+export type Select = NonNullable<DecisionRule["select"]>;
 
-interface DualSelect {
+export interface DualSelect {
   (match: SelectMatch): (node: SelectedNode) => boolean;
   (node: SelectedNode, match: SelectMatch): boolean;
 }
 
-const dualSelect = (select: Select): DualSelect => Fn.dual(DATA_FIRST_ARITY, select);
+export const dualSelect = (select: Select): DualSelect => Fn.dual(DATA_FIRST_ARITY, select);
 
-type NodeTest = Predicate.Predicate<SelectedNode>;
+export type NodeTest = Predicate.Predicate<SelectedNode>;
 
 const childrenOf = (node: SelectedNode): readonly SelectedNode[] =>
   pipe(
@@ -38,7 +38,7 @@ const descendantsOf = (node: SelectedNode): readonly SelectedNode[] => [
   ),
 ];
 
-const containing =
+export const containing =
   (test: NodeTest): NodeTest =>
   (node) =>
     pipe(
@@ -46,16 +46,13 @@ const containing =
       Arr.some((found) => test(found)),
     );
 
-const ofType =
+export const ofType =
   (...types: readonly string[]): NodeTest =>
   (node) =>
     types.includes(node.type);
 
-const identifierOf = (node: SelectedNode): Option.Option<string> =>
+export const identifierOf = (node: SelectedNode): Option.Option<string> =>
   Match.value(node).pipe(
     Match.when({ type: "Identifier" }, (identifier) => Option.some(identifier.name)),
     Match.orElse(() => Option.none()),
   );
-
-export { containing, dualSelect, identifierOf, ofType };
-export type { DualSelect, NodeTest, Select };

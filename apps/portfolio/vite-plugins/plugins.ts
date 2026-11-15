@@ -10,7 +10,7 @@ import mdx from "./markdown/mdx.config.ts";
 import { pages, sitemap, withLastmod } from "./prerender.ts";
 import { seikinTechniques } from "./seikin/seikin-techniques.ts";
 
-const portfolioPlugins = (): PluginOption[] => [
+export const portfolioPlugins = (): PluginOption[] => [
   devtools(),
   ...seikinTechniques(),
   mdx,
@@ -37,5 +37,3 @@ const portfolioPlugins = (): PluginOption[] => [
   rsc(),
   viteReact({ include: /\.(?:md|tsx?)$/u }),
 ];
-
-export { portfolioPlugins };

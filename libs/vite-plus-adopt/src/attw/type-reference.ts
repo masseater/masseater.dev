@@ -13,7 +13,7 @@ import type { TypeReferenceRequest } from "./type-reference-state.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface ResolvedTypeReference {
+export interface ResolvedTypeReference {
   readonly resolvedFileName: string;
   readonly packageId: Option.Option<PackageId>;
   readonly isExternalLibraryImport: boolean;
@@ -57,7 +57,7 @@ const secondaryLookup = (
     .resolved;
 };
 
-const resolveTypeReferenceDirective: {
+export const resolveTypeReferenceDirective: {
   (host: ResolverHost): (request: TypeReferenceRequest) => Option.Option<ResolvedTypeReference>;
   (request: TypeReferenceRequest, host: ResolverHost): Option.Option<ResolvedTypeReference>;
 } = Fn.dual(
@@ -74,6 +74,3 @@ const resolveTypeReferenceDirective: {
     );
   },
 );
-
-export { resolveTypeReferenceDirective };
-export type { ResolvedTypeReference };

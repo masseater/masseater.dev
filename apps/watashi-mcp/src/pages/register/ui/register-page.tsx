@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 
 import { SITE_NAME } from "#/shared/config";
 
-const RegisterPage = (): ReactNode => (
+export const RegisterPage = (): ReactNode => (
   <ActionPanel
     button={Button}
     title={SITE_NAME}
@@ -15,5 +15,3 @@ const RegisterPage = (): ReactNode => (
     action={registerPasskey}
   />
 );
-
-export { RegisterPage };

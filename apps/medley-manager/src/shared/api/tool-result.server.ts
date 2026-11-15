@@ -18,7 +18,7 @@ const errorResult = ({ message }: Readonly<{ message: string }>): CallToolResult
   isError: true,
 });
 
-const runTool = <Value>(effect: Effect.Effect<Value, ToolError>): Promise<CallToolResult> =>
+export const runTool = <Value>(effect: Effect.Effect<Value, ToolError>): Promise<CallToolResult> =>
   runRequest(
     effect.pipe(
       Effect.flatMap(encodeJson),
@@ -31,10 +31,10 @@ const messageOf = (cause: unknown): string =>
     Option.match({ onNone: () => UNKNOWN_FAILURE, onSome: (error) => error.message }),
   );
 
-const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, ToolError> =>
+export const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, ToolError> =>
   Effect.tryPromise({ try: run, catch: (cause) => ToolError.make({ message: messageOf(cause) }) });
 
-const orMissing =
+export const orMissing =
   (missing: string) =>
   <Value, Failure>(
     effect: Effect.Effect<Option.Option<Value>, Failure>,
@@ -47,5 +47,3 @@ const orMissing =
         }),
       ),
     );
-
-export { orMissing, query, runTool };

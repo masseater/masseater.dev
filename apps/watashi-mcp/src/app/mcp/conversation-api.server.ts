@@ -30,12 +30,10 @@ const tokens = (request: Request): Effect.Effect<Response> =>
     Effect.orElseSucceed(storageFailed),
   );
 
-const serveConversations = (request: Request): Promise<Response> =>
+export const serveConversations = (request: Request): Promise<Response> =>
   asOwnerOrTokenHolder({ request, scope: "conversation:write", handle: conversations });
 
-const serveMemories = (request: Request): Promise<Response> =>
+export const serveMemories = (request: Request): Promise<Response> =>
   asOwnerOrTokenHolder({ request, scope: "memory:write", handle: memories });
 
-const serveApiTokens: (request: Request) => Promise<Response> = asOwner(tokens);
-
-export { serveApiTokens, serveConversations, serveMemories };
+export const serveApiTokens: (request: Request) => Promise<Response> = asOwner(tokens);

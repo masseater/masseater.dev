@@ -23,13 +23,13 @@ const DTYPE = "q4";
 const DEVICES = ["dml", "cpu"] as const satisfies readonly DeviceType[];
 const IMAGE_SOFT_TOKENS = 70;
 
-type Vector = readonly number[];
+export type Vector = readonly number[];
 
 type Model = Awaited<ReturnType<typeof AutoModel.from_pretrained>>;
 
 type Processor = Awaited<ReturnType<typeof AutoProcessor.from_pretrained>>;
 
-class Embedder extends Context.Service<
+export class Embedder extends Context.Service<
   Embedder,
   {
     readonly device: string;
@@ -151,7 +151,7 @@ const loadConfig = Effect.gen(function* loadConfig() {
 });
 
 /** @internal */
-const fetchModel = Effect.fn("fetchModel")(function* fetchModelFiles(directory: string) {
+export const fetchModel = Effect.fn("fetchModel")(function* fetchModelFiles(directory: string) {
   yield* Effect.sync(() => {
     Object.assign(env, {
       cacheDir: directory,
@@ -167,7 +167,7 @@ const fetchModel = Effect.fn("fetchModel")(function* fetchModelFiles(directory: 
   );
 });
 
-const localEmbedderLayer = (
+export const localEmbedderLayer = (
   modelDirectory: Option.Option<string>,
 ): Layer.Layer<Embedder, EmbeddingFailed> =>
   Layer.effect(
@@ -182,6 +182,3 @@ const localEmbedderLayer = (
       return Embedder.of({ device, ...make(embedWith(model), processor, imageToken) });
     }),
   );
-
-export { Embedder, fetchModel, localEmbedderLayer };
-export type { Vector };

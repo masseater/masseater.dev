@@ -2,14 +2,14 @@ import type { Choices } from "#/shared/ui/choice-group";
 
 import type { KindValue, PeriodValue, SortValue } from "./search";
 
-const SORT_LABELS: Choices<SortValue> = [
+export const SORT_LABELS: Choices<SortValue> = [
   ["youtube", "YouTube"],
   ["nico", "ニコニコ"],
   ["youtube-lead", "YouTube が多い"],
   ["nico-lead", "ニコニコが多い"],
 ];
 
-const PERIOD_LABELS: Choices<PeriodValue> = [
+export const PERIOD_LABELS: Choices<PeriodValue> = [
   ["all", "累計"],
   ["1", "1 日"],
   ["7", "7 日"],
@@ -17,12 +17,12 @@ const PERIOD_LABELS: Choices<PeriodValue> = [
   ["custom", "期間指定"],
 ];
 
-const KIND_LABELS: Choices<KindValue> = [
+export const KIND_LABELS: Choices<KindValue> = [
   ["original", "オリジナル"],
   ["all", "カバーも含む"],
 ];
 
-const TEXT = {
+export const TEXT = {
   title: "nimado",
   about: "このサイトについて",
   sort: "並び順",
@@ -45,5 +45,3 @@ const TEXT = {
   empty: "該当なし",
   asOf: "時点",
 } as const;
-
-export { KIND_LABELS, PERIOD_LABELS, SORT_LABELS, TEXT };

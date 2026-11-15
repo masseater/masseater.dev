@@ -34,7 +34,7 @@ const loadCatalog = (read: Read, path: string): Promise<string> =>
     ),
   );
 
-const techniqueCatalog = (): Plugin => ({
+export const techniqueCatalog = (): Plugin => ({
   name: "technique-catalog",
   enforce: "pre",
   resolveId(source, importer) {
@@ -59,5 +59,3 @@ const techniqueCatalog = (): Plugin => ({
     );
   },
 });
-
-export { techniqueCatalog };

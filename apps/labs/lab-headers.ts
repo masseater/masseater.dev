@@ -87,7 +87,7 @@ const bundleHeaders = (files: readonly HtmlFile[]): Effect.Effect<string> =>
 
 const beacon = webAnalyticsBeacon(CF_BEACON_TOKEN);
 
-const labHeaders = (): Plugin => ({
+export const labHeaders = (): Plugin => ({
   name: "lab-headers",
   apply: "build",
   transformIndexHtml: () => [
@@ -128,5 +128,3 @@ const labHeaders = (): Plugin => ({
     },
   },
 });
-
-export { labHeaders };

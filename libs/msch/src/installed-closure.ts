@@ -35,7 +35,7 @@ interface Collect {
 
 const decodeManifest = Schema.decodeOption(Schema.fromJsonString(InstalledManifest));
 
-const keysOf = (map: Readonly<Record<string, string>> | undefined): readonly string[] =>
+export const keysOf = (map: Readonly<Record<string, string>> | undefined): readonly string[] =>
   pipe(
     Option.fromUndefinedOr(map),
     Option.map(Rec.keys),
@@ -154,25 +154,22 @@ const directorySize = (directory: string): Effect.Effect<number, never, Reposito
     return Num.sumAll(sizes);
   });
 
-interface ClosureRoot {
+export interface ClosureRoot {
   readonly provided: HashSet.HashSet<string>;
   readonly from: string;
   readonly name: string;
 }
 
-const installedClosure = ({
+export const installedClosure = ({
   provided,
   from,
   name,
 }: ClosureRoot): Effect.Effect<HashSet.HashSet<string>, never, RepositoryFiles> =>
   closureOf(provided, { pending: [[from, name]], seen: HashSet.empty() });
 
-const installedSize = (directory: string): Effect.Effect<number, never, RepositoryFiles> => {
+export const installedSize = (directory: string): Effect.Effect<number, never, RepositoryFiles> => {
   if (Str.includes(`/${NODE_MODULES}/`)(directory)) {
     return directorySize(directory);
   }
   return Effect.succeed(EMPTY);
 };
-
-export { installedClosure, installedSize, keysOf };
-export type { ClosureRoot };

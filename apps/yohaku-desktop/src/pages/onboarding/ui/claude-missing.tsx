@@ -6,12 +6,10 @@ import type { Recheck } from "./recheck-button.tsx";
 
 const LABEL = "見つかりません";
 
-const ClaudeMissing = ({ checking, recheck }: Recheck): ReactNode => (
+export const ClaudeMissing = ({ checking, recheck }: Recheck): ReactNode => (
   <>
     <span className="text-muted-foreground">{LABEL}</span>
     <InstallButton />
     <RecheckButton checking={checking} recheck={recheck} />
   </>
 );
-
-export { ClaudeMissing };

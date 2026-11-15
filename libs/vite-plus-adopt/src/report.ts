@@ -1,6 +1,4 @@
-interface Report {
+export interface Report {
   readonly valid: boolean;
   readonly output: string;
 }
-
-export type { Report };

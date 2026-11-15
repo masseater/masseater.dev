@@ -12,7 +12,7 @@ import type {
 
 const DATA_FIRST_ARITY = 2;
 
-const RESOLUTION_VERSION = "5.6.1-rc";
+export const RESOLUTION_VERSION = "5.6.1-rc";
 const RESOLUTION_VERSION_MAJOR_MINOR = "5.6";
 const RANGE_OPTIONS = { includePrerelease: true } as const;
 
@@ -85,7 +85,7 @@ const resolveTypesVersionPathsWithTrace = (
     Option.flatMap((typesVersions) => selectVersionPathsWithTrace(asRecord(typesVersions), state)),
   );
 
-const getVersionPaths: {
+export const getVersionPaths: {
   (state: ResolutionState): (info: PackageJsonInfo) => Option.Option<VersionPaths>;
   (info: PackageJsonInfo, state: ResolutionState): Option.Option<VersionPaths>;
 } = Fn.dual(
@@ -95,5 +95,3 @@ const getVersionPaths: {
       resolveTypesVersionPathsWithTrace(info.contents.packageJsonContent, state),
     ),
 );
-
-export { RESOLUTION_VERSION, getVersionPaths };

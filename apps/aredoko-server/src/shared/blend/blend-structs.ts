@@ -5,7 +5,7 @@ import type { Block, Layout } from "./blend-blocks.ts";
 import { dnaOf } from "./blend-dna.ts";
 import type { Dna, Field, Struct } from "./blend-dna.ts";
 
-interface BlendFile {
+export interface BlendFile {
   readonly bytes: Uint8Array;
   readonly layout: Layout;
   readonly blocks: readonly Block[];
@@ -13,13 +13,13 @@ interface BlendFile {
   readonly addresses: HashMap.HashMap<bigint, readonly Block[]>;
 }
 
-interface Instance {
+export interface Instance {
   readonly file: BlendFile;
   readonly struct: Struct;
   readonly offset: number;
 }
 
-interface Lookup {
+export interface Lookup {
   readonly instance: Instance;
   readonly names: readonly string[];
 }
@@ -43,7 +43,7 @@ const addressesOf = (blocks: readonly Block[]): HashMap.HashMap<bigint, readonly
     HashMap.fromIterable,
   );
 
-const openBlend = (bytes: Uint8Array): Option.Option<BlendFile> =>
+export const openBlend = (bytes: Uint8Array): Option.Option<BlendFile> =>
   Option.gen(function* open() {
     const layout = yield* layoutOf(bytes);
     const blocks = blocksOf({ bytes, layout });
@@ -71,7 +71,7 @@ const placeOf = (lookup: Lookup): Option.Option<number> =>
 
 const view = (instance: Instance): DataView => viewOf(instance.file.bytes);
 
-const floatsOf = (lookup: Lookup): Option.Option<readonly number[]> =>
+export const floatsOf = (lookup: Lookup): Option.Option<readonly number[]> =>
   Option.flatMap(fieldOf(lookup), ({ offset, size, pointer }) => {
     if (pointer) {
       return Option.none();
@@ -85,7 +85,7 @@ const floatsOf = (lookup: Lookup): Option.Option<readonly number[]> =>
     );
   });
 
-const intOf = (lookup: Lookup): Option.Option<number> =>
+export const intOf = (lookup: Lookup): Option.Option<number> =>
   Option.flatMap(fieldOf(lookup), ({ offset, size }) => {
     const at = lookup.instance.offset + offset;
     const { little } = lookup.instance.file.layout;
@@ -107,7 +107,7 @@ const addressOf = (lookup: Lookup): bigint =>
     Option.getOrElse(() => NULL_ADDRESS),
   );
 
-const resolve = ({
+export const resolve = ({
   file,
   address,
   anchor,
@@ -127,20 +127,20 @@ const resolve = ({
   );
 };
 
-const follow = (lookup: Lookup): Option.Option<Block> =>
+export const follow = (lookup: Lookup): Option.Option<Block> =>
   resolve({
     file: lookup.instance.file,
     address: addressOf(lookup),
     anchor: lookup.instance.offset,
   });
 
-const instanceOf = ({
+export const instanceOf = ({
   file,
   block,
 }: Readonly<{ file: BlendFile; block: Block }>): Option.Option<Instance> =>
   Option.map(structOfBlock(file, block), (struct) => ({ file, struct, offset: block.data }));
 
-const embedded = ({
+export const embedded = ({
   lookup,
   structName,
 }: Readonly<{ lookup: Lookup; structName: string }>): Option.Option<Instance> =>
@@ -150,7 +150,7 @@ const embedded = ({
     return { file: lookup.instance.file, struct, offset };
   });
 
-const elementsOf = ({
+export const elementsOf = ({
   file,
   block,
   structName,
@@ -179,7 +179,7 @@ const cString = (bytes: Uint8Array, start: number, length: number): string => {
   return utf8.decode(window.subarray(NUL, end));
 };
 
-const textOf = (lookup: Lookup): Option.Option<string> =>
+export const textOf = (lookup: Lookup): Option.Option<string> =>
   Option.flatMap(fieldOf(lookup), ({ offset, size, pointer }) => {
     const { bytes } = lookup.instance.file;
     const start = lookup.instance.offset + offset;
@@ -199,7 +199,7 @@ const linkedAt = (file: BlendFile, offset: number): Option.Option<Instance> =>
     (block) => instanceOf({ file, block }),
   );
 
-const listOf = (lookup: Lookup): readonly Instance[] => {
+export const listOf = (lookup: Lookup): readonly Instance[] => {
   const { file } = lookup.instance;
   const items: Instance[] = [];
   let current = Option.flatMap(placeOf(lookup), (offset) => linkedAt(file, offset));
@@ -209,17 +209,3 @@ const listOf = (lookup: Lookup): readonly Instance[] => {
   }
   return items;
 };
-
-export {
-  elementsOf,
-  embedded,
-  floatsOf,
-  follow,
-  instanceOf,
-  intOf,
-  listOf,
-  openBlend,
-  resolve,
-  textOf,
-};
-export type { BlendFile, Instance, Lookup };

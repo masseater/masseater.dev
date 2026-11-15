@@ -18,7 +18,7 @@ const OverrideReportSchema = Schema.Struct({
   advisories: Schema.Array(Schema.String),
 });
 
-type OverrideReport = typeof OverrideReportSchema.Type;
+export type OverrideReport = typeof OverrideReportSchema.Type;
 type PackageChange = typeof PackageChangeSchema.Type;
 
 const PeerParentSchema = Schema.Struct({ name: Schema.String, version: Schema.String });
@@ -46,12 +46,12 @@ const PeerIssuesLog = Schema.fromJsonString(
   }),
 );
 
-interface Findings {
+export interface Findings {
   readonly peerIssues: readonly string[];
   readonly advisories: readonly string[];
 }
 
-interface Resolution extends Findings {
+export interface Resolution extends Findings {
   readonly versions: Readonly<Record<string, readonly string[]>>;
   readonly snapshots: readonly string[];
 }
@@ -100,7 +100,7 @@ const issuesOfProject = ([project, issues]: readonly [
   ),
 ];
 
-const peerIssuesIn = (output: string): readonly string[] =>
+export const peerIssuesIn = (output: string): readonly string[] =>
   sorted(
     pipe(
       Str.split(output, "\n"),
@@ -110,7 +110,7 @@ const peerIssuesIn = (output: string): readonly string[] =>
     ),
   );
 
-const advisoriesIn = (output: string): readonly string[] =>
+export const advisoriesIn = (output: string): readonly string[] =>
   Option.match(Schema.decodeOption(AuditReport)(output), {
     onNone: () => [],
     onSome: (report) =>
@@ -166,7 +166,7 @@ const lockfileKeysOf = (lockfile: string, section: string): readonly string[] =>
     Arr.flatMap((document) => keysOf(document.get(section))),
   );
 
-const resolutionOf =
+export const resolutionOf =
   (findings: Findings) =>
   (lockfile: string): Resolution => {
     const snapshots = lockfileKeysOf(lockfile, "snapshots");
@@ -213,7 +213,7 @@ const needsTheOverride = (
   Arr.isReadonlyArrayNonEmpty(found.peerIssues) ||
   Arr.isReadonlyArrayNonEmpty(found.advisories);
 
-const judge =
+export const judge =
   (baseline: Resolution) =>
   (key: string, candidate: Resolution): OverrideReport => {
     const changes = changesBetween(baseline, candidate);
@@ -232,16 +232,16 @@ const judge =
   };
 
 const OVERRIDES = "overrides";
-const BASELINE_PROBE = "msch-baseline-probe";
+export const BASELINE_PROBE = "msch-baseline-probe";
 const REMOVED_DEPENDENCY = "-";
 
-interface OverrideKey {
+export interface OverrideKey {
   readonly key: string;
   readonly line: number;
   readonly column: number;
 }
 
-const overrideKeysOf = (manifest: string): readonly OverrideKey[] => {
+export const overrideKeysOf = (manifest: string): readonly OverrideKey[] => {
   const lineCounter = new LineCounter();
   const overrides = parseDocument(manifest, { lineCounter }).get(OVERRIDES);
   if (!isMap(overrides)) {
@@ -266,7 +266,7 @@ const overrideKeysOf = (manifest: string): readonly OverrideKey[] => {
   );
 };
 
-const withoutOverride =
+export const withoutOverride =
   (key: string) =>
   (manifest: string): string => {
     const document = parseDocument(manifest);
@@ -274,20 +274,8 @@ const withoutOverride =
     return document.toString();
   };
 
-const withBaselineProbe = (manifest: string): string => {
+export const withBaselineProbe = (manifest: string): string => {
   const document = parseDocument(manifest);
   document.setIn([OVERRIDES, BASELINE_PROBE], REMOVED_DEPENDENCY);
   return document.toString();
 };
-
-export {
-  BASELINE_PROBE,
-  advisoriesIn,
-  judge,
-  overrideKeysOf,
-  peerIssuesIn,
-  resolutionOf,
-  withBaselineProbe,
-  withoutOverride,
-};
-export type { Findings, OverrideKey, OverrideReport, Resolution };

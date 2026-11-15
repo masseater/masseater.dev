@@ -3,12 +3,12 @@ import { Option } from "effect";
 import { RuleTester } from "./rule-tester.ts";
 import type { UpstreamParserOptions } from "./rule-tester.ts";
 
-interface LegacyOptions {
+export interface LegacyOptions {
   readonly parser?: string | undefined;
   readonly parserOptions?: UpstreamParserOptions | undefined;
 }
 
-const createRuleTester = (options: LegacyOptions): RuleTester =>
+export const createRuleTester = (options: LegacyOptions): RuleTester =>
   new RuleTester(
     Option.fromNullishOr(options.parserOptions).pipe(
       Option.match({
@@ -17,6 +17,3 @@ const createRuleTester = (options: LegacyOptions): RuleTester =>
       }),
     ),
   );
-
-export type { LegacyOptions };
-export { createRuleTester };

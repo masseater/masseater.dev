@@ -18,9 +18,9 @@ import { publicEntryFiles } from "./workspace-public-entries.ts";
 import { NO_TASKS, definesTask, tasksOf } from "./workspace-tasks.ts";
 import type { WorkspaceTasks } from "./workspace-tasks.ts";
 
-type RuleSet = Readonly<Record<string, unknown>>;
-type RuleSets = Readonly<Record<string, RuleSet>>;
-type DependencySets = Readonly<Record<string, readonly string[]>>;
+export type RuleSet = Readonly<Record<string, unknown>>;
+export type RuleSets = Readonly<Record<string, RuleSet>>;
+export type DependencySets = Readonly<Record<string, readonly string[]>>;
 
 const CONFIG_FILE = "vite.config.ts";
 const SHADCN_FILE = "components.json";
@@ -59,26 +59,26 @@ const WorkspaceLintSettings = Schema.Struct({
 const DevDependencySettings = Schema.Struct({ use: Names, dependencies: Names });
 const WorkspaceDevDependencies = Schema.Record(Schema.String, DevDependencySettings);
 
-interface DevDependencyAllowance {
+export interface DevDependencyAllowance {
   readonly workspaces: readonly string[];
   readonly dependencies: readonly string[];
 }
 
-interface WorkspaceLint {
+export interface WorkspaceLint {
   readonly ignorePatterns: readonly string[];
   readonly overrides: readonly OxlintOverride[];
   readonly shadcnUi: readonly string[];
   readonly publicEntries: readonly string[];
 }
 
-interface WorkspaceSettings {
+export interface WorkspaceSettings {
   readonly lint: WorkspaceLint;
   readonly testProjects: readonly string[];
   readonly tasks: WorkspaceTasks;
   readonly devDependencies: Readonly<Record<string, DevDependencyAllowance>>;
 }
 
-interface SettingsOptions {
+export interface SettingsOptions {
   readonly root: string;
   readonly ruleSets: RuleSets;
   readonly dependencySets: DependencySets;
@@ -252,17 +252,7 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
   },
 );
 
-const workspaceSettings = (options: SettingsOptions): Promise<WorkspaceSettings> =>
+export const workspaceSettings = (options: SettingsOptions): Promise<WorkspaceSettings> =>
   Effect.runPromise(collectWorkspaceSettings(options).pipe(Effect.provide(nodeRepositoryFiles)));
 
-export { workspaceSettings };
-export type {
-  DependencySets,
-  DevDependencyAllowance,
-  RuleSet,
-  RuleSets,
-  SettingsOptions,
-  WorkspaceLint,
-  WorkspaceSettings,
-};
 export type { WorkspaceTasks } from "./workspace-tasks.ts";

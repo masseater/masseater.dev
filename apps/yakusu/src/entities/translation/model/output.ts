@@ -1,18 +1,21 @@
 import { Option, String, pipe } from "effect";
 
-type Output =
+export type Output =
   | Readonly<{ status: "empty" }>
   | Readonly<{ status: "translating" }>
   | Readonly<{ status: "translated"; text: string; stale: boolean }>
   | Readonly<{ status: "failed"; message: string }>;
 
-type QueryView = Readonly<{
+export type QueryView = Readonly<{
   data: Option.Option<string>;
   failure: Option.Option<string>;
   isPlaceholderData: boolean;
 }>;
 
-const outputOf = ({ draft, query }: Readonly<{ draft: string; query: QueryView }>): Output => {
+export const outputOf = ({
+  draft,
+  query,
+}: Readonly<{ draft: string; query: QueryView }>): Output => {
   if (pipe(draft, String.trim, String.isEmpty)) {
     return { status: "empty" };
   }
@@ -25,6 +28,3 @@ const outputOf = ({ draft, query }: Readonly<{ draft: string; query: QueryView }
   }
   return { status: "translated", text: text.value, stale: query.isPlaceholderData };
 };
-
-export { outputOf };
-export type { Output, QueryView };

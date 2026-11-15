@@ -4,11 +4,11 @@ import { RuleTester as OxlintRuleTester } from "vite-plus/lint/plugins-dev";
 
 import { distinct } from "./test-cases.ts";
 
-type ValidCase = OxlintRuleTester.ValidTestCase;
+export type ValidCase = OxlintRuleTester.ValidTestCase;
 
-type InvalidCase = OxlintRuleTester.InvalidTestCase;
+export type InvalidCase = OxlintRuleTester.InvalidTestCase;
 
-interface UpstreamCases {
+export interface UpstreamCases {
   readonly valid: readonly (ValidCase | string)[];
   readonly invalid: readonly InvalidCase[];
 }
@@ -91,13 +91,13 @@ const PROJECTS = {
   "react-native": Option.some("jsx-react-native"),
 } as const satisfies Readonly<Record<string, Option.Option<string>>>;
 
-type TsconfigFixtureName = keyof typeof PROJECTS;
+export type TsconfigFixtureName = keyof typeof PROJECTS;
 
-const ruleTester = new RuleTester(SAMPLES);
+export const ruleTester = new RuleTester(SAMPLES);
 
-const ruleTesterWithTypes = ruleTester;
+export const ruleTesterWithTypes = ruleTester;
 
-const createRuleTesterForTsconfig = (name: TsconfigFixtureName): RuleTester =>
+export const createRuleTesterForTsconfig = (name: TsconfigFixtureName): RuleTester =>
   PROJECTS[name].pipe(
     Option.match({
       onNone: () => ruleTester,
@@ -105,5 +105,4 @@ const createRuleTesterForTsconfig = (name: TsconfigFixtureName): RuleTester =>
     }),
   );
 
-export type { InvalidCase, RuleTester, TsconfigFixtureName, UpstreamCases, ValidCase };
-export { createRuleTesterForTsconfig, ruleTester, ruleTesterWithTypes };
+export type { RuleTester };

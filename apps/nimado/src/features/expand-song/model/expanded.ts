@@ -4,7 +4,7 @@ import { useCallback } from "react";
 
 const expandedAtom = Atom.family((_id: number) => Atom.make(false));
 
-const useExpanded = (id: number): readonly [boolean, () => void] => {
+export const useExpanded = (id: number): readonly [boolean, () => void] => {
   const atom = expandedAtom(id);
   const open = useAtomValue(atom);
   const setOpen = useAtomSet(atom);
@@ -13,5 +13,3 @@ const useExpanded = (id: number): readonly [boolean, () => void] => {
   }, [setOpen]);
   return [open, toggle];
 };
-
-export { useExpanded };

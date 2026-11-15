@@ -49,7 +49,7 @@ const thisContainerIsFile = (node: Node): boolean => {
   return isSourceFile(current);
 };
 
-const bindThisPropertyAssignment: {
+export const bindThisPropertyAssignment: {
   (node: BinaryExpression): (binding: FileBinding) => void;
   (binding: FileBinding, node: BinaryExpression): void;
 } = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, node: BinaryExpression): void => {
@@ -63,7 +63,7 @@ const bindThisPropertyAssignment: {
   declareSourceFileMember(binding, node, THIS_PROPERTY_LOCAL);
 });
 
-const isThisInitialized: {
+export const isThisInitialized: {
   (node: BinaryExpression): (binding: FileBinding) => boolean;
   (binding: FileBinding, node: BinaryExpression): boolean;
 } = Fn.dual(
@@ -72,5 +72,3 @@ const isThisInitialized: {
     isAccessExpression(node.left) &&
     variableInitializer(binding, node.left.expression).pipe(Option.exists(isThisKeyword)),
 );
-
-export { bindThisPropertyAssignment, isThisInitialized };

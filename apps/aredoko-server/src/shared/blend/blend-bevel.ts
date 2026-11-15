@@ -4,7 +4,7 @@ import type { Edge } from "./blend-edges.ts";
 import { dot, normalIn } from "./blend-geometry.ts";
 import type { Face, Point, Shape } from "./blend-geometry.ts";
 
-interface Bevel {
+export interface Bevel {
   readonly limit: "all" | "angle" | "weight" | "none";
   readonly angle: number;
 }
@@ -79,7 +79,7 @@ const creased = ({ from, to }: Readonly<{ from: number; to: number }>): Edge => 
   weight: NONE,
 });
 
-const beveled =
+export const beveled =
   (bevel: Bevel) =>
   (shape: Shape): Shape => {
     const weighted = pipe(
@@ -93,6 +93,3 @@ const beveled =
       edges: [...shape.edges, ...pipe([...weighted, ...sharp], Array.map(creased))],
     };
   };
-
-export { beveled };
-export type { Bevel };

@@ -1,19 +1,19 @@
-type SemconvLevel = "violation" | "improvement" | "information";
+export type SemconvLevel = "violation" | "improvement" | "information";
 
-interface SemconvOptions {
+export interface SemconvOptions {
   readonly registry?: string;
   readonly weaver?: string;
   readonly failOn?: SemconvLevel;
 }
 
-interface ResolvedSemconv {
+export interface ResolvedSemconv {
   readonly registry: string;
   readonly weaver: string;
   readonly failOn: SemconvLevel;
 }
 
-const SEMCONV_KEY = "vitest-otlp:semconv";
-const FORWARD_KEY = "vitest-otlp:forward";
+export const SEMCONV_KEY = "vitest-otlp:semconv";
+export const FORWARD_KEY = "vitest-otlp:forward";
 
 declare module "vite-plus/test" {
   interface ProvidedContext {
@@ -21,6 +21,3 @@ declare module "vite-plus/test" {
     readonly [FORWARD_KEY]?: readonly string[];
   }
 }
-
-export { FORWARD_KEY, SEMCONV_KEY };
-export type { ResolvedSemconv, SemconvLevel, SemconvOptions };

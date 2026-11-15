@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 const PLAY_MARK = "▶";
 
-const SeekBar = (): ReactNode => (
+export const SeekBar = (): ReactNode => (
   <div
     aria-hidden="true"
     className="bg-screen text-muted-foreground relative flex items-center gap-3 border-t px-4 py-2 text-xs"
@@ -13,5 +13,3 @@ const SeekBar = (): ReactNode => (
     </span>
   </div>
 );
-
-export { SeekBar };

@@ -1,4 +1,4 @@
-const COMMENT_DIRECTIVES: readonly string[] = [
+export const COMMENT_DIRECTIVES: readonly string[] = [
   "oxlint-disable",
   "oxlint-enable",
   "eslint-disable",
@@ -14,5 +14,3 @@ const COMMENT_DIRECTIVES: readonly string[] = [
   "yaml-language-server:",
   "> statement-breakpoint$",
 ];
-
-export { COMMENT_DIRECTIVES };

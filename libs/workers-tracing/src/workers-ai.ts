@@ -11,18 +11,18 @@ const EXCEPTION_EVENTS = {
   embeddings: "gen_ai.client.embeddings.exception",
 } as const;
 
-type Operation = keyof typeof EXCEPTION_EVENTS;
+export type Operation = keyof typeof EXCEPTION_EVENTS;
 
 const taggedError = Schema.TaggedError;
 
-class WorkersAiError extends taggedError<WorkersAiError, { readonly brand: unique symbol }>()(
-  "WorkersAiError",
-  {
-    errorType: Schema.String,
-    outOfCapacity: Schema.Boolean,
-    cause: Schema.Unknown,
-  },
-) {}
+export class WorkersAiError extends taggedError<
+  WorkersAiError,
+  { readonly brand: unique symbol }
+>()("WorkersAiError", {
+  errorType: Schema.String,
+  outOfCapacity: Schema.Boolean,
+  cause: Schema.Unknown,
+}) {}
 
 const ApiErrors = Schema.Struct({
   errors: Schema.NonEmptyArray(Schema.Struct({ code: Schema.Finite })),
@@ -106,7 +106,7 @@ const answerAttributes = (answer: typeof Answer.Type): Attributes => ({
 const isCutOff = (answer: typeof Answer.Type): boolean =>
   pipe(finishReasons(answer), Option.exists(Array.some((reason) => !COMPLETE_REASONS.has(reason))));
 
-interface WorkersAiCall<Output> {
+export interface WorkersAiCall<Output> {
   readonly operation: Operation;
   readonly model: string;
   readonly prompt?: string;
@@ -124,7 +124,7 @@ const requestAttributes = ({
   ...attribute("gen_ai.prompt.name", Option.fromUndefinedOr(prompt)),
 });
 
-const runWorkersAi = <Output>({
+export const runWorkersAi = <Output>({
   call,
   ...request
 }: WorkersAiCall<Output>): Effect.Effect<Output, WorkersAiError> => {
@@ -173,6 +173,3 @@ const runWorkersAi = <Output>({
     Effect.withSpan(`${request.operation} ${request.model}`, { kind: "client", attributes }),
   );
 };
-
-export type { Operation, WorkersAiCall };
-export { runWorkersAi, WorkersAiError };

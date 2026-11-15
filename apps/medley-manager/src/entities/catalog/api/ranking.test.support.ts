@@ -25,7 +25,7 @@ const SECOND = 2;
 
 const THIRD = 3;
 
-const thumbnailOf = (title: string): string => `https://example.com/thumbnail/${title}.jpg`;
+export const thumbnailOf = (title: string): string => `https://example.com/thumbnail/${title}.jpg`;
 
 const addSong = (title: string): Effect.Effect<number> =>
   Effect.promise(() =>
@@ -99,7 +99,7 @@ const seedStaff = (parts: Parts, people: People): Effect.Effect<unknown> =>
     ]),
   );
 
-const seedCatalog = Effect.gen(function* seedCatalog() {
+export const seedCatalog = Effect.gen(function* seedCatalog() {
   yield* resetDatabase;
   const songs = yield* seedSongs;
   const videos = yield* seedVideos;
@@ -108,5 +108,3 @@ const seedCatalog = Effect.gen(function* seedCatalog() {
   yield* seedStaff(parts, people);
   return { songs, videos, people };
 });
-
-export { seedCatalog, thumbnailOf };

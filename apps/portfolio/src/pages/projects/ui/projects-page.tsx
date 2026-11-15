@@ -12,7 +12,7 @@ const route = getRouteApi("/_stage/_site/projects");
 
 const counts = tagCounts(projects);
 
-const ProjectsPage = (): ReactNode => {
+export const ProjectsPage = (): ReactNode => {
   const { activeTag, select } = useTagFilter({
     search: route.useSearch(),
     navigate: route.useNavigate(),
@@ -30,5 +30,3 @@ const ProjectsPage = (): ReactNode => {
     </div>
   );
 };
-
-export { ProjectsPage };

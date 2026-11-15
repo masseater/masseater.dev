@@ -4,13 +4,15 @@ import { Atom } from "effect/reactivity";
 
 import type { LanguageCode } from "./languages.ts";
 
-type Source = Readonly<{ kind: "detect" }> | Readonly<{ kind: "language"; code: LanguageCode }>;
+export type Source =
+  | Readonly<{ kind: "detect" }>
+  | Readonly<{ kind: "language"; code: LanguageCode }>;
 
-type Side = "source" | "target";
+export type Side = "source" | "target";
 
-type Picker = Readonly<{ kind: "closed" }> | Readonly<{ kind: "open"; side: Side }>;
+export type Picker = Readonly<{ kind: "closed" }> | Readonly<{ kind: "open"; side: Side }>;
 
-type Selection = Readonly<{ source: Source; target: LanguageCode }>;
+export type Selection = Readonly<{ source: Source; target: LanguageCode }>;
 
 const RECENT_SIZE = 3;
 
@@ -34,21 +36,21 @@ const withRecent = ({
   return pipe(recents, Array.prepend(code), Array.take(RECENT_SIZE));
 };
 
-const useSource = (): Source => useAtomValue(sourceAtom);
+export const useSource = (): Source => useAtomValue(sourceAtom);
 
 const useTarget = (): LanguageCode => useAtomValue(targetAtom);
 
-const useSelection = (): Selection => ({ source: useSource(), target: useTarget() });
+export const useSelection = (): Selection => ({ source: useSource(), target: useTarget() });
 
-const useRecentSources = (): readonly LanguageCode[] => useAtomValue(recentSourcesAtom);
+export const useRecentSources = (): readonly LanguageCode[] => useAtomValue(recentSourcesAtom);
 
-const useRecentTargets = (): readonly LanguageCode[] => useAtomValue(recentTargetsAtom);
+export const useRecentTargets = (): readonly LanguageCode[] => useAtomValue(recentTargetsAtom);
 
-const usePicker = (): Picker => useAtomValue(pickerAtom);
+export const usePicker = (): Picker => useAtomValue(pickerAtom);
 
-const useSetPicker = (): ((picker: Picker) => void) => useAtomSet(pickerAtom);
+export const useSetPicker = (): ((picker: Picker) => void) => useAtomSet(pickerAtom);
 
-const useSelect = (): ((selection: Selection) => void) => {
+export const useSelect = (): ((selection: Selection) => void) => {
   const setSource = useAtomSet(sourceAtom);
   const setTarget = useAtomSet(targetAtom);
   const setRecentSources = useAtomSet(recentSourcesAtom);
@@ -64,14 +66,3 @@ const useSelect = (): ((selection: Selection) => void) => {
     setPicker({ kind: "closed" });
   };
 };
-
-export {
-  usePicker,
-  useRecentSources,
-  useRecentTargets,
-  useSelect,
-  useSelection,
-  useSetPicker,
-  useSource,
-};
-export type { Picker, Selection, Side, Source };

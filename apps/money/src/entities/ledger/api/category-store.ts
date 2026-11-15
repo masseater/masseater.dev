@@ -10,7 +10,7 @@ import type { Rejected } from "#/shared/api";
 import { db, query, runAll } from "./database";
 import { categoryRules, transactions } from "./ledger.table.ts";
 
-type CategoryChoice = Readonly<{
+export type CategoryChoice = Readonly<{
   transactionId: number;
   category: Category | "auto";
   label: Option.Option<string>;
@@ -32,7 +32,7 @@ const IDS_PER_UPDATE = 90;
 
 const KEY_SEPARATOR = "\u0000";
 
-const userRules = query(() =>
+export const userRules = query(() =>
   db
     .select({
       pattern: categoryRules.pattern,
@@ -122,7 +122,7 @@ const recategorize = Effect.fn("recategorize")(function* recategorize(rules: rea
   return changes.length;
 });
 
-const setCategory = Effect.fn("setCategory")(function* setCategory({
+export const setCategory = Effect.fn("setCategory")(function* setCategory({
   transactionId,
   category,
   label,
@@ -146,7 +146,7 @@ const setCategory = Effect.fn("setCategory")(function* setCategory({
   );
 });
 
-const setRule = Effect.fn("setRule")(function* setRule(rule: Rule) {
+export const setRule = Effect.fn("setRule")(function* setRule(rule: Rule) {
   const saved = { ...rule, pattern: normalized(rule.pattern) };
   const label = Option.getOrNull(saved.label);
   yield* query(() =>
@@ -163,7 +163,7 @@ const setRule = Effect.fn("setRule")(function* setRule(rule: Rule) {
   return { pattern: saved.pattern, category: saved.category, label, recategorized };
 });
 
-const deleteRule = Effect.fn("deleteRule")(function* deleteRule(text: string) {
+export const deleteRule = Effect.fn("deleteRule")(function* deleteRule(text: string) {
   const pattern = normalized(text);
   const deleted = yield* query(() =>
     db
@@ -176,6 +176,3 @@ const deleteRule = Effect.fn("deleteRule")(function* deleteRule(text: string) {
   const recategorized = yield* recategorize(rules);
   return { deleted: pattern, recategorized };
 });
-
-export { deleteRule, setCategory, setRule, userRules };
-export type { CategoryChoice };

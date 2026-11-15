@@ -5,7 +5,7 @@ import { AddKnownFolderButton, AddFolderButton, ImportResult } from "#/features/
 
 const DROP_HERE = "ここにドロップ";
 
-const FirstImport = (): ReactNode => (
+export const FirstImport = (): ReactNode => (
   <div className="flex flex-1 flex-col items-center justify-center gap-4">
     <div className="text-muted-foreground flex flex-col items-center gap-2">
       <PackagePlus className="size-12" />
@@ -19,5 +19,3 @@ const FirstImport = (): ReactNode => (
     <ImportResult />
   </div>
 );
-
-export { FirstImport };

@@ -62,7 +62,8 @@ const linkedGitDir = Effect.fn("linkedGitDir")(function* linkedGitDir(dir: strin
   );
 });
 
-type AppServices = FileSystem.FileSystem | Path.Path;
+/** @internal */
+export type AppServices = FileSystem.FileSystem | Path.Path;
 
 const gitDirAt = Effect.fn("gitDirAt")(function* gitDirAt(dir: string) {
   const fs = yield* FileSystem.FileSystem;
@@ -123,22 +124,28 @@ const repoOf = Effect.gen(function* repoOf() {
   return yield* remoteSlug;
 });
 
-interface AppContext {
+/** @internal */
+export interface AppContext {
   readonly repo: string;
   readonly context: string;
 }
 
-const appContext: Effect.Effect<AppContext, never, AppServices> = Effect.gen(function* app() {
-  const context = yield* contextOf;
-  const repo = yield* repoOf;
-  return { repo: Option.getOrElse(repo, () => SELF), context };
-});
+/** @internal */
+export const appContext: Effect.Effect<AppContext, never, AppServices> = Effect.gen(
+  function* app() {
+    const context = yield* contextOf;
+    const repo = yield* repoOf;
+    return { repo: Option.getOrElse(repo, () => SELF), context };
+  },
+);
 
-type OpenRouterApp = Readonly<
+/** @internal */
+export type OpenRouterApp = Readonly<
   Record<"HTTP-Referer" | "X-OpenRouter-Title" | "X-OpenRouter-App-Visibility", string>
 >;
 
-const openRouterApp = (tool: string): Effect.Effect<OpenRouterApp, never, AppServices> =>
+/** @internal */
+export const openRouterApp = (tool: string): Effect.Effect<OpenRouterApp, never, AppServices> =>
   Effect.gen(function* attribution() {
     const context = yield* contextOf;
     const repo = yield* repoOf;
@@ -149,8 +156,3 @@ const openRouterApp = (tool: string): Effect.Effect<OpenRouterApp, never, AppSer
       "X-OpenRouter-App-Visibility": "hidden",
     };
   });
-
-/** @internal */
-export { appContext, openRouterApp };
-/** @internal */
-export type { AppContext, AppServices, OpenRouterApp };

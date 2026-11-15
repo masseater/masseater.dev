@@ -40,7 +40,7 @@ const addAliases = (
     ),
   );
 
-const createSong = Effect.fn("mcp.song.create")(function* createSong(
+export const createSong = Effect.fn("mcp.song.create")(function* createSong(
   input: typeof CreateSongInput.Type,
 ) {
   const { aliases, ...fields } = input;
@@ -54,7 +54,7 @@ const createSong = Effect.fn("mcp.song.create")(function* createSong(
   return yield* songDetail(created.id);
 });
 
-const updateSong = Effect.fn("mcp.song.update")(function* updateSong(
+export const updateSong = Effect.fn("mcp.song.update")(function* updateSong(
   input: typeof UpdateSongInput.Type,
 ) {
   const { id, ...patch } = input;
@@ -64,21 +64,21 @@ const updateSong = Effect.fn("mcp.song.update")(function* updateSong(
   return yield* songDetail(id);
 });
 
-const deleteSong = Effect.fn("mcp.song.delete")(function* deleteSong(id: number) {
+export const deleteSong = Effect.fn("mcp.song.delete")(function* deleteSong(id: number) {
   const deleted = yield* query(() =>
     catalogDb.delete(song).where(eq(song.id, id)).returning({ id: song.id }).get(),
   );
   return yield* Effect.succeed(Option.fromUndefinedOr(deleted)).pipe(orMissing(SONG_MISSING));
 });
 
-const addSongAlias = Effect.fn("mcp.song.alias.add")(function* addSongAlias(
+export const addSongAlias = Effect.fn("mcp.song.alias.add")(function* addSongAlias(
   input: typeof SongAliasInput.Type,
 ) {
   yield* addAliases(input.songId, [input.alias]);
   return yield* songDetail(input.songId);
 });
 
-const removeSongAlias = Effect.fn("mcp.song.alias.remove")(function* removeSongAlias(
+export const removeSongAlias = Effect.fn("mcp.song.alias.remove")(function* removeSongAlias(
   input: typeof SongAliasInput.Type,
 ) {
   yield* query(() =>
@@ -89,7 +89,9 @@ const removeSongAlias = Effect.fn("mcp.song.alias.remove")(function* removeSongA
   return yield* songDetail(input.songId);
 });
 
-const mergeSongs = Effect.fn("mcp.song.merge")(function* mergeSongs(input: typeof MergeInput.Type) {
+export const mergeSongs = Effect.fn("mcp.song.merge")(function* mergeSongs(
+  input: typeof MergeInput.Type,
+) {
   if (input.sourceId === input.targetId) {
     return yield* ToolError.make({ message: SAME_SONG });
   }
@@ -104,5 +106,3 @@ const mergeSongs = Effect.fn("mcp.song.merge")(function* mergeSongs(input: typeo
   );
   return yield* songDetail(input.targetId);
 });
-
-export { addSongAlias, createSong, deleteSong, mergeSongs, removeSongAlias, updateSong };

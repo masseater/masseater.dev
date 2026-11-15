@@ -2,7 +2,7 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "#/shared/lib/utils";
 
-const TableHead = ({ className, ...props }: ComponentProps<"th">): ReactNode => (
+export const TableHead = ({ className, ...props }: ComponentProps<"th">): ReactNode => (
   <th
     data-slot="table-head"
     className={cn(
@@ -12,5 +12,3 @@ const TableHead = ({ className, ...props }: ComponentProps<"th">): ReactNode => 
     {...props}
   />
 );
-
-export { TableHead };

@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-const TabLink = ({
+export const TabLink = ({
   hrefOf,
   slug,
   label,
@@ -23,5 +23,3 @@ const TabLink = ({
       </a>
     ),
   });
-
-export { TabLink };

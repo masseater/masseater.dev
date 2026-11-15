@@ -100,11 +100,9 @@ const getPathRoot = (path: string): PathRoot => {
   );
 };
 
-const getRootLength = (path: string): number => getPathRoot(path).length;
+export const getRootLength = (path: string): number => getPathRoot(path).length;
 
-const isRootedDiskPath = (path: string): boolean => {
+export const isRootedDiskPath = (path: string): boolean => {
   const root = getPathRoot(path);
   return root.length > FIRST && !root.isUrl;
 };
-
-export { getRootLength, isRootedDiskPath };

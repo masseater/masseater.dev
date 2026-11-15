@@ -107,7 +107,9 @@ const allowsWorkspaceAgentDocs = Effect.fn("allowsWorkspaceAgentDocs")(
 );
 
 /** @internal */
-const checkNestedDocs = Effect.fn("checkNestedDocs")(function* checkNestedDocs(root: string) {
+export const checkNestedDocs = Effect.fn("checkNestedDocs")(function* checkNestedDocs(
+  root: string,
+) {
   const files = yield* RepositoryFiles;
   const names = yield* files.listedFiles(root);
   const nested = pipe(names, Arr.filter(isNested));
@@ -126,5 +128,3 @@ const checkNestedDocs = Effect.fn("checkNestedDocs")(function* checkNestedDocs(r
   });
   return Arr.getSomes(found);
 });
-
-export { checkNestedDocs };

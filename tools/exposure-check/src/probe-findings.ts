@@ -37,7 +37,7 @@ const answered = (probe: Probe, status: number, location: string): readonly Find
     Match.exhaustive,
   );
 
-const fromProbe = ({ probe, outcome }: ProbeResult): readonly Finding[] =>
+export const fromProbe = ({ probe, outcome }: ProbeResult): readonly Finding[] =>
   Match.value(outcome).pipe(
     Match.tagsExhaustive({
       Gone: () => [],
@@ -51,5 +51,3 @@ const fromProbe = ({ probe, outcome }: ProbeResult): readonly Finding[] =>
       Answered: ({ status, location }) => answered(probe, status, location),
     }),
   );
-
-export { fromProbe };

@@ -9,7 +9,7 @@ import type { QueryFunction, SkipToken, UseQueryOptions } from "@tanstack/react-
 import type { Run, Trace, InspectEvent } from "#/entities/inspection";
 import { traceOf, inspectEvents } from "#/entities/inspection";
 
-type InspectState =
+export type InspectState =
   | { readonly status: "idle" }
   | { readonly status: "error"; readonly message: string }
   | {
@@ -45,7 +45,7 @@ const inspectQuery = (run: Run): UseQueryOptions<InspectEvent[], Error, InspectE
     retry: false,
   });
 
-const useInspect = (run: Run): InspectState => {
+export const useInspect = (run: Run): InspectState => {
   const query = useQuery(inspectQuery(run));
   if (run.status === "idle") {
     return { status: "idle" };
@@ -63,6 +63,3 @@ const useInspect = (run: Run): InspectState => {
     trace: traceOf(events),
   };
 };
-
-export type { InspectState };
-export { useInspect };

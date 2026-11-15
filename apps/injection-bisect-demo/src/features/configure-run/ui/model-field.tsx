@@ -7,7 +7,7 @@ import { useModel, useSetModel, MODELS } from "#/entities/inspection";
 import { COPY } from "#/shared/config";
 import { SELECT_CLASS } from "#/shared/ui/select-class";
 
-const ModelField = (): ReactNode => {
+export const ModelField = (): ReactNode => {
   const model = useModel();
   const setModel = useSetModel();
   const pick = useCallback(
@@ -34,5 +34,3 @@ const ModelField = (): ReactNode => {
     </select>
   );
 };
-
-export { ModelField };

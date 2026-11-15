@@ -6,7 +6,7 @@ const SERVER_ERROR = 500;
 const isNotFound = (thrown: unknown): boolean =>
   Predicate.hasProperty(thrown, "isNotFound") && thrown.isNotFound === true;
 
-const responseStatus = (thrown: unknown): Option.Option<number> => {
+export const responseStatus = (thrown: unknown): Option.Option<number> => {
   if (thrown instanceof Response) {
     return Option.some(thrown.status);
   }
@@ -16,12 +16,12 @@ const responseStatus = (thrown: unknown): Option.Option<number> => {
   return Option.none();
 };
 
-const isServerError = (status: number): boolean => status >= SERVER_ERROR;
+export const isServerError = (status: number): boolean => status >= SERVER_ERROR;
 
 const isFailure = (thrown: unknown): boolean =>
   pipe(responseStatus(thrown), Option.match({ onNone: Function.constTrue, onSome: isServerError }));
 
-const failures = (cause: Cause.Cause<unknown>): Option.Option<Cause.Cause<unknown>> =>
+export const failures = (cause: Cause.Cause<unknown>): Option.Option<Cause.Cause<unknown>> =>
   pipe(
     cause.reasons,
     Array.filter(
@@ -32,5 +32,3 @@ const failures = (cause: Cause.Cause<unknown>): Option.Option<Cause.Cause<unknow
     Option.liftPredicate(Array.isReadonlyArrayNonEmpty),
     Option.map(Cause.fromReasons),
   );
-
-export { failures, isServerError, responseStatus };

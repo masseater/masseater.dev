@@ -16,7 +16,7 @@ const COPIES = ["first", "second"] as const;
 const speedOf = (lane: number): string =>
   Option.getOrElse(Array.get(SPEEDS, lane % SPEEDS.length), () => "animate-danmaku");
 
-const DanmakuLane = ({
+export const DanmakuLane = ({
   comments,
   lane,
 }: Readonly<{ comments: readonly Comment[]; lane: number }>): ReactNode => (
@@ -27,5 +27,3 @@ const DanmakuLane = ({
     )}
   </div>
 );
-
-export { DanmakuLane };

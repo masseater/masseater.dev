@@ -6,7 +6,7 @@ import { Atom } from "effect/reactivity";
 
 import { EXAMPLES } from "./examples";
 
-type Run =
+export type Run =
   | { readonly status: "idle" }
   | {
       readonly status: "started";
@@ -18,7 +18,7 @@ type Run =
       readonly unreadable: readonly Unreadable[];
     };
 
-type Opening =
+export type Opening =
   | { readonly status: "idle" }
   | { readonly status: "reading"; readonly name: string }
   | { readonly status: "failed"; readonly name: string; readonly reason: string }
@@ -28,11 +28,11 @@ type Opening =
       readonly unreadable: readonly Unreadable[];
     };
 
-type Focus = { readonly status: "none" } | { readonly status: "probe"; readonly id: number };
+export type Focus = { readonly status: "none" } | { readonly status: "probe"; readonly id: number };
 
 const IDLE: Run = { status: "idle" };
 
-const NO_FOCUS: Focus = { status: "none" };
+export const NO_FOCUS: Focus = { status: "none" };
 
 const [FIRST_EXAMPLE] = EXAMPLES;
 
@@ -44,9 +44,9 @@ const modelAtom = Atom.make<string>(DEFAULT_MODEL);
 
 const formatAtom = Atom.make<string>(AUTO);
 
-const NOT_OPENING: Opening = { status: "idle" };
+export const NOT_OPENING: Opening = { status: "idle" };
 
-const openedOf =
+export const openedOf =
   (name: string) =>
   (unreadable: readonly Unreadable[]): Opening => {
     if (Arr.isReadonlyArrayEmpty(unreadable)) {
@@ -55,7 +55,7 @@ const openedOf =
     return { status: "partial", name, unreadable };
   };
 
-const unreadableOf = (opening: Opening): readonly Unreadable[] => {
+export const unreadableOf = (opening: Opening): readonly Unreadable[] => {
   if (opening.status === "partial") {
     return opening.unreadable;
   }
@@ -68,52 +68,30 @@ const runAtom = Atom.make<Run>(IDLE);
 
 const focusAtom = Atom.make<Focus>(NO_FOCUS);
 
-const useDraftText = (): string => useAtomValue(draftTextAtom);
+export const useDraftText = (): string => useAtomValue(draftTextAtom);
 
-const useSetDraftText = (): ((text: string) => void) => useAtomSet(draftTextAtom);
+export const useSetDraftText = (): ((text: string) => void) => useAtomSet(draftTextAtom);
 
-const useApiKey = (): string => useAtomValue(apiKeyAtom);
+export const useApiKey = (): string => useAtomValue(apiKeyAtom);
 
-const useSetApiKey = (): ((apiKey: string) => void) => useAtomSet(apiKeyAtom);
+export const useSetApiKey = (): ((apiKey: string) => void) => useAtomSet(apiKeyAtom);
 
-const useModel = (): string => useAtomValue(modelAtom);
+export const useModel = (): string => useAtomValue(modelAtom);
 
-const useSetModel = (): ((model: string) => void) => useAtomSet(modelAtom);
+export const useSetModel = (): ((model: string) => void) => useAtomSet(modelAtom);
 
-const useFormat = (): string => useAtomValue(formatAtom);
+export const useFormat = (): string => useAtomValue(formatAtom);
 
-const useSetFormat = (): ((format: string) => void) => useAtomSet(formatAtom);
+export const useSetFormat = (): ((format: string) => void) => useAtomSet(formatAtom);
 
-const useOpening = (): Opening => useAtomValue(openingAtom);
+export const useOpening = (): Opening => useAtomValue(openingAtom);
 
-const useSetOpening = (): ((opening: Opening) => void) => useAtomSet(openingAtom);
+export const useSetOpening = (): ((opening: Opening) => void) => useAtomSet(openingAtom);
 
-const useRun = (): Run => useAtomValue(runAtom);
+export const useRun = (): Run => useAtomValue(runAtom);
 
-const useSetRun = (): ((run: Run) => void) => useAtomSet(runAtom);
+export const useSetRun = (): ((run: Run) => void) => useAtomSet(runAtom);
 
-const useFocus = (): Focus => useAtomValue(focusAtom);
+export const useFocus = (): Focus => useAtomValue(focusAtom);
 
-const useSetFocus = (): ((focus: Focus) => void) => useAtomSet(focusAtom);
-
-export type { Focus, Opening, Run };
-export {
-  NOT_OPENING,
-  NO_FOCUS,
-  openedOf,
-  unreadableOf,
-  useApiKey,
-  useDraftText,
-  useFocus,
-  useFormat,
-  useModel,
-  useOpening,
-  useRun,
-  useSetApiKey,
-  useSetDraftText,
-  useSetFocus,
-  useSetFormat,
-  useSetModel,
-  useSetOpening,
-  useSetRun,
-};
+export const useSetFocus = (): ((focus: Focus) => void) => useAtomSet(focusAtom);

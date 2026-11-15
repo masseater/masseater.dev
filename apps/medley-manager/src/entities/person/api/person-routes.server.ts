@@ -8,10 +8,8 @@ import { runRequest } from "#/shared/observability/index.server";
 import { listPeople } from "./people.server.ts";
 import { getPerson } from "./person.server.ts";
 
-const personRoutes = createRouter("/people")
+export const personRoutes = createRouter("/people")
   .get("/", ({ query }) => runRequest(keywordOf(query.keyword).pipe(listPeople)), {
     query: Schema.toStandardSchemaV1(TextSearch),
   })
   .get("/:id", ({ params }) => respondFound(getPerson(params.id)), { params: IdParams });
-
-export { personRoutes };

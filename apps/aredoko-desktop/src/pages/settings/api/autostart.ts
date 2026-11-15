@@ -11,15 +11,13 @@ const setAutostart = (enabled: boolean): Promise<void> => {
   return disable();
 };
 
-const useAutostart = (): UseQueryResult<boolean> =>
+export const useAutostart = (): UseQueryResult<boolean> =>
   useQuery(queryOptions({ queryKey: AUTOSTART_KEY, queryFn: isEnabled }));
 
-const useSetAutostart = (): UseMutationResult<void, Error, boolean> => {
+export const useSetAutostart = (): UseMutationResult<void, Error, boolean> => {
   const client = useQueryClient();
   return useMutation({
     mutationFn: setAutostart,
     onSuccess: () => client.invalidateQueries({ queryKey: AUTOSTART_KEY }),
   });
 };
-
-export { useAutostart, useSetAutostart };

@@ -18,12 +18,10 @@ const tableCellVariants = cva("px-4 py-3 align-middle", {
   },
 });
 
-const TableCell = ({
+export const TableCell = ({
   className,
   variant = "default",
   ...props
 }: ComponentProps<"td"> & Readonly<VariantProps<typeof tableCellVariants>>): ReactNode => (
   <td data-slot="table-cell" className={cn(tableCellVariants({ variant }), className)} {...props} />
 );
-
-export { TableCell };

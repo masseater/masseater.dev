@@ -116,7 +116,7 @@ const descriptors = (
   ];
 };
 
-const csharp = Effect.fn("csharp")(function* csharp(identifier: string) {
+export const csharp = Effect.fn("csharp")(function* csharp(identifier: string) {
   const { lines, names } = yield* csharpTypes({
     namespace: NAMESPACE,
     framework: "NewtonSoft",
@@ -124,5 +124,3 @@ const csharp = Effect.fn("csharp")(function* csharp(identifier: string) {
   });
   return Array.join([...lines, "", ...descriptors(names, identifier), ""], "\n");
 });
-
-export { csharp };

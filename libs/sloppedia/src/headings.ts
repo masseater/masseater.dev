@@ -1,10 +1,10 @@
 import { Array as Arr, Option, Schema, pipe } from "effect";
 
-type Level = "section" | "subsection";
+export type Level = "section" | "subsection";
 
-type Heading = Readonly<{ id: string; value: string; level: Level }>;
+export type Heading = Readonly<{ id: string; value: string; level: Level }>;
 
-type NumberedHeading = Heading & Readonly<{ number: string }>;
+export type NumberedHeading = Heading & Readonly<{ number: string }>;
 
 const FOOTNOTE_LABEL_ID = "footnote-label";
 
@@ -26,7 +26,7 @@ const flatten = ({ id, value, children = [] }: typeof SectionSchema.Type): reado
   ),
 ];
 
-const headingsOf = (tableOfContents: unknown): readonly Heading[] =>
+export const headingsOf = (tableOfContents: unknown): readonly Heading[] =>
   pipe(
     decodeToc(tableOfContents),
     Option.getOrElse((): readonly (typeof SectionSchema.Type)[] => []),
@@ -59,8 +59,5 @@ const numberHeading = (counter: Counter, heading: Heading): readonly [Counter, N
   return [counted, { ...heading, number: label(counted, heading) }];
 };
 
-const numbered = (headings: readonly Heading[]): readonly NumberedHeading[] =>
+export const numbered = (headings: readonly Heading[]): readonly NumberedHeading[] =>
   pipe(headings, Arr.mapAccum(START, numberHeading), ([, result]) => result);
-
-export type { Heading, Level, NumberedHeading };
-export { headingsOf, numbered };

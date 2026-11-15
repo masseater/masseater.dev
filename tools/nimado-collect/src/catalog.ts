@@ -15,20 +15,20 @@ const Crawl = Schema.Struct({
   since: Schema.String,
 });
 
-const Catalog = Schema.Struct({
+export const Catalog = Schema.Struct({
   crawl: Crawl,
   songs: Schema.Array(CatalogSong),
 });
 
-type CatalogSongValue = typeof CatalogSong.Type;
-type CatalogValue = typeof Catalog.Type;
+export type CatalogSongValue = typeof CatalogSong.Type;
+export type CatalogValue = typeof Catalog.Type;
 
 const hasVideo = ({ nico, youtube }: CatalogSongValue): boolean =>
   Arr.isReadonlyArrayNonEmpty(nico) || Arr.isReadonlyArrayNonEmpty(youtube);
 
 const keyOf = (id: number): string => id.toString();
 
-const mergeSongs = ({
+export const mergeSongs = ({
   songs,
   updates,
   removed,
@@ -47,6 +47,3 @@ const mergeSongs = ({
     Arr.sortWith(({ id }) => id, Order.Number),
   );
 };
-
-export type { CatalogSongValue, CatalogValue };
-export { Catalog, mergeSongs };

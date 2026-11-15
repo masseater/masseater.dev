@@ -18,11 +18,12 @@ const DATA_FIRST_ARITY = 2;
 
 const encodeJson = Schema.encodeUnknownOption(Schema.fromJsonString(Schema.Unknown));
 
-const toJson = (value: unknown): string => Option.getOrElse(encodeJson(value), () => String(value));
+export const toJson = (value: unknown): string =>
+  Option.getOrElse(encodeJson(value), () => String(value));
 
-const nowMs = (): number => DateTime.toEpochMillis(DateTime.nowUnsafe());
+export const nowMs = (): number => DateTime.toEpochMillis(DateTime.nowUnsafe());
 
-const runOrElse: {
+export const runOrElse: {
   <Value>(
     fallback: (error: unknown) => Value,
   ): <Failure>(effect: Effect.Effect<Value, Failure>) => Value;
@@ -42,13 +43,13 @@ const runOrElse: {
     }),
 );
 
-const envOf = (name: string): Option.Option<string> =>
+export const envOf = (name: string): Option.Option<string> =>
   runOrElse(Config.option(Config.NonEmptyString(name)), () => Option.none()).pipe(
     Option.map((value) => Str.trim(value)),
     Option.filter(Str.isNonEmpty),
   );
 
-const envNameOf: {
+export const envNameOf: {
   (name: string): (env: Readonly<Record<string, string>>) => string;
   (env: Readonly<Record<string, string>>, name: string): string;
 } = Fn.dual(
@@ -56,12 +57,12 @@ const envNameOf: {
   (env: Readonly<Record<string, string>>, name: string): string => env[name] ?? name,
 );
 
-const failsInCi = (options: ResolvedOptions): boolean =>
+export const failsInCi = (options: ResolvedOptions): boolean =>
   options.ci === "fail" && Option.isSome(envOf("CI"));
 
 const warned = new Set<string>();
 
-const warnOnce: {
+export const warnOnce: {
   (message: string): (reason: string) => void;
   (reason: string, message: string): void;
 } = Fn.dual(DATA_FIRST_ARITY, (reason: string, message: string): void => {
@@ -72,14 +73,14 @@ const warnOnce: {
   Effect.runFork(Console.warn(`${PREFIX}: ${message}`));
 });
 
-const messageOf = (error: unknown): string => {
+export const messageOf = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;
   }
   return String(error);
 };
 
-const captured: {
+export const captured: {
   (name: string): (match: Option.Option<RegExpMatchArray>) => Option.Option<string>;
   (match: Option.Option<RegExpMatchArray>, name: string): Option.Option<string>;
 } = Fn.dual(
@@ -90,5 +91,3 @@ const captured: {
       Option.flatMap((groups) => Option.fromNullishOr(groups[name])),
     ),
 );
-
-export { captured, envNameOf, envOf, failsInCi, messageOf, nowMs, runOrElse, toJson, warnOnce };

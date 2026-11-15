@@ -31,7 +31,8 @@ const lintOptionsOf = (loaded: QualifiedConfig): LintOptions => ({
   defaultIgnores: loaded.defaultIgnores ?? true,
 });
 
-const lintCommitMessages: {
+/** @internal */
+export const lintCommitMessages: {
   (
     root: string,
     messages: readonly string[],
@@ -66,7 +67,8 @@ const lintCommitMessages: {
     }),
 );
 
-const lintCommitMessageFile: {
+/** @internal */
+export const lintCommitMessageFile: {
   (
     root: string,
     messageFile: string,
@@ -91,6 +93,3 @@ const lintCommitMessageFile: {
       return yield* lintCommitMessages(config, root, [message]);
     }),
 );
-
-/** @internal */
-export { lintCommitMessageFile, lintCommitMessages };

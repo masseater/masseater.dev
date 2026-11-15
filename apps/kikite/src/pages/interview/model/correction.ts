@@ -57,7 +57,8 @@ const contextNow = Effect.gen(function* contextNow() {
   return contextOf(summaryOf(summary), leads);
 });
 
-const correct = Effect.fn("kikite.correct")(function* correct() {
+/** @internal */
+export const correct = Effect.fn("kikite.correct")(function* correct() {
   const lines = yield* pendingLines;
   const last = Arr.last(lines);
   if (Option.isNone(last)) {
@@ -70,6 +71,3 @@ const correct = Effect.fn("kikite.correct")(function* correct() {
   );
   yield* modify(entriesAtom, Arr.map(corrected(fixed)));
 });
-
-/** @internal */
-export { correct };

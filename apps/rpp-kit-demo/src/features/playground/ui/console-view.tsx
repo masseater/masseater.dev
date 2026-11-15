@@ -23,7 +23,7 @@ const noticeOf = (output: Output): string =>
     }),
   );
 
-const ConsoleView = (): ReactNode => {
+export const ConsoleView = (): ReactNode => {
   const output = useOutput();
   const notice = noticeOf(output);
   return (
@@ -40,5 +40,3 @@ const ConsoleView = (): ReactNode => {
     </div>
   );
 };
-
-export { ConsoleView };

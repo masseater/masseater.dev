@@ -8,7 +8,7 @@ import { tablesOf } from "#/pages/measurements/model/tables";
 
 import { RunsSection } from "./runs-section";
 
-const MeasurementsPage = (): ReactNode => {
+export const MeasurementsPage = (): ReactNode => {
   const summary = useSummary();
   return (
     <main className="vt-match mx-auto flex max-w-3xl flex-col gap-8 px-4 py-12 md:px-8">
@@ -23,5 +23,3 @@ const MeasurementsPage = (): ReactNode => {
     </main>
   );
 };
-
-export { MeasurementsPage };

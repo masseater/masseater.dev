@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 const ALL = {};
 const ACTIVE = { className: "bg-secondary text-foreground" };
 
-const NavLink = ({
+export const NavLink = ({
   to,
   label,
 }: Readonly<{ to: "/videos" | "/songs" | "/people"; label: string }>): ReactNode => (
@@ -17,5 +17,3 @@ const NavLink = ({
     {label}
   </Link>
 );
-
-export { NavLink };

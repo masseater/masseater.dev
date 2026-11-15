@@ -4,13 +4,13 @@ import { parseRpp } from "./parse.ts";
 import { outlineSong } from "./song.ts";
 import type { Marker, Song, Track } from "./types.ts";
 
-type Named = Readonly<{ name: string }>;
+export type Named = Readonly<{ name: string }>;
 
-type Tracked<Tracks extends readonly Track[]> = Readonly<{ tracks: Tracks }>;
+export type Tracked<Tracks extends readonly Track[]> = Readonly<{ tracks: Tracks }>;
 
-type Marked<Markers extends readonly Marker[]> = Readonly<{ markers: Markers }>;
+export type Marked<Markers extends readonly Marker[]> = Readonly<{ markers: Markers }>;
 
-type FirstNamed<List, Name> = List extends readonly [
+export type FirstNamed<List, Name> = List extends readonly [
   infer Head extends Named,
   ...infer Rest extends readonly Named[],
 ]
@@ -21,12 +21,12 @@ type FirstNamed<List, Name> = List extends readonly [
     ? Element | undefined
     : undefined;
 
-type AllNamed<List extends readonly Named[], Name> = readonly Extract<
+export type AllNamed<List extends readonly Named[], Name> = readonly Extract<
   List[number],
   Readonly<{ name: Name }>
 >[];
 
-const readSong = (source: string): Song => {
+export const readSong = (source: string): Song => {
   const result = parseRpp(source);
   if (result.status === "error") {
     throw new Error(result.error.message);
@@ -55,7 +55,7 @@ const allNamed = <Element extends Named>(
 
 const ARITY = 2;
 
-const trackNamed: {
+export const trackNamed: {
   <const Tracks extends readonly Track[], const Name extends Tracks[number]["name"]>(
     name: Name,
   ): (song: Tracked<Tracks>) => FirstNamed<Tracks, Name>;
@@ -67,7 +67,7 @@ const trackNamed: {
   firstNamed(song.tracks, name),
 );
 
-const tracksNamed: {
+export const tracksNamed: {
   <const Tracks extends readonly Track[], const Name extends Tracks[number]["name"]>(
     name: Name,
   ): (song: Tracked<Tracks>) => AllNamed<Tracks, Name>;
@@ -77,7 +77,7 @@ const tracksNamed: {
   ): AllNamed<Tracks, Name>;
 } = Fn.dual(ARITY, (song: Tracked<readonly Track[]>, name: string) => allNamed(song.tracks, name));
 
-const markerNamed: {
+export const markerNamed: {
   <const Markers extends readonly Marker[], const Name extends Markers[number]["name"]>(
     name: Name,
   ): (song: Marked<Markers>) => FirstNamed<Markers, Name>;
@@ -89,7 +89,7 @@ const markerNamed: {
   firstNamed(song.markers, name),
 );
 
-const markersNamed: {
+export const markersNamed: {
   <const Markers extends readonly Marker[], const Name extends Markers[number]["name"]>(
     name: Name,
   ): (song: Marked<Markers>) => AllNamed<Markers, Name>;
@@ -98,6 +98,3 @@ const markersNamed: {
     name: Name,
   ): AllNamed<Markers, Name>;
 } = Fn.dual(ARITY, (song: Marked<readonly Marker[]>, name: string) => allNamed(song.markers, name));
-
-export { markerNamed, markersNamed, readSong, trackNamed, tracksNamed };
-export type { AllNamed, FirstNamed, Marked, Named, Tracked };

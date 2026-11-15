@@ -31,7 +31,7 @@ import {
 import { finiteValuesOf, isSubsetOf, literalUnionOf, schemaTypeOf } from "./values.ts";
 import type { Value } from "./values.ts";
 
-interface ValueSite {
+export interface ValueSite {
   readonly node: Node;
   readonly values: readonly Value[];
   readonly sources: readonly TypeSymbol[];
@@ -150,7 +150,7 @@ const sourcesOf =
       Arr.filter((symbol) => Option.isSome(namedValuesOf(checker)(symbol))),
     );
 
-const sitesUnder =
+export const sitesUnder =
   (checker: Checker) =>
   (node: Node): readonly ValueSite[] => {
     const nested = pipe(
@@ -165,6 +165,3 @@ const sitesUnder =
       Option.toArray,
     );
   };
-
-export { sitesUnder };
-export type { ValueSite };

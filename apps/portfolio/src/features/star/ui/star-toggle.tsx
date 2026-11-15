@@ -14,7 +14,7 @@ const COUNT_CLASS = {
   found: "tabular-nums",
 } as const;
 
-const StarToggle = ({
+export const StarToggle = ({
   view,
   addStar,
   removeStar,
@@ -49,5 +49,3 @@ const StarToggle = ({
     </button>
   );
 };
-
-export { StarToggle };

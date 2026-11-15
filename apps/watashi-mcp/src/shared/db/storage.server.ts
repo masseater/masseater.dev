@@ -13,7 +13,7 @@ import {
 
 import { StorageFailed } from "./storage-failed";
 
-type WriteFailure = Readonly<{ duplicate: boolean; message: string }>;
+export type WriteFailure = Readonly<{ duplicate: boolean; message: string }>;
 
 const UNIQUE_VIOLATION = "UNIQUE constraint failed";
 
@@ -33,26 +33,26 @@ const writeFailure = (cause: unknown): WriteFailure => {
   };
 };
 
-const attempt = <Row>(run: () => Promise<Row>): Effect.Effect<Row, WriteFailure> =>
+export const attempt = <Row>(run: () => Promise<Row>): Effect.Effect<Row, WriteFailure> =>
   Effect.tryPromise({ try: run, catch: writeFailure });
 
-const toStorageFailed = ({ message }: WriteFailure): StorageFailed =>
+export const toStorageFailed = ({ message }: WriteFailure): StorageFailed =>
   StorageFailed.make({ message });
 
-const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, StorageFailed> =>
+export const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, StorageFailed> =>
   attempt(run).pipe(Effect.mapError(toStorageFailed));
 
-const firstRow =
+export const firstRow =
   <Failure>(onEmpty: () => Failure) =>
   <Row>(rows: readonly Row[]): Effect.Effect<Row, Failure> =>
     Effect.fromOption(Arr.head(rows)).pipe(Effect.mapError(onEmpty));
 
-const nowIso = DateTime.now.pipe(Effect.map(DateTime.formatIso));
+export const nowIso = DateTime.now.pipe(Effect.map(DateTime.formatIso));
 
-const termsOf = (text: string): readonly string[] =>
+export const termsOf = (text: string): readonly string[] =>
   pipe(text, Str.split(/\s+/u), Arr.filter(Str.isNonEmpty), Arr.dedupe);
 
-const anyTermMatches =
+export const anyTermMatches =
   (matchesOf: (pattern: string) => SQL[]) =>
   (terms: readonly string[]): Option.Option<SQL> => {
     const matches = pipe(
@@ -64,25 +64,12 @@ const anyTermMatches =
 
 const FIRST = 1;
 
-const nextAfterMax = (rows: readonly Readonly<{ max: number | null }>[]): number =>
+export const nextAfterMax = (rows: readonly Readonly<{ max: number | null }>[]): number =>
   pipe(
     Arr.head(rows),
     Option.flatMap((row) => Option.fromNullishOr(row.max)),
     Option.match({ onNone: () => FIRST, onSome: (value) => value + FIRST }),
   );
 
-const encodeJson = (value: unknown): Effect.Effect<string> =>
+export const encodeJson = (value: unknown): Effect.Effect<string> =>
   Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
-
-export {
-  anyTermMatches,
-  attempt,
-  encodeJson,
-  firstRow,
-  nextAfterMax,
-  nowIso,
-  query,
-  toStorageFailed,
-  termsOf,
-};
-export type { WriteFailure };

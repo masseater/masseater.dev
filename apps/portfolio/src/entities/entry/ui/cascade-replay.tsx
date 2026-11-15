@@ -8,7 +8,7 @@ import { useUpdateCascade } from "#/entities/entry/model/cascade-state";
 
 const REPLAY_LABEL = "連鎖を再生";
 
-const CascadeReplay = (): ReactNode => {
+export const CascadeReplay = (): ReactNode => {
   const update = useUpdateCascade();
   const replay = useCallback(() => {
     update(replayed);
@@ -25,5 +25,3 @@ const CascadeReplay = (): ReactNode => {
     </div>
   );
 };
-
-export { CascadeReplay };

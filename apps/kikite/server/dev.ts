@@ -5,7 +5,7 @@ import { DEV_API_PORT } from "#config";
 
 import { serveApi } from "./serve.ts";
 
-const interviewerDev = (): Plugin => ({
+export const interviewerDev = (): Plugin => ({
   name: "kikite-interviewer",
   apply: "serve",
   configureServer(server) {
@@ -19,6 +19,4 @@ const interviewerDev = (): Plugin => ({
   },
 });
 
-const DEV_PROXY = { "/api": `http://127.0.0.1:${DEV_API_PORT}` };
-
-export { DEV_PROXY, interviewerDev };
+export const DEV_PROXY = { "/api": `http://127.0.0.1:${DEV_API_PORT}` };

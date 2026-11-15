@@ -5,7 +5,7 @@ import type { SloppediaConfig } from "./config.ts";
 import { RandomBox } from "./random-box.tsx";
 import { RecentBox } from "./recent-box.tsx";
 
-const MainView = ({
+export const MainView = ({
   config,
   articles,
 }: Readonly<{ config: SloppediaConfig; articles: readonly Article[] }>): ReactNode => (
@@ -19,5 +19,3 @@ const MainView = ({
     </div>
   </main>
 );
-
-export { MainView };

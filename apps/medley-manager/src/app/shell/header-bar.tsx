@@ -6,7 +6,7 @@ import { KeywordForm } from "#/shared/ui/keyword-form";
 import { NavLinks } from "./nav-links";
 import { SiteLogo } from "./site-logo";
 
-const HeaderBar = (): ReactNode => (
+export const HeaderBar = (): ReactNode => (
   <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
     <Link to="/" aria-label="トップへ">
       <SiteLogo />
@@ -17,5 +17,3 @@ const HeaderBar = (): ReactNode => (
     </div>
   </div>
 );
-
-export { HeaderBar };

@@ -12,7 +12,7 @@ import { gains, growth, rank, totals } from "./ranking";
 import type { Ranked } from "./ranking";
 import type { RankingSearch } from "./search";
 
-type Entries =
+export type Entries =
   | Readonly<{ status: "pending" }>
   | Readonly<{ status: "error" }>
   | Readonly<{ status: "short" }>
@@ -23,7 +23,7 @@ type Loaded<Value> =
   | Readonly<{ status: "error" }>
   | Readonly<{ status: "success"; data: Value }>;
 
-type MetaValue = typeof Meta.Type;
+export type MetaValue = typeof Meta.Type;
 
 interface Period {
   readonly window: Option.Option<Window>;
@@ -148,7 +148,7 @@ const unsettled = (statuses: readonly QueryStatus[]): Exclude<QueryStatus, "succ
   return "pending";
 };
 
-const useEntries = ({
+export const useEntries = ({
   meta,
   search,
 }: Readonly<{ meta: MetaValue; search: RankingSearch }>): Entries => {
@@ -160,6 +160,3 @@ const useEntries = ({
   }
   return { status: unsettled([table.status, days.status]) };
 };
-
-export type { Entries, MetaValue };
-export { useEntries };

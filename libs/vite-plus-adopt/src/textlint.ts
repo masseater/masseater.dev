@@ -30,7 +30,8 @@ const descriptorOf = (
   );
 };
 
-const lintTexts: {
+/** @internal */
+export const lintTexts: {
   (
     root: string,
     files: readonly string[],
@@ -74,6 +75,3 @@ const lintTexts: {
       };
     }),
 );
-
-/** @internal */
-export { lintTexts };

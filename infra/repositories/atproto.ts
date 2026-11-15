@@ -94,7 +94,10 @@ const submit = (request: Request, env: AppStoreEnv): Effect.Effect<Response> =>
     ),
   );
 
-const atprotoRoute = ({ request, env }: RouteInput): Option.Option<Effect.Effect<Response>> =>
+export const atprotoRoute = ({
+  request,
+  env,
+}: RouteInput): Option.Option<Effect.Effect<Response>> =>
   pipe(
     Option.liftPredicate(
       request,
@@ -109,7 +112,7 @@ const readAppPassword = (env: AppStoreEnv): Effect.Effect<Option.Option<string>>
     Effect.catchTag("SealFailed", () => Effect.succeedNone),
   );
 
-const issueAppPassword = ({
+export const issueAppPassword = ({
   env,
   granted,
 }: Readonly<{ env: AppStoreEnv; granted: boolean }>): Effect.Effect<
@@ -125,5 +128,3 @@ const issueAppPassword = ({
         ),
     }),
   );
-
-export { atprotoRoute, issueAppPassword };

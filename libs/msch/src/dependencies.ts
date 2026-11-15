@@ -12,7 +12,7 @@ import {
 
 import { RepositoryFiles } from "./repository-files.ts";
 
-interface DependencyEntry {
+export interface DependencyEntry {
   readonly packageName: string;
   readonly specifier: string;
   readonly declarationsPath: string;
@@ -31,10 +31,10 @@ const PackageManifest = Schema.Struct({
   main: Schema.optional(Schema.String),
 });
 
-type Manifest = typeof PackageManifest.Type;
+export type Manifest = typeof PackageManifest.Type;
 
-const MANIFEST_FILE = "package.json";
-const NODE_MODULES = "node_modules";
+export const MANIFEST_FILE = "package.json";
+export const NODE_MODULES = "node_modules";
 const WORKSPACE_PROTOCOL = "workspace:";
 const ROOT_SUBPATH = ".";
 const SUBPATH_PREFIX = "./";
@@ -48,7 +48,7 @@ const DEPTH_STEP = 1;
 const DECLARATIONS_SUFFIX = /\.d\.[cm]?ts$|\.[cm]?tsx?$/u;
 const SCRIPT_SUFFIX = /\.(?<module>[cm]?)js$/u;
 
-const readManifest = Effect.fn("readManifest")(function* readManifest(directory: string) {
+export const readManifest = Effect.fn("readManifest")(function* readManifest(directory: string) {
   const files = yield* RepositoryFiles;
   const manifestText = yield* files.readFile(files.join(directory, MANIFEST_FILE));
   const text = yield* Effect.fromOption(manifestText);
@@ -238,7 +238,7 @@ const declaredDependencies = (manifest: Manifest): readonly string[] =>
     Arr.map(([packageName]) => packageName),
   );
 
-const workspaceDependencies = (manifest: Manifest): readonly string[] =>
+export const workspaceDependencies = (manifest: Manifest): readonly string[] =>
   pipe(
     Rec.toEntries({ ...manifest.dependencies, ...manifest.devDependencies }),
     Arr.filter(([, range]) => Str.startsWith(WORKSPACE_PROTOCOL)(range)),
@@ -247,7 +247,7 @@ const workspaceDependencies = (manifest: Manifest): readonly string[] =>
 
 const entryOrder = Order.mapInput(Order.String, (entry: DependencyEntry) => entry.specifier);
 
-const dependencyEntries = Effect.fn("dependencyEntries")(function* dependencyEntries(
+export const dependencyEntries = Effect.fn("dependencyEntries")(function* dependencyEntries(
   packageDirectory: string,
 ) {
   const files = yield* RepositoryFiles;
@@ -263,6 +263,3 @@ const dependencyEntries = Effect.fn("dependencyEntries")(function* dependencyEnt
     entryOrder,
   );
 });
-
-export { MANIFEST_FILE, NODE_MODULES, dependencyEntries, readManifest, workspaceDependencies };
-export type { DependencyEntry, Manifest };

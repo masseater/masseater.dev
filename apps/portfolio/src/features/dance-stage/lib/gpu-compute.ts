@@ -11,9 +11,9 @@ const EMPTY_BYTES = 8;
 const START = 0;
 const BINDINGS = { block: 0, density: 1, sampler: 2, dance: 3 } as const;
 
-type ComputeStage = Readonly<{ pipeline: GPUComputePipeline; workgroups: number }>;
+export type ComputeStage = Readonly<{ pipeline: GPUComputePipeline; workgroups: number }>;
 
-const computeLayoutOf: Fn<GPUDevice, GPUBindGroupLayout> = (device) =>
+export const computeLayoutOf: Fn<GPUDevice, GPUBindGroupLayout> = (device) =>
   device.createBindGroupLayout({
     entries: [
       {
@@ -35,7 +35,7 @@ const computeLayoutOf: Fn<GPUDevice, GPUBindGroupLayout> = (device) =>
     ],
   });
 
-const computePipelinesOf: Fn<
+export const computePipelinesOf: Fn<
   Readonly<{ device: GPUDevice; layout: GPUBindGroupLayout; computes: readonly GpuCompute[] }>,
   Promise<readonly GPUComputePipeline[]>
 > = ({ device, layout, computes }) => {
@@ -53,7 +53,7 @@ const computePipelinesOf: Fn<
   );
 };
 
-const densityOf: Fn<Readonly<{ device: GPUDevice; used: boolean }>, GPUBuffer> = ({
+export const densityOf: Fn<Readonly<{ device: GPUDevice; used: boolean }>, GPUBuffer> = ({
   device,
   used,
 }) => {
@@ -64,7 +64,7 @@ const densityOf: Fn<Readonly<{ device: GPUDevice; used: boolean }>, GPUBuffer> =
   });
 };
 
-const encodeComputes: Fn<
+export const encodeComputes: Fn<
   Readonly<{
     device: GPUDevice;
     encoder: GPUCommandEncoder;
@@ -98,6 +98,3 @@ const encodeComputes: Fn<
   }
   pass.end();
 };
-
-export type { ComputeStage };
-export { computeLayoutOf, computePipelinesOf, densityOf, encodeComputes };

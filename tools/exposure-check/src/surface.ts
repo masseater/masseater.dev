@@ -2,24 +2,24 @@ import { Array as Arr, Order, String as Str, pipe } from "effect";
 
 import type { AccessApp, Inventory } from "./inventory.ts";
 
-type Surface = Readonly<{
+export type Surface = Readonly<{
   hosts: readonly string[];
   workers: readonly string[];
   repositories: readonly string[];
 }>;
 
-type Observed = Readonly<{ inventory: Inventory; remembered: Surface }>;
+export type Observed = Readonly<{ inventory: Inventory; remembered: Surface }>;
 
 const ACCESS_TYPES: readonly string[] = ["self_hosted", "mcp_portal"];
 
-const WILDCARD = "*.";
+export const WILDCARD = "*.";
 
-const hostOf = (destination: string): string =>
+export const hostOf = (destination: string): string =>
   pipe(Str.split("/")(destination), Arr.headNonEmpty, Str.toLowerCase);
 
 const isAccessApp = (app: AccessApp): boolean => Arr.contains(ACCESS_TYPES, app.type);
 
-const accessApps = (inventory: Inventory): readonly AccessApp[] =>
+export const accessApps = (inventory: Inventory): readonly AccessApp[] =>
   pipe(inventory.apps, Arr.filter(isAccessApp));
 
 const covers =
@@ -44,17 +44,17 @@ const coversHost =
       Arr.some((destination) => covers(destination)(host)),
     );
 
-const coveringApp =
+export const coveringApp =
   (inventory: Inventory) =>
   (host: string): readonly AccessApp[] =>
     pipe(accessApps(inventory), Arr.filter(coversHost(host)));
 
-const isCovered =
+export const isCovered =
   (inventory: Inventory) =>
   (host: string): boolean =>
     Arr.isReadonlyArrayNonEmpty(coveringApp(inventory)(host));
 
-const routeHost = (pattern: string): string => hostOf(pattern);
+export const routeHost = (pattern: string): string => hostOf(pattern);
 
 const union = (...lists: readonly (readonly string[])[]): readonly string[] =>
   pipe(
@@ -104,7 +104,7 @@ const privateRepositories = ({ inventory, remembered }: Observed): readonly stri
     remembered.repositories,
   );
 
-const privateSurface = (observed: Observed): Surface => {
+export const privateSurface = (observed: Observed): Surface => {
   const hosts = privateHosts(observed);
   return {
     hosts,
@@ -112,6 +112,3 @@ const privateSurface = (observed: Observed): Surface => {
     repositories: privateRepositories(observed),
   };
 };
-
-export { WILDCARD, accessApps, coveringApp, hostOf, isCovered, privateSurface, routeHost };
-export type { Observed, Surface };

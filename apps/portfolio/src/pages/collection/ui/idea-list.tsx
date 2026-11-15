@@ -6,7 +6,7 @@ import type { Entry } from "#/entities/entry";
 
 const IDEA_SUMMARY = "アイデア段階のメモ";
 
-const IdeaList = ({
+export const IdeaList = ({
   ideas,
   starCounts,
 }: Readonly<{
@@ -22,5 +22,3 @@ const IdeaList = ({
     </div>
   </details>
 );
-
-export { IdeaList };

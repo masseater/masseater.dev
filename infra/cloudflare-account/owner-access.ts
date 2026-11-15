@@ -2,14 +2,14 @@ import { Access, CloudflareEnvironment } from "@alchemy.run/cloudflare";
 import { ownerStack } from "@masseater.dev/owner-stack";
 import { Effect } from "effect";
 
-type OwnerAccessProps = Readonly<{
+export type OwnerAccessProps = Readonly<{
   id: string;
   name: string;
   host: string;
   loopbackClients: boolean;
 }>;
 
-type OwnerMcpAccessProps = Readonly<{
+export type OwnerMcpAccessProps = Readonly<{
   id: string;
   name: string;
   host: string;
@@ -75,7 +75,7 @@ const ownerApplication = Effect.fn("ownerApplication")(function* ownerApplicatio
   });
 });
 
-const ownerAccess = Effect.fn("ownerAccess")(function* ownerAccess({
+export const ownerAccess = Effect.fn("ownerAccess")(function* ownerAccess({
   id,
   name,
   host,
@@ -94,7 +94,7 @@ const ownerAccess = Effect.fn("ownerAccess")(function* ownerAccess({
   });
 });
 
-const ownerMcpAccess = Effect.fn("ownerMcpAccess")(function* ownerMcpAccess({
+export const ownerMcpAccess = Effect.fn("ownerMcpAccess")(function* ownerMcpAccess({
   id,
   name,
   host,
@@ -120,6 +120,3 @@ const ownerMcpAccess = Effect.fn("ownerMcpAccess")(function* ownerMcpAccess({
   });
   return { ACCESS_TEAM_DOMAIN: team.authDomain, ACCESS_AUDIENCE: application.aud };
 });
-
-export { ownerAccess, ownerMcpAccess };
-export type { OwnerAccessProps, OwnerMcpAccessProps };

@@ -11,7 +11,7 @@ const LABEL = "コマンドをコピー";
 const commandFor = ({ url, token }: Mcp): string =>
   `claude mcp add --transport http yohaku ${url} --header "Authorization: Bearer ${token}"`;
 
-const CopyCommandButton = ({ mcp }: Readonly<{ mcp: Mcp }>): ReactNode => {
+export const CopyCommandButton = ({ mcp }: Readonly<{ mcp: Mcp }>): ReactNode => {
   const onClick = useCallback(() => {
     Effect.runFork(Effect.promise(() => navigator.clipboard.writeText(commandFor(mcp))));
   }, [mcp]);
@@ -22,5 +22,3 @@ const CopyCommandButton = ({ mcp }: Readonly<{ mcp: Mcp }>): ReactNode => {
     </Button>
   );
 };
-
-export { CopyCommandButton };

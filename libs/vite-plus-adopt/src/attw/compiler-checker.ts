@@ -12,7 +12,7 @@ import { resolveInDirectory } from "./resolver.ts";
 
 const DATA_FIRST_ARITY_3 = 3;
 
-interface CheckerSite {
+export interface CheckerSite {
   readonly core: HostWrapperCore;
   readonly mountRoot: string;
   readonly options: ProgramOptions;
@@ -60,7 +60,7 @@ const checkerResolver =
       Option.map((module) => ({ resolvedFileName: `${site.mountRoot}${module.resolvedFileName}` })),
     );
 
-const openChecker: {
+export const openChecker: {
   (
     files: readonly ProgramFile[],
     rootNames: readonly string[],
@@ -98,6 +98,3 @@ const openChecker: {
     });
   },
 );
-
-export { openChecker };
-export type { CheckerSite };

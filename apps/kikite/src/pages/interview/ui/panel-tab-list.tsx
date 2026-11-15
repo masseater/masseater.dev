@@ -16,7 +16,7 @@ const countOf = (panel: PanelLabel, open: number): number => {
   return NONE;
 };
 
-const PanelTabList = (): ReactNode => {
+export const PanelTabList = (): ReactNode => {
   const open = pipe(
     useSummary(),
     Option.match({ onNone: () => NONE, onSome: (summary) => summary.open.length }),
@@ -30,5 +30,3 @@ const PanelTabList = (): ReactNode => {
     </div>
   );
 };
-
-export { PanelTabList };

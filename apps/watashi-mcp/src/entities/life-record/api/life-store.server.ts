@@ -10,9 +10,9 @@ import { db, anyTermMatches, firstRow, query } from "#/shared/db/index.server";
 import { NONE, refOf } from "./life-record";
 import type { Body } from "./life-record";
 
-type LifeEntry = Readonly<{ row: LifeRow; body: Body }>;
+export type LifeEntry = Readonly<{ row: LifeRow; body: Body }>;
 
-type RecordScan = Readonly<{
+export type RecordScan = Readonly<{
   records: readonly LifeRecordName[];
   from: Option.Option<string>;
   to: Option.Option<string>;
@@ -20,11 +20,11 @@ type RecordScan = Readonly<{
   limit: number;
 }>;
 
-type LabelKey = Readonly<{ record: LifeRecordName; label: string }>;
+export type LabelKey = Readonly<{ record: LifeRecordName; label: string }>;
 
-type OpenSpan = Readonly<{ about: string; startedBy: string }>;
+export type OpenSpan = Readonly<{ about: string; startedBy: string }>;
 
-type OpenKey = LabelKey & OpenSpan;
+export type OpenKey = LabelKey & OpenSpan;
 
 type Newest = LabelKey & Readonly<{ open: Option.Option<OpenSpan> }>;
 
@@ -32,11 +32,11 @@ type Wanted = Omit<RecordScan, "limit"> & Readonly<{ label: Option.Option<string
 
 type Page = Readonly<{ wanted: Wanted; limit: number; offset: number }>;
 
-type CappedScan = Readonly<{ entries: readonly LifeEntry[]; limited: Body }>;
+export type CappedScan = Readonly<{ entries: readonly LifeEntry[]; limited: Body }>;
 
-type IdKey = Readonly<{ record: LifeRecordName; id: number }>;
+export type IdKey = Readonly<{ record: LifeRecordName; id: number }>;
 
-const SCAN_LIMIT = 5000;
+export const SCAN_LIMIT = 5000;
 
 const ONE_ROW = 1;
 
@@ -125,7 +125,7 @@ const rowsFrom = (
 const everyEntry = (wanted: Wanted): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
   rowsFrom(wanted, NO_OFFSET).pipe(Effect.flatMap(entriesOf));
 
-const scanRecords = (scan: RecordScan): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
+export const scanRecords = (scan: RecordScan): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
   pageOf({
     wanted: anyLabel(scan),
     limit: Math.min(scan.limit, SCAN_LIMIT),
@@ -146,7 +146,7 @@ const limitedOf = (limit: number, found: number): Body => {
   return {};
 };
 
-const scanCapped = (scan: RecordScan): Effect.Effect<CappedScan, StorageFailed> =>
+export const scanCapped = (scan: RecordScan): Effect.Effect<CappedScan, StorageFailed> =>
   pageOf({ wanted: anyLabel(scan), limit: scan.limit + ONE_ROW, offset: NO_OFFSET }).pipe(
     Effect.flatMap((rows) =>
       entriesOf(Arr.take(rows, scan.limit)).pipe(
@@ -155,7 +155,7 @@ const scanCapped = (scan: RecordScan): Effect.Effect<CappedScan, StorageFailed> 
     ),
   );
 
-const findRecord = ({
+export const findRecord = ({
   record,
   id,
 }: IdKey): Effect.Effect<LifeEntry, RecordNotFound | StorageFailed> =>
@@ -194,35 +194,25 @@ const newestOf = ({
   ).pipe(Effect.flatMap(entriesOf), Effect.map(Arr.head));
 };
 
-const findByLabel = (key: LabelKey): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> =>
+export const findByLabel = (
+  key: LabelKey,
+): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> =>
   newestOf({ ...key, open: Option.none() });
 
-const findOpen = ({
+export const findOpen = ({
   about,
   startedBy,
   ...key
 }: OpenKey): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> =>
   newestOf({ ...key, open: Option.some({ about, startedBy }) });
 
-const scanAll = (
+export const scanAll = (
   records: readonly LifeRecordName[],
 ): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
   everyEntry(wholeOf(records, Option.none()));
 
-const scanLabel = ({
+export const scanLabel = ({
   record,
   label,
 }: LabelKey): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
   everyEntry(wholeOf([record], Option.some(label)));
-
-export {
-  SCAN_LIMIT,
-  findByLabel,
-  findOpen,
-  findRecord,
-  scanAll,
-  scanCapped,
-  scanLabel,
-  scanRecords,
-};
-export type { CappedScan, IdKey, LabelKey, LifeEntry, OpenKey, OpenSpan, RecordScan };
