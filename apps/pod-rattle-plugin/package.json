@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "devDependencies": {
+    "@masseater.dev/component-release": "workspace:*",
+    "@masseater.dev/node-main": "workspace:*",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
     "vite-plus": "catalog:stack"
   }
 }

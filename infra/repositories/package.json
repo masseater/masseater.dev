@@ -16,6 +16,7 @@
     "@atproto/api": "catalog:",
     "@distilled.cloud/cloudflare": "catalog:stack",
     "@distilled.cloud/github": "catalog:",
+    "@masseater.dev/exposure-protocol": "workspace:*",
     "@octokit/rest": "catalog:",
     "@peculiar/asn1-pkcs8": "catalog:",
     "@peculiar/asn1-rsa": "catalog:",

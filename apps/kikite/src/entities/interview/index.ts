@@ -26,7 +26,6 @@ export type {
   Rating,
   Progress,
   Phase,
-  Input,
 } from "./model/atoms";
 export { heardFailure, heardInterim, heardSound, heardSpeech, touch } from "./model/heard";
 export { parseDraft } from "./lib/draft";
@@ -53,7 +52,7 @@ export {
   useLeads,
   useResearching,
 } from "./model/hooks";
-export type { Lead, Panel, Researching, Saving } from "./model/hooks";
+export type { Lead, Panel, Saving } from "./model/hooks";
 export { rated } from "./model/rate";
 export { saveAtom } from "./model/record";
 /** @internal */
