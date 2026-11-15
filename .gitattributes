@@ -5,5 +5,6 @@ routeTree.gen.ts linguist-generated
 **/src-tauri/gen/** linguist-generated
 tools/pod-rattle-parity/engine.gen.js linguist-generated
 pnpm-lock.yaml linguist-generated
+**/upstream/** linguist-vendored
 *.g.cs linguist-generated
 apps/aredoko-desktop/src-tauri/src/protocol.rs linguist-generated

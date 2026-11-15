@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { serveConversations } from "#/features/mcp/index.server";
+import { serveConversations } from "#/app/mcp/index.server";
 
 const handle = ({ request }: Readonly<{ request: Request }>): Promise<Response> =>
   serveConversations(request);

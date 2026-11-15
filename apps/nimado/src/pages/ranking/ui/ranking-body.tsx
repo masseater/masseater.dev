@@ -2,10 +2,9 @@ import type { Meta } from "@masseater.dev/nimado";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { generatedAt } from "#/pages/ranking/model/format";
-import { TEXT } from "#/pages/ranking/model/labels";
+import { generatedAt, TEXT } from "#/entities/ranking";
+import { RankingControls } from "#/features/filter-ranking";
 
-import { RankingControls } from "./ranking-controls";
 import { RankingResults } from "./ranking-results";
 
 const RankingBody = ({ meta }: Readonly<{ meta: typeof Meta.Type }>): ReactNode => {

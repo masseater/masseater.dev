@@ -20,8 +20,8 @@ sources:
   - src/**
   - README.md
   - example/**
-  - tests/skills/write-decision-rules/**
-  - tests/skill-write-decision-rules.test.ts
+  - src/skill-write-decision-rules.task.md
+  - src/skill-write-decision-rules.test.ts
 ---
 
 # Write decision rules

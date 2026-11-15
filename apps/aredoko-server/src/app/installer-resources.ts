@@ -13,7 +13,7 @@ import {
 } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
-import { fetchModel } from "#shared/embedding";
+import { fetchModel } from "#/shared/embedding/index.ts";
 
 const RESOURCES = "../aredoko-desktop/src-tauri/resources";
 const BUNDLE = "dist";

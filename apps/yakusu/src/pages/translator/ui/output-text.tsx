@@ -1,7 +1,7 @@
 import { cn } from "@masseater.dev/ui/cn";
 import type { ReactNode } from "react";
 
-import { useTranslation } from "#/pages/translator/api/translation.ts";
+import { useTranslation } from "#/entities/translation";
 
 const PLACEHOLDER = "翻訳";
 

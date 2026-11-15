@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
-import { pageLabel } from "#/pages/ranking/model/format";
-import { TEXT } from "#/pages/ranking/model/labels";
+import { pageLabel, TEXT } from "#/entities/ranking";
 
 import { PagerLink } from "./pager-link";
 

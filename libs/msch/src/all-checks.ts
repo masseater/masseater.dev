@@ -2,10 +2,9 @@ import { Array as Arr, Effect } from "effect";
 
 import { checkRepository } from "./check.ts";
 import { checkPublishedPackages } from "./install-size.ts";
-import { checkNestedDocs } from "./nested-docs.ts";
 import { checkOverrides } from "./overrides.ts";
+import { checkPlacement } from "./placement-checks.ts";
 import type { Problem } from "./problem.ts";
-import { checkRootReadme } from "./root-readme.ts";
 import { checkTrackedText } from "./tracked-text.ts";
 import { checkWorkspaces } from "./workspace-checks.ts";
 
@@ -31,8 +30,7 @@ const checkAll: (
       checkRepository(root),
       checkOverrides(root),
       checkTrackedText(root),
-      checkNestedDocs(root),
-      checkRootReadme(root),
+      checkPlacement(root),
       checkPublishedPackages(root),
       checkWorkspaces(root),
     ],

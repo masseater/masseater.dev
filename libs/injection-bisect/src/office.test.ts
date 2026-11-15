@@ -1,9 +1,9 @@
 import { Effect, Array as Arr, String as Str, Record as Rec, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { cleanedOf } from "./__tests__/fake-judge.ts";
-import { LINES, SAVED, documentOf, spreadsheetOf } from "./__tests__/office.ts";
 import { readDocument } from "./document.ts";
+import { cleanedOf } from "./fake-judge.test.support.ts";
+import { LINES, SAVED, documentOf, spreadsheetOf } from "./office.test.support.ts";
 
 const [TEXT, INJECTION] = LINES;
 

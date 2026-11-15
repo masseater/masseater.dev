@@ -1,0 +1,47 @@
+import { Array as Arr, Effect, Ref, Schedule } from "effect";
+
+import { recordingAtom, savingAtom } from "#/entities/interview/model/atoms";
+import { encodeRecord, recordOf } from "#/entities/interview/model/record";
+import { saveSession } from "#/shared/api";
+import { read, write } from "#/shared/lib/registry";
+import { runtime } from "#/shared/lib/runtime";
+
+const SAVE_EVERY = "3 seconds";
+
+const upload = Effect.fn("kikite.saveSession")(function* upload() {
+  const record = yield* recordOf;
+  if (Arr.isReadonlyArrayEmpty(record.entries)) {
+    return;
+  }
+  const { id } = yield* read(recordingAtom);
+  yield* write(savingAtom, { status: "saving" });
+  yield* saveSession({ id, record }).pipe(
+    Effect.matchEffect({
+      onSuccess: () => write(savingAtom, { status: "saved" }),
+      onFailure: ({ message }) => write(savingAtom, { status: "failed", message }),
+    }),
+  );
+});
+
+const saveIfChanged = Effect.fn("kikite.saveIfChanged")(function* saveIfChanged(
+  last: Ref.Ref<string>,
+) {
+  const json = yield* recordOf.pipe(Effect.flatMap(encodeRecord));
+  if (json === (yield* Ref.get(last))) {
+    return;
+  }
+  yield* upload();
+  if ((yield* read(savingAtom)).status === "saved") {
+    yield* Ref.set(last, json);
+  }
+});
+
+const autosaving = Effect.gen(function* autosaving() {
+  const last = yield* Ref.make("");
+  yield* Effect.repeat(saveIfChanged(last), Schedule.spaced(SAVE_EVERY));
+});
+
+const uploadAtom = runtime.fn(() => upload());
+
+/** @internal */
+export { autosaving, upload, uploadAtom };

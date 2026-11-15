@@ -22,14 +22,14 @@ export default defineConfig({
   },
   test: {
     testTimeout: 120_000,
-    include: ["tests/**/*.test.ts"],
+    include: ["src/**/*.test.ts"],
   },
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["test"] },
       build: "vp pack",
       test: {
-        command: "vp test run --exclude='tests/*live.test.ts'",
+        command: "vp test run --exclude='src/*live.test.ts'",
         dependsOn: ["build", "@r_masseater/oxlint-plugin-decision#build"],
       },
       "test:live": {

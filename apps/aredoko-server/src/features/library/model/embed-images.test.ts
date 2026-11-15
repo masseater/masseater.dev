@@ -2,8 +2,8 @@ import { expect, layer } from "@effect/vitest";
 import { Array, Effect, MutableRef, Option, Ref, String, Tracer, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { ASSET_ORDER, EMBEDDING } from "#shared/database";
-import { Embedder } from "#shared/embedding";
+import { ASSET_ORDER, EMBEDDING } from "#/shared/database/index.ts";
+import { Embedder } from "#/shared/embedding/index.ts";
 
 import { embedImages } from "./embed-images.ts";
 import {
