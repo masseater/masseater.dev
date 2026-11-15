@@ -1,3 +1,4 @@
+import { alchemyTasks } from "@masseater.dev/cloudflare-account/run-tasks";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -10,10 +11,9 @@ import { externalizeInlineScripts } from "./inline-scripts.ts";
 export default defineConfig({
   run: {
     tasks: {
+      ...alchemyTasks,
       verify: { command: [], dependsOn: ["typecheck"] },
       typecheck: "tsc --runExternalCode",
-      deploy: { command: "alchemy deploy", cache: false },
-      destroy: { command: "alchemy destroy", cache: false },
     },
   },
   resolve: { tsconfigPaths: true },
