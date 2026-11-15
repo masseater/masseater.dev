@@ -1,4 +1,4 @@
-FROM ubuntu:24.04 AS fetch
+FROM ubuntu:26.04 AS fetch
 ARG LLAMA_TAG=b12228
 ARG LLAMA_SHA256=61672e52aefe54ef3f90babf6a9fa4489f019ae61a5bdcd55d91caa6dc6e1cee
 ARG MODEL_REPOSITORY=pfnet/plamo-3-translate-0.8b-GGUF
@@ -25,7 +25,7 @@ RUN mkdir licenses \
   && curl --fail --silent --show-error --location --retry 3 --output licenses/llama.cpp-LICENSE.txt \
     "https://raw.githubusercontent.com/ggml-org/llama.cpp/${LLAMA_TAG}/LICENSE"
 
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 RUN apt-get update \
   && apt-get install --yes --no-install-recommends libgomp1 libssl3t64 \
   && rm -rf /var/lib/apt/lists/*
