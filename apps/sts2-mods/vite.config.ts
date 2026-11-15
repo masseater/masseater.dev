@@ -10,6 +10,10 @@ export default defineConfig({
       publish: { cache: false, command: "dotnet publish" },
       pck: { cache: false, command: "dotnet msbuild -restore -t:ExportPck" },
       "pck:all": { cache: false, command: "node scripts/export-all-pck.ts" },
+      "release:linux": {
+        cache: false,
+        command: "PCK_OUT=release-assets node scripts/export-all-pck.ts",
+      },
       "new-mod": {
         cache: false,
         command:
