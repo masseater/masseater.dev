@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
 
 import type { MemoValue, RevisionValue } from "#/entities/watashi";
+import { RestoreButton } from "#/features/edit-memo";
 import { shownTime } from "#/shared/model";
 import { Row } from "#/shared/ui";
-
-import { RestoreButton } from "./restore-button";
 
 const SHOWN = "本文";
 
