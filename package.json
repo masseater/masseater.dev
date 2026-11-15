@@ -48,6 +48,7 @@
       "@tanstack/router-plugin",
       "@tanstack/start-server-core",
       "fallow",
+      "workspace:@masseater.dev/effect2rs",
       "workspace:@r_masseater/msch"
     ]
   }

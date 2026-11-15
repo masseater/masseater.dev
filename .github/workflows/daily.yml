@@ -1,0 +1,129 @@
+name: daily
+
+on:
+  schedule:
+    - cron: "30 23 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  plan:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: read
+    outputs:
+      packages: ${{ steps.packages.outputs.packages }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: git fetch --unshallow --filter=blob:none origin
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - id: packages
+        run: vp run -r task-packages daily
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  run:
+    needs: plan
+    if: needs.plan.outputs.packages != '' && needs.plan.outputs.packages != '[]'
+    name: ${{ matrix.package.key }}
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        package: ${{ fromJSON(needs.plan.outputs.packages) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    environment: daily
+    concurrency:
+      group: daily-${{ matrix.package.key }}
+    permissions:
+      actions: write
+      contents: write
+      deployments: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - uses: masseater/typescript-template/.github/actions/credentials@d31880940798de1570171b0bd255ec9e69005d83
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          shared-key: daily-${{ matrix.package.name }}
+          save-if: ${{ strategy.job-index == 0 }}
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ matrix.package.directory }}/.persist
+          key: persist-${{ matrix.package.key }}-${{ github.run_id }}
+          restore-keys: |
+            persist-${{ matrix.package.key }}-
+      - run: vp run --filter "./$DIRECTORY" daily
+        env:
+          DIRECTORY: ${{ matrix.package.directory }}
+          ITEM: ${{ matrix.package.item }}
+          JOB_INDEX: ${{ strategy.job-index }}
+          GH_TOKEN: ${{ github.token }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      - if: ${{ !cancelled() && matrix.package.finally }}
+        run: vp run --filter "./$DIRECTORY" daily:finally
+        env:
+          DIRECTORY: ${{ matrix.package.directory }}
+          ITEM: ${{ matrix.package.item }}
+          GH_TOKEN: ${{ github.token }}
+      - if: ${{ !cancelled() && hashFiles(format('{0}/.persist/**', matrix.package.directory)) != '' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ matrix.package.directory }}/.persist
+          key: persist-${{ matrix.package.key }}-${{ github.run_id }}
+      - if: ${{ !cancelled() }}
+        run: vp run -r prune-caches
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: vp run -r record-deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOYMENT_ENVIRONMENT: daily
+          DEPLOYMENT_TASK: daily:${{ matrix.package.name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
+
+  after:
+    needs: run
+    if: ${{ !cancelled() && needs.run.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    environment: daily
+    concurrency:
+      group: daily-after
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - uses: masseater/typescript-template/.github/actions/credentials@d31880940798de1570171b0bd255ec9e69005d83
+      - run: vp run -r daily:after
+
+  ci-telemetry:
+    needs: [plan, run, after]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@d31880940798de1570171b0bd255ec9e69005d83
+        with:
+          github-token: ${{ github.token }}
