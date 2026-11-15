@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { outputOf, writeOutputs } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
-import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
 import { isChanged, nameOf, workspace } from "./changes.ts";
 

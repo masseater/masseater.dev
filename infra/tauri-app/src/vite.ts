@@ -29,37 +29,37 @@ const browserTest = (viewport: Readonly<{ width: number; height: number }>): Use
 const cargoCommand = (crate: string): string =>
   `cargo fmt -p ${crate} --check && cargo clippy -p ${crate} --all-targets --locked -- -D warnings && cargo test -p ${crate} --locked`;
 
-export const tauriAppConfig = ({
+export const tauriAppTasks = ({
   crate,
+  workspaceInputs,
+}: Readonly<{ crate: string; workspaceInputs: readonly string[] }>): NonNullable<
+  NonNullable<UserConfig["run"]>["tasks"]
+> => ({
+  cargo: {
+    command: cargoCommand(crate),
+    cache: {
+      input: [
+        "src-tauri/**",
+        "!src-tauri/gen/**",
+        "!src-tauri/target/**",
+        ...pipe(
+          [...CARGO_INPUTS, ...workspaceInputs],
+          Array.map((pattern) => ({ pattern, base: "workspace" as const })),
+        ),
+      ],
+      output: [],
+    },
+  },
+});
+
+export const tauriAppConfig = ({
   devPort,
   viewport,
-  workspaceInputs,
 }: Readonly<{
-  crate: string;
   devPort: number;
   viewport: Option.Option<Readonly<{ width: number; height: number }>>;
-  workspaceInputs: readonly string[];
 }>): UserConfig => {
   const base: UserConfig = {
-    run: {
-      tasks: {
-        cargo: {
-          command: cargoCommand(crate),
-          cache: {
-            input: [
-              "src-tauri/**",
-              "!src-tauri/gen/**",
-              "!src-tauri/target/**",
-              ...pipe(
-                [...CARGO_INPUTS, ...workspaceInputs],
-                Array.map((pattern) => ({ pattern, base: "workspace" as const })),
-              ),
-            ],
-            output: [],
-          },
-        },
-      },
-    },
     resolve: { tsconfigPaths: true },
     plugins: [tailwindcss(), viteReact()],
     clearScreen: false,

@@ -6,9 +6,6 @@
   "devDependencies": {
     "@masseater.dev/component-release": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",
-    "@masseater.dev/pod-rattle-engine": "workspace:*",
-    "@masseater.dev/pod-rattle-host": "workspace:*",
-    "@masseater.dev/xtask": "workspace:*",
     "@types/node": "catalog:",
     "effect": "catalog:stack",
     "vite-plus": "catalog:stack"

@@ -45,27 +45,39 @@ const neighborsOf = (packages: Packages, directory: string): readonly string[] =
   return [...dependencies, ...devDependencies];
 };
 
-const closureOf = (packages: Packages, start: readonly string[]): readonly string[] => {
-  const seen = new Set(start);
-  const queue = [...start];
-  for (const directory of queue) {
-    for (const next of neighborsOf(packages, directory)) {
-      if (!seen.has(next)) {
-        seen.add(next);
-        queue.push(next);
+/** @internal */
+export const closure =
+  (neighbors: (node: string) => readonly string[]) =>
+  (start: readonly string[]): readonly string[] => {
+    const seen = new Set(start);
+    const queue = [...start];
+    for (const node of queue) {
+      const unseen = pipe(
+        neighbors(node),
+        Arr.filter((candidate) => !seen.has(candidate)),
+      );
+      for (const candidate of unseen) {
+        seen.add(candidate);
+        queue.push(candidate);
       }
     }
-  }
-  return [...seen];
-};
+    return [...seen];
+  };
+
+const SHARED: readonly ((file: string) => boolean)[] = [
+  Str.startsWith(".github/actions/"),
+  Str.startsWith("patches/"),
+  (file) => !Str.includes("/")(file) && !Str.endsWith(".md")(file),
+];
 
 const isShared =
   (workflows: readonly string[]) =>
   (file: string): boolean =>
     Arr.contains(workflows, file) ||
-    Str.startsWith(".github/actions/")(file) ||
-    Str.startsWith("patches/")(file) ||
-    (!Str.includes("/")(file) && !Str.endsWith(".md")(file));
+    pipe(
+      SHARED,
+      Arr.some((matches) => matches(file)),
+    );
 
 const lastMarked = Effect.fn("lastMarked")(
   function* lastMarked(prefix: string) {
@@ -99,11 +111,12 @@ export type Changes = Readonly<{
   packages: Packages;
   marker: string;
   workflows: readonly string[];
+  extra?: (directory: string) => readonly string[];
 }>;
 
 /** @internal */
 export const isChanged = Effect.fn("isChanged")(function* isChanged(
-  { packages, marker, workflows }: Changes,
+  { packages, marker, workflows, extra = (): readonly string[] => [] }: Changes,
   stack: Readonly<{ name: string; directories: readonly string[] }>,
 ) {
   const last = yield* lastMarked(`${marker}${stack.name}-`);
@@ -115,7 +128,8 @@ export const isChanged = Effect.fn("isChanged")(function* isChanged(
     }),
   );
   const directories = pipe(
-    closureOf(packages, stack.directories),
+    stack.directories,
+    closure((directory) => [...neighborsOf(packages, directory), ...extra(directory)]),
     Arr.filter((directory) => directory !== ROOT),
   );
   const touched = (file: string): boolean =>
