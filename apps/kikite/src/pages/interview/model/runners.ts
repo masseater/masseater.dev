@@ -8,6 +8,8 @@ const runners = Effect.gen(function* runners() {
   return {
     asking: yield* FiberHandle.makeRuntime<Services>(),
     summarizing: yield* FiberHandle.makeRuntime<Services>(),
+    researching: yield* FiberHandle.makeRuntime<Services>(),
+    correcting: yield* FiberHandle.makeRuntime<Services>(),
     events: yield* FiberSet.makeRuntime<Services>(),
   };
 });

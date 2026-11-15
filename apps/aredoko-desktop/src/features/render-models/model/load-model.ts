@@ -2,7 +2,8 @@ import { Array, Deferred, Duration, Effect, Option, Record, String, pipe } from 
 import type { LoadingManager } from "three";
 
 import { baseName, managerFor } from "./file-urls.ts";
-import { PARSERS, unreadable } from "./parsers.ts";
+import { unreadable } from "./gltf-scene.ts";
+import { PARSERS } from "./parsers.ts";
 import type { ModelSource } from "./parsers.ts";
 import { ignoreVertexColorsOnTextures } from "./vertex-colors.ts";
 

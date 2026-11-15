@@ -7,6 +7,7 @@ import {
   askingAtom,
   entriesAtom,
   heardAtom,
+  hearingAtom,
   interimAtom,
   listeningAtom,
   nudgeAtom,
@@ -83,5 +84,9 @@ const heardFailure = Effect.fn("kikite.heardFailure")(function* heardFailure(mes
   yield* write(listeningAtom, { status: "failed", message });
 });
 
+const heardSound = Effect.fn("kikite.heardSound")(function* heardSound(hearing: boolean) {
+  yield* write(hearingAtom, hearing);
+});
+
 /** @internal */
-export { heardFailure, heardInterim, heardSpeech, touch };
+export { heardFailure, heardInterim, heardSound, heardSpeech, touch };

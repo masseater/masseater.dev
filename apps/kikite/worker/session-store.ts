@@ -27,6 +27,27 @@ const listSessions = Effect.tryPromise({
   catch: failed,
 });
 
+const MEMORY_SESSIONS = 20;
+
+const allRecords = Effect.tryPromise({
+  try: () =>
+    db
+      .select({ id: sessions.id, record: sessions.record })
+      .from(sessions)
+      .orderBy(desc(sessions.startedAt)),
+  catch: failed,
+});
+
+const recentRecords = Effect.tryPromise({
+  try: () =>
+    db
+      .select({ record: sessions.record })
+      .from(sessions)
+      .orderBy(desc(sessions.startedAt))
+      .limit(MEMORY_SESSIONS),
+  catch: failed,
+}).pipe(Effect.map(Arr.map(({ record }) => record)));
+
 const readSession = (id: string): Effect.Effect<Option.Option<string>, StoreFailed> =>
   Effect.tryPromise({
     try: () => db.select({ record: sessions.record }).from(sessions).where(eq(sessions.id, id)),
@@ -51,5 +72,5 @@ const storeSession = (session: StoredSession): Effect.Effect<void, StoreFailed> 
     catch: failed,
   }).pipe(Effect.asVoid);
 
-export { listSessions, readSession, storeSession };
+export { allRecords, listSessions, readSession, recentRecords, storeSession };
 export type { StoredSession };
