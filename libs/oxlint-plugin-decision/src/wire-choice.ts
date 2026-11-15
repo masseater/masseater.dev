@@ -155,6 +155,19 @@ const choiceQuestionsOf = (
     }),
   );
 
+const collapseChoices: {
+  (answers: Answers): (request: DecisionRequest) => Answers;
+  (request: DecisionRequest, answers: Answers): Answers;
+} = Fn.dual(DATA_FIRST_ARITY, (request: DecisionRequest, answers: Answers): Answers => ({
+  ...answers,
+  ...Rec.fromEntries(
+    pipe(
+      choiceQuestionsOf(request),
+      Arr.flatMap((entry) => choiceFromYesNo(answers, entry)),
+    ),
+  ),
+}));
+
 const withChoices: {
   (answers: Answers): (request: DecisionRequest) => Answers;
   (request: DecisionRequest, answers: Answers): Answers;
@@ -162,16 +175,8 @@ const withChoices: {
   if (!isRespan(request.model)) {
     return answers;
   }
-  return {
-    ...answers,
-    ...Rec.fromEntries(
-      pipe(
-        choiceQuestionsOf(request),
-        Arr.flatMap((entry) => choiceFromYesNo(answers, entry)),
-      ),
-    ),
-  };
+  return collapseChoices(request, answers);
 });
 
-export { isRespan, isSeverityScale, levelsAboveNone, optionIdOf, withChoices };
+export { collapseChoices, isRespan, isSeverityScale, levelsAboveNone, optionIdOf, withChoices };
 export type { ChoiceCriteria };

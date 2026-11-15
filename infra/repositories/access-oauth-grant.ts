@@ -3,9 +3,9 @@ import type { TokenEndpointResponse } from "oauth4webapi";
 
 import { failed, failedWith } from "./access-oauth-failed.ts";
 import type { AccessOAuthFailed } from "./access-oauth-failed.ts";
-import type { AccessSite } from "./access-sites.ts";
 import { readRow, swapSealed, writeSealed } from "./app-store.ts";
 import type { AppStoreEnv } from "./app-store.ts";
+import type { OAuthTargetId } from "./oauth-targets.ts";
 import { unseal } from "./sealed-value.ts";
 
 const MILLISECONDS = 1000;
@@ -25,12 +25,12 @@ type StoredGrant = Readonly<{ stored: string; grant: AccessGrant }>;
 
 type GrantSwap = Readonly<{
   env: AppStoreEnv;
-  site: AccessSite;
+  site: OAuthTargetId;
   expected: Option.Option<string>;
   grant: AccessGrant;
 }>;
 
-const grantKey = (site: AccessSite): string => `access_oauth_grant:${site}`;
+const grantKey = (site: OAuthTargetId): string => `access_oauth_grant:${site}`;
 
 type IssuedTokens = Readonly<{
   tokens: Readonly<Pick<TokenEndpointResponse, "access_token" | "refresh_token" | "expires_in">>;
@@ -60,7 +60,7 @@ const grantFrom = ({
 const readGrant = ({
   env,
   site,
-}: Readonly<{ env: AppStoreEnv; site: AccessSite }>): Effect.Effect<
+}: Readonly<{ env: AppStoreEnv; site: OAuthTargetId }>): Effect.Effect<
   Option.Option<StoredGrant>,
   AccessOAuthFailed
 > =>

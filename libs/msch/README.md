@@ -44,6 +44,7 @@ Vite+ はワークスペースの `vite.config.ts` の `lint` を使わない。
 `use` は、ルートが `workspaceSettings` に渡す `ruleSets` と `dependencySets` の名前を指す。
 import した値が要る規則と依存は、ルートの集合に名前を付けて置く。
 `test` タスクを持たないワークスペースは `testProjects` に入り、ルートの `vp test` が動かす。
+`workspaceSettings` はタスクも返す。`tasks.verify` は、`vite.config.ts` が `verify` タスクを書く各ワークスペースの `verify` タスクを列挙し、ルートの `verify` はそれらに依存する。
 `components.json` の `aliases.ui` は `package.json` の `imports` で解決し、shadcn の部品の置き場を `lint.shadcnUi` として返す。
 `package.json` の `exports` と `bin` が指すファイルは `lint.publicEntries` として返す。`dist` を指す入口は、`pack.entry` から元のファイルをたどる。プラグインや textlint のルールのように、読み込む側が default export を求める入口に使う。
 
@@ -60,6 +61,7 @@ Python は使わない方針なので、`.py`・`pyproject.toml`・`uv.lock` な
 案内文書は、`AGENTS.md`・`CLAUDE.md` をルートにだけ置かせる。
 ルートの `vite.config.ts` の文字列がワークスペースの中を指していると指摘する。そのワークスペースだけの設定は、そのワークスペースの `vite.config.ts` に移す。
 Cargo のワークスペースがあれば、`verify` タスクを持つワークスペースの中にない crate を指摘する。
+msch は、`vite.config.ts` の `verify` タスクを別のファイル内のコードから取得しているワークスペースを指摘する。ルートの `verify` は `vite.config.ts` を実行せずに読み込むため、その `verify` を一度も実行しないからである。
 ルートの `vite.config.ts` に `msch: { workspaceAgentsMd: true }` と書くと、ワークスペース（`package.json` のあるディレクトリ）の直下にも `AGENTS.md` を置ける。`CLAUDE.md` はルートだけに置く。
 README はルートまたはワークスペースのディレクトリ（`git ls-files` に載る `package.json` が格納されているディレクトリ）でのみ許可される。
 msch は、ワークスペースのパス、ディレクトリ名、パッケージ名のいずれかを記載したルートの README を指摘する。ルートの README はリポジトリ全体について説明し、各ワークスペースの使用方法はそのワークスペースの README に記載する。

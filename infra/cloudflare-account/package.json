@@ -4,14 +4,14 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./account": "./account.ts",
     "./auth-site": "./auth-site.ts",
     "./edge-guard": "./edge-guard.ts",
-    "./log-archive": "./log-archive.ts",
     "./trace-destination": "./trace-destination.ts",
     "./traced-providers": "./traced-providers.ts",
-    "./account-readers": "./account-readers.ts",
     "./owner-access": "./owner-access.ts",
-    "./owner-site-run": "./owner-site-run.ts"
+    "./owner-site-run": "./owner-site-run.ts",
+    "./run-tasks": "./run-tasks.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

@@ -14,6 +14,7 @@ export default defineConfig(
     test: { server: { deps: { inline: ["@effect/vitest"] } } },
     run: {
       tasks: {
+        verify: { command: [], dependsOn: ["cargo"] },
         "dev:app": {
           command:
             "set WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222&& set OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318&& set OTEL_TRACES_EXPORTER=otlp&& tauri dev",

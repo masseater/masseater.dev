@@ -182,20 +182,24 @@ export default defineConfig({
     cache: true,
     tasks: {
       ...checkTasks,
-      fallow: [
-        "fallow --skip dupes --fail-on-issues --quiet --format compact",
-        "fallow dead-code --no-production --fail-on-issues --quiet --format compact",
-        "fallow dead-code --no-production --quiet --format json | jq -n 'input | {prop_drilling_chains, thin_wrappers, duplicate_prop_shapes} | with_entries(select(.value | length > 0)) | if length > 0 then halt_error else empty end'",
-        "fallow dupes --fail-on-issues --quiet --format compact",
-        "fallow security --fail-on-issues --quiet",
-      ],
+      fallow: {
+        command: [
+          "fallow --skip dupes --fail-on-issues --quiet --format compact",
+          "fallow dead-code --no-production --fail-on-issues --quiet --format compact",
+          "fallow dead-code --no-production --quiet --format json | jq -n 'input | {prop_drilling_chains, thin_wrappers, duplicate_prop_shapes} | with_entries(select(.value | length > 0)) | if length > 0 then halt_error else empty end'",
+          "fallow dupes --fail-on-issues --quiet --format compact",
+          "fallow security --fail-on-issues --quiet",
+        ],
+        cache: { input: [{ auto: true }, "!.fallow/**", "!target/**"], output: [] },
+      },
       "workflow-rules":
         "ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows",
       check: {
         command: "GOMEMLIMIT=4GiB vp check --deny-warnings",
         cache: {
-          env: ["OPENROUTER_API_KEY"],
+          env: ["CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_AI_GATEWAY_ID"],
           untrackedEnv: [
+            "CLOUDFLARE_API_TOKEN",
             "CLAUDECODE",
             "CLAUDE_CODE_REMOTE",
             "HTTPS_PROXY",
@@ -208,8 +212,9 @@ export default defineConfig({
         },
       },
       verify: {
-        command: "vp run -r verify",
+        command: [],
         dependsOn: [
+          ...workspace.tasks.verify,
           "check",
           "test",
           "vpa",
@@ -221,7 +226,10 @@ export default defineConfig({
           "audit",
         ],
       },
-      test: "vp test run",
+      test: {
+        command: "vp test run",
+        cache: { input: [{ auto: true }, "!**/.cache/**", "!target/**"] },
+      },
       msch: {
         command: "msch",
         cache: {

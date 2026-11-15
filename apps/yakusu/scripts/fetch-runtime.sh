@@ -5,7 +5,8 @@ llama_tag=b12228
 model_repository=pfnet/plamo-3-translate-0.8b-GGUF
 model_revision=1cf96ae02133958a20074bfdfab76517bb737d00
 
-case "${1:?usage: fetch-runtime.sh linux-x64|macos-arm64|windows-x64}" in
+platform="${1:?usage: fetch-runtime.sh linux-x64|macos-arm64|windows-x64}"
+case "$platform" in
   linux-x64)
     asset="llama-$llama_tag-bin-ubuntu-x64.tar.gz"
     asset_sha256=61672e52aefe54ef3f90babf6a9fa4489f019ae61a5bdcd55d91caa6dc6e1cee
@@ -88,6 +89,41 @@ keep_server_closure() {
   mv "$kept" "$llama"
 }
 
+ship_msvc_runtime() {
+  local llama="$1" vswhere crt dumpbin file name changed
+  vswhere="/c/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe"
+  crt="$("$vswhere" -latest -products "*" -find "VC/Redist/MSVC/*/x64/Microsoft.VC*.CRT" | tr -d "\r" | sort | tail -n 1)"
+  dumpbin="$("$vswhere" -latest -products "*" -find "VC/Tools/MSVC/*/bin/Hostx64/x64/dumpbin.exe" | tr -d "\r" | sort | tail -n 1)"
+  if [ -z "$crt" ] || [ -z "$dumpbin" ]; then
+    echo "the Visual C++ redistributable or dumpbin was not found; install Visual Studio with the C++ workload" >&2
+    exit 1
+  fi
+  crt="$(cygpath -u "$crt")"
+  changed=1
+  while [ "$changed" -eq 1 ]; do
+    changed=0
+    for file in "$llama"/*.exe "$llama"/*.dll; do
+      while read -r name; do
+        if [ ! -f "$llama/$name" ] && [ -f "$crt/$name" ]; then
+          cp "$crt/$name" "$llama/$name"
+          changed=1
+        fi
+      done < <("$dumpbin" -nologo -dependents "$(cygpath -w "$file")" | tr -d "\r" | awk "/^ +[^ ]+\\.[dD][lL][lL]$/ {print \$1}")
+    done
+  done
+  for file in "$llama"/*.exe "$llama"/*.dll; do
+    while read -r name; do
+      case "$name" in
+        api-ms-win-* | ext-ms-win-*) continue ;;
+      esac
+      if [ ! -f "$llama/$name" ] && [ ! -f "/c/Windows/System32/$name" ]; then
+        echo "$(basename "$file") needs $name, which is neither shipped nor part of Windows" >&2
+        exit 1
+      fi
+    done < <("$dumpbin" -nologo -dependents "$(cygpath -w "$file")" | tr -d "\r" | awk "/^ +[^ ]+\\.[dD][lL][lL]$/ {print \$1}")
+  done
+}
+
 archive="$resources/archives/$asset"
 if ! { [ -f "$archive" ] && checksum "$asset_sha256" "$archive"; }; then
   rm -rf "$resources/archives"
@@ -103,6 +139,9 @@ case "$asset" in
   *) tar -xzf "$archive" -C "$resources/llama" --strip-components=1 ;;
 esac
 keep_server_closure "$resources/llama" "$resources/licenses"
+if [ "$platform" = windows-x64 ]; then
+  ship_msvc_runtime "$resources/llama"
+fi
 
 download "https://huggingface.co/$model_repository/resolve/$model_revision/LICENSE/ja" "$resources/licenses/PLaMo-Community-License-ja.txt"
 download "https://huggingface.co/$model_repository/resolve/$model_revision/LICENSE/en" "$resources/licenses/PLaMo-Community-License-en.txt"

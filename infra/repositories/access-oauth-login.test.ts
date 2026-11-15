@@ -98,3 +98,84 @@ test("同じ state で 2 回戻ってきたら 2 回目は断る", () =>
       expect(again.status).toBe(BAD_REQUEST);
     }),
   ));
+
+const TWILOG = "https://twilog-mcp.togetter.dev";
+const TWILOG_SITE = "twilog/u1_mas";
+
+const TWILOG_ROUTES: Readonly<Record<string, () => Response>> = {
+  [`GET ${TWILOG}/.well-known/oauth-protected-resource/mcp`]: () =>
+    json({ resource: `${TWILOG}/mcp`, authorization_servers: [TWILOG] }),
+  [`GET ${TWILOG}/.well-known/oauth-authorization-server`]: () =>
+    json({
+      issuer: TWILOG,
+      authorization_endpoint: `${TWILOG}/authorize`,
+      token_endpoint: `${TWILOG}/token`,
+      registration_endpoint: `${TWILOG}/register`,
+      code_challenge_methods_supported: ["S256"],
+    }),
+  [`POST ${TWILOG}/register`]: () =>
+    json({ client_id: "twilog-client", token_endpoint_auth_method: "none" }, CREATED),
+  [`POST ${TWILOG}/token`]: () =>
+    json({
+      access_token: "twilog-access",
+      token_type: "bearer",
+      expires_in: 3600,
+      refresh_token: "twilog-refresh",
+    }),
+};
+
+const fakeTwilog: typeof fetch = (input, init) => {
+  const request = new Request(input, init);
+  const url = new URL(request.url);
+  const answer = Option.fromNullishOr(
+    TWILOG_ROUTES[`${request.method} ${url.origin}${url.pathname}`],
+  );
+  return Promise.resolve(
+    Option.match(answer, {
+      onNone: () => new Response("", { status: NOT_FOUND }),
+      onSome: (respond) => respond(),
+    }),
+  );
+};
+
+test("twilog のアカウントは twilog の認可サーバーへ scope と MCP の resource を付けて送る", () =>
+  Effect.runPromise(
+    Effect.gen(function* twilogLogin() {
+      vi.stubGlobal("fetch", fakeTwilog);
+      const { env } = memoryStore();
+      const login = new URL(`${BROKER}/access-oauth/login`);
+      login.searchParams.set("site", TWILOG_SITE);
+      const started = yield* route(env, login.href);
+      const location = new URL(started.headers.get("location") ?? BROKER);
+      expect([started.status, location.origin, location.pathname]).toStrictEqual([
+        FOUND,
+        TWILOG,
+        "/authorize",
+      ]);
+      expect([
+        location.searchParams.get("scope"),
+        location.searchParams.get("resource"),
+        location.searchParams.get("client_id"),
+      ]).toStrictEqual(["twilog.read offline_access", `${TWILOG}/mcp`, "twilog-client"]);
+    }),
+  ));
+
+test("twilog のアカウントごとに別のトークンとして保存する", () =>
+  Effect.runPromise(
+    Effect.gen(function* twilogGrant() {
+      vi.stubGlobal("fetch", fakeTwilog);
+      const { env, rows } = memoryStore();
+      const login = new URL(`${BROKER}/access-oauth/login`);
+      login.searchParams.set("site", TWILOG_SITE);
+      const started = yield* route(env, login.href);
+      const finished = yield* route(
+        env,
+        `${BROKER}/access-oauth/callback?code=${CODE}&state=${stateOf(started)}`,
+      );
+      expect(finished.status).toBe(OK);
+      expect([
+        Option.isSome(rows.get(`access_oauth_grant:${TWILOG_SITE}`)),
+        Option.isSome(rows.get("access_oauth_grant:twilog/r_masseater")),
+      ]).toStrictEqual([true, false]);
+    }),
+  ));

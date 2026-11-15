@@ -101,7 +101,6 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -126,7 +125,7 @@ jobs:
       - run: vp exec --filter portfolio alchemy deploy --config alchemy.zone.ts --stage prod --yes
 
   mcp-portal:
-    needs: [deploy, watashi-mcp, sundries]
+    needs: [deploy, watashi-mcp, sundries, twilog-mcp, money]
     if: needs.deploy.outputs.latest == 'true'
     runs-on: ubuntu-latest
     environment: mcp-portal
@@ -224,6 +223,47 @@ jobs:
       - run: vp exec --filter sundries alchemy deploy --stage prod --yes
       - run: vp run --filter sundries access-check
 
+  twilog-mcp:
+    needs: deploy
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    environment: twilog-mcp
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: twilog-mcp
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp exec --filter twilog-mcp alchemy deploy --stage prod --yes
+      - run: vp run --filter twilog-mcp access-check
+
+  money:
+    needs: deploy
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    environment: money
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: money
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp exec --filter money alchemy deploy --stage prod --yes
+      - run: vp run --filter money access-check
   kikite:
     needs: deploy
     if: needs.deploy.outputs.latest == 'true'
@@ -431,6 +471,27 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  private-names:
+    needs: deploy
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    environment: private-names
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          path: masseater.dev
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          repository: masseater/skills
+          path: skills
+      - run: masseater.dev/.github/scripts/github-token.sh
+      - run: masseater.dev/.github/scripts/private-names.sh masseater.dev skills
 
   zenn:
     needs: verify
@@ -763,6 +824,8 @@ jobs:
         three-twelve,
         watashi-mcp,
         sundries,
+        twilog-mcp,
+        money,
         kikite,
         plamo-translate,
         yohaku-sync,
@@ -773,6 +836,7 @@ jobs:
         web-vitals,
         sts2-pck,
         github,
+        private-names,
         zenn,
         mosaic-plan,
         mosaic-character,
@@ -825,6 +889,7 @@ jobs:
         three-twelve,
         watashi-mcp,
         sundries,
+        twilog-mcp,
         kikite,
         plamo-translate,
         yohaku-sync,
@@ -835,6 +900,7 @@ jobs:
         web-vitals,
         sts2-pck,
         github,
+        private-names,
         zenn,
         mosaic-plan,
         mosaic-character,

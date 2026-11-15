@@ -14,25 +14,29 @@ import type { AccessGrant } from "./access-oauth-grant.ts";
 import { Site } from "./access-oauth-login.ts";
 import { connect, loginUrlOf, resourceOf } from "./access-oauth-server.ts";
 import type { SiteContext } from "./access-oauth-server.ts";
-import type { AccessSite } from "./access-sites.ts";
 import type { AppStoreEnv } from "./app-store.ts";
+import type { OAuthTargetId } from "./oauth-targets.ts";
 
 const REFRESH_MARGIN_MS = 60_000;
-const BAD_GATEWAY = 502;
 
 type SiteToken =
-  | Readonly<{ status: "ok"; site: AccessSite; accessToken: string; expiresAt: string }>
-  | Readonly<{ status: "login"; site: AccessSite; loginUrl: string }>;
+  | Readonly<{ status: "ok"; site: OAuthTargetId; accessToken: string; expiresAt: string }>
+  | Readonly<{ status: "login"; site: OAuthTargetId; loginUrl: string }>
+  | Readonly<{ status: "failed"; site: OAuthTargetId; message: string }>;
+
+interface AccessOAuthRpc extends Rpc.WorkerEntrypointBranded {
+  token: (site: OAuthTargetId) => Promise<SiteToken>;
+}
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 
-const loginNeeded = (site: AccessSite): SiteToken => ({
+const loginNeeded = (site: OAuthTargetId): SiteToken => ({
   status: "login",
   site,
   loginUrl: loginUrlOf(site),
 });
 
-const issued = (site: AccessSite, grant: AccessGrant): SiteToken => ({
+const issued = (site: OAuthTargetId, grant: AccessGrant): SiteToken => ({
   status: "ok",
   site,
   accessToken: grant.accessToken,
@@ -118,21 +122,17 @@ const tokenFor = ({ env, site }: SiteContext): Effect.Effect<SiteToken, AccessOA
     return yield* rotate({ env, site, stored, grant });
   });
 
-const siteParameter = (request: Request): string | null =>
-  new URL(request.url).searchParams.get("site");
-
-class AccessOAuth extends WorkerEntrypoint<AppStoreEnv> {
-  public override fetch(request: Request): Promise<Response> {
+class AccessOAuth extends WorkerEntrypoint<AppStoreEnv> implements AccessOAuthRpc {
+  public token(site: OAuthTargetId): Promise<SiteToken> {
     const { env } = this;
     return runner(logger)(
-      Schema.decodeUnknownEffect(Site)(siteParameter(request)).pipe(
-        Effect.mapError(() => failedWith("site is not one of the Access sites")),
-        Effect.flatMap((site) => tokenFor({ env, site })),
-        Effect.map((token) => Response.json(token)),
+      Schema.decodeEffect(Site)(site).pipe(
+        Effect.mapError(() => failedWith("site is not one of the OAuth targets")),
+        Effect.flatMap((target) => tokenFor({ env, site: target })),
         Effect.catchTag("AccessOAuthFailed", ({ message }) =>
           Effect.logError("access_oauth.token_failed").pipe(
             Effect.annotateLogs({ reason: message }),
-            Effect.as(new Response("", { status: BAD_GATEWAY })),
+            Effect.as<SiteToken>({ status: "failed", site, message }),
           ),
         ),
       ),
@@ -141,4 +141,5 @@ class AccessOAuth extends WorkerEntrypoint<AppStoreEnv> {
 }
 
 export { AccessOAuth };
+export type { AccessOAuthRpc, SiteToken };
 export { accessOAuthRoute } from "./access-oauth-login.ts";
