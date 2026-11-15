@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
+import { MoreSlot } from "#/features/page-utterances";
 import { useConversation } from "#/pages/conversation/api/conversation-query";
 
-import { MoreSlot } from "./more-slot";
 import { UtteranceList } from "./utterance-list";
 
 export const ConversationPage = (): ReactNode => {
