@@ -47,8 +47,25 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+  tailnet:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r deploy:tailnet
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
   broker:
-    needs: bootstrap
+    needs: [bootstrap, tailnet]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
@@ -86,7 +103,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@eeeed3cd1ec6cbeabc464f7b1a0bd727703bfd7c
+      - uses: masseater/typescript-template/.github/actions/credentials@d931a8843e20a6675286de4aae013da4778a72d6
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -116,7 +133,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@eeeed3cd1ec6cbeabc464f7b1a0bd727703bfd7c
+      - uses: masseater/typescript-template/.github/actions/credentials@d931a8843e20a6675286de4aae013da4778a72d6
       - uses: $/.github/actions/setup
         with:
           native: "false"

@@ -1,22 +1,26 @@
-import { run } from "@masseater.dev/component-release";
+import { repositoryRoot, run } from "@masseater.dev/component-release";
 import { runMain } from "@masseater.dev/node-main";
-import { Effect } from "effect";
+import { Effect, Path } from "effect";
 
 import { CLAP, bundlesWith } from "./lib/bundled.ts";
 
-const VERSION = "0.4.1";
-const REPOSITORY = "https://github.com/free-audio/clap-validator";
-
-const validate = (bundle: string): ReturnType<typeof run> =>
-  run({ file: "clap-validator", args: ["validate", bundle] });
-
 runMain("pod-rattle-clap-validator")(
   Effect.gen(function* clapValidator() {
-    yield* run({
-      file: "cargo",
-      args: ["install", "--locked", "--git", REPOSITORY, "--tag", VERSION, "clap-validator"],
-    });
+    const path = yield* Path.Path;
+    const root = yield* repositoryRoot;
+    const validator = path.join(
+      root,
+      "tools",
+      "cargo-tools",
+      "target",
+      "release",
+      "clap-validator",
+    );
     const bundles = yield* bundlesWith(CLAP);
-    yield* Effect.forEach(bundles, validate, { discard: true });
+    yield* Effect.forEach(
+      bundles,
+      (bundle) => run({ file: validator, args: ["validate", bundle] }),
+      { discard: true },
+    );
   }),
 );
