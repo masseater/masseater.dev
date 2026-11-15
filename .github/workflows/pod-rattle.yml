@@ -3,13 +3,25 @@ name: pod-rattle
 on:
   push:
     branches: [main]
+    paths:
+      - "apps/pod-rattle-plugin/**"
+      - "libs/pod-rattle-engine/**"
+      - "tools/pod-rattle-host/**"
+      - "tools/xtask/**"
+      - "libs/component-release/**"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "!**/*.md"
+      - ".github/actions/linux-packages/**"
+      - ".github/release-please/pod-rattle-*.json"
+      - ".github/workflows/pod-rattle.yml"
   workflow_dispatch:
 
 permissions: {}
 
 concurrency:
   group: pod-rattle
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   CARGO_TERM_COLOR: always
@@ -143,6 +155,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@93ede91739120dbe2102f1a4a5dbcfcb67641f36
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@988d10d667dd956eb17a81ec39e8b8cbba5c898a
         with:
           github-token: ${{ github.token }}

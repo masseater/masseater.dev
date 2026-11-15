@@ -248,6 +248,9 @@ catalogs:
     '@distilled.cloud/github':
       specifier: 1.0.0-rc.20
       version: 1.0.0-rc.20
+    '@distilled.cloud/tailscale':
+      specifier: 1.0.0-rc.20
+      version: 1.0.0-rc.20
     '@earendil-works/chord':
       specifier: 1.5.2
       version: 1.5.2
@@ -2730,6 +2733,9 @@ importers:
       '@masseater.dev/component-release':
         specifier: workspace:*
         version: link:../../libs/component-release
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
@@ -2971,6 +2977,9 @@ importers:
       '@distilled.cloud/github':
         specifier: 'catalog:'
         version: 1.0.0-rc.20(effect@4.1.4)
+      '@distilled.cloud/tailscale':
+        specifier: 'catalog:'
+        version: 1.0.0-rc.20(effect@4.1.4)
       '@masseater.dev/exposure-protocol':
         specifier: workspace:*
         version: link:../../libs/exposure-protocol
@@ -2998,6 +3007,9 @@ importers:
       jose:
         specifier: 'catalog:'
         version: 6.2.17
+      jsonc-parser:
+        specifier: 'catalog:'
+        version: 3.3.1
       oauth4webapi:
         specifier: 'catalog:'
         version: 3.8.8
@@ -3008,6 +3020,12 @@ importers:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
         version: 5.20261112.1
+      '@effect/platform-node':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@effect/vitest':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
@@ -5645,6 +5663,11 @@ packages:
 
   '@distilled.cloud/s3@1.0.0-rc.20':
     resolution: {integrity: sha512-MqJlG+CVCgkIX7iPDo8hb4YlcEELYTlJFLg2Whp8TjBPieViNiiRAJR/5TtDApa38dzrTsMc69ul965Myagrdg==}
+    peerDependencies:
+      effect: ^4.1.2
+
+  '@distilled.cloud/tailscale@1.0.0-rc.20':
+    resolution: {integrity: sha512-ROW6kdGiLx484NvLsgiCSHkK7oxf2xk+8GUTPpN8aloc4DKndo4AIzljfyyz2qUb+P3XUob0rn8q9Icha1DJvQ==}
     peerDependencies:
       effect: ^4.1.2
 
@@ -17593,6 +17616,11 @@ snapshots:
   '@distilled.cloud/s3@1.0.0-rc.20(effect@4.1.4)':
     dependencies:
       '@distilled.cloud/aws4signer': 1.0.0-rc.20(effect@4.1.4)
+      '@distilled.cloud/core': 1.0.0-rc.20(effect@4.1.4)
+      effect: 4.1.4
+
+  '@distilled.cloud/tailscale@1.0.0-rc.20(effect@4.1.4)':
+    dependencies:
       '@distilled.cloud/core': 1.0.0-rc.20(effect@4.1.4)
       effect: 4.1.4
 
