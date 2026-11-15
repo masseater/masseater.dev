@@ -5,7 +5,6 @@
     "**/*.d.rpp.ts",
     "apps/aredoko-server/src/app/rpc/embedder-worker.test.support.ts",
     "libs/workers-tracing/src/fixture/*.worker.ts",
-    "libs/oxlint-plugin-decision/src/openrouter-worker.ts",
     "libs/oxlint-typed-rules/src/ts-api-utils.ts",
     "libs/oxlint-typed-rules/src/ts-compat.ts",
     "libs/oxlint-typed-rules/src/typescript-eslint-utils.ts",
@@ -36,7 +35,7 @@
   "overrides": [
     { "files": ["libs/vitest-otlp/src/generated/**"], "rules": { "unused-enum-members": "off" } },
   ],
-  "ignoreDependencies": ["@effect/language-service", "@masseater.dev/textlint-rule-yomiyasu"],
+  "ignoreDependencies": ["@effect/language-service"],
   "workspaces": {
     "settings": {
       "libs/msch": {
@@ -45,23 +44,18 @@
       "libs/oxlint-typed-rules": {
         "ignoreDependencies": [
           "@tsconfig/strictest",
-          "@types/react",
           "@typescript-eslint/parser",
-          "@typescript-eslint/types",
           "@typescript-eslint/typescript-estree",
           "combinate",
           "dedent",
-          "publint",
         ],
       },
       "libs/vite-plus-adopt": {
         "ignoreDependencies": [
-          "@andrewbranch/untar.js",
           "@feature-sliced/filesystem",
           "@loaderkit/resolve",
           "cjs-module-lexer",
           "fastest-levenshtein",
-          "fflate",
           "pluralize",
           "tsconfck",
           "validate-npm-package-name",
@@ -212,6 +206,7 @@
       "enablers": ["@r_masseater/vite-plus-adopt"],
       "toolingDependencies": [
         "@commitlint/config-conventional",
+        "@masseater.dev/textlint-rule-yomiyasu",
         "@textlint-ja/textlint-rule-preset-ai-writing",
         "textlint-rule-preset-ja-technical-writing",
       ],
