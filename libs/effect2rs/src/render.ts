@@ -2,7 +2,7 @@ import { Array, Match, Option, Predicate, String, pipe } from "effect";
 
 import { screamingSnakeCase } from "./names.ts";
 import { itemLines } from "./render-items.ts";
-import { someTy } from "./rust-type.ts";
+import { someTy, spectaType } from "./rust-type.ts";
 import { escape, when } from "./text.ts";
 import type { Constant, Item, Ty } from "./types.ts";
 
@@ -108,6 +108,27 @@ const importLines = ({ items, derive }: Rendering): readonly string[] =>
     Array.map((path) => `use ${path};`),
   );
 
+const aliasesOf = (items: readonly Item[]): ReadonlyMap<string, Ty> =>
+  new Map(
+    pipe(
+      items,
+      Array.flatMap((item) =>
+        Match.value(item).pipe(
+          Match.tag("Alias", ({ name, ty }) => [[name, ty] as const]),
+          Match.orElse(() => []),
+        ),
+      ),
+    ),
+  );
+
+const spectaOf = ({ derive, items }: Rendering): ((ty: Ty) => Ty) => {
+  const aliases = aliasesOf(items);
+  return Match.value(pipe(derive, Array.contains(SPECTA_TYPE))).pipe(
+    Match.when(true, () => spectaType((name) => Option.fromNullishOr(aliases.get(name)))),
+    Match.orElse(() => (ty: Ty) => ty),
+  );
+};
+
 const shortName = (path: string): string =>
   pipe(path, String.split(PATH_SEPARATOR), Array.lastNonEmpty);
 
@@ -120,7 +141,7 @@ export const render = (rendering: Rendering): string => {
   const extra = pipe(rendering.derive, Array.map(shortName));
   const lines = itemLines({
     derive: deriveLine(extra),
-    specta: pipe(rendering.derive, Array.contains(SPECTA_TYPE)),
+    specta: spectaOf(rendering),
     hasFloat: floatsIn(rendering.items),
   });
   const sections = pipe(

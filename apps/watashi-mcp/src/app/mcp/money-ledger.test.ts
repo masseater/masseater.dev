@@ -111,6 +111,22 @@ it.effect("読めない日付があれば、何も取り込まずに行の番号
   }),
 );
 
+it.effect("引用符の閉じていない CSV は、何も取り込まずに行の番号を返す", () =>
+  Effect.gen(function* unterminated() {
+    yield* setUpAccounts;
+    const { isError, text } = yield* call(write("import_csv"))({
+      account: "card",
+      source: "unterminated.csv",
+      csv: '利用日,利用店名・商品名,利用金額\n2026/10/03,A,100\n2026/10/04,"B,200\n',
+      columns: CARD_COLUMNS,
+    });
+    const rows = yield* allRows;
+    expect(isError).toBe(true);
+    expect(text).toContain("3 行目の CSV を読めません");
+    expect(rows).toStrictEqual([]);
+  }),
+);
+
 it.effect("無い口座には取り込まない", () =>
   Effect.gen(function* missing() {
     const { isError, text } = yield* call(write("import_csv"))({
