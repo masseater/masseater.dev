@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "dependencies": {
     "@masseater.dev/aredoko-protocol": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",

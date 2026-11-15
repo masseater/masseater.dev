@@ -63,7 +63,6 @@
     "micromark-extension-gfm": "catalog:",
     "nanotar": "catalog:",
     "officeparser": "catalog:",
-    "papaparse": "catalog:",
     "parse5": "catalog:",
     "postal-mime": "catalog:",
     "refractor": "catalog:",
@@ -77,7 +76,6 @@
     "@types/hast": "catalog:",
     "@types/mdast": "catalog:",
     "@types/node": "catalog:",
-    "@types/papaparse": "catalog:",
     "effect": "catalog:stack",
     "vite-plus": "catalog:stack"
   },

@@ -2,13 +2,12 @@ import { Array as Arr, Effect } from "effect";
 
 import { checkPublishedPackages } from "#/features/install-size/index.ts";
 import { checkOverrides } from "#/features/overrides/index.ts";
-import { passThroughWrappersIn } from "#/features/pass-through-wrappers/index.ts";
 import { checkPlacement } from "#/features/placement/index.ts";
 import { checkWorkspaces } from "#/features/repository-layout/index.ts";
 import { checkScripts } from "#/features/scripts/index.ts";
-import { checkRepository } from "#/features/value-owners/index.ts";
 import { checkWorkflowQueues } from "#/features/workflow-concurrency/index.ts";
 
+import { checkSources } from "./source-checks.ts";
 import { checkTrackedText } from "./tracked-text.ts";
 
 /** @internal */
@@ -17,20 +16,20 @@ export const checkAll: (
 ) => Effect.Effect<
   Effect.Success<ReturnType<typeof checkRepository>>,
   Effect.Error<
-    | ReturnType<typeof checkRepository>
+    | ReturnType<typeof checkSources>
     | ReturnType<typeof checkOverrides>
     | ReturnType<typeof checkTrackedText>
     | ReturnType<typeof checkWorkspaces>
   >,
   Effect.Services<
-    | ReturnType<typeof checkRepository>
+    | ReturnType<typeof checkSources>
     | ReturnType<typeof checkOverrides>
     | ReturnType<typeof checkTrackedText>
   >
 > = Effect.fn("checkAll")(function* checkAll(root: string) {
   const found = yield* Effect.all(
     [
-      checkRepository(root, [passThroughWrappersIn]),
+      checkSources(root),
       checkOverrides(root),
       checkTrackedText(root),
       checkPlacement(root),
