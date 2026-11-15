@@ -6,6 +6,7 @@ import { checkPlacement } from "#/features/placement/index.ts";
 import { checkWorkspaces } from "#/features/repository-layout/index.ts";
 import { checkScripts } from "#/features/scripts/index.ts";
 import { checkRepository } from "#/features/value-owners/index.ts";
+import { checkWorkflowQueues } from "#/features/workflow-concurrency/index.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
 
 import { checkTrackedText } from "./tracked-text.ts";
@@ -36,6 +37,7 @@ export const checkAll: (
       checkScripts(root),
       checkPublishedPackages(root),
       checkWorkspaces(root),
+      checkWorkflowQueues(root),
     ],
     { concurrency: "unbounded" },
   );
