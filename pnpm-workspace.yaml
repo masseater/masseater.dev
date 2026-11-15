@@ -329,3 +329,6 @@ minimumReleaseAgeExclude:
   - "@better-auth/telemetry@1.7.25"
   - auth@1.7.25
   - better-auth@1.7.25
+
+cargo:
+  enabled: true
