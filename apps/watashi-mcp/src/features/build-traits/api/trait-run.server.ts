@@ -1,5 +1,6 @@
 import { Clock, Duration, Effect, Option } from "effect";
 
+import { ProfileAuthor } from "#/entities/owner-profile";
 import {
   AnalystFailed,
   analystFailed,
@@ -14,6 +15,10 @@ import type {
 } from "#/entities/trait";
 import { encodeJson } from "#/shared/db/index.server";
 
+import { profileAuthorOf } from "./profile-ai.server.ts";
+import type { ProfileModel } from "./profile-ai.server.ts";
+import { buildProfile } from "./profile-build.server.ts";
+import type { ProfileOutcome } from "./profile-build.server.ts";
 import { buildStep } from "./trait-build.server.ts";
 import type { StepFailure, StepOutcome } from "./trait-build.server.ts";
 import { RECORD_TOOL, TRAIT_MODEL, readTranscript } from "./trait-pi";
@@ -28,7 +33,8 @@ export type Conversation = Readonly<{
 
 export type BuildSummary = Readonly<{ steps: number; idle: boolean }>;
 
-export type RunSummary = BuildSummary & Readonly<{ translated: number }>;
+export type RunSummary = BuildSummary &
+  Readonly<{ translated: number; profile: ProfileOutcome | "failed" }>;
 
 const AGENT = "trait-builder";
 
@@ -101,9 +107,11 @@ const stepsUntil = (
 export const buildTraits = ({
   conversation,
   translator,
+  ai,
 }: Readonly<{
   conversation: Conversation;
   translator: TranslatorBinding;
+  ai: ProfileModel;
 }>): Effect.Effect<RunSummary, StepFailure> =>
   Effect.gen(function* buildAll() {
     const start = yield* Clock.currentTimeMillis;
@@ -111,9 +119,18 @@ export const buildTraits = ({
     const earlier = yield* translateTraits(deadline);
     const built = yield* stepsUntil(deadline, NONE_YET);
     const later = yield* translateTraits(deadline);
-    return { ...built, translated: earlier + later };
+    const profile = yield* buildProfile.pipe(
+      Effect.catch((error) =>
+        Effect.logWarning("watashi.profile.failed").pipe(
+          Effect.annotateLogs({ error }),
+          Effect.as("failed" as const),
+        ),
+      ),
+    );
+    return { ...built, translated: earlier + later, profile };
   }).pipe(
     Effect.provideService(TraitAnalyst, analystOf(conversation)),
     Effect.provideService(TraitTranslator, translatorOf(translator)),
+    Effect.provideService(ProfileAuthor, profileAuthorOf(ai)),
     Effect.withSpan("watashi.traits.build"),
   );
