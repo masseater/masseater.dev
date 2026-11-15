@@ -32,7 +32,7 @@ import type { PolicyEntries } from "./tailnet-policy.ts";
 const TAILNET = "-";
 const API_ROOT = "https://api.tailscale.com/api/v2";
 const TOKEN_EXCHANGE = `${API_ROOT}/oauth/token-exchange`;
-const CI_CLIENT_ID = "TODO-ci-federated-identity";
+const CI_CLIENT_ID = "TMwqo2dMr211CNTRL-k9SS94yMES11CNTRL";
 const CI_AUDIENCE = `api.tailscale.com/${CI_CLIENT_ID}`;
 
 const AGENT_POLICY: PolicyEntries = {
