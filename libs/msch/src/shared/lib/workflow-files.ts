@@ -5,7 +5,7 @@ import { RepositoryFiles } from "./repository-files.ts";
 const WORKFLOW_FILE = /^\.github\/workflows\/[^/]+\.ya?ml$/u;
 const READ_CONCURRENCY = 16;
 
-export interface WorkflowFile {
+interface WorkflowFile {
   readonly file: string;
   readonly source: string;
 }
