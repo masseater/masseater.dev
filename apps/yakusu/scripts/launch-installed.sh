@@ -21,7 +21,7 @@ case "$platform" in
     ;;
   macos-arm64)
     mount="$(mktemp -d)"
-    hdiutil attach "$installers"/*.dmg -nobrowse -readonly -mountpoint "$mount"
+    printf "Y\n" | hdiutil attach "$installers"/*.dmg -nobrowse -readonly -mountpoint "$mount" >/dev/null
     cp -R "$mount/yakusu.app" /Applications/
     hdiutil detach "$mount"
     spctl --assess --type execute -vv /Applications/yakusu.app >"$output/gatekeeper.txt" 2>&1 || true
