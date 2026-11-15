@@ -5,11 +5,11 @@ export default defineConfig({
   run: {
     tasks: {
       render: {
-        command: "node extract.ts && node render.ts",
+        command: "node bin/extract.ts && node bin/render.ts",
         cache: {
           input: [
-            "extract.ts",
-            "render.ts",
+            "bin/extract.ts",
+            "bin/render.ts",
             "scenarios.json",
             { pattern: "apps/labs/pages/pod-rattle/index.html", base: "workspace" },
           ],

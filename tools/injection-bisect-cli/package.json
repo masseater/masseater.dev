@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "bin": {
-    "injection-bisect": "./src/main.ts"
+    "injection-bisect": "./bin/injection-bisect.ts"
   },
   "type": "module",
   "imports": {

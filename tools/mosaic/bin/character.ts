@@ -3,7 +3,7 @@ import { mustSucceed, succeeds, warn } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
 import { Config, Duration, Effect, FileSystem, Option, Path, pipe } from "effect";
 
-import { CACHE, MOSAIC, PERSIST, inRepository } from "./repository.ts";
+import { CACHE, MOSAIC, PERSIST, inRepository } from "./lib/repository.ts";
 
 const STAGGER_SLOTS = 6;
 const STAGGER_SECONDS = 30;

@@ -5,6 +5,7 @@ import {
   keyName,
   literalOf,
   nestedValues,
+  RUN_TASKS,
   workspaceConfigOf,
   workspaceDirectories,
 } from "#/entities/workspace/index.ts";
@@ -12,7 +13,6 @@ import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { positionOf } from "#/shared/lib/text-position.ts";
 
 const RULE: RuleName = "shared-uncached-task";
-const TASKS_PATH = ["run", "tasks"] as const;
 const READ_CONCURRENCY = 8;
 const SHARED = 2;
 const OWN_PROGRAM = /^(?:node|vpx|bun|deno|tsx)$|\//u;
@@ -95,7 +95,7 @@ const definitionsIn = Effect.fn("definitionsIn")(function* definitionsIn(
   }
   const { file, source, program } = config.value;
   return pipe(
-    nestedValues(TASKS_PATH)(program),
+    nestedValues(RUN_TASKS)(program),
     Arr.flatMap((tasks) =>
       pipe(
         decodeTaskObject(tasks),
