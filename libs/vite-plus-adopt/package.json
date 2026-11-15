@@ -34,7 +34,7 @@
   "type": "module",
   "imports": {
     "#attw-upstream/*": "./upstream/attw-core/lib/*",
-    "#src/*": "./src/*"
+    "#/*": "./src/*"
   },
   "exports": {
     ".": {
@@ -112,17 +112,17 @@
         "!dist/fsd.mjs",
         "!dist/attw.mjs"
       ],
-      "limit": "11045 B"
+      "limit": "11150 B"
     },
     {
       "name": "fsd",
       "path": "dist/fsd.mjs",
-      "limit": "9412 B"
+      "limit": "9420 B"
     },
     {
       "name": "attw",
       "path": "dist/attw.mjs",
-      "limit": "47100 B"
+      "limit": "47120 B"
     }
   ],
   "engines": {

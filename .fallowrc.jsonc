@@ -9,9 +9,9 @@
     "libs/oxlint-typed-rules/src/shared/lib/ts-api-utils.ts",
     "libs/oxlint-typed-rules/src/shared/lib/ts-compat.ts",
     "libs/oxlint-typed-rules/src/shared/lib/typescript-eslint-utils.ts",
-    "libs/vite-plus-adopt/src/attw/compiler-hosts.ts",
-    "libs/vite-plus-adopt/src/attw/typescript.ts",
-    "libs/vite-plus-adopt/src/fsd-typescript.ts",
+    "libs/vite-plus-adopt/src/shared/lib/typescript/compiler-hosts.ts",
+    "libs/vite-plus-adopt/src/shared/lib/typescript/typescript.ts",
+    "libs/vite-plus-adopt/src/app/fsd-typescript.ts",
   ],
   "usedClassMembers": [
     { "implements": "LegacySymbol", "members": ["getName", "getDeclarations"] },

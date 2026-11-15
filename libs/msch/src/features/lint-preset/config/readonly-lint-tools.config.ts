@@ -54,7 +54,7 @@ export const lintToolReadonlyAllow = [
   },
   {
     from: "file" as const,
-    path: "src/types.ts",
+    path: "src/shared/config/types.ts",
     name: ["CommitlintConfig", "MarkdownlintConfig", "TextlintConfig", "ToolSections"],
   },
   {
