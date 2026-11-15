@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
-import { LeadSection } from "./lead-section.tsx";
+import { LeadSection } from "#/features/research-leads";
+
 import { NoteSection } from "./note-section.tsx";
 import { OPEN, POINTS } from "./notes.ts";
 

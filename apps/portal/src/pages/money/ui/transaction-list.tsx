@@ -4,11 +4,11 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 
 import type { PeriodValue, SettingsValue } from "#/entities/money";
+import { PageLinks } from "#/features/page-transactions";
 import { useTransactions } from "#/pages/money/api/money-query";
 import { accountLabel, categoryLabel } from "#/pages/money/model/labels";
 import { RowList } from "#/shared/ui";
 
-import { PageLinks } from "./page-links";
 import { TransactionRow } from "./transaction-row";
 
 const route = getRouteApi("/money");

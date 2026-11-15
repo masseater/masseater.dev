@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { PeriodForm } from "#/features/choose-period";
 import { useOverview } from "#/pages/money/api/money-query";
 import { Section } from "#/shared/ui";
 
@@ -7,7 +8,6 @@ import { BalanceSheet } from "./balance-sheet";
 import { FlowSection } from "./flow-section";
 import { MonthlyChart } from "./monthly-chart";
 import { MonthlyTable } from "./monthly-table";
-import { PeriodForm } from "./period-form";
 import { Totals } from "./totals";
 import { TransactionList } from "./transaction-list";
 
