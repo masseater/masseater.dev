@@ -164,14 +164,14 @@ A `"file"` rule can add `location: { question, cutoff }`. It moves the diagnosti
 
 Settings apply to the whole plugin. Pass them to `createDecisionPlugin` or put them under `settings.<plugin name>` in `oxlint.config.ts`. The config file wins.
 
-| Setting           | Default                             | Meaning                                                                                  |
-| ----------------- | ----------------------------------- | ---------------------------------------------------------------------------------------- |
-| `model`           | `"openrouter/~typesafe/jev-latest"` | Model id `<provider>/<model>`, or a list; every listed model answers every match.        |
-| `ci`              | `"fail"`                            | When `CI` is set and a model can't be asked: `"fail"` fails the run, `"skip"` warns.     |
-| `timeoutMs`       | `10000`                             | Per-file budget shared by every request, retry, and location refinement.                 |
-| `maxSnippetChars` | `4000`                              | Longer snippets are cut and end with `/* ...truncated */`.                               |
-| `env`             | `{}`                                | Renames variables providers read, e.g. `{ OPENROUTER_API_KEY: "TEAM_KEY" }`. Names only. |
-| `explain`         | `false`                             | `true`/`"text"` or `"json"` prints why each match was or wasn't reported, to stderr.     |
+| Setting           | Default                             | Meaning                                                                                                         |
+| ----------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `model`           | `"openrouter/~typesafe/jev-latest"` | Model id `<provider>/<model>`, or a list; every listed model answers every match.                               |
+| `ci`              | `"fail"`                            | When `CI` is set and a model can't be asked: `"fail"` fails the run, `"skip"` warns. A spent budget only warns. |
+| `timeoutMs`       | `10000`                             | Per-file budget shared by every request, retry, and location refinement.                                        |
+| `maxSnippetChars` | `4000`                              | Longer snippets are cut and end with `/* ...truncated */`.                                                      |
+| `env`             | `{}`                                | Renames variables providers read, e.g. `{ OPENROUTER_API_KEY: "TEAM_KEY" }`. Names only.                        |
+| `explain`         | `false`                             | `true`/`"text"` or `"json"` prints why each match was or wasn't reported, to stderr.                            |
 
 A rule's model comes from the first source that sets one. The rule's options in `oxlint.config.ts` come first, such as `["warn", { model: "openrouter/respan/span-01-lite" }]`. Next comes the rule's own `model`, and then `settings.<plugin name>.model`. After that comes the `model` passed to `createDecisionPlugin`. The default comes last.
 

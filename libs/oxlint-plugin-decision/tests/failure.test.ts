@@ -32,6 +32,18 @@ const failsInCi = Effect.gen(function* test() {
   strictEqual(Str.includes(REASON)(run.stderr), false, run.stderr);
 });
 
+const warnsInCiWhenOutOfBudget = Effect.gen(function* test() {
+  const env = yield* mockEnv("out-of-budget");
+  const run = yield* lintProject({
+    files: { "log.js": SOURCE },
+    options: { ci: "fail", rules: [callRule] },
+    env: { ...env, CI: "true" },
+  });
+  strictEqual(run.status, PASSED, outputOf(run));
+  deepStrictEqual(decisionLines(run), []);
+  assertInclude(run.stderr, "weekly budget");
+});
+
 const explainsTheFailure = Effect.gen(function* test() {
   const env = yield* mockEnv("unauthorized");
   const run = yield* lintProject({
@@ -46,5 +58,10 @@ const explainsTheFailure = Effect.gen(function* test() {
 layer(NodeServices.layer, { excludeTestServices: true })("a failed decision request", (it) => {
   it.effect("warns and lets the run pass", () => withMock(warnsAndPasses), TIMEOUT);
   it.effect("fails the run in CI when ci is fail", () => withMock(failsInCi), TIMEOUT);
+  it.effect(
+    "only warns in CI when the provider budget is spent",
+    () => withMock(warnsInCiWhenOutOfBudget),
+    TIMEOUT,
+  );
   it.effect("is explained with its reason", () => withMock(explainsTheFailure), TIMEOUT);
 });
