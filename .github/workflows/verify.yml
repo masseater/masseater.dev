@@ -52,125 +52,20 @@ jobs:
           gh workflow run autofix.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_BRANCH"
           -f run_id="$FAILED_RUN_ID" -f branch="$HEAD_BRANCH" -f sha="$HEAD_SHA"
 
-  bootstrap:
+  deploy:
     needs: verify
     if: github.event_name == 'push'
-    runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       id-token: write
     concurrency:
-      group: bootstrap
-    outputs:
-      latest: ${{ steps.head.outputs.latest }}
-    steps:
-      - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@988d10d667dd956eb17a81ec39e8b8cbba5c898a
-        with:
-          github-token: ${{ github.token }}
-      - if: steps.head.outputs.latest == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - if: steps.head.outputs.latest == 'true'
-        run: git fetch --unshallow --filter=blob:none origin
-      - if: steps.head.outputs.latest == 'true'
-        uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - if: steps.head.outputs.latest == 'true'
-        run: vp run -r atproto-password
-        continue-on-error: true
-      - if: steps.head.outputs.latest == 'true' && env.ATP_APP_PASSWORD != ''
-        run: vp run -r standard-site
-        continue-on-error: true
-        env:
-          ATP_IDENTIFIER: did:plc:sz2kxumpsjbch3kgnsjjed5z
-      - if: steps.head.outputs.latest == 'true'
-        run: vp run -r deploy:bootstrap
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - if: steps.head.outputs.latest == 'true'
-        run: vp run -r deploy:broker
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  production:
-    needs: bootstrap
-    if: needs.bootstrap.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: production
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: production
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@988d10d667dd956eb17a81ec39e8b8cbba5c898a
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run --log labeled -r deploy:production
-      - if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: web-vitals
-          path: tools/*/report/
-          if-no-files-found: ignore
-
-  zone:
-    needs: bootstrap
-    if: needs.bootstrap.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: zone
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: zone
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@988d10d667dd956eb17a81ec39e8b8cbba5c898a
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run -r deploy:zone
-
-  github:
-    needs: bootstrap
-    if: needs.bootstrap.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: github
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: github
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run -r github-token
-      - run: vp run -r deploy:github
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      group: deploy
+    uses: $/.github/workflows/deploy.yml
+    secrets: inherit
 
   private-names:
-    needs: bootstrap
+    needs: deploy
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     concurrency:
@@ -363,19 +258,8 @@ jobs:
     steps: *mosaic-site
 
   exposure:
-    needs:
-      [
-        bootstrap,
-        production,
-        zone,
-        github,
-        zenn,
-        sts2-pck,
-        mosaic-plan,
-        mosaic-character,
-        mosaic-deploy,
-      ]
-    if: ${{ !cancelled() && needs.bootstrap.outputs.latest == 'true' }}
+    needs: [deploy, zenn, sts2-pck, mosaic-plan, mosaic-character, mosaic-deploy]
+    if: ${{ !cancelled() && needs.deploy.outputs.latest == 'true' }}
     permissions:
       actions: read
       contents: read
@@ -385,10 +269,7 @@ jobs:
   deploy-failure:
     needs:
       [
-        bootstrap,
-        production,
-        zone,
-        github,
+        deploy,
         private-names,
         zenn,
         sts2-pck,
@@ -423,10 +304,7 @@ jobs:
       [
         verify,
         autofix,
-        bootstrap,
-        production,
-        zone,
-        github,
+        deploy,
         private-names,
         zenn,
         sts2-pck,

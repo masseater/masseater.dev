@@ -23,7 +23,7 @@ on:
 permissions: {}
 
 concurrency:
-  group: github
+  group: deploy
 
 jobs:
   run:
