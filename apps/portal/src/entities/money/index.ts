@@ -13,6 +13,6 @@ export type {
   TransactionPageValue,
   TransactionValue,
 } from "./model/money";
-export { signedYen, yen } from "./model/yen";
+export { SIGNED_YEN, YEN } from "./model/yen";
 export { monthLabel } from "./model/month-label";
 export { MoneyLink } from "./ui/money-link";
