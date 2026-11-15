@@ -14,12 +14,14 @@ export const MemoArticle = ({
   memo,
   revisions,
 }: Readonly<{ memo: MemoValue; revisions: readonly RevisionValue[] }>): ReactNode => (
-  <article className="flex flex-col gap-8">
-    <MemoHeader memo={memo} />
-    <MemoEditor key={memo.content} memo={memo} />
-    <RetractSlot memo={memo} />
+  <div className="grid items-start gap-5 xl:grid-cols-3">
+    <article className="bg-card flex min-w-0 flex-col gap-6 rounded-xl border p-5 sm:p-6 xl:col-span-2">
+      <MemoHeader memo={memo} />
+      <MemoEditor key={memo.content} memo={memo} />
+      <RetractSlot memo={memo} />
+    </article>
     <Section title={HISTORY}>
       <RevisionList memo={memo} revisions={revisions} />
     </Section>
-  </article>
+  </div>
 );

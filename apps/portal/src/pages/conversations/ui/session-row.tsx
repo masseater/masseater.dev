@@ -13,13 +13,13 @@ export const SessionRow = ({ session }: Readonly<{ session: SessionValue }>): Re
   return (
     <Row lead={jstMinute(session.lastAt)}>
       <Link
-        className="font-display hover:text-foreground/70 text-lg font-light break-all transition-colors"
+        className="text-link font-bold break-all underline underline-offset-3"
         params={params}
         to="/conversations/$session"
       >
         {placeOf(session)}
       </Link>
-      <p className="text-foreground/50 font-mono text-xs break-all">{session.cwd}</p>
+      <p className="text-muted-foreground font-mono text-xs break-all">{session.cwd}</p>
       <TagList tags={tags} />
     </Row>
   );

@@ -16,10 +16,10 @@ export const RevisionRow = ({
   revision,
 }: Readonly<{ memo: MemoValue; revision: RevisionValue }>): ReactNode => (
   <Row lead={leadOf(revision)}>
-    <p className="text-foreground/70 text-sm">{revision.body.description}</p>
+    <p className="text-muted-foreground text-sm">{revision.body.description}</p>
     <details>
-      <summary className="text-foreground/50 cursor-pointer text-xs">{SHOWN}</summary>
-      <pre className="text-foreground/80 mt-2 text-xs leading-relaxed whitespace-pre-wrap">
+      <summary className="text-muted-foreground cursor-pointer text-xs">{SHOWN}</summary>
+      <pre className="text-foreground mt-2 text-xs leading-relaxed whitespace-pre-wrap">
         {revision.body.content}
       </pre>
     </details>

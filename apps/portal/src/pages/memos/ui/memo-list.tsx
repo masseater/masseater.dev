@@ -4,11 +4,11 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 
 import { useMemos } from "#/pages/memos/api/memos-query";
-import { RowList, SearchField } from "#/shared/ui";
+import { RowList, Card, CardHeader, SearchField } from "#/shared/ui";
 
 import { MemoRow } from "./memo-row";
 
-const route = getRouteApi("/_watashi/memos/");
+const route = getRouteApi("/memos/");
 
 const TEXT = { search: "作業メモを探す", list: "作業メモ" } as const;
 
@@ -18,14 +18,16 @@ export const MemoList = (): ReactNode => {
   const { project, keyword = "" } = route.useSearch();
   const kept = useMemo(() => Rec.getSomes({ project: Option.fromUndefinedOr(project) }), [project]);
   return (
-    <div className="flex min-w-0 flex-col gap-6">
-      <SearchField action={ACTION} kept={kept} label={TEXT.search} value={keyword} />
+    <Card>
+      <CardHeader title={TEXT.list}>
+        <SearchField action={ACTION} kept={kept} label={TEXT.search} value={keyword} />
+      </CardHeader>
       <RowList label={TEXT.list}>
         {pipe(
           useMemos(),
           Arr.map((memo) => <MemoRow key={memo.ref} memo={memo} />),
         )}
       </RowList>
-    </div>
+    </Card>
   );
 };

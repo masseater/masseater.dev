@@ -1,13 +1,15 @@
 import { Array as Arr, Number as Num, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { yen } from "#/entities/money";
 import type { FlowNodeValue } from "#/entities/money";
-import { FILLS, PLACEMENTS } from "#/pages/money/model/flow";
+import { FILLS, PLACEMENTS, TEXT_FILLS, shareOf, toneOf } from "#/pages/money/model/flow";
 import type { Placement } from "#/pages/money/model/flow";
+
+import { FlowNodeLabel } from "./flow-node-label";
 
 type FlowNodeProps = Readonly<{
   nodes: readonly FlowNodeValue[];
+  whole: number;
   x?: number;
   y?: number;
   width?: number;
@@ -20,11 +22,7 @@ type Box = Readonly<{ x: number; width: number }>;
 
 const LABEL_GAP = 8;
 
-const AMOUNT_GAP = 6;
-
-const HALO = 3;
-
-const RADIUS = 2;
+const SHARE_GAP = 6;
 
 const NONE = 0;
 
@@ -44,6 +42,7 @@ const amountOf = (payload: FlowNodeProps["payload"]): number =>
 
 export const FlowNode = ({
   nodes,
+  whole,
   x = NONE,
   y = NONE,
   width = NONE,
@@ -55,25 +54,32 @@ export const FlowNode = ({
     Arr.get(nodes, index),
     Option.match({
       onNone: () => false,
-      onSome: (node) => (
-        <g>
-          <rect fill={FILLS[node.nodeType]} height={height} rx={RADIUS} width={width} x={x} y={y} />
-          <text
-            className="fill-foreground text-xs"
-            dominantBaseline="middle"
-            paintOrder="stroke"
-            stroke="var(--background)"
-            strokeWidth={HALO}
-            textAnchor={PLACEMENTS[node.nodeType].anchor}
-            x={LABEL_X[PLACEMENTS[node.nodeType].side]({ x, width })}
-            y={y + height / HALF}
-          >
-            {node.label}
-            <tspan className="fill-foreground/60 tabular-nums" dx={AMOUNT_GAP}>
-              {yen(amountOf(payload))}
-            </tspan>
-          </text>
-        </g>
-      ),
+      onSome: (node) => {
+        const tone = toneOf(node);
+        const amount = amountOf(payload);
+        const placement = PLACEMENTS[node.nodeType];
+        const middle = y + height / HALF;
+        return (
+          <g>
+            <rect fill={FILLS[tone]} height={height} width={width} x={x} y={y} />
+            <text
+              className="text-xs font-bold tabular-nums"
+              fill={TEXT_FILLS[tone]}
+              textAnchor="middle"
+              x={x + width / HALF}
+              y={y - SHARE_GAP}
+            >
+              {shareOf({ value: amount, whole })}
+            </text>
+            <FlowNodeLabel
+              amount={amount}
+              label={node.label}
+              placement={placement}
+              x={LABEL_X[placement.side]({ x, width })}
+              y={middle}
+            />
+          </g>
+        );
+      },
     }),
   );

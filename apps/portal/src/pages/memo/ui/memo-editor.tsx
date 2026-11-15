@@ -1,3 +1,4 @@
+import { Button } from "@masseater.dev/ui/button";
 import { useCallback } from "react";
 import type { ReactNode, SubmitEvent } from "react";
 
@@ -10,7 +11,7 @@ import { FailedNote } from "./failed-note";
 const TEXT = { description: "説明", content: "本文", save: "保存" } as const;
 
 const FIELD =
-  "border-foreground/20 focus-visible:border-foreground w-full border-b bg-transparent py-2 outline-none";
+  "border-input focus-visible:ring-ring w-full rounded-md border bg-white px-3 py-2 outline-none focus-visible:ring-2";
 
 export const MemoEditor = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
   const save = useChangeMemo();
@@ -44,9 +45,9 @@ export const MemoEditor = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode =
         required
       />
       <FailedNote error={save.error} />
-      <button className="stage-link self-end" disabled={save.isPending} type="submit">
+      <Button className="self-end" disabled={save.isPending} type="submit">
         {TEXT.save}
-      </button>
+      </Button>
     </form>
   );
 };

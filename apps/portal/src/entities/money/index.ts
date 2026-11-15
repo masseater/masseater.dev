@@ -1,5 +1,5 @@
 export { moneyQueries } from "./api/queries";
-export { MoneySearch } from "./model/money";
+export { FLOW_VIEWS, MoneySearch } from "./model/money";
 export type {
   AccountBalanceValue,
   BalanceSheetValue,
@@ -14,3 +14,4 @@ export type {
   TransactionValue,
 } from "./model/money";
 export { signedYen, yen } from "./model/yen";
+export { monthLabel } from "./model/month-label";

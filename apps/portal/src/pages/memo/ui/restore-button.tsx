@@ -1,3 +1,4 @@
+import { Button } from "@masseater.dev/ui/button";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
@@ -15,13 +16,15 @@ export const RestoreButton = ({
     restore.mutate({ project: memo.project, name: memo.name, restoreTo: rev });
   }, [memo.project, memo.name, rev, restore]);
   return (
-    <button
-      className="stage-link self-start text-xs"
+    <Button
+      className="self-start"
       disabled={restore.isPending}
       onClick={click}
+      size="sm"
       type="button"
+      variant="outline"
     >
       {RESTORE}
-    </button>
+    </Button>
   );
 };

@@ -6,12 +6,9 @@ import { Row } from "#/shared/ui";
 
 export const HitRow = ({ hit }: Readonly<{ hit: HitValue }>): ReactNode => (
   <Row lead={`${String(hit.page)} / ${String(hit.pages)}`}>
-    <a
-      className="font-display hover:text-foreground/70 text-lg font-light transition-colors"
-      href={pageUrl(hit)}
-    >
+    <a className="text-link font-bold underline underline-offset-3" href={pageUrl(hit)}>
       {hit.title}
     </a>
-    <p className="text-foreground/70 text-sm leading-relaxed">{excerpt(hit.text)}</p>
+    <p className="text-muted-foreground text-sm leading-relaxed">{excerpt(hit.text)}</p>
   </Row>
 );

@@ -7,7 +7,7 @@ import type { MemoValue, MemosSearchValue, ProjectValue } from "#/entities/watas
 
 type MemosLoad = Readonly<{ queryClient: QueryClient; search: MemosSearchValue }>;
 
-const route = getRouteApi("/_watashi/memos/");
+const route = getRouteApi("/memos/");
 
 const projects = watashiQueries["memo-projects"].get;
 

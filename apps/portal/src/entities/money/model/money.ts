@@ -2,10 +2,15 @@ import { Schema } from "effect";
 
 const Month = Schema.String.check(Schema.isPattern(/^\d{4}-(?:0[1-9]|1[0-2])$/u));
 
+export const FLOW_VIEWS = ["detail", "summary"] as const;
+
 export const MoneySearch = Schema.Struct({
   from: Schema.optionalKey(Month),
   to: Schema.optionalKey(Month),
   cursor: Schema.optionalKey(Schema.String),
+  account: Schema.optionalKey(Schema.String),
+  category: Schema.optionalKey(Schema.String),
+  flow: Schema.optionalKey(Schema.Literals(FLOW_VIEWS)),
 });
 
 export const PeriodInput = Schema.Struct({
@@ -19,6 +24,8 @@ export const TransactionsInput = Schema.Struct({
   from: Month,
   to: Month,
   cursor: Schema.optionalKey(Schema.String),
+  account: Schema.optionalKey(Schema.String),
+  category: Schema.optionalKey(Schema.String),
 });
 
 const NODE_TYPES = ["income", "income-sub", "total", "expense", "expense-sub"] as const;
