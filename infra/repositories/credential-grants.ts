@@ -50,7 +50,6 @@ const PROFILES = {
 const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "1403864815": "access",
   "ai-produced": "deploy",
-  cdmm: "deploy",
   "geigeki-kaiiki": "deploy",
   konomi: "deploy",
   "masseater.dev": "deploy",
