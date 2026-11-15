@@ -14,9 +14,10 @@ import type {
   TailscaleOpContext,
   ValidateAndTestPolicyFileError,
 } from "@distilled.cloud/tailscale";
+import { map as mapOutput } from "alchemy/Output";
 import { succeed } from "alchemy/Provider";
 import { Resource } from "alchemy/Resource";
-import { Config, Effect, Layer, Option, Redacted, Schema, pipe } from "effect";
+import { Config, Effect, Layer, Option, Record, Redacted, Schema, pipe } from "effect";
 import {
   FetchHttpClient,
   HttpBody,
@@ -180,12 +181,15 @@ export const tailscaleProviders = Layer.mergeAll(
 ).pipe(Layer.provideMerge(tailscaleCredentials), Layer.provideMerge(FetchHttpClient.layer));
 
 export const agentTrust = Effect.gen(function* trust() {
-  yield* TailnetPolicyEntries("TailnetAgentPolicy", AGENT_POLICY);
+  const policy = yield* TailnetPolicyEntries("TailnetAgentPolicy", AGENT_POLICY);
   return yield* FederatedIdentity("TailnetAgentIdentity", {
     description: "agents via sundries",
     issuer: TAILNET_ISSUER,
     subject: AGENT_SUBJECT,
     scopes: ["auth_keys"],
-    tags: [AGENT_TAG],
+    tags: pipe(
+      policy.tagOwners,
+      mapOutput((owners) => Record.keys(owners)),
+    ),
   });
 });
