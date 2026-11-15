@@ -238,6 +238,27 @@ const ignoresGenericSlotsNumericCoincidencesA = Effect.gen(
   },
 );
 
+const ignoresUtilityTypesOfTheTypeScriptLib = Effect.gen(
+  function* ignoresUtilityTypesOfTheTypeScriptLib() {
+    const packageJson = yield* dependingOn();
+    const findings = yield* findingsIn({
+      "package.json": packageJson,
+      "src/a.ts": pipe(
+        [
+          'export type Reason = "auth" | "quota";',
+          "interface Stalled { reason?: Reason }",
+          "declare const reason: Reason;",
+          'export const take = (value: NonNullable<Stalled["reason"]>): string => value;',
+          "take(reason);",
+          "",
+        ],
+        Arr.join("\n"),
+      ),
+    });
+    expect(findings).toStrictEqual([]);
+  },
+);
+
 layer(fixtureLayer)("dependency types", (it) => {
   it.effect(
     "reports sets that restate a type of a library the file imports",
@@ -263,5 +284,9 @@ layer(fixtureLayer)("dependency types", (it) => {
   it.effect(
     "ignores generic library slots, numeric coincidences and files without type checking",
     () => ignoresGenericSlotsNumericCoincidencesA,
+  );
+  it.effect(
+    "ignores utility types of the TypeScript lib",
+    () => ignoresUtilityTypesOfTheTypeScriptLib,
   );
 });
