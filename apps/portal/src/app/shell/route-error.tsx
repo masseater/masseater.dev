@@ -1,23 +1,22 @@
+import { Button } from "@masseater.dev/ui/button";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-const RETRY = "もう一度読む";
+import { messageOf } from "#/shared/model";
 
-const messageOf = (error: unknown): string => {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return String(error);
-};
+const RETRY = "もう一度読む";
 
 export const RouteError = ({
   error,
   reset,
 }: Readonly<Pick<ErrorComponentProps, "error" | "reset">>): ReactNode => (
-  <div className="flex flex-col items-start gap-4" role="alert">
-    <p className="text-foreground/80 text-sm break-words whitespace-pre-wrap">{messageOf(error)}</p>
-    <button className="stage-link" onClick={reset} type="button">
+  <div
+    className="border-destructive bg-destructive-soft flex flex-col items-start gap-4 rounded-xl border p-5"
+    role="alert"
+  >
+    <p className="text-sm break-words whitespace-pre-wrap">{messageOf(error)}</p>
+    <Button onClick={reset} variant="outline">
       {RETRY}
-    </button>
+    </Button>
   </div>
 );

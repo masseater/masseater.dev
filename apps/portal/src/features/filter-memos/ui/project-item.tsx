@@ -15,7 +15,7 @@ export const ProjectItem = ({
     <li>
       <Link aria-current={active && "page"} className={PILL} search={search} to="/memos">
         {project.project}
-        <span className="tabular-nums">{project.memos}</span>
+        <span className="text-muted-foreground text-xs tabular-nums">{project.memos}</span>
       </Link>
     </li>
   );

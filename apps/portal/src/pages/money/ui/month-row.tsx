@@ -2,14 +2,16 @@ import type { ReactNode } from "react";
 
 import { SIGNED_YEN, YEN } from "#/entities/money";
 import type { MonthTotalValue } from "#/entities/money";
-import { Row } from "#/shared/ui";
+
+const CELL = "border-b px-2 py-2 text-right tabular-nums";
 
 export const MonthRow = ({ month }: Readonly<{ month: MonthTotalValue }>): ReactNode => (
-  <Row lead={month.month}>
-    <p className="grid grid-cols-3 gap-4 text-sm tabular-nums">
-      <span>{YEN.format(month.income)}</span>
-      <span>{YEN.format(month.expense)}</span>
-      <span className="text-foreground/70">{SIGNED_YEN.format(month.balance)}</span>
-    </p>
-  </Row>
+  <tr>
+    <th className="border-b px-2 py-2 text-left font-normal tabular-nums" scope="row">
+      {month.month}
+    </th>
+    <td className={CELL}>{YEN.format(month.income)}</td>
+    <td className={CELL}>{YEN.format(month.expense)}</td>
+    <td className={CELL}>{SIGNED_YEN.format(month.balance)}</td>
+  </tr>
 );

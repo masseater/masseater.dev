@@ -12,14 +12,14 @@ export const MemoRow = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
   return (
     <Row lead={shownTime(memo.updatedAt)}>
       <Link
-        className="font-display hover:text-foreground/70 text-lg font-light break-words transition-colors"
+        className="text-link font-bold break-words underline underline-offset-3"
         params={params}
         to="/memos/$project/$name"
       >
         {memo.name}
       </Link>
-      <p className="text-foreground/70 text-sm">{memo.description}</p>
-      <p className="font-display text-foreground/40 text-xs tracking-widest">{memo.project}</p>
+      <p className="text-muted-foreground text-sm">{memo.description}</p>
+      <p className="text-muted-foreground text-xs">{memo.project}</p>
       <RetractedNote memo={memo} />
     </Row>
   );
