@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => ({
       "deploy:production": {
         command: [
           deployTo("prod").command,
+          "alchemy deploy alchemy.retired.ts --stage prod --yes",
           "alchemy destroy alchemy.retired.ts --stage prod --yes",
         ],
         cache: false,
