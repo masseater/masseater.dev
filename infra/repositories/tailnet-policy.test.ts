@@ -1,7 +1,7 @@
 import { parse } from "jsonc-parser";
 import { expect, test } from "vite-plus/test";
 
-import { ensureEntries, removeEntries } from "./tailnet-policy.ts";
+import { ensureEntries, removeEntries, replaceEntries } from "./tailnet-policy.ts";
 
 const GRANT = { src: ["tag:agent"], dst: ["autogroup:member"], ip: ["tcp:22"] };
 
@@ -42,4 +42,10 @@ test("grants の無い方針には grants を作る", () => {
 test("消すときは足したものだけを外す", () => {
   const removed = removeEntries(ENTRIES)(ensureEntries(ENTRIES)(POLICY));
   expect(parse(removed)).toStrictEqual(parse(POLICY));
+});
+
+test("前に足した grant を新しい grant に差し替える", () => {
+  const narrowed = { ...ENTRIES, grants: [{ ...GRANT, dst: ["100.64.0.1"] }] };
+  const replaced = replaceEntries(ENTRIES)(narrowed)(ensureEntries(ENTRIES)(POLICY));
+  expect(parse(replaced)).toStrictEqual(parse(ensureEntries(narrowed)(POLICY)));
 });
