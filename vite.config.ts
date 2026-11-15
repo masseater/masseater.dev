@@ -262,7 +262,10 @@ export default defineConfig({
           "audit",
         ],
       },
-      test: "vp test run",
+      test: {
+        command: "vp test run",
+        cache: { input: [{ auto: true }, "!**/.cache/**", "!target/**"] },
+      },
       msch: {
         command: "msch",
         cache: {
