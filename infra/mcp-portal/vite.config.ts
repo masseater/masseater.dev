@@ -14,7 +14,6 @@ export default defineConfig({
           "watashi-mcp#deploy:production",
           "sundries#deploy:production",
           "twilog-mcp#deploy:production",
-          "money#deploy:production",
         ],
       },
     },
