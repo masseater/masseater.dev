@@ -5,6 +5,7 @@
   "keywords": [
     "lint",
     "oxlint",
+    "tanstack-intent",
     "vite-plus"
   ],
   "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/msch#readme",
@@ -22,6 +23,7 @@
   },
   "files": [
     "dist",
+    "skills/msch-checks",
     "src/app/vite.d.ts"
   ],
   "type": "module",

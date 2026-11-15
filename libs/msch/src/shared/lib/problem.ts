@@ -41,6 +41,17 @@ const RuleNameSchema = Schema.Literals([
   "workflow-package",
   "colocated-test",
   "comment",
+  "package-script",
+  "package-manager-command",
+  "skipped-gate",
+  "filter-task",
+  "vite-plus-block",
+  "node-version",
+  "replaced-tool",
+  "missing-hook",
+  "dangling-link",
+  "alchemy-patch",
+  "skill-file",
   "pass-through-wrapper",
 ]);
 

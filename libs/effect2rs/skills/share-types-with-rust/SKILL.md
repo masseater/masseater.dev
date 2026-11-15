@@ -20,7 +20,7 @@ sources:
   - ../../tools/protocol-codegen/src/**
 ---
 
-# Share types with Rust
+# share-types-with-rust
 
 Effect Schema is the source of truth. Rust never declares a type that crosses the boundary. It imports the module that effect2rs generates.
 
