@@ -23,6 +23,7 @@ const PNPM_BLOCK = [
   "",
 ];
 const MEMBER_MANIFEST = '[package]\nname = "mosaic"\n';
+const TOOLS_MANIFEST = '[package]\nname = "cargo-tools"\n\n[workspace]\n';
 
 const findingsFor = Effect.fn("findingsFor")(function* findingsFor(
   files: Readonly<Record<string, string>>,
@@ -50,6 +51,8 @@ const flagsFilesPnpmReplaces = Effect.gen(function* flagsFilesPnpmReplaces() {
     "Cargo.lock": "version = 4\n",
     "tools/mosaic/Cargo.toml": MEMBER_MANIFEST,
     "tools/mosaic/Cargo.lock": "version = 4\n",
+    "tools/cargo-tools/Cargo.toml": TOOLS_MANIFEST,
+    "tools/cargo-tools/Cargo.lock": "version = 4\n",
     ".cargo/config": "[build]\n",
     ".cargo/config.toml": Arr.join(PNPM_BLOCK, "\n"),
     "tools/mosaic/.cargo/config.toml": Arr.join(["[build]", "jobs = 2", ...PNPM_BLOCK], "\n"),
@@ -80,6 +83,8 @@ const flagsToolchainSetup = Effect.gen(function* flagsToolchainSetup() {
         `      - run: ${INSTALLER} toolchain install`,
         `      - run: ${INSTALLER} target add x86_64-apple-darwin`,
         `      - run: ${FETCHER} fetch --locked`,
+        `      - run: ${FETCHER} install --locked clap-validator`,
+        `      - run: ${FETCHER} binstall gungraun-runner`,
         "",
       ],
       Arr.join("\n"),
@@ -93,6 +98,8 @@ const flagsToolchainSetup = Effect.gen(function* flagsToolchainSetup() {
     ".github/workflows/verify.yml:5 unneeded-setup",
     ".github/workflows/verify.yml:6 unneeded-setup",
     ".github/workflows/verify.yml:7 unneeded-setup",
+    ".github/workflows/verify.yml:8 unneeded-setup",
+    ".github/workflows/verify.yml:9 unneeded-setup",
     "mise.toml:3 unneeded-setup",
   ]);
 });
@@ -141,11 +148,11 @@ const passesRepositoriesWithoutPnpmOrCargo = Effect.gen(
 
 layer(fixtureLayer)("files pnpm makes unneeded", (it) => {
   it.effect(
-    "flags other lockfiles, member Cargo.lock files, .cargo/config, a pnpm-only .cargo/config.toml and .pnpm",
+    "flags other lockfiles, member Cargo.lock files, .cargo/config, a pnpm-only .cargo/config.toml and .pnpm, and keeps the lockfile of a workspace inside the root workspace",
     () => flagsFilesPnpmReplaces,
   );
   it.effect(
-    "flags toolchain installs, crate fetches and mise Rust tools once pnpm manages Cargo",
+    "flags toolchain installs, crate fetches, cargo installs and mise Rust tools once pnpm manages Cargo",
     () => flagsToolchainSetup,
   );
   it.effect(

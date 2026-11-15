@@ -1,37 +1,34 @@
-import { Option, String as Str } from "effect";
+import { String as Str } from "effect";
 import { Keyboard } from "lucide-react";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode, SubmitEvent } from "react";
 
 import { useAnswerDraft } from "#/entities/interview";
-import { useSession } from "#/pages/interview/model/session-hooks";
+import type { Answering } from "#/features/answer-question/model/answering";
 
 import { SendButton } from "./send-button.tsx";
 import { ANSWER_ID } from "./type-anywhere.ts";
 
 const LABEL = "文字で答える";
 
-export const AnswerBox = (): ReactNode => {
-  const session = useSession();
+export const AnswerBox = ({ answering }: Readonly<{ answering: Answering }>): ReactNode => {
   const text = useAnswerDraft();
   const onChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      if (Option.isSome(session)) {
-        session.value.typing(event.target.value);
-      }
+      answering.typing(event.target.value);
     },
-    [session],
+    [answering],
   );
   const empty = Str.isEmpty(Str.trim(text));
   const onSubmit = useCallback(
     (event: SubmitEvent<HTMLFormElement>) => {
       event.preventDefault();
       const answer = Str.trim(text);
-      if (Option.isSome(session) && Str.isNonEmpty(answer)) {
-        session.value.typed(answer);
+      if (Str.isNonEmpty(answer)) {
+        answering.typed(answer);
       }
     },
-    [session, text],
+    [answering, text],
   );
   return (
     <form
