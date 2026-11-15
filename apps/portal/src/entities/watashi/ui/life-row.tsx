@@ -17,7 +17,7 @@ export const LifeRow = ({ item }: Readonly<{ item: LifeItemValue }>): ReactNode 
   const tags = useMemo(() => [recordLabel(item.ref), ...labelsOf(item)], [item]);
   return (
     <Row lead={timeOf(item)}>
-      <p className="text-foreground/90 text-sm leading-relaxed whitespace-pre-wrap">
+      <p className="text-foreground text-sm leading-relaxed whitespace-pre-wrap">
         {headline(item)}
       </p>
       <TagList tags={tags} />

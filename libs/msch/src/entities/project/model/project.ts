@@ -8,6 +8,7 @@ import {
 } from "#/entities/package/@x/project.ts";
 import { API, getLeadingCommentRanges } from "#/shared/lib/compiler.ts";
 import type { Checker, ParsedCommandLine, Program, SourceFile } from "#/shared/lib/compiler.ts";
+import type { Problem } from "#/shared/lib/problem.ts";
 import { NODE_MODULES, RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 import { libraryCache, libraryIndex } from "./library.ts";
@@ -22,6 +23,8 @@ export interface Project {
   readonly sourceFiles: readonly SourceFile[];
   readonly library: LibraryIndex;
 }
+
+export type SourceCheck = (checker: Checker) => (sourceFile: SourceFile) => readonly Problem[];
 
 interface PackageInfo {
   readonly directory: string;

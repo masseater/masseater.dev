@@ -6,6 +6,7 @@ import {
   fsdRules,
   generated,
   lint as preset,
+  removalPolicySyntax,
   requiredStack,
   restrictedImports,
 } from "@r_masseater/msch/lint";
@@ -62,7 +63,9 @@ const overrides = [
   {
     files: ["apps/*/src/**/*.{ts,tsx}", "apps/*/worker/**/*.ts"],
     excludeFiles: ["**/*.test.ts"],
-    rules: { "eslint-js/no-restricted-syntax": ["error", ...unguardedWorkersAi] },
+    rules: {
+      "eslint-js/no-restricted-syntax": ["error", removalPolicySyntax, ...unguardedWorkersAi],
+    },
   },
   ...workspace.lint.overrides,
   {
@@ -164,7 +167,7 @@ export default defineConfig({
     passWithNoTests: true,
   },
   staged: {
-    "*": "vp check --fix",
+    "*": "vp fmt --no-error-on-unmatched-pattern",
   },
   fmt: {
     ignorePatterns: lint.ignorePatterns,

@@ -1,7 +1,7 @@
 import { Option, Array as Arr, String as Str, pipe } from "effect";
 
 import type { Span, Unit } from "./parser.ts";
-import { looksLikeProse } from "./prose.ts";
+import { PROSE } from "./prose.ts";
 
 const START = 0;
 
@@ -81,7 +81,7 @@ export const proseUnitsOf =
       values,
       Arr.flatMap((value) => Option.toArray(locate(value))),
       Arr.filter(({ start, end }) =>
-        looksLikeProse(pipe(located.text, Str.slice(start, end), Str.trim)),
+        PROSE.test(pipe(located.text, Str.slice(start, end), Str.trim)),
       ),
       Arr.map(({ start, end }) => ({ kind: "prose", start, end })),
     );
