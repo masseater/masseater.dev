@@ -7,7 +7,7 @@ export { statementOf, traitLabel, whyOf } from "./model/profile";
 export type { PersonValue, ProfileValue, TraitValue } from "./model/profile";
 export { ConversationSearch, MemosSearch, RecordsSearch } from "./model/search";
 export type { ConversationSearchValue, MemosSearchValue, RecordsSearchValue } from "./model/search";
-export { placeOf, sizeOf } from "./model/session";
+export { RECENT_SESSION_LIMIT, placeOf, sizeOf } from "./model/session";
 export { LifeList } from "./ui/life-list";
 export type { TimelineEntry } from "./model/timeline";
 export type { SessionValue } from "./model/session";
