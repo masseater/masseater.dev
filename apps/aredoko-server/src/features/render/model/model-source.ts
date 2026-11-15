@@ -3,7 +3,7 @@ import { SqlClient } from "effect/sql";
 
 import { bundleFolder, hasExtension, mentionedIn } from "#/entities/package/index.ts";
 import type { Folder } from "#/entities/package/index.ts";
-import { blendModel } from "#/shared/blend/index.ts";
+import { blendImageNames, blendModel } from "#/shared/blend/index.ts";
 import { Settings } from "#/shared/settings/index.ts";
 import { decodeRows } from "#/shared/sql/index.ts";
 import { extractAssets } from "#/shared/unitypackage/index.ts";
@@ -123,13 +123,11 @@ const mentionedBy = Effect.fn("mentionedBy")(function* mentionedBy(
   );
 });
 
-const extractMentioned = Effect.fn("extractMentioned")(function* extractMentioned(
+const extractWanted = Effect.fn("extractWanted")(function* extractWanted(
   { model, staging }: Staging,
-  sources: readonly string[],
+  wanted: readonly Name[],
 ) {
   const path = yield* Path.Path;
-  const candidates = yield* packageNames(model);
-  const wanted = yield* mentionedBy(sources, candidates);
   const destinations = pipe(
     wanted,
     Array.map(({ guid, pathname }) => [guid, path.join(staging, path.basename(pathname))] as const),
@@ -142,6 +140,44 @@ const extractMentioned = Effect.fn("extractMentioned")(function* extractMentione
     destinations,
     Array.map(([, destination]) => destination),
   );
+});
+
+const extractMentioned = Effect.fn("extractMentioned")(function* extractMentioned(
+  staged: Staging,
+  sources: readonly string[],
+) {
+  const candidates = yield* packageNames(staged.model);
+  const wanted = yield* mentionedBy(sources, candidates);
+  return yield* extractWanted(staged, wanted);
+});
+
+const extractNamed = Effect.fn("extractNamed")(function* extractNamed(
+  staged: Staging,
+  names: readonly string[],
+) {
+  const path = yield* Path.Path;
+  const candidates = yield* packageNames(staged.model);
+  const wanted = pipe(
+    candidates,
+    Array.filter(({ pathname }) => pipe(names, Array.contains(path.basename(pathname)))),
+    Array.dedupeWith(
+      (left, right) => path.basename(left.pathname) === path.basename(right.pathname),
+    ),
+  );
+  return yield* extractWanted(staged, wanted);
+});
+
+const stageBlend = Effect.fn("stageBlend")(function* stageBlend(
+  staged: Staging,
+  { blend, main }: Readonly<{ blend: string; main: string }>,
+) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  if (isPackaged(staged.model)) {
+    const names = yield* blendImageNames(blend);
+    yield* extractNamed(staged, names);
+  }
+  const glb = yield* blendModel(blend);
+  yield* fileSystem.writeFile(main, glb);
 });
 
 const extractCompanions = Effect.fn("extractCompanions")(function* extractCompanions(
@@ -186,7 +222,6 @@ const freshStaging = Effect.fn("freshStaging")(function* freshStaging(assetId: n
 
 /** @internal */
 const stage = Effect.fn("stage")(function* stage(assetId: number) {
-  const fileSystem = yield* FileSystem.FileSystem;
   const model = yield* modelOf(assetId);
   if (!isStaged(model)) {
     return;
@@ -196,7 +231,7 @@ const stage = Effect.fn("stage")(function* stage(assetId: number) {
   const extracted = yield* extractModel(staged, main);
   yield* Option.match(Option.liftPredicate(model.pathname, isBlend), {
     onNone: () => extractCompanions(staged, main),
-    onSome: () => Effect.flatMap(blendModel(extracted), (glb) => fileSystem.writeFile(main, glb)),
+    onSome: () => stageBlend(staged, { blend: extracted, main }),
   });
 });
 

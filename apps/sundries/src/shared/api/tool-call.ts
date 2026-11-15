@@ -9,6 +9,7 @@ type ToolName =
   | "get_deck"
   | "get_access_token"
   | "translate"
+  | "join_tailnet"
   | "send_to_claude"
   | "register_claude_routine"
   | "take_claude_requests"

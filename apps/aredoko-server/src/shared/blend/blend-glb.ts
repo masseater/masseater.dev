@@ -1,40 +1,16 @@
-import { Array, Effect, Schema, pipe } from "effect";
+import { Array, Effect, Option, Schema, pipe } from "effect";
+import type { HashMap } from "effect";
 
+import { documentOf } from "./blend-gltf.ts";
+import type { Document, View } from "./blend-gltf.ts";
 import type { Part } from "./blend-scene.ts";
-
-interface View {
-  readonly bytes: Uint8Array;
-  readonly target: number;
-}
-
-interface Bounds {
-  readonly min: readonly number[];
-  readonly max: readonly number[];
-}
-
-interface Document {
-  readonly views: readonly View[];
-  readonly accessors: readonly object[];
-  readonly materials: readonly object[];
-  readonly meshes: readonly object[];
-}
 
 const GLB_VERSION = 2;
 const HEADER_BYTES = 12;
 const CHUNK_HEADER_BYTES = 8;
 const ALIGN = 4;
 const SPACE = 0x20;
-const FLOAT = 5126;
-const UNSIGNED_INT = 5125;
-const ARRAY_BUFFER = 34_962;
-const ELEMENT_ARRAY_BUFFER = 34_963;
-const TRIANGLES = 4;
-const XYZ = 3;
-const OPAQUE = 1;
-const ROUGHNESS = 0.8;
-const METALLIC = 0;
 const NONE = 0;
-const NEXT = 1;
 const LITTLE = true;
 
 const tagOf = (text: string): number =>
@@ -48,72 +24,6 @@ const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
 const padded = (length: number): number => Math.ceil(length / ALIGN) * ALIGN;
 
-const boundsOf = (positions: Float32Array): Bounds => {
-  const min = Array.replicate(Infinity, XYZ);
-  const max = Array.replicate(-Infinity, XYZ);
-  for (const [index, value] of positions.entries()) {
-    const axis = index % XYZ;
-    min[axis] = Math.min(min[axis] ?? value, value);
-    max[axis] = Math.max(max[axis] ?? value, value);
-  }
-  return { min, max };
-};
-
-const bytesOf = (array: Float32Array | Uint32Array): Uint8Array =>
-  new Uint8Array(array.buffer, array.byteOffset, array.byteLength);
-
-const materialOf = (color: readonly number[]): object => ({
-  pbrMetallicRoughness: {
-    baseColorFactor: [...color, OPAQUE],
-    metallicFactor: METALLIC,
-    roughnessFactor: ROUGHNESS,
-  },
-  doubleSided: true,
-});
-
-const documentOf = (parts: readonly Part[]): Document => {
-  const views: View[] = [];
-  const accessors: object[] = [];
-  const materials: object[] = [];
-  const meshes = pipe(
-    parts,
-    Array.map(({ positions, groups }) => {
-      const position = accessors.length;
-      const count = positions.length / XYZ;
-      views.push({ bytes: bytesOf(positions), target: ARRAY_BUFFER });
-      accessors.push({
-        bufferView: position,
-        componentType: FLOAT,
-        count,
-        type: "VEC3",
-        ...boundsOf(positions),
-      });
-      const primitives = pipe(
-        groups,
-        Array.map(({ color, indices }) => {
-          views.push({ bytes: bytesOf(indices), target: ELEMENT_ARRAY_BUFFER });
-          accessors.push({
-            bufferView: views.length - NEXT,
-            componentType: UNSIGNED_INT,
-            count: indices.length,
-            type: "SCALAR",
-          });
-          materials.push(materialOf(color));
-          const material = materials.length - NEXT;
-          return {
-            attributes: { POSITION: position },
-            indices: accessors.length - NEXT,
-            material,
-            mode: TRIANGLES,
-          };
-        }),
-      );
-      return { primitives };
-    }),
-  );
-  return { views, accessors, materials, meshes };
-};
-
 const offsetsOf = (views: readonly View[]): readonly [readonly number[], number] => {
   const [length, offsets] = Array.mapAccum(
     views,
@@ -123,6 +33,16 @@ const offsetsOf = (views: readonly View[]): readonly [readonly number[], number]
   return [offsets, length];
 };
 
+const optional = (key: string, values: readonly object[]): object =>
+  Array.match(values, { onEmpty: () => ({}), onNonEmpty: (items) => ({ [key]: items }) });
+
+const bufferViewOf = ({ bytes, target }: View, byteOffset: number): object => ({
+  buffer: NONE,
+  byteOffset,
+  byteLength: bytes.length,
+  ...Option.match(target, { onNone: () => ({}), onSome: (value) => ({ target: value }) }),
+});
+
 const jsonOf = (document: Document, offsets: readonly number[], length: number): object => ({
   asset: { version: "2.0", generator: "aredoko" },
   scene: NONE,
@@ -130,15 +50,16 @@ const jsonOf = (document: Document, offsets: readonly number[], length: number):
   nodes: Array.makeBy(document.meshes.length, (mesh) => ({ mesh })),
   meshes: document.meshes,
   materials: document.materials,
+  ...optional("images", document.images),
+  ...optional("textures", document.textures),
+  ...optional(
+    "samplers",
+    Array.match(document.textures, { onEmpty: () => [], onNonEmpty: () => [{}] }),
+  ),
   accessors: document.accessors,
   bufferViews: pipe(
     document.views,
-    Array.map(({ bytes, target }, index) => ({
-      buffer: NONE,
-      byteOffset: offsets[index] ?? NONE,
-      byteLength: bytes.length,
-      target,
-    })),
+    Array.map((view, index) => bufferViewOf(view, offsets[index] ?? NONE)),
   ),
   buffers: [{ byteLength: length }],
 });
@@ -179,8 +100,11 @@ const assemble = (
   return glb;
 };
 
-const glbOf = Effect.fn("glbOf")(function* glbOf(parts: readonly Part[]) {
-  const document = documentOf(parts);
+const glbOf = Effect.fn("glbOf")(function* glbOf(
+  parts: readonly Part[],
+  pngs: HashMap.HashMap<number, Uint8Array>,
+) {
+  const document = documentOf({ parts, pngs });
   const layout = offsetsOf(document.views);
   const [offsets, length] = layout;
   const json = yield* encodeJson(jsonOf(document, offsets, length));

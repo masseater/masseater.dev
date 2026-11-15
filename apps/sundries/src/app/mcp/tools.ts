@@ -2,8 +2,8 @@ import type { Caller } from "@masseater.dev/mcp-tool-call";
 import { McpServer } from "@modelcontextprotocol/server";
 import { pipe } from "effect";
 
-import { registerAccessTokenTools } from "#/features/access-token";
 import { registerAnalyticsTools } from "#/features/analytics";
+import { registerBrokerTools } from "#/features/broker-credentials";
 import { registerClaudeRequestTools } from "#/features/claude-request";
 import { registerSlideTools } from "#/features/slides-search";
 import { registerSloppediaTools } from "#/features/sloppedia";
@@ -18,7 +18,7 @@ const registerTools = (caller: Caller): McpServer =>
     registerSloppediaTools(caller),
     registerAnalyticsTools(caller),
     registerSlideTools(caller),
-    registerAccessTokenTools(caller),
+    registerBrokerTools(caller),
     registerTranslateTools(caller),
     registerClaudeRequestTools(caller),
   );
