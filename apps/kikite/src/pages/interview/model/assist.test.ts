@@ -6,7 +6,7 @@ import { AtomRegistry } from "effect/reactivity";
 import { vi } from "vite-plus/test";
 
 import { entriesAtom, heardAtom, leadsAtom, summaryAtom } from "./atoms.ts";
-import type { Entry } from "./atoms.ts";
+import type { Entry, Input } from "./atoms.ts";
 import { correct } from "./correction.ts";
 import { read, write } from "./registry.ts";
 import { research } from "./research.ts";
@@ -35,7 +35,7 @@ const answered = (
 
 const fakeServer = HttpClient.make((request) => Effect.sync(() => answered(request)));
 
-const speech = (id: number, text: string, by: "voice" | "typed"): Entry => ({
+const speech = (id: number, text: string, by: Input): Entry => ({
   kind: "speech",
   id,
   at: AT,
