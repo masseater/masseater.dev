@@ -31,16 +31,17 @@
   ],
   "type": "module",
   "imports": {
-    "#src/*": "./src/*"
+    "#src/*": "./src/*",
+    "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./drizzle": "./src/drizzle.ts",
-    "./react": "./src/react.ts",
-    "./remotion": "./src/remotion.ts",
-    "./tanstack-query": "./src/tanstack-query.ts",
-    "./tanstack-router": "./src/tanstack-router.ts",
-    "./tanstack-start": "./src/tanstack-start.ts",
+    ".": "./src/app/index.ts",
+    "./drizzle": "./src/app/drizzle.ts",
+    "./react": "./src/app/react.ts",
+    "./remotion": "./src/app/remotion.ts",
+    "./tanstack-query": "./src/app/tanstack-query.ts",
+    "./tanstack-router": "./src/app/tanstack-router.ts",
+    "./tanstack-start": "./src/app/tanstack-start.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {

@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#config": "./three-twelve.ts",
-    "#outcome": "./outcome.ts"
+    "#config": "./src/shared/config/three-twelve.ts",
+    "#outcome": "./src/entities/outcome/model/outcome.ts",
+    "#/*": "./src/*"
   },
   "dependencies": {
     "@discordjs/voice": "catalog:",

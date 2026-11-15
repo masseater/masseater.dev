@@ -18,7 +18,7 @@ import { GROUPS, summarize } from "./summarize.ts";
 
 const INDENT = { space: 2 } as const;
 
-const DATA = new URL("../../../../data", import.meta.url);
+const DATA = new URL("../../../../data/", import.meta.url);
 
 const DOCUMENTS = new URL("documents.json", DATA).pathname;
 

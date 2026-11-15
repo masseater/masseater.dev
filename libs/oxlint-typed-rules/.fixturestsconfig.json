@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "strict": true
+  },
+  "files": [
+    "stateful-widget.tsx",
+    "plain-widget.tsx",
+    "render-stateful.tsx",
+    "render-plain.tsx",
+    "async-note.tsx",
+    "client-page.tsx",
+    "route.tsx"
+  ]
+}

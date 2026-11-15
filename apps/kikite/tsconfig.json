@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@effect/tsgo/schema.json",
   "extends": "../../tsconfig.json",
-  "include": ["*.ts", "server/*.ts", "worker/*.ts", "src"],
+  "include": ["src", "*.ts"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["node", "vite/client", "@cloudflare/workers-types", "dom-speech-recognition"]

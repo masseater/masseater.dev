@@ -11,7 +11,7 @@ import { ResultsError } from "./results-error.ts";
 
 const INDENT = { space: 2 } as const;
 
-const ROOT = new URL("../../../..", import.meta.url);
+const ROOT = new URL("../../../../", import.meta.url);
 
 const ReadingSchema = Schema.Union([
   Schema.Struct({

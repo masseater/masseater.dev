@@ -4,7 +4,7 @@ import viteReact from "@vitejs/plugin-react";
 import { String as Str } from "effect";
 import { defineConfig } from "vite-plus";
 
-import { DEV_PROXY, interviewerDev } from "./server/dev.ts";
+import { DEV_PROXY, interviewerDev } from "./src/app/server/dev.ts";
 
 const AGENT_SDK = "@anthropic-ai/claude-agent-sdk";
 
@@ -27,7 +27,7 @@ export default defineConfig({
           },
         },
         {
-          files: ["server/serve.ts"],
+          files: ["src/app/server/serve.ts"],
           rules: { "effecttsgo/node-builtin-import": "off" },
         },
       ],
@@ -38,7 +38,7 @@ export default defineConfig({
   server: { proxy: DEV_PROXY },
   build: { outDir: "dist/client" },
   pack: {
-    entry: { server: "server/main.ts" },
+    entry: { server: "src/app/server/main.ts" },
     outDir: "dist/server",
     platform: "node",
     format: "esm",
@@ -48,7 +48,7 @@ export default defineConfig({
       neverBundle: [AGENT_SDK],
       alwaysBundle: (id) => !Str.startsWith(AGENT_SDK)(id),
     },
-    copy: [{ from: "server/Dockerfile", to: "dist/server" }],
+    copy: [{ from: "src/app/server/Dockerfile", to: "dist/server" }],
   },
   test: {
     include: ["**/*.test.ts"],

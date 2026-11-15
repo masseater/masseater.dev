@@ -1,0 +1,53 @@
+import { Array, Boolean, pipe } from "effect";
+
+import { plainIdentifier, serdeCamelField } from "#/entities/rust-item/index.ts";
+import type { Field, Ty } from "#/entities/rust-item/index.ts";
+import { attribute, docLines, escape, when } from "#/shared/lib/text.ts";
+
+import { rustType } from "./rust-type.ts";
+
+export interface FieldStyle {
+  readonly specta: (ty: Ty) => Ty;
+  readonly visibility: string;
+  readonly indent: string;
+  readonly camel: boolean;
+}
+
+export const camelCased = (fields: readonly Field[]): boolean =>
+  pipe(
+    fields,
+    Array.some(({ rust, key }) => plainIdentifier(rust) !== key),
+  );
+
+const serdeParts =
+  (camel: boolean) =>
+  (field: Field): readonly string[] => {
+    const plain = plainIdentifier(field.rust);
+    const expected = Boolean.match(camel, {
+      onTrue: () => serdeCamelField(plain),
+      onFalse: () => plain,
+    });
+    return [
+      ...when(expected !== field.key)(() => [`rename = "${escape(field.key)}"`]),
+      ...when(field.skipNone)(() => ['skip_serializing_if = "Option::is_none"']),
+    ];
+  };
+
+const spectaParts =
+  (style: FieldStyle) =>
+  (field: Field): readonly string[] => {
+    const override = rustType(style.specta(field.ty));
+    return when(override !== rustType(field.ty))(() => [`type = ${override}`]);
+  };
+
+export const fieldLines =
+  (style: FieldStyle) =>
+  (field: Field): readonly string[] => [
+    ...docLines(style.indent)(field.doc),
+    ...attribute({ name: "serde", parts: serdeParts(style.camel)(field), indent: style.indent }),
+    ...attribute({ name: "specta", parts: spectaParts(style)(field), indent: style.indent }),
+    `${style.indent}${style.visibility}${field.rust}: ${rustType(field.ty)},`,
+  ];
+
+export const renameAllCamel = (camel: boolean): readonly string[] =>
+  when(camel)(() => ['rename_all = "camelCase"']);
