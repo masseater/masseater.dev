@@ -155,8 +155,6 @@ catalog:
   nanotar: ^0.3.0
   xlsx: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
   cfb: ^1.2.2
-  papaparse: ^5.7.0
-  "@types/papaparse": ^5.5.2
   ass-compiler: ^0.1.16
   "@plussub/srt-vtt-parser": ^2.0.5
   ical.js: ^2.2.1
