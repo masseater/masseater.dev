@@ -39,7 +39,7 @@
     <ItemGroup Condition="'$(IsSts2Mod)' == 'true'">
         <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.4.8" PrivateAssets="All" />
         <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.6.1" PrivateAssets="All" />
-        <PackageReference Include="Meziantou.Analyzer" Version="3.0.326" PrivateAssets="All" />
+        <PackageReference Include="Meziantou.Analyzer" Version="3.0.327" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(IsSts2Mod)' == 'true' and '$(ModHasPck)' == 'true'">
