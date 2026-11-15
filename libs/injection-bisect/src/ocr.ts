@@ -1,5 +1,4 @@
 import { Effect, Array as Arr, pipe } from "effect";
-import { OEM, createWorker } from "tesseract.js";
 import type { WorkerOptions } from "tesseract.js";
 
 import type { Reader } from "./parser.ts";
@@ -21,10 +20,14 @@ export const recognizedText =
   ({ languages = DEFAULT_LANGUAGES, worker = {} }: OcrOptions) =>
   (images: readonly Uint8Array[]): Effect.Effect<string, ReadError> =>
     Effect.acquireUseRelease(
-      Effect.tryPromise({
-        try: () => createWorker([...languages], OEM.LSTM_ONLY, worker),
-        catch: readErrorOf,
-      }),
+      Effect.tryPromise({ try: () => import("tesseract.js"), catch: readErrorOf }).pipe(
+        Effect.flatMap(({ OEM, createWorker }) =>
+          Effect.tryPromise({
+            try: () => createWorker([...languages], OEM.LSTM_ONLY, worker),
+            catch: readErrorOf,
+          }),
+        ),
+      ),
       (tesseract) =>
         Effect.forEach(
           images,
