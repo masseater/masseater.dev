@@ -10,6 +10,7 @@ import type { TestError } from "./oxlint.ts";
 
 const UNAUTHORIZED = 401;
 const TOO_MANY_REQUESTS = 429;
+const FORBIDDEN = 403;
 
 interface LoggedRequest {
   readonly authorization: string;
@@ -36,6 +37,11 @@ const unauthorized = HttpServerResponse.jsonUnsafe(
   { status: UNAUTHORIZED },
 );
 
+const outOfBudget = HttpServerResponse.jsonUnsafe(
+  { error: { message: "Workspace weekly budget of $5.00 exceeded." } },
+  { status: FORBIDDEN },
+);
+
 const replyFor = (
   body: Body,
   token: string,
@@ -47,6 +53,9 @@ const replyFor = (
   }
   if (token === "unauthorized" || (refinement && token === "refinement-fails")) {
     return Effect.succeed(unauthorized);
+  }
+  if (token === "out-of-budget") {
+    return Effect.succeed(outOfBudget);
   }
   if (token === "flaky" && hits === FIRST_HIT) {
     return Effect.succeed(

@@ -43,7 +43,7 @@ catalog:
   discord-api-types: 0.38.58
   oxlint-plugin-eslint: 1.93.0
   "@ast-grep/cli": 0.51.2
-  "@cloudflare/workers-types": 5.20261110.1
+  "@cloudflare/workers-types": 5.20261112.1
   "@effect/platform-node": 4.1.4
   "@effect/platform-node-shared": 4.1.4
   "@effect/sql-sqlite-node": 4.1.4
@@ -111,7 +111,7 @@ catalog:
   "@fontsource/dela-gothic-one": 5.3.0
   "@fontsource/shippori-mincho-b1": 5.3.0
   "@fontsource/ibm-plex-mono": 5.3.0
-  "@distilled.cloud/github": 1.0.0-rc.18
+  "@distilled.cloud/github": 1.0.0-rc.19
   universal-github-app-jwt: 2.2.2
   "@octokit/rest": 22.0.1
   simple-icons: 16.37.0
@@ -159,7 +159,7 @@ catalog:
   "@fontsource/zen-kurenaido": ^5.3.1
   fastest-levenshtein: ^1.0.16
   "@cfworker/json-schema": ^4.1.6
-  "@openrouter/sdk": 1.5.87
+  "@openrouter/sdk": 1.5.92
   recharts: 3.10.1
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -175,7 +175,7 @@ catalog:
   "@tanstack/eslint-plugin-query": 5.107.1
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/eslint-plugin-start": 0.1.0
-  "@tsconfig/strictest": 2.0.8
+  "@tsconfig/strictest": 2.0.9
   "@typescript-eslint/parser": 8.72.2
   "@typescript-eslint/types": 8.72.2
   "@typescript-eslint/typescript-estree": 8.72.2
@@ -235,10 +235,10 @@ catalog:
   "@earendil-works/chord": 1.5.2
 catalogs:
   stack:
-    "@distilled.cloud/cloudflare": 1.0.0-rc.18
+    "@distilled.cloud/cloudflare": 1.0.0-rc.19
     "@effect/atom-react": 4.1.4
     "@huggingface/transformers": 4.3.2
-    "@effect/tsgo": 0.68.0
+    "@effect/tsgo": 0.68.1
     "@elysiajs/eden": 1.4.9
     "@tanstack/react-query": 5.107.1
     "@tanstack/react-start": 1.169.5
@@ -260,7 +260,7 @@ overrides:
   "@feature-sliced/filesystem>typescript": "catalog:stack"
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-"
   "@remotion/eslint-plugin>typescript": "-"
-  workerd: 1.20261110.1
+  workerd: 1.20261112.1
   vite@*: "catalog:"
   eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
   fflate@>=0.7.0 <0.7.5: ^0.8.0
