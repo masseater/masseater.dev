@@ -8,7 +8,6 @@ import { checkWorkspaces } from "#/features/repository-layout/index.ts";
 import { checkScripts } from "#/features/scripts/index.ts";
 import { checkRepository } from "#/features/value-owners/index.ts";
 import { checkWorkflowQueues } from "#/features/workflow-concurrency/index.ts";
-import type { Problem } from "#/shared/lib/problem.ts";
 
 import { checkTrackedText } from "./tracked-text.ts";
 
@@ -16,7 +15,7 @@ import { checkTrackedText } from "./tracked-text.ts";
 export const checkAll: (
   root: string,
 ) => Effect.Effect<
-  readonly Problem[],
+  Effect.Success<ReturnType<typeof checkRepository>>,
   Effect.Error<
     | ReturnType<typeof checkRepository>
     | ReturnType<typeof checkOverrides>
