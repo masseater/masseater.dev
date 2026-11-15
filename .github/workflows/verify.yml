@@ -100,57 +100,6 @@ jobs:
         env:
           CHECKOUTS: ${{ github.workspace }} ${{ github.workspace }}/.skills-checkout
 
-  zenn:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    concurrency:
-      group: zenn
-      cancel-in-progress: true
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run -r zenn-publish
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GIT_AUTHOR_NAME: github-actions[bot]
-          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
-          GIT_COMMITTER_NAME: github-actions[bot]
-          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
-
-  sts2-pck:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    concurrency:
-      group: sts2-pck
-      cancel-in-progress: true
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: jdx/mise-action@d5574b52816a478f9d4e6529a3f6ff17a8a36785 # v5.2.8
-        with:
-          fetch_from_github: false
-          install_args: dotnet
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run -r pck:all
-        env:
-          PCK_OUT: ${{ runner.temp }}/sts2-pck
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: sts2-pck
-          path: ${{ runner.temp }}/sts2-pck/
-          if-no-files-found: ignore
-
   mosaic-plan:
     if: github.event_name == 'push' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
@@ -255,7 +204,7 @@ jobs:
     steps: *mosaic-site
 
   exposure:
-    needs: [deploy, zenn, sts2-pck, mosaic-plan, mosaic-character, mosaic-deploy]
+    needs: [deploy, mosaic-plan, mosaic-character, mosaic-deploy]
     if: ${{ !cancelled() }}
     permissions:
       actions: read
@@ -268,8 +217,6 @@ jobs:
       [
         deploy,
         private-names,
-        zenn,
-        sts2-pck,
         mosaic-plan,
         mosaic-character,
         mosaic-deploy,
@@ -303,8 +250,6 @@ jobs:
         autofix,
         deploy,
         private-names,
-        zenn,
-        sts2-pck,
         mosaic-plan,
         mosaic-character,
         mosaic-deploy,
