@@ -1,11 +1,14 @@
 use std::path::Path;
 
 use tauri::{App, Manager, RunEvent, WindowEvent, async_runtime};
+use tauri_plugin_log::{RotationStrategy, log::LevelFilter};
 use tauri_specta::{Builder, ErrorHandlingMode, collect_commands};
 
 mod commands;
+mod export;
 mod failure;
 mod mcp;
+mod menu;
 mod model;
 mod store;
 mod sync;
@@ -23,6 +26,8 @@ use writing::understanding::Understanding;
 
 const MAIN_WINDOW: &str = "main";
 const WORK_DIRECTORY: &str = "work";
+const LOG_FILE_BYTES: u128 = 1_000_000;
+const LOG_FILES_KEPT: usize = 5;
 
 fn builder() -> Builder<tauri::Wry> {
     Builder::<tauri::Wry>::new()
@@ -32,6 +37,7 @@ fn builder() -> Builder<tauri::Wry> {
             commands::create_manuscript,
             commands::open_manuscript,
             commands::save_paragraphs,
+            commands::export_manuscript,
             commands::set_title,
             commands::get_annotations,
             commands::draft_from_memo,
@@ -82,7 +88,7 @@ fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     async_runtime::spawn(async move {
         let (store, syncer, token) = serving;
         if let Err(failure) = mcp::serve(store, syncer, token).await {
-            eprintln!("mcp server stopped: {failure}");
+            log::warn!("mcp server stopped: {failure}");
         }
     });
     state.syncer.start();
@@ -95,38 +101,51 @@ fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
 
 pub fn run() -> tauri::Result<()> {
     let builder = builder();
-    tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(
-            |app, _arguments, _cwd| {
-                window::show(app);
-            },
-        ))
-        .plugin(window::state_plugin())
-        .plugin(window::browser_keys_plugin())
-        .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_updater::Builder::new().build())
-        .invoke_handler(builder.invoke_handler())
-        .on_window_event(|window, event| {
-            if let WindowEvent::CloseRequested { api, .. } = event
-                && window.label() == MAIN_WINDOW
-            {
-                api.prevent_close();
-                window::request_close(window.app_handle(), false);
-            }
-        })
-        .setup(setup)
-        .build(tauri::generate_context!())?
-        .run(|app, event| match event {
-            RunEvent::ExitRequested {
-                code: None, api, ..
-            } => {
-                api.prevent_exit();
-                window::request_close(app, true);
-            }
-            #[cfg(target_os = "macos")]
-            RunEvent::Reopen { .. } => window::show(app),
-            _ => {}
-        });
+    let app = tauri::Builder::default();
+    let app = if cfg!(target_os = "macos") {
+        app.menu(menu::japanese)
+    } else {
+        app
+    };
+    app.plugin(tauri_plugin_single_instance::init(
+        |app, _arguments, _cwd| {
+            window::show(app);
+        },
+    ))
+    .plugin(
+        tauri_plugin_log::Builder::new()
+            .level(LevelFilter::Info)
+            .max_file_size(LOG_FILE_BYTES)
+            .rotation_strategy(RotationStrategy::KeepSome(LOG_FILES_KEPT))
+            .build(),
+    )
+    .plugin(window::state_plugin())
+    .plugin(window::browser_keys_plugin())
+    .plugin(tauri_plugin_opener::init())
+    .plugin(tauri_plugin_dialog::init())
+    .plugin(tauri_plugin_updater::Builder::new().build())
+    .invoke_handler(builder.invoke_handler())
+    .on_window_event(|window, event| {
+        if let WindowEvent::CloseRequested { api, .. } = event
+            && window.label() == MAIN_WINDOW
+        {
+            api.prevent_close();
+            window::request_close(window.app_handle(), false);
+        }
+    })
+    .setup(setup)
+    .build(tauri::generate_context!())?
+    .run(|app, event| match event {
+        RunEvent::ExitRequested {
+            code: None, api, ..
+        } => {
+            api.prevent_exit();
+            window::request_close(app, true);
+        }
+        #[cfg(target_os = "macos")]
+        RunEvent::Reopen { .. } => window::show(app),
+        _ => {}
+    });
     Ok(())
 }
 

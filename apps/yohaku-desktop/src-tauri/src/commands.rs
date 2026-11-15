@@ -1,6 +1,7 @@
 use tauri::State;
 use tauri::ipc::Channel;
 
+use crate::export;
 use crate::failure::{Failure, Outcome};
 use crate::mcp;
 use crate::model::{
@@ -97,6 +98,20 @@ pub async fn save_paragraphs(
 
 #[tauri::command]
 #[specta::specta]
+pub async fn export_manuscript(
+    app: tauri::AppHandle,
+    yohaku: State<'_, Yohaku>,
+    id: String,
+) -> Answer<bool> {
+    let current = manuscript(&yohaku.store, &id)?;
+    let paragraphs = yohaku
+        .store
+        .with(|connection| manuscripts::paragraphs(connection, &id))?;
+    export::save(app, &current, &paragraphs).await
+}
+
+#[tauri::command]
+#[specta::specta]
 pub async fn set_title(yohaku: State<'_, Yohaku>, id: String, text: String) -> Answer<Manuscript> {
     let trimmed = text.trim();
     let title = (!trimmed.is_empty()).then(|| Title {
@@ -116,7 +131,7 @@ async fn titled(yohaku: &Yohaku, current: Manuscript, prose: &[String]) -> Outco
     let proposed = propose_title(&yohaku.claude, prose)
         .await
         .unwrap_or_else(|failure| {
-            eprintln!("title failed: {failure}");
+            log::warn!("title failed: {failure}");
             String::new()
         });
     if proposed.is_empty() {

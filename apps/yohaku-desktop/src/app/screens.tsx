@@ -6,13 +6,16 @@ import { UpdateNotice } from "#/features/update";
 import { OnboardingPage } from "#/pages/onboarding";
 
 import { Pages } from "./pages.tsx";
+import { useResumed } from "./resume.ts";
 import { useShownOnceReady } from "./window.ts";
 
 const Screens = (): ReactNode => {
   const loaded = Option.isSome(useOnboardingDone());
   const setup = useStepPending("setup");
-  useShownOnceReady(loaded);
-  if (!loaded) {
+  const resumed = useResumed();
+  const ready = loaded && (setup || resumed);
+  useShownOnceReady(ready);
+  if (!ready) {
     return false;
   }
   if (setup) {

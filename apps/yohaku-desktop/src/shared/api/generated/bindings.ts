@@ -9,6 +9,7 @@ export const commands = {
 	createManuscript: () => typedError<Manuscript_Serialize, Failure>(__TAURI_INVOKE("create_manuscript")),
 	openManuscript: (id: string) => typedError<Opened_Serialize, Failure>(__TAURI_INVOKE("open_manuscript", { id })),
 	saveParagraphs: (id: string, paragraphs: Paragraph[]) => typedError<null, Failure>(__TAURI_INVOKE("save_paragraphs", { id, paragraphs })),
+	exportManuscript: (id: string) => typedError<boolean, Failure>(__TAURI_INVOKE("export_manuscript", { id })),
 	setTitle: (id: string, text: string) => typedError<Manuscript_Serialize, Failure>(__TAURI_INVOKE("set_title", { id, text })),
 	getAnnotations: (id: string) => typedError<Annotations_Serialize, Failure>(__TAURI_INVOKE("get_annotations", { id })),
 	draftFromMemo: (id: string, paragraphId: string, onText: Channel<string>) => typedError<null, Failure>(__TAURI_INVOKE("draft_from_memo", { id, paragraphId, onText })),

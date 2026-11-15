@@ -20,7 +20,7 @@ pub async fn available(app: &AppHandle) -> Option<Release> {
     latest(app)
         .await
         .unwrap_or_else(|failure| {
-            eprintln!("update check failed: {failure}");
+            log::warn!("update check failed: {failure}");
             None
         })
         .map(|update| Release {
