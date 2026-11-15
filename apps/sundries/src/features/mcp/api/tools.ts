@@ -4,8 +4,8 @@ import { pipe } from "effect";
 
 import { SERVER_NAME } from "#/shared/config";
 
-import { registerAccessTokenTools } from "./access-token-tools";
 import { registerAnalyticsTools } from "./analytics-tools";
+import { registerBrokerTools } from "./broker-tools";
 import { registerClaudeRequestTools } from "./claude-request-tools";
 import { registerSlideTools } from "./slides-tools";
 import { registerSloppediaTools } from "./sloppedia-tools";
@@ -19,7 +19,7 @@ const registerTools = (caller: Caller): McpServer =>
     registerSloppediaTools(caller),
     registerAnalyticsTools(caller),
     registerSlideTools(caller),
-    registerAccessTokenTools(caller),
+    registerBrokerTools(caller),
     registerTranslateTools(caller),
     registerClaudeRequestTools(caller),
   );

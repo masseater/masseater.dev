@@ -16,7 +16,6 @@ jobs:
       run:
         shell: pwsh
     env:
-      RESOURCES: apps/aredoko-desktop/src-tauri/resources
       GIT_CONFIG_COUNT: 1
       GIT_CONFIG_KEY_0: core.autocrlf
       GIT_CONFIG_VALUE_0: "false"
@@ -30,34 +29,8 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
       - run: rustup toolchain install
-      - name: Bundle the server
-        run: vp pack
-        working-directory: apps/aredoko-server
-      - name: Copy the server and the Node runtime
-        run: |
-          New-Item -ItemType Directory -Force "$env:RESOURCES/runtime", "$env:RESOURCES/server" | Out-Null
-          Copy-Item (node -p "process.execPath") "$env:RESOURCES/runtime/node.exe"
-          Copy-Item apps/aredoko-server/dist/*.mjs "$env:RESOURCES/server/"
-          $versions = @{}
-          foreach ($name in '@huggingface/transformers', 'sqlite-vec') {
-            $versions[$name] = (Get-Content "apps/aredoko-server/node_modules/$name/package.json" | ConvertFrom-Json).version
-          }
-          @{ name = 'aredoko-server'; private = $true; type = 'module'; dependencies = $versions } |
-            ConvertTo-Json | Set-Content "$env:RESOURCES/server/package.json"
-          "nodeLinker: hoisted", "allowBuilds:", "  onnxruntime-node: false", "  protobufjs: false" |
-            Set-Content "$env:RESOURCES/server/pnpm-workspace.yaml"
-      - name: Install the native dependencies of the server
-        run: vp install --prod --no-frozen-lockfile
-        working-directory: apps/aredoko-desktop/src-tauri/resources/server
-      - name: Drop the onnxruntime binaries for other platforms
-        run: |
-          Get-ChildItem "$env:RESOURCES/server/node_modules/onnxruntime-node/bin" -Recurse -Directory |
-            Where-Object { $_.Name -in 'linux', 'darwin' } | Remove-Item -Recurse -Force
-      - name: Download the embedding model
-        run: vp run fetch-model --model-dir "${{ github.workspace }}/${{ env.RESOURCES }}/models"
-        working-directory: apps/aredoko-server
       - name: Build the installer
-        run: vp exec tauri build --config src-tauri/tauri.release.conf.json
+        run: vp run installer
         working-directory: apps/aredoko-desktop
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -79,6 +52,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@93ede91739120dbe2102f1a4a5dbcfcb67641f36
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@988d10d667dd956eb17a81ec39e8b8cbba5c898a
         with:
           github-token: ${{ github.token }}

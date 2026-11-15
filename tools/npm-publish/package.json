@@ -1,0 +1,14 @@
+{
+  "name": "npm-publish",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@masseater.dev/node-main": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

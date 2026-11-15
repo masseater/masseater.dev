@@ -48,6 +48,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
+      test: "vp test run",
       verify: { command: [], dependsOn: ["build"] },
       build: "vp pack",
     },
