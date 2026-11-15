@@ -250,7 +250,7 @@ jobs:
 
   exposure:
     needs: [deploy, zenn, sts2-pck, mosaic-plan, mosaic-character, mosaic-deploy]
-    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
+    if: ${{ !cancelled() }}
     permissions:
       actions: read
       contents: read
