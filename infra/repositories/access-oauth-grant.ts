@@ -30,7 +30,7 @@ export type GrantSwap = Readonly<{
   grant: AccessGrant;
 }>;
 
-const grantKey = (site: OAuthTargetId): string => `access_oauth_grant:${site}`;
+export const grantKey = (site: OAuthTargetId): string => `access_oauth_grant:${site}`;
 
 export type IssuedTokens = Readonly<{
   tokens: Readonly<Pick<TokenEndpointResponse, "access_token" | "refresh_token" | "expires_in">>;
