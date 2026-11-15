@@ -7,33 +7,6 @@
     "types": ["node", "vite/client", "@cloudflare/workers-types", "dom-speech-recognition"],
     "paths": {
       "#/*": ["./src/*"]
-    },
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "allowedUnstableApis": [
-          "@effect/atom-react",
-          "@effect/vitest#it",
-          "@effect/vitest#layer",
-          "@effect/platform-node/NodeHttpServer",
-          "@effect/platform-node/NodeRuntime",
-          "effect/FileSystem",
-          "effect/crypto/SecureRandom",
-          "effect/http/FetchHttpClient",
-          "effect/http/HttpClient",
-          "effect/http/HttpClientRequest",
-          "effect/http/HttpClientResponse",
-          "effect/http/HttpRouter",
-          "effect/http/HttpServerError",
-          "effect/http/HttpServerRequest",
-          "effect/http/HttpServerResponse",
-          "effect/observability/OtlpSerialization",
-          "effect/observability/OtlpTracer",
-          "effect/reactivity/AsyncResult",
-          "effect/reactivity/Atom",
-          "effect/reactivity/AtomRegistry"
-        ]
-      }
-    ]
+    }
   }
 }

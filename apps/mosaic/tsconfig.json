@@ -7,32 +7,6 @@
     "types": ["vite/client", "@cloudflare/workers-types", "@webgpu/types"],
     "paths": {
       "#/*": ["./src/*"]
-    },
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "allowedUnstableApis": [
-          "@effect/atom-react",
-          "@effect/platform-node/NodeRuntime#runMain",
-          "@effect/platform-node/NodeServices#layer",
-          "@effect/vitest#layer",
-          "effect/FileSystem#FileSystem",
-          "effect/Path#Path",
-          "effect/process/ChildProcess#make",
-          "effect/reactivity/Atom",
-          "effect/http/FetchHttpClient#layer",
-          "effect/http/HttpClient#get",
-          "effect/http/HttpClient#HttpClient",
-          "effect/http/HttpClientError#HttpClientError",
-          "effect/http/HttpClientResponse#filterStatusOk",
-          "effect/http/HttpClientResponse#schemaBodyJson",
-          "effect/http/FetchHttpClient#RequestInit",
-          "effect/observability/OtlpExporter#Flusher",
-          "effect/observability/OtlpExporter#layerFlusher",
-          "effect/observability/OtlpSerialization#layerJson",
-          "effect/observability/OtlpTracer#layer"
-        ]
-      }
-    ]
+    }
   }
 }
