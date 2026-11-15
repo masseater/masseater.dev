@@ -5,13 +5,13 @@ import { MemoList, MemoProjects } from "#/entities/watashi/model/memo";
 import { MemoChange, MemoKey, Written } from "#/entities/watashi/model/memo-input";
 import { Profile } from "#/entities/watashi/model/profile";
 import { CursorQuery, MemosSearch, RecordsSearch } from "#/entities/watashi/model/search";
-import { Sessions } from "#/entities/watashi/model/session";
+import { RECENT_SESSION_LIMIT, Sessions } from "#/entities/watashi/model/session";
 import { createRouter, respond, rpcBody, watashi } from "#/shared/api/index.server";
 
 import { memosInput, recordsInput } from "./inputs";
 import { conversation, memoDetail, timeline } from "./watashi-reads.server";
 
-const RECENT_SESSIONS = { limit: 100 } as const;
+const RECENT_SESSIONS = { limit: RECENT_SESSION_LIMIT } as const;
 
 export const watashiRoutes = createRouter("/api/watashi")
   .get("/timeline", () => respond(timeline))
