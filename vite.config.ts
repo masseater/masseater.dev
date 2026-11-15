@@ -185,7 +185,17 @@ export default defineConfig({
           "fallow dupes --fail-on-issues --quiet --format compact",
           "fallow security --fail-on-issues --quiet",
         ],
-        cache: { input: [{ auto: true }, "!.fallow/**", "!target/**"], output: [] },
+        cache: {
+          input: [
+            { auto: true },
+            "!.fallow/**",
+            "!target/**",
+            "!**/dist/**",
+            "!node_modules/.vitest-cache/**",
+            "!**/.fallow-verified",
+          ],
+          output: [],
+        },
       },
       "workflow-rules":
         "ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows",
@@ -223,7 +233,9 @@ export default defineConfig({
       },
       test: {
         command: "vp test run",
-        cache: { input: [{ auto: true }, "!**/.cache/**", "!target/**"] },
+        cache: {
+          input: [{ auto: true }, "!**/.cache/**", "!target/**", "!node_modules/.vitest-cache/**"],
+        },
       },
       msch: {
         command: "msch",

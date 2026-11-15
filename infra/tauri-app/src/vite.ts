@@ -48,6 +48,8 @@ export const tauriAppConfig = ({
           cache: {
             input: [
               "src-tauri/**",
+              "!src-tauri/gen/**",
+              "!src-tauri/target/**",
               ...pipe(
                 [...CARGO_INPUTS, ...workspaceInputs],
                 Array.map((pattern) => ({ pattern, base: "workspace" as const })),
