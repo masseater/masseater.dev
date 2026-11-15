@@ -31,6 +31,8 @@ import { descendantsOf, isGenericDeclaration, isTypeDeclaration } from "#/shared
 import { schemaTypeOf } from "#/shared/lib/values.ts";
 
 import { derivedDeclarationsOf } from "./derivation.ts";
+import { declaredBy, openTypeIdsOf, sameProperty } from "./property-match.ts";
+import type { OpenTypeIds } from "./property-match.ts";
 
 export interface ShapeContext {
   readonly checker: Checker;
@@ -114,16 +116,6 @@ interface LocalProperty {
   readonly type: Type;
 }
 
-interface OpenTypeIds {
-  readonly any: number;
-  readonly unknown: number;
-}
-
-const openTypeIdsOf = (checker: Checker): OpenTypeIds => ({
-  any: checker.getAnyType().id,
-  unknown: checker.getUnknownType().id,
-});
-
 type IndexedDeclaration =
   | TypeAliasDeclaration
   | InterfaceDeclaration
@@ -179,18 +171,6 @@ const hasEveryName =
     );
   };
 
-const sameProperty =
-  (checker: Checker, open: OpenTypeIds) =>
-  (localType: Type, library: TypeSymbol): boolean => {
-    const libraryType = checker.getTypeOfSymbol(library);
-    return (
-      libraryType.id !== open.any &&
-      libraryType.id !== open.unknown &&
-      checker.isTypeAssignableTo(localType, libraryType) &&
-      checker.isTypeAssignableTo(libraryType, localType)
-    );
-  };
-
 const matchOf =
   (context: ShapeContext, open: OpenTypeIds) =>
   (locals: readonly LocalProperty[], shape: LibraryShape): Option.Option<ShapeMatch> => {
@@ -201,7 +181,10 @@ const matchOf =
           locals,
           Arr.every((local) =>
             Option.fromUndefinedOr(checker.getPropertyOfType(shapeType, local.name)).pipe(
-              Option.exists((library) => sameProperty(checker, open)(local.type, library)),
+              Option.exists(
+                (library) =>
+                  declaredBy(shape)(library) && sameProperty(checker, open)(local.type, library),
+              ),
             ),
           ),
         ),

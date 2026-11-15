@@ -29,7 +29,7 @@ export default defineConfig({ lint });
 ```
 
 リポジトリに固有のルールや overrides は、`lint` を広げてから足す。
-`steigerRules` は、`steiger` セクションの Steiger ルールリストである。推奨される Feature-Sliced Design ルールに続き、masseater のリポジトリが追加するルールが並んでいる。
+`steigerRules` は `steiger` セクションに渡す Steiger のルールリストで、推奨の Feature-Sliced Design ルールのあとに masseater のリポジトリで足すルールを並べる。
 decision ルールは呼ぶたびに費用がかかるので、プリセットは有効にしない。
 `decisionRules` を掛けたいファイルの overrides に渡す。
 

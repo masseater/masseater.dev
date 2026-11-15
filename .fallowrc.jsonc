@@ -203,7 +203,7 @@
     },
     {
       "name": "vite-plus-adopt",
-      "enablers": ["@r_masseater/vite-plus-adopt", "@r_masseater/msch"],
+      "enablers": ["@r_masseater/msch"],
       "toolingDependencies": [
         "@commitlint/config-conventional",
         "@masseater.dev/textlint-rule-yomiyasu",
@@ -213,7 +213,7 @@
     },
     {
       "name": "oxlint-plugin-decision",
-      "enablers": ["@r_masseater/oxlint-plugin-decision"],
+      "enablers": ["@r_masseater/msch"],
       "entryPoints": ["decision-rules.ts"],
     },
     {

@@ -78,11 +78,10 @@ const writeJson = Effect.fn("writeJson")(function* writeJson(root: string) {
 });
 
 const checkEverything = Effect.fn("checkEverything")(function* checkEverything(root: string) {
-  const [found, toolFailures] = yield* Effect.all([checkAll(root), toolChecks(root, [])], {
-    concurrency: "unbounded",
-  });
+  const found = yield* checkAll(root);
   const problems = sortProblems(found);
   yield* writeProblems(root, problems);
+  const toolFailures = yield* toolChecks(root, []);
   return yield* failWhenAny(problems.length + toolFailures);
 });
 

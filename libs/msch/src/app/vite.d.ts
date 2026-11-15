@@ -1,4 +1,3 @@
-import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import type { OxlintOverride } from "vite-plus/lint";
 
 export type { ToolSections } from "@r_masseater/vite-plus-adopt";
@@ -39,7 +38,7 @@ export interface MschConfig {
 }
 
 declare module "vite" {
-  interface UserConfig extends ToolSections {
+  interface UserConfig {
     readonly msch?: MschConfig;
   }
 }
