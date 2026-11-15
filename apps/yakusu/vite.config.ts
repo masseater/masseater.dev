@@ -10,5 +10,12 @@ const app = tauriAppConfig({
 });
 
 export default defineConfig(
-  mergeConfig(app, { run: { tasks: { verify: { command: [], dependsOn: ["cargo"] } } } }),
+  mergeConfig(app, {
+    run: {
+      tasks: {
+        verify: { command: [], dependsOn: ["cargo"] },
+        "fetch-runtime": { command: "node fetch-runtime.ts", cache: false },
+      },
+    },
+  }),
 );
