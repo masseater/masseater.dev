@@ -1,0 +1,62 @@
+name: release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    concurrency:
+      group: release-plan
+      cancel-in-progress: true
+    outputs:
+      components: ${{ steps.components.outputs.components }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: git fetch --unshallow --filter=blob:none origin
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - id: components
+        run: vp run -r release-components
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  component:
+    needs: plan
+    if: needs.plan.outputs.components != '' && needs.plan.outputs.components != '[]'
+    name: ${{ matrix.component.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        component: ${{ fromJSON(needs.plan.outputs.components) }}
+    permissions:
+      actions: write
+      contents: write
+      id-token: write
+      pull-requests: write
+    uses: $/.github/workflows/release-component.yml
+    with:
+      component: ${{ toJSON(matrix.component) }}
+
+  ci-telemetry:
+    needs: [plan, component]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ee56f90bdf77bf747e158391c0ae8a846732b988
+        with:
+          github-token: ${{ github.token }}
