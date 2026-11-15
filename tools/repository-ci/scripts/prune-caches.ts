@@ -40,11 +40,12 @@ const pruneOlder = Effect.fn("pruneOlder")(function* pruneOlder(prefix: string) 
 const PERSIST = "persist-";
 const RUN_SUFFIX = /-\d+$/u;
 
+const groupOf = ({ key }: Readonly<{ key: string }>): string => Str.replace(RUN_SUFFIX, "")(key);
+
 const prunePersisted = Effect.gen(function* prunePersisted() {
   const { actions_caches } = yield* getJson(Caches)(
     `actions/caches?ref=${MAIN}&key=${PERSIST}&sort=created_at&direction=desc&per_page=100`,
   );
-  const groupOf = ({ key }: { readonly key: string }): string => Str.replace(RUN_SUFFIX, "")(key);
   const older = pipe(
     actions_caches,
     Arr.filter((cache, index) =>

@@ -99,6 +99,12 @@ const changedOnly = Effect.fn("changedOnly")(function* changedOnly(
   );
 });
 
+const keyOf = (name: string, item: string): string =>
+  pipe(
+    Option.liftPredicate(item, Str.isNonEmpty),
+    Option.match({ onNone: () => name, onSome: (value) => `${name}-${value}` }),
+  );
+
 const entriesOf = Effect.fn("entriesOf")(function* entriesOf(
   { root, tasks }: Readonly<{ root: string; tasks: Tasks }>,
   task: string,
@@ -106,18 +112,18 @@ const entriesOf = Effect.fn("entriesOf")(function* entriesOf(
 ) {
   const defines = definesIn(tasks);
   const name = nameOf(directory);
-  const listed = defines(directory, `${task}${ITEMS}`);
-  const items = listed ? yield* Effect.scoped(itemsOf(root, directory, task)) : [NO_ITEM];
-  return pipe(
-    items,
-    Arr.map((item) => ({
-      name,
-      key: item === NO_ITEM ? name : `${name}-${item}`,
-      directory,
-      item,
-      finally: defines(directory, `${task}${FINALLY}`),
-    })),
-  );
+  const entryOf = (item: string): typeof Entry.Type => ({
+    name,
+    key: keyOf(name, item),
+    directory,
+    item,
+    finally: defines(directory, `${task}${FINALLY}`),
+  });
+  if (defines(directory, `${task}${ITEMS}`)) {
+    const items = yield* Effect.scoped(itemsOf(root, directory, task));
+    return pipe(items, Arr.map(entryOf));
+  }
+  return [entryOf(NO_ITEM)];
 });
 
 const command = Command.make("task-packages", { task: Argument.String("task") }, ({ task }) =>
