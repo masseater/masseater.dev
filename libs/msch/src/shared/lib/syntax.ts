@@ -51,8 +51,9 @@ export const descendantsOf = (node: Node): readonly Node[] =>
 const isExternalFile =
   (program: Program) =>
   (sourceFile: SourceFile): boolean =>
-    Str.includes(NODE_MODULES_SEGMENT)(sourceFile.fileName) ||
-    program.isSourceFileFromExternalLibrary(sourceFile);
+    !program.isSourceFileDefaultLibrary(sourceFile) &&
+    (Str.includes(NODE_MODULES_SEGMENT)(sourceFile.fileName) ||
+      program.isSourceFileFromExternalLibrary(sourceFile));
 
 export const isExternalDeclaration =
   (program: Program) =>
