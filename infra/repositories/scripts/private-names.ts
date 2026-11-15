@@ -54,7 +54,7 @@ const privateRegex = Effect.gen(function* privateRegex() {
 });
 
 const privateNames = Effect.gen(function* privateNames() {
-  const checkouts = yield* Config.String("CHECKOUTS").pipe(Config.withDefault("."));
+  const checkouts = yield* Config.String("CHECKOUTS");
   const regex = yield* privateRegex;
   const hits = yield* Effect.forEach(Str.split(" ")(checkouts), (checkout) =>
     hitsIn({ checkout, regex }),

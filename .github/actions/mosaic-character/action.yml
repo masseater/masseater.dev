@@ -31,9 +31,6 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       run: vp run -r mosaic-superseded
     - if: steps.start.outputs.superseded != 'true'
-      shell: bash
-      run: rustup toolchain install
-    - if: steps.start.outputs.superseded != 'true'
       uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       with:
         shared-key: mosaic-character
