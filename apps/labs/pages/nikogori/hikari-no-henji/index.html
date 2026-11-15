@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>ひかりの返事 | masseater.dev</title>
     <style>
-      /* one sheet of dark sanded pastel paper hung on a quiet wall; nothing else on the page */
       :root {
         --wall: #cfc9c0;
         --shade: rgba(38, 30, 52, 0.36);
@@ -63,10 +62,7 @@
     <script type="module">
       (() => {
         "use strict";
-        /* Media: soft pastel sticks, pastel pencils, willow charcoal and white chalk on a sheet of
-   indigo sanded paper, plus one stick that does not exist: a chalk that keeps the light it
-   is given and lets it go slowly. The sheet is worked by hand twelve times a second, and
-   whatever was there a moment ago is rubbed back with the side of the palm. */
+
         const cv = document.getElementById("c"),
           V = cv.getContext("2d");
         const W = 1920,
@@ -96,7 +92,6 @@
         V.lineCap = V.lineJoin = "round";
         const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        /* three hands: r lays the scene out (always the same place), q is the tremor of the wrist, z is tonight */
         const mul = (a) => () => {
           a = (a + 0x6d2b79f5) | 0;
           let t = Math.imul(a ^ (a >>> 15), 1 | a);
@@ -158,7 +153,6 @@
         };
         const pk = (R, l) => R[cl(Math.floor(l * (R.length - 1) + q()), 0, R.length - 1)];
 
-        /* ---------- the tooth of the paper: every mark, still or moving, breaks on the same grain ---------- */
         const TN = 512,
           tooth = new Float32Array(TN * TN);
         {
@@ -294,10 +288,9 @@
           pg.setTransform(1, 0, 0, 1, 0, 0);
         }
 
-        /* ---------- the sticks ---------- */
         const NX = new Float32Array(96),
           NY = new Float32Array(96);
-        /* one drag of a stick: a bundle of grazing lines, each with its own pressure. tp 1 = runs out to a tip, 2 = spindle */
+
         function stk(c, P, w, col, a, tp, jit, den) {
           const n = P.length >> 1;
           if (n < 2) return;
@@ -410,7 +403,6 @@
           c.stroke();
         }
 
-        /* ---------- the place (held in the head once, then drawn three times, in three lights) ---------- */
         const GX = 1470,
           GY = 240;
         const xl = (y) => 1420 - 1750 * Math.pow(Math.max((y - 410) / 670, 0), 0.85);
@@ -860,7 +852,7 @@
             (o.ft ? 9000 : (o.k === 3 || o.k === 4) && o.y > 850 ? 7000 : o.z > 1.1 ? 5000 : 0) +
             o.y;
           PL.sort((a, b) => key(a) - key(b));
-          /* where the dew will sit, and in what order the morning finds it */
+
           for (const b of PL) {
             if (b.k !== 0 || b.z < 0.45) continue;
             if (r() < (b.z > 1.1 ? 0.22 : 0.1)) {
@@ -894,7 +886,6 @@
           DEW.sort((a, b) => a.o - b.o);
         }
 
-        /* ---------- three boxes of sticks, dark to light ---------- */
         const box = (o) => {
           for (const k in o) {
             const v = o[k];
@@ -1000,11 +991,9 @@
           fk: 0.75,
         });
 
-        /* ---------- drawing the sheet, back to front, the way the hand would ---------- */
         const U = mk(240, 135),
           u = U.getContext("2d");
         function* under(dst, P) {
-          /* first colour rubbed into the tooth with the fingers */
           r = mul(11);
           u.setTransform(1, 0, 0, 1, 0, 0);
           u.clearRect(0, 0, 240, 135);
@@ -1142,7 +1131,7 @@
           shut(dst, CUT[2]);
           yield;
           if (P.dew || P.side < 0) {
-            open(); /* the light eats into the trunks that cross it */
+            open();
             for (const T of FTR) {
               if (T.x < 1330 || T.x > 1620) continue;
               for (let y = 120; y < 400; y += 26) {
@@ -1337,7 +1326,7 @@
           }
           shut(dst, CUT[2]);
           yield;
-          open(); /* rings: the water answering whatever touched it */
+          open();
           const rings = [
             [906, 774, 30],
             [556, 746, 34],
@@ -2192,7 +2181,6 @@
           }
         }
 
-        /* ---------- the living layer: lights that answer ---------- */
         const trail = mk(),
           tg = cx(trail),
           dust = mk(),
@@ -2216,7 +2204,7 @@
             [255, 244, 200],
             [255, 190, 84],
           ],
-        ]; /* answering light, yours, dew, evening */
+        ];
         function halo(c0, c1) {
           const n = 96,
             c = mk(n, n),
@@ -2292,11 +2280,7 @@
             localStorage.setItem(KEY, JSON.stringify(store));
           } catch (e) {}
         };
-        if (store.last)
-          bonus0 = Math.min(
-            70,
-            6 + ((Date.now() - store.last) / 36e5) * 4,
-          ); /* it kept answering while you were away */
+        if (store.last) bonus0 = Math.min(70, 6 + ((Date.now() - store.last) / 36e5) * 4);
 
         function addFly(x, y, zd, o) {
           const f = Object.assign(
@@ -2502,7 +2486,6 @@
           } else if (n === "toNight") startTr(night, "night");
         }
 
-        /* ---------- sound: only the stick on the paper, and only after you have touched the sheet ---------- */
         let AC = null,
           NB = null,
           MG = null,
@@ -2574,7 +2557,6 @@
           } catch (e) {}
         }
 
-        /* ---------- the viewer's hand ---------- */
         const toL = (e) => {
           const b = cv.getBoundingClientRect();
           return [((e.clientX - b.left) / b.width) * W, ((e.clientY - b.top) / b.height) * H];
@@ -2683,7 +2665,6 @@
             hidAt = 0;
             last = 0;
             if (d > 3) {
-              /* you looked away, and it had not stopped */
               const n = Math.min(140, 6 + d * 1.5);
               if (pn === "night" || pn === "toDawn") {
                 bonus += n;
@@ -2697,7 +2678,6 @@
         });
         window.addEventListener("pagehide", save);
 
-        /* ---------- one beat of the hand (twelve to the second) ---------- */
         function step(dt) {
           const w0 = where(tl);
           if (
@@ -2783,7 +2763,6 @@
             V.drawImage(S, 0, 0);
           }
 
-          /* rub back what was drawn a moment ago; what stays is the afterglow */
           tg.setTransform(1, 0, 0, 1, 0, 0);
           tg.globalCompositeOperation = "destination-out";
           tg.globalAlpha = 1;
@@ -2808,7 +2787,6 @@
           }
           dg.setTransform(Q, 0, 0, Q, 0, 0);
 
-          /* the answering lights */
           if (pn === "night") {
             const d = pt - answerT;
             if (d >= 0 && !first) {
@@ -2940,7 +2918,6 @@
             }
           }
 
-          /* daylight on the water */
           if (dayK > 0) {
             const n = Math.round(dayK * (calm ? 30 : 96)),
               C = eveK > 0.5 ? GE : GM;
@@ -2973,7 +2950,7 @@
               tg.stroke();
             }
           }
-          /* rings where a touch landed on the water */
+
           for (const w of waves) {
             if (!w.wet) continue;
             const age = tl - w.t,
@@ -2999,7 +2976,6 @@
             }
           }
 
-          /* dew and evening glints: which ones catch the light depends on where you stand */
           const gk = Math.max(dewK, eveK * 0.45),
             lit = Math.floor(gk * DEW.length),
             gh = eveK > 0.5 ? 3 : 2;
@@ -3024,7 +3000,6 @@
           if (dayK > 0.3)
             for (const f of F) if (f.mine && z() < 0.07) glintAt({ x: f.x, y: f.y, s: 1.3 }, gh);
 
-          /* everything chalked this beat goes through the tooth of the paper */
           open();
           s.setTransform(1, 0, 0, 1, 0, 0);
           s.drawImage(dust, 0, 0);
@@ -3145,7 +3120,6 @@
           V.globalAlpha = 1;
         }
 
-        /* ---------- begin: the sheet is drawn in front of you, then it starts to live ---------- */
         const still = arg("s"),
           jump = arg("t");
         let last = 0,

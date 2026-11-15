@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>まだ、あたたかい | masseater.dev</title>
     <style>
-      /* layout: one gilded panel, 16:9, hung alone on a dim wall; nothing else on the page */
       :root {
         --wall: #1b1715;
         --wall-edge: #0f0c0b;
@@ -108,7 +107,6 @@
         const reduceMotion =
           window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        /* ---------- hash options: #done, #s<seed>, #t<seconds>, #l<0-4> (plain names only) ---------- */
         const opt = {
           seed: (Math.random() * 4294967296) >>> 0,
           ff: reduceMotion ? 110 : 0,
@@ -121,7 +119,6 @@
           else if (/^l\d$/.test(tok)) opt.light = +tok.slice(1);
         }
 
-        /* ---------- the two working surfaces: pigment, and relief/material ---------- */
         const dprGuess = Math.min(window.devicePixelRatio || 1, 2);
         const PW = clamp(
           Math.round((Math.min(window.innerWidth, (window.innerHeight * 16) / 9) * dprGuess) / 32) *
@@ -173,7 +170,6 @@
           };
         }
 
-        /* ---------- colour ---------- */
         const rgb = (c) =>
           `rgb(${clamp(c[0], 0, 255) | 0},${clamp(c[1], 0, 255) | 0},${clamp(c[2], 0, 255) | 0})`;
         const mix = (a, b, t) => [
@@ -272,9 +268,7 @@
           ],
         };
 
-        /* ---------- composition fields ---------- */
         function warmth(x, y) {
-          // pixel coords -> 0 (long night) .. 1 (the warm heart)
           const X = x / PH,
             Y = y / PH;
           const dx = (X - core.x) * 0.8,
@@ -282,7 +276,7 @@
           let d = Math.hypot(dx, dy);
           d += (fbm(X * 1.9 + warmSeedA, Y * 1.9 + warmSeedB) - 0.5) * 0.46;
           d += (noise(X * 6.3 + 3.1, Y * 6.3 + warmSeedA) - 0.5) * 0.1;
-          const p2 = Math.hypot((X - core.px) * 1.0, (Y - core.py) * 1.0); // a small second pocket of warmth far in the dark
+          const p2 = Math.hypot((X - core.px) * 1.0, (Y - core.py) * 1.0);
           d = Math.min(d, 0.5 + p2 * 1.5);
           return smooth(0.92, 0.1, d);
         }
@@ -341,7 +335,6 @@
           return [bx, by];
         }
 
-        /* ---------- primitives ---------- */
         function polyPath(pts) {
           const p = new Path2D();
           p.moveTo(pts[0][0], pts[0][1]);
@@ -406,7 +399,6 @@
           return [nx, ny];
         }
 
-        /* a loaded bristle brush dragged along a path: every hair carries its own colour, load and ridge */
         function* brush(pts, o, rng) {
           const n = pts.length;
           if (n < 3) return;
@@ -510,7 +502,6 @@
           }
         }
 
-        /* one touch of a small loaded brush */
         function dab(x, y, ang, len, w, col, rng, thick) {
           const nb = Math.max(3, Math.round(w / (1.0 * U)));
           const ca = Math.cos(ang),
@@ -557,7 +548,6 @@
           cx.globalAlpha = hx.globalAlpha = 1;
         }
 
-        /* thin colour let down in water: many faint irregular sheets, with pigment gathering at the rim */
         function* wash(x, y, r, col, layers, alpha, rng, o) {
           o = o || {};
           const base = deform(blob(x, y, r, rng, 9, o.sx), 3, 0.5, rng);
@@ -623,7 +613,6 @@
           hx.fillStyle = `rgb(${24 + rng.i(9)},255,${rng.i(256)})`;
           hx.fill(path);
           for (let k = 0; k < 8; k++) {
-            // patina
             const bx = tx + rng.r(-0.42, 0.42) * s,
               by = ty + rng.r(-0.42, 0.42) * s;
             const pp = deform(blob(bx, by, s * rng.r(0.06, 0.24), rng, 7), 2, 0.5, rng);
@@ -643,7 +632,7 @@
           cx.moveTo(cs[3][0], cs[3][1]);
           cx.lineTo(cs[2][0], cs[2][1]);
           cx.stroke();
-          const nc = rng.chance(0.45) ? 1 : 0; // a crease where the leaf folded on itself
+          const nc = rng.chance(0.45) ? 1 : 0;
           for (let k = 0; k < nc; k++) {
             const a = rng.f() * TAU,
               ox = tx + rng.r(-0.3, 0.3) * s,
@@ -662,7 +651,7 @@
             hx.lineWidth = rng.r(0.7, 1.3) * U;
             hx.stroke(p);
           }
-          const nw = rng.chance(0.3) ? 1 + rng.i(2) : 0; // worn places where the red ground shows
+          const nw = rng.chance(0.3) ? 1 + rng.i(2) : 0;
           for (let k = 0; k < nw; k++) {
             const e = rng.i(4),
               t = rng.f(),
@@ -686,7 +675,6 @@
             hx.fill(pp);
           }
           for (let k = 0; k < 3; k++) {
-            // hairline cracks
             const ox = tx + rng.r(-0.45, 0.45) * s,
               oy = ty + rng.r(-0.45, 0.45) * s,
               a = rng.f() * TAU,
@@ -727,7 +715,6 @@
         }
 
         function scratchLine(pts, w, rng) {
-          // the back of the brush dragged through wet paint, down to the leaf
           const p = new Path2D();
           p.moveTo(pts[0][0], pts[0][1]);
           for (let i = 1; i < pts.length; i++)
@@ -752,7 +739,6 @@
           cx.globalAlpha = hx.globalAlpha = 1;
         }
 
-        /* wax dragged over the tooth of the surface: colour only where the ground stands up to meet it */
         let autoScratch = 0;
         function crayonSeg(x0, y0, x1, y1, w, css, press, rng) {
           const dist = Math.hypot(x1 - x0, y1 - y0);
@@ -879,7 +865,7 @@
             if ((i & 7) === 7) yield 0.012;
           }
         }
-        /* ---------- time: every gesture is a small coroutine that waits between touches ---------- */
+
         let tracks = [],
           paintT = 0,
           clockT = 0,
@@ -922,7 +908,6 @@
           }
         }
 
-        /* ---------- the painting ---------- */
         function* gLeaf(rng) {
           const rows = 7,
             s = PH / (rows - 0.42),
@@ -1042,7 +1027,6 @@
               : rng.pick(P.trans);
         }
         function* dabString(rng, x, y, n, o) {
-          // a drift of touches following the current of the picture
           o = o || {};
           const flip = rng.chance(0.5),
             sc = o.scale || 1;
@@ -1072,7 +1056,6 @@
           }
         }
         function* gDabs(rng, strings, t0, span) {
-          // one, then a few, then they do not stop
           const ox = core.px * PH,
             oy = core.py * PH;
           let t = 0;
@@ -1135,7 +1118,6 @@
           }
         }
         function* gToast(rng, x, y, n, o) {
-          // leaf dust thrown from a bamboo tube: one bright fan, then the slow fall
           o = o || {};
           const ang = o.ang == null ? rng.f() * TAU : o.ang,
             spread = o.spread || rng.r(0.5, 1.1),
@@ -1149,7 +1131,6 @@
           }
         }
         function* gDust(rng, n) {
-          // finest leaf dust drifting along one long current through the dark
           let p = samplePos(rng, (x, y) => smooth(0.4, 0.1, warmth(x, y)));
           let a = flowAng(p[0], p[1]);
           for (let i = 0; i < n; i++) {
@@ -1172,7 +1153,6 @@
           }
         }
         function* gCrayons(rng) {
-          // the long looping line that will not stop
           const start = [rng.r(0.04, 0.1) * PW, rng.r(0.3, 0.5) * PH];
           const circ = (x, y) => flowAng(x, y);
           spawn(
@@ -1227,7 +1207,7 @@
             clockT,
           );
           yield 4;
-          // a patch of fierce filling-in, the way a small hand colours a corner
+
           const hx0 = rng.r(0.8, 0.9) * PW,
             hy0 = rng.r(0.76, 0.86) * PH,
             ha = rng.r(-1.1, -0.7),
@@ -1313,7 +1293,6 @@
           }
         }
         function* gAfter(rng) {
-          // it never quite finishes
           let i = 0;
           for (;;) {
             yield rng.r(1.4, 3.6) + Math.min(14, i * 0.07);
@@ -1396,7 +1375,6 @@
             drift: R.r(-0.75, -0.3),
           };
 
-          // the ground: red bole, brushed on unevenly
           cx.globalAlpha = 1;
           cx.globalCompositeOperation = "source-over";
           cx.fillStyle = rgb(BOLE);
@@ -1422,7 +1400,6 @@
           for (let i = 0; i < 2; i++) spawn(gWashes(R.fork(), 9, "syrup"), 5 + i);
           spawn(gWashes(R.fork(), 8, "veil"), 31);
 
-          // the long dark: laid in broadly, then worked over and over
           const nightW = (x, y) => Math.pow(smooth(0.55, 0.08, warmth(x, y)), 0.8);
           for (let i = 0; i < 3; i++)
             spawn(
@@ -1469,7 +1446,6 @@
               21 + i * 0.6,
             );
 
-          // where the dark gives way
           for (let i = 0; i < 2; i++)
             spawn(
               gMass(R.fork(), 32, {
@@ -1487,7 +1463,7 @@
               }),
               17 + i * 0.7,
             );
-          // warmth, scumbled thin so the leaf keeps breathing through it
+
           for (let i = 0; i < 2; i++)
             spawn(
               gMass(R.fork(), 28, {
@@ -1518,7 +1494,7 @@
             }),
             29,
           );
-          // a few loaded strokes of shell-white, thick enough to throw a shadow
+
           spawn(
             gMass(R.fork(), 14, {
               where: (x, y) => smooth(0.6, 0.9, warmth(x, y)),
@@ -1535,7 +1511,7 @@
             }),
             36,
           );
-          // and small hot strokes of vermilion and marigold out in the cold
+
           spawn(
             gMass(R.fork(), 26, {
               where: (x, y) => smooth(0.5, 0.15, warmth(x, y)) * 0.6 + 0.05,
@@ -1573,7 +1549,6 @@
           dirty = true;
         }
 
-        /* ---------- light: the surface is lit and photographed, never merely displayed ---------- */
         const VS =
           "attribute vec2 p;varying vec2 v;void main(){v=p*0.5+0.5;gl_Position=vec4(p,0.,1.);}";
         const FS = `precision highp float;
@@ -1745,7 +1720,7 @@ void main(){
         let lastNow = performance.now(),
           wall = 0,
           frameNo = 0;
-        const SPEED = 4; // the hand works quickly; the light takes its time
+        const SPEED = 4;
         const hour = new Date().getHours() + new Date().getMinutes() / 60;
         const hourWarm = 0.5 + 0.5 * Math.cos(((hour - 15) / 24) * TAU);
         compose(opt.seed);
@@ -1762,7 +1737,7 @@ void main(){
               paintT + Math.min(0.4, raw) * (paintT < 104 ? SPEED : 1),
               clamp(raw * 500, 10, 40),
             );
-          // where the light stands: it travels by itself, like a slow day
+
           let tx = 0.62 * Math.sin(wall * 0.11 + 0.6) + 0.2 * Math.sin(wall * 0.047),
             ty = 0.34 * Math.cos(wall * 0.083) + 0.2;
           if (reduceMotion) {
@@ -1780,7 +1755,7 @@ void main(){
           light[1] += (ty - light[1]) * e;
           const dawn = smooth(0, 96, paintT) * (0.955 + 0.045 * Math.sin(wall * 0.05));
           frameNo++;
-          if (!dirty && !forceDraw && frameNo & 1) return; // nothing but the slow light is moving: half the frames are enough
+          if (!dirty && !forceDraw && frameNo & 1) return;
           forceDraw = false;
           if (gl && !glLost) {
             if (dirty && (paintT < ffTarget || (frameNo & 1) === 0)) {

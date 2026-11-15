@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>起きたら咲いていた | masseater.dev</title>
     <style>
-      /* one sheet of toned pastel paper hung on a quiet wall; nothing else on the page */
       :root {
         --wall: #cdc7be;
         --shade: rgba(40, 30, 50, 0.34);
@@ -61,8 +60,7 @@
     <script type="module">
       (() => {
         "use strict";
-        /* Media: hand-rolled soft pastel sticks, pastel pencil, willow charcoal and white chalk
-         on a sheet of indigo-grey sanded paper. Every mark below is a stroke of one of those. */
+
         const W = 2560,
           H = 1440,
           PI = Math.PI,
@@ -78,7 +76,6 @@
         const S = mk(W, H),
           s = S.getContext("2d");
 
-        /* ---------- hand jitter ---------- */
         let sd = 0x51f15eed;
         const R = () => {
           sd = (sd + 0x6d2b79f5) | 0;
@@ -128,7 +125,6 @@
         }
         const tick = () => new Promise((r) => setTimeout(r, 0));
 
-        /* ---------- pigments ---------- */
         const mix = (a, b, t) => [
           a[0] + (b[0] - a[0]) * t,
           a[1] + (b[1] - a[1]) * t,
@@ -166,7 +162,6 @@
           return L < 0.5 ? mix(d, c, L * 2) : mix(c, l, (L - 0.5) * 2);
         }
 
-        /* ---------- the light: low, warm, from beyond the upper-left corner ---------- */
         const P0 = [-500, -520];
         const SH = [
           [32, 3.4, 1.25],
@@ -221,7 +216,6 @@
           return mix(c, [20, 74, 82], cl((tl - 0.45) * 2.2) * (1 - L) * 0.75);
         }
 
-        /* ---------- paper tooth ---------- */
         const T = 1024,
           hg = new Float32Array(T * T);
         (() => {
@@ -293,7 +287,6 @@
           return g.createPattern(t, "repeat");
         })();
 
-        /* ---------- laying a mark down: draw on a scratch sheet, let the tooth bite it, press it onto the paper ---------- */
         let bb = null;
         const tch = (x, y, r) => {
           if (!bb) bb = [x - r, y - r, x + r, y + r];
@@ -340,7 +333,7 @@
           }
           return o;
         }
-        /* the side or the end of a pastel stick: a bundle of streaks, some missing, ends ragged */
+
         function pastel(p, wd, col, al = 1, gap = 0.14, gr = 2.4) {
           const L = p.length;
           if (L < 2) return;
@@ -372,7 +365,7 @@
           for (let k = 0; k < L; k += 2) tch(p[k][0], p[k][1], wd);
           tch(p[L - 1][0], p[L - 1][1], wd);
         }
-        /* a sharpened pastel pencil: light at both ends, firmer in the middle */
+
         function pencil(p, wd, col, al = 0.8) {
           const L = p.length;
           if (L < 2) return;
@@ -406,7 +399,7 @@
           s.fill();
           tch(x, y, r + 2);
         }
-        /* a line as a wrist draws it: a slight arc and a slow wander */
+
         function seg(x0, y0, x1, y1, wob = 0, bend = 0, n) {
           const L = Math.hypot(x1 - x0, y1 - y0) || 1;
           n = n || Math.max(4, Math.ceil(L / 14));
@@ -452,7 +445,7 @@
           if (!closed) o.push(P[n - 1].slice());
           return o;
         }
-        /* fill a shape the only way a stick can: stroke after stroke, overshooting the edge a little */
+
         function hatch(poly, ang, sp, fn) {
           const c = Math.cos(ang),
             sn = Math.sin(ang),
@@ -480,7 +473,7 @@
             }
           }
         }
-        /* a fingertip: rub what is already on the paper */
+
         function down(src, sx, sy, sw, sh, k) {
           let c = mk(Math.ceil(sw / 2), Math.ceil(sh / 2)),
             x = c.getContext("2d");
@@ -563,7 +556,6 @@
           commit(lv);
         }
 
-        /* ---------- the sheet ---------- */
         function paper() {
           g.fillStyle = css(PAPER);
           g.fillRect(0, 0, W, H);
@@ -600,7 +592,6 @@
           }
         }
 
-        /* ---------- the ground: broad side-strokes, rubbed in, then scumbled ---------- */
         async function background() {
           for (let pass = 0; pass < 3; pass++) {
             const N = [820, 620, 380][pass];
@@ -709,7 +700,6 @@
           }
         }
 
-        /* ---------- the frame the plant climbs ---------- */
         const POLES = [
           { x: 330, t: 0.035, w: 25 },
           { x: 820, t: -0.02, w: 21 },
@@ -871,7 +861,6 @@
           commit(6);
         }
 
-        /* ---------- the plant ---------- */
         const FT = [
           {
             rim: [50, 118, 226],
