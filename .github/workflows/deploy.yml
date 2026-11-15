@@ -18,8 +18,8 @@ jobs:
   bootstrap:
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: read
+      deployments: read
       id-token: write
     outputs:
       stacks: ${{ steps.stacks.outputs.stacks }}
@@ -81,6 +81,7 @@ jobs:
     environment: production
     permissions:
       contents: read
+      deployments: write
       id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -93,10 +94,11 @@ jobs:
       - run: vp run --log labeled --filter "$FILTER" deploy:production
         env:
           FILTER: ${{ matrix.stack.filter }}
-      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .github/workflows/deploy.yml
-          key: deployed-${{ matrix.stack.name }}-${{ github.sha }}
+      - run: vp run -r record-deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STACK: ${{ matrix.stack.name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

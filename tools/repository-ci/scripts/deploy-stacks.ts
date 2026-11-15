@@ -4,9 +4,9 @@ import { runMain } from "@masseater.dev/node-main";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 import type { ChildProcessSpawner } from "effect/process";
 
+import { ENVIRONMENT, deployTask } from "./deployment.ts";
+
 const TASK = "deploy:production";
-const MARKER = "deployed-";
-const SHA = /^[0-9a-f]{40}$/u;
 const ROOT = ".";
 
 const Task = Schema.Struct({
@@ -25,9 +25,7 @@ const Workspace = Schema.fromJsonString(
   Schema.Struct({ packages: Schema.Record(Schema.String, Package) }),
 );
 
-const Caches = Schema.Struct({
-  actions_caches: Schema.Array(Schema.Struct({ key: Schema.String })),
-});
+const Deployments = Schema.Array(Schema.Struct({ sha: Schema.String }));
 
 const Stacks = Schema.fromJsonString(
   Schema.Array(Schema.Struct({ name: Schema.String, filter: Schema.String })),
@@ -141,17 +139,15 @@ const isShared = (file: string): boolean =>
 
 const lastDeployed = Effect.fn("lastDeployed")(
   function* lastDeployed(name: string) {
-    const prefix = `${MARKER}${name}-`;
-    const { actions_caches } = yield* getJson(Caches)(
-      `actions/caches?ref=refs/heads/main&key=${encodeURIComponent(prefix)}&sort=created_at&direction=desc&per_page=100`,
+    const deployments = yield* getJson(Deployments)(
+      `deployments?environment=${ENVIRONMENT}&task=${encodeURIComponent(deployTask(name))}&per_page=1`,
     );
     return pipe(
-      actions_caches,
-      Arr.map(({ key }) => Str.slice(prefix.length)(key)),
-      Arr.findFirst((sha) => SHA.test(sha)),
+      Arr.head(deployments),
+      Option.map(({ sha }) => sha),
     );
   },
-  Effect.tapError(() => warn("The deploy markers could not be read, so every stack deploys")),
+  Effect.tapError(() => warn("The deployments could not be read, so every stack deploys")),
   Effect.orElseSucceed(Option.none),
 );
 
