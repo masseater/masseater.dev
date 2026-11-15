@@ -13,9 +13,12 @@ import type { Workspace } from "./project.ts";
 export interface ProjectInputs {
   readonly options: string;
   readonly files: readonly string[];
+  readonly dependencies: readonly string[];
 }
 
 const SEPARATOR = "/";
+const SCOPE_PREFIX = "@";
+const HIDDEN_PREFIX = ".";
 
 const encodeOptions = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
@@ -63,20 +66,74 @@ const workspaceClosure = Effect.fn("workspaceClosure")(function* workspaceClosur
 const isUnder =
   (prefixes: readonly string[]) =>
   (file: string): boolean =>
-    !Str.includes(SEPARATOR)(file) ||
     pipe(
       prefixes,
       Arr.some((prefix) => Str.startsWith(prefix)(file)),
     );
 
-const prefixesOf = Effect.fn("prefixesOf")(function* prefixesOf(root: string, configPath: string) {
+const closureOf = Effect.fn("closureOf")(function* closureOf(root: string, configPath: string) {
   const files = yield* RepositoryFiles;
   const directory = yield* packageDirectoryOf(root)(files.dirname(configPath));
   const directories = yield* workspaceClosure(directory);
-  return pipe(
+  const prefixes = pipe(
     directories,
     Arr.map((found) => `${files.relative(root, found)}${SEPARATOR}`),
   );
+  return { directories, prefixes };
+});
+
+const scopedNames =
+  (modules: string) =>
+  (name: string): Effect.Effect<readonly string[], never, RepositoryFiles> =>
+    Effect.gen(function* listScope() {
+      const files = yield* RepositoryFiles;
+      if (!Str.startsWith(SCOPE_PREFIX)(name)) {
+        return [name];
+      }
+      const scoped = yield* files.readDirectory(files.join(modules, name));
+      return pipe(
+        scoped,
+        Arr.map((entry) => `${name}${SEPARATOR}${entry}`),
+      );
+    });
+
+const installedNames = Effect.fn("installedNames")(function* installedNames(modules: string) {
+  const files = yield* RepositoryFiles;
+  const listed = yield* files.readDirectory(modules);
+  const nested = yield* pipe(
+    listed,
+    Arr.filter((name) => !Str.startsWith(HIDDEN_PREFIX)(name)),
+    Effect.forEach(scopedNames(modules)),
+  );
+  return Arr.flatten(nested);
+});
+
+const installedPackages = Effect.fn("installedPackages")(function* installedPackages(
+  root: string,
+  directory: string,
+) {
+  const files = yield* RepositoryFiles;
+  const modules = files.join(directory, NODE_MODULES);
+  const names = yield* installedNames(modules);
+  return yield* pipe(
+    names,
+    Effect.forEach((name) =>
+      files
+        .realPath(files.join(modules, name))
+        .pipe(Effect.map((found) => files.relative(root, found))),
+    ),
+  );
+});
+
+const dependencyVersions = Effect.fn("dependencyVersions")(function* dependencyVersions(
+  root: string,
+  directories: readonly string[],
+) {
+  const installed = yield* pipe(
+    Arr.dedupe([root, ...directories]),
+    Effect.forEach((directory) => installedPackages(root, directory)),
+  );
+  return Arr.sort(Arr.dedupe(Arr.flatten(installed)), Order.String);
 });
 
 export interface InputScope {
@@ -93,7 +150,8 @@ export const projectInputs =
       if (Option.isNone(parsed)) {
         return Option.none();
       }
-      const prefixes = yield* prefixesOf(root, configPath);
+      const closure = yield* closureOf(root, configPath);
+      const dependencies = yield* dependencyVersions(root, closure.directories);
       const options = yield* encodeOptions(parsed.value.options).pipe(
         Effect.orElseSucceed(() => ""),
       );
@@ -101,9 +159,10 @@ export const projectInputs =
         parsed.value.fileNames,
         Arr.map((fileName) => files.relative(root, fileName)),
       );
-      const shared = pipe(listed, Arr.filter(isUnder(prefixes)));
+      const shared = pipe(listed, Arr.filter(isUnder(closure.prefixes)));
       return Option.some({
         options,
         files: Arr.sort(Arr.dedupe([...sources, ...shared]), Order.String),
+        dependencies,
       });
     });
