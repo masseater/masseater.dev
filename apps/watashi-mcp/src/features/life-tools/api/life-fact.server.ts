@@ -1,0 +1,95 @@
+import { Effect, Option, pipe } from "effect";
+
+import type { ItemResult, Body } from "#/entities/life-record";
+import { NONE, SELF, columnsOf, refOf, stringAt, textAt, todayJst } from "#/entities/life-record";
+import { findOpen, snapshotOf, succeedRecord } from "#/entities/life-record/index.server";
+import type { LifeEntry, Notice, NewRecord, Writer } from "#/entities/life-record/index.server";
+import type { StorageFailed } from "#/shared/db";
+
+import { plainInsert } from "./life-create.server.ts";
+import type { Creator } from "./life-create.server.ts";
+
+type FactKey = Readonly<{ about: string; topic: string; start: string }>;
+
+type Successor = Readonly<{ writer: Writer; input: NewRecord; until: string }>;
+
+const isOpen = (body: Body): boolean => columnsOf("profile_fact")(body).dayEnd === NONE;
+
+const factToEnd = (
+  body: Body,
+  key: FactKey,
+): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> => {
+  if (isOpen(body)) {
+    return findOpen({
+      record: "profile_fact",
+      label: key.topic,
+      about: key.about,
+      startedBy: key.start,
+    });
+  }
+  return Effect.succeedNone;
+};
+
+const replacedNotice = (entry: LifeEntry, until: string): Notice => ({
+  type: "replaced",
+  ref: refOf(entry.row),
+  statement: textAt("statement")(entry.body),
+  note: `The previous fact now ends at ${until}.`,
+});
+
+const succeedFact =
+  ({ writer, input, until }: Successor) =>
+  (entry: LifeEntry): Effect.Effect<ItemResult, StorageFailed> =>
+    succeedRecord(writer)({
+      ended: {
+        entry,
+        snapshot: { ...snapshotOf(entry), body: { ...entry.body, until } },
+        op: "update",
+      },
+      created: input,
+    }).pipe(
+      Effect.map((id) => ({
+        ref: refOf({ record: input.record, id }),
+        notices: [replacedNotice(entry, until)],
+      })),
+    );
+
+const scheduledNotices =
+  (start: string, today: string) =>
+  (ref: string): readonly Notice[] => {
+    if (start > today) {
+      return [{ type: "scheduled", ref, note: "since is in the future, so it is kept as a plan." }];
+    }
+    return [];
+  };
+
+const startOrToday = (body: Body, today: string): string => {
+  const start = columnsOf("profile_fact")(body).dayStart;
+  if (start === NONE) {
+    return today;
+  }
+  return start;
+};
+
+const createFact: Creator = (writer) => (input) =>
+  Effect.gen(function* createProfileFact() {
+    const today = yield* todayJst;
+    const start = startOrToday(input.body, today);
+    const about = textAt("about")(input.body) || SELF;
+    const until = pipe(
+      stringAt("since")(input.body),
+      Option.getOrElse(() => today),
+    );
+    const current = yield* factToEnd(input.body, {
+      about,
+      topic: textAt("topic")(input.body),
+      start,
+    });
+    const { ref, notices } = yield* Option.match(current, {
+      onNone: () => plainInsert(writer)(input),
+      onSome: succeedFact({ writer, input, until }),
+    });
+    return { ref, notices: [...notices, ...scheduledNotices(start, today)(ref)] };
+  });
+
+export { createFact };

@@ -28,7 +28,7 @@ const web = Effect.gen(function* web() {
   });
   yield* Workers.Worker("TraitBuilder", {
     name: `${PREFIX}trait-builder`,
-    main: "./src/features/mcp/api/trait-builder.worker.ts",
+    main: "./src/features/build-traits/api/trait-builder.worker.ts",
     logpush: true,
     crons: [TRAIT_CRON],
     env: {

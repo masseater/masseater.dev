@@ -3,9 +3,9 @@ import { Effect } from "effect";
 import { page, userEvent } from "vite-plus/test/browser";
 import type { Locator } from "vite-plus/test/browser";
 
-import { fakeEngine } from "#/app/__tests__/fake-engine.ts";
-import { mount } from "#/app/__tests__/mount.tsx";
-import { main, output, source } from "#/app/__tests__/screen.ts";
+import { fakeEngine } from "./fake-engine.test.support.ts";
+import { mount } from "./mount.test.support.tsx";
+import { main, output, source } from "./screen.test.support.ts";
 
 describe("choosing a language", () => {
   it.live("chooses a target language from the picker", () =>

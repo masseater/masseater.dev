@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { MosaicActions } from "./mosaic-actions";
-import { TileSearch } from "./tile-search";
+import { TileSearch } from "#/features/search-tiles";
+import { MosaicActions } from "#/features/share-mosaic";
 
 const MosaicToolbar = ({ slug, seed }: Readonly<{ slug: string; seed: number }>): ReactNode => (
   <header className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-6 absolute inset-x-4 top-4 flex justify-end gap-2 duration-700 ease-out">

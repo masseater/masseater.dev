@@ -3,8 +3,6 @@ import { LockKeyhole } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { InspectState } from "#/pages/inspect/api/use-inspect";
-import { COPY } from "#/pages/inspect/model/copy";
 import {
   NO_FOCUS,
   unreadableOf,
@@ -16,12 +14,14 @@ import {
   useRun,
   useSetFocus,
   useSetRun,
-} from "#/pages/inspect/model/draft";
-import type { Run } from "#/pages/inspect/model/draft";
+} from "#/entities/inspection";
+import type { Run } from "#/entities/inspection";
+import { RunSettings } from "#/features/configure-run";
+import type { InspectState } from "#/features/run-inspection";
+import { COPY } from "#/shared/config";
 
 import { Note } from "./note";
 import { OverlaidText } from "./overlaid-text";
-import { RunSettings } from "./run-settings";
 import { SourceBar } from "./source-bar";
 
 const NON_BLANK = /\S/u;

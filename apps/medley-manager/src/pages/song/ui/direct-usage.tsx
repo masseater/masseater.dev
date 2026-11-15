@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/catalog";
+import { VideoList } from "#/entities/video";
 import { useSong } from "#/pages/song/api/use-song";
 import { describeDirect } from "#/pages/song/lib/describe";
 import { SectionHeading } from "#/shared/ui/section-heading";

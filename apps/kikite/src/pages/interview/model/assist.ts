@@ -1,8 +1,9 @@
 import { Effect } from "effect";
 
+import type { runners } from "#/shared/lib/runners";
+
 import { correct } from "./correction.ts";
 import { research } from "./research.ts";
-import type { runners } from "./runners.ts";
 
 type Assisting = Pick<Effect.Success<typeof runners>, "correcting" | "researching">;
 

@@ -4,9 +4,9 @@ import type { Outcome } from "@r_masseater/injection-bisect";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { COPY } from "#/pages/inspect/model/copy";
-import { formatCount, formatDollars } from "#/pages/inspect/model/format";
-import type { Answer, Phase, Row, Trace } from "#/pages/inspect/model/trace";
+import { formatCount, formatDollars } from "#/entities/inspection";
+import type { Answer, Phase, Row, Trace } from "#/entities/inspection";
+import { COPY } from "#/shared/config";
 
 import { GradeLine } from "./grade-line";
 import { PhaseNotes } from "./phase-notes";

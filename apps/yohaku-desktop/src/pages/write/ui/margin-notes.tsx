@@ -2,9 +2,8 @@ import { useAtomValue } from "@effect/atom-react";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { placedAtom } from "#/pages/write/model/writing-atoms.ts";
-
-import { RemarkNote } from "./remark-note.tsx";
+import { placedAtom } from "#/entities/manuscript";
+import { RemarkNote } from "#/features/respond-to-remark";
 
 const MarginNotes = (): ReactNode => (
   <div className="relative w-75 shrink-0">

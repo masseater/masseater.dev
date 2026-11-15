@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { useRunSession } from "#/pages/interview/model/hooks";
+import { useRunSession } from "#/pages/interview/model/session-hooks";
 
 import { ConversationColumn } from "./conversation-column.tsx";
 import { NotesColumn } from "./notes-column.tsx";

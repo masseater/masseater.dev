@@ -1,2 +1,2 @@
-export { rankingSearch } from "./model/search";
+export { rankingSearch } from "#/entities/ranking";
 export { RankingPage } from "./ui/ranking-page";

@@ -1,27 +1,19 @@
 import type { Source } from "@masseater.dev/aredoko-protocol";
-import {
-  queryOptions,
-  useMutation,
-  useMutationState,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { queryOptions, useMutation, useMutationState, useQuery } from "@tanstack/react-query";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import { Array, Option, pipe } from "effect";
 
 import { NO_IMPORT, lastImportOf } from "#/features/library/model/last-import";
 import type { LastImport } from "#/features/library/model/last-import";
 import {
-  ASSETS_KEY,
   LIBRARY_POLL,
-  PACKAGES_KEY,
   SOURCES_KEY,
-  STATUS_KEY,
   addSource,
   getLibrary,
   importFiles,
   listSources,
   removeSource,
+  useRefreshLibrary,
 } from "#/shared/api";
 import type { LibraryInfo } from "#/shared/api";
 
@@ -36,17 +28,6 @@ const useSources = (): UseQueryResult<readonly (typeof Source.Type)[]> =>
       ...LIBRARY_POLL,
     }),
   );
-
-const useRefreshLibrary = (): (() => Promise<unknown>) => {
-  const client = useQueryClient();
-  return () =>
-    Promise.all([
-      client.invalidateQueries({ queryKey: SOURCES_KEY }),
-      client.invalidateQueries({ queryKey: PACKAGES_KEY }),
-      client.invalidateQueries({ queryKey: ASSETS_KEY }),
-      client.invalidateQueries({ queryKey: STATUS_KEY }),
-    ]);
-};
 
 const addFolder = (path: string): Promise<typeof Source.Type> =>
   addSource({ path, kind: "folder" });
@@ -141,7 +122,6 @@ export {
   useKnownFolder,
   useImportFiles,
   useLastImport,
-  useRefreshLibrary,
   useRemoveSource,
   useSources,
 };

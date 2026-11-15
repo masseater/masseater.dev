@@ -1,7 +1,7 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/catalog";
+import { VideoList } from "#/entities/video";
 import { useVideo } from "#/pages/video/api/use-video";
 import { SectionHeading } from "#/shared/ui/section-heading";
 

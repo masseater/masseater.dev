@@ -3,4 +3,5 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   plugins: [otlp({ semconv: true })],
+  test: { include: ["*.fixture.ts"] },
 });
