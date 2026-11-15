@@ -3,8 +3,6 @@
   "name": "masseater-scripts",
   "detection": { "type": "fileExists", "pattern": "pnpm-workspace.yaml" },
   "entryPoints": [
-    "apps/portfolio/scripts/standard-site.ts",
-    "apps/portfolio/scripts/technique-examples.ts",
     "apps/medley-manager/auth.config.ts",
     "apps/watashi-mcp/auth.config.ts",
     "apps/aredoko-server/src/app/fetch-model.ts",
@@ -22,8 +20,8 @@
     "tools/ocr-measure/src/measure.ts",
     "tools/ocr-measure/src/rescore.ts",
     "tools/injection-bisect-cli/src/main.ts",
-    "apps/pod-rattle-plugin/scripts/*.ts",
-    "apps/yohaku-desktop/scripts/*.ts",
+    "apps/*/scripts/*.ts",
+    "tools/*/scripts/*.ts",
   ],
   "entryPointRole": "runtime",
 }
