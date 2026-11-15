@@ -6,7 +6,7 @@ import { Playhead } from "#/features/playback";
 
 const LABEL_OFFSET = 4;
 
-const SectionStrip = (): ReactNode => (
+export const SectionStrip = (): ReactNode => (
   <svg aria-hidden className="block h-8 min-w-0 flex-1">
     {pipe(
       song.sections,
@@ -39,5 +39,3 @@ const SectionStrip = (): ReactNode => (
     <Playhead />
   </svg>
 );
-
-export { SectionStrip };

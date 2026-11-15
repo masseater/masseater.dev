@@ -3,23 +3,23 @@ import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 import { site } from "#/shared/config";
 import { wiki } from "#/shared/wiki";
 
-type JsonLd = Readonly<Record<string, unknown>>;
+export type JsonLd = Readonly<Record<string, unknown>>;
 
-type Meta = Readonly<Record<string, string>>;
+export type Meta = Readonly<Record<string, string>>;
 
-type Script = Readonly<{ type: string; children: string }>;
+export type Script = Readonly<{ type: string; children: string }>;
 
-type Head = Readonly<{
+export type Head = Readonly<{
   meta: Meta[];
   links: Readonly<Record<string, string>>[];
   scripts: Script[];
 }>;
 
-type Image = Readonly<{ path: string; alt: string }>;
+export type Image = Readonly<{ path: string; alt: string }>;
 
-const absoluteUrl = (path: string): string => new URL(path, site.url).href;
+export const absoluteUrl = (path: string): string => new URL(path, site.url).href;
 
-const defaultImage: Image = { path: site.ogImage.path, alt: site.name };
+export const defaultImage: Image = { path: site.ogImage.path, alt: site.name };
 
 const encodeJson = Schema.encodeOption(Schema.fromJsonString(Schema.Unknown));
 
@@ -34,7 +34,7 @@ const jsonLd = (data: JsonLd): Script => ({
   ),
 });
 
-const seo = ({
+export const seo = ({
   title,
   description,
   path,
@@ -76,13 +76,14 @@ const seo = ({
   };
 };
 
-const pageTitle = (title: string): string => `${title} | ${site.name}`;
+export const pageTitle = (title: string): string => `${title} | ${site.name}`;
 
-const wikiPageTitle = (title: string): string => `${title} - ${wiki.name}`;
+export const wikiPageTitle = (title: string): string => `${title} - ${wiki.name}`;
 
-const notFoundHead: Head = { meta: [{ title: pageTitle("Not Found") }], links: [], scripts: [] };
+export const notFoundHead: Head = {
+  meta: [{ title: pageTitle("Not Found") }],
+  links: [],
+  scripts: [],
+};
 
-const author: JsonLd = { "@type": "Person", name: site.name, url: site.url };
-
-export type { Head, Image, JsonLd, Meta, Script };
-export { absoluteUrl, author, defaultImage, notFoundHead, pageTitle, seo, wikiPageTitle };
+export const author: JsonLd = { "@type": "Person", name: site.name, url: site.url };

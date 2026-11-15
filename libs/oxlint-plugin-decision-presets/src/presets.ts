@@ -31,11 +31,11 @@ import {
   testNameVerifiesClaim,
 } from "./test-claims.ts";
 
-type Preset = readonly [DecisionRule, ...DecisionRule[]];
+export type Preset = readonly [DecisionRule, ...DecisionRule[]];
 
-const recommended: Preset = [noPiiInLogs, noPromptInjection, noHardcodedSecrets];
+export const recommended: Preset = [noPiiInLogs, noPromptInjection, noHardcodedSecrets];
 
-const strict: Preset = [
+export const strict: Preset = [
   ...recommended,
   nameMatchesBehavior,
   untrustedInputRisk,
@@ -47,7 +47,7 @@ const strict: Preset = [
   testMocksSubject,
 ];
 
-const reviewOnly: Preset = [
+export const reviewOnly: Preset = [
   domainNaming,
   preferSchemaValidation,
   fnNamePromises,
@@ -63,9 +63,6 @@ const reviewOnly: Preset = [
   snapshotOnlyBehaviourClaim,
 ];
 
-const presets = { recommended, strict, reviewOnly } as const satisfies Readonly<
+export const presets = { recommended, strict, reviewOnly } as const satisfies Readonly<
   Record<string, Preset>
 >;
-
-export { presets, recommended, reviewOnly, strict };
-export type { Preset };

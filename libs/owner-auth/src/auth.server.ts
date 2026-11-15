@@ -10,7 +10,7 @@ import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { ownerPasskey } from "./passkey.server";
 import type { OwnerPasskeyConfig } from "./passkey.server";
 
-interface OwnerAuthOptions {
+export interface OwnerAuthOptions {
   [option: string]: unknown;
   baseURL: string;
   database: ReturnType<typeof drizzleAdapter>;
@@ -24,7 +24,7 @@ interface OwnerAuthOptions {
   secret: string;
 }
 
-interface OwnerAuthConfig {
+export interface OwnerAuthConfig {
   readonly origin: string;
   readonly db: DB;
   readonly schema: Readonly<Record<string, unknown>>;
@@ -35,7 +35,7 @@ interface OwnerAuthConfig {
   readonly resource: string;
 }
 
-const createOwnerAuth = ({
+export const createOwnerAuth = ({
   origin,
   db,
   schema,
@@ -65,6 +65,3 @@ const createOwnerAuth = ({
     ],
     secret,
   });
-
-export { createOwnerAuth };
-export type { OwnerAuthConfig, OwnerAuthOptions };

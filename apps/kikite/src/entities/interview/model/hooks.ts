@@ -33,50 +33,50 @@ import type {
   SummaryState,
 } from "./atoms.ts";
 
-type QuestionEntry = Extract<Entry, { kind: "question" }>;
-type SpeechEntry = Extract<Entry, { kind: "speech" }>;
+export type QuestionEntry = Extract<Entry, { kind: "question" }>;
+export type SpeechEntry = Extract<Entry, { kind: "speech" }>;
 
-type Stage = Readonly<{
+export type Stage = Readonly<{
   history: readonly Entry[];
   question: Option.Option<QuestionEntry>;
   said: readonly SpeechEntry[];
 }>;
 
-const usePhase = (): Phase => useAtomValue(phaseAtom);
+export const usePhase = (): Phase => useAtomValue(phaseAtom);
 
 const useSummaryState = (): SummaryState => useAtomValue(summaryAtom);
 
-const useTheme = (): string =>
+export const useTheme = (): string =>
   Option.match(summaryOf(useSummaryState()), {
     onNone: () => "",
     onSome: (summary) => summary.theme,
   });
 
-const useSummary = (): Option.Option<InterviewSummary> => summaryOf(useSummaryState());
+export const useSummary = (): Option.Option<InterviewSummary> => summaryOf(useSummaryState());
 
-const usePanel = (): Panel => useAtomValue(panelAtom);
+export const usePanel = (): Panel => useAtomValue(panelAtom);
 
-const useSetPanel = (): ((panel: Panel) => void) => useAtomSet(panelAtom);
+export const useSetPanel = (): ((panel: Panel) => void) => useAtomSet(panelAtom);
 
-const useAnswerDraft = (): string => useAtomValue(answerDraftAtom);
+export const useAnswerDraft = (): string => useAtomValue(answerDraftAtom);
 
-const useEntries = (): readonly Entry[] => useAtomValue(entriesAtom);
+export const useEntries = (): readonly Entry[] => useAtomValue(entriesAtom);
 
-const useInterim = (): string => useAtomValue(interimAtom);
+export const useInterim = (): string => useAtomValue(interimAtom);
 
-const useHearing = (): boolean => useAtomValue(hearingAtom);
+export const useHearing = (): boolean => useAtomValue(hearingAtom);
 
-const useAsking = (): Asking => useAtomValue(askingAtom);
+export const useAsking = (): Asking => useAtomValue(askingAtom);
 
-const useListening = (): Listening => useAtomValue(listeningAtom);
+export const useListening = (): Listening => useAtomValue(listeningAtom);
 
-const useNudge = (): Option.Option<Nudge> => useAtomValue(nudgeAtom);
+export const useNudge = (): Option.Option<Nudge> => useAtomValue(nudgeAtom);
 
-const useLeads = (): readonly Lead[] => useAtomValue(leadsAtom);
+export const useLeads = (): readonly Lead[] => useAtomValue(leadsAtom);
 
-const useResearching = (): Researching => useAtomValue(researchingAtom);
+export const useResearching = (): Researching => useAtomValue(researchingAtom);
 
-const useStale = (): boolean => useAtomValue(staleAtom);
+export const useStale = (): boolean => useAtomValue(staleAtom);
 
 const isQuestion = (entry: Entry): entry is QuestionEntry =>
   entry.kind === "question" && Option.isSome(entry.strategy);
@@ -95,11 +95,11 @@ const stageOf = (entries: readonly Entry[]): Stage => {
   });
 };
 
-const useStage = (): Stage => stageOf(useEntries());
+export const useStage = (): Stage => stageOf(useEntries());
 
-const useAsked = (): boolean => pipe(useEntries(), Arr.some(isQuestion));
+export const useAsked = (): boolean => pipe(useEntries(), Arr.some(isQuestion));
 
-const useCheckpoint = (): boolean => {
+export const useCheckpoint = (): boolean => {
   const { question, said } = useStage();
   const asking = useAsking();
   return (
@@ -109,28 +109,6 @@ const useCheckpoint = (): boolean => {
   );
 };
 
-const useSaving = (): Saving => useAtomValue(savingAtom);
+export const useSaving = (): Saving => useAtomValue(savingAtom);
 
-export {
-  useAnswerDraft,
-  useAsked,
-  useAsking,
-  useCheckpoint,
-  useEntries,
-  useHearing,
-  useInterim,
-  useLeads,
-  useListening,
-  useNudge,
-  usePanel,
-  usePhase,
-  useResearching,
-  useSaving,
-  useSetPanel,
-  useStage,
-  useStale,
-  useSummary,
-  useTheme,
-};
-export type { QuestionEntry, SpeechEntry, Stage };
 export type { Asking, Entry, Lead, Listening, Panel, Researching, Saving } from "./atoms.ts";

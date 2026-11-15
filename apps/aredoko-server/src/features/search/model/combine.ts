@@ -4,7 +4,7 @@ const IMAGE_OFFSET = 0.05;
 const NAME_BONUS = 0.05;
 const NO_SIMILARITY = 0;
 
-interface Hit {
+export interface Hit {
   readonly id: number;
   readonly similarity: number;
 }
@@ -19,7 +19,7 @@ const bestOf =
       Array.match({ onEmpty: () => NO_SIMILARITY, onNonEmpty: Array.max(Order.Number) }),
     );
 
-const combine = ({
+export const combine = ({
   images,
   texts,
   names,
@@ -44,6 +44,3 @@ const combine = ({
     Array.sortWith(([, score]) => score, Order.flip(Order.Number)),
   );
 };
-
-export { combine };
-export type { Hit };

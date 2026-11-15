@@ -15,7 +15,7 @@ const toggled =
   (current: StarState | undefined): StarState | undefined =>
     pipe(Option.fromNullishOr(current), Option.map(toggleStar(starred)), Option.getOrUndefined);
 
-const useStar = (
+export const useStar = (
   entry: Entry,
 ): Readonly<{
   stars: UseQueryResult<StarState, unknown>;
@@ -62,5 +62,3 @@ const useStar = (
   const remove = useMutation(route.delete.mutationOptions(optimistic(false)));
   return { stars, addStar: add.mutate, removeStar: remove.mutate };
 };
-
-export { useStar };

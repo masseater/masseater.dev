@@ -18,7 +18,7 @@ const endpointText = Effect.gen(function* endpointText() {
 });
 
 /** @internal */
-const endpointFileLayer = Layer.effectDiscard(
+export const endpointFileLayer = Layer.effectDiscard(
   Effect.gen(function* endpointFile() {
     const dataDirectory = yield* EndpointDirectory;
     const path = yield* Path.Path;
@@ -34,5 +34,3 @@ const endpointFileLayer = Layer.effectDiscard(
     );
   }),
 );
-
-export { endpointFileLayer };

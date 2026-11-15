@@ -209,7 +209,10 @@ const modifierOf =
       return yield* Option.liftPredicate(build(object, data), () => enabled);
     });
 
-const modifiedMesh = ({ object, mesh }: Readonly<{ object: Instance; mesh: MeshData }>): MeshData =>
+export const modifiedMesh = ({
+  object,
+  mesh,
+}: Readonly<{ object: Instance; mesh: MeshData }>): MeshData =>
   pipe(
     listOf({ instance: object, names: ["modifiers"] }),
     Array.map(modifierOf(object)),
@@ -225,5 +228,3 @@ const modifiedMesh = ({ object, mesh }: Readonly<{ object: Instance; mesh: MeshD
       },
     }),
   );
-
-export { modifiedMesh };

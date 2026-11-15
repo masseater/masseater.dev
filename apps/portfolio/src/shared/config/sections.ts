@@ -1,10 +1,10 @@
 import { portfolio } from "@masseater.dev/ui/portfolio";
 
-const sections = ["projects", "blogs", "sloppedia", "nikogori"] as const;
+export const sections = ["projects", "blogs", "sloppedia", "nikogori"] as const;
 
-type Section = (typeof sections)[number];
+export type Section = (typeof sections)[number];
 
-const sectionMeta = {
+export const sectionMeta = {
   projects: {
     title: portfolio.sections.projects,
     description: "作ったもの",
@@ -30,7 +30,4 @@ const sectionMeta = {
   Readonly<{ title: string; description: string; titleTransition: string }>
 >;
 
-const sectionPath = (section: Section): string => `/${section}`;
-
-export type { Section };
-export { sectionMeta, sectionPath, sections };
+export const sectionPath = (section: Section): string => `/${section}`;

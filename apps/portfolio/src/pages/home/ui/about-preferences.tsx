@@ -6,7 +6,7 @@ import { PREFERENCES } from "#/pages/home/model/about";
 import { AboutItemList } from "./about-item-list";
 import { AboutRow } from "./about-row";
 
-const AboutPreferences = (): ReactNode => (
+export const AboutPreferences = (): ReactNode => (
   <dl className="flex flex-col gap-6">
     {pipe(
       PREFERENCES,
@@ -18,5 +18,3 @@ const AboutPreferences = (): ReactNode => (
     )}
   </dl>
 );
-
-export { AboutPreferences };

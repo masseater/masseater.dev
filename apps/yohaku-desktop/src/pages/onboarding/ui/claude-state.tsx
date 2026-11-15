@@ -9,7 +9,7 @@ import { ClaudeReady } from "./claude-ready.tsx";
 
 const CHECKING = "確かめています";
 
-const ClaudeState = (): ReactNode => {
+export const ClaudeState = (): ReactNode => {
   const { status, checking, recheck } = useClaudeStatus();
   if (Option.isNone(status)) {
     return <span className="text-muted-foreground">{CHECKING}</span>;
@@ -22,5 +22,3 @@ const ClaudeState = (): ReactNode => {
   }
   return <ClaudeReady />;
 };
-
-export { ClaudeState };

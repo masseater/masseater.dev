@@ -1,6 +1,6 @@
 import { Array as Arr, String as Str, pipe } from "effect";
 
-type Part = Readonly<{ text: string; translate: boolean }>;
+export type Part = Readonly<{ text: string; translate: boolean }>;
 
 type Chunk = Readonly<{ gap: string; text: string }>;
 
@@ -43,7 +43,7 @@ const partsOf = ({ gap, text }: Chunk): readonly Part[] => [
   { text, translate: true },
 ];
 
-const split =
+export const split =
   (limit: number) =>
   (text: string): readonly Part[] => {
     const body = Str.trim(text);
@@ -61,6 +61,3 @@ const split =
       ...space(Str.replace(UP_TO_LAST_TEXT, "")(text)),
     ];
   };
-
-export { split };
-export type { Part };

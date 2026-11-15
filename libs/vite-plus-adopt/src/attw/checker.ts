@@ -15,7 +15,7 @@ import type { AnySymbol } from "./checker-symbols.ts";
 import { hasFlag, withFlags } from "./flags.ts";
 import { isTypeOnlyImportOrExportDeclaration } from "./type-only.ts";
 
-interface TypeCheckerFacade {
+export interface TypeCheckerFacade {
   readonly resolveExternalModuleSymbol: (symbol: AnySymbol) => CheckerSymbol;
   readonly getTypeOfSymbol: (symbol: AnySymbol) => Type;
   readonly getExportsAndPropertiesOfModule: (symbol: AnySymbol) => readonly AnySymbol[];
@@ -168,7 +168,7 @@ const hasCallOrConstructSignatures = (checker: Checker, type: Type): boolean =>
   checker.getSignaturesOfType(type, SignatureKind.Call).length > NONE ||
   checker.getSignaturesOfType(type, SignatureKind.Construct).length > NONE;
 
-const createTypeChecker = (program: CheckerProgram): TypeCheckerFacade => {
+export const createTypeChecker = (program: CheckerProgram): TypeCheckerFacade => {
   const session = openCheckerSession(program);
   const { checker } = session;
   return {
@@ -185,6 +185,3 @@ const createTypeChecker = (program: CheckerProgram): TypeCheckerFacade => {
     dispose: session.dispose,
   };
 };
-
-export { createTypeChecker };
-export type { TypeCheckerFacade };

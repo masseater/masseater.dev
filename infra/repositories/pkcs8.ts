@@ -25,10 +25,8 @@ const wrapPkcs1 = (pkcs1: string): Effect.Effect<string, EncodingError> =>
     Effect.map((body) => `-----BEGIN ${PKCS8_LABEL}-----\n${body}\n-----END ${PKCS8_LABEL}-----`),
   );
 
-const toPkcs8 = (pem: string): Effect.Effect<string, EncodingError> =>
+export const toPkcs8 = (pem: string): Effect.Effect<string, EncodingError> =>
   Option.match(Option.liftPredicate(pem, Str.includes(PKCS8_HEADER)), {
     onSome: Effect.succeed,
     onNone: () => wrapPkcs1(pem),
   });
-
-export { toPkcs8 };

@@ -5,11 +5,11 @@ const Period = Schema.Literals(["all", "1", "7", "30", "custom"]);
 const Kind = Schema.Literals(["original", "all"]);
 const DateText = Schema.String.check(Schema.isPattern(/^\d{4}-\d{2}-\d{2}$/u));
 
-type SortValue = typeof Sort.Type;
-type PeriodValue = typeof Period.Type;
-type KindValue = typeof Kind.Type;
+export type SortValue = typeof Sort.Type;
+export type PeriodValue = typeof Period.Type;
+export type KindValue = typeof Kind.Type;
 
-interface RankingSearch {
+export interface RankingSearch {
   readonly sort: SortValue;
   readonly period: PeriodValue;
   readonly from: string;
@@ -42,7 +42,7 @@ const field = <Codec extends Schema.Codec<unknown, unknown>>({
     Option.getOrElse(() => fallback),
   );
 
-const rankingSearch = (search: Readonly<Record<string, unknown>>): RankingSearch => ({
+export const rankingSearch = (search: Readonly<Record<string, unknown>>): RankingSearch => ({
   sort: field({ codec: Sort, value: search["sort"], fallback: DEFAULT_SEARCH.sort }),
   period: field({ codec: Period, value: search["period"], fallback: DEFAULT_SEARCH.period }),
   from: field({ codec: DateText, value: search["from"], fallback: NO_DATE }),
@@ -58,7 +58,7 @@ const rankingSearch = (search: Readonly<Record<string, unknown>>): RankingSearch
 
 const NICO_SORT: SortValue = "nico";
 
-const usableSearch = ({
+export const usableSearch = ({
   search,
   youtube,
 }: Readonly<{ search: RankingSearch; youtube: boolean }>): RankingSearch => {
@@ -67,6 +67,3 @@ const usableSearch = ({
   }
   return { ...search, sort: NICO_SORT };
 };
-
-export type { KindValue, PeriodValue, RankingSearch, SortValue };
-export { rankingSearch, usableSearch };

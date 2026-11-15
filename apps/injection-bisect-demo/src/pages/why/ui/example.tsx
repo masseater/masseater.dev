@@ -8,7 +8,7 @@ const LOOK = {
   removed: "text-muted-foreground line-through",
 } as const;
 
-const Example = (): ReactNode => (
+export const Example = (): ReactNode => (
   <p className="rounded-lg border p-5 text-sm leading-relaxed">
     {pipe(
       SAMPLE,
@@ -20,5 +20,3 @@ const Example = (): ReactNode => (
     )}
   </p>
 );
-
-export { Example };

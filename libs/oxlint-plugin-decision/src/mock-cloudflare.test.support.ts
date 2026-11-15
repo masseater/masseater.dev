@@ -39,9 +39,11 @@ const ChatBody = Schema.Struct({
   chat_template_kwargs: Schema.optional(Schema.Record(Schema.String, Schema.Boolean)),
 });
 
-type Body = typeof ChatBody.Type;
+/** @internal */
+export type Body = typeof ChatBody.Type;
 
-interface LoggedChat {
+/** @internal */
+export interface LoggedChat {
   readonly url: string;
   readonly authorization: string;
   readonly gateway: string;
@@ -54,7 +56,8 @@ interface MockShape {
   readonly baseURL: string;
 }
 
-class MockCloudflare extends Context.Service<MockCloudflare, MockShape>()(
+/** @internal */
+export class MockCloudflare extends Context.Service<MockCloudflare, MockShape>()(
   "@r_masseater/oxlint-plugin-decision/mock-cloudflare.test.support/MockCloudflare",
 ) {}
 
@@ -171,19 +174,21 @@ const routes = Layer.unwrap(
   }),
 );
 
-const MockCloudflareLayer = routes.pipe(
+/** @internal */
+export const MockCloudflareLayer = routes.pipe(
   Layer.provideMerge(MockLive),
   Layer.provideMerge(NodeHttpServer.layerTest),
 );
 
-const loggedChats: Effect.Effect<readonly LoggedChat[], TestError, MockCloudflare> = Effect.gen(
-  function* logged() {
+/** @internal */
+export const loggedChats: Effect.Effect<readonly LoggedChat[], TestError, MockCloudflare> =
+  Effect.gen(function* logged() {
     const { log } = yield* MockCloudflare;
     return yield* Ref.get(log);
-  },
-);
+  });
 
-const cloudflareEnv = (
+/** @internal */
+export const cloudflareEnv = (
   token: string,
 ): Effect.Effect<Readonly<Record<string, string>>, never, MockCloudflare> =>
   MockCloudflare.pipe(
@@ -194,8 +199,3 @@ const cloudflareEnv = (
       CLOUDFLARE_AI_GATEWAY_ID: "lint-gateway",
     })),
   );
-
-/** @internal */
-export { MockCloudflare, MockCloudflareLayer, cloudflareEnv, loggedChats };
-/** @internal */
-export type { Body, LoggedChat };

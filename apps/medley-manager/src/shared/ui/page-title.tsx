@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const PageTitle = ({
+export const PageTitle = ({
   title,
   description,
 }: Readonly<{ title: string; description: string }>): ReactNode => (
@@ -9,5 +9,3 @@ const PageTitle = ({
     <p className="text-muted-foreground">{description}</p>
   </div>
 );
-
-export { PageTitle };

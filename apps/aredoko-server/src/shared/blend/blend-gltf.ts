@@ -3,12 +3,12 @@ import { Array, HashMap, Option, pipe } from "effect";
 import type { Surface } from "./blend-material.ts";
 import type { Group, Part } from "./blend-scene.ts";
 
-interface View {
+export interface View {
   readonly bytes: Uint8Array;
   readonly target: Option.Option<number>;
 }
 
-interface Document {
+export interface Document {
   readonly views: readonly View[];
   readonly accessors: readonly object[];
   readonly materials: readonly object[];
@@ -161,7 +161,7 @@ const meshOf = (store: Store, { positions, uvs, groups }: Part): object => {
   };
 };
 
-const documentOf = ({
+export const documentOf = ({
   parts,
   pngs,
 }: Readonly<{ parts: readonly Part[]; pngs: HashMap.HashMap<number, Uint8Array> }>): Document => {
@@ -172,6 +172,3 @@ const documentOf = ({
   );
   return store.document(meshes);
 };
-
-export { documentOf };
-export type { Document, View };

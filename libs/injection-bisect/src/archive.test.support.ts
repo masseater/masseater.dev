@@ -23,7 +23,9 @@ const entryOf = ([name, content]: readonly [string, string | Uint8Array]): reado
   return [name, bytesOf(content)];
 };
 
-const zipOf = (files: Readonly<Record<string, string | Uint8Array>>): Effect.Effect<Uint8Array> =>
+export const zipOf = (
+  files: Readonly<Record<string, string | Uint8Array>>,
+): Effect.Effect<Uint8Array> =>
   Effect.callback<Uint8Array>((resume) => {
     const entries = pipe(
       Rec.toEntries(files),
@@ -38,7 +40,7 @@ const zipOf = (files: Readonly<Record<string, string | Uint8Array>>): Effect.Eff
     });
   });
 
-const gzipOf = (bytes: Uint8Array): Effect.Effect<Uint8Array> =>
+export const gzipOf = (bytes: Uint8Array): Effect.Effect<Uint8Array> =>
   Effect.callback<Uint8Array>((resume) => {
     gzip(bytes, (cause, zipped) => {
       if (cause !== null) {
@@ -47,5 +49,3 @@ const gzipOf = (bytes: Uint8Array): Effect.Effect<Uint8Array> =>
       resume(Effect.succeed(zipped));
     });
   });
-
-export { gzipOf, zipOf };

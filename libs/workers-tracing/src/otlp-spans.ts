@@ -2,10 +2,10 @@ import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effec
 
 const taggedError = Schema.TaggedError;
 
-class UnreadableBody extends taggedError<UnreadableBody, { readonly brand: unique symbol }>()(
-  "UnreadableBody",
-  { message: Schema.String },
-) {}
+export class UnreadableBody extends taggedError<
+  UnreadableBody,
+  { readonly brand: unique symbol }
+>()("UnreadableBody", { message: Schema.String }) {}
 
 const KeyValue = Schema.Struct({
   key: Schema.String,
@@ -33,12 +33,12 @@ const ScopeSpans = Schema.Struct({
   spans: Schema.Array(Span),
 });
 
-const ResourceSpans = Schema.Struct({
+export const ResourceSpans = Schema.Struct({
   resource: Schema.optional(Schema.Struct({ attributes: Attributes })),
   scopeSpans: Schema.Array(ScopeSpans),
 });
 
-const TraceRequest = Schema.Struct({ resourceSpans: Schema.Array(ResourceSpans) });
+export const TraceRequest = Schema.Struct({ resourceSpans: Schema.Array(ResourceSpans) });
 
 type ReceivedSpan = Readonly<{
   service: unknown;
@@ -56,7 +56,7 @@ const flatten = (attributes: typeof Attributes.Type): Readonly<Record<string, un
     ),
   );
 
-const serviceOf = (resourceSpans: typeof ResourceSpans.Type): unknown =>
+export const serviceOf = (resourceSpans: typeof ResourceSpans.Type): unknown =>
   pipe(
     Option.fromNullishOr(resourceSpans.resource),
     Option.map(({ attributes }) => flatten(attributes)["service.name"]),
@@ -97,7 +97,7 @@ const logSpan = ({ service, scope, span }: ReceivedSpan): Effect.Effect<void> =>
     }),
   );
 
-const bodyOf = (request: Request): Promise<unknown> =>
+export const bodyOf = (request: Request): Promise<unknown> =>
   pipe(
     Option.fromNullishOr(request.body),
     Option.filter(() => request.headers.get("content-encoding") === "gzip"),
@@ -107,7 +107,5 @@ const bodyOf = (request: Request): Promise<unknown> =>
     }),
   );
 
-const logTraceRequest = ({ resourceSpans }: typeof TraceRequest.Type): Effect.Effect<void> =>
+export const logTraceRequest = ({ resourceSpans }: typeof TraceRequest.Type): Effect.Effect<void> =>
   Effect.forEach(pipe(resourceSpans, Arr.flatMap(spansOf)), logSpan, { discard: true });
-
-export { ResourceSpans, TraceRequest, UnreadableBody, bodyOf, logTraceRequest, serviceOf };

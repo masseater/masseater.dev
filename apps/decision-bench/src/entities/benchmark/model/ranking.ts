@@ -3,7 +3,7 @@ import { Array as Arr, pipe, String as Str, Number as Num, Order } from "effect"
 import { summary } from "./summary";
 import type { ModelResult, TaskResult } from "./summary";
 
-type TaskEntry = Readonly<{ model: ModelResult; result: TaskResult; mark: number }>;
+export type TaskEntry = Readonly<{ model: ModelResult; result: TaskResult; mark: number }>;
 
 const FIRST_MARK = 1;
 
@@ -20,16 +20,16 @@ const bySkillDescending = Order.mapInput(
   ({ result }: Readonly<{ result: TaskResult }>) => result.test.skill,
 );
 
-const rankedModels: readonly ModelResult[] = pipe(
+export const rankedModels: readonly ModelResult[] = pipe(
   summary.models,
   Arr.sortBy(byIndexDescending, byLabel),
 );
 
-type TaskInfo = Readonly<
+export type TaskInfo = Readonly<
   Pick<TaskResult, "task" | "label" | "format" | "metric"> & { test: number; hard: number }
 >;
 
-const tasks: readonly TaskInfo[] = [
+export const tasks: readonly TaskInfo[] = [
   ...new Map(
     pipe(
       summary.models,
@@ -56,7 +56,7 @@ const tasks: readonly TaskInfo[] = [
   ).values(),
 ];
 
-const entriesOf = (task: string): readonly TaskEntry[] =>
+export const entriesOf = (task: string): readonly TaskEntry[] =>
   pipe(
     rankedModels,
     Arr.flatMap((model) =>
@@ -69,6 +69,3 @@ const entriesOf = (task: string): readonly TaskEntry[] =>
     Arr.sortBy(bySkillDescending),
     Arr.map(({ model, result }, index) => ({ model, result, mark: index + FIRST_MARK })),
   );
-
-export { entriesOf, rankedModels, tasks };
-export type { TaskEntry, TaskInfo };

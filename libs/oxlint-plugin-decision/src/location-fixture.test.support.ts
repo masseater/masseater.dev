@@ -21,14 +21,18 @@ import type {
 } from "./oxlint.test.support.ts";
 import type { DecisionPluginSetup, DecisionRule } from "./types.ts";
 
-const SOURCE =
+/** @internal */
+export const SOURCE =
   "// Context 🐱\nexport function logUser(user) {\n\n\tconsole.log(user.email, user.phone);  \n}\n";
 const PADDING_LINES = 600;
-const LARGE_SOURCE = `${Str.repeat(PADDING_LINES)("// Context\n")}${SOURCE}`;
-const LOG_CALL = "console.log(user.email, user.phone);";
+/** @internal */
+export const LARGE_SOURCE = `${Str.repeat(PADDING_LINES)("// Context\n")}${SOURCE}`;
+/** @internal */
+export const LOG_CALL = "console.log(user.email, user.phone);";
 const MAX_SNIPPET_CHARS = 64_000;
 
-const fileRule: DecisionRule = {
+/** @internal */
+export const fileRule: DecisionRule = {
   id: "no-personal-data",
   target: "file",
   question: "Does this file log personal data?",
@@ -36,17 +40,20 @@ const fileRule: DecisionRule = {
   location: { question: "Select the call that logs personal data.", cutoff: 0.8 },
 };
 
-interface Linted {
+/** @internal */
+export interface Linted {
   readonly run: OxlintRun;
   readonly diagnostics: readonly OxlintDiagnostic[];
 }
 
-interface LocationProject {
+/** @internal */
+export interface LocationProject {
   readonly cwd: string;
   readonly lint: Effect.Effect<Linted, TestError, Services>;
 }
 
-interface ProjectSetup {
+/** @internal */
+export interface ProjectSetup {
   readonly text?: string;
   readonly options?: Partial<DecisionPluginSetup>;
   readonly token?: string;
@@ -61,7 +68,8 @@ const ARGS = [
   "source.ts",
 ];
 
-const locationProject = ({
+/** @internal */
+export const locationProject = ({
   text = SOURCE,
   options = {},
   token = "test-key",
@@ -89,13 +97,16 @@ const locationProject = ({
     return { cwd, lint };
   });
 
-const lineOf = (diagnostics: readonly OxlintDiagnostic[]): Option.Option<number> =>
+/** @internal */
+export const lineOf = (diagnostics: readonly OxlintDiagnostic[]): Option.Option<number> =>
   Arr.head(diagnostics).pipe(Option.map((diagnostic) => firstSpan(diagnostic).line));
 
-const spanOf = (diagnostics: readonly OxlintDiagnostic[]): Option.Option<OxlintSpan> =>
+/** @internal */
+export const spanOf = (diagnostics: readonly OxlintDiagnostic[]): Option.Option<OxlintSpan> =>
   Arr.head(diagnostics).pipe(Option.map((diagnostic) => firstSpan(diagnostic)));
 
-const cacheEntries = (
+/** @internal */
+export const cacheEntries = (
   cwd: string,
 ): Effect.Effect<readonly string[], TestError, FileSystem.FileSystem | Path.Path> =>
   Effect.gen(function* entries() {
@@ -108,8 +119,3 @@ const cacheEntries = (
       Arr.map((name) => path.join(dir, name)),
     );
   });
-
-/** @internal */
-export { LARGE_SOURCE, LOG_CALL, SOURCE, cacheEntries, fileRule, lineOf, locationProject, spanOf };
-/** @internal */
-export type { Linted, LocationProject, ProjectSetup };

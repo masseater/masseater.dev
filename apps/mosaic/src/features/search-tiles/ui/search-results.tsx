@@ -8,7 +8,7 @@ import { SearchResult } from "./search-result";
 
 const NOTHING = "見つかりませんでした";
 
-const SearchResults = ({ query }: Readonly<{ query: string }>): ReactNode => {
+export const SearchResults = ({ query }: Readonly<{ query: string }>): ReactNode => {
   const tiles = useTiles();
   const hits = searchTiles({ tiles, query });
   return (
@@ -23,5 +23,3 @@ const SearchResults = ({ query }: Readonly<{ query: string }>): ReactNode => {
     </ul>
   );
 };
-
-export { SearchResults };

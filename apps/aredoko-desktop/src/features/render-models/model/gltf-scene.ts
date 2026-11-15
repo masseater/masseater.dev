@@ -5,7 +5,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 import { ModelUnreadable } from "./model-unreadable.ts";
 
-interface GltfSource {
+export interface GltfSource {
   readonly buffer: ArrayBuffer;
   readonly pathname: string;
   readonly manager: LoadingManager;
@@ -15,7 +15,7 @@ const BASE = "./";
 const VRM_KEY = "vrm";
 const VRM_ZERO = "0";
 
-const unreadable =
+export const unreadable =
   (pathname: string) =>
   (cause: unknown): ModelUnreadable =>
     ModelUnreadable.make({ pathname, cause });
@@ -31,7 +31,7 @@ const vrmOf = (
   return Effect.fail(unreadable(pathname)(vrm));
 };
 
-const gltfScene = ({
+export const gltfScene = ({
   buffer,
   pathname,
   manager,
@@ -41,7 +41,7 @@ const gltfScene = ({
     catch: unreadable(pathname),
   }).pipe(Effect.map(({ scene }) => scene));
 
-const vrmScene = ({
+export const vrmScene = ({
   buffer,
   pathname,
   manager,
@@ -61,6 +61,3 @@ const vrmScene = ({
       return vrm.scene;
     }),
   );
-
-export { gltfScene, unreadable, vrmScene };
-export type { GltfSource };

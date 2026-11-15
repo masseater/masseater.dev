@@ -5,7 +5,7 @@ const groupOf =
   ({ groups }: RegExpMatchArray): Option.Option<string> =>
     pipe(Option.fromNullishOr(groups), Option.flatMap(Record.get(name)));
 
-const capture =
+export const capture =
   ({
     pattern,
     name,
@@ -16,7 +16,7 @@ const capture =
   (text) =>
     pipe(text, String.match(pattern), Option.flatMap(groupOf(name)));
 
-const captureAll =
+export const captureAll =
   ({
     pattern,
     name,
@@ -32,5 +32,3 @@ const captureAll =
       Array.map(groupOf(name)),
       Array.getSomes,
     );
-
-export { capture, captureAll };

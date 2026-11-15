@@ -39,14 +39,14 @@ import {
 } from "./syntax.ts";
 import { formatValues, isSubsetOf, vocabularyOf } from "./values.ts";
 
-interface ValueContext {
+export interface ValueContext {
   readonly checker: Checker;
   readonly owners: readonly Owner[];
   readonly vocabularies: readonly LibraryVocabulary[];
   readonly flows: readonly Flow[];
 }
 
-interface SiteVerdict {
+export interface SiteVerdict {
   readonly problems: readonly Problem[];
   readonly unowned: readonly ValueSite[];
 }
@@ -188,7 +188,7 @@ const originalVerdict =
     return verdict([], [site]);
   };
 
-const siteVerdict =
+export const siteVerdict =
   (context: ValueContext) =>
   (site: ValueSite): SiteVerdict => {
     if (Arr.isReadonlyArrayNonEmpty(site.sources)) {
@@ -254,7 +254,7 @@ const ownedLiteralProblem =
       ),
     );
 
-const ownedLiteralProblems =
+export const ownedLiteralProblems =
   (context: ValueContext) =>
   (sourceFile: SourceFile, excluded: readonly Node[]): readonly Problem[] =>
     Arr.getSomes(
@@ -272,6 +272,3 @@ const ownedLiteralProblems =
         Arr.map((node) => ownedLiteralProblem(context)(node)),
       ),
     );
-
-export { ownedLiteralProblems, siteVerdict };
-export type { SiteVerdict, ValueContext };

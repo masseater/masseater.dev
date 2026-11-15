@@ -3,15 +3,15 @@ import { Array as Arr, Schema, String as Str, pipe } from "effect";
 import { sectionMeta, sectionPath } from "#/shared/config";
 import type { Section } from "#/shared/config";
 
-const categories = ["blogs", "sloppedia"] as const satisfies readonly Section[];
+export const categories = ["blogs", "sloppedia"] as const satisfies readonly Section[];
 
-const CategorySchema = Schema.Literals(categories);
+export const CategorySchema = Schema.Literals(categories);
 
-type Category = typeof CategorySchema.Type;
+export type Category = typeof CategorySchema.Type;
 
-type Robots = "index" | "noindex";
+export type Robots = "index" | "noindex";
 
-const categoryMeta = {
+export const categoryMeta = {
   blogs: { ...sectionMeta.blogs, schemaType: "BlogPosting", robots: "index" },
   sloppedia: { ...sectionMeta.sloppedia, schemaType: "Article", robots: "noindex" },
 } as const satisfies Record<
@@ -24,7 +24,7 @@ const categoryMeta = {
   }>
 >;
 
-const categoryPath = (category: Category): string => sectionPath(category);
+export const categoryPath = (category: Category): string => sectionPath(category);
 
 const unindexedPaths = pipe(
   categories,
@@ -32,11 +32,8 @@ const unindexedPaths = pipe(
   Arr.flatMap((category) => [categoryPath(category), `/og${categoryPath(category)}`]),
 );
 
-const isUnindexedPath = (path: string): boolean =>
+export const isUnindexedPath = (path: string): boolean =>
   pipe(
     unindexedPaths,
     Arr.some((prefix) => path === prefix || Str.startsWith(`${prefix}/`)(path)),
   );
-
-export type { Category, Robots };
-export { categories, CategorySchema, categoryMeta, categoryPath, isUnindexedPath };

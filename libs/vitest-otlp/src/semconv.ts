@@ -237,12 +237,10 @@ const checkedRun = (
 const semconvOf = (project: TestProject): Option.Option<ResolvedSemconv> =>
   Option.fromNullishOr(project.getProvidedContext()[SEMCONV_KEY]);
 
-const setup = (project: TestProject): Promise<() => Promise<void>> =>
+export const setup = (project: TestProject): Promise<() => Promise<void>> =>
   runtime.runPromise(
     Option.match(semconvOf(project), {
       onNone: () => Effect.succeed(noTeardown),
       onSome: (semconv) => checkedRun(project, semconv),
     }),
   );
-
-export { setup };

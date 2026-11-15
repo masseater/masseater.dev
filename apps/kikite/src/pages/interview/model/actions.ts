@@ -7,7 +7,7 @@ import { runners } from "#/shared/lib/runners";
 
 import { assistWith } from "./assist.ts";
 
-type Actions = Readonly<{
+export type Actions = Readonly<{
   wrapUp: () => void;
   answer: (text: string) => void;
   typed: (text: string) => void;
@@ -25,7 +25,8 @@ const typedAnswer = Effect.fn("kikite.typedAnswer")(function* typedAnswer(text: 
   yield* typing("");
 });
 
-const actionsFor = Effect.gen(function* actionsFor() {
+/** @internal */
+export const actionsFor = Effect.gen(function* actionsFor() {
   const run = yield* runners;
   const asked = Effect.andThen(ask(), wrapUpIfAsked());
   const askNow = (): void => {
@@ -67,7 +68,3 @@ const actionsFor = Effect.gen(function* actionsFor() {
   };
   return actions;
 });
-
-/** @internal */
-export { actionsFor };
-export type { Actions };

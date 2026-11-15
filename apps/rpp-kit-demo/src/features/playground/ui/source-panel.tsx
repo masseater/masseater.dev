@@ -9,7 +9,7 @@ import { Panel } from "./panel";
 import { PanelBody } from "./panel-body";
 import { TabButton } from "./tab-button";
 
-const SourcePanel = (): ReactNode => {
+export const SourcePanel = (): ReactNode => {
   const [tab, setTab] = useSourceTab();
   const showMain = useCallback(() => {
     setTab("main");
@@ -30,5 +30,3 @@ const SourcePanel = (): ReactNode => {
     </Panel>
   );
 };
-
-export { SourcePanel };

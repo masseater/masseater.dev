@@ -173,7 +173,8 @@ const isPlaced = (
     return yield* fs.exists(file);
   });
 
-const installBinary = (
+/** @internal */
+export const installBinary = (
   binary: Binary,
 ): Effect.Effect<
   void,
@@ -189,7 +190,8 @@ const installBinary = (
     yield* unpack({ binary, platform, data });
   });
 
-const locateBinary = (
+/** @internal */
+export const locateBinary = (
   binary: Binary,
 ): Effect.Effect<
   string,
@@ -203,6 +205,3 @@ const locateBinary = (
     }
     return yield* binaryPath(binary, platform);
   });
-
-/** @internal */
-export { installBinary, locateBinary };

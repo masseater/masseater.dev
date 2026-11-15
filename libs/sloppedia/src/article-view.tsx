@@ -6,7 +6,7 @@ import type { SloppediaConfig } from "./config.ts";
 import type { Heading } from "./headings.ts";
 import { SideToc } from "./side-toc.tsx";
 
-const ArticleView = ({
+export const ArticleView = ({
   config,
   article,
   headings,
@@ -24,5 +24,3 @@ const ArticleView = ({
     </ArticleMain>
   </div>
 );
-
-export { ArticleView };

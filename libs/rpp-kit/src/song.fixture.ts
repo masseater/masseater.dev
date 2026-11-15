@@ -13,7 +13,7 @@ import {
 import { readSong } from "./read.ts";
 import type { Song } from "./types.ts";
 
-type Comparison = Readonly<{ rpp: string; truth: string }>;
+export type Comparison = Readonly<{ rpp: string; truth: string }>;
 
 const TOLERANCE = 0.001;
 
@@ -36,12 +36,12 @@ const readFixture = Effect.fn("readFixture")(function* readFixture(name: string)
   return yield* fileSystem.readFileString(new URL(`fixtures/${name}`, import.meta.url).pathname);
 });
 
-type Reading<Result> = Readonly<{ name: string; read: (song: Song) => Result }>;
+export type Reading<Result> = Readonly<{ name: string; read: (song: Song) => Result }>;
 
-const fromSong = <Result>({ name, read }: Reading<Result>): Promise<Result> =>
+export const fromSong = <Result>({ name, read }: Reading<Result>): Promise<Result> =>
   runtime.runPromise(Effect.map(readFixture(name), (text) => read(readSong(text))));
 
-const songOf = (name: string): Promise<Song> => fromSong({ name, read: (song) => song });
+export const songOf = (name: string): Promise<Song> => fromSong({ name, read: (song) => song });
 
 const near = (left: number, right: number): boolean => Math.abs(left - right) <= TOLERANCE;
 
@@ -88,8 +88,5 @@ const compare = Effect.fn("compare")(function* compare({ rpp, truth }: Compariso
   );
 });
 
-const mismatchesOf = (comparison: Comparison): Promise<readonly unknown[]> =>
+export const mismatchesOf = (comparison: Comparison): Promise<readonly unknown[]> =>
   runtime.runPromise(compare(comparison));
-
-export { fromSong, mismatchesOf, songOf };
-export type { Comparison, Reading };

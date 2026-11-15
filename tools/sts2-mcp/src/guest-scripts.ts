@@ -10,11 +10,11 @@ type DevLoop = Readonly<{
   build: boolean;
 }>;
 
-type Deploy = Readonly<{ ref: string; mods: readonly string[] }>;
+export type Deploy = Readonly<{ ref: string; mods: readonly string[] }>;
 
-type Launch = Readonly<{ instances: number; mods: readonly string[] }>;
+export type Launch = Readonly<{ instances: number; mods: readonly string[] }>;
 
-type Logs = Readonly<{ instance: number; lines: number }>;
+export type Logs = Readonly<{ instance: number; lines: number }>;
 
 const REPOSITORY = String.raw`C:\dev\masseater.dev`;
 const DEV_LOOP = String.raw`${REPOSITORY}\apps\sts2-mods\scripts\vm\dev-loop.ps1`;
@@ -51,7 +51,7 @@ const devLoop = ({ mods, instances, launch, build }: DevLoop): string =>
     Arr.join(" "),
   );
 
-const deployScript = ({ ref, mods }: Deploy): string =>
+export const deployScript = ({ ref, mods }: Deploy): string =>
   lines([
     "$ErrorActionPreference = 'Stop'",
     `git -C ${quote(REPOSITORY)} fetch --quiet origin ${quote(ref)}`,
@@ -62,21 +62,18 @@ const deployScript = ({ ref, mods }: Deploy): string =>
     "exit $LASTEXITCODE",
   ]);
 
-const launchScript = ({ instances, mods }: Launch): string =>
+export const launchScript = ({ instances, mods }: Launch): string =>
   lines([devLoop({ mods, instances, launch: true, build: false }), "exit $LASTEXITCODE"]);
 
-const stopScript = lines([
+export const stopScript = lines([
   "Get-Process SlayTheSpire2 -ErrorAction SilentlyContinue | Stop-Process -Force",
   "Start-Sleep 2",
   "'running=' + @(Get-Process SlayTheSpire2 -ErrorAction SilentlyContinue).Count",
 ]);
 
-const logScript = ({ instance, lines: tail }: Logs): string =>
+export const logScript = ({ instance, lines: tail }: Logs): string =>
   lines([
     `$entry = (Get-Content ${quote(INSTANCES_FILE)} -Raw | ConvertFrom-Json) | Where-Object { $_.instance -eq ${String(instance)} }`,
     `if (-not $entry) { Write-Output 'instance ${String(instance)} has not been launched'; exit 1 }`,
     `Get-Content $entry.log -Tail ${String(tail)} -Encoding UTF8`,
   ]);
-
-export { deployScript, launchScript, logScript, stopScript };
-export type { Deploy, Launch, Logs };

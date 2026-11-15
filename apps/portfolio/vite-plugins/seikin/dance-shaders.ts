@@ -181,7 +181,7 @@ const loadGpuEffect = (read: Read, path: string): Promise<string> => {
   );
 };
 
-const danceShaders = (): Plugin => ({
+export const danceShaders = (): Plugin => ({
   name: "dance-shaders",
   enforce: "pre",
   load(id) {
@@ -198,5 +198,3 @@ const danceShaders = (): Plugin => ({
     );
   },
 });
-
-export { danceShaders };

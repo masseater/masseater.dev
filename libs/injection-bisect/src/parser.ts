@@ -2,17 +2,17 @@ import type { Effect } from "effect";
 
 import type { ReadError } from "./read-error.ts";
 
-interface Span {
+export interface Span {
   readonly start: number;
   readonly end: number;
 }
 
-type Unit =
+export type Unit =
   | (Span & { readonly kind: "prose" })
   | (Span & { readonly kind: "whole" })
   | (Span & { readonly kind: "nested"; readonly format: string });
 
-interface Parser {
+export interface Parser {
   readonly format: string;
   readonly extensions: readonly string[];
   readonly aliases?: readonly string[];
@@ -20,22 +20,20 @@ interface Parser {
   readonly unitsOf: (text: string) => readonly Unit[];
 }
 
-interface Unreadable {
+export interface Unreadable {
   readonly name: string;
   readonly reason: string;
 }
 
-interface Document {
+export interface Document {
   readonly text: string;
   readonly format: string;
   readonly unreadable?: readonly Unreadable[];
 }
 
-interface Reader {
+export interface Reader {
   readonly format: string;
   readonly extensions: readonly string[];
   readonly accepts?: (bytes: Uint8Array) => boolean;
   readonly read: (bytes: Uint8Array) => Effect.Effect<Document, ReadError>;
 }
-
-export type { Document, Parser, Reader, Span, Unit, Unreadable };

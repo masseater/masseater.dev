@@ -4,7 +4,7 @@ import type { ChangeEventHandler, ReactNode } from "react";
 const LAYER =
   "col-start-1 row-start-1 min-h-40 w-full rounded-md border px-3 py-2 text-base leading-relaxed break-words whitespace-pre-wrap md:text-sm";
 
-const HighlightTextarea = ({
+export const HighlightTextarea = ({
   children,
   maxLength,
   value,
@@ -30,5 +30,3 @@ const HighlightTextarea = ({
     />
   </div>
 );
-
-export { HighlightTextarea };

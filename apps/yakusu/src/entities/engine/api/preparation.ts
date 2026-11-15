@@ -16,7 +16,7 @@ const NOTHING = Option.none<Progress>();
 const latest = (_previous: Option.Option<Progress>, progress: Progress): Option.Option<Progress> =>
   Option.some(progress);
 
-const usePreparation = (): Readonly<{ preparation: Preparation; retry: () => void }> => {
+export const usePreparation = (): Readonly<{ preparation: Preparation; retry: () => void }> => {
   const engine = useEngine();
   const query = useQuery(
     queryOptions({
@@ -44,5 +44,3 @@ const usePreparation = (): Readonly<{ preparation: Preparation; retry: () => voi
     }),
   };
 };
-
-export { usePreparation };

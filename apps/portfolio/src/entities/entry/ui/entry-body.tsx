@@ -8,8 +8,6 @@ import { components } from "./mdx-components";
 
 const renderBody: Render = ({ default: Body }) => <Body components={components} />;
 
-const EntryBody = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
+export const EntryBody = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
   <EntryModule entry={entry} render={renderBody} />
 );
-
-export { EntryBody };

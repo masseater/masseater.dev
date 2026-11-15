@@ -19,9 +19,8 @@ const web = Effect.gen(function* web() {
   });
 });
 
-type WebEnv = InferEnv<typeof web>;
+export type WebEnv = InferEnv<typeof web>;
 
-export type { WebEnv };
 export default Stack(
   APP_NAME,
   tracedStackProps,

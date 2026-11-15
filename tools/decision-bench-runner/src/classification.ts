@@ -4,11 +4,11 @@ import { ConfusionMatrix } from "ml-confusion-matrix";
 import { NOUL_THRESHOLD } from "./item.ts";
 import type { Item, Scored } from "./item.ts";
 
-const NONE = 0;
-const FULL = 1;
+export const NONE = 0;
+export const FULL = 1;
 const TWO = 2;
 
-const mean = (values: readonly number[]): number => {
+export const mean = (values: readonly number[]): number => {
   if (values.length === NONE) {
     return NONE;
   }
@@ -73,7 +73,7 @@ const finiteOrZero = (value: number): number => {
   return NONE;
 };
 
-const balancedAccuracy = (rows: readonly Scored[]): number => {
+export const balancedAccuracy = (rows: readonly Scored[]): number => {
   const classes = [String(true), String(false)];
   const confusion = confusionOf(rows, classes, predictedNoul);
   return mean(
@@ -85,7 +85,7 @@ const balancedAccuracy = (rows: readonly Scored[]): number => {
   );
 };
 
-const macroF1 = (rows: readonly Scored[]): number => {
+export const macroF1 = (rows: readonly Scored[]): number => {
   const classes = choiceClasses(rows);
   const confusion = confusionOf(rows, classes, predictedChoice);
   return mean(
@@ -96,7 +96,7 @@ const macroF1 = (rows: readonly Scored[]): number => {
   );
 };
 
-const macroF1Chance = (rows: readonly Scored[]): number => {
+export const macroF1Chance = (rows: readonly Scored[]): number => {
   const classes = choiceClasses(rows);
   const guess = FULL / Math.max(FULL, classes.length);
   return mean(
@@ -113,5 +113,3 @@ const macroF1Chance = (rows: readonly Scored[]): number => {
     ),
   );
 };
-
-export { FULL, NONE, balancedAccuracy, macroF1, macroF1Chance, mean };

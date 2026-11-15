@@ -215,7 +215,7 @@ const scannedFiles = Effect.fn("scannedFiles")(function* scannedFiles(
 });
 
 /** @internal */
-const checkComments = Effect.fn("checkComments")(function* checkComments(root: string) {
+export const checkComments = Effect.fn("checkComments")(function* checkComments(root: string) {
   const files = yield* RepositoryFiles;
   const settings = yield* rootSettings(root);
   const scanned = yield* scannedFiles(root, settings);
@@ -255,5 +255,3 @@ const checkComments = Effect.fn("checkComments")(function* checkComments(root: s
   );
   return Arr.flatten(found);
 });
-
-export { checkComments };

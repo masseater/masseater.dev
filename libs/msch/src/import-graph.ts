@@ -188,7 +188,7 @@ const packagesFrom = (
   });
 
 /** @internal */
-const packagesByEntry = Effect.fn("packagesByEntry")(function* packagesByEntry(
+export const packagesByEntry = Effect.fn("packagesByEntry")(function* packagesByEntry(
   api: API,
   directory: string,
   entries: readonly string[],
@@ -213,5 +213,3 @@ const packagesByEntry = Effect.fn("packagesByEntry")(function* packagesByEntry(
     ),
   );
 });
-
-export { packagesByEntry };

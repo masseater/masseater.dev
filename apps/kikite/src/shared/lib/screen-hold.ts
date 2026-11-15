@@ -26,9 +26,7 @@ const holding = pipe(
   Stream.runForEach(() => Effect.ignore(lockScreen)),
 );
 
-const holdScreen: Effect.Effect<void, never, Scope.Scope> = Effect.when(
+export const holdScreen: Effect.Effect<void, never, Scope.Scope> = Effect.when(
   Effect.asVoid(Effect.forkScoped(holding)),
   Effect.sync(() => "wakeLock" in navigator),
 ).pipe(Effect.asVoid);
-
-export { holdScreen };

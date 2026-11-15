@@ -4,7 +4,7 @@ import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effec
 
 import { authClient } from "./client";
 
-interface ConsentView {
+export interface ConsentView {
   readonly name: string;
   readonly details: readonly Readonly<{ label: string; values: readonly string[] }>[];
   readonly allow: "enabled" | "disabled";
@@ -26,9 +26,9 @@ const ConsentSearch = Schema.Struct({
   scope: Schema.optional(Schema.String),
 });
 
-type ConsentSearchParams = typeof ConsentSearch.Type;
+export type ConsentSearchParams = typeof ConsentSearch.Type;
 
-const validateConsentSearch = Schema.toStandardSchemaV1(ConsentSearch);
+export const validateConsentSearch = Schema.toStandardSchemaV1(ConsentSearch);
 
 const parseUrl = Option.liftThrowable((uri: string) => new URL(uri));
 
@@ -42,7 +42,7 @@ const redirectTargetOf = (redirectUri: string): string =>
 const scopesOf = (requestedScope: string): readonly string[] =>
   pipe(requestedScope, Str.split(SCOPE_SEPARATOR), Arr.filter(Str.isNonEmpty), Arr.dedupe);
 
-const consentView = ({
+export const consentView = ({
   clientId,
   clientName,
   redirectUri,
@@ -88,7 +88,7 @@ const fetchClientName = (clientId: string): Promise<string> =>
     ),
   );
 
-const clientNameQuery = (
+export const clientNameQuery = (
   clientId: string,
 ): ReturnType<typeof queryOptions<string, Error, string, readonly ["oauth-client", string]>> =>
   queryOptions({
@@ -96,8 +96,5 @@ const clientNameQuery = (
     queryFn: () => fetchClientName(clientId),
   });
 
-const answerConsent = (accept: boolean): Promise<unknown> =>
+export const answerConsent = (accept: boolean): Promise<unknown> =>
   authClient.oauth2.consent({ accept, fetchOptions: { throw: true } });
-
-export { answerConsent, clientNameQuery, consentView, validateConsentSearch };
-export type { ConsentSearchParams, ConsentView };

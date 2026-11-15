@@ -3,14 +3,14 @@ import type { Scope } from "effect";
 
 import { transcriptsOf } from "./transcripts.ts";
 
-type RecognitionHandlers = Readonly<{
+export type RecognitionHandlers = Readonly<{
   onFinal: (text: string) => void;
   onInterim: (text: string) => void;
   onFailed: (message: string) => void;
   onSound: (hearing: boolean) => void;
 }>;
 
-interface Recognition {
+export interface Recognition {
   readonly mute: () => void;
   readonly unmute: () => void;
 }
@@ -192,13 +192,10 @@ const listenWith = (
     );
   });
 
-const listen = (
+export const listen = (
   handlers: RecognitionHandlers,
 ): Effect.Effect<Option.Option<Recognition>, never, Scope.Scope> =>
   Option.match(recognizerClass(), {
     onNone: () => Effect.succeedNone,
     onSome: (Recognizer) => Effect.asSome(listenWith({ Recognizer, handlers })),
   });
-
-export { listen };
-export type { Recognition, RecognitionHandlers };

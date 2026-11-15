@@ -16,12 +16,10 @@ const swappedTarget = ({
   );
 };
 
-const swapped = ({
+export const swapped = ({
   source,
   direction,
 }: Readonly<{ source: Source; direction: Direction }>): Selection => ({
   source: { kind: "language", code: direction.target },
   target: swappedTarget({ source, direction }),
 });
-
-export { swapped };

@@ -8,14 +8,14 @@ import type { PackageFile } from "./package-row.ts";
 const SEPARATOR = "/";
 const SINGLE = 1;
 
-interface Member {
+export interface Member {
   readonly pathname: string;
   readonly file: string;
   readonly size: number;
   readonly modifiedAt: number;
 }
 
-interface Bundle extends PackageFile {
+export interface Bundle extends PackageFile {
   readonly name: string;
   readonly members: readonly Member[];
 }
@@ -23,7 +23,7 @@ interface Bundle extends PackageFile {
 type FileStat = Effect.Success<ReturnType<typeof statOf>>;
 
 /** @internal */
-const statIfPresent = Effect.fn("statIfPresent")(function* statPresentFile(file: string) {
+export const statIfPresent = Effect.fn("statIfPresent")(function* statPresentFile(file: string) {
   return yield* statOf(file).pipe(
     Effect.map((stat) => Option.some<FileStat>(stat)),
     Effect.catch((error) =>
@@ -85,7 +85,7 @@ const bundleOf =
   };
 
 /** @internal */
-const bundlesIn = Effect.fn("bundlesIn")(function* listBundles(
+export const bundlesIn = Effect.fn("bundlesIn")(function* listBundles(
   { id, path: root }: { readonly id: number; readonly path: string },
   names: readonly string[],
 ) {
@@ -102,6 +102,3 @@ const bundlesIn = Effect.fn("bundlesIn")(function* listBundles(
     Array.map(bundleOf(id, root, path)),
   );
 });
-
-export { bundlesIn, statIfPresent };
-export type { Bundle, Member };

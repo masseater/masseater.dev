@@ -3,7 +3,7 @@ import { EditorView } from "@codemirror/view";
 const SERIF = "var(--font-serif)";
 const SANS = "var(--font-sans)";
 
-const writingTheme = EditorView.theme({
+export const writingTheme = EditorView.theme({
   "&": {
     fontFamily: SERIF,
     fontSize: "16px",
@@ -37,5 +37,3 @@ const writingTheme = EditorView.theme({
     textUnderlineOffset: "6px",
   },
 });
-
-export { writingTheme };

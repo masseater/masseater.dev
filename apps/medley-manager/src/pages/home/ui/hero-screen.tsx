@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { Danmaku } from "./danmaku";
 import { HeroPanel } from "./hero-panel";
 
-const HeroScreen = (): ReactNode => (
+export const HeroScreen = (): ReactNode => (
   <div className="relative">
     <Danmaku />
     <div className="relative flex justify-center px-4 py-14 sm:py-20">
@@ -11,5 +11,3 @@ const HeroScreen = (): ReactNode => (
     </div>
   </div>
 );
-
-export { HeroScreen };

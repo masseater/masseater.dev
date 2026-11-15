@@ -5,15 +5,18 @@ import type { Atom } from "effect/reactivity";
 
 const DATA_FIRST_ARITY = 2;
 
-type Registered<Value> = Effect.Effect<Value, never, AtomRegistry.AtomRegistry>;
+/** @internal */
+export type Registered<Value> = Effect.Effect<Value, never, AtomRegistry.AtomRegistry>;
 
-const read = <Value>(atom: Atom.Atom<Value>): Registered<Value> =>
+/** @internal */
+export const read = <Value>(atom: Atom.Atom<Value>): Registered<Value> =>
   pipe(
     AtomRegistry.AtomRegistry,
     Effect.map((registry) => registry.get(atom)),
   );
 
-const write: {
+/** @internal */
+export const write: {
   <Value>(value: Value): (atom: Atom.Writable<Value>) => Registered<void>;
   <Value>(atom: Atom.Writable<Value>, value: Value): Registered<void>;
 } = dual(DATA_FIRST_ARITY, <Value>(atom: Atom.Writable<Value>, value: Value): Registered<void> =>
@@ -27,7 +30,8 @@ const write: {
   ),
 );
 
-const modify: {
+/** @internal */
+export const modify: {
   <Value>(update: (current: Value) => Value): (atom: Atom.Writable<Value>) => Registered<void>;
   <Value>(atom: Atom.Writable<Value>, update: (current: Value) => Value): Registered<void>;
 } = dual(
@@ -42,8 +46,3 @@ const modify: {
       ),
     ),
 );
-
-/** @internal */
-export { modify, read, write };
-/** @internal */
-export type { Registered };

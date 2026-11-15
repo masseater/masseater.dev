@@ -4,7 +4,7 @@ import { otherOf } from "./languages.ts";
 import type { LanguageCode } from "./languages.ts";
 import type { Source } from "./selection.ts";
 
-type Direction = Readonly<{
+export type Direction = Readonly<{
   source: Option.Option<LanguageCode>;
   target: LanguageCode;
   detected: Option.Option<LanguageCode>;
@@ -19,7 +19,7 @@ const detectedIn = (text: string): Option.Option<LanguageCode> => {
   return Option.none();
 };
 
-const resolveDirection = ({
+export const resolveDirection = ({
   text,
   source,
   target,
@@ -33,6 +33,3 @@ const resolveDirection = ({
   }
   return { source: Option.none(), target, detected };
 };
-
-export { resolveDirection };
-export type { Direction };

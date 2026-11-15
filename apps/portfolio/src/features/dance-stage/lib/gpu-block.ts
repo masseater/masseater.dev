@@ -8,7 +8,7 @@ import { BANDS, POSE_FIELDS, POSE_POINTS, TEXT_ROWS } from "./renderer";
 const SCALAR = 1;
 const PAIR = 2;
 const VECTOR = 4;
-const POSE_SIZE = POSE_POINTS * POSE_FIELDS;
+export const POSE_SIZE = POSE_POINTS * POSE_FIELDS;
 
 const LAYOUT = {
   pose: POSE_SIZE,
@@ -42,11 +42,11 @@ const USED = Num.sumAll(Rec.values(LAYOUT));
 
 const BLOCK_FLOATS = Math.ceil(USED / VECTOR) * VECTOR;
 
-const BLOCK_BYTES = BLOCK_FLOATS * Float32Array.BYTES_PER_ELEMENT;
+export const BLOCK_BYTES = BLOCK_FLOATS * Float32Array.BYTES_PER_ELEMENT;
 
-const emptyBlock = (): Float32Array => new Float32Array(BLOCK_FLOATS);
+export const emptyBlock = (): Float32Array => new Float32Array(BLOCK_FLOATS);
 
-const fillBlock: Fn<
+export const fillBlock: Fn<
   Readonly<{ data: Float32Array; frame: Frame; lastPose: Float32Array; size: Size }>,
   Float32Array
 > = ({ data, frame, lastPose, size }) => {
@@ -58,11 +58,9 @@ const fillBlock: Fn<
   return data;
 };
 
-const fillTextWidths: Fn<Readonly<{ data: Float32Array; widths: readonly number[] }>, void> = ({
-  data,
-  widths,
-}) => {
+export const fillTextWidths: Fn<
+  Readonly<{ data: Float32Array; widths: readonly number[] }>,
+  void
+> = ({ data, widths }) => {
   data.set(pipe(widths, Arr.take(TEXT_ROWS)), OFFSETS.textWidth);
 };
-
-export { BLOCK_BYTES, emptyBlock, fillBlock, fillTextWidths, POSE_SIZE };

@@ -1,3 +1,1 @@
-type Fn<Input, Output> = (input: Input) => Output;
-
-export type { Fn };
+export type Fn<Input, Output> = (input: Input) => Output;

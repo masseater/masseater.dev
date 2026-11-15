@@ -12,7 +12,8 @@ const UNAUTHORIZED = 401;
 const TOO_MANY_REQUESTS = 429;
 const FORBIDDEN = 403;
 
-interface LoggedRequest {
+/** @internal */
+export interface LoggedRequest {
   readonly authorization: string;
   readonly app: Readonly<Record<"referer" | "title" | "visibility", string>>;
   readonly body: Body;
@@ -28,7 +29,8 @@ interface MockShape extends MockState {
   readonly baseURL: string;
 }
 
-class MockOpenRouter extends Context.Service<MockOpenRouter, MockShape>()(
+/** @internal */
+export class MockOpenRouter extends Context.Service<MockOpenRouter, MockShape>()(
   "@r_masseater/oxlint-plugin-decision/mock-openrouter.test.support/MockOpenRouter",
 ) {}
 
@@ -130,18 +132,15 @@ const routes = Layer.unwrap(
   }),
 );
 
-const MockOpenRouterLayer = routes.pipe(
+/** @internal */
+export const MockOpenRouterLayer = routes.pipe(
   Layer.provideMerge(MockLive),
   Layer.provideMerge(NodeHttpServer.layerTest),
 );
 
-const loggedRequests: Effect.Effect<readonly LoggedRequest[], TestError, MockOpenRouter> =
+/** @internal */
+export const loggedRequests: Effect.Effect<readonly LoggedRequest[], TestError, MockOpenRouter> =
   Effect.gen(function* logged() {
     const { log } = yield* MockOpenRouter;
     return yield* Ref.get(log);
   });
-
-/** @internal */
-export { MockOpenRouter, MockOpenRouterLayer, loggedRequests };
-/** @internal */
-export type { LoggedRequest };

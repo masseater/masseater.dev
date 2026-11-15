@@ -14,7 +14,7 @@ import type { LibraryCache, LibraryIndex } from "./library.ts";
 import { RepositoryFiles } from "./repository-files.ts";
 import { annotateResources } from "./telemetry.ts";
 
-interface Project {
+export interface Project {
   readonly packageName: Option.Option<string>;
   readonly workspaceDependencies: readonly string[];
   readonly program: Program;
@@ -42,7 +42,9 @@ const isVisible = (file: string): boolean =>
     ),
   );
 
-const listConfigFiles = (root: string): Effect.Effect<readonly string[], never, RepositoryFiles> =>
+export const listConfigFiles = (
+  root: string,
+): Effect.Effect<readonly string[], never, RepositoryFiles> =>
   Effect.gen(function* configFilesUnder() {
     const files = yield* RepositoryFiles;
     const listed = yield* files.matchingFiles(root, [CONFIG_PATHSPEC]);
@@ -144,18 +146,18 @@ const buildProject = Effect.fn("buildProject")(function* buildProject(
   } satisfies Project;
 });
 
-interface Compiler {
+export interface Compiler {
   readonly api: API;
   readonly libraries: LibraryCache;
 }
 
-interface Workspace {
+export interface Workspace {
   readonly compiler: Compiler;
   readonly root: string;
   readonly generated: readonly string[];
 }
 
-const typeScriptCompiler = Effect.acquireRelease(
+export const typeScriptCompiler = Effect.acquireRelease(
   Effect.sync((): Compiler => ({
     api: new API({ collectTiming: true }),
     libraries: libraryCache(),
@@ -191,7 +193,7 @@ const releaseProject = (project: Project): Effect.Effect<void> =>
     project.program.dispose();
   });
 
-const withProject =
+export const withProject =
   (workspace: Workspace) =>
   (configPath: string) =>
   <Value, Failure, Requirements>(
@@ -207,7 +209,7 @@ const withProject =
       (loaded) => Option.match(loaded, { onNone: () => Effect.void, onSome: releaseProject }),
     );
 
-const mentions =
+export const mentions =
   (needle: string) =>
   ({ api }: Compiler) =>
   (configPath: string): Effect.Effect<boolean, never, RepositoryFiles> =>
@@ -227,6 +229,3 @@ const mentions =
         Arr.some((text) => Option.exists(text, includesNeedle)),
       );
     });
-
-export { listConfigFiles, mentions, typeScriptCompiler, withProject };
-export type { Compiler, Project, Workspace };

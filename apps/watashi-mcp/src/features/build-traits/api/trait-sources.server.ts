@@ -67,7 +67,7 @@ const collectLife: Effect.Effect<Option.Option<Collected>, StorageFailed> = Effe
   },
 );
 
-const collectSources: Effect.Effect<
+export const collectSources: Effect.Effect<
   Option.Option<Collected>,
   StorageFailed | UpstreamFailed
 > = Effect.gen(function* collectSources() {
@@ -81,5 +81,3 @@ const collectSources: Effect.Effect<
   }
   return yield* collectConversations;
 });
-
-export { collectSources };

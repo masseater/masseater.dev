@@ -5,7 +5,7 @@ import { Match } from "effect";
 
 import type { Rejected } from "./rejected";
 
-type ToolName =
+export type ToolName =
   | "upsert_account"
   | "import_csv"
   | "add_transactions"
@@ -20,7 +20,7 @@ type ToolName =
   | "monthly_totals"
   | "balance_sheet";
 
-const { meteredInput, runToolIn } = toolCalls<ToolName, UpstreamFailed | Rejected>({
+export const { meteredInput, runToolIn } = toolCalls<ToolName, UpstreamFailed | Rejected>({
   dataset: () => env.TOOL_CALLS,
   describe: (failure) =>
     Match.value(failure).pipe(
@@ -33,6 +33,3 @@ const { meteredInput, runToolIn } = toolCalls<ToolName, UpstreamFailed | Rejecte
       }),
     ),
 });
-
-export { meteredInput, runToolIn };
-export type { ToolName };

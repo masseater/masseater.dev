@@ -2,7 +2,7 @@ import { parseJsonlLines } from "claude-code-jsonl-parser";
 import type { ParsedLine, UserContentBlock } from "claude-code-jsonl-parser";
 import { Array as Arr, Match, Option, String as Str, pipe } from "effect";
 
-type Utterance = Readonly<{ uuid: string; timestamp: string; text: string }>;
+export type Utterance = Readonly<{ uuid: string; timestamp: string; text: string }>;
 
 type Candidate = Readonly<{ uuid: string; timestamp: string; owner: boolean; text: string }>;
 
@@ -95,7 +95,7 @@ const utterancesOf = (candidate: Candidate): readonly Utterance[] =>
     Arr.map((text) => ({ uuid: candidate.uuid, timestamp: candidate.timestamp, text })),
   );
 
-const ownerUtterances = (jsonl: string): readonly Utterance[] =>
+export const ownerUtterances = (jsonl: string): readonly Utterance[] =>
   pipe(
     Arr.fromIterable(parseJsonlLines(jsonl)),
     Arr.map(candidateOf),
@@ -103,6 +103,3 @@ const ownerUtterances = (jsonl: string): readonly Utterance[] =>
     Arr.filter((candidate) => candidate.owner),
     Arr.flatMap(utterancesOf),
   );
-
-export { ownerUtterances };
-export type { Utterance };

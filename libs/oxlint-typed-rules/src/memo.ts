@@ -1,6 +1,6 @@
 import { Option } from "effect";
 
-const memoizeByKey = <Key extends WeakKey, Value>(
+export const memoizeByKey = <Key extends WeakKey, Value>(
   compute: (key: Key) => Value,
 ): ((key: Key) => Value) => {
   const cache = new WeakMap<Key, Value>();
@@ -14,7 +14,7 @@ const memoizeByKey = <Key extends WeakKey, Value>(
     );
 };
 
-const lazily = <Value>(compute: () => Value): (() => Value) => {
+export const lazily = <Value>(compute: () => Value): (() => Value) => {
   const cell: { value?: Option.Option<Value> } = {};
   return () => {
     const cached = Option.flatten(Option.fromNullishOr(cell.value));
@@ -26,5 +26,3 @@ const lazily = <Value>(compute: () => Value): (() => Value) => {
     return computed;
   };
 };
-
-export { lazily, memoizeByKey };

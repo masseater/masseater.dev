@@ -99,16 +99,16 @@ const compile = (source: string, flags = ""): RegExp => {
   return found;
 };
 
-type Pattern = Readonly<{ source: string; flags: string; anchored: RegExp; anywhere: RegExp }>;
+export type Pattern = Readonly<{ source: string; flags: string; anchored: RegExp; anywhere: RegExp }>;
 
-const pattern = (source: string, flags = ""): Pattern => ({
+export const pattern = (source: string, flags = ""): Pattern => ({
   source,
   flags,
   anchored: compile(source, `${flags}y`),
   anywhere: compile(source, `${flags}g`),
 });
 
-type Match = Readonly<{ start: number; end: number; group: (name?: number | string) => string | undefined; groups: RegExpExecArray }>;
+export type Match = Readonly<{ start: number; end: number; group: (name?: number | string) => string | undefined; groups: RegExpExecArray }>;
 
 const wrap = (found: RegExpExecArray): Match => ({
   start: found.index,
@@ -120,7 +120,7 @@ const wrap = (found: RegExpExecArray): Match => ({
 const asPattern = (value: Pattern | string, flags = ""): Pattern => (typeof value === "string" ? pattern(value, flags) : value);
 
 // re.match(p, text, pos)
-const match = (value: Pattern | string, text: string, pos = 0, flags = ""): Match | undefined => {
+export const match = (value: Pattern | string, text: string, pos = 0, flags = ""): Match | undefined => {
   const regex = asPattern(value, flags).anchored;
   regex.lastIndex = pos;
   const found = regex.exec(text);
@@ -128,13 +128,13 @@ const match = (value: Pattern | string, text: string, pos = 0, flags = ""): Matc
 };
 
 // re.fullmatch(p, text)
-const fullmatch = (value: Pattern | string, text: string, flags = ""): Match | undefined => {
+export const fullmatch = (value: Pattern | string, text: string, flags = ""): Match | undefined => {
   const source = asPattern(value, flags);
   return match(pattern(`(?:${source.source})$`, source.flags), text);
 };
 
 // re.search(p, text, pos)
-const search = (value: Pattern | string, text: string, pos = 0, flags = ""): Match | undefined => {
+export const search = (value: Pattern | string, text: string, pos = 0, flags = ""): Match | undefined => {
   const regex = asPattern(value, flags).anywhere;
   regex.lastIndex = pos;
   const found = regex.exec(text);
@@ -142,7 +142,7 @@ const search = (value: Pattern | string, text: string, pos = 0, flags = ""): Mat
 };
 
 // re.finditer(p, text)
-const finditer = (value: Pattern | string, text: string, flags = ""): Match[] => {
+export const finditer = (value: Pattern | string, text: string, flags = ""): Match[] => {
   const regex = asPattern(value, flags).anywhere;
   const out: Match[] = [];
   regex.lastIndex = 0;
@@ -157,7 +157,7 @@ const finditer = (value: Pattern | string, text: string, flags = ""): Match[] =>
 const count = (value: Pattern | string, text: string, flags = ""): number => finditer(value, text, flags).length;
 
 // re.sub(p, replacement, text)
-const sub = (value: Pattern | string, replacement: string | ((found: Match) => string), text: string, flags = ""): string => {
+export const sub = (value: Pattern | string, replacement: string | ((found: Match) => string), text: string, flags = ""): string => {
   let out = "";
   let last = 0;
   for (const found of finditer(value, text, flags)) {
@@ -168,7 +168,7 @@ const sub = (value: Pattern | string, replacement: string | ((found: Match) => s
 };
 
 // re.split(p, text)（グループの中身は返さない）
-const split = (value: Pattern | string, text: string, maxsplit = 0, flags = ""): string[] => {
+export const split = (value: Pattern | string, text: string, maxsplit = 0, flags = ""): string[] => {
   const out: string[] = [];
   let last = 0;
   for (const found of finditer(value, text, flags)) {
@@ -181,7 +181,5 @@ const split = (value: Pattern | string, text: string, maxsplit = 0, flags = ""):
   return out;
 };
 
-const escape = (text: string): string => text.replace(/[\\^$.*+?()[\]{}|\-/#&~ \t\n\r\v\f]/g, "\\$&");
+export const escape = (text: string): string => text.replace(/[\\^$.*+?()[\]{}|\-/#&~ \t\n\r\v\f]/g, "\\$&");
 
-export { escape, finditer, fullmatch, match, pattern, search, split, sub };
-export type { Match, Pattern };

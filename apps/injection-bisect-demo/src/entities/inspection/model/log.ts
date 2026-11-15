@@ -7,7 +7,7 @@ import { COPY } from "#/shared/config";
 
 import { formatCount, formatDollars, formatPercent } from "./format";
 
-interface LogLine {
+export interface LogLine {
   readonly key: string;
   readonly tone: "asked" | "answered" | "done" | "failed";
   readonly text: string;
@@ -74,11 +74,8 @@ const lineOf = (event: InspectEvent): LogLine => {
   return { key: "failed", tone: "failed", text: `${at}  ${event.reason}` };
 };
 
-const logOf = (events: readonly InspectEvent[]): readonly LogLine[] =>
+export const logOf = (events: readonly InspectEvent[]): readonly LogLine[] =>
   pipe(
     events,
     Arr.map((event) => lineOf(event)),
   );
-
-export type { LogLine };
-export { logOf };

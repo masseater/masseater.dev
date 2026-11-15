@@ -55,7 +55,7 @@ const isUnboundModuleExportsValue = (binding: FileBinding, assigned: Node, scope
   isEmptyObjectLiteral(assigned) ||
   (scope.containerIsFile && isExportsOrModuleExportsOrAlias(binding, assigned));
 
-const bindModuleExportsAssignment: {
+export const bindModuleExportsAssignment: {
   (node: BinaryExpression, scope: Scope): (binding: FileBinding) => void;
   (binding: FileBinding, node: BinaryExpression, scope: Scope): void;
 } = Fn.dual(
@@ -90,7 +90,7 @@ const isTrackedModuleExportsAccess = (binding: FileBinding, node: Node): boolean
   Predicate.isNotUndefined(binding.commonJsModuleIndicator) &&
   isModuleExportsAccessExpression(node);
 
-const bindModuleExportsAccess: {
+export const bindModuleExportsAccess: {
   (node: Node, scope: Scope): (binding: FileBinding) => void;
   (binding: FileBinding, node: Node, scope: Scope): void;
 } = Fn.dual(DATA_FIRST_ARITY_3, (binding: FileBinding, node: Node, scope: Scope): void => {
@@ -107,5 +107,3 @@ const bindModuleExportsAccess: {
     flags: MODULE_LOCAL,
   });
 });
-
-export { bindModuleExportsAccess, bindModuleExportsAssignment };

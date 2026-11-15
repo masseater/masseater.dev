@@ -5,7 +5,7 @@ import { McpCommand, useMcp } from "#/entities/mcp";
 
 const TITLE = "MCP";
 
-const McpSetting = (): ReactNode => {
+export const McpSetting = (): ReactNode => {
   const mcp = useMcp();
   if (Option.isNone(mcp)) {
     return false;
@@ -17,5 +17,3 @@ const McpSetting = (): ReactNode => {
     </section>
   );
 };
-
-export { McpSetting };

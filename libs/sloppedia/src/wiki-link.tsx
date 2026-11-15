@@ -17,7 +17,7 @@ const hrefOf = (config: SloppediaConfig, target: Target): string =>
     }),
   );
 
-const WikiLink = ({
+export const WikiLink = ({
   config,
   target,
   className = LINK_CLASS,
@@ -35,5 +35,3 @@ const WikiLink = ({
     </Link>
   );
 };
-
-export { WikiLink };

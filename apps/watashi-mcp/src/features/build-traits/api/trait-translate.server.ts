@@ -9,7 +9,7 @@ import { nowIso } from "#/shared/db/index.server";
 
 type Pending = Readonly<{ id: number; trait: TraitState }>;
 
-type TranslateFailure = StorageFailed | UpstreamFailed;
+export type TranslateFailure = StorageFailed | UpstreamFailed;
 
 const NONE_YET = 0;
 
@@ -67,7 +67,7 @@ const translateFrom = (
     return yield* translateFrom(pending, deadline, done + ONE_MORE);
   });
 
-const translateTraits = (
+export const translateTraits = (
   deadline: number,
 ): Effect.Effect<number, TranslateFailure, TraitTranslator> =>
   Effect.gen(function* translateAll() {
@@ -75,6 +75,3 @@ const translateTraits = (
     const rows = yield* loadTraitJa;
     return yield* translateFrom(pendingOf(traits, rows), deadline, NONE_YET);
   }).pipe(Effect.withSpan("watashi.traits.translate"));
-
-export { translateTraits };
-export type { TranslateFailure };

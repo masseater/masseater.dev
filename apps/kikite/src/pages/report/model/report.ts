@@ -6,18 +6,18 @@ import type { StrategyId } from "#strategies";
 
 type QuestionEntry = Extract<Entry, { kind: "question" }>;
 
-type StrategyRow = Readonly<{
+export type StrategyRow = Readonly<{
   strategy: StrategyId;
   asked: number;
   good: number;
   off: number;
 }>;
 
-type Wait = Readonly<{ medianMs: number; maxMs: number }>;
+export type Wait = Readonly<{ medianMs: number; maxMs: number }>;
 
-type Change = Readonly<{ open: readonly [number, number]; next: readonly [number, number] }>;
+export type Change = Readonly<{ open: readonly [number, number]; next: readonly [number, number] }>;
 
-type Report = Readonly<{
+export type Report = Readonly<{
   rows: readonly StrategyRow[];
   wait: Option.Option<Wait>;
   withdrawn: number;
@@ -97,7 +97,8 @@ const changeOf = (progress: readonly Progress[]): Option.Option<Change> =>
 
 const byAsked = Order.mapInput(Order.flip(Num.Order), (row: StrategyRow) => row.asked);
 
-const reportOf = ({ entries, progress, withdrawn }: Sources): Report => {
+/** @internal */
+export const reportOf = ({ entries, progress, withdrawn }: Sources): Report => {
   const questions = pipe(entries, Arr.filter(isQuestion));
   return {
     rows: pipe(STRATEGY_IDS, Arr.map(rowOf(questions)), Arr.filter(used), Arr.sortBy(byAsked)),
@@ -106,7 +107,3 @@ const reportOf = ({ entries, progress, withdrawn }: Sources): Report => {
     change: changeOf(progress),
   };
 };
-
-/** @internal */
-export { reportOf };
-export type { Change, Report, StrategyRow, Wait };

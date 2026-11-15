@@ -33,7 +33,7 @@ const scannedText =
       }),
     );
 
-const pdfReaderOf = (options: OcrOptions): Reader => ({
+export const pdfReaderOf = (options: OcrOptions): Reader => ({
   format: "pdf",
   extensions: [".pdf"],
   read: (bytes) =>
@@ -59,5 +59,3 @@ const pdfReaderOf = (options: OcrOptions): Reader => ({
       return { text: pipe(pages, Arr.join(PAGE_BREAK)), format: "plain" };
     }),
 });
-
-export { pdfReaderOf };

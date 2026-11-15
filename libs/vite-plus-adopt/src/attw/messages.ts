@@ -4,7 +4,7 @@ import type { ResolutionState, TraceSink } from "./resolution-types.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-const Messages = {
+export const Messages = {
   directoryDoesNotExist: "Directory '{0}' does not exist, skipping all lookups in it.",
   directoryHasNoPackageScope:
     "Directory '{0}' has no containing package.json scope. Imports will not resolve.",
@@ -77,7 +77,7 @@ const Messages = {
   packageJsonNoImports: "package.json scope '{0}' has no imports defined.",
 } as const;
 
-type Message = (typeof Messages)[keyof typeof Messages];
+export type Message = (typeof Messages)[keyof typeof Messages];
 
 const PLACEHOLDER = /\{(?<index>\d+)\}/u;
 const PLACEHOLDER_STEP = 2;
@@ -92,10 +92,10 @@ const filled =
     return args[Number(part)] ?? `{${part}}`;
   };
 
-const formatMessage = (message: Message, ...args: readonly string[]): string =>
+export const formatMessage = (message: Message, ...args: readonly string[]): string =>
   pipe(Str.split(message, PLACEHOLDER), Arr.map(filled(args)), Arr.join(""));
 
-const emitTrace: {
+export const emitTrace: {
   (message: string): (trace: Option.Option<TraceSink>) => void;
   (trace: Option.Option<TraceSink>, message: string): void;
 } = Fn.dual(DATA_FIRST_ARITY, (trace: Option.Option<TraceSink>, message: string): void => {
@@ -104,13 +104,10 @@ const emitTrace: {
   }
 });
 
-const traceMessage = (
+export const traceMessage = (
   state: Pick<ResolutionState, "trace">,
   message: Message,
   ...args: readonly string[]
 ): void => {
   emitTrace(state.trace, formatMessage(message, ...args));
 };
-
-export { Messages, emitTrace, formatMessage, traceMessage };
-export type { Message };

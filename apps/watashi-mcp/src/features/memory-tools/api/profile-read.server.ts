@@ -21,10 +21,8 @@ const profileOf = (input: WatashiProfileValue): Effect.Effect<Body, ToolFailure>
     Effect.flatMap((topic) => ownerProfile({ scope: Option.fromUndefinedOr(input.scope), topic })),
   );
 
-const watashiProfile = (input: WatashiProfileValue): Effect.Effect<Body, ToolFailure> =>
+export const watashiProfile = (input: WatashiProfileValue): Effect.Effect<Body, ToolFailure> =>
   Option.match(Option.fromUndefinedOr(input.trait), {
     onSome: traitDetail,
     onNone: () => profileOf(input),
   });
-
-export { watashiProfile };

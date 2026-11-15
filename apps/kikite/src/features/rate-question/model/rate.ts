@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { entriesAtom, rated, uploadAtom } from "#/entities/interview";
 import type { Rating } from "#/entities/interview";
 
-const useRate = (id: number): ((rating: Rating) => void) => {
+export const useRate = (id: number): ((rating: Rating) => void) => {
   const setEntries = useAtomSet(entriesAtom);
   const upload = useAtomSet(uploadAtom);
   return useCallback(
@@ -15,5 +15,3 @@ const useRate = (id: number): ((rating: Rating) => void) => {
     [setEntries, upload, id],
   );
 };
-
-export { useRate };

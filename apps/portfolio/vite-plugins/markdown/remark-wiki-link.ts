@@ -40,6 +40,4 @@ const toWikiLink: Transform<RootContent, RootContent> = (node) =>
     Option.getOrElse((): RootContent => node),
   );
 
-const remarkWikiLink: Plugin<[], Root> = () => mapTree(toWikiLink);
-
-export { remarkWikiLink };
+export const remarkWikiLink: Plugin<[], Root> = () => mapTree(toWikiLink);

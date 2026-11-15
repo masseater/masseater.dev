@@ -13,7 +13,7 @@ import type { ValueSite } from "./sites.ts";
 import { contains, descendantsOf } from "./syntax.ts";
 import { ownedLiteralProblems, siteVerdict } from "./value-checks.ts";
 
-interface ProjectAnalysis {
+export interface ProjectAnalysis {
   readonly problems: readonly Problem[];
   readonly unowned: readonly ValueSite[];
 }
@@ -76,7 +76,7 @@ const nodesOf = (sites: readonly ValueSite[]): readonly Node[] =>
     Arr.map((site) => site.node),
   );
 
-const analyzeProject =
+export const analyzeProject =
   (owners: readonly Owner[]) =>
   (project: Project): ProjectAnalysis => {
     const { checker } = project;
@@ -121,6 +121,3 @@ const analyzeProject =
       ),
     };
   };
-
-export { analyzeProject };
-export type { ProjectAnalysis };

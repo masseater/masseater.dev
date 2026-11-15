@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { CountBadge } from "./count-badge";
 
-const SectionHeading = ({
+export const SectionHeading = ({
   title,
   count,
 }: Readonly<{ title: string; count?: number }>): ReactNode => (
@@ -12,5 +12,3 @@ const SectionHeading = ({
     <CountBadge count={count} />
   </h2>
 );
-
-export { SectionHeading };

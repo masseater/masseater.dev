@@ -86,6 +86,4 @@ const probeAll = (
   Effect.forEach(probes, resultOf, { concurrency: CONCURRENCY });
 
 /** @internal */
-const runProbes = probeAll;
-
-export { runProbes };
+export const runProbes = probeAll;

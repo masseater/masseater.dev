@@ -10,7 +10,7 @@ import { db } from "#/shared/db/index.server";
 const OWNER_INVITE_HASH =
   "a6f8d888f1b83ee5cdc18e833b7c9b08:f83925e6b19f06c9f373618768edb54ebf76092ef306d518680dc9480ef48ee434b7027c8dcdec48c0ed4ec7154846a0ddddf4289bfeed9728afffb3ab5e675c";
 
-const createAuth = (): Auth<OwnerAuthOptions> =>
+export const createAuth = (): Auth<OwnerAuthOptions> =>
   createOwnerAuth({
     origin: SITE_ORIGIN,
     db,
@@ -21,5 +21,3 @@ const createAuth = (): Auth<OwnerAuthOptions> =>
     consentPage: CONSENT_PATH,
     resource: MCP_URL,
   });
-
-export { createAuth };

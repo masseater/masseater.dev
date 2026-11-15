@@ -22,6 +22,4 @@ const runWithTracing =
   };
 
 /** @internal */
-const runMain = runWithTracing;
-
-export { runMain };
+export const runMain = runWithTracing;

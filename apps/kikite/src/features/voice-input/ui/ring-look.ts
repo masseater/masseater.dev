@@ -3,13 +3,13 @@ import type { LucideIcon } from "lucide-react";
 
 import type { Asking, Listening } from "#/entities/interview";
 
-type RingState = "listening" | "hearing" | "thinking" | "typing" | "paused" | "deaf";
+export type RingState = "listening" | "hearing" | "thinking" | "typing" | "paused" | "deaf";
 
-type Look = Readonly<{ Icon: LucideIcon; label: string }>;
+export type Look = Readonly<{ Icon: LucideIcon; label: string }>;
 
-type Signals = Readonly<{ listening: Listening; asking: Asking; hearing: boolean }>;
+export type Signals = Readonly<{ listening: Listening; asking: Asking; hearing: boolean }>;
 
-const LOOKS: Readonly<Record<RingState, Look>> = {
+export const LOOKS: Readonly<Record<RingState, Look>> = {
   listening: { Icon: Mic, label: "聞いている" },
   hearing: { Icon: Mic, label: "聞いている" },
   thinking: { Icon: Mic, label: "考えている" },
@@ -27,7 +27,7 @@ const BY_LISTENING: Readonly<Record<Listening["status"], RingState>> = {
   paused: "paused",
 };
 
-const ringStateOf = ({ listening, asking, hearing }: Signals): RingState => {
+export const ringStateOf = ({ listening, asking, hearing }: Signals): RingState => {
   if (asking.status === "drafting") {
     return "thinking";
   }
@@ -37,6 +37,3 @@ const ringStateOf = ({ listening, asking, hearing }: Signals): RingState => {
   }
   return state;
 };
-
-export { LOOKS, ringStateOf };
-export type { Look, RingState, Signals };

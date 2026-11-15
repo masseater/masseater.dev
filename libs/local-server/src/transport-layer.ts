@@ -20,10 +20,11 @@ const socketServerLayer = Layer.unwrap(
 );
 
 /** @internal */
-const transportLayer = Layer.mergeAll(RpcServer.layerProtocolSocketServer, endpointFileLayer).pipe(
+export const transportLayer = Layer.mergeAll(
+  RpcServer.layerProtocolSocketServer,
+  endpointFileLayer,
+).pipe(
   Layer.provide(RpcSerialization.layerJsonRpc()),
   Layer.provide(socketServerLayer),
   Layer.provideMerge(serverTokenLayer),
 );
-
-export { transportLayer };

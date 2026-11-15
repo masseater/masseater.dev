@@ -6,7 +6,7 @@ import { categoriesOf } from "./categories.ts";
 import { CategorySection } from "./category-section.tsx";
 import type { SloppediaConfig } from "./config.ts";
 
-const CategoriesView = ({
+export const CategoriesView = ({
   config,
   articles,
 }: Readonly<{ config: SloppediaConfig; articles: readonly Article[] }>): ReactNode => (
@@ -24,5 +24,3 @@ const CategoriesView = ({
     </div>
   </main>
 );
-
-export { CategoriesView };

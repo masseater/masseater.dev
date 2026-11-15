@@ -27,7 +27,8 @@ const tracing = Otlp.layerFromConfig({ resource: { serviceName: "msch" } }).pipe
   Layer.provide(FetchHttpClient.layer),
 );
 
-const runCli = <Value, Failure>(
+/** @internal */
+export const runCli = <Value, Failure>(
   program: Effect.Effect<
     Value,
     Failure,
@@ -49,6 +50,3 @@ const runCli = <Value, Failure>(
   );
   runMain(main, { disableErrorReporting: true });
 };
-
-/** @internal */
-export { runCli };

@@ -1,4 +1,4 @@
-const SCANNER_PROBES = {
+export const SCANNER_PROBES = {
   contains: [
     ".php",
     "/phpinfo",
@@ -160,5 +160,3 @@ const SCANNER_PROBES = {
     "/application.properties",
   ],
 } as const;
-
-export { SCANNER_PROBES };

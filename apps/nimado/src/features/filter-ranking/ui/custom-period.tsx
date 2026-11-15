@@ -6,7 +6,7 @@ import type { RankingSearch, Update } from "#/entities/ranking";
 
 import { DateSelect } from "./date-select";
 
-const CustomPeriod = ({
+export const CustomPeriod = ({
   dates,
   search,
   update,
@@ -22,5 +22,3 @@ const CustomPeriod = ({
     </div>
   );
 };
-
-export { CustomPeriod };

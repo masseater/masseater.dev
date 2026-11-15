@@ -231,7 +231,7 @@ const surfaceOf: Fn<
     );
   });
 
-const createGpuRenderer: Fn<
+export const createGpuRenderer: Fn<
   Readonly<{ canvas: HTMLCanvasElement; passes: readonly Pass[]; gpu: GpuEffect }> & Sizes,
   Effect.Effect<Renderer, GpuUnavailable>
 > = ({ canvas, passes, gpu, offscreen, screen }) =>
@@ -240,5 +240,3 @@ const createGpuRenderer: Fn<
     const surface = yield* surfaceOf({ canvas, screen });
     return rendererOf(contextOf({ setup, surface, passes, gpu, sizes: { offscreen, screen } }));
   });
-
-export { createGpuRenderer };

@@ -1,19 +1,19 @@
 import { Array as Arr, pipe } from "effect";
 
-interface RestrictedImport {
+export interface RestrictedImport {
   readonly name: string;
   readonly importNames: readonly string[];
   readonly allowTypeImports?: boolean;
   readonly message: string;
 }
 
-interface RestrictedProperty {
+export interface RestrictedProperty {
   readonly object: string;
   readonly property: string;
   readonly message: string;
 }
 
-interface RestrictedSyntax {
+export interface RestrictedSyntax {
   readonly selector: string;
   readonly message: string;
 }
@@ -36,7 +36,7 @@ const RUN_FUNCTIONS = [
   "runSyncExitWith",
 ];
 
-const restrictedImports: readonly RestrictedImport[] = [
+export const restrictedImports: readonly RestrictedImport[] = [
   {
     name: "elysia",
     importNames: ["Elysia", "default"],
@@ -48,7 +48,7 @@ const restrictedImports: readonly RestrictedImport[] = [
   { name: "effect/ManagedRuntime", importNames: ["make"], message: RUN_MESSAGE },
 ];
 
-const restrictedProperties: readonly RestrictedProperty[] = [
+export const restrictedProperties: readonly RestrictedProperty[] = [
   ...pipe(
     RUN_FUNCTIONS,
     Arr.map((property) => ({
@@ -60,7 +60,7 @@ const restrictedProperties: readonly RestrictedProperty[] = [
   { object: "ManagedRuntime", property: "make", message: RUN_MESSAGE },
 ];
 
-const restrictedSyntax: readonly RestrictedSyntax[] = [
+export const restrictedSyntax: readonly RestrictedSyntax[] = [
   {
     selector:
       'CallExpression[callee.property.name="run"][callee.object.property.name="AI"]:not(CallExpression[callee.name="runWorkersAi"] *)',
@@ -68,6 +68,3 @@ const restrictedSyntax: readonly RestrictedSyntax[] = [
       "Call Workers AI inside runWorkersAi from @r_masseater/workers-tracing/workers-ai, so an out-of-capacity error is retried and a cut-off answer is logged.",
   },
 ];
-
-export type { RestrictedImport, RestrictedProperty, RestrictedSyntax };
-export { restrictedImports, restrictedProperties, restrictedSyntax };

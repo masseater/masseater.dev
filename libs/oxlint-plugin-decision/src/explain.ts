@@ -41,7 +41,7 @@ const FIRST = 1;
 const START = 0;
 const COLUMN_BASE = 1;
 
-interface Outcome {
+export interface Outcome {
   readonly served: string;
   readonly answers: Answers;
   readonly cached: boolean | undefined;
@@ -49,17 +49,17 @@ interface Outcome {
   readonly reported: boolean;
 }
 
-interface Explainer {
+export interface Explainer {
   readonly outcome: (match: RuleMatch, at: Placed, outcome: Outcome) => void;
   readonly failure: (matches: readonly RuleMatch[], reason: string) => void;
 }
 
-interface Placed {
+export interface Placed {
   readonly ref: string;
   readonly loc: Location;
 }
 
-interface ExplainPass {
+export interface ExplainPass {
   readonly setting: ExplainSetting;
   readonly cwd: string;
   readonly filename: string;
@@ -229,11 +229,8 @@ const explaining = (pass: ExplainPass, mode: ExplainFormat): Explainer => {
 
 const SILENT: Explainer = { outcome: Fn.constVoid, failure: Fn.constVoid };
 
-const explainerFor = (pass: ExplainPass): Explainer =>
+export const explainerFor = (pass: ExplainPass): Explainer =>
   Match.value(explainModeOf(pass.setting)).pipe(
     Match.when("off", () => SILENT),
     Match.orElse((mode) => explaining(pass, mode)),
   );
-
-export { explainerFor };
-export type { Explainer, ExplainPass, Outcome, Placed };

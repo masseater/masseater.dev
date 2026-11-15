@@ -22,7 +22,7 @@ const registerTools = (caller: Caller): McpServer =>
     registerTokenTools(caller),
   );
 
-const serveMcp = (request: Request): Promise<Response> =>
+export const serveMcp = (request: Request): Promise<Response> =>
   requireMcpAuth(
     createAuth(),
     (authorized, claims) =>
@@ -33,5 +33,3 @@ const serveMcp = (request: Request): Promise<Response> =>
       ).fetch(authorized),
     { resource: MCP_URL },
   )(request);
-
-export { serveMcp };

@@ -43,7 +43,7 @@ const problemsIn = (file: string, source: string): readonly Problem[] => {
 };
 
 /** @internal */
-const checkHiddenUnicode = Effect.fn("checkHiddenUnicode")(function* checkHiddenUnicode(
+export const checkHiddenUnicode = Effect.fn("checkHiddenUnicode")(function* checkHiddenUnicode(
   root: string,
 ) {
   const files = yield* RepositoryFiles;
@@ -65,5 +65,3 @@ const checkHiddenUnicode = Effect.fn("checkHiddenUnicode")(function* checkHidden
   );
   return Arr.flatten(found);
 });
-
-export { checkHiddenUnicode };

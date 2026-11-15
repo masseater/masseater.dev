@@ -127,7 +127,7 @@ const callExpressionSpread = normalizeIndent`
             retry: 3,
         })`
 
-function getCode({ mutationFunction: mutationFunction, properties }: TestCase) {
+function getCode({ mutationFunction, properties }: TestCase) {
   function getPropertyCode(
     property: CheckedProperties | OrderIndependentProps,
   ) {

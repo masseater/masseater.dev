@@ -1,6 +1,6 @@
 import { Array as Arr, Boolean as Bool, Option, Schema, String as Str, pipe } from "effect";
 
-const CATEGORIES = [
+export const CATEGORIES = [
   "salary",
   "business",
   "other-income",
@@ -13,17 +13,17 @@ const CATEGORIES = [
   "transfer",
 ] as const;
 
-const CategorySchema = Schema.Literals(CATEGORIES);
+export const CategorySchema = Schema.Literals(CATEGORIES);
 
-type Category = typeof CategorySchema.Type;
+export type Category = typeof CategorySchema.Type;
 
-type Flow = "income" | "expense" | "transfer";
+export type Flow = "income" | "expense" | "transfer";
 
-type Rule = Readonly<{ pattern: string; category: Category; label: Option.Option<string> }>;
+export type Rule = Readonly<{ pattern: string; category: Category; label: Option.Option<string> }>;
 
-type Decision = Readonly<{ category: Category; label: Option.Option<string> }>;
+export type Decision = Readonly<{ category: Category; label: Option.Option<string> }>;
 
-type Described = Readonly<{ amount: number; normalized: string }>;
+export type Described = Readonly<{ amount: number; normalized: string }>;
 
 const FLOWS: Readonly<Record<Category, Flow>> = {
   salary: "income",
@@ -38,7 +38,7 @@ const FLOWS: Readonly<Record<Category, Flow>> = {
   transfer: "transfer",
 };
 
-const CATEGORY_LABELS: Readonly<Record<Category, string>> = {
+export const CATEGORY_LABELS: Readonly<Record<Category, string>> = {
   salary: "給与",
   business: "事業・副業",
   "other-income": "その他の収入",
@@ -53,7 +53,7 @@ const CATEGORY_LABELS: Readonly<Record<Category, string>> = {
 
 const NO_AMOUNT = 0;
 
-const flowOf = (category: Category): Flow => FLOWS[category];
+export const flowOf = (category: Category): Flow => FLOWS[category];
 
 const infrastructure = (pattern: string, label: string): Rule => ({
   pattern,
@@ -61,7 +61,7 @@ const infrastructure = (pattern: string, label: string): Rule => ({
   label: Option.some(label),
 });
 
-const BUILT_IN_RULES: readonly Rule[] = [
+export const BUILT_IN_RULES: readonly Rule[] = [
   infrastructure("CLOUDFLARE", "Cloudflare"),
   infrastructure("ANTHROPIC", "Claude"),
   infrastructure("CLAUDE.AI", "Claude"),
@@ -69,7 +69,8 @@ const BUILT_IN_RULES: readonly Rule[] = [
   infrastructure("FAL.AI", "fal"),
 ];
 
-const normalized = (text: string): string => pipe(text, Str.normalize("NFKC"), Str.toUpperCase);
+export const normalized = (text: string): string =>
+  pipe(text, Str.normalize("NFKC"), Str.toUpperCase);
 
 const fallbackOf = (amount: number): Decision => ({
   category: Bool.match(amount > NO_AMOUNT, {
@@ -79,7 +80,7 @@ const fallbackOf = (amount: number): Decision => ({
   label: Option.none(),
 });
 
-const decide =
+export const decide =
   (rules: readonly Rule[]) =>
   ({ amount, normalized: text }: Described): Decision =>
     pipe(
@@ -88,6 +89,3 @@ const decide =
       Option.map(({ category, label }): Decision => ({ category, label })),
       Option.getOrElse(() => fallbackOf(amount)),
     );
-
-export { BUILT_IN_RULES, CATEGORIES, CATEGORY_LABELS, CategorySchema, decide, flowOf, normalized };
-export type { Category, Decision, Described, Flow, Rule };

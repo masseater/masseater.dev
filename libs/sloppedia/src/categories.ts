@@ -3,7 +3,10 @@ import { Array as Arr, Order, String as Str, pipe } from "effect";
 import { newestFirst } from "./article.ts";
 import type { Article } from "./article.ts";
 
-type WikiCategory<Item extends Article> = Readonly<{ name: string; articles: readonly Item[] }>;
+export type WikiCategory<Item extends Article> = Readonly<{
+  name: string;
+  articles: readonly Item[];
+}>;
 
 const categoryOf =
   <Item extends Article>(articles: readonly Item[]) =>
@@ -16,7 +19,7 @@ const categoryOf =
     ),
   });
 
-const categoriesOf = <Item extends Article>(
+export const categoriesOf = <Item extends Article>(
   articles: readonly Item[],
 ): readonly WikiCategory<Item>[] =>
   pipe(
@@ -29,10 +32,10 @@ const categoriesOf = <Item extends Article>(
 
 const BOX_COUNT = 8;
 
-const recentOf = <Item extends Article>(articles: readonly Item[]): readonly Item[] =>
+export const recentOf = <Item extends Article>(articles: readonly Item[]): readonly Item[] =>
   Arr.take(newestFirst(articles), BOX_COUNT);
 
-const randomOf = <Item extends Article>(articles: readonly Item[]): readonly Item[] =>
+export const randomOf = <Item extends Article>(articles: readonly Item[]): readonly Item[] =>
   Arr.take(
     Arr.sortWith(
       articles,
@@ -44,6 +47,3 @@ const randomOf = <Item extends Article>(articles: readonly Item[]): readonly Ite
     ),
     BOX_COUNT,
   );
-
-export type { WikiCategory };
-export { categoriesOf, randomOf, recentOf };

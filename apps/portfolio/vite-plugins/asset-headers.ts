@@ -17,7 +17,7 @@ const HEADERS_FILE = pipe(
   Arr.join("\n"),
 );
 
-const assetHeaders = (): Plugin => ({
+export const assetHeaders = (): Plugin => ({
   name: "asset-headers",
   apply: "build",
   generateBundle() {
@@ -26,5 +26,3 @@ const assetHeaders = (): Plugin => ({
     }
   },
 });
-
-export { assetHeaders };

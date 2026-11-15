@@ -1,6 +1,6 @@
 import type { AssetKind } from "@masseater.dev/aredoko-protocol";
 
-const KIND_LABELS: Readonly<Record<typeof AssetKind.Type, string>> = {
+export const KIND_LABELS: Readonly<Record<typeof AssetKind.Type, string>> = {
   texture: "テクスチャ",
   model: "3D モデル",
   material: "マテリアル",
@@ -13,7 +13,7 @@ const KIND_LABELS: Readonly<Record<typeof AssetKind.Type, string>> = {
   other: "その他",
 };
 
-const SEARCHABLE_KINDS: readonly (typeof AssetKind.Type)[] = [
+export const SEARCHABLE_KINDS: readonly (typeof AssetKind.Type)[] = [
   "texture",
   "model",
   "material",
@@ -24,5 +24,3 @@ const SEARCHABLE_KINDS: readonly (typeof AssetKind.Type)[] = [
   "scene",
   "script",
 ];
-
-export { KIND_LABELS, SEARCHABLE_KINDS };

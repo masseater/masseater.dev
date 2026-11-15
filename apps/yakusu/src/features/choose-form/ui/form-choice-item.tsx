@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { FormOption } from "#/entities/translation";
 
-const FormChoiceItem = ({ option }: Readonly<{ option: FormOption }>): ReactNode => (
+export const FormChoiceItem = ({ option }: Readonly<{ option: FormOption }>): ReactNode => (
   <ToggleGroup.Item
     className="text-muted-foreground hover:text-foreground data-[state=on]:bg-highlight/12 data-[state=on]:text-highlight rounded-full px-3 py-1 transition-colors"
     value={option.choice}
@@ -11,5 +11,3 @@ const FormChoiceItem = ({ option }: Readonly<{ option: FormOption }>): ReactNode
     {option.label}
   </ToggleGroup.Item>
 );
-
-export { FormChoiceItem };

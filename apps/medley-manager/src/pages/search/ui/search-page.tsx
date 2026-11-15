@@ -5,7 +5,7 @@ import { FoundSongs } from "./found-songs";
 import { FoundVideos } from "./found-videos";
 import { SearchHeader } from "./search-header";
 
-const SearchPage = (): ReactNode => (
+export const SearchPage = (): ReactNode => (
   <div className="flex flex-col gap-10">
     <SearchHeader />
     <FoundSongs />
@@ -13,5 +13,3 @@ const SearchPage = (): ReactNode => (
     <FoundPeople />
   </div>
 );
-
-export { SearchPage };

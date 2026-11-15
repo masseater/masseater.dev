@@ -10,9 +10,14 @@ import type { ToolName } from "#/shared/api";
 
 import type { Failure, Services } from "./database";
 
-type Annotations = Readonly<typeof READ_ONLY> | Readonly<typeof WRITE> | Readonly<typeof OVERWRITE>;
+/** @internal */
+export type Annotations =
+  | Readonly<typeof READ_ONLY>
+  | Readonly<typeof WRITE>
+  | Readonly<typeof OVERWRITE>;
 
-type Tool<Input, Output, Value> = Readonly<{
+/** @internal */
+export type Tool<Input, Output, Value> = Readonly<{
   name: ToolName;
   description: string;
   input: StandardSchemaWithJSON<Input, Output>;
@@ -21,11 +26,13 @@ type Tool<Input, Output, Value> = Readonly<{
   count: (value: Value) => number;
 }>;
 
-type Register = (caller: Caller) => (server: McpServer) => McpServer;
+/** @internal */
+export type Register = (caller: Caller) => (server: McpServer) => McpServer;
 
 const runMoneyTool = runToolIn(Layer.mergeAll(Digest.layerWebCrypto, SecureRandom.layerWebCrypto));
 
-const tool =
+/** @internal */
+export const tool =
   <Input, Output, Value>(spec: Tool<Input, Output, Value>): Register =>
   (caller) =>
   (server) => {
@@ -42,7 +49,8 @@ const tool =
     return server;
   };
 
-const registerAll =
+/** @internal */
+export const registerAll =
   (tools: readonly Register[]): Register =>
   (caller) =>
   (server) => {
@@ -52,9 +60,5 @@ const registerAll =
     return server;
   };
 
-const lengthOf = (values: readonly unknown[]): number => values.length;
-
 /** @internal */
-export { lengthOf, registerAll, tool };
-/** @internal */
-export type { Annotations, Register, Tool };
+export const lengthOf = (values: readonly unknown[]): number => values.length;

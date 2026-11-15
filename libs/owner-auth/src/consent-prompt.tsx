@@ -8,7 +8,7 @@ import { answerConsent, clientNameQuery, consentView } from "./consent";
 import { ConsentActions } from "./consent-actions";
 import { ConsentDetails } from "./consent-details";
 
-const ConsentPrompt = ({
+export const ConsentPrompt = ({
   button,
   scope,
   clientId,
@@ -50,5 +50,3 @@ const ConsentPrompt = ({
     </section>
   );
 };
-
-export { ConsentPrompt };

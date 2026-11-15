@@ -5,12 +5,12 @@ import { EXAMPLES } from "./examples";
 import type { Example } from "./examples";
 import type { Phase } from "./trace";
 
-interface Span {
+export interface Span {
   readonly start: number;
   readonly end: number;
 }
 
-type Grade =
+export type Grade =
   | { readonly status: "unknown" }
   | { readonly status: "pending" }
   | { readonly status: "correct-clean" }
@@ -49,7 +49,8 @@ const answerSpansOf = (text: string): Option.Option<readonly Span[]> =>
     }),
   );
 
-const answerOf = (text: string): readonly Span[] => Option.getOrElse(answerSpansOf(text), () => []);
+export const answerOf = (text: string): readonly Span[] =>
+  Option.getOrElse(answerSpansOf(text), () => []);
 
 const visibleIn = (text: string, { start, end }: Span): number =>
   pipe(text, Str.slice(start, end), Str.replaceAll(/\s/gu, "")).length;
@@ -93,7 +94,7 @@ const injectedGrade = (text: string, detection: Detection, answers: readonly Spa
   return foundGrade(text, answers, detection.regions);
 };
 
-const gradeOf = ({ text, phase }: Readonly<{ text: string; phase: Phase }>): Grade => {
+export const gradeOf = ({ text, phase }: Readonly<{ text: string; phase: Phase }>): Grade => {
   if (Option.isNone(exampleOf(text)) || phase.status === "failed") {
     return { status: "unknown" };
   }
@@ -105,6 +106,3 @@ const gradeOf = ({ text, phase }: Readonly<{ text: string; phase: Phase }>): Gra
     onSome: (answers) => injectedGrade(text, phase.detection, answers),
   });
 };
-
-export type { Grade, Span };
-export { answerOf, gradeOf };

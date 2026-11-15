@@ -6,7 +6,7 @@ import { CompatSymbol } from "./compat-symbol.ts";
 import { CompatType } from "./compat-type.ts";
 import { memoizeByKey } from "./memo.ts";
 
-interface CompatChecker {
+export interface CompatChecker {
   readonly getSymbolAtLocation: (node: Node) => CompatSymbol | undefined;
   readonly getAliasedSymbol: (symbol: CompatSymbol) => CompatSymbol;
   readonly getTypeAtLocation: (node: Node) => CompatType;
@@ -17,7 +17,7 @@ interface CompatChecker {
   readonly typeToString: (type: CompatType) => string;
 }
 
-interface CompatProgram {
+export interface CompatProgram {
   readonly getSourceFile: (fileName: string) => SourceFile | undefined;
   readonly getSourceFiles: () => readonly SourceFile[];
   readonly getTypeChecker: () => CompatChecker;
@@ -52,7 +52,7 @@ const ownSourceFiles = memoizeByKey((program: NativeProgram): readonly SourceFil
 
 const compatPrograms = new WeakMap<NativeProgram, CompatProgram>();
 
-const internProgram = (project: Project): CompatProgram =>
+export const internProgram = (project: Project): CompatProgram =>
   Option.fromNullishOr(compatPrograms.get(project.program)).pipe(
     Option.getOrElse(() => {
       const { program } = project;
@@ -67,6 +67,3 @@ const internProgram = (project: Project): CompatProgram =>
       return created;
     }),
   );
-
-export type { CompatChecker, CompatProgram };
-export { internProgram };

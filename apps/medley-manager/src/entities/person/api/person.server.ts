@@ -15,7 +15,7 @@ const byVideoThenPosition = Order.combine(
   Order.mapInput(Order.Number, ({ part }: Credit) => part.position),
 );
 
-const getPerson = Effect.fn("catalog.person")(function* getPerson(id: number) {
+export const getPerson = Effect.fn("catalog.person")(function* getPerson(id: number) {
   const promiseResult = yield* Effect.promise(() =>
     catalogDb.query.person.findFirst({
       columns: { id: true, name: true },
@@ -50,5 +50,3 @@ const getPerson = Effect.fn("catalog.person")(function* getPerson(id: number) {
     })),
   );
 });
-
-export { getPerson };

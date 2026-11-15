@@ -12,7 +12,7 @@ import type {
 } from "#protocol";
 import { STRATEGIES, STRATEGY_IDS } from "#strategies";
 
-type Prompt = Readonly<{ system: string; user: string }>;
+export type Prompt = Readonly<{ system: string; user: string }>;
 
 const NONE = "（まだ無い）";
 const UNKNOWN_THEME = "（まだ分からない）";
@@ -71,7 +71,7 @@ const SUMMARY_SYSTEM = pipe(
   Arr.join("\n"),
 );
 
-const summaryPrompt = (request: SummaryBody): Prompt => ({
+export const summaryPrompt = (request: SummaryBody): Prompt => ({
   system: SUMMARY_SYSTEM,
   user: pipe(
     [`前回の要約:\n${summaryLines(request.previous)}`, `新しい発言:\n${request.transcript}`],
@@ -112,7 +112,7 @@ const QUESTION_SYSTEM = pipe(
   Arr.join("\n"),
 );
 
-const questionPrompt = (request: QuestionBody): Prompt => ({
+export const questionPrompt = (request: QuestionBody): Prompt => ({
   system: QUESTION_SYSTEM,
   user: pipe(
     [
@@ -137,7 +137,7 @@ const RESEARCH_SYSTEM = pipe(
   Arr.join("\n"),
 );
 
-const researchPrompt = (request: ResearchBody): Prompt => ({
+export const researchPrompt = (request: ResearchBody): Prompt => ({
   system: RESEARCH_SYSTEM,
   user: pipe(
     [
@@ -167,7 +167,7 @@ const numbered = (lines: readonly HeardText[]): string =>
     Arr.join("\n"),
   );
 
-const correctionPrompt = (request: CorrectionBody): Prompt => ({
+export const correctionPrompt = (request: CorrectionBody): Prompt => ({
   system: CORRECTION_SYSTEM,
   user: pipe(
     [
@@ -177,6 +177,3 @@ const correctionPrompt = (request: CorrectionBody): Prompt => ({
     Arr.join("\n\n"),
   ),
 });
-
-export { correctionPrompt, questionPrompt, researchPrompt, summaryPrompt };
-export type { Prompt };

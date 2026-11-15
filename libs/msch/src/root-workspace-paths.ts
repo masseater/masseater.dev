@@ -86,7 +86,7 @@ const problemsIn =
     );
 
 /** @internal */
-const checkRootWorkspacePaths = Effect.fn("checkRootWorkspacePaths")(
+export const checkRootWorkspacePaths = Effect.fn("checkRootWorkspacePaths")(
   function* checkRootWorkspacePaths(root: string) {
     const files = yield* RepositoryFiles;
     const file = files.join(root, CONFIG_FILE);
@@ -102,5 +102,3 @@ const checkRootWorkspacePaths = Effect.fn("checkRootWorkspacePaths")(
     );
   },
 );
-
-export { checkRootWorkspacePaths };

@@ -11,9 +11,9 @@ import { executor } from "./execution";
 import type { Report } from "./output";
 import { rppPane, songOf } from "./rpp-pane";
 
-type Panes = Readonly<{ rpp: HTMLElement; generated: HTMLElement; main: HTMLElement }>;
+export type Panes = Readonly<{ rpp: HTMLElement; generated: HTMLElement; main: HTMLElement }>;
 
-type Session = Readonly<{ panes: Panes; report: Report }>;
+export type Session = Readonly<{ panes: Panes; report: Report }>;
 
 const codeOf = (mapped: Mapped): string =>
   Match.value(mapped).pipe(
@@ -23,7 +23,7 @@ const codeOf = (mapped: Mapped): string =>
     }),
   );
 
-const runPlayground = Effect.fn("runPlayground")(function* runPlayground({
+export const runPlayground = Effect.fn("runPlayground")(function* runPlayground({
   panes,
   report,
 }: Session) {
@@ -49,6 +49,3 @@ const runPlayground = Effect.fn("runPlayground")(function* runPlayground({
   });
   return yield* Effect.never;
 });
-
-export { runPlayground };
-export type { Panes, Session };

@@ -3,7 +3,7 @@ import { defaultImage, seo, wikiPageTitle } from "#/shared/lib";
 import type { Head } from "#/shared/lib";
 import { wiki } from "#/shared/wiki";
 
-const mainHead: Head = seo({
+export const mainHead: Head = seo({
   title: wikiPageTitle(wiki.labels.mainPage),
   description: wiki.tagline,
   path: `${categoryPath("sloppedia")}/`,
@@ -12,5 +12,3 @@ const mainHead: Head = seo({
   extra: [],
   structuredData: [],
 });
-
-export { mainHead };

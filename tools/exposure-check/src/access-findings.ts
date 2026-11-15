@@ -75,10 +75,8 @@ const publicOverrides = (app: AccessApp): readonly Finding[] =>
     ),
   );
 
-const accessFindings = (scene: Scene): readonly Finding[] => [
+export const accessFindings = (scene: Scene): readonly Finding[] => [
   ...missingAccess(scene),
   ...pipe(accessApps(scene.inventory), Arr.flatMap(openPolicies)),
   ...pipe(accessApps(scene.inventory), Arr.flatMap(publicOverrides)),
 ];
-
-export { accessFindings };

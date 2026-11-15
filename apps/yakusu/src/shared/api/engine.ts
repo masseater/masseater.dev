@@ -1,18 +1,18 @@
 import { Channel, invoke } from "@tauri-apps/api/core";
 import { Effect, Option, Predicate, Queue, Schema, Stream, pipe } from "effect";
 
-type Form = "plain" | "polite";
+export type Form = "plain" | "polite";
 
-type TranslateRequest = Readonly<{
+export type TranslateRequest = Readonly<{
   text: string;
   source: Option.Option<string>;
   target: string;
   form: Option.Option<Form>;
 }>;
 
-type Progress = Readonly<{ received: number; total: number }>;
+export type Progress = Readonly<{ received: number; total: number }>;
 
-type Engine = Readonly<{
+export type Engine = Readonly<{
   prepare: () => AsyncIterable<Progress>;
   translate: (request: TranslateRequest) => AsyncIterable<string>;
 }>;
@@ -54,7 +54,7 @@ const invokeStream = <Item>(
     ),
   );
 
-const tauriEngine: Engine = {
+export const tauriEngine: Engine = {
   prepare: () => invokeStream<Progress>("prepare", "onProgress", {}),
   translate: (request) =>
     invokeStream<string>("translate", "onDelta", {
@@ -66,6 +66,3 @@ const tauriEngine: Engine = {
       },
     }),
 };
-
-export { tauriEngine };
-export type { Engine, Form, Progress, TranslateRequest };

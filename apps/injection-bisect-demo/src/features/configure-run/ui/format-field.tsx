@@ -18,7 +18,7 @@ const labelOf = (format: string): string => {
   return format;
 };
 
-const FormatField = (): ReactNode => {
+export const FormatField = (): ReactNode => {
   const format = useFormat();
   const setFormat = useSetFormat();
   const pick = useCallback(
@@ -40,5 +40,3 @@ const FormatField = (): ReactNode => {
     </select>
   );
 };
-
-export { FormatField };

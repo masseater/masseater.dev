@@ -8,7 +8,7 @@ import { SearchResults } from "./search-results";
 
 const PLACEHOLDER = "曲名やボカロPで探す";
 
-const TileSearch = (): ReactNode => {
+export const TileSearch = (): ReactNode => {
   const query = useSearch();
   const setQuery = useSetSearch();
   const change = useCallback<ChangeEventHandler<HTMLInputElement>>(
@@ -31,5 +31,3 @@ const TileSearch = (): ReactNode => {
     </div>
   );
 };
-
-export { TileSearch };

@@ -18,7 +18,7 @@ const MISSING_SIZE = 0;
 const GENERATED_PATHSPEC = ":(attr:linguist-generated)";
 const LISTED_ARGS = ["--cached", "--others", "--exclude-standard"];
 
-class RepositoryFiles extends Context.Service<
+export class RepositoryFiles extends Context.Service<
   RepositoryFiles,
   {
     readonly readFile: (file: string) => Effect.Effect<Option.Option<string>>;
@@ -41,7 +41,7 @@ class RepositoryFiles extends Context.Service<
   }
 >()("@r_masseater/msch/repository-files/RepositoryFiles") {}
 
-const nodeRepositoryFiles = Layer.effect(
+export const nodeRepositoryFiles = Layer.effect(
   RepositoryFiles,
   Effect.gen(function* nodeRepositoryFiles() {
     const fs = yield* FileSystem.FileSystem;
@@ -90,5 +90,3 @@ const nodeRepositoryFiles = Layer.effect(
     });
   }),
 ).pipe(Layer.provide(nodeServicesLayer));
-
-export { RepositoryFiles, nodeRepositoryFiles };

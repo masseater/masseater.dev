@@ -15,11 +15,11 @@ const ORIGIN = 0;
 const LEVELS = 1;
 const TRANSPARENT = 0;
 
-type Gl = WebGL2RenderingContext;
+export type Gl = WebGL2RenderingContext;
 
-type Size = readonly [number, number];
+export type Size = readonly [number, number];
 
-type Buffer = Readonly<{ texture: WebGLTexture; framebuffer: WebGLFramebuffer }>;
+export type Buffer = Readonly<{ texture: WebGLTexture; framebuffer: WebGLFramebuffer }>;
 
 const compile: Fn<Readonly<{ gl: Gl; type: GLenum; source: string }>, WebGLShader> = ({
   gl,
@@ -38,7 +38,7 @@ const compile: Fn<Readonly<{ gl: Gl; type: GLenum; source: string }>, WebGLShade
   return shader;
 };
 
-const link: Fn<Readonly<{ gl: Gl; frag: string }>, WebGLProgram> = ({ gl, frag }) => {
+export const link: Fn<Readonly<{ gl: Gl; frag: string }>, WebGLProgram> = ({ gl, frag }) => {
   const program = gl.createProgram();
   gl.attachShader(program, compile({ gl, type: gl.VERTEX_SHADER, source: VERTEX }));
   gl.attachShader(
@@ -53,7 +53,7 @@ const link: Fn<Readonly<{ gl: Gl; frag: string }>, WebGLProgram> = ({ gl, frag }
   return program;
 };
 
-const makeTexture: Fn<Gl, WebGLTexture> = (gl) => {
+export const makeTexture: Fn<Gl, WebGLTexture> = (gl) => {
   const texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -63,7 +63,7 @@ const makeTexture: Fn<Gl, WebGLTexture> = (gl) => {
   return texture;
 };
 
-const makeBuffer: Fn<Readonly<{ gl: Gl; size: Size }>, Buffer> = ({
+export const makeBuffer: Fn<Readonly<{ gl: Gl; size: Size }>, Buffer> = ({
   gl,
   size: [width, height],
 }) => {
@@ -77,13 +77,13 @@ const makeBuffer: Fn<Readonly<{ gl: Gl; size: Size }>, Buffer> = ({
   return { texture, framebuffer };
 };
 
-const contextOf: Fn<HTMLCanvasElement, Gl> = (canvas) =>
+export const contextOf: Fn<HTMLCanvasElement, Gl> = (canvas) =>
   Option.getOrThrowWith(
     Option.fromNullishOr(canvas.getContext("webgl2", { premultipliedAlpha: false })),
     () => new Error("WebGL2 が使えない"),
   );
 
-const makeQuad: Fn<Gl, WebGLBuffer> = (gl) => {
+export const makeQuad: Fn<Gl, WebGLBuffer> = (gl) => {
   const quad = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, quad);
   gl.bufferData(gl.ARRAY_BUFFER, QUAD, gl.STATIC_DRAW);
@@ -91,6 +91,3 @@ const makeQuad: Fn<Gl, WebGLBuffer> = (gl) => {
   gl.vertexAttribPointer(CORNER, CORNER_SIZE, gl.FLOAT, false, ORIGIN, ORIGIN);
   return quad;
 };
-
-export type { Buffer, Gl, Size };
-export { contextOf, link, makeBuffer, makeQuad, makeTexture };

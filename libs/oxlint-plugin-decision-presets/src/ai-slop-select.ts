@@ -78,7 +78,7 @@ const isOptionOfCall = (node: SelectedNode): boolean =>
 
 const isCallback: NodeTest = Predicate.or(isArgument, isOptionOfCall);
 
-const isDeclared: NodeTest = Predicate.not(isCallback);
+export const isDeclared: NodeTest = Predicate.not(isCallback);
 
 const isShort: NodeTest = (node) =>
   Option.exists(bodyOf(node), (body) => statementsOf(body).length <= ONE_STATEMENT);
@@ -172,7 +172,7 @@ const passesParamsUnchanged: NodeTest = (node) =>
     Option.exists((names) => Option.exists(argumentsOf(node), passesExactly(names))),
   );
 
-const forwardsOneCall: NodeTest = Predicate.and(
+export const forwardsOneCall: NodeTest = Predicate.and(
   Predicate.and(hasAtMostOneStatement, isSingleCall),
   passesParamsUnchanged,
 );
@@ -246,7 +246,7 @@ const isGenericIdentity: NodeTest = (node) =>
     Option.exists((param) => returnsParameter(node, param)),
   );
 
-const mayBePlaceholder: NodeTest = Predicate.and(
+export const mayBePlaceholder: NodeTest = Predicate.and(
   hasAtMostOneStatement,
   Predicate.not(isGenericIdentity),
 );
@@ -256,12 +256,10 @@ const isGuard: NodeTest = Predicate.or(
   isTypeofCheck,
 );
 
-const hasGuard: NodeTest = Predicate.and(hasNarrowParameter, containing(isGuard));
+export const hasGuard: NodeTest = Predicate.and(hasNarrowParameter, containing(isGuard));
 
 const isFallback: NodeTest = Predicate.or(isFallbackOperator, ofType("AssignmentPattern"));
 
-const hasFallback: DualSelect = dualSelect(containing(isFallback));
+export const hasFallback: DualSelect = dualSelect(containing(isFallback));
 
-const hasCast: DualSelect = dualSelect(containing(isCast));
-
-export { forwardsOneCall, mayBePlaceholder, isDeclared, hasCast, hasFallback, hasGuard };
+export const hasCast: DualSelect = dualSelect(containing(isCast));

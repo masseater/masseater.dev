@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-const DEFAULT_DAYS = 7;
+export const DEFAULT_DAYS = 7;
 const MIN_DAYS = 1;
 const MAX_DAYS = 30;
 
@@ -14,9 +14,7 @@ const Days = Schema.Int.check(DayRange).annotate({
   description: `今からさかのぼる日数。既定は ${DEFAULT_DAYS}`,
 });
 
-const AnalyticsInput = Schema.Struct({
+export const AnalyticsInput = Schema.Struct({
   path: Schema.optionalKey(Path),
   days: Schema.optionalKey(Days),
 });
-
-export { AnalyticsInput, DEFAULT_DAYS };
