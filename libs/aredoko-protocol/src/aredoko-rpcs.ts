@@ -66,7 +66,11 @@ const ModelFile = Schema.Struct({ name: Schema.String, size: Size }).annotate({
   identifier: "ModelFile",
 });
 
-const ModelFiles = Schema.Struct({ size: Size, files: Schema.Array(ModelFile) });
+const ModelFiles = Schema.Struct({
+  name: Schema.String,
+  size: Size,
+  files: Schema.Array(ModelFile),
+});
 
 const ModelPartQuery = { assetId: Id, file: Schema.NullOr(Schema.String), offset: Size };
 

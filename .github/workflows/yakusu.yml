@@ -152,7 +152,7 @@ jobs:
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: yakusu-launch-${{ matrix.platform }}
+          name: launch-yakusu-${{ matrix.platform }}
           path: launch/*
           if-no-files-found: ignore
 
@@ -230,6 +230,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@f873929b6484891defa1f5d4cb09cde8e9fde30e
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@6c7f35a2fde3e12da835c89d61c46221a6388946
         with:
           github-token: ${{ github.token }}
