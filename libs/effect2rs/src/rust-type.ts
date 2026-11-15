@@ -1,11 +1,12 @@
 import type { Predicate } from "effect";
-import { Array, Match, pipe } from "effect";
+import { Array, Match, Option, pipe } from "effect";
 
 import { prim } from "./types.ts";
 import type { Ty } from "./types.ts";
 
 const WIDE_INTEGERS = new Set(["i64", "u64"]);
 const SPECTA_NUMBER = "specta_typescript::Number";
+const SPECTA_UNKNOWN = "specta_typescript::Unknown";
 const SINGLE = 1;
 
 const tupleType = (items: readonly string[]): string =>
@@ -28,27 +29,39 @@ export const rustType = (ty: Ty): string =>
     }),
   );
 
-export const spectaNumber = (ty: Ty): Ty =>
-  Match.value(ty).pipe(
-    Match.tagsExhaustive({
-      Prim: ({ name }) =>
-        Match.value(WIDE_INTEGERS.has(name)).pipe(
-          Match.when(true, () => prim(SPECTA_NUMBER)),
-          Match.orElse(() => ty),
-        ),
-      Json: () => ty,
-      Named: () => ty,
-      Optional: (inner) => ({ ...inner, of: spectaNumber(inner.of) }),
-      List: (inner) => ({ ...inner, of: spectaNumber(inner.of) }),
-      Boxed: (inner) => ({ ...inner, of: spectaNumber(inner.of) }),
-      Dictionary: (inner) => ({
-        ...inner,
-        key: spectaNumber(inner.key),
-        value: spectaNumber(inner.value),
+export const spectaType =
+  (aliasOf: (name: string) => Option.Option<Ty>) =>
+  (ty: Ty): Ty =>
+    Match.value(ty).pipe(
+      Match.tagsExhaustive({
+        Prim: ({ name }) =>
+          Match.value(WIDE_INTEGERS.has(name)).pipe(
+            Match.when(true, () => prim(SPECTA_NUMBER)),
+            Match.orElse(() => ty),
+          ),
+        Json: () => prim(SPECTA_UNKNOWN),
+        Named: ({ name }) =>
+          pipe(
+            aliasOf(name),
+            Option.flatMap((target) =>
+              Option.liftPredicate(
+                spectaType(aliasOf)(target),
+                (override) => rustType(override) !== rustType(target),
+              ),
+            ),
+            Option.getOrElse(() => ty),
+          ),
+        Optional: (inner) => ({ ...inner, of: spectaType(aliasOf)(inner.of) }),
+        List: (inner) => ({ ...inner, of: spectaType(aliasOf)(inner.of) }),
+        Boxed: (inner) => ({ ...inner, of: spectaType(aliasOf)(inner.of) }),
+        Dictionary: (inner) => ({
+          ...inner,
+          key: spectaType(aliasOf)(inner.key),
+          value: spectaType(aliasOf)(inner.value),
+        }),
+        Tuple: (inner) => ({ ...inner, items: pipe(inner.items, Array.map(spectaType(aliasOf))) }),
       }),
-      Tuple: (inner) => ({ ...inner, items: pipe(inner.items, Array.map(spectaNumber)) }),
-    }),
-  );
+    );
 
 export const someTy =
   (predicate: Predicate.Predicate<Ty>) =>
