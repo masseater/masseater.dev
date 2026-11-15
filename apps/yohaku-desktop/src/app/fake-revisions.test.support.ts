@@ -17,4 +17,4 @@ const revisionCalls = (): Pick<
   restoreRevision: () => Effect.void,
 });
 
-export { KEPT, revisionCalls };
+export { revisionCalls };
