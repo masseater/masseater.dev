@@ -182,15 +182,18 @@ jobs:
       || !(github.ref == 'refs/heads/main' && fromJSON(inputs.component).publish))
     runs-on: ubuntu-latest
     permissions:
-      actions: write
       contents: read
+      deployments: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: .github/workflows/release-component.yml
-          sparse-checkout-cone-mode: false
-      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - uses: $/.github/actions/setup
         with:
-          path: .github/workflows/release-component.yml
-          key: released-${{ fromJSON(inputs.component).name }}-${{ github.sha }}
+          native: "false"
+      - run: vp run -r record-deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOYMENT_ENVIRONMENT: release
+          DEPLOYMENT_TASK: release:${{ fromJSON(inputs.component).name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
