@@ -9,12 +9,12 @@ const TIMES = "回";
 
 export const PersonRow = ({ person }: Readonly<{ person: PersonValue }>): ReactNode => (
   <Row lead={person.lastMet ?? ""}>
-    <p className="font-display text-lg font-light">{person.name}</p>
-    <p className="text-foreground/50 text-xs tabular-nums">{`${String(person.count)}${TIMES}`}</p>
+    <p className="text-std-17B-170">{person.name}</p>
+    <p className="text-muted-foreground text-xs tabular-nums">{`${String(person.count)}${TIMES}`}</p>
     {pipe(
       person.facts,
       Arr.map((fact) => (
-        <p className="text-foreground/70 text-sm" key={fact.ref}>
+        <p className="text-muted-foreground text-sm" key={fact.ref}>
           {headline(fact)}
         </p>
       )),

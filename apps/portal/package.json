@@ -8,7 +8,10 @@
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
+    "@digital-go-jp/tailwind-theme-plugin": "catalog:",
+    "@effect/atom-react": "catalog:stack",
     "@elysiajs/eden": "catalog:stack",
+    "@fontsource-variable/noto-sans-jp": "catalog:",
     "@masseater.dev/portal-protocol": "workspace:*",
     "@masseater.dev/start-shell": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
@@ -16,14 +19,18 @@
     "@tanstack/react-query": "catalog:stack",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-start": "catalog:stack",
+    "class-variance-authority": "catalog:",
     "eden-tanstack-react-query": "catalog:stack",
     "effect": "catalog:stack",
     "elysia": "catalog:stack",
+    "lucide-react": "catalog:",
+    "radix-ui": "catalog:stack",
     "react": "catalog:",
     "react-dom": "catalog:",
     "recharts": "catalog:",
     "security-headers": "workspace:*",
-    "tailwindcss": "catalog:stack"
+    "tailwindcss": "catalog:stack",
+    "tw-animate-css": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",

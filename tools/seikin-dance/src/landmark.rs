@@ -231,7 +231,8 @@ pub(crate) fn detect(root: &Path, clip: &Clip) -> Result<Poses> {
             marks: Vec::with_capacity(clip.count),
         },
     };
-    let mut chrome = browser(&format!("http://{address}/"), &cache.join("chrome"))?;
+    let profile = tempfile::tempdir()?;
+    let mut chrome = browser(&format!("http://{address}/"), profile.path())?;
     let served = session.serve(&server);
     chrome.kill()?;
     chrome.wait()?;
