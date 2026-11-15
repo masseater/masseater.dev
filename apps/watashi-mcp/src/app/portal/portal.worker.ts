@@ -31,8 +31,8 @@ export class WatashiPortal extends WorkerEntrypoint implements WatashiPortalRpc 
     return this.run("memory_projects", memoryProjects);
   }
 
-  public profile(input: unknown): Promise<PortalResult> {
-    return this.run("watashi_profile", profile(input));
+  public profile(): Promise<PortalResult> {
+    return this.run("watashi_profile", profile);
   }
 
   public conversationRead(input: unknown): Promise<PortalResult> {

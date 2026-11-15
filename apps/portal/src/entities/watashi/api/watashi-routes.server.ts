@@ -11,8 +11,6 @@ import { createRouter, respond, rpcBody, watashi } from "#/shared/api/index.serv
 import { memosInput, recordsInput } from "./inputs";
 import { conversation, memoDetail, timeline } from "./watashi-reads.server";
 
-const EVERY_SCOPE = {} as const;
-
 const RECENT_SESSIONS = { limit: 100 } as const;
 
 export const watashiRoutes = createRouter("/api/watashi")
@@ -40,9 +38,7 @@ export const watashiRoutes = createRouter("/api/watashi")
   .get("/memos/:project/:name", ({ params }) => respond(memoDetail(params)), {
     params: Schema.toStandardSchemaV1(MemoKey),
   })
-  .get("/profile", () =>
-    respond(rpcBody({ schema: Profile, call: () => watashi().profile(EVERY_SCOPE) })),
-  )
+  .get("/profile", () => respond(rpcBody({ schema: Profile, call: () => watashi().profile() })))
   .get("/conversations", () =>
     respond(rpcBody({ schema: Sessions, call: () => watashi().conversationRead(RECENT_SESSIONS) })),
   )

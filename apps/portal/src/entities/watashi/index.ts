@@ -3,8 +3,20 @@ export { headline } from "./model/life-item";
 export type { LifeItemValue } from "./model/life-item";
 export type { MemoValue, ProjectValue } from "./model/memo";
 export type { MemoChangeValue, RevisionValue } from "./model/memo-input";
-export { statementOf, traitLabel, whyOf } from "./model/profile";
-export type { PersonValue, ProfileValue, TraitValue } from "./model/profile";
+export {
+  markdownOf,
+  ProfileSearch,
+  refsLabel,
+  scopesOf,
+  sectionId,
+  sectionsOf,
+} from "./model/profile";
+export type {
+  ProfileLineValue,
+  ProfileSearchValue,
+  ProfileSectionValue,
+  ProfileValue,
+} from "./model/profile";
 export { ConversationSearch, MemosSearch, RecordsSearch } from "./model/search";
 export type { ConversationSearchValue, MemosSearchValue, RecordsSearchValue } from "./model/search";
 export { placeOf, sizeOf } from "./model/session";

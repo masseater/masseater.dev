@@ -12,6 +12,7 @@
   --spacing-sidebar-icon: 3rem;
   --spacing-sidebar-mobile: 18rem;
   --grid-template-columns-memos: 14rem minmax(0, 1fr);
+  --grid-template-columns-profile: minmax(0, 1fr) 16rem;
 }
 
 :root {

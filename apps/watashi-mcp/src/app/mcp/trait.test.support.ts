@@ -11,6 +11,7 @@ const testD1 = makeD1({
     "owner_trait_evidence",
     "owner_trait_ja",
     "owner_trait_vector",
+    "owner_profile",
     "trait_cursor",
     "conversation_chunk",
     "conversation_session",
