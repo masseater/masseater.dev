@@ -1,22 +1,20 @@
-<Project InitialTargets="CheckDependencyPaths">
-    <!--
-      Mod 共通のビルドターゲット。Mod ごとの csproj には Sdk 行と固有の設定だけを書く。
-      Mod のフォルダ構成の前提:
-        mods/<Mod>/<Mod>.csproj    プロジェクト
-        mods/<Mod>/<Mod>.json      Mod マニフェスト
-        mods/<Mod>/<Mod>/          .pck に入るアセット (任意。無ければ .pck を作らない)
-    -->
+<Project InitialTargets="ValidateModLayout">
     <PropertyGroup Condition="'$(IsSts2Mod)' == 'true'">
         <ModId Condition="'$(ModId)' == ''">$(MSBuildProjectName)</ModId>
         <ModManifest>$(MSBuildProjectDirectory)/$(ModId).json</ModManifest>
         <ModAssetDir>$(MSBuildProjectDirectory)/$(ModId)</ModAssetDir>
-        <!-- アセットフォルダがある Mod だけ .pck を書き出す。マニフェストの has_pck と揃えること -->
         <ModHasPck Condition="'$(ModHasPck)' == '' and Exists('$(ModAssetDir)')">true</ModHasPck>
         <ModHasPck Condition="'$(ModHasPck)' == ''">false</ModHasPck>
         <ModOutputDir>$(ModsPath)$(ModId)/</ModOutputDir>
+        <PckOutputDir Condition="'$(PckOutputDir)' == ''">$(ModOutputDir)</PckOutputDir>
+        <PckOutputPath>$(PckOutputDir)$(ModId).pck</PckOutputPath>
+        <WorkshopDir>$(RepoRoot)workshop/$(ModId)/</WorkshopDir>
+        <WorkshopContentDir>$(WorkshopDir)content/$(ModId)/</WorkshopContentDir>
+        <ModFormatOnly Condition="'$(UseSts2Stubs)' == 'true' and '$(SupportsSts2Stubs)' != 'true'">true</ModFormatOnly>
     </PropertyGroup>
 
-    <!-- ゲーム本体の参照 -->
+    <Import Project="$(RepoRoot)build/FormatOnly.targets" Condition="'$(ModFormatOnly)' == 'true'" />
+
     <ItemGroup Condition="'$(IsSts2Mod)' == 'true' and '$(UseSts2Stubs)' != 'true' and Exists('$(Sts2DataDir)')">
         <Reference Include="0Harmony">
             <HintPath>$(Sts2DataDir)/0Harmony.dll</HintPath>
@@ -28,10 +26,8 @@
         </Reference>
     </ItemGroup>
 
-    <!-- スタブ (build/Sts2Stubs) への参照。ゲームが無い環境での型チェック専用 -->
     <ItemGroup Condition="'$(IsSts2Mod)' == 'true' and '$(UseSts2Stubs)' == 'true'">
         <ProjectReference Include="$(RepoRoot)build/Sts2Stubs/Sts2Stubs.csproj" Private="false" />
-        <!-- ゲームに同梱の 0Harmony.dll の代わり。コンパイル時だけ使う -->
         <PackageReference Include="Lib.Harmony" Version="2.4.3" ExcludeAssets="runtime" PrivateAssets="All" />
     </ItemGroup>
 
@@ -42,24 +38,19 @@
 
     <ItemGroup Condition="'$(IsSts2Mod)' == 'true'">
         <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.4.7" PrivateAssets="All" />
-        <!-- Harmony パッチの対象メソッド名・引数名・__instance の型を検査するアナライザ -->
         <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.6.1" PrivateAssets="All" />
-        <!-- 一般的なバグ・性能・API の誤用を検出するアナライザ (.NET 標準の CA ルールに加えて) -->
         <PackageReference Include="Meziantou.Analyzer" Version="3.0.325" PrivateAssets="All" />
     </ItemGroup>
 
-    <!-- カード・レリックなどのローカライズ漏れを検査するアナライザ。ローカライズ (アセットフォルダ) を持つ Mod だけに付ける -->
     <ItemGroup Condition="'$(IsSts2Mod)' == 'true' and '$(ModHasPck)' == 'true'">
         <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="0.2.1" PrivateAssets="All" />
         <AdditionalFiles Include="$(ModAssetDir)/localization/**/*.json" />
     </ItemGroup>
 
-    <!-- 共通コード (shared/) を各 Mod のアセンブリにソースとして取り込む。別 dll にしないので配布物は Mod ごとに 1 つで済む -->
     <ItemGroup Condition="'$(IsSts2Mod)' == 'true' and '$(UseSharedCode)' == 'true'">
         <Compile Include="$(RepoRoot)shared/**/*.cs" LinkBase="Shared" />
     </ItemGroup>
 
-    <!-- アセットフォルダ内のファイルは C# としてコンパイルしない -->
     <ItemGroup Condition="'$(IsSts2Mod)' == 'true'">
         <Compile Remove="$(ModId)/**" />
         <EmbeddedResource Remove="$(ModId)/**" />
@@ -68,16 +59,28 @@
         <None Include="$(ModId)/**" />
     </ItemGroup>
 
-    <!-- restore はゲーム無しでも通るようにする。SkipSts2Check=true は scripts/export-pck.sh が .pck だけ書き出すときに使う -->
-    <Target Name="CheckDependencyPaths"
-            Condition="'$(IsSts2Mod)' == 'true' and '$(MSBuildIsRestoring)' != 'true' and '$(SkipSts2Check)' != 'true'">
-        <Error Text=" Slay the Spire 2 data not found at path '$(Sts2DataDir)'。ゲームが無い環境では scripts/check.sh (スタブでの型チェック) を使ってください"
-               Condition="'$(UseSts2Stubs)' != 'true' and ('$(Sts2DataDir)' == '' or !Exists('$(Sts2DataDir)'))" />
-        <Error Text=" $(MSBuildProjectName) はスタブでビルドできない Mod です (csproj の SupportsSts2Stubs が false)"
-               Condition="'$(UseSts2Stubs)' == 'true' and '$(SupportsSts2Stubs)' != 'true'" />
+    <Target Name="ValidateModLayout" Condition="'$(IsSts2Mod)' == 'true' and '$(MSBuildIsRestoring)' != 'true'">
+        <PropertyGroup>
+            <ModManifestText Condition="Exists('$(ModManifest)')">$([System.IO.File]::ReadAllText('$(ModManifest)'))</ModManifestText>
+            <ModProjectText>$([System.IO.File]::ReadAllText('$(MSBuildProjectFullPath)'))</ModProjectText>
+            <WorkshopText Condition="Exists('$(WorkshopDir)workshop.json')">$([System.IO.File]::ReadAllText('$(WorkshopDir)workshop.json'))</WorkshopText>
+            <ModManifestHasPck>$([System.Text.RegularExpressions.Regex]::IsMatch('$(ModManifestText)', '"has_pck"\s*:\s*true'))</ModManifestHasPck>
+        </PropertyGroup>
+        <Error Text=" Mod 名は英字で始まる英数字だけにしてください: $(ModId)"
+               Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(ModId)', '^[A-Za-z][A-Za-z0-9]*$'))" />
+        <Error Text=" $(ModManifest) がありません" Condition="!Exists('$(ModManifest)')" />
+        <Error Text=" $(ModManifest) の id がフォルダ名 $(ModId) と違います"
+               Condition="Exists('$(ModManifest)') and !$([System.Text.RegularExpressions.Regex]::IsMatch('$(ModManifestText)', '&quot;id&quot;\s*:\s*&quot;$(ModId)&quot;'))" />
+        <Error Text=" アセットフォルダ $(ModAssetDir) があるのに、マニフェストの has_pck が true ではありません"
+               Condition="'$(ModHasPck)' == 'true' and '$(ModManifestHasPck)' != 'True'" />
+        <Error Text=" アセットフォルダ $(ModAssetDir) が無いのに、マニフェストの has_pck が true です"
+               Condition="'$(ModHasPck)' != 'true' and '$(ModManifestHasPck)' == 'True'" />
+        <Error Text=" $(MSBuildProjectFile) に TargetFramework を直書きしてください (MegaDot が書き換えるため)"
+               Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(ModProjectText)', '&lt;TargetFramework&gt;[^&lt;]+&lt;/TargetFramework&gt;'))" />
+        <Error Text=" $(WorkshopDir)workshop.json の dependencies は数値で書いてください (アップローダが数値として読む)"
+               Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(WorkshopText)', '&quot;dependencies&quot;\s*:\s*\[[^\]]*&quot;'))" />
     </Target>
 
-    <!-- 実際に解決された BaseLib のバージョンをマニフェストの dependencies に書き戻す -->
     <Target Name="UpdateDependencyVersions" BeforeTargets="BeforeBuild"
             Condition="'$(IsSts2Mod)' == 'true' and '$(UseSts2Stubs)' != 'true' and Exists('$(ProjectAssetsFile)')">
         <PropertyGroup>
@@ -92,8 +95,6 @@
                  Text="マニフェストの BaseLib 依存を $(ActiveBaseLibVersion) に更新しました" Importance="high" />
     </Target>
 
-    <!-- dotnet build のたびに .dll / .pdb / .json をゲームの mods フォルダへコピー
-         (スタブビルドと、scripts/check.sh の検査用ビルド (CopyToModsFolder=false) ではしない) -->
     <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent"
             Condition="'$(IsSts2Mod)' == 'true' and '$(UseSts2Stubs)' != 'true' and '$(CopyToModsFolder)' != 'false'">
         <Message Text="$(ModOutputDir) へ .dll .pdb .json をコピーします" Importance="high" />
@@ -102,29 +103,36 @@
         <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(ModOutputDir)" />
     </Target>
 
-    <Target Name="NeedGodotForPublish" BeforeTargets="Publish" Condition="'$(IsSts2Mod)' == 'true' and '$(ModHasPck)' == 'true'">
+    <Target Name="NoPublishWithStubs" BeforeTargets="PrepareForPublish" Condition="'$(IsSts2Mod)' == 'true' and '$(UseSts2Stubs)' == 'true'">
+        <Error Text=" スタブに対してビルドした dll は配れないので、publish はゲームのある PC で行ってください" />
+    </Target>
+
+    <Target Name="NeedGodot">
         <Error Text=" MegaDot が見つかりません: '$(GodotPath)'。local.props の GodotPath を設定してください"
                Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')" />
     </Target>
 
-    <!-- dotnet publish で .pck も書き出す。scripts/export-pck.sh からも同じ処理を呼べる -->
     <Target Name="GodotPublish" AfterTargets="Publish" DependsOnTargets="ExportPck" Condition="'$(IsSts2Mod)' == 'true'" />
 
-    <Target Name="ExportPck"
-            Condition="'$(IsSts2Mod)' == 'true' and '$(ModHasPck)' == 'true' and '$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
-        <PropertyGroup>
-            <PckOutputDir Condition="'$(PckOutputDir)' == ''">$(ModOutputDir)</PckOutputDir>
-            <PckOutputPath>$(PckOutputDir)$(ModId).pck</PckOutputPath>
-        </PropertyGroup>
+    <Target Name="ExportPck" DependsOnTargets="NeedGodot"
+            Condition="'$(IsSts2Mod)' == 'true' and '$(ModHasPck)' == 'true' and '$(IsInnerGodotExport)' != 'true'">
         <Message Text="$(PckOutputPath) を書き出します" Importance="high" />
-        <!-- 出力先フォルダが無いと MegaDot は "Can't open file for writing" で失敗する -->
         <MakeDir Directories="$(PckOutputDir)" />
         <Delete Files="$(PckOutputPath)" />
-        <!-- MegaDot は内部で C# のビルドも試みるので、ゲームが無い環境では終了コードが 0 にならない。
-             .pck ができたかどうかで成否を判定する -->
         <Exec Command="&quot;$(GodotPath)&quot; --headless --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;BasicExport&quot; &quot;$(PckOutputPath)&quot;"
-              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
+              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1;DOTNET_ROOT=$(NetCoreRoot)"
               IgnoreExitCode="true" IgnoreStandardErrorWarningFormat="true" />
         <Error Text=" .pck の書き出しに失敗しました: $(PckOutputPath)" Condition="!Exists('$(PckOutputPath)')" />
+    </Target>
+
+    <Target Name="StageWorkshop" AfterTargets="GodotPublish"
+            Condition="'$(IsSts2Mod)' == 'true' and '$(UseSts2Stubs)' != 'true' and Exists('$(WorkshopDir)')">
+        <ItemGroup>
+            <WorkshopFile Include="$(ModManifest);$(TargetPath)" />
+            <WorkshopFile Include="$(PckOutputPath)" Condition="'$(ModHasPck)' == 'true'" />
+        </ItemGroup>
+        <RemoveDir Directories="$(WorkshopContentDir)" />
+        <Copy SourceFiles="@(WorkshopFile)" DestinationFolder="$(WorkshopContentDir)" />
+        <Message Text="$(WorkshopContentDir) へ @(WorkshopFile->'%(Filename)%(Extension)') を写しました" Importance="high" />
     </Target>
 </Project>

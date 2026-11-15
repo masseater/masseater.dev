@@ -1,7 +1,6 @@
 using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using MyFirstMod.MyFirstModCode.Extensions;
-using MegaCrit.Sts2.Core.Entities.Powers;
 
 namespace MyFirstMod.MyFirstModCode.Powers;
 
