@@ -96,5 +96,5 @@ const saveGrant = ({
     Effect.mapError(failed),
   );
 
-export { grantFrom, readGrant, saveGrant };
+export { grantFrom, grantKey, readGrant, saveGrant };
 export type { AccessGrant, GrantSwap, IssuedTokens, StoredGrant };

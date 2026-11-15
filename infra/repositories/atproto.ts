@@ -126,4 +126,4 @@ const issueAppPassword = ({
     }),
   );
 
-export { atprotoRoute, issueAppPassword };
+export { APP_PASSWORD_KEY, atprotoRoute, issueAppPassword };

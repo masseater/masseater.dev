@@ -256,5 +256,5 @@ const route = (input: RouteInput): Option.Option<Effect.Effect<Response, GitHubA
     Option.map((handle) => handle(input)),
   );
 
-export { GitHubAppFailed, gitHubAppCredentials, readApp, route };
+export { APP_KEY, GitHubAppFailed, SETUP_PATH, gitHubAppCredentials, readApp, route };
 export type { GitHubAppEnv, RouteInput };

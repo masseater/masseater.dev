@@ -39,6 +39,13 @@ const web = Effect.gen(function* web() {
       TRANSLATOR: Workers.WorkerEntrypoint<TranslatorRpc>(translate, "Translator"),
     },
   });
+  yield* Workers.Worker("Portal", {
+    name: `${PREFIX}portal`,
+    main: "./src/features/mcp/api/portal.worker.ts",
+    logpush: true,
+    workersDev: false,
+    env: { DB, CONVERSATIONS, AI: Workers.AI() },
+  });
   return yield* authSite({
     domain: SITE_HOST,
     name: Option.some(`${PREFIX}web`),

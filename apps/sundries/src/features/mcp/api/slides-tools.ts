@@ -167,4 +167,4 @@ const registerSlideTools =
   (server: McpServer): McpServer =>
     pipe(server, registerSearch(caller), registerGetDeck(caller));
 
-export { registerSlideTools };
+export { registerSlideTools, searchSlides };

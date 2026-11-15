@@ -1,0 +1,29 @@
+import { Schema } from "effect";
+
+import { Decks, Hits, SearchQuery } from "#/entities/slides/model/slides";
+import {
+  createRouter,
+  jsonBody,
+  personal,
+  respond,
+  rpcBody,
+  slides,
+} from "#/shared/api/index.server";
+
+const HIT_LIMIT = 20;
+
+const slidesRoutes = createRouter("/api/slides")
+  .get("/decks", () =>
+    respond(jsonBody({ schema: Decks, call: () => personal("/decks/decks.json") })),
+  )
+  .get(
+    "/search",
+    ({ query }) =>
+      respond(rpcBody({ schema: Hits, call: () => slides().search(query.keyword, HIT_LIMIT) })),
+    { query: Schema.toStandardSchemaV1(SearchQuery) },
+  );
+
+type SlidesRoutes = typeof slidesRoutes;
+
+export { slidesRoutes };
+export type { SlidesRoutes };

@@ -1,0 +1,33 @@
+import { runner } from "@r_masseater/workers-tracing/effect";
+import { Effect, Logger } from "effect";
+import { status } from "elysia";
+import type { ElysiaCustomStatusResponse } from "elysia";
+
+import type { PortalFailed } from "./portal-failed";
+
+const BAD_GATEWAY = 502;
+
+type Failed = Readonly<{ errorTag: string; text: string }>;
+
+type UpstreamDown = ElysiaCustomStatusResponse<typeof BAD_GATEWAY, Failed>;
+
+const runRequest = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
+
+const downOf = ({ errorTag, text }: Readonly<Failed>): Effect.Effect<UpstreamDown> =>
+  Effect.logWarning("portal.upstream.failed").pipe(
+    Effect.annotateLogs({ errorTag }),
+    Effect.as(status(BAD_GATEWAY, { errorTag, text })),
+  );
+
+const respond = <Body>(effect: Effect.Effect<Body, PortalFailed>): Promise<Body | UpstreamDown> =>
+  runRequest(
+    effect.pipe(
+      Effect.matchEffect({
+        onFailure: downOf,
+        onSuccess: (body) => Effect.succeed<Body | UpstreamDown>(body),
+      }),
+    ),
+  );
+
+export { respond };
+export type { UpstreamDown };

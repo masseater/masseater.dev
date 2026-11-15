@@ -10,7 +10,7 @@ import { BalanceSheetInput, ListTransactionsInput, Period } from "./input";
 import { categoryTotals, dayTotals, listTransactions } from "./report-store";
 import { lengthOf, registerAll, tool } from "./tool";
 
-const TOOLS = [
+const REPORT_TOOLS = [
   tool({
     name: "list_transactions",
     description:
@@ -52,6 +52,7 @@ const TOOLS = [
   }),
 ];
 
-const registerReportTools = registerAll(TOOLS);
+const registerReportTools = registerAll(REPORT_TOOLS);
 
-export { registerReportTools };
+/** @internal */
+export { REPORT_TOOLS, registerReportTools };
