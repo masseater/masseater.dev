@@ -27,7 +27,7 @@ export default defineConfig({
   },
   pack: {
     entry: {
-      cli: "src/app/cli.ts",
+      cli: "bin/msch.ts",
       oxlint: "src/app/oxlint.ts",
       lint: "src/features/lint-preset/index.ts",
       "decision-rules": "src/features/lint-preset/config/decision-rules.ts",
