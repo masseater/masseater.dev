@@ -107,12 +107,16 @@ const stacksOf = (tasks: Tasks): readonly Stack[] => {
   );
 };
 
+const neighborsOf = (packages: Packages, directory: string): readonly string[] => {
+  const { dependencies = [], devDependencies = [] } = packages[directory] ?? {};
+  return [...dependencies, ...devDependencies];
+};
+
 const closureOf = (packages: Packages, start: readonly string[]): readonly string[] => {
   const seen = new Set(start);
   const queue = [...start];
   for (const directory of queue) {
-    const { dependencies = [], devDependencies = [] } = packages[directory] ?? {};
-    for (const next of [...dependencies, ...devDependencies]) {
+    for (const next of neighborsOf(packages, directory)) {
       if (!seen.has(next)) {
         seen.add(next);
         queue.push(next);
@@ -122,11 +126,18 @@ const closureOf = (packages: Packages, start: readonly string[]): readonly strin
   return [...seen];
 };
 
+const SHARED: readonly ((file: string) => boolean)[] = [
+  (file) => file === ".github/workflows/deploy.yml",
+  Str.startsWith(".github/actions/"),
+  Str.startsWith("patches/"),
+  (file) => !Str.includes("/")(file) && !Str.endsWith(".md")(file),
+];
+
 const isShared = (file: string): boolean =>
-  file === ".github/workflows/deploy.yml" ||
-  Str.startsWith(".github/actions/")(file) ||
-  Str.startsWith("patches/")(file) ||
-  (!Str.includes("/")(file) && !Str.endsWith(".md")(file));
+  pipe(
+    SHARED,
+    Arr.some((matches) => matches(file)),
+  );
 
 const lastDeployed = Effect.fn("lastDeployed")(
   function* lastDeployed(name: string) {
