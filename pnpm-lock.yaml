@@ -2071,15 +2071,6 @@ importers:
       '@masseater.dev/node-main':
         specifier: workspace:*
         version: link:../../libs/node-main
-      '@masseater.dev/pod-rattle-engine':
-        specifier: workspace:*
-        version: link:../../libs/pod-rattle-engine
-      '@masseater.dev/pod-rattle-host':
-        specifier: workspace:*
-        version: link:../../tools/pod-rattle-host
-      '@masseater.dev/xtask':
-        specifier: workspace:*
-        version: link:../../tools/xtask
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
