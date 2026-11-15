@@ -2,10 +2,9 @@ import { Array as Arr, pipe } from "effect";
 import { ArrowDownLeft, ArrowUpRight, CircleCheck, CircleX } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { InspectEvent } from "#/pages/inspect/api/inspect-events";
-import { COPY } from "#/pages/inspect/model/copy";
-import { logOf } from "#/pages/inspect/model/log";
-import type { LogLine } from "#/pages/inspect/model/log";
+import type { InspectEvent, LogLine } from "#/entities/inspection";
+import { logOf } from "#/entities/inspection";
+import { COPY } from "#/shared/config";
 
 const LINE_CLASS: Readonly<Record<LogLine["tone"], string>> = {
   asked: "text-muted-foreground",
@@ -21,7 +20,7 @@ const LINE_ICON: Readonly<Record<LogLine["tone"], ReactNode>> = {
   failed: <CircleX />,
 };
 
-const EventLog = ({ events }: Readonly<{ events: readonly InspectEvent[] }>): ReactNode => (
+export const EventLog = ({ events }: Readonly<{ events: readonly InspectEvent[] }>): ReactNode => (
   <div className="flex flex-col gap-2">
     <h2 className="text-lg font-semibold">{COPY.log}</h2>
     <ol className="bg-muted/40 max-h-96 overflow-auto rounded-md border p-3 font-mono text-xs leading-relaxed whitespace-pre [&_svg]:size-3 [&_svg]:shrink-0">
@@ -37,5 +36,3 @@ const EventLog = ({ events }: Readonly<{ events: readonly InspectEvent[] }>): Re
     </ol>
   </div>
 );
-
-export { EventLog };

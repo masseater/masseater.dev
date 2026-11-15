@@ -10,7 +10,7 @@ import { CreditRow } from "./credit-row";
 
 const HEADINGS = ["動画", "No.", "曲", "担当"];
 
-const CreditsTable = (): ReactNode => {
+export const CreditsTable = (): ReactNode => {
   const { credits } = usePerson();
   return (
     <Table>
@@ -26,5 +26,3 @@ const CreditsTable = (): ReactNode => {
     </Table>
   );
 };
-
-export { CreditsTable };

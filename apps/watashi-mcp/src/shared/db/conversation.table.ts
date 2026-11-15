@@ -1,0 +1,41 @@
+import { CONVERSATION_KINDS } from "@masseater.dev/watashi-protocol";
+import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
+
+export const conversationSession = sqliteTable(
+  "conversation_session",
+  {
+    kind: text("kind", { enum: CONVERSATION_KINDS }).notNull(),
+    sessionId: text("session_id").notNull(),
+    cwd: text("cwd").notNull(),
+    source: text("source").notNull(),
+    remoteSession: text("remote_session").notNull(),
+    firstAt: text("first_at").notNull(),
+    lastAt: text("last_at").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.kind, table.sessionId] }),
+    index("conversation_session_last_at_idx").on(table.lastAt),
+  ],
+);
+
+export const conversationChunk = sqliteTable(
+  "conversation_chunk",
+  {
+    kind: text("kind", { enum: CONVERSATION_KINDS }).notNull(),
+    sessionId: text("session_id").notNull(),
+    file: text("file").notNull(),
+    start: integer("start").notNull(),
+    end: integer("end").notNull(),
+    redactions: integer("redactions").notNull(),
+    storedBytes: integer("stored_bytes").notNull(),
+    objectKey: text("object_key").notNull(),
+    at: text("at").notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.kind, table.sessionId, table.file, table.start] })],
+);
+
+export type ConversationSession = typeof conversationSession.$inferSelect;
+
+export type ConversationChunk = typeof conversationChunk.$inferSelect;
+
+export type ConversationKind = ConversationChunk["kind"];

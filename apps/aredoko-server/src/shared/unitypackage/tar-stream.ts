@@ -2,8 +2,8 @@ import { Array, Effect, FileSystem, HashSet, Stream, String, pipe } from "effect
 import { createTarDecoder } from "modern-tar";
 import type { ParsedTarEntry } from "modern-tar";
 
-import { collectBytes } from "#shared/bytes";
-import { captureAll } from "#shared/text";
+import { collectBytes } from "#/shared/bytes/index.ts";
+import { captureAll } from "#/shared/text/index.ts";
 
 import { UnityPackageUnreadable } from "./unity-package-unreadable.ts";
 
@@ -13,7 +13,7 @@ const unreadable =
     UnityPackageUnreadable.make({ path, cause });
 
 /** @internal */
-const tarEntries = Effect.fn("tarEntries")(function* openTar(path: string) {
+export const tarEntries = Effect.fn("tarEntries")(function* openTar(path: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const readable = yield* Stream.toReadableStreamEffect(
     fileSystem.stream(path).pipe(Stream.map((chunk) => Uint8Array.from(chunk))),
@@ -26,14 +26,14 @@ const tarEntries = Effect.fn("tarEntries")(function* openTar(path: string) {
 });
 
 /** @internal */
-const bodyOf = Effect.fn("bodyOf")(function* readBody(path: string, entry: ParsedTarEntry) {
+export const bodyOf = Effect.fn("bodyOf")(function* readBody(path: string, entry: ParsedTarEntry) {
   return yield* collectBytes(
     Stream.fromReadableStream({ evaluate: () => entry.body, onError: unreadable(path) }),
   );
 });
 
 /** @internal */
-const skip = Effect.fn("skip")(function* skipBody(entry: ParsedTarEntry) {
+export const skip = Effect.fn("skip")(function* skipBody(entry: ParsedTarEntry) {
   yield* Effect.promise(() => entry.body.cancel());
 });
 
@@ -46,7 +46,7 @@ const REFERENCE_TAIL = -64;
 
 const latin1 = new TextDecoder("latin1");
 
-const referencesIn = captureAll({ pattern: /guid: (?<guid>[0-9a-f]{32})/gu, name: "guid" });
+export const referencesIn = captureAll({ pattern: /guid: (?<guid>[0-9a-f]{32})/gu, name: "guid" });
 
 const absorb = ({ references, tail }: Scan, chunk: Uint8Array): Scan => {
   const text = tail + latin1.decode(chunk);
@@ -57,7 +57,7 @@ const absorb = ({ references, tail }: Scan, chunk: Uint8Array): Scan => {
 };
 
 /** @internal */
-const scanBody = Effect.fn("scanBody")(function* scanReferences(
+export const scanBody = Effect.fn("scanBody")(function* scanReferences(
   path: string,
   entry: ParsedTarEntry,
 ) {
@@ -68,5 +68,3 @@ const scanBody = Effect.fn("scanBody")(function* scanReferences(
   );
   return Array.fromIterable(references);
 });
-
-export { bodyOf, referencesIn, scanBody, skip, tarEntries };

@@ -34,20 +34,18 @@ const subtitleUnitsOf = (text: string): readonly Unit[] =>
 
 const hasCues = (text: string): boolean => cuesOf(text).length > NONE;
 
-const vttParser: Parser = {
+export const vttParser: Parser = {
   format: "vtt",
   extensions: [".vtt"],
   accepts: (text) => VTT_HEADER.test(text) && hasCues(text),
   unitsOf: subtitleUnitsOf,
 };
 
-const srtParser: Parser = {
+export const srtParser: Parser = {
   format: "srt",
   extensions: [".srt"],
   accepts: (text) => !VTT_HEADER.test(text) && hasCues(text),
   unitsOf: subtitleUnitsOf,
 };
 
-const SUBTITLE_PARSERS: readonly Parser[] = [vttParser, srtParser, assParser];
-
-export { SUBTITLE_PARSERS, srtParser, vttParser };
+export const SUBTITLE_PARSERS: readonly Parser[] = [vttParser, srtParser, assParser];

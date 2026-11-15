@@ -55,7 +55,7 @@ const createContents = (packageJsonContent: PackageJsonContent): PackageJsonCont
   peerDependencies: memo(),
 });
 
-const createPackageJsonCache = (): PackageJsonCache => {
+export const createPackageJsonCache = (): PackageJsonCache => {
   const entries = new Map<string, PackageJsonCacheEntry>();
   return {
     get: (packageJsonPath) => Option.fromNullishOr(entries.get(toPath(packageJsonPath))),
@@ -130,7 +130,7 @@ const resolveAndCacheWithTrace = (
   return Option.none();
 };
 
-const resolvePackageJsonInfo: {
+export const resolvePackageJsonInfo: {
   (
     onlyRecordFailures: boolean,
     state: ResolutionState,
@@ -164,7 +164,7 @@ const resolvePackageJsonInfo: {
   },
 );
 
-const getPackageScopeForPath: {
+export const getPackageScopeForPath: {
   (state: ResolutionState): (directory: string) => Option.Option<PackageJsonInfo>;
   (directory: string, state: ResolutionState): Option.Option<PackageJsonInfo>;
 } = Fn.dual(
@@ -241,7 +241,7 @@ const packageIdOf = (
   });
 };
 
-const withPackageId: {
+export const withPackageId: {
   (
     resolved: Option.Option<PathAndExtension>,
     state: ResolutionState,
@@ -278,13 +278,5 @@ const qualifiedName = (packageId: PackageId): string => {
   return packageId.name;
 };
 
-const packageIdToString = (packageId: PackageId): string =>
+export const packageIdToString = (packageId: PackageId): string =>
   `${qualifiedName(packageId)}@${packageId.version}${packageId.peerDependencies}`;
-
-export {
-  createPackageJsonCache,
-  getPackageScopeForPath,
-  packageIdToString,
-  resolvePackageJsonInfo,
-  withPackageId,
-};

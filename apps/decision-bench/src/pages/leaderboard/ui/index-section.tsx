@@ -1,16 +1,15 @@
 import type { ReactNode } from "react";
 
-import { useVisibleModels } from "#/pages/leaderboard/model/view";
+import { BarChart, ChartFigure } from "#/entities/benchmark";
+import { useVisibleModels } from "#/features/filter-models";
+import { Section } from "#/shared/ui/section";
 
-import { BarChart } from "./charts/bar-chart";
-import { ChartFigure } from "./charts/chart-figure";
 import { rowsOf } from "./index-rows";
-import { Section } from "./section";
-import { IndexTable } from "./tables/index-table";
+import { IndexTable } from "./index-table";
 
 const CHART_TITLE = "指数";
 
-const IndexSection = (): ReactNode => {
+export const IndexSection = (): ReactNode => {
   const models = useVisibleModels();
   return (
     <Section id="index" title="総合指数（参考）">
@@ -21,5 +20,3 @@ const IndexSection = (): ReactNode => {
     </Section>
   );
 };
-
-export { IndexSection };

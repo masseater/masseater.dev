@@ -1,9 +1,9 @@
 import { Array, Clock, Effect, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { RENDER, RETRY } from "#shared/database";
-import { normalizePng } from "#shared/preview";
-import { decodeRows } from "#shared/sql";
+import { RENDER, RETRY } from "#/shared/database/index.ts";
+import { normalizePng } from "#/shared/preview/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 import { discardStaging } from "./model-source.ts";
 
@@ -12,7 +12,7 @@ const JOBS_PER_REQUEST = 8;
 const JobRow = Schema.Struct({ assetId: Schema.Int, pathname: Schema.String });
 
 /** @internal */
-const renderJobs = Effect.fn("renderJobs")(function* listRenderJobs() {
+export const renderJobs = Effect.fn("renderJobs")(function* listRenderJobs() {
   const sql = yield* SqlClient.SqlClient;
   const now = yield* Clock.currentTimeMillis;
   return yield* decodeRows(JobRow)(
@@ -23,7 +23,7 @@ const renderJobs = Effect.fn("renderJobs")(function* listRenderJobs() {
 });
 
 /** @internal */
-const putRender = Effect.fn("putRender")(function* storeRender({
+export const putRender = Effect.fn("putRender")(function* storeRender({
   assetId,
   pngs,
 }: {
@@ -55,7 +55,7 @@ const putRender = Effect.fn("putRender")(function* storeRender({
 });
 
 /** @internal */
-const failRender = Effect.fn("failRender")(function* postponeRender({
+export const failRender = Effect.fn("failRender")(function* postponeRender({
   assetId,
   reason,
 }: {
@@ -70,5 +70,3 @@ const failRender = Effect.fn("failRender")(function* postponeRender({
     where id = ${assetId} and render = ${RENDER.pending}`;
   yield* discardStaging(assetId);
 });
-
-export { failRender, putRender, renderJobs };

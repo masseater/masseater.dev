@@ -6,7 +6,7 @@ import { CopyCommandButton, useMcp } from "#/entities/mcp";
 
 const LABEL = "Claude Code に原作を読ませる";
 
-const ClaudeRoute = (): ReactNode => {
+export const ClaudeRoute = (): ReactNode => {
   const mcp = useMcp();
   if (Option.isNone(mcp)) {
     return false;
@@ -19,5 +19,3 @@ const ClaudeRoute = (): ReactNode => {
     </li>
   );
 };
-
-export { ClaudeRoute };

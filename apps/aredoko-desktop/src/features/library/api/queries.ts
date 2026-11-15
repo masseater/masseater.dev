@@ -1,34 +1,26 @@
 import type { Source } from "@masseater.dev/aredoko-protocol";
-import {
-  queryOptions,
-  useMutation,
-  useMutationState,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { queryOptions, useMutation, useMutationState, useQuery } from "@tanstack/react-query";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import { Array, Option, pipe } from "effect";
 
 import { NO_IMPORT, lastImportOf } from "#/features/library/model/last-import";
 import type { LastImport } from "#/features/library/model/last-import";
 import {
-  ASSETS_KEY,
   LIBRARY_POLL,
-  PACKAGES_KEY,
   SOURCES_KEY,
-  STATUS_KEY,
   addSource,
   getLibrary,
   importFiles,
   listSources,
   removeSource,
+  useRefreshLibrary,
 } from "#/shared/api";
 import type { LibraryInfo } from "#/shared/api";
 
 const LIBRARY_KEY = ["library"];
 const IMPORT_KEY = ["import"];
 
-const useSources = (): UseQueryResult<readonly (typeof Source.Type)[]> =>
+export const useSources = (): UseQueryResult<readonly (typeof Source.Type)[]> =>
   useQuery(
     queryOptions({
       queryKey: SOURCES_KEY,
@@ -37,36 +29,25 @@ const useSources = (): UseQueryResult<readonly (typeof Source.Type)[]> =>
     }),
   );
 
-const useRefreshLibrary = (): (() => Promise<unknown>) => {
-  const client = useQueryClient();
-  return () =>
-    Promise.all([
-      client.invalidateQueries({ queryKey: SOURCES_KEY }),
-      client.invalidateQueries({ queryKey: PACKAGES_KEY }),
-      client.invalidateQueries({ queryKey: ASSETS_KEY }),
-      client.invalidateQueries({ queryKey: STATUS_KEY }),
-    ]);
-};
-
 const addFolder = (path: string): Promise<typeof Source.Type> =>
   addSource({ path, kind: "folder" });
 
-const useAddFolder = (): UseMutationResult<typeof Source.Type, Error, string> => {
+export const useAddFolder = (): UseMutationResult<typeof Source.Type, Error, string> => {
   const refresh = useRefreshLibrary();
   return useMutation({ mutationFn: addFolder, onSuccess: refresh });
 };
 
-const useRemoveSource = (): UseMutationResult<void, Error, number> => {
+export const useRemoveSource = (): UseMutationResult<void, Error, number> => {
   const refresh = useRefreshLibrary();
   return useMutation({ mutationFn: removeSource, onSuccess: refresh });
 };
 
-type KnownFolder = "assetStore" | "blm";
+export type KnownFolder = "assetStore" | "blm";
 
 const useLibrary = (): UseQueryResult<LibraryInfo> =>
   useQuery(queryOptions({ queryKey: LIBRARY_KEY, queryFn: getLibrary, retry: false }));
 
-interface NamedFolder {
+export interface NamedFolder {
   readonly name: string;
   readonly removable: boolean;
 }
@@ -82,7 +63,7 @@ const KNOWN: readonly KnownFolder[] = ["assetStore", "blm"];
 
 const NOT_NAMED = (): Option.Option<NamedFolder> => Option.none();
 
-const useFolderName = (): ((path: string) => Option.Option<NamedFolder>) => {
+export const useFolderName = (): ((path: string) => Option.Option<NamedFolder>) => {
   const library = useLibrary();
   if (!library.isSuccess) {
     return NOT_NAMED;
@@ -100,7 +81,7 @@ const useFolderName = (): ((path: string) => Option.Option<NamedFolder>) => {
   };
 };
 
-const useKnownFolder = (known: KnownFolder): Option.Option<string> => {
+export const useKnownFolder = (known: KnownFolder): Option.Option<string> => {
   const library = useLibrary();
   const sources = useSources();
   if (!library.isSuccess || !sources.isSuccess) {
@@ -119,12 +100,12 @@ const useKnownFolder = (known: KnownFolder): Option.Option<string> => {
   );
 };
 
-const useImportFiles = (): UseMutationResult<number, Error, readonly string[]> => {
+export const useImportFiles = (): UseMutationResult<number, Error, readonly string[]> => {
   const refresh = useRefreshLibrary();
   return useMutation({ mutationKey: IMPORT_KEY, mutationFn: importFiles, onSuccess: refresh });
 };
 
-const useLastImport = (): LastImport =>
+export const useLastImport = (): LastImport =>
   pipe(
     useMutationState({
       filters: { mutationKey: IMPORT_KEY },
@@ -133,15 +114,3 @@ const useLastImport = (): LastImport =>
     Array.last,
     Option.getOrElse(() => NO_IMPORT),
   );
-
-export type { KnownFolder, NamedFolder };
-export {
-  useAddFolder,
-  useFolderName,
-  useKnownFolder,
-  useImportFiles,
-  useLastImport,
-  useRefreshLibrary,
-  useRemoveSource,
-  useSources,
-};

@@ -1,9 +1,9 @@
 import { Array, Effect, HashMap, Option, Schema, String, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { vectorBytes } from "#shared/database";
-import { Embedder } from "#shared/embedding";
-import { decodeRows, ids } from "#shared/sql";
+import { vectorBytes } from "#/shared/database/index.ts";
+import { Embedder } from "#/shared/embedding/index.ts";
+import { decodeRows, ids } from "#/shared/sql/index.ts";
 
 import { combine } from "./combine.ts";
 import type { Hit } from "./combine.ts";
@@ -98,7 +98,7 @@ const nameRanking = Effect.fn("nameRanking")(function* rankByName(
 });
 
 /** @internal */
-const search = Effect.fn("search")(function* searchAssets({
+export const search = Effect.fn("search")(function* searchAssets({
   query,
   limit,
   kinds,
@@ -121,5 +121,3 @@ const search = Effect.fn("search")(function* searchAssets({
   const scores = HashMap.fromIterable(ranked);
   return pipe(rows, Array.take(limit), Array.map(resultOf(scores)));
 });
-
-export { search };

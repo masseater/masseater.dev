@@ -3,7 +3,7 @@ import type { ChangeEvent, ReactNode } from "react";
 
 import { Input } from "./ui/input.tsx";
 
-const ApiKeyInput = ({
+export const ApiKeyInput = ({
   label,
   value,
   onValueChange,
@@ -29,5 +29,3 @@ const ApiKeyInput = ({
     />
   );
 };
-
-export { ApiKeyInput };

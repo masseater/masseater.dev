@@ -6,11 +6,11 @@ import { down } from "./model-down.ts";
 import type { ModelDown } from "./model-down.ts";
 import { STOP } from "./prompt.ts";
 
-type Asked = Readonly<{ prompt: string; maxTokens: number }>;
+export type Asked = Readonly<{ prompt: string; maxTokens: number }>;
 
 const MODEL_ORIGIN = "http://model";
 const OK = 200;
-const TEMPERATURE = 0;
+export const TEMPERATURE = 0;
 
 const STARTUP = {
   schedule: Schedule.spaced(MODEL_STARTUP.spacing),
@@ -21,7 +21,7 @@ const encodeJson = Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unkno
 
 const decodeCompletion = Schema.decodeUnknownEffect(Completion);
 
-const containerOf = (ctx: DurableObjectState): Effect.Effect<Container, ModelDown> =>
+export const containerOf = (ctx: DurableObjectState): Effect.Effect<Container, ModelDown> =>
   Effect.fromOption(Option.fromUndefinedOr(ctx.container), () =>
     down("the durable object has no container"),
   );
@@ -59,7 +59,7 @@ const ready = (container: Container): Effect.Effect<void, ModelDown> =>
     Effect.asVoid,
   );
 
-const complete = Effect.fn("plamo.complete")(function* complete(
+export const complete = Effect.fn("plamo.complete")(function* complete(
   container: Container,
   { prompt, maxTokens }: Asked,
 ) {
@@ -85,6 +85,3 @@ const complete = Effect.fn("plamo.complete")(function* complete(
   const answer = yield* Effect.tryPromise({ try: () => response.json(), catch: down });
   return yield* decodeCompletion(answer).pipe(Effect.mapError(down));
 });
-
-export { TEMPERATURE, complete, containerOf };
-export type { Asked };

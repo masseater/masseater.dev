@@ -6,9 +6,7 @@ import { wiki } from "#/shared/wiki";
 
 const route = getRouteApi("/sloppedia/categories");
 
-const CategoriesPage = (): ReactNode => {
+export const CategoriesPage = (): ReactNode => {
   const { entries } = route.useLoaderData();
   return <CategoriesView articles={entries} config={wiki} />;
 };
-
-export { CategoriesPage };

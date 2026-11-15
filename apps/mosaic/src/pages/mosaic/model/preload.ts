@@ -1,17 +1,12 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { Array, Effect, Option, pipe } from "effect";
 
-import { bundledMosaic } from "#/pages/mosaic/api/bundled";
-import type { Mosaic } from "#/pages/mosaic/api/queries";
-import { mosaicTitle, slugFile, variantFile } from "#/pages/mosaic/lib/files";
-import type { Visit } from "#/pages/mosaic/lib/files";
+import { bundledMosaic, mosaicTitle, slugFile, variantFile, loadVisit } from "#/entities/mosaic";
+import type { Mosaic, Visit, Assignment, Loaded } from "#/entities/mosaic";
 import { BASE_PATH, SITE_ORIGIN } from "#/shared/config";
 import { optionalCardMeta } from "#/shared/lib/card";
 import type { Card, Meta } from "#/shared/lib/card";
 import { runtime } from "#/shared/lib/telemetry";
-
-import { loadVisit } from "./visit";
-import type { Assignment, Loaded } from "./visit";
 
 const OVERVIEW = 0;
 const BEST_VARIANT = 0;
@@ -66,7 +61,7 @@ const previewOf = (slug: string, mosaic: Option.Option<Mosaic>): Preview => ({
   ),
 });
 
-const bundledPreview = (slug: string): Preview => previewOf(slug, bundledMosaic(slug));
+export const bundledPreview = (slug: string): Preview => previewOf(slug, bundledMosaic(slug));
 
 const preloadOf = (slug: string, { seed, choice, mosaic }: Loaded): Preload => ({
   seed,
@@ -74,7 +69,7 @@ const preloadOf = (slug: string, { seed, choice, mosaic }: Loaded): Preload => (
   ...previewOf(slug, mosaic),
 });
 
-const loadMosaic = ({
+export const loadMosaic = ({
   queryClient,
   slug,
   seed,
@@ -94,9 +89,7 @@ const preloadLink = (href: string): PreloadLink => ({
   fetchPriority: "high",
 });
 
-const mosaicHead = ({ images, card }: Preview): Head => ({
+export const mosaicHead = ({ images, card }: Preview): Head => ({
   links: pipe(images, Array.map(preloadLink)),
   meta: optionalCardMeta(card),
 });
-
-export { bundledPreview, loadMosaic, mosaicHead };

@@ -2,12 +2,12 @@ import { NodeServices } from "@effect/platform-node";
 import { Array, Effect, FileSystem, Layer, Option, Path, Ref, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { databaseLayer } from "#shared/database";
-import { Embedder } from "#shared/embedding";
-import { Settings } from "#shared/settings";
-import { decodeRows, firstId } from "#shared/sql";
-import { writePackage } from "#shared/unitypackage";
-import type { LooseFile } from "#shared/unitypackage";
+import { databaseLayer } from "#/shared/database/index.ts";
+import { Embedder } from "#/shared/embedding/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
+import { decodeRows, firstId } from "#/shared/sql/index.ts";
+import { writePackage } from "#/shared/unitypackage/index.ts";
+import type { LooseFile } from "#/shared/unitypackage/index.ts";
 
 const VECTOR_DIMENSIONS = 768;
 const UNIT = 1;
@@ -21,7 +21,9 @@ const CountRow = Schema.Struct({ total: Schema.Int });
 
 const StateRow = Schema.Struct({ embedded: Schema.Int });
 
-const vectorsFor = (inputs: readonly unknown[]): Effect.Effect<readonly (readonly number[])[]> =>
+export const vectorsFor = (
+  inputs: readonly unknown[],
+): Effect.Effect<readonly (readonly number[])[]> =>
   Effect.succeed(
     pipe(
       inputs,
@@ -29,7 +31,7 @@ const vectorsFor = (inputs: readonly unknown[]): Effect.Effect<readonly (readonl
     ),
   );
 
-const embedderOf = (overrides: Partial<typeof Embedder.Service>): typeof Embedder.Service =>
+export const embedderOf = (overrides: Partial<typeof Embedder.Service>): typeof Embedder.Service =>
   Embedder.of({
     device: "test",
     embedQuery: () => Effect.succeed(VECTOR),
@@ -38,7 +40,7 @@ const embedderOf = (overrides: Partial<typeof Embedder.Service>): typeof Embedde
     ...overrides,
   });
 
-const recordingEmbedder = Effect.gen(function* recordingEmbedder() {
+export const recordingEmbedder = Effect.gen(function* recordingEmbedder() {
   const texts = yield* Ref.make<readonly string[]>([]);
   const embedder = embedderOf({
     embedDocuments: (batch) =>
@@ -48,7 +50,7 @@ const recordingEmbedder = Effect.gen(function* recordingEmbedder() {
 });
 
 /** @internal */
-const indexInTemporaryFolder = Layer.unwrap(
+export const indexInTemporaryFolder = Layer.unwrap(
   Effect.gen(function* indexInTemporaryFolder() {
     const fileSystem = yield* FileSystem.FileSystem;
     const dataDirectory = yield* fileSystem.makeTempDirectoryScoped();
@@ -62,7 +64,7 @@ const indexInTemporaryFolder = Layer.unwrap(
 ).pipe(Layer.provideMerge(NodeServices.layer));
 
 /** @internal */
-const addPackage = Effect.gen(function* addPackage() {
+export const addPackage = Effect.gen(function* addPackage() {
   const sql = yield* SqlClient.SqlClient;
   const sourceId = yield* firstId(
     sql`insert into sources(path, kind) values (${LIBRARY}, 'folder') returning id`,
@@ -91,7 +93,7 @@ const addImage = Effect.fn("addImage")(function* addImageOfNewAsset(
 });
 
 /** @internal */
-const addImages = Effect.fn("addImages")(function* addImagesOfNewAssets({
+export const addImages = Effect.fn("addImages")(function* addImagesOfNewAssets({
   packageId,
   offset,
   pngs,
@@ -107,7 +109,7 @@ const addImages = Effect.fn("addImages")(function* addImagesOfNewAssets({
 });
 
 /** @internal */
-const imageStates = Effect.gen(function* imageStates() {
+export const imageStates = Effect.gen(function* imageStates() {
   const sql = yield* SqlClient.SqlClient;
   const rows = yield* decodeRows(StateRow)(sql`select embedded from images order by id`);
   return pipe(
@@ -117,7 +119,9 @@ const imageStates = Effect.gen(function* imageStates() {
 });
 
 /** @internal */
-const countOf = Effect.fn("countOf")(function* countRows(table: "image_vectors" | "text_vectors") {
+export const countOf = Effect.fn("countOf")(function* countRows(
+  table: "image_vectors" | "text_vectors",
+) {
   const sql = yield* SqlClient.SqlClient;
   const rows = yield* decodeRows(CountRow)(sql`select count(*) as total from ${sql(table)}`);
   return pipe(
@@ -127,7 +131,7 @@ const countOf = Effect.fn("countOf")(function* countRows(table: "image_vectors" 
 });
 
 /** @internal */
-const addFolderSource = Effect.fn("addFolderSource")(function* addFolderSourceWithPackage(
+export const addFolderSource = Effect.fn("addFolderSource")(function* addFolderSourceWithPackage(
   relativeFile: string,
   files: readonly LooseFile[],
 ) {
@@ -141,15 +145,3 @@ const addFolderSource = Effect.fn("addFolderSource")(function* addFolderSourceWi
   yield* sql`insert into sources(path, kind) values (${folder}, 'folder')`;
   return folder;
 });
-
-export {
-  addFolderSource,
-  addImages,
-  addPackage,
-  countOf,
-  embedderOf,
-  imageStates,
-  indexInTemporaryFolder,
-  recordingEmbedder,
-  vectorsFor,
-};

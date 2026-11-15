@@ -2,9 +2,9 @@ import { LOOSE_EXTENSIONS } from "@masseater.dev/aredoko-protocol";
 import type { AssetKind as AssetKindSchema } from "@masseater.dev/aredoko-protocol";
 import { Array, Option, Record, String, pipe } from "effect";
 
-import { capture } from "#shared/text";
+import { capture } from "#/shared/text/index.ts";
 
-type AssetKind = typeof AssetKindSchema.Type;
+export type AssetKind = typeof AssetKindSchema.Type;
 
 const EXTENSIONS = {
   ...LOOSE_EXTENSIONS,
@@ -18,7 +18,7 @@ const EXTENSIONS = {
 
 const extensionOf = capture({ pattern: /\.(?<extension>[^./]+)$/u, name: "extension" });
 
-const kindOf = (pathname: string): AssetKind =>
+export const kindOf = (pathname: string): AssetKind =>
   pipe(
     extensionOf(pathname),
     Option.map(String.toLowerCase),
@@ -30,6 +30,3 @@ const kindOf = (pathname: string): AssetKind =>
     ),
     Option.match({ onNone: (): AssetKind => "other", onSome: ([kind]) => kind }),
   );
-
-export { kindOf };
-export type { AssetKind };

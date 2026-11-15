@@ -11,9 +11,7 @@ const PAGES: Readonly<Record<Page, ComponentType>> = {
   settings: SettingsPage,
 };
 
-const CurrentPage = (): ReactNode => {
+export const CurrentPage = (): ReactNode => {
   const Current = PAGES[usePage()];
   return <Current />;
 };
-
-export { CurrentPage };

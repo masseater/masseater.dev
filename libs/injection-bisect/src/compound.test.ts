@@ -1,8 +1,8 @@
 import { Effect, Array as Arr, String as Str, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { compoundOf, utf16Of } from "./__tests__/compound.ts";
-import { INJECTION, foundIn } from "./__tests__/fake-judge.ts";
+import { compoundOf, utf16Of } from "./compound.test.support.ts";
+import { INJECTION, foundIn } from "./fake-judge.test.support.ts";
 
 const LITTLE_ENDIAN = true;
 

@@ -3,7 +3,7 @@ import type { Package } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, Option, Record, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { decodeRows } from "#shared/sql";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 import { StoredSummary } from "./summary.ts";
 
@@ -42,7 +42,7 @@ const toPackage = (
   );
 
 /** @internal */
-const packagesWhere = Effect.fn("packagesWhere")(function* selectPackages(
+export const packagesWhere = Effect.fn("packagesWhere")(function* selectPackages(
   id: Option.Option<number>,
 ) {
   const sql = yield* SqlClient.SqlClient;
@@ -56,5 +56,3 @@ const packagesWhere = Effect.fn("packagesWhere")(function* selectPackages(
   );
   return yield* pipe(rows, Effect.forEach(toPackage));
 });
-
-export { packagesWhere };

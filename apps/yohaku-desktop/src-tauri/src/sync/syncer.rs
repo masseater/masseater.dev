@@ -1,3 +1,4 @@
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex, PoisonError};
 use std::time::Duration;
 
@@ -16,6 +17,7 @@ use super::state::{self, Key};
 use super::vault::Vault;
 
 const INTERVAL: Duration = Duration::from_secs(20);
+const RESTING_INTERVAL: Duration = Duration::from_secs(600);
 const REFRESH_MARGIN: i64 = 60_000;
 const PUSH_BATCH: usize = 50;
 const MILLISECONDS: i64 = 1000;
@@ -45,6 +47,8 @@ pub struct Syncer {
     http: Client,
     port: u16,
     vault: Vault,
+    resting: Arc<AtomicBool>,
+    wake: Arc<tokio::sync::Notify>,
     shared: Arc<Mutex<Shared>>,
     round: Arc<tokio::sync::Mutex<()>>,
 }
@@ -69,6 +73,8 @@ impl Syncer {
             http,
             port,
             vault: Vault::default(),
+            resting: Arc::default(),
+            wake: Arc::default(),
             shared: Arc::default(),
             round: Arc::default(),
         })
@@ -83,9 +89,24 @@ impl Syncer {
         async_runtime::spawn(async move {
             loop {
                 syncer.sync_once().await;
-                tokio::time::sleep(INTERVAL).await;
+                let pause = if syncer.resting.load(Ordering::SeqCst) {
+                    RESTING_INTERVAL
+                } else {
+                    INTERVAL
+                };
+                tokio::select! {
+                    () = tokio::time::sleep(pause) => {}
+                    () = syncer.wake.notified() => {}
+                }
             }
         });
+    }
+
+    pub fn rest(&self, resting: bool) {
+        let was_resting = self.resting.swap(resting, Ordering::SeqCst);
+        if was_resting && !resting {
+            self.wake.notify_one();
+        }
     }
 
     async fn access_token(&self) -> Result<Option<String>, SyncProblem> {

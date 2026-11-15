@@ -9,7 +9,7 @@ const letters = toWavyLetters(portfolio.name);
 
 const logoStyle: CSSProperties = { "--n": portfolio.name.length };
 
-const PortfolioLogo = (): ReactNode => (
+export const PortfolioLogo = (): ReactNode => (
   <a
     aria-label={portfolio.name}
     className="stage vt-site-name font-display inline-block shrink-0 text-3xl whitespace-nowrap select-none"
@@ -22,5 +22,3 @@ const PortfolioLogo = (): ReactNode => (
     <WavyLetters letters={letters} />
   </a>
 );
-
-export { PortfolioLogo };

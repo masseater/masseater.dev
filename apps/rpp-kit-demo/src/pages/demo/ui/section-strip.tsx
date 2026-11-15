@@ -1,14 +1,12 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { fillOf, percentOf } from "#/pages/demo/model/format";
-import { song } from "#/pages/demo/model/song";
-
-import { Playhead } from "./playhead";
+import { fillOf, percentOf, song } from "#/entities/song";
+import { Playhead } from "#/features/playback";
 
 const LABEL_OFFSET = 4;
 
-const SectionStrip = (): ReactNode => (
+export const SectionStrip = (): ReactNode => (
   <svg aria-hidden className="block h-8 min-w-0 flex-1">
     {pipe(
       song.sections,
@@ -41,5 +39,3 @@ const SectionStrip = (): ReactNode => (
     <Playhead />
   </svg>
 );
-
-export { SectionStrip };

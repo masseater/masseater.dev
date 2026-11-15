@@ -1,13 +1,13 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/catalog";
+import { VideoList } from "#/entities/video";
 import { useVideo } from "#/pages/video/api/use-video";
 import { SectionHeading } from "#/shared/ui/section-heading";
 
 const nothing = (): string => "";
 
-const QuotedBy = (): ReactNode => {
+export const QuotedBy = (): ReactNode => {
   const video = useVideo();
   return (
     Arr.isReadonlyArrayNonEmpty(video.quotedBy) && (
@@ -18,5 +18,3 @@ const QuotedBy = (): ReactNode => {
     )
   );
 };
-
-export { QuotedBy };

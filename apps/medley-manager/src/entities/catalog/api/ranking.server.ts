@@ -1,12 +1,8 @@
 import { asc, count, countDistinct, desc, eq } from "drizzle-orm";
 import { Effect } from "effect";
 
-import { part, partStaff } from "#/entities/catalog/model/part.table";
-import { person } from "#/entities/catalog/model/person.table";
-import { song } from "#/entities/catalog/model/song.table";
-import { video } from "#/entities/catalog/model/video.table";
-
-import { catalogDb } from "./db.server";
+import { part, partStaff, person, song, video } from "#/shared/db";
+import { catalogDb } from "#/shared/db/index.server";
 
 const songUses = countDistinct(part.videoId);
 
@@ -14,7 +10,7 @@ const videoParts = count(part.id);
 
 const personCredits = count(partStaff.id);
 
-const rankSongs = Effect.fn("catalog.ranking.songs")(function* rankSongs(limit: number) {
+export const rankSongs = Effect.fn("catalog.ranking.songs")(function* rankSongs(limit: number) {
   return yield* Effect.promise(() =>
     catalogDb
       .select({ id: song.id, title: song.title, useCount: songUses })
@@ -26,7 +22,7 @@ const rankSongs = Effect.fn("catalog.ranking.songs")(function* rankSongs(limit: 
   );
 });
 
-const rankVideos = Effect.fn("catalog.ranking.videos")(function* rankVideos(limit: number) {
+export const rankVideos = Effect.fn("catalog.ranking.videos")(function* rankVideos(limit: number) {
   return yield* Effect.promise(() =>
     catalogDb
       .select({
@@ -44,7 +40,7 @@ const rankVideos = Effect.fn("catalog.ranking.videos")(function* rankVideos(limi
   );
 });
 
-const rankPeople = Effect.fn("catalog.ranking.people")(function* rankPeople(limit: number) {
+export const rankPeople = Effect.fn("catalog.ranking.people")(function* rankPeople(limit: number) {
   return yield* Effect.promise(() =>
     catalogDb
       .select({ id: person.id, name: person.name, creditCount: personCredits })
@@ -55,5 +51,3 @@ const rankPeople = Effect.fn("catalog.ranking.people")(function* rankPeople(limi
       .limit(limit),
   );
 });
-
-export { rankPeople, rankSongs, rankVideos };

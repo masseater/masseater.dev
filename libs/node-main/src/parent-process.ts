@@ -17,7 +17,7 @@ const untilExits = (pid: number): Effect.Effect<void> =>
     Effect.asVoid,
   );
 
-const whileParentAlive =
+export const whileParentAlive =
   (parentPid: Option.Option<string>) =>
   <Value, Failure, Requirements>(
     program: Effect.Effect<Value, Failure, Requirements>,
@@ -30,5 +30,3 @@ const whileParentAlive =
         Option.getOrElse(() => Effect.never),
       ),
     );
-
-export { whileParentAlive };

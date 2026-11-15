@@ -16,7 +16,7 @@ import { elementsOf, floatsOf, follow, instanceOf, intOf, resolve } from "./blen
 import type { Instance } from "./blend-structs.ts";
 import { uvsOf } from "./blend-uv.ts";
 
-interface MeshData {
+export interface MeshData {
   readonly positions: Float32Array;
   readonly offsets: Int32Array;
   readonly corners: Int32Array;
@@ -170,7 +170,7 @@ const slotsOf = (mesh: Instance): readonly Option.Option<Instance>[] =>
     Option.getOrElse((): readonly Option.Option<Instance>[] => []),
   );
 
-const readMesh = (mesh: Instance): Option.Option<MeshData> =>
+export const readMesh = (mesh: Instance): Option.Option<MeshData> =>
   Option.gen(function* meshData() {
     const counts = countsOf(mesh);
     if (counts.vertices <= NONE || counts.faces <= NONE) {
@@ -187,6 +187,3 @@ const readMesh = (mesh: Instance): Option.Option<MeshData> =>
     const slots = slotsOf(mesh);
     return { positions, offsets, corners, materials, uvs, slots, edges: markedEdges(mesh) };
   });
-
-export { readMesh };
-export type { MeshData };

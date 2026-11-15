@@ -1,14 +1,12 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { usePackage } from "#/pages/home/api/queries";
-import { useSelectedPackage } from "#/pages/home/model";
+import { usePackage, useSelectedPackage, PackageSummary } from "#/entities/asset";
+import { BoothSection } from "#/features/link-booth";
 
-import { BoothSection } from "./booth-section.tsx";
 import { PackageHeader } from "./package-header.tsx";
-import { PackageSummary } from "./package-summary.tsx";
 
-const ScopeHeader = (): ReactNode => {
+export const ScopeHeader = (): ReactNode => {
   const item = usePackage(useSelectedPackage());
   if (Option.isNone(item)) {
     return false;
@@ -25,5 +23,3 @@ const ScopeHeader = (): ReactNode => {
     </section>
   );
 };
-
-export { ScopeHeader };

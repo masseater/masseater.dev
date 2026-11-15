@@ -1,12 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 
-import { colorOf } from "#/pages/leaderboard/model/model-color";
-import type { ModelResult } from "#/pages/leaderboard/model/summary";
+import { colorOf, indexDetail } from "#/entities/benchmark";
+import type { ModelResult, ChartRow } from "#/entities/benchmark";
 
-import type { ChartRow } from "./charts/chart-row";
-import { indexDetail } from "./charts/model-detail";
-
-const rowsOf = (models: readonly ModelResult[]): readonly ChartRow[] =>
+export const rowsOf = (models: readonly ModelResult[]): readonly ChartRow[] =>
   pipe(
     models,
     Arr.map((model) => ({
@@ -18,5 +15,3 @@ const rowsOf = (models: readonly ModelResult[]): readonly ChartRow[] =>
       ratio: model.index,
     })),
   );
-
-export { rowsOf };

@@ -3,8 +3,8 @@ import type { Cause } from "effect";
 import { Array, Effect, HashMap, HashSet, Option, Path, Ref, Schema, String, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { fetchItem, itemUrl } from "#entities/booth";
-import { decodeRows } from "#shared/sql";
+import { fetchItem, itemUrl } from "#/entities/booth/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 import { Blm } from "./blm.ts";
 import type { BlmItem, BlmLibrary } from "./blm.ts";
@@ -145,7 +145,7 @@ const linkFromBlm = Effect.fn("linkFromBlm")(function* linkBlmPackages(
 });
 
 /** @internal */
-const blmLinker = Ref.make(HashSet.empty<number>()).pipe(
+export const blmLinker = Ref.make(HashSet.empty<number>()).pipe(
   Effect.map((tried) => ({
     link: Ref.get(tried).pipe(
       Effect.flatMap(linkFromBlm),
@@ -154,5 +154,3 @@ const blmLinker = Ref.make(HashSet.empty<number>()).pipe(
     linkable: linkablePaths(),
   })),
 );
-
-export { blmLinker };

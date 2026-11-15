@@ -3,7 +3,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { mosaicQuery } from "#/pages/mosaic/api/queries";
+import { mosaicQuery } from "#/entities/mosaic";
 
 import { MosaicCredit } from "./mosaic-credit";
 import { MosaicLoading } from "./mosaic-loading";
@@ -15,7 +15,7 @@ const FAILED = "モザイクを読み込めませんでした";
 
 const route = getRouteApi("/$slug");
 
-const MosaicPage = (): ReactNode => {
+export const MosaicPage = (): ReactNode => {
   const { slug } = route.useParams();
   const { seed, choice } = route.useLoaderData();
   const query = useQuery(mosaicQuery(slug));
@@ -31,5 +31,3 @@ const MosaicPage = (): ReactNode => {
     </main>
   );
 };
-
-export { MosaicPage };

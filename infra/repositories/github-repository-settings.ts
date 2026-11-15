@@ -6,7 +6,7 @@ import { Effect } from "effect";
 import { OWNER, updateRepository } from "./github-repositories.ts";
 import type { ManagedRepository, RepositorySettingsProps } from "./github-repositories.ts";
 
-type RepositorySettingsResource = Resource<
+export type RepositorySettingsResource = Resource<
   "MasseaterDev.GitHub.RepositorySettings",
   RepositorySettingsProps,
   RepositorySettingsProps
@@ -17,7 +17,7 @@ const RepositorySettings = Resource<RepositorySettingsResource>(
   { defaultRemovalPolicy: "retain" },
 );
 
-const settingsProvider = succeed(RepositorySettings, {
+export const settingsProvider = succeed(RepositorySettings, {
   reconcile: Effect.fn(function* reconcile({ news }) {
     yield* updateRepository(news);
     return news;
@@ -25,7 +25,7 @@ const settingsProvider = succeed(RepositorySettings, {
   delete: () => Effect.void,
 });
 
-const settingsOf = (
+export const settingsOf = (
   repository: ManagedRepository,
 ): Effect.Effect<unknown, never, Provider<RepositorySettingsResource>> =>
   RepositorySettings(`RepositorySettings${repository.id}`, {
@@ -35,6 +35,3 @@ const settingsOf = (
     secretScanning: !repository.private,
     actionsCreatePullRequests: true,
   });
-
-export { settingsOf, settingsProvider };
-export type { RepositorySettingsResource };

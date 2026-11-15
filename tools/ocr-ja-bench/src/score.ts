@@ -9,7 +9,7 @@ const HARMONIC = 2;
 
 const BMP_PRIVATE_USE = 57_344;
 
-interface Pair {
+export interface Pair {
   readonly answer: string;
   readonly truth: string;
 }
@@ -30,7 +30,7 @@ const codesFor = (characters: readonly string[]): Readonly<Record<string, string
     ),
   );
 
-const accuracyOf = ({ answer, truth }: Pair): number => {
+export const accuracyOf = ({ answer, truth }: Pair): number => {
   const expected = charactersOf(truth);
   if (expected.length === NOTHING) {
     return PERFECT;
@@ -63,7 +63,7 @@ const overlapOf = (actual: Counts, expected: Counts): number => {
   return matched;
 };
 
-const charF1Of = ({ answer, truth }: Pair): number => {
+export const charF1Of = ({ answer, truth }: Pair): number => {
   const expected = charactersOf(truth);
   const actual = charactersOf(answer);
   const matched = overlapOf(countsOf(actual), countsOf(expected));
@@ -74,6 +74,3 @@ const charF1Of = ({ answer, truth }: Pair): number => {
   const recall = matched / expected.length;
   return (HARMONIC * precision * recall) / (precision + recall);
 };
-
-export { accuracyOf, charF1Of };
-export type { Pair };

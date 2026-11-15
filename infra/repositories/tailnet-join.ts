@@ -13,7 +13,7 @@ const CERTIFICATE_LIFETIME_SECONDS = 3600;
 const MS_PER_SECOND = 1000;
 const NODE_OPTIONS = "ephemeral=true&preauthorized=true";
 
-type TailnetEnv = AppStoreEnv &
+export type TailnetEnv = AppStoreEnv &
   Readonly<{
     TAILNET_CLIENT_ID: string;
     TAILNET_AUDIENCE: string;
@@ -28,7 +28,7 @@ const Joined = Schema.Struct({
   expiresAt: Schema.String,
 });
 
-type JoinedTailnet = typeof Joined.Type;
+export type JoinedTailnet = typeof Joined.Type;
 
 const idToken = (env: TailnetEnv): Effect.Effect<string, SealFailed> =>
   Effect.gen(function* sign() {
@@ -46,7 +46,7 @@ const idToken = (env: TailnetEnv): Effect.Effect<string, SealFailed> =>
     );
   });
 
-const joinTailnet =
+export const joinTailnet =
   (publicKey: unknown) =>
   (
     env: TailnetEnv,
@@ -76,6 +76,3 @@ const joinTailnet =
         ),
       };
     });
-
-export { joinTailnet };
-export type { JoinedTailnet, TailnetEnv };

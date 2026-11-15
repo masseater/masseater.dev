@@ -1,7 +1,7 @@
 import { RequestFailed, failed } from "@masseater.dev/local-server";
 import { Array, Effect, pipe } from "effect";
 
-const firstOr =
+export const firstOr =
   (message: string) =>
   <Value, Failure, Requirements>(
     effect: Effect.Effect<readonly Value[], Failure, Requirements>,
@@ -15,5 +15,3 @@ const firstOr =
         ),
       ),
     );
-
-export { firstOr };

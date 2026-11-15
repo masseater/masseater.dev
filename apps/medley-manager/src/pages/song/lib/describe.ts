@@ -1,6 +1,6 @@
 import { Array, Option, pipe } from "effect";
 
-import { formatTime } from "#/entities/catalog";
+import { formatTime } from "#/entities/video";
 
 type UsedAt = Readonly<{ position: number; startSec: number | null }>;
 
@@ -10,14 +10,14 @@ const usedAt = (part: UsedAt): string =>
     onSome: formatTime,
   });
 
-const describeDirect = ({ parts }: Readonly<{ parts: readonly UsedAt[] }>): string =>
+export const describeDirect = ({ parts }: Readonly<{ parts: readonly UsedAt[] }>): string =>
   pipe(
     parts,
     Array.map((part) => usedAt(part)),
     Array.join("、"),
   );
 
-const describeIndirect = ({
+export const describeIndirect = ({
   via,
 }: Readonly<{ via: readonly Readonly<{ title: string }>[] }>): string =>
   `${pipe(
@@ -25,5 +25,3 @@ const describeIndirect = ({
     Array.map((source) => source.title),
     Array.join("、"),
   )} 経由`;
-
-export { describeDirect, describeIndirect };

@@ -2,13 +2,13 @@ import { FlaskConical, Tag } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { SITE_TITLE } from "#/shared/config";
+import { MethodLink } from "#/shared/ui/method-link";
+import { NoteList } from "#/shared/ui/note-list";
+import type { Note } from "#/shared/ui/note-list";
+import { PageShell } from "#/widgets/page-shell";
 
 import { EnglishSection } from "./english-section";
 import { IndexSection } from "./index-section";
-import { MethodLink } from "./method-link";
-import { NoteList } from "./note-list";
-import type { Note } from "./note-list";
-import { PageShell } from "./page-shell";
 import { TaskLinks } from "./task-links";
 
 const NOTES: readonly Note[] = [
@@ -27,12 +27,10 @@ const HEADER = (
   </>
 );
 
-const LeaderboardPage = (): ReactNode => (
+export const LeaderboardPage = (): ReactNode => (
   <PageShell header={HEADER}>
     <TaskLinks />
     <IndexSection />
     <EnglishSection />
   </PageShell>
 );
-
-export { LeaderboardPage };

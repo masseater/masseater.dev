@@ -1,8 +1,8 @@
 import { Array, Effect, Option, pipe } from "effect";
 
-import { kindOf, listedEntry } from "#entities/package";
-import { readPackage } from "#shared/unitypackage";
-import type { PackageEntry } from "#shared/unitypackage";
+import { kindOf, listedEntry } from "#/entities/package/index.ts";
+import { readPackage } from "#/shared/unitypackage/index.ts";
+import type { PackageEntry } from "#/shared/unitypackage/index.ts";
 
 import { plainAsset } from "./insert-assets.ts";
 import type { AssetInput } from "./insert-assets.ts";
@@ -19,7 +19,7 @@ const packagedAsset = ({ guid, pathname, preview, references }: PackageEntry): A
 });
 
 /** @internal */
-const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(
+export const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(
   file: PackageFile,
   linkable: boolean,
 ) {
@@ -39,7 +39,7 @@ const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(
 });
 
 /** @internal */
-const indexBundle = Effect.fn("indexBundle")(function* indexLooseFiles(
+export const indexBundle = Effect.fn("indexBundle")(function* indexLooseFiles(
   bundle: Bundle,
   linkable: boolean,
 ) {
@@ -56,5 +56,3 @@ const indexBundle = Effect.fn("indexBundle")(function* indexLooseFiles(
     linkable,
   });
 });
-
-export { indexBundle, indexPackage };

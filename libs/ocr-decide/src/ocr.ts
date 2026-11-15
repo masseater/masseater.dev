@@ -4,11 +4,11 @@ import type { WorkerOptions } from "tesseract.js";
 import type { Fragment } from "./fragment.ts";
 import { OcrError } from "./ocr-error.ts";
 
-interface OcrRequest {
+export interface OcrRequest {
   readonly image: Uint8Array;
 }
 
-interface OcrOptions {
+export interface OcrOptions {
   readonly languages?: readonly string[];
   readonly worker?: Partial<WorkerOptions>;
 }
@@ -24,7 +24,7 @@ const SPACE_BETWEEN_CJK =
 
 const failure = (cause: unknown): OcrError => OcrError.make({ reason: String(cause) });
 
-const readFragments = ({
+export const readFragments = ({
   image,
   languages = DEFAULT_LANGUAGES,
   worker = {},
@@ -57,6 +57,3 @@ const readFragments = ({
     ),
     Effect.withSpan("ocr-decide.ocr"),
   );
-
-export { readFragments };
-export type { OcrOptions, OcrRequest };

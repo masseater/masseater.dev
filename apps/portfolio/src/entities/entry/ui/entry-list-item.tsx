@@ -8,7 +8,7 @@ import type { Entry } from "#/entities/entry/model/entry";
 import { EntryListFooter } from "./entry-list-footer";
 import { entryTitleTransition } from "./entry-transition";
 
-const EntryListItem = ({
+export const EntryListItem = ({
   entry,
   stars,
 }: Readonly<{ entry: Entry; stars: Option.Option<number> }>): ReactNode => (
@@ -33,5 +33,3 @@ const EntryListItem = ({
     </Link>
   </li>
 );
-
-export { EntryListItem };

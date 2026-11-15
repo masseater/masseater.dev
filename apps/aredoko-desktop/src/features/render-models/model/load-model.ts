@@ -26,7 +26,7 @@ const settled = Effect.fn("settled")(function* settled(manager: LoadingManager) 
   return done;
 });
 
-const loadModel = Effect.fn("loadModel")(function* loadModel(source: ModelSource) {
+export const loadModel = Effect.fn("loadModel")(function* loadModel(source: ModelSource) {
   const manager = yield* managerFor(source.files);
   const parse = yield* pipe(
     Record.get(PARSERS, extensionOf(source.pathname)),
@@ -39,5 +39,3 @@ const loadModel = Effect.fn("loadModel")(function* loadModel(source: ModelSource
   ignoreVertexColorsOnTextures(object);
   return object;
 });
-
-export { loadModel };

@@ -35,7 +35,7 @@ const fetchJson =
       Effect.withSpan("credits.fetch", { attributes: { path } }),
     );
 
-const creditedTiles = ({ slug, seed }: Request): Promise<TileList> =>
+export const creditedTiles = ({ slug, seed }: Request): Promise<TileList> =>
   runtime.runPromise(
     Effect.gen(function* credited() {
       const mosaic = yield* fetchJson(PublishedMosaic)(manifestPath(slug));
@@ -55,5 +55,3 @@ const creditedTiles = ({ slug, seed }: Request): Promise<TileList> =>
       return assignedTiles({ choice, lists });
     }).pipe(Effect.orElseSucceed(() => NO_TILES)),
   );
-
-export { creditedTiles };

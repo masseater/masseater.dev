@@ -1,7 +1,16 @@
-import { Effect, Option, Array as Arr, Record as Rec, pipe, Function as Fn } from "effect";
+import {
+  Effect,
+  FileSystem,
+  Option,
+  Array as Arr,
+  Record as Rec,
+  pipe,
+  Function as Fn,
+} from "effect";
+import type { PlatformError } from "effect";
 
 import type { CommandEffect } from "./command.ts";
-import { lintCommitMessageFile } from "./commitlint.ts";
+import { lintCommitMessages } from "./commitlint.ts";
 import { loadSection } from "./config.ts";
 import { checksFailed } from "./errors.ts";
 import { finish } from "./output.ts";
@@ -15,6 +24,7 @@ const USAGE = pipe(
     "Usage: vpa                       run every check configured in vite.config.ts",
     "       vpa --staged              scan the staged changes for secrets (pre-commit)",
     "       vpa --commit-msg <file>   lint a commit message (commit-msg)",
+    "       vpa --message <text>      lint a message",
   ],
   Arr.join("\n"),
 );
@@ -27,25 +37,40 @@ const stagedSecrets = (root: string): CommandEffect =>
     Effect.flatMap(finish),
   );
 
-const commitMessage = (root: string, rest: readonly string[]): CommandEffect =>
-  pipe(
-    Arr.head(rest),
-    Option.match({
-      onNone: () => usage,
-      onSome: (file) =>
-        loadSection(root, "commitlint").pipe(
-          Effect.flatMap((config) => lintCommitMessageFile(config, root, file)),
-          Effect.flatMap(finish),
-        ),
-    }),
-  );
+const lintMessage =
+  (
+    toMessage: (
+      argument: string,
+    ) => Effect.Effect<string, PlatformError.PlatformError, FileSystem.FileSystem>,
+  ) =>
+  (root: string, rest: readonly string[]): CommandEffect =>
+    pipe(
+      Arr.head(rest),
+      Option.match({
+        onNone: () => usage,
+        onSome: (argument) =>
+          Effect.gen(function* lintGiven() {
+            const message = yield* toMessage(argument);
+            const config = yield* loadSection(root, "commitlint");
+            const report = yield* lintCommitMessages(config, root, [message]);
+            return yield* finish(report);
+          }),
+      }),
+    );
+
+const readMessage = (
+  file: string,
+): Effect.Effect<string, PlatformError.PlatformError, FileSystem.FileSystem> =>
+  FileSystem.FileSystem.pipe(Effect.flatMap((fs) => fs.readFileString(file)));
 
 const HOOKS: Readonly<Record<string, (root: string, rest: readonly string[]) => CommandEffect>> = {
   "--staged": stagedSecrets,
-  "--commit-msg": commitMessage,
+  "--commit-msg": lintMessage(readMessage),
+  "--message": lintMessage(Effect.succeed),
 };
 
-const runVpa: {
+/** @internal */
+export const runVpa: {
   (args: readonly string[]): (root: string) => CommandEffect;
   (root: string, args: readonly string[]): CommandEffect;
 } = Fn.dual(DATA_FIRST_ARITY, (root: string, args: readonly string[]): CommandEffect =>
@@ -61,6 +86,3 @@ const runVpa: {
     }),
   ),
 );
-
-/** @internal */
-export { runVpa };

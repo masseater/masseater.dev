@@ -19,12 +19,12 @@ const GENERATOR_LABEL = "Gemini 3.5 Flash Lite";
 
 const ONE_AT_A_TIME = { concurrency: 1 } as const;
 
-const labelOf = (model: string): string =>
+export const labelOf = (model: string): string =>
   Arr.findFirst(DECISION_MODELS, ({ id }) => id === model).pipe(
     Option.match({ onNone: () => GENERATOR_LABEL, onSome: ({ label }) => label }),
   );
 
-interface Outcome {
+export interface Outcome {
   readonly id: string;
   readonly method: Method;
   readonly model: string;
@@ -129,7 +129,7 @@ const lineCount = (ocr: Attempt<readonly Fragment[]>): string => {
   return `${ocr.value.length} lines`;
 };
 
-const measureDocument = Effect.fn("ocr-measure.document")(function* measureDocument(
+export const measureDocument = Effect.fn("ocr-measure.document")(function* measureDocument(
   document: Document,
   image: Uint8Array,
 ) {
@@ -144,6 +144,3 @@ const measureDocument = Effect.fn("ocr-measure.document")(function* measureDocum
   yield* Effect.logInfo(`${document.id}: ${lineCount(prepared.ocr.attempt)}`);
   return [...decisions.flat(), generated];
 });
-
-export { labelOf, measureDocument };
-export type { Outcome };

@@ -6,7 +6,8 @@ import { configMissing } from "./errors.ts";
 import type { VpToolsError } from "./errors.ts";
 import type { ToolSection, ToolSections } from "./types.ts";
 
-type FileServices = FileSystem.FileSystem | Path.Path;
+/** @internal */
+export type FileServices = FileSystem.FileSystem | Path.Path;
 
 const CONFIG_FILES = ["vite.config.ts", "vite.config.mts", "vite.config.js", "vite.config.mjs"];
 
@@ -24,7 +25,10 @@ const findConfigFile = (root: string): Effect.Effect<string, VpToolsError, FileS
     );
   });
 
-const loadViteConfig = (root: string): Effect.Effect<ToolSections, VpToolsError, FileServices> =>
+/** @internal */
+export const loadViteConfig = (
+  root: string,
+): Effect.Effect<ToolSections, VpToolsError, FileServices> =>
   findConfigFile(root).pipe(
     Effect.flatMap((file) => attempt("vite.config")(() => resolveConfigFromFile(file))),
   );
@@ -38,7 +42,8 @@ const requireSection =
 
 const DATA_FIRST_ARITY = 2;
 
-const loadSection: {
+/** @internal */
+export const loadSection: {
   <Key extends ToolSection>(
     key: Key,
   ): (root: string) => Effect.Effect<NonNullable<ToolSections[Key]>, VpToolsError, FileServices>;
@@ -54,8 +59,3 @@ const loadSection: {
   ): Effect.Effect<NonNullable<ToolSections[Key]>, VpToolsError, FileServices> =>
     loadViteConfig(root).pipe(Effect.flatMap(requireSection(key))),
 );
-
-/** @internal */
-export { loadSection, loadViteConfig };
-/** @internal */
-export type { FileServices };

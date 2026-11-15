@@ -2,7 +2,7 @@ import { Option } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { KindBadge } from "#/entities/catalog";
+import { KindBadge } from "#/entities/video";
 import { useVideo } from "#/pages/video/api/use-video";
 import { formatDate } from "#/shared/lib/date";
 import { Facts } from "#/shared/ui/facts";
@@ -11,7 +11,7 @@ import { Note } from "#/shared/ui/note";
 import { VideoPlayer } from "./video-player";
 import { WatchLink } from "./watch-link";
 
-const VideoHeader = (): ReactNode => {
+export const VideoHeader = (): ReactNode => {
   const video = useVideo();
   const facts = useMemo(
     () => [video.uploader, Option.getOrNull(formatDate(video.publishedAt)), video.videoId],
@@ -33,5 +33,3 @@ const VideoHeader = (): ReactNode => {
     </header>
   );
 };
-
-export { VideoHeader };

@@ -28,7 +28,7 @@ const expand = (
   });
 };
 
-const closure = ({
+export const closure = ({
   roots,
   references,
 }: {
@@ -36,7 +36,7 @@ const closure = ({
   readonly references: HashMap.HashMap<string, readonly string[]>;
 }): HashSet.HashSet<string> => expand(references, HashSet.empty(), roots);
 
-const missingOf = ({
+export const missingOf = ({
   included,
   references,
 }: {
@@ -49,5 +49,3 @@ const missingOf = ({
     Array.filter((guid) => !HashMap.has(references, guid)),
     Array.dedupe,
   );
-
-export { closure, missingOf };

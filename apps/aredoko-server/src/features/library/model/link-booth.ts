@@ -2,8 +2,8 @@ import type { BoothItem } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { kindOf, searchableText } from "#entities/package";
-import { decodeRows } from "#shared/sql";
+import { kindOf, searchableText } from "#/entities/package/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 import { embedTexts } from "./embed-texts.ts";
 import { labelOf } from "./name.ts";
@@ -38,7 +38,7 @@ const retext = Effect.fn("retext")(function* retextAsset({ id, text }: Relabeled
 });
 
 /** @internal */
-const linkBooth = Effect.fn("linkBooth")(function* linkBoothItem({
+export const linkBooth = Effect.fn("linkBooth")(function* linkBoothItem({
   packageId,
   item,
 }: {
@@ -67,5 +67,3 @@ const linkBooth = Effect.fn("linkBooth")(function* linkBoothItem({
   );
   yield* embedTexts(Option.some(packageId));
 });
-
-export { linkBooth };

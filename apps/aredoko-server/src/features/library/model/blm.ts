@@ -14,7 +14,7 @@ import {
 } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { decodeRows } from "#shared/sql";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 const ROAMING = "APPDATA";
 const DATABASE = ["pm.booth.library-manager", "data.db"] as const;
@@ -34,19 +34,19 @@ const ItemRow = Schema.Struct({
   shop: Schema.NullOr(Schema.String),
 });
 
-interface BlmItem {
+export interface BlmItem {
   readonly folder: string;
   readonly boothId: number;
   readonly name: Option.Option<string>;
   readonly shop: Option.Option<string>;
 }
 
-interface BlmLibrary {
+export interface BlmLibrary {
   readonly itemDirectory: string;
   readonly items: readonly BlmItem[];
 }
 
-class Blm extends Context.Service<
+export class Blm extends Context.Service<
   Blm,
   { readonly library: Effect.Effect<Option.Option<BlmLibrary>> }
 >()("aredoko-server/features/library/model/blm") {}
@@ -135,7 +135,7 @@ const reading = Layer.effect(
 );
 
 /** @internal */
-const blmLayer = Layer.unwrap(
+export const blmLayer = Layer.unwrap(
   Effect.gen(function* blm() {
     const file = yield* databasePath;
     return pipe(
@@ -151,6 +151,3 @@ const blmLayer = Layer.unwrap(
     );
   }),
 );
-
-export { Blm, blmLayer };
-export type { BlmItem, BlmLibrary };

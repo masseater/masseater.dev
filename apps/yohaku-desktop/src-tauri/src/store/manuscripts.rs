@@ -3,7 +3,7 @@ use rusqlite::{Connection, Row, params};
 use crate::model::{Manuscript, Paragraph, Title, TitleAuthor};
 use crate::text::utf16_slice;
 
-use super::{fresh_id, now};
+use super::{fresh_id, now, revisions};
 
 const EXCERPT_LENGTH: usize = 80;
 
@@ -103,11 +103,13 @@ pub fn save(
     id: &str,
     paragraphs: &[Paragraph],
 ) -> rusqlite::Result<()> {
+    let at = now();
     let transaction = connection.transaction()?;
+    revisions::keep(&transaction, id, at, revisions::Keep::Periodically)?;
     insert_paragraphs(&transaction, id, paragraphs)?;
     transaction.execute(
         "update manuscripts set updated_at = ?1 where id = ?2",
-        params![now(), id],
+        params![at, id],
     )?;
     transaction.commit()
 }

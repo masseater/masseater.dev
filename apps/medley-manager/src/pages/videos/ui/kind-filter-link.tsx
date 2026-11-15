@@ -2,12 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { VIDEO_KIND_LABEL } from "#/entities/catalog";
-import type { VideoKind } from "#/entities/catalog";
+import { VIDEO_KIND_LABEL } from "#/entities/video";
+import type { VideoKind } from "#/entities/video";
 import { variantOf } from "#/pages/videos/lib/variant";
 import { Button } from "#/shared/ui/button";
 
-const KindFilterLink = ({
+export const KindFilterLink = ({
   kind,
   selected,
 }: Readonly<{ kind: VideoKind; selected: boolean }>): ReactNode => {
@@ -20,5 +20,3 @@ const KindFilterLink = ({
     </Button>
   );
 };
-
-export { KindFilterLink };

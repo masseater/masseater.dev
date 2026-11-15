@@ -6,7 +6,7 @@ const USER_AGENT = "nimado/0.0 (+https://masseater.dev/nimado/)";
 const RETRIES = 3;
 
 /** @internal */
-const getJson = Effect.fn("http.get")(function* fetchJson<Codec extends Schema.Constraint>({
+export const getJson = Effect.fn("http.get")(function* fetchJson<Codec extends Schema.Constraint>({
   codec,
   url,
   params,
@@ -32,5 +32,3 @@ const getJson = Effect.fn("http.get")(function* fetchJson<Codec extends Schema.C
     );
   return yield* HttpClientResponse.schemaBodyJson(codec)(response);
 });
-
-export { getJson };

@@ -5,15 +5,13 @@ on:
     branches: [main]
     paths:
       - "apps/yohaku-desktop/**"
+      - "libs/component-release/**"
+      - "!**/*.md"
       - ".github/release-please/yohaku-*.json"
       - ".github/workflows/yohaku-desktop.yml"
   workflow_dispatch:
 
 permissions: {}
-
-concurrency:
-  group: yohaku-desktop
-  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
@@ -23,7 +21,7 @@ env:
 
 jobs:
   tag:
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -52,6 +50,9 @@ jobs:
             platform: macos-arm64
             bundles: app,dmg
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: yohaku-installer-${{ matrix.platform }}
+      cancel-in-progress: true
     environment: yohaku-release
     permissions:
       contents: read
@@ -88,7 +89,7 @@ jobs:
 
   release:
     needs: [tag, installer]
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: yohaku-release
     permissions:
@@ -136,6 +137,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@93ede91739120dbe2102f1a4a5dbcfcb67641f36
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
         with:
           github-token: ${{ github.token }}

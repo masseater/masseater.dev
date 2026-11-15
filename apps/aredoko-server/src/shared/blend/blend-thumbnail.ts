@@ -3,7 +3,7 @@ import { Option, pipe } from "effect";
 import { blockAt, layoutOf, viewOf } from "./blend-blocks.ts";
 import type { Block, Layout } from "./blend-blocks.ts";
 
-interface Thumbnail {
+export interface Thumbnail {
   readonly width: number;
   readonly height: number;
   readonly rgba: Uint8Array;
@@ -52,11 +52,8 @@ const findThumbnail = (
     }),
   );
 
-const blendThumbnail = (bytes: Uint8Array): Option.Option<Thumbnail> =>
+export const blendThumbnail = (bytes: Uint8Array): Option.Option<Thumbnail> =>
   pipe(
     layoutOf(bytes),
     Option.flatMap((layout) => findThumbnail(bytes, layout.start, layout)),
   );
-
-export { blendThumbnail };
-export type { Thumbnail };

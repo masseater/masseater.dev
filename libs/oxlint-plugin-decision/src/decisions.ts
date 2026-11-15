@@ -46,7 +46,8 @@ const reasonFor = ({ _tag, message, http }: FailureReason): string =>
     Option.getOrElse(() => `network: ${message}`),
   );
 
-const send = Effect.fn("send")(function* send(
+/** @internal */
+export const send = Effect.fn("send")(function* send(
   endpoint: string,
   decisionsRequest: WireRequest,
   { env }: Pick<DecideInput, "env">,
@@ -70,6 +71,3 @@ const send = Effect.fn("send")(function* send(
     .pipe(Effect.mapError(({ reason }) => reasonFor(reason)));
   return body;
 });
-
-/** @internal */
-export { send };

@@ -1,15 +1,15 @@
 import { Array as Arr, String as Str, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { COPY } from "#/pages/inspect/model/copy";
-import type { Trace } from "#/pages/inspect/model/trace";
+import type { Trace } from "#/entities/inspection";
+import { COPY } from "#/shared/config";
 
 import { Legend } from "./legend";
 import { TraceRow } from "./trace-row";
 
 const MIN_SPAN = 1;
 
-const TraceView = ({ text, trace }: Readonly<{ text: string; trace: Trace }>): ReactNode => (
+export const TraceView = ({ text, trace }: Readonly<{ text: string; trace: Trace }>): ReactNode => (
   <div className="flex flex-col gap-2">
     <h2 className="text-lg font-semibold">{COPY.trace}</h2>
     <Legend />
@@ -28,5 +28,3 @@ const TraceView = ({ text, trace }: Readonly<{ text: string; trace: Trace }>): R
     </ol>
   </div>
 );
-
-export { TraceView };

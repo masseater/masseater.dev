@@ -28,7 +28,8 @@ const idToken = Effect.fn("broker.idToken")(function* idToken() {
   return value;
 });
 
-const githubToken = Effect.fn("broker.githubToken")(function* githubToken() {
+/** @internal */
+export const githubToken = Effect.fn("broker.githubToken")(function* githubToken() {
   const oidc = yield* idToken();
   const client = yield* HttpClient.HttpClient;
   const request = HttpClientRequest.bearerToken(HttpClientRequest.post(BROKER), oidc);
@@ -43,6 +44,3 @@ const githubToken = Effect.fn("broker.githubToken")(function* githubToken() {
   }
   return token;
 });
-
-/** @internal */
-export { githubToken };

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const CascadeLabel = ({
+export const CascadeLabel = ({
   label,
   detail,
 }: Readonly<{ label: string; detail: string }>): ReactNode => (
@@ -9,5 +9,3 @@ const CascadeLabel = ({
     <span className="text-muted-foreground truncate text-xs empty:hidden">{detail}</span>
   </span>
 );
-
-export { CascadeLabel };

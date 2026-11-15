@@ -1,6 +1,6 @@
 import { PRODUCT_NAME } from "@r_masseater/injection-bisect";
 
-const COPY = {
+export const COPY = {
   title: "いちばん確かな注入対策は、AI に渡さないこと",
   demo: "デモで試す",
   npm: "npm で入れる",
@@ -32,7 +32,7 @@ const clean =
   },
 } as const;
 
-const SAMPLE = [
+export const SAMPLE = [
   { text: "このイヤホンは通勤用に買いました。", kind: "kept" },
   { text: "低音がしっかりしていて、通話もクリアです。", kind: "kept" },
   {
@@ -41,5 +41,3 @@ const SAMPLE = [
   },
   { text: "バッテリーは公称どおり8時間もちました。", kind: "kept" },
 ] as const;
-
-export { COPY, SAMPLE };

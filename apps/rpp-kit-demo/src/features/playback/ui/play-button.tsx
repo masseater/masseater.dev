@@ -1,0 +1,25 @@
+import type { ReactNode } from "react";
+
+import { usePlayback, usePlaybackControls } from "#/features/playback/model/playback";
+import { transport } from "#/shared/config";
+
+const labelOf = (playing: boolean): string => {
+  if (playing) {
+    return transport.stop;
+  }
+  return transport.play;
+};
+
+export const PlayButton = (): ReactNode => {
+  const playback = usePlayback();
+  const { toggle } = usePlaybackControls();
+  return (
+    <button
+      className="bg-primary text-primary-foreground rounded-lg px-4 py-2 font-semibold"
+      onClick={toggle}
+      type="button"
+    >
+      {labelOf(playback.status === "playing")}
+    </button>
+  );
+};

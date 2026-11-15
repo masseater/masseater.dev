@@ -6,9 +6,7 @@ import { wiki } from "#/shared/wiki";
 
 const route = getRouteApi("/sloppedia/");
 
-const MainPage = (): ReactNode => {
+export const MainPage = (): ReactNode => {
   const { entries } = route.useLoaderData();
   return <MainView articles={entries} config={wiki} />;
 };
-
-export { MainPage };

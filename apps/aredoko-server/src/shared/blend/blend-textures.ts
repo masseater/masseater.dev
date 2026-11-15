@@ -1,6 +1,6 @@
 import { Array, Effect, FileSystem, HashMap, Option, Path, String, pipe } from "effect";
 
-import { normalizePng } from "#shared/preview";
+import { normalizePng } from "#/shared/preview/index.ts";
 
 import type { ImageSource } from "./blend-material.ts";
 import type { Part } from "./blend-scene.ts";
@@ -55,7 +55,7 @@ const pngOf = (
   );
 
 /** @internal */
-const texturesOf = Effect.fn("texturesOf")(function* texturesOf(
+export const texturesOf = Effect.fn("texturesOf")(function* texturesOf(
   blend: string,
   parts: readonly Part[],
 ) {
@@ -73,5 +73,3 @@ const texturesOf = Effect.fn("texturesOf")(function* texturesOf(
   );
   return HashMap.fromIterable(Array.getSomes(loaded));
 });
-
-export { texturesOf };

@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { PersonLink } from "#/entities/catalog";
+import { PersonLink } from "#/entities/person";
 import { peopleQuery } from "#/pages/home/api/loader";
 import { RANKING_LIMIT, rankOf } from "#/pages/home/lib/rank";
 
@@ -10,7 +10,7 @@ import { RankingItem } from "./ranking-item";
 
 const creditsLabel = (count: number): string => `${count.toString()} パート`;
 
-const PeopleRankingList = (): ReactNode => {
+export const PeopleRankingList = (): ReactNode => {
   const { data: people } = useSuspenseQuery(peopleQuery);
   return (
     <ol className="flex flex-col divide-y">
@@ -30,5 +30,3 @@ const PeopleRankingList = (): ReactNode => {
     </ol>
   );
 };
-
-export { PeopleRankingList };

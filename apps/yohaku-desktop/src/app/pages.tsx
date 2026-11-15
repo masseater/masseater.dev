@@ -5,7 +5,7 @@ import { SourcesPage } from "#/pages/sources";
 import { WritePage } from "#/pages/write";
 import { useScreen } from "#/shared/model";
 
-const Pages = (): ReactNode => {
+export const Pages = (): ReactNode => {
   const [{ page }] = useScreen();
   if (page === "manuscripts") {
     return <ManuscriptsPage />;
@@ -15,5 +15,3 @@ const Pages = (): ReactNode => {
   }
   return <WritePage />;
 };
-
-export { Pages };

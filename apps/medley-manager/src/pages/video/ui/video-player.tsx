@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { VideoThumbnail, embedUrl } from "#/entities/catalog";
+import { VideoThumbnail, embedUrl } from "#/entities/video";
 
 type Playable = Readonly<{
   title: string;
@@ -10,7 +10,7 @@ type Playable = Readonly<{
   thumbnailUrl: string | null;
 }>;
 
-const VideoPlayer = ({ video }: Readonly<{ video: Playable }>): ReactNode =>
+export const VideoPlayer = ({ video }: Readonly<{ video: Playable }>): ReactNode =>
   Option.match(embedUrl(video), {
     onNone: () => <VideoThumbnail src={video.thumbnailUrl} />,
     onSome: (src) => (
@@ -24,5 +24,3 @@ const VideoPlayer = ({ video }: Readonly<{ video: Playable }>): ReactNode =>
       />
     ),
   });
-
-export { VideoPlayer };

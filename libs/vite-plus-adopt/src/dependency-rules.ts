@@ -193,7 +193,7 @@ const comparedDependencies = (
   );
 };
 
-const checkDependencies: {
+export const checkDependencies: {
   (dependencies: readonly Dependency[]): (rules: DependencyRules) => readonly string[];
   (rules: DependencyRules, dependencies: readonly Dependency[]): readonly string[];
 } = Fn.dual(
@@ -204,5 +204,3 @@ const checkDependencies: {
     ...versionProblems(rules, comparedDependencies(rules, dependencies)),
   ],
 );
-
-export { checkDependencies };

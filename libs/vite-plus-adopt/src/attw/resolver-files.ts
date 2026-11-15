@@ -112,7 +112,7 @@ const attemptsFor = (candidate: string, original: string): readonly ExtensionAtt
 
 const NONE = 0;
 
-const tryFile: {
+export const tryFile: {
   (
     onlyRecordFailures: boolean,
     state: ResolutionState,
@@ -198,7 +198,7 @@ const resolveBySwappingExtensionWithTrace = (
   );
 };
 
-const loadModuleFromFile: {
+export const loadModuleFromFile: {
   (state: ResolutionState): (request: CandidateRequest) => Option.Option<PathAndExtension>;
   (request: CandidateRequest, state: ResolutionState): Option.Option<PathAndExtension>;
 } = Fn.dual(
@@ -213,7 +213,7 @@ const loadModuleFromFile: {
     ),
 );
 
-const loadFileNameFromPackageJsonField: {
+export const loadFileNameFromPackageJsonField: {
   (state: ResolutionState): (request: CandidateRequest) => Option.Option<PathAndExtension>;
   (request: CandidateRequest, state: ResolutionState): Option.Option<PathAndExtension>;
 } = Fn.dual(
@@ -232,5 +232,3 @@ const loadFileNameFromPackageJsonField: {
     );
   },
 );
-
-export { loadFileNameFromPackageJsonField, loadModuleFromFile, tryFile };

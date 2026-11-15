@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { COPY } from "#/pages/inspect/model/copy";
-import type { Tone } from "#/pages/inspect/model/overlay";
+import type { Tone } from "#/entities/inspection";
+import { COPY } from "#/shared/config";
 
 import { ANSWER_CLASS, TONE_CLASS } from "./tone";
 
@@ -13,7 +13,7 @@ const ITEMS: readonly (readonly [Tone, string])[] = [
   ["injection", COPY.regions],
 ];
 
-const Legend = (): ReactNode => (
+export const Legend = (): ReactNode => (
   <ul className="text-muted-foreground flex flex-wrap gap-4 text-xs">
     {pipe(
       ITEMS,
@@ -30,5 +30,3 @@ const Legend = (): ReactNode => (
     </li>
   </ul>
 );
-
-export { Legend };

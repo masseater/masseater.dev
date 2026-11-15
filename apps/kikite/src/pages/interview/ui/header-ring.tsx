@@ -1,9 +1,6 @@
 import type { ReactNode } from "react";
 
-import { useAsked } from "#/pages/interview/model/hooks";
+import { useAsked } from "#/entities/interview";
+import { MicButton } from "#/features/voice-input";
 
-import { MicButton } from "./mic-button.tsx";
-
-const HeaderRing = (): ReactNode => useAsked() && <MicButton size="sm" />;
-
-export { HeaderRing };
+export const HeaderRing = (): ReactNode => useAsked() && <MicButton size="sm" />;

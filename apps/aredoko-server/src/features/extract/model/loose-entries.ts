@@ -1,9 +1,9 @@
 import { Array, Effect, FileSystem, Path, Schema, String, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { bundleFolder, companionsOf, kindOf, partsOf } from "#entities/package";
-import { decodeRows } from "#shared/sql";
-import type { LooseFile } from "#shared/unitypackage";
+import { bundleFolder, companionsOf, kindOf, partsOf } from "#/entities/package/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
+import type { LooseFile } from "#/shared/unitypackage/index.ts";
 
 const UNITY_ROOT = "Assets/aredoko";
 const GUID_LENGTH = 32;
@@ -69,7 +69,9 @@ const filesOf = Effect.fn("filesOf")(function* filesOfLoose(loose: Loose) {
 });
 
 /** @internal */
-const looseEntries = Effect.fn("looseEntries")(function* selectLoose(assetIds: readonly number[]) {
+export const looseEntries = Effect.fn("looseEntries")(function* selectLoose(
+  assetIds: readonly number[],
+) {
   const sql = yield* SqlClient.SqlClient;
   const rows = yield* Array.match(assetIds, {
     onEmpty: () => Effect.succeed<readonly Loose[]>([]),
@@ -86,5 +88,3 @@ const looseEntries = Effect.fn("looseEntries")(function* selectLoose(assetIds: r
     Array.dedupeWith((left, right) => left.pathname === right.pathname),
   );
 });
-
-export { looseEntries };

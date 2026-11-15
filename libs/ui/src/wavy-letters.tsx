@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { WavyLetter } from "./to-wavy-letters.ts";
 
-const WavyLetters = ({ letters }: Readonly<{ letters: readonly WavyLetter[] }>): ReactNode =>
+export const WavyLetters = ({ letters }: Readonly<{ letters: readonly WavyLetter[] }>): ReactNode =>
   pipe(
     letters,
     Arr.map(({ key, letter, style }) => (
@@ -12,5 +12,3 @@ const WavyLetters = ({ letters }: Readonly<{ letters: readonly WavyLetter[] }>):
       </span>
     )),
   );
-
-export { WavyLetters };

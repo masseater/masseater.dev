@@ -1,8 +1,8 @@
 import { Effect, Option } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { encodeSummary } from "#entities/package";
-import type { SummaryEntry } from "#entities/package";
+import { encodeSummary } from "#/entities/package/index.ts";
+import type { SummaryEntry } from "#/entities/package/index.ts";
 
 import { embedTexts } from "./embed-texts.ts";
 import { insertAssets } from "./insert-assets.ts";
@@ -12,7 +12,7 @@ import { boothOf, insertPackage } from "./package-row.ts";
 import type { PackageFile, StoredKind } from "./package-row.ts";
 
 /** @internal */
-const storePackage = Effect.fn("storePackage")(function* storePackageRows({
+export const storePackage = Effect.fn("storePackage")(function* storePackageRows({
   kind,
   file,
   name,
@@ -43,5 +43,3 @@ const storePackage = Effect.fn("storePackage")(function* storePackageRows({
     yield* embedTexts(Option.some(packageId));
   }
 });
-
-export { storePackage };

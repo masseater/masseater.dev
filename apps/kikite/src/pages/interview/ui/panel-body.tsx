@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 
-import { usePanel } from "#/pages/interview/model/hooks";
+import { usePanel } from "#/entities/interview";
 
 import { LeadSection } from "./lead-section.tsx";
 import { NoteSection } from "./note-section.tsx";
 import { OPEN, POINTS } from "./notes.ts";
 import { Transcript } from "./transcript.tsx";
 
-const PanelBody = (): ReactNode => {
+export const PanelBody = (): ReactNode => {
   const panel = usePanel();
   if (panel === "transcript") {
     return <Transcript />;
@@ -20,5 +20,3 @@ const PanelBody = (): ReactNode => {
   }
   return <NoteSection note={POINTS} className="min-h-0 flex-1 overflow-y-auto px-0" />;
 };
-
-export { PanelBody };

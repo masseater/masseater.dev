@@ -18,7 +18,7 @@ const DESTINATIONS: readonly Destination[] = [
   { label: "資料", page: "sources" },
 ];
 
-const ScreenNav = (): ReactNode => (
+export const ScreenNav = (): ReactNode => (
   <nav aria-label={LABEL} className="flex gap-1">
     {pipe(
       DESTINATIONS,
@@ -26,5 +26,3 @@ const ScreenNav = (): ReactNode => (
     )}
   </nav>
 );
-
-export { ScreenNav };

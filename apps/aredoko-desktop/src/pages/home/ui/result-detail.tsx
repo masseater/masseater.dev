@@ -1,11 +1,11 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { useSelectedResult } from "#/pages/home/model";
+import { useSelectedResult } from "#/entities/asset";
 
 import { ResultSummary } from "./result-summary.tsx";
 
-const ResultDetail = (): ReactNode => {
+export const ResultDetail = (): ReactNode => {
   const selected = useSelectedResult();
   if (Option.isNone(selected)) {
     return false;
@@ -16,5 +16,3 @@ const ResultDetail = (): ReactNode => {
     </aside>
   );
 };
-
-export { ResultDetail };

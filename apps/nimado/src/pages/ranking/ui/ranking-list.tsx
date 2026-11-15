@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Ranked } from "#/pages/ranking/model/ranking";
+import type { Ranked } from "#/entities/ranking";
 
 import { Pager } from "./pager";
 import { RankingTable } from "./ranking-table";
@@ -9,7 +9,7 @@ import { RankingTable } from "./ranking-table";
 const PAGE_SIZE = 100;
 const FIRST_PAGE = 1;
 
-const RankingList = ({
+export const RankingList = ({
   entries,
   page,
   youtube,
@@ -28,5 +28,3 @@ const RankingList = ({
     </>
   );
 };
-
-export { RankingList };

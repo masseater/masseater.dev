@@ -2,10 +2,9 @@ import { Match } from "effect";
 import { Target } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { gradeOf } from "#/pages/inspect/model/answer";
-import type { Grade } from "#/pages/inspect/model/answer";
-import { COPY } from "#/pages/inspect/model/copy";
-import type { Phase } from "#/pages/inspect/model/trace";
+import { gradeOf } from "#/entities/inspection";
+import type { Grade, Phase } from "#/entities/inspection";
+import { COPY } from "#/shared/config";
 
 import { Note } from "./note";
 
@@ -22,7 +21,7 @@ const textOf = (grade: Grade): string =>
     }),
   );
 
-const GradeLine = ({ text, phase }: Readonly<{ text: string; phase: Phase }>): ReactNode => {
+export const GradeLine = ({ text, phase }: Readonly<{ text: string; phase: Phase }>): ReactNode => {
   const grade = gradeOf({ text, phase });
   if (grade.status === "unknown" || grade.status === "pending") {
     return "";
@@ -33,5 +32,3 @@ const GradeLine = ({ text, phase }: Readonly<{ text: string; phase: Phase }>): R
     </Note>
   );
 };
-
-export { GradeLine };

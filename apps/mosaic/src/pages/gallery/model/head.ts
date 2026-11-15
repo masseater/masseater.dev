@@ -14,8 +14,6 @@ const galleryCard = (cover: Card): Card => ({
   url: `${SITE_ORIGIN}${BASE_PATH}/`,
 });
 
-const galleryHead = (cover: Option.Option<Card>): Readonly<{ meta: Meta[] }> => ({
+export const galleryHead = (cover: Option.Option<Card>): Readonly<{ meta: Meta[] }> => ({
   meta: optionalCardMeta(pipe(cover, Option.map(galleryCard))),
 });
-
-export { galleryHead };

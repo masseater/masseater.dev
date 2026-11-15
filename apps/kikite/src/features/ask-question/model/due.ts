@@ -1,0 +1,101 @@
+import { Array as Arr, Clock, Duration, Effect, Option, pipe } from "effect";
+
+import {
+  answerDraftAtom,
+  askingAtom,
+  entriesAtom,
+  heardAtom,
+  hearingAtom,
+  interimAtom,
+  listeningAtom,
+} from "#/entities/interview";
+import type { Asking, Entry, Heard, Listening } from "#/entities/interview";
+import { read } from "#/shared/lib/registry";
+
+export type Snapshot = Readonly<{
+  now: number;
+  heard: Heard;
+  entries: readonly Entry[];
+  interim: string;
+  typing: string;
+  hearing: boolean;
+  listening: Listening;
+  asking: Asking;
+}>;
+
+export type Due = Readonly<{ ask: boolean; summarize: boolean; nudge: number; stale: boolean }>;
+
+const SILENCE_SECONDS = 2.5;
+const SUMMARY_SECONDS = 8;
+const STALE_SECONDS = 15;
+const FIRST_NUDGE_SECONDS = 10;
+const SECOND_NUDGE_SECONDS = 30;
+const NUDGE_SECONDS = [SECOND_NUDGE_SECONDS, FIRST_NUDGE_SECONDS] as const;
+const NO_NUDGE = 0;
+
+const elapsed = (now: number, since: number, seconds: number): boolean =>
+  Duration.isGreaterThanOrEqualTo(Duration.millis(now - since), Duration.seconds(seconds));
+
+const quiet = ({ interim, typing, asking }: Snapshot): boolean =>
+  interim === "" && typing === "" && asking.status !== "drafting";
+
+const spoke = (entries: readonly Entry[]): boolean =>
+  pipe(
+    entries,
+    Arr.some((entry) => entry.kind === "speech"),
+  );
+
+const nudgeLevel = (snapshot: Snapshot): number => {
+  if (spoke(snapshot.entries) || !quiet(snapshot) || snapshot.listening.status === "paused") {
+    return NO_NUDGE;
+  }
+  return pipe(
+    NUDGE_SECONDS,
+    Arr.findFirstIndex((seconds) => elapsed(snapshot.now, snapshot.heard.lastActivityAt, seconds)),
+    Option.match({
+      onNone: () => NO_NUDGE,
+      onSome: (index) => NUDGE_SECONDS.length - index,
+    }),
+  );
+};
+
+const unanswered = ({ heard, interim, typing, hearing }: Snapshot): boolean =>
+  !heard.spokeSinceQuestion && interim === "" && typing === "" && !hearing;
+
+const staleAt = (snapshot: Snapshot): boolean =>
+  pipe(
+    Arr.last(snapshot.entries),
+    Option.filter((entry) => entry.kind === "question"),
+    Option.exists(
+      (entry) => unanswered(snapshot) && elapsed(snapshot.now, entry.at, STALE_SECONDS),
+    ),
+  );
+
+const askDue = (snapshot: Snapshot): boolean =>
+  snapshot.heard.spokeSinceQuestion &&
+  quiet(snapshot) &&
+  elapsed(snapshot.now, snapshot.heard.lastActivityAt, SILENCE_SECONDS);
+
+/** @internal */
+export const dueAt = (snapshot: Snapshot): Due => ({
+  ask: askDue(snapshot),
+  summarize:
+    askDue(snapshot) || elapsed(snapshot.now, snapshot.heard.lastSummaryAt, SUMMARY_SECONDS),
+  nudge: nudgeLevel(snapshot),
+  stale: staleAt(snapshot),
+});
+
+/** @internal */
+export const due = Effect.gen(function* due() {
+  const snapshot: Snapshot = {
+    now: yield* Clock.currentTimeMillis,
+    heard: yield* read(heardAtom),
+    entries: yield* read(entriesAtom),
+    interim: yield* read(interimAtom),
+    typing: yield* read(answerDraftAtom),
+    hearing: yield* read(hearingAtom),
+    listening: yield* read(listeningAtom),
+    asking: yield* read(askingAtom),
+  };
+  return dueAt(snapshot);
+});

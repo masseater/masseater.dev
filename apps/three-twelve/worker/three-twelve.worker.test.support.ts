@@ -1,6 +1,6 @@
 import { Array as Arr, MutableRef } from "effect";
 
-const KNOWN_TOKEN = "known.bot-token";
+export const KNOWN_TOKEN = "known.bot-token";
 
 const calls = MutableRef.make<readonly string[]>([]);
 
@@ -29,7 +29,7 @@ const player: FakePlayer = {
   },
 };
 
-const env = {
+export const env = {
   PLAYER: { getByName: (): FakePlayer => player },
   AUDIO: {
     put: (): Promise<void> => {
@@ -39,12 +39,10 @@ const env = {
   },
 };
 
-const DurableObject = Object;
+export const DurableObject = Object;
 
-const recordedCalls = (): readonly string[] => MutableRef.get(calls);
+export const recordedCalls = (): readonly string[] => MutableRef.get(calls);
 
-const resetCalls = (): void => {
+export const resetCalls = (): void => {
   MutableRef.set(calls, []);
 };
-
-export { DurableObject, KNOWN_TOKEN, env, recordedCalls, resetCalls };

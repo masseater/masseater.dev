@@ -7,6 +7,7 @@ export type {
   OnboardingStep,
   Opened,
   Release,
+  Revision,
   SpanTarget,
   Yohaku,
 } from "./yohaku.ts";

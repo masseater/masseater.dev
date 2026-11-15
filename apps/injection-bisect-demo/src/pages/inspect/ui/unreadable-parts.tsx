@@ -3,13 +3,13 @@ import { Array as Arr, pipe } from "effect";
 import { FileX } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { Phase } from "#/pages/inspect/model/trace";
+import type { Phase } from "#/entities/inspection";
 
 import { Note } from "./note";
 
 const lineOf = ({ name, reason }: Unreadable): string => `${name}　${reason}`;
 
-const UnreadableParts = ({ phase }: Readonly<{ phase: Phase }>): ReactNode => {
+export const UnreadableParts = ({ phase }: Readonly<{ phase: Phase }>): ReactNode => {
   if (phase.status !== "done") {
     return "";
   }
@@ -24,5 +24,3 @@ const UnreadableParts = ({ phase }: Readonly<{ phase: Phase }>): ReactNode => {
     )),
   );
 };
-
-export { UnreadableParts };

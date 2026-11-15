@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { nameTransition } from "./name-transition.ts";
 import { portfolio } from "./portfolio.ts";
 
-const PortfolioSectionLink = ({
+export const PortfolioSectionLink = ({
   category,
   title,
 }: Readonly<{ category: string; title: string }>): ReactNode => (
@@ -15,5 +15,3 @@ const PortfolioSectionLink = ({
     </a>
   </li>
 );
-
-export { PortfolioSectionLink };

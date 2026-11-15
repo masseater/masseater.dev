@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ResultsBody } from "./results-body";
 import { ResultsHead } from "./results-head";
 
-const ResultsTable = (): ReactNode => (
+export const ResultsTable = (): ReactNode => (
   <div className="overflow-x-auto rounded-lg border">
     <table className="w-full text-sm">
       <ResultsHead />
@@ -11,5 +11,3 @@ const ResultsTable = (): ReactNode => (
     </table>
   </div>
 );
-
-export { ResultsTable };

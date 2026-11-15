@@ -5,7 +5,7 @@ import { ROWS } from "#/pages/why/model/results";
 
 import { ResultsRow } from "./results-row";
 
-const ResultsBody = (): ReactNode => (
+export const ResultsBody = (): ReactNode => (
   <tbody>
     {pipe(
       ROWS,
@@ -13,5 +13,3 @@ const ResultsBody = (): ReactNode => (
     )}
   </tbody>
 );
-
-export { ResultsBody };

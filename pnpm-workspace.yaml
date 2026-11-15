@@ -29,15 +29,15 @@ catalog:
   codemirror: 6.0.2
   comlink: 4.4.2
   typescript-wasm: npm:typescript@7.1.0-dev.20261106.1
-  "@better-auth/drizzle-adapter": 1.7.21
-  "@better-auth/mcp": 1.7.21
-  "@better-auth/oauth-provider": 1.7.21
-  "@better-auth/passkey": 1.7.21
+  "@better-auth/drizzle-adapter": 1.7.25
+  "@better-auth/mcp": 1.7.25
+  "@better-auth/oauth-provider": 1.7.25
+  "@better-auth/passkey": 1.7.25
   "@modelcontextprotocol/client": 2.4.0
   "@modelcontextprotocol/server": 2.4.0
-  auth: 1.7.21
+  auth: 1.7.25
   "@r_masseater/oxlint-typed-rules": 0.4.0
-  "@r_masseater/vite-plus-adopt": 0.4.0
+  "@r_masseater/vite-plus-adopt": 0.4.1
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
@@ -167,7 +167,7 @@ catalog:
   "@fontsource/zen-kurenaido": ^5.3.1
   fastest-levenshtein: ^1.0.16
   "@cfworker/json-schema": ^4.1.6
-  "@openrouter/sdk": 1.5.93
+  "@openrouter/sdk": 1.5.94
   recharts: 3.10.1
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -250,7 +250,7 @@ catalogs:
     "@elysiajs/eden": 1.4.9
     "@tanstack/react-query": 5.107.1
     "@tanstack/react-start": 1.169.5
-    better-auth: 1.7.21
+    better-auth: 1.7.25
     "@alchemy.run/cloudflare": 2.0.0-beta.87
     "@alchemy.run/github": 2.0.0-beta.87
     alchemy: 2.0.0-beta.87
@@ -270,7 +270,6 @@ overrides:
   "@remotion/eslint-plugin>typescript": "-"
   workerd: 1.20261112.1
   vite@*: "catalog:"
-  eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
   fflate@>=0.7.0 <0.7.5: ^0.8.0
   glob@>=9.0.0 <=14.0.1: ^14.0.2
   "capnp-es>typescript": "-"
@@ -315,3 +314,16 @@ patchedDependencies:
   "@voidzero-dev/vite-plus-core@1.6.0": patches/@voidzero-dev__vite-plus-core@1.6.0.patch
 minimumReleaseAgeExclude:
   - "@r_masseater/oxlint-typed-rules@0.4.0"
+  - "@r_masseater/vite-plus-adopt@0.4.1"
+  - "@better-auth/core@1.7.25"
+  - "@better-auth/drizzle-adapter@1.7.25"
+  - "@better-auth/kysely-adapter@1.7.25"
+  - "@better-auth/mcp@1.7.25"
+  - "@better-auth/memory-adapter@1.7.25"
+  - "@better-auth/mongo-adapter@1.7.25"
+  - "@better-auth/oauth-provider@1.7.25"
+  - "@better-auth/passkey@1.7.25"
+  - "@better-auth/prisma-adapter@1.7.25"
+  - "@better-auth/telemetry@1.7.25"
+  - auth@1.7.25
+  - better-auth@1.7.25

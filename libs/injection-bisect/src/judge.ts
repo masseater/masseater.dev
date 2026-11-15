@@ -3,21 +3,21 @@ import type { Effect } from "effect";
 
 import type { JudgeError } from "./judge-error.ts";
 
-interface Verdict {
+export interface Verdict {
   readonly probability: number;
   readonly cost: number;
   readonly model: string;
   readonly inputTokens: number;
 }
 
-interface Verdicts {
+export interface Verdicts {
   readonly probabilities: readonly number[];
   readonly cost: number;
   readonly model: string;
   readonly inputTokens: number;
 }
 
-class InjectionJudge extends Context.Service<
+export class InjectionJudge extends Context.Service<
   InjectionJudge,
   {
     readonly verdictOf: (text: string, model: string) => Effect.Effect<Verdict, JudgeError>;
@@ -26,6 +26,3 @@ class InjectionJudge extends Context.Service<
     ) => Effect.Effect<Verdicts, JudgeError>;
   }
 >()("@r_masseater/injection-bisect/judge/InjectionJudge") {}
-
-export { InjectionJudge };
-export type { Verdict, Verdicts };

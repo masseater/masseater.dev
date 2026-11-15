@@ -14,7 +14,7 @@ import {
   placedAtom,
   rewritingAtom,
   titleAtom,
-} from "#/pages/write/model/writing-atoms.ts";
+} from "#/entities/manuscript";
 import { useYohaku } from "#/shared/api";
 import type { Opened } from "#/shared/api";
 import { useScreen } from "#/shared/model";
@@ -83,7 +83,7 @@ const useResetters = (): ((opening: Opening, session: number) => void) => {
   };
 };
 
-const useSession = (): boolean => {
+export const useSession = (): boolean => {
   const [{ session }] = useScreen();
   const opening = useOpening();
   const [ready] = useAtom(readySessionAtom);
@@ -100,5 +100,3 @@ const useSession = (): boolean => {
   }, [ready, session, loaded, reset]);
   return Option.isSome(opening) && ready === session;
 };
-
-export { useSession };

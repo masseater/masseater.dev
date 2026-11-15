@@ -1,11 +1,10 @@
 import type { ReactNode } from "react";
 
-import { useDirection } from "#/pages/translator/api/translation.ts";
+import { useDirection } from "#/entities/translation";
+import { LanguageBar } from "#/features/pick-language";
+import { SwapButton } from "#/features/swap-languages";
 
-import { LanguageBar } from "./language-bar.tsx";
-import { SwapButton } from "./swap-button.tsx";
-
-const DirectionBar = (): ReactNode => {
+export const DirectionBar = (): ReactNode => {
   const { detected, target } = useDirection();
   return (
     <LanguageBar detected={detected} target={target}>
@@ -13,5 +12,3 @@ const DirectionBar = (): ReactNode => {
     </LanguageBar>
   );
 };
-
-export { DirectionBar };

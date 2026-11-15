@@ -1,8 +1,7 @@
 import { Option } from "effect";
 
-import { parseDraft } from "#/pages/interview/lib/draft";
-import { useAsking, useStage, useStale } from "#/pages/interview/model/hooks";
-import type { Asking } from "#/pages/interview/model/hooks";
+import { parseDraft, useAsking, useStage, useStale } from "#/entities/interview";
+import type { Asking } from "#/entities/interview";
 
 type Shown = Readonly<{ question: string; faded: boolean }>;
 
@@ -20,7 +19,7 @@ const draftText = (asking: Asking): string => {
   return "";
 };
 
-const useShownQuestion = (): Shown => {
+export const useShownQuestion = (): Shown => {
   const asking = useAsking();
   const stale = useStale();
   const current = Option.match(useStage().question, {
@@ -33,5 +32,3 @@ const useShownQuestion = (): Shown => {
     faded: stale || (asking.status === "drafting" && drafted === ""),
   };
 };
-
-export { useShownQuestion };

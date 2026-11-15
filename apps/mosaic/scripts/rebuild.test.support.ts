@@ -17,8 +17,8 @@ import type { Plan } from "./rebuild.ts";
 
 const RUN_ID_BASE = 7000;
 const CURRENT = 100;
-const HEAD_SHA = "head-sha";
-const BEFORE_SHA = "before-sha";
+export const HEAD_SHA = "head-sha";
+export const BEFORE_SHA = "before-sha";
 const NOT_FOUND = 404;
 const SERVER_ERROR = 500;
 const REPOSITORY = "masseater/masseater.dev";
@@ -27,7 +27,7 @@ const RUNS = "actions/workflows/verify.yml/runs";
 const JOBS = /^actions\/runs\/(?<id>[0-9]+)\/jobs$/u;
 const COMPARE = /^compare\/(?<range>.+)$/u;
 
-interface RunFixture {
+export interface RunFixture {
   readonly number: number;
   readonly status: string;
   readonly jobs: readonly {
@@ -39,7 +39,7 @@ interface RunFixture {
 
 type JobFixture = RunFixture["jobs"][number];
 
-interface Scenario {
+export interface Scenario {
   readonly event: string;
   readonly before: string;
   readonly runs: readonly RunFixture[];
@@ -72,29 +72,31 @@ const runOf = (number: number, status: string, jobs: readonly JobFixture[]): Run
   jobs,
 });
 
-const unrelated = (number: number): RunFixture => runOf(number, "completed", [planJob("skipped")]);
+export const unrelated = (number: number): RunFixture =>
+  runOf(number, "completed", [planJob("skipped")]);
 
-const deployed = (number: number): RunFixture =>
+export const deployed = (number: number): RunFixture =>
   runOf(number, "completed", [planJob("success"), deployJob("success")]);
 
-const rebuilding = (number: number): RunFixture =>
+export const rebuilding = (number: number): RunFixture =>
   runOf(number, "in_progress", [planJob("success")]);
 
-const deployingWeb = (number: number): RunFixture =>
+export const deployingWeb = (number: number): RunFixture =>
   runOf(number, "in_progress", [planJob("skipped", "success")]);
 
-const awaitingDeploy = (number: number): RunFixture =>
+export const awaitingDeploy = (number: number): RunFixture =>
   runOf(number, "in_progress", [planJob("success"), QUEUED_DEPLOY]);
 
-const skippedDeploy = (number: number): RunFixture =>
+export const skippedDeploy = (number: number): RunFixture =>
   runOf(number, "completed", [planJob("success"), deployJob("skipped")]);
 
-const failedDeploy = (number: number): RunFixture =>
+export const failedDeploy = (number: number): RunFixture =>
   runOf(number, "completed", [planJob("success"), deployJob("failure")]);
 
-const cancelled = (number: number): RunFixture => runOf(number, "completed", [planJob("success")]);
+export const cancelled = (number: number): RunFixture =>
+  runOf(number, "completed", [planJob("success")]);
 
-const shaOf = (number: number): string => `sha-${String(number)}`;
+export const shaOf = (number: number): string => `sha-${String(number)}`;
 
 const idOf = (number: number): number => RUN_ID_BASE + number;
 
@@ -213,32 +215,13 @@ const supersededOf = ({ scenario, steps }: Superseding): Effect.Effect<boolean> 
 const WITHOUT_THE_API: Inputs = { scenario: PUSH, client: UNREADABLE };
 
 /** @internal */
-const planIn = planOf;
+export const planIn = planOf;
 
 /** @internal */
-const supersededIn = supersededOf;
+export const supersededIn = supersededOf;
 
 /** @internal */
-const planWithoutTheApi = runIn(WITHOUT_THE_API)(rebuildPlan);
+export const planWithoutTheApi = runIn(WITHOUT_THE_API)(rebuildPlan);
 
 /** @internal */
-const supersededWithoutTheApi = runIn(WITHOUT_THE_API)(supersededBy(["rebuild"]));
-
-export {
-  BEFORE_SHA,
-  HEAD_SHA,
-  awaitingDeploy,
-  cancelled,
-  deployed,
-  deployingWeb,
-  failedDeploy,
-  planIn,
-  planWithoutTheApi,
-  rebuilding,
-  shaOf,
-  skippedDeploy,
-  supersededIn,
-  supersededWithoutTheApi,
-  unrelated,
-};
-export type { RunFixture, Scenario };
+export const supersededWithoutTheApi = runIn(WITHOUT_THE_API)(supersededBy(["rebuild"]));

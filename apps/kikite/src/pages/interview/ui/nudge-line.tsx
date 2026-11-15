@@ -1,10 +1,10 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { phrased } from "#/pages/interview/lib/phrases";
-import { useNudge } from "#/pages/interview/model/hooks";
+import { useNudge } from "#/entities/interview";
+import { phrased } from "#/shared/lib/phrases";
 
-const NudgeLine = (): ReactNode =>
+export const NudgeLine = (): ReactNode =>
   Option.match(useNudge(), {
     onNone: () => <p className="min-h-7" />,
     onSome: ({ text }) => (
@@ -13,5 +13,3 @@ const NudgeLine = (): ReactNode =>
       </p>
     ),
   });
-
-export { NudgeLine };

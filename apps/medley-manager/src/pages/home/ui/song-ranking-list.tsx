@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { SongLink } from "#/entities/catalog";
+import { SongLink } from "#/entities/song";
 import { songsQuery } from "#/pages/home/api/loader";
 import { RANKING_LIMIT, rankOf } from "#/pages/home/lib/rank";
 
@@ -10,7 +10,7 @@ import { RankingItem } from "./ranking-item";
 
 const usesLabel = (count: number): string => `${count.toString()} 本`;
 
-const SongRankingList = (): ReactNode => {
+export const SongRankingList = (): ReactNode => {
   const { data: songs } = useSuspenseQuery(songsQuery);
   return (
     <ol className="flex flex-col divide-y">
@@ -26,5 +26,3 @@ const SongRankingList = (): ReactNode => {
     </ol>
   );
 };
-
-export { SongRankingList };

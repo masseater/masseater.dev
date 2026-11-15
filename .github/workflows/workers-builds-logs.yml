@@ -24,10 +24,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: .github/scripts/workers-builds-logs.sh
-          sparse-checkout-cone-mode: false
-      - uses: masseater/typescript-template/.github/actions/credentials@93ede91739120dbe2102f1a4a5dbcfcb67641f36
-      - run: .github/scripts/workers-builds-logs.sh
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
+      - run: vp run builds-logs
+        working-directory: tools/cloudflare-logs
         env:
           WORKER: ${{ inputs.worker }}
           COUNT: ${{ inputs.count }}
@@ -42,6 +44,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@93ede91739120dbe2102f1a4a5dbcfcb67641f36
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
         with:
           github-token: ${{ github.token }}

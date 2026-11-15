@@ -1,0 +1,14 @@
+import { Option, pipe } from "effect";
+import type { ReactNode } from "react";
+
+import type { RemarkActions } from "#/features/respond-to-remark/api/remark-actions";
+
+export const RemarkProposal = ({ actions }: Readonly<{ actions: RemarkActions }>): ReactNode =>
+  pipe(
+    actions.proposal,
+    Option.filter(() => actions.rewriting),
+    Option.match({
+      onNone: () => false,
+      onSome: (text) => <p className="text-draft font-serif text-sm leading-7">{text}</p>,
+    }),
+  );

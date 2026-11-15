@@ -1,12 +1,12 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/catalog";
+import { VideoList } from "#/entities/video";
 import { useSong } from "#/pages/song/api/use-song";
 import { describeIndirect } from "#/pages/song/lib/describe";
 import { SectionHeading } from "#/shared/ui/section-heading";
 
-const IndirectUsage = (): ReactNode => {
+export const IndirectUsage = (): ReactNode => {
   const { indirect } = useSong();
   return (
     Arr.isReadonlyArrayNonEmpty(indirect) && (
@@ -17,5 +17,3 @@ const IndirectUsage = (): ReactNode => {
     )
   );
 };
-
-export { IndirectUsage };

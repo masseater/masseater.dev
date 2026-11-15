@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/catalog";
+import { VideoList } from "#/entities/video";
 import { useSearchResults } from "#/pages/search/api/use-search-results";
 import { SectionHeading } from "#/shared/ui/section-heading";
 
 const uploaderOf = ({ uploader }: Readonly<{ uploader: string | null }>): string => uploader ?? "";
 
-const FoundVideos = (): ReactNode => {
+export const FoundVideos = (): ReactNode => {
   const { videos } = useSearchResults();
   return (
     <section className="flex flex-col gap-4">
@@ -15,5 +15,3 @@ const FoundVideos = (): ReactNode => {
     </section>
   );
 };
-
-export { FoundVideos };

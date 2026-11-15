@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSummary } from "#/pages/interview/model/hooks";
+import { useSummary } from "#/entities/interview";
 
 import { PanelTab } from "./panel-tab.tsx";
 import { PANELS } from "./panels.ts";
@@ -16,7 +16,7 @@ const countOf = (panel: PanelLabel, open: number): number => {
   return NONE;
 };
 
-const PanelTabList = (): ReactNode => {
+export const PanelTabList = (): ReactNode => {
   const open = pipe(
     useSummary(),
     Option.match({ onNone: () => NONE, onSome: (summary) => summary.open.length }),
@@ -30,5 +30,3 @@ const PanelTabList = (): ReactNode => {
     </div>
   );
 };
-
-export { PanelTabList };

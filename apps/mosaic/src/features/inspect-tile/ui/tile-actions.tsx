@@ -1,0 +1,28 @@
+import { Button } from "@masseater.dev/ui/button";
+import { Option } from "effect";
+import type { ReactNode } from "react";
+import { useCallback } from "react";
+
+import { select, useViewerStore } from "#/entities/mosaic";
+
+import { ServiceLink } from "./service-link";
+
+const CLOSE = "閉じる";
+
+export const TileActions = ({
+  url,
+  service,
+}: Readonly<{ url: string; service: string }>): ReactNode => {
+  const store = useViewerStore();
+  const close = useCallback(() => {
+    store.step(select(Option.none()));
+  }, [store]);
+  return (
+    <div className="flex gap-2">
+      <ServiceLink url={url} service={service} />
+      <Button variant="outline" onClick={close}>
+        {CLOSE}
+      </Button>
+    </div>
+  );
+};

@@ -1,11 +1,10 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
+import { entriesAtom, heardAtom, leadsAtom, summaryAtom, summaryOf } from "#/entities/interview";
+import type { Entry, Lead } from "#/entities/interview";
 import { requestCorrection } from "#/shared/api";
+import { modify, read } from "#/shared/lib/registry";
 import type { HeardText, InterviewSummary } from "#protocol";
-
-import { entriesAtom, heardAtom, leadsAtom, summaryAtom, summaryOf } from "./atoms.ts";
-import type { Entry, Lead } from "./atoms.ts";
-import { modify, read } from "./registry.ts";
 
 const heardLine = (entry: Entry): readonly HeardText[] => {
   if (entry.kind === "speech" && entry.by === "voice") {
@@ -58,7 +57,8 @@ const contextNow = Effect.gen(function* contextNow() {
   return contextOf(summaryOf(summary), leads);
 });
 
-const correct = Effect.fn("kikite.correct")(function* correct() {
+/** @internal */
+export const correct = Effect.fn("kikite.correct")(function* correct() {
   const lines = yield* pendingLines;
   const last = Arr.last(lines);
   if (Option.isNone(last)) {
@@ -71,6 +71,3 @@ const correct = Effect.fn("kikite.correct")(function* correct() {
   );
   yield* modify(entriesAtom, Arr.map(corrected(fixed)));
 });
-
-/** @internal */
-export { correct };

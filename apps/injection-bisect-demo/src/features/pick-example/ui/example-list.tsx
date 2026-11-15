@@ -1,0 +1,65 @@
+import { Array as Arr, Option, pipe } from "effect";
+import { useCallback } from "react";
+import type { ChangeEvent, ReactNode } from "react";
+
+import {
+  NOT_OPENING,
+  useDraftText,
+  useSetDraftText,
+  useSetOpening,
+  EXAMPLES,
+} from "#/entities/inspection";
+import type { Example } from "#/entities/inspection";
+import { COPY } from "#/shared/config";
+import { SELECT_CLASS } from "#/shared/ui/select-class";
+
+const GROUPS = [
+  { kind: "injected", label: COPY.injected },
+  { kind: "clean", label: COPY.clean },
+] as const satisfies readonly { kind: Example["kind"]; label: string }[];
+
+const UNPICKED = "";
+
+export const ExampleList = (): ReactNode => {
+  const text = useDraftText();
+  const setText = useSetDraftText();
+  const setOpening = useSetOpening();
+  const picked = Arr.findFirst(EXAMPLES, (example) => example.text === text).pipe(
+    Option.match({ onNone: () => UNPICKED, onSome: ({ name }) => name }),
+  );
+  const pick = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      Option.map(
+        Arr.findFirst(EXAMPLES, ({ name }) => name === event.target.value),
+        (example) => {
+          setText(example.text);
+          setOpening(NOT_OPENING);
+        },
+      );
+    },
+    [setText, setOpening],
+  );
+  return (
+    <select aria-label={COPY.examples} value={picked} onChange={pick} className={SELECT_CLASS}>
+      <option value={UNPICKED} disabled>
+        {COPY.examples}
+      </option>
+      {pipe(
+        GROUPS,
+        Arr.map(({ kind, label }) => (
+          <optgroup key={kind} label={label}>
+            {pipe(
+              EXAMPLES,
+              Arr.filter((example) => example.kind === kind),
+              Arr.map(({ name }) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              )),
+            )}
+          </optgroup>
+        )),
+      )}
+    </select>
+  );
+};

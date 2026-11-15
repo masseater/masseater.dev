@@ -1,0 +1,71 @@
+import { useAtomSet, useAtomValue } from "@effect/atom-react";
+import { String as Str, pipe, Array as Arr } from "effect";
+import { Atom } from "effect/reactivity";
+
+import { entriesOf, rankedModels } from "#/entities/benchmark";
+import type { TaskEntry, ModelResult } from "#/entities/benchmark";
+
+export type Scope = "top" | "all";
+
+export type QueryEvent = Readonly<{ target: Readonly<{ value: string }> }>;
+
+export const TOP_COUNT = 10;
+const FIRST = 0;
+
+const scopeAtom = Atom.make<Scope>("top");
+const queryAtom = Atom.make("");
+
+export const useScope = (): Scope => useAtomValue(scopeAtom);
+export const useScopeChange = (): ((value: string) => void) => {
+  const set = useAtomSet(scopeAtom);
+  return (value) => {
+    if (value === "top" || value === "all") {
+      set(value);
+    }
+  };
+};
+export const useQuery = (): string => useAtomValue(queryAtom);
+export const useQueryChange = (): ((event: QueryEvent) => void) => {
+  const set = useAtomSet(queryAtom);
+  return (event) => {
+    set(event.target.value);
+  };
+};
+
+const narrow = <Item>({
+  items,
+  labelOf,
+  scope,
+  query,
+}: Readonly<{
+  items: readonly Item[];
+  labelOf: (item: Item) => string;
+  scope: Scope;
+  query: string;
+}>): readonly Item[] => {
+  const needle = Str.toLowerCase(Str.trim(query));
+  const matches = pipe(
+    items,
+    Arr.filter((item) => pipe(Str.toLowerCase(labelOf(item)), Str.includes(needle))),
+  );
+  if (scope === "all") {
+    return matches;
+  }
+  return matches.slice(FIRST, TOP_COUNT);
+};
+
+export const useVisibleEntries = (task: string): readonly TaskEntry[] =>
+  narrow({
+    items: entriesOf(task),
+    labelOf: ({ model }) => model.label,
+    scope: useScope(),
+    query: useQuery(),
+  });
+
+export const useVisibleModels = (): readonly ModelResult[] =>
+  narrow({
+    items: rankedModels,
+    labelOf: ({ label }) => label,
+    scope: useScope(),
+    query: useQuery(),
+  });

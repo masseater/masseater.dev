@@ -1,13 +1,13 @@
 import { cn } from "@masseater.dev/ui/cn";
 import type { ReactNode } from "react";
 
-import { useTranslation } from "#/pages/translator/api/translation.ts";
+import { useTranslation } from "#/entities/translation";
 
 const PLACEHOLDER = "翻訳";
 
 const TRANSLATING = "翻訳しています...";
 
-const OutputText = (): ReactNode => {
+export const OutputText = (): ReactNode => {
   const output = useTranslation();
   if (output.status === "empty") {
     return <span className="text-muted-foreground">{PLACEHOLDER}</span>;
@@ -20,5 +20,3 @@ const OutputText = (): ReactNode => {
   }
   return <span className={cn(output.stale && "text-muted-foreground")}>{output.text}</span>;
 };
-
-export { OutputText };

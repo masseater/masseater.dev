@@ -2,12 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { NoteList } from "./note-list";
-import { Section } from "./section";
-import { notesOf } from "./task-notes";
-import { taskRoutes } from "./task-routes";
+import { notesOf, taskRoutes } from "#/entities/benchmark";
+import { NoteList } from "#/shared/ui/note-list";
+import { Section } from "#/shared/ui/section";
 
-const TaskLinks = (): ReactNode => (
+export const TaskLinks = (): ReactNode => (
   <Section id="tasks" title="タスク">
     {pipe(
       taskRoutes,
@@ -22,5 +21,3 @@ const TaskLinks = (): ReactNode => (
     )}
   </Section>
 );
-
-export { TaskLinks };

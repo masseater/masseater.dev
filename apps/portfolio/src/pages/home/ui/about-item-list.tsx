@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-const AboutItemList = ({ items }: Readonly<{ items: readonly string[] }>): ReactNode => (
+export const AboutItemList = ({ items }: Readonly<{ items: readonly string[] }>): ReactNode => (
   <ul className="flex flex-col gap-2">
     {pipe(
       items,
@@ -9,5 +9,3 @@ const AboutItemList = ({ items }: Readonly<{ items: readonly string[] }>): React
     )}
   </ul>
 );
-
-export { AboutItemList };

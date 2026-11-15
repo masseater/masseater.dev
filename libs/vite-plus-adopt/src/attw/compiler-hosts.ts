@@ -13,7 +13,7 @@ import type { MountedFileSystem } from "./ts-api.ts";
 const DATA_FIRST_ARITY = 2;
 const DATA_FIRST_ARITY_3 = 3;
 
-interface CompilerHosts {
+export interface CompilerHosts {
   readonly node10: CompilerHostWrapper;
   readonly node16: CompilerHostWrapper;
   readonly bundler: CompilerHostWrapper;
@@ -40,7 +40,7 @@ const mountFileSystem = (fs: PackageFileSystem, minimalLib: string): MountedFile
     listFiles: () => [LIB_FILE_NAME, ...fs.listFiles()],
   });
 
-const createCompilerHostWrapperWith: {
+export const createCompilerHostWrapperWith: {
   (moduleResolution: number, minimalLib: string): (fs: PackageFileSystem) => CompilerHostWrapper;
   (fs: PackageFileSystem, moduleResolution: number, minimalLib: string): CompilerHostWrapper;
 } = Fn.dual(
@@ -64,7 +64,7 @@ const holdsAll =
       Arr.every((file) => Predicate.isNotUndefined(host.getSourceFileFromCache(file))),
     );
 
-const createCompilerHostsWith: {
+export const createCompilerHostsWith: {
   (minimalLib: string): (fs: PackageFileSystem) => CompilerHosts;
   (fs: PackageFileSystem, minimalLib: string): CompilerHosts;
 } = Fn.dual(DATA_FIRST_ARITY, (fs: PackageFileSystem, minimalLib: string): CompilerHosts => {
@@ -82,6 +82,3 @@ const createCompilerHostsWith: {
       Option.getOrUndefined(Arr.findFirst([node10, node16, bundler], holdsAll(files))),
   };
 });
-
-export { createCompilerHostWrapperWith, createCompilerHostsWith };
-export type { CompilerHosts };

@@ -9,7 +9,7 @@ const LINK_CLASS = "hover:text-foreground transition-colors";
 
 const BLOG_LABEL = "Blog";
 
-const ProjectMeta = ({ project }: Readonly<{ project: Project }>): ReactNode => (
+export const ProjectMeta = ({ project }: Readonly<{ project: Project }>): ReactNode => (
   <div className="font-display text-foreground/50 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs tracking-widest uppercase">
     <TagList tags={project.tags} />
     {pipe(
@@ -30,5 +30,3 @@ const ProjectMeta = ({ project }: Readonly<{ project: Project }>): ReactNode => 
     )}
   </div>
 );
-
-export { ProjectMeta };

@@ -1,13 +1,9 @@
 import { Effect } from "effect";
 
-import { part } from "#/entities/catalog/model/part.table";
-import { person } from "#/entities/catalog/model/person.table";
-import { song } from "#/entities/catalog/model/song.table";
-import { video } from "#/entities/catalog/model/video.table";
+import { part, person, song, video } from "#/shared/db";
+import { catalogDb } from "#/shared/db/index.server";
 
-import { catalogDb } from "./db.server";
-
-const getStats = Effect.all(
+export const getStats = Effect.all(
   {
     songs: Effect.promise(() => catalogDb.$count(song)),
     videos: Effect.promise(() => catalogDb.$count(video)),
@@ -16,5 +12,3 @@ const getStats = Effect.all(
   },
   { concurrency: "unbounded" },
 ).pipe(Effect.withSpan("catalog.stats"));
-
-export { getStats };

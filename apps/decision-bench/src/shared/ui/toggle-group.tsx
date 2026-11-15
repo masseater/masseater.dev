@@ -3,7 +3,7 @@
 import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui";
 import type { ReactNode } from "react";
 
-const ToggleGroup = ({
+export const ToggleGroup = ({
   label,
   value,
   onValueChange,
@@ -25,5 +25,3 @@ const ToggleGroup = ({
     {children}
   </ToggleGroupPrimitive.Root>
 );
-
-export { ToggleGroup };

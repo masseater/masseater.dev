@@ -1,13 +1,14 @@
 import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import type { ReactNode } from "react";
 
-import { originOf } from "#/pages/home/model";
+import { originOf, ResultPreview } from "#/entities/asset";
 import { fileNameOf } from "#/shared/lib";
 
 import { ResultActions } from "./result-actions.tsx";
-import { ResultPreview } from "./result-preview.tsx";
 
-const ResultSummary = ({ result }: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => (
+export const ResultSummary = ({
+  result,
+}: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => (
   <>
     <div className="bg-muted flex aspect-square items-center justify-center overflow-hidden rounded-lg border">
       <ResultPreview result={result} />
@@ -18,5 +19,3 @@ const ResultSummary = ({ result }: Readonly<{ result: typeof SearchResult.Type }
     <ResultActions result={result} />
   </>
 );
-
-export { ResultSummary };

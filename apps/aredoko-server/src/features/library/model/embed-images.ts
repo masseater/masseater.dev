@@ -1,9 +1,9 @@
 import { Array, Clock, Duration, Effect, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { ASSET_ORDER, EMBEDDING, RETRY, vectorBytes } from "#shared/database";
-import { Embedder } from "#shared/embedding";
-import { decodeRows } from "#shared/sql";
+import { ASSET_ORDER, EMBEDDING, RETRY, vectorBytes } from "#/shared/database/index.ts";
+import { Embedder } from "#/shared/embedding/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
 
 import { ImageRow, PendingImageRow } from "./rows.ts";
 
@@ -16,7 +16,7 @@ type Image = typeof ImageRow.Type;
 
 type PendingImage = typeof PendingImageRow.Type;
 
-interface AnalyzedBatch {
+export interface AnalyzedBatch {
   readonly assetIds: readonly number[];
   readonly pathname: string;
 }
@@ -143,12 +143,9 @@ const nextRetry = Effect.gen(function* nextRetry() {
 }).pipe(Effect.withSpan("nextImageRetry"));
 
 /** @internal */
-const embedImages = Effect.fn("embedImages")(function* embedAllImages(
+export const embedImages = Effect.fn("embedImages")(function* embedAllImages(
   onBatch: (batch: AnalyzedBatch) => Effect.Effect<void>,
 ) {
   yield* embedPending(onBatch).pipe(Effect.repeat({ while: (count) => count > NO_IMAGES }));
   return yield* nextRetry;
 });
-
-export { embedImages };
-export type { AnalyzedBatch };

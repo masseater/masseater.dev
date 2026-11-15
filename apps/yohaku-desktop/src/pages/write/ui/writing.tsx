@@ -1,14 +1,14 @@
 import type { ReactNode } from "react";
 
+import { useDrafts } from "#/features/edit-draft";
+import { TitleField } from "#/features/rename-manuscript";
 import { useAutosave } from "#/pages/write/api/autosave.ts";
-import { useDrafts } from "#/pages/write/api/drafts.ts";
 import { useIdeaHint } from "#/pages/write/api/idea-hint.ts";
 import { AppHeader } from "#/shared/ui";
 
-import { TitleField } from "./title-field.tsx";
 import { WritingColumns } from "./writing-columns.tsx";
 
-const Writing = (): ReactNode => {
+export const Writing = (): ReactNode => {
   useAutosave();
   useDrafts();
   useIdeaHint();
@@ -23,5 +23,3 @@ const Writing = (): ReactNode => {
     </div>
   );
 };
-
-export { Writing };

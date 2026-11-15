@@ -44,12 +44,10 @@ const SERVER_ERROR = 500;
 const rejected = (code: number) => (): Effect.Effect<Response> =>
   Effect.succeed(new Response("", { status: code }));
 
-const researched =
+export const researched =
   (forward: (next: Request) => Promise<Response>) =>
   (request: Request): Effect.Effect<Response> =>
     withMemory(request).pipe(
       Effect.flatMap((next) => Effect.promise(() => forward(next))),
       Effect.catchTags({ SchemaError: rejected(BAD_REQUEST), StoreFailed: rejected(SERVER_ERROR) }),
     );
-
-export { researched };

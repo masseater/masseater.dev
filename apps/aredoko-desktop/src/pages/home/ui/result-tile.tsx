@@ -3,12 +3,14 @@ import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { originOf, useSelectResult, useSelectedResult } from "#/pages/home/model";
+import { originOf, useSelectResult, useSelectedResult } from "#/entities/asset";
 import { fileNameOf } from "#/shared/lib";
 
 import { TileThumbnail } from "./tile-thumbnail.tsx";
 
-const ResultTile = ({ result }: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => {
+export const ResultTile = ({
+  result,
+}: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => {
   const selected = useSelectedResult();
   const select = useSelectResult();
   const active = Option.exists(selected, ({ assetId }) => assetId === result.assetId);
@@ -31,5 +33,3 @@ const ResultTile = ({ result }: Readonly<{ result: typeof SearchResult.Type }>):
     </li>
   );
 };
-
-export { ResultTile };

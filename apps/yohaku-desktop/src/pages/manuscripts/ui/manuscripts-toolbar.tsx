@@ -1,13 +1,11 @@
 import type { ReactNode } from "react";
 
-import { NewManuscriptButton } from "./new-manuscript-button.tsx";
-import { SyncControl } from "./sync-control.tsx";
+import { NewManuscriptButton } from "#/features/create-manuscript";
+import { SyncControl } from "#/features/sync-manuscripts";
 
-const ManuscriptsToolbar = (): ReactNode => (
+export const ManuscriptsToolbar = (): ReactNode => (
   <div className="flex items-center justify-between">
     <NewManuscriptButton />
     <SyncControl />
   </div>
 );
-
-export { ManuscriptsToolbar };

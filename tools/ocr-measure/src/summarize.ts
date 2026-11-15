@@ -19,7 +19,7 @@ const FIELD_IDS: readonly FieldId[] = pipe(
   Arr.map(({ id }) => id),
 );
 
-const GROUPS = pipe(
+export const GROUPS = pipe(
   KINDS,
   Arr.flatMap((kind) =>
     pipe(
@@ -137,7 +137,7 @@ const runOf = (outcomes: readonly [Outcome, ...Outcome[]], documents: readonly D
   };
 };
 
-const summarize = ({
+export const summarize = ({
   outcomes,
   documents,
 }: Readonly<{ outcomes: readonly Outcome[]; documents: readonly Document[] }>): readonly Run[] => {
@@ -147,5 +147,3 @@ const summarize = ({
     Arr.map((group) => runOf(group, documents)),
   );
 };
-
-export { GROUPS, summarize };

@@ -1,9 +1,9 @@
 import { Array, Effect, HashSet, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { encodeSummary, kindOf, listedEntry, searchableText } from "#entities/package";
-import { normalizePng } from "#shared/preview";
-import { decodeRows, firstId, ids } from "#shared/sql";
+import { encodeSummary, kindOf, listedEntry, searchableText } from "#/entities/package/index.ts";
+import { normalizePng } from "#/shared/preview/index.ts";
+import { decodeRows, firstId, ids } from "#/shared/sql/index.ts";
 
 import { embedTexts } from "./embed-texts.ts";
 import { insertAssets, plainAsset } from "./insert-assets.ts";
@@ -59,7 +59,7 @@ const isChanged = Effect.fn("isChanged")(function* isChangedSinceStored({
 });
 
 /** @internal */
-const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAssets({
+export const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAssets({
   projectPath,
   assets,
 }: {
@@ -94,7 +94,7 @@ const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAss
 });
 
 /** @internal */
-const pruneProject = Effect.fn("pruneProject")(function* pruneProjectAssets({
+export const pruneProject = Effect.fn("pruneProject")(function* pruneProjectAssets({
   packageId,
   projectPath,
   seen,
@@ -123,5 +123,3 @@ const pruneProject = Effect.fn("pruneProject")(function* pruneProjectAssets({
   const summary = yield* encodeSummary({ name, entries: pipe(kept, Array.map(listedEntry)) });
   yield* sql`update packages set summary = ${summary} where id = ${packageId}`;
 });
-
-export { pruneProject, putProjectAssets };

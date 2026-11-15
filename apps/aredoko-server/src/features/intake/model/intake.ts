@@ -1,6 +1,6 @@
 import { Array, Effect, FileSystem, Number, Path, pipe } from "effect";
 
-import { isCompanion, isLoose, isPackage, isZip } from "#entities/package";
+import { isCompanion, isLoose, isPackage, isZip } from "#/entities/package/index.ts";
 
 import { digestOfFile } from "./content-digest.ts";
 import { bundleCount, placedCount } from "./counts.ts";
@@ -93,7 +93,7 @@ const takeIn = Effect.fn("takeIn")(function* takeIn(dropped: string, library: st
 });
 
 /** @internal */
-const intake = Effect.fn("intake")(function* intakeFiles(dropped: readonly string[]) {
+export const intake = Effect.fn("intake")(function* intakeFiles(dropped: readonly string[]) {
   const library = yield* libraryFolder;
   const placed = yield* pipe(
     dropped,
@@ -101,5 +101,3 @@ const intake = Effect.fn("intake")(function* intakeFiles(dropped: readonly strin
   );
   return Number.sumAll(placed);
 });
-
-export { intake };

@@ -1,12 +1,12 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { song } from "#/pages/demo/model/song";
+import { song } from "#/entities/song";
 
 import { Lane } from "./lane";
 import { SectionStrip } from "./section-strip";
 
-const Board = (): ReactNode => (
+export const Board = (): ReactNode => (
   <div className="bg-card border-border overflow-hidden rounded-lg border">
     <div className="flex">
       <div className="w-20 shrink-0 sm:w-28" />
@@ -18,5 +18,3 @@ const Board = (): ReactNode => (
     )}
   </div>
 );
-
-export { Board };

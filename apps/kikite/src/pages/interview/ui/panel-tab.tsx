@@ -2,13 +2,16 @@ import { cn } from "@masseater.dev/ui/cn";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { usePanel, useSetPanel } from "#/pages/interview/model/hooks";
+import { usePanel, useSetPanel } from "#/entities/interview";
 
 import type { PanelLabel } from "./panels.ts";
 
 const NONE = 0;
 
-const PanelTab = ({ panel, count }: Readonly<{ panel: PanelLabel; count: number }>): ReactNode => {
+export const PanelTab = ({
+  panel,
+  count,
+}: Readonly<{ panel: PanelLabel; count: number }>): ReactNode => {
   const selected = usePanel() === panel.id;
   const setPanel = useSetPanel();
   const select = useCallback(() => {
@@ -20,7 +23,7 @@ const PanelTab = ({ panel, count }: Readonly<{ panel: PanelLabel; count: number 
       role="tab"
       aria-selected={selected}
       className={cn(
-        "text-muted-foreground flex-1 border-b-2 border-transparent py-2 text-sm",
+        "text-muted-foreground flex-auto border-b-2 border-transparent px-1 py-2 text-sm whitespace-nowrap",
         selected && "border-foreground text-foreground font-semibold",
       )}
       onClick={select}
@@ -30,5 +33,3 @@ const PanelTab = ({ panel, count }: Readonly<{ panel: PanelLabel; count: number 
     </button>
   );
 };
-
-export { PanelTab };

@@ -12,7 +12,7 @@ import { resolveNestedModule } from "./resolver.ts";
 
 const DATA_FIRST_ARITY = 2;
 
-interface TypeReferenceRequest {
+export interface TypeReferenceRequest {
   readonly name: string;
   readonly containingFile: string;
   readonly options: ResolverOptions;
@@ -36,7 +36,7 @@ const featuresFor = (request: TypeReferenceRequest): Features => {
   return NO_FEATURES;
 };
 
-const stateFor: {
+export const stateFor: {
   (host: ResolverHost): (request: TypeReferenceRequest) => ResolutionState;
   (request: TypeReferenceRequest, host: ResolverHost): ResolutionState;
 } = Fn.dual(
@@ -61,6 +61,3 @@ const stateFor: {
     };
   },
 );
-
-export { stateFor };
-export type { TypeReferenceRequest };

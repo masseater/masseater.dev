@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 
-import type { InspectState } from "#/pages/inspect/api/use-inspect";
+import type { InspectState } from "#/features/run-inspection";
 
 import { EventLog } from "./event-log";
 import { RunSummary } from "./run-summary";
 import { TraceView } from "./trace-view";
 
-const RunView = ({ state }: Readonly<{ state: InspectState }>): ReactNode => {
+export const RunView = ({ state }: Readonly<{ state: InspectState }>): ReactNode => {
   if (state.status === "idle") {
     return "";
   }
@@ -24,5 +24,3 @@ const RunView = ({ state }: Readonly<{ state: InspectState }>): ReactNode => {
     </section>
   );
 };
-
-export { RunView };

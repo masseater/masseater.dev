@@ -2,15 +2,15 @@ import { Array, Option, Order, Record, pipe } from "effect";
 
 import type { TagSearch } from "./search";
 
-type Tagged = Readonly<{ tags: readonly string[] }>;
+export type Tagged = Readonly<{ tags: readonly string[] }>;
 
-type TagCount = Readonly<{ tag: string; count: number; search: TagSearch }>;
+export type TagCount = Readonly<{ tag: string; count: number; search: TagSearch }>;
 
 const byCount = Order.mapInput(Order.flip(Order.Number), ({ count }: TagCount) => count);
 
 const byName = Order.mapInput(Order.String, ({ tag }: TagCount) => tag);
 
-const tagCounts = (items: readonly Tagged[]): readonly TagCount[] =>
+export const tagCounts = (items: readonly Tagged[]): readonly TagCount[] =>
   pipe(
     items,
     Array.flatMap(({ tags }) => tags),
@@ -20,7 +20,7 @@ const tagCounts = (items: readonly Tagged[]): readonly TagCount[] =>
     Array.sortBy(byCount, byName),
   );
 
-const withTag =
+export const withTag =
   (tag: Option.Option<string>) =>
   <Item extends Tagged>(items: readonly Item[]): readonly Item[] =>
     Option.match(tag, {
@@ -31,6 +31,3 @@ const withTag =
           Array.filter(({ tags }) => Array.contains(tags, wanted)),
         ),
     });
-
-export type { TagCount, Tagged };
-export { tagCounts, withTag };

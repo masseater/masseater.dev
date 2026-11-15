@@ -1,7 +1,7 @@
 import { cn } from "@masseater.dev/web-ui";
 import type { ComponentProps, ReactNode } from "react";
 
-const TableHead = ({ className, ...props }: ComponentProps<"th">): ReactNode => (
+export const TableHead = ({ className, ...props }: ComponentProps<"th">): ReactNode => (
   <th
     data-slot="table-head"
     className={cn(
@@ -11,5 +11,3 @@ const TableHead = ({ className, ...props }: ComponentProps<"th">): ReactNode => 
     {...props}
   />
 );
-
-export { TableHead };

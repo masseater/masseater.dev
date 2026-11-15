@@ -5,7 +5,7 @@ import { useSources } from "#/entities/source";
 
 import { SourceRow } from "./source-row.tsx";
 
-const SourceList = ({ label }: Readonly<{ label: string }>): ReactNode => (
+export const SourceList = ({ label }: Readonly<{ label: string }>): ReactNode => (
   <ul aria-label={label}>
     {pipe(
       useSources(),
@@ -13,5 +13,3 @@ const SourceList = ({ label }: Readonly<{ label: string }>): ReactNode => (
     )}
   </ul>
 );
-
-export { SourceList };

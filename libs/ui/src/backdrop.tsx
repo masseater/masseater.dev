@@ -18,7 +18,7 @@ const STILL_COLORS: CssVariables = {
   "--still-mint": backdropPalette.mint,
 };
 
-const Backdrop = (): ReactNode => (
+export const Backdrop = (): ReactNode => (
   <div aria-hidden className="vt-backdrop pointer-events-none absolute inset-0 -z-10">
     <div className="stage-backdrop stage-backdrop-still absolute" style={STILL_COLORS}>
       <MeshGradient
@@ -35,5 +35,3 @@ const Backdrop = (): ReactNode => (
     <div className="stage-spotlight absolute top-0 left-0 rounded-full" />
   </div>
 );
-
-export { Backdrop };

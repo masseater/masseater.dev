@@ -28,8 +28,8 @@ const FENCE_OPEN = pattern(String.raw`^ {0,3}(` + "`{3,}" + String.raw`|~{3,})(.
 const ATX_HEADING = pattern(String.raw`^ {0,3}#{1,6}(?:[ \t]+|$)`);
 const SPACE_SEPARATOR = /^\p{Zs}$/u;
 
-type Span = readonly [number, number, string];
-type Row = {
+export type Span = readonly [number, number, string];
+export type Row = {
   line: number;
   raw: string;
   start: number;
@@ -40,8 +40,8 @@ type Row = {
   list_item: boolean;
   kind: string;
 };
-type Block = { kind: string; lines: Row[] };
-type Analysis = {
+export type Block = { kind: string; lines: Row[] };
+export type Analysis = {
   text: string;
   lines: Row[];
   blocks: Block[];
@@ -53,7 +53,7 @@ type Analysis = {
   [key: string]: unknown;
 };
 
-const unicodeWhitespace = (ch: string): boolean => {
+export const unicodeWhitespace = (ch: string): boolean => {
   if (!ch) return true;
   const chars = [...ch];
   if (chars.length > 1) return chars.every((c) => unicodeWhitespace(c));
@@ -98,7 +98,7 @@ const bisectLeft = (values: readonly number[], target: number): number => {
   return low;
 };
 
-const bisectRight = (values: readonly number[], target: number): number => {
+export const bisectRight = (values: readonly number[], target: number): number => {
   let low = 0;
   let high = values.length;
   while (low < high) {
@@ -392,7 +392,7 @@ const physicalLines = (text: string): (readonly [number, string, string])[] => {
   return rows;
 };
 
-const stripChars = (text: string, chars: string): string => {
+export const stripChars = (text: string, chars: string): string => {
   let left = 0;
   let right = text.length;
   while (left < right && chars.includes(text[left]!)) left += 1;
@@ -576,17 +576,17 @@ const referenceDefinitionEnd = (lines: readonly string[], start: number, paragra
 const PY_SPACE = /^[\s\u001c-\u001f\u0085]$/u;
 const isPySpace = (ch: string | undefined): boolean => ch !== undefined && PY_SPACE.test(ch);
 // 末尾の空白を正規表現の +$ で探すと、長い空白の並びで探す手間が字数の2乗になるので、両端から1字ずつ見る
-const pyLstrip = (text: string): string => {
+export const pyLstrip = (text: string): string => {
   let start = 0;
   while (start < text.length && isPySpace(text[start])) start += 1;
   return text.slice(start);
 };
-const pyRstrip = (text: string): string => {
+export const pyRstrip = (text: string): string => {
   let end = text.length;
   while (end > 0 && isPySpace(text[end - 1])) end -= 1;
   return text.slice(0, end);
 };
-const pyStrip = (text: string): string => pyLstrip(pyRstrip(text));
+export const pyStrip = (text: string): string => pyLstrip(pyRstrip(text));
 
 const lstripChars = (text: string, chars: string): string => {
   let left = 0;
@@ -618,7 +618,7 @@ const htmlBlockStart = (content: string, current: Block | undefined): string | u
   return undefined;
 };
 
-const analyzeMarkdown = (text: string, skipFrontmatter = true): Analysis => {
+export const analyzeMarkdown = (text: string, skipFrontmatter = true): Analysis => {
   const lines: Row[] = [];
   let blocks: Block[] = [];
   const protectedSpans: Span[] = [];
@@ -804,7 +804,7 @@ const kindMasks = (analysis: Analysis, kinds: Iterable<string>) => {
   return { key, found };
 };
 
-const lineVisibleText = (analysis: Analysis, lineNo: number, protectedKinds?: Iterable<string>): string => {
+export const lineVisibleText = (analysis: Analysis, lineNo: number, protectedKinds?: Iterable<string>): string => {
   const kinds = protectedKinds === undefined ? undefined : [...protectedKinds];
   const cacheKey = `${lineNo}\u0001${kinds === undefined ? "*" : [...new Set(kinds)].sort().join("\u0000")}`;
   analysis._line_visible_cache ??= new Map();
@@ -832,7 +832,7 @@ const lineVisibleText = (analysis: Analysis, lineNo: number, protectedKinds?: It
   return remember(visible.join(""));
 };
 
-const rangeOverlapsProtected = (analysis: Analysis, start: number, end: number, protectedKinds?: Iterable<string>): boolean => {
+export const rangeOverlapsProtected = (analysis: Analysis, start: number, end: number, protectedKinds?: Iterable<string>): boolean => {
   if (end <= start) return false;
   const [masks, ends] =
     protectedKinds === undefined ? [analysis.mask_spans, analysis.mask_ends] : kindMasks(analysis, protectedKinds).found;
@@ -840,15 +840,3 @@ const rangeOverlapsProtected = (analysis: Analysis, start: number, end: number, 
   return index < masks.length && masks[index]![0] < end;
 };
 
-export {
-  analyzeMarkdown,
-  bisectRight,
-  lineVisibleText,
-  pyLstrip,
-  pyRstrip,
-  pyStrip,
-  rangeOverlapsProtected,
-  stripChars,
-  unicodeWhitespace,
-};
-export type { Analysis, Block, Row, Span };

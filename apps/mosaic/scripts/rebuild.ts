@@ -7,8 +7,8 @@ const WINDOW = 50;
 const COMPARE_FILE_LIMIT = 300;
 const PLAN_JOB = "mosaic-plan";
 const REFRESH_JOB = "mosaic-refresh";
-const REBUILD_STEPS = ["rebuild"];
-const DEPLOY_STEPS = ["deploy"];
+export const REBUILD_STEPS = ["rebuild"];
+export const DEPLOY_STEPS = ["deploy"];
 const SUCCESS = "success";
 const COMPLETED = "completed";
 const SCHEDULE = "schedule";
@@ -44,7 +44,7 @@ const Compare = Schema.Struct({ files: Schema.optional(Schema.Array(ChangedFile)
 type WorkflowRun = typeof Run.Type;
 type WorkflowJob = typeof Job.Type;
 
-interface Plan {
+export interface Plan {
   readonly rebuild: boolean;
   readonly web: boolean;
 }
@@ -246,10 +246,7 @@ const planOfThisRun = Effect.gen(function* planOfThisRun() {
 });
 
 /** @internal */
-const rebuildPlan = planOfThisRun;
+export const rebuildPlan = planOfThisRun;
 
 /** @internal */
-const supersededBy = supersededByNewer;
-
-export type { Plan };
-export { rebuildPlan, supersededBy };
+export const supersededBy = supersededByNewer;

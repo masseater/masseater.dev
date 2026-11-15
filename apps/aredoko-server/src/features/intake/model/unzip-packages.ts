@@ -2,8 +2,8 @@ import { ZipReader, configure } from "@zip.js/zip.js";
 import type { Entry, FileEntry } from "@zip.js/zip.js";
 import { Array, Effect, FileSystem, Option, Path, pipe } from "effect";
 
-import { isCompanion, isLoose, isPackage } from "#entities/package";
-import { collectBytes } from "#shared/bytes";
+import { isCompanion, isLoose, isPackage } from "#/entities/package/index.ts";
+import { collectBytes } from "#/shared/bytes/index.ts";
 
 import { digestWith } from "./content-digest.ts";
 import { bundleCount, placedCount } from "./counts.ts";
@@ -115,7 +115,7 @@ const openZip = Effect.fn("openZip")(function* openZip(zip: string) {
 });
 
 /** @internal */
-const unzipPackages = Effect.fn("unzipPackages")(function* unzipPackagesInto(
+export const unzipPackages = Effect.fn("unzipPackages")(function* unzipPackagesInto(
   zip: string,
   library: string,
 ) {
@@ -137,5 +137,3 @@ const unzipPackages = Effect.fn("unzipPackages")(function* unzipPackagesInto(
   );
   return placedCount(packages) + bundleCount(assets);
 }, Effect.scoped);
-
-export { unzipPackages };

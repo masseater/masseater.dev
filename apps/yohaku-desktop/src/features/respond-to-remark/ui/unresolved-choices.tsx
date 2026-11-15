@@ -1,0 +1,21 @@
+import { Button } from "@masseater.dev/ui/button";
+import type { ReactNode } from "react";
+
+import type { RemarkActions } from "#/features/respond-to-remark/api/remark-actions";
+
+const REWRITE = "書き直させる";
+const KEEP = "残す";
+
+export const UnresolvedChoices = ({ actions }: Readonly<{ actions: RemarkActions }>): ReactNode => {
+  const { rewrite, keep } = actions;
+  return (
+    <div className="flex gap-1.5">
+      <Button size="sm" variant="outline" onClick={rewrite}>
+        {REWRITE}
+      </Button>
+      <Button size="sm" variant="outline" onClick={keep}>
+        {KEEP}
+      </Button>
+    </div>
+  );
+};

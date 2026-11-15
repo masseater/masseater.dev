@@ -16,15 +16,18 @@ import {
 import { hasSyntacticModifier, isNodeValue } from "./binder-names.ts";
 import { nameText } from "./binder-syntax.ts";
 
-const NON_INSTANTIATED = 0;
+export const NON_INSTANTIATED = 0;
 const INSTANTIATED = 1;
 const CONST_ENUM_ONLY = 2;
 
-type ModuleInstanceState = typeof NON_INSTANTIATED | typeof INSTANTIATED | typeof CONST_ENUM_ONLY;
+export type ModuleInstanceState =
+  | typeof NON_INSTANTIATED
+  | typeof INSTANTIATED
+  | typeof CONST_ENUM_ONLY;
 
-type StateOf = (node: Node) => ModuleInstanceState;
+export type StateOf = (node: Node) => ModuleInstanceState;
 
-const isConstEnum = (node: Node): boolean => hasSyntacticModifier(node, ModifierFlags.Const);
+export const isConstEnum = (node: Node): boolean => hasSyntacticModifier(node, ModifierFlags.Const);
 
 const keepFirstInstantiated = (
   state: ModuleInstanceState,
@@ -133,8 +136,5 @@ const containerState = (node: Node, stateOf: StateOf): ModuleInstanceState => {
   return INSTANTIATED;
 };
 
-const getModuleInstanceState: StateOf = (node) =>
+export const getModuleInstanceState: StateOf = (node) =>
   Option.getOrElse(declarationState(node), () => containerState(node, getModuleInstanceState));
-
-export { NON_INSTANTIATED, getModuleInstanceState, isConstEnum };
-export type { ModuleInstanceState, StateOf };

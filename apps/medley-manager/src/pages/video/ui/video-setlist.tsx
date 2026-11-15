@@ -1,12 +1,12 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import { Setlist } from "#/entities/catalog";
+import { Setlist } from "#/entities/part";
 import { useVideo } from "#/pages/video/api/use-video";
 
 const EMPTY = "この動画のセトリはまだ登録されていません。";
 
-const VideoSetlist = (): ReactNode => {
+export const VideoSetlist = (): ReactNode => {
   const video = useVideo();
   return Arr.match(video.parts, {
     onEmpty: () => (
@@ -17,5 +17,3 @@ const VideoSetlist = (): ReactNode => {
     onNonEmpty: (parts) => <Setlist source={video} parts={parts} />,
   });
 };
-
-export { VideoSetlist };

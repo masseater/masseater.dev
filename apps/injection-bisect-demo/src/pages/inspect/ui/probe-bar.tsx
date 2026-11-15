@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { toneOf } from "#/pages/inspect/model/overlay";
-import type { Answer, Row } from "#/pages/inspect/model/trace";
+import { toneOf } from "#/entities/inspection";
+import type { Answer, Row } from "#/entities/inspection";
 
 import { BAR_CLASS } from "./tone";
 
@@ -18,7 +18,7 @@ const endOf = (answer: Answer, total: number): number => {
   return total;
 };
 
-const ProbeBar = ({ row, total }: Readonly<{ row: Row; total: number }>): ReactNode => (
+export const ProbeBar = ({ row, total }: Readonly<{ row: Row; total: number }>): ReactNode => (
   <svg
     aria-hidden="true"
     className="bg-muted/50 h-2.5 min-w-0 flex-1 rounded-sm"
@@ -33,5 +33,3 @@ const ProbeBar = ({ row, total }: Readonly<{ row: Row; total: number }>): ReactN
     />
   </svg>
 );
-
-export { ProbeBar };

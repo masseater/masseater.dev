@@ -2,13 +2,15 @@ import { Effect, Layer, ManagedRuntime, Option, pipe } from "effect";
 
 import { failures } from "./failure.ts";
 
-type Run<Services> = <Success, Failure>(
+export type Run<Services> = <Success, Failure>(
   effect: Effect.Effect<Success, Failure, Services>,
 ) => Promise<Success>;
 
-type Runner = <Services, LayerError>(services: Layer.Layer<Services, LayerError>) => Run<Services>;
+export type Runner = <Services, LayerError>(
+  services: Layer.Layer<Services, LayerError>,
+) => Run<Services>;
 
-const runnerWith =
+export const runnerWith =
   (tracing: Layer.Layer<never>): Runner =>
   (services) => {
     const runtime = ManagedRuntime.make(Layer.mergeAll(services, tracing));
@@ -27,6 +29,3 @@ const runnerWith =
         ),
       );
   };
-
-export type { Run, Runner };
-export { runnerWith };

@@ -4,15 +4,15 @@ import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { Array, Effect, Option, Record, String, pipe } from "effect";
 import { use, useCallback, useEffect } from "react";
 
-import { received } from "#/pages/write/model/annotations.ts";
-import type { Texts } from "#/pages/write/model/annotations.ts";
 import {
+  received,
   editorAtom,
   manuscriptIdAtom,
   paragraphsAtom,
   pausedAtom,
   titleAtom,
-} from "#/pages/write/model/writing-atoms.ts";
+} from "#/entities/manuscript";
+import type { Texts } from "#/entities/manuscript";
 import { useYohaku } from "#/shared/api";
 import type { Failure, Yohaku } from "#/shared/api";
 import { beforeClosing, screenAtom } from "#/shared/model";
@@ -101,7 +101,7 @@ const fetchedWith =
     texts: textsOf(paragraphs),
   });
 
-const useAutosave = (): void => {
+export const useAutosave = (): void => {
   const yohaku = useYohaku();
   const saved = useSave();
   const editor = useAtomValue(editorAtom);
@@ -128,5 +128,3 @@ const useAutosave = (): void => {
     }
   }, [data, editor, setTitle]);
 };
-
-export { useAutosave };

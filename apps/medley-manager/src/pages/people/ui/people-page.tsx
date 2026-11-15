@@ -11,7 +11,7 @@ const DESCRIPTION = "パートを担当した人の一覧です。";
 
 const route = getRouteApi("/people/");
 
-const PeoplePage = (): ReactNode => {
+export const PeoplePage = (): ReactNode => {
   const { keyword } = route.useSearch();
   return (
     <div className="flex flex-col gap-6">
@@ -23,5 +23,3 @@ const PeoplePage = (): ReactNode => {
     </div>
   );
 };
-
-export { PeoplePage };

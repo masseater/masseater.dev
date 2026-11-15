@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type { SloppediaConfig } from "./config.ts";
 import { TabLink } from "./tab-link.tsx";
 
-const ArticleTabs = ({
+export const ArticleTabs = ({
   config,
   slug,
 }: Readonly<{ config: SloppediaConfig; slug: string }>): ReactNode => (
@@ -17,5 +17,3 @@ const ArticleTabs = ({
     </div>
   </div>
 );
-
-export { ArticleTabs };

@@ -7,7 +7,7 @@ import type { Column } from "#/pages/measurements/model/tables";
 
 import { RunRow } from "./run-row";
 
-const RunRows = ({ columns }: Readonly<{ columns: readonly Column[] }>): ReactNode => {
+export const RunRows = ({ columns }: Readonly<{ columns: readonly Column[] }>): ReactNode => {
   const { runs } = useSummary();
   return (
     <tbody>
@@ -18,5 +18,3 @@ const RunRows = ({ columns }: Readonly<{ columns: readonly Column[] }>): ReactNo
     </tbody>
   );
 };
-
-export { RunRows };

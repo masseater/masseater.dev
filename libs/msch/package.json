@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/msch",
-  "version": "0.9.0",
+  "version": "0.11.0",
   "description": "masseater's check policy: points every finite value set and object shape at its one owner, and ships the oxlint preset of plugins and rules.",
   "keywords": [
     "lint",
@@ -18,22 +18,26 @@
     "directory": "libs/msch"
   },
   "bin": {
-    "msch": "./src/cli.ts"
+    "msch": "./src/app/cli.ts"
   },
   "files": [
     "dist",
-    "src/vite.d.ts"
+    "src/app/vite.d.ts"
   ],
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    "./cli": "./src/cli.ts",
-    "./decision-rules": "./src/lint/decision-rules.ts",
-    "./lint": "./src/lint/index.ts",
-    "./oxlint": "./src/oxlint.ts",
+    "./cli": "./src/app/cli.ts",
+    "./decision-rules": "./src/features/lint-preset/config/decision-rules.ts",
+    "./inline-exports": "./src/features/inline-exports/index.ts",
+    "./lint": "./src/features/lint-preset/index.ts",
+    "./oxlint": "./src/app/oxlint.ts",
     "./vite": {
-      "types": "./src/vite.d.ts"
+      "types": "./src/app/vite.d.ts"
     },
-    "./workspace-settings": "./src/workspace-settings.ts",
+    "./workspace-settings": "./src/features/workspace-settings/index.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -45,6 +49,10 @@
       "./decision-rules": {
         "types": "./dist/decision-rules.d.mts",
         "default": "./dist/decision-rules.mjs"
+      },
+      "./inline-exports": {
+        "types": "./dist/inline-exports.d.mts",
+        "default": "./dist/inline-exports.mjs"
       },
       "./lint": {
         "types": "./dist/lint.d.mts",
@@ -59,7 +67,7 @@
         "default": "./dist/workspace-settings.mjs"
       },
       "./vite": {
-        "types": "./src/vite.d.ts"
+        "types": "./src/app/vite.d.ts"
       },
       "./package.json": "./package.json"
     },

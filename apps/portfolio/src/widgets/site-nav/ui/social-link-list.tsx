@@ -6,7 +6,7 @@ import { socialLinks } from "#/widgets/site-nav/model/social-links";
 
 import { LinkList } from "./link-list";
 
-const SocialLinkList = ({ direction }: Readonly<{ direction: Direction }>): ReactNode => (
+export const SocialLinkList = ({ direction }: Readonly<{ direction: Direction }>): ReactNode => (
   <LinkList direction={direction}>
     {pipe(
       socialLinks,
@@ -20,5 +20,3 @@ const SocialLinkList = ({ direction }: Readonly<{ direction: Direction }>): Reac
     )}
   </LinkList>
 );
-
-export { SocialLinkList };

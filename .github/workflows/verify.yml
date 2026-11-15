@@ -15,12 +15,15 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    concurrency:
+      group: verify-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
-      - uses: masseater/typescript-template/.github/actions/verify@93ede91739120dbe2102f1a4a5dbcfcb67641f36
+      - uses: masseater/typescript-template/.github/actions/verify@a76b6452b4c008062dc453dc5f116557b8056978
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -49,127 +52,27 @@ jobs:
           gh workflow run autofix.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_BRANCH"
           -f run_id="$FAILED_RUN_ID" -f branch="$HEAD_BRANCH" -f sha="$HEAD_SHA"
 
-  bootstrap:
-    needs: verify
+  deploy:
     if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      id-token: write
-    concurrency:
-      group: bootstrap
-    outputs:
-      latest: ${{ steps.head.outputs.latest }}
-    steps:
-      - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@93ede91739120dbe2102f1a4a5dbcfcb67641f36
-        with:
-          github-token: ${{ github.token }}
-      - if: steps.head.outputs.latest == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - if: steps.head.outputs.latest == 'true'
-        run: git fetch --unshallow --filter=blob:none origin
-      - if: steps.head.outputs.latest == 'true'
-        uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - if: steps.head.outputs.latest == 'true'
-        run: .github/scripts/atproto-password.sh
-        continue-on-error: true
-      - if: steps.head.outputs.latest == 'true' && env.ATP_APP_PASSWORD != ''
-        run: vp run -r standard-site
-        continue-on-error: true
-        env:
-          ATP_IDENTIFIER: did:plc:sz2kxumpsjbch3kgnsjjed5z
-      - if: steps.head.outputs.latest == 'true'
-        run: vp run -r deploy:bootstrap
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - if: steps.head.outputs.latest == 'true'
-        run: vp run -r deploy:broker
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  production:
-    needs: bootstrap
-    if: needs.bootstrap.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: production
     permissions:
       contents: read
       id-token: write
     concurrency:
-      group: production
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@93ede91739120dbe2102f1a4a5dbcfcb67641f36
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run --log labeled -r deploy:production
-      - if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: web-vitals
-          path: tools/*/report/
-          if-no-files-found: ignore
-
-  zone:
-    needs: bootstrap
-    if: needs.bootstrap.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: zone
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: zone
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@93ede91739120dbe2102f1a4a5dbcfcb67641f36
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run -r deploy:zone
-
-  github:
-    needs: bootstrap
-    if: needs.bootstrap.outputs.latest == 'true'
-    runs-on: ubuntu-latest
-    environment: github
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: github
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - run: .github/scripts/github-token.sh
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run -r deploy:github
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      group: deploy
+    uses: $/.github/workflows/deploy.yml
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   private-names:
-    needs: bootstrap
+    needs: deploy
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
+    concurrency:
+      group: private-names
+      cancel-in-progress: true
     environment: private-names
     permissions:
       contents: read
@@ -178,39 +81,35 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          path: masseater.dev
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           repository: masseater/skills
-          path: skills
-      - run: masseater.dev/.github/scripts/github-token.sh
-      - run: masseater.dev/.github/scripts/private-names.sh masseater.dev skills
+          path: .skills-checkout
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r github-token
+      - run: vp run -r private-names
+        env:
+          CHECKOUTS: . .skills-checkout
 
   zenn:
-    needs: verify
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: write
     concurrency:
       group: zenn
+      cancel-in-progress: true
     steps:
-      - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@93ede91739120dbe2102f1a4a5dbcfcb67641f36
-        with:
-          github-token: ${{ github.token }}
-      - if: steps.head.outputs.latest == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - if: steps.head.outputs.latest == 'true'
-        uses: $/.github/actions/setup
+      - uses: $/.github/actions/setup
         with:
           native: "false"
-      - if: steps.head.outputs.latest == 'true'
-        run: vp run -r zenn-publish
+      - run: vp run -r zenn-publish
         env:
           GH_TOKEN: ${{ github.token }}
           GIT_AUTHOR_NAME: github-actions[bot]
@@ -219,9 +118,11 @@ jobs:
           GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
 
   sts2-pck:
-    needs: verify
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    concurrency:
+      group: sts2-pck
+      cancel-in-progress: true
     permissions:
       contents: read
     steps:
@@ -245,9 +146,11 @@ jobs:
           if-no-files-found: ignore
 
   mosaic-plan:
-    needs: verify
     if: github.event_name == 'push' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
+    concurrency:
+      group: mosaic-plan
+      cancel-in-progress: true
     permissions:
       actions: write
       contents: read
@@ -346,19 +249,8 @@ jobs:
     steps: *mosaic-site
 
   exposure:
-    needs:
-      [
-        bootstrap,
-        production,
-        zone,
-        github,
-        zenn,
-        sts2-pck,
-        mosaic-plan,
-        mosaic-character,
-        mosaic-deploy,
-      ]
-    if: ${{ !cancelled() && needs.bootstrap.outputs.latest == 'true' }}
+    needs: [deploy, zenn, sts2-pck, mosaic-plan, mosaic-character, mosaic-deploy]
+    if: ${{ !cancelled() }}
     permissions:
       actions: read
       contents: read
@@ -368,10 +260,7 @@ jobs:
   deploy-failure:
     needs:
       [
-        bootstrap,
-        production,
-        zone,
-        github,
+        deploy,
         private-names,
         zenn,
         sts2-pck,
@@ -387,6 +276,7 @@ jobs:
       issues: write
     concurrency:
       group: deploy-failure
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -405,10 +295,7 @@ jobs:
       [
         verify,
         autofix,
-        bootstrap,
-        production,
-        zone,
-        github,
+        deploy,
         private-names,
         zenn,
         sts2-pck,
@@ -426,6 +313,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@93ede91739120dbe2102f1a4a5dbcfcb67641f36
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
         with:
           github-token: ${{ github.token }}

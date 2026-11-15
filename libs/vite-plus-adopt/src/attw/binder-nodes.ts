@@ -23,7 +23,7 @@ import { setValueDeclaration } from "./binder-symbols.ts";
 import { isAliasableExpression } from "./binder-syntax.ts";
 import { EMPTY } from "./flags.ts";
 
-type NodeBinder = (binding: FileBinding, node: Node, scope: Scope) => void;
+export type NodeBinder = (binding: FileBinding, node: Node, scope: Scope) => void;
 
 const flagPair = (includes: number, excludes: number): SymbolFlagPair => ({ includes, excludes });
 
@@ -128,7 +128,7 @@ const bindExportAssignment: NodeBinder = (binding, node, scope) => {
   }
 };
 
-const DECLARATION_BINDERS: ReadonlyMap<SyntaxKind, NodeBinder> = new Map([
+export const DECLARATION_BINDERS: ReadonlyMap<SyntaxKind, NodeBinder> = new Map([
   [SyntaxKind.FunctionDeclaration, bindFunction],
   [SyntaxKind.ClassDeclaration, inBlock(flagPair(SymbolFlags.Class, SymbolFlags.ClassExcludes))],
   [
@@ -149,6 +149,3 @@ const DECLARATION_BINDERS: ReadonlyMap<SyntaxKind, NodeBinder> = new Map([
   [SyntaxKind.ExportDeclaration, bindExportDeclaration],
   [SyntaxKind.ExportAssignment, bindExportAssignment],
 ]);
-
-export { DECLARATION_BINDERS };
-export type { NodeBinder };

@@ -8,7 +8,7 @@ const TITLE = "ページが見つからない";
 const MESSAGE = "URL が間違っているか、ページが移動した可能性がある。";
 const BACK = "トップへ戻る";
 
-const NotFound = (): ReactNode => (
+export const NotFound = (): ReactNode => (
   <div className="glass-surface mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-12 sm:px-12 sm:py-16">
     <p
       aria-hidden
@@ -24,5 +24,3 @@ const NotFound = (): ReactNode => (
     </Link>
   </div>
 );
-
-export { NotFound };

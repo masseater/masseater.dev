@@ -6,9 +6,11 @@ import MAIN_MENU from "./fixtures/main-menu.json" with { type: "json" };
 import { Vm } from "./vm.ts";
 import type { Output } from "./vm.ts";
 
-type Sent = Readonly<{ method: string; url: string; body: string }>;
+/** @internal */
+export type Sent = Readonly<{ method: string; url: string; body: string }>;
 
-type Fake = Readonly<{
+/** @internal */
+export type Fake = Readonly<{
   states: readonly GameStateType[];
   served: number;
   sent: readonly Sent[];
@@ -16,13 +18,15 @@ type Fake = Readonly<{
   tunnels: readonly number[];
 }>;
 
-type Scene = Readonly<{
+/** @internal */
+export type Scene = Readonly<{
   states: readonly GameStateType[];
   guest: Output;
   failState: boolean;
 }>;
 
-type FakeGame = Readonly<{
+/** @internal */
+export type FakeGame = Readonly<{
   context: Context.Context<Vm | HttpClient.HttpClient>;
   now: () => Fake;
 }>;
@@ -32,7 +36,8 @@ const SERVER_ERROR = 500;
 const NEXT = 1;
 const PNG_BYTES = new TextEncoder().encode("PNG");
 
-const gameState = (overrides: Partial<GameStateType> = {}): GameStateType => ({
+/** @internal */
+export const gameState = (overrides: Partial<GameStateType> = {}): GameStateType => ({
   ...MAIN_MENU,
   ...overrides,
 });
@@ -73,7 +78,8 @@ const answer = (
     return Response.json(nextState(fake), { status: OK });
   });
 
-const fakeGame = (scene: Partial<Scene> = {}): FakeGame => {
+/** @internal */
+export const fakeGame = (scene: Partial<Scene> = {}): FakeGame => {
   const full: Scene = {
     states: [gameState()],
     guest: { exitCode: 0, output: "RESULT={}" },
@@ -106,8 +112,3 @@ const fakeGame = (scene: Partial<Scene> = {}): FakeGame => {
     now: () => Ref.getUnsafe(ref),
   };
 };
-
-/** @internal */
-export { fakeGame, gameState };
-/** @internal */
-export type { Fake, FakeGame, Scene, Sent };

@@ -37,7 +37,7 @@ const absorb = ({ digest, pending }: Progress, chunk: Uint8Array): Effect.Effect
 };
 
 /** @internal */
-const digestWith = Effect.fn("digestWith")(function* digestWith<Failure, Requirements>(
+export const digestWith = Effect.fn("digestWith")(function* digestWith<Failure, Requirements>(
   write: (
     feed: (chunk: Uint8Array) => Effect.Effect<void>,
   ) => Effect.Effect<void, Failure, Requirements>,
@@ -55,9 +55,7 @@ const digestWith = Effect.fn("digestWith")(function* digestWith<Failure, Require
 });
 
 /** @internal */
-const digestOfFile = Effect.fn("digestOfFile")(function* digestOfFile(file: string) {
+export const digestOfFile = Effect.fn("digestOfFile")(function* digestOfFile(file: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   return yield* digestWith((feed) => pipe(fileSystem.stream(file), Stream.runForEach(feed)));
 });
-
-export { digestOfFile, digestWith };

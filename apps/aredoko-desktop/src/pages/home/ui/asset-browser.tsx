@@ -1,8 +1,7 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useAssets, useLoadNext } from "#/pages/home/api/queries";
-import { useKinds, useSelectedPackage } from "#/pages/home/model";
+import { useAssets, useLoadNext, useKinds, useSelectedPackage } from "#/entities/asset";
 import { Loading } from "#/shared/ui/loading";
 import { Notice } from "#/shared/ui/notice";
 
@@ -12,7 +11,7 @@ import { ResultGrid } from "./result-grid.tsx";
 
 const EMPTY = "該当するアセットがありません";
 
-const AssetBrowser = (): ReactNode => {
+export const AssetBrowser = (): ReactNode => {
   const assets = useAssets({ packageId: useSelectedPackage(), kinds: useKinds() });
   const onEnd = useLoadNext(assets);
   if (assets.isPending) {
@@ -35,5 +34,3 @@ const AssetBrowser = (): ReactNode => {
     </>
   );
 };
-
-export { AssetBrowser };

@@ -14,8 +14,8 @@ import {
 } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { decodeRows } from "#shared/sql";
-import { writePackage } from "#shared/unitypackage";
+import { decodeRows } from "#/shared/sql/index.ts";
+import { writePackage } from "#/shared/unitypackage/index.ts";
 
 import { closure, missingOf } from "./closure.ts";
 import { looseEntries } from "./loose-entries.ts";
@@ -97,7 +97,7 @@ const destinationIn = Effect.fn("destinationIn")(function* destinationIn(directo
 });
 
 /** @internal */
-const extract = Effect.fn("extract")(function* extractAssets(
+export const extract = Effect.fn("extract")(function* extractAssets(
   assetIds: readonly number[],
   directory: string,
 ) {
@@ -130,5 +130,3 @@ const extract = Effect.fn("extract")(function* extractAssets(
     ),
   };
 });
-
-export { extract };

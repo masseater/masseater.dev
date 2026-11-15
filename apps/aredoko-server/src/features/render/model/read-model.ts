@@ -1,6 +1,6 @@
 import { Effect, FileSystem, Option, Path, Schema, pipe } from "effect";
 
-import { companionNamesOf, companionPath } from "#entities/package";
+import { companionNamesOf, companionPath } from "#/entities/package/index.ts";
 
 import { sourceOf, stage } from "./model-source.ts";
 
@@ -20,7 +20,7 @@ const sizeOf = Effect.fn("sizeOf")(function* sizeOfFile(file: string) {
 });
 
 /** @internal */
-const readModel = Effect.fn("readModel")(function* readModelFiles(assetId: number) {
+export const readModel = Effect.fn("readModel")(function* readModelFiles(assetId: number) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   yield* stage(assetId);
@@ -48,7 +48,7 @@ const partPath = Effect.fn("partPath")(function* partPathOf(assetId: number, fil
 });
 
 /** @internal */
-const readModelPart = Effect.fn("readModelPart")(function* readModelFilePart({
+export const readModelPart = Effect.fn("readModelPart")(function* readModelFilePart({
   assetId,
   file,
   offset,
@@ -72,5 +72,3 @@ const readModelPart = Effect.fn("readModelPart")(function* readModelFilePart({
   );
   return { data };
 });
-
-export { readModel, readModelPart };

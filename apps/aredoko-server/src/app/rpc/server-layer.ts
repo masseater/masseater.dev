@@ -4,9 +4,9 @@ import { Effect, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { RpcServer } from "effect/rpc";
 
-import { blmLayer, libraryLayer } from "#features/library";
-import { databaseLayer } from "#shared/database";
-import { Settings } from "#shared/settings";
+import { blmLayer, libraryLayer } from "#/features/library/index.ts";
+import { databaseLayer } from "#/shared/database/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
 
 import { embedderLayer } from "./embedder-layer.ts";
 import { handlersLayer } from "./handlers.ts";
@@ -19,7 +19,7 @@ const endpointDirectoryLayer = Layer.effect(
 const settingsTransportLayer = transportLayer.pipe(Layer.provide(endpointDirectoryLayer));
 
 /** @internal */
-const serverLayer = RpcServer.layer(AredokoRpcs).pipe(
+export const serverLayer = RpcServer.layer(AredokoRpcs).pipe(
   Layer.provide(handlersLayer),
   Layer.provide(libraryLayer),
   Layer.provideMerge(blmLayer),
@@ -28,5 +28,3 @@ const serverLayer = RpcServer.layer(AredokoRpcs).pipe(
   Layer.provideMerge(databaseLayer),
   Layer.provide(FetchHttpClient.layer),
 );
-
-export { serverLayer };

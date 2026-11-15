@@ -42,6 +42,16 @@ pub struct Manuscript {
     pub updated_at: i64,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Type)]
+#[serde(rename_all = "camelCase")]
+pub struct Revision {
+    pub id: String,
+    #[specta(type = specta_typescript::Number)]
+    pub saved_at: i64,
+    pub excerpt: String,
+    pub characters: u32,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
 pub struct Paragraph {
     pub id: String,

@@ -2,8 +2,8 @@ import { expect, layer } from "@effect/vitest";
 import { Array, Effect, FileSystem, Path, pipe, Predicate } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { RENDER } from "#shared/database";
-import { firstId } from "#shared/sql";
+import { RENDER } from "#/shared/database/index.ts";
+import { firstId } from "#/shared/sql/index.ts";
 
 import { readModel, readModelPart } from "./read-model.ts";
 import { failRender, putRender, renderJobs } from "./render-jobs.ts";

@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 
-import { PersonLink } from "#/entities/catalog";
+import { PersonLink } from "#/entities/person";
 import { TableCell } from "#/shared/ui/table-cell";
 import { TableRow } from "#/shared/ui/table-row";
 
 type PersonSummary = Readonly<{ id: number; name: string; creditCount: number }>;
 
-const PersonRow = ({ person }: Readonly<{ person: PersonSummary }>): ReactNode => (
+export const PersonRow = ({ person }: Readonly<{ person: PersonSummary }>): ReactNode => (
   <TableRow>
     <TableCell>
       <PersonLink id={person.id} name={person.name} />
@@ -14,5 +14,3 @@ const PersonRow = ({ person }: Readonly<{ person: PersonSummary }>): ReactNode =
     <TableCell variant="count">{`${person.creditCount.toString()} パート`}</TableCell>
   </TableRow>
 );
-
-export { PersonRow };

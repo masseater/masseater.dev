@@ -2,12 +2,15 @@ import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { ImportToUnityButton } from "./import-to-unity-button.tsx";
-import { OpenerButton } from "./opener-button.tsx";
+import { ImportToUnityButton } from "#/features/import-to-unity";
+import { OpenerButton } from "#/shared/ui/opener-button";
+
 import { ShowPackageButton } from "./show-package-button.tsx";
 import { useResultLinks } from "./use-result-links.ts";
 
-const ResultActions = ({ result }: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => {
+export const ResultActions = ({
+  result,
+}: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => {
   const { file, revealed, booth } = useResultLinks(result);
   return (
     <div className="flex flex-col gap-2">
@@ -19,5 +22,3 @@ const ResultActions = ({ result }: Readonly<{ result: typeof SearchResult.Type }
     </div>
   );
 };
-
-export { ResultActions };

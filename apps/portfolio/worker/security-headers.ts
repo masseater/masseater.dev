@@ -5,9 +5,9 @@ import {
 } from "@masseater.dev/ui/web-analytics";
 import { Array as Arr, pipe } from "effect";
 
-const IMAGE_HEADERS = { "Cross-Origin-Resource-Policy": "cross-origin" } as const;
+export const IMAGE_HEADERS = { "Cross-Origin-Resource-Policy": "cross-origin" } as const;
 
-const contentSecurityPolicy = (nonce: string): string =>
+export const contentSecurityPolicy = (nonce: string): string =>
   pipe(
     [
       "default-src 'self'",
@@ -25,5 +25,4 @@ const contentSecurityPolicy = (nonce: string): string =>
     Arr.join("; "),
   );
 
-export { IMAGE_HEADERS, contentSecurityPolicy };
 export { SECURITY_HEADERS_CREDENTIALLESS as SECURITY_HEADERS } from "security-headers";

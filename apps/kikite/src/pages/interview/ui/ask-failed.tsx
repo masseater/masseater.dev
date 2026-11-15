@@ -1,9 +1,9 @@
 import { CircleAlert } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useAsking } from "#/pages/interview/model/hooks";
+import { useAsking } from "#/entities/interview";
 
-const AskFailed = (): ReactNode => {
+export const AskFailed = (): ReactNode => {
   const asking = useAsking();
   return (
     asking.status === "failed" && (
@@ -14,5 +14,3 @@ const AskFailed = (): ReactNode => {
     )
   );
 };
-
-export { AskFailed };

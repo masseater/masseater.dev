@@ -1,12 +1,12 @@
 import { Array, Effect, FileSystem, HashMap, Option, Path, Schema, String, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { bundleFolder, hasExtension, mentionedIn } from "#entities/package";
-import type { Folder } from "#entities/package";
-import { blendImageNames, blendModel } from "#shared/blend";
-import { Settings } from "#shared/settings";
-import { decodeRows } from "#shared/sql";
-import { extractAssets } from "#shared/unitypackage";
+import { bundleFolder, hasExtension, mentionedIn } from "#/entities/package/index.ts";
+import type { Folder } from "#/entities/package/index.ts";
+import { blendImageNames, blendModel } from "#/shared/blend/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
+import { decodeRows } from "#/shared/sql/index.ts";
+import { extractAssets } from "#/shared/unitypackage/index.ts";
 
 const STAGING = "render";
 const RENDERED = "model";
@@ -78,7 +78,7 @@ const renderedName = (path: Path.Path, model: Model): string => {
 };
 
 /** @internal */
-const sourceOf = Effect.fn("sourceOf")(function* sourceOf(assetId: number) {
+export const sourceOf = Effect.fn("sourceOf")(function* sourceOf(assetId: number) {
   const path = yield* Path.Path;
   const model = yield* modelOf(assetId);
   if (!isStaged(model)) {
@@ -221,7 +221,7 @@ const freshStaging = Effect.fn("freshStaging")(function* freshStaging(assetId: n
 });
 
 /** @internal */
-const stage = Effect.fn("stage")(function* stage(assetId: number) {
+export const stage = Effect.fn("stage")(function* stage(assetId: number) {
   const model = yield* modelOf(assetId);
   if (!isStaged(model)) {
     return;
@@ -236,10 +236,10 @@ const stage = Effect.fn("stage")(function* stage(assetId: number) {
 });
 
 /** @internal */
-const discardStaging = Effect.fn("discardStaging")(function* discardStaging(assetId: number) {
+export const discardStaging = Effect.fn("discardStaging")(function* discardStaging(
+  assetId: number,
+) {
   const fileSystem = yield* FileSystem.FileSystem;
   const staging = yield* stagingOf(assetId);
   yield* fileSystem.remove(staging, { recursive: true, force: true });
 });
-
-export { discardStaging, sourceOf, stage };

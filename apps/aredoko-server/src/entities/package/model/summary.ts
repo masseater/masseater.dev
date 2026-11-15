@@ -1,7 +1,7 @@
 import type { Effect } from "effect";
 import { Array, HashMap, Option, Order, Record, Schema, String, pipe } from "effect";
 
-import { capture } from "#shared/text";
+import { capture } from "#/shared/text/index.ts";
 
 import { avatarsIn, colorsIn } from "./aliases.ts";
 import { kindOf } from "./kind.ts";
@@ -15,7 +15,7 @@ const SHADER_MARKERS = [
   { name: "UnityChanToonShader", marker: "_utsTechnique" },
 ] as const;
 
-const StoredSummary = Schema.Struct({
+export const StoredSummary = Schema.Struct({
   counts: Schema.Record(Schema.String, Schema.Int),
   shaders: Schema.Array(Schema.String),
   avatars: Schema.Array(Schema.String),
@@ -24,7 +24,7 @@ const StoredSummary = Schema.Struct({
 
 type PackageSummary = typeof StoredSummary.Type;
 
-interface SummaryEntry {
+export interface SummaryEntry {
   readonly guid: string;
   readonly pathname: string;
   readonly asset: Option.Option<Uint8Array>;
@@ -126,7 +126,7 @@ const summarize = ({
   colors: colorsIn(pathsOf(ofKind("material")(entries))),
 });
 
-const listedEntry = ({
+export const listedEntry = ({
   guid,
   pathname,
 }: Readonly<{ guid: string; pathname: string }>): SummaryEntry => ({
@@ -135,10 +135,7 @@ const listedEntry = ({
   asset: Option.none(),
 });
 
-const encodeSummary = (input: {
+export const encodeSummary = (input: {
   readonly name: string;
   readonly entries: readonly SummaryEntry[];
 }): Effect.Effect<string, Schema.SchemaError> => encode(summarize(input));
-
-export { StoredSummary, encodeSummary, listedEntry };
-export type { SummaryEntry };
