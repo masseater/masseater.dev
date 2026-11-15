@@ -1112,6 +1112,9 @@ importers:
       '@effect/vitest':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
+      '@masseater.dev/component-release':
+        specifier: workspace:*
+        version: link:../../libs/component-release
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
