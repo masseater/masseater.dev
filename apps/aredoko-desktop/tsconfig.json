@@ -7,21 +7,6 @@
     "types": ["vite/client"],
     "paths": {
       "#/*": ["./src/*"]
-    },
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "allowedUnstableApis": [
-          "@effect/atom-react",
-          "@effect/vitest#it",
-          "effect/http/FetchHttpClient",
-          "effect/http/HttpClient",
-          "effect/http/HttpClientResponse",
-          "effect/observability/OtlpSerialization#layerJson",
-          "effect/observability/OtlpTracer#layerFromConfig",
-          "effect/reactivity/Atom"
-        ]
-      }
-    ]
+    }
   }
 }

@@ -32,7 +32,6 @@ const scriptsOverride: {
 } = {
   files: ["scripts/**"],
   rules: {
-    "import/no-nodejs-modules": "off",
     "node/no-process-env": "off",
     "node/no-sync": "off",
     "effecttsgo/node-builtin-import": "off",
