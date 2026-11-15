@@ -9,4 +9,9 @@ const app = tauriAppConfig({
   workspaceInputs: [],
 });
 
-export default defineConfig(mergeConfig(app, { optimizeDeps: { include: ["effect/crypto"] } }));
+export default defineConfig(
+  mergeConfig(app, {
+    optimizeDeps: { include: ["effect/crypto"] },
+    run: { tasks: { verify: { command: [], dependsOn: ["cargo"] } } },
+  }),
+);

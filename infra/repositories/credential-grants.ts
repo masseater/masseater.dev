@@ -107,6 +107,7 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
       metadata: "read",
     },
   },
+  "masseater.dev/private-names": { permissions: { metadata: "read" } },
   ...Rec.fromEntries(
     pipe(
       RELEASE_COMPONENTS,
