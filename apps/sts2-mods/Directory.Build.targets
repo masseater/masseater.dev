@@ -1,4 +1,4 @@
-<Project InitialTargets="CheckDependencyPaths">
+<Project InitialTargets="ValidateModLayout">
     <PropertyGroup Condition="'$(IsSts2Mod)' == 'true'">
         <ModId Condition="'$(ModId)' == ''">$(MSBuildProjectName)</ModId>
         <ModManifest>$(MSBuildProjectDirectory)/$(ModId).json</ModManifest>
@@ -6,7 +6,14 @@
         <ModHasPck Condition="'$(ModHasPck)' == '' and Exists('$(ModAssetDir)')">true</ModHasPck>
         <ModHasPck Condition="'$(ModHasPck)' == ''">false</ModHasPck>
         <ModOutputDir>$(ModsPath)$(ModId)/</ModOutputDir>
+        <PckOutputDir Condition="'$(PckOutputDir)' == ''">$(ModOutputDir)</PckOutputDir>
+        <PckOutputPath>$(PckOutputDir)$(ModId).pck</PckOutputPath>
+        <WorkshopDir>$(RepoRoot)workshop/$(ModId)/</WorkshopDir>
+        <WorkshopContentDir>$(WorkshopDir)content/$(ModId)/</WorkshopContentDir>
+        <ModFormatOnly Condition="'$(UseSts2Stubs)' == 'true' and '$(SupportsSts2Stubs)' != 'true'">true</ModFormatOnly>
     </PropertyGroup>
+
+    <Import Project="$(RepoRoot)build/FormatOnly.targets" Condition="'$(ModFormatOnly)' == 'true'" />
 
     <ItemGroup Condition="'$(IsSts2Mod)' == 'true' and '$(UseSts2Stubs)' != 'true' and Exists('$(Sts2DataDir)')">
         <Reference Include="0Harmony">
@@ -30,7 +37,7 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(IsSts2Mod)' == 'true'">
-        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.4.7" PrivateAssets="All" />
+        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.4.8" PrivateAssets="All" />
         <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.6.1" PrivateAssets="All" />
         <PackageReference Include="Meziantou.Analyzer" Version="3.0.326" PrivateAssets="All" />
     </ItemGroup>
@@ -52,12 +59,26 @@
         <None Include="$(ModId)/**" />
     </ItemGroup>
 
-    <Target Name="CheckDependencyPaths"
-            Condition="'$(IsSts2Mod)' == 'true' and '$(MSBuildIsRestoring)' != 'true' and '$(SkipSts2Check)' != 'true'">
-        <Error Text=" Slay the Spire 2 data not found at path '$(Sts2DataDir)'。ゲームが無い環境では scripts/check.sh (スタブでの型チェック) を使ってください"
-               Condition="'$(UseSts2Stubs)' != 'true' and ('$(Sts2DataDir)' == '' or !Exists('$(Sts2DataDir)'))" />
-        <Error Text=" $(MSBuildProjectName) はスタブでビルドできない Mod です (csproj の SupportsSts2Stubs が false)"
-               Condition="'$(UseSts2Stubs)' == 'true' and '$(SupportsSts2Stubs)' != 'true'" />
+    <Target Name="ValidateModLayout" Condition="'$(IsSts2Mod)' == 'true' and '$(MSBuildIsRestoring)' != 'true'">
+        <PropertyGroup>
+            <ModManifestText Condition="Exists('$(ModManifest)')">$([System.IO.File]::ReadAllText('$(ModManifest)'))</ModManifestText>
+            <ModProjectText>$([System.IO.File]::ReadAllText('$(MSBuildProjectFullPath)'))</ModProjectText>
+            <WorkshopText Condition="Exists('$(WorkshopDir)workshop.json')">$([System.IO.File]::ReadAllText('$(WorkshopDir)workshop.json'))</WorkshopText>
+            <ModManifestHasPck>$([System.Text.RegularExpressions.Regex]::IsMatch('$(ModManifestText)', '"has_pck"\s*:\s*true'))</ModManifestHasPck>
+        </PropertyGroup>
+        <Error Text=" Mod 名は英字で始まる英数字だけにしてください: $(ModId)"
+               Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(ModId)', '^[A-Za-z][A-Za-z0-9]*$'))" />
+        <Error Text=" $(ModManifest) がありません" Condition="!Exists('$(ModManifest)')" />
+        <Error Text=" $(ModManifest) の id がフォルダ名 $(ModId) と違います"
+               Condition="Exists('$(ModManifest)') and !$([System.Text.RegularExpressions.Regex]::IsMatch('$(ModManifestText)', '&quot;id&quot;\s*:\s*&quot;$(ModId)&quot;'))" />
+        <Error Text=" アセットフォルダ $(ModAssetDir) があるのに、マニフェストの has_pck が true ではありません"
+               Condition="'$(ModHasPck)' == 'true' and '$(ModManifestHasPck)' != 'True'" />
+        <Error Text=" アセットフォルダ $(ModAssetDir) が無いのに、マニフェストの has_pck が true です"
+               Condition="'$(ModHasPck)' != 'true' and '$(ModManifestHasPck)' == 'True'" />
+        <Error Text=" $(MSBuildProjectFile) に TargetFramework を直書きしてください (MegaDot が書き換えるため)"
+               Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(ModProjectText)', '&lt;TargetFramework&gt;[^&lt;]+&lt;/TargetFramework&gt;'))" />
+        <Error Text=" $(WorkshopDir)workshop.json の dependencies は数値で書いてください (アップローダが数値として読む)"
+               Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(WorkshopText)', '&quot;dependencies&quot;\s*:\s*\[[^\]]*&quot;'))" />
     </Target>
 
     <Target Name="UpdateDependencyVersions" BeforeTargets="BeforeBuild"
@@ -82,25 +103,36 @@
         <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(ModOutputDir)" />
     </Target>
 
-    <Target Name="NeedGodotForPublish" BeforeTargets="Publish" Condition="'$(IsSts2Mod)' == 'true' and '$(ModHasPck)' == 'true'">
+    <Target Name="NoPublishWithStubs" BeforeTargets="PrepareForPublish" Condition="'$(IsSts2Mod)' == 'true' and '$(UseSts2Stubs)' == 'true'">
+        <Error Text=" スタブに対してビルドした dll は配れないので、publish はゲームのある PC で行ってください" />
+    </Target>
+
+    <Target Name="NeedGodot">
         <Error Text=" MegaDot が見つかりません: '$(GodotPath)'。local.props の GodotPath を設定してください"
                Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')" />
     </Target>
 
     <Target Name="GodotPublish" AfterTargets="Publish" DependsOnTargets="ExportPck" Condition="'$(IsSts2Mod)' == 'true'" />
 
-    <Target Name="ExportPck"
-            Condition="'$(IsSts2Mod)' == 'true' and '$(ModHasPck)' == 'true' and '$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
-        <PropertyGroup>
-            <PckOutputDir Condition="'$(PckOutputDir)' == ''">$(ModOutputDir)</PckOutputDir>
-            <PckOutputPath>$(PckOutputDir)$(ModId).pck</PckOutputPath>
-        </PropertyGroup>
+    <Target Name="ExportPck" DependsOnTargets="NeedGodot"
+            Condition="'$(IsSts2Mod)' == 'true' and '$(ModHasPck)' == 'true' and '$(IsInnerGodotExport)' != 'true'">
         <Message Text="$(PckOutputPath) を書き出します" Importance="high" />
         <MakeDir Directories="$(PckOutputDir)" />
         <Delete Files="$(PckOutputPath)" />
         <Exec Command="&quot;$(GodotPath)&quot; --headless --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;BasicExport&quot; &quot;$(PckOutputPath)&quot;"
-              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
+              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1;DOTNET_ROOT=$(NetCoreRoot)"
               IgnoreExitCode="true" IgnoreStandardErrorWarningFormat="true" />
         <Error Text=" .pck の書き出しに失敗しました: $(PckOutputPath)" Condition="!Exists('$(PckOutputPath)')" />
+    </Target>
+
+    <Target Name="StageWorkshop" AfterTargets="GodotPublish"
+            Condition="'$(IsSts2Mod)' == 'true' and '$(UseSts2Stubs)' != 'true' and Exists('$(WorkshopDir)')">
+        <ItemGroup>
+            <WorkshopFile Include="$(ModManifest);$(TargetPath)" />
+            <WorkshopFile Include="$(PckOutputPath)" Condition="'$(ModHasPck)' == 'true'" />
+        </ItemGroup>
+        <RemoveDir Directories="$(WorkshopContentDir)" />
+        <Copy SourceFiles="@(WorkshopFile)" DestinationFolder="$(WorkshopContentDir)" />
+        <Message Text="$(WorkshopContentDir) へ @(WorkshopFile->'%(Filename)%(Extension)') を写しました" Importance="high" />
     </Target>
 </Project>

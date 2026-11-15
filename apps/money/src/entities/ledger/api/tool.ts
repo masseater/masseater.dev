@@ -1,11 +1,10 @@
 import { NO_PROJECT } from "@masseater.dev/mcp-tool-call";
 import type { Caller, OVERWRITE, READ_ONLY, WRITE } from "@masseater.dev/mcp-tool-call";
 import type { McpServer, StandardSchemaWithJSON } from "@modelcontextprotocol/server";
-import { Layer, pipe } from "effect";
-import type { Effect } from "effect";
+import { Array as Arr, Effect, Layer, pipe } from "effect";
 import { Digest, SecureRandom } from "effect/crypto";
 
-import { meteredInput, runToolIn } from "#/shared/api";
+import { meteredInput, rejected, runToolIn } from "#/shared/api";
 import type { ToolName } from "#/shared/api";
 
 import type { Failure, Services } from "./database";
@@ -29,13 +28,43 @@ export type Tool<Input, Output, Value> = Readonly<{
 /** @internal */
 export type Register = (caller: Caller) => (server: McpServer) => McpServer;
 
-const runMoneyTool = runToolIn(Layer.mergeAll(Digest.layerWebCrypto, SecureRandom.layerWebCrypto));
+/** @internal */
+export type DefinedTool = Readonly<{
+  name: ToolName;
+  annotations: Annotations;
+  register: Register;
+  call: (input: unknown) => Effect.Effect<unknown, Failure, Services>;
+}>;
 
 /** @internal */
-export const tool =
-  <Input, Output, Value>(spec: Tool<Input, Output, Value>): Register =>
-  (caller) =>
-  (server) => {
+export const services = Layer.mergeAll(Digest.layerWebCrypto, SecureRandom.layerWebCrypto);
+
+const runMoneyTool = runToolIn(services);
+
+const issuesOf = (issues: readonly Readonly<{ message: string }>[]): string =>
+  pipe(
+    issues,
+    Arr.map(({ message }) => message),
+    Arr.join("; "),
+  );
+
+const validated =
+  <Input, Output>(schema: StandardSchemaWithJSON<Input, Output>) =>
+  (input: unknown): Effect.Effect<Output, Failure> =>
+    Effect.promise(() => Promise.resolve(schema["~standard"].validate(input))).pipe(
+      Effect.flatMap((result) => {
+        if ("value" in result) {
+          return Effect.succeed(result.value);
+        }
+        return Effect.fail(rejected(issuesOf(result.issues)));
+      }),
+    );
+
+/** @internal */
+export const tool = <Input, Output, Value>(spec: Tool<Input, Output, Value>): DefinedTool => ({
+  name: spec.name,
+  annotations: spec.annotations,
+  register: (caller) => (server) => {
     const meter = { tool: spec.name, caller, project: NO_PROJECT } as const;
     server.registerTool(
       spec.name,
@@ -47,14 +76,16 @@ export const tool =
       (input) => pipe(spec.run(input), runMoneyTool({ ...meter, input, count: spec.count })),
     );
     return server;
-  };
+  },
+  call: (input) => validated(spec.input)(input).pipe(Effect.flatMap(spec.run)),
+});
 
 /** @internal */
 export const registerAll =
-  (tools: readonly Register[]): Register =>
+  (tools: readonly DefinedTool[]): Register =>
   (caller) =>
   (server) => {
-    for (const register of tools) {
+    for (const { register } of tools) {
       register(caller)(server);
     }
     return server;

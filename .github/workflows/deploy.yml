@@ -1,0 +1,144 @@
+name: deploy
+
+on:
+  workflow_call:
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN:
+        required: true
+      CLOUDFLARE_ACCOUNT_ID:
+        required: true
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      NPM_TOKEN:
+        required: true
+
+permissions: {}
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    outputs:
+      stacks: ${{ steps.stacks.outputs.stacks }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: git fetch --unshallow --filter=blob:none origin
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r atproto-password
+        continue-on-error: true
+      - if: env.ATP_APP_PASSWORD != ''
+        run: vp run -r standard-site
+        continue-on-error: true
+        env:
+          ATP_IDENTIFIER: did:plc:sz2kxumpsjbch3kgnsjjed5z
+      - id: stacks
+        run: vp run -r deploy-stacks
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: vp run -r deploy:bootstrap
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  broker:
+    needs: bootstrap
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r deploy:broker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  production:
+    needs: [bootstrap, broker]
+    if: ${{ !cancelled() && needs.bootstrap.outputs.stacks != '' && needs.bootstrap.outputs.stacks != '[]' }}
+    name: production (${{ matrix.stack.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        stack: ${{ fromJSON(needs.bootstrap.outputs.stacks) }}
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run --log labeled --filter "$FILTER" deploy:production
+        env:
+          FILTER: ${{ matrix.stack.filter }}
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .github/workflows/deploy.yml
+          key: deployed-${{ matrix.stack.name }}-${{ github.sha }}
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: web-vitals-${{ matrix.stack.name }}
+          path: tools/*/report/
+          if-no-files-found: ignore
+
+  zone:
+    needs: broker
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    environment: zone
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r deploy:zone
+
+  github:
+    needs: broker
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    environment: github
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r github-token
+      - run: vp run -r deploy:github
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

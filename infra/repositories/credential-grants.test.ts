@@ -66,7 +66,7 @@ test("a profile without zone permissions issues no zone policy", () => {
   expect(pipe(buildsLogs, Option.map(resourceKeys))).toStrictEqual(Option.some([ACCOUNT_RESOURCE]));
 });
 
-const DECISION_EXPERIMENTS = "masseater.dev/decision-experiments";
+const PRODUCTION = "masseater.dev/production";
 
 const RULE_GROUP_NAMES: readonly string[] = ["Account Rulesets Write", "Account Rule Lists Write"];
 
@@ -76,13 +76,13 @@ const RULE_GROUP_IDS = pipe(
   Arr.map(({ id }) => id),
 );
 
-test("decision-experiments の環境は deploy の権限グループだけを受け取り、ルールセットとリストは書けない", () => {
+test("本番のスタックを当てる環境は access の権限グループだけを受け取り、ルールセットとリストは書けない", () => {
   const grants = grantPolicies({ accountId: "account", zoneId: "zone" });
   const granted = pipe(
-    Rec.get(grants.repositories, DECISION_EXPERIMENTS),
+    Rec.get(grants.repositories, PRODUCTION),
     Option.flatMap((profile) => Rec.get(grants.profiles, profile)),
   );
-  expect(granted).toStrictEqual(Rec.get(grants.profiles, "deploy"));
+  expect(granted).toStrictEqual(Rec.get(grants.profiles, "access"));
   expect(Option.isSome(granted)).toBe(true);
   expect(
     pipe(

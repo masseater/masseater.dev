@@ -6,12 +6,14 @@
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@distilled.cloud/cloudflare": "catalog:stack",
+    "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/owner-stack": "workspace:*",
     "alchemy": "catalog:stack",
     "effect": "catalog:stack"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
-    "@types/node": "catalog:"
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
   }
 }

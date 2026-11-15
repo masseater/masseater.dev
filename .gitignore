@@ -51,6 +51,8 @@ libs/mosaic/data/
 
 # Rust
 /target
+/.pnpm
+/.cargo/config.toml
 /tools/pod-rattle-parity/reference
 /tools/pod-rattle-parity/engine.gen.js
 tools/web-vitals-measure/report/
