@@ -9,7 +9,7 @@ export default defineConfig({
       build: { cache: false, command: "scripts/build.sh" },
       publish: { cache: false, command: "scripts/build.sh --publish" },
       pck: { cache: false, command: "scripts/export-pck.sh" },
-      "pck:all": { cache: false, command: "scripts/export-all-pck.sh" },
+      "pck:all": { cache: false, command: "node scripts/export-all-pck.ts" },
       stage: { cache: false, command: "scripts/stage.sh" },
       "new-mod": { cache: false, command: "scripts/new-mod.sh" },
     },

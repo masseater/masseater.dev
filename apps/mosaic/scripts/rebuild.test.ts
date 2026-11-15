@@ -1,27 +1,25 @@
-import { layer as nodeServicesLayer } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
-import { Array as Arr, Effect, FileSystem, Path, Schema, String as Str, pipe } from "effect";
+import { Array as Arr, Console, Effect, Layer, String as Str, pipe } from "effect";
 import { expect } from "vite-plus/test";
-import { parse } from "yaml";
 
 import {
   BEFORE_SHA,
   HEAD_SHA,
   awaitingDeploy,
   cancelled,
-  decisionIn,
-  decisionWithoutTheApi,
   deployed,
   failedDeploy,
+  planIn,
+  planWithoutTheApi,
   rebuilding,
   shaOf,
   skippedDeploy,
+  supersededIn,
+  supersededWithoutTheApi,
   unrelated,
-} from "./mosaic-rebuild.test.support.ts";
-import type { RunFixture, Scenario } from "./mosaic-rebuild.test.support.ts";
-
-const TOUCHED = "mosaic-touched.sh";
-const SUPERSEDED = "mosaic-superseded.sh";
+} from "./rebuild.test.support.ts";
+import type { RunFixture, Scenario } from "./rebuild.test.support.ts";
+import type { Plan } from "./rebuild.ts";
 
 const NEWEST = 102;
 const NEWER = 101;
@@ -38,10 +36,9 @@ const UNRELATED_FILES = ["apps/portfolio/src/app/router.tsx", "libs/mosaic-like/
 const MOSAIC_FILES = ["AGENTS.md", "tools/mosaic/src/site.rs"];
 const TOO_MANY_FILES = Arr.makeBy(COMPARE_FILE_LIMIT, (index) => `docs/${String(index)}.md`);
 
-const REBUILT = "rebuild=true\nweb=true\n";
-const NOT_REBUILT = "rebuild=false\nweb=false\n";
-const STOPPED = "superseded=true\n";
-const NOT_STOPPED = "superseded=false\n";
+const REBUILT: Plan = { rebuild: true, web: true };
+const NOT_REBUILT: Plan = { rebuild: false, web: false };
+const REBUILD_STEPS = ["rebuild"];
 
 const WAITING_FOR_VERIFY: RunFixture = { number: NEWEST, status: "in_progress", jobs: [] };
 
@@ -55,7 +52,6 @@ const push = (runs: readonly RunFixture[], compares: Scenario["compares"]): Scen
   compares,
   event: "push",
   before: BEFORE_SHA,
-  superseding: "",
 });
 
 const weekly = (scenario: Scenario): Scenario => ({ ...scenario, event: "schedule", before: "" });
@@ -104,13 +100,13 @@ const OUT_OF_WINDOW = push(
   },
 );
 
-interface Case {
+interface Case<Expected> {
   readonly name: string;
   readonly scenario: Scenario;
-  readonly expected: string;
+  readonly expected: Expected;
 }
 
-const PLAN_CASES: readonly Case[] = [
+const PLAN_CASES: readonly Case<Plan>[] = [
   {
     name: "前回の作り直しから mosaic に変更が無ければ作り直さない",
     scenario: BASE_WITHOUT_MOSAIC,
@@ -206,91 +202,50 @@ const PLAN_CASES: readonly Case[] = [
   },
 ];
 
-const STOP_CASES: readonly Case[] = [
-  {
-    name: "新しい実行が作り直すと決めていれば止める",
-    scenario: NEWER_REBUILD,
-    expected: STOPPED,
-  },
-  {
-    name: "新しい実行が作り直さないなら止めない",
-    scenario: NEWER_UNRELATED,
-    expected: NOT_STOPPED,
-  },
-  { name: "新しい実行が無ければ止めない", scenario: BASE_WITH_MOSAIC, expected: NOT_STOPPED },
-  { name: "古い実行の作り直しでは止めない", scenario: REBUILD_UNDER_WAY, expected: NOT_STOPPED },
+const STOP_CASES: readonly Case<boolean>[] = [
+  { name: "新しい実行が作り直すと決めていれば止める", scenario: NEWER_REBUILD, expected: true },
+  { name: "新しい実行が作り直さないなら止めない", scenario: NEWER_UNRELATED, expected: false },
+  { name: "新しい実行が無ければ止めない", scenario: BASE_WITH_MOSAIC, expected: false },
+  { name: "古い実行の作り直しでは止めない", scenario: REBUILD_UNDER_WAY, expected: false },
 ];
 
-const writes = Effect.fn("writes")(function* writes(script: string, testCase: Case) {
-  const decision = yield* decisionIn(script, testCase.scenario);
-  expect(decision.written).toBe(testCase.expected);
+const plans = Effect.fn("plans")(function* plans({ scenario, expected }: Case<Plan>) {
+  const plan = yield* planIn(scenario);
+  expect(plan).toStrictEqual(expected);
+});
+
+const stops = Effect.fn("stops")(function* stops({ scenario, expected }: Case<boolean>) {
+  const superseded = yield* supersededIn({ scenario, steps: REBUILD_STEPS });
+  expect(superseded).toBe(expected);
 });
 
 const rebuildsWithoutTheApi = Effect.gen(function* rebuildsWithoutTheApi() {
-  const decision = yield* decisionWithoutTheApi(TOUCHED);
-  expect(decision.written).toBe(REBUILT);
+  const plan = yield* planWithoutTheApi;
+  expect(plan).toStrictEqual(REBUILT);
 });
 
 const warnsWithoutTheApi = Effect.gen(function* warnsWithoutTheApi() {
-  const decision = yield* decisionWithoutTheApi(SUPERSEDED);
-  expect(decision.written).toBe(NOT_STOPPED);
-  expect(Str.includes("::warning::")(decision.log)).toBe(true);
-});
-
-const Step = Schema.Struct({
-  name: Schema.optional(Schema.String),
-  uses: Schema.optional(Schema.String),
-});
-
-const Job = Schema.Struct({ steps: Schema.Array(Step) });
-
-const Workflow = Schema.Struct({
-  jobs: Schema.Struct({
-    "mosaic-plan": Job,
-    "mosaic-character": Job,
-    "mosaic-deploy": Job,
-    "mosaic-refresh": Job,
-  }),
-});
-
-const namesOf = (job: typeof Job.Type): readonly string[] =>
-  pipe(
-    job.steps,
-    Arr.flatMap((step) => Arr.fromNullishOr(step.name)),
+  const lines: string[] = [];
+  const capturing: Console.Console = {
+    ...globalThis.console,
+    log: (...args) => {
+      lines.push(...pipe(args, Arr.map(String)));
+    },
+  };
+  const superseded = yield* supersededWithoutTheApi.pipe(
+    Effect.provideService(Console.Console, capturing),
   );
-
-const usesLatestVerified = Str.includes("latest-verified");
-
-const workflowMatchesTheScripts = Effect.gen(function* workflowMatchesTheScripts() {
-  const fs = yield* FileSystem.FileSystem;
-  const path = yield* Path.Path;
-  const file = path.resolve(import.meta.dirname, "../../.github/workflows/verify.yml");
-  const source = yield* fs.readFileString(file);
-  const { jobs } = yield* Schema.decodeUnknownEffect(Workflow)(parse(source));
-  expect(namesOf(jobs["mosaic-plan"])).toStrictEqual(["rebuild", "web"]);
-  expect(namesOf(jobs["mosaic-deploy"])).toStrictEqual(["deploy"]);
-  expect(namesOf(jobs["mosaic-refresh"])).toStrictEqual(["deploy"]);
-  const actions = pipe(
-    [jobs["mosaic-plan"], jobs["mosaic-character"], jobs["mosaic-deploy"], jobs["mosaic-refresh"]],
-    Arr.flatMap((job) => job.steps),
-    Arr.flatMap((step) => Arr.fromNullishOr(step.uses)),
-  );
-  expect(pipe(actions, Arr.filter(usesLatestVerified))).toStrictEqual([]);
+  expect(superseded).toBe(false);
+  const warned = pipe(lines, Arr.some(Str.includes("::warning::")));
+  expect(warned).toBe(true);
 });
 
-layer(nodeServicesLayer)("mosaic を作り直すかの判定", (it) => {
-  it.effect.each(PLAN_CASES)("$name", (testCase) => writes(TOUCHED, testCase));
+layer(Layer.empty)("mosaic を作り直すかの判定", (it) => {
+  it.effect.each(PLAN_CASES)("$name", plans);
   it.effect("実行も変更も読めなければ作り直す", () => rebuildsWithoutTheApi);
 });
 
-layer(nodeServicesLayer)("mosaic の作り直しを止めるかの判定", (it) => {
-  it.effect.each(STOP_CASES)("$name", (testCase) => writes(SUPERSEDED, testCase));
+layer(Layer.empty)("mosaic の作り直しを止めるかの判定", (it) => {
+  it.effect.each(STOP_CASES)("$name", stops);
   it.effect("実行の一覧を読めなければ、警告を出して止めない", () => warnsWithoutTheApi);
-});
-
-layer(nodeServicesLayer)("verify.yml の mosaic のジョブ", (it) => {
-  it.effect(
-    "スクリプトが探す名前のステップを持ち、latest-verified を使わない",
-    () => workflowMatchesTheScripts,
-  );
 });

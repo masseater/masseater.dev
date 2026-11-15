@@ -208,7 +208,11 @@ jobs:
         with:
           persist-credentials: false
       - if: steps.head.outputs.latest == 'true'
-        run: .github/scripts/zenn-publish.sh
+        uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - if: steps.head.outputs.latest == 'true'
+        run: vp run -r zenn-publish
         env:
           GH_TOKEN: ${{ github.token }}
           GIT_AUTHOR_NAME: github-actions[bot]
@@ -250,28 +254,31 @@ jobs:
       actions: write
       contents: read
     outputs:
-      rebuild: ${{ steps.touched.outputs.rebuild }}
-      web: ${{ steps.touched.outputs.web }}
-      slugs: ${{ steps.rebuild.outputs.slugs }}
+      rebuild: ${{ steps.plan.outputs.rebuild }}
+      web: ${{ steps.plan.outputs.web }}
+      slugs: ${{ steps.plan.outputs.slugs }}
+      pool: ${{ steps.plan.outputs.pool }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - id: touched
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - id: plan
         env:
           GH_TOKEN: ${{ github.token }}
           HEAD_SHA: ${{ github.sha }}
           BEFORE_SHA: ${{ github.event.before }}
-        run: .github/scripts/mosaic-touched.sh
+        run: vp run -r mosaic-plan
       - env:
           GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/prune-caches.sh
+        run: vp run -r prune-caches
       - name: rebuild
-        id: rebuild
-        if: steps.touched.outputs.rebuild == 'true'
-        run: .github/scripts/mosaic-slugs.sh
+        if: steps.plan.outputs.rebuild == 'true'
+        run: echo "the character files are rebuilt"
       - name: web
-        if: steps.touched.outputs.web == 'true'
+        if: steps.plan.outputs.web == 'true'
         run: echo "the site is redeployed"
 
   mosaic-character:
@@ -296,6 +303,7 @@ jobs:
       - uses: $/.github/actions/mosaic-character
         with:
           slug: ${{ matrix.slug }}
+          pool: ${{ needs.mosaic-plan.outputs.pool }}
           job-index: ${{ strategy.job-index }}
           github-token: ${{ github.token }}
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -315,15 +323,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - id: head
         env:
           GH_TOKEN: ${{ github.token }}
           SUPERSEDING_STEPS: rebuild web
-        run: .github/scripts/mosaic-superseded.sh
-      - if: steps.head.outputs.superseded != 'true'
-        uses: $/.github/actions/setup
-        with:
-          native: "false"
+        run: vp run -r mosaic-superseded
       - name: deploy
         if: steps.head.outputs.superseded != 'true'
         run: vp run -r deploy:mosaic-site
@@ -381,6 +388,7 @@ jobs:
     if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       issues: write
     concurrency:
       group: deploy-failure
@@ -388,9 +396,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: .github/scripts/deploy-failure.sh
-          sparse-checkout-cone-mode: false
-      - run: .github/scripts/deploy-failure.sh
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r deploy-failure
         env:
           GH_TOKEN: ${{ github.token }}
           NEEDS: ${{ toJSON(needs) }}
