@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { PersonLink } from "#/entities/catalog";
+import { PersonLink } from "#/entities/person";
 import { TableCell } from "#/shared/ui/table-cell";
 import { TableRow } from "#/shared/ui/table-row";
 

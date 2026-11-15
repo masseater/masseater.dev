@@ -3,11 +3,11 @@ import { Array, Effect, FileSystem, Layer, Option, Path, Result, Schema, pipe } 
 import { Base64 } from "effect/encoding";
 import { SqlClient } from "effect/sql";
 
-import { RENDER, databaseLayer } from "#shared/database";
-import { Settings } from "#shared/settings";
-import { decodeRows, firstId } from "#shared/sql";
-import { writePackage } from "#shared/unitypackage";
-import type { LooseFile } from "#shared/unitypackage";
+import { RENDER, databaseLayer } from "#/shared/database/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
+import { decodeRows, firstId } from "#/shared/sql/index.ts";
+import { writePackage } from "#/shared/unitypackage/index.ts";
+import type { LooseFile } from "#/shared/unitypackage/index.ts";
 
 const NO_SIZE = 0;
 const FIRST = 0;

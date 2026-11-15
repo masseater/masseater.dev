@@ -1,8 +1,7 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useAssets, useLoadNext } from "#/pages/home/api/queries";
-import { useKinds, useSelectedPackage } from "#/pages/home/model";
+import { useAssets, useLoadNext, useKinds, useSelectedPackage } from "#/entities/asset";
 import { Loading } from "#/shared/ui/loading";
 import { Notice } from "#/shared/ui/notice";
 

@@ -2,12 +2,12 @@ import { String as Str, pipe } from "effect";
 import { CircleAlert, ExternalLink, FlaskConical, Languages, Server, Sigma } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { englishRows, englishSource } from "#/pages/leaderboard/model/english";
+import { englishRows, englishSource } from "#/entities/benchmark";
+import { NoteList } from "#/shared/ui/note-list";
+import type { Note } from "#/shared/ui/note-list";
+import { Section } from "#/shared/ui/section";
 
-import { NoteList } from "./note-list";
-import type { Note } from "./note-list";
-import { Section } from "./section";
-import { EnglishTable } from "./tables/english-table";
+import { EnglishTable } from "./english-table";
 
 const COMMIT_START = 0;
 const SHORT_COMMIT = 7;

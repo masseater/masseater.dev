@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Ranked } from "#/pages/ranking/model/ranking";
+import type { Ranked } from "#/entities/ranking";
 
 import { Pager } from "./pager";
 import { RankingTable } from "./ranking-table";

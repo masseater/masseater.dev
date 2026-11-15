@@ -1,7 +1,7 @@
 import { Effect, Array as Arr, String as Str, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { INJECTION, cleanedOf } from "./__tests__/fake-judge.ts";
+import { INJECTION, cleanedOf } from "./fake-judge.test.support.ts";
 import { sentencesOf } from "./segment.ts";
 
 const textsOf = (text: string, format: string): readonly string[] =>

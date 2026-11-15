@@ -3,7 +3,7 @@ import { Array as Arr, pipe } from "effect";
 import { FileX } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { Phase } from "#/pages/inspect/model/trace";
+import type { Phase } from "#/entities/inspection";
 
 import { Note } from "./note";
 

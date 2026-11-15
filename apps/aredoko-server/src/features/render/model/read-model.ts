@@ -1,6 +1,6 @@
 import { Effect, FileSystem, Option, Path, Schema, pipe } from "effect";
 
-import { companionNamesOf, companionPath } from "#entities/package";
+import { companionNamesOf, companionPath } from "#/entities/package/index.ts";
 
 import { sourceOf, stage } from "./model-source.ts";
 

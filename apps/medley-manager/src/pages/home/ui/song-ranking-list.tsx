@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { SongLink } from "#/entities/catalog";
+import { SongLink } from "#/entities/song";
 import { songsQuery } from "#/pages/home/api/loader";
 import { RANKING_LIMIT, rankOf } from "#/pages/home/lib/rank";
 

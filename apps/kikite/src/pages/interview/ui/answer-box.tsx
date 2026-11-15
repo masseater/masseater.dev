@@ -3,7 +3,8 @@ import { Keyboard } from "lucide-react";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode, SubmitEvent } from "react";
 
-import { useAnswerDraft, useSession } from "#/pages/interview/model/hooks";
+import { useAnswerDraft } from "#/entities/interview";
+import { useSession } from "#/pages/interview/model/session-hooks";
 
 import { SendButton } from "./send-button.tsx";
 import { ANSWER_ID } from "./type-anywhere.ts";

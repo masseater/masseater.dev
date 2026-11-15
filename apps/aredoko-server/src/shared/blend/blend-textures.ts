@@ -1,6 +1,6 @@
 import { Array, Effect, FileSystem, HashMap, Option, Path, String, pipe } from "effect";
 
-import { normalizePng } from "#shared/preview";
+import { normalizePng } from "#/shared/preview/index.ts";
 
 import type { ImageSource } from "./blend-material.ts";
 import type { Part } from "./blend-scene.ts";

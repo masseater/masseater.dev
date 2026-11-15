@@ -29,6 +29,7 @@ export default defineConfig({ lint });
 ```
 
 リポジトリに固有のルールや overrides は、`lint` を広げてから足す。
+`fsdRules` には、masseater のリポジトリが `fsd.configs.recommended` の後に足す Steiger のルールが入っている。
 decision ルールは呼ぶたびに費用がかかるので、プリセットは有効にしない。
 `decisionRules` を掛けたいファイルの overrides に渡す。
 

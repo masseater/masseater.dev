@@ -3,6 +3,7 @@ import {
   INSTRUMENTATION,
   decisionRules,
   decisionTestRules,
+  fsdRules,
   generated,
   lint as preset,
   requiredStack,
@@ -113,16 +114,7 @@ const checks: ToolSections = {
   },
   steiger: {
     paths: ["apps/*/src"],
-    rules: [
-      ...fsd.configs.recommended,
-      {
-        rules: {
-          "fsd/no-cross-imports": "error",
-          "fsd/no-higher-level-imports": "error",
-          "fsd/no-wildcard-exports": "error",
-        },
-      },
-    ],
+    rules: [...fsd.configs.recommended, { rules: fsdRules }],
   },
   textlint: {
     ignores: MARKDOWN_IGNORES,

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { usePicker } from "#/pages/translator/model/selection.ts";
+import { usePicker } from "#/entities/language";
+import { LanguagePicker } from "#/features/pick-language";
 
-import { LanguagePicker } from "./language-picker.tsx";
 import { Panes } from "./panes.tsx";
 
 const Workspace = (): ReactNode => {

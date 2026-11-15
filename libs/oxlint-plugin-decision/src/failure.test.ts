@@ -1,0 +1,75 @@
+import { NodeServices } from "@effect/platform-node";
+import { layer } from "@effect/vitest";
+import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
+import { Effect, String as Str } from "effect";
+
+import {
+  FAILED,
+  PASSED,
+  TIMEOUT,
+  callRule,
+  lintProject,
+  outputOf,
+  withMock,
+} from "./fixtures.test.support.ts";
+import { decisionLines, mockEnv } from "./oxlint.test.support.ts";
+
+const SOURCE = "console.log(user.email, user.phone);\n";
+const REASON = "http 401: bad key";
+
+const warnsAndPasses = Effect.gen(function* test() {
+  const env = yield* mockEnv("unauthorized");
+  const run = yield* lintProject({
+    files: { "log.js": SOURCE },
+    options: { rules: [callRule] },
+    env,
+  });
+  strictEqual(run.status, PASSED, outputOf(run));
+  deepStrictEqual(decisionLines(run), []);
+  assertInclude(run.stderr, REASON);
+});
+
+const failsInCi = Effect.gen(function* test() {
+  const env = yield* mockEnv("unauthorized");
+  const run = yield* lintProject({
+    files: { "log.js": SOURCE },
+    options: { ci: "fail", rules: [callRule] },
+    env: { ...env, CI: "true" },
+  });
+  strictEqual(run.status, FAILED, outputOf(run));
+  strictEqual(Str.includes(REASON)(run.stderr), false, run.stderr);
+});
+
+const warnsInCiWhenOutOfBudget = Effect.gen(function* test() {
+  const env = yield* mockEnv("out-of-budget");
+  const run = yield* lintProject({
+    files: { "log.js": SOURCE },
+    options: { ci: "fail", rules: [callRule] },
+    env: { ...env, CI: "true" },
+  });
+  strictEqual(run.status, PASSED, outputOf(run));
+  deepStrictEqual(decisionLines(run), []);
+  assertInclude(run.stderr, "weekly budget");
+});
+
+const explainsTheFailure = Effect.gen(function* test() {
+  const env = yield* mockEnv("unauthorized");
+  const run = yield* lintProject({
+    files: { "log.js": SOURCE },
+    options: { explain: "json", rules: [callRule] },
+    env,
+  });
+  assertInclude(run.stderr, `"error":"${REASON}"`);
+  assertInclude(run.stderr, '"reported":false');
+});
+
+layer(NodeServices.layer, { excludeTestServices: true })("a failed decision request", (it) => {
+  it.effect("warns and lets the run pass", () => withMock(warnsAndPasses), TIMEOUT);
+  it.effect("fails the run in CI when ci is fail", () => withMock(failsInCi), TIMEOUT);
+  it.effect(
+    "only warns in CI when the provider budget is spent",
+    () => withMock(warnsInCiWhenOutOfBudget),
+    TIMEOUT,
+  );
+  it.effect("is explained with its reason", () => withMock(explainsTheFailure), TIMEOUT);
+});
