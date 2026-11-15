@@ -3,7 +3,7 @@ import { parse } from "parse5";
 import type { DefaultTreeAdapterMap } from "parse5";
 
 import type { Parser, Span } from "./parser.ts";
-import { looksLikeProse } from "./prose.ts";
+import { PROSE } from "./prose.ts";
 
 type Node = DefaultTreeAdapterMap["node"];
 
@@ -32,8 +32,6 @@ const QUOTE = /["']/u;
 const NOT_FOUND = -1;
 
 const NO_SPANS: readonly Span[] = [];
-
-const looksLikeHtml = (text: string): boolean => TAG.test(text);
 
 const linesIn = (text: string, { start, end }: Span): readonly Span[] => {
   const spans: Span[] = [];
@@ -69,7 +67,7 @@ const attributeSpans = (text: string, element: Element): readonly Span[] =>
       Option.fromNullishOr(element.sourceCodeLocation).pipe(
         Option.flatMapNullishOr((location) => location.attrs),
         Option.flatMapNullishOr((attrs) => attrs[name]),
-        Option.filter(() => !MARKUP_ATTRIBUTES.has(name) && looksLikeProse(value)),
+        Option.filter(() => !MARKUP_ATTRIBUTES.has(name) && PROSE.test(value)),
         Option.map(({ startOffset, endOffset }) =>
           valueSpan(text, { start: startOffset, end: endOffset }),
         ),
@@ -148,7 +146,7 @@ const htmlUnitsOf = (text: string): readonly Span[] => {
 export const htmlParser: Parser = {
   format: "html",
   extensions: [".html", ".htm", ".xhtml", ".vue", ".svelte", ".astro"],
-  accepts: looksLikeHtml,
+  accepts: (text) => TAG.test(text),
   unitsOf: (text) =>
     pipe(
       htmlUnitsOf(text),

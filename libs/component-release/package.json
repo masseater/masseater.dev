@@ -3,12 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "bin": {
-    "bundle-collect": "./src/collect-main.ts",
-    "component-release": "./src/release-main.ts",
-    "component-tag": "./src/tag-main.ts",
-    "release-please-token": "./src/token-main.ts"
+    "bundle-collect": "./bin/bundle-collect.ts",
+    "component-release": "./bin/component-release.ts",
+    "component-tag": "./bin/component-tag.ts",
+    "release-please-token": "./bin/release-please-token.ts"
   },
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
     ".": "./src/index.ts"
   },

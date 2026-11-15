@@ -167,7 +167,7 @@ export default defineConfig({
     passWithNoTests: true,
   },
   staged: {
-    "*": "vp check --fix",
+    "*": "vp fmt --no-error-on-unmatched-pattern",
   },
   fmt: {
     ignorePatterns: lint.ignorePatterns,

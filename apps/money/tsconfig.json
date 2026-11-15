@@ -10,6 +10,7 @@
         "allowedUnstableApis": [
           "@effect/vitest#it",
           "effect/crypto",
+          "effect/encoding/Csv",
           "effect/http/FetchHttpClient",
           "effect/http/HttpClient",
           "effect/http/HttpClientRequest",

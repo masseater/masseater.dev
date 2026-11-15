@@ -24,12 +24,10 @@ export const categoryMeta = {
   }>
 >;
 
-export const categoryPath = (category: Category): string => sectionPath(category);
-
 const unindexedPaths = pipe(
   categories,
   Arr.filter((category) => categoryMeta[category].robots === "noindex"),
-  Arr.flatMap((category) => [categoryPath(category), `/og${categoryPath(category)}`]),
+  Arr.flatMap((category) => [sectionPath(category), `/og${sectionPath(category)}`]),
 );
 
 export const isUnindexedPath = (path: string): boolean =>

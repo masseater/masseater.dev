@@ -22,6 +22,7 @@ const RuleNameSchema = Schema.Literals([
   "nested-docs",
   "root-readme",
   "agent-docs-length",
+  "root-docs",
   "shell-script",
   "workflow-script",
   "workflow-queue",
@@ -32,8 +33,13 @@ const RuleNameSchema = Schema.Literals([
   "root-workspace-path",
   "shared-uncached-task",
   "workflow-path",
+  "command-outside-bin",
+  "unrun-command",
+  "scripts-directory",
+  "listed-entry",
   "colocated-test",
   "comment",
+  "pass-through-wrapper",
 ]);
 
 export type RuleName = typeof RuleNameSchema.Type;

@@ -4,6 +4,7 @@
 # ビルド生成物
 .godot/
 bin/
+!/bin/
 obj/
 publish/
 packages/
