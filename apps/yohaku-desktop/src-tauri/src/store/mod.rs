@@ -13,6 +13,7 @@ pub mod manuscripts;
 mod migrations;
 pub mod onboarding;
 pub mod reactions;
+pub mod revisions;
 pub mod sources;
 
 const DATABASE_FILE: &str = "yohaku.db";
