@@ -2,7 +2,7 @@ import { Option, String as Str, Array as Arr, pipe } from "effect";
 import { Parser as XmlParser } from "htmlparser2";
 
 import type { Parser, Span, Unit } from "./parser.ts";
-import { looksLikeProse } from "./prose.ts";
+import { PROSE } from "./prose.ts";
 
 const NO_OFFSET = 0;
 
@@ -20,8 +20,6 @@ const COMMENT_CLOSE = "-->".length;
 
 const INCLUSIVE = 1;
 
-const looksLikeXml = (text: string): boolean => DECLARATION.test(text);
-
 const attributeUnits = (text: string, { start, end }: Span): readonly Unit[] =>
   pipe(
     [...pipe(text, Str.slice(start, end), Str.matchAll(ATTRIBUTE))],
@@ -33,7 +31,7 @@ const attributeUnits = (text: string, { start, end }: Span): readonly Unit[] =>
         ),
         () => "",
       );
-      if (!looksLikeProse(value)) {
+      if (!PROSE.test(value)) {
         return [];
       }
       const from = start + (match.index ?? NO_OFFSET) + whole.length - value.length - "'".length;
@@ -69,7 +67,7 @@ const xmlUnitsOf = (text: string): readonly Unit[] => {
             start: parser.startIndex + CDATA_OPEN,
             end: end - CDATA_CLOSE,
           });
-        } else if (looksLikeProse(data) && Str.trim(data) !== "") {
+        } else if (PROSE.test(data) && Str.trim(data) !== "") {
           units.push({ kind: "prose", start: end - data.length, end });
         }
       },
@@ -103,6 +101,6 @@ export const xmlParser: Parser = {
     ".opml",
     ".resx",
   ],
-  accepts: looksLikeXml,
+  accepts: (text) => DECLARATION.test(text),
   unitsOf: xmlUnitsOf,
 };

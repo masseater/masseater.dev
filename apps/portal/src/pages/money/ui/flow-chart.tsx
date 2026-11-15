@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { ResponsiveContainer, Sankey, Tooltip } from "recharts";
 
-import { yen } from "#/entities/money";
+import { YEN } from "#/entities/money";
 import type { MoneyFlowValue } from "#/entities/money";
 import { flowHeight, sankeyInput } from "#/pages/money/model/flow";
 
@@ -20,7 +20,7 @@ const INITIAL_DIMENSION = { width: 720, height: 280 } as const;
 
 const LINK = { stroke: "var(--foreground)", strokeOpacity: 0.12 } as const;
 
-const asYen = (value: unknown): string => yen(Number(value));
+const asYen = (value: unknown): string => YEN.format(Number(value));
 
 export const FlowChart = ({
   flow,

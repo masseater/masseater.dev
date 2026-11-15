@@ -1,7 +1,7 @@
 import { Array as Arr, Number as Num, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { yen } from "#/entities/money";
+import { YEN } from "#/entities/money";
 import type { FlowNodeValue } from "#/entities/money";
 import { FILLS, PLACEMENTS } from "#/pages/money/model/flow";
 import type { Placement } from "#/pages/money/model/flow";
@@ -70,7 +70,7 @@ export const FlowNode = ({
           >
             {node.label}
             <tspan className="fill-foreground/60 tabular-nums" dx={AMOUNT_GAP}>
-              {yen(amountOf(payload))}
+              {YEN.format(amountOf(payload))}
             </tspan>
           </text>
         </g>

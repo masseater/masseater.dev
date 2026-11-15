@@ -28,8 +28,6 @@ const file =
     body,
   });
 
-const encode = (text: string): Uint8Array => encoder.encode(text);
-
 const fileIn =
   (guid: string) =>
   ([name, body]: readonly [string, Option.Option<Uint8Array>]): Option.Option<FixtureFile> =>
@@ -38,9 +36,15 @@ const fileIn =
 const filesOf = ({ guid, pathname, asset, meta, preview }: FixtureAsset): readonly FixtureFile[] =>
   pipe(
     [
-      ["pathname", Option.some(encode(pathname))],
+      ["pathname", Option.some(encoder.encode(pathname))],
       ["asset", asset],
-      ["asset.meta", pipe(meta, Option.map(encode))],
+      [
+        "asset.meta",
+        pipe(
+          meta,
+          Option.map((text) => encoder.encode(text)),
+        ),
+      ],
       ["preview.png", preview],
     ] as const,
     Array.map(fileIn(guid)),

@@ -12,7 +12,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { yen } from "#/entities/money";
+import { YEN } from "#/entities/money";
 import type { MonthTotalValue } from "#/entities/money";
 
 const TEXT = { income: "収入", expense: "支出" } as const;
@@ -42,7 +42,7 @@ const shortYen = (amount: number): string => `${String(Math.round(amount / MAN))
 const shortMonth = (month: string): string =>
   pipe(month, Str.slice(YEAR_START), Str.replace("-", "/"));
 
-const asYen = (value: unknown): string => yen(Number(value));
+const asYen = (value: unknown): string => YEN.format(Number(value));
 
 export const MonthlyChart = ({
   months,
