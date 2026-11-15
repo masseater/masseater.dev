@@ -4,7 +4,7 @@ import type { Outcome } from "@r_masseater/injection-bisect";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { formatCount, formatDollars } from "#/entities/inspection";
+import { COUNT, DOLLARS } from "#/entities/inspection";
 import type { Answer, Phase, Row, Trace } from "#/entities/inspection";
 import { COPY } from "#/shared/config";
 
@@ -86,12 +86,12 @@ export const RunSummary = ({
         label={COPY.branches}
         value={String(branchesOf(model, sentencesOf({ text, format }).length))}
       />
-      <Stat label={COPY.elapsed} value={`${formatCount(Math.round(trace.elapsed))}ms`} />
+      <Stat label={COPY.elapsed} value={`${COUNT.format(Math.round(trace.elapsed))}ms`} />
       <Stat
         label={COPY.tokens}
-        value={formatCount(sumOf(trace.rows, (answer) => answer.inputTokens))}
+        value={COUNT.format(sumOf(trace.rows, (answer) => answer.inputTokens))}
       />
-      <Stat label={COPY.spent} value={formatDollars(sumOf(trace.rows, (answer) => answer.cost))} />
+      <Stat label={COPY.spent} value={DOLLARS.format(sumOf(trace.rows, (answer) => answer.cost))} />
     </dl>
   </div>
 );

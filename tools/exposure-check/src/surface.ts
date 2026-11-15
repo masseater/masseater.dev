@@ -54,8 +54,6 @@ export const isCovered =
   (host: string): boolean =>
     Arr.isReadonlyArrayNonEmpty(coveringApp(inventory)(host));
 
-export const routeHost = (pattern: string): string => hostOf(pattern);
-
 const union = (...lists: readonly (readonly string[])[]): readonly string[] =>
   pipe(
     lists,
@@ -87,7 +85,7 @@ const privateWorkers = (
     ),
     pipe(
       inventory.routes,
-      Arr.filter((route) => isPrivateHost(routeHost(route.pattern))),
+      Arr.filter((route) => isPrivateHost(hostOf(route.pattern))),
       Arr.map((route) => route.script),
     ),
     remembered.workers,

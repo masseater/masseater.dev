@@ -42,9 +42,6 @@ const player = (): DurableObjectStub<Player> => env.PLAYER.getByName("player");
 const botToken = (request: Request): string =>
   Str.replace(/^Bot /u, "")(request.headers.get("authorization") ?? "");
 
-const json = (value: unknown, init: Readonly<{ status: number }>): Response =>
-  Response.json(value, init);
-
 const authorize = (request: Request): Effect.Effect<void, Rejected> =>
   Effect.promise(() => player().isToken(botToken(request))).pipe(
     Effect.filterOrFail(
@@ -60,23 +57,23 @@ const registerToken = Effect.fn("three-twelve.registerToken")(function* register
   const token = botToken(request);
   const application = yield* ownedApplication(token);
   yield* Effect.promise(() => player().setToken(token));
-  return json({ invite: inviteUrl(application.id) }, { status: 200 });
+  return Response.json({ invite: inviteUrl(application.id) }, { status: 200 });
 });
 
 const storeAudio: Handler = (request) =>
   Effect.promise(() =>
     env.AUDIO.put(AUDIO_KEY, request.body, { httpMetadata: { contentType: "audio/ogg" } }),
-  ).pipe(Effect.as(json({ stored: AUDIO_KEY }, { status: 200 })));
+  ).pipe(Effect.as(Response.json({ stored: AUDIO_KEY }, { status: 200 })));
 
 const playSoon = Effect.fn("three-twelve.playSoon")(function* playSoon() {
   const now = yield* DateTime.now;
   const startAt = DateTime.toEpochMillis(DateTime.add(now, ARM_LEAD));
   yield* Effect.promise(() => player().arm(startAt));
-  return json({ startAt }, { status: 202 });
+  return Response.json({ startAt }, { status: 202 });
 });
 
 const status = Effect.promise(() => player().lastRun()).pipe(
-  Effect.map((last) => json({ lastRun: last }, { status: 200 })),
+  Effect.map((last) => Response.json({ lastRun: last }, { status: 200 })),
 );
 
 const authorized: Readonly<Record<string, Handler>> = {
@@ -103,7 +100,7 @@ const respond = Effect.fn("three-twelve.respond")(function* respond(request: Req
     Effect.catchTag("Rejected", (rejected) =>
       Effect.logWarning("three-twelve.rejected").pipe(
         Effect.annotateLogs({ status: rejected.status, reason: rejected.reason }),
-        Effect.as(json({ error: rejected.reason }, { status: rejected.status })),
+        Effect.as(Response.json({ error: rejected.reason }, { status: rejected.status })),
       ),
     ),
   );

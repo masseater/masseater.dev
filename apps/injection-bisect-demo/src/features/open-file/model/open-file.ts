@@ -3,7 +3,7 @@ import type { Document, Unreadable } from "@r_masseater/injection-bisect";
 import { Effect, MutableRef, Option, String as Str } from "effect";
 import type { Fiber } from "effect";
 
-import { openedOf, formatCount, MAX_CHARS } from "#/entities/inspection";
+import { openedOf, COUNT, MAX_CHARS } from "#/entities/inspection";
 import type { Opening } from "#/entities/inspection";
 import { COPY } from "#/shared/config";
 
@@ -44,7 +44,7 @@ const keptOf = (name: string, { text, unreadable = [] }: Document): Kept => {
   }
   return {
     text: Str.slice(FIRST, MAX_CHARS)(text),
-    unreadable: [...unreadable, { name, reason: COPY.beyond(formatCount(MAX_CHARS)) }],
+    unreadable: [...unreadable, { name, reason: COPY.beyond(COUNT.format(MAX_CHARS)) }],
   };
 };
 

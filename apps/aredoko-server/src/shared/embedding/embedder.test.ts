@@ -39,8 +39,6 @@ const respond = (url: string): Response =>
 
 const unpinned = (url: string): boolean => !PINNED_COMMIT.test(url);
 
-const namesWeights = (failure: string): boolean => WEIGHTS.test(failure);
-
 const replaceFetch = (fetch: typeof env.fetch): Effect.Effect<void> =>
   Effect.sync(() => {
     Object.assign(env, { fetch });
@@ -90,7 +88,12 @@ layer(NodeServices.layer, { excludeTestServices: true })("embedder", (it) => {
       const failures = yield* Effect.forEach([empty, fetched], loadFailure);
       const afterLoad = yield* Ref.get(requested);
       expect(afterLoad).toStrictEqual(duringFetch);
-      expect(pipe(failures, Array.map(namesWeights))).toStrictEqual([false, true]);
+      expect(
+        pipe(
+          failures,
+          Array.map((failure) => WEIGHTS.test(failure)),
+        ),
+      ).toStrictEqual([false, true]);
     }),
   );
 });
