@@ -29,7 +29,11 @@ export default defineConfig({
       "ci:codesign": { command: "node scripts/codesign.ts", cache: false },
       "ci:pluginval": { command: "node scripts/pluginval.ts", cache: false },
       "ci:host": { command: "node scripts/host.ts", cache: false },
-      "ci:clap-validator": { command: "node scripts/clap-validator.ts", cache: false },
+      "ci:clap-validator": {
+        command: "node scripts/clap-validator.ts",
+        dependsOn: ["@masseater.dev/cargo-tools#build"],
+        cache: false,
+      },
       "ci:archive": { command: "node scripts/archive.ts", cache: false },
       "release:tag": { command: "component-tag pod-rattle", cache: false },
       "release:publish": {

@@ -113,7 +113,7 @@ const checks: ToolSections = {
     )}])`,
   },
   steiger: {
-    paths: ["apps/*/src"],
+    paths: ["apps/*/src", "libs/*/src"],
     rules: [...fsd.configs.recommended, { rules: fsdRules }],
   },
   textlint: {
