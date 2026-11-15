@@ -15,7 +15,13 @@ export default defineConfig({
   },
   run: {
     tasks: {
+      build: "vp pack",
       "fetch-model": "node src/app/fetch-model.ts",
+      "installer:resources": {
+        command: "node src/app/installer-resources.ts",
+        dependsOn: ["build"],
+        cache: false,
+      },
       serve: {
         command: "node src/app/main.ts",
         cache: false,
