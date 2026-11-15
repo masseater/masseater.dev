@@ -125,7 +125,7 @@ jobs:
       - run: vp exec --filter portfolio alchemy deploy --config alchemy.zone.ts --stage prod --yes
 
   mcp-portal:
-    needs: [deploy, watashi-mcp, sundries, twilog-mcp]
+    needs: [deploy, watashi-mcp, sundries, twilog-mcp, money]
     if: needs.deploy.outputs.latest == 'true'
     runs-on: ubuntu-latest
     environment: mcp-portal
@@ -241,8 +241,26 @@ jobs:
         with:
           native: "false"
       - run: vp exec --filter twilog-mcp alchemy deploy --stage prod --yes
-      - run: vp run --filter twilog-mcp access-check
 
+  money:
+    needs: deploy
+    if: needs.deploy.outputs.latest == 'true'
+    runs-on: ubuntu-latest
+    environment: money
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: money
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: masseater/typescript-template/.github/actions/credentials@f873929b6484891defa1f5d4cb09cde8e9fde30e
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp exec --filter money alchemy deploy --stage prod --yes
   kikite:
     needs: deploy
     if: needs.deploy.outputs.latest == 'true'
@@ -834,6 +852,7 @@ jobs:
         watashi-mcp,
         sundries,
         twilog-mcp,
+        money,
         kikite,
         plamo-translate,
         yohaku-sync,
