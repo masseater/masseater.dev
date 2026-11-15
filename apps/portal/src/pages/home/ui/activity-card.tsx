@@ -10,7 +10,8 @@ import {
   useRecords,
   useSessions,
 } from "#/pages/home/api/home-query";
-import { activitiesOf, byDay } from "#/pages/home/model/activity";
+import { activitiesOf, byDay, foldConversations } from "#/pages/home/model/activity";
+import type { Activity, ActivityKind } from "#/pages/home/model/activity";
 import { Section } from "#/shared/ui";
 
 import { ActivityDayList } from "./activity-day-list";
@@ -24,6 +25,19 @@ const SHOWN = 40;
 
 const route = getRouteApi("/");
 
+const shownOf = (
+  activities: readonly Activity[],
+  kind: Option.Option<ActivityKind>,
+): readonly Activity[] => {
+  if (Option.isNone(kind)) {
+    return foldConversations(activities);
+  }
+  return pipe(
+    activities,
+    Arr.filter((activity) => Option.contains(kind, activity.kind)),
+  );
+};
+
 export const ActivityCard = (): ReactNode => {
   const kind = Option.fromUndefinedOr(route.useSearch().kind);
   const overview = useOverview();
@@ -36,7 +50,7 @@ export const ActivityCard = (): ReactNode => {
       categories: overview.settings.categories,
       decks: useDecks(),
     }),
-    Arr.filter((activity) => Option.isNone(kind) || Option.contains(kind, activity.kind)),
+    (activities) => shownOf(activities, kind),
     Arr.take(SHOWN),
     byDay,
   );
