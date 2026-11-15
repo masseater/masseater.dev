@@ -11,8 +11,8 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: read
+      deployments: read
     concurrency:
       group: release-plan
       cancel-in-progress: true
@@ -40,8 +40,8 @@ jobs:
       matrix:
         component: ${{ fromJSON(needs.plan.outputs.components) }}
     permissions:
-      actions: write
       contents: write
+      deployments: write
       id-token: write
       pull-requests: write
     uses: $/.github/workflows/release-component.yml
