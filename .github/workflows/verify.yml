@@ -60,7 +60,11 @@ jobs:
     concurrency:
       group: deploy
     uses: $/.github/workflows/deploy.yml
-    secrets: inherit
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   private-names:
     needs: deploy

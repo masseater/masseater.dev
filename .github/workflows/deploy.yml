@@ -2,6 +2,15 @@ name: deploy
 
 on:
   workflow_call:
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN:
+        required: true
+      CLOUDFLARE_ACCOUNT_ID:
+        required: true
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      NPM_TOKEN:
+        required: true
 
 permissions: {}
 
