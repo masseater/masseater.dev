@@ -178,3 +178,5 @@ const releasedOnMain = Effect.fn("release.releasedOnMain")(function* releasedOnM
 
 /** @internal */
 export { filesIn, publishRelease, releaseExists, releasedOnMain, tagComponent, uploadAssets };
+/** @internal */
+export type { Publish, Upload };

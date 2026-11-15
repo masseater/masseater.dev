@@ -73,5 +73,6 @@ const run = Effect.fn("command.run")(function* run({ file, args, cwd }: Invocati
 const gh = (args: readonly string[]): Output => output({ file: "gh", args });
 
 /** @internal */
-export { gh, output, run, succeeds };
-export type { Invocation };
+export { CommandFailed, gh, output, run, succeeds };
+/** @internal */
+export type { Invocation, Output };

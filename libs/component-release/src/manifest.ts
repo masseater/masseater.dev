@@ -71,4 +71,5 @@ const tagOf = ({ name, version }: Release): string => `${name}-v${version}`;
 
 /** @internal */
 export { checkedOutVersion, component, mainVersion, repositoryRoot, tagOf };
-export type { Component };
+/** @internal */
+export type { Component, Release };
