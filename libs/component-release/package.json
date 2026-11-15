@@ -1,0 +1,22 @@
+{
+  "name": "@masseater.dev/component-release",
+  "version": "0.0.0",
+  "private": true,
+  "bin": {
+    "component-release": "./src/release-main.ts",
+    "component-tag": "./src/tag-main.ts",
+    "release-please-token": "./src/token-main.ts"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@masseater.dev/node-main": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

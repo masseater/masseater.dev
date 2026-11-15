@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 import { opened, useScreen } from "#/shared/model";
 
+import { ExportButton } from "./export-button.tsx";
 import { ManuscriptExcerpt } from "./manuscript-excerpt.tsx";
 
 const nameOf = ({ title, excerpt }: typeof Manuscript.Type): string =>
@@ -21,11 +22,16 @@ const ManuscriptRow = ({
     setScreen(opened(manuscript.id)(screen));
   }, [manuscript.id, screen, setScreen]);
   return (
-    <li className="border-b">
-      <button className="flex w-full flex-col gap-1 py-3 text-left" type="button" onClick={onClick}>
+    <li className="flex items-center gap-2 border-b">
+      <button
+        className="flex min-w-0 flex-1 flex-col gap-1 py-3 text-left"
+        type="button"
+        onClick={onClick}
+      >
         <span className="truncate font-bold">{nameOf(manuscript)}</span>
         <ManuscriptExcerpt manuscript={manuscript} />
       </button>
+      <ExportButton id={manuscript.id} />
     </li>
   );
 };

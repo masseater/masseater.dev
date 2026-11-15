@@ -13,6 +13,7 @@ use super::auth::{self, Issued, Login, SyncProblem};
 use super::outbox::{mark_pushed, pending_count, pending_documents};
 use super::remote::{fetch_changes, push_documents};
 use super::state::{self, Key};
+use super::vault::Vault;
 
 const INTERVAL: Duration = Duration::from_secs(20);
 const REFRESH_MARGIN: i64 = 60_000;
@@ -43,6 +44,7 @@ pub struct Syncer {
     store: Store,
     http: Client,
     port: u16,
+    vault: Vault,
     shared: Arc<Mutex<Shared>>,
     round: Arc<tokio::sync::Mutex<()>>,
 }
@@ -66,6 +68,7 @@ impl Syncer {
             store,
             http,
             port,
+            vault: Vault::default(),
             shared: Arc::default(),
             round: Arc::default(),
         })
@@ -95,14 +98,11 @@ impl Syncer {
         if let Some(grant) = fresh {
             return Ok(Some(grant.access_token));
         }
-        let stored = self
-            .store
-            .with(|connection| state::read(connection, Key::RefreshToken))?;
-        let Some(refresh_token) = stored else {
+        let Some(refresh_token) = self.vault.refresh_token(&self.store)? else {
             return Ok(None);
         };
-        let grant =
-            grant_of(auth::refresh(&self.http, &self.store, self.port, refresh_token).await?);
+        let issued = auth::refresh(&self.http, &self.store, self.port, refresh_token).await?;
+        let grant = self.granted(issued)?;
         let token = grant.access_token.clone();
         self.shared(|shared| shared.grant = Some(grant));
         Ok(Some(token))
@@ -164,11 +164,11 @@ impl Syncer {
     fn record(&self, problem: SyncProblem) {
         if problem.signed_out {
             self.shared(|shared| shared.grant = None);
-            let _ = self
-                .store
-                .with(|connection| state::clear(connection, Key::RefreshToken));
+            if let Err(failure) = self.vault.forget() {
+                log::warn!("forgetting the sync sign-in failed: {failure}");
+            }
         }
-        eprintln!("sync failed: {}", problem.message);
+        log::warn!("sync failed: {}", problem.message);
         self.shared(|shared| shared.progress.problem = Some(problem.message));
     }
 
@@ -180,9 +180,7 @@ impl Syncer {
     }
 
     pub fn status(&self) -> Outcome<SyncStatus> {
-        let refresh_token = self
-            .store
-            .with(|connection| state::read(connection, Key::RefreshToken))?;
+        let refresh_token = self.vault.refresh_token(&self.store)?;
         let pending = self.store.with(|connection| pending_count(connection))?;
         Ok(self.shared(|shared| SyncStatus {
             connected: refresh_token.is_some(),
@@ -190,6 +188,13 @@ impl Syncer {
             pending,
             problem: shared.progress.problem.clone(),
         }))
+    }
+
+    fn granted(&self, issued: Issued) -> Outcome<Grant> {
+        if let Some(refresh_token) = &issued.refresh_token {
+            self.vault.keep(refresh_token)?;
+        }
+        Ok(grant_of(issued))
     }
 
     pub async fn sign_in(&self) -> Outcome<String> {
@@ -203,7 +208,7 @@ impl Syncer {
             .shared(|shared| shared.login.take())
             .ok_or_else(|| Failure::new("no sign-in is waiting"))?;
         let issued = auth::exchange_code(&self.http, &self.store, self.port, url, login).await?;
-        let grant = grant_of(issued);
+        let grant = self.granted(issued)?;
         self.shared(|shared| shared.grant = Some(grant));
         let syncer = self.clone();
         async_runtime::spawn(async move { syncer.sync_once().await });

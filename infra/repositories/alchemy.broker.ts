@@ -7,6 +7,7 @@ import {
   providers,
   state,
 } from "@alchemy.run/cloudflare";
+import type { ClaudeRequestsRpc } from "@masseater.dev/exposure-protocol/claude-requests";
 import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
 import { Stack, makeRandom } from "alchemy";
 import type { CompiledStack } from "alchemy";
@@ -15,7 +16,7 @@ import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
 import { CREDENTIAL_BROKER_AUDIENCE, PREFIX, TRACE_DESTINATION } from "./broker-names.ts";
-import { grantPolicies, WORKFLOW_GITHUB_GRANTS } from "./credential-grants.ts";
+import { grantBindings, WORKFLOW_GITHUB_GRANTS } from "./credential-grants.ts";
 import type { GitHubAppEnv } from "./github-app.ts";
 
 const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
@@ -24,6 +25,7 @@ const DOMAIN = "masseater.dev";
 const CREDENTIAL_BROKER_HOST = `credentials.${DOMAIN}`;
 const GITHUB_APP_DATABASE = `${PREFIX}GitHubApp-prod-zcxmorxkzgzaqw2z`;
 const SEAL_KEY_BYTES = 32;
+const SUNDRIES = { stack: "masseater-dev-sundries", stage: "prod" } as const;
 
 const npmTokenBinding = Effect.fn("npmTokenBinding")(function* npmTokenBinding(
   store: SecretsStore.Store,
@@ -42,6 +44,17 @@ const npmTokenBinding = Effect.fn("npmTokenBinding")(function* npmTokenBinding(
     value: filled.value,
   });
   return { NPM_TOKEN };
+});
+
+const encodedGrants = Effect.fn("encodedGrants")(function* encodedGrants(
+  ids: Readonly<{ accountId: string; zoneId: string }>,
+) {
+  const bindings = grantBindings(ids);
+  return yield* Effect.all({
+    GRANTS: encodeJson(bindings.GRANTS),
+    GRANT_PROFILES: encodeJson(bindings.GRANT_PROFILES),
+    WORKFLOW_GRANTS: encodeJson(WORKFLOW_GITHUB_GRANTS),
+  }).pipe(Effect.orDie);
 });
 
 const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.Store) {
@@ -81,10 +94,8 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       }),
       SEAL_KEY: yield* makeRandom("SealKey", { bytes: SEAL_KEY_BYTES }),
     } satisfies Readonly<Record<keyof GitHubAppEnv, unknown>>;
-    const { GRANTS, WORKFLOW_GRANTS } = yield* Effect.all({
-      GRANTS: encodeJson(grantPolicies({ accountId, zoneId })),
-      WORKFLOW_GRANTS: encodeJson(WORKFLOW_GITHUB_GRANTS),
-    }).pipe(Effect.orDie);
+    const grants = yield* encodedGrants({ accountId, zoneId });
+    const sundries = yield* Workers.Worker.ref("Mcp", SUNDRIES);
     const { url } = yield* Workers.Worker("CredentialBroker", {
       name: CREDENTIAL_BROKER_AUDIENCE,
       main: "./credential-broker.worker.ts",
@@ -96,8 +107,8 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
         ...keys,
         ...appStore,
         ACCOUNT_ID: accountId,
-        GRANTS,
-        WORKFLOW_GRANTS,
+        ...grants,
+        CLAUDE_REQUESTS: Workers.WorkerEntrypoint<ClaudeRequestsRpc>(sundries, "ClaudeRequests"),
       },
     });
     return { url };
