@@ -8,7 +8,7 @@ import { loadProjects } from "#/features/filter-memos";
 
 type MemosLoad = Readonly<{ queryClient: QueryClient; search: MemosSearchValue }>;
 
-const route = getRouteApi("/_watashi/memos/");
+const route = getRouteApi("/memos/");
 
 export const loadMemosPage = ({ queryClient, search }: MemosLoad): Promise<unknown> =>
   Promise.all([

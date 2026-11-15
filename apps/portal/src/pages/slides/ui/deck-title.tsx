@@ -9,13 +9,10 @@ export const DeckTitle = ({
   title,
 }: Readonly<{ file: string; title: string }>): ReactNode => (
   <div className="flex items-baseline justify-between gap-4">
-    <a
-      className="font-display hover:text-foreground/70 min-w-0 text-lg font-light transition-colors"
-      href={deckUrl(file)}
-    >
+    <a className="hover:text-muted-foreground text-std-17B-170 min-w-0" href={deckUrl(file)}>
       {title}
     </a>
-    <a className="stage-link shrink-0 text-xs" href={pdfUrl(file)}>
+    <a className="text-link shrink-0 text-xs underline underline-offset-3" href={pdfUrl(file)}>
       {PDF}
     </a>
   </div>

@@ -7,7 +7,7 @@ import type { LifeItemValue, RecordsSearchValue } from "#/entities/watashi";
 
 type RecordsLoad = Readonly<{ queryClient: QueryClient; search: RecordsSearchValue }>;
 
-const route = getRouteApi("/_watashi/records");
+const route = getRouteApi("/records");
 
 export const loadRecordsPage = ({ queryClient, search }: RecordsLoad): Promise<unknown> =>
   queryClient.query(watashiQueries.records.get.queryOptions(search));

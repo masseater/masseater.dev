@@ -1,41 +1,36 @@
+import { Button } from "@masseater.dev/ui/button";
+import { useMemo } from "react";
 import type { ReactNode } from "react";
 
 import type { PeriodValue } from "#/entities/money";
+import { recentMonths } from "#/features/choose-period/model/months";
 
-const TEXT = { from: "最初の月", to: "最後の月", show: "表示", between: "から" } as const;
+import { MonthSelect } from "./month-select";
+
+const TEXT = {
+  from: "最初の月",
+  to: "最後の月",
+  show: "表示",
+  between: "〜",
+  asOf: "時点",
+} as const;
 
 const ACTION = "/money";
 
-const FIELD =
-  "border-foreground/20 focus-visible:border-foreground w-24 border-b bg-transparent py-1 font-display text-sm tabular-nums outline-none";
-
-export const PeriodForm = ({ period }: Readonly<{ period: PeriodValue }>): ReactNode => (
-  <form action={ACTION} className="flex flex-wrap items-end gap-4" method="get">
-    <input
-      aria-label={TEXT.from}
-      className={FIELD}
-      defaultValue={period.from}
-      name="from"
-      required
-      inputMode="numeric"
-      pattern="\d{4}-\d{2}"
-      placeholder="YYYY-MM"
-      type="text"
-    />
-    <span className="text-foreground/40 pb-1 text-xs">{TEXT.between}</span>
-    <input
-      aria-label={TEXT.to}
-      className={FIELD}
-      defaultValue={period.to}
-      name="to"
-      required
-      inputMode="numeric"
-      pattern="\d{4}-\d{2}"
-      placeholder="YYYY-MM"
-      type="text"
-    />
-    <button className="stage-link" type="submit">
-      {TEXT.show}
-    </button>
-  </form>
-);
+export const PeriodForm = ({
+  asOf,
+  period,
+}: Readonly<{ asOf: string; period: PeriodValue }>): ReactNode => {
+  const months = useMemo(() => recentMonths(asOf), [asOf]);
+  return (
+    <form action={ACTION} className="flex flex-wrap items-center gap-2" method="get">
+      <MonthSelect label={TEXT.from} months={months} name="from" value={period.from} />
+      <span className="text-muted-foreground text-sm">{TEXT.between}</span>
+      <MonthSelect label={TEXT.to} months={months} name="to" value={period.to} />
+      <Button type="submit" variant="outline">
+        {TEXT.show}
+      </Button>
+      <p className="text-muted-foreground ml-auto text-sm tabular-nums">{`${asOf} ${TEXT.asOf}`}</p>
+    </form>
+  );
+};

@@ -1,2 +1,2 @@
 export const PILL =
-  "ring-foreground/10 text-foreground/60 hover:text-foreground flex items-baseline justify-between gap-3 rounded-full px-3 py-1 ring-1 transition-colors aria-[current=page]:ring-foreground/60 aria-[current=page]:text-foreground";
+  "hover:bg-solid-gray-50 aria-[current=page]:bg-key-50 aria-[current=page]:text-key-900 aria-[current=page]:font-bold flex items-baseline justify-between gap-3 rounded-md px-3 py-2 text-sm";
