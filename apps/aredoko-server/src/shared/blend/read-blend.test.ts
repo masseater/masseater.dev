@@ -5,7 +5,8 @@ import sharp from "sharp";
 import { Box3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-import { blendModel, blendPreview } from "./read-blend.ts";
+import { blendModel } from "./blend-model.ts";
+import { blendPreview } from "./read-blend.ts";
 
 const THUMBNAIL_SIDE = 128;
 const NO_SIZE = [Number.NaN, Number.NaN] as const;
@@ -16,8 +17,8 @@ const XYZ = 3;
 const JSON_LENGTH_AT = 12;
 const JSON_START = 20;
 const LITTLE = true;
-const CUBE = { vertices: 8, triangles: 12, corner: Array.replicate(UNIT, XYZ) };
-const SUZANNE = { vertices: 507, triangles: 968 };
+const CUBE = { vertices: 24, triangles: 12, corner: Array.replicate(UNIT, XYZ) };
+const SUZANNE = { vertices: 1968, triangles: 968 };
 
 const Primitive = Schema.Struct({
   attributes: Schema.Struct({ POSITION: Schema.Int }),
