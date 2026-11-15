@@ -2800,6 +2800,9 @@ importers:
       '@distilled.cloud/cloudflare':
         specifier: catalog:stack
         version: 1.0.0-rc.20(effect@4.1.4)
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
       '@masseater.dev/owner-stack':
         specifier: workspace:*
         version: link:../../libs/owner-stack
