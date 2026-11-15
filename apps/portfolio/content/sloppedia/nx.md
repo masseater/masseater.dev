@@ -44,6 +44,12 @@ Nx は、`package.json` や `project.json`、各言語のマニフェストか�
 
 `nx graph` は、プロジェクトのグラフをブラウザーの対話的な画面で見せる[^nx-commands]。プロジェクトを選んで絞り込んだり、フォルダーごとにまとめたりできる。`--file` に渡す名前の拡張子で、JSON か持ち運べる HTML に書き出す。
 
+## モジュール境界
+
+Nx は、`project.json` または `package.json` の `nx` フィールドでプロジェクトにタグを割り当てる[^boundaries]。その後、リントルール `@nx/enforce-module-boundaries` が `depConstraints` を用いて、どのプロジェクトがどのプロジェクトに依存できるかを制限する[^boundaries]。各制約は `sourceTag` と `onlyDependOnLibsWithTags` をペアにする[^boundaries]。タグのないプロジェクトは、`*` が許可されていない限り、他のどのプロジェクトにも依存できない[^boundaries]。
+
+このルールは ESLint で動き、`@nx/oxlint` を通じて実験的に [Oxlint](/sloppedia/oxlint) でも動く[^boundaries]。JavaScript で記述されていないプロジェクトの場合、Conformance のルール `@nx/conformance/enforce-project-boundaries` がプロジェクトグラフ全体をチェックする[^boundaries]。このルールには Nx Enterprise プランが必要となる[^boundaries]。ほかの道具との比較は「[モジュール境界ツール](/sloppedia/module-boundary-tools)」を参照。
+
 ## AI との連携
 
 Nx は MCP のサーバー `nx mcp` を持つ[^nx-mcp]。2026年2月17日の記事「Why we deleted (most of) our MCP tools」で、Nx はツールの数を大きく減らしたと書いた[^blog]。エージェントには、ツールを並べるより CLI と文書を読ませるほうがよいという判断である。今の `nx mcp` は、既定で最小の構成で動く[^nx-mcp]。6月26日には、複数のリポジトリにまたがってエージェントを動かす Polygraph を発表した[^blog]。
@@ -58,6 +64,7 @@ Nx は、モノレポの道具を比べるサイト [monorepo.tools](/sloppedia/
 - [Turborepo](/sloppedia/turborepo)
 - [monorepo.tools](/sloppedia/monorepo-tools)
 - [モノレポの構造の可視化](/sloppedia/monorepo-structure-visualization)
+- [モジュール境界](/sloppedia/module-boundaries)
 
 [^home]: Nx「[Nx](https://nx.dev/)」。2026年11月9日に閲覧。
 
@@ -70,3 +77,5 @@ Nx は、モノレポの道具を比べるサイト [monorepo.tools](/sloppedia/
 [^nx-commands]: Nx「[Nx Commands](https://nx.dev/docs/reference/nx-commands)」。2026年11月9日に閲覧。
 
 [^nx-mcp]: Nx「[Nx MCP](https://nx.dev/docs/reference/nx-mcp)」。2026年11月9日に閲覧。
+
+[^boundaries]: Nx「[Enforce Module Boundaries](https://nx.dev/docs/features/enforce-module-boundaries)」。2026年11月15日に閲覧。
