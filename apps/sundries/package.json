@@ -16,8 +16,6 @@
     "@r_masseater/workers-tracing": "workspace:*",
     "drizzle-orm": "catalog:stack",
     "effect": "catalog:stack",
-    "jose": "catalog:",
-    "security-headers": "workspace:*",
     "yaml": "catalog:"
   },
   "devDependencies": {

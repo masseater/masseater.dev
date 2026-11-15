@@ -1,6 +1,6 @@
 # Custom providers
 
-Read this when rules must ask a decision service other than OpenRouter. The built-in provider is `openrouter`, so `openrouter/<model>` needs no provider code.
+Read this when rules must ask a service other than Cloudflare and OpenRouter. `cloudflare/<model>` and `openrouter/<model>` are built in and need no provider code.
 
 ## Define and register a provider
 

@@ -21,7 +21,7 @@ A changed question, snippet, context, or answer kind re-asks that file. A change
 
 Probabilities are not calibrated the same across models. Re-tune cutoffs after switching, and pin a versioned model id once tuned.
 
-`openrouter/respan/span-01-lite` is free and a cheap way to try rules. Respan models answer yes/no only. The plugin splits `classify` into one yes/no per label, and the highest yes wins. It splits `severity` into "at least info/warn/error", and the most serious level at 0.8 or above wins. It also asks about one match per request.
+Cloudflare models and Respan models such as `openrouter/respan/span-01-lite` answer yes/no only. The plugin splits `classify` into one yes/no per label, and the highest yes wins. It splits `severity` into "at least info/warn/error", and the most serious level at 0.8 or above wins. It also asks one question per request.
 
 You can override one rule's model in `oxlint.config.ts` without touching the plugin file. For example, write `"team/stale-comment": ["warn", { model: "openrouter/~typesafe/jev-latest" }]`. Rules on different models are asked in separate requests and cached separately.
 
