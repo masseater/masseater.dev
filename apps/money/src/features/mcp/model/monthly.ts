@@ -55,4 +55,4 @@ const monthlyTotals = ({ from, to, totals }: MonthRange): readonly Month[] =>
   );
 
 export { monthlyTotals };
-export type { DayTotal, Month };
+export type { DayTotal, Month, MonthRange };

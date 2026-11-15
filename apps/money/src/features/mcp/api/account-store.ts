@@ -106,4 +106,4 @@ const positions = Effect.fn("positions")(function* positions(asOf: string) {
 const listAccounts = query(() => db.select().from(accounts).orderBy(asc(accounts.id)));
 
 export { accountNamed, listAccounts, positions, recordBalance, upsertAccount };
-export type { Account };
+export type { Account, Balance };

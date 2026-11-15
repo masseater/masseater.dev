@@ -90,4 +90,4 @@ const decide =
     );
 
 export { BUILT_IN_RULES, CATEGORIES, CATEGORY_LABELS, CategorySchema, decide, flowOf, normalized };
-export type { Category, Decision, Flow, Rule };
+export type { Category, Decision, Described, Flow, Rule };

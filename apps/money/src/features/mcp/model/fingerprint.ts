@@ -65,4 +65,4 @@ const fingerprints = ({
 
 /** @internal */
 export { fingerprints };
-export type { Entry, Fingerprint };
+export type { Entry, Fingerprint, Source };
