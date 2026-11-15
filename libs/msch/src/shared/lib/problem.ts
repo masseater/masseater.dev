@@ -34,6 +34,7 @@ const RuleNameSchema = Schema.Literals([
   "workflow-path",
   "colocated-test",
   "comment",
+  "applied-package",
   "pass-through-wrapper",
 ]);
 

@@ -12,7 +12,6 @@
     "@effect/tsgo": "catalog:stack",
     "@masseater.dev/textlint-rule-yomiyasu": "workspace:*",
     "@r_masseater/msch": "workspace:*",
-    "@r_masseater/vite-plus-adopt": "catalog:",
     "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/intent": "catalog:",
     "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",

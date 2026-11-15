@@ -1,5 +1,6 @@
 import { Array as Arr, Effect } from "effect";
 
+import { checkAppliedPackages } from "#/features/applied-packages/index.ts";
 import { checkComments } from "#/features/comments/index.ts";
 import { checkHiddenUnicode } from "#/features/invisible-characters/index.ts";
 import { checkPython } from "#/features/python/index.ts";
@@ -10,7 +11,13 @@ export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTra
   root: string,
 ) {
   const found = yield* Effect.all(
-    [checkHiddenUnicode(root), checkPython(root), checkUnneededFiles(root), checkComments(root)],
+    [
+      checkHiddenUnicode(root),
+      checkPython(root),
+      checkUnneededFiles(root),
+      checkComments(root),
+      checkAppliedPackages(root),
+    ],
     { concurrency: "unbounded" },
   );
   return Arr.flatten(found);
