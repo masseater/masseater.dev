@@ -1,4 +1,4 @@
-import { alchemyTasks } from "@masseater.dev/cloudflare-account/run-tasks";
+import { alchemyTasks, deployTo } from "@masseater.dev/cloudflare-account/run-tasks";
 import { String as Str } from "effect";
 import { defineConfig } from "vite-plus";
 
@@ -8,6 +8,7 @@ export default defineConfig({
   run: {
     tasks: {
       ...alchemyTasks,
+      "deploy:production": deployTo("prod"),
     },
   },
   pack: {

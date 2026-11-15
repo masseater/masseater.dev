@@ -38,6 +38,8 @@ fn builder() -> Builder<tauri::Wry> {
             commands::open_manuscript,
             commands::save_paragraphs,
             commands::export_manuscript,
+            commands::list_revisions,
+            commands::restore_revision,
             commands::set_title,
             commands::get_annotations,
             commands::draft_from_memo,
@@ -126,11 +128,18 @@ pub fn run() -> tauri::Result<()> {
     .plugin(tauri_plugin_updater::Builder::new().build())
     .invoke_handler(builder.invoke_handler())
     .on_window_event(|window, event| {
-        if let WindowEvent::CloseRequested { api, .. } = event
-            && window.label() == MAIN_WINDOW
-        {
-            api.prevent_close();
-            window::request_close(window.app_handle(), false);
+        if window.label() != MAIN_WINDOW {
+            return;
+        }
+        match event {
+            WindowEvent::CloseRequested { api, .. } => {
+                api.prevent_close();
+                window::request_close(window.app_handle(), false);
+            }
+            WindowEvent::Resized(_) | WindowEvent::Focused(_) => {
+                window::rest_while_out_of_sight(window.app_handle());
+            }
+            _ => {}
         }
     })
     .setup(setup)

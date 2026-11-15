@@ -23,7 +23,7 @@ export const PanelTab = ({
       role="tab"
       aria-selected={selected}
       className={cn(
-        "text-muted-foreground flex-1 border-b-2 border-transparent py-2 text-sm",
+        "text-muted-foreground flex-auto border-b-2 border-transparent px-1 py-2 text-sm whitespace-nowrap",
         selected && "border-foreground text-foreground font-semibold",
       )}
       onClick={select}

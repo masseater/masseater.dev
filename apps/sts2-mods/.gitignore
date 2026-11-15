@@ -17,7 +17,7 @@ Properties/
 *.user
 *.DotSettings.user
 
-# ワークショップ: アップロード直前に scripts/stage.ps1 でコピーする生成物
+# ワークショップ: dotnet publish が写す生成物
 workshop/*/content/*
 !workshop/*/content/.gitkeep
 mod-uploader.log

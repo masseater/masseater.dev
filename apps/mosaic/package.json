@@ -5,6 +5,7 @@
   "type": "module",
   "imports": {
     "#/*": "./src/*",
+    "#base-path": "./base-path.ts",
     "#telemetry": "./telemetry.ts"
   },
   "dependencies": {
@@ -12,6 +13,8 @@
     "@effect/platform-node": "catalog:",
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
+    "@masseater.dev/github-workflow": "workspace:*",
+    "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/start-shell": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",

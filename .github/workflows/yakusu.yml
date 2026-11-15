@@ -14,10 +14,6 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: yakusu
-  cancel-in-progress: false
-
 env:
   CARGO_TERM_COLOR: always
   GIT_CONFIG_COUNT: 1
@@ -26,7 +22,7 @@ env:
 
 jobs:
   tag:
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -63,6 +59,9 @@ jobs:
             bundles: dmg
             files: target/release/bundle/dmg/*.dmg
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: yakusu-installer-${{ matrix.platform }}
+      cancel-in-progress: true
     permissions:
       contents: read
     defaults:
@@ -127,6 +126,9 @@ jobs:
           - os: macos-latest
             platform: macos-arm64
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: yakusu-launch-${{ matrix.platform }}
+      cancel-in-progress: true
     permissions:
       contents: read
     defaults:
@@ -157,7 +159,7 @@ jobs:
 
   release:
     needs: [tag, installer, launch]
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: yakusu-release
     permissions:
@@ -205,6 +207,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@577c307ec375535021fe50e34af8bd128fbcfe66
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
         with:
           github-token: ${{ github.token }}

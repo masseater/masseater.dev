@@ -22,11 +22,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@577c307ec375535021fe50e34af8bd128fbcfe66
-      - run: .github/scripts/github-token.sh
+      - uses: masseater/typescript-template/.github/actions/credentials@a76b6452b4c008062dc453dc5f116557b8056978
       - uses: $/.github/actions/setup
         with:
           native: "false"
+      - run: vp run -r github-token
       - run: vp run --filter exposure-check check
 
   ci-telemetry:
@@ -38,6 +38,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@577c307ec375535021fe50e34af8bd128fbcfe66
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@a76b6452b4c008062dc453dc5f116557b8056978
         with:
           github-token: ${{ github.token }}
