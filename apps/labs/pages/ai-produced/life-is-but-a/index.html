@@ -311,7 +311,7 @@
         }
         function make(S, META, totalSec, BPM, SWING, log) {
           const N = Math.ceil(totalSec * SR);
-          const nameOf = /* @__PURE__ */ new Map();
+          const nameOf = new Map();
           if (log) {
             for (const k of Object.keys(META)) if (S[k]) nameOf.set(S[k], k);
           }
