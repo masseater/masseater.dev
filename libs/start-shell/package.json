@@ -26,7 +26,8 @@
   },
   "devDependencies": {
     "@types/react": "catalog:",
-    "react": "catalog:"
+    "react": "catalog:",
+    "vite": "catalog:"
   },
   "peerDependencies": {
     "react": "^19.0.0"
