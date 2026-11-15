@@ -105,162 +105,8 @@ jobs:
         env:
           CHECKOUTS: ${{ github.workspace }} ${{ github.workspace }}/.skills-checkout
 
-  zenn:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    concurrency:
-      group: zenn
-      cancel-in-progress: true
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run -r zenn-publish
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GIT_AUTHOR_NAME: github-actions[bot]
-          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
-          GIT_COMMITTER_NAME: github-actions[bot]
-          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
-
-  sts2-pck:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    concurrency:
-      group: sts2-pck
-      cancel-in-progress: true
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: jdx/mise-action@d5574b52816a478f9d4e6529a3f6ff17a8a36785 # v5.2.8
-        with:
-          fetch_from_github: false
-          install_args: dotnet
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run -r pck:all
-        env:
-          PCK_OUT: ${{ runner.temp }}/sts2-pck
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: sts2-pck
-          path: ${{ runner.temp }}/sts2-pck/
-          if-no-files-found: ignore
-
-  mosaic-plan:
-    if: github.event_name == 'push' || github.event_name == 'schedule'
-    runs-on: ubuntu-latest
-    concurrency:
-      group: mosaic-plan
-      cancel-in-progress: true
-    permissions:
-      actions: write
-      contents: read
-    outputs:
-      rebuild: ${{ steps.plan.outputs.rebuild }}
-      web: ${{ steps.plan.outputs.web }}
-      slugs: ${{ steps.plan.outputs.slugs }}
-      pool: ${{ steps.plan.outputs.pool }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - id: plan
-        env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD_SHA: ${{ github.sha }}
-          BEFORE_SHA: ${{ github.event.before }}
-        run: vp run -r mosaic-plan
-      - env:
-          GH_TOKEN: ${{ github.token }}
-        run: vp run -r prune-caches
-      - name: rebuild
-        if: steps.plan.outputs.rebuild == 'true'
-        run: echo "the character files are rebuilt"
-      - name: web
-        if: steps.plan.outputs.web == 'true'
-        run: echo "the site is redeployed"
-
-  mosaic-character:
-    needs: mosaic-plan
-    if: needs.mosaic-plan.outputs.rebuild == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-      contents: read
-    concurrency:
-      group: mosaic-character-${{ matrix.slug }}
-    strategy:
-      fail-fast: false
-      max-parallel: 6
-      matrix:
-        slug: ${{ fromJSON(needs.mosaic-plan.outputs.slugs) }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/mosaic-character
-        with:
-          slug: ${{ matrix.slug }}
-          pool: ${{ needs.mosaic-plan.outputs.pool }}
-          job-index: ${{ strategy.job-index }}
-          github-token: ${{ github.token }}
-          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-  mosaic-deploy:
-    needs: mosaic-plan
-    if: needs.mosaic-plan.outputs.web == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-    concurrency:
-      group: mosaic-deploy
-    steps: &mosaic-site
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - id: head
-        env:
-          GH_TOKEN: ${{ github.token }}
-          SUPERSEDING_STEPS: rebuild web
-        run: vp run -r mosaic-superseded
-      - name: deploy
-        if: steps.head.outputs.superseded != 'true'
-        run: vp run -r deploy:mosaic-site
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-  mosaic-refresh:
-    needs: [mosaic-plan, mosaic-character]
-    if: always() && needs.mosaic-plan.outputs.rebuild == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-    concurrency:
-      group: mosaic-deploy
-    steps: *mosaic-site
-
   exposure:
-    needs: [deploy, zenn, sts2-pck, mosaic-plan, mosaic-character, mosaic-deploy]
+    needs: [deploy]
     if: ${{ !cancelled() }}
     permissions:
       actions: read
@@ -269,17 +115,7 @@ jobs:
     uses: $/.github/workflows/exposure.yml
 
   deploy-failure:
-    needs:
-      [
-        deploy,
-        private-names,
-        zenn,
-        sts2-pck,
-        mosaic-plan,
-        mosaic-character,
-        mosaic-deploy,
-        mosaic-refresh,
-      ]
+    needs: [deploy, private-names]
     if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
@@ -302,21 +138,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
 
   ci-telemetry:
-    needs:
-      [
-        verify,
-        autofix,
-        deploy,
-        private-names,
-        zenn,
-        sts2-pck,
-        mosaic-plan,
-        mosaic-character,
-        mosaic-deploy,
-        mosaic-refresh,
-        exposure,
-        deploy-failure,
-      ]
+    needs: [verify, autofix, deploy, private-names, exposure, deploy-failure]
     if: always()
     runs-on: ubuntu-latest
     permissions:
