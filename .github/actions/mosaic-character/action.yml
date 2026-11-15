@@ -74,7 +74,7 @@ runs:
         KEEP: ${{ steps.pack.outputs.key }}
       run: .github/scripts/mosaic-finish.sh
     - if: steps.finish.outputs.changed == 'true'
-      uses: ./.github/actions/setup
+      uses: $/.github/actions/setup
       with:
         native: "false"
     - id: still
