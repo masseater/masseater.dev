@@ -28,7 +28,7 @@ type ListInput = typeof ListInputSchema.Type;
 
 const INPUT_SCHEMA = ListInputSchema.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
-const { meteredInput, runTool } = toolCalls<"list_marks", UpstreamFailed>({
+const { meteredInput, runTool } = toolCalls<UpstreamFailed>({
   dataset: () => env.TOOL_CALLS,
   describe: ({ service, message }) => ({
     errorTag: "UpstreamFailed",
