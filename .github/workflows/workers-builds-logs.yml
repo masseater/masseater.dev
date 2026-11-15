@@ -27,7 +27,7 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - uses: masseater/typescript-template/.github/actions/credentials@4d17b5e2549b5c3a741b1f7000b54920acd7796b
+      - uses: masseater/typescript-template/.github/actions/credentials@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
       - run: vp run builds-logs
         working-directory: tools/cloudflare-logs
         env:
@@ -44,6 +44,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@4d17b5e2549b5c3a741b1f7000b54920acd7796b
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
         with:
           github-token: ${{ github.token }}

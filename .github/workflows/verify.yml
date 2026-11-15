@@ -23,7 +23,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
-      - uses: masseater/typescript-template/.github/actions/verify@4d17b5e2549b5c3a741b1f7000b54920acd7796b
+      - uses: masseater/typescript-template/.github/actions/verify@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -55,6 +55,7 @@ jobs:
   deploy:
     if: github.event_name == 'push'
     permissions:
+      actions: read
       contents: read
       id-token: write
     concurrency:
@@ -92,7 +93,7 @@ jobs:
       - run: vp run -r github-token
       - run: vp run -r private-names
         env:
-          CHECKOUTS: . .skills-checkout
+          CHECKOUTS: ${{ github.workspace }} ${{ github.workspace }}/.skills-checkout
 
   zenn:
     if: github.event_name == 'push'
@@ -313,6 +314,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@4d17b5e2549b5c3a741b1f7000b54920acd7796b
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b8e607c76fcd0b7207e1f6abb138a4473d7084dc
         with:
           github-token: ${{ github.token }}
