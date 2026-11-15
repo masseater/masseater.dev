@@ -4,11 +4,10 @@ import { checkPublishedPackages } from "#/features/install-size/index.ts";
 import { checkOverrides } from "#/features/overrides/index.ts";
 import { checkPlacement } from "#/features/placement/index.ts";
 import { checkWorkspaces } from "#/features/repository-layout/index.ts";
-import { checkScripts } from "#/features/scripts/index.ts";
-import { checkWorkflowQueues } from "#/features/workflow-concurrency/index.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
 
 import { checkSources } from "./source-checks.ts";
+import { checkToolUse } from "./tool-use.ts";
 import { checkTrackedText } from "./tracked-text.ts";
 
 /** @internal */
@@ -21,6 +20,7 @@ export const checkAll: (
     | ReturnType<typeof checkOverrides>
     | ReturnType<typeof checkTrackedText>
     | ReturnType<typeof checkWorkspaces>
+    | ReturnType<typeof checkToolUse>
   >,
   Effect.Services<
     | ReturnType<typeof checkSources>
@@ -34,10 +34,9 @@ export const checkAll: (
       checkOverrides(root),
       checkTrackedText(root),
       checkPlacement(root),
-      checkScripts(root),
       checkPublishedPackages(root),
       checkWorkspaces(root),
-      checkWorkflowQueues(root),
+      checkToolUse(root),
     ],
     { concurrency: "unbounded" },
   );

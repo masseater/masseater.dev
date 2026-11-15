@@ -3,14 +3,29 @@ import { Array as Arr, Effect } from "effect";
 import { checkComments } from "#/features/comments/index.ts";
 import { checkHiddenUnicode } from "#/features/invisible-characters/index.ts";
 import { checkPython } from "#/features/python/index.ts";
-import { checkUnneededFiles } from "#/features/unneeded-files/index.ts";
+import { checkNodeVersion } from "#/features/runtime-version/index.ts";
+import { checkSkillFiles } from "#/features/skills/index.ts";
+import {
+  checkAlchemyPatch,
+  checkReplacedTools,
+  checkUnneededFiles,
+} from "#/features/unneeded-files/index.ts";
 
 /** @internal */
 export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTrackedText(
   root: string,
 ) {
   const found = yield* Effect.all(
-    [checkHiddenUnicode(root), checkPython(root), checkUnneededFiles(root), checkComments(root)],
+    [
+      checkHiddenUnicode(root),
+      checkPython(root),
+      checkUnneededFiles(root),
+      checkReplacedTools(root),
+      checkAlchemyPatch(root),
+      checkNodeVersion(root),
+      checkSkillFiles(root),
+      checkComments(root),
+    ],
     { concurrency: "unbounded" },
   );
   return Arr.flatten(found);

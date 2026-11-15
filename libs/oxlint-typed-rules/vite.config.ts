@@ -212,6 +212,11 @@ const upstreamDrizzleRules = {
 export default defineConfig({
   msch: {
     publish: { installSize: "0 B" },
+    devDependencies: {
+      "上流の ESLint プラグインのコードが eslint の型を読む": {
+        dependencies: ["eslint"],
+      },
+    },
     lint: {
       ignorePatterns: [
         "upstream/src/__tests__/**",
