@@ -11,11 +11,15 @@ const INTERVIEWER_STARTUP = { probes: 60, spacing: "500 millis" } as const;
 const TELEMETRY_SERVICE = "kikite-web";
 const TRACES_PATH = "/api/otlp/v1/traces";
 
-const SUMMARY_MODEL = "sonnet";
-const QUESTION_MODEL = "sonnet";
+const SUMMARY_MODEL = "opus";
+const QUESTION_MODEL = "opus";
+const RESEARCH_MODEL = "opus";
+const CORRECTION_MODEL = "sonnet";
+const RESEARCH_TOOLING = { tools: ["WebSearch", "WebFetch"], maxTurns: 8 } as const;
 
 export {
   API_PORT,
+  CORRECTION_MODEL,
   DEV_API_PORT,
   HOST,
   INTERVIEWER_IDLE,
@@ -23,6 +27,8 @@ export {
   INTERVIEWER_INSTANCE,
   INTERVIEWER_STARTUP,
   QUESTION_MODEL,
+  RESEARCH_MODEL,
+  RESEARCH_TOOLING,
   SUMMARY_MODEL,
   TELEMETRY_SERVICE,
   TRACES_PATH,

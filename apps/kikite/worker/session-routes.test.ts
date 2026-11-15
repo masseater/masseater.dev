@@ -23,6 +23,8 @@ const TWO_ENTRIES = 2;
 
 const encodeRecord = Schema.encodeEffect(Schema.fromJsonString(SessionRecord));
 const decodeRecord = Schema.decodeUnknownEffect(Schema.fromJsonString(SessionRecord));
+const Exported = Schema.Array(Schema.Struct({ id: Schema.String, record: SessionRecord }));
+const decodeExport = Schema.decodeUnknownEffect(Schema.fromJsonString(Exported));
 const decodeListing = Schema.decodeUnknownEffect(
   Schema.fromJsonString(Schema.Array(SessionListing)),
 );
@@ -106,6 +108,20 @@ describe("sessions", () => {
     Effect.gen(function* test() {
       const missing = yield* call(`/api/sessions/${ID}`);
       expect(missing.status).toBe(NOT_FOUND);
+    }),
+  );
+});
+
+describe("session export", () => {
+  it.effect("exports every session with its whole record", () =>
+    Effect.gen(function* test() {
+      const record = recordWith(["最初", "次"], Option.some("聞き手"));
+      yield* save(record);
+      const exported = yield* call("/api/sessions/all").pipe(
+        Effect.flatMap(textOf),
+        Effect.flatMap(decodeExport),
+      );
+      expect(exported).toStrictEqual([{ id: ID, record }]);
     }),
   );
 });
