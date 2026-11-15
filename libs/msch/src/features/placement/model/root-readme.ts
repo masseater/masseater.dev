@@ -10,6 +10,10 @@ const RULE: RuleName = "root-readme";
 const ROOT_DOC = /^(?:README(?:\.[^/]+)?|AGENTS\.md|CLAUDE\.md)$/iu;
 const READ_CONCURRENCY = 16;
 const START = 0;
+const CHECK_POLICY = "@r_masseater/msch";
+
+const isCheckPolicy = ({ packageName }: NamedWorkspace): boolean =>
+  Option.contains(packageName, CHECK_POLICY);
 
 const messageFor = (directory: string): string =>
   `names the workspace ${directory}. The root README, AGENTS.md and CLAUDE.md describe the repository as a whole. Write what belongs to the workspace in ${directory}/README.md, or for agents in ${directory}/AGENTS.md.`;
@@ -50,7 +54,11 @@ export const checkRootReadme = Effect.fn("checkRootReadme")(function* checkRootR
     names,
     Arr.filter((name) => ROOT_DOC.test(name)),
   );
-  const workspaces = yield* namedWorkspaces(root);
+  const named = yield* namedWorkspaces(root);
+  const workspaces = pipe(
+    named,
+    Arr.filter((workspace) => !isCheckPolicy(workspace)),
+  );
   const found = yield* Effect.forEach(
     readmes,
     (name) => problemsInReadme(files.join(root, name), workspaces),

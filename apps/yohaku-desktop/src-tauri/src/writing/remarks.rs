@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-use crate::model::{Paragraph, Remark};
+use crate::protocol::{Paragraph, Remark};
 use crate::text::utf16_offset;
 
 const EMOTION_EXPLAINED: &str = "emotion_explained";
@@ -99,7 +99,7 @@ pub fn without_dismissed(
 #[cfg(test)]
 mod tests {
     use super::remarks_of;
-    use crate::model::Paragraph;
+    use crate::protocol::Paragraph;
     use crate::text::utf16_slice;
 
     fn marked(text: &str) -> Vec<String> {
