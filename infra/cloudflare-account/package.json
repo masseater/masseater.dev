@@ -12,7 +12,7 @@
     "./account-readers": "./account-readers.ts",
     "./owner-access": "./owner-access.ts",
     "./owner-site-run": "./owner-site-run.ts",
-    "./alchemy-tasks": "./alchemy-tasks.ts"
+    "./run-tasks": "./run-tasks.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

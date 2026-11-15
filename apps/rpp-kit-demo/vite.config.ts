@@ -1,4 +1,4 @@
-import { alchemyTasks } from "@masseater.dev/cloudflare-account/alchemy-tasks";
+import { alchemyTasks } from "@masseater.dev/cloudflare-account/run-tasks";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";

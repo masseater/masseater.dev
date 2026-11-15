@@ -1,4 +1,4 @@
-import { alchemyTasks } from "@masseater.dev/cloudflare-account/alchemy-tasks";
+import { alchemyTasks } from "@masseater.dev/cloudflare-account/run-tasks";
 import { String as Str } from "effect";
 import { defineConfig } from "vite-plus";
 

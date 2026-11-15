@@ -1,4 +1,4 @@
-import { alchemyTasks } from "@masseater.dev/cloudflare-account/alchemy-tasks";
+import { alchemyTasks } from "@masseater.dev/cloudflare-account/run-tasks";
 import { Array as Arr, Record as Rec, pipe } from "effect";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { defineConfig } from "vite-plus";
