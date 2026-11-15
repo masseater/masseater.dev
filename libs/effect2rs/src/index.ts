@@ -7,25 +7,28 @@ import {
   Schema,
   SchemaAST,
   SchemaRepresentation,
-  Stream,
   pipe,
 } from "effect";
-import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
+import { copiesOf } from "./copies.ts";
+import type { RustFile } from "./copies.ts";
+import { handWrittenCopies } from "./hand-written-copies.ts";
 import { itemOf } from "./items.ts";
 import { render } from "./render.ts";
+import { staleRust } from "./stale-rust.ts";
 import { UnsupportedSchema } from "./types.ts";
 import type { Constant } from "./types.ts";
 
 export { UnsupportedSchema } from "./types.ts";
+export { StaleRust } from "./stale-rust.ts";
+export { HandWrittenCopies } from "./hand-written-copies.ts";
+export type { RustFile } from "./copies.ts";
 
 export interface Effect2rsInput {
   readonly definitions: Readonly<Record<string, unknown>>;
   readonly header: string;
   readonly derive?: readonly string[];
 }
-
-const RUSTFMT = ["--edition", "2024", "--emit", "stdout", "--quiet"];
 
 const isConstant = Predicate.or(
   Predicate.isString,
@@ -120,7 +123,7 @@ const renamed = (name: string): UnsupportedSchema =>
     reason: "another schema has the same name, or a recursive schema has no identifier",
   });
 
-export const toRust = Effect.fn("effect2rs.toRust")(function* toRust(input: Effect2rsInput) {
+export const effect2rs = Effect.fn("effect2rs")(function* effect2rs(input: Effect2rsInput) {
   const constants = yield* pipe(
     Record.toEntries(input.definitions),
     Array.filter(([, value]) => !Schema.isSchema(value)),
@@ -140,13 +143,27 @@ export const toRust = Effect.fn("effect2rs.toRust")(function* toRust(input: Effe
   return render({ header: input.header, derive: input.derive ?? [], items, constants });
 });
 
-const rustfmt = Effect.fn("effect2rs.rustfmt")(function* rustfmt(source: string) {
-  const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-  const stdin = Stream.succeed(new TextEncoder().encode(source));
-  return yield* spawner.string(ChildProcess.make("rustfmt", RUSTFMT, { stdin }));
-});
+export interface RustCheck extends Effect2rsInput {
+  readonly path: string;
+  readonly current: Option.Option<string>;
+  readonly siblings: readonly RustFile[];
+}
 
-export const effect2rs = Effect.fn("effect2rs")(function* effect2rs(input: Effect2rsInput) {
-  const source = yield* toRust(input);
-  return yield* rustfmt(source);
+export const checkRust = Effect.fn("effect2rs.checkRust")(function* checkRust(check: RustCheck) {
+  const source = yield* effect2rs(check);
+  yield* pipe(
+    check.current,
+    Option.filter((current) => current === source),
+    Option.match({
+      onNone: () => Effect.fail(staleRust(check.path)),
+      onSome: () => Effect.void,
+    }),
+  );
+  return yield* pipe(
+    copiesOf(source)(check.siblings),
+    Array.match({
+      onEmpty: () => Effect.void,
+      onNonEmpty: (copies) => Effect.fail(handWrittenCopies(copies)),
+    }),
+  );
 });
