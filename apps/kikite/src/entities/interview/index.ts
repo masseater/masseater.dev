@@ -14,6 +14,8 @@ export {
   phaseAtom,
   progressAtom,
   staleAtom,
+  leadsAtom,
+  researchingAtom,
 } from "./model/atoms";
 export type {
   Entry,
@@ -24,8 +26,9 @@ export type {
   Rating,
   Progress,
   Phase,
+  Input,
 } from "./model/atoms";
-export { heardFailure, heardInterim, heardSpeech, touch } from "./model/heard";
+export { heardFailure, heardInterim, heardSound, heardSpeech, touch } from "./model/heard";
 export { parseDraft } from "./lib/draft";
 export type { ParsedDraft } from "./lib/draft";
 export { askedOf, recentOf, linesOf, speechAfter } from "./model/transcript";
@@ -47,8 +50,10 @@ export {
   useSaving,
   useStale,
   useEntries,
+  useLeads,
+  useResearching,
 } from "./model/hooks";
-export type { Panel, Saving } from "./model/hooks";
+export type { Lead, Panel, Researching, Saving } from "./model/hooks";
 export { rated } from "./model/rate";
 export { saveAtom } from "./model/record";
 /** @internal */

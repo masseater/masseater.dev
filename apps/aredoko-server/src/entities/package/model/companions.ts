@@ -78,6 +78,19 @@ const readCompanion = Effect.fn("readCompanion")(function* readCompanionFile(
 });
 
 /** @internal */
+const mentionedIn = Effect.fn("mentionedIn")(function* mentionedIn({
+  bytes,
+  names,
+}: {
+  readonly bytes: Uint8Array;
+  readonly names: readonly string[];
+}) {
+  const path = yield* Path.Path;
+  const isMentioned = referenced(textsOf(bytes), path);
+  return pipe(names, Array.filter(isNeeded), Array.filter(isMentioned));
+});
+
+/** @internal */
 const companionNamesOf = Effect.fn("companionNamesOf")(function* companionNamesOfModel(
   folder: Folder,
   model: Uint8Array,
@@ -126,5 +139,5 @@ const companionPath = Effect.fn("companionPath")(function* companionPathIn(
   return Option.liftPredicate(resolved, () => inside);
 });
 
-export { bundleFolder, companionNamesOf, companionPath, companionsOf };
+export { bundleFolder, companionNamesOf, companionPath, companionsOf, mentionedIn };
 export type { Folder };

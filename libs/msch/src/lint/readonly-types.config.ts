@@ -1,3 +1,4 @@
+import { BINARY_DATA } from "./readonly-binary.config.ts";
 import { BROWSER_HANDLES, WEBGPU_HANDLES } from "./readonly-browser.config.ts";
 import { lintToolReadonlyAllow } from "./readonly-lint-tools.config.ts";
 
@@ -11,11 +12,8 @@ const readonlyParameterAllow = [
       "ReadableStream",
       "Request",
       "Response",
-      "Float64Array",
-      "ArrayBuffer",
+      ...BINARY_DATA,
       "RegExp",
-      "Uint8Array",
-      "DataView",
       "RegExpExecArray",
       "RegExpMatchArray",
       "Date",

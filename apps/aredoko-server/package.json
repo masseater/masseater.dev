@@ -22,11 +22,13 @@
     "fzstd": "catalog:",
     "modern-tar": "catalog:",
     "sharp": "catalog:",
-    "sqlite-vec": "catalog:"
+    "sqlite-vec": "catalog:",
+    "three": "catalog:"
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",
     "@types/node": "catalog:",
+    "@types/three": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   }

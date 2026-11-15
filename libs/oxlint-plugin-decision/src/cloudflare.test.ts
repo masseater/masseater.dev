@@ -23,6 +23,9 @@ const MODEL = "@cf/test/model";
 const SOURCE = "console.log(user.email, user.phone);\n";
 const YES_LINE = `log.js:1:1: [any-call] cloudflare/${MODEL} answered yes (0.95 >= 0.80): Does this call write personal data to a log? [Error/decision(any-call)]`;
 const RETRIED = 2;
+const TWO_CALLS = "console.log(user.email);\nconsole.log(user.phone);\n";
+const ONE_REQUEST = 1;
+const BOTH = 2;
 const PERCENT = 100;
 const FIRST = 0;
 const SECOND = 1;
@@ -103,6 +106,17 @@ const retriesRateLimits = Effect.gen(function* test() {
   strictEqual(chats.length, RETRIED);
 });
 
+const asksTheFileAtOnce = Effect.gen(function* test() {
+  const env = yield* cloudflareEnv("yes");
+  const run = yield* lintProject({
+    files: { "log.js": TWO_CALLS },
+    options: { model: `cloudflare/${MODEL}`, rules: [callRule] },
+    env,
+  });
+  strictEqual(decisionLines(run).length, BOTH, outputOf(run));
+  strictEqual((yield* loggedChats).length, ONE_REQUEST);
+});
+
 type Alternative = readonly [string, number];
 
 const token = (
@@ -164,6 +178,11 @@ layer(NodeServices.layer, { excludeTestServices: true })("the cloudflare provide
   it.effect(
     "warns with the Cloudflare error message",
     () => withCloudflare(warnsOnDenied),
+    TIMEOUT,
+  );
+  it.effect(
+    "asks every match in a file in one request",
+    () => withCloudflare(asksTheFileAtOnce),
     TIMEOUT,
   );
   it.effect("retries a rate limited request", () => withCloudflare(retriesRateLimits), TIMEOUT);

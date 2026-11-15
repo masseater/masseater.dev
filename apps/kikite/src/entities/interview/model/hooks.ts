@@ -9,10 +9,12 @@ import {
   entriesAtom,
   hearingAtom,
   interimAtom,
+  leadsAtom,
   listeningAtom,
   nudgeAtom,
   panelAtom,
   phaseAtom,
+  researchingAtom,
   savingAtom,
   staleAtom,
   summaryAtom,
@@ -21,10 +23,12 @@ import {
 import type {
   Asking,
   Entry,
+  Lead,
   Listening,
   Nudge,
   Panel,
   Phase,
+  Researching,
   Saving,
   SummaryState,
 } from "./atoms.ts";
@@ -67,6 +71,10 @@ const useAsking = (): Asking => useAtomValue(askingAtom);
 const useListening = (): Listening => useAtomValue(listeningAtom);
 
 const useNudge = (): Option.Option<Nudge> => useAtomValue(nudgeAtom);
+
+const useLeads = (): readonly Lead[] => useAtomValue(leadsAtom);
+
+const useResearching = (): Researching => useAtomValue(researchingAtom);
 
 const useStale = (): boolean => useAtomValue(staleAtom);
 
@@ -111,10 +119,12 @@ export {
   useEntries,
   useHearing,
   useInterim,
+  useLeads,
   useListening,
   useNudge,
   usePanel,
   usePhase,
+  useResearching,
   useSaving,
   useSetPanel,
   useStage,
@@ -123,4 +133,4 @@ export {
   useTheme,
 };
 export type { QuestionEntry, SpeechEntry, Stage };
-export type { Asking, Entry, Listening, Panel, Saving } from "./atoms.ts";
+export type { Asking, Entry, Lead, Listening, Panel, Researching, Saving } from "./atoms.ts";

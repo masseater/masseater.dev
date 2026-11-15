@@ -1,10 +1,14 @@
 import { Array, Effect, FileSystem, Option, pipe } from "effect";
-import { Decompress } from "fzstd";
+import { Decompress, decompress } from "fzstd";
 
 import { collectBytes } from "#/shared/bytes/index.ts";
 import { PreviewFailed, pixelsPreview } from "#/shared/preview/index.ts";
 
+import { glbOf } from "./blend-glb.ts";
+import { sceneOf } from "./blend-scene.ts";
+import { openBlend } from "./blend-structs.ts";
 import { blendThumbnail } from "./blend-thumbnail.ts";
+import { BlendUnreadable } from "./blend-unreadable.ts";
 
 const PREFIX_BYTES = 4_194_304;
 const ZSTD_MAGIC = ["40", "181", "47", "253"] as const;
@@ -67,4 +71,30 @@ const blendPreview = Effect.fn("blendPreview")(function* blendPreview(path: stri
   });
 });
 
-export { blendPreview };
+const plainFile = Effect.fn("plainFile")(function* plainFile(path: string) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const bytes = yield* fileSystem.readFile(path);
+  if (isZstd(bytes)) {
+    return yield* Effect.try({
+      try: () => decompress(bytes),
+      catch: (cause) => BlendUnreadable.make({ path, cause }),
+    });
+  }
+  if (isGzip(bytes)) {
+    return yield* gunzipFile(path).pipe(
+      Effect.mapError(({ cause }) => BlendUnreadable.make({ path, cause })),
+    );
+  }
+  return bytes;
+});
+
+/** @internal */
+const blendModel = Effect.fn("blendModel")(function* blendModel(path: string) {
+  const plain = yield* plainFile(path);
+  const file = yield* Effect.fromOption(openBlend(plain)).pipe(
+    Effect.mapError((cause) => BlendUnreadable.make({ path, cause })),
+  );
+  return yield* glbOf(sceneOf(file));
+});
+
+export { blendModel, blendPreview };

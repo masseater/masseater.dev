@@ -40,6 +40,8 @@ const base = {
     spokeSinceQuestion: true,
     lastSummaryAt: 0,
     summarizedThrough: NOTHING_SUMMARIZED,
+    correctedThrough: NOTHING_SUMMARIZED,
+    researchedFor: "",
     withdrawn: 0,
   },
   entries: [SPEECH],

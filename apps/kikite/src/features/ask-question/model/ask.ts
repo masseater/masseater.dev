@@ -4,6 +4,7 @@ import type { AtomRegistry } from "effect/reactivity";
 
 import {
   parseDraft,
+  leadsAtom,
   askingAtom,
   entriesAtom,
   heardAtom,
@@ -28,6 +29,7 @@ const bodyNow = Effect.gen(function* bodyNow() {
     summary: summaryOf(summary),
     recent: recentOf(entries),
     asked: askedOf(entries),
+    leads: yield* read(leadsAtom),
   };
   return body;
 });

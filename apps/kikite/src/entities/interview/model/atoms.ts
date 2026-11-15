@@ -2,7 +2,7 @@ import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 
 import type { Recognition } from "#/shared/lib/recognition";
-import type { InterviewSummary, RecordedEntry, RecordedProgress } from "#protocol";
+import type { InterviewLead, InterviewSummary, RecordedEntry, RecordedProgress } from "#protocol";
 
 import { storedPrevious } from "./memory.ts";
 
@@ -13,6 +13,13 @@ type Rating = Extract<Entry, { kind: "question" }>["rating"];
 type Input = Extract<Entry, { kind: "speech" }>["by"];
 
 type Progress = RecordedProgress;
+
+type Lead = InterviewLead;
+
+type Researching =
+  | Readonly<{ status: "idle" }>
+  | Readonly<{ status: "running" }>
+  | Readonly<{ status: "failed"; message: string }>;
 
 type Asking =
   | Readonly<{ status: "idle" }>
@@ -35,7 +42,7 @@ type Listening =
 
 type Phase = Readonly<{ status: "interview" }> | Readonly<{ status: "report" }>;
 
-type Panel = "points" | "open" | "transcript";
+type Panel = "points" | "open" | "leads" | "transcript";
 
 type Saving =
   | Readonly<{ status: "idle" }>
@@ -52,6 +59,8 @@ type Heard = Readonly<{
   spokeSinceQuestion: boolean;
   lastSummaryAt: number;
   summarizedThrough: number;
+  correctedThrough: number;
+  researchedFor: string;
   withdrawn: number;
 }>;
 
@@ -63,6 +72,8 @@ const freshHeard = (now: number): Heard => ({
   spokeSinceQuestion: false,
   lastSummaryAt: now,
   summarizedThrough: NOTHING_SUMMARIZED,
+  correctedThrough: NOTHING_SUMMARIZED,
+  researchedFor: "",
   withdrawn: 0,
 });
 
@@ -85,6 +96,8 @@ const previousThemeAtom = keep(storedPrevious());
 const panelAtom = keep<Panel>("points");
 const savingAtom = keep<Saving>({ status: "idle" });
 const recordingAtom = keep<Recording>({ id: "", startedAt: NEVER });
+const leadsAtom = keep<readonly Lead[]>([]);
+const researchingAtom = keep<Researching>({ status: "idle" });
 
 const summaryOf = (state: SummaryState): Option.Option<InterviewSummary> => {
   if (state.status === "empty") {
@@ -102,6 +115,7 @@ export {
   heardAtom,
   hearingAtom,
   interimAtom,
+  leadsAtom,
   listeningAtom,
   nudgeAtom,
   panelAtom,
@@ -110,6 +124,7 @@ export {
   progressAtom,
   recognitionAtom,
   recordingAtom,
+  researchingAtom,
   savingAtom,
   staleAtom,
   summaryAtom,
@@ -120,6 +135,7 @@ export type {
   Entry,
   Heard,
   Input,
+  Lead,
   Listening,
   Nudge,
   Panel,
@@ -127,6 +143,7 @@ export type {
   Progress,
   Rating,
   Recording,
+  Researching,
   Saving,
   SummaryState,
 };

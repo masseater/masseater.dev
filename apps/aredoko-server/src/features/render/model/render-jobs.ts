@@ -1,9 +1,11 @@
-import { Clock, Effect, Schema, pipe } from "effect";
+import { Array, Clock, Effect, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { RENDER, RETRY } from "#/shared/database/index.ts";
 import { normalizePng } from "#/shared/preview/index.ts";
 import { decodeRows } from "#/shared/sql/index.ts";
+
+import { discardStaging } from "./model-source.ts";
 
 const JOBS_PER_REQUEST = 8;
 
@@ -33,16 +35,23 @@ const putRender = Effect.fn("putRender")(function* storeRender({
     pngs,
     Effect.forEach((png) => normalizePng(`render of asset ${String(assetId)}`, png)),
   );
+  const replaced = Array.match(normalized, {
+    onEmpty: () => Effect.void,
+    onNonEmpty: (images) =>
+      Effect.gen(function* replace() {
+        yield* sql`delete from images where asset_id = ${assetId}`;
+        yield* pipe(
+          images,
+          Effect.forEach(
+            (png) => sql`insert into images(asset_id, png) values (${assetId}, ${png})`,
+          ),
+        );
+      }),
+  });
   yield* sql.withTransaction(
-    Effect.gen(function* write() {
-      yield* sql`delete from images where asset_id = ${assetId}`;
-      yield* pipe(
-        normalized,
-        Effect.forEach((png) => sql`insert into images(asset_id, png) values (${assetId}, ${png})`),
-      );
-      yield* sql`update assets set render = ${RENDER.done} where id = ${assetId}`;
-    }),
+    Effect.andThen(replaced, sql`update assets set render = ${RENDER.done} where id = ${assetId}`),
   );
+  yield* discardStaging(assetId);
 });
 
 /** @internal */
@@ -59,6 +68,7 @@ const failRender = Effect.fn("failRender")(function* postponeRender({
   yield* sql`update assets set render_attempts = render_attempts + 1,
     render_retry_at = ${now} + min(${RETRY.firstMillis} << min(render_attempts, ${RETRY.doublings}), ${RETRY.longestMillis})
     where id = ${assetId} and render = ${RENDER.pending}`;
+  yield* discardStaging(assetId);
 });
 
 export { failRender, putRender, renderJobs };

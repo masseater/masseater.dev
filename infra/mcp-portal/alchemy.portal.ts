@@ -66,8 +66,6 @@ const upstreams = [
   { id: "medley", url: "https://medley-manager.masseater.dev/mcp", auth: oauth },
   { id: "twilog", url: "https://twilog.masseater.dev/mcp", auth: oauth },
   { id: "money", url: "https://money.masseater.dev/mcp", auth: oauth },
-  { id: "twilog-masseater", url: "https://twilog-mcp.togetter.dev/mcp", auth: oauth },
-  { id: "twilog-u1-mas", url: "https://twilog-mcp.togetter.dev/mcp", auth: oauth },
   { id: "atra", url: "https://mcp.atra.bot/mcp", auth: oauth },
   { id: "flovia", url: "https://api.flovia.dev/mcp", auth: oauth },
   { id: "cloudflare", url: "https://mcp.cloudflare.com/mcp", auth: cloudflareReader },

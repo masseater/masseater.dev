@@ -12,11 +12,18 @@ const NextTopics = (): ReactNode => {
   );
   return (
     Arr.isReadonlyArrayNonEmpty(next) && (
-      <section className="hidden flex-col gap-2 lg:flex">
+      <section className="hidden shrink-0 flex-col gap-2 lg:flex">
         <h2 className="text-muted-foreground text-xs font-semibold tracking-wider">{LABEL}</h2>
-        <p className="text-muted-foreground text-sm leading-relaxed">
-          {pipe(next, Arr.join("　／　"))}
-        </p>
+        <ul className="text-muted-foreground marker:text-muted-foreground/60 grid list-disc grid-cols-2 gap-x-8 gap-y-1 pl-4 text-sm leading-relaxed">
+          {pipe(
+            next,
+            Arr.map((topic) => (
+              <li key={topic} className="wrap-anywhere">
+                {topic}
+              </li>
+            )),
+          )}
+        </ul>
       </section>
     )
   );

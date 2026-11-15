@@ -15,17 +15,23 @@ const nameOf = ({ title, excerpt }: typeof Manuscript.Type): string =>
 
 const ManuscriptRow = ({
   manuscript,
-}: Readonly<{ manuscript: typeof Manuscript.Type }>): ReactNode => {
+  children,
+}: Readonly<{ manuscript: typeof Manuscript.Type; children: ReactNode }>): ReactNode => {
   const [screen, setScreen] = useScreen();
   const onClick = useCallback(() => {
     setScreen(opened(manuscript.id)(screen));
   }, [manuscript.id, screen, setScreen]);
   return (
-    <li className="border-b">
-      <button className="flex w-full flex-col gap-1 py-3 text-left" type="button" onClick={onClick}>
+    <li className="flex items-center gap-2 border-b">
+      <button
+        className="flex min-w-0 flex-1 flex-col gap-1 py-3 text-left"
+        type="button"
+        onClick={onClick}
+      >
         <span className="truncate font-bold">{nameOf(manuscript)}</span>
         <ManuscriptExcerpt manuscript={manuscript} />
       </button>
+      {children}
     </li>
   );
 };
