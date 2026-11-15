@@ -1,6 +1,3 @@
-// sts2.dll の Godot ノードのスタブ。Sts2Stubs.csproj の説明を参照。
-// private のメンバーも Krafs.Publicizer を使う Mod のために public で書いている (実物では private)。
-
 namespace MegaCrit.Sts2.Core.Nodes
 {
     using Godot;
@@ -69,7 +66,6 @@ namespace MegaCrit.Sts2.Core.Nodes.Screens.Map
 
     public class NMapDrawings : Control
     {
-        // 実物では private class。プレイヤーごとの描画状態。各線は drawViewport の子の Line2D
         public class DrawingState
         {
             public DrawingMode? overrideDrawingMode;
@@ -85,10 +81,8 @@ namespace MegaCrit.Sts2.Core.Nodes.Screens.Map
             public bool IsDrawing => throw null!;
         }
 
-        // 実物では private
         public INetGameService _netService = null!;
 
-        // 実物では private
         public IPlayerCollection _playerCollection = null!;
 
         public void Initialize(INetGameService netService, IPlayerCollection playerCollection, PeerInputSynchronizer inputSynchronizer) => throw null!;
@@ -105,16 +99,12 @@ namespace MegaCrit.Sts2.Core.Nodes.Screens.Map
 
         public bool IsLocalDrawing() => throw null!;
 
-        // 実物では private。無ければ作って返す
         public DrawingState GetDrawingStateForPlayer(ulong playerId) => throw null!;
 
-        // 実物では private。相手の線の受信処理
         public void HandleDrawingMessage(MapDrawingMessage message, ulong senderId) => throw null!;
 
-        // 実物では private。Clear ボタン (自分・相手) で呼ばれる
         public void ClearAllLinesForPlayer(DrawingState state) => throw null!;
 
-        // マップ切り替え時に全員分を消す
         public void ClearAllLines() => throw null!;
     }
 }

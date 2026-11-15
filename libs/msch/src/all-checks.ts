@@ -1,13 +1,12 @@
 import { Array as Arr, Effect } from "effect";
 
 import { checkRepository } from "./check.ts";
-import { checkHiddenUnicode } from "./hidden-unicode.ts";
 import { checkPublishedPackages } from "./install-size.ts";
 import { checkNestedDocs } from "./nested-docs.ts";
 import { checkOverrides } from "./overrides.ts";
 import type { Problem } from "./problem.ts";
-import { checkPython } from "./python.ts";
 import { checkRootReadme } from "./root-readme.ts";
+import { checkTrackedText } from "./tracked-text.ts";
 import { checkWorkspaces } from "./workspace-checks.ts";
 
 /** @internal */
@@ -18,21 +17,20 @@ const checkAll: (
   Effect.Error<
     | ReturnType<typeof checkRepository>
     | ReturnType<typeof checkOverrides>
-    | ReturnType<typeof checkHiddenUnicode>
+    | ReturnType<typeof checkTrackedText>
     | ReturnType<typeof checkWorkspaces>
   >,
   Effect.Services<
     | ReturnType<typeof checkRepository>
     | ReturnType<typeof checkOverrides>
-    | ReturnType<typeof checkHiddenUnicode>
+    | ReturnType<typeof checkTrackedText>
   >
 > = Effect.fn("checkAll")(function* checkAll(root: string) {
   const found = yield* Effect.all(
     [
       checkRepository(root),
       checkOverrides(root),
-      checkHiddenUnicode(root),
-      checkPython(root),
+      checkTrackedText(root),
       checkNestedDocs(root),
       checkRootReadme(root),
       checkPublishedPackages(root),
