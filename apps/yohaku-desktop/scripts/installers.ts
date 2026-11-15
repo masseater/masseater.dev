@@ -2,7 +2,7 @@ import { checkedOutVersion, component } from "@masseater.dev/component-release";
 import { Effect, Path } from "effect";
 
 const COMPONENT = "yohaku";
-const OUTPUT = "installers";
+const OUTPUT = "release-assets";
 
 /** @internal */
 export const installers = Effect.gen(function* installers() {
