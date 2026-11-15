@@ -22,6 +22,7 @@ const RuleNameSchema = Schema.Literals([
   "nested-docs",
   "root-readme",
   "agent-docs-length",
+  "root-docs",
   "shell-script",
   "workflow-script",
   "workflow-queue",
