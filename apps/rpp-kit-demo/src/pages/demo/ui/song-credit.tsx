@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { credit } from "#/pages/demo/model/content";
+import { credit } from "#/shared/config";
 
 const SongCredit = (): ReactNode => (
   <p className="text-muted-foreground flex flex-wrap gap-x-3 text-sm">

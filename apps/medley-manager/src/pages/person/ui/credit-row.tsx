@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { VideoLink } from "#/entities/catalog";
+import { VideoLink } from "#/entities/video";
 import { Badge } from "#/shared/ui/badge";
 import { TableCell } from "#/shared/ui/table-cell";
 import { TableRow } from "#/shared/ui/table-row";

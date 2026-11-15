@@ -9,7 +9,7 @@ export default defineConfig({
     lint: {
       overrides: [
         {
-          files: ["src/pages/mosaic/lib/gpu-device.ts"],
+          files: ["src/entities/mosaic/lib/gpu-device.ts"],
           rules: {
             "baseline-js/use-baseline": [
               "error",

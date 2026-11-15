@@ -1,4 +1,4 @@
-import type { Tone } from "#/pages/inspect/model/overlay";
+import type { Tone } from "#/entities/inspection";
 
 const TONE_CLASS: Readonly<Record<Tone, string>> = {
   none: "",

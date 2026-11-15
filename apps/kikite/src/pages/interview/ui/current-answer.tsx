@@ -2,11 +2,11 @@ import { cn } from "@masseater.dev/ui/cn";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useInterim, usePanel, useStage } from "#/pages/interview/model/hooks";
+import { useInterim, usePanel, useStage } from "#/entities/interview";
+import { useStickToBottom } from "#/shared/lib/stick-to-bottom";
 
 import { HistoryItem } from "./history-item.tsx";
 import { InterimItem } from "./interim-item.tsx";
-import { useStickToBottom } from "./stick-to-bottom.ts";
 
 const CurrentAnswer = (): ReactNode => {
   const { said } = useStage();

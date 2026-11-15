@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Lead } from "#/pages/interview/model/hooks";
+import type { Lead } from "#/entities/interview";
 
 import { LeadSource } from "./lead-source.tsx";
 

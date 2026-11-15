@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { serveMemories } from "#/features/mcp/index.server";
+import { serveMemories } from "#/app/mcp/index.server";
 
 const handle = ({ request }: Readonly<{ request: Request }>): Promise<Response> =>
   serveMemories(request);

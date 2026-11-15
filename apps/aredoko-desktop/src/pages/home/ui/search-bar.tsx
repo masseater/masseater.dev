@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 
-import { KindChips } from "./kind-chips.tsx";
-import { PackageScope } from "./package-scope.tsx";
+import { PackageScope } from "#/features/choose-scope";
+import { KindChips } from "#/features/filter-kind";
+
 import { SearchRow } from "./search-row.tsx";
 
 const SearchBar = (): ReactNode => (

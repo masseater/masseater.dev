@@ -2,14 +2,15 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Number as Num, Option, Order, pipe, Schema, Struct } from "effect";
 import { vi } from "vite-plus/test";
 
-import { closeDatabase } from "./d1.test.support";
-import { handleCatalog } from "./handle.server";
-import { listPeople } from "./people.server";
-import { seedCatalog, thumbnailOf } from "./ranking.test.support";
-import { listSongs } from "./songs.server";
-import { listVideos } from "./videos.server";
+import { listPeople } from "#/entities/person/@x/catalog";
+import { listSongs } from "#/entities/song/@x/catalog";
+import { listVideos } from "#/entities/video/@x/catalog";
+import { closeDatabase } from "#/shared/db/index.test.support";
 
-vi.mock("cloudflare:workers", () => import("./d1.test.support"));
+import { handleCatalog } from "./handle.server";
+import { seedCatalog, thumbnailOf } from "./ranking.test.support";
+
+vi.mock("cloudflare:workers", () => import("#/shared/db/index.test.support"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 

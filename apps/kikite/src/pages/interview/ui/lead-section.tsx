@@ -2,7 +2,7 @@ import { cn } from "@masseater.dev/ui/cn";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useLeads, useResearching } from "#/pages/interview/model/hooks";
+import { useLeads, useResearching } from "#/entities/interview";
 
 import { LeadItem } from "./lead-item.tsx";
 

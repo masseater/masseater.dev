@@ -14,7 +14,7 @@ import {
   placedAtom,
   rewritingAtom,
   titleAtom,
-} from "#/pages/write/model/writing-atoms.ts";
+} from "#/entities/manuscript";
 import { useYohaku } from "#/shared/api";
 import type { Opened } from "#/shared/api";
 import { useScreen } from "#/shared/model";

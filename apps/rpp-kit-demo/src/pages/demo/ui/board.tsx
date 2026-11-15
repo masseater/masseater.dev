@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { song } from "#/pages/demo/model/song";
+import { song } from "#/entities/song";
 
 import { Lane } from "./lane";
 import { SectionStrip } from "./section-strip";

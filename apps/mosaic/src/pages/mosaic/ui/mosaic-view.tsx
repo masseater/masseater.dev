@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 
-import type { Visit } from "#/pages/mosaic/lib/files";
-import { useViewerStatus } from "#/pages/mosaic/model/viewer";
+import type { Visit } from "#/entities/mosaic";
+import { useViewerStatus, MosaicCanvas } from "#/entities/mosaic";
 
-import { MosaicCanvas } from "./mosaic-canvas";
 import { MosaicLoading } from "./mosaic-loading";
 import { MosaicOverlay } from "./mosaic-overlay";
 

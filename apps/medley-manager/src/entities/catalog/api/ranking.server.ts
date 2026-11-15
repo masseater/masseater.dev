@@ -1,12 +1,8 @@
 import { asc, count, countDistinct, desc, eq } from "drizzle-orm";
 import { Effect } from "effect";
 
-import { part, partStaff } from "#/entities/catalog/model/part.table";
-import { person } from "#/entities/catalog/model/person.table";
-import { song } from "#/entities/catalog/model/song.table";
-import { video } from "#/entities/catalog/model/video.table";
-
-import { catalogDb } from "./db.server";
+import { part, partStaff, person, song, video } from "#/shared/db";
+import { catalogDb } from "#/shared/db/index.server";
 
 const songUses = countDistinct(part.videoId);
 

@@ -1,7 +1,7 @@
 import { Effect, FileSystem, Path } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { Settings } from "#shared/settings";
+import { Settings } from "#/shared/settings/index.ts";
 
 const LIBRARY_FOLDER = "library";
 
