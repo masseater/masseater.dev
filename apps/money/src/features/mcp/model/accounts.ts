@@ -7,8 +7,18 @@ const ACCOUNT_CLASSES = [
   "fixed-liability",
 ] as const;
 
-const AccountClass = Schema.Literals(ACCOUNT_CLASSES);
+const AccountClassSchema = Schema.Literals(ACCOUNT_CLASSES);
 
-type AccountClass = typeof AccountClass.Type;
+type AccountClass = typeof AccountClassSchema.Type;
 
-export { ACCOUNT_CLASSES, AccountClass };
+const DIRECTIONS: Readonly<Record<AccountClass, number>> = {
+  "current-asset": 1,
+  "fixed-asset": 1,
+  "current-liability": -1,
+  "fixed-liability": -1,
+};
+
+const directionOf = (accountClass: AccountClass): number => DIRECTIONS[accountClass];
+
+export { ACCOUNT_CLASSES, AccountClassSchema, directionOf };
+export type { AccountClass };

@@ -1,53 +1,68 @@
 import { Array as Arr, Effect, HashMap, Option, pipe } from "effect";
+import { Digest } from "effect/crypto";
 
-import { normalized } from "./categories";
+import { normalized } from "#/features/mcp/model/categories";
 
 type Entry = Readonly<{ date: string; amount: number; description: string }>;
 
-type Fingerprinted<Row extends Entry> = Row & Readonly<{ normalized: string; hash: string }>;
+type Fingerprint = Readonly<{ normalized: string; hash: string }>;
+
+type Source = Readonly<{ accountId: string; entries: readonly Entry[] }>;
 
 const SEPARATOR = "\u0000";
 
-const HEX = 16;
+const FIRST = 0;
 
-const BYTE_WIDTH = 2;
+const STEP = 1;
 
-const keyOf = (accountId: string, row: Entry): string =>
-  Arr.join([accountId, row.date, String(row.amount), normalized(row.description)], SEPARATOR);
+const keyOf =
+  (accountId: string) =>
+  (entry: Entry): string =>
+    Arr.join(
+      [accountId, entry.date, String(entry.amount), normalized(entry.description)],
+      SEPARATOR,
+    );
 
 const occurrences = (keys: readonly string[]): readonly number[] =>
   pipe(
     keys,
     Arr.mapAccum(HashMap.empty<string, number>(), (seen, key) => {
-      const count = Option.getOrElse(HashMap.get(seen, key), () => 0);
-      return [HashMap.set(seen, key, count + 1), count];
+      const count = pipe(
+        HashMap.get(seen, key),
+        Option.getOrElse(() => FIRST),
+      );
+      return [HashMap.set(seen, key, count + STEP), count];
     }),
     ([, counts]) => counts,
   );
 
-const sha256 = (text: string): Effect.Effect<string> =>
-  Effect.promise(() => crypto.subtle.digest("SHA-256", new TextEncoder().encode(text))).pipe(
-    Effect.map((digest) =>
-      Arr.join(
-        Arr.map([...new Uint8Array(digest)], (byte) =>
-          byte.toString(HEX).padStart(BYTE_WIDTH, "0"),
-        ),
-        "",
-      ),
-    ),
-  );
+const hashOf = Effect.fn("hashOf")(function* hashOf(text: string) {
+  const digest = yield* Digest.Digest;
+  return yield* digest.digestHex(Digest.sha256, new TextEncoder().encode(text));
+});
 
-const fingerprinted = <Row extends Entry>(
-  accountId: string,
-  rows: readonly Row[],
-): Effect.Effect<readonly Fingerprinted<Row>[]> => {
-  const keys = Arr.map(rows, (row) => keyOf(accountId, row));
-  return Effect.forEach(Arr.zip(rows, Arr.zip(keys, occurrences(keys))), ([row, [key, nth]]) =>
-    sha256(`${key}${SEPARATOR}${nth}`).pipe(
-      Effect.map((hash) => ({ ...row, normalized: normalized(row.description), hash })),
-    ),
+const printOf = ([entry, [key, nth]]: readonly [Entry, readonly [string, number]]): Effect.Effect<
+  Fingerprint,
+  never,
+  Digest.Digest
+> => {
+  const keyed = Arr.join([key, String(nth)], SEPARATOR);
+  const text = normalized(entry.description);
+  return pipe(
+    hashOf(keyed),
+    Effect.map((hash): Fingerprint => ({ normalized: text, hash })),
   );
 };
 
-export { fingerprinted };
-export type { Entry, Fingerprinted };
+const fingerprints = ({
+  accountId,
+  entries,
+}: Source): Effect.Effect<readonly Fingerprint[], never, Digest.Digest> => {
+  const keys = pipe(entries, Arr.map(keyOf(accountId)));
+  const numbered = Arr.zip(keys, occurrences(keys));
+  return pipe(Arr.zip(entries, numbered), Effect.forEach(printOf));
+};
+
+/** @internal */
+export { fingerprints };
+export type { Entry, Fingerprint };

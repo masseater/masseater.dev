@@ -7,8 +7,8 @@ import {
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
-import { ACCOUNT_CLASSES } from "../model/accounts";
-import { CATEGORIES } from "../model/categories";
+import { ACCOUNT_CLASSES } from "#/features/mcp/model/accounts";
+import { CATEGORIES } from "#/features/mcp/model/categories";
 
 const accounts = sqliteTable("accounts", {
   id: text("id").primaryKey(),

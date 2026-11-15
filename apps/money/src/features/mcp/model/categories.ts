@@ -1,25 +1,42 @@
-import { Schema } from "effect";
+import { Array as Arr, Boolean as Bool, Option, Schema, String as Str, pipe } from "effect";
 
-const INCOME_CATEGORIES = ["salary", "business", "other-income"] as const;
-
-const EXPENSE_CATEGORIES = [
+const CATEGORIES = [
+  "salary",
+  "business",
+  "other-income",
   "housing",
   "food",
   "living",
   "infrastructure",
   "hobby",
   "other-expense",
+  "transfer",
 ] as const;
 
-const TRANSFER = "transfer";
+const CategorySchema = Schema.Literals(CATEGORIES);
 
-const CATEGORIES = [...INCOME_CATEGORIES, ...EXPENSE_CATEGORIES, TRANSFER] as const;
-
-const Category = Schema.Literals(CATEGORIES);
-
-type Category = typeof Category.Type;
+type Category = typeof CategorySchema.Type;
 
 type Flow = "income" | "expense" | "transfer";
+
+type Rule = Readonly<{ pattern: string; category: Category; label: Option.Option<string> }>;
+
+type Decision = Readonly<{ category: Category; label: Option.Option<string> }>;
+
+type Described = Readonly<{ amount: number; normalized: string }>;
+
+const FLOWS: Readonly<Record<Category, Flow>> = {
+  salary: "income",
+  business: "income",
+  "other-income": "income",
+  housing: "expense",
+  food: "expense",
+  living: "expense",
+  infrastructure: "expense",
+  hobby: "expense",
+  "other-expense": "expense",
+  transfer: "transfer",
+};
 
 const CATEGORY_LABELS: Readonly<Record<Category, string>> = {
   salary: "給与",
@@ -34,29 +51,14 @@ const CATEGORY_LABELS: Readonly<Record<Category, string>> = {
   transfer: "振替",
 };
 
-const isIncome = Schema.is(Schema.Literals(INCOME_CATEGORIES));
+const NO_AMOUNT = 0;
 
-const isExpense = Schema.is(Schema.Literals(EXPENSE_CATEGORIES));
-
-const flowOf = (category: Category): Flow => {
-  if (isIncome(category)) {
-    return "income";
-  }
-  if (isExpense(category)) {
-    return "expense";
-  }
-  return "transfer";
-};
-
-const fallbackCategory = (amount: number): Category =>
-  amount > 0 ? "other-income" : "other-expense";
-
-type Rule = Readonly<{ pattern: string; category: Category; label: string | null }>;
+const flowOf = (category: Category): Flow => FLOWS[category];
 
 const infrastructure = (pattern: string, label: string): Rule => ({
   pattern,
   category: "infrastructure",
-  label,
+  label: Option.some(label),
 });
 
 const BUILT_IN_RULES: readonly Rule[] = [
@@ -67,15 +69,25 @@ const BUILT_IN_RULES: readonly Rule[] = [
   infrastructure("FAL.AI", "fal"),
 ];
 
-const normalized = (text: string): string => text.normalize("NFKC").toUpperCase();
+const normalized = (text: string): string => pipe(text, Str.normalize("NFKC"), Str.toUpperCase);
 
-export {
-  BUILT_IN_RULES,
-  CATEGORIES,
-  CATEGORY_LABELS,
-  Category,
-  fallbackCategory,
-  flowOf,
-  normalized,
-};
-export type { Flow, Rule };
+const fallbackOf = (amount: number): Decision => ({
+  category: Bool.match(amount > NO_AMOUNT, {
+    onTrue: (): Category => "other-income",
+    onFalse: (): Category => "other-expense",
+  }),
+  label: Option.none(),
+});
+
+const decide =
+  (rules: readonly Rule[]) =>
+  ({ amount, normalized: text }: Described): Decision =>
+    pipe(
+      [...BUILT_IN_RULES, ...rules],
+      Arr.findLast(({ pattern }) => Str.includes(normalized(pattern))(text)),
+      Option.map(({ category, label }): Decision => ({ category, label })),
+      Option.getOrElse(() => fallbackOf(amount)),
+    );
+
+export { BUILT_IN_RULES, CATEGORIES, CATEGORY_LABELS, CategorySchema, decide, flowOf, normalized };
+export type { Category, Decision, Flow, Rule };

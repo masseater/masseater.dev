@@ -2,14 +2,19 @@ import { securedResponse } from "security-headers/response";
 
 type Route = (request: Request) => Promise<Response>;
 
+type McpWorker = Readonly<{ path: string; serve: Route }>;
+
 const NOT_FOUND = 404;
 
 const notFound: Route = () => Promise.resolve(new Response("Not Found", { status: NOT_FOUND }));
 
-const mcpWorker = (path: string, serve: Route): ExportedHandler => ({
-  fetch: (request) =>
-    securedResponse(() => (new URL(request.url).pathname === path ? serve : notFound)(request)),
-});
+const mcpWorker = ({ path, serve }: McpWorker): ExportedHandler => {
+  const routes: Readonly<Record<string, Route>> = { [path]: serve };
+  return {
+    fetch: (request) =>
+      securedResponse(() => (routes[new URL(request.url).pathname] ?? notFound)(request)),
+  };
+};
 
 export { mcpWorker };
-export type { Route };
+export type { McpWorker, Route };

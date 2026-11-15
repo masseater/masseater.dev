@@ -20,7 +20,7 @@ type ToolName =
   | "monthly_totals"
   | "balance_sheet";
 
-const { meteredInput, runTool } = toolCalls<ToolName, UpstreamFailed | Rejected>({
+const { meteredInput, runToolIn } = toolCalls<ToolName, UpstreamFailed | Rejected>({
   dataset: () => env.TOOL_CALLS,
   describe: (failure) =>
     Match.value(failure).pipe(
@@ -34,5 +34,5 @@ const { meteredInput, runTool } = toolCalls<ToolName, UpstreamFailed | Rejected>
     ),
 });
 
-export { meteredInput, runTool };
+export { meteredInput, runToolIn };
 export type { ToolName };

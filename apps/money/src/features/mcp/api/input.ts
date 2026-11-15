@@ -1,8 +1,11 @@
-import { Schema } from "effect";
+import type { StandardSchemaWithJSON } from "@modelcontextprotocol/server";
+import { Schema, pipe } from "effect";
 
-import { AccountClass } from "../model/accounts";
-import { Category } from "../model/categories";
-import { Columns } from "../model/csv";
+import { AccountClassSchema } from "#/features/mcp/model/accounts";
+import { CategorySchema } from "#/features/mcp/model/categories";
+import { ColumnsSchema } from "#/features/mcp/model/csv-columns";
+
+type InputSchema = Schema.ConstraintDecoder<unknown> & Schema.Constraint;
 
 const MONTH = /^\d{4}-(?:0[1-9]|1[0-2])$/u;
 
@@ -30,32 +33,41 @@ const Label = Schema.NonEmptyString.annotate({
   description: "カテゴリーの下に並べる内訳の名前（例: Cloudflare）",
 });
 
-const Period = Schema.Struct({
+const LineNumber = Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_LINE));
+
+const TransactionId = Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_ID));
+
+const ordered = Schema.makeFilter(
+  ({ from, to }: Readonly<{ from: string; to: string }>) =>
+    from <= to || "to は from と同じか後の月にする",
+);
+
+const PERIOD_FIELDS = {
   from: Month.annotate({ description: "最初の月（YYYY-MM）" }),
   to: Month.annotate({ description: "最後の月（YYYY-MM）。from と同じか後" }),
-}).check(Schema.makeFilter(({ from, to }) => from <= to || "to は from と同じか後の月にする"));
+};
 
-const UpsertAccountInput = Schema.Struct({
+const PeriodSchema = Schema.Struct(PERIOD_FIELDS).check(ordered);
+
+const UpsertAccountInputSchema = Schema.Struct({
   id: AccountId,
   name: Schema.NonEmptyString.annotate({ description: "表示する名前（例: 三井住友銀行）" }),
-  class: AccountClass.annotate({
+  class: AccountClassSchema.annotate({
     description:
       "貸借対照表での区分。銀行・現金は current-asset、投資は fixed-asset、クレジットカードは current-liability、ローンは fixed-liability",
   }),
 });
 
-const ImportCsvInput = Schema.Struct({
+const ImportCsvInputSchema = Schema.Struct({
   account: AccountId,
   source: Schema.NonEmptyString.annotate({ description: "取り込み元の名前（ファイル名など）" }),
   csv: Schema.NonEmptyString.annotate({
     description: "CSV の本文。文字コードは読み替えた後の文字列",
   }),
   headerRow: Schema.optionalKey(
-    Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_LINE)).annotate({
-      description: "見出しのある行の番号（1 から）。省くと 1",
-    }),
+    LineNumber.annotate({ description: "見出しのある行の番号（1 から）。省くと 1" }),
   ),
-  columns: Columns,
+  columns: ColumnsSchema,
 });
 
 const EntryInput = Schema.Struct({
@@ -65,7 +77,7 @@ const EntryInput = Schema.Struct({
   memo: Schema.optionalKey(Schema.NonEmptyString),
 });
 
-const AddTransactionsInput = Schema.Struct({
+const AddTransactionsInputSchema = Schema.Struct({
   account: AccountId,
   source: Schema.NonEmptyString.annotate({ description: "記録の出どころ（例: 手入力、現金）" }),
   transactions: Schema.NonEmptyArray(EntryInput),
@@ -73,9 +85,9 @@ const AddTransactionsInput = Schema.Struct({
 
 const ImportId = Schema.NonEmptyString.annotate({ description: "取り込みが返した importId" });
 
-const DeleteImportInput = Schema.Struct({ importId: ImportId });
+const DeleteImportInputSchema = Schema.Struct({ importId: ImportId });
 
-const RecordBalanceInput = Schema.Struct({
+const RecordBalanceInputSchema = Schema.Struct({
   account: AccountId,
   date: Day.annotate({ description: "残高を確かめた日（その日の終わりの残高）" }),
   balance: Yen.annotate({
@@ -83,39 +95,72 @@ const RecordBalanceInput = Schema.Struct({
   }),
 });
 
-const SetCategoryInput = Schema.Struct({
-  transactionId: Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_ID)),
-  category: Schema.Union([Category, Schema.Literal("auto")]).annotate({
+const SetCategoryInputSchema = Schema.Struct({
+  transactionId: TransactionId,
+  category: Schema.Union([CategorySchema, Schema.Literal("auto")]).annotate({
     description: "手で決めるカテゴリー。auto なら手で決めたのをやめ、規則に戻す",
   }),
   label: Schema.optionalKey(Label),
 });
 
-const SetRuleInput = Schema.Struct({
+const SetRuleInputSchema = Schema.Struct({
   pattern: Schema.NonEmptyString.annotate({
     description:
       "摘要に含まれていれば当てはまる文字列。全角・半角と大文字・小文字は区別しない。同じ pattern の規則は置き換える",
   }),
-  category: Category,
+  category: CategorySchema,
   label: Schema.optionalKey(Label),
 });
 
-const DeleteRuleInput = Schema.Struct({ pattern: Schema.NonEmptyString });
+const DeleteRuleInputSchema = Schema.Struct({ pattern: Schema.NonEmptyString });
 
-const ListTransactionsInput = Schema.Struct({
-  ...Period.fields,
+const ListTransactionsInputSchema = Schema.Struct({
+  ...PERIOD_FIELDS,
   account: Schema.optionalKey(AccountId),
-  category: Schema.optionalKey(Category),
+  category: Schema.optionalKey(CategorySchema),
   cursor: Schema.optionalKey(
     Schema.NonEmptyString.annotate({ description: "前のページが返した next" }),
   ),
-}).check(Schema.makeFilter(({ from, to }) => from <= to || "to は from と同じか後の月にする"));
+}).check(ordered);
 
-const BalanceSheetInput = Schema.Struct({
+const BalanceSheetInputSchema = Schema.Struct({
   asOf: Day.annotate({ description: "この日の終わりの残高で表を作る" }),
 });
 
-const EmptyInput = Schema.Struct({});
+const EmptyInputSchema = Schema.Struct({});
+
+type Standard<Target extends InputSchema> = StandardSchemaWithJSON<
+  Target["Encoded"],
+  Target["Type"]
+> &
+  Target;
+
+const standard = <Target extends InputSchema>(schema: Target): Standard<Target> =>
+  pipe(schema, Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+
+const UpsertAccountInput = standard(UpsertAccountInputSchema);
+
+const ImportCsvInput = standard(ImportCsvInputSchema);
+
+const AddTransactionsInput = standard(AddTransactionsInputSchema);
+
+const DeleteImportInput = standard(DeleteImportInputSchema);
+
+const RecordBalanceInput = standard(RecordBalanceInputSchema);
+
+const SetCategoryInput = standard(SetCategoryInputSchema);
+
+const SetRuleInput = standard(SetRuleInputSchema);
+
+const DeleteRuleInput = standard(DeleteRuleInputSchema);
+
+const ListTransactionsInput = standard(ListTransactionsInputSchema);
+
+const BalanceSheetInput = standard(BalanceSheetInputSchema);
+
+const EmptyInput = standard(EmptyInputSchema);
+
+const Period = standard(PeriodSchema);
 
 export {
   AddTransactionsInput,

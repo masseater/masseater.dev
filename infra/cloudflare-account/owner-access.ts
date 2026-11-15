@@ -74,8 +74,11 @@ const application = Effect.fn("ownerApplication")(function* application({
   });
 });
 
-const ownerAccess = ({ loopbackClients, ...site }: OwnerAccessProps) =>
-  application({
+const ownerAccess = Effect.fn("ownerAccess")(function* ownerAccess({
+  loopbackClients,
+  ...site
+}: OwnerAccessProps) {
+  return yield* application({
     ...site,
     clients: {
       callbacks: [BROKER_CALLBACK],
@@ -84,13 +87,15 @@ const ownerAccess = ({ loopbackClients, ...site }: OwnerAccessProps) =>
       loopback: loopbackClients,
     },
   });
+});
 
 const ownerMcpAccess = Effect.fn("ownerMcpAccess")(function* ownerMcpAccess({
   portalServerId,
   ...site
 }: OwnerMcpAccessProps) {
   const { accountId } = yield* yield* CloudflareEnvironment;
-  const team = yield* Access.Organization.ref("ZeroTrust", yield* ownerStack);
+  const holder = yield* ownerStack;
+  const team = yield* Access.Organization.ref("ZeroTrust", holder);
   const app = yield* application({
     ...site,
     clients: {
