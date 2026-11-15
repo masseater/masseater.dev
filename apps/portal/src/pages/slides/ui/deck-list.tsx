@@ -2,7 +2,7 @@ import type { Option } from "effect";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { withTag } from "#/entities/slides";
+import { withTag } from "#/entities/slide";
 import { useDecks } from "#/pages/slides/api/slides-query";
 import { RowList } from "#/shared/ui";
 

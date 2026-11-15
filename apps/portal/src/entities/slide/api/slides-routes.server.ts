@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { Decks, Hits, SearchQuery } from "#/entities/slides/model/slides";
+import { Decks, Hits, SearchQuery } from "#/entities/slide/model/slides";
 import {
   createRouter,
   jsonBody,

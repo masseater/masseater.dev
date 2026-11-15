@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Schema } from "effect";
 
-import { SlidesSearch } from "#/entities/slides";
+import { SlidesSearch } from "#/entities/slide";
 import { SlidesPage, loadSlidesPage } from "#/pages/slides";
 
 export const Route = createFileRoute("/slides")({

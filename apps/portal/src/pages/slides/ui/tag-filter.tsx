@@ -1,8 +1,8 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { tagsOf } from "#/entities/slides";
-import type { DeckValue } from "#/entities/slides";
+import { tagsOf } from "#/entities/slide";
+import type { DeckValue } from "#/entities/slide";
 
 import { TagItem } from "./tag-item";
 

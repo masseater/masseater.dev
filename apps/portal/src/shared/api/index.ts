@@ -1,1 +1,1 @@
-export { browserClient, createQueries, serverClient } from "./client";
+export { browserClient, createQueries, serverClient } from "@masseater.dev/start-shell/eden-client";

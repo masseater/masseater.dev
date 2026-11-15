@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { dayOf } from "#/entities/slides";
-import type { DeckValue } from "#/entities/slides";
+import { dayOf } from "#/entities/slide";
+import type { DeckValue } from "#/entities/slide";
 import { Row, TagList } from "#/shared/ui";
 
 import { DeckTitle } from "./deck-title";

@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { SlidesSearchValue } from "#/entities/slides";
+import type { SlidesSearchValue } from "#/entities/slide";
 import { wanted } from "#/pages/slides/api/slides-query";
 
 import { DeckList } from "./deck-list";

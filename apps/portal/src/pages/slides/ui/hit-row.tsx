@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { excerpt, pageUrl } from "#/entities/slides";
-import type { HitValue } from "#/entities/slides";
+import { excerpt, pageUrl } from "#/entities/slide";
+import type { HitValue } from "#/entities/slide";
 import { Row } from "#/shared/ui";
 
 export const HitRow = ({ hit }: Readonly<{ hit: HitValue }>): ReactNode => (
