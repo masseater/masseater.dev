@@ -5,7 +5,8 @@ import type { DecisionRule } from "@r_masseater/oxlint-plugin-decision";
 import { Config, Effect, Redacted, Array as Arr, pipe, Order } from "effect";
 import type { PlatformError } from "effect/PlatformError";
 
-import { codeClaims } from "./code-claims.ts";
+import { codeClaims, presets, testClaims } from "#/entities/rule/index.ts";
+
 import {
   EXAMPLE_FILES,
   LIVE_MODEL,
@@ -23,8 +24,6 @@ import {
   tempProject,
 } from "./oxlint.test.support.ts";
 import type { Services } from "./oxlint.test.support.ts";
-import { presets } from "./presets.ts";
-import { testClaims } from "./test-claims.ts";
 
 const EXPECTED = {
   recommended: [

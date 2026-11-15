@@ -1,6 +1,6 @@
 import { defineDecisionRule } from "@r_masseater/oxlint-plugin-decision";
 
-import { namedLike } from "./claim-select.ts";
+import { namedLike } from "#/shared/lib/claim-select.ts";
 
 export const noPiiInLogs = defineDecisionRule({
   id: "no-pii-in-logs",

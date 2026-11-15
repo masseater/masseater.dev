@@ -1,7 +1,7 @@
 import type { DecisionRule } from "@r_masseater/oxlint-plugin-decision";
 
-import { claimRule } from "./claim-rule.ts";
-import { isDescribeCall, isTestCall } from "./claim-select.ts";
+import { claimRule } from "#/shared/lib/claim-rule.ts";
+import { isDescribeCall, isTestCall } from "#/shared/lib/claim-select.ts";
 
 export const describeNamesSubject = claimRule({
   id: "describe-names-subject",

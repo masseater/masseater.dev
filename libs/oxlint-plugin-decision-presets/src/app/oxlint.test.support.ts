@@ -42,7 +42,9 @@ export const PASSED = 0;
 /** @internal */
 export const FAILED = 1;
 
-const presetsRoot = Path.Path.pipe(Effect.map((path) => path.dirname(import.meta.dirname)));
+const presetsRoot = Path.Path.pipe(
+  Effect.map((path) => path.join(import.meta.dirname, "..", "..")),
+);
 
 /** @internal */
 export const fromRoot = (...segments: readonly string[]): Effect.Effect<string, never, Path.Path> =>

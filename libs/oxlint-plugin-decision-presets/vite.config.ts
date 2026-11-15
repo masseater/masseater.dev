@@ -7,11 +7,11 @@ export default defineConfig({
   },
   pack: {
     entry: [
-      "src/index.ts",
-      "src/recommended.ts",
-      "src/strict.ts",
-      "src/review-only.ts",
-      "src/ai-slop.ts",
+      "src/app/index.ts",
+      "src/app/recommended.ts",
+      "src/app/strict.ts",
+      "src/app/review-only.ts",
+      "src/app/ai-slop.ts",
     ],
     platform: "node",
     sourcemap: true,
@@ -29,7 +29,7 @@ export default defineConfig({
       verify: { command: [], dependsOn: ["test"] },
       build: "vp pack",
       test: {
-        command: "vp test run --exclude='src/*live.test.ts'",
+        command: "vp test run --exclude='src/**/*live.test.ts'",
         dependsOn: ["build", "@r_masseater/oxlint-plugin-decision#build"],
       },
       "test:live": {

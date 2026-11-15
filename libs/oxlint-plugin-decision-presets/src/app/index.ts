@@ -1,6 +1,6 @@
 export { default } from "./recommended.ts";
-export { presets, recommended, reviewOnly, strict } from "./presets.ts";
-export type { Preset } from "./presets.ts";
+export { presets, recommended, reviewOnly, strict } from "#/entities/rule/index.ts";
+export type { Preset } from "#/entities/rule/index.ts";
 export {
   domainNaming,
   nameMatchesBehavior,
@@ -9,7 +9,7 @@ export {
   noPromptInjection,
   preferSchemaValidation,
   untrustedInputRisk,
-} from "./rules.ts";
+} from "#/entities/rule/index.ts";
 export {
   catchHidesFailure,
   codeClaims,
@@ -24,7 +24,7 @@ export {
   pureNameIsPure,
   safeNameIsSafe,
   varNameDescribesValue,
-} from "./code-claims.ts";
+} from "#/entities/rule/index.ts";
 export {
   describeNamesSubject,
   snapshotOnlyBehaviourClaim,
@@ -32,4 +32,4 @@ export {
   testMocksSubject,
   testNameDescribesCode,
   testNameVerifiesClaim,
-} from "./test-claims.ts";
+} from "#/entities/rule/index.ts";

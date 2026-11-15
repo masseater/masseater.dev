@@ -1,8 +1,9 @@
 import type { DecisionPlugin } from "@r_masseater/oxlint-plugin-decision";
 
-import { presetPlugin } from "./plugin.ts";
-import { strict } from "./presets.ts";
+import { recommended } from "#/entities/rule/index.ts";
 
-const plugin: DecisionPlugin = presetPlugin(strict);
+import { presetPlugin } from "./plugin.ts";
+
+const plugin: DecisionPlugin = presetPlugin(recommended);
 
 export default plugin;

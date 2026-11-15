@@ -8,8 +8,8 @@ import {
   hasCast,
   hasFallback,
   hasGuard,
-} from "./ai-slop-select.ts";
-import { hasCommentInside, hasSuppression } from "./comment-select.ts";
+} from "#/shared/lib/ai-slop-select.ts";
+import { hasCommentInside, hasSuppression } from "#/shared/lib/comment-select.ts";
 
 interface SlopRule extends Pick<DecisionRule, "id" | "select" | "context"> {
   readonly ask: string;

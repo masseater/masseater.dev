@@ -1,7 +1,7 @@
 import { createDecisionPlugin } from "@r_masseater/oxlint-plugin-decision";
 import type { DecisionPlugin } from "@r_masseater/oxlint-plugin-decision";
 
-import { aiSlopRules } from "./ai-slop-rules.ts";
+import { aiSlopRules } from "#/entities/rule/index.ts";
 
 const plugin: DecisionPlugin = createDecisionPlugin({
   name: "decision-ai-slop",
@@ -21,4 +21,4 @@ export {
   redundantGuard,
   reinventsBuiltin,
   suppressionInsteadOfFix,
-} from "./ai-slop-rules.ts";
+} from "#/entities/rule/index.ts";
