@@ -7,7 +7,11 @@ import baselineJs from "eslint-plugin-baseline-js";
 import type { UserConfig } from "vite-plus";
 
 import decisionPlugin from "./decision-rules.ts";
-import { alchemyOverride, scriptsOverride } from "./lint-overrides.config.ts";
+import {
+  alchemyOverride,
+  cloudflareResourceSyntax,
+  scriptsOverride,
+} from "./lint-overrides.config.ts";
 import {
   COMMENT_DIRECTIVES,
   allRulesOf,
@@ -87,6 +91,7 @@ const rules = {
   "jsdoc/require-param": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],
   "jsdoc/require-returns": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],
   "eslint/no-restricted-imports": ["error", restrictedImports],
+  "eslint-js/no-restricted-syntax": ["error", ...cloudflareResourceSyntax],
   "typescript/prefer-readonly-parameter-types": [
     "error",
     { ignoreInferredTypes: true, allow: readonlyParameterAllow },

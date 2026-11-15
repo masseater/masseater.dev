@@ -8,6 +8,7 @@ import { checkScripts } from "#/features/scripts/index.ts";
 import { checkRepository } from "#/features/value-owners/index.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
 
+import { checkToolUse } from "./tool-use.ts";
 import { checkTrackedText } from "./tracked-text.ts";
 
 /** @internal */
@@ -20,6 +21,7 @@ export const checkAll: (
     | ReturnType<typeof checkOverrides>
     | ReturnType<typeof checkTrackedText>
     | ReturnType<typeof checkWorkspaces>
+    | ReturnType<typeof checkToolUse>
   >,
   Effect.Services<
     | ReturnType<typeof checkRepository>
@@ -36,6 +38,7 @@ export const checkAll: (
       checkScripts(root),
       checkPublishedPackages(root),
       checkWorkspaces(root),
+      checkToolUse(root),
     ],
     { concurrency: "unbounded" },
   );

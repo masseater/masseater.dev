@@ -99,7 +99,7 @@ export const literalOf = (node: unknown): Option.Option<Literal> => {
   );
 };
 
-const propertyValue =
+export const propertyValue =
   (name: string) =>
   (object: unknown): Option.Option<unknown> =>
     pipe(
