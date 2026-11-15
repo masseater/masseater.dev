@@ -10,6 +10,8 @@ import {
   named,
 } from "./blend-attributes.ts";
 import { pointerAt, pointerBytes } from "./blend-blocks.ts";
+import { markedEdges } from "./blend-edges.ts";
+import type { Edge } from "./blend-edges.ts";
 import { elementsOf, floatsOf, follow, instanceOf, intOf, resolve } from "./blend-structs.ts";
 import type { Instance } from "./blend-structs.ts";
 import { uvsOf } from "./blend-uv.ts";
@@ -21,6 +23,7 @@ interface MeshData {
   readonly materials: Int32Array;
   readonly uvs: Option.Option<Float32Array>;
   readonly slots: readonly Option.Option<Instance>[];
+  readonly edges: readonly Edge[];
 }
 
 interface Counts {
@@ -181,7 +184,8 @@ const readMesh = (mesh: Instance): Option.Option<MeshData> =>
     const materials = materialsOf(mesh, counts, faces);
     const { offsets, corners } = faces;
     const uvs = uvsOf({ mesh, corners: counts.corners });
-    return { positions, offsets, corners, materials, uvs, slots: slotsOf(mesh) };
+    const slots = slotsOf(mesh);
+    return { positions, offsets, corners, materials, uvs, slots, edges: markedEdges(mesh) };
   });
 
 export { readMesh };
