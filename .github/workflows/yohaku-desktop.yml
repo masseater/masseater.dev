@@ -9,6 +9,7 @@ on:
       - ".github/release-please/yohaku-*.json"
       - ".github/scripts/yohaku-*.sh"
       - ".github/scripts/component-release.sh"
+      - ".github/scripts/component-tag.sh"
       - ".github/scripts/release-please-ready.sh"
       - ".github/workflows/yohaku-desktop.yml"
   workflow_dispatch:
@@ -22,6 +23,21 @@ env:
   GIT_CONFIG_VALUE_0: "false"
 
 jobs:
+  tag:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github
+      - name: Tag the revision before main changes a workflow file
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/component-tag.sh yohaku apps/yohaku-desktop
+
   installer:
     strategy:
       fail-fast: false
@@ -68,7 +84,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: installer
+    needs: [tag, installer]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     environment: yohaku-release
@@ -116,7 +132,7 @@ jobs:
           skip-github-release: true
 
   ci-telemetry:
-    needs: [installer, release]
+    needs: [tag, installer, release]
     if: always()
     runs-on: ubuntu-latest
     permissions:
