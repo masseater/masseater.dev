@@ -16,7 +16,7 @@ export const DocumentShell = ({ children }: Readonly<{ children: ReactNode }>): 
     </head>
     <body>
       {children}
-      <TanStackDevtools plugins={devtoolsPlugins} />
+      {import.meta.env.DEV && <TanStackDevtools plugins={devtoolsPlugins} />}
       <Scripts />
     </body>
   </html>

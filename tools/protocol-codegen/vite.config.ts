@@ -4,8 +4,8 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["codegen:check"] },
-      codegen: "node src/main.ts",
-      "codegen:check": "node src/main.ts --check",
+      codegen: "node bin/protocol-codegen.ts",
+      "codegen:check": "node bin/protocol-codegen.ts --check",
     },
   },
 });

@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@effect/tsgo/schema.json",
   "extends": "../../tsconfig.json",
-  "include": ["src", "*.ts"],
+  "include": ["src", "bin", "*.ts"],
   "compilerOptions": {
     "paths": {
       "#/*": ["./src/*"]
