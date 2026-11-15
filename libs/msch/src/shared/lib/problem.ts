@@ -37,6 +37,8 @@ const RuleNameSchema = Schema.Literals([
   "unrun-command",
   "scripts-directory",
   "listed-entry",
+  "workflow-path-filter",
+  "workflow-package",
   "colocated-test",
   "comment",
   "pass-through-wrapper",
