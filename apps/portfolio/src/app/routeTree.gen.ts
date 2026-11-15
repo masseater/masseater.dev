@@ -12,6 +12,7 @@ import { Route as StageSiteRouteImport } from './routes/_stage/_site'
 import { Route as SloppediaIndexRouteImport } from './routes/sloppedia/index'
 import { Route as SloppediaSlugRouteImport } from './routes/sloppedia/$slug'
 import { Route as SloppediaCategoriesRouteImport } from './routes/sloppedia/categories'
+import { Route as StageSiteAiProducedRouteImport } from './routes/_stage/_site/ai-produced'
 import { Route as StageSiteNikogoriRouteImport } from './routes/_stage/_site/nikogori'
 import { Route as StageSiteProjectsRouteImport } from './routes/_stage/_site/projects'
 import { Route as StageSiteCategoryIndexRouteImport } from './routes/_stage/_site/$category/index'
@@ -62,6 +63,11 @@ const SloppediaCategoriesRoute = SloppediaCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => SloppediaRoute,
 } as any)
+const StageSiteAiProducedRoute = StageSiteAiProducedRouteImport.update({
+  id: '/ai-produced',
+  path: '/ai-produced',
+  getParentRoute: () => StageSiteRoute,
+} as any)
 const StageSiteNikogoriRoute = StageSiteNikogoriRouteImport.update({
   id: '/nikogori',
   path: '/nikogori',
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/sloppedia/$slug': typeof SloppediaSlugRoute
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/sloppedia/': typeof SloppediaIndexRoute
+  '/ai-produced': typeof StageSiteAiProducedRoute
   '/nikogori': typeof StageSiteNikogoriRoute
   '/projects': typeof StageSiteProjectsRoute
   '/$category/$slug': typeof StageSiteCategorySlugRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/sloppedia/$slug': typeof SloppediaSlugRoute
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/sloppedia': typeof SloppediaIndexRoute
+  '/ai-produced': typeof StageSiteAiProducedRoute
   '/nikogori': typeof StageSiteNikogoriRoute
   '/projects': typeof StageSiteProjectsRoute
   '/$category/$slug': typeof StageSiteCategorySlugRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/_stage/': typeof StageIndexRoute
   '/sloppedia/': typeof SloppediaIndexRoute
+  '/_stage/_site/ai-produced': typeof StageSiteAiProducedRoute
   '/_stage/_site/nikogori': typeof StageSiteNikogoriRoute
   '/_stage/_site/projects': typeof StageSiteProjectsRoute
   '/_stage/_site/$category/$slug': typeof StageSiteCategorySlugRoute
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/sloppedia/$slug'
     | '/sloppedia/categories'
     | '/sloppedia/'
+    | '/ai-produced'
     | '/nikogori'
     | '/projects'
     | '/$category/$slug'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/sloppedia/$slug'
     | '/sloppedia/categories'
     | '/sloppedia'
+    | '/ai-produced'
     | '/nikogori'
     | '/projects'
     | '/$category/$slug'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/sloppedia/categories'
     | '/_stage/'
     | '/sloppedia/'
+    | '/_stage/_site/ai-produced'
     | '/_stage/_site/nikogori'
     | '/_stage/_site/projects'
     | '/_stage/_site/$category/$slug'
@@ -263,6 +275,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SloppediaCategoriesRouteImport
       parentRoute: typeof SloppediaRoute
     }
+    '/_stage/_site/ai-produced': {
+      id: '/_stage/_site/ai-produced'
+      path: '/ai-produced'
+      fullPath: '/ai-produced'
+      preLoaderRoute: typeof StageSiteAiProducedRouteImport
+      parentRoute: typeof StageSiteRoute
+    }
     '/_stage/_site/nikogori': {
       id: '/_stage/_site/nikogori'
       path: '/nikogori'
@@ -309,6 +328,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface StageSiteRouteChildren {
+  StageSiteAiProducedRoute: typeof StageSiteAiProducedRoute
   StageSiteNikogoriRoute: typeof StageSiteNikogoriRoute
   StageSiteProjectsRoute: typeof StageSiteProjectsRoute
   StageSiteCategorySlugRoute: typeof StageSiteCategorySlugRoute
@@ -318,6 +338,7 @@ interface StageSiteRouteChildren {
 }
 
 const StageSiteRouteChildren: StageSiteRouteChildren = {
+  StageSiteAiProducedRoute: StageSiteAiProducedRoute,
   StageSiteNikogoriRoute: StageSiteNikogoriRoute,
   StageSiteProjectsRoute: StageSiteProjectsRoute,
   StageSiteCategorySlugRoute: StageSiteCategorySlugRoute,
