@@ -5,12 +5,8 @@ import { ProjectList } from "#/features/filter-memos";
 import { MemoList } from "./memo-list";
 
 export const MemosPage = (): ReactNode => (
-  <div className="flex flex-col gap-8 xl:flex-row xl:items-start">
-    <div className="min-w-0 xl:flex-1">
-      <MemoList />
-    </div>
-    <div className="xl:sticky xl:top-24 xl:w-56 xl:shrink-0">
-      <ProjectList />
-    </div>
+  <div className="lg:grid-cols-memos grid items-start gap-5">
+    <ProjectList />
+    <MemoList />
   </div>
 );

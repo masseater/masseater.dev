@@ -1,10 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
+import { HitRow } from "#/entities/slide";
 import { useHits } from "#/pages/slides/api/slides-query";
 import { RowList } from "#/shared/ui";
-
-import { HitRow } from "./hit-row";
 
 const LABEL = "見つかったスライド";
 

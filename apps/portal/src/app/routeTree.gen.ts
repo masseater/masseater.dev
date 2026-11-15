@@ -3,21 +3,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WatashiRouteImport } from './routes/_watashi'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as CredentialsRouteImport } from './routes/credentials'
 import { Route as MoneyRouteImport } from './routes/money'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as RecordsRouteImport } from './routes/records'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as SlidesRouteImport } from './routes/slides'
-import { Route as WatashiIndexRouteImport } from './routes/_watashi/index'
-import { Route as WatashiProfileRouteImport } from './routes/_watashi/profile'
-import { Route as WatashiRecordsRouteImport } from './routes/_watashi/records'
+import { Route as TimelineRouteImport } from './routes/timeline'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
-import { Route as WatashiConversationsIndexRouteImport } from './routes/_watashi/conversations/index'
-import { Route as WatashiConversationsSessionRouteImport } from './routes/_watashi/conversations/$session'
-import { Route as WatashiMemosIndexRouteImport } from './routes/_watashi/memos/index'
-import { Route as WatashiMemosProjectNameRouteImport } from './routes/_watashi/memos/$project/$name'
+import { Route as ConversationsIndexRouteImport } from './routes/conversations/index'
+import { Route as ConversationsSessionRouteImport } from './routes/conversations/$session'
+import { Route as MemosIndexRouteImport } from './routes/memos/index'
+import { Route as MemosProjectNameRouteImport } from './routes/memos/$project/$name'
 
-const WatashiRoute = WatashiRouteImport.update({
-  id: '/_watashi',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CredentialsRoute = CredentialsRouteImport.update({
@@ -30,94 +32,102 @@ const MoneyRoute = MoneyRouteImport.update({
   path: '/money',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordsRoute = RecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SlidesRoute = SlidesRouteImport.update({
   id: '/slides',
   path: '/slides',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WatashiIndexRoute = WatashiIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => WatashiRoute,
-} as any)
-const WatashiProfileRoute = WatashiProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => WatashiRoute,
-} as any)
-const WatashiRecordsRoute = WatashiRecordsRouteImport.update({
-  id: '/records',
-  path: '/records',
-  getParentRoute: () => WatashiRoute,
+const TimelineRoute = TimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WatashiConversationsIndexRoute =
-  WatashiConversationsIndexRouteImport.update({
-    id: '/conversations/',
-    path: '/conversations/',
-    getParentRoute: () => WatashiRoute,
-  } as any)
-const WatashiConversationsSessionRoute =
-  WatashiConversationsSessionRouteImport.update({
-    id: '/conversations/$session',
-    path: '/conversations/$session',
-    getParentRoute: () => WatashiRoute,
-  } as any)
-const WatashiMemosIndexRoute = WatashiMemosIndexRouteImport.update({
+const ConversationsIndexRoute = ConversationsIndexRouteImport.update({
+  id: '/conversations/',
+  path: '/conversations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConversationsSessionRoute = ConversationsSessionRouteImport.update({
+  id: '/conversations/$session',
+  path: '/conversations/$session',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MemosIndexRoute = MemosIndexRouteImport.update({
   id: '/memos/',
   path: '/memos/',
-  getParentRoute: () => WatashiRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const WatashiMemosProjectNameRoute = WatashiMemosProjectNameRouteImport.update({
+const MemosProjectNameRoute = MemosProjectNameRouteImport.update({
   id: '/memos/$project/$name',
   path: '/memos/$project/$name',
-  getParentRoute: () => WatashiRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof WatashiIndexRoute
+  '/': typeof IndexRoute
   '/credentials': typeof CredentialsRoute
   '/money': typeof MoneyRoute
+  '/profile': typeof ProfileRoute
+  '/records': typeof RecordsRoute
+  '/search': typeof SearchRoute
   '/slides': typeof SlidesRoute
-  '/profile': typeof WatashiProfileRoute
-  '/records': typeof WatashiRecordsRoute
+  '/timeline': typeof TimelineRoute
   '/api/$': typeof ApiSplatRoute
-  '/conversations/$session': typeof WatashiConversationsSessionRoute
-  '/conversations/': typeof WatashiConversationsIndexRoute
-  '/memos/': typeof WatashiMemosIndexRoute
-  '/memos/$project/$name': typeof WatashiMemosProjectNameRoute
+  '/conversations/$session': typeof ConversationsSessionRoute
+  '/conversations/': typeof ConversationsIndexRoute
+  '/memos/': typeof MemosIndexRoute
+  '/memos/$project/$name': typeof MemosProjectNameRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/credentials': typeof CredentialsRoute
   '/money': typeof MoneyRoute
+  '/profile': typeof ProfileRoute
+  '/records': typeof RecordsRoute
+  '/search': typeof SearchRoute
   '/slides': typeof SlidesRoute
-  '/profile': typeof WatashiProfileRoute
-  '/records': typeof WatashiRecordsRoute
+  '/timeline': typeof TimelineRoute
   '/api/$': typeof ApiSplatRoute
-  '/': typeof WatashiIndexRoute
-  '/conversations/$session': typeof WatashiConversationsSessionRoute
-  '/conversations': typeof WatashiConversationsIndexRoute
-  '/memos': typeof WatashiMemosIndexRoute
-  '/memos/$project/$name': typeof WatashiMemosProjectNameRoute
+  '/conversations/$session': typeof ConversationsSessionRoute
+  '/conversations': typeof ConversationsIndexRoute
+  '/memos': typeof MemosIndexRoute
+  '/memos/$project/$name': typeof MemosProjectNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_watashi': typeof WatashiRouteWithChildren
+  '/': typeof IndexRoute
   '/credentials': typeof CredentialsRoute
   '/money': typeof MoneyRoute
+  '/profile': typeof ProfileRoute
+  '/records': typeof RecordsRoute
+  '/search': typeof SearchRoute
   '/slides': typeof SlidesRoute
-  '/_watashi/profile': typeof WatashiProfileRoute
-  '/_watashi/records': typeof WatashiRecordsRoute
+  '/timeline': typeof TimelineRoute
   '/api/$': typeof ApiSplatRoute
-  '/_watashi/': typeof WatashiIndexRoute
-  '/_watashi/conversations/$session': typeof WatashiConversationsSessionRoute
-  '/_watashi/conversations/': typeof WatashiConversationsIndexRoute
-  '/_watashi/memos/': typeof WatashiMemosIndexRoute
-  '/_watashi/memos/$project/$name': typeof WatashiMemosProjectNameRoute
+  '/conversations/$session': typeof ConversationsSessionRoute
+  '/conversations/': typeof ConversationsIndexRoute
+  '/memos/': typeof MemosIndexRoute
+  '/memos/$project/$name': typeof MemosProjectNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -125,9 +135,11 @@ export interface FileRouteTypes {
     | '/'
     | '/credentials'
     | '/money'
-    | '/slides'
     | '/profile'
     | '/records'
+    | '/search'
+    | '/slides'
+    | '/timeline'
     | '/api/$'
     | '/conversations/$session'
     | '/conversations/'
@@ -135,48 +147,59 @@ export interface FileRouteTypes {
     | '/memos/$project/$name'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/credentials'
     | '/money'
-    | '/slides'
     | '/profile'
     | '/records'
+    | '/search'
+    | '/slides'
+    | '/timeline'
     | '/api/$'
-    | '/'
     | '/conversations/$session'
     | '/conversations'
     | '/memos'
     | '/memos/$project/$name'
   id:
     | '__root__'
-    | '/_watashi'
+    | '/'
     | '/credentials'
     | '/money'
+    | '/profile'
+    | '/records'
+    | '/search'
     | '/slides'
-    | '/_watashi/profile'
-    | '/_watashi/records'
+    | '/timeline'
     | '/api/$'
-    | '/_watashi/'
-    | '/_watashi/conversations/$session'
-    | '/_watashi/conversations/'
-    | '/_watashi/memos/'
-    | '/_watashi/memos/$project/$name'
+    | '/conversations/$session'
+    | '/conversations/'
+    | '/memos/'
+    | '/memos/$project/$name'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  WatashiRoute: typeof WatashiRouteWithChildren
+  IndexRoute: typeof IndexRoute
   CredentialsRoute: typeof CredentialsRoute
   MoneyRoute: typeof MoneyRoute
+  ProfileRoute: typeof ProfileRoute
+  RecordsRoute: typeof RecordsRoute
+  SearchRoute: typeof SearchRoute
   SlidesRoute: typeof SlidesRoute
+  TimelineRoute: typeof TimelineRoute
   ApiSplatRoute: typeof ApiSplatRoute
+  ConversationsSessionRoute: typeof ConversationsSessionRoute
+  ConversationsIndexRoute: typeof ConversationsIndexRoute
+  MemosIndexRoute: typeof MemosIndexRoute
+  MemosProjectNameRoute: typeof MemosProjectNameRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_watashi': {
-      id: '/_watashi'
-      path: ''
+    '/': {
+      id: '/'
+      path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof WatashiRouteImport
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/credentials': {
@@ -193,6 +216,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MoneyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/records': {
+      id: '/records'
+      path: '/records'
+      fullPath: '/records'
+      preLoaderRoute: typeof RecordsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/slides': {
       id: '/slides'
       path: '/slides'
@@ -200,26 +244,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SlidesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_watashi/': {
-      id: '/_watashi/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof WatashiIndexRouteImport
-      parentRoute: typeof WatashiRoute
-    }
-    '/_watashi/profile': {
-      id: '/_watashi/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof WatashiProfileRouteImport
-      parentRoute: typeof WatashiRoute
-    }
-    '/_watashi/records': {
-      id: '/_watashi/records'
-      path: '/records'
-      fullPath: '/records'
-      preLoaderRoute: typeof WatashiRecordsRouteImport
-      parentRoute: typeof WatashiRoute
+    '/timeline': {
+      id: '/timeline'
+      path: '/timeline'
+      fullPath: '/timeline'
+      preLoaderRoute: typeof TimelineRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/$': {
       id: '/api/$'
@@ -228,66 +258,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_watashi/conversations/': {
-      id: '/_watashi/conversations/'
+    '/conversations/': {
+      id: '/conversations/'
       path: '/conversations'
       fullPath: '/conversations/'
-      preLoaderRoute: typeof WatashiConversationsIndexRouteImport
-      parentRoute: typeof WatashiRoute
+      preLoaderRoute: typeof ConversationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_watashi/conversations/$session': {
-      id: '/_watashi/conversations/$session'
+    '/conversations/$session': {
+      id: '/conversations/$session'
       path: '/conversations/$session'
       fullPath: '/conversations/$session'
-      preLoaderRoute: typeof WatashiConversationsSessionRouteImport
-      parentRoute: typeof WatashiRoute
+      preLoaderRoute: typeof ConversationsSessionRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_watashi/memos/': {
-      id: '/_watashi/memos/'
+    '/memos/': {
+      id: '/memos/'
       path: '/memos'
       fullPath: '/memos/'
-      preLoaderRoute: typeof WatashiMemosIndexRouteImport
-      parentRoute: typeof WatashiRoute
+      preLoaderRoute: typeof MemosIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_watashi/memos/$project/$name': {
-      id: '/_watashi/memos/$project/$name'
+    '/memos/$project/$name': {
+      id: '/memos/$project/$name'
       path: '/memos/$project/$name'
       fullPath: '/memos/$project/$name'
-      preLoaderRoute: typeof WatashiMemosProjectNameRouteImport
-      parentRoute: typeof WatashiRoute
+      preLoaderRoute: typeof MemosProjectNameRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface WatashiRouteChildren {
-  WatashiProfileRoute: typeof WatashiProfileRoute
-  WatashiRecordsRoute: typeof WatashiRecordsRoute
-  WatashiIndexRoute: typeof WatashiIndexRoute
-  WatashiConversationsSessionRoute: typeof WatashiConversationsSessionRoute
-  WatashiConversationsIndexRoute: typeof WatashiConversationsIndexRoute
-  WatashiMemosIndexRoute: typeof WatashiMemosIndexRoute
-  WatashiMemosProjectNameRoute: typeof WatashiMemosProjectNameRoute
-}
-
-const WatashiRouteChildren: WatashiRouteChildren = {
-  WatashiProfileRoute: WatashiProfileRoute,
-  WatashiRecordsRoute: WatashiRecordsRoute,
-  WatashiIndexRoute: WatashiIndexRoute,
-  WatashiConversationsSessionRoute: WatashiConversationsSessionRoute,
-  WatashiConversationsIndexRoute: WatashiConversationsIndexRoute,
-  WatashiMemosIndexRoute: WatashiMemosIndexRoute,
-  WatashiMemosProjectNameRoute: WatashiMemosProjectNameRoute,
-}
-
-const WatashiRouteWithChildren =
-  WatashiRoute._addFileChildren(WatashiRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
-  WatashiRoute: WatashiRouteWithChildren,
+  IndexRoute: IndexRoute,
   CredentialsRoute: CredentialsRoute,
   MoneyRoute: MoneyRoute,
+  ProfileRoute: ProfileRoute,
+  RecordsRoute: RecordsRoute,
+  SearchRoute: SearchRoute,
   SlidesRoute: SlidesRoute,
+  TimelineRoute: TimelineRoute,
   ApiSplatRoute: ApiSplatRoute,
+  ConversationsSessionRoute: ConversationsSessionRoute,
+  ConversationsIndexRoute: ConversationsIndexRoute,
+  MemosIndexRoute: MemosIndexRoute,
+  MemosProjectNameRoute: MemosProjectNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

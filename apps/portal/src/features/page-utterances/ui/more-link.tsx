@@ -12,7 +12,7 @@ export const MoreLink = ({
   const search = useMemo(() => ({ cursor }), [cursor]);
   return (
     <Link
-      className="stage-link self-end"
+      className="text-link self-end underline underline-offset-3"
       params={params}
       search={search}
       to="/conversations/$session"
