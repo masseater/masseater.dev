@@ -9,16 +9,10 @@ export default defineConfig({
         {
           files: ["src/oxlint.ts"],
           rules: {
-            "import/no-default-export": "off",
-            "import/no-nodejs-modules": "off",
             "node/no-sync": "off",
             "effecttsgo/node-builtin-import": "off",
             "effecttsgo/schema-sync": "off",
           },
-        },
-        {
-          files: ["src/lint/preset.ts"],
-          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:url"] }] },
         },
       ],
     },

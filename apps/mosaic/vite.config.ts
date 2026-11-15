@@ -18,6 +18,26 @@ const characterPages = pipe(
 );
 
 export default defineConfig({
+  msch: {
+    lint: {
+      overrides: [
+        {
+          files: ["src/pages/mosaic/lib/gpu-device.ts"],
+          rules: {
+            "baseline-js/use-baseline": [
+              "error",
+              {
+                available: "widely",
+                includeWebApis: { preset: "auto" },
+                includeJsBuiltins: { preset: "auto" },
+                ignoreFeatures: ["webgpu"],
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
   run: {
     tasks: {
       dev: { command: "alchemy dev", cache: false },

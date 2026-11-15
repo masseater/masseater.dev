@@ -15,11 +15,6 @@ export default defineConfig({
         {
           files: ["src/**/*.test.ts"],
           use: ["otlpInterop"],
-          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:url"] }] },
-        },
-        {
-          files: ["src/context.ts"],
-          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:async_hooks"] }] },
         },
       ],
     },
