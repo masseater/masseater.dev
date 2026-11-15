@@ -10,7 +10,8 @@
     "./trace-destination": "./trace-destination.ts",
     "./traced-providers": "./traced-providers.ts",
     "./owner-access": "./owner-access.ts",
-    "./owner-site-run": "./owner-site-run.ts"
+    "./owner-site-run": "./owner-site-run.ts",
+    "./run-tasks": "./run-tasks.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

@@ -25,7 +25,7 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["test"] },
-      build: { command: "vp pack", cache: false },
+      build: "vp pack",
       test: { command: "vp test run --exclude='tests/*live.test.ts'", dependsOn: ["build"] },
       "test:live": { command: "vp test run live.test", dependsOn: ["build"], cache: false },
     },
