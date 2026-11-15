@@ -10,6 +10,7 @@ mod failure;
 mod mcp;
 mod menu;
 mod model;
+pub mod protocol;
 mod store;
 mod sync;
 mod text;
