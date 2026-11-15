@@ -1,10 +1,10 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Ranked } from "#/pages/ranking/model/ranking";
+import type { Ranked } from "#/entities/ranking";
+import { SongRow } from "#/features/expand-song";
 
 import { RankingHead } from "./ranking-head";
-import { SongRow } from "./song-row";
 
 const FIRST_RANK = 1;
 

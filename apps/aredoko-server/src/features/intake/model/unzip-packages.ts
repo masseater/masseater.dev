@@ -2,8 +2,8 @@ import { ZipReader, configure } from "@zip.js/zip.js";
 import type { Entry, FileEntry } from "@zip.js/zip.js";
 import { Array, Effect, FileSystem, Option, Path, pipe } from "effect";
 
-import { isCompanion, isLoose, isPackage } from "#entities/package";
-import { collectBytes } from "#shared/bytes";
+import { isCompanion, isLoose, isPackage } from "#/entities/package/index.ts";
+import { collectBytes } from "#/shared/bytes/index.ts";
 
 import { digestWith } from "./content-digest.ts";
 import { bundleCount, placedCount } from "./counts.ts";

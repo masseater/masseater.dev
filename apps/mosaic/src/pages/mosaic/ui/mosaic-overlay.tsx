@@ -1,13 +1,11 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { tileCrop } from "#/pages/mosaic/lib/files";
-import type { Visit } from "#/pages/mosaic/lib/files";
-import { useTile } from "#/pages/mosaic/model/tiles";
-import { useArrival, useSelection } from "#/pages/mosaic/model/viewer";
+import { tileCrop, useTile, useArrival, useSelection } from "#/entities/mosaic";
+import type { Visit } from "#/entities/mosaic";
+import { TileCard } from "#/features/inspect-tile";
 
 import { MosaicChrome } from "./mosaic-chrome";
-import { TileCard } from "./tile-card";
 
 const MosaicOverlay = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
   const selection = useSelection();

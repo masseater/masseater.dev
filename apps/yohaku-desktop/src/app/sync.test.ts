@@ -2,9 +2,9 @@ import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 import { page, userEvent } from "vite-plus/test/browser";
 
-import { fakeYohaku } from "#/app/__tests__/fake-yohaku.ts";
-import { mount } from "#/app/__tests__/mount.tsx";
-import { main, settled } from "#/app/__tests__/screen.ts";
+import { fakeYohaku } from "./fake-yohaku.test.support.ts";
+import { mount } from "./mount.test.support.tsx";
+import { main, settled } from "./screen.test.support.ts";
 
 const openManuscripts = Effect.promise(() =>
   userEvent.click(

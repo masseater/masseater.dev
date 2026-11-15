@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { PersonLink } from "#/entities/catalog";
+import { PersonLink } from "#/entities/person";
 import { peopleQuery } from "#/pages/home/api/loader";
 import { RANKING_LIMIT, rankOf } from "#/pages/home/lib/rank";
 

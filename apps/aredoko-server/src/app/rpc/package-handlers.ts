@@ -3,12 +3,18 @@ import type { ProjectAsset } from "@masseater.dev/aredoko-protocol";
 import { failed } from "@masseater.dev/local-server";
 import { Array, Effect, Option, Path, pipe } from "effect";
 
-import { fetchItem } from "#entities/booth";
-import { packagesWhere } from "#entities/package";
-import { extract } from "#features/extract";
-import { findAssetStore } from "#features/intake";
-import { Blm, Library, linkBooth, pruneProject, putProjectAssets } from "#features/library";
-import { Settings } from "#shared/settings";
+import { fetchItem } from "#/entities/booth/index.ts";
+import { packagesWhere } from "#/entities/package/index.ts";
+import { extract } from "#/features/extract/index.ts";
+import { findAssetStore } from "#/features/intake/index.ts";
+import {
+  Blm,
+  Library,
+  linkBooth,
+  pruneProject,
+  putProjectAssets,
+} from "#/features/library/index.ts";
+import { Settings } from "#/shared/settings/index.ts";
 
 import { firstOr } from "./request-failed.ts";
 

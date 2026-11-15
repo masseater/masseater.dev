@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 
 import { PickFilesButton } from "#/features/library";
-
-import { SearchForm } from "./search-form.tsx";
+import { SearchForm } from "#/features/search-assets";
 
 const SearchRow = (): ReactNode => (
   <div className="flex gap-2">

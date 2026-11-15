@@ -43,7 +43,6 @@ export default defineConfig({
   ],
   test: {
     include: ["src/**/*.test.ts"],
-    exclude: ["src/semconv-fixture/**"],
     testTimeout: 60_000,
   },
 });

@@ -1,9 +1,10 @@
 import type { Effect, Option } from "effect";
 
-import type { getPerson } from "./person.server";
+import type { getPerson } from "#/entities/person/@x/catalog";
+import type { getSong } from "#/entities/song/@x/catalog";
+import type { getVideo } from "#/entities/video/@x/catalog";
+
 import type { search } from "./search.server";
-import type { getSong } from "./song.server";
-import type { getVideo } from "./video.server";
 
 type SongDetail = Option.Option.Value<Effect.Success<ReturnType<typeof getSong>>>;
 type VideoDetail = Option.Option.Value<Effect.Success<ReturnType<typeof getVideo>>>;

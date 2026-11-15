@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-import { TEXT } from "#/pages/ranking/model/labels";
+import { TEXT, Note } from "#/entities/ranking";
 import { metaQuery } from "#/shared/api";
 
-import { Note } from "./note";
 import { RankingBody } from "./ranking-body";
 
 const MetaState = (): ReactNode => {

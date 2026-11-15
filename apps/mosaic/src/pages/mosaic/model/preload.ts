@@ -1,17 +1,12 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { Array, Effect, Option, pipe } from "effect";
 
-import { bundledMosaic } from "#/pages/mosaic/api/bundled";
-import type { Mosaic } from "#/pages/mosaic/api/queries";
-import { mosaicTitle, slugFile, variantFile } from "#/pages/mosaic/lib/files";
-import type { Visit } from "#/pages/mosaic/lib/files";
+import { bundledMosaic, mosaicTitle, slugFile, variantFile, loadVisit } from "#/entities/mosaic";
+import type { Mosaic, Visit, Assignment, Loaded } from "#/entities/mosaic";
 import { BASE_PATH, SITE_ORIGIN } from "#/shared/config";
 import { optionalCardMeta } from "#/shared/lib/card";
 import type { Card, Meta } from "#/shared/lib/card";
 import { runtime } from "#/shared/lib/telemetry";
-
-import { loadVisit } from "./visit";
-import type { Assignment, Loaded } from "./visit";
 
 const OVERVIEW = 0;
 const BEST_VARIANT = 0;

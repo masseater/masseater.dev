@@ -1,10 +1,9 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { phrased } from "#/pages/interview/lib/phrases";
-import type { Entry } from "#/pages/interview/model/hooks";
-
-import { RatingButtons } from "./rating-buttons.tsx";
+import type { Entry } from "#/entities/interview";
+import { RatingButtons } from "#/features/rate-question";
+import { phrased } from "#/shared/lib/phrases";
 
 const HistoryItem = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => {
   if (entry.kind === "speech") {

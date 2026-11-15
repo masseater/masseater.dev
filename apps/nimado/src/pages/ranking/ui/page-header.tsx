@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { TEXT } from "#/pages/ranking/model/labels";
+import { TEXT } from "#/entities/ranking";
 
 const PageHeader = (): ReactNode => (
   <header className="flex items-baseline justify-between gap-4">
