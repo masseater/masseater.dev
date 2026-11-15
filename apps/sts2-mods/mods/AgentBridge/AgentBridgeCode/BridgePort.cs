@@ -4,10 +4,6 @@ using MegaCrit.Sts2.Core.Helpers;
 
 namespace AgentBridge.AgentBridgeCode;
 
-/// <summary>
-/// インスタンスごとの待ち受けポート。1 台目 (Steam 経由・--fastmp=host) は基準のポート、
-/// --fastmp=join --clientId=N の参加側は基準 + N - <see cref="Ports.JoinClientIdBase"/> を使う。
-/// </summary>
 internal static class BridgePort
 {
     public static int? ClientId { get; private set; }
