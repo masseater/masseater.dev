@@ -22,6 +22,7 @@
   "devDependencies": {
     "@effect/vitest": "catalog:",
     "@fontsource-variable/noto-sans-jp": "catalog:",
+    "@masseater.dev/component-release": "workspace:*",
     "@masseater.dev/tauri-app": "workspace:*",
     "@tauri-apps/cli": "catalog:",
     "@types/react": "catalog:",
