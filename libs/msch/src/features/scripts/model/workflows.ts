@@ -3,16 +3,14 @@ import type { Range } from "yaml";
 import { isPair, isScalar, parseDocument, visit } from "yaml";
 
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
-import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import { positionOf } from "#/shared/lib/text-position.ts";
+import { readWorkflows } from "#/shared/lib/workflow-files.ts";
 
-const WORKFLOW_FILE = /^\.github\/workflows\/[^/]+\.ya?ml$/u;
 const COMMAND_CHAIN = /&&|\|\||;|\|/u;
 const QUOTED = /\$\{\{.*?\}\}|"(?:[^"\\]|\\.)*"|'[^']*'/gu;
 const COMMENT = "#";
 const RUN_KEY = "run";
 const RULE: RuleName = "workflow-script";
-const READ_CONCURRENCY = 16;
 const START = 0;
 const ONE_COMMAND = 1;
 const MESSAGE =
@@ -71,27 +69,9 @@ const problemsIn =
 
 /** @internal */
 export const checkWorkflows = Effect.fn("checkWorkflows")(function* checkWorkflows(root: string) {
-  const files = yield* RepositoryFiles;
-  const names = yield* files.listedFiles(root);
-  const workflows = pipe(
-    names,
-    Arr.filter((name) => WORKFLOW_FILE.test(name)),
-  );
-  const found = yield* Effect.forEach(
+  const workflows = yield* readWorkflows(root);
+  return pipe(
     workflows,
-    (name) => {
-      const file = files.join(root, name);
-      return files.readFile(file).pipe(
-        Effect.map((text) =>
-          pipe(
-            text,
-            Option.map(problemsIn(file)),
-            Option.getOrElse(() => []),
-          ),
-        ),
-      );
-    },
-    { concurrency: READ_CONCURRENCY },
+    Arr.flatMap(({ file, source }) => problemsIn(file)(source)),
   );
-  return Arr.flatten(found);
 });

@@ -1,7 +1,8 @@
 import { Effect, Schema } from "effect";
 import { Frontmatter as ArticleFrontmatter } from "sloppedia/schema";
 
-import { categoryPath } from "./category";
+import { sectionPath } from "#/shared/config";
+
 import type { Category } from "./category";
 
 const Stage = Schema.Literals(["article", "idea"]).pipe(
@@ -27,7 +28,7 @@ export type CollectionResult =
 export type EntryResult = Readonly<{ status: "found"; entry: Entry }> | Missing;
 
 export const entryPath = ({ category, slug }: Readonly<Pick<Entry, "category" | "slug">>): string =>
-  `${categoryPath(category)}/${slug}`;
+  `${sectionPath(category)}/${slug}`;
 
 export const entryOgImagePath = (entry: Readonly<Pick<Entry, "category" | "slug">>): string =>
   `/og${entryPath(entry)}.png`;
