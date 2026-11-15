@@ -2,6 +2,8 @@ export { lint } from "./config/preset.ts";
 export {
   alchemyOverride,
   cloudflareResourceSyntax,
+  removalPolicyOverride,
+  removalPolicySyntax,
   scriptsOverride,
 } from "./config/lint-overrides.config.ts";
 export {

@@ -1,4 +1,5 @@
 import { ApiToken, CloudflareEnvironment, Logpush, R2 } from "@alchemy.run/cloudflare";
+import { RemovalPolicy } from "alchemy";
 import { all, map, mapEffect } from "alchemy/Output";
 import { sha256 } from "alchemy/Util";
 import { Effect, Redacted, pipe } from "effect";
@@ -61,7 +62,7 @@ export const logArchive = Effect.fn("logArchive")(function* logArchive(appName: 
         },
       },
     ],
-  });
+  }).pipe(RemovalPolicy.protect());
   const token = yield* writerToken(appName);
   const credentials = all(token.tokenId, token.value, bucket.bucketName).pipe(
     mapEffect(([tokenId, value, bucketName]) =>

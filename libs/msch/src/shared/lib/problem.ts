@@ -24,6 +24,7 @@ const RuleNameSchema = Schema.Literals([
   "agent-docs-length",
   "shell-script",
   "workflow-script",
+  "workflow-queue",
   "stack-dependency",
   "install-size",
   "unverified-crate",
@@ -44,6 +45,7 @@ const RuleNameSchema = Schema.Literals([
   "dangling-link",
   "alchemy-patch",
   "skill-file",
+  "pass-through-wrapper",
 ]);
 
 export type RuleName = typeof RuleNameSchema.Type;

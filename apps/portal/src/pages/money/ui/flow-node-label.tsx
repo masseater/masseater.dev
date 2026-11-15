@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { yen } from "#/entities/money";
+import { YEN } from "#/entities/money";
 import type { Placement } from "#/pages/money/model/flow";
 
 const AMOUNT_LINE = 16;
@@ -36,7 +36,7 @@ export const FlowNodeLabel = ({
       {label}
     </tspan>
     <tspan className="fill-muted-foreground text-xs tabular-nums" dy={AMOUNT_LINE} x={x}>
-      {yen(amount)}
+      {YEN.format(amount)}
     </tspan>
   </text>
 );

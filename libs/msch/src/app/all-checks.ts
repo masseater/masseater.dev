@@ -2,9 +2,9 @@ import { Array as Arr, Effect } from "effect";
 
 import { checkPublishedPackages } from "#/features/install-size/index.ts";
 import { checkOverrides } from "#/features/overrides/index.ts";
+import { passThroughWrappersIn } from "#/features/pass-through-wrappers/index.ts";
 import { checkPlacement } from "#/features/placement/index.ts";
 import { checkWorkspaces } from "#/features/repository-layout/index.ts";
-import { checkScripts } from "#/features/scripts/index.ts";
 import { checkRepository } from "#/features/value-owners/index.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
 
@@ -31,11 +31,10 @@ export const checkAll: (
 > = Effect.fn("checkAll")(function* checkAll(root: string) {
   const found = yield* Effect.all(
     [
-      checkRepository(root),
+      checkRepository(root, [passThroughWrappersIn]),
       checkOverrides(root),
       checkTrackedText(root),
       checkPlacement(root),
-      checkScripts(root),
       checkPublishedPackages(root),
       checkWorkspaces(root),
       checkToolUse(root),

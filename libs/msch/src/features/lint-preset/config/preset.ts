@@ -10,6 +10,7 @@ import decisionPlugin from "./decision-rules.ts";
 import {
   alchemyOverride,
   cloudflareResourceSyntax,
+  removalPolicyOverride,
   scriptsOverride,
 } from "./lint-overrides.config.ts";
 import {
@@ -108,6 +109,7 @@ const rules = {
 } satisfies LintConfig["rules"];
 
 const overrides = [
+  removalPolicyOverride,
   alchemyOverride,
   {
     files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "**/decision-rules.ts"],
