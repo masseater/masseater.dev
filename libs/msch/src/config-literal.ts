@@ -141,5 +141,5 @@ const nestedValues =
     return [...own, ...pipe(childrenOf(node), Arr.flatMap(nestedValues(path)))];
   };
 
-export { childrenOf, literalOf, nestedValues };
+export { KeySchema, childrenOf, keyName, literalOf, nestedValues };
 export type { Literal, LiteralObject };
