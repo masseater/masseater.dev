@@ -1,7 +1,7 @@
 import type { BoothItem } from "@masseater.dev/aredoko-protocol";
 import { Array, Option, String, pipe } from "effect";
 
-import { partsOf } from "#entities/package";
+import { partsOf } from "#/entities/package";
 
 const nameOf = (path: string): string =>
   pipe(

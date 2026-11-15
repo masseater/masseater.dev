@@ -1,8 +1,8 @@
 import { Effect, Option } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { encodeSummary } from "#entities/package";
-import type { SummaryEntry } from "#entities/package";
+import { encodeSummary } from "#/entities/package";
+import type { SummaryEntry } from "#/entities/package";
 
 import { embedTexts } from "./embed-texts.ts";
 import { insertAssets } from "./insert-assets.ts";

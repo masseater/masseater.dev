@@ -1,8 +1,8 @@
 import { Array, Effect, Option, pipe } from "effect";
 
-import { listedEntry } from "#entities/package";
-import { readPackage } from "#shared/unitypackage";
-import type { PackageEntry } from "#shared/unitypackage";
+import { listedEntry } from "#/entities/package";
+import { readPackage } from "#/shared/unitypackage";
+import type { PackageEntry } from "#/shared/unitypackage";
 
 import { plainAsset } from "./insert-assets.ts";
 import type { AssetInput } from "./insert-assets.ts";

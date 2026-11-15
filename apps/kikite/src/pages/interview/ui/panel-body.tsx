@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { usePanel } from "#/pages/interview/model/hooks";
+import { usePanel } from "#/entities/interview";
 
 import { NoteSection } from "./note-section.tsx";
 import { OPEN, POINTS } from "./notes.ts";

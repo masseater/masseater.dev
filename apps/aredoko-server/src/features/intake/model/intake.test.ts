@@ -3,7 +3,7 @@ import { expect, layer } from "@effect/vitest";
 import { TextReader, Uint8ArrayWriter, ZipWriter } from "@zip.js/zip.js";
 import { Array, Effect, FileSystem, Option, Order, Path, Record, pipe } from "effect";
 
-import { Settings } from "#shared/settings";
+import { Settings } from "#/shared/settings";
 
 import { IntakeFailed } from "./intake-failed.ts";
 import { intake } from "./intake.ts";

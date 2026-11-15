@@ -1,7 +1,7 @@
 import { runMain } from "@masseater.dev/node-main";
 import { Command, Flag } from "effect/cli";
 
-import { fetchModel } from "#shared/embedding";
+import { fetchModel } from "#/shared/embedding";
 
 import { VERSION } from "./rpc/handlers.ts";
 

@@ -2,8 +2,8 @@ import { Array, Effect, FileSystem, HashSet, Stream, String, pipe } from "effect
 import { createTarDecoder } from "modern-tar";
 import type { ParsedTarEntry } from "modern-tar";
 
-import { collectBytes } from "#shared/bytes";
-import { captureAll } from "#shared/text";
+import { collectBytes } from "#/shared/bytes";
+import { captureAll } from "#/shared/text";
 
 import { UnityPackageUnreadable } from "./unity-package-unreadable.ts";
 

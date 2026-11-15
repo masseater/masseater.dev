@@ -1,7 +1,7 @@
 import { Array, Config, Effect, FileSystem, Option, Path, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { decodeRows } from "#shared/sql";
+import { decodeRows } from "#/shared/sql";
 
 const CUSTOM_LOCATION = "ASSETSTORE_CACHE_PATH";
 const ROAMING = "APPDATA";

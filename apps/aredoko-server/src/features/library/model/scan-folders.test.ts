@@ -3,12 +3,12 @@ import { expect, layer } from "@effect/vitest";
 import { Array, Effect, FileSystem, Layer, Option, Path, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { databaseLayer } from "#shared/database";
-import { Embedder } from "#shared/embedding";
-import { Settings } from "#shared/settings";
-import { decodeRows, firstId } from "#shared/sql";
-import { writePackage } from "#shared/unitypackage";
-import type { LooseFile } from "#shared/unitypackage";
+import { databaseLayer } from "#/shared/database";
+import { Embedder } from "#/shared/embedding";
+import { Settings } from "#/shared/settings";
+import { decodeRows, firstId } from "#/shared/sql";
+import { writePackage } from "#/shared/unitypackage";
+import type { LooseFile } from "#/shared/unitypackage";
 
 import { scanFolders } from "./scan-folders.ts";
 

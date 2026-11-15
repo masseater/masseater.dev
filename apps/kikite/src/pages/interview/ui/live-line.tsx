@@ -1,8 +1,8 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { phrased } from "#/pages/interview/lib/phrases";
-import { useInterim, usePanel, useStage } from "#/pages/interview/model/hooks";
+import { useInterim, usePanel, useStage } from "#/entities/interview";
+import { phrased } from "#/shared/lib/phrases";
 
 const LiveLine = (): ReactNode => {
   const interim = useInterim();

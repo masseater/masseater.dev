@@ -3,9 +3,9 @@ import { Effect, Result, Schema } from "effect";
 import { Base64 } from "effect/encoding";
 import { SqlClient } from "effect/sql";
 
-import { EMBEDDING } from "#shared/database";
-import { Embedder } from "#shared/embedding";
-import { decodeRows, firstId } from "#shared/sql";
+import { EMBEDDING } from "#/shared/database";
+import { Embedder } from "#/shared/embedding";
+import { decodeRows, firstId } from "#/shared/sql";
 
 import { embedderOf, indexInTemporaryFolder, recordingEmbedder } from "./library.test.support.ts";
 import { putProjectAssets } from "./project-assets.ts";

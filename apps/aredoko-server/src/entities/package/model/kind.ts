@@ -2,7 +2,7 @@ import { LOOSE_EXTENSIONS } from "@masseater.dev/aredoko-protocol";
 import type { AssetKind as AssetKindSchema } from "@masseater.dev/aredoko-protocol";
 import { Array, Option, Record, String, pipe } from "effect";
 
-import { capture } from "#shared/text";
+import { capture } from "#/shared/text";
 
 type AssetKind = typeof AssetKindSchema.Type;
 

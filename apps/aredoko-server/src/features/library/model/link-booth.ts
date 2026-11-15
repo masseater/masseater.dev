@@ -2,8 +2,8 @@ import type { BoothItem } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { kindOf, searchableText } from "#entities/package";
-import { decodeRows } from "#shared/sql";
+import { kindOf, searchableText } from "#/entities/package";
+import { decodeRows } from "#/shared/sql";
 
 import { embedTexts } from "./embed-texts.ts";
 import { labelOf } from "./name.ts";

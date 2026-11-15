@@ -1,9 +1,9 @@
 import { Array, Clock, Duration, Effect, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { ASSET_ORDER, EMBEDDING, RETRY, vectorBytes } from "#shared/database";
-import { Embedder } from "#shared/embedding";
-import { decodeRows } from "#shared/sql";
+import { ASSET_ORDER, EMBEDDING, RETRY, vectorBytes } from "#/shared/database";
+import { Embedder } from "#/shared/embedding";
+import { decodeRows } from "#/shared/sql";
 
 import { ImageRow, PendingImageRow } from "./rows.ts";
 

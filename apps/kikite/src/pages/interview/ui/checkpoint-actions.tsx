@@ -3,7 +3,8 @@ import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useCheckpoint, useSession } from "#/pages/interview/model/hooks";
+import { useCheckpoint } from "#/entities/interview";
+import { useSession } from "#/pages/interview/model/session-hooks";
 
 import { focusAnswer } from "./type-anywhere.ts";
 

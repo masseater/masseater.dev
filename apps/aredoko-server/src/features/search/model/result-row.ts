@@ -3,8 +3,8 @@ import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, HashMap, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { ASSET_ORDER, EMBEDDING } from "#shared/database";
-import { decodeRows, ids as decodeIds } from "#shared/sql";
+import { ASSET_ORDER, EMBEDDING } from "#/shared/database";
+import { decodeRows, ids as decodeIds } from "#/shared/sql";
 
 const ResultRow = Schema.Struct({
   id: Schema.Int,

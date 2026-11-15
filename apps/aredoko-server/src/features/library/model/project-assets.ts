@@ -1,9 +1,9 @@
 import { Array, Effect, HashSet, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { encodeSummary, kindOf, listedEntry, searchableText } from "#entities/package";
-import { normalizePng } from "#shared/preview";
-import { decodeRows, firstId, ids } from "#shared/sql";
+import { encodeSummary, kindOf, listedEntry, searchableText } from "#/entities/package";
+import { normalizePng } from "#/shared/preview";
+import { decodeRows, firstId, ids } from "#/shared/sql";
 
 import { embedTexts } from "./embed-texts.ts";
 import { insertAssets, plainAsset } from "./insert-assets.ts";

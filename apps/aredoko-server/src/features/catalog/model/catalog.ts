@@ -2,8 +2,8 @@ import type { Source } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { EMBEDDING } from "#shared/database";
-import { decodeRows } from "#shared/sql";
+import { EMBEDDING } from "#/shared/database";
+import { decodeRows } from "#/shared/sql";
 
 const SourceRow = Schema.Struct({
   id: Schema.Int,

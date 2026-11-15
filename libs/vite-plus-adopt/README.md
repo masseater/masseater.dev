@@ -113,10 +113,10 @@ TypeScript 7 の構文木に無い `escapedText` を `text` に読み替え、�
 
 `upstream/attw-core/test` は元のリポのテストを手を入れずに置いたものである。
 テストが読む `fixtures` と `snapshots` は `upstream/attw-core/` の直下に、元のパッケージの `src/` は `upstream/attw-core/src` に置く。
-`tests/attw` は、本物の @arethetypeswrong/core 0.18.5 と TypeScript 5.6.1-rc の結果と突き合わせる。
-入力は `tests/attw/fixtures.json`、期待する結果は `tests/attw/expected.json` にある。
-`tests/attw/expected.json` は、このリポの外の空のディレクトリに `@arethetypeswrong/core@0.18.5` を入れて作る。
-`fixtures.json` の `fixtures` は `checkPackage` に渡す。
+`src/attw` の `differential.test.ts` は、本物の @arethetypeswrong/core 0.18.5 と TypeScript 5.6.1-rc の結果と突き合わせる。
+入力は `src/attw/differential.fixtures.json`、期待する結果は `src/attw/differential.expected.json` にある。
+`src/attw/differential.expected.json` は、このリポの外の空のディレクトリに `@arethetypeswrong/core@0.18.5` を入れて作る。
+`differential.fixtures.json` の `fixtures` は `checkPackage` に渡す。
 `hostLookups` は `internal/multiCompilerHost.js` の `CompilerHostWrapper` の `resolveModuleName` に渡す。
 `paths` は TypeScript 5.6.1-rc のパスの関数に渡す。渡す先は `getRootLength`・`normalizePath`・`getNormalizedAbsolutePath`・`getDirectoryPath`・`combinePaths`・`getPathComponents` である。
 `packageNames` は `mangleScopedPackageName`・`unmangleScopedPackageName`・`getTypesPackageName` に渡す。

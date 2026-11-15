@@ -2,11 +2,11 @@ import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 import { page, userEvent } from "vite-plus/test/browser";
 
-import { updateReady } from "#/app/__tests__/fake-setups.ts";
-import { DOWNLOADED } from "#/app/__tests__/fake-update.ts";
-import { fakeYohaku } from "#/app/__tests__/fake-yohaku.ts";
-import { mount } from "#/app/__tests__/mount.tsx";
-import { settled } from "#/app/__tests__/screen.ts";
+import { updateReady } from "./fake-setups.test.support.ts";
+import { DOWNLOADED } from "./fake-update.test.support.ts";
+import { fakeYohaku } from "./fake-yohaku.test.support.ts";
+import { mount } from "./mount.test.support.tsx";
+import { settled } from "./screen.test.support.ts";
 
 const PAUSED = { timeout: 5000 };
 const VERSION = "0.2.0";

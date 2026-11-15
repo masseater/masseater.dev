@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
-import { MicButton } from "./mic-button.tsx";
+import { MicButton } from "#/features/voice-input";
+
 import { NudgeLine } from "./nudge-line.tsx";
 
 const OpeningStage = (): ReactNode => (

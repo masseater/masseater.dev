@@ -1,8 +1,8 @@
 import { Array, Effect, FileSystem, Option, pipe } from "effect";
 import { Decompress } from "fzstd";
 
-import { collectBytes } from "#shared/bytes";
-import { PreviewFailed, pixelsPreview } from "#shared/preview";
+import { collectBytes } from "#/shared/bytes";
+import { PreviewFailed, pixelsPreview } from "#/shared/preview";
 
 import { blendThumbnail } from "./blend-thumbnail.ts";
 

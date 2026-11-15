@@ -1,6 +1,6 @@
 import { Array, Effect, Number, Option, Order, Path, Record, pipe } from "effect";
 
-import { isLoose, partsOf } from "#entities/package";
+import { isLoose, partsOf } from "#/entities/package";
 
 import { statOf } from "./file-stat.ts";
 import type { PackageFile } from "./package-row.ts";

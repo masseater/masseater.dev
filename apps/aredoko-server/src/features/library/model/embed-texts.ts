@@ -1,10 +1,10 @@
 import { Array, Effect, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { vectorBytes } from "#shared/database";
-import type { Vector } from "#shared/embedding";
-import { Embedder } from "#shared/embedding";
-import { decodeRows } from "#shared/sql";
+import { vectorBytes } from "#/shared/database";
+import type { Vector } from "#/shared/embedding";
+import { Embedder } from "#/shared/embedding";
+import { decodeRows } from "#/shared/sql";
 
 import { AssetTextRow } from "./rows.ts";
 

@@ -1,9 +1,9 @@
 import { Effect, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { kindOf, searchableText } from "#entities/package";
-import { RENDER } from "#shared/database";
-import { firstId } from "#shared/sql";
+import { kindOf, searchableText } from "#/entities/package";
+import { RENDER } from "#/shared/database";
+import { firstId } from "#/shared/sql";
 
 interface AssetInput {
   readonly guid: string;
