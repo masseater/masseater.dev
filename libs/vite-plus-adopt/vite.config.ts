@@ -174,6 +174,11 @@ export default defineConfig({
   },
   run: {
     tasks: {
+      "npm:publish": {
+        command: "node ../../tools/npm-publish/src/main.ts",
+        dependsOn: ["test", "size", "build"],
+        cache: false,
+      },
       verify: { command: [], dependsOn: ["test", "size"] },
       build: "vp pack",
       test: { command: "vp test run", dependsOn: ["build"] },

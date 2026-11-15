@@ -5,6 +5,12 @@ export default defineConfig({
   msch: { publish: { installSize: "0 B" } },
   run: {
     tasks: {
+      test: "vp test run",
+      "npm:publish": {
+        command: "node ../../tools/npm-publish/src/main.ts",
+        dependsOn: ["test", "size"],
+        cache: false,
+      },
       verify: { command: [], dependsOn: ["size"] },
       build: "vp pack",
       size: { command: "size-limit", dependsOn: ["build"] },
