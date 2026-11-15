@@ -10,7 +10,7 @@ timeout_seconds=600
 
 case "$platform" in
   linux-x64)
-    sudo apt-get install -y "$installers"/*.deb xvfb imagemagick
+    sudo apt-get install -y "$installers"/deb/*.deb xvfb imagemagick
     export DISPLAY=:99
     Xvfb "$DISPLAY" -screen 0 1280x800x24 &
     sleep 2

@@ -12,6 +12,15 @@ const app = tauriAppConfig({
 export default defineConfig(
   mergeConfig(app, {
     optimizeDeps: { include: ["effect/crypto"] },
-    run: { tasks: { verify: { command: [], dependsOn: ["cargo"] } } },
+    run: {
+      tasks: {
+        verify: { command: [], dependsOn: ["cargo"] },
+        "release:tag": { command: "component-tag yohaku", cache: false },
+        "release:collect": { command: "node scripts/collect.ts", cache: false },
+        "release:publish": { command: "node scripts/release.ts", cache: false },
+        "release:token": { command: "release-please-token yohaku", cache: false },
+        "signing-key": { command: "node scripts/signing-key.ts", cache: false },
+      },
+    },
   }),
 );

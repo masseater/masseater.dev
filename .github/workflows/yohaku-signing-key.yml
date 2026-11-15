@@ -24,7 +24,8 @@ jobs:
         with:
           native: "false"
       - run: .github/scripts/github-token.sh
-      - run: .github/scripts/yohaku-signing-key.sh
+      - run: vp run signing-key
+        working-directory: apps/yohaku-desktop
 
   ci-telemetry:
     needs: [generate]

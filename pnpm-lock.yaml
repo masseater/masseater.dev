@@ -2042,6 +2042,18 @@ importers:
 
   apps/pod-rattle-plugin:
     devDependencies:
+      '@masseater.dev/component-release':
+        specifier: workspace:*
+        version: link:../../tools/component-release
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -2712,6 +2724,9 @@ importers:
       '@fontsource-variable/noto-sans-jp':
         specifier: 'catalog:'
         version: 5.3.1
+      '@masseater.dev/component-release':
+        specifier: workspace:*
+        version: link:../../tools/component-release
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
@@ -2794,6 +2809,12 @@ importers:
       '@fontsource-variable/noto-serif-jp':
         specifier: 'catalog:'
         version: 5.3.1
+      '@masseater.dev/component-release':
+        specifier: workspace:*
+        version: link:../../tools/component-release
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
@@ -4157,6 +4178,22 @@ importers:
 
   tools/aredoko-telemetry:
     devDependencies:
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  tools/component-release:
+    dependencies:
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
