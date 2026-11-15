@@ -34,6 +34,11 @@
     ],
     "publisher": "masseater",
     "shortDescription": "PLaMo 3 Translate で手元だけで訳す",
-    "copyright": "© masseater"
+    "copyright": "© masseater",
+    "linux": {
+      "deb": {
+        "depends": ["libgomp1", "libssl3t64 | libssl3"]
+      }
+    }
   }
 }
