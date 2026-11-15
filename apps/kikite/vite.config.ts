@@ -13,7 +13,7 @@ export default defineConfig({
     lint: {
       overrides: [
         {
-          files: ["src/pages/interview/lib/screen-hold.ts"],
+          files: ["src/shared/lib/screen-hold.ts"],
           rules: {
             "baseline-js/use-baseline": [
               "error",

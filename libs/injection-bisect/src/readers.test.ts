@@ -1,7 +1,7 @@
 import { Effect, Array as Arr, String as Str, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { ENGLISH_MARK, INJECTION, INJECTION_MARK, foundIn } from "./__tests__/fake-judge.ts";
+import { ENGLISH_MARK, INJECTION, INJECTION_MARK, foundIn } from "./fake-judge.test.support.ts";
 
 const encoder = new TextEncoder();
 

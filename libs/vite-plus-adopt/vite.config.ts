@@ -162,7 +162,6 @@ export default defineConfig({
     hookTimeout: 600_000,
     include: [
       "src/**/*.test.ts",
-      "tests/**/*.test.ts",
       "upstream/filesystem/specs/*.spec.ts",
       "upstream/attw-core/test/**/*.test.ts",
     ],

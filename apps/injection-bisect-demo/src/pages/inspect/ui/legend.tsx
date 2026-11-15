@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { COPY } from "#/pages/inspect/model/copy";
-import type { Tone } from "#/pages/inspect/model/overlay";
+import type { Tone } from "#/entities/inspection";
+import { COPY } from "#/shared/config";
 
 import { ANSWER_CLASS, TONE_CLASS } from "./tone";
 

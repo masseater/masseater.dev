@@ -1,8 +1,7 @@
 import { Option } from "effect";
 
-import { parseDraft } from "#/pages/interview/lib/draft";
-import { useAsking, useStage, useStale } from "#/pages/interview/model/hooks";
-import type { Asking } from "#/pages/interview/model/hooks";
+import { parseDraft, useAsking, useStage, useStale } from "#/entities/interview";
+import type { Asking } from "#/entities/interview";
 
 type Shown = Readonly<{ question: string; faded: boolean }>;
 

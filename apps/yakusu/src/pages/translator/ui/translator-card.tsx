@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 
+import { PreparationBar } from "#/features/prepare-engine";
+
 import { DirectionBar } from "./direction-bar.tsx";
-import { PreparationBar } from "./preparation-bar.tsx";
 import { Workspace } from "./workspace.tsx";
 
 const TranslatorCard = (): ReactNode => (

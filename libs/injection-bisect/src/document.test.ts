@@ -1,8 +1,8 @@
 import { Effect, Array as Arr, String as Str, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { INJECTION_MARK, cleanedOf } from "./__tests__/fake-judge.ts";
 import { formatsOf, readDocument } from "./document.ts";
+import { INJECTION_MARK, cleanedOf } from "./fake-judge.test.support.ts";
 import type { Reader } from "./parser.ts";
 import { DEFAULT_PARSERS } from "./parsers.ts";
 import { ReadError } from "./read-error.ts";

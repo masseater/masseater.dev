@@ -13,9 +13,9 @@ import {
 import { markerNamed, markersNamed, trackNamed } from "rpp-kit";
 import { beforeAll, describe, expect, expectTypeOf, it } from "vite-plus/test";
 
-import { createChecker } from "./src/pages/demo/model/checker";
-import type { Checker } from "./src/pages/demo/model/checker";
-import { song } from "./src/pages/demo/model/song";
+import { song } from "./src/entities/song/model/song";
+import { createChecker } from "./src/features/playground/model/checker";
+import type { Checker } from "./src/features/playground/model/checker";
 
 const RPP_KIT = import.meta.glob<string>(
   ["/node_modules/rpp-kit/package.json", "/node_modules/rpp-kit/src/*.ts", "!**/*.test.ts"],
@@ -23,7 +23,7 @@ const RPP_KIT = import.meta.glob<string>(
 );
 
 const MODEL = import.meta.glob<string>(
-  ["./src/pages/demo/model/song.ts", "./src/pages/demo/model/*.d.rpp.ts"],
+  ["./src/entities/song/model/song.ts", "./src/entities/song/model/*.d.rpp.ts"],
   { query: "?raw", import: "default", eager: true },
 );
 
@@ -44,7 +44,7 @@ const CM9_TIME = 16;
 
 const PROBE_PATH = "/probe.ts";
 
-const MODEL_DIRECTORY = "./src/pages/demo/model/";
+const MODEL_DIRECTORY = "./src/entities/song/model/";
 
 const PROBE = pipe(
   [

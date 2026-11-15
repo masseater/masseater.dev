@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/catalog";
+import { VideoList } from "#/entities/video";
 import { useSearchResults } from "#/pages/search/api/use-search-results";
 import { SectionHeading } from "#/shared/ui/section-heading";
 

@@ -1,9 +1,9 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSearch } from "#/pages/home/api/queries";
-import { searchViewOf, useKinds, useQueryText, useSelectedPackage } from "#/pages/home/model";
-import type { SearchPhase } from "#/pages/home/model";
+import { useSearch, useKinds, useQueryText, useSelectedPackage } from "#/entities/asset";
+import { searchViewOf } from "#/pages/home/model/search-view";
+import type { SearchPhase } from "#/pages/home/model/search-view";
 import { Notice } from "#/shared/ui/notice";
 
 import { MatchedResults } from "./matched-results.tsx";

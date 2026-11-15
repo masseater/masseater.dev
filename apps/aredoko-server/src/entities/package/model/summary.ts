@@ -1,7 +1,7 @@
 import type { Effect } from "effect";
 import { Array, HashMap, Option, Order, Record, Schema, String, pipe } from "effect";
 
-import { capture } from "#shared/text";
+import { capture } from "#/shared/text/index.ts";
 
 import { avatarsIn, colorsIn } from "./aliases.ts";
 import { kindOf } from "./kind.ts";

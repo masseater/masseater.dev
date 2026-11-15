@@ -2,7 +2,7 @@ import { cn } from "@masseater.dev/ui/cn";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { usePanel, useSetPanel } from "#/pages/interview/model/hooks";
+import { usePanel, useSetPanel } from "#/entities/interview";
 
 import type { PanelLabel } from "./panels.ts";
 

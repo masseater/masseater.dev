@@ -1,9 +1,9 @@
 import { Effect, Array as Arr, String as Str, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { INJECTION, fakeJudge } from "./__tests__/fake-judge.ts";
 import { detect } from "./detect.ts";
 import type { Detection, DetectOptions } from "./detect.ts";
+import { INJECTION, fakeJudge } from "./fake-judge.test.support.ts";
 import type { JudgeError } from "./judge-error.ts";
 import { InjectionJudge } from "./judge.ts";
 import type { Verdict } from "./judge.ts";

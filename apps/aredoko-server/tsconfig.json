@@ -4,9 +4,7 @@
   "include": ["src", "*.ts"],
   "compilerOptions": {
     "paths": {
-      "#entities/*": ["./src/entities/*/index.ts"],
-      "#features/*": ["./src/features/*/index.ts"],
-      "#shared/*": ["./src/shared/*/index.ts"]
+      "#/*": ["./src/*"]
     }
   }
 }

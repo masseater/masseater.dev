@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { SongLink } from "#/entities/catalog";
+import { SongLink } from "#/entities/song";
 import { TableCell } from "#/shared/ui/table-cell";
 import { TableRow } from "#/shared/ui/table-row";
 

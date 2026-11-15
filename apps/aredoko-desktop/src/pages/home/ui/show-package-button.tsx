@@ -2,9 +2,8 @@ import { Package } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useShowPackage } from "#/pages/home/model";
-
-import { ActionButton } from "./action-button.tsx";
+import { useShowPackage } from "#/entities/asset";
+import { ActionButton } from "#/shared/ui/action-button";
 
 const LABEL = "パッケージを表示";
 

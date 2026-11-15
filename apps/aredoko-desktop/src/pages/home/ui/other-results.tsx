@@ -2,7 +2,7 @@ import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import { Array } from "effect";
 import type { ReactNode } from "react";
 
-import { useOthersShown } from "#/pages/home/model";
+import { useOthersShown } from "#/entities/asset";
 
 import { ResultGrid } from "./result-grid.tsx";
 import { ShowOthersButton } from "./show-others-button.tsx";
