@@ -175,7 +175,7 @@ const loadsEntry = (entry: (typeof ENTRIES)[number]): Check =>
       });
       const run = yield* oxlint(cwd, ["-c", "oxlint.config.ts", "a.js"], { CI: "1" });
       strictEqual(run.status === PASSED, false);
-      assertInclude(outputOf(run), "OPENROUTER_API_KEY is not set");
+      assertInclude(outputOf(run), "CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID is not set");
     }),
   );
 
@@ -183,7 +183,10 @@ const customExample = Effect.gen(function* test() {
   const cwd = yield* fromRoot("example", "custom");
   const run = yield* oxlint(cwd, ["--format", "unix", "-c", "oxlint.config.ts", "handler.js"], {});
   strictEqual(run.status, PASSED, outputOf(run));
-  assertInclude(run.stderr, "OPENROUTER_API_KEY is not set, skipping openrouter models");
+  assertInclude(
+    run.stderr,
+    "CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID is not set, skipping cloudflare models",
+  );
 });
 
 layer(NodeServices.layer, { excludeTestServices: true })("the presets", (it) => {

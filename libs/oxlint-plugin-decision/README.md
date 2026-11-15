@@ -3,7 +3,7 @@
 > [!WARNING]
 > This package is experimental. Use at your own risk.
 
-[Oxlint](https://oxc.rs/docs/guide/usage/linter.html) rules written in plain English, answered by decision models on [OpenRouter](https://openrouter.ai).
+[Oxlint](https://oxc.rs/docs/guide/usage/linter.html) rules written in plain English, answered by models on [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/) or by decision models on [OpenRouter](https://openrouter.ai).
 
 A rule is a question about a function, a call, a JSX element or a whole file. Each match is sent to one or more decision models with the question. The plugin reports an error when the answer the rule cares about clears its cutoff.
 
@@ -11,16 +11,19 @@ Decision models do not write text. They return a probability for a yes/no questi
 
 For ready-made rules, see [`@r_masseater/oxlint-plugin-decision-presets`](https://www.npmjs.com/package/@r_masseater/oxlint-plugin-decision-presets).
 
-This is a fork of [oxlint-plugin-jev](https://github.com/wobsoriano/oxlint-plugin-jev) by [Robert Soriano](https://github.com/wobsoriano), rebuilt on the OpenRouter Decisions API.
+This is a fork of [oxlint-plugin-jev](https://github.com/wobsoriano/oxlint-plugin-jev) by [Robert Soriano](https://github.com/wobsoriano). It asks Cloudflare AI Gateway or the OpenRouter Decisions API.
 
 ## Install
 
 ```sh
 npm i -D oxlint @r_masseater/oxlint-plugin-decision
-export OPENROUTER_API_KEY="..."   # https://openrouter.ai/settings/keys
+export CLOUDFLARE_ACCOUNT_ID="..."
+export CLOUDFLARE_API_TOKEN="..."   # an account API token with Workers AI Read
 ```
 
-The plugin reads the key from the `OPENROUTER_API_KEY` environment variable. Without it, the plugin warns once and reports nothing. To read the key from a variable with another name, set `env` (see [Settings](#settings)). The key itself is never passed in code or config.
+The default model runs on Workers AI through the account's AI Gateway, so it needs no other key. The plugin reads the account and the token from `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`. Without them, the plugin warns once and reports nothing. To read them from variables with other names, set `env` (see [Settings](#settings)). Neither is ever passed in code or config.
+
+Requests go to the gateway named `default`, which Cloudflare creates on the first request. `CLOUDFLARE_AI_GATEWAY_ID` picks another gateway. Its cache, logs and rate limits apply to every request.
 
 In CI (when the `CI` environment variable is set), a run that could not reach a model fails instead of passing quietly. Set `ci: "skip"` to only warn there too. A provider that refuses for a spent budget only warns, even in CI. That is HTTP 402, or a 403 that names the budget.
 
@@ -192,7 +195,10 @@ More context costs more tokens. It is cached together with the match, so an edit
 
 ### Models
 
-A model id is `<provider>/<model>`. The built-in provider is `openrouter`, so `openrouter/inception/mercury-decide` asks `inception/mercury-decide` on OpenRouter. Browse decision models at [openrouter.ai/models](https://openrouter.ai/models?output_modalities=decisions).
+A model id is `<provider>/<model>`. There are two built-in providers.
+
+- `cloudflare` asks a chat model through the [AI Gateway REST API](https://developers.cloudflare.com/ai-gateway/usage/rest-api/). `cloudflare/@cf/qwen/qwen3.8-27b`, the default, asks `@cf/qwen/qwen3.8-27b` on Workers AI. The model answers each question with `yes` or `no`, and the yes probability comes from the log probabilities of that word. A model must return `logprobs` to be used here. Third-party models such as `cloudflare/openai/gpt-5.5` are billed through Unified Billing and need credits on the account.
+- `openrouter` asks a decision model on the OpenRouter Decisions API. `openrouter/inception/mercury-decide` asks `inception/mercury-decide`. It reads the key from `OPENROUTER_API_KEY`. Browse decision models at [openrouter.ai/models](https://openrouter.ai/models?output_modalities=decisions).
 
 `model` takes one id or a list. With a list, every model answers every match in a separate request. Each model's yes is its own diagnostic, so you can compare models on the same code.
 
@@ -203,17 +209,17 @@ createDecisionPlugin({
 });
 ```
 
-Respan models, such as `openrouter/respan/span-01-lite`, answer only yes/no questions. The plugin splits every choice into yes/no questions for them.
+Cloudflare models and Respan models, such as `openrouter/respan/span-01-lite`, answer only yes/no questions. The plugin splits every choice into yes/no questions for them.
 
 - `classify` asks whether each label fits and picks the label with the highest yes probability.
 - `severity` asks whether the match is at least `info`, at least `warn` and at least `error`. It picks the most serious level with a yes probability of 0.8 or more. A level's probability is never below that of a more serious level.
 - File-rule `location` asks about each candidate line. It finds clear cases, but is less precise than on the default model.
 
-The probability in the message is the yes probability of the picked label or level. Respan models are also asked about one match per request. So they send more requests than other models on files with many matches. The default `openrouter/~typesafe/jev-latest` answers every answer kind in one question.
+The probability in the message is the yes probability of the picked label or level. These models are also asked one question per request. So they send more requests than other models on files with many matches. `openrouter/~typesafe/jev-latest` answers every answer kind in one question.
 
 Probabilities are not calibrated the same way across models. A cutoff tuned for one model does not carry over to another. Pin a versioned id once your cutoffs are tuned. Each diagnostic names the model that answered.
 
-A key is required only for providers the rules you turned on use. `OPENROUTER_BASE_URL` points the plugin at another OpenRouter-compatible host.
+A key is required only for providers the rules you turned on use. `OPENROUTER_BASE_URL` points the plugin at another OpenRouter-compatible host. `CLOUDFLARE_API_BASE_URL` points it at another Cloudflare API host.
 
 ### File locations
 
@@ -265,7 +271,7 @@ export default defineConfig({
 | `ci`              | `"fail"`                            | What happens when a model can't be asked and `CI` is set. `"fail"` fails the run. `"skip"` warns once and reports nothing. Outside CI it always skips. |
 | `timeoutMs`       | `10000`                             | Per-file budget shared by every model's request, retries and location refinements.                                                                     |
 | `maxSnippetChars` | `4000`                              | Longer snippets are cut and end with `/* ...truncated */`.                                                                                             |
-| `model`           | `"openrouter/~typesafe/jev-latest"` | The default model id or list of ids.                                                                                                                   |
+| `model`           | `"cloudflare/@cf/qwen/qwen3.8-27b"` | The default model id or list of ids.                                                                                                                   |
 | `env`             | `{}`                                | Renames the environment variables providers read, such as `{ "OPENROUTER_API_KEY": "TEAM_OPENROUTER_KEY" }`. Values are variable names, not keys.      |
 | `explain`         | `false`                             | `true` or `"text"` prints why each match was or wasn't reported, `"json"` prints the same as JSON Lines. See [Explain mode](#explain-mode).            |
 
@@ -338,7 +344,7 @@ Rules on different models are asked separately, one request per file and model. 
 
 ## Providers
 
-`createDecisionPlugin` also takes providers, so rules can ask a decision service other than OpenRouter.
+`createDecisionPlugin` also takes providers, so rules can ask a decision service other than Cloudflare and OpenRouter.
 
 ```js
 // decision-plugin.mjs
@@ -391,9 +397,9 @@ export default defineConfig({
 
 `createDecisionPlugin` checks every rule and setting when the plugin loads. A typo in a rule fails the oxlint run instead of being ignored.
 
-A provider's `decide` is synchronous, because oxlint rules are. It gets an OpenRouter Decisions request (`model`, `state`, `questions`). It returns `{ ok: true, response }` with a Decisions response, or `{ ok: false, reason }`. The built-in `openRouter` provider does its network call on a worker thread through [synckit](https://github.com/un-ts/synckit). A custom provider that calls a network service should do the same.
+A provider's `decide` is synchronous, because oxlint rules are. It gets an OpenRouter Decisions request (`model`, `state`, `questions`). It returns `{ ok: true, response }` with a Decisions response, or `{ ok: false, reason }`. The built-in `cloudflare` and `openRouter` providers do their network calls on a worker thread through [synckit](https://github.com/un-ts/synckit). A custom provider that calls a network service should do the same.
 
-oxlint runs JS plugins on one thread, so files are asked one after another. Within a file, the plugin hands every model of the same provider to the provider's optional `decideAll` in one call. The built-in provider sends them at the same time. A provider without `decideAll` is asked one model at a time through `decide`.
+oxlint runs JS plugins on one thread, so files are asked one after another. Within a file, the plugin hands every model of the same provider to the provider's optional `decideAll` in one call. The built-in providers send them at the same time. A provider without `decideAll` is asked one model at a time through `decide`.
 
 The built-in provider's worker can report its `decide`, `ask` and `send` steps as spans over OTLP. It does so when the standard `OTEL_TRACES_EXPORTER=otlp` and `OTEL_EXPORTER_OTLP_ENDPOINT` are set. `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` also works in place of the endpoint. Otherwise it does nothing.
 
@@ -401,11 +407,11 @@ Types for all of this are exported. The rule types include `DecisionRule`, `Deci
 
 ## How it works
 
-Each file gets one request per model, with every match for that model in it. Respan models get one request per match instead, with each choice question split into yes/no questions. A file rule with `location` adds numbered source and a choice question. Above 254 nonblank lines the model selects a range and refines it in follow-up requests with the same context. All requests share the per-file `timeoutMs` budget.
+Each file gets one request per model, with every match for that model in it. Cloudflare and Respan models get one request per question instead. Each of their choice questions becomes yes/no questions. A file rule with `location` adds numbered source and a choice question. Above 254 nonblank lines the model selects a range and refines it in follow-up requests with the same context. All requests share the per-file `timeoutMs` budget.
 
 Answers are cached under `node_modules/.cache/oxlint-plugin-decision`, keyed by the endpoint and the request. Changing a snippet, its context, a question or an answer kind re-asks that file. Changing a cutoff or an `id` does not. Malformed answers are never cached, and malformed entries already on disk are asked again. See [Cost and caching](#cost-and-caching) for how to keep the cost down.
 
-Requests go through Effect's [`@effect/ai-openrouter`](https://www.npmjs.com/package/@effect/ai-openrouter) client, which retries rate limits and server errors within `timeoutMs`.
+OpenRouter requests use Effect's [`@effect/ai-openrouter`](https://www.npmjs.com/package/@effect/ai-openrouter) client. Cloudflare requests use Effect's HTTP client. Both retry rate limits and server errors within `timeoutMs`.
 
 A model may not be reachable, because the key is missing, the request times out or the API errors. Then the plugin prints one warning and reports nothing for that model on that file. Under CI the run fails instead, unless `ci` is `"skip"`.
 
@@ -432,7 +438,7 @@ Before running the plugin on a real codebase, put these three in place.
        restore-keys: oxlint-decision-
    ```
 
-To try rules without paying for requests, set a rule's model to the free `openrouter/respan/span-01-lite`. For example, use `"team/no-pii-in-logs": ["error", { "model": "openrouter/respan/span-01-lite" }]`.
+Workers AI models are billed by the account's Workers AI usage, which includes a free daily allocation. The AI Gateway cache can also answer a request the account has already sent, so set a cache TTL on the gateway.
 
 ## In the editor
 

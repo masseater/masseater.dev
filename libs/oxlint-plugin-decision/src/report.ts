@@ -144,6 +144,7 @@ const explainPassOf = (
   }),
   filename: pass.filename,
   model: pass.model.id,
+  yesNo: pass.model.provider.yesNo === true,
   request,
   durationMs,
 });
