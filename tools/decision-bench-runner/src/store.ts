@@ -42,7 +42,7 @@ export const readText = Effect.fn("readText")(function* readText(file: string) {
   return yield* store.readText(file);
 });
 
-export const writeText = Effect.fn("writeText")(function* writeText(file: string, text: string) {
+const writeText = Effect.fn("writeText")(function* writeText(file: string, text: string) {
   const store = yield* BenchStore;
   yield* store.writeText(file, text);
 });
