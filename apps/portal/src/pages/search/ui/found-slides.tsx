@@ -1,10 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
+import { HitRow } from "#/entities/slide";
 import { useFoundSlides } from "#/pages/search/api/search-query";
 import { RowList, Section } from "#/shared/ui";
-
-import { FoundSlideRow } from "./found-slide-row";
 
 const TITLE = "スライド";
 
@@ -15,7 +14,7 @@ export const FoundSlides = ({ keyword }: Readonly<{ keyword: string }>): ReactNo
       <RowList label={TITLE}>
         {pipe(
           hits,
-          Arr.map((hit) => <FoundSlideRow hit={hit} key={`${hit.deck}#${String(hit.page)}`} />),
+          Arr.map((hit) => <HitRow hit={hit} key={`${hit.deck}#${String(hit.page)}`} />),
         )}
       </RowList>
     </Section>
