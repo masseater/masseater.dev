@@ -8,6 +8,7 @@ import { barsOfSong } from "./bars.ts";
 import type { PlacedItem } from "./bars.ts";
 import { declarationsOf } from "./declarations.ts";
 import type { Item, NoteItem } from "./items.ts";
+import { automationsProblemsOf } from "./mixer.ts";
 import { problemAt, problemsOf } from "./problem.ts";
 import type { Compiled, From, Problem } from "./problem.ts";
 
@@ -135,6 +136,11 @@ export const compileSong: From<SongNode, Compiled<Song>> = (song) => {
         Arr.flatMap((bar) => bar.automations),
       ),
     },
-    problems: [...declarations.problems, ...bars.problems, ...tied.problems],
+    problems: [
+      ...declarations.problems,
+      ...bars.problems,
+      ...tied.problems,
+      ...automationsProblemsOf(song),
+    ],
   };
 };

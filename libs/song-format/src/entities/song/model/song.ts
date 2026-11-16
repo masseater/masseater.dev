@@ -41,10 +41,19 @@ const TrackSourceSchema = Schema.Union([
   kind("audio")({}),
 ]);
 
+const MixerSchema = Schema.Struct({
+  volumeDecibels: Schema.Finite,
+  pan: Share,
+  muted: Schema.Boolean,
+});
+
+export type Mixer = typeof MixerSchema.Type;
+
 const TrackSchema = Schema.Struct({
   name: Name,
   source: TrackSourceSchema,
   role: Schema.OptionFromNullOr(RoleSchema),
+  mixer: MixerSchema,
   fx: Schema.Array(EffectSchema),
   sends: Schema.Array(SendSchema),
 });
@@ -53,6 +62,7 @@ export type Track = typeof TrackSchema.Type;
 
 const BusSchema = Schema.Struct({
   name: Name,
+  mixer: MixerSchema,
   fx: Schema.Array(EffectSchema),
   sends: Schema.Array(SendSchema),
 });
