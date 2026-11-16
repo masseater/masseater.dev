@@ -8,12 +8,13 @@
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/media-notes-protocol": "workspace:*",
+    "@masseater.dev/media-notes-ui": "workspace:*",
     "@masseater.dev/shirushi-protocol": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@tauri-apps/api": "catalog:",
     "effect": "catalog:stack",
     "lucide-react": "catalog:",
-    "niconico-embed-player": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "scheduler": "catalog:",
@@ -22,7 +23,6 @@
   },
   "devDependencies": {
     "@effect/tsgo": "catalog:stack",
-    "@effect/vitest": "catalog:",
     "@masseater.dev/component-release": "workspace:*",
     "@masseater.dev/tauri-app": "workspace:*",
     "@tauri-apps/cli": "catalog:",

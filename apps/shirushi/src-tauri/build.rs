@@ -2,7 +2,9 @@ const COMMANDS: &[&str] = &[
     "list_marks",
     "save_mark",
     "remove_mark",
-    "song_at",
+    "open_link",
+    "open_file",
+    "choose_file",
     "mcp_access",
 ];
 

@@ -1,15 +1,16 @@
-use tauri::{App, Manager, Url, WebviewUrl, WebviewWindowBuilder, Wry, async_runtime};
+use desktop_shell::{Setup, Shell, open_window, screen_port};
+use media_notes::commands::{Setting, media_notes};
+use media_notes::protocol::Site;
+use media_notes::store::Store;
+use tauri::{App, Manager, async_runtime};
 use tauri_specta::{Builder, ErrorHandlingMode, collect_commands};
 
 mod commands;
-mod failure;
 mod mcp;
 pub mod protocol;
-mod song;
-mod source;
-mod store;
 
-const WINDOW: &str = "main";
+const SITES: &[Site] = &[Site::Youtube, Site::Niconico, Site::Soundcloud];
+const SCREEN_PORT: u16 = 47_231;
 
 fn builder() -> Builder<tauri::Wry> {
     Builder::<tauri::Wry>::new()
@@ -18,81 +19,46 @@ fn builder() -> Builder<tauri::Wry> {
             commands::list_marks,
             commands::save_mark,
             commands::remove_mark,
-            commands::song_at,
-            commands::mcp_access,
+            media_notes::commands::open_link,
+            media_notes::commands::open_file,
+            media_notes::commands::choose_file,
+            media_notes::commands::mcp_access,
         ])
-}
-
-type Setup = Result<(), Box<dyn std::error::Error>>;
-
-fn free_port() -> std::io::Result<u16> {
-    Ok(std::net::TcpListener::bind((local_mcp::HOST, 0))?
-        .local_addr()?
-        .port())
-}
-
-fn served_at(port: u16) -> Result<WebviewUrl, url::ParseError> {
-    if tauri::is_dev() {
-        return Ok(WebviewUrl::default());
-    }
-    Ok(WebviewUrl::External(Url::parse(&format!(
-        "http://{}:{port}",
-        local_mcp::HOST
-    ))?))
-}
-
-fn open_window(app: &App, port: u16) -> Setup {
-    let mut config = app
-        .config()
-        .app
-        .windows
-        .first()
-        .cloned()
-        .ok_or("tauri.conf.json has no window")?;
-    config.url = served_at(port)?;
-    WebviewWindowBuilder::from_config(app, &config)?.build()?;
-    Ok(())
 }
 
 fn setup(app: &App, port: u16) -> Setup {
     let data = app.path().app_local_data_dir()?;
-    let state = commands::shirushi(&data).map_err(|failure| failure.message)?;
-    let serving = (state.store.clone(), state.mcp_token.clone());
+    let notes = media_notes(&Setting {
+        name: "shirushi",
+        version: env!("CARGO_PKG_VERSION"),
+        data: &data,
+        sites: SITES,
+        port: mcp::PORT,
+    })?;
+    let store = Store::open(&data, commands::DATABASE, commands::TABLE)?;
+    let serving = (store.clone(), notes.mcp.token.clone());
     async_runtime::spawn(async move {
         let (store, token) = serving;
         if let Err(failure) = mcp::serve(store, token).await {
             eprintln!("mcp server stopped: {failure}");
         }
     });
-    app.manage(state);
+    app.manage(notes);
+    app.manage(store);
     open_window(app, port)
-}
-
-fn served(app: tauri::Builder<Wry>, port: u16) -> tauri::Builder<Wry> {
-    if tauri::is_dev() {
-        return app;
-    }
-    app.plugin(
-        tauri_plugin_localhost::Builder::new(port)
-            .host(local_mcp::HOST)
-            .build(),
-    )
 }
 
 pub fn run() -> tauri::Result<()> {
     let builder = builder();
-    let port = free_port()?;
-    let single = tauri::Builder::default().plugin(tauri_plugin_single_instance::init(
-        |app, _arguments, _cwd| {
-            if let Some(window) = app.get_webview_window(WINDOW) {
-                let _ = window.set_focus();
-            }
-        },
-    ));
-    served(single, port)
-        .invoke_handler(builder.invoke_handler())
-        .setup(move |app| setup(app, port))
-        .run(tauri::generate_context!())
+    let port = screen_port(SCREEN_PORT)?;
+    desktop_shell::builder(&Shell {
+        name: "しるし",
+        window: "main",
+        port,
+    })
+    .invoke_handler(builder.invoke_handler())
+    .setup(move |app| setup(app, port))
+    .run(tauri::generate_context!())
 }
 
 #[cfg(test)]

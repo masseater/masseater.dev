@@ -1,18 +1,37 @@
-import type { Song } from "@masseater.dev/shirushi-protocol";
-import { Option } from "effect";
+import type { Media } from "@masseater.dev/media-notes-protocol";
+import {
+  KeyHints,
+  MediaMeta,
+  MediaPlayer,
+  Timeline,
+  usePlayKey,
+  usePlayer,
+  usePosition,
+  useRangeKey,
+} from "@masseater.dev/media-notes-ui";
+import type { Span, Tone } from "@masseater.dev/media-notes-ui";
+import type { Mark, Verb } from "@masseater.dev/shirushi-protocol";
+import { Array as Arr, Option, pipe } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { SongMeta } from "#/entities/song";
-import { Timeline, useMarkKey } from "#/features/mark-range";
-import { SongPlayer, usePlayer, usePosition } from "#/features/play-song";
+import { useMarks } from "#/entities/mark";
 
-import { KeyHint } from "./key-hint.tsx";
+const TONES: Readonly<Record<Verb, Tone>> = { like: "plain", dislike: "warn" };
 
-export const SongStage = ({ song }: Readonly<{ song: Song }>): ReactNode => {
+const spanOf = (mark: Mark): Span => ({
+  key: mark.id,
+  from: mark.from,
+  to: mark.to,
+  tone: TONES[mark.verb],
+});
+
+export const SongStage = ({ media }: Readonly<{ media: Media }>): ReactNode => {
   const player = usePlayer();
   const position = usePosition();
-  useMarkKey(player);
+  const spans = pipe(useMarks(Option.some(media)), Arr.map(spanOf));
+  useRangeKey(player);
+  usePlayKey(player);
   const seek = useCallback(
     (seconds: number) => {
       if (Option.isSome(player)) {
@@ -23,10 +42,10 @@ export const SongStage = ({ song }: Readonly<{ song: Song }>): ReactNode => {
   );
   return (
     <section className="grid content-start gap-3 lg:col-span-2">
-      <SongMeta song={song} duration={position.duration} />
-      <SongPlayer />
-      <Timeline position={position} seek={seek} />
-      <KeyHint />
+      <MediaMeta media={media} duration={position.duration} />
+      <MediaPlayer />
+      <Timeline position={position} spans={spans} seek={seek} />
+      <KeyHints />
     </section>
   );
 };

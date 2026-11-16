@@ -25,6 +25,7 @@ export interface Effect2rsInput {
   readonly definitions: Readonly<Record<string, unknown>>;
   readonly header: string;
   readonly derive?: readonly string[];
+  readonly external?: Readonly<Record<string, string>>;
 }
 
 const isConstant = Predicate.or(
@@ -137,7 +138,21 @@ export const effect2rs = Effect.fn("effect2rs")(function* effect2rs(input: Effec
     }),
   );
   const items = yield* pipe(named, Effect.forEach(itemOf(references)));
-  return render({ header: input.header, derive: input.derive ?? [], items, constants });
+  const external = input.external ?? {};
+  return render({
+    header: input.header,
+    derive: input.derive ?? [],
+    items: pipe(
+      items,
+      Array.filter(({ name }) => !Record.has(external, name)),
+    ),
+    imported: pipe(
+      items,
+      Array.filter(({ name }) => Record.has(external, name)),
+    ),
+    external,
+    constants,
+  });
 });
 
 export interface RustCheck extends Effect2rsInput {

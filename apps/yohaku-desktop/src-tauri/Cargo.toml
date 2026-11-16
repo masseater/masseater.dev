@@ -14,6 +14,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 axum = "0.8"
+desktop-shell = { path = "../../../libs/desktop-shell" }
 dunce = "1"
 keyring = "4"
 local-mcp = { path = "../../../libs/local-mcp" }
@@ -38,7 +39,6 @@ tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
 tauri-plugin-log = "2"
 tauri-plugin-opener = "2"
-tauri-plugin-prevent-default = "6"
 tauri-plugin-single-instance = "2"
 tauri-plugin-updater = "2"
 tauri-plugin-window-state = "2"

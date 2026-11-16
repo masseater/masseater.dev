@@ -5,10 +5,12 @@ import { invoke as __TAURI_INVOKE } from "@tauri-apps/api/core";
 
 /** Commands */
 export const commands = {
-	listMarks: (link: string) => typedError<Mark[], Failure>(__TAURI_INVOKE("list_marks", { link })),
+	listMarks: () => typedError<Mark[], Failure>(__TAURI_INVOKE("list_marks")),
 	saveMark: (input: MarkInput) => typedError<Saved, Failure>(__TAURI_INVOKE("save_mark", { input })),
 	removeMark: (id: string) => typedError<boolean, Failure>(__TAURI_INVOKE("remove_mark", { id })),
-	songAt: (link: string) => typedError<Song, Failure>(__TAURI_INVOKE("song_at", { link })),
+	openLink: (link: string) => typedError<Opened, Failure>(__TAURI_INVOKE("open_link", { link })),
+	openFile: (path: string) => typedError<Opened, Failure>(__TAURI_INVOKE("open_file", { path })),
+	chooseFile: () => typedError<Opened | null, Failure>(__TAURI_INVOKE("choose_file")),
 	mcpAccess: () => typedError<McpAccess, Failure>(__TAURI_INVOKE("mcp_access")),
 };
 
@@ -21,7 +23,7 @@ export type Failure = {
 
 export type Mark = {
 	id: string,
-	song: Song,
+	song: Media,
 	from: number | null,
 	to: number | null,
 	verb: Verb,
@@ -31,7 +33,7 @@ export type Mark = {
 };
 
 export type MarkInput = {
-	song: Song,
+	song: Media,
 	from: number | null,
 	to: number | null,
 	verb: Verb,
@@ -44,18 +46,23 @@ export type McpAccess = {
 	token: string,
 };
 
+export type Media = {
+	source: Source,
+	title: string,
+	artist: string,
+};
+
+export type Opened = {
+	media: Media,
+	location: string,
+};
+
 export type Saved = {
 	id: string,
 	at: number,
 };
 
-export type Site = "youtube" | "niconico" | "soundcloud";
-
-export type Song = {
-	source: Source,
-	title: string,
-	artist: string,
-};
+export type Site = "youtube" | "niconico" | "soundcloud" | "file";
 
 export type Source = {
 	site: Site,

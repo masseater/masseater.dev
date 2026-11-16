@@ -13,32 +13,22 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dev-dependencies]
+reqwest = { version = "0.13", default-features = false, features = ["rustls"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread"] }
 
 [dependencies]
 axum = "0.8"
+desktop-shell = { path = "../../../libs/desktop-shell" }
 local-mcp = { path = "../../../libs/local-mcp" }
-regex = "1"
-reqwest = { version = "0.13", default-features = false, features = [
-  "json",
-  "query",
-  "rustls",
-  "system-proxy",
-] }
+media-notes = { path = "../../../libs/media-notes" }
 rmcp = { version = "3.10", features = ["macros", "server", "transport-streamable-http-server"] }
-rusqlite = { version = "0.42", features = ["bundled"] }
 schemars = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 specta = { version = "=2.0.0-rc.28", features = ["derive"] }
 specta-typescript = "0.0.15"
-tauri = { version = "2", features = [] }
-tauri-plugin-localhost = "2"
-tauri-plugin-single-instance = "2"
+tauri = { version = "2", features = ["protocol-asset"] }
 tauri-specta = { version = "=2.0.0-rc.28", features = ["derive", "typescript"] }
-tokio = { version = "1", features = ["macros", "net", "rt"] }
-url = "2"
-uuid = { version = "1", features = ["v7"] }
 
 [lints.rust]
 unsafe_code = "forbid"

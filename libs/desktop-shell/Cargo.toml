@@ -1,0 +1,21 @@
+[package]
+name = "desktop-shell"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+local-mcp = { path = "../local-mcp" }
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-localhost = "2"
+tauri-plugin-prevent-default = "6"
+tauri-plugin-single-instance = "2"
+tauri-plugin-window-state = "2"
+url = "2"
+
+[lints]
+workspace = true

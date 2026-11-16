@@ -1,10 +1,10 @@
+import { clock } from "@masseater.dev/media-notes-ui";
 import type { Mark } from "@masseater.dev/shirushi-protocol";
 import { cn } from "@masseater.dev/ui/cn";
 import { Array as Arr, String as Str, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { ASPECT_LABELS, VERB_LABELS } from "#/shared/config";
-import { clock } from "#/shared/lib/source";
 
 const summaryOf = (mark: Mark): string => {
   if (Str.isNonEmpty(mark.words)) {

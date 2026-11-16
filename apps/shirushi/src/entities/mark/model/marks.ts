@@ -1,13 +1,22 @@
 import { useAtomValue } from "@effect/atom-react";
+import type { Media } from "@masseater.dev/media-notes-protocol";
+import { keyOf, runtime } from "@masseater.dev/media-notes-ui";
 import type { Mark } from "@masseater.dev/shirushi-protocol";
-import { Array as Arr } from "effect";
-import { AsyncResult, Atom } from "effect/reactivity";
+import { Array as Arr, Option, pipe } from "effect";
+import { AsyncResult } from "effect/reactivity";
 
 import { fetchMarks } from "#/shared/api";
-import { runtime } from "#/shared/lib/runtime";
 
 /** @internal */
-export const marksAtom = Atom.family((link: string) => runtime.atom(fetchMarks(link)));
+export const marksAtom = runtime.atom(fetchMarks);
 
-export const useMarks = (link: string): readonly Mark[] =>
-  AsyncResult.getOrElse(useAtomValue(marksAtom(link)), Arr.empty);
+const ofMedia =
+  (media: Option.Option<Media>) =>
+  (mark: Mark): boolean =>
+    Option.match(media, {
+      onNone: () => true,
+      onSome: ({ source }) => keyOf(source) === keyOf(mark.song.source),
+    });
+
+export const useMarks = (media: Option.Option<Media>): readonly Mark[] =>
+  pipe(AsyncResult.getOrElse(useAtomValue(marksAtom), Arr.empty), Arr.filter(ofMedia(media)));

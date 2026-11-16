@@ -1,0 +1,28 @@
+{
+  "name": "@masseater.dev/media-notes-ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/media-notes-protocol": "workspace:*",
+    "@masseater.dev/ui": "workspace:*",
+    "@tauri-apps/api": "catalog:",
+    "effect": "catalog:stack",
+    "lucide-react": "catalog:",
+    "niconico-embed-player": "catalog:",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@types/react": "catalog:",
+    "@types/youtube": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

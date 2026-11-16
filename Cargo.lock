@@ -75,6 +75,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "akapen"
+version = "0.0.0"
+dependencies = [
+ "axum",
+ "desktop-shell",
+ "local-mcp",
+ "media-notes",
+ "reqwest",
+ "rmcp",
+ "schemars 1.2.3",
+ "serde",
+ "serde_json",
+ "specta",
+ "specta-typescript",
+ "tauri",
+ "tauri-build",
+ "tauri-specta",
+ "tokio",
+]
+
+[[package]]
 name = "alloc-no-stdlib"
 version = "3.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1739,6 +1760,20 @@ dependencies = [
  "quote",
  "rustc_version",
  "syn 2.0.119",
+]
+
+[[package]]
+name = "desktop-shell"
+version = "0.0.0"
+dependencies = [
+ "local-mcp",
+ "tauri",
+ "tauri-plugin-dialog",
+ "tauri-plugin-localhost",
+ "tauri-plugin-prevent-default",
+ "tauri-plugin-single-instance",
+ "tauri-plugin-window-state",
+ "url",
 ]
 
 [[package]]
@@ -3989,7 +4024,9 @@ dependencies = [
  "axum",
  "constant_time_eq",
  "getrandom 0.4.3",
+ "rmcp",
  "tempfile",
+ "tokio",
 ]
 
 [[package]]
@@ -4035,6 +4072,28 @@ name = "matchit"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3"
+
+[[package]]
+name = "media-notes"
+version = "0.0.0"
+dependencies = [
+ "local-mcp",
+ "regex",
+ "reqwest",
+ "rmcp",
+ "rusqlite",
+ "schemars 1.2.3",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "specta",
+ "specta-typescript",
+ "tauri",
+ "tauri-plugin-dialog",
+ "tempfile",
+ "url",
+ "uuid",
+]
 
 [[package]]
 name = "memchr"
@@ -6723,11 +6782,11 @@ name = "shirushi"
 version = "0.0.0"
 dependencies = [
  "axum",
+ "desktop-shell",
  "local-mcp",
- "regex",
+ "media-notes",
  "reqwest",
  "rmcp",
- "rusqlite",
  "schemars 1.2.3",
  "serde",
  "serde_json",
@@ -6735,12 +6794,8 @@ dependencies = [
  "specta-typescript",
  "tauri",
  "tauri-build",
- "tauri-plugin-localhost",
- "tauri-plugin-single-instance",
  "tauri-specta",
  "tokio",
- "url",
- "uuid",
 ]
 
 [[package]]
@@ -9496,6 +9551,7 @@ name = "yohaku-desktop"
 version = "0.1.5"
 dependencies = [
  "axum",
+ "desktop-shell",
  "dunce",
  "keyring",
  "local-mcp",
@@ -9515,7 +9571,6 @@ dependencies = [
  "tauri-plugin-dialog",
  "tauri-plugin-log",
  "tauri-plugin-opener",
- "tauri-plugin-prevent-default",
  "tauri-plugin-single-instance",
  "tauri-plugin-updater",
  "tauri-plugin-window-state",

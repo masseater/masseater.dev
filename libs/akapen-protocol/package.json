@@ -1,0 +1,16 @@
+{
+  "name": "@masseater.dev/akapen-protocol",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@masseater.dev/media-notes-protocol": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "vite-plus": "catalog:stack"
+  }
+}

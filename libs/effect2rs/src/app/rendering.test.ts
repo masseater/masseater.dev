@@ -2,6 +2,7 @@ import { expect, it } from "@effect/vitest";
 import { Effect, Schema } from "effect";
 
 import { rust, rustWith } from "./effect2rs.test.support.ts";
+import { effect2rs } from "./index.ts";
 
 it.effect("specta treats JSON values as unknown and sees through 64-bit aliases", () =>
   Effect.gen(function* body() {
@@ -138,5 +139,41 @@ it.effect("awkward literal values and keys still become valid, distinct identifi
     pub crate_: String,
     #[serde(rename = "1st")]
     pub field_1st: String,`);
+  }),
+);
+
+it.effect("external types are imported instead of generated", () =>
+  Effect.gen(function* body() {
+    const Span = Schema.Struct({ from: Schema.Finite, to: Schema.Finite }).annotate({
+      identifier: "Span",
+    });
+    const Note = Schema.Struct({ span: Span, words: Schema.String }).annotate({
+      identifier: "Note",
+    });
+    const source = yield* effect2rs({
+      definitions: { Note },
+      header: "// test",
+      external: { Span: "shared::protocol::Span" },
+    });
+    expect(source).toContain("use shared::protocol::Span;");
+    expect(source).not.toContain("pub struct Span");
+    expect(source).toContain(`#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Note {`);
+  }),
+);
+
+it.effect("only external types the output names are imported", () =>
+  Effect.gen(function* body() {
+    const Site = Schema.Literals(["web", "file"]).annotate({ identifier: "Site" });
+    const Media = Schema.Struct({ site: Site }).annotate({ identifier: "Media" });
+    const Note = Schema.Struct({ media: Media }).annotate({ identifier: "Note" });
+    const source = yield* effect2rs({
+      definitions: { Note },
+      header: "// test",
+      external: { Site: "shared::Site", Media: "shared::Media", Unused: "shared::Unused" },
+    });
+    expect(source).toContain("use shared::Media;");
+    expect(source).not.toContain("shared::Site");
+    expect(source).not.toContain("shared::Unused");
   }),
 );

@@ -37,6 +37,10 @@ Do not pick names one by one, because a name you forget is never generated.
 A new app needs its own `RustOutput` in `rustOutputs`.
 Set `derive` to `specta::Type` for tauri-specta and add `schemars::JsonSchema` when Rust needs a JSON Schema.
 
+When the schemas use a type that another output already generates, map its identifier to the Rust path in `external`.
+A shared crate's protocol is the usual case.
+The output then imports that type instead of generating a second copy.
+
 Run `vp run codegen` in `tools/protocol-codegen`.
 Commit the generated `protocol.rs` together with the schema change.
 Rust code declares `pub mod protocol;` and imports from `crate::protocol`.

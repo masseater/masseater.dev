@@ -1,4 +1,4 @@
-import { Array, Match, Option, Predicate, String, pipe } from "effect";
+import { Array, Match, Option, Predicate, Record, String, pipe } from "effect";
 
 import { screamingSnakeCase } from "#/entities/rust-item/index.ts";
 import type { Constant, Item, Ty } from "#/entities/rust-item/index.ts";
@@ -11,6 +11,8 @@ export interface Rendering {
   readonly header: string;
   readonly derive: readonly string[];
   readonly items: readonly Item[];
+  readonly imported: readonly Item[];
+  readonly external: Readonly<Record<string, string>>;
   readonly constants: readonly Constant[];
 }
 
@@ -98,16 +100,33 @@ const usesMap = (items: readonly Item[]): boolean =>
 const derivePaths = (derive: readonly string[]): readonly string[] =>
   pipe(derive, Array.filter(String.includes(PATH_SEPARATOR)));
 
-const importLines = ({ items, derive }: Rendering): readonly string[] =>
+const namesType =
+  (name: string) =>
+  (ty: Ty): boolean =>
+    Predicate.isTagged(ty, "Named") && ty.name === name;
+
+const usedExternals = ({ items, external }: Rendering): readonly string[] =>
   pipe(
+    Record.toEntries(external),
+    Array.filter(([name]) =>
+      pipe(items, Array.flatMap(tysOf), Array.some(someTy(namesType(name)))),
+    ),
+    Array.map(([, path]) => path),
+  );
+
+const importLines = (rendering: Rendering): readonly string[] => {
+  const { items, derive } = rendering;
+  return pipe(
     when(Array.isReadonlyArrayNonEmpty(items))(() => [
       "serde::{Deserialize, Serialize}",
       ...derivePaths(derive),
       ...when(usesMap(items))(() => ["std::collections::BTreeMap"]),
+      ...usedExternals(rendering),
     ]),
     Array.sortBy(String.Order),
     Array.map((path) => `use ${path};`),
   );
+};
 
 const aliasesOf = (items: readonly Item[]): ReadonlyMap<string, Ty> =>
   new Map(
@@ -122,8 +141,8 @@ const aliasesOf = (items: readonly Item[]): ReadonlyMap<string, Ty> =>
     ),
   );
 
-const spectaOf = ({ derive, items }: Rendering): ((ty: Ty) => Ty) => {
-  const aliases = aliasesOf(items);
+const spectaOf = ({ derive, items, imported }: Rendering): ((ty: Ty) => Ty) => {
+  const aliases = aliasesOf([...items, ...imported]);
   return Match.value(pipe(derive, Array.contains(SPECTA_TYPE))).pipe(
     Match.when(true, () => spectaType((name) => Option.fromNullishOr(aliases.get(name)))),
     Match.orElse(() => (ty: Ty) => ty),
@@ -143,7 +162,7 @@ export const render = (rendering: Rendering): string => {
   const lines = itemLines({
     derive: deriveLine(extra),
     specta: spectaOf(rendering),
-    hasFloat: floatsIn(rendering.items),
+    hasFloat: floatsIn([...rendering.items, ...rendering.imported]),
   });
   const sections = pipe(
     [

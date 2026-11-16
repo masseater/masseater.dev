@@ -1,20 +1,16 @@
-use std::sync::Arc;
-
 use axum::Router;
+use media_notes::failure::Outcome;
+use media_notes::mcp::answer;
+use media_notes::source::{link_at, page_of, range, source_of};
+use media_notes::store::Store;
 use rmcp::handler::server::router::tool::ToolRouter;
 use rmcp::handler::server::wrapper::Parameters;
-use rmcp::model::{CallToolResult, ContentBlock, Implementation, ServerCapabilities, ServerConfig};
-use rmcp::transport::streamable_http_server::session::local::LocalSessionManager;
-use rmcp::transport::streamable_http_server::{StreamableHttpServerConfig, StreamableHttpService};
+use rmcp::model::{CallToolResult, Implementation, ServerCapabilities, ServerConfig};
 use rmcp::{ErrorData, ServerHandler, tool, tool_handler, tool_router};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use tokio::net::TcpListener;
 
-use crate::failure::Outcome;
 use crate::protocol::{Aspect, Mark, Verb};
-use crate::source::{clock, link_at, page_of, source_of};
-use crate::store::Store;
 
 pub const PORT: u16 = 47_230;
 
@@ -48,9 +44,9 @@ fn brief_of(mark: Mark) -> Brief {
     let source = &mark.song.source;
     Brief {
         verb: mark.verb,
-        page: page_of(source),
-        link: link_at(source, mark.from),
-        range: format!("{}–{}", clock(mark.from), clock(mark.to)),
+        page: page_of(source).unwrap_or_default(),
+        link: link_at(source, mark.from).unwrap_or_default(),
+        range: range(mark.from, mark.to),
         title: mark.song.title,
         artist: mark.song.artist,
         from: mark.from,
@@ -70,7 +66,7 @@ fn matches(input: &ListInput, mark: &Mark) -> bool {
 fn listed(store: &Store, input: &ListInput) -> Outcome<Vec<Brief>> {
     let source = input.url.as_deref().and_then(source_of);
     Ok(store
-        .list(source.as_ref())?
+        .list::<Mark>(source.as_ref())?
         .into_iter()
         .filter(|mark| matches(input, mark))
         .map(brief_of)
@@ -100,12 +96,7 @@ impl Tools {
         &self,
         Parameters(input): Parameters<ListInput>,
     ) -> Result<CallToolResult, ErrorData> {
-        let answer =
-            listed(&self.store, &input).and_then(|briefs| Ok(serde_json::to_string(&briefs)?));
-        Ok(match answer {
-            Ok(text) => CallToolResult::success(vec![ContentBlock::text(text)]),
-            Err(failure) => CallToolResult::error(vec![ContentBlock::text(failure.message)]),
-        })
+        Ok(answer(listed(&self.store, &input)))
     }
 }
 
@@ -122,48 +113,52 @@ impl ServerHandler for Tools {
 }
 
 fn router(store: Store, token: String) -> Router {
-    let tools = StreamableHttpService::new(
-        move || Ok(Tools::new(store.clone())),
-        Arc::new(LocalSessionManager::default()),
-        StreamableHttpServerConfig::default(),
-    );
-    local_mcp::guarded(
-        Router::new().nest_service(local_mcp::MCP_PATH, tools),
-        token,
-    )
+    local_mcp::router(token, move || Tools::new(store.clone()))
 }
 
-pub async fn serve(store: Store, token: String) -> Outcome<()> {
-    serve_on(
-        TcpListener::bind((local_mcp::HOST, PORT)).await?,
-        store,
-        token,
-    )
-    .await
-}
-
-async fn serve_on(listener: TcpListener, store: Store, token: String) -> Outcome<()> {
-    axum::serve(listener, router(store, token)).await?;
-    Ok(())
+pub async fn serve(store: Store, token: String) -> std::io::Result<()> {
+    local_mcp::serve(PORT, router(store, token)).await
 }
 
 #[cfg(test)]
 mod tests {
+    use media_notes::protocol::{Media, Site, Source};
+    use media_notes::store::Store;
     use tokio::net::TcpListener;
 
-    use super::{ListInput, listed, serve_on};
-    use crate::protocol::{Aspect, Verb};
-    use crate::store::Store;
-    use crate::store::tests::input;
+    use super::{ListInput, listed, router};
+    use crate::commands::{TABLE, saved};
+    use crate::protocol::{Aspect, MarkInput, Verb};
 
     const INITIALIZE: &str = r#"{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"test","version":"0"}}}"#;
+
+    fn input(id: &str, verb: Verb) -> MarkInput {
+        MarkInput {
+            song: Media {
+                source: Source {
+                    site: Site::Youtube,
+                    id: id.to_owned(),
+                },
+                title: "曲".to_owned(),
+                artist: "作者".to_owned(),
+            },
+            from: 61.5,
+            to: 75.0,
+            verb,
+            aspects: vec![Aspect::Bass, Aspect::Chords],
+            words: "ベースが跳ねる".to_owned(),
+        }
+    }
 
     #[tokio::test]
     async fn answers_only_with_the_token() {
         let listener = TcpListener::bind(("127.0.0.1", 0)).await.expect("listener");
         let address = listener.local_addr().expect("address");
-        let store = Store::in_memory().expect("store");
-        tokio::spawn(serve_on(listener, store, "secret".to_owned()));
+        let store = Store::in_memory(TABLE).expect("store");
+        tokio::spawn(local_mcp::serve_on(
+            listener,
+            router(store, "secret".to_owned()),
+        ));
         let client = reqwest::Client::new();
         let url = format!("http://{address}/mcp");
         let ask = |bearer: &str| {
@@ -183,12 +178,10 @@ mod tests {
 
     #[test]
     fn narrows_marks_by_song_verb_and_aspect() {
-        let store = Store::in_memory().expect("store");
-        store.save(input("aaaaaaaaaaa", Verb::Like)).expect("liked");
-        store
-            .save(input("aaaaaaaaaaa", Verb::Dislike))
-            .expect("disliked");
-        store.save(input("bbbbbbbbbbb", Verb::Like)).expect("other");
+        let store = Store::in_memory(TABLE).expect("store");
+        saved(&store, input("aaaaaaaaaaa", Verb::Like)).expect("liked");
+        saved(&store, input("aaaaaaaaaaa", Verb::Dislike)).expect("disliked");
+        saved(&store, input("bbbbbbbbbbb", Verb::Like)).expect("other");
         let song = ListInput {
             url: Some("https://youtu.be/aaaaaaaaaaa".to_owned()),
             verb: Some(Verb::Like),

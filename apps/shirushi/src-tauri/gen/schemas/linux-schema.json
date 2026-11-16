@@ -177,6 +177,12 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Enables the choose_file command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-choose-file",
+          "markdownDescription": "Enables the choose_file command without any pre-configured scope."
+        },
+        {
           "description": "Enables the list_marks command without any pre-configured scope.",
           "type": "string",
           "const": "allow-list-marks",
@@ -187,6 +193,18 @@
           "type": "string",
           "const": "allow-mcp-access",
           "markdownDescription": "Enables the mcp_access command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the open_file command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-open-file",
+          "markdownDescription": "Enables the open_file command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the open_link command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-open-link",
+          "markdownDescription": "Enables the open_link command without any pre-configured scope."
         },
         {
           "description": "Enables the remove_mark command without any pre-configured scope.",
@@ -207,6 +225,12 @@
           "markdownDescription": "Enables the song_at command without any pre-configured scope."
         },
         {
+          "description": "Denies the choose_file command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-choose-file",
+          "markdownDescription": "Denies the choose_file command without any pre-configured scope."
+        },
+        {
           "description": "Denies the list_marks command without any pre-configured scope.",
           "type": "string",
           "const": "deny-list-marks",
@@ -217,6 +241,18 @@
           "type": "string",
           "const": "deny-mcp-access",
           "markdownDescription": "Denies the mcp_access command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the open_file command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-open-file",
+          "markdownDescription": "Denies the open_file command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the open_link command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-open-link",
+          "markdownDescription": "Denies the open_link command without any pre-configured scope."
         },
         {
           "description": "Denies the remove_mark command without any pre-configured scope.",

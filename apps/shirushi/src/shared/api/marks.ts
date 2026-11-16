@@ -1,5 +1,5 @@
-import { MarkSchema, McpAccessSchema, SongSchema } from "@masseater.dev/shirushi-protocol";
-import type { Mark, MarkInput, McpAccess, Song } from "@masseater.dev/shirushi-protocol";
+import { MarkSchema } from "@masseater.dev/shirushi-protocol";
+import type { Mark, MarkInput } from "@masseater.dev/shirushi-protocol";
 import { Effect, Schema } from "effect";
 
 import { commands } from "./generated/bindings.ts";
@@ -31,35 +31,23 @@ const call = <Value>(run: () => Promise<Settled<Value>>): Effect.Effect<Value, A
 
 const decodeMarks = Schema.decodeUnknownEffect(Schema.Array(MarkSchema));
 
-const decodeSong = Schema.decodeUnknownEffect(SongSchema);
-
-const decodeAccess = Schema.decodeUnknownEffect(McpAccessSchema);
-
 const malformed = (cause: unknown): Effect.Effect<never, ApiFailed> => Effect.fail(failed(cause));
 
 /** @internal */
-export const fetchMarks = (link: string): Effect.Effect<readonly Mark[], ApiFailed> =>
-  call(() => commands.listMarks(link)).pipe(
-    Effect.flatMap(decodeMarks),
-    Effect.catchTag("SchemaError", malformed),
-  );
-
-/** @internal */
-export const fetchSong = (link: string): Effect.Effect<Song, ApiFailed> =>
-  call(() => commands.songAt(link)).pipe(
-    Effect.flatMap(decodeSong),
-    Effect.catchTag("SchemaError", malformed),
-  );
+export const fetchMarks: Effect.Effect<readonly Mark[], ApiFailed> = Effect.suspend(() =>
+  call(() => commands.listMarks()),
+).pipe(Effect.flatMap(decodeMarks), Effect.catchTag("SchemaError", malformed));
 
 /** @internal */
 export const postMark = (input: MarkInput): Effect.Effect<void, ApiFailed> =>
-  call(() => commands.saveMark({ ...input, aspects: [...input.aspects] })).pipe(Effect.asVoid);
+  call(() =>
+    commands.saveMark({
+      ...input,
+      song: { ...input.song, source: { ...input.song.source } },
+      aspects: [...input.aspects],
+    }),
+  ).pipe(Effect.asVoid);
 
 /** @internal */
 export const deleteMark = (id: string): Effect.Effect<void, ApiFailed> =>
   call(() => commands.removeMark(id)).pipe(Effect.asVoid);
-
-/** @internal */
-export const mcpAccess: Effect.Effect<McpAccess, ApiFailed> = Effect.suspend(() =>
-  call(() => commands.mcpAccess()),
-).pipe(Effect.flatMap(decodeAccess), Effect.catchTag("SchemaError", malformed));

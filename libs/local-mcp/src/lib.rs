@@ -9,6 +9,10 @@ use axum::extract::{Request, State};
 use axum::http::{HeaderMap, StatusCode, header};
 use axum::middleware::{self, Next};
 use axum::response::{IntoResponse, Response};
+use rmcp::ServerHandler;
+use rmcp::transport::streamable_http_server::session::local::LocalSessionManager;
+use rmcp::transport::streamable_http_server::{StreamableHttpServerConfig, StreamableHttpService};
+use tokio::net::TcpListener;
 
 pub const HOST: &str = "127.0.0.1";
 pub const MCP_PATH: &str = "/mcp";
@@ -69,8 +73,28 @@ async fn authorized(State(token): State<Arc<String>>, request: Request, next: Ne
     StatusCode::UNAUTHORIZED.into_response()
 }
 
-pub fn guarded(router: Router, token: String) -> Router {
+fn guarded(router: Router, token: String) -> Router {
     router.layer(middleware::from_fn_with_state(Arc::new(token), authorized))
+}
+
+pub fn router<S: ServerHandler + Send + 'static>(
+    token: String,
+    tools: impl Fn() -> S + Send + Sync + 'static,
+) -> Router {
+    let service = StreamableHttpService::new(
+        move || Ok(tools()),
+        Arc::new(LocalSessionManager::default()),
+        StreamableHttpServerConfig::default(),
+    );
+    guarded(Router::new().nest_service(MCP_PATH, service), token)
+}
+
+pub async fn serve(port: u16, router: Router) -> io::Result<()> {
+    serve_on(TcpListener::bind((HOST, port)).await?, router).await
+}
+
+pub async fn serve_on(listener: TcpListener, router: Router) -> io::Result<()> {
+    axum::serve(listener, router).await
 }
 
 #[cfg(test)]

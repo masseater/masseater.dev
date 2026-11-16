@@ -1,36 +1,30 @@
 import { useAtomSet } from "@effect/atom-react";
+import { linkAtom, openLinkAtom, pageOf } from "@masseater.dev/media-notes-ui";
 import type { Mark } from "@masseater.dev/shirushi-protocol";
+import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
 import { MarkList, removeAtom, useMarks } from "#/entities/mark";
-import { linkAtom, loadAtom } from "#/features/load-song";
-import { pageOf } from "#/shared/lib/source";
-
-const EVERY_SONG = "";
 
 export const Library = (): ReactNode => {
-  const marks = useMarks(EVERY_SONG);
+  const marks = useMarks(Option.none());
   const setLink = useAtomSet(linkAtom);
-  const load = useAtomSet(loadAtom);
+  const open = useAtomSet(openLinkAtom);
   const remove = useAtomSet(removeAtom);
   const pick = useCallback(
     ({ song }: Mark) => {
-      const page = pageOf(song.source);
-      setLink(page);
-      load(page);
+      Option.map(pageOf(song.source), (page) => {
+        setLink(page);
+        open(page);
+        return page;
+      });
     },
-    [setLink, load],
-  );
-  const removeOne = useCallback(
-    (id: string) => {
-      remove({ id, link: EVERY_SONG });
-    },
-    [remove],
+    [setLink, open],
   );
   return (
     <section className="max-w-2xl">
-      <MarkList marks={marks} showSong onPick={pick} onRemove={removeOne} />
+      <MarkList marks={marks} showSong onPick={pick} onRemove={remove} />
     </section>
   );
 };
