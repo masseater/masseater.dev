@@ -1,3 +1,4 @@
+import { ignoredDirectories } from "@r_masseater/msch/workspace-settings";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
@@ -51,7 +52,12 @@ export default defineConfig({
     tasks: {
       test: "vp test run",
       verify: { command: [], dependsOn: ["build"] },
-      build: "vp pack",
+      build: {
+        command: "vp pack",
+        cache: {
+          input: [{ auto: true }, ...(await ignoredDirectories(`${import.meta.dirname}/../..`))],
+        },
+      },
     },
   },
 });
