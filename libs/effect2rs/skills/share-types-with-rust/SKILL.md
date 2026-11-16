@@ -30,7 +30,7 @@ Define the type as an Effect Schema in the app's `libs/<app>-protocol` package.
 Give every struct, enum, and alias an `identifier` annotation.
 effect2rs refuses an anonymous nested struct and reports its path.
 
-Export the schema from a module that `tools/protocol-codegen/src/features/generate-rust/model/rust.ts` already passes as `definitions`.
+Export the schema from a module that the Rust generator of `tools/protocol-codegen` passes as `definitions`.
 The codegen spreads whole modules into `definitions`, so a new export is generated without touching it.
 Do not pick names one by one, because a name you forget is never generated.
 

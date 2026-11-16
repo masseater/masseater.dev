@@ -196,7 +196,8 @@ createDecisionPlugin({
 });
 ```
 
-Keys are read only from environment variables; `env` values are variable names, not keys (`src/entities/decision/model/options.ts`, `src/entities/decision/model/runtime.ts`).
+Keys are read only from environment variables, and `env` values are variable names, not keys.
+See `options.ts` and `runtime.ts` in `src/entities/decision/model/`.
 
 ### HIGH: a broad target on a whole codebase
 
