@@ -61,22 +61,9 @@ const shirushiRust = Effect.gen(function* shirushiRust() {
   return output;
 });
 
-const akapenRust = Effect.gen(function* akapenRust() {
-  const definitions = yield* Effect.promise(() => import("@masseater.dev/akapen-protocol"));
-  const output: RustOutput = {
-    output: "../../apps/akapen/src-tauri/src/protocol.rs",
-    header: HEADER,
-    derive: DESKTOP_DERIVE,
-    definitions,
-    external: fromMediaNotes,
-  };
-  return output;
-});
-
 export const rustOutputs = Effect.all([
   Effect.succeed(aredokoRust),
   yohakuRust,
   mediaNotesRust,
   shirushiRust,
-  akapenRust,
 ]);
