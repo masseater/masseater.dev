@@ -606,8 +606,8 @@ catalogs:
       specifier: 6.0.1
       version: 6.0.1
     driver.js:
-      specifier: 1.13.0
-      version: 1.13.0
+      specifier: 1.14.0
+      version: 1.14.0
     entities:
       specifier: 9.0.0
       version: 9.0.0
@@ -3050,7 +3050,7 @@ importers:
         version: 2.7.3
       driver.js:
         specifier: 'catalog:'
-        version: 1.13.0
+        version: 1.14.0
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -12716,8 +12716,8 @@ packages:
   doublearray@0.0.2:
     resolution: {integrity: sha512-aw55FtZzT6AmiamEj2kvmR6BuFqvYgKZUkfQ7teqVRNqD5UE0rw8IeW/3gieHNKQ5sPuDKlljWEn4bzv5+1bHw==}
 
-  driver.js@1.13.0:
-    resolution: {integrity: sha512-MppOO4r77bXEXWp1LF/xJZCwcPKq+p9/kisbH9Sd/upeGxZjR3hbvF+ar2N80ElaF0hC/2OGrJ9FKpQdSPCd9A==}
+  driver.js@1.14.0:
+    resolution: {integrity: sha512-BnCFuNU8QO2rrYiDra43Ortx6D6chqMvEMF1q3fWQfsC3xNyCX4T1P1vZDTXTxGdtcXh2v5r11hxSpNLF3DJVw==}
 
   drizzle-kit@1.0.0-rc.5-ab785fc:
     resolution: {integrity: sha512-TSg7sK1finOxdo48O9mDfyMY3lhi/aHCVIil5TFhthyq/H/89H/3nwX5V9Gdp7HYMUGFHyWJD5iowSn98l0elw==}
@@ -24454,7 +24454,7 @@ snapshots:
 
   doublearray@0.0.2: {}
 
-  driver.js@1.13.0: {}
+  driver.js@1.14.0: {}
 
   drizzle-kit@1.0.0-rc.5-ab785fc:
     dependencies:
