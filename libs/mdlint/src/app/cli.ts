@@ -104,12 +104,11 @@ const main = Effect.gen(function* main() {
   );
 });
 
-const tracing = Otlp.layerFromConfig({ resource: { serviceName: "mdlint" } }).pipe(
+const services = Otlp.layerFromConfig({ resource: { serviceName: "mdlint" } }).pipe(
   Layer.provide(OtlpSerialization.layerJson),
   Layer.provide(FetchHttpClient.layer),
+  Layer.provideMerge(NodeServices.layer),
 );
-
-const services = Layer.merge(NodeServices.layer, tracing);
 
 export const runCli = (): void => {
   runMain(main.pipe(Effect.provide(services)));
