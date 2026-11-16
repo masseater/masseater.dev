@@ -1,7 +1,7 @@
 import type { MixPlayer, PlayerSetup, TapeSource } from "@masseater.dev/daw-view/worklet";
 import { Array as Arr, Option, Schema, pipe } from "effect";
 
-import { SAMPLE_RATE, orDefault } from "#/entities/song/lib/dsp/number.ts";
+import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
 import { trackAdded } from "#/entities/song/lib/live/tape.ts";
 import type { Ramps } from "#/entities/song/lib/live/tape.ts";
 import { slide, targetsOf } from "#/entities/song/lib/live/targets.ts";
@@ -112,7 +112,7 @@ export const playerOf = ({ init, tape, sampleRate }: PlayerSetup): MixPlayer => 
   const cursor = { position: SILENT };
   return transportOf({
     targets,
-    ratio: SAMPLE_RATE / orDefault(SAMPLE_RATE)(sampleRate),
+    sampleRate,
     source: {
       frames: setup.frames,
       position: () => cursor.position,

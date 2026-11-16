@@ -1,6 +1,8 @@
 import type { MixMessage, MixPlayer } from "@masseater.dev/daw-view/worklet";
 import { Option, Predicate, pipe } from "effect";
 
+import { SAMPLE_RATE, orDefault } from "#/entities/song/lib/dsp/number.ts";
+
 import { aimed } from "./targets.ts";
 import type { Targets } from "./targets.ts";
 
@@ -89,7 +91,7 @@ const fadedIn = (left: Float32Array, right: Float32Array, frames: number): void 
 export interface Transport {
   readonly source: Source;
   readonly targets: Targets;
-  readonly ratio: number;
+  readonly sampleRate: number;
 }
 
 interface CueState {
@@ -182,7 +184,8 @@ const cued =
     }
   };
 
-export const transportOf = ({ source, targets, ratio }: Transport): MixPlayer => {
+export const transportOf = ({ source, targets, sampleRate }: Transport): MixPlayer => {
+  const ratio = SAMPLE_RATE / orDefault(SAMPLE_RATE)(sampleRate);
   const cue = cueOf();
   const deck = { source, resampler: resamplerOf(source.fill, ratio), cue };
   return { msg: cued(cue, targets), render: rendered(deck) };

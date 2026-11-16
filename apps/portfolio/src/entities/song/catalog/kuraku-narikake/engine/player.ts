@@ -1,7 +1,6 @@
 import type { MixPlayer, PlayerSetup } from "@masseater.dev/daw-view/worklet";
-import { Option, Schema } from "effect";
+import { Option, Schema, pipe } from "effect";
 
-import { SAMPLE_RATE, orDefault } from "#/entities/song/lib/dsp/number.ts";
 import { targetsOf } from "#/entities/song/lib/live/targets.ts";
 import { transportOf } from "#/entities/song/lib/live/transport.ts";
 
@@ -23,14 +22,17 @@ const initOf = Schema.decodeUnknownOption(LiveInitSchema);
 const EMPTY: LiveInit = { frames: SILENT, drums: [], curves: curvesFor(SILENT) };
 
 export const playerOf = ({ init, tape, sampleRate }: PlayerSetup): MixPlayer => {
-  const setup = Option.getOrElse(initOf(init), () => EMPTY);
-  const targets = targetsOf(setup.drums.length);
-  const core = coreOf({ frames: setup.frames, drums: setup.drums, tape, curves: setup.curves });
+  const { frames, drums, curves } = pipe(
+    initOf(init),
+    Option.getOrElse(() => EMPTY),
+  );
+  const targets = targetsOf(drums.length);
+  const core = coreOf({ frames, drums, tape, curves });
   return transportOf({
     targets,
-    ratio: SAMPLE_RATE / orDefault(SAMPLE_RATE)(sampleRate),
+    sampleRate,
     source: {
-      frames: setup.frames,
+      frames,
       position: () => positionOf(core),
       seek: (frame) => {
         seek(frame)(core);

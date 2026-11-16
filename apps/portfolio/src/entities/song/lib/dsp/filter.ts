@@ -79,13 +79,17 @@ const retuned = (run: SvfRun, index: number): void => {
   }
 };
 
-const lowPass = (x: Float32Array, run: SvfRun): void => {
-  for (let index = run.start; index < run.end; index += STEP) {
-    retuned(run, index);
-    stepped(run.state, x[index] ?? SILENT);
-    x[index] = run.state[AT.low] ?? SILENT;
-  }
-};
+const tapped =
+  (slot: number) =>
+  (x: Float32Array, run: SvfRun): void => {
+    for (let index = run.start; index < run.end; index += STEP) {
+      retuned(run, index);
+      stepped(run.state, x[index] ?? SILENT);
+      x[index] = run.state[slot] ?? SILENT;
+    }
+  };
+
+const lowPass = tapped(AT.low);
 
 const highPass = (x: Float32Array, run: SvfRun): void => {
   for (let index = run.start; index < run.end; index += STEP) {
@@ -96,13 +100,7 @@ const highPass = (x: Float32Array, run: SvfRun): void => {
   }
 };
 
-const bandPass = (x: Float32Array, run: SvfRun): void => {
-  for (let index = run.start; index < run.end; index += STEP) {
-    retuned(run, index);
-    stepped(run.state, x[index] ?? SILENT);
-    x[index] = run.state[AT.band] ?? SILENT;
-  }
-};
+const bandPass = tapped(AT.band);
 
 const PASSES: Readonly<Record<SvfKind, (x: Float32Array, run: SvfRun) => void>> = {
   [SVF.low]: lowPass,
