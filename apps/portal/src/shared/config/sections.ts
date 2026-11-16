@@ -1,3 +1,4 @@
+import type { RegisteredRouter } from "@tanstack/react-router";
 import {
   FileText,
   History,
@@ -12,17 +13,10 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-export type PortalPath =
-  | "/"
-  | "/timeline"
-  | "/records"
-  | "/memos"
-  | "/profile"
-  | "/conversations"
-  | "/money"
-  | "/slides"
-  | "/credentials"
-  | "/search";
+export type PortalPath = Exclude<
+  RegisteredRouter["routeTree"]["types"]["fileRouteTypes"]["to"],
+  `${string}$${string}`
+>;
 
 export type NavItem = Readonly<{ label: string; to: PortalPath }>;
 

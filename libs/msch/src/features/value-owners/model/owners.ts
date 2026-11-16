@@ -246,3 +246,26 @@ export const combineOwnerScans = (scans: readonly OwnerScan[]): OwnerScan => {
   ];
   return { owners, problems };
 };
+
+export const ownerDeclarationsIn =
+  (owners: readonly Owner[]) =>
+  (project: Project): readonly VariableDeclaration[] => {
+    const keys = new Set(
+      pipe(
+        owners,
+        Arr.map((owner) => owner.key),
+      ),
+    );
+    return pipe(
+      project.sourceFiles,
+      Arr.flatMap((sourceFile) =>
+        pipe(
+          descendantsOf(sourceFile),
+          Arr.filter((node) => isVariableDeclaration(node)),
+          Arr.filter((declaration) =>
+            Option.exists(ownerKeyOf(declaration), (key) => keys.has(key)),
+          ),
+        ),
+      ),
+    );
+  };

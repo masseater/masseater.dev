@@ -5,6 +5,7 @@ export {
   NOUL_THRESHOLD,
   OutcomeSchema,
 } from "./model/item.ts";
+export { RULE_THEMES } from "./model/rule-themes.ts";
 export type {
   ChoiceItem,
   Decision,

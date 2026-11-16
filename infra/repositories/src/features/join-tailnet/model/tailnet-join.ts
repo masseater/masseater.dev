@@ -2,12 +2,8 @@ import { Clock, DateTime, Effect, Schema } from "effect";
 import type { Cause } from "effect";
 import { SignJWT } from "jose";
 
-import {
-  JWT_ALGORITHM,
-  oidcSigner,
-  publicJwk,
-  sshCaKey,
-} from "#/features/join-tailnet/api/tailnet.ts";
+import { oidcSigner, publicJwk, sshCaKey } from "#/features/join-tailnet/api/tailnet.ts";
+import { JWT_ALGORITHM } from "#/features/join-tailnet/model/signing-keys.ts";
 import type { AppStoreEnv } from "#/shared/api/index.ts";
 import { AGENT_SUBJECT, AGENT_TAG, SSH_USER, TAILNET_ISSUER } from "#/shared/config/index.ts";
 import type { SealFailed } from "#/shared/lib/sealed-value.ts";

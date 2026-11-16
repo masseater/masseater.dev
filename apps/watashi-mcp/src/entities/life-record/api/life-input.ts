@@ -15,7 +15,7 @@ import {
   Time,
   TodoBody,
 } from "#/entities/life-record/model/life-body.ts";
-import { LIFE_RECORDS } from "#/shared/db/index.ts";
+import { LIFE_RECORDS, SOURCES } from "#/shared/db/index.ts";
 
 import { BUCKETS } from "./life-groups.ts";
 
@@ -29,15 +29,13 @@ export const DEFAULT_PERIODS = 4;
 
 const MAX_PERIODS = 24;
 
-const SAID_SOURCES = ["said", "provided", "imported"] as const;
-
 const READ_ORDERS = ["time", "recent", "relevance"] as const;
 
 const Text = Schema.NonEmptyString;
 
 const Names = Schema.Array(Text);
 
-const Source = Schema.Literals(SAID_SOURCES).annotate({
+const Source = Schema.Literals(SOURCES).pick(["said", "provided", "imported"]).annotate({
   description:
     "said: the owner said it in this conversation. provided: a file or screen the owner gave. imported: a linked service. Never write from AI memos, other notes or guesses.",
 });

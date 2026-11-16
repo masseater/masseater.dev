@@ -1,22 +1,22 @@
 import { Option, Array as Arr, pipe } from "effect";
 
 import type { Project, SourceCheck } from "#/entities/project/index.ts";
-import { isVariableDeclaration } from "#/shared/lib/compiler.ts";
-import type { Checker, Node, VariableDeclaration } from "#/shared/lib/compiler.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
-import { contains, descendantsOf } from "#/shared/lib/syntax.ts";
 
 import { flowsIn } from "./flows.ts";
-import { ownerKeyOf } from "./owners.ts";
+import { fileFactsIn } from "./free-literals.ts";
+import type { FileFacts } from "./free-literals.ts";
+import { ownerDeclarationsIn } from "./owners.ts";
 import type { Owner } from "./owners.ts";
 import { shapeProblemsIn } from "./shapes.ts";
-import { sitesUnder } from "./sites.ts";
+import { sitesOutside } from "./sites.ts";
 import type { ValueSite } from "./sites.ts";
 import { ownedLiteralProblems, siteVerdict } from "./value-checks.ts";
 
 export interface ProjectAnalysis {
   readonly problems: readonly Problem[];
   readonly unowned: readonly ValueSite[];
+  readonly literals: readonly FileFacts[];
 }
 
 const isVisibleTo =
@@ -32,46 +32,7 @@ const isVisibleTo =
         Option.contains(project.packageName, name) || project.workspaceDependencies.includes(name),
     );
 
-const ownerDeclarationsIn = (
-  project: Project,
-  owners: readonly Owner[],
-): readonly VariableDeclaration[] => {
-  const keys = new Set(
-    pipe(
-      owners,
-      Arr.map((owner) => owner.key),
-    ),
-  );
-  return pipe(
-    project.sourceFiles,
-    Arr.flatMap((sourceFile) =>
-      pipe(
-        descendantsOf(sourceFile),
-        Arr.filter((node) => isVariableDeclaration(node)),
-        Arr.filter((declaration) => Option.exists(ownerKeyOf(declaration), (key) => keys.has(key))),
-      ),
-    ),
-  );
-};
-
-const isInside =
-  (outers: readonly Node[]) =>
-  (node: Node): boolean =>
-    pipe(
-      outers,
-      Arr.some((outer) => contains(outer)(node)),
-    );
-
-const sitesOutside =
-  (checker: Checker) =>
-  (project: Project, outers: readonly Node[]): readonly ValueSite[] =>
-    pipe(
-      project.sourceFiles,
-      Arr.flatMap((sourceFile) => sitesUnder(checker)(sourceFile)),
-      Arr.filter((site) => !isInside(outers)(site.node)),
-    );
-
-const nodesOf = (sites: readonly ValueSite[]): readonly Node[] =>
+const nodesOf = (sites: readonly ValueSite[]): readonly ValueSite["node"][] =>
   pipe(
     sites,
     Arr.map((site) => site.node),
@@ -86,7 +47,7 @@ export const analyzeProject =
   ({ owners, sourceChecks }: ProjectChecks) =>
   (project: Project): ProjectAnalysis => {
     const { checker } = project;
-    const ownerDeclarations = ownerDeclarationsIn(project, owners);
+    const ownerDeclarations = ownerDeclarationsIn(owners)(project);
     const sites = sitesOutside(checker)(project, ownerDeclarations);
     const flowContext = { checker, program: project.program, sites };
     const context = {
@@ -129,5 +90,6 @@ export const analyzeProject =
         verdicts,
         Arr.flatMap((found) => found.unowned),
       ),
+      literals: fileFactsIn(checker)(project.sourceFiles, excluded),
     };
   };
