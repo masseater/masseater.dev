@@ -33,6 +33,7 @@ export default defineConfig({ lint });
 decision ルールは呼ぶたびに費用がかかるので、プリセットは有効にしない。
 `decisionRules` を掛けたいファイルの overrides に渡す。
 `tracedRules` は、@r_masseater/workers-tracing でスパンを取る Worker のコードの overrides に渡す。
+`remotionRules` は、Remotion で動画を組むワークスペースの overrides に渡す。
 
 Vite+ はワークスペースの `vite.config.ts` の `lint` を使わない。
 1 つのワークスペースだけに効く設定は、そのワークスペースの `vite.config.ts` の `msch` にリテラルで書く。
