@@ -4,7 +4,7 @@ import { EMPTY_TAKE, sessionOf } from "#/entities/song/index.ts";
 import type { NoteEvent, Structure, Session } from "#/entities/song/index.ts";
 
 import type { Shade } from "./mix.ts";
-import { UNMIXED, heardIn, mixingOf, toggled } from "./mixing.ts";
+import { UNMIXED, heardIn, toggled } from "./mixing.ts";
 import type { Change, Mixing } from "./mixing.ts";
 import type { Size } from "./pen.ts";
 import { layoutOf } from "./roll-layout.ts";
@@ -56,9 +56,11 @@ export const settled = (model: Model): Model => {
 };
 
 export const mixedWith =
-  (tracks: readonly string[]) =>
+  (mixing: Mixing) =>
   (model: Model): Model =>
-    settled({ ...model, mixing: mixingOf(tracks) });
+    settled({ ...model, mixing });
+
+export const unmixed: (model: Model) => Model = mixedWith(UNMIXED);
 
 export const flippedBy =
   (change: Change) =>

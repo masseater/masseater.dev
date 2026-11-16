@@ -4,6 +4,8 @@ import type { Heading } from "#/widgets/daw-view/ui/page.ts";
 import type { Credit } from "#/widgets/daw-view/ui/panels.ts";
 
 import type { Mixdown } from "./mix.ts";
+import type { Mixer } from "./mixing.ts";
+import type { Tape } from "./tape.ts";
 
 export interface Progress {
   readonly share: number;
@@ -19,7 +21,7 @@ export interface RenderSession {
 export interface MixMessage {
   readonly play?: number;
   readonly stop?: true;
-  readonly gains?: Float32Array;
+  readonly mixers?: readonly Mixer[];
 }
 
 export interface MixPlayer {
@@ -32,6 +34,8 @@ export interface LiveMix {
   readonly player: string;
   readonly init: unknown;
   readonly transfer: readonly ArrayBuffer[];
+  readonly tape?: Tape;
+  readonly mixers?: Readonly<Record<string, Mixer>>;
 }
 
 export interface Rendered extends Mixdown {

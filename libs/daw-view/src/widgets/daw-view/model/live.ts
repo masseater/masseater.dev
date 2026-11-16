@@ -6,23 +6,76 @@ const PROCESSOR = "daw-view-mix";
 const NONE = 0;
 const ONE = 1;
 const STEREO = 2;
+const AHEAD_BLOCKS = 8;
 
 export const HEARD = { silent: 0, started: 1, ended: 2 } as const;
 
-const moduleOf = (player: string): string => `const createPlayer = ${player};
-registerProcessor("${PROCESSOR}", class extends AudioWorkletProcessor {
+const READER = `const AHEAD = ${AHEAD_BLOCKS};
+class TapeReader {
+  constructor(port, frames, blocks) {
+    this.port = port;
+    this.frames = frames;
+    this.blocks = blocks;
+    this.held = new Map();
+    this.at = -2;
+    this.pin = -2;
+    port.onmessage = ({ data }) => {
+      if (this.held.has(data.block)) this.held.set(data.block, data.tracks);
+    };
+  }
+  near(k, b) {
+    return k >= b - 1 && k <= b + AHEAD;
+  }
+  keep(b) {
+    for (const k of this.held.keys()) {
+      if (!this.near(k, this.at) && !this.near(k, this.pin)) this.held.delete(k);
+    }
+    for (let k = Math.max(0, b); k <= b + AHEAD && k < this.blocks; k++) {
+      if (!this.held.has(k)) {
+        this.held.set(k, null);
+        this.port.postMessage({ want: k });
+      }
+    }
+  }
+  block(b) {
+    if (b !== this.at) {
+      this.at = b;
+      this.keep(b);
+    }
+    return this.held.get(b) || null;
+  }
+  ready(frame) {
+    const b = Math.floor(frame / this.frames);
+    if (b !== this.pin) {
+      this.pin = b;
+      this.keep(b);
+    }
+    return Boolean(this.held.get(b)) && (b + 1 >= this.blocks || Boolean(this.held.get(b + 1)));
+  }
+}
+`;
+
+const WORKLET = `registerProcessor("${PROCESSOR}", class extends AudioWorkletProcessor {
   constructor() {
     super();
     this.player = null;
+    this.tape = null;
+    this.wait = null;
     this.cue = 0;
     this.port.onmessage = ({ data }) => {
       if ("init" in data) {
-        this.player = createPlayer(data.init, sampleRate);
+        if (data.tape) this.tape = new TapeReader(data.tape, data.frames, data.blocks);
+        this.player = createPlayer(data.init, sampleRate, this.tape);
         return;
       }
       if (data.play !== undefined) {
         this.cue = data.play;
+        if (this.tape) {
+          this.wait = data.play;
+          return;
+        }
       }
+      if (data.stop) this.wait = null;
       if (this.player) {
         this.player.msg(data);
       }
@@ -30,6 +83,10 @@ registerProcessor("${PROCESSOR}", class extends AudioWorkletProcessor {
   }
   process(inputs, outputs) {
     const [left, right] = outputs[0];
+    if (this.player && this.wait !== null && this.tape.ready(this.wait)) {
+      this.player.msg({ play: this.wait });
+      this.wait = null;
+    }
     if (this.player && right) {
       const heard = this.player.render(left, right, left.length);
       if (heard !== ${HEARD.silent}) {
@@ -40,6 +97,8 @@ registerProcessor("${PROCESSOR}", class extends AudioWorkletProcessor {
   }
 });
 `;
+
+const moduleOf = (player: string): string => `const createPlayer = ${player};\n${READER}${WORKLET}`;
 
 const taggedError = Schema.TaggedError;
 
@@ -71,6 +130,18 @@ export interface LiveOpening {
   readonly live: LiveMix;
   readonly onHeard: (event: Heard) => void;
 }
+
+const initOf = (live: LiveMix): readonly [unknown, Transferable[]] =>
+  Option.match(Option.fromUndefinedOr(live.tape), {
+    onNone: () => [{ init: live.init }, [...live.transfer]],
+    onSome: (tape) => {
+      const port = tape.port();
+      return [
+        { init: live.init, tape: port, frames: tape.frames, blocks: tape.blocks },
+        [...live.transfer, port],
+      ];
+    },
+  });
 
 export const liveSupported = (): boolean => "AudioWorkletNode" in globalThis;
 
@@ -112,7 +183,7 @@ export const openLive = Effect.fn("live.open")(function* openLive({
     }
   });
   node.port.start();
-  node.port.postMessage({ init: live.init }, [...live.transfer]);
+  node.port.postMessage(...initOf(live));
   const opened: LiveNode = {
     send: (message) => {
       node.port.postMessage(message, []);
