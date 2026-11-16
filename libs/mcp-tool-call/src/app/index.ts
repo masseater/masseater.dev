@@ -1,6 +1,6 @@
 export { accessMcpEndpoint } from "#/features/serve-access-mcp/index.ts";
 export type { AccessMcp } from "#/features/serve-access-mcp/index.ts";
-export { callerOf } from "#/entities/tool-call/index.ts";
+export { callerOf, compactInput } from "#/entities/tool-call/index.ts";
 export type { Caller, CallerSource } from "#/entities/tool-call/index.ts";
 export { mcpWorker } from "#/shared/lib/mcp-worker.ts";
 export {

@@ -13,7 +13,7 @@ import { AccessTokenInput } from "./access-token-input.ts";
 const ONE_TOKEN = 1;
 
 const DESCRIPTION =
-  "Cloudflare Access の背後にある持ち主のサイトを開くための OAuth のアクセストークンを返す。トークンは Access の Managed OAuth が、持ち主と同じ Google のログインを通して出したもので、リクエストに Authorization: Bearer <accessToken> を付けて使う。期限は expiresAt で、切れたらもう一度呼ぶ。status が login のときは、持ち主に loginUrl を開いて Google でログインしてもらう。";
+  "Return an OAuth access token for one of the owner's sites behind Cloudflare Access.";
 
 const INPUT_SCHEMA = AccessTokenInput.pipe(
   Schema.toStandardSchemaV1,

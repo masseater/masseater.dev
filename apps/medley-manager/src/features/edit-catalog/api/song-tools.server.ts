@@ -1,3 +1,4 @@
+import { compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
@@ -11,13 +12,23 @@ const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint:
 const CREATE_SCHEMA = CreateSongInput.pipe(
   Schema.toStandardSchemaV1,
   Schema.toStandardJSONSchemaV1,
+  compactInput,
 );
 const UPDATE_SCHEMA = UpdateSongInput.pipe(
   Schema.toStandardSchemaV1,
   Schema.toStandardJSONSchemaV1,
+  compactInput,
 );
-const ID_SCHEMA = IdInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
-const MERGE_SCHEMA = MergeInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const ID_SCHEMA = IdInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+  compactInput,
+);
+const MERGE_SCHEMA = MergeInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+  compactInput,
+);
 
 export const registerSongTools = (server: McpServer): McpServer => {
   server.registerTool(
