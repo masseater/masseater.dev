@@ -1,6 +1,6 @@
 import type { Caller, UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { NO_PROJECT } from "@masseater.dev/mcp-tool-call";
-import type { JoinedTailnet } from "@masseater.dev/repositories/credential-broker.worker";
+import type { JoinedTailnet } from "@masseater.dev/repositories/credential-broker";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { env } from "cloudflare:workers";
 import { Effect, Schema } from "effect";

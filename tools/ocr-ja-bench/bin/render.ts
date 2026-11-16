@@ -15,7 +15,7 @@ const SCALE = { clean: 2, small: 1, degraded: 1 } as const;
 const render = Effect.gen(function* render() {
   const fs = yield* FileSystem.FileSystem;
   const pages = yield* fs
-    .readFileString(new URL("synthetic.json", DATA).pathname)
+    .readFileString(new URL("./synthetic.json", DATA).pathname)
     .pipe(Effect.flatMap(Schema.decodeEffect(SyntheticPagesSchema)));
   yield* fs.makeDirectory(DRAFTS.pathname, { recursive: true });
   const browser = yield* launchBrowser;
