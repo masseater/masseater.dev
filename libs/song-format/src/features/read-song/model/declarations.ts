@@ -25,7 +25,6 @@ import type {
   Kit,
   Sample,
   SingleSample,
-  Song as SongNode,
   Track as TrackNode,
   TrackSource,
   Zone,
@@ -125,9 +124,9 @@ const duckOf: From<Duck, Compiled<Declarations["ducks"][number]>> = (node) => {
   };
 };
 
-const grooveOf: From<SongNode, Compiled<Declarations["groove"]>> = (song) =>
+const grooveOf: From<readonly Declaration[], Compiled<Declarations["groove"]>> = (declarations) =>
   pipe(
-    song.declarations,
+    declarations,
     Arr.filter(isGroove),
     Arr.head,
     Option.match({
@@ -153,9 +152,9 @@ const chainsOf: From<Declaration, readonly FxChain[]> = (declaration) => {
   return [];
 };
 
-const delayProblemsOf: From<SongNode, readonly Problem[]> = (song) =>
+const delayProblemsOf: From<readonly Declaration[], readonly Problem[]> = (declarations) =>
   pipe(
-    song.declarations,
+    declarations,
     Arr.flatMap(chainsOf),
     Arr.flatMap((chain) => chain.effects),
     Arr.filter(isDelay),
@@ -169,24 +168,24 @@ const delayProblemsOf: From<SongNode, readonly Problem[]> = (song) =>
     ),
   );
 
-type Named = Sample | Kit | Instrument | Bus | TrackNode;
+export type Named = Sample | Kit | Instrument | Bus | TrackNode;
 
-const namespaceOf: From<Named, string> = (node) => {
+export const namespaceOf: From<Named, string> = (node) => {
   if (isBus(node) || isTrack(node)) {
     return "mixable";
   }
   return node.$type;
 };
 
-const isNamed: Predicate.Refinement<Declaration, Named> = (declaration) =>
+export const isNamed: Predicate.Refinement<Declaration, Named> = (declaration) =>
   isSample(declaration) ||
   isKit(declaration) ||
   isInstrument(declaration) ||
   isBus(declaration) ||
   isTrack(declaration);
 
-const duplicateProblemsOf: From<SongNode, readonly Problem[]> = (song) => {
-  const named = pipe(song.declarations, Arr.filter(isNamed));
+const duplicateProblemsOf: From<readonly Declaration[], readonly Problem[]> = (declarations) => {
+  const named = pipe(declarations, Arr.filter(isNamed));
   return pipe(
     named,
     Arr.filter((node, index) =>
@@ -221,25 +220,27 @@ const kitOf: From<Kit, Declarations["kits"][number]> = (kit) => ({
   ),
 });
 
-export const declarationsOf: From<SongNode, Compiled<Declarations>> = (song) => {
-  const instruments = pipe(song.declarations, Arr.filter(isInstrument), Arr.map(instrumentOf));
-  const ducks = pipe(song.declarations, Arr.filter(isDuck), Arr.map(duckOf));
-  const groove = grooveOf(song);
+export const declarationsOf: From<readonly Declaration[], Compiled<Declarations>> = (
+  declarations,
+) => {
+  const instruments = pipe(declarations, Arr.filter(isInstrument), Arr.map(instrumentOf));
+  const ducks = pipe(declarations, Arr.filter(isDuck), Arr.map(duckOf));
+  const groove = grooveOf(declarations);
   return {
     value: {
       groove: groove.value,
       samples: pipe(
-        song.declarations,
+        declarations,
         Arr.filter(isSample),
         Arr.map((sample) => ({ name: sample.name, path: sample.path, slices: slicesOf(sample) })),
       ),
-      kits: pipe(song.declarations, Arr.filter(isKit), Arr.map(kitOf)),
+      kits: pipe(declarations, Arr.filter(isKit), Arr.map(kitOf)),
       instruments: pipe(
         instruments,
         Arr.map((instrument) => instrument.value),
       ),
       buses: pipe(
-        song.declarations,
+        declarations,
         Arr.filter(isBus),
         Arr.map((bus) => ({
           name: bus.name,
@@ -248,13 +249,13 @@ export const declarationsOf: From<SongNode, Compiled<Declarations>> = (song) => 
           sends: pipe(bus.sends, Arr.map(sendOf)),
         })),
       ),
-      tracks: pipe(song.declarations, Arr.filter(isTrack), Arr.map(trackOf)),
+      tracks: pipe(declarations, Arr.filter(isTrack), Arr.map(trackOf)),
       ducks: pipe(
         ducks,
         Arr.map((duck) => duck.value),
       ),
       master: pipe(
-        song.declarations,
+        declarations,
         Arr.filter(isMaster),
         Arr.flatMap((master) => effectsOf(master.fx)),
       ),
@@ -263,8 +264,8 @@ export const declarationsOf: From<SongNode, Compiled<Declarations>> = (song) => 
       ...groove.problems,
       ...problemsOf(instruments),
       ...problemsOf(ducks),
-      ...delayProblemsOf(song),
-      ...duplicateProblemsOf(song),
+      ...delayProblemsOf(declarations),
+      ...duplicateProblemsOf(declarations),
     ],
   };
 };

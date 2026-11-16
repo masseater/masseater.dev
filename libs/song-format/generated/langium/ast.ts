@@ -29,17 +29,28 @@ export const FuTerminals = {
 export type FuTerminalNames = keyof typeof FuTerminals;
 
 export type FuKeywordNames =
+    | "!="
     | "("
     | ")"
+    | "*"
     | "+"
     | ","
+    | "-"
     | "->"
     | "."
+    | "/"
     | ":"
+    | "<"
+    | "<="
+    | "="
+    | "=="
+    | ">"
+    | ">="
     | "["
     | "]"
     | "_"
     | "accent"
+    | "and"
     | "attack"
     | "audio"
     | "automate"
@@ -47,6 +58,7 @@ export type FuKeywordNames =
     | "base"
     | "bass"
     | "bend"
+    | "bool"
     | "bus"
     | "by"
     | "chorus"
@@ -54,28 +66,42 @@ export type FuKeywordNames =
     | "countermelody"
     | "curve"
     | "decay"
+    | "decibels"
     | "delay"
     | "depth"
     | "drive"
     | "drums"
     | "duck"
+    | "duration"
+    | "each"
+    | "else"
     | "every"
     | "exp"
     | "fade"
+    | "false"
     | "feedback"
+    | "floor"
+    | "fn"
+    | "for"
     | "from"
     | "fx"
     | "gain"
     | "gate"
     | "groove"
     | "harmony"
+    | "hertz"
     | "highpass"
     | "hold"
+    | "if"
+    | "import"
+    | "in"
     | "instrument"
     | "ir"
     | "kit"
     | "legato"
+    | "len"
     | "length"
+    | "let"
     | "limit"
     | "linear"
     | "lookahead"
@@ -87,20 +113,31 @@ export type FuKeywordNames =
     | "melody"
     | "meter"
     | "mix"
+    | "mod"
     | "mono-below"
     | "multisample"
     | "mute"
+    | "not"
     | "nudge"
+    | "number"
     | "offset"
     | "onsets"
+    | "or"
     | "over"
     | "pan"
+    | "percent"
     | "phaser"
     | "pingpong"
+    | "pitch"
     | "predelay"
+    | "push"
     | "q"
+    | "random"
+    | "range"
     | "release"
+    | "repeat"
     | "rest"
+    | "return"
     | "reverb"
     | "reverse"
     | "reverse-slice"
@@ -109,23 +146,28 @@ export type FuKeywordNames =
     | "sample"
     | "section"
     | "semi"
+    | "semitones"
     | "send"
     | "slice"
     | "slices"
     | "song"
     | "staccato"
+    | "string"
     | "stutter"
     | "swing"
     | "tapestop"
     | "tempo"
     | "texture"
     | "tie"
+    | "time"
     | "to"
     | "track"
     | "tremolo"
+    | "true"
     | "tuplet"
     | "vel"
     | "volume"
+    | "while"
     | "width"
     | "{"
     | "}";
@@ -160,6 +202,23 @@ export const Articulation = {
 
 export function isArticulation(item: unknown): item is Articulation {
     return reflection.isInstance(item, Articulation.$type);
+}
+
+export interface Assign extends langium.AstNode {
+    readonly $container: Fn | For | If | Repeat | Song | While;
+    readonly $type: 'Assign';
+    target: langium.Reference<Binding>;
+    value: Expression;
+}
+
+export const Assign = {
+    $type: 'Assign',
+    target: 'target',
+    value: 'value'
+} as const;
+
+export function isAssign(item: unknown): item is Assign {
+    return reflection.isInstance(item, Assign.$type);
 }
 
 export interface Attack extends langium.AstNode {
@@ -228,7 +287,7 @@ export function isAutomation(item: unknown): item is Automation {
 }
 
 export interface Bar extends langium.AstNode {
-    readonly $container: Song;
+    readonly $container: Fn | For | If | Repeat | Song | While;
     readonly $type: 'Bar';
     lines: Array<Line>;
     mark?: string;
@@ -282,6 +341,52 @@ export function isBendPoint(item: unknown): item is BendPoint {
     return reflection.isInstance(item, BendPoint.$type);
 }
 
+export interface Binary extends langium.AstNode {
+    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
+    readonly $type: 'Binary';
+    left: Expression;
+    operator: '!=' | '*' | '+' | '-' | '/' | '<' | '<=' | '==' | '>' | '>=' | 'and' | 'mod' | 'or';
+    right: Expression;
+}
+
+export const Binary = {
+    $type: 'Binary',
+    left: 'left',
+    operator: 'operator',
+    right: 'right'
+} as const;
+
+export function isBinary(item: unknown): item is Binary {
+    return reflection.isInstance(item, Binary.$type);
+}
+
+export type Binding = Each | For | Let | Param;
+
+export const Binding = {
+    $type: 'Binding'
+} as const;
+
+export function isBinding(item: unknown): item is Binding {
+    return reflection.isInstance(item, Binding.$type);
+}
+
+export interface Builtin extends langium.AstNode {
+    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
+    readonly $type: 'Builtin';
+    args: Array<Expression>;
+    name: 'floor' | 'len' | 'push' | 'random' | 'range';
+}
+
+export const Builtin = {
+    $type: 'Builtin',
+    args: 'args',
+    name: 'name'
+} as const;
+
+export function isBuiltin(item: unknown): item is Builtin {
+    return reflection.isInstance(item, Builtin.$type);
+}
+
 export interface Bus extends langium.AstNode {
     readonly $container: Song;
     readonly $type: 'Bus';
@@ -305,6 +410,40 @@ export const Bus = {
 
 export function isBus(item: unknown): item is Bus {
     return reflection.isInstance(item, Bus.$type);
+}
+
+export interface Call extends langium.AstNode {
+    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
+    readonly $type: 'Call';
+    args: Array<Expression>;
+    callee: langium.Reference<Fn>;
+}
+
+export const Call = {
+    $type: 'Call',
+    args: 'args',
+    callee: 'callee'
+} as const;
+
+export function isCall(item: unknown): item is Call {
+    return reflection.isInstance(item, Call.$type);
+}
+
+export interface CallStatement extends langium.AstNode {
+    readonly $container: Fn | For | If | Repeat | Song | While;
+    readonly $type: 'CallStatement';
+    args: Array<Expression>;
+    callee: langium.Reference<Fn>;
+}
+
+export const CallStatement = {
+    $type: 'CallStatement',
+    args: 'args',
+    callee: 'callee'
+} as const;
+
+export function isCallStatement(item: unknown): item is CallStatement {
+    return reflection.isInstance(item, CallStatement.$type);
 }
 
 export interface Chord extends langium.AstNode {
@@ -364,6 +503,21 @@ export const Comp = {
 
 export function isComp(item: unknown): item is Comp {
     return reflection.isInstance(item, Comp.$type);
+}
+
+export interface Computed extends langium.AstNode {
+    readonly $container: Sounding;
+    readonly $type: 'Computed';
+    value: Expression;
+}
+
+export const Computed = {
+    $type: 'Computed',
+    value: 'value'
+} as const;
+
+export function isComputed(item: unknown): item is Computed {
+    return reflection.isInstance(item, Computed.$type);
 }
 
 export interface Decay extends langium.AstNode {
@@ -471,6 +625,25 @@ export function isDuckDepth(item: unknown): item is DuckDepth {
     return reflection.isInstance(item, DuckDepth.$type);
 }
 
+export interface Each extends langium.AstNode {
+    readonly $container: Each | Tuplet | VoiceLine;
+    readonly $type: 'Each';
+    events: Array<Event>;
+    items: Expression;
+    name: Name;
+}
+
+export const Each = {
+    $type: 'Each',
+    events: 'events',
+    items: 'items',
+    name: 'name'
+} as const;
+
+export function isEach(item: unknown): item is Each {
+    return reflection.isInstance(item, Each.$type);
+}
+
 export interface Edit extends langium.AstNode {
     readonly $container: Sounding;
     readonly $type: 'Edit';
@@ -496,7 +669,7 @@ export function isEffect(item: unknown): item is Effect {
     return reflection.isInstance(item, Effect.$type);
 }
 
-export type Event = Rest | Sounding | Tuplet;
+export type Event = Each | Rest | Sounding | Tuplet;
 
 export const Event = {
     $type: 'Event'
@@ -523,6 +696,26 @@ export function isEvery(item: unknown): item is Every {
     return reflection.isInstance(item, Every.$type);
 }
 
+export type Exportable = Bus | Fn | Instrument | Kit | Let | Sample | Track;
+
+export const Exportable = {
+    $type: 'Exportable'
+} as const;
+
+export function isExportable(item: unknown): item is Exportable {
+    return reflection.isInstance(item, Exportable.$type);
+}
+
+export type Expression = Binary | Builtin | Call | Group | Index | ListLiteral | Literal | Ref | Unary;
+
+export const Expression = {
+    $type: 'Expression'
+} as const;
+
+export function isExpression(item: unknown): item is Expression {
+    return reflection.isInstance(item, Expression.$type);
+}
+
 export interface Fade extends langium.AstNode {
     readonly $container: Sounding;
     readonly $type: 'Fade';
@@ -536,6 +729,46 @@ export const Fade = {
 
 export function isFade(item: unknown): item is Fade {
     return reflection.isInstance(item, Fade.$type);
+}
+
+export interface Fn extends langium.AstNode {
+    readonly $container: Fn | For | If | Repeat | Song | While;
+    readonly $type: 'Fn';
+    body: Array<Statement>;
+    name: Name;
+    params: Array<Param>;
+    returns?: TypeRef;
+}
+
+export const Fn = {
+    $type: 'Fn',
+    body: 'body',
+    name: 'name',
+    params: 'params',
+    returns: 'returns'
+} as const;
+
+export function isFn(item: unknown): item is Fn {
+    return reflection.isInstance(item, Fn.$type);
+}
+
+export interface For extends langium.AstNode {
+    readonly $container: Fn | For | If | Repeat | Song | While;
+    readonly $type: 'For';
+    body: Array<Statement>;
+    items: Expression;
+    name: Name;
+}
+
+export const For = {
+    $type: 'For',
+    body: 'body',
+    items: 'items',
+    name: 'name'
+} as const;
+
+export function isFor(item: unknown): item is For {
+    return reflection.isInstance(item, For.$type);
 }
 
 export interface FxChain extends langium.AstNode {
@@ -600,7 +833,22 @@ export function isGroove(item: unknown): item is Groove {
     return reflection.isInstance(item, Groove.$type);
 }
 
-export type Head = Chord | Edit | Hit | Note | Slice;
+export interface Group extends langium.AstNode {
+    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
+    readonly $type: 'Group';
+    inner: Expression;
+}
+
+export const Group = {
+    $type: 'Group',
+    inner: 'inner'
+} as const;
+
+export function isGroup(item: unknown): item is Group {
+    return reflection.isInstance(item, Group.$type);
+}
+
+export type Head = Chord | Computed | Edit | Hit | Note | Slice;
 
 export const Head = {
     $type: 'Head'
@@ -640,6 +888,76 @@ export const Hit = {
 
 export function isHit(item: unknown): item is Hit {
     return reflection.isInstance(item, Hit.$type);
+}
+
+export interface If extends langium.AstNode {
+    readonly $container: Fn | For | If | Repeat | Song | While;
+    readonly $type: 'If';
+    condition: Expression;
+    else: Array<Statement>;
+    otherwise?: If;
+    then: Array<Statement>;
+}
+
+export const If = {
+    $type: 'If',
+    condition: 'condition',
+    else: 'else',
+    otherwise: 'otherwise',
+    then: 'then'
+} as const;
+
+export function isIf(item: unknown): item is If {
+    return reflection.isInstance(item, If.$type);
+}
+
+export interface Import extends langium.AstNode {
+    readonly $container: Song;
+    readonly $type: 'Import';
+    path: string;
+    symbols: Array<ImportedSymbol>;
+}
+
+export const Import = {
+    $type: 'Import',
+    path: 'path',
+    symbols: 'symbols'
+} as const;
+
+export function isImport(item: unknown): item is Import {
+    return reflection.isInstance(item, Import.$type);
+}
+
+export interface ImportedSymbol extends langium.AstNode {
+    readonly $container: Import;
+    readonly $type: 'ImportedSymbol';
+    target: langium.Reference<Exportable>;
+}
+
+export const ImportedSymbol = {
+    $type: 'ImportedSymbol',
+    target: 'target'
+} as const;
+
+export function isImportedSymbol(item: unknown): item is ImportedSymbol {
+    return reflection.isInstance(item, ImportedSymbol.$type);
+}
+
+export interface Index extends langium.AstNode {
+    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
+    readonly $type: 'Index';
+    index: Expression;
+    list: Expression;
+}
+
+export const Index = {
+    $type: 'Index',
+    index: 'index',
+    list: 'list'
+} as const;
+
+export function isIndex(item: unknown): item is Index {
+    return reflection.isInstance(item, Index.$type);
 }
 
 export interface Instrument extends langium.AstNode {
@@ -750,6 +1068,25 @@ export function isLength(item: unknown): item is Length {
     return reflection.isInstance(item, Length.$type);
 }
 
+export interface Let extends langium.AstNode {
+    readonly $container: Fn | For | If | Repeat | Song | While;
+    readonly $type: 'Let';
+    name: Name;
+    type?: TypeRef;
+    value: Expression;
+}
+
+export const Let = {
+    $type: 'Let',
+    name: 'name',
+    type: 'type',
+    value: 'value'
+} as const;
+
+export function isLet(item: unknown): item is Let {
+    return reflection.isInstance(item, Let.$type);
+}
+
 export interface Limit extends langium.AstNode {
     readonly $container: FxChain;
     readonly $type: 'Limit';
@@ -777,6 +1114,69 @@ export const Line = {
 
 export function isLine(item: unknown): item is Line {
     return reflection.isInstance(item, Line.$type);
+}
+
+export interface ListLiteral extends langium.AstNode {
+    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
+    readonly $type: 'ListLiteral';
+    items: Array<Expression>;
+}
+
+export const ListLiteral = {
+    $type: 'ListLiteral',
+    items: 'items'
+} as const;
+
+export function isListLiteral(item: unknown): item is ListLiteral {
+    return reflection.isInstance(item, ListLiteral.$type);
+}
+
+export interface ListType extends langium.AstNode {
+    readonly $container: Fn | Let | ListType | Param;
+    readonly $type: 'ListType';
+    element: TypeRef;
+}
+
+export const ListType = {
+    $type: 'ListType',
+    element: 'element'
+} as const;
+
+export function isListType(item: unknown): item is ListType {
+    return reflection.isInstance(item, ListType.$type);
+}
+
+export interface Literal extends langium.AstNode {
+    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
+    readonly $type: 'Literal';
+    decibels?: string;
+    duration?: string;
+    hertz?: string;
+    number?: number;
+    percent?: string;
+    pitch?: string;
+    semitones?: string;
+    text?: string;
+    time?: string;
+    truth?: 'false' | 'true';
+}
+
+export const Literal = {
+    $type: 'Literal',
+    decibels: 'decibels',
+    duration: 'duration',
+    hertz: 'hertz',
+    number: 'number',
+    percent: 'percent',
+    pitch: 'pitch',
+    semitones: 'semitones',
+    text: 'text',
+    time: 'time',
+    truth: 'truth'
+} as const;
+
+export function isLiteral(item: unknown): item is Literal {
+    return reflection.isInstance(item, Literal.$type);
 }
 
 export interface Lowpass extends langium.AstNode {
@@ -938,6 +1338,23 @@ export function isPan(item: unknown): item is Pan {
     return reflection.isInstance(item, Pan.$type);
 }
 
+export interface Param extends langium.AstNode {
+    readonly $container: Fn;
+    readonly $type: 'Param';
+    name: Name;
+    type: TypeRef;
+}
+
+export const Param = {
+    $type: 'Param',
+    name: 'name',
+    type: 'type'
+} as const;
+
+export function isParam(item: unknown): item is Param {
+    return reflection.isInstance(item, Param.$type);
+}
+
 export interface Phaser extends langium.AstNode {
     readonly $container: FxChain;
     readonly $type: 'Phaser';
@@ -971,6 +1388,21 @@ export function isPlayParam(item: unknown): item is PlayParam {
     return reflection.isInstance(item, PlayParam.$type);
 }
 
+export interface Ref extends langium.AstNode {
+    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
+    readonly $type: 'Ref';
+    target: langium.Reference<Binding>;
+}
+
+export const Ref = {
+    $type: 'Ref',
+    target: 'target'
+} as const;
+
+export function isRef(item: unknown): item is Ref {
+    return reflection.isInstance(item, Ref.$type);
+}
+
 export interface Release extends langium.AstNode {
     readonly $container: KitVoice | Sounding;
     readonly $type: 'Release';
@@ -986,19 +1418,53 @@ export function isRelease(item: unknown): item is Release {
     return reflection.isInstance(item, Release.$type);
 }
 
+export interface Repeat extends langium.AstNode {
+    readonly $container: Fn | For | If | Repeat | Song | While;
+    readonly $type: 'Repeat';
+    body: Array<Statement>;
+    count: Expression;
+}
+
+export const Repeat = {
+    $type: 'Repeat',
+    body: 'body',
+    count: 'count'
+} as const;
+
+export function isRepeat(item: unknown): item is Repeat {
+    return reflection.isInstance(item, Repeat.$type);
+}
+
 export interface Rest extends langium.AstNode {
-    readonly $container: Tuplet | VoiceLine;
+    readonly $container: Each | Tuplet | VoiceLine;
     readonly $type: 'Rest';
-    duration: string;
+    computedDuration?: Expression;
+    duration?: string;
 }
 
 export const Rest = {
     $type: 'Rest',
+    computedDuration: 'computedDuration',
     duration: 'duration'
 } as const;
 
 export function isRest(item: unknown): item is Rest {
     return reflection.isInstance(item, Rest.$type);
+}
+
+export interface Return extends langium.AstNode {
+    readonly $container: Fn | For | If | Repeat | Song | While;
+    readonly $type: 'Return';
+    value?: Expression;
+}
+
+export const Return = {
+    $type: 'Return',
+    value: 'value'
+} as const;
+
+export function isReturn(item: unknown): item is Return {
+    return reflection.isInstance(item, Return.$type);
 }
 
 export interface Reverb extends langium.AstNode {
@@ -1062,6 +1528,21 @@ export const Sample = {
 
 export function isSample(item: unknown): item is Sample {
     return reflection.isInstance(item, Sample.$type);
+}
+
+export interface ScalarType extends langium.AstNode {
+    readonly $container: Fn | Let | ListType | Param;
+    readonly $type: 'ScalarType';
+    name: 'bool' | 'decibels' | 'duration' | 'hertz' | 'number' | 'percent' | 'pitch' | 'semitones' | 'string' | 'time';
+}
+
+export const ScalarType = {
+    $type: 'ScalarType',
+    name: 'name'
+} as const;
+
+export function isScalarType(item: unknown): item is ScalarType {
+    return reflection.isInstance(item, ScalarType.$type);
 }
 
 export interface Semi extends langium.AstNode {
@@ -1132,15 +1613,17 @@ export function isSlice(item: unknown): item is Slice {
 
 export interface Song extends langium.AstNode {
     readonly $type: 'Song';
-    bars: Array<Bar>;
+    body: Array<Statement>;
     declarations: Array<Declaration>;
-    title: string;
+    imports: Array<Import>;
+    title?: string;
 }
 
 export const Song = {
     $type: 'Song',
-    bars: 'bars',
+    body: 'body',
     declarations: 'declarations',
+    imports: 'imports',
     title: 'title'
 } as const;
 
@@ -1149,22 +1632,34 @@ export function isSong(item: unknown): item is Song {
 }
 
 export interface Sounding extends langium.AstNode {
-    readonly $container: Tuplet | VoiceLine;
+    readonly $container: Each | Tuplet | VoiceLine;
     readonly $type: 'Sounding';
     attributes: Array<Attribute>;
-    duration: string;
+    computedDuration?: Expression;
+    duration?: string;
     head: Head;
 }
 
 export const Sounding = {
     $type: 'Sounding',
     attributes: 'attributes',
+    computedDuration: 'computedDuration',
     duration: 'duration',
     head: 'head'
 } as const;
 
 export function isSounding(item: unknown): item is Sounding {
     return reflection.isInstance(item, Sounding.$type);
+}
+
+export type Statement = Assign | Bar | CallStatement | Fn | For | If | Let | Repeat | Return | While;
+
+export const Statement = {
+    $type: 'Statement'
+} as const;
+
+export function isStatement(item: unknown): item is Statement {
+    return reflection.isInstance(item, Statement.$type);
 }
 
 export interface Tempo extends langium.AstNode {
@@ -1258,7 +1753,7 @@ export function isTremolo(item: unknown): item is Tremolo {
 }
 
 export interface Tuplet extends langium.AstNode {
-    readonly $container: Tuplet | VoiceLine;
+    readonly $container: Each | Tuplet | VoiceLine;
     readonly $type: 'Tuplet';
     events: Array<Event>;
     ratio: string;
@@ -1274,14 +1769,43 @@ export function isTuplet(item: unknown): item is Tuplet {
     return reflection.isInstance(item, Tuplet.$type);
 }
 
+export type TypeRef = ListType | ScalarType;
+
+export const TypeRef = {
+    $type: 'TypeRef'
+} as const;
+
+export function isTypeRef(item: unknown): item is TypeRef {
+    return reflection.isInstance(item, TypeRef.$type);
+}
+
+export interface Unary extends langium.AstNode {
+    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
+    readonly $type: 'Unary';
+    operand: Expression;
+    operator: '-' | 'not';
+}
+
+export const Unary = {
+    $type: 'Unary',
+    operand: 'operand',
+    operator: 'operator'
+} as const;
+
+export function isUnary(item: unknown): item is Unary {
+    return reflection.isInstance(item, Unary.$type);
+}
+
 export interface Velocity extends langium.AstNode {
     readonly $container: Sounding;
     readonly $type: 'Velocity';
-    value: number;
+    computed?: Expression;
+    value?: number;
 }
 
 export const Velocity = {
     $type: 'Velocity',
+    computed: 'computed',
     value: 'value'
 } as const;
 
@@ -1306,6 +1830,23 @@ export const VoiceLine = {
 
 export function isVoiceLine(item: unknown): item is VoiceLine {
     return reflection.isInstance(item, VoiceLine.$type);
+}
+
+export interface While extends langium.AstNode {
+    readonly $container: Fn | For | If | Repeat | Song | While;
+    readonly $type: 'While';
+    body: Array<Statement>;
+    condition: Expression;
+}
+
+export const While = {
+    $type: 'While',
+    body: 'body',
+    condition: 'condition'
+} as const;
+
+export function isWhile(item: unknown): item is While {
+    return reflection.isInstance(item, While.$type);
 }
 
 export interface Width extends langium.AstNode {
@@ -1345,6 +1886,7 @@ export function isZone(item: unknown): item is Zone {
 export type FuAstType = {
     Amount: Amount
     Articulation: Articulation
+    Assign: Assign
     Attack: Attack
     Attribute: Attribute
     AudioSource: AudioSource
@@ -1352,28 +1894,44 @@ export type FuAstType = {
     Bar: Bar
     Bend: Bend
     BendPoint: BendPoint
+    Binary: Binary
+    Binding: Binding
+    Builtin: Builtin
     Bus: Bus
+    Call: Call
+    CallStatement: CallStatement
     Chord: Chord
     Chorus: Chorus
     Comp: Comp
+    Computed: Computed
     Decay: Decay
     Declaration: Declaration
     Delay: Delay
     Drive: Drive
     Duck: Duck
     DuckDepth: DuckDepth
+    Each: Each
     Edit: Edit
     Effect: Effect
     Event: Event
     Every: Every
+    Exportable: Exportable
+    Expression: Expression
     Fade: Fade
+    Fn: Fn
+    For: For
     FxChain: FxChain
     Gain: Gain
     GateLength: GateLength
     Groove: Groove
+    Group: Group
     Head: Head
     Highpass: Highpass
     Hit: Hit
+    If: If
+    Import: Import
+    ImportedSymbol: ImportedSymbol
+    Index: Index
     Instrument: Instrument
     InstrumentRef: InstrumentRef
     InstrumentSource: InstrumentSource
@@ -1381,8 +1939,12 @@ export type FuAstType = {
     KitSource: KitSource
     KitVoice: KitVoice
     Length: Length
+    Let: Let
     Limit: Limit
     Line: Line
+    ListLiteral: ListLiteral
+    ListType: ListType
+    Literal: Literal
     Lowpass: Lowpass
     Lyric: Lyric
     Master: Master
@@ -1393,27 +1955,36 @@ export type FuAstType = {
     Nudge: Nudge
     Offset: Offset
     Pan: Pan
+    Param: Param
     Phaser: Phaser
     PlayParam: PlayParam
+    Ref: Ref
     Release: Release
+    Repeat: Repeat
     Rest: Rest
+    Return: Return
     Reverb: Reverb
     Reverse: Reverse
     Sample: Sample
+    ScalarType: ScalarType
     Semi: Semi
     Send: Send
     SingleSample: SingleSample
     Slice: Slice
     Song: Song
     Sounding: Sounding
+    Statement: Statement
     Tempo: Tempo
     Tie: Tie
     Track: Track
     TrackSource: TrackSource
     Tremolo: Tremolo
     Tuplet: Tuplet
+    TypeRef: TypeRef
+    Unary: Unary
     Velocity: Velocity
     VoiceLine: VoiceLine
+    While: While
     Width: Width
     Zone: Zone
 }
@@ -1437,6 +2008,19 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: [Attribute.$type]
+        },
+        Assign: {
+            name: Assign.$type,
+            properties: {
+                target: {
+                    name: Assign.target,
+                    referenceType: Binding.$type
+                },
+                value: {
+                    name: Assign.value
+                }
+            },
+            superTypes: [Statement.$type]
         },
         Attack: {
             name: Attack.$type,
@@ -1514,7 +2098,7 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                     optional: true
                 }
             },
-            superTypes: []
+            superTypes: [Statement.$type]
         },
         Bend: {
             name: Bend.$type,
@@ -1537,6 +2121,41 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: []
+        },
+        Binary: {
+            name: Binary.$type,
+            properties: {
+                left: {
+                    name: Binary.left
+                },
+                operator: {
+                    name: Binary.operator
+                },
+                right: {
+                    name: Binary.right
+                }
+            },
+            superTypes: [Expression.$type]
+        },
+        Binding: {
+            name: Binding.$type,
+            properties: {
+            },
+            superTypes: []
+        },
+        Builtin: {
+            name: Builtin.$type,
+            properties: {
+                args: {
+                    name: Builtin.args,
+                    defaultValue: [],
+                    optional: true
+                },
+                name: {
+                    name: Builtin.name
+                }
+            },
+            superTypes: [Expression.$type]
         },
         Bus: {
             name: Bus.$type,
@@ -1567,7 +2186,37 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                     optional: true
                 }
             },
-            superTypes: [Declaration.$type, Mixable.$type]
+            superTypes: [Declaration.$type, Exportable.$type, Mixable.$type]
+        },
+        Call: {
+            name: Call.$type,
+            properties: {
+                args: {
+                    name: Call.args,
+                    defaultValue: [],
+                    optional: true
+                },
+                callee: {
+                    name: Call.callee,
+                    referenceType: Fn.$type
+                }
+            },
+            superTypes: [Expression.$type]
+        },
+        CallStatement: {
+            name: CallStatement.$type,
+            properties: {
+                args: {
+                    name: CallStatement.args,
+                    defaultValue: [],
+                    optional: true
+                },
+                callee: {
+                    name: CallStatement.callee,
+                    referenceType: Fn.$type
+                }
+            },
+            superTypes: [Statement.$type]
         },
         Chord: {
             name: Chord.$type,
@@ -1621,6 +2270,15 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: [Effect.$type]
+        },
+        Computed: {
+            name: Computed.$type,
+            properties: {
+                value: {
+                    name: Computed.value
+                }
+            },
+            superTypes: [Head.$type]
         },
         Decay: {
             name: Decay.$type,
@@ -1713,6 +2371,22 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: []
         },
+        Each: {
+            name: Each.$type,
+            properties: {
+                events: {
+                    name: Each.events,
+                    defaultValue: []
+                },
+                items: {
+                    name: Each.items
+                },
+                name: {
+                    name: Each.name
+                }
+            },
+            superTypes: [Binding.$type, Event.$type]
+        },
         Edit: {
             name: Edit.$type,
             properties: {
@@ -1747,6 +2421,18 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [Attribute.$type]
         },
+        Exportable: {
+            name: Exportable.$type,
+            properties: {
+            },
+            superTypes: []
+        },
+        Expression: {
+            name: Expression.$type,
+            properties: {
+            },
+            superTypes: []
+        },
         Fade: {
             name: Fade.$type,
             properties: {
@@ -1755,6 +2441,46 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: [Attribute.$type]
+        },
+        Fn: {
+            name: Fn.$type,
+            properties: {
+                body: {
+                    name: Fn.body,
+                    defaultValue: [],
+                    optional: true
+                },
+                name: {
+                    name: Fn.name
+                },
+                params: {
+                    name: Fn.params,
+                    defaultValue: [],
+                    optional: true
+                },
+                returns: {
+                    name: Fn.returns,
+                    optional: true
+                }
+            },
+            superTypes: [Exportable.$type, Statement.$type]
+        },
+        For: {
+            name: For.$type,
+            properties: {
+                body: {
+                    name: For.body,
+                    defaultValue: [],
+                    optional: true
+                },
+                items: {
+                    name: For.items
+                },
+                name: {
+                    name: For.name
+                }
+            },
+            superTypes: [Binding.$type, Statement.$type]
         },
         FxChain: {
             name: FxChain.$type,
@@ -1796,6 +2522,15 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [Declaration.$type]
         },
+        Group: {
+            name: Group.$type,
+            properties: {
+                inner: {
+                    name: Group.inner
+                }
+            },
+            superTypes: [Expression.$type]
+        },
         Head: {
             name: Head.$type,
             properties: {
@@ -1824,6 +2559,64 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [Head.$type]
         },
+        If: {
+            name: If.$type,
+            properties: {
+                condition: {
+                    name: If.condition
+                },
+                else: {
+                    name: If.else,
+                    defaultValue: [],
+                    optional: true
+                },
+                otherwise: {
+                    name: If.otherwise,
+                    optional: true
+                },
+                then: {
+                    name: If.then,
+                    defaultValue: [],
+                    optional: true
+                }
+            },
+            superTypes: [Statement.$type]
+        },
+        Import: {
+            name: Import.$type,
+            properties: {
+                path: {
+                    name: Import.path
+                },
+                symbols: {
+                    name: Import.symbols,
+                    defaultValue: []
+                }
+            },
+            superTypes: []
+        },
+        ImportedSymbol: {
+            name: ImportedSymbol.$type,
+            properties: {
+                target: {
+                    name: ImportedSymbol.target,
+                    referenceType: Exportable.$type
+                }
+            },
+            superTypes: []
+        },
+        Index: {
+            name: Index.$type,
+            properties: {
+                index: {
+                    name: Index.index
+                },
+                list: {
+                    name: Index.list
+                }
+            },
+            superTypes: [Expression.$type]
+        },
         Instrument: {
             name: Instrument.$type,
             properties: {
@@ -1834,7 +2627,7 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                     name: Instrument.source
                 }
             },
-            superTypes: [Declaration.$type]
+            superTypes: [Declaration.$type, Exportable.$type]
         },
         InstrumentRef: {
             name: InstrumentRef.$type,
@@ -1864,7 +2657,7 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                     optional: true
                 }
             },
-            superTypes: [Declaration.$type]
+            superTypes: [Declaration.$type, Exportable.$type]
         },
         KitSource: {
             name: KitSource.$type,
@@ -1902,6 +2695,22 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [PlayParam.$type]
         },
+        Let: {
+            name: Let.$type,
+            properties: {
+                name: {
+                    name: Let.name
+                },
+                type: {
+                    name: Let.type,
+                    optional: true
+                },
+                value: {
+                    name: Let.value
+                }
+            },
+            superTypes: [Binding.$type, Exportable.$type, Statement.$type]
+        },
         Limit: {
             name: Limit.$type,
             properties: {
@@ -1924,6 +2733,72 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             properties: {
             },
             superTypes: []
+        },
+        ListLiteral: {
+            name: ListLiteral.$type,
+            properties: {
+                items: {
+                    name: ListLiteral.items,
+                    defaultValue: [],
+                    optional: true
+                }
+            },
+            superTypes: [Expression.$type]
+        },
+        ListType: {
+            name: ListType.$type,
+            properties: {
+                element: {
+                    name: ListType.element
+                }
+            },
+            superTypes: [TypeRef.$type]
+        },
+        Literal: {
+            name: Literal.$type,
+            properties: {
+                decibels: {
+                    name: Literal.decibels,
+                    optional: true
+                },
+                duration: {
+                    name: Literal.duration,
+                    optional: true
+                },
+                hertz: {
+                    name: Literal.hertz,
+                    optional: true
+                },
+                number: {
+                    name: Literal.number,
+                    optional: true
+                },
+                percent: {
+                    name: Literal.percent,
+                    optional: true
+                },
+                pitch: {
+                    name: Literal.pitch,
+                    optional: true
+                },
+                semitones: {
+                    name: Literal.semitones,
+                    optional: true
+                },
+                text: {
+                    name: Literal.text,
+                    optional: true
+                },
+                time: {
+                    name: Literal.time,
+                    optional: true
+                },
+                truth: {
+                    name: Literal.truth,
+                    optional: true
+                }
+            },
+            superTypes: [Expression.$type]
         },
         Lowpass: {
             name: Lowpass.$type,
@@ -2033,6 +2908,18 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [PlayParam.$type]
         },
+        Param: {
+            name: Param.$type,
+            properties: {
+                name: {
+                    name: Param.name
+                },
+                type: {
+                    name: Param.type
+                }
+            },
+            superTypes: [Binding.$type]
+        },
         Phaser: {
             name: Phaser.$type,
             properties: {
@@ -2062,6 +2949,16 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [Attribute.$type]
         },
+        Ref: {
+            name: Ref.$type,
+            properties: {
+                target: {
+                    name: Ref.target,
+                    referenceType: Binding.$type
+                }
+            },
+            superTypes: [Expression.$type]
+        },
         Release: {
             name: Release.$type,
             properties: {
@@ -2071,14 +2968,43 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [PlayParam.$type]
         },
+        Repeat: {
+            name: Repeat.$type,
+            properties: {
+                body: {
+                    name: Repeat.body,
+                    defaultValue: [],
+                    optional: true
+                },
+                count: {
+                    name: Repeat.count
+                }
+            },
+            superTypes: [Statement.$type]
+        },
         Rest: {
             name: Rest.$type,
             properties: {
+                computedDuration: {
+                    name: Rest.computedDuration,
+                    optional: true
+                },
                 duration: {
-                    name: Rest.duration
+                    name: Rest.duration,
+                    optional: true
                 }
             },
             superTypes: [Event.$type]
+        },
+        Return: {
+            name: Return.$type,
+            properties: {
+                value: {
+                    name: Return.value,
+                    optional: true
+                }
+            },
+            superTypes: [Statement.$type]
         },
         Reverb: {
             name: Reverb.$type,
@@ -2130,7 +3056,16 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                     name: Sample.path
                 }
             },
-            superTypes: [Declaration.$type]
+            superTypes: [Declaration.$type, Exportable.$type]
+        },
+        ScalarType: {
+            name: ScalarType.$type,
+            properties: {
+                name: {
+                    name: ScalarType.name
+                }
+            },
+            superTypes: [TypeRef.$type]
         },
         Semi: {
             name: Semi.$type,
@@ -2182,8 +3117,8 @@ export class FuAstReflection extends langium.AbstractAstReflection {
         Song: {
             name: Song.$type,
             properties: {
-                bars: {
-                    name: Song.bars,
+                body: {
+                    name: Song.body,
                     defaultValue: [],
                     optional: true
                 },
@@ -2192,8 +3127,14 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                     defaultValue: [],
                     optional: true
                 },
+                imports: {
+                    name: Song.imports,
+                    defaultValue: [],
+                    optional: true
+                },
                 title: {
-                    name: Song.title
+                    name: Song.title,
+                    optional: true
                 }
             },
             superTypes: []
@@ -2206,14 +3147,25 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                     defaultValue: [],
                     optional: true
                 },
+                computedDuration: {
+                    name: Sounding.computedDuration,
+                    optional: true
+                },
                 duration: {
-                    name: Sounding.duration
+                    name: Sounding.duration,
+                    optional: true
                 },
                 head: {
                     name: Sounding.head
                 }
             },
             superTypes: [Event.$type]
+        },
+        Statement: {
+            name: Statement.$type,
+            properties: {
+            },
+            superTypes: []
         },
         Tempo: {
             name: Tempo.$type,
@@ -2278,7 +3230,7 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                     optional: true
                 }
             },
-            superTypes: [Declaration.$type, Mixable.$type]
+            superTypes: [Declaration.$type, Exportable.$type, Mixable.$type]
         },
         TrackSource: {
             name: TrackSource.$type,
@@ -2311,11 +3263,34 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [Event.$type]
         },
+        TypeRef: {
+            name: TypeRef.$type,
+            properties: {
+            },
+            superTypes: []
+        },
+        Unary: {
+            name: Unary.$type,
+            properties: {
+                operand: {
+                    name: Unary.operand
+                },
+                operator: {
+                    name: Unary.operator
+                }
+            },
+            superTypes: [Expression.$type]
+        },
         Velocity: {
             name: Velocity.$type,
             properties: {
+                computed: {
+                    name: Velocity.computed,
+                    optional: true
+                },
                 value: {
-                    name: Velocity.value
+                    name: Velocity.value,
+                    optional: true
                 }
             },
             superTypes: [Attribute.$type]
@@ -2339,6 +3314,20 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: [Line.$type]
+        },
+        While: {
+            name: While.$type,
+            properties: {
+                body: {
+                    name: While.body,
+                    defaultValue: [],
+                    optional: true
+                },
+                condition: {
+                    name: While.condition
+                }
+            },
+            superTypes: [Statement.$type]
         },
         Width: {
             name: Width.$type,

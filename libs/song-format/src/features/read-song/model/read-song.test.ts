@@ -2,40 +2,16 @@ import { expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { Note } from "tonal";
 
-import type { Song } from "#/entities/song/index.ts";
 import { fractionOf } from "#/shared/lib/ticks.ts";
 
-import { header, oddMeter, twoFiveOne, withLine } from "./read-song.test.support.ts";
-import { readSong } from "./read-song.ts";
-
-const messagesOf = (text: string): Effect.Effect<readonly string[]> =>
-  readSong(text).pipe(
-    Effect.map((source) => {
-      if (source.status === "valid") {
-        return [];
-      }
-      return pipe(
-        source.issues,
-        Arr.map((issue) => issue.message),
-      );
-    }),
-  );
-
-const validSong = (text: string): Effect.Effect<Song> =>
-  readSong(text).pipe(
-    Effect.map((source) => {
-      if (source.status === "invalid") {
-        throw new Error(
-          pipe(
-            source.issues,
-            Arr.map((issue) => issue.message),
-            Arr.join("\n"),
-          ),
-        );
-      }
-      return source.song;
-    }),
-  );
+import {
+  header,
+  messagesOf,
+  oddMeter,
+  twoFiveOne,
+  validSong,
+  withLine,
+} from "./read-song.test.support.ts";
 
 const groupingOf = (groups: readonly number[]): string =>
   pipe(groups, Arr.map(String), Arr.join("+"));

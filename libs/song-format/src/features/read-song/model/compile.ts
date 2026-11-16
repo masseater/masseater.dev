@@ -1,16 +1,18 @@
-import { Array as Arr, Option, Record as Rec, pipe } from "effect";
-import type { Predicate } from "effect";
+import { Array as Arr, Option, Predicate, Record as Rec, pipe } from "effect";
 
 import type { Edit, Hit, Note, Slice, Song } from "#/entities/song/index.ts";
+import { isBar } from "#generated/langium/ast.ts";
 import type { Song as SongNode } from "#generated/langium/ast.ts";
 
 import { barsOfSong } from "./bars.ts";
 import type { PlacedItem } from "./bars.ts";
 import { declarationsOf } from "./declarations.ts";
+import { clashProblemsOf, importedOf, withImported } from "./imports.ts";
 import type { Item, NoteItem } from "./items.ts";
 import { automationsProblemsOf } from "./mixer.ts";
 import { problemAt, problemsOf } from "./problem.ts";
 import type { Compiled, From, Problem } from "./problem.ts";
+import { programOf } from "./program.ts";
 
 type PlacedOf<Kind extends Item["kind"]> = PlacedItem & {
   readonly item: Extract<Item, { readonly kind: Kind }>;
@@ -110,9 +112,22 @@ const editOf: From<PlacedOf<"edit">, Edit> = (placed) => {
   return { ...timedOf(placed), edit, every, fadeMilliseconds };
 };
 
+const titleProblemsOf: From<SongNode, readonly Problem[]> = (song) => {
+  const hasBars = pipe(
+    song.body,
+    Arr.some((statement) => isBar(statement)),
+  );
+  if (!Predicate.isString(song.title) && hasBars) {
+    return [problemAt(song)("bars")('小節を書くファイルには song "題名" を書きます')];
+  }
+  return [];
+};
+
 export const compileSong: From<SongNode, Compiled<Song>> = (song) => {
-  const declarations = declarationsOf(song);
-  const bars = barsOfSong(declarations.value.kits)(song.bars);
+  const declarations = declarationsOf(song.declarations);
+  const merged = withImported(importedOf(song))(declarations.value);
+  const program = programOf(song);
+  const bars = barsOfSong(merged.kits)(program.value);
   const placed = pipe(
     bars.value,
     Arr.flatMap((bar) => bar.items),
@@ -121,8 +136,8 @@ export const compileSong: From<SongNode, Compiled<Song>> = (song) => {
   const tied = tieNotes(notes);
   return {
     value: {
-      title: song.title,
-      ...declarations.value,
+      title: song.title ?? "",
+      ...merged,
       bars: pipe(
         bars.value,
         Arr.map((bar) => bar.bar),
@@ -140,7 +155,10 @@ export const compileSong: From<SongNode, Compiled<Song>> = (song) => {
       ...declarations.problems,
       ...bars.problems,
       ...tied.problems,
-      ...automationsProblemsOf(song),
+      ...automationsProblemsOf(program.value),
+      ...clashProblemsOf(song),
+      ...titleProblemsOf(song),
+      ...program.problems,
     ],
   };
 };
