@@ -4,6 +4,7 @@ use media_notes::store::{Row, Store, fresh_id, now};
 use tauri::State;
 
 use crate::protocol::{Choice, Forecast, Judgement, Mark, MarkInput, Pair, Statement};
+use crate::stills::Stills;
 use crate::taste::{Taste, chosen, forecasts, judged};
 
 pub const DATABASE: &str = "shirushi.db";
@@ -42,14 +43,34 @@ pub async fn list_marks(store: State<'_, Store>) -> Answer<Vec<Mark>> {
 
 #[tauri::command]
 #[specta::specta]
-pub async fn save_mark(store: State<'_, Store>, input: MarkInput) -> Answer<Saved> {
-    saved(&store, input)
+pub async fn save_mark(
+    store: State<'_, Store>,
+    stills: State<'_, Stills>,
+    input: MarkInput,
+    still: Option<String>,
+) -> Answer<Saved> {
+    let mark = saved(&store, input)?;
+    if let Some(jpeg) = still {
+        stills.put(&mark.id, mark.at, jpeg)?;
+    }
+    Ok(mark)
 }
 
 #[tauri::command]
 #[specta::specta]
-pub async fn remove_mark(store: State<'_, Store>, id: String) -> Answer<bool> {
+pub async fn remove_mark(
+    store: State<'_, Store>,
+    stills: State<'_, Stills>,
+    id: String,
+) -> Answer<bool> {
+    stills.remove(&id)?;
     store.remove(&id)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_still(stills: State<'_, Stills>, id: String) -> Answer<Option<String>> {
+    stills.get(&id)
 }
 
 #[tauri::command]

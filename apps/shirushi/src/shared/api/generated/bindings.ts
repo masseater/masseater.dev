@@ -7,8 +7,9 @@ import type { InvokeOptions } from "@tauri-apps/api/core";
 /** Commands */
 export const commands = {
 	listMarks: (options?: InvokeOptions) => typedError<Mark[], Failure>(__TAURI_INVOKE("list_marks", undefined, options)),
-	saveMark: (input: MarkInput, options?: InvokeOptions) => typedError<Saved, Failure>(__TAURI_INVOKE("save_mark", { input }, options)),
+	saveMark: (input: MarkInput, still: string | null, options?: InvokeOptions) => typedError<Saved, Failure>(__TAURI_INVOKE("save_mark", { input, still }, options)),
 	removeMark: (id: string, options?: InvokeOptions) => typedError<boolean, Failure>(__TAURI_INVOKE("remove_mark", { id }, options)),
+	getStill: (id: string, options?: InvokeOptions) => typedError<string | null, Failure>(__TAURI_INVOKE("get_still", { id }, options)),
 	listPairs: (options?: InvokeOptions) => typedError<Pair_Serialize[], Failure>(__TAURI_INVOKE("list_pairs", undefined, options)),
 	choosePair: (id: string, choice: Choice, options?: InvokeOptions) => typedError<Pair_Serialize, Failure>(__TAURI_INVOKE("choose_pair", { id, choice }, options)),
 	listStatements: (options?: InvokeOptions) => typedError<Statement_Serialize[], Failure>(__TAURI_INVOKE("list_statements", undefined, options)),
@@ -21,7 +22,7 @@ export const commands = {
 };
 
 /* Types */
-export type Aspect = "rhythm" | "bass" | "chords" | "melody" | "tone" | "voice" | "arrangement" | "mix";
+export type Aspect = "rhythm" | "bass" | "chords" | "melody" | "tone" | "voice" | "arrangement" | "mix" | "composition" | "color" | "light" | "line" | "texture" | "motion" | "cut";
 
 export type Choice = "first" | "second" | "neither";
 

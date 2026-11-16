@@ -16,6 +16,13 @@ pub enum Aspect {
     Voice,
     Arrangement,
     Mix,
+    Composition,
+    Color,
+    Light,
+    Line,
+    Texture,
+    Motion,
+    Cut,
 }
 
 impl Aspect {
@@ -30,6 +37,13 @@ impl Aspect {
             Self::Voice => "voice",
             Self::Arrangement => "arrangement",
             Self::Mix => "mix",
+            Self::Composition => "composition",
+            Self::Color => "color",
+            Self::Light => "light",
+            Self::Line => "line",
+            Self::Texture => "texture",
+            Self::Motion => "motion",
+            Self::Cut => "cut",
         }
     }
 
@@ -44,6 +58,13 @@ impl Aspect {
             "voice" => Some(Self::Voice),
             "arrangement" => Some(Self::Arrangement),
             "mix" => Some(Self::Mix),
+            "composition" => Some(Self::Composition),
+            "color" => Some(Self::Color),
+            "light" => Some(Self::Light),
+            "line" => Some(Self::Line),
+            "texture" => Some(Self::Texture),
+            "motion" => Some(Self::Motion),
+            "cut" => Some(Self::Cut),
             _ => None,
         }
     }
