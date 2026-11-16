@@ -10,7 +10,6 @@ export default defineConfig({
         cache: false,
       },
       daily: { command: [], dependsOn: ["mosaic#deploy:mosaic-files"] },
-      "persist-migrate": { command: "node bin/persist-migrate.ts", cache: false },
       cargo: {
         command:
           "cargo fmt -p mosaic --check && cargo clippy -p mosaic --all-targets -- -D warnings && cargo test -p mosaic",
