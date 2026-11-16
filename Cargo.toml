@@ -12,7 +12,10 @@ members = [
   "tools/xtask",
   "libs/effect2rs",
   "libs/local-mcp",
+  "libs/desktop-shell",
+  "libs/media-notes",
   "apps/shirushi/src-tauri",
+  "apps/akapen/src-tauri",
 ]
 
 [workspace.package]
