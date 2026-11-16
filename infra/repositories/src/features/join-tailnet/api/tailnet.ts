@@ -3,14 +3,18 @@ import { calculateJwkThumbprint } from "jose";
 import type { JWK } from "jose";
 
 import type { RouteInput } from "#/entities/credential/index.ts";
-import { OIDC_SIGNER, SSH_CA, signingKey } from "#/features/join-tailnet/model/signing-keys.ts";
+import {
+  JWT_ALGORITHM,
+  OIDC_SIGNER,
+  SSH_CA,
+  signingKey,
+} from "#/features/join-tailnet/model/signing-keys.ts";
 import type { AppStoreEnv } from "#/shared/api/index.ts";
 import { AGENT_SUBJECT, TAILNET_ISSUER } from "#/shared/config/index.ts";
 import type { SealFailed } from "#/shared/lib/sealed-value.ts";
 import { authorizedKey } from "#/shared/lib/ssh-certificate.ts";
 import type { SigningPair, SshCertificateFailed } from "#/shared/lib/ssh-certificate.ts";
 
-export const JWT_ALGORITHM = "RS256";
 const DISCOVERY_PATH = "/.well-known/openid-configuration";
 const JWKS_PATH = "/.well-known/jwks.json";
 const SSH_CA_PATH = "/tailnet/ssh-ca.pub";

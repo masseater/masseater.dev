@@ -1,9 +1,9 @@
 import { Array as Arr, Number as Num, Option, pipe } from "effect";
 
 import { flowOf } from "./categories.ts";
-import type { Category } from "./categories.ts";
+import type { Category, Flow } from "./categories.ts";
 
-export type Side = "income" | "expense";
+export type Side = Exclude<Flow, "transfer">;
 
 export type Signed = Readonly<{ category: Category; amount: number }>;
 

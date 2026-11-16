@@ -4,13 +4,22 @@ import { Hex } from "effect/encoding";
 import { readSealed, swapSealed } from "#/shared/api/index.ts";
 import type { AppStoreEnv } from "#/shared/api/index.ts";
 import { SealFailed } from "#/shared/lib/sealed-value.ts";
+import { SSH_ALGORITHM } from "#/shared/lib/ssh-certificate.ts";
 import type { SigningPair } from "#/shared/lib/ssh-certificate.ts";
 
-export type SigningKeyKind = Readonly<{ name: string; algorithm: "Ed25519" | "RS256" }>;
+export const JWT_ALGORITHM = "RS256";
 
-export const SSH_CA: SigningKeyKind = { name: "tailnet_ssh_ca", algorithm: "Ed25519" };
+export type SigningKeyKind = Readonly<{
+  name: string;
+  algorithm: typeof SSH_ALGORITHM | typeof JWT_ALGORITHM;
+}>;
 
-export const OIDC_SIGNER: SigningKeyKind = { name: "tailnet_oidc_signer", algorithm: "RS256" };
+export const SSH_CA: SigningKeyKind = { name: "tailnet_ssh_ca", algorithm: SSH_ALGORITHM };
+
+export const OIDC_SIGNER: SigningKeyKind = {
+  name: "tailnet_oidc_signer",
+  algorithm: JWT_ALGORITHM,
+};
 
 const RS256_MODULUS_BITS = 2048;
 

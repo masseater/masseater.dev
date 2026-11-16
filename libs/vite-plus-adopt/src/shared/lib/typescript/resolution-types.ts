@@ -5,7 +5,9 @@ import type { Extensions } from "./extensions.ts";
 
 export type ResolutionKind = "Node10" | "Node16" | "Bundler";
 
-export type ResolutionMode = "CommonJS" | "ESNext";
+export type EmitModuleKind = "CommonJS" | "ESNext" | "Node16";
+
+export type ResolutionMode = Exclude<EmitModuleKind, "Node16">;
 
 export interface Features {
   readonly imports: boolean;

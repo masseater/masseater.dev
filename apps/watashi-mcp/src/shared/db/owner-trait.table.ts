@@ -14,7 +14,11 @@ export const TRAIT_STATUSES = ["active", "superseded", "retracted"] as const;
 
 export const STANCES = ["supports", "contradicts"] as const;
 
-export const TRAIT_ORIGINS = ["memory", "life", "conversation"] as const;
+const STORES = ["memory", "life"] as const;
+
+export type Store = (typeof STORES)[number];
+
+export const TRAIT_ORIGINS = [...STORES, "conversation"] as const;
 
 export const ownerTrait = sqliteTable(
   "owner_trait",

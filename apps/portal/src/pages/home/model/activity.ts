@@ -4,6 +4,7 @@ import type { SettingsValue, TransactionValue } from "#/entities/money/index.ts"
 import type { DeckValue } from "#/entities/slide/index.ts";
 import type { LifeItemValue, MemoValue, SessionValue } from "#/entities/watashi/index.ts";
 import { headline, placeOf } from "#/entities/watashi/index.ts";
+import type { PortalPath } from "#/shared/config/index.ts";
 import { jstMinute, shownTime } from "#/shared/model/index.ts";
 
 export const ACTIVITY_KINDS = ["record", "memo", "conversation", "transaction", "slide"] as const;
@@ -21,7 +22,7 @@ export const KIND_LABELS: Readonly<Record<ActivityKind, string>> = {
 export type ActivityLink =
   | Readonly<{ kind: "memo"; params: Readonly<{ project: string; name: string }> }>
   | Readonly<{ kind: "conversation"; params: Readonly<{ session: string }> }>
-  | Readonly<{ kind: "page"; to: "/records" | "/money" | "/slides" | "/conversations" }>;
+  | Readonly<{ kind: "page"; to: PortalPath }>;
 
 export type Activity = Readonly<{
   key: string;

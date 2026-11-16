@@ -1,5 +1,6 @@
 import { Array as Arr, Option, pipe } from "effect";
 
+import type { Project } from "#/entities/project/index.ts";
 import {
   isArrayLiteralExpression,
   isCallExpression,
@@ -8,8 +9,10 @@ import {
   isIdentifier,
   isPropertyAccessExpression,
   isSpreadElement,
+  isTypeAliasDeclaration,
   isTypeReferenceNode,
   isUnionTypeNode,
+  SyntaxKind,
 } from "#/shared/lib/compiler.ts";
 import type {
   ArrayLiteralExpression,
@@ -23,6 +26,7 @@ import type {
 } from "#/shared/lib/compiler.ts";
 import {
   childrenOf,
+  isInsideAny,
   declarationsOf,
   isTypeDeclaration,
   propertyNamesOf,
@@ -108,11 +112,44 @@ const selectsKeys =
     );
   };
 
+const FILTERED_TYPE = 0;
+
+const isConditionalAlias =
+  (checker: Checker) =>
+  (reference: Node): boolean =>
+    isTypeReferenceNode(reference) &&
+    Option.fromUndefinedOr(checker.getSymbolAtLocation(reference.typeName)).pipe(
+      Option.map(declarationsOf),
+      Option.exists(
+        Arr.some(
+          (declaration) =>
+            isTypeAliasDeclaration(declaration) &&
+            declaration.type.kind === SyntaxKind.ConditionalType,
+        ),
+      ),
+    );
+
+const filtersBy =
+  (checker: Checker) =>
+  (node: Node): boolean => {
+    const { parent } = node;
+    if (isTypeReferenceNode(parent)) {
+      const typeArguments: readonly TypeNode[] = parent.typeArguments ?? [];
+      const filtering = Arr.findFirstIndex(typeArguments, (argument) => argument === node).pipe(
+        Option.exists((position) => position > FILTERED_TYPE),
+      );
+      if (filtering && isConditionalAlias(checker)(parent)) {
+        return true;
+      }
+    }
+    return parent.kind !== SyntaxKind.SourceFile && filtersBy(checker)(parent);
+  };
+
 const unionValuesOf =
   (checker: Checker) =>
   (node: UnionTypeNode): Option.Option<readonly Value[]> =>
     literalUnionOf(checker.getTypeFromTypeNode(node)).pipe(
-      Option.filter((values) => !selectsKeys(checker)(node, values)),
+      Option.filter((values) => !selectsKeys(checker)(node, values) && !filtersBy(checker)(node)),
     );
 
 const isExpressionSite = (node: Node): node is ArrayLiteralExpression | CallExpression =>
@@ -165,3 +202,12 @@ export const sitesUnder =
       Option.toArray,
     );
   };
+
+export const sitesOutside =
+  (checker: Checker) =>
+  (project: Project, outers: readonly Node[]): readonly ValueSite[] =>
+    pipe(
+      project.sourceFiles,
+      Arr.flatMap((sourceFile) => sitesUnder(checker)(sourceFile)),
+      Arr.filter((site) => !isInsideAny(outers)(site.node)),
+    );

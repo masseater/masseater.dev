@@ -16,6 +16,7 @@ import type { StoreFailure } from "#/shared/api/index.ts";
 import { listHistory } from "#/shared/db/index.server.ts";
 import type { HistoryEntry } from "#/shared/db/index.server.ts";
 import { TRAIT_KINDS } from "#/shared/db/index.ts";
+import type { Store } from "#/shared/db/index.ts";
 
 import { GLOBAL, TRAIT_PREFIX, isActive, japaneseOf, keyText } from "./trait-state.ts";
 import type { Evidence, JaRows, Japanese, TraitState } from "./trait-state.ts";
@@ -25,7 +26,7 @@ import type { Vector } from "./trait-vector.ts";
 
 const HISTORY_LIMIT = 100;
 
-const STORE = "memory";
+const STORE: Store = "memory";
 
 const NONE = 0;
 

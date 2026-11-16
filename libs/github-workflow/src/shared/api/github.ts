@@ -1,7 +1,7 @@
 import { Config, Effect, Redacted } from "effect";
 import type { Schema } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
-import type { HttpBody, HttpClientError } from "effect/http";
+import type { HttpBody, HttpClientError, HttpMethod } from "effect/http";
 
 const API = "https://api.github.com";
 const HEADERS = {
@@ -15,7 +15,7 @@ type Failure = Config.ConfigError | HttpBody.HttpBodyError | HttpClientError.Htt
 type Sent<Success> = Effect.Effect<Success, Failure, HttpClient.HttpClient>;
 
 const requestTo = Effect.fn("requestTo")(function* requestTo(
-  method: "GET" | "POST" | "PATCH" | "DELETE",
+  method: HttpMethod.HttpMethod,
   path: string,
 ) {
   const repository = yield* Config.String("GITHUB_REPOSITORY");
@@ -35,7 +35,7 @@ const execute = Effect.fn("execute")(function* execute(
 });
 
 const withBody = Effect.fn("withBody")(function* withBody(
-  method: "POST" | "PATCH",
+  method: HttpMethod.HttpMethod.WithBody,
   path: string,
   body: unknown,
 ) {
