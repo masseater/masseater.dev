@@ -14,7 +14,9 @@ const SPECIFIER_GROUP = "specifier";
 const SCRIPT = /\.[cm]?[jt]sx?$/u;
 const TEST_FILE = /\.test\.[cm]?[jt]sx?$/u;
 const MANIFEST_NAME = /package\.json$/u;
-const SEPARATE_TEST_DIRECTORY = /(?:^|\/)(?:__tests__|__mocks__|tests?|specs?)\//u;
+const SEPARATE_TEST_DIRECTORY = /(?:^|\/)(?:__tests__|__mocks__|tests?)\//u;
+const SPEC_DIRECTORY = /(?:^|\/)specs?\//u;
+const SPEC_FILE = /\.spec\.[cm]?[jt]sx?$/u;
 const RELATIVE_REFERENCE = /["'`]\.\/(?<name>[^/"'`]+)/gu;
 const DIRNAME_REFERENCE = /import\.meta\.dirname\s*,\s*["'](?<name>[^/"']+)["']/gu;
 const MODULE_SPECIFIER =
@@ -154,8 +156,11 @@ const refersIn = Effect.fn("refersIn")(function* refersIn(context: Context, test
   return yield* refersToOwnDirectory(context, test, source.value);
 });
 
+const inSeparateTestDirectory = (name: string): boolean =>
+  SEPARATE_TEST_DIRECTORY.test(name) || (SPEC_DIRECTORY.test(name) && SPEC_FILE.test(name));
+
 const problemIn = Effect.fn("problemIn")(function* problemIn(context: Context, test: TestFile) {
-  if (SEPARATE_TEST_DIRECTORY.test(test.name)) {
+  if (inSeparateTestDirectory(test.name)) {
     return Option.some(problemFor(test, DIRECTORY_MESSAGE));
   }
   if (!TEST_FILE.test(test.name)) {
