@@ -885,8 +885,8 @@ catalogs:
       specifier: 4.1.1
       version: 4.1.1
     vscode-languageserver:
-      specifier: 10.1.2
-      version: 10.1.2
+      specifier: 11.0.0
+      version: 11.0.0
     web-tree-sitter:
       specifier: 0.27.2
       version: 0.27.2
@@ -4032,7 +4032,7 @@ importers:
         version: 6.5.1
       vscode-languageserver:
         specifier: 'catalog:'
-        version: 10.1.2
+        version: 11.0.0
     devDependencies:
       '@effect/vitest':
         specifier: 'catalog:'
@@ -16481,6 +16481,10 @@ packages:
 
   vscode-languageserver@10.1.2:
     resolution: {integrity: sha512-pXPWde3RytdeBVEs6PulOOT5OpeXC5GkWRpcT11f5rNn41jviQsAYPyAqJ/0oVGETQLKPJtYbHNiMPlfLb0NTQ==}
+    hasBin: true
+
+  vscode-languageserver@11.0.0:
+    resolution: {integrity: sha512-dOyMIyq0PNVJhTkj+FZoi3H8N3WffNSZEepfbQT+x2E16x1ONPacSx00DoVRqyVKO7PN35ixj/l2RQwQmStkNg==}
     hasBin: true
 
   vscode-uri@3.1.0:
@@ -29285,6 +29289,10 @@ snapshots:
   vscode-languageserver@10.1.2:
     dependencies:
       vscode-languageserver-protocol: 3.18.4
+
+  vscode-languageserver@11.0.0:
+    dependencies:
+      vscode-languageserver-protocol: 3.18.5
 
   vscode-uri@3.1.0: {}
 
