@@ -5,7 +5,7 @@ import { Array as Arr, Number as Num, Option, Schema, pipe } from "effect";
 import { AnalysisResult } from "#/entities/trait/index.ts";
 import type { AnalysisResultValue } from "#/entities/trait/index.ts";
 
-export const TRAIT_MODEL = "@cf/zai-org/glm-5.3-flash";
+export const TRAIT_MODEL = "@cf/thinkingmachines/inkling-2-small";
 
 export const RECORD_TOOL = "record_observations";
 
