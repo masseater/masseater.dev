@@ -1,5 +1,5 @@
-import { namespaceDestructuringIn } from "#/features/namespace-destructuring/index.ts";
-import { passThroughWrappersIn } from "#/features/pass-through-wrappers/index.ts";
+import { namespaceDestructuringIn } from "#/features/source-code/namespace-destructuring/index.ts";
+import { passThroughWrappersIn } from "#/features/source-code/pass-through-wrappers/index.ts";
 import { checkRepository } from "#/features/value-owners/index.ts";
 
 /** @internal */
