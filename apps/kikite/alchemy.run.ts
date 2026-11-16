@@ -76,6 +76,7 @@ export default Stack(
       memo: false,
     });
     const { url } = yield* Workers.Worker("Kikite", {
+      limits: { cpuMs: 200 },
       main: "./src/app/kikite.ts",
       logpush: true,
       domain: HOST,

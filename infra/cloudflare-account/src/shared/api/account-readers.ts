@@ -20,6 +20,7 @@ export const webAnalyticsReader = Effect.fn("webAnalyticsReader")(function* webA
     ],
   });
   return yield* Workers.Worker("WebAnalyticsToken", {
+    limits: { cpuMs: 200 },
     name: `${appName}-web-analytics-token`,
     main: decodeURIComponent(new URL("./web-analytics-token.ts", import.meta.url).pathname),
     logpush: true,
