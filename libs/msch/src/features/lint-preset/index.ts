@@ -9,6 +9,7 @@ export {
 export { allRulesOf, decisionRules, decisionTestRules, generated } from "./config/lint.config.ts";
 export { INSTRUMENTATION, requiredStack } from "./config/required-stack.config.ts";
 export { tracedRules } from "./config/traced-rules.config.ts";
+export { remotionRules } from "./config/remotion-rules.config.ts";
 export { steigerRules } from "./config/fsd-rules.ts";
 export { textlintPresets } from "./config/textlint-presets.config.ts";
 export { readonlyParameterAllow } from "./config/readonly-types.config.ts";
