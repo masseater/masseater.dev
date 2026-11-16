@@ -1,6 +1,7 @@
 import { Array, Effect, Option, Predicate, Schedule, Schema, pipe } from "effect";
 
 const PROVIDER = "cloudflare.workers_ai";
+const DEFAULT_GATEWAY = "default";
 const OUT_OF_CAPACITY = "3040";
 const ERROR_CODE = /(?<!\d)(?<code>\d{4}): /u;
 const RETRY_TIMES = 4;
@@ -106,11 +107,19 @@ const answerAttributes = (answer: typeof Answer.Type): Attributes => ({
 const isCutOff = (answer: typeof Answer.Type): boolean =>
   pipe(finishReasons(answer), Option.exists(Array.some((reason) => !COMPLETE_REASONS.has(reason))));
 
+export type GatewayMetadata = Readonly<Record<string, string>>;
+
+export interface GatewayOptions {
+  readonly gateway: Readonly<{ id: string; metadata: GatewayMetadata }>;
+}
+
 export interface WorkersAiCall<Output> {
   readonly operation: Operation;
   readonly model: string;
+  readonly caller: string;
+  readonly gateway?: string;
   readonly prompt?: string;
-  readonly call: () => PromiseLike<Output>;
+  readonly call: (options: GatewayOptions) => PromiseLike<Output>;
 }
 
 const requestAttributes = ({
@@ -124,22 +133,58 @@ const requestAttributes = ({
   ...attribute("gen_ai.prompt.name", Option.fromUndefinedOr(prompt)),
 });
 
+const traceIdOf: Effect.Effect<GatewayMetadata> = Effect.currentSpan.pipe(
+  Effect.map(({ traceId }) => ({ trace_id: traceId })),
+  Effect.orElseSucceed(() => ({})),
+);
+
+const gatewayOptions = (caller: string, gateway: string): Effect.Effect<GatewayOptions> =>
+  traceIdOf.pipe(
+    Effect.map((trace) => ({ gateway: { id: gateway, metadata: { caller, ...trace } } })),
+  );
+
+const recordAnswer =
+  (attributes: Attributes) =>
+  (output: unknown): Effect.Effect<void> =>
+    pipe(
+      decodeAnswer(output),
+      Option.match({
+        onNone: () => Effect.void,
+        onSome: (answer) => {
+          const answered = answerAttributes(answer);
+          const recorded = Effect.annotateCurrentSpan(answered);
+          if (!isCutOff(answer)) {
+            return recorded;
+          }
+          return recorded.pipe(
+            Effect.andThen(Effect.logWarning("Workers AI cut the answer off")),
+            Effect.annotateLogs({ ...attributes, ...answered }),
+          );
+        },
+      }),
+    );
+
 export const runWorkersAi = <Output>({
   call,
+  caller,
+  gateway = DEFAULT_GATEWAY,
   ...request
 }: WorkersAiCall<Output>): Effect.Effect<Output, WorkersAiError> => {
   const attributes = requestAttributes(request);
-  return Effect.tryPromise({
-    try: () => Promise.resolve(call()),
-    catch: (cause) => {
-      const errorType = errorTypeOf(cause);
-      return WorkersAiError.make({
-        errorType,
-        outOfCapacity: errorType === OUT_OF_CAPACITY,
-        cause,
-      });
-    },
-  }).pipe(
+  return gatewayOptions(caller, gateway).pipe(
+    Effect.flatMap((options) =>
+      Effect.tryPromise({
+        try: () => Promise.resolve(call(options)),
+        catch: (cause) => {
+          const errorType = errorTypeOf(cause);
+          return WorkersAiError.make({
+            errorType,
+            outOfCapacity: errorType === OUT_OF_CAPACITY,
+            cause,
+          });
+        },
+      }),
+    ),
     Effect.tapError(({ errorType, cause }) =>
       Effect.logWarning(EXCEPTION_EVENTS[request.operation]).pipe(
         Effect.annotateLogs({ ...attributes, ...exceptionOf(cause), "error.type": errorType }),
@@ -151,25 +196,7 @@ export const runWorkersAi = <Output>({
       while: ({ outOfCapacity }) => outOfCapacity,
     }),
     Effect.tapError(({ errorType }) => Effect.annotateCurrentSpan("error.type", errorType)),
-    Effect.tap((output) =>
-      pipe(
-        decodeAnswer(output),
-        Option.match({
-          onNone: () => Effect.void,
-          onSome: (answer) => {
-            const answered = answerAttributes(answer);
-            const recorded = Effect.annotateCurrentSpan(answered);
-            if (!isCutOff(answer)) {
-              return recorded;
-            }
-            return recorded.pipe(
-              Effect.andThen(Effect.logWarning("Workers AI cut the answer off")),
-              Effect.annotateLogs({ ...attributes, ...answered }),
-            );
-          },
-        }),
-      ),
-    ),
+    Effect.tap(recordAnswer(attributes)),
     Effect.withSpan(`${request.operation} ${request.model}`, { kind: "client", attributes }),
   );
 };

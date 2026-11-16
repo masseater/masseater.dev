@@ -1,6 +1,7 @@
 import { repositoryConfig } from "@r_masseater/msch/config";
 import {
   INSTRUMENTATION,
+  cloudflareResourceSyntax,
   decisionRules,
   removalPolicySyntax,
   requiredStack,
@@ -25,7 +26,12 @@ export default defineConfig({
         files: ["apps/*/src/**/*.{ts,tsx}"],
         excludeFiles: ["**/*.test.ts"],
         rules: {
-          "eslint-js/no-restricted-syntax": ["error", removalPolicySyntax, ...unguardedWorkersAi],
+          "eslint-js/no-restricted-syntax": [
+            "error",
+            ...cloudflareResourceSyntax,
+            removalPolicySyntax,
+            ...unguardedWorkersAi,
+          ],
         },
       },
     ],

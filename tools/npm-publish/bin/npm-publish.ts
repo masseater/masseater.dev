@@ -128,8 +128,30 @@ const check = Effect.fn("check")(function* check(hasSizeLimit: boolean) {
   }
 });
 
-const publish = Effect.fn("publish")(function* publish() {
-  const manifest = yield* manifestOf();
+const authEnv = Effect.fn("authEnv")(function* authEnv() {
+  const token = yield* npmToken();
+  return Option.match(token, {
+    onNone: (): Readonly<Record<string, string>> => ({}),
+    onSome: (value) => ({ NODE_AUTH_TOKEN: value }),
+  });
+});
+
+const deprecate = Effect.fn("deprecate")(function* deprecate(
+  name: string,
+  env: Readonly<Record<string, string>>,
+) {
+  const range = yield* Config.option(Config.NonEmptyString("DEPRECATE_RANGE"));
+  const message = yield* Config.option(Config.NonEmptyString("DEPRECATE_MESSAGE"));
+  if (Option.isNone(range) || Option.isNone(message)) {
+    return;
+  }
+  yield* runOrFail("npm", ["deprecate", `${name}@${range.value}`, message.value], env);
+});
+
+const publishNew = Effect.fn("publishNew")(function* publishNew(
+  manifest: typeof Manifest.Type,
+  env: Readonly<Record<string, string>>,
+) {
   const { name, version } = manifest;
   const published = yield* exitCodeOf("npm", ["view", `${name}@${version}`, "version"]);
   if (published === SUCCESS) {
@@ -137,12 +159,14 @@ const publish = Effect.fn("publish")(function* publish() {
   }
   yield* check(Predicate.isNotUndefined(manifest["size-limit"]));
   const tarball = yield* pack();
-  const token = yield* npmToken();
-  const env = Option.match(token, {
-    onNone: () => ({}),
-    onSome: (value) => ({ NODE_AUTH_TOKEN: value }),
-  });
   return yield* runOrFail("npm", ["publish", tarball, "--provenance", "--access", "public"], env);
+});
+
+const publish = Effect.fn("publish")(function* publish() {
+  const manifest = yield* manifestOf();
+  const env = yield* authEnv();
+  yield* publishNew(manifest, env);
+  return yield* deprecate(manifest.name, env);
 });
 
 runMain("npm-publish")(Effect.scoped(publish()));

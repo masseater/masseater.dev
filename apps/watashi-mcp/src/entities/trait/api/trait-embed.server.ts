@@ -17,7 +17,8 @@ const embedPieces = (pieces: readonly string[]): Effect.Effect<readonly Vector[]
   runWorkersAi({
     operation: "embeddings",
     model: EMBEDDING_MODEL,
-    call: () => env.AI.run(EMBEDDING_MODEL, { text: [...pieces] }),
+    caller: "watashi-mcp.trait-embed",
+    call: (options) => env.AI.run(EMBEDDING_MODEL, { text: [...pieces] }, options),
   }).pipe(
     Effect.mapBoth({
       onFailure: ({ cause }) => fail(cause),
