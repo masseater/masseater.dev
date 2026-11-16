@@ -6,6 +6,9 @@ const CPU_LIMIT = 'Property[key.name="limits"]:has(Property[key.name="cpuMs"])';
 const CPU_LIMIT_MESSAGE =
   "コードを動かす Worker には limits.cpuMs を付け、本番の CPU 時間の最大値をわずかに上回る値にする。付けないと、1 回の暴走が上限の CPU 時間まで請求される";
 
+const UNATTRIBUTED_MODEL_CALL =
+  "モデルの呼び出しは AI Gateway を通し、呼び出し元を metadata に載せる。載せないと、費用やエラーを後から呼び出し元で引けない";
+
 export const cloudflareResourceSyntax: readonly Readonly<{ selector: string; message: string }>[] =
   [
     {
@@ -23,6 +26,32 @@ export const cloudflareResourceSyntax: readonly Readonly<{ selector: string; mes
     {
       selector: `CallExpression[callee.object.name="Website"]:not([callee.property.name="StaticSite"]) > ObjectExpression.arguments:not(:has(${CPU_LIMIT}))`,
       message: CPU_LIMIT_MESSAGE,
+    },
+    {
+      selector:
+        'CallExpression[callee.property.name="run"][callee.object.property.name="AI"][arguments.length<3]',
+      message: UNATTRIBUTED_MODEL_CALL,
+    },
+    {
+      selector:
+        'CallExpression[callee.name="runWorkersAi"] > ObjectExpression > Property[key.name="call"] > ArrowFunctionExpression[params.length=0]',
+      message: UNATTRIBUTED_MODEL_CALL,
+    },
+    {
+      selector:
+        'CallExpression[callee.name="createAI"] > ObjectExpression.arguments:not(:has(Property[key.name="metadata"]))',
+      message: UNATTRIBUTED_MODEL_CALL,
+    },
+    {
+      selector:
+        'ObjectExpression:has(Property[key.value="cf-aig-gateway-id"]):not(:has(Property[key.value="cf-aig-metadata"]))',
+      message: UNATTRIBUTED_MODEL_CALL,
+    },
+    {
+      selector:
+        'CallExpression[callee.object.name="AI"][callee.property.name="Gateway"] > ObjectExpression.arguments:not(:has(Property[key.name="collectLogs"][value.value=true]))',
+      message:
+        "AI Gateway には collectLogs: true を付ける。付けないと、モデルの呼び出しが後から引けない",
     },
     {
       selector: 'MemberExpression[object.name="Rum"][property.name="Site"]',

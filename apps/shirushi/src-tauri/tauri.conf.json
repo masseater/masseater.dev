@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; script-src 'self' https://www.youtube.com https://s.ytimg.com https://w.soundcloud.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://w.soundcloud.com https://embed.nicovideo.jp; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost",
+      "csp": "default-src 'self'; script-src 'self' https://www.youtube.com https://s.ytimg.com https://w.soundcloud.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://w.soundcloud.com https://embed.nicovideo.jp; img-src 'self' data: https:; media-src 'self' asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost",
       "assetProtocol": {
         "enable": true,
         "scope": []
@@ -38,7 +38,7 @@
       "icons/icon.ico"
     ],
     "publisher": "masseater",
-    "shortDescription": "曲の好きな所にしるしを付けて作曲 AI に渡す",
+    "shortDescription": "曲や動画の好きな所にしるしを付けて、作品を作る AI に渡す",
     "copyright": "© masseater",
     "windows": {
       "nsis": {
