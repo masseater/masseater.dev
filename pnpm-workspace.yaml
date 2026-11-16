@@ -137,7 +137,7 @@ catalog:
   "@size-limit/file": 14.3.0
   publint: 0.3.25
   sequoia-cli: ^0.5.8
-  "@atproto/api": ^0.31.0
+  "@atproto/api": ^0.32.0
   "@effect/ai-openrouter": 4.1.4
   parse5: ^8.1.0
   mdast-util-from-markdown: ^2.1.0
@@ -160,7 +160,7 @@ catalog:
   fast-png: ^8.0.0
   tesseract.js: ^7.0.0
   "@tesseract.js-data/eng": ^1.0.0
-  playwright-core: 1.65.0
+  playwright-core: 1.65.1
   "@kenjiuno/msgreader": ^1.28.0
   officeparser: ^8.1.1
   file-type: ^22.1.0
@@ -199,7 +199,7 @@ catalog:
   "@typescript-eslint/utils": ^8.72.1
   combinate: 1.1.11
   dedent: 1.7.2
-  eslint: 10.14.0
+  eslint: 10.15.0
   eslint-plugin-drizzle: 0.2.3
   "@andrewbranch/untar.js": 1.0.4
   "@commitlint/format": 21.2.3
@@ -274,7 +274,7 @@ catalogs:
     eden-tanstack-react-query: 0.5.1
     effect: 4.1.4
     elysia: 1.4.32
-    fallow: 3.42.0
+    fallow: 3.43.0
     radix-ui: 1.8.1
     tailwindcss: 4.3.5
     typescript: 7.1.0-beta
