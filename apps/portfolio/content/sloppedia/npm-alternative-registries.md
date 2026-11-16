@@ -121,7 +121,7 @@ JSR はまだプライベートなパッケージを置けない[^jsr-private]�
 
 ## 評価
 
-Sloppedia の持ち主の masseater は、`sloppedia` や `@r_masseater/msch` などのパッケージを公開の npm レジストリに出している。この記事は、pnpm のチームによるレジストリの例として pnpr が挙がったことから書かれた。
+Sloppedia の持ち主の masseater は、`@r_masseater/msch` などのパッケージを公開の npm レジストリに出している。この記事は、pnpm のチームによるレジストリの例として pnpr が挙がったことから書かれた。
 
 ## 関連項目
 

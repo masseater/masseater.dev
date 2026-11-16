@@ -1,7 +1,7 @@
+import { headingsOf } from "@masseater.dev/sloppedia";
+import type { Heading } from "@masseater.dev/sloppedia";
 import { Array as Arr, Option } from "effect";
 import type { MDXModule } from "mdx/types";
-import { headingsOf } from "sloppedia";
-import type { Heading } from "sloppedia";
 
 import { findLoadedBody } from "./body";
 import type { Entry } from "./entry";

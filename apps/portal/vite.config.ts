@@ -21,12 +21,7 @@ export default defineConfig(({ mode }) => ({
     tasks: {
       ...alchemyTasks,
       "deploy:production": {
-        command: [
-          deployTo("prod").command,
-          "alchemy deploy alchemy.retired.ts --stage prod --yes",
-          "alchemy destroy alchemy.retired.ts --stage prod --yes",
-        ],
-        cache: false,
+        ...deployTo("prod"),
         dependsOn: ["watashi-mcp#deploy:production", "sundries#deploy:production"],
       },
     },
