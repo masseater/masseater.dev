@@ -18,6 +18,7 @@ const RuleNameSchema = Schema.Literals([
   "python-command",
   "docker-file",
   "docker-command",
+  "unnamed-restriction",
   "unneeded-file",
   "unneeded-setup",
   "cargo-outside-pnpm",

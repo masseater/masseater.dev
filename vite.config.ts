@@ -1,5 +1,4 @@
 import {
-  INFRASTRUCTURE,
   INSTRUMENTATION,
   decisionRules,
   decisionTestRules,
@@ -8,42 +7,20 @@ import {
   lint as preset,
   removalPolicySyntax,
   requiredStack,
-  restrictedImports,
+  tracedRules,
 } from "@r_masseater/msch/lint";
 import { workspaceSettings } from "@r_masseater/msch/workspace-settings";
 import type { RuleSets } from "@r_masseater/msch/workspace-settings";
 import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import fsd from "@r_masseater/vite-plus-adopt/fsd";
-import {
-  restrictedImports as untracedImports,
-  restrictedProperties as untracedProperties,
-  restrictedSyntax as unguardedWorkersAi,
-} from "@r_masseater/workers-tracing/oxlint";
+import { restrictedSyntax as unguardedWorkersAi } from "@r_masseater/workers-tracing/oxlint";
 import { Array as Arr, Record as Rec, pipe } from "effect";
 import { defineConfig } from "vite-plus";
 import type { UserConfig } from "vite-plus";
 
 type LintConfig = NonNullable<UserConfig["lint"]>;
 
-const isOtlpInterop = ({ message }: Readonly<{ message: string }>): boolean =>
-  message !== INSTRUMENTATION && message !== INFRASTRUCTURE;
-
-const otlpInteropImports = {
-  paths: pipe(restrictedImports.paths, Arr.filter(isOtlpInterop)),
-  patterns: pipe(restrictedImports.patterns, Arr.filter(isOtlpInterop)),
-};
-
-const ruleSets: RuleSets = {
-  decision: decisionRules,
-  traced: {
-    "eslint/no-restricted-imports": [
-      "error",
-      { ...restrictedImports, paths: [...restrictedImports.paths, ...untracedImports] },
-    ],
-    "eslint/no-restricted-properties": ["error", ...untracedProperties],
-  },
-  otlpInterop: { "eslint/no-restricted-imports": ["error", otlpInteropImports] },
-};
+const ruleSets: RuleSets = { decision: decisionRules, traced: tracedRules };
 
 const workspace = await workspaceSettings({
   root: import.meta.dirname,
