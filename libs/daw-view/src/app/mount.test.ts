@@ -5,7 +5,7 @@ import { page } from "vite-plus/test/browser";
 import { fixtureOf, mixedFixtureOf } from "./fixture.test.support.ts";
 import { mount } from "./mount.test.support.ts";
 
-const CLICK = new URL("click.wav", import.meta.url).href;
+const CLICK = new URL("./click.wav", import.meta.url).href;
 const CLICK_FRAMES = 2205;
 
 const main = page.getByRole("main");

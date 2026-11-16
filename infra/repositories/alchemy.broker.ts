@@ -51,7 +51,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
     const sundries = yield* Workers.Worker.ref("Mcp", SUNDRIES);
     const { url } = yield* Workers.Worker("CredentialBroker", {
       name: CREDENTIAL_BROKER_AUDIENCE,
-      main: "./src/app/credential-broker.worker.ts",
+      main: "./src/app/credential-broker.ts",
       logpush: true,
       domain: CREDENTIAL_BROKER_HOST,
       crons: ["41 * * * *"],
