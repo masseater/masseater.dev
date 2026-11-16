@@ -195,7 +195,7 @@ export const projects: readonly Project[] = [
     name: "sloppedia",
     tags: ["package"],
     description: "Markdown で書く個人の百科事典を Wikipedia 風の見た目にする部品",
-    href: `${NPM}/sloppedia`,
+    href: `${SITE}/sloppedia/`,
     links: [],
     blogs: [],
   },
