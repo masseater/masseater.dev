@@ -15,9 +15,9 @@ import {
 import type { PlatformError } from "effect/PlatformError";
 import { parse, stringify } from "yaml";
 
+import { entryDates } from "#/app/vite/markdown/remark-git-date.ts";
+import type { Dates } from "#/app/vite/markdown/remark-git-date.ts";
 import { Frontmatter } from "#/entities/entry/index.server.ts";
-import { entryDates } from "#vite-plugins/markdown/remark-git-date.ts";
-import type { Dates } from "#vite-plugins/markdown/remark-git-date.ts";
 
 const SOURCE_DIR = "content/blogs";
 const OUTPUT_DIR = "node_modules/.cache/standard-site/blogs";
