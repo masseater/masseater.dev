@@ -12,11 +12,11 @@ const verbListOf = (index: string): string =>
   pipe(
     Str.split(index, "\n"),
     Arr.filter((line) => !Str.startsWith(FIELD_SEPARATOR)(line)),
-    Arr.map((line) => Str.split(line, FIELD_SEPARATOR)[0] ?? ""),
+    Arr.flatMap((line) => Arr.fromOption(Arr.head(Str.split(line, FIELD_SEPARATOR)))),
     Arr.filter((lemma) => WORD.test(lemma)),
     Arr.dedupe,
     (verbs) => Arr.sort(verbs, Str.Order),
-    (verbs) => `${JSON.stringify(verbs, undefined, INDENT)}\n`,
+    (verbs) => `${JSON.stringify(verbs, null, INDENT)}\n`,
   );
 
 const matchesWordnet = Effect.gen(function* matchesWordnet() {
