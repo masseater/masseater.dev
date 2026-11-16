@@ -1,3 +1,4 @@
+import type { Song } from "@masseater.dev/shirushi-protocol";
 import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
@@ -5,7 +6,6 @@ import type { ReactNode } from "react";
 import { SongMeta } from "#/entities/song";
 import { Timeline, useMarkKey } from "#/features/mark-range";
 import { SongPlayer, usePlayer, usePosition } from "#/features/play-song";
-import type { Song } from "#protocol";
 
 import { KeyHint } from "./key-hint.tsx";
 

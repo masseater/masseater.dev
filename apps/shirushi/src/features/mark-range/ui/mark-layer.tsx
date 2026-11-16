@@ -1,9 +1,9 @@
+import type { Verb } from "@masseater.dev/shirushi-protocol";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { useMarks } from "#/entities/mark";
 import { useSongLink } from "#/entities/song";
-import type { Verb } from "#protocol";
 
 import { MARK_LANE } from "./lanes.ts";
 import { SpanRect } from "./span-rect.tsx";

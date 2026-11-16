@@ -1,10 +1,10 @@
 import { useAtomValue } from "@effect/atom-react";
+import type { Mark } from "@masseater.dev/shirushi-protocol";
 import { Array as Arr } from "effect";
 import { AsyncResult, Atom } from "effect/reactivity";
 
 import { fetchMarks } from "#/shared/api";
 import { runtime } from "#/shared/lib/runtime";
-import type { Mark } from "#protocol";
 
 /** @internal */
 export const marksAtom = Atom.family((link: string) => runtime.atom(fetchMarks(link)));
