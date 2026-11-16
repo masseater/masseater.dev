@@ -61,7 +61,8 @@ export const Ref = Schema.String.check(Schema.isPattern(/^[a-z_]+:\d+$/u)).annot
 const Names = Schema.Array(Text);
 
 const Values = Schema.Record(Schema.String, Schema.Unknown).annotate({
-  description: "Follows the kind's valuesSchema. Numeric keys are metric names",
+  description:
+    "Numbers to count, following the kind's valuesSchema, such as {drinks, yen} for kind met",
 });
 
 const MediaIds = Schema.Struct({

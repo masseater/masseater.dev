@@ -39,7 +39,7 @@ const GraphqlErrors = Schema.Array(Schema.Struct({ message: Schema.String }));
 
 const GraphqlResult = Schema.Struct({ errors: Schema.optionalKey(GraphqlErrors) });
 
-const DESCRIPTION = `Add an article to Sloppedia (${SITE}/sloppedia/), the owner's opinionated Wikipedia-like encyclopedia, or rewrite the one with the same slug. It goes live once the auto-merged PR deploys. Write in Japanese, in encyclopedic である style, opening with a sentence that defines the subject with the title as its subject. Cite facts with named footnotes like [^webdev], defined at the end with the author, the linked title and the outlet. Attribute the owner's opinions (Sloppediaの持ち主のmasseaterは〜と考えている) and never give your own. Use ## and ### sections and tables for comparisons. Link other articles as [語](/sloppedia/<slug>), even ones not written yet, reusing the slugs existing articles link to.`;
+const DESCRIPTION = `Add or rewrite an article in Sloppedia (${SITE}/sloppedia/), the owner's opinionated Wikipedia-like encyclopedia.`;
 
 const INPUT_SCHEMA = ArticleInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 

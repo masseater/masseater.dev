@@ -10,11 +10,12 @@ import { brokerFailed, meteredInput, runTool } from "#/shared/api/index.ts";
 const ONE_JOIN = 1;
 
 const DESCRIPTION =
-  "Return short-lived credentials to join the owner's tailnet and SSH to the Windows PC (ssh Host win). Run `tailscale up --client-id=<clientId> --id-token=<idToken> --advertise-tags=<tags joined with commas>`, write sshCertificate to ~/.ssh/win-cert.pub, then `ssh win`. idToken lasts 5 minutes and the certificate until expiresAt.";
+  "Return short-lived credentials to SSH into the owner's Windows PC over the tailnet.";
 
 const TailnetInput = Schema.Struct({
   publicKey: Schema.String.annotate({
-    description: "The ssh-ed25519 line of ~/.ssh/win.pub",
+    description:
+      "The ssh-ed25519 line of ~/.ssh/win.pub. Then run tailscale up --client-id=<clientId> --id-token=<idToken> --advertise-tags=<tags joined with commas>, write sshCertificate to ~/.ssh/win-cert.pub and ssh win. idToken lasts 5 minutes",
   }),
 });
 

@@ -23,7 +23,8 @@ const rejects = (matches: (text: string) => boolean, message: string): SchemaAST
   Schema.makeFilter<string>((text) => !matches(text) || message);
 
 const Slug = Schema.String.check(Schema.isPattern(SLUG)).annotate({
-  description: "The subject's English name in kebab-case, such as web-dev",
+  description:
+    "The subject's English name in kebab-case, such as web-dev. Reuse the slug existing articles link to; an existing slug is rewritten",
 });
 
 const Title = Schema.NonEmptyString.check(Schema.isMaxLength(MAX_TITLE)).annotate({
@@ -44,7 +45,10 @@ const Body = Schema.NonEmptyString.check(
   rejects((text) => BARE_URL.test(text), "URLは[語](URL)の形で埋め込む"),
   rejects((text) => MDX_SYNTAX.test(text), "{ } < はMDXとして解釈されるので使えない"),
   rejects((text) => NUMERIC_FOOTNOTE.test(text), "脚注のラベルは番号でなく名前にする"),
-).annotate({ description: "Markdown without frontmatter or the title heading" });
+).annotate({
+  description:
+    "Japanese Markdown in encyclopedic である style, without frontmatter or the title heading. Open by defining the subject with the title as subject. Cite facts with named footnotes like [^webdev], defined at the end with the author, linked title and outlet. Attribute the owner's opinions (Sloppediaの持ち主のmasseaterは〜と考えている) and never give your own. Use ## and ### sections and tables for comparisons. Link other articles as [語](/sloppedia/<slug>), even unwritten ones",
+});
 
 const Href = Schema.String.check(Schema.isPattern(WEB_URL));
 

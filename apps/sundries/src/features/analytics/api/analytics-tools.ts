@@ -21,7 +21,7 @@ const DIRECT = "(direct)";
 const FILTER_TYPE = "[RumPageloadEventsAdaptiveGroupsFilter_InputObject!]!";
 
 const DESCRIPTION =
-  "Read masseater.dev page views and visits per path for the last days (Cloudflare Web Analytics). With path, also returns that path's daily, referrer and country breakdowns. Per-path totals are sampled. The numbers are private: never copy them anywhere public.";
+  "Read masseater.dev page views and visits per path; the numbers are private, so never copy them anywhere public.";
 
 const INPUT_SCHEMA = AnalyticsInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 

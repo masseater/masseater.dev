@@ -68,7 +68,7 @@ const ImportCsvInputSchema = Schema.Struct({
 
 const EntryInput = Schema.Struct({
   date: Day,
-  amount: Yen,
+  amount: Yen.annotate({ description: "Yen. Inflow positive, outflow negative" }),
   description: Schema.NonEmptyString,
   memo: Schema.optionalKey(Schema.NonEmptyString),
 });
@@ -165,11 +165,11 @@ const MoneyReadInputSchema = Schema.Union([
     ...ListTransactionsFields,
   }).check(ordered),
   Schema.Struct({
-    view: literal("flow", "Sankey nodes and links from income to spending categories"),
+    view: literal("flow", "Sankey nodes and links from income to spending, without transfers"),
     ...PERIOD_FIELDS,
   }).check(ordered),
   Schema.Struct({
-    view: literal("monthly", "Income, spending and net per month"),
+    view: literal("monthly", "Income, spending and net per month, without transfers"),
     ...PERIOD_FIELDS,
   }).check(ordered),
   Schema.Struct({

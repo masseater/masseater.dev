@@ -15,7 +15,7 @@ const After = Schema.Int.check(Schema.isGreaterThanOrEqualTo(BEFORE_FIRST));
 
 export const SendInput = Schema.Struct({
   text: LongText.annotate({
-    description: "Read as the request as is",
+    description: "Read as the request as is. Read the reply with list_claude_replies",
   }),
 });
 
@@ -23,17 +23,21 @@ export const TakeInput = Schema.Struct({});
 
 export const ReplyInput = Schema.Struct({
   id: RequestId,
-  reply: LongText,
+  reply: LongText.annotate({ description: "The result, URLs of what you made, or questions" }),
   threadUrl: ThreadUrl.annotate({ description: "Your thread" }),
 });
 
 export const ListInput = Schema.Struct({
-  after: Schema.optionalKey(After),
+  after: Schema.optionalKey(
+    After.annotate({
+      description: "Omit for the newest 50; otherwise the 50 after this id, oldest first",
+    }),
+  ),
 });
 
 export const RoutineInput = Schema.Struct({
   triggerId: Schema.NonEmptyString.annotate({
-    description: "The routine's trig_ id",
+    description: "The routine's trig_ id. Register only after the owner recreated the routine",
   }),
   token: Schema.NonEmptyString.annotate({
     description: "The routine's API trigger token, sk-ant-oat01-",

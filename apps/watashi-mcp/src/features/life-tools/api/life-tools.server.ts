@@ -20,13 +20,12 @@ const READ_SCHEMA = LifeReadInput.pipe(Schema.toStandardSchemaV1, Schema.toStand
 const STATS_SCHEMA = LifeStatsInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
 const WRITE_DESCRIPTION =
-  "Write one or more of the owner's life records when the owner tells you about events, health, mood, meals, spending, people, media, plans, goals or reflections. Write only what the owner said in this conversation (source: said), gave as a file or screen (provided) or linked from a service (imported), never AI memos or guesses. One event is one life_event; put numbers to count in values (a drinking party: kind met, values {drinks, yen}). Times are ISO 8601 times, dates, months or years; a time without a zone is Asia/Tokyo. Returns {written, notices}; fix what a notice's hint says or ask the owner. On error nothing was written, except the refs listed after `Already written`.";
+  "Write the owner's life records when the owner tells you about events, health, mood, meals, spending, people, media, plans, goals or reflections.";
 
-const READ_DESCRIPTION =
-  "Read the owner's life records; every input is optional. Without record, searches life_event, profile_fact and owner_reflection. record: digest returns material to review the from–to period; record: event_kind lists kinds, metrics, people, places, tags and topics. Times are ISO 8601; a time without a zone is Asia/Tokyo. Returns {total, items, notices}.";
+const READ_DESCRIPTION = "Read the owner's life records.";
 
 const STATS_DESCRIPTION =
-  "Aggregate metrics between from and to (inclusive, ISO 8601) and compare with the previous period. Use it instead of counting records yourself. Metric and kind names come from life_read record: event_kind. Returns one summary per metric.";
+  "Aggregate the owner's metrics over a period instead of counting records yourself.";
 
 const registerWrite =
   (caller: Caller) =>

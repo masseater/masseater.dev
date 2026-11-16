@@ -123,8 +123,7 @@ const registerSearch =
     server.registerTool(
       "search_slides",
       {
-        description:
-          "Search the owner's slide decks by meaning, one slide per result, with deck, page, text and deck URL.",
+        description: "Search the owner's slide decks by meaning, one slide per result.",
         inputSchema: meteredInput({ tool: "search_slides", caller, project: NO_PROJECT })(
           SEARCH_SCHEMA,
         ),

@@ -10,8 +10,7 @@ import { meteredInput, runTool } from "#/shared/api/index.ts";
 
 const ONE_TEXT = 1;
 
-const DESCRIPTION =
-  "Translate text with PLaMo 3 Translate (Built with PLaMo). Omit from to detect the source language. form applies only to Japanese output.";
+const DESCRIPTION = "Translate text with PLaMo 3 Translate (Built with PLaMo).";
 
 const INPUT_SCHEMA = TranslateRequest.pipe(
   Schema.toStandardSchemaV1,

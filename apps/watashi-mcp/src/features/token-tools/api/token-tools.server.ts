@@ -16,7 +16,7 @@ const IssueInput = Schema.Struct({
   scope: Schema.optional(
     Schema.Literals(TOKEN_SCOPES).annotate({
       description:
-        "conversation:write (default): PUT /api/conversations. memory:write: PUT /api/memories",
+        "conversation:write (default): PUT /api/conversations. memory:write: PUT /api/memories. The token is shown once; send it as Authorization: Bearer and revoke it with watashi token revoke <id>",
     }),
   ),
   label: Schema.optional(Label.annotate({ description: "What the token is for, such as cloud" })),
@@ -26,8 +26,7 @@ type IssueRequest = typeof IssueInput.Type;
 
 const ISSUE_SCHEMA = IssueInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
-const DESCRIPTION =
-  "Issue a token for the watashi HTTP API, used as WATASHI_TOKEN and sent as Authorization: Bearer. The value appears only in this response. Revoke it with `watashi token revoke <id>`.";
+const DESCRIPTION = "Issue a token for the watashi HTTP API.";
 
 const issuing = (caller: Caller, input: IssueRequest): Promise<CallToolResult> =>
   mintToken({

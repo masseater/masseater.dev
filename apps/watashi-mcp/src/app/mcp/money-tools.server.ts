@@ -29,11 +29,9 @@ import {
 
 type Run<Input> = (input: Input) => Effect.Effect<unknown, Failure, Services>;
 
-const WRITE_DESCRIPTION =
-  "Write to the owner's household ledger. op picks the action. Amounts are yen integers: inflow positive, outflow negative.";
+const WRITE_DESCRIPTION = "Write to the owner's household ledger.";
 
-const READ_DESCRIPTION =
-  "Read the owner's household ledger. view picks the report. Amounts are yen integers: inflow positive, outflow negative. Transfers are left out of flow and monthly.";
+const READ_DESCRIPTION = "Read reports from the owner's household ledger.";
 
 const write: Run<MoneyWrite> = Match.type<MoneyWrite>().pipe(
   Match.discriminatorsExhaustive("op")({

@@ -40,16 +40,14 @@ const PROFILE_SCHEMA = WatashiProfileInput.pipe(
 );
 
 const MEMORY_WRITE_DESCRIPTION =
-  "Write an AI work memo, keyed by project and name: project rules and history, or what you learned from life records. Creates it (description and content required) or replaces only the fields you pass. Returns {written, notices}.";
+  "Write an AI work memo about a project or what you learned from life records.";
 
-const MEMORY_READ_DESCRIPTION =
-  "Find and read AI work memos. Call before starting work with words from the project or topic. project and name read one memo. Memos are written by AI, not the owner: never life_write from them.";
+const MEMORY_READ_DESCRIPTION = "Find and read AI work memos; call it before starting work.";
 
-const SEARCH_DESCRIPTION =
-  "Search the owner's life records and AI work memos together in natural words. Returns {total, countsByStore, items}; items with store memory are AI-written, not the owner's words.";
+const SEARCH_DESCRIPTION = "Search the owner's life records and AI work memos in natural words.";
 
 const PROFILE_DESCRIPTION =
-  "Return USER.md, the owner's profile for agents, as Markdown. Call it at the start of a conversation and follow it. The bracketed numbers at line ends are trait refs.";
+  "Return USER.md, the owner's profile for agents; call it at the start of a conversation and follow it.";
 
 const registerMemoryWrite =
   (caller: Caller) =>

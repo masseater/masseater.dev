@@ -13,7 +13,8 @@ const Project = Schema.NonEmptyString.annotate({
 });
 
 const Name = Schema.NonEmptyString.annotate({
-  description: "Short kebab-case, unique in the project",
+  description:
+    "Short kebab-case, unique in the project. An existing name replaces only the fields you pass",
 });
 
 const Limit = Schema.Int.check(
@@ -29,10 +30,12 @@ export const MemoryWriteInput = Schema.Struct({
   name: Name,
   description: Schema.optionalKey(
     Schema.NonEmptyString.annotate({
-      description: "One-line summary",
+      description: "One-line summary. Required to create",
     }),
   ),
-  content: Schema.optionalKey(Schema.NonEmptyString.annotate({ description: "Markdown" })),
+  content: Schema.optionalKey(
+    Schema.NonEmptyString.annotate({ description: "Markdown. Required to create" }),
+  ),
   evidence: Schema.optionalKey(
     Schema.Array(Ref).annotate({ description: "Life records this memo is based on" }),
   ),
@@ -44,7 +47,8 @@ export const MemoryWriteInput = Schema.Struct({
 export const MemoryReadInput = Schema.Struct({
   query: Schema.optionalKey(
     Schema.String.annotate({
-      description: "Omit to list the newest",
+      description:
+        "Words from the project or topic. Omit to list the newest. Memos are AI-written, never the owner's words",
     }),
   ),
   project: Schema.optionalKey(Project),
@@ -54,7 +58,9 @@ export const MemoryReadInput = Schema.Struct({
 });
 
 export const WatashiSearchInput = Schema.Struct({
-  query: Schema.NonEmptyString,
+  query: Schema.NonEmptyString.annotate({
+    description: "Items with store memory are AI-written, never the owner's words",
+  }),
   limit: Schema.optionalKey(Limit),
 });
 

@@ -119,7 +119,10 @@ const WriteItem = Schema.Union([
 ]);
 
 export const LifeWriteInput = Schema.Struct({
-  records: Schema.Array(WriteItem).check(Schema.isMinLength(MIN_ONE)),
+  records: Schema.Array(WriteItem).check(Schema.isMinLength(MIN_ONE)).annotate({
+    description:
+      "One record per event. source: said in this conversation, provided as a file or screen, or imported from a linked service; never AI memos or guesses. Times are ISO 8601; a time without a zone is Asia/Tokyo. On error nothing was written except the refs after Already written",
+  }),
 });
 
 const ReadLimit = Schema.Int.check(
@@ -131,9 +134,16 @@ const Periods = Schema.Int.check(Schema.isBetween({ minimum: MIN_ONE, maximum: M
 export const LifeReadInput = Schema.Struct({
   ref: Schema.optionalKey(Ref),
   revisions: Schema.optionalKey(Schema.Boolean),
-  record: Schema.optionalKey(Schema.Literals([...LIFE_RECORDS, "digest"])),
+  record: Schema.optionalKey(
+    Schema.Literals([...LIFE_RECORDS, "digest"]).annotate({
+      description:
+        "Omit to search life_event, profile_fact and owner_reflection. digest: material to review from–to. event_kind: lists kinds, metrics, people, places, tags and topics",
+    }),
+  ),
   query: Schema.optionalKey(Text),
-  from: Schema.optionalKey(Time),
+  from: Schema.optionalKey(
+    Time.annotate({ description: "ISO 8601. A time without a zone is Asia/Tokyo" }),
+  ),
   to: Schema.optionalKey(Time),
   kinds: Schema.optionalKey(Names),
   people: Schema.optionalKey(Names),
@@ -181,7 +191,8 @@ const GroupBy = Schema.Union([
 ]);
 
 const Metrics = Names.check(Schema.isMinLength(MIN_ONE)).annotate({
-  description: "<metric>, count:<kind> or days:<kind or metric>",
+  description:
+    "<metric>, count:<kind> or days:<kind or metric>. Names from life_read record: event_kind",
 });
 
 const CompareTo = Schema.Union([Period, Schema.Literal("previousYear"), Schema.Null]).annotate({
@@ -190,7 +201,7 @@ const CompareTo = Schema.Union([Period, Schema.Literal("previousYear"), Schema.N
 
 export const LifeStatsInput = Schema.Struct({
   metrics: Metrics,
-  from: Time,
+  from: Time.annotate({ description: "ISO 8601, inclusive like to" }),
   to: Time,
   bucket: Schema.optionalKey(Schema.Literals(BUCKETS)),
   compareTo: Schema.optionalKey(CompareTo),

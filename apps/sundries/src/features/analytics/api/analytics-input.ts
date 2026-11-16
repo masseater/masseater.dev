@@ -5,7 +5,8 @@ const MIN_DAYS = 1;
 const MAX_DAYS = 30;
 
 const Path = Schema.String.check(Schema.isPattern(/^\//u)).annotate({
-  description: "Such as /satsuei-lab/. Omit for the whole site",
+  description:
+    "Such as /satsuei-lab/. Adds daily, referrer and country breakdowns. Omit for per-path totals, which are sampled",
 });
 
 const DayRange = Schema.isBetween({ minimum: MIN_DAYS, maximum: MAX_DAYS });

@@ -13,7 +13,7 @@ import { AccessTokenInput } from "./access-token-input.ts";
 const ONE_TOKEN = 1;
 
 const DESCRIPTION =
-  "Return an OAuth access token for one of the owner's sites behind Cloudflare Access, issued through the owner's Google login. Send it as Authorization: Bearer and call again after expiresAt. When status is login, ask the owner to open loginUrl.";
+  "Return an OAuth access token for one of the owner's sites behind Cloudflare Access.";
 
 const INPUT_SCHEMA = AccessTokenInput.pipe(
   Schema.toStandardSchemaV1,
