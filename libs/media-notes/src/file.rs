@@ -1,6 +1,6 @@
 use std::fmt::Write;
 use std::fs::File;
-use std::io::{self, BufReader};
+use std::io::{BufRead, BufReader};
 use std::path::Path;
 
 use sha2::{Digest, Sha256};
@@ -18,7 +18,15 @@ fn hex(bytes: &[u8]) -> String {
 pub fn digest(path: &Path) -> Outcome<String> {
     let mut reader = BufReader::new(File::open(path)?);
     let mut hasher = Sha256::new();
-    io::copy(&mut reader, &mut hasher)?;
+    loop {
+        let chunk = reader.fill_buf()?;
+        if chunk.is_empty() {
+            break;
+        }
+        hasher.update(chunk);
+        let read = chunk.len();
+        reader.consume(read);
+    }
     Ok(hex(&hasher.finalize()))
 }
 
@@ -45,8 +53,19 @@ pub fn opened_file(path: &Path) -> Outcome<Opened> {
 mod tests {
     use std::fs;
 
-    use super::opened_file;
+    use super::{digest, opened_file};
     use crate::protocol::Site;
+
+    #[test]
+    fn digests_the_file_as_sha256() {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        let file = directory.path().join("abc.txt");
+        fs::write(&file, b"abc").expect("file");
+        assert_eq!(
+            digest(&file).expect("digest"),
+            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+        );
+    }
 
     #[test]
     fn names_a_file_by_its_contents() {
