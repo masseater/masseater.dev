@@ -3,13 +3,11 @@ import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Option, Order, String as Str, pipe } from "effect";
 
-import { toJson } from "#/entities/decision/index.ts";
 import type { RuleContext } from "#/entities/decision/index.ts";
 
 import {
   FAILED,
   PASSED,
-  RESPAN,
   TIMEOUT,
   callRule,
   lintProject,
@@ -18,8 +16,8 @@ import {
   questionCount,
   withMock,
 } from "./fixtures.test.support.ts";
-import { loggedRequests } from "./mock-openrouter.test.support.ts";
-import type { LoggedRequest } from "./mock-openrouter.test.support.ts";
+import { loggedRequests } from "./mock-typesafe.test.support.ts";
+import type { LoggedRequest } from "./mock-typesafe.test.support.ts";
 import { decisionLines, mockEnv } from "./oxlint.test.support.ts";
 import type { Services, TestError } from "./oxlint.test.support.ts";
 
@@ -82,20 +80,17 @@ const perModel = Effect.gen(function* test() {
   const env = yield* mockEnv("test-key");
   const run = yield* lintProject({
     files: { "log.js": LOG_LINE },
-    options: { model: ["openrouter/first", "openrouter/second"], rules: [callRule] },
+    options: { model: ["typesafe/jev-latest", "typesafe/jev-1.2"], rules: [callRule] },
     env,
   });
   const requests = yield* loggedRequests;
-  deepStrictEqual(sortedModels(requests), ["first", "second"]);
+  deepStrictEqual(sortedModels(requests), ["jev-1.2", "jev-latest"]);
   deepStrictEqual(
     pipe(
       decisionLines(run),
       Arr.map((line) => Str.replace(/ answered.*/u, "")(line)),
     ),
-    [
-      "log.js:1:1: [any-call] openrouter/mock-decider",
-      "log.js:1:1: [any-call] openrouter/mock-second",
-    ],
+    ["log.js:1:1: [any-call] typesafe/mock-decider", "log.js:1:1: [any-call] typesafe/mock-second"],
   );
 });
 
@@ -103,66 +98,26 @@ const ruleModel = Effect.gen(function* test() {
   const env = yield* mockEnv("test-key");
   yield* lintProject({
     files: { "log.js": LOG_LINE },
-    options: { model: "openrouter/first", rules: [{ ...callRule, model: "openrouter/second" }] },
+    options: { model: "typesafe/jev-latest", rules: [{ ...callRule, model: "typesafe/jev-1.2" }] },
     env,
   });
   const requests = yield* loggedRequests;
-  deepStrictEqual(sortedModels(requests), ["second"]);
-});
-
-const textState = Effect.gen(function* test() {
-  const env = yield* mockEnv("test-key");
-  const run = yield* lintProject({
-    files: { "log.js": LOG_LINE },
-    options: { model: RESPAN, rules: [callRule] },
-    env,
-  });
-  const requests = yield* loggedRequests;
-  deepStrictEqual(
-    pipe(
-      requests,
-      Arr.map(({ sentState }) => sentState),
-    ),
-    ["state.snippets.s0:\nconsole.log(user.email, user.phone)"],
-  );
-  strictEqual(decisionLines(run).length, ONE);
-});
-
-const textStatePerSnippet = Effect.gen(function* test() {
-  const env = yield* mockEnv("test-key");
-  const run = yield* lintProject({
-    files: { "log.js": `${LOG_LINE}console.log("done");\n` },
-    options: { model: RESPAN, rules: [callRule] },
-    env,
-  });
-  const requests = yield* loggedRequests;
-  deepStrictEqual(
-    pipe(
-      requests,
-      Arr.map(({ sentState }) => toJson(sentState)),
-      (sorted) => Arr.sort(sorted, Order.String),
-    ),
-    [
-      toJson("state.snippets.s0:\nconsole.log(user.email, user.phone)"),
-      toJson('state.snippets.s1:\nconsole.log("done")'),
-    ],
-  );
-  strictEqual(decisionLines(run).length, ONE);
+  deepStrictEqual(sortedModels(requests), ["jev-1.2"]);
 });
 
 const renamedEnv = Effect.gen(function* test() {
-  const { OPENROUTER_API_KEY: key, OPENROUTER_BASE_URL: url } = yield* mockEnv("team-key");
+  const { TYPESAFE_API_KEY: key, TYPESAFE_BASE_URL: url } = yield* mockEnv("team-key");
   const files = { "log.js": LOG_LINE };
   const options = {
-    env: { OPENROUTER_API_KEY: "TEAM_OPENROUTER_KEY", OPENROUTER_BASE_URL: "TEAM_OPENROUTER_URL" },
+    env: { TYPESAFE_API_KEY: "TEAM_TYPESAFE_KEY", TYPESAFE_BASE_URL: "TEAM_TYPESAFE_URL" },
     rules: [callRule],
   };
-  const without = yield* lintProject({ files, options, env: { OPENROUTER_API_KEY: "ignored" } });
-  assertInclude(without.stderr, "TEAM_OPENROUTER_KEY is not set, skipping openrouter models");
+  const without = yield* lintProject({ files, options, env: { TYPESAFE_API_KEY: "ignored" } });
+  assertInclude(without.stderr, "TEAM_TYPESAFE_KEY is not set, skipping typesafe models");
   const run = yield* lintProject({
     files,
     options,
-    env: { TEAM_OPENROUTER_KEY: String(key), TEAM_OPENROUTER_URL: String(url) },
+    env: { TEAM_TYPESAFE_KEY: String(key), TEAM_TYPESAFE_URL: String(url) },
   });
   const requests = yield* loggedRequests;
   deepStrictEqual(
@@ -220,50 +175,6 @@ const contexts = Effect.gen(function* test() {
   );
 });
 
-const attributed = Effect.gen(function* test() {
-  const env = yield* mockEnv("test-key");
-  yield* lintProject({
-    files: { "log.js": LOG_LINE },
-    options: { rules: [callRule] },
-    env: { ...env, GITHUB_ACTIONS: "true", GITHUB_REPOSITORY: "acme/app" },
-  });
-  const requests = yield* loggedRequests;
-  deepStrictEqual(
-    pipe(
-      requests,
-      Arr.map(({ app }) => app),
-    ),
-    [
-      {
-        referer: "https://github.com/acme/app/oxlint-plugin-decision/github-actions",
-        title: "acme/app github-actions oxlint-plugin-decision",
-        visibility: "hidden",
-      },
-    ],
-  );
-});
-
-const fromRemote = Effect.gen(function* test() {
-  const env = yield* mockEnv("test-key");
-  yield* lintProject({
-    files: {
-      "log.js": LOG_LINE,
-      ".git": "gitdir: .\n",
-      config: '[core]\n\tbare = false\n[remote "origin"]\n\turl = git@github.com:acme/tool.git\n',
-    },
-    options: { rules: [callRule] },
-    env: { ...env, CLAUDECODE: "1" },
-  });
-  const requests = yield* loggedRequests;
-  deepStrictEqual(
-    pipe(
-      requests,
-      Arr.map(({ app }) => app.title),
-    ),
-    ["acme/tool claude-code oxlint-plugin-decision"],
-  );
-});
-
 layer(NodeServices.layer, { excludeTestServices: true })("linting a project", (it) => {
   it.effect(
     "asks separately about files with the same text but different parses",
@@ -276,12 +187,6 @@ layer(NodeServices.layer, { excludeTestServices: true })("linting a project", (i
     () => withMock(perModel),
     TIMEOUT,
   );
-  it.effect("sends Respan models their state as text", () => withMock(textState), TIMEOUT);
-  it.effect(
-    "asks Respan models about one snippet per request",
-    () => withMock(textStatePerSnippet),
-    TIMEOUT,
-  );
   it.effect("lets a rule override the default model", () => withMock(ruleModel), TIMEOUT);
   it.effect("sends the source a rule's context scope asks for", () => contexts, TIMEOUT);
   it.effect(
@@ -289,10 +194,4 @@ layer(NodeServices.layer, { excludeTestServices: true })("linting a project", (i
     () => withMock(renamedEnv),
     TIMEOUT,
   );
-  it.effect(
-    "names the repository and where it runs as a hidden OpenRouter app",
-    () => withMock(attributed),
-    TIMEOUT,
-  );
-  it.effect("reads the repository from the origin remote", () => withMock(fromRemote), TIMEOUT);
 });

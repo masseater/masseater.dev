@@ -1,14 +1,14 @@
 import { Clock, Effect, FileSystem, Option, Path, Schema, Function as Fn } from "effect";
 import { Digest } from "effect/crypto";
 
-import { AnswerSchema, parseVerdicts } from "#/entities/decision/index.ts";
+import { AnswerSchema, PREFIX, parseVerdicts } from "#/entities/decision/index.ts";
 import type { DecisionRequest, DecisionResponse } from "#/entities/decision/index.ts";
 
 const DATA_FIRST_ARITY = 2;
 
 const CACHE_VERSION = 7;
 /** @internal */
-export const CACHE_DIR = ["node_modules", ".cache", "oxlint-plugin-decision"] as const;
+export const CACHE_DIR = `node_modules/.cache/${PREFIX}`;
 
 const encodeJson = (value: unknown): Effect.Effect<string> =>
   Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
@@ -23,7 +23,7 @@ export const cacheFile = Effect.fn("cacheFile")(function* cacheFile(
   const json = yield* encodeJson({ version: CACHE_VERSION, endpoint, request });
   const payload = new TextEncoder().encode(json);
   const hash = yield* digest.digestHex(Digest.sha256, payload);
-  return path.resolve(...CACHE_DIR, `${hash}.json`);
+  return path.resolve(CACHE_DIR, `${hash}.json`);
 });
 
 const CachedResponse = Schema.Struct({

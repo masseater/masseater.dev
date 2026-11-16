@@ -1,17 +1,17 @@
 {
   "name": "@r_masseater/oxlint-plugin-decision",
-  "version": "0.7.0",
-  "description": "Oxlint JS plugin that lints code with plain-English rules answered by decision models: Clef on Workers AI or Jev on OpenRouter.",
+  "version": "0.8.0",
+  "description": "Oxlint JS plugin that lints code with plain-English rules answered by decision models: Clef on Workers AI or Jev on the Typesafe System One API.",
   "keywords": [
     "ai-gateway",
     "cloudflare",
     "decision-model",
     "lint",
-    "openrouter",
     "oxlint",
     "oxlint-plugin",
     "preset",
-    "tanstack-intent"
+    "tanstack-intent",
+    "typesafe"
   ],
   "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/oxlint-plugin-decision#readme",
   "bugs": {
@@ -34,7 +34,6 @@
   },
   "exports": {
     ".": "./src/app/index.ts",
-    "./openrouter-app": "./src/app/openrouter-app.ts",
     "./presets": "./src/app/presets.ts",
     "./presets/recommended": "./src/app/recommended.ts",
     "./presets/strict": "./src/app/strict.ts",
@@ -47,10 +46,6 @@
       ".": {
         "types": "./dist/index.d.mts",
         "default": "./dist/index.mjs"
-      },
-      "./openrouter-app": {
-        "types": "./dist/openrouter-app.d.mts",
-        "default": "./dist/openrouter-app.mjs"
       },
       "./presets": {
         "types": "./dist/presets/index.d.mts",
@@ -81,7 +76,6 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@effect/ai-openrouter": "catalog:",
     "synckit": "catalog:"
   },
   "devDependencies": {

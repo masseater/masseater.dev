@@ -12,7 +12,6 @@ import type { PlatformError } from "effect/PlatformError";
 
 import { captured } from "#/entities/decision/index.ts";
 
-const GITHUB = "https://github.com";
 const SELF = "masseater/masseater.dev";
 const GIT_SUFFIX = /\.git\/?$/u;
 const SEPARATORS = /[/:]/u;
@@ -138,21 +137,3 @@ export const appContext: Effect.Effect<AppContext, never, AppServices> = Effect.
     return { repo: Option.getOrElse(repo, () => SELF), context };
   },
 );
-
-/** @internal */
-export type OpenRouterApp = Readonly<
-  Record<"HTTP-Referer" | "X-OpenRouter-Title" | "X-OpenRouter-App-Visibility", string>
->;
-
-/** @internal */
-export const openRouterApp = (tool: string): Effect.Effect<OpenRouterApp, never, AppServices> =>
-  Effect.gen(function* attribution() {
-    const context = yield* contextOf;
-    const repo = yield* repoOf;
-    const slug = Option.getOrElse(repo, () => SELF);
-    return {
-      "HTTP-Referer": `${GITHUB}/${slug}/${tool}/${context}`,
-      "X-OpenRouter-Title": `${Option.getOrElse(repo, () => "unknown")} ${context} ${tool}`,
-      "X-OpenRouter-App-Visibility": "hidden",
-    };
-  });
