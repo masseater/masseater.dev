@@ -13,5 +13,5 @@ export {
   requiredStack,
   restrictedImports,
 } from "./config/required-stack.config.ts";
-export { fsdRules } from "./config/fsd-rules.ts";
+export { steigerRules } from "./config/fsd-rules.ts";
 export { readonlyParameterAllow } from "./config/readonly-types.config.ts";

@@ -43,6 +43,7 @@ const RuleNameSchema = Schema.Literals([
   "workflow-package",
   "colocated-test",
   "comment",
+  "applied-package",
   "package-script",
   "package-manager-command",
   "skipped-gate",

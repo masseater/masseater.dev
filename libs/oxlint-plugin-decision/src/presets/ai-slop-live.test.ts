@@ -59,12 +59,12 @@ const aiSlopLive = Effect.scoped(
   Effect.gen(function* test() {
     const fs = yield* FileSystem.FileSystem;
     const key = yield* Config.Redacted("OPENROUTER_API_KEY");
-    const example = yield* fromRoot("example", "ai-slop");
+    const example = yield* fromRoot("example-presets", "ai-slop");
     const cwd = yield* tempProject({
       "fail.ts": yield* fs.readFileString(`${example}/fail.ts`),
       "pass.ts": yield* fs.readFileString(`${example}/pass.ts`),
       "oxlint.config.ts": configSource({
-        jsPlugins: [yield* fromRoot("dist", "ai-slop.mjs")],
+        jsPlugins: [yield* fromRoot("dist", "presets", "ai-slop.mjs")],
         rules: enabled(AI_SLOP, aiSlopRules),
         settings: {
           [AI_SLOP]: { model: LIVE_MODEL, timeoutMs: LIVE_TIMEOUT_MS },
