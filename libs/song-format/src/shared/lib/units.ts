@@ -20,7 +20,8 @@ export const semitonesOf = amountBefore("st");
 export const bpmOf = amountBefore("bpm");
 export const barsOf = amountBefore("bar");
 export const countOf = (text: string): number => Number(Str.slice(Str.length("x"))(text));
-export const shareOf = (text: string): number => amountBefore("%")(text) / HUNDRED;
+export const percentOf = amountBefore("%");
+export const shareOf = (text: string): number => percentOf(text) / HUNDRED;
 
 export const hertzOf = (text: string): number => {
   if (Str.endsWith("kHz")(text)) {

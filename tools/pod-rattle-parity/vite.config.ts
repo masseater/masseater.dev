@@ -1,7 +1,6 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
-  msch: { lint: { ignorePatterns: ["engine.gen.js"] } },
   run: {
     tasks: {
       render: {
@@ -13,7 +12,7 @@ export default defineConfig({
             "scenarios.json",
             { pattern: "apps/labs/pages/pod-rattle/index.html", base: "workspace" },
           ],
-          output: ["engine.gen.js", "reference/**"],
+          output: ["generated/**", "reference/**"],
         },
       },
     },
