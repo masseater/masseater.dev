@@ -1,31 +1,18 @@
-import type { LiveMix, RenderSession, Rendered, Song } from "@masseater.dev/daw-view";
-import { Effect, Option, pipe } from "effect";
+import type { RenderSession, Song } from "@masseater.dev/daw-view";
+import { Effect } from "effect";
 
 import { dawSongOf, samplesIn } from "#/entities/song/model/daw.ts";
 import { sheetOf } from "#/entities/song/model/take.ts";
 import { tapeFor } from "#/entities/song/model/tape.ts";
 
 import { heldOn } from "./deck.ts";
-import { liveOf } from "./live.ts";
+import { masteredWith } from "./live.ts";
 import { engine, openedOn, program } from "./session.ts";
 import { renderTracks } from "./tracks.ts";
 import { work } from "./work.ts";
 
 const sheetFor = sheetOf("MASTER LP");
 const START = 0;
-
-const withLive =
-  (mixdown: Rendered) =>
-  (live: Option.Option<LiveMix>): Rendered =>
-    Option.match(live, {
-      onNone: () => mixdown,
-      onSome: (given) => ({
-        left: mixdown.left,
-        right: mixdown.right,
-        take: mixdown.take,
-        live: given,
-      }),
-    });
 
 const rendered = Effect.fn("song.kuraku-narikake.render")(function* rendered({
   samples,
@@ -39,8 +26,7 @@ const rendered = Effect.fn("song.kuraku-narikake.render")(function* rendered({
   const drums = yield* renderTracks({ engine, session, samples, sheet, held });
   const stems = held.stemsOf(session.tracks, drums);
   const out = yield* Effect.promise(() => session.master(stems, held.deck, sheet.progress));
-  const live = pipe(tape, Option.map(liveOf({ session, out, stems })));
-  return withLive({ left: out.L, right: out.R, take: sheet.take() })(live);
+  return masteredWith({ session, out, stems, take: sheet.take() })(tape);
 });
 
 export const song: Song = dawSongOf({
@@ -70,6 +56,5 @@ export const song: Song = dawSongOf({
     import.meta.glob<string>("./samples/*.flac", { query: "?url", import: "default", eager: true }),
   ),
   sampleRate: engine.SR,
-  render: ({ signal, ...session }) =>
-    Effect.runPromise(Effect.scoped(rendered(session)), { signal }),
+  render: rendered,
 });

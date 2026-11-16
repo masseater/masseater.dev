@@ -1,7 +1,8 @@
-import type { LiveMix, RenderSession, Rendered, Song, Tape } from "@masseater.dev/daw-view";
+import type { LiveMix, RenderSession, Song, Tape } from "@masseater.dev/daw-view";
 import { Effect, Option, pipe } from "effect";
 
 import { dawSongOf, samplesIn } from "#/entities/song/model/daw.ts";
+import { withLive } from "#/entities/song/model/mixdown.ts";
 import { FIELD } from "#/entities/song/model/program.ts";
 import type { Ledger, View } from "#/entities/song/model/program.ts";
 import { sheetOf } from "#/entities/song/model/take.ts";
@@ -59,19 +60,6 @@ const renderingOn: (log: Ledger, view: View) => (tape: Option.Option<Tape>) => R
       onSome: (taped) => ({ log, view, tape: sinkOn(taped) }),
     });
 
-const withLive =
-  (mixdown: Rendered) =>
-  (live: Option.Option<LiveMix>): Rendered =>
-    Option.match(live, {
-      onNone: () => mixdown,
-      onSome: (given) => ({
-        left: mixdown.left,
-        right: mixdown.right,
-        take: mixdown.take,
-        live: given,
-      }),
-    });
-
 const rendered = Effect.fn("song.life-is-but-a.render")(function* rendered({
   samples,
   report,
@@ -109,6 +97,5 @@ export const song: Song = dawSongOf({
     import.meta.glob<string>("./samples/*.flac", { query: "?url", import: "default", eager: true }),
   ),
   sampleRate: engine.SR,
-  render: ({ signal, ...session }) =>
-    Effect.runPromise(Effect.scoped(rendered(session)), { signal }),
+  render: rendered,
 });

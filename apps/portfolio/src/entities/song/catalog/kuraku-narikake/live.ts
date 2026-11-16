@@ -1,6 +1,7 @@
-import type { LiveMix, Tape } from "@masseater.dev/daw-view";
-import { Array as Arr, Record as Rec, pipe } from "effect";
+import type { LiveMix, Rendered, Take, Tape } from "@masseater.dev/daw-view";
+import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
+import { withLive } from "#/entities/song/model/mixdown.ts";
 import { FIELD } from "#/entities/song/model/program.ts";
 
 import type { Master, Session, Slot } from "./program/song.js";
@@ -24,3 +25,14 @@ export const liveOf =
     ),
     tape,
   });
+
+export interface Finished extends Mastering {
+  readonly take: Take;
+}
+
+export const masteredWith =
+  ({ take, ...mastering }: Finished) =>
+  (tape: Option.Option<Tape>): Rendered => {
+    const live = pipe(tape, Option.map(liveOf(mastering)));
+    return withLive({ left: mastering.out.L, right: mastering.out.R, take })(live);
+  };

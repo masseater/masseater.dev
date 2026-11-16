@@ -1,5 +1,6 @@
 import type { Song as DawSong, RenderSession, Rendered, TrackStyle } from "@masseater.dev/daw-view";
-import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
+import type { Scope } from "effect";
 
 import type { Form } from "./program.ts";
 import { factsOf } from "./song.ts";
@@ -18,7 +19,7 @@ export type Recording = Readonly<{
   look: Look;
   sampleUrls: Readonly<Record<string, string>>;
   sampleRate: number;
-  render: (session: RenderSession) => Promise<Rendered>;
+  render: (session: Omit<RenderSession, "signal">) => Effect.Effect<Rendered, never, Scope.Scope>;
 }>;
 
 export const samplesIn = (
@@ -70,5 +71,5 @@ export const dawSongOf = ({
   credits: work.credits,
   samples: sampleUrls,
   sampleRate,
-  render,
+  render: ({ signal, ...session }) => Effect.runPromise(Effect.scoped(render(session)), { signal }),
 });
