@@ -15,6 +15,7 @@
     "@typescript/typescript6": "catalog:",
     "effect": "catalog:stack",
     "fallow": "catalog:stack",
+    "fallow-type-aware": "catalog:stack",
     "skills": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
