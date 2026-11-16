@@ -125,6 +125,7 @@ export type FuKeywordNames =
     | "tremolo"
     | "tuplet"
     | "vel"
+    | "volume"
     | "width"
     | "{"
     | "}";
@@ -285,15 +286,21 @@ export interface Bus extends langium.AstNode {
     readonly $container: Song;
     readonly $type: 'Bus';
     fx?: FxChain;
+    muted: boolean;
     name: Name;
+    pan?: string;
     sends: Array<Send>;
+    volume?: string;
 }
 
 export const Bus = {
     $type: 'Bus',
     fx: 'fx',
+    muted: 'muted',
     name: 'name',
-    sends: 'sends'
+    pan: 'pan',
+    sends: 'sends',
+    volume: 'volume'
 } as const;
 
 export function isBus(item: unknown): item is Bus {
@@ -865,10 +872,10 @@ export function isMultiSample(item: unknown): item is MultiSample {
     return reflection.isInstance(item, MultiSample.$type);
 }
 
-export type Name = 'accent' | 'attack' | 'audio' | 'automate' | 'bar' | 'base' | 'bass' | 'bend' | 'bus' | 'by' | 'chorus' | 'comp' | 'countermelody' | 'curve' | 'decay' | 'delay' | 'depth' | 'drive' | 'drums' | 'duck' | 'every' | 'exp' | 'fade' | 'feedback' | 'from' | 'fx' | 'gain' | 'gate' | 'groove' | 'harmony' | 'highpass' | 'hold' | 'instrument' | 'ir' | 'kit' | 'legato' | 'length' | 'limit' | 'linear' | 'lookahead' | 'lowpass' | 'lyric' | 'makeup' | 'mark' | 'melody' | 'meter' | 'mix' | 'mono-below' | 'multisample' | 'nudge' | 'offset' | 'onsets' | 'over' | 'pan' | 'phaser' | 'pingpong' | 'predelay' | 'q' | 'release' | 'reverb' | 'reverse' | 'role' | 'root' | 'sample' | 'section' | 'semi' | 'send' | 'slice' | 'slices' | 'song' | 'staccato' | 'swing' | 'tempo' | 'texture' | 'tie' | 'to' | 'track' | 'tremolo' | 'vel' | 'width' | string;
+export type Name = 'accent' | 'attack' | 'audio' | 'automate' | 'bar' | 'base' | 'bass' | 'bend' | 'bus' | 'by' | 'chorus' | 'comp' | 'countermelody' | 'curve' | 'decay' | 'delay' | 'depth' | 'drive' | 'drums' | 'duck' | 'every' | 'exp' | 'fade' | 'feedback' | 'from' | 'fx' | 'gain' | 'gate' | 'groove' | 'harmony' | 'highpass' | 'hold' | 'instrument' | 'ir' | 'kit' | 'legato' | 'length' | 'limit' | 'linear' | 'lookahead' | 'lowpass' | 'lyric' | 'makeup' | 'mark' | 'melody' | 'meter' | 'mix' | 'mono-below' | 'multisample' | 'nudge' | 'offset' | 'onsets' | 'over' | 'pan' | 'phaser' | 'pingpong' | 'predelay' | 'q' | 'release' | 'reverb' | 'reverse' | 'role' | 'root' | 'sample' | 'section' | 'semi' | 'send' | 'slice' | 'slices' | 'song' | 'staccato' | 'swing' | 'tempo' | 'texture' | 'tie' | 'to' | 'track' | 'tremolo' | 'vel' | 'volume' | 'width' | string;
 
 export function isName(item: unknown): item is Name {
-    return item === 'melody' || item === 'countermelody' || item === 'bass' || item === 'harmony' || item === 'drums' || item === 'texture' || item === 'delay' || item === 'reverb' || item === 'chorus' || item === 'comp' || item === 'limit' || item === 'width' || item === 'phaser' || item === 'tremolo' || item === 'drive' || item === 'gain' || item === 'pan' || item === 'sample' || item === 'release' || item === 'attack' || item === 'decay' || item === 'offset' || item === 'length' || item === 'mix' || item === 'base' || item === 'from' || item === 'to' || item === 'q' || item === 'ir' || item === 'predelay' || item === 'feedback' || item === 'pingpong' || item === 'lookahead' || item === 'makeup' || item === 'semi' || item === 'highpass' || item === 'lowpass' || item === 'slice' || item === 'slices' || item === 'onsets' || item === 'root' || item === 'hold' || item === 'depth' || item === 'by' || item === 'over' || item === 'curve' || item === 'linear' || item === 'exp' || item === 'every' || item === 'fade' || item === 'nudge' || item === 'bend' || item === 'lyric' || item === 'gate' || item === 'vel' || item === 'tie' || item === 'staccato' || item === 'legato' || item === 'accent' || item === 'reverse' || item === 'audio' || item === 'kit' || item === 'instrument' || item === 'track' || item === 'bus' || item === 'duck' || item === 'groove' || item === 'swing' || item === 'multisample' || item === 'song' || item === 'bar' || item === 'meter' || item === 'tempo' || item === 'section' || item === 'mark' || item === 'automate' || item === 'fx' || item === 'send' || item === 'role' || item === 'mono-below' || (typeof item === 'string' && (/[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(item)));
+    return item === 'melody' || item === 'countermelody' || item === 'bass' || item === 'harmony' || item === 'drums' || item === 'texture' || item === 'delay' || item === 'reverb' || item === 'chorus' || item === 'comp' || item === 'limit' || item === 'width' || item === 'phaser' || item === 'tremolo' || item === 'drive' || item === 'gain' || item === 'pan' || item === 'sample' || item === 'release' || item === 'attack' || item === 'decay' || item === 'offset' || item === 'length' || item === 'mix' || item === 'base' || item === 'from' || item === 'to' || item === 'q' || item === 'ir' || item === 'predelay' || item === 'feedback' || item === 'pingpong' || item === 'lookahead' || item === 'makeup' || item === 'semi' || item === 'highpass' || item === 'lowpass' || item === 'slice' || item === 'slices' || item === 'onsets' || item === 'root' || item === 'hold' || item === 'depth' || item === 'by' || item === 'over' || item === 'curve' || item === 'linear' || item === 'exp' || item === 'every' || item === 'fade' || item === 'nudge' || item === 'bend' || item === 'lyric' || item === 'gate' || item === 'vel' || item === 'tie' || item === 'staccato' || item === 'legato' || item === 'accent' || item === 'reverse' || item === 'audio' || item === 'kit' || item === 'instrument' || item === 'track' || item === 'bus' || item === 'duck' || item === 'groove' || item === 'swing' || item === 'multisample' || item === 'song' || item === 'bar' || item === 'meter' || item === 'tempo' || item === 'section' || item === 'mark' || item === 'automate' || item === 'fx' || item === 'send' || item === 'role' || item === 'mono-below' || item === 'volume' || (typeof item === 'string' && (/[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(item)));
 }
 
 export interface Note extends langium.AstNode {
@@ -1198,19 +1205,25 @@ export interface Track extends langium.AstNode {
     readonly $container: Song;
     readonly $type: 'Track';
     fx?: FxChain;
+    muted: boolean;
     name: Name;
+    pan?: string;
     role?: Role;
     sends: Array<Send>;
     source: TrackSource;
+    volume?: string;
 }
 
 export const Track = {
     $type: 'Track',
     fx: 'fx',
+    muted: 'muted',
     name: 'name',
+    pan: 'pan',
     role: 'role',
     sends: 'sends',
-    source: 'source'
+    source: 'source',
+    volume: 'volume'
 } as const;
 
 export function isTrack(item: unknown): item is Track {
@@ -1532,12 +1545,25 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                     name: Bus.fx,
                     optional: true
                 },
+                muted: {
+                    name: Bus.muted,
+                    defaultValue: false,
+                    optional: true
+                },
                 name: {
                     name: Bus.name
+                },
+                pan: {
+                    name: Bus.pan,
+                    optional: true
                 },
                 sends: {
                     name: Bus.sends,
                     defaultValue: [],
+                    optional: true
+                },
+                volume: {
+                    name: Bus.volume,
                     optional: true
                 }
             },
@@ -2223,8 +2249,17 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                     name: Track.fx,
                     optional: true
                 },
+                muted: {
+                    name: Track.muted,
+                    defaultValue: false,
+                    optional: true
+                },
                 name: {
                     name: Track.name
+                },
+                pan: {
+                    name: Track.pan,
+                    optional: true
                 },
                 role: {
                     name: Track.role,
@@ -2237,6 +2272,10 @@ export class FuAstReflection extends langium.AbstractAstReflection {
                 },
                 source: {
                     name: Track.source
+                },
+                volume: {
+                    name: Track.volume,
+                    optional: true
                 }
             },
             superTypes: [Declaration.$type, Mixable.$type]
