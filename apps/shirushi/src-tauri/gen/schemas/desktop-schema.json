@@ -189,6 +189,12 @@
           "markdownDescription": "Enables the choose_pair command without any pre-configured scope."
         },
         {
+          "description": "Enables the get_still command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-get-still",
+          "markdownDescription": "Enables the get_still command without any pre-configured scope."
+        },
+        {
           "description": "Enables the judge_statement command without any pre-configured scope.",
           "type": "string",
           "const": "allow-judge-statement",
@@ -249,6 +255,12 @@
           "markdownDescription": "Enables the save_mark command without any pre-configured scope."
         },
         {
+          "description": "Enables the song_at command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-song-at",
+          "markdownDescription": "Enables the song_at command without any pre-configured scope."
+        },
+        {
           "description": "Denies the choose_file command without any pre-configured scope.",
           "type": "string",
           "const": "deny-choose-file",
@@ -259,6 +271,12 @@
           "type": "string",
           "const": "deny-choose-pair",
           "markdownDescription": "Denies the choose_pair command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the get_still command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-get-still",
+          "markdownDescription": "Denies the get_still command without any pre-configured scope."
         },
         {
           "description": "Denies the judge_statement command without any pre-configured scope.",
@@ -319,6 +337,12 @@
           "type": "string",
           "const": "deny-save-mark",
           "markdownDescription": "Denies the save_mark command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the song_at command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-song-at",
+          "markdownDescription": "Denies the song_at command without any pre-configured scope."
         },
         {
           "description": "Default core plugins set.\n#### This default permission set includes:\n\n- `core:path:default`\n- `core:event:default`\n- `core:window:default`\n- `core:webview:default`\n- `core:app:default`\n- `core:image:default`\n- `core:resources:default`\n- `core:menu:default`\n- `core:tray:default`",

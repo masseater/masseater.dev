@@ -2,8 +2,7 @@ import { runtime, savedRange } from "@masseater.dev/media-notes-ui";
 import { Array as Arr, Effect } from "effect";
 import { AtomRegistry } from "effect/reactivity";
 
-import { marksAtom } from "#/entities/mark/index.ts";
-import { postMark } from "#/shared/api/index.ts";
+import { marksAtom, posted } from "#/entities/mark/index.ts";
 
 import { aspectsAtom, verbAtom, wordsAtom } from "./draft.ts";
 
@@ -16,8 +15,8 @@ export const saveAtom = runtime.fn(
     const verb = drafted.get(verbAtom);
     const aspects = drafted.get(aspectsAtom);
     const words = drafted.get(wordsAtom);
-    const registry = yield* savedRange(({ media }, { from, to }) =>
-      postMark({ song: media, from, to, verb, aspects, words }),
+    const registry = yield* savedRange((opened, { from, to }) =>
+      posted(opened)({ song: opened.media, from, to, verb, aspects, words }),
     );
     registry.set(aspectsAtom, Arr.empty());
     registry.set(wordsAtom, EMPTY);
