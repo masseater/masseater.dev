@@ -10,6 +10,8 @@ use serde::de::DeserializeOwned;
 use crate::failure::Outcome;
 use crate::protocol::Source;
 
+const UNSOURCED: &str = "";
+
 #[derive(Clone)]
 pub struct Store {
     connection: Arc<Mutex<Connection>>,
@@ -114,18 +116,37 @@ impl Store {
             .transpose()
     }
 
-    pub fn put<T: Serialize>(&self, row: &Row<'_, T>) -> Outcome<()> {
+    fn insert<T: Serialize>(
+        &self,
+        id: &str,
+        source: (&str, &str),
+        at: i64,
+        value: &T,
+    ) -> Outcome<()> {
         let table = self.table;
-        let body = serde_json::to_string(row.value)?;
+        let body = serde_json::to_string(value)?;
         self.with(|connection| {
             connection.execute(
                 &format!(
                     "INSERT OR REPLACE INTO {table} (id, site, source_id, created_at, body) VALUES (?1, ?2, ?3, ?4, ?5)"
                 ),
-                params![row.id, row.source.site.as_str(), row.source.id, row.at, body],
+                params![id, source.0, source.1, at, body],
             )?;
             Ok(())
         })
+    }
+
+    pub fn put<T: Serialize>(&self, row: &Row<'_, T>) -> Outcome<()> {
+        self.insert(
+            row.id,
+            (row.source.site.as_str(), &row.source.id),
+            row.at,
+            row.value,
+        )
+    }
+
+    pub fn put_unsourced<T: Serialize>(&self, id: &str, at: i64, value: &T) -> Outcome<()> {
+        self.insert(id, (UNSOURCED, UNSOURCED), at, value)
     }
 
     pub fn remove(&self, id: &str) -> Outcome<bool> {
@@ -210,5 +231,23 @@ mod tests {
         assert!(store.remove("1").expect("first removal"));
         assert!(!store.remove("1").expect("second removal"));
         assert_eq!(store.get::<Note>("1").expect("gone"), None);
+    }
+
+    #[test]
+    fn keeps_a_note_that_belongs_to_no_media() {
+        let store = Store::in_memory("notes").expect("store");
+        store
+            .put_unsourced("1", 1, &note("about every song"))
+            .expect("saved");
+        assert_eq!(
+            store.list::<Note>(None).expect("every note"),
+            vec![note("about every song")]
+        );
+        assert_eq!(
+            store
+                .list::<Note>(Some(&source("aaaaaaaaaaa")))
+                .expect("none here"),
+            Vec::<Note>::new()
+        );
     }
 }
