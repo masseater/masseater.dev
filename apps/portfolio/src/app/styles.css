@@ -1,6 +1,6 @@
 @import "@masseater.dev/ui/styles.css";
 @import "@masseater.dev/ui/theme.css";
-@import "sloppedia/styles.css";
+@import "@masseater.dev/sloppedia/styles.css";
 @import "@xyflow/react/dist/base.css";
 @plugin "@tailwindcss/typography";
 
