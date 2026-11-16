@@ -1,23 +1,29 @@
-import { createRegistry, defineExtension, defineTool, section } from "@earendil-works/pi-durable";
-import type { Extension, Registry } from "@earendil-works/pi-durable";
-import { Array as Arr, Number as Num, Option, Result, Schema, pipe } from "effect";
+import {
+  GenerationTask,
+  createRegistry,
+  defineExtension,
+  defineTool,
+  hook,
+  section,
+} from "@earendil-works/pi-durable";
+import type { Cursor, Extension, Registry } from "@earendil-works/pi-durable";
+import { Array as Arr, Effect, Number as Num, Option, Result, Schema, pipe } from "effect";
 
 import { AnalysisResult } from "#/entities/trait/index.ts";
 import type { AnalysisResultValue } from "#/entities/trait/index.ts";
+import { NUDGE, RECORD_TOOL, needsNudge } from "#/features/build-traits/model/analyst-nudge.ts";
 
 export const TRAIT_MODEL = "@cf/thinkingmachines/inkling-2-small";
-
-export const RECORD_TOOL = "record_observations";
 
 const INSTRUCTIONS = Arr.join(
   [
     "You read notes and records written by one person, the owner, and link them to the owner's traits.",
     "The user message is JSON with `sources` and `traits`. Each source lists the refs of the traits it may concern in `candidates`.",
-    `Call \`${RECORD_TOOL}\` exactly once with every observation you find, then reply with the single word done.`,
+    `Always call \`${RECORD_TOOL}\` exactly once, then reply with the single word done. When the sources show nothing, call it with an empty \`observations\` list.`,
     "For each trait a source shows, record one observation: `supports` or `contradicts` for a candidate it confirms or denies, `replace` when the owner changed a candidate trait, and `new` when no candidate fits.",
     "Use only the trait refs listed in that source's `candidates`. Copy each quote verbatim from the source text.",
     "Write every statement and why in English, even when the source is Japanese.",
-    "Record nothing for a source that says nothing about the owner's rules, tastes, tools, ways of working, values or background.",
+    "Add no observation for a source that says nothing about the owner's rules, tastes, tools, ways of working, values or background.",
   ],
   "\n",
 );
@@ -29,19 +35,6 @@ const recordTool = defineTool({
   replay: "safe",
   execute: () => Promise.resolve({ output: [{ type: "text", text: "recorded" }] }),
 });
-
-const traitExtension = (): Extension =>
-  defineExtension({
-    name: "watashi.traits",
-    sections: [section("trait_rules", () => INSTRUCTIONS, { tag: false })],
-    tools: [recordTool],
-  });
-
-export const traitRegistry = (): Registry => {
-  const registry = createRegistry();
-  registry.install(traitExtension());
-  return registry;
-};
 
 const Turn = Schema.Struct({
   role: Schema.Literal("assistant"),
@@ -156,7 +149,7 @@ const describe = (said: typeof Said.Type): string =>
     " ",
   );
 
-export const lastSaid = (entries: readonly unknown[]): string =>
+const lastSaid = (entries: readonly unknown[]): string =>
   pipe(
     entries,
     Arr.flatMap(messagesOf),
@@ -168,3 +161,51 @@ export const lastSaid = (entries: readonly unknown[]): string =>
       onSome: describe,
     }),
   );
+
+export const missingCallText = ({
+  outcome,
+  entries,
+}: Readonly<{ outcome: string; entries: readonly unknown[] }>): string =>
+  `no ${RECORD_TOOL} call (${outcome}): ${lastSaid(entries)}`;
+
+const RECENT = 20;
+
+const newestFirstOf = (entries: readonly unknown[]): readonly unknown[] =>
+  pipe(
+    entries,
+    Arr.flatMap((entry) => Arr.reverse(messagesOf(entry))),
+  );
+
+const FROM_NEWEST = Option.getOrUndefined(Option.none<Cursor>());
+
+const nudgeOf = (needed: boolean): Option.Option<Readonly<{ continue: string }>> =>
+  pipe(
+    Option.some({ continue: NUDGE }),
+    Option.filter(() => needed),
+  );
+
+const nudgeHook = hook(GenerationTask, {
+  onYield: (answer, api, context) =>
+    Effect.runPromise(
+      Effect.promise(() => api.entries({ order: "descending" }, RECENT, FROM_NEWEST, context)).pipe(
+        Effect.map((page) =>
+          nudgeOf(needsNudge({ answer, newestFirst: newestFirstOf(page.items) })),
+        ),
+        Effect.map(Option.getOrUndefined),
+      ),
+    ),
+});
+
+const traitExtension = (): Extension =>
+  defineExtension({
+    name: "watashi.traits",
+    sections: [section("trait_rules", () => INSTRUCTIONS, { tag: false })],
+    tools: [recordTool],
+    hooks: [nudgeHook],
+  });
+
+export const traitRegistry = (): Registry => {
+  const registry = createRegistry();
+  registry.install(traitExtension());
+  return registry;
+};
