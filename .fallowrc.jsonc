@@ -28,19 +28,13 @@
     },
   ],
   "ignoreExports": [
-    { "file": "libs/vitest-otlp/src/shared/api/generated/**", "exports": ["*"] },
-    { "file": "apps/*/src/shared/api/generated/**", "exports": ["*"] },
+    { "file": "**/generated/**", "exports": ["*"] },
     {
       "file": "libs/workers-tracing/src/app/tanstack-start.plain.ts",
       "exports": ["traceServerFn"],
     },
   ],
-  "overrides": [
-    {
-      "files": ["libs/vitest-otlp/src/shared/api/generated/**"],
-      "rules": { "unused-enum-members": "off" },
-    },
-  ],
+  "overrides": [{ "files": ["**/generated/**"], "rules": { "unused-enum-members": "off" } }],
   "ignoreDependencies": ["@effect/language-service"],
   "workspaces": {
     "settings": {
@@ -166,6 +160,7 @@
       ],
     },
   },
+  "health": { "ignore": ["**/generated/**"] },
   "duplicates": { "threshold": 1, "ignore": ["**/generated/**", "**/routeTree.gen.ts"] },
   "flags": {
     "sdkPatterns": [
@@ -214,7 +209,6 @@
       "enablers": ["@r_masseater/msch"],
       "toolingDependencies": [
         "@commitlint/config-conventional",
-        "@r_masseater/textlint-rule-preset-ja",
         "@textlint-ja/textlint-rule-preset-ai-writing",
         "textlint-rule-preset-ja-technical-writing",
       ],
