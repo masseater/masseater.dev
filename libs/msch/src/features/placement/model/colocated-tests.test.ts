@@ -26,6 +26,7 @@ const flagsDistantTests = Effect.gen(function* flagsDistantTests() {
     "apps/site/src/app/__tests__/mount.tsx": "export const mount = 1;\n",
     "apps/site/src/pages/translator/index.ts": 'export { TranslatorPage } from "./ui/page.tsx";\n',
     "libs/kit/tests/parse.test.ts": 'import { parse } from "../src/parse.ts";\n',
+    "libs/kit/spec/parse.spec.ts": 'import { parse } from "../src/parse.ts";\n',
     "libs/kit/src/other-test.test.ts": 'import { cases } from "./parse.test.ts";\n',
     "libs/trace/package.json": '{"name":"trace","exports":{"./spans":"./src/spans.ts"}}\n',
     "libs/trace/src/spans.ts": "export const spans = 1;\n",
@@ -34,6 +35,7 @@ const flagsDistantTests = Effect.gen(function* flagsDistantTests() {
   expect(findings).toStrictEqual([
     "apps/site/src/app/__tests__/mount.tsx colocated-test",
     "apps/site/src/app/translate.test.ts colocated-test",
+    "libs/kit/spec/parse.spec.ts colocated-test",
     "libs/kit/src/other-test.test.ts colocated-test",
     "libs/kit/tests/parse.test.ts colocated-test",
     "libs/trace/src/lib/format.test.ts colocated-test",
@@ -56,6 +58,9 @@ const passesColocatedTests = Effect.gen(function* passesColocatedTests() {
     "libs/trace/src/spans.test.ts": 'import { spans } from "trace/spans";\n',
     "libs/flow/src/main.test.ts": 'const entry = path.join(import.meta.dirname, "main.ts");\n',
     "apps/demo/declarations.test.ts": 'const sources = import.meta.glob("./src/**/*.rpp");\n',
+    "apps/sdd/src/features/specs/Dashboard.tsx": "export const Dashboard = 1;\n",
+    "plugins/sdd/skills/spec/scripts/copy.ts": "export const copy = 1;\n",
+    "plugins/sdd/skills/spec/scripts/copy.test.ts": 'import { copy } from "./copy.ts";\n',
   });
   expect(findings).toStrictEqual([]);
 });
@@ -66,7 +71,7 @@ layer(fixtureLayer)("colocated tests", (it) => {
     () => flagsDistantTests,
   );
   it.effect(
-    "passes tests that import, name or reach through their package's exports a file beside them, vendored files and Rust integration tests",
+    "passes tests that import, name or reach through their package's exports a file beside them, vendored files, Rust integration tests and modules in a directory named after specs",
     () => passesColocatedTests,
   );
 });
