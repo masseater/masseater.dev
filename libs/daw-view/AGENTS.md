@@ -6,4 +6,4 @@
 
 ページが `live`（曲のミキサー）も返すと、トラックごとのミュートとソロが出て、そのミキサーを AudioWorklet で動かして鳴らす。トラックごとの素材は `openTape` のテープに書く。テープは素材を OPFS に置き、再生位置の前後だけを AudioWorklet へ送るので、スマートフォンでも素材をメモリに抱えない。OPFS が使えずメモリも少ない環境と、AudioWorklet が使えない環境では、マスターを通した 2 チャンネルをそのまま鳴らす。
 
-トラックの音量、パン、ミュートは `Mixer`（`volumeDecibels`、`pan`、`muted`）で持ち、名前と単位を `libs/song-format` の `.fu` のミキサーにそろえる。パンはバランスとして扱い、左の音量を gain × min(1, 1 − pan)、右の音量を gain × min(1, 1 + pan) とする。ソロは画面だけの状態とし、曲に書かない。
+トラックの音量、パン、ミュートは `Mixer`（`volumeDecibels`、`pan`、`muted`）で持ち、名前と単位を `libs/song-format` の `.fu` のミキサーにそろえる。パンはバランスとして扱う。左の音量を gain × min(1, 1 − pan)、右の音量を gain × min(1, 1 + pan) とする。ソロは画面の状態で、曲には書かない。

@@ -1,11 +1,6 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
-  msch: {
-    lint: {
-      overrides: [{ files: ["**/*.worker.ts"], excludeFiles: ["**/*.test.ts"], use: ["traced"] }],
-    },
-  },
   run: {
     tasks: {
       "cloudflare-tokens": { command: "node bin/cloudflare-tokens.ts", cache: false },

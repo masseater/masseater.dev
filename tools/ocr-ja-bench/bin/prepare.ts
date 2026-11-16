@@ -27,7 +27,7 @@ const ONE_AT_A_TIME = { concurrency: 1 } as const;
 const ROOT = new URL("../", import.meta.url);
 const IMAGES = new URL(".cache/images/", ROOT).pathname;
 const DOWNLOADS = new URL(".cache/jawildtext/", ROOT).pathname;
-const MANIFEST = new URL("data/jawildtext.json", ROOT).pathname;
+const MANIFEST = new URL("./data/jawildtext.json", ROOT).pathname;
 
 const HANDWRITING = "handwriting_ocr/train-00000-of-00006.parquet";
 const RECEIPT = "receipt_kie/train-00000-of-00008.parquet";

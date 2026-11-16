@@ -9,7 +9,7 @@ import { translateWith } from "#/features/translate-text/index.ts";
 import { MODEL_NAME } from "#/shared/config/index.ts";
 import { runLogged } from "#/shared/lib/run.ts";
 
-import type { PlamoModel } from "./translator.worker.ts";
+import type { PlamoModel } from "./translator.ts";
 
 const OK = 200;
 const BAD_REQUEST = 400;

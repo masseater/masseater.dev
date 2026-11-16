@@ -1,0 +1,38 @@
+{
+  "name": "akapen",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/akapen-protocol": "workspace:*",
+    "@masseater.dev/media-notes-protocol": "workspace:*",
+    "@masseater.dev/media-notes-ui": "workspace:*",
+    "@masseater.dev/ui": "workspace:*",
+    "@tauri-apps/api": "catalog:",
+    "effect": "catalog:stack",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "scheduler": "catalog:",
+    "tailwindcss": "catalog:stack",
+    "tw-animate-css": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/tsgo": "catalog:stack",
+    "@effect/vitest": "catalog:",
+    "@masseater.dev/component-release": "workspace:*",
+    "@masseater.dev/tauri-app": "workspace:*",
+    "@tauri-apps/cli": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@types/youtube": "catalog:",
+    "happy-dom": "catalog:",
+    "typescript": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

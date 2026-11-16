@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "@masseater.dev/ui/theme.css";
 
+@source "../../node_modules/@masseater.dev/media-notes-ui/src";
+
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
