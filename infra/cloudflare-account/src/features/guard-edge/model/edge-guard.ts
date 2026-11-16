@@ -56,6 +56,7 @@ const honeypot = Effect.fn("honeypot")(function* honeypot({ appName, domain }: E
     dataset: `${Str.replaceAll("-", "_")(appName)}_honeypot`,
   });
   return yield* Workers.Worker("Honeypot", {
+    limits: { cpuMs: 200 },
     name: `${appName}-honeypot`,
     main: decodeURIComponent(new URL("./honeypot.ts", import.meta.url).pathname),
     logpush: true,

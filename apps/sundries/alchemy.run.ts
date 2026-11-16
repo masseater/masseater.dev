@@ -67,6 +67,7 @@ const worker = Effect.gen(function* worker() {
     RemovalPolicy.protect(),
   );
   return yield* Workers.Worker("Mcp", {
+    limits: { cpuMs: 200 },
     name: `${PREFIX}worker`,
     main: "./src/app/sundries.ts",
     logpush: true,
