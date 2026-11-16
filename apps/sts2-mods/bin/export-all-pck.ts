@@ -151,7 +151,7 @@ const exportAllPck = Effect.gen(function* exportAllPck() {
         ],
         env: { DOTNET_ROOT },
       }),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 });
 

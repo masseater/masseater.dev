@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, HashSet, Option, Schema, String as Str, pipe } from "effect";
 import { resolveConfigFromFile } from "vite-plus";
 
-import { MANIFEST_FILE } from "#/entities/package/index.ts";
+import { workspaceDirectories } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
@@ -114,11 +114,11 @@ export const checkNestedDocs = Effect.fn("checkNestedDocs")(function* checkNeste
   const names = yield* files.listedFiles(root);
   const nested = pipe(names, Arr.filter(isNested));
   const workspaceAgentDocs = yield* allowsWorkspaceAgentDocs(root);
+  const directories = yield* workspaceDirectories(root);
   const allowed: Allowed = {
     workspaces: pipe(
-      nested,
-      Arr.filter((name) => files.basename(name) === MANIFEST_FILE),
-      Arr.map((name) => files.dirname(files.join(root, name))),
+      directories,
+      Arr.map((directory) => files.join(root, directory)),
       HashSet.fromIterable,
     ),
     workspaceAgentDocs,

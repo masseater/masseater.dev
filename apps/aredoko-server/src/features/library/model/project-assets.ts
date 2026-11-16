@@ -73,15 +73,16 @@ export const putProjectAssets = Effect.fn("putProjectAssets")(function* storePro
   const sql = yield* SqlClient.SqlClient;
   const packageId = yield* projectPackage(projectPath);
   const packageName = nameOf(projectPath);
-  const normalized = yield* pipe(
+  const normalized = yield* Effect.forEach(
     assets,
-    Effect.forEach((asset) =>
+    (asset) =>
       pipe(
         asset.previews,
-        Effect.forEach((png) => normalizePng(asset.pathname, png)),
+        (items) =>
+          Effect.forEach(items, (png) => normalizePng(asset.pathname, png), { concurrency: 1 }),
         Effect.map((previews) => ({ ...asset, previews })),
       ),
-    ),
+    { concurrency: 1 },
   );
   const changed = yield* pipe(
     normalized,
@@ -116,10 +117,9 @@ export const pruneProject = Effect.fn("pruneProject")(function* pruneProjectAsse
     rows,
     Array.filter(({ guid }) => !HashSet.has(seen, guid)),
   );
-  yield* pipe(
-    removed,
-    Effect.forEach(({ id }) => sql`delete from assets where id = ${id}`),
-  );
+  yield* Effect.forEach(removed, ({ id }) => sql`delete from assets where id = ${id}`, {
+    concurrency: 1,
+  });
   const summary = yield* encodeSummary({ name, entries: pipe(kept, Array.map(listedEntry)) });
   yield* sql`update packages set summary = ${summary} where id = ${packageId}`;
 });

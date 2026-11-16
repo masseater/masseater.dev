@@ -82,6 +82,6 @@ runMain("pod-rattle-pluginval")(
     const http = yield* Layer.build(Layer.mergeAll(FetchHttpClient.layer, Digest.layerWebCrypto));
     yield* download.pipe(Effect.provideContext(http));
     const bundles = yield* bundlesWith(VST3);
-    yield* Effect.forEach(bundles, validate, { discard: true });
+    yield* Effect.forEach(bundles, validate, { concurrency: 1, discard: true });
   }).pipe(Effect.scoped),
 );

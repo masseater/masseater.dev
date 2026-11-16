@@ -162,10 +162,9 @@ const measurePage = (
       Effect.withSpan("web-vitals.load", { attributes: { url } }),
     );
     const links = yield* linksOn(session.page);
-    const skipped = yield* pipe(
-      links,
-      Effect.forEach((link) => measureTransition(session, url, link)),
-    );
+    const skipped = yield* Effect.forEach(links, (link) => measureTransition(session, url, link), {
+      concurrency: 1,
+    });
     return Array.getSomes(skipped);
   });
 
@@ -178,10 +177,9 @@ export const measureFlow = Effect.fn("web-vitals.flow")(function* measureFlow(
   );
   const page = yield* attempt(() => browser.newPage());
   const flow = yield* attempt(() => startFlow(page, { name: "web-vitals" }));
-  const skipped = yield* pipe(
-    urls,
-    Effect.forEach((url) => measurePage({ page, flow }, url)),
-  );
+  const skipped = yield* Effect.forEach(urls, (url) => measurePage({ page, flow }, url), {
+    concurrency: 1,
+  });
   const result = yield* attempt(() => flow.createFlowResult()).pipe(
     Effect.withSpan("web-vitals.audit"),
   );

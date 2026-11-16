@@ -35,11 +35,11 @@ const moveLicenses = Effect.fn("closure.moveLicenses")(function* moveLicenses({
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const names = yield* fileSystem.readDirectory(llama);
-  yield* pipe(
-    names,
-    Arr.filter(Str.startsWith(LICENSE_PREFIX)),
-    Effect.forEach((name) =>
-      fileSystem.rename(path.join(llama, name), path.join(licenses, licenseName(name))),
+  yield* pipe(names, Arr.filter(Str.startsWith(LICENSE_PREFIX)), (items) =>
+    Effect.forEach(
+      items,
+      (name) => fileSystem.rename(path.join(llama, name), path.join(licenses, licenseName(name))),
+      { concurrency: 1 },
     ),
   );
 });
@@ -48,9 +48,9 @@ const linksIn = Effect.fn("closure.linksIn")(function* linksIn(llama: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const names = yield* fileSystem.readDirectory(llama);
-  const links = yield* pipe(
+  const links = yield* Effect.forEach(
     names,
-    Effect.forEach((name) =>
+    (name) =>
       fileSystem.readLink(path.join(llama, name)).pipe(
         Effect.map((target): Link => ({
           link: path.join(llama, name),
@@ -58,7 +58,7 @@ const linksIn = Effect.fn("closure.linksIn")(function* linksIn(llama: string) {
         })),
         Effect.option,
       ),
-    ),
+    { concurrency: 1 },
   );
   return Arr.getSomes(links);
 });
@@ -73,15 +73,16 @@ const flattenLinks = Effect.fn("closure.flattenLinks")(function* flattenLinks(ll
   yield* pipe(
     links,
     Arr.filter(({ target }) => !pipe(linked, Arr.contains(target))),
-    Effect.forEach(({ link, target }) =>
-      Effect.andThen(fileSystem.remove(link), fileSystem.rename(target, link)),
-    ),
+    (items) =>
+      Effect.forEach(
+        items,
+        ({ link, target }) =>
+          Effect.andThen(fileSystem.remove(link), fileSystem.rename(target, link)),
+        { concurrency: 1 },
+      ),
   );
   const remaining = yield* linksIn(llama);
-  yield* pipe(
-    remaining,
-    Effect.forEach(({ link }) => fileSystem.remove(link)),
-  );
+  yield* Effect.forEach(remaining, ({ link }) => fileSystem.remove(link), { concurrency: 1 });
 });
 
 const textsOf = Effect.fn("closure.textsOf")(function* textsOf(
@@ -90,11 +91,11 @@ const textsOf = Effect.fn("closure.textsOf")(function* textsOf(
 ) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  return yield* pipe(
+  return yield* Effect.forEach(
     names,
-    Effect.forEach((name) =>
+    (name) =>
       Effect.map(fileSystem.readFile(path.join(llama, name)), (bytes) => decoder.decode(bytes)),
-    ),
+    { concurrency: 1 },
   );
 });
 
@@ -135,9 +136,12 @@ const keepServer = Effect.fn("closure.keepServer")(function* keepServer(llama: s
   const texts = yield* textsOf(llama, servers);
   const candidates = pipe(names, Arr.filter(isLibrary));
   const kept = yield* grow({ llama, kept: servers, texts, candidates });
-  yield* pipe(
+  yield* Effect.forEach(
     Arr.difference(names, kept),
-    Effect.forEach((name) => fileSystem.remove(path.join(llama, name), { recursive: true })),
+    (name) => fileSystem.remove(path.join(llama, name), { recursive: true }),
+    {
+      concurrency: 1,
+    },
   );
 });
 

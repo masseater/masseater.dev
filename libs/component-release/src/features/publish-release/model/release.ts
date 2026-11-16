@@ -86,7 +86,7 @@ const markTagged = Effect.fn("release.markTagged")(function* markTagged(name: st
       "--add-label",
       TAGGED,
     ]);
-  yield* Effect.all(pipe(pulls, Arr.map(relabel)));
+  yield* Effect.all(pipe(pulls, Arr.map(relabel)), { concurrency: 1 });
 });
 
 const createRelease = Effect.fn("release.create")(function* createRelease({

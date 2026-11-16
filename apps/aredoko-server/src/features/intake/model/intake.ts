@@ -42,10 +42,9 @@ const takeAsset = Effect.fn("takeAsset")(function* takeAsset(file: string, libra
   const path = yield* Path.Path;
   const folder = path.join(library, path.parse(file).name);
   const siblings = yield* siblingsOf(file);
-  const placed = yield* pipe(
-    [file, ...siblings],
-    Effect.forEach((member) => copyInto(member, folder)),
-  );
+  const placed = yield* Effect.forEach([file, ...siblings], (member) => copyInto(member, folder), {
+    concurrency: 1,
+  });
   return bundleCount(placed);
 });
 
@@ -70,14 +69,17 @@ const takeFolder = Effect.fn("takeFolder")(function* takeFolder(folder: string, 
   const archives = yield* pipe(
     names,
     Array.filter((name) => isPackage(name) || isZip(name)),
-    Effect.forEach((name) => takeFile(path.join(folder, name), library)),
+    (items) =>
+      Effect.forEach(items, (name) => takeFile(path.join(folder, name), library), {
+        concurrency: 1,
+      }),
   );
   const target = path.join(library, path.basename(folder));
-  const assets = yield* pipe(
-    names,
-    Array.filter(isAsset),
-    Effect.forEach((name) =>
-      copyInto(path.join(folder, name), path.join(target, path.dirname(name))),
+  const assets = yield* pipe(names, Array.filter(isAsset), (items) =>
+    Effect.forEach(
+      items,
+      (name) => copyInto(path.join(folder, name), path.join(target, path.dirname(name))),
+      { concurrency: 1 },
     ),
   );
   return Number.sumAll([...archives, bundleCount(assets)]);
@@ -95,9 +97,8 @@ const takeIn = Effect.fn("takeIn")(function* takeIn(dropped: string, library: st
 /** @internal */
 export const intake = Effect.fn("intake")(function* intakeFiles(dropped: readonly string[]) {
   const library = yield* libraryFolder;
-  const placed = yield* pipe(
-    dropped,
-    Effect.forEach((file) => takeIn(file, library)),
-  );
+  const placed = yield* Effect.forEach(dropped, (file) => takeIn(file, library), {
+    concurrency: 1,
+  });
   return Number.sumAll(placed);
 });

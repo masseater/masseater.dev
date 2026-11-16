@@ -80,10 +80,13 @@ const mixed =
 const base64UrlJson = (value: Json): Effect.Effect<string> =>
   encodeJson(value).pipe(Effect.map((text) => Base64Url.encode(encoder.encode(text))));
 
-const jwt: Effect.Effect<string> = Effect.all([
-  base64UrlJson({ alg: "HS256", typ: "JWT" }),
-  base64UrlJson({ sub: pick(ALNUM)(JWT_SUBJECT), iat: ISSUED_AT }),
-]).pipe(
+const jwt: Effect.Effect<string> = Effect.all(
+  [
+    base64UrlJson({ alg: "HS256", typ: "JWT" }),
+    base64UrlJson({ sub: pick(ALNUM)(JWT_SUBJECT), iat: ISSUED_AT }),
+  ],
+  { concurrency: 1 },
+).pipe(
   Effect.map(([header, payload]) => {
     const signature = Base64Url.encode(crypto.getRandomValues(new Uint8Array(JWT_SIGNATURE_BYTES)));
     return `${header}.${payload}.${signature}`;
@@ -154,7 +157,9 @@ const bareSecrets = (): readonly FakeSecret[] => [
 ];
 
 /** @internal */
-export const fakeSecrets: Effect.Effect<readonly FakeSecret[]> = Effect.all([jwt, privateKey]).pipe(
+export const fakeSecrets: Effect.Effect<readonly FakeSecret[]> = Effect.all([jwt, privateKey], {
+  concurrency: 1,
+}).pipe(
   Effect.map(([token, pem]) => [
     ...prefixedSecrets(),
     ...bareSecrets(),

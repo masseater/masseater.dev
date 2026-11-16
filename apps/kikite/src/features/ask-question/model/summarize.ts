@@ -58,12 +58,15 @@ export const summarize = Effect.fn("kikite.summarize")(function* summarize() {
   yield* requestSummary({ previous, transcript: linesOf(fresh) }).pipe(
     Effect.matchEffect({
       onSuccess: (summary) =>
-        Effect.all([
-          write(summaryAtom, { status: "ready", summary: Option.some(summary) }),
-          modify(heardAtom, (current) => ({ ...current, summarizedThrough: last.value.id })),
-          tracked(summary),
-          remembered(summary),
-        ]),
+        Effect.all(
+          [
+            write(summaryAtom, { status: "ready", summary: Option.some(summary) }),
+            modify(heardAtom, (current) => ({ ...current, summarizedThrough: last.value.id })),
+            tracked(summary),
+            remembered(summary),
+          ],
+          { concurrency: 1 },
+        ),
       onFailure: ({ message }) =>
         write(summaryAtom, { status: "failed", summary: previous, message }),
     }),

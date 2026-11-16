@@ -107,10 +107,9 @@ export const extract = Effect.fn("extract")(function* extractAssets(
     Array.map(({ package_id: id }) => id),
     Array.dedupe,
   );
-  const plans = yield* pipe(
-    packageIds,
-    Effect.forEach((packageId) => planOf({ packageId, selected })),
-  );
+  const plans = yield* Effect.forEach(packageIds, (packageId) => planOf({ packageId, selected }), {
+    concurrency: 1,
+  });
   const destination = yield* destinationIn(directory);
   const loose = yield* looseEntries(assetIds);
   yield* writePackage(plans, loose, destination);

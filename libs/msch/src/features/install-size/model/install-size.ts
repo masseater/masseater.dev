@@ -100,13 +100,13 @@ const measure = Effect.fn("measure")(function* measure(
   { workspace, provided }: Published,
   direct: readonly string[],
 ) {
-  const closures = yield* pipe(
+  const closures = yield* Effect.forEach(
     direct,
-    Effect.forEach((name) =>
+    (name) =>
       installedClosure({ provided, from: workspace.directory, name }).pipe(
         Effect.map((packages) => [name, packages] as const),
       ),
-    ),
+    { concurrency: 1 },
   );
   const everything = pipe(
     closures,
@@ -259,7 +259,7 @@ const workspaceProblems = Effect.fn("workspaceProblems")(function* workspaceProb
 export const checkPublishedPackages = Effect.fn("checkPublishedPackages")(
   function* checkPublishedPackages(root: string) {
     const workspaces = yield* publishedWorkspaces(root);
-    const found = yield* pipe(workspaces, Effect.forEach(workspaceProblems));
+    const found = yield* Effect.forEach(workspaces, workspaceProblems, { concurrency: 1 });
     return Arr.flatten(found);
   },
 );

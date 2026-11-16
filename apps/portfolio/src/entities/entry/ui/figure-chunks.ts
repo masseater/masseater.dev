@@ -50,5 +50,5 @@ export const importedFigure = (name: FigureName): Option.Option<ReactElement> =>
 export const importFigures: Effect.Effect<void> = Effect.forEach(
   Rec.keys(chunks),
   (name) => Effect.promise(() => importFigure(name)),
-  { discard: true },
+  { concurrency: 1, discard: true },
 );

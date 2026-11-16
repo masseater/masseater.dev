@@ -54,20 +54,23 @@ const command = Command.make(
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       yield* fileSystem.makeDirectory(reportDirectory, { recursive: true });
-      const results = yield* Effect.forEach(Array.range(FIRST_RUN, runs), (run) =>
-        Effect.gen(function* measureRun() {
-          const { result, html, unclickable } = yield* measureFlow(urls, flags);
-          yield* fileSystem.writeFileString(
-            path.join(reportDirectory, `flow-${run.toString()}.html`),
-            html,
-          );
-          const json = yield* encodeJson(result);
-          yield* fileSystem.writeFileString(
-            path.join(reportDirectory, `flow-${run.toString()}.json`),
-            json,
-          );
-          return { result, unclickable };
-        }),
+      const results = yield* Effect.forEach(
+        Array.range(FIRST_RUN, runs),
+        (run) =>
+          Effect.gen(function* measureRun() {
+            const { result, html, unclickable } = yield* measureFlow(urls, flags);
+            yield* fileSystem.writeFileString(
+              path.join(reportDirectory, `flow-${run.toString()}.html`),
+              html,
+            );
+            const json = yield* encodeJson(result);
+            yield* fileSystem.writeFileString(
+              path.join(reportDirectory, `flow-${run.toString()}.json`),
+              json,
+            );
+            return { result, unclickable };
+          }),
+        { concurrency: 1 },
       );
       const { table, failures } = summarize(results);
       yield* Console.log(table);

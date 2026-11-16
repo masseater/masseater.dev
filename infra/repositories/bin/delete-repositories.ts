@@ -13,7 +13,7 @@ const deleteRepositories = Effect.gen(function* deleteRepositories() {
   yield* Effect.forEach(
     repositories,
     (repo) => Delete({ owner: OWNER, repo }).pipe(Effect.andThen(Console.log(`deleted ${repo}`))),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 });
 

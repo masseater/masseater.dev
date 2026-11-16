@@ -104,7 +104,7 @@ const appliedByMsch = Effect.fn("appliedByMsch")(function* appliedByMsch() {
     Option.getOrElse((): readonly string[] => []),
     Arr.filter(Str.startsWith(SCOPE)),
   );
-  return yield* pipe(names, Effect.forEach(installedPackage));
+  return yield* Effect.forEach(names, installedPackage, { concurrency: 1 });
 });
 
 const problemAt =
@@ -233,9 +233,12 @@ export const appliedPackageProblems = Effect.fn("appliedPackageProblems")(
       applied,
       Arr.map(({ name }) => name),
     );
-    const manifestProblems = yield* pipe(
+    const manifestProblems = yield* Effect.forEach(
       consumers,
-      Effect.forEach((directory) => manifestUses(root, appliedNames, directory)),
+      (directory) => manifestUses(root, appliedNames, directory),
+      {
+        concurrency: 1,
+      },
     );
     const sourceProblems = yield* sourceUses({ root, applied, directories, consumers });
     return [...Arr.flatten(manifestProblems), ...sourceProblems];

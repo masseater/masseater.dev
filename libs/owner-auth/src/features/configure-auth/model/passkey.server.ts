@@ -22,10 +22,13 @@ const requireOwnerInvite = (
   invite: string | null | undefined,
   countPasskeys: () => Promise<number>,
 ): Effect.Effect<void, APIError> =>
-  Effect.all([
-    Effect.promise(() => verifyPassword({ hash: inviteHash, password: invite ?? "" })),
-    Effect.promise(countPasskeys),
-  ]).pipe(
+  Effect.all(
+    [
+      Effect.promise(() => verifyPassword({ hash: inviteHash, password: invite ?? "" })),
+      Effect.promise(countPasskeys),
+    ],
+    { concurrency: 1 },
+  ).pipe(
     Effect.filterOrFail(
       ([valid, registered]) => valid && registered === NO_PASSKEYS,
       () => new APIError("FORBIDDEN", { message: "invalid_invite" }),

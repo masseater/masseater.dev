@@ -53,7 +53,7 @@ export const lintToolReadonlyAllow = [
   {
     from: "package" as const,
     package: "@r_masseater/vite-plus-adopt",
-    name: ["CheckPackageOptions"],
+    name: ["CheckPackageOptions", "TextlintSource"],
   },
   {
     from: "file" as const,

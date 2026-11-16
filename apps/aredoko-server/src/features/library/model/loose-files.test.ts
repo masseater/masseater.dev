@@ -15,14 +15,17 @@ layer(NodeServices.layer, { excludeTestServices: true })("bundlesIn", (it) => {
       const path = yield* Path.Path;
       const root = yield* fileSystem.makeTempDirectoryScoped();
       yield* fileSystem.makeDirectory(path.join(root, "Kit", "Models"), { recursive: true });
-      yield* pipe(
+      yield* Effect.forEach(
         [
           ["Kit/Models/sword.fbx", "fbx"],
           ["Kit/cover.png", "png!"],
           ["crate.glb", "glb"],
           ["Cabin.unitypackage", "pkg"],
         ] as const,
-        Effect.forEach(([name, text]) => fileSystem.writeFileString(path.join(root, name), text)),
+        ([name, text]) => fileSystem.writeFileString(path.join(root, name), text),
+        {
+          concurrency: 1,
+        },
       );
       const names = yield* fileSystem.readDirectory(root, { recursive: true });
       const bundles = yield* bundlesIn({ id: SOURCE_ID, path: root }, names);

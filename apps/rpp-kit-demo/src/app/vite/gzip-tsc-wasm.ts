@@ -29,15 +29,19 @@ export const gzipTscWasm = (): Plugin => ({
             output.type === "asset" &&
             pipe(output.originalFileNames, Arr.some(Str.endsWith(TSC_WASM))),
         ),
-        Effect.forEach((asset) =>
-          gzipped(asset.source).pipe(
-            Effect.flatMap((bytes) =>
-              Effect.sync(() => {
-                asset.source = bytes;
-              }),
-            ),
+        (items) =>
+          Effect.forEach(
+            items,
+            (asset) =>
+              gzipped(asset.source).pipe(
+                Effect.flatMap((bytes) =>
+                  Effect.sync(() => {
+                    asset.source = bytes;
+                  }),
+                ),
+              ),
+            { concurrency: 1 },
           ),
-        ),
         Effect.asVoid,
       ),
     ),

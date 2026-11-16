@@ -43,14 +43,15 @@ const writeTree = Effect.fn("writeTree")(function* writeTree(
 ) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  yield* pipe(
+  yield* Effect.forEach(
     Record.toEntries(files),
-    Effect.forEach(([name, text]) => {
+    ([name, text]) => {
       const file = path.join(root, name);
       return fileSystem
         .makeDirectory(path.dirname(file), { recursive: true })
         .pipe(Effect.andThen(fileSystem.writeFileString(file, text)));
-    }),
+    },
+    { concurrency: 1 },
   );
 });
 
@@ -174,9 +175,12 @@ const ESCAPING = ["../outside.txt", "a/../../outside2.txt", "ok/inside.png"] as 
 
 const makeEscapingZip = Effect.gen(function* makeEscapingZip() {
   const writer = new ZipWriter(new Uint8ArrayWriter());
-  yield* pipe(
+  yield* Effect.forEach(
     ESCAPING,
-    Effect.forEach((name) => Effect.promise(() => writer.add(name, new TextReader("png")))),
+    (name) => Effect.promise(() => writer.add(name, new TextReader("png"))),
+    {
+      concurrency: 1,
+    },
   );
   return yield* Effect.promise(() => writer.close());
 });

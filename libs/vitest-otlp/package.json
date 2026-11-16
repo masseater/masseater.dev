@@ -6,6 +6,7 @@
     "opentelemetry",
     "otel",
     "otlp",
+    "tanstack-intent",
     "testing",
     "vitest",
     "vitest-plugin"
@@ -21,8 +22,9 @@
     "directory": "libs/vitest-otlp"
   },
   "files": [
+    "LICENSE",
     "dist",
-    "LICENSE"
+    "skills/assert-exported-telemetry"
   ],
   "type": "module",
   "imports": {

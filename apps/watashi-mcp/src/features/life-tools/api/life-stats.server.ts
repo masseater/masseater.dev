@@ -28,7 +28,7 @@ const dayRange = (input: string): Effect.Effect<Period, StoreFailure> =>
   );
 
 const periodOf = ({ from, to }: Period): Effect.Effect<Period, StoreFailure> =>
-  Effect.all({ start: dayRange(from), end: dayRange(to) }).pipe(
+  Effect.all({ start: dayRange(from), end: dayRange(to) }, { concurrency: 1 }).pipe(
     Effect.map(({ start, end }) => ({ from: start.from, to: end.to })),
   );
 
@@ -65,6 +65,6 @@ const requestOf = (input: LifeStatsValue): Effect.Effect<StatsRequest, StoreFail
 export const lifeStats = (
   input: LifeStatsValue,
 ): Effect.Effect<readonly MetricStats[], StoreFailure> =>
-  Effect.all({ request: requestOf(input), data: loadStatsData }).pipe(
+  Effect.all({ request: requestOf(input), data: loadStatsData }, { concurrency: 1 }).pipe(
     Effect.map(({ request, data }) => computeStats(request)(data)),
   );

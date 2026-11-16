@@ -32,11 +32,11 @@ const scanOwners = Effect.fn("scanOwners")(function* scanOwners(
     configPaths,
     Effect.filter(mentions(`@${OWNER_TAG}`)(workspace.compiler)),
   );
-  const scans = yield* pipe(
+  const scans = yield* Effect.forEach(
     ownerConfigs,
-    Effect.forEach((configPath) =>
+    (configPath) =>
       withProject(workspace)(configPath)((project) => Effect.sync(() => ownersIn(project))),
-    ),
+    { concurrency: 1 },
   );
   return combineOwnerScans(Arr.getSomes(scans));
 });
@@ -128,9 +128,12 @@ const analyzeProjects = Effect.fn("analyzeProjects")(function* analyzeProjects(
   const files = yield* RepositoryFiles;
   const cache = yield* cacheFor(workspace.root, owners);
   const listed = yield* files.listedFiles(workspace.root);
-  const keyed = yield* pipe(
+  const keyed = yield* Effect.forEach(
     configPaths,
-    Effect.forEach(analyzeConfig({ workspace, owners, sourceChecks, cache, listed })),
+    analyzeConfig({ workspace, owners, sourceChecks, cache, listed }),
+    {
+      concurrency: 1,
+    },
   );
   const found = Arr.getSomes(keyed);
   yield* pruneAnalyses(cache)(

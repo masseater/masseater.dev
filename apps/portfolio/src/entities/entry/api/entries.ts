@@ -85,7 +85,7 @@ export const findEntry = (
   );
 
 export const allEntries: Effect.Effect<readonly Entry[], Schema.SchemaError> = Effect.suspend(() =>
-  Effect.forEach(Rec.toEntries(frontmatters()), decodeEntry),
+  Effect.forEach(Rec.toEntries(frontmatters()), decodeEntry, { concurrency: 1 }),
 ).pipe(
   Effect.map((entries) =>
     pipe(

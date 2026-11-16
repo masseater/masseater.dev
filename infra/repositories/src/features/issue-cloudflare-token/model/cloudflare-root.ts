@@ -47,9 +47,8 @@ export const sweepIssuedTokens = (
       ),
       Stream.runCollect,
     );
-    yield* pipe(
-      expired,
-      Effect.forEach((token) => deleteToken({ accountId, tokenId: token.id ?? "" })),
-    );
+    yield* Effect.forEach(expired, (token) => deleteToken({ accountId, tokenId: token.id ?? "" }), {
+      concurrency: 1,
+    });
     yield* Effect.logInfo("credential.swept").pipe(Effect.annotateLogs({ count: expired.length }));
   }).pipe(Effect.catchCause((cause) => Effect.logError("credential.sweep_failed", cause)));

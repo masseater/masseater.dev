@@ -65,7 +65,7 @@ const imageOwners = Effect.gen(function* imageOwners() {
   return yield* decodeRows(OwnerRow)(sql`select asset_id, embedded from images order by id`);
 });
 
-const assetIds = Effect.all([assetIdOf(WALL.guid), assetIdOf(ROOF.guid)]);
+const assetIds = Effect.all([assetIdOf(WALL.guid), assetIdOf(ROOF.guid)], { concurrency: 1 });
 
 const register = Effect.fn("register")(function* register(
   assets: readonly Asset[],

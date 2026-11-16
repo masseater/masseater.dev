@@ -36,7 +36,9 @@ const researchFor = Effect.fn("kikite.research")(function* researchFor(summary: 
   yield* requestResearch({ summary, recent: recentOf(entries), known }).pipe(
     Effect.matchEffect({
       onSuccess: (found) =>
-        Effect.all([modify(leadsAtom, merged(found)), write(researchingAtom, { status: "idle" })]),
+        Effect.all([modify(leadsAtom, merged(found)), write(researchingAtom, { status: "idle" })], {
+          concurrency: 1,
+        }),
       onFailure: ({ message }) => write(researchingAtom, { status: "failed", message }),
     }),
   );

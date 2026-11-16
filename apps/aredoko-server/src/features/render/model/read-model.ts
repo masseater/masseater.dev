@@ -1,4 +1,4 @@
-import { Effect, FileSystem, Option, Path, Schema, pipe } from "effect";
+import { Effect, FileSystem, Option, Path, Schema } from "effect";
 
 import { companionNamesOf, companionPath } from "#/entities/package/index.ts";
 
@@ -27,11 +27,10 @@ export const readModel = Effect.fn("readModel")(function* readModelFiles(assetId
   const { main, folder } = yield* sourceOf(assetId);
   const model = yield* fileSystem.readFile(main);
   const names = yield* companionNamesOf(folder, model);
-  const files = yield* pipe(
+  const files = yield* Effect.forEach(
     names,
-    Effect.forEach((name) =>
-      sizeOf(path.join(folder.path, name)).pipe(Effect.map((size) => ({ name, size }))),
-    ),
+    (name) => sizeOf(path.join(folder.path, name)).pipe(Effect.map((size) => ({ name, size }))),
+    { concurrency: 1 },
   );
   return { name: path.basename(main), size: model.length, files };
 });

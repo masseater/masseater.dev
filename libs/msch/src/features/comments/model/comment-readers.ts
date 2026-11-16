@@ -55,10 +55,9 @@ export const loadGrammars = Effect.fn("loadGrammars")(function* loadGrammars() {
     try: () => treeSitter.Parser.init(),
     catch: unreadable("javascript"),
   });
-  const loaded = yield* pipe(
-    GRAMMARS,
-    Effect.forEach((grammar) => loadGrammar(grammar)),
-  );
+  const loaded = yield* Effect.forEach(GRAMMARS, (grammar) => loadGrammar(grammar), {
+    concurrency: 1,
+  });
   const languages = Rec.fromEntries(loaded);
   const grammars: Grammars = (grammar) => Rec.get(languages, grammar);
   return grammars;
@@ -151,7 +150,11 @@ const embeddedComments =
     return Option.match(embeddedGrammar(node), {
       onNone: () => Effect.succeed(NONE),
       onSome: (grammar) =>
-        pipe(texts, Effect.forEach(textComments(grammars, grammar)), Effect.map(Arr.flatten)),
+        pipe(
+          texts,
+          (items) => Effect.forEach(items, textComments(grammars, grammar), { concurrency: 1 }),
+          Effect.map(Arr.flatten),
+        ),
     });
   };
 
@@ -169,7 +172,7 @@ const markupComments =
       if (markup === "xml") {
         return own;
       }
-      const embedded = yield* pipe(nodes, Effect.forEach(embeddedComments(grammars)));
+      const embedded = yield* Effect.forEach(nodes, embeddedComments(grammars), { concurrency: 1 });
       return [...own, ...Arr.flatten(embedded)];
     });
 
