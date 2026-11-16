@@ -101,7 +101,6 @@ const portalServers = defineResource<PortalServersResource>(PORTAL_SERVERS);
 const accountIdOf = flatten(CloudflareEnvironment).pipe(map(({ accountId }) => accountId));
 
 const mcpAccessApplicationProvider = succeedProvider(mcpAccessApplication, {
-  diff: () => succeed({ action: "update" } as const),
   reconcile: ({ news, output }) =>
     gen(function* reconcileApplication() {
       const accountId = yield* accountIdOf;
@@ -121,7 +120,6 @@ const mcpAccessApplicationProvider = succeedProvider(mcpAccessApplication, {
 });
 
 const portalServersProvider = succeedProvider(portalServers, {
-  diff: () => succeed({ action: "update" } as const),
   reconcile: ({ news }) =>
     accountIdOf.pipe(
       flatMap((accountId) =>
@@ -204,6 +202,7 @@ const mcpPortal = gen(function* mcpPortal() {
     sessionDuration,
     oauthConfiguration: {
       enabled: true,
+      grant: { accessTokenLifetime: "15m", sessionDuration },
       dynamicClientRegistration: {
         enabled: true,
         allowedUris: [

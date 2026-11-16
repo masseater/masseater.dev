@@ -227,6 +227,7 @@ export default defineConfig({
       },
       test: {
         command: "vp test run",
+        dependsOn: ["check"],
         cache: {
           input: [
             { auto: true },
@@ -239,6 +240,7 @@ export default defineConfig({
       },
       msch: {
         command: "msch",
+        dependsOn: ["check"],
         cache: false,
       },
       "db-check-all": "vp run -r db:check",
