@@ -1,6 +1,7 @@
 import { Array as Arr, Effect } from "effect";
 
 import { checkAgentDocsLength } from "./agent-docs-length.ts";
+import { checkColocatedGitPatterns } from "./colocated-git-patterns.ts";
 import { checkColocatedTests } from "./colocated-tests.ts";
 import { checkDanglingLinks } from "./dangling-links.ts";
 import { checkLayeredSource } from "./layered-source.ts";
@@ -21,6 +22,7 @@ export const checkPlacement = Effect.fn("checkPlacement")(function* checkPlaceme
       checkLayeredSource(root),
       checkDanglingLinks(root),
       checkSourceAliases(root),
+      checkColocatedGitPatterns(root),
     ],
     { concurrency: "unbounded" },
   );
