@@ -28,7 +28,7 @@ export default defineConfig({
   run: {
     tasks: {
       ...alchemyTasks,
-      build: { command: "vp build && node bin/write-asset-headers.ts", cache: false },
+      build: "vp build && node bin/write-asset-headers.ts",
       "deploy:production": {
         command: ["node bin/live.ts", "alchemy deploy --stage production --yes"],
         cache: false,
