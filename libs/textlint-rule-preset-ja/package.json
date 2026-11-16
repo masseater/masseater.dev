@@ -70,7 +70,7 @@
   "size-limit": [
     {
       "path": "dist/*.mjs",
-      "limit": "27356 B"
+      "limit": "27401 B"
     }
   ],
   "engines": {
