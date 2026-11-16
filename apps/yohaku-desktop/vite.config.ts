@@ -10,7 +10,10 @@ export default defineConfig({
   }),
   run: {
     tasks: {
-      ...tauriAppTasks({ crate: "yohaku-desktop", workspaceInputs: ["libs/local-mcp/**"] }),
+      ...tauriAppTasks({
+        crate: "yohaku-desktop",
+        workspaceInputs: ["libs/local-mcp/**", "libs/desktop-shell/**"],
+      }),
       verify: { command: [], dependsOn: ["cargo"] },
       "release:tag": { command: "component-tag yohaku", cache: false },
       "release:windows": {

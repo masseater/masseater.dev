@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use axum::Router;
 use axum::extract::{RawQuery, State};
 use axum::http::request::Parts;
@@ -10,12 +8,9 @@ use rmcp::handler::server::router::tool::ToolRouter;
 use rmcp::handler::server::tool::Extension;
 use rmcp::handler::server::wrapper::Parameters;
 use rmcp::model::{CallToolResult, ContentBlock, Implementation, ServerCapabilities, ServerConfig};
-use rmcp::transport::streamable_http_server::session::local::LocalSessionManager;
-use rmcp::transport::streamable_http_server::{StreamableHttpServerConfig, StreamableHttpService};
 use rmcp::{ErrorData, ServerHandler, tool, tool_handler, tool_router};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use tokio::net::TcpListener;
 
 use crate::failure::Outcome;
 use crate::protocol::{Fact, SourceOrigin};
@@ -166,23 +161,13 @@ async fn signed_in(State(syncer): State<Syncer>, RawQuery(query): RawQuery) -> R
 }
 
 fn router(store: Store, syncer: Syncer, token: String) -> Router {
-    let tools = StreamableHttpService::new(
-        move || Ok(Tools::new(store.clone())),
-        Arc::new(LocalSessionManager::default()),
-        StreamableHttpServerConfig::default(),
-    );
-    let mcp = local_mcp::guarded(
-        Router::new().nest_service(local_mcp::MCP_PATH, tools),
-        token,
-    );
     Router::new()
         .route(CALLBACK_PATH, get(signed_in).with_state(syncer))
-        .merge(mcp)
+        .merge(local_mcp::router(token, move || Tools::new(store.clone())))
 }
 
 pub async fn serve(store: Store, syncer: Syncer, token: String) -> Outcome<()> {
-    let listener = TcpListener::bind((local_mcp::HOST, PORT)).await?;
-    axum::serve(listener, router(store, syncer, token)).await?;
+    local_mcp::serve(PORT, router(store, syncer, token)).await?;
     Ok(())
 }
 
