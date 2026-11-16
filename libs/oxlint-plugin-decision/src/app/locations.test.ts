@@ -16,7 +16,7 @@ import {
   locationProject,
   spanOf,
 } from "./location-fixture.test.support.ts";
-import { loggedRequests } from "./mock-openrouter.test.support.ts";
+import { loggedRequests } from "./mock-typesafe.test.support.ts";
 import type { OxlintDiagnostic } from "./oxlint.test.support.ts";
 
 const FIRST_LINE = 1;

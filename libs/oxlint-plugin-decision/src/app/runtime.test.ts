@@ -12,7 +12,7 @@ import {
 } from "#/entities/decision/index.ts";
 import type { ResolvedOptions } from "#/entities/decision/index.ts";
 
-import { openRouter } from "./openrouter.ts";
+import { typesafe } from "./typesafe.ts";
 
 const TIMEOUT_MS = 5;
 const NETWORK = "network: ";
@@ -25,7 +25,7 @@ const options: ResolvedOptions = {
   explain: false,
   timeoutMs: TIMEOUT_MS,
   maxSnippetChars: 1,
-  env: { OPENROUTER_API_KEY: "TEAM_KEY" },
+  env: { TYPESAFE_API_KEY: "TEAM_KEY" },
   rules: [],
 };
 
@@ -39,7 +39,7 @@ const fallsBack = Effect.sync(() => {
 });
 
 const renamesEnv = Effect.sync(() => {
-  strictEqual(envNameOf(options.env, "OPENROUTER_API_KEY"), "TEAM_KEY");
+  strictEqual(envNameOf(options.env, "TYPESAFE_API_KEY"), "TEAM_KEY");
   strictEqual(envNameOf(options.env, "OTHER"), "OTHER");
 });
 
@@ -54,9 +54,9 @@ const warnsOnce = Effect.sync(() => {
 });
 
 const reportsWorkerFailure = Effect.sync(() => {
-  const result = openRouter.decide({
+  const result = typesafe.decide({
     request: {
-      model: "model",
+      model: "jev-latest",
       state: { snippets: { snippet: "ok();" } },
       questions: { snippet: { type: "noul", instructions: "Is it bad?" } },
     },

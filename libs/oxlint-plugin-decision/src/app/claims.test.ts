@@ -15,6 +15,7 @@ import type { PlatformError } from "effect/PlatformError";
 import strictConfig from "#example-presets/claims/oxlint.config.ts";
 import reviewOnlyConfig from "#example-presets/claims/review-only.config.ts";
 
+import { FAKE_SETTINGS, alwaysYes, fakeTypesafeEnv } from "./fake-typesafe.test.support.ts";
 import {
   FAILED,
   PASSED,
@@ -29,24 +30,13 @@ import {
 } from "./presets-oxlint.test.support.ts";
 import type { Services } from "./presets-oxlint.test.support.ts";
 
-const alwaysYes = (core: string, entry: string, preset: string): string => `
-import { createDecisionPlugin, defineProvider } from ${toJson(core)};
+const pluginSource = (core: string, entry: string, preset: string): string => `
+import { createDecisionPlugin } from ${toJson(core)};
 import { presets } from ${toJson(entry)};
-
-const decide = ({ request }) => ({
-  ok: true,
-  response: {
-    model: "fake-1",
-    answers: Object.fromEntries(
-      Object.keys(request.questions).map((ref) => [ref, { type: "noul", noul: 0.99 }]),
-    ),
-  },
-});
 
 export default createDecisionPlugin({
   name: ${toJson(PLUGIN_NAME)},
   rules: presets[${toJson(preset)}],
-  providers: [defineProvider({ name: "fake", requiredEnv: [], decide })],
 });
 `;
 
@@ -151,19 +141,20 @@ const askedWhere = (preset: Preset): Effect.Effect<void, PlatformError, Services
       const core = yield* fromRoot("dist", "index.mjs");
       const entry = yield* fromRoot("dist", "presets", "index.mjs");
       const cwd = yield* tempProject({
-        "plugin.mjs": alwaysYes(core, entry, preset),
+        "plugin.mjs": pluginSource(core, entry, preset),
         "cart.js": yield* exampleFile("cart.js"),
         "cart.test.js": yield* exampleFile("cart.test.js"),
         "oxlint.config.ts": configSource({
           ...EXAMPLES[preset].config,
           jsPlugins: ["./plugin.mjs"],
-          settings: { [PLUGIN_NAME]: { model: "fake/any" } },
+          settings: { [PLUGIN_NAME]: FAKE_SETTINGS },
         }),
       });
+      const env = yield* fakeTypesafeEnv(alwaysYes);
       const run = yield* oxlint(
         cwd,
         ["--format", "unix", "-c", "oxlint.config.ts", "cart.js", "cart.test.js"],
-        {},
+        env,
       );
       strictEqual(run.status, EXAMPLES[preset].status, outputOf(run));
       deepStrictEqual(byRule(run.stdout), EXAMPLES[preset].asked);

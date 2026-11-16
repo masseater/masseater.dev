@@ -5,14 +5,7 @@ import { Array as Arr, Effect, Option, Order, Schema, String as Str, pipe } from
 
 import type { DecisionPluginSetup } from "#/entities/decision/index.ts";
 
-import {
-  RESPAN,
-  TIMEOUT,
-  callRule,
-  lintProject,
-  outputOf,
-  withMock,
-} from "./fixtures.test.support.ts";
+import { TIMEOUT, callRule, lintProject, outputOf, withMock } from "./fixtures.test.support.ts";
 import {
   decisionLines,
   mockEnv,
@@ -24,7 +17,7 @@ import {
 const SOURCE = "ok();\nconsole.log(user.email, user.phone);\n";
 const LOG_ONLY = "console.log(user.email, user.phone);\n";
 const FIRST_LINE = 1;
-const HEAD = "state.snippets.s1:";
+const HEAD = "console.log(user.email, user.phone)";
 const LEAKS_LINE = 2;
 
 const LEAKS = {
@@ -85,7 +78,7 @@ const textFromOption = Effect.gen(function* test() {
   });
   assertInclude(
     run.stderr,
-    "oxlint-plugin-decision explain: log.js:2:1 [any-call] openrouter/~typesafe/jev-latest (served openrouter/mock-decider) cached=no",
+    "oxlint-plugin-decision explain: log.js:2:1 [any-call] typesafe/jev-latest (served typesafe/mock-decider) cached=no",
   );
   assertInclude(run.stderr, "  s1: yes=0.95\n    Consider only snippet");
   assertInclude(run.stderr, "  verdict: yes 0.95, cutoff 0.80, reported");
@@ -97,7 +90,7 @@ const jsonFromEnv = Effect.gen(function* test() {
   const env = yield* mockEnv("test-key");
   const run = yield* lintProject({
     files: { "log.js": SOURCE },
-    options: { model: RESPAN, rules: [{ ...callRule, answer: LEAKS }] },
+    options: { rules: [{ ...callRule, answer: LEAKS }] },
     env: { ...env, OXLINT_DECISION_EXPLAIN: "json" },
   });
   const records = recordsOf(run.stderr);
@@ -108,10 +101,7 @@ const jsonFromEnv = Effect.gen(function* test() {
       questions,
       Arr.map(({ id, probabilities }) => [id, probabilities]),
     ),
-    [
-      ["s1__safe", { yes: 0.3 }],
-      ["s1__leaks", { yes: 0.9 }],
-    ],
+    [["s1", { leaks: 0.99 }]],
   );
   assertInclude(
     pipe(
@@ -119,16 +109,16 @@ const jsonFromEnv = Effect.gen(function* test() {
       Arr.map(({ question }) => question),
       Arr.join("\n"),
     ),
-    'Does the label "safe" (Logs nothing personal) fit?',
+    "Select the label that fits best.",
   );
   assertInclude(state.head, HEAD);
   deepStrictEqual(leaks, {
     file: "log.js",
     line: LEAKS_LINE,
     rule: "any-call",
-    model: RESPAN,
+    model: "typesafe/jev-latest",
     cached: false,
-    verdict: { answer: "leaks", probability: 0.9 },
+    verdict: { answer: "leaks", probability: 0.99 },
     reported: true,
   });
   strictEqual(recordAt(records, FIRST_LINE).reported, false);
@@ -140,10 +130,10 @@ const modelPerRule = Effect.gen(function* test() {
     files: { "log.js": LOG_ONLY },
     options: {
       explain: "json",
-      model: "openrouter/first",
+      model: "typesafe/jev-latest",
       rules: [callRule, { ...callRule, id: "other-call" }],
     },
-    ruleOptions: { "other-call": { model: "openrouter/second" } },
+    ruleOptions: { "other-call": { model: "typesafe/jev-1.2" } },
     env,
   });
   deepStrictEqual(
@@ -152,7 +142,7 @@ const modelPerRule = Effect.gen(function* test() {
       Arr.map(({ rule, model }) => `${rule} ${model}`),
       (sorted) => Arr.sort(sorted, Order.String),
     ),
-    ["any-call openrouter/first", "other-call openrouter/second"],
+    ["any-call typesafe/jev-latest", "other-call typesafe/jev-1.2"],
   );
 });
 
@@ -189,7 +179,7 @@ layer(NodeServices.layer, { excludeTestServices: true })("explain mode", (it) =>
     TIMEOUT,
   );
   it.effect(
-    "prints JSON lines with each yes/no question a Respan model is asked",
+    "prints JSON lines with each question the model is asked",
     () => withMock(jsonFromEnv),
     TIMEOUT,
   );

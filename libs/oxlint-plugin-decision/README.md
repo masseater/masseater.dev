@@ -5,14 +5,14 @@
 
 [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) rules written in plain English, answered by decision models.
 The default is [Clef](https://developers.cloudflare.com/workers-ai/models/clef-flash/) on Workers AI through [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/).
-Jev on [OpenRouter](https://openrouter.ai) also works.
+Jev through the Typesafe System One API also works.
 It never asks a chat model.
 
 A rule is a question about a function, a call, a JSX element or a whole file. Each match is sent to one or more decision models with the question. The plugin reports an error when the answer the rule cares about clears its cutoff.
 
 Decision models do not write text. They return a probability for a yes/no question, or pick one of the options you list. That makes them fast and cheap enough to run over a codebase. It is also why every rule here is a question with a fixed set of answers.
 
-This is a fork of [oxlint-plugin-jev](https://github.com/wobsoriano/oxlint-plugin-jev) by [Robert Soriano](https://github.com/wobsoriano). It asks Clef on Workers AI or the OpenRouter Decisions API.
+This is a fork of [oxlint-plugin-jev](https://github.com/wobsoriano/oxlint-plugin-jev) by [Robert Soriano](https://github.com/wobsoriano). It asks Clef on Workers AI or Jev through the Typesafe System One API.
 
 ## Install
 
@@ -22,7 +22,16 @@ export CLOUDFLARE_ACCOUNT_ID="..."
 export CLOUDFLARE_API_TOKEN="..."   # an account API token with Workers AI Read
 ```
 
-The default model, `cloudflare/@cf/cloudflare/clef-flash`, runs on Workers AI and needs no other key. The `cloudflare` provider accepts only Clef decision models and refuses any other Workers AI model. Without the two variables, the plugin warns once and reports nothing.
+The default model, `cloudflare/@cf/cloudflare/clef-flash`, runs on Workers AI and needs no other key. Requests go through the AI Gateway named `default`, or the one in `CLOUDFLARE_AI_GATEWAY_ID`. Without the two variables, the plugin warns once and reports nothing.
+
+A model is one of these decision models, and the types and the settings check refuse anything else:
+
+| Model                                                       | Reads                                              |
+| ----------------------------------------------------------- | -------------------------------------------------- |
+| `cloudflare/@cf/cloudflare/clef`, `clef-flash`, `clef-omni` | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`    |
+| `typesafe/jev-latest`, `typesafe/jev-<major>.<minor>`       | `TYPESAFE_API_KEY`, `TYPESAFE_BASE_URL` (optional) |
+
+`TYPESAFE_BASE_URL` points the `typesafe` provider at any endpoint that serves System One.
 
 ## Write your rules
 
