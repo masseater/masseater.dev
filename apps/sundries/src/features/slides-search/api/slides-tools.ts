@@ -49,7 +49,9 @@ const embed = (query: string): Effect.Effect<number[], ReturnType<typeof fail>> 
   runWorkersAi({
     operation: "embeddings",
     model: EMBEDDING_MODEL,
-    call: () => env.AI.run(EMBEDDING_MODEL, { queries: query, instruction: QUERY_INSTRUCTION }),
+    caller: "sundries.slides-search",
+    call: (options) =>
+      env.AI.run(EMBEDDING_MODEL, { queries: query, instruction: QUERY_INSTRUCTION }, options),
   }).pipe(
     Effect.mapError(({ cause }) => fail(cause)),
     Effect.flatMap(({ data }) =>

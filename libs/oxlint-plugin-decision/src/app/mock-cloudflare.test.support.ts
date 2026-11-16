@@ -7,6 +7,7 @@ import {
   Layer,
   Number as Num,
   Option,
+  Record as Rec,
   Ref,
   Schema,
   String as Str,
@@ -15,36 +16,36 @@ import {
 import { HttpRouter, HttpServer, HttpServerRequest, HttpServerResponse } from "effect/http";
 import type { HttpServerError } from "effect/http";
 
-import type { YesNo } from "#/features/serve-decisions/index.test.support.ts";
-
 import type { TestError } from "./oxlint.test.support.ts";
 
-type Answer = YesNo;
+type Reply = "yes" | "no";
 
 const UNAUTHORIZED = 401;
 const TOO_MANY_REQUESTS = 429;
 const NO_HITS = 0;
 const FIRST_HIT = 1;
-const CERTAIN = 0;
-const LIKELY_PROBABILITY = 0.95;
-const UNLIKELY_PROBABILITY = 0.05;
-const LIKELY = Math.log(LIKELY_PROBABILITY);
-const UNLIKELY = Math.log(UNLIKELY_PROBABILITY);
-const LABEL = /^q\d+:/gmu;
+const LIKELY = 0.95;
+const UNLIKELY = 0.05;
 
-const ChatBody = Schema.Struct({
+const Criteria = Schema.Record(Schema.String, Schema.NullOr(Schema.String));
+
+const Question = Schema.Struct({
+  type: Schema.String,
+  instructions: Schema.String,
+  criteria: Schema.optional(Criteria),
+});
+
+const RunBody = Schema.Struct({
   model: Schema.String,
-  logprobs: Schema.Boolean,
-  top_logprobs: Schema.Finite,
-  messages: Schema.NonEmptyArray(Schema.Struct({ role: Schema.String, content: Schema.String })),
-  chat_template_kwargs: Schema.optional(Schema.Record(Schema.String, Schema.Boolean)),
+  state: Schema.Unknown,
+  questions: Schema.Record(Schema.String, Question),
 });
 
 /** @internal */
-export type Body = typeof ChatBody.Type;
+export type Body = typeof RunBody.Type;
 
 /** @internal */
-export interface LoggedChat {
+export interface LoggedRun {
   readonly url: string;
   readonly authorization: string;
   readonly gateway: string;
@@ -52,7 +53,7 @@ export interface LoggedChat {
 }
 
 interface MockShape {
-  readonly log: Ref.Ref<readonly LoggedChat[]>;
+  readonly log: Ref.Ref<readonly LoggedRun[]>;
   readonly hits: Ref.Ref<number>;
   readonly baseURL: string;
 }
@@ -62,53 +63,48 @@ export class MockCloudflare extends Context.Service<MockCloudflare, MockShape>()
   "@r_masseater/oxlint-plugin-decision/app/mock-cloudflare.test.support/MockCloudflare",
 ) {}
 
-const logprobOf = (answer: Answer, word: Answer): number =>
-  Bool.match(answer === word, { onTrue: () => LIKELY, onFalse: () => UNLIKELY });
+const yesOf = (reply: Reply): number =>
+  Bool.match(reply === "yes", { onTrue: () => LIKELY, onFalse: () => UNLIKELY });
 
-const answerToken = (answer: Answer): object => ({
-  token: ` ${answer}`,
-  logprob: logprobOf(answer, answer),
-  top_logprobs: [
-    { token: " yes", logprob: logprobOf(answer, "yes") },
-    { token: " no", logprob: logprobOf(answer, "no") },
-  ],
-});
-
-const plain = (token: string): object => ({
-  token,
-  logprob: CERTAIN,
-  top_logprobs: [{ token, logprob: CERTAIN }],
-});
-
-const lineOf = (answer: Answer, index: number): readonly object[] => [
-  plain(`q${String(Num.sum(index, FIRST_HIT))}`),
-  plain(":"),
-  answerToken(answer),
-  plain("\n"),
-];
-
-const completion = (body: Body, answer: Answer): object => {
-  const { content: user } = Arr.lastNonEmpty(body.messages);
-  const count = Option.match(Str.match(LABEL)(user), {
-    onNone: () => NO_HITS,
-    onSome: (found) => found.length,
-  });
+const answerOf = (reply: Reply, question: Body["questions"][string]): object => {
+  if (question.type !== "choice") {
+    return { type: "noul", noul: yesOf(reply) };
+  }
+  const labels = Rec.keys(question.criteria ?? {});
+  const choice = Option.getOrElse(Arr.last(labels), () => "");
   return {
-    model: body.model,
-    choices: [
-      {
-        logprobs: {
-          content: pipe(
-            Arr.makeBy(count, (index) => lineOf(answer, index)),
-            Arr.flatten,
-          ),
-        },
-      },
-    ],
+    type: "choice",
+    choice,
+    confidence: LIKELY,
+    probabilities: Rec.fromEntries(
+      pipe(
+        labels,
+        Arr.map(
+          (label) =>
+            [
+              label,
+              Bool.match(label === choice, { onTrue: () => LIKELY, onFalse: () => UNLIKELY }),
+            ] as const,
+        ),
+      ),
+    ),
   };
 };
 
-const answerFor = (token: string): Answer =>
+const resultOf = (body: Body, reply: Reply): object => ({
+  success: true,
+  errors: [],
+  result: {
+    model: body.model,
+    answers: pipe(
+      body.questions,
+      Rec.map((question) => answerOf(reply, question)),
+    ),
+    usage: { input_tokens: 1, output_tokens: 0 },
+  },
+});
+
+const replyOf = (token: string): Reply =>
   Bool.match(Str.startsWith("no")(token), { onTrue: () => "no", onFalse: () => "yes" });
 
 const replyFor = (
@@ -128,7 +124,7 @@ const replyFor = (
       { status: TOO_MANY_REQUESTS, headers: { "retry-after-ms": "10" } },
     );
   }
-  return HttpServerResponse.jsonUnsafe(completion(body, answerFor(token)));
+  return HttpServerResponse.jsonUnsafe(resultOf(body, replyOf(token)));
 };
 
 const handler = (
@@ -141,13 +137,14 @@ const handler = (
   Effect.gen(function* handle() {
     const request = yield* HttpServerRequest.HttpServerRequest;
     const json = yield* request.json;
-    const body = yield* Schema.decodeUnknownEffect(ChatBody)(json);
+    const body = yield* Schema.decodeUnknownEffect(RunBody)(json);
     const header = (name: string): string =>
       Option.getOrElse(Option.fromUndefinedOr(request.headers[name]), () => "");
     const authorization = header("authorization");
+    const gateway = header("cf-aig-gateway-id");
     yield* Ref.update(state.log, (log) => [
       ...log,
-      { url: request.url, authorization, gateway: header("cf-aig-gateway-id"), body },
+      { url: request.url, authorization, gateway, body },
     ]);
     const hits = yield* Ref.updateAndGet(state.hits, (count) => Num.sum(count, FIRST_HIT));
     return replyFor(body, Str.replace("Bearer ", "")(authorization), hits);
@@ -156,7 +153,7 @@ const handler = (
 const MockLive = Layer.effect(
   MockCloudflare,
   Effect.gen(function* make() {
-    const log = yield* Ref.make<readonly LoggedChat[]>([]);
+    const log = yield* Ref.make<readonly LoggedRun[]>([]);
     const hits = yield* Ref.make(NO_HITS);
     const baseURL = yield* HttpServer.addressFormattedWith((address) =>
       Effect.succeed(`${address}/client/v4`),
@@ -169,7 +166,7 @@ const routes = Layer.unwrap(
   Effect.gen(function* serve() {
     const state = yield* MockCloudflare;
     return HttpRouter.serve(
-      HttpRouter.add("POST", "/client/v4/accounts/:account/ai/v1/chat/completions", handler(state)),
+      HttpRouter.add("POST", "/client/v4/accounts/:account/ai/run/*", handler(state)),
       { disableLogger: true, disableListenLog: true },
     );
   }),
@@ -182,7 +179,7 @@ export const MockCloudflareLayer = routes.pipe(
 );
 
 /** @internal */
-export const loggedChats: Effect.Effect<readonly LoggedChat[], TestError, MockCloudflare> =
+export const loggedRuns: Effect.Effect<readonly LoggedRun[], TestError, MockCloudflare> =
   Effect.gen(function* logged() {
     const { log } = yield* MockCloudflare;
     return yield* Ref.get(log);
@@ -197,6 +194,5 @@ export const cloudflareEnv = (
       CLOUDFLARE_API_TOKEN: token,
       CLOUDFLARE_ACCOUNT_ID: "account-id",
       CLOUDFLARE_API_BASE_URL: baseURL,
-      CLOUDFLARE_AI_GATEWAY_ID: "lint-gateway",
     })),
   );

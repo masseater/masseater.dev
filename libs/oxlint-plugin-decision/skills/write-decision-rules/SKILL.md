@@ -2,7 +2,7 @@
 name: write-decision-rules
 description: >
   Use when writing, wiring up, or debugging lint rules for @r_masseater/oxlint-plugin-decision: rules
-  phrased as plain-English questions that models on Cloudflare AI Gateway or OpenRouter answer about functions, calls,
+  phrased as plain-English questions that decision models on Workers AI or OpenRouter answer about functions, calls,
   JSX elements, or whole files in an Oxlint run. Covers defineDecisionRule, createDecisionPlugin,
   enabling the rules in oxlint.config.ts, select, answer kinds, context, per-rule models, settings,
   explain mode, and keeping request cost under control. Also use when someone wants a lint check
@@ -38,7 +38,7 @@ The package root ships no rules; the ready-made ones are under `/presets`. You w
    export CLOUDFLARE_API_TOKEN="..."   # account API token with Workers AI Read
    ```
 
-   Result: `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` are set in the shell that runs oxlint. The default model runs on Workers AI through the AI Gateway `default` (`CLOUDFLARE_AI_GATEWAY_ID` picks another). `openrouter/...` models read `OPENROUTER_API_KEY` instead. Without it the plugin warns once and reports nothing outside CI, and fails the run in CI.
+   Result: `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` are set in the shell that runs oxlint. The default model, `cloudflare/@cf/cloudflare/clef-flash`, runs on Workers AI. `openrouter/...` models read `OPENROUTER_API_KEY` instead. Without it the plugin warns once and reports nothing outside CI, and fails the run in CI.
 
 2. Write a plugin file that default-exports `createDecisionPlugin`.
 
@@ -165,14 +165,14 @@ A `"file"` rule can add `location: { question, cutoff }`. It moves the diagnosti
 
 Settings apply to the whole plugin. Pass them to `createDecisionPlugin` or put them under `settings.<plugin name>` in `oxlint.config.ts`. The config file wins.
 
-| Setting           | Default                             | Meaning                                                                                                         |
-| ----------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `model`           | `"cloudflare/@cf/qwen/qwen3.8-27b"` | Model id `<provider>/<model>`, or a list; every listed model answers every match.                               |
-| `ci`              | `"fail"`                            | When `CI` is set and a model can't be asked: `"fail"` fails the run, `"skip"` warns. A spent budget only warns. |
-| `timeoutMs`       | `10000`                             | Per-file budget shared by every request, retry, and location refinement.                                        |
-| `maxSnippetChars` | `4000`                              | Longer snippets are cut and end with `/* ...truncated */`.                                                      |
-| `env`             | `{}`                                | Renames variables providers read, e.g. `{ CLOUDFLARE_API_TOKEN: "TEAM_KEY" }`. Names only.                      |
-| `explain`         | `false`                             | `true`/`"text"` or `"json"` prints why each match was or wasn't reported, to stderr.                            |
+| Setting           | Default                                  | Meaning                                                                                                         |
+| ----------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `model`           | `"cloudflare/@cf/cloudflare/clef-flash"` | Model id `<provider>/<model>`, or a list; every listed model answers every match.                               |
+| `ci`              | `"fail"`                                 | When `CI` is set and a model can't be asked: `"fail"` fails the run, `"skip"` warns. A spent budget only warns. |
+| `timeoutMs`       | `10000`                                  | Per-file budget shared by every request, retry, and location refinement.                                        |
+| `maxSnippetChars` | `4000`                                   | Longer snippets are cut and end with `/* ...truncated */`.                                                      |
+| `env`             | `{}`                                     | Renames variables providers read, e.g. `{ CLOUDFLARE_API_TOKEN: "TEAM_KEY" }`. Names only.                      |
+| `explain`         | `false`                                  | `true`/`"text"` or `"json"` prints why each match was or wasn't reported, to stderr.                            |
 
 A rule's model comes from the first source that sets one. The rule's options in `oxlint.config.ts` come first, such as `["warn", { model: "openrouter/respan/span-01-lite" }]`. Next comes the rule's own `model`, and then `settings.<plugin name>.model`. After that comes the `model` passed to `createDecisionPlugin`. The default comes last.
 
