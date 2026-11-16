@@ -4,20 +4,23 @@ import {
   Effect,
   FileSystem,
   Layer,
+  Option,
   Path,
   Stream,
   String as Str,
   pipe,
 } from "effect";
-import type { Option } from "effect";
 import { Digest } from "effect/crypto";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
+import { groupOf } from "./match-groups.ts";
 import { nodeServicesLayer } from "./node-services.ts";
 
 const MISSING_SIZE = 0;
 const GENERATED_PATHSPEC = ":(attr:linguist-generated)";
 const LISTED_ARGS = ["--cached", "--others", "--exclude-standard"];
+const STAGED_ARGS = ["--stage"];
+const LINK_ENTRY = /^120000 \S+ \d+\t(?<name>.+)$/u;
 
 export const NODE_MODULES = "node_modules";
 
@@ -34,6 +37,8 @@ export class RepositoryFiles extends Context.Service<
     readonly hash: (text: string) => Effect.Effect<string>;
     readonly generatedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly listedFiles: (root: string) => Effect.Effect<readonly string[]>;
+    readonly linkedFiles: (root: string) => Effect.Effect<readonly string[]>;
+    readonly readLink: (file: string) => Effect.Effect<Option.Option<string>>;
     readonly matchingFiles: (
       root: string,
       pathspecs: readonly string[],
@@ -76,6 +81,9 @@ const gitPathsService = Effect.gen(function* gitPathsService() {
   return gitPaths;
 });
 
+const linkName = (entry: string): readonly string[] =>
+  Option.toArray(groupOf("name")(LINK_ENTRY.exec(entry)));
+
 type CacheOperations = Pick<
   typeof RepositoryFiles.Service,
   "walkDirectory" | "writeFile" | "removeFile" | "hash"
@@ -115,6 +123,8 @@ export const nodeRepositoryFiles = Layer.effect(
           Effect.map(Arr.map((file) => path.join(root, file))),
         ),
       listedFiles: (root) => gitFiles(root, LISTED_ARGS),
+      linkedFiles: (root) => gitFiles(root, STAGED_ARGS).pipe(Effect.map(Arr.flatMap(linkName))),
+      readLink: (file) => fs.readLink(file).pipe(Effect.option),
       matchingFiles: (root, pathspecs) => gitFiles(root, [...LISTED_ARGS, "--", ...pathspecs]),
       ignoredPaths: (root, paths) => gitPaths(root, ["check-ignore", "--", ...paths], "\n"),
       readFile: (file) => fs.readFileString(file).pipe(Effect.option),

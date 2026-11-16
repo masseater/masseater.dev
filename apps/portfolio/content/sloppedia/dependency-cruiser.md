@@ -33,7 +33,7 @@ dependency-cruiser は、結果を DOT、Mermaid、JSON、CSV、HTML、文字な
 
 ## モノレポとの関係
 
-dependency-cruiser が見るのは、パッケージの間ではなくファイルの間の依存である。モノレポのパッケージのグラフを描く [Nx](/sloppedia/nx) や [Turborepo](/sloppedia/turborepo) とは、見る粒度が違う。同じくファイルの粒度で依存を見る道具に、[Madge](/sloppedia/madge) と [fallow](/sloppedia/fallow) がある。
+dependency-cruiser が見るのは、パッケージの間ではなくファイルの間の依存である。モノレポのパッケージのグラフを描く [Nx](/sloppedia/nx) や [Turborepo](/sloppedia/turborepo) とは、見る粒度が違う。同じくファイルの粒度で依存を見る道具に、[Madge](/sloppedia/madge) と [fallow](/sloppedia/fallow) がある。境界を検査する道具の比較は「[モジュール境界ツール](/sloppedia/module-boundary-tools)」を参照。
 
 ## 関連項目
 

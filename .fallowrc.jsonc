@@ -1,6 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "production": true,
+  "entry": ["*/*/bin/*.ts"],
   "dynamicallyLoaded": [
     "**/*.d.rpp.ts",
     "apps/aredoko-server/src/app/rpc/embedder-worker.test.support.ts",
@@ -71,6 +72,7 @@
           "@fontsource/ibm-plex-mono",
           "@fontsource/shippori-mincho-b1",
           "@fontsource/zen-kaku-gothic-new",
+          "@masseater.dev/daw-view",
           "@webxr-input-profiles/assets",
           "d3-array",
           "d3-polygon",
@@ -210,6 +212,11 @@
         "@textlint-ja/textlint-rule-preset-ai-writing",
         "textlint-rule-preset-ja-technical-writing",
       ],
+    },
+    {
+      "name": "better-auth-cli",
+      "enablers": ["auth"],
+      "entryPoints": ["auth.config.ts"],
     },
     {
       "name": "oxlint-plugin-decision",

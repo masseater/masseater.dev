@@ -28,18 +28,22 @@ export default defineConfig({
   run: {
     tasks: {
       ...alchemyTasks,
-      build: { command: "vp build && node ./write-asset-headers.ts", cache: false },
+      build: { command: "vp build && node bin/write-asset-headers.ts", cache: false },
       "deploy:production": {
-        command: ["node scripts/live.ts", "alchemy deploy --stage production --yes"],
+        command: ["node bin/live.ts", "alchemy deploy --stage production --yes"],
         cache: false,
       },
       "daily:after": { command: [], dependsOn: ["deploy:production"] },
-      "deploy:mosaic-files": { command: "alchemy deploy alchemy.files.ts --yes", cache: false },
+      "deploy:mosaic-files": {
+        command: "ALCHEMY_STAGE=$ITEM alchemy deploy alchemy.files.ts --yes",
+        cache: false,
+        dependsOn: ["@masseater.dev/mosaic-build#character"],
+      },
     },
   },
   base: `${BASE_PATH}/`,
   build: { copyPublicDir: false },
   resolve: { tsconfigPaths: true },
-  test: { include: ["src/**/*.test.{ts,tsx}", "scripts/*.test.ts", "*.test.ts"] },
+  test: { include: ["src/**/*.test.{ts,tsx}", "bin/lib/*.test.ts", "*.test.ts"] },
   plugins: mosaicPlugins(),
 });

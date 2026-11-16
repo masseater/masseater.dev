@@ -6,11 +6,11 @@ import { plugin as shadcn } from "@shadcn/lint";
 import baselineJs from "eslint-plugin-baseline-js";
 import type { UserConfig } from "vite-plus";
 
-import decisionPlugin from "./decision-rules.ts";
 import {
   alchemyOverride,
+  cloudflareResourceSyntax,
   removalPolicyOverride,
-  scriptsOverride,
+  commandsOverride,
 } from "./lint-overrides.config.ts";
 import {
   COMMENT_DIRECTIVES,
@@ -18,10 +18,10 @@ import {
   decisionPluginName,
   generated,
   pluginRules,
-  restrictedImports,
   shadcnRestyleContracts,
 } from "./lint.config.ts";
 import { readonlyParameterAllow } from "./readonly-types.config.ts";
+import { restrictedImports } from "./required-stack.config.ts";
 
 type LintConfig = NonNullable<UserConfig["lint"]>;
 
@@ -91,6 +91,7 @@ const rules = {
   "jsdoc/require-param": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],
   "jsdoc/require-returns": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],
   "eslint/no-restricted-imports": ["error", restrictedImports],
+  "eslint-js/no-restricted-syntax": ["error", ...cloudflareResourceSyntax],
   "typescript/prefer-readonly-parameter-types": [
     "error",
     { ignoreInferredTypes: true, allow: readonlyParameterAllow },
@@ -113,7 +114,7 @@ const overrides = [
     files: ["**/*.config.ts", "**/alchemy.*.ts", "**/*.worker.ts", "**/decision-rules.ts"],
     rules: { "import/no-default-export": "off" },
   },
-  scriptsOverride,
+  commandsOverride,
   {
     files: ["**/vite.config.ts"],
     rules: {
@@ -153,7 +154,7 @@ export const lint = {
   rules,
   overrides,
   settings: {
-    [decisionPlugin.meta.name]: {
+    [decisionPluginName]: {
       model: "cloudflare/@cf/qwen/qwen3.8-27b",
       timeoutMs: DECISION_TIMEOUT_MS,
       ci: "skip",

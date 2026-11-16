@@ -12,6 +12,7 @@
   --spacing-sidebar-icon: 3rem;
   --spacing-sidebar-mobile: 18rem;
   --grid-template-columns-memos: 14rem minmax(0, 1fr);
+  --grid-template-columns-profile: minmax(0, 1fr) 16rem;
 }
 
 :root {
@@ -105,5 +106,15 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer base {
+  [data-sidebar-resizing] {
+    cursor: col-resize;
+    user-select: none;
+  }
+  [data-sidebar-resizing] [data-slot^="sidebar"] {
+    transition: none;
   }
 }

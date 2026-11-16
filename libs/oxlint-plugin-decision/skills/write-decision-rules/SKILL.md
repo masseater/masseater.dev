@@ -24,7 +24,7 @@ sources:
   - src/skill-write-decision-rules.test.ts
 ---
 
-# Write decision rules
+# write-decision-rules
 
 The package root ships no rules; the ready-made ones are under `/presets`. You write each rule as a yes/no (or pick-one) question with `defineDecisionRule`. You bundle the rules with `createDecisionPlugin` in a plugin file of your own. Then you load that file through `jsPlugins` in `oxlint.config.ts` and turn each rule on by name. Decision models return probabilities, never text. So a rule cannot produce an explanation or a fix.
 

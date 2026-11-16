@@ -5,6 +5,7 @@
   "type": "module",
   "imports": {
     "#/*": "./src/*",
+    "#asset-headers": "./asset-headers.ts",
     "#base-path": "./base-path.ts",
     "#telemetry": "./telemetry.ts"
   },

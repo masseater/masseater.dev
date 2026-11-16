@@ -24,7 +24,6 @@ const upstreams = Effect.gen(function* upstreams() {
     stack: "masseater-dev-watashi-mcp",
     stage: PROD,
   });
-  const money = yield* Workers.Worker.ref("Mcp", { stack: "masseater-dev-money", stage: PROD });
   const sundries = yield* Workers.Worker.ref("Mcp", {
     stack: "masseater-dev-sundries",
     stage: PROD,
@@ -36,7 +35,7 @@ const upstreams = Effect.gen(function* upstreams() {
   return {
     PERSONAL: Workers.WorkerEntrypoint(personal),
     WATASHI: Workers.WorkerEntrypoint<WatashiPortalRpc>(watashi, "WatashiPortal"),
-    MONEY: Workers.WorkerEntrypoint<MoneyPortalRpc>(money, "MoneyPortal"),
+    MONEY: Workers.WorkerEntrypoint<MoneyPortalRpc>(watashi, "MoneyPortal"),
     SLIDES: Workers.WorkerEntrypoint<SlidesRpc>(sundries, "Slides"),
     CREDENTIALS: Workers.WorkerEntrypoint<CredentialStatusRpc>(broker, "CredentialStatus"),
   };

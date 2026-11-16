@@ -21,5 +21,10 @@ export const BROWSER_HANDLES: readonly string[] = [
   "MouseEvent",
   "AbortSignal",
   "ImageBitmap",
+  "AudioContext",
+  "OfflineAudioContext",
+  "AnalyserNode",
+  "AudioBuffer",
+  "AudioBufferSourceNode",
   ...WEBGPU_HANDLES,
 ];

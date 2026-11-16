@@ -1,8 +1,8 @@
-import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { parse } from "vite-plus";
-import type { ESTree } from "vite-plus/lint/plugins";
 
-import { childrenOf, workspaceDirectories } from "#/entities/workspace/index.ts";
+import { stringsIn, workspaceDirectories } from "#/entities/workspace/index.ts";
+import type { FoundString } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import { positionOf } from "#/shared/lib/text-position.ts";
@@ -13,41 +13,6 @@ const PATH_CHARACTER = /[\w.@/-]/u;
 const NAME_CHARACTER = /[\w.@-]/u;
 const FIRST = 0;
 const NEXT = 1;
-
-const StringNode = Schema.Union([
-  Schema.Struct({
-    type: Schema.Literal<ESTree.StringLiteral["type"]>("Literal"),
-    value: Schema.String,
-    start: Schema.Finite,
-  }),
-  Schema.Struct({
-    type: Schema.Literal<ESTree.TemplateElement["type"]>("TemplateElement"),
-    value: Schema.Struct({ cooked: Schema.String }),
-    start: Schema.Finite,
-  }),
-]);
-const decodeStringNode = Schema.decodeUnknownOption(StringNode);
-
-interface FoundString {
-  readonly text: string;
-  readonly start: number;
-}
-
-const textOf = (node: typeof StringNode.Type): string => {
-  if (node.type === "Literal") {
-    return node.value;
-  }
-  return node.value.cooked;
-};
-
-const stringsIn = (node: unknown): readonly FoundString[] => {
-  const own = pipe(
-    decodeStringNode(node),
-    Option.map((found) => ({ text: textOf(found), start: found.start })),
-    Option.toArray,
-  );
-  return [...own, ...pipe(childrenOf(node), Arr.flatMap(stringsIn))];
-};
 
 const isBoundary = (character: string, allowed: RegExp): boolean =>
   character === "" || !allowed.test(character);
