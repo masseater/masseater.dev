@@ -5,12 +5,12 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 
 import { aspectsAtom } from "#/features/mark-range/model/draft.ts";
-import { ASPECTS, ASPECT_LABELS } from "#/shared/config/index.ts";
+import { ASPECT_LABELS, PICTURE_ASPECTS, SOUND_ASPECTS } from "#/shared/config/index.ts";
 import { TOGGLE } from "#/shared/ui/index.ts";
 
 const toggled = (aspects: readonly Aspect[], aspect: Aspect): readonly Aspect[] =>
   pipe(
-    ASPECTS,
+    [...SOUND_ASPECTS, ...PICTURE_ASPECTS],
     Arr.filter((each) => (each === aspect) !== Arr.contains(aspects, each)),
   );
 

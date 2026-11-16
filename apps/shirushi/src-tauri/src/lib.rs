@@ -10,11 +10,13 @@ use tauri_specta::{Builder, ErrorHandlingMode, collect_commands};
 mod commands;
 mod mcp;
 pub mod protocol;
+mod stills;
 mod taste;
 
+use stills::Stills;
 use taste::Taste;
 
-const SITES: &[Site] = &[Site::Youtube, Site::Niconico, Site::Soundcloud];
+const SITES: &[Site] = &[Site::Youtube, Site::Niconico, Site::Soundcloud, Site::File];
 const SCREEN_PORT: u16 = 47_231;
 const CHANGED: &str = "shirushi://taste-changed";
 
@@ -25,6 +27,7 @@ fn builder() -> Builder<tauri::Wry> {
             commands::list_marks,
             commands::save_mark,
             commands::remove_mark,
+            commands::get_still,
             commands::list_pairs,
             commands::choose_pair,
             commands::list_statements,
@@ -48,10 +51,12 @@ fn setup(app: &App, port: u16) -> Setup {
     })?;
     let store = Store::open(&data, commands::DATABASE, commands::TABLE)?;
     let taste = Taste::open(&data, commands::DATABASE)?;
+    let stills = Stills::open(&data, commands::DATABASE)?;
     let handle = app.handle().clone();
     let serving = mcp::Serving {
         store: store.clone(),
         taste: taste.clone(),
+        stills: stills.clone(),
         client: notes.client.clone(),
         sites: SITES,
         token: notes.mcp.token.clone(),
@@ -67,6 +72,7 @@ fn setup(app: &App, port: u16) -> Setup {
     app.manage(notes);
     app.manage(store);
     app.manage(taste);
+    app.manage(stills);
     open_window(app, port)
 }
 
