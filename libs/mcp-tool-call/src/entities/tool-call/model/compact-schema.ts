@@ -72,7 +72,7 @@ const compactEntry = (value: unknown, key: string): unknown => {
   return compactValue(value);
 };
 
-export const compactJsonSchema = (node: JsonObject): JsonObject =>
+export const compactJsonSchema = (node: Record<string, unknown>): Record<string, unknown> =>
   pipe(
     node,
     Rec.filter((value, key) => !isNoise(value, key)),
