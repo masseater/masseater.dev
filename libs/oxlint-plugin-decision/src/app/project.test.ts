@@ -3,6 +3,7 @@ import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Option, Order, String as Str, pipe } from "effect";
 
+import { toJson } from "#/entities/decision/index.ts";
 import type { RuleContext } from "#/entities/decision/index.ts";
 
 import {
@@ -20,7 +21,6 @@ import { loggedRequests } from "./mock-typesafe.test.support.ts";
 import type { LoggedRequest } from "./mock-typesafe.test.support.ts";
 import { decisionLines, mockEnv } from "./oxlint.test.support.ts";
 import type { Services, TestError } from "./oxlint.test.support.ts";
-import { toJson } from "./presets-oxlint.test.support.ts";
 
 const ONE = 1;
 const ROWS = 30;
