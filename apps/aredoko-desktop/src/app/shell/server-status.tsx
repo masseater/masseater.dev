@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { IndexingProgress, useFollowAnalysis } from "#/features/indexing/index.ts";
+import { IndexingProgress, useFollowAnalysis } from "#/features/follow-indexing/index.ts";
 import { useStatus } from "#/shared/api/index.ts";
 
 import { Unreachable } from "./unreachable.tsx";

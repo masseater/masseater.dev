@@ -11,7 +11,7 @@ metadata:
   library_version: 0.31.0
 sources:
   - src/app/vite.d.ts
-  - src/features/workspace-settings/**
+  - src/features/build-workspace-settings/**
   - src/entities/workspace/**
 ---
 

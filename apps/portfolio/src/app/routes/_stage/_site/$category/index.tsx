@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { validateTagSearch } from "#/features/tag-filter/index.ts";
+import { validateTagSearch } from "#/features/filter-by-tag/index.ts";
 import { collectionHead, CollectionPage, loadCollection } from "#/pages/collection/index.ts";
 
 export const Route = createFileRoute("/_stage/_site/$category/")({

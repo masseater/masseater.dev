@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { SectionButtons, Transport } from "#/features/playback/index.ts";
+import { SectionButtons, Transport } from "#/features/play-song/index.ts";
 
 import { Board } from "./board.tsx";
 

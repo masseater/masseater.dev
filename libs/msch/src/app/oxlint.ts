@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 import { Option, Schema } from "effect";
 
-import { mschPlugin } from "#/features/oxlint-plugin/index.ts";
+import { mschPlugin } from "#/features/report-problems/index.ts";
 import { JSON_FLAG } from "#/shared/lib/cli-contract.ts";
 import { ProblemList } from "#/shared/lib/problem.ts";
 import type { Problem } from "#/shared/lib/problem.ts";

@@ -3,8 +3,8 @@ import { Array as Arr, Effect, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
 import { SCAN_LIMIT } from "#/entities/life-record/index.server.ts";
-import { routeLifeRead, writeLife } from "#/features/life-tools/index.test.support.ts";
-import { watashiSearch } from "#/features/memory-tools/index.test.support.ts";
+import { watashiSearch } from "#/features/manage-memory/index.test.support.ts";
+import { routeLifeRead, writeLife } from "#/features/record-life/index.test.support.ts";
 
 import { closeDatabase, env, resetDatabase } from "./d1.test.support.ts";
 

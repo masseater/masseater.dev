@@ -1,1 +1,1 @@
-export { ClaudeRoutine } from "./api/claude-routine-entrypoint.ts";
+export { ClaudeRoutine } from "./api/claude-routine.ts";
