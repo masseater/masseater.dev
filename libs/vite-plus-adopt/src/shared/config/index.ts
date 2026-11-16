@@ -12,3 +12,5 @@ export type {
   ToolSection,
   ToolSections,
 } from "./types.ts";
+export { SkillsSectionSchema } from "./skills.ts";
+export type { SkillSource, SkillsSection } from "./skills.ts";

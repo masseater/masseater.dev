@@ -1,6 +1,6 @@
 # vite-plus-adopt
 
-`vpa` は、Betterleaks・actionlint・zizmor・commitlint・textlint・markdownlint・Steiger・fallow を Vite+ に取り込む CLI である。設定と依存の規則を `vite.config.ts` に書くと、そこから読んで動かす。
+`vpa` は、Betterleaks・actionlint・zizmor・commitlint・textlint・markdownlint・Steiger・fallow とエージェントスキルの導入を Vite+ に取り込む CLI である。設定と依存の規則を `vite.config.ts` に書くと、そこから読んで動かす。
 引数なしの `vpa` を 1 回実行すると、設定のある検査をすべて並行して動かし、結果をまとめて出す。
 TypeScript 7 だけで動く Feature-Sliced Design の Steiger プラグインと @arethetypeswrong/core も同梱する。
 
@@ -59,6 +59,31 @@ Git のフックは次のように書く。
 vpa --staged
 # .vite-hooks/commit-msg
 vpa --commit-msg "$1"
+```
+
+## エージェントスキル
+
+`skills` に GitHub のリポジトリとコミットを書くと、`vpa --prepare` がそのスキルを `.agents/skills/` に置く。スキルは `SKILL.md` の `name` で選び、`"all"` は `root` の下のすべてを選ぶ。
+
+```ts
+export default defineConfig({
+  skills: {
+    "masseater/skills": {
+      commit: "40c8069607f259ab20d7cfee82f7c29b29fc65ad",
+      root: "plugins/masseater-skills/skills",
+      skills: "all",
+    },
+    "cloudflare/skills": { commit: "…", root: "skills", skills: ["cloudflare"] },
+  },
+});
+```
+
+取得したスキルは `~/.cache/vpa/skills/`（`XDG_CACHE_HOME`、Windows では `LOCALAPPDATA` の下）に読み取り専用で置き、`.agents/skills/` からはシンボリックリンク（Windows ではジャンクション）で指す。同じコミットはマシンのどのワークツリーでも取り直さない。非公開のリポジトリは `GITHUB_TOKEN` で取る。
+
+`prepare` には `vpa --prepare` を書く。Renovate がコミットを更新できるように、`renovate.json` で次のプリセットを読む。
+
+```json
+{ "extends": ["github>masseater/masseater.dev//libs/vite-plus-adopt/renovate"] }
 ```
 
 ## Feature-Sliced Design のプラグイン
