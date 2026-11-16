@@ -87,10 +87,10 @@ const main = Effect.gen(function* main() {
   const config = yield* configOf(root);
   const files = yield* markdownFiles(root, config);
   const diagnostics = yield* lint({ root, files, config });
-  yield* pipe(
-    diagnostics,
-    Effect.forEach((diagnostic) => Console.log(format(diagnostic))),
-  );
+  yield* Arr.match(diagnostics, {
+    onEmpty: () => Effect.void,
+    onNonEmpty: (found) => Console.log(pipe(found, Arr.map(format), Arr.join("\n"))),
+  });
   yield* Effect.when(
     Effect.sync(() => {
       process.exitCode = FAILED;
