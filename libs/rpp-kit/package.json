@@ -13,6 +13,7 @@
   "dependencies": {
     "@effect/platform-node": "catalog:",
     "effect": "catalog:stack",
+    "mapped-import": "workspace:*",
     "ts-content-mapper": "0.1.1"
   },
   "devDependencies": {

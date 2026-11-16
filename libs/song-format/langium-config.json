@@ -1,10 +1,10 @@
 {
-  "projectName": "Fu",
+  "projectName": "Fumx",
   "languages": [
     {
-      "id": "fu",
-      "grammar": "src/features/read-song/model/fu.langium",
-      "fileExtensions": [".fu"]
+      "id": "fumx",
+      "grammar": "src/features/read-song/model/fumx.langium",
+      "fileExtensions": [".fumx"]
     }
   ],
   "out": "generated/langium",
