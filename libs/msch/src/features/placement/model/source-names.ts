@@ -10,14 +10,14 @@ import {
 } from "effect";
 
 import { MANIFEST_FILE } from "#/entities/package/index.ts";
-import { workspaceDirectories } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
+
+import { memberSources } from "./member-sources.ts";
 
 const ALIAS_RULE: RuleName = "source-alias";
 const RUNTIME_RULE: RuleName = "runtime-name";
 const FIRST = 1;
-const ROOT_WORKSPACE = ".";
 const SEPARATOR = "/";
 const SOURCE_ALIAS = "#/*";
 const SOURCE_TARGET = "./src/*";
@@ -36,11 +36,6 @@ const RUNTIME_NAMES: readonly string[] = [
   "electron",
   "lambda",
   "vercel",
-];
-const EXCLUDED: readonly string[] = [
-  ":(exclude,attr:linguist-vendored)",
-  ":(exclude,attr:linguist-generated)",
-  ":(exclude,attr:linguist-documentation)",
 ];
 
 const ALIAS_MESSAGE = `points into src/ under its own name. Import source through "${SOURCE_ALIAS}": "${SOURCE_TARGET}" only, so an import names the layer and slice it uses instead of a folder alias.`;
@@ -116,12 +111,7 @@ export const checkSourceNames = Effect.fn("checkSourceNames")(function* checkSou
   root: string,
 ) {
   const files = yield* RepositoryFiles;
-  const declared = yield* workspaceDirectories(root);
-  const workspaces = pipe(
-    declared,
-    Arr.filter((workspace) => workspace !== ROOT_WORKSPACE),
-  );
-  const listed = yield* files.matchingFiles(root, EXCLUDED);
+  const { workspaces, listed } = yield* memberSources(root);
   const folders = pipe(
     listed,
     Arr.filter((name) =>
