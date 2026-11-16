@@ -12,6 +12,13 @@ export const AspectSchema = Schema.Literals([
   "voice",
   "arrangement",
   "mix",
+  "composition",
+  "color",
+  "light",
+  "line",
+  "texture",
+  "motion",
+  "cut",
 ]).annotate({ identifier: "Aspect" });
 
 export const MarkInputSchema = Schema.Struct({
