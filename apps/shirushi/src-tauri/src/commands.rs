@@ -53,7 +53,9 @@ pub async fn mcp_access(shirushi: State<'_, Shirushi>) -> Answer<McpAccess> {
 pub fn shirushi(data: &std::path::Path) -> Outcome<Shirushi> {
     Ok(Shirushi {
         store: Store::open(data)?,
-        client: reqwest::Client::new(),
+        client: reqwest::Client::builder()
+            .user_agent(concat!("shirushi/", env!("CARGO_PKG_VERSION")))
+            .build()?,
         mcp_token: local_mcp::token(data)?,
     })
 }
