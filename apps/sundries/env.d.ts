@@ -4,7 +4,7 @@ import type {
   ClaudeRoutine,
   SloppediaGitHub,
   TailnetRpc,
-} from "@masseater.dev/repositories/credential-broker.worker";
+} from "@masseater.dev/repositories/credential-broker";
 
 import type { WorkerEnv } from "./alchemy.run.ts";
 

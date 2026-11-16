@@ -13,7 +13,7 @@ const SCALE = { clean: 1.5, degraded: 0.75 } as const;
 const render = Effect.gen(function* render() {
   const fs = yield* FileSystem.FileSystem;
   const documents = yield* fs
-    .readFileString(new URL("documents.json", DATA).pathname)
+    .readFileString(new URL("./documents.json", DATA).pathname)
     .pipe(Effect.flatMap(Schema.decodeEffect(DocumentsSchema)));
   const browser = yield* launchBrowser;
   yield* Effect.forEach(

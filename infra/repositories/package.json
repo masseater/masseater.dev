@@ -10,7 +10,7 @@
     "./access-sites": "./src/app/access-sites.ts",
     "./oauth-targets": "./src/app/oauth-targets.ts",
     "./github-oidc": "./src/app/github-oidc.ts",
-    "./credential-broker.worker": "./src/app/credential-broker.worker.ts"
+    "./credential-broker": "./src/app/credential-broker.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

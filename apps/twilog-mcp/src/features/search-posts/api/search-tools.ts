@@ -1,6 +1,6 @@
 import type { Caller, UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { failedAt, NO_PROJECT } from "@masseater.dev/mcp-tool-call";
-import type { SiteToken } from "@masseater.dev/repositories/credential-broker.worker";
+import type { SiteToken } from "@masseater.dev/repositories/credential-broker";
 import { TWILOG_ACCOUNTS, twilogTarget } from "@masseater.dev/repositories/oauth-targets";
 import type { TwilogAccount } from "@masseater.dev/repositories/oauth-targets";
 import type { McpServer } from "@modelcontextprotocol/server";

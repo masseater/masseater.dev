@@ -1,4 +1,4 @@
-import type { AccessOAuth } from "@masseater.dev/repositories/credential-broker.worker";
+import type { AccessOAuth } from "@masseater.dev/repositories/credential-broker";
 
 import type { WorkerEnv } from "./alchemy.run.ts";
 
