@@ -4,9 +4,9 @@ import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
 import { Effect, Layer, pipe } from "effect";
 import { FetchHttpClient } from "effect/http";
 
-import { registerTools } from "#/tools.ts";
-import type { Services } from "#/tools.ts";
-import { vmLayer } from "#/vm.ts";
+import { registerTools } from "#/app/tools.ts";
+import type { Services } from "#/app/tools.ts";
+import { vmLayer } from "#/shared/api/index.ts";
 
 const SERVER_INFO = { name: "sts2", version: "0.1.0" };
 

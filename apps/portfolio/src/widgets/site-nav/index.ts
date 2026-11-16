@@ -1,4 +1,4 @@
-export { SectionLinkList } from "./ui/section-link-list";
-export { SiteLinks } from "./ui/site-links";
-export { SiteLogo } from "./ui/site-logo";
-export { SocialLinkList } from "./ui/social-link-list";
+export { SectionLinkList } from "./ui/section-link-list.tsx";
+export { SiteLinks } from "./ui/site-links.tsx";
+export { SiteLogo } from "./ui/site-logo.tsx";
+export { SocialLinkList } from "./ui/social-link-list.tsx";

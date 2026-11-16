@@ -2,7 +2,7 @@ import { Button } from "@masseater.dev/ui/button";
 import { PanelLeft } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useToggleSidebar } from "./sidebar-state";
+import { useToggleSidebar } from "./sidebar-state.ts";
 
 const LABEL = "サイドバーを開閉";
 

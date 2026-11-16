@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 
-import { playground } from "#/shared/config";
+import { playground } from "#/shared/config/index.ts";
 
-import { Pane } from "./pane";
-import { Panel } from "./panel";
-import { PanelBody } from "./panel-body";
-import { PanelLabel } from "./panel-label";
+import { Pane } from "./pane.tsx";
+import { PanelBody } from "./panel-body.tsx";
+import { PanelLabel } from "./panel-label.tsx";
+import { Panel } from "./panel.tsx";
 
 export const GeneratedPanel = (): ReactNode => (
   <Panel className="h-72 lg:h-auto">

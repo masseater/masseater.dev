@@ -3,14 +3,14 @@ import { Array as Arr, Option } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import type { PeriodValue, SettingsValue } from "#/entities/money";
-import { TransactionPager } from "#/features/page-transactions";
-import { useTransactions } from "#/pages/money/api/money-query";
-import { accountLabel, categoryLabel } from "#/pages/money/model/labels";
-import { Section } from "#/shared/ui";
+import type { PeriodValue, SettingsValue } from "#/entities/money/index.ts";
+import { TransactionPager } from "#/features/page-transactions/index.ts";
+import { useTransactions } from "#/pages/money/api/money-query.ts";
+import { accountLabel, categoryLabel } from "#/pages/money/model/labels.ts";
+import { Section } from "#/shared/ui/index.ts";
 
-import { TransactionFilters } from "./transaction-filters";
-import { TransactionTable } from "./transaction-table";
+import { TransactionFilters } from "./transaction-filters.tsx";
+import { TransactionTable } from "./transaction-table.tsx";
 
 const route = getRouteApi("/money");
 

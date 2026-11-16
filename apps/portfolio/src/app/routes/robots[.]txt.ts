@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Array as Arr } from "effect";
 
-import { site } from "#/shared/config";
+import { site } from "#/shared/config/index.ts";
 
 const body = Arr.join(
   ["User-agent: *", "Allow: /", "", `Sitemap: ${new URL(site.sitemapFile, site.url).href}`, ""],

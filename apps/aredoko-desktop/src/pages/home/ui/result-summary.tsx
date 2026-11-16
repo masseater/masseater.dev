@@ -1,8 +1,8 @@
 import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import type { ReactNode } from "react";
 
-import { originOf, ResultPreview } from "#/entities/asset";
-import { fileNameOf } from "#/shared/lib";
+import { originOf, ResultPreview } from "#/entities/asset/index.ts";
+import { fileNameOf } from "#/shared/lib/index.ts";
 
 import { ResultActions } from "./result-actions.tsx";
 

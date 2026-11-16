@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts",
-    "./node": "./src/node.ts"
+    ".": "./src/app/index.ts",
+    "./node": "./src/app/node.ts"
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",

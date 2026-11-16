@@ -5,7 +5,7 @@ import {
   useClosePicker,
   useQueryText,
   useSetQueryText,
-} from "#/features/pick-language/model/search";
+} from "#/features/pick-language/model/search.ts";
 
 const LABEL = "言語を検索";
 

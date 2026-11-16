@@ -2,19 +2,19 @@ import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Array as Arr, Effect, pipe } from "effect";
 import type { Option } from "effect";
 
-import { ownerUtterances } from "#/entities/conversation";
-import type { Utterance } from "#/entities/conversation";
-import { chunkText } from "#/entities/conversation/index.server";
+import { chunkText } from "#/entities/conversation/index.server.ts";
+import { ownerUtterances } from "#/entities/conversation/index.ts";
+import type { Utterance } from "#/entities/conversation/index.ts";
+import { cursorOf } from "#/entities/trait/index.server.ts";
 import {
   chunkPositionFrom,
   chunkPositionText,
   collect,
   settledBefore,
   GLOBAL,
-} from "#/entities/trait";
-import type { Collected, BatchSource } from "#/entities/trait";
-import { cursorOf } from "#/entities/trait/index.server";
-import type { ConversationChunk, StorageFailed } from "#/shared/db";
+} from "#/entities/trait/index.ts";
+import type { Collected, BatchSource } from "#/entities/trait/index.ts";
+import type { ConversationChunk, StorageFailed } from "#/shared/db/index.ts";
 
 import { chunksAfter } from "./trait-source-store.server.ts";
 

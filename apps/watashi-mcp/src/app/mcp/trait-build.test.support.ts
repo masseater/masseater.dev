@@ -1,11 +1,11 @@
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { TestClock } from "effect/testing";
 
-import type { AnalysisRequestValue } from "#/entities/trait";
-import { TraitAnalyst } from "#/entities/trait";
-import type { ObservationValue } from "#/entities/trait/index.test.support";
-import { buildStep } from "#/features/build-traits/index.test.support";
-import type { StepFailure, StepOutcome } from "#/features/build-traits/index.test.support";
+import type { ObservationValue } from "#/entities/trait/index.test.support.ts";
+import type { AnalysisRequestValue } from "#/entities/trait/index.ts";
+import { TraitAnalyst } from "#/entities/trait/index.ts";
+import { buildStep } from "#/features/build-traits/index.test.support.ts";
+import type { StepFailure, StepOutcome } from "#/features/build-traits/index.test.support.ts";
 
 export type Respond = (request: AnalysisRequestValue) => readonly ObservationValue[];
 

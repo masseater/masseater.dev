@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useDraft, useSetDraft } from "#/entities/translation";
+import { useDraft, useSetDraft } from "#/entities/translation/index.ts";
 
 const LABEL = "消去";
 

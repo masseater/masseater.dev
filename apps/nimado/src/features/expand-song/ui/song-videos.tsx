@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { TEXT } from "#/entities/ranking";
-import { shardQuery } from "#/shared/api";
-import { NICO_WATCH_URL, VOCADB_SONG_URL, YOUTUBE_WATCH_URL } from "#/shared/config";
-import { ExternalLink } from "#/shared/ui/external-link";
+import { TEXT } from "#/entities/ranking/index.ts";
+import { shardQuery } from "#/shared/api/index.ts";
+import { NICO_WATCH_URL, VOCADB_SONG_URL, YOUTUBE_WATCH_URL } from "#/shared/config/index.ts";
+import { ExternalLink } from "#/shared/ui/external-link.tsx";
 
-import { VideoLinks } from "./video-links";
+import { VideoLinks } from "./video-links.tsx";
 
 export const SongVideos = ({ id }: Readonly<{ id: number }>): ReactNode => {
   const query = useQuery(shardQuery(shardOf(id)));

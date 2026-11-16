@@ -1,15 +1,15 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import type { Body } from "#/entities/life-record";
-import { timeOut } from "#/entities/life-record";
-import { DEFAULT_MEMORY_LIMIT } from "#/entities/memory";
-import type { MemoryReadValue } from "#/entities/memory";
-import { findMemory, memoryItem, searchMemories } from "#/entities/memory/index.server";
-import { InvalidRecord, MemoryNotFound } from "#/shared/api";
-import type { StoreFailure } from "#/shared/api";
-import type { Memory } from "#/shared/db";
-import { listHistory } from "#/shared/db/index.server";
-import type { HistoryEntry } from "#/shared/db/index.server";
+import type { Body } from "#/entities/life-record/index.ts";
+import { timeOut } from "#/entities/life-record/index.ts";
+import { findMemory, memoryItem, searchMemories } from "#/entities/memory/index.server.ts";
+import { DEFAULT_MEMORY_LIMIT } from "#/entities/memory/index.ts";
+import type { MemoryReadValue } from "#/entities/memory/index.ts";
+import { InvalidRecord, MemoryNotFound } from "#/shared/api/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
+import { listHistory } from "#/shared/db/index.server.ts";
+import type { HistoryEntry } from "#/shared/db/index.server.ts";
+import type { Memory } from "#/shared/db/index.ts";
 
 type Named = Readonly<{ project: string; name: string }>;
 

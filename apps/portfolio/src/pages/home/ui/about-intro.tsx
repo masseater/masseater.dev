@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { ABOUT_ID, ABOUT_TITLE, AVATAR_PATH } from "#/pages/home/model/about";
-import { site } from "#/shared/config";
+import { ABOUT_ID, ABOUT_TITLE, AVATAR_PATH } from "#/pages/home/model/about.ts";
+import { site } from "#/shared/config/index.ts";
 
 const AVATAR_SIZE = 64;
 

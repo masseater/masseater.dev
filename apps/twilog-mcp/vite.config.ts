@@ -3,6 +3,5 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   run: ownerSiteRun,
-  resolve: { tsconfigPaths: true },
   test: { include: ["src/**/*.test.ts"] },
 });

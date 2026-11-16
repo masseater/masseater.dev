@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { thumbnailPath, workPath } from "#/pages/nikogori/model/works";
-import type { Work } from "#/pages/nikogori/model/works";
+import { thumbnailPath, workPath } from "#/pages/nikogori/model/works.ts";
+import type { Work } from "#/pages/nikogori/model/works.ts";
 
 export const WorkItem = ({ work }: Readonly<{ work: Work }>): ReactNode => (
   <li>

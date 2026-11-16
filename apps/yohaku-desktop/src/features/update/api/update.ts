@@ -4,9 +4,9 @@ import { Effect, Option, Stream } from "effect";
 import { Atom } from "effect/reactivity";
 import { useCallback } from "react";
 
-import { useYohaku } from "#/shared/api";
-import type { Release } from "#/shared/api";
-import { flushAll } from "#/shared/model";
+import { useYohaku } from "#/shared/api/index.ts";
+import type { Release } from "#/shared/api/index.ts";
+import { flushAll } from "#/shared/model/index.ts";
 
 const UPDATE_KEY = ["update"] as const;
 const RECHECK_INTERVAL = 21_600_000;

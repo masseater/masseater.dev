@@ -1,8 +1,8 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { Named } from "#/entities/part/lib/part";
-import { SongLink } from "#/entities/song/@x/part";
+import type { Named } from "#/entities/part/lib/part.ts";
+import { SongLink } from "#/entities/song/@x/part.ts";
 
 export const PartTitle = ({
   song,

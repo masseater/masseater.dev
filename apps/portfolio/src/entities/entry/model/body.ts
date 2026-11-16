@@ -1,8 +1,8 @@
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 import type { MDXModule } from "mdx/types";
 
-import { contentPath } from "./content";
-import type { Entry } from "./entry";
+import { contentPath } from "./content.ts";
+import type { Entry } from "./entry.ts";
 
 const once = <Value>(make: () => Value): (() => Value) => {
   let made: Option.Option<Value> = Option.none();

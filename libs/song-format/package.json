@@ -10,9 +10,9 @@
     "#/*": "./src/*"
   },
   "exports": {
-    "./analysis": "./src/analysis.ts",
-    "./source": "./src/source.ts",
-    "./song": "./src/song.ts",
+    "./analysis": "./src/features/analyze-song/index.ts",
+    "./source": "./src/features/read-source/index.ts",
+    "./song": "./src/entities/song/index.ts",
     "./song.schema.json": "./generated/song.schema.json"
   },
   "dependencies": {

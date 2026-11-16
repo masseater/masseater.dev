@@ -1,6 +1,6 @@
 import { Effect, Schema } from "effect";
 
-import { InvalidRecord } from "#/shared/api";
+import { InvalidRecord } from "#/shared/api/index.ts";
 
 const invalid = ({ message }: Readonly<{ message: string }>): InvalidRecord =>
   InvalidRecord.make({ message });

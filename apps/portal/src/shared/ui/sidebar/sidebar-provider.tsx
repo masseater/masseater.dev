@@ -1,8 +1,8 @@
 import { Tooltip } from "radix-ui";
 import type { ReactNode } from "react";
 
-import { SidebarShortcut } from "./sidebar-shortcut";
-import { sidebarRegistry } from "./sidebar-state";
+import { SidebarShortcut } from "./sidebar-shortcut.tsx";
+import { sidebarRegistry } from "./sidebar-state.ts";
 
 const NO_DELAY = 0;
 

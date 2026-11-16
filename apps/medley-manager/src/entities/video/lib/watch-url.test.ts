@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 
-import { formatTime, watchUrl } from "./watch-url";
+import { formatTime, watchUrl } from "./watch-url.ts";
 
 const START = 83;
 

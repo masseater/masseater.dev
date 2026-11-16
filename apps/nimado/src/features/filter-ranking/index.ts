@@ -1,1 +1,1 @@
-export { RankingControls } from "./ui/ranking-controls";
+export { RankingControls } from "./ui/ranking-controls.tsx";

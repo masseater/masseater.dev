@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { SectionLinkList, SiteLogo } from "#/widgets/site-nav";
+import { SectionLinkList, SiteLogo } from "#/widgets/site-nav/index.ts";
 
 export const SiteHeader = (): ReactNode => (
   <header

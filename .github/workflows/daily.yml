@@ -50,7 +50,7 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - uses: masseater/typescript-template/.github/actions/credentials@66d56815723aea2454d5aa03712bcdb283ea1ff4
+      - uses: masseater/typescript-template/.github/actions/credentials@b024e4dc89157d7261c5fb86f23d8ee4060cf523
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           shared-key: daily-${{ matrix.package.name }}
@@ -101,7 +101,7 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - uses: masseater/typescript-template/.github/actions/credentials@66d56815723aea2454d5aa03712bcdb283ea1ff4
+      - uses: masseater/typescript-template/.github/actions/credentials@b024e4dc89157d7261c5fb86f23d8ee4060cf523
       - run: vp run -r daily:after
 
   ci-telemetry:
@@ -113,6 +113,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@66d56815723aea2454d5aa03712bcdb283ea1ff4
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b024e4dc89157d7261c5fb86f23d8ee4060cf523
         with:
           github-token: ${{ github.token }}

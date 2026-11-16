@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { excerpt, pageUrl } from "#/entities/slide/model/slides";
-import type { HitValue } from "#/entities/slide/model/slides";
-import { Row } from "#/shared/ui";
+import { excerpt, pageUrl } from "#/entities/slide/model/slides.ts";
+import type { HitValue } from "#/entities/slide/model/slides.ts";
+import { Row } from "#/shared/ui/index.ts";
 
 export const HitRow = ({ hit }: Readonly<{ hit: HitValue }>): ReactNode => (
   <Row lead={`${String(hit.page)} / ${String(hit.pages)}`}>

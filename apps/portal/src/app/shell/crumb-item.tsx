@@ -1,8 +1,8 @@
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { CrumbText } from "./crumb-text";
-import type { Crumb } from "./crumbs";
+import { CrumbText } from "./crumb-text.tsx";
+import type { Crumb } from "./crumbs.ts";
 
 export const CrumbItem = ({
   crumb,

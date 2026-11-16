@@ -1,7 +1,7 @@
 import { Array, Option } from "effect";
 import type { ReactNode } from "react";
 
-import { FIRST_RANK } from "#/pages/home/lib/rank";
+import { FIRST_RANK } from "#/pages/home/lib/rank.ts";
 
 const PODIUM: readonly string[] = [
   "bg-comment-yellow text-primary-foreground",

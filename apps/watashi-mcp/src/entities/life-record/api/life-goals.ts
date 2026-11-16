@@ -1,12 +1,12 @@
 import { Array as Arr, Option, Predicate, Record as Rec, pipe } from "effect";
 
-import { monthOf, shiftDays, weekStartOf } from "./life-calendar";
-import type { Period } from "./life-calendar";
-import { NONE, textAt } from "./life-record";
-import type { Body } from "./life-record";
-import { computeStats } from "./life-stats";
-import type { MetricStats, StatsData } from "./life-stats";
-import { dayRangeOf } from "./life-time";
+import { monthOf, shiftDays, weekStartOf } from "./life-calendar.ts";
+import type { Period } from "./life-calendar.ts";
+import { NONE, textAt } from "./life-record.ts";
+import type { Body } from "./life-record.ts";
+import { computeStats } from "./life-stats.ts";
+import type { MetricStats, StatsData } from "./life-stats.ts";
+import { dayRangeOf } from "./life-time.ts";
 
 export type GoalPeriod = Period &
   Readonly<{ value?: number; achieved?: boolean; inProgress?: boolean }>;

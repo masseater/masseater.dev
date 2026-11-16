@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { deckUrl, pdfUrl } from "#/entities/slide";
+import { deckUrl, pdfUrl } from "#/entities/slide/index.ts";
 
 const PDF = "PDF";
 

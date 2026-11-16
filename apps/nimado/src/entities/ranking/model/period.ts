@@ -1,6 +1,6 @@
 import { Array as Arr, DateTime, Option, Order, String as Str, pipe } from "effect";
 
-import type { PeriodValue, RankingSearch } from "./search";
+import type { PeriodValue, RankingSearch } from "./search.ts";
 
 export interface Window {
   readonly start: string;

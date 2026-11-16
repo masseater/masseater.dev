@@ -2,8 +2,8 @@ import type { QueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Option, String as Str, pipe } from "effect";
 
-import { slidesQueries } from "#/entities/slide";
-import type { DeckValue, HitValue, SlidesSearchValue } from "#/entities/slide";
+import { slidesQueries } from "#/entities/slide/index.ts";
+import type { DeckValue, HitValue, SlidesSearchValue } from "#/entities/slide/index.ts";
 
 type SlidesLoad = Readonly<{ queryClient: QueryClient; search: SlidesSearchValue }>;
 

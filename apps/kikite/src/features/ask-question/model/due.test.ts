@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Option } from "effect";
 
-import type { Entry } from "#/entities/interview";
+import type { Entry } from "#/entities/interview/index.ts";
 
 import { dueAt } from "./due.ts";
 

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import type { Activity } from "#/pages/home/model/activity";
+import type { Activity } from "#/pages/home/model/activity.ts";
 
 const LINK = "text-link hover:decoration-2 underline underline-offset-3";
 

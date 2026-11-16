@@ -5,7 +5,7 @@ import { HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 
-import { site } from "#/shared/config";
+import { site } from "#/shared/config/index.ts";
 
 const devtoolsPlugins = [
   { name: "TanStack Router", render: <TanStackRouterDevtoolsPanel /> },

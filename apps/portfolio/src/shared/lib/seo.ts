@@ -1,7 +1,7 @@
 import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 
-import { site } from "#/shared/config";
-import { wiki } from "#/shared/wiki";
+import { site } from "#/shared/config/index.ts";
+import { wiki } from "#/shared/wiki/index.ts";
 
 export type JsonLd = Readonly<Record<string, unknown>>;
 

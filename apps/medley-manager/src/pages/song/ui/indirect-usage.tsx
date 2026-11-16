@@ -1,10 +1,10 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/video";
-import { useSong } from "#/pages/song/api/use-song";
-import { describeIndirect } from "#/pages/song/lib/describe";
-import { SectionHeading } from "#/shared/ui/section-heading";
+import { VideoList } from "#/entities/video/index.ts";
+import { useSong } from "#/pages/song/api/use-song.ts";
+import { describeIndirect } from "#/pages/song/lib/describe.ts";
+import { SectionHeading } from "#/shared/ui/section-heading.tsx";
 
 export const IndirectUsage = (): ReactNode => {
   const { indirect } = useSong();

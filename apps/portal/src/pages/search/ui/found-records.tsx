@@ -1,9 +1,9 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import { LifeList } from "#/entities/watashi";
-import { useFoundRecords } from "#/pages/search/api/search-query";
-import { Section } from "#/shared/ui";
+import { LifeList } from "#/entities/watashi/index.ts";
+import { useFoundRecords } from "#/pages/search/api/search-query.ts";
+import { Section } from "#/shared/ui/index.ts";
 
 const TITLE = "ライフ記録";
 

@@ -1,8 +1,8 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
-import { PartIdInput, UpdatePartInput, VideoPartsInput } from "#/entities/catalog";
-import { runTool } from "#/shared/api/index.server";
+import { PartIdInput, UpdatePartInput, VideoPartsInput } from "#/entities/catalog/index.ts";
+import { runTool } from "#/shared/api/index.server.ts";
 
 import { addParts, deletePart, setVideoParts, updatePart } from "./part-write.server.ts";
 

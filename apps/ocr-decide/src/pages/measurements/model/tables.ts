@@ -1,8 +1,8 @@
 import type { Run, Summary } from "@ocr-decide/measurements/schema";
 import { Array as Arr, pipe } from "effect";
 
-import { COPY } from "./copy";
-import { dollars, percent, rateIn, seconds } from "./summary";
+import { COPY } from "./copy.ts";
+import { dollars, percent, rateIn, seconds } from "./summary.ts";
 
 export interface Column {
   readonly id: string;

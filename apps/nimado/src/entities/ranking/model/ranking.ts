@@ -1,7 +1,7 @@
 import type { DayViews, TableRow } from "@masseater.dev/nimado";
 import { Array as Arr, Option, Order, Record, String as Str, pipe } from "effect";
 
-import type { KindValue, SortValue } from "./search";
+import type { KindValue, SortValue } from "./search.ts";
 
 export type Row = typeof TableRow.Type;
 export type Day = typeof DayViews.Type;

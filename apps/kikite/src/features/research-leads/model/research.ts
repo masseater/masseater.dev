@@ -8,11 +8,11 @@ import {
   summaryAtom,
   summaryOf,
   recentOf,
-} from "#/entities/interview";
-import type { Lead } from "#/entities/interview";
-import { requestResearch } from "#/shared/api";
-import { modify, read, write } from "#/shared/lib/registry";
-import type { InterviewSummary } from "#protocol";
+} from "#/entities/interview/index.ts";
+import type { Lead } from "#/entities/interview/index.ts";
+import { requestResearch } from "#/shared/api/index.ts";
+import type { InterviewSummary } from "#/shared/api/index.ts";
+import { modify, read, write } from "#/shared/lib/registry.ts";
 
 const KEPT_LEADS = 12;
 

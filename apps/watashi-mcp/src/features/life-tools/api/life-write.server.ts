@@ -1,9 +1,9 @@
 import { Array as Arr, Effect, String as Str, pipe } from "effect";
 
-import type { ItemResult, ChangeValue, WriteItemValue } from "#/entities/life-record";
-import { checkEventValues } from "#/entities/life-record/index.server";
-import type { Notice, ValuesCheck, Writer } from "#/entities/life-record/index.server";
-import type { StoreFailure } from "#/shared/api";
+import { checkEventValues } from "#/entities/life-record/index.server.ts";
+import type { Notice, ValuesCheck, Writer } from "#/entities/life-record/index.server.ts";
+import type { ItemResult, ChangeValue, WriteItemValue } from "#/entities/life-record/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
 
 import { changeItem, checkChange } from "./life-change.server.ts";
 import {
@@ -16,7 +16,7 @@ import {
 } from "./life-create.server.ts";
 import type { Creators } from "./life-create.server.ts";
 import { createFact } from "./life-fact.server.ts";
-import { locating } from "./life-write-failure";
+import { locating } from "./life-write-failure.ts";
 
 export type WriteResult = Readonly<{ written: readonly string[]; notices: readonly Notice[] }>;
 

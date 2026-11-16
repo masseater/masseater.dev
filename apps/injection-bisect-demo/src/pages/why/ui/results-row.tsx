@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Row } from "#/pages/why/model/results";
+import type { Row } from "#/pages/why/model/results.ts";
 
 export const ResultsRow = ({ row }: Readonly<{ row: Row }>): ReactNode => (
   <tr className="border-t">

@@ -1,7 +1,7 @@
 import { DateTime } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 
-import { asOfOf, periodOf, todayJst } from "./period";
+import { asOfOf, periodOf, todayJst } from "./period.ts";
 
 const TODAY = "2026-11-15";
 

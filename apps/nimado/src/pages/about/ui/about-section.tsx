@@ -1,10 +1,10 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { paragraphKey } from "#/pages/about/model/content";
-import type { AboutSection } from "#/pages/about/model/content";
+import { paragraphKey } from "#/pages/about/model/content.ts";
+import type { AboutSection } from "#/pages/about/model/content.ts";
 
-import { AboutParagraph } from "./about-paragraph";
+import { AboutParagraph } from "./about-paragraph.tsx";
 
 export const AboutSectionView = ({ section }: Readonly<{ section: AboutSection }>): ReactNode => (
   <section className="flex flex-col gap-2">

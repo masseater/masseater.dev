@@ -1,5 +1,7 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
+import { SCAN_LIMIT, findRecord, scanCapped } from "#/entities/life-record/index.server.ts";
+import type { RecordScan } from "#/entities/life-record/index.server.ts";
 import {
   lifeKeyOf,
   defaultOrder,
@@ -13,12 +15,10 @@ import {
   itemOf,
   dayBound,
   todayJst,
-} from "#/entities/life-record";
-import type { Body, Entry, LifeReadValue } from "#/entities/life-record";
-import { SCAN_LIMIT, findRecord, scanCapped } from "#/entities/life-record/index.server";
-import type { RecordScan } from "#/entities/life-record/index.server";
-import type { StoreFailure } from "#/shared/api";
-import { termsOf } from "#/shared/db/index.server";
+} from "#/entities/life-record/index.ts";
+import type { Body, Entry, LifeReadValue } from "#/entities/life-record/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
+import { termsOf } from "#/shared/db/index.server.ts";
 
 import { extrasOf } from "./life-read-extras.server.ts";
 

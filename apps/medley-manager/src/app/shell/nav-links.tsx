@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { NavLink } from "./nav-link";
+import { NavLink } from "./nav-link.tsx";
 
 export const NavLinks = (): ReactNode => (
   <nav className="flex gap-1" aria-label="一覧">

@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Schema } from "effect";
 
-import { RecordsSearch } from "#/entities/watashi";
-import { SearchPage, loadSearchPage } from "#/pages/search";
+import { RecordsSearch } from "#/entities/watashi/index.ts";
+import { SearchPage, loadSearchPage } from "#/pages/search/index.ts";
 
 export const Route = createFileRoute("/search")({
   validateSearch: Schema.toStandardSchemaV1(RecordsSearch),

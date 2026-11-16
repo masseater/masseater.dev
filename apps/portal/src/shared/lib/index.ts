@@ -1,1 +1,1 @@
-export { formText } from "./form-text";
+export { formText } from "./form-text.ts";

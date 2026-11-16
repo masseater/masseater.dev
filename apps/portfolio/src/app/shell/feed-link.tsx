@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { site } from "#/shared/config";
+import { site } from "#/shared/config/index.ts";
 
 const LABEL = "RSS";
 

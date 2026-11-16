@@ -1,10 +1,10 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSearch, useKinds, useQueryText, useSelectedPackage } from "#/entities/asset";
-import { searchViewOf } from "#/pages/home/model/search-view";
-import type { SearchPhase } from "#/pages/home/model/search-view";
-import { Notice } from "#/shared/ui/notice";
+import { useSearch, useKinds, useQueryText, useSelectedPackage } from "#/entities/asset/index.ts";
+import { searchViewOf } from "#/pages/home/model/search-view.ts";
+import type { SearchPhase } from "#/pages/home/model/search-view.ts";
+import { Notice } from "#/shared/ui/notice.tsx";
 
 import { MatchedResults } from "./matched-results.tsx";
 

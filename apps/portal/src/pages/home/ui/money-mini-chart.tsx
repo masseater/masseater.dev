@@ -3,9 +3,9 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
-import { monthLabel, YEN } from "#/entities/money";
-import { useOverview } from "#/pages/home/api/home-query";
-import { RECENT_MONTHS } from "#/pages/home/model/recent-months";
+import { monthLabel, YEN } from "#/entities/money/index.ts";
+import { useOverview } from "#/pages/home/api/home-query.ts";
+import { RECENT_MONTHS } from "#/pages/home/model/recent-months.ts";
 
 const TEXT = { income: "収入", expense: "支出" } as const;
 

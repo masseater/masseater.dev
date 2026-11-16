@@ -3,13 +3,20 @@ import type { ChunkParams } from "@masseater.dev/watashi-protocol";
 import { env } from "cloudflare:workers";
 import { Clock, Effect, Option, Schema, String as Str, pipe } from "effect";
 
-import type { Principal } from "#/entities/api-token/index.server";
-import { fileKeyOf, paramsOf } from "#/entities/conversation";
-import { chunkAt, committedEnd, appendChunk } from "#/entities/conversation/index.server";
-import type { FileKey } from "#/entities/conversation/index.server";
-import { BAD_REQUEST, CONFLICT, TOO_LARGE, json, storageFailed, withStatus } from "#/shared/api";
-import { nowIso, query } from "#/shared/db/index.server";
-import type { WriteFailure } from "#/shared/db/index.server";
+import type { Principal } from "#/entities/api-token/index.server.ts";
+import { chunkAt, committedEnd, appendChunk } from "#/entities/conversation/index.server.ts";
+import type { FileKey } from "#/entities/conversation/index.server.ts";
+import { fileKeyOf, paramsOf } from "#/entities/conversation/index.ts";
+import {
+  BAD_REQUEST,
+  CONFLICT,
+  TOO_LARGE,
+  json,
+  storageFailed,
+  withStatus,
+} from "#/shared/api/index.ts";
+import { nowIso, query } from "#/shared/db/index.server.ts";
+import type { WriteFailure } from "#/shared/db/index.server.ts";
 
 type UploadStatus = "ok" | "conflict" | "error";
 

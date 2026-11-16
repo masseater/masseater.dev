@@ -1,10 +1,10 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { UtteranceValue } from "#/entities/watashi";
-import { RowList } from "#/shared/ui";
+import type { UtteranceValue } from "#/entities/watashi/index.ts";
+import { RowList } from "#/shared/ui/index.ts";
 
-import { UtteranceRow } from "./utterance-row";
+import { UtteranceRow } from "./utterance-row.tsx";
 
 const TEXT = { label: "持ち主の発言", empty: "発言はない" } as const;
 

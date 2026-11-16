@@ -1,18 +1,18 @@
-export { apiToken } from "./api-token.table";
-export type { ApiToken, TokenScope } from "./api-token.table";
-export { StorageFailed } from "./storage-failed";
-export { conversationChunk, conversationSession } from "./conversation.table";
+export { apiToken } from "./api-token.table.ts";
+export type { ApiToken, TokenScope } from "./api-token.table.ts";
+export { StorageFailed } from "./storage-failed.ts";
+export { conversationChunk, conversationSession } from "./conversation.table.ts";
 export type {
   ConversationKind,
   ConversationChunk,
   ConversationSession,
-} from "./conversation.table";
-export { LIFE_RECORDS, lifeRecord, SOURCES } from "./life-record.table";
-export { NOT_RETRACTED } from "./retractable";
-export type { LifeRecordName, Source, LifeRow } from "./life-record.table";
-export type { RevisionOp } from "./revision.table";
-export { memory } from "./memory.table";
-export type { Memory } from "./memory.table";
+} from "./conversation.table.ts";
+export { LIFE_RECORDS, lifeRecord, SOURCES } from "./life-record.table.ts";
+export { NOT_RETRACTED } from "./retractable.ts";
+export type { LifeRecordName, Source, LifeRow } from "./life-record.table.ts";
+export type { RevisionOp } from "./revision.table.ts";
+export { memory } from "./memory.table.ts";
+export type { Memory } from "./memory.table.ts";
 export {
   ownerTraitJa,
   TRAIT_KINDS,
@@ -22,7 +22,7 @@ export {
   traitCursor,
   STANCES,
   TRAIT_ORIGINS,
-} from "./owner-trait.table";
+} from "./owner-trait.table.ts";
 export type {
   TraitOrigin,
   OwnerTraitJa,
@@ -31,7 +31,7 @@ export type {
   TraitStatus,
   OwnerTrait,
   OwnerTraitEvidence,
-} from "./owner-trait.table";
-export type { RevisionNotFound } from "./revision-not-found";
-export { ownerProfile } from "./owner-profile.table";
-export type { OwnerProfile } from "./owner-profile.table";
+} from "./owner-trait.table.ts";
+export type { RevisionNotFound } from "./revision-not-found.ts";
+export { ownerProfile } from "./owner-profile.table.ts";
+export type { OwnerProfile } from "./owner-profile.table.ts";

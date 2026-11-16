@@ -1,6 +1,6 @@
-import type { Choices } from "#/shared/ui/choice-group";
+import type { Choices } from "#/shared/ui/choice-group.tsx";
 
-import type { KindValue, PeriodValue, SortValue } from "./search";
+import type { KindValue, PeriodValue, SortValue } from "./search.ts";
 
 export const SORT_LABELS: Choices<SortValue> = [
   ["youtube", "YouTube"],

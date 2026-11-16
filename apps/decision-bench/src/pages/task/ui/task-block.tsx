@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 
-import type { TaskInfo } from "#/entities/benchmark";
-import { TaskCharts, notesOf } from "#/entities/benchmark";
-import { useVisibleEntries } from "#/features/filter-models";
-import { NoteList } from "#/shared/ui/note-list";
+import type { TaskInfo } from "#/entities/benchmark/index.ts";
+import { TaskCharts, notesOf } from "#/entities/benchmark/index.ts";
+import { useVisibleEntries } from "#/features/filter-models/index.ts";
+import { NoteList } from "#/shared/ui/note-list.tsx";
 
-import { ProfileTable } from "./profile-table";
-import { ReliabilitySection } from "./reliability-section";
-import { ScoreTable } from "./score-table";
+import { ProfileTable } from "./profile-table.tsx";
+import { ReliabilitySection } from "./reliability-section.tsx";
+import { ScoreTable } from "./score-table.tsx";
 
 export const TaskBlock = ({ task }: Readonly<{ task: TaskInfo }>): ReactNode => {
   const entries = useVisibleEntries(task.task);

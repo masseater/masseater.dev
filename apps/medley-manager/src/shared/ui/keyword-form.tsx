@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { Button } from "./button";
-import { Input } from "./input";
+import { Button } from "./button.tsx";
+import { Input } from "./input.tsx";
 
 const SUBMIT = "検索";
 

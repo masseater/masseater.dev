@@ -2,12 +2,17 @@ import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { Hex } from "effect/encoding";
 
-import { isUserMd, parseUserMd, ProfileAuthor, renderUserMd } from "#/entities/owner-profile";
-import type { ProfileSection } from "#/entities/owner-profile";
-import { latestProfile, saveProfile } from "#/entities/owner-profile/index.server";
-import { TraitTranslator } from "#/entities/trait";
-import type { StorageFailed } from "#/shared/db";
-import { encodeJson, nowIso } from "#/shared/db/index.server";
+import { latestProfile, saveProfile } from "#/entities/owner-profile/index.server.ts";
+import {
+  isUserMd,
+  parseUserMd,
+  ProfileAuthor,
+  renderUserMd,
+} from "#/entities/owner-profile/index.ts";
+import type { ProfileSection } from "#/entities/owner-profile/index.ts";
+import { TraitTranslator } from "#/entities/trait/index.ts";
+import { encodeJson, nowIso } from "#/shared/db/index.server.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { profileSource } from "./profile-source.server.ts";
 

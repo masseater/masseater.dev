@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { useCallback, useSyncExternalStore } from "react";
 
-import type { Visit } from "#/entities/mosaic/lib/files";
-import { onCached, onRestored } from "#/entities/mosaic/lib/gpu-lifetime";
-import { mountViewer } from "#/entities/mosaic/lib/viewer";
-import { useViewerStore } from "#/entities/mosaic/model/viewer";
+import type { Visit } from "#/entities/mosaic/lib/files.ts";
+import { onCached, onRestored } from "#/entities/mosaic/lib/gpu-lifetime.ts";
+import { mountViewer } from "#/entities/mosaic/lib/viewer.ts";
+import { useViewerStore } from "#/entities/mosaic/model/viewer.ts";
 
 const LABEL =
   "モザイクアート。ドラッグで移動、ホイールかピンチで拡大、サムネイルを押すと動画の情報が出ます";

@@ -2,8 +2,8 @@ import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/r
 import { Array, Effect, Option, pipe } from "effect";
 import { useCallback } from "react";
 
-import { useYohaku } from "#/shared/api";
-import type { ClaudeStatus, OnboardingStep } from "#/shared/api";
+import { useYohaku } from "#/shared/api/index.ts";
+import type { ClaudeStatus, OnboardingStep } from "#/shared/api/index.ts";
 
 const DONE_KEY = ["onboarding"] as const;
 const CLAUDE_KEY = ["claude-status"] as const;

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { SaveStatus } from "#/features/save-session";
+import { SaveStatus } from "#/features/save-session/index.ts";
 
 import { EndButton } from "./end-button.tsx";
 import { HeaderRing } from "./header-ring.tsx";

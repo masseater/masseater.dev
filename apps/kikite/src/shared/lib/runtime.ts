@@ -3,7 +3,7 @@ import { SecureRandom } from "effect/crypto";
 import { FetchHttpClient } from "effect/http";
 import { Atom } from "effect/reactivity";
 
-import { telemetry } from "./telemetry";
+import { telemetry } from "./telemetry.ts";
 
 /** @internal */
 export const runtime = Atom.runtime(

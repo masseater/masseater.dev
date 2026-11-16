@@ -8,9 +8,9 @@ import {
   MemoryWriteInput,
   WatashiProfileInput,
   WatashiSearchInput,
-} from "#/entities/memory";
-import type { MemoryReadValue } from "#/entities/memory";
-import { meteredInput, runTool } from "#/shared/api/index.server";
+} from "#/entities/memory/index.ts";
+import type { MemoryReadValue } from "#/entities/memory/index.ts";
+import { meteredInput, runTool } from "#/shared/api/index.server.ts";
 
 import { readMemory } from "./memory-read.server.ts";
 import { writeMemory } from "./memory-write.server.ts";

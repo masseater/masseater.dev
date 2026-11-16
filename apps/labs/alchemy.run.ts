@@ -3,9 +3,9 @@ import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-provi
 import { Stack } from "alchemy";
 import { Array as Arr, Effect, pipe } from "effect";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
-import { ZONE } from "./cloudflare.ts";
-import { ASSETS_DIR, PAGES } from "./pages.ts";
+import { APP_NAME, requireAppPrefix } from "./src/shared/config/app-name.ts";
+import { ZONE } from "./src/shared/config/cloudflare.ts";
+import { ASSETS_DIR, PAGES } from "./src/shared/config/pages.ts";
 
 const route = (path: string): Readonly<{ pattern: string; zoneName: string }> => ({
   pattern: `${ZONE}/${path}*`,

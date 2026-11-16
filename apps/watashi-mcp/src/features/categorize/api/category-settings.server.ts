@@ -1,8 +1,8 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import { BUILT_IN_RULES, CATEGORIES, CATEGORY_LABELS, flowOf } from "#/entities/ledger";
-import type { Rule } from "#/entities/ledger";
-import { listAccounts, userRules } from "#/entities/ledger/index.server";
+import { listAccounts, userRules } from "#/entities/ledger/index.server.ts";
+import { BUILT_IN_RULES, CATEGORIES, CATEGORY_LABELS, flowOf } from "#/entities/ledger/index.ts";
+import type { Rule } from "#/entities/ledger/index.ts";
 
 const CATEGORY_LIST = pipe(
   CATEGORIES,

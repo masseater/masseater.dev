@@ -1,1 +1,1 @@
-export { PreparationBar } from "./ui/preparation-bar";
+export { PreparationBar } from "./ui/preparation-bar.tsx";

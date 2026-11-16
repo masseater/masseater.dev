@@ -1,8 +1,8 @@
 import { nameTransition } from "@masseater.dev/ui";
 import type { ReactNode } from "react";
 
-import { EntryMeta, entryTitleTransition } from "#/entities/entry";
-import type { Entry } from "#/entities/entry";
+import { EntryMeta, entryTitleTransition } from "#/entities/entry/index.ts";
+import type { Entry } from "#/entities/entry/index.ts";
 
 export const ArticleHeader = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
   <header className="flex flex-col gap-6">

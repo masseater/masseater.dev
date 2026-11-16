@@ -2,8 +2,8 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 import { vi } from "vite-plus/test";
 
-import { revokeToken } from "#/features/token-tools/index.server";
-import { mintToken } from "#/features/token-tools/index.test.support";
+import { revokeToken } from "#/features/token-tools/index.server.ts";
+import { mintToken } from "#/features/token-tools/index.test.support.ts";
 
 import { serveConversations } from "./conversation-api.server.ts";
 import {

@@ -11,9 +11,9 @@
     "#package.json": "./package.json"
   },
   "exports": {
-    "./vite": "./src/vite.ts",
-    "./alchemy": "./src/app-prefix.ts",
-    "./site": "./src/static-site.ts"
+    "./vite": "./src/features/configure-vite/index.ts",
+    "./alchemy": "./src/shared/lib/app-prefix.ts",
+    "./site": "./src/features/deploy-static-site/index.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

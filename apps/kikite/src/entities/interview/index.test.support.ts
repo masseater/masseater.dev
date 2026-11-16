@@ -1,1 +1,1 @@
-export type { Input } from "./model/atoms";
+export type { Input } from "./model/atoms.ts";

@@ -1,7 +1,7 @@
 import type { EngineRun, JaBenchSummary } from "@ocr-decide/measurements/ja-bench-schema";
 import { Array as Arr, pipe } from "effect";
 
-import { COPY } from "./copy";
+import { COPY } from "./copy.ts";
 
 const PERCENT = 100;
 

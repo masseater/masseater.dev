@@ -1,6 +1,6 @@
 import { Option, String as Str, pipe } from "effect";
 
-import type { WikiImage } from "./technique";
+import type { WikiImage } from "./technique.ts";
 
 export const IMAGE_SEPARATOR = " ・ 画像: ";
 

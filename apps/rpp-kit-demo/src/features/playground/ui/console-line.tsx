@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Entry } from "#/features/playground/model/output";
+import type { Entry } from "#/features/playground/model/output.ts";
 
 const KIND_CLASS = {
   log: "text-foreground",

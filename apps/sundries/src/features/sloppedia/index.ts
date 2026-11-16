@@ -1,1 +1,1 @@
-export { registerSloppediaTools } from "./api/sloppedia-tools";
+export { registerSloppediaTools } from "./api/sloppedia-tools.ts";

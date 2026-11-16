@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { WayField } from "#/features/choose-way";
-import { ApiKeyField } from "#/features/enter-api-key";
-import { PicturePicker, PicturePreview } from "#/features/pick-picture";
-import { RunPanel } from "#/features/run-extract";
-import { COPY } from "#/shared/config";
+import { WayField } from "#/features/choose-way/index.ts";
+import { ApiKeyField } from "#/features/enter-api-key/index.ts";
+import { PicturePicker, PicturePreview } from "#/features/pick-picture/index.ts";
+import { RunPanel } from "#/features/run-extract/index.ts";
+import { COPY } from "#/shared/config/index.ts";
 
 export const ExtractPage = (): ReactNode => (
   <main className="vt-match mx-auto flex max-w-2xl flex-col gap-6 px-4 py-12 md:px-8">

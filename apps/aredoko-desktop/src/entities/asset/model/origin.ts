@@ -1,6 +1,6 @@
 import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 
-import { KIND_LABELS } from "#/entities/asset/config/asset-kinds";
+import { KIND_LABELS } from "#/entities/asset/config/asset-kinds.ts";
 
 export const originOf = ({
   kind,

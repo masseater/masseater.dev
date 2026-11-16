@@ -1,9 +1,9 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/video";
-import { useVideo } from "#/pages/video/api/use-video";
-import { SectionHeading } from "#/shared/ui/section-heading";
+import { VideoList } from "#/entities/video/index.ts";
+import { useVideo } from "#/pages/video/api/use-video.ts";
+import { SectionHeading } from "#/shared/ui/section-heading.tsx";
 
 const nothing = (): string => "";
 

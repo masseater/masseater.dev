@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
-import { tagCounts, withTag } from "./tag-filter";
+import { tagCounts, withTag } from "./tag-filter.ts";
 
 const entry = (
   slug: string,

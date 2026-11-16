@@ -1,7 +1,7 @@
 import type { Source } from "@masseater.dev/yohaku-protocol";
 import type { ReactNode } from "react";
 
-import { RevertButton } from "#/entities/source";
+import { RevertButton } from "#/entities/source/index.ts";
 
 type SourceType = typeof Source.Type;
 

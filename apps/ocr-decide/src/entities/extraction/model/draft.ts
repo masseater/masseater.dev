@@ -1,7 +1,7 @@
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Atom } from "effect/reactivity";
 
-import { DIRECT } from "./ways";
+import { DIRECT } from "./ways.ts";
 
 export type Choice =
   | { readonly status: "none" }

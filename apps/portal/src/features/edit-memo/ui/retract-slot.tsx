@@ -1,9 +1,9 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { MemoValue } from "#/entities/watashi";
+import type { MemoValue } from "#/entities/watashi/index.ts";
 
-import { MemoRetract } from "./memo-retract";
+import { MemoRetract } from "./memo-retract.tsx";
 
 export const RetractSlot = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode =>
   Option.match(Option.fromUndefinedOr(memo.retracted), {

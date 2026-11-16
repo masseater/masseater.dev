@@ -1,7 +1,7 @@
 import type { PortalResult } from "@masseater.dev/portal-protocol";
 import { Effect, Schema } from "effect";
 
-import { PortalFailed } from "./portal-failed";
+import { PortalFailed } from "./portal-failed.ts";
 
 const decodeFailed = ({ message }: Readonly<{ message: string }>): PortalFailed =>
   PortalFailed.make({ errorTag: "SchemaError", text: message });

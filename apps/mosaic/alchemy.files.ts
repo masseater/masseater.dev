@@ -5,10 +5,10 @@ import { Stack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
 import { Array as Arr, Effect, Option } from "effect";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
-import { ASSET_HEADERS } from "./asset-headers.ts";
-import { BASE_PATH } from "./base-path.ts";
-import { ZONE } from "./cloudflare.ts";
+import { APP_NAME, requireAppPrefix } from "./src/shared/config/app-name.ts";
+import { ZONE } from "./src/shared/config/cloudflare.ts";
+import { BASE_PATH } from "./src/shared/config/site-base-path.ts";
+import { ASSET_HEADERS } from "./src/shared/lib/asset-headers.ts";
 
 export default Stack(
   APP_NAME,

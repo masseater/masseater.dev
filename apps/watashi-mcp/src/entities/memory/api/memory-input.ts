@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { Ref } from "#/entities/life-record/@x/memory";
+import { Ref } from "#/entities/life-record/@x/memory.ts";
 
 const MIN_ONE = 1;
 

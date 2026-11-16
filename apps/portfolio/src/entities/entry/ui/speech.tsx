@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { speakers } from "#/entities/entry/model/speaker";
-import type { Side, Speaker } from "#/entities/entry/model/speaker";
+import { speakers } from "#/entities/entry/model/speaker.ts";
+import type { Side, Speaker } from "#/entities/entry/model/speaker.ts";
 
 const AVATAR_SIZE = 40;
 

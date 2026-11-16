@@ -1,2 +1,2 @@
-export { PicturePicker } from "./ui/picture-picker";
-export { PicturePreview } from "./ui/picture-preview";
+export { PicturePicker } from "./ui/picture-picker.tsx";
+export { PicturePreview } from "./ui/picture-preview.tsx";

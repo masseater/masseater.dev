@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { GALLERY_TITLE } from "#/pages/gallery/model/title";
+import { GALLERY_TITLE } from "#/pages/gallery/model/title.ts";
 
 export const GalleryIntro = (): ReactNode => (
   <header className="flex flex-col gap-2">

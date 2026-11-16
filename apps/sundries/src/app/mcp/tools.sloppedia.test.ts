@@ -13,7 +13,7 @@ import {
   stubGithub,
 } from "./sloppedia-tools.test.support.ts";
 import type { Sent } from "./sloppedia-tools.test.support.ts";
-import { registerTools } from "./tools";
+import { registerTools } from "./tools.ts";
 
 vi.mock("cloudflare:workers", () => import("./sloppedia-tools.test.support.ts"));
 

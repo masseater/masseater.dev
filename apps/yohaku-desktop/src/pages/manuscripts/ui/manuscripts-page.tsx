@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { ScreenFrame } from "#/shared/ui";
+import { ScreenFrame } from "#/shared/ui/index.ts";
 
 import { ManuscriptList } from "./manuscript-list.tsx";
 import { ManuscriptsToolbar } from "./manuscripts-toolbar.tsx";

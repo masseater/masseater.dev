@@ -1,6 +1,6 @@
 import { Array as Arr, Order, Record as Rec, pipe } from "effect";
 
-import type { Entry } from "./life-filter";
+import type { Entry } from "./life-filter.ts";
 
 export type Usage = Readonly<{ count: number; first: string; last: string }>;
 

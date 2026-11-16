@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import type { ProjectValue } from "#/entities/watashi";
+import type { ProjectValue } from "#/entities/watashi/index.ts";
 
-import { PILL } from "./pill";
+import { PILL } from "./pill.ts";
 
 export const ProjectItem = ({
   active,

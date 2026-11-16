@@ -2,7 +2,7 @@ import { beaconScripts } from "@masseater.dev/ui/web-analytics";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext } from "@tanstack/react-router";
 
-import { RootDocument } from "#/app/shell/root-document";
+import { RootDocument } from "#/app/shell/root-document.tsx";
 
 import appCss from "#/app/styles.css?url";
 

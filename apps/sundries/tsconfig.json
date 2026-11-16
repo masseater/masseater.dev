@@ -4,9 +4,6 @@
   "include": ["src", "*.ts"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["@cloudflare/workers-types"],
-    "paths": {
-      "#/*": ["./src/*"]
-    }
+    "types": ["@cloudflare/workers-types"]
   }
 }

@@ -33,29 +33,29 @@
     "#/*": "./src/*"
   },
   "exports": {
-    "./alchemy": "./src/alchemy.ts",
-    "./browser-spans": "./src/browser-spans.ts",
+    "./alchemy": "./src/app/alchemy.ts",
+    "./browser-spans": "./src/app/browser-spans.ts",
     "./elysia": {
-      "workerd": "./src/elysia.ts",
-      "node": "./src/elysia.plain.ts",
-      "default": "./src/elysia.ts"
+      "workerd": "./src/app/elysia.ts",
+      "node": "./src/app/elysia.plain.ts",
+      "default": "./src/app/elysia.ts"
     },
     "./tanstack-start": {
-      "workerd": "./src/tanstack-start.ts",
-      "browser": "./src/tanstack-start.plain.ts",
-      "node": "./src/tanstack-start.plain.ts",
-      "default": "./src/tanstack-start.ts"
+      "workerd": "./src/app/tanstack-start.ts",
+      "browser": "./src/app/tanstack-start.plain.ts",
+      "node": "./src/app/tanstack-start.plain.ts",
+      "default": "./src/app/tanstack-start.ts"
     },
     "./package.json": "./package.json",
     "./effect": {
-      "workerd": "./src/effect.ts",
-      "browser": "./src/effect.plain.ts",
-      "node": "./src/effect.plain.ts",
-      "default": "./src/effect.ts"
+      "workerd": "./src/app/effect-tracing.ts",
+      "browser": "./src/app/effect-tracing.plain.ts",
+      "node": "./src/app/effect-tracing.plain.ts",
+      "default": "./src/app/effect-tracing.ts"
     },
-    "./oxlint": "./src/oxlint.ts",
-    "./workers-ai": "./src/workers-ai.ts",
-    "./trace-sink-worker": "./src/trace-sink.worker.ts"
+    "./oxlint": "./src/app/oxlint.ts",
+    "./workers-ai": "./src/app/workers-ai.ts",
+    "./trace-sink-worker": "./src/app/trace-sink.worker.ts"
   },
   "publishConfig": {
     "bin": {

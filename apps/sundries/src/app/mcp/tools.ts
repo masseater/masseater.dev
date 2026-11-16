@@ -2,13 +2,13 @@ import type { Caller } from "@masseater.dev/mcp-tool-call";
 import { McpServer } from "@modelcontextprotocol/server";
 import { pipe } from "effect";
 
-import { registerAnalyticsTools } from "#/features/analytics";
-import { registerBrokerTools } from "#/features/broker-credentials";
-import { registerClaudeRequestTools } from "#/features/claude-request";
-import { registerSlideTools } from "#/features/slides-search";
-import { registerSloppediaTools } from "#/features/sloppedia";
-import { registerTranslateTools } from "#/features/translate";
-import { SERVER_NAME } from "#/shared/config";
+import { registerAnalyticsTools } from "#/features/analytics/index.ts";
+import { registerBrokerTools } from "#/features/broker-credentials/index.ts";
+import { registerClaudeRequestTools } from "#/features/claude-request/index.ts";
+import { registerSlideTools } from "#/features/slides-search/index.ts";
+import { registerSloppediaTools } from "#/features/sloppedia/index.ts";
+import { registerTranslateTools } from "#/features/translate/index.ts";
+import { SERVER_NAME } from "#/shared/config/index.ts";
 
 const SERVER_INFO = { name: SERVER_NAME, version: "0.0.0" };
 

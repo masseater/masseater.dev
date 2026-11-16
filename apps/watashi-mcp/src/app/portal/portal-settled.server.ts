@@ -1,8 +1,8 @@
 import type { PortalResult } from "@masseater.dev/portal-protocol";
 import { Effect } from "effect";
 
-import type { ToolFailure } from "#/shared/api";
-import { describeFailure } from "#/shared/api/index.server";
+import { describeFailure } from "#/shared/api/index.server.ts";
+import type { ToolFailure } from "#/shared/api/index.ts";
 
 type Described = Readonly<{ errorTag: string; text: string }>;
 

@@ -1,1 +1,1 @@
-export { MoreSlot } from "./ui/more-slot";
+export { MoreSlot } from "./ui/more-slot.tsx";

@@ -2,8 +2,8 @@ import { Button } from "@masseater.dev/ui/button";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useTranslation } from "#/entities/translation";
-import { useCopyText } from "#/features/copy-translation/model/copy";
+import { useTranslation } from "#/entities/translation/index.ts";
+import { useCopyText } from "#/features/copy-translation/model/copy.ts";
 
 import { CopyIcon } from "./copy-icon.tsx";
 

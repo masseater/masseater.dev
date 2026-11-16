@@ -1,6 +1,6 @@
 import { Array, Option, Record, pipe } from "effect";
 
-import type { Camera, Grid, Point, Size } from "./camera";
+import type { Camera, Grid, Point, Size } from "./camera.ts";
 import {
   CELL_WIDTH,
   cellAt,
@@ -13,7 +13,7 @@ import {
   toWorld,
   worldCenter,
   zoomAround,
-} from "./camera";
+} from "./camera.ts";
 
 const FOCUS_TILE_PIXELS = 160;
 const DOUBLE_TAP_ZOOM = 3;

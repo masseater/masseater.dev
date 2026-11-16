@@ -1,9 +1,9 @@
 import { Array as Arr, Number as Num, Record as Rec, pipe } from "effect";
 
-import type { Fn } from "./fn";
-import type { Size } from "./gl";
-import type { Frame } from "./renderer";
-import { BANDS, POSE_FIELDS, POSE_POINTS, TEXT_ROWS } from "./renderer";
+import type { Fn } from "./fn.ts";
+import type { Size } from "./gl.ts";
+import type { Frame } from "./renderer.ts";
+import { BANDS, POSE_FIELDS, POSE_POINTS, TEXT_ROWS } from "./renderer.ts";
 
 const SCALAR = 1;
 const PAIR = 2;

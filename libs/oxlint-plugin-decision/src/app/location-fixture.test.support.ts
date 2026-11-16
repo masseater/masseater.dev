@@ -1,0 +1,122 @@
+import { Array as Arr, Effect, FileSystem, Option, Path, String as Str, pipe } from "effect";
+import type { Scope } from "effect";
+import type { PlatformError } from "effect/PlatformError";
+
+import type { DecisionPluginSetup, DecisionRule } from "#/entities/decision/index.ts";
+
+import type { MockOpenRouter } from "./mock-openrouter.test.support.ts";
+import {
+  cacheDirOf,
+  diagnosticsOf,
+  firstSpan,
+  mockEnv,
+  projectFilesFor,
+  runOxlint,
+  writeProject,
+} from "./oxlint.test.support.ts";
+import type {
+  OxlintDiagnostic,
+  OxlintRun,
+  OxlintSpan,
+  Services,
+  TestError,
+} from "./oxlint.test.support.ts";
+
+/** @internal */
+export const SOURCE =
+  "// Context 🐱\nexport function logUser(user) {\n\n\tconsole.log(user.email, user.phone);  \n}\n";
+const PADDING_LINES = 600;
+/** @internal */
+export const LARGE_SOURCE = `${Str.repeat(PADDING_LINES)("// Context\n")}${SOURCE}`;
+/** @internal */
+export const LOG_CALL = "console.log(user.email, user.phone);";
+const MAX_SNIPPET_CHARS = 64_000;
+
+/** @internal */
+export const fileRule: DecisionRule = {
+  id: "no-personal-data",
+  target: "file",
+  question: "Does this file log personal data?",
+  cutoff: 0.9,
+  location: { question: "Select the call that logs personal data.", cutoff: 0.8 },
+};
+
+/** @internal */
+export interface Linted {
+  readonly run: OxlintRun;
+  readonly diagnostics: readonly OxlintDiagnostic[];
+}
+
+/** @internal */
+export interface LocationProject {
+  readonly cwd: string;
+  readonly lint: Effect.Effect<Linted, TestError, Services>;
+}
+
+/** @internal */
+export interface ProjectSetup {
+  readonly text?: string;
+  readonly options?: Partial<DecisionPluginSetup>;
+  readonly token?: string;
+}
+
+const ARGS = [
+  "--threads=1",
+  "--disable-nested-config",
+  "--format=json",
+  "-c",
+  "oxlint.config.ts",
+  "source.ts",
+];
+
+/** @internal */
+export const locationProject = ({
+  text = SOURCE,
+  options = {},
+  token = "test-key",
+}: ProjectSetup): Effect.Effect<
+  LocationProject,
+  PlatformError,
+  Services | MockOpenRouter | Scope.Scope
+> =>
+  Effect.gen(function* setup() {
+    const project = yield* projectFilesFor(
+      {
+        ci: "fail",
+        maxSnippetChars: MAX_SNIPPET_CHARS,
+        rules: [fileRule],
+        ...options,
+      },
+      {},
+    );
+    const cwd = yield* writeProject({ "source.ts": text, ...project });
+    const env = { ...(yield* mockEnv(token)), CI: "1" };
+    const lint = Effect.gen(function* lintOnce() {
+      const run = yield* runOxlint({ cwd, args: ARGS, env });
+      return { run, diagnostics: yield* diagnosticsOf(run) };
+    });
+    return { cwd, lint };
+  });
+
+/** @internal */
+export const lineOf = (diagnostics: readonly OxlintDiagnostic[]): Option.Option<number> =>
+  Arr.head(diagnostics).pipe(Option.map((diagnostic) => firstSpan(diagnostic).line));
+
+/** @internal */
+export const spanOf = (diagnostics: readonly OxlintDiagnostic[]): Option.Option<OxlintSpan> =>
+  Arr.head(diagnostics).pipe(Option.map((diagnostic) => firstSpan(diagnostic)));
+
+/** @internal */
+export const cacheEntries = (
+  cwd: string,
+): Effect.Effect<readonly string[], TestError, FileSystem.FileSystem | Path.Path> =>
+  Effect.gen(function* entries() {
+    const fs = yield* FileSystem.FileSystem;
+    const path = yield* Path.Path;
+    const dir = yield* cacheDirOf(cwd);
+    const names = yield* fs.readDirectory(dir);
+    return pipe(
+      names,
+      Arr.map((name) => path.join(dir, name)),
+    );
+  });

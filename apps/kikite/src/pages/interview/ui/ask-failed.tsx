@@ -1,7 +1,7 @@
 import { CircleAlert } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useAsking } from "#/entities/interview";
+import { useAsking } from "#/entities/interview/index.ts";
 
 export const AskFailed = (): ReactNode => {
   const asking = useAsking();

@@ -1,7 +1,7 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useStatus } from "#/shared/api";
+import { useStatus } from "#/shared/api/index.ts";
 
 const NAME = "aredoko";
 

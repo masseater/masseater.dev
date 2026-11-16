@@ -3,9 +3,9 @@ import { ArrowLeftRight } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useSelect, useSource } from "#/entities/language";
-import { useDirection, useTranslation, useSetDraft } from "#/entities/translation";
-import { swapped } from "#/features/swap-languages/model/swap";
+import { useSelect, useSource } from "#/entities/language/index.ts";
+import { useDirection, useTranslation, useSetDraft } from "#/entities/translation/index.ts";
+import { swapped } from "#/features/swap-languages/model/swap.ts";
 
 const LABEL = "言語を入れ替える";
 

@@ -1,11 +1,11 @@
 import { count, desc, eq, max } from "drizzle-orm";
 import { Array as Arr, Effect, pipe } from "effect";
 
-import type { Body } from "#/entities/life-record";
-import { timeOut } from "#/entities/life-record";
-import { memory } from "#/shared/db";
-import type { StorageFailed } from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+import type { Body } from "#/entities/life-record/index.ts";
+import { timeOut } from "#/entities/life-record/index.ts";
+import { db, query } from "#/shared/db/index.server.ts";
+import { memory } from "#/shared/db/index.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 const NOT_RETRACTED = "";
 

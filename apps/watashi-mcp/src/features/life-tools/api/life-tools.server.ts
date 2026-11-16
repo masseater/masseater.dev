@@ -3,9 +3,9 @@ import { one, OVERWRITE, READ_ONLY } from "@masseater.dev/mcp-tool-call";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { Schema, pipe } from "effect";
 
-import { LifeReadInput, LifeStatsInput, LifeWriteInput } from "#/entities/life-record";
-import type { LifeReadValue } from "#/entities/life-record";
-import { meteredInput, runTool } from "#/shared/api/index.server";
+import { LifeReadInput, LifeStatsInput, LifeWriteInput } from "#/entities/life-record/index.ts";
+import type { LifeReadValue } from "#/entities/life-record/index.ts";
+import { meteredInput, runTool } from "#/shared/api/index.server.ts";
 
 import { routeLifeRead } from "./life-read-route.server.ts";
 import { lifeStats } from "./life-stats.server.ts";

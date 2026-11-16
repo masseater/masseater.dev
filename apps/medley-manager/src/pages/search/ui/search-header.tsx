@@ -1,7 +1,7 @@
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { KeywordForm } from "#/shared/ui/keyword-form";
+import { KeywordForm } from "#/shared/ui/keyword-form.tsx";
 
 const route = getRouteApi("/search");
 

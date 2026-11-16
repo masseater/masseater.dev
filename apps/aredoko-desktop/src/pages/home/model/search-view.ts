@@ -2,7 +2,7 @@ import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import { Array, Option, pipe } from "effect";
 import type { ComponentProps } from "react";
 
-import type { Notice } from "#/shared/ui/notice";
+import type { Notice } from "#/shared/ui/notice.tsx";
 
 type Results = readonly (typeof SearchResult.Type)[];
 

@@ -1,6 +1,5 @@
 import { Array as Arr, Effect, Equal, Option, Schema } from "effect";
 
-import type { MemoryWriteValue } from "#/entities/memory";
 import {
   findMemory,
   MemorySnapshot,
@@ -8,13 +7,14 @@ import {
   resultOf,
   save,
   snapshotOf,
-} from "#/entities/memory/index.server";
-import type { MemoryResult, MemorySnapshotValue, Writer } from "#/entities/memory/index.server";
-import { InvalidRecord, MemoryNotFound } from "#/shared/api";
-import type { StoreFailure } from "#/shared/api";
-import { NOT_RETRACTED } from "#/shared/db";
-import type { Memory } from "#/shared/db";
-import { findRevision, nowIso } from "#/shared/db/index.server";
+} from "#/entities/memory/index.server.ts";
+import type { MemoryResult, MemorySnapshotValue, Writer } from "#/entities/memory/index.server.ts";
+import type { MemoryWriteValue } from "#/entities/memory/index.ts";
+import { InvalidRecord, MemoryNotFound } from "#/shared/api/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
+import { findRevision, nowIso } from "#/shared/db/index.server.ts";
+import { NOT_RETRACTED } from "#/shared/db/index.ts";
+import type { Memory } from "#/shared/db/index.ts";
 
 const decodeSnapshot = Schema.decodeUnknownEffect(Schema.fromJsonString(MemorySnapshot));
 

@@ -6,9 +6,9 @@ import { Array as Arr, Effect, pipe } from "effect";
 import { SECURITY_HEADERS } from "security-headers";
 import { headerLines } from "security-headers/static";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
-import { BASE_PATH } from "./base-path.ts";
-import { ZONE } from "./cloudflare.ts";
+import { APP_NAME, requireAppPrefix } from "./src/shared/config/app-name.ts";
+import { ZONE } from "./src/shared/config/cloudflare.ts";
+import { BASE_PATH } from "./src/shared/config/site-base-path.ts";
 
 const PUBLISHED_DIR = "./published";
 const DATA_CACHE_CONTROL = "public, max-age=600";

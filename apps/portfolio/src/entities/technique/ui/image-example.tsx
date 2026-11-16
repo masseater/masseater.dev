@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-import type { Example } from "#/entities/technique/model/technique";
+import type { Example } from "#/entities/technique/model/technique.ts";
 
-import { ExampleFigure } from "./example-figure";
-import { ExternalLink } from "./external-link";
+import { ExampleFigure } from "./example-figure.tsx";
+import { ExternalLink } from "./external-link.tsx";
 
 export const ImageExample = ({
   example,

@@ -1,2 +1,2 @@
-export { EditorSurface } from "./ui/editor-surface";
-export { useDrafts } from "./api/drafts";
+export { EditorSurface } from "./ui/editor-surface.tsx";
+export { useDrafts } from "./api/drafts.ts";

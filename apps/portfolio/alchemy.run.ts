@@ -8,7 +8,7 @@ import type { CompiledStack } from "alchemy";
 import { Effect, Option } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./src/app/app-name.ts";
 import { site } from "./src/shared/config/site.ts";
 
 const DOMAIN = new URL(site.url).hostname;
@@ -27,7 +27,7 @@ const web = Effect.gen(function* web() {
     ...(production && { domain: { name: DOMAIN, redirects: [`www.${DOMAIN}`] } }),
     command: "vp run build",
     outdir: "dist/client",
-    main: "./worker/site.worker.ts",
+    main: "./src/app/worker/site.worker.ts",
     logpush: true,
     env: { STARS, VISITOR_SALT, VITE_CF_BEACON_TOKEN: CF_BEACON_TOKEN },
     assets: {
@@ -41,7 +41,7 @@ const web = Effect.gen(function* web() {
 
 const ciTelemetry = Workers.Worker("CiTelemetry", {
   name: CI_TELEMETRY_AUDIENCE,
-  main: "./worker/ci-telemetry.worker.ts",
+  main: "./src/app/worker/ci-telemetry.worker.ts",
   logpush: true,
 });
 

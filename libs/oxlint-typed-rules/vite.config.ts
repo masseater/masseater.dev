@@ -11,7 +11,7 @@ import {
 } from "effect";
 import { defineConfig } from "vite-plus";
 
-import { toJson } from "./src/json.ts";
+import { toJson } from "./src/shared/lib/json.ts";
 import { upstreamRemotionRules } from "./upstream/remotion-modules.ts";
 
 const local = (path: string): string => new URL(path, import.meta.url).pathname;
@@ -33,9 +33,9 @@ const attwModule = {
 };
 
 const shims: Readonly<Record<string, string>> = {
-  typescript: local("src/ts-compat.ts"),
-  "ts-api-utils": local("src/ts-api-utils.ts"),
-  "@typescript-eslint/utils": local("src/typescript-eslint-utils.ts"),
+  typescript: local("src/shared/lib/ts-compat.ts"),
+  "ts-api-utils": local("src/shared/lib/ts-api-utils.ts"),
+  "@typescript-eslint/utils": local("src/shared/lib/typescript-eslint-utils.ts"),
   "@typescript-eslint/typescript-estree": local(
     "node_modules/@typescript-eslint/typescript-estree/dist/simple-traverse.js",
   ),
@@ -84,7 +84,7 @@ const upstreamRuleModule = (id: string): Option.Option<string> =>
     Option.map(({ plugin, rule }) =>
       pipe(
         [
-          `import plugin from ${toJson(local("src/react.ts"))};`,
+          `import plugin from ${toJson(local("src/app/react.ts"))};`,
           `export const RULE_NAME = ${toJson(rule)};`,
           `export default plugin.rules[${toJson(`${plugin}-${rule}`)}];`,
         ],
@@ -148,7 +148,7 @@ const tanstackRuleModule = (id: string): Option.Option<string> =>
     Option.map(({ plugin, rule }) =>
       pipe(
         [
-          `import plugin from ${toJson(local(`src/tanstack-${plugin}.ts`))};`,
+          `import plugin from ${toJson(local(`src/app/tanstack-${plugin}.ts`))};`,
           `export * from ${toJson(upstreamSource(plugin, `rules/${rule}/${rule}.rule`))};`,
           `export const name = ${toJson(rule)};`,
           `export const rule = plugin.rules[${toJson(rule)}];`,
@@ -190,7 +190,7 @@ const drizzleRuleModule = (id: string): Option.Option<string> =>
     Option.map((virtual) =>
       pipe(
         [
-          `import plugin from ${toJson(local("src/drizzle.ts"))};`,
+          `import plugin from ${toJson(local("src/app/drizzle.ts"))};`,
           `export default plugin.rules[${toJson(Str.slice(VIRTUAL_DRIZZLE_RULE.length)(virtual))}];`,
         ],
         Arr.join("\n"),
@@ -225,7 +225,7 @@ export default defineConfig({
       ],
       overrides: [
         {
-          files: ["src/ts-compat.ts"],
+          files: ["src/shared/lib/ts-compat.ts"],
           rules: { "import/no-default-export": "off" },
         },
       ],
@@ -247,13 +247,13 @@ export default defineConfig({
   },
   pack: {
     entry: [
-      "src/index.ts",
-      "src/tanstack-start.ts",
-      "src/tanstack-query.ts",
-      "src/tanstack-router.ts",
-      "src/drizzle.ts",
-      "src/remotion.ts",
-      "src/react.ts",
+      "src/app/index.ts",
+      "src/app/tanstack-start.ts",
+      "src/app/tanstack-query.ts",
+      "src/app/tanstack-router.ts",
+      "src/app/drizzle.ts",
+      "src/app/remotion.ts",
+      "src/app/react.ts",
     ],
     platform: "node",
     sourcemap: true,

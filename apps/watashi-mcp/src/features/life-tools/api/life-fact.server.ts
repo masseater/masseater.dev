@@ -1,10 +1,18 @@
 import { Effect, Option, pipe } from "effect";
 
-import type { ItemResult, Body } from "#/entities/life-record";
-import { NONE, SELF, columnsOf, refOf, stringAt, textAt, todayJst } from "#/entities/life-record";
-import { findOpen, snapshotOf, succeedRecord } from "#/entities/life-record/index.server";
-import type { LifeEntry, Notice, NewRecord, Writer } from "#/entities/life-record/index.server";
-import type { StorageFailed } from "#/shared/db";
+import { findOpen, snapshotOf, succeedRecord } from "#/entities/life-record/index.server.ts";
+import type { LifeEntry, Notice, NewRecord, Writer } from "#/entities/life-record/index.server.ts";
+import type { ItemResult, Body } from "#/entities/life-record/index.ts";
+import {
+  NONE,
+  SELF,
+  columnsOf,
+  refOf,
+  stringAt,
+  textAt,
+  todayJst,
+} from "#/entities/life-record/index.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { plainInsert } from "./life-create.server.ts";
 import type { Creator } from "./life-create.server.ts";

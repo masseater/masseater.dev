@@ -1,11 +1,17 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Effect, Option } from "effect";
 
-import { collect, rowPositionFrom, rowPositionText, settledBefore, GLOBAL } from "#/entities/trait";
-import type { Collected, BatchSource } from "#/entities/trait";
-import { cursorOf } from "#/entities/trait/index.server";
-import { NOT_RETRACTED } from "#/shared/db";
-import type { LifeRow, Memory, StorageFailed } from "#/shared/db";
+import { cursorOf } from "#/entities/trait/index.server.ts";
+import {
+  collect,
+  rowPositionFrom,
+  rowPositionText,
+  settledBefore,
+  GLOBAL,
+} from "#/entities/trait/index.ts";
+import type { Collected, BatchSource } from "#/entities/trait/index.ts";
+import { NOT_RETRACTED } from "#/shared/db/index.ts";
+import type { LifeRow, Memory, StorageFailed } from "#/shared/db/index.ts";
 
 import { collectConversations } from "./trait-conversations.server.ts";
 import { lifeAfter, memoriesAfter } from "./trait-source-store.server.ts";

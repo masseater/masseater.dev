@@ -20,8 +20,8 @@ sources:
   - src/**
   - README.md
   - example/**
-  - src/skill-write-decision-rules.task.md
-  - src/skill-write-decision-rules.test.ts
+  - src/app/skill-write-decision-rules.task.md
+  - src/app/skill-write-decision-rules.test.ts
 ---
 
 # write-decision-rules
@@ -196,7 +196,8 @@ createDecisionPlugin({
 });
 ```
 
-Keys are read only from environment variables; `env` values are variable names, not keys (`src/options.ts`, `src/runtime.ts`).
+Keys are read only from environment variables, and `env` values are variable names, not keys.
+See `options.ts` and `runtime.ts` in `src/entities/decision/model/`.
 
 ### HIGH: a broad target on a whole codebase
 
@@ -226,7 +227,7 @@ Asking whether a function is named well reports the well-named functions. With t
 
 ### MEDIUM: rule ids that are not lowercase-hyphenated or are repeated
 
-`id` must match `^[a-z0-9]+(?:-[a-z0-9]+)*$` and be unique within the plugin. `rules` must list at least one rule. Otherwise loading the plugin throws (`src/options.ts`).
+`id` must match `^[a-z0-9]+(?:-[a-z0-9]+)*$` and be unique within the plugin. `rules` must list at least one rule. Otherwise loading the plugin throws (`src/entities/decision/model/options.ts`).
 
 ## Completion
 
