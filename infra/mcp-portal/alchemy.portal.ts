@@ -42,10 +42,6 @@ import type { Effect } from "effect/Effect";
 import { mergeAll, provideMerge } from "effect/Layer";
 import { fromNullishOr, map as mapOption, match } from "effect/Option";
 
-const { McpPortal: defineMcpPortal, McpServer: defineMcpServer, Policy: definePolicy } = Access;
-const { Record: defineRecord } = DNS;
-const { resolveZoneId } = Zone;
-
 const MCP_ACCESS_APP = "MasseaterDev.McpAccessApplication";
 const PORTAL_SERVERS = "MasseaterDev.McpPortalServers";
 const PORTAL_HOST = "mcp.masseater.dev";
@@ -145,16 +141,18 @@ const portalServersProvider = succeedProvider(portalServers, {
 const mcpPortalProviders = mergeAll(mcpAccessApplicationProvider, portalServersProvider);
 
 const viewerPolicy = ownerStack.pipe(
-  flatMap((holder) => definePolicy.ref("OwnerPolicy", holder)),
+  flatMap((holder) => Access.Policy.ref("OwnerPolicy", holder)),
   map(({ policyId }) => [{ id: policyId, precedence: 1 }]),
 );
 
 const portalDns = gen(function* portalDns() {
   const accountId = yield* accountIdOf;
-  const zoneId = yield* resolveZoneId({ accountId, zone: PORTAL_HOST, hostname: PORTAL_HOST }).pipe(
-    orDie,
-  );
-  yield* defineRecord("McpPortalCname", {
+  const zoneId = yield* Zone.resolveZoneId({
+    accountId,
+    zone: PORTAL_HOST,
+    hostname: PORTAL_HOST,
+  }).pipe(orDie);
+  yield* DNS.Record("McpPortalCname", {
     zoneId,
     name: PORTAL_HOST,
     type: "CNAME",
@@ -168,7 +166,7 @@ const upstreamServers = gen(function* upstreamServers() {
   return yield* all(
     mapArray(upstreams, ({ id, url, auth }) =>
       gen(function* upstreamServer() {
-        const server = yield* defineMcpServer(`${id}McpServer`, {
+        const server = yield* Access.McpServer(`${id}McpServer`, {
           serverId: id,
           name: id,
           hostname: url,
@@ -190,7 +188,7 @@ const upstreamServers = gen(function* upstreamServers() {
 
 const mcpPortal = gen(function* mcpPortal() {
   yield* portalDns;
-  const portal = yield* defineMcpPortal("McpPortal", {
+  const portal = yield* Access.McpPortal("McpPortal", {
     portalId: "personal",
     name: "masseater",
     hostname: PORTAL_HOST,
