@@ -1,8 +1,8 @@
+import type { Aspect, Verb } from "@masseater.dev/shirushi-protocol";
 import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 
 import { songAtom } from "#/entities/song";
-import type { Aspect, Verb } from "#protocol";
 
 export type Range = Readonly<{ from: number; to: number }>;
 
