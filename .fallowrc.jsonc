@@ -208,7 +208,6 @@
       "enablers": ["@r_masseater/msch"],
       "toolingDependencies": [
         "@commitlint/config-conventional",
-        "@r_masseater/textlint-rule-preset-ja",
         "@textlint-ja/textlint-rule-preset-ai-writing",
         "textlint-rule-preset-ja-technical-writing",
       ],
