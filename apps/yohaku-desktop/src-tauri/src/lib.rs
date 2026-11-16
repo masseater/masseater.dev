@@ -8,7 +8,6 @@ mod commands;
 mod export;
 mod failure;
 mod mcp;
-mod menu;
 mod model;
 pub mod protocol;
 mod store;
@@ -106,7 +105,7 @@ pub fn run() -> tauri::Result<()> {
     let builder = builder();
     let app = tauri::Builder::default();
     let app = if cfg!(target_os = "macos") {
-        app.menu(menu::japanese)
+        app.menu(|handle| desktop_shell::japanese_menu(handle, "余白"))
     } else {
         app
     };
@@ -122,8 +121,8 @@ pub fn run() -> tauri::Result<()> {
             .rotation_strategy(RotationStrategy::KeepSome(LOG_FILES_KEPT))
             .build(),
     )
-    .plugin(window::state_plugin())
-    .plugin(window::browser_keys_plugin())
+    .plugin(desktop_shell::state_plugin())
+    .plugin(desktop_shell::browser_keys_plugin())
     .plugin(tauri_plugin_opener::init())
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_updater::Builder::new().build())

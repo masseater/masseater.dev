@@ -7,6 +7,7 @@ import type { Body, Entry } from "#/entities/life-record/index.ts";
 import { loadTraits } from "#/entities/trait/index.server.ts";
 import { GLOBAL, idOf, isActive, supportsOf } from "#/entities/trait/index.ts";
 import type { TraitState } from "#/entities/trait/index.ts";
+import type { TraitInput } from "#/features/build-traits/model/profile-outline.ts";
 import { db, query } from "#/shared/db/index.server.ts";
 import { memory, NOT_RETRACTED } from "#/shared/db/index.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
@@ -28,7 +29,7 @@ const lastSeenOf = (trait: TraitState): string =>
     Arr.match({ onEmpty: () => NEVER_SEEN, onNonEmpty: Arr.max(Order.String) }),
   );
 
-const traitInput = (trait: TraitState): Option.Option<Body> => {
+const traitInput = (trait: TraitState): Option.Option<TraitInput> => {
   const supports = supportsOf(trait).length;
   return Option.map(idOf(trait), (ref) => ({
     ref,
@@ -64,7 +65,13 @@ const recentMemos: Effect.Effect<readonly Body[], StorageFailed> = query(() =>
     .limit(RECENT_MEMOS),
 ).pipe(Effect.map(Arr.map((row) => ({ ...row, updatedAt: dayOf(row.updatedAt) }))));
 
-export const profileSource: Effect.Effect<Body, StorageFailed> = Effect.gen(
+export type ProfileSource = Readonly<{
+  ownerFacts: readonly Body[];
+  recentMemos: readonly Body[];
+  traits: readonly TraitInput[];
+}>;
+
+export const profileSource: Effect.Effect<ProfileSource, StorageFailed> = Effect.gen(
   function* profileSourceOf() {
     const today = yield* todayJst;
     const traits = yield* loadTraits;

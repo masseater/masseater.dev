@@ -1,1 +1,1 @@
-export { tauriAppConfig, tauriAppTasks } from "./model/vite.ts";
+export { tauriAppConfig, tauriAppTasks, tauriReleaseTasks } from "./model/vite.ts";

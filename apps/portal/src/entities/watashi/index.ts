@@ -10,6 +10,7 @@ export {
   scopesOf,
   sectionId,
   sectionsOf,
+  topicsOf,
 } from "./model/profile.ts";
 export type { ProfileLineValue, ProfileSectionValue, ProfileValue } from "./model/profile.ts";
 export { ConversationSearch, MemosSearch, RecordsSearch } from "./model/search.ts";
