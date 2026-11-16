@@ -82,7 +82,7 @@ const PUBLIC_VALUES = [
 
 const FAKE_SECRET_FIXTURES = [String.raw`(^|/)fixtures/[^/]+\.tgz!`];
 
-const MARKDOWN_IGNORES = ["AGENTS.md", "apps/zenn-articles/**", "**/.cache/**"];
+const MARKDOWN_IGNORES = ["AGENTS.md", "apps/zenn-articles/**", "**/.cache/**", "**/fixtures/**"];
 
 const checks: ToolSections = {
   commitlint: { extends: ["@commitlint/config-conventional"] },
