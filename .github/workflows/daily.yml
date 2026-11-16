@@ -13,21 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      deployments: read
     outputs:
       packages: ${{ steps.packages.outputs.packages }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - run: git fetch --unshallow --filter=blob:none origin
       - uses: $/.github/actions/setup
         with:
           native: "false"
       - id: packages
         run: vp run -r task-packages daily
-        env:
-          GH_TOKEN: ${{ github.token }}
 
   run:
     needs: plan
@@ -46,7 +42,6 @@ jobs:
     permissions:
       actions: write
       contents: write
-      deployments: write
       id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -88,12 +83,6 @@ jobs:
         run: vp run -r prune-caches
         env:
           GH_TOKEN: ${{ github.token }}
-      - run: vp run -r record-deployment
-        env:
-          GH_TOKEN: ${{ github.token }}
-          DEPLOYMENT_ENVIRONMENT: daily
-          DEPLOYMENT_TASK: daily:${{ matrix.package.name }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
 
   after:
     needs: run
