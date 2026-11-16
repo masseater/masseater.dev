@@ -1,10 +1,10 @@
+import type { Mixer } from "#/entities/live/index.ts";
 import type { Structure, Take } from "#/entities/song/index.ts";
 import type { Samples } from "#/shared/lib/samples.ts";
 import type { Heading } from "#/widgets/daw-view/ui/page.ts";
 import type { Credit } from "#/widgets/daw-view/ui/panels.ts";
 
 import type { Mixdown } from "./mix.ts";
-import type { Mixer } from "./mixing.ts";
 import type { Tape } from "./tape.ts";
 
 export interface Progress {
@@ -19,20 +19,9 @@ export interface RenderSession {
   readonly signal: AbortSignal;
 }
 
-export interface MixMessage {
-  readonly play?: number;
-  readonly stop?: true;
-  readonly mixers?: readonly Mixer[];
-}
-
-export interface MixPlayer {
-  readonly msg: (message: MixMessage) => void;
-  readonly render: (left: Float32Array, right: Float32Array, frames: number) => number;
-}
-
 export interface LiveMix {
   readonly tracks: readonly string[];
-  readonly player: string;
+  readonly worklet: string;
   readonly init: unknown;
   readonly transfer: readonly ArrayBuffer[];
   readonly tape?: Tape;

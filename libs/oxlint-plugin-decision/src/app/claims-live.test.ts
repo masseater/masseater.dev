@@ -55,7 +55,7 @@ const claimsLive = (
   Effect.scoped(
     Effect.gen(function* test() {
       const fs = yield* FileSystem.FileSystem;
-      const key = yield* Config.Redacted("OPENROUTER_API_KEY");
+      const key = yield* Config.Redacted("TYPESAFE_API_KEY");
       const example = yield* fromRoot("example-presets", "claims");
       const cwd = yield* tempProject({
         "cart.js": yield* fs.readFileString(`${example}/cart.js`),
@@ -74,7 +74,7 @@ const claimsLive = (
       const run = yield* oxlint(
         cwd,
         ["--format", "unix", "-c", "oxlint.config.ts", "cart.js", "cart.test.js"],
-        { ...(yield* forwardedEnv), OPENROUTER_API_KEY: Redacted.value(key) },
+        { ...(yield* forwardedEnv), TYPESAFE_API_KEY: Redacted.value(key) },
       );
       yield* Effect.log(outputOf(run));
       deepStrictEqual(

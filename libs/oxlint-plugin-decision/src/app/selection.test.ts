@@ -13,7 +13,7 @@ import {
   outputOf,
   withMock,
 } from "./fixtures.test.support.ts";
-import { loggedRequests } from "./mock-openrouter.test.support.ts";
+import { loggedRequests } from "./mock-typesafe.test.support.ts";
 import { decisionLines, mockEnv } from "./oxlint.test.support.ts";
 
 const STRING_SELECT: object = { select: "console" };

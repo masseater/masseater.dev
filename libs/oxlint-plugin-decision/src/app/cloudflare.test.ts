@@ -3,6 +3,8 @@ import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Layer, Option, Record as Rec, pipe } from "effect";
 
+import { toJson } from "#/entities/decision/index.ts";
+
 import {
   FAILED,
   PASSED,
@@ -34,13 +36,16 @@ const withCloudflare = <Value>(
     ),
   );
 
-const lintWith = (token: string): CloudflareTest<OxlintRun> =>
+const lintWith = (
+  token: string,
+  extraEnv: Readonly<Record<string, string>> = {},
+): CloudflareTest<OxlintRun> =>
   Effect.gen(function* lint() {
     const env = yield* cloudflareEnv(token);
     return yield* lintProject({
       files: { "log.js": SOURCE },
       options: { model: `cloudflare/${MODEL}`, rules: [callRule] },
-      env,
+      env: { ...env, ...extraEnv },
     });
   });
 
@@ -73,6 +78,31 @@ const sendsTheGatewayRequest = Effect.gen(function* test() {
       model: "clef-flash",
       types: ["noul"],
     }),
+  );
+});
+
+const namesTheCaller = Effect.gen(function* test() {
+  yield* lintWith("yes", {
+    GITHUB_ACTIONS: "true",
+    GITHUB_REPOSITORY: "acme/app",
+    CLOUDFLARE_AI_GATEWAY_ID: "team-gateway",
+  });
+  const runs = yield* loggedRuns;
+  deepStrictEqual(
+    pipe(
+      runs,
+      Arr.map(({ gateway, metadata }) => ({ gateway, metadata })),
+    ),
+    [
+      {
+        gateway: "team-gateway",
+        metadata: toJson({
+          tool: "oxlint-plugin-decision",
+          repo: "acme/app",
+          context: "github-actions",
+        }),
+      },
+    ],
   );
 });
 
@@ -112,6 +142,11 @@ layer(NodeServices.layer, { excludeTestServices: true })("the cloudflare provide
   it.effect(
     "asks the Workers AI decision model directly",
     () => withCloudflare(sendsTheGatewayRequest),
+    TIMEOUT,
+  );
+  it.effect(
+    "sends the repository and where it runs to the configured gateway",
+    () => withCloudflare(namesTheCaller),
     TIMEOUT,
   );
   it.effect("passes on a no answer", () => withCloudflare(passesOnNo), TIMEOUT);

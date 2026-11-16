@@ -1,5 +1,7 @@
 import { Effect, Option, pipe } from "effect";
 
+import { HEARD } from "#/entities/live/index.ts";
+import type { Heard } from "#/entities/live/index.ts";
 import { clamp } from "#/shared/lib/math.ts";
 import { createStore } from "#/shared/lib/store.ts";
 import type { Store } from "#/shared/lib/store.ts";
@@ -7,8 +9,8 @@ import type { Store } from "#/shared/lib/store.ts";
 import type { LiveMix } from "./contract.ts";
 import { bufferOf, latencyOf, levelsOf, openDeck, shut, woken } from "./deck.ts";
 import type { Deck, Levels } from "./deck.ts";
-import { HEARD, liveSupported, openLive } from "./live.ts";
-import type { Heard, LiveNode } from "./live.ts";
+import { liveSupported, openLive } from "./live.ts";
+import type { LiveNode } from "./live.ts";
 import type { Mixdown } from "./mix.ts";
 import { heardMixers } from "./mixing.ts";
 import type { Mixing } from "./mixing.ts";

@@ -1,0 +1,1103 @@
+{
+  "order": [
+    "KICK",
+    "SNARE",
+    "HATS",
+    "BREAK",
+    "PERC",
+    "SUB",
+    "BASS",
+    "RHODES",
+    "VIBES",
+    "STRINGS",
+    "GLASS",
+    "VOX F",
+    "VOX M",
+    "FX"
+  ],
+  "returns": {
+    "delay": 0.5,
+    "reverb": 0.9,
+    "museum": 0.7
+  },
+  "tracks": [
+    {
+      "name": "RHODES",
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "RHODES"
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 150,
+              "resonance": 0.7
+            },
+            {
+              "drive": 2.4,
+              "post": 0.5
+            },
+            {
+              "biquad": "high",
+              "hertz": 2600,
+              "gain": 4,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 1800,
+              "gain": 3,
+              "resonance": 0.8
+            },
+            {
+              "biquad": "peak",
+              "hertz": 2300,
+              "gain": 2,
+              "resonance": 0.9
+            },
+            {
+              "biquad": "peak",
+              "hertz": 420,
+              "gain": -2,
+              "resonance": 1
+            },
+            {
+              "biquad": "high",
+              "hertz": 8000,
+              "gain": 2,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "tremolo",
+          "bus": "main",
+          "rate": 5.6,
+          "depth": 0.34
+        },
+        {
+          "op": "chorus",
+          "bus": "main",
+          "depth": 1.4,
+          "rate": 0.45,
+          "amount": 0.32
+        },
+        {
+          "op": "phaser",
+          "bus": "main",
+          "rate": 0.21,
+          "low": 400,
+          "high": 2400,
+          "feedback": 0.3,
+          "amount": 0.35,
+          "from": {
+            "bar": 112,
+            "step": 0
+          },
+          "to": {
+            "bar": 136,
+            "step": 0
+          }
+        },
+        {
+          "op": "compress",
+          "bus": "main",
+          "threshold": -18,
+          "ratio": 2.5,
+          "attack": 10,
+          "release": 120,
+          "makeup": 3
+        },
+        {
+          "op": "width",
+          "bus": "main",
+          "width": 1.35,
+          "monoBelow": 200
+        },
+        {
+          "op": "empty",
+          "into": "plate",
+          "mono": true
+        },
+        {
+          "op": "gather",
+          "into": "delay",
+          "lane": "@dly:RHODES"
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "plate",
+          "gain": 0.2,
+          "boost": {
+            "from": {
+              "bar": 112,
+              "step": 0
+            },
+            "to": {
+              "bar": 136,
+              "step": 0
+            },
+            "gain": 1.6
+          }
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "delay",
+          "gain": 0.1,
+          "boost": {
+            "from": {
+              "bar": 112,
+              "step": 0
+            },
+            "to": {
+              "bar": 136,
+              "step": 0
+            },
+            "gain": 3.5
+          }
+        },
+        {
+          "op": "duck",
+          "bus": "main",
+          "by": "hits",
+          "depth": 0.22
+        },
+        {
+          "op": "flush",
+          "into": "museum",
+          "lane": "m:RHODES"
+        },
+        {
+          "op": "tremolo",
+          "bus": "museum",
+          "rate": 3.1,
+          "depth": 0.3
+        },
+        {
+          "op": "filter",
+          "bus": "museum",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 120,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "high",
+              "hertz": 6000,
+              "gain": -2,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.44
+        },
+        {
+          "op": "scale",
+          "bus": "museum",
+          "gain": 0.75
+        }
+      ]
+    },
+    {
+      "name": "STRINGS",
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "STRINGS"
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 160,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 2800,
+              "gain": -1.5,
+              "resonance": 0.8
+            },
+            {
+              "biquad": "high",
+              "hertz": 9000,
+              "gain": 2,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "width",
+          "bus": "main",
+          "width": 1.4,
+          "monoBelow": 200
+        },
+        {
+          "op": "empty",
+          "into": "plate",
+          "mono": true
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "plate",
+          "gain": 0.5
+        },
+        {
+          "op": "duck",
+          "bus": "main",
+          "by": "hits",
+          "depth": 0.3
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.5
+        },
+        {
+          "op": "flush",
+          "into": "museum",
+          "lane": "m:STRINGS"
+        },
+        {
+          "op": "scale",
+          "bus": "museum",
+          "gain": 0.9
+        }
+      ]
+    },
+    {
+      "name": "VOX F",
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "VOX F"
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 190,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 3100,
+              "gain": -3.5,
+              "resonance": 1.4
+            },
+            {
+              "biquad": "peak",
+              "hertz": 1900,
+              "gain": 2,
+              "resonance": 1
+            },
+            {
+              "biquad": "high",
+              "hertz": 9500,
+              "gain": 2.5,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 450,
+              "gain": -2,
+              "resonance": 1
+            }
+          ]
+        },
+        {
+          "op": "compress",
+          "bus": "main",
+          "threshold": -18,
+          "ratio": 3,
+          "attack": 4,
+          "release": 110,
+          "makeup": 4
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "drive": 1.15,
+              "post": 0.9
+            }
+          ]
+        },
+        {
+          "op": "gather",
+          "into": "plate",
+          "lane": "@plate:VOX F"
+        },
+        {
+          "op": "gather",
+          "into": "delay",
+          "lane": "@dly:VOX F"
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "plate",
+          "gain": 0.1
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "delay",
+          "gain": 0.04
+        },
+        {
+          "op": "duck",
+          "bus": "main",
+          "by": "hits",
+          "depth": 0.12
+        },
+        {
+          "op": "flush",
+          "into": "museum",
+          "lane": "m:VOX F"
+        },
+        {
+          "op": "filter",
+          "bus": "museum",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 200,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "high",
+              "hertz": 9000,
+              "gain": 2,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "scale",
+          "bus": "museum",
+          "gain": 0.8
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.5
+        }
+      ]
+    },
+    {
+      "name": "VIBES",
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "VIBES"
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 280,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "high",
+              "hertz": 7000,
+              "gain": 1.5,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "empty",
+          "into": "plate",
+          "mono": true
+        },
+        {
+          "op": "empty",
+          "into": "delay",
+          "mono": true
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "plate",
+          "gain": 0.3
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "delay",
+          "gain": 0.22
+        },
+        {
+          "op": "duck",
+          "bus": "main",
+          "by": "hits",
+          "depth": 0.15
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.14
+        },
+        {
+          "op": "flush",
+          "into": "museum",
+          "lane": "m:VIBES"
+        },
+        {
+          "op": "scale",
+          "bus": "museum",
+          "gain": 0.8
+        }
+      ]
+    },
+    {
+      "name": "BREAK",
+      "drum": true,
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "BREAK"
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "high",
+              "curve": "breakHighPass",
+              "resonance": 0.8
+            },
+            {
+              "svf": "high",
+              "cutoff": 60,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 3200,
+              "gain": 2,
+              "resonance": 0.8
+            },
+            {
+              "biquad": "peak",
+              "hertz": 2300,
+              "gain": 2,
+              "resonance": 0.9
+            },
+            {
+              "biquad": "high",
+              "hertz": 9000,
+              "gain": 2.5,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 420,
+              "gain": -2.5,
+              "resonance": 1
+            }
+          ]
+        },
+        {
+          "op": "compress",
+          "bus": "main",
+          "threshold": -16,
+          "ratio": 3,
+          "attack": 3,
+          "release": 70,
+          "makeup": 3
+        },
+        {
+          "op": "widen",
+          "bus": "main",
+          "milliseconds": 14,
+          "amount": 0.45,
+          "highPass": 1200
+        },
+        {
+          "op": "empty",
+          "into": "plate",
+          "mono": true
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "plate",
+          "gain": 0.05
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.46
+        },
+        {
+          "op": "flush",
+          "into": "top",
+          "lane": "TOP"
+        },
+        {
+          "op": "filter",
+          "bus": "top",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 1100,
+              "resonance": 0.7
+            },
+            {
+              "svf": "high",
+              "cutoff": 1100,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "high",
+              "hertz": 9000,
+              "gain": 2,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "widen",
+          "bus": "top",
+          "milliseconds": 8,
+          "amount": 0.5,
+          "highPass": 2000
+        },
+        {
+          "op": "mix",
+          "from": "top",
+          "into": "main",
+          "gain": 0.42
+        }
+      ]
+    },
+    {
+      "name": "VOX M",
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "VOX M"
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 110,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 3100,
+              "gain": -3.5,
+              "resonance": 1.4
+            },
+            {
+              "biquad": "peak",
+              "hertz": 1900,
+              "gain": 2,
+              "resonance": 1
+            },
+            {
+              "biquad": "high",
+              "hertz": 9500,
+              "gain": 2.5,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 450,
+              "gain": -2,
+              "resonance": 1
+            }
+          ]
+        },
+        {
+          "op": "compress",
+          "bus": "main",
+          "threshold": -18,
+          "ratio": 3,
+          "attack": 4,
+          "release": 110,
+          "makeup": 4
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "drive": 1.15,
+              "post": 0.9
+            }
+          ]
+        },
+        {
+          "op": "gather",
+          "into": "plate",
+          "lane": "@plate:VOX M"
+        },
+        {
+          "op": "gather",
+          "into": "delay",
+          "lane": "@dly:VOX M"
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "plate",
+          "gain": 0.1
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "delay",
+          "gain": 0.04
+        },
+        {
+          "op": "duck",
+          "bus": "main",
+          "by": "hits",
+          "depth": 0.12
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.75
+        }
+      ]
+    },
+    {
+      "name": "HATS",
+      "drum": true,
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "HATS"
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 900,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "high",
+              "hertz": 11000,
+              "gain": 1.5,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "widen",
+          "bus": "main",
+          "milliseconds": 11,
+          "amount": 0.4,
+          "highPass": 2500
+        },
+        {
+          "op": "empty",
+          "into": "plate",
+          "mono": true
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "plate",
+          "gain": 0.035
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.9
+        },
+        {
+          "op": "flush",
+          "into": "museum",
+          "lane": "m:HATS"
+        }
+      ]
+    },
+    {
+      "name": "PERC",
+      "drum": true,
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "PERC"
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 180,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "high",
+              "hertz": 8000,
+              "gain": 1.5,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "gather",
+          "into": "plate",
+          "lane": "@plate:PERC"
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "plate",
+          "gain": 0.08
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.75
+        }
+      ]
+    },
+    {
+      "name": "SNARE",
+      "drum": true,
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "SNARE"
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 110,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 215,
+              "gain": 2.5,
+              "resonance": 1.2
+            },
+            {
+              "biquad": "peak",
+              "hertz": 900,
+              "gain": -2,
+              "resonance": 1.2
+            },
+            {
+              "biquad": "high",
+              "hertz": 7000,
+              "gain": 2.5,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 2800,
+              "gain": 4,
+              "resonance": 0.8
+            },
+            {
+              "drive": 1.25,
+              "post": 0.86
+            }
+          ]
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.66
+        },
+        {
+          "op": "gather",
+          "into": "plate",
+          "lane": "@plate:SNARE"
+        }
+      ]
+    },
+    {
+      "name": "FX",
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "FX"
+        },
+        {
+          "op": "gather",
+          "into": "plate",
+          "lane": "@plate:FX"
+        },
+        {
+          "op": "send",
+          "from": "main",
+          "into": "plate",
+          "gain": 0.1
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.6
+        },
+        {
+          "op": "flush",
+          "into": "museum",
+          "lane": "m:FX"
+        }
+      ]
+    },
+    {
+      "name": "GLASS",
+      "steps": [
+        {
+          "op": "empty",
+          "into": "main",
+          "mono": false
+        },
+        {
+          "op": "flush",
+          "into": "museum",
+          "lane": "m:GLASS"
+        },
+        {
+          "op": "scale",
+          "bus": "museum",
+          "gain": 0.8
+        }
+      ]
+    },
+    {
+      "name": "BASS",
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "BASS"
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "high",
+              "cutoff": 150,
+              "resonance": 0.7
+            },
+            {
+              "biquad": "peak",
+              "hertz": 800,
+              "gain": 2,
+              "resonance": 0.9
+            },
+            {
+              "drive": 1.8,
+              "post": 0.7
+            },
+            {
+              "biquad": "high",
+              "hertz": 5000,
+              "gain": -3,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "compress",
+          "bus": "main",
+          "threshold": -18,
+          "ratio": 3,
+          "attack": 6,
+          "release": 100,
+          "makeup": 3
+        },
+        {
+          "op": "width",
+          "bus": "main",
+          "width": 1,
+          "monoBelow": 220
+        },
+        {
+          "op": "duck",
+          "bus": "main",
+          "by": "kicks",
+          "depth": 0.45
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.6
+        }
+      ]
+    },
+    {
+      "name": "SUB",
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "SUB",
+          "mono": true
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "svf": "low",
+              "cutoff": 160,
+              "resonance": 0.7
+            },
+            {
+              "svf": "low",
+              "cutoff": 230,
+              "resonance": 0.6
+            },
+            {
+              "drive": 1.25,
+              "post": 0.9
+            },
+            {
+              "svf": "high",
+              "cutoff": 28,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "duck",
+          "bus": "main",
+          "by": "kicks",
+          "depth": 0.82
+        },
+        {
+          "op": "flush",
+          "into": "direct",
+          "lane": "m:SUB",
+          "mono": true
+        },
+        {
+          "op": "filter",
+          "bus": "direct",
+          "chain": [
+            {
+              "svf": "low",
+              "cutoff": 150,
+              "resonance": 0.7
+            },
+            {
+              "svf": "high",
+              "cutoff": 28,
+              "resonance": 0.7
+            }
+          ]
+        },
+        {
+          "op": "stereo",
+          "bus": "main"
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 5.6
+        },
+        {
+          "op": "stereo",
+          "bus": "direct"
+        },
+        {
+          "op": "scale",
+          "bus": "direct",
+          "gain": 0.8
+        }
+      ]
+    },
+    {
+      "name": "KICK",
+      "drum": true,
+      "steps": [
+        {
+          "op": "flush",
+          "into": "main",
+          "lane": "KICK",
+          "mono": true
+        },
+        {
+          "op": "filter",
+          "bus": "main",
+          "chain": [
+            {
+              "drive": 1.3,
+              "post": 0.84
+            },
+            {
+              "biquad": "peak",
+              "hertz": 62,
+              "gain": 2,
+              "resonance": 1.1
+            },
+            {
+              "biquad": "peak",
+              "hertz": 300,
+              "gain": -3,
+              "resonance": 1.2
+            },
+            {
+              "biquad": "peak",
+              "hertz": 3500,
+              "gain": 2,
+              "resonance": 0.9
+            }
+          ]
+        },
+        {
+          "op": "stereo",
+          "bus": "main"
+        },
+        {
+          "op": "scale",
+          "bus": "main",
+          "gain": 0.65
+        }
+      ]
+    }
+  ]
+}

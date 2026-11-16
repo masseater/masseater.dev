@@ -1,12 +1,12 @@
 import { Option, pipe } from "effect";
 
+import type { Mixer } from "#/entities/live/index.ts";
 import { clamp } from "#/shared/lib/math.ts";
 
 import type { LiveMix } from "./contract.ts";
 import type { Deck } from "./deck.ts";
 import type { LiveNode } from "./live.ts";
 import type { Mixdown } from "./mix.ts";
-import type { Mixer } from "./mixing.ts";
 
 const TAIL = 0.05;
 const START = 0;

@@ -1,0 +1,61 @@
+{
+  "drum": {
+    "threshold": -11,
+    "ratio": 2.5,
+    "attack": 8,
+    "release": 90,
+    "makeup": 1.5,
+    "sidechainHighPass": 150,
+    "pre": 1.15,
+    "post": 0.9,
+    "clip": { "threshold": 0.5, "knee": 0.12 },
+    "out": 1
+  },
+  "butterworth": 0.7071,
+  "highPass": 25,
+  "eq": [
+    { "kind": "peak", "hertz": 280, "resonance": 0.9, "gain": -1.2 },
+    { "kind": "peak", "hertz": 2200, "resonance": 0.8, "gain": 2.5 },
+    { "kind": "high", "hertz": 11000, "resonance": 0.7, "gain": 1 }
+  ],
+  "monoBelow": 130,
+  "width": 1.25,
+  "crossover": { "low": 120, "high": 2500 },
+  "bands": [
+    {
+      "threshold": -17,
+      "ratio": 2.5,
+      "attack": 30,
+      "release": 150,
+      "knee": 6,
+      "makeup": 1.5,
+      "clip": { "threshold": 0.38, "knee": 0.1 }
+    },
+    {
+      "threshold": -12,
+      "ratio": 2,
+      "attack": 10,
+      "release": 120,
+      "knee": 6,
+      "makeup": 1,
+      "clip": { "threshold": 9, "knee": 0.1 }
+    },
+    {
+      "threshold": -15,
+      "ratio": 1.5,
+      "attack": 3,
+      "release": 80,
+      "knee": 6,
+      "makeup": 0.5,
+      "clip": { "threshold": 9, "knee": 0.1 }
+    }
+  ],
+  "gain": 1.18,
+  "clip": { "threshold": 0.62, "knee": 0.26 },
+  "limit": { "ceiling": -1.2, "lookahead": 3, "release": 60, "every": 4, "truePeak": true },
+  "every": 32,
+  "block": 4096,
+  "slew": 0.006,
+  "fade": { "before": 0.4, "length": 0.38 },
+  "ceiling": 0.999
+}

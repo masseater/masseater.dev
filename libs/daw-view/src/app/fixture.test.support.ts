@@ -11,6 +11,14 @@ import type {
   Take,
 } from "./index.ts";
 
+const worklets = import.meta.glob<string>("./fixture-worklet.test.support.ts", {
+  query: "?worker&url",
+  import: "default",
+  eager: true,
+});
+
+const worklet = pipe(Rec.values(worklets), Arr.join(""));
+
 const SAMPLE_RATE = 44_100;
 const TIMING = { tempo: 120, swing: 0.5, bars: 8, tail: 0.5 } as const;
 const BAR = 2;
@@ -207,37 +215,6 @@ export const SONG = {
   sampleRate: SAMPLE_RATE,
 } as const satisfies Partial<Song>;
 
-const PLAYER = `(init) => {
-  const stems = init.stems;
-  const gains = new Float32Array(stems.length).fill(1);
-  const linear = (mixer) => (mixer.muted ? 0 : Math.pow(10, mixer.volumeDecibels / 20));
-  let at = -1;
-  let fresh = false;
-  return {
-    msg: (message) => {
-      if (message.mixers) gains.set(message.mixers.map(linear));
-      if (message.play !== undefined) { at = message.play; fresh = true; }
-      if (message.stop) at = -1;
-    },
-    render: (left, right, frames) => {
-      left.fill(0);
-      right.fill(0);
-      if (at < 0) return 0;
-      stems.forEach((stem, index) => {
-        for (let frame = 0; frame < frames; frame++) {
-          const value = (stem[at + frame] || 0) * gains[index];
-          left[frame] += value;
-          right[frame] += value;
-        }
-      });
-      at += frames;
-      if (fresh) { fresh = false; return 1; }
-      if (at >= stems[0].length) { at = -1; return 2; }
-      return 0;
-    },
-  };
-}`;
-
 const MIXED = ["DRUMS", "BASS", "LEAD"] as const;
 
 const liveOf = (samples: Samples): LiveMix => {
@@ -254,7 +231,7 @@ const liveOf = (samples: Samples): LiveMix => {
   );
   return {
     tracks: MIXED,
-    player: PLAYER,
+    worklet,
     init: { stems },
     transfer: pipe(
       stems,

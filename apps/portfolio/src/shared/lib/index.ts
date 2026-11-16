@@ -8,3 +8,4 @@ export {
   wikiPageTitle,
 } from "./seo.ts";
 export type { Head, JsonLd } from "./seo.ts";
+export { browserRuntime } from "./telemetry.ts";

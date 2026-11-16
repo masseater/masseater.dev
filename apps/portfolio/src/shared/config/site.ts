@@ -12,6 +12,8 @@ export const site = {
   ogImage: { path: "/og.png", width: 1200, height: 630, type: "image/png" },
   feedPath: "/feed.xml",
   starsApiPath: "/api/stars",
+  tracesPath: "/otlp/v1/traces",
+  telemetryService: "masseater-dev-web",
   robotsPath: "/robots.txt",
   sitemapFile: "sitemap.xml",
   externalPaths: ["/decision-bench/"],

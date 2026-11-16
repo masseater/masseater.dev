@@ -7,7 +7,6 @@ import type { LiveMix, Progress, Rendered, Song } from "#/widgets/daw-view/model
 import { relayout } from "#/widgets/daw-view/model/layout.ts";
 import { peaksOf, shadesOf } from "#/widgets/daw-view/model/mix.ts";
 import { mixingOf } from "#/widgets/daw-view/model/mixing.ts";
-import type { Mixer } from "#/widgets/daw-view/model/mixing.ts";
 import { mixedWith, settled } from "#/widgets/daw-view/model/model.ts";
 
 import { rebuildChrome } from "./controls.ts";
@@ -75,7 +74,7 @@ const finish = (shell: Shell, song: Song, rendered: Rendered): void => {
   const mixers = pipe(
     Option.fromUndefinedOr(rendered.live),
     Option.flatMapNullishOr(({ mixers: given }) => given),
-    Option.getOrElse((): Readonly<Record<string, Mixer>> => ({})),
+    Option.getOrElse((): NonNullable<LiveMix["mixers"]> => ({})),
   );
   shell.model.step(mixedWith(mixingOf(mixers)(mixed)));
   shell.transport.mix(shell.model.read().mixing);

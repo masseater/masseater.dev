@@ -1,3 +1,4 @@
+import { browserSpans } from "@r_masseater/workers-tracing/browser-spans";
 import { run } from "@r_masseater/workers-tracing/effect";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
@@ -73,10 +74,20 @@ const assetRequest = (request: Request): Request =>
 const isStarsApi = (request: Request): boolean =>
   Str.startsWith(`${site.starsApiPath}/`)(new URL(request.url).pathname);
 
-const upstream = (request: Request): Promise<Response> | Response =>
+const receiveSpans = browserSpans({ service: site.telemetryService });
+
+const isTraces = (request: Request): boolean => new URL(request.url).pathname === site.tracesPath;
+
+const page = (request: Request): Promise<Response> | Response =>
   Option.match(Option.liftPredicate(request, isStarsApi), {
     onNone: () => env.ASSETS.fetch(assetRequest(request)),
     onSome: (api) => handleStars(api),
+  });
+
+const upstream = (request: Request): Promise<Response> | Response =>
+  Option.match(Option.liftPredicate(request, isTraces), {
+    onNone: () => page(request),
+    onSome: receiveSpans,
   });
 
 const newNonce = (): string => Base64.encode(crypto.getRandomValues(new Uint8Array(NONCE_BYTES)));
