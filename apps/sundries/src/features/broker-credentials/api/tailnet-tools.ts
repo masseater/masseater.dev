@@ -10,11 +10,12 @@ import { brokerFailed, meteredInput, runTool } from "#/shared/api/index.ts";
 const ONE_JOIN = 1;
 
 const DESCRIPTION =
-  "持ち主の tailnet に入り、Windows の PC（ssh の Host win）へ SSH するための短命な資格を返す。publicKey に ~/.ssh/win.pub（ssh-ed25519）の中身を渡す。返った値で `tailscale up --client-id=<clientId> --id-token=<idToken> --advertise-tags=<tags をカンマでつないだもの>` を実行し、sshCertificate を ~/.ssh/win-cert.pub に書くと `ssh win` で入れる。idToken は 5 分、証明書は expiresAt まで使え、切れたらもう一度呼ぶ。";
+  "Return short-lived credentials to SSH into the owner's Windows PC over the tailnet.";
 
 const TailnetInput = Schema.Struct({
   publicKey: Schema.String.annotate({
-    description: "証明書を受け取る ssh-ed25519 の公開鍵（~/.ssh/win.pub の 1 行）",
+    description:
+      "The ssh-ed25519 line of ~/.ssh/win.pub. Then run tailscale up --client-id=<clientId> --id-token=<idToken> --advertise-tags=<tags joined with commas>, write sshCertificate to ~/.ssh/win-cert.pub and ssh win. idToken lasts 5 minutes",
   }),
 });
 

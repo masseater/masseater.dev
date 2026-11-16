@@ -1,3 +1,4 @@
+import { compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
@@ -8,11 +9,20 @@ import { orMissing, runTool } from "#/shared/api/index.server.ts";
 import { keywordOf } from "#/shared/db/index.server.ts";
 
 const READ_ONLY = { readOnlyHint: true, openWorldHint: false };
-const KEYWORD_SCHEMA = KeywordInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
-const ID_SCHEMA = IdInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const KEYWORD_SCHEMA = KeywordInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+  compactInput,
+);
+const ID_SCHEMA = IdInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+  compactInput,
+);
 const VIDEO_SEARCH_SCHEMA = VideoSearchInput.pipe(
   Schema.toStandardSchemaV1,
   Schema.toStandardJSONSchemaV1,
+  compactInput,
 );
 
 export const registerReadTools = (server: McpServer): McpServer => {
