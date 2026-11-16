@@ -1,10 +1,10 @@
 import type { Comment } from "@masseater.dev/akapen-protocol";
 import { runtime } from "@masseater.dev/media-notes-ui";
+import type { ApiFailed } from "@masseater.dev/media-notes-ui";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 import { Atom, AtomRegistry } from "effect/reactivity";
 
 import { deleteComment, restoreComment } from "#/shared/api";
-import type { ApiFailed } from "#/shared/api";
 
 import { commentsAtom } from "./comments.ts";
 

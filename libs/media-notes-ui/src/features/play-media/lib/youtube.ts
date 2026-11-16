@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import type { Scope } from "effect";
 
-import type { Mount, Player } from "#/shared/lib/player.ts";
+import type { Mount, Player } from "#src/shared/lib/player.ts";
 
 const LOADED = 1;
 

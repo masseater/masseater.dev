@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Span, Tone } from "#/features/select-range/model/range.ts";
+import type { Span, Tone } from "#src/features/select-range/model/range.ts";
 
 import { MARK_LANE } from "./lanes.ts";
 import { SpanRect } from "./span-rect.tsx";

@@ -2,9 +2,9 @@ import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Option, String as Str } from "effect";
 import { useEffect } from "react";
 
-import { anchorAtom, rangeAtom, spanOf } from "#/features/select-range/model/range.ts";
-import { ignoredKey } from "#/shared/lib/keys.ts";
-import type { Player } from "#/shared/lib/player.ts";
+import { anchorAtom, rangeAtom, spanOf } from "#src/features/select-range/model/range.ts";
+import { ignoredKey } from "#src/shared/lib/keys.ts";
+import type { Player } from "#src/shared/lib/player.ts";
 
 const KEY = "m";
 

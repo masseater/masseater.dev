@@ -1,5 +1,5 @@
-import { anchorAtom, openedAtom, rangeAtom, runtime } from "@masseater.dev/media-notes-ui";
-import { Effect, Option } from "effect";
+import { runtime, savedRange } from "@masseater.dev/media-notes-ui";
+import { Array as Arr, Effect } from "effect";
 import { AtomRegistry } from "effect/reactivity";
 
 import { marksAtom } from "#/entities/mark";
@@ -7,26 +7,20 @@ import { postMark } from "#/shared/api";
 
 import { aspectsAtom, verbAtom, wordsAtom } from "./draft.ts";
 
+const EMPTY = "";
+
 /** @internal */
 export const saveAtom = runtime.fn(
   Effect.fnUntraced(function* save() {
-    const registry = yield* AtomRegistry.AtomRegistry;
-    const { media } = yield* Effect.fromOption(registry.get(openedAtom));
-    const { from, to } = yield* Effect.fromOption(registry.get(rangeAtom));
-    yield* postMark({
-      song: media,
-      from,
-      to,
-      verb: registry.get(verbAtom),
-      aspects: registry.get(aspectsAtom),
-      words: registry.get(wordsAtom),
-    });
-    yield* Effect.sync(() => {
-      registry.set(rangeAtom, Option.none());
-      registry.set(anchorAtom, Option.none());
-      registry.set(aspectsAtom, []);
-      registry.set(wordsAtom, "");
-      registry.refresh(marksAtom);
-    });
+    const drafted = yield* AtomRegistry.AtomRegistry;
+    const verb = drafted.get(verbAtom);
+    const aspects = drafted.get(aspectsAtom);
+    const words = drafted.get(wordsAtom);
+    const registry = yield* savedRange(({ media }, { from, to }) =>
+      postMark({ song: media, from, to, verb, aspects, words }),
+    );
+    registry.set(aspectsAtom, Arr.empty());
+    registry.set(wordsAtom, EMPTY);
+    registry.refresh(marksAtom);
   }),
 );

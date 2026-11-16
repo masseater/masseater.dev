@@ -1,8 +1,8 @@
 import { Option } from "effect";
 import { useEffect } from "react";
 
-import { ignoredKey } from "#/shared/lib/keys.ts";
-import type { Player } from "#/shared/lib/player.ts";
+import { ignoredKey } from "#src/shared/lib/keys.ts";
+import type { Player } from "#src/shared/lib/player.ts";
 
 const KEY = " ";
 

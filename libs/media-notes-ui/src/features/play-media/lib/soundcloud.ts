@@ -2,9 +2,9 @@ import type { Opened } from "@masseater.dev/media-notes-protocol";
 import { Effect, MutableRef, Option } from "effect";
 import type { Scope } from "effect";
 
-import { pageOf } from "#/entities/media/index.ts";
-import { STILL } from "#/shared/lib/player.ts";
-import type { Mount, Player } from "#/shared/lib/player.ts";
+import { pageOf } from "#src/entities/media/index.ts";
+import { STILL } from "#src/shared/lib/player.ts";
+import type { Mount, Player } from "#src/shared/lib/player.ts";
 
 type Progress = Readonly<{ currentPosition: number }>;
 

@@ -2,9 +2,9 @@ import type { Opened } from "@masseater.dev/media-notes-protocol";
 import { Effect, Option } from "effect";
 import { Atom, AtomRegistry } from "effect/reactivity";
 
-import { openedAtom } from "#/entities/media/index.ts";
-import { chooseFile, openFile, openLink } from "#/shared/api/index.ts";
-import { runtime } from "#/shared/lib/runtime.ts";
+import { openedAtom } from "#src/entities/media/index.ts";
+import { chooseFile, openFile, openLink } from "#src/shared/api/index.ts";
+import { runtime } from "#src/shared/lib/runtime.ts";
 
 /** @internal */
 export const linkAtom = Atom.make("").pipe(Atom.keepAlive);

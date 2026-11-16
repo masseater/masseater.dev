@@ -3,7 +3,7 @@ import { Effect } from "effect";
 import type { Scope } from "effect";
 import { constVoid } from "effect/Function";
 
-import type { Mount, Player } from "#/shared/lib/player.ts";
+import type { Mount, Player } from "#src/shared/lib/player.ts";
 
 const START = 0;
 

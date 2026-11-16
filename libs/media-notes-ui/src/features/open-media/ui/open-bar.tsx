@@ -5,8 +5,8 @@ import { LoaderCircle } from "lucide-react";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode, SubmitEvent } from "react";
 
-import { linkAtom, openLinkAtom } from "#/features/open-media/model/open.ts";
-import { useFileDrop } from "#/features/open-media/model/use-file-drop.ts";
+import { linkAtom, openLinkAtom } from "#src/features/open-media/model/open.ts";
+import { useFileDrop } from "#src/features/open-media/model/use-file-drop.ts";
 
 import { ChooseFile } from "./choose-file.tsx";
 import { Refusal } from "./refusal.tsx";

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import type { Span } from "#/features/select-range/model/range.ts";
-import type { Position } from "#/shared/lib/player.ts";
+import type { Span } from "#src/features/select-range/model/range.ts";
+import type { Position } from "#src/shared/lib/player.ts";
 
 import { HEAD, PLAY_LANE, WHOLE_LANE } from "./lanes.ts";
 import { RangeLayer } from "./range-layer.tsx";
