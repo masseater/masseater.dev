@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@effect/platform-node": "catalog:",
+    "@masseater.dev/component-release": "workspace:*",
+    "@masseater.dev/node-main": "workspace:*",
+    "@types/node": "catalog:",
     "effect": "catalog:stack",
-    "smol-toml": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }
