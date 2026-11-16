@@ -66,7 +66,7 @@ const loader: From<FumxServices, From<Reader, From<URI, Effect.Effect<void>>>> =
         yield* Effect.forEach(
           document.parseResult.value.imports,
           (node) => load(importedUriOf(node)),
-          { discard: true },
+          { concurrency: 1, discard: true },
         );
       });
     return load;

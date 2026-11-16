@@ -118,6 +118,7 @@ test("finishes and returns regions when branches is below 2", { timeout: SOON },
             ),
           ),
         ),
+        { concurrency: 1 },
       );
       expect(
         pipe(

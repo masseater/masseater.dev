@@ -10,39 +10,51 @@ import { checkCatalogEntries } from "./catalog-entries.ts";
 
 const lines = (text: readonly string[]): string => pipe([...text, ""], Arr.join("\n"));
 
+const FIXTURE = {
+  "pnpm-workspace.yaml": lines([
+    "catalog:",
+    "  used: 1.0.0",
+    "  unused: 1.0.0",
+    "  overridden: 1.0.0",
+    "catalogs:",
+    "  stack:",
+    "    effect: 4.1.4",
+    "    typescript: 7.1.0",
+    "overrides:",
+    '  overridden: "catalog:"',
+    "minimumReleaseAgeExclude:",
+    '  - "@scope/kept@2.0.0"',
+    "  - gone@1.0.0",
+    "  - pattern-*",
+  ]),
+  "pnpm-lock.yaml": lines([
+    "lockfileVersion: '9.0'",
+    "",
+    "packages:",
+    "",
+    "  '@scope/kept@2.0.0':",
+    "    resolution: {integrity: sha512-AAAA}",
+    "",
+    "  used@1.0.0:",
+    "    resolution: {integrity: sha512-BBBB}",
+    "",
+    "snapshots:",
+    "",
+    "  '@scope/kept@2.0.0': {}",
+    "",
+    "  used@1.0.0: {}",
+  ]),
+  "package.json": lines([
+    "{",
+    '  "dependencies": { "used": "catalog:" },',
+    '  "devDependencies": { "effect": "catalog:stack" }',
+    "}",
+  ]),
+};
+
 const flagsUnusedAndStale = Effect.gen(function* flagsUnusedAndStale() {
   const repositoryFiles = yield* RepositoryFiles;
-  const root = yield* gitRepositoryWith({
-    "pnpm-workspace.yaml": lines([
-      "catalog:",
-      "  used: 1.0.0",
-      "  unused: 1.0.0",
-      "  overridden: 1.0.0",
-      "catalogs:",
-      "  stack:",
-      "    effect: 4.1.4",
-      "    typescript: 7.1.0",
-      "overrides:",
-      '  overridden: "catalog:"',
-      "minimumReleaseAgeExclude:",
-      '  - "@scope/kept@2.0.0"',
-      "  - gone@1.0.0",
-      "  - pattern-*",
-    ]),
-    "pnpm-lock.yaml": lines([
-      "packages:",
-      "  '@scope/kept@2.0.0':",
-      "    resolution: {}",
-      "  used@1.0.0:",
-      "    resolution: {}",
-    ]),
-    "package.json": lines([
-      "{",
-      '  "dependencies": { "used": "catalog:" },',
-      '  "devDependencies": { "effect": "catalog:stack" }',
-      "}",
-    ]),
-  });
+  const root = yield* gitRepositoryWith(FIXTURE);
   const problems = yield* checkCatalogEntries(root);
   expect(
     pipe(

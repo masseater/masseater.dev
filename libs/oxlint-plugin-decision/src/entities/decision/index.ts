@@ -1,7 +1,7 @@
 export { AnswerSchema, isReported } from "./model/answer.ts";
 export { OUT_OF_BUDGET } from "./model/budget.ts";
 export { commentedSnippetOf, contextOf, lacksComment } from "./model/context.ts";
-export { defineDecisionRule, defineProvider } from "./model/define.ts";
+export { defineDecisionRule } from "./model/define.ts";
 export {
   EVERY_LINE,
   locates,
@@ -79,10 +79,7 @@ export type {
   Verdict,
   Verdicts,
 } from "./model/types.ts";
-export {
-  mergeResponses,
-  snippetRequestsFor,
-  wireRequestsFor,
-  yesNoRequestsFor,
-} from "./model/wire.ts";
+export { fileRequestsFor, mergeResponses, snippetRequestsFor } from "./model/wire.ts";
+export { CLEF_MODEL, JEV_MODEL } from "./model/models.ts";
+export type { DecisionModel } from "./model/models.ts";
 export type { WireRequest } from "./model/wire.ts";

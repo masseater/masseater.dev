@@ -1,6 +1,6 @@
 import { run } from "@masseater.dev/component-release";
 import { runMain } from "@masseater.dev/node-main";
-import { Effect, FileSystem, Layer, Path, String as Str, pipe } from "effect";
+import { Effect, FileSystem, Layer, Path, String as Str } from "effect";
 import { Command } from "effect/cli";
 import { Digest } from "effect/crypto";
 
@@ -68,10 +68,9 @@ const freshDirectories = Effect.fn("runtime.freshDirectories")(function* freshDi
 
 const saveLicenses = Effect.fn("runtime.saveLicenses")(function* saveLicenses(licenses: string) {
   const path = yield* Path.Path;
-  yield* pipe(
-    LICENSES,
-    Effect.forEach(({ url, name }) => save({ url, to: path.join(licenses, name) })),
-  );
+  yield* Effect.forEach(LICENSES, ({ url, name }) => save({ url, to: path.join(licenses, name) }), {
+    concurrency: 1,
+  });
 });
 
 const fetchRuntime = Effect.fn("runtime.fetch")(function* fetchRuntime(target: Platform) {

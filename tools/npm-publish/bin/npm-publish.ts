@@ -97,7 +97,7 @@ const brokerToken = Effect.fn("broker.npmToken")(function* brokerToken(oidc: str
   const response = yield* HttpClient.filterStatusOk(client).execute(request);
   const grants = yield* HttpClientResponse.schemaBodyJson(Grants)(response);
   const token = Option.fromUndefinedOr(grants.npmToken);
-  yield* Effect.forEach(Option.toArray(token), mask);
+  yield* Effect.forEach(Option.toArray(token), mask, { concurrency: 1 });
   return token;
 });
 
@@ -136,18 +136,6 @@ const authEnv = Effect.fn("authEnv")(function* authEnv() {
   });
 });
 
-const deprecate = Effect.fn("deprecate")(function* deprecate(
-  name: string,
-  env: Readonly<Record<string, string>>,
-) {
-  const range = yield* Config.option(Config.NonEmptyString("DEPRECATE_RANGE"));
-  const message = yield* Config.option(Config.NonEmptyString("DEPRECATE_MESSAGE"));
-  if (Option.isNone(range) || Option.isNone(message)) {
-    return;
-  }
-  yield* runOrFail("npm", ["deprecate", `${name}@${range.value}`, message.value], env);
-});
-
 const publishNew = Effect.fn("publishNew")(function* publishNew(
   manifest: typeof Manifest.Type,
   env: Readonly<Record<string, string>>,
@@ -165,8 +153,7 @@ const publishNew = Effect.fn("publishNew")(function* publishNew(
 const publish = Effect.fn("publish")(function* publish() {
   const manifest = yield* manifestOf();
   const env = yield* authEnv();
-  yield* publishNew(manifest, env);
-  return yield* deprecate(manifest.name, env);
+  return yield* publishNew(manifest, env);
 });
 
 runMain("npm-publish")(Effect.scoped(publish()));

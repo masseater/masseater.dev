@@ -9,6 +9,7 @@
     "lcp",
     "lighthouse",
     "opentelemetry",
+    "tanstack-intent",
     "user-flow",
     "web-vitals"
   ],
@@ -26,8 +27,9 @@
     "web-vitals-flow": "./bin/web-vitals-flow.ts"
   },
   "files": [
+    "LICENSE",
     "dist",
-    "LICENSE"
+    "skills/measure-web-vitals"
   ],
   "type": "module",
   "imports": {

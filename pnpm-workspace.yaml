@@ -8,6 +8,13 @@ packages:
 catalogMode: prefer
 
 catalog:
+  "@pnpm/lockfile.fs": 1100.2.18
+  "@pnpm/logger": 1100.0.0
+  "@pnpm/workspace.projects-reader": 1101.1.7
+  "@pnpm/workspace.workspace-manifest-reader": 1100.3.2
+  "@pnpm/workspace.workspace-manifest-writer": 1100.2.11
+  "@textlint-ja/textlint-rule-preset-ai-writing": 1.7.0
+  textlint-rule-preset-ja-technical-writing: 12.0.2
   "@textlint/ast-node-types": 15.8.0
   "@textlint/types": 15.8.0
   "@bufbuild/buf": 1.75.0
@@ -47,7 +54,6 @@ catalog:
   discord.js: 14.28.1
   discord-api-types: 0.38.59
   oxlint-plugin-eslint: 1.93.0
-  "@ast-grep/cli": 0.51.2
   "@cloudflare/workers-types": 5.20261113.1
   "@effect/platform-node": 4.1.4
   "@effect/platform-node-shared": 4.1.4
@@ -73,6 +79,7 @@ catalog:
   "@vitejs/plugin-rsc": 0.5.39
   skills: 1.8.1
   "@tanstack/intent": 0.5.6
+  "@typescript/typescript6": 6.0.2
   "@mdx-js/rollup": 3.1.1
   "@shikijs/rehype": 4.6.0
   "@tailwindcss/typography": 0.5.20
@@ -237,7 +244,7 @@ catalog:
   "@tauri-apps/api": 2.12.4
   "@tauri-apps/cli": 2.12.4
   "@tauri-apps/plugin-opener": 2.7.3
-  "@anthropic-ai/claude-agent-sdk": 0.3.323
+  "@anthropic-ai/claude-agent-sdk": 0.3.325
   "@types/dom-speech-recognition": 0.0.12
   oauth4webapi: ^3.8.8
   agents: 0.33.0
@@ -253,7 +260,7 @@ catalogs:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20
     "@effect/atom-react": 4.1.4
     "@huggingface/transformers": 4.3.2
-    "@effect/tsgo": 0.68.1
+    "@effect/tsgo": 0.69.0
     "@elysiajs/eden": 1.4.9
     "@tanstack/react-query": 5.107.1
     "@tanstack/react-start": 1.169.5
@@ -295,7 +302,6 @@ allowBuilds:
   "@r_masseater/vite-plus-adopt": true
   tesseract.js: false
   "@google/genai": false
-  "@ast-grep/cli": true
   esbuild: true
   workerd: true
   protobufjs: false

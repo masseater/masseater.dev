@@ -20,7 +20,7 @@ runMain("pod-rattle-clap-validator")(
     yield* Effect.forEach(
       bundles,
       (bundle) => run({ file: validator, args: ["validate", bundle] }),
-      { discard: true },
+      { concurrency: 1, discard: true },
     );
   }),
 );

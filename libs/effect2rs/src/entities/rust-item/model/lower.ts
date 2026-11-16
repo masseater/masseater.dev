@@ -109,7 +109,9 @@ const objects =
         onNone: () => refuse(path)("a struct needs an identifier"),
         onSome: ({ parameter, type }) =>
           pipe(
-            Effect.all([lower(`${path}[key]`)(parameter), lower(`${path}[]`)(type)]),
+            Effect.all([lower(`${path}[key]`)(parameter), lower(`${path}[]`)(type)], {
+              concurrency: 1,
+            }),
             Effect.map(dictionary),
           ),
       }),
@@ -137,7 +139,10 @@ const arrays =
       Match.when(isTuple, ({ elements }) =>
         pipe(
           elements,
-          Effect.forEach(({ type }, index) => lower(`${path}[${index}]`)(type)),
+          (items) =>
+            Effect.forEach(items, ({ type }, index) => lower(`${path}[${index}]`)(type), {
+              concurrency: 1,
+            }),
           Effect.map(tuple),
         ),
       ),

@@ -4,6 +4,7 @@
   "description": "textlint preset of masseater's Japanese writing rules: yomiyasu, which flags hard-to-read Japanese written by AI, and no-taigendome, which bans sentences that end in a noun after a comma.",
   "keywords": [
     "japanese",
+    "tanstack-intent",
     "textlint",
     "textlint-rule",
     "textlintrule"
@@ -19,8 +20,9 @@
     "directory": "libs/textlint-rule-preset-ja"
   },
   "files": [
-    "dist",
     "LICENSE",
+    "dist",
+    "skills/check-japanese-writing",
     "upstream/LICENSE",
     "upstream/UNICODE-LICENSE.txt"
   ],

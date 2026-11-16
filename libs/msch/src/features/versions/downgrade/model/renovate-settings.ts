@@ -9,6 +9,7 @@ const AUTOMERGE_OFF = /["']?platformAutomerge["']?\s*:\s*false/gu;
 const VERSION_CAP = /["']?allowedVersions["']?\s*:\s*["'](?<range>[^"']*<[^"']*)["']/gu;
 const AUTOMERGE_RULE: RuleName = "renovate-platform-automerge";
 const CAP_RULE: RuleName = "renovate-version-cap";
+const READ_CONCURRENCY = 16;
 const AUTOMERGE_MESSAGE =
   "sets `platformAutomerge: false`. Keep the platform's automerge on so passing updates merge without waiting for the next Renovate run.";
 const CAP_MESSAGE =
@@ -53,6 +54,7 @@ export const checkRenovateSettings = Effect.fn("checkRenovateSettings")(
             ),
           );
       },
+      { concurrency: READ_CONCURRENCY },
     );
     return Arr.flatten(found);
   },

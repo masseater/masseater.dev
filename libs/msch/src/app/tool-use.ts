@@ -4,8 +4,11 @@ import { checkMissingHooks } from "#/features/agent-settings/index.ts";
 import { checkRestrictedRules } from "#/features/overrides/index.ts";
 import { checkScripts } from "#/features/scripts/index.ts";
 import { checkVitePlus } from "#/features/vite-plus/index.ts";
-import { checkWorkflowCommits } from "#/features/workflows/commits/index.ts";
-import { checkWorkflowQueues } from "#/features/workflows/concurrency/index.ts";
+import {
+  checkFullHistoryCheckout,
+  checkWorkflowCommits,
+  checkWorkflowQueues,
+} from "#/features/workflows/index.ts";
 
 /** @internal */
 export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(root: string) {
@@ -16,6 +19,7 @@ export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(roo
       checkScripts(root),
       checkWorkflowQueues(root),
       checkWorkflowCommits(root),
+      checkFullHistoryCheckout(root),
       checkRestrictedRules(root),
     ],
     { concurrency: "unbounded" },

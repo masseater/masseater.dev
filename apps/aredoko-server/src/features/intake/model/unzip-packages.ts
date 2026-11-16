@@ -124,15 +124,11 @@ export const unzipPackages = Effect.fn("unzipPackages")(function* unzipPackagesI
   const entries = yield* attempt(() =>
     reader.getEntries({ decodeText: (value) => decodeName(value) }),
   );
-  const packages = yield* pipe(
-    entries,
-    Array.filter(isPackageEntry),
-    Effect.forEach((entry) => placeEntry(folder, entry)),
+  const packages = yield* pipe(entries, Array.filter(isPackageEntry), (items) =>
+    Effect.forEach(items, (entry) => placeEntry(folder, entry), { concurrency: 1 }),
   );
-  const assets = yield* pipe(
-    entries,
-    Array.filter(isAssetEntry),
-    Effect.forEach((entry) => placeEntry(folder, entry)),
+  const assets = yield* pipe(entries, Array.filter(isAssetEntry), (items) =>
+    Effect.forEach(items, (entry) => placeEntry(folder, entry), { concurrency: 1 }),
   );
   return placedCount(packages) + bundleCount(assets);
 }, Effect.scoped);

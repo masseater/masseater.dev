@@ -104,9 +104,9 @@ const subpathTarget = (
 
 const existingSource = Effect.fn("existingSource")(function* existingSource(base: string) {
   const files = yield* RepositoryFiles;
-  const found = yield* pipe(
+  const found = yield* Effect.forEach(
     SOURCE_SUFFIXES,
-    Effect.forEach((suffix) => {
+    (suffix) => {
       const candidate = `${base}${suffix}`;
       return files
         .isDirectory(candidate)
@@ -117,7 +117,8 @@ const existingSource = Effect.fn("existingSource")(function* existingSource(base
             ),
           ),
         );
-    }),
+    },
+    { concurrency: 1 },
   );
   return Arr.head(Arr.getSomes(found));
 });
@@ -157,9 +158,10 @@ const referencesIn = Effect.fn("referencesIn")(function* referencesIn(graph: Gra
     onNone: (): readonly string[] => [],
     onSome: (source) => specifiersIn(graph.api, file, source),
   });
-  const references = yield* pipe(
+  const references = yield* Effect.forEach(
     specifiers,
-    Effect.forEach((specifier) => referenceOf(graph, file, specifier)),
+    (specifier) => referenceOf(graph, file, specifier),
+    { concurrency: 1 },
   );
   const found = Arr.getSomes(references);
   return { packages: Arr.getFailures(found), sources: Arr.getSuccesses(found) };
@@ -202,14 +204,14 @@ export const packagesByEntry = Effect.fn("packagesByEntry")(function* packagesBy
     Option.getOrElse((): Readonly<Record<string, string>> => ({})),
   );
   const graph: Graph = { api, directory, imports };
-  return yield* pipe(
+  return yield* Effect.forEach(
     entries,
-    Effect.forEach((entry) =>
+    (entry) =>
       packagesFrom(graph, {
         pending: [entry],
         visited: HashSet.empty(),
         packages: HashSet.empty(),
       }).pipe(Effect.map((packages) => [entry, packages] as const)),
-    ),
+    { concurrency: 1 },
   );
 });

@@ -12,14 +12,14 @@ import {
 } from "effect";
 import { Digest } from "effect/crypto";
 
-import { AnswerSchema, parseVerdicts, snippetRefOf } from "#/entities/decision/index.ts";
+import { AnswerSchema, PREFIX, parseVerdicts, snippetRefOf } from "#/entities/decision/index.ts";
 import type { Answer, DecisionRequest, DecisionResponse } from "#/entities/decision/index.ts";
 
 const DATA_FIRST_ARITY = 2;
 
 const CACHE_VERSION = 8;
 /** @internal */
-export const CACHE_DIR = ["node_modules", ".cache", "oxlint-plugin-decision"] as const;
+export const CACHE_DIR = `node_modules/.cache/${PREFIX}`;
 
 const encodeJson = (value: unknown): Effect.Effect<string> =>
   Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
@@ -44,7 +44,7 @@ const cacheFile = Effect.fn("cacheFile")(function* cacheFile(key: unknown) {
   const path = yield* Path.Path;
   const json = yield* encodeJson(key);
   const hash = yield* digest.digestHex(Digest.sha256, new TextEncoder().encode(json));
-  return path.resolve(...CACHE_DIR, `${hash}.json`);
+  return path.resolve(CACHE_DIR, `${hash}.json`);
 });
 
 const CachedAnswerSchema = Schema.Struct({ model: Schema.NonEmptyString, answer: AnswerSchema });

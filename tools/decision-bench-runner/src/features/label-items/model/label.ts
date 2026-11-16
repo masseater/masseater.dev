@@ -52,6 +52,7 @@ export const askThrice = Effect.fn("askThrice")(function* askThrice(question: Re
   const results = yield* Effect.forEach(
     Arr.makeBy(SAMPLE_COUNT, (sample) => sample),
     (sample) => opus.ask({ system: SYSTEM, prompt, schema: AnswerSchema, jsonSchema, sample }),
+    { concurrency: 1 },
   );
   return {
     answers: pipe(

@@ -2,33 +2,28 @@ import { Array as Arr, Match, Option, Result, Schema, pipe } from "effect";
 
 const SignedAmount = Schema.Struct({
   kind: Schema.Literal("signed"),
-  column: Schema.NonEmptyString.annotate({ description: "金額の列の見出し" }),
+  column: Schema.NonEmptyString,
   outflowPositive: Schema.Boolean.annotate({
-    description:
-      "true なら正の数を出金（カードの利用明細の多く）、false なら正の数を入金として読む",
+    description: "true when positive amounts are outflows, as on most card statements",
   }),
 });
 
 const SplitAmount = Schema.Struct({
   kind: Schema.Literal("split"),
-  outflow: Schema.NonEmptyString.annotate({
-    description: "出金（お支払金額・引出し）の列の見出し",
-  }),
-  inflow: Schema.NonEmptyString.annotate({ description: "入金（お預入れ金額）の列の見出し" }),
+  outflow: Schema.NonEmptyString,
+  inflow: Schema.NonEmptyString,
 });
 
 const DescriptionColumns = Schema.NonEmptyArray(Schema.NonEmptyString).annotate({
-  description: "摘要として空白でつなぐ列の見出し。先の列ほど前に置く",
+  description: "Columns joined with spaces into the description",
 });
-
-const MemoColumn = Schema.NonEmptyString.annotate({ description: "メモの列の見出し" });
 
 export const ColumnsSchema = Schema.Struct({
-  date: Schema.NonEmptyString.annotate({ description: "日付の列の見出し" }),
+  date: Schema.NonEmptyString,
   description: DescriptionColumns,
-  memo: Schema.optionalKey(MemoColumn),
+  memo: Schema.optionalKey(Schema.NonEmptyString),
   amount: Schema.Union([SignedAmount, SplitAmount]),
-});
+}).annotate({ description: "Column headings in the CSV" });
 
 export type Columns = typeof ColumnsSchema.Type;
 

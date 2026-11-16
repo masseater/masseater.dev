@@ -71,7 +71,7 @@ const workerLogs = Effect.gen(function* workerLogs() {
         workers,
         source,
       }),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 });
 

@@ -32,7 +32,7 @@ export const listHistory = ({
   const ofRecord = and(eq(revision.entity, entity), eq(revision.entityId, String(id)));
   return query(() =>
     db.select().from(revision).where(ofRecord).orderBy(desc(revision.rev)).limit(limit),
-  ).pipe(Effect.flatMap(Effect.forEach(entryOf)));
+  ).pipe(Effect.flatMap((items) => Effect.forEach(items, entryOf, { concurrency: 1 })));
 };
 
 export const findRevision = ({

@@ -34,7 +34,10 @@ const pruneOlder = Effect.fn("pruneOlder")(function* pruneOlder(prefix: string) 
   const { actions_caches } = yield* getJson(Caches)(
     `actions/caches?ref=${MAIN}&key=${encodeURIComponent(prefix)}&sort=created_at&direction=desc&per_page=100`,
   );
-  yield* Effect.forEach(pipe(actions_caches, Arr.drop(NEWEST)), removeCache, { discard: true });
+  yield* Effect.forEach(pipe(actions_caches, Arr.drop(NEWEST)), removeCache, {
+    concurrency: 1,
+    discard: true,
+  });
 });
 
 const PERSIST = "persist-";
@@ -56,7 +59,7 @@ const prunePersisted = Effect.gen(function* prunePersisted() {
       ),
     ),
   );
-  yield* Effect.forEach(older, removeCache, { discard: true });
+  yield* Effect.forEach(older, removeCache, { concurrency: 1, discard: true });
 });
 
 const pruneBranches = Effect.gen(function* pruneBranches() {
@@ -65,7 +68,7 @@ const pruneBranches = Effect.gen(function* pruneBranches() {
     actions_caches,
     Arr.filter(({ ref }) => ref !== MAIN),
   );
-  yield* Effect.forEach(branches, removeCache, { discard: true });
+  yield* Effect.forEach(branches, removeCache, { concurrency: 1, discard: true });
 });
 
 const reportUsage = Effect.gen(function* reportUsage() {
@@ -80,12 +83,12 @@ const reportUsage = Effect.gen(function* reportUsage() {
     actions_caches,
     ({ key, ref, size_in_bytes, last_accessed_at }) =>
       Console.log(`${megabytes(size_in_bytes)} ${ref} ${key} ${last_accessed_at}`),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 });
 
 runMain("prune-caches")(
-  Effect.forEach(PREFIXES, pruneOlder, { discard: true }).pipe(
+  Effect.forEach(PREFIXES, pruneOlder, { concurrency: 1, discard: true }).pipe(
     Effect.andThen(prunePersisted),
     Effect.andThen(pruneBranches),
     Effect.andThen(reportUsage),

@@ -76,7 +76,9 @@ const scriptBodies = (html: string): readonly string[] =>
   );
 
 export const inlineScriptHashes = (html: string): Effect.Effect<readonly string[]> =>
-  pipe(scriptBodies(html), Arr.dedupe, Effect.forEach(sourceHash));
+  pipe(scriptBodies(html), Arr.dedupe, (items) =>
+    Effect.forEach(items, sourceHash, { concurrency: 1 }),
+  );
 
 export const pageSlug = (page: string): string =>
   pipe(page, Str.replace(INDEX_PAGE, ""), Str.replace(HTML_EXTENSION, ""));
@@ -88,13 +90,14 @@ export const pageHashes = <Failure, Requirements>({
   entries: readonly string[];
   read: (page: string) => Effect.Effect<string, Failure, Requirements>;
 }>): Effect.Effect<readonly PageHashes[], Failure, Requirements> =>
-  pipe(
-    entries,
-    Arr.filter(Str.endsWith(".html")),
-    Effect.forEach((page) =>
-      read(page).pipe(
-        Effect.flatMap(inlineScriptHashes),
-        Effect.map((hashes): PageHashes => ({ page, hashes })),
-      ),
+  pipe(entries, Arr.filter(Str.endsWith(".html")), (items) =>
+    Effect.forEach(
+      items,
+      (page) =>
+        read(page).pipe(
+          Effect.flatMap(inlineScriptHashes),
+          Effect.map((hashes): PageHashes => ({ page, hashes })),
+        ),
+      { concurrency: 1 },
     ),
   );

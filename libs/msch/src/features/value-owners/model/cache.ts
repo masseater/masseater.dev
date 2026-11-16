@@ -86,23 +86,23 @@ const digestEntries =
   (
     named: readonly (readonly [string, string])[],
   ): Effect.Effect<readonly string[], never, RepositoryFiles> =>
-    pipe(
+    Effect.forEach(
       named,
-      Effect.forEach(([name, file]) =>
-        digestFile(file).pipe(Effect.map((found) => entryOf(name, found))),
-      ),
+      ([name, file]) => digestFile(file).pipe(Effect.map((found) => entryOf(name, found))),
+      { concurrency: 1 },
     );
 
 const fingerprintedFiles = Effect.fn("fingerprintedFiles")(function* fingerprintedFiles(
   root: string,
 ) {
   const files = yield* RepositoryFiles;
-  const nested = yield* pipe(
+  const nested = yield* Effect.forEach(
     FINGERPRINTED,
-    Effect.forEach((entry) => {
+    (entry) => {
       const base = files.join(root, entry);
       return files.walkDirectory(base).pipe(Effect.map(Arr.map((file) => files.join(base, file))));
-    }),
+    },
+    { concurrency: 1 },
   );
   return Arr.sort([files.join(root, MANIFEST_ENTRY), ...Arr.flatten(nested)], Str.Order);
 });
@@ -195,7 +195,10 @@ export const pruneAnalyses =
       yield* pipe(
         present,
         Arr.filter((name) => !keep.has(name)),
-        Effect.forEach((name) => files.removeFile(files.join(cache.directory, name))),
+        (items) =>
+          Effect.forEach(items, (name) => files.removeFile(files.join(cache.directory, name)), {
+            concurrency: 1,
+          }),
         Effect.asVoid,
       );
     });

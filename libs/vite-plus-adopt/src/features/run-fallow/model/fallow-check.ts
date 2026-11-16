@@ -63,11 +63,10 @@ const runFallow = (
       config,
     ).pipe(Effect.orDie);
     yield* fs.writeFileString(configFile, configText);
-    const reports = yield* pipe(
+    const reports = yield* Effect.forEach(
       RUNS,
-      Effect.forEach((args) =>
-        runCaptured({ root, file: "fallow", args: [...args, "-c", configFile] }),
-      ),
+      (args) => runCaptured({ root, file: "fallow", args: [...args, "-c", configFile] }),
+      { concurrency: 1 },
     );
     const smells = yield* componentSmells(root, configFile);
     const all = [...reports, smells];

@@ -30,7 +30,7 @@ const embedBatch = Effect.fn("embedTextBatch")(function* embedTextBatch(
     Array.map(({ text }) => text),
   );
   const vectors = yield* embedder.embedDocuments(texts);
-  yield* pipe(Array.zip(batch, vectors), Effect.forEach(insertVector));
+  yield* Effect.forEach(Array.zip(batch, vectors), insertVector, { concurrency: 1 });
 });
 
 /** @internal */
@@ -47,16 +47,19 @@ export const embedTexts = Effect.fn("embedTexts")(function* embedMissingTexts(
       where ${inPackage}
       and not exists (select 1 from text_vectors v where v.rowid = a.id)`,
   );
-  const embedded = yield* pipe(
-    rows,
-    Array.chunksOf(TEXT_BATCH),
-    Effect.forEach((batch) =>
-      embedBatch(batch).pipe(
-        Effect.as(true),
-        Effect.catchCause((cause) =>
-          Effect.logWarning("text embedding failed, retrying later", cause).pipe(Effect.as(false)),
+  const embedded = yield* pipe(rows, Array.chunksOf(TEXT_BATCH), (items) =>
+    Effect.forEach(
+      items,
+      (batch) =>
+        embedBatch(batch).pipe(
+          Effect.as(true),
+          Effect.catchCause((cause) =>
+            Effect.logWarning("text embedding failed, retrying later", cause).pipe(
+              Effect.as(false),
+            ),
+          ),
         ),
-      ),
+      { concurrency: 1 },
     ),
   );
   return pipe(embedded, Array.every(Boolean));

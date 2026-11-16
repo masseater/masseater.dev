@@ -1,6 +1,6 @@
-import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
-import { parse } from "yaml";
+import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 
+import { workspaceManifest } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import { positionOf } from "#/shared/lib/text-position.ts";
@@ -9,19 +9,6 @@ const RULE: RuleName = "alchemy-patch";
 const WORKSPACE_FILE = "pnpm-workspace.yaml";
 const ALCHEMY = /^(?:alchemy|@alchemy\.run\/[^@]+)(?:@.*)?$/u;
 const START = 0;
-
-const WorkspaceFile = Schema.Struct({
-  patchedDependencies: Schema.optionalKey(Schema.Record(Schema.String, Schema.Unknown)),
-});
-const decodeWorkspaceFile = Schema.decodeUnknownOption(WorkspaceFile);
-
-const patchedIn = (source: string): readonly string[] =>
-  pipe(
-    decodeWorkspaceFile(parse(source)),
-    Option.flatMap(({ patchedDependencies }) => Option.fromUndefinedOr(patchedDependencies)),
-    Option.map(Rec.keys),
-    Option.getOrElse((): readonly string[] => []),
-  );
 
 const problemOf = (
   file: string,
@@ -35,7 +22,7 @@ const problemOf = (
 });
 
 const problemsIn =
-  (file: string) =>
+  (file: string, patched: readonly string[]) =>
   (source: string): readonly Problem[] => {
     const at = positionOf(source);
     const offsetOf = (name: string): number =>
@@ -44,7 +31,7 @@ const problemsIn =
         Option.getOrElse(() => START),
       );
     return pipe(
-      patchedIn(source),
+      patched,
       Arr.filter((name) => ALCHEMY.test(name)),
       Arr.map((name) => problemOf(file, at(offsetOf(name)), name)),
     );
@@ -57,9 +44,16 @@ export const checkAlchemyPatch = Effect.fn("checkAlchemyPatch")(function* checkA
   const files = yield* RepositoryFiles;
   const file = files.join(root, WORKSPACE_FILE);
   const text = yield* files.readFile(file);
+  const manifest = yield* workspaceManifest(root);
+  const patched = pipe(
+    manifest,
+    Option.flatMap(({ patchedDependencies }) => Option.fromUndefinedOr(patchedDependencies)),
+    Option.map(Rec.keys),
+    Option.getOrElse((): readonly string[] => []),
+  );
   return pipe(
     text,
-    Option.map(problemsIn(file)),
+    Option.map(problemsIn(file, patched)),
     Option.getOrElse((): readonly Problem[] => []),
   );
 });

@@ -129,7 +129,8 @@ const modsWithAssets = Effect.fn("modsWithAssets")(function* modsWithAssets(root
 const exportAllPck = Effect.gen(function* exportAllPck() {
   const path = yield* Path.Path;
   const root = path.resolve(import.meta.dirname, "..");
-  const out = yield* Config.String("PCK_OUT").pipe(Config.withDefault(path.join(root, "out")));
+  const pckOut = yield* Config.String("PCK_OUT").pipe(Config.withDefault("out"));
+  const out = path.resolve(root, pckOut);
   const godot = yield* megaDot;
   const DOTNET_ROOT = yield* dotnetRoot;
   const mods = yield* modsWithAssets(root);
@@ -150,7 +151,7 @@ const exportAllPck = Effect.gen(function* exportAllPck() {
         ],
         env: { DOTNET_ROOT },
       }),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 });
 

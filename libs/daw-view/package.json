@@ -8,6 +8,7 @@
   },
   "exports": {
     ".": "./src/app/index.ts",
+    "./worklet": "./src/app/worklet.ts",
     "./styles.css": "./src/styles.css"
   },
   "dependencies": {

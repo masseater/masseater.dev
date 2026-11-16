@@ -69,7 +69,7 @@ export const collectConversations: Effect.Effect<
   const stored = yield* cursorOf("conversation");
   const before = yield* settledBefore;
   const chunks = yield* chunksAfter({ position: chunkPositionFrom(stored), before });
-  const items = yield* pipe(chunks, Effect.forEach(readChunk));
+  const items = yield* Effect.forEach(chunks, readChunk, { concurrency: 1 });
   return yield* collect({
     origin: "conversation",
     items,

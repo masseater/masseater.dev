@@ -47,23 +47,23 @@ const embedBatch = Effect.fn("embedBatch")(function* embedImageBatch(images: rea
       Array.map(({ png }) => png),
     ),
   );
-  const embedded = yield* pipe(
+  const embedded = yield* Effect.forEach(
     images,
-    Effect.forEach((image, index) =>
+    (image, index) =>
       pipe(
         Array.get(vectors, index),
         Effect.fromOption,
         Effect.map((vector) => [image, vector] as const),
       ),
-    ),
+    { concurrency: 1 },
   );
-  yield* sql.withTransaction(pipe(embedded, Effect.forEach(save)));
+  yield* sql.withTransaction(Effect.forEach(embedded, save, { concurrency: 1 }));
 });
 
 const embedOneByOne = Effect.fn("embedOneByOne")(function* embedOneByOne(images: readonly Image[]) {
-  yield* pipe(
+  yield* Effect.forEach(
     images,
-    Effect.forEach((image) =>
+    (image) =>
       embedBatch([image]).pipe(
         Effect.catchCause((cause) =>
           Effect.logWarning("image embedding failed, retrying later", image.id, cause).pipe(
@@ -71,7 +71,7 @@ const embedOneByOne = Effect.fn("embedOneByOne")(function* embedOneByOne(images:
           ),
         ),
       ),
-    ),
+    { concurrency: 1 },
   );
 });
 
@@ -121,10 +121,8 @@ const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
       where i.embedded = ${EMBEDDING.pending} and i.retry_at <= ${now}
       order by ${sql.literal(ASSET_ORDER)}, i.id`,
   );
-  yield* pipe(
-    pending,
-    Array.chunksOf(IMAGE_BATCH),
-    Effect.forEach((batch) => analyze(batch, onBatch)),
+  yield* pipe(pending, Array.chunksOf(IMAGE_BATCH), (items) =>
+    Effect.forEach(items, (batch) => analyze(batch, onBatch), { concurrency: 1 }),
   );
   return pending.length;
 });

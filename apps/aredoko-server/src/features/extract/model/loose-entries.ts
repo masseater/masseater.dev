@@ -59,11 +59,10 @@ const filesOf = Effect.fn("filesOf")(function* filesOfLoose(loose: Loose) {
     return [own];
   }
   const companions = yield* companionsOf(folder, data);
-  const others = yield* pipe(
+  const others = yield* Effect.forEach(
     companions,
-    Effect.forEach(({ name, data: bytes }) =>
-      looseFile(unityPath(loose.package_name, name), bytes),
-    ),
+    ({ name, data: bytes }) => looseFile(unityPath(loose.package_name, name), bytes),
+    { concurrency: 1 },
   );
   return [own, ...others];
 });
@@ -82,7 +81,7 @@ export const looseEntries = Effect.fn("looseEntries")(function* selectLoose(
           where p.kind = 'files' and a.file is not null and ${sql.in("a.id", ids)}`,
       ),
   });
-  const files = yield* pipe(rows, Effect.forEach(filesOf));
+  const files = yield* Effect.forEach(rows, filesOf, { concurrency: 1 });
   return pipe(
     Array.flatten(files),
     Array.dedupeWith((left, right) => left.pathname === right.pathname),

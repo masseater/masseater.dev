@@ -78,7 +78,7 @@ export const tailWorker = ({
   compatibilityDate = DEFAULT_COMPATIBILITY_DATE,
   serviceName = DEFAULT_SERVICE_NAME,
 }: TailWorkerOptions = {}): Effect.Effect<TailWorker, TailWorkerBuildFailed | ReceiverNotRunning> =>
-  Effect.all([bundle, currentReceiver]).pipe(
+  Effect.all([bundle, currentReceiver], { concurrency: 1 }).pipe(
     Effect.map(([contents, receiver]) => ({
       name,
       compatibilityDate,

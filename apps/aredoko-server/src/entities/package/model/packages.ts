@@ -54,5 +54,5 @@ export const packagesWhere = Effect.fn("packagesWhere")(function* selectPackages
         where ${filter} is null or p.id = ${filter}
         order by p.name`,
   );
-  return yield* pipe(rows, Effect.forEach(toPackage));
+  return yield* Effect.forEach(rows, toPackage, { concurrency: 1 });
 });

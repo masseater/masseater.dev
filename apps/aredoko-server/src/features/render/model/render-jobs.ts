@@ -1,4 +1,4 @@
-import { Array, Clock, Effect, Schema, pipe } from "effect";
+import { Array, Clock, Effect, Schema } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { RENDER, RETRY } from "#/shared/database/index.ts";
@@ -31,20 +31,22 @@ export const putRender = Effect.fn("putRender")(function* storeRender({
   readonly pngs: readonly Uint8Array[];
 }) {
   const sql = yield* SqlClient.SqlClient;
-  const normalized = yield* pipe(
+  const normalized = yield* Effect.forEach(
     pngs,
-    Effect.forEach((png) => normalizePng(`render of asset ${String(assetId)}`, png)),
+    (png) => normalizePng(`render of asset ${String(assetId)}`, png),
+    {
+      concurrency: 1,
+    },
   );
   const replaced = Array.match(normalized, {
     onEmpty: () => Effect.void,
     onNonEmpty: (images) =>
       Effect.gen(function* replace() {
         yield* sql`delete from images where asset_id = ${assetId}`;
-        yield* pipe(
+        yield* Effect.forEach(
           images,
-          Effect.forEach(
-            (png) => sql`insert into images(asset_id, png) values (${assetId}, ${png})`,
-          ),
+          (png) => sql`insert into images(asset_id, png) values (${assetId}, ${png})`,
+          { concurrency: 1 },
         );
       }),
   });

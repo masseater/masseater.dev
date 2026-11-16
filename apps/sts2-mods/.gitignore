@@ -1,7 +1,5 @@
-# ローカル環境ごとのパス設定
 /local.props
 
-# ビルド生成物
 .godot/
 */**/bin/
 obj/
@@ -10,28 +8,19 @@ packages/
 Properties/
 /android/
 
-# IDE
-.idea/
 .vs/
 .vscode/
 *.user
 *.DotSettings.user
 
-# ワークショップ: dotnet publish が写す生成物
 workshop/*/content/*
 !workshop/*/content/.gitkeep
 mod-uploader.log
 
-# OS
-.DS_Store
 Thumbs.db
 
-# MegaDot が書き出し時に自動生成するファイル
 *.import
 *.uid
 *.csproj.old
-node_modules/
 
-# masseater.dev のルートが *.sln を無視するので戻す
-!/sts2-mods.sln
 out/

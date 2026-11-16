@@ -1,7 +1,6 @@
 import { OpenRouter } from "@openrouter/sdk";
 import { HTTPClient } from "@openrouter/sdk/lib/http.js";
 import type { DecisionsRequest, DecisionsResponse } from "@openrouter/sdk/models";
-import { openRouterApp } from "@r_masseater/oxlint-plugin-decision/openrouter-app";
 import { isSplitChoice } from "bench-summary/schema";
 import type { ChoiceVia } from "bench-summary/schema";
 import {
@@ -34,7 +33,11 @@ const NO_COST = 0;
 const MIN_TOTAL = Number.EPSILON;
 const READOUT = "probabilities";
 
-const attribution = openRouterApp("bench");
+const ATTRIBUTION = {
+  "HTTP-Referer": "https://github.com/masseater/masseater.dev/bench",
+  "X-OpenRouter-Title": "masseater.dev decision-bench",
+  "X-OpenRouter-App-Visibility": "hidden",
+} as const;
 
 type Frozen<Value> = Value extends object
   ? { readonly [Key in keyof Value]: Frozen<Value[Key]> }
@@ -196,7 +199,7 @@ const cacheKey = (model: string, item: Readonly<Item>, via: ChoiceVia): unknown 
 export const makeOpenRouterAdapter = Effect.fn("makeOpenRouterAdapter")(
   function* makeOpenRouterAdapter(model: string, via: ChoiceVia) {
     const apiKey = yield* Config.Redacted("OPENROUTER_API_KEY");
-    const headers = yield* attribution;
+    const headers = ATTRIBUTION;
     const httpClient = new HTTPClient().addHook("beforeRequest", (request) => {
       for (const [name, value] of Rec.toEntries(headers)) {
         request.headers.set(name, value);

@@ -4,6 +4,7 @@ import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/util
 import { Array as Arr, Effect, FileSystem, Layer, Option, Path, Record as Rec, pipe } from "effect";
 
 import type { DecisionRule } from "#/entities/decision/index.ts";
+import { toJson } from "#/entities/decision/index.ts";
 
 import {
   FAILED,
@@ -36,13 +37,16 @@ const withCloudflare = <Value>(
     ),
   );
 
-const lintWith = (token: string): CloudflareTest<OxlintRun> =>
+const lintWith = (
+  token: string,
+  extraEnv: Readonly<Record<string, string>> = {},
+): CloudflareTest<OxlintRun> =>
   Effect.gen(function* lint() {
     const env = yield* cloudflareEnv(token);
     return yield* lintProject({
       files: { "log.js": SOURCE },
       options: { model: `cloudflare/${MODEL}`, rules: [callRule] },
-      env,
+      env: { ...env, ...extraEnv },
     });
   });
 
@@ -75,6 +79,31 @@ const sendsTheGatewayRequest = Effect.gen(function* test() {
       model: "clef-flash",
       types: ["noul"],
     }),
+  );
+});
+
+const namesTheCaller = Effect.gen(function* test() {
+  yield* lintWith("yes", {
+    GITHUB_ACTIONS: "true",
+    GITHUB_REPOSITORY: "acme/app",
+    CLOUDFLARE_AI_GATEWAY_ID: "team-gateway",
+  });
+  const runs = yield* loggedRuns;
+  deepStrictEqual(
+    pipe(
+      runs,
+      Arr.map(({ gateway, metadata }) => ({ gateway, metadata })),
+    ),
+    [
+      {
+        gateway: "team-gateway",
+        metadata: toJson({
+          tool: "oxlint-plugin-decision",
+          repo: "acme/app",
+          context: "github-actions",
+        }),
+      },
+    ],
   );
 });
 
@@ -134,7 +163,7 @@ const rewriteConfig = (
     const files = yield* projectFilesFor({ model: CLOUDFLARE_MODEL, rules }, {});
     const write = ([name, content]: readonly [string, string]): Effect.Effect<void, TestError> =>
       fs.writeFileString(path.join(cwd, name), content);
-    yield* Effect.forEach(Rec.toEntries(files), write);
+    yield* Effect.forEach(Rec.toEntries(files), write, { concurrency: 1, discard: true });
   });
 
 const asksOnlyTheAddedRule = Effect.scoped(
@@ -164,6 +193,11 @@ layer(NodeServices.layer, { excludeTestServices: true })("the cloudflare provide
   it.effect(
     "asks the Workers AI decision model directly",
     () => withCloudflare(sendsTheGatewayRequest),
+    TIMEOUT,
+  );
+  it.effect(
+    "sends the repository and where it runs to the configured gateway",
+    () => withCloudflare(namesTheCaller),
     TIMEOUT,
   );
   it.effect("passes on a no answer", () => withCloudflare(passesOnNo), TIMEOUT);

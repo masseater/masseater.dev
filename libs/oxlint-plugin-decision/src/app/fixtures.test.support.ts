@@ -3,8 +3,8 @@ import type { PlatformError } from "effect/PlatformError";
 
 import type { DecisionPluginSetup, DecisionRule } from "#/entities/decision/index.ts";
 
-import { MockOpenRouterLayer } from "./mock-openrouter.test.support.ts";
-import type { LoggedRequest, MockOpenRouter } from "./mock-openrouter.test.support.ts";
+import { MockTypesafeLayer } from "./mock-typesafe.test.support.ts";
+import type { LoggedRequest, MockTypesafe } from "./mock-typesafe.test.support.ts";
 import { packageRoot, projectFilesFor, runOxlint, writeProject } from "./oxlint.test.support.ts";
 import type { OxlintRun, Services, TestError } from "./oxlint.test.support.ts";
 
@@ -14,10 +14,8 @@ const DATA_FIRST_ARITY = 2;
 export type Env = Readonly<Record<string, string>>;
 
 /** @internal */
-export type MockTest<Value = void> = Effect.Effect<Value, TestError, Services | MockOpenRouter>;
+export type MockTest<Value = void> = Effect.Effect<Value, TestError, Services | MockTypesafe>;
 
-/** @internal */
-export const RESPAN = "openrouter/respan/span-01-lite";
 /** @internal */
 export const TIMEOUT = 120_000;
 /** @internal */
@@ -88,10 +86,10 @@ export const modelOf = (request: LoggedRequest): string => request.body.model;
 
 /** @internal */
 export const withMock = <Value>(
-  effect: Effect.Effect<Value, TestError, MockOpenRouter | Services>,
+  effect: Effect.Effect<Value, TestError, MockTypesafe | Services>,
 ): Effect.Effect<Value, TestError, Services> =>
   Effect.scoped(
-    Effect.flatMap(Layer.build(MockOpenRouterLayer), (context) =>
+    Effect.flatMap(Layer.build(MockTypesafeLayer), (context) =>
       Effect.provideContext(effect, context),
     ),
   );

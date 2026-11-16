@@ -52,7 +52,7 @@ export type Commit = Readonly<{
 export const commitWith = ({ writes, extra }: Commit): Effect.Effect<void, WriteFailure> =>
   pipe(
     writes,
-    Effect.forEach(statementsOf),
+    (items) => Effect.forEach(items, statementsOf, { concurrency: 1 }),
     Effect.flatMap((statements) =>
       attempt(() => db.batch(Arr.appendAll(Arr.flatten(statements), extra))),
     ),
