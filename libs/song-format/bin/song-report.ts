@@ -25,7 +25,7 @@ const command = Command.make(
   {
     file: Argument.String("file").pipe(
       Argument.withDescription(
-        "A .fu file; reads the files it imports and prints the keys, chords and repeated bars read from its notes",
+        "A .fumx file; reads the files it imports and prints the keys, chords and repeated bars read from its notes",
       ),
     ),
   },
