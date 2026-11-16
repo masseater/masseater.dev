@@ -2,8 +2,8 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Logger } from "effect";
 
-import { joinTailnet } from "#/features/join-tailnet/model/tailnet-join.ts";
-import type { JoinedTailnet, TailnetEnv } from "#/features/join-tailnet/model/tailnet-join.ts";
+import { joinTailnet } from "#/features/join-tailnet/index.ts";
+import type { JoinedTailnet, TailnetEnv } from "#/features/join-tailnet/index.ts";
 
 export interface TailnetRpc extends Rpc.WorkerEntrypointBranded {
   join: (publicKey: unknown) => Promise<JoinedTailnet>;
