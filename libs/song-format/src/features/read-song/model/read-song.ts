@@ -2,12 +2,12 @@ import { Array as Arr, Effect, Predicate, Random, pipe } from "effect";
 import { URI } from "langium";
 import type { Diagnostic } from "vscode-languageserver";
 
-import type { Song } from "#/entities/song/song.ts";
+import type { Song } from "#/entities/song/index.ts";
 import type { Song as SongNode } from "#generated/langium/ast.ts";
 
-import { compileSong } from "./compile/compile.ts";
-import type { From } from "./compile/problem.ts";
+import { compileSong } from "./compile.ts";
 import { createFuServices } from "./fu-module.ts";
+import type { From } from "./problem.ts";
 
 const FIRST = 1;
 const ERROR = 1;

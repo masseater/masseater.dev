@@ -1,6 +1,6 @@
 import { Match, Option, pipe } from "effect";
 
-import type { Effect, PlayParam } from "#/entities/song/sound.ts";
+import type { Effect, PlayParam } from "#/entities/song/index.ts";
 import { ticksOf } from "#/shared/lib/ticks.ts";
 import {
   decibelsOf,

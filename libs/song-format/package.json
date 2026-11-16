@@ -12,9 +12,9 @@
     "#generated/*": "./generated/*"
   },
   "exports": {
-    "./analysis": "./src/features/analyze/analysis.ts",
-    "./read-song": "./src/features/read-song/read-song.ts",
-    "./song": "./src/entities/song/song.ts"
+    "./analysis": "./src/features/analyze/index.ts",
+    "./read-song": "./src/features/read-song/index.ts",
+    "./song": "./src/entities/song/index.ts"
   },
   "dependencies": {
     "@effect/platform-node-shared": "catalog:",

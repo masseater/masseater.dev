@@ -2,7 +2,7 @@ import { expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { Note } from "tonal";
 
-import type { Song } from "#/entities/song/song.ts";
+import type { Song } from "#/entities/song/index.ts";
 import { fractionOf } from "#/shared/lib/ticks.ts";
 
 import { header, oddMeter, twoFiveOne, withLine } from "./read-song.test.support.ts";

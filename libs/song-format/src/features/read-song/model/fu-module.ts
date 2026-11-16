@@ -9,8 +9,8 @@ import type { LangiumCoreServices, LangiumSharedCoreServices } from "langium";
 import type { FuAstType } from "#generated/langium/ast.ts";
 import { FuGeneratedModule, FuGeneratedSharedModule } from "#generated/langium/module.ts";
 
-import { compileSong } from "./compile/compile.ts";
-import type { From } from "./compile/problem.ts";
+import { compileSong } from "./compile.ts";
+import type { From } from "./problem.ts";
 
 export interface FuServices {
   readonly shared: LangiumSharedCoreServices;

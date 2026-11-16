@@ -1,8 +1,7 @@
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 import type { Predicate } from "effect";
 
-import type { Edit, Hit, Note, Slice } from "#/entities/song/events.ts";
-import type { Song } from "#/entities/song/song.ts";
+import type { Edit, Hit, Note, Slice, Song } from "#/entities/song/index.ts";
 import type { Song as SongNode } from "#generated/langium/ast.ts";
 
 import { barsOfSong } from "./bars.ts";

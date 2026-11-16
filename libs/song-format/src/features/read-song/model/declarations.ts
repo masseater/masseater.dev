@@ -1,7 +1,7 @@
 import { Array as Arr, Match, Option, pipe } from "effect";
 import type { Predicate } from "effect";
 
-import type { Song, Track } from "#/entities/song/song.ts";
+import type { Song, Track } from "#/entities/song/index.ts";
 import { ticksOf } from "#/shared/lib/ticks.ts";
 import { millisecondsOf, pitchOf, shareOf } from "#/shared/lib/units.ts";
 import {

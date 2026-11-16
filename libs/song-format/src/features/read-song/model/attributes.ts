@@ -1,7 +1,6 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { Edit, Lyric } from "#/entities/song/events.ts";
-import type { PlayParam } from "#/entities/song/sound.ts";
+import type { Edit, Lyric, PlayParam } from "#/entities/song/index.ts";
 import { ticksOf } from "#/shared/lib/ticks.ts";
 import { countOf, millisecondsOf, semitonesOf, shareOf } from "#/shared/lib/units.ts";
 import {

@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Schema, pipe } from "effect";
 
-import type { Song } from "#/entities/song/song.ts";
+import type { Song } from "#/entities/song/index.ts";
 
 import { ChordSpanSchema, chordsOf } from "./chords.ts";
 import { BarRangeSchema, KeySpanSchema, keyIn } from "./keys.ts";

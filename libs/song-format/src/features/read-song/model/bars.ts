@@ -1,6 +1,6 @@
 import { Array as Arr, Match, Option, pipe } from "effect";
 
-import type { Bar, Meter, Song, Tempo } from "#/entities/song/song.ts";
+import type { Bar, Meter, Song, Tempo } from "#/entities/song/index.ts";
 import { TICKS_PER_WHOLE, fractionOf } from "#/shared/lib/ticks.ts";
 import { isAutomation, isVoiceLine } from "#generated/langium/ast.ts";
 import type { Bar as BarNode, VoiceLine } from "#generated/langium/ast.ts";

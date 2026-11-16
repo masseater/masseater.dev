@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Order, pipe } from "effect";
 
-import type { Song } from "#/entities/song/song.ts";
+import type { Song } from "#/entities/song/index.ts";
 
 import type { BarRange } from "./keys.ts";
 

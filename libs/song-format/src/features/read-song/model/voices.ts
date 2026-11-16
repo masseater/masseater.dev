@@ -1,6 +1,6 @@
 import { Array as Arr, Match, Option, pipe } from "effect";
 
-import type { Song } from "#/entities/song/song.ts";
+import type { Song } from "#/entities/song/index.ts";
 import type { TrackSource, VoiceLine } from "#generated/langium/ast.ts";
 
 import type { LineKind } from "./items.ts";

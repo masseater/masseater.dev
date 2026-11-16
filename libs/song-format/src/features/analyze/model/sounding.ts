@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 import { Note as TonalNote } from "tonal";
 
-import type { Role, Song } from "#/entities/song/song.ts";
+import type { Role, Song } from "#/entities/song/index.ts";
 import { fractionOf } from "#/shared/lib/ticks.ts";
 
 const NONE = 0;

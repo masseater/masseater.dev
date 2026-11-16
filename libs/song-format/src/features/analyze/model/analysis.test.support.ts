@@ -1,8 +1,7 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 import { Note as TonalNote } from "tonal";
 
-import type { Note } from "#/entities/song/events.ts";
-import type { Bar, Song } from "#/entities/song/song.ts";
+import type { Note, Bar, Song } from "#/entities/song/index.ts";
 import { TICKS_PER_WHOLE } from "#/shared/lib/ticks.ts";
 
 const FIRST = 1;

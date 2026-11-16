@@ -1,6 +1,6 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-import type { Amount, Automation } from "#/entities/song/song.ts";
+import type { Amount, Automation } from "#/entities/song/index.ts";
 import {
   barsOf,
   decibelsOf,

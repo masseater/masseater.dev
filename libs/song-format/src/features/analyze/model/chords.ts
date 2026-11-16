@@ -1,7 +1,7 @@
 import { Array as Arr, Option, Order, Schema, pipe } from "effect";
 import { Chord } from "tonal";
 
-import type { Song } from "#/entities/song/song.ts";
+import type { Song } from "#/entities/song/index.ts";
 import { TICKS_PER_WHOLE } from "#/shared/lib/ticks.ts";
 
 import { overlapOf, positionOf, soundingsOf } from "./sounding.ts";

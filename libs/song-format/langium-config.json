@@ -3,7 +3,7 @@
   "languages": [
     {
       "id": "fu",
-      "grammar": "src/entities/language/fu.langium",
+      "grammar": "src/features/read-song/model/fu.langium",
       "fileExtensions": [".fu"]
     }
   ],

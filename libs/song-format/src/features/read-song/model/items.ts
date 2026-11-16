@@ -1,7 +1,7 @@
 import type { Option } from "effect";
 import type { AstNode } from "langium";
 
-import type { Edit, Hit, Note, Slice } from "#/entities/song/events.ts";
+import type { Edit, Hit, Note, Slice } from "#/entities/song/index.ts";
 
 export type LineKind =
   | { readonly kind: "kit"; readonly voices: readonly string[]; readonly kit: string }

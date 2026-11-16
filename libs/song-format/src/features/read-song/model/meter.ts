@@ -1,6 +1,6 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { Meter, Tempo } from "#/entities/song/song.ts";
+import type { Meter, Tempo } from "#/entities/song/index.ts";
 import { partsOf } from "#/shared/lib/ticks.ts";
 import { barsOf, bpmOf } from "#/shared/lib/units.ts";
 import type { Meter as MeterNode, Tempo as TempoNode } from "#generated/langium/ast.ts";
