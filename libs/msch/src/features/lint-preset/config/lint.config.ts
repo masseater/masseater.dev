@@ -14,6 +14,7 @@ export const generated = [
   ".intent/**",
   "AGENTS.md",
   "skills-lock.json",
+  "**/CHANGELOG.md",
   ".github/release-please/*manifest.json",
   "**/.release-please-manifest.json",
   "**/*.d.rpp.ts",

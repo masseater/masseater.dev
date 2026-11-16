@@ -2,10 +2,12 @@ import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import {
   isEnumDeclaration,
+  isExportAssignment,
   isExportDeclaration,
   isIdentifier,
   isImportDeclaration,
   isInterfaceDeclaration,
+  isPropertyAccessExpression,
   isStringLiteral,
   isTypeAliasDeclaration,
   SyntaxKind,
@@ -14,6 +16,7 @@ import type {
   Checker,
   Declaration,
   EnumDeclaration,
+  Expression,
   InterfaceDeclaration,
   Node,
   Program,
@@ -68,8 +71,9 @@ export const descendantsOf = (node: Node): readonly Node[] =>
 const isExternalFile =
   (program: Program) =>
   (sourceFile: SourceFile): boolean =>
-    Str.includes(NODE_MODULES_SEGMENT)(sourceFile.fileName) ||
-    program.isSourceFileFromExternalLibrary(sourceFile);
+    !program.isSourceFileDefaultLibrary(sourceFile) &&
+    (Str.includes(NODE_MODULES_SEGMENT)(sourceFile.fileName) ||
+      program.isSourceFileFromExternalLibrary(sourceFile));
 
 export const isExternalDeclaration =
   (program: Program) =>
@@ -91,7 +95,15 @@ export const declarationsOf = (symbol: TypeSymbol): readonly Declaration[] =>
     Arr.flatMap((handle) => Option.toArray(Option.fromUndefinedOr(handle.resolve()))),
   );
 
-const isAliasDeclaration = (declaration: Node): boolean => ALIAS_KINDS.has(declaration.kind);
+const isEntityName = (expression: Expression): boolean =>
+  isIdentifier(expression) ||
+  (isPropertyAccessExpression(expression) && isEntityName(expression.expression));
+
+const aliasesAnEntity = (declaration: Node): boolean =>
+  !isExportAssignment(declaration) || isEntityName(declaration.expression);
+
+const isAliasDeclaration = (declaration: Node): boolean =>
+  ALIAS_KINDS.has(declaration.kind) && aliasesAnEntity(declaration);
 
 export const resolvedSymbol =
   (checker: Checker) =>

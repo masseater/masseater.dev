@@ -13,7 +13,6 @@ export default defineConfig({
     },
     lint: {
       overrides: [
-        { files: ["src/**/*.test.ts"], use: ["otlpInterop"] },
         {
           files: ["src/setup.ts"],
           rules: {
