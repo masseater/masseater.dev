@@ -15,6 +15,7 @@
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/repositories": "workspace:*",
+    "@masseater.dev/sloppedia": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "@tailwindcss/typography": "catalog:",
@@ -37,7 +38,6 @@
     "react-dom": "catalog:",
     "scheduler": "catalog:",
     "security-headers": "workspace:*",
-    "sloppedia": "workspace:*",
     "tailwindcss": "catalog:stack"
   },
   "devDependencies": {

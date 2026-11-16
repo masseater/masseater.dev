@@ -1,6 +1,6 @@
+import type { Heading } from "@masseater.dev/sloppedia";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
-import type { Heading } from "sloppedia";
 
 import { TocItem } from "./toc-item.tsx";
 

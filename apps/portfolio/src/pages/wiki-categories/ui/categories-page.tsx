@@ -1,6 +1,6 @@
+import { CategoriesView } from "@masseater.dev/sloppedia";
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { CategoriesView } from "sloppedia";
 
 import { wiki } from "#/shared/wiki/index.ts";
 

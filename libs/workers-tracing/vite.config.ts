@@ -10,14 +10,6 @@ export default defineConfig({
         dependencies: ["miniflare"],
       },
     },
-    lint: {
-      overrides: [
-        {
-          files: ["src/**/*.test.ts"],
-          use: ["otlpInterop"],
-        },
-      ],
-    },
   },
   run: {
     tasks: {

@@ -1,5 +1,5 @@
+import type { Heading } from "@masseater.dev/sloppedia";
 import { Effect } from "effect";
-import type { Heading } from "sloppedia";
 
 import { entryOf, foundOrNotFound, loadedHeadings, preloadBody } from "#/entities/entry/index.ts";
 import type { Entry } from "#/entities/entry/index.ts";

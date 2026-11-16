@@ -12,6 +12,13 @@ export const THUMBNAIL = { width: 1600, height: 900 } as const;
 
 export const songs: readonly Song[] = [
   {
+    slug: "kuraku-narikake",
+    title: "暗くなりかけ",
+    style: "liquid funk",
+    tempo: 175,
+    length: "4:57",
+  },
+  {
     slug: "life-is-but-a",
     title: "life is but a",
     style: "speed garage",

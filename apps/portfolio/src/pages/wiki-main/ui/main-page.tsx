@@ -1,6 +1,6 @@
+import { MainView } from "@masseater.dev/sloppedia";
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { MainView } from "sloppedia";
 
 import { wiki } from "#/shared/wiki/index.ts";
 
