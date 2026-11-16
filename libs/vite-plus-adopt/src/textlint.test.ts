@@ -6,6 +6,7 @@ import { Effect, String as Str } from "effect";
 import { directoryWith, lines } from "./fixture.test.support.ts";
 import { toJson } from "./json.ts";
 import { lintTexts } from "./textlint.ts";
+import type { TextlintPreset } from "./types.ts";
 
 const NO_FOO_RULE = lines(
   "module.exports = (context) => ({",
@@ -74,7 +75,38 @@ const loadsTypeScriptRules = Effect.gen(function* loadsTypeScriptRules() {
   assertTrue(Str.includes("bar is not allowed")(report.output));
 });
 
+const noBaz: TextlintPreset["rules"][string] = (context) => ({
+  [context.Syntax.Str](node) {
+    if (Str.includes("baz")(context.getSource(node))) {
+      context.report(node, new context.RuleError("baz is not allowed"));
+    }
+  },
+});
+
+const BAZ_PRESET: TextlintPreset = { rules: { "no-baz": noBaz }, rulesConfig: { "no-baz": true } };
+
+const BAZ_FILES = { "baz.md": "# Baz\n\nThis line says baz.\n" };
+
+const runsGivenPresets = Effect.gen(function* runsGivenPresets() {
+  const root = yield* directoryWith(BAZ_FILES);
+  const config = { presets: { "preset-baz": BAZ_PRESET }, rules: { "preset-baz": true } };
+  const report = yield* lintTexts(config, root, ["baz.md"]);
+  assertFalse(report.valid);
+  assertTrue(Str.includes("baz is not allowed")(report.output));
+});
+
+const turnsOffPresetRules = Effect.gen(function* turnsOffPresetRules() {
+  const root = yield* directoryWith(BAZ_FILES);
+  const config = {
+    presets: { "preset-baz": BAZ_PRESET },
+    rules: { "preset-baz": { "no-baz": false } },
+  };
+  assertTrue((yield* lintTexts(config, root, ["baz.md"])).valid);
+});
+
 layer(fixtureLayer)("linting text", (it) => {
+  it.effect("runs the rules of presets given as modules", () => runsGivenPresets);
+  it.effect("skips preset rules turned off in the config", () => turnsOffPresetRules);
   it.effect("runs the rules named in the config over Markdown files", () => reportsBrokenRules);
   it.effect("passes when no file breaks a rule", () => passesCleanFiles);
   it.effect("loads rules written in TypeScript from node_modules", () => loadsTypeScriptRules);

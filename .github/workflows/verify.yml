@@ -23,20 +23,24 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
+        with:
+          rust-cache-key: verify
+          save-rust-cache: "false"
       - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.cache/msch
-          key: msch-${{ github.run_id }}-${{ github.run_attempt }}
+          key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           restore-keys: msch-
-      - uses: masseater/typescript-template/.github/actions/verify@6801f4c85932a8b6a4bf2cac757e7473decb039a
+      - uses: masseater/typescript-template/.github/actions/verify@5c4be9248ecb6ab249aacab2b3e3c8b3670421c1
         with:
           github-token: ${{ github.token }}
           full-history: "true"
+          share: "false"
       - if: always()
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.cache/msch
-          key: msch-${{ github.run_id }}-${{ github.run_attempt }}
+          key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
       - if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -45,6 +49,37 @@ jobs:
             .vitest/attachments/
             apps/*/.vitest/attachments/
           if-no-files-found: ignore
+
+  cache:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: cache-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          rust-cache-key: verify
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: node_modules/.cache/msch
+          key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          restore-keys: msch-
+      - uses: masseater/typescript-template/.github/actions/verify@5c4be9248ecb6ab249aacab2b3e3c8b3670421c1
+        with:
+          github-token: ${{ github.token }}
+          full-history: "true"
+      - if: always()
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: node_modules/.cache/msch
+          key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
 
   autofix:
     needs: verify
@@ -138,7 +173,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
 
   ci-telemetry:
-    needs: [verify, autofix, deploy, private-names, exposure, deploy-failure]
+    needs: [verify, cache, autofix, deploy, private-names, exposure, deploy-failure]
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -146,6 +181,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@6801f4c85932a8b6a4bf2cac757e7473decb039a
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@5c4be9248ecb6ab249aacab2b3e3c8b3670421c1
         with:
           github-token: ${{ github.token }}
