@@ -1,0 +1,31 @@
+{
+  "name": "@masseater.dev/song-format",
+  "version": "0.0.0",
+  "private": true,
+  "bin": {
+    "song-report": "./bin/song-report.ts"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    "./analysis": "./src/features/analyze-song/index.ts",
+    "./source": "./src/features/read-source/index.ts",
+    "./song": "./src/entities/song/index.ts",
+    "./song.schema.json": "./generated/song.schema.json"
+  },
+  "dependencies": {
+    "@effect/platform-node-shared": "catalog:",
+    "effect": "catalog:stack",
+    "jsonc-parser": "catalog:",
+    "tonal": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

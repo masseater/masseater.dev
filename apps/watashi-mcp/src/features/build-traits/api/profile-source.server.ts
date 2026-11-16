@@ -5,7 +5,7 @@ import { scanAll } from "#/entities/life-record/index.server.ts";
 import { SELF, factStateOf, itemOf, todayJst } from "#/entities/life-record/index.ts";
 import type { Body, Entry } from "#/entities/life-record/index.ts";
 import { loadTraits } from "#/entities/trait/index.server.ts";
-import { idOf, isActive, supportsOf } from "#/entities/trait/index.ts";
+import { GLOBAL, idOf, isActive, supportsOf } from "#/entities/trait/index.ts";
 import type { TraitState } from "#/entities/trait/index.ts";
 import { db, query } from "#/shared/db/index.server.ts";
 import { memory, NOT_RETRACTED } from "#/shared/db/index.ts";
@@ -33,7 +33,7 @@ const traitInput = (trait: TraitState): Option.Option<Body> => {
   return Option.map(idOf(trait), (ref) => ({
     ref,
     kind: trait.kind,
-    scope: trait.scope,
+    limited: trait.scope !== GLOBAL,
     statement: trait.statement,
     supports,
     contradicts: trait.evidence.length - supports,
@@ -54,7 +54,6 @@ const ownerFacts = (today: string): Effect.Effect<readonly Body[], StorageFailed
 const recentMemos: Effect.Effect<readonly Body[], StorageFailed> = query(() =>
   db
     .select({
-      project: memory.project,
       name: memory.name,
       description: memory.description,
       updatedAt: memory.updatedAt,
