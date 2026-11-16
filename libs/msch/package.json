@@ -1,10 +1,11 @@
 {
   "name": "@r_masseater/msch",
-  "version": "0.17.0",
+  "version": "0.20.0",
   "description": "masseater's check policy: points every finite value set and object shape at its one owner, and ships the oxlint preset of plugins and rules.",
   "keywords": [
     "lint",
     "oxlint",
+    "tanstack-intent",
     "vite-plus"
   ],
   "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/msch#readme",
@@ -22,6 +23,7 @@
   },
   "files": [
     "dist",
+    "skills/msch-checks",
     "src/app/vite.d.ts"
   ],
   "type": "module",
