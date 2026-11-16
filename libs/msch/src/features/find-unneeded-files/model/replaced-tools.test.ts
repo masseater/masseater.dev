@@ -37,6 +37,7 @@ const flagsSettingsOfReplacedTools = Effect.gen(function* flagsSettingsOfReplace
     "apps/web/wrangler.jsonc": "{}\n",
     "infra/main.tf": "\n",
     ".claude/rules/style.md": "# style\n",
+    "skills-lock.json": "{}\n",
   });
   expect(findings).toStrictEqual([
     ".claude/rules/style.md:1 replaced-tool",
@@ -50,6 +51,7 @@ const flagsSettingsOfReplacedTools = Effect.gen(function* flagsSettingsOfReplace
     "jest.config.ts:1 replaced-tool",
     "knip.json:1 replaced-tool",
     "lefthook.yml:1 replaced-tool",
+    "skills-lock.json:1 replaced-tool",
     "turbo.json:1 replaced-tool",
   ]);
 });
