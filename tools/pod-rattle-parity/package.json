@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#engine": "./engine.gen.js"
+    "#engine": {
+      "types": "./engine.gen.d.ts",
+      "default": "./generated/engine.js"
+    }
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",

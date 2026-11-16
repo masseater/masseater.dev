@@ -5,6 +5,7 @@ import { RepositoryFiles, nodeRepositoryFiles } from "#/shared/lib/repository-fi
 const IGNORE_FILES = ":(glob)**/.gitignore";
 const SEPARATOR = "/";
 const NEGATION = "!";
+const CONTENTS = "/**";
 const ROOT = ".";
 const ANYWHERE = "**/";
 const READ_CONCURRENCY = 16;
@@ -77,7 +78,10 @@ const collectIgnoredDirectories = Effect.fn("collectIgnoredDirectories")(
     });
     return pipe(
       Arr.getSomes(kept),
-      Arr.map((glob): IgnoredDirectory => ({ pattern: `${NEGATION}${glob}`, base: "workspace" })),
+      Arr.flatMap((glob): readonly IgnoredDirectory[] => [
+        { pattern: `${NEGATION}${glob}`, base: "workspace" },
+        { pattern: `${NEGATION}${glob}${CONTENTS}`, base: "workspace" },
+      ]),
     );
   },
 );
