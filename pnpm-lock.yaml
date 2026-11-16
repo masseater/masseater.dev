@@ -4408,6 +4408,9 @@ importers:
       web-tree-sitter:
         specifier: 'catalog:'
         version: 0.27.2
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
     devDependencies:
       '@effect/platform-node':
         specifier: 'catalog:'

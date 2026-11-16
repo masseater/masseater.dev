@@ -87,7 +87,8 @@
     "textlint": "catalog:",
     "tsconfck": "catalog:",
     "validate-npm-package-name": "catalog:",
-    "web-tree-sitter": "catalog:"
+    "web-tree-sitter": "catalog:",
+    "yaml": "catalog:"
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",
