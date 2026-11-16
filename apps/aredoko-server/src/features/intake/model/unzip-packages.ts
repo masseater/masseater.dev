@@ -1,9 +1,8 @@
 import { ZipReader, configure } from "@zip.js/zip.js";
 import type { Entry, FileEntry } from "@zip.js/zip.js";
-import { Array, Effect, FileSystem, Option, Path, pipe } from "effect";
+import { Array, Effect, FileSystem, Option, Path, Stream, pipe } from "effect";
 
 import { isCompanion, isLoose, isPackage } from "#/entities/package/index.ts";
-import { collectBytes } from "#/shared/bytes/index.ts";
 
 import { digestWith } from "./content-digest.ts";
 import { bundleCount, placedCount } from "./counts.ts";
@@ -78,7 +77,7 @@ const readRange = Effect.fn("readRange")(function* readRange(
   bytesToRead: number,
 ) {
   const fileSystem = yield* FileSystem.FileSystem;
-  return yield* collectBytes(fileSystem.stream(zip, { offset, bytesToRead }));
+  return yield* Stream.mkUint8Array(fileSystem.stream(zip, { offset, bytesToRead }));
 });
 
 const rangeOf =

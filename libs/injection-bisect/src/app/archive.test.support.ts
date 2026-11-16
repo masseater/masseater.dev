@@ -1,6 +1,9 @@
-import { Effect, Predicate, Record as Rec, Array as Arr, pipe } from "effect";
-import { gzip, strToU8, zip } from "fflate";
+import { Effect, Predicate, Stream, Record as Rec, Array as Arr, pipe } from "effect";
+import { Tar } from "effect/encoding";
+import { strToU8, zip } from "fflate";
 import type { AsyncZippable } from "fflate";
+
+type Files = Readonly<Record<string, string | Uint8Array>>;
 
 const STORED = 0;
 
@@ -23,9 +26,7 @@ const entryOf = ([name, content]: readonly [string, string | Uint8Array]): reado
   return [name, bytesOf(content)];
 };
 
-export const zipOf = (
-  files: Readonly<Record<string, string | Uint8Array>>,
-): Effect.Effect<Uint8Array> =>
+export const zipOf = (files: Files): Effect.Effect<Uint8Array> =>
   Effect.callback<Uint8Array>((resume) => {
     const entries = pipe(
       Rec.toEntries(files),
@@ -40,12 +41,17 @@ export const zipOf = (
     });
   });
 
+export const tarOf = (files: Files): Effect.Effect<Uint8Array> =>
+  Stream.fromIterable(
+    pipe(
+      Rec.toEntries(files),
+      Arr.map(([name, content]) => Tar.file(name, content)),
+    ),
+  ).pipe(Stream.pipeThroughChannel(Tar.encode()), Stream.mkUint8Array, Effect.orDie);
+
 export const gzipOf = (bytes: Uint8Array): Effect.Effect<Uint8Array> =>
-  Effect.callback<Uint8Array>((resume) => {
-    gzip(bytes, (cause, zipped) => {
-      if (cause !== null) {
-        throw cause;
-      }
-      resume(Effect.succeed(zipped));
-    });
-  });
+  Effect.promise(() =>
+    new Response(
+      new Blob([Uint8Array.from(bytes)]).stream().pipeThrough(new CompressionStream("gzip")),
+    ).bytes(),
+  );

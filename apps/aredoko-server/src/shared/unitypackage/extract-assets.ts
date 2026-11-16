@@ -1,23 +1,22 @@
 import { Effect, FileSystem, HashMap, Option, Stream, pipe } from "effect";
 import type { PlatformError } from "effect";
-import type { ParsedTarEntry } from "modern-tar";
+import type { Tar } from "effect/encoding";
 
-import { skip, tarEntries } from "./tar-stream.ts";
-import { UnityPackageUnreadable } from "./unity-package-unreadable.ts";
+import { tarEntries } from "./tar-stream.ts";
+import type { UnityPackageUnreadable } from "./unity-package-unreadable.ts";
 
 const ASSET_NAME = /^(?:\.\/)?(?<guid>[0-9a-f]{32})\/asset$/u;
 
-const assetGuidOf = ({ header }: ParsedTarEntry): Option.Option<string> =>
+const assetGuidOf = ({ header }: Tar.Entry<UnityPackageUnreadable>): Option.Option<string> =>
   pipe(
-    Option.fromNullishOr(ASSET_NAME.exec(header.name)),
-    Option.filter(() => header.type === "file"),
+    Option.fromNullishOr(ASSET_NAME.exec(header.path)),
+    Option.filter(() => header.type === "File"),
     Option.flatMap(({ groups }) => Option.fromNullishOr(groups)),
     Option.flatMap(({ guid }) => Option.fromNullishOr(guid)),
   );
 
 const writeBody = (
-  path: string,
-  entry: ParsedTarEntry,
+  entry: Tar.Entry<UnityPackageUnreadable>,
   destination: string,
 ): Effect.Effect<
   void,
@@ -26,10 +25,7 @@ const writeBody = (
 > =>
   Effect.gen(function* writeAsset() {
     const fileSystem = yield* FileSystem.FileSystem;
-    yield* Stream.fromReadableStream({
-      evaluate: () => entry.body,
-      onError: (cause) => UnityPackageUnreadable.make({ path, cause }),
-    }).pipe(Stream.run(fileSystem.sink(destination)));
+    yield* Stream.run(entry.body, fileSystem.sink(destination));
   });
 
 /** @internal */
@@ -46,8 +42,8 @@ export const extractAssets = Effect.fn("extractAssets")(function* extractAssets(
       Option.match(
         Option.flatMap(assetGuidOf(entry), (guid) => HashMap.get(destinations, guid)),
         {
-          onNone: () => skip(entry),
-          onSome: (destination) => writeBody(path, entry, destination),
+          onNone: () => Effect.void,
+          onSome: (destination) => writeBody(entry, destination),
         },
       ),
     ),
