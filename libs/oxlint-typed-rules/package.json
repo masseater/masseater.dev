@@ -129,12 +129,12 @@
     {
       "name": "tanstack-router",
       "path": "dist/tanstack-router.mjs",
-      "limit": "3428 B"
+      "limit": "3429 B"
     },
     {
       "name": "drizzle",
       "path": "dist/drizzle.mjs",
-      "limit": "2173 B"
+      "limit": "2174 B"
     },
     {
       "name": "remotion",
