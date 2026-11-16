@@ -9,13 +9,13 @@ export const ClipSchema = Schema.Struct({
   to: Schema.Finite,
 }).annotate({ identifier: "Clip" });
 
-export const ChoiceSchema = Schema.Literals(["a", "b", "neither"]).annotate({
+export const ChoiceSchema = Schema.Literals(["first", "second", "neither"]).annotate({
   identifier: "Choice",
 });
 
 export const PairInputSchema = Schema.Struct({
-  a: ClipSchema,
-  b: ClipSchema,
+  first: ClipSchema,
+  second: ClipSchema,
 }).annotate({ identifier: "PairInput" });
 
 export const PairSchema = Schema.Struct({

@@ -9,8 +9,8 @@ import { TOGGLE } from "#/shared/ui/index.ts";
 
 const labelOf = (choice: Choice): string =>
   Match.value(choice).pipe(
-    Match.when("a", () => "A"),
-    Match.when("b", () => "B"),
+    Match.when("first", () => "A"),
+    Match.when("second", () => "B"),
     Match.when("neither", () => "どちらでもない"),
     Match.exhaustive,
   );

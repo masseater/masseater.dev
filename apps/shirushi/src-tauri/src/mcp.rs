@@ -106,8 +106,8 @@ struct ClipInput {
 
 #[derive(Deserialize, JsonSchema)]
 struct PairRequest {
-    a: ClipInput,
-    b: ClipInput,
+    first: ClipInput,
+    second: ClipInput,
 }
 
 #[derive(Deserialize, JsonSchema)]
@@ -158,16 +158,16 @@ fn clip_brief(clip: Clip) -> ClipBrief {
 #[derive(Serialize)]
 struct PairBrief {
     id: String,
-    a: ClipBrief,
-    b: ClipBrief,
+    first: ClipBrief,
+    second: ClipBrief,
     choice: Option<Choice>,
 }
 
 fn pair_brief(pair: Pair) -> PairBrief {
     PairBrief {
         id: pair.id,
-        a: clip_brief(pair.a),
-        b: clip_brief(pair.b),
+        first: clip_brief(pair.first),
+        second: clip_brief(pair.second),
         choice: pair.choice,
     }
 }
@@ -235,8 +235,8 @@ impl Tools {
 
     async fn pair(&self, request: PairRequest) -> Outcome<PairBrief> {
         let input = PairInput {
-            a: self.clip(request.a).await?,
-            b: self.clip(request.b).await?,
+            first: self.clip(request.first).await?,
+            second: self.clip(request.second).await?,
         };
         paired(&self.serving.taste, input).map(pair_brief)
     }
@@ -294,7 +294,7 @@ impl Tools {
     }
 
     #[tool(
-        description = "持ち主に二択を出す。a と b に曲の範囲を 1 つずつ渡すと、持ち主のアプリの「二択」に並び、持ち主はどちらが好きかを選ぶ。好みの境目を確かめたいときに、似ているが違う 2 つの範囲を選んで出す。答えは list_pairs で読む。"
+        description = "持ち主に二択を出す。first と second に曲の範囲を 1 つずつ渡すと、持ち主のアプリの「二択」に並び、持ち主はどちらが好きかを選ぶ。好みの境目を確かめたいときに、似ているが違う 2 つの範囲を選んで出す。答えは list_pairs で読む。"
     )]
     async fn propose_pair(
         &self,
@@ -305,7 +305,7 @@ impl Tools {
     }
 
     #[tool(
-        description = "出した二択と持ち主の答えを新しい順に返す。choice は a・b・neither（どちらでもない）で、まだ答えていなければ null。",
+        description = "出した二択と持ち主の答えを新しい順に返す。choice は first・second・neither（どちらでもない）で、まだ答えていなければ null。",
         annotations(read_only_hint = true)
     )]
     async fn list_pairs(&self) -> Result<CallToolResult, ErrorData> {

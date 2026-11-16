@@ -23,7 +23,7 @@ export const commands = {
 /* Types */
 export type Aspect = "rhythm" | "bass" | "chords" | "melody" | "tone" | "voice" | "arrangement" | "mix";
 
-export type Choice = "a" | "b" | "neither";
+export type Choice = "first" | "second" | "neither";
 
 export type Clip = {
 	media: Media,
@@ -82,16 +82,16 @@ export type Pair = Pair_Serialize | Pair_Deserialize;
 
 export type Pair_Deserialize = {
 	id: string,
-	a: Clip,
-	b: Clip,
+	first: Clip,
+	second: Clip,
 	at: number,
 	choice?: Choice | null,
 };
 
 export type Pair_Serialize = {
 	id: string,
-	a: Clip,
-	b: Clip,
+	first: Clip,
+	second: Clip,
 	at: number,
 	choice: Choice | null,
 };

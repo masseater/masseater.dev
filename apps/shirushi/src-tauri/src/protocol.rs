@@ -52,8 +52,8 @@ impl Aspect {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
 #[serde(rename_all = "lowercase")]
 pub enum Choice {
-    A,
-    B,
+    First,
+    Second,
     Neither,
 }
 
@@ -61,8 +61,8 @@ impl Choice {
     #[must_use]
     pub const fn as_str(self) -> &'static str {
         match self {
-            Self::A => "a",
-            Self::B => "b",
+            Self::First => "first",
+            Self::Second => "second",
             Self::Neither => "neither",
         }
     }
@@ -70,8 +70,8 @@ impl Choice {
     #[must_use]
     pub fn parse(value: &str) -> Option<Self> {
         match value {
-            "a" => Some(Self::A),
-            "b" => Some(Self::B),
+            "first" => Some(Self::First),
+            "second" => Some(Self::Second),
             "neither" => Some(Self::Neither),
             _ => None,
         }
@@ -208,15 +208,15 @@ pub struct Mark {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
 pub struct PairInput {
-    pub a: Clip,
-    pub b: Clip,
+    pub first: Clip,
+    pub second: Clip,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
 pub struct Pair {
     pub id: String,
-    pub a: Clip,
-    pub b: Clip,
+    pub first: Clip,
+    pub second: Clip,
     #[specta(type = specta_typescript::Number)]
     pub at: i64,
     pub choice: Option<Choice>,

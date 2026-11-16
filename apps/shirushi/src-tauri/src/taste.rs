@@ -44,7 +44,7 @@ impl Taste {
 fn kept_pair(taste: &Taste, pair: &Pair) -> Outcome<()> {
     taste.pairs.put(&Row {
         id: &pair.id,
-        source: &pair.a.media.source,
+        source: &pair.first.media.source,
         at: pair.at,
         value: pair,
     })
@@ -53,8 +53,8 @@ fn kept_pair(taste: &Taste, pair: &Pair) -> Outcome<()> {
 pub fn paired(taste: &Taste, input: PairInput) -> Outcome<Pair> {
     let pair = Pair {
         id: fresh_id(),
-        a: input.a,
-        b: input.b,
+        first: input.first,
+        second: input.second,
         at: now(),
         choice: None,
     };
@@ -199,16 +199,16 @@ mod tests {
         let pair = paired(
             &taste,
             PairInput {
-                a: clip("aaaaaaaaaaa"),
-                b: clip("bbbbbbbbbbb"),
+                first: clip("aaaaaaaaaaa"),
+                second: clip("bbbbbbbbbbb"),
             },
         )
         .expect("paired");
         assert_eq!(pair.choice, None);
-        chosen(&taste, &pair.id, Choice::B).expect("chosen");
+        chosen(&taste, &pair.id, Choice::Second).expect("chosen");
         let pairs: Vec<crate::protocol::Pair> = taste.pairs.list(None).expect("pairs");
-        assert_eq!(pairs[0].choice, Some(Choice::B));
-        assert!(chosen(&taste, "missing", Choice::A).is_err());
+        assert_eq!(pairs[0].choice, Some(Choice::Second));
+        assert!(chosen(&taste, "missing", Choice::First).is_err());
     }
 
     #[test]
