@@ -1,5 +1,5 @@
 /** @internal */
-export { deleteMark, fetchMarks, postMark } from "./marks.ts";
+export { deleteMark, fetchMarks, fetchStill, postMark } from "./marks.ts";
 /** @internal */
 export {
   answerPair,
