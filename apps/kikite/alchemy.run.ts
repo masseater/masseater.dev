@@ -23,13 +23,15 @@ const agentSdkVersion = Effect.gen(function* agentSdkVersion() {
   return version;
 }).pipe(Effect.orDie);
 
+const BUNDLE_DIR = "dist/server";
+
 const InterviewerImage = Containers.Container(
   INTERVIEWER_IMAGE,
   Effect.gen(function* interviewerImage() {
     const version = yield* agentSdkVersion;
     const { outdir } = yield* Build("InterviewerBundle", {
       command: "vp pack",
-      outdir: "dist/server",
+      outdir: BUNDLE_DIR,
       memo: {
         include: [
           "src/app/server/**",
@@ -45,6 +47,7 @@ const InterviewerImage = Containers.Container(
     return {
       schedulingPolicy: "durable_object" as const,
       context: outdir,
+      dockerfile: `${BUNDLE_DIR}/Containerfile`,
       build: { args: { AGENT_SDK_VERSION: version } },
     };
   }),

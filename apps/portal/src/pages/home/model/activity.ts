@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Order, Record as Rec, String as Str, pipe } from "effect";
+import { Array as Arr, Option, Order, Predicate, Record as Rec, String as Str, pipe } from "effect";
 
 import type { SettingsValue, TransactionValue } from "#/entities/money/index.ts";
 import type { DeckValue } from "#/entities/slide/index.ts";
@@ -21,7 +21,7 @@ export const KIND_LABELS: Readonly<Record<ActivityKind, string>> = {
 export type ActivityLink =
   | Readonly<{ kind: "memo"; params: Readonly<{ project: string; name: string }> }>
   | Readonly<{ kind: "conversation"; params: Readonly<{ session: string }> }>
-  | Readonly<{ kind: "page"; to: "/records" | "/money" | "/slides" }>;
+  | Readonly<{ kind: "page"; to: "/records" | "/money" | "/slides" | "/conversations" }>;
 
 export type Activity = Readonly<{
   key: string;
@@ -153,3 +153,48 @@ export const countSince = ({
     Arr.filter((activity) => activity.kind === kind && dayOf(activity) >= since),
     Arr.length,
   );
+
+const PLACES_SHOWN = 3;
+
+const SINGLE = 1;
+
+const isConversation = (activity: Activity): boolean => activity.kind === "conversation";
+
+const summaryOf = ([day, group]: readonly [
+  string,
+  Arr.NonEmptyReadonlyArray<Activity>,
+]): Activity => ({
+  key: `conversations:${day}`,
+  kind: "conversation",
+  stamp: Arr.headNonEmpty(group).stamp,
+  title: `${String(Arr.length(group))} 件の会話`,
+  context: pipe(
+    group,
+    Arr.map((activity) => activity.title),
+    Arr.dedupe,
+    Arr.take(PLACES_SHOWN),
+    Arr.join("・"),
+  ),
+  link: { kind: "page", to: "/conversations" },
+});
+
+const foldedDay = (
+  entry: readonly [string, Arr.NonEmptyReadonlyArray<Activity>],
+): readonly Activity[] => {
+  const [, group] = entry;
+  if (Arr.length(group) > SINGLE) {
+    return [summaryOf(entry)];
+  }
+  return group;
+};
+
+export const foldConversations = (activities: readonly Activity[]): readonly Activity[] => {
+  const others = pipe(activities, Arr.filter(Predicate.not(isConversation)));
+  const conversations = pipe(activities, Arr.filter(isConversation));
+  const folded = pipe(conversations, Arr.groupBy(dayOf), Rec.toEntries, Arr.flatMap(foldedDay));
+  return pipe(
+    others,
+    Arr.appendAll(folded),
+    Arr.sortWith((activity) => activity.stamp, Order.flip(Str.Order)),
+  );
+};

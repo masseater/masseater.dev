@@ -1,11 +1,9 @@
-import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
+import { Option, String as Str, pipe } from "effect";
 
+import { agentDocProblems } from "#/shared/lib/agent-docs.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
-import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
-const AGENT_DOC = /(?:^|\/)(?:AGENTS|CLAUDE)\.md$/u;
 const RECOMMENDED_LINES = 200;
-const READ_CONCURRENCY = 16;
 const FIRST = 1;
 const RULE: RuleName = "agent-docs-length";
 
@@ -27,24 +25,5 @@ const problemFor =
   };
 
 /** @internal */
-export const checkAgentDocsLength = Effect.fn("checkAgentDocsLength")(
-  function* checkAgentDocsLength(root: string) {
-    const files = yield* RepositoryFiles;
-    const listed = yield* files.listedFiles(root);
-    const docs = pipe(
-      listed,
-      Arr.filter((name) => AGENT_DOC.test(name)),
-    );
-    const found = yield* Effect.forEach(
-      docs,
-      (name) => {
-        const file = files.join(root, name);
-        return files
-          .readFile(file)
-          .pipe(Effect.map(Option.flatMap((source) => problemFor(file)(lineCount(source)))));
-      },
-      { concurrency: READ_CONCURRENCY },
-    );
-    return Arr.getSomes(found);
-  },
-);
+export const checkAgentDocsLength = (root: string): ReturnType<typeof agentDocProblems> =>
+  agentDocProblems(root, (file) => (source) => problemFor(file)(lineCount(source)));

@@ -1,73 +1,78 @@
-import { Option, Schema, pipe } from "effect";
+import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 
-import { TimeOut } from "#/shared/model/index.ts";
+const ProfileLine = Schema.Struct({ text: Schema.String, refs: Schema.Array(Schema.Int) });
 
-import { LifeItem } from "./life-item.ts";
-
-const Japanese = Schema.Struct({
-  statement: Schema.String,
-  why: Schema.optionalKey(Schema.String),
-});
-
-const Trait = Schema.Struct({
-  ref: Schema.String,
-  scope: Schema.String,
-  statement: Schema.String,
-  why: Schema.optionalKey(Schema.String),
-  ja: Schema.optionalKey(Japanese),
-  supports: Schema.Int,
-  contradicts: Schema.optionalKey(Schema.Int),
-  lastSeen: Schema.optionalKey(TimeOut),
-});
-
-const Person = Schema.Struct({
-  name: Schema.String,
-  count: Schema.Int,
-  lastMet: Schema.optionalKey(Schema.String),
-  facts: Schema.Array(LifeItem),
-});
+const ProfileSection = Schema.Struct({ title: Schema.String, lines: Schema.Array(ProfileLine) });
 
 export const Profile = Schema.Struct({
-  ownerFacts: Schema.Array(LifeItem),
-  activeGoals: Schema.Array(LifeItem),
-  openTodos: Schema.Array(LifeItem),
-  people: Schema.Array(Person),
-  recentMedia: Schema.Array(LifeItem),
-  traits: Schema.Record(Schema.String, Schema.Array(Trait)),
+  builtAt: Schema.String,
+  sections: Schema.Array(ProfileSection),
+  sectionsJa: Schema.Array(ProfileSection),
+});
+
+export const ProfileSearch = Schema.Struct({
+  lang: Schema.optionalKey(Schema.Literal("ja")),
+  scope: Schema.optionalKey(Schema.String),
 });
 
 export type ProfileValue = typeof Profile.Type;
 
-export type TraitValue = typeof Trait.Type;
+export type ProfileLineValue = typeof ProfileLine.Type;
 
-type JapaneseValue = typeof Japanese.Type;
+export type ProfileSectionValue = typeof ProfileSection.Type;
 
-export type PersonValue = typeof Person.Type;
+export type ProfileSearchValue = typeof ProfileSearch.Type;
 
-const TRAIT_LABELS: Readonly<Record<string, string>> = {
-  rule: "決まり",
-  preference: "好み",
-  stack: "技術",
-  workstyle: "働き方",
-  communication: "話し方",
-  value: "価値観",
-  background: "経歴",
-};
+const SCOPE_MARK = "In ";
 
-export const traitLabel = (kind: string): string => TRAIT_LABELS[kind] ?? kind;
+const BULLET = "- ";
 
-const japaneseOf = (trait: TraitValue): Option.Option<JapaneseValue> =>
-  Option.fromUndefinedOr(trait.ja);
-
-export const statementOf = (trait: TraitValue): string =>
+const scopeOf = (section: ProfileSectionValue): Option.Option<string> =>
   pipe(
-    japaneseOf(trait),
-    Option.match({ onNone: () => trait.statement, onSome: (ja) => ja.statement }),
+    Option.liftPredicate(section.title, Str.startsWith(SCOPE_MARK)),
+    Option.map(Str.slice(SCOPE_MARK.length)),
   );
 
-export const whyOf = (trait: TraitValue): Option.Option<string> =>
-  pipe(
-    japaneseOf(trait),
-    Option.flatMap((ja) => Option.fromUndefinedOr(ja.why)),
-    Option.orElse(() => Option.fromUndefinedOr(trait.why)),
-  );
+export const scopesOf = (sections: readonly ProfileSectionValue[]): readonly string[] =>
+  pipe(sections, Arr.map(scopeOf), Arr.getSomes);
+
+const shownIn =
+  (scope: Option.Option<string>) =>
+  (section: ProfileSectionValue): boolean =>
+    Option.match(scopeOf(section), {
+      onNone: () => true,
+      onSome: (name) =>
+        pipe(scope, Option.match({ onNone: () => true, onSome: (wanted) => wanted === name })),
+    });
+
+const languageOf =
+  (lang: ProfileSearchValue["lang"]) =>
+  (profile: ProfileValue): readonly ProfileSectionValue[] =>
+    Option.match(Option.fromUndefinedOr(lang), {
+      onNone: () => profile.sections,
+      onSome: () => profile.sectionsJa,
+    });
+
+export const sectionsOf =
+  ({ lang, scope }: ProfileSearchValue) =>
+  (profile: ProfileValue): readonly ProfileSectionValue[] => {
+    const shown = shownIn(Option.fromUndefinedOr(scope));
+    return pipe(languageOf(lang)(profile), Arr.filter(shown));
+  };
+
+export const refsLabel = (refs: readonly number[]): string =>
+  pipe(refs, Arr.map(String), Arr.join(" "));
+
+const lineText = ({ text, refs }: ProfileLineValue): string =>
+  Arr.match(refs, {
+    onEmpty: () => `${BULLET}${text}`,
+    onNonEmpty: (some) => `${BULLET}${text} [${refsLabel(some)}]`,
+  });
+
+const sectionText = (section: ProfileSectionValue): string =>
+  pipe(section.lines, Arr.map(lineText), Arr.prepend(`## ${section.title}`), Arr.join("\n"));
+
+export const markdownOf = (sections: readonly ProfileSectionValue[]): string =>
+  pipe(sections, Arr.map(sectionText), Arr.prepend("# USER.md"), Arr.join("\n\n"));
+
+export const sectionId = (title: string): string => `section-${encodeURIComponent(title)}`;

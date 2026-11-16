@@ -34,7 +34,11 @@ export default defineConfig({
         cache: false,
       },
       "daily:after": { command: [], dependsOn: ["deploy:production"] },
-      "deploy:mosaic-files": { command: "alchemy deploy alchemy.files.ts --yes", cache: false },
+      "deploy:mosaic-files": {
+        command: "ALCHEMY_STAGE=$ITEM alchemy deploy alchemy.files.ts --yes",
+        cache: false,
+        dependsOn: ["@masseater.dev/mosaic-build#character"],
+      },
     },
   },
   base: `${BASE_PATH}/`,

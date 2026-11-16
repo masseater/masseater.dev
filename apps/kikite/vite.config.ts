@@ -48,7 +48,7 @@ export default defineConfig({
       neverBundle: [AGENT_SDK],
       alwaysBundle: (id) => !Str.startsWith(AGENT_SDK)(id),
     },
-    copy: [{ from: "src/app/server/Dockerfile", to: "dist/server" }],
+    copy: [{ from: "src/app/server/Containerfile", to: "dist/server" }],
   },
   test: {
     include: ["**/*.test.ts"],

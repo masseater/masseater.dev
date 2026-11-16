@@ -9,8 +9,10 @@ import { SectionLink } from "./section-link.tsx";
 
 const LABEL = "セクション";
 
+const NAV_CLASS = { row: "", header: "max-sm:basis-full" } as const;
+
 export const SectionLinkList = ({ direction }: Readonly<{ direction: Direction }>): ReactNode => (
-  <nav aria-label={LABEL}>
+  <nav aria-label={LABEL} className={NAV_CLASS[direction]}>
     <LinkList direction={direction}>
       {pipe(
         sections,

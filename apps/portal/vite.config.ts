@@ -22,11 +22,7 @@ export default defineConfig(({ mode }) => ({
       ...alchemyTasks,
       "deploy:production": {
         ...deployTo("prod"),
-        dependsOn: [
-          "watashi-mcp#deploy:production",
-          "sundries#deploy:production",
-          "money#deploy:production",
-        ],
+        dependsOn: ["watashi-mcp#deploy:production", "sundries#deploy:production"],
       },
     },
   },

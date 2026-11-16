@@ -28,7 +28,11 @@ export default defineConfig(({ mode }) => ({
       overrides: [
         {
           files: ["src/**/*.{ts,tsx}"],
-          excludeFiles: ["src/**/*-writer.server.ts"],
+          excludeFiles: [
+            "src/**/*-writer.server.ts",
+            "src/entities/ledger/**",
+            "src/features/{categorize,import-statements,report}/**",
+          ],
           rules: {
             "eslint/no-restricted-properties": [
               "error",

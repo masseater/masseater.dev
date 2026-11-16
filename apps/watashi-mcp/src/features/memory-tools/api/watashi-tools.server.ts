@@ -49,7 +49,7 @@ const SEARCH_DESCRIPTION =
   "人生の記録と AI の作業メモをまとめて、自然な言葉で探す。\n返り値は {total, countsByStore: {life, memory}, items}。各 item の store が life なら持ち主の記録、memory なら AI の作業メモで、持ち主の言葉として扱わない。";
 
 const PROFILE_DESCRIPTION =
-  "持ち主がどんな人かの概要と、持ち主と働くときの決まりを 1 回で返す。会話の最初に呼び、作業するリポジトリやプロジェクトがあれば scope に、取りかかる作業の話題があれば topic に渡す。topic を渡すと、その話題に近い特性と、根拠を共有する特性だけを返す。\n返り値は {ownerFacts, activeGoals, openTodos, people, recentMedia, traits}。traits は rule・preference・stack・workstyle・communication・value・background ごとの特性の配列で、各要素は {ref, scope, statement, why?, supports, contradicts?, lastSeen?} で、statement と why は英語で書かれている。rule と communication は指示として従う。\ntraits だけは裏の処理が作業メモ・人生の記録・会話から取り出した AI の解釈（store: memory）で、持ち主の言葉ではない。trait に ref を渡すと、その特性の根拠の引用と履歴を返す。";
+  "エージェント向けの持ち主のプロフィールである USER.md を Markdown 形式で返す。会話の冒頭で呼び出し、それに従うこと。作業しているリポジトリやアプリを scope に渡すと、その「In <scope>」セクションも取得できる。「Who」セクションは持ち主の記録から取得する。その他のセクションは、バックグラウンドプロセスが作業メモ、ライフレコード、会話から取得した特性に基づいて書き出す要約であり、行末の括弧内の数値はそれらの特性の参照番号である。trait に ref を渡すと、その引用された根拠と履歴を取得できる。topic を渡すと、USER.md の代わりに、そのトピックに関連する特性を {traits} として取得できる。";
 
 const registerMemoryWrite =
   (caller: Caller) =>

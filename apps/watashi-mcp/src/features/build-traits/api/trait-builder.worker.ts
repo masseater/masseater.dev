@@ -51,7 +51,7 @@ export class TraitBuilder extends DurableObject {
       reset: () => session.reset(),
       prompt: (input) => session.prompt(input),
     };
-    const guarded = buildTraits({ conversation, translator: env.TRANSLATOR }).pipe(
+    const guarded = buildTraits({ conversation, translator: env.TRANSLATOR, ai: env.AI }).pipe(
       this.gate.withPermitsIfAvailable(ONE_RUN),
       Effect.map(Option.getOrElse(busy)),
       Effect.tap(logRun),

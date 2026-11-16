@@ -13,21 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      deployments: read
     outputs:
       packages: ${{ steps.packages.outputs.packages }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - run: git fetch --unshallow --filter=blob:none origin
       - uses: $/.github/actions/setup
         with:
           native: "false"
       - id: packages
         run: vp run -r task-packages daily
-        env:
-          GH_TOKEN: ${{ github.token }}
 
   run:
     needs: plan
@@ -46,7 +42,6 @@ jobs:
     permissions:
       actions: write
       contents: write
-      deployments: write
       id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -55,7 +50,7 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - uses: masseater/typescript-template/.github/actions/credentials@d31880940798de1570171b0bd255ec9e69005d83
+      - uses: masseater/typescript-template/.github/actions/credentials@5e507cf2bcea2ef759c07e195185632936b70c33
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           shared-key: daily-${{ matrix.package.name }}
@@ -88,12 +83,6 @@ jobs:
         run: vp run -r prune-caches
         env:
           GH_TOKEN: ${{ github.token }}
-      - run: vp run -r record-deployment
-        env:
-          GH_TOKEN: ${{ github.token }}
-          DEPLOYMENT_ENVIRONMENT: daily
-          DEPLOYMENT_TASK: daily:${{ matrix.package.name }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
 
   after:
     needs: run
@@ -112,7 +101,7 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - uses: masseater/typescript-template/.github/actions/credentials@d31880940798de1570171b0bd255ec9e69005d83
+      - uses: masseater/typescript-template/.github/actions/credentials@5e507cf2bcea2ef759c07e195185632936b70c33
       - run: vp run -r daily:after
 
   ci-telemetry:
@@ -124,6 +113,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@d31880940798de1570171b0bd255ec9e69005d83
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@5e507cf2bcea2ef759c07e195185632936b70c33
         with:
           github-token: ${{ github.token }}

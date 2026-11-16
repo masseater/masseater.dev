@@ -36,7 +36,6 @@ export {
   ordered,
   projected,
   factStateOf,
-  stringsAt,
   contains,
 } from "./api/life-filter.ts";
 export type { Entry } from "./api/life-filter.ts";

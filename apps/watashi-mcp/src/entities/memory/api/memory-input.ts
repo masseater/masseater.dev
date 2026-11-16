@@ -62,20 +62,20 @@ export const WatashiSearchInput = Schema.Struct({
 
 const TraitRef = Schema.String.check(Schema.isPattern(/^owner_trait:\d+$/u)).annotate({
   description:
-    "A trait ref (owner_trait:12). Returns that trait with its quoted evidence and revisions",
+    "A trait ref, owner_trait:<n> for a number n in brackets in USER.md. Returns that trait with its quoted evidence and revisions",
 });
 
 export const WatashiProfileInput = Schema.Struct({
   scope: Schema.optionalKey(
     Schema.NonEmptyString.annotate({
       description:
-        "A repository or project name. Returns global traits plus the traits of this scope. Omit to return every scope",
+        "A repository or app name. Adds its In <scope> section to USER.md, or limits topic results to global traits and this scope",
     }),
   ),
   topic: Schema.optionalKey(
     Schema.NonEmptyString.annotate({
       description:
-        "Natural words about the work at hand. Narrows traits to those near the words and their neighbours in the evidence graph",
+        "Natural words about the work at hand. Returns the traits near the words and their neighbours in the evidence graph instead of USER.md",
     }),
   ),
   trait: Schema.optionalKey(TraitRef),

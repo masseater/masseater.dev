@@ -15,4 +15,5 @@ export type {
 } from "./model/money.ts";
 export { SIGNED_YEN, YEN } from "./model/yen.ts";
 export { monthLabel } from "./model/month-label.ts";
+export { hasMovement } from "./model/movement.ts";
 export { MoneyLink } from "./ui/money-link.tsx";

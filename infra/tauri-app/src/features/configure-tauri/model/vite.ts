@@ -1,30 +1,10 @@
+import { browserTest } from "@masseater.dev/browser-test/vite";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
 import { Array, Option, pipe } from "effect";
 import type { UserConfig } from "vite-plus";
-import { playwright } from "vite-plus/test/browser-playwright";
 
-const FONTCONFIG_FILE = `${import.meta.dirname}/../fontconfig/fonts.conf`;
-const ALLOWED_MISMATCHED_PIXELS = 0.002;
 const CARGO_INPUTS = ["Cargo.lock", "Cargo.toml", "rust-toolchain.toml", ".cargo/**"] as const;
-
-const browserTest = (viewport: Readonly<{ width: number; height: number }>): UserConfig => ({
-  test: {
-    browser: {
-      enabled: true,
-      headless: true,
-      provider: playwright({ launchOptions: { channel: "chrome", env: { FONTCONFIG_FILE } } }),
-      instances: [{ browser: "chromium" }],
-      viewport: { ...viewport },
-      expect: {
-        toMatchScreenshot: {
-          comparatorName: "pixelmatch",
-          comparatorOptions: { allowedMismatchedPixelRatio: ALLOWED_MISMATCHED_PIXELS },
-        },
-      },
-    },
-  },
-});
 
 const cargoCommand = (crate: string): string =>
   `cargo fmt -p ${crate} --check && cargo clippy -p ${crate} --all-targets --locked -- -D warnings && cargo test -p ${crate} --locked`;

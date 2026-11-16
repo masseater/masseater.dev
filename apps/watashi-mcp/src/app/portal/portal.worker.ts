@@ -10,6 +10,8 @@ import { conversationRead } from "./portal-conversation.server.ts";
 import { lifeRead, memoryRead, memoryWrite, profile } from "./portal-operations.server.ts";
 import { settled } from "./portal-settled.server.ts";
 
+export { MoneyPortal } from "./money-portal.server.ts";
+
 const NOT_FOUND = 404;
 
 const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
@@ -31,8 +33,8 @@ export class WatashiPortal extends WorkerEntrypoint implements WatashiPortalRpc 
     return this.run("memory_projects", memoryProjects);
   }
 
-  public profile(input: unknown): Promise<PortalResult> {
-    return this.run("watashi_profile", profile(input));
+  public profile(): Promise<PortalResult> {
+    return this.run("watashi_profile", profile);
   }
 
   public conversationRead(input: unknown): Promise<PortalResult> {

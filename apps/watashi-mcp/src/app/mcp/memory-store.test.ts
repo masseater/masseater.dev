@@ -1,12 +1,12 @@
 import { afterAll, expect, it } from "@effect/vitest";
-import { Effect, Option } from "effect";
+import { Effect } from "effect";
 import { vi } from "vite-plus/test";
 
 import { routeLifeRead, writeLife } from "#/features/life-tools/index.test.support.ts";
 import {
   readMemory,
   writeMemory,
-  ownerProfile,
+  watashiProfile,
   watashiSearch,
 } from "#/features/memory-tools/index.test.support.ts";
 
@@ -46,12 +46,8 @@ it.effect("語彙・振り返りの材料・概要を返す", () =>
     expect(vocabulary).toMatchObject({ metrics: [{ metric: "drinks", count: 1 }] });
     const digest = yield* routeLifeRead({ record: "digest", from: "2026-11-02", to: NIGHT });
     expect(digest).toMatchObject({ kindCounts: { met: 1 } });
-    const profile = yield* ownerProfile({ scope: Option.none(), topic: Option.none() });
-    expect(profile).toMatchObject({
-      openTodos: [{ title: "確定申告" }],
-      recentMedia: [{ title: "三体" }],
-    });
-    expect(profile["traits"]).toStrictEqual({});
+    const profile = yield* watashiProfile({});
+    expect(profile).toBe("# USER.md\n\nThe profile has not been built yet.\n");
   }),
 );
 

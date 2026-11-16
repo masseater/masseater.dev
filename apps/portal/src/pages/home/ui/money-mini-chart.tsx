@@ -5,10 +5,9 @@ import { Bar, BarChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis } fro
 
 import { monthLabel, YEN } from "#/entities/money/index.ts";
 import { useOverview } from "#/pages/home/api/home-query.ts";
+import { RECENT_MONTHS } from "#/pages/home/model/recent-months.ts";
 
 const TEXT = { income: "収入", expense: "支出" } as const;
-
-const MONTHS = 6;
 
 const HEIGHT = 160;
 
@@ -26,7 +25,7 @@ export const MoneyMiniChart = (): ReactNode => {
     () =>
       pipe(
         months,
-        Arr.takeRight(MONTHS),
+        Arr.takeRight(RECENT_MONTHS),
         Arr.map((row) => ({ month: row.month, income: row.income, expense: -row.expense })),
       ),
     [months],
