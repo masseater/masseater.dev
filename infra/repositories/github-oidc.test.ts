@@ -119,6 +119,21 @@ test("a bot workflow in an unlisted repository is granted for that repository al
   );
 });
 
+test("the merge queue may also update workflow files when it merges main into a pull request", () => {
+  const queue = jobIn({ repository: UNLISTED, workflow: "update-branches.yml" });
+  expect(workflowGrant(BROKER_GRANTS.workflows)(queue)).toStrictEqual(
+    Option.some({
+      permissions: {
+        contents: "write",
+        pull_requests: "write",
+        metadata: "read",
+        workflows: "write",
+      },
+      repositories: [UNLISTED],
+    }),
+  );
+});
+
 test("a workflow outside the workflow table in an unlisted repository is not granted", () => {
   const release = jobIn({ repository: UNLISTED, workflow: "release.yml" });
   const outsideWorkflows = {
@@ -131,8 +146,11 @@ test("a workflow outside the workflow table in an unlisted repository is not gra
   expect(isGranted(BROKER_GRANTS)(outsideWorkflows)).toBe(false);
 });
 
-test("every workflow grant carries only contents, pull request and metadata permissions", () => {
-  const files = Rec.keys(BROKER_GRANTS.workflows);
+test("every bot workflow grant except the merge queue carries only contents, pull request and metadata permissions", () => {
+  const files = pipe(
+    Rec.keys(BROKER_GRANTS.workflows),
+    Arr.filter((workflow) => workflow !== "update-branches.yml"),
+  );
   const grants = pipe(
     files,
     Arr.map((workflow) =>
