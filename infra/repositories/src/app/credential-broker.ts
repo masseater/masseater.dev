@@ -280,7 +280,7 @@ export type { AccessOAuthRpc, SiteToken } from "#/features/access-oauth/index.ts
 export { ClaudeRoutine } from "#/features/run-claude-routine/index.ts";
 export { CredentialStatus } from "./credential-status.ts";
 export { SloppediaGitHub } from "#/features/mint-github-token/index.ts";
-export { Tailnet } from "#/features/join-tailnet/index.ts";
-export type { TailnetRpc } from "#/features/join-tailnet/index.ts";
+export { Tailnet } from "./tailnet-entrypoint.ts";
+export type { TailnetRpc } from "./tailnet-entrypoint.ts";
 export type { JoinedTailnet } from "#/features/join-tailnet/index.ts";
 export default worker;
