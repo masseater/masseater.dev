@@ -7,8 +7,12 @@ import type { ReactNode } from "react";
 
 import { MarkList, removeAtom, useMarks } from "#/entities/mark/index.ts";
 
+import { TasteTabs } from "./taste-tabs.tsx";
+import { useTasteTabs } from "./use-taste-tabs.tsx";
+
 export const Library = (): ReactNode => {
   const marks = useMarks(Option.none());
+  const taste = useTasteTabs();
   const setLink = useAtomSet(linkAtom);
   const open = useAtomSet(openLinkAtom);
   const remove = useAtomSet(removeAtom);
@@ -23,8 +27,13 @@ export const Library = (): ReactNode => {
     [setLink, open],
   );
   return (
-    <section className="max-w-2xl">
-      <MarkList marks={marks} showSong onPick={pick} onRemove={remove} />
-    </section>
+    <div className="grid items-start gap-6 lg:grid-cols-3">
+      <section className="lg:col-span-2">
+        <MarkList marks={marks} showSong onPick={pick} onRemove={remove} />
+      </section>
+      <aside className="lg:sticky lg:top-4">
+        <TasteTabs tabs={taste} />
+      </aside>
+    </div>
   );
 };

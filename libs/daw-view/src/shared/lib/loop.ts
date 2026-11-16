@@ -2,19 +2,20 @@ export interface Loop {
   readonly kick: () => void;
   readonly paint: () => void;
   readonly start: (frame: () => boolean) => void;
+  readonly stop: () => void;
 }
+
+const NONE = 0;
 
 const idle = (): boolean => false;
 
 export const createLoop = (): Loop => {
-  let frame = idle;
-  let pending = false;
+  const state = { frame: idle, pending: NONE };
   const kick = (): void => {
-    if (!pending) {
-      pending = true;
-      requestAnimationFrame(() => {
-        pending = false;
-        if (frame()) {
+    if (state.pending === NONE) {
+      state.pending = requestAnimationFrame(() => {
+        state.pending = NONE;
+        if (state.frame()) {
           kick();
         }
       });
@@ -23,13 +24,18 @@ export const createLoop = (): Loop => {
   return {
     kick,
     paint: () => {
-      if (frame()) {
+      if (state.frame()) {
         kick();
       }
     },
     start: (next) => {
-      frame = next;
+      state.frame = next;
       kick();
+    },
+    stop: () => {
+      state.frame = idle;
+      cancelAnimationFrame(state.pending);
+      state.pending = NONE;
     },
   };
 };

@@ -183,10 +183,40 @@
           "markdownDescription": "Enables the choose_file command without any pre-configured scope."
         },
         {
+          "description": "Enables the choose_pair command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-choose-pair",
+          "markdownDescription": "Enables the choose_pair command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the judge_statement command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-judge-statement",
+          "markdownDescription": "Enables the judge_statement command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the list_forecasts command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-list-forecasts",
+          "markdownDescription": "Enables the list_forecasts command without any pre-configured scope."
+        },
+        {
           "description": "Enables the list_marks command without any pre-configured scope.",
           "type": "string",
           "const": "allow-list-marks",
           "markdownDescription": "Enables the list_marks command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the list_pairs command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-list-pairs",
+          "markdownDescription": "Enables the list_pairs command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the list_statements command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-list-statements",
+          "markdownDescription": "Enables the list_statements command without any pre-configured scope."
         },
         {
           "description": "Enables the mcp_access command without any pre-configured scope.",
@@ -231,10 +261,40 @@
           "markdownDescription": "Denies the choose_file command without any pre-configured scope."
         },
         {
+          "description": "Denies the choose_pair command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-choose-pair",
+          "markdownDescription": "Denies the choose_pair command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the judge_statement command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-judge-statement",
+          "markdownDescription": "Denies the judge_statement command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the list_forecasts command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-list-forecasts",
+          "markdownDescription": "Denies the list_forecasts command without any pre-configured scope."
+        },
+        {
           "description": "Denies the list_marks command without any pre-configured scope.",
           "type": "string",
           "const": "deny-list-marks",
           "markdownDescription": "Denies the list_marks command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the list_pairs command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-list-pairs",
+          "markdownDescription": "Denies the list_pairs command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the list_statements command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-list-statements",
+          "markdownDescription": "Denies the list_statements command without any pre-configured scope."
         },
         {
           "description": "Denies the mcp_access command without any pre-configured scope.",

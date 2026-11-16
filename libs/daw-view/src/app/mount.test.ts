@@ -4,6 +4,7 @@ import { page } from "vite-plus/test/browser";
 
 import { fixtureOf, mixedFixtureOf } from "./fixture.test.support.ts";
 import { mount } from "./mount.test.support.ts";
+import { pendingFixtureOf } from "./pending.test.support.ts";
 
 const CLICK = new URL("./click.wav", import.meta.url).href;
 const CLICK_FRAMES = 2205;
@@ -134,6 +135,19 @@ describe("the mixer of a mounted song", () => {
       yield* Effect.promise(() => expect.element(page.getByText("0:01")).toBeVisible());
       yield* Effect.promise(() => pause.click());
       yield* Effect.promise(() => expect.element(play).toBeVisible());
+    }),
+  );
+});
+
+describe("an unmounted song", () => {
+  it.live("stops rendering and empties its root", () =>
+    Effect.gen(function* test() {
+      const fixture = pendingFixtureOf();
+      const { root, dispose } = yield* mount(fixture.song);
+      yield* Effect.promise(() => expect.poll(fixture.rendering).toBe(true));
+      dispose();
+      expect(root.firstChild).toBeNull();
+      yield* Effect.promise(() => expect.poll(fixture.aborted).toBe(true));
     }),
   );
 });
