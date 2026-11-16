@@ -107,15 +107,17 @@ const designed = ({ kind, hertz, gain, resonance }: BiquadOptions): Float64Array
 
 const AT = { b0: 0, b1: 1, b2: 2, a1: 3, a2: 4, x1: 5, x2: 6, y1: 7, y2: 8, size: 9 } as const;
 
+const slotOf = (state: Float64Array, slot: number): number => state[slot] ?? SILENT;
+
 const filtered = (state: Float64Array, input: number): number => {
-  const x1 = state[AT.x1] ?? SILENT;
-  const y1 = state[AT.y1] ?? SILENT;
+  const x1 = slotOf(state, AT.x1);
+  const y1 = slotOf(state, AT.y1);
   const output =
-    (state[AT.b0] ?? SILENT) * input +
-    (state[AT.b1] ?? SILENT) * x1 +
-    (state[AT.b2] ?? SILENT) * (state[AT.x2] ?? SILENT) -
-    (state[AT.a1] ?? SILENT) * y1 -
-    (state[AT.a2] ?? SILENT) * (state[AT.y2] ?? SILENT);
+    slotOf(state, AT.b0) * input +
+    slotOf(state, AT.b1) * x1 +
+    slotOf(state, AT.b2) * slotOf(state, AT.x2) -
+    slotOf(state, AT.a1) * y1 -
+    slotOf(state, AT.a2) * slotOf(state, AT.y2);
   state[AT.x2] = x1;
   state[AT.x1] = input;
   state[AT.y2] = y1;

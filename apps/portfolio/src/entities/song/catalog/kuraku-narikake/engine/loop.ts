@@ -3,7 +3,7 @@ import type { Bus } from "#/entities/song/lib/studio/bus.ts";
 import { timeOf } from "#/entities/song/lib/studio/moment.ts";
 
 import type { Kuraku } from "./kuraku.ts";
-import type { Edit } from "./score-schema.ts";
+import type { CueEdit } from "./score-schema.ts";
 
 const LOOP_FADE = 64;
 const LOOP_FADE_DIVISOR = 8;
@@ -11,7 +11,7 @@ const ONE = 1;
 const FIRST = 0;
 const SILENT = 0;
 
-export type Loop = Extract<Edit, Readonly<{ kind: "loop" }>>;
+export type Loop = Extract<CueEdit, Readonly<{ kind: "loop" }>>;
 
 const framesAt = (seconds: number): number => Math.round(seconds * SAMPLE_RATE);
 

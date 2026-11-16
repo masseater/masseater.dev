@@ -36,7 +36,7 @@ type Placed = typeof Place.Type;
 
 const CUTS = scoreOf(Schema.Array(CutSchema))("edits", automation.edits);
 
-interface Cutting {
+export interface Cutting {
   readonly grid: Grid;
   readonly studio: Studio;
   readonly bus: Bus;

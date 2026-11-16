@@ -8,7 +8,7 @@ import type { Bus } from "#/entities/song/lib/studio/bus.ts";
 import { timeOf } from "#/entities/song/lib/studio/moment.ts";
 
 import type { Kuraku } from "./kuraku.ts";
-import type { Span } from "./score-schema.ts";
+import type { TimeSpan } from "./score-schema.ts";
 
 const PAD = 0.25;
 const SILENT = 0;
@@ -21,14 +21,14 @@ export interface Sweep {
 
 const framesAt = (seconds: number): number => Math.round(seconds * SAMPLE_RATE);
 
-const endOf = (kuraku: Kuraku, span: Span): number =>
+const endOf = (kuraku: Kuraku, span: TimeSpan): number =>
   Option.match(Option.fromUndefinedOr(span.to), {
     onNone: () => kuraku.frames,
     onSome: (to) =>
       Math.min(kuraku.frames, framesAt(timeOf(kuraku.grid)(to) + (span.after ?? SILENT))),
   });
 
-const swept = (kuraku: Kuraku, bus: Bus, [sweep, span]: readonly [Sweep, Span]): void => {
+const swept = (kuraku: Kuraku, bus: Bus, [sweep, span]: readonly [Sweep, TimeSpan]): void => {
   const start = framesAt(timeOf(kuraku.grid)(span.from));
   const end = endOf(kuraku, span);
   const cutoff = (index: number): number => sweep.curve(index / SAMPLE_RATE);
@@ -46,7 +46,7 @@ const swept = (kuraku: Kuraku, bus: Bus, [sweep, span]: readonly [Sweep, Span]):
 };
 
 export const sweptAll =
-  ({ bus, sweep, spans }: Readonly<{ bus: Bus; sweep: Sweep; spans: readonly Span[] }>) =>
+  ({ bus, sweep, spans }: Readonly<{ bus: Bus; sweep: Sweep; spans: readonly TimeSpan[] }>) =>
   (kuraku: Kuraku): void => {
     for (const span of spans) {
       swept(kuraku, bus, [sweep, span]);

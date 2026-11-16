@@ -5,7 +5,7 @@ import type { Bus } from "#/entities/song/lib/studio/bus.ts";
 import { editorOf } from "./editor.ts";
 import type { Editing } from "./editor.ts";
 import type { Kuraku } from "./kuraku.ts";
-import type { Edit } from "./score-schema.ts";
+import type { CueEdit } from "./score-schema.ts";
 import { CUES, SECTIONS } from "./score.ts";
 import { sweptAll } from "./sweeps.ts";
 
@@ -16,7 +16,7 @@ const DRUM_LOW = { kind: SVF.low, resonance: 0.7 } as const;
 const DRUM_HIGH = { kind: SVF.high, resonance: 0.8 } as const;
 const MUSEUM_LOW = { kind: SVF.low, resonance: 0.7 } as const;
 
-const editedAll = (editing: Editing, edits: readonly Edit[]): void => {
+const editedAll = (editing: Editing, edits: readonly CueEdit[]): void => {
   const edit = editorOf(editing);
   for (const each of edits) {
     edit(each);

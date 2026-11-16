@@ -63,19 +63,6 @@ export const resample =
     return y;
   };
 
-export interface Seconds {
-  readonly from: number;
-  readonly to: number;
-}
-
-export const slice =
-  ({ from, to }: Seconds) =>
-  (x: Float32Array): Float32Array =>
-    x.subarray(
-      Math.max(FIRST, Math.round(from * SAMPLE_RATE)),
-      Math.min(x.length, Math.round(to * SAMPLE_RATE)),
-    );
-
 export interface Fades {
   readonly fadeIn: number;
   readonly fadeOut: number;

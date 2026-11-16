@@ -8,7 +8,7 @@ import type { Studio } from "#/entities/song/lib/studio/studio.ts";
 
 import type { Kuraku } from "./kuraku.ts";
 import { looped } from "./loop.ts";
-import type { Edit } from "./score-schema.ts";
+import type { CueEdit } from "./score-schema.ts";
 
 const MUTE_FADE = 3e-3;
 const NO_PITCH = 0;
@@ -20,9 +20,9 @@ export interface Editing {
   readonly bus: Bus;
 }
 
-export const editorOf = ({ kuraku, studio, bus }: Editing): ((edit: Edit) => void) => {
+export const editorOf = ({ kuraku, studio, bus }: Editing): ((edit: CueEdit) => void) => {
   const time = timeOf(kuraku.grid);
-  return Match.type<Edit>().pipe(
+  return Match.type<CueEdit>().pipe(
     Match.discriminatorsExhaustive("kind")({
       mute: ({ at, seconds }) => {
         mute(studio.desk)({ bus, time: time(at), seconds, fade: MUTE_FADE });

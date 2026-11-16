@@ -36,9 +36,9 @@ const EntrySchema = Schema.Struct({
   notes: Schema.optionalKey(Schema.Array(Numbers)),
 });
 
-export const SampleTableSchema = Schema.Record(Schema.String, EntrySchema);
+export const NotedTableSchema = Schema.Record(Schema.String, EntrySchema);
 
-export type SampleTableEntry = (typeof SampleTableSchema.Type)[string];
+export type SampleTableEntry = (typeof NotedTableSchema.Type)[string];
 
 export interface WordCache {
   readonly get: (key: string) => Float32Array | undefined;

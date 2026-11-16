@@ -22,7 +22,7 @@ const STAGES = {
   done: { share: 1, label: "done" },
 } as const;
 
-export interface Deck {
+export interface BlockSource {
   readonly frames: number;
   readonly block: (index: number) => Promise<readonly Block[]>;
 }
@@ -30,7 +30,7 @@ export interface Deck {
 export interface Mastering {
   readonly frames: number;
   readonly drums: readonly boolean[];
-  readonly deck: Deck;
+  readonly deck: BlockSource;
   readonly progress: Progressing;
 }
 
@@ -45,7 +45,7 @@ interface Cache {
   readonly fetch: (from: number, to: number) => Effect.Effect<void>;
 }
 
-const cacheOf = (deck: Deck): Cache => {
+const cacheOf = (deck: BlockSource): Cache => {
   const held = new Map<number, readonly Block[]>();
   const evicted = (first: number): void => {
     for (const index of held.keys()) {

@@ -12,7 +12,7 @@ import type { Life } from "./context.ts";
 import type { Event } from "./score-schema.ts";
 import { wordOf } from "./words.ts";
 
-type Pasted = Extract<Event, Readonly<{ kind: "paste" }>>;
+export type Pasted = Extract<Event, Readonly<{ kind: "paste" }>>;
 
 const SPOKEN = {
   name: "spoken",

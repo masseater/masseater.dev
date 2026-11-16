@@ -87,8 +87,7 @@ const triple = (): readonly [Float32Array, Float32Array, Float32Array] => [
   buffer(),
 ];
 
-export const heldCurve = (length: number): Float32Array<ArrayBuffer> =>
-  new Float32Array(length).fill(ONE);
+const heldCurve = (length: number): Float32Array<ArrayBuffer> => new Float32Array(length).fill(ONE);
 
 export const curvesFor = (frames: number): MasterCurves => {
   const length = Math.ceil(frames / MASTER.every) + TWO;

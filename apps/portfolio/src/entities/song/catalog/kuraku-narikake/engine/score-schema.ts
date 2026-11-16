@@ -55,7 +55,7 @@ const EditSchema = Schema.Union([
   }),
 ]);
 
-export type Edit = typeof EditSchema.Type;
+export type CueEdit = typeof EditSchema.Type;
 
 export const CuesSchema = Schema.Struct({
   kicks: Times,
@@ -65,8 +65,6 @@ export const CuesSchema = Schema.Struct({
   flashes: Schema.Array(Schema.Struct({ from: AtSchema, to: AtSchema })),
   roots: Times,
 });
-
-export type Cues = typeof CuesSchema.Type;
 
 const PointSchema = Schema.Struct({ at: AtSchema, shift: maybe(Finite), value: Finite });
 
@@ -197,7 +195,7 @@ const SpanSchema = Schema.Struct({ from: AtSchema, to: maybe(AtSchema), after: m
 
 const ClosedSchema = Schema.Struct({ from: AtSchema, to: AtSchema });
 
-export type Span = typeof SpanSchema.Type;
+export type TimeSpan = typeof SpanSchema.Type;
 
 export const SectionsSchema = Schema.Struct({
   museum: ClosedSchema,
@@ -209,5 +207,3 @@ export const SectionsSchema = Schema.Struct({
   drumHighPass: Schema.Array(SpanSchema),
   museumLowPass: Schema.Array(SpanSchema),
 });
-
-export type Sections = typeof SectionsSchema.Type;

@@ -3,7 +3,7 @@ import { Array as Arr, Option, pipe } from "effect";
 
 import type { Block } from "#/entities/song/lib/live/tape.ts";
 
-import type { Deck as Blocks } from "./engine/master.ts";
+import type { BlockSource } from "./engine/master.ts";
 import { MIX } from "./engine/score.ts";
 
 const SUMMED_FRAMES = 32_768;
@@ -15,7 +15,7 @@ const UNSCALED = 1;
 const SLOT = { drums: 0, music: 1 } as const;
 const SUMMED = [true, false] as const;
 
-export type Deck = Blocks &
+export type Deck = BlockSource &
   Readonly<{
     write: (
       slot: number,

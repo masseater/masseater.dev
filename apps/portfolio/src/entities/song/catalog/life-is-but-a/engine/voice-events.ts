@@ -8,7 +8,7 @@ import { lead } from "./lines.ts";
 import type { Event } from "./score-schema.ts";
 import { chop, say } from "./voices.ts";
 
-type Of<Kind extends Event["kind"]> = Extract<Event, Readonly<{ kind: Kind }>>;
+export type EventOf<Kind extends Event["kind"]> = Extract<Event, Readonly<{ kind: Kind }>>;
 
 const voicedOf =
   (life: Life) =>
@@ -30,11 +30,11 @@ const voicedOf =
 export const voiceEvents = (
   life: Life,
 ): Readonly<{
-  chop: (event: Of<"chop">) => void;
-  say: (event: Of<"say">) => void;
-  choir: (event: Of<"choir">) => void;
+  chop: (event: EventOf<"chop">) => void;
+  say: (event: EventOf<"say">) => void;
+  choir: (event: EventOf<"choir">) => void;
   lead: ReturnType<typeof lead>;
-  dream: (event: Of<"dream">) => void;
+  dream: (event: EventOf<"dream">) => void;
   mosaic: ReturnType<typeof mosaic>;
 }> => ({
   chop: (event) => {

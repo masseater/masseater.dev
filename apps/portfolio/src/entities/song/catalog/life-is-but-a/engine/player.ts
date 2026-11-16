@@ -1,5 +1,5 @@
 import type { MixPlayer, PlayerSetup, TapeSource } from "@masseater.dev/daw-view/worklet";
-import { Option, Schema } from "effect";
+import { Array as Arr, Option, Schema, pipe } from "effect";
 
 import { SAMPLE_RATE, orDefault } from "#/entities/song/lib/dsp/number.ts";
 import { trackAdded } from "#/entities/song/lib/live/tape.ts";
@@ -41,24 +41,47 @@ interface Channels {
   readonly ramps: Ramps;
 }
 
+const STEP = ONE / (SLEW_SECONDS * SAMPLE_RATE);
+
+const gainsAt = (
+  { targets, gains }: Channels,
+  track: number,
+): readonly [number, number, number, number] => [
+  gains.left[track] ?? SILENT,
+  gains.right[track] ?? SILENT,
+  targets.left[track] ?? SILENT,
+  targets.right[track] ?? SILENT,
+];
+
+const trackChannelAdded = (
+  channels: Channels,
+  [left, right]: readonly [Float32Array, Float32Array],
+  [position, end, count, track]: readonly [number, number, number, number],
+): void => {
+  const { tape, gains, ramps } = channels;
+  const [left0, right0, left1, right1] = gainsAt(channels, track);
+  if (
+    pipe(
+      [left0, right0, left1, right1],
+      Arr.every((gain) => gain === SILENT),
+    )
+  ) {
+    return;
+  }
+  gains.left[track] = slide({ ramp: ramps.left, frames: count, step: STEP })(left0, left1);
+  gains.right[track] = slide({ ramp: ramps.right, frames: count, step: STEP })(right0, right1);
+  trackAdded({ tape, track, ramps })(left, right, [position, end]);
+};
+
 const channelsAdded =
-  ({ tape, targets, gains, ramps }: Channels) =>
+  (channels: Channels) =>
   (
     left: Float32Array,
     right: Float32Array,
     [position, end, count]: readonly [number, number, number],
   ): void => {
-    const step = ONE / (SLEW_SECONDS * SAMPLE_RATE);
-    for (let track = SILENT; track < targets.left.length; track += ONE) {
-      const left0 = gains.left[track] ?? SILENT;
-      const right0 = gains.right[track] ?? SILENT;
-      const left1 = targets.left[track] ?? SILENT;
-      const right1 = targets.right[track] ?? SILENT;
-      if (left0 !== SILENT || right0 !== SILENT || left1 !== SILENT || right1 !== SILENT) {
-        gains.left[track] = slide({ ramp: ramps.left, frames: count, step })(left0, left1);
-        gains.right[track] = slide({ ramp: ramps.right, frames: count, step })(right0, right1);
-        trackAdded({ tape, track, ramps })(left, right, [position, end]);
-      }
+    for (let track = SILENT; track < channels.targets.left.length; track += ONE) {
+      trackChannelAdded(channels, [left, right], [position, end, count, track]);
     }
   };
 

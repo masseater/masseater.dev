@@ -8,7 +8,7 @@ const HALL_RATE = 0.5;
 const PLATE = { low: 300, high: 8500, resonance: 0.7 } as const;
 const HALL_LOW = 220;
 
-type Samples = Readonly<Record<string, Float32Array>>;
+export type ImpulseSamples = Readonly<Record<string, Float32Array>>;
 
 const tailed = (impulse: Float32Array, frames: number): Float32Array => {
   const longer = new Float32Array(impulse.length + frames);
@@ -16,10 +16,10 @@ const tailed = (impulse: Float32Array, frames: number): Float32Array => {
   return longer;
 };
 
-const impulseOf = (samples: Samples, name: string): Float32Array =>
+const impulseOf = (samples: ImpulseSamples, name: string): Float32Array =>
   samples[name] ?? new Float32Array();
 
-export const plateOf = (samples: Samples): Impulse => {
+export const plateOf = (samples: ImpulseSamples): Impulse => {
   const left = tailed(impulseOf(samples, "irL"), PLATE_TAIL);
   const right = tailed(impulseOf(samples, "irR"), PLATE_TAIL);
   for (const channel of [left, right]) {
@@ -29,7 +29,7 @@ export const plateOf = (samples: Samples): Impulse => {
   return { left, right };
 };
 
-export const hallOf = (samples: Samples): Impulse => {
+export const hallOf = (samples: ImpulseSamples): Impulse => {
   const half = resample({ rate: HALL_RATE });
   const left = tailed(half(impulseOf(samples, "irL")), HALL_TAIL);
   const right = tailed(half(impulseOf(samples, "irR")), HALL_TAIL);

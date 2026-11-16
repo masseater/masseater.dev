@@ -5,11 +5,11 @@ import { samplesIn } from "#/entities/song/model/daw.ts";
 import type { Recording } from "#/entities/song/model/daw.ts";
 import { FormSchema } from "#/entities/song/model/form.ts";
 
-import { SampleTableSchema } from "./engine/context.ts";
+import { NotedTableSchema } from "./engine/context.ts";
 import samples from "./samples.json";
 import { work } from "./work.ts";
 
-export const table = scoreOf(SampleTableSchema)("samples", samples);
+export const table = scoreOf(NotedTableSchema)("samples", samples);
 
 export const recorded: Omit<Recording, "render"> = {
   work,

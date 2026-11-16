@@ -65,20 +65,20 @@ export const crossfadeEdge =
     }
   };
 
-export interface Span {
+export interface BusSpan {
   readonly bus: Bus;
   readonly time: number;
   readonly seconds: number;
 }
 
-const framesOf = ({ time, seconds }: Span): readonly [number, number] => [
+const framesOf = ({ time, seconds }: BusSpan): readonly [number, number] => [
   Math.round(time * SAMPLE_RATE),
   Math.round(seconds * SAMPLE_RATE),
 ];
 
 export const reverseSlice =
   (desk: Desk) =>
-  (span: Span): void => {
+  (span: BusSpan): void => {
     loggedEdit(desk)({ label: "reverse", time: span.time, seconds: span.seconds, reversed: true });
     const [start, length] = framesOf(span);
     for (const channel of [span.bus.left, span.bus.right]) {
@@ -91,7 +91,7 @@ export const reverseSlice =
     crossfadeEdge(desk.frames)({ bus: span.bus, at: start + length });
   };
 
-export interface TapeStop extends Span {
+export interface TapeStop extends BusSpan {
   readonly endRate: number;
 }
 
@@ -123,7 +123,7 @@ export const tapeStop =
     }
   };
 
-export interface Repeat extends Span {
+export interface Repeat extends BusSpan {
   readonly count: number;
   readonly decay?: number;
   readonly pitch?: number;

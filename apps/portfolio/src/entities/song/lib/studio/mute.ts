@@ -1,7 +1,7 @@
 import { SAMPLE_RATE, orDefault } from "#/entities/song/lib/dsp/number.ts";
 
 import { loggedEdit } from "./edits.ts";
-import type { Span } from "./edits.ts";
+import type { BusSpan } from "./edits.ts";
 import type { Desk } from "./paste.ts";
 
 const ONE = 1;
@@ -10,7 +10,7 @@ const FIRST = 0;
 const STEP = 1;
 const DEFAULT_FADE = 3e-3;
 
-export interface Mute extends Span {
+export interface Mute extends BusSpan {
   readonly fade?: number;
 }
 
