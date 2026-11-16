@@ -121,14 +121,14 @@ it.effect("imports plugins from a library and rebases their modules", () =>
   Effect.gen(function* imported() {
     const song = yield* songIn(
       filesOf({
-        [ENTRY]: `import { ott } from "../lib/fx.fu"
+        [ENTRY]: `import { ott } from "../lib/fx.fumx"
 song "imported"
 track pad audio fx [ott]
 bar meter 4/4 tempo 120bpm {
   pad: rest 1/1
 }
 `,
-        "/lib/fx.fu": `plugin ott from "./ott.ts" {
+        "/lib/fx.fumx": `plugin ott from "./ott.ts" {
   depth: percent = 50%
 }
 `,
