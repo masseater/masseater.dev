@@ -1,10 +1,11 @@
+import { secondsOf, timeOf } from "#/entities/song/lib/studio/moment.ts";
+import type { At, Length } from "#/entities/song/lib/studio/moment.ts";
+
 import { choir } from "./choir.ts";
 import type { Life } from "./context.ts";
 import { dream, mosaic } from "./ensemble.ts";
 import { lead } from "./lines.ts";
 import type { Event } from "./score-schema.ts";
-import { secondsOf, timeOf } from "./timing.ts";
-import type { At, Length } from "./timing.ts";
 import { chop, say } from "./voices.ts";
 
 type Of<Kind extends Event["kind"]> = Extract<Event, Readonly<{ kind: Kind }>>;

@@ -3,7 +3,7 @@ import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
 import { scoreOf } from "#/entities/song/lib/studio/score.ts";
 import { samplesIn } from "#/entities/song/model/daw.ts";
 import type { Recording } from "#/entities/song/model/daw.ts";
-import { FormSchema } from "#/entities/song/model/program.ts";
+import { FormSchema } from "#/entities/song/model/form.ts";
 
 import { SampleTableSchema } from "./engine/context.ts";
 import samples from "./samples.json";

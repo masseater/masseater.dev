@@ -13,8 +13,6 @@ export interface View {
   readonly roots?: readonly number[];
 }
 
-export type SampleTable = Readonly<Record<string, unknown>>;
-
 export const FormSchema = Schema.Struct({
   title: Schema.String,
   BPM: Schema.Finite,
@@ -26,5 +24,3 @@ export const FormSchema = Schema.Struct({
 });
 
 export type Form = typeof FormSchema.Type;
-
-export type Progressing = (share: number, label: string) => void;

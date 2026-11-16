@@ -1,5 +1,5 @@
 import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import type { Lane } from "#/entities/song/model/program.ts";
+import type { Lane } from "#/entities/song/model/form.ts";
 
 import type { Life } from "./context.ts";
 import { wallsOf } from "./wall.ts";

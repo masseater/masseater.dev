@@ -1,4 +1,4 @@
-import type { Lane } from "#/entities/song/model/program.ts";
+import type { Lane } from "#/entities/song/model/form.ts";
 
 import type { Mastered } from "./master.ts";
 

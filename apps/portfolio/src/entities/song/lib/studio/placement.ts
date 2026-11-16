@@ -55,3 +55,12 @@ export interface SampleInfo {
   readonly midi?: number;
   readonly group?: string;
 }
+
+export const SampleTableSchema = Schema.Record(
+  Schema.String,
+  Schema.Struct({
+    key: Schema.optionalKey(Schema.Finite),
+    midi: Schema.optionalKey(Schema.Finite),
+    group: Schema.optionalKey(Schema.String),
+  }),
+);

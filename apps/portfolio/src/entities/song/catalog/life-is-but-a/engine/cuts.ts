@@ -3,11 +3,10 @@ import { Match, Schema } from "effect";
 import automation from "#/entities/song/catalog/life-is-but-a/score/automation.json";
 import type { Bus } from "#/entities/song/lib/studio/bus.ts";
 import { fieldOf } from "#/entities/song/lib/studio/field.ts";
+import { mute } from "#/entities/song/lib/studio/mute.ts";
 import { scoreOf } from "#/entities/song/lib/studio/score.ts";
 import type { Studio } from "#/entities/song/lib/studio/studio.ts";
 import type { Grid } from "#/entities/song/lib/studio/timing.ts";
-
-import { mute } from "./mute.ts";
 
 const { Finite } = Schema;
 const Place = Schema.Struct({ bar: Finite, step: Finite });

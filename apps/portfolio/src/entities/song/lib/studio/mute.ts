@@ -1,7 +1,8 @@
 import { SAMPLE_RATE, orDefault } from "#/entities/song/lib/dsp/number.ts";
-import { loggedEdit } from "#/entities/song/lib/studio/edits.ts";
-import type { Span } from "#/entities/song/lib/studio/edits.ts";
-import type { Desk } from "#/entities/song/lib/studio/paste.ts";
+
+import { loggedEdit } from "./edits.ts";
+import type { Span } from "./edits.ts";
+import type { Desk } from "./paste.ts";
 
 const ONE = 1;
 const SILENT = 0;

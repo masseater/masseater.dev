@@ -1,5 +1,5 @@
 import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import type { Lane } from "#/entities/song/model/program.ts";
+import type { Lane } from "#/entities/song/model/form.ts";
 
 import { automationOf } from "./automation.ts";
 import type { Life } from "./context.ts";

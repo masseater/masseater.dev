@@ -3,7 +3,7 @@ import { Array as Arr, Option, Record as Rec, pipe, Predicate } from "effect";
 
 import type { Ledger, Logged } from "#/entities/song/lib/studio/placement.ts";
 
-import type { Lane, View } from "./program.ts";
+import type { Lane, View } from "./form.ts";
 
 const HERTZ = "Hz";
 const NONE = 0;

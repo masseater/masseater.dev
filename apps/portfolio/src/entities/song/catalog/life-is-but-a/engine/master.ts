@@ -1,9 +1,9 @@
 import type { Bus } from "#/entities/song/lib/studio/bus.ts";
 import { curveApplied, softClip } from "#/entities/song/lib/studio/curves.ts";
 import { compressionCurve } from "#/entities/song/lib/studio/dynamics.ts";
+import { limitCurve } from "#/entities/song/lib/studio/limiter.ts";
 
 import type { Life } from "./context.ts";
-import { limitCurve } from "./limiter.ts";
 import { MASTER } from "./mastering.ts";
 import { toned } from "./tone.ts";
 

@@ -4,12 +4,12 @@ import { semitoneRatio } from "#/entities/song/lib/dsp/number.ts";
 import { fade, resample } from "#/entities/song/lib/dsp/sampling.ts";
 import { stretch } from "#/entities/song/lib/dsp/stretch.ts";
 import { fieldOf } from "#/entities/song/lib/studio/field.ts";
+import { secondsOf, timeOf } from "#/entities/song/lib/studio/moment.ts";
+import type { Length } from "#/entities/song/lib/studio/moment.ts";
 import type { Source } from "#/entities/song/lib/studio/paste.ts";
 
 import type { Life } from "./context.ts";
 import type { Event } from "./score-schema.ts";
-import { secondsOf, timeOf } from "./timing.ts";
-import type { Length } from "./timing.ts";
 import { wordOf } from "./words.ts";
 
 type Pasted = Extract<Event, Readonly<{ kind: "paste" }>>;

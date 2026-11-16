@@ -1,9 +1,19 @@
-import type { TapeSource, TrackBlock } from "@masseater.dev/daw-view/worklet";
 import { Predicate } from "effect";
 
 const SILENT = 0;
 const ONE = 1;
 const STEREO = 2;
+
+export interface Block {
+  readonly channels: number;
+  readonly scale: number;
+  readonly data: ArrayLike<number>;
+}
+
+export interface Blocks {
+  readonly frames: number;
+  readonly block: (index: number) => readonly Block[];
+}
 
 export interface Ramps {
   readonly left: Float32Array;
@@ -24,7 +34,7 @@ const otherOf = (stereo: boolean, left: number, right: number): number => {
 };
 
 const spanAdded =
-  (block: TrackBlock, ramps: Ramps) =>
+  (block: Block, ramps: Ramps) =>
   (left: Float32Array, right: Float32Array, { from, to, offset }: Span): void => {
     const { data, scale, channels } = block;
     const stereo = channels === STEREO;
@@ -39,7 +49,7 @@ const spanAdded =
   };
 
 export interface Reading {
-  readonly tape: TapeSource;
+  readonly tape: Blocks;
   readonly track: number;
   readonly ramps: Ramps;
 }

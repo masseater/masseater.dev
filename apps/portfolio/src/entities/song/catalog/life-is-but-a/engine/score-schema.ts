@@ -1,5 +1,7 @@
 import { Schema } from "effect";
 
+import { AtSchema, LengthSchema } from "#/entities/song/lib/studio/moment.ts";
+
 const { Finite } = Schema;
 const Text = Schema.String;
 const Flag = Schema.Boolean;
@@ -12,17 +14,6 @@ const kind = <Name extends string>(name: Name): { readonly kind: Schema.Literal<
 });
 
 const Struck = { bar: Finite, step: Finite, velocity: Finite };
-
-export const AtSchema = Schema.Union([
-  Schema.Struct({ bar: Finite, step: Finite }),
-  Schema.Struct({ seconds: Finite }),
-]);
-
-export const LengthSchema = Schema.Union([
-  Schema.Struct({ sixteenths: Finite }),
-  Schema.Struct({ bars: Finite }),
-  Schema.Struct({ seconds: Finite }),
-]);
 
 const Drums = Schema.Struct({
   ...kind("drums"),

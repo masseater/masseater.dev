@@ -1,6 +1,8 @@
 import { SAMPLE_RATE, decibels } from "#/entities/song/lib/dsp/number.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import { heldCurve } from "#/entities/song/lib/studio/dynamics.ts";
+import { truePeakAt } from "#/entities/song/lib/dsp/true-peak.ts";
+
+import type { Bus } from "./bus.ts";
+import { heldCurve } from "./dynamics.ts";
 
 const ONE = 1;
 const NONE = 0;
@@ -11,6 +13,7 @@ export interface Limiting {
   readonly lookahead: number;
   readonly release: number;
   readonly every: number;
+  readonly truePeak?: boolean;
 }
 
 export interface Limited {
@@ -25,10 +28,24 @@ const wantedOf = (peak: number, ceiling: number): number => {
   return ONE;
 };
 
-const requests = (bus: Bus, ceiling: number): Float32Array => {
+type Peak = (bus: Bus, index: number) => number;
+
+const samplePeak: Peak = (bus, index) =>
+  Math.max(Math.abs(bus.left[index] ?? NONE), Math.abs(bus.right[index] ?? NONE));
+
+const peakOf = (ceiling: number, truePeak?: boolean): Peak => {
+  if (truePeak !== true) {
+    return samplePeak;
+  }
+  const between = truePeakAt(ceiling);
+  return (bus, index) =>
+    Math.max(samplePeak(bus, index), between(bus.left, index), between(bus.right, index));
+};
+
+const requests = (bus: Bus, ceiling: number, peakAt: Peak): Float32Array => {
   const wanted = new Float32Array(bus.left.length);
   for (let index = NONE; index < wanted.length; index += ONE) {
-    const peak = Math.max(Math.abs(bus.left[index] ?? NONE), Math.abs(bus.right[index] ?? NONE));
+    const peak = peakAt(bus, index);
     wanted[index] = wantedOf(peak, ceiling);
   }
   return wanted;
@@ -128,10 +145,11 @@ const decimated = (smooth: Float32Array, every: number): Limited => {
 };
 
 export const limitCurve =
-  ({ ceiling, lookahead, release, every }: Limiting) =>
+  ({ ceiling, lookahead, release, every, truePeak }: Limiting) =>
   (bus: Bus): Limited => {
     const ahead = Math.round(lookahead * MILLI * SAMPLE_RATE);
-    const wanted = requests(bus, decibels(ceiling));
+    const level = decibels(ceiling);
+    const wanted = requests(bus, level, peakOf(level, truePeak));
     const least = windowMinimum(wanted, ahead);
     released(least, ONE - Math.exp(-ONE / (release * MILLI * SAMPLE_RATE)));
     averaged(least, wanted, ahead);
