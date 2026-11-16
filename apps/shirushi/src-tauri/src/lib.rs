@@ -1,4 +1,4 @@
-use tauri::{App, Manager, async_runtime};
+use tauri::{App, Manager, Url, WebviewUrl, WebviewWindowBuilder, Wry, async_runtime};
 use tauri_specta::{Builder, ErrorHandlingMode, collect_commands};
 
 mod commands;
@@ -8,6 +8,8 @@ pub mod protocol;
 mod song;
 mod source;
 mod store;
+
+const WINDOW: &str = "main";
 
 fn builder() -> Builder<tauri::Wry> {
     Builder::<tauri::Wry>::new()
@@ -21,7 +23,38 @@ fn builder() -> Builder<tauri::Wry> {
         ])
 }
 
-fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
+type Setup = Result<(), Box<dyn std::error::Error>>;
+
+fn free_port() -> std::io::Result<u16> {
+    Ok(std::net::TcpListener::bind((local_mcp::HOST, 0))?
+        .local_addr()?
+        .port())
+}
+
+fn served_at(port: u16) -> Result<WebviewUrl, url::ParseError> {
+    if tauri::is_dev() {
+        return Ok(WebviewUrl::default());
+    }
+    Ok(WebviewUrl::External(Url::parse(&format!(
+        "http://{}:{port}",
+        local_mcp::HOST
+    ))?))
+}
+
+fn open_window(app: &App, port: u16) -> Setup {
+    let mut config = app
+        .config()
+        .app
+        .windows
+        .first()
+        .cloned()
+        .ok_or("tauri.conf.json has no window")?;
+    config.url = served_at(port)?;
+    WebviewWindowBuilder::from_config(app, &config)?.build()?;
+    Ok(())
+}
+
+fn setup(app: &App, port: u16) -> Setup {
     let data = app.path().app_local_data_dir()?;
     let state = commands::shirushi(&data).map_err(|failure| failure.message)?;
     let serving = (state.store.clone(), state.mcp_token.clone());
@@ -32,21 +65,33 @@ fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         }
     });
     app.manage(state);
-    Ok(())
+    open_window(app, port)
+}
+
+fn served(app: tauri::Builder<Wry>, port: u16) -> tauri::Builder<Wry> {
+    if tauri::is_dev() {
+        return app;
+    }
+    app.plugin(
+        tauri_plugin_localhost::Builder::new(port)
+            .host(local_mcp::HOST)
+            .build(),
+    )
 }
 
 pub fn run() -> tauri::Result<()> {
     let builder = builder();
-    tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(
-            |app, _arguments, _cwd| {
-                if let Some(window) = app.get_webview_window("main") {
-                    let _ = window.set_focus();
-                }
-            },
-        ))
+    let port = free_port()?;
+    let single = tauri::Builder::default().plugin(tauri_plugin_single_instance::init(
+        |app, _arguments, _cwd| {
+            if let Some(window) = app.get_webview_window(WINDOW) {
+                let _ = window.set_focus();
+            }
+        },
+    ));
+    served(single, port)
         .invoke_handler(builder.invoke_handler())
-        .setup(setup)
+        .setup(move |app| setup(app, port))
         .run(tauri::generate_context!())
 }
 
