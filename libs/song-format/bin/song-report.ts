@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Array as Arr, Console, Effect, FileSystem, Schema, pipe } from "effect";
+import { Array as Arr, Console, Effect, FileSystem, Path, Schema, pipe } from "effect";
 import { Argument, Command } from "effect/cli";
 
 import { runWithNode } from "#/app/node-services.ts";
@@ -25,20 +25,24 @@ const command = Command.make(
   {
     file: Argument.String("file").pipe(
       Argument.withDescription(
-        "A .fu file; prints the keys, chords and repeated bars read from its notes",
+        "A .fu file; reads the files it imports and prints the keys, chords and repeated bars read from its notes",
       ),
     ),
   },
   ({ file }) =>
     Effect.gen(function* report() {
       const fileSystem = yield* FileSystem.FileSystem;
-      const text = yield* fileSystem.readFileString(file);
-      const source = yield* readSong(text);
+      const path = yield* Path.Path;
+      const source = yield* readSong({
+        path: path.resolve(file),
+        read: (target) => fileSystem.readFileString(target),
+      });
       if (source.status === "invalid") {
         const lines = pipe(
           source.issues,
           Arr.map(
-            (issue) => `${file}:${String(issue.line)}:${String(issue.column)} ${issue.message}`,
+            (issue) =>
+              `${issue.path}:${String(issue.line)}:${String(issue.column)} ${issue.message}`,
           ),
         );
         return yield* InvalidSong.make({ message: Arr.join(lines, "\n") });

@@ -6,7 +6,7 @@ import { isAutomation } from "#generated/langium/ast.ts";
 import type {
   Automation,
   Bus,
-  Song as SongNode,
+  Bar as BarNode,
   Track as TrackNode,
 } from "#generated/langium/ast.ts";
 
@@ -86,9 +86,9 @@ const automationProblemsOf: From<Automation, readonly Problem[]> = (automation) 
     }),
   );
 
-export const automationsProblemsOf: From<SongNode, readonly Problem[]> = (song) =>
+export const automationsProblemsOf: From<readonly BarNode[], readonly Problem[]> = (bars) =>
   pipe(
-    song.bars,
+    bars,
     Arr.flatMap((bar) => bar.lines),
     Arr.filter(isAutomation),
     Arr.flatMap(automationProblemsOf),

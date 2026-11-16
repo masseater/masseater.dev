@@ -36,13 +36,18 @@ const durationOf =
   (scale: Scale): From<Sounding | Rest, Compiled<number>> =>
   (node) =>
     pipe(
-      ticksOf(node.duration),
+      Option.fromNullishOr(node.duration),
+      Option.flatMap(ticksOf),
       Option.map((ticks) => (ticks * scale.over) / scale.times),
       Option.filter(Number.isInteger),
       Option.match({
         onNone: () => ({
           value: NONE,
-          problems: [problemAt(node)("duration")(`${node.duration} は細かすぎて表せません`)],
+          problems: [
+            problemAt(node)("duration")(
+              `${node.duration ?? "計算した音価"} は細かすぎて表せません`,
+            ),
+          ],
         }),
         onSome: (ticks) => ({ value: ticks, problems: [] }),
       }),
@@ -98,6 +103,10 @@ export const lineOf =
             Match.discriminatorsExhaustive("$type")({
               Rest: restOf(scale),
               Sounding: soundingOf(kind, scale),
+              Each: (each) => ({
+                value: { items: [], length: NONE },
+                problems: [problemAt(each)("items")("each を展開できませんでした")],
+              }),
               Tuplet: (tuplet) =>
                 Option.match(ratioOf(tuplet.ratio), {
                   onNone: () => ({
