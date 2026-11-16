@@ -24,6 +24,7 @@ export default Stack(
       loopbackClients: false,
     });
     const { url } = yield* Workers.Worker("Translate", {
+      limits: { cpuMs: 200 },
       name: `${PREFIX}worker`,
       main: "./src/app/translator.ts",
       logpush: true,

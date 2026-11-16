@@ -49,6 +49,7 @@ const web = Effect.gen(function* web() {
     loopbackClients: false,
   });
   return yield* Website.Vite("Web", {
+    limits: { cpuMs: 1100 },
     name: `${PREFIX}web`,
     logpush: true,
     domain: SITE_HOST,
