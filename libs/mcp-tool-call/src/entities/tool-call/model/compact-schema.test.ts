@@ -1,7 +1,7 @@
 import { expect, it } from "@effect/vitest";
 import { Schema, pipe } from "effect";
 
-import { compactInput, compactJsonSchema } from "./compact-schema.ts";
+import { compactInput } from "./compact-schema.ts";
 
 const TARGET = { target: "draft-2020-12" } as const;
 
@@ -39,7 +39,14 @@ it("keeps properties and literal values named like noise keywords", () => {
     default: { additionalProperties: true },
     additionalProperties: false,
   };
-  expect(compactJsonSchema(node)).toStrictEqual(node);
+  const schema = pipe(Schema.Unknown, Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+  const fixed = {
+    "~standard": {
+      ...schema["~standard"],
+      jsonSchema: { input: (): typeof node => node, output: (): typeof node => node },
+    },
+  };
+  expect(compactInput(fixed)["~standard"].jsonSchema.input(TARGET)).toStrictEqual(node);
 });
 
 it("validates with the original schema", () => {

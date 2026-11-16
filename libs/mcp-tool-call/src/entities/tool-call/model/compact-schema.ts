@@ -69,7 +69,7 @@ const compactEntry =
     return recurse(value);
   };
 
-export const compactJsonSchema = (node: JsonObject): JsonObject => {
+const compactJsonSchema = (node: JsonObject): JsonObject => {
   const recurse: Recurse = (value) => {
     if (Arr.isArray(value)) {
       return pipe(value, Arr.map(recurse));
