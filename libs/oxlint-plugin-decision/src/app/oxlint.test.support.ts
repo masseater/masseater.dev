@@ -80,7 +80,7 @@ export const packageRoot = inPackage();
 export const pluginPath = inPackage("dist", "index.mjs");
 /** @internal */
 export const cacheDirOf = (root: string): Effect.Effect<string, never, Path.Path> =>
-  Path.Path.pipe(Effect.map((path) => path.join(root, ...CACHE_DIR)));
+  Path.Path.pipe(Effect.map((path) => path.join(root, CACHE_DIR)));
 
 const inheritedEnv: Effect.Effect<Readonly<Record<string, string>>> = Effect.map(
   pipe(

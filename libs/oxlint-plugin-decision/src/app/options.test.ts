@@ -88,7 +88,7 @@ const refusesChatModels = Effect.sync(() => {
 
 const dedupesModels = Effect.sync(() => {
   const resolved = resolveOptions(
-    { options: { model: ["typesafe/jev-latest", "typesafe/jev-latest", "typesafe/jev-1.2"] } },
+    { options: { model: ["typesafe/jev-latest", "typesafe/jev-latest", "typesafe/jev-1.3"] } },
     [rule],
     providers,
   );
@@ -102,7 +102,7 @@ const dedupesModels = Effect.sync(() => {
         ),
       ),
     ),
-    ["jev-latest", "jev-1.2"],
+    ["jev-latest", "jev-1.3"],
   );
 });
 

@@ -24,7 +24,7 @@ export CLOUDFLARE_API_TOKEN="..."   # an account API token with Workers AI Read
 
 The default model, `cloudflare/@cf/cloudflare/clef-flash`, runs on Workers AI and needs no other key. Requests go through the AI Gateway named `default`, or the one in `CLOUDFLARE_AI_GATEWAY_ID`. Without the two variables, the plugin warns once and reports nothing.
 
-A model is one of these decision models, and the types and the settings check refuse anything else:
+The types and the settings check accept only the decision models in this table.
 
 | Model                                                       | Reads                                              |
 | ----------------------------------------------------------- | -------------------------------------------------- |

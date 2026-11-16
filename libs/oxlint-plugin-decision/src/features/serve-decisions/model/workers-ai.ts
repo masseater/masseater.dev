@@ -1,12 +1,11 @@
 import { Config, Effect, Option, String as Str } from "effect";
 
-import { captured, envNameOf, toJson } from "#/entities/decision/index.ts";
+import { PREFIX, captured, envNameOf, toJson } from "#/entities/decision/index.ts";
 import type { DecideInput, WireRequest } from "#/entities/decision/index.ts";
 
 import { appContext } from "./app-context.ts";
 import { sendSystemOne } from "./system-one.ts";
 
-const TOOL = "oxlint-plugin-decision";
 const DEFAULT_GATEWAY = "default";
 const DEFAULT_API_URL = "https://api.cloudflare.com/client/v4";
 const RUN_PATH = "/ai/run";
@@ -46,7 +45,7 @@ export const sendWorkersAi = Effect.fn("sendWorkersAi")(function* sendWorkersAi(
       token,
       headers: {
         "cf-aig-gateway-id": gateway,
-        "cf-aig-metadata": toJson({ tool: TOOL, ...app }),
+        "cf-aig-metadata": toJson({ tool: PREFIX, ...app }),
       },
       envelope: true,
     },
