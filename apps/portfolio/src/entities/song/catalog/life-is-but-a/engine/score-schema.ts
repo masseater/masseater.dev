@@ -2,184 +2,200 @@ import { Schema } from "effect";
 
 import { AtSchema, LengthSchema } from "#/entities/song/lib/studio/moment.ts";
 
-const { Finite } = Schema;
 const Text = Schema.String;
 const Flag = Schema.Boolean;
 const maybe = Schema.optionalKey;
-const Keys = Schema.Array(Finite);
-const Glide = Schema.Array(Schema.Tuple([Finite, Finite]));
+const Keys = Schema.Array(Schema.Finite);
+const Glide = Schema.Array(Schema.Tuple([Schema.Finite, Schema.Finite]));
 
 const kind = <Name extends string>(name: Name): { readonly kind: Schema.Literal<Name> } => ({
   kind: Schema.Literal(name),
 });
 
-const Struck = { bar: Finite, step: Finite, velocity: Finite };
+const Struck = { bar: Schema.Finite, step: Schema.Finite, velocity: Schema.Finite };
 
 const Drums = Schema.Struct({
   ...kind("drums"),
-  bar: Finite,
+  bar: Schema.Finite,
   kick: maybe(Text),
   clap: maybe(Schema.Union([Text, Flag])),
   ghost: maybe(Text),
-  hats: maybe(Finite),
+  hats: maybe(Schema.Finite),
   busyHats: maybe(Flag),
-  open: maybe(Finite),
-  shaker: maybe(Finite),
-  percussion: maybe(Finite),
-  ride: maybe(Finite),
+  open: maybe(Schema.Finite),
+  shaker: maybe(Schema.Finite),
+  percussion: maybe(Schema.Finite),
+  ride: maybe(Schema.Finite),
 });
 
 const Hat = Schema.Struct({ ...kind("hat"), ...Struck });
 
 const Amen = Schema.Struct({
   ...kind("amen"),
-  bar: Finite,
-  step: Finite,
-  slice: Finite,
-  steps: Finite,
-  shift: maybe(Finite),
-  gain: maybe(Finite),
+  bar: Schema.Finite,
+  step: Schema.Finite,
+  slice: Schema.Finite,
+  steps: Schema.Finite,
+  shift: maybe(Schema.Finite),
+  gain: maybe(Schema.Finite),
 });
 
 const Roll = Schema.Struct({
   ...kind("roll"),
-  bar: Finite,
-  from: Finite,
-  to: Finite,
+  bar: Schema.Finite,
+  from: Schema.Finite,
+  to: Schema.Finite,
   sample: Text,
-  startGain: Finite,
-  endGain: Finite,
+  startGain: Schema.Finite,
+  endGain: Schema.Finite,
   accelerate: maybe(Flag),
-  rise: maybe(Finite),
-  division: maybe(Finite),
-  highPass: maybe(Finite),
+  rise: maybe(Schema.Finite),
+  division: maybe(Schema.Finite),
+  highPass: maybe(Schema.Finite),
 });
 
-const Shaker = Schema.Struct({ ...kind("shaker"), bar: Finite, level: Finite });
+const Shaker = Schema.Struct({ ...kind("shaker"), bar: Schema.Finite, level: Schema.Finite });
 
 const Percussion = Schema.Struct({
   ...kind("percussion"),
   ...Struck,
   sample: Text,
-  pan: maybe(Finite),
-  duration: maybe(Finite),
-  highPass: maybe(Finite),
-  semitones: maybe(Finite),
+  pan: maybe(Schema.Finite),
+  duration: maybe(Schema.Finite),
+  highPass: maybe(Schema.Finite),
+  semitones: maybe(Schema.Finite),
 });
 
 const Crash = Schema.Struct({
   ...kind("crash"),
-  bar: Finite,
-  step: maybe(Finite),
-  gain: maybe(Finite),
+  bar: Schema.Finite,
+  step: maybe(Schema.Finite),
+  gain: maybe(Schema.Finite),
 });
 
-const Riser = Schema.Struct({ ...kind("riser"), bar: Finite, seconds: Finite, gain: Finite });
+const Riser = Schema.Struct({
+  ...kind("riser"),
+  bar: Schema.Finite,
+  seconds: Schema.Finite,
+  gain: Schema.Finite,
+});
 
 const BassBar = Schema.Struct({
   ...kind("bassBar"),
-  bar: Finite,
+  bar: Schema.Finite,
   pattern: Text,
-  thick: maybe(Finite),
+  thick: maybe(Schema.Finite),
 });
 
 const BassNote = Schema.Struct({
   ...kind("bassNote"),
-  bar: Finite,
-  step: Finite,
-  length: Finite,
-  key: Finite,
-  sweep: maybe(Finite),
-  from: maybe(Finite),
-  glide: maybe(Finite),
-  to: maybe(Finite),
-  toAt: maybe(Finite),
-  amount: maybe(Finite),
+  bar: Schema.Finite,
+  step: Schema.Finite,
+  length: Schema.Finite,
+  key: Schema.Finite,
+  sweep: maybe(Schema.Finite),
+  from: maybe(Schema.Finite),
+  glide: maybe(Schema.Finite),
+  to: maybe(Schema.Finite),
+  toAt: maybe(Schema.Finite),
+  amount: maybe(Schema.Finite),
 });
 
 const OrganBar = Schema.Struct({
   ...kind("organBar"),
-  bar: Finite,
+  bar: Schema.Finite,
   pattern: Text,
-  top: maybe(Finite),
+  top: maybe(Schema.Finite),
   invert: maybe(Flag),
-  gain: maybe(Finite),
+  gain: maybe(Schema.Finite),
 });
 
 const Chorded = {
-  bar: Finite,
-  step: Finite,
-  length: Finite,
+  bar: Schema.Finite,
+  step: Schema.Finite,
+  length: Schema.Finite,
   keys: Keys,
-  gain: maybe(Finite),
-  release: maybe(Finite),
+  gain: maybe(Schema.Finite),
+  release: maybe(Schema.Finite),
 };
 
 const OrganHit = Schema.Struct({ ...kind("organHit"), ...Chorded });
 
-const Piano = Schema.Struct({ ...kind("piano"), ...Chorded, strum: maybe(Finite) });
+const Piano = Schema.Struct({ ...kind("piano"), ...Chorded, strum: maybe(Schema.Finite) });
 
 const Pad = Schema.Struct({
   ...kind("pad"),
-  bar: Finite,
-  bars: Finite,
+  bar: Schema.Finite,
+  bars: Schema.Finite,
   keys: Keys,
-  gain: maybe(Finite),
-  lowPass: maybe(Finite),
+  gain: maybe(Schema.Finite),
+  lowPass: maybe(Schema.Finite),
 });
 
 const Voiced = {
   bus: Text,
-  key: Finite,
+  key: Schema.Finite,
   at: AtSchema,
   length: LengthSchema,
-  gain: maybe(Finite),
-  send: maybe(Finite),
-  delay: maybe(Finite),
-  pan: maybe(Finite),
-  attack: maybe(Finite),
-  release: maybe(Finite),
-  highPass: maybe(Finite),
+  gain: maybe(Schema.Finite),
+  send: maybe(Schema.Finite),
+  delay: maybe(Schema.Finite),
+  pan: maybe(Schema.Finite),
+  attack: maybe(Schema.Finite),
+  release: maybe(Schema.Finite),
+  highPass: maybe(Schema.Finite),
   mode: maybe(Text),
-  grain: maybe(Finite),
+  grain: maybe(Schema.Finite),
 };
 
 const Chop = Schema.Struct({ ...kind("chop"), ...Voiced, voice: Text });
 
 const Say = Schema.Struct({ ...kind("say"), ...Voiced, syllable: Text, pitch: maybe(Glide) });
 
-const Choir = Schema.Struct({ ...kind("choir"), ...Voiced, singer: Text, index: Finite });
+const Choir = Schema.Struct({ ...kind("choir"), ...Voiced, singer: Text, index: Schema.Finite });
 
 const Lead = Schema.Struct({
   ...kind("lead"),
-  bar: Finite,
-  notes: Schema.Array(Schema.Struct({ step: Finite, length: Finite, key: Finite })),
-  cut: maybe(Finite),
-  send: maybe(Finite),
-  delay: maybe(Finite),
+  bar: Schema.Finite,
+  notes: Schema.Array(
+    Schema.Struct({ step: Schema.Finite, length: Schema.Finite, key: Schema.Finite }),
+  ),
+  cut: maybe(Schema.Finite),
+  send: maybe(Schema.Finite),
+  delay: maybe(Schema.Finite),
   voice: maybe(Text),
-  transpose: maybe(Finite),
-  pan: maybe(Finite),
-  gain: maybe(Finite),
-  prefer: maybe(Finite),
+  transpose: maybe(Schema.Finite),
+  pan: maybe(Schema.Finite),
+  gain: maybe(Schema.Finite),
+  prefer: maybe(Schema.Finite),
   bus: maybe(Text),
 });
 
 const Dream = Schema.Struct({
   ...kind("dream"),
-  bar: Finite,
-  step: Finite,
+  bar: Schema.Finite,
+  step: Schema.Finite,
   length: LengthSchema,
-  transpose: Finite,
-  gain: Finite,
+  transpose: Schema.Finite,
+  gain: Schema.Finite,
   notes: maybe(Keys),
   mode: maybe(Text),
 });
 
-const Mosaic = Schema.Struct({ ...kind("mosaic"), bar: Finite, level: Finite, density: Finite });
+const Mosaic = Schema.Struct({
+  ...kind("mosaic"),
+  bar: Schema.Finite,
+  level: Schema.Finite,
+  density: Schema.Finite,
+});
 
 const WordSource = Schema.Struct({
-  word: Schema.Struct({ syllable: Text, key: Finite, seconds: Finite, mode: maybe(Text) }),
+  word: Schema.Struct({
+    syllable: Text,
+    key: Schema.Finite,
+    seconds: Schema.Finite,
+    mode: maybe(Text),
+  }),
 });
 
 const Paste = Schema.Struct({
@@ -188,14 +204,14 @@ const Paste = Schema.Struct({
   source: Schema.Union([Text, WordSource, Schema.Struct({ spoken: Flag })]),
   at: AtSchema,
   placement: Schema.Struct({
-    gain: maybe(Finite),
-    pan: maybe(Finite),
-    release: maybe(Finite),
-    attack: maybe(Finite),
-    lowPass: maybe(Finite),
-    highPass: maybe(Finite),
-    semitones: maybe(Finite),
-    offset: maybe(Finite),
+    gain: maybe(Schema.Finite),
+    pan: maybe(Schema.Finite),
+    release: maybe(Schema.Finite),
+    attack: maybe(Schema.Finite),
+    lowPass: maybe(Schema.Finite),
+    highPass: maybe(Schema.Finite),
+    semitones: maybe(Schema.Finite),
+    offset: maybe(Schema.Finite),
     length: maybe(LengthSchema),
   }),
 });

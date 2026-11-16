@@ -1,9 +1,7 @@
 import { portfolio } from "@masseater.dev/ui/portfolio";
 
-const { url } = portfolio;
-
 export const site = {
-  url,
+  url: portfolio.url,
   name: portfolio.name,
   description:
     "masseater のポートフォリオ。作ったもの、ブログ、個人の百科事典もどきの Sloppedia を置いている。",
