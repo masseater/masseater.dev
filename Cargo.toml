@@ -11,6 +11,8 @@ members = [
   "tools/pod-rattle-host",
   "tools/xtask",
   "libs/effect2rs",
+  "libs/local-mcp",
+  "apps/shirushi/src-tauri",
 ]
 
 [workspace.package]
