@@ -1,41 +1,47 @@
 import { Option, Schema, pipe } from "effect";
 
-import type { Logged } from "#/entities/song/model/program.ts";
+import type { Logged } from "#/entities/song/lib/studio/placement.ts";
 
-import { engineModule } from "./program/engine.js";
-import { songModule } from "./program/song.js";
-import type { Session } from "./program/song.js";
+import { kurakuOf } from "./engine/kuraku.ts";
+import type { Kuraku } from "./engine/kuraku.ts";
+import { clipsOf } from "./engine/score.ts";
+import { trackOf } from "./engine/track.ts";
 import { AskSchema } from "./track-messages.ts";
 import type { Ask, Reply } from "./track-messages.ts";
 
 const FIRST = 0;
 
-const engine = engineModule();
-const program = songModule();
-const log: (Logged | null)[] = [];
-const held: { session: Option.Option<Session> } = { session: Option.none() };
+const log: Logged[] = [];
+const held: { kuraku: Option.Option<Kuraku> } = { kuraku: Option.none() };
 
 const askOf = Schema.decodeUnknownOption(AskSchema);
 
-const reply: (message: Reply, transfer: readonly ArrayBuffer[]) => void = (message, transfer) => {
+const reply = (message: Reply, transfer: readonly ArrayBuffer[]): void => {
   globalThis.postMessage(message, { transfer: [...transfer] });
 };
 
 const built =
   (name: string) =>
-  (session: Session): void => {
-    const stem = session.track(name);
+  (kuraku: Kuraku): void => {
+    const stem = trackOf(kuraku)(name);
     const entries = log.splice(FIRST);
-    reply({ name, stem, entries }, [stem.data.buffer, stem.segs.buffer]);
+    reply({ name, stem, entries }, [stem.data.buffer, stem.segments.buffer]);
   };
 
 const answer = (ask: Ask): void => {
   if ("samples" in ask) {
-    held.session = Option.some(program.open(engine, ask.samples, ask.table, { log, edits: false }));
+    held.kuraku = Option.some(
+      kurakuOf({
+        samples: ask.samples,
+        table: ask.table,
+        log: Option.some(log),
+        clips: clipsOf(ask.clips),
+      }),
+    );
     reply({ ready: true }, []);
     return;
   }
-  pipe(held.session, Option.map(built(ask.name)));
+  pipe(held.kuraku, Option.map(built(ask.name)));
 };
 
 globalThis.addEventListener("message", ({ data }) => {

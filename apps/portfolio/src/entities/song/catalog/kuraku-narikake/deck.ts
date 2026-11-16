@@ -1,7 +1,10 @@
 import type { Tape } from "@masseater.dev/daw-view";
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { Block, Blocks, Slot } from "./program/song.js";
+import type { Block } from "#/entities/song/lib/live/tape.ts";
+
+import type { BlockSource } from "./engine/master.ts";
+import { MIX } from "./engine/score.ts";
 
 const SUMMED_FRAMES = 32_768;
 const STEREO = 2;
@@ -10,12 +13,9 @@ const NEXT = 1;
 const SILENCE = 0;
 const UNSCALED = 1;
 const SLOT = { drums: 0, music: 1 } as const;
-const SUMMED: readonly Slot[] = [
-  { name: "DRUMS", drum: true },
-  { name: "MUSIC", drum: false },
-];
+const SUMMED = [true, false] as const;
 
-export type Deck = Blocks &
+export type Deck = BlockSource &
   Readonly<{
     write: (
       slot: number,
@@ -27,8 +27,8 @@ export type Deck = Blocks &
 export type Held = Readonly<{
   deck: Deck;
   tape: Option.Option<Tape>;
-  slotOf: (index: number, drum: boolean) => number;
-  stemsOf: (tracks: readonly string[], drums: readonly string[]) => readonly Slot[];
+  slotOf: (name: string, drum: boolean) => number;
+  drums: readonly boolean[];
 }>;
 
 type Sum = Readonly<{ left: Float32Array<ArrayBuffer>; right: Float32Array<ArrayBuffer> }>;
@@ -82,24 +82,28 @@ const summedDeck = (frames: number): Deck => {
 const taped = (tape: Tape): Held => ({
   deck: { frames: tape.frames, write: tape.write, block: tape.block },
   tape: Option.some(tape),
-  slotOf: (index) => index,
-  stemsOf: (tracks, drums) =>
-    pipe(
-      tracks,
-      Arr.map((name) => ({ name, drum: drums.includes(name) })),
+  slotOf: (name) => MIX.order.indexOf(name),
+  drums: pipe(
+    MIX.order,
+    Arr.map((name) =>
+      pipe(
+        MIX.tracks,
+        Arr.some((track) => track.name === name && track.drum === true),
+      ),
     ),
+  ),
 });
 
 const summed = (frames: number): Held => ({
   deck: summedDeck(frames),
   tape: Option.none(),
-  slotOf: (_index, drum) => {
+  slotOf: (_name, drum) => {
     if (drum) {
       return SLOT.drums;
     }
     return SLOT.music;
   },
-  stemsOf: () => SUMMED,
+  drums: SUMMED,
 });
 
 export const heldOn =
