@@ -7,7 +7,7 @@
     "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/app/index.ts"
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
