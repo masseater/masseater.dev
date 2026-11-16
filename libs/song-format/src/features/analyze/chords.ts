@@ -1,14 +1,17 @@
 import { Array as Arr, Option, Order, Schema, pipe } from "effect";
 import { Chord } from "tonal";
 
-import type { Events, Sounding } from "./events.ts";
-import { PositionSchema, TICKS_PER_BEAT } from "./song.ts";
-import { overlapOf } from "./time.ts";
-import type { Span } from "./time.ts";
+import type { Song } from "#/entities/song/song.ts";
+import { TICKS_PER_WHOLE } from "#/shared/lib/ticks.ts";
+
+import { overlapOf, positionOf, soundingsOf } from "./sounding.ts";
+import type { Sounding, Span } from "./sounding.ts";
 
 const FIRST = 1;
 const HELD_SHARE = 0.25;
 const UNKNOWN = "?";
+
+export const PositionSchema = Schema.Struct({ bar: Schema.Int, offset: Schema.String });
 
 export const ChordSpanSchema = Schema.Struct({
   from: PositionSchema,
@@ -29,7 +32,8 @@ const heldIn =
   (note: Sounding): boolean =>
     overlapOf(note)(window) >= (window.end - window.start) * HELD_SHARE;
 
-const isHarmonic = (note: Sounding): boolean => note.role === "bass" || note.role === "harmony";
+const isHarmonic = (note: Sounding): boolean =>
+  Option.exists(note.role, (role) => role === "bass" || role === "harmony");
 
 const byMidi = Order.mapInput(Order.Number, (note: Sounding) => note.midi);
 
@@ -43,15 +47,15 @@ const harmonicOrAll = (held: readonly Sounding[]): readonly Sounding[] => {
 
 const chordNotesIn =
   (notes: readonly Sounding[]) =>
-  (window: Span): readonly string[] => {
-    const held = pipe(notes, Arr.filter(heldIn(window)));
-    const chosen = harmonicOrAll(held);
-    return pipe(
-      Arr.sort(chosen, byMidi),
+  (window: Span): readonly string[] =>
+    pipe(
+      notes,
+      Arr.filter(heldIn(window)),
+      harmonicOrAll,
+      (held) => Arr.sort(held, byMidi),
       Arr.map((note) => note.pitchClass),
       Arr.dedupe,
     );
-  };
 
 const symbolOf = (notes: readonly string[]): string =>
   pipe(
@@ -60,11 +64,17 @@ const symbolOf = (notes: readonly string[]): string =>
     Option.getOrElse(() => UNKNOWN),
   );
 
-const beatWindows = (events: Events): readonly Span[] =>
-  Arr.makeBy(Math.ceil(events.end / TICKS_PER_BEAT), (beat) => ({
-    start: beat * TICKS_PER_BEAT,
-    end: (beat + FIRST) * TICKS_PER_BEAT,
-  }));
+const beatWindowsOf = (song: Song): readonly Span[] =>
+  pipe(
+    song.bars,
+    Arr.flatMap((bar) => {
+      const beat = TICKS_PER_WHOLE / bar.meter.denominator;
+      return Arr.makeBy(bar.meter.numerator, (index) => ({
+        start: bar.start + index * beat,
+        end: bar.start + (index + FIRST) * beat,
+      }));
+    }),
+  );
 
 const extend = (spans: readonly BeatChord[], beat: BeatChord): readonly BeatChord[] =>
   Option.match(Arr.last(spans), {
@@ -87,13 +97,15 @@ const beatChordOf =
     return Option.some({ ...window, notes: held, symbol: symbolOf(held) });
   };
 
-export const chordsOf = (events: Events): readonly ChordSpan[] => {
-  const beats = pipe(beatWindows(events), Arr.map(beatChordOf(events.notes)), Arr.getSomes);
+export const chordsOf = (song: Song): readonly ChordSpan[] => {
+  const notes = soundingsOf(song);
+  const beats = pipe(beatWindowsOf(song), Arr.map(beatChordOf(notes)), Arr.getSomes);
+  const at = positionOf(song);
   return pipe(
     Arr.reduce(beats, [] as readonly BeatChord[], extend),
     Arr.map((span) => ({
-      from: events.timeline.positionOf(span.start),
-      to: events.timeline.positionOf(span.end),
+      from: at(span.start),
+      to: at(span.end),
       symbol: span.symbol,
       notes: span.notes,
     })),

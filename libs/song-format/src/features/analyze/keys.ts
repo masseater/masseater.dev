@@ -1,8 +1,9 @@
 import { Array as Arr, Option, Order, Record, Schema, pipe } from "effect";
 
-import type { Events, Sounding } from "./events.ts";
-import { overlapOf } from "./time.ts";
-import type { Span } from "./time.ts";
+import type { Song } from "#/entities/song/song.ts";
+
+import { overlapOf, soundingsOf } from "./sounding.ts";
+import type { Sounding, Span } from "./sounding.ts";
 
 const FIRST = 1;
 const NONE = 0;
@@ -155,13 +156,26 @@ const byCorrelation = Order.flip(
   Order.mapInput(Order.Number, (candidate: Candidate) => candidate.correlation),
 );
 
+const edgeOf =
+  (song: Song) =>
+  (index: number, end: boolean): number =>
+    pipe(
+      song.bars,
+      Arr.findFirst((bar) => bar.index === index),
+      Option.match({
+        onNone: () => NONE,
+        onSome: (bar) => bar.start + Number(end) * bar.length,
+      }),
+    );
+
 export const keyIn =
-  (events: Events) =>
+  (song: Song) =>
   (range: BarRange): Option.Option<KeySpan> => {
+    const edge = edgeOf(song);
     const histogram = histogramOf({
-      start: events.timeline.barStart(range.fromBar),
-      end: events.timeline.barStart(range.toBar + FIRST),
-    })(events.notes);
+      start: edge(range.fromBar, false),
+      end: edge(range.toBar, true),
+    })(soundingsOf(song));
     const silent = pipe(
       histogram,
       Arr.every((weight) => weight === NONE),

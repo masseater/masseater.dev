@@ -3,7 +3,9 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   run: {
     tasks: {
-      schema: "node bin/song-schema.ts",
+      grammar: "langium generate",
+      "grammar:check": "langium generate && git diff --exit-code -- generated",
+      verify: { command: [], dependsOn: ["grammar:check"] },
     },
   },
 });

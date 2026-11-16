@@ -1,11 +1,11 @@
 import { Array as Arr, Option, Schema, pipe } from "effect";
 
+import type { Song } from "#/entities/song/song.ts";
+
 import { ChordSpanSchema, chordsOf } from "./chords.ts";
-import { eventsOf, lastBarOf } from "./events.ts";
 import { BarRangeSchema, KeySpanSchema, keyIn } from "./keys.ts";
 import type { BarRange } from "./keys.ts";
 import { repeatsOf } from "./repeats.ts";
-import type { Song } from "./song.ts";
 
 const FIRST = 1;
 const NONE = 0;
@@ -28,16 +28,15 @@ const phrasesOf = (bars: number): readonly BarRange[] =>
   }));
 
 export const analyze = (song: Song): Analysis => {
-  const events = eventsOf(song);
-  const bars = lastBarOf(events);
+  const bars = song.bars.length;
   if (bars === NONE) {
     return { bars, key: Option.none(), keys: [], chords: [], repeats: [] };
   }
   return {
     bars,
-    key: keyIn(events)({ fromBar: FIRST, toBar: bars }),
-    keys: pipe(phrasesOf(bars), Arr.map(keyIn(events)), Arr.getSomes),
-    chords: chordsOf(events),
-    repeats: repeatsOf(events)(bars),
+    key: keyIn(song)({ fromBar: FIRST, toBar: bars }),
+    keys: pipe(phrasesOf(bars), Arr.map(keyIn(song)), Arr.getSomes),
+    chords: chordsOf(song),
+    repeats: repeatsOf(song),
   };
 };

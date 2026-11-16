@@ -3,28 +3,30 @@
   "version": "0.0.0",
   "private": true,
   "bin": {
+    "fu-language-server": "./bin/fu-language-server.ts",
     "song-report": "./bin/song-report.ts"
   },
   "type": "module",
   "imports": {
-    "#/*": "./src/*"
+    "#/*": "./src/*",
+    "#generated/*": "./generated/*"
   },
   "exports": {
-    "./analysis": "./src/analysis.ts",
-    "./source": "./src/source.ts",
-    "./song": "./src/song.ts",
-    "./song.schema.json": "./generated/song.schema.json"
+    "./analysis": "./src/features/analyze/analysis.ts",
+    "./read-song": "./src/features/read-song/read-song.ts",
+    "./song": "./src/entities/song/song.ts"
   },
   "dependencies": {
     "@effect/platform-node-shared": "catalog:",
     "effect": "catalog:stack",
-    "jsonc-parser": "catalog:",
-    "tonal": "catalog:"
+    "langium": "catalog:",
+    "tonal": "catalog:",
+    "vscode-languageserver": "catalog:"
   },
   "devDependencies": {
-    "@effect/platform-node": "catalog:",
     "@effect/vitest": "catalog:",
     "@types/node": "catalog:",
+    "langium-cli": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   }

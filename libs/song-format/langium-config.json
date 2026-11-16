@@ -1,0 +1,12 @@
+{
+  "projectName": "Fu",
+  "languages": [
+    {
+      "id": "fu",
+      "grammar": "src/entities/language/fu.langium",
+      "fileExtensions": [".fu"]
+    }
+  ],
+  "out": "generated/langium",
+  "importExtension": ".ts"
+}
