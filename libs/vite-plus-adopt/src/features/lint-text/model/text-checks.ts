@@ -60,7 +60,7 @@ export const textlintCheck = withSection("textlint", (config, { root }) => {
       ),
     ),
   );
-  return Effect.all([markdown, ...sources]).pipe(Effect.map(mergeReports));
+  return Effect.all([markdown, ...sources], { concurrency: 1 }).pipe(Effect.map(mergeReports));
 });
 
 /** @internal */

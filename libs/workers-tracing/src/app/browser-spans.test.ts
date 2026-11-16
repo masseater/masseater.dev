@@ -77,6 +77,7 @@ test("OTLP でない本文・大きすぎる本文・多すぎるスパン・POS
     const results = yield* Effect.forEach(
       [post("{"), post(String.repeat(LARGE)("x")), many, new Request(URL_PATH)],
       received,
+      { concurrency: 1 },
     );
     expect(results).toStrictEqual([
       [REJECTED, NONE],

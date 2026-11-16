@@ -1,9 +1,12 @@
+import { readWantedLockfile } from "@pnpm/lockfile.fs";
+import { updateWorkspaceManifest } from "@pnpm/workspace.workspace-manifest-writer";
 import {
   Array as Arr,
   Effect,
   FileSystem,
   Option,
   Path,
+  Record as Rec,
   Schema,
   Stream,
   String as Str,
@@ -13,6 +16,7 @@ import type { PlatformError } from "effect";
 import { ChildProcess } from "effect/process";
 import type { ChildProcessSpawner } from "effect/process";
 
+import { workspaceManifest } from "#/entities/workspace/index.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
 
 import { overrideProblem } from "./override-findings.ts";
@@ -26,7 +30,7 @@ import {
   withBaselineProbe,
   withoutOverride,
 } from "./override-resolution.ts";
-import type { OverrideKey } from "./override-resolution.ts";
+import type { OverrideKey, Overrides } from "./override-resolution.ts";
 
 const WORKSPACE_FILE = "pnpm-workspace.yaml";
 const LOCKFILE = "pnpm-lock.yaml";
@@ -50,7 +54,7 @@ type CandidateServices =
 interface Workspace {
   readonly root: string;
   readonly files: readonly string[];
-  readonly manifest: string;
+  readonly overrides: Overrides;
 }
 
 const textOf = <Failure>(
@@ -105,41 +109,62 @@ const copyFiles = Effect.fn("copyFiles")(function* copyFiles(
     const copy = fs.copyFile(path.join(workspace.root, file), target);
     return fs.makeDirectory(path.dirname(target), { recursive: true }).pipe(Effect.andThen(copy));
   };
-  yield* Effect.forEach(workspace.files, copyOne, { discard: true });
+  yield* Effect.forEach(workspace.files, copyOne, { concurrency: 1, discard: true });
 });
+
+const depPathsIn = (
+  directory: string,
+  override: string,
+): Effect.Effect<readonly string[], OverrideResolutionFailed> =>
+  Effect.tryPromise({
+    try: () => readWantedLockfile(directory, { ignoreIncompatible: false }),
+    catch: (cause) => OverrideResolutionFailed.make({ override, output: String(cause) }),
+  }).pipe(
+    Effect.map((lockfile) =>
+      pipe(
+        Option.fromNullishOr(lockfile),
+        Option.flatMap(({ packages }) => Option.fromUndefinedOr(packages)),
+        Option.map(Rec.keys),
+        Option.getOrElse((): readonly string[] => []),
+      ),
+    ),
+  );
 
 const resolutionWith = Effect.fn("resolutionWith")(function* resolutionWith(
   workspace: Workspace,
   override: string,
-  manifest: string,
+  overrides: Overrides,
 ) {
   const fs = yield* FileSystem.FileSystem;
-  const path = yield* Path.Path;
   const directory = yield* fs.makeTempDirectoryScoped({ prefix: "msch-overrides-" });
   yield* copyFiles(workspace, directory);
-  yield* fs.writeFileString(path.join(directory, WORKSPACE_FILE), manifest);
+  yield* Effect.tryPromise({
+    try: () =>
+      updateWorkspaceManifest(directory, { updatedFields: { overrides: { ...overrides } } }),
+    catch: (cause) => OverrideResolutionFailed.make({ override, output: String(cause) }),
+  });
   const output = yield* resolveIn(directory, override);
-  const lockfile = yield* fs.readFileString(path.join(directory, LOCKFILE));
+  const depPaths = yield* depPathsIn(directory, override);
   yield* Effect.annotateCurrentSpan({ "msch.override": override });
   const advisories = yield* auditIn(directory);
-  return resolutionOf({ peerIssues: peerIssuesIn(output), advisories })(lockfile);
+  return resolutionOf({ peerIssues: peerIssuesIn(output), advisories })(depPaths);
 }, Effect.scoped);
 
 const problemsFor = Effect.fn("problemsFor")(function* problemsFor(
   root: string,
-  manifest: string,
+  overrides: Overrides,
   keys: readonly OverrideKey[],
 ) {
   const path = yield* Path.Path;
   const files = yield* trackedResolutionFiles(root);
-  const workspace: Workspace = { root, files, manifest };
-  const baseline = yield* resolutionWith(workspace, BASELINE_PROBE, withBaselineProbe(manifest));
+  const workspace: Workspace = { root, files, overrides };
+  const baseline = yield* resolutionWith(workspace, BASELINE_PROBE, withBaselineProbe(overrides));
   const judgeAgainstBaseline = judge(baseline);
   const file = path.join(root, WORKSPACE_FILE);
   const problemOf = (
     located: OverrideKey,
   ): Effect.Effect<Option.Option<Problem>, CandidateFailure, CandidateServices> =>
-    resolutionWith(workspace, located.key, withoutOverride(located.key)(manifest)).pipe(
+    resolutionWith(workspace, located.key, withoutOverride(located.key)(overrides)).pipe(
       Effect.map((candidate) =>
         overrideProblem({ ...located, file })(judgeAgainstBaseline(located.key, candidate)),
       ),
@@ -154,10 +179,20 @@ const problemsFor = Effect.fn("problemsFor")(function* problemsFor(
 export const checkOverrides = Effect.fn("checkOverrides")(function* checkOverrides(root: string) {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const manifest = yield* fs.readFileString(path.join(root, WORKSPACE_FILE)).pipe(Effect.option);
-  const keys = Option.match(manifest, { onNone: () => [], onSome: overrideKeysOf });
-  if (Option.isNone(manifest) || !Arr.isReadonlyArrayNonEmpty(keys)) {
+  const source = yield* fs.readFileString(path.join(root, WORKSPACE_FILE)).pipe(Effect.option);
+  const manifest = yield* workspaceManifest(root);
+  const overrides: Overrides = pipe(
+    manifest,
+    Option.flatMap((found) => Option.fromUndefinedOr(found.overrides)),
+    Option.getOrElse((): Overrides => ({})),
+  );
+  const keys = pipe(
+    source,
+    Option.map((text) => overrideKeysOf(text)(overrides)),
+    Option.getOrElse((): readonly OverrideKey[] => []),
+  );
+  if (!Arr.isReadonlyArrayNonEmpty(keys)) {
     return [];
   }
-  return yield* problemsFor(root, manifest.value, keys);
+  return yield* problemsFor(root, overrides, keys);
 });

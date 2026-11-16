@@ -64,6 +64,7 @@ export const readJsonl = Effect.fn("readJsonl")(function* readJsonl<Codec extend
       Arr.filter((line) => Str.trim(line) !== ""),
     ),
     (line) => decode(line),
+    { concurrency: 1 },
   );
 });
 

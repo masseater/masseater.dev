@@ -56,7 +56,7 @@ const exportJwk = (key: CryptoKey): Effect.Effect<JsonWebKey, SealFailed> =>
   });
 
 const exported = (pair: SigningPair): Effect.Effect<string, SealFailed> =>
-  Effect.all([exportJwk(pair.privateKey), exportJwk(pair.publicKey)]).pipe(
+  Effect.all([exportJwk(pair.privateKey), exportJwk(pair.publicKey)], { concurrency: 1 }).pipe(
     Effect.flatMap(([privateKey, publicKey]) =>
       Schema.encodeEffect(StoredPair)({
         privateKey: { ...privateKey },
@@ -78,10 +78,13 @@ const imported = (kind: SigningKeyKind, json: string): Effect.Effect<SigningPair
   Schema.decodeEffect(StoredPair)(json).pipe(
     Effect.mapError(unusable(`${kind.name} is not a stored key pair`)),
     Effect.flatMap(({ privateKey, publicKey }) =>
-      Effect.all({
-        privateKey: importJwk(kind, "sign")(privateKey),
-        publicKey: importJwk(kind, "verify")(publicKey),
-      }),
+      Effect.all(
+        {
+          privateKey: importJwk(kind, "sign")(privateKey),
+          publicKey: importJwk(kind, "verify")(publicKey),
+        },
+        { concurrency: 1 },
+      ),
     ),
   );
 

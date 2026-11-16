@@ -102,10 +102,9 @@ export const addImages = Effect.fn("addImages")(function* addImagesOfNewAssets({
   readonly offset: number;
   readonly pngs: readonly Uint8Array[];
 }) {
-  return yield* pipe(
-    pngs,
-    Effect.forEach((png, index) => addImage(packageId, png, offset + index)),
-  );
+  return yield* Effect.forEach(pngs, (png, index) => addImage(packageId, png, offset + index), {
+    concurrency: 1,
+  });
 });
 
 /** @internal */

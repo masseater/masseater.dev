@@ -10,6 +10,7 @@
     "oxlint-plugin",
     "react",
     "remotion",
+    "tanstack-intent",
     "tanstack-query",
     "tanstack-router",
     "tanstack-start",
@@ -26,8 +27,9 @@
     "directory": "libs/oxlint-typed-rules"
   },
   "files": [
+    "LICENSE",
     "dist",
-    "LICENSE"
+    "skills/run-typed-eslint-rules"
   ],
   "type": "module",
   "imports": {

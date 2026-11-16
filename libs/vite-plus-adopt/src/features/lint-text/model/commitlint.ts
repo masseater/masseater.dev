@@ -51,11 +51,11 @@ export const lintCommitMessages: {
   ): Effect.Effect<Report, VpToolsError> =>
     Effect.gen(function* lintMessages() {
       const loaded = yield* attempt("commitlint")(() => load(config, { cwd: root }));
-      const results = yield* pipe(
+      const results = yield* Effect.forEach(
         messages,
-        Effect.forEach((message) =>
+        (message) =>
           attempt("commitlint")(() => lint(message, loaded.rules, lintOptionsOf(loaded))),
-        ),
+        { concurrency: 1 },
       );
       return {
         valid: pipe(

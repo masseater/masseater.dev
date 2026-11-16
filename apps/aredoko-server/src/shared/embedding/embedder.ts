@@ -135,7 +135,7 @@ const make = (
   embedImages: (pngs) =>
     pipe(
       pngs,
-      Effect.forEach(readImage),
+      (items) => Effect.forEach(items, readImage, { concurrency: 1 }),
       Effect.flatMap((images) => {
         const tokens = Array.replicate(imageToken, images.length);
         const batch = pipe(images, Array.map(Array.of));

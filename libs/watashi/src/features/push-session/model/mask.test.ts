@@ -127,14 +127,14 @@ const masksEverySecret = (
   Effect.gen(function* masksPlacement() {
     const detect = yield* realDetector;
     const secrets = yield* fakeSecrets;
-    yield* pipe(secrets, Effect.forEach(masksSecret(detect, placement)));
+    yield* Effect.forEach(secrets, masksSecret(detect, placement), { concurrency: 1 });
   }).pipe(Effect.scoped);
 
 const keepsLines = Effect.gen(function* keepsLineOrder() {
   const detect = yield* realDetector;
   const secrets = yield* fakeSecrets;
   const header = yield* nonSecretLine;
-  const lines = [header, ...(yield* pipe(secrets, Effect.forEach(userMessage.line)))];
+  const lines = [header, ...(yield* Effect.forEach(secrets, userMessage.line, { concurrency: 1 }))];
   const masked = yield* maskWith(detect)(`${Arr.join(lines, "\n")}\n`);
   const out = parseLines(masked.text);
   expect(out).toHaveLength(lines.length + ONE);

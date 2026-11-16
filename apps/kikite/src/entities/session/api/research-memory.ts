@@ -20,7 +20,7 @@ const summaryIn = (record: string): Effect.Effect<Option.Option<InterviewSummary
   );
 
 const memory = recentRecords.pipe(
-  Effect.flatMap(Effect.forEach(summaryIn)),
+  Effect.flatMap((items) => Effect.forEach(items, summaryIn, { concurrency: 1 })),
   Effect.map(Arr.getSomes),
   Effect.map(Arr.filter(({ theme }) => theme !== "")),
   Effect.map(Arr.map(memoryLine)),

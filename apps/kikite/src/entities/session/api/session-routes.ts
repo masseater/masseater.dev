@@ -41,9 +41,11 @@ const json = (body: string): Response =>
 const listed = listSessions.pipe(Effect.flatMap(encodeListing), Effect.map(json));
 
 const exported = allRecords.pipe(
-  Effect.flatMap(
-    Effect.forEach(({ id, record }) =>
-      Effect.map(decodeRecord(record), (decoded) => ({ id, record: decoded })),
+  Effect.flatMap((items) =>
+    Effect.forEach(
+      items,
+      ({ id, record }) => Effect.map(decodeRecord(record), (decoded) => ({ id, record: decoded })),
+      { concurrency: 1 },
     ),
   ),
   Effect.flatMap(encodeExport),

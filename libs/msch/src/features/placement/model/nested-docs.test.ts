@@ -8,6 +8,8 @@ import { fixtureLayer, gitRepositoryWith } from "#/shared/lib/repository.test.su
 
 import { checkNestedDocs } from "./nested-docs.ts";
 
+const WORKSPACES = "packages:\n  - apps/*\n  - libs/*\n  - tools/*\n";
+
 const SITE_CONFIG = "export default {};\n";
 const PUBLIC_PACKAGE = '{ "name": "published" }';
 const PRIVATE_PACKAGE = '{ "name": "site", "private": true }';
@@ -17,7 +19,7 @@ const findingsFor = Effect.fn("findingsFor")(function* findingsFor(
   files: Readonly<Record<string, string>>,
 ) {
   const repositoryFiles = yield* RepositoryFiles;
-  const root = yield* gitRepositoryWith(files);
+  const root = yield* gitRepositoryWith({ "pnpm-workspace.yaml": WORKSPACES, ...files });
   const problems = yield* checkNestedDocs(root);
   return pipe(
     sortProblems(problems),

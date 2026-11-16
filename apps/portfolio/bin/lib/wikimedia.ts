@@ -155,13 +155,16 @@ export const pageImages = Effect.fn("pageImages")(function* pageImages(
   lang: string,
   titles: readonly string[],
 ) {
-  const pages = yield* Effect.forEach(Arr.chunksOf(titles, BATCH), (batch) =>
-    query(PageImages, `${lang}.wikipedia.org`, {
-      prop: "pageimages",
-      piprop: "name",
-      redirects: "1",
-      titles: Arr.join(batch, "|"),
-    }),
+  const pages = yield* Effect.forEach(
+    Arr.chunksOf(titles, BATCH),
+    (batch) =>
+      query(PageImages, `${lang}.wikipedia.org`, {
+        prop: "pageimages",
+        piprop: "name",
+        redirects: "1",
+        titles: Arr.join(batch, "|"),
+      }),
+    { concurrency: 1 },
   );
   return pipe(pages, Arr.flatMap(imagesOfPage), Rec.fromEntries);
 });
@@ -237,9 +240,9 @@ const filesOfPage = ({
 
 /** @internal */
 export const commons = Effect.fn("commons")(function* commons(files: readonly string[]) {
-  const pages = yield* pipe(
+  const pages = yield* Effect.forEach(
     Arr.chunksOf(files, BATCH),
-    Effect.forEach((batch) => {
+    (batch) => {
       const titles = pipe(
         batch,
         Arr.map((name) => `${FILE_PREFIX}${name}`),
@@ -251,7 +254,8 @@ export const commons = Effect.fn("commons")(function* commons(files: readonly st
         iiurlwidth: THUMB_WIDTH,
         titles,
       });
-    }),
+    },
+    { concurrency: 1 },
   );
   return pipe(pages, Arr.flatMap(filesOfPage), Rec.fromEntries);
 });

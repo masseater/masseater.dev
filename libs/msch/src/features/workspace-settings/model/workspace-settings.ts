@@ -18,7 +18,9 @@ import {
 import type { WorkspaceSource, WorkspaceTasks } from "#/entities/workspace/index.ts";
 import { RepositoryFiles, nodeRepositoryFiles } from "#/shared/lib/repository-files.ts";
 
+import type { IgnoredDirectory } from "./ignored-directories.ts";
 import { shadcnUiIn } from "./shadcn-ui.ts";
+import { directoryLayoutIn } from "./source-directories.ts";
 import { publicEntryFiles } from "./workspace-public-entries.ts";
 
 export type RuleSet = Readonly<Record<string, unknown>>;
@@ -77,6 +79,8 @@ export interface WorkspaceLint {
 
 export interface WorkspaceSettings {
   readonly lint: WorkspaceLint;
+  readonly sourceDirectories: readonly string[];
+  readonly ignoredDirectories: readonly IgnoredDirectory[];
   readonly testProjects: readonly string[];
   readonly tasks: WorkspaceTasks;
   readonly devDependencies: Readonly<Record<string, DevDependencyAllowance>>;
@@ -129,9 +133,10 @@ const lintOf = Effect.fn("lintOf")(function* lintOf(source: WorkspaceSource, rul
     decode: Schema.decodeUnknownEffect(WorkspaceLintSettings),
   });
   const lint = Option.getOrElse(settings, (): typeof WorkspaceLintSettings.Type => ({}));
-  const overrides = yield* pipe(
+  const overrides = yield* Effect.forEach(
     lint.overrides ?? [],
-    Effect.forEach((override) => overrideOf(source, ruleSets, override)),
+    (override) => overrideOf(source, ruleSets, override),
+    { concurrency: 1 },
   );
   const ignorePatterns = pipe(lint.ignorePatterns ?? [], Arr.map(prefixed(source.directory)));
   return { ignorePatterns, overrides };
@@ -160,9 +165,12 @@ const devDependenciesOf = Effect.fn("devDependenciesOf")(function* devDependenci
     decode: Schema.decodeUnknownEffect(WorkspaceDevDependencies),
   });
   const allowed = Rec.toEntries(Option.getOrElse(settings, () => ({})));
-  const entries = yield* pipe(
+  const entries = yield* Effect.forEach(
     allowed,
-    Effect.forEach((entry) => allowanceOf(source, dependencySets, entry)),
+    (entry) => allowanceOf(source, dependencySets, entry),
+    {
+      concurrency: 1,
+    },
   );
   return Rec.fromEntries(entries);
 });
@@ -219,8 +227,8 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
       (directory) => shadcnUiIn(options.root, files.join(directory, SHADCN_FILE)),
       { concurrency: READ_CONCURRENCY },
     );
-    const deployed = yield* deployEntries(options.root);
     return {
+      ...(yield* directoryLayoutIn(options.root, directories)),
       lint: {
         ignorePatterns: pipe(
           found,
@@ -235,7 +243,7 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
           found,
           Arr.flatMap(({ publicEntries }) => publicEntries),
         ),
-        deployEntries: deployed,
+        deployEntries: yield* deployEntries(options.root),
       },
       testProjects: pipe(
         found,

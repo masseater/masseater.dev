@@ -125,7 +125,7 @@ export const effect2rs = Effect.fn("effect2rs")(function* effect2rs(input: Effec
   const constants = yield* pipe(
     Record.toEntries(input.definitions),
     Array.filter(([, value]) => !Schema.isSchema(value)),
-    Effect.forEach(constantOf),
+    (items) => Effect.forEach(items, constantOf, { concurrency: 1 }),
   );
   const { references, chosen } = documentOf(input.definitions);
   const named = Record.toEntries(references);
@@ -137,7 +137,7 @@ export const effect2rs = Effect.fn("effect2rs")(function* effect2rs(input: Effec
       onSome: ([name]) => Effect.fail(renamed(name)),
     }),
   );
-  const items = yield* pipe(named, Effect.forEach(itemOf(references)));
+  const items = yield* Effect.forEach(named, itemOf(references), { concurrency: 1 });
   const external = input.external ?? {};
   return render({
     header: input.header,

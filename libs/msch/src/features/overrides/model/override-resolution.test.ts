@@ -1,4 +1,4 @@
-import { Array as Arr, String as Str, pipe } from "effect";
+import { Record as Rec } from "effect";
 import { expect, it } from "vite-plus/test";
 
 import {
@@ -20,22 +20,15 @@ catalog:
   zod: 4.6.7
 `;
 
-const lockfileWith = (sharp: string, snapshot: string): string => `lockfileVersion: '9.0'
+const OVERRIDES = {
+  "sharp@<0.35.5": "^0.35.5",
+  "steiger>@feature-sliced/steiger-plugin": "-",
+};
 
-packages:
-
-  '@img/sharp-linux-x64@${sharp}':
-    resolution: {integrity: sha512-a}
-
-  zod@4.6.7:
-    resolution: {integrity: sha512-b}
-
-snapshots:
-
-  '@img/sharp-linux-x64@${sharp}': {}
-
-  ${snapshot}: {}
-`;
+const lockfileWith = (sharp: string, snapshot: string): readonly string[] => [
+  `@img/sharp-linux-x64@${sharp}`,
+  snapshot,
+];
 
 const peerLog = (parents: string): string =>
   `{"name":"pnpm:peer-dependency-issues","issuesByProjects":{"apps/web":{"bad":{"typescript":[{"parents":[${parents}],"wantedRange":"^5","foundVersion":"7.1.0"}]},"missing":{},"conflicts":[]}}}`;
@@ -48,20 +41,14 @@ const AUDIT =
 const NO_FINDINGS = { peerIssues: [], advisories: [] };
 
 it("reads the override keys and edits only the named one", () => {
-  expect(overrideKeysOf(MANIFEST)).toStrictEqual([
+  expect(overrideKeysOf(MANIFEST)(OVERRIDES)).toStrictEqual([
     { key: "sharp@<0.35.5", line: 4, column: 3 },
     { key: "steiger>@feature-sliced/steiger-plugin", line: 5, column: 3 },
   ]);
-  expect(withoutOverride("sharp@<0.35.5")(MANIFEST)).toBe(
-    Str.replace("  sharp@<0.35.5: ^0.35.5\n", "")(MANIFEST),
-  );
-  const probed = overrideKeysOf(withBaselineProbe(MANIFEST));
-  expect(
-    pipe(
-      probed,
-      Arr.map((found) => found.key),
-    ),
-  ).toContain("msch-baseline-probe");
+  expect(withoutOverride("sharp@<0.35.5")(OVERRIDES)).toStrictEqual({
+    "steiger>@feature-sliced/steiger-plugin": "-",
+  });
+  expect(Rec.keys(withBaselineProbe(OVERRIDES))).toContain("msch-baseline-probe");
 });
 
 it("calls an override unused when nothing resolves differently without it", () => {
@@ -89,9 +76,10 @@ it("keeps an override whose removal brings back an advisory", () => {
 
 it("keeps an override whose removal installs more versions of a package", () => {
   const baseline = resolutionOf(NO_FINDINGS)(lockfileWith("0.35.5", "zod@4.6.7"));
-  const candidate = resolutionOf(NO_FINDINGS)(
-    `${lockfileWith("0.35.5", "zod@4.6.7")}\n  zod@3.25.0: {}\n`,
-  );
+  const candidate = resolutionOf(NO_FINDINGS)([
+    ...lockfileWith("0.35.5", "zod@4.6.7"),
+    "zod@3.25.0",
+  ]);
   const report = judge(baseline)("zod@<4", candidate);
   expect([report.verdict, report.changes]).toStrictEqual([
     "keep",

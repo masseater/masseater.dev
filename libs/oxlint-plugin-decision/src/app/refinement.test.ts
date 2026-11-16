@@ -199,6 +199,7 @@ const retriesCorruptCache = Effect.scoped(
         entries,
         Arr.map((file) => corruptRefinement(file)),
       ),
+      { concurrency: 1 },
     );
     deepStrictEqual(Arr.sort(corrupted, Order.Number), [NONE, ONE]);
     deepStrictEqual(lineOf((yield* project.lint).diagnostics), Option.some(REFINED_LINE));

@@ -77,7 +77,7 @@ const siblingsOf = Effect.fn("siblingsOf")(function* siblingsOf(output: string) 
     Arr.filter((file) => path.resolve(file) !== path.resolve(output)),
     Arr.sortBy(Str.Order),
   );
-  return yield* pipe(files, Effect.forEach(readRust));
+  return yield* Effect.forEach(files, readRust, { concurrency: 1 });
 });
 
 const checkRustOutput = Effect.fn("checkRustOutput")(function* checkRustOutput(target: RustOutput) {
@@ -101,11 +101,11 @@ const command = Command.make(
         { path: STS2_OUTPUT, source: sts2Source },
       ];
       if (check) {
-        yield* Effect.forEach(rust, checkRustOutput, { discard: true });
-        return yield* Effect.forEach(outputs, verify, { discard: true });
+        yield* Effect.forEach(rust, checkRustOutput, { concurrency: 1, discard: true });
+        return yield* Effect.forEach(outputs, verify, { concurrency: 1, discard: true });
       }
-      yield* Effect.forEach(rust, writeRust, { discard: true });
-      return yield* Effect.forEach(outputs, write, { discard: true });
+      yield* Effect.forEach(rust, writeRust, { concurrency: 1, discard: true });
+      return yield* Effect.forEach(outputs, write, { concurrency: 1, discard: true });
     }),
 );
 

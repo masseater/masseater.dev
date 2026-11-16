@@ -57,7 +57,7 @@ export const directoryWith = Effect.fn("directoryWith")(function* directoryWith(
   yield* Effect.forEach(
     Rec.toEntries(files),
     ([fileName, source]) => fixtures.writeFile(repositoryFiles.join(root, fileName), source),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
   return root;
 });

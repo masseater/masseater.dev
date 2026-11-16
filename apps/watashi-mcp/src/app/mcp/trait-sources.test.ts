@@ -119,8 +119,11 @@ it.effect("一度に読める量を超える源も切り捨てずにすべて読
     yield* fresh;
     const big = Str.repeat(TRAIT_STEP_CHARACTERS / HALF - MARGIN)("あ");
     const huge = Str.repeat(TRAIT_STEP_CHARACTERS + PAST_LIMIT)("い");
-    yield* Effect.forEach(["one", "two", "three"], (name) =>
-      writeMemory(writer)({ project: "assistant", name, description: name, content: big }),
+    yield* Effect.forEach(
+      ["one", "two", "three"],
+      (name) =>
+        writeMemory(writer)({ project: "assistant", name, description: name, content: big }),
+      { concurrency: 1 },
     );
     yield* writeMemory(writer)({
       project: "assistant",
@@ -168,16 +171,16 @@ const learnsEach = drain((request) =>
 it.effect("LLM には近い特性だけを候補として渡し、話題で特性を絞れる", () =>
   Effect.gen(function* passesNearestOnly() {
     yield* fresh;
-    yield* pipe(
+    yield* Effect.forEach(
       topics,
-      Effect.forEach((content, index) =>
+      (content, index) =>
         writeMemory(writer)({
           project: "assistant",
           name: `t${String(index)}`,
           description: "t",
           content,
         }),
-      ),
+      { concurrency: 1 },
     );
     yield* learnsEach;
     yield* writeMemory(writer)({

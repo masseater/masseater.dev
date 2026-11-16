@@ -15,7 +15,10 @@ const plainRules = Arr.map(({ pattern, category, label }: Rule) => ({
   label: Option.getOrNull(label),
 }));
 
-export const settings = Effect.all({ accounts: listAccounts, rules: userRules }).pipe(
+export const settings = Effect.all(
+  { accounts: listAccounts, rules: userRules },
+  { concurrency: 1 },
+).pipe(
   Effect.map(({ accounts, rules }) => ({
     accounts,
     categories: CATEGORY_LIST,

@@ -49,17 +49,20 @@ const privateRegex = Effect.gen(function* privateRegex() {
   if (!Arr.isReadonlyArrayNonEmpty(names)) {
     return yield* fail("The GitHub App listed no private repository");
   }
-  yield* Effect.forEach(names, mask, { discard: true });
+  yield* Effect.forEach(names, mask, { concurrency: 1, discard: true });
   return pipe(names, Arr.flatMap(patternsOf), Arr.join("|"));
 });
 
 const privateNames = Effect.gen(function* privateNames() {
   const checkouts = yield* Config.String("CHECKOUTS");
   const regex = yield* privateRegex;
-  const hits = yield* Effect.forEach(Str.split(" ")(checkouts), (checkout) =>
-    hitsIn({ checkout, regex }),
+  const hits = yield* Effect.forEach(
+    Str.split(" ")(checkouts),
+    (checkout) => hitsIn({ checkout, regex }),
+    { concurrency: 1 },
   ).pipe(Effect.map(Arr.flatten));
   yield* Effect.forEach(hits, (hit) => Console.log(`::error::${hit} names a private repository`), {
+    concurrency: 1,
     discard: true,
   });
   if (Arr.isReadonlyArrayNonEmpty(hits)) {

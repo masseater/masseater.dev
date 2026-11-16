@@ -52,11 +52,8 @@ export const linkBooth = Effect.fn("linkBooth")(function* linkBoothItem({
       join packages p on p.id = a.package_id
       where a.package_id = ${packageId}`,
   );
-  const retexted = pipe(
-    rows,
-    Array.map(relabeledWith(item)),
-    Array.getSomes,
-    Effect.forEach(retext),
+  const retexted = pipe(rows, Array.map(relabeledWith(item)), Array.getSomes, (items) =>
+    Effect.forEach(items, retext, { concurrency: 1 }),
   );
   yield* sql.withTransaction(
     Effect.andThen(

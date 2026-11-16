@@ -68,6 +68,6 @@ export const newestFirst = <Item extends Article>(articles: readonly Item[]): re
 export const articlesOf = (
   frontmatters: Readonly<Record<string, unknown>>,
 ): Effect.Effect<readonly Article[], Schema.SchemaError> =>
-  Effect.forEach(Rec.toEntries(frontmatters), articleOf).pipe(
+  Effect.forEach(Rec.toEntries(frontmatters), articleOf, { concurrency: 1 }).pipe(
     Effect.map((found) => newestFirst(Arr.getSomes(found))),
   );

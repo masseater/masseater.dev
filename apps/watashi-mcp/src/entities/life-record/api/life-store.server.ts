@@ -53,7 +53,7 @@ const entryOf = (row: LifeRow): Effect.Effect<LifeEntry> =>
   );
 
 const entriesOf = (rows: readonly LifeRow[]): Effect.Effect<readonly LifeEntry[]> =>
-  pipe(rows, Effect.forEach(entryOf));
+  Effect.forEach(rows, entryOf, { concurrency: 1 });
 
 const notRetracted = eq(lifeRecord.retractedAt, NOT_RETRACTED);
 

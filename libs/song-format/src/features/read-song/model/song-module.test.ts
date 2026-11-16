@@ -51,10 +51,8 @@ layer(NodeFileSystem.layer)("書き出した型宣言", (test) => {
     Effect.gen(function* compare() {
       const fileSystem = yield* FileSystem.FileSystem;
       const names = yield* fileSystem.readDirectory(FIXTURES);
-      const pairs = yield* pipe(
-        names,
-        Arr.filter(Str.endsWith(EXTENSION)),
-        Effect.forEach((name) => pairOf(`${FIXTURES}${name}`)),
+      const pairs = yield* pipe(names, Arr.filter(Str.endsWith(EXTENSION)), (items) =>
+        Effect.forEach(items, (name) => pairOf(`${FIXTURES}${name}`), { concurrency: 1 }),
       );
       expect(Arr.isReadonlyArrayNonEmpty(pairs)).toBe(true);
       for (const { written, mapped } of pairs) {

@@ -42,15 +42,15 @@ export const externalize = Effect.fn("externalize")(function* externalize({
     onNonEmpty: () => Effect.fail(InlineStyle.make({ file, reason: INLINE_STYLE_REASON })),
   });
   const inline = root.querySelectorAll("script:not([src])");
-  const scripts: readonly Script[] = yield* pipe(
+  const scripts: readonly Script[] = yield* Effect.forEach(
     inline,
-    Effect.forEach((element) =>
+    (element) =>
       Effect.map(fileOf(element.rawText), (script) => ({
         file: script,
         src: `${base}${script}`,
         code: element.rawText,
       })),
-    ),
+    { concurrency: 1 },
   );
   const ends = pipe(
     inline,

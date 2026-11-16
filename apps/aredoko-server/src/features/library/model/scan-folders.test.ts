@@ -115,7 +115,9 @@ layer(indexInTemporaryFolder, { excludeTestServices: true })("scanFolders", (it)
       expect(indexed).toStrictEqual([file]);
       yield* fileSystem.remove(file);
       yield* scan;
-      const remaining = yield* Effect.all([packagePaths(id), assetPathnames(id)]);
+      const remaining = yield* Effect.all([packagePaths(id), assetPathnames(id)], {
+        concurrency: 1,
+      });
       expect(remaining).toStrictEqual([[], []]);
     }).pipe(Effect.scoped),
   );
@@ -140,7 +142,7 @@ layer(indexInTemporaryFolder, { excludeTestServices: true })(
         yield* scan;
         yield* fileSystem.remove(folder, { recursive: true });
         yield* scan;
-        const kept = yield* Effect.all([packagePaths(id), assetPathnames(id)]);
+        const kept = yield* Effect.all([packagePaths(id), assetPathnames(id)], { concurrency: 1 });
         expect(kept).toStrictEqual([[file], [TEXTURE.pathname]]);
       }).pipe(Effect.scoped),
     );
@@ -154,10 +156,10 @@ layer(indexInTemporaryFolder, { excludeTestServices: true })(
         yield* fileSystem.remove(readable.file);
         yield* fileSystem.remove(unreadable.folder, { recursive: true });
         yield* scan;
-        const packages = yield* Effect.all([
-          packagePaths(readable.id),
-          packagePaths(unreadable.id),
-        ]);
+        const packages = yield* Effect.all(
+          [packagePaths(readable.id), packagePaths(unreadable.id)],
+          { concurrency: 1 },
+        );
         expect(packages).toStrictEqual([[], [unreadable.file]]);
       }).pipe(Effect.scoped),
     );

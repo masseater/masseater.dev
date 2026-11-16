@@ -19,6 +19,7 @@ import { nodeServicesLayer } from "./node-services.ts";
 const MISSING_SIZE = 0;
 const GENERATED_PATHSPEC = ":(attr:linguist-generated)";
 const LISTED_ARGS = ["--cached", "--others", "--exclude-standard"];
+const IGNORED_ARGS = ["--others", "--ignored", "--exclude-standard"];
 const STAGED_ARGS = ["--stage"];
 const LINK_ENTRY = /^120000 \S+ \d+\t(?<name>.+)$/u;
 
@@ -46,6 +47,10 @@ export class RepositoryFiles extends Context.Service<
     readonly ignoredPaths: (
       root: string,
       paths: readonly string[],
+    ) => Effect.Effect<readonly string[]>;
+    readonly ignoredFiles: (
+      root: string,
+      pathspecs: readonly string[],
     ) => Effect.Effect<readonly string[]>;
     readonly isDirectory: (file: string) => Effect.Effect<Option.Option<boolean>>;
     readonly fileSize: (file: string) => Effect.Effect<number>;
@@ -126,6 +131,7 @@ export const nodeRepositoryFiles = Layer.effect(
       linkedFiles: (root) => gitFiles(root, STAGED_ARGS).pipe(Effect.map(Arr.flatMap(linkName))),
       readLink: (file) => fs.readLink(file).pipe(Effect.option),
       matchingFiles: (root, pathspecs) => gitFiles(root, [...LISTED_ARGS, "--", ...pathspecs]),
+      ignoredFiles: (root, pathspecs) => gitFiles(root, [...IGNORED_ARGS, "--", ...pathspecs]),
       ignoredPaths: (root, paths) => gitPaths(root, ["check-ignore", "--", ...paths], "\n"),
       readFile: (file) => fs.readFileString(file).pipe(Effect.option),
       exists: (file) => fs.exists(file).pipe(Effect.orElseSucceed(() => false)),

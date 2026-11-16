@@ -57,7 +57,7 @@ const bestFit = Effect.runPromise(
   assignVariants({ candidates: SPARE_CANDIDATES, seed: SEED }).pipe(Effect.map(allBest)),
 );
 const repeatable = Effect.runPromise(
-  Effect.all([assigned(), assigned()]).pipe(Effect.map(sameChoice)),
+  Effect.all([assigned(), assigned()], { concurrency: 1 }).pipe(Effect.map(sameChoice)),
 );
 
 describe("assignVariants", () => {

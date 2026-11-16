@@ -24,11 +24,10 @@ const chatCallsInSource = Effect.gen(function* test() {
   const src = path.join(root, "src");
   const entries = yield* fs.readDirectory(src, { recursive: true });
   const sources = pipe(entries, Arr.filter(isSource));
-  const texts = yield* pipe(
+  const texts = yield* Effect.forEach(
     sources,
-    Effect.forEach((file) =>
-      Effect.map(fs.readFileString(path.join(src, file)), (text) => [file, text] as const),
-    ),
+    (file) => Effect.map(fs.readFileString(path.join(src, file)), (text) => [file, text] as const),
+    { concurrency: 1 },
   );
   deepStrictEqual(
     pipe(
