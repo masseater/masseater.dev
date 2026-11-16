@@ -1,5 +1,7 @@
 import type { OxlintOverride } from "vite-plus/lint";
 
+export type { ToolSections } from "@r_masseater/vite-plus-adopt";
+
 export type InstallSize = `${number} ${"B" | "kB" | "MB"}`;
 
 export interface PublishSettings {

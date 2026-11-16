@@ -64,7 +64,7 @@ const presetLive = (
   Effect.scoped(
     Effect.gen(function* test() {
       const key = yield* Config.Redacted("OPENROUTER_API_KEY");
-      const plugin = yield* fromRoot("dist", `${preset}.mjs`);
+      const plugin = yield* fromRoot("dist", "presets", `${preset}.mjs`);
       const cwd = yield* tempProject({
         ...(yield* exampleFiles),
         "oxlint.config.ts": configSource({
