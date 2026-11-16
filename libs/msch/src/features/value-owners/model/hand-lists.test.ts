@@ -43,6 +43,15 @@ const ignoresNamesUsedInsideFunctions = Effect.gen(function* ignoresNamesUsedIns
   expect(findings).toStrictEqual([]);
 });
 
+const ignoresNamesInsideDataRecords = Effect.gen(function* ignoresNamesInsideDataRecords() {
+  const findings = yield* findingsIn({
+    "src/alpha.ts": lines('export const ITEMS = [{ effort: "low" }, { effort: "mid" }];'),
+    "src/beta.ts": lines('export const ROWS = [{ level: "high" }];'),
+    "src/priority.ts": lines('export type Priority = "high" | "low";'),
+  });
+  expect(findings).toStrictEqual([]);
+});
+
 const reportsAPartOfAnotherList = Effect.gen(function* reportsAPartOfAnotherList() {
   const findings = yield* findingsIn({
     "src/sort.ts": lines(
@@ -105,6 +114,7 @@ layer(fixtureLayer)("hand-written names", (it) => {
   );
   it.effect("accepts names typed with the list", () => acceptsNamesTypedWithTheList);
   it.effect("ignores names used inside functions", () => ignoresNamesUsedInsideFunctions);
+  it.effect("ignores names inside data records", () => ignoresNamesInsideDataRecords);
   it.effect("reports a part of another list", () => reportsAPartOfAnotherList);
   it.effect(
     "ignores lists in modules that do not import each other",
