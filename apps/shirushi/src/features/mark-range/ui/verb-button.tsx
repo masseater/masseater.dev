@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 
 import { verbAtom } from "#/features/mark-range/model/draft";
-import { VERB_LABELS } from "#/shared/config/labels";
+import { VERB_LABELS } from "#/shared/config";
 
 import { TOGGLE } from "./toggle.ts";
 

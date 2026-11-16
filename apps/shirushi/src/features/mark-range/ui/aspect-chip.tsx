@@ -5,7 +5,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 
 import { aspectsAtom } from "#/features/mark-range/model/draft";
-import { ASPECTS, ASPECT_LABELS } from "#/shared/config/labels";
+import { ASPECTS, ASPECT_LABELS } from "#/shared/config";
 
 import { TOGGLE } from "./toggle.ts";
 
