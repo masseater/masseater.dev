@@ -46,6 +46,8 @@ const RuleNameSchema = Schema.Literals([
   "colocated-test",
   "layered-source",
   "public-entry",
+  "source-alias",
+  "runtime-name",
   "comment",
   "applied-package",
   "package-script",
