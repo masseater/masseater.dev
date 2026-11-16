@@ -3794,6 +3794,9 @@ importers:
       '@shadcn/lint':
         specifier: 'catalog:'
         version: 0.2.5(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))
+      '@tanstack/intent':
+        specifier: 'catalog:'
+        version: 0.5.6
       '@textlint-ja/textlint-rule-preset-ai-writing':
         specifier: 'catalog:'
         version: 1.7.0

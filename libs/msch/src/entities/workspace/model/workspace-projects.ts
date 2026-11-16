@@ -9,6 +9,7 @@ import { workspaceManifest } from "./workspace-manifest.ts";
 export interface WorkspaceProject {
   readonly directory: string;
   readonly packageName: Option.Option<string>;
+  readonly manifest: Project["manifest"];
 }
 
 const byDirectory = Order.mapInput(Str.Order, (project: WorkspaceProject) => project.directory);
@@ -41,6 +42,7 @@ export const workspaceProjects = Effect.fn("workspaceProjects")(function* worksp
     Arr.map((project): WorkspaceProject => ({
       directory: files.relative(root, project.rootDir),
       packageName: Option.fromUndefinedOr(project.manifest.name),
+      manifest: project.manifest,
     })),
     Arr.filter(({ directory }) => Str.isNonEmpty(directory)),
   );

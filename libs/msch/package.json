@@ -98,6 +98,7 @@
     "@r_masseater/textlint-rule-preset-ja": "workspace:*",
     "@r_masseater/vite-plus-adopt": "catalog:",
     "@shadcn/lint": "catalog:",
+    "@tanstack/intent": "catalog:",
     "@textlint-ja/textlint-rule-preset-ai-writing": "catalog:",
     "@vscode/tree-sitter-wasm": "catalog:",
     "dockerfile-ast": "catalog:",
