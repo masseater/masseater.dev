@@ -75,27 +75,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "akapen"
-version = "0.0.0"
-dependencies = [
- "axum",
- "desktop-shell",
- "local-mcp",
- "media-notes",
- "reqwest",
- "rmcp",
- "schemars 1.2.3",
- "serde",
- "serde_json",
- "specta",
- "specta-typescript",
- "tauri",
- "tauri-build",
- "tauri-specta",
- "tokio",
-]
-
-[[package]]
 name = "alloc-no-stdlib"
 version = "3.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
