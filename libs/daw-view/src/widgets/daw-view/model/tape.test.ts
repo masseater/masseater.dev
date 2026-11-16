@@ -1,8 +1,9 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option } from "effect";
 
+import type { TrackBlock } from "#/entities/live/index.ts";
+
 import { BLOCK_FRAMES, openTape } from "./tape.ts";
-import type { TrackBlock } from "./tape.ts";
 
 const HALF = 0.5;
 const FRAMES = BLOCK_FRAMES + BLOCK_FRAMES * HALF;

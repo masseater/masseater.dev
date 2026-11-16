@@ -38,6 +38,9 @@ export const samplesIn = (
     Rec.fromEntries,
   );
 
+export const workletIn = (found: Readonly<Record<string, string>>): string =>
+  pipe(Rec.values(found), Arr.join(""));
+
 export const dawSongOf = ({
   work,
   form,

@@ -1,30 +1,32 @@
 import type { Automation, NoteEvent, Take } from "@masseater.dev/daw-view";
-import { Array as Arr, Option, Predicate, Record as Rec, pipe } from "effect";
+import { Array as Arr, Option, Record as Rec, pipe, Predicate } from "effect";
 
-import type { Lane, Ledger, Log, Logged, View } from "./program.ts";
+import type { Ledger, Logged } from "#/entities/song/lib/studio/placement.ts";
+
+import type { Lane, View } from "./program.ts";
 
 const HERTZ = "Hz";
 const NONE = 0;
 
 const eventOf = (entry: Logged): NoteEvent => {
   const placed = {
-    track: entry.tr,
-    sample: entry.s,
-    start: entry.t,
-    duration: entry.d,
-    gain: entry.g,
-    offset: entry.off,
-    reversed: Boolean(entry.rev),
+    track: entry.track,
+    sample: entry.sample,
+    start: entry.start,
+    duration: entry.duration,
+    gain: entry.gain,
+    offset: entry.offset,
+    reversed: entry.reversed,
   };
-  if (entry.m === null) {
+  if (Predicate.isUndefined(entry.pitch)) {
     return { ...placed, kind: "hit" };
   }
   return {
     ...placed,
     kind: "note",
-    pitch: entry.m,
+    pitch: entry.pitch,
     glide: pipe(
-      entry.pc ?? [],
+      entry.glide ?? [],
       Arr.map(([at, semitones]) => ({ at, semitones })),
     ),
   };
@@ -47,9 +49,9 @@ const automationOf =
   (shaded: string) =>
   ([name, lane]: readonly [string, Lane]): Automation => ({
     name,
-    values: Arr.makeBy(lane.v.length, (index) => lane.v[index] ?? NONE),
-    low: lane.lo,
-    high: lane.hi,
+    values: Arr.makeBy(lane.values.length, (index) => lane.values[index] ?? NONE),
+    low: lane.low,
+    high: lane.high,
     scale: scaleOf(lane),
     unit: unitOf(lane),
     shade: name === shaded,
@@ -57,15 +59,15 @@ const automationOf =
 
 export const takeOf =
   (shaded: string) =>
-  (log: Log, view: View): Take => ({
-    events: pipe(log, Arr.filter(Predicate.isNotNull), Arr.map(eventOf)),
+  (log: readonly Logged[], view: View): Take => ({
+    events: pipe(log, Arr.map(eventOf)),
     automation: pipe(Rec.toEntries(view.auto ?? {}), Arr.map(automationOf(shaded))),
     roots: view.roots ?? [],
   });
 
 export interface Sheet {
   readonly log: Ledger;
-  readonly view: View;
+  readonly show: (view: View) => void;
   readonly take: () => Take;
   readonly progress: (share: number, label: string) => void;
 }
@@ -73,12 +75,14 @@ export interface Sheet {
 export const sheetOf =
   (shaded: string) =>
   (report: (progress: Readonly<{ share: number; label: string; take: Take }>) => void): Sheet => {
-    const log: (Logged | null)[] = [];
-    const view: View = {};
-    const take = (): Take => takeOf(shaded)(log, view);
+    const log: Logged[] = [];
+    let shown: View = {};
+    const take = (): Take => takeOf(shaded)(log, shown);
     return {
       log,
-      view,
+      show: (view) => {
+        shown = view;
+      },
       take,
       progress: (share, label) => {
         report({ share, label, take: take() });
