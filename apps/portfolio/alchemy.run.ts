@@ -24,6 +24,7 @@ const web = Effect.gen(function* web() {
   );
   const VISITOR_SALT = yield* makeRandom("VisitorSalt");
   return yield* Website.StaticSite("Web", {
+    limits: { cpuMs: 200 },
     ...(production && { domain: { name: DOMAIN, redirects: [`www.${DOMAIN}`] } }),
     command: "vp run build",
     outdir: "dist/client",
@@ -40,6 +41,7 @@ const web = Effect.gen(function* web() {
 });
 
 const ciTelemetry = Workers.Worker("CiTelemetry", {
+  limits: { cpuMs: 300 },
   name: CI_TELEMETRY_AUDIENCE,
   main: "./src/app/ci-telemetry.ts",
   logpush: true,

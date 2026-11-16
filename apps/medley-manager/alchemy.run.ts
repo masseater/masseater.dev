@@ -15,6 +15,7 @@ const web = Effect.gen(function* web() {
   return yield* authSite({
     domain: SITE_HOST,
     name: Option.none(),
+    cpuMs: 3500,
     bindings: { CF_BEACON_TOKEN, DB },
   });
 });

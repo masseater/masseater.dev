@@ -15,6 +15,7 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
       destination: TRACE_DESTINATION,
       workerName: `${APP_NAME}-trace-sink`,
       logpush: true,
+      cpuMs: 900,
     });
     return { slug: destination.slug };
   }),
