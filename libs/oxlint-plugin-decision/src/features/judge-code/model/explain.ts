@@ -13,13 +13,7 @@ import {
   pipe,
 } from "effect";
 
-import {
-  refAt,
-  envOf,
-  toJson,
-  wireRequestsFor,
-  yesNoRequestsFor,
-} from "#/entities/decision/index.ts";
+import { refAt, envOf, toJson, snippetRequestsFor } from "#/entities/decision/index.ts";
 import type {
   Answer,
   Answers,
@@ -69,7 +63,6 @@ export interface ExplainPass {
   readonly cwd: string;
   readonly filename: string;
   readonly model: string;
-  readonly yesNo: boolean;
   readonly request: DecisionRequest;
   readonly durationMs: number;
 }
@@ -112,10 +105,7 @@ const probabilitiesIn = (answer: Answer): Option.Option<Readonly<Record<string, 
   if (answer.type === "noul") {
     return Option.some({ yes: answer.noul });
   }
-  if (answer.type === "choice") {
-    return Option.fromUndefinedOr(answer.probabilities);
-  }
-  return Option.none();
+  return Option.fromUndefinedOr(answer.probabilities);
 };
 
 const probabilitiesOf = (answer: Answer | undefined): Readonly<Record<string, number>> =>
@@ -205,10 +195,7 @@ const printerFor =
   };
 
 const explaining = (pass: ExplainPass, mode: ExplainFormat): Explainer => {
-  const sent = Bool.match(pass.yesNo, {
-    onTrue: () => yesNoRequestsFor(pass.request),
-    onFalse: () => wireRequestsFor(pass.request),
-  });
+  const sent = snippetRequestsFor(pass.request);
   const print = printerFor(mode);
   return {
     outcome: (match, at, { served, answers, cached, verdict, reported }) => {

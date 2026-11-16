@@ -7,8 +7,8 @@ import type { PlatformError } from "effect/PlatformError";
 import { toJson } from "#/entities/decision/index.ts";
 
 import { FAILED, PASSED, TIMEOUT, outputOf, withMock } from "./fixtures.test.support.ts";
-import { loggedRequests } from "./mock-openrouter.test.support.ts";
-import type { MockOpenRouter } from "./mock-openrouter.test.support.ts";
+import { loggedRequests } from "./mock-typesafe.test.support.ts";
+import type { MockTypesafe } from "./mock-typesafe.test.support.ts";
 import {
   configSource,
   decisionLines,
@@ -30,7 +30,7 @@ const pluginSource = (
 
 export default createDecisionPlugin({
   name: "team",
-  model: "openrouter/~typesafe/jev-latest",${setupExtra}
+  model: "typesafe/jev-latest",${setupExtra}
   rules: [
     defineDecisionRule({
       id: "no-pii-in-logs",
@@ -46,7 +46,7 @@ export default createDecisionPlugin({
 const lintTask = (
   setupExtra: string,
   rules: Readonly<Record<string, string>>,
-): Effect.Effect<OxlintRun, PlatformError, Services | MockOpenRouter> =>
+): Effect.Effect<OxlintRun, PlatformError, Services | MockTypesafe> =>
   Effect.scoped(
     Effect.gen(function* lint() {
       const plugin2 = yield* pluginPath;

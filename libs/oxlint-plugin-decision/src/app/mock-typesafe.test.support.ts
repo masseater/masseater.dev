@@ -4,8 +4,8 @@ import { HttpRouter, HttpServer, HttpServerRequest, HttpServerResponse } from "e
 import type { HttpServerError } from "effect/http";
 
 import { FIRST_HIT, NO_HITS, answer, isRefinement } from "./mock-answers.test.support.ts";
-import { RawBodySchema, normalized, rejectionOf } from "./mock-body.test.support.ts";
-import type { Body, RawBody } from "./mock-body.test.support.ts";
+import { BodySchema } from "./mock-body.test.support.ts";
+import type { Body } from "./mock-body.test.support.ts";
 import type { TestError } from "./oxlint.test.support.ts";
 
 const UNAUTHORIZED = 401;
@@ -15,9 +15,7 @@ const FORBIDDEN = 403;
 /** @internal */
 export interface LoggedRequest {
   readonly authorization: string;
-  readonly app: Readonly<Record<"referer" | "title" | "visibility", string>>;
   readonly body: Body;
-  readonly sentState: RawBody["state"];
 }
 
 interface MockState {
@@ -30,17 +28,17 @@ interface MockShape extends MockState {
 }
 
 /** @internal */
-export class MockOpenRouter extends Context.Service<MockOpenRouter, MockShape>()(
-  "@r_masseater/oxlint-plugin-decision/app/mock-openrouter.test.support/MockOpenRouter",
+export class MockTypesafe extends Context.Service<MockTypesafe, MockShape>()(
+  "@r_masseater/oxlint-plugin-decision/app/mock-typesafe.test.support/MockTypesafe",
 ) {}
 
 const unauthorized = HttpServerResponse.jsonUnsafe(
-  { error: { message: "bad key" } },
+  { detail: { message: "bad key" } },
   { status: UNAUTHORIZED },
 );
 
 const outOfBudget = HttpServerResponse.jsonUnsafe(
-  { error: { message: "Workspace weekly budget of $5.00 exceeded." } },
+  { detail: { message: "Workspace weekly budget of $5.00 exceeded." } },
   { status: FORBIDDEN },
 );
 
@@ -85,47 +83,31 @@ const handler = (
 > =>
   Effect.gen(function* handle() {
     const request = yield* HttpServerRequest.HttpServerRequest;
-    const json2 = yield* request.json;
-    const raw = yield* Schema.decodeUnknownEffect(RawBodySchema)(json2);
+    const json = yield* request.json;
+    const body = yield* Schema.decodeUnknownEffect(BodySchema)(json);
     const authorization = Option.getOrElse(
       Option.fromUndefinedOr(request.headers["authorization"]),
       () => "",
     );
     const token = Str.replace("Bearer ", "")(authorization);
-    const body = normalized(raw);
-    const header = (name: string): string =>
-      Option.getOrElse(Option.fromUndefinedOr(request.headers[name]), () => "");
-    const app = {
-      referer: header("http-referer"),
-      title: header("x-openrouter-title"),
-      visibility: header("x-openrouter-app-visibility"),
-    };
-    yield* Ref.update(state.log, (log) => [
-      ...log,
-      { authorization, app, body, sentState: raw.state },
-    ]);
-    return yield* Option.match(rejectionOf(raw), {
-      onSome: Effect.succeed,
-      onNone: () => Effect.flatMap(countHit(state, token), (hits) => replyFor(body, token, hits)),
-    });
+    yield* Ref.update(state.log, (log) => [...log, { authorization, body }]);
+    return yield* Effect.flatMap(countHit(state, token), (hits) => replyFor(body, token, hits));
   });
 
 const MockLive = Layer.effect(
-  MockOpenRouter,
+  MockTypesafe,
   Effect.gen(function* make() {
     const log = yield* Ref.make<readonly LoggedRequest[]>([]);
     const hits = yield* Ref.make<Readonly<Record<string, number>>>({});
-    const baseURL = yield* HttpServer.addressFormattedWith((address) =>
-      Effect.succeed(`${address}/api/v1`),
-    );
+    const baseURL = yield* HttpServer.addressFormattedWith((address) => Effect.succeed(address));
     return { log, hits, baseURL };
   }),
 );
 
 const routes = Layer.unwrap(
   Effect.gen(function* serve() {
-    const state = yield* MockOpenRouter;
-    return HttpRouter.serve(HttpRouter.add("POST", "/api/alpha/decisions", handler(state)), {
+    const state = yield* MockTypesafe;
+    return HttpRouter.serve(HttpRouter.add("POST", "/v1/systemone", handler(state)), {
       disableLogger: true,
       disableListenLog: true,
     });
@@ -133,14 +115,14 @@ const routes = Layer.unwrap(
 );
 
 /** @internal */
-export const MockOpenRouterLayer = routes.pipe(
+export const MockTypesafeLayer = routes.pipe(
   Layer.provideMerge(MockLive),
   Layer.provideMerge(NodeHttpServer.layerTest),
 );
 
 /** @internal */
-export const loggedRequests: Effect.Effect<readonly LoggedRequest[], TestError, MockOpenRouter> =
+export const loggedRequests: Effect.Effect<readonly LoggedRequest[], TestError, MockTypesafe> =
   Effect.gen(function* logged() {
-    const { log } = yield* MockOpenRouter;
+    const { log } = yield* MockTypesafe;
     return yield* Ref.get(log);
   });

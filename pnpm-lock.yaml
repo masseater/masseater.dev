@@ -3879,9 +3879,6 @@ importers:
 
   libs/oxlint-plugin-decision:
     dependencies:
-      '@effect/ai-openrouter':
-        specifier: 'catalog:'
-        version: 4.1.4(effect@4.1.4)
       synckit:
         specifier: 'catalog:'
         version: 0.12.3
@@ -4680,9 +4677,6 @@ importers:
       '@openrouter/sdk':
         specifier: 'catalog:'
         version: 1.5.100
-      '@r_masseater/oxlint-plugin-decision':
-        specifier: workspace:*
-        version: link:../../libs/oxlint-plugin-decision
       bench-summary:
         specifier: workspace:*
         version: link:../../libs/bench-summary
