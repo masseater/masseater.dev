@@ -2,7 +2,8 @@ import { NodeRuntime, NodeServices } from "@effect/platform-node";
 import { Effect, FileSystem, Layer, Option, Schema, String as Str, pipe } from "effect";
 
 const PAGE = "../../apps/labs/pages/pod-rattle/index.html";
-const OUTPUT = "engine.gen.js";
+const OUTPUT_DIR = "generated";
+const OUTPUT = `${OUTPUT_DIR}/engine.js`;
 const START = "function createEngine(";
 const END = "\n      }\n";
 
@@ -33,6 +34,7 @@ const program = Effect.gen(function* extractEngine() {
     Effect.fromOption,
     Effect.mapError(() => EngineNotFound.make({ page: PAGE })),
   );
+  yield* fileSystem.makeDirectory(OUTPUT_DIR, { recursive: true });
   yield* fileSystem.writeFileString(OUTPUT, `${engine}\nexport { createEngine };\n`);
 });
 

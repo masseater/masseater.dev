@@ -57,7 +57,7 @@ libs/mosaic/data/
 /tools/cargo-tools/.cargo/config.toml
 /tools/cargo-tools/target/
 /tools/pod-rattle-parity/reference/
-/tools/pod-rattle-parity/engine.gen.js
+/tools/pod-rattle-parity/generated/
 tools/web-vitals-measure/report/
 
 # decision-bench-runner の判定キャッシュ（結果は results/ にコミットする）
