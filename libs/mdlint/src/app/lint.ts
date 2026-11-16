@@ -2,7 +2,7 @@ import { Array as Arr, Boolean as Bool, Effect, Match, Option, Order, pipe } fro
 
 import { BUILTIN, resolve, unknownPlugins } from "#/entities/rule/index.ts";
 import type { Resolved } from "#/entities/rule/index.ts";
-import { runCompatRules } from "#/features/markdownlint-compat/index.ts";
+import { runCompatRules } from "#/features/run-compat-rules/index.ts";
 import { runScriptRules } from "#/features/run-rules/index.ts";
 import type { Diagnostic, MdlintConfig } from "#/shared/config/index.ts";
 import { MdlintError } from "#/shared/lib/errors.ts";
