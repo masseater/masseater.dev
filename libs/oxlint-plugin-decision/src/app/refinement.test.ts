@@ -8,7 +8,6 @@ import {
   Option,
   Order,
   Schema,
-  Record as Rec,
   String as Str,
   pipe,
 } from "effect";
@@ -37,6 +36,7 @@ const NONE = 0;
 const ONE = 1;
 const TWO = 2;
 const THREE = 3;
+const FOUR = 4;
 const SHORT_TIMEOUT_MS = 5000;
 const LONG_TIMEOUT_MS = 60_000;
 
@@ -168,23 +168,20 @@ const retriesMalformed = ({ token, text, line, requests }: MissingOnce): MockTes
     }),
   );
 
-const CachedAnswers = Schema.fromJsonString(
-  Schema.Struct({ answers: Schema.Record(Schema.String, Schema.Unknown) }),
+const CachedAnswer = Schema.fromJsonString(
+  Schema.Struct({ model: Schema.String, answer: Schema.Struct({ type: Schema.String }) }),
 );
 
-const JsonRecord = Schema.fromJsonString(Schema.Record(Schema.String, Schema.Unknown));
-
-const corruptRefinement = (file: string): Effect.Effect<number, TestError, FileSystem.FileSystem> =>
+const corruptChoice = (file: string): Effect.Effect<number, TestError, FileSystem.FileSystem> =>
   Effect.gen(function* corrupt() {
     const fs = yield* FileSystem.FileSystem;
     const raw = yield* fs.readFileString(file);
-    const entry = yield* Schema.decodeEffect(CachedAnswers)(raw);
-    if (Rec.has(entry.answers, "s0")) {
+    const entry = yield* Schema.decodeEffect(CachedAnswer)(raw);
+    if (entry.answer.type !== "choice") {
       return NONE;
     }
-    const answers = { ...entry.answers, s0_location: { type: "choice", choice: "L604" } };
-    const whole = yield* Schema.decodeEffect(JsonRecord)(raw);
-    const text = yield* Schema.encodeEffect(JsonRecord)({ ...whole, answers });
+    const answer = { type: "choice", choice: "L999999" };
+    const text = yield* Schema.encodeEffect(CachedAnswer)({ ...entry, answer });
     yield* fs.writeFileString(file, text);
     return ONE;
   });
@@ -197,13 +194,13 @@ const retriesCorruptCache = Effect.scoped(
     const corrupted = yield* Effect.all(
       pipe(
         entries,
-        Arr.map((file) => corruptRefinement(file)),
+        Arr.map((file) => corruptChoice(file)),
       ),
       { concurrency: 1 },
     );
-    deepStrictEqual(Arr.sort(corrupted, Order.Number), [NONE, ONE]);
+    deepStrictEqual(Arr.sort(corrupted, Order.Number), [NONE, ONE, ONE]);
     deepStrictEqual(lineOf((yield* project.lint).diagnostics), Option.some(REFINED_LINE));
-    strictEqual((yield* loggedRequests).length, THREE);
+    strictEqual((yield* loggedRequests).length, FOUR);
   }),
 );
 
