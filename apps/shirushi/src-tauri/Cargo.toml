@@ -35,7 +35,7 @@ specta-typescript = "0.0.15"
 tauri = { version = "2", features = [] }
 tauri-plugin-localhost = "2"
 tauri-plugin-single-instance = "2"
-tauri-specta = { version = "=2.0.0-rc.28", features = ["derive", "typescript"] }
+tauri-specta = { version = "=2.0.0-rc.29", features = ["derive", "typescript"] }
 tokio = { version = "1", features = ["macros", "net", "rt"] }
 url = "2"
 uuid = { version = "1", features = ["v7"] }
