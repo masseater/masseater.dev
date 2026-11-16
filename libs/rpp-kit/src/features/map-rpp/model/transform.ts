@@ -1,51 +1,13 @@
 import { NodeServices } from "@effect/platform-node";
-import { Array as Arr, Effect, FileSystem, ManagedRuntime, Match, Path, pipe } from "effect";
-import { MappedCodeBuilder, stringIndexToPosition } from "ts-content-mapper";
-import type { PositionEncoding, TransformResult } from "ts-content-mapper";
+import { Array as Arr, Effect, FileSystem, ManagedRuntime, Path, pipe } from "effect";
+import { mappedOutput } from "mapped-import/mapper";
+import type { Request } from "mapped-import/mapper";
+import type { TransformResult } from "ts-content-mapper";
 
 import { parseRpp, outlineSong, segmentsOf } from "#/entities/song/index.ts";
-import type { Param, ParseError, Segment } from "#/entities/song/index.ts";
-
-export type Request = Readonly<{
-  fileName: string;
-  content: string;
-  positionEncoding: PositionEncoding;
-}>;
-
-const PARSE_ERROR = 1;
+import type { Param } from "#/entities/song/index.ts";
 
 const NEVER_SONG = "export declare const song: never;\n";
-
-const parseFailure = (
-  { content, positionEncoding }: Request,
-  error: ParseError,
-): TransformResult => {
-  const start = stringIndexToPosition(content, error.start, positionEncoding);
-  const end = stringIndexToPosition(content, error.end, positionEncoding);
-  return {
-    text: NEVER_SONG,
-    extension: ".ts",
-    diagnostics: [{ messageText: error.message, start, length: end - start, code: PARSE_ERROR }],
-  };
-};
-
-const build = (
-  { content, positionEncoding }: Request,
-  segments: readonly Segment[],
-): TransformResult => {
-  const builder = new MappedCodeBuilder(content, { positionEncoding });
-  for (const segment of segments) {
-    Match.value(segment).pipe(
-      Match.discriminatorsExhaustive("kind")({
-        text: ({ text }) => builder.append(text),
-        verbatim: ({ start, end }) => builder.appendVerbatim(start, end),
-        alias: ({ text, start, end }) => builder.appendAlias(text, start, end),
-        atom: ({ text, start, end }) => builder.appendAtom(text, start, end),
-      }),
-    );
-  }
-  return builder.build(".ts");
-};
 
 const missingFiles = Effect.fn("missingFiles")(function* missingFiles(
   fileName: string,
@@ -65,11 +27,20 @@ const missingFiles = Effect.fn("missingFiles")(function* missingFiles(
 const transformRpp = Effect.fn("transformRpp")(function* transformRpp(request: Request) {
   const parsed = parseRpp(request.content);
   if (parsed.status === "error") {
-    return parseFailure(request, parsed.error);
+    return mappedOutput({
+      request,
+      mapped: { status: "error", fallback: NEVER_SONG, issues: [parsed.error] },
+    });
   }
   const outline = outlineSong(parsed.root);
   const missing = yield* missingFiles(request.fileName, outline.files);
-  return build(request, segmentsOf({ outline, missing: Arr.fromIterable(missing) }));
+  return mappedOutput({
+    request,
+    mapped: {
+      status: "ok",
+      segments: segmentsOf({ outline, missing: Arr.fromIterable(missing) }),
+    },
+  });
 });
 
 const runtime = ManagedRuntime.make(NodeServices.layer);

@@ -10,7 +10,7 @@ import {
   songIn,
 } from "./read-song.test.support.ts";
 
-const LIBRARY = "/lib/kit.fu";
+const LIBRARY = "/lib/kit.fumx";
 
 it.effect("brings in what a song imports and what that needs", () =>
   Effect.gen(function* imported() {
@@ -75,7 +75,7 @@ it.effect("reports a name the imported file does not have", () =>
 it.effect("reports a file that is not there", () =>
   Effect.gen(function* missing() {
     const messages = yield* messagesIn(filesOf({ [ENTRY]: importing("studio, keys") }));
-    expect(messages).toContain("../lib/kit.fu というファイルがありません");
+    expect(messages).toContain("../lib/kit.fumx というファイルがありません");
   }),
 );
 

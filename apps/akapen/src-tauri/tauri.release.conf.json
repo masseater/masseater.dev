@@ -1,7 +1,0 @@
-{
-  "$schema": "https://schema.tauri.app/config/2",
-  "bundle": {
-    "license": "AGPL-3.0-only",
-    "licenseFile": "../../../LICENSE"
-  }
-}

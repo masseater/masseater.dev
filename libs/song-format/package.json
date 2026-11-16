@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "bin": {
-    "fu-language-server": "./bin/fu-language-server.ts",
+    "fumx-language-server": "./bin/fumx-language-server.ts",
     "song-report": "./bin/song-report.ts"
   },
   "type": "module",
@@ -14,20 +14,34 @@
   "exports": {
     "./analysis": "./src/features/analyze/index.ts",
     "./read-song": "./src/features/read-song/index.ts",
-    "./song": "./src/entities/song/index.ts"
+    "./song": "./src/entities/song/index.ts",
+    "./vite": "./src/app/vite.ts"
   },
   "dependencies": {
     "@effect/platform-node-shared": "catalog:",
     "effect": "catalog:stack",
     "langium": "catalog:",
+    "mapped-import": "workspace:*",
     "tonal": "catalog:",
+    "ts-content-mapper": "0.1.1",
     "vscode-languageserver": "catalog:"
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",
+    "@masseater.dev/song-format": "workspace:*",
     "@types/node": "catalog:",
     "langium-cli": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
+  },
+  "typescript": {
+    "contentMapper": {
+      "compilerOptions": [],
+      "dynamicConfig": false,
+      "exec": [
+        "node",
+        "src/app/mapper.ts"
+      ]
+    }
   }
 }
