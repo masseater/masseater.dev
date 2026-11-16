@@ -51,4 +51,6 @@ oxlint のバージョンは、@effect/tsgo が対応するものに合わせる
 `tsconfig.json` の `types` に `@r_masseater/msch/vite` を足すと、`defineConfig` の `msch` に型が付く。
 `msch` は、Betterleaks、commitlint、textlint、Steiger、fallow など、`vite.config.ts` で設定された vite-plus-adopt のすべてのチェックも実行する。これらのチェックでは `VPA_BASE` などの環境変数を読み取るため、タスクは `cache: false` で実行すること。Git フックでは、pre-commit で `msch --staged` を、commit-msg で `msch --commit-msg "$1"` を実行すること。
 `types` に `@r_masseater/msch/vite` を指定すると、`defineConfig` の vite-plus-adopt セクションも型付けされる。`ToolSections` 型は同じエントリから来ている。
+masseater の日本語の textlint ルールを使うときは、`@r_masseater/msch/lint` の `textlintPresets` を `textlint.presets` に渡す。
+`textlint.rules` に `"@r_masseater/preset-ja"` を書くと有効になる。
 指摘があれば終了コードは 1 になる。`--json` を付けると結果を JSON で出す。
