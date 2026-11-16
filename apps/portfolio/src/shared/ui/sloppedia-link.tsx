@@ -1,7 +1,7 @@
+import type { LinkProps } from "@masseater.dev/sloppedia";
 import { Link } from "@tanstack/react-router";
 import { Match, pipe } from "effect";
 import type { ReactNode } from "react";
-import type { LinkProps } from "sloppedia";
 
 export const SloppediaLink = ({ target, className, children }: LinkProps): ReactNode =>
   pipe(
