@@ -9,6 +9,7 @@ import {
 } from "#/entities/project/index.ts";
 import type { Project, SourceCheck, Workspace } from "#/entities/project/index.ts";
 import { sortProblems } from "#/shared/lib/problem.ts";
+import type { Problem } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 import { analyzeProject } from "./analysis.ts";
@@ -21,6 +22,7 @@ import { handWrittenNameProblems } from "./hand-lists.ts";
 import { OWNER_TAG, combineOwnerScans, ownersIn } from "./owners.ts";
 import type { Owner, OwnerScan } from "./owners.ts";
 import { repositoryNamesOf } from "./repository-names.ts";
+import type { RepositoryNames } from "./repository-names.ts";
 
 const scanOwners = Effect.fn("scanOwners")(function* scanOwners(
   workspace: Workspace,
@@ -143,6 +145,27 @@ const analyzeProjects = Effect.fn("analyzeProjects")(function* analyzeProjects(
   );
 });
 
+const repositoryProblems =
+  (repository: RepositoryNames) =>
+  (analyses: readonly Analysis[]): readonly Problem[] => {
+    const unowned = pipe(
+      analyses,
+      Arr.flatMap((analysis) => analysis.unowned),
+    );
+    const literals = pipe(
+      analyses,
+      Arr.flatMap((analysis) => analysis.literals),
+    );
+    return [
+      ...pipe(
+        analyses,
+        Arr.flatMap((analysis) => analysis.problems),
+      ),
+      ...duplicateProblems(repository.relative)(unowned),
+      ...handWrittenNameProblems({ repository, literals })(unowned),
+    ];
+  };
+
 export const checkRepository = Effect.fn("checkRepository")(function* checkRepository(
   root: string,
   sourceChecks: readonly SourceCheck[] = [],
@@ -158,25 +181,6 @@ export const checkRepository = Effect.fn("checkRepository")(function* checkRepos
     { owners: ownerScan.owners, sourceChecks },
     configPaths,
   );
-  const relative = (file: string): string => files.relative(root, file);
-  const unowned = pipe(
-    analyses,
-    Arr.flatMap((analysis) => analysis.unowned),
-  );
   const repository = yield* repositoryNamesOf(root);
-  return sortProblems([
-    ...ownerScan.problems,
-    ...pipe(
-      analyses,
-      Arr.flatMap((analysis) => analysis.problems),
-    ),
-    ...duplicateProblems(relative)(unowned),
-    ...handWrittenNameProblems(
-      repository,
-      pipe(
-        analyses,
-        Arr.flatMap((analysis) => analysis.literals),
-      ),
-    )(unowned),
-  ]);
+  return sortProblems([...ownerScan.problems, ...repositoryProblems(repository)(analyses)]);
 }, Effect.scoped);

@@ -12,9 +12,9 @@ import type { Memory, StorageFailed } from "#/shared/db/index.ts";
 
 type Scored = Readonly<{ score: number; item: Body }>;
 
-const SEARCHED_RECORDS = Arr.filter(
+const SEARCHED_RECORDS = pipe(
   LIFE_RECORDS,
-  (record) => record !== "event_kind" && record !== "metric_definition",
+  Arr.filter((record) => record !== "event_kind" && record !== "metric_definition"),
 );
 
 const scoreText =

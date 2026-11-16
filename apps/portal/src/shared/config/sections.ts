@@ -13,9 +13,10 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-type RouteTo = RegisteredRouter["routeTree"]["types"]["fileRouteTypes"]["to"];
-
-export type PortalPath = Exclude<RouteTo, `${string}$${string}`>;
+export type PortalPath = Exclude<
+  RegisteredRouter["routeTree"]["types"]["fileRouteTypes"]["to"],
+  `${string}$${string}`
+>;
 
 export type NavItem = Readonly<{ label: string; to: PortalPath }>;
 

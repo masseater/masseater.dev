@@ -15,8 +15,19 @@ const LINE_SEPARATOR = "\n";
 
 const ValueSchema = Schema.Union([Schema.String, Schema.Finite]);
 
+const Strings = Schema.Array(Schema.String);
+
+const ScopeSchema = Schema.Struct({ name: Schema.String, dependencies: Strings });
+
+const FileLiteralsSchema = Schema.Struct({
+  scope: ScopeSchema,
+  file: Schema.String,
+  values: Strings,
+  imports: Strings,
+});
+
 const UnownedSiteSchema = Schema.Struct({
-  scope: Schema.Struct({ name: Schema.String, dependencies: Schema.Array(Schema.String) }),
+  scope: ScopeSchema,
   file: Schema.String,
   start: Schema.Int,
   line: Schema.Int,
@@ -27,13 +38,7 @@ const UnownedSiteSchema = Schema.Struct({
 const AnalysisSchema = Schema.Struct({
   problems: ProblemList,
   unowned: Schema.Array(UnownedSiteSchema),
-  literals: Schema.Array(
-    Schema.Struct({
-      scope: Schema.Struct({ name: Schema.String, dependencies: Schema.Array(Schema.String) }),
-      file: Schema.String,
-      values: Schema.Array(Schema.String),
-    }),
-  ),
+  literals: Schema.Array(FileLiteralsSchema),
 });
 
 const AnalysisJson = Schema.fromJsonString(AnalysisSchema);

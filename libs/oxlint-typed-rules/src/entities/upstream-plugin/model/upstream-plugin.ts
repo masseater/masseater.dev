@@ -29,8 +29,6 @@ export type UpstreamPlugin<ConfigName extends string> = Plugin & {
   readonly configs: Readonly<Record<ConfigName, Config>>;
 };
 
-export type ConfigNameOf<Configs> = Extract<keyof Configs, string>;
-
 export interface Upstream<ConfigName extends string> {
   readonly rules: Readonly<Record<string, unknown>>;
   readonly configs: Readonly<Record<ConfigName, unknown>>;

@@ -1,9 +1,9 @@
 import { configs, rules } from "eslint-plugin-drizzle";
 
 import { plainRules, upstreamPlugin } from "#/entities/upstream-plugin/index.ts";
-import type { ConfigNameOf, UpstreamPlugin } from "#/entities/upstream-plugin/index.ts";
+import type { UpstreamPlugin } from "#/entities/upstream-plugin/index.ts";
 
-type ConfigName = ConfigNameOf<typeof configs>;
+export type ConfigName = "all" | "recommended";
 
 const plugin: UpstreamPlugin<ConfigName> = upstreamPlugin(
   "drizzle",

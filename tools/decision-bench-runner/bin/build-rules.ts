@@ -1,7 +1,7 @@
 import type { TaskId } from "bench-summary/schema";
 import { Effect, Number as Num, Schema, Array as Arr, pipe } from "effect";
 
-import { NOUL_CRITERIA } from "#/entities/item/index.ts";
+import { NOUL_CRITERIA, RULE_THEMES } from "#/entities/item/index.ts";
 import type { Item, NoulItem } from "#/entities/item/index.ts";
 import { askThrice, splitOf, tally, writeLabeled } from "#/features/label-items/index.ts";
 import { Opus, runBench } from "#/shared/lib/runtime.ts";
@@ -18,34 +18,6 @@ const FIRST_ROUND = 0;
 const SECOND_ROUND = 1;
 const SOURCE = "Claude Opus 5.5 で生成した架空の社内規程と事例";
 const LICENSE = "CC BY-SA 4.0";
-
-const THEMES = [
-  "経費精算",
-  "出張旅費",
-  "休暇取得",
-  "勤怠と残業申請",
-  "在宅勤務",
-  "情報セキュリティ",
-  "個人情報の取り扱い",
-  "購買と発注承認",
-  "接待と贈答",
-  "契約書の締結権限",
-  "社外への情報発信",
-  "副業の届出",
-  "備品の貸与と返却",
-  "ハラスメント相談",
-  "採用面接の運用",
-  "顧客からの返品対応",
-  "請求書の発行と支払期日",
-  "社用車の利用",
-  "ソフトウェアの導入申請",
-  "安全衛生と事故報告",
-  "研修の受講と費用負担",
-  "社内システムのアカウント管理",
-  "取引先の与信審査",
-  "文書の保管と廃棄",
-  "災害時の出社判断",
-] as const;
 
 const GENERATOR_SYSTEM =
   "あなたは日本企業の社内規程と、その運用で起きる判断事例を作る作成者です。指定の形式で返してください。";
@@ -275,7 +247,7 @@ const labelDraft = Effect.fn("labelDraft")(function* labelDraft(
 
 runBench(
   Effect.gen(function* buildRules() {
-    const generated = yield* Effect.forEach(THEMES, generateTheme, {
+    const generated = yield* Effect.forEach(RULE_THEMES, generateTheme, {
       concurrency: CONCURRENCY,
     });
     const drafts = pipe(

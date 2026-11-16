@@ -88,6 +88,16 @@ const acceptsNamedFilesAmongOtherEntries = Effect.gen(
   },
 );
 
+const ignoresListsInModulesThatDoNotImportEachOther = Effect.gen(
+  function* ignoresListsInModulesThatDoNotImportEachOther() {
+    const findings = yield* findingsIn({
+      "src/query.ts": lines('export type QueryConfig = "recommended" | "strict" | "flat";'),
+      "src/router.ts": lines('export type RouterConfig = "recommended" | "flat";'),
+    });
+    expect(findings).toStrictEqual([]);
+  },
+);
+
 layer(fixtureLayer)("hand-written names", (it) => {
   it.effect(
     "reports names that modules declare one by one",
@@ -96,6 +106,10 @@ layer(fixtureLayer)("hand-written names", (it) => {
   it.effect("accepts names typed with the list", () => acceptsNamesTypedWithTheList);
   it.effect("ignores names used inside functions", () => ignoresNamesUsedInsideFunctions);
   it.effect("reports a part of another list", () => reportsAPartOfAnotherList);
+  it.effect(
+    "ignores lists in modules that do not import each other",
+    () => ignoresListsInModulesThatDoNotImportEachOther,
+  );
   it.effect("accepts a selection from another list", () => acceptsASelectionFromAnotherList);
   it.effect("reports lists that enumerate a directory", () => reportsListsThatEnumerateADirectory);
   it.effect("accepts named files among other entries", () => acceptsNamedFilesAmongOtherEntries);

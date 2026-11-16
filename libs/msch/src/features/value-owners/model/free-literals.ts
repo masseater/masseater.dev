@@ -12,7 +12,7 @@ import {
   SyntaxKind,
 } from "#/shared/lib/compiler.ts";
 import type { Checker, Node, SourceFile, StringLiteral } from "#/shared/lib/compiler.ts";
-import { contains, descendantsOf } from "#/shared/lib/syntax.ts";
+import { declarationsOf, descendantsOf, isInsideAny } from "#/shared/lib/syntax.ts";
 import { finiteValuesOf } from "#/shared/lib/values.ts";
 
 const NAME = /^[\w@.#/:$-]{2,}$/u;
@@ -57,7 +57,32 @@ const isTyped =
       Option.isSome,
     );
 
-export const freeLiteralsIn =
+const specifierOf = (statement: Node): Option.Option<StringLiteral> => {
+  if (!isImportDeclaration(statement) && !isExportDeclaration(statement)) {
+    return Option.none();
+  }
+  return Option.fromUndefinedOr(statement.moduleSpecifier).pipe(Option.filter(isStringLiteral));
+};
+
+const importedFilesOf =
+  (checker: Checker) =>
+  (sourceFile: SourceFile): readonly string[] =>
+    pipe(
+      sourceFile.statements,
+      Arr.map(specifierOf),
+      Arr.getSomes,
+      Arr.flatMap((specifier) =>
+        pipe(
+          Option.fromUndefinedOr(checker.getSymbolAtLocation(specifier)),
+          Option.flatMap((symbol) => Arr.head(declarationsOf(symbol))),
+          Option.map((declaration) => declaration.getSourceFile().fileName),
+          Option.toArray,
+        ),
+      ),
+      Arr.dedupe,
+    );
+
+const freeLiteralsIn =
   (checker: Checker) =>
   (sourceFile: SourceFile, excluded: readonly Node[]): readonly string[] =>
     pipe(
@@ -66,8 +91,29 @@ export const freeLiteralsIn =
       Arr.filter((node) => NAME.test(node.text)),
       Arr.filter(isDefinition),
       Arr.filter((node) => !isModuleSpecifier(node)),
-      Arr.filter((node) => !Arr.some(excluded, (outer) => contains(outer)(node))),
-      Arr.filter((node) => !isTyped(checker)(node)),
+      Arr.filter((node) => !isInsideAny(excluded)(node) && !isTyped(checker)(node)),
       Arr.map((node) => node.text),
       Arr.dedupe,
+    );
+
+export interface FileFacts {
+  readonly file: string;
+  readonly values: readonly string[];
+  readonly imports: readonly string[];
+}
+
+export const fileFactsIn =
+  (checker: Checker) =>
+  (sourceFiles: readonly SourceFile[], excluded: readonly Node[]): readonly FileFacts[] =>
+    pipe(
+      sourceFiles,
+      Arr.map((sourceFile) => ({
+        file: sourceFile.fileName,
+        values: freeLiteralsIn(checker)(sourceFile, excluded),
+        imports: importedFilesOf(checker)(sourceFile),
+      })),
+      Arr.filter(
+        (facts) =>
+          Arr.isReadonlyArrayNonEmpty(facts.values) || Arr.isReadonlyArrayNonEmpty(facts.imports),
+      ),
     );

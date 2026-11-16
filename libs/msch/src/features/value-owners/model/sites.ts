@@ -1,5 +1,6 @@
 import { Array as Arr, Option, pipe } from "effect";
 
+import type { Project } from "#/entities/project/index.ts";
 import {
   isArrayLiteralExpression,
   isCallExpression,
@@ -21,11 +22,11 @@ import type {
   Node,
   TypeSymbol,
   TypeNode,
-  TypeReferenceNode,
   UnionTypeNode,
 } from "#/shared/lib/compiler.ts";
 import {
   childrenOf,
+  isInsideAny,
   declarationsOf,
   isTypeDeclaration,
   propertyNamesOf,
@@ -111,9 +112,12 @@ const selectsKeys =
     );
   };
 
+const FILTERED_TYPE = 0;
+
 const isConditionalAlias =
   (checker: Checker) =>
-  (reference: TypeReferenceNode): boolean =>
+  (reference: Node): boolean =>
+    isTypeReferenceNode(reference) &&
     Option.fromUndefinedOr(checker.getSymbolAtLocation(reference.typeName)).pipe(
       Option.map(declarationsOf),
       Option.exists(
@@ -132,7 +136,7 @@ const filtersBy =
     if (isTypeReferenceNode(parent)) {
       const typeArguments: readonly TypeNode[] = parent.typeArguments ?? [];
       const filtering = Arr.findFirstIndex(typeArguments, (argument) => argument === node).pipe(
-        Option.exists((position) => position > 0),
+        Option.exists((position) => position > FILTERED_TYPE),
       );
       if (filtering && isConditionalAlias(checker)(parent)) {
         return true;
@@ -198,3 +202,12 @@ export const sitesUnder =
       Option.toArray,
     );
   };
+
+export const sitesOutside =
+  (checker: Checker) =>
+  (project: Project, outers: readonly Node[]): readonly ValueSite[] =>
+    pipe(
+      project.sourceFiles,
+      Arr.flatMap((sourceFile) => sitesUnder(checker)(sourceFile)),
+      Arr.filter((site) => !isInsideAny(outers)(site.node)),
+    );

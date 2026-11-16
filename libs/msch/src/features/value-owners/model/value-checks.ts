@@ -25,7 +25,7 @@ import type {
 import { CANDIDATE_LIMIT, problemAt } from "#/shared/lib/problem.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
 import {
-  contains,
+  isInsideAny,
   declarationsOf,
   descendantsOf,
   importedModulesOf,
@@ -263,13 +263,7 @@ export const ownedLiteralProblems =
         descendantsOf(sourceFile),
         Arr.filter((node) => isStringLiteral(node) || isNumericLiteral(node)),
         Arr.filter((node) => isValuePosition(node)),
-        Arr.filter(
-          (node) =>
-            !pipe(
-              excluded,
-              Arr.some((outer) => contains(outer)(node)),
-            ),
-        ),
+        Arr.filter((node) => !isInsideAny(excluded)(node)),
         Arr.map((node) => ownedLiteralProblem(context)(node)),
       ),
     );

@@ -28,7 +28,6 @@ export type {
   StringLiteral,
   TypeAliasDeclaration,
   TypeNode,
-  TypeReferenceNode,
   UnionTypeNode,
   VariableDeclaration,
   VariableDeclarationList,
