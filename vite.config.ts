@@ -40,7 +40,7 @@ export default defineConfig({
       paths: [String.raw`(^|/)fixtures/[^/]+\.tgz!`],
     },
     textlint: {
-      ignores: ["apps/zenn-articles/**", "**/.cache/**"],
+      ignores: ["apps/zenn-articles/**", "**/.cache/**", "**/fixtures/**"],
       kanji: [
         "個人情報保護法",
         "中小企業基盤整備機構",
