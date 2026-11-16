@@ -1,3 +1,4 @@
+import type { TaskId } from "bench-summary/schema";
 import { Effect, Number as Num, Schema, Array as Arr, pipe } from "effect";
 
 import { NOUL_CRITERIA } from "#/entities/item/index.ts";
@@ -5,7 +6,7 @@ import type { Item, NoulItem } from "#/entities/item/index.ts";
 import { askThrice, splitOf, tally, writeLabeled } from "#/features/label-items/index.ts";
 import { Opus, runBench } from "#/shared/lib/runtime.ts";
 
-const TASK = "rules";
+const TASK: TaskId = "rules";
 const PAIRS_PER_ROUND = 5;
 const CONCURRENCY = 12;
 const MIN_ARTICLES = 8;

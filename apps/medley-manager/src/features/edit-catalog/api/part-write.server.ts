@@ -17,7 +17,7 @@ import { part, partStaff } from "#/shared/db/index.ts";
 import { personByName, songByTitle, videoByTitle } from "./resolve.server.ts";
 
 type Part = typeof PartInput.Type;
-type StaffRole = "audio" | "video";
+type StaffRole = Exclude<typeof partStaff.$inferSelect.role, "other">;
 type Staffing = Readonly<{ role: StaffRole; personIds: readonly number[] }>;
 type Member = Readonly<{ role: StaffRole; personId: number }>;
 type Last = Readonly<{ last: number | null }>;

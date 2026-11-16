@@ -17,8 +17,10 @@ import { analysisCache, keyOf, pruneAnalyses, readAnalysis, writeAnalysis } from
 import type { Analysis, AnalysisCache } from "./cache.ts";
 import { duplicateProblems, unownedSiteOf } from "./duplicates.ts";
 import type { PackageScope } from "./duplicates.ts";
+import { handWrittenNameProblems } from "./hand-lists.ts";
 import { OWNER_TAG, combineOwnerScans, ownersIn } from "./owners.ts";
 import type { Owner, OwnerScan } from "./owners.ts";
+import { repositoryNamesOf } from "./repository-names.ts";
 
 const scanOwners = Effect.fn("scanOwners")(function* scanOwners(
   workspace: Workspace,
@@ -60,6 +62,10 @@ const freshAnalysis =
         return {
           problems: analysis.problems,
           unowned: pipe(analysis.unowned, Arr.map(unownedSiteOf(scope))),
+          literals: pipe(
+            analysis.literals,
+            Arr.map((entry) => ({ ...entry, scope })),
+          ),
         };
       }).pipe(Effect.withSpan("analyzeProject")),
     );
@@ -157,6 +163,7 @@ export const checkRepository = Effect.fn("checkRepository")(function* checkRepos
     analyses,
     Arr.flatMap((analysis) => analysis.unowned),
   );
+  const repository = yield* repositoryNamesOf(root);
   return sortProblems([
     ...ownerScan.problems,
     ...pipe(
@@ -164,5 +171,12 @@ export const checkRepository = Effect.fn("checkRepository")(function* checkRepos
       Arr.flatMap((analysis) => analysis.problems),
     ),
     ...duplicateProblems(relative)(unowned),
+    ...handWrittenNameProblems(
+      repository,
+      pipe(
+        analyses,
+        Arr.flatMap((analysis) => analysis.literals),
+      ),
+    )(unowned),
   ]);
 }, Effect.scoped);

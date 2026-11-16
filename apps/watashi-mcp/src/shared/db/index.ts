@@ -24,6 +24,7 @@ export {
   TRAIT_ORIGINS,
 } from "./owner-trait.table.ts";
 export type {
+  Store,
   TraitOrigin,
   OwnerTraitJa,
   Stance,

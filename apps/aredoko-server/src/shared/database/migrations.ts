@@ -1,3 +1,4 @@
+import type { PackageKind } from "@masseater.dev/aredoko-protocol";
 import { Effect } from "effect";
 import { SqlClient } from "effect/sql";
 
@@ -103,7 +104,7 @@ const retries = Effect.gen(function* retries() {
 });
 
 const MODEL = "model";
-const RENDERED_ELSEWHERE = "project";
+const RENDERED_ELSEWHERE: typeof PackageKind.Type = "project";
 
 const renderAllModels = Effect.gen(function* renderAllModels() {
   const sql = yield* SqlClient.SqlClient;

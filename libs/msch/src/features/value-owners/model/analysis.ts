@@ -7,6 +7,8 @@ import type { Problem } from "#/shared/lib/problem.ts";
 import { contains, descendantsOf } from "#/shared/lib/syntax.ts";
 
 import { flowsIn } from "./flows.ts";
+import { freeLiteralsIn } from "./free-literals.ts";
+import type { FileLiterals } from "./hand-lists.ts";
 import { ownerKeyOf } from "./owners.ts";
 import type { Owner } from "./owners.ts";
 import { shapeProblemsIn } from "./shapes.ts";
@@ -17,6 +19,7 @@ import { ownedLiteralProblems, siteVerdict } from "./value-checks.ts";
 export interface ProjectAnalysis {
   readonly problems: readonly Problem[];
   readonly unowned: readonly ValueSite[];
+  readonly literals: readonly Omit<FileLiterals, "scope">[];
 }
 
 const isVisibleTo =
@@ -128,6 +131,14 @@ export const analyzeProject =
       unowned: pipe(
         verdicts,
         Arr.flatMap((found) => found.unowned),
+      ),
+      literals: pipe(
+        project.sourceFiles,
+        Arr.map((sourceFile) => ({
+          file: sourceFile.fileName,
+          values: freeLiteralsIn(checker)(sourceFile, excluded),
+        })),
+        Arr.filter((entry) => entry.values.length > 0),
       ),
     };
   };

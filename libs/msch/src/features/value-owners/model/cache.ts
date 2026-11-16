@@ -27,6 +27,13 @@ const UnownedSiteSchema = Schema.Struct({
 const AnalysisSchema = Schema.Struct({
   problems: ProblemList,
   unowned: Schema.Array(UnownedSiteSchema),
+  literals: Schema.Array(
+    Schema.Struct({
+      scope: Schema.Struct({ name: Schema.String, dependencies: Schema.Array(Schema.String) }),
+      file: Schema.String,
+      values: Schema.Array(Schema.String),
+    }),
+  ),
 });
 
 const AnalysisJson = Schema.fromJsonString(AnalysisSchema);

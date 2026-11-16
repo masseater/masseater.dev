@@ -7,18 +7,15 @@ import { memoryItem, searchMemories } from "#/entities/memory/index.server.ts";
 import { DEFAULT_MEMORY_LIMIT } from "#/entities/memory/index.ts";
 import type { WatashiSearchValue } from "#/entities/memory/index.ts";
 import { termsOf } from "#/shared/db/index.server.ts";
+import { LIFE_RECORDS } from "#/shared/db/index.ts";
 import type { Memory, StorageFailed } from "#/shared/db/index.ts";
 
 type Scored = Readonly<{ score: number; item: Body }>;
 
-const SEARCHED_RECORDS = [
-  "life_event",
-  "media_item",
-  "profile_fact",
-  "metric_goal",
-  "owner_reflection",
-  "todo",
-] as const;
+const SEARCHED_RECORDS = Arr.filter(
+  LIFE_RECORDS,
+  (record) => record !== "event_kind" && record !== "metric_definition",
+);
 
 const scoreText =
   (terms: readonly string[]) =>
