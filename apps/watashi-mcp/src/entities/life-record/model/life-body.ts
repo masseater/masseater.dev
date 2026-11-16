@@ -36,7 +36,7 @@ export const SHARED_MEDIA_ID_KEYS = ["konomiKey", "url"] as const;
 
 const COMPARISONS = ["atLeast", "atMost"] as const;
 
-const GOAL_PERIODS = ["day", "week", "month"] as const;
+export const GOAL_PERIODS = ["day", "week", "month"] as const;
 
 export const TODO_STATUSES = ["open", "done", "canceled"] as const;
 

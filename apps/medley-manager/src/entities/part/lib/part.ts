@@ -1,6 +1,8 @@
+import type { partStaff } from "#/shared/db/index.ts";
+
 export type Named = Readonly<{ id: number; title: string }>;
 
-export type StaffRole = "audio" | "video" | "other";
+export type StaffRole = typeof partStaff.$inferSelect.role;
 
 export type Credit = Readonly<{ role: StaffRole; person: Readonly<{ id: number; name: string }> }>;
 

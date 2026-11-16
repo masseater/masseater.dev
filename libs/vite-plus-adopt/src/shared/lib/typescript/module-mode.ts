@@ -22,13 +22,11 @@ import {
 } from "typescript/ast/is";
 
 import { fileExtensionIsOneOf } from "./extensions.ts";
-import type { ResolutionKind, ResolutionMode } from "./resolution-types.ts";
+import type { EmitModuleKind, ResolutionKind, ResolutionMode } from "./resolution-types.ts";
 import { impliedNodeFormatOf, packageJsonScopeOf } from "./source-file.ts";
 
 const DATA_FIRST_ARITY = 2;
 const DATA_FIRST_ARITY_3 = 3;
-
-export type EmitModuleKind = "CommonJS" | "ESNext" | "Node16";
 
 export interface ModeOptions {
   readonly moduleResolution: ResolutionKind;

@@ -1,10 +1,18 @@
-import { Schema } from "effect";
+import { Array as Arr, Schema, pipe } from "effect";
 
 export const RULE_SECTIONS = ["limits", "work", "communication", "who", "repo"] as const;
 
-export const EDITED_SECTIONS = ["limits", "work", "communication", "repo"] as const;
-
 export type RuleSection = (typeof RULE_SECTIONS)[number];
+
+const UNEDITED_SECTION = "who";
+
+const EDITED_SECTIONS = pipe(
+  RULE_SECTIONS,
+  Arr.filter(
+    (section): section is Exclude<RuleSection, typeof UNEDITED_SECTION> =>
+      section !== UNEDITED_SECTION,
+  ),
+);
 
 const Repo = Schema.String.annotate({
   description:

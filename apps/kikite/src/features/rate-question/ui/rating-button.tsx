@@ -16,7 +16,7 @@ export const RatingButton = ({
   id,
   current,
   value,
-}: Readonly<{ id: number; current: Rating; value: "good" | "off" }>): ReactNode => {
+}: Readonly<{ id: number; current: Rating; value: keyof typeof LOOKS }>): ReactNode => {
   const rate = useRate(id);
   const onClick = useCallback(() => {
     rate(value);
