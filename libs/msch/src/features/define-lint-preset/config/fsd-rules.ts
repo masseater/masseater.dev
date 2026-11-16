@@ -5,6 +5,7 @@ export const steigerRules: SteigerConfig = [
   ...fsd.configs.recommended,
   {
     rules: {
+      "fsd/excessive-slicing": "off",
       "fsd/insignificant-slice": "off",
       "fsd/no-cross-imports": "error",
       "fsd/no-higher-level-imports": "error",
