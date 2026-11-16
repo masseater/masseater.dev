@@ -9,7 +9,7 @@ use media_notes::source::{link_at, page_of, range, source_of};
 use media_notes::store::Store;
 use rmcp::handler::server::router::tool::ToolRouter;
 use rmcp::handler::server::wrapper::Parameters;
-use rmcp::model::{CallToolResult, Implementation, ServerCapabilities, ServerConfig};
+use rmcp::model::{CallToolResult, ContentBlock, Implementation, ServerCapabilities, ServerConfig};
 use rmcp::{ErrorData, ServerHandler, tool, tool_handler, tool_router};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -18,10 +18,13 @@ use crate::protocol::{
     Aspect, Choice, Clip, Forecast, Judgement, Mark, Pair, PairInput, PredictionInput, Statement,
     StatementInput, Verb, Verdict,
 };
+use crate::stills::Stills;
 use crate::taste::{Taste, forecasts, paired, predicted, stated};
 
 pub const PORT: u16 = 47_230;
 const NOT_MEDIA: &str = "開けるリンクではありません";
+const NO_STILL: &str = "このしるしには静止画がありません";
+const JPEG: &str = "image/jpeg";
 
 pub type Changed = Arc<dyn Fn() + Send + Sync>;
 
@@ -29,6 +32,7 @@ pub type Changed = Arc<dyn Fn() + Send + Sync>;
 pub struct Serving {
     pub store: Store,
     pub taste: Taste,
+    pub stills: Stills,
     pub client: reqwest::Client,
     pub sites: &'static [Site],
     pub token: String,
@@ -38,7 +42,7 @@ pub struct Serving {
 #[derive(Deserialize, JsonSchema)]
 struct ListInput {
     #[schemars(
-        description = "YouTube・ニコニコ・SoundCloud の曲のリンク。渡すとその曲のしるしだけを返す"
+        description = "YouTube・ニコニコ・SoundCloud のリンク。渡すとその曲や動画のしるしだけを返す"
     )]
     url: Option<String>,
     #[schemars(description = "like（好き）か dislike（苦手）で絞る")]
@@ -49,6 +53,8 @@ struct ListInput {
 
 #[derive(Serialize)]
 struct Brief {
+    id: String,
+    still: bool,
     verb: Verb,
     title: String,
     artist: String,
@@ -61,9 +67,10 @@ struct Brief {
     words: String,
 }
 
-fn brief_of(mark: Mark) -> Brief {
+fn brief_of(mark: Mark, still: bool) -> Brief {
     let source = &mark.song.source;
     Brief {
+        still,
         verb: mark.verb,
         page: page_of(source).unwrap_or_default(),
         link: link_at(source, mark.from).unwrap_or_default(),
@@ -74,6 +81,7 @@ fn brief_of(mark: Mark) -> Brief {
         to: mark.to,
         aspects: mark.aspects,
         words: mark.words,
+        id: mark.id,
     }
 }
 
@@ -84,19 +92,36 @@ fn matches(input: &ListInput, mark: &Mark) -> bool {
             .is_none_or(|aspect| mark.aspects.contains(&aspect))
 }
 
-fn listed(store: &Store, input: &ListInput) -> Outcome<Vec<Brief>> {
+fn listed(store: &Store, stills: &Stills, input: &ListInput) -> Outcome<Vec<Brief>> {
     let source = input.url.as_deref().and_then(source_of);
-    Ok(store
+    store
         .list::<Mark>(source.as_ref())?
         .into_iter()
         .filter(|mark| matches(input, mark))
-        .map(brief_of)
-        .collect())
+        .map(|mark| {
+            let still = stills.get(&mark.id)?.is_some();
+            Ok(brief_of(mark, still))
+        })
+        .collect()
+}
+
+#[derive(Deserialize, JsonSchema)]
+struct StillRequest {
+    #[schemars(description = "list_marks が返したしるしの id")]
+    id: String,
+}
+
+fn still_of(stills: &Stills, id: &str) -> CallToolResult {
+    match stills.get(id) {
+        Ok(Some(jpeg)) => CallToolResult::success(vec![ContentBlock::image(jpeg, JPEG)]),
+        Ok(None) => CallToolResult::error(vec![ContentBlock::text(NO_STILL)]),
+        Err(failure) => CallToolResult::error(vec![ContentBlock::text(failure.message)]),
+    }
 }
 
 #[derive(Deserialize, JsonSchema)]
 struct ClipInput {
-    #[schemars(description = "YouTube・ニコニコ・SoundCloud の曲のリンク")]
+    #[schemars(description = "YouTube・ニコニコ・SoundCloud の曲や動画のリンク")]
     url: String,
     #[schemars(description = "範囲の始まり（秒）")]
     from: f64,
@@ -122,7 +147,7 @@ struct StatementRequest {
 
 #[derive(Deserialize, JsonSchema)]
 struct PredictionRequest {
-    #[schemars(description = "持ち主がまだ聴いていない曲のリンク")]
+    #[schemars(description = "持ち主がまだ見ていない曲や動画のリンク")]
     url: String,
     #[schemars(description = "範囲の始まり（秒）")]
     from: f64,
@@ -134,7 +159,7 @@ struct PredictionRequest {
 
 #[derive(Deserialize, JsonSchema)]
 struct SongFilter {
-    #[schemars(description = "渡すとその曲だけを返す")]
+    #[schemars(description = "渡すとその曲や動画だけを返す")]
     url: Option<String>,
 }
 
@@ -283,18 +308,33 @@ impl Tools {
     }
 
     #[tool(
-        description = "持ち主が YouTube・ニコニコ・SoundCloud の曲に付けた「しるし」を新しい順に返す。しるしは曲の範囲（秒）、好きか苦手か、どこが（rhythm・bass・chords・melody・tone・voice・arrangement・mix）、持ち主の言葉からなる。link はその範囲の始まりから再生するリンク。曲を作る前や直す前に呼び、持ち主の好みの根拠として読む。",
+        description = "持ち主が YouTube・ニコニコ・SoundCloud・PC のファイルの曲や動画に付けた「しるし」を新しい順に返す。しるしは範囲（秒）、好きか苦手か、どこが（音は rhythm・bass・chords・melody・tone・voice・arrangement・mix、絵は composition・color・light・line・texture・motion・cut）、持ち主の言葉からなる。link はその範囲の始まりから再生するリンクで、PC のファイルには無い。still が true なら view_still で範囲の静止画を見られる。曲や絵や映像を作る前や直す前に呼び、持ち主の好みの根拠として読む。",
         annotations(read_only_hint = true)
     )]
     async fn list_marks(
         &self,
         Parameters(input): Parameters<ListInput>,
     ) -> Result<CallToolResult, ErrorData> {
-        Ok(answer(listed(&self.serving.store, &input)))
+        Ok(answer(listed(
+            &self.serving.store,
+            &self.serving.stills,
+            &input,
+        )))
     }
 
     #[tool(
-        description = "持ち主に二択を出す。first と second に曲の範囲を 1 つずつ渡すと、持ち主のアプリの「二択」に並び、持ち主はどちらが好きかを選ぶ。好みの境目を確かめたいときに、似ているが違う 2 つの範囲を選んで出す。答えは list_pairs で読む。"
+        description = "PC の動画ファイルに付けたしるしの、範囲の真ん中の静止画を返す。list_marks で still が true のしるしの id を渡す。構図・色・光などの好みを絵で確かめるときに呼ぶ。",
+        annotations(read_only_hint = true)
+    )]
+    async fn view_still(
+        &self,
+        Parameters(request): Parameters<StillRequest>,
+    ) -> Result<CallToolResult, ErrorData> {
+        Ok(still_of(&self.serving.stills, &request.id))
+    }
+
+    #[tool(
+        description = "持ち主に二択を出す。first と second に曲や動画の範囲を 1 つずつ渡すと、持ち主のアプリの「二択」に並び、持ち主はどちらが好きかを選ぶ。好みの境目を確かめたいときに、似ているが違う 2 つの範囲を選んで出す。答えは list_pairs で読む。"
     )]
     async fn propose_pair(
         &self,
@@ -319,7 +359,7 @@ impl Tools {
     }
 
     #[tool(
-        description = "持ち主の好みについての見立てを 1 文で書き残す。持ち主のアプリの「AI の見立て」に並び、持ち主は合っているか違うかを付ける。しるしや二択の答えから言えることを、曲を作るときに使える具体さで書く。答えは list_statements で読む。"
+        description = "持ち主の好みについての見立てを 1 文で書き残す。持ち主のアプリの「AI の見立て」に並び、持ち主は合っているか違うかを付ける。しるしや二択の答えから言えることを、作品を作るときに使える具体さで書く。答えは list_statements で読む。"
     )]
     async fn write_statement(
         &self,
@@ -356,7 +396,7 @@ impl Tools {
     }
 
     #[tool(
-        description = "持ち主がまだ聴いていない曲で、どの範囲に like か dislike を付けるかを予想して残す。持ち主が聴き終えてしるしを付けると、予想が当たったかが決まる。答え合わせは list_predictions で読む。"
+        description = "持ち主がまだ見ていない曲や動画で、どの範囲に like か dislike を付けるかを予想して残す。持ち主が見終えてしるしを付けると、予想が当たったかが決まる。答え合わせは list_predictions で読む。"
     )]
     async fn predict(
         &self,
@@ -367,7 +407,7 @@ impl Tools {
     }
 
     #[tool(
-        description = "残した予想と答え合わせを新しい順に返す。verdict は hit（同じ範囲に同じしるしが付いた）、miss（その曲にしるしが付いたが外れた）、open（まだしるしが無い）。外れた予想から見立てを直す。",
+        description = "残した予想と答え合わせを新しい順に返す。verdict は hit（同じ範囲に同じしるしが付いた）、miss（その曲や動画にしるしが付いたが外れた）、open（まだしるしが無い）。外れた予想から見立てを直す。",
         annotations(read_only_hint = true)
     )]
     async fn list_predictions(
@@ -410,6 +450,7 @@ mod tests {
     use super::{ListInput, Serving, listed, router};
     use crate::commands::{TABLE, saved};
     use crate::protocol::{Aspect, MarkInput, Verb};
+    use crate::stills::Stills;
     use crate::taste::Taste;
 
     const INITIALIZE: &str = r#"{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"test","version":"0"}}}"#;
@@ -439,6 +480,7 @@ mod tests {
         let serving = Serving {
             store: Store::in_memory(TABLE).expect("store"),
             taste: Taste::in_memory().expect("taste"),
+            stills: Stills::in_memory().expect("stills"),
             client: reqwest::Client::new(),
             sites: &[Site::Youtube],
             token: "secret".to_owned(),
@@ -465,6 +507,7 @@ mod tests {
     #[test]
     fn narrows_marks_by_song_verb_and_aspect() {
         let store = Store::in_memory(TABLE).expect("store");
+        let stills = Stills::in_memory().expect("stills");
         saved(&store, input("aaaaaaaaaaa", Verb::Like)).expect("liked");
         saved(&store, input("aaaaaaaaaaa", Verb::Dislike)).expect("disliked");
         saved(&store, input("bbbbbbbbbbb", Verb::Like)).expect("other");
@@ -473,7 +516,7 @@ mod tests {
             verb: Some(Verb::Like),
             aspect: Some(Aspect::Bass),
         };
-        let briefs = listed(&store, &song).expect("briefs");
+        let briefs = listed(&store, &stills, &song).expect("briefs");
         assert_eq!(briefs.len(), 1);
         assert_eq!(briefs[0].range, "1:01–1:15");
         assert_eq!(briefs[0].link, "https://youtu.be/aaaaaaaaaaa?t=61");
@@ -482,6 +525,6 @@ mod tests {
             verb: None,
             aspect: Some(Aspect::Melody),
         };
-        assert!(listed(&store, &melody).expect("none").is_empty());
+        assert!(listed(&store, &stills, &melody).expect("none").is_empty());
     }
 }

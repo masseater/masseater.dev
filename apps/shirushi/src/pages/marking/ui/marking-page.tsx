@@ -10,7 +10,7 @@ export const MarkingPage = (): ReactNode => {
   return (
     <main className="mx-auto grid max-w-6xl gap-5 px-4 py-5">
       <header className="flex items-start gap-2 [&>form]:flex-1">
-        <OpenBar files={false} label="曲のリンク" />
+        <OpenBar files label="リンク" />
         <CopyMcpCommand name="shirushi" />
       </header>
       <MarkingBody />

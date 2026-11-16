@@ -1,15 +1,12 @@
-import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { ASPECTS } from "#/shared/config/index.ts";
+import { PICTURE_ASPECTS, SOUND_ASPECTS } from "#/shared/config/index.ts";
 
-import { AspectChip } from "./aspect-chip.tsx";
+import { AspectGroup } from "./aspect-group.tsx";
 
 export const AspectChips = (): ReactNode => (
-  <fieldset aria-label="どこが" className="m-0 flex min-w-0 flex-wrap gap-1 border-0 p-0">
-    {pipe(
-      ASPECTS,
-      Arr.map((aspect) => <AspectChip key={aspect} aspect={aspect} />),
-    )}
-  </fieldset>
+  <div className="grid gap-1.5">
+    <AspectGroup label="音" aspects={SOUND_ASPECTS} />
+    <AspectGroup label="絵" aspects={PICTURE_ASPECTS} />
+  </div>
 );
