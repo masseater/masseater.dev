@@ -6,8 +6,6 @@ export const EDITED_SECTIONS = ["limits", "work", "communication", "repo"] as co
 
 export type RuleSection = (typeof RULE_SECTIONS)[number];
 
-export type EditedSectionKind = (typeof EDITED_SECTIONS)[number];
-
 const Repo = Schema.String.annotate({
   description:
     "The repository or app name the rule applies to, such as masseater.dev, when section is repo. An empty string otherwise",

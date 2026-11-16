@@ -12,7 +12,11 @@ import { saveTranslated } from "./profile-save.server.ts";
 import type { ProfileFailure, ProfileOutcome } from "./profile-save.server.ts";
 import type { ProfileSource } from "./profile-source.server.ts";
 
-type Writing = Effect.Effect<ProfileOutcome, ProfileFailure, ProfileAuthor | TraitTranslator>;
+export type Writing = Effect.Effect<
+  ProfileOutcome,
+  ProfileFailure,
+  ProfileAuthor | TraitTranslator
+>;
 
 type Draft = Readonly<{
   source: ProfileSource;
