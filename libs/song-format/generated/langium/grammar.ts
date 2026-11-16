@@ -30,7 +30,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@89"
+                "$ref": "#/rules@90"
               },
               "arguments": []
             }
@@ -55,7 +55,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@45"
+                "$ref": "#/rules@46"
               },
               "arguments": []
             },
@@ -117,14 +117,14 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@32"
+              "$ref": "#/rules@33"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@34"
+              "$ref": "#/rules@35"
             },
             "arguments": []
           }
@@ -155,7 +155,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@78"
+                "$ref": "#/rules@79"
               },
               "arguments": []
             }
@@ -167,7 +167,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@85"
+                "$ref": "#/rules@86"
               },
               "arguments": []
             }
@@ -195,7 +195,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@73"
+                "$ref": "#/rules@74"
               },
               "arguments": []
             }
@@ -207,7 +207,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@89"
+                "$ref": "#/rules@90"
               },
               "arguments": []
             }
@@ -238,7 +238,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@88"
+                        "$ref": "#/rules@89"
                       },
                       "arguments": []
                     }
@@ -271,7 +271,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@73"
+                "$ref": "#/rules@74"
               },
               "arguments": []
             }
@@ -316,7 +316,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@73"
+                "$ref": "#/rules@74"
               },
               "arguments": []
             }
@@ -328,7 +328,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@89"
+                "$ref": "#/rules@90"
               },
               "arguments": []
             }
@@ -369,7 +369,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@73"
+                "$ref": "#/rules@74"
               },
               "arguments": []
             }
@@ -472,7 +472,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@89"
+                "$ref": "#/rules@90"
               },
               "arguments": []
             }
@@ -488,7 +488,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@77"
+                "$ref": "#/rules@78"
               },
               "arguments": []
             }
@@ -512,7 +512,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@89"
+                "$ref": "#/rules@90"
               },
               "arguments": []
             }
@@ -528,7 +528,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@77"
+                "$ref": "#/rules@78"
               },
               "arguments": []
             }
@@ -659,7 +659,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@86"
+                "$ref": "#/rules@87"
               },
               "arguments": []
             }
@@ -687,7 +687,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -715,7 +715,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -743,7 +743,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -771,7 +771,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -799,7 +799,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -827,7 +827,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@83"
+                "$ref": "#/rules@84"
               },
               "arguments": []
             }
@@ -846,7 +846,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@88"
+                    "$ref": "#/rules@89"
                   },
                   "arguments": []
                 }
@@ -877,7 +877,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@83"
+                "$ref": "#/rules@84"
               },
               "arguments": []
             }
@@ -896,7 +896,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@83"
+                    "$ref": "#/rules@84"
                   },
                   "arguments": []
                 }
@@ -918,7 +918,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@88"
+                    "$ref": "#/rules@89"
                   },
                   "arguments": []
                 }
@@ -949,7 +949,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@84"
+                "$ref": "#/rules@85"
               },
               "arguments": []
             }
@@ -977,7 +977,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@85"
+                "$ref": "#/rules@86"
               },
               "arguments": []
             }
@@ -1005,7 +1005,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@88"
+                "$ref": "#/rules@89"
               },
               "arguments": []
             }
@@ -1038,7 +1038,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@73"
+                  "$ref": "#/rules@74"
                 },
                 "arguments": []
               },
@@ -1053,7 +1053,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@85"
+                "$ref": "#/rules@86"
               },
               "arguments": []
             }
@@ -1097,10 +1097,17 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@73"
+                "$ref": "#/rules@74"
               },
               "arguments": []
             }
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@27"
+            },
+            "arguments": []
           },
           {
             "$type": "Group",
@@ -1116,7 +1123,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@35"
+                    "$ref": "#/rules@36"
                   },
                   "arguments": []
                 }
@@ -1160,7 +1167,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@73"
+                "$ref": "#/rules@74"
               },
               "arguments": []
             }
@@ -1172,7 +1179,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@27"
+                "$ref": "#/rules@28"
               },
               "arguments": []
             }
@@ -1191,13 +1198,20 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@31"
+                    "$ref": "#/rules@32"
                   },
                   "arguments": []
                 }
               }
             ],
             "cardinality": "?"
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@27"
+            },
+            "arguments": []
           },
           {
             "$type": "Group",
@@ -1213,7 +1227,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@35"
+                    "$ref": "#/rules@36"
                   },
                   "arguments": []
                 }
@@ -1242,17 +1256,76 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
     },
     {
       "$type": "ParserRule",
+      "fragment": true,
+      "name": "Mixer",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "volume"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "volume",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@85"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "pan"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "pan",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@86"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "muted",
+            "operator": "?=",
+            "terminal": {
+              "$type": "Keyword",
+              "value": "mute"
+            },
+            "cardinality": "?"
+          }
+        ]
+      },
+      "entry": false,
+      "parameters": []
+    },
+    {
+      "$type": "ParserRule",
       "name": "TrackSource",
       "definition": {
         "$type": "Alternatives",
         "elements": [
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@28"
-            },
-            "arguments": []
-          },
           {
             "$type": "RuleCall",
             "rule": {
@@ -1264,6 +1337,13 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "$type": "RuleCall",
             "rule": {
               "$ref": "#/rules@30"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@31"
             },
             "arguments": []
           }
@@ -1295,7 +1375,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@73"
+                  "$ref": "#/rules@74"
                 },
                 "arguments": []
               },
@@ -1331,7 +1411,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@73"
+                  "$ref": "#/rules@74"
                 },
                 "arguments": []
               },
@@ -1420,7 +1500,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@73"
+                  "$ref": "#/rules@74"
                 },
                 "arguments": []
               },
@@ -1447,7 +1527,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@73"
+                      "$ref": "#/rules@74"
                     },
                     "arguments": []
                   },
@@ -1474,7 +1554,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@73"
+                  "$ref": "#/rules@74"
                 },
                 "arguments": []
               },
@@ -1493,7 +1573,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -1509,7 +1589,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -1525,7 +1605,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@33"
+                "$ref": "#/rules@34"
               },
               "arguments": []
             }
@@ -1544,7 +1624,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@33"
+                    "$ref": "#/rules@34"
                   },
                   "arguments": []
                 }
@@ -1576,7 +1656,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@73"
+                  "$ref": "#/rules@74"
                 },
                 "arguments": []
               },
@@ -1591,7 +1671,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@85"
+                "$ref": "#/rules@86"
               },
               "arguments": []
             }
@@ -1623,7 +1703,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@35"
+                "$ref": "#/rules@36"
               },
               "arguments": []
             }
@@ -1651,7 +1731,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@36"
+                "$ref": "#/rules@37"
               },
               "arguments": []
             }
@@ -1670,7 +1750,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@36"
+                    "$ref": "#/rules@37"
                   },
                   "arguments": []
                 }
@@ -1705,13 +1785,6 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "$type": "RuleCall",
             "rule": {
               "$ref": "#/rules@19"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@37"
             },
             "arguments": []
           },
@@ -1767,6 +1840,13 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
           {
             "$type": "RuleCall",
             "rule": {
+              "$ref": "#/rules@45"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
               "$ref": "#/rules@22"
             },
             "arguments": []
@@ -1805,7 +1885,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@89"
+                "$ref": "#/rules@90"
               },
               "arguments": []
             }
@@ -1817,7 +1897,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@89"
+                "$ref": "#/rules@90"
               },
               "arguments": []
             },
@@ -1837,7 +1917,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@82"
+                    "$ref": "#/rules@83"
                   },
                   "arguments": []
                 }
@@ -1859,7 +1939,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@85"
+                    "$ref": "#/rules@86"
                   },
                   "arguments": []
                 }
@@ -1893,7 +1973,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@78"
+                    "$ref": "#/rules@79"
                   },
                   "arguments": []
                 }
@@ -1905,7 +1985,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@82"
+                    "$ref": "#/rules@83"
                   },
                   "arguments": []
                 }
@@ -1923,7 +2003,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@85"
+                "$ref": "#/rules@86"
               },
               "arguments": []
             }
@@ -1942,7 +2022,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@83"
+                    "$ref": "#/rules@84"
                   },
                   "arguments": []
                 }
@@ -1964,7 +2044,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@83"
+                    "$ref": "#/rules@84"
                   },
                   "arguments": []
                 }
@@ -1986,7 +2066,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@85"
+                    "$ref": "#/rules@86"
                   },
                   "arguments": []
                 }
@@ -2017,7 +2097,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@84"
+                "$ref": "#/rules@85"
               },
               "arguments": []
             }
@@ -2029,7 +2109,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@79"
+                "$ref": "#/rules@80"
               },
               "arguments": []
             }
@@ -2048,7 +2128,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@82"
+                    "$ref": "#/rules@83"
                   },
                   "arguments": []
                 }
@@ -2070,7 +2150,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@82"
+                    "$ref": "#/rules@83"
                   },
                   "arguments": []
                 }
@@ -2092,7 +2172,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@84"
+                    "$ref": "#/rules@85"
                   },
                   "arguments": []
                 }
@@ -2123,7 +2203,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -2135,7 +2215,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@83"
+                "$ref": "#/rules@84"
               },
               "arguments": []
             }
@@ -2147,7 +2227,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@85"
+                "$ref": "#/rules@86"
               },
               "arguments": []
             }
@@ -2166,7 +2246,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@82"
+                    "$ref": "#/rules@83"
                   },
                   "arguments": []
                 }
@@ -2197,7 +2277,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@85"
+                "$ref": "#/rules@86"
               },
               "arguments": []
             }
@@ -2216,7 +2296,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@83"
+                    "$ref": "#/rules@84"
                   },
                   "arguments": []
                 }
@@ -2247,7 +2327,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@84"
+                "$ref": "#/rules@85"
               },
               "arguments": []
             }
@@ -2266,7 +2346,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@82"
+                    "$ref": "#/rules@83"
                   },
                   "arguments": []
                 }
@@ -2288,7 +2368,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@82"
+                    "$ref": "#/rules@83"
                   },
                   "arguments": []
                 }
@@ -2319,7 +2399,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@83"
+                "$ref": "#/rules@84"
               },
               "arguments": []
             }
@@ -2335,7 +2415,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@83"
+                "$ref": "#/rules@84"
               },
               "arguments": []
             }
@@ -2351,7 +2431,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@83"
+                "$ref": "#/rules@84"
               },
               "arguments": []
             }
@@ -2370,7 +2450,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@85"
+                    "$ref": "#/rules@86"
                   },
                   "arguments": []
                 }
@@ -2392,7 +2472,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@85"
+                    "$ref": "#/rules@86"
                   },
                   "arguments": []
                 }
@@ -2423,7 +2503,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@83"
+                "$ref": "#/rules@84"
               },
               "arguments": []
             }
@@ -2435,7 +2515,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@85"
+                "$ref": "#/rules@86"
               },
               "arguments": []
             }
@@ -2477,7 +2557,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@46"
+                    "$ref": "#/rules@47"
                   },
                   "arguments": []
                 }
@@ -2499,7 +2579,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@47"
+                    "$ref": "#/rules@48"
                   },
                   "arguments": []
                 }
@@ -2521,7 +2601,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@73"
+                    "$ref": "#/rules@74"
                   },
                   "arguments": []
                 }
@@ -2543,7 +2623,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@89"
+                    "$ref": "#/rules@90"
                   },
                   "arguments": []
                 }
@@ -2562,7 +2642,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@48"
+                "$ref": "#/rules@49"
               },
               "arguments": []
             },
@@ -2591,7 +2671,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@78"
+                "$ref": "#/rules@79"
               },
               "arguments": []
             }
@@ -2610,7 +2690,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@88"
+                    "$ref": "#/rules@89"
                   },
                   "arguments": []
                 }
@@ -2629,7 +2709,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@88"
+                        "$ref": "#/rules@89"
                       },
                       "arguments": []
                     }
@@ -2663,7 +2743,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@80"
+                "$ref": "#/rules@81"
               },
               "arguments": []
             }
@@ -2682,7 +2762,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@80"
+                    "$ref": "#/rules@81"
                   },
                   "arguments": []
                 }
@@ -2698,7 +2778,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@81"
+                    "$ref": "#/rules@82"
                   },
                   "arguments": []
                 }
@@ -2721,14 +2801,14 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@49"
+              "$ref": "#/rules@50"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@50"
+              "$ref": "#/rules@51"
             },
             "arguments": []
           }
@@ -2768,7 +2848,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@73"
+                      "$ref": "#/rules@74"
                     },
                     "arguments": []
                   },
@@ -2789,7 +2869,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@52"
+                "$ref": "#/rules@53"
               },
               "arguments": []
             }
@@ -2808,7 +2888,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@52"
+                    "$ref": "#/rules@53"
                   },
                   "arguments": []
                 }
@@ -2844,7 +2924,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@73"
+                  "$ref": "#/rules@74"
                 },
                 "arguments": []
               },
@@ -2863,7 +2943,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@73"
+                "$ref": "#/rules@74"
               },
               "arguments": []
             }
@@ -2875,7 +2955,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@51"
+                "$ref": "#/rules@52"
               },
               "arguments": []
             }
@@ -2891,7 +2971,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@51"
+                "$ref": "#/rules@52"
               },
               "arguments": []
             }
@@ -2907,7 +2987,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@81"
+                "$ref": "#/rules@82"
               },
               "arguments": []
             }
@@ -2959,13 +3039,6 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@83"
-              },
-              "arguments": []
-            },
-            {
-              "$type": "RuleCall",
-              "rule": {
                 "$ref": "#/rules@84"
               },
               "arguments": []
@@ -2980,13 +3053,6 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
-              },
-              "arguments": []
-            },
-            {
-              "$type": "RuleCall",
-              "rule": {
                 "$ref": "#/rules@86"
               },
               "arguments": []
@@ -2994,7 +3060,21 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@88"
+                "$ref": "#/rules@83"
+              },
+              "arguments": []
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@87"
+              },
+              "arguments": []
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@89"
               },
               "arguments": []
             }
@@ -3014,13 +3094,6 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@53"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
               "$ref": "#/rules@54"
             },
             "arguments": []
@@ -3029,6 +3102,13 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "$type": "RuleCall",
             "rule": {
               "$ref": "#/rules@55"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@56"
             },
             "arguments": []
           }
@@ -3055,7 +3135,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@78"
+                "$ref": "#/rules@79"
               },
               "arguments": []
             }
@@ -3083,7 +3163,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@79"
+                "$ref": "#/rules@80"
               },
               "arguments": []
             }
@@ -3099,7 +3179,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@52"
+                "$ref": "#/rules@53"
               },
               "arguments": []
             }
@@ -3118,7 +3198,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@52"
+                    "$ref": "#/rules@53"
                   },
                   "arguments": []
                 }
@@ -3149,7 +3229,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@56"
+                "$ref": "#/rules@57"
               },
               "arguments": []
             }
@@ -3161,7 +3241,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@78"
+                "$ref": "#/rules@79"
               },
               "arguments": []
             }
@@ -3173,7 +3253,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@62"
+                "$ref": "#/rules@63"
               },
               "arguments": []
             },
@@ -3191,13 +3271,6 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
       "definition": {
         "$type": "Alternatives",
         "elements": [
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@57"
-            },
-            "arguments": []
-          },
           {
             "$type": "RuleCall",
             "rule": {
@@ -3225,6 +3298,13 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
               "$ref": "#/rules@61"
             },
             "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@62"
+            },
+            "arguments": []
           }
         ]
       },
@@ -3249,7 +3329,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@58"
+                "$ref": "#/rules@59"
               },
               "arguments": []
             },
@@ -3275,7 +3355,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@77"
+            "$ref": "#/rules@78"
           },
           "arguments": []
         }
@@ -3302,7 +3382,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@73"
+                  "$ref": "#/rules@74"
                 },
                 "arguments": []
               },
@@ -3329,7 +3409,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@88"
+                "$ref": "#/rules@89"
               },
               "arguments": []
             }
@@ -3387,7 +3467,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@73"
+            "$ref": "#/rules@74"
           },
           "arguments": []
         }
@@ -3402,13 +3482,6 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
       "definition": {
         "$type": "Alternatives",
         "elements": [
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@63"
-            },
-            "arguments": []
-          },
           {
             "$type": "RuleCall",
             "rule": {
@@ -3447,7 +3520,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@70"
+              "$ref": "#/rules@69"
             },
             "arguments": []
           },
@@ -3462,6 +3535,13 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "$type": "RuleCall",
             "rule": {
               "$ref": "#/rules@72"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@73"
             },
             "arguments": []
           },
@@ -3495,7 +3575,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@88"
+                "$ref": "#/rules@89"
               },
               "arguments": []
             }
@@ -3523,7 +3603,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@85"
+                "$ref": "#/rules@86"
               },
               "arguments": []
             }
@@ -3599,7 +3679,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@89"
+                    "$ref": "#/rules@90"
                   },
                   "arguments": []
                 }
@@ -3638,7 +3718,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@69"
+                "$ref": "#/rules@70"
               },
               "arguments": []
             },
@@ -3663,7 +3743,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -3679,7 +3759,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@86"
+                "$ref": "#/rules@87"
               },
               "arguments": []
             }
@@ -3707,7 +3787,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -3735,7 +3815,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@82"
+                "$ref": "#/rules@83"
               },
               "arguments": []
             }
@@ -3763,7 +3843,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@78"
+                "$ref": "#/rules@79"
               },
               "arguments": []
             }
@@ -3775,7 +3855,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@87"
+                "$ref": "#/rules@88"
               },
               "arguments": []
             },
@@ -3797,7 +3877,7 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@90"
+              "$ref": "#/rules@91"
             },
             "arguments": []
           },
@@ -4120,6 +4200,10 @@ export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = lo
           {
             "$type": "Keyword",
             "value": "mono-below"
+          },
+          {
+            "$type": "Keyword",
+            "value": "volume"
           }
         ]
       },
