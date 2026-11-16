@@ -102,10 +102,10 @@
     ".claude/**",
     "apps/aredoko-unity/**",
     "apps/zenn-articles/**",
-    "libs/oxlint-plugin-decision*/example/**",
+    "libs/oxlint-plugin-decision/example*/**",
     "libs/oxlint-typed-rules/upstream/{react,tanstack-query,tanstack-router,drizzle,remotion}/**",
     "libs/vite-plus-adopt/upstream/**",
-    "libs/textlint-rule-yomiyasu/upstream/**",
+    "libs/textlint-rule-preset-ja/upstream/**",
   ],
   "audit": { "gate": "all" },
   "security": {
@@ -205,10 +205,10 @@
     },
     {
       "name": "vite-plus-adopt",
-      "enablers": ["@r_masseater/vite-plus-adopt"],
+      "enablers": ["@r_masseater/msch"],
       "toolingDependencies": [
         "@commitlint/config-conventional",
-        "@masseater.dev/textlint-rule-yomiyasu",
+        "@r_masseater/textlint-rule-preset-ja",
         "@textlint-ja/textlint-rule-preset-ai-writing",
         "textlint-rule-preset-ja-technical-writing",
       ],
@@ -220,7 +220,7 @@
     },
     {
       "name": "oxlint-plugin-decision",
-      "enablers": ["@r_masseater/oxlint-plugin-decision"],
+      "enablers": ["@r_masseater/msch"],
       "entryPoints": ["decision-rules.ts"],
     },
     {

@@ -69,13 +69,32 @@ const migrationStatements = Effect.fn("d1Test.migrations")(function* migrationSt
 
 const plain = (sql: string): Query => ({ sql, params: [] });
 
+const D1_MAX_PARAMETERS = 100;
+
+const fitsD1 = (query: Query): boolean => query.params.length <= D1_MAX_PARAMETERS;
+
+const tooManyVariables = (query: Query): Error =>
+  new Error(
+    `D1_ERROR: too many SQL variables (${String(query.params.length)} bound, D1 allows ${String(D1_MAX_PARAMETERS)})`,
+  );
+
+const withinD1 = (query: Query): Effect.Effect<Query> =>
+  pipe(
+    query,
+    Option.liftPredicate(fitsD1),
+    Option.match({
+      onNone: () => Effect.die(tooManyVariables(query)),
+      onSome: Effect.succeed,
+    }),
+  );
+
 const executeAll = (
   queries: readonly Query[],
 ): Effect.Effect<readonly (readonly Row[])[], SqlError, SqlClient.SqlClient> =>
   Effect.gen(function* runQueries() {
     const client = yield* SqlClient.SqlClient;
     const execute = (query: Query): Effect.Effect<readonly Row[], SqlError> =>
-      client.unsafe<Row>(query.sql, query.params);
+      withinD1(query).pipe(Effect.andThen(client.unsafe<Row>(query.sql, query.params)));
     return yield* client.withTransaction(pipe(queries, Effect.forEach(execute)));
   });
 
@@ -86,6 +105,7 @@ const sqlite = SqliteClient.layer({ filename: ":memory:" });
 const rowsOf = (query: Query): Effect.Effect<readonly Row[], SqlError, SqlClient.SqlClient> =>
   Effect.gen(function* readRows() {
     const client = yield* SqlClient.SqlClient;
+    yield* withinD1(query);
     return yield* client.unsafe<Row>(query.sql, query.params);
   });
 
@@ -94,6 +114,7 @@ const valuesOf = (
 ): Effect.Effect<readonly (readonly unknown[])[], SqlError, SqlClient.SqlClient> =>
   Effect.gen(function* readValues() {
     const client = yield* SqlClient.SqlClient;
+    yield* withinD1(query);
     return yield* client.unsafe(query.sql, query.params).values;
   });
 

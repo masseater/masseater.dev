@@ -1,5 +1,5 @@
 import { afterAll, expect, it } from "@effect/vitest";
-import { Effect, Option, Record as Rec } from "effect";
+import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
 import { profileTraits, traitDetail } from "#/entities/trait/index.server";
@@ -217,5 +217,39 @@ it.effect("別のプロジェクトの根拠にも支えられた特性は globa
     expect(outcomes).toMatchObject([{ accepted: 1, touched: 1 }]);
     const detail = yield* traitDetail("owner_trait:2");
     expect(detail).toMatchObject({ scope: "global", supports: 2 });
+  }),
+);
+
+const MANY_SOURCES = 20;
+
+const SUPPORTED = MANY_SOURCES + ONCE;
+
+const supportsFromAll: Respond = (request) =>
+  pipe(
+    request.sources,
+    Arr.map((source) => ({
+      action: "supports" as const,
+      source: source.ref,
+      quote: "lint の抑止は禁止",
+      trait: "owner_trait:2",
+    })),
+  );
+
+const lintMemo = (index: number): ReturnType<ReturnType<typeof writeMemory>> =>
+  writeMemory(writer)({
+    project: "repo-a",
+    name: `lint-${String(index)}`,
+    description: "lint",
+    content: `${String(index)} 回目: lint の抑止は禁止`,
+  });
+
+it.effect("1 回の D1 の文に入りきらない数の根拠を持つ特性も保存する", () =>
+  Effect.gen(function* savesManyEvidence() {
+    yield* learned;
+    yield* settle;
+    yield* Effect.forEach(Arr.range(ONCE, MANY_SOURCES), lintMemo);
+    yield* drain(supportsFromAll);
+    const detail = yield* traitDetail("owner_trait:2");
+    expect(detail).toMatchObject({ supports: SUPPORTED });
   }),
 );

@@ -37,7 +37,7 @@ catalog:
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.25
   "@r_masseater/oxlint-typed-rules": 0.4.0
-  "@r_masseater/vite-plus-adopt": 0.5.0
+  "@r_masseater/vite-plus-adopt": 0.6.0
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
@@ -50,7 +50,7 @@ catalog:
   "@effect/sql-sqlite-node": 4.1.4
   "@effect/vitest": 4.1.4
   modern-tar: 0.8.6
-  "@zip.js/zip.js": 2.24.0
+  "@zip.js/zip.js": 2.25.0
   sharp: 0.35.5
   hyparquet: 1.33.0
   fzstd: 0.1.1
@@ -317,7 +317,7 @@ patchedDependencies:
   "@voidzero-dev/vite-plus-core@1.6.0": patches/@voidzero-dev__vite-plus-core@1.6.0.patch
 minimumReleaseAgeExclude:
   - "@r_masseater/oxlint-typed-rules@0.4.0"
-  - "@r_masseater/vite-plus-adopt@0.5.0"
+  - "@r_masseater/vite-plus-adopt@0.6.0"
   - "@better-auth/core@1.7.25"
   - "@better-auth/drizzle-adapter@1.7.25"
   - "@better-auth/kysely-adapter@1.7.25"
