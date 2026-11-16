@@ -4,22 +4,22 @@
  ******************************************************************************/
 
 import type { LangiumSharedCoreServices, LangiumCoreServices, LangiumGeneratedCoreServices, LangiumGeneratedSharedCoreServices, LanguageMetaData, Module } from 'langium';
-import { FuAstReflection } from './ast.ts';
-import { FuGrammar } from './grammar.ts';
+import { FumxAstReflection } from './ast.ts';
+import { FumxGrammar } from './grammar.ts';
 
-export const FuLanguageMetaData = {
-    languageId: 'fu',
-    fileExtensions: ['.fu'],
+export const FumxLanguageMetaData = {
+    languageId: 'fumx',
+    fileExtensions: ['.fumx'],
     caseInsensitive: false,
     mode: 'development'
 } as const satisfies LanguageMetaData;
 
-export const FuGeneratedSharedModule: Module<LangiumSharedCoreServices, LangiumGeneratedSharedCoreServices> = {
-    AstReflection: () => new FuAstReflection()
+export const FumxGeneratedSharedModule: Module<LangiumSharedCoreServices, LangiumGeneratedSharedCoreServices> = {
+    AstReflection: () => new FumxAstReflection()
 };
 
-export const FuGeneratedModule: Module<LangiumCoreServices, LangiumGeneratedCoreServices> = {
-    Grammar: () => FuGrammar(),
-    LanguageMetaData: () => FuLanguageMetaData,
+export const FumxGeneratedModule: Module<LangiumCoreServices, LangiumGeneratedCoreServices> = {
+    Grammar: () => FumxGrammar(),
+    LanguageMetaData: () => FumxLanguageMetaData,
     parser: {}
 };

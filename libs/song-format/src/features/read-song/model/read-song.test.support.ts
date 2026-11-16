@@ -62,7 +62,7 @@ ${line}
 }
 `;
 
-export const ENTRY = "/songs/main.fu";
+export const ENTRY = "/songs/main.fumx";
 
 export const filesOf = (files: Readonly<Record<string, string>>): SongFiles<string> => ({
   path: ENTRY,
@@ -77,7 +77,7 @@ bus room fx [reverb ir "room.flac" mix 30%]
 track keys instrument keys role harmony send room 20%
 `;
 
-export const importing = (names: string): string => `import { ${names} } from "../lib/kit.fu"
+export const importing = (names: string): string => `import { ${names} } from "../lib/kit.fumx"
 song "imported"
 track drums kit studio
 bar meter 4/4 tempo 120bpm {
