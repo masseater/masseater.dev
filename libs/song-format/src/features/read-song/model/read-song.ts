@@ -8,8 +8,10 @@ import { isSong } from "#generated/langium/ast.ts";
 import type { Song as SongNode } from "#generated/langium/ast.ts";
 
 import { compileSong } from "./compile.ts";
-import { createFuServices } from "./fu-module.ts";
-import type { FuServices } from "./fu-module.ts";
+import { createFumxServices } from "./fumx-module.ts";
+import type { FumxServices } from "./fumx-module.ts";
+import { emptyOutline, outlineOf } from "./outline.ts";
+import type { Outline } from "./outline.ts";
 import type { From } from "./problem.ts";
 import { importedUriOf } from "./scope.ts";
 
@@ -20,12 +22,18 @@ export interface SourceIssue {
   readonly path: string;
   readonly line: number;
   readonly column: number;
+  readonly start: number;
+  readonly end: number;
   readonly message: string;
 }
 
 export type SongSource =
-  | { readonly status: "invalid"; readonly issues: readonly SourceIssue[] }
-  | { readonly status: "valid"; readonly song: Song };
+  | {
+      readonly status: "invalid";
+      readonly issues: readonly SourceIssue[];
+      readonly outline: Outline;
+    }
+  | { readonly status: "valid"; readonly song: Song; readonly outline: Outline };
 
 export interface SongFiles<Failure> {
   readonly path: string;
@@ -41,7 +49,7 @@ const messageOf: From<Diagnostic["message"], string> = (message) => {
 
 type Reader = From<string, Effect.Effect<Option.Option<string>>>;
 
-const loader: From<FuServices, From<Reader, From<URI, Effect.Effect<void>>>> =
+const loader: From<FumxServices, From<Reader, From<URI, Effect.Effect<void>>>> =
   (services) => (read) => {
     const { LangiumDocuments, LangiumDocumentFactory } = services.shared.workspace;
     const load: From<URI, Effect.Effect<void>> = (uri) =>
@@ -72,40 +80,61 @@ const issuesOf: From<LangiumDocument, readonly SourceIssue[]> = (document) =>
       path: document.uri.fsPath,
       line: diagnostic.range.start.line + FIRST,
       column: diagnostic.range.start.character + FIRST,
+      start: document.textDocument.offsetAt(diagnostic.range.start),
+      end: document.textDocument.offsetAt(diagnostic.range.end),
       message: messageOf(diagnostic.message),
     })),
   );
 
-const builtOf: From<FuServices, From<URI, Effect.Effect<SongSource>>> = (services) => (entry) =>
+const builtOf: From<FumxServices, From<URI, Effect.Effect<SongSource>>> = (services) => (entry) =>
   Effect.gen(function* build() {
     const { workspace } = services.shared;
     const documents = workspace.LangiumDocuments.all.toArray();
     yield* Effect.promise(() => workspace.DocumentBuilder.build(documents, { validation: true }));
-    const issues = pipe(documents, Arr.flatMap(issuesOf));
-    if (Arr.isReadonlyArrayNonEmpty(issues)) {
-      return { status: "invalid", issues };
-    }
-    return pipe(
+    const files = pipe(
+      documents,
+      Arr.map((document) => document.uri.fsPath),
+    );
+    const root = pipe(
       Option.fromNullishOr(workspace.LangiumDocuments.getDocument(entry)),
       Option.map((document) => document.parseResult.value),
       Option.filter(isSong),
-      Option.match({
-        onNone: (): SongSource => ({ status: "invalid", issues: [] }),
-        onSome: (song): SongSource => ({ status: "valid", song: compileSong(song).value }),
-      }),
     );
+    const outline = pipe(
+      root,
+      Option.map(outlineOf(files)),
+      Option.getOrElse(() => ({ ...emptyOutline, files })),
+    );
+    const issues = pipe(documents, Arr.flatMap(issuesOf));
+    if (Arr.isReadonlyArrayNonEmpty(issues)) {
+      return { status: "invalid", issues, outline };
+    }
+    return Option.match(root, {
+      onNone: (): SongSource => ({ status: "invalid", issues: [], outline }),
+      onSome: (song): SongSource => ({ status: "valid", song: compileSong(song).value, outline }),
+    });
   });
 
 export const readSong = Effect.fnUntraced(function* read<Failure>(
   files: SongFiles<Failure>,
 ): Effect.fn.Return<SongSource> {
-  const services = createFuServices();
+  const services = createFumxServices();
   const entry = URI.file(files.path);
   yield* loader(services)((path) => Effect.option(files.read(path)))(entry);
   if (!services.shared.workspace.LangiumDocuments.hasDocument(entry)) {
     return {
       status: "invalid",
-      issues: [{ path: files.path, line: FIRST, column: FIRST, message: "ファイルを読めません" }],
+      issues: [
+        {
+          path: files.path,
+          line: FIRST,
+          column: FIRST,
+          start: 0,
+          end: 0,
+          message: "ファイルを読めません",
+        },
+      ],
+      outline: emptyOutline,
     };
   }
   return yield* builtOf(services)(entry);

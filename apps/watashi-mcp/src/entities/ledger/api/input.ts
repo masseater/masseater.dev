@@ -18,7 +18,7 @@ const FIRST_LINE = 1;
 const FIRST_ID = 1;
 
 const AccountId = Schema.String.check(Schema.isPattern(ACCOUNT_ID)).annotate({
-  description: "口座の id。英小文字・数字・ハイフン（例: smbc、rakuten-card）",
+  description: "Such as smbc or rakuten-card",
 });
 
 const Month = Schema.String.check(Schema.isPattern(MONTH)).annotate({
@@ -27,10 +27,10 @@ const Month = Schema.String.check(Schema.isPattern(MONTH)).annotate({
 
 const Day = Schema.String.check(Schema.isPattern(DAY)).annotate({ description: "YYYY-MM-DD" });
 
-const Yen = Schema.Int.annotate({ description: "円の整数" });
+const Yen = Schema.Int;
 
 const Label = Schema.NonEmptyString.annotate({
-  description: "カテゴリーの下に並べる内訳の名前（例: Cloudflare）",
+  description: "Breakdown under the category, such as Cloudflare",
 });
 
 const LineNumber = Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_LINE));
@@ -39,72 +39,67 @@ const TransactionId = Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_ID));
 
 const ordered = Schema.makeFilter(
   ({ from, to }: Readonly<{ from: string; to: string }>) =>
-    from <= to || "to は from と同じか後の月にする",
+    from <= to || "to must be the same month as from or later",
 );
 
 const PERIOD_FIELDS = {
-  from: Month.annotate({ description: "最初の月（YYYY-MM）" }),
-  to: Month.annotate({ description: "最後の月（YYYY-MM）。from と同じか後" }),
+  from: Month,
+  to: Month,
 };
 
 const UpsertAccountInputSchema = Schema.Struct({
   id: AccountId,
-  name: Schema.NonEmptyString.annotate({ description: "表示する名前（例: 三井住友銀行）" }),
+  name: Schema.NonEmptyString,
   class: AccountClassSchema.annotate({
     description:
-      "貸借対照表での区分。銀行・現金は current-asset、投資は fixed-asset、クレジットカードは current-liability、ローンは fixed-liability",
+      "bank and cash: current-asset, investments: fixed-asset, credit cards: current-liability, loans: fixed-liability",
   }),
 });
 
 const ImportCsvInputSchema = Schema.Struct({
   account: AccountId,
-  source: Schema.NonEmptyString.annotate({ description: "取り込み元の名前（ファイル名など）" }),
-  csv: Schema.NonEmptyString.annotate({
-    description: "CSV の本文。文字コードは読み替えた後の文字列",
-  }),
+  source: Schema.NonEmptyString.annotate({ description: "Such as the file name" }),
+  csv: Schema.NonEmptyString,
   headerRow: Schema.optionalKey(
-    LineNumber.annotate({ description: "見出しのある行の番号（1 から）。省くと 1" }),
+    LineNumber.annotate({ description: "1-based line of the column headings. Default 1" }),
   ),
   columns: ColumnsSchema,
 });
 
 const EntryInput = Schema.Struct({
   date: Day,
-  amount: Yen.annotate({ description: "入金は正、出金は負の円の整数" }),
-  description: Schema.NonEmptyString.annotate({ description: "摘要" }),
+  amount: Yen.annotate({ description: "Yen. Inflow positive, outflow negative" }),
+  description: Schema.NonEmptyString,
   memo: Schema.optionalKey(Schema.NonEmptyString),
 });
 
 const AddTransactionsInputSchema = Schema.Struct({
   account: AccountId,
-  source: Schema.NonEmptyString.annotate({ description: "記録の出どころ（例: 手入力、現金）" }),
+  source: Schema.NonEmptyString.annotate({ description: "Such as manual or cash" }),
   transactions: Schema.NonEmptyArray(EntryInput),
 });
 
-const ImportId = Schema.NonEmptyString.annotate({ description: "取り込みが返した importId" });
+const ImportId = Schema.NonEmptyString.annotate({ description: "From import_csv" });
 
 const DeleteImportInputSchema = Schema.Struct({ importId: ImportId });
 
 const RecordBalanceInputSchema = Schema.Struct({
   account: AccountId,
-  date: Day.annotate({ description: "残高を確かめた日（その日の終わりの残高）" }),
-  balance: Yen.annotate({
-    description: "その日の残高。負債の口座では借りている額を正の数で書く",
-  }),
+  date: Day.annotate({ description: "The balance is as of the end of this day" }),
+  balance: Yen.annotate({ description: "Liability accounts: the amount owed, positive" }),
 });
 
 const SetCategoryInputSchema = Schema.Struct({
   transactionId: TransactionId,
   category: Schema.Union([CategorySchema, Schema.Literal("auto")]).annotate({
-    description: "手で決めるカテゴリー。auto なら手で決めたのをやめ、規則に戻す",
+    description: "auto returns the transaction to the rules",
   }),
   label: Schema.optionalKey(Label),
 });
 
 const SetRuleInputSchema = Schema.Struct({
   pattern: Schema.NonEmptyString.annotate({
-    description:
-      "摘要に含まれていれば当てはまる文字列。全角・半角と大文字・小文字は区別しない。同じ pattern の規則は置き換える",
+    description: "Text in the description to match, ignoring width and case",
   }),
   category: CategorySchema,
   label: Schema.optionalKey(Label),
@@ -117,37 +112,70 @@ const ListTransactionsFields = {
   account: Schema.optionalKey(AccountId),
   category: Schema.optionalKey(CategorySchema),
   cursor: Schema.optionalKey(
-    Schema.NonEmptyString.annotate({ description: "前のページが返した next" }),
+    Schema.NonEmptyString.annotate({ description: "next from the previous page" }),
   ),
 };
 
 const BalanceSheetInputSchema = Schema.Struct({
-  asOf: Day.annotate({ description: "この日の終わりの残高で表を作る" }),
+  asOf: Day,
 });
 
-const op = <Name extends string>(name: Name): Schema.Literal<Name> =>
-  Schema.Literal(name).annotate({ description: "する操作" });
-
-const view = <Name extends string>(name: Name): Schema.Literal<Name> =>
-  Schema.Literal(name).annotate({ description: "読む表" });
+const literal = <Name extends string>(name: Name, description: string): Schema.Literal<Name> =>
+  Schema.Literal(name).annotate({ description });
 
 const MoneyWriteInputSchema = Schema.Union([
-  Schema.Struct({ op: op("account"), ...UpsertAccountInputSchema.fields }),
-  Schema.Struct({ op: op("import_csv"), ...ImportCsvInputSchema.fields }),
-  Schema.Struct({ op: op("transactions"), ...AddTransactionsInputSchema.fields }),
-  Schema.Struct({ op: op("delete_import"), ...DeleteImportInputSchema.fields }),
-  Schema.Struct({ op: op("balance"), ...RecordBalanceInputSchema.fields }),
-  Schema.Struct({ op: op("category"), ...SetCategoryInputSchema.fields }),
-  Schema.Struct({ op: op("rule"), ...SetRuleInputSchema.fields }),
-  Schema.Struct({ op: op("delete_rule"), ...DeleteRuleInputSchema.fields }),
+  Schema.Struct({
+    op: literal("account", "Create or edit an account. Do this before recording to it"),
+    ...UpsertAccountInputSchema.fields,
+  }),
+  Schema.Struct({
+    op: literal("import_csv", "Import a statement CSV. Rows already imported are skipped"),
+    ...ImportCsvInputSchema.fields,
+  }),
+  Schema.Struct({
+    op: literal("transactions", "Add entries that have no CSV, such as cash"),
+    ...AddTransactionsInputSchema.fields,
+  }),
+  Schema.Struct({
+    op: literal("delete_import", "Delete every transaction of one import"),
+    ...DeleteImportInputSchema.fields,
+  }),
+  Schema.Struct({
+    op: literal("balance", "Record an account balance on a day"),
+    ...RecordBalanceInputSchema.fields,
+  }),
+  Schema.Struct({
+    op: literal("category", "Set one transaction's category by hand; rules no longer change it"),
+    ...SetCategoryInputSchema.fields,
+  }),
+  Schema.Struct({
+    op: literal("rule", "Add or replace a category rule and reapply rules. Later rules win"),
+    ...SetRuleInputSchema.fields,
+  }),
+  Schema.Struct({
+    op: literal("delete_rule", "Delete a rule you added and reapply rules"),
+    ...DeleteRuleInputSchema.fields,
+  }),
 ]);
 
 const MoneyReadInputSchema = Schema.Union([
-  Schema.Struct({ view: view("settings") }),
-  Schema.Struct({ view: view("transactions"), ...ListTransactionsFields }).check(ordered),
-  Schema.Struct({ view: view("flow"), ...PERIOD_FIELDS }).check(ordered),
-  Schema.Struct({ view: view("monthly"), ...PERIOD_FIELDS }).check(ordered),
-  Schema.Struct({ view: view("balance_sheet"), ...BalanceSheetInputSchema.fields }),
+  Schema.Struct({ view: literal("settings", "Accounts, categories and category rules") }),
+  Schema.Struct({
+    view: literal("transactions", "Transactions, newest first, 100 per page"),
+    ...ListTransactionsFields,
+  }).check(ordered),
+  Schema.Struct({
+    view: literal("flow", "Sankey nodes and links from income to spending, without transfers"),
+    ...PERIOD_FIELDS,
+  }).check(ordered),
+  Schema.Struct({
+    view: literal("monthly", "Income, spending and net per month, without transfers"),
+    ...PERIOD_FIELDS,
+  }).check(ordered),
+  Schema.Struct({
+    view: literal("balance_sheet", "Balance sheet at the end of asOf, per account"),
+    ...BalanceSheetInputSchema.fields,
+  }),
 ]);
 
 type Standard<Target extends InputSchema> = StandardSchemaWithJSON<

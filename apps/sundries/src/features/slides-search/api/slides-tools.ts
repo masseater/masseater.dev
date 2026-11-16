@@ -123,8 +123,7 @@ const registerSearch =
     server.registerTool(
       "search_slides",
       {
-        description:
-          "持ち主のスライドデッキを、意味の近さで1枚ずつ検索する。結果にはデッキ名、ページ番号、スライドの本文、デッキのURLが入る。",
+        description: "Search the owner's slide decks by meaning, one slide per result.",
         inputSchema: meteredInput({ tool: "search_slides", caller, project: NO_PROJECT })(
           SEARCH_SCHEMA,
         ),
@@ -154,7 +153,7 @@ const registerGetDeck =
     server.registerTool(
       "get_deck",
       {
-        description: "デッキ名を指定して、そのデッキの全スライドの本文をページ順に返す。",
+        description: "Return the text of every slide in a deck, in page order.",
         inputSchema: meteredInput({ tool: "get_deck", caller, project: NO_PROJECT })(DECK_SCHEMA),
         annotations: READ_ONLY,
       },

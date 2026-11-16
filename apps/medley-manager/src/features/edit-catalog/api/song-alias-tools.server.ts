@@ -1,3 +1,4 @@
+import { compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
@@ -8,7 +9,11 @@ import { addSongAlias, removeSongAlias } from "./song-write.server.ts";
 
 const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
 const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
-const ALIAS_SCHEMA = SongAliasInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const ALIAS_SCHEMA = SongAliasInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+  compactInput,
+);
 
 export const registerSongAliasTools = (server: McpServer): McpServer => {
   server.registerTool(
