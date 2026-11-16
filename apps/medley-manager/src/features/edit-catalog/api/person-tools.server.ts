@@ -1,3 +1,4 @@
+import { compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
@@ -11,8 +12,16 @@ import { mergePeople } from "./person-write.server.ts";
 
 const READ_ONLY = { readOnlyHint: true, openWorldHint: false };
 const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
-const KEYWORD_SCHEMA = KeywordInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
-const ID_SCHEMA = IdInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const KEYWORD_SCHEMA = KeywordInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+  compactInput,
+);
+const ID_SCHEMA = IdInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+  compactInput,
+);
 
 export const registerPersonTools = (server: McpServer): McpServer => {
   server.registerTool(
@@ -42,7 +51,11 @@ export const registerPersonTools = (server: McpServer): McpServer => {
     "merge_people",
     {
       description: "重複した担当者をまとめる。消す側の名前と別名義は残す側の別名義になる",
-      inputSchema: MergeInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1),
+      inputSchema: MergeInput.pipe(
+        Schema.toStandardSchemaV1,
+        Schema.toStandardJSONSchemaV1,
+        compactInput,
+      ),
       annotations: DESTRUCTIVE,
     },
     (input) => runTool(mergePeople(input)),

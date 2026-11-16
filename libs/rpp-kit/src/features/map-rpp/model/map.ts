@@ -1,4 +1,6 @@
-import { parseRpp, outlineSong, renderSegments, segmentsOf } from "#/entities/song/index.ts";
+import { renderSegments } from "mapped-import";
+
+import { parseRpp, outlineSong, segmentsOf } from "#/entities/song/index.ts";
 import type { ParseError } from "#/entities/song/index.ts";
 
 export type Mapped =

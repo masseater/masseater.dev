@@ -3,7 +3,7 @@
   "production": true,
   "entry": ["*/*/bin/*.ts"],
   "dynamicallyLoaded": [
-    "**/*.d.rpp.ts",
+    "**/*.d.*.ts",
     "libs/oxlint-typed-rules/src/shared/lib/ts-api-utils.ts",
     "libs/oxlint-typed-rules/src/shared/lib/ts-compat.ts",
     "libs/oxlint-typed-rules/src/shared/lib/typescript-eslint-utils.ts",

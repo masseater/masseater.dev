@@ -63,8 +63,12 @@ export const tasksOf = ({
       command: "GOMEMLIMIT=4GiB vp check --deny-warnings",
       cache: { input: inputs, untrackedEnv: UNTRACKED_ENV },
     },
-    test: { command: "vp test run", cache: { input: [...inputs, "!**/.cache/**"] } },
-    msch: { command: "msch", cache: false },
+    test: {
+      command: "vp test run",
+      dependsOn: ["check"],
+      cache: { input: [...inputs, "!**/.cache/**"] },
+    },
+    msch: { command: "msch", dependsOn: ["check"], cache: false },
     audit: { command: AUDIT, cache: false },
     ...commands,
   };
