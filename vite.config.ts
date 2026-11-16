@@ -11,7 +11,7 @@ import {
   tracedRules,
 } from "@r_masseater/msch/lint";
 import type { ToolSections } from "@r_masseater/msch/vite";
-import { workspaceSettings } from "@r_masseater/msch/workspace-settings";
+import { ignoredDirectories, workspaceSettings } from "@r_masseater/msch/workspace-settings";
 import type { RuleSets } from "@r_masseater/msch/workspace-settings";
 import { restrictedSyntax as unguardedWorkersAi } from "@r_masseater/workers-tracing/oxlint";
 import { Array as Arr, Record as Rec, pipe } from "effect";
@@ -19,6 +19,12 @@ import { defineConfig } from "vite-plus";
 import type { UserConfig } from "vite-plus";
 
 type LintConfig = NonNullable<UserConfig["lint"]>;
+
+const notInputs = [
+  ...(await ignoredDirectories(import.meta.dirname)),
+  "!node_modules/.pnpm-store",
+  "!node_modules/.pnpm-store/**",
+];
 
 const ruleSets: RuleSets = { decision: decisionRules, traced: tracedRules };
 
@@ -161,6 +167,7 @@ export default defineConfig({
         cache: {
           input: [
             { auto: true },
+            ...notInputs,
             "!.fallow/**",
             "!target/**",
             "!**/dist/**",
@@ -176,8 +183,10 @@ export default defineConfig({
       check: {
         command: "GOMEMLIMIT=4GiB vp check --deny-warnings",
         cache: {
-          env: ["CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_AI_GATEWAY_ID"],
+          input: [{ auto: true }, ...notInputs],
           untrackedEnv: [
+            "CLOUDFLARE_ACCOUNT_ID",
+            "CLOUDFLARE_AI_GATEWAY_ID",
             "CLOUDFLARE_API_TOKEN",
             "CLAUDECODE",
             "CLAUDE_CODE_REMOTE",
@@ -207,7 +216,13 @@ export default defineConfig({
       test: {
         command: "vp test run",
         cache: {
-          input: [{ auto: true }, "!**/.cache/**", "!target/**", "!node_modules/.vitest-cache/**"],
+          input: [
+            { auto: true },
+            ...notInputs,
+            "!**/.cache/**",
+            "!target/**",
+            "!node_modules/.vitest-cache/**",
+          ],
         },
       },
       msch: {

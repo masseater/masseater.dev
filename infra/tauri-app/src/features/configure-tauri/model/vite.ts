@@ -22,6 +22,7 @@ export const tauriAppTasks = ({
         "src-tauri/**",
         "!src-tauri/gen/**",
         "!src-tauri/target/**",
+        "!src-tauri/permissions/**",
         ...pipe(
           [...CARGO_INPUTS, ...workspaceInputs],
           Array.map((pattern) => ({ pattern, base: "workspace" as const })),
