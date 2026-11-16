@@ -9,10 +9,10 @@ import {
   pipe,
 } from "effect";
 
-import { TRAIT_STEP_CHARACTERS } from "#/shared/config";
-import type { TraitOrigin } from "#/shared/db";
+import { TRAIT_STEP_CHARACTERS } from "#/shared/config/index.ts";
+import type { TraitOrigin } from "#/shared/db/index.ts";
 
-import type { BatchSource } from "./trait-state";
+import type { BatchSource } from "./trait-state.ts";
 
 export type Collected = Readonly<{
   origin: TraitOrigin;

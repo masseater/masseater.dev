@@ -5,8 +5,8 @@ import { RemovalPolicy, Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect, FileSystem, Schema } from "effect";
 
-import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
-import { HOST, INTERVIEWER_IMAGE } from "./kikite.ts";
+import { APP_NAME, PREFIX, requireAppPrefix } from "./src/shared/config/app-name.ts";
+import { HOST, INTERVIEWER_IMAGE } from "./src/shared/config/kikite.ts";
 
 const PROD = "prod";
 
@@ -33,8 +33,15 @@ const InterviewerImage = Containers.Container(
       command: "vp pack",
       outdir: BUNDLE_DIR,
       memo: {
-        include: ["server/**", "*.ts", "package.json"],
-        exclude: ["**/*.test.ts", "alchemy.run.ts", "server/dev.ts"],
+        include: [
+          "src/app/server/**",
+          "src/features/generate-interview/**",
+          "src/shared/api/**",
+          "src/shared/config/**",
+          "*.ts",
+          "package.json",
+        ],
+        exclude: ["**/*.test.ts", "alchemy.run.ts", "src/app/server/dev.ts"],
       },
     });
     return {
@@ -69,7 +76,7 @@ export default Stack(
       memo: false,
     });
     const { url } = yield* Workers.Worker("Kikite", {
-      main: "./worker/kikite.worker.ts",
+      main: "./src/app/worker/kikite.worker.ts",
       logpush: true,
       domain: HOST,
       workersDev: false,

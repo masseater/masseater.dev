@@ -2,7 +2,7 @@ import { Effect, Option, Schema } from "effect";
 import { status } from "elysia";
 import type { ElysiaCustomStatusResponse } from "elysia";
 
-import { runRequest } from "#/shared/observability/index.server";
+import { runRequest } from "#/shared/observability/index.server.ts";
 
 const NOT_FOUND = 404;
 

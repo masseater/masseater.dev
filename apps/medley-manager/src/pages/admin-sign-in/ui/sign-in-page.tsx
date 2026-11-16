@@ -2,7 +2,7 @@ import { signInWithPasskey } from "@masseater.dev/owner-auth";
 import { ActionPanel } from "@masseater.dev/owner-auth/ui";
 import type { ReactNode } from "react";
 
-import { Button } from "#/shared/ui/button";
+import { Button } from "#/shared/ui/button.tsx";
 
 export const SignInPage = (): ReactNode => (
   <div className="max-w-sm">

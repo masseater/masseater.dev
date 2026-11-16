@@ -2,8 +2,8 @@ import { Array, pipe } from "effect";
 import type { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { LanguageCode } from "#/entities/language";
-import { useRecentSources } from "#/entities/language";
+import type { LanguageCode } from "#/entities/language/index.ts";
+import { useRecentSources } from "#/entities/language/index.ts";
 
 import { DetectTab } from "./detect-tab.tsx";
 import { PickerToggle } from "./picker-toggle.tsx";

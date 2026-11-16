@@ -1,8 +1,8 @@
 import { alchemyTasks } from "@masseater.dev/cloudflare-account/run-tasks";
 import { defineConfig } from "vite-plus";
 
-import { BASE_PATH } from "./base-path.ts";
-import { mosaicPlugins } from "./vite-plugins.ts";
+import { mosaicPlugins } from "./src/app/vite/vite-plugins.ts";
+import { BASE_PATH } from "./src/shared/config/site-base-path.ts";
 
 export default defineConfig({
   msch: {
@@ -43,7 +43,6 @@ export default defineConfig({
   },
   base: `${BASE_PATH}/`,
   build: { copyPublicDir: false },
-  resolve: { tsconfigPaths: true },
-  test: { include: ["src/**/*.test.{ts,tsx}", "bin/lib/*.test.ts", "*.test.ts"] },
+  test: { include: ["src/**/*.test.{ts,tsx}", "bin/lib/*.test.ts"] },
   plugins: mosaicPlugins(),
 });

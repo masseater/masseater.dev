@@ -1,5 +1,5 @@
-export { catalogQueries } from "./api/queries";
-export type { PersonDetail, SearchResults, SongDetail, VideoDetail } from "./api/types";
+export { catalogQueries } from "./api/queries.ts";
+export type { PersonDetail, SearchResults, SongDetail, VideoDetail } from "./api/types.ts";
 export {
   PartIdInput,
   UpdatePartInput,
@@ -13,5 +13,5 @@ export {
   UpdateSongInput,
   CreateVideoInput,
   UpdateVideoInput,
-} from "./model/tool-input";
-export type { PartInput } from "./model/tool-input";
+} from "./model/tool-input.ts";
+export type { PartInput } from "./model/tool-input.ts";

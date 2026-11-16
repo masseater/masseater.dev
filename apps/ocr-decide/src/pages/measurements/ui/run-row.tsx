@@ -2,8 +2,8 @@ import type { Run } from "@ocr-decide/measurements/schema";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { wayOf } from "#/pages/measurements/model/summary";
-import type { Column } from "#/pages/measurements/model/tables";
+import { wayOf } from "#/pages/measurements/model/summary.ts";
+import type { Column } from "#/pages/measurements/model/tables.ts";
 
 export const RunRow = ({
   run,

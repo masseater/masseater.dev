@@ -1,7 +1,7 @@
 import { Result } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 
-import { dayRangeOf, parseTime, storedOf, timeOut } from "./life-time";
+import { dayRangeOf, parseTime, storedOf, timeOut } from "./life-time.ts";
 
 const stored = (input: string): string =>
   Result.match(parseTime(input), { onFailure: (message) => message, onSuccess: storedOf });

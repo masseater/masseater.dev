@@ -1,19 +1,19 @@
 import { Clock, Duration, Effect, Option } from "effect";
 
-import { ProfileAuthor } from "#/entities/owner-profile";
+import { ProfileAuthor } from "#/entities/owner-profile/index.ts";
 import {
   AnalystFailed,
   analystFailed,
   TraitAnalyst,
   TraitTranslator,
   translatorOf,
-} from "#/entities/trait";
+} from "#/entities/trait/index.ts";
 import type {
   AnalysisRequestValue,
   AnalysisResultValue,
   TranslatorBinding,
-} from "#/entities/trait";
-import { encodeJson } from "#/shared/db/index.server";
+} from "#/entities/trait/index.ts";
+import { encodeJson } from "#/shared/db/index.server.ts";
 
 import { profileAuthorOf } from "./profile-ai.server.ts";
 import type { ProfileModel } from "./profile-ai.server.ts";
@@ -21,7 +21,7 @@ import { buildProfile } from "./profile-build.server.ts";
 import type { ProfileOutcome } from "./profile-build.server.ts";
 import { buildStep } from "./trait-build.server.ts";
 import type { StepFailure, StepOutcome } from "./trait-build.server.ts";
-import { RECORD_TOOL, TRAIT_MODEL, readTranscript } from "./trait-pi";
+import { RECORD_TOOL, TRAIT_MODEL, readTranscript } from "./trait-pi.ts";
 import { translateTraits } from "./trait-translate.server.ts";
 
 export type Answer = Readonly<{ status: string; reason?: string; messages: readonly unknown[] }>;

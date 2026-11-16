@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import type { StrategyRow as Row } from "#/pages/report/model/review-hooks";
-import { STRATEGIES } from "#strategies";
+import type { StrategyRow as Row } from "#/pages/report/model/review-hooks.ts";
+import { STRATEGIES } from "#/shared/config/index.ts";
 
 export const StrategyRow = ({ row }: Readonly<{ row: Row }>): ReactNode => (
   <>

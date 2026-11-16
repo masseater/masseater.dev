@@ -3,11 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts",
-    "./server": "./src/index.server.ts",
-    "./sources.css": "./src/sources.css",
-    "./ui": "./src/ui.ts"
+    ".": "./src/app/index.ts",
+    "./server": "./src/app/index.server.ts",
+    "./sources.css": "./src/app/sources.css",
+    "./ui": "./src/app/consent-screen.ts"
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "catalog:",

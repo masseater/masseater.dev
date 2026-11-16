@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Group } from "#/pages/seikin-index/model/groups";
+import type { Group } from "#/pages/seikin-index/model/groups.ts";
 
-import { TechniqueLink } from "./technique-link";
+import { TechniqueLink } from "./technique-link.tsx";
 
 export const TechniqueGroup = ({ group }: Readonly<{ group: Group }>): ReactNode => (
   <div className="flex flex-col gap-2">

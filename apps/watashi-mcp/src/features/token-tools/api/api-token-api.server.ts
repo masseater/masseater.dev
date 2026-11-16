@@ -2,11 +2,15 @@ import { TOKEN_SCOPES, TokenRequest } from "@masseater.dev/watashi-protocol";
 import type { TokenFields } from "@masseater.dev/watashi-protocol";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
-import { hashApiToken, newApiToken } from "#/entities/api-token";
-import { listApiTokens, createApiToken, revokeApiToken } from "#/entities/api-token/index.server";
-import { paramsOf } from "#/entities/conversation";
-import { BAD_REQUEST, NOT_FOUND, json, withStatus } from "#/shared/api";
-import { nowIso } from "#/shared/db/index.server";
+import {
+  listApiTokens,
+  createApiToken,
+  revokeApiToken,
+} from "#/entities/api-token/index.server.ts";
+import { hashApiToken, newApiToken } from "#/entities/api-token/index.ts";
+import { paramsOf } from "#/entities/conversation/index.ts";
+import { BAD_REQUEST, NOT_FOUND, json, withStatus } from "#/shared/api/index.ts";
+import { nowIso } from "#/shared/db/index.server.ts";
 
 const NONE_REVOKED = 0;
 

@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { useSong } from "#/pages/song/api/use-song";
-import { Facts } from "#/shared/ui/facts";
-import { Note } from "#/shared/ui/note";
+import { useSong } from "#/pages/song/api/use-song.ts";
+import { Facts } from "#/shared/ui/facts.tsx";
+import { Note } from "#/shared/ui/note.tsx";
 
-import { OriginalLink } from "./original-link";
-import { SongAliases } from "./song-aliases";
-import { UsageCounter } from "./usage-counter";
+import { OriginalLink } from "./original-link.tsx";
+import { SongAliases } from "./song-aliases.tsx";
+import { UsageCounter } from "./usage-counter.tsx";
 
 const KICKER = "♪ 曲";
 

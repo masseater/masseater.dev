@@ -1,7 +1,7 @@
-import { CELL_HEIGHT, CELL_WIDTH } from "./camera";
-import { planImages, planOutlines } from "./plan";
-import type { Outline, Source, Span } from "./plan";
-import type { Scene } from "./scene";
+import { CELL_HEIGHT, CELL_WIDTH } from "./camera.ts";
+import { planImages, planOutlines } from "./plan.ts";
+import type { Outline, Source, Span } from "./plan.ts";
+import type { Scene } from "./scene.ts";
 
 const ORIGIN = 0;
 const IDENTITY = 1;

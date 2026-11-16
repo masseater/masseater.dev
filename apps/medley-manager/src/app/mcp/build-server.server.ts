@@ -7,8 +7,8 @@ import {
   registerSongAliasTools,
   registerSongTools,
   registerVideoTools,
-} from "#/features/edit-catalog/index.server";
-import { SITE_ORIGIN } from "#/shared/config";
+} from "#/features/edit-catalog/index.server.ts";
+import { SITE_ORIGIN } from "#/shared/config/index.ts";
 
 import { registerReadTools } from "./read-tools.server.ts";
 

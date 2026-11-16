@@ -1,11 +1,11 @@
 import { Option } from "effect";
 
-import { categoryMeta, entryOgImagePath, entryPath } from "#/entities/entry";
-import type { Entry } from "#/entities/entry";
-import type { FoundEntry } from "#/pages/entry/api/load-entry";
-import { sectionPath, site } from "#/shared/config";
-import { absoluteUrl, author, notFoundHead, pageTitle, seo } from "#/shared/lib";
-import type { JsonLd, Head } from "#/shared/lib";
+import { categoryMeta, entryOgImagePath, entryPath } from "#/entities/entry/index.ts";
+import type { Entry } from "#/entities/entry/index.ts";
+import type { FoundEntry } from "#/pages/entry/api/load-entry.ts";
+import { sectionPath, site } from "#/shared/config/index.ts";
+import { absoluteUrl, author, notFoundHead, pageTitle, seo } from "#/shared/lib/index.ts";
+import type { JsonLd, Head } from "#/shared/lib/index.ts";
 
 const breadcrumb = (entry: Entry): JsonLd => ({
   "@type": "BreadcrumbList",

@@ -1,1 +1,1 @@
-export { SyncControl } from "./ui/sync-control";
+export { SyncControl } from "./ui/sync-control.tsx";

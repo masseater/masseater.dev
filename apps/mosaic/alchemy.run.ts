@@ -4,9 +4,9 @@ import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect } from "effect";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
-import { BASE_PATH } from "./base-path.ts";
-import { ZONE } from "./cloudflare.ts";
+import { APP_NAME, requireAppPrefix } from "./src/shared/config/app-name.ts";
+import { ZONE } from "./src/shared/config/cloudflare.ts";
+import { BASE_PATH } from "./src/shared/config/site-base-path.ts";
 
 const CF_BEACON_TOKEN = "021b4961f3fd419297b186136a5a8a0a";
 
@@ -18,7 +18,7 @@ const web = Effect.gen(function* web() {
     memo: false,
   });
   return yield* Workers.Worker("Web", {
-    main: "./worker/web.worker.ts",
+    main: "./src/app/worker/web.worker.ts",
     logpush: true,
     routes: [{ pattern: `${ZONE}${BASE_PATH}*`, zoneName: ZONE }],
     assets: {

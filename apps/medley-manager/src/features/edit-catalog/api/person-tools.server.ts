@@ -1,11 +1,11 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
-import { IdInput, KeywordInput, MergeInput } from "#/entities/catalog";
-import { getStats } from "#/entities/catalog/index.server";
-import { getPerson, listPeople } from "#/entities/person/index.server";
-import { orMissing, runTool } from "#/shared/api/index.server";
-import { keywordOf } from "#/shared/db/index.server";
+import { getStats } from "#/entities/catalog/index.server.ts";
+import { IdInput, KeywordInput, MergeInput } from "#/entities/catalog/index.ts";
+import { getPerson, listPeople } from "#/entities/person/index.server.ts";
+import { orMissing, runTool } from "#/shared/api/index.server.ts";
+import { keywordOf } from "#/shared/db/index.server.ts";
 
 import { mergePeople } from "./person-write.server.ts";
 

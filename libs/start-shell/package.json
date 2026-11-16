@@ -3,11 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    "./document-shell": "./src/document-shell.tsx",
-    "./query-router": "./src/query-router.ts",
-    "./eden-client": "./src/eden-client.ts",
-    "./secured-start": "./src/secured-start.ts"
+    "./document-shell": "./src/shared/ui/document-shell.tsx",
+    "./query-router": "./src/shared/lib/query-router.ts",
+    "./eden-client": "./src/shared/lib/eden-client.ts",
+    "./secured-start": "./src/shared/lib/secured-start.ts"
   },
   "dependencies": {
     "@elysiajs/eden": "catalog:stack",

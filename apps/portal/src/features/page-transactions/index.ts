@@ -1,1 +1,1 @@
-export { TransactionPager } from "./ui/transaction-pager";
+export { TransactionPager } from "./ui/transaction-pager.tsx";

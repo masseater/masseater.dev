@@ -4,8 +4,8 @@ import { ThumbsDown, ThumbsUp } from "lucide-react";
 import type { ReactNode } from "react";
 import { useCallback } from "react";
 
-import type { Rating } from "#/entities/interview";
-import { useRate } from "#/features/rate-question/model/rate";
+import type { Rating } from "#/entities/interview/index.ts";
+import { useRate } from "#/features/rate-question/model/rate.ts";
 
 const LOOKS = {
   good: { Icon: ThumbsUp, label: "聞いてほしかった" },

@@ -2,8 +2,8 @@ import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { String as Str, pipe, Array as Arr } from "effect";
 import { Atom } from "effect/reactivity";
 
-import { entriesOf, rankedModels } from "#/entities/benchmark";
-import type { TaskEntry, ModelResult } from "#/entities/benchmark";
+import { entriesOf, rankedModels } from "#/entities/benchmark/index.ts";
+import type { TaskEntry, ModelResult } from "#/entities/benchmark/index.ts";
 
 export type Scope = "top" | "all";
 

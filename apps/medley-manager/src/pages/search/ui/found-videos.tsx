@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/video";
-import { useSearchResults } from "#/pages/search/api/use-search-results";
-import { SectionHeading } from "#/shared/ui/section-heading";
+import { VideoList } from "#/entities/video/index.ts";
+import { useSearchResults } from "#/pages/search/api/use-search-results.ts";
+import { SectionHeading } from "#/shared/ui/section-heading.tsx";
 
 const uploaderOf = ({ uploader }: Readonly<{ uploader: string | null }>): string => uploader ?? "";
 

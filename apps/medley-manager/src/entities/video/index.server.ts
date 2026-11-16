@@ -1,3 +1,3 @@
-export { listVideos } from "./api/videos.server";
-export { videoRoutes } from "./api/video-routes.server";
-export { getVideo } from "./api/video.server";
+export { listVideos } from "./api/videos.server.ts";
+export { videoRoutes } from "./api/video-routes.server.ts";
+export { getVideo } from "./api/video.server.ts";

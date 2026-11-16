@@ -1,2 +1,2 @@
-export { dayQuery, metaQuery, shardQuery, tableQuery } from "./data";
-export type { DayValue, TableValue } from "./data";
+export { dayQuery, metaQuery, shardQuery, tableQuery } from "./data.ts";
+export type { DayValue, TableValue } from "./data.ts";

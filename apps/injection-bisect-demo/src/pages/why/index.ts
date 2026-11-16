@@ -1,1 +1,1 @@
-export { WhyPage } from "./ui/why-page";
+export { WhyPage } from "./ui/why-page.tsx";

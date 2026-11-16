@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 
-import { part, person, song, video } from "#/shared/db";
-import { catalogDb } from "#/shared/db/index.server";
+import { catalogDb } from "#/shared/db/index.server.ts";
+import { part, person, song, video } from "#/shared/db/index.ts";
 
 export const getStats = Effect.all(
   {

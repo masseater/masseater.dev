@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-import { MoreSlot } from "#/features/page-utterances";
-import { useConversation } from "#/pages/conversation/api/conversation-query";
-import { Section } from "#/shared/ui";
+import { MoreSlot } from "#/features/page-utterances/index.ts";
+import { useConversation } from "#/pages/conversation/api/conversation-query.ts";
+import { Section } from "#/shared/ui/index.ts";
 
-import { UtteranceList } from "./utterance-list";
+import { UtteranceList } from "./utterance-list.tsx";
 
 const TITLE = "会話";
 

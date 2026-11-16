@@ -1,6 +1,6 @@
 import { Array, Effect, Number, Option, Order, pipe, String as Str } from "effect";
 
-import { catalogDb } from "#/shared/db/index.server";
+import { catalogDb } from "#/shared/db/index.server.ts";
 
 const byLocale = Order.make<string>((self, that) =>
   Number.sign(pipe(self, Str.localeCompare(that))),

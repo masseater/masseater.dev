@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { video } from "#/shared/db";
+import { video } from "#/shared/db/index.ts";
 
 export const VideoSearch = Schema.Struct({
   keyword: Schema.optional(Schema.String),

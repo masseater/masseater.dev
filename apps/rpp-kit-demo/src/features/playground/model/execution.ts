@@ -1,12 +1,12 @@
 import type { Remote } from "comlink";
 import { Array as Arr, Effect, Ref, pipe } from "effect";
 
-import { playground } from "#/shared/config";
+import { playground } from "#/shared/config/index.ts";
 
 import type { CheckerWorker } from "./checker.worker.ts";
-import type { Checked } from "./editors";
-import type { Entry, Line, Report } from "./output";
-import { runScript } from "./runner";
+import type { Checked } from "./editors.ts";
+import type { Entry, Line, Report } from "./output.ts";
+import { runScript } from "./runner.ts";
 
 export type Fork = (effect: Effect.Effect<void>) => unknown;
 

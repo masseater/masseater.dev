@@ -1,1 +1,1 @@
-export { InspectPage } from "./ui/inspect-page";
+export { InspectPage } from "./ui/inspect-page.tsx";

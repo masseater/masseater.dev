@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useJaBench } from "#/pages/ocr-engines/api/ja-bench-query";
-import type { Column } from "#/pages/ocr-engines/model/tables";
+import { useJaBench } from "#/pages/ocr-engines/api/ja-bench-query.ts";
+import type { Column } from "#/pages/ocr-engines/model/tables.ts";
 
 export const EngineRows = ({ columns }: Readonly<{ columns: readonly Column[] }>): ReactNode => {
   const { runs } = useJaBench();

@@ -4,10 +4,10 @@ import { HttpClient, HttpClientResponse } from "effect/http";
 import { AtomRegistry } from "effect/reactivity";
 import { vi } from "vite-plus/test";
 
-import { entriesAtom, heardAtom } from "#/entities/interview";
-import type { Entry } from "#/entities/interview";
-import type { Input } from "#/entities/interview/index.test.support";
-import { read, write } from "#/shared/lib/registry";
+import type { Input } from "#/entities/interview/index.test.support.ts";
+import { entriesAtom, heardAtom } from "#/entities/interview/index.ts";
+import type { Entry } from "#/entities/interview/index.ts";
+import { read, write } from "#/shared/lib/registry.ts";
 
 import { correct } from "./correction.ts";
 

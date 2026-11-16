@@ -1,6 +1,6 @@
 import { Array, Option, Order, Record, pipe } from "effect";
 
-import type { TagSearch } from "./search";
+import type { TagSearch } from "./search.ts";
 
 export type Tagged = Readonly<{ tags: readonly string[] }>;
 

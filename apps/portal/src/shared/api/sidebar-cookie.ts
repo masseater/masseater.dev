@@ -2,7 +2,7 @@ import { createIsomorphicFn, createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
 import { Option, Schema, pipe } from "effect";
 
-import { DEFAULT_SIDEBAR_WIDTH, sidebarWidthOf } from "#/shared/model";
+import { DEFAULT_SIDEBAR_WIDTH, sidebarWidthOf } from "#/shared/model/index.ts";
 
 const OPEN_COOKIE = "sidebar_state";
 

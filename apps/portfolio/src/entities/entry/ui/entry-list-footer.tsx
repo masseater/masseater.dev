@@ -1,11 +1,11 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { Entry } from "#/entities/entry/model/entry";
-import { Arrow } from "#/shared/ui";
+import type { Entry } from "#/entities/entry/model/entry.ts";
+import { Arrow } from "#/shared/ui/index.ts";
 
-import { EntryMeta } from "./entry-meta";
-import { EntryStars } from "./entry-stars";
+import { EntryMeta } from "./entry-meta.tsx";
+import { EntryStars } from "./entry-stars.tsx";
 
 export const EntryListFooter = ({
   entry,

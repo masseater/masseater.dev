@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { pageLabel, TEXT } from "#/entities/ranking";
+import { pageLabel, TEXT } from "#/entities/ranking/index.ts";
 
-import { PagerLink } from "./pager-link";
+import { PagerLink } from "./pager-link.tsx";
 
 const STEP = 1;
 const FIRST_PAGE = 1;

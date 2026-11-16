@@ -1,9 +1,14 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import { DOCUMENT_TITLE, inScope, parseUserMd, renderUserMd } from "#/entities/owner-profile";
-import type { ProfileSection } from "#/entities/owner-profile";
-import { latestProfile } from "#/entities/owner-profile/index.server";
-import type { StorageFailed } from "#/shared/db";
+import { latestProfile } from "#/entities/owner-profile/index.server.ts";
+import {
+  DOCUMENT_TITLE,
+  inScope,
+  parseUserMd,
+  renderUserMd,
+} from "#/entities/owner-profile/index.ts";
+import type { ProfileSection } from "#/entities/owner-profile/index.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 const NOT_BUILT = `${DOCUMENT_TITLE}\n\nThe profile has not been built yet.\n`;
 

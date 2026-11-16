@@ -1,10 +1,15 @@
 import { Array, Effect, Option, Order, Record as Rec, Schema, pipe } from "effect";
 
-import { CategorySchema } from "#/entities/entry/model/category";
-import type { Category } from "#/entities/entry/model/category";
-import { contentLocation, contentPath } from "#/entities/entry/model/content";
-import { Frontmatter } from "#/entities/entry/model/entry";
-import type { CollectionResult, Entry, EntryResult, Missing } from "#/entities/entry/model/entry";
+import { CategorySchema } from "#/entities/entry/model/category.ts";
+import type { Category } from "#/entities/entry/model/category.ts";
+import { contentLocation, contentPath } from "#/entities/entry/model/content.ts";
+import { Frontmatter } from "#/entities/entry/model/entry.ts";
+import type {
+  CollectionResult,
+  Entry,
+  EntryResult,
+  Missing,
+} from "#/entities/entry/model/entry.ts";
 
 const decodeFrontmatter = Schema.decodeUnknownEffect(Frontmatter);
 

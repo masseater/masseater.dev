@@ -2,8 +2,8 @@ import { String as Str, pipe } from "effect";
 import { Clock } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { summary, TaskNav } from "#/entities/benchmark";
-import { ModelFilter } from "#/features/filter-models";
+import { summary, TaskNav } from "#/entities/benchmark/index.ts";
+import { ModelFilter } from "#/features/filter-models/index.ts";
 
 const updatedAt = pipe(
   summary.generatedAt,

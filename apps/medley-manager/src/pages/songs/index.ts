@@ -1,2 +1,2 @@
-export { loadSongsPage } from "./api/loader";
-export { SongsPage } from "./ui/songs-page";
+export { loadSongsPage } from "./api/loader.ts";
+export { SongsPage } from "./ui/songs-page.tsx";

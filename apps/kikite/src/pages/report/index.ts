@@ -1,1 +1,1 @@
-export { ReportView } from "./ui/report-view";
+export { ReportView } from "./ui/report-view.tsx";

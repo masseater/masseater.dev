@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-import type { InspectState } from "#/features/run-inspection";
+import type { InspectState } from "#/features/run-inspection/index.ts";
 
-import { EventLog } from "./event-log";
-import { RunSummary } from "./run-summary";
-import { TraceView } from "./trace-view";
+import { EventLog } from "./event-log.tsx";
+import { RunSummary } from "./run-summary.tsx";
+import { TraceView } from "./trace-view.tsx";
 
 export const RunView = ({ state }: Readonly<{ state: InspectState }>): ReactNode => {
   if (state.status === "idle") {

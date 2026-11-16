@@ -3,8 +3,8 @@ import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { originOf, useSelectResult, useSelectedResult } from "#/entities/asset";
-import { fileNameOf } from "#/shared/lib";
+import { originOf, useSelectResult, useSelectedResult } from "#/entities/asset/index.ts";
+import { fileNameOf } from "#/shared/lib/index.ts";
 
 import { TileThumbnail } from "./tile-thumbnail.tsx";
 

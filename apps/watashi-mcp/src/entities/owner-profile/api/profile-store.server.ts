@@ -2,9 +2,9 @@ import { desc } from "drizzle-orm";
 import { Array as Arr, Effect } from "effect";
 import type { Option } from "effect";
 
-import { ownerProfile } from "#/shared/db";
-import type { OwnerProfile, StorageFailed } from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+import { db, query } from "#/shared/db/index.server.ts";
+import { ownerProfile } from "#/shared/db/index.ts";
+import type { OwnerProfile, StorageFailed } from "#/shared/db/index.ts";
 
 const LATEST = 1;
 

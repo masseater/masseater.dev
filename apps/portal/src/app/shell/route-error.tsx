@@ -2,7 +2,7 @@ import { Button } from "@masseater.dev/ui/button";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { messageOf } from "#/shared/model";
+import { messageOf } from "#/shared/model/index.ts";
 
 const RETRY = "もう一度読む";
 

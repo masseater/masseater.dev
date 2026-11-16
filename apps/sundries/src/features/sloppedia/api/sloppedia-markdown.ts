@@ -2,7 +2,7 @@ import { Array as Arr, Option, String as Str } from "effect";
 import { Base64 } from "effect/encoding";
 import { stringify } from "yaml";
 
-import type { ArticleInput } from "./sloppedia-input";
+import type { ArticleInput } from "./sloppedia-input.ts";
 
 type Article = typeof ArticleInput.Type;
 

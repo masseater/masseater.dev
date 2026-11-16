@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { McpCommand, useMcp } from "#/entities/mcp";
+import { McpCommand, useMcp } from "#/entities/mcp/index.ts";
 
 const TITLE = "MCP";
 

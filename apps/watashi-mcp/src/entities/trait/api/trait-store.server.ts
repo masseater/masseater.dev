@@ -1,19 +1,24 @@
 import { asc, eq } from "drizzle-orm";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
+import { db, query } from "#/shared/db/index.server.ts";
 import {
   ownerTrait,
   ownerTraitEvidence,
   ownerTraitJa,
   ownerTraitVector,
   traitCursor,
-} from "#/shared/db";
-import type { OwnerTrait, OwnerTraitEvidence, TraitOrigin, StorageFailed } from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+} from "#/shared/db/index.ts";
+import type {
+  OwnerTrait,
+  OwnerTraitEvidence,
+  TraitOrigin,
+  StorageFailed,
+} from "#/shared/db/index.ts";
 
-import { traitRefOf } from "./trait-state";
-import type { Evidence, JaRows, TraitState } from "./trait-state";
-import type { Vector } from "./trait-vector";
+import { traitRefOf } from "./trait-state.ts";
+import type { Evidence, JaRows, TraitState } from "./trait-state.ts";
+import type { Vector } from "./trait-vector.ts";
 
 const ONE_ROW = 1;
 

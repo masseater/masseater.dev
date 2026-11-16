@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Entry } from "#/entities/entry";
+import type { Entry } from "#/entities/entry/index.ts";
 
 export const EntryTitleBar = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => (
   <div

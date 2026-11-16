@@ -1,8 +1,8 @@
 import { Array as Arr, Clock, Effect, Option } from "effect";
 
-import { parseDraft } from "#/entities/interview/lib/draft";
-import { isFiller } from "#/entities/interview/lib/filler";
-import { modify, read, write } from "#/shared/lib/registry";
+import { parseDraft } from "#/entities/interview/lib/draft.ts";
+import { isFiller } from "#/entities/interview/lib/filler.ts";
+import { modify, read, write } from "#/shared/lib/registry.ts";
 
 import {
   askingAtom,

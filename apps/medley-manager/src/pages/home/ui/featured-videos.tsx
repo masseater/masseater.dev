@@ -1,9 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
-import { VideoList } from "#/entities/video";
-import { videosQuery } from "#/pages/home/api/loader";
-import { SectionHeading } from "#/shared/ui/section-heading";
+import { VideoList } from "#/entities/video/index.ts";
+import { videosQuery } from "#/pages/home/api/loader.ts";
+import { SectionHeading } from "#/shared/ui/section-heading.tsx";
 
 type Counted = Readonly<{ partCount: number }>;
 

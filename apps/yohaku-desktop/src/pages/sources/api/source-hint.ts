@@ -1,6 +1,6 @@
 import { Option } from "effect";
 
-import { useHint } from "#/entities/onboarding";
+import { useHint } from "#/entities/onboarding/index.ts";
 
 const findRevert = (): Option.Option<Element> =>
   Option.fromNullishOr(document.querySelector("[data-revert]"));

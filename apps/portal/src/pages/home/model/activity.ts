@@ -1,10 +1,10 @@
 import { Array as Arr, Option, Order, Predicate, Record as Rec, String as Str, pipe } from "effect";
 
-import type { SettingsValue, TransactionValue } from "#/entities/money";
-import type { DeckValue } from "#/entities/slide";
-import type { LifeItemValue, MemoValue, SessionValue } from "#/entities/watashi";
-import { headline, placeOf } from "#/entities/watashi";
-import { jstMinute, shownTime } from "#/shared/model";
+import type { SettingsValue, TransactionValue } from "#/entities/money/index.ts";
+import type { DeckValue } from "#/entities/slide/index.ts";
+import type { LifeItemValue, MemoValue, SessionValue } from "#/entities/watashi/index.ts";
+import { headline, placeOf } from "#/entities/watashi/index.ts";
+import { jstMinute, shownTime } from "#/shared/model/index.ts";
 
 export const ACTIVITY_KINDS = ["record", "memo", "conversation", "transaction", "slide"] as const;
 

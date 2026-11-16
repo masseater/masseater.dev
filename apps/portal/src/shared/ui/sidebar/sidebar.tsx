@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { SidebarRail } from "./sidebar-rail";
-import { useSidebarState } from "./sidebar-state";
+import { SidebarRail } from "./sidebar-rail.tsx";
+import { useSidebarState } from "./sidebar-state.ts";
 
 const COLLAPSIBLE = { expanded: "", collapsed: "icon" } as const;
 

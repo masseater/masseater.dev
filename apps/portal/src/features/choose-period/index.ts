@@ -1,1 +1,1 @@
-export { PeriodForm } from "./ui/period-form";
+export { PeriodForm } from "./ui/period-form.tsx";

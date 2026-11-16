@@ -4,9 +4,9 @@ import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 
-import { SHARE_TARGETS, shareText } from "#/features/share-mosaic/lib/share";
+import { SHARE_TARGETS, shareText } from "#/features/share-mosaic/lib/share.ts";
 
-import { ShareLink } from "./share-link";
+import { ShareLink } from "./share-link.tsx";
 
 const REGENERATE = "再構成";
 const NO_SEED = {};

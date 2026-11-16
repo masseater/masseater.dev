@@ -2,8 +2,8 @@ import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Atom } from "effect/reactivity";
 import { useCallback } from "react";
 
-import { startPlayer } from "./player";
-import type { Player } from "./player";
+import { startPlayer } from "./player.ts";
+import type { Player } from "./player.ts";
 
 export type Playback =
   | Readonly<{ status: "stopped"; position: number }>

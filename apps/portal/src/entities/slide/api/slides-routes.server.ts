@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { Decks, Hits, SearchQuery } from "#/entities/slide/model/slides";
+import { Decks, Hits, SearchQuery } from "#/entities/slide/model/slides.ts";
 import {
   createRouter,
   jsonBody,
@@ -8,7 +8,7 @@ import {
   respond,
   rpcBody,
   slides,
-} from "#/shared/api/index.server";
+} from "#/shared/api/index.server.ts";
 
 const HIT_LIMIT = 20;
 

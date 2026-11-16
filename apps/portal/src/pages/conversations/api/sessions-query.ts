@@ -1,8 +1,8 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { watashiQueries } from "#/entities/watashi";
-import type { SessionValue } from "#/entities/watashi";
+import { watashiQueries } from "#/entities/watashi/index.ts";
+import type { SessionValue } from "#/entities/watashi/index.ts";
 
 export const loadConversationsPage = (queryClient: QueryClient): Promise<unknown> =>
   queryClient.query(watashiQueries.conversations.get.queryOptions());

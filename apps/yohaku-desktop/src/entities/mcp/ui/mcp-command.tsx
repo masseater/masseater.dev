@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Mcp } from "#/shared/api";
+import type { Mcp } from "#/shared/api/index.ts";
 
 import { CopyCommandButton } from "./copy-command-button.tsx";
 

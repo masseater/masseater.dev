@@ -4,7 +4,7 @@ import { FileText } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { revealServerLog } from "#/features/reveal-server-log/api/server-log";
+import { revealServerLog } from "#/features/reveal-server-log/api/server-log.ts";
 
 const LABEL = "ログを表示";
 

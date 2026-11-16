@@ -28,7 +28,8 @@
   "type": "module",
   "imports": {
     "#package.json": "./package.json",
-    "#plugin.json": "./.claude-plugin/plugin.json"
+    "#plugin.json": "./.claude-plugin/plugin.json",
+    "#/*": "./src/*"
   },
   "publishConfig": {
     "access": "public",

@@ -1,7 +1,7 @@
 import { Array as Arr, Record as Rec, pipe } from "effect";
 
-import { techniqueList } from "#/entities/technique";
-import type { Article, Technique } from "#/entities/technique";
+import { techniqueList } from "#/entities/technique/index.ts";
+import type { Article, Technique } from "#/entities/technique/index.ts";
 
 export type Group = Readonly<{ name: string; techniques: readonly Technique[] }>;
 

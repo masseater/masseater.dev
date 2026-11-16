@@ -1,8 +1,8 @@
 import { followPointer, releasePointer } from "@masseater.dev/ui";
 import type { ReactNode } from "react";
 
-import { AboutCue } from "./about-cue";
-import { ProfileHeader } from "./profile-header";
+import { AboutCue } from "./about-cue.tsx";
+import { ProfileHeader } from "./profile-header.tsx";
 
 export const HeroSection = (): ReactNode => (
   <section

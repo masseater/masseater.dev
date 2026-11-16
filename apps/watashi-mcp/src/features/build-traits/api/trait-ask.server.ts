@@ -1,16 +1,22 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 
-import type { AnalystFailed, BatchSource, Candidates, Checked, TraitState } from "#/entities/trait";
+import { embedTexts, loadTraitVectors, loadTraits } from "#/entities/trait/index.server.ts";
+import type {
+  AnalystFailed,
+  BatchSource,
+  Candidates,
+  Checked,
+  TraitState,
+} from "#/entities/trait/index.ts";
 import {
   TraitAnalyst,
   checkObservations,
   knownTraits,
   candidatesOf,
   unionOf,
-} from "#/entities/trait";
-import { embedTexts, loadTraitVectors, loadTraits } from "#/entities/trait/index.server";
-import type { StorageFailed } from "#/shared/db";
+} from "#/entities/trait/index.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 export type Asked = Readonly<{ traits: readonly TraitState[]; checked: Checked }>;
 

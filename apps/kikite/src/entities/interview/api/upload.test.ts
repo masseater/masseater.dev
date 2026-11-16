@@ -6,9 +6,9 @@ import { AtomRegistry } from "effect/reactivity";
 import { TestClock } from "effect/testing";
 import { vi } from "vite-plus/test";
 
-import { entriesAtom, recordingAtom } from "#/entities/interview/model/atoms";
-import type { Entry } from "#/entities/interview/model/atoms";
-import { modify, write } from "#/shared/lib/registry";
+import { entriesAtom, recordingAtom } from "#/entities/interview/model/atoms.ts";
+import type { Entry } from "#/entities/interview/model/atoms.ts";
+import { modify, write } from "#/shared/lib/registry.ts";
 
 import { autosaving } from "./upload.ts";
 

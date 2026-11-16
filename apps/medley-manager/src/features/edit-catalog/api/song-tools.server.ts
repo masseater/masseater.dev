@@ -1,8 +1,8 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
-import { CreateSongInput, IdInput, MergeInput, UpdateSongInput } from "#/entities/catalog";
-import { runTool } from "#/shared/api/index.server";
+import { CreateSongInput, IdInput, MergeInput, UpdateSongInput } from "#/entities/catalog/index.ts";
+import { runTool } from "#/shared/api/index.server.ts";
 
 import { createSong, deleteSong, mergeSongs, updateSong } from "./song-write.server.ts";
 

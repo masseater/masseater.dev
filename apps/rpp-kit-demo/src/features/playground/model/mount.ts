@@ -1,7 +1,7 @@
 import { Effect, Fiber, Option } from "effect";
 
-import type { Report } from "./output";
-import type { Panes } from "./playground";
+import type { Report } from "./output.ts";
+import type { Panes } from "./playground.ts";
 
 export type Pane = keyof Panes;
 
@@ -19,7 +19,7 @@ export const mountPlayground = ({ container, report }: Mount): (() => void) => {
     }).pipe(
       Effect.fromOption,
       Effect.flatMap((panes) =>
-        Effect.promise(() => import("./playground")).pipe(
+        Effect.promise(() => import("./playground.ts")).pipe(
           Effect.flatMap(({ runPlayground }) => Effect.scoped(runPlayground({ panes, report }))),
         ),
       ),

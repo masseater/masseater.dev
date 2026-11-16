@@ -8,11 +8,11 @@ import {
   Settings,
   TransactionPage,
   TransactionsInput,
-} from "#/entities/money/model/money";
-import type { OverviewValue, PeriodInputValue } from "#/entities/money/model/money";
-import { asOfOf, periodOf, todayJst } from "#/entities/money/model/period";
-import type { PortalFailed } from "#/shared/api/index.server";
-import { createRouter, money, respond, rpcBody } from "#/shared/api/index.server";
+} from "#/entities/money/model/money.ts";
+import type { OverviewValue, PeriodInputValue } from "#/entities/money/model/money.ts";
+import { asOfOf, periodOf, todayJst } from "#/entities/money/model/period.ts";
+import type { PortalFailed } from "#/shared/api/index.server.ts";
+import { createRouter, money, respond, rpcBody } from "#/shared/api/index.server.ts";
 
 const MonthTotals = Schema.Array(MonthTotal);
 

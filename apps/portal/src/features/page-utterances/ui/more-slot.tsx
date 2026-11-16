@@ -1,9 +1,9 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { ConversationValue } from "#/entities/watashi";
+import type { ConversationValue } from "#/entities/watashi/index.ts";
 
-import { MoreLink } from "./more-link";
+import { MoreLink } from "./more-link.tsx";
 
 export const MoreSlot = ({
   conversation,

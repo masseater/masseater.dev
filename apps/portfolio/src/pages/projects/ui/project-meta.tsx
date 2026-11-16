@@ -2,8 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Project } from "#/pages/projects/model/projects";
-import { TagList } from "#/shared/ui";
+import type { Project } from "#/pages/projects/model/projects.ts";
+import { TagList } from "#/shared/ui/index.ts";
 
 const LINK_CLASS = "hover:text-foreground transition-colors";
 

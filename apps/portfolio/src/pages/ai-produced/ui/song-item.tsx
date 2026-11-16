@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { THUMBNAIL, factsOf, songPath, thumbnailPath } from "#/pages/ai-produced/model/songs";
-import type { Song } from "#/pages/ai-produced/model/songs";
+import { THUMBNAIL, factsOf, songPath, thumbnailPath } from "#/pages/ai-produced/model/songs.ts";
+import type { Song } from "#/pages/ai-produced/model/songs.ts";
 
 export const SongItem = ({ song }: Readonly<{ song: Song }>): ReactNode => (
   <li>

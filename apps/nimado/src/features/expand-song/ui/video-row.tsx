@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { SongVideos } from "./song-videos";
+import { SongVideos } from "./song-videos.tsx";
 
 const NICO_COLUMNS = 2;
 const YOUTUBE_COLUMNS = 2;

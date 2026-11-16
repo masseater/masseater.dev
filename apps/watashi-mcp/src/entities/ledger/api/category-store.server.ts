@@ -2,12 +2,12 @@ import { asc, eq, inArray } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import { Array as Arr, Effect, Match, Option, pipe } from "effect";
 
-import { decide, normalized } from "#/entities/ledger/model/categories";
-import type { Category, Decision, Rule } from "#/entities/ledger/model/categories";
-import { InvalidRecord } from "#/shared/api";
-import { db, query } from "#/shared/db/index.server";
+import { decide, normalized } from "#/entities/ledger/model/categories.ts";
+import type { Category, Decision, Rule } from "#/entities/ledger/model/categories.ts";
+import { InvalidRecord } from "#/shared/api/index.ts";
+import { db, query } from "#/shared/db/index.server.ts";
 
-import { runAll } from "./database.server";
+import { runAll } from "./database.server.ts";
 import { categoryRules, transactions } from "./ledger.table.ts";
 
 export type CategoryChoice = Readonly<{

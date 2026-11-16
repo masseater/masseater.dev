@@ -3,8 +3,8 @@ import { QueryClient } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { TranslatorPage } from "#/pages/translator";
-import { tauriEngine } from "#/shared/api";
+import { TranslatorPage } from "#/pages/translator/index.ts";
+import { tauriEngine } from "#/shared/api/index.ts";
 
 import { Providers } from "./state.tsx";
 

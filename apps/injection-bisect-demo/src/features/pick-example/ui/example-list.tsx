@@ -8,10 +8,10 @@ import {
   useSetDraftText,
   useSetOpening,
   EXAMPLES,
-} from "#/entities/inspection";
-import type { Example } from "#/entities/inspection";
-import { COPY } from "#/shared/config";
-import { SELECT_CLASS } from "#/shared/ui/select-class";
+} from "#/entities/inspection/index.ts";
+import type { Example } from "#/entities/inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
+import { SELECT_CLASS } from "#/shared/ui/select-class.ts";
 
 const GROUPS = [
   { kind: "injected", label: COPY.injected },

@@ -1,7 +1,7 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-import { HOME, NAV_GROUPS } from "#/shared/config";
-import type { NavItem, PortalPath } from "#/shared/config";
+import { HOME, NAV_GROUPS } from "#/shared/config/index.ts";
+import type { NavItem, PortalPath } from "#/shared/config/index.ts";
 
 export type Crumb = Readonly<{ label: string; to: Option.Option<PortalPath> }>;
 

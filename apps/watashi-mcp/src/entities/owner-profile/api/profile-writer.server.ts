@@ -1,8 +1,8 @@
 import { Effect } from "effect";
 
-import { ownerProfile } from "#/shared/db";
-import type { OwnerProfile, StorageFailed } from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+import { db, query } from "#/shared/db/index.server.ts";
+import { ownerProfile } from "#/shared/db/index.ts";
+import type { OwnerProfile, StorageFailed } from "#/shared/db/index.ts";
 
 export type NewProfile = Omit<OwnerProfile, "id">;
 

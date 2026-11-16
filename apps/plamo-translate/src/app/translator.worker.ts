@@ -1,0 +1,37 @@
+import { DurableObject } from "cloudflare:workers";
+import { Effect } from "effect";
+
+import type { CompletionValue, Asked } from "#/entities/completion/index.ts";
+import { complete, containerOf } from "#/entities/completion/index.ts";
+import { runLogged } from "#/shared/lib/run.ts";
+
+import { answer } from "./translation.ts";
+
+const NOT_FOUND = 404;
+const TRANSLATE_PATH = "/translate";
+const ATTRIBUTION = "Built with PLaMo";
+
+export class PlamoModel extends DurableObject {
+  public complete(asked: Asked): Promise<CompletionValue> {
+    return runLogged(
+      containerOf(this.ctx).pipe(Effect.flatMap((container) => complete(container, asked))),
+    );
+  }
+}
+
+type Route = (request: Request) => Promise<Response>;
+
+const notFound: Route = () => Promise.resolve(new Response("Not Found", { status: NOT_FOUND }));
+
+const ROUTES: Readonly<Record<string, Route>> = {
+  [`POST ${TRANSLATE_PATH}`]: (request) => runLogged(answer(() => request.json())),
+  "GET /": () => Promise.resolve(new Response(ATTRIBUTION)),
+};
+
+const worker = {
+  fetch: (request: Request): Promise<Response> =>
+    (ROUTES[`${request.method} ${new URL(request.url).pathname}`] ?? notFound)(request),
+} satisfies ExportedHandler;
+
+export { Translator } from "./translation.ts";
+export default worker;

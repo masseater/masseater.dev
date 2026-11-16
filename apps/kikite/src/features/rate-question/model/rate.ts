@@ -1,8 +1,8 @@
 import { useAtomSet } from "@effect/atom-react";
 import { useCallback } from "react";
 
-import { entriesAtom, rated, uploadAtom } from "#/entities/interview";
-import type { Rating } from "#/entities/interview";
+import { entriesAtom, rated, uploadAtom } from "#/entities/interview/index.ts";
+import type { Rating } from "#/entities/interview/index.ts";
 
 export const useRate = (id: number): ((rating: Rating) => void) => {
   const setEntries = useAtomSet(entriesAtom);

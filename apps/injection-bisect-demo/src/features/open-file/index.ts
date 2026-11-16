@@ -1,1 +1,1 @@
-export { OpenFile } from "./ui/open-file";
+export { OpenFile } from "./ui/open-file.tsx";

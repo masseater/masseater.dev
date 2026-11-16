@@ -1,8 +1,8 @@
 import type { Array, Option, Record } from "effect";
 import type { ReactNode } from "react";
 
-import { EntryList } from "#/entities/entry";
-import type { Entry } from "#/entities/entry";
+import { EntryList } from "#/entities/entry/index.ts";
+import type { Entry } from "#/entities/entry/index.ts";
 
 const IDEA_SUMMARY = "アイデア段階のメモ";
 

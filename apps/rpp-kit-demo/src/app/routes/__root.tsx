@@ -1,7 +1,7 @@
 import { beaconScripts } from "@masseater.dev/ui/web-analytics";
 import { createRootRoute } from "@tanstack/react-router";
 
-import { RootDocument } from "#/app/shell/root-document";
+import { RootDocument } from "#/app/shell/root-document.tsx";
 
 import appCss from "#/app/styles.css?url";
 

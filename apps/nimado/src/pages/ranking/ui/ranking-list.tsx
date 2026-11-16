@@ -1,10 +1,10 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Ranked } from "#/entities/ranking";
+import type { Ranked } from "#/entities/ranking/index.ts";
 
-import { Pager } from "./pager";
-import { RankingTable } from "./ranking-table";
+import { Pager } from "./pager.tsx";
+import { RankingTable } from "./ranking-table.tsx";
 
 const PAGE_SIZE = 100;
 const FIRST_PAGE = 1;

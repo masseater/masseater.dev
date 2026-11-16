@@ -1,7 +1,7 @@
 import { Array as Arr, Number as Num, Option, pipe } from "effect";
 
-import { flowOf } from "./categories";
-import type { Category } from "./categories";
+import { flowOf } from "./categories.ts";
+import type { Category } from "./categories.ts";
 
 export type Side = "income" | "expense";
 

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import type { VideoKind } from "#/entities/video/lib/video-kind";
+import type { VideoKind } from "#/entities/video/lib/video-kind.ts";
 
-import { KindBadge } from "./kind-badge";
+import { KindBadge } from "./kind-badge.tsx";
 
 export const VideoCaption = ({
   video,

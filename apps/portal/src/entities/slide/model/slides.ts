@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 
-import { PERSONAL_ORIGIN } from "#/shared/config";
+import { PERSONAL_ORIGIN } from "#/shared/config/index.ts";
 
 const Deck = Schema.Struct({
   file: Schema.String,

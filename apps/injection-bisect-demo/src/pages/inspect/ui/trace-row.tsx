@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { NO_FOCUS, useSetFocus, PERCENT } from "#/entities/inspection";
-import type { Answer, Row } from "#/entities/inspection";
+import { NO_FOCUS, useSetFocus, PERCENT } from "#/entities/inspection/index.ts";
+import type { Answer, Row } from "#/entities/inspection/index.ts";
 
-import { ProbeBar } from "./probe-bar";
+import { ProbeBar } from "./probe-bar.tsx";
 
 const DEPTH_INDENT = ["pl-0", "pl-3", "pl-6", "pl-9", "pl-12", "pl-15", "pl-18", "pl-21"];
 

@@ -5,7 +5,7 @@
     "types": ["node", "@r_masseater/msch/vite"],
     "resolveJsonModule": true,
     "paths": {
-      "@r_masseater/vite-plus-adopt": ["./src/index.ts"]
+      "@r_masseater/vite-plus-adopt": ["./src/app/index.ts"]
     }
   }
 }

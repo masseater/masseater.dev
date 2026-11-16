@@ -1,10 +1,10 @@
 import { Option } from "effect";
 
-import { categoryMeta } from "#/entities/entry";
-import type { FoundCollection } from "#/pages/collection/api/load-collection";
-import { sectionPath } from "#/shared/config";
-import { defaultImage, notFoundHead, pageTitle, seo } from "#/shared/lib";
-import type { Head } from "#/shared/lib";
+import { categoryMeta } from "#/entities/entry/index.ts";
+import type { FoundCollection } from "#/pages/collection/api/load-collection.ts";
+import { sectionPath } from "#/shared/config/index.ts";
+import { defaultImage, notFoundHead, pageTitle, seo } from "#/shared/lib/index.ts";
+import type { Head } from "#/shared/lib/index.ts";
 
 export const collectionHead = (loaded: FoundCollection | undefined): Head =>
   Option.match(Option.fromUndefinedOr(loaded), {

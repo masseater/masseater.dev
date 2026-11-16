@@ -7,8 +7,8 @@ import {
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
-import { ACCOUNT_CLASSES } from "#/entities/ledger/model/accounts";
-import { CATEGORIES } from "#/entities/ledger/model/categories";
+import { ACCOUNT_CLASSES } from "#/entities/ledger/model/accounts.ts";
+import { CATEGORIES } from "#/entities/ledger/model/categories.ts";
 
 export const accounts = sqliteTable("ledger_account", {
   id: text("id").primaryKey(),

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { MAX_CHARACTERS, useDraft } from "#/entities/translation";
+import { MAX_CHARACTERS, useDraft } from "#/entities/translation/index.ts";
 
 const counter = new Intl.NumberFormat("ja");
 

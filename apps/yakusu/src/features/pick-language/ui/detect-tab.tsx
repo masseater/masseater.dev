@@ -2,9 +2,9 @@ import { Option, pipe } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { languageName, useSource } from "#/entities/language";
-import type { LanguageCode } from "#/entities/language";
-import { useChooseSource } from "#/features/pick-language/model/choose";
+import { languageName, useSource } from "#/entities/language/index.ts";
+import type { LanguageCode } from "#/entities/language/index.ts";
+import { useChooseSource } from "#/features/pick-language/model/choose.ts";
 
 import { LanguageTab } from "./language-tab.tsx";
 

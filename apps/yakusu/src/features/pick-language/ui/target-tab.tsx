@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { languageName } from "#/entities/language";
-import type { LanguageCode } from "#/entities/language";
-import { useChooseTarget } from "#/features/pick-language/model/choose";
+import { languageName } from "#/entities/language/index.ts";
+import type { LanguageCode } from "#/entities/language/index.ts";
+import { useChooseTarget } from "#/features/pick-language/model/choose.ts";
 
 import { LanguageTab } from "./language-tab.tsx";
 

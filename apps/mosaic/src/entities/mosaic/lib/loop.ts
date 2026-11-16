@@ -1,12 +1,12 @@
 import { Option } from "effect";
 
-import type { ViewerStore } from "#/entities/mosaic/model/viewer";
+import type { ViewerStore } from "#/entities/mosaic/model/viewer.ts";
 
-import { advance } from "./motion";
-import type { Renderer } from "./renderer-contract";
-import type { Scene } from "./scene";
-import { settle } from "./scene";
-import type { Sprites } from "./sprites";
+import { advance } from "./motion.ts";
+import type { Renderer } from "./renderer-contract.ts";
+import type { Scene } from "./scene.ts";
+import { settle } from "./scene.ts";
+import type { Sprites } from "./sprites.ts";
 
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 

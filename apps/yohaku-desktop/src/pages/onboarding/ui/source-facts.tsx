@@ -2,7 +2,7 @@ import type { Source } from "@masseater.dev/yohaku-protocol";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { RevertButton, useSourceFacts } from "#/entities/source";
+import { RevertButton, useSourceFacts } from "#/entities/source/index.ts";
 
 import { FactRow } from "./fact-row.tsx";
 

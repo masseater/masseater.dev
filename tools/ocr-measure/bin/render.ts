@@ -2,8 +2,7 @@ import { NodeRuntime, NodeServices } from "@effect/platform-node";
 import { launchBrowser, provideAtEntry } from "@ocr-decide/tooling";
 import { Effect, FileSystem, Schema } from "effect";
 
-import { htmlOf } from "#/html.ts";
-import { DocumentsSchema } from "#/sample.ts";
+import { htmlOf, DocumentsSchema } from "#/entities/measurement/index.ts";
 
 const DATA = new URL("../data/", import.meta.url);
 

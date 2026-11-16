@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { RemarkActions } from "#/features/respond-to-remark/api/remark-actions";
+import type { RemarkActions } from "#/features/respond-to-remark/api/remark-actions.ts";
 
 import { RewriteChoices } from "./rewrite-choices.tsx";
 import { UnresolvedChoices } from "./unresolved-choices.tsx";

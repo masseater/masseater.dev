@@ -14,15 +14,15 @@ import {
   useRun,
   useSetFocus,
   useSetRun,
-} from "#/entities/inspection";
-import type { Run } from "#/entities/inspection";
-import { RunSettings } from "#/features/configure-run";
-import type { InspectState } from "#/features/run-inspection";
-import { COPY } from "#/shared/config";
+} from "#/entities/inspection/index.ts";
+import type { Run } from "#/entities/inspection/index.ts";
+import { RunSettings } from "#/features/configure-run/index.ts";
+import type { InspectState } from "#/features/run-inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
 
-import { Note } from "./note";
-import { OverlaidText } from "./overlaid-text";
-import { SourceBar } from "./source-bar";
+import { Note } from "./note.tsx";
+import { OverlaidText } from "./overlaid-text.tsx";
+import { SourceBar } from "./source-bar.tsx";
 
 const NON_BLANK = /\S/u;
 

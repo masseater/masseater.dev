@@ -7,8 +7,8 @@ import {
   loadMosaic,
   mosaicHead,
   mosaicSearch,
-} from "#/pages/mosaic";
-import { seedOf } from "#/shared/lib/seed";
+} from "#/pages/mosaic/index.ts";
+import { seedOf } from "#/shared/lib/seed.ts";
 
 export const Route = createFileRoute("/$slug")({
   validateSearch: mosaicSearch,

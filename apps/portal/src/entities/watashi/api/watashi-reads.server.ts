@@ -1,16 +1,16 @@
 import { Effect } from "effect";
 
-import { Conversation } from "#/entities/watashi/model/conversation";
-import type { ConversationValue } from "#/entities/watashi/model/conversation";
-import { LifePage } from "#/entities/watashi/model/life-item";
-import { MemoList } from "#/entities/watashi/model/memo";
-import type { MemoValue } from "#/entities/watashi/model/memo";
-import { Revisions } from "#/entities/watashi/model/memo-input";
-import type { MemoKeyValue, RevisionValue } from "#/entities/watashi/model/memo-input";
-import { PersonalTimeline, mergeTimeline } from "#/entities/watashi/model/timeline";
-import type { TimelineEntry } from "#/entities/watashi/model/timeline";
-import type { PortalFailed } from "#/shared/api/index.server";
-import { jsonBody, personal, rpcBody, watashi } from "#/shared/api/index.server";
+import { Conversation } from "#/entities/watashi/model/conversation.ts";
+import type { ConversationValue } from "#/entities/watashi/model/conversation.ts";
+import { LifePage } from "#/entities/watashi/model/life-item.ts";
+import { Revisions } from "#/entities/watashi/model/memo-input.ts";
+import type { MemoKeyValue, RevisionValue } from "#/entities/watashi/model/memo-input.ts";
+import { MemoList } from "#/entities/watashi/model/memo.ts";
+import type { MemoValue } from "#/entities/watashi/model/memo.ts";
+import { PersonalTimeline, mergeTimeline } from "#/entities/watashi/model/timeline.ts";
+import type { TimelineEntry } from "#/entities/watashi/model/timeline.ts";
+import type { PortalFailed } from "#/shared/api/index.server.ts";
+import { jsonBody, personal, rpcBody, watashi } from "#/shared/api/index.server.ts";
 
 const LIFE_EVENTS = { record: "life_event", order: "time", limit: 1000 } as const;
 

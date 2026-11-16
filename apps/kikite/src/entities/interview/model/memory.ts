@@ -1,6 +1,6 @@
 import type { Option } from "effect";
 
-import { readStored, writeStored } from "#/shared/lib/stored";
+import { readStored, writeStored } from "#/shared/lib/stored.ts";
 
 const THEME_KEY = "theme";
 

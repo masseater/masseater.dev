@@ -1,7 +1,7 @@
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { messageOf } from "#/shared/model";
+import { messageOf } from "#/shared/model/index.ts";
 
 const FAILED = "読み込めませんでした";
 

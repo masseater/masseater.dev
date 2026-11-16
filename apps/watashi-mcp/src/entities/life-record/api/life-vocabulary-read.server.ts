@@ -1,14 +1,14 @@
 import { Array as Arr, Effect, Option, Order, Record as Rec, String as Str, pipe } from "effect";
 
-import type { StorageFailed } from "#/shared/db";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
-import { stringsAt } from "./life-filter";
-import type { Entry } from "./life-filter";
-import { refOf, textAt } from "./life-record";
-import type { Body } from "./life-record";
+import { stringsAt } from "./life-filter.ts";
+import type { Entry } from "./life-filter.ts";
+import { refOf, textAt } from "./life-record.ts";
+import type { Body } from "./life-record.ts";
 import { scanAll } from "./life-store.server.ts";
-import { countOf, usageOf } from "./life-usage";
-import type { Usage } from "./life-usage";
+import { countOf, usageOf } from "./life-usage.ts";
+import type { Usage } from "./life-usage.ts";
 import { metricKeysOf } from "./life-vocabulary.server.ts";
 
 const NO_USE: Usage = { count: 0, first: "", last: "" };

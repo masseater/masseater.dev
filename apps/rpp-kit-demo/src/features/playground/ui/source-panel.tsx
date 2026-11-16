@@ -1,13 +1,13 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useSourceTab } from "#/features/playground/model/tabs";
-import { playground } from "#/shared/config";
+import { useSourceTab } from "#/features/playground/model/tabs.ts";
+import { playground } from "#/shared/config/index.ts";
 
-import { Pane } from "./pane";
-import { Panel } from "./panel";
-import { PanelBody } from "./panel-body";
-import { TabButton } from "./tab-button";
+import { Pane } from "./pane.tsx";
+import { PanelBody } from "./panel-body.tsx";
+import { Panel } from "./panel.tsx";
+import { TabButton } from "./tab-button.tsx";
 
 export const SourcePanel = (): ReactNode => {
   const [tab, setTab] = useSourceTab();

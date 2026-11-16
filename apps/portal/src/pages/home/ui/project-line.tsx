@@ -3,8 +3,8 @@ import { String as Str } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import type { ProjectValue } from "#/entities/watashi";
-import { shownTime } from "#/shared/model";
+import type { ProjectValue } from "#/entities/watashi/index.ts";
+import { shownTime } from "#/shared/model/index.ts";
 
 const TEXT = { memos: "メモ", latest: "更新" } as const;
 

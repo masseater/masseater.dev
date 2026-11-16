@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Ranked } from "#/entities/ranking/model/ranking";
+import type { Ranked } from "#/entities/ranking/model/ranking.ts";
 
 export const SongCell = ({
   entry,

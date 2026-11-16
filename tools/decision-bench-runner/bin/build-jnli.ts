@@ -9,10 +9,10 @@ import {
   Order,
 } from "effect";
 
-import type { ChoiceItem } from "#/item.ts";
-import { askThrice, splitOf, tally, writeLabeled } from "#/label.ts";
-import { runBench } from "#/runtime.ts";
-import { readJsonl, sha256 } from "#/store.ts";
+import type { ChoiceItem } from "#/entities/item/index.ts";
+import { askThrice, splitOf, tally, writeLabeled } from "#/features/label-items/index.ts";
+import { runBench } from "#/shared/lib/runtime.ts";
+import { readJsonl, sha256 } from "#/shared/lib/store.ts";
 
 const TASK = "jnli";
 const OPUS_SAMPLE = 200;

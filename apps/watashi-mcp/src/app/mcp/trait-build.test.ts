@@ -2,8 +2,8 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
-import { profileTraits, traitDetail } from "#/entities/trait/index.server";
-import { writeMemory } from "#/features/memory-tools/index.test.support";
+import { profileTraits, traitDetail } from "#/entities/trait/index.server.ts";
+import { writeMemory } from "#/features/memory-tools/index.test.support.ts";
 
 import {
   drain,

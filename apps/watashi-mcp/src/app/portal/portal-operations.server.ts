@@ -1,13 +1,13 @@
 import { PORTAL_ACTOR } from "@masseater.dev/portal-protocol";
 import { Effect } from "effect";
 
-import { LifeReadInput } from "#/entities/life-record";
-import { MemoryReadInput, MemoryWriteInput } from "#/entities/memory";
-import { routeLifeRead } from "#/features/life-tools/index.server";
-import { profileDocument, readMemory, writeMemory } from "#/features/memory-tools/index.server";
-import type { ToolFailure } from "#/shared/api";
+import { LifeReadInput } from "#/entities/life-record/index.ts";
+import { MemoryReadInput, MemoryWriteInput } from "#/entities/memory/index.ts";
+import { routeLifeRead } from "#/features/life-tools/index.server.ts";
+import { profileDocument, readMemory, writeMemory } from "#/features/memory-tools/index.server.ts";
+import type { ToolFailure } from "#/shared/api/index.ts";
 
-import { decoded } from "./portal-decode";
+import { decoded } from "./portal-decode.ts";
 
 const ownerWrite = writeMemory({ actor: PORTAL_ACTOR });
 

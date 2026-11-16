@@ -17,7 +17,10 @@ export default defineConfig({
           input: [
             "Cargo.toml",
             "src/**",
-            { pattern: "libs/mosaic/src/characters.json", base: "workspace" },
+            {
+              pattern: "libs/mosaic/src/entities/character/model/characters.json",
+              base: "workspace",
+            },
             { pattern: "Cargo.lock", base: "workspace" },
             { pattern: "Cargo.toml", base: "workspace" },
             { pattern: "rust-toolchain.toml", base: "workspace" },

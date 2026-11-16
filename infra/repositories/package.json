@@ -4,16 +4,16 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#broker-names": "./broker-names.ts",
-    "#cloudflare-root": "./cloudflare-root.ts",
-    "#github-oidc": "./github-oidc.ts"
+    "#broker-names": "./src/shared/config/broker-names.ts",
+    "#cloudflare-root": "./src/features/issue-cloudflare-token/model/cloudflare-root.ts",
+    "#github-oidc": "./src/entities/credential/model/github-oidc.ts",
+    "#/*": "./src/*"
   },
   "exports": {
-    "./access-sites": "./access-sites.ts",
-    "./oauth-targets": "./oauth-targets.ts",
-    "./credential-grants": "./credential-grants.ts",
-    "./github-oidc": "./github-oidc.ts",
-    "./credential-broker.worker": "./credential-broker.worker.ts"
+    "./access-sites": "./src/app/access-sites.ts",
+    "./oauth-targets": "./src/app/oauth-targets.ts",
+    "./github-oidc": "./src/app/github-oidc.ts",
+    "./credential-broker.worker": "./src/app/credential-broker.worker.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

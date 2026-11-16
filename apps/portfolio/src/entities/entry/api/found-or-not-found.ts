@@ -2,7 +2,7 @@ import { notFound } from "@tanstack/react-router";
 import type { NotFoundError } from "@tanstack/react-router";
 import { Effect } from "effect";
 
-import type { Missing } from "#/entities/entry/model/entry";
+import type { Missing } from "#/entities/entry/model/entry.ts";
 
 export const foundOrNotFound = <Found extends Readonly<{ status: "found" }>>(
   result: Found | Missing,

@@ -1,7 +1,7 @@
 import { Array as Arr, HashSet, Match, Option, Record as Rec, pipe } from "effect";
 
-import type { ObservationValue, TraitSourceValue } from "#/entities/trait/model/trait-analysis";
-import type { Stance } from "#/shared/db";
+import type { ObservationValue, TraitSourceValue } from "#/entities/trait/model/trait-analysis.ts";
+import type { Stance } from "#/shared/db/index.ts";
 
 import {
   GLOBAL,
@@ -12,8 +12,8 @@ import {
   supportsOf,
   updateWhere,
   withEvidence,
-} from "./trait-state";
-import type { BatchSource, Evidence, Plan, Step, TraitKey, TraitState } from "./trait-state";
+} from "./trait-state.ts";
+import type { BatchSource, Evidence, Plan, Step, TraitKey, TraitState } from "./trait-state.ts";
 
 type Drafted = Extract<ObservationValue, Readonly<{ action: "new" | "replace" }>>;
 

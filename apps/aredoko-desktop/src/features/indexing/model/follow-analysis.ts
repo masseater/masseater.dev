@@ -4,7 +4,7 @@ import { Effect, HashSet, Option } from "effect";
 import { Atom } from "effect/reactivity";
 import { useEffect } from "react";
 
-import { ASSETS_KEY, useStatus } from "#/shared/api";
+import { ASSETS_KEY, useStatus } from "#/shared/api/index.ts";
 
 const scannedAtom = Atom.make(HashSet.empty<number>());
 

@@ -1,7 +1,7 @@
 import type { Option } from "effect";
 import { Effect, Stream } from "effect";
 
-import type { Release, Yohaku } from "#/shared/api";
+import type { Release, Yohaku } from "#/shared/api/index.ts";
 
 export const DOWNLOADED = 40;
 

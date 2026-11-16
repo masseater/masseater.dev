@@ -10,11 +10,11 @@ import {
 } from "effect";
 import { distance } from "fastest-levenshtein";
 
-import { InvalidRecord } from "#/shared/api";
-import type { LifeRecordName, StorageFailed } from "#/shared/db";
+import { InvalidRecord } from "#/shared/api/index.ts";
+import type { LifeRecordName, StorageFailed } from "#/shared/db/index.ts";
 
-import { lower, refOf, stringAt } from "./life-record";
-import type { Body } from "./life-record";
+import { lower, refOf, stringAt } from "./life-record.ts";
+import type { Body } from "./life-record.ts";
 import { findByLabel, scanAll } from "./life-store.server.ts";
 import type { LifeEntry } from "./life-store.server.ts";
 import { insertRecord } from "./life-writer.server.ts";

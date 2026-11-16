@@ -2,8 +2,8 @@ import { cn } from "@masseater.dev/ui/cn";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useInterim, usePanel, useStage } from "#/entities/interview";
-import { useStickToBottom } from "#/shared/lib/stick-to-bottom";
+import { useInterim, usePanel, useStage } from "#/entities/interview/index.ts";
+import { useStickToBottom } from "#/shared/lib/stick-to-bottom.ts";
 
 import { HistoryItem } from "./history-item.tsx";
 import { InterimItem } from "./interim-item.tsx";

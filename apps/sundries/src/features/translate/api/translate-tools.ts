@@ -6,7 +6,7 @@ import type { McpServer } from "@modelcontextprotocol/server";
 import { env } from "cloudflare:workers";
 import { Effect, Schema } from "effect";
 
-import { meteredInput, runTool } from "#/shared/api";
+import { meteredInput, runTool } from "#/shared/api/index.ts";
 
 const ONE_TEXT = 1;
 

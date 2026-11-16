@@ -2,7 +2,7 @@ import { RootDocument, rootHead } from "@masseater.dev/web-ui";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext } from "@tanstack/react-router";
 
-import { SEARCH_INDEX_ORIGIN, SITE_TITLE } from "#/shared/config";
+import { SEARCH_INDEX_ORIGIN, SITE_TITLE } from "#/shared/config/index.ts";
 
 import appCss from "#/app/styles.css?url";
 

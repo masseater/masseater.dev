@@ -1,6 +1,6 @@
 import { String as Str } from "effect";
 
-import { song } from "./song";
+import { song } from "./song.ts";
 
 const PERCENT = 100;
 

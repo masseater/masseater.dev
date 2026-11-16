@@ -1,9 +1,9 @@
 import { Array as Arr, Hash, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Example } from "#/entities/technique/model/technique";
+import type { Example } from "#/entities/technique/model/technique.ts";
 
-import { ExampleView } from "./example-view";
+import { ExampleView } from "./example-view.tsx";
 
 export const TechniqueExamples = ({
   examples,

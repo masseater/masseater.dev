@@ -30,16 +30,17 @@
   "type": "module",
   "imports": {
     "#src/*": "./src/*",
-    "#example-presets/*": "./example-presets/*"
+    "#example-presets/*": "./example-presets/*",
+    "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./openrouter-app": "./src/openrouter-app.ts",
-    "./presets": "./src/presets/index.ts",
-    "./presets/recommended": "./src/presets/recommended.ts",
-    "./presets/strict": "./src/presets/strict.ts",
-    "./presets/review-only": "./src/presets/review-only.ts",
-    "./presets/ai-slop": "./src/presets/ai-slop.ts",
+    ".": "./src/app/index.ts",
+    "./openrouter-app": "./src/app/openrouter-app.ts",
+    "./presets": "./src/app/presets.ts",
+    "./presets/recommended": "./src/app/recommended.ts",
+    "./presets/strict": "./src/app/strict.ts",
+    "./presets/review-only": "./src/app/review-only.ts",
+    "./presets/ai-slop": "./src/app/ai-slop.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
