@@ -112,6 +112,16 @@ export const requiredStack: Readonly<Record<string, readonly string[]>> = {
     "@fast-csv/*",
     "d3-dsv",
   ],
+  "tar は effect/encoding の Tar だけで読み書きする": [
+    "modern-tar",
+    "nanotar",
+    "tar",
+    "tar-stream",
+    "tar-fs",
+    "tar-js",
+    "tarts",
+    "it-tar",
+  ],
   "フィーチャーフラグは OpenFeature だけで扱う": [
     "launchdarkly-*",
     "@launchdarkly/*",

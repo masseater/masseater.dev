@@ -716,15 +716,9 @@ catalogs:
     ml-confusion-matrix:
       specifier: 2.0.0
       version: 2.0.0
-    modern-tar:
-      specifier: 0.8.6
-      version: 0.8.6
     naga-wasm:
       specifier: 30.2.0
       version: 30.2.0
-    nanotar:
-      specifier: ^0.3.0
-      version: 0.3.0
     niconico-embed-player:
       specifier: 0.1.2
       version: 0.1.2
@@ -1261,9 +1255,6 @@ importers:
       fzstd:
         specifier: 'catalog:'
         version: 0.1.1
-      modern-tar:
-        specifier: 'catalog:'
-        version: 0.8.6
       sharp:
         specifier: 'catalog:'
         version: 0.35.5(@types/node@26.6.6)
@@ -3603,9 +3594,6 @@ importers:
       micromark-extension-gfm:
         specifier: 'catalog:'
         version: 3.0.0
-      nanotar:
-        specifier: 'catalog:'
-        version: 0.3.0
       officeparser:
         specifier: 'catalog:'
         version: 8.7.1(supports-color@10.2.2)
@@ -14809,9 +14797,6 @@ packages:
   nanostores@1.5.5:
     resolution: {integrity: sha512-FixtE239Gl6Gz0ZGCK0WzvNwObNCIwVT+L7zQcf1QgcA6AzBxblzqe9OT88qiucNkhsjSOqiogSaF5jVbJiqSA==}
     engines: {node: ^20.0.0 || >=22.0.0}
-
-  nanotar@0.3.0:
-    resolution: {integrity: sha512-Kv2JYYiCzt16Kt5QwAc9BFG89xfPNBx+oQL4GQXD9nLqPkZBiNaqaCWtwnbk/q7UVsTYevvM1b0UF8zmEI4pCg==}
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
@@ -26980,8 +26965,6 @@ snapshots:
       picocolors: 1.1.1
 
   nanostores@1.5.5: {}
-
-  nanotar@0.3.0: {}
 
   natural-compare@1.4.0: {}
 

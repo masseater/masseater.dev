@@ -1,6 +1,6 @@
-import { untar } from "@andrewbranch/untar.js";
-import { Array as Arr, Effect, FileSystem, Path, pipe, Record as Rec } from "effect";
+import { Array as Arr, Effect, FileSystem, Path, pipe, Record as Rec, Stream } from "effect";
 import type { Option, PlatformError } from "effect";
+import { Tar } from "effect/encoding";
 import { encode as encodeHex } from "effect/encoding/Hex";
 import { HttpClient } from "effect/http";
 import { unzip } from "fflate";
@@ -75,19 +75,21 @@ const gunzipped = (data: Uint8Array): Effect.Effect<ArrayBuffer, VpToolsError> =
   );
 };
 
-const tarEntries = (data: Uint8Array): Effect.Effect<Entries, VpToolsError> =>
-  gunzipped(data).pipe(
-    Effect.map(untar),
-    Effect.map(
-      (files) =>
-        new Map(
-          pipe(
-            files,
-            Arr.map((file) => [file.name, file.fileData] as const),
-          ),
-        ),
+const untarred = (archive: ArrayBuffer): Effect.Effect<Entries, VpToolsError> =>
+  Stream.make(new Uint8Array(archive)).pipe(
+    Stream.pipeThroughChannel(Tar.decode()),
+    Stream.mapEffect(({ header, body }) =>
+      Effect.map(Stream.mkUint8Array(body), (bytes) => [header.path, bytes] as const),
     ),
+    Stream.runCollect,
+    Effect.mapBoth({
+      onSuccess: (files): Entries => new Map(files),
+      onFailure: toolFailed("untar"),
+    }),
   );
+
+const tarEntries = (data: Uint8Array): Effect.Effect<Entries, VpToolsError> =>
+  Effect.flatMap(gunzipped(data), untarred);
 
 const zipEntries = (data: Uint8Array): Effect.Effect<Entries, VpToolsError> =>
   Effect.callback<Entries, VpToolsError>((resume) => {

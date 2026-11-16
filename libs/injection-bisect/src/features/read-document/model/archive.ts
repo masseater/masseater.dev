@@ -1,7 +1,7 @@
-import { Effect, Option, Array as Arr, Record as Rec, String as Str, pipe } from "effect";
-import { gunzip, unzip } from "fflate";
+import { Effect, Option, Stream, Array as Arr, Record as Rec, String as Str, pipe } from "effect";
+import { Tar } from "effect/encoding";
+import { unzip } from "fflate";
 import type { Unzipped } from "fflate";
-import { parseTar } from "nanotar";
 
 import type { Document, Reader, Unreadable, ReadError } from "#/entities/document/index.ts";
 import {
@@ -128,11 +128,24 @@ const unzipped = (bytes: Uint8Array): Effect.Effect<Unzipped, ReadError> =>
     });
   });
 
+const untarred = (bytes: Uint8Array): Effect.Effect<readonly Entry[], ReadError> =>
+  Stream.make(bytes).pipe(
+    Stream.pipeThroughChannel(Tar.decode()),
+    Stream.filter(({ header }) => header.type === "File" && isFile(header.path)),
+    Stream.mapEffect(({ header, body }) =>
+      Effect.map(Stream.mkUint8Array(body), (data): Entry => ({ name: header.path, bytes: data })),
+    ),
+    Stream.runCollect,
+    Effect.mapError(readErrorOf),
+  );
+
 const gunzipped = (bytes: Uint8Array): Effect.Effect<Uint8Array, ReadError> =>
-  Effect.callback<Uint8Array, ReadError>((resume) => {
-    gunzip(bytes, (cause, data) => {
-      resume(settled(cause, data));
-    });
+  Effect.tryPromise({
+    try: () =>
+      new Response(
+        new Blob([Uint8Array.from(bytes)]).stream().pipeThrough(new DecompressionStream("gzip")),
+      ).bytes(),
+    catch: readErrorOf,
   });
 
 export const archiveReadersOf = (read: ReadEntry): readonly Reader[] => [
@@ -153,20 +166,7 @@ export const archiveReadersOf = (read: ReadEntry): readonly Reader[] => [
   {
     format: "tar",
     extensions: [".tar"],
-    read: (bytes) =>
-      sectionsOf(read)(
-        pipe(
-          parseTar(bytes),
-          Arr.flatMap(({ name, type, data }) => {
-            if (type !== "file" || !isFile(name)) {
-              return [];
-            }
-            return Option.toArray(
-              Option.map(Option.fromNullishOr(data), (body) => ({ name, bytes: body })),
-            );
-          }),
-        ),
-      ),
+    read: (bytes) => untarred(bytes).pipe(Effect.flatMap(sectionsOf(read))),
   },
   {
     format: "gzip",
