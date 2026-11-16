@@ -1,4 +1,13 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src", "bin", "generated", "*.ts"]
+  "include": ["src", "bin", "generated", "*.ts"],
+  "compilerOptions": {
+    "allowArbitraryExtensions": true
+  },
+  "contentMappers": [
+    {
+      "package": "@masseater.dev/song-format",
+      "extensions": [".fumx"]
+    }
+  ]
 }

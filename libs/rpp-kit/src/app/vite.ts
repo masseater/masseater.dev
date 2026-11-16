@@ -1,68 +1,35 @@
-import { NodeServices } from "@effect/platform-node";
-import { Effect, FileSystem, ManagedRuntime, Match, Schema, String as Str, pipe } from "effect";
+import { Effect, Match, Option, Schema } from "effect";
+import { contentImport, declarationPathOf } from "mapped-import/vite";
 import type { Plugin } from "vite-plus";
 
 import { readSong } from "#/entities/song/index.ts";
 import { mapRpp } from "#/features/map-rpp/index.ts";
 
-type Source = Readonly<{ id: string; content: string }>;
+const EXTENSION = ".rpp";
 
-const RPP_EXTENSION = /\.rpp$/iu;
-
-const DECLARATION_EXTENSION = ".d.rpp.ts";
-
-export const declarationPath = (id: string): string =>
-  pipe(id, Str.replace(RPP_EXTENSION, DECLARATION_EXTENSION));
-
-const writeIfChanged = Effect.fn("writeIfChanged")(function* writeIfChanged(
-  path: string,
-  code: string,
-) {
-  const fileSystem = yield* FileSystem.FileSystem;
-  const current = yield* fileSystem.readFileString(path).pipe(Effect.orElseSucceed(() => ""));
-  if (current !== code) {
-    yield* fileSystem.writeFileString(path, code).pipe(Effect.orDie);
-  }
-});
-
-const writeDeclaration = ({
-  id,
-  content,
-}: Source): Effect.Effect<void, never, FileSystem.FileSystem> =>
-  Match.value(mapRpp(content)).pipe(
-    Match.discriminatorsExhaustive("status")({
-      ok: ({ code }) => writeIfChanged(declarationPath(id), code),
-      error: () => Effect.void,
-    }),
-  );
+export const declarationPath = declarationPathOf(EXTENSION);
 
 const encodeSong = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
-const moduleOf = (json: string): string => `export const song = ${json};\n`;
+const declarationOf = (content: string): Option.Option<string> =>
+  Match.value(mapRpp(content)).pipe(
+    Match.discriminatorsExhaustive("status")({
+      ok: ({ code }) => Option.some(code),
+      error: () => Option.none(),
+    }),
+  );
 
-const loadRpp = Effect.fn("loadRpp")(function* loadRpp(source: Source) {
-  yield* writeDeclaration(source);
-  const json = yield* encodeSong(readSong(source.content)).pipe(Effect.orDie);
-  return { code: moduleOf(json) };
-});
-
-const runtime = ManagedRuntime.make(NodeServices.layer);
-
-const transformRpp = (content: string, id: string): Promise<Readonly<{ code: string }>> =>
-  runtime.runPromise(loadRpp({ id, content }));
-
-export const rpp = (): Plugin => ({
-  name: "rpp-kit",
-  transform: { filter: { id: RPP_EXTENSION }, handler: transformRpp },
-  configureVitest: ({ defineCacheKeyGenerator }) => {
-    defineCacheKeyGenerator(({ id }) =>
-      Match.value(id).pipe(
-        Match.when(
-          (path) => RPP_EXTENSION.test(path),
-          (): false => false,
-        ),
-        Match.orElse(() => ""),
+export const rpp = (): Plugin =>
+  contentImport({
+    name: "rpp-kit",
+    extension: EXTENSION,
+    load: ({ content }) =>
+      encodeSong(readSong(content)).pipe(
+        Effect.orDie,
+        Effect.map((json) => ({
+          code: `export const song = ${json};\n`,
+          declaration: declarationOf(content),
+          watchFiles: [],
+        })),
       ),
-    );
-  },
-});
+  });
