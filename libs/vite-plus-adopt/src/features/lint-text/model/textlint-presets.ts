@@ -1,5 +1,6 @@
 import type { TextlintRcConfig } from "@textlint/config-loader";
 import type { TextlintKernelRule } from "@textlint/kernel";
+import { normalizeTextlintPresetSubRuleKey } from "@textlint/utils";
 import { Array as Arr, Option, Predicate, Record as Rec, pipe } from "effect";
 
 import type { TextlintConfig } from "#/shared/config/index.ts";
@@ -22,7 +23,7 @@ export const presetRulesOf = (config: TextlintConfig): TextlintKernelRule[] => {
       return pipe(
         Rec.toEntries(preset.rules),
         Arr.map(([key, rule]) => ({
-          ruleId: `${name}/${key}`,
+          ruleId: normalizeTextlintPresetSubRuleKey({ preset: name, rule: key }),
           rule,
           options: pipe(
             Rec.get(userOptions, key),
