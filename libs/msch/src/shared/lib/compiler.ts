@@ -41,6 +41,7 @@ export {
   isClassDeclaration,
   isElementAccessExpression,
   isEnumDeclaration,
+  isExportAssignment,
   isExportDeclaration,
   isFunctionDeclaration,
   isFunctionExpression,

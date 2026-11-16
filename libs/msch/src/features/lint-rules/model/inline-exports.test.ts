@@ -2,7 +2,7 @@ import { Option, Record, pipe } from "effect";
 import { RuleTester } from "vite-plus/lint/plugins-dev";
 import { describe, it } from "vite-plus/test";
 
-import { mschLintPlugin } from "./inline-exports.ts";
+import { mschLintPlugin } from "./plugin.ts";
 
 const MESSAGE =
   "export は宣言に付ける（export const・export function など）。ファイルの末尾で export { … } にまとめない。";
