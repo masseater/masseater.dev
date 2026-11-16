@@ -58,9 +58,12 @@ const isDirectoryAt: Resolver = Effect.fn("isDirectoryAt")(function* isDirectory
 });
 
 const hasAction: Resolver = Effect.fn("hasAction")(function* hasAction(root: string, path: string) {
-  const found = yield* pipe(
+  const found = yield* Effect.forEach(
     ACTION_DEFINITIONS,
-    Effect.forEach((name) => existsAt(root, `${path}${SEPARATOR}${name}`)),
+    (name) => existsAt(root, `${path}${SEPARATOR}${name}`),
+    {
+      concurrency: 1,
+    },
   );
   return pipe(found, Arr.some(Boolean));
 });

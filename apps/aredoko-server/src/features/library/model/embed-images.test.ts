@@ -166,7 +166,9 @@ layer(indexInTemporaryFolder, { excludeTestServices: true })(
         const wait = yield* embedWith(embedder);
         const afterFailure = yield* imageStates;
         yield* embedUntilDone(embedder);
-        const [states, vectors] = yield* Effect.all([imageStates, countOf("image_vectors")]);
+        const [states, vectors] = yield* Effect.all([imageStates, countOf("image_vectors")], {
+          concurrency: 1,
+        });
         expect({ waits: Option.isSome(wait), afterFailure, states, vectors }).toStrictEqual({
           waits: true,
           afterFailure: [DONE, DONE, PENDING, DONE],

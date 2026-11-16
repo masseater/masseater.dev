@@ -100,7 +100,7 @@ const fieldsOf =
     pipe(
       objects.propertySignatures,
       Array.filter(({ name }) => !Option.contains(skip, name)),
-      Effect.forEach(field(path)),
+      (items) => Effect.forEach(items, field(path), { concurrency: 1 }),
       Effect.map(withDistinctNames),
     );
 
@@ -133,7 +133,7 @@ const tagged =
       Option.map((tag) =>
         pipe(
           members,
-          Effect.forEach(variantOf(name, tag)),
+          (items) => Effect.forEach(items, variantOf(name, tag), { concurrency: 1 }),
           Effect.map((variants): Item => ({
             _tag: "Tagged",
             name,

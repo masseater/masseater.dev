@@ -90,7 +90,7 @@ const collectImages = Effect.fn("collectImages")(function* collectImages(links: 
     links,
     Arr.groupBy(({ lang }) => lang),
     Rec.toEntries,
-    Effect.forEach(([lang, group]) => imagesIn(lang, group)),
+    (items) => Effect.forEach(items, ([lang, group]) => imagesIn(lang, group), { concurrency: 1 }),
   );
   const images = Arr.flatten(found);
   const files = pipe(

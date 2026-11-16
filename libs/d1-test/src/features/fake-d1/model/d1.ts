@@ -62,7 +62,7 @@ const migrationStatements = Effect.fn("d1Test.migrations")(function* migrationSt
   const files = yield* pipe(
     names,
     Arr.sortWith((name: string) => name, Str.Order),
-    Effect.forEach(readMigration),
+    (items) => Effect.forEach(items, readMigration, { concurrency: 1 }),
   );
   return pipe(files, Arr.flatMap(statementsIn));
 });
@@ -95,7 +95,7 @@ const executeAll = (
     const client = yield* SqlClient.SqlClient;
     const execute = (query: Query): Effect.Effect<readonly Row[], SqlError> =>
       withinD1(query).pipe(Effect.andThen(client.unsafe<Row>(query.sql, query.params)));
-    return yield* client.withTransaction(pipe(queries, Effect.forEach(execute)));
+    return yield* client.withTransaction(Effect.forEach(queries, execute, { concurrency: 1 }));
   });
 
 const plainAll = Arr.map(plain);

@@ -56,7 +56,7 @@ const collectKind = Effect.fn("collect.kind")(function* collectKind(bundle: stri
   yield* Effect.forEach(
     files,
     (name) => fileSystem.copyFile(path.join(from, name), path.join(to, name)),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 });
 
@@ -68,7 +68,10 @@ const command = Command.make(
       const path = yield* Path.Path;
       const root = yield* repositoryRoot;
       const bundle = path.join(root, "target", "release", "bundle");
-      yield* Effect.forEach(kinds, (kind) => collectKind(bundle, kind), { discard: true });
+      yield* Effect.forEach(kinds, (kind) => collectKind(bundle, kind), {
+        concurrency: 1,
+        discard: true,
+      });
     }),
 );
 

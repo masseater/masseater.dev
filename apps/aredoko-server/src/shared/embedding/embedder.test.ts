@@ -85,7 +85,7 @@ layer(NodeServices.layer, { excludeTestServices: true })("embedder", (it) => {
       const requested = yield* recordFetches;
       yield* fetchModel(fetched).pipe(Effect.flip);
       const duringFetch = yield* Ref.get(requested);
-      const failures = yield* Effect.forEach([empty, fetched], loadFailure);
+      const failures = yield* Effect.forEach([empty, fetched], loadFailure, { concurrency: 1 });
       const afterLoad = yield* Ref.get(requested);
       expect(afterLoad).toStrictEqual(duringFetch);
       expect(

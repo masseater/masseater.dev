@@ -64,11 +64,15 @@ const resolverOf =
 const revoke = (urls: HashMap.HashMap<string, string>): Effect.Effect<void> =>
   pipe(
     HashMap.values(urls),
-    Effect.forEach((url) =>
-      Effect.sync(() => {
-        URL.revokeObjectURL(url);
-      }),
-    ),
+    (items) =>
+      Effect.forEach(
+        items,
+        (url) =>
+          Effect.sync(() => {
+            URL.revokeObjectURL(url);
+          }),
+        { concurrency: 1 },
+      ),
     Effect.asVoid,
   );
 

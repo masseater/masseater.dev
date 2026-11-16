@@ -50,7 +50,7 @@ const checks = (env: AppStoreEnv): readonly Effect.Effect<CredentialState>[] => 
 ];
 
 const states = (env: AppStoreEnv): Effect.Effect<readonly CredentialState[]> =>
-  Effect.all(checks(env));
+  Effect.all(checks(env), { concurrency: 1 });
 
 export class CredentialStatus extends WorkerEntrypoint<AppStoreEnv> implements CredentialStatusRpc {
   public list(): Promise<readonly CredentialState[]> {

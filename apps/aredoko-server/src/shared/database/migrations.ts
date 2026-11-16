@@ -113,7 +113,7 @@ const renderAllModels = Effect.gen(function* renderAllModels() {
     and package_id in (select id from packages where kind != ${RENDERED_ELSEWHERE})`;
 });
 
-const init = Effect.all([vectors, library, assets, images], { discard: true });
+const init = Effect.all([vectors, library, assets, images], { concurrency: 1, discard: true });
 
 /** @internal */
 export const migrations = {

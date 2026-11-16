@@ -2,7 +2,7 @@ import { ApiToken, CloudflareEnvironment, Logpush, R2 } from "@alchemy.run/cloud
 import { RemovalPolicy } from "alchemy";
 import { all, map, mapEffect } from "alchemy/Output";
 import { sha256 } from "alchemy/Util";
-import { Effect, Redacted, pipe } from "effect";
+import { Effect, Redacted } from "effect";
 
 const RETENTION_DAYS = 30;
 
@@ -71,9 +71,9 @@ export const logArchive = Effect.fn("logArchive")(function* logArchive(appName: 
       ),
     ),
   );
-  return yield* pipe(
+  return yield* Effect.forEach(
     ARCHIVES,
-    Effect.forEach(({ id, prefix, filter, sampleRate }) =>
+    ({ id, prefix, filter, sampleRate }) =>
       Logpush.Job(id, {
         name: `${appName}-${prefix}-logs`,
         dataset: "workers_trace_events",
@@ -92,6 +92,6 @@ export const logArchive = Effect.fn("logArchive")(function* logArchive(appName: 
           timestampFormat: "rfc3339",
         },
       }),
-    ),
+    { concurrency: 1 },
   );
 });

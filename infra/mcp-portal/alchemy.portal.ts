@@ -184,6 +184,7 @@ const upstreamServers = gen(function* upstreamServers() {
         return { serverId: server.serverId, onBehalf: false };
       }),
     ),
+    { concurrency: 1 },
   );
 });
 

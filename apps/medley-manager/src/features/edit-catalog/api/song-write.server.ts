@@ -33,11 +33,11 @@ const addAliases = (
   songId: number,
   aliases: readonly string[],
 ): Effect.Effect<unknown, ToolError> =>
-  pipe(
+  Effect.forEach(
     aliases,
-    Effect.forEach((alias) =>
+    (alias) =>
       query(() => catalogDb.insert(songAlias).values({ songId, alias }).onConflictDoNothing()),
-    ),
+    { concurrency: 1 },
   );
 
 export const createSong = Effect.fn("mcp.song.create")(function* createSong(

@@ -71,9 +71,8 @@ export const checkSourceAliases = Effect.fn("checkSourceAliases")(function* chec
   root: string,
 ) {
   const workspaces = yield* memberWorkspaces(root);
-  const aliases = yield* pipe(
-    workspaces,
-    Effect.forEach((workspace) => aliasProblems(root, workspace)),
-  );
+  const aliases = yield* Effect.forEach(workspaces, (workspace) => aliasProblems(root, workspace), {
+    concurrency: 1,
+  });
   return Arr.flatten(aliases);
 });

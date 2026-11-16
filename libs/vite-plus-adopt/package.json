@@ -10,6 +10,7 @@
     "commitlint",
     "feature-sliced",
     "steiger",
+    "tanstack-intent",
     "textlint",
     "vite-plus",
     "zizmor"
@@ -28,8 +29,9 @@
     "vpa": "./dist/cli.mjs"
   },
   "files": [
+    "THIRD-PARTY-NOTICES",
     "dist",
-    "THIRD-PARTY-NOTICES"
+    "skills/configure-checks"
   ],
   "type": "module",
   "imports": {
@@ -67,6 +69,9 @@
     "@commitlint/types": "catalog:",
     "@effect/platform-node-shared": "catalog:",
     "@loaderkit/resolve": "catalog:",
+    "@pnpm/logger": "catalog:",
+    "@pnpm/workspace.projects-reader": "catalog:",
+    "@pnpm/workspace.workspace-manifest-reader": "catalog:",
     "@textlint/config-loader": "catalog:",
     "@textlint/kernel": "catalog:",
     "@textlint/utils": "catalog:",
@@ -113,7 +118,7 @@
         "!dist/fsd.mjs",
         "!dist/attw.mjs"
       ],
-      "limit": "15421 B"
+      "limit": "15470 B"
     },
     {
       "name": "fsd",

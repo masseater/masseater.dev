@@ -28,18 +28,22 @@ const syncServer = Effect.fn("syncServer")(
 const status = Effect.gen(function* status() {
   const accountId = yield* Config.String("CLOUDFLARE_ACCOUNT_ID");
   const servers = yield* Stream.runCollect(listAccessAiControlMcpServers.items({ accountId }));
-  yield* Effect.forEach(servers, ({ id }) => syncServer(accountId, id), { discard: true });
+  yield* Effect.forEach(servers, ({ id }) => syncServer(accountId, id), {
+    concurrency: 1,
+    discard: true,
+  });
   const portals = yield* Stream.runCollect(listAccessAiControlMcpPortals.items({ accountId }));
   yield* Effect.forEach(
     portals,
     ({ id, hostname, codeMode, allowCodeMode, servers: portalServers }) =>
       print("portal", { id, hostname, codeMode, allowCodeMode, servers: portalServers }),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
   const applications = yield* Stream.runCollect(
     listAccessApplicationsForAccount.items({ accountId }),
   );
   yield* Effect.forEach(applications, (application) => print("application", application), {
+    concurrency: 1,
     discard: true,
   });
 });

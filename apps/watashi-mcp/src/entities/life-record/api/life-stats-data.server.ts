@@ -35,11 +35,14 @@ const aggregateOf = (entry: LifeEntry): Aggregate =>
     Option.getOrElse((): Aggregate => "sum"),
   );
 
-export const loadStatsData: Effect.Effect<StatsData, StorageFailed> = Effect.all({
-  events: scanAll(["life_event"]).pipe(Effect.map(statEventsOf)),
-  aggregates: scanAll(["metric_definition"]).pipe(
-    Effect.map((entries) =>
-      Rec.fromIterableWith(entries, (entry) => [entry.row.label, aggregateOf(entry)]),
+export const loadStatsData: Effect.Effect<StatsData, StorageFailed> = Effect.all(
+  {
+    events: scanAll(["life_event"]).pipe(Effect.map(statEventsOf)),
+    aggregates: scanAll(["metric_definition"]).pipe(
+      Effect.map((entries) =>
+        Rec.fromIterableWith(entries, (entry) => [entry.row.label, aggregateOf(entry)]),
+      ),
     ),
-  ),
-});
+  },
+  { concurrency: 1 },
+);

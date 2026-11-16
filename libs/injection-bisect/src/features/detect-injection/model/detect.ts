@@ -170,7 +170,7 @@ const askTogether = Effect.fn("injection-bisect.ask-together")(function* askToge
   yield* Effect.forEach(
     sentences,
     (span, index) => listen({ type: "asked", id: ids[index] ?? FIRST, ...span, depth }),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
   const [elapsed, verdicts] = yield* Effect.timed(
     judge.verdictsOf({
@@ -197,7 +197,7 @@ const askTogether = Effect.fn("injection-bisect.ask-together")(function* askToge
       query
         .record(probe)
         .pipe(Effect.andThen(listen({ type: "answered", id: ids[index] ?? FIRST, ...probe }))),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
   return probes;
 });

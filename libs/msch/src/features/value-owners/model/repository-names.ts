@@ -51,9 +51,12 @@ export const repositoryNamesOf = Effect.fn("repositoryNamesOf")(function* reposi
   const names = yield* pipe(
     listed,
     Arr.filter((file) => files.basename(file) === MANIFEST),
-    Effect.forEach((manifest) =>
-      files.readFile(files.join(root, manifest)).pipe(Effect.map(nameOf)),
-    ),
+    (items) =>
+      Effect.forEach(
+        items,
+        (manifest) => files.readFile(files.join(root, manifest)).pipe(Effect.map(nameOf)),
+        { concurrency: 1 },
+      ),
   );
   const paths = pipe(listed, Arr.flatMap(prefixesOf), Arr.dedupe);
   const repository: RepositoryNames = {

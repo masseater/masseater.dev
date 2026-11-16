@@ -50,23 +50,28 @@ const seedSongs = Effect.gen(function* seedSongs() {
   return { sourceId: source.id, targetId: target.id };
 }).pipe(Effect.orDie);
 
-const stored = Effect.all({
-  songs: Effect.promise(() => catalogDb.select({ title: song.title }).from(song).orderBy(song.id)),
-  aliases: Effect.promise(() =>
-    catalogDb
-      .select({ title: song.title, alias: songAlias.alias })
-      .from(songAlias)
-      .innerJoin(song, eq(song.id, songAlias.songId))
-      .orderBy(song.id, songAlias.alias),
-  ),
-  parts: Effect.promise(() =>
-    catalogDb
-      .select({ position: part.position, title: song.title })
-      .from(part)
-      .leftJoin(song, eq(song.id, part.songId))
-      .orderBy(part.position),
-  ),
-});
+const stored = Effect.all(
+  {
+    songs: Effect.promise(() =>
+      catalogDb.select({ title: song.title }).from(song).orderBy(song.id),
+    ),
+    aliases: Effect.promise(() =>
+      catalogDb
+        .select({ title: song.title, alias: songAlias.alias })
+        .from(songAlias)
+        .innerJoin(song, eq(song.id, songAlias.songId))
+        .orderBy(song.id, songAlias.alias),
+    ),
+    parts: Effect.promise(() =>
+      catalogDb
+        .select({ position: part.position, title: song.title })
+        .from(part)
+        .leftJoin(song, eq(song.id, part.songId))
+        .orderBy(part.position),
+    ),
+  },
+  { concurrency: 1 },
+);
 
 const SEEDED = {
   songs: [{ title: SOURCE_TITLE }, { title: TARGET_TITLE }],

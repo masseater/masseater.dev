@@ -148,33 +148,36 @@ const github: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
   },
   Effect.gen(function* stack() {
     const managed = yield* repositories;
-    yield* pipe(
+    yield* Effect.forEach(
       targetsOf(managed),
-      Effect.forEach((target) =>
-        Repository(target.id, { owner: OWNER, name: target.name, ...target.props }),
-      ),
+      (target) => Repository(target.id, { owner: OWNER, name: target.name, ...target.props }),
+      { concurrency: 1 },
     );
     const active = pipe(
       managed,
       Arr.filter((repository) => !isArchiving(repository)),
     );
-    yield* pipe(active, Effect.forEach(settingsOf));
+    yield* Effect.forEach(active, settingsOf, { concurrency: 1 });
     yield* pipe(
       active,
       Arr.filter((repository) => !repository.private),
-      Effect.forEach((repository) =>
-        hasUpToDateWorkflow(repository).pipe(
-          Effect.flatMap((upToDate) =>
-            Ruleset(`Ruleset${repository.id}`, {
-              owner: OWNER,
-              repository: repository.name,
-              name: "protect default branch",
-              conditions: { include: ["~DEFAULT_BRANCH"] },
-              ...rulesOf(upToDate),
-            }).pipe(adopt(true)),
-          ),
+      (items) =>
+        Effect.forEach(
+          items,
+          (repository) =>
+            hasUpToDateWorkflow(repository).pipe(
+              Effect.flatMap((upToDate) =>
+                Ruleset(`Ruleset${repository.id}`, {
+                  owner: OWNER,
+                  repository: repository.name,
+                  name: "protect default branch",
+                  conditions: { include: ["~DEFAULT_BRANCH"] },
+                  ...rulesOf(upToDate),
+                }).pipe(adopt(true)),
+              ),
+            ),
+          { concurrency: 1 },
         ),
-      ),
     );
     return { repositories: managed.length };
   }),
