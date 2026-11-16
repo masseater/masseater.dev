@@ -7,6 +7,7 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { Array as Arr, Clock, Effect, Layer, Match, Option, Predicate, Schema, pipe } from "effect";
 
 import type { Caller } from "./caller.ts";
+import { compactInput } from "./compact-schema.ts";
 
 export type ToolCall = Readonly<{
   tool: string;
@@ -187,12 +188,13 @@ const meteredInputOf =
   (meter: InputMeter) =>
   <Input, Output>(
     schema: StandardSchemaWithJSON<Input, Output>,
-  ): StandardSchemaWithJSON<Input, Output> => ({
-    "~standard": {
-      ...schema["~standard"],
-      validate: (value) => runInput(checked(dataset, meter)(schema, value)),
-    },
-  });
+  ): StandardSchemaWithJSON<Input, Output> =>
+    compactInput({
+      "~standard": {
+        ...schema["~standard"],
+        validate: (value) => runInput(checked(dataset, meter)(schema, value)),
+      },
+    });
 
 const runToolInOf =
   <Failure>({ dataset, describe }: Meter<Failure>) =>
