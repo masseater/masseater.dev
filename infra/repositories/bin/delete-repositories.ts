@@ -4,7 +4,7 @@ import { Delete } from "@distilled.cloud/github/repos";
 import { runMainWith } from "@masseater.dev/node-main";
 import { Console, Effect } from "effect";
 
-import { OWNER } from "#github-oidc";
+import { OWNER } from "#/entities/credential/index.ts";
 
 import { requestedRepositories } from "./lib/requested-names.ts";
 

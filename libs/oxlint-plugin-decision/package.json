@@ -29,7 +29,6 @@
   ],
   "type": "module",
   "imports": {
-    "#src/*": "./src/*",
     "#example-presets/*": "./example-presets/*",
     "#/*": "./src/*"
   },
