@@ -2,6 +2,7 @@ import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
 import type {
   Automation,
+  LiveMix,
   NoteEvent,
   RenderSession,
   Rendered,
@@ -162,18 +163,20 @@ const soundOf =
       Option.getOrElse(() => toneOf(event)),
     );
 
-const mixed = (samples: Samples): Float32Array => {
-  const seconds = TIMING.bars * BAR + TIMING.tail;
-  const mix = new Float32Array(Math.round(seconds * SAMPLE_RATE));
-  const sound = soundOf(samples);
-  for (const event of whole.events) {
-    const first = Math.round(event.start * SAMPLE_RATE);
-    for (const [frame, value] of sound(event).entries()) {
-      mix[first + frame] = (mix[first + frame] ?? NONE) + value * event.gain;
+const mixed =
+  (samples: Samples) =>
+  (events: readonly NoteEvent[]): Float32Array<ArrayBuffer> => {
+    const seconds = TIMING.bars * BAR + TIMING.tail;
+    const mix = new Float32Array(Math.round(seconds * SAMPLE_RATE));
+    const sound = soundOf(samples);
+    for (const event of events) {
+      const first = Math.round(event.start * SAMPLE_RATE);
+      for (const [frame, value] of sound(event).entries()) {
+        mix[first + frame] = (mix[first + frame] ?? NONE) + value * event.gain;
+      }
     }
-  }
-  return mix;
-};
+    return mix;
+  };
 
 export interface Fixture {
   readonly song: Song;
@@ -204,13 +207,78 @@ const SONG = {
   sampleRate: SAMPLE_RATE,
 } as const satisfies Partial<Song>;
 
-export const fixtureOf = (samples: Readonly<Record<string, string>>): Fixture => {
-  let heard: Samples = {};
-  const render = (session: RenderSession): Promise<Rendered> => {
-    heard = session.samples;
-    session.report({ share: HALF, label: "drums", take: early });
-    const mix = mixed(session.samples);
-    return Promise.resolve({ left: mix, right: mix, take: whole });
+const PLAYER = `(init) => {
+  const stems = init.stems;
+  const gains = new Float32Array(stems.length).fill(1);
+  let at = -1;
+  let fresh = false;
+  return {
+    msg: (message) => {
+      if (message.gains) gains.set(message.gains);
+      if (message.play !== undefined) { at = message.play; fresh = true; }
+      if (message.stop) at = -1;
+    },
+    render: (left, right, frames) => {
+      left.fill(0);
+      right.fill(0);
+      if (at < 0) return 0;
+      stems.forEach((stem, index) => {
+        for (let frame = 0; frame < frames; frame++) {
+          const value = (stem[at + frame] || 0) * gains[index];
+          left[frame] += value;
+          right[frame] += value;
+        }
+      });
+      at += frames;
+      if (fresh) { fresh = false; return 1; }
+      if (at >= stems[0].length) { at = -1; return 2; }
+      return 0;
+    },
   };
-  return { song: { ...SONG, samples, render }, heard: () => heard };
+}`;
+
+const MIXED = ["DRUMS", "BASS", "LEAD"] as const;
+
+const liveOf = (samples: Samples): LiveMix => {
+  const stems = pipe(
+    MIXED,
+    Arr.map((track) =>
+      mixed(samples)(
+        pipe(
+          whole.events,
+          Arr.filter((event) => event.track === track),
+        ),
+      ),
+    ),
+  );
+  return {
+    tracks: MIXED,
+    player: PLAYER,
+    init: { stems },
+    transfer: pipe(
+      stems,
+      Arr.map((stem) => stem.buffer),
+    ),
+  };
 };
+
+const fixtureWith =
+  (live: boolean) =>
+  (samples: Readonly<Record<string, string>>): Fixture => {
+    let heard: Samples = {};
+    const render = (session: RenderSession): Promise<Rendered> => {
+      heard = session.samples;
+      session.report({ share: HALF, label: "drums", take: early });
+      const mix = mixed(session.samples)(whole.events);
+      const rendered: Rendered = { left: mix, right: mix, take: whole };
+      if (live) {
+        return Promise.resolve({ ...rendered, live: liveOf(session.samples) });
+      }
+      return Promise.resolve(rendered);
+    };
+    return { song: { ...SONG, samples, render }, heard: () => heard };
+  };
+
+export const fixtureOf = fixtureWith(false);
+
+export const mixedFixtureOf = fixtureWith(true);
