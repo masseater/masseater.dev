@@ -8,6 +8,7 @@ export type {
   DependencyRules,
   FallowConfig,
   MarkdownlintConfig,
+  SkillsSection,
   SteigerConfig,
   SteigerSection,
   TextlintConfig,

@@ -9,6 +9,8 @@ import type { defineConfig as defineSteigerConfig } from "steiger";
 
 import type { DependencyField } from "#/shared/lib/workspace.ts";
 
+import type { SkillsSection } from "./skills.ts";
+
 export interface CommitlintConfig extends Readonly<CommitlintUserConfig> {}
 
 export type SteigerConfig = readonly ReturnType<typeof defineSteigerConfig>[number][];
@@ -96,6 +98,7 @@ export interface ToolSections {
   readonly dependencyRules?: DependencyRules;
   readonly fallow?: FallowConfig;
   readonly markdownlint?: MarkdownlintConfig;
+  readonly skills?: SkillsSection;
   readonly steiger?: SteigerSection;
   readonly textlint?: TextlintConfig;
 }
