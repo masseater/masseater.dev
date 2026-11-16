@@ -24,6 +24,8 @@
   "files": [
     "dist",
     "skills/msch-checks",
+    "skills/repository-config",
+    "skills/workspace-settings",
     "src/app/vite.d.ts"
   ],
   "type": "module",
