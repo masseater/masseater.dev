@@ -1,14 +1,14 @@
 import { Array as Arr, Effect } from "effect";
 
-import { checkMissingHooks } from "#/features/agent-settings/index.ts";
-import { checkRestrictedRules } from "#/features/overrides/index.ts";
-import { checkScripts } from "#/features/scripts/index.ts";
-import { checkVitePlus } from "#/features/vite-plus/index.ts";
+import { checkMissingHooks } from "#/features/check-agent-settings/index.ts";
+import { checkRestrictedRules } from "#/features/check-overrides/index.ts";
+import { checkScripts } from "#/features/check-scripts/index.ts";
+import { checkVitePlus } from "#/features/check-vite-plus/index.ts";
 import {
   checkFullHistoryCheckout,
   checkWorkflowCommits,
   checkWorkflowQueues,
-} from "#/features/workflows/index.ts";
+} from "#/features/check-workflows/index.ts";
 
 /** @internal */
 export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(root: string) {

@@ -2,7 +2,7 @@ import { Effect } from "effect";
 import { Command, Flag } from "effect/cli";
 
 import { publish } from "#/features/publish-views/index.ts";
-import { restoreState, saveState } from "#/features/release-state/index.ts";
+import { restoreState, saveState } from "#/features/save-release-state/index.ts";
 
 import { collectAll, stateFlag } from "./commands.ts";
 

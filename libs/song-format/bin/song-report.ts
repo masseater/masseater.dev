@@ -3,7 +3,7 @@ import { Array as Arr, Console, Effect, FileSystem, Path, Schema, pipe } from "e
 import { Argument, Command } from "effect/cli";
 
 import { runWithNode } from "#/app/node-services.ts";
-import { AnalysisSchema, analyze } from "#/features/analyze/index.ts";
+import { AnalysisSchema, analyze } from "#/features/analyze-song/index.ts";
 import { readSong } from "#/features/read-song/index.ts";
 
 const INDENT = 2;

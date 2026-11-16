@@ -4,14 +4,14 @@ import { Record as Rec, pipe } from "effect";
 import type { UserConfig } from "vite-plus";
 import type { OxlintOverride } from "vite-plus/lint";
 
+import type { WorkspaceSettings } from "#/features/build-workspace-settings/index.ts";
 import {
   decisionTestRules,
   generated,
   lint as preset,
   requiredStack,
   steigerRules,
-} from "#/features/lint-preset/index.ts";
-import type { WorkspaceSettings } from "#/features/workspace-settings/index.ts";
+} from "#/features/define-lint-preset/index.ts";
 
 import { tasksOf } from "./repository-tasks.ts";
 import { betterleaksOf, textlintOf } from "./repository-text.ts";
