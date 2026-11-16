@@ -1,4 +1,4 @@
-import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
 import { receivedLogs, waitForLogs, waitForSpans } from "@r_masseater/vitest-otlp";
 import type { ReceivedLogRecord, ReceivedSpan } from "@r_masseater/vitest-otlp";
@@ -11,7 +11,8 @@ import { expect, test } from "vite-plus/test";
 
 import { COMPATIBILITY_DATE } from "#/shared/config/index.ts";
 
-const FIXTURE = fileURLToPath(import.meta.resolve("./fixture.test.support.ts"));
+const require = createRequire(import.meta.url);
+const FIXTURE = require.resolve("./fixture.test.support.ts");
 const FIXTURE_HANDLER = `export { worker as default } from "./fixture.mjs";`;
 const TEMPORARY_REDIRECT = 307;
 const NOT_FOUND = 404;
