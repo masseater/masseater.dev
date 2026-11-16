@@ -129,6 +129,7 @@ export type FuKeywordNames =
     | "phaser"
     | "pingpong"
     | "pitch"
+    | "plugin"
     | "predelay"
     | "push"
     | "q"
@@ -265,6 +266,7 @@ export interface Automation extends langium.AstNode {
     readonly $container: Bar;
     readonly $type: 'Automation';
     curve?: 'exp' | 'linear';
+    field?: Name;
     from: Amount;
     parameter: Name;
     span: string;
@@ -275,6 +277,7 @@ export interface Automation extends langium.AstNode {
 export const Automation = {
     $type: 'Automation',
     curve: 'curve',
+    field: 'field',
     from: 'from',
     parameter: 'parameter',
     span: 'span',
@@ -535,7 +538,7 @@ export function isDecay(item: unknown): item is Decay {
     return reflection.isInstance(item, Decay.$type);
 }
 
-export type Declaration = Bus | Duck | Groove | Instrument | Kit | Master | Sample | Track;
+export type Declaration = Bus | Duck | Groove | Instrument | Kit | Master | Plugin | Sample | Track;
 
 export const Declaration = {
     $type: 'Declaration'
@@ -659,7 +662,7 @@ export function isEdit(item: unknown): item is Edit {
     return reflection.isInstance(item, Edit.$type);
 }
 
-export type Effect = Chorus | Comp | Delay | Drive | Gain | Highpass | Limit | Lowpass | Phaser | Reverb | Tremolo | Width;
+export type Effect = Chorus | Comp | Delay | Drive | Gain | Highpass | Limit | Lowpass | Phaser | PluginEffect | Reverb | Tremolo | Width;
 
 export const Effect = {
     $type: 'Effect'
@@ -696,7 +699,7 @@ export function isEvery(item: unknown): item is Every {
     return reflection.isInstance(item, Every.$type);
 }
 
-export type Exportable = Bus | Fn | Instrument | Kit | Let | Sample | Track;
+export type Exportable = Bus | Fn | Instrument | Kit | Let | Plugin | Sample | Track;
 
 export const Exportable = {
     $type: 'Exportable'
@@ -992,7 +995,7 @@ export function isInstrumentRef(item: unknown): item is InstrumentRef {
     return reflection.isInstance(item, InstrumentRef.$type);
 }
 
-export type InstrumentSource = MultiSample | SingleSample;
+export type InstrumentSource = MultiSample | PluginInstrument | SingleSample;
 
 export const InstrumentSource = {
     $type: 'InstrumentSource'
@@ -1147,7 +1150,7 @@ export function isListType(item: unknown): item is ListType {
 }
 
 export interface Literal extends langium.AstNode {
-    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
+    readonly $container: Assign | Binary | Builtin | Call | CallStatement | Computed | Each | For | Group | If | Index | Let | ListLiteral | PluginArgument | PluginParam | Repeat | Rest | Return | Sounding | Unary | Velocity | While;
     readonly $type: 'Literal';
     decibels?: string;
     duration?: string;
@@ -1272,10 +1275,10 @@ export function isMultiSample(item: unknown): item is MultiSample {
     return reflection.isInstance(item, MultiSample.$type);
 }
 
-export type Name = 'accent' | 'attack' | 'audio' | 'automate' | 'bar' | 'base' | 'bass' | 'bend' | 'bus' | 'by' | 'chorus' | 'comp' | 'countermelody' | 'curve' | 'decay' | 'delay' | 'depth' | 'drive' | 'drums' | 'duck' | 'every' | 'exp' | 'fade' | 'feedback' | 'from' | 'fx' | 'gain' | 'gate' | 'groove' | 'harmony' | 'highpass' | 'hold' | 'instrument' | 'ir' | 'kit' | 'legato' | 'length' | 'limit' | 'linear' | 'lookahead' | 'lowpass' | 'lyric' | 'makeup' | 'mark' | 'melody' | 'meter' | 'mix' | 'mono-below' | 'multisample' | 'nudge' | 'offset' | 'onsets' | 'over' | 'pan' | 'phaser' | 'pingpong' | 'predelay' | 'q' | 'release' | 'reverb' | 'reverse' | 'role' | 'root' | 'sample' | 'section' | 'semi' | 'send' | 'slice' | 'slices' | 'song' | 'staccato' | 'swing' | 'tempo' | 'texture' | 'tie' | 'to' | 'track' | 'tremolo' | 'vel' | 'volume' | 'width' | string;
+export type Name = 'accent' | 'attack' | 'audio' | 'automate' | 'bar' | 'base' | 'bass' | 'bend' | 'bool' | 'bus' | 'by' | 'chorus' | 'comp' | 'countermelody' | 'curve' | 'decay' | 'decibels' | 'delay' | 'depth' | 'drive' | 'drums' | 'duck' | 'duration' | 'every' | 'exp' | 'fade' | 'feedback' | 'from' | 'fx' | 'gain' | 'gate' | 'groove' | 'harmony' | 'hertz' | 'highpass' | 'hold' | 'instrument' | 'ir' | 'kit' | 'legato' | 'length' | 'limit' | 'linear' | 'lookahead' | 'lowpass' | 'lyric' | 'makeup' | 'mark' | 'melody' | 'meter' | 'mix' | 'mono-below' | 'multisample' | 'nudge' | 'number' | 'offset' | 'onsets' | 'over' | 'pan' | 'percent' | 'phaser' | 'pingpong' | 'pitch' | 'plugin' | 'predelay' | 'q' | 'release' | 'reverb' | 'reverse' | 'role' | 'root' | 'sample' | 'section' | 'semi' | 'semitones' | 'send' | 'slice' | 'slices' | 'song' | 'staccato' | 'string' | 'swing' | 'tempo' | 'texture' | 'tie' | 'time' | 'to' | 'track' | 'tremolo' | 'vel' | 'volume' | 'width' | string;
 
 export function isName(item: unknown): item is Name {
-    return item === 'melody' || item === 'countermelody' || item === 'bass' || item === 'harmony' || item === 'drums' || item === 'texture' || item === 'delay' || item === 'reverb' || item === 'chorus' || item === 'comp' || item === 'limit' || item === 'width' || item === 'phaser' || item === 'tremolo' || item === 'drive' || item === 'gain' || item === 'pan' || item === 'sample' || item === 'release' || item === 'attack' || item === 'decay' || item === 'offset' || item === 'length' || item === 'mix' || item === 'base' || item === 'from' || item === 'to' || item === 'q' || item === 'ir' || item === 'predelay' || item === 'feedback' || item === 'pingpong' || item === 'lookahead' || item === 'makeup' || item === 'semi' || item === 'highpass' || item === 'lowpass' || item === 'slice' || item === 'slices' || item === 'onsets' || item === 'root' || item === 'hold' || item === 'depth' || item === 'by' || item === 'over' || item === 'curve' || item === 'linear' || item === 'exp' || item === 'every' || item === 'fade' || item === 'nudge' || item === 'bend' || item === 'lyric' || item === 'gate' || item === 'vel' || item === 'tie' || item === 'staccato' || item === 'legato' || item === 'accent' || item === 'reverse' || item === 'audio' || item === 'kit' || item === 'instrument' || item === 'track' || item === 'bus' || item === 'duck' || item === 'groove' || item === 'swing' || item === 'multisample' || item === 'song' || item === 'bar' || item === 'meter' || item === 'tempo' || item === 'section' || item === 'mark' || item === 'automate' || item === 'fx' || item === 'send' || item === 'role' || item === 'mono-below' || item === 'volume' || (typeof item === 'string' && (/[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(item)));
+    return item === 'melody' || item === 'countermelody' || item === 'bass' || item === 'harmony' || item === 'drums' || item === 'texture' || item === 'delay' || item === 'reverb' || item === 'chorus' || item === 'comp' || item === 'limit' || item === 'width' || item === 'phaser' || item === 'tremolo' || item === 'drive' || item === 'gain' || item === 'pan' || item === 'sample' || item === 'release' || item === 'attack' || item === 'decay' || item === 'offset' || item === 'length' || item === 'mix' || item === 'base' || item === 'from' || item === 'to' || item === 'q' || item === 'ir' || item === 'predelay' || item === 'feedback' || item === 'pingpong' || item === 'lookahead' || item === 'makeup' || item === 'semi' || item === 'highpass' || item === 'lowpass' || item === 'slice' || item === 'slices' || item === 'onsets' || item === 'root' || item === 'hold' || item === 'depth' || item === 'by' || item === 'over' || item === 'curve' || item === 'linear' || item === 'exp' || item === 'every' || item === 'fade' || item === 'nudge' || item === 'bend' || item === 'lyric' || item === 'gate' || item === 'vel' || item === 'tie' || item === 'staccato' || item === 'legato' || item === 'accent' || item === 'reverse' || item === 'audio' || item === 'kit' || item === 'instrument' || item === 'track' || item === 'bus' || item === 'duck' || item === 'groove' || item === 'swing' || item === 'multisample' || item === 'song' || item === 'bar' || item === 'meter' || item === 'tempo' || item === 'section' || item === 'mark' || item === 'automate' || item === 'fx' || item === 'send' || item === 'role' || item === 'mono-below' || item === 'volume' || item === 'plugin' || item === 'number' || item === 'pitch' || item === 'duration' || item === 'decibels' || item === 'percent' || item === 'hertz' || item === 'time' || item === 'semitones' || item === 'string' || item === 'bool' || (typeof item === 'string' && (/[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(item)));
 }
 
 export interface Note extends langium.AstNode {
@@ -1386,6 +1389,108 @@ export const PlayParam = {
 
 export function isPlayParam(item: unknown): item is PlayParam {
     return reflection.isInstance(item, PlayParam.$type);
+}
+
+export interface Plugin extends langium.AstNode {
+    readonly $container: Song;
+    readonly $type: 'Plugin';
+    module: string;
+    name: string;
+    params: Array<PluginParam>;
+}
+
+export const Plugin = {
+    $type: 'Plugin',
+    module: 'module',
+    name: 'name',
+    params: 'params'
+} as const;
+
+export function isPlugin(item: unknown): item is Plugin {
+    return reflection.isInstance(item, Plugin.$type);
+}
+
+export interface PluginArgument extends langium.AstNode {
+    readonly $container: PluginUse;
+    readonly $type: 'PluginArgument';
+    name: Name;
+    value: Literal;
+}
+
+export const PluginArgument = {
+    $type: 'PluginArgument',
+    name: 'name',
+    value: 'value'
+} as const;
+
+export function isPluginArgument(item: unknown): item is PluginArgument {
+    return reflection.isInstance(item, PluginArgument.$type);
+}
+
+export interface PluginEffect extends langium.AstNode {
+    readonly $container: FxChain;
+    readonly $type: 'PluginEffect';
+    use: PluginUse;
+}
+
+export const PluginEffect = {
+    $type: 'PluginEffect',
+    use: 'use'
+} as const;
+
+export function isPluginEffect(item: unknown): item is PluginEffect {
+    return reflection.isInstance(item, PluginEffect.$type);
+}
+
+export interface PluginInstrument extends langium.AstNode {
+    readonly $container: Instrument;
+    readonly $type: 'PluginInstrument';
+    use: PluginUse;
+}
+
+export const PluginInstrument = {
+    $type: 'PluginInstrument',
+    use: 'use'
+} as const;
+
+export function isPluginInstrument(item: unknown): item is PluginInstrument {
+    return reflection.isInstance(item, PluginInstrument.$type);
+}
+
+export interface PluginParam extends langium.AstNode {
+    readonly $container: Plugin;
+    readonly $type: 'PluginParam';
+    default?: Literal;
+    name: Name;
+    type: ScalarType;
+}
+
+export const PluginParam = {
+    $type: 'PluginParam',
+    default: 'default',
+    name: 'name',
+    type: 'type'
+} as const;
+
+export function isPluginParam(item: unknown): item is PluginParam {
+    return reflection.isInstance(item, PluginParam.$type);
+}
+
+export interface PluginUse extends langium.AstNode {
+    readonly $container: PluginEffect | PluginInstrument;
+    readonly $type: 'PluginUse';
+    arguments: Array<PluginArgument>;
+    plugin: langium.Reference<Plugin>;
+}
+
+export const PluginUse = {
+    $type: 'PluginUse',
+    arguments: 'arguments',
+    plugin: 'plugin'
+} as const;
+
+export function isPluginUse(item: unknown): item is PluginUse {
+    return reflection.isInstance(item, PluginUse.$type);
 }
 
 export interface Ref extends langium.AstNode {
@@ -1531,7 +1636,7 @@ export function isSample(item: unknown): item is Sample {
 }
 
 export interface ScalarType extends langium.AstNode {
-    readonly $container: Fn | Let | ListType | Param;
+    readonly $container: Fn | Let | ListType | Param | PluginParam;
     readonly $type: 'ScalarType';
     name: 'bool' | 'decibels' | 'duration' | 'hertz' | 'number' | 'percent' | 'pitch' | 'semitones' | 'string' | 'time';
 }
@@ -1958,6 +2063,12 @@ export type FuAstType = {
     Param: Param
     Phaser: Phaser
     PlayParam: PlayParam
+    Plugin: Plugin
+    PluginArgument: PluginArgument
+    PluginEffect: PluginEffect
+    PluginInstrument: PluginInstrument
+    PluginParam: PluginParam
+    PluginUse: PluginUse
     Ref: Ref
     Release: Release
     Repeat: Repeat
@@ -2052,6 +2163,10 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             properties: {
                 curve: {
                     name: Automation.curve,
+                    optional: true
+                },
+                field: {
+                    name: Automation.field,
                     optional: true
                 },
                 from: {
@@ -2948,6 +3063,84 @@ export class FuAstReflection extends langium.AbstractAstReflection {
             properties: {
             },
             superTypes: [Attribute.$type]
+        },
+        Plugin: {
+            name: Plugin.$type,
+            properties: {
+                module: {
+                    name: Plugin.module
+                },
+                name: {
+                    name: Plugin.name
+                },
+                params: {
+                    name: Plugin.params,
+                    defaultValue: [],
+                    optional: true
+                }
+            },
+            superTypes: [Declaration.$type, Exportable.$type]
+        },
+        PluginArgument: {
+            name: PluginArgument.$type,
+            properties: {
+                name: {
+                    name: PluginArgument.name
+                },
+                value: {
+                    name: PluginArgument.value
+                }
+            },
+            superTypes: []
+        },
+        PluginEffect: {
+            name: PluginEffect.$type,
+            properties: {
+                use: {
+                    name: PluginEffect.use
+                }
+            },
+            superTypes: [Effect.$type]
+        },
+        PluginInstrument: {
+            name: PluginInstrument.$type,
+            properties: {
+                use: {
+                    name: PluginInstrument.use
+                }
+            },
+            superTypes: [InstrumentSource.$type]
+        },
+        PluginParam: {
+            name: PluginParam.$type,
+            properties: {
+                default: {
+                    name: PluginParam.default,
+                    optional: true
+                },
+                name: {
+                    name: PluginParam.name
+                },
+                type: {
+                    name: PluginParam.type
+                }
+            },
+            superTypes: []
+        },
+        PluginUse: {
+            name: PluginUse.$type,
+            properties: {
+                arguments: {
+                    name: PluginUse.arguments,
+                    defaultValue: [],
+                    optional: true
+                },
+                plugin: {
+                    name: PluginUse.plugin,
+                    referenceType: Plugin.$type
+                }
+            },
+            superTypes: []
         },
         Ref: {
             name: Ref.$type,

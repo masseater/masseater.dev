@@ -1,6 +1,7 @@
 import { Schema } from "effect";
 
 import { Name, OptionalNumber, OptionalShare, Share, Ticks, kind } from "./fields.ts";
+import { PluginUseSchema } from "./plugin.ts";
 
 export const SendSchema = Schema.Struct({ bus: Name, amount: Share });
 
@@ -84,6 +85,7 @@ export const EffectSchema = Schema.Union([
     mix: OptionalShare,
   }),
   kind("tremolo")({ rateHertz: Schema.Finite, depth: Share }),
+  PluginUseSchema,
 ]);
 
 export type Effect = typeof EffectSchema.Type;

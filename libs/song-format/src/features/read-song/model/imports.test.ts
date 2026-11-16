@@ -38,7 +38,12 @@ it.effect("brings in what a song imports and what that needs", () =>
     expect(
       pipe(
         song.instruments,
-        Arr.flatMap((instrument) => instrument.zones),
+        Arr.flatMap((instrument) => {
+          if (instrument.source.kind === "samples") {
+            return instrument.source.zones;
+          }
+          return [];
+        }),
         Arr.map((zone) => zone.path),
       ),
     ).toStrictEqual(["../lib/keys.flac"]);
