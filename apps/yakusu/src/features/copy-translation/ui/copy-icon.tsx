@@ -1,7 +1,7 @@
 import { Check, Copy } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useCopy } from "#/features/copy-translation/model/copy";
+import { useCopy } from "#/features/copy-translation/model/copy.ts";
 
 export const CopyIcon = (): ReactNode => {
   if (useCopy() === "copied") {

@@ -5,8 +5,8 @@ import type { HttpClientRequest } from "effect/http";
 import { AtomRegistry } from "effect/reactivity";
 import { vi } from "vite-plus/test";
 
-import { leadsAtom, summaryAtom } from "#/entities/interview";
-import { read, write } from "#/shared/lib/registry";
+import { leadsAtom, summaryAtom } from "#/entities/interview/index.ts";
+import { read, write } from "#/shared/lib/registry.ts";
 
 import { research } from "./research.ts";
 

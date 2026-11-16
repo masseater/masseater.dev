@@ -2,11 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useJaBench } from "#/pages/ocr-engines/api/ja-bench-query";
-import { COPY } from "#/pages/ocr-engines/model/copy";
-import { tablesOf } from "#/pages/ocr-engines/model/tables";
+import { useJaBench } from "#/pages/ocr-engines/api/ja-bench-query.ts";
+import { COPY } from "#/pages/ocr-engines/model/copy.ts";
+import { tablesOf } from "#/pages/ocr-engines/model/tables.ts";
 
-import { EnginesSection } from "./engines-section";
+import { EnginesSection } from "./engines-section.tsx";
 
 export const OcrEnginesPage = (): ReactNode => {
   const summary = useJaBench();

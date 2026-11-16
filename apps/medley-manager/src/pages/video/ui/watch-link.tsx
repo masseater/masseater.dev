@@ -1,8 +1,8 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { embedUrl, watchUrl } from "#/entities/video";
-import { Button } from "#/shared/ui/button";
+import { embedUrl, watchUrl } from "#/entities/video/index.ts";
+import { Button } from "#/shared/ui/button.tsx";
 
 const OPEN = "元動画を開く ↗";
 

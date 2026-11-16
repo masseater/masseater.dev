@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { useSaving } from "#/entities/interview";
-import type { Saving } from "#/entities/interview";
+import { useSaving } from "#/entities/interview/index.ts";
+import type { Saving } from "#/entities/interview/index.ts";
 
 const LABELS: Readonly<Record<Saving["status"], string>> = {
   idle: "",

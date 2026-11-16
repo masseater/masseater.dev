@@ -9,19 +9,19 @@ import {
   pipe,
 } from "effect";
 
-import type { Body } from "#/entities/life-record/@x/trait";
-import { timeOut } from "#/entities/life-record/@x/trait";
-import { RecordNotFound } from "#/shared/api";
-import type { StoreFailure } from "#/shared/api";
-import { TRAIT_KINDS } from "#/shared/db";
-import { listHistory } from "#/shared/db/index.server";
-import type { HistoryEntry } from "#/shared/db/index.server";
+import type { Body } from "#/entities/life-record/@x/trait.ts";
+import { timeOut } from "#/entities/life-record/@x/trait.ts";
+import { RecordNotFound } from "#/shared/api/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
+import { listHistory } from "#/shared/db/index.server.ts";
+import type { HistoryEntry } from "#/shared/db/index.server.ts";
+import { TRAIT_KINDS } from "#/shared/db/index.ts";
 
-import { GLOBAL, TRAIT_PREFIX, isActive, japaneseOf, keyText } from "./trait-state";
-import type { Evidence, JaRows, Japanese, TraitState } from "./trait-state";
+import { GLOBAL, TRAIT_PREFIX, isActive, japaneseOf, keyText } from "./trait-state.ts";
+import type { Evidence, JaRows, Japanese, TraitState } from "./trait-state.ts";
 import { loadTraitJa, loadTraitVectors, loadTraits } from "./trait-store.server.ts";
-import { relatedTo } from "./trait-vector";
-import type { Vector } from "./trait-vector";
+import { relatedTo } from "./trait-vector.ts";
+import type { Vector } from "./trait-vector.ts";
 
 const HISTORY_LIMIT = 100;
 

@@ -2,10 +2,10 @@ import { useMutation } from "@tanstack/react-query";
 import { Option, pipe } from "effect";
 import { useCallback } from "react";
 
-import { saveSidebarWidth } from "#/shared/api";
-import { DEFAULT_SIDEBAR_WIDTH, sidebarWidthOf } from "#/shared/model";
+import { saveSidebarWidth } from "#/shared/api/index.ts";
+import { DEFAULT_SIDEBAR_WIDTH, sidebarWidthOf } from "#/shared/model/index.ts";
 
-import { useSidebarOpen, useToggleSidebar } from "./sidebar-state";
+import { useSidebarOpen, useToggleSidebar } from "./sidebar-state.ts";
 
 const WIDTH_VARIABLE = "--spacing-sidebar";
 

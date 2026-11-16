@@ -3,7 +3,7 @@ import { PenLine } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { NEW_MANUSCRIPT, opened, useScreen } from "#/shared/model";
+import { NEW_MANUSCRIPT, opened, useScreen } from "#/shared/model/index.ts";
 
 const LABEL = "新しく書く";
 

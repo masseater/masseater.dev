@@ -5,8 +5,8 @@ import { createRoot } from "react-dom/client";
 import type { Root } from "react-dom/client";
 
 import { Providers } from "#/app/state.tsx";
-import { TranslatorPage } from "#/pages/translator";
-import type { Engine } from "#/shared/api";
+import { TranslatorPage } from "#/pages/translator/index.ts";
+import type { Engine } from "#/shared/api/index.ts";
 
 import styles from "#/app/styles.css?inline";
 import fixedFonts from "./fixed-fonts.test.support.css?inline";

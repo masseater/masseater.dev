@@ -1,4 +1,4 @@
-import type { PlamoModel } from "./translator.worker.ts";
+import type { PlamoModel } from "./src/app/translator.worker.ts";
 
 declare module "cloudflare:workers" {
   namespace Cloudflare {

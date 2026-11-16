@@ -1,7 +1,7 @@
 import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-import type { RemarkActions } from "#/features/respond-to-remark/api/remark-actions";
+import type { RemarkActions } from "#/features/respond-to-remark/api/remark-actions.ts";
 
 const REWRITE = "書き直させる";
 const KEEP = "残す";

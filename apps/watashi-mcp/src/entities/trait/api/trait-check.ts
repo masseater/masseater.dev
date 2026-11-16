@@ -1,9 +1,9 @@
 import { Array as Arr, HashSet, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import type { KnownTraitValue, ObservationValue } from "#/entities/trait/model/trait-analysis";
+import type { KnownTraitValue, ObservationValue } from "#/entities/trait/model/trait-analysis.ts";
 
-import { isActive, keyText } from "./trait-state";
-import type { BatchSource, Candidates, Checked, Step, TraitState } from "./trait-state";
+import { isActive, keyText } from "./trait-state.ts";
+import type { BatchSource, Candidates, Checked, Step, TraitState } from "./trait-state.ts";
 
 export type Checking = Step & Readonly<{ candidates: Candidates }>;
 

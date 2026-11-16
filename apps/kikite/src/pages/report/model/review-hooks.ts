@@ -2,7 +2,13 @@ import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Effect, Option, pipe } from "effect";
 import { useCallback, useMemo } from "react";
 
-import { entriesAtom, heardAtom, phaseAtom, progressAtom, useSummary } from "#/entities/interview";
+import {
+  entriesAtom,
+  heardAtom,
+  phaseAtom,
+  progressAtom,
+  useSummary,
+} from "#/entities/interview/index.ts";
 
 import { handoffOf } from "./handoff.ts";
 import { reportOf } from "./report.ts";

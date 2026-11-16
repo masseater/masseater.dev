@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   pack: {
-    entry: { player: "player/main.ts" },
+    entry: { player: "src/app/player/main.ts" },
     outDir: "dist/player",
     platform: "node",
     format: "esm",
@@ -22,7 +22,7 @@ export default defineConfig({
       neverBundle: [NATIVE],
       alwaysBundle: (id) => !Str.startsWith(NATIVE)(id),
     },
-    copy: [{ from: "player/Containerfile", to: "dist/player" }],
+    copy: [{ from: "src/app/player/Containerfile", to: "dist/player" }],
   },
   test: { include: ["**/*.test.ts"] },
 });

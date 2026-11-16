@@ -1,2 +1,2 @@
-export { research } from "./model/research";
-export { LeadSection } from "./ui/lead-section";
+export { research } from "./model/research.ts";
+export { LeadSection } from "./ui/lead-section.tsx";

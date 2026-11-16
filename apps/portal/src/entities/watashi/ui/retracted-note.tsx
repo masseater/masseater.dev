@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { MemoValue } from "#/entities/watashi/model/memo";
+import type { MemoValue } from "#/entities/watashi/model/memo.ts";
 
 const RETRACTED = "取り消し済み";
 

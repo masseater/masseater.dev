@@ -1,2 +1,2 @@
-export { SEARCH_INDEX_ORIGIN } from "./search";
-export { COPY } from "./copy";
+export { SEARCH_INDEX_ORIGIN } from "./search.ts";
+export { COPY } from "./copy.ts";

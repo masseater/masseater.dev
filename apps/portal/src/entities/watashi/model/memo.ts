@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { TimeOut } from "#/shared/model";
+import { TimeOut } from "#/shared/model/index.ts";
 
 const Memo = Schema.Struct({
   ref: Schema.String,

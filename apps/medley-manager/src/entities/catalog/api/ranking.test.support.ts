@@ -1,8 +1,8 @@
 import { Effect } from "effect";
 
-import { part, partStaff, person, song, video } from "#/shared/db";
-import { catalogDb } from "#/shared/db/index.server";
-import { resetDatabase } from "#/shared/db/index.test.support";
+import { catalogDb } from "#/shared/db/index.server.ts";
+import { resetDatabase } from "#/shared/db/index.test.support.ts";
+import { part, partStaff, person, song, video } from "#/shared/db/index.ts";
 
 type Songs = Readonly<{ unused: number; once: number; twiceLater: number; twiceEarlier: number }>;
 

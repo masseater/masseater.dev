@@ -2,11 +2,11 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { TagFilter, tagCounts, useTagFilter, withTag } from "#/features/tag-filter";
-import { projects } from "#/pages/projects/model/projects";
-import { sectionMeta } from "#/shared/config";
+import { TagFilter, tagCounts, useTagFilter, withTag } from "#/features/tag-filter/index.ts";
+import { projects } from "#/pages/projects/model/projects.ts";
+import { sectionMeta } from "#/shared/config/index.ts";
 
-import { ProjectItem } from "./project-item";
+import { ProjectItem } from "./project-item.tsx";
 
 const route = getRouteApi("/_stage/_site/projects");
 

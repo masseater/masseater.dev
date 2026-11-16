@@ -2,9 +2,9 @@ import { beaconScripts } from "@masseater.dev/ui/web-analytics";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext } from "@tanstack/react-router";
 
-import { RootDocument } from "#/app/shell/root-document";
-import { RootNotFound } from "#/app/shell/root-not-found";
-import { site } from "#/shared/config";
+import { RootDocument } from "#/app/shell/root-document.tsx";
+import { RootNotFound } from "#/app/shell/root-not-found.tsx";
+import { site } from "#/shared/config/index.ts";
 
 import appCss from "#/app/styles.css?url";
 

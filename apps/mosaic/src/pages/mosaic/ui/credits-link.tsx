@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 
-import { CREDITS } from "./credits";
+import { CREDITS } from "./credits.ts";
 
 export const CreditsLink = ({
   slug,

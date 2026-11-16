@@ -1,8 +1,8 @@
 import { notFound } from "@tanstack/react-router";
 import { Effect, Option } from "effect";
 
-import { techniqueOf } from "#/entities/technique";
-import { effectLoader } from "#/features/dance-stage";
+import { techniqueOf } from "#/entities/technique/index.ts";
+import { effectLoader } from "#/features/dance-stage/index.ts";
 
 export type FoundTechnique = Readonly<{ slug: string; source: string }>;
 

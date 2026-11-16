@@ -1,1 +1,1 @@
-export { registerBrokerTools } from "./api/broker-tools";
+export { registerBrokerTools } from "./api/broker-tools.ts";

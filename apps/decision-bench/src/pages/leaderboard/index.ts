@@ -1,1 +1,1 @@
-export { LeaderboardPage } from "./ui/leaderboard-page";
+export { LeaderboardPage } from "./ui/leaderboard-page.tsx";

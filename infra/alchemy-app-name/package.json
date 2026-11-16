@@ -3,8 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/features/name-app/index.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

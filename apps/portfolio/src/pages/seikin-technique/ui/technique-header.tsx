@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { COLLECTION_TITLE } from "#/entities/technique";
+import { COLLECTION_TITLE } from "#/entities/technique/index.ts";
 
 export const TechniqueHeader = ({ name }: Readonly<{ name: string }>): ReactNode => (
   <header className="flex flex-col gap-3">

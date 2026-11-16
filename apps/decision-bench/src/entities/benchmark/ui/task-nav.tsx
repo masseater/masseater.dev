@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { taskRoutes } from "#/entities/benchmark/model/task-routes";
+import { taskRoutes } from "#/entities/benchmark/model/task-routes.ts";
 
 const OVERVIEW = "概要";
 const LINK_CLASS = "text-muted-foreground hover:text-foreground";

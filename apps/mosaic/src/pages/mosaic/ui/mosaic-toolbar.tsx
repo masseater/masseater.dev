@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { TileSearch } from "#/features/search-tiles";
-import { MosaicActions } from "#/features/share-mosaic";
+import { TileSearch } from "#/features/search-tiles/index.ts";
+import { MosaicActions } from "#/features/share-mosaic/index.ts";
 
 export const MosaicToolbar = ({
   slug,

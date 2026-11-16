@@ -7,10 +7,15 @@ import {
 } from "@tanstack/react-query";
 import { Effect, Option, Stream, String, pipe } from "effect";
 
-import { dropped, editorAtom, manuscriptIdAtom, rewritingAtom } from "#/entities/manuscript";
-import type { Marked } from "#/entities/manuscript";
-import { useYohaku } from "#/shared/api";
-import type { SpanTarget } from "#/shared/api";
+import {
+  dropped,
+  editorAtom,
+  manuscriptIdAtom,
+  rewritingAtom,
+} from "#/entities/manuscript/index.ts";
+import type { Marked } from "#/entities/manuscript/index.ts";
+import { useYohaku } from "#/shared/api/index.ts";
+import type { SpanTarget } from "#/shared/api/index.ts";
 
 export interface Proposal {
   readonly proposal: Option.Option<string>;

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Array, Option, pipe } from "effect";
 
-import { SEARCH_INDEX_ORIGIN, SITEMAP_FILE } from "#/shared/config";
+import { SEARCH_INDEX_ORIGIN, SITEMAP_FILE } from "#/shared/config/index.ts";
 
 const body = pipe(
   [

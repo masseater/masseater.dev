@@ -11,7 +11,7 @@ import {
   pipe,
 } from "effect";
 
-import { StorageFailed } from "./storage-failed";
+import { StorageFailed } from "./storage-failed.ts";
 
 export type WriteFailure = Readonly<{ duplicate: boolean; message: string }>;
 

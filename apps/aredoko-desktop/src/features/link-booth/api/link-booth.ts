@@ -2,7 +2,7 @@ import type { Package } from "@masseater.dev/aredoko-protocol";
 import { useMutation } from "@tanstack/react-query";
 import type { UseMutationResult } from "@tanstack/react-query";
 
-import { linkBooth, useRefreshLibrary } from "#/shared/api";
+import { linkBooth, useRefreshLibrary } from "#/shared/api/index.ts";
 
 export const useLinkBooth = (): UseMutationResult<
   typeof Package.Type,

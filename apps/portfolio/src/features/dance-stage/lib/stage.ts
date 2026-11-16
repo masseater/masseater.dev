@@ -1,18 +1,25 @@
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 import { constVoid } from "effect/Function";
 
-import { SCREEN } from "#/features/dance-stage/model/effect";
-import type { DanceEffect } from "#/features/dance-stage/model/effect";
-import { loadGpuEffect } from "#/features/dance-stage/model/effects";
-import type { DanceTrack } from "#/features/dance-stage/model/track";
+import { SCREEN } from "#/entities/dance-effect/index.ts";
+import type { DanceEffect } from "#/entities/dance-effect/index.ts";
+import { loadGpuEffect } from "#/features/dance-stage/model/effects.ts";
+import type { DanceTrack } from "#/features/dance-stage/model/track.ts";
 
-import type { Fn } from "./fn";
-import type { Size } from "./gl";
-import { drawGlyphs } from "./glyphs";
-import type { Glyphs } from "./glyphs";
-import { createGpuRenderer } from "./gpu";
-import { BANDS, createRenderer, emptyBands, emptyPose, POSE_FIELDS, POSE_POINTS } from "./renderer";
-import type { Frame, Renderer } from "./renderer";
+import type { Fn } from "./fn.ts";
+import type { Size } from "./gl.ts";
+import { drawGlyphs } from "./glyphs.ts";
+import type { Glyphs } from "./glyphs.ts";
+import { createGpuRenderer } from "./gpu.ts";
+import {
+  BANDS,
+  createRenderer,
+  emptyBands,
+  emptyPose,
+  POSE_FIELDS,
+  POSE_POINTS,
+} from "./renderer.ts";
+import type { Frame, Renderer } from "./renderer.ts";
 
 const DANCE_SRC = "/seikin-techniques/dance.mp4";
 const HISTORY_SRC = "/seikin-techniques/history.jpg";

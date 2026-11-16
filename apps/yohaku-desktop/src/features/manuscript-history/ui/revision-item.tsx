@@ -2,7 +2,7 @@ import { Button } from "@masseater.dev/ui/button";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { Revision } from "#/shared/api";
+import type { Revision } from "#/shared/api/index.ts";
 
 const RESTORE = "戻す";
 

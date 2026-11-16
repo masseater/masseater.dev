@@ -1,10 +1,10 @@
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
-import type { Pass } from "#/features/dance-stage/model/effect";
+import type { Pass } from "#/entities/dance-effect/index.ts";
 
-import type { Fn } from "./fn";
-import { contextOf, link, makeBuffer, makeQuad, makeTexture } from "./gl";
-import type { Buffer, Gl, Size } from "./gl";
+import type { Fn } from "./fn.ts";
+import { contextOf, link, makeBuffer, makeQuad, makeTexture } from "./gl.ts";
+import type { Buffer, Gl, Size } from "./gl.ts";
 
 const QUAD_VERTICES = 4;
 const ORIGIN = 0;

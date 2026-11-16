@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import type { Example } from "#/entities/technique/model/technique";
-import { YouTubeLink } from "#/shared/ui";
+import type { Example } from "#/entities/technique/model/technique.ts";
+import { YouTubeLink } from "#/shared/ui/index.ts";
 
 export const YouTubeExample = ({
   example,

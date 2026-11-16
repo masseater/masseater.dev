@@ -1,11 +1,11 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { SlidesSearchValue } from "#/entities/slide";
-import { wanted } from "#/pages/slides/api/slides-query";
+import type { SlidesSearchValue } from "#/entities/slide/index.ts";
+import { wanted } from "#/pages/slides/api/slides-query.ts";
 
-import { DeckList } from "./deck-list";
-import { HitList } from "./hit-list";
+import { DeckList } from "./deck-list.tsx";
+import { HitList } from "./hit-list.tsx";
 
 export const SlidesResults = ({ search }: Readonly<{ search: SlidesSearchValue }>): ReactNode =>
   Option.match(wanted(search), {

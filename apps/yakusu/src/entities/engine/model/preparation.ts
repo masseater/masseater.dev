@@ -1,6 +1,6 @@
 import { Option } from "effect";
 
-import type { Progress } from "#/shared/api";
+import type { Progress } from "#/shared/api/index.ts";
 
 export type Preparation =
   | Readonly<{ status: "preparing" }>

@@ -3,11 +3,11 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
-import { YEN } from "#/entities/money";
-import type { SheetBlock } from "#/pages/money/model/sheet";
-import { SHEET_SERIES, sheetRow } from "#/pages/money/model/sheet-chart";
+import { YEN } from "#/entities/money/index.ts";
+import { SHEET_SERIES, sheetRow } from "#/pages/money/model/sheet-chart.ts";
+import type { SheetBlock } from "#/pages/money/model/sheet.ts";
 
-import { SheetBar } from "./sheet-bar";
+import { SheetBar } from "./sheet-bar.tsx";
 
 const TEXT = { assets: "資産", liabilities: "負債・純資産" } as const;
 

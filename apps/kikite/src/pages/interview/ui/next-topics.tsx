@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSummary } from "#/entities/interview";
+import { useSummary } from "#/entities/interview/index.ts";
 
 const LABEL = "次に聞くこと";
 

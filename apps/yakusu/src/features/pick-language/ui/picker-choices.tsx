@@ -1,9 +1,9 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { LANGUAGES } from "#/entities/language";
-import type { Side } from "#/entities/language";
-import { matching, useQueryText } from "#/features/pick-language/model/search";
+import { LANGUAGES } from "#/entities/language/index.ts";
+import type { Side } from "#/entities/language/index.ts";
+import { matching, useQueryText } from "#/features/pick-language/model/search.ts";
 
 import { DetectChoice } from "./detect-choice.tsx";
 import { LanguageChoice } from "./language-choice.tsx";

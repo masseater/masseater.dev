@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-import type { ProfileSectionValue } from "#/entities/watashi";
+import type { ProfileSectionValue } from "#/entities/watashi/index.ts";
 
-import { CopyButton } from "./copy-button";
-import { LangTabs } from "./lang-tabs";
+import { CopyButton } from "./copy-button.tsx";
+import { LangTabs } from "./lang-tabs.tsx";
 
 export const DocumentBar = ({
   sections,

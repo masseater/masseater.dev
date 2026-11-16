@@ -1,9 +1,9 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useFolderName, useSources } from "#/features/library/api/queries";
-import { Loading } from "#/shared/ui/loading";
-import { Notice } from "#/shared/ui/notice";
+import { useFolderName, useSources } from "#/features/library/api/queries.ts";
+import { Loading } from "#/shared/ui/loading.tsx";
+import { Notice } from "#/shared/ui/notice.tsx";
 
 import { SourceRow } from "./source-row.tsx";
 

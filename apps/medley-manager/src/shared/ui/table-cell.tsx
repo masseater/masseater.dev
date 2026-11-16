@@ -2,7 +2,7 @@ import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 import type { ComponentProps, ReactNode } from "react";
 
-import { cn } from "#/shared/lib/utils";
+import { cn } from "#/shared/lib/utils.ts";
 
 const tableCellVariants = cva("px-4 py-3 align-middle", {
   variants: {

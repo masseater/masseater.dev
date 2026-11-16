@@ -7,11 +7,11 @@ import {
   insertRecord,
   replaceRecord,
   snapshotOf,
-} from "#/entities/life-record/index.server";
-import type { MemoryWriteValue } from "#/entities/memory";
-import { routeLifeRead } from "#/features/life-tools/index.test.support";
-import { writeMemory } from "#/features/memory-tools/index.test.support";
-import type { StorageFailed } from "#/shared/db";
+} from "#/entities/life-record/index.server.ts";
+import type { MemoryWriteValue } from "#/entities/memory/index.ts";
+import { routeLifeRead } from "#/features/life-tools/index.test.support.ts";
+import { writeMemory } from "#/features/memory-tools/index.test.support.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { closeDatabase, resetDatabase } from "./d1.test.support.ts";
 

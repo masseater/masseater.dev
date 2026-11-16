@@ -1,6 +1,6 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { Change, Report, Wait } from "#/pages/report/model/review-hooks";
+import type { Change, Report, Wait } from "#/pages/report/model/review-hooks.ts";
 
 export type FactKey = "wait" | "withdrawn" | "open" | "next";
 

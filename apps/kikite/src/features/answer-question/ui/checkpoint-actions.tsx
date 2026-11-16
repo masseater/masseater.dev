@@ -2,8 +2,8 @@ import { Button } from "@masseater.dev/ui/button";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useCheckpoint } from "#/entities/interview";
-import type { Answering } from "#/features/answer-question/model/answering";
+import { useCheckpoint } from "#/entities/interview/index.ts";
+import type { Answering } from "#/features/answer-question/model/answering.ts";
 
 import { focusAnswer } from "./type-anywhere.ts";
 

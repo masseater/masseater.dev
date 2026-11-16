@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { useAsked } from "#/entities/interview";
+import { useAsked } from "#/entities/interview/index.ts";
 
 import { PanelBody } from "./panel-body.tsx";
 import { PanelTabList } from "./panel-tab-list.tsx";

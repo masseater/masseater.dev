@@ -2,9 +2,9 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
-import { SCAN_LIMIT } from "#/entities/life-record/index.server";
-import { routeLifeRead, writeLife } from "#/features/life-tools/index.test.support";
-import { watashiSearch } from "#/features/memory-tools/index.test.support";
+import { SCAN_LIMIT } from "#/entities/life-record/index.server.ts";
+import { routeLifeRead, writeLife } from "#/features/life-tools/index.test.support.ts";
+import { watashiSearch } from "#/features/memory-tools/index.test.support.ts";
 
 import { closeDatabase, env, resetDatabase } from "./d1.test.support.ts";
 

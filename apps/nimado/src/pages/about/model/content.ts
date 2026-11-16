@@ -7,7 +7,7 @@ import {
   SOURCE_URL,
   VOCADB_URL,
   YOUTUBE_TERMS_URL,
-} from "#/shared/config";
+} from "#/shared/config/index.ts";
 
 export type Segment = Readonly<{ text: string; href?: string }>;
 

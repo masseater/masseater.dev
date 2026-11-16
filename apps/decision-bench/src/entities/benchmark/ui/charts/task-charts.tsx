@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 
-import type { TaskEntry } from "#/entities/benchmark/model/ranking";
+import type { TaskEntry } from "#/entities/benchmark/model/ranking.ts";
 
-import { BarChart } from "./bar-chart";
-import { ChartFigure } from "./chart-figure";
-import { ModelKey } from "./model-key";
-import { COST_AXIS, LATENCY_AXIS, scatterPoints } from "./scatter-points";
-import { ScoreScatter } from "./score-scatter";
-import { skillRows } from "./skill-rows";
+import { BarChart } from "./bar-chart.tsx";
+import { ChartFigure } from "./chart-figure.tsx";
+import { ModelKey } from "./model-key.tsx";
+import { COST_AXIS, LATENCY_AXIS, scatterPoints } from "./scatter-points.ts";
+import { ScoreScatter } from "./score-scatter.tsx";
+import { skillRows } from "./skill-rows.ts";
 
 const SKILL_TITLE = "skill";
 const LATENCY_TITLE = "skill × p50 レイテンシ";

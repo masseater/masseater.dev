@@ -2,7 +2,7 @@ import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import { ImageOff } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { usePreview } from "#/entities/asset/api/queries";
+import { usePreview } from "#/entities/asset/api/queries.ts";
 
 import { PreviewImage } from "./preview-image.tsx";
 

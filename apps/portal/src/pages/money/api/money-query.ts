@@ -4,13 +4,13 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { Effect, Option, Record as Rec, String as Str } from "effect";
 
-import { moneyQueries } from "#/entities/money";
+import { moneyQueries } from "#/entities/money/index.ts";
 import type {
   MoneySearchValue,
   OverviewValue,
   PeriodValue,
   TransactionPageValue,
-} from "#/entities/money";
+} from "#/entities/money/index.ts";
 
 type MoneyLoad = Readonly<{ queryClient: QueryClient; search: MoneySearchValue }>;
 

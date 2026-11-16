@@ -2,13 +2,13 @@ import { run } from "@r_masseater/workers-tracing/effect";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { Effect } from "effect";
 
-import { browserClient, createQueries, serverClient } from "#/shared/api";
+import { browserClient, createQueries, serverClient } from "#/shared/api/index.ts";
 
-import type { CredentialsRoutes } from "./credentials-routes.server";
+import type { CredentialsRoutes } from "./credentials-routes.server.ts";
 
 const loadCredentialsHandle = (): Promise<(request: Request) => Promise<Response>> =>
   run(
-    Effect.promise(() => import("./handle.server")).pipe(
+    Effect.promise(() => import("./handle.server.ts")).pipe(
       Effect.map((module) => module.handleCredentials),
     ),
   );

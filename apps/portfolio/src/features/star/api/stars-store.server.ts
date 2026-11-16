@@ -4,8 +4,8 @@ import type { SQL } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { Array as Arr, Effect, Record, pipe } from "effect";
 
-import type { Entry } from "#/entities/entry";
-import { star } from "#/features/star/model/star.table";
+import type { Entry } from "#/entities/entry/index.ts";
+import { star } from "#/features/star/model/star.table.ts";
 
 export type Target = Readonly<Pick<Entry, "category" | "slug">>;
 

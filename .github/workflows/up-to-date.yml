@@ -19,13 +19,13 @@ jobs:
     steps:
       - id: skills-lock
         if: github.event_name == 'pull_request'
-        uses: masseater/typescript-template/.github/actions/pr-changed@ccaa104d258c33875313bd6a31ad9c4ab8e4364f
+        uses: masseater/typescript-template/.github/actions/pr-changed@b024e4dc89157d7261c5fb86f23d8ee4060cf523
         with:
           file: skills-lock.json
           github-token: ${{ github.token }}
       - id: lockfile
         if: github.event_name == 'pull_request'
-        uses: masseater/typescript-template/.github/actions/pr-changed@ccaa104d258c33875313bd6a31ad9c4ab8e4364f
+        uses: masseater/typescript-template/.github/actions/pr-changed@b024e4dc89157d7261c5fb86f23d8ee4060cf523
         with:
           file: pnpm-lock.yaml
           github-token: ${{ github.token }}
@@ -34,7 +34,7 @@ jobs:
         with:
           persist-credentials: false
       - if: steps.skills-lock.outputs.changed == 'true'
-        uses: masseater/typescript-template/.github/actions/skills-lock@ccaa104d258c33875313bd6a31ad9c4ab8e4364f
+        uses: masseater/typescript-template/.github/actions/skills-lock@b024e4dc89157d7261c5fb86f23d8ee4060cf523
         with:
           branch: ${{ github.head_ref }}
       - if: steps.lockfile.outputs.changed == 'true'

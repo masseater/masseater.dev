@@ -32,7 +32,7 @@
   },
   "exports": {
     "./cli": "./bin/msch.ts",
-    "./decision-rules": "./src/features/lint-preset/config/decision-rules.ts",
+    "./decision-rules": "./src/app/decision-rules.ts",
     "./lint-rules": "./src/features/lint-rules/index.ts",
     "./lint": "./src/features/lint-preset/index.ts",
     "./oxlint": "./src/app/oxlint.ts",

@@ -2,10 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { placeOf, sizeOf } from "#/entities/watashi";
-import type { SessionValue } from "#/entities/watashi";
-import { jstMinute } from "#/shared/model";
-import { Row, TagList } from "#/shared/ui";
+import { placeOf, sizeOf } from "#/entities/watashi/index.ts";
+import type { SessionValue } from "#/entities/watashi/index.ts";
+import { jstMinute } from "#/shared/model/index.ts";
+import { Row, TagList } from "#/shared/ui/index.ts";
 
 export const SessionRow = ({ session }: Readonly<{ session: SessionValue }>): ReactNode => {
   const params = useMemo(() => ({ session: session.sessionId }), [session.sessionId]);

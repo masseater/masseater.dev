@@ -1,7 +1,7 @@
 import { ArrowUpCircle } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { Release } from "#/shared/api";
+import type { Release } from "#/shared/api/index.ts";
 
 import { ReleaseNotesLink } from "./release-notes-link.tsx";
 import { UpdateAction } from "./update-action.tsx";

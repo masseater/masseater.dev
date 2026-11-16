@@ -93,7 +93,7 @@ const checks: ToolSections = {
     )}])`,
   },
   steiger: {
-    paths: ["apps/*/src", "libs/*/src"],
+    paths: ["apps/*/src", "libs/*/src", "tools/*/src", "infra/*/src"],
     rules: steigerRules,
   },
   textlint: {

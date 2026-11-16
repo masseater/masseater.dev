@@ -1,1 +1,1 @@
-export { Setlist } from "./ui/setlist";
+export { Setlist } from "./ui/setlist.tsx";

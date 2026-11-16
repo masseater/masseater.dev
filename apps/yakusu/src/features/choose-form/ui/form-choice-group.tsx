@@ -8,8 +8,8 @@ import {
   FORM_OPTIONS,
   useFormChoice,
   useSetFormChoice,
-} from "#/entities/translation";
-import type { FormChoice } from "#/entities/translation";
+} from "#/entities/translation/index.ts";
+import type { FormChoice } from "#/entities/translation/index.ts";
 
 import { FormChoiceItem } from "./form-choice-item.tsx";
 

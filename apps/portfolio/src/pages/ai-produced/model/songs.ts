@@ -1,4 +1,4 @@
-import { sectionPath, site } from "#/shared/config";
+import { sectionPath, site } from "#/shared/config/index.ts";
 
 export type Song = Readonly<{
   slug: string;

@@ -1,10 +1,10 @@
 import { Array as Arr, Effect, Ref, Schedule } from "effect";
 
-import { recordingAtom, savingAtom } from "#/entities/interview/model/atoms";
-import { encodeRecord, recordOf } from "#/entities/interview/model/record";
-import { saveSession } from "#/shared/api";
-import { read, write } from "#/shared/lib/registry";
-import { runtime } from "#/shared/lib/runtime";
+import { recordingAtom, savingAtom } from "#/entities/interview/model/atoms.ts";
+import { encodeRecord, recordOf } from "#/entities/interview/model/record.ts";
+import { saveSession } from "#/shared/api/index.ts";
+import { read, write } from "#/shared/lib/registry.ts";
+import { runtime } from "#/shared/lib/runtime.ts";
 
 const SAVE_EVERY = "3 seconds";
 

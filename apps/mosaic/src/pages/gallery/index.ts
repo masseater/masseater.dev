@@ -1,2 +1,2 @@
-export { galleryHead } from "./model/head";
-export { GalleryPage } from "./ui/gallery-page";
+export { galleryHead } from "./model/head.ts";
+export { GalleryPage } from "./ui/gallery-page.tsx";

@@ -25,12 +25,13 @@
     "upstream/UNICODE-LICENSE.txt"
   ],
   "type": "module",
-  "main": "./src/index.ts",
+  "main": "./src/app/index.ts",
   "imports": {
-    "#upstream/*": "./upstream/*"
+    "#upstream/*": "./upstream/*",
+    "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts",
+    ".": "./src/app/index.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {

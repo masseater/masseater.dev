@@ -1,7 +1,7 @@
 import { PackagePlus } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useDragOver } from "#/features/library/model/drop-state";
+import { useDragOver } from "#/features/library/model/drop-state.ts";
 
 const DROP_HERE = "ここにドロップ";
 

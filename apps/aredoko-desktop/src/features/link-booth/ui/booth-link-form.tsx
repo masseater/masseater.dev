@@ -2,9 +2,9 @@ import { Button } from "@masseater.dev/ui/button";
 import { useCallback } from "react";
 import type { ChangeEvent, SubmitEvent, ReactNode } from "react";
 
-import { useLinkBooth } from "#/features/link-booth/api/link-booth";
-import { useBoothDraft, useSetBoothDraft } from "#/features/link-booth/model/booth-draft";
-import { Input } from "#/shared/ui/input";
+import { useLinkBooth } from "#/features/link-booth/api/link-booth.ts";
+import { useBoothDraft, useSetBoothDraft } from "#/features/link-booth/model/booth-draft.ts";
+import { Input } from "#/shared/ui/input.tsx";
 
 const PLACEHOLDER = "https://booth.pm/ja/items/…";
 const LABEL = "BOOTH の商品ページの URL";

@@ -2,7 +2,7 @@ import { cn } from "@masseater.dev/ui/cn";
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSummary } from "#/entities/interview";
+import { useSummary } from "#/entities/interview/index.ts";
 
 import { NoteList } from "./note-list.tsx";
 import type { Note } from "./notes.ts";

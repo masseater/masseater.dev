@@ -1,11 +1,11 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { techniqueList } from "#/entities/technique";
-import type { Technique } from "#/entities/technique";
-import { NEXT_LABEL, PREVIOUS_LABEL } from "#/pages/seikin-technique/model/copy";
+import { techniqueList } from "#/entities/technique/index.ts";
+import type { Technique } from "#/entities/technique/index.ts";
+import { NEXT_LABEL, PREVIOUS_LABEL } from "#/pages/seikin-technique/model/copy.ts";
 
-import { PagerLink } from "./pager-link";
+import { PagerLink } from "./pager-link.tsx";
 
 const PREVIOUS = -1;
 const NEXT = 1;

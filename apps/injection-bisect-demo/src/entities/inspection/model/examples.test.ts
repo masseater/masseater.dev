@@ -1,7 +1,7 @@
 import { String as Str } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { EXAMPLES } from "./examples";
+import { EXAMPLES } from "./examples.ts";
 
 test("every answer appears once in its example", () => {
   for (const example of EXAMPLES) {

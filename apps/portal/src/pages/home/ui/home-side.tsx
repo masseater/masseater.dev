@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-import { AttentionCard } from "./attention-card";
-import { Guarded } from "./guarded";
-import { MoneyMiniCard } from "./money-mini-card";
-import { ProjectsCard } from "./projects-card";
+import { AttentionCard } from "./attention-card.tsx";
+import { Guarded } from "./guarded.tsx";
+import { MoneyMiniCard } from "./money-mini-card.tsx";
+import { ProjectsCard } from "./projects-card.tsx";
 
 export const HomeSide = (): ReactNode => (
   <div className="flex min-w-0 flex-col gap-5">

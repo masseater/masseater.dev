@@ -4,9 +4,6 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#config": "./kikite.ts",
-    "#protocol": "./protocol.ts",
-    "#strategies": "./strategies.ts",
     "#/*": "./src/*"
   },
   "dependencies": {

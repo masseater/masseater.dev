@@ -1,8 +1,8 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { LoadingCell } from "./loading-cell";
-import { HEIGHT, WIDTH } from "./loading-cell-size";
+import { HEIGHT, WIDTH } from "./loading-cell-size.ts";
+import { LoadingCell } from "./loading-cell.tsx";
 
 const LABEL = "読み込み中";
 const SIDE = 3;

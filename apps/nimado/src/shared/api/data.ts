@@ -13,7 +13,7 @@ import { Effect, ManagedRuntime } from "effect";
 import type { Schema } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientResponse } from "effect/http";
 
-import { BASE_PATH } from "#/shared/config";
+import { BASE_PATH } from "#/shared/config/index.ts";
 
 export interface Query<Value> {
   readonly queryKey: readonly string[];

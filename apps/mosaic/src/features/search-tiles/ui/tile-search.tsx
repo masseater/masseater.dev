@@ -1,10 +1,10 @@
 import type { ChangeEventHandler, ReactNode } from "react";
 import { useCallback } from "react";
 
-import { useSearch, useSetSearch } from "#/entities/mosaic";
-import { hasQuery } from "#/features/search-tiles/lib/search";
+import { useSearch, useSetSearch } from "#/entities/mosaic/index.ts";
+import { hasQuery } from "#/features/search-tiles/lib/search.ts";
 
-import { SearchResults } from "./search-results";
+import { SearchResults } from "./search-results.tsx";
 
 const PLACEHOLDER = "曲名やボカロPで探す";
 

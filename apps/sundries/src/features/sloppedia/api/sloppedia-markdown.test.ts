@@ -3,7 +3,7 @@ import { Base64 } from "effect/encoding";
 import { describe, expect, it } from "vite-plus/test";
 import { parse } from "yaml";
 
-import { articleContent } from "./sloppedia-markdown";
+import { articleContent } from "./sloppedia-markdown.ts";
 
 const decode = (content: string): string => Result.getOrThrow(Base64.decodeString(content));
 

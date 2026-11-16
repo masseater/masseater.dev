@@ -1,10 +1,10 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Tone } from "#/entities/inspection";
-import { COPY } from "#/shared/config";
+import type { Tone } from "#/entities/inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
 
-import { ANSWER_CLASS, TONE_CLASS } from "./tone";
+import { ANSWER_CLASS, TONE_CLASS } from "./tone.ts";
 
 const ITEMS: readonly (readonly [Tone, string])[] = [
   ["pending", COPY.legendPending],

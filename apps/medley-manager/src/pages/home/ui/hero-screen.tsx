@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { Danmaku } from "./danmaku";
-import { HeroPanel } from "./hero-panel";
+import { Danmaku } from "./danmaku.tsx";
+import { HeroPanel } from "./hero-panel.tsx";
 
 export const HeroScreen = (): ReactNode => (
   <div className="relative">

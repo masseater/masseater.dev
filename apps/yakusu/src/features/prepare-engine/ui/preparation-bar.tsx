@@ -1,7 +1,7 @@
 import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-import { usePreparation, amountOf } from "#/entities/engine";
+import { usePreparation, amountOf } from "#/entities/engine/index.ts";
 
 const DOWNLOADING = "モデルを取得中";
 

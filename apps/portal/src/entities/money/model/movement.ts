@@ -1,6 +1,6 @@
 import { Array as Arr, pipe } from "effect";
 
-import type { MonthTotalValue } from "./money";
+import type { MonthTotalValue } from "./money.ts";
 
 const NONE = 0;
 

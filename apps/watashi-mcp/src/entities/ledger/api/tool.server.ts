@@ -4,10 +4,10 @@ import type { McpServer, StandardSchemaWithJSON } from "@modelcontextprotocol/se
 import { Array as Arr, Effect, Layer, pipe } from "effect";
 import { Digest, SecureRandom } from "effect/crypto";
 
-import { InvalidRecord } from "#/shared/api";
-import { meteredInput, runToolIn } from "#/shared/api/index.server";
+import { meteredInput, runToolIn } from "#/shared/api/index.server.ts";
+import { InvalidRecord } from "#/shared/api/index.ts";
 
-import type { Failure, Services } from "./database.server";
+import type { Failure, Services } from "./database.server.ts";
 
 /** @internal */
 export type Annotations =

@@ -3,9 +3,9 @@ import type { BatchItem } from "drizzle-orm/batch";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 import type { Digest, SecureRandom } from "effect/crypto";
 
-import type { InvalidRecord } from "#/shared/api";
-import type { StorageFailed } from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+import type { InvalidRecord } from "#/shared/api/index.ts";
+import { db, query } from "#/shared/db/index.server.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { transactions } from "./ledger.table.ts";
 

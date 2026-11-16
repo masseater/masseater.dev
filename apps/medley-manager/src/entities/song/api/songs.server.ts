@@ -1,8 +1,8 @@
 import { countDistinct, isNotNull } from "drizzle-orm";
 import { Array, Effect, Option, Order, pipe } from "effect";
 
-import { part } from "#/shared/db";
-import { NO_ROWS, catalogDb, containing } from "#/shared/db/index.server";
+import { NO_ROWS, catalogDb, containing } from "#/shared/db/index.server.ts";
+import { part } from "#/shared/db/index.ts";
 
 const byUsesDescending = Order.flip(
   Order.mapInput(Order.Number, ({ useCount }: Readonly<{ useCount: number }>) => useCount),

@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { HitRow } from "#/entities/slide";
-import { useFoundSlides } from "#/pages/search/api/search-query";
-import { RowList, Section } from "#/shared/ui";
+import { HitRow } from "#/entities/slide/index.ts";
+import { useFoundSlides } from "#/pages/search/api/search-query.ts";
+import { RowList, Section } from "#/shared/ui/index.ts";
 
 const TITLE = "スライド";
 

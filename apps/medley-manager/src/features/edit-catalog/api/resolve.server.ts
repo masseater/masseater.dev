@@ -1,10 +1,10 @@
 import { eq, or } from "drizzle-orm";
 import { Effect, Option } from "effect";
 
-import type { ToolError } from "#/shared/api";
-import { query } from "#/shared/api/index.server";
-import { person, personAlias, song, songAlias, video } from "#/shared/db";
-import { catalogDb } from "#/shared/db/index.server";
+import { query } from "#/shared/api/index.server.ts";
+import type { ToolError } from "#/shared/api/index.ts";
+import { catalogDb } from "#/shared/db/index.server.ts";
+import { person, personAlias, song, songAlias, video } from "#/shared/db/index.ts";
 
 const UNKNOWN_URL = "urn:medley-manager:unknown";
 const STUB_NOTE = "パートの登録で作った。元動画の URL は未確認";

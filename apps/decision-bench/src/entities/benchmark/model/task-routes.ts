@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 
-import { tasks } from "./ranking";
-import type { TaskInfo } from "./ranking";
+import { tasks } from "./ranking.ts";
+import type { TaskInfo } from "./ranking.ts";
 
 export type TaskRoute = Readonly<{ info: TaskInfo; params: Readonly<{ task: string }> }>;
 

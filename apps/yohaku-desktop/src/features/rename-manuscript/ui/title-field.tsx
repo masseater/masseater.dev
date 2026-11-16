@@ -3,7 +3,7 @@ import { Option, String, pipe } from "effect";
 import { useCallback } from "react";
 import type { FocusEvent, ReactNode } from "react";
 
-import { useTitle } from "#/features/rename-manuscript/api/title";
+import { useTitle } from "#/features/rename-manuscript/api/title.ts";
 
 const LABEL = "題名";
 

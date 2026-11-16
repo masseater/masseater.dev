@@ -1,11 +1,11 @@
 import { MousePointerClick, TrendingDown } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { TaskEntry } from "#/entities/benchmark";
-import { ReliabilityChart } from "#/entities/benchmark";
-import { NoteList } from "#/shared/ui/note-list";
-import type { Note } from "#/shared/ui/note-list";
-import { Section } from "#/shared/ui/section";
+import type { TaskEntry } from "#/entities/benchmark/index.ts";
+import { ReliabilityChart } from "#/entities/benchmark/index.ts";
+import { NoteList } from "#/shared/ui/note-list.tsx";
+import type { Note } from "#/shared/ui/note-list.tsx";
+import { Section } from "#/shared/ui/section.tsx";
 
 const TITLE = "確信度と実際の正解率";
 

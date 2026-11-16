@@ -1,1 +1,1 @@
-export { TileCard } from "./ui/tile-card";
+export { TileCard } from "./ui/tile-card.tsx";

@@ -1,10 +1,10 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { PREFERENCES } from "#/pages/home/model/about";
+import { PREFERENCES } from "#/pages/home/model/about.ts";
 
-import { AboutItemList } from "./about-item-list";
-import { AboutRow } from "./about-row";
+import { AboutItemList } from "./about-item-list.tsx";
+import { AboutRow } from "./about-row.tsx";
 
 export const AboutPreferences = (): ReactNode => (
   <dl className="flex flex-col gap-6">

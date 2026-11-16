@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { StrategyRow as Row } from "#/pages/report/model/review-hooks";
+import type { StrategyRow as Row } from "#/pages/report/model/review-hooks.ts";
 
 import { StrategyHeading } from "./strategy-heading.tsx";
 import { StrategyRow } from "./strategy-row.tsx";

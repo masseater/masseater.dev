@@ -1,11 +1,11 @@
 import { Clock, Effect, Match, Option, Result, Schema } from "effect";
 
-import type { Principal } from "#/entities/api-token/index.server";
-import { MemoryWriteInput } from "#/entities/memory";
-import type { MemoryWriteValue } from "#/entities/memory";
-import type { StoreFailure } from "#/shared/api";
-import { BAD_REQUEST, json, storageFailed, withStatus } from "#/shared/api";
-import { describeFailure } from "#/shared/api/index.server";
+import type { Principal } from "#/entities/api-token/index.server.ts";
+import { MemoryWriteInput } from "#/entities/memory/index.ts";
+import type { MemoryWriteValue } from "#/entities/memory/index.ts";
+import { describeFailure } from "#/shared/api/index.server.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
+import { BAD_REQUEST, json, storageFailed, withStatus } from "#/shared/api/index.ts";
 
 import { writeMemory } from "./memory-write.server.ts";
 

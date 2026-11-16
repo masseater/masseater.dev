@@ -4,8 +4,8 @@ import { Array, Effect, Option, pipe } from "effect";
 import { Atom } from "effect/reactivity";
 import { useEffect } from "react";
 
-import { useYohaku } from "#/shared/api";
-import { opened, useScreen } from "#/shared/model";
+import { useYohaku } from "#/shared/api/index.ts";
+import { opened, useScreen } from "#/shared/model/index.ts";
 
 const resumedAtom = Atom.make(false);
 

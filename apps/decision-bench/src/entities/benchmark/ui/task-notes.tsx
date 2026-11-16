@@ -2,12 +2,12 @@ import { percent } from "bench-summary/format";
 import { Array as Arr, pipe } from "effect";
 import { Asterisk, ListChecks, Ruler, Tag } from "lucide-react";
 
-import { SPLIT_MARK } from "#/entities/benchmark/model/display-label";
-import { METRIC_NAMES } from "#/entities/benchmark/model/metric-names";
-import type { TaskInfo } from "#/entities/benchmark/model/ranking";
-import { summary } from "#/entities/benchmark/model/summary";
-import type { LabelStats } from "#/entities/benchmark/model/summary";
-import type { Note } from "#/shared/ui/note-list";
+import { SPLIT_MARK } from "#/entities/benchmark/model/display-label.ts";
+import { METRIC_NAMES } from "#/entities/benchmark/model/metric-names.ts";
+import type { TaskInfo } from "#/entities/benchmark/model/ranking.ts";
+import { summary } from "#/entities/benchmark/model/summary.ts";
+import type { LabelStats } from "#/entities/benchmark/model/summary.ts";
+import type { Note } from "#/shared/ui/note-list.tsx";
 
 const SPLIT_NOTE: Note = {
   icon: <Asterisk aria-hidden="true" />,

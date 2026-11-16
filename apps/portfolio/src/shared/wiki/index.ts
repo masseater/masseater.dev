@@ -1,1 +1,1 @@
-export { wiki } from "./wiki";
+export { wiki } from "./wiki.ts";

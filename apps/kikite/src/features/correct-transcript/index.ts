@@ -1,1 +1,1 @@
-export { correct } from "./model/correction";
+export { correct } from "./model/correction.ts";

@@ -1,7 +1,7 @@
 import { Number as Num, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { YEN } from "#/entities/money";
+import { YEN } from "#/entities/money/index.ts";
 
 type SheetLabelProps = Readonly<{
   x?: number | string;

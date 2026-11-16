@@ -1,1 +1,1 @@
-export { MosaicActions } from "./ui/mosaic-actions";
+export { MosaicActions } from "./ui/mosaic-actions.tsx";

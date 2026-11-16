@@ -1,8 +1,8 @@
 import { Effect, Option } from "effect";
 
-import { nudgeAtom, previousThemeAtom } from "#/entities/interview";
-import type { Nudge } from "#/entities/interview";
-import { read, write } from "#/shared/lib/registry";
+import { nudgeAtom, previousThemeAtom } from "#/entities/interview/index.ts";
+import type { Nudge } from "#/entities/interview/index.ts";
+import { read, write } from "#/shared/lib/registry.ts";
 
 const FIRST = 1;
 const FIRST_TIME = "さっきまで、何をしていましたか？";

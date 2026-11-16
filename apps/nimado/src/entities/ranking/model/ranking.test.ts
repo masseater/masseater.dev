@@ -2,10 +2,10 @@ import { DayViews, Table } from "@masseater.dev/nimado";
 import { Array as Arr, Option, Schema, pipe } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 
-import { windowOf } from "./period";
-import { gains, growth, rank, totals } from "./ranking";
-import type { Ranked } from "./ranking";
-import { rankingSearch, usableSearch } from "./search";
+import { windowOf } from "./period.ts";
+import { gains, growth, rank, totals } from "./ranking.ts";
+import type { Ranked } from "./ranking.ts";
+import { rankingSearch, usableSearch } from "./search.ts";
 
 const decodeTable = Schema.decodeUnknownOption(Schema.fromJsonString(Table));
 const decodeDay = Schema.decodeUnknownOption(Schema.fromJsonString(DayViews));

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { entryHead, EntryPage, loadEntry } from "#/pages/entry";
+import { entryHead, EntryPage, loadEntry } from "#/pages/entry/index.ts";
 
 export const Route = createFileRoute("/_stage/_site/$category/$slug")({
   loader: ({ params }) => loadEntry(params),

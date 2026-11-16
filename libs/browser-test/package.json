@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./vite": "./src/vite.ts"
+    "./vite": "./src/app/vite.ts"
   },
   "dependencies": {
     "@vitest/browser-playwright": "5.1.0",
+    "dejavu-fonts-ttf": "catalog:",
     "playwright": "1.65.0",
     "vite-plus": "catalog:stack"
   }

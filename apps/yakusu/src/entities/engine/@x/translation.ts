@@ -1,1 +1,1 @@
-export { usePreparation } from "#/entities/engine/api/preparation";
+export { usePreparation } from "#/entities/engine/api/preparation.ts";

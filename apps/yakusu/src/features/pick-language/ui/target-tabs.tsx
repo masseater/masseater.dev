@@ -1,8 +1,8 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { LanguageCode } from "#/entities/language";
-import { useRecentTargets } from "#/entities/language";
+import type { LanguageCode } from "#/entities/language/index.ts";
+import { useRecentTargets } from "#/entities/language/index.ts";
 
 import { PickerToggle } from "./picker-toggle.tsx";
 import { TargetTab } from "./target-tab.tsx";

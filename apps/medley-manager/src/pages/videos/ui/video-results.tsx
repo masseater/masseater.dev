@@ -3,8 +3,8 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { catalogQueries } from "#/entities/catalog";
-import { VideoList } from "#/entities/video";
+import { catalogQueries } from "#/entities/catalog/index.ts";
+import { VideoList } from "#/entities/video/index.ts";
 
 const route = getRouteApi("/videos/");
 

@@ -1,30 +1,30 @@
 import { Array as Arr, Effect, Option, Predicate, Record as Rec, Schema } from "effect";
 
 import {
-  assumedNotices,
-  invalid,
-  lifeKeyOf,
-  normalize,
-  validateBody,
-  refOf,
-} from "#/entities/life-record";
-import type { ItemResult, ChangeValue, Body } from "#/entities/life-record";
-import {
   findRecord,
   vocabularyNotices,
   Snapshot,
   replaceRecord,
   snapshotOf,
-} from "#/entities/life-record/index.server";
+} from "#/entities/life-record/index.server.ts";
 import type {
   LifeEntry,
   Notice,
   ValuesCheck,
   SnapshotValue,
   Writer,
-} from "#/entities/life-record/index.server";
-import type { StoreFailure } from "#/shared/api";
-import { findRevision, nowIso } from "#/shared/db/index.server";
+} from "#/entities/life-record/index.server.ts";
+import {
+  assumedNotices,
+  invalid,
+  lifeKeyOf,
+  normalize,
+  validateBody,
+  refOf,
+} from "#/entities/life-record/index.ts";
+import type { ItemResult, ChangeValue, Body } from "#/entities/life-record/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
+import { findRevision, nowIso } from "#/shared/db/index.server.ts";
 
 export type ChangeFailure = Exclude<StoreFailure, Readonly<{ _tag: "MemoryNotFound" }>>;
 

@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { ProfileSectionValue } from "#/entities/watashi";
+import type { ProfileSectionValue } from "#/entities/watashi/index.ts";
 
-import { SectionBlock } from "./section-block";
+import { SectionBlock } from "./section-block.tsx";
 
 const EMPTY = "まだ作られていない";
 

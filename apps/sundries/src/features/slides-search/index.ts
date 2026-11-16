@@ -1,1 +1,1 @@
-export { registerSlideTools, searchSlides } from "./api/slides-tools";
+export { registerSlideTools, searchSlides } from "./api/slides-tools.ts";

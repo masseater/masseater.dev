@@ -1,4 +1,12 @@
-import { Array as Arr, Option, Predicate, Record as Rec, String as Str, pipe } from "effect";
+import {
+  Array as Arr,
+  Option,
+  Predicate,
+  Record as Rec,
+  Schema,
+  String as Str,
+  pipe,
+} from "effect";
 
 import type { PackEntrySource } from "./published.ts";
 
@@ -101,3 +109,11 @@ export const publicEntriesOf = (lookup: EntryLookup): readonly PublicEntry[] =>
     ),
     Arr.dedupeWith((left, right) => left.label === right.label && left.source === right.source),
   );
+
+const EntryManifestFields = Schema.Struct({
+  name: Schema.optional(Schema.String),
+  exports: Schema.optional(Schema.Unknown),
+  bin: Schema.optional(Schema.Unknown),
+});
+
+export const EntryManifestJson = Schema.fromJsonString(EntryManifestFields);

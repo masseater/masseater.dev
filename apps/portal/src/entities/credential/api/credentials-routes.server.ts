@@ -1,4 +1,4 @@
-import { attempt, createRouter, credentials, respond } from "#/shared/api/index.server";
+import { attempt, createRouter, credentials, respond } from "#/shared/api/index.server.ts";
 
 export const credentialsRoutes = createRouter("/api/credentials").get("/", () =>
   respond(attempt(() => credentials().list())),

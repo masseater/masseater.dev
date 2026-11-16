@@ -1,8 +1,6 @@
 import { eq, max } from "drizzle-orm";
 import { Array as Arr, Effect, Option, Order, Record as Rec, pipe } from "effect";
 
-import { ownerTrait, ownerTraitEvidence, ownerTraitVector, traitCursor } from "#/shared/db";
-import type { TraitOrigin, RevisionOp, StorageFailed } from "#/shared/db";
 import {
   db,
   commitWith,
@@ -10,11 +8,18 @@ import {
   nextAfterMax,
   nowIso,
   toStorageFailed,
-} from "#/shared/db/index.server";
-import type { RevisedWrite, Statement, WriteFailure } from "#/shared/db/index.server";
+} from "#/shared/db/index.server.ts";
+import type { RevisedWrite, Statement, WriteFailure } from "#/shared/db/index.server.ts";
+import {
+  ownerTrait,
+  ownerTraitEvidence,
+  ownerTraitVector,
+  traitCursor,
+} from "#/shared/db/index.ts";
+import type { TraitOrigin, RevisionOp, StorageFailed } from "#/shared/db/index.ts";
 
-import { keyText } from "./trait-state";
-import type { Plan, TraitKey, TraitState } from "./trait-state";
+import { keyText } from "./trait-state.ts";
+import type { Plan, TraitKey, TraitState } from "./trait-state.ts";
 
 export type Cursor = Readonly<{ origin: TraitOrigin; position: string }>;
 

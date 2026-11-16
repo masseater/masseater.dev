@@ -1,6 +1,6 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import { previousWeekStart, weekStart } from "./week";
+import { previousWeekStart, weekStart } from "./week.ts";
 
 const NONE = 0;
 

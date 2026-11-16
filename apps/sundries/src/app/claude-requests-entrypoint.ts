@@ -6,8 +6,8 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Logger } from "effect";
 
-import { enqueue, wakeProject } from "#/features/claude-request";
-import type { Woken } from "#/features/claude-request";
+import { enqueue, wakeProject } from "#/features/claude-request/index.ts";
+import type { Woken } from "#/features/claude-request/index.ts";
 
 const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
 

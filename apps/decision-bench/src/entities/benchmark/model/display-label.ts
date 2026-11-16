@@ -1,6 +1,6 @@
 import { isSplitChoice } from "bench-summary/schema";
 
-import type { ModelResult, TaskResult } from "./summary";
+import type { ModelResult, TaskResult } from "./summary.ts";
 
 export const SPLIT_MARK = "*";
 

@@ -1,1 +1,1 @@
-export { credentialsRoutes } from "./api/credentials-routes.server";
+export { credentialsRoutes } from "./api/credentials-routes.server.ts";

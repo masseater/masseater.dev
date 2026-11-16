@@ -8,11 +8,11 @@ import {
   pipe,
 } from "effect";
 
-import { LIFE_RECORDS } from "#/shared/db";
-import type { LifeRecordName } from "#/shared/db";
+import { LIFE_RECORDS } from "#/shared/db/index.ts";
+import type { LifeRecordName } from "#/shared/db/index.ts";
 
-import { dayRangeOf, parseTime, storedOf, timeOut } from "./life-time";
-import type { DayRange, TimeValue } from "./life-time";
+import { dayRangeOf, parseTime, storedOf, timeOut } from "./life-time.ts";
+import type { DayRange, TimeValue } from "./life-time.ts";
 
 export type Body = Readonly<Record<string, unknown>>;
 

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import type { MemoValue } from "#/entities/watashi";
-import { RetractedNote } from "#/entities/watashi";
-import { TagList } from "#/shared/ui";
+import type { MemoValue } from "#/entities/watashi/index.ts";
+import { RetractedNote } from "#/entities/watashi/index.ts";
+import { TagList } from "#/shared/ui/index.ts";
 
 export const MemoHeader = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => (
   <header className="flex flex-col gap-2">

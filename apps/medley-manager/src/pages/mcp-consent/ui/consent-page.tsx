@@ -2,7 +2,7 @@ import { ConsentForm } from "@masseater.dev/owner-auth/ui";
 import { useSearch } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { Button } from "#/shared/ui/button";
+import { Button } from "#/shared/ui/button.tsx";
 
 const SCOPE = "曲・動画・担当者の登録と編集を許可します";
 

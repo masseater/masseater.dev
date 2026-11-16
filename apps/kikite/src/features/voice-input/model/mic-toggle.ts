@@ -3,9 +3,9 @@ import { Effect, Option } from "effect";
 import { Atom } from "effect/reactivity";
 import { useCallback } from "react";
 
-import { hearingAtom, listeningAtom, recognitionAtom, touch } from "#/entities/interview";
-import type { Recognition } from "#/shared/lib/recognition";
-import { read, write } from "#/shared/lib/registry";
+import { hearingAtom, listeningAtom, recognitionAtom, touch } from "#/entities/interview/index.ts";
+import type { Recognition } from "#/shared/lib/recognition.ts";
+import { read, write } from "#/shared/lib/registry.ts";
 
 const pause = Effect.fn("kikite.pauseMic")(function* pause(recognition: Recognition) {
   recognition.mute();

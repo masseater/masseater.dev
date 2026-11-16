@@ -3,10 +3,8 @@ import { runMain } from "@masseater.dev/node-main";
 import { Array as Arr, Effect, FileSystem, Path, Schema, String as Str, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 
-import { csharp } from "#/csharp.ts";
-import { rustOutputs } from "#/rust.ts";
-import type { RustOutput } from "#/rust.ts";
-import { sts2 } from "#/sts2.ts";
+import { csharp, rustOutputs, sts2 } from "#/features/generate-bindings/index.ts";
+import type { RustOutput } from "#/features/generate-bindings/index.ts";
 
 const CSHARP_OUTPUT =
   "../../apps/aredoko-unity/Packages/dev.masseater.aredoko/Editor/Protocol/Protocol.g.cs";

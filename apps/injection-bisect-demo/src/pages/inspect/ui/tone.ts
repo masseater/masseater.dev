@@ -1,4 +1,4 @@
-import type { Tone } from "#/entities/inspection";
+import type { Tone } from "#/entities/inspection/index.ts";
 
 export const TONE_CLASS: Readonly<Record<Tone, string>> = {
   none: "",

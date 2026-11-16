@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, test } from "vite-plus/test";
 
-import { WikiLink } from "./wiki-link";
+import { WikiLink } from "./wiki-link.tsx";
 
 const label = "文言";
 

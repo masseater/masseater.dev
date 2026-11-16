@@ -5,7 +5,7 @@ import { Build } from "alchemy/Command";
 import { Effect } from "effect";
 import { STATIC_PAGE_HEADERS, assetHeaders } from "security-headers";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, requireAppPrefix } from "./src/shared/config/app-name.ts";
 
 const COMPATIBILITY = { date: "2026-08-25" } as const;
 

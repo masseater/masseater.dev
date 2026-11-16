@@ -13,7 +13,7 @@
     "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/app/index.ts"
   },
   "dependencies": {
     "@masseater.dev/node-main": "workspace:*",

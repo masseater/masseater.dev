@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { statsQuery } from "#/pages/home/api/loader";
+import { statsQuery } from "#/pages/home/api/loader.ts";
 
 const ALL = {};
 

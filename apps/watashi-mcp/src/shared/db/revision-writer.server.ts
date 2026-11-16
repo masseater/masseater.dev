@@ -5,7 +5,7 @@ import { Array as Arr, Effect, pipe } from "effect";
 import { db } from "./client.server.ts";
 import { revision } from "./revision.table.ts";
 import type { RevisionEntity, RevisionOp } from "./revision.table.ts";
-import type { StorageFailed } from "./storage-failed";
+import type { StorageFailed } from "./storage-failed.ts";
 import { attempt, encodeJson, nextAfterMax, toStorageFailed } from "./storage.server.ts";
 import type { WriteFailure } from "./storage.server.ts";
 

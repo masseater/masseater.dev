@@ -2,7 +2,7 @@ import { cn } from "@masseater.dev/ui/cn";
 import { LoaderCircle } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useStatus } from "#/shared/api";
+import { useStatus } from "#/shared/api/index.ts";
 
 const SIZES = {
   xs: { text: "text-xs", icon: "size-4" },

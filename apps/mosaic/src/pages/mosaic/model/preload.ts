@@ -1,12 +1,18 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { Array, Effect, Option, pipe } from "effect";
 
-import { bundledMosaic, mosaicTitle, slugFile, variantFile, loadVisit } from "#/entities/mosaic";
-import type { Mosaic, Visit, Assignment, Loaded } from "#/entities/mosaic";
-import { BASE_PATH, SITE_ORIGIN } from "#/shared/config";
-import { optionalCardMeta } from "#/shared/lib/card";
-import type { Card, Meta } from "#/shared/lib/card";
-import { runtime } from "#/shared/lib/telemetry";
+import {
+  bundledMosaic,
+  mosaicTitle,
+  slugFile,
+  variantFile,
+  loadVisit,
+} from "#/entities/mosaic/index.ts";
+import type { Mosaic, Visit, Assignment, Loaded } from "#/entities/mosaic/index.ts";
+import { BASE_PATH, SITE_ORIGIN } from "#/shared/config/index.ts";
+import { optionalCardMeta } from "#/shared/lib/card.ts";
+import type { Card, Meta } from "#/shared/lib/card.ts";
+import { runtime } from "#/shared/lib/telemetry.ts";
 
 const OVERVIEW = 0;
 const BEST_VARIANT = 0;

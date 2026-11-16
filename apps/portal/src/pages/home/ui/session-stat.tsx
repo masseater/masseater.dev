@@ -1,13 +1,13 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { RECENT_SESSION_LIMIT } from "#/entities/watashi";
-import { useSessions } from "#/pages/home/api/home-query";
-import { activitiesOf } from "#/pages/home/model/activity";
-import { boundedText, exactWeeks } from "#/pages/home/model/bounded-count";
-import { weekCount } from "#/pages/home/model/week-count";
-import { jstMinute } from "#/shared/model";
-import { Stat } from "#/shared/ui";
+import { RECENT_SESSION_LIMIT } from "#/entities/watashi/index.ts";
+import { useSessions } from "#/pages/home/api/home-query.ts";
+import { activitiesOf } from "#/pages/home/model/activity.ts";
+import { boundedText, exactWeeks } from "#/pages/home/model/bounded-count.ts";
+import { weekCount } from "#/pages/home/model/week-count.ts";
+import { jstMinute } from "#/shared/model/index.ts";
+import { Stat } from "#/shared/ui/index.ts";
 
 const TEXT = { label: "今週の会話", previous: "前週", unit: "件" } as const;
 
