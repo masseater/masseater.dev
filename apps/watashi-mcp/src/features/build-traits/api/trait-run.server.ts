@@ -21,7 +21,7 @@ import { buildProfile } from "./profile-build.server.ts";
 import type { ProfileOutcome } from "./profile-save.server.ts";
 import { buildStep } from "./trait-build.server.ts";
 import type { StepFailure, StepOutcome } from "./trait-build.server.ts";
-import { RECORD_TOOL, TRAIT_MODEL, lastSaid, readTranscript } from "./trait-pi.ts";
+import { TRAIT_MODEL, missingCallText, readTranscript } from "./trait-pi.ts";
 import { translateTraits } from "./trait-translate.server.ts";
 
 export type Answer = Readonly<{ status: string; reason?: string; messages: readonly unknown[] }>;
@@ -51,7 +51,10 @@ const reasonOf = (answer: Answer): string =>
 
 const missingCall = (answer: Answer): AnalystFailed =>
   AnalystFailed.make({
-    message: `no ${RECORD_TOOL} call (${answer.status} ${reasonOf(answer)}): ${lastSaid(answer.messages)}`,
+    message: missingCallText({
+      outcome: `${answer.status} ${reasonOf(answer)}`,
+      entries: answer.messages,
+    }),
   });
 
 const analyze =
