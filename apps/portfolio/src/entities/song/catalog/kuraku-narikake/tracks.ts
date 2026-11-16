@@ -1,12 +1,15 @@
 import type { Samples } from "@masseater.dev/daw-view";
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
 
+import { unpacked } from "#/entities/song/lib/studio/stem.ts";
 import type { Sheet } from "#/entities/song/model/take.ts";
 
 import type { Held } from "./deck.ts";
-import type { Engine, Stem } from "./program/engine.js";
-import type { Session } from "./program/song.js";
-import table from "./samples.json";
+import type { Kuraku } from "./engine/kuraku.ts";
+import { MIX } from "./engine/score.ts";
+import { trackOf } from "./engine/track.ts";
+import type { TrackStem } from "./engine/track.ts";
+import { table } from "./session.ts";
 import { ReplySchema } from "./track-messages.ts";
 import type { Ask, Reply } from "./track-messages.ts";
 
@@ -19,8 +22,8 @@ const RESERVED = 1;
 const BREATH = "0 millis";
 
 export interface Tracking {
-  readonly engine: Engine;
-  readonly session: Session;
+  readonly kuraku: Kuraku;
+  readonly clips: string;
   readonly samples: Samples;
   readonly sheet: Sheet;
   readonly held: Held;
@@ -103,7 +106,7 @@ interface Queue {
 }
 
 interface Taker {
-  readonly take: (name: string, stem: Stem) => void;
+  readonly take: (stem: TrackStem) => void;
   readonly drums: () => readonly string[];
 }
 
@@ -127,7 +130,7 @@ const built =
   (reply: Reply): void => {
     if ("stem" in reply) {
       tracking.sheet.log.push(...reply.entries);
-      taker.take(reply.name, reply.stem);
+      taker.take(reply.stem);
     }
   };
 
@@ -140,7 +143,9 @@ const working =
         Effect.gen(function* track() {
           queue.start(name);
           asked(worker, { name });
-          const reply = yield* replied(worker);
+          const reply = yield* Effect.withSpan(replied(worker), "kuraku.track", {
+            attributes: { "song.track": name },
+          });
           built(tracking, taker)(reply);
           queue.finish(name);
           yield* working(tracking, queue, taker)(worker);
@@ -151,7 +156,7 @@ const drained =
   (tracking: Tracking, queue: Queue, taker: Taker) =>
   (worker: Worker): Effect.Effect<void, WorkerLost> =>
     Effect.gen(function* drain() {
-      asked(worker, { samples: tracking.samples, table });
+      asked(worker, { samples: tracking.samples, table, clips: tracking.clips });
       yield* replied(worker);
       yield* working(tracking, queue, taker)(worker);
     });
@@ -174,38 +179,41 @@ const here = (tracking: Tracking, names: readonly string[], taker: Taker): Effec
       Effect.andThen(
         Effect.sleep(BREATH),
         Effect.sync(() => {
-          taker.take(name, tracking.session.track(name));
+          taker.take(trackOf(tracking.kuraku)(name));
         }),
       ),
     { discard: true },
   );
 
 const takerOf = (tracking: Tracking): Taker => {
-  const total = tracking.session.cost.length;
+  const total = MIX.tracks.length;
   const drums = new Set<string>();
   const done = { count: 0 };
   return {
-    take: (name, stem) => {
-      const index = tracking.session.tracks.indexOf(name);
-      const unpacked = tracking.engine.unpack(stem);
-      tracking.held.deck.write(tracking.held.slotOf(index, stem.drum), unpacked.L, unpacked.R);
+    take: (stem) => {
+      const { left, right } = unpacked(stem);
+      tracking.held.deck.write(tracking.held.slotOf(stem.name, stem.drum), left, right);
       if (stem.drum) {
-        drums.add(name);
+        drums.add(stem.name);
       }
       done.count += 1;
-      tracking.sheet.progress((done.count / total) * TRACK_SHARE, Str.toLowerCase(name));
+      tracking.sheet.progress((done.count / total) * TRACK_SHARE, Str.toLowerCase(stem.name));
     },
     drums: () => [...drums],
   };
 };
 
-export const renderTracks = (tracking: Tracking): Effect.Effect<readonly string[]> =>
+export const renderTracks = (tracking: Tracking): Effect.Effect<void> =>
   Effect.gen(function* tracks() {
     const taker = takerOf(tracking);
-    const queue = queueOf(tracking.session.cost);
+    const queue = queueOf(
+      pipe(
+        MIX.tracks,
+        Arr.map(({ name }) => name),
+      ),
+    );
     yield* pipe(
       pooled(tracking, queue, taker),
       Effect.catch(() => here(tracking, queue.left(), taker)),
     );
-    return taker.drums();
   });
