@@ -42,7 +42,7 @@ export const findingsOf =
     );
   };
 
-const rule: TextlintRuleModule = (context) => {
+export const yomiyasu: TextlintRuleModule = (context) => {
   const { Syntax, RuleError, report, getSource, getFilePath, locator } = context;
   return {
     [Syntax.Document]: (node) => {
@@ -56,5 +56,3 @@ const rule: TextlintRuleModule = (context) => {
     },
   };
 };
-
-export default rule;

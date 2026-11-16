@@ -1,7 +1,7 @@
 import { Array as Arr } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
-import { findingsOf } from "./index.ts";
+import { findingsOf } from "./yomiyasu.ts";
 
 const LIST_ITEMS = 20;
 const LISTED = Arr.join(

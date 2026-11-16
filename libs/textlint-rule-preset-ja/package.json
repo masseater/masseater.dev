@@ -1,0 +1,78 @@
+{
+  "name": "@r_masseater/textlint-rule-preset-ja",
+  "version": "0.1.1",
+  "description": "textlint preset of masseater's Japanese writing rules: yomiyasu, which flags hard-to-read Japanese written by AI, and no-taigendome, which bans sentences that end in a noun after a comma.",
+  "keywords": [
+    "japanese",
+    "textlint",
+    "textlint-rule",
+    "textlintrule"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/textlint-rule-preset-ja#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/textlint-rule-preset-ja"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "upstream/LICENSE",
+    "upstream/UNICODE-LICENSE.txt"
+  ],
+  "type": "module",
+  "main": "./src/index.ts",
+  "imports": {
+    "#upstream/*": "./upstream/*"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "main": "./dist/index.mjs",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "kuromojin": "3.0.1",
+    "sentence-splitter": "5.0.3"
+  },
+  "devDependencies": {
+    "@r_masseater/vite-plus-adopt": "catalog:",
+    "@size-limit/file": "catalog:",
+    "@textlint/ast-node-types": "catalog:",
+    "@textlint/types": "catalog:",
+    "effect": "catalog:stack",
+    "publint": "catalog:",
+    "size-limit": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0"
+  },
+  "size-limit": [
+    {
+      "path": "dist/*.mjs",
+      "limit": "27356 B"
+    }
+  ],
+  "engines": {
+    "node": ">=26"
+  }
+}
