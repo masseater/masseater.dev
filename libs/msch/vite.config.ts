@@ -30,7 +30,7 @@ export default defineConfig({
       cli: "bin/msch.ts",
       oxlint: "src/app/oxlint.ts",
       lint: "src/features/lint-preset/index.ts",
-      "decision-rules": "src/features/lint-preset/config/decision-rules.ts",
+      "decision-rules": "src/app/decision-rules.ts",
       "inline-exports": "src/features/inline-exports/index.ts",
       "workspace-settings": "src/features/workspace-settings/index.ts",
     },

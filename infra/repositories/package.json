@@ -10,10 +10,9 @@
     "#/*": "./src/*"
   },
   "exports": {
-    "./access-sites": "./src/shared/config/access-sites.ts",
-    "./oauth-targets": "./src/entities/oauth-target/model/oauth-targets.ts",
-    "./credential-grants": "./src/entities/credential/model/credential-grants.ts",
-    "./github-oidc": "./src/entities/credential/model/github-oidc.ts",
+    "./access-sites": "./src/app/access-sites.ts",
+    "./oauth-targets": "./src/app/oauth-targets.ts",
+    "./github-oidc": "./src/app/github-oidc.ts",
     "./credential-broker.worker": "./src/app/credential-broker.worker.ts"
   },
   "dependencies": {

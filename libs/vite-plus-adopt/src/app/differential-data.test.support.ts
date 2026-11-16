@@ -1,8 +1,8 @@
 import { Array as Arr, Option, Schema } from "effect";
 
-import { Package } from "#/app/attw.ts";
 import { parseJson, toJson } from "#/shared/lib/json.ts";
 
+import { Package } from "./attw.ts";
 import expectedJson from "./differential.expected.json" with { type: "json" };
 import fixturesJson from "./differential.fixtures.json" with { type: "json" };
 

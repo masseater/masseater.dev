@@ -35,7 +35,7 @@
   },
   "exports": {
     ".": "./src/app/index.ts",
-    "./schema": "./src/entities/article/model/schema.ts",
+    "./schema": "./src/app/schema.ts",
     "./styles.css": "./src/styles.css",
     "./package.json": "./package.json"
   },

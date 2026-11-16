@@ -3,7 +3,7 @@ import { Array as Arr, Effect, Option, pipe } from "effect";
 import { Base64 } from "effect/encoding";
 import { describe, expect, it } from "vite-plus/test";
 
-import { BACKDROP_STYLE_HASH } from "#/shared/lib/backdrop-palette.ts";
+import { BACKDROP_STYLE_HASH } from "./backdrop-palette.ts";
 
 const injectedStyle = (): string => {
   const parent = document.createElement("div");

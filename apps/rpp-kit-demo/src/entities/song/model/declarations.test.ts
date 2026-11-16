@@ -3,13 +3,13 @@ import { mapRpp } from "rpp-kit";
 import { declarationPath } from "rpp-kit/vite";
 import { describe, expect, it } from "vite-plus/test";
 
-const SOURCES = import.meta.glob<string>("/src/**/*.rpp", {
+const SOURCES = import.meta.glob<string>("./*.rpp", {
   query: "?raw",
   import: "default",
   eager: true,
 });
 
-const DECLARATIONS = import.meta.glob<string>("/src/**/*.d.rpp.ts", {
+const DECLARATIONS = import.meta.glob<string>("./*.d.rpp.ts", {
   query: "?raw",
   import: "default",
   eager: true,

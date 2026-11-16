@@ -7,7 +7,7 @@ import rsc from "@vitejs/plugin-rsc";
 import { Array as Arr, Option, pipe } from "effect";
 import type { PluginOption } from "vite-plus";
 
-import { SEARCH_INDEX_ORIGIN } from "#/shared/config/index.ts";
+import { SEARCH_INDEX_ORIGIN } from "#/shared/config/search.ts";
 
 const SITEMAP_FILE = "sitemap.xml";
 

@@ -9,6 +9,7 @@ export { APP_KEY, SETUP_PATH, gitHubAppCredentials, readApp, route } from "./mod
 export type { GitHubAppEnv, GitHubAppFailed, RouteInput } from "./model/github-app.ts";
 export {
   OWNER,
+  OWNER_ID,
   Rejected,
   grantKeys,
   isGranted,
