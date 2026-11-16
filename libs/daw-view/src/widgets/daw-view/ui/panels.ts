@@ -18,7 +18,8 @@ const CLASS = {
   scroll:
     "relative z-0 overflow-x-auto overflow-y-hidden overscroll-x-contain border-t border-line [scrollbar-width:thin]",
   inner: "relative flex w-max min-w-full",
-  heads: "sticky left-0 z-[3] w-[132px] flex-none border-r border-line bg-card max-sm:w-[106px]",
+  heads:
+    "sticky left-0 z-[3] w-[132px] flex-none border-r border-line bg-card data-[mixing=true]:w-[172px] max-sm:w-[106px] max-sm:data-[mixing=true]:w-[128px]",
   corner:
     "flex h-[46px] items-end border-b border-line px-2 pb-1 text-[10px] tracking-[0.06em] text-dim",
   lanes: "relative flex-none cursor-pointer",
