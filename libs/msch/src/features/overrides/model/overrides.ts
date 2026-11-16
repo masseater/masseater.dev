@@ -40,20 +40,12 @@ const SUCCEEDED = 0;
 
 const taggedError = Schema.TaggedError;
 
-class OverrideManifestFailed extends taggedError<
-  OverrideManifestFailed,
-  { readonly brand: unique symbol }
->()("OverrideManifestFailed", { override: Schema.String }) {}
-
 class OverrideResolutionFailed extends taggedError<
   OverrideResolutionFailed,
   { readonly brand: unique symbol }
 >()("OverrideResolutionFailed", { override: Schema.String, output: Schema.String }) {}
 
-type CandidateFailure =
-  | OverrideManifestFailed
-  | OverrideResolutionFailed
-  | PlatformError.PlatformError;
+type CandidateFailure = OverrideResolutionFailed | PlatformError.PlatformError;
 type CandidateServices =
   | FileSystem.FileSystem
   | Path.Path
@@ -120,8 +112,14 @@ const copyFiles = Effect.fn("copyFiles")(function* copyFiles(
   yield* Effect.forEach(workspace.files, copyOne, { discard: true });
 });
 
-const depPathsIn = (directory: string): Effect.Effect<readonly string[]> =>
-  Effect.tryPromise(() => readWantedLockfile(directory, { ignoreIncompatible: false })).pipe(
+const depPathsIn = (
+  directory: string,
+  override: string,
+): Effect.Effect<readonly string[], OverrideResolutionFailed> =>
+  Effect.tryPromise({
+    try: () => readWantedLockfile(directory, { ignoreIncompatible: false }),
+    catch: (cause) => OverrideResolutionFailed.make({ override, output: String(cause) }),
+  }).pipe(
     Effect.map((lockfile) =>
       pipe(
         Option.fromNullishOr(lockfile),
@@ -130,7 +128,6 @@ const depPathsIn = (directory: string): Effect.Effect<readonly string[]> =>
         Option.getOrElse((): readonly string[] => []),
       ),
     ),
-    Effect.orElseSucceed((): readonly string[] => []),
   );
 
 const resolutionWith = Effect.fn("resolutionWith")(function* resolutionWith(
@@ -144,10 +141,10 @@ const resolutionWith = Effect.fn("resolutionWith")(function* resolutionWith(
   yield* Effect.tryPromise({
     try: () =>
       updateWorkspaceManifest(directory, { updatedFields: { overrides: { ...overrides } } }),
-    catch: () => OverrideManifestFailed.make({ override }),
+    catch: (cause) => OverrideResolutionFailed.make({ override, output: String(cause) }),
   });
   const output = yield* resolveIn(directory, override);
-  const depPaths = yield* depPathsIn(directory);
+  const depPaths = yield* depPathsIn(directory, override);
   yield* Effect.annotateCurrentSpan({ "msch.override": override });
   const advisories = yield* auditIn(directory);
   return resolutionOf({ peerIssues: peerIssuesIn(output), advisories })(depPaths);

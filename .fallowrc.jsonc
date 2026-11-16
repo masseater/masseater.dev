@@ -38,7 +38,7 @@
     },
   ],
   "overrides": [{ "files": ["**/generated/**"], "rules": { "unused-enum-members": "off" } }],
-  "ignoreDependencies": ["@effect/language-service"],
+  "ignoreDependencies": ["@effect/language-service", "@typescript/typescript6"],
   "workspaces": {
     "settings": {
       "libs/msch": {

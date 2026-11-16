@@ -5,22 +5,26 @@ import { Array as Arr, Effect, Option, Order, String as Str, pipe } from "effect
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 import { workspaceManifest } from "./workspace-manifest.ts";
+import { WorkspaceUnreadable } from "./workspace-unreadable.ts";
 
 export interface WorkspaceProject {
   readonly directory: string;
   readonly packageName: Option.Option<string>;
-  readonly manifest: Project["manifest"];
+  readonly published: boolean;
+  readonly keywords: readonly string[];
+  readonly files: Option.Option<readonly string[]>;
 }
 
-const byDirectory = Order.mapInput(Str.Order, (project: WorkspaceProject) => project.directory);
+const byDirectory = Order.mapInput(Str.Order, ({ directory }: WorkspaceProject) => directory);
 
 const projectsMatching = (
   root: string,
   patterns: readonly string[],
 ): Effect.Effect<readonly Project[]> =>
-  Effect.tryPromise(() => findWorkspaceProjectsNoCheck(root, { patterns: [...patterns] })).pipe(
-    Effect.orElseSucceed((): readonly Project[] => []),
-  );
+  Effect.tryPromise({
+    try: () => findWorkspaceProjectsNoCheck(root, { patterns: [...patterns] }),
+    catch: (cause) => WorkspaceUnreadable.make({ root, reason: String(cause) }),
+  }).pipe(Effect.orElseSucceed((): readonly Project[] => []));
 
 /** @internal */
 export const workspaceProjects = Effect.fn("workspaceProjects")(function* workspaceProjects(
@@ -39,10 +43,12 @@ export const workspaceProjects = Effect.fn("workspaceProjects")(function* worksp
   const projects = yield* projectsMatching(root, patterns);
   const found = pipe(
     projects,
-    Arr.map((project): WorkspaceProject => ({
-      directory: files.relative(root, project.rootDir),
-      packageName: Option.fromUndefinedOr(project.manifest.name),
-      manifest: project.manifest,
+    Arr.map(({ rootDir, manifest: own }): WorkspaceProject => ({
+      directory: files.relative(root, rootDir),
+      packageName: Option.fromUndefinedOr(own.name),
+      published: own.private !== true,
+      keywords: Option.getOrElse(Option.fromUndefinedOr(own.keywords), () => []),
+      files: Option.fromUndefinedOr(own.files),
     })),
     Arr.filter(({ directory }) => Str.isNonEmpty(directory)),
   );

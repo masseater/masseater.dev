@@ -58,18 +58,17 @@ const baseNameOf = (text: string): string =>
     Option.getOrElse(() => text),
   );
 
-const importedModules = (program: ESTree.Program): readonly string[] =>
+const importedModules = (statements: readonly ESTree.Statement[]): readonly string[] =>
   pipe(
-    program.body,
-    Arr.flatMap((statement) =>
-      statement.type === "ImportDeclaration" ? [statement.source.value] : [],
-    ),
+    statements,
+    Arr.filter((statement) => statement.type === "ImportDeclaration"),
+    Arr.map((declaration) => declaration.source.value),
   );
 
 const parserIn =
   (context: Context) =>
   (format: Format): Option.Option<string> => {
-    const imported = importedModules(context.sourceCode.ast);
+    const imported = importedModules(context.sourceCode.ast.body);
     const fromModule = pipe(
       Rec.get(PARSER_MODULES, format),
       Option.getOrElse((): readonly string[] => []),
@@ -86,32 +85,42 @@ const parserIn =
     );
   };
 
-const reportNamed = (context: Context, node: ESTree.Node, text: string): void => {
-  const name = baseNameOf(text);
-  const file = Arr.findFirst(ECOSYSTEM_FILES, (entry) => entry.name.test(name));
-  if (Option.isNone(file)) {
-    return;
-  }
-  const parser = parserIn(context)(file.value.format);
-  if (Option.isNone(parser)) {
-    return;
-  }
-  context.report({
-    node,
-    message: `${name} has an official reader: ${file.value.reader}. Read it with that instead of parsing it with ${parser.value}, so that the file means what its own tool says it means.`,
-  });
-};
+const messageFor =
+  (context: Context) =>
+  (text: string): Option.Option<string> => {
+    const name = baseNameOf(text);
+    return pipe(
+      ECOSYSTEM_FILES,
+      Arr.findFirst((entry) => entry.name.test(name)),
+      Option.flatMap(({ format, reader }) =>
+        pipe(
+          parserIn(context)(format),
+          Option.map(
+            (parser) =>
+              `${name} has an official reader: ${reader}. Read it with that instead of parsing it with ${parser}, so that the file means what its own tool says it means.`,
+          ),
+        ),
+      ),
+    );
+  };
 
 export const ecosystemReaders: Rule = {
   meta: { type: "problem" },
   create: (context) => ({
     Literal: (node): void => {
-      if (typeof node.value === "string") {
-        reportNamed(context, node, node.value);
+      const message = pipe(
+        Option.liftPredicate(node.value, (value) => typeof value === "string"),
+        Option.flatMap(messageFor(context)),
+      );
+      if (Option.isSome(message)) {
+        context.report({ node, message: message.value });
       }
     },
     TemplateElement: (node): void => {
-      reportNamed(context, node, node.value.raw);
+      const message = messageFor(context)(node.value.raw);
+      if (Option.isSome(message)) {
+        context.report({ node, message: message.value });
+      }
     },
   }),
 };

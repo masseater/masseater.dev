@@ -227,7 +227,7 @@ const keyStart =
   (source: string) =>
   (index: number): number => {
     const before = Str.slice(index - PREVIOUS, index)(source);
-    return Arr.contains(QUOTES, before) ? index - PREVIOUS : index;
+    return index - Number(Arr.contains(QUOTES, before)) * PREVIOUS;
   };
 
 export const overrideKeysOf =

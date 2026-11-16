@@ -17,7 +17,7 @@ const SKILL_FILE = "SKILL.md";
 const FIRST = 1;
 const SUCCEEDED = 0;
 const SYNC = "Run vp exec intent maintainer sync in the repository root.";
-const INTENT_CLI = fileURLToPath(new URL("cli.mjs", import.meta.resolve("@tanstack/intent")));
+const INTENT_CLI = fileURLToPath(new URL("./cli.mjs", import.meta.resolve("@tanstack/intent")));
 
 const problemAt = (file: string, message: string): Problem => ({
   file,
@@ -26,8 +26,6 @@ const problemAt = (file: string, message: string): Problem => ({
   rule: RULE,
   message,
 });
-
-const isPublished = ({ manifest }: WorkspaceProject): boolean => manifest.private !== true;
 
 const skillDirectoriesIn = (
   files: typeof RepositoryFiles.Service,
@@ -45,26 +43,31 @@ const isShipped =
     Arr.contains(listed, SKILLS) || Arr.contains(listed, skill);
 
 const packagingMessages = (
-  project: WorkspaceProject,
+  { keywords, files }: WorkspaceProject,
   skills: readonly string[],
 ): readonly string[] => {
-  const keywords = Option.getOrElse(Option.fromUndefinedOr(project.manifest.keywords), () => []);
-  const keyword = Arr.contains(keywords, KEYWORD)
-    ? []
-    : [
+  const keyword = pipe(
+    Option.liftPredicate(keywords, (own) => !Arr.contains(own, KEYWORD)),
+    Option.map(
+      () =>
         `is published with skills but lacks the ${KEYWORD} keyword, so Intent does not find them. ${SYNC}`,
-      ];
-  const unshipped = pipe(
-    Option.fromUndefinedOr(project.manifest.files),
-    Option.map((listed) => Arr.filter(skills, (skill) => !isShipped(listed)(skill))),
-    Option.getOrElse((): readonly string[] => []),
+    ),
   );
-  const files = Arr.isReadonlyArrayNonEmpty(unshipped)
-    ? [
-        `leaves ${Arr.join(unshipped, ", ")} out of files, so the published package does not ship them. ${SYNC}`,
-      ]
-    : [];
-  return [...keyword, ...files];
+  const unshipped = pipe(
+    files,
+    Option.map((listed) =>
+      pipe(
+        skills,
+        Arr.filter((skill) => !isShipped(listed)(skill)),
+      ),
+    ),
+    Option.filter((left) => Arr.isReadonlyArrayNonEmpty(left)),
+    Option.map(
+      (left) =>
+        `leaves ${Arr.join(left, ", ")} out of files, so the published package does not ship them. ${SYNC}`,
+    ),
+  );
+  return Arr.getSomes([keyword, unshipped]);
 };
 
 const validationOf = Effect.fn("validationOf")(function* validationOf(directory: string) {
@@ -77,7 +80,7 @@ const validationOf = Effect.fn("validationOf")(function* validationOf(directory:
     [handle.all.pipe(Stream.decodeText(), Stream.mkString), handle.exitCode],
     { concurrency: "unbounded" },
   );
-  return Number(status) === SUCCEEDED ? Option.none<string>() : Option.some(Str.trim(output));
+  return Option.liftPredicate(Str.trim(output), () => Number(status) !== SUCCEEDED);
 }, Effect.scoped);
 
 const problemsIn = Effect.fn("problemsIn")(function* problemsIn(
@@ -118,8 +121,12 @@ const problemsIn = Effect.fn("problemsIn")(function* problemsIn(
 export const checkPublishedSkills = Effect.fn("checkPublishedSkills")(
   function* checkPublishedSkills(root: string) {
     const projects = yield* workspaceProjects(root);
-    const problems = yield* Effect.forEach(pipe(projects, Arr.filter(isPublished)), (project) =>
-      problemsIn(root, project),
+    const problems = yield* Effect.forEach(
+      pipe(
+        projects,
+        Arr.filter(({ published }) => published),
+      ),
+      (project) => problemsIn(root, project),
     );
     return Arr.flatten(problems);
   },

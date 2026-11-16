@@ -43,10 +43,11 @@ const flagsPublishedPackagesWithoutSkills = Effect.gen(
       "libs/bare/package.json": '{ "name": "bare", "files": ["dist"] }',
       "libs/private/package.json": '{ "name": "private", "private": true }',
     });
-    expect(findings).toHaveLength(1);
-    expect(findings[0]).toMatch(
-      /^libs\/bare\/package\.json is published without TanStack Intent skills/u,
-    );
+    expect(findings).toStrictEqual([
+      expect.stringMatching(
+        /^libs\/bare\/package\.json is published without TanStack Intent skills/u,
+      ),
+    ]);
   },
 );
 
@@ -55,9 +56,10 @@ const flagsUnshippedSkills = Effect.gen(function* flagsUnshippedSkills() {
     "libs/kit/package.json": '{ "name": "kit", "files": ["dist"] }',
     "libs/kit/skills/run-checks/SKILL.md": SKILL,
   });
-  expect(findings).toHaveLength(2);
-  expect(Arr.join(findings, "\n")).toContain("lacks the tanstack-intent keyword");
-  expect(Arr.join(findings, "\n")).toContain("leaves skills/run-checks out of files");
+  expect(findings).toStrictEqual([
+    expect.stringContaining("lacks the tanstack-intent keyword"),
+    expect.stringContaining("leaves skills/run-checks out of files"),
+  ]);
 });
 
 const passesShippedSkills = Effect.gen(function* passesShippedSkills() {
@@ -74,8 +76,9 @@ const flagsInvalidSkills = Effect.gen(function* flagsInvalidSkills() {
     "libs/kit/package.json": '{ "name": "kit", "keywords": ["tanstack-intent"] }',
     "libs/kit/skills/run-checks/SKILL.md": "# run-checks\n",
   });
-  expect(findings).toHaveLength(1);
-  expect(findings[0]).toMatch(/^libs\/kit\/skills fails intent validate/u);
+  expect(findings).toStrictEqual([
+    expect.stringMatching(/^libs\/kit\/skills fails intent validate/u),
+  ]);
 });
 
 layer(Layer.merge(fixtureLayer, nodeServicesLayer))(

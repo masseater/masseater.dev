@@ -2,13 +2,9 @@ import { output, run } from "@masseater.dev/component-release";
 import { runMain } from "@masseater.dev/node-main";
 import { Array as Arr, Effect, Schema, pipe } from "effect";
 
-const Metadata = Schema.fromJsonString(
-  Schema.Struct({
-    packages: Schema.Array(
-      Schema.Struct({ dependencies: Schema.Array(Schema.Struct({ name: Schema.String })) }),
-    ),
-  }),
-);
+const CrateDependency = Schema.Struct({ name: Schema.String });
+const CratePackage = Schema.Struct({ dependencies: Schema.Array(CrateDependency) });
+const Metadata = Schema.fromJsonString(Schema.Struct({ packages: Schema.Array(CratePackage) }));
 
 runMain("cargo-tools-build")(
   Effect.gen(function* build() {
@@ -22,9 +18,10 @@ runMain("cargo-tools-build")(
       Arr.map(({ name }) => name),
       Arr.dedupe,
     );
-    yield* run({
-      file: "cargo",
-      args: ["build", "--release", "--locked", ...Arr.flatMap(crates, (crate) => ["-p", crate])],
-    });
+    const selected = pipe(
+      crates,
+      Arr.flatMap((crate) => ["-p", crate]),
+    );
+    yield* run({ file: "cargo", args: ["build", "--release", "--locked", ...selected] });
   }),
 );

@@ -1,4 +1,3 @@
-import type { WorkspaceManifest } from "@pnpm/workspace.workspace-manifest-reader";
 import { Array as Arr, Effect, Option, Order, Schema, String as Str, pipe } from "effect";
 
 import { workspaceManifest } from "#/entities/workspace/index.ts";
@@ -55,7 +54,7 @@ const CargoSettings = Schema.Struct({ enabled: Schema.optionalKey(Schema.Boolean
 const WorkspaceFile = Schema.Struct({ cargo: Schema.optionalKey(CargoSettings) });
 const decodeWorkspaceFile = Schema.decodeUnknownOption(WorkspaceFile);
 
-const cargoEnabled = (manifest: WorkspaceManifest): boolean =>
+const cargoEnabled = (manifest: unknown): boolean =>
   pipe(
     decodeWorkspaceFile(manifest),
     Option.flatMap(({ cargo }) => Option.fromUndefinedOr(cargo)),
@@ -267,17 +266,14 @@ const cargoProblems = (
   });
 };
 
-const unneededIn = Effect.fn("unneededIn")(function* unneededIn(
-  root: string,
-  workspace: WorkspaceManifest,
-) {
+const unneededIn = Effect.fn("unneededIn")(function* unneededIn(root: string, enabled: boolean) {
   const listed = yield* listedFiles(root);
   const present = yield* presentFiles(listed);
   const lockfiles = pipe(present, Arr.filter(isForeignLockfile), Arr.map(foreignLockfile));
   if (!pipe(present, Arr.some(isCargoManifest))) {
     return lockfiles;
   }
-  const cargo = yield* cargoProblems(present, cargoEnabled(workspace));
+  const cargo = yield* cargoProblems(present, enabled);
   return [...lockfiles, ...cargo];
 });
 
@@ -289,5 +285,5 @@ export const checkUnneededFiles = Effect.fn("checkUnneededFiles")(function* chec
   if (Option.isNone(workspace)) {
     return [];
   }
-  return yield* unneededIn(root, workspace.value);
+  return yield* unneededIn(root, cargoEnabled(workspace.value));
 });

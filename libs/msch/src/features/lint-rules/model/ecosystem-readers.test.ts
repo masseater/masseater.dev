@@ -12,9 +12,11 @@ RuleTester.it = (text, run): void => {
 
 const tester = new RuleTester({ languageOptions: { parserOptions: { lang: "ts" } } });
 
-const reported = (code: string): { readonly code: string; readonly errors: 1 } => ({
+const ONE_ERROR = 1;
+
+const reported = (code: string): { readonly code: string; readonly errors: number } => ({
   code,
-  errors: 1,
+  errors: ONE_ERROR,
 });
 
 tester.run("ecosystem-readers", ecosystemReaders, {
@@ -27,7 +29,7 @@ tester.run("ecosystem-readers", ecosystemReaders, {
   ],
   invalid: [
     reported('import { parse } from "yaml";\nconst file = "pnpm-workspace.yaml";\n'),
-    reported('import { parse } from "yaml";\nconst file = `${root}/pnpm-lock.yaml`;\n'),
+    reported(`import { parse } from "yaml";\nconst file = \`\${root}/pnpm-lock.yaml\`;\n`),
     reported('import { parse } from "smol-toml";\nconst file = "./Cargo.toml";\n'),
     reported('const file = "tsconfig.build.json";\nconst config = JSON.parse(text);\n'),
     reported('import ts from "typescript";\nconst file = "vite.config.ts";\n'),

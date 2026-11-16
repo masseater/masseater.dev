@@ -1,9 +1,15 @@
-import { relative } from "node:path";
-
 import { findWorkspaceProjectsNoCheck } from "@pnpm/workspace.projects-reader";
-import type { Project } from "@pnpm/workspace.projects-reader";
 import { readWorkspaceManifest } from "@pnpm/workspace.workspace-manifest-reader";
-import { Array as Arr, Effect, Option, Order, Record as Rec, String as Str, pipe } from "effect";
+import {
+  Array as Arr,
+  Effect,
+  Option,
+  Order,
+  Path,
+  Record as Rec,
+  String as Str,
+  pipe,
+} from "effect";
 
 import { attempt } from "./attempt.ts";
 import type { VpToolsError } from "./errors.ts";
@@ -28,38 +34,46 @@ export interface Dependency {
   readonly specifier: string;
 }
 
+type DeclaredDependencies = Readonly<
+  Partial<Record<DependencyField, Readonly<Record<string, string>>>>
+>;
+
+interface ListedManifest {
+  readonly file: string;
+  readonly dependencies: readonly Dependency[];
+}
+
 const pnpm = attempt("pnpm");
 
-const manifestOf =
-  (root: string) =>
-  (project: Project): string =>
-    pipe(relative(root, project.rootDir), (directory) =>
-      Str.isEmpty(directory) ? MANIFEST_FILE : `${directory}/${MANIFEST_FILE}`,
-    );
+const byFile = Order.mapInput(Str.Order, ({ file }: ListedManifest) => file);
 
-const byManifest = (root: string): Order.Order<Project> =>
-  Order.mapInput(Str.Order, (project: Project) => relative(root, project.rootDir));
+const manifestIn = (directory: string): string =>
+  pipe(
+    Option.liftPredicate(directory, Str.isNonEmpty),
+    Option.map((own) => `${own}/${MANIFEST_FILE}`),
+    Option.getOrElse(() => MANIFEST_FILE),
+  );
 
-const dependenciesOf =
-  (root: string) =>
-  (project: Project): readonly Dependency[] => {
-    const manifest = manifestOf(root)(project);
-    return pipe(
-      DEPENDENCY_FIELDS,
-      Arr.flatMap((field) =>
-        pipe(
-          Rec.toEntries(project.manifest[field] ?? {}),
-          Arr.map(([name, specifier]) => ({ manifest, field, name, specifier })),
-        ),
-      ),
-    );
-  };
+const dependenciesIn = (file: string, declared: DeclaredDependencies): readonly Dependency[] =>
+  pipe(
+    DEPENDENCY_FIELDS,
+    Arr.flatMap((field) => {
+      const entries = Rec.toEntries(
+        Option.getOrElse(Option.fromUndefinedOr(declared[field]), () => ({})),
+      );
+      return pipe(
+        entries,
+        Arr.map(([name, specifier]): Dependency => ({ manifest: file, field, name, specifier })),
+      );
+    }),
+  );
 
 /** @internal */
 export const listDependencies = (
   root: string,
-): Effect.Effect<readonly Dependency[], VpToolsError> =>
+): Effect.Effect<readonly Dependency[], VpToolsError, Path.Path> =>
   Effect.gen(function* list() {
+    const path = yield* Path.Path;
     const workspace = yield* pnpm(() => readWorkspaceManifest(root));
     const patterns = pipe(
       Option.fromUndefinedOr(workspace),
@@ -67,5 +81,15 @@ export const listDependencies = (
       Option.getOrElse((): string[] => []),
     );
     const projects = yield* pnpm(() => findWorkspaceProjectsNoCheck(root, { patterns }));
-    return pipe(Arr.sort(projects, byManifest(root)), Arr.flatMap(dependenciesOf(root)));
+    const listed = pipe(
+      projects,
+      Arr.map(({ rootDir, manifest }): ListedManifest => {
+        const file = manifestIn(path.relative(root, rootDir));
+        return { file, dependencies: dependenciesIn(file, manifest) };
+      }),
+    );
+    return pipe(
+      Arr.sort(listed, byFile),
+      Arr.flatMap(({ dependencies }) => dependencies),
+    );
   });
