@@ -105,14 +105,21 @@ const namesType =
   (ty: Ty): boolean =>
     Predicate.isTagged(ty, "Named") && ty.name === name;
 
-const usedExternals = ({ items, external }: Rendering): readonly string[] =>
-  pipe(
+const usedBy =
+  (tys: readonly Ty[]) =>
+  ([name]: readonly [string, string]): boolean => {
+    const named = someTy(namesType(name));
+    return pipe(tys, Array.some(named));
+  };
+
+const usedExternals = ({ items, external }: Rendering): readonly string[] => {
+  const used = usedBy(pipe(items, Array.flatMap(tysOf)));
+  return pipe(
     Record.toEntries(external),
-    Array.filter(([name]) =>
-      pipe(items, Array.flatMap(tysOf), Array.some(someTy(namesType(name)))),
-    ),
+    Array.filter(used),
     Array.map(([, path]) => path),
   );
+};
 
 const importLines = (rendering: Rendering): readonly string[] => {
   const { items, derive } = rendering;
