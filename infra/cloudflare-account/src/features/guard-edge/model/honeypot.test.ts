@@ -1,7 +1,7 @@
 import { expect, test } from "vite-plus/test";
 
 import type { HoneypotEnv } from "./edge-guard.ts";
-import worker from "./honeypot.worker.ts";
+import worker from "./honeypot.ts";
 
 const recorder = (): Readonly<{ points: AnalyticsEngineDataPoint[]; env: HoneypotEnv }> => {
   const points: AnalyticsEngineDataPoint[] = [];
