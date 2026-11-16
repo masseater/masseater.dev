@@ -5,8 +5,7 @@ import type { DecisionRule } from "@r_masseater/oxlint-plugin-decision";
 import { Config, Effect, Redacted, Array as Arr, pipe, Order } from "effect";
 import type { PlatformError } from "effect/PlatformError";
 
-import { codeClaims, presets, testClaims } from "#/entities/rule/index.ts";
-
+import { codeClaims } from "#/entities/rule/index.ts";
 import {
   EXAMPLE_FILES,
   LIVE_MODEL,
@@ -22,8 +21,10 @@ import {
   oxlint,
   reportedLines,
   tempProject,
-} from "./oxlint.test.support.ts";
-import type { Services } from "./oxlint.test.support.ts";
+} from "./presets-oxlint.test.support.ts";
+import type { Services } from "./presets-oxlint.test.support.ts";
+import { presets } from "#/entities/rule/index.ts";
+import { testClaims } from "#/entities/rule/index.ts";
 
 const EXPECTED = {
   recommended: [
@@ -63,7 +64,7 @@ const presetLive = (
   Effect.scoped(
     Effect.gen(function* test() {
       const key = yield* Config.Redacted("OPENROUTER_API_KEY");
-      const plugin = yield* fromRoot("dist", `${preset}.mjs`);
+      const plugin = yield* fromRoot("dist", "presets", `${preset}.mjs`);
       const cwd = yield* tempProject({
         ...(yield* exampleFiles),
         "oxlint.config.ts": configSource({

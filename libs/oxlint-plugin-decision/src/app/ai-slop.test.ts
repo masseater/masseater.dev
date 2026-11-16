@@ -24,8 +24,8 @@ import {
   oxlint,
   tempProject,
   toJson,
-} from "./oxlint.test.support.ts";
-import type { Services } from "./oxlint.test.support.ts";
+} from "./presets-oxlint.test.support.ts";
+import type { Services } from "./presets-oxlint.test.support.ts";
 
 const AI_SLOP = aiSlopPlugin.meta.name;
 
@@ -137,20 +137,14 @@ const exampleFile = (
 ): Effect.Effect<string, PlatformError, FileSystem.FileSystem | Services> =>
   Effect.gen(function* read() {
     const fs = yield* FileSystem.FileSystem;
-    const file = yield* fromRoot("example", "ai-slop", name);
+    const file = yield* fromRoot("example-presets", "ai-slop", name);
     return yield* fs.readFileString(file);
   });
 
 const askedWhere = Effect.scoped(
   Effect.gen(function* test() {
-    const core = yield* fromRoot(
-      "node_modules",
-      "@r_masseater",
-      "oxlint-plugin-decision",
-      "dist",
-      "index.mjs",
-    );
-    const entry = yield* fromRoot("dist", "ai-slop.mjs");
+    const core = yield* fromRoot("dist", "index.mjs");
+    const entry = yield* fromRoot("dist", "presets", "ai-slop.mjs");
     const cwd = yield* tempProject({
       "plugin.mjs": alwaysYes(core, entry),
       "fail.ts": yield* exampleFile("fail.ts"),
@@ -169,7 +163,7 @@ const askedWhere = Effect.scoped(
 
 const loadsEntry = Effect.scoped(
   Effect.gen(function* test() {
-    const plugin = yield* fromRoot("dist", "ai-slop.mjs");
+    const plugin = yield* fromRoot("dist", "presets", "ai-slop.mjs");
     const cwd = yield* tempProject({
       "a.ts": "export function a(): void {}\n",
       "oxlint.config.ts": configSource({

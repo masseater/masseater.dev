@@ -45,6 +45,7 @@ const RuleNameSchema = Schema.Literals([
   "layered-source",
   "public-entry",
   "comment",
+  "applied-package",
   "package-script",
   "package-manager-command",
   "skipped-gate",

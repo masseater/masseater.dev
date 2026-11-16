@@ -11,3 +11,4 @@ apps/aredoko-desktop/src-tauri/src/protocol.rs linguist-generated
 apps/yohaku-desktop/src-tauri/src/protocol.rs linguist-generated
 libs/effect2rs/conformance/protocol.rs linguist-generated
 **/example/** linguist-documentation
+**/example-presets/** linguist-documentation

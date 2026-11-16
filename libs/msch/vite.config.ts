@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   msch: {
-    publish: { installSize: "140 MB" },
+    publish: { installSize: "270 MB" },
     lint: {
       overrides: [
         {

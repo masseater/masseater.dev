@@ -12,8 +12,8 @@ import {
 } from "effect";
 import type { PlatformError } from "effect/PlatformError";
 
-import strictConfig from "#example/claims/oxlint.config.ts";
-import reviewOnlyConfig from "#example/claims/review-only.config.ts";
+import strictConfig from "#example-presets/claims/oxlint.config.ts";
+import reviewOnlyConfig from "#example-presets/claims/review-only.config.ts";
 
 import {
   FAILED,
@@ -26,8 +26,8 @@ import {
   oxlint,
   tempProject,
   toJson,
-} from "./oxlint.test.support.ts";
-import type { Services } from "./oxlint.test.support.ts";
+} from "./presets-oxlint.test.support.ts";
+import type { Services } from "./presets-oxlint.test.support.ts";
 
 const alwaysYes = (core: string, entry: string, preset: string): string => `
 import { createDecisionPlugin, defineProvider } from ${toJson(core)};
@@ -141,21 +141,15 @@ const exampleFile = (
 ): Effect.Effect<string, PlatformError, FileSystem.FileSystem | Services> =>
   Effect.gen(function* read() {
     const fs = yield* FileSystem.FileSystem;
-    const file = yield* fromRoot("example", "claims", name);
+    const file = yield* fromRoot("example-presets", "claims", name);
     return yield* fs.readFileString(file);
   });
 
 const askedWhere = (preset: Preset): Effect.Effect<void, PlatformError, Services> =>
   Effect.scoped(
     Effect.gen(function* test() {
-      const core = yield* fromRoot(
-        "node_modules",
-        "@r_masseater",
-        "oxlint-plugin-decision",
-        "dist",
-        "index.mjs",
-      );
-      const entry = yield* fromRoot("dist", "index.mjs");
+      const core = yield* fromRoot("dist", "index.mjs");
+      const entry = yield* fromRoot("dist", "presets", "index.mjs");
       const cwd = yield* tempProject({
         "plugin.mjs": alwaysYes(core, entry, preset),
         "cart.js": yield* exampleFile("cart.js"),

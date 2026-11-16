@@ -43,7 +43,7 @@ export const PASSED = 0;
 export const FAILED = 1;
 
 const presetsRoot = Path.Path.pipe(
-  Effect.map((path) => path.join(import.meta.dirname, "..", "..")),
+  Effect.map((path) => path.resolve(import.meta.dirname, "..", "..")),
 );
 
 /** @internal */
@@ -128,7 +128,7 @@ export const exampleFiles: Effect.Effect<Env, PlatformError, Services> = Effect.
       pipe(
         EXAMPLE_FILES,
         Arr.map((name) =>
-          Effect.flatMap(fromRoot("example", name), (file) => fs.readFileString(file)),
+          Effect.flatMap(fromRoot("example-presets", name), (file) => fs.readFileString(file)),
         ),
       ),
     );

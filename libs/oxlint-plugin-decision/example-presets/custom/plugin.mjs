@@ -1,5 +1,5 @@
 import { createDecisionPlugin, defineDecisionRule } from "@r_masseater/oxlint-plugin-decision";
-import { recommended } from "@r_masseater/oxlint-plugin-decision-presets";
+import { recommended } from "@r_masseater/oxlint-plugin-decision/presets";
 
 const noDirectDbInHandlers = defineDecisionRule({
   id: "no-direct-db-in-handlers",

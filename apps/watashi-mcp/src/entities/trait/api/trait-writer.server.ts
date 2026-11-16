@@ -86,20 +86,26 @@ const traitStatement = (
   return db.update(ownerTrait).set(row).where(eq(ownerTrait.id, id));
 };
 
+const MAX_PARAMETERS = 100;
+
+const EVIDENCE_COLUMNS = 6;
+
+const EVIDENCE_PER_INSERT = Math.floor(MAX_PARAMETERS / EVIDENCE_COLUMNS);
+
+type EvidenceRow = typeof ownerTraitEvidence.$inferInsert;
+
+const evidenceInsert = (rows: Arr.NonEmptyReadonlyArray<EvidenceRow>): Statement =>
+  db.insert(ownerTraitEvidence).values([...rows]);
+
 const evidenceStatements = (trait: TraitState, id: number): readonly Statement[] => {
   const cleared = db.delete(ownerTraitEvidence).where(eq(ownerTraitEvidence.traitId, id));
-  return Arr.match(trait.evidence, {
-    onEmpty: () => [cleared],
-    onNonEmpty: (items) => [
-      cleared,
-      db.insert(ownerTraitEvidence).values(
-        pipe(
-          items,
-          Arr.map((item) => ({ ...item, traitId: id })),
-        ),
-      ),
-    ],
-  });
+  const inserts = pipe(
+    trait.evidence,
+    Arr.map((item): EvidenceRow => ({ ...item, traitId: id })),
+    Arr.chunksOf(EVIDENCE_PER_INSERT),
+    Arr.map(evidenceInsert),
+  );
+  return [cleared, ...inserts];
 };
 
 const vectorStatements = (

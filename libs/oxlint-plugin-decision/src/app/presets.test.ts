@@ -4,8 +4,6 @@ import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/util
 import { Effect, Array as Arr, Option, String as Str, pipe, Order } from "effect";
 import type { PlatformError } from "effect/PlatformError";
 
-import { presets } from "#/entities/rule/index.ts";
-
 import {
   EXAMPLE_FILES,
   FAILED,
@@ -21,8 +19,9 @@ import {
   reportedLines,
   tempProject,
   toJson,
-} from "./oxlint.test.support.ts";
-import type { Run, Services } from "./oxlint.test.support.ts";
+} from "./presets-oxlint.test.support.ts";
+import type { Run, Services } from "./presets-oxlint.test.support.ts";
+import { presets } from "#/entities/rule/index.ts";
 
 type PresetName = keyof typeof presets;
 
@@ -83,14 +82,8 @@ export default createDecisionPlugin({
 const lintWithFake = (preset: PresetName): Effect.Effect<Run, PlatformError, Services> =>
   Effect.scoped(
     Effect.gen(function* lint() {
-      const core = yield* fromRoot(
-        "node_modules",
-        "@r_masseater",
-        "oxlint-plugin-decision",
-        "dist",
-        "index.mjs",
-      );
-      const entry = yield* fromRoot("dist", "index.mjs");
+      const core = yield* fromRoot("dist", "index.mjs");
+      const entry = yield* fromRoot("dist", "presets", "index.mjs");
       const cwd = yield* tempProject({
         "plugin.mjs": fakePlugin(core, entry, preset),
         ...(yield* exampleFiles),
@@ -164,7 +157,7 @@ const ENTRIES = ["recommended", "strict", "review-only", "index"] as const;
 const loadsEntry = (entry: (typeof ENTRIES)[number]): Check =>
   Effect.scoped(
     Effect.gen(function* test() {
-      const plugin = yield* fromRoot("dist", `${entry}.mjs`);
+      const plugin = yield* fromRoot("dist", "presets", `${entry}.mjs`);
       const cwd = yield* tempProject({
         "a.js": "console.log(1);\n",
         "oxlint.config.ts": configSource({
@@ -180,7 +173,7 @@ const loadsEntry = (entry: (typeof ENTRIES)[number]): Check =>
   );
 
 const customExample = Effect.gen(function* test() {
-  const cwd = yield* fromRoot("example", "custom");
+  const cwd = yield* fromRoot("example-presets", "custom");
   const run = yield* oxlint(cwd, ["--format", "unix", "-c", "oxlint.config.ts", "handler.js"], {});
   strictEqual(run.status, PASSED, outputOf(run));
   assertInclude(
