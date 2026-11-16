@@ -3,11 +3,11 @@ import { layer } from "@effect/vitest";
 import { assertFalse, assertTrue } from "@effect/vitest/utils";
 import { Effect, String as Str } from "effect";
 
+import type { TextlintPreset } from "#/shared/config/index.ts";
 import { directoryWith, lines } from "#/shared/lib/fixture.test.support.ts";
 import { toJson } from "#/shared/lib/json.ts";
 
 import { lintTexts } from "./textlint.ts";
-import type { TextlintPreset } from "./types.ts";
 
 const NO_FOO_RULE = lines(
   "module.exports = (context) => ({",

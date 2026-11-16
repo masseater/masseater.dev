@@ -8,6 +8,7 @@ export type {
   MarkdownlintConfig,
   SteigerConfig,
   SteigerSection,
+  TextlintPreset,
   TextlintConfig,
   ToolSection,
   ToolSections,
