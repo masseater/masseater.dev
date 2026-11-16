@@ -18,7 +18,9 @@ import {
 import type { WorkspaceSource, WorkspaceTasks } from "#/entities/workspace/index.ts";
 import { RepositoryFiles, nodeRepositoryFiles } from "#/shared/lib/repository-files.ts";
 
+import type { IgnoredDirectory } from "./ignored-directories.ts";
 import { shadcnUiIn } from "./shadcn-ui.ts";
+import { directoryLayoutIn } from "./source-directories.ts";
 import { publicEntryFiles } from "./workspace-public-entries.ts";
 
 export type RuleSet = Readonly<Record<string, unknown>>;
@@ -77,6 +79,8 @@ export interface WorkspaceLint {
 
 export interface WorkspaceSettings {
   readonly lint: WorkspaceLint;
+  readonly sourceDirectories: readonly string[];
+  readonly ignoredDirectories: readonly IgnoredDirectory[];
   readonly testProjects: readonly string[];
   readonly tasks: WorkspaceTasks;
   readonly devDependencies: Readonly<Record<string, DevDependencyAllowance>>;
@@ -219,8 +223,8 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
       (directory) => shadcnUiIn(options.root, files.join(directory, SHADCN_FILE)),
       { concurrency: READ_CONCURRENCY },
     );
-    const deployed = yield* deployEntries(options.root);
     return {
+      ...(yield* directoryLayoutIn(options.root, directories)),
       lint: {
         ignorePatterns: pipe(
           found,
@@ -235,7 +239,7 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
           found,
           Arr.flatMap(({ publicEntries }) => publicEntries),
         ),
-        deployEntries: deployed,
+        deployEntries: yield* deployEntries(options.root),
       },
       testProjects: pipe(
         found,

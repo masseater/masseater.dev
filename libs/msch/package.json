@@ -32,6 +32,7 @@
   },
   "exports": {
     "./cli": "./bin/msch.ts",
+    "./config": "./src/app/repository-config.ts",
     "./decision-rules": "./src/app/decision-rules.ts",
     "./lint-rules": "./src/features/lint-rules/index.ts",
     "./lint": "./src/features/lint-preset/index.ts",
@@ -48,6 +49,10 @@
     },
     "exports": {
       "./cli": "./dist/cli.mjs",
+      "./config": {
+        "types": "./dist/config.d.mts",
+        "default": "./dist/config.mjs"
+      },
       "./decision-rules": {
         "types": "./dist/decision-rules.d.mts",
         "default": "./dist/decision-rules.mjs"
@@ -80,6 +85,7 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
+    "@commitlint/config-conventional": "catalog:",
     "@effect/platform-node-shared": "catalog:",
     "@html-eslint/eslint-plugin-react": "catalog:",
     "@r_masseater/oxlint-plugin-decision": "workspace:*",
@@ -87,6 +93,7 @@
     "@r_masseater/textlint-rule-preset-ja": "workspace:*",
     "@r_masseater/vite-plus-adopt": "catalog:",
     "@shadcn/lint": "catalog:",
+    "@textlint-ja/textlint-rule-preset-ai-writing": "catalog:",
     "@vscode/tree-sitter-wasm": "catalog:",
     "dockerfile-ast": "catalog:",
     "domhandler": "catalog:",
@@ -96,6 +103,7 @@
     "htmlparser2": "catalog:",
     "oxlint-plugin-eslint": "catalog:",
     "sql-parser-cst": "catalog:",
+    "textlint-rule-preset-ja-technical-writing": "catalog:",
     "toml-eslint-parser": "catalog:",
     "yaml": "catalog:"
   },

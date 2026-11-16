@@ -179,9 +179,6 @@ catalogs:
     '@anthropic-ai/claude-agent-sdk':
       specifier: 0.3.323
       version: 0.3.323
-    '@ast-grep/cli':
-      specifier: 0.51.2
-      version: 0.51.2
     '@atproto/api':
       specifier: ^0.31.0
       version: 0.31.2
@@ -449,6 +446,9 @@ catalogs:
     '@tesseract.js-data/eng':
       specifier: ^1.0.0
       version: 1.0.0
+    '@textlint-ja/textlint-rule-preset-ai-writing':
+      specifier: 1.7.0
+      version: 1.7.0
     '@textlint/ast-node-types':
       specifier: 15.8.0
       version: 15.8.0
@@ -842,6 +842,9 @@ catalogs:
     textlint:
       specifier: 15.8.0
       version: 15.8.0
+    textlint-rule-preset-ja-technical-writing:
+      specifier: 12.0.2
+      version: 12.0.2
     three:
       specifier: 0.187.0
       version: 0.187.0
@@ -988,12 +991,6 @@ importers:
 
   .:
     devDependencies:
-      '@ast-grep/cli':
-        specifier: 'catalog:'
-        version: 0.51.2
-      '@commitlint/config-conventional':
-        specifier: 'catalog:'
-        version: 21.2.4
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.68.1
@@ -1006,9 +1003,6 @@ importers:
       '@tanstack/intent':
         specifier: 'catalog:'
         version: 0.5.6
-      '@textlint-ja/textlint-rule-preset-ai-writing':
-        specifier: 1.7.0
-        version: 1.7.0
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
@@ -1021,9 +1015,6 @@ importers:
       skills:
         specifier: 'catalog:'
         version: 1.8.1
-      textlint-rule-preset-ja-technical-writing:
-        specifier: 12.0.2
-        version: 12.0.2(supports-color@10.2.2)
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -3749,6 +3740,9 @@ importers:
 
   libs/msch:
     dependencies:
+      '@commitlint/config-conventional':
+        specifier: 'catalog:'
+        version: 21.2.4
       '@effect/platform-node-shared':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)
@@ -3770,6 +3764,9 @@ importers:
       '@shadcn/lint':
         specifier: 'catalog:'
         version: 0.2.5(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))
+      '@textlint-ja/textlint-rule-preset-ai-writing':
+        specifier: 'catalog:'
+        version: 1.7.0
       '@vscode/tree-sitter-wasm':
         specifier: 'catalog:'
         version: 0.3.1
@@ -3797,6 +3794,9 @@ importers:
       sql-parser-cst:
         specifier: 'catalog:'
         version: 0.44.1
+      textlint-rule-preset-ja-technical-writing:
+        specifier: 'catalog:'
+        version: 12.0.2(supports-color@10.2.2)
       toml-eslint-parser:
         specifier: 'catalog:'
         version: 1.0.3
@@ -5255,69 +5255,6 @@ packages:
     peerDependenciesMeta:
       zod:
         optional: true
-
-  '@ast-grep/cli-darwin-arm64@0.51.2':
-    resolution: {integrity: sha512-KGvO4opuCvREiNOl8W/ZmG97rEfbUidoAgmj0+bgibQzJQ4hpLtdTeGWfD/4rdqeIDESv7yBaHbAaEY7SNdR/Q==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@ast-grep/cli-darwin-x64@0.51.2':
-    resolution: {integrity: sha512-XwUi5mwn1pu8vZCPHC9tdJqJcHSeZ/EUi0Mnz0g0MIQk9puiXHb/VyY21GzHa7pWJZ5oyT2KE7JzZxTQwKmIDA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@ast-grep/cli-linux-arm64-gnu@0.51.2':
-    resolution: {integrity: sha512-T9otX6zk58rN5F9SIvGSM4QXVHmVb2N62L5L4ZpVY1f93FqzaS3y7OIQTSPrTpfvZuth3dyoL9kZXTVGcllkWg==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  '@ast-grep/cli-linux-arm64-musl@0.51.2':
-    resolution: {integrity: sha512-NxLmXQWHGxJp8j+Tlb0Vz/kOmVgQZAOJBYBmg3euhEtmZ4k/pc+3/GiRK4kYC9ryzdc0TuqREcn9CCo92/v2rQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [musl]
-
-  '@ast-grep/cli-linux-x64-gnu@0.51.2':
-    resolution: {integrity: sha512-1ToEMb1m/tzjyQNEOhPjRZ3xIUfvY1adR2uP76ZQTmtCPwFWdZdFjIFKiigbzTaH48XoZYUN9L2E7lKbRBZzBw==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  '@ast-grep/cli-linux-x64-musl@0.51.2':
-    resolution: {integrity: sha512-XuTizC8JqsbPOwcyXmIf9TMETQAy83uEm77uyzZY8GcvBj9PcSkcEykLFa4dHErKK2jnh7Ts9SUtEpppLSdrAw==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
-
-  '@ast-grep/cli-win32-arm64-msvc@0.51.2':
-    resolution: {integrity: sha512-7SfwFvS9sJqoFcisxMh+mGKS9fixg0eCa7PhZZWLKB4MhGZydnoLJreVCg0ffHVZQJlYJItOUMzkuTb33kBbSQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [win32]
-
-  '@ast-grep/cli-win32-ia32-msvc@0.51.2':
-    resolution: {integrity: sha512-ih2meRyYNSfYyJIQHtEnRnY+obt96xNlOfTxbSZGEj6veU68BdpXhQKB/O5V9VTw7ip+IdRK5MKZPWikMocXIw==}
-    engines: {node: '>= 10'}
-    cpu: [ia32]
-    os: [win32]
-
-  '@ast-grep/cli-win32-x64-msvc@0.51.2':
-    resolution: {integrity: sha512-YzSajn4h8XNOfpf8QD4wYlGSzqlIahwUSp+k/WA9UM8p1QRNbokm1WTI+FvK9dmocgHogQaAmvcDWKiEPabhBg==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [win32]
-
-  '@ast-grep/cli@0.51.2':
-    resolution: {integrity: sha512-iAtkqUeMwgmVUXy9XH5Bck0oe0Lo+1aN7MLKiNu0MoeifePo0kPe9zWtH7x8QgGfEHOdO3aBE0OtH4GzsChnqA==}
-    engines: {node: '>= 12.0.0'}
-    hasBin: true
 
   '@atproto-labs/did-resolver@0.2.6':
     resolution: {integrity: sha512-2K1bC04nI2fmgNcvof+yA28IhGlpWn2JKYlPa7To9JTKI45FINCGkQSGiL2nyXlyzDJJ34fZ1aq6/IRFIOIiqg==}
@@ -17042,47 +16979,6 @@ snapshots:
       standardwebhooks: 1.1.1
     optionalDependencies:
       zod: 4.6.7
-
-  '@ast-grep/cli-darwin-arm64@0.51.2':
-    optional: true
-
-  '@ast-grep/cli-darwin-x64@0.51.2':
-    optional: true
-
-  '@ast-grep/cli-linux-arm64-gnu@0.51.2':
-    optional: true
-
-  '@ast-grep/cli-linux-arm64-musl@0.51.2':
-    optional: true
-
-  '@ast-grep/cli-linux-x64-gnu@0.51.2':
-    optional: true
-
-  '@ast-grep/cli-linux-x64-musl@0.51.2':
-    optional: true
-
-  '@ast-grep/cli-win32-arm64-msvc@0.51.2':
-    optional: true
-
-  '@ast-grep/cli-win32-ia32-msvc@0.51.2':
-    optional: true
-
-  '@ast-grep/cli-win32-x64-msvc@0.51.2':
-    optional: true
-
-  '@ast-grep/cli@0.51.2':
-    dependencies:
-      detect-libc: 2.1.2
-    optionalDependencies:
-      '@ast-grep/cli-darwin-arm64': 0.51.2
-      '@ast-grep/cli-darwin-x64': 0.51.2
-      '@ast-grep/cli-linux-arm64-gnu': 0.51.2
-      '@ast-grep/cli-linux-arm64-musl': 0.51.2
-      '@ast-grep/cli-linux-x64-gnu': 0.51.2
-      '@ast-grep/cli-linux-x64-musl': 0.51.2
-      '@ast-grep/cli-win32-arm64-msvc': 0.51.2
-      '@ast-grep/cli-win32-ia32-msvc': 0.51.2
-      '@ast-grep/cli-win32-x64-msvc': 0.51.2
 
   '@atproto-labs/did-resolver@0.2.6':
     dependencies:

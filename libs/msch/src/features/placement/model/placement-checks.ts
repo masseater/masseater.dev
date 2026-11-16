@@ -4,6 +4,7 @@ import { checkAgentDocsLength } from "./agent-docs-length.ts";
 import { checkColocatedGitPatterns } from "./colocated-git-patterns.ts";
 import { checkColocatedTests } from "./colocated-tests.ts";
 import { checkDanglingLinks } from "./dangling-links.ts";
+import { checkIgnoredSources } from "./ignored-sources.ts";
 import { checkLayeredSource } from "./layered-source.ts";
 import { checkNestedDocs } from "./nested-docs.ts";
 import { checkRootDocs } from "./root-docs.ts";
@@ -23,6 +24,7 @@ export const checkPlacement = Effect.fn("checkPlacement")(function* checkPlaceme
       checkDanglingLinks(root),
       checkSourceAliases(root),
       checkColocatedGitPatterns(root),
+      checkIgnoredSources(root),
     ],
     { concurrency: "unbounded" },
   );

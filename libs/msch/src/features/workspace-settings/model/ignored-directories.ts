@@ -64,7 +64,7 @@ const globsIn = Effect.fn("globsIn")(function* globsIn(root: string, file: strin
   );
 });
 
-const collectIgnoredDirectories = Effect.fn("collectIgnoredDirectories")(
+export const collectIgnoredDirectories = Effect.fn("collectIgnoredDirectories")(
   function* collectIgnoredDirectories(root: string) {
     const files = yield* RepositoryFiles;
     const ignoreFiles = yield* files.matchingFiles(root, [IGNORE_FILES]);

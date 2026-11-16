@@ -3,12 +3,13 @@
 masseater のリポジトリに共通の検査の方針を、1 つのパッケージにまとめたものである。
 入口は次のとおりである。
 
-| 入口                               | 中身                                                                           |
-| ---------------------------------- | ------------------------------------------------------------------------------ |
-| `msch`（bin）                      | 有限な値の集合とオブジェクトの形を、それを既に持つ 1 か所へ向けさせる検査      |
-| `@r_masseater/msch/lint`           | Vite+ の `lint` にそのまま渡せる oxlint のプリセットと、ルールを組むための部品 |
-| `@r_masseater/msch/oxlint`         | `msch` の結果を oxlint の診断として出す JS プラグイン                          |
-| `@r_masseater/msch/decision-rules` | プリセットが読む decision ルールのプラグイン                                   |
+| 入口                               | 中身                                                                            |
+| ---------------------------------- | ------------------------------------------------------------------------------- |
+| `msch`（bin）                      | 有限な値の集合とオブジェクトの形を、それを既に持つ 1 か所へ向けさせる検査       |
+| `@r_masseater/msch/lint`           | Vite+ の `lint` にそのまま渡せる oxlint のプリセットと、ルールを組むための部品  |
+| `@r_masseater/msch/oxlint`         | `msch` の結果を oxlint の診断として出す JS プラグイン                           |
+| `@r_masseater/msch/decision-rules` | プリセットが読む decision ルールのプラグイン                                    |
+| `@r_masseater/msch/config`         | ワークスペースの設定からルートの `vite.config.ts` を構築する `repositoryConfig` |
 
 Vite+ と Node.js 26 以降だけを前提にする。
 
@@ -38,6 +39,12 @@ decision ルールは呼ぶたびに費用がかかるので、プリセット�
 Vite+ はワークスペースの `vite.config.ts` の `lint` を使わない。
 1 つのワークスペースだけに効く設定は、そのワークスペースの `vite.config.ts` の `msch` にリテラルで書く。
 ルートの `vite.config.ts` は `@r_masseater/msch/workspace-settings` の `workspaceSettings` でそれを読む。
+
+## ルートの設定
+
+ルート `vite.config.ts` は、`@r_masseater/msch/config` の `repositoryConfig` を用いて設定全体を構築する。そこに `workspaceSettings` の結果を渡し、リポジトリに属するもの（追加のリントルールやオーバーライド、Betterleaks 用の公開値、textlint 用の単語、および追加タスク）のみを指定する。
+`repositoryConfig` は、`lint`、`fmt`、`staged`、`test`、vite-plus-adopt のセクション、`run` を返す。Steiger は各ワークスペースの `src` をチェックする。`verify` タスクは各ワークスペースの `verify` とすべてのルートタスクに依存するため、`run.tasks` に追加したタスクは一覧に書かなくても検証される。
+結果を `defineConfig` に展開し、その横に `msch` をリテラルとして記述する。
 
 `effecttsgo` のルールは、@effect/tsgo が手を入れた oxlint でだけ動く。
 `prepare` で `effect-tsgo patch --typescript --oxlint` を実行するか、`effect-tsgo vp check` で動かす。
