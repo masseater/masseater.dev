@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/msch",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "description": "masseater's check policy: points every finite value set and object shape at its one owner, and ships the oxlint preset of plugins and rules.",
   "keywords": [
     "lint",
@@ -33,7 +33,7 @@
   "exports": {
     "./cli": "./bin/msch.ts",
     "./decision-rules": "./src/features/lint-preset/config/decision-rules.ts",
-    "./inline-exports": "./src/features/inline-exports/index.ts",
+    "./lint-rules": "./src/features/lint-rules/index.ts",
     "./lint": "./src/features/lint-preset/index.ts",
     "./oxlint": "./src/app/oxlint.ts",
     "./vite": {
@@ -52,9 +52,9 @@
         "types": "./dist/decision-rules.d.mts",
         "default": "./dist/decision-rules.mjs"
       },
-      "./inline-exports": {
-        "types": "./dist/inline-exports.d.mts",
-        "default": "./dist/inline-exports.mjs"
+      "./lint-rules": {
+        "types": "./dist/lint-rules.d.mts",
+        "default": "./dist/lint-rules.mjs"
       },
       "./lint": {
         "types": "./dist/lint.d.mts",

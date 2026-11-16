@@ -1,5 +1,5 @@
+import type { Heading } from "@masseater.dev/sloppedia";
 import type { ReactNode } from "react";
-import type { Heading } from "sloppedia";
 
 const ITEM_CLASS = {
   section: "",

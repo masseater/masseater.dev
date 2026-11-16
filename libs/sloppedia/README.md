@@ -1,4 +1,4 @@
-# sloppedia
+# @masseater.dev/sloppedia
 
 Markdown で書いた記事を、Wikipedia に似た百科事典の見た目で出す React の部品である。[Sloppedia](https://masseater.dev/sloppedia/) がこれで動いている。
 
@@ -6,15 +6,11 @@ Markdown で書いた記事を、Wikipedia に似た百科事典の見た目で�
 
 ## 入れ方
 
-```sh
-npm install sloppedia effect react
-```
-
-React 19、Tailwind CSS 4、Effect 4 が要る。Tailwind の CSS で `sloppedia/styles.css` を読み込むと、色と本文の体裁が入る。
+masseater.dev の中だけで使う workspace パッケージで、npm には出していない。React 19、Tailwind CSS 4、Effect 4 が要る。Tailwind の CSS で `@masseater.dev/sloppedia/styles.css` を読み込むと、色と本文の体裁が入る。
 
 ```css
 @import "tailwindcss";
-@import "sloppedia/styles.css";
+@import "@masseater.dev/sloppedia/styles.css";
 ```
 
 ## 使い方
@@ -22,7 +18,13 @@ React 19、Tailwind CSS 4、Effect 4 が要る。Tailwind の CSS で `sloppedia
 `defineSloppedia` で名前と置き場所を決め、その設定を各部品に渡す。
 
 ```tsx
-import { ArticleView, WikiLayout, defineSloppedia, githubSource, headingsOf } from "sloppedia";
+import {
+  ArticleView,
+  WikiLayout,
+  defineSloppedia,
+  githubSource,
+  headingsOf,
+} from "@masseater.dev/sloppedia";
 
 const wiki = defineSloppedia({
   name: "Sloppedia",

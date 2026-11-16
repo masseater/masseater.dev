@@ -21,7 +21,6 @@ import {
   shadcnRestyleContracts,
 } from "./lint.config.ts";
 import { readonlyParameterAllow } from "./readonly-types.config.ts";
-import { restrictedImports } from "./required-stack.config.ts";
 
 type LintConfig = NonNullable<UserConfig["lint"]>;
 
@@ -45,7 +44,7 @@ const jsPlugins = [
   { name: "@html-eslint/react", specifier: resolved("@html-eslint/eslint-plugin-react") },
   { name: "eslint-js", specifier: resolved("oxlint-plugin-eslint") },
   { name: decisionPluginName, specifier: resolved("@r_masseater/msch/decision-rules") },
-  { name: "msch-lint", specifier: resolved("@r_masseater/msch/inline-exports") },
+  { name: "msch-lint", specifier: resolved("@r_masseater/msch/lint-rules") },
 ];
 
 const rules = {
@@ -77,6 +76,8 @@ const rules = {
   "import/group-exports": "off",
   "import/exports-last": "off",
   "msch-lint/inline-exports": "error",
+  "msch-lint/ui-state-in-atoms": "error",
+  "msch-lint/no-hand-written-sql": "error",
   "react/react-in-jsx-scope": "off",
   "eslint/no-undef": "off",
   "typescript/promise-function-async": "off",
@@ -90,7 +91,6 @@ const rules = {
   "jsdoc/check-tag-names": ["error", { definedTags: ["msch"] }],
   "jsdoc/require-param": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],
   "jsdoc/require-returns": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],
-  "eslint/no-restricted-imports": ["error", restrictedImports],
   "eslint-js/no-restricted-syntax": ["error", ...cloudflareResourceSyntax],
   "typescript/prefer-readonly-parameter-types": [
     "error",

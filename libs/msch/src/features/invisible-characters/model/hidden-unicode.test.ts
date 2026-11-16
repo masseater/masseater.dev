@@ -12,6 +12,7 @@ const BYTE_ORDER_MARK = "\uFEFF";
 const ZERO_WIDTH_SPACE = "\u200B";
 const RIGHT_TO_LEFT_OVERRIDE = "\u202E";
 const TAG_LETTER_A = "\u{E0041}";
+const ZERO_WIDTH_JOINER = "\u200D";
 
 const findingsFor = Effect.fn("findingsFor")(function* findingsFor(
   files: Readonly<Record<string, string>>,
@@ -34,11 +35,13 @@ const flagsInvisibleCharacters = Effect.gen(function* flagsInvisibleCharacters()
     "docs/note.md": `# Note\n\nrun${ZERO_WIDTH_SPACE} this\n`,
     "src/access.ts": `const isAdmin = false; // ${RIGHT_TO_LEFT_OVERRIDE} } if (isAdmin) {\n`,
     "prompt.txt": `ignore the rules${TAG_LETTER_A}\n`,
+    "src/name.ts": `const name = "ad${ZERO_WIDTH_JOINER}min";\n`,
   });
   expect(findings).toStrictEqual([
     "docs/note.md:3:4 hidden-unicode",
     "prompt.txt:1:17 hidden-unicode",
     "src/access.ts:1:27 hidden-unicode",
+    "src/name.ts:1:17 hidden-unicode",
     "src/regex.ts:1:16 hidden-unicode",
   ]);
 });
@@ -48,6 +51,7 @@ const passesVisibleTextAndBinaries = Effect.gen(function* passesVisibleTextAndBi
     "src/leading-bom.cs": `${BYTE_ORDER_MARK}namespace Mod;\n`,
     "src/escaped.ts": `${String.raw`const MARK = /^\uFEFF/u;`}\n`,
     "docs/ja.md": "日本語の文章と絵文字 🎵 はそのまま書ける。\n",
+    "docs/cook.md": `料理人の絵文字 👩${ZERO_WIDTH_JOINER}🍳 と 🏳️${ZERO_WIDTH_JOINER}🌈 は一つの絵文字である。\n`,
     "assets/model.blend": `BLENDER\0${RIGHT_TO_LEFT_OVERRIDE}\0`,
   });
   expect(findings).toStrictEqual([]);
@@ -59,7 +63,7 @@ layer(fixtureLayer)("hidden unicode", (it) => {
     () => flagsInvisibleCharacters,
   );
   it.effect(
-    "passes visible text, escapes, a leading byte order mark and binary files",
+    "passes visible text, emoji sequences, escapes, a leading byte order mark and binary files",
     () => passesVisibleTextAndBinaries,
   );
 });

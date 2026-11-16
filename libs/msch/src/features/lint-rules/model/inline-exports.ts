@@ -1,5 +1,5 @@
 import { Array as Arr, Option, pipe } from "effect";
-import type { Context, ESTree, Plugin, Rule } from "vite-plus/lint/plugins";
+import type { Context, ESTree, Rule } from "vite-plus/lint/plugins";
 
 import { editsOf } from "./inline-exports-plan.ts";
 import { isTypeOnlyClass } from "./inline-exports-resolve.ts";
@@ -67,7 +67,7 @@ const reportList = (
   );
 };
 
-const inlineExports: Rule = {
+export const inlineExports: Rule = {
   meta: { type: "suggestion", fixable: "code" },
   create: (context) => ({
     ExportNamedDeclaration: (node): void => {
@@ -80,9 +80,4 @@ const inlineExports: Rule = {
       }
     },
   }),
-};
-
-export const mschLintPlugin: Plugin & { readonly meta: { readonly name: string } } = {
-  meta: { name: "msch-lint" },
-  rules: { "inline-exports": inlineExports },
 };
