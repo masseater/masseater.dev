@@ -10,7 +10,7 @@ import {
   zoomArrange,
   zoomRoll,
 } from "#/widgets/daw-view/model/layout.ts";
-import { flippedBy, mixedWith, settled } from "#/widgets/daw-view/model/model.ts";
+import { flippedBy, settled, unmixed } from "#/widgets/daw-view/model/model.ts";
 import { keyboardWidth } from "#/widgets/daw-view/model/roll-layout.ts";
 import { pickAt } from "#/widgets/daw-view/model/roll-pick.ts";
 import type { Aim } from "#/widgets/daw-view/model/roll-pick.ts";
@@ -56,7 +56,7 @@ const select = (shell: Shell, selected: Option.Option<string>): void => {
 };
 
 export const unmix = (shell: Shell): void => {
-  shell.model.step(mixedWith([]));
+  shell.model.step(unmixed);
   rebuildChrome(shell);
   relayout(shell);
 };
