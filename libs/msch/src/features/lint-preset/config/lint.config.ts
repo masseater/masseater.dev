@@ -17,7 +17,7 @@ export const generated = [
   "**/CHANGELOG.md",
   ".github/release-please/*manifest.json",
   "**/.release-please-manifest.json",
-  "**/*.d.rpp.ts",
+  "**/*.d.*.ts",
   "**/src-tauri/gen/**",
 ];
 

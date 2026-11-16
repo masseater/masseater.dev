@@ -23,11 +23,12 @@ const rejects = (matches: (text: string) => boolean, message: string): SchemaAST
   Schema.makeFilter<string>((text) => !matches(text) || message);
 
 const Slug = Schema.String.check(Schema.isPattern(SLUG)).annotate({
-  description: "URLになる英小文字と数字のケバブケース(例: web-dev)。既存のslugなら書き換える",
+  description:
+    "The subject's English name in kebab-case, such as web-dev. Reuse the slug existing articles link to; an existing slug is rewritten",
 });
 
 const Title = Schema.NonEmptyString.check(Schema.isMaxLength(MAX_TITLE)).annotate({
-  description: "記事名。題材の正式な名前",
+  description: "The subject's official name",
 });
 
 const Description = Schema.NonEmptyString.check(
@@ -36,7 +37,7 @@ const Description = Schema.NonEmptyString.check(
   rejects((text) => BARE_URL.test(text), "リンクや記号を入れない"),
   rejects((text) => MDX_SYNTAX.test(text), "リンクや記号を入れない"),
   rejects((text) => MARKDOWN_LINK.test(text), "リンクや記号を入れない"),
-).annotate({ description: "一覧とOGPに出る1文の説明。リンクを入れない平文" });
+).annotate({ description: "One plain sentence for the index and OGP" });
 
 const Body = Schema.NonEmptyString.check(
   rejects((text) => TOP_HEADING.test(text), "見出しは##から使う。#は記事名が使う"),
@@ -44,25 +45,24 @@ const Body = Schema.NonEmptyString.check(
   rejects((text) => BARE_URL.test(text), "URLは[語](URL)の形で埋め込む"),
   rejects((text) => MDX_SYNTAX.test(text), "{ } < はMDXとして解釈されるので使えない"),
   rejects((text) => NUMERIC_FOOTNOTE.test(text), "脚注のラベルは番号でなく名前にする"),
-).annotate({ description: "Markdownの本文。frontmatterと記事名の見出しは含めない" });
-
-const Href = Schema.String.check(Schema.isPattern(WEB_URL)).annotate({
-  description: "値のリンク先",
+).annotate({
+  description:
+    "Japanese Markdown in encyclopedic である style, without frontmatter or the title heading. Open by defining the subject with the title as subject. Cite facts with named footnotes like [^webdev], defined at the end with the author, linked title and outlet. Attribute the owner's opinions (Sloppediaの持ち主のmasseaterは〜と考えている) and never give your own. Use ## and ### sections and tables for comparisons. Link other articles as [語](/sloppedia/<slug>), even unwritten ones",
 });
 
+const Href = Schema.String.check(Schema.isPattern(WEB_URL));
+
 const InfoboxRow = Schema.Struct({
-  label: Schema.NonEmptyString.annotate({ description: "項目名(例: 開発元)" }),
-  value: Schema.NonEmptyString.annotate({ description: "値" }),
+  label: Schema.NonEmptyString.annotate({ description: "Such as 開発元" }),
+  value: Schema.NonEmptyString,
   href: Schema.optionalKey(Href),
 });
 
-const Tags = Schema.Array(Schema.NonEmptyString)
-  .check(Schema.isMaxLength(MAX_TAGS))
-  .annotate({ description: "カテゴリになるタグ" });
+const Tags = Schema.Array(Schema.NonEmptyString).check(Schema.isMaxLength(MAX_TAGS));
 
 const Infobox = Schema.Array(InfoboxRow)
   .check(Schema.isMaxLength(MAX_INFOBOX))
-  .annotate({ description: "右上の情報欄。ソフトウェアや組織などで要るときだけ付ける" });
+  .annotate({ description: "Side facts box, for software, organizations and the like" });
 
 export const ArticleInput = Schema.Struct({
   slug: Slug,
