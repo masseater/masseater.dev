@@ -4,7 +4,6 @@ import type { Mixer } from "#/entities/song/index.ts";
 import { decibelsOf, shareOf } from "#/shared/lib/units.ts";
 import { isAutomation } from "#generated/langium/ast.ts";
 import type {
-  Amount,
   Automation,
   Bus,
   Song as SongNode,
@@ -60,9 +59,7 @@ const unitProblemsOf: From<Automation, readonly Problem[]> = (automation) =>
             ["from", automation.from],
             ["to", automation.to],
           ] as const,
-          Arr.filter(
-            ([, amount]: readonly [string, Amount]) => !Str.endsWith(unit)(String(amount.value)),
-          ),
+          Arr.filter(([, amount]) => !Str.endsWith(unit)(String(amount.value))),
           Arr.map(([property]) =>
             problemAt(automation)(property)(`${automation.parameter} は ${unit} で書きます`),
           ),

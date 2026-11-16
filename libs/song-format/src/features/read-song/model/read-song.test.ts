@@ -188,7 +188,7 @@ it.effect("needs meter and tempo on the first bar", () =>
 );
 
 it.effect("reads the mixer settings of a track", () =>
-  Effect.gen(function* mixer() {
+  Effect.gen(function* mixerSettings() {
     const song = yield* validSong(twoFiveOne);
     const settings = pipe(
       song.tracks,
