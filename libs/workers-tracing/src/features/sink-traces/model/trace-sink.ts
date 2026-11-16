@@ -9,9 +9,12 @@ export interface TraceSinkProps {
   readonly destination?: string;
   readonly workerName?: string;
   readonly logpush?: boolean;
+  readonly cpuMs?: number;
 }
 
 export const DEFAULT_DESTINATION = "workers-tracing";
+
+const DEFAULT_CPU_MS = 1000;
 
 const sinkMain = (): string =>
   decodeURIComponent(
@@ -22,6 +25,7 @@ export const traceSink = Effect.fn("traceSink")(function* traceSink({
   destination = DEFAULT_DESTINATION,
   workerName = `${destination}-sink`,
   logpush = false,
+  cpuMs = DEFAULT_CPU_MS,
 }: TraceSinkProps = {}) {
   const token = yield* makeRandom("TraceSinkToken");
   const sink = yield* Workers.Worker("TraceSink", {
@@ -29,6 +33,7 @@ export const traceSink = Effect.fn("traceSink")(function* traceSink({
     main: sinkMain(),
     compatibility: { date: COMPATIBILITY_DATE },
     logpush,
+    limits: { cpuMs },
     env: { TRACE_SINK_TOKEN: token },
     observability: {
       enabled: true,

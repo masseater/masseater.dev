@@ -31,6 +31,7 @@ const web = Effect.gen(function* web() {
     stage: "prod",
   });
   yield* Workers.Worker("TraitBuilder", {
+    limits: { cpuMs: 200 },
     name: `${PREFIX}trait-builder`,
     main: "./src/features/build-traits/api/trait-builder.ts",
     logpush: true,
@@ -44,6 +45,7 @@ const web = Effect.gen(function* web() {
     },
   });
   yield* Workers.Worker("Portal", {
+    limits: { cpuMs: 400 },
     name: `${PREFIX}portal`,
     main: "./src/app/portal/portal.ts",
     logpush: true,
@@ -53,6 +55,7 @@ const web = Effect.gen(function* web() {
   return yield* authSite({
     domain: SITE_HOST,
     name: Option.some(`${PREFIX}web`),
+    cpuMs: 1600,
     bindings: {
       DB,
       TOOL_CALLS,
