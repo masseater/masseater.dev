@@ -11,6 +11,8 @@ import {
 } from "effect";
 
 import { BOOLEAN_ANSWER, decodeRuleAnswer } from "./answer.ts";
+import { DecisionModelSchema } from "./models.ts";
+import type { DecisionModel } from "./models.ts";
 import {
   CiBehaviorSchema,
   Cutoff,
@@ -51,8 +53,8 @@ const isSelector = (input: unknown): input is DecisionRule["select"] => Predicat
 const RULE_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
 
 export const ModelSpecSchema = Schema.Union([
-  Schema.NonEmptyString,
-  Schema.NonEmptyArray(Schema.NonEmptyString),
+  DecisionModelSchema,
+  Schema.NonEmptyArray(DecisionModelSchema),
 ]);
 
 const ONE = 1;
@@ -100,7 +102,8 @@ class OptionsError extends taggedError<OptionsError, { readonly brand: unique sy
 export const optionsError = (message: string): Error =>
   OptionsError.make({ message: `${PREFIX}: ${message}` });
 
-export const modelIdsOf = (spec: ModelSpec): readonly string[] => Arr.dedupe(Arr.ensure(spec));
+export const modelIdsOf = (spec: ModelSpec): readonly DecisionModel[] =>
+  Arr.dedupe(Arr.ensure(spec));
 
 const splitModelId = (id: string): Option.Option<readonly [string, string]> => {
   const [provider, ...rest] = Str.split(id, PROVIDER_SEPARATOR);
@@ -113,7 +116,7 @@ const splitModelId = (id: string): Option.Option<readonly [string, string]> => {
 
 const acceptedModel = (ref: ModelRef): ModelRef => {
   const { models, name } = ref.provider;
-  if (Predicate.isNotUndefined(models) && !models.test(ref.model)) {
+  if (!models.test(ref.model)) {
     throw optionsError(
       `model "${ref.id}" is not a decision model that the "${name}" provider accepts`,
     );

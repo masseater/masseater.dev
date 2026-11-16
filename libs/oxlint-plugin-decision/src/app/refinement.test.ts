@@ -26,7 +26,7 @@ import {
   lineOf,
   locationProject,
 } from "./location-fixture.test.support.ts";
-import { loggedRequests } from "./mock-openrouter.test.support.ts";
+import { loggedRequests } from "./mock-typesafe.test.support.ts";
 import { firstSpan } from "./oxlint.test.support.ts";
 import type { TestError } from "./oxlint.test.support.ts";
 

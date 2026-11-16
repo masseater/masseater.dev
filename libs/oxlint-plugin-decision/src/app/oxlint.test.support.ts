@@ -23,7 +23,7 @@ import { toJson } from "#/entities/decision/index.ts";
 import type { DecisionPluginSetup } from "#/entities/decision/index.ts";
 import { CACHE_DIR } from "#/features/serve-decisions/index.test.support.ts";
 
-import { MockOpenRouter } from "./mock-openrouter.test.support.ts";
+import { MockTypesafe } from "./mock-typesafe.test.support.ts";
 
 const DATA_FIRST_ARITY = 2;
 
@@ -66,7 +66,7 @@ const PASSED_ENV = [
 
 const DECISION_PLUGINS = ["decision", "team"] as const;
 
-const OPENROUTER_DEFAULT = "openrouter/~typesafe/jev-latest";
+const TYPESAFE_DEFAULT = "typesafe/jev-latest";
 
 const inPackage = (...segments: readonly string[]): Effect.Effect<string, never, Path.Path> =>
   Effect.gen(function* resolve() {
@@ -80,7 +80,7 @@ export const packageRoot = inPackage();
 export const pluginPath = inPackage("dist", "index.mjs");
 /** @internal */
 export const cacheDirOf = (root: string): Effect.Effect<string, never, Path.Path> =>
-  Path.Path.pipe(Effect.map((path) => path.join(root, ...CACHE_DIR)));
+  Path.Path.pipe(Effect.map((path) => path.join(root, CACHE_DIR)));
 
 const inheritedEnv: Effect.Effect<Readonly<Record<string, string>>> = Effect.map(
   pipe(
@@ -209,7 +209,7 @@ export const projectFilesFor: {
   ): Effect.Effect<Readonly<Record<string, string>>, never, Path.Path> =>
     pluginPath.pipe(
       Effect.map((plugin) => ({
-        "plugin.mjs": `import { createDecisionPlugin } from ${toJson(plugin)};\n\nexport default createDecisionPlugin(${setupSource({ model: OPENROUTER_DEFAULT, ...setup })});\n`,
+        "plugin.mjs": `import { createDecisionPlugin } from ${toJson(plugin)};\n\nexport default createDecisionPlugin(${setupSource({ model: TYPESAFE_DEFAULT, ...setup })});\n`,
         "oxlint.config.ts": configSource({
           jsPlugins: ["./plugin.mjs"],
           rules: pipe(
@@ -225,9 +225,9 @@ export const projectFilesFor: {
 /** @internal */
 export const mockEnv = (
   token: string,
-): Effect.Effect<Readonly<Record<string, string>>, never, MockOpenRouter> =>
-  MockOpenRouter.pipe(
-    Effect.map(({ baseURL }) => ({ OPENROUTER_API_KEY: token, OPENROUTER_BASE_URL: baseURL })),
+): Effect.Effect<Readonly<Record<string, string>>, never, MockTypesafe> =>
+  MockTypesafe.pipe(
+    Effect.map(({ baseURL }) => ({ TYPESAFE_API_KEY: token, TYPESAFE_BASE_URL: baseURL })),
   );
 
 /** @internal */

@@ -149,7 +149,6 @@ const explainPassOf = (
   }),
   filename: pass.filename,
   model: pass.model.id,
-  yesNo: pass.model.provider.yesNo === true,
   request,
   durationMs,
 });
@@ -195,14 +194,7 @@ const decideWith = (
     prepared,
     Arr.map(({ asking, request }) => inputOf(asking, request)),
   );
-  return Option.match(Option.fromUndefinedOr(provider.decideAll), {
-    onNone: () =>
-      pipe(
-        inputs,
-        Arr.map((input) => provider.decide(input)),
-      ),
-    onSome: (decideAll) => decideAll(inputs),
-  });
+  return provider.decideAll(inputs);
 };
 
 const reportProvider = (prepared: Arr.NonEmptyReadonlyArray<Prepared>): void => {

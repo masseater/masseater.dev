@@ -14,7 +14,7 @@ import {
   outputOf,
   withMock,
 } from "./fixtures.test.support.ts";
-import { loggedRequests } from "./mock-openrouter.test.support.ts";
+import { loggedRequests } from "./mock-typesafe.test.support.ts";
 import { decisionLines, mockEnv } from "./oxlint.test.support.ts";
 
 const LOG_LINE = "console.log(user.email, user.phone);\n";
@@ -26,10 +26,10 @@ const perRuleModel = Effect.gen(function* test() {
   const run = yield* lintProject({
     files: { "log.js": LOG_LINE },
     options: {
-      model: "openrouter/first",
-      rules: [callRule, { ...otherRule, model: "openrouter/third" }],
+      model: "typesafe/jev-latest",
+      rules: [callRule, { ...otherRule, model: "typesafe/jev-1.3" }],
     },
-    ruleOptions: { "other-call": { model: "openrouter/second" } },
+    ruleOptions: { "other-call": { model: "typesafe/jev-1.2" } },
     env,
   });
   const requests = yield* loggedRequests;
@@ -39,7 +39,7 @@ const perRuleModel = Effect.gen(function* test() {
       Arr.map((request) => modelOf(request)),
       (sorted) => Arr.sort(sorted, Order.String),
     ),
-    ["first", "second"],
+    ["jev-1.2", "jev-latest"],
   );
   deepStrictEqual(
     pipe(
@@ -48,8 +48,8 @@ const perRuleModel = Effect.gen(function* test() {
       (sorted) => Arr.sort(sorted, Order.String),
     ),
     [
-      "log.js:1:1: [any-call] openrouter/mock-decider",
-      "log.js:1:1: [other-call] openrouter/mock-second",
+      "log.js:1:1: [any-call] typesafe/mock-decider",
+      "log.js:1:1: [other-call] typesafe/mock-second",
     ],
   );
 });
@@ -64,7 +64,7 @@ const badRuleOptions = Effect.gen(function* test() {
     format: "default",
   });
   strictEqual(run.status === PASSED, false, outputOf(run));
-  assertInclude(outputOf(run), 'model "nowhere" must be "<provider>/<model>"');
+  assertInclude(outputOf(run), "model must be a decision model");
 });
 
 layer(NodeServices.layer)("rule options in the oxlint config", (it) => {

@@ -17,7 +17,7 @@ import type { Scope } from "effect";
 
 import { toJson } from "#/entities/decision/index.ts";
 
-import { RESPAN, TIMEOUT, outputOf } from "./fixtures.test.support.ts";
+import { TIMEOUT, outputOf } from "./fixtures.test.support.ts";
 import {
   configSource,
   decisionLines,
@@ -28,7 +28,8 @@ import {
 } from "./oxlint.test.support.ts";
 import type { Services, TestError } from "./oxlint.test.support.ts";
 
-const JEV_MODEL = "openrouter/~typesafe/jev-latest";
+const JEV_MODEL = "typesafe/jev-latest";
+const CLEF_MODEL = "cloudflare/@cf/cloudflare/clef-flash";
 const PROVIDER_FAILURE = /http \d+|network:|timeout|is not set/u;
 const REPORTED = /^(?<where>\S+:\d+:\d+): \[(?<rule>[^\]]+)\]/u;
 
@@ -54,7 +55,7 @@ const EXAMPLE_RULES: RuleEntries = {
 
 const MIXED_RULES: RuleEntries = {
   ...EXAMPLE_RULES,
-  "decision/no-prompt-injection": ["error", { model: JEV_MODEL }],
+  "decision/no-prompt-injection": ["error", { model: CLEF_MODEL }],
 };
 
 const livePlugin = (example: string, dist: string, cutoff: string): string => `
@@ -62,7 +63,7 @@ import { createDecisionPlugin } from ${toJson(dist)};
 import { rules } from ${toJson(example)};
 
 export default createDecisionPlugin({
-  model: ${toJson(RESPAN)},
+  model: ${toJson(JEV_MODEL)},
   rules: rules.map((rule) => Object.assign({}, rule, ${cutoff})),
 });
 `;
@@ -101,12 +102,18 @@ const reportOf = (line: string): Option.Option<string> =>
 const lintLive = (live: LiveRun): Effect.Effect<readonly string[], TestError, Services> =>
   Effect.scoped(
     Effect.gen(function* lint() {
-      const key = yield* Config.Redacted("OPENROUTER_API_KEY");
+      const key = yield* Config.Redacted("TYPESAFE_API_KEY");
+      const token = yield* Config.Redacted("CLOUDFLARE_API_TOKEN");
+      const account = yield* Config.NonEmptyString("CLOUDFLARE_ACCOUNT_ID");
       const cwd = yield* exampleProject(live);
       const run = yield* runOxlint({
         cwd,
         args: ["--format", "unix", "-c", "oxlint.config.ts", "fail.js", "pass.js"],
-        env: { OPENROUTER_API_KEY: Redacted.value(key) },
+        env: {
+          TYPESAFE_API_KEY: Redacted.value(key),
+          CLOUDFLARE_API_TOKEN: Redacted.value(token),
+          CLOUDFLARE_ACCOUNT_ID: account,
+        },
       });
       const lines = decisionLines(run);
       yield* Effect.log(pipe(lines, Arr.join("\n")));
@@ -152,7 +159,7 @@ const mixedLive = Effect.gen(function* test() {
   strictEqual(
     pipe(
       modelsOf(injection),
-      Arr.every((model) => Str.includes("typesafe/jev")(model)),
+      Arr.every((model) => Str.includes("clef-flash")(model)),
     ),
     true,
     pipe(injection, Arr.join("\n")),
@@ -160,7 +167,7 @@ const mixedLive = Effect.gen(function* test() {
   strictEqual(
     pipe(
       modelsOf(others),
-      Arr.every((model) => Str.includes("respan/span-01-lite")(model)),
+      Arr.every((model) => Str.includes("typesafe/jev")(model)),
     ),
     true,
     pipe(others, Arr.join("\n")),
@@ -177,14 +184,14 @@ const probabilitiesLive = Effect.gen(function* test() {
   strictEqual(lines.length, EXAMPLE_MATCHES);
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("the live OpenRouter API", (it) => {
+layer(NodeServices.layer, { excludeTestServices: true })("the live decision model APIs", (it) => {
   it.effect(
     "reports exactly the example's violations without a provider failure",
     () => answersLive,
     TIMEOUT,
   );
   it.effect(
-    "answers each rule with the model its rule options pick, Respan and jev in one run",
+    "answers each rule with the model its rule options pick, Jev and Clef in one run",
     () => mixedLive,
     TIMEOUT,
   );
