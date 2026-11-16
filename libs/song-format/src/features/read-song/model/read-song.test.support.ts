@@ -1,3 +1,10 @@
+import { Array as Arr, Effect, Record as Rec, pipe } from "effect";
+
+import type { Song } from "#/entities/song/index.ts";
+
+import { readSong } from "./read-song.ts";
+import type { SongFiles } from "./read-song.ts";
+
 export const header = `song "two five one"
 
 kit studio {
@@ -54,3 +61,61 @@ bar meter 4/4 tempo 120bpm {
 ${line}
 }
 `;
+
+export const ENTRY = "/songs/main.fu";
+
+export const filesOf = (files: Readonly<Record<string, string>>): SongFiles<string> => ({
+  path: ENTRY,
+  read: (path) => Effect.fromOption(Rec.get(files, path)).pipe(Effect.mapError(() => path)),
+});
+
+export const library = `kit studio {
+  kick "kick.flac"
+}
+instrument keys sample "keys.flac" root C4
+bus room fx [reverb ir "room.flac" mix 30%]
+track keys instrument keys role harmony send room 20%
+`;
+
+export const importing = (names: string): string => `import { ${names} } from "../lib/kit.fu"
+song "imported"
+track drums kit studio
+bar meter 4/4 tempo 120bpm {
+  drums: kick 1/1
+  keys:  C4 1/1
+}
+`;
+
+export const messagesIn = (files: SongFiles<string>): Effect.Effect<readonly string[]> =>
+  readSong(files).pipe(
+    Effect.map((source) => {
+      if (source.status === "valid") {
+        return [];
+      }
+      return pipe(
+        source.issues,
+        Arr.map((issue) => issue.message),
+      );
+    }),
+  );
+
+export const songIn = (files: SongFiles<string>): Effect.Effect<Song> =>
+  readSong(files).pipe(
+    Effect.map((source) => {
+      if (source.status === "invalid") {
+        throw new Error(
+          pipe(
+            source.issues,
+            Arr.map((issue) => issue.message),
+            Arr.join("\n"),
+          ),
+        );
+      }
+      return source.song;
+    }),
+  );
+
+export const messagesOf = (text: string): Effect.Effect<readonly string[]> =>
+  messagesIn(filesOf({ [ENTRY]: text }));
+
+export const validSong = (text: string): Effect.Effect<Song> => songIn(filesOf({ [ENTRY]: text }));

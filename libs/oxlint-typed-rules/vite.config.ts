@@ -240,7 +240,10 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["test", "size"] },
-      build: "vp pack",
+      build: {
+        command: "vp pack",
+        cache: { input: [{ auto: true }, "!.fixtures", "!.fixtures/**"] },
+      },
       test: { command: "vp test run", dependsOn: ["build"] },
       size: { command: "size-limit", dependsOn: ["build"] },
     },
