@@ -89,6 +89,23 @@ const passesCommandsThatOnlyNameAPackageManager = Effect.gen(
   },
 );
 
+const flagsPackageManagersInAgentDocCode = Effect.gen(
+  function* flagsPackageManagersInAgentDocCode() {
+    const findings = yield* findingsFor({
+      "AGENTS.md":
+        "# AGENTS.md\n\n`npm` には出さない。`pnpm-workspace.yaml` を読む。\n\n```sh\nvp install\npnpm exec tsc\n```\n",
+      "apps/site/AGENTS.md":
+        "# site\n\nスキルは `pnpm exec intent load site#deploy` で読む。\n\n`vp exec intent list` を先に流す。\n",
+      "apps/site/CLAUDE.md": "@AGENTS.md\n",
+      "README.md": "# site\n\n`npx site-cli login` で始める。\n",
+    });
+    expect(findings).toStrictEqual([
+      "AGENTS.md:6 package-manager-command",
+      "apps/site/AGENTS.md:3 package-manager-command",
+    ]);
+  },
+);
+
 const flagsSkippedGatesAndFilterTasks = Effect.gen(function* flagsSkippedGatesAndFilterTasks() {
   const findings = yield* findingsFor({
     "vite.config.ts":
@@ -125,6 +142,10 @@ layer(fixtureLayer)("commands run through Vite+", (it) => {
   it.effect(
     "passes quoted text, Dockerfiles and prose that only name a package manager",
     () => passesCommandsThatOnlyNameAPackageManager,
+  );
+  it.effect(
+    "flags package managers in code in agent docs, but not names or READMEs",
+    () => flagsPackageManagersInAgentDocCode,
   );
   it.effect(
     "flags flags that skip a gate and tasks that wrap --filter",
