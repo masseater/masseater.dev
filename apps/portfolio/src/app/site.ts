@@ -4,7 +4,7 @@ import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from
 import { Base64 } from "effect/encoding";
 
 import { isUnindexedPath } from "#/entities/entry/index.ts";
-import { handleStars } from "#/features/star/index.server.ts";
+import { handleStars } from "#/features/star-songs/index.server.ts";
 import {
   IMAGE_HEADERS,
   SECURITY_HEADERS,

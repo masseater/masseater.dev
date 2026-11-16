@@ -16,7 +16,7 @@ export default defineConfig({
           },
         },
         {
-          files: ["src/features/comments/model/comments.ts"],
+          files: ["src/features/ban-comments/model/comments.ts"],
           rules: { "effecttsgo/node-builtin-import": "off" },
         },
       ],
@@ -30,10 +30,10 @@ export default defineConfig({
     entry: {
       cli: "bin/msch.ts",
       oxlint: "src/app/oxlint.ts",
-      lint: "src/features/lint-preset/index.ts",
+      lint: "src/features/define-lint-preset/index.ts",
       "decision-rules": "src/app/decision-rules.ts",
-      "lint-rules": "src/features/lint-rules/index.ts",
-      "workspace-settings": "src/features/workspace-settings/index.ts",
+      "lint-rules": "src/features/define-lint-rules/index.ts",
+      "workspace-settings": "src/features/build-workspace-settings/index.ts",
     },
     platform: "node",
     sourcemap: true,

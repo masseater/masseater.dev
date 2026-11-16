@@ -55,7 +55,7 @@
     },
     "./oxlint": "./src/app/oxlint.ts",
     "./workers-ai": "./src/app/workers-ai.ts",
-    "./trace-sink-worker": "./src/app/trace-sink.worker.ts"
+    "./trace-sink-worker": "./src/app/trace-sink.ts"
   },
   "publishConfig": {
     "bin": {
@@ -99,7 +99,7 @@
         "types": "./dist/workers-ai.d.ts",
         "default": "./dist/workers-ai.js"
       },
-      "./trace-sink-worker": "./dist/trace-sink.worker.js"
+      "./trace-sink-worker": "./dist/trace-sink.js"
     },
     "access": "public",
     "provenance": true

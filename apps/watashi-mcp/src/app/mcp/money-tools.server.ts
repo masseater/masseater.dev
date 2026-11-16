@@ -14,7 +14,7 @@ import {
 import type { Failure, Services } from "#/entities/ledger/index.server.ts";
 import { MoneyReadInput, MoneyWriteInput } from "#/entities/ledger/index.ts";
 import type { MoneyRead, MoneyWrite } from "#/entities/ledger/index.ts";
-import { settings } from "#/features/categorize/index.server.ts";
+import { settings } from "#/features/configure-categories/index.server.ts";
 import {
   addTransactions,
   deleteImport,
@@ -25,7 +25,7 @@ import {
   flowReport,
   listTransactions,
   monthlyReport,
-} from "#/features/report/index.server.ts";
+} from "#/features/report-money/index.server.ts";
 
 type Run<Input> = (input: Input) => Effect.Effect<unknown, Failure, Services>;
 

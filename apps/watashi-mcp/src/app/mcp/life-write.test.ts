@@ -2,7 +2,7 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 import { vi } from "vite-plus/test";
 
-import { routeLifeRead, writeLife } from "#/features/life-tools/index.test.support.ts";
+import { routeLifeRead, writeLife } from "#/features/record-life/index.test.support.ts";
 
 import { closeDatabase, env, resetDatabase } from "./d1.test.support.ts";
 

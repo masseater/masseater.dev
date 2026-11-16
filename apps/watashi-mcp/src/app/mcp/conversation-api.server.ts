@@ -2,9 +2,9 @@ import { Effect, Match } from "effect";
 
 import { asOwner, asOwnerOrTokenHolder } from "#/entities/api-token/index.server.ts";
 import type { Principal } from "#/entities/api-token/index.server.ts";
-import { offset, upload } from "#/features/conversation-tools/index.server.ts";
-import { importMemos } from "#/features/memory-tools/index.server.ts";
-import { issueToken, listTokens, revokeToken } from "#/features/token-tools/index.server.ts";
+import { issueToken, listTokens, revokeToken } from "#/features/issue-tokens/index.server.ts";
+import { importMemos } from "#/features/manage-memory/index.server.ts";
+import { offset, upload } from "#/features/store-conversations/index.server.ts";
 import { methodNotAllowed, storageFailed } from "#/shared/api/index.ts";
 
 const conversations = (request: Request, principal: Principal): Effect.Effect<Response> =>

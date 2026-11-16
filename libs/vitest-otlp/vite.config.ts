@@ -38,7 +38,7 @@ export default defineConfig({
       sourcemap: true,
       dts: true,
     },
-    { entry: ["src/app/tail.worker.ts"], platform: "neutral", sourcemap: true, dts: false },
+    { entry: ["src/app/tail-to-otlp.ts"], platform: "neutral", sourcemap: true, dts: false },
   ],
   test: {
     include: ["src/**/*.test.ts"],

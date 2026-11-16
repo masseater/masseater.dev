@@ -5,15 +5,15 @@ import { Array, Effect, Option, Path, pipe } from "effect";
 
 import { fetchItem } from "#/entities/booth/index.ts";
 import { packagesWhere } from "#/entities/package/index.ts";
-import { extract } from "#/features/extract/index.ts";
-import { findAssetStore } from "#/features/intake/index.ts";
+import { extract } from "#/features/extract-assets/index.ts";
+import { findAssetStore } from "#/features/import-assets/index.ts";
 import {
   Blm,
   Library,
   linkBooth,
   pruneProject,
   putProjectAssets,
-} from "#/features/library/index.ts";
+} from "#/features/scan-library/index.ts";
 import { Settings } from "#/shared/settings/index.ts";
 
 import { firstOr } from "./request-failed.ts";

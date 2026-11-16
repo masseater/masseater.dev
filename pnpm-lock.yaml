@@ -887,6 +887,9 @@ catalogs:
     web-tree-sitter:
       specifier: 0.27.2
       version: 0.27.2
+    wordnet-db:
+      specifier: 3.1.14
+      version: 3.1.14
     xlsx:
       specifier: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
       version: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
@@ -3761,6 +3764,9 @@ importers:
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+      wordnet-db:
+        specifier: 'catalog:'
+        version: 3.1.14
 
   libs/nimado:
     dependencies:
@@ -16684,6 +16690,10 @@ packages:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
 
+  wordnet-db@3.1.14:
+    resolution: {integrity: sha512-zVyFsvE+mq9MCmwXUWHIcpfbrHHClZWZiVOzKSxNJruIcFn2RbY55zkhiAMMxM8zCVSmtNiViq8FsAZSFpMYag==}
+    engines: {node: '>=0.6.0'}
+
   wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
 
@@ -29510,6 +29520,8 @@ snapshots:
   why-is-node-running@3.2.1: {}
 
   word-wrap@1.2.5: {}
+
+  wordnet-db@3.1.14: {}
 
   wordwrap@1.0.0: {}
 

@@ -33,7 +33,7 @@
     "./setup": "./src/app/setup.ts",
     "./semconv": "./src/app/semconv.ts",
     "./workers": "./src/app/workers.ts",
-    "./tail-worker": "./src/app/tail.worker.ts",
+    "./tail-worker": "./src/app/tail-to-otlp.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -54,7 +54,7 @@
         "types": "./dist/workers.d.mts",
         "default": "./dist/workers.mjs"
       },
-      "./tail-worker": "./dist/tail.worker.js",
+      "./tail-worker": "./dist/tail-to-otlp.js",
       "./package.json": "./package.json"
     },
     "access": "public",

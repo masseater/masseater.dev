@@ -1,0 +1,42 @@
+import { Array as Arr, Match, pipe } from "effect";
+import type { ReactNode } from "react";
+
+import { useOutput } from "#/features/run-playground/model/output.ts";
+import type { Entry, Output } from "#/features/run-playground/model/output.ts";
+import { playground } from "#/shared/config/index.ts";
+
+import { ConsoleLine } from "./console-line.tsx";
+
+const entriesOf = (output: Output): readonly Entry[] =>
+  Match.value(output).pipe(
+    Match.discriminatorsExhaustive("status")({
+      pending: (): readonly Entry[] => [],
+      ran: ({ entries }) => entries,
+    }),
+  );
+
+const noticeOf = (output: Output): string =>
+  Match.value(output).pipe(
+    Match.discriminatorsExhaustive("status")({
+      pending: () => playground.output.pending,
+      ran: () => "",
+    }),
+  );
+
+export const ConsoleView = (): ReactNode => {
+  const output = useOutput();
+  const notice = noticeOf(output);
+  return (
+    <div className="h-full overflow-auto font-mono text-xs" role="log">
+      <ol>
+        {pipe(
+          entriesOf(output),
+          Arr.map((entry) => <ConsoleLine key={entry.id} entry={entry} />),
+        )}
+      </ol>
+      <p hidden={notice === ""} className="text-muted-foreground px-4 py-2">
+        {notice}
+      </p>
+    </div>
+  );
+};

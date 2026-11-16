@@ -3,8 +3,8 @@ import { Array as Arr, Console, Effect } from "effect";
 import type { Config } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
 
-import { authorized } from "#/features/authenticate/index.ts";
-import type { CredentialsError } from "#/features/authenticate/index.ts";
+import { authorized } from "#/features/authenticate-user/index.ts";
+import type { CredentialsError } from "#/features/authenticate-user/index.ts";
 import { asWatashi, issueToken, listTokens, revokeToken } from "#/shared/api/index.ts";
 import { settings } from "#/shared/config/index.ts";
 import type { WatashiFailed } from "#/shared/lib/errors.ts";

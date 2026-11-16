@@ -15,6 +15,7 @@ catalog:
   "@opentelemetry/api": 1.10.0
   "@opentelemetry/sdk-node": 0.301.2
   chrome-launcher: 1.2.3
+  wordnet-db: 3.1.14
   lighthouse: 13.6.0
   miniflare: 4.20260730.0
   puppeteer-core: 25.17.0
