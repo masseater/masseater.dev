@@ -6,8 +6,10 @@ import {
   Record as Rec,
   pipe,
   Function as Fn,
+  Stream,
 } from "effect";
 import type { Scope } from "effect";
+import { Tar } from "effect/encoding";
 import { encode as encodeHex } from "effect/encoding/Hex";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { zip } from "fflate";
@@ -142,6 +144,24 @@ export const zipArchive = (files: Readonly<Record<string, string>>): Effect.Effe
       resume(Effect.succeed(zipped));
     });
   });
+
+/** @internal */
+export const tarGzArchive = (files: Readonly<Record<string, string>>): Effect.Effect<Uint8Array> =>
+  Stream.fromIterable(
+    pipe(
+      Rec.toEntries(files),
+      Arr.map(([name, source]) => Tar.file(name, source, { mode: 0o755 })),
+    ),
+  ).pipe(
+    Stream.pipeThroughChannel(Tar.encode()),
+    Stream.mkUint8Array,
+    Effect.flatMap((tar) =>
+      Effect.promise(() =>
+        new Response(new Blob([tar]).stream().pipeThrough(new CompressionStream("gzip"))).bytes(),
+      ),
+    ),
+    Effect.orDie,
+  );
 
 /** @internal */
 export const sha256Hex = (data: Uint8Array): Effect.Effect<string> => {

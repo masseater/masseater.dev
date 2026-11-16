@@ -1,5 +1,4 @@
 import { Array as Arr, Duration, Effect, Match, Option, Predicate, Schedule, pipe } from "effect";
-import type { Cause } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/http";
 import type { HttpClientError } from "effect/http";
 
@@ -46,16 +45,11 @@ const requestOf = (probe: Probe): HttpClientRequest.HttpClientRequest =>
 
 const answer = (
   probe: Probe,
-): Effect.Effect<
-  ProbeOutcome,
-  HttpClientError.HttpClientError | Cause.TimeoutError,
-  HttpClient.HttpClient
-> =>
+): Effect.Effect<ProbeOutcome, HttpClientError.HttpClientError, HttpClient.HttpClient> =>
   Effect.gen(function* answerProbe() {
-    const client = yield* HttpClient.HttpClient;
-    const response = yield* HttpClient.withScope(client)
-      .execute(requestOf(probe))
-      .pipe(Effect.timeout(TIMEOUT));
+    const base = yield* HttpClient.HttpClient;
+    const client = HttpClient.timeout(base, TIMEOUT);
+    const response = yield* HttpClient.withScope(client).execute(requestOf(probe));
     const location = Option.getOrElse(Option.fromNullishOr(response.headers["location"]), () => "");
     return { _tag: "Answered", status: response.status, location } satisfies ProbeOutcome;
   }).pipe(Effect.scoped);
