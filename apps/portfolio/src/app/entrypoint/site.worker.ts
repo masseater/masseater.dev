@@ -5,9 +5,12 @@ import { Base64 } from "effect/encoding";
 
 import { isUnindexedPath } from "#/entities/entry/index.ts";
 import { handleStars } from "#/features/star/index.server.ts";
-import { site } from "#/shared/config/index.ts";
-
-import { IMAGE_HEADERS, SECURITY_HEADERS, contentSecurityPolicy } from "./security-headers.ts";
+import {
+  IMAGE_HEADERS,
+  SECURITY_HEADERS,
+  contentSecurityPolicy,
+  site,
+} from "#/shared/config/index.ts";
 
 const NONCE_BYTES = 16;
 

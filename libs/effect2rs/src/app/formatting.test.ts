@@ -6,6 +6,7 @@ import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { conformance } from "./conformance.test.support.ts";
 import { effect2rs } from "./index.ts";
 
+const RUSTFMT_TIMEOUT = 60_000;
 const RUSTFMT = ["--edition", "2024", "--emit", "stdout", "--quiet"];
 
 const rustfmt = Effect.fn("rustfmt")(function* rustfmt(source: string) {
@@ -76,5 +77,6 @@ layer(NodeServices.layer)("rustfmt", (it) => {
         expect(formattedPlain).toBe(plain);
         expect(formattedSpecta).toBe(specta);
       }),
+    RUSTFMT_TIMEOUT,
   );
 });

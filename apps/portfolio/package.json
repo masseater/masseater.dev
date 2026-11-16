@@ -4,9 +4,7 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#/*": "./src/*",
-    "#vite-plugins/*": "./src/app/vite/*",
-    "#worker/*": "./src/app/worker/*"
+    "#/*": "./src/*"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

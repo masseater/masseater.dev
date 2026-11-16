@@ -28,7 +28,7 @@ import {
 } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
-import { ISSUED_TOKEN_PREFIX } from "#cloudflare-root";
+import { ISSUED_TOKEN_PREFIX } from "#/features/issue-cloudflare-token/index.ts";
 
 type Token = Readonly<{
   id?: string | null | undefined;

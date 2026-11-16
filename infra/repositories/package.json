@@ -4,9 +4,6 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#broker-names": "./src/shared/config/broker-names.ts",
-    "#cloudflare-root": "./src/features/issue-cloudflare-token/model/cloudflare-root.ts",
-    "#github-oidc": "./src/entities/credential/model/github-oidc.ts",
     "#/*": "./src/*"
   },
   "exports": {

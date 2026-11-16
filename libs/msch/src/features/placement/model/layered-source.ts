@@ -2,14 +2,14 @@ import { Array as Arr, Effect, Option, Order, Schema, String as Str, pipe } from
 
 import { MANIFEST_FILE, EntryManifestJson, publicEntriesOf } from "#/entities/package/index.ts";
 import type { PublicEntry } from "#/entities/package/index.ts";
-import { workspaceDirectories } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
+
+import { memberSources } from "./member-sources.ts";
 
 const LAYERED_RULE: RuleName = "layered-source";
 const ENTRY_RULE: RuleName = "public-entry";
 const FIRST = 1;
-const ROOT_WORKSPACE = ".";
 const SOURCE_DIRECTORY = "src";
 const SEPARATOR = "/";
 const LOOSE_DEPTH = 2;
@@ -19,11 +19,6 @@ const ROOT_ALLOWED =
   /^(?:[^/]+\.config\.[cm]?[jt]s|alchemy\.[^/]+\.ts|[^/]+\.d\.[cm]?ts|bin\/.+)$/u;
 const PUBLIC_ENTRY =
   /^(?:bin\/[^/]+|src\/(?:app\/[^/]+|(?:pages|widgets|features|entities)\/[^/]+\/index(?:\.[a-z]+)*\.tsx?|shared\/[^/]+\/index(?:\.[a-z]+)*\.tsx?|shared\/(?:ui|lib)\/.+))$/u;
-const EXCLUDED: readonly string[] = [
-  ":(exclude,attr:linguist-vendored)",
-  ":(exclude,attr:linguist-generated)",
-  ":(exclude,attr:linguist-documentation)",
-];
 
 const OUTSIDE_MESSAGE =
   "sits outside src/. Put every module of a workspace under src/ in an FSD layer; only bin/, *.config.ts, alchemy.*.ts and *.d.ts may stay at the workspace root.";
@@ -107,12 +102,7 @@ export const checkLayeredSource = Effect.fn("checkLayeredSource")(function* chec
   root: string,
 ) {
   const files = yield* RepositoryFiles;
-  const declared = yield* workspaceDirectories(root);
-  const workspaces = pipe(
-    declared,
-    Arr.filter((workspace) => workspace !== ROOT_WORKSPACE),
-  );
-  const listed = yield* files.matchingFiles(root, EXCLUDED);
+  const { workspaces, listed } = yield* memberSources(root);
   const layered = pipe(
     listed,
     Arr.filter((name) => SCRIPT.test(name)),
