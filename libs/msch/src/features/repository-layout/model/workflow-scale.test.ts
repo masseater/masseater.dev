@@ -43,6 +43,7 @@ const problemsFor = Effect.fn("problemsFor")(function* problemsFor(
   files: Readonly<Record<string, string>>,
 ) {
   const root = yield* gitRepositoryWith({
+    "pnpm-workspace.yaml": "packages:\n  - apps/*\n",
     "apps/mosaic/package.json": '{"name":"@scope/mosaic"}',
     "apps/mosaic/scripts/plan.ts": "",
     "apps/web/package.json": '{"name":"@scope/web"}',

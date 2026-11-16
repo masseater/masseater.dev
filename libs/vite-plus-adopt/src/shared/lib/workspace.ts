@@ -1,18 +1,12 @@
-import {
-  Effect,
-  FileSystem,
-  Path,
-  Schema,
-  Array as Arr,
-  Record as Rec,
-  String as Str,
-  pipe,
-} from "effect";
-import type { PlatformError } from "effect";
-import type { ChildProcessSpawner } from "effect/process";
-import { parse } from "yaml";
+import { relative } from "node:path";
 
-import { listGitFiles } from "./git.ts";
+import { findWorkspaceProjectsNoCheck } from "@pnpm/workspace.projects-reader";
+import type { Project } from "@pnpm/workspace.projects-reader";
+import { readWorkspaceManifest } from "@pnpm/workspace.workspace-manifest-reader";
+import { Array as Arr, Effect, Option, Order, Record as Rec, String as Str, pipe } from "effect";
+
+import { attempt } from "./attempt.ts";
+import type { VpToolsError } from "./errors.ts";
 
 const DEPENDENCY_FIELDS = [
   "dependencies",
@@ -20,6 +14,8 @@ const DEPENDENCY_FIELDS = [
   "optionalDependencies",
   "peerDependencies",
 ] as const;
+
+const MANIFEST_FILE = "package.json";
 
 /** @internal */
 export type DependencyField = (typeof DEPENDENCY_FIELDS)[number];
@@ -32,90 +28,44 @@ export interface Dependency {
   readonly specifier: string;
 }
 
-/** @internal */
-export type WorkspaceServices =
-  | ChildProcessSpawner.ChildProcessSpawner
-  | FileSystem.FileSystem
-  | Path.Path;
+const pnpm = attempt("pnpm");
 
-const Manifest = Schema.Record(Schema.String, Schema.Unknown);
-
-const decodeSpecifiers = Schema.decodeUnknownEffect(Schema.Record(Schema.String, Schema.String));
-
-const Workspace = Schema.Struct({
-  packages: Schema.optionalKey(Schema.Array(Schema.String)),
-});
-
-const decodeManifest = Schema.decodeEffect(Schema.fromJsonString(Manifest));
-
-const decodeWorkspace = Schema.decodeUnknownEffect(Workspace);
-
-const NEGATION = "!";
-
-const manifestPathspec = (pattern: string): string => {
-  if (Str.startsWith(NEGATION)(pattern)) {
-    return `:(glob,exclude)${Str.slice(NEGATION.length)(pattern)}/package.json`;
-  }
-  return `:(glob)${pattern}/package.json`;
-};
-
-const listManifests = (
-  root: string,
-): Effect.Effect<
-  readonly string[],
-  PlatformError.PlatformError | Schema.SchemaError,
-  WorkspaceServices
-> =>
-  Effect.gen(function* list() {
-    const fs = yield* FileSystem.FileSystem;
-    const path = yield* Path.Path;
-    const text = yield* fs.readFileString(path.join(root, "pnpm-workspace.yaml"));
-    const raw: unknown = parse(text);
-    const workspace = yield* decodeWorkspace(raw);
-    const found = yield* listGitFiles(
-      root,
-      pipe(workspace.packages ?? [], Arr.map(manifestPathspec)),
+const manifestOf =
+  (root: string) =>
+  (project: Project): string =>
+    pipe(relative(root, project.rootDir), (directory) =>
+      Str.isEmpty(directory) ? MANIFEST_FILE : `${directory}/${MANIFEST_FILE}`,
     );
-    return ["package.json", ...Arr.sort(found, Str.Order)];
-  });
+
+const byManifest = (root: string): Order.Order<Project> =>
+  Order.mapInput(Str.Order, (project: Project) => relative(root, project.rootDir));
 
 const dependenciesOf =
-  (manifest: string) =>
-  (fields: typeof Manifest.Type): Effect.Effect<readonly Dependency[], Schema.SchemaError> =>
-    pipe(
+  (root: string) =>
+  (project: Project): readonly Dependency[] => {
+    const manifest = manifestOf(root)(project);
+    return pipe(
       DEPENDENCY_FIELDS,
-      Effect.forEach((field) =>
-        decodeSpecifiers(fields[field] ?? {}).pipe(
-          Effect.map((specifiers) =>
-            pipe(
-              Rec.toEntries(specifiers),
-              Arr.map(([name, specifier]) => ({ manifest, field, name, specifier })),
-            ),
-          ),
+      Arr.flatMap((field) =>
+        pipe(
+          Rec.toEntries(project.manifest[field] ?? {}),
+          Arr.map(([name, specifier]) => ({ manifest, field, name, specifier })),
         ),
       ),
-      Effect.map(Arr.flatten),
     );
+  };
 
 /** @internal */
 export const listDependencies = (
   root: string,
-): Effect.Effect<
-  readonly Dependency[],
-  PlatformError.PlatformError | Schema.SchemaError,
-  WorkspaceServices
-> =>
+): Effect.Effect<readonly Dependency[], VpToolsError> =>
   Effect.gen(function* list() {
-    const fs = yield* FileSystem.FileSystem;
-    const path = yield* Path.Path;
-    const manifests = yield* listManifests(root);
-    const parsed = yield* pipe(
-      manifests,
-      Effect.forEach((manifest) =>
-        fs
-          .readFileString(path.join(root, manifest))
-          .pipe(Effect.flatMap(decodeManifest), Effect.flatMap(dependenciesOf(manifest))),
-      ),
+    const workspace = yield* pnpm(() => readWorkspaceManifest(root));
+    const patterns = pipe(
+      Option.fromUndefinedOr(workspace),
+      Option.flatMap(({ packages }) => Option.fromNullishOr(packages)),
+      Option.getOrElse((): string[] => []),
     );
-    return Arr.flatten(parsed);
+    const projects = yield* pnpm(() => findWorkspaceProjectsNoCheck(root, { patterns }));
+    return pipe(Arr.sort(projects, byManifest(root)), Arr.flatMap(dependenciesOf(root)));
   });

@@ -67,6 +67,9 @@
     "@commitlint/types": "catalog:",
     "@effect/platform-node-shared": "catalog:",
     "@loaderkit/resolve": "catalog:",
+    "@pnpm/logger": "catalog:",
+    "@pnpm/workspace.projects-reader": "catalog:",
+    "@pnpm/workspace.workspace-manifest-reader": "catalog:",
     "@textlint/config-loader": "catalog:",
     "@textlint/kernel": "catalog:",
     "@textlint/utils": "catalog:",
@@ -82,8 +85,7 @@
     "textlint": "catalog:",
     "tsconfck": "catalog:",
     "validate-npm-package-name": "catalog:",
-    "web-tree-sitter": "catalog:",
-    "yaml": "catalog:"
+    "web-tree-sitter": "catalog:"
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",
