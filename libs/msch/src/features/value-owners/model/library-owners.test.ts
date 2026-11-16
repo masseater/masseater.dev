@@ -1,24 +1,12 @@
 import { layer } from "@effect/vitest";
-import { Effect, Schema, Array as Arr, Record as Rec, pipe } from "effect";
+import { Effect, Array as Arr, pipe } from "effect";
 import { expect } from "vite-plus/test";
 
 import { fixtureLayer } from "#/shared/lib/repository.test.support.ts";
 
-import { findingsIn } from "./findings.test.support.ts";
+import { dependingOn, findingsIn, jsonOf } from "./findings.test.support.ts";
 
-const stringifyUnknown = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
-
-const dependingOn = (...names: readonly string[]): Effect.Effect<string, Schema.SchemaError> =>
-  stringifyUnknown({
-    name: "fixture",
-    dependencies: pipe(
-      names,
-      Arr.map((name) => [name, "1.0.0"] as const),
-      Rec.fromEntries,
-    ),
-  });
-
-const SORTER_MANIFEST = stringifyUnknown({ name: "sorter", types: "./index.d.ts" });
+const SORTER_MANIFEST = jsonOf({ name: "sorter", types: "./index.d.ts" });
 
 const sorterWith = (manifest: string): Readonly<Record<string, string>> => ({
   "node_modules/sorter/package.json": manifest,
@@ -38,7 +26,7 @@ const sorterWith = (manifest: string): Readonly<Record<string, string>> => ({
   ),
 });
 
-const BILLING_MANIFEST = stringifyUnknown({ name: "billing", types: "./index.d.ts" });
+const BILLING_MANIFEST = jsonOf({ name: "billing", types: "./index.d.ts" });
 
 const billingWith = (manifest: string): Readonly<Record<string, string>> => ({
   "node_modules/billing/package.json": manifest,
@@ -250,6 +238,27 @@ const ignoresGenericSlotsNumericCoincidencesA = Effect.gen(
   },
 );
 
+const ignoresUtilityTypesOfTheTypeScriptLib = Effect.gen(
+  function* ignoresUtilityTypesOfTheTypeScriptLib() {
+    const packageJson = yield* dependingOn();
+    const findings = yield* findingsIn({
+      "package.json": packageJson,
+      "src/a.ts": pipe(
+        [
+          'export type Reason = "auth" | "quota";',
+          "interface Stalled { reason?: Reason }",
+          "declare const reason: Reason;",
+          'export const take = (value: NonNullable<Stalled["reason"]>): string => value;',
+          "take(reason);",
+          "",
+        ],
+        Arr.join("\n"),
+      ),
+    });
+    expect(findings).toStrictEqual([]);
+  },
+);
+
 layer(fixtureLayer)("dependency types", (it) => {
   it.effect(
     "reports sets that restate a type of a library the file imports",
@@ -275,5 +284,9 @@ layer(fixtureLayer)("dependency types", (it) => {
   it.effect(
     "ignores generic library slots, numeric coincidences and files without type checking",
     () => ignoresGenericSlotsNumericCoincidencesA,
+  );
+  it.effect(
+    "ignores utility types of the TypeScript lib",
+    () => ignoresUtilityTypesOfTheTypeScriptLib,
   );
 });

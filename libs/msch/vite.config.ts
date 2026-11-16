@@ -31,7 +31,7 @@ export default defineConfig({
       oxlint: "src/app/oxlint.ts",
       lint: "src/features/lint-preset/index.ts",
       "decision-rules": "src/features/lint-preset/config/decision-rules.ts",
-      "inline-exports": "src/features/inline-exports/index.ts",
+      "lint-rules": "src/features/lint-rules/index.ts",
       "workspace-settings": "src/features/workspace-settings/index.ts",
     },
     platform: "node",
