@@ -1,6 +1,6 @@
 import { Option, Record, Array as Arr, String as Str, pipe } from "effect";
 
-import { toJson } from "#src/shared/lib/json.ts";
+import { toJson } from "#/shared/lib/json.ts";
 
 const local = (path: string): string => new URL(path, import.meta.url).pathname;
 

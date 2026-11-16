@@ -274,6 +274,7 @@ catalogs:
     vite-plus: 1.6.0
 overrides:
   "@feature-sliced/filesystem>typescript": "catalog:stack"
+  "langium>vscode-languageserver": "catalog:"
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-"
   "@remotion/eslint-plugin>typescript": "-"
   workerd: 1.20261113.1
