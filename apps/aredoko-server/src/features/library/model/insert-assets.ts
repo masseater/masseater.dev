@@ -53,16 +53,18 @@ const insertAsset = Effect.fn("insertAsset")(function* insertOneAsset({
       values (${packageId}, ${guid}, ${pathname}, ${kind}, ${text}, ${Option.getOrNull(file)},
         ${renderState(render)}) returning id`,
   );
-  yield* pipe(
+  yield* Effect.forEach(
     previews,
-    Effect.forEach((png) => sql`insert into images(asset_id, png) values (${id}, ${png})`),
+    (png) => sql`insert into images(asset_id, png) values (${id}, ${png})`,
+    {
+      concurrency: 1,
+    },
   );
-  yield* pipe(
+  yield* Effect.forEach(
     references,
-    Effect.forEach(
-      (reference) =>
-        sql`insert or ignore into asset_references(asset_id, guid) values (${id}, ${reference})`,
-    ),
+    (reference) =>
+      sql`insert or ignore into asset_references(asset_id, guid) values (${id}, ${reference})`,
+    { concurrency: 1 },
   );
 });
 
@@ -76,8 +78,7 @@ export const insertAssets = Effect.fn("insertAssets")(function* insertAllAssets(
   readonly packageName: string;
   readonly assets: readonly AssetInput[];
 }) {
-  yield* pipe(
-    assets,
-    Effect.forEach((asset) => insertAsset({ packageId, packageName, asset })),
-  );
+  yield* Effect.forEach(assets, (asset) => insertAsset({ packageId, packageName, asset }), {
+    concurrency: 1,
+  });
 });

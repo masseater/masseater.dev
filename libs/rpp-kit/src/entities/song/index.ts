@@ -16,5 +16,4 @@ export type {
   TempoPoint,
   Track,
 } from "./model/types.ts";
-export { renderSegments, segmentsOf } from "./model/virtual.ts";
-export type { Segment } from "./model/virtual.ts";
+export { segmentsOf } from "./model/virtual.ts";

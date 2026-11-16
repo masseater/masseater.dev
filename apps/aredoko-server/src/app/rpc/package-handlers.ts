@@ -89,7 +89,9 @@ export const putAssets = Effect.fn("PutProjectAssets")(function* putRequest({
 /** @internal */
 export const libraryInfo = Effect.fn("GetLibrary")(function* libraryInfo(libraryPath: string) {
   const blm = yield* Blm;
-  const [assetStore, blmLibrary] = yield* failed(Effect.all([findAssetStore(), blm.library]));
+  const [assetStore, blmLibrary] = yield* failed(
+    Effect.all([findAssetStore(), blm.library], { concurrency: 1 }),
+  );
   return {
     path: libraryPath,
     assetStore: Option.getOrNull(assetStore),

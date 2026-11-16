@@ -88,6 +88,7 @@ test("パスワードの受け口は 5 回まで試させ、6 回目からはサ
       const statuses = yield* Effect.forEach(
         Arr.makeBy(OVER_LIMIT, () => env),
         submitMalformed,
+        { concurrency: 1 },
       );
       expect(Arr.take(statuses, LIMIT)).toStrictEqual(Arr.makeBy(LIMIT, () => UNAUTHORIZED));
       expect(Arr.drop(statuses, LIMIT)).toStrictEqual([TOO_MANY_REQUESTS, TOO_MANY_REQUESTS]);

@@ -20,10 +20,13 @@ const NODE_OPTIONS = "ephemeral=true&preauthorized=true";
 export type TailnetEnv = AppStoreEnv & Readonly<Partial<Federation>>;
 
 const federation = (env: TailnetEnv): Effect.Effect<Federation, Cause.NoSuchElementError> =>
-  Effect.all({
-    TAILNET_CLIENT_ID: Effect.fromNullishOr(env.TAILNET_CLIENT_ID),
-    TAILNET_AUDIENCE: Effect.fromNullishOr(env.TAILNET_AUDIENCE),
-  }).pipe(Effect.tapError(() => Effect.logError("tailnet.not_configured")));
+  Effect.all(
+    {
+      TAILNET_CLIENT_ID: Effect.fromNullishOr(env.TAILNET_CLIENT_ID),
+      TAILNET_AUDIENCE: Effect.fromNullishOr(env.TAILNET_AUDIENCE),
+    },
+    { concurrency: 1 },
+  ).pipe(Effect.tapError(() => Effect.logError("tailnet.not_configured")));
 
 const Joined = Schema.Struct({
   clientId: Schema.String,

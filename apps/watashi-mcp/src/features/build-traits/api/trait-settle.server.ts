@@ -19,7 +19,7 @@ const quotesOf = (trait: Plan["touched"][number]): string =>
 const vectorsOf = (plan: Plan): Effect.Effect<VectorTexts, UpstreamFailed> => {
   const active = pipe(plan.touched, Arr.filter(isActive));
   return embedTexts(pipe(active, Arr.map(quotesOf))).pipe(
-    Effect.flatMap(Effect.forEach(encodeJson)),
+    Effect.flatMap((items) => Effect.forEach(items, encodeJson, { concurrency: 1 })),
     Effect.map((texts) =>
       Rec.fromEntries(
         Arr.zipWith(active, texts, (trait, text) => [keyText(trait.key), text] as const),

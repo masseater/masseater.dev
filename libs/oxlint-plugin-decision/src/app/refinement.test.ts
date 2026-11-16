@@ -26,7 +26,7 @@ import {
   lineOf,
   locationProject,
 } from "./location-fixture.test.support.ts";
-import { loggedRequests } from "./mock-openrouter.test.support.ts";
+import { loggedRequests } from "./mock-typesafe.test.support.ts";
 import { firstSpan } from "./oxlint.test.support.ts";
 import type { TestError } from "./oxlint.test.support.ts";
 
@@ -199,6 +199,7 @@ const retriesCorruptCache = Effect.scoped(
         entries,
         Arr.map((file) => corruptRefinement(file)),
       ),
+      { concurrency: 1 },
     );
     deepStrictEqual(Arr.sort(corrupted, Order.Number), [NONE, ONE]);
     deepStrictEqual(lineOf((yield* project.lint).diagnostics), Option.some(REFINED_LINE));

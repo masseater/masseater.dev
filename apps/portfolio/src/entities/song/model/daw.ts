@@ -2,7 +2,9 @@ import type { Song as DawSong, RenderSession, Rendered, TrackStyle } from "@mass
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 import type { Scope } from "effect";
 
-import type { Form } from "./program.ts";
+import { browserRuntime } from "#/shared/lib/index.ts";
+
+import type { Form } from "./form.ts";
 import { factsOf } from "./song.ts";
 import type { Work } from "./song.ts";
 
@@ -38,6 +40,9 @@ export const samplesIn = (
     Rec.fromEntries,
   );
 
+export const workletIn = (found: Readonly<Record<string, string>>): string =>
+  pipe(Rec.values(found), Arr.join(""));
+
 export const dawSongOf = ({
   work,
   form,
@@ -71,5 +76,6 @@ export const dawSongOf = ({
   credits: work.credits,
   samples: sampleUrls,
   sampleRate,
-  render: ({ signal, ...session }) => Effect.runPromise(Effect.scoped(render(session)), { signal }),
+  render: ({ signal, ...session }) =>
+    browserRuntime.runPromise(Effect.scoped(render(session)), { signal }),
 });

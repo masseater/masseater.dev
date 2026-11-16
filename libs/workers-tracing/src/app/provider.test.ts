@@ -104,11 +104,14 @@ const reconciledNews: (variant: Readonly<typeof fakeVariant>) => Effect.Effect<u
 test("every mode of the Worker provider reconciles traced props", () =>
   Effect.gen(function* everyMode() {
     const tuned = tuneService(OPTIONS)(fakeProvider);
-    const news = yield* Effect.all([
-      reconciledNews(tuned),
-      tuned.modes.live.pipe(Effect.flatMap(reconciledNews)),
-      tuned.modes.local.pipe(Effect.flatMap(reconciledNews)),
-    ]);
+    const news = yield* Effect.all(
+      [
+        reconciledNews(tuned),
+        tuned.modes.live.pipe(Effect.flatMap(reconciledNews)),
+        tuned.modes.local.pipe(Effect.flatMap(reconciledNews)),
+      ],
+      { concurrency: 1 },
+    );
     expect(news).toMatchObject(
       Arr.replicate(
         { main: "a.ts", observability: { traces: { destinations: [TRACE_DESTINATION] } } },

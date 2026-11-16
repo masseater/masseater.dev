@@ -70,13 +70,17 @@ const writeDays = Effect.fn("publish.days.write")(function* writeDaysOf({
     PLATFORMS,
     Arr.map((platform) => [platform, dayOf(platform)(songs)] as const),
     Arr.filter(([, views]) => Arr.isReadonlyArrayNonEmpty(views)),
-    Effect.forEach(([platform, views]) =>
-      writeJson({
-        codec: DayViews,
-        file: path.join(state, dayPath({ platform, date })),
-        value: views,
-      }),
-    ),
+    (items) =>
+      Effect.forEach(
+        items,
+        ([platform, views]) =>
+          writeJson({
+            codec: DayViews,
+            file: path.join(state, dayPath({ platform, date })),
+            value: views,
+          }),
+        { concurrency: 1 },
+      ),
   );
 });
 
@@ -88,9 +92,12 @@ const expireYoutube = Effect.fn("publish.days.expire")(function* expireOldYoutub
   yield* pipe(
     days,
     Arr.filter((day) => day < oldest),
-    Effect.forEach((date) =>
-      fileSystem.remove(path.join(state, dayPath({ platform: "youtube", date }))),
-    ),
+    (items) =>
+      Effect.forEach(
+        items,
+        (date) => fileSystem.remove(path.join(state, dayPath({ platform: "youtube", date }))),
+        { concurrency: 1 },
+      ),
   );
 });
 
@@ -101,14 +108,18 @@ const copyDays = Effect.fn("publish.days.copy")(function* copyDaysTo({ state, ou
   yield* pipe(
     PLATFORMS,
     Effect.filter((platform) => fileSystem.exists(path.join(state, daysDir(platform)))),
-    Effect.flatMap(
-      Effect.forEach((platform) => {
-        const from = path.join(state, daysDir(platform));
-        const to = path.join(out, daysDir(platform));
-        return fileSystem
-          .makeDirectory(path.dirname(to), { recursive: true })
-          .pipe(Effect.andThen(fileSystem.copy(from, to)));
-      }),
+    Effect.flatMap((items) =>
+      Effect.forEach(
+        items,
+        (platform) => {
+          const from = path.join(state, daysDir(platform));
+          const to = path.join(out, daysDir(platform));
+          return fileSystem
+            .makeDirectory(path.dirname(to), { recursive: true })
+            .pipe(Effect.andThen(fileSystem.copy(from, to)));
+        },
+        { concurrency: 1 },
+      ),
     ),
   );
 });
@@ -119,11 +130,11 @@ const writeSongs = Effect.fn("publish.songs")(function* writeSongsTo({
   states,
 }: Readonly<{ out: string; songs: readonly Measured[]; states: States }>) {
   const path = yield* Path.Path;
-  yield* pipe(
+  yield* Effect.forEach(
     shardsOf({ songs, states }),
-    Effect.forEach(([shard, details]) =>
+    ([shard, details]) =>
       writeJson({ codec: Shard, file: path.join(out, shardPath(shard)), value: details }),
-    ),
+    { concurrency: 1 },
   );
   yield* writeJson({ codec: Table, file: path.join(out, tablePath), value: tableOf(songs) });
 });

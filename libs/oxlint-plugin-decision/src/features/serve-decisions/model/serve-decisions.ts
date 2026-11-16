@@ -3,7 +3,7 @@ import type { Config } from "effect";
 import type { HttpClient } from "effect/http";
 import { runAsWorker } from "synckit";
 
-import { messageOf } from "#/entities/decision/index.ts";
+import { mergeResponses, messageOf } from "#/entities/decision/index.ts";
 import type {
   DecideInput,
   DecideResult,
@@ -12,9 +12,9 @@ import type {
   WireRequest,
 } from "#/entities/decision/index.ts";
 
+import type { AppServices } from "./app-context.ts";
 import { cacheFile, isComplete, readCache, writeCache } from "./cache.ts";
 import type { CacheServices } from "./cache.ts";
-import type { AppServices } from "./openrouter-app.ts";
 import { workerServices } from "./services.ts";
 
 /** @internal */
@@ -26,10 +26,6 @@ type Inputs = Arr.NonEmptyReadonlyArray<DecideInput>;
 export interface Transport {
   readonly endpoint: (env: DecideInput["env"]) => Config.Config<string>;
   readonly wires: (request: DecisionRequest) => Arr.NonEmptyReadonlyArray<WireRequest>;
-  readonly combine: (
-    request: DecisionRequest,
-    responses: Arr.NonEmptyReadonlyArray<DecisionResponse>,
-  ) => DecisionResponse;
   readonly send: (
     endpoint: string,
     wire: WireRequest,
@@ -52,7 +48,7 @@ const ask = Effect.fn("ask")(function* ask(
       orElse: () => Effect.fail("timeout"),
     }),
   );
-  return transport.combine(request, responses);
+  return mergeResponses(responses);
 });
 
 const askAndStore = Effect.fn("askAndStore")(function* askAndStore(

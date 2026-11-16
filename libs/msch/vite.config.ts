@@ -4,7 +4,7 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   msch: {
-    publish: { installSize: "310 MB" },
+    publish: { installSize: "330 MB" },
     lint: {
       overrides: [
         {
@@ -29,6 +29,7 @@ export default defineConfig({
   pack: {
     entry: {
       cli: "bin/msch.ts",
+      config: "src/app/repository-config.ts",
       oxlint: "src/app/oxlint.ts",
       lint: "src/features/lint-preset/index.ts",
       "decision-rules": "src/app/decision-rules.ts",

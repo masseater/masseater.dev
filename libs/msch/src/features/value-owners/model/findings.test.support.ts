@@ -87,8 +87,10 @@ export const findingsAfterEdit = Effect.fn("findingsAfterEdit")(function* findin
       ),
     );
   const before = yield* checkRepository(root);
-  yield* Effect.forEach(Rec.toEntries(edits), ([file, source]) =>
-    fixtures.writeFile(repositoryFiles.join(root, file), source),
+  yield* Effect.forEach(
+    Rec.toEntries(edits),
+    ([file, source]) => fixtures.writeFile(repositoryFiles.join(root, file), source),
+    { concurrency: 1 },
   );
   const after = yield* checkRepository(root);
   return [describe(before), describe(after)] as const;

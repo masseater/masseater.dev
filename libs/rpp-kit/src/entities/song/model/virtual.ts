@@ -1,43 +1,19 @@
-import { Array as Arr, Match, Option, Schema, String as Str, pipe } from "effect";
+import { Array as Arr, Option, pipe } from "effect";
+import { nameLiteral, quoted, text } from "mapped-import";
+import type { Segment } from "mapped-import";
 
 import type { SongOutline, Spanned } from "./outline.ts";
 import type { Param } from "./parse.ts";
 
-export type Segment =
-  | Readonly<{ kind: "text"; text: string }>
-  | Readonly<{ kind: "verbatim"; start: number; end: number }>
-  | Readonly<{ kind: "alias"; text: string; start: number; end: number }>
-  | Readonly<{ kind: "atom"; text: string; start: number; end: number }>;
-
-export type Rendering = Readonly<{ content: string; segments: readonly Segment[] }>;
-
 export type VirtualInput = Readonly<{ outline: SongOutline; missing: readonly Param[] }>;
-
-const PLAIN_NAME = /^[^"\\\r\n]*$/u;
 
 const NUMERIC = /^-?\d+(?:\.\d+)?$/u;
 
-const QUOTE = '"';
-
-const encodeString = Schema.encodeOption(Schema.fromJsonString(Schema.String));
-
-const quoted = (value: string): string =>
-  Option.getOrElse(encodeString(value), () => `${QUOTE}${QUOTE}`);
-
-const text = (value: string): Segment => ({ kind: "text", text: value });
-
 const keyOf = (param: Option.Option<Param>, fallback: string): readonly Segment[] =>
   Option.match(param, {
-    onNone: () => [text(quoted(fallback))],
+    onNone: () => nameLiteral({ name: fallback, span: Option.none() }),
     onSome: ({ text: name, start, end }) =>
-      Match.value(PLAIN_NAME.test(name)).pipe(
-        Match.when(true, (): readonly Segment[] => [
-          text(QUOTE),
-          { kind: "verbatim", start, end },
-          text(QUOTE),
-        ]),
-        Match.orElse((): readonly Segment[] => [{ kind: "alias", text: quoted(name), start, end }]),
-      ),
+      nameLiteral({ name, span: Option.some({ start, end }) }),
   });
 
 const literalOf = ({ value, param }: Spanned): Segment =>
@@ -108,19 +84,3 @@ export const segmentsOf = ({ outline, missing }: VirtualInput): readonly Segment
   text("  ];\n};\n"),
   ...missingSegments(missing),
 ];
-
-export const renderSegments = ({ content, segments }: Rendering): string =>
-  pipe(
-    segments,
-    Arr.map((segment) =>
-      Match.value(segment).pipe(
-        Match.discriminatorsExhaustive("kind")({
-          text: ({ text: value }) => value,
-          verbatim: ({ start, end }) => pipe(content, Str.slice(start, end)),
-          alias: ({ text: value }) => value,
-          atom: ({ text: value }) => value,
-        }),
-      ),
-    ),
-    Arr.join(""),
-  );

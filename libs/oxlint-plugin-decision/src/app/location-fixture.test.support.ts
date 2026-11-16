@@ -4,7 +4,7 @@ import type { PlatformError } from "effect/PlatformError";
 
 import type { DecisionPluginSetup, DecisionRule } from "#/entities/decision/index.ts";
 
-import type { MockOpenRouter } from "./mock-openrouter.test.support.ts";
+import type { MockTypesafe } from "./mock-typesafe.test.support.ts";
 import {
   cacheDirOf,
   diagnosticsOf,
@@ -77,7 +77,7 @@ export const locationProject = ({
 }: ProjectSetup): Effect.Effect<
   LocationProject,
   PlatformError,
-  Services | MockOpenRouter | Scope.Scope
+  Services | MockTypesafe | Scope.Scope
 > =>
   Effect.gen(function* setup() {
     const project = yield* projectFilesFor(

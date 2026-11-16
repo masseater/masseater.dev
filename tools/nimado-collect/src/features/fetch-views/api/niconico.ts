@@ -57,6 +57,8 @@ const fetchBatch = (
 export const fetchNicoViews = Effect.fn("niconico.views")(function* nicoViews(
   ids: readonly string[],
 ) {
-  const batches = yield* pipe(Arr.chunksOf(ids, NICO_BATCH), Effect.forEach(fetchBatch));
+  const batches = yield* Effect.forEach(Arr.chunksOf(ids, NICO_BATCH), fetchBatch, {
+    concurrency: 1,
+  });
   return Record.fromEntries(Arr.flatten(batches));
 });

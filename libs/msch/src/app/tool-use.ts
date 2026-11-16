@@ -4,7 +4,7 @@ import { checkMissingHooks } from "#/features/agent-settings/index.ts";
 import { checkRestrictedRules } from "#/features/overrides/index.ts";
 import { checkScripts } from "#/features/scripts/index.ts";
 import { checkVitePlus } from "#/features/vite-plus/index.ts";
-import { checkWorkflowQueues } from "#/features/workflow-concurrency/index.ts";
+import { checkFullHistoryCheckout, checkWorkflowQueues } from "#/features/workflows/index.ts";
 
 /** @internal */
 export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(root: string) {
@@ -14,6 +14,7 @@ export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(roo
       checkMissingHooks(root),
       checkScripts(root),
       checkWorkflowQueues(root),
+      checkFullHistoryCheckout(root),
       checkRestrictedRules(root),
     ],
     { concurrency: "unbounded" },

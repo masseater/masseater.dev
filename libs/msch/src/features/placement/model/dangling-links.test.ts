@@ -18,7 +18,7 @@ const findingsFor = Effect.fn("findingsFor")(function* findingsFor(
   yield* Effect.forEach(
     Rec.toEntries(links),
     ([link, target]) => fixtures.symlink(target, repositoryFiles.join(root, link)),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
   yield* fixtures.commitAll(root);
   const problems = yield* checkDanglingLinks(root);

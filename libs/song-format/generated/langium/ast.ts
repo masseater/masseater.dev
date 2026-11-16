@@ -6,7 +6,7 @@
 /* eslint-disable */
 import * as langium from 'langium';
 
-export const FuTerminals = {
+export const FumxTerminals = {
     WS: /\s+/,
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
@@ -26,9 +26,9 @@ export const FuTerminals = {
     ID: /[a-z][a-z0-9]*(-[a-z0-9]+)*/,
 };
 
-export type FuTerminalNames = keyof typeof FuTerminals;
+export type FumxTerminalNames = keyof typeof FumxTerminals;
 
-export type FuKeywordNames =
+export type FumxKeywordNames =
     | "!="
     | "("
     | ")"
@@ -173,7 +173,7 @@ export type FuKeywordNames =
     | "{"
     | "}";
 
-export type FuTokenNames = FuTerminalNames | FuKeywordNames;
+export type FumxTokenNames = FumxTerminalNames | FumxKeywordNames;
 
 export interface Amount extends langium.AstNode {
     readonly $container: Automation;
@@ -1988,7 +1988,7 @@ export function isZone(item: unknown): item is Zone {
     return reflection.isInstance(item, Zone.$type);
 }
 
-export type FuAstType = {
+export type FumxAstType = {
     Amount: Amount
     Articulation: Articulation
     Assign: Assign
@@ -2100,7 +2100,7 @@ export type FuAstType = {
     Zone: Zone
 }
 
-export class FuAstReflection extends langium.AbstractAstReflection {
+export class FumxAstReflection extends langium.AbstractAstReflection {
     override readonly types = {
         Amount: {
             name: Amount.$type,
@@ -3550,4 +3550,4 @@ export class FuAstReflection extends langium.AbstractAstReflection {
     } as const satisfies langium.AstMetaData
 }
 
-export const reflection = new FuAstReflection();
+export const reflection = new FumxAstReflection();

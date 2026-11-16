@@ -109,11 +109,11 @@ const mentionedBy = Effect.fn("mentionedBy")(function* mentionedBy(
     candidates,
     Array.map(({ pathname }) => pathname),
   );
-  const mentioned = yield* pipe(
+  const mentioned = yield* Effect.forEach(
     sources,
-    Effect.forEach((source) =>
+    (source) =>
       Effect.flatMap(fileSystem.readFile(source), (bytes) => mentionedIn({ bytes, names })),
-    ),
+    { concurrency: 1 },
   );
   return pipe(
     candidates,

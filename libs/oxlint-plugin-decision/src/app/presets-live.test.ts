@@ -62,7 +62,7 @@ const presetLive = (
 ): Effect.Effect<void, Config.ConfigError | PlatformError, Services> =>
   Effect.scoped(
     Effect.gen(function* test() {
-      const key = yield* Config.Redacted("OPENROUTER_API_KEY");
+      const key = yield* Config.Redacted("TYPESAFE_API_KEY");
       const plugin = yield* fromRoot("dist", "presets", `${preset}.mjs`);
       const cwd = yield* tempProject({
         ...(yield* exampleFiles),
@@ -77,7 +77,7 @@ const presetLive = (
         ["--format", "unix", "-c", "oxlint.config.ts", ...EXAMPLE_FILES],
         {
           ...(yield* forwardedEnv),
-          OPENROUTER_API_KEY: Redacted.value(key),
+          TYPESAFE_API_KEY: Redacted.value(key),
         },
       );
       yield* Effect.log(outputOf(run));

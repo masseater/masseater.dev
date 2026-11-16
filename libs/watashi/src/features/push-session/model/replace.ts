@@ -110,7 +110,7 @@ export const applyTargets =
     const replace = replaceLine(replacerOf(targets));
     return pipe(
       lines,
-      Effect.forEach(replace),
+      (items) => Effect.forEach(items, replace, { concurrency: 1 }),
       Effect.map((applied) => ({ value: valuesOf(applied), count: countOf(applied) })),
     );
   };

@@ -1,0 +1,3 @@
+/.pnpm/
+/.cargo/config.toml
+/target/

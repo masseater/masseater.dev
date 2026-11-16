@@ -62,14 +62,15 @@ const redactOwners = (
       Arr.flatMap((finding) => view.owners.slice(finding.startLine - ONE, finding.endLine)),
     ),
   );
-  return pipe(
+  return Effect.forEach(
     lines,
-    Effect.forEach((line, index) => {
+    (line, index) => {
       if (owned.has(index)) {
         return redactedLine(line);
       }
       return Effect.succeed(line);
-    }),
+    },
+    { concurrency: 1 },
   );
 };
 

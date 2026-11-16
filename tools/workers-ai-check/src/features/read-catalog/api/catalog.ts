@@ -49,7 +49,12 @@ const searchAll = (
   readonly CatalogEntry[],
   Effect.Error<ReturnType<typeof search>>,
   Effect.Services<ReturnType<typeof search>>
-> => pipe(models, Effect.forEach(search), Effect.map(Arr.flatten));
+> =>
+  pipe(
+    models,
+    (items) => Effect.forEach(items, search, { concurrency: 1 }),
+    Effect.map(Arr.flatten),
+  );
 
 /** @internal */
 export const catalogOf = searchAll;

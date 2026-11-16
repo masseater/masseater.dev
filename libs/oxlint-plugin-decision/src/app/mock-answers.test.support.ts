@@ -29,15 +29,7 @@ export const NO_HITS = 0;
 export const FIRST_HIT = 1;
 const SECOND_HIT = 2;
 const UNKNOWN_CHOICE = "unknown";
-const OPTION_SEPARATOR = "__";
 
-const YES_BY_FLAGGED_OPTION: Readonly<Record<string, number>> = {
-  leaks: 0.9,
-  safe: 0.3,
-  info: 0.97,
-  warn: 0.93,
-  error: 0.85,
-};
 const LOCATED_LINE = /^L(?<line>\d+)\|/u;
 const RANGE_KEY = /^L(?<start>\d+)(?:-L(?<end>\d+))?$/u;
 const lookup = <Value>(
@@ -101,17 +93,6 @@ const choiceAnswer = (body: Body, ref: string, token: string): unknown => {
   return { type: "choice", choice, probabilities: { [choice]: probability } };
 };
 
-const optionOf = (ref: string): Option.Option<readonly [string, string]> => {
-  const [snippetRef, option] = Str.split(ref, OPTION_SEPARATOR);
-  return Option.map(Option.fromUndefinedOr(option), (label) => [snippetRef, label] as const);
-};
-
-const optionScore = (flagged: boolean, label: string): number =>
-  Bool.match(flagged, {
-    onTrue: () => Option.getOrElse(lookup(YES_BY_FLAGGED_OPTION, label), () => NO),
-    onFalse: () => NO,
-  });
-
 const noulScore = (body: Body, ref: string, token: string): number => {
   if (token === "location-always-positive") {
     return SURE;
@@ -122,11 +103,7 @@ const noulScore = (body: Body, ref: string, token: string): number => {
   const instructions = lookup(body.questions, ref).pipe(
     Option.match({ onNone: () => "", onSome: (question) => question.instructions }),
   );
-  return Option.match(optionOf(ref), {
-    onNone: () => scoreFor(instructions, snippetOf(body, ref)),
-    onSome: ([snippetRef, label]) =>
-      optionScore(scoreFor(instructions, snippetOf(body, snippetRef)) === YES, label),
-  });
+  return scoreFor(instructions, snippetOf(body, ref));
 };
 
 const skipsChoice = (body: Body, token: string, hits: number): boolean =>
@@ -169,7 +146,7 @@ export const answer: {
     ),
   );
   let model = "mock-decider";
-  if (body.model === "second") {
+  if (body.model === "jev-1.2") {
     model = "mock-second";
   }
   return {

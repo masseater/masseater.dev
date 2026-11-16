@@ -88,16 +88,16 @@ const staffingOf = (
       onSome: (given) =>
         pipe(
           given,
-          Effect.forEach(personByName),
+          (items) => Effect.forEach(items, personByName, { concurrency: 1 }),
           Effect.map((personIds) => [{ role, personIds }]),
         ),
     }),
   );
 
 const staffingsOf = (input: Part): Effect.Effect<readonly Staffing[], ToolError> =>
-  Effect.all([staffingOf("audio", input.audioStaff), staffingOf("video", input.videoStaff)]).pipe(
-    Effect.map(Arr.flatten),
-  );
+  Effect.all([staffingOf("audio", input.audioStaff), staffingOf("video", input.videoStaff)], {
+    concurrency: 1,
+  }).pipe(Effect.map(Arr.flatten));
 
 const preparePart = Effect.fn("mcp.part.prepare")(function* preparePart(input: Part) {
   const material = yield* materialOf(input);
@@ -111,7 +111,7 @@ const preparePart = Effect.fn("mcp.part.prepare")(function* preparePart(input: P
 });
 
 const prepareParts = (parts: readonly Part[]): Effect.Effect<readonly Prepared[], ToolError> =>
-  pipe(parts, Effect.forEach(preparePart));
+  Effect.forEach(parts, preparePart, { concurrency: 1 });
 
 const membersOf = (staff: readonly Staffing[]): readonly Member[] =>
   pipe(

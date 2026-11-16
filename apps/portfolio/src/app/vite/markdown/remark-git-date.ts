@@ -29,7 +29,7 @@ const commitDates = (path: string): Effect.Effect<readonly string[]> =>
 const today: Effect.Effect<string> = DateTime.now.pipe(Effect.map(DateTime.formatIsoDateUtc));
 
 export const entryDates = (path: string): Effect.Effect<Dates> =>
-  Effect.all({ commits: commitDates(path), fallback: today }).pipe(
+  Effect.all({ commits: commitDates(path), fallback: today }, { concurrency: 1 }).pipe(
     Effect.map(({ commits, fallback }) => ({
       date: pipe(
         Arr.last(commits),

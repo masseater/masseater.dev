@@ -17,7 +17,6 @@ members = [
   "libs/mdlint/native/core",
   "libs/mdlint/native/node",
   "apps/shirushi/src-tauri",
-  "apps/akapen/src-tauri",
 ]
 
 [workspace.package]

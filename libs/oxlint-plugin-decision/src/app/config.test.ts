@@ -1,60 +1,62 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Effect, Array as Arr, String as Str, pipe } from "effect";
+import { Effect, Array as Arr, Record as Rec, String as Str, pipe } from "effect";
 
 import { toJson } from "#/entities/decision/index.ts";
 import type { DecisionPluginSetup, DecisionRule } from "#/entities/decision/index.ts";
 
-import { PASSED, TIMEOUT, lintProject, outputOf } from "./fixtures.test.support.ts";
-import { configSource, pluginPath, runOxlint, writeProject } from "./oxlint.test.support.ts";
+import { PASSED, TIMEOUT, lintProject, outputOf, withMock } from "./fixtures.test.support.ts";
+import { loggedRequests } from "./mock-typesafe.test.support.ts";
+import {
+  configSource,
+  mockEnv,
+  pluginPath,
+  runOxlint,
+  writeProject,
+} from "./oxlint.test.support.ts";
 import type { Services, TestError } from "./oxlint.test.support.ts";
 
 const UNKNOWN_OPTION: object = { foo: 1 };
 const REPO_CONTEXT: object = { context: { scope: "repo" } };
+const UNKNOWN_PROVIDER: object = { model: "acme/model-1" };
+const CHAT_MODEL: object = { model: "cloudflare/@cf/qwen/qwen3.8-27b" };
+const BARE_MODEL: object = { model: "jev-latest" };
+const DECISION_MODELS_ONLY = "model must be a decision model";
 
 const customPlugin = (
   dist: string,
-): string => `import { createDecisionPlugin, defineDecisionRule, defineProvider } from ${toJson(dist)};
-
-const yes = ({ request }) => ({
-  ok: true,
-  response: {
-    model: "fake-1",
-    answers: Object.fromEntries(Object.keys(request.questions).map((ref) => [ref, { type: "noul", noul: 0.9 }])),
-  },
-});
+): string => `import { createDecisionPlugin, defineDecisionRule } from ${toJson(dist)};
 
 export default createDecisionPlugin({
   name: "custom",
   rules: [
-    defineDecisionRule({ id: "code-rule", target: "call", question: "Is this a call?", cutoff: 0.8 }),
+    defineDecisionRule({ id: "code-rule", target: "call", question: "Does this call write personal data to a log?", cutoff: 0.8 }),
     defineDecisionRule({ id: "off-rule", target: "file", question: "Is this a file?", cutoff: 0.8 }),
   ],
-  providers: [defineProvider({ name: "fake", requiredEnv: ["FAKE_KEY"], decide: yes })],
 });
 `;
 
 const CUSTOM_LINE =
-  "log.js:1:1: [code-rule] fake/fake-1 answered yes (0.90 >= 0.80): Is this a call? [Error/custom(code-rule)]";
+  "log.js:1:1: [code-rule] typesafe/mock-decider answered yes (0.95 >= 0.80): Does this call write personal data to a log? [Error/custom(code-rule)]";
 
-const customProvider = Effect.scoped(
+const registersRules = Effect.scoped(
   Effect.gen(function* test() {
-    const plugin2 = yield* pluginPath;
+    const plugin = yield* pluginPath;
     const cwd = yield* writeProject({
-      "plugin.mjs": customPlugin(plugin2),
-      "log.js": "console.log(user.email);\n",
+      "plugin.mjs": customPlugin(plugin),
+      "log.js": "console.log(user.email, user.phone);\n",
       "oxlint.config.ts": configSource({
         jsPlugins: ["./plugin.mjs"],
-        settings: { custom: { model: "fake/any", ci: "fail" } },
+        settings: { custom: { model: "typesafe/jev-latest", ci: "fail" } },
         rules: { "custom/code-rule": "error" },
       }),
     });
     const args = ["--format", "unix", "-c", "oxlint.config.ts", "log.js"];
     const without = yield* runOxlint({ cwd, args, env: {} });
     strictEqual(without.status, PASSED, outputOf(without));
-    assertInclude(without.stderr, "FAKE_KEY is not set, skipping fake models");
-    const withKey = yield* runOxlint({ cwd, args, env: { FAKE_KEY: "1" } });
+    assertInclude(without.stderr, "TYPESAFE_API_KEY is not set, skipping typesafe models");
+    const withKey = yield* runOxlint({ cwd, args, env: yield* mockEnv("test-key") });
     deepStrictEqual(
       pipe(
         Str.split(withKey.stdout, "\n"),
@@ -62,64 +64,16 @@ const customProvider = Effect.scoped(
       ),
       [CUSTOM_LINE],
     );
-  }),
-);
-
-const batchingPlugin = (
-  dist: string,
-): string => `import { createDecisionPlugin, defineDecisionRule, defineProvider } from ${toJson(dist)};
-
-const answer = (noul) => ({ request }) => ({
-  ok: true,
-  response: {
-    model: request.model,
-    answers: Object.fromEntries(Object.keys(request.questions).map((ref) => [ref, { type: "noul", noul }])),
-  },
-});
-
-export default createDecisionPlugin({
-  name: "batch",
-  rules: [
-    defineDecisionRule({ id: "first", target: "call", question: "Is this a call?", cutoff: 0.8 }),
-    defineDecisionRule({ id: "second", target: "call", question: "Is this a call?", cutoff: 0.8 }),
-  ],
-  providers: [
-    defineProvider({
-      name: "fake",
-      requiredEnv: [],
-      decide: answer(0.1),
-      decideAll: (inputs) => inputs.map(answer(inputs.length === 2 ? 0.9 : 0.1)),
-    }),
-  ],
-});
-`;
-
-const ONE_PART = 1;
-
-const batchedModels = Effect.scoped(
-  Effect.gen(function* test() {
-    const plugin2 = yield* pluginPath;
-    const cwd = yield* writeProject({
-      "plugin.mjs": batchingPlugin(plugin2),
-      "log.js": "console.log(user.email);\n",
-      "oxlint.config.ts": configSource({
-        jsPlugins: ["./plugin.mjs"],
-        settings: { batch: { model: "fake/one", ci: "fail" } },
-        rules: { "batch/first": "error", "batch/second": ["error", { model: "fake/two" }] },
-      }),
-    });
-    const run = yield* runOxlint({
-      cwd,
-      args: ["--format", "unix", "-c", "oxlint.config.ts", "log.js"],
-      env: {},
-    });
+    const requests = yield* loggedRequests;
     deepStrictEqual(
       pipe(
-        Str.split(run.stdout, "\n"),
-        Arr.filter((line) => Str.includes("batch(")(line)),
-        Arr.map((line) => pipe(Str.split(line, " answered"), Arr.take(ONE_PART), Arr.join(""))),
+        requests,
+        Arr.flatMap(({ body }) => Rec.values(body.questions)),
+        Arr.map(({ instructions }) => instructions),
       ),
-      ["log.js:1:1: [first] fake/one", "log.js:1:1: [second] fake/two"],
+      [
+        'Consider only snippet "s0" in state.snippets. Does this call write personal data to a log?',
+      ],
     );
   }),
 );
@@ -156,13 +110,14 @@ const badConfigs: readonly (readonly [string, DecisionPluginSetup, string])[] = 
   ],
   [
     "a model names an unknown provider",
-    { model: "acme/model-1", rules: [goodRule] },
-    'oxlint-plugin-decision: model "acme/model-1" must be "<provider>/<model>" with a provider from: cloudflare, openrouter',
+    { rules: [goodRule], ...UNKNOWN_PROVIDER },
+    DECISION_MODELS_ONLY,
   ],
+  ["a model is a chat model", { rules: [goodRule], ...CHAT_MODEL }, DECISION_MODELS_ONLY],
   [
     "a model has no provider prefix",
-    { rules: [{ ...goodRule, model: "jev-latest" }] },
-    'model "jev-latest" must be "<provider>/<model>"',
+    { rules: [{ ...goodRule, ...BARE_MODEL }] },
+    DECISION_MODELS_ONLY,
   ],
   [
     "a classify rule reports a label it does not list",
@@ -198,10 +153,9 @@ const refuses = ([, options, expected]: readonly [
 layer(NodeServices.layer, { excludeTestServices: true })("plugin configuration", (it) => {
   it.effect(
     "registers each rule under its own id and asks only for the enabled ones",
-    () => customProvider,
+    () => withMock(registersRules),
     TIMEOUT,
   );
-  it.effect("asks every model of a file in one provider call", () => batchedModels, TIMEOUT);
   it.effect.each(badConfigs)(
     "refuses a config where %s",
     (badConfig) => refuses(badConfig),
