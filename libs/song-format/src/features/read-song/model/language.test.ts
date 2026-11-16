@@ -112,13 +112,13 @@ it.effect("brings in functions and constants from another file", () =>
   Effect.gen(function* importedCode() {
     const song = yield* songIn(
       filesOf({
-        [ENTRY]: `import { octave, low } from "./theory.fu"
+        [ENTRY]: `import { octave, low } from "./theory.fumx"
 ${header}
 bar meter 4/4 tempo 120bpm {
   bass: (octave(low)) 1/1
 }
 `,
-        "/songs/theory.fu": `let low = C1
+        "/songs/theory.fumx": `let low = C1
 fn octave(note: pitch): pitch {
   return note + 12st
 }

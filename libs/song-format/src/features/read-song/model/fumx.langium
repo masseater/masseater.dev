@@ -1,4 +1,4 @@
-grammar Fu
+grammar Fumx
 
 entry Song:
     imports+=Import*
