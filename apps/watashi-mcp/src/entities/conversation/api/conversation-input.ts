@@ -12,42 +12,39 @@ const MAX_MAX_BYTES = 2_000_000;
 const FIRST_OFFSET = 0;
 
 const Kind = Schema.Literals(CONVERSATION_KINDS).annotate({
-  description: "会話をしたツール。今は claude-code だけ。既定は claude-code",
+  description: "Default claude-code",
 });
 
 const SessionId = Schema.String.annotate({
-  description:
-    "読む会話のセッション ID。省くと最近の会話の一覧（作業ディレクトリ・期間・ファイルごとのバイト数）を返す",
+  description: "Omit to list recent sessions",
 });
 
 const File = Schema.String.annotate({
-  description:
-    "セッションの中のファイル。本体はセッション ID と同じ名前、subagent は subagents/agent-<id>。既定は本体",
+  description: "Default: the main transcript. Subagents: subagents/agent-<id>",
 });
 
 const NonNegative = Schema.isGreaterThanOrEqualTo(FIRST_OFFSET);
 
 const Cursor = Schema.Int.check(NonNegative).annotate({
-  description: "読み始めるバイト位置。前の呼び出しの nextCursor を渡す。既定は 0",
+  description: "nextCursor from the previous call",
 });
 
 const ByteRange = Schema.isBetween({ minimum: MIN_MAX_BYTES, maximum: MAX_MAX_BYTES });
 
 const MaxBytes = Schema.Int.check(ByteRange).annotate({
-  description: `一度に返す本文のおおよその上限（バイト）。既定は ${DEFAULT_MAX_BYTES}`,
+  description: `Default ${DEFAULT_MAX_BYTES}`,
 });
 
 const SessionRange = Schema.isBetween({ minimum: MIN_SESSION_LIMIT, maximum: MAX_SESSION_LIMIT });
 
 const Limit = Schema.Int.check(SessionRange).annotate({
-  description: `一覧で返す会話の数。既定は ${DEFAULT_SESSION_LIMIT}`,
+  description: `Default ${DEFAULT_SESSION_LIMIT}`,
 });
 
 const VIEWS = ["raw", "owner"] as const;
 
 const ViewSchema = Schema.Literals(VIEWS).annotate({
-  description:
-    "raw はトランスクリプトの JSONL を text にそのまま返す。owner は持ち主の発言だけを {uuid, timestamp, text} の並びにして utterances に返す。既定は raw",
+  description: "raw (default): the JSONL as text. owner: only the owner's utterances",
 });
 
 export const ReadInput = Schema.Struct({

@@ -1,3 +1,4 @@
+import { compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
@@ -8,7 +9,11 @@ import { addParts, deletePart, setVideoParts, updatePart } from "./part-write.se
 
 const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
 const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
-const PARTS_SCHEMA = VideoPartsInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const PARTS_SCHEMA = VideoPartsInput.pipe(
+  Schema.toStandardSchemaV1,
+  Schema.toStandardJSONSchemaV1,
+  compactInput,
+);
 
 export const registerPartTools = (server: McpServer): McpServer => {
   server.registerTool(
@@ -35,7 +40,11 @@ export const registerPartTools = (server: McpServer): McpServer => {
     {
       description:
         "パートを 1 件、指定した項目だけ書き換える。担当者は指定した役割ごとに置き換える。partId は get_video で分かる",
-      inputSchema: UpdatePartInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1),
+      inputSchema: UpdatePartInput.pipe(
+        Schema.toStandardSchemaV1,
+        Schema.toStandardJSONSchemaV1,
+        compactInput,
+      ),
       annotations: WRITE,
     },
     (input) => runTool(updatePart(input)),
@@ -44,7 +53,11 @@ export const registerPartTools = (server: McpServer): McpServer => {
     "delete_part",
     {
       description: "パートを 1 件消す",
-      inputSchema: PartIdInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1),
+      inputSchema: PartIdInput.pipe(
+        Schema.toStandardSchemaV1,
+        Schema.toStandardJSONSchemaV1,
+        compactInput,
+      ),
       annotations: DESTRUCTIVE,
     },
     ({ partId }) => runTool(deletePart(partId)),

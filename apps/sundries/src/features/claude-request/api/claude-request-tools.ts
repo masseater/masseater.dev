@@ -19,16 +19,14 @@ import { registerRoutine, wakeProject } from "./claude-routine.ts";
 export type Register = (caller: Caller) => (server: McpServer) => McpServer;
 
 const SEND_DESCRIPTION =
-  "持ち主の masseater の Claude Code プロジェクト「個人PJ」へ依頼を送る。送るとすぐにプロジェクトのスレッドが立って依頼を実行し、結果を返事として書く。返事は list_claude_replies で読む。返り値の id で返事を見分け、woke が fired でなければスレッドはまだ立っていない（1 時間ごとの見回りで拾われる）。";
+  "Send a request to the owner's Claude Code project, which does it and replies.";
 
 const TAKE_DESCRIPTION =
-  "Claude Code のプロジェクト「個人PJ」のスレッドが使う。まだ誰も受け取っていない依頼をすべて受け取り済みにして古い順に返す。受け取った依頼は自分で実行し、reply_to_request で返事を書く。";
+  "Claim every untaken request for the owner's Claude Code project, oldest first, then answer each with reply_to_request.";
 
-const REPLY_DESCRIPTION =
-  "Claude Code のスレッドが、take_claude_requests で受け取った依頼に返事を書く。結果、作ったものの URL、依頼した人への質問などを書く。";
+const REPLY_DESCRIPTION = "Answer a request from take_claude_requests.";
 
-const LIST_DESCRIPTION =
-  "send_to_claude で送った依頼と、その受け取りの時刻・スレッドの URL・返事を返す。after を省くと新しい順に 50 件、after を渡すとその id より後を古い順に 50 件返す。";
+const LIST_DESCRIPTION = "List requests sent with send_to_claude with their threads and replies.";
 
 const SEND_SCHEMA = SendInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
@@ -37,7 +35,7 @@ const TAKE_SCHEMA = TakeInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJ
 const REPLY_SCHEMA = ReplyInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
 const ROUTINE_DESCRIPTION =
-  "send_to_claude が依頼を積んだ直後に押す、プロジェクト外の中継タスクを登録する。持ち主が claude.ai の routines で中継タスクを作り直したときだけ使う。トークンは broker が封をして置く。";
+  "Register the claude.ai routine that wakes the project for send_to_claude.";
 
 const ROUTINE_SCHEMA = RoutineInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 

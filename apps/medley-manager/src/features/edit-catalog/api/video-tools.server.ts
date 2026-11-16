@@ -1,3 +1,4 @@
+import { compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
@@ -15,7 +16,11 @@ export const registerVideoTools = (server: McpServer): McpServer => {
     {
       description:
         "メドレー・合作・単品などの動画を登録する。パート表は set_video_parts で登録する",
-      inputSchema: CreateVideoInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1),
+      inputSchema: CreateVideoInput.pipe(
+        Schema.toStandardSchemaV1,
+        Schema.toStandardJSONSchemaV1,
+        compactInput,
+      ),
       annotations: WRITE,
     },
     (input) => runTool(createVideo(input)),
@@ -24,7 +29,11 @@ export const registerVideoTools = (server: McpServer): McpServer => {
     "update_video",
     {
       description: "動画の情報のうち、指定した項目だけを書き換える。null を渡すと消す",
-      inputSchema: UpdateVideoInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1),
+      inputSchema: UpdateVideoInput.pipe(
+        Schema.toStandardSchemaV1,
+        Schema.toStandardJSONSchemaV1,
+        compactInput,
+      ),
       annotations: WRITE,
     },
     (input) => runTool(updateVideo(input)),
@@ -33,7 +42,11 @@ export const registerVideoTools = (server: McpServer): McpServer => {
     "delete_video",
     {
       description: "動画をパート表ごと消す",
-      inputSchema: IdInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1),
+      inputSchema: IdInput.pipe(
+        Schema.toStandardSchemaV1,
+        Schema.toStandardJSONSchemaV1,
+        compactInput,
+      ),
       annotations: DESTRUCTIVE,
     },
     ({ id }) => runTool(deleteVideo(id)),
