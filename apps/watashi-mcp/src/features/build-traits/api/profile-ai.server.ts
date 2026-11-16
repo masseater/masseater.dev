@@ -3,11 +3,11 @@ import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Array as Arr, Effect, Schema } from "effect";
 
 import { ProfileAuthor } from "#/entities/owner-profile/index.ts";
+import type { ProfileRequest } from "#/entities/owner-profile/index.ts";
 
-import { PROFILE_INSTRUCTIONS } from "./profile-prompt.ts";
-import { TRAIT_MODEL } from "./trait-pi.ts";
+export const PROFILE_MODEL = "@cf/thinkingmachines/inkling-2-small";
 
-const MAX_TOKENS = 8000;
+const MAX_TOKENS = 40_000;
 
 const AGENT = "profile-writer";
 
@@ -25,14 +25,18 @@ export type ProfileModel = Readonly<{ run: (model: string, inputs: object) => Pr
 
 const write =
   (ai: ProfileModel) =>
-  (input: string): Effect.Effect<string, UpstreamFailed> =>
+  (request: ProfileRequest): Effect.Effect<string, UpstreamFailed> =>
     Effect.tryPromise({
       try: () =>
-        ai.run(TRAIT_MODEL, {
+        ai.run(PROFILE_MODEL, {
           messages: [
-            { role: "system", content: PROFILE_INSTRUCTIONS },
-            { role: "user", content: input },
+            { role: "system", content: request.instructions },
+            { role: "user", content: request.input },
           ],
+          response_format: {
+            type: "json_schema",
+            json_schema: { name: request.step, strict: true, schema: request.format },
+          },
           max_tokens: MAX_TOKENS,
           reasoning_effort: "low",
         }),
@@ -48,13 +52,13 @@ const write =
         }),
       ),
       Effect.map((completion) => Arr.headNonEmpty(completion.choices).message.content),
-      Effect.withSpan(`chat ${TRAIT_MODEL}`, {
+      Effect.withSpan(`chat ${PROFILE_MODEL}`, {
         kind: "client",
         attributes: {
           "gen_ai.operation.name": "chat",
-          "gen_ai.agent.name": AGENT,
+          "gen_ai.agent.name": `${AGENT}.${request.step}`,
           "gen_ai.provider.name": "cloudflare.workers_ai",
-          "gen_ai.request.model": TRAIT_MODEL,
+          "gen_ai.request.model": PROFILE_MODEL,
         },
       }),
     );
