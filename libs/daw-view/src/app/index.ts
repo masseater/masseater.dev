@@ -8,7 +8,9 @@ export type {
   Song,
 } from "#/widgets/daw-view/index.ts";
 export type { Mixdown } from "#/widgets/daw-view/index.ts";
-export { mountSong } from "#/widgets/daw-view/index.ts";
+export { mountSong, openTape } from "#/widgets/daw-view/index.ts";
+export type { Tape, TapeShape, TrackBlock } from "#/widgets/daw-view/index.ts";
+export type { Mixer } from "#/widgets/daw-view/index.ts";
 export type { Credit } from "#/widgets/daw-view/index.ts";
 export type { Samples } from "#/shared/lib/samples.ts";
 export type {

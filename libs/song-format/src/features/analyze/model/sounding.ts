@@ -24,22 +24,30 @@ export const overlapOf =
   (right: Span): number =>
     Math.max(NONE, Math.min(left.end, right.end) - Math.max(left.start, right.start));
 
-export const soundingsOf = (song: Song): readonly Sounding[] =>
-  pipe(
-    song.notes,
-    Arr.map((note) => ({
-      track: note.track,
-      role: pipe(
-        song.tracks,
-        Arr.findFirst((track) => track.name === note.track),
-        Option.flatMap((track) => track.role),
-      ),
-      midi: note.midi,
-      pitchClass: TonalNote.pitchClass(TonalNote.fromMidi(note.midi)),
-      start: note.start,
-      end: note.start + note.length,
-    })),
+export const soundingsOf = (song: Song): readonly Sounding[] => {
+  const audible = pipe(
+    song.tracks,
+    Arr.filter((track) => !track.mixer.muted),
   );
+  return pipe(
+    song.notes,
+    Arr.flatMap((note) =>
+      pipe(
+        audible,
+        Arr.findFirst((track) => track.name === note.track),
+        Option.map((track) => ({
+          track: note.track,
+          role: track.role,
+          midi: note.midi,
+          pitchClass: TonalNote.pitchClass(TonalNote.fromMidi(note.midi)),
+          start: note.start,
+          end: note.start + note.length,
+        })),
+        Option.toArray,
+      ),
+    ),
+  );
+};
 
 export const positionOf =
   (song: Song) =>

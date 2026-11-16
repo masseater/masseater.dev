@@ -31,6 +31,7 @@ import type {
   Zone,
 } from "#generated/langium/ast.ts";
 
+import { mixerOf } from "./mixer.ts";
 import { effectOf, playParamOf, sendOf } from "./params.ts";
 import { problemAt, problemsOf } from "./problem.ts";
 import type { Compiled, From, Problem } from "./problem.ts";
@@ -93,6 +94,7 @@ const trackOf: From<TrackNode, Track> = (node) => ({
   name: node.name,
   source: trackSourceOf(node.source),
   role: pipe(Option.fromNullishOr(node.role), Option.filter(isRole)),
+  mixer: mixerOf(node),
   fx: effectsOf(node.fx),
   sends: pipe(node.sends, Arr.map(sendOf)),
 });
@@ -241,6 +243,7 @@ export const declarationsOf: From<SongNode, Compiled<Declarations>> = (song) => 
         Arr.filter(isBus),
         Arr.map((bus) => ({
           name: bus.name,
+          mixer: mixerOf(bus),
           fx: effectsOf(bus.fx),
           sends: pipe(bus.sends, Arr.map(sendOf)),
         })),

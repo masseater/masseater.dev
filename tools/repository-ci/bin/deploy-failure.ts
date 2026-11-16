@@ -101,10 +101,7 @@ const reportedJobs = Effect.fn("reportedJobs")(function* reportedJobs(number: nu
 const stillFailing =
   (results: Results) =>
   (job: string): boolean =>
-    Option.match(Rec.get(results, job), {
-      onNone: () => true,
-      onSome: ({ result }) => result !== SUCCESS,
-    });
+    Option.exists(Rec.get(results, job), ({ result }) => result !== SUCCESS);
 
 const closeIfPassed = Effect.fn("closeIfPassed")(function* closeIfPassed(
   results: Results,
