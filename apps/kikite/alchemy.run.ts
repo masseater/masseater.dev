@@ -17,7 +17,7 @@ const SdkPackage = Schema.fromJsonString(Schema.Struct({ version: Schema.String 
 const agentSdkVersion = Effect.gen(function* agentSdkVersion() {
   const fs = yield* FileSystem.FileSystem;
   const json = yield* fs.readFileString(
-    new URL("package.json", import.meta.resolve("@anthropic-ai/claude-agent-sdk")).pathname,
+    new URL("./package.json", import.meta.resolve("@anthropic-ai/claude-agent-sdk")).pathname,
   );
   const { version } = yield* Schema.decodeEffect(SdkPackage)(json);
   return version;
@@ -76,7 +76,7 @@ export default Stack(
       memo: false,
     });
     const { url } = yield* Workers.Worker("Kikite", {
-      main: "./src/app/entrypoint/kikite.worker.ts",
+      main: "./src/app/kikite.ts",
       logpush: true,
       domain: HOST,
       workersDev: false,

@@ -7,8 +7,8 @@ import type { EditorView, Tooltip } from "@codemirror/view";
 import type { Remote } from "comlink";
 import { Array as Arr, Boolean as Bool, Effect, pipe } from "effect";
 
+import type { CheckerWorker } from "./checker-runner.ts";
 import type { Completion, Hover, Lint } from "./checker.ts";
-import type { CheckerWorker } from "./checker.worker.ts";
 
 export type Pane = Readonly<{ worker: Remote<CheckerWorker>; path: string }>;
 
