@@ -54,6 +54,18 @@ export const cloudflareResourceSyntax: readonly Readonly<{ selector: string; mes
         "AI Gateway には collectLogs: true を付ける。付けないと、モデルの呼び出しが後から引けない",
     },
     {
+      selector:
+        'CallExpression[callee.object.name="AI"][callee.property.name="Gateway"] > ObjectExpression.arguments:not(:has(Property[key.name="spendLimits"] > ObjectExpression > Property[key.name="enabled"][value.value=true]))',
+      message:
+        "AI Gateway には spendLimits を enabled: true で付け、日ごとの費用の上限を掛ける。付けないと、従量課金のモデルの呼び出しが上限なく請求される",
+    },
+    {
+      selector:
+        'CallExpression[callee.object.name="AI"][callee.property.name="Gateway"] > ObjectExpression.arguments:not(:has(Property[key.name="cacheTtl"]))',
+      message:
+        "AI Gateway には cacheTtl を付け、同じ問いの答えをキャッシュする。付けないと、同じ問いにも毎回課金される",
+    },
+    {
       selector: 'MemberExpression[object.name="Rum"][property.name="Site"]',
       message:
         "Rum.Site は使わない。CI のトークンに Account Settings Write が要る。Cloudflare API でホストごとに一度サイトを作り、トークンを CF_BEACON_TOKEN に置く",
@@ -73,7 +85,9 @@ export const removalPolicyOverride: {
 } = {
   files: ["**/*.ts"],
   excludeFiles: ["**/*.test.ts"],
-  rules: { "eslint-js/no-restricted-syntax": ["error", removalPolicySyntax] },
+  rules: {
+    "eslint-js/no-restricted-syntax": ["error", ...cloudflareResourceSyntax, removalPolicySyntax],
+  },
 };
 
 export const alchemyOverride: {

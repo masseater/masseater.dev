@@ -2,6 +2,7 @@ import { Array as Arr, Effect } from "effect";
 
 import { checkComments } from "#/features/ban-comments/index.ts";
 import { checkDocker, checkPython } from "#/features/ban-tools/index.ts";
+import { checkCatalogEntries } from "#/features/check-catalog-entries/index.ts";
 import { checkGitSubpath } from "#/features/check-overrides/index.ts";
 import { checkNodeVersion } from "#/features/check-runtime-version/index.ts";
 import {
@@ -9,6 +10,10 @@ import {
   checkSkillEntry,
   checkSkillFiles,
 } from "#/features/check-skills/index.ts";
+import {
+  checkDowngrades,
+  checkRenovateSettings,
+} from "#/features/check-version-downgrades/index.ts";
 import { checkHiddenUnicode } from "#/features/find-invisible-characters/index.ts";
 import {
   checkAlchemyPatch,
@@ -36,6 +41,9 @@ export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTra
       checkComments(root),
       checkAppliedPackages(root),
       checkGitSubpath(root),
+      checkDowngrades(root),
+      checkRenovateSettings(root),
+      checkCatalogEntries(root),
     ],
     { concurrency: "unbounded" },
   );
