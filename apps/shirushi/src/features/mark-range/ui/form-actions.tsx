@@ -1,10 +1,9 @@
 import { useAtom, useAtomSet } from "@effect/atom-react";
+import { anchorAtom, rangeAtom } from "@masseater.dev/media-notes-ui";
 import { Button } from "@masseater.dev/ui/button";
 import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
-
-import { anchorAtom, rangeAtom } from "#/features/mark-range/model/draft";
 
 const CLEAR = "消す";
 const SAVE = "しるしを保存";

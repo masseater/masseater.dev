@@ -1,61 +1,52 @@
+use media_notes::failure::Failure;
+use media_notes::protocol::Saved;
+use media_notes::store::{Row, Store, fresh_id, now};
 use tauri::State;
 
-use crate::failure::{Failure, Outcome};
-use crate::protocol::{Mark, MarkInput, McpAccess, Saved, Song};
-use crate::song::song_of;
-use crate::source::source_of;
-use crate::store::Store;
+use crate::protocol::{Mark, MarkInput};
 
-const NOT_A_SONG: &str = "YouTube・ニコニコ・SoundCloud の曲のリンクではありません";
-
-pub struct Shirushi {
-    pub store: Store,
-    pub client: reqwest::Client,
-    pub mcp_token: String,
-}
+pub const DATABASE: &str = "shirushi.db";
+pub const TABLE: &str = "marks";
 
 type Answer<T> = Result<T, Failure>;
 
-#[tauri::command]
-#[specta::specta]
-pub async fn list_marks(shirushi: State<'_, Shirushi>, link: String) -> Answer<Vec<Mark>> {
-    shirushi.store.list(source_of(&link).as_ref())
-}
-
-#[tauri::command]
-#[specta::specta]
-pub async fn save_mark(shirushi: State<'_, Shirushi>, input: MarkInput) -> Answer<Saved> {
-    shirushi.store.save(input)
-}
-
-#[tauri::command]
-#[specta::specta]
-pub async fn remove_mark(shirushi: State<'_, Shirushi>, id: String) -> Answer<bool> {
-    shirushi.store.remove(&id)
-}
-
-#[tauri::command]
-#[specta::specta]
-pub async fn song_at(shirushi: State<'_, Shirushi>, link: String) -> Answer<Song> {
-    let source = source_of(&link).ok_or_else(|| Failure::new(NOT_A_SONG))?;
-    Ok(song_of(&shirushi.client, source).await)
-}
-
-#[tauri::command]
-#[specta::specta]
-pub async fn mcp_access(shirushi: State<'_, Shirushi>) -> Answer<McpAccess> {
-    Ok(McpAccess {
-        url: local_mcp::url(crate::mcp::PORT),
-        token: shirushi.mcp_token.clone(),
+pub fn saved(store: &Store, input: MarkInput) -> Answer<Saved> {
+    let mark = Mark {
+        id: fresh_id(),
+        song: input.song,
+        from: input.from,
+        to: input.to,
+        verb: input.verb,
+        aspects: input.aspects,
+        words: input.words,
+        at: now(),
+    };
+    store.put(&Row {
+        id: &mark.id,
+        source: &mark.song.source,
+        at: mark.at,
+        value: &mark,
+    })?;
+    Ok(Saved {
+        id: mark.id,
+        at: mark.at,
     })
 }
 
-pub fn shirushi(data: &std::path::Path) -> Outcome<Shirushi> {
-    Ok(Shirushi {
-        store: Store::open(data)?,
-        client: reqwest::Client::builder()
-            .user_agent(concat!("shirushi/", env!("CARGO_PKG_VERSION")))
-            .build()?,
-        mcp_token: local_mcp::token(data)?,
-    })
+#[tauri::command]
+#[specta::specta]
+pub async fn list_marks(store: State<'_, Store>) -> Answer<Vec<Mark>> {
+    store.list(None)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn save_mark(store: State<'_, Store>, input: MarkInput) -> Answer<Saved> {
+    saved(&store, input)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn remove_mark(store: State<'_, Store>, id: String) -> Answer<bool> {
+    store.remove(&id)
 }

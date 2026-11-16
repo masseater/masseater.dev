@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { ASPECTS } from "#/shared/config";
+import { ASPECTS } from "#/shared/config/index.ts";
 
 import { AspectChip } from "./aspect-chip.tsx";
 

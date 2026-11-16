@@ -6,10 +6,12 @@ import type { InvokeOptions } from "@tauri-apps/api/core";
 
 /** Commands */
 export const commands = {
-	listMarks: (link: string, options?: InvokeOptions) => typedError<Mark[], Failure>(__TAURI_INVOKE("list_marks", { link }, options)),
+	listMarks: (options?: InvokeOptions) => typedError<Mark[], Failure>(__TAURI_INVOKE("list_marks", undefined, options)),
 	saveMark: (input: MarkInput, options?: InvokeOptions) => typedError<Saved, Failure>(__TAURI_INVOKE("save_mark", { input }, options)),
 	removeMark: (id: string, options?: InvokeOptions) => typedError<boolean, Failure>(__TAURI_INVOKE("remove_mark", { id }, options)),
-	songAt: (link: string, options?: InvokeOptions) => typedError<Song, Failure>(__TAURI_INVOKE("song_at", { link }, options)),
+	openLink: (link: string, options?: InvokeOptions) => typedError<Opened, Failure>(__TAURI_INVOKE("open_link", { link }, options)),
+	openFile: (path: string, options?: InvokeOptions) => typedError<Opened, Failure>(__TAURI_INVOKE("open_file", { path }, options)),
+	chooseFile: (options?: InvokeOptions) => typedError<Opened | null, Failure>(__TAURI_INVOKE("choose_file", undefined, options)),
 	mcpAccess: (options?: InvokeOptions) => typedError<McpAccess, Failure>(__TAURI_INVOKE("mcp_access", undefined, options)),
 };
 
@@ -22,7 +24,7 @@ export type Failure = {
 
 export type Mark = {
 	id: string,
-	song: Song,
+	song: Media,
 	from: number | null,
 	to: number | null,
 	verb: Verb,
@@ -32,7 +34,7 @@ export type Mark = {
 };
 
 export type MarkInput = {
-	song: Song,
+	song: Media,
 	from: number | null,
 	to: number | null,
 	verb: Verb,
@@ -45,18 +47,23 @@ export type McpAccess = {
 	token: string,
 };
 
+export type Media = {
+	source: Source,
+	title: string,
+	artist: string,
+};
+
+export type Opened = {
+	media: Media,
+	location: string,
+};
+
 export type Saved = {
 	id: string,
 	at: number,
 };
 
-export type Site = "youtube" | "niconico" | "soundcloud";
-
-export type Song = {
-	source: Source,
-	title: string,
-	artist: string,
-};
+export type Site = "youtube" | "niconico" | "soundcloud" | "file";
 
 export type Source = {
 	site: Site,
