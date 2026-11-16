@@ -11,7 +11,7 @@ const FIRST = 1;
 const HELD_SHARE = 0.25;
 const UNKNOWN = "?";
 
-export const PositionSchema = Schema.Struct({ bar: Schema.Int, offset: Schema.String });
+const PositionSchema = Schema.Struct({ bar: Schema.Int, offset: Schema.String });
 
 export const ChordSpanSchema = Schema.Struct({
   from: PositionSchema,

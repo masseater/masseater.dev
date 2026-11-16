@@ -23,7 +23,7 @@ import type { Item, LineKind, NoteItem, Placed } from "./items.ts";
 import { problemAt, problemsOf } from "./problem.ts";
 import type { Compiled, From } from "./problem.ts";
 
-type Items = Compiled<readonly Item[]>;
+export type Items = Compiled<readonly Item[]>;
 
 interface Context {
   readonly sounding: Sounding;
@@ -135,13 +135,13 @@ const wrongOf =
     problems: [problemAt(sounding)("head")(`${what}はこのトラックに書けません`)],
   });
 
-export interface Head {
+export interface HeadSetting {
   readonly kind: LineKind;
   readonly placed: Placed;
 }
 
 export const headItemsOf =
-  ({ kind, placed }: Head): From<Sounding, Items> =>
+  ({ kind, placed }: HeadSetting): From<Sounding, Items> =>
   (sounding) =>
     Match.value(sounding.head).pipe(
       Match.discriminatorsExhaustive("$type")({

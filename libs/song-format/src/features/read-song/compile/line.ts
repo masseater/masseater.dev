@@ -18,12 +18,12 @@ export interface LineResult {
   readonly length: number;
 }
 
-interface Scale {
+export interface Scale {
   readonly times: number;
   readonly over: number;
 }
 
-export interface Line {
+export interface LineSetting {
   readonly kind: LineKind;
   readonly scale: Scale;
 }
@@ -88,7 +88,7 @@ const soundingOf =
   };
 
 export const lineOf =
-  ({ kind, scale }: Line): From<readonly Event[], Compiled<LineResult>> =>
+  ({ kind, scale }: LineSetting): From<readonly Event[], Compiled<LineResult>> =>
   (events) =>
     Arr.reduce(
       pipe(

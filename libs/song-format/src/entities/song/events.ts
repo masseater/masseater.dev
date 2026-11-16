@@ -13,14 +13,11 @@ const timedFields = {
   nudgeMilliseconds: Schema.Finite,
 };
 
-export const LyricSchema = Schema.Union([
-  kind("syllable")({ text: Schema.String }),
-  kind("melisma")({}),
-]);
+const LyricSchema = Schema.Union([kind("syllable")({ text: Schema.String }), kind("melisma")({})]);
 
 export type Lyric = typeof LyricSchema.Type;
 
-export const ArticulationSchema = Schema.Literals(["staccato", "legato", "accent"]);
+const ArticulationSchema = Schema.Literals(["staccato", "legato", "accent"]);
 
 const BendPointSchema = Schema.Struct({ milliseconds: Schema.Finite, semitones: Schema.Finite });
 
@@ -57,7 +54,7 @@ export const SliceSchema = Schema.Struct({
 
 export type Slice = typeof SliceSchema.Type;
 
-export const EditKindSchema = Schema.Literals(["mute", "stutter", "tapestop", "reverse-slice"]);
+const EditKindSchema = Schema.Literals(["mute", "stutter", "tapestop", "reverse-slice"]);
 
 const RepeatSchema = Schema.Struct({ ticks: Ticks, count: Schema.OptionFromNullOr(Schema.Int) });
 

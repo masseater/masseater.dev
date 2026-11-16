@@ -23,7 +23,7 @@ import { playParamOf } from "./params.ts";
 import { problemAt } from "./problem.ts";
 import type { From, Problem } from "./problem.ts";
 
-type Attributes = readonly Attribute[];
+export type Attributes = readonly Attribute[];
 
 const FULL = 1;
 const NONE = 0;
