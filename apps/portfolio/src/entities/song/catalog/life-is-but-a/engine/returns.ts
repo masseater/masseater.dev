@@ -77,7 +77,7 @@ export const plateOpened = (life: Life): Plate => {
 
 export const plateSide =
   (life: Life) =>
-  (side: "left" | "right") =>
+  (side: keyof typeof IMPULSES) =>
   ({ send, plate }: Plate): void => {
     const impulse = life.samples[IMPULSES[side]] ?? new Float32Array();
     convolve({ impulse, out: plate[side], gain: PLATE.gain })(shifted(life, send[side]));

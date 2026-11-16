@@ -4,6 +4,7 @@ import patterns from "#/entities/song/catalog/life-is-but-a/score/patterns.json"
 import { SAMPLE_RATE, orDefault, semitoneRatio } from "#/entities/song/lib/dsp/number.ts";
 import { fade, resample } from "#/entities/song/lib/dsp/sampling.ts";
 import { stretch } from "#/entities/song/lib/dsp/stretch.ts";
+import type { Stretching } from "#/entities/song/lib/dsp/stretch.ts";
 
 import type { Life } from "./context.ts";
 
@@ -67,7 +68,7 @@ const grainOf = (word: Word): number => {
   return orDefault(GRAIN.smooth)(word.grain);
 };
 
-const modeOf = (word: Word): "akai" | "smooth" => {
+const modeOf = (word: Word): NonNullable<Stretching["mode"]> => {
   if (word.mode === "akai") {
     return "akai";
   }
