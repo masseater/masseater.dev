@@ -6,14 +6,14 @@ import {
 } from "@tanstack/react-query";
 import { Option, String, pipe } from "effect";
 
-import { usePreparation } from "#/entities/engine/@x/translation";
-import type { Direction } from "#/entities/language/@x/translation";
-import { resolveDirection, useSelection } from "#/entities/language/@x/translation";
-import { useDraft, useSettledDraft } from "#/entities/translation/model/draft";
-import { formFor, useFormChoice } from "#/entities/translation/model/form";
-import type { Output } from "#/entities/translation/model/output";
-import { outputOf } from "#/entities/translation/model/output";
-import { useEngine } from "#/shared/api";
+import { usePreparation } from "#/entities/engine/@x/translation.ts";
+import type { Direction } from "#/entities/language/@x/translation.ts";
+import { resolveDirection, useSelection } from "#/entities/language/@x/translation.ts";
+import { useDraft, useSettledDraft } from "#/entities/translation/model/draft.ts";
+import { formFor, useFormChoice } from "#/entities/translation/model/form.ts";
+import type { Output } from "#/entities/translation/model/output.ts";
+import { outputOf } from "#/entities/translation/model/output.ts";
+import { useEngine } from "#/shared/api/index.ts";
 
 const appendDelta = (translation: string, delta: string): string => `${translation}${delta}`;
 

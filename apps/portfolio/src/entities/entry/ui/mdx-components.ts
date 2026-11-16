@@ -1,12 +1,12 @@
 import type { MDXComponents } from "mdx/types";
 
-import { Figure } from "./figure";
-import { FootnoteRef } from "./footnote-ref";
-import { LazyImage } from "./lazy-image";
-import { ScrollTable } from "./scroll-table";
-import { Speech } from "./speech";
-import { WikiLink } from "./wiki-link";
-import { YouTube } from "./you-tube";
+import { Figure } from "./figure.tsx";
+import { FootnoteRef } from "./footnote-ref.tsx";
+import { LazyImage } from "./lazy-image.tsx";
+import { ScrollTable } from "./scroll-table.tsx";
+import { Speech } from "./speech.tsx";
+import { WikiLink } from "./wiki-link.tsx";
+import { YouTube } from "./you-tube.tsx";
 
 export const components: MDXComponents = {
   Figure,

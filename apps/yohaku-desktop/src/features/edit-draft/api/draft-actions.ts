@@ -4,9 +4,15 @@ import type { Reaction } from "@masseater.dev/yohaku-protocol";
 import { Effect, HashSet, Option, pipe } from "effect";
 import { useEffect, useMemo, useRef } from "react";
 
-import { draftClosed, draftOf, lineOf, draftRequestAtom, keptAtom } from "#/entities/manuscript";
-import type { DraftActions, DraftRequest } from "#/entities/manuscript";
-import { useYohaku } from "#/shared/api";
+import {
+  draftClosed,
+  draftOf,
+  lineOf,
+  draftRequestAtom,
+  keptAtom,
+} from "#/entities/manuscript/index.ts";
+import type { DraftActions, DraftRequest } from "#/entities/manuscript/index.ts";
+import { useYohaku } from "#/shared/api/index.ts";
 
 const FIRST_ATTEMPT = 0;
 const NEXT = 1;

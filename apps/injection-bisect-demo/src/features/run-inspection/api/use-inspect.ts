@@ -6,8 +6,8 @@ import {
 } from "@tanstack/react-query";
 import type { QueryFunction, SkipToken, UseQueryOptions } from "@tanstack/react-query";
 
-import type { Run, Trace, InspectEvent } from "#/entities/inspection";
-import { traceOf, inspectEvents } from "#/entities/inspection";
+import type { Run, Trace, InspectEvent } from "#/entities/inspection/index.ts";
+import { traceOf, inspectEvents } from "#/entities/inspection/index.ts";
 
 export type InspectState =
   | { readonly status: "idle" }

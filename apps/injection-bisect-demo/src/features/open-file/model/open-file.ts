@@ -3,9 +3,9 @@ import type { Document, Unreadable } from "@r_masseater/injection-bisect";
 import { Effect, MutableRef, Option, String as Str } from "effect";
 import type { Fiber } from "effect";
 
-import { openedOf, COUNT, MAX_CHARS } from "#/entities/inspection";
-import type { Opening } from "#/entities/inspection";
-import { COPY } from "#/shared/config";
+import { openedOf, COUNT, MAX_CHARS } from "#/entities/inspection/index.ts";
+import type { Opening } from "#/entities/inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
 
 const FIRST = 0;
 

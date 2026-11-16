@@ -2,9 +2,9 @@ import { Button } from "@masseater.dev/ui/button";
 import { FolderPlus } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 
-import { usePickThen } from "#/features/library/api/pick-then";
-import { pickFolder } from "#/features/library/api/pickers";
-import { useAddFolder } from "#/features/library/api/queries";
+import { usePickThen } from "#/features/library/api/pick-then.ts";
+import { pickFolder } from "#/features/library/api/pickers.ts";
+import { useAddFolder } from "#/features/library/api/queries.ts";
 
 const LABEL = "フォルダを登録";
 

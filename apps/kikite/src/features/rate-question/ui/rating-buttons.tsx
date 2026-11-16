@@ -1,7 +1,7 @@
 import { cn } from "@masseater.dev/ui/cn";
 import type { ReactNode } from "react";
 
-import type { Rating } from "#/entities/interview";
+import type { Rating } from "#/entities/interview/index.ts";
 
 import { RatingButton } from "./rating-button.tsx";
 

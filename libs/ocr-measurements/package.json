@@ -3,11 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
     "./summary": "./summary.json",
-    "./schema": "./src/summary.ts",
+    "./schema": "./src/entities/summary/index.ts",
     "./ja-bench": "./ja-bench.json",
-    "./ja-bench-schema": "./src/ja-bench.ts"
+    "./ja-bench-schema": "./src/entities/ja-bench/index.ts"
   },
   "dependencies": {
     "@r_masseater/ocr-decide": "workspace:*",

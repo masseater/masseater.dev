@@ -1,8 +1,8 @@
 import { Dialog } from "radix-ui";
 import type { ReactNode } from "react";
 
-import { MobileSheet } from "./mobile-sheet";
-import { useMobileOpen, useSetMobileOpen } from "./sidebar-state";
+import { MobileSheet } from "./mobile-sheet.tsx";
+import { useMobileOpen, useSetMobileOpen } from "./sidebar-state.ts";
 
 export const MobileSidebar = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
   <Dialog.Root onOpenChange={useSetMobileOpen()} open={useMobileOpen()}>

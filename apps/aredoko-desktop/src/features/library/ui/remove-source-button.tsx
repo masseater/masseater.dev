@@ -3,7 +3,7 @@ import { Trash2 } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useRemoveSource } from "#/features/library/api/queries";
+import { useRemoveSource } from "#/features/library/api/queries.ts";
 
 const LABEL = "登録を外す";
 

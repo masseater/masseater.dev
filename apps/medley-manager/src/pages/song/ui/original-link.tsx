@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { Button } from "#/shared/ui/button";
+import { Button } from "#/shared/ui/button.tsx";
 
 const OPEN_ORIGINAL = "原曲を開く ↗";
 

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import type { Project } from "#/pages/projects/model/projects";
+import type { Project } from "#/pages/projects/model/projects.ts";
 
-import { ProjectMeta } from "./project-meta";
+import { ProjectMeta } from "./project-meta.tsx";
 
 export const ProjectItem = ({ project }: Readonly<{ project: Project }>): ReactNode => (
   <li className="border-foreground/10 flex flex-col gap-2 border-t py-5 sm:flex-row sm:items-baseline sm:gap-8">

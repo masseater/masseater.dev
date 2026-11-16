@@ -4,7 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useYohaku } from "#/shared/api";
+import { useYohaku } from "#/shared/api/index.ts";
 
 const GUIDE = "https://code.claude.com/docs/ja/quickstart";
 const LABEL = "Claude Code を入れる";

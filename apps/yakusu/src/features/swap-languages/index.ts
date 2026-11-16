@@ -1,1 +1,1 @@
-export { SwapButton } from "./ui/swap-button";
+export { SwapButton } from "./ui/swap-button.tsx";

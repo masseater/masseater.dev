@@ -1,10 +1,10 @@
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { KeywordForm } from "#/shared/ui/keyword-form";
-import { PageTitle } from "#/shared/ui/page-title";
+import { KeywordForm } from "#/shared/ui/keyword-form.tsx";
+import { PageTitle } from "#/shared/ui/page-title.tsx";
 
-import { PeopleTable } from "./people-table";
+import { PeopleTable } from "./people-table.tsx";
 
 const TITLE = "担当者";
 const DESCRIPTION = "パートを担当した人の一覧です。";

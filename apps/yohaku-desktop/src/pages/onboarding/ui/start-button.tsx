@@ -2,7 +2,7 @@ import { Button } from "@masseater.dev/ui/button";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useCompleteStep } from "#/entities/onboarding";
+import { useCompleteStep } from "#/entities/onboarding/index.ts";
 
 const LABEL = "書き始める";
 

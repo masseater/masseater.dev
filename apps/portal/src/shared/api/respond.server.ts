@@ -3,7 +3,7 @@ import { Effect, Logger } from "effect";
 import { status } from "elysia";
 import type { ElysiaCustomStatusResponse } from "elysia";
 
-import type { PortalFailed } from "./portal-failed";
+import type { PortalFailed } from "./portal-failed.ts";
 
 const BAD_GATEWAY = 502;
 

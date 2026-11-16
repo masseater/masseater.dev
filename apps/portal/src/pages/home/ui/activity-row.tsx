@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-import { KIND_LABELS, timeOf } from "#/pages/home/model/activity";
-import type { Activity } from "#/pages/home/model/activity";
+import { KIND_LABELS, timeOf } from "#/pages/home/model/activity.ts";
+import type { Activity } from "#/pages/home/model/activity.ts";
 
-import { ActivityTitle } from "./activity-title";
+import { ActivityTitle } from "./activity-title.tsx";
 
 const NO_TIME = "—";
 

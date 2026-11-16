@@ -2,8 +2,8 @@ import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { Placed } from "#/entities/manuscript";
-import { useRemarkActions } from "#/features/respond-to-remark/api/remark-actions";
+import type { Placed } from "#/entities/manuscript/index.ts";
+import { useRemarkActions } from "#/features/respond-to-remark/api/remark-actions.ts";
 
 import { RemarkChoices } from "./remark-choices.tsx";
 import { RemarkProposal } from "./remark-proposal.tsx";

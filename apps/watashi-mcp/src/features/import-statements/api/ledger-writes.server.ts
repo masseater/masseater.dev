@@ -1,10 +1,10 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import type { MoneyWriteOf } from "#/entities/ledger";
-import { parseCsv } from "#/features/import-statements/model/csv";
-import { InvalidRecord } from "#/shared/api";
+import type { MoneyWriteOf } from "#/entities/ledger/index.ts";
+import { parseCsv } from "#/features/import-statements/model/csv.ts";
+import { InvalidRecord } from "#/shared/api/index.ts";
 
-import { importEntries } from "./import-store.server";
+import { importEntries } from "./import-store.server.ts";
 
 const DEFAULT_HEADER_ROW = 1;
 

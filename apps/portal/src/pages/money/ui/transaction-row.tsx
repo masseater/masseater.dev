@@ -1,8 +1,8 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { SIGNED_YEN } from "#/entities/money";
-import type { TransactionValue } from "#/entities/money";
+import { SIGNED_YEN } from "#/entities/money/index.ts";
+import type { TransactionValue } from "#/entities/money/index.ts";
 
 export type Labels = Readonly<{
   category: (id: string) => string;

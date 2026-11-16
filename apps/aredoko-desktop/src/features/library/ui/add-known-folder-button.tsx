@@ -5,8 +5,8 @@ import type { LucideIcon } from "lucide-react";
 import { useCallback } from "react";
 import type { ComponentProps, ReactNode } from "react";
 
-import { useAddFolder, useKnownFolder } from "#/features/library/api/queries";
-import type { KnownFolder } from "#/features/library/api/queries";
+import { useAddFolder, useKnownFolder } from "#/features/library/api/queries.ts";
+import type { KnownFolder } from "#/features/library/api/queries.ts";
 
 interface Labelled {
   readonly label: string;

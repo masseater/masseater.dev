@@ -3,8 +3,8 @@ import { Effect } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { markdownOf } from "#/entities/watashi";
-import type { ProfileSectionValue } from "#/entities/watashi";
+import { markdownOf } from "#/entities/watashi/index.ts";
+import type { ProfileSectionValue } from "#/entities/watashi/index.ts";
 
 const COPY = "コピー";
 

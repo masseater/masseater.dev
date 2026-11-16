@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 
-import { MAX_CHARACTERS, useDraft, useSetDraft } from "#/entities/translation";
+import { MAX_CHARACTERS, useDraft, useSetDraft } from "#/entities/translation/index.ts";
 
 const LABEL = "原文";
 

@@ -1,14 +1,14 @@
 import { Array, Option, pipe } from "effect";
 
-import { CELL_HEIGHT, CELL_WIDTH } from "./camera";
-import type { Gpu } from "./gpu-device";
-import { MAX_DRAWS, SLOT_BYTES } from "./gpu-pipelines";
-import type { Pipelines } from "./gpu-pipelines";
-import { INTRO_MS } from "./gpu-shader";
-import type { Textures, Uploaded } from "./gpu-textures";
-import { overview, planImages, planOutlines } from "./plan";
-import type { Item, Outline, Source, Span } from "./plan";
-import type { Scene } from "./scene";
+import { CELL_HEIGHT, CELL_WIDTH } from "./camera.ts";
+import type { Gpu } from "./gpu-device.ts";
+import { MAX_DRAWS, SLOT_BYTES } from "./gpu-pipelines.ts";
+import type { Pipelines } from "./gpu-pipelines.ts";
+import { INTRO_MS } from "./gpu-shader.ts";
+import type { Textures, Uploaded } from "./gpu-textures.ts";
+import { overview, planImages, planOutlines } from "./plan.ts";
+import type { Item, Outline, Source, Span } from "./plan.ts";
+import type { Scene } from "./scene.ts";
 
 const FLOATS_PER_SLOT = SLOT_BYTES / Float32Array.BYTES_PER_ELEMENT;
 const RADIUS_OF_DIAGONAL = 0.75;

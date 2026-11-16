@@ -1,8 +1,8 @@
 import { slugPath, versionPath } from "@thumb-mosaic/mosaic";
 import { Array, Option, pipe } from "effect";
 
-import type { Mosaic } from "#/entities/mosaic/api/queries";
-import { BASE_PATH } from "#/shared/config";
+import type { Mosaic } from "#/entities/mosaic/api/queries.ts";
+import { BASE_PATH } from "#/shared/config/index.ts";
 
 const FIRST = 0;
 const BLOCK_FILE = 2;

@@ -1,1 +1,1 @@
-export { mintToken } from "./api/api-token-api.server";
+export { mintToken } from "./api/api-token-api.server.ts";

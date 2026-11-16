@@ -15,8 +15,11 @@
     "skills/share-types-with-rust"
   ],
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/app/index.ts"
   },
   "dependencies": {
     "effect": "catalog:stack"

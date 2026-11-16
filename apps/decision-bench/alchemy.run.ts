@@ -4,8 +4,8 @@ import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect } from "effect";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
-import { BASE_PATH } from "./base-path.ts";
+import { APP_NAME, requireAppPrefix } from "./src/shared/config/app-name.ts";
+import { BASE_PATH } from "./src/shared/config/base-path.ts";
 
 const ZONE = "masseater.dev";
 

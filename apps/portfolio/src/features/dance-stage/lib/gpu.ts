@@ -1,16 +1,16 @@
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import type { GpuEffect, GpuPass, Pass } from "#/features/dance-stage/model/effect";
+import type { GpuEffect, GpuPass, Pass } from "#/entities/dance-effect/index.ts";
 
-import type { Fn } from "./fn";
-import type { Size } from "./gl";
-import { BLOCK_BYTES, emptyBlock, fillBlock, fillTextWidths, POSE_SIZE } from "./gpu-block";
-import { densityOf, encodeComputes } from "./gpu-compute";
-import { inputGroup, sharedGroup, writeTarget } from "./gpu-groups";
-import type { Context, Images, Sizes, Stage } from "./gpu-groups";
-import { blockOf, extentOf, unavailable, GROUPS, imageOf, setUp, targetsOf } from "./gpu-setup";
-import type { GpuUnavailable, Setup } from "./gpu-setup";
-import type { Asset, Frame, Renderer, Source } from "./renderer";
+import type { Fn } from "./fn.ts";
+import type { Size } from "./gl.ts";
+import { BLOCK_BYTES, emptyBlock, fillBlock, fillTextWidths, POSE_SIZE } from "./gpu-block.ts";
+import { densityOf, encodeComputes } from "./gpu-compute.ts";
+import { inputGroup, sharedGroup, writeTarget } from "./gpu-groups.ts";
+import type { Context, Images, Sizes, Stage } from "./gpu-groups.ts";
+import { blockOf, extentOf, unavailable, GROUPS, imageOf, setUp, targetsOf } from "./gpu-setup.ts";
+import type { GpuUnavailable, Setup } from "./gpu-setup.ts";
+import type { Asset, Frame, Renderer, Source } from "./renderer.ts";
 
 const TRIANGLE = 3;
 const NEXT = 1;

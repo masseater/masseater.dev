@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 
-import { useToggleSidebar } from "./sidebar-state";
+import { useToggleSidebar } from "./sidebar-state.ts";
 
 const KEY = "b";
 

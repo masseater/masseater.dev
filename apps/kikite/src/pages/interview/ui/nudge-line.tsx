@@ -1,8 +1,8 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { useNudge } from "#/entities/interview";
-import { phrased } from "#/shared/lib/phrases";
+import { useNudge } from "#/entities/interview/index.ts";
+import { phrased } from "#/shared/lib/phrases.ts";
 
 export const NudgeLine = (): ReactNode =>
   Option.match(useNudge(), {

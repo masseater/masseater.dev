@@ -3,8 +3,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { Option, Record as Rec, pipe } from "effect";
 
-import { watashiQueries } from "#/entities/watashi";
-import type { ConversationSearchValue, ConversationValue } from "#/entities/watashi";
+import { watashiQueries } from "#/entities/watashi/index.ts";
+import type { ConversationSearchValue, ConversationValue } from "#/entities/watashi/index.ts";
 
 type ConversationKey = Readonly<{ sessionId: string; search: ConversationSearchValue }>;
 

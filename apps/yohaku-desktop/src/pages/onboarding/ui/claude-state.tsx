@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { useClaudeStatus } from "#/entities/onboarding";
+import { useClaudeStatus } from "#/entities/onboarding/index.ts";
 
 import { ClaudeLoggedOut } from "./claude-logged-out.tsx";
 import { ClaudeMissing } from "./claude-missing.tsx";

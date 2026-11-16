@@ -1,11 +1,11 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Array as Arr, Clock, Effect, Option, String as Str, pipe } from "effect";
 
-import { idOf, isActive, japaneseOf, TraitTranslator } from "#/entities/trait";
-import type { JaRows, TraitState } from "#/entities/trait";
-import { saveTraitJa, loadTraitJa, loadTraits } from "#/entities/trait/index.server";
-import type { StorageFailed } from "#/shared/db";
-import { nowIso } from "#/shared/db/index.server";
+import { saveTraitJa, loadTraitJa, loadTraits } from "#/entities/trait/index.server.ts";
+import { idOf, isActive, japaneseOf, TraitTranslator } from "#/entities/trait/index.ts";
+import type { JaRows, TraitState } from "#/entities/trait/index.ts";
+import { nowIso } from "#/shared/db/index.server.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 type Pending = Readonly<{ id: number; trait: TraitState }>;
 

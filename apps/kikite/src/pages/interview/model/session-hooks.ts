@@ -3,8 +3,8 @@ import { Option } from "effect";
 import { AsyncResult } from "effect/reactivity";
 import { useCallback, useMemo } from "react";
 
-import { phaseAtom } from "#/entities/interview";
-import type { Answering } from "#/features/answer-question";
+import { phaseAtom } from "#/entities/interview/index.ts";
+import type { Answering } from "#/features/answer-question/index.ts";
 
 import { sessionAtom } from "./session.ts";
 import type { Session } from "./session.ts";

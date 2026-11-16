@@ -1,8 +1,8 @@
 import { Array as Arr, Equal, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import { articles } from "./articles";
-import type { Article } from "./articles";
-import type { CatalogExample, CatalogItem } from "./catalog";
+import { articles } from "./articles.ts";
+import type { Article } from "./articles.ts";
+import type { CatalogExample, CatalogItem } from "./catalog.ts";
 import examples from "./generated/examples.json";
 import slugTable from "./slugs.json";
 

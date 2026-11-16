@@ -1,6 +1,6 @@
 import { Array as Arr, pipe } from "effect";
 
-import type { MonthTotalValue } from "#/entities/money";
+import type { MonthTotalValue } from "#/entities/money/index.ts";
 
 export type MonthlyRow = Readonly<{
   month: string;

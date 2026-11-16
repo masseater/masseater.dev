@@ -1,6 +1,6 @@
 import { Option, Record, Array as Arr, String as Str, pipe } from "effect";
 
-import { toJson } from "#src/json.ts";
+import { toJson } from "#src/shared/lib/json.ts";
 
 const local = (path: string): string => new URL(path, import.meta.url).pathname;
 
@@ -36,7 +36,7 @@ const remotionRuleModule = (id: string): Option.Option<string> =>
     Option.map((virtual) =>
       pipe(
         [
-          `import plugin from ${toJson(local("../src/remotion.ts"))};`,
+          `import plugin from ${toJson(local("../src/app/remotion.ts"))};`,
           `export default plugin.rules[${toJson(Str.slice(VIRTUAL_REMOTION_RULE.length)(virtual))}];`,
         ],
         Arr.join("\n"),

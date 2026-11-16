@@ -2,11 +2,11 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { SongLink } from "#/entities/song";
-import { songsQuery } from "#/pages/home/api/loader";
-import { RANKING_LIMIT, rankOf } from "#/pages/home/lib/rank";
+import { SongLink } from "#/entities/song/index.ts";
+import { songsQuery } from "#/pages/home/api/loader.ts";
+import { RANKING_LIMIT, rankOf } from "#/pages/home/lib/rank.ts";
 
-import { RankingItem } from "./ranking-item";
+import { RankingItem } from "./ranking-item.tsx";
 
 const usesLabel = (count: number): string => `${count.toString()} 本`;
 

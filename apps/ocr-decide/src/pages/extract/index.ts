@@ -1,1 +1,1 @@
-export { ExtractPage } from "./ui/extract-page";
+export { ExtractPage } from "./ui/extract-page.tsx";

@@ -7,11 +7,11 @@ import {
   usePick,
   useRankingSearch,
   useUpdateSearch,
-} from "#/entities/ranking";
-import { ChoiceGroup } from "#/shared/ui/choice-group";
+} from "#/entities/ranking/index.ts";
+import { ChoiceGroup } from "#/shared/ui/choice-group.tsx";
 
-import { CustomPeriod } from "./custom-period";
-import { KindAndSearch } from "./kind-and-search";
+import { CustomPeriod } from "./custom-period.tsx";
+import { KindAndSearch } from "./kind-and-search.tsx";
 
 export const RankingControls = ({
   dates,

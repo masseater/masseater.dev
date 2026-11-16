@@ -1,5 +1,6 @@
 import { Effect, Option, Predicate, Result, pipe } from "effect";
 
+import { loadStatsData } from "#/entities/life-record/index.server.ts";
 import {
   previousPeriod,
   previousYear,
@@ -8,10 +9,14 @@ import {
   dayRangeOf,
   parseTime,
   storedOf,
-} from "#/entities/life-record";
-import type { Period, LifeStatsValue, MetricStats, StatsRequest } from "#/entities/life-record";
-import { loadStatsData } from "#/entities/life-record/index.server";
-import type { StoreFailure } from "#/shared/api";
+} from "#/entities/life-record/index.ts";
+import type {
+  Period,
+  LifeStatsValue,
+  MetricStats,
+  StatsRequest,
+} from "#/entities/life-record/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
 
 const dayRange = (input: string): Effect.Effect<Period, StoreFailure> =>
   pipe(

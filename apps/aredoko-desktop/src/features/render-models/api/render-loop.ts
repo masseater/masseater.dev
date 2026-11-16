@@ -1,8 +1,8 @@
 import { Array, Cause, Duration, Effect, Exit, Fiber, pipe } from "effect";
 
-import { loadModel } from "#/features/render-models/model/load-model";
-import { renderViews } from "#/features/render-models/model/render-views";
-import { failRender, listRenderJobs, putRender, readModel } from "#/shared/api";
+import { loadModel } from "#/features/render-models/model/load-model.ts";
+import { renderViews } from "#/features/render-models/model/render-views.ts";
+import { failRender, listRenderJobs, putRender, readModel } from "#/shared/api/index.ts";
 
 const BUSY = Duration.fromInputUnsafe("1 second");
 const IDLE = Duration.fromInputUnsafe("10 seconds");

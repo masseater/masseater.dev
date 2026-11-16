@@ -1,2 +1,2 @@
-export { jaBenchQuery } from "./api/ja-bench-query";
-export { OcrEnginesPage } from "./ui/ocr-engines-page";
+export { jaBenchQuery } from "./api/ja-bench-query.ts";
+export { OcrEnginesPage } from "./ui/ocr-engines-page.tsx";

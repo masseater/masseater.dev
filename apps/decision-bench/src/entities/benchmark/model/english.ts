@@ -2,8 +2,8 @@ import type { TaskId } from "bench-summary/schema";
 import { Option, Schema, Array as Arr, pipe } from "effect";
 
 import referenceJson from "./english-reference.json";
-import { rankedModels } from "./ranking";
-import type { ModelResult, TaskResult } from "./summary";
+import { rankedModels } from "./ranking.ts";
+import type { ModelResult, TaskResult } from "./summary.ts";
 
 const ReferenceSchema = Schema.Struct({
   source: Schema.Struct({

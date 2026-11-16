@@ -5,7 +5,7 @@ import type { McpServer } from "@modelcontextprotocol/server";
 import { env } from "cloudflare:workers";
 import { Effect, Schema } from "effect";
 
-import { brokerFailed, meteredInput, runTool } from "#/shared/api";
+import { brokerFailed, meteredInput, runTool } from "#/shared/api/index.ts";
 
 const ONE_JOIN = 1;
 

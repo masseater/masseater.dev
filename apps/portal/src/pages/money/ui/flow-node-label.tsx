@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { YEN } from "#/entities/money";
-import type { Placement } from "#/pages/money/model/flow";
+import { YEN } from "#/entities/money/index.ts";
+import type { Placement } from "#/pages/money/model/flow.ts";
 
 const AMOUNT_LINE = 16;
 

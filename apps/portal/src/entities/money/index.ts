@@ -1,5 +1,5 @@
-export { moneyQueries } from "./api/queries";
-export { MoneySearch } from "./model/money";
+export { moneyQueries } from "./api/queries.ts";
+export { MoneySearch } from "./model/money.ts";
 export type {
   AccountBalanceValue,
   BalanceSheetValue,
@@ -12,8 +12,8 @@ export type {
   SettingsValue,
   TransactionPageValue,
   TransactionValue,
-} from "./model/money";
-export { SIGNED_YEN, YEN } from "./model/yen";
-export { monthLabel } from "./model/month-label";
-export { hasMovement } from "./model/movement";
-export { MoneyLink } from "./ui/money-link";
+} from "./model/money.ts";
+export { SIGNED_YEN, YEN } from "./model/yen.ts";
+export { monthLabel } from "./model/month-label.ts";
+export { hasMovement } from "./model/movement.ts";
+export { MoneyLink } from "./ui/money-link.tsx";

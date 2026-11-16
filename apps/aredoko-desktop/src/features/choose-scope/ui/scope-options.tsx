@@ -2,7 +2,7 @@ import { Array, pipe } from "effect";
 import { Select } from "radix-ui";
 import type { ReactNode } from "react";
 
-import { usePackages } from "#/entities/asset";
+import { usePackages } from "#/entities/asset/index.ts";
 
 import { ALL_PACKAGES } from "./all-packages.ts";
 import { ScopeOption } from "./scope-option.tsx";

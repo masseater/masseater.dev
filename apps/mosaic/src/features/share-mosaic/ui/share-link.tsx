@@ -1,7 +1,7 @@
 import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-import { ShareIcon } from "./share-icon";
+import { ShareIcon } from "./share-icon.tsx";
 
 export const ShareLink = ({
   name,

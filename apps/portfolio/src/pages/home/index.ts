@@ -1,2 +1,2 @@
-export { homeHead } from "./model/head";
-export { HomePage } from "./ui/home-page";
+export { homeHead } from "./model/head.ts";
+export { HomePage } from "./ui/home-page.tsx";

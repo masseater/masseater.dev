@@ -4,8 +4,8 @@ import type { QueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { yohakuAtom } from "#/shared/api";
-import type { Yohaku } from "#/shared/api";
+import { yohakuAtom } from "#/shared/api/index.ts";
+import type { Yohaku } from "#/shared/api/index.ts";
 
 export const Providers = ({
   children,

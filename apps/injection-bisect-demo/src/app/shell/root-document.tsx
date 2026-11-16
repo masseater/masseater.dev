@@ -4,7 +4,7 @@ import { HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 
-import { StageBody } from "./stage-body";
+import { StageBody } from "./stage-body.tsx";
 
 const devtoolsPlugins = [
   { name: "TanStack Router", render: <TanStackRouterDevtoolsPanel /> },

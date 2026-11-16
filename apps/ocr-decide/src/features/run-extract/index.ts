@@ -1,1 +1,1 @@
-export { RunPanel } from "./ui/run-panel";
+export { RunPanel } from "./ui/run-panel.tsx";

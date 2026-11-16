@@ -1,5 +1,5 @@
-import { otherOf, useSelect, useSelection } from "#/entities/language";
-import type { LanguageCode, Selection, Source } from "#/entities/language";
+import { otherOf, useSelect, useSelection } from "#/entities/language/index.ts";
+import type { LanguageCode, Selection, Source } from "#/entities/language/index.ts";
 
 const otherSideOf = ({
   current,

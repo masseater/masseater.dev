@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import type { MoneySearchValue } from "#/entities/money";
+import type { MoneySearchValue } from "#/entities/money/index.ts";
 
 export const MoneyLink = ({
   children,

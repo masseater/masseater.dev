@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { useListening } from "#/entities/interview";
-import { useToggleMic } from "#/features/voice-input/model/mic-toggle";
+import { useListening } from "#/entities/interview/index.ts";
+import { useToggleMic } from "#/features/voice-input/model/mic-toggle.ts";
 
 import { Ring } from "./ring.tsx";
 import type { RingSize } from "./ring.tsx";

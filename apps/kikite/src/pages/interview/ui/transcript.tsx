@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useEntries, useInterim } from "#/entities/interview";
-import { useStickToBottom } from "#/shared/lib/stick-to-bottom";
+import { useEntries, useInterim } from "#/entities/interview/index.ts";
+import { useStickToBottom } from "#/shared/lib/stick-to-bottom.ts";
 
 import { HistoryItem } from "./history-item.tsx";
 import { InterimItem } from "./interim-item.tsx";

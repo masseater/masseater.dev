@@ -3,7 +3,7 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Logger, Option } from "effect";
 
-import { searchSlides } from "#/features/slides-search";
+import { searchSlides } from "#/features/slides-search/index.ts";
 
 const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
 

@@ -3,13 +3,13 @@ import { eq } from "drizzle-orm";
 import { Effect } from "effect";
 import { vi } from "vite-plus/test";
 
-import { part, partStaff, person, personAlias, video } from "#/shared/db";
-import { catalogDb } from "#/shared/db/index.server";
-import { closeDatabase, resetDatabase, whileRejecting } from "#/shared/db/index.test.support";
+import { catalogDb } from "#/shared/db/index.server.ts";
+import { closeDatabase, resetDatabase, whileRejecting } from "#/shared/db/index.test.support.ts";
+import { part, partStaff, person, personAlias, video } from "#/shared/db/index.ts";
 
 import { mergePeople } from "./person-write.server.ts";
 
-vi.mock("cloudflare:workers", () => import("#/shared/db/index.test.support"));
+vi.mock("cloudflare:workers", () => import("#/shared/db/index.test.support.ts"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 

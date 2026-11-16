@@ -2,7 +2,7 @@ import type { Manuscript } from "@masseater.dev/yohaku-protocol";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { Effect, Option, pipe } from "effect";
 
-import { useYohaku } from "#/shared/api";
+import { useYohaku } from "#/shared/api/index.ts";
 
 export type Manuscripts = readonly (typeof Manuscript.Type)[];
 

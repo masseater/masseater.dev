@@ -1,10 +1,10 @@
 import { percent } from "bench-summary/format";
 import type { ReactNode } from "react";
 
-import { colorOf, usd } from "#/entities/benchmark";
-import type { ModelResult } from "#/entities/benchmark";
-import type { TableColumn } from "#/features/sort-table";
-import { SortableTable } from "#/features/sort-table";
+import { colorOf, usd } from "#/entities/benchmark/index.ts";
+import type { ModelResult } from "#/entities/benchmark/index.ts";
+import type { TableColumn } from "#/features/sort-table/index.ts";
+import { SortableTable } from "#/features/sort-table/index.ts";
 
 const CAPTION = "指数と費用";
 const LABEL = "モデル";

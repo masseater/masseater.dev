@@ -2,9 +2,9 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 import { vi } from "vite-plus/test";
 
-import { readMemory } from "#/features/memory-tools/index.test.support";
-import { mintToken } from "#/features/token-tools/index.test.support";
-import type { TokenScope } from "#/shared/db";
+import { readMemory } from "#/features/memory-tools/index.test.support.ts";
+import { mintToken } from "#/features/token-tools/index.test.support.ts";
+import type { TokenScope } from "#/shared/db/index.ts";
 
 import { serveMemories } from "./conversation-api.server.ts";
 import { closeDatabase, resetDatabase } from "./upload.test.support.ts";

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { SIGNED_YEN, YEN } from "#/entities/money";
-import type { BalanceSheetValue, MoneyFlowValue } from "#/entities/money";
-import { Stat } from "#/shared/ui";
+import { SIGNED_YEN, YEN } from "#/entities/money/index.ts";
+import type { BalanceSheetValue, MoneyFlowValue } from "#/entities/money/index.ts";
+import { Stat } from "#/shared/ui/index.ts";
 
 const TEXT = {
   income: "収入総額",

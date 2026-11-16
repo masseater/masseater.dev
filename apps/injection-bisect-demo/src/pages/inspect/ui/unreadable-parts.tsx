@@ -3,9 +3,9 @@ import { Array as Arr, pipe } from "effect";
 import { FileX } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { Phase } from "#/entities/inspection";
+import type { Phase } from "#/entities/inspection/index.ts";
 
-import { Note } from "./note";
+import { Note } from "./note.tsx";
 
 const lineOf = ({ name, reason }: Unreadable): string => `${name}　${reason}`;
 

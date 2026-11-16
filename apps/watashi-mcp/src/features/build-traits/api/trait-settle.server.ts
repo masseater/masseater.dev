@@ -1,11 +1,11 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Array as Arr, Effect, Record as Rec, pipe } from "effect";
 
-import { planTraits, isActive, keyText, supportsOf } from "#/entities/trait";
-import type { Plan, Step } from "#/entities/trait";
-import { embedTexts } from "#/entities/trait/index.server";
-import type { VectorTexts } from "#/entities/trait/index.server";
-import { encodeJson } from "#/shared/db/index.server";
+import { embedTexts } from "#/entities/trait/index.server.ts";
+import type { VectorTexts } from "#/entities/trait/index.server.ts";
+import { planTraits, isActive, keyText, supportsOf } from "#/entities/trait/index.ts";
+import type { Plan, Step } from "#/entities/trait/index.ts";
+import { encodeJson } from "#/shared/db/index.server.ts";
 
 export type Settled = Readonly<{ plan: Plan; vectors: VectorTexts }>;
 

@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { cascadeLinks, clicked, linkDirection, replayed, started, stopDelays } from "./cascade";
+import { cascadeLinks, clicked, linkDirection, replayed, started, stopDelays } from "./cascade.ts";
 
 test("再生すると段階の順に、根から下流へ遅れて止まる", () => {
   expect(stopDelays({ status: "playing", round: 1 })).toMatchObject({

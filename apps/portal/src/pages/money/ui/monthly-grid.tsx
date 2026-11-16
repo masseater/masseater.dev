@@ -1,11 +1,11 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { MonthTotalValue } from "#/entities/money";
-import { TableFrame, TableHead } from "#/shared/ui";
-import type { Column } from "#/shared/ui";
+import type { MonthTotalValue } from "#/entities/money/index.ts";
+import { TableFrame, TableHead } from "#/shared/ui/index.ts";
+import type { Column } from "#/shared/ui/index.ts";
 
-import { MonthRow } from "./month-row";
+import { MonthRow } from "./month-row.tsx";
 
 const LABEL = "月ごとの収支";
 

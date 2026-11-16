@@ -1,12 +1,12 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import type { Entry } from "#/entities/entry/model/entry";
-import { tocOf } from "#/entities/entry/model/toc";
+import type { Entry } from "#/entities/entry/model/entry.ts";
+import { tocOf } from "#/entities/entry/model/toc.ts";
 
-import { EntryModule } from "./entry-module";
-import type { Render } from "./entry-module";
-import { TocList } from "./toc-list";
+import { EntryModule } from "./entry-module.tsx";
+import type { Render } from "./entry-module.tsx";
+import { TocList } from "./toc-list.tsx";
 
 const LABEL = "目次";
 

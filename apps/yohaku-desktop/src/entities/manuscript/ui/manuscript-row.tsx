@@ -3,7 +3,7 @@ import { Option, pipe } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { opened, useScreen } from "#/shared/model";
+import { opened, useScreen } from "#/shared/model/index.ts";
 
 import { ManuscriptExcerpt } from "./manuscript-excerpt.tsx";
 

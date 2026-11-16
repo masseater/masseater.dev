@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { danceSource } from "#/features/dance-stage/model/source";
+import { danceSource } from "#/features/dance-stage/model/source.ts";
 
 export const DanceCredit = (): ReactNode => (
   <p className="text-muted-foreground text-xs leading-relaxed">

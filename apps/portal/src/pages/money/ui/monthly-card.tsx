@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-import type { MonthTotalValue } from "#/entities/money";
-import { Section } from "#/shared/ui";
+import type { MonthTotalValue } from "#/entities/money/index.ts";
+import { Section } from "#/shared/ui/index.ts";
 
-import { MonthlyContent } from "./monthly-content";
+import { MonthlyContent } from "./monthly-content.tsx";
 
 const TITLE = "毎月の収支推移";
 

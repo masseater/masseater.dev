@@ -3,7 +3,7 @@ import { Option, Predicate, Struct, pipe } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { PagerButton } from "./pager-button";
+import { PagerButton } from "./pager-button.tsx";
 
 const route = getRouteApi("/money");
 

@@ -1,1 +1,1 @@
-export { SongRow } from "./ui/song-row";
+export { SongRow } from "./ui/song-row.tsx";

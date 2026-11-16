@@ -2,11 +2,11 @@ import { and, asc, eq, gt, lt, or } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import type { Effect } from "effect";
 
-import { SELF } from "#/entities/life-record";
-import type { ChunkPositionValue, RowPositionValue } from "#/entities/trait";
-import { conversationChunk, lifeRecord, memory } from "#/shared/db";
-import type { ConversationChunk, LifeRow, Memory, StorageFailed } from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+import { SELF } from "#/entities/life-record/index.ts";
+import type { ChunkPositionValue, RowPositionValue } from "#/entities/trait/index.ts";
+import { db, query } from "#/shared/db/index.server.ts";
+import { conversationChunk, lifeRecord, memory } from "#/shared/db/index.ts";
+import type { ConversationChunk, LifeRow, Memory, StorageFailed } from "#/shared/db/index.ts";
 
 export type Window<Position> = Readonly<{ position: Position; before: string }>;
 

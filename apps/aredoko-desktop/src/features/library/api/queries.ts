@@ -3,8 +3,8 @@ import { queryOptions, useMutation, useMutationState, useQuery } from "@tanstack
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import { Array, Option, pipe } from "effect";
 
-import { NO_IMPORT, lastImportOf } from "#/features/library/model/last-import";
-import type { LastImport } from "#/features/library/model/last-import";
+import { NO_IMPORT, lastImportOf } from "#/features/library/model/last-import.ts";
+import type { LastImport } from "#/features/library/model/last-import.ts";
 import {
   LIBRARY_POLL,
   SOURCES_KEY,
@@ -14,8 +14,8 @@ import {
   listSources,
   removeSource,
   useRefreshLibrary,
-} from "#/shared/api";
-import type { LibraryInfo } from "#/shared/api";
+} from "#/shared/api/index.ts";
+import type { LibraryInfo } from "#/shared/api/index.ts";
 
 const LIBRARY_KEY = ["library"];
 const IMPORT_KEY = ["import"];

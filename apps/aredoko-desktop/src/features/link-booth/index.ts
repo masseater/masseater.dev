@@ -1,1 +1,1 @@
-export { BoothSection } from "./ui/booth-section";
+export { BoothSection } from "./ui/booth-section.tsx";

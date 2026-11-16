@@ -1,4 +1,4 @@
-export type { Direction } from "./model/direction";
+export type { Direction } from "./model/direction.ts";
 export {
   useSelection,
   useSelect,
@@ -7,7 +7,7 @@ export {
   usePicker,
   useRecentSources,
   useRecentTargets,
-} from "./model/selection";
-export type { Selection, Source, Side } from "./model/selection";
-export { otherOf, LANGUAGES, languageName } from "./model/languages";
-export type { LanguageCode, Language } from "./model/languages";
+} from "./model/selection.ts";
+export type { Selection, Source, Side } from "./model/selection.ts";
+export { otherOf, LANGUAGES, languageName } from "./model/languages.ts";
+export type { LanguageCode, Language } from "./model/languages.ts";

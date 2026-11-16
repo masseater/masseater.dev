@@ -2,7 +2,7 @@ import { Button } from "@masseater.dev/ui/button";
 import { ArrowLeft } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useClosePicker } from "#/features/pick-language/model/search";
+import { useClosePicker } from "#/features/pick-language/model/search.ts";
 
 const LABEL = "戻る";
 

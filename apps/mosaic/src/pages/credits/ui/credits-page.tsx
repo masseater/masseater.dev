@@ -1,8 +1,8 @@
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { CreditsFrame } from "./credits-frame";
-import { CreditsList } from "./credits-list";
+import { CreditsFrame } from "./credits-frame.tsx";
+import { CreditsList } from "./credits-list.tsx";
 
 const route = getRouteApi("/$slug_/credits");
 

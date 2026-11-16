@@ -4,7 +4,7 @@ import { FileDown } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useYohaku } from "#/shared/api";
+import { useYohaku } from "#/shared/api/index.ts";
 
 const LABEL = "書き出す";
 

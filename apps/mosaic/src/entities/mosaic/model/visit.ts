@@ -2,9 +2,9 @@ import type { QueryClient } from "@tanstack/react-query";
 import { assignVariants } from "@thumb-mosaic/mosaic";
 import { Effect, Option, Random, Schema } from "effect";
 
-import { bundledCandidates, bundledMosaic } from "#/entities/mosaic/api/bundled";
-import { candidatesQuery, mosaicQuery } from "#/entities/mosaic/api/queries";
-import type { CandidateList, Mosaic, Query } from "#/entities/mosaic/api/queries";
+import { bundledCandidates, bundledMosaic } from "#/entities/mosaic/api/bundled.ts";
+import { candidatesQuery, mosaicQuery } from "#/entities/mosaic/api/queries.ts";
+import type { CandidateList, Mosaic, Query } from "#/entities/mosaic/api/queries.ts";
 
 export interface Assignment {
   readonly seed: number;

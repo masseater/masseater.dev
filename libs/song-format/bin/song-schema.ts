@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { Effect, FileSystem } from "effect";
 
-import { songJsonSchema } from "#/json-schema.ts";
-import { runWithNode } from "#/node-services.ts";
+import { songJsonSchema } from "#/features/generate-schema/index.ts";
+import { runWithNode } from "#/shared/lib/node-services.ts";
 
 const target = new URL("../generated/song.schema.json", import.meta.url);
 

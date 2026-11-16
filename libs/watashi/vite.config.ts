@@ -6,14 +6,14 @@ export default defineConfig({
     lint: {
       overrides: [
         {
-          files: ["src/callback-server.ts"],
+          files: ["src/features/authenticate/api/callback-server.ts"],
           rules: { "effecttsgo/node-builtin-import": "off" },
         },
       ],
     },
   },
   pack: {
-    entry: { main: "src/main.ts" },
+    entry: { main: "src/app/main.ts" },
     platform: "node",
     deps: { alwaysBundle: [/./u], onlyBundle: false },
     publint: { strict: true },

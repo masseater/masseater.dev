@@ -2,8 +2,8 @@ import type { Source } from "@masseater.dev/aredoko-protocol";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { NamedFolder } from "#/features/library/api/queries";
-import { Badge } from "#/shared/ui/badge";
+import type { NamedFolder } from "#/features/library/api/queries.ts";
+import { Badge } from "#/shared/ui/badge.tsx";
 
 import { RemoveSourceButton } from "./remove-source-button.tsx";
 import { SourceName } from "./source-name.tsx";

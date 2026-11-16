@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { useSession } from "#/pages/write/api/session.ts";
-import { useScreen } from "#/shared/model";
+import { useScreen } from "#/shared/model/index.ts";
 
 import { Writing } from "./writing.tsx";
 

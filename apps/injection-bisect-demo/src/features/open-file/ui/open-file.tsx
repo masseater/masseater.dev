@@ -4,11 +4,16 @@ import { FileUp } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 
-import { useOpening, useSetDraftText, useSetFormat, useSetOpening } from "#/entities/inspection";
-import type { Opening } from "#/entities/inspection";
-import { openerOf, pickedOf } from "#/features/open-file/model/open-file";
-import type { Picked } from "#/features/open-file/model/open-file";
-import { COPY } from "#/shared/config";
+import {
+  useOpening,
+  useSetDraftText,
+  useSetFormat,
+  useSetOpening,
+} from "#/entities/inspection/index.ts";
+import type { Opening } from "#/entities/inspection/index.ts";
+import { openerOf, pickedOf } from "#/features/open-file/model/open-file.ts";
+import type { Picked } from "#/features/open-file/model/open-file.ts";
+import { COPY } from "#/shared/config/index.ts";
 
 const SHOWN_NAMES = 3;
 

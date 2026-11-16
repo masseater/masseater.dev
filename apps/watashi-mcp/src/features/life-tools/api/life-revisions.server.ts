@@ -1,12 +1,12 @@
 import { Effect, Schema, pipe } from "effect";
 
-import { lifeKeyOf, timesOut, timeOut } from "#/entities/life-record";
-import type { Body } from "#/entities/life-record";
-import { findRecord, Snapshot } from "#/entities/life-record/index.server";
-import type { IdKey } from "#/entities/life-record/index.server";
-import type { StoreFailure } from "#/shared/api";
-import { listHistory } from "#/shared/db/index.server";
-import type { HistoryEntry } from "#/shared/db/index.server";
+import { findRecord, Snapshot } from "#/entities/life-record/index.server.ts";
+import type { IdKey } from "#/entities/life-record/index.server.ts";
+import { lifeKeyOf, timesOut, timeOut } from "#/entities/life-record/index.ts";
+import type { Body } from "#/entities/life-record/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
+import { listHistory } from "#/shared/db/index.server.ts";
+import type { HistoryEntry } from "#/shared/db/index.server.ts";
 
 const HISTORY_LIMIT = 100;
 

@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Schema } from "effect";
 
-import { SongsPage, loadSongsPage } from "#/pages/songs";
-import { TextSearch } from "#/shared/lib/text-search";
+import { SongsPage, loadSongsPage } from "#/pages/songs/index.ts";
+import { TextSearch } from "#/shared/lib/text-search.ts";
 
 export const Route = createFileRoute("/songs/")({
   validateSearch: Schema.toStandardSchemaV1(TextSearch),

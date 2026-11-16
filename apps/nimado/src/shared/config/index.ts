@@ -1,4 +1,4 @@
-export { BASE_PATH } from "./base-path";
+export { BASE_PATH } from "./base-path.ts";
 export {
   CC_BY_URL,
   GOOGLE_PRIVACY_URL,
@@ -9,4 +9,4 @@ export {
   VOCADB_URL,
   YOUTUBE_TERMS_URL,
   YOUTUBE_WATCH_URL,
-} from "./site";
+} from "./site.ts";

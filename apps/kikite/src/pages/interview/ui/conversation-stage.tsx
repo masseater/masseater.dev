@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { useAsked } from "#/entities/interview";
+import { useAsked } from "#/entities/interview/index.ts";
 
 import { AskedStage } from "./asked-stage.tsx";
 import { OpeningStage } from "./opening-stage.tsx";

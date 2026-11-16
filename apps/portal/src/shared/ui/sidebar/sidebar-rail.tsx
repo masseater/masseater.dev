@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { useRailDrag } from "./use-rail-drag";
+import { useRailDrag } from "./use-rail-drag.ts";
 
 const LABEL = "ドラッグで幅を変える・クリックで開閉";
 

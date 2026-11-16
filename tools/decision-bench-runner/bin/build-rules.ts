@@ -1,9 +1,9 @@
 import { Effect, Number as Num, Schema, Array as Arr, pipe } from "effect";
 
-import { NOUL_CRITERIA } from "#/item.ts";
-import type { Item, NoulItem } from "#/item.ts";
-import { askThrice, splitOf as splitByVotes, tally, writeLabeled } from "#/label.ts";
-import { Opus, runBench } from "#/runtime.ts";
+import { NOUL_CRITERIA } from "#/entities/item/index.ts";
+import type { Item, NoulItem } from "#/entities/item/index.ts";
+import { askThrice, splitOf, tally, writeLabeled } from "#/features/label-items/index.ts";
+import { Opus, runBench } from "#/shared/lib/runtime.ts";
 
 const TASK = "rules";
 const PAIRS_PER_ROUND = 5;
@@ -194,9 +194,9 @@ const generateCases = Effect.fn("generateCases")(function* generateCases(
   });
 });
 
-const splitOf = (agreement: number, asIntended: boolean): Item["split"] => {
+const splitByIntent = (agreement: number, asIntended: boolean): Item["split"] => {
   if (asIntended) {
-    return splitByVotes(agreement);
+    return splitOf(agreement);
   }
   return "hard";
 };
@@ -267,7 +267,7 @@ const labelDraft = Effect.fn("labelDraft")(function* labelDraft(
     agreement,
     source: `${SOURCE}（テーマ: ${draft.theme}）`,
     license: LICENSE,
-    split: splitOf(agreement, mode === String(draft.intended)),
+    split: splitByIntent(agreement, mode === String(draft.intended)),
   };
   return { item, costUsd };
 });

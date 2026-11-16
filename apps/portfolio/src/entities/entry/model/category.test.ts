@@ -1,6 +1,6 @@
 import { expect, test } from "vite-plus/test";
 
-import { isUnindexedPath } from "./category";
+import { isUnindexedPath } from "./category.ts";
 
 test.each([
   "/sloppedia",

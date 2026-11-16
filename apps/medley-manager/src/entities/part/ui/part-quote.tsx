@@ -1,8 +1,8 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { Named } from "#/entities/part/lib/part";
-import { VideoLink } from "#/entities/video/@x/part";
+import type { Named } from "#/entities/part/lib/part.ts";
+import { VideoLink } from "#/entities/video/@x/part.ts";
 
 const QUOTED = "引用";
 

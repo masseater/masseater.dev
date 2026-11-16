@@ -2,14 +2,20 @@ import { LabelStatsSchema, SummarySchema } from "bench-summary/schema";
 import type { Summary, Support } from "bench-summary/schema";
 import { DateTime, Effect, Number as Num, Schema, pipe, Array as Arr } from "effect";
 
-import { DetailSchema, reusePrior } from "#/detail.ts";
-import { ItemSchema } from "#/item.ts";
-import type { Item, Scored } from "#/item.ts";
-import { makeOpenRouterAdapter } from "#/openrouter.ts";
-import type { DecisionAdapter } from "#/openrouter.ts";
-import { runBench } from "#/runtime.ts";
-import { metric, usage } from "#/score.ts";
-import { benchPath, dataPath, modelSlug, readJsonl, readText, writeJson } from "#/store.ts";
+import { ItemSchema } from "#/entities/item/index.ts";
+import type { Item, Scored } from "#/entities/item/index.ts";
+import { makeOpenRouterAdapter, DetailSchema, reusePrior } from "#/features/label-items/index.ts";
+import type { DecisionAdapter } from "#/features/label-items/index.ts";
+import { metric, usage } from "#/features/score-decisions/index.ts";
+import { runBench } from "#/shared/lib/runtime.ts";
+import {
+  benchPath,
+  dataPath,
+  modelSlug,
+  readJsonl,
+  readText,
+  writeJson,
+} from "#/shared/lib/store.ts";
 
 const CONCURRENCY = 4;
 

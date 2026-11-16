@@ -1,4 +1,4 @@
-import { video } from "#/shared/db";
+import { video } from "#/shared/db/index.ts";
 
 export type VideoKind = (typeof video.$inferSelect)["kind"];
 

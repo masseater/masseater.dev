@@ -1,2 +1,2 @@
-export { loadSearchPage } from "./api/loader";
-export { SearchPage } from "./ui/search-page";
+export { loadSearchPage } from "./api/loader.ts";
+export { SearchPage } from "./ui/search-page.tsx";

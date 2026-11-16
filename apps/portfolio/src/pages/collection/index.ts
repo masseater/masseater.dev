@@ -1,3 +1,3 @@
-export { loadCollection } from "./api/load-collection";
-export { collectionHead } from "./model/head";
-export { CollectionPage } from "./ui/collection-page";
+export { loadCollection } from "./api/load-collection.ts";
+export { collectionHead } from "./model/head.ts";
+export { CollectionPage } from "./ui/collection-page.tsx";

@@ -2,7 +2,7 @@ import type { CredentialState } from "@masseater.dev/portal-protocol";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { AttentionRow } from "./attention-row";
+import { AttentionRow } from "./attention-row.tsx";
 
 export const AttentionList = ({
   label,

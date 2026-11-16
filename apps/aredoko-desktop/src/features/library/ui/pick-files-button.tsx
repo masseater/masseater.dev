@@ -2,9 +2,9 @@ import { Button } from "@masseater.dev/ui/button";
 import { FilePlus } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 
-import { usePickThen } from "#/features/library/api/pick-then";
-import { pickFiles } from "#/features/library/api/pickers";
-import { useImportFiles } from "#/features/library/api/queries";
+import { usePickThen } from "#/features/library/api/pick-then.ts";
+import { pickFiles } from "#/features/library/api/pickers.ts";
+import { useImportFiles } from "#/features/library/api/queries.ts";
 
 const LABEL = "ファイルを取り込む";
 

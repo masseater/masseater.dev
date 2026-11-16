@@ -1,6 +1,6 @@
 import { Array as Arr, pipe } from "effect";
 
-import type { InterviewSummary } from "#protocol";
+import type { InterviewSummary } from "#/shared/api/index.ts";
 
 export const SECTIONS = [
   { key: "points", heading: "分かったこと" },

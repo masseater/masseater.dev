@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { Arrow } from "#/shared/ui";
+import { Arrow } from "#/shared/ui/index.ts";
 
 const CODE = "404";
 const TITLE = "ページが見つからない";

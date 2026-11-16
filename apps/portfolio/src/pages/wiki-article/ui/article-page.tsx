@@ -2,8 +2,8 @@ import { ArticleView } from "@masseater.dev/sloppedia";
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { EntryBody } from "#/entities/entry";
-import { wiki } from "#/shared/wiki";
+import { EntryBody } from "#/entities/entry/index.ts";
+import { wiki } from "#/shared/wiki/index.ts";
 
 const route = getRouteApi("/sloppedia/$slug");
 

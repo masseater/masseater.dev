@@ -1,6 +1,6 @@
 import { Option } from "effect";
 
-import { seedOf } from "#/shared/lib/seed";
+import { seedOf } from "#/shared/lib/seed.ts";
 
 const DEFAULT_SEED = 0;
 

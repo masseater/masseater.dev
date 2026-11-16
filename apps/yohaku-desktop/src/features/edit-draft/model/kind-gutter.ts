@@ -2,8 +2,8 @@ import type { Extension } from "@codemirror/state";
 import { GutterMarker, gutter } from "@codemirror/view";
 import { Option, pipe } from "effect";
 
-import { annotationsField, kindAt, paragraphIdsField } from "#/entities/manuscript";
-import type { Kind } from "#/entities/manuscript";
+import { annotationsField, kindAt, paragraphIdsField } from "#/entities/manuscript/index.ts";
+import type { Kind } from "#/entities/manuscript/index.ts";
 
 const MEMO_LABEL = "メモ";
 

@@ -1,3 +1,3 @@
-export { loadTechnique } from "./api/load-technique";
-export { techniqueHead } from "./model/head";
-export { TechniquePage } from "./ui/technique-page";
+export { loadTechnique } from "./api/load-technique.ts";
+export { techniqueHead } from "./model/head.ts";
+export { TechniquePage } from "./ui/technique-page.tsx";

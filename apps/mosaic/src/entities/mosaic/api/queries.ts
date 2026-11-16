@@ -11,8 +11,8 @@ import type { Schema } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";
 import type { HttpClientError } from "effect/http";
 
-import { BASE_PATH } from "#/shared/config";
-import { runtime } from "#/shared/lib/telemetry";
+import { BASE_PATH } from "#/shared/config/index.ts";
+import { runtime } from "#/shared/lib/telemetry.ts";
 
 export type Mosaic = typeof PublishedMosaic.Type;
 export type TileList = typeof Tiles.Type;

@@ -2,8 +2,8 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { MosaicCredit } from "./mosaic-credit";
-import { MosaicLoading } from "./mosaic-loading";
+import { MosaicCredit } from "./mosaic-credit.tsx";
+import { MosaicLoading } from "./mosaic-loading.tsx";
 
 const route = getRouteApi("/$slug");
 

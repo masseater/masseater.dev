@@ -3,10 +3,10 @@ import { getRouteApi } from "@tanstack/react-router";
 import { assignedTiles } from "@thumb-mosaic/mosaic";
 import { Array, Option, pipe } from "effect";
 
-import { mosaicQuery, tileChunkQuery, tilesQuery } from "#/entities/mosaic/api/queries";
-import type { TileList } from "#/entities/mosaic/api/queries";
-import { variantOf } from "#/entities/mosaic/lib/files";
-import type { Visit } from "#/entities/mosaic/lib/files";
+import { mosaicQuery, tileChunkQuery, tilesQuery } from "#/entities/mosaic/api/queries.ts";
+import type { TileList } from "#/entities/mosaic/api/queries.ts";
+import { variantOf } from "#/entities/mosaic/lib/files.ts";
+import type { Visit } from "#/entities/mosaic/lib/files.ts";
 
 const NO_TILES: TileList = [];
 const FIRST = 0;

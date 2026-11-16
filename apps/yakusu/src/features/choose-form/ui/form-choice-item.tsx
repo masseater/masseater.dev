@@ -1,7 +1,7 @@
 import { ToggleGroup } from "radix-ui";
 import type { ReactNode } from "react";
 
-import type { FormOption } from "#/entities/translation";
+import type { FormOption } from "#/entities/translation/index.ts";
 
 export const FormChoiceItem = ({ option }: Readonly<{ option: FormOption }>): ReactNode => (
   <ToggleGroup.Item

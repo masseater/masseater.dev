@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { AnswerBox } from "#/features/answer-question";
-import { useAnswering } from "#/pages/interview/model/session-hooks";
+import { AnswerBox } from "#/features/answer-question/index.ts";
+import { useAnswering } from "#/pages/interview/model/session-hooks.ts";
 
 import { ConversationStage } from "./conversation-stage.tsx";
 import { PanelTabs } from "./panel-tabs.tsx";

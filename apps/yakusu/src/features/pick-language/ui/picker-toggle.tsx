@@ -2,8 +2,8 @@ import { Button } from "@masseater.dev/ui/button";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { usePicker, useSetPicker } from "#/entities/language";
-import type { Side } from "#/entities/language";
+import { usePicker, useSetPicker } from "#/entities/language/index.ts";
+import type { Side } from "#/entities/language/index.ts";
 
 import { Chevron } from "./chevron.tsx";
 

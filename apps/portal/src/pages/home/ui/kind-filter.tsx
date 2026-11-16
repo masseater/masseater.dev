@@ -1,10 +1,10 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { ACTIVITY_KINDS, KIND_LABELS } from "#/pages/home/model/activity";
-import type { ActivityKind } from "#/pages/home/model/activity";
+import { ACTIVITY_KINDS, KIND_LABELS } from "#/pages/home/model/activity.ts";
+import type { ActivityKind } from "#/pages/home/model/activity.ts";
 
-import { KindChip } from "./kind-chip";
+import { KindChip } from "./kind-chip.tsx";
 
 const ALL = "すべて";
 

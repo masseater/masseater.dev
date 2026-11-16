@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { site } from "#/shared/config";
-import { SocialLinkList } from "#/widgets/site-nav";
+import { site } from "#/shared/config/index.ts";
+import { SocialLinkList } from "#/widgets/site-nav/index.ts";
 
 const FEED_LABEL = "RSS";
 

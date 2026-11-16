@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 
-import { BarChart, ChartFigure } from "#/entities/benchmark";
-import { useVisibleModels } from "#/features/filter-models";
-import { Section } from "#/shared/ui/section";
+import { BarChart, ChartFigure } from "#/entities/benchmark/index.ts";
+import { useVisibleModels } from "#/features/filter-models/index.ts";
+import { Section } from "#/shared/ui/section.tsx";
 
-import { rowsOf } from "./index-rows";
-import { IndexTable } from "./index-table";
+import { rowsOf } from "./index-rows.ts";
+import { IndexTable } from "./index-table.tsx";
 
 const CHART_TITLE = "指数";
 

@@ -1,7 +1,7 @@
 import { PackagePlus } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { AddKnownFolderButton, AddFolderButton, ImportResult } from "#/features/library";
+import { AddKnownFolderButton, AddFolderButton, ImportResult } from "#/features/library/index.ts";
 
 const DROP_HERE = "ここにドロップ";
 

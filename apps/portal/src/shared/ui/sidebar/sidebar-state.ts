@@ -4,7 +4,7 @@ import { Atom } from "effect/reactivity";
 import { createElement, useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { saveSidebarOpen } from "#/shared/api";
+import { saveSidebarOpen } from "#/shared/api/index.ts";
 
 const DESKTOP = "(min-width: 48rem)";
 

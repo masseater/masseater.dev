@@ -4,16 +4,16 @@ import { Input } from "@masseater.dev/web-ui";
 import { Search } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { summary } from "#/entities/benchmark";
+import { summary } from "#/entities/benchmark/index.ts";
 import {
   TOP_COUNT,
   useQuery,
   useQueryChange,
   useScope,
   useScopeChange,
-} from "#/features/filter-models/model/view";
-import { ToggleGroup } from "#/shared/ui/toggle-group";
-import { ToggleGroupItem } from "#/shared/ui/toggle-group-item";
+} from "#/features/filter-models/model/view.ts";
+import { ToggleGroupItem } from "#/shared/ui/toggle-group-item.tsx";
+import { ToggleGroup } from "#/shared/ui/toggle-group.tsx";
 
 const TOTAL = summary.models.length;
 

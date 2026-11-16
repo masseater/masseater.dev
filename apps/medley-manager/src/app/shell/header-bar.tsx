@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { KeywordForm } from "#/shared/ui/keyword-form";
+import { KeywordForm } from "#/shared/ui/keyword-form.tsx";
 
-import { NavLinks } from "./nav-links";
-import { SiteLogo } from "./site-logo";
+import { NavLinks } from "./nav-links.tsx";
+import { SiteLogo } from "./site-logo.tsx";
 
 export const HeaderBar = (): ReactNode => (
   <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">

@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-import { hasMovement } from "#/entities/money";
-import type { MonthTotalValue } from "#/entities/money";
+import { hasMovement } from "#/entities/money/index.ts";
+import type { MonthTotalValue } from "#/entities/money/index.ts";
 
-import { MonthlyBody } from "./monthly-body";
+import { MonthlyBody } from "./monthly-body.tsx";
 
 const EMPTY = "この期間の取引はありません";
 

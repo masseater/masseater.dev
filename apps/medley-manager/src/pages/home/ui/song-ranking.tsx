@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { SectionHeading } from "#/shared/ui/section-heading";
+import { SectionHeading } from "#/shared/ui/section-heading.tsx";
 
-import { SongRankingList } from "./song-ranking-list";
+import { SongRankingList } from "./song-ranking-list.tsx";
 
 export const SongRanking = (): ReactNode => (
   <section className="bg-card flex flex-col gap-4 rounded-xl border p-5">

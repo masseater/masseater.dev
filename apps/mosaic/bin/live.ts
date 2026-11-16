@@ -5,7 +5,7 @@ import { CHARACTERS, manifestPath, slugPath } from "@thumb-mosaic/mosaic";
 import { Effect, FileSystem, Option, Path, Schedule, Schema } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";
 
-import { BASE_PATH } from "#base-path";
+import { BASE_PATH } from "#/shared/config/index.ts";
 
 const ORIGIN = `https://masseater.dev${BASE_PATH}`;
 const RETRIES = 3;

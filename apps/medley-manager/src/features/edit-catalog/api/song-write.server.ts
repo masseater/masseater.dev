@@ -8,12 +8,12 @@ import type {
   MergeInput,
   SongAliasInput,
   UpdateSongInput,
-} from "#/entities/catalog";
-import { getSong } from "#/entities/song/index.server";
-import { ToolError } from "#/shared/api";
-import { orMissing, query } from "#/shared/api/index.server";
-import { part, song, songAlias } from "#/shared/db";
-import { catalogDb } from "#/shared/db/index.server";
+} from "#/entities/catalog/index.ts";
+import { getSong } from "#/entities/song/index.server.ts";
+import { orMissing, query } from "#/shared/api/index.server.ts";
+import { ToolError } from "#/shared/api/index.ts";
+import { catalogDb } from "#/shared/db/index.server.ts";
+import { part, song, songAlias } from "#/shared/db/index.ts";
 
 type Statement = BatchItem<"sqlite">;
 

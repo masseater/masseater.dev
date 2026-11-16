@@ -14,9 +14,13 @@ import { adopt } from "alchemy/AdoptPolicy";
 import { Config, Effect } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { ciKeys, encodedGrants, githubAppStore } from "./broker-env.ts";
-import { CREDENTIAL_BROKER_AUDIENCE, PREFIX, TRACE_DESTINATION } from "./broker-names.ts";
-import { tailnetFederation } from "./tailnet-federation.ts";
+import { ciKeys, encodedGrants, githubAppStore } from "./src/app/broker-env.ts";
+import { tailnetFederation } from "./src/features/join-tailnet/model/tailnet-federation.ts";
+import {
+  CREDENTIAL_BROKER_AUDIENCE,
+  PREFIX,
+  TRACE_DESTINATION,
+} from "./src/shared/config/broker-names.ts";
 
 const DOMAIN = "masseater.dev";
 const CREDENTIAL_BROKER_HOST = `credentials.${DOMAIN}`;
@@ -47,7 +51,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
     const sundries = yield* Workers.Worker.ref("Mcp", SUNDRIES);
     const { url } = yield* Workers.Worker("CredentialBroker", {
       name: CREDENTIAL_BROKER_AUDIENCE,
-      main: "./credential-broker.worker.ts",
+      main: "./src/app/credential-broker.worker.ts",
       logpush: true,
       domain: CREDENTIAL_BROKER_HOST,
       crons: ["41 * * * *"],
