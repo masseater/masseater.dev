@@ -9,11 +9,12 @@ export const DEFAULT_MEMORY_LIMIT = 20;
 const MAX_MEMORY_LIMIT = 100;
 
 const Project = Schema.NonEmptyString.annotate({
-  description: "The memo's project: a repository name, a claude.ai project name, or assistant",
+  description: "A repository, a claude.ai project, or assistant",
 });
 
 const Name = Schema.NonEmptyString.annotate({
-  description: "A short kebab-case name unique in the project",
+  description:
+    "Short kebab-case, unique in the project. An existing name replaces only the fields you pass",
 });
 
 const Limit = Schema.Int.check(
@@ -21,7 +22,7 @@ const Limit = Schema.Int.check(
 ).annotate({ description: `Default ${DEFAULT_MEMORY_LIMIT}` });
 
 const RestoreTo = Schema.Int.check(Schema.isGreaterThanOrEqualTo(MIN_ONE)).annotate({
-  description: "Restore the memo to this revision (see memory_read with revisions: true)",
+  description: "Revision from memory_read with revisions: true",
 });
 
 export const MemoryWriteInput = Schema.Struct({
@@ -29,14 +30,14 @@ export const MemoryWriteInput = Schema.Struct({
   name: Name,
   description: Schema.optionalKey(
     Schema.NonEmptyString.annotate({
-      description: "One-line summary. Required when creating.",
+      description: "One-line summary. Required to create",
     }),
   ),
   content: Schema.optionalKey(
-    Schema.NonEmptyString.annotate({ description: "Body in Markdown. Required when creating." }),
+    Schema.NonEmptyString.annotate({ description: "Markdown. Required to create" }),
   ),
   evidence: Schema.optionalKey(
-    Schema.Array(Ref).annotate({ description: "Refs of the life records this memo is based on" }),
+    Schema.Array(Ref).annotate({ description: "Life records this memo is based on" }),
   ),
   retract: Schema.optionalKey(Schema.Literal(true)),
   reason: Schema.optionalKey(Schema.NonEmptyString),
@@ -46,7 +47,8 @@ export const MemoryWriteInput = Schema.Struct({
 export const MemoryReadInput = Schema.Struct({
   query: Schema.optionalKey(
     Schema.String.annotate({
-      description: "Words to look for. Empty or omitted lists the newest.",
+      description:
+        "Words from the project or topic. Omit to list the newest. Memos are AI-written, never the owner's words",
     }),
   ),
   project: Schema.optionalKey(Project),
@@ -56,26 +58,25 @@ export const MemoryReadInput = Schema.Struct({
 });
 
 export const WatashiSearchInput = Schema.Struct({
-  query: Schema.NonEmptyString.annotate({ description: "Natural words to look for" }),
+  query: Schema.NonEmptyString.annotate({
+    description: "Items with store memory are AI-written, never the owner's words",
+  }),
   limit: Schema.optionalKey(Limit),
 });
 
 const TraitRef = Schema.String.check(Schema.isPattern(/^owner_trait:\d+$/u)).annotate({
-  description:
-    "A trait ref, owner_trait:<n> for a number n in brackets in USER.md. Returns that trait with its quoted evidence and revisions",
+  description: "owner_trait:<n> for a bracketed n in USER.md. Returns its evidence and revisions",
 });
 
 export const WatashiProfileInput = Schema.Struct({
   scope: Schema.optionalKey(
     Schema.NonEmptyString.annotate({
-      description:
-        "A repository or app name. Adds its In <scope> section to USER.md, or limits topic results to global traits and this scope",
+      description: "A repository or app. Adds its In <scope> section",
     }),
   ),
   topic: Schema.optionalKey(
     Schema.NonEmptyString.annotate({
-      description:
-        "Natural words about the work at hand. Returns the traits near the words and their neighbours in the evidence graph instead of USER.md",
+      description: "The work at hand. Returns related traits instead of USER.md",
     }),
   ),
   trait: Schema.optionalKey(TraitRef),

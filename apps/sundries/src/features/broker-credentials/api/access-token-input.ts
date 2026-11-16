@@ -4,5 +4,8 @@ import { Schema } from "effect";
 const Site = Schema.Literals(ACCESS_SITES);
 
 export const AccessTokenInput = Schema.Struct({
-  site: Site.annotate({ description: "トークンを受け取るサイトのホスト名" }),
+  site: Site.annotate({
+    description:
+      "Host name. Send the token as Authorization: Bearer and call again after expiresAt. If status is login, ask the owner to open loginUrl",
+  }),
 });

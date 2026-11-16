@@ -18,7 +18,8 @@ const Page = Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_PAGE)).annotat
 export const SearchInput = Schema.Struct({
   accounts: Schema.optionalKey(
     Schema.Array(Account).annotate({
-      description: "X accounts to search, by handle. Omit to search every linked account.",
+      description:
+        "X accounts to search, by handle. Omit to search every linked account. isSelf marks the account's own posts. If a result's status is login, ask the owner to open loginUrl and sign in to Togetter as that account.",
     }),
   ),
   keyword: Schema.optionalKey(
