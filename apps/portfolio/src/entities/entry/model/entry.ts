@@ -1,5 +1,5 @@
+import { Frontmatter as ArticleFrontmatter } from "@masseater.dev/sloppedia/schema";
 import { Effect, Schema } from "effect";
-import { Frontmatter as ArticleFrontmatter } from "sloppedia/schema";
 
 import { sectionPath } from "#/shared/config";
 
