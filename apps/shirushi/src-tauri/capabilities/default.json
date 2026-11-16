@@ -11,6 +11,7 @@
     "allow-list-marks",
     "allow-save-mark",
     "allow-remove-mark",
+    "allow-get-still",
     "allow-list-pairs",
     "allow-choose-pair",
     "allow-list-statements",
