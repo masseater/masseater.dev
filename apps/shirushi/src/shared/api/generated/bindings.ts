@@ -9,6 +9,11 @@ export const commands = {
 	listMarks: (options?: InvokeOptions) => typedError<Mark[], Failure>(__TAURI_INVOKE("list_marks", undefined, options)),
 	saveMark: (input: MarkInput, options?: InvokeOptions) => typedError<Saved, Failure>(__TAURI_INVOKE("save_mark", { input }, options)),
 	removeMark: (id: string, options?: InvokeOptions) => typedError<boolean, Failure>(__TAURI_INVOKE("remove_mark", { id }, options)),
+	listPairs: (options?: InvokeOptions) => typedError<Pair_Serialize[], Failure>(__TAURI_INVOKE("list_pairs", undefined, options)),
+	choosePair: (id: string, choice: Choice, options?: InvokeOptions) => typedError<Pair_Serialize, Failure>(__TAURI_INVOKE("choose_pair", { id, choice }, options)),
+	listStatements: (options?: InvokeOptions) => typedError<Statement_Serialize[], Failure>(__TAURI_INVOKE("list_statements", undefined, options)),
+	judgeStatement: (id: string, judgement: Judgement, options?: InvokeOptions) => typedError<Statement_Serialize, Failure>(__TAURI_INVOKE("judge_statement", { id, judgement }, options)),
+	listForecasts: (options?: InvokeOptions) => typedError<Forecast[], Failure>(__TAURI_INVOKE("list_forecasts", undefined, options)),
 	openLink: (link: string, options?: InvokeOptions) => typedError<Opened, Failure>(__TAURI_INVOKE("open_link", { link }, options)),
 	openFile: (path: string, options?: InvokeOptions) => typedError<Opened, Failure>(__TAURI_INVOKE("open_file", { path }, options)),
 	chooseFile: (options?: InvokeOptions) => typedError<Opened | null, Failure>(__TAURI_INVOKE("choose_file", undefined, options)),
@@ -18,9 +23,24 @@ export const commands = {
 /* Types */
 export type Aspect = "rhythm" | "bass" | "chords" | "melody" | "tone" | "voice" | "arrangement" | "mix";
 
+export type Choice = "a" | "b" | "neither";
+
+export type Clip = {
+	media: Media,
+	from: number | null,
+	to: number | null,
+};
+
 export type Failure = {
 	message: string,
 };
+
+export type Forecast = {
+	prediction: Prediction,
+	verdict: Verdict,
+};
+
+export type Judgement = "right" | "wrong";
 
 export type Mark = {
 	id: string,
@@ -58,6 +78,33 @@ export type Opened = {
 	location: string,
 };
 
+export type Pair = Pair_Serialize | Pair_Deserialize;
+
+export type Pair_Deserialize = {
+	id: string,
+	a: Clip,
+	b: Clip,
+	at: number,
+	choice?: Choice | null,
+};
+
+export type Pair_Serialize = {
+	id: string,
+	a: Clip,
+	b: Clip,
+	at: number,
+	choice: Choice | null,
+};
+
+export type Prediction = {
+	id: string,
+	media: Media,
+	from: number | null,
+	to: number | null,
+	verb: Verb,
+	at: number,
+};
+
 export type Saved = {
 	id: string,
 	at: number,
@@ -70,7 +117,27 @@ export type Source = {
 	id: string,
 };
 
+export type Statement = Statement_Serialize | Statement_Deserialize;
+
+export type Statement_Deserialize = {
+	id: string,
+	words: string,
+	evidence: string[],
+	at: number,
+	judgement?: Judgement | null,
+};
+
+export type Statement_Serialize = {
+	id: string,
+	words: string,
+	evidence: string[],
+	at: number,
+	judgement: Judgement | null,
+};
+
 export type Verb = "like" | "dislike";
+
+export type Verdict = "hit" | "miss" | "open";
 
 /* Tauri Specta runtime */
 async function typedError<T, E>(result: Promise<T>): Promise<{ status: "ok"; data: T } | { status: "error"; error: E }> {

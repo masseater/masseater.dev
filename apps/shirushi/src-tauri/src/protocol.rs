@@ -51,6 +51,42 @@ impl Aspect {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
 #[serde(rename_all = "lowercase")]
+pub enum Choice {
+    A,
+    B,
+    Neither,
+}
+
+impl Choice {
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::A => "a",
+            Self::B => "b",
+            Self::Neither => "neither",
+        }
+    }
+
+    #[must_use]
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "a" => Some(Self::A),
+            "b" => Some(Self::B),
+            "neither" => Some(Self::Neither),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct Clip {
+    pub media: Media,
+    pub from: f64,
+    pub to: f64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
+#[serde(rename_all = "lowercase")]
 pub enum Verb {
     Like,
     Dislike,
@@ -70,6 +106,78 @@ impl Verb {
         match value {
             "like" => Some(Self::Like),
             "dislike" => Some(Self::Dislike),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct Prediction {
+    pub id: String,
+    pub media: Media,
+    pub from: f64,
+    pub to: f64,
+    pub verb: Verb,
+    #[specta(type = specta_typescript::Number)]
+    pub at: i64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
+#[serde(rename_all = "lowercase")]
+pub enum Verdict {
+    Hit,
+    Miss,
+    Open,
+}
+
+impl Verdict {
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Hit => "hit",
+            Self::Miss => "miss",
+            Self::Open => "open",
+        }
+    }
+
+    #[must_use]
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "hit" => Some(Self::Hit),
+            "miss" => Some(Self::Miss),
+            "open" => Some(Self::Open),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct Forecast {
+    pub prediction: Prediction,
+    pub verdict: Verdict,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Type, JsonSchema)]
+#[serde(rename_all = "lowercase")]
+pub enum Judgement {
+    Right,
+    Wrong,
+}
+
+impl Judgement {
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Right => "right",
+            Self::Wrong => "wrong",
+        }
+    }
+
+    #[must_use]
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "right" => Some(Self::Right),
+            "wrong" => Some(Self::Wrong),
             _ => None,
         }
     }
@@ -96,4 +204,44 @@ pub struct Mark {
     pub words: String,
     #[specta(type = specta_typescript::Number)]
     pub at: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct PairInput {
+    pub a: Clip,
+    pub b: Clip,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct Pair {
+    pub id: String,
+    pub a: Clip,
+    pub b: Clip,
+    #[specta(type = specta_typescript::Number)]
+    pub at: i64,
+    pub choice: Option<Choice>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct PredictionInput {
+    pub media: Media,
+    pub from: f64,
+    pub to: f64,
+    pub verb: Verb,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct StatementInput {
+    pub words: String,
+    pub evidence: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct Statement {
+    pub id: String,
+    pub words: String,
+    pub evidence: Vec<String>,
+    #[specta(type = specta_typescript::Number)]
+    pub at: i64,
+    pub judgement: Option<Judgement>,
 }

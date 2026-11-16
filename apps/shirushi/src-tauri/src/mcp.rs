@@ -1,6 +1,10 @@
+use std::sync::Arc;
+
 use axum::Router;
-use media_notes::failure::Outcome;
+use media_notes::credit::media_of;
+use media_notes::failure::{Failure, Outcome};
 use media_notes::mcp::answer;
+use media_notes::protocol::{Media, Site};
 use media_notes::source::{link_at, page_of, range, source_of};
 use media_notes::store::Store;
 use rmcp::handler::server::router::tool::ToolRouter;
@@ -10,9 +14,26 @@ use rmcp::{ErrorData, ServerHandler, tool, tool_handler, tool_router};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::protocol::{Aspect, Mark, Verb};
+use crate::protocol::{
+    Aspect, Choice, Clip, Forecast, Judgement, Mark, Pair, PairInput, PredictionInput, Statement,
+    StatementInput, Verb, Verdict,
+};
+use crate::taste::{Taste, forecasts, paired, predicted, stated};
 
 pub const PORT: u16 = 47_230;
+const NOT_MEDIA: &str = "開けるリンクではありません";
+
+pub type Changed = Arc<dyn Fn() + Send + Sync>;
+
+#[derive(Clone)]
+pub struct Serving {
+    pub store: Store,
+    pub taste: Taste,
+    pub client: reqwest::Client,
+    pub sites: &'static [Site],
+    pub token: String,
+    pub changed: Changed,
+}
 
 #[derive(Deserialize, JsonSchema)]
 struct ListInput {
@@ -73,17 +94,190 @@ fn listed(store: &Store, input: &ListInput) -> Outcome<Vec<Brief>> {
         .collect())
 }
 
+#[derive(Deserialize, JsonSchema)]
+struct ClipInput {
+    #[schemars(description = "YouTube・ニコニコ・SoundCloud の曲のリンク")]
+    url: String,
+    #[schemars(description = "範囲の始まり（秒）")]
+    from: f64,
+    #[schemars(description = "範囲の終わり（秒）")]
+    to: f64,
+}
+
+#[derive(Deserialize, JsonSchema)]
+struct PairRequest {
+    a: ClipInput,
+    b: ClipInput,
+}
+
+#[derive(Deserialize, JsonSchema)]
+struct StatementRequest {
+    #[schemars(
+        description = "持ち主の好みについての見立てを 1 文で。例: サビ直前に音が一度消える展開が好き"
+    )]
+    words: String,
+    #[schemars(description = "根拠にしたしるしの link か範囲の説明")]
+    evidence: Vec<String>,
+}
+
+#[derive(Deserialize, JsonSchema)]
+struct PredictionRequest {
+    #[schemars(description = "持ち主がまだ聴いていない曲のリンク")]
+    url: String,
+    #[schemars(description = "範囲の始まり（秒）")]
+    from: f64,
+    #[schemars(description = "範囲の終わり（秒）")]
+    to: f64,
+    #[schemars(description = "持ち主が like（好き）と dislike（苦手）のどちらを付けると見るか")]
+    verb: Verb,
+}
+
+#[derive(Deserialize, JsonSchema)]
+struct SongFilter {
+    #[schemars(description = "渡すとその曲だけを返す")]
+    url: Option<String>,
+}
+
+#[derive(Serialize)]
+struct ClipBrief {
+    title: String,
+    artist: String,
+    range: String,
+    link: String,
+}
+
+fn clip_brief(clip: Clip) -> ClipBrief {
+    ClipBrief {
+        range: range(clip.from, clip.to),
+        link: link_at(&clip.media.source, clip.from).unwrap_or_default(),
+        title: clip.media.title,
+        artist: clip.media.artist,
+    }
+}
+
+#[derive(Serialize)]
+struct PairBrief {
+    id: String,
+    a: ClipBrief,
+    b: ClipBrief,
+    choice: Option<Choice>,
+}
+
+fn pair_brief(pair: Pair) -> PairBrief {
+    PairBrief {
+        id: pair.id,
+        a: clip_brief(pair.a),
+        b: clip_brief(pair.b),
+        choice: pair.choice,
+    }
+}
+
+#[derive(Serialize)]
+struct StatementBrief {
+    id: String,
+    words: String,
+    evidence: Vec<String>,
+    judgement: Option<Judgement>,
+}
+
+fn statement_brief(statement: Statement) -> StatementBrief {
+    StatementBrief {
+        id: statement.id,
+        words: statement.words,
+        evidence: statement.evidence,
+        judgement: statement.judgement,
+    }
+}
+
+#[derive(Serialize)]
+struct ForecastBrief {
+    id: String,
+    clip: ClipBrief,
+    verb: Verb,
+    verdict: Verdict,
+}
+
+fn forecast_brief(forecast: Forecast) -> ForecastBrief {
+    let prediction = forecast.prediction;
+    ForecastBrief {
+        id: prediction.id,
+        verb: prediction.verb,
+        verdict: forecast.verdict,
+        clip: clip_brief(Clip {
+            media: prediction.media,
+            from: prediction.from,
+            to: prediction.to,
+        }),
+    }
+}
+
 #[derive(Clone)]
 struct Tools {
-    store: Store,
+    serving: Serving,
     tool_router: ToolRouter<Self>,
+}
+
+impl Tools {
+    async fn media(&self, url: &str) -> Outcome<Media> {
+        let source = source_of(url)
+            .filter(|source| self.serving.sites.contains(&source.site))
+            .ok_or_else(|| Failure::new(NOT_MEDIA))?;
+        Ok(media_of(&self.serving.client, source).await)
+    }
+
+    async fn clip(&self, input: ClipInput) -> Outcome<Clip> {
+        Ok(Clip {
+            media: self.media(&input.url).await?,
+            from: input.from,
+            to: input.to,
+        })
+    }
+
+    async fn pair(&self, request: PairRequest) -> Outcome<PairBrief> {
+        let input = PairInput {
+            a: self.clip(request.a).await?,
+            b: self.clip(request.b).await?,
+        };
+        paired(&self.serving.taste, input).map(pair_brief)
+    }
+
+    async fn prediction(&self, request: PredictionRequest) -> Outcome<ForecastBrief> {
+        let input = PredictionInput {
+            media: self.media(&request.url).await?,
+            from: request.from,
+            to: request.to,
+            verb: request.verb,
+        };
+        predicted(&self.serving.taste, input).map(|prediction| {
+            forecast_brief(Forecast {
+                prediction,
+                verdict: Verdict::Open,
+            })
+        })
+    }
+
+    fn told<T>(&self, outcome: Outcome<T>) -> Outcome<T> {
+        if outcome.is_ok() {
+            (self.serving.changed)();
+        }
+        outcome
+    }
+
+    fn forecasts(&self, filter: &SongFilter) -> Outcome<Vec<ForecastBrief>> {
+        let marks = self.serving.store.list::<Mark>(None)?;
+        let source = filter.url.as_deref().and_then(source_of);
+        Ok(forecasts(&self.serving.taste, &marks, source.as_ref())?
+            .into_iter()
+            .map(forecast_brief)
+            .collect())
+    }
 }
 
 #[tool_router]
 impl Tools {
-    fn new(store: Store) -> Self {
+    fn new(serving: Serving) -> Self {
         Self {
-            store,
+            serving,
             tool_router: Self::tool_router(),
         }
     }
@@ -96,7 +290,91 @@ impl Tools {
         &self,
         Parameters(input): Parameters<ListInput>,
     ) -> Result<CallToolResult, ErrorData> {
-        Ok(answer(listed(&self.store, &input)))
+        Ok(answer(listed(&self.serving.store, &input)))
+    }
+
+    #[tool(
+        description = "持ち主に二択を出す。a と b に曲の範囲を 1 つずつ渡すと、持ち主のアプリの「二択」に並び、持ち主はどちらが好きかを選ぶ。好みの境目を確かめたいときに、似ているが違う 2 つの範囲を選んで出す。答えは list_pairs で読む。"
+    )]
+    async fn propose_pair(
+        &self,
+        Parameters(request): Parameters<PairRequest>,
+    ) -> Result<CallToolResult, ErrorData> {
+        let outcome = self.pair(request).await;
+        Ok(answer(self.told(outcome)))
+    }
+
+    #[tool(
+        description = "出した二択と持ち主の答えを新しい順に返す。choice は a・b・neither（どちらでもない）で、まだ答えていなければ null。",
+        annotations(read_only_hint = true)
+    )]
+    async fn list_pairs(&self) -> Result<CallToolResult, ErrorData> {
+        let outcome = self
+            .serving
+            .taste
+            .pairs
+            .list::<Pair>(None)
+            .map(|pairs| pairs.into_iter().map(pair_brief).collect::<Vec<_>>());
+        Ok(answer(outcome))
+    }
+
+    #[tool(
+        description = "持ち主の好みについての見立てを 1 文で書き残す。持ち主のアプリの「AI の見立て」に並び、持ち主は合っているか違うかを付ける。しるしや二択の答えから言えることを、曲を作るときに使える具体さで書く。答えは list_statements で読む。"
+    )]
+    async fn write_statement(
+        &self,
+        Parameters(request): Parameters<StatementRequest>,
+    ) -> Result<CallToolResult, ErrorData> {
+        let outcome = stated(
+            &self.serving.taste,
+            StatementInput {
+                words: request.words,
+                evidence: request.evidence,
+            },
+        )
+        .map(statement_brief);
+        Ok(answer(self.told(outcome)))
+    }
+
+    #[tool(
+        description = "書いた見立てと持ち主の判定を新しい順に返す。judgement は right（合っている）か wrong（違う）で、まだなら null。right の見立ては持ち主の好みとして使い、wrong の見立ては使わない。",
+        annotations(read_only_hint = true)
+    )]
+    async fn list_statements(&self) -> Result<CallToolResult, ErrorData> {
+        let outcome = self
+            .serving
+            .taste
+            .statements
+            .list::<Statement>(None)
+            .map(|statements| {
+                statements
+                    .into_iter()
+                    .map(statement_brief)
+                    .collect::<Vec<_>>()
+            });
+        Ok(answer(outcome))
+    }
+
+    #[tool(
+        description = "持ち主がまだ聴いていない曲で、どの範囲に like か dislike を付けるかを予想して残す。持ち主が聴き終えてしるしを付けると、予想が当たったかが決まる。答え合わせは list_predictions で読む。"
+    )]
+    async fn predict(
+        &self,
+        Parameters(request): Parameters<PredictionRequest>,
+    ) -> Result<CallToolResult, ErrorData> {
+        let outcome = self.prediction(request).await;
+        Ok(answer(self.told(outcome)))
+    }
+
+    #[tool(
+        description = "残した予想と答え合わせを新しい順に返す。verdict は hit（同じ範囲に同じしるしが付いた）、miss（その曲にしるしが付いたが外れた）、open（まだしるしが無い）。外れた予想から見立てを直す。",
+        annotations(read_only_hint = true)
+    )]
+    async fn list_predictions(
+        &self,
+        Parameters(filter): Parameters<SongFilter>,
+    ) -> Result<CallToolResult, ErrorData> {
+        Ok(answer(self.forecasts(&filter)))
     }
 }
 
@@ -112,12 +390,13 @@ impl ServerHandler for Tools {
     }
 }
 
-fn router(store: Store, token: String) -> Router {
-    local_mcp::router(token, move || Tools::new(store.clone()))
+fn router(serving: Serving) -> Router {
+    let token = serving.token.clone();
+    local_mcp::router(token, move || Tools::new(serving.clone()))
 }
 
-pub async fn serve(store: Store, token: String) -> std::io::Result<()> {
-    local_mcp::serve(PORT, router(store, token)).await
+pub async fn serve(serving: Serving) -> std::io::Result<()> {
+    local_mcp::serve(PORT, router(serving)).await
 }
 
 #[cfg(test)]
@@ -126,9 +405,12 @@ mod tests {
     use media_notes::store::Store;
     use tokio::net::TcpListener;
 
-    use super::{ListInput, listed, router};
+    use std::sync::Arc;
+
+    use super::{ListInput, Serving, listed, router};
     use crate::commands::{TABLE, saved};
     use crate::protocol::{Aspect, MarkInput, Verb};
+    use crate::taste::Taste;
 
     const INITIALIZE: &str = r#"{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"test","version":"0"}}}"#;
 
@@ -154,11 +436,15 @@ mod tests {
     async fn answers_only_with_the_token() {
         let listener = TcpListener::bind(("127.0.0.1", 0)).await.expect("listener");
         let address = listener.local_addr().expect("address");
-        let store = Store::in_memory(TABLE).expect("store");
-        tokio::spawn(local_mcp::serve_on(
-            listener,
-            router(store, "secret".to_owned()),
-        ));
+        let serving = Serving {
+            store: Store::in_memory(TABLE).expect("store"),
+            taste: Taste::in_memory().expect("taste"),
+            client: reqwest::Client::new(),
+            sites: &[Site::Youtube],
+            token: "secret".to_owned(),
+            changed: Arc::new(|| {}),
+        };
+        tokio::spawn(local_mcp::serve_on(listener, router(serving)));
         let client = reqwest::Client::new();
         let url = format!("http://{address}/mcp");
         let ask = |bearer: &str| {
