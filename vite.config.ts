@@ -121,7 +121,7 @@ const checks: ToolSections = {
   textlint: {
     ignores: MARKDOWN_IGNORES,
     rules: {
-      "@masseater.dev/yomiyasu": true,
+      "@r_masseater/preset-ja": { "no-taigendome": false },
       "@textlint-ja/preset-ai-writing": true,
       "preset-ja-technical-writing": {
         "sentence-length": { max: 120 },

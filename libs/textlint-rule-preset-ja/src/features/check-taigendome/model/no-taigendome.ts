@@ -138,7 +138,7 @@ const findings = (text: string, checks: readonly Check[]): Effect.Effect<readonl
   );
 };
 
-export const rule: TextlintRuleModule = (context) => {
+export const noTaigendome: TextlintRuleModule = (context) => {
   const { Syntax, RuleError, report, getSource, locator } = context;
   const inJsx = JSX_FILE.test(context.getFilePath() ?? "");
   const checks = pipe(
