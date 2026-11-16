@@ -11,7 +11,7 @@
     "./ai-gateway": "./src/features/provision-ai-gateway/index.ts",
     "./auth-site": "./src/features/provision-auth-site/index.ts",
     "./edge-guard": "./src/features/guard-edge/index.ts",
-    "./trace-destination": "./src/features/trace-stacks/index.ts",
+    "./trace-destination": "./src/shared/config/index.ts",
     "./traced-providers": "./src/features/trace-stacks/index.ts",
     "./owner-access": "./src/features/grant-owner-access/index.ts",
     "./owner-site-run": "./src/features/run-owner-site/index.ts",
