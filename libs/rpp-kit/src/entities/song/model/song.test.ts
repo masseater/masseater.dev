@@ -1,4 +1,6 @@
 import { Array as Arr, Match, pipe, String as Str } from "effect";
+import { renderSegments } from "mapped-import";
+import type { Segment } from "mapped-import";
 import { expect, test } from "vite-plus/test";
 
 import type { SongOutline } from "./outline.ts";
@@ -6,8 +8,7 @@ import { parseRpp } from "./parse.ts";
 import { markerNamed, markersNamed, readSong, trackNamed, tracksNamed } from "./read.ts";
 import { fromSong, songOf } from "./song.fixture.ts";
 import { outlineSong } from "./song.ts";
-import { renderSegments, segmentsOf } from "./virtual.ts";
-import type { Segment } from "./virtual.ts";
+import { segmentsOf } from "./virtual.ts";
 
 const SMALL_RPP = `
 <REAPER_PROJECT 0.1 7.0 0
