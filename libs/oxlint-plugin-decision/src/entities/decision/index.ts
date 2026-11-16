@@ -80,9 +80,8 @@ export type {
 } from "./model/types.ts";
 export {
   mergeResponses,
-  mergeYesNo,
+  snippetRequestsFor,
   wireRequestsFor,
-  yesNoRequestFor,
   yesNoRequestsFor,
 } from "./model/wire.ts";
 export type { WireRequest } from "./model/wire.ts";

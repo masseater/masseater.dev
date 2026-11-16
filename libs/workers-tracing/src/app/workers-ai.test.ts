@@ -1,10 +1,14 @@
 import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
+import type { GatewayOptions } from "@r_masseater/workers-tracing/workers-ai";
 import { Array, Effect, Fiber, Inspectable, Record, Result, String, Tracer, pipe } from "effect";
 import { expect, test, vi } from "vite-plus/test";
 
 const MODEL = "@cf/google/gemma-4-26b-a4b-it";
 const EMBED_MODEL = "@cf/baai/bge-m3";
 const PROMPT = "daily-summary";
+const CALLER = "digest.daily-summary";
+const GATEWAY = "digest";
+const TRACE_ID = /^[\da-f]+$/u;
 const BUSY = "3040: Capacity temporarily exceeded, please try again.";
 const ANSWER = {
   choices: [{ finish_reason: "stop" }],
@@ -20,7 +24,7 @@ const ONE_CALL = 1;
 const THREE_CALLS = 3;
 const FIVE_CALLS = 5;
 
-type Model = () => Promise<typeof ANSWER>;
+type Model = (options: GatewayOptions) => Promise<typeof ANSWER>;
 
 interface Recorded {
   readonly name: string;
@@ -82,7 +86,7 @@ test("an out-of-capacity error from the binding is retried inside one span", () 
       .mockRejectedValueOnce(new Error(BUSY))
       .mockResolvedValue(ANSWER);
     const [result, spans] = yield* traced(
-      runWorkersAi({ operation: "chat", model: MODEL, prompt: PROMPT, call }),
+      runWorkersAi({ operation: "chat", model: MODEL, caller: CALLER, prompt: PROMPT, call }),
     );
     expect([Result.isSuccess(result), call.mock.calls.length, spans]).toStrictEqual([
       true,
@@ -113,7 +117,7 @@ test("an out-of-capacity error from the REST API is retried four times, then fai
     const busy = Object.assign(new Error("429"), { errors: [{ code: 3040 }] });
     const call = vi.fn<Model>().mockRejectedValue(busy);
     const [result, spans] = yield* traced(
-      runWorkersAi({ operation: "embeddings", model: EMBED_MODEL, call }),
+      runWorkersAi({ operation: "embeddings", model: EMBED_MODEL, caller: CALLER, call }),
     );
     expect([
       Result.isFailure(result),
@@ -131,7 +135,9 @@ test("any other error is not retried", () =>
     const call = vi
       .fn<Model>()
       .mockRejectedValue(new Error("3036: You have used up your daily free allocation"));
-    const [result, spans] = yield* traced(runWorkersAi({ operation: "chat", model: MODEL, call }));
+    const [result, spans] = yield* traced(
+      runWorkersAi({ operation: "chat", model: MODEL, caller: CALLER, call }),
+    );
     expect([
       Result.isFailure(result),
       call.mock.calls.length,
@@ -146,15 +152,21 @@ test("an answer that was cut off is logged with the attributes of its span", () 
   Effect.gen(function* cutOff() {
     const logged = logs();
     yield* traced(
-      runWorkersAi({ operation: "chat", model: MODEL, call: () => Promise.resolve(ANSWER) }),
+      runWorkersAi({
+        operation: "chat",
+        model: MODEL,
+        caller: CALLER,
+        call: vi.fn<Model>().mockResolvedValue(ANSWER),
+      }),
     );
     const whole = logged().length;
     const [, spans] = yield* traced(
       runWorkersAi({
         operation: "chat",
         model: MODEL,
+        caller: CALLER,
         prompt: PROMPT,
-        call: () => Promise.resolve(CUT_OFF),
+        call: vi.fn<Model>().mockResolvedValue(CUT_OFF),
       }),
     );
     const text = pipe(logged(), Array.join("\n"));
@@ -179,4 +191,22 @@ test("an answer that was cut off is logged with the attributes of its span", () 
       true,
       true,
     ]);
+  }).pipe(Effect.runPromise));
+
+test("the model call gets the gateway and the caller and trace id as metadata", () =>
+  Effect.gen(function* routed() {
+    const call = vi.fn<Model>().mockResolvedValue(ANSWER);
+    yield* traced(
+      runWorkersAi({ operation: "chat", model: MODEL, caller: CALLER, gateway: GATEWAY, call }),
+    );
+    expect(
+      pipe(
+        call.mock.calls,
+        Array.map(([{ gateway }]) => ({
+          id: gateway.id,
+          caller: gateway.metadata["caller"],
+          traced: TRACE_ID.test(gateway.metadata["trace_id"] ?? ""),
+        })),
+      ),
+    ).toStrictEqual([{ id: GATEWAY, caller: CALLER, traced: true }]);
   }).pipe(Effect.runPromise));

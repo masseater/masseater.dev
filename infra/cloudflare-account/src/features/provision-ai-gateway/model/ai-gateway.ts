@@ -9,15 +9,15 @@ const SECONDS_PER_DAY = 86_400;
 
 const KEPT_LOGS = 10_000_000;
 
-const DAILY_SPEND_CENTS = 200;
+const FREE_NEURONS_PER_DAY = 10_000;
 
-const BLOCKED_SPEND_CENTS = 1;
+const CENTS_PER_THOUSAND_NEURONS = 1.1;
 
-const BLOCKED_MODELS = [
-  "@cf/qwen/qwen3.8-27b",
-  "@cf/aisingapore/gemma-sea-lion-v4-27b-it",
-  "@cf/meta/llama-4-scout-17b-16e-instruct",
-];
+const NEURONS_PER_PRICE_UNIT = 1000;
+
+const DAILY_SPEND_CENTS = Math.round(
+  (FREE_NEURONS_PER_DAY / NEURONS_PER_PRICE_UNIT) * CENTS_PER_THOUSAND_NEURONS,
+);
 
 export const aiGateway = AI.Gateway("DefaultAiGateway", {
   id: DEFAULT_GATEWAY_ID,
@@ -29,14 +29,6 @@ export const aiGateway = AI.Gateway("DefaultAiGateway", {
   logManagementStrategy: "DELETE_OLDEST",
   spendLimits: {
     enabled: true,
-    rules: [
-      { limitType: "cost", limit: DAILY_SPEND_CENTS, window: "1 day" },
-      {
-        limitType: "cost",
-        limit: BLOCKED_SPEND_CENTS,
-        window: "1 day",
-        model: { mode: "filter", values: BLOCKED_MODELS },
-      },
-    ],
+    rules: [{ limitType: "cost", limit: DAILY_SPEND_CENTS, window: "1 day" }],
   },
 }).pipe(adopt(true));
