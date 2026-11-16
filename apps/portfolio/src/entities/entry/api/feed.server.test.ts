@@ -4,7 +4,7 @@ import { expect, test, vi } from "vite-plus/test";
 import type { Entry } from "#/entities/entry/model/entry.ts";
 import { site } from "#/shared/config/index.ts";
 
-import { feedResponse } from "./feed.server";
+import { feedResponse } from "./feed.server.ts";
 
 const { entries } = vi.hoisted(() => {
   const base = {

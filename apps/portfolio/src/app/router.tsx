@@ -5,8 +5,8 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 
 import { NotFound } from "#/widgets/not-found/index.ts";
 
-import { routeTree } from "./routeTree.gen";
-import { transitionTypes } from "./transition-types";
+import { routeTree } from "./routeTree.gen.ts";
+import { transitionTypes } from "./transition-types.ts";
 
 export type AppRouter = Router<typeof routeTree>;
 

@@ -7,9 +7,9 @@ import { NoteList } from "#/shared/ui/note-list.tsx";
 import type { Note } from "#/shared/ui/note-list.tsx";
 import { PageShell } from "#/widgets/page-shell/index.ts";
 
-import { EnglishSection } from "./english-section";
-import { IndexSection } from "./index-section";
-import { TaskLinks } from "./task-links";
+import { EnglishSection } from "./english-section.tsx";
+import { IndexSection } from "./index-section.tsx";
+import { TaskLinks } from "./task-links.tsx";
 
 const NOTES: readonly Note[] = [
   {

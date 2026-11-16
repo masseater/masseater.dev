@@ -1,1 +1,1 @@
-export { registerSearchTools } from "./api/search-tools";
+export { registerSearchTools } from "./api/search-tools.ts";

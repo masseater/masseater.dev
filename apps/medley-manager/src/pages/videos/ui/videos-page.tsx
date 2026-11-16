@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 import { PageTitle } from "#/shared/ui/page-title.tsx";
 
-import { KindFilter } from "./kind-filter";
-import { VideoResults } from "./video-results";
+import { KindFilter } from "./kind-filter.tsx";
+import { VideoResults } from "./video-results.tsx";
 
 const TITLE = "動画";
 const DESCRIPTION = "登録されているメドレー・合作の一覧です。";

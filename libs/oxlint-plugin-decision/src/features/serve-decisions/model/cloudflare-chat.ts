@@ -13,7 +13,6 @@ import {
 } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
-import { appContext } from "#/app/openrouter-app.ts";
 import { captured, envNameOf, toJson } from "#/entities/decision/index.ts";
 import type {
   Answers,
@@ -22,6 +21,8 @@ import type {
   Question,
   WireRequest,
 } from "#/entities/decision/index.ts";
+
+import { appContext } from "./openrouter-app.ts";
 
 const TOOL = "oxlint-plugin-decision";
 const DEFAULT_API_URL = "https://api.cloudflare.com/client/v4";

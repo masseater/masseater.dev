@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 
 import type { Example } from "#/entities/technique/model/technique.ts";
 
-import { ImageExample } from "./image-example";
-import { LinkExample } from "./link-example";
-import { YouTubeExample } from "./youtube-example";
+import { ImageExample } from "./image-example.tsx";
+import { LinkExample } from "./link-example.tsx";
+import { YouTubeExample } from "./youtube-example.tsx";
 
 export const ExampleView = ({ example }: Readonly<{ example: Example }>): ReactNode => {
   if (example.kind === "image") {

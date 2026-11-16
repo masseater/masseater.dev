@@ -8,7 +8,7 @@ import type { MemoValue } from "#/entities/watashi/index.ts";
 import { useChangeMemo } from "#/features/edit-memo/api/use-change-memo.ts";
 import { formText } from "#/shared/lib/index.ts";
 
-import { FailedNote } from "./failed-note";
+import { FailedNote } from "./failed-note.tsx";
 
 const TEXT = { reason: "取り消す理由", retract: "取り消す" } as const;
 

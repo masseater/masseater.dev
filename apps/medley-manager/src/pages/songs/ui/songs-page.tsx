@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { KeywordForm } from "#/shared/ui/keyword-form.tsx";
 import { PageTitle } from "#/shared/ui/page-title.tsx";
 
-import { SongsTable } from "./songs-table";
+import { SongsTable } from "./songs-table.tsx";
 
 const TITLE = "曲";
 const DESCRIPTION = "素材として使われた曲の一覧です。使われた本数の多い順に並びます。";

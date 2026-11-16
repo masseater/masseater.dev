@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { Line } from "#/entities/extraction/index.ts";
 
-import { ResultRow } from "./result-row";
+import { ResultRow } from "./result-row.tsx";
 
 export const ResultRows = ({ lines }: Readonly<{ lines: readonly Line[] }>): ReactNode => (
   <tbody>

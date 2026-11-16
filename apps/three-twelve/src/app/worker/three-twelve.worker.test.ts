@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { beforeEach, expect, test, vi } from "vite-plus/test";
 
-import { BASE_PATH } from "#config";
+import { BASE_PATH } from "#/shared/config/index.ts";
 
 import { KNOWN_TOKEN, recordedCalls, resetCalls } from "./three-twelve.worker.test.support.ts";
 import worker from "./three-twelve.worker.ts";

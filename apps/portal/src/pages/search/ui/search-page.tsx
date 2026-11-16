@@ -4,9 +4,9 @@ import type { ReactNode } from "react";
 
 import { SearchField } from "#/shared/ui/index.ts";
 
-import { FoundMemos } from "./found-memos";
-import { FoundRecords } from "./found-records";
-import { FoundSlides } from "./found-slides";
+import { FoundMemos } from "./found-memos.tsx";
+import { FoundRecords } from "./found-records.tsx";
+import { FoundSlides } from "./found-slides.tsx";
 
 const route = getRouteApi("/search");
 

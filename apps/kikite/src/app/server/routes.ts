@@ -9,13 +9,6 @@ import {
   summaryPrompt,
 } from "#/features/generate-interview/index.ts";
 import {
-  CORRECTION_MODEL,
-  QUESTION_MODEL,
-  RESEARCH_MODEL,
-  RESEARCH_TOOLING,
-  SUMMARY_MODEL,
-} from "#config";
-import {
   CORRECTION_PATH,
   Correction,
   CorrectionRequest,
@@ -28,7 +21,14 @@ import {
   SUMMARY_PATH,
   Summary,
   SummaryRequest,
-} from "#protocol";
+} from "#/shared/api/index.ts";
+import {
+  CORRECTION_MODEL,
+  QUESTION_MODEL,
+  RESEARCH_MODEL,
+  RESEARCH_TOOLING,
+  SUMMARY_MODEL,
+} from "#/shared/config/index.ts";
 
 type Failure = Readonly<{ _tag: string; message: string }>;
 type Response = HttpServerResponse.HttpServerResponse;

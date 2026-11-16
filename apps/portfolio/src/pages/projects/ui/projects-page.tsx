@@ -6,7 +6,7 @@ import { TagFilter, tagCounts, useTagFilter, withTag } from "#/features/tag-filt
 import { projects } from "#/pages/projects/model/projects.ts";
 import { sectionMeta } from "#/shared/config/index.ts";
 
-import { ProjectItem } from "./project-item";
+import { ProjectItem } from "./project-item.tsx";
 
 const route = getRouteApi("/_stage/_site/projects");
 

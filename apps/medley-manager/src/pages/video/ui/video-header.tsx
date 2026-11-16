@@ -8,8 +8,8 @@ import { formatDate } from "#/shared/lib/date.ts";
 import { Facts } from "#/shared/ui/facts.tsx";
 import { Note } from "#/shared/ui/note.tsx";
 
-import { VideoPlayer } from "./video-player";
-import { WatchLink } from "./watch-link";
+import { VideoPlayer } from "./video-player.tsx";
+import { WatchLink } from "./watch-link.tsx";
 
 export const VideoHeader = (): ReactNode => {
   const video = useVideo();

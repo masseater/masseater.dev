@@ -2,8 +2,8 @@ import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pip
 import { parseGlsl, parseWgsl, validate, writeWgsl } from "naga-wasm";
 import type { Plugin } from "vite-plus";
 
-import { parseEffect, SCREEN } from "#/features/dance-stage/model/effect.ts";
-import type { GpuCompute, GpuEffect, GpuPass } from "#/features/dance-stage/model/effect.ts";
+import { parseEffect, SCREEN } from "#/entities/dance-effect/index.ts";
+import type { GpuCompute, GpuEffect, GpuPass } from "#/entities/dance-effect/index.ts";
 
 const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 

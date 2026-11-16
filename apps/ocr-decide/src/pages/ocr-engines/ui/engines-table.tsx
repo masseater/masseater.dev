@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 import type { Column } from "#/pages/ocr-engines/model/tables.ts";
 
-import { EngineRows } from "./engine-rows";
-import { EnginesHead } from "./engines-head";
+import { EngineRows } from "./engine-rows.tsx";
+import { EnginesHead } from "./engines-head.tsx";
 
 export const EnginesTable = ({ columns }: Readonly<{ columns: readonly Column[] }>): ReactNode => (
   <div className="overflow-x-auto rounded-lg border">

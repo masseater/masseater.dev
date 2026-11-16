@@ -5,7 +5,7 @@ import { tileCrop, useTile, useArrival, useSelection } from "#/entities/mosaic/i
 import type { Visit } from "#/entities/mosaic/index.ts";
 import { TileCard } from "#/features/inspect-tile/index.ts";
 
-import { MosaicChrome } from "./mosaic-chrome";
+import { MosaicChrome } from "./mosaic-chrome.tsx";
 
 export const MosaicOverlay = ({ visit }: Readonly<{ visit: Visit }>): ReactNode => {
   const selection = useSelection();

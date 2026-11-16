@@ -4,7 +4,7 @@ import { KIND_LABELS, TEXT, usePick } from "#/entities/ranking/index.ts";
 import type { RankingSearch, Update } from "#/entities/ranking/index.ts";
 import { ChoiceGroup } from "#/shared/ui/choice-group.tsx";
 
-import { SongSearch } from "./song-search";
+import { SongSearch } from "./song-search.tsx";
 
 export const KindAndSearch = ({
   search,

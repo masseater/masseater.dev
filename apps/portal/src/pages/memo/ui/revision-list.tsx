@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { MemoValue, RevisionValue } from "#/entities/watashi/index.ts";
 import { RowList } from "#/shared/ui/index.ts";
 
-import { RevisionRow } from "./revision-row";
+import { RevisionRow } from "./revision-row.tsx";
 
 const LABEL = "履歴";
 

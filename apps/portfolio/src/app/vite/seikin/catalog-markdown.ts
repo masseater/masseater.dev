@@ -18,11 +18,7 @@ import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
 
-import type {
-  CatalogExample,
-  CatalogItem,
-  ImageCredit,
-} from "#/entities/technique/model/catalog.ts";
+import type { CatalogExample, CatalogItem, ImageCredit } from "#/entities/technique/index.ts";
 
 const NEXT = 1;
 const SINGLE = 1;

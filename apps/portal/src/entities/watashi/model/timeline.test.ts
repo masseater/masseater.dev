@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Array as Arr, pipe } from "effect";
 
-import { mergeTimeline } from "./timeline";
+import { mergeTimeline } from "./timeline.ts";
 
 const personal = [
   { occurredOn: "1999-10-22", title: "生まれる", note: "", topics: ["生活"] },

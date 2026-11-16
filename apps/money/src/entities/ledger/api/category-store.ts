@@ -7,7 +7,7 @@ import type { Category, Decision, Rule } from "#/entities/ledger/model/categorie
 import { rejected } from "#/shared/api/index.ts";
 import type { Rejected } from "#/shared/api/index.ts";
 
-import { db, query, runAll } from "./database";
+import { db, query, runAll } from "./database.ts";
 import { categoryRules, transactions } from "./ledger.table.ts";
 
 export type CategoryChoice = Readonly<{

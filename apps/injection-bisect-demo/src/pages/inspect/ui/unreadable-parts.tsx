@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 
 import type { Phase } from "#/entities/inspection/index.ts";
 
-import { Note } from "./note";
+import { Note } from "./note.tsx";
 
 const lineOf = ({ name, reason }: Unreadable): string => `${name}　${reason}`;
 

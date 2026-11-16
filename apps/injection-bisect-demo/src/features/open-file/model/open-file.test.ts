@@ -5,8 +5,8 @@ import type { Mock } from "vite-plus/test";
 import type { Opening } from "#/entities/inspection/index.ts";
 import { MAX_CHARS } from "#/entities/inspection/index.ts";
 
-import { openerOf } from "./open-file";
-import type { Picked } from "./open-file";
+import { openerOf } from "./open-file.ts";
+import type { Picked } from "./open-file.ts";
 
 vi.mock("@r_masseater/injection-bisect", () => import("./injection-bisect.test.support.ts"));
 

@@ -4,12 +4,12 @@ import { AGGREGATES } from "#/entities/life-record/model/life-body.ts";
 import type { Aggregate } from "#/entities/life-record/model/life-body.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
-import type { StatEvent } from "./life-daily";
-import { stringAt } from "./life-record";
-import type { StatsData } from "./life-stats";
+import type { StatEvent } from "./life-daily.ts";
+import { stringAt } from "./life-record.ts";
+import type { StatsData } from "./life-stats.ts";
 import { scanAll } from "./life-store.server.ts";
 import type { LifeEntry } from "./life-store.server.ts";
-import { isDayPrecise } from "./life-time";
+import { isDayPrecise } from "./life-time.ts";
 import { valuesOf } from "./life-vocabulary.server.ts";
 
 const isAggregate = Schema.is(Schema.Literals(AGGREGATES));

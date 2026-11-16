@@ -5,10 +5,16 @@ import { Effect, Option, Schema, pipe } from "effect";
 
 import { meteredInput, runTool } from "#/shared/api/index.ts";
 
-import { ListInput, ReplyInput, RoutineInput, SendInput, TakeInput } from "./claude-request-input";
-import { answer, enqueue, listed, take } from "./claude-requests";
-import type { ClaudeRequest } from "./claude-requests";
-import { registerRoutine, wakeProject } from "./claude-routine";
+import {
+  ListInput,
+  ReplyInput,
+  RoutineInput,
+  SendInput,
+  TakeInput,
+} from "./claude-request-input.ts";
+import { answer, enqueue, listed, take } from "./claude-requests.ts";
+import type { ClaudeRequest } from "./claude-requests.ts";
+import { registerRoutine, wakeProject } from "./claude-routine.ts";
 
 export type Register = (caller: Caller) => (server: McpServer) => McpServer;
 

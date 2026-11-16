@@ -5,7 +5,7 @@ import { useSummary } from "#/pages/measurements/api/summary-query.ts";
 import { keyOf } from "#/pages/measurements/model/summary.ts";
 import type { Column } from "#/pages/measurements/model/tables.ts";
 
-import { RunRow } from "./run-row";
+import { RunRow } from "./run-row.tsx";
 
 export const RunRows = ({ columns }: Readonly<{ columns: readonly Column[] }>): ReactNode => {
   const { runs } = useSummary();

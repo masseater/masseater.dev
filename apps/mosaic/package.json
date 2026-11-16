@@ -4,10 +4,7 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#/*": "./src/*",
-    "#asset-headers": "./src/shared/lib/asset-headers.ts",
-    "#base-path": "./src/shared/config/site-base-path.ts",
-    "#telemetry": "./src/shared/config/telemetry.ts"
+    "#/*": "./src/*"
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",

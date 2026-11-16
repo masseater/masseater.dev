@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 
 import { SECTIONS } from "#/pages/about/model/content.ts";
 
-import { AboutHeader } from "./about-header";
-import { AboutSectionView } from "./about-section";
+import { AboutHeader } from "./about-header.tsx";
+import { AboutSectionView } from "./about-section.tsx";
 
 export const AboutPage = (): ReactNode => (
   <main className="mx-auto flex max-w-2xl flex-col gap-8 px-4 py-8 text-sm leading-relaxed">

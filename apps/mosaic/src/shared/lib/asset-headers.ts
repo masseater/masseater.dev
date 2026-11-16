@@ -1,7 +1,7 @@
 import { FILES_DIR } from "@thumb-mosaic/mosaic";
 import { headersFileFor } from "security-headers/static";
 
-import { BASE_PATH } from "#base-path";
+import { BASE_PATH } from "#/shared/config/index.ts";
 
 export const assetHeaders = headersFileFor([
   `${BASE_PATH}/assets/*`,

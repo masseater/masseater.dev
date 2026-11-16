@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 import { ABOUT_ID } from "#/pages/home/model/about.ts";
 
-import { AboutIntro } from "./about-intro";
-import { AboutPreferences } from "./about-preferences";
+import { AboutIntro } from "./about-intro.tsx";
+import { AboutPreferences } from "./about-preferences.tsx";
 
 export const AboutSection = (): ReactNode => (
   <section

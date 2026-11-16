@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { Entry } from "#/entities/entry/model/entry.ts";
 import { TagList } from "#/shared/ui/index.ts";
 
-import { entryMetaTransition } from "./entry-transition";
+import { entryMetaTransition } from "./entry-transition.ts";
 
 const DRAFT_LABEL = "下書き";
 

@@ -15,8 +15,8 @@ import {
 import type { Failure } from "#/entities/ledger/index.ts";
 import { rejected } from "#/shared/api/index.ts";
 
-import { ROWS_PER_INSERT, insertsOf, rowOf } from "./import-rows";
-import type { ImportRequest, NewRow, Prepared } from "./import-rows";
+import { ROWS_PER_INSERT, insertsOf, rowOf } from "./import-rows.ts";
+import type { ImportRequest, NewRow, Prepared } from "./import-rows.ts";
 
 const NOTHING = 0;
 

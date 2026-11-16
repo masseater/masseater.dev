@@ -3,7 +3,7 @@ import { Frontmatter as ArticleFrontmatter } from "sloppedia/schema";
 
 import { sectionPath } from "#/shared/config/index.ts";
 
-import type { Category } from "./category";
+import type { Category } from "./category.ts";
 
 const Stage = Schema.Literals(["article", "idea"]).pipe(
   Schema.withDecodingDefaultKey(Effect.succeed("article" as const)),

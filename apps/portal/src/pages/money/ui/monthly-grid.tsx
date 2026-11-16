@@ -5,7 +5,7 @@ import type { MonthTotalValue } from "#/entities/money/index.ts";
 import { TableFrame, TableHead } from "#/shared/ui/index.ts";
 import type { Column } from "#/shared/ui/index.ts";
 
-import { MonthRow } from "./month-row";
+import { MonthRow } from "./month-row.tsx";
 
 const LABEL = "月ごとの収支";
 

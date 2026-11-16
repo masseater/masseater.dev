@@ -1,11 +1,7 @@
 import type { TailStream } from "@cloudflare/workers-types/index.ts";
 import { Array, Match, Option, Predicate, Record, Schema, pipe } from "effect";
 
-import { SeverityNumber } from "#/shared/api/generated/opentelemetry/proto/logs/v1/logs_pb.ts";
-import {
-  Span_SpanKind,
-  Status_StatusCode,
-} from "#/shared/api/generated/opentelemetry/proto/trace/v1/trace_pb.ts";
+import { SeverityNumber, Span_SpanKind, Status_StatusCode } from "#/shared/api/index.ts";
 
 export type TailEvent = TailStream.TailEvent<TailStream.EventType>;
 type Attribute = TailStream.Attribute;

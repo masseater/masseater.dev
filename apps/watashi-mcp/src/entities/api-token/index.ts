@@ -1,1 +1,1 @@
-export { hashApiToken, newApiToken } from "./api/api-token";
+export { hashApiToken, newApiToken } from "./api/api-token.ts";

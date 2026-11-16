@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { usePerson } from "#/pages/person/api/use-person.ts";
 import { SectionHeading } from "#/shared/ui/section-heading.tsx";
 
-import { CreditsTable } from "./credits-table";
+import { CreditsTable } from "./credits-table.tsx";
 
 const KICKER = "✎ 担当者";
 

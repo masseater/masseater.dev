@@ -1,7 +1,7 @@
 import { CatchBoundary } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { LoadFailed } from "./load-failed";
+import { LoadFailed } from "./load-failed.tsx";
 
 const KEY = "home";
 

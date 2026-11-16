@@ -6,7 +6,7 @@ import type { TaskEntry, TaskInfo } from "#/entities/benchmark/index.ts";
 import type { TableColumn } from "#/features/sort-table/index.ts";
 import { SortableTable } from "#/features/sort-table/index.ts";
 
-import { taskEntryColor, taskEntryKey } from "./task-entry";
+import { taskEntryColor, taskEntryKey } from "./task-entry.ts";
 
 const CAPTION = "成績（test）";
 const LABEL = "モデル";

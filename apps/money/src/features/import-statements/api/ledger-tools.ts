@@ -15,7 +15,7 @@ import {
 import { parseCsv } from "#/features/import-statements/model/csv.ts";
 import { rejected } from "#/shared/api/index.ts";
 
-import { deleteImport, importEntries } from "./import-store";
+import { deleteImport, importEntries } from "./import-store.ts";
 
 type CsvImport = typeof ImportCsvInput.Type;
 

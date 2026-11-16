@@ -4,7 +4,7 @@ import type { Record } from "effect";
 
 import type { Category } from "#/entities/entry/index.ts";
 
-import { starQueries } from "./star-queries";
+import { starQueries } from "./star-queries.ts";
 
 export const useStarCounts = (
   category: Category,

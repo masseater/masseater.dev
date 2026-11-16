@@ -1,4 +1,4 @@
-import type { TaskResult } from "./summary";
+import type { TaskResult } from "./summary.ts";
 
 export const METRIC_NAMES: Readonly<Record<TaskResult["metric"], string>> = {
   "macro-f1": "macro-F1",

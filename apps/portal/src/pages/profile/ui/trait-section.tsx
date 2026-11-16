@@ -5,7 +5,7 @@ import { traitLabel } from "#/entities/watashi/index.ts";
 import type { TraitValue } from "#/entities/watashi/index.ts";
 import { RowList, Section } from "#/shared/ui/index.ts";
 
-import { TraitRow } from "./trait-row";
+import { TraitRow } from "./trait-row.tsx";
 
 export const TraitSection = ({
   kind,

@@ -3,7 +3,7 @@ import { Effect, Layer, Option, Schema } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
-import { INVITE_PERMISSIONS, OWNER_DISCORD_ID } from "#config";
+import { INVITE_PERMISSIONS, OWNER_DISCORD_ID } from "#/shared/config/index.ts";
 
 import { Rejected } from "./rejected.ts";
 

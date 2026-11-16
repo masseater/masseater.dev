@@ -7,7 +7,7 @@ import { routeLifeRead } from "#/features/life-tools/index.server.ts";
 import { readMemory, watashiProfile, writeMemory } from "#/features/memory-tools/index.server.ts";
 import type { ToolFailure } from "#/shared/api/index.ts";
 
-import { decoded } from "./portal-decode";
+import { decoded } from "./portal-decode.ts";
 
 const ownerWrite = writeMemory({ actor: PORTAL_ACTOR });
 

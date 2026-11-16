@@ -9,8 +9,8 @@ import { useTransactions } from "#/pages/money/api/money-query.ts";
 import { accountLabel, categoryLabel } from "#/pages/money/model/labels.ts";
 import { Section } from "#/shared/ui/index.ts";
 
-import { TransactionFilters } from "./transaction-filters";
-import { TransactionTable } from "./transaction-table";
+import { TransactionFilters } from "./transaction-filters.tsx";
+import { TransactionTable } from "./transaction-table.tsx";
 
 const route = getRouteApi("/money");
 

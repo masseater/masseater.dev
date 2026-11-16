@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import type { Ranked } from "#/entities/ranking/index.ts";
 import { useExpanded } from "#/features/expand-song/model/expanded.ts";
 
-import { SummaryRow } from "./summary-row";
-import { VideoRow } from "./video-row";
+import { SummaryRow } from "./summary-row.tsx";
+import { VideoRow } from "./video-row.tsx";
 
 export const SongRow = ({
   entry,

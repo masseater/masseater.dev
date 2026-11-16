@@ -1,1 +1,1 @@
-export { authRelations } from "./generated/auth.table";
+export { authRelations } from "./generated/auth.table.ts";

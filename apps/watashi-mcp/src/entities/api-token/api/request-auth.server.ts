@@ -7,8 +7,8 @@ import { createAuth } from "#/shared/auth/index.server.ts";
 import { MCP_URL } from "#/shared/config/index.ts";
 import type { ApiToken, TokenScope } from "#/shared/db/index.ts";
 
-import { hashApiToken, isApiToken } from "./api-token";
 import { activeTokenByHash } from "./api-token-store.server.ts";
+import { hashApiToken, isApiToken } from "./api-token.ts";
 
 export type Principal = Readonly<{ via: "oauth" | "token" }>;
 

@@ -6,7 +6,7 @@ import { sectionMeta } from "#/shared/config/index.ts";
 import type { Section } from "#/shared/config/index.ts";
 import type { Direction } from "#/widgets/site-nav/model/direction.ts";
 
-import { NavLabel } from "./nav-label";
+import { NavLabel } from "./nav-label.tsx";
 
 const LINK_CLASS = {
   row: "px-2 py-3",

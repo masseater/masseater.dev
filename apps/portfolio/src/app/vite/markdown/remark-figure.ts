@@ -4,7 +4,7 @@ import type { LeafDirective } from "mdast-util-directive";
 import type { MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 import type { Plugin } from "unified";
 
-import { FigureNameSchema } from "#/entities/entry/model/figure.ts";
+import { FigureNameSchema } from "#/entities/entry/index.server.ts";
 
 import { componentOf, labelOf, leafDirectiveAs, mapTree } from "./remark-tree.ts";
 import type { Transform } from "./remark-tree.ts";

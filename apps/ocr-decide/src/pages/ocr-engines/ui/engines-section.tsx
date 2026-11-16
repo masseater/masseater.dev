@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import type { Table } from "#/pages/ocr-engines/model/tables.ts";
 
-import { EnginesTable } from "./engines-table";
+import { EnginesTable } from "./engines-table.tsx";
 
 export const EnginesSection = ({ table }: Readonly<{ table: Table }>): ReactNode => (
   <section className="flex flex-col gap-3">

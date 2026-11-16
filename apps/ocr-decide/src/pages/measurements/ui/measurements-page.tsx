@@ -6,7 +6,7 @@ import { useSummary } from "#/pages/measurements/api/summary-query.ts";
 import { COPY } from "#/pages/measurements/model/copy.ts";
 import { tablesOf } from "#/pages/measurements/model/tables.ts";
 
-import { RunsSection } from "./runs-section";
+import { RunsSection } from "./runs-section.tsx";
 
 export const MeasurementsPage = (): ReactNode => {
   const summary = useSummary();

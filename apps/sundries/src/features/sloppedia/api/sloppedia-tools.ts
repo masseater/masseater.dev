@@ -14,9 +14,9 @@ import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } fr
 
 import { meteredInput, runToolIn } from "#/shared/api/index.ts";
 
-import { ArticleInput } from "./sloppedia-input";
-import { articleContent } from "./sloppedia-markdown";
-import { sloppediaToken } from "./sloppedia-token";
+import { ArticleInput } from "./sloppedia-input.ts";
+import { articleContent } from "./sloppedia-markdown.ts";
+import { sloppediaToken } from "./sloppedia-token.ts";
 
 type Article = typeof ArticleInput.Type;
 

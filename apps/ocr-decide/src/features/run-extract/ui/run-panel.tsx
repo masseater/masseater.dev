@@ -7,7 +7,7 @@ import { usePicture, useApiKey, useWay, WAYS } from "#/entities/extraction/index
 import { useExtract } from "#/features/run-extract/api/use-extract.ts";
 import { COPY } from "#/shared/config/index.ts";
 
-import { ExtractResult } from "./extract-result";
+import { ExtractResult } from "./extract-result.tsx";
 
 const labelOf = (running: boolean): string => {
   if (running) {

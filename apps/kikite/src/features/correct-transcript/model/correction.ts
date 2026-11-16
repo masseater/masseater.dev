@@ -9,8 +9,8 @@ import {
 } from "#/entities/interview/index.ts";
 import type { Entry, Lead } from "#/entities/interview/index.ts";
 import { requestCorrection } from "#/shared/api/index.ts";
+import type { HeardText, InterviewSummary } from "#/shared/api/index.ts";
 import { modify, read } from "#/shared/lib/registry.ts";
-import type { HeardText, InterviewSummary } from "#protocol";
 
 const heardLine = (entry: Entry): readonly HeardText[] => {
   if (entry.kind === "speech" && entry.by === "voice") {

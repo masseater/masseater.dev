@@ -16,7 +16,7 @@ import { encodeJson } from "#/shared/db/index.server.ts";
 
 import { buildStep } from "./trait-build.server.ts";
 import type { StepFailure, StepOutcome } from "./trait-build.server.ts";
-import { RECORD_TOOL, TRAIT_MODEL, readTranscript } from "./trait-pi";
+import { RECORD_TOOL, TRAIT_MODEL, readTranscript } from "./trait-pi.ts";
 import { translateTraits } from "./trait-translate.server.ts";
 
 export type Answer = Readonly<{ status: string; reason?: string; messages: readonly unknown[] }>;

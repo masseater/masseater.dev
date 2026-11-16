@@ -5,7 +5,7 @@ import { useProjects } from "#/pages/home/api/home-query.ts";
 import { sortKey } from "#/shared/model/index.ts";
 import { Section } from "#/shared/ui/index.ts";
 
-import { ProjectLine } from "./project-line";
+import { ProjectLine } from "./project-line.tsx";
 
 const TITLE = "作業中のプロジェクト";
 

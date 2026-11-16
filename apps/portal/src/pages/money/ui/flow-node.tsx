@@ -5,7 +5,7 @@ import type { FlowNodeValue } from "#/entities/money/index.ts";
 import { FILLS, PLACEMENTS, TEXT_FILLS, shareOf, toneOf } from "#/pages/money/model/flow.ts";
 import type { Placement } from "#/pages/money/model/flow.ts";
 
-import { FlowNodeLabel } from "./flow-node-label";
+import { FlowNodeLabel } from "./flow-node-label.tsx";
 
 type FlowNodeProps = Readonly<{
   nodes: readonly FlowNodeValue[];

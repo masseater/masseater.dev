@@ -1,3 +1,3 @@
-export { loadArticle } from "./api/load-article";
-export { articleHead } from "./model/head";
-export { ArticlePage } from "./ui/article-page";
+export { loadArticle } from "./api/load-article.ts";
+export { articleHead } from "./model/head.ts";
+export { ArticlePage } from "./ui/article-page.tsx";

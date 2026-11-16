@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { STRATEGY_IDS } from "#strategies";
+import { STRATEGY_IDS } from "#/shared/config/index.ts";
 
 export const Summary = Schema.Struct({
   theme: Schema.String,

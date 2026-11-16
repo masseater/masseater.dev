@@ -5,7 +5,7 @@ import { ReadInput, listRequestOf, readRequestOf } from "#/entities/conversation
 import type { Input } from "#/entities/conversation/index.ts";
 import type { ToolFailure } from "#/shared/api/index.ts";
 
-import { decoded } from "./portal-decode";
+import { decoded } from "./portal-decode.ts";
 
 const conversationOf = (value: Input): Effect.Effect<unknown, ToolFailure> =>
   Option.match(Option.fromUndefinedOr(value.sessionId), {

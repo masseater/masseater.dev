@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { Phase } from "#/entities/inspection/index.ts";
 
-import { Note } from "./note";
+import { Note } from "./note.tsx";
 
 export const FailureReason = ({ phase }: Readonly<{ phase: Phase }>): ReactNode => {
   if (phase.status !== "failed") {

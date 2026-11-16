@@ -1,9 +1,9 @@
-export { candidatesOf, unionOf } from "./api/trait-vector";
-export type { Vector } from "./api/trait-vector";
-export { AnalystFailed, analystFailed } from "./model/analyst-failed";
-export { TraitAnalyst } from "./api/trait-analyst";
-export { checkObservations, knownTraits } from "./api/trait-check";
-export { GLOBAL, isActive, keyText, supportsOf, idOf, japaneseOf } from "./api/trait-state";
+export { candidatesOf, unionOf } from "./api/trait-vector.ts";
+export type { Vector } from "./api/trait-vector.ts";
+export { AnalystFailed, analystFailed } from "./model/analyst-failed.ts";
+export { TraitAnalyst } from "./api/trait-analyst.ts";
+export { checkObservations, knownTraits } from "./api/trait-check.ts";
+export { GLOBAL, isActive, keyText, supportsOf, idOf, japaneseOf } from "./api/trait-state.ts";
 export type {
   BatchSource,
   Candidates,
@@ -12,7 +12,7 @@ export type {
   Plan,
   Step,
   JaRows,
-} from "./api/trait-state";
+} from "./api/trait-state.ts";
 export {
   chunkPositionFrom,
   chunkPositionText,
@@ -20,10 +20,10 @@ export {
   settledBefore,
   rowPositionFrom,
   rowPositionText,
-} from "./api/trait-batch";
-export type { Collected, ChunkPositionValue, RowPositionValue } from "./api/trait-batch";
-export { AnalysisResult } from "./model/trait-analysis";
-export type { AnalysisRequestValue, AnalysisResultValue } from "./model/trait-analysis";
-export { TraitTranslator, translatorOf } from "./api/trait-translator";
-export type { TranslatorBinding } from "./api/trait-translator";
-export { planTraits } from "./api/trait-plan";
+} from "./api/trait-batch.ts";
+export type { Collected, ChunkPositionValue, RowPositionValue } from "./api/trait-batch.ts";
+export { AnalysisResult } from "./model/trait-analysis.ts";
+export type { AnalysisRequestValue, AnalysisResultValue } from "./model/trait-analysis.ts";
+export { TraitTranslator, translatorOf } from "./api/trait-translator.ts";
+export type { TranslatorBinding } from "./api/trait-translator.ts";
+export { planTraits } from "./api/trait-plan.ts";

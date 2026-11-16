@@ -5,7 +5,7 @@ import { useCallback } from "react";
 
 import { select, useViewerStore } from "#/entities/mosaic/index.ts";
 
-import { ServiceLink } from "./service-link";
+import { ServiceLink } from "./service-link.tsx";
 
 const CLOSE = "閉じる";
 

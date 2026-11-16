@@ -1,8 +1,8 @@
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
 import type { StoreFailed } from "#/entities/session/model/store-failed.ts";
-import { ResearchAsk, ResearchRequest, SessionRecord } from "#protocol";
-import type { InterviewSummary } from "#protocol";
+import { ResearchAsk, ResearchRequest, SessionRecord } from "#/shared/api/index.ts";
+import type { InterviewSummary } from "#/shared/api/index.ts";
 
 import { recentRecords } from "./session-store.ts";
 

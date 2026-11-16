@@ -11,7 +11,7 @@ import {
   pipe,
 } from "effect";
 
-import { registerTools } from "./tools";
+import { registerTools } from "./tools.ts";
 
 export type Args = Readonly<Record<string, unknown>>;
 

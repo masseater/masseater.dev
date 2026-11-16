@@ -9,8 +9,13 @@ import {
   RESEARCH_PATH,
   Research,
   ResearchAsk,
-} from "#protocol";
-import type { CorrectionBody, HeardText, InterviewLead, ResearchAskBody } from "#protocol";
+} from "#/shared/api/protocol.ts";
+import type {
+  CorrectionBody,
+  HeardText,
+  InterviewLead,
+  ResearchAskBody,
+} from "#/shared/api/protocol.ts";
 
 import { InterviewerFailed, send } from "./interviewer.ts";
 

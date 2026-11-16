@@ -6,7 +6,7 @@ import { Effect, Layer, Logger, Match } from "effect";
 import { services } from "#/entities/ledger/index.ts";
 import type { Failure, Services } from "#/entities/ledger/index.ts";
 
-import { readTool } from "./portal-tools";
+import { readTool } from "./portal-tools.ts";
 
 type Described = Readonly<{ errorTag: string; text: string }>;
 

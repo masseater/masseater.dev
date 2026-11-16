@@ -9,8 +9,8 @@ export {
   TOO_LARGE,
   FORBIDDEN,
   UNAUTHORIZED,
-} from "./http-json";
-export type { StoreFailure, ToolFailure } from "./tool-failure";
-export { InvalidRecord } from "./invalid-record";
-export { RecordNotFound } from "./record-not-found";
-export { MemoryNotFound } from "./memory-not-found";
+} from "./http-json.ts";
+export type { StoreFailure, ToolFailure } from "./tool-failure.ts";
+export { InvalidRecord } from "./invalid-record.ts";
+export { RecordNotFound } from "./record-not-found.ts";
+export { MemoryNotFound } from "./memory-not-found.ts";

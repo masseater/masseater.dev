@@ -1,7 +1,7 @@
 import { Clock, Effect, Option, Schedule, Schema } from "effect";
 
-import { PLAYER_ENTRYPOINT, PLAYER_IMAGE, STARTUP } from "#config";
-import { Outcomes } from "#outcome";
+import { Outcomes } from "#/entities/outcome/index.ts";
+import { PLAYER_ENTRYPOINT, PLAYER_IMAGE, STARTUP } from "#/shared/config/index.ts";
 
 import { PlayerFailed, playerFailed } from "./player-failed.ts";
 

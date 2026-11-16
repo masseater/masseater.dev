@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { Outcomes } from "#outcome";
+import { Outcomes } from "#/entities/outcome/index.ts";
 
 const Missing = Schema.Array(Schema.Literals(["token", "audio"]));
 

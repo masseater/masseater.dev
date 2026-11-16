@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { ProjectList } from "#/features/filter-memos/index.ts";
 
-import { MemoList } from "./memo-list";
+import { MemoList } from "./memo-list.tsx";
 
 export const MemosPage = (): ReactNode => (
   <div className="lg:grid-cols-memos grid items-start gap-5">

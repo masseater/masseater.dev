@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 
 import { useProjects } from "#/features/filter-memos/api/projects-query.ts";
 
-import { AllProjectsItem } from "./all-projects-item";
-import { ProjectItem } from "./project-item";
+import { AllProjectsItem } from "./all-projects-item.tsx";
+import { ProjectItem } from "./project-item.tsx";
 
 const route = getRouteApi("/memos/");
 

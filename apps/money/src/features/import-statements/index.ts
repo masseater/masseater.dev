@@ -1,1 +1,1 @@
-export { LEDGER_TOOLS, registerLedgerTools } from "./api/ledger-tools";
+export { LEDGER_TOOLS, registerLedgerTools } from "./api/ledger-tools.ts";

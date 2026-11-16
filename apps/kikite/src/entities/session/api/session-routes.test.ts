@@ -2,9 +2,9 @@ import { describe, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 import { afterAll, beforeEach, vi } from "vite-plus/test";
 
+import { SessionListing, SessionRecord } from "#/shared/api/index.ts";
+import type { RecordedSession } from "#/shared/api/index.ts";
 import { closeDatabase, resetDatabase } from "#/shared/lib/d1.test.support.ts";
-import { SessionListing, SessionRecord } from "#protocol";
-import type { RecordedSession } from "#protocol";
 
 import { sessionRoutes } from "./session-routes.ts";
 

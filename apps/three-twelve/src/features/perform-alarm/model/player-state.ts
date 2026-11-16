@@ -1,6 +1,6 @@
 import { DateTime, Effect, Option, Schema } from "effect";
 
-import { ARM_LEAD } from "#config";
+import { ARM_LEAD } from "#/shared/config/index.ts";
 
 import type { LastRunValue } from "./last-run.ts";
 import { playerFailed } from "./player-failed.ts";

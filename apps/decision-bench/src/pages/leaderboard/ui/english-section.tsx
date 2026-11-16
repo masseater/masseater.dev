@@ -7,7 +7,7 @@ import { NoteList } from "#/shared/ui/note-list.tsx";
 import type { Note } from "#/shared/ui/note-list.tsx";
 import { Section } from "#/shared/ui/section.tsx";
 
-import { EnglishTable } from "./english-table";
+import { EnglishTable } from "./english-table.tsx";
 
 const COMMIT_START = 0;
 const SHORT_COMMIT = 7;

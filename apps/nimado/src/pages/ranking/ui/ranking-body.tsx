@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { generatedAt, TEXT } from "#/entities/ranking/index.ts";
 import { RankingControls } from "#/features/filter-ranking/index.ts";
 
-import { RankingResults } from "./ranking-results";
+import { RankingResults } from "./ranking-results.tsx";
 
 export const RankingBody = ({ meta }: Readonly<{ meta: typeof Meta.Type }>): ReactNode => {
   const youtube = Arr.isReadonlyArrayNonEmpty(meta.days.youtube);

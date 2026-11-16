@@ -2,8 +2,8 @@ import { Array, Effect, Option, Schema, pipe } from "effect";
 
 import type { Mosaic } from "#/entities/mosaic/api/queries.ts";
 
-import { variantFile, variantOf } from "./files";
-import type { Visit } from "./files";
+import { variantFile, variantOf } from "./files.ts";
+import type { Visit } from "./files.ts";
 
 export type Level = Mosaic["levels"][number];
 type Sources = readonly (readonly [number, ImageBitmap])[];

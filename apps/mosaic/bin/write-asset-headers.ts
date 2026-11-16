@@ -4,9 +4,8 @@ import { contentSecurityPolicy } from "security-headers";
 import { pageSlug, pageHashes } from "security-headers/static";
 import type { PageHeaders } from "security-headers/static";
 
-import { SEARCH_INDEX_ORIGIN } from "#/shared/config/index.ts";
-import { assetHeaders } from "#asset-headers";
-import { BASE_PATH } from "#base-path";
+import { SEARCH_INDEX_ORIGIN, BASE_PATH } from "#/shared/config/index.ts";
+import { assetHeaders } from "#/shared/lib/asset-headers.ts";
 
 const OUTDIR = "dist/client";
 const HEADERS_FILE = "_headers";

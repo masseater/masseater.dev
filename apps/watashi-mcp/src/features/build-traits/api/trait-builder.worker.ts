@@ -7,7 +7,7 @@ import { createAI } from "agents/models/pi-ai";
 import { DurableObject, env } from "cloudflare:workers";
 import { Effect, Logger, Option, Semaphore } from "effect";
 
-import { TRAIT_MODEL, traitRegistry } from "./trait-pi";
+import { TRAIT_MODEL, traitRegistry } from "./trait-pi.ts";
 import { buildTraits } from "./trait-run.server.ts";
 import type { Conversation, RunSummary } from "./trait-run.server.ts";
 

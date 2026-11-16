@@ -4,10 +4,10 @@ import type { ReactNode } from "react";
 import type { PartRow } from "#/entities/part/lib/part.ts";
 import type { PartStartLink } from "#/entities/video/@x/part.ts";
 
-import { PartFacts } from "./part-facts";
-import { PartMaterial } from "./part-material";
-import { PartStaff } from "./part-staff";
-import { PartStart } from "./part-start";
+import { PartFacts } from "./part-facts.tsx";
+import { PartMaterial } from "./part-material.tsx";
+import { PartStaff } from "./part-staff.tsx";
+import { PartStart } from "./part-start.tsx";
 
 export const SetlistBody = ({
   part,

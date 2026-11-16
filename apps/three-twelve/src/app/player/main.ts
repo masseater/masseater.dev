@@ -29,9 +29,9 @@ import {
   pipe,
 } from "effect";
 
+import { Outcomes } from "#/entities/outcome/index.ts";
 import { discordFailed, pickRoom } from "#/features/play-voice/index.ts";
 import type { DiscordFailed, VoiceRoom } from "#/features/play-voice/index.ts";
-import { Outcomes } from "#outcome";
 
 const CONNECT_TIMEOUT = Duration.toMillis("30 seconds");
 const START_TIMEOUT = Duration.toMillis("10 seconds");

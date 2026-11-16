@@ -14,8 +14,8 @@ import type { RevisedWrite, WriteFailure } from "#/shared/db/index.server.ts";
 import { NOT_RETRACTED, SOURCES, lifeRecord } from "#/shared/db/index.ts";
 import type { LifeRecordName, Source, RevisionOp, StorageFailed } from "#/shared/db/index.ts";
 
-import { columnsOf } from "./life-record";
-import type { Body } from "./life-record";
+import { columnsOf } from "./life-record.ts";
+import type { Body } from "./life-record.ts";
 import type { LifeEntry } from "./life-store.server.ts";
 
 export const Snapshot = Schema.Struct({

@@ -1,3 +1,3 @@
-export { loadCategories } from "./api/load-categories";
-export { categoriesHead } from "./model/head";
-export { CategoriesPage } from "./ui/categories-page";
+export { loadCategories } from "./api/load-categories.ts";
+export { categoriesHead } from "./model/head.ts";
+export { CategoriesPage } from "./ui/categories-page.tsx";

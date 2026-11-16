@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { Entry } from "#/entities/entry/model/entry.ts";
 
-import { EntryListItem } from "./entry-list-item";
+import { EntryListItem } from "./entry-list-item.tsx";
 
 const EMPTY_MESSAGE = "まだ何もない。";
 

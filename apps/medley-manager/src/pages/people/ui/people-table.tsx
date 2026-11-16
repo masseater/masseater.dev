@@ -8,7 +8,7 @@ import { TableBody } from "#/shared/ui/table-body.tsx";
 import { TableHeadings } from "#/shared/ui/table-headings.tsx";
 import { Table } from "#/shared/ui/table.tsx";
 
-import { PersonRow } from "./person-row";
+import { PersonRow } from "./person-row.tsx";
 
 const route = getRouteApi("/people/");
 

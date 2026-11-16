@@ -7,8 +7,8 @@ import { listSongs } from "#/entities/song/@x/catalog.ts";
 import { listVideos } from "#/entities/video/@x/catalog.ts";
 import { closeDatabase } from "#/shared/db/index.test.support.ts";
 
-import { handleCatalog } from "./handle.server";
-import { seedCatalog, thumbnailOf } from "./ranking.test.support";
+import { handleCatalog } from "./handle.server.ts";
+import { seedCatalog, thumbnailOf } from "./ranking.test.support.ts";
 
 vi.mock("cloudflare:workers", () => import("#/shared/db/index.test.support.ts"));
 

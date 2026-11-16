@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { tagsOf } from "#/entities/slide/index.ts";
 import type { DeckValue } from "#/entities/slide/index.ts";
 
-import { TagItem } from "./tag-item";
+import { TagItem } from "./tag-item.tsx";
 
 const TEXT = { label: "タグで絞る", all: "すべて" } as const;
 

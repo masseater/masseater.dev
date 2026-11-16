@@ -5,7 +5,7 @@ import { articleTitles, blogPath } from "#/entities/technique/index.ts";
 import type { Article } from "#/entities/technique/index.ts";
 import { groupsOf } from "#/pages/seikin-index/model/groups.ts";
 
-import { TechniqueGroup } from "./technique-group";
+import { TechniqueGroup } from "./technique-group.tsx";
 
 export const ArticleSection = ({ article }: Readonly<{ article: Article }>): ReactNode => (
   <section className="flex flex-col gap-6">

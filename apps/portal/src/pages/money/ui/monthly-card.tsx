@@ -4,8 +4,8 @@ import type { MonthTotalValue } from "#/entities/money/index.ts";
 import { ChartLegend, Section } from "#/shared/ui/index.ts";
 import type { LegendItem } from "#/shared/ui/index.ts";
 
-import { MonthlyChart } from "./monthly-chart";
-import { MonthlyTable } from "./monthly-table";
+import { MonthlyChart } from "./monthly-chart.tsx";
+import { MonthlyTable } from "./monthly-table.tsx";
 
 const TITLE = "毎月の収支推移";
 

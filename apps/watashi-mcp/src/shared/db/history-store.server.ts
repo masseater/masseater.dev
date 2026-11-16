@@ -2,10 +2,10 @@ import { and, desc, eq } from "drizzle-orm";
 import { Effect, Schema } from "effect";
 
 import { db } from "./client.server.ts";
-import { RevisionNotFound } from "./revision-not-found";
+import { RevisionNotFound } from "./revision-not-found.ts";
 import { revision } from "./revision.table.ts";
 import type { Revision, RevisionEntity } from "./revision.table.ts";
-import type { StorageFailed } from "./storage-failed";
+import type { StorageFailed } from "./storage-failed.ts";
 import { firstRow, query } from "./storage.server.ts";
 
 export type RecordRef = Readonly<{ entity: RevisionEntity; id: number }>;

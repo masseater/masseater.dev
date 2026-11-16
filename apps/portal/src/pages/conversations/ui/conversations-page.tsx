@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useSessions } from "#/pages/conversations/api/sessions-query.ts";
 import { RowList, Section } from "#/shared/ui/index.ts";
 
-import { SessionRow } from "./session-row";
+import { SessionRow } from "./session-row.tsx";
 
 const LABEL = "Claude Code の会話";
 

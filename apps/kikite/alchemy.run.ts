@@ -34,7 +34,6 @@ const InterviewerImage = Containers.Container(
         include: [
           "src/app/server/**",
           "src/features/generate-interview/**",
-          "src/entities/strategy/**",
           "src/shared/api/**",
           "src/shared/config/**",
           "*.ts",

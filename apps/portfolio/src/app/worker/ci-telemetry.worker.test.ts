@@ -12,7 +12,7 @@ const { CI_TELEMETRY_AUDIENCE } = vi.hoisted(() => ({
   CI_TELEMETRY_AUDIENCE: "masseater-dev-test-ci-telemetry",
 }));
 
-vi.mock("#app-name", () => ({ CI_TELEMETRY_AUDIENCE }));
+vi.mock("#/app/app-name.ts", () => ({ CI_TELEMETRY_AUDIENCE }));
 
 const ISSUER = "https://token.actions.githubusercontent.com";
 

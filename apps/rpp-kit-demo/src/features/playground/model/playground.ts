@@ -5,11 +5,11 @@ import type { Mapped } from "rpp-kit";
 import { songSource as source } from "#/entities/song/index.ts";
 import { playground } from "#/shared/config/index.ts";
 
-import { checkerThread } from "./checker-thread";
-import { generatedPane, mainPane, scopedEditor } from "./editors";
-import { executor } from "./execution";
-import type { Report } from "./output";
-import { rppPane, songOf } from "./rpp-pane";
+import { checkerThread } from "./checker-thread.ts";
+import { generatedPane, mainPane, scopedEditor } from "./editors.ts";
+import { executor } from "./execution.ts";
+import type { Report } from "./output.ts";
+import { rppPane, songOf } from "./rpp-pane.ts";
 
 export type Panes = Readonly<{ rpp: HTMLElement; generated: HTMLElement; main: HTMLElement }>;
 

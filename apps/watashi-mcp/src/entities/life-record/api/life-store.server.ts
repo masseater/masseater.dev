@@ -7,8 +7,8 @@ import { db, anyTermMatches, firstRow, query } from "#/shared/db/index.server.ts
 import { lifeRecord, NOT_RETRACTED } from "#/shared/db/index.ts";
 import type { LifeRecordName, LifeRow, StorageFailed } from "#/shared/db/index.ts";
 
-import { NONE, refOf } from "./life-record";
-import type { Body } from "./life-record";
+import { NONE, refOf } from "./life-record.ts";
+import type { Body } from "./life-record.ts";
 
 export type LifeEntry = Readonly<{ row: LifeRow; body: Body }>;
 

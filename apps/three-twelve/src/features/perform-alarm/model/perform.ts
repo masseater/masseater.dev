@@ -1,6 +1,6 @@
 import { Array as Arr, Cause, DateTime, Effect, Option } from "effect";
 
-import { AUDIO_KEY } from "#config";
+import { AUDIO_KEY } from "#/shared/config/index.ts";
 
 import type { LastRunValue } from "./last-run.ts";
 import { PlayerFailed, playerFailed } from "./player-failed.ts";

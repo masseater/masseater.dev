@@ -2,12 +2,19 @@ import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect
 
 import type { Aggregate } from "#/entities/life-record/model/life-body.ts";
 
-import { daysBetween } from "./life-calendar";
-import type { Period } from "./life-calendar";
-import { aggregateFor, parseSpec, summarize } from "./life-daily";
-import type { Daily, StatEvent, Summary } from "./life-daily";
-import { bucketsOf, dailyFor, dailyOfMetric, groupsOf, optional } from "./life-groups";
-import type { Bucket, BucketValue, GroupBy, GroupValue, Measured, StatsData } from "./life-groups";
+import { daysBetween } from "./life-calendar.ts";
+import type { Period } from "./life-calendar.ts";
+import { aggregateFor, parseSpec, summarize } from "./life-daily.ts";
+import type { Daily, StatEvent, Summary } from "./life-daily.ts";
+import { bucketsOf, dailyFor, dailyOfMetric, groupsOf, optional } from "./life-groups.ts";
+import type {
+  Bucket,
+  BucketValue,
+  GroupBy,
+  GroupValue,
+  Measured,
+  StatsData,
+} from "./life-groups.ts";
 
 export type Condition = Readonly<{
   metric: string;
@@ -165,4 +172,4 @@ export const computeStats =
     );
   };
 
-export type { Bucket, GroupBy, StatsData } from "./life-groups";
+export type { Bucket, GroupBy, StatsData } from "./life-groups.ts";

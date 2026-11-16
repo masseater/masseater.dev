@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { SITE_DESCRIPTION, SITE_NAME } from "#/shared/config/index.ts";
 import { KeywordForm } from "#/shared/ui/keyword-form.tsx";
 
-import { StatChips } from "./stat-chips";
+import { StatChips } from "./stat-chips.tsx";
 
 export const HeroPanel = (): ReactNode => (
   <div className="bg-screen/60 flex w-full max-w-3xl flex-col items-center gap-5 rounded-xl px-4 py-8 text-center backdrop-blur-sm sm:px-8">

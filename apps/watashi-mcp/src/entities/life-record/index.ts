@@ -1,13 +1,18 @@
-export { assumedNotices, invalid, lifeKeyOf, normalize, validateBody } from "./api/life-checks";
-export type { ItemResult } from "./api/life-checks";
+export { assumedNotices, invalid, lifeKeyOf, normalize, validateBody } from "./api/life-checks.ts";
+export type { ItemResult } from "./api/life-checks.ts";
 export {
   DEFAULT_PERIODS,
   DEFAULT_READ_LIMIT,
   LifeReadInput,
   LifeStatsInput,
   LifeWriteInput,
-} from "./api/life-input";
-export type { ChangeValue, WriteItemValue, LifeReadValue, LifeStatsValue } from "./api/life-input";
+} from "./api/life-input.ts";
+export type {
+  ChangeValue,
+  WriteItemValue,
+  LifeReadValue,
+  LifeStatsValue,
+} from "./api/life-input.ts";
 export {
   refOf,
   columnsOf,
@@ -18,10 +23,10 @@ export {
   SELF,
   stringAt,
   timesOut,
-} from "./api/life-record";
-export type { Body } from "./api/life-record";
-export { previousPeriod, shiftDays, previousYear } from "./api/life-calendar";
-export type { Period } from "./api/life-calendar";
+} from "./api/life-record.ts";
+export type { Body } from "./api/life-record.ts";
+export { previousPeriod, shiftDays, previousYear } from "./api/life-calendar.ts";
+export type { Period } from "./api/life-calendar.ts";
 export {
   peopleFilter,
   defaultOrder,
@@ -33,12 +38,12 @@ export {
   factStateOf,
   stringsAt,
   contains,
-} from "./api/life-filter";
-export type { Entry } from "./api/life-filter";
-export { goalPeriods } from "./api/life-goals";
-export { itemOf } from "./api/life-item";
-export { computeStats } from "./api/life-stats";
-export type { MetricStats, StatsData, StatsRequest } from "./api/life-stats";
+} from "./api/life-filter.ts";
+export type { Entry } from "./api/life-filter.ts";
+export { goalPeriods } from "./api/life-goals.ts";
+export { itemOf } from "./api/life-item.ts";
+export { computeStats } from "./api/life-stats.ts";
+export type { MetricStats, StatsData, StatsRequest } from "./api/life-stats.ts";
 export {
   dayBound,
   jstDayOf,
@@ -47,4 +52,4 @@ export {
   dayRangeOf,
   parseTime,
   storedOf,
-} from "./api/life-time";
+} from "./api/life-time.ts";

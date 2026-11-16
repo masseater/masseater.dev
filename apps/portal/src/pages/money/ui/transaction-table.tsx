@@ -5,8 +5,8 @@ import type { TransactionValue } from "#/entities/money/index.ts";
 import { TableFrame, TableHead } from "#/shared/ui/index.ts";
 import type { Column } from "#/shared/ui/index.ts";
 
-import { TransactionRow } from "./transaction-row";
-import type { Labels } from "./transaction-row";
+import { TransactionRow } from "./transaction-row.tsx";
+import type { Labels } from "./transaction-row.tsx";
 
 const LABEL = "出入金";
 

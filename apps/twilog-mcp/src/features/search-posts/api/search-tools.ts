@@ -9,10 +9,10 @@ import { Array as Arr, Effect, Match, Number as Num, Option, Schema, pipe } from
 
 import { meteredInput, runTool } from "#/shared/api/index.ts";
 
-import { SearchInput } from "./search-input";
-import type { SearchRequest } from "./search-input";
-import type { TwilogPosts } from "./twilog-posts";
-import { twilogPosts } from "./twilog-upstream";
+import { SearchInput } from "./search-input.ts";
+import type { SearchRequest } from "./search-input.ts";
+import type { TwilogPosts } from "./twilog-posts.ts";
+import { twilogPosts } from "./twilog-upstream.ts";
 
 type Post = TwilogPosts["logs"][number];
 

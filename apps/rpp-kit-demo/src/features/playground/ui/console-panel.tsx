@@ -2,10 +2,10 @@ import type { ReactNode } from "react";
 
 import { playground } from "#/shared/config/index.ts";
 
-import { ConsoleView } from "./console-view";
-import { Panel } from "./panel";
-import { PanelBody } from "./panel-body";
-import { PanelLabel } from "./panel-label";
+import { ConsoleView } from "./console-view.tsx";
+import { PanelBody } from "./panel-body.tsx";
+import { PanelLabel } from "./panel-label.tsx";
+import { Panel } from "./panel.tsx";
 
 export const ConsolePanel = (): ReactNode => (
   <Panel className="max-h-96">

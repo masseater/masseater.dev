@@ -7,7 +7,7 @@ import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } fr
 
 import { meteredInput, runToolIn } from "#/shared/api/index.ts";
 
-import { AnalyticsInput, DEFAULT_DAYS } from "./analytics-input";
+import { AnalyticsInput, DEFAULT_DAYS } from "./analytics-input.ts";
 
 type Query = Readonly<{ path: Option.Option<string>; days: number }>;
 

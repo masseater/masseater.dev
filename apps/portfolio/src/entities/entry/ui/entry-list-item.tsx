@@ -5,8 +5,8 @@ import type { ReactNode } from "react";
 
 import type { Entry } from "#/entities/entry/model/entry.ts";
 
-import { EntryListFooter } from "./entry-list-footer";
-import { entryTitleTransition } from "./entry-transition";
+import { EntryListFooter } from "./entry-list-footer.tsx";
+import { entryTitleTransition } from "./entry-transition.ts";
 
 export const EntryListItem = ({
   entry,

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { RowList, Section } from "#/shared/ui/index.ts";
 
-import { CredentialRow } from "./credential-row";
+import { CredentialRow } from "./credential-row.tsx";
 
 const TITLES: Readonly<Record<CredentialState["kind"], string>> = {
   key: "鍵",

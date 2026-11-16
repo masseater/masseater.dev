@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 import { PeriodForm } from "#/features/choose-period/index.ts";
 import { useOverview } from "#/pages/money/api/money-query.ts";
 
-import { FlowCard } from "./flow-card";
-import { MoneyCharts } from "./money-charts";
-import { MoneyStats } from "./money-stats";
-import { TransactionsCard } from "./transactions-card";
+import { FlowCard } from "./flow-card.tsx";
+import { MoneyCharts } from "./money-charts.tsx";
+import { MoneyStats } from "./money-stats.tsx";
+import { TransactionsCard } from "./transactions-card.tsx";
 
 export const MoneyPage = (): ReactNode => {
   const overview = useOverview();

@@ -27,7 +27,7 @@ import {
   TOP,
   stageHeight,
   stageTops,
-} from "./cascade-frame";
+} from "./cascade-frame.ts";
 
 export type Status = "running" | "stopped";
 

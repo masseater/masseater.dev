@@ -11,8 +11,8 @@ import {
 } from "#/entities/interview/index.ts";
 import type { Lead } from "#/entities/interview/index.ts";
 import { requestResearch } from "#/shared/api/index.ts";
+import type { InterviewSummary } from "#/shared/api/index.ts";
 import { modify, read, write } from "#/shared/lib/registry.ts";
-import type { InterviewSummary } from "#protocol";
 
 const KEPT_LEADS = 12;
 

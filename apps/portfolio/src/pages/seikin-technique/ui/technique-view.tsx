@@ -2,11 +2,11 @@ import type { ReactNode } from "react";
 
 import type { Technique } from "#/entities/technique/index.ts";
 
-import { ExamplesSection } from "./examples-section";
-import { OriginList } from "./origin-list";
-import { ReproductionSection } from "./reproduction-section";
-import { TechniqueHeader } from "./technique-header";
-import { TechniquePager } from "./technique-pager";
+import { ExamplesSection } from "./examples-section.tsx";
+import { OriginList } from "./origin-list.tsx";
+import { ReproductionSection } from "./reproduction-section.tsx";
+import { TechniqueHeader } from "./technique-header.tsx";
+import { TechniquePager } from "./technique-pager.tsx";
 
 export const TechniqueView = ({
   technique,

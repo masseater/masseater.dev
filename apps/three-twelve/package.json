@@ -4,8 +4,6 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#config": "./src/shared/config/three-twelve.ts",
-    "#outcome": "./src/entities/outcome/model/outcome.ts",
     "#/*": "./src/*"
   },
   "dependencies": {

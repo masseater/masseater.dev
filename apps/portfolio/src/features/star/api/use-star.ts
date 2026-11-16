@@ -6,7 +6,7 @@ import type { Entry } from "#/entities/entry/index.ts";
 import { toggleStar } from "#/features/star/model/star-state.ts";
 import type { StarState } from "#/features/star/model/star-state.ts";
 
-import { starQueries } from "./star-queries";
+import { starQueries } from "./star-queries.ts";
 
 const ONLY_THIS_MUTATION = 1;
 

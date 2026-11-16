@@ -1,7 +1,7 @@
 import { DateTime, Duration, Effect, Option } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { STARTUP } from "#config";
+import { STARTUP } from "#/shared/config/index.ts";
 
 import {
   OUTCOMES,

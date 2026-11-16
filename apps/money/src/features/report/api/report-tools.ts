@@ -14,7 +14,7 @@ import {
 import { moneyFlow } from "#/features/report/model/money-flow.ts";
 import { monthlyTotals } from "#/features/report/model/monthly.ts";
 
-import { categoryTotals, dayTotals, listTransactions } from "./report-store";
+import { categoryTotals, dayTotals, listTransactions } from "./report-store.ts";
 
 /** @internal */
 export const REPORT_TOOLS = [

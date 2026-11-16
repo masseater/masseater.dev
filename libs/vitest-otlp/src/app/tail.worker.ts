@@ -6,8 +6,10 @@ import type { HttpClientError } from "effect/http";
 
 import type { Invocation, TailEvent } from "#/features/export-tail/index.ts";
 import { invocationOf, logsOf, tracesOf } from "#/features/export-tail/index.ts";
-import { ExportLogsServiceRequestSchema } from "#/shared/api/generated/opentelemetry/proto/collector/logs/v1/logs_service_pb.ts";
-import { ExportTraceServiceRequestSchema } from "#/shared/api/generated/opentelemetry/proto/collector/trace/v1/trace_service_pb.ts";
+import {
+  ExportLogsServiceRequestSchema,
+  ExportTraceServiceRequestSchema,
+} from "#/shared/api/index.ts";
 
 interface Env {
   readonly OTEL_EXPORTER_OTLP_ENDPOINT: string;

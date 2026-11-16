@@ -6,7 +6,7 @@ import { statementOf } from "#/entities/watashi/index.ts";
 import type { TraitValue } from "#/entities/watashi/index.ts";
 import { Row, TagList } from "#/shared/ui/index.ts";
 
-import { TraitWhy } from "./trait-why";
+import { TraitWhy } from "./trait-why.tsx";
 
 const GLOBAL = "global";
 

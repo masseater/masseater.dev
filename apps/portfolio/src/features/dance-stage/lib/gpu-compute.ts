@@ -1,9 +1,9 @@
 import { Array as Arr, Number as Num, pipe } from "effect";
 
-import { SCREEN } from "#/features/dance-stage/model/effect.ts";
-import type { GpuCompute } from "#/features/dance-stage/model/effect.ts";
+import { SCREEN } from "#/entities/dance-effect/index.ts";
+import type { GpuCompute } from "#/entities/dance-effect/index.ts";
 
-import type { Fn } from "./fn";
+import type { Fn } from "./fn.ts";
 
 const ENTRY = "main";
 const CHANNELS = 2;

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { PersonValue } from "#/entities/watashi/index.ts";
 import { RowList, Section } from "#/shared/ui/index.ts";
 
-import { PersonRow } from "./person-row";
+import { PersonRow } from "./person-row.tsx";
 
 const TITLE = "よく会う人";
 

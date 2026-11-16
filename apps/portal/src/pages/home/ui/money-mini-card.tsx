@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { Card, CardHeader, ChartLegend } from "#/shared/ui/index.ts";
 import type { LegendItem } from "#/shared/ui/index.ts";
 
-import { MoneyMiniChart } from "./money-mini-chart";
+import { MoneyMiniChart } from "./money-mini-chart.tsx";
 
 const TEXT = { title: "お金", meta: "直近 6 か月", more: "お金を開く" } as const;
 

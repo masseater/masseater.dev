@@ -1,6 +1,6 @@
 import { DateTime } from "effect";
 
-import { PLAY_AT } from "#config";
+import { PLAY_AT } from "#/shared/config/index.ts";
 
 const LATE_START = { minutes: 10 } as const;
 

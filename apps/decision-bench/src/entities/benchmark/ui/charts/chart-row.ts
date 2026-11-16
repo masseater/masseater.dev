@@ -1,4 +1,4 @@
-import type { Detail } from "./model-detail";
+import type { Detail } from "./model-detail.ts";
 
 export type ChartRow =
   | Readonly<{

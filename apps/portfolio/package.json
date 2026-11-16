@@ -5,7 +5,6 @@
   "type": "module",
   "imports": {
     "#/*": "./src/*",
-    "#app-name": "./src/shared/config/app-name.ts",
     "#vite-plugins/*": "./src/app/vite/*",
     "#worker/*": "./src/app/worker/*"
   },

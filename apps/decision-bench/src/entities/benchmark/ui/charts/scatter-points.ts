@@ -5,12 +5,12 @@ import { displayLabel } from "#/entities/benchmark/model/display-label.ts";
 import { colorOf } from "#/entities/benchmark/model/model-color.ts";
 import type { TaskEntry } from "#/entities/benchmark/model/ranking.ts";
 
-import { ORIGIN } from "./chart-style";
-import { errorOf } from "./interval-bar";
-import { placeLabels } from "./label-placement";
-import type { LabelSpot } from "./label-placement";
-import { taskDetail } from "./model-detail";
-import type { Axis, ScatterPoint } from "./score-scatter-model";
+import { ORIGIN } from "./chart-style.ts";
+import { errorOf } from "./interval-bar.tsx";
+import { placeLabels } from "./label-placement.ts";
+import type { LabelSpot } from "./label-placement.ts";
+import { taskDetail } from "./model-detail.ts";
+import type { Axis, ScatterPoint } from "./score-scatter-model.ts";
 
 const HEADROOM = 1.3;
 const LATENCY_STEP = 100;

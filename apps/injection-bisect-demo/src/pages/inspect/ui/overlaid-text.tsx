@@ -13,8 +13,8 @@ import {
 import type { Focus, Piece } from "#/entities/inspection/index.ts";
 import type { InspectState } from "#/features/run-inspection/index.ts";
 
-import { HighlightTextarea } from "./highlight-textarea";
-import { ANSWER_CLASS, TONE_CLASS } from "./tone";
+import { HighlightTextarea } from "./highlight-textarea.tsx";
+import { ANSWER_CLASS, TONE_CLASS } from "./tone.ts";
 
 const overlayOf = (text: string, state: InspectState, focus: Focus): readonly Piece[] => {
   if (state.status !== "streaming" || state.text !== text) {

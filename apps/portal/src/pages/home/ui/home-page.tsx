@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-import { Guarded } from "./guarded";
-import { HomeMain } from "./home-main";
-import { HomeSide } from "./home-side";
-import { HomeStats } from "./home-stats";
+import { Guarded } from "./guarded.tsx";
+import { HomeMain } from "./home-main.tsx";
+import { HomeSide } from "./home-side.tsx";
+import { HomeStats } from "./home-stats.tsx";
 
 export const HomePage = (): ReactNode => (
   <>

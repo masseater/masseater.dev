@@ -1,1 +1,1 @@
-export { REPORT_TOOLS, registerReportTools } from "./api/report-tools";
+export { REPORT_TOOLS, registerReportTools } from "./api/report-tools.ts";

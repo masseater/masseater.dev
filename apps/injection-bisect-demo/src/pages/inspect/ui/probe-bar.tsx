@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { toneOf } from "#/entities/inspection/index.ts";
 import type { Answer, Row } from "#/entities/inspection/index.ts";
 
-import { BAR_CLASS } from "./tone";
+import { BAR_CLASS } from "./tone.ts";
 
 const SCALE = 1000;
 

@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import { sections } from "#/shared/config/index.ts";
 import type { Direction } from "#/widgets/site-nav/model/direction.ts";
 
-import { LinkList } from "./link-list";
-import { SectionLink } from "./section-link";
+import { LinkList } from "./link-list.tsx";
+import { SectionLink } from "./section-link.tsx";
 
 const LABEL = "セクション";
 

@@ -5,7 +5,7 @@ import { clockOf, song } from "#/entities/song/index.ts";
 import { usePlayback } from "#/features/playback/model/playback.ts";
 import { transport } from "#/shared/config/index.ts";
 
-import { PlayButton } from "./play-button";
+import { PlayButton } from "./play-button.tsx";
 
 export const Transport = (): ReactNode => {
   const { position } = usePlayback();

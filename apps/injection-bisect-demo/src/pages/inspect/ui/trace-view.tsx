@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import type { Trace } from "#/entities/inspection/index.ts";
 import { COPY } from "#/shared/config/index.ts";
 
-import { Legend } from "./legend";
-import { TraceRow } from "./trace-row";
+import { Legend } from "./legend.tsx";
+import { TraceRow } from "./trace-row.tsx";
 
 const MIN_SPAN = 1;
 

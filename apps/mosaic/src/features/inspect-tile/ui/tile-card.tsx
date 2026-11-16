@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 
 import type { TileList, TileCrop as Crop } from "#/entities/mosaic/index.ts";
 
-import { TileActions } from "./tile-actions";
-import { TileCrop } from "./tile-crop";
-import { TileText } from "./tile-text";
+import { TileActions } from "./tile-actions.tsx";
+import { TileCrop } from "./tile-crop.tsx";
+import { TileText } from "./tile-text.tsx";
 
 export const TileCard = ({
   tile,

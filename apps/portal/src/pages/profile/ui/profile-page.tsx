@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 
 import { useProfile } from "#/pages/profile/api/profile-query.ts";
 
-import { LifeSection } from "./life-section";
-import { PeopleSection } from "./people-section";
-import { ProfileColumn } from "./profile-column";
-import { TraitSection } from "./trait-section";
+import { LifeSection } from "./life-section.tsx";
+import { PeopleSection } from "./people-section.tsx";
+import { ProfileColumn } from "./profile-column.tsx";
+import { TraitSection } from "./trait-section.tsx";
 
 const TEXT = {
   recorded: "記録にあること",

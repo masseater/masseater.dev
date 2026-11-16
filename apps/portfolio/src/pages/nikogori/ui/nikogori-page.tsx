@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { works } from "#/pages/nikogori/model/works.ts";
 import { sectionMeta } from "#/shared/config/index.ts";
 
-import { WorkItem } from "./work-item";
+import { WorkItem } from "./work-item.tsx";
 
 export const NikogoriPage = (): ReactNode => (
   <div className="flex flex-col" data-wide>

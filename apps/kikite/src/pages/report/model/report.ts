@@ -1,8 +1,8 @@
 import { Array as Arr, Number as Num, Option, Order, pipe } from "effect";
 
 import type { Entry, Progress } from "#/entities/interview/index.ts";
-import { STRATEGY_IDS } from "#strategies";
-import type { StrategyId } from "#strategies";
+import { STRATEGY_IDS } from "#/shared/config/index.ts";
+import type { StrategyId } from "#/shared/config/index.ts";
 
 type QuestionEntry = Extract<Entry, { kind: "question" }>;
 

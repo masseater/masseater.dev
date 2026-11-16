@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { SearchField } from "#/shared/ui/index.ts";
 import { SidebarTrigger } from "#/shared/ui/sidebar/index.ts";
 
-import { PortalBreadcrumb } from "./portal-breadcrumb";
+import { PortalBreadcrumb } from "./portal-breadcrumb.tsx";
 
 const SEARCH = "記録・メモ・スライドを検索";
 

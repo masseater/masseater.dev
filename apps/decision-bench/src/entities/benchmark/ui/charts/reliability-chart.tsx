@@ -10,9 +10,9 @@ import { colorOf } from "#/entities/benchmark/model/model-color.ts";
 import type { TaskEntry } from "#/entities/benchmark/model/ranking.ts";
 import { ChartContainer } from "#/shared/ui/chart.tsx";
 
-import { ReliabilityAxes } from "./reliability-axes";
-import { useLegendHandlers, useSeriesState } from "./reliability-state";
-import type { SeriesState } from "./reliability-state";
+import { ReliabilityAxes } from "./reliability-axes.tsx";
+import { useLegendHandlers, useSeriesState } from "./reliability-state.ts";
+import type { SeriesState } from "./reliability-state.ts";
 
 type Point = Readonly<{ label: string; confidence: number; accuracy: number; count: number }>;
 

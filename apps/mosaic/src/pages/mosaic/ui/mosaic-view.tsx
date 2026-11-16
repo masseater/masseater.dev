@@ -4,8 +4,8 @@ import { useMemo } from "react";
 import type { Visit } from "#/entities/mosaic/index.ts";
 import { useViewerStatus, MosaicCanvas } from "#/entities/mosaic/index.ts";
 
-import { MosaicLoading } from "./mosaic-loading";
-import { MosaicOverlay } from "./mosaic-overlay";
+import { MosaicLoading } from "./mosaic-loading.tsx";
+import { MosaicOverlay } from "./mosaic-overlay.tsx";
 
 export const MosaicView = ({ slug, seed, choice, mosaic }: Visit): ReactNode => {
   const visit = useMemo(() => ({ slug, seed, choice, mosaic }), [slug, seed, choice, mosaic]);

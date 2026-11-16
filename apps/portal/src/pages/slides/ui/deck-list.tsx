@@ -7,7 +7,7 @@ import { TagFilter } from "#/features/filter-decks/index.ts";
 import { useDecks } from "#/pages/slides/api/slides-query.ts";
 import { RowList } from "#/shared/ui/index.ts";
 
-import { DeckRow } from "./deck-row";
+import { DeckRow } from "./deck-row.tsx";
 
 const LABEL = "デッキ";
 

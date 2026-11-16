@@ -10,8 +10,8 @@ import { TableCaption } from "#/shared/ui/table-caption.tsx";
 import { TableHeader } from "#/shared/ui/table-header.tsx";
 import { Table } from "#/shared/ui/table.tsx";
 
-import { SortBodyRow } from "./sort-body-row";
-import { SortHeaderRow } from "./sort-header-row";
+import { SortBodyRow } from "./sort-body-row.tsx";
+import { SortHeaderRow } from "./sort-header-row.tsx";
 
 export const SortableTable = <Row,>({
   id,

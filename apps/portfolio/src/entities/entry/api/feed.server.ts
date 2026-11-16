@@ -7,7 +7,7 @@ import type { Entry } from "#/entities/entry/model/entry.ts";
 import { entryOgImagePath, entryPath } from "#/entities/entry/model/entry.ts";
 import { site } from "#/shared/config/index.ts";
 
-import { allEntries } from "./entries";
+import { allEntries } from "./entries.ts";
 
 const toFeed = (entries: readonly Entry[]): string => {
   const feed = new Feed({

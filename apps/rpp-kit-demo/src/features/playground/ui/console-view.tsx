@@ -5,7 +5,7 @@ import { useOutput } from "#/features/playground/model/output.ts";
 import type { Entry, Output } from "#/features/playground/model/output.ts";
 import { playground } from "#/shared/config/index.ts";
 
-import { ConsoleLine } from "./console-line";
+import { ConsoleLine } from "./console-line.tsx";
 
 const entriesOf = (output: Output): readonly Entry[] =>
   Match.value(output).pipe(

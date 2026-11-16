@@ -6,8 +6,8 @@ import { YEN } from "#/entities/money/index.ts";
 import type { MoneyFlowValue } from "#/entities/money/index.ts";
 import { flowHeight, sankeyInput } from "#/pages/money/model/flow.ts";
 
-import { FlowLink } from "./flow-link";
-import { FlowNode } from "./flow-node";
+import { FlowLink } from "./flow-link.tsx";
+import { FlowNode } from "./flow-node.tsx";
 
 const NODE_WIDTH = 16;
 

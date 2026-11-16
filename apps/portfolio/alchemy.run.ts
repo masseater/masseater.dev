@@ -8,7 +8,7 @@ import type { CompiledStack } from "alchemy";
 import { Effect, Option } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./src/shared/config/app-name.ts";
+import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./src/app/app-name.ts";
 import { site } from "./src/shared/config/site.ts";
 
 const DOMAIN = new URL(site.url).hostname;

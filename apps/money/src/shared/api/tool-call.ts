@@ -3,7 +3,7 @@ import { toolCalls } from "@masseater.dev/mcp-tool-call";
 import { env } from "cloudflare:workers";
 import { Match } from "effect";
 
-import type { Rejected } from "./rejected";
+import type { Rejected } from "./rejected.ts";
 
 export type ToolName =
   | "upsert_account"

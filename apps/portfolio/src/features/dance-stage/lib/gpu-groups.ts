@@ -1,12 +1,12 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { GpuPass, Pass } from "#/features/dance-stage/model/effect.ts";
+import type { GpuPass, Pass } from "#/entities/dance-effect/index.ts";
 
-import type { Fn } from "./fn";
-import type { Size } from "./gl";
-import { GROUPS, PING_PONG, SHARED, SINGLE } from "./gpu-setup";
-import type { Setup } from "./gpu-setup";
-import type { Asset } from "./renderer";
+import type { Fn } from "./fn.ts";
+import type { Size } from "./gl.ts";
+import { GROUPS, PING_PONG, SHARED, SINGLE } from "./gpu-setup.ts";
+import type { Setup } from "./gpu-setup.ts";
+import type { Asset } from "./renderer.ts";
 
 const NEXT = 1;
 

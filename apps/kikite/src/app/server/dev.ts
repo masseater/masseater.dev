@@ -1,7 +1,7 @@
 import { Effect, Fiber, Layer, Option } from "effect";
 import type { Plugin } from "vite-plus";
 
-import { DEV_API_PORT } from "#config";
+import { DEV_API_PORT } from "#/shared/config/index.ts";
 
 import { serveApi } from "./serve.ts";
 

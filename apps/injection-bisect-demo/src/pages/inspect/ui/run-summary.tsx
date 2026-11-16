@@ -8,9 +8,9 @@ import { COUNT, DOLLARS } from "#/entities/inspection/index.ts";
 import type { Answer, Phase, Row, Trace } from "#/entities/inspection/index.ts";
 import { COPY } from "#/shared/config/index.ts";
 
-import { GradeLine } from "./grade-line";
-import { PhaseNotes } from "./phase-notes";
-import { Stat } from "./stat";
+import { GradeLine } from "./grade-line.tsx";
+import { PhaseNotes } from "./phase-notes.tsx";
+import { Stat } from "./stat.tsx";
 
 type Answered = Extract<Answer, Readonly<{ status: "answered" }>>;
 

@@ -6,8 +6,8 @@ import { fillOf, song } from "#/entities/song/index.ts";
 import { TimeCursor } from "#/features/playback/index.ts";
 import { lane } from "#/shared/config/index.ts";
 
-import { LaneLabel } from "./lane-label";
-import { NoteRects } from "./note-rects";
+import { LaneLabel } from "./lane-label.tsx";
+import { NoteRects } from "./note-rects.tsx";
 
 const HEIGHT = 40;
 

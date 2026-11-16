@@ -1,2 +1,2 @@
-export { serveMcp } from "./endpoint";
-export { MoneyPortal } from "./portal-entrypoint";
+export { serveMcp } from "./endpoint.ts";
+export { MoneyPortal } from "./portal-entrypoint.ts";

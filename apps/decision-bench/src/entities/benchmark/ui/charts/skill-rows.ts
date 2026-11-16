@@ -4,8 +4,8 @@ import { displayLabel } from "#/entities/benchmark/model/display-label.ts";
 import { colorOf } from "#/entities/benchmark/model/model-color.ts";
 import type { TaskEntry } from "#/entities/benchmark/model/ranking.ts";
 
-import type { ChartRow } from "./chart-row";
-import { taskDetail } from "./model-detail";
+import type { ChartRow } from "./chart-row.ts";
+import { taskDetail } from "./model-detail.ts";
 
 export const skillRows = (entries: readonly TaskEntry[]): readonly ChartRow[] =>
   pipe(

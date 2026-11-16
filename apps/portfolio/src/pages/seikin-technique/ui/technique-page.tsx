@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { techniqueOf } from "#/entities/technique/index.ts";
 
-import { TechniqueView } from "./technique-view";
+import { TechniqueView } from "./technique-view.tsx";
 
 const route = getRouteApi("/_stage/_site/seikin-techniques/$slug");
 

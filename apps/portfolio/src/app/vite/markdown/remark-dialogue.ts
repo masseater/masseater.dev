@@ -5,7 +5,7 @@ import type { ContainerDirective, LeafDirective, TextDirective } from "mdast-uti
 import type { MdxJsxFlowElement } from "mdast-util-mdx-jsx";
 import type { Plugin } from "unified";
 
-import { SpeakerSchema } from "#/entities/entry/model/speaker.ts";
+import { SpeakerSchema } from "#/entities/entry/index.server.ts";
 
 import { mapTree } from "./remark-tree.ts";
 import type { Transform } from "./remark-tree.ts";

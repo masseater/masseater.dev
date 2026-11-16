@@ -1,7 +1,7 @@
 import { Array as Arr, Result, Schema, String as Str, pipe } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
-import { ArticleInput } from "./sloppedia-input";
+import { ArticleInput } from "./sloppedia-input.ts";
 
 const VALID = {
   slug: "web-dev",

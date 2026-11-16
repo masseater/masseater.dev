@@ -3,12 +3,11 @@ import { deepStrictEqual } from "@effect/vitest/utils";
 import upstreamRemotion from "@remotion/eslint-plugin";
 import { Array as Arr, Effect, Layer, Option, Record, String as Str, pipe } from "effect";
 
-import drizzle from "#/app/drizzle.ts";
-import eslintReact from "#/app/react.ts";
-import remotion from "#/app/remotion.ts";
-import tanstackQuery from "#/app/tanstack-query.ts";
-import tanstackRouter from "#/app/tanstack-router.ts";
-
+import drizzle from "./drizzle.ts";
+import eslintReact from "./react.ts";
+import remotion from "./remotion.ts";
+import tanstackQuery from "./tanstack-query.ts";
+import tanstackRouter from "./tanstack-router.ts";
 import type { Config } from "./upstream-plugin.ts";
 
 type Configs = Readonly<Record<string, Config>>;

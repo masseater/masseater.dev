@@ -13,8 +13,13 @@ import {
   ResearchRequest,
   SUMMARY_PATH,
   SummaryRequest,
-} from "#protocol";
-import type { CorrectionBody, QuestionBody, ResearchBody, SummaryBody } from "#protocol";
+} from "#/shared/api/index.ts";
+import type {
+  CorrectionBody,
+  QuestionBody,
+  ResearchBody,
+  SummaryBody,
+} from "#/shared/api/index.ts";
 
 import { routes } from "./routes.ts";
 

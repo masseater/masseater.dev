@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 import { COPY } from "#/pages/why/model/copy.ts";
 
-import { Actions } from "./actions";
-import { Example } from "./example";
+import { Actions } from "./actions.tsx";
+import { Example } from "./example.tsx";
 
 export const Intro = (): ReactNode => (
   <header className="flex flex-col gap-5">

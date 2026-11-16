@@ -2,7 +2,7 @@ import { Option, Schema, pipe } from "effect";
 
 import { TimeOut } from "#/shared/model/index.ts";
 
-import { LifeItem } from "./life-item";
+import { LifeItem } from "./life-item.ts";
 
 const Japanese = Schema.Struct({
   statement: Schema.String,

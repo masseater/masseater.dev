@@ -6,7 +6,7 @@ import type { TaskEntry, TaskInfo } from "#/entities/benchmark/index.ts";
 import type { TableColumn } from "#/features/sort-table/index.ts";
 import { SortableTable } from "#/features/sort-table/index.ts";
 
-import { taskEntryColor, taskEntryKey } from "./task-entry";
+import { taskEntryColor, taskEntryKey } from "./task-entry.ts";
 
 const CAPTION = "確信度・速度・費用";
 const LABEL = "モデル";

@@ -5,7 +5,7 @@ import { articles } from "#/entities/technique/index.ts";
 import { DanceCredit } from "#/features/dance-stage/index.ts";
 import { TITLE } from "#/pages/seikin-index/model/copy.ts";
 
-import { ArticleSection } from "./article-section";
+import { ArticleSection } from "./article-section.tsx";
 
 export const SeikinIndexPage = (): ReactNode => (
   <div className="flex w-full max-w-5xl flex-col gap-12">

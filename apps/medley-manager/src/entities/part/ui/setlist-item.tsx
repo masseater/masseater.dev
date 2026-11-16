@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import type { PartRow } from "#/entities/part/lib/part.ts";
 import type { PartStartLink } from "#/entities/video/@x/part.ts";
 
-import { PositionMark } from "./position-mark";
-import { SetlistBody } from "./setlist-body";
+import { PositionMark } from "./position-mark.tsx";
+import { SetlistBody } from "./setlist-body.tsx";
 
 export const SetlistItem = ({
   part,

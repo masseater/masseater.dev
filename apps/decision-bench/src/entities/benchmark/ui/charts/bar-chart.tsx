@@ -7,11 +7,11 @@ import { Bar, CartesianGrid, BarChart as Chart, Tooltip, XAxis, YAxis } from "re
 import { pointsOf, toPercentPoints } from "#/entities/benchmark/lib/format.ts";
 import { ChartContainer } from "#/shared/ui/chart.tsx";
 
-import type { ChartRow } from "./chart-row";
-import { AXIS_TICK, MARK_RADIUS, ORIGIN, PERCENT_SCALE, SERIES_COLOR } from "./chart-style";
-import { DetailTooltip } from "./detail-tooltip";
-import { errorOf, intervalBar } from "./interval-bar";
-import type { Detail } from "./model-detail";
+import type { ChartRow } from "./chart-row.ts";
+import { AXIS_TICK, MARK_RADIUS, ORIGIN, PERCENT_SCALE, SERIES_COLOR } from "./chart-style.ts";
+import { DetailTooltip } from "./detail-tooltip.tsx";
+import { errorOf, intervalBar } from "./interval-bar.tsx";
+import type { Detail } from "./model-detail.ts";
 
 const LABEL_WIDTH = 104;
 const BAR_SIZE = 14;

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { CountBadge } from "./count-badge";
+import { CountBadge } from "./count-badge.tsx";
 
 export const SectionHeading = ({
   title,

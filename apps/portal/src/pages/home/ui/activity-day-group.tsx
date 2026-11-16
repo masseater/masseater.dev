@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { ActivityDay } from "#/pages/home/model/activity.ts";
 
-import { ActivityRow } from "./activity-row";
+import { ActivityRow } from "./activity-row.tsx";
 
 export const ActivityDayGroup = ({ group }: Readonly<{ group: ActivityDay }>): ReactNode => (
   <section className="flex flex-col">

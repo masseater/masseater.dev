@@ -8,8 +8,8 @@ import { CursorQuery, MemosSearch, RecordsSearch } from "#/entities/watashi/mode
 import { Sessions } from "#/entities/watashi/model/session.ts";
 import { createRouter, respond, rpcBody, watashi } from "#/shared/api/index.server.ts";
 
-import { memosInput, recordsInput } from "./inputs";
-import { conversation, memoDetail, timeline } from "./watashi-reads.server";
+import { memosInput, recordsInput } from "./inputs.ts";
+import { conversation, memoDetail, timeline } from "./watashi-reads.server.ts";
 
 const EVERY_SCOPE = {} as const;
 

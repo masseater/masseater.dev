@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { Ranked } from "#/entities/ranking/index.ts";
 import { SongRow } from "#/features/expand-song/index.ts";
 
-import { RankingHead } from "./ranking-head";
+import { RankingHead } from "./ranking-head.tsx";
 
 const FIRST_RANK = 1;
 

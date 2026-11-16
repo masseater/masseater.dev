@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 
 import type { VideoKind } from "#/entities/video/lib/video-kind.ts";
 
-import { VideoCaption } from "./video-caption";
-import { VideoThumbnail } from "./video-thumbnail";
+import { VideoCaption } from "./video-caption.tsx";
+import { VideoThumbnail } from "./video-thumbnail.tsx";
 
 export type VideoSummary = Readonly<{
   id: number;

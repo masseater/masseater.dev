@@ -5,7 +5,7 @@ import { Array as Arr, String as Str, pipe } from "effect";
 import type { InspectEvent } from "#/entities/inspection/api/inspect-events.ts";
 import { COPY } from "#/shared/config/index.ts";
 
-import { COUNT, DOLLARS, PERCENT } from "./format";
+import { COUNT, DOLLARS, PERCENT } from "./format.ts";
 
 export interface LogLine {
   readonly key: string;

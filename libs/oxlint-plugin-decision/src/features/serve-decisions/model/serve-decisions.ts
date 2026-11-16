@@ -3,7 +3,6 @@ import type { Config } from "effect";
 import type { HttpClient } from "effect/http";
 import { runAsWorker } from "synckit";
 
-import type { AppServices } from "#/app/openrouter-app.ts";
 import { messageOf } from "#/entities/decision/index.ts";
 import type {
   DecideInput,
@@ -15,6 +14,7 @@ import type {
 
 import { cacheFile, isComplete, readCache, writeCache } from "./cache.ts";
 import type { CacheServices } from "./cache.ts";
+import type { AppServices } from "./openrouter-app.ts";
 import { workerServices } from "./services.ts";
 
 /** @internal */

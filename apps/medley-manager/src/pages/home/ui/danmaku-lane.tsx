@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { Comment } from "#/pages/home/lib/danmaku.ts";
 
-import { DanmakuComments } from "./danmaku-comments";
+import { DanmakuComments } from "./danmaku-comments.tsx";
 
 const SPEEDS: readonly string[] = [
   "animate-danmaku",

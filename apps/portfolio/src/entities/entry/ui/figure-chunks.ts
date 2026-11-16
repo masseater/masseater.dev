@@ -10,7 +10,7 @@ type FigureChunk =
   | { readonly status: "imported"; readonly body: ReactElement };
 
 const chunks = {
-  "cascade-failure": Effect.promise(() => import("./cascade-failure")).pipe(
+  "cascade-failure": Effect.promise(() => import("./cascade-failure.tsx")).pipe(
     Effect.map(({ CascadeFailure }) => createElement(CascadeFailure)),
   ),
 } as const satisfies Record<FigureName, Effect.Effect<ReactElement>>;

@@ -16,9 +16,9 @@ import type {
   StorageFailed,
 } from "#/shared/db/index.ts";
 
-import { traitRefOf } from "./trait-state";
-import type { Evidence, JaRows, TraitState } from "./trait-state";
-import type { Vector } from "./trait-vector";
+import { traitRefOf } from "./trait-state.ts";
+import type { Evidence, JaRows, TraitState } from "./trait-state.ts";
+import type { Vector } from "./trait-vector.ts";
 
 const ONE_ROW = 1;
 

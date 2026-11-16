@@ -7,7 +7,7 @@ import { usePicture, useSetChoice, SAMPLES } from "#/entities/extraction/index.t
 import type { Picture } from "#/entities/extraction/index.ts";
 import { COPY } from "#/shared/config/index.ts";
 
-import { SampleButton } from "./sample-button";
+import { SampleButton } from "./sample-button.tsx";
 
 const FIRST = 0;
 

@@ -5,7 +5,7 @@ import { Badge } from "#/shared/ui/badge.tsx";
 import { TableCell } from "#/shared/ui/table-cell.tsx";
 import { TableRow } from "#/shared/ui/table-row.tsx";
 
-import { CreditMaterial } from "./credit-material";
+import { CreditMaterial } from "./credit-material.tsx";
 
 const ROLE_LABEL = { audio: "音声", video: "映像", other: "その他" } as const;
 

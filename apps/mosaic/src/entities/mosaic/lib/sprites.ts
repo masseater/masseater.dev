@@ -2,10 +2,10 @@ import { Array, Effect, Option, Record, pipe } from "effect";
 
 import { runtime } from "#/shared/lib/telemetry.ts";
 
-import { composeBlock } from "./compose";
-import type { Level } from "./compose";
-import { variantFile } from "./files";
-import type { Visit } from "./files";
+import { composeBlock } from "./compose.ts";
+import type { Level } from "./compose.ts";
+import { variantFile } from "./files.ts";
+import type { Visit } from "./files.ts";
 
 const NO_WIDTH = 0;
 const SHARPER = 1.2;

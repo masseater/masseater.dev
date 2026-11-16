@@ -6,15 +6,11 @@ import type { SignalKey } from "#/entities/telemetry/index.ts";
 import {
   ExportLogsServiceRequestSchema,
   ExportLogsServiceResponseSchema,
-} from "#/shared/api/generated/opentelemetry/proto/collector/logs/v1/logs_service_pb.ts";
-import {
   ExportMetricsServiceRequestSchema,
   ExportMetricsServiceResponseSchema,
-} from "#/shared/api/generated/opentelemetry/proto/collector/metrics/v1/metrics_service_pb.ts";
-import {
   ExportTraceServiceRequestSchema,
   ExportTraceServiceResponseSchema,
-} from "#/shared/api/generated/opentelemetry/proto/collector/trace/v1/trace_service_pb.ts";
+} from "#/shared/api/index.ts";
 import { hexIdsToBase64, normalize } from "#/shared/lib/normalize.ts";
 
 import type { ForwardFailed } from "./forward.ts";

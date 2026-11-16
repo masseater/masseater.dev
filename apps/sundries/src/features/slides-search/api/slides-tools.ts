@@ -7,7 +7,7 @@ import { Array as Arr, Effect, Option, Order, Schema, pipe } from "effect";
 
 import { meteredInput, runTool } from "#/shared/api/index.ts";
 
-import { DEFAULT_SLIDE_LIMIT, DeckInput, SlideSearchInput } from "./slides-input";
+import { DEFAULT_SLIDE_LIMIT, DeckInput, SlideSearchInput } from "./slides-input.ts";
 
 const EMBEDDING_MODEL = "@cf/qwen/qwen3-embedding-0.6b";
 const QUERY_INSTRUCTION =

@@ -11,7 +11,7 @@ import {
 } from "#/entities/ranking/index.ts";
 import type { Entries } from "#/entities/ranking/index.ts";
 
-import { RankingList } from "./ranking-list";
+import { RankingList } from "./ranking-list.tsx";
 
 const NOTES: Readonly<Record<Exclude<Entries["status"], "success">, string>> = {
   pending: TEXT.loading,

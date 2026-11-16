@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { NAV_GROUPS, TOP_GROUP } from "#/shared/config/index.ts";
 import { SidebarBrand } from "#/shared/ui/sidebar/index.ts";
 
-import { PortalNavGroup } from "./portal-nav-group";
+import { PortalNavGroup } from "./portal-nav-group.tsx";
 
 export const PortalNav = (): ReactNode => (
   <>

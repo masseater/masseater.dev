@@ -1,2 +1,2 @@
-export { seikinIndexHead } from "./model/head";
-export { SeikinIndexPage } from "./ui/seikin-index-page";
+export { seikinIndexHead } from "./model/head.ts";
+export { SeikinIndexPage } from "./ui/seikin-index-page.tsx";

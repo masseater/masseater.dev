@@ -3,11 +3,10 @@ import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
 import { Effect, Array as Arr, Record as Rec, pipe } from "effect";
 
-import { TIMEOUT } from "#/app/fixtures.test.support.ts";
-
 import type { Answers, DecisionRequest, NoulAnswer } from "./types.ts";
 import { mergeResponses, wireRequestsFor } from "./wire.ts";
 
+const TIMEOUT = 120_000;
 const RESPAN = "respan/span-01-lite";
 const SERVED = "respan/span-01-lite-20260925";
 const TINY = 0.125;

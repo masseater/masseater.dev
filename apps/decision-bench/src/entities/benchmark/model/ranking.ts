@@ -1,7 +1,7 @@
 import { Array as Arr, pipe, String as Str, Number as Num, Order } from "effect";
 
-import { summary } from "./summary";
-import type { ModelResult, TaskResult } from "./summary";
+import { summary } from "./summary.ts";
+import type { ModelResult, TaskResult } from "./summary.ts";
 
 export type TaskEntry = Readonly<{ model: ModelResult; result: TaskResult; mark: number }>;
 

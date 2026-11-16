@@ -4,9 +4,9 @@ import type { ReactNode } from "react";
 import { mountPlayground } from "#/features/playground/model/mount.ts";
 import { useReport } from "#/features/playground/model/output.ts";
 
-import { ConsolePanel } from "./console-panel";
-import { GeneratedPanel } from "./generated-panel";
-import { SourcePanel } from "./source-panel";
+import { ConsolePanel } from "./console-panel.tsx";
+import { GeneratedPanel } from "./generated-panel.tsx";
+import { SourcePanel } from "./source-panel.tsx";
 
 export const Playground = (): ReactNode => {
   const report = useReport();

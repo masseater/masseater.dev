@@ -2,7 +2,7 @@ import { useHydrated } from "@tanstack/react-router";
 import { Effect, Option, pipe } from "effect";
 import { useCallback } from "react";
 
-import type { TagSearch } from "./search";
+import type { TagSearch } from "./search.ts";
 
 export type Navigate = (
   options: Readonly<{ search: TagSearch; resetScroll: false }>,

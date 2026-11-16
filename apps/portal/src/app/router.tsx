@@ -3,7 +3,7 @@ import type { Router } from "@tanstack/react-router";
 
 import { FRESH } from "#/shared/config/index.ts";
 
-import { routeTree } from "./routeTree.gen";
+import { routeTree } from "./routeTree.gen.ts";
 
 export type AppRouter = Router<typeof routeTree>;
 

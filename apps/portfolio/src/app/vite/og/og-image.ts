@@ -6,9 +6,8 @@ import type { Font } from "satori";
 import type { Plugin } from "vite-plus";
 import { parse } from "yaml";
 
-import { categories } from "#/entities/entry/model/category.ts";
-import { entryOgImagePath } from "#/entities/entry/model/entry.ts";
-import { site } from "#/shared/config/site.ts";
+import { categories, entryOgImagePath } from "#/entities/entry/index.server.ts";
+import { site } from "#/shared/config/index.ts";
 
 import { BOLD, JAPANESE, LATIN, REGULAR, cardElement, siteElement } from "./og-card.ts";
 import type { Card } from "./og-card.ts";

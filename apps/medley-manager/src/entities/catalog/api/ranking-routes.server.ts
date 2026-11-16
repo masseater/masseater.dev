@@ -3,7 +3,7 @@ import { Schema } from "effect";
 import { createRouter } from "#/shared/api/index.server.ts";
 import { runRequest } from "#/shared/observability/index.server.ts";
 
-import { rankPeople, rankSongs, rankVideos } from "./ranking.server";
+import { rankPeople, rankSongs, rankVideos } from "./ranking.server.ts";
 
 const MIN_LIMIT = 1;
 const MAX_LIMIT = 100;

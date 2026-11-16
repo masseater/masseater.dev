@@ -1,2 +1,2 @@
-export { SEARCH_INDEX_ORIGIN } from "./search";
-export { SITE_TITLE } from "./site";
+export { SEARCH_INDEX_ORIGIN } from "./search.ts";
+export { SITE_TITLE } from "./site.ts";

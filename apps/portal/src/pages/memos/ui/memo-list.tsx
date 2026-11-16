@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 import { useMemos } from "#/pages/memos/api/memos-query.ts";
 import { RowList, Card, CardHeader, SearchField } from "#/shared/ui/index.ts";
 
-import { MemoRow } from "./memo-row";
+import { MemoRow } from "./memo-row.tsx";
 
 const route = getRouteApi("/memos/");
 

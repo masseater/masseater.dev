@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { useCredentials } from "#/pages/credentials/api/credentials-query.ts";
 
-import { CredentialSection } from "./credential-section";
+import { CredentialSection } from "./credential-section.tsx";
 
 export const CredentialsPage = (): ReactNode => {
   const states = useCredentials();

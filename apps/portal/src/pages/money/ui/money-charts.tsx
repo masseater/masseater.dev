@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 import type { OverviewValue } from "#/entities/money/index.ts";
 
-import { MonthlyCard } from "./monthly-card";
-import { SheetCard } from "./sheet-card";
+import { MonthlyCard } from "./monthly-card.tsx";
+import { SheetCard } from "./sheet-card.tsx";
 
 export const MoneyCharts = ({ overview }: Readonly<{ overview: OverviewValue }>): ReactNode => (
   <div className="grid min-w-0 gap-5 xl:grid-cols-5">

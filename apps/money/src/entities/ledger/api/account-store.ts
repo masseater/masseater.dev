@@ -5,8 +5,8 @@ import { Array as Arr, Effect, Number as Num, Option, Order, pipe } from "effect
 import type { AccountPosition, Snapshot } from "#/entities/ledger/model/balance-sheet.ts";
 import { rejected } from "#/shared/api/index.ts";
 
-import { db, query, summedAmount, yenOf } from "./database";
-import type { Failure } from "./database";
+import { db, query, summedAmount, yenOf } from "./database.ts";
+import type { Failure } from "./database.ts";
 import { accounts, balances, transactions } from "./ledger.table.ts";
 
 export type Account = typeof accounts.$inferSelect;

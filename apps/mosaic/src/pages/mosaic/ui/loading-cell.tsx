@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { HEIGHT, WIDTH } from "./loading-cell-size";
+import { HEIGHT, WIDTH } from "./loading-cell-size.ts";
 
 const RADIUS = 1;
 const DIM = 0.15;

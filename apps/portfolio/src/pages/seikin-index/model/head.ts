@@ -2,7 +2,7 @@ import { ROOT } from "#/entities/technique/index.ts";
 import { defaultImage, pageTitle, seo } from "#/shared/lib/index.ts";
 import type { Head } from "#/shared/lib/index.ts";
 
-import { INTRO, TITLE } from "./copy";
+import { INTRO, TITLE } from "./copy.ts";
 
 export const seikinIndexHead: Head = seo({
   title: pageTitle(TITLE),

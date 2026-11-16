@@ -4,7 +4,7 @@ import type { BalanceSheetValue } from "#/entities/money/index.ts";
 import { leftBlocks, rightBlocks, sideTotal } from "#/pages/money/model/sheet.ts";
 import { Section } from "#/shared/ui/index.ts";
 
-import { SheetChart } from "./sheet-chart";
+import { SheetChart } from "./sheet-chart.tsx";
 
 const TEXT = { title: "貸借対照表", empty: "残高の記録がありません" } as const;
 

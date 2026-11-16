@@ -1,7 +1,7 @@
 import { Clock, Effect, Option, Schema, String as Str, pipe } from "effect";
 
 import type { StoreFailed } from "#/entities/session/model/store-failed.ts";
-import { SESSIONS_PATH, SessionId, SessionListing, SessionRecord } from "#protocol";
+import { SESSIONS_PATH, SessionId, SessionListing, SessionRecord } from "#/shared/api/index.ts";
 
 import { allRecords, listSessions, readSession, storeSession } from "./session-store.ts";
 

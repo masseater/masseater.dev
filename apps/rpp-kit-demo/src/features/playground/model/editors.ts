@@ -13,7 +13,7 @@ import type { Scope } from "effect";
 import { playground } from "#/shared/config/index.ts";
 
 import type { CheckerWorker } from "./checker.worker.ts";
-import { lintsOf, typeCompletion, typeHover } from "./language";
+import { lintsOf, typeCompletion, typeHover } from "./language.ts";
 
 export type Editor = Readonly<{ host: HTMLElement; doc: string; extensions: readonly Extension[] }>;
 

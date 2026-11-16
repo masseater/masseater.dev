@@ -3,8 +3,8 @@ import type { MDXModule } from "mdx/types";
 import { headingsOf } from "sloppedia";
 import type { Heading } from "sloppedia";
 
-import { findLoadedBody } from "./body";
-import type { Entry } from "./entry";
+import { findLoadedBody } from "./body.ts";
+import type { Entry } from "./entry.ts";
 
 export const tocOf = ({ tableOfContents }: Readonly<MDXModule>): readonly Heading[] =>
   headingsOf(tableOfContents);

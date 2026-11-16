@@ -8,7 +8,7 @@ import { shardQuery } from "#/shared/api/index.ts";
 import { NICO_WATCH_URL, VOCADB_SONG_URL, YOUTUBE_WATCH_URL } from "#/shared/config/index.ts";
 import { ExternalLink } from "#/shared/ui/external-link.tsx";
 
-import { VideoLinks } from "./video-links";
+import { VideoLinks } from "./video-links.tsx";
 
 export const SongVideos = ({ id }: Readonly<{ id: number }>): ReactNode => {
   const query = useQuery(shardQuery(shardOf(id)));

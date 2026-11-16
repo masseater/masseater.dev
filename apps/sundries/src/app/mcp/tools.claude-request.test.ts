@@ -14,7 +14,7 @@ import {
 import { afterAll, beforeEach, vi } from "vite-plus/test";
 
 import { closeDatabase, resetDatabase } from "./claude-request-tools.test.support.ts";
-import { registerTools } from "./tools";
+import { registerTools } from "./tools.ts";
 
 vi.mock("cloudflare:workers", () => import("./claude-request-tools.test.support.ts"));
 

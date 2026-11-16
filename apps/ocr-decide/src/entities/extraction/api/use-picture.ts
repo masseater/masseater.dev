@@ -6,7 +6,7 @@ import { FetchHttpClient, HttpClient } from "effect/http";
 import { useChoice } from "#/entities/extraction/model/draft.ts";
 import type { Choice } from "#/entities/extraction/model/draft.ts";
 
-import { asPng } from "./as-png";
+import { asPng } from "./as-png.ts";
 
 export type Picture =
   | { readonly status: "none" }

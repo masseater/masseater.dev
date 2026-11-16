@@ -20,9 +20,9 @@ import { RunSettings } from "#/features/configure-run/index.ts";
 import type { InspectState } from "#/features/run-inspection/index.ts";
 import { COPY } from "#/shared/config/index.ts";
 
-import { Note } from "./note";
-import { OverlaidText } from "./overlaid-text";
-import { SourceBar } from "./source-bar";
+import { Note } from "./note.tsx";
+import { OverlaidText } from "./overlaid-text.tsx";
+import { SourceBar } from "./source-bar.tsx";
 
 const NON_BLANK = /\S/u;
 

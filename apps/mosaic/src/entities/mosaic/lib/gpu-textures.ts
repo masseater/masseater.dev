@@ -2,8 +2,8 @@ import { Array, Effect, MutableHashMap, Number as Num, Option, Order, pipe } fro
 
 import { runtime } from "#/shared/lib/telemetry.ts";
 
-import { drawGroup } from "./gpu-pipelines";
-import type { Pipelines } from "./gpu-pipelines";
+import { drawGroup } from "./gpu-pipelines.ts";
+import type { Pipelines } from "./gpu-pipelines.ts";
 
 const MAX_MIP_LEVELS = 4;
 const TEXTURE_LIMIT = 160;

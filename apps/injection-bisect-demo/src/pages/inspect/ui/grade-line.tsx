@@ -6,7 +6,7 @@ import { gradeOf } from "#/entities/inspection/index.ts";
 import type { Grade, Phase } from "#/entities/inspection/index.ts";
 import { COPY } from "#/shared/config/index.ts";
 
-import { Note } from "./note";
+import { Note } from "./note.tsx";
 
 const textOf = (grade: Grade): string =>
   Match.value(grade).pipe(

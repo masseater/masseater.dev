@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { Group } from "#/pages/seikin-index/model/groups.ts";
 
-import { TechniqueLink } from "./technique-link";
+import { TechniqueLink } from "./technique-link.tsx";
 
 export const TechniqueGroup = ({ group }: Readonly<{ group: Group }>): ReactNode => (
   <div className="flex flex-col gap-2">

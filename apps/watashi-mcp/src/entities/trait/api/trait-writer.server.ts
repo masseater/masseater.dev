@@ -18,8 +18,8 @@ import {
 } from "#/shared/db/index.ts";
 import type { TraitOrigin, RevisionOp, StorageFailed } from "#/shared/db/index.ts";
 
-import { keyText } from "./trait-state";
-import type { Plan, TraitKey, TraitState } from "./trait-state";
+import { keyText } from "./trait-state.ts";
+import type { Plan, TraitKey, TraitState } from "./trait-state.ts";
 
 export type Cursor = Readonly<{ origin: TraitOrigin; position: string }>;
 

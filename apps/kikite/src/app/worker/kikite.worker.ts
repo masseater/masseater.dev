@@ -4,6 +4,7 @@ import { DurableObject, env } from "cloudflare:workers";
 import { Duration, Effect, Logger, Option, Schedule } from "effect";
 
 import { researched, isSessionsPath, sessionRoutes } from "#/entities/session/index.ts";
+import { RESEARCH_PATH } from "#/shared/api/index.ts";
 import {
   API_PORT,
   INTERVIEWER_IDLE,
@@ -12,8 +13,7 @@ import {
   INTERVIEWER_STARTUP,
   TELEMETRY_SERVICE,
   TRACES_PATH,
-} from "#config";
-import { RESEARCH_PATH } from "#protocol";
+} from "#/shared/config/index.ts";
 
 import { down } from "./interviewer-down.ts";
 import type { InterviewerDown } from "./interviewer-down.ts";

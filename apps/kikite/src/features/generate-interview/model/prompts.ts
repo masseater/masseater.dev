@@ -1,6 +1,6 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-import { QUESTION_LABEL, REASON_LABEL, STRATEGY_LABEL } from "#protocol";
+import { QUESTION_LABEL, REASON_LABEL, STRATEGY_LABEL } from "#/shared/api/index.ts";
 import type {
   CorrectionBody,
   HeardText,
@@ -9,8 +9,8 @@ import type {
   QuestionBody,
   ResearchBody,
   SummaryBody,
-} from "#protocol";
-import { STRATEGIES, STRATEGY_IDS } from "#strategies";
+} from "#/shared/api/index.ts";
+import { STRATEGIES, STRATEGY_IDS } from "#/shared/config/index.ts";
 
 export type Prompt = Readonly<{ system: string; user: string }>;
 

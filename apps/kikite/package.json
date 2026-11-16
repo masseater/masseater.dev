@@ -4,9 +4,6 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#config": "./src/shared/config/kikite.ts",
-    "#protocol": "./src/shared/api/protocol.ts",
-    "#strategies": "./src/entities/strategy/model/strategies.ts",
     "#/*": "./src/*"
   },
   "dependencies": {

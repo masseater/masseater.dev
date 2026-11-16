@@ -7,7 +7,7 @@ import type { Category, Entry } from "#/entities/entry/index.ts";
 import { TagFilter, tagCounts, withTag } from "#/features/tag-filter/index.ts";
 import type { TagSearch } from "#/features/tag-filter/index.ts";
 
-import { IdeaList } from "./idea-list";
+import { IdeaList } from "./idea-list.tsx";
 
 export const CollectionView = ({
   activeTag,

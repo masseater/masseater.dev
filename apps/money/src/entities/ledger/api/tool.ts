@@ -7,7 +7,7 @@ import { Digest, SecureRandom } from "effect/crypto";
 import { meteredInput, rejected, runToolIn } from "#/shared/api/index.ts";
 import type { ToolName } from "#/shared/api/index.ts";
 
-import type { Failure, Services } from "./database";
+import type { Failure, Services } from "./database.ts";
 
 /** @internal */
 export type Annotations =

@@ -4,16 +4,18 @@ import type { TailStream } from "@cloudflare/workers-types/index.ts";
 import { Array, Match, Option, Predicate, Record, Result, pipe } from "effect";
 import { Hex } from "effect/encoding";
 
-import type { ExportLogsServiceRequest } from "#/shared/api/generated/opentelemetry/proto/collector/logs/v1/logs_service_pb.ts";
-import { ExportLogsServiceRequestSchema } from "#/shared/api/generated/opentelemetry/proto/collector/logs/v1/logs_service_pb.ts";
-import type { ExportTraceServiceRequest } from "#/shared/api/generated/opentelemetry/proto/collector/trace/v1/trace_service_pb.ts";
-import { ExportTraceServiceRequestSchema } from "#/shared/api/generated/opentelemetry/proto/collector/trace/v1/trace_service_pb.ts";
 import type {
+  ExportLogsServiceRequest,
+  ExportTraceServiceRequest,
   AnyValueSchema,
   KeyValueSchema,
-} from "#/shared/api/generated/opentelemetry/proto/common/v1/common_pb.ts";
-import type { LogRecordSchema } from "#/shared/api/generated/opentelemetry/proto/logs/v1/logs_pb.ts";
-import type { SpanSchema } from "#/shared/api/generated/opentelemetry/proto/trace/v1/trace_pb.ts";
+  LogRecordSchema,
+  SpanSchema,
+} from "#/shared/api/index.ts";
+import {
+  ExportLogsServiceRequestSchema,
+  ExportTraceServiceRequestSchema,
+} from "#/shared/api/index.ts";
 
 import type { Draft, Invocation, LogDraft } from "./tail-events.ts";
 

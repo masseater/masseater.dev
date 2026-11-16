@@ -4,7 +4,7 @@ import { createEdenOptionsProxy } from "eden-tanstack-react-query";
 
 import { site } from "#/shared/config/index.ts";
 
-import type { StarRoutes } from "./stars-routes.server";
+import type { StarRoutes } from "./stars-routes.server.ts";
 
 const client = createIsomorphicFn()
   .server(() => treaty<StarRoutes>(site.url))

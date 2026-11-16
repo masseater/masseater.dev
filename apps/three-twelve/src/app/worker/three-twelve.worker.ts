@@ -11,7 +11,7 @@ import {
   storeToken,
 } from "#/features/perform-alarm/index.ts";
 import { inviteUrl, ownedApplication, Rejected } from "#/shared/api/index.ts";
-import { ARM_LEAD, AUDIO_KEY, BASE_PATH } from "#config";
+import { ARM_LEAD, AUDIO_KEY, BASE_PATH } from "#/shared/config/index.ts";
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 const runLogged = runner(logger);

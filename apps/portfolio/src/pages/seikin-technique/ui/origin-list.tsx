@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { Origin } from "#/entities/technique/index.ts";
 
-import { OriginView } from "./origin-view";
+import { OriginView } from "./origin-view.tsx";
 
 export const OriginList = ({ origins }: Readonly<{ origins: readonly Origin[] }>): ReactNode => (
   <div className="flex flex-col gap-8">

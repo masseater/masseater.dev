@@ -1,1 +1,1 @@
-export { PostsJson } from "./api/twilog-posts";
+export { PostsJson } from "./api/twilog-posts.ts";

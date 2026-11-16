@@ -8,7 +8,7 @@ import { TableBody } from "#/shared/ui/table-body.tsx";
 import { TableHeadings } from "#/shared/ui/table-headings.tsx";
 import { Table } from "#/shared/ui/table.tsx";
 
-import { SongRow } from "./song-row";
+import { SongRow } from "./song-row.tsx";
 
 const route = getRouteApi("/songs/");
 

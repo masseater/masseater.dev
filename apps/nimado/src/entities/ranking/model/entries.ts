@@ -6,11 +6,11 @@ import { Array as Arr, Option, Record, pipe } from "effect";
 import { dayQuery, tableQuery } from "#/shared/api/index.ts";
 import type { DayValue, TableValue } from "#/shared/api/index.ts";
 
-import { covers, windowOf } from "./period";
-import type { Window } from "./period";
-import { gains, growth, rank, totals } from "./ranking";
-import type { Ranked } from "./ranking";
-import type { RankingSearch } from "./search";
+import { covers, windowOf } from "./period.ts";
+import type { Window } from "./period.ts";
+import { gains, growth, rank, totals } from "./ranking.ts";
+import type { Ranked } from "./ranking.ts";
+import type { RankingSearch } from "./search.ts";
 
 export type Entries =
   | Readonly<{ status: "pending" }>

@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 import { songsQuery } from "#/pages/home/api/loader.ts";
 import { danmakuLanes } from "#/pages/home/lib/danmaku.ts";
 
-import { DanmakuLane } from "./danmaku-lane";
+import { DanmakuLane } from "./danmaku-lane.tsx";
 
 export const Danmaku = (): ReactNode => {
   const { data: songs } = useSuspenseQuery(songsQuery);

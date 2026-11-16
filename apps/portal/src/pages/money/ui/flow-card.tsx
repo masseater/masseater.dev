@@ -6,8 +6,8 @@ import type { MoneyFlowValue } from "#/entities/money/index.ts";
 import { hasDetail, summarized } from "#/pages/money/model/flow.ts";
 import { Section } from "#/shared/ui/index.ts";
 
-import { FlowChart } from "./flow-chart";
-import { FlowTabs } from "./flow-tabs";
+import { FlowChart } from "./flow-chart.tsx";
+import { FlowTabs } from "./flow-tabs.tsx";
 
 const TITLE = "収支の流れ";
 

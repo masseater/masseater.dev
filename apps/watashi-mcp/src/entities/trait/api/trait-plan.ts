@@ -12,8 +12,8 @@ import {
   supportsOf,
   updateWhere,
   withEvidence,
-} from "./trait-state";
-import type { BatchSource, Evidence, Plan, Step, TraitKey, TraitState } from "./trait-state";
+} from "./trait-state.ts";
+import type { BatchSource, Evidence, Plan, Step, TraitKey, TraitState } from "./trait-state.ts";
 
 type Drafted = Extract<ObservationValue, Readonly<{ action: "new" | "replace" }>>;
 

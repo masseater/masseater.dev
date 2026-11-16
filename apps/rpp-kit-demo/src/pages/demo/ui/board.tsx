@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 
 import { song } from "#/entities/song/index.ts";
 
-import { Lane } from "./lane";
-import { SectionStrip } from "./section-strip";
+import { Lane } from "./lane.tsx";
+import { SectionStrip } from "./section-strip.tsx";
 
 export const Board = (): ReactNode => (
   <div className="bg-card border-border overflow-hidden rounded-lg border">

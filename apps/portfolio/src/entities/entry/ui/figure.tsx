@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 
 import type { FigureName } from "#/entities/entry/model/figure.ts";
 
-import { CascadePlaceholder } from "./cascade-placeholder";
-import { FigureBody } from "./figure-body";
-import { FigureCaption } from "./figure-caption";
+import { CascadePlaceholder } from "./cascade-placeholder.tsx";
+import { FigureBody } from "./figure-body.tsx";
+import { FigureCaption } from "./figure-caption.tsx";
 
 const placeholders = {
   "cascade-failure": <CascadePlaceholder />,

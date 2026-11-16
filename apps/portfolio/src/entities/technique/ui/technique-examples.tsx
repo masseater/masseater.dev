@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { Example } from "#/entities/technique/model/technique.ts";
 
-import { ExampleView } from "./example-view";
+import { ExampleView } from "./example-view.tsx";
 
 export const TechniqueExamples = ({
   examples,

@@ -7,7 +7,7 @@ import type { TaskInfo } from "#/entities/benchmark/index.ts";
 import { MethodLink } from "#/shared/ui/method-link.tsx";
 import { PageShell } from "#/widgets/page-shell/index.ts";
 
-import { TaskBlock } from "./task-block";
+import { TaskBlock } from "./task-block.tsx";
 
 const route = getRouteApi("/tasks/$task");
 

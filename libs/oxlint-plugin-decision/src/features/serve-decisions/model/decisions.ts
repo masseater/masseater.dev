@@ -2,9 +2,10 @@ import { make as makeOpenRouter } from "@effect/ai-openrouter/OpenRouterClient";
 import { Config, Effect, Option, Schedule, Schema } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/http";
 
-import { openRouterApp } from "#/app/openrouter-app.ts";
 import { envNameOf } from "#/entities/decision/index.ts";
 import type { DecideInput, WireRequest } from "#/entities/decision/index.ts";
+
+import { openRouterApp } from "./openrouter-app.ts";
 
 const TOOL = "oxlint-plugin-decision";
 const API_PATH = "/api/v1";

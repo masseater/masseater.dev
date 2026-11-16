@@ -1,8 +1,8 @@
 import { Effect, MutableRef, Option, Predicate, Record as Rec, Schema } from "effect";
 import { constVoid } from "effect/Function";
 
-import { PLAYER_IMAGE } from "#config";
-import { Outcomes } from "#outcome";
+import { Outcomes } from "#/entities/outcome/index.ts";
+import { PLAYER_IMAGE } from "#/shared/config/index.ts";
 
 import type { AudioBucket } from "./perform.ts";
 import type { PlayerStorage } from "./player-state.ts";

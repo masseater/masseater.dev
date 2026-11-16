@@ -8,9 +8,9 @@ import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effec
 
 import { SERVER_NAME } from "#/shared/config/index.ts";
 
-import type { SearchRequest } from "./search-input";
-import { PostsJson } from "./twilog-posts";
-import type { TwilogPosts } from "./twilog-posts";
+import type { SearchRequest } from "./search-input.ts";
+import { PostsJson } from "./twilog-posts.ts";
+import type { TwilogPosts } from "./twilog-posts.ts";
 
 export type PostsRequest = Readonly<{
   account: TwilogAccount;

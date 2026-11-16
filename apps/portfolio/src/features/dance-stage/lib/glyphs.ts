@@ -1,9 +1,9 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { TextRow } from "#/features/dance-stage/model/effect.ts";
+import type { TextRow } from "#/entities/dance-effect/index.ts";
 
-import type { Fn } from "./fn";
-import { TEXT_ROWS } from "./renderer";
+import type { Fn } from "./fn.ts";
+import { TEXT_ROWS } from "./renderer.ts";
 
 const WIDTH = 2048;
 const ROW_HEIGHT = 128;

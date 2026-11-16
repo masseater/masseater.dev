@@ -5,11 +5,11 @@ import { Array as Arr, Effect, Match, Number as Num, Option, pipe } from "effect
 
 import type { ConversationChunk } from "#/shared/db/index.ts";
 
-import type { ReadRequest, View } from "./conversation-input";
+import type { ReadRequest, View } from "./conversation-input.ts";
 import { chunksFrom, filesOf } from "./conversation-store.server.ts";
 import type { FileSummary } from "./conversation-store.server.ts";
-import { ownerUtterances } from "./owner-utterance";
-import type { Utterance } from "./owner-utterance";
+import { ownerUtterances } from "./owner-utterance.ts";
+import type { Utterance } from "./owner-utterance.ts";
 
 type ConversationText = Readonly<{
   sessionId: string;

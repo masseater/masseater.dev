@@ -8,7 +8,7 @@ import {
 import type { MediaType } from "#/entities/life-record/model/life-body.ts";
 import type { InvalidRecord } from "#/shared/api/index.ts";
 
-import type { Body } from "./life-record";
+import type { Body } from "./life-record.ts";
 
 const isMediaType = (value: unknown): value is MediaType =>
   pipe(

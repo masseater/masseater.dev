@@ -8,7 +8,7 @@ import { afterEach, vi } from "vite-plus/test";
 import { PostsJson } from "#/features/search-posts/index.test.support.ts";
 
 import { TOKENS, tokens } from "./search-tools.test.support.ts";
-import { registerTools } from "./tools";
+import { registerTools } from "./tools.ts";
 
 vi.mock("cloudflare:workers", () => import("./search-tools.test.support.ts"));
 

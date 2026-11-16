@@ -4,7 +4,7 @@ import type { Technique } from "#/entities/technique/index.ts";
 import { DanceCredit } from "#/features/dance-stage/index.ts";
 import { REPRODUCTION_HEADING } from "#/pages/seikin-technique/model/copy.ts";
 
-import { Reproduction } from "./reproduction";
+import { Reproduction } from "./reproduction.tsx";
 
 export const ReproductionSection = ({
   technique,

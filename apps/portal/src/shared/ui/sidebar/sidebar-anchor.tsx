@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { NAV_ICONS } from "#/shared/config/index.ts";
 import type { PortalPath } from "#/shared/config/index.ts";
 
-import { useSetMobileOpen } from "./sidebar-state";
+import { useSetMobileOpen } from "./sidebar-state.ts";
 
 const EXACT = { exact: true } as const;
 

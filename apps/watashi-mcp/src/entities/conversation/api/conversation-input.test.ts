@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import { listRequestOf, readRequestOf } from "./conversation-input";
+import { listRequestOf, readRequestOf } from "./conversation-input.ts";
 
 const SESSION = "6df4989a-c0a7-5129-89d5-965ab358d4fe";
 

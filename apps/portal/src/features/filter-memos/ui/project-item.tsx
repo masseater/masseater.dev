@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import type { ProjectValue } from "#/entities/watashi/index.ts";
 
-import { PILL } from "./pill";
+import { PILL } from "./pill.ts";
 
 export const ProjectItem = ({
   active,
