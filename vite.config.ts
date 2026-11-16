@@ -1,5 +1,6 @@
 import {
   INSTRUMENTATION,
+  cloudflareResourceSyntax,
   decisionRules,
   decisionTestRules,
   generated,
@@ -53,7 +54,12 @@ const overrides = [
     files: ["apps/*/src/**/*.{ts,tsx}"],
     excludeFiles: ["**/*.test.ts"],
     rules: {
-      "eslint-js/no-restricted-syntax": ["error", removalPolicySyntax, ...unguardedWorkersAi],
+      "eslint-js/no-restricted-syntax": [
+        "error",
+        ...cloudflareResourceSyntax,
+        removalPolicySyntax,
+        ...unguardedWorkersAi,
+      ],
     },
   },
   ...workspace.lint.overrides,

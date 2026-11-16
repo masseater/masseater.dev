@@ -6,8 +6,10 @@ import {
   Record as Rec,
   pipe,
   Function as Fn,
+  Stream,
 } from "effect";
 import type { Scope } from "effect";
+import { Tar } from "effect/encoding";
 import { encode as encodeHex } from "effect/encoding/Hex";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { zip } from "fflate";
@@ -121,6 +123,16 @@ export const runGit: {
 export const lines = (...rows: readonly string[]): string => `${Arr.join(rows, "\n")}\n`;
 
 /** @internal */
+export const NO_FOO_RULE = lines(
+  "module.exports = (context) => ({",
+  "  [context.Syntax.Str](node) {",
+  '    if (context.getSource(node).includes("foo")) {',
+  '      context.report(node, new context.RuleError("foo is not allowed"));',
+  "    }",
+  "  },",
+  "});",
+);
+
 export const zipArchive = (files: Readonly<Record<string, string>>): Effect.Effect<Uint8Array> =>
   Effect.callback<Uint8Array>((resume) => {
     const encoder = new TextEncoder();
@@ -132,6 +144,24 @@ export const zipArchive = (files: Readonly<Record<string, string>>): Effect.Effe
       resume(Effect.succeed(zipped));
     });
   });
+
+/** @internal */
+export const tarGzArchive = (files: Readonly<Record<string, string>>): Effect.Effect<Uint8Array> =>
+  Stream.fromIterable(
+    pipe(
+      Rec.toEntries(files),
+      Arr.map(([name, source]) => Tar.file(name, source, { mode: 0o755 })),
+    ),
+  ).pipe(
+    Stream.pipeThroughChannel(Tar.encode()),
+    Stream.mkUint8Array,
+    Effect.flatMap((tar) =>
+      Effect.promise(() =>
+        new Response(new Blob([tar]).stream().pipeThrough(new CompressionStream("gzip"))).bytes(),
+      ),
+    ),
+    Effect.orDie,
+  );
 
 /** @internal */
 export const sha256Hex = (data: Uint8Array): Effect.Effect<string> => {

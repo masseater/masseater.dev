@@ -2,6 +2,7 @@ const COMMANDS: &[&str] = &[
     "list_marks",
     "save_mark",
     "remove_mark",
+    "get_still",
     "list_pairs",
     "choose_pair",
     "list_statements",

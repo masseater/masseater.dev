@@ -13,6 +13,7 @@ const worker = Effect.gen(function* worker() {
     RemovalPolicy.protect(),
   );
   return yield* Workers.Worker("Sync", {
+    limits: { cpuMs: 200 },
     name: `${PREFIX}worker`,
     main: "./src/app/sync.ts",
     logpush: true,

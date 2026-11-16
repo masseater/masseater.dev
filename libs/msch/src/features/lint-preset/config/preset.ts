@@ -38,6 +38,7 @@ const jsPlugins = [
   { name: "drizzle", specifier: resolved(`${typedRules}/drizzle`) },
   { name: "react-hooks-js", specifier: resolved("eslint-plugin-react-hooks") },
   { name: "@eslint-react", specifier: resolved(`${typedRules}/react`) },
+  { name: "@remotion", specifier: resolved(`${typedRules}/remotion`) },
   { name: "shadcn", specifier: resolved("@shadcn/lint") },
   { name: "no-comments", specifier: resolved("eslint-plugin-no-comments") },
   { name: "baseline-js", specifier: resolved("eslint-plugin-baseline-js") },
@@ -157,7 +158,7 @@ export const lint = {
   overrides,
   settings: {
     [decisionPluginName]: {
-      model: "cloudflare/@cf/qwen/qwen3.8-27b",
+      model: "cloudflare/@cf/cloudflare/clef-flash",
       timeoutMs: DECISION_TIMEOUT_MS,
       ci: "skip",
     },

@@ -1,8 +1,6 @@
 import { Array, Effect, FileSystem, HashSet, Stream, String, pipe } from "effect";
-import { createTarDecoder } from "modern-tar";
-import type { ParsedTarEntry } from "modern-tar";
+import { Tar } from "effect/encoding";
 
-import { collectBytes } from "#/shared/bytes/index.ts";
 import { captureAll } from "#/shared/text/index.ts";
 
 import { UnityPackageUnreadable } from "./unity-package-unreadable.ts";
@@ -12,29 +10,49 @@ const unreadable =
   (cause: unknown): UnityPackageUnreadable =>
     UnityPackageUnreadable.make({ path, cause });
 
+const piped = <Failure, Requirements>(
+  bytes: Stream.Stream<Uint8Array<ArrayBuffer>, Failure, Requirements>,
+  transform: () => CompressionStream | DecompressionStream,
+  path: string,
+): Effect.Effect<Stream.Stream<Uint8Array, UnityPackageUnreadable>, never, Requirements> =>
+  Effect.map(Stream.toReadableStreamEffect(bytes), (readable) =>
+    Stream.fromReadableStream({
+      evaluate: () => readable.pipeThrough(transform()),
+      onError: unreadable(path),
+    }),
+  );
+
 /** @internal */
 export const tarEntries = Effect.fn("tarEntries")(function* openTar(path: string) {
   const fileSystem = yield* FileSystem.FileSystem;
-  const readable = yield* Stream.toReadableStreamEffect(
+  const archive = yield* piped(
     fileSystem.stream(path).pipe(Stream.map((chunk) => Uint8Array.from(chunk))),
+    () => new DecompressionStream("gzip"),
+    path,
   );
-  return Stream.fromReadableStream({
-    evaluate: () =>
-      readable.pipeThrough(new DecompressionStream("gzip")).pipeThrough(createTarDecoder()),
-    onError: unreadable(path),
-  });
-});
-
-/** @internal */
-export const bodyOf = Effect.fn("bodyOf")(function* readBody(path: string, entry: ParsedTarEntry) {
-  return yield* collectBytes(
-    Stream.fromReadableStream({ evaluate: () => entry.body, onError: unreadable(path) }),
+  return archive.pipe(
+    Stream.pipeThroughChannel(Tar.decode<UnityPackageUnreadable>()),
+    Stream.mapError(unreadable(path)),
+    Stream.map(({ header, body }): Tar.Entry<UnityPackageUnreadable> => ({
+      header,
+      body: Stream.mapError(body, unreadable(path)),
+    })),
   );
 });
 
 /** @internal */
-export const skip = Effect.fn("skip")(function* skipBody(entry: ParsedTarEntry) {
-  yield* Effect.promise(() => entry.body.cancel());
+export const writeTar = Effect.fn("writeTar")(function* writeTarArchive(
+  destination: string,
+  entries: Stream.Stream<Tar.Entry, UnityPackageUnreadable>,
+) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const tar = entries.pipe(
+    Stream.pipeThroughChannel(Tar.encode<UnityPackageUnreadable>()),
+    Stream.mapError(unreadable(destination)),
+    Stream.map((chunk) => Uint8Array.from(chunk)),
+  );
+  const archive = yield* piped(tar, () => new CompressionStream("gzip"), destination);
+  yield* Stream.run(archive, fileSystem.sink(destination));
 });
 
 interface Scan {
@@ -58,11 +76,10 @@ const absorb = ({ references, tail }: Scan, chunk: Uint8Array): Scan => {
 
 /** @internal */
 export const scanBody = Effect.fn("scanBody")(function* scanReferences(
-  path: string,
-  entry: ParsedTarEntry,
+  entry: Tar.Entry<UnityPackageUnreadable>,
 ) {
   const { references } = yield* Stream.runFold(
-    Stream.fromReadableStream({ evaluate: () => entry.body, onError: unreadable(path) }),
+    entry.body,
     (): Scan => ({ references: HashSet.empty(), tail: "" }),
     absorb,
   );
