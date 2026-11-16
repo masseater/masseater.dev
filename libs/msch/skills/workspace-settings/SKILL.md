@@ -53,6 +53,10 @@ export default defineConfig({
 
 ## Rules
 
-- Write values, not imports or function calls. When several workspaces need the same rules, the root defines a set and each workspace names it in `use`.
-- Write `run.tasks.verify` in the workspace's own `vite.config.ts`. The root verify reads the file without running it, so a verify task built by code elsewhere never runs.
-- Keep repository-wide settings, such as `comments.allow` and `workspaceAgentsMd`, in the root `msch` block.
+Write values, not imports or function calls.
+When several workspaces need the same rules, the root defines a set and each workspace names it in `use`.
+
+Write `run.tasks.verify` in the workspace's own `vite.config.ts`.
+The root verify reads the file without running it, so a verify task built by code elsewhere never runs.
+
+Keep repository-wide settings such as `comments.allow` and `workspaceAgentsMd` in the root `msch` block.

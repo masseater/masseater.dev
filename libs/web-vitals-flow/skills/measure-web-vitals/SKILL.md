@@ -20,7 +20,7 @@ sources:
 
 ## Prerequisites
 
-- Node.js 26 or later and Chrome. Set `CHROME_PATH` when Chrome is not found.
+It needs Node.js 26 or later and Chrome. Set `CHROME_PATH` when Chrome is not found.
 
 ## Run it
 
@@ -42,5 +42,5 @@ A failing run names each step and metric that missed the passing score. Open `fl
 
 ## Common mistakes
 
-- Measuring with `--runs 1`. A single run is noisy, and the median needs several.
-- Measuring a page behind a login. The flow starts from a fresh browser, so it sees the login page.
+Do not measure with `--runs 1`. A single run is noisy, and the median needs several.
+A page behind a login cannot be measured, because the flow starts from a fresh browser and sees the login page.

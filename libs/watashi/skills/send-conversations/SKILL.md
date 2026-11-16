@@ -17,12 +17,15 @@ sources:
 
 # send-conversations
 
-The `watashi` CLI masks secrets in a Claude Code transcript on the local machine with Betterleaks, then sends it to watashi. The Claude Code plugin `watashi` runs `watashi hook stop` when a session stops.
+The `watashi` CLI masks secrets in a Claude Code transcript with Betterleaks on the local machine.
+It then sends the transcript to watashi.
+The Claude Code plugin `watashi` runs `watashi hook stop` when a session stops.
 
 ## Prerequisites
 
-- Node.js 26 or later.
-- Betterleaks 2.0.0-rc.7, found through `mise`, on `PATH`, or at the path in `WATASHI_BETTERLEAKS`. Without it the CLI refuses to send, so no unmasked text leaves the machine.
+The CLI needs Node.js 26 or later and Betterleaks 2.0.0-rc.7.
+It finds Betterleaks through `mise`, on `PATH`, or at the path in `WATASHI_BETTERLEAKS`.
+Without Betterleaks the CLI refuses to send, so no unmasked text leaves the machine.
 
 ## Send every session automatically
 
@@ -59,5 +62,5 @@ npx @r_masseater/watashi token issue --scope conversation:write --label cloud
 
 ## Common mistakes
 
-- Pasting the token into a repository or a transcript. Keep it in the environment's secrets.
-- Expecting the hook to send without `WATASHI_SEND_CONVERSATIONS=1`.
+Keep the token in the environment's secrets, never in a repository or a transcript.
+The hook sends nothing until `WATASHI_SEND_CONVERSATIONS=1` is set.

@@ -33,7 +33,7 @@ export default defineConfig({
 });
 ```
 
-The plugin adds a setup file. Before the tests run it sets these variables:
+The plugin adds a setup file, which sets the variables below before the tests run.
 
 | Variable                                                    | Value                                                                                      |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
@@ -69,7 +69,8 @@ test("checkout is traced", () =>
   }).pipe(Effect.runPromise));
 ```
 
-`waitForSpans`, `waitForLogs` and `waitForMetrics` poll the receiver and succeed with every matching item once enough have arrived. They take these options:
+`waitForSpans`, `waitForLogs` and `waitForMetrics` poll the receiver.
+They succeed with every matching item once enough have arrived, and take the options below.
 
 | Option     | Default    | Meaning                                                              |
 | ---------- | ---------- | -------------------------------------------------------------------- |
@@ -82,11 +83,17 @@ test("checkout is traced", () =>
 
 ## Semantic conventions
 
-`otlp({ semconv: true })` also runs OpenTelemetry Weaver against everything received and fails the run on violations of the semantic conventions. Pass an object to change `registry`, the `weaver` binary or `failOn` (`violation`, `improvement` or `information`). Weaver must be on `PATH` unless `weaver` names it.
+`otlp({ semconv: true })` also runs OpenTelemetry Weaver against everything received.
+The run fails when the telemetry violates the semantic conventions.
+Pass an object to change `registry`, the `weaver` binary or `failOn`.
+`failOn` is `violation`, `improvement` or `information`.
+Weaver must be on `PATH` unless `weaver` names it.
 
 ## Cloudflare Workers
 
-`tailWorker()` from `@r_masseater/vitest-otlp/workers` bundles a tail worker that forwards a Worker's traces and logs to the receiver. Add it to Miniflare's `workers` and list its name in the traced Worker's `streamingTails`.
+`tailWorker()` from `@r_masseater/vitest-otlp/workers` bundles a tail worker.
+It forwards a Worker's traces and logs to the receiver.
+Add it to Miniflare's `workers` and list its name in the traced Worker's `streamingTails`.
 
 ```ts
 import { waitForSpans } from "@r_masseater/vitest-otlp";

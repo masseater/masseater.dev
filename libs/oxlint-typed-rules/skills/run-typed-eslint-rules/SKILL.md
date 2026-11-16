@@ -18,7 +18,9 @@ sources:
 
 # run-typed-eslint-rules
 
-Oxlint's JS plugins receive no type information. This package builds a TypeScript 7 program for each linted file and hands the rule the `parserServices` that typed ESLint rules read. ESLint itself is not installed.
+Oxlint's JS plugins receive no type information.
+This package builds a TypeScript 7 program for each linted file.
+It hands the rule the `parserServices` that typed ESLint rules read, without installing ESLint.
 
 ## Setup
 
@@ -73,11 +75,11 @@ export default {
 
 ## Choose the tool
 
-- A typescript-eslint rule that oxlint also has, such as `no-floating-promises`, runs faster in tsgolint. Use tsgolint for those.
-- Use this package for typed rules that tsgolint does not have.
-- Running both builds type information twice, so memory grows by that much.
+A typescript-eslint rule that oxlint also has, such as `no-floating-promises`, runs faster in tsgolint.
+Use tsgolint for those, and this package for typed rules that tsgolint does not have.
+Running both builds type information twice, so memory grows by that much.
 
 ## Common mistakes
 
-- Linting a file that no `tsconfig.json` includes. The rule gets no program and reports nothing.
-- Expecting ESLint configs to load as they are. Turn the rules on in the oxlint config.
+A file that no `tsconfig.json` includes gets no program, so the rule reports nothing for it.
+ESLint configs do not load as they are. Turn the rules on in the oxlint config.

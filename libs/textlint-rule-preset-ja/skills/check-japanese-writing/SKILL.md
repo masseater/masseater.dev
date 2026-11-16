@@ -52,7 +52,7 @@ In a repository that uses @r_masseater/msch, `repositoryConfig` already enables 
 }
 ```
 
-To disable a rule for one passage in Markdown, name it with the preset prefix:
+To disable a rule for one passage in Markdown, name it with the preset prefix as below.
 
 ```md
 <!-- textlint-disable @r_masseater/ja/no-taigendome -->

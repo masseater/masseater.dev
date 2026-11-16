@@ -50,11 +50,14 @@ The root `vite.config.ts` builds the whole configuration with `repositoryConfig`
 
 ## What repositoryConfig returns
 
-It returns `lint`, `fmt`, `staged`, `test`, `run` and the vite-plus-adopt sections: `commitlint`, `dependencyRules`, `betterleaks`, `steiger` and `textlint`.
+It returns `lint`, `fmt`, `staged`, `test` and `run`.
+It also returns the vite-plus-adopt sections `commitlint`, `dependencyRules`, `betterleaks`, `steiger` and `textlint`.
 
-- Steiger checks the `src` directory of every workspace.
-- The `verify` task depends on every workspace's `verify` and on every root task. A task added to `run.tasks` is verified without listing it anywhere.
-- The lint overrides already relax the rules for shadcn/ui components, public entries and deploy entries, and apply `decisionTestRules` to `*.test.ts`.
+Steiger checks the `src` directory of every workspace.
+The `verify` task depends on every workspace's `verify` and on every root task.
+A task added to `run.tasks` is therefore verified without listing it anywhere.
+The lint overrides already relax the rules for shadcn/ui components, public entries and deploy entries.
+They also apply `decisionTestRules` to `*.test.ts`.
 
 ## Options
 
@@ -70,12 +73,16 @@ It returns `lint`, `fmt`, `staged`, `test`, `run` and the vite-plus-adopt sectio
 
 `workspaceSettings` takes `ruleSets` and `dependencySets`. A workspace names them with `use`, so the values stay in the root.
 
-- `decisionRules` cost a request per check. The preset leaves them off. Name them only for files that need them.
-- `tracedRules` belong to Worker code that records spans with @r_masseater/workers-tracing.
-- `remotionRules` belong to workspaces that build videos with Remotion.
+| Rule set        | Use                                                                                    |
+| --------------- | -------------------------------------------------------------------------------------- |
+| `decisionRules` | Each check costs a request, so the preset leaves them off. Name them only where needed |
+| `tracedRules`   | Worker code that records spans with @r_masseater/workers-tracing                       |
+| `remotionRules` | Workspaces that build videos with Remotion                                             |
 
 ## Common mistakes
 
-- Writing a workspace path in the root config. The `root-workspace-path` check rejects it. Put the setting in that workspace's `msch` block instead, as [workspace-settings](../workspace-settings/SKILL.md) describes.
-- Adding commitlint, textlint presets or `@ast-grep/cli` to the root `package.json`. msch already depends on them.
-- Running effecttsgo rules on a plain oxlint. They need the oxlint that @effect/tsgo patches: run `effect-tsgo patch --typescript --oxlint` in `prepare`, or lint with `effect-tsgo vp check`.
+| Mistake                                                                           | Fix                                                                                                                                 |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Writing a workspace path in the root config                                       | The `root-workspace-path` check rejects it. Use the workspace's `msch` block ([workspace-settings](../workspace-settings/SKILL.md)) |
+| Adding commitlint, textlint presets or `@ast-grep/cli` to the root `package.json` | msch already depends on them                                                                                                        |
+| Running effecttsgo rules on a plain oxlint                                        | Run `effect-tsgo patch --typescript --oxlint` in `prepare`, or lint with `effect-tsgo vp check`                                     |

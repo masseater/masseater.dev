@@ -18,7 +18,11 @@ sources:
 
 # configure-checks
 
-`vpa` runs Betterleaks, actionlint, zizmor, commitlint, textlint, markdownlint, Steiger, fallow and the dependency rules from the sections of `vite.config.ts`. Run without arguments, it runs every configured check in parallel and prints the results together.
+`vpa` runs the checks that the sections of `vite.config.ts` configure.
+They cover secrets with Betterleaks and workflows with actionlint and zizmor.
+They also run commitlint, textlint and markdownlint.
+Steiger, fallow and the dependency rules check the code.
+Run without arguments, it runs every configured check in parallel and prints the results together.
 
 ## Setup
 
@@ -68,21 +72,28 @@ In a repository that uses @r_masseater/msch, `repositoryConfig` writes these sec
 
 ## Section notes
 
-- `textlint` checks the Markdown that git tracks. To check other files, list a glob (`files`) and its settings in `textlint.sources`.
-- `steiger` checks only the directories matched by `steiger.paths` that hold FSD layer folders (`app`, `pages`, `widgets`, `features`, `entities`, `shared`) directly.
-- `betterleaks.filter` is an expression that accepts a finding, such as a public token pattern. `ignoredSecrets` takes SHA-256 hashes of secrets that are known to be safe.
-- The commitlint check and the git-history checks compare against `VPA_BASE`, which defaults to `origin/main`. Run them with `cache: false`.
+| Section       | Note                                                                                                     |
+| ------------- | -------------------------------------------------------------------------------------------------------- |
+| `textlint`    | Checks the Markdown that git tracks. List other globs (`files`) and their settings in `textlint.sources` |
+| `steiger`     | Checks only the `steiger.paths` directories that hold FSD layer folders such as `features` directly      |
+| `betterleaks` | `filter` is an expression that accepts a finding. `ignoredSecrets` takes SHA-256 hashes of safe secrets  |
+| `commitlint`  | Compares against `VPA_BASE` (default `origin/main`) like the git-history checks. Run with `cache: false` |
 
 ## Bundled replacements
 
-- `@r_masseater/vite-plus-adopt/fsd` bundles @feature-sliced/steiger-plugin with the same rules and `configs.recommended`. vpa does not use Steiger's CLI, so `overrides: { "steiger>@feature-sliced/steiger-plugin": "-" }` in `pnpm-workspace.yaml` drops the TypeScript 5 it pulls in.
-- `@r_masseater/vite-plus-adopt/attw` has the API of @arethetypeswrong/core on TypeScript 7.1 alone. Pass it as `pack.attw.module`.
+`@r_masseater/vite-plus-adopt/fsd` bundles @feature-sliced/steiger-plugin with the same rules and `configs.recommended`.
+vpa does not use Steiger's CLI.
+The plugin pulls in TypeScript 5.
+Add `overrides: { "steiger>@feature-sliced/steiger-plugin": "-" }` to `pnpm-workspace.yaml` to drop it.
 
-  ```ts
-  import * as attw from "@r_masseater/vite-plus-adopt/attw";
-  import { defineConfig } from "vite-plus";
+`@r_masseater/vite-plus-adopt/attw` has the API of @arethetypeswrong/core on TypeScript 7.1 alone.
+Pass it as `pack.attw.module`.
 
-  export default defineConfig({
-    pack: { attw: { module: attw, profile: "esm-only", level: "error" } },
-  });
-  ```
+```ts
+import * as attw from "@r_masseater/vite-plus-adopt/attw";
+import { defineConfig } from "vite-plus";
+
+export default defineConfig({
+  pack: { attw: { module: attw, profile: "esm-only", level: "error" } },
+});
+```

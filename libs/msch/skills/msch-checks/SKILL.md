@@ -21,14 +21,20 @@ msch holds masseater's repository conventions as checks. No list of those conven
 
 Run `vp exec msch` at the repository root. It takes no subcommand, checks the whole repository and exits with 1 when it finds anything. `--json` prints the findings as JSON.
 
-msch also runs every vite-plus-adopt check that the root `vite.config.ts` configures: Betterleaks, commitlint, textlint, Steiger, dependency rules and fallow. Those checks read `VPA_BASE` (default `origin/main`) and other environment variables, so a task that runs msch sets `cache: false`.
+msch also runs every vite-plus-adopt check that the root `vite.config.ts` configures.
+Those include Betterleaks, commitlint and textlint.
+Steiger, the dependency rules and fallow run as well.
+They read `VPA_BASE` (default `origin/main`) and other environment variables.
+A task that runs msch therefore sets `cache: false`.
 
 The lint preset `@r_masseater/msch/lint` reports the rest through `vp lint`, including the `msch-lint/*` rules.
 
 ## Git hooks
 
-- pre-commit: `msch --staged`
-- commit-msg: `msch --commit-msg "$1"`
+| Hook       | Command                  |
+| ---------- | ------------------------ |
+| pre-commit | `msch --staged`          |
+| commit-msg | `msch --commit-msg "$1"` |
 
 ## Act on a finding
 
@@ -38,5 +44,5 @@ Never silence a finding with an ignore list, a disable directive or an override.
 
 ## Related skills
 
-- [repository-config](../repository-config/SKILL.md) builds the root `vite.config.ts` that configures these checks.
-- [workspace-settings](../workspace-settings/SKILL.md) covers what one workspace may change.
+[repository-config](../repository-config/SKILL.md) builds the root `vite.config.ts` that configures these checks.
+[workspace-settings](../workspace-settings/SKILL.md) covers what one workspace may change.

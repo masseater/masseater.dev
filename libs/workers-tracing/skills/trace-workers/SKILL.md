@@ -18,7 +18,11 @@ sources:
 
 # trace-workers
 
-Cloudflare Workers traces each request and every binding call (D1, KV, R2, Durable Objects, `fetch`) by itself. This package nests the application's own steps above those spans in the same trace: the route, the server function and each `Effect.withSpan` or `Effect.fn`. Traces are kept only on the Workers Paid plan.
+Cloudflare Workers traces each request and every binding call by itself.
+Those calls include D1, KV, R2, Durable Objects and `fetch`.
+This package nests the application's own steps above those spans in the same trace.
+The steps are the route, the server function and each `Effect.withSpan` or `Effect.fn`.
+Traces are kept only on the Workers Paid plan.
 
 ## Entries
 
@@ -32,7 +36,8 @@ Cloudflare Workers traces each request and every binding call (D1, KV, R2, Durab
 | `./workers-ai`     | `runWorkersAi`, which retries out-of-capacity errors and records `gen_ai.*` attributes                                                |
 | `./oxlint`         | `restrictedSyntax`, which bans `env.AI.run` outside `runWorkersAi`                                                                    |
 
-On Node.js and in the browser, `./effect`, `./tanstack-start` and `./elysia` resolve to pass-through versions, so the same imports work in tests and client bundles.
+On Node.js and in the browser, `./effect`, `./tanstack-start` and `./elysia` resolve to pass-through versions.
+The same imports therefore work in tests and client bundles.
 
 ## Setup
 
@@ -48,7 +53,7 @@ export default Stack(
 );
 ```
 
-TanStack Start, in `src/start.ts`:
+TanStack Start sets the middleware in `src/start.ts`.
 
 ```ts no-check
 import { requestSpan, serverFnSpan } from "@r_masseater/workers-tracing/tanstack-start";
@@ -95,7 +100,9 @@ It fails with `WorkersAiError` and logs a cut-off answer. Add `restrictedSyntax`
 
 ## Checking spans in CI
 
-Deploy `traceSink()` once per account as its own stack, then name its destination in `withWorkersTracing({ destinations: ["workers-tracing"] })`. The sink logs every received span, and `workers-traces` reads them back through the Workers Observability API.
+Deploy `traceSink()` once per account as its own stack.
+Then name its destination in `withWorkersTracing({ destinations: ["workers-tracing"] })`.
+The sink logs every received span, and `workers-traces` reads them back through the Workers Observability API.
 
 ```sh
 workers-traces --request https://app.example.com/ --expect "GET /" --expect invite.load --wait 60

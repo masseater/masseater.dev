@@ -52,7 +52,12 @@ const cleaned = await Effect.runPromise(program);
 
 ## Check a file
 
-`readDocument({ bytes, name })` turns a file into text first. It reads plain text, HTML, Markdown, Office documents, PDF and images (with OCR), and picks the reader from the name and the bytes. Pass `document.text` and `document.format` to `detect`, so the sentences are split the way that format reads. `document.unreadable` lists the parts it could not read; pass it as `unreadable` so the result reports them.
+`readDocument({ bytes, name })` turns a file into text first.
+It reads plain text, HTML, Markdown and Office documents.
+It also reads PDF and images, which go through OCR.
+It picks the reader from the name and the bytes.
+Pass `document.text` and `document.format` to `detect`, so the sentences are split the way that format reads.
+`document.unreadable` lists the parts it could not read. Pass it as `unreadable` so the result reports them.
 
 ## Options
 

@@ -18,7 +18,9 @@ sources:
 
 # extract-invoice-fields
 
-`extract` reads fields from an invoice or receipt image. With the decision methods it runs OCR on the image and lets a decision model pick which OCR line holds each field, so the answer is always text that is on the page. The models run on OpenRouter.
+`extract` reads fields from an invoice or receipt image.
+With the decision methods it runs OCR on the image and lets a decision model pick the OCR line that holds each field.
+The answer is therefore always text that is on the page. The models run on OpenRouter.
 
 ## Setup
 
@@ -71,4 +73,6 @@ console.log(extraction.costUsd);
 
 ## Custom fields
 
-A field is `{ id, label, description }`. The description tells the model what the field is and what it is not, such as "the total including tax, not the subtotal". Write it the same way for fields of your own.
+A field is `{ id, label, description }`.
+The description tells the model what the field is and what it is not.
+An example is "the total including tax, not the subtotal". Write it the same way for fields of your own.
