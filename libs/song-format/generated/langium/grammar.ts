@@ -6,11 +6,11 @@
 import type { Grammar } from 'langium';
 import { loadGrammarFromJson } from 'langium';
 
-let loadedFuGrammar: Grammar | undefined;
-export const FuGrammar = (): Grammar => loadedFuGrammar ?? (loadedFuGrammar = loadGrammarFromJson(`{
+let loadedFumxGrammar: Grammar | undefined;
+export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGrammar = loadGrammarFromJson(`{
   "$type": "Grammar",
   "isDeclared": true,
-  "name": "Fu",
+  "name": "Fumx",
   "rules": [
     {
       "$type": "ParserRule",

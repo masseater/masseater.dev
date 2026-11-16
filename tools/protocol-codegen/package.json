@@ -7,7 +7,6 @@
     "#/*": "./src/*"
   },
   "dependencies": {
-    "@masseater.dev/akapen-protocol": "workspace:*",
     "@masseater.dev/aredoko-protocol": "workspace:*",
     "@masseater.dev/effect2rs": "workspace:*",
     "@masseater.dev/media-notes-protocol": "workspace:*",
