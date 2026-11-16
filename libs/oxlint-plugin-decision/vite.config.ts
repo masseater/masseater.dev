@@ -8,8 +8,7 @@ export default defineConfig({
   pack: {
     entry: {
       index: "src/app/index.ts",
-      "openrouter-app": "src/app/openrouter-app.ts",
-      "openrouter-worker": "src/app/openrouter-worker.ts",
+      "typesafe-worker": "src/app/typesafe-worker.ts",
       "cloudflare-worker": "src/app/cloudflare-worker.ts",
       "presets/index": "src/app/presets.ts",
       "presets/recommended": "src/app/recommended.ts",

@@ -19,7 +19,7 @@ import {
 } from "#/features/judge-code/index.ts";
 
 import { cloudflare } from "./cloudflare.ts";
-import { openRouter } from "./openrouter.ts";
+import { typesafe } from "./typesafe.ts";
 
 const DEFAULT_NAME = "decision";
 
@@ -34,7 +34,7 @@ const metaOf = (rule: DecisionRule): RuleMeta => ({
 });
 
 const optionsOf = (setup: DecisionPluginSetup): DecisionOptions =>
-  Struct.omit(setup, ["name", "rules", "providers"]);
+  Struct.omit(setup, ["name", "rules"]);
 
 type Resolve = (settings: unknown) => ResolvedOptions;
 
@@ -74,7 +74,7 @@ export const createDecisionPlugin = (setup: DecisionPluginSetup): DecisionPlugin
   const name = setup.name ?? DEFAULT_NAME;
   const providers: Readonly<Record<string, DecisionProvider>> = Rec.fromEntries(
     pipe(
-      [cloudflare, openRouter, ...(setup.providers ?? [])],
+      [cloudflare, typesafe],
       Arr.map((provider) => [provider.name, provider]),
     ),
   );

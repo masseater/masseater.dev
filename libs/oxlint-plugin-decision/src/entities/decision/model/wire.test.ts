@@ -1,173 +1,87 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
-import { Effect, Array as Arr, Record as Rec, pipe } from "effect";
+import { Array as Arr, Effect, Record as Rec, pipe } from "effect";
 
-import type { Answers, DecisionRequest, NoulAnswer } from "./types.ts";
-import { mergeResponses, wireRequestsFor } from "./wire.ts";
+import type { DecisionRequest, Question } from "./types.ts";
+import { fileRequestsFor, mergeResponses, snippetRequestsFor } from "./wire.ts";
 
 const TIMEOUT = 120_000;
-const RESPAN = "respan/span-01-lite";
-const SERVED = "respan/span-01-lite-20260925";
-const TINY = 0.125;
-const LOW = 0.25;
-const HALF = 0.5;
-const HIGH = 0.875;
+const MODEL = "@cf/cloudflare/clef-flash";
+const MAX_QUESTIONS = 64;
+const OVER_LIMIT = 65;
+const YES = 0.9;
+const FIRST = 1;
+const REST = 1;
 
-type Scores = Readonly<Record<string, number>>;
+const noul = (instructions: string): Question => ({ type: "noul", instructions });
 
-const SEVERITY = {
-  none: "No problem",
-  info: "Worth noting, but not a problem",
-  warn: "Likely a problem",
-  error: "Clearly a problem",
-} as const;
-
-const classifyRequest = (model: string): DecisionRequest => ({
-  model,
-  state: { snippets: { s0: "f()" } },
-  questions: {
-    s0: {
-      type: "choice",
-      instructions: "How is it?",
-      criteria: { safe: "Fine", leaks: "Leaks data" },
-    },
-  },
-});
-
-const severityRequest: DecisionRequest = {
-  model: RESPAN,
-  state: { snippets: { s0: "f()" } },
-  questions: { s0: { type: "choice", instructions: "Is it risky?", criteria: SEVERITY } },
-};
-
-const yes = (noul: number): NoulAnswer => ({ type: "noul", noul });
-
-const yesAnswers = (scores: Scores): Answers =>
-  Rec.fromEntries(
-    pipe(
-      Rec.toEntries(scores),
-      Arr.map(([id, noul]) => [id, yes(noul)]),
-    ),
+const refsUpTo = (count: number): readonly string[] =>
+  pipe(
+    Arr.range(FIRST, count),
+    Arr.map((index) => `s${String(index)}`),
   );
 
-const merged = (request: DecisionRequest, scores: Scores): unknown =>
-  mergeResponses(request, [{ model: SERVED, answers: yesAnswers(scores) }]);
-
-const choiceOf = (scores: Scores, choice: string, probabilities: Scores): unknown => ({
-  model: SERVED,
-  answers: { ...yesAnswers(scores), s0: { type: "choice", choice, probabilities } },
+const manySnippets = (count: number): DecisionRequest => ({
+  model: MODEL,
+  state: {
+    snippets: Rec.fromEntries(
+      pipe(
+        refsUpTo(count),
+        Arr.map((ref) => [ref, "f()"]),
+      ),
+    ),
+  },
+  questions: Rec.fromEntries(
+    pipe(
+      refsUpTo(count),
+      Arr.map((ref) => [ref, noul("Is f risky?")]),
+    ),
+  ),
 });
 
-const keepsChoice = Effect.sync(() => {
-  const request = classifyRequest("~typesafe/jev-latest");
-  deepStrictEqual(wireRequestsFor(request), [request]);
-});
+const twoSnippets: DecisionRequest = {
+  model: MODEL,
+  state: { snippets: { s0: "f()", s1: "g()" }, contexts: { s0: "file a", s1: "file b" } },
+  questions: { s0: noul("Is f risky?"), s1: noul("Is g risky?") },
+};
 
-const splitsLabels = Effect.sync(() => {
-  deepStrictEqual(wireRequestsFor(classifyRequest(RESPAN)), [
+const splitsBySnippet = Effect.sync(() => {
+  deepStrictEqual(snippetRequestsFor(twoSnippets), [
     {
-      model: RESPAN,
-      state: "state.snippets.s0:\nf()",
-      questions: {
-        s0__safe: { type: "noul", instructions: 'How is it? Does the label "safe" (Fine) fit?' },
-        s0__leaks: {
-          type: "noul",
-          instructions: 'How is it? Does the label "leaks" (Leaks data) fit?',
-        },
-      },
+      model: MODEL,
+      state: { snippets: { s0: "f()" }, contexts: { s0: "file a" } },
+      questions: { s0: noul("Is f risky?") },
+    },
+    {
+      model: MODEL,
+      state: { snippets: { s1: "g()" }, contexts: { s1: "file b" } },
+      questions: { s1: noul("Is g risky?") },
     },
   ]);
 });
 
-const picksLabel = Effect.sync(() => {
-  const scores = { s0__safe: LOW, s0__leaks: HIGH };
-  deepStrictEqual(
-    merged(classifyRequest(RESPAN), scores),
-    choiceOf(scores, "leaks", { safe: LOW, leaks: HIGH }),
+const chunksLargeRequests = Effect.sync(() => {
+  const wires = fileRequestsFor(manySnippets(OVER_LIMIT));
+  const sizes = pipe(
+    wires,
+    Arr.map(({ questions }) => Rec.size(questions)),
   );
+  deepStrictEqual(sizes, [MAX_QUESTIONS, REST]);
 });
 
-const missingLabel = Effect.sync(() => {
-  const scores = { s0__safe: LOW };
-  deepStrictEqual(merged(classifyRequest(RESPAN), scores), {
-    model: SERVED,
-    answers: yesAnswers(scores),
-  });
+const yes = { type: "noul", noul: YES } as const;
+
+const mergesAnswers = Effect.sync(() => {
+  const merged = mergeResponses([
+    { model: MODEL, answers: { s0: yes } },
+    { model: MODEL, answers: { s1: yes } },
+  ]);
+  deepStrictEqual(merged, { model: MODEL, answers: { s0: yes, s1: yes } });
 });
 
-const splitsLevels = Effect.sync(() => {
-  deepStrictEqual(
-    pipe(
-      wireRequestsFor(severityRequest),
-      Arr.map(({ questions }) => questions),
-    ),
-    [
-      {
-        s0__info: {
-          type: "noul",
-          instructions:
-            'Is it risky? Is it at least as serious as "info" (Worth noting, but not a problem)?',
-        },
-        s0__warn: {
-          type: "noul",
-          instructions: 'Is it risky? Is it at least as serious as "warn" (Likely a problem)?',
-        },
-        s0__error: {
-          type: "noul",
-          instructions: 'Is it risky? Is it at least as serious as "error" (Clearly a problem)?',
-        },
-      },
-    ],
-  );
+layer(NodeServices.layer, { excludeTestServices: true })("wire requests", (it) => {
+  it.effect("sends one request per snippet", () => splitsBySnippet, TIMEOUT);
+  it.effect("splits a file with more than 64 questions", () => chunksLargeRequests, TIMEOUT);
+  it.effect("merges the answers of every request", () => mergesAnswers, TIMEOUT);
 });
-
-const picksLevel = Effect.sync(() => {
-  const scores = { s0__info: HIGH, s0__warn: HALF, s0__error: LOW };
-  deepStrictEqual(
-    merged(severityRequest, scores),
-    choiceOf(scores, "info", { none: TINY, info: HIGH, warn: HALF, error: LOW }),
-  );
-});
-
-const raisesLevels = Effect.sync(() => {
-  const scores = { s0__info: LOW, s0__warn: TINY, s0__error: HIGH };
-  deepStrictEqual(
-    merged(severityRequest, scores),
-    choiceOf(scores, "error", { none: TINY, info: HIGH, warn: HIGH, error: HIGH }),
-  );
-});
-
-const noLevel = Effect.sync(() => {
-  const scores = { s0__info: HALF, s0__warn: TINY, s0__error: TINY };
-  deepStrictEqual(
-    merged(severityRequest, scores),
-    choiceOf(scores, "none", { none: HALF, info: HALF, warn: TINY, error: TINY }),
-  );
-});
-
-layer(NodeServices.layer, { excludeTestServices: true })(
-  "choice questions for yes/no-only models",
-  (it) => {
-    it.effect(
-      "keeps one choice question for models that answer choices",
-      () => keepsChoice,
-      TIMEOUT,
-    );
-    it.effect("asks one yes/no question per classify label", () => splitsLabels, TIMEOUT);
-    it.effect("picks the label with the highest yes probability", () => picksLabel, TIMEOUT);
-    it.effect(
-      "leaves the choice unanswered when a label has no answer",
-      () => missingLabel,
-      TIMEOUT,
-    );
-    it.effect(
-      "asks one at-least question per severity level above none",
-      () => splitsLevels,
-      TIMEOUT,
-    );
-    it.effect("picks the most serious level the model is confident in", () => picksLevel, TIMEOUT);
-    it.effect("raises a level to the yes of a more serious one", () => raisesLevels, TIMEOUT);
-    it.effect("answers none when no level reaches 0.8", () => noLevel, TIMEOUT);
-  },
-);

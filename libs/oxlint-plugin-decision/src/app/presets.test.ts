@@ -1,11 +1,22 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Effect, Array as Arr, Option, String as Str, pipe, Order } from "effect";
+import {
+  Effect,
+  Array as Arr,
+  Boolean as Bool,
+  Option,
+  Record as Rec,
+  String as Str,
+  pipe,
+  Order,
+} from "effect";
 import type { PlatformError } from "effect/PlatformError";
 
 import { presets } from "#/features/define-presets/index.ts";
 
+import { FAKE_SETTINGS, fakeTypesafeEnv } from "./fake-typesafe.test.support.ts";
+import type { Answerer } from "./fake-typesafe.test.support.ts";
 import {
   EXAMPLE_FILES,
   FAILED,
@@ -44,40 +55,36 @@ const MARKERS = {
   "hand-written chain": "typeof body.id",
 } as const;
 
-const fakePlugin = (core: string, presetsEntry: string, preset: string): string => `
-import { createDecisionPlugin, defineProvider } from ${toJson(core)};
-import { presets } from ${toJson(presetsEntry)};
+const YES = 0.95;
+const NO = 0.05;
 
-const MARKERS = ${toJson(MARKERS)};
+const flagged = (instructions: string, snippet: string): boolean =>
+  pipe(
+    Rec.toEntries(MARKERS),
+    Arr.some(
+      ([topic, marker]) => Str.includes(topic)(instructions) && Str.includes(marker)(snippet),
+    ),
+  );
 
-const flagged = (instructions, snippet) =>
-  Object.entries(MARKERS).some(([topic, marker]) => instructions.includes(topic) && snippet.includes(marker));
-
-const answerFor = (request, ref, question) => {
-  const snippet = typeof request.state === "string" ? request.state : request.state.snippets[ref] ?? "";
+const markerAnswer: Answerer = ({ question, snippet }) => {
   const yes = flagged(question.instructions, snippet);
   if (question.type === "noul") {
-    return { type: "noul", noul: yes ? 0.95 : 0.05 };
+    return { type: "noul", noul: Bool.match(yes, { onTrue: () => YES, onFalse: () => NO }) };
   }
-  const labels = Object.keys(question.criteria);
-  const choice = yes ? labels.at(-1) : labels[0];
-  return { type: "choice", choice, probabilities: { [choice]: 0.95 } };
+  const labels = Rec.keys(question.criteria ?? {});
+  const picked = Bool.match(yes, {
+    onTrue: () => Arr.last(labels),
+    onFalse: () => Arr.head(labels),
+  });
+  const choice = Option.getOrElse(picked, () => "");
+  return { type: "choice", choice, probabilities: { [choice]: YES } };
 };
 
-const decide = ({ request }) => ({
-  ok: true,
-  response: {
-    model: "fake-1",
-    answers: Object.fromEntries(
-      Object.entries(request.questions).map(([ref, question]) => [ref, answerFor(request, ref, question)]),
-    ),
-  },
-});
+const fakePlugin = (core: string, presetsEntry: string, preset: string): string => `
+import { createDecisionPlugin } from ${toJson(core)};
+import { presets } from ${toJson(presetsEntry)};
 
-export default createDecisionPlugin({
-  rules: presets[${toJson(preset)}],
-  providers: [defineProvider({ name: "fake", requiredEnv: [], decide })],
-});
+export default createDecisionPlugin({ rules: presets[${toJson(preset)}] });
 `;
 
 const lintWithFake = (preset: PresetName): Effect.Effect<Run, PlatformError, Services> =>
@@ -90,14 +97,15 @@ const lintWithFake = (preset: PresetName): Effect.Effect<Run, PlatformError, Ser
         ...(yield* exampleFiles),
         "oxlint.config.ts": configSource({
           jsPlugins: ["./plugin.mjs"],
-          settings: { decision: { model: "fake/any", ci: "fail" } },
+          settings: { decision: { ...FAKE_SETTINGS, ci: "fail" } },
           rules: enabled("decision", presets[preset]),
         }),
       });
+      const env = yield* fakeTypesafeEnv(markerAnswer);
       return yield* oxlint(
         cwd,
         ["--format", "unix", "-c", "oxlint.config.ts", ...EXAMPLE_FILES],
-        {},
+        env,
       );
     }),
   );
