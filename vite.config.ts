@@ -24,6 +24,8 @@ const notInputs = [
   ...(await ignoredDirectories(import.meta.dirname)),
   "!node_modules/.pnpm-store",
   "!node_modules/.pnpm-store/**",
+  "!node_modules/.tmp",
+  "!node_modules/.tmp/**",
 ];
 
 const ruleSets: RuleSets = { decision: decisionRules, traced: tracedRules };
