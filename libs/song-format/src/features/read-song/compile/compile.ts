@@ -1,4 +1,4 @@
-import { Array as Arr, Option, pipe } from "effect";
+import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 import type { Predicate } from "effect";
 
 import type { Edit, Hit, Note, Slice } from "#/entities/song/events.ts";
@@ -9,7 +9,7 @@ import { barsOfSong } from "./bars.ts";
 import type { PlacedItem } from "./bars.ts";
 import { declarationsOf } from "./declarations.ts";
 import type { Item, NoteItem } from "./items.ts";
-import { problemAt } from "./problem.ts";
+import { problemAt, problemsOf } from "./problem.ts";
 import type { Compiled, From, Problem } from "./problem.ts";
 
 type PlacedOf<Kind extends Item["kind"]> = PlacedItem & {
@@ -38,77 +38,57 @@ const noteOf: From<PlacedNote, Note> = (placed) => {
   return { ...timedOf(placed), midi, cents, velocity, gate, articulation, lyric, bend, params };
 };
 
-const continues =
-  (note: Note): From<PlacedNote, boolean> =>
-  (candidate) =>
-    candidate.track === note.track &&
-    candidate.item.midi === note.midi &&
-    candidate.start === note.start + note.length;
-
 const joined = (head: Note, tail: Note): Note => {
   const length = head.length + tail.length;
   return { ...head, length, gate: (head.length + tail.length * tail.gate) / length };
 };
 
-interface Chain {
-  readonly note: Note;
-  readonly consumed: readonly number[];
-  readonly problems: readonly Problem[];
-}
-
-const followOf: From<readonly PlacedNote[], From<Chain, From<PlacedNote, Chain>>> =
-  (placed) => (chain) => (current) =>
-    Option.match(current.item.tie, {
-      onNone: () => chain,
-      onSome: (tie) =>
-        pipe(
-          placed,
-          Arr.findFirstWithIndex(
-            (candidate, index) =>
-              !Arr.contains(chain.consumed, index) && continues(chain.note)(candidate),
-          ),
-          Option.match({
-            onNone: () => ({
-              ...chain,
-              problems: [
-                ...chain.problems,
-                problemAt(tie)("tie")("tie の続きの音が次の小節の頭にありません"),
-              ],
-            }),
-            onSome: ([next, index]) =>
-              followOf(placed)({
-                note: joined(chain.note, noteOf(next)),
-                consumed: [...chain.consumed, index],
-                problems: chain.problems,
-              })(next),
-          }),
-        ),
-    });
+const keyOf = (track: string, midi: number, start: number): string =>
+  `${track}:${String(midi)}:${String(start)}`;
 
 interface Tied {
   readonly notes: readonly Note[];
-  readonly consumed: readonly number[];
   readonly problems: readonly Problem[];
 }
 
-const UNTIED: Tied = { notes: [], consumed: [], problems: [] };
-
-const tieNotes: From<readonly PlacedNote[], Tied> = (placed) =>
-  Arr.reduce(placed, UNTIED, (state, candidate, index) => {
-    if (Arr.contains(state.consumed, index)) {
-      return state;
-    }
-    const chain = followOf(placed)({
-      note: noteOf(candidate),
-      consumed: [...state.consumed, index],
-      problems: state.problems,
-    })(candidate);
-    return {
-      notes: [...state.notes, chain.note],
-      consumed: chain.consumed,
-      problems: chain.problems,
-    };
-  });
+const tieNotes: From<readonly PlacedNote[], Tied> = (placed) => {
+  const byStart = Arr.groupBy(placed, (note) => keyOf(note.track, note.item.midi, note.start));
+  const successorOf: From<PlacedNote, Option.Option<PlacedNote>> = (note) =>
+    pipe(
+      note.item.tie,
+      Option.flatMap(() =>
+        Rec.get(byStart, keyOf(note.track, note.item.midi, note.start + note.item.length)),
+      ),
+      Option.map(Arr.headNonEmpty),
+    );
+  const consumed: ReadonlySet<PlacedNote> = new Set(
+    pipe(placed, Arr.map(successorOf), Arr.getSomes),
+  );
+  const follow: From<Note, From<PlacedNote, Compiled<Note>>> = (note) => (current) =>
+    Option.match(current.item.tie, {
+      onNone: () => ({ value: note, problems: [] }),
+      onSome: (tie) =>
+        Option.match(successorOf(current), {
+          onNone: () => ({
+            value: note,
+            problems: [problemAt(tie)("tie")("tie の続きの音が次の小節の頭にありません")],
+          }),
+          onSome: (next) => follow(joined(note, noteOf(next)))(next),
+        }),
+    });
+  const chains = pipe(
+    placed,
+    Arr.filter((note) => !consumed.has(note)),
+    Arr.map((head) => follow(noteOf(head))(head)),
+  );
+  return {
+    notes: pipe(
+      chains,
+      Arr.map((chain) => chain.value),
+    ),
+    problems: problemsOf(chains),
+  };
+};
 
 const isKind =
   <Kind extends Item["kind"]>(kind: Kind): Predicate.Refinement<PlacedItem, PlacedOf<Kind>> =>
