@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src", "bin", "*.ts"],
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "effect/PlatformError#PlatformError",
+          "effect/http/HttpClient#HttpClient",
+          "effect/http/HttpClient#filterStatusOk",
+          "effect/http/HttpClientError#HttpClientError",
+          "effect/http/HttpClientRequest#bearerToken",
+          "effect/http/HttpClientRequest#get",
+          "effect/http/HttpClientRequest#setUrlParams",
+          "effect/http/HttpClientResponse#schemaBodyJson",
+          "effect/process/ChildProcess#make",
+          "effect/process/ChildProcessSpawner#ChildProcessSpawner"
+        ]
+      }
+    ]
+  }
+}
