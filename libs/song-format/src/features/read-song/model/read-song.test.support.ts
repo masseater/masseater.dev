@@ -13,7 +13,7 @@ bus room fx [reverb ir "room.flac" mix 30%]
 
 track drums kit studio
 track keys  instrument keys role harmony fx [chorus 3ms 0.5Hz 40%] send room 20%
-track bass  instrument bass role bass
+track bass  instrument bass role bass volume -4.5dB pan -20% mute
 track loop  audio
 `;
 
