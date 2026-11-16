@@ -18,7 +18,7 @@ env:
 
 jobs:
   tag:
-    if: github.ref == 'refs/heads/main' && fromJSON(inputs.component).publish
+    if: github.ref == 'refs/heads/main' && fromJSON(inputs.component).publish && fromJSON(inputs.component).build
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -36,6 +36,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
   build:
+    if: fromJSON(inputs.component).build
     name: build (${{ matrix.platform.os }})
     strategy:
       fail-fast: false
@@ -45,7 +46,7 @@ jobs:
     environment: ${{ fromJSON(inputs.component).environment }}
     concurrency:
       group: release-build-${{ fromJSON(inputs.component).name }}-${{ matrix.platform.os }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     permissions:
       contents: read
     defaults:
@@ -92,7 +93,7 @@ jobs:
 
   check:
     needs: build
-    if: fromJSON(inputs.component).checks[0] != null
+    if: fromJSON(inputs.component).build && fromJSON(inputs.component).checks[0] != null
     name: check (${{ matrix.platform.os }})
     strategy:
       fail-fast: false
@@ -101,7 +102,7 @@ jobs:
     runs-on: ${{ matrix.platform.runner }}
     concurrency:
       group: release-check-${{ fromJSON(inputs.component).name }}-${{ matrix.platform.os }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     permissions:
       contents: read
     defaults:
@@ -160,6 +161,26 @@ jobs:
         env:
           DIRECTORY: ${{ fromJSON(inputs.component).directory }}
           GH_TOKEN: ${{ github.token }}
+
+  please:
+    needs: publish
+    if: >-
+      !cancelled() && github.ref == 'refs/heads/main' && fromJSON(inputs.component).publish
+      && (needs.publish.result == 'success' || !fromJSON(inputs.component).build)
+    runs-on: ubuntu-latest
+    environment: ${{ fromJSON(inputs.component).environment }}
+    concurrency:
+      group: release-please-${{ fromJSON(inputs.component).name }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
       - id: app-token
         run: vp run --filter "./$DIRECTORY" release:token
         env:
@@ -174,12 +195,14 @@ jobs:
           skip-github-release: true
 
   mark:
-    needs: [build, check, publish]
+    needs: [tag, build, check, publish, please]
     if: >-
-      !cancelled() && needs.build.result == 'success'
+      !cancelled()
+      && contains(fromJSON('["success", "skipped"]'), needs.tag.result)
+      && contains(fromJSON('["success", "skipped"]'), needs.build.result)
       && contains(fromJSON('["success", "skipped"]'), needs.check.result)
-      && (needs.publish.result == 'success'
-      || !(github.ref == 'refs/heads/main' && fromJSON(inputs.component).publish))
+      && contains(fromJSON('["success", "skipped"]'), needs.publish.result)
+      && contains(fromJSON('["success", "skipped"]'), needs.please.result)
     runs-on: ubuntu-latest
     permissions:
       contents: read

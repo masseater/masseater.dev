@@ -16,7 +16,6 @@ export default defineConfig({
         cache: false,
       },
       "daily:finally": { command: `node bin/nimado-collect.ts save ${STATE}`, cache: false },
-      "persist-migrate": { command: "node bin/persist-migrate.ts", cache: false },
     },
   },
 });
