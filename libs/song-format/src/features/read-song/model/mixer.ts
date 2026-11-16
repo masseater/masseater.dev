@@ -14,7 +14,7 @@ import type {
 import { problemAt } from "./problem.ts";
 import type { From, Problem } from "./problem.ts";
 
-type Mixable = Bus | TrackNode;
+export type Mixable = Bus | TrackNode;
 
 const UNITY = 0;
 const CENTER = 0;
