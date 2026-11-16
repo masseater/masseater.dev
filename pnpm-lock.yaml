@@ -461,6 +461,9 @@ catalogs:
     '@textlint/types':
       specifier: 15.8.0
       version: 15.8.0
+    '@textlint/utils':
+      specifier: 15.8.0
+      version: 15.8.0
     '@tsconfig/strictest':
       specifier: 2.0.9
       version: 2.0.9
@@ -4370,6 +4373,9 @@ importers:
       '@textlint/kernel':
         specifier: 'catalog:'
         version: 15.8.0(supports-color@10.2.2)
+      '@textlint/utils':
+        specifier: 'catalog:'
+        version: 15.8.0
       cjs-module-lexer:
         specifier: 'catalog:'
         version: 2.3.0
