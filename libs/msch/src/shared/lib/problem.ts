@@ -52,6 +52,7 @@ const RuleNameSchema = Schema.Literals([
   "dangling-link",
   "alchemy-patch",
   "skill-file",
+  "unlocked-skill",
   "pass-through-wrapper",
 ]);
 
