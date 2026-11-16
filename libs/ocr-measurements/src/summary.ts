@@ -1,4 +1,4 @@
-import { METHODS } from "@masseater.dev/ocr-decide";
+import { METHODS } from "@r_masseater/ocr-decide";
 import { Schema } from "effect";
 
 const MethodSchema = Schema.Literals(METHODS);

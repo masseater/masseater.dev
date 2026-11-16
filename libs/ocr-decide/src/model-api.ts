@@ -41,4 +41,4 @@ export class ModelApi extends Context.Service<
       request: Readonly<{ model: string; parts: readonly Part[]; jsonSchema: object }>,
     ) => Effect.Effect<Generated, ModelError>;
   }
->()("@masseater.dev/ocr-decide/model-api/ModelApi") {}
+>()("@r_masseater/ocr-decide/model-api/ModelApi") {}

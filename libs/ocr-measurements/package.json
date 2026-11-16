@@ -10,7 +10,7 @@
     "./ja-bench-schema": "./src/ja-bench.ts"
   },
   "dependencies": {
-    "@masseater.dev/ocr-decide": "workspace:*",
+    "@r_masseater/ocr-decide": "workspace:*",
     "effect": "catalog:stack"
   }
 }

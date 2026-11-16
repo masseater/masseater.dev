@@ -1,5 +1,5 @@
-import { INVOICE_FIELDS } from "@masseater.dev/ocr-decide";
 import type { Run } from "@ocr-decide/measurements/schema";
+import { INVOICE_FIELDS } from "@r_masseater/ocr-decide";
 import { Array as Arr, Number as Num, Option, Record as Rec, pipe } from "effect";
 
 import type { Outcome } from "./outcome.ts";

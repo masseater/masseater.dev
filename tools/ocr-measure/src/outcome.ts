@@ -1,3 +1,4 @@
+import type { Method } from "@ocr-decide/measurements/schema";
 import {
   DECISION_MODELS,
   DEFAULT_GENERATOR_MODEL,
@@ -6,9 +7,8 @@ import {
   extractFromImage,
   readFragments,
   rereadLowConfidence,
-} from "@masseater.dev/ocr-decide";
-import type { DecisionModel, Extraction, Fragment, ModelApi } from "@masseater.dev/ocr-decide";
-import type { Method } from "@ocr-decide/measurements/schema";
+} from "@r_masseater/ocr-decide";
+import type { DecisionModel, Extraction, Fragment, ModelApi } from "@r_masseater/ocr-decide";
 import { Array as Arr, Effect, Option } from "effect";
 
 import { costOf, skipped, timed } from "./attempt.ts";

@@ -1,5 +1,5 @@
-import { DECISION_MODELS, DEFAULT_GENERATOR_MODEL } from "@masseater.dev/ocr-decide";
-import type { DecisionModel, Method } from "@masseater.dev/ocr-decide";
+import { DECISION_MODELS, DEFAULT_GENERATOR_MODEL } from "@r_masseater/ocr-decide";
+import type { DecisionModel, Method } from "@r_masseater/ocr-decide";
 import { Array as Arr, pipe } from "effect";
 
 export interface Way {
