@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "effect": "catalog:stack",
+    "smol-toml": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }
