@@ -1,11 +1,11 @@
 import { useAtom } from "@effect/atom-react";
+import type { Aspect } from "@masseater.dev/shirushi-protocol";
 import { Array as Arr, pipe } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
 import { aspectsAtom } from "#/features/mark-range/model/draft";
-import { ASPECTS, ASPECT_LABELS } from "#protocol";
-import type { Aspect } from "#protocol";
+import { ASPECTS, ASPECT_LABELS } from "#/shared/config/labels";
 
 import { TOGGLE } from "./toggle.ts";
 

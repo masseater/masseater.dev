@@ -3983,6 +3983,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4744e383959f0db86ede514b809b1c53251889093803c05267acc7d4e7030d70"
 
 [[package]]
+name = "local-mcp"
+version = "0.0.0"
+dependencies = [
+ "axum",
+ "constant_time_eq",
+ "getrandom 0.4.3",
+ "tempfile",
+]
+
+[[package]]
 name = "lock_api"
 version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6706,6 +6716,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6"
 dependencies = [
  "lazy_static",
+]
+
+[[package]]
+name = "shirushi"
+version = "0.0.0"
+dependencies = [
+ "axum",
+ "local-mcp",
+ "regex",
+ "reqwest",
+ "rmcp",
+ "rusqlite",
+ "schemars 1.2.3",
+ "serde",
+ "serde_json",
+ "specta",
+ "specta-typescript",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-single-instance",
+ "tauri-specta",
+ "tokio",
+ "url",
+ "uuid",
 ]
 
 [[package]]
@@ -9446,10 +9480,9 @@ name = "yohaku-desktop"
 version = "0.1.4"
 dependencies = [
  "axum",
- "constant_time_eq",
  "dunce",
- "getrandom 0.4.3",
  "keyring",
+ "local-mcp",
  "log",
  "oauth2",
  "regex",

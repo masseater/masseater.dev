@@ -2472,21 +2472,15 @@ importers:
       '@effect/atom-react':
         specifier: catalog:stack
         version: 4.1.4(effect@4.1.4)(react@19.3.1)(scheduler@0.28.0)
-      '@masseater.dev/mcp-tool-call':
+      '@masseater.dev/shirushi-protocol':
         specifier: workspace:*
-        version: link:../../libs/mcp-tool-call
+        version: link:../../libs/shirushi-protocol
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
-      '@modelcontextprotocol/server':
+      '@tauri-apps/api':
         specifier: 'catalog:'
-        version: 2.4.0
-      '@r_masseater/workers-tracing':
-        specifier: workspace:*
-        version: link:../../libs/workers-tracing
-      drizzle-orm:
-        specifier: catalog:stack
-        version: 1.0.0-rc.5-ab785fc(@cloudflare/workers-types@5.20261112.1)(@effect/sql-d1@4.1.4(effect@4.1.4))(@effect/sql-sqlite-node@4.1.4(effect@4.1.4))(@electric-sql/pglite@0.3.15)(@libsql/client@0.17.4)(@opentelemetry/api@1.10.0)(@sinclair/typebox@0.34.52)(effect@4.1.4)(valibot@1.5.0(typescript@7.1.0-beta))(zod@4.6.7)
+        version: 2.12.4
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -2512,33 +2506,21 @@ importers:
         specifier: 'catalog:'
         version: 1.4.0
     devDependencies:
-      '@alchemy.run/cloudflare':
-        specifier: catalog:stack
-        version: 2.0.0-beta.87(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(alchemy@2.0.0-beta.87(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(ws@8.22.1))(effect@4.1.4)
-      '@cloudflare/workers-types':
-        specifier: 'catalog:'
-        version: 5.20261112.1
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.68.1
       '@effect/vitest':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
-      '@masseater.dev/alchemy-app-name':
+      '@masseater.dev/component-release':
         specifier: workspace:*
-        version: link:../../infra/alchemy-app-name
-      '@masseater.dev/cloudflare-account':
+        version: link:../../libs/component-release
+      '@masseater.dev/tauri-app':
         specifier: workspace:*
-        version: link:../../infra/cloudflare-account
-      '@masseater.dev/d1-test':
-        specifier: workspace:*
-        version: link:../../libs/d1-test
-      '@tailwindcss/vite':
+        version: link:../../infra/tauri-app
+      '@tauri-apps/cli':
         specifier: 'catalog:'
-        version: 4.3.5(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
-      '@types/node':
-        specifier: 'catalog:'
-        version: 26.6.6
+        version: 2.12.4
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
@@ -2548,12 +2530,6 @@ importers:
       '@types/youtube':
         specifier: 'catalog:'
         version: 0.3.0
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 6.3.0(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
-      alchemy:
-        specifier: catalog:stack
-        version: 2.0.0-beta.87(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(ws@8.22.1)
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -3557,6 +3533,12 @@ importers:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
+  libs/local-mcp:
+    devDependencies:
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
   libs/local-server:
     dependencies:
       '@effect/platform-node':
@@ -3975,6 +3957,16 @@ importers:
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  libs/shirushi-protocol:
+    dependencies:
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+    devDependencies:
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4790,6 +4782,9 @@ importers:
       '@masseater.dev/node-main':
         specifier: workspace:*
         version: link:../../libs/node-main
+      '@masseater.dev/shirushi-protocol':
+        specifier: workspace:*
+        version: link:../../libs/shirushi-protocol
       '@masseater.dev/sts2-protocol':
         specifier: workspace:*
         version: link:../../libs/sts2-protocol
