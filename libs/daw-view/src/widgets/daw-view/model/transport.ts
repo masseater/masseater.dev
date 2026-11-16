@@ -5,7 +5,7 @@ import { createStore } from "#/shared/lib/store.ts";
 import type { Store } from "#/shared/lib/store.ts";
 
 import type { LiveMix } from "./contract.ts";
-import { bufferOf, latencyOf, levelsOf, openDeck, woken } from "./deck.ts";
+import { bufferOf, latencyOf, levelsOf, openDeck, shut, woken } from "./deck.ts";
 import type { Deck, Levels } from "./deck.ts";
 import { HEARD, liveSupported, openLive } from "./live.ts";
 import type { Heard, LiveNode } from "./live.ts";
@@ -35,6 +35,7 @@ export interface Transport {
   readonly playing: () => boolean;
   readonly waiting: () => boolean;
   readonly levels: () => Option.Option<Levels>;
+  readonly close: () => void;
 }
 
 interface Cue {
@@ -287,5 +288,9 @@ export const createTransport = ({
     playing: () => player.read().playback.status === "playing",
     waiting: () => waitingIn(player.read()),
     levels: () => pipe(player.read().deck, Option.map(levelsOf)),
+    close: () => {
+      halt(player.read().playback);
+      shut(player.read().deck);
+    },
   };
 };

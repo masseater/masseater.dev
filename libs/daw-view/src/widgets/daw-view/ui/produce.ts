@@ -3,7 +3,7 @@ import { Cause, Effect, Option, pipe } from "effect";
 import type { Take } from "#/entities/song/index.ts";
 import { sessionOf } from "#/entities/song/index.ts";
 import { loadSamples } from "#/shared/lib/samples.ts";
-import type { Progress, Rendered, Song } from "#/widgets/daw-view/model/contract.ts";
+import type { LiveMix, Progress, Rendered, Song } from "#/widgets/daw-view/model/contract.ts";
 import { relayout } from "#/widgets/daw-view/model/layout.ts";
 import { peaksOf, shadesOf } from "#/widgets/daw-view/model/mix.ts";
 import { mixingOf } from "#/widgets/daw-view/model/mixing.ts";
@@ -47,7 +47,28 @@ const report =
     shell.loop.paint();
   };
 
+const closedOnAbort =
+  (signal: AbortSignal) =>
+  (tape: NonNullable<LiveMix["tape"]>): void => {
+    if (signal.aborted) {
+      tape.close();
+    } else {
+      signal.addEventListener("abort", tape.close, { once: true });
+    }
+  };
+
+const released = (shell: Shell, rendered: Rendered): void => {
+  const tape = pipe(
+    Option.fromUndefinedOr(rendered.live),
+    Option.flatMapNullishOr((live) => live.tape),
+  );
+  if (Option.isSome(tape)) {
+    closedOnAbort(shell.signal)(tape.value);
+  }
+};
+
 const finish = (shell: Shell, song: Song, rendered: Rendered): void => {
+  released(shell, rendered);
   const peaks = peaksOf(shell.parts.deck.wave.width)(rendered);
   const seconds = rendered.left.length / song.sampleRate;
   const mixed = shell.transport.load(rendered, Option.fromUndefinedOr(rendered.live));
@@ -92,7 +113,9 @@ const rendered = Effect.fn("song.rendered")(function* rendered<Failure, Requirem
       loading(shell, "samples", share * SAMPLE_SHARE);
     },
   });
-  const result = yield* Effect.promise(() => song.render({ samples, report: report(shell) }));
+  const result = yield* Effect.promise((signal) =>
+    song.render({ samples, report: report(shell), signal }),
+  );
   finish(shell, song, result);
 });
 

@@ -6,9 +6,10 @@ import { mountSong } from "./index.ts";
 
 import styles from "#/styles.css?inline";
 
-interface Mounted {
+export interface Mounted {
   readonly style: HTMLStyleElement;
   readonly root: HTMLElement;
+  readonly dispose: () => void;
 }
 
 const attach = (song: Song): Effect.Effect<Mounted> =>
@@ -19,13 +20,14 @@ const attach = (song: Song): Effect.Effect<Mounted> =>
     const root = document.createElement("main");
     document.body.classList.add("daw-song");
     document.body.append(root);
-    mountSong(root)(song);
-    return { style, root };
+    const dispose = mountSong(root)(song);
+    return { style, root, dispose };
   });
 
-export const mount = (song: Song): Effect.Effect<void, never, Scope.Scope> =>
-  Effect.acquireRelease(attach(song), ({ style, root }) =>
+export const mount = (song: Song): Effect.Effect<Mounted, never, Scope.Scope> =>
+  Effect.acquireRelease(attach(song), ({ style, root, dispose }) =>
     Effect.sync(() => {
+      dispose();
       root.remove();
       style.remove();
     }),
