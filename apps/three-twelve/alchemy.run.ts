@@ -8,12 +8,14 @@ import { Effect } from "effect";
 import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
 import { BASE_PATH, CRON, PLAYER_IMAGE, ZONE } from "./three-twelve.ts";
 
+const BUNDLE_DIR = "dist/player";
+
 const PlayerImage = Containers.Container(
   PLAYER_IMAGE,
   Effect.gen(function* playerImage() {
     const { outdir } = yield* Build("PlayerBundle", {
       command: "vp pack",
-      outdir: "dist/player",
+      outdir: BUNDLE_DIR,
       memo: {
         include: ["player/**", "*.ts", "package.json"],
         exclude: ["**/*.test.ts", "alchemy.run.ts"],
@@ -22,6 +24,7 @@ const PlayerImage = Containers.Container(
     return {
       schedulingPolicy: "durable_object" as const,
       context: outdir,
+      dockerfile: `${BUNDLE_DIR}/Containerfile`,
       build: { args: { DAVEY_VERSION: davey.version } },
     };
   }),

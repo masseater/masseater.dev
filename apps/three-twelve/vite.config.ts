@@ -22,7 +22,7 @@ export default defineConfig({
       neverBundle: [NATIVE],
       alwaysBundle: (id) => !Str.startsWith(NATIVE)(id),
     },
-    copy: [{ from: "player/Dockerfile", to: "dist/player" }],
+    copy: [{ from: "player/Containerfile", to: "dist/player" }],
   },
   test: { include: ["**/*.test.ts"] },
 });
