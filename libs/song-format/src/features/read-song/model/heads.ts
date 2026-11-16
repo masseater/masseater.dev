@@ -170,5 +170,6 @@ export const headItemsOf =
           return sliceOf(slice)({ sounding, placed });
         },
         Edit: (edit) => editOf(edit)({ sounding, placed }),
+        Computed: () => wrongOf("計算した値")(sounding),
       }),
     );
