@@ -18,7 +18,7 @@ import { encodeJson } from "#/shared/db/index.server.ts";
 import { profileAuthorOf } from "./profile-ai.server.ts";
 import type { ProfileModel } from "./profile-ai.server.ts";
 import { buildProfile } from "./profile-build.server.ts";
-import type { ProfileOutcome } from "./profile-build.server.ts";
+import type { ProfileOutcome } from "./profile-save.server.ts";
 import { buildStep } from "./trait-build.server.ts";
 import type { StepFailure, StepOutcome } from "./trait-build.server.ts";
 import { RECORD_TOOL, TRAIT_MODEL, readTranscript } from "./trait-pi.ts";
