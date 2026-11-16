@@ -4,8 +4,8 @@ import { deepStrictEqual } from "@effect/vitest/utils";
 import { Config, Effect, FileSystem, Redacted, Array as Arr, pipe, Order } from "effect";
 import type { PlatformError } from "effect/PlatformError";
 
-import strictConfig from "#example/claims/oxlint.config.ts";
-import reviewOnlyConfig from "#example/claims/review-only.config.ts";
+import strictConfig from "#example-presets/claims/oxlint.config.ts";
+import reviewOnlyConfig from "#example-presets/claims/review-only.config.ts";
 
 import {
   LIVE_MODEL,
@@ -56,13 +56,13 @@ const claimsLive = (
     Effect.gen(function* test() {
       const fs = yield* FileSystem.FileSystem;
       const key = yield* Config.Redacted("OPENROUTER_API_KEY");
-      const example = yield* fromRoot("example", "claims");
+      const example = yield* fromRoot("example-presets", "claims");
       const cwd = yield* tempProject({
         "cart.js": yield* fs.readFileString(`${example}/cart.js`),
         "cart.test.js": yield* fs.readFileString(`${example}/cart.test.js`),
         "oxlint.config.ts": configSource({
           ...EXAMPLES[entry].config,
-          jsPlugins: [yield* fromRoot("dist", `${entry}.mjs`)],
+          jsPlugins: [yield* fromRoot("dist", "presets", `${entry}.mjs`)],
           settings: {
             [PLUGIN_NAME]: {
               model: LIVE_MODEL,
