@@ -3,7 +3,7 @@ import { Array as Arr, Effect, Ref, pipe } from "effect";
 
 import { playground } from "#/shared/config/index.ts";
 
-import type { CheckerWorker } from "./checker.worker.ts";
+import type { CheckerWorker } from "./checker-runner.ts";
 import type { Checked } from "./editors.ts";
 import type { Entry, Line, Report } from "./output.ts";
 import { runScript } from "./runner.ts";

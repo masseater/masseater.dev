@@ -1,46 +1,18 @@
-import {
-  Array as Arr,
-  Effect,
-  Option,
-  Predicate,
-  Record as Rec,
-  Schema,
-  String as Str,
-  pipe,
-} from "effect";
+import { Array as Arr, Effect, Option, Predicate, Record as Rec, Schema, pipe } from "effect";
 
 import { MANIFEST_FILE } from "#/entities/package/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
-import { memberSources } from "./member-sources.ts";
+import { memberWorkspaces } from "./member-sources.ts";
 
 const ALIAS_RULE: RuleName = "source-alias";
-const RUNTIME_RULE: RuleName = "runtime-name";
 const FIRST = 1;
-const SEPARATOR = "/";
 const SOURCE_ALIAS = "#/*";
 const SOURCE_TARGET = "./src/*";
 const SOURCE_PREFIX = /^\.\/src(?:\/|$)/u;
-const RUNTIME_NAMES: readonly string[] = [
-  "worker",
-  "workers",
-  "cloudflare",
-  "durable-objects",
-  "node",
-  "nodejs",
-  "bun",
-  "deno",
-  "browser",
-  "tauri",
-  "electron",
-  "lambda",
-  "vercel",
-];
 
 const ALIAS_MESSAGE = `points into src/ under its own name. Import source through "${SOURCE_ALIAS}": "${SOURCE_TARGET}" only, so an import names the layer and slice it uses instead of a folder alias.`;
-const RUNTIME_MESSAGE =
-  "names the runtime that runs the code. Name folders after what the code does: entry code goes in app/entrypoint/, and code that does not depend on the runtime moves to the slice or shared segment of its role.";
 
 const Manifest = Schema.Struct({ imports: Schema.optional(Schema.Unknown) });
 const decodeManifest = Schema.decodeUnknownOption(Schema.fromJsonString(Manifest));
@@ -94,40 +66,14 @@ const aliasProblems = Effect.fn("aliasProblems")(function* aliasProblems(
   );
 });
 
-const RUNTIME_FOLDER = new RegExp(
-  `^(?<folder>.*?/src(?:/[^/]+)*?/(?:${Arr.join(RUNTIME_NAMES, "|")}))/`,
-  "u",
-);
-
-const runtimeFolderOf = (name: string): Option.Option<string> =>
-  pipe(
-    Option.fromNullishOr(RUNTIME_FOLDER.exec(name)),
-    Option.flatMap((found) => Option.fromUndefinedOr(found.groups)),
-    Option.flatMap((groups) => Option.fromUndefinedOr(groups["folder"])),
-  );
-
 /** @internal */
-export const checkSourceNames = Effect.fn("checkSourceNames")(function* checkSourceNames(
+export const checkSourceAliases = Effect.fn("checkSourceAliases")(function* checkSourceAliases(
   root: string,
 ) {
-  const files = yield* RepositoryFiles;
-  const { workspaces, listed } = yield* memberSources(root);
-  const folders = pipe(
-    listed,
-    Arr.filter((name) =>
-      pipe(
-        workspaces,
-        Arr.some((workspace) => Str.startsWith(`${workspace}${SEPARATOR}src${SEPARATOR}`)(name)),
-      ),
-    ),
-    Arr.map(runtimeFolderOf),
-    Arr.getSomes,
-    Arr.dedupe,
-    Arr.map((folder) => problemAt(files.join(root, folder), RUNTIME_RULE, RUNTIME_MESSAGE)),
-  );
+  const workspaces = yield* memberWorkspaces(root);
   const aliases = yield* pipe(
     workspaces,
     Effect.forEach((workspace) => aliasProblems(root, workspace)),
   );
-  return [...folders, ...Arr.flatten(aliases)];
+  return Arr.flatten(aliases);
 });

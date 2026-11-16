@@ -25,7 +25,7 @@ export default Stack(
     });
     const { url } = yield* Workers.Worker("Translate", {
       name: `${PREFIX}worker`,
-      main: "./src/app/translator.worker.ts",
+      main: "./src/app/translator.ts",
       logpush: true,
       domain: HOST,
       workersDev: false,
