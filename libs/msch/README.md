@@ -29,7 +29,7 @@ export default defineConfig({ lint });
 ```
 
 リポジトリに固有のルールや overrides は、`lint` を広げてから足す。
-`fsdRules` には、masseater のリポジトリが `fsd.configs.recommended` の後に足す Steiger のルールが入っている。
+`steigerRules` は `steiger` セクションに渡す Steiger のルールリストで、推奨の Feature-Sliced Design ルールのあとに masseater のリポジトリで足すルールを並べる。
 decision ルールは呼ぶたびに費用がかかるので、プリセットは有効にしない。
 `decisionRules` を掛けたいファイルの overrides に渡す。
 
@@ -48,4 +48,6 @@ oxlint のバージョンは、@effect/tsgo が対応するものに合わせる
 許すのは、ツールが読むコメントだけである。
 リポジトリがコメントから独自のフォーマットを読み込む際は、ルートの `vite.config.ts` の `msch.comments.allow` に、それらのコメント用の正規表現を記述する。各記述は、コメントマーカー以降のテキストと照合される。
 `tsconfig.json` の `types` に `@r_masseater/msch/vite` を足すと、`defineConfig` の `msch` に型が付く。
+`msch` は、Betterleaks、commitlint、textlint、Steiger、fallow など、`vite.config.ts` で設定された vite-plus-adopt のすべてのチェックも実行する。これらのチェックでは `VPA_BASE` などの環境変数を読み取るため、タスクは `cache: false` で実行すること。Git フックでは、pre-commit で `msch --staged` を、commit-msg で `msch --commit-msg "$1"` を実行すること。
+`types` に `@r_masseater/msch/vite` を指定すると、`defineConfig` の vite-plus-adopt セクションも型付けされる。`ToolSections` 型は同じエントリから来ている。
 指摘があれば終了コードは 1 になる。`--json` を付けると結果を JSON で出す。

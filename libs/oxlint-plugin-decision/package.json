@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/oxlint-plugin-decision",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Oxlint JS plugin that lints code with plain-English rules answered by models on Cloudflare AI Gateway or decision models on OpenRouter.",
   "keywords": [
     "ai-gateway",
@@ -10,6 +10,7 @@
     "openrouter",
     "oxlint",
     "oxlint-plugin",
+    "preset",
     "tanstack-intent"
   ],
   "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/oxlint-plugin-decision#readme",
@@ -28,11 +29,17 @@
   ],
   "type": "module",
   "imports": {
-    "#src/*": "./src/*"
+    "#src/*": "./src/*",
+    "#example-presets/*": "./example-presets/*"
   },
   "exports": {
     ".": "./src/index.ts",
     "./openrouter-app": "./src/openrouter-app.ts",
+    "./presets": "./src/presets/index.ts",
+    "./presets/recommended": "./src/presets/recommended.ts",
+    "./presets/strict": "./src/presets/strict.ts",
+    "./presets/review-only": "./src/presets/review-only.ts",
+    "./presets/ai-slop": "./src/presets/ai-slop.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -44,6 +51,26 @@
       "./openrouter-app": {
         "types": "./dist/openrouter-app.d.mts",
         "default": "./dist/openrouter-app.mjs"
+      },
+      "./presets": {
+        "types": "./dist/presets/index.d.mts",
+        "default": "./dist/presets/index.mjs"
+      },
+      "./presets/recommended": {
+        "types": "./dist/presets/recommended.d.mts",
+        "default": "./dist/presets/recommended.mjs"
+      },
+      "./presets/strict": {
+        "types": "./dist/presets/strict.d.mts",
+        "default": "./dist/presets/strict.mjs"
+      },
+      "./presets/review-only": {
+        "types": "./dist/presets/review-only.d.mts",
+        "default": "./dist/presets/review-only.mjs"
+      },
+      "./presets/ai-slop": {
+        "types": "./dist/presets/ai-slop.d.mts",
+        "default": "./dist/presets/ai-slop.mjs"
       },
       "./package.json": "./package.json"
     },

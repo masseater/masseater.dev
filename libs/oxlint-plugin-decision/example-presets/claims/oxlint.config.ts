@@ -1,7 +1,7 @@
 import { defineConfig } from "oxlint";
 
 export default defineConfig({
-  jsPlugins: ["../../dist/strict.mjs"],
+  jsPlugins: ["../../dist/presets/strict.mjs"],
   ignorePatterns: ["oxlint.config.ts", "review-only.config.ts"],
   rules: {
     "decision-presets/pure-name-is-pure": "error",
