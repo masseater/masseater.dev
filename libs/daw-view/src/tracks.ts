@@ -12,6 +12,7 @@ const ONE = 1;
 const HALF = 2;
 const SILENT = 1e-9;
 const LANE_HEIGHT = 26;
+const QUIET = 0.28;
 const NOTE_TRACK = { base: 14, perSemitone: 1.15, least: 34, most: 52 } as const;
 const HIT_TRACK = { base: 12, perRow: 2.6, least: 24, most: 68 } as const;
 
@@ -29,6 +30,7 @@ export interface Track extends TrackStyle {
   readonly clips: readonly Clip[];
   readonly top: number;
   readonly height: number;
+  readonly audible: boolean;
 }
 
 export interface Lane {
@@ -45,6 +47,13 @@ export interface Session {
 }
 
 const isNote = (event: NoteEvent): event is Note => event.kind === "note";
+
+export const levelOf = (track: Pick<Track, "audible">): number => {
+  if (track.audible) {
+    return ONE;
+  }
+  return QUIET;
+};
 
 const byStart = Order.mapInput(Order.Number, (event: NoteEvent) => event.start);
 
@@ -138,6 +147,7 @@ const trackOf =
       clips: clipsOf(bars)(events),
       top: NONE,
       height: heightOf(shape),
+      audible: true,
     };
   };
 

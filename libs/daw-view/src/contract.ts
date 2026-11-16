@@ -15,8 +15,27 @@ export interface RenderSession {
   readonly report: (progress: Progress) => void;
 }
 
+export interface MixMessage {
+  readonly play?: number;
+  readonly stop?: true;
+  readonly gains?: Float32Array;
+}
+
+export interface MixPlayer {
+  readonly msg: (message: MixMessage) => void;
+  readonly render: (left: Float32Array, right: Float32Array, frames: number) => number;
+}
+
+export interface LiveMix {
+  readonly tracks: readonly string[];
+  readonly player: string;
+  readonly init: unknown;
+  readonly transfer: readonly ArrayBuffer[];
+}
+
 export interface Rendered extends Mixdown {
   readonly take: Take;
+  readonly live?: LiveMix;
 }
 
 export interface Song extends Structure, Heading {

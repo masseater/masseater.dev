@@ -1,8 +1,15 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import { buildChips, buildHeads, paintLegend, syncSelection } from "./heads.ts";
-import { resized, rollScaleOf, zoomArrange, zoomRoll } from "./layout.ts";
-import { settled } from "./model.ts";
+import {
+  buildChips,
+  buildHeads,
+  paintLegend,
+  switchAt,
+  syncMixing,
+  syncSelection,
+} from "./heads.ts";
+import { relayout, resized, rollScaleOf, zoomArrange, zoomRoll } from "./layout.ts";
+import { flippedBy, mixedWith, settled } from "./model.ts";
 import { keyboardWidth } from "./roll-layout.ts";
 import { pickAt } from "./roll-pick.ts";
 import type { Aim } from "./roll-pick.ts";
@@ -17,19 +24,20 @@ const IN = 1;
 const OUT = -1;
 
 const syncChrome = ({ parts, model }: Shell): void => {
-  const { selected, session, theme } = model.read();
+  const { selected, session, mixing, theme } = model.read();
   const track = pipe(
     session.tracks,
     Arr.findFirst((item) => Option.contains(selected, item.name)),
   );
   syncSelection(parts.tracks.heads)(selected);
   syncSelection(parts.roll.chips)(selected);
+  syncMixing(parts.tracks.heads)({ session, mixing });
   paintLegend(parts.roll.legend)({ track, tint: theme.tint });
 };
 
 export const rebuildChrome = (shell: Shell): void => {
-  const { session, theme } = shell.model.read();
-  const chrome = { session, tint: theme.tint };
+  const { session, mixing, theme } = shell.model.read();
+  const chrome = { session, mixing, tint: theme.tint };
   buildHeads(shell.parts.tracks.heads)(chrome);
   buildChips(shell.parts.roll.chips)(chrome);
   syncChrome(shell);
@@ -38,6 +46,12 @@ export const rebuildChrome = (shell: Shell): void => {
 const select = (shell: Shell, selected: Option.Option<string>): void => {
   shell.model.step((model) => settled({ ...model, selected, hover: Option.none() }));
   syncChrome(shell);
+};
+
+export const unmix = (shell: Shell): void => {
+  shell.model.step(mixedWith([]));
+  rebuildChrome(shell);
+  relayout(shell);
 };
 
 const press = (shell: Shell): void => {
@@ -63,8 +77,13 @@ const onHeads =
   (shell: Shell) =>
   (event: MouseEvent): void => {
     const { selected } = shell.model.read();
+    const change = switchAt(event);
     const name = trackAt(event);
-    if (Option.isSome(name)) {
+    if (Option.isSome(change)) {
+      shell.model.step(flippedBy(change.value));
+      shell.transport.mix(shell.model.read().mixing);
+      syncChrome(shell);
+    } else if (Option.isSome(name)) {
       select(
         shell,
         pipe(

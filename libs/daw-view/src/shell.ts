@@ -32,9 +32,14 @@ export interface Shell {
   readonly loop: Loop;
 }
 
+export interface Mounting {
+  readonly song: Song;
+  readonly onLost: () => void;
+}
+
 export const shellOf =
   (root: HTMLElement) =>
-  (song: Song): Shell => {
+  ({ song, onLost }: Mounting): Shell => {
     const loop = createLoop();
     const parts = partsOf(root)(song);
     return {
@@ -50,6 +55,7 @@ export const shellOf =
         sampleRate: song.sampleRate,
         duration: songSeconds(song),
         onChange: loop.kick,
+        onLost,
       }),
       loop,
     };

@@ -35,8 +35,15 @@ const keyOf =
 export const soundingAt =
   (layout: RollLayout) =>
   (seconds: number): Sounding => {
+    const heard = {
+      ...layout,
+      tracks: pipe(
+        layout.tracks,
+        Arr.filter((track) => track.audible),
+      ),
+    };
     const events = pipe(
-      layout,
+      heard,
       under(seconds),
       Arr.filter((event) => seconds < event.start + event.duration),
     );

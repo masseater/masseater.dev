@@ -7,7 +7,7 @@ import { fitted, fontOf, leftOf } from "./pen.ts";
 import type { Pen } from "./pen.ts";
 import { STEPS_PER_BAR, barSeconds, normalized } from "./song.ts";
 import type { NoteEvent } from "./song.ts";
-import { eventsBetween } from "./tracks.ts";
+import { eventsBetween, levelOf } from "./tracks.ts";
 import type { Lane, Track } from "./tracks.ts";
 
 const CLIP = { inset: 2, gap: 1, title: 10, titled: 30, body: 0.14, head: 0.34 } as const;
@@ -30,6 +30,7 @@ interface Row {
   readonly title: number;
   readonly top: number;
   readonly body: number;
+  readonly level: number;
 }
 
 interface Band {
@@ -53,6 +54,7 @@ const rowOf = (pen: Pen, track: Track): Row => {
     title,
     top: track.top + CLIP.inset + title,
     body: track.height - BODY_TRIM - title,
+    level: levelOf(track),
   };
 };
 
@@ -79,9 +81,9 @@ const fillClip = (row: Row, item: Clip, height: number): void => {
 };
 
 const clipHead = (row: Row, item: Clip): void => {
-  row.pen.context.globalAlpha = CLIP.head;
+  row.pen.context.globalAlpha = CLIP.head * row.level;
   fillClip(row, item, row.title);
-  row.pen.context.globalAlpha = OPAQUE;
+  row.pen.context.globalAlpha = row.level;
   clipName(row, item);
 };
 
@@ -90,7 +92,7 @@ const clip =
   (item: Clip): void => {
     const { pen, track } = row;
     pen.context.fillStyle = row.color;
-    pen.context.globalAlpha = CLIP.body;
+    pen.context.globalAlpha = CLIP.body * row.level;
     fillClip(row, item, track.height - CLIP.inset * TWO);
     if (row.title > NONE) {
       clipHead(row, item);
@@ -146,7 +148,8 @@ const stroke =
     const bar = barSeconds(pen.structure);
     const band = bandOf(row, event);
     const width = Math.max(ONE, (event.duration / bar) * pen.scale - gapOf(pen.scale));
-    pen.context.globalAlpha = GAIN.floor + GAIN.range * Math.sqrt(event.gain / track.loudest);
+    pen.context.globalAlpha =
+      (GAIN.floor + GAIN.range * Math.sqrt(event.gain / track.loudest)) * row.level;
     pen.context.fillRect(leftOf(pen)(event.start / bar), band.top, width, band.height);
   };
 

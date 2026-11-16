@@ -1,4 +1,12 @@
-export type { Progress, RenderSession, Rendered, Song } from "./contract.ts";
+export type {
+  LiveMix,
+  MixMessage,
+  MixPlayer,
+  Progress,
+  RenderSession,
+  Rendered,
+  Song,
+} from "./contract.ts";
 export type { Mixdown } from "./mix.ts";
 export { mountSong } from "./mount.ts";
 export type { Credit } from "./panels.ts";

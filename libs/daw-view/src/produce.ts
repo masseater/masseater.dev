@@ -1,10 +1,10 @@
-import { Cause, Effect } from "effect";
+import { Cause, Effect, Option } from "effect";
 
 import type { Progress, Rendered, Song } from "./contract.ts";
 import { rebuildChrome } from "./controls.ts";
 import { relayout } from "./layout.ts";
 import { peaksOf, shadesOf } from "./mix.ts";
-import { settled } from "./model.ts";
+import { mixedWith, settled } from "./model.ts";
 import { loadSamples } from "./samples.ts";
 import type { Shell } from "./shell.ts";
 import type { Take } from "./song.ts";
@@ -47,9 +47,10 @@ const report =
 const finish = (shell: Shell, song: Song, rendered: Rendered): void => {
   const peaks = peaksOf(shell.parts.deck.wave.width)(rendered);
   const seconds = rendered.left.length / song.sampleRate;
+  const mixed = shell.transport.load(rendered, Option.fromUndefinedOr(rendered.live));
+  shell.model.step(mixedWith(mixed));
   show(shell, rendered.take);
   shell.model.step((model) => ({ ...model, peaks, phase: { status: "ready", seconds } }));
-  shell.transport.load(rendered);
   relayout(shell);
 };
 

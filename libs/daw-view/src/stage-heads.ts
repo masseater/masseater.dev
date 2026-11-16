@@ -78,7 +78,10 @@ export const paintHeads =
     playhead.style.transform = `translateX(${(bars * scale).toFixed(SHIFT_DECIMALS)}px)`;
     const buttons = [...heads.querySelectorAll<HTMLElement>("button[data-track]")];
     for (const [track, button] of Arr.zip(session.tracks, buttons)) {
-      mark(button)("data-lit", String(transport.playing() && flashes(track, time)));
+      mark(button)(
+        "data-lit",
+        String(transport.playing() && track.audible && flashes(track, time)),
+      );
     }
     const values = [...heads.querySelectorAll<HTMLElement>("[data-automation] > span:last-child")];
     for (const [lane, value] of Arr.zip(session.lanes, values)) {

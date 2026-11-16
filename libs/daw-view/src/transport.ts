@@ -1,55 +1,35 @@
 import { Effect, Option, pipe } from "effect";
 
+import type { LiveMix } from "./contract.ts";
+import { bufferOf, latencyOf, levelsOf, openDeck, woken } from "./deck.ts";
+import type { Deck, Levels } from "./deck.ts";
+import { HEARD, liveSupported, openLive } from "./live.ts";
+import type { Heard, LiveNode } from "./live.ts";
 import { clamp } from "./math.ts";
 import type { Mixdown } from "./mix.ts";
+import { gainsOf } from "./mixing.ts";
+import type { Mixing } from "./mixing.ts";
+import { PAUSED, idle, offsetIn, positionOf, waitingIn } from "./playback.ts";
+import type { Output, Playback, Player } from "./playback.ts";
 import { createStore } from "./store.ts";
 import type { Store } from "./store.ts";
 
-const ANALYSER = { fftSize: 4096, smoothing: 0.72 } as const;
 const LEAD = 0.03;
 const TAIL = 0.05;
 const START = 0;
-const CHANNELS = { count: 2, left: 0, right: 1 } as const;
-
-interface Deck {
-  readonly context: AudioContext;
-  readonly analyser: AnalyserNode;
-}
-
-type Playback =
-  | { readonly status: "paused"; readonly offset: number }
-  | {
-      readonly status: "playing";
-      readonly offset: number;
-      readonly startedAt: number;
-      readonly deck: Deck;
-      readonly source: AudioBufferSourceNode;
-    };
-
-interface Player {
-  readonly sampleRate: number;
-  readonly deck: Option.Option<Deck>;
-  readonly mixdown: Option.Option<Mixdown>;
-  readonly buffer: Option.Option<AudioBuffer>;
-  readonly playback: Playback;
-  readonly wanted: boolean;
-}
-
-export interface Levels {
-  readonly levels: Uint8Array;
-  readonly sampleRate: number;
-}
 
 export interface TransportOptions {
   readonly sampleRate: number;
   readonly duration: number;
   readonly onChange: () => void;
+  readonly onLost: () => void;
 }
 
 export interface Transport {
   readonly press: () => void;
   readonly seek: (seconds: number) => void;
-  readonly load: (mixdown: Mixdown) => void;
+  readonly load: (mixdown: Mixdown, live: Option.Option<LiveMix>) => readonly string[];
+  readonly mix: (mixing: Mixing) => void;
   readonly position: () => number;
   readonly playing: () => boolean;
   readonly waiting: () => boolean;
@@ -58,89 +38,78 @@ export interface Transport {
 
 interface Cue {
   readonly deck: Deck;
-  readonly buffer: AudioBuffer;
   readonly seconds: number;
 }
 
-const idle = (sampleRate: number): Player => ({
-  sampleRate,
-  deck: Option.none(),
-  mixdown: Option.none(),
-  buffer: Option.none(),
-  playback: { status: "paused", offset: START },
-  wanted: false,
-});
+interface Bench {
+  readonly player: Store<Player>;
+  readonly onLost: () => void;
+}
 
-const openDeck = (): Deck => {
-  const context = new AudioContext();
-  const analyser = new AnalyserNode(context, {
-    fftSize: ANALYSER.fftSize,
-    smoothingTimeConstant: ANALYSER.smoothing,
-  });
-  analyser.connect(context.destination);
-  return { context, analyser };
-};
+interface Started {
+  readonly offset: number;
+  readonly startedAt: number;
+}
 
 const deckOf = (player: Store<Player>): Deck => {
-  const deck = Option.getOrElse(player.read().deck, openDeck);
-  Effect.runFork(Effect.promise(() => deck.context.resume()));
+  const deck = woken(Option.getOrElse(player.read().deck, openDeck));
   player.step((state) => ({ ...state, deck: Option.some(deck) }));
   return deck;
 };
 
 const halt = (playback: Playback): void => {
-  if (playback.status === "playing") {
-    playback.source.stop();
-    playback.source.disconnect();
+  if (playback.status === "playing" && Option.isSome(playback.source)) {
+    playback.source.value.stop();
+    playback.source.value.disconnect();
   }
 };
 
 const finish = (player: Store<Player>, source: AudioBufferSourceNode): void => {
   const { playback } = player.read();
-  if (playback.status === "playing" && playback.source === source) {
-    player.step((state) => ({ ...state, playback: { status: "paused", offset: START } }));
+  if (playback.status === "playing" && Option.contains(playback.source, source)) {
+    player.step((state) => ({ ...state, playback: PAUSED }));
   }
 };
 
-const begin = (player: Store<Player>, { deck, buffer, seconds }: Cue): void => {
-  const offset = clamp({ low: START, high: buffer.duration - TAIL })(seconds);
-  const source = new AudioBufferSourceNode(deck.context, { buffer });
-  const startedAt = deck.context.currentTime + LEAD;
+const started = (
+  player: Store<Player>,
+  cue: Cue,
+  source: Option.Option<AudioBufferSourceNode>,
+): Started => {
+  const offset = offsetIn(player.read())(cue.seconds);
+  const startedAt = cue.deck.context.currentTime + LEAD;
+  player.step((state) => ({
+    ...state,
+    playback: { status: "playing", offset, startedAt, deck: cue.deck, source },
+  }));
+  return { offset, startedAt };
+};
+
+const beginBuffer = (player: Store<Player>, cue: Cue, buffer: AudioBuffer): void => {
+  const source = new AudioBufferSourceNode(cue.deck.context, { buffer });
   halt(player.read().playback);
-  source.connect(deck.analyser);
-  source.start(startedAt, offset);
+  source.connect(cue.deck.analyser);
   source.addEventListener("ended", () => {
     finish(player, source);
   });
-  player.step((state) => ({
-    ...state,
-    playback: { status: "playing", offset, startedAt, deck, source },
-  }));
+  const { offset, startedAt } = started(player, cue, Option.some(source));
+  source.start(startedAt, offset);
 };
 
-const positionOf = (playback: Playback): number => {
-  if (playback.status === "playing") {
-    return playback.offset + playback.deck.context.currentTime - playback.startedAt;
-  }
-  return playback.offset;
+const beginLive = (player: Store<Player>, cue: Cue, live: LiveNode): void => {
+  halt(player.read().playback);
+  const { offset } = started(player, cue, Option.none());
+  live.send({ play: Math.round(offset * player.read().sampleRate) });
 };
 
 const pause = (player: Store<Player>): void => {
-  const { playback } = player.read();
+  const { playback, output } = player.read();
   const offset = positionOf(playback);
   halt(playback);
+  if (output.kind === "live") {
+    output.live.send({ stop: true });
+  }
   player.step((state) => ({ ...state, playback: { status: "paused", offset } }));
-};
-
-const bufferOf = ({ left, right }: Mixdown, sampleRate: number): AudioBuffer => {
-  const buffer = new AudioBuffer({
-    length: left.length,
-    numberOfChannels: CHANNELS.count,
-    sampleRate,
-  });
-  buffer.getChannelData(CHANNELS.left).set(left);
-  buffer.getChannelData(CHANNELS.right).set(right);
-  return buffer;
 };
 
 const bufferFor = (player: Store<Player>): Option.Option<AudioBuffer> => {
@@ -148,13 +117,28 @@ const bufferFor = (player: Store<Player>): Option.Option<AudioBuffer> => {
   if (Option.isSome(buffer) || Option.isNone(mixdown)) {
     return buffer;
   }
-  const built = Option.some(bufferOf(mixdown.value, sampleRate));
+  const built = Option.some(bufferOf(sampleRate)(mixdown.value));
   player.step((state) => ({ ...state, buffer: built }));
   return built;
 };
 
-const press = (player: Store<Player>): void => {
-  const deck = deckOf(player);
+const heard =
+  (player: Store<Player>) =>
+  (event: Heard): void => {
+    const { playback, sampleRate } = player.read();
+    if (playback.status !== "playing") {
+      return;
+    }
+    if (event.heard === HEARD.started) {
+      const offset = event.frame / sampleRate;
+      const startedAt = event.at + latencyOf(playback.deck);
+      player.step((state) => ({ ...state, playback: { ...playback, offset, startedAt } }));
+    } else {
+      player.step((state) => ({ ...state, playback: PAUSED }));
+    }
+  };
+
+const pressBuffer = (player: Store<Player>, deck: Deck): void => {
   const buffer = bufferFor(player);
   const { playback } = player.read();
   if (Option.isNone(buffer)) {
@@ -162,58 +146,145 @@ const press = (player: Store<Player>): void => {
   } else if (playback.status === "playing") {
     pause(player);
   } else {
-    begin(player, { deck, buffer: buffer.value, seconds: playback.offset });
+    beginBuffer(player, { deck, seconds: playback.offset }, buffer.value);
+  }
+};
+
+const pressLive = (player: Store<Player>, deck: Deck, live: LiveNode): void => {
+  const { playback } = player.read();
+  if (playback.status === "playing") {
+    pause(player);
+  } else {
+    beginLive(player, { deck, seconds: playback.offset }, live);
+  }
+};
+
+const wantedNow = (player: Store<Player>): boolean => {
+  const { wanted } = player.read();
+  player.step((state) => ({ ...state, wanted: false }));
+  return wanted;
+};
+
+const opened =
+  (bench: Bench, deck: Deck) =>
+  (live: LiveNode): Effect.Effect<void> =>
+    Effect.sync(() => {
+      live.connect(deck.analyser);
+      const { gains } = bench.player.read();
+      if (Option.isSome(gains)) {
+        live.send({ gains: gains.value });
+      }
+      bench.player.step((state) => ({ ...state, output: { kind: "live", live } }));
+      if (wantedNow(bench.player)) {
+        pressLive(bench.player, deck, live);
+      }
+    });
+
+const lost = (bench: Bench, deck: Deck) => (): Effect.Effect<void> =>
+  Effect.sync(() => {
+    bench.player.step((state) => ({ ...state, output: { kind: "buffer" } }));
+    bench.onLost();
+    if (wantedNow(bench.player)) {
+      pressBuffer(bench.player, deck);
+    }
+  });
+
+const open = (bench: Bench, deck: Deck, live: LiveMix): void => {
+  bench.player.step((state) => ({ ...state, output: { kind: "opening" }, wanted: true }));
+  const opening = openLive({ context: deck.context, live, onHeard: heard(bench.player) });
+  const settled = Effect.matchEffect(opening, {
+    onFailure: lost(bench, deck),
+    onSuccess: opened(bench, deck),
+  });
+  Effect.runFork(settled);
+};
+
+const press = (bench: Bench): void => {
+  const { player } = bench;
+  const deck = deckOf(player);
+  const { output } = player.read();
+  if (output.kind === "pending") {
+    open(bench, deck, output.live);
+  } else if (output.kind === "opening") {
+    player.step((state) => ({ ...state, wanted: !state.wanted }));
+  } else if (output.kind === "live") {
+    pressLive(player, deck, output.live);
+  } else {
+    pressBuffer(player, deck);
   }
 };
 
 const seek = (player: Store<Player>, seconds: number): void => {
-  const { buffer, playback } = player.read();
-  if (playback.status === "playing" && Option.isSome(buffer)) {
-    begin(player, { deck: playback.deck, buffer: buffer.value, seconds });
+  const { buffer, playback, output } = player.read();
+  if (playback.status === "playing" && output.kind === "live") {
+    beginLive(player, { deck: playback.deck, seconds }, output.live);
+  } else if (playback.status === "playing" && Option.isSome(buffer)) {
+    beginBuffer(player, { deck: playback.deck, seconds }, buffer.value);
   } else {
     player.step((state) => ({ ...state, playback: { status: "paused", offset: seconds } }));
   }
 };
 
-const load = (player: Store<Player>, mixdown: Mixdown): void => {
-  const { wanted } = player.read();
-  player.step((state) => ({
+const outputFor = (live: Option.Option<LiveMix>): Output => {
+  if (Option.isSome(live) && liveSupported()) {
+    return { kind: "pending", live: live.value };
+  }
+  return { kind: "buffer" };
+};
+
+const mixedIn = (output: Output): readonly string[] => {
+  if (output.kind === "pending") {
+    return output.live.tracks;
+  }
+  return [];
+};
+
+const load = (bench: Bench, mixdown: Mixdown, live: Option.Option<LiveMix>): readonly string[] => {
+  const output = outputFor(live);
+  bench.player.step((state) => ({
     ...state,
     mixdown: Option.some(mixdown),
     buffer: Option.none(),
-    wanted: false,
+    output,
   }));
-  if (wanted) {
-    press(player);
+  if (wantedNow(bench.player)) {
+    press(bench);
   }
+  return mixedIn(output);
 };
 
-const levelsOf = ({ context, analyser }: Deck): Levels => {
-  const levels = new Uint8Array(analyser.frequencyBinCount);
-  analyser.getByteFrequencyData(levels);
-  return { levels, sampleRate: context.sampleRate };
+const mix = (player: Store<Player>, mixing: Mixing): void => {
+  const { output } = player.read();
+  const gains = gainsOf(mixing);
+  player.step((state) => ({ ...state, gains: Option.some(gains) }));
+  if (output.kind === "live") {
+    output.live.send({ gains });
+  }
 };
 
 export const createTransport = ({
   sampleRate,
   duration,
   onChange,
+  onLost,
 }: TransportOptions): Transport => {
   const player = createStore({ initial: idle(sampleRate), onChange });
+  const bench = { player, onLost };
   const within = clamp({ low: START, high: duration });
   return {
     press: () => {
-      press(player);
+      press(bench);
     },
     seek: (seconds) => {
       seek(player, clamp({ low: START, high: duration - TAIL })(seconds));
     },
-    load: (mixdown) => {
-      load(player, mixdown);
+    load: (mixdown, live) => load(bench, mixdown, live),
+    mix: (mixing) => {
+      mix(player, mixing);
     },
     position: () => within(positionOf(player.read().playback)),
     playing: () => player.read().playback.status === "playing",
-    waiting: () => player.read().wanted && Option.isNone(player.read().mixdown),
+    waiting: () => waitingIn(player.read()),
     levels: () => pipe(player.read().deck, Option.map(levelsOf)),
   };
 };

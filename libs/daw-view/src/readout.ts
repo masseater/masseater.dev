@@ -50,6 +50,9 @@ const pitchAt = (event: NoteEvent, time: number): string => {
 const soundingOf =
   (time: number) =>
   (track: Track): readonly Entry[] => {
+    if (!track.audible) {
+      return [];
+    }
     const names = pipe(
       eventsBetween({ from: time, to: time })(track),
       Arr.filter((event) => time < event.start + event.duration),
