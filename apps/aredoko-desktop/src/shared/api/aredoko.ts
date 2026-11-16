@@ -243,13 +243,13 @@ export const readModel = (
     Effect.gen(function* readModelInParts() {
       const { name: modelName, size, files } = yield* readModelRpc({ assetId });
       const model = yield* readWhole(readPart, { assetId, file: WHOLE_MODEL, size });
-      const companions = yield* pipe(
+      const companions = yield* Effect.forEach(
         files,
-        Effect.forEach(({ name, size: fileSize }) =>
+        ({ name, size: fileSize }) =>
           readWhole(readPart, { assetId, file: name, size: fileSize }).pipe(
             Effect.map((data) => ({ name, data })),
           ),
-        ),
+        { concurrency: 1 },
       );
       return { name: modelName, model, files: companions };
     }),

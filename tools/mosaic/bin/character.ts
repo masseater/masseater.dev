@@ -34,7 +34,7 @@ const copied = Effect.fn("copied")(function* copied(from: string, to: string) {
           yield* fs.copy(source, target, { overwrite: true });
         }
       }),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 });
 
@@ -63,6 +63,7 @@ const build = Effect.fn("build")(function* build(slug: string) {
   yield* Effect.sleep(Duration.seconds((jobIndex % STAGGER_SLOTS) * STAGGER_SECONDS));
   yield* fetchSongs(mosaic, slug);
   yield* Effect.forEach(STEPS, (step) => mustSucceed({ command: mosaic, args: [step, slug] }), {
+    concurrency: 1,
     discard: true,
   });
 });

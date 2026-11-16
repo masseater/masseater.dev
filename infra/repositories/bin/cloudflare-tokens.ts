@@ -135,10 +135,7 @@ const program = Effect.gen(function* tokens() {
     Arr.map(Str.trim),
     Arr.filter(Str.isNonEmpty),
   );
-  yield* pipe(
-    targets,
-    Effect.forEach((tokenId) => revoke(accountId, tokenId)),
-  );
+  yield* Effect.forEach(targets, (tokenId) => revoke(accountId, tokenId), { concurrency: 1 });
   yield* ownPolicies(accountId);
   yield* inventory("account", () => listAccountTokens.items({ accountId }));
   yield* inventory("user", () => listUserTokens.items({}));

@@ -54,6 +54,9 @@ const prerendered = Effect.fn("prerendered")(function* prerendered(slug: string)
   });
 });
 
-const live = Effect.forEach(CHARACTERS, ({ slug }) => prerendered(slug), { discard: true });
+const live = Effect.forEach(CHARACTERS, ({ slug }) => prerendered(slug), {
+  concurrency: 1,
+  discard: true,
+});
 
 runMain("mosaic-live")(live);

@@ -1,6 +1,6 @@
 import { OWNER_ID } from "@masseater.dev/repositories/github-oidc";
 import { runner } from "@r_masseater/workers-tracing/effect";
-import { Effect, Logger, Schema, String as Str, pipe } from "effect";
+import { Effect, Logger, Schema, String as Str } from "effect";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
 import { CI_TELEMETRY_AUDIENCE } from "./app-name.ts";
@@ -81,13 +81,13 @@ const logJob = (run: Run, job: typeof Job.Type): Effect.Effect<void> =>
   Effect.gen(function* logJobAndSteps() {
     const context = { ...run, job: job.name, jobId: job.id, runner: job.runner_name };
     yield* Effect.logInfo("ci.job").pipe(Effect.annotateLogs({ ...context, ...timing(job) }));
-    yield* pipe(
+    yield* Effect.forEach(
       job.steps,
-      Effect.forEach((step) =>
+      (step) =>
         Effect.logInfo("ci.step").pipe(
           Effect.annotateLogs({ ...context, ...timing(step), stepNumber: step.number }),
         ),
-      ),
+      { concurrency: 1 },
     );
   });
 
@@ -109,10 +109,7 @@ const record = (request: Request): Effect.Effect<Response> =>
       catch: (cause) => UnreadableBody.make({ message: String(cause) }),
     });
     const { jobs } = yield* Schema.decodeUnknownEffect(Payload)(body);
-    yield* pipe(
-      jobs,
-      Effect.forEach((job) => logJob(toRun(claims), job)),
-    );
+    yield* Effect.forEach(jobs, (job) => logJob(toRun(claims), job), { concurrency: 1 });
     return new Response("", { status: 202 });
   }).pipe(
     Effect.catchTag("Unauthorized", (unauthorized) =>

@@ -40,10 +40,7 @@ const childPids = Effect.gen(function* childPids() {
 const annotateMemory = Effect.gen(function* annotateMemory() {
   const own = yield* residentBytesOf(String(process.pid));
   const pids = yield* childPids;
-  const children = yield* pipe(
-    pids,
-    Effect.forEach((pid) => residentBytesOf(pid)),
-  );
+  const children = yield* Effect.forEach(pids, (pid) => residentBytesOf(pid), { concurrency: 1 });
   const { heapUsed } = process.memoryUsage();
   yield* Effect.annotateCurrentSpan({
     "process.memory.rss": own,

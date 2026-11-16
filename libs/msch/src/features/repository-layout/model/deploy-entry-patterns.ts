@@ -161,9 +161,12 @@ const problemsIn = Effect.fn("problemsIn")(function* problemsIn(request: ConfigR
   }
   const patterns = yield* patternsOf(file, text.value, kind);
   const selection = { root, bases: kind.bases(files.dirname(file), workspaces), entries };
-  const flagged = yield* pipe(
+  const flagged = yield* Effect.forEach(
     patterns,
-    Effect.forEach((pattern) => selectsOnlyDeployEntries(selection, pattern)),
+    (pattern) => selectsOnlyDeployEntries(selection, pattern),
+    {
+      concurrency: 1,
+    },
   );
   return pipe(
     Arr.getSomes(flagged),

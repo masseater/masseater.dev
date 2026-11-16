@@ -109,7 +109,7 @@ const copyFiles = Effect.fn("copyFiles")(function* copyFiles(
     const copy = fs.copyFile(path.join(workspace.root, file), target);
     return fs.makeDirectory(path.dirname(target), { recursive: true }).pipe(Effect.andThen(copy));
   };
-  yield* Effect.forEach(workspace.files, copyOne, { discard: true });
+  yield* Effect.forEach(workspace.files, copyOne, { concurrency: 1, discard: true });
 });
 
 const depPathsIn = (

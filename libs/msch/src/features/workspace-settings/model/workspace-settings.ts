@@ -133,9 +133,10 @@ const lintOf = Effect.fn("lintOf")(function* lintOf(source: WorkspaceSource, rul
     decode: Schema.decodeUnknownEffect(WorkspaceLintSettings),
   });
   const lint = Option.getOrElse(settings, (): typeof WorkspaceLintSettings.Type => ({}));
-  const overrides = yield* pipe(
+  const overrides = yield* Effect.forEach(
     lint.overrides ?? [],
-    Effect.forEach((override) => overrideOf(source, ruleSets, override)),
+    (override) => overrideOf(source, ruleSets, override),
+    { concurrency: 1 },
   );
   const ignorePatterns = pipe(lint.ignorePatterns ?? [], Arr.map(prefixed(source.directory)));
   return { ignorePatterns, overrides };
@@ -164,9 +165,12 @@ const devDependenciesOf = Effect.fn("devDependenciesOf")(function* devDependenci
     decode: Schema.decodeUnknownEffect(WorkspaceDevDependencies),
   });
   const allowed = Rec.toEntries(Option.getOrElse(settings, () => ({})));
-  const entries = yield* pipe(
+  const entries = yield* Effect.forEach(
     allowed,
-    Effect.forEach((entry) => allowanceOf(source, dependencySets, entry)),
+    (entry) => allowanceOf(source, dependencySets, entry),
+    {
+      concurrency: 1,
+    },
   );
   return Rec.fromEntries(entries);
 });

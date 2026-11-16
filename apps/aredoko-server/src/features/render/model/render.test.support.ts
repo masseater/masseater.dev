@@ -1,5 +1,5 @@
 import { NodeServices } from "@effect/platform-node";
-import { Array, Effect, FileSystem, Layer, Option, Path, Result, Schema, pipe } from "effect";
+import { Array, Effect, FileSystem, Layer, Option, Path, Result, Schema } from "effect";
 import { Base64 } from "effect/encoding";
 import { SqlClient } from "effect/sql";
 
@@ -65,15 +65,15 @@ export const addPackage = Effect.fn("addPackage")(function* addPackage(
       select id, 'unitypackage', ${file}, 'wall', ${NO_SIZE}, ${NO_SIZE}, '{}'
       from sources where path = ${folder} returning id`,
   );
-  return yield* pipe(
+  return yield* Effect.forEach(
     files,
-    Effect.forEach(({ guid, pathname }) =>
+    ({ guid, pathname }) =>
       firstId(
         sql`insert into assets(package_id, guid, pathname, kind, text, render)
           values (${packageId}, ${guid}, ${pathname}, 'model', ${pathname}, ${RENDER.pending})
           returning id`,
       ),
-    ),
+    { concurrency: 1 },
   );
 });
 

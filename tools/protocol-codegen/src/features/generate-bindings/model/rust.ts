@@ -61,9 +61,7 @@ const shirushiRust = Effect.gen(function* shirushiRust() {
   return output;
 });
 
-export const rustOutputs = Effect.all([
-  Effect.succeed(aredokoRust),
-  yohakuRust,
-  mediaNotesRust,
-  shirushiRust,
-]);
+export const rustOutputs = Effect.all(
+  [Effect.succeed(aredokoRust), yohakuRust, mediaNotesRust, shirushiRust],
+  { concurrency: 1 },
+);

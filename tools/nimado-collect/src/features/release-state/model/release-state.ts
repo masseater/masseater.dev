@@ -107,7 +107,10 @@ const decompress = Effect.fn("state.decompress")(function* decompress(state: str
     zipped,
     Effect.filter((file) => fileSystem.exists(file)),
   );
-  yield* Effect.forEach(present, (file) => run("gzip", ["-d", "-f", file]), { discard: true });
+  yield* Effect.forEach(present, (file) => run("gzip", ["-d", "-f", file]), {
+    concurrency: 1,
+    discard: true,
+  });
   const archive = path.join(state, NICO_DAYS_ARCHIVE);
   const archived = yield* fileSystem.exists(archive);
   if (archived) {
@@ -146,7 +149,10 @@ const gzipped = Effect.fn("state.gzip")(function* gzipped(state: string) {
     Arr.map((name) => path.join(state, name)),
     Effect.filter((file) => fileSystem.exists(file)),
   );
-  yield* Effect.forEach(present, (file) => run("gzip", ["-k", "-f", file]), { discard: true });
+  yield* Effect.forEach(present, (file) => run("gzip", ["-k", "-f", file]), {
+    concurrency: 1,
+    discard: true,
+  });
   return pipe(
     present,
     Arr.map((file) => `${file}${GZIP}`),

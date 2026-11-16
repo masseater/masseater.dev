@@ -260,7 +260,7 @@ export const libraryIndex =
   (entries: readonly DependencyEntry[]): Effect.Effect<LibraryIndex> =>
     pipe(
       entries,
-      Effect.forEach(indexEntry(cache)(checker)),
+      (items) => Effect.forEach(items, indexEntry(cache)(checker), { concurrency: 1 }),
       Effect.map(mergeIndexes),
       Effect.withSpan("libraryIndex"),
     );

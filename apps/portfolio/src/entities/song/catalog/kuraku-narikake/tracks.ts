@@ -159,7 +159,10 @@ const drained =
 const pooled = (tracking: Tracking, queue: Queue, taker: Taker): Effect.Effect<void, WorkerLost> =>
   Effect.scoped(
     Effect.gen(function* pool() {
-      const workers = yield* Effect.all(Arr.makeBy(poolSize(), () => spawned));
+      const workers = yield* Effect.all(
+        Arr.makeBy(poolSize(), () => spawned),
+        { concurrency: 1 },
+      );
       yield* Effect.forEach(workers, drained(tracking, queue, taker), {
         concurrency: "unbounded",
         discard: true,
@@ -177,7 +180,7 @@ const here = (tracking: Tracking, names: readonly string[], taker: Taker): Effec
           taker.take(name, tracking.session.track(name));
         }),
       ),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 
 const takerOf = (tracking: Tracking): Taker => {

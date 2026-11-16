@@ -98,10 +98,8 @@ export const companionNamesOf = Effect.fn("companionNamesOf")(function* companio
   model: Uint8Array,
 ) {
   const direct = yield* namesIn(folder, textsOf(model));
-  const materials = yield* pipe(
-    direct,
-    Array.filter(isMaterialName),
-    Effect.forEach((name) => readCompanion(folder, name)),
+  const materials = yield* pipe(direct, Array.filter(isMaterialName), (items) =>
+    Effect.forEach(items, (name) => readCompanion(folder, name), { concurrency: 1 }),
   );
   const fromMaterials = yield* namesIn(
     folder,
@@ -119,10 +117,7 @@ export const companionsOf = Effect.fn("companionsOf")(function* companionsOfMode
   model: Uint8Array,
 ) {
   const names = yield* companionNamesOf(folder, model);
-  return yield* pipe(
-    names,
-    Effect.forEach((name) => readCompanion(folder, name)),
-  );
+  return yield* Effect.forEach(names, (name) => readCompanion(folder, name), { concurrency: 1 });
 });
 
 /** @internal */

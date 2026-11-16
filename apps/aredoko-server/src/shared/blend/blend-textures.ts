@@ -67,9 +67,8 @@ export const texturesOf = Effect.fn("texturesOf")(function* texturesOf(
     Array.getSomes,
     Array.dedupeWith((left, right) => left.key === right.key),
   );
-  const loaded = yield* pipe(
-    sources,
-    Effect.forEach((source) => pngOf(blend, source)),
-  );
+  const loaded = yield* Effect.forEach(sources, (source) => pngOf(blend, source), {
+    concurrency: 1,
+  });
   return HashMap.fromIterable(Array.getSomes(loaded));
 });

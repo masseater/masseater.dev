@@ -141,10 +141,9 @@ const matchedWorkspaces = Effect.fn("matchedWorkspaces")(function* matchedWorksp
     Arr.filter((workspace) => depthOf(workspace) < segments.length),
   );
   const depths = pipe(candidates, Arr.map(depthOf), Arr.dedupe);
-  const matched = yield* pipe(
-    depths,
-    Effect.forEach((depth) => matchedAtDepth(root, segments, depth)),
-  );
+  const matched = yield* Effect.forEach(depths, (depth) => matchedAtDepth(root, segments, depth), {
+    concurrency: 1,
+  });
   const flat = Arr.flatten(matched);
   return pipe(
     candidates,

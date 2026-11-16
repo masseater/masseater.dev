@@ -54,16 +54,13 @@ const upload = Effect.fn("upload")(function* uploadLibrary(
 ) {
   const { PutProjectAssets: putProjectAssets } = yield* AredokoClient;
   const projectPath = `${PROJECT_ROOT}/${condition}`;
-  yield* pipe(
-    placed,
-    Array.chunksOf(UPLOAD_BATCH),
-    Effect.forEach((batch) =>
-      pipe(
-        batch,
-        Effect.forEach((entry) => projectAsset(condition, entry)),
+  yield* Effect.forEach(
+    Array.chunksOf(placed, UPLOAD_BATCH),
+    (batch) =>
+      Effect.forEach(batch, (entry) => projectAsset(condition, entry), { concurrency: 1 }).pipe(
         Effect.flatMap((assets) => putProjectAssets({ projectPath, assets, complete: false })),
       ),
-    ),
+    { concurrency: 1 },
   );
   yield* putProjectAssets({ projectPath, assets: [], complete: true });
 });
@@ -89,9 +86,9 @@ const searchAll = Effect.fn("searchAll")(function* searchAll(
     Array.map((entry) => [pathnameOf(condition)(entry), entry.asset.id] as const),
     HashMap.fromIterable,
   );
-  return yield* pipe(
+  return yield* Effect.forEach(
     queries,
-    Effect.forEach(({ query, expected }) =>
+    ({ query, expected }) =>
       search({ query, limit: RESULT_LIMIT, kinds: [], packageId: ALL_PACKAGES }).pipe(
         Effect.map(({ results }) => ({
           query,
@@ -103,7 +100,7 @@ const searchAll = Effect.fn("searchAll")(function* searchAll(
           ),
         })),
       ),
-    ),
+    { concurrency: 1 },
   );
 });
 

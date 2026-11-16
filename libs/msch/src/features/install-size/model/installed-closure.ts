@@ -135,9 +135,9 @@ const directorySize = (directory: string): Effect.Effect<number, never, Reposito
       Arr.filter((name) => name !== NODE_MODULES),
       Arr.map((name) => files.join(directory, name)),
     );
-    const sizes = yield* pipe(
+    const sizes = yield* Effect.forEach(
       entries,
-      Effect.forEach((entry) =>
+      (entry) =>
         files.isDirectory(entry).pipe(
           Effect.flatMap((kind) => {
             if (Option.isNone(kind)) {
@@ -149,7 +149,7 @@ const directorySize = (directory: string): Effect.Effect<number, never, Reposito
             return files.fileSize(entry);
           }),
         ),
-      ),
+      { concurrency: 1 },
     );
     return Num.sumAll(sizes);
   });

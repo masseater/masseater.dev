@@ -94,10 +94,7 @@ const repositoryWith = (
     yield* fs.chmod(`${root}/${VENDORED_BETTERLEAKS}`, EXECUTABLE_MODE).pipe(Effect.orDie);
     yield* commitEmpty(root, "feat: base");
     yield* runGit(root, ["update-ref", "refs/remotes/origin/main", "HEAD"]);
-    yield* pipe(
-      commits,
-      Effect.forEach((message) => commitEmpty(root, message)),
-    );
+    yield* Effect.forEach(commits, (message) => commitEmpty(root, message), { concurrency: 1 });
     return root;
   });
 
@@ -192,6 +189,7 @@ const lintsTheCommitMessageFile = Effect.gen(function* lintsTheCommitMessageFile
       ["--other"],
     ],
     (args) => run(root, args),
+    { concurrency: 1 },
   );
   deepStrictEqual(
     pipe(
@@ -207,6 +205,7 @@ const lintsAGivenMessage = Effect.gen(function* lintsAGivenMessage() {
   const results = yield* Effect.forEach(
     [["--message", "feat: add (#7)"], ["--message", "no type (#7)"], ["--message"]],
     (args) => run(root, args),
+    { concurrency: 1 },
   );
   deepStrictEqual(
     pipe(

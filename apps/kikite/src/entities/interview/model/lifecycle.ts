@@ -41,30 +41,36 @@ export const reset = Effect.gen(function* reset() {
   const now = yield* Clock.currentTimeMillis;
   const random = yield* SecureRandom.SecureRandom;
   const id = yield* random.uuidV4();
-  yield* Effect.all([
-    write(entriesAtom, []),
-    write(summaryAtom, { status: "empty" }),
-    write(interimAtom, ""),
-    write(answerDraftAtom, ""),
-    write(askingAtom, IDLE),
-    write(heardAtom, freshHeard(now)),
-    write(progressAtom, []),
-    write(nudgeAtom, Option.none()),
-    write(staleAtom, false),
-    write(recordingAtom, { id, startedAt: now }),
-    write(savingAtom, { status: "idle" }),
-    write(leadsAtom, []),
-    write(researchingAtom, IDLE),
-  ]);
+  yield* Effect.all(
+    [
+      write(entriesAtom, []),
+      write(summaryAtom, { status: "empty" }),
+      write(interimAtom, ""),
+      write(answerDraftAtom, ""),
+      write(askingAtom, IDLE),
+      write(heardAtom, freshHeard(now)),
+      write(progressAtom, []),
+      write(nudgeAtom, Option.none()),
+      write(staleAtom, false),
+      write(recordingAtom, { id, startedAt: now }),
+      write(savingAtom, { status: "idle" }),
+      write(leadsAtom, []),
+      write(researchingAtom, IDLE),
+    ],
+    { concurrency: 1 },
+  );
 });
 
 /** @internal */
-export const release = Effect.all([
-  write(listeningAtom, { status: "off" }),
-  write(recognitionAtom, Option.none()),
-  write(askingAtom, IDLE),
-  write(hearingAtom, false),
-]);
+export const release = Effect.all(
+  [
+    write(listeningAtom, { status: "off" }),
+    write(recognitionAtom, Option.none()),
+    write(askingAtom, IDLE),
+    write(hearingAtom, false),
+  ],
+  { concurrency: 1 },
+);
 
 /** @internal */
 export const startListening = Effect.fn("kikite.startListening")(function* startListening(

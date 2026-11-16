@@ -49,10 +49,8 @@ const fileOf = Effect.fn("fileOf")(function* statFile({ id, path: root }: Source
 const filesOf = Effect.fn("filesOf")(function* listPackageFiles(source: Source) {
   const fileSystem = yield* FileSystem.FileSystem;
   const names = yield* fileSystem.readDirectory(source.path, { recursive: true });
-  const packages = yield* pipe(
-    names,
-    Array.filter(isPackage),
-    Effect.forEach((name) => fileOf(source, name)),
+  const packages = yield* pipe(names, Array.filter(isPackage), (items) =>
+    Effect.forEach(items, (name) => fileOf(source, name), { concurrency: 1 }),
   );
   const bundles = yield* bundlesIn(source, names);
   return [
@@ -86,7 +84,7 @@ const listingOf = Effect.fn("listingOf")(function* listSource(source: Source) {
 
 const currentListings = Effect.fn("currentListings")(function* listCurrentSources() {
   const sources = yield* folderSources();
-  const listings = yield* pipe(sources, Effect.forEach(listingOf));
+  const listings = yield* Effect.forEach(sources, listingOf, { concurrency: 1 });
   return Array.getSomes(listings);
 });
 
@@ -120,10 +118,9 @@ const removeStale = Effect.fn("removeStale")(function* removeStalePackages(
         HashSet.has(listed, sourceId) && !HashSet.has(present, path),
     ),
   );
-  yield* pipe(
-    stale,
-    Effect.forEach(({ id }) => sql`delete from packages where id = ${id}`),
-  );
+  yield* Effect.forEach(stale, ({ id }) => sql`delete from packages where id = ${id}`, {
+    concurrency: 1,
+  });
 });
 
 const indexScanned = Effect.fn("indexScanned")(function* indexScannedFile(
@@ -159,13 +156,13 @@ export const scanFolders = Effect.fn("scanFolders")(function* scanSourceFolders(
     files,
     Array.filter(({ file }) => !HashSet.has(unchanged, fileKey(file))),
   );
-  yield* pipe(
+  yield* Effect.forEach(
     changed,
-    Effect.forEach((scanned, done) =>
+    (scanned, done) =>
       onFile({ path: scanned.file.path, done, total: changed.length }).pipe(
         Effect.andThen(indexScanned(scanned, linkable)),
         Effect.catchCause((cause) => Effect.logWarning("index failed", scanned.file.path, cause)),
       ),
-    ),
+    { concurrency: 1 },
   );
 });

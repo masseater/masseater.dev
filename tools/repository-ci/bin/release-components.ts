@@ -234,9 +234,9 @@ runMain("release-components")(
       Arr.map(({ package: directory }) => directory),
       Arr.dedupe,
     );
-    const found = yield* pipe(
+    const found = yield* Effect.forEach(
       directories,
-      Effect.forEach((directory) =>
+      (directory) =>
         Effect.gen(function* component() {
           const names = tasksOf(tasks, directory);
           const builds = platformsWith(names, BUILD);
@@ -254,7 +254,7 @@ runMain("release-components")(
             Option.liftPredicate(() => changed || build),
           );
         }),
-      ),
+      { concurrency: 1 },
     );
     const components = yield* Schema.encodeEffect(Components)(Arr.getSomes(found));
     yield* writeOutputs({ components });

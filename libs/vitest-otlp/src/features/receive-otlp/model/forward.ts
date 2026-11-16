@@ -88,5 +88,6 @@ export const forwardTo =
   (endpoint: Endpoint) =>
   (message: Uint8Array): Effect.Effect<void, ForwardFailed> =>
     Effect.forEach(origins, (origin) => exportTo(origin, endpoint)(message), {
+      concurrency: 1,
       discard: true,
     }).pipe(Effect.withSpan("vitest-otlp.forward"));

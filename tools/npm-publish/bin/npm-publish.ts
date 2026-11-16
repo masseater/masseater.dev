@@ -97,7 +97,7 @@ const brokerToken = Effect.fn("broker.npmToken")(function* brokerToken(oidc: str
   const response = yield* HttpClient.filterStatusOk(client).execute(request);
   const grants = yield* HttpClientResponse.schemaBodyJson(Grants)(response);
   const token = Option.fromUndefinedOr(grants.npmToken);
-  yield* Effect.forEach(Option.toArray(token), mask);
+  yield* Effect.forEach(Option.toArray(token), mask, { concurrency: 1 });
   return token;
 });
 

@@ -142,8 +142,10 @@ export const writeProject = (
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const dir = yield* fs.makeTempDirectoryScoped({ prefix: "decision-" });
-    yield* Effect.forEach(Rec.toEntries(files), ([name, content]) =>
-      fs.writeFileString(path.join(dir, name), content),
+    yield* Effect.forEach(
+      Rec.toEntries(files),
+      ([name, content]) => fs.writeFileString(path.join(dir, name), content),
+      { concurrency: 1 },
     );
     return dir;
   });

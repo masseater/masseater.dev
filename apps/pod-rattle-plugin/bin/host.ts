@@ -9,6 +9,6 @@ const render = (bundle: string): ReturnType<typeof cargo> =>
 runMain("pod-rattle-host")(
   Effect.gen(function* host() {
     const bundles = yield* bundlesWith(VST3);
-    yield* Effect.forEach(bundles, render, { discard: true });
+    yield* Effect.forEach(bundles, render, { concurrency: 1, discard: true });
   }),
 );

@@ -127,6 +127,7 @@ export const checkPublishedSkills = Effect.fn("checkPublishedSkills")(
         Arr.filter(({ published }) => published),
       ),
       (project) => problemsIn(root, project),
+      { concurrency: 1 },
     );
     return Arr.flatten(problems);
   },

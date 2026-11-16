@@ -91,7 +91,7 @@ export const extractSkill =
           ),
         ),
         writeEntry(staging, skill),
-        { discard: true },
+        { concurrency: 1, discard: true },
       ),
     );
 

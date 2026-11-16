@@ -58,7 +58,10 @@ const allDependents = Effect.fn("msvc.allDependents")(function* allDependents(
   const listed = yield* pipe(
     names,
     Arr.filter((name) => BINARY.test(name)),
-    Effect.forEach((name) => dependents(dumpbin, path.join(llama, name))),
+    (items) =>
+      Effect.forEach(items, (name) => dependents(dumpbin, path.join(llama, name)), {
+        concurrency: 1,
+      }),
   );
   return Arr.flatten(listed);
 });
@@ -100,10 +103,9 @@ const copyRuntime = (
       Arr.map(({ name }) => name),
       Arr.dedupe,
     );
-    const flags = yield* pipe(
-      names,
-      Effect.forEach((name) => shippable(tools, name)),
-    );
+    const flags = yield* Effect.forEach(names, (name) => shippable(tools, name), {
+      concurrency: 1,
+    });
     const wanted = pipe(
       Arr.zip(names, flags),
       Arr.filter(([, shipped]) => shipped),
@@ -112,11 +114,10 @@ const copyRuntime = (
     if (Arr.isReadonlyArrayEmpty(wanted)) {
       return;
     }
-    yield* pipe(
+    yield* Effect.forEach(
       wanted,
-      Effect.forEach((name) =>
-        fileSystem.copyFile(path.join(tools.crt, name), path.join(tools.llama, name)),
-      ),
+      (name) => fileSystem.copyFile(path.join(tools.crt, name), path.join(tools.llama, name)),
+      { concurrency: 1 },
     );
     yield* copyRuntime(tools);
   });
@@ -130,10 +131,9 @@ const requireShipped = Effect.fn("msvc.requireShipped")(function* requireShipped
     listed,
     Arr.filter(({ name }) => !API_SET.test(name)),
   );
-  const flags = yield* pipe(
-    checked,
-    Effect.forEach(({ name }) => foreign(llama, name)),
-  );
+  const flags = yield* Effect.forEach(checked, ({ name }) => foreign(llama, name), {
+    concurrency: 1,
+  });
   const lines = pipe(
     Arr.zip(checked, flags),
     Arr.filter(([, missing]) => missing),
