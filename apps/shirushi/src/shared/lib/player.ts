@@ -1,4 +1,4 @@
-import type { Source } from "#protocol";
+import type { Source } from "@masseater.dev/shirushi-protocol";
 
 export type Position = Readonly<{ current: number; duration: number }>;
 
