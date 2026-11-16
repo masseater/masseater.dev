@@ -11,7 +11,6 @@
     "@commitlint/config-conventional": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@r_masseater/msch": "workspace:*",
-    "@r_masseater/textlint-rule-preset-ja": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/intent": "catalog:",
     "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",
