@@ -3,7 +3,7 @@ import { layer } from "@effect/vitest";
 import { assertFalse, assertTrue } from "@effect/vitest/utils";
 import { Effect, String as Str } from "effect";
 
-import type { TextlintPreset } from "#/shared/config/index.ts";
+import type { TextlintPreset } from "#/shared/config/index.test.support.ts";
 import { directoryWith, lines } from "#/shared/lib/fixture.test.support.ts";
 import { toJson } from "#/shared/lib/json.ts";
 
