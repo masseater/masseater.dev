@@ -123,6 +123,7 @@ export interface DecideInput {
 export interface DecisionProvider {
   readonly name: string;
   readonly requiredEnv: readonly string[];
+  readonly models?: RegExp;
   readonly yesNo?: boolean;
   readonly decide: (input: DecideInput) => DecideResult;
   readonly decideAll?: (inputs: readonly DecideInput[]) => readonly DecideResult[];

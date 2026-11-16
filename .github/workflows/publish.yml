@@ -11,6 +11,14 @@ on:
         description: Tag or commit to publish
         required: true
         default: main
+      deprecate-range:
+        description: Published versions to deprecate, as an npm semver range
+        required: false
+        type: string
+      deprecate-message:
+        description: Deprecation message for those versions
+        required: false
+        type: string
 
 permissions: {}
 
@@ -42,6 +50,9 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
       - run: node ../../tools/npm-publish/bin/npm-publish.ts
+        env:
+          DEPRECATE_RANGE: ${{ inputs.deprecate-range }}
+          DEPRECATE_MESSAGE: ${{ inputs.deprecate-message }}
 
   ci-telemetry:
     needs: [publish]
