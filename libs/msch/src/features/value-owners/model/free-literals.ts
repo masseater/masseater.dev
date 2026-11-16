@@ -4,6 +4,7 @@ import {
   isCallExpression,
   isExportDeclaration,
   isImportDeclaration,
+  isObjectLiteralExpression,
   isPropertyAssignment,
   isSignatureDeclaration,
   isSourceFile,
@@ -40,13 +41,21 @@ const isModuleScope = (node: Node): boolean => {
   return !isSignatureDeclaration(parent) && isModuleScope(parent);
 };
 
+const isModuleConstant = (node: Node): boolean =>
+  isVariableDeclaration(node.parent) &&
+  node.parent.initializer === node &&
+  isModuleScope(node.parent);
+
 const isDefinition = (node: StringLiteral): boolean => {
   const { parent } = node;
-  return (
-    ((isVariableDeclaration(parent) && parent.initializer === node) ||
-      (isPropertyAssignment(parent) && parent.initializer === node)) &&
-    isModuleScope(parent)
-  );
+  if (isPropertyAssignment(parent)) {
+    return (
+      parent.initializer === node &&
+      isObjectLiteralExpression(parent.parent) &&
+      isModuleConstant(parent.parent)
+    );
+  }
+  return isModuleConstant(node);
 };
 
 const isTyped =
