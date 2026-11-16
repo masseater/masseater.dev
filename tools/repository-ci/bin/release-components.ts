@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { outputOf, writeOutputs } from "@masseater.dev/github-workflow";
+import { getJson, outputOf, warn, writeOutputs } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
 import {
   Array as Arr,
@@ -23,6 +23,7 @@ const BUILD = "release:";
 const CHECK = "release:check:";
 const PUBLISH = "release:publish";
 const CONFIG = "release-please-config.json";
+const MANIFEST = ".release-please-manifest.json";
 const NO_ENVIRONMENT = "release";
 
 const RUNNERS = {
@@ -40,6 +41,12 @@ const ReleasePackage = Schema.Struct({ component: Schema.String });
 const ReleaseConfig = Schema.fromJsonString(
   Schema.Struct({ packages: Schema.Record(Schema.String, ReleasePackage) }),
 );
+
+const Manifest = Schema.fromJsonString(Schema.Record(Schema.String, Schema.String));
+
+const PublishedRelease = Schema.Struct({ assets: Schema.Array(Schema.Unknown) });
+
+type Release = Readonly<{ component: string; version: string }>;
 
 const Platform = Schema.Struct({ os: Schema.String, runner: Schema.String });
 
@@ -61,6 +68,7 @@ const Component = Schema.Struct({
   builds: Schema.Array(Platform),
   checks: Schema.Array(Platform),
   publish: Schema.Boolean,
+  build: Schema.Boolean,
 });
 
 const Components = Schema.fromJsonString(Schema.Array(Component));
@@ -145,26 +153,67 @@ const cargoEdges = Effect.fn("cargoEdges")(function* cargoEdges(directories: rea
   );
 });
 
-const environmentOf = Effect.fn("environmentOf")(function* environmentOf(
-  root: string,
-  directory: string,
-) {
+const releaseOf = Effect.fn("releaseOf")(function* releaseOf(root: string, directory: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const file = path.join(root, directory, CONFIG);
-  const exists = yield* fileSystem.exists(file);
+  const config = path.join(root, directory, CONFIG);
+  const exists = yield* fileSystem.exists(config);
   if (!exists) {
-    return NO_ENVIRONMENT;
+    return Option.none<Release>();
   }
-  const config = yield* fileSystem
-    .readFileString(file)
+  const { packages } = yield* fileSystem
+    .readFileString(config)
     .pipe(Effect.flatMap(Schema.decodeEffect(ReleaseConfig)));
-  return pipe(
-    Rec.get(config.packages, directory),
+  const manifest = yield* fileSystem
+    .readFileString(path.join(root, directory, MANIFEST))
+    .pipe(Effect.flatMap(Schema.decodeEffect(Manifest)));
+  return Option.all({
+    component: pipe(
+      Rec.get(packages, directory),
+      Option.map(({ component }) => component),
+    ),
+    version: Rec.get(manifest, directory),
+  });
+});
+
+const environmentOf = (release: Option.Option<Release>): string =>
+  pipe(
+    release,
     Option.map(({ component }) => `${component}-release`),
     Option.getOrElse(() => NO_ENVIRONMENT),
   );
+
+const unpublished = Effect.fn("unpublished")(function* unpublished(
+  release: Option.Option<Release>,
+) {
+  if (Option.isNone(release)) {
+    return false;
+  }
+  const { component, version } = release.value;
+  return yield* getJson(PublishedRelease)(`releases/tags/${component}-v${version}`).pipe(
+    Effect.map(({ assets }) => !Arr.isReadonlyArrayNonEmpty(assets)),
+    Effect.tapError(() => warn(`${component} v${version} has no release yet, so it is built`)),
+    Effect.orElseSucceed(() => true),
+  );
 });
+
+const builtWhen = Effect.fn("builtWhen")(function* builtWhen({
+  publish,
+  changed,
+  release,
+}: Readonly<{ publish: boolean; changed: boolean; release: Option.Option<Release> }>) {
+  if (publish) {
+    return yield* unpublished(release);
+  }
+  return changed;
+});
+
+const idsOf = (names: readonly string[], directory: string): readonly string[] =>
+  pipe(
+    names,
+    Arr.filter(Str.startsWith(BUILD)),
+    Arr.map((name) => `${directory}#${name}`),
+  );
 
 runMain("release-components")(
   Effect.gen(function* releaseComponents() {
@@ -191,21 +240,18 @@ runMain("release-components")(
         Effect.gen(function* component() {
           const names = tasksOf(tasks, directory);
           const builds = platformsWith(names, BUILD);
-          const ids = pipe(
-            names,
-            Arr.filter(Str.startsWith(BUILD)),
-            Arr.map((name) => `${directory}#${name}`),
-          );
           const name = nameOf(directory);
           const changed = yield* isChanged(
             { packages, record: released, workflows: WORKFLOWS, extra },
-            { name, directories: reachedFrom(tasks, ids) },
+            { name, directories: reachedFrom(tasks, idsOf(names, directory)) },
           );
-          const environment = yield* environmentOf(workspaceRoot, directory);
+          const release = yield* releaseOf(workspaceRoot, directory);
+          const publish = Arr.contains(names, PUBLISH);
+          const build = yield* builtWhen({ publish, changed, release });
           return pipe(
-            { name, directory, environment, builds, checks: platformsWith(names, CHECK) },
-            (base) => ({ ...base, publish: Arr.contains(names, PUBLISH) }),
-            Option.liftPredicate(() => changed),
+            { name, directory, environment: environmentOf(release), builds },
+            (base) => ({ ...base, checks: platformsWith(names, CHECK), publish, build }),
+            Option.liftPredicate(() => changed || build),
           );
         }),
       ),
