@@ -210,11 +210,12 @@ const SONG = {
 const PLAYER = `(init) => {
   const stems = init.stems;
   const gains = new Float32Array(stems.length).fill(1);
+  const linear = (mixer) => (mixer.muted ? 0 : Math.pow(10, mixer.volumeDecibels / 20));
   let at = -1;
   let fresh = false;
   return {
     msg: (message) => {
-      if (message.gains) gains.set(message.gains);
+      if (message.mixers) gains.set(message.mixers.map(linear));
       if (message.play !== undefined) { at = message.play; fresh = true; }
       if (message.stop) at = -1;
     },

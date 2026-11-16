@@ -6,6 +6,7 @@ import type { LiveMix } from "./contract.ts";
 import type { Deck } from "./deck.ts";
 import type { LiveNode } from "./live.ts";
 import type { Mixdown } from "./mix.ts";
+import type { Mixer } from "./mixing.ts";
 
 const TAIL = 0.05;
 const START = 0;
@@ -32,7 +33,7 @@ export interface Player {
   readonly mixdown: Option.Option<Mixdown>;
   readonly buffer: Option.Option<AudioBuffer>;
   readonly output: Output;
-  readonly gains: Option.Option<Float32Array>;
+  readonly mixers: Option.Option<readonly Mixer[]>;
   readonly playback: Playback;
   readonly wanted: boolean;
 }
@@ -45,7 +46,7 @@ export const idle = (sampleRate: number): Player => ({
   mixdown: Option.none(),
   buffer: Option.none(),
   output: { kind: "buffer" },
-  gains: Option.none(),
+  mixers: Option.none(),
   playback: PAUSED,
   wanted: false,
 });

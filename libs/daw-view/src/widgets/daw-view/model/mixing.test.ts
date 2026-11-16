@@ -1,24 +1,45 @@
+import { Array as Arr, Option, pipe } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 
-import { UNMIXED, audible, gainsOf, mixingOf, toggled } from "./mixing.ts";
+import { UNMIXED, audible, heardMixers, mixingOf, toggled } from "./mixing.ts";
 
-const ON = 1;
-const OFF = 0;
+const QUIET = -6;
+const LEFT = -0.5;
+const KEYS = 2;
 
-const mixing = mixingOf(["DRUMS", "BASS", "KEYS"]);
+const mixing = mixingOf({ KEYS: { volumeDecibels: QUIET, pan: LEFT, muted: false } })([
+  "DRUMS",
+  "BASS",
+  "KEYS",
+]);
 const muted = toggled({ name: "BASS", flip: "mute" })(mixing);
 const soloed = toggled({ name: "KEYS", flip: "solo" })(muted);
 
+const silenced = (state: typeof mixing): readonly boolean[] =>
+  pipe(
+    heardMixers(state),
+    Arr.map((mixer) => mixer.muted),
+  );
+
 describe("a mix", () => {
   it("plays every track until one is muted or soloed", () => {
-    expect([...gainsOf(mixing)]).toStrictEqual([ON, ON, ON]);
-    expect([...gainsOf(muted)]).toStrictEqual([ON, OFF, ON]);
+    expect(silenced(mixing)).toStrictEqual([false, false, false]);
+    expect(silenced(muted)).toStrictEqual([false, true, false]);
   });
 
   it("plays only the soloed tracks, and a muted track stays silent", () => {
-    expect([...gainsOf(soloed)]).toStrictEqual([OFF, OFF, ON]);
+    expect(silenced(soloed)).toStrictEqual([true, true, false]);
     const both = toggled({ name: "BASS", flip: "solo" })(soloed);
-    expect([...gainsOf(both)]).toStrictEqual([OFF, OFF, ON]);
+    expect(silenced(both)).toStrictEqual([true, true, false]);
+  });
+
+  it("keeps the volume and pan the song gave a track", () => {
+    const keys = Option.getOrNull(Arr.get(heardMixers(soloed), KEYS));
+    expect(keys).toStrictEqual({
+      volumeDecibels: QUIET,
+      pan: LEFT,
+      muted: false,
+    });
   });
 
   it("turns a switch off when it is pressed again", () => {

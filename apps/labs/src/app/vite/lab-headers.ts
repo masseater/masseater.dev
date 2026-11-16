@@ -29,14 +29,18 @@ const styleBodies = (html: string): readonly string[] =>
     Arr.flatMap((match) => Option.toArray(group("body")(match.groups))),
   );
 
+const scriptSourcesOf = (page: string): readonly string[] =>
+  pipe(
+    Rec.toEntries(PAGE_SCRIPT_SOURCES),
+    Arr.filter(([scope]) => page === scope || Str.startsWith(`${scope}/`)(page)),
+    Arr.flatMap(([, sources]) => sources),
+  );
+
 const pageRule = ({ page, hashes }: PageStyles): readonly string[] => [
   `/${page}/*`,
   ...headerLines(SECURITY_HEADERS_CREDENTIALLESS),
   `  Content-Security-Policy: ${contentSecurityPolicy({
-    script: pipe(
-      Rec.get(PAGE_SCRIPT_SOURCES, page),
-      Option.getOrElse((): readonly string[] => []),
-    ),
+    script: scriptSourcesOf(page),
     style: hashes,
     image: ["blob:"],
     styleAttr: true,

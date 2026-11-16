@@ -9,7 +9,7 @@
   <body class="daw-song">
     <main></main>
     <script type="module">
-      import { mountSong } from "@masseater.dev/daw-view";
+      import { mountSong, openTape } from "@masseater.dev/daw-view";
 
       import "@masseater.dev/daw-view/styles.css";
 
@@ -888,6 +888,101 @@
             curve = G.curve,
             svf = G.svf;
           const E = G.make(S, META, (BARS * 240) / BPM + TAIL, BPM, SWING, opt.log);
+          const Q = G.make(S, META, (BARS * 240) / BPM + TAIL, BPM, SWING, null);
+          const COMP_DEC = 16,
+            LIM_DEC = 4,
+            CLIP = [0.66, 0.4];
+          const held = (g, dec) => new Float32Array(Math.ceil(N / dec) + 2).fill(g);
+          const compCurve = (b, thrDb, ratio, attMs, relMs, makeupDb, scHp) => {
+            const thr = db(thrDb),
+              aA = Math.exp(-1 / (attMs * 1e-3 * SR)),
+              aR = Math.exp(-1 / (relMs * 1e-3 * SR)),
+              mk = db(makeupDb || 0),
+              aH = scHp ? 1 - Math.exp((-2 * Math.PI * scHp) / SR) : 0;
+            const curve = held(mk, COMP_DEC);
+            let env = 0,
+              hp = 0,
+              most = 0,
+              g = 1;
+            for (let i = 0; i < N; i++) {
+              let m = (b.L[i] + b.R[i]) * 0.5;
+              if (aH) {
+                hp += aH * (m - hp);
+                m -= hp;
+              }
+              const d = Math.max(Math.abs(m), Math.abs(b.L[i]) * 0.7, Math.abs(b.R[i]) * 0.7);
+              env = d > env ? aA * env + (1 - aA) * d : aR * env + (1 - aR) * d;
+              g = 1;
+              if (env > thr) {
+                g = Math.pow(env / thr, 1 / ratio - 1);
+                if (1 - g > most) most = 1 - g;
+              }
+              if (i % COMP_DEC === 0) curve[i / COMP_DEC] = g * mk;
+            }
+            curve.fill(g * mk, Math.floor((N - 1) / COMP_DEC) + 1);
+            return { curve, most };
+          };
+          const applyCurve = (b, curve, dec) => {
+            for (let i = 0; i < N; i++) {
+              const w = (i / dec) | 0,
+                g = curve[w] + (curve[w + 1] - curve[w]) * ((i - w * dec) / dec);
+              b.L[i] *= g;
+              b.R[i] *= g;
+            }
+          };
+          const softClip = (ch, T, K) => {
+            for (let i = 0; i < N; i++) {
+              const x = ch[i],
+                a = Math.abs(x);
+              ch[i] = a < T ? x : Math.sign(x) * (T + K * Math.tanh((a - T) / K));
+            }
+          };
+          const limitCurve = (b, ceilDb, lookMs, relMs) => {
+            const c = db(ceilDb),
+              La = Math.round(lookMs * 1e-3 * SR),
+              rel = 1 - Math.exp(-1 / (relMs * 1e-3 * SR));
+            const req = new Float32Array(N);
+            for (let i = 0; i < N; i++) {
+              const p = Math.max(Math.abs(b.L[i]), Math.abs(b.R[i]));
+              req[i] = p > c ? c / p : 1;
+            }
+            const mn = new Float32Array(N);
+            const dq = new Int32Array(N);
+            let h = 0,
+              tl = 0;
+            for (let i = 0, j = 0; i < N; i++) {
+              const end = Math.min(N - 1, i + La);
+              for (; j <= end; j++) {
+                while (tl > h && req[dq[tl - 1]] >= req[j]) tl--;
+                dq[tl++] = j;
+              }
+              while (dq[h] < i) h++;
+              mn[i] = req[dq[h]];
+            }
+            let e = 1;
+            for (let i = 0; i < N; i++) {
+              const m = mn[i];
+              e = m < e ? m : e + (m - e) * rel;
+              mn[i] = e;
+            }
+            let acc = 0;
+            for (let i = 0; i < N; i++) {
+              acc += mn[i];
+              if (i >= La) acc -= mn[i - La];
+              req[i] = i >= La - 1 ? acc / La : mn[i];
+            }
+            const curve = held(1, LIM_DEC);
+            let least = 1;
+            for (let k = 0; k < curve.length; k++) {
+              let m = 1;
+              const a = Math.max(0, k * LIM_DEC - LIM_DEC),
+                z = Math.min(N, k * LIM_DEC + LIM_DEC + 1);
+              for (let i = a; i < z; i++) if (req[i] < m) m = req[i];
+              curve[k] = m;
+              if (m < least) least = m;
+            }
+            return { curve, least };
+          };
           const { N, T16, BAR, tt, paste: P } = E;
           const rnd = G.rng(1997);
           const tick = (p, label) =>
@@ -922,11 +1017,107 @@
           view.roots = Array.from({ length: BARS }, (_, b) => chordOf(b)[0]);
           view.keyShift = Array.from({ length: BARS }, (_, b) => TRof(b));
           view.auto = {};
-          const main = E.bus(false, "FX"),
+          const wallFc = curve([
+            [0, 260],
+            [tt(3, 0), 300],
+            [tt(6, 0), 700],
+            [tt(7, 8), 2600],
+            [tt(7, 15.5), 5e3],
+            [tt(8, 0), 2e4],
+            [tt(71, 12), 2e4],
+            [tt(72, 0), 2400],
+            [tt(74, 0), 700],
+            [tt(76, 0), 330],
+            [tt(80, 0), 210],
+            [tt(82, 0), 150],
+          ]);
+          const wallG = curve([
+            [0, 0.3],
+            [tt(4, 0), 0.36],
+            [tt(7, 0), 0.5],
+            [tt(7, 15), 0.7],
+            [tt(8, 0), 1],
+            [tt(72, 0), 1],
+            [tt(72, 0) + 0.01, 0.6],
+            [tt(76, 0), 0.42],
+            [tt(79, 0), 0.3],
+            [tt(80, 0), 0.2],
+            [tt(81, 0), 0],
+          ]);
+          const hpF = curve([
+            [tt(67, 8), 20],
+            [tt(68, 0), 260],
+            [tt(71, 0), 420],
+            [tt(71, 12), 500],
+            [tt(72, 0), 20],
+          ]);
+          const wall = (b) => {
+            for (const rg of [
+              [0, ix(tt(8, 0))],
+              [ix(tt(71, 12)), N],
+            ])
+              for (const ch of [b.L, b.R]) {
+                const f = (i) => wallFc(i / SR);
+                svf(ch, 0, f, 0.75, rg[0], rg[1]);
+                svf(ch, 0, f, 0.6, rg[0], rg[1]);
+              }
+            E.gainFn(b, wallG);
+            const a = ix(tt(67, 8)),
+              z = ix(tt(72, 0));
+            for (const ch of [b.L, b.R]) svf(ch, 1, (i) => hpF(i / SR), 0.8, a, z);
+          };
+          const cutUps = (X, b) => {
+            X.mute(b, tt(7, 15.6), tt(8, 0) - tt(7, 15.6), 4e-3);
+            X.repeat(b, tt(15, 12), T16 * 1, 4, { pitch: 0 });
+            X.tapeStop(b, tt(23, 12), tt(24, 0) - tt(23, 12), 0.05);
+            X.repeat(b, tt(21, 8), T16 * 2, 2, {});
+            X.repeat(b, tt(31, 14), T16 * 0.5, 4, { pitch: 1 });
+            X.repeat(b, tt(35, 12), T16 * 2, 2, {});
+            X.repeat(b, tt(37, 14), T16, 2, {});
+            X.repeat(b, tt(39, 14), T16 * 0.5, 4, { pitch: 2 });
+            X.reverseSlice(b, tt(43, 12), T16 * 2);
+            X.repeat(b, tt(45, 8), T16 * 2, 2, {});
+            X.mute(b, tt(51, 15), tt(52, 0) - tt(51, 15), 4e-3);
+            X.repeat(b, tt(55, 12), T16, 4, {});
+            X.repeat(b, tt(57, 8), T16 * 2, 2, {});
+            X.repeat(b, tt(59, 14), T16 * 0.5, 4, { pitch: 2 });
+            X.repeat(b, tt(61, 14), T16, 2, {});
+            X.repeat(b, tt(63, 12), T16 * 2, 2, {});
+            X.reverseSlice(b, tt(65, 12), T16 * 4);
+            X.tapeStop(b, tt(71, 12), tt(72, 0) - tt(71, 12), 0.08);
+            X.mute(b, tt(80, 0) + 0.02, 0.6, 0.6);
+          };
+          const mg = opt.gain ? +opt.gain : 1.06;
+          const tone = (b) => {
+            for (const ch of [b.L, b.R]) {
+              svf(ch, 1, 27, 0.7);
+              G.biquad(ch, "low", 90, 1, 0.7);
+              G.biquad(ch, "peak", 260, -1.5, 0.9);
+            }
+            E.width(b, 1, 140);
+            for (let i = 0; i < N; i++) {
+              b.L[i] *= mg;
+              b.R[i] *= mg;
+            }
+          };
+          const tape = opt.tape || null;
+          const stemOf = (name, c, walled) => {
+            if (walled) wall(c);
+            cutUps(Q, c);
+            tone(c);
+            tape.write(name, c.L, c.R);
+          };
+          const keep = (name, b, level, walled) => {
+            if (!tape) return;
+            const c = E.bus(false);
+            E.mix(c, b, level);
+            stemOf(name, c, walled);
+          };
+          const main = E.bus(false),
+            fx = E.bus(false, "FX"),
             revSend = E.bus(false, "PLATE SEND"),
             dlySend = E.bus(false, "DELAY SEND"),
             fore = E.bus(false, "FRONT VOICE");
-          const fx = main;
           let kick = E.bus(true, "KICK"),
             drums = E.bus(false, "DRUMS"),
             bassSub = null,
@@ -945,10 +1136,6 @@
             vox: 0.8,
             rev: 0.85,
             dly: 0.5,
-          };
-          const stems = opt.stems ? {} : null;
-          const keep = (n, b) => {
-            if (stems) stems[n] = { L: b.L.slice(), R: b.R.slice() };
           };
           const kickTimes = [];
           const hit = (b, name, bar, step, o) => P(b, name, tt(bar, step) + ((o && o.dt) || 0), o);
@@ -1888,8 +2075,8 @@
           });
           E.comp(drums, -16, 2.5, 6, 90, 2.5);
           E.each(drums, (ch, a, z) => G.drive(ch, 1.15, 0.9, a, z));
-          keep("kick", kick);
-          keep("drums", drums);
+          keep("KICK", kick, LV.kick, true);
+          keep("DRUMS", drums, LV.drums, true);
           E.mix(main, kick, LV.kick);
           E.mix(main, drums, LV.drums);
           kick = drums = null;
@@ -1974,9 +2161,21 @@
           svf(bassMid.L, 0, 5200, 0.7);
           svf(bassSub.L, 0, 125, 0.8);
           G.drive(bassSub.L, 1.6, 0.62);
+          if (tape)
+            for (const [name, src, k] of [
+              ["BASS SUB", bassSub, 1],
+              ["BASS MID", bassMid, 0.9],
+            ]) {
+              const c = E.bus(false);
+              for (let i = 0; i < N; i++) {
+                const v = src.L[i] * k * (0.1 + 0.9 * duck[i]) * LV.bass;
+                c.L[i] = v;
+                c.R[i] = v;
+              }
+              stemOf(name, c, true);
+            }
           for (let i = 0; i < N; i++)
             bassSub.L[i] = (bassSub.L[i] + bassMid.L[i] * 0.9) * (0.1 + 0.9 * duck[i]);
-          keep("bass", bassSub);
           E.mix(main, bassSub, LV.bass);
           bassSub = bassMid = null;
           await tick(0.22, "organ");
@@ -2129,9 +2328,9 @@
           E.mix(revSend, pad, 0.16);
           E.mix(dlySend, organ, 0.1);
           E.mix(dlySend, keys, 0.16);
-          keep("organ", organ);
-          keep("keys", keys);
-          keep("pad", pad);
+          keep("ORGAN", organ, LV.organ, true);
+          keep("FM PIANO", keys, LV.keys, true);
+          keep("PAD", pad, LV.pad, true);
           E.mix(main, organ, LV.organ);
           E.mix(main, keys, LV.keys);
           E.mix(main, pad, LV.pad);
@@ -2774,8 +2973,8 @@
           E.comp(vox, -17, 3, 4, 110, 3.5);
           E.each(vox, (ch, a, z) => G.drive(ch, 1.2, 0.88, a, z));
           E.mulEnv(vox, duck, 0.18);
-          keep("vox", vox);
-          keep("fore", fore);
+          keep("VOICES", vox, LV.vox, true);
+          keep("FRONT VOICE", fore, 1.3, false);
           E.mix(main, vox, LV.vox);
           vox = null;
           await tick(0.58, "delay");
@@ -2783,7 +2982,7 @@
           let dly = E.delay(dlySend, T16 * 3, 0.46, 3600, 350, 1);
           E.mix(revSend, dly, 0.3);
           E.mulEnv(dly, duck, 0.3);
-          keep("dly", dly);
+          keep("DELAY SEND", dly, LV.dly, true);
           E.mix(main, dly, LV.dly);
           dly = null;
           await tick(0.66, "plate reverb");
@@ -2802,48 +3001,14 @@
             tmp.set(revSend.R.subarray(0, N - pre), pre);
             G.convolve(tmp, S.irR, rev.R, 0.055);
             E.mulEnv(rev, duck, 0.45);
-            keep("rev", rev);
+            keep("PLATE SEND", rev, LV.rev, true);
             E.mix(main, rev, LV.rev);
             rev = null;
           }
           await tick(0.84, "mixdown");
-          const wallFc = curve([
-            [0, 260],
-            [tt(3, 0), 300],
-            [tt(6, 0), 700],
-            [tt(7, 8), 2600],
-            [tt(7, 15.5), 5e3],
-            [tt(8, 0), 2e4],
-            [tt(71, 12), 2e4],
-            [tt(72, 0), 2400],
-            [tt(74, 0), 700],
-            [tt(76, 0), 330],
-            [tt(80, 0), 210],
-            [tt(82, 0), 150],
-          ]);
-          const wallG = curve([
-            [0, 0.3],
-            [tt(4, 0), 0.36],
-            [tt(7, 0), 0.5],
-            [tt(7, 15), 0.7],
-            [tt(8, 0), 1],
-            [tt(72, 0), 1],
-            [tt(72, 0) + 0.01, 0.6],
-            [tt(76, 0), 0.42],
-            [tt(79, 0), 0.3],
-            [tt(80, 0), 0.2],
-            [tt(81, 0), 0],
-          ]);
-          for (const rg of [
-            [0, ix(tt(8, 0))],
-            [ix(tt(71, 12)), N],
-          ])
-            for (const ch of [main.L, main.R]) {
-              const f = (i) => wallFc(i / SR);
-              svf(ch, 0, f, 0.75, rg[0], rg[1]);
-              svf(ch, 0, f, 0.6, rg[0], rg[1]);
-            }
-          E.gainFn(main, wallG);
+          keep("FX", fx, 1, true);
+          E.mix(main, fx, 1);
+          wall(main);
           {
             const n = BARS * 16 + 1,
               a = new Float32Array(n),
@@ -2865,68 +3030,26 @@
             }
             view.auto["BASS FILTER"] = { v: bf, lo: 150, hi: 3e3, log: 1, unit: "Hz" };
           }
-          {
-            const hpF = curve([
-              [tt(67, 8), 20],
-              [tt(68, 0), 260],
-              [tt(71, 0), 420],
-              [tt(71, 12), 500],
-              [tt(72, 0), 20],
-            ]);
-            const a = ix(tt(67, 8)),
-              b = ix(tt(72, 0));
-            for (const ch of [main.L, main.R]) svf(ch, 1, (i) => hpF(i / SR), 0.8, a, b);
-          }
           E.mix(main, fore, 1.3);
           await tick(0.88, "cut-ups");
-          E.mute(main, tt(7, 15.6), tt(8, 0) - tt(7, 15.6), 4e-3);
-          E.repeat(main, tt(15, 12), T16 * 1, 4, { pitch: 0 });
-          E.tapeStop(main, tt(23, 12), tt(24, 0) - tt(23, 12), 0.05);
-          E.repeat(main, tt(21, 8), T16 * 2, 2, {});
-          E.repeat(main, tt(31, 14), T16 * 0.5, 4, { pitch: 1 });
-          E.repeat(main, tt(35, 12), T16 * 2, 2, {});
-          E.repeat(main, tt(37, 14), T16, 2, {});
-          E.repeat(main, tt(39, 14), T16 * 0.5, 4, { pitch: 2 });
-          E.reverseSlice(main, tt(43, 12), T16 * 2);
-          E.repeat(main, tt(45, 8), T16 * 2, 2, {});
-          E.mute(main, tt(51, 15), tt(52, 0) - tt(51, 15), 4e-3);
-          E.repeat(main, tt(55, 12), T16, 4, {});
-          E.repeat(main, tt(57, 8), T16 * 2, 2, {});
-          E.repeat(main, tt(59, 14), T16 * 0.5, 4, { pitch: 2 });
-          E.repeat(main, tt(61, 14), T16, 2, {});
-          E.repeat(main, tt(63, 12), T16 * 2, 2, {});
-          E.reverseSlice(main, tt(65, 12), T16 * 4);
-          E.tapeStop(main, tt(71, 12), tt(72, 0) - tt(71, 12), 0.08);
-          E.mute(main, tt(80, 0) + 0.02, 0.6, 0.6);
+          cutUps(E, main);
           await tick(0.92, "master");
-          for (const ch of [main.L, main.R]) {
-            svf(ch, 1, 27, 0.7);
-            G.biquad(ch, "low", 90, 1, 0.7);
-            G.biquad(ch, "peak", 260, -1.5, 0.9);
-          }
-          E.width(main, 1, 140);
-          const mg = opt.gain ? +opt.gain : 1.06;
-          for (let i = 0; i < N; i++) {
-            main.L[i] *= mg;
-            main.R[i] *= mg;
-          }
-          const gr = E.comp(main, -9, 2, 12, 140, 1.2, 120);
-          for (const ch of [main.L, main.R]) {
-            for (let i = 0; i < N; i++) {
-              const x = ch[i],
-                a = Math.abs(x);
-              ch[i] = a < 0.66 ? x : Math.sign(x) * (0.66 + 0.4 * Math.tanh((a - 0.66) / 0.4));
-            }
-          }
-          const lg = E.limit(main, -1.4, 3, 70);
+          tone(main);
+          const comp = compCurve(main, -9, 2, 12, 140, 1.2, 120);
+          applyCurve(main, comp.curve, COMP_DEC);
+          for (const ch of [main.L, main.R]) softClip(ch, CLIP[0], CLIP[1]);
+          const lim = limitCurve(main, -1.4, 3, 70);
+          applyCurve(main, lim.curve, LIM_DEC);
           await tick(1, "done");
-          const out = {
+          return {
             L: main.L,
             R: main.R,
-            info: { compGR: +gr.toFixed(3), limMin: +lg.toFixed(3) },
+            comp: comp.curve,
+            lim: lim.curve,
+            clip: CLIP,
+            dec: [COMP_DEC, LIM_DEC],
+            info: { compGR: +comp.most.toFixed(3), limMin: +lim.least.toFixed(3) },
           };
-          if (stems) out.stems = stems;
-          return out;
         }
         const api = { render, title: "life is but a", BPM, SWING, BARS, TAIL, SEC, MARKS };
         return api;
@@ -3190,14 +3313,266 @@
         roots: view.roots ?? [],
       });
 
+      const mixerModule = function () {
+        function slide(ramp, g0, g1, m, step) {
+          let g = g0;
+          for (let i = 0; i < m; i++) {
+            if (g < g1) g = Math.min(g1, g + step);
+            else if (g > g1) g = Math.max(g1, g - step);
+            ramp[i] = g;
+          }
+          return g;
+        }
+        function Player(P, rate, tape) {
+          this.N = P.N;
+          this.SR = P.SR;
+          this.comp = P.comp;
+          this.lim = P.lim;
+          this.cd = P.dec[0];
+          this.ld = P.dec[1];
+          this.T = P.clip[0];
+          this.K = P.clip[1];
+          this.tape = tape;
+          this.n = P.tracks;
+          this.gl = new Float32Array(P.tracks).fill(1);
+          this.gr = new Float32Array(P.tracks).fill(1);
+          this.tl = new Float32Array(P.tracks).fill(1);
+          this.tr = new Float32Array(P.tracks).fill(1);
+          this.slew = 1 / (6e-3 * P.SR);
+          this.rbL = new Float32Array(256);
+          this.rbR = new Float32Array(256);
+          this.pos = 0;
+          this.on = false;
+          this.next = null;
+          this.fin = false;
+          this.ratio = P.SR / (rate || P.SR);
+          this.ph = 1;
+          this.sL = new Float32Array(256);
+          this.sR = new Float32Array(256);
+          this.sn = 0;
+          this.si = 0;
+          this.a0 = 0;
+          this.a1 = 0;
+          this.b0 = 0;
+          this.b1 = 0;
+        }
+        Player.prototype.chunk = function (L, R, m) {
+          const pos = this.pos,
+            end = Math.max(0, Math.min(m, this.N - pos)),
+            F = this.tape.frames;
+          L.fill(0, 0, m);
+          R.fill(0, 0, m);
+          for (let s = 0; s < this.n; s++) {
+            const l0 = this.gl[s],
+              r0 = this.gr[s],
+              l1 = this.tl[s],
+              r1 = this.tr[s];
+            if (l0 === 0 && r0 === 0 && l1 === 0 && r1 === 0) continue;
+            const rl = this.rbL,
+              rr = this.rbR;
+            this.gl[s] = slide(rl, l0, l1, m, this.slew);
+            this.gr[s] = slide(rr, r0, r1, m, this.slew);
+            for (let i0 = 0; i0 < end;) {
+              const gi = pos + i0,
+                b = Math.floor(gi / F),
+                o0 = gi - b * F,
+                i1 = Math.min(end, i0 + F - o0),
+                blk = this.tape.block(b),
+                T = blk && blk[s];
+              if (T && T.channels) {
+                const d = T.data,
+                  sc = T.scale;
+                let o = o0 * T.channels;
+                for (let i = i0; i < i1; i++) {
+                  const l = d[o++] * sc;
+                  L[i] += l * rl[i];
+                  R[i] += (T.channels === 2 ? d[o++] * sc : l) * rr[i];
+                }
+              }
+              i0 = i1;
+            }
+          }
+          const comp = this.comp,
+            lim = this.lim,
+            cd = this.cd,
+            ld = this.ld,
+            T = this.T,
+            K = this.K;
+          for (let i = 0; i < end; i++) {
+            const gi = pos + i;
+            let w = (gi / cd) | 0;
+            const cg = comp[w] + (comp[w + 1] - comp[w]) * ((gi - w * cd) / cd);
+            w = (gi / ld) | 0;
+            const lg = lim[w] + (lim[w + 1] - lim[w]) * ((gi - w * ld) / ld);
+            let x = L[i] * cg,
+              a = Math.abs(x);
+            if (a >= T) x = Math.sign(x) * (T + K * Math.tanh((a - T) / K));
+            L[i] = x * lg;
+            x = R[i] * cg;
+            a = Math.abs(x);
+            if (a >= T) x = Math.sign(x) * (T + K * Math.tanh((a - T) / K));
+            R[i] = x * lg;
+          }
+          this.pos += m;
+        };
+        Player.prototype.msg = function (m) {
+          if (m.mixers)
+            m.mixers.forEach((x, s) => {
+              const g = x.muted ? 0 : Math.pow(10, x.volumeDecibels / 20);
+              this.tl[s] = g * Math.min(1, 1 - x.pan);
+              this.tr[s] = g * Math.min(1, 1 + x.pan);
+            });
+          if (m.play !== undefined) this.next = m.play;
+          if (m.stop) this.next = -1;
+        };
+        Player.prototype.pull = function (L, R, n) {
+          if (this.ratio === 1) {
+            this.chunk(L, R, n);
+            return;
+          }
+          const r = this.ratio,
+            sL = this.sL,
+            sR = this.sR;
+          let ph = this.ph,
+            a0 = this.a0,
+            a1 = this.a1,
+            b0 = this.b0,
+            b1 = this.b1;
+          for (let i = 0; i < n; i++) {
+            while (ph >= 1) {
+              if (this.si >= this.sn) {
+                this.chunk(sL, sR, 256);
+                this.sn = 256;
+                this.si = 0;
+              }
+              a0 = b0;
+              a1 = b1;
+              b0 = sL[this.si];
+              b1 = sR[this.si++];
+              ph -= 1;
+            }
+            L[i] = a0 + (b0 - a0) * ph;
+            R[i] = a1 + (b1 - a1) * ph;
+            ph += r;
+          }
+          this.ph = ph;
+          this.a0 = a0;
+          this.a1 = a1;
+          this.b0 = b0;
+          this.b1 = b1;
+        };
+        Player.prototype.render = function (L, R, n) {
+          let ev = 0;
+          if (this.next !== null && this.on) {
+            this.pull(L, R, n);
+            for (let i = 0; i < n; i++) {
+              const g = 1 - (i + 1) / n;
+              L[i] *= g;
+              R[i] *= g;
+            }
+            this.on = false;
+            return 0;
+          }
+          if (this.next !== null) {
+            const p = this.next;
+            this.next = null;
+            if (p >= 0) {
+              this.pos = Math.max(0, Math.min(this.N, Math.round(p)));
+              this.ph = 1;
+              this.sn = this.si = 0;
+              this.a0 = this.a1 = this.b0 = this.b1 = 0;
+              this.on = true;
+              this.fin = true;
+              ev = 1;
+            }
+          }
+          if (!this.on) {
+            L.fill(0, 0, n);
+            R.fill(0, 0, n);
+            return 0;
+          }
+          this.pull(L, R, n);
+          if (this.fin) {
+            const k = Math.min(n, 96);
+            for (let i = 0; i < k; i++) {
+              const g = i / k;
+              L[i] *= g;
+              R[i] *= g;
+            }
+            this.fin = false;
+          }
+          if (this.pos >= this.N + 512) {
+            this.on = false;
+            ev = 2;
+          }
+          return ev;
+        };
+        return { Player };
+      };
+
+      const MIXED = [
+        "KICK",
+        "DRUMS",
+        "BASS SUB",
+        "BASS MID",
+        "ORGAN",
+        "FM PIANO",
+        "PAD",
+        "VOICES",
+        "FRONT VOICE",
+        "FX",
+        "PLATE SEND",
+        "DELAY SEND",
+      ];
+
+      const tapeFor = async () => {
+        try {
+          return await openTape({
+            tracks: MIXED.length,
+            frames: Math.ceil(((GSong.BARS * 240) / GSong.BPM + GSong.TAIL) * GEngine.SR),
+          });
+        } catch {
+          return null;
+        }
+      };
+
+      const liveOf = (out, tape) => ({
+        tracks: MIXED,
+        player: `(init, rate, tape) => new ((${mixerModule})().Player)(init, rate, tape)`,
+        init: {
+          N: out.L.length,
+          SR: GEngine.SR,
+          tracks: MIXED.length,
+          comp: out.comp,
+          lim: out.lim,
+          clip: out.clip,
+          dec: out.dec,
+        },
+        transfer: [out.comp.buffer, out.lim.buffer],
+        tape,
+      });
+
       const render = async ({ samples, report }) => {
         const log = [];
         const view = {};
         const progress = (share, label) => {
           report({ share, label, take: takeOf(log, view) });
         };
-        const out = await GSong.render(GEngine, samples, META, progress, { log, view });
-        return { left: out.L, right: out.R, take: takeOf(log, view) };
+        const tape = await tapeFor();
+        const out = await GSong.render(GEngine, samples, META, progress, {
+          log,
+          view,
+          tape: tape && {
+            write: (name, left, right) => {
+              tape.write(MIXED.indexOf(name), left, right);
+            },
+          },
+        });
+        const rendered = { left: out.L, right: out.R, take: takeOf(log, view) };
+        if (!tape) {
+          return rendered;
+        }
+        return { ...rendered, live: liveOf(out, tape) };
       };
 
       mountSong(document.querySelector("main"))({
