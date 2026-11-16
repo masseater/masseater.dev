@@ -9,6 +9,7 @@ export type {
   SteigerConfig,
   SteigerSection,
   TextlintConfig,
+  TextlintSource,
   ToolSection,
   ToolSections,
 } from "./types.ts";
