@@ -141,6 +141,7 @@ test(
               ),
             ),
           ),
+          { concurrency: 1 },
         );
         expect(texts).toStrictEqual(["", ""]);
       }),

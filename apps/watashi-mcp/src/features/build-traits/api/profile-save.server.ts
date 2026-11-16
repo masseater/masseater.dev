@@ -84,7 +84,7 @@ const translateSection = (
 ): Effect.Effect<ProfileSection, UpstreamFailed, TraitTranslator> =>
   Effect.gen(function* translateWhole() {
     const head = yield* translateBlock({ title: Option.none(), lines: section.lines });
-    const topics = yield* pipe(section.topics, Effect.forEach(translateTopic));
+    const topics = yield* Effect.forEach(section.topics, translateTopic, { concurrency: 1 });
     return { title: section.title, lines: head.lines, topics };
   });
 
@@ -96,7 +96,7 @@ export const saveTranslated = ({
   sourceHash: string;
 }>): Effect.Effect<ProfileOutcome, ProfileFailure, TraitTranslator> =>
   Effect.gen(function* saveWritten() {
-    const japanese = yield* pipe(sections, Effect.forEach(translateSection));
+    const japanese = yield* Effect.forEach(sections, translateSection, { concurrency: 1 });
     const builtAt = yield* nowIso;
     yield* saveProfile({
       sourceHash,

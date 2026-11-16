@@ -186,16 +186,19 @@ const subpathEntriesOf = Effect.fn("subpathEntriesOf")(function* subpathEntriesO
   directory: string,
   manifest: Manifest,
 ) {
-  const found = yield* Effect.forEach(subpathTargetsOf(manifest.exports), ({ subpath, target }) =>
-    firstDeclarationsAmong(directory, targetPathsOf(target)).pipe(
-      Effect.map(
-        Option.map((declarationsPath) => ({
-          packageName,
-          specifier: specifierFor(packageName, subpath),
-          declarationsPath,
-        })),
+  const found = yield* Effect.forEach(
+    subpathTargetsOf(manifest.exports),
+    ({ subpath, target }) =>
+      firstDeclarationsAmong(directory, targetPathsOf(target)).pipe(
+        Effect.map(
+          Option.map((declarationsPath) => ({
+            packageName,
+            specifier: specifierFor(packageName, subpath),
+            declarationsPath,
+          })),
+        ),
       ),
-    ),
+    { concurrency: 1 },
   );
   return Arr.getSomes(found);
 });
@@ -254,8 +257,11 @@ export const dependencyEntries = Effect.fn("dependencyEntries")(function* depend
   if (Option.isNone(manifest)) {
     return [];
   }
-  const entries = yield* Effect.forEach(declaredDependencies(manifest.value), (packageName) =>
-    entriesOfDependency(packageName, files.join(packageDirectory, NODE_MODULES, packageName)),
+  const entries = yield* Effect.forEach(
+    declaredDependencies(manifest.value),
+    (packageName) =>
+      entriesOfDependency(packageName, files.join(packageDirectory, NODE_MODULES, packageName)),
+    { concurrency: 1 },
   );
   return Arr.sort(
     Arr.dedupeWith(entries.flat(), (left, right) => left.specifier === right.specifier),

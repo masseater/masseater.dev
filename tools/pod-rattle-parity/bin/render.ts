@@ -98,7 +98,7 @@ const program = Effect.gen(function* renderReference() {
   const text = yield* fileSystem.readFileString(SCENARIOS);
   const scenarios = yield* decodeScenarios(text);
   yield* fileSystem.makeDirectory(OUTPUT_DIR, { recursive: true });
-  yield* Effect.forEach(scenarios, write(fileSystem), { discard: true });
+  yield* Effect.forEach(scenarios, write(fileSystem), { concurrency: 1, discard: true });
 });
 
 NodeRuntime.runMain(

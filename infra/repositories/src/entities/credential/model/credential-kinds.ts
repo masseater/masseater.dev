@@ -58,7 +58,7 @@ export const issueKinds = <Failure, Context>({
 }: Issuance<Failure, Context>): Effect.Effect<Issued, Failure, Context> =>
   pipe(
     kinds,
-    Effect.forEach((kind) => issuers[kind]),
+    (items) => Effect.forEach(items, (kind) => issuers[kind], { concurrency: 1 }),
     Effect.map(merged),
   );
 

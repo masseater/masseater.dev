@@ -227,10 +227,9 @@ export const mentions =
         onNone: (): readonly string[] => [],
         onSome: (parsed): readonly string[] => parsed.fileNames,
       });
-      const texts = yield* pipe(
-        fileNames,
-        Effect.forEach((fileName) => files.readFile(fileName)),
-      );
+      const texts = yield* Effect.forEach(fileNames, (fileName) => files.readFile(fileName), {
+        concurrency: 1,
+      });
       const includesNeedle = Str.includes(needle);
       return pipe(
         texts,

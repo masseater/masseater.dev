@@ -7,7 +7,8 @@
     "llm",
     "openrouter",
     "prompt-injection",
-    "security"
+    "security",
+    "tanstack-intent"
   ],
   "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/injection-bisect#readme",
   "bugs": {
@@ -20,8 +21,9 @@
     "directory": "libs/injection-bisect"
   },
   "files": [
+    "LICENSE",
     "dist",
-    "LICENSE"
+    "skills/detect-prompt-injection"
   ],
   "type": "module",
   "imports": {

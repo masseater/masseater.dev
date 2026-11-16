@@ -47,6 +47,8 @@ export const fetchYoutubeViews = Effect.fn("youtube.views")(function* youtubeVie
   key,
   ids,
 }: Readonly<{ key: Redacted.Redacted; ids: readonly string[] }>) {
-  const batches = yield* pipe(Arr.chunksOf(ids, YOUTUBE_BATCH), Effect.forEach(fetchBatch(key)));
+  const batches = yield* Effect.forEach(Arr.chunksOf(ids, YOUTUBE_BATCH), fetchBatch(key), {
+    concurrency: 1,
+  });
   return Record.fromEntries(Arr.flatten(batches));
 });

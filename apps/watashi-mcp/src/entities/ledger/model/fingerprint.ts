@@ -61,5 +61,5 @@ export const fingerprints = ({
 }: Source): Effect.Effect<readonly Fingerprint[], never, Digest.Digest> => {
   const keys = pipe(entries, Arr.map(keyOf(accountId)));
   const numbered = Arr.zip(keys, occurrences(keys));
-  return pipe(Arr.zip(entries, numbered), Effect.forEach(printOf));
+  return Effect.forEach(Arr.zip(entries, numbered), printOf, { concurrency: 1 });
 };

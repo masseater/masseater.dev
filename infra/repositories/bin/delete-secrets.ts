@@ -21,6 +21,7 @@ const deleteFrom = Effect.fn("deleteFrom")(function* deleteFrom(
   const deletable = Arr.intersection(target.secrets, present);
   const absent = Arr.difference(target.secrets, present);
   yield* Effect.forEach(absent, (secret) => Console.log(`${secret} is not in ${target.repo}`), {
+    concurrency: 1,
     discard: true,
   });
   yield* Effect.forEach(
@@ -29,7 +30,7 @@ const deleteFrom = Effect.fn("deleteFrom")(function* deleteFrom(
       deleteRepoSecret({ owner: OWNER, repo: target.repo, secret_name: secret }).pipe(
         Effect.andThen(Console.log(`deleted ${secret} from ${target.repo}`)),
       ),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 });
 
@@ -39,7 +40,10 @@ const deleteSecrets = Effect.gen(function* deleteSecrets() {
   if (Arr.contains(repositories, BROKER_REPOSITORY)) {
     return yield* fail(`${BROKER_REPOSITORY} holds the broker's own secrets`);
   }
-  yield* Effect.forEach(repositories, (repo) => deleteFrom({ repo, secrets }), { discard: true });
+  yield* Effect.forEach(repositories, (repo) => deleteFrom({ repo, secrets }), {
+    concurrency: 1,
+    discard: true,
+  });
   return Arr.length(repositories);
 });
 

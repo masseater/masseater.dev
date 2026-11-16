@@ -1,5 +1,5 @@
 import { runMain } from "@masseater.dev/node-main";
-import { Effect, Layer, Record, pipe } from "effect";
+import { Effect, Layer, Record } from "effect";
 import { Command, Flag } from "effect/cli";
 import { FetchHttpClient } from "effect/http";
 
@@ -12,13 +12,13 @@ const evaluateAll = Effect.gen(function* evaluateAll() {
   const library = yield* readLibrary;
   const assets = libraryAssets(library);
   const queries = yield* readQueries;
-  const entries = yield* pipe(
+  const entries = yield* Effect.forEach(
     CONDITIONS,
-    Effect.forEach((condition) =>
+    (condition) =>
       evaluate(condition, assets, queries).pipe(
         Effect.map((scores) => [condition, scores] as const),
       ),
-    ),
+    { concurrency: 1 },
   );
   return Record.fromEntries(entries);
 });

@@ -34,11 +34,14 @@ export const encodedGrants = Effect.fn("encodedGrants")(function* encodedGrants(
   ids: Readonly<{ accountId: string; zoneId: string }>,
 ) {
   const bindings = grantBindings(ids);
-  return yield* Effect.all({
-    GRANTS: encodeJson(bindings.GRANTS),
-    GRANT_PROFILES: encodeJson(bindings.GRANT_PROFILES),
-    WORKFLOW_GRANTS: encodeJson(WORKFLOW_GITHUB_GRANTS),
-  }).pipe(Effect.orDie);
+  return yield* Effect.all(
+    {
+      GRANTS: encodeJson(bindings.GRANTS),
+      GRANT_PROFILES: encodeJson(bindings.GRANT_PROFILES),
+      WORKFLOW_GRANTS: encodeJson(WORKFLOW_GITHUB_GRANTS),
+    },
+    { concurrency: 1 },
+  ).pipe(Effect.orDie);
 });
 
 export const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.Store) {
@@ -53,10 +56,13 @@ export const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.S
   };
 });
 
-export const githubAppStore = Effect.all({
-  GITHUB_APP: D1.Database("GitHubApp", {
-    name: GITHUB_APP_DATABASE,
-    migrations: "./github-app-migrations",
-  }).pipe(RemovalPolicy.protect()),
-  SEAL_KEY: makeRandom("SealKey", { bytes: SEAL_KEY_BYTES }),
-}).pipe(Effect.map((store) => store satisfies Readonly<Record<keyof GitHubAppEnv, unknown>>));
+export const githubAppStore = Effect.all(
+  {
+    GITHUB_APP: D1.Database("GitHubApp", {
+      name: GITHUB_APP_DATABASE,
+      migrations: "./github-app-migrations",
+    }).pipe(RemovalPolicy.protect()),
+    SEAL_KEY: makeRandom("SealKey", { bytes: SEAL_KEY_BYTES }),
+  },
+  { concurrency: 1 },
+).pipe(Effect.map((store) => store satisfies Readonly<Record<keyof GitHubAppEnv, unknown>>));

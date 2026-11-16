@@ -1,4 +1,4 @@
-import { Array, Cause, Duration, Effect, Exit, Fiber, pipe } from "effect";
+import { Array, Cause, Duration, Effect, Exit, Fiber } from "effect";
 
 import { loadModel } from "#/features/render-models/model/load-model.ts";
 import { renderViews } from "#/features/render-models/model/render-views.ts";
@@ -31,7 +31,7 @@ const renderOne = Effect.fn("renderOne")(function* renderOne(job: Job) {
 
 const renderPending = Effect.gen(function* renderPending() {
   const jobs = yield* Effect.promise(listRenderJobs);
-  yield* pipe(jobs, Effect.forEach(renderOne));
+  yield* Effect.forEach(jobs, renderOne, { concurrency: 1 });
   return Array.match(jobs, { onEmpty: () => IDLE, onNonEmpty: () => BUSY });
 }).pipe(Effect.catchCause(() => Effect.succeed(IDLE)));
 

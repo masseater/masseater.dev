@@ -27,7 +27,11 @@ const embedPieces = (pieces: readonly string[]): Effect.Effect<readonly Vector[]
   );
 
 const embedAll = (pieces: readonly string[]): Effect.Effect<readonly Vector[], UpstreamFailed> =>
-  pipe(Arr.chunksOf(pieces, EMBED_BATCH), Effect.forEach(embedPieces), Effect.map(Arr.flatten));
+  pipe(
+    Arr.chunksOf(pieces, EMBED_BATCH),
+    (items) => Effect.forEach(items, embedPieces, { concurrency: 1 }),
+    Effect.map(Arr.flatten),
+  );
 
 const meanAt =
   (embedded: readonly (readonly [number, Vector])[]) =>

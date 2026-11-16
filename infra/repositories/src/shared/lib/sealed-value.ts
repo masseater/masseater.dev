@@ -92,7 +92,7 @@ const parse = (stored: string): Effect.Effect<Envelope, SealFailed> =>
   pipe(
     Str.split(SEPARATOR)(stored),
     Arr.drop(VERSION_PARTS),
-    Effect.forEach(decodePart),
+    (items) => Effect.forEach(items, decodePart, { concurrency: 1 }),
     Effect.map(envelopeOf),
     Effect.flatMap(Effect.fromOption),
     Effect.mapError(malformed),

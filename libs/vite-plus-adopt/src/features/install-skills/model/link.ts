@@ -81,7 +81,7 @@ const isCurrent = (
       Arr.map(({ name }) => name),
       Arr.append(KEEP),
     );
-    const linked = yield* pipe(links, Effect.forEach(pointsAt(directory)));
+    const linked = yield* Effect.forEach(links, pointsAt(directory), { concurrency: 1 });
     const onlyExpected = pipe(
       entries,
       Arr.every((entry) => Arr.contains(expected, entry)),
@@ -98,7 +98,7 @@ const buildNext = (
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const next = yield* fs.makeTempDirectory({ directory: agents, prefix: ".skills-next-" });
-    yield* Effect.forEach(links, linkTo(next), { discard: true });
+    yield* Effect.forEach(links, linkTo(next), { concurrency: 1, discard: true });
     if (yield* fs.exists(path.join(skills, KEEP))) {
       yield* fs.writeFileString(path.join(next, KEEP), "");
     }

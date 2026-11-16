@@ -54,7 +54,7 @@ export const writePackage = Effect.fn("writePackage")(function* writeUnityPackag
   loose: readonly LooseFile[],
   destination: string,
 ) {
-  const perSelection = yield* pipe(selections, Effect.forEach(filesOf));
+  const perSelection = yield* Effect.forEach(selections, filesOf, { concurrency: 1 });
   const files = [...Array.flatten(perSelection), ...pipe(loose, Array.flatMap(looseEntries))];
   yield* writeTar(destination, Stream.fromIterable(files));
 });

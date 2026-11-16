@@ -43,7 +43,7 @@ export const indexBundle = Effect.fn("indexBundle")(function* indexLooseFiles(
   bundle: Bundle,
   linkable: boolean,
 ) {
-  const assets = yield* pipe(bundle.members, Effect.forEach(looseAsset));
+  const assets = yield* Effect.forEach(bundle.members, looseAsset, { concurrency: 1 });
   yield* storePackage({
     kind: "files",
     file: bundle,

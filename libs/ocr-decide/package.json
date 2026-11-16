@@ -8,7 +8,8 @@
     "invoice",
     "ocr",
     "openrouter",
-    "receipt"
+    "receipt",
+    "tanstack-intent"
   ],
   "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/ocr-decide#readme",
   "bugs": {
@@ -21,8 +22,9 @@
     "directory": "libs/ocr-decide"
   },
   "files": [
+    "LICENSE",
     "dist",
-    "LICENSE"
+    "skills/extract-invoice-fields"
   ],
   "type": "module",
   "imports": {

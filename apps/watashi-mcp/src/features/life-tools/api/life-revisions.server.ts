@@ -30,7 +30,8 @@ const revisionOf =
     );
 
 const revisionsOf = (key: IdKey): Effect.Effect<readonly Body[], StoreFailure> => {
-  const toRevisions = Effect.forEach(revisionOf(key));
+  const toRevisions = (entries: readonly HistoryEntry[]): Effect.Effect<readonly Body[]> =>
+    Effect.forEach(entries, revisionOf(key), { concurrency: 1 });
   return findRecord(key).pipe(
     Effect.andThen(listHistory({ entity: key.record, id: key.id, limit: HISTORY_LIMIT })),
     Effect.flatMap(toRevisions),

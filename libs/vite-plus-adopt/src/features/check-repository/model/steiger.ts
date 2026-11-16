@@ -52,11 +52,10 @@ export const checkSlices: {
     Effect.gen(function* check() {
       const path = yield* Path.Path;
       processConfiguration([...config], root);
-      const perTarget = yield* pipe(
+      const perTarget = yield* Effect.forEach(
         targets,
-        Effect.forEach((target) =>
-          attempt("steiger")(() => linter.run(path.resolve(root, target))),
-        ),
+        (target) => attempt("steiger")(() => linter.run(path.resolve(root, target))),
+        { concurrency: 1 },
       );
       return reportOf(Arr.flatten(perTarget), (file) => path.relative(root, file));
     }),

@@ -67,7 +67,7 @@ const repositoryWith = Effect.fn("repositoryWith")(function* repositoryWith(
         .makeDirectory(path.dirname(file), { recursive: true })
         .pipe(Effect.andThen(fs.writeFileString(file, source)));
     },
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
   yield* Effect.forEach(
     [
@@ -78,7 +78,7 @@ const repositoryWith = Effect.fn("repositoryWith")(function* repositoryWith(
       ChildProcess.make("git", args, { cwd: root, stdin: "ignore" }).pipe(
         Effect.flatMap((handle) => handle.exitCode),
       ),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
   return root;
 });

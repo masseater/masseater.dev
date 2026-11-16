@@ -86,7 +86,7 @@ const makeResults = Effect.gen(function* makeResults() {
     Effect.map((pages) => pipe(pages, Arr.map(withImage))),
   );
   return Results.of({
-    pages: Effect.all([synthetic, jaWildText]).pipe(
+    pages: Effect.all([synthetic, jaWildText], { concurrency: 1 }).pipe(
       Effect.mapBoth({ onSuccess: (groups) => groups.flat(), onFailure: asResultsError }),
     ),
     read: (engine) =>

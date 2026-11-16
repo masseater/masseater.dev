@@ -93,6 +93,7 @@ const corruptCache = (
         entries,
         Arr.map((entry) => fs.writeFileString(path.join(dir, entry), "{}")),
       ),
+      { concurrency: 1 },
     );
   });
 

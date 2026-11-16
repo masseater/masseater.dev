@@ -1,5 +1,6 @@
 import { Array as Arr, Option, Order, Record as Rec, Schema, String as Str, pipe } from "effect";
-import { LineCounter, isMap, isScalar, parseAllDocuments, parseDocument } from "yaml";
+
+import { positionOf } from "#/shared/lib/text-position.ts";
 
 const VerdictSchema = Schema.Literals(["unused", "keep", "verify"]);
 
@@ -145,34 +146,12 @@ const packageOf = (key: string): Option.Option<readonly [string, string]> =>
     withoutPeerContext(Str.slice(separator + SEPARATOR_LENGTH)(key)),
   ]);
 
-const keysOf = (node: unknown): readonly string[] => {
-  if (!isMap(node)) {
-    return [];
-  }
-  return pipe(
-    node.items,
-    Arr.flatMap((pair): readonly string[] => {
-      if (isScalar(pair.key)) {
-        return [String(pair.key.value)];
-      }
-      return [];
-    }),
-  );
-};
-
-const lockfileKeysOf = (lockfile: string, section: string): readonly string[] =>
-  pipe(
-    parseAllDocuments(lockfile),
-    Arr.flatMap((document) => keysOf(document.get(section))),
-  );
-
 export const resolutionOf =
   (findings: Findings) =>
-  (lockfile: string): Resolution => {
-    const snapshots = lockfileKeysOf(lockfile, "snapshots");
+  (depPaths: readonly string[]): Resolution => {
     const packages = Arr.getSomes(
       pipe(
-        [...lockfileKeysOf(lockfile, "packages"), ...snapshots],
+        depPaths,
         Arr.map((key) => packageOf(key)),
       ),
     );
@@ -186,7 +165,7 @@ export const resolutionOf =
           ),
         ),
     );
-    return { ...findings, versions, snapshots: sorted(snapshots) };
+    return { ...findings, versions, snapshots: sorted(depPaths) };
   };
 
 const changesBetween = (baseline: Resolution, candidate: Resolution): readonly PackageChange[] =>
@@ -231,9 +210,12 @@ export const judge =
     return { ...found, verdict: "verify" };
   };
 
-const OVERRIDES = "overrides";
 export const BASELINE_PROBE = "msch-baseline-probe";
 const REMOVED_DEPENDENCY = "-";
+const QUOTES = ['"', "'"];
+const PREVIOUS = 1;
+
+export type Overrides = Readonly<Record<string, string>>;
 
 export interface OverrideKey {
   readonly key: string;
@@ -241,41 +223,35 @@ export interface OverrideKey {
   readonly column: number;
 }
 
-export const overrideKeysOf = (manifest: string): readonly OverrideKey[] => {
-  const lineCounter = new LineCounter();
-  const overrides = parseDocument(manifest, { lineCounter }).get(OVERRIDES);
-  if (!isMap(overrides)) {
-    return [];
-  }
-  return pipe(
-    overrides.items,
-    Arr.flatMap((pair): readonly OverrideKey[] => {
-      const { key } = pair;
-      if (!isScalar(key)) {
-        return [];
-      }
-      return pipe(
-        Option.fromNullishOr(key.range),
-        Option.map(([start]) => {
-          const { line, col } = lineCounter.linePos(start);
-          return { key: String(key.value), line, column: col };
-        }),
-        Option.toArray,
-      );
-    }),
-  );
-};
+const keyStart =
+  (source: string) =>
+  (index: number): number => {
+    const before = Str.slice(index - PREVIOUS, index)(source);
+    return index - Number(Arr.contains(QUOTES, before)) * PREVIOUS;
+  };
+
+export const overrideKeysOf =
+  (source: string) =>
+  (overrides: Overrides): readonly OverrideKey[] => {
+    const at = positionOf(source);
+    return pipe(
+      Rec.keys(overrides),
+      Arr.flatMap((key) =>
+        pipe(
+          Str.indexOf(key)(source),
+          Option.map((index) => ({ key, ...at(keyStart(source)(index)) })),
+          Option.toArray,
+        ),
+      ),
+    );
+  };
 
 export const withoutOverride =
   (key: string) =>
-  (manifest: string): string => {
-    const document = parseDocument(manifest);
-    document.deleteIn([OVERRIDES, key]);
-    return document.toString();
-  };
+  (overrides: Overrides): Overrides =>
+    Rec.remove(overrides, key);
 
-export const withBaselineProbe = (manifest: string): string => {
-  const document = parseDocument(manifest);
-  document.setIn([OVERRIDES, BASELINE_PROBE], REMOVED_DEPENDENCY);
-  return document.toString();
-};
+export const withBaselineProbe = (overrides: Overrides): Overrides => ({
+  ...overrides,
+  [BASELINE_PROBE]: REMOVED_DEPENDENCY,
+});

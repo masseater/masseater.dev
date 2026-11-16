@@ -64,14 +64,13 @@ const globsIn = Effect.fn("globsIn")(function* globsIn(root: string, file: strin
   );
 });
 
-const collectIgnoredDirectories = Effect.fn("collectIgnoredDirectories")(
+export const collectIgnoredDirectories = Effect.fn("collectIgnoredDirectories")(
   function* collectIgnoredDirectories(root: string) {
     const files = yield* RepositoryFiles;
     const ignoreFiles = yield* files.matchingFiles(root, [IGNORE_FILES]);
-    const globs = yield* pipe(
-      ignoreFiles,
-      Effect.forEach((file) => globsIn(root, file)),
-    );
+    const globs = yield* Effect.forEach(ignoreFiles, (file) => globsIn(root, file), {
+      concurrency: 1,
+    });
     const candidates = Arr.dedupe(Arr.flatten(globs));
     const kept = yield* Effect.forEach(candidates, (glob) => keptGlob(root, glob), {
       concurrency: READ_CONCURRENCY,

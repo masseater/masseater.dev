@@ -12,6 +12,7 @@ const prepared = (extensions: readonly string[]): Layer.Layer<never, SqlError.Sq
     Effect.gen(function* prepare() {
       const client = yield* SqliteClient.SqliteClient;
       yield* Effect.forEach(extensions, (extension) => client.loadExtension(extension), {
+        concurrency: 1,
         discard: true,
       });
       const sql = yield* SqlClient.SqlClient;

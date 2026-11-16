@@ -8,11 +8,13 @@ import { fixtureLayer, gitRepositoryWith } from "#/shared/lib/repository.test.su
 
 import { checkRootReadme } from "./root-readme.ts";
 
+const PNPM_WORKSPACE = "packages:\n  - apps/*\n  - libs/*\n  - plugins/*\n";
+
 const findingsFor = Effect.fn("findingsFor")(function* findingsFor(
   files: Readonly<Record<string, string>>,
 ) {
   const repositoryFiles = yield* RepositoryFiles;
-  const root = yield* gitRepositoryWith(files);
+  const root = yield* gitRepositoryWith({ "pnpm-workspace.yaml": PNPM_WORKSPACE, ...files });
   const problems = yield* checkRootReadme(root);
   return pipe(
     sortProblems(problems),

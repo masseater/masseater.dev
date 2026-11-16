@@ -49,7 +49,7 @@ const bundle = Effect.promise(() =>
 );
 
 const withMiniflare = Effect.acquireRelease(
-  Effect.all([bundle, tailWorker({ serviceName: "app" })]).pipe(
+  Effect.all([bundle, tailWorker({ serviceName: "app" })], { concurrency: 1 }).pipe(
     Effect.map(
       ([script, tail]) =>
         new Miniflare({
@@ -129,7 +129,7 @@ test("Effect spans nest under their own request and wrap the platform's spans", 
   Effect.gen(function* effectSpans() {
     const miniflare = yield* withMiniflare;
     yield* Effect.all([get(miniflare, "/first"), get(miniflare, "/second")], { concurrency: 2 });
-    const trees = yield* Effect.forEach(["first", "second"], requestTree);
+    const trees = yield* Effect.forEach(["first", "second"], requestTree, { concurrency: 1 });
     expect(trees).toMatchObject([
       { root: { attributes: { "url.full": "http://localhost/first" } } },
       { root: { attributes: { "url.full": "http://localhost/second" } } },
