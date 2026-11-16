@@ -9,7 +9,7 @@ const decodeManifest = Schema.decodeUnknownEffect(Manifest);
 const crates = await Effect.runPromise(
   Effect.gen(function* crates() {
     const fs = yield* FileSystem.FileSystem;
-    const text = yield* fs.readFileString(new URL("Cargo.toml", import.meta.url).pathname);
+    const text = yield* fs.readFileString(new URL("./Cargo.toml", import.meta.url).pathname);
     const manifest = yield* decodeManifest(parse(text));
     return Rec.keys(manifest.dependencies);
   }).pipe(Effect.provide(NodeServices.layer)),
