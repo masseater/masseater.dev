@@ -27,4 +27,4 @@ You can override one rule's model in `oxlint.config.ts` without touching the plu
 
 ## Cache
 
-Answers are cached under `node_modules/.cache/oxlint-plugin-decision`, one entry per question, keyed by endpoint, model, snippet, context and question. A request sends only the questions that have no cached answer. Unchanged code is not asked again. Persist that directory between CI runs to keep it warm. Malformed answers are never cached.
+Answers are cached under `node_modules/.cache/oxlint-plugin-decision`, one entry per question. The key is the endpoint, the model, the snippet, its context and the question. A request sends only the questions that have no cached answer. Unchanged code is not asked again. Persist that directory between CI runs to keep it warm. Malformed answers are never cached.

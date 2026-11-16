@@ -3816,6 +3816,9 @@ importers:
       oxlint-plugin-eslint:
         specifier: 'catalog:'
         version: 1.93.0
+      semver:
+        specifier: 'catalog:'
+        version: 7.8.6
       sql-parser-cst:
         specifier: 'catalog:'
         version: 0.44.1
@@ -3841,6 +3844,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+      '@types/semver':
+        specifier: 'catalog:'
+        version: 7.8.0
       effect:
         specifier: catalog:stack
         version: 4.1.4

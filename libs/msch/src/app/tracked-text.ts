@@ -12,6 +12,8 @@ import {
   checkReplacedTools,
   checkUnneededFiles,
 } from "#/features/unneeded-files/index.ts";
+import { checkCatalogEntries } from "#/features/versions/catalog-entries/index.ts";
+import { checkDowngrades, checkRenovateSettings } from "#/features/versions/downgrade/index.ts";
 
 /** @internal */
 export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTrackedText(
@@ -31,6 +33,9 @@ export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTra
       checkComments(root),
       checkAppliedPackages(root),
       checkGitSubpath(root),
+      checkDowngrades(root),
+      checkRenovateSettings(root),
+      checkCatalogEntries(root),
     ],
     { concurrency: "unbounded" },
   );

@@ -39,6 +39,12 @@ export class RepositoryFiles extends Context.Service<
     readonly listedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly linkedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly readLink: (file: string) => Effect.Effect<Option.Option<string>>;
+    readonly mergeBase: (root: string, revision: string) => Effect.Effect<Option.Option<string>>;
+    readonly readAtRevision: (
+      root: string,
+      revision: string,
+      name: string,
+    ) => Effect.Effect<Option.Option<string>>;
     readonly matchingFiles: (
       root: string,
       pathspecs: readonly string[],
@@ -56,6 +62,26 @@ export class RepositoryFiles extends Context.Service<
     readonly basename: (file: string) => string;
   }
 >()("@r_masseater/msch/shared/lib/repository-files/RepositoryFiles") {}
+
+const SUCCESS = 0;
+
+type GitText = (root: string, args: readonly string[]) => Effect.Effect<Option.Option<string>>;
+
+const gitTextService = Effect.gen(function* gitTextService() {
+  const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
+  const gitText: GitText = (root, args) =>
+    Effect.gen(function* readText() {
+      const handle = yield* ChildProcess.make("git", args, { cwd: root, stdin: "ignore" });
+      const text = yield* handle.stdout.pipe(Stream.decodeText(), Stream.mkString);
+      const code = yield* handle.exitCode;
+      return Option.liftPredicate(text, () => code === SUCCESS);
+    }).pipe(
+      Effect.scoped,
+      Effect.provideService(ChildProcessSpawner.ChildProcessSpawner, spawner),
+      Effect.orElseSucceed(() => Option.none<string>()),
+    );
+  return gitText;
+});
 
 type GitPaths = (
   root: string,
@@ -115,6 +141,7 @@ export const nodeRepositoryFiles = Layer.effect(
     const path = yield* Path.Path;
     const digest = yield* Digest.Digest;
     const gitPaths = yield* gitPathsService;
+    const gitText = yield* gitTextService;
     const gitFiles = (root: string, args: readonly string[]): Effect.Effect<readonly string[]> =>
       gitPaths(root, ["ls-files", "-z", ...args], "\0");
     return RepositoryFiles.of({
@@ -125,6 +152,12 @@ export const nodeRepositoryFiles = Layer.effect(
       listedFiles: (root) => gitFiles(root, LISTED_ARGS),
       linkedFiles: (root) => gitFiles(root, STAGED_ARGS).pipe(Effect.map(Arr.flatMap(linkName))),
       readLink: (file) => fs.readLink(file).pipe(Effect.option),
+      mergeBase: (root, revision) =>
+        gitText(root, ["merge-base", "HEAD", revision]).pipe(
+          Effect.map(Option.map(Str.trim)),
+          Effect.map(Option.filter(Str.isNonEmpty)),
+        ),
+      readAtRevision: (root, revision, name) => gitText(root, ["show", `${revision}:${name}`]),
       matchingFiles: (root, pathspecs) => gitFiles(root, [...LISTED_ARGS, "--", ...pathspecs]),
       ignoredPaths: (root, paths) => gitPaths(root, ["check-ignore", "--", ...paths], "\n"),
       readFile: (file) => fs.readFileString(file).pipe(Effect.option),
