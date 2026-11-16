@@ -122,6 +122,7 @@ export const requiredStack: Readonly<Record<string, readonly string[]>> = {
     "tarts",
     "it-tar",
   ],
+  "エージェントスキルは vite.config.ts の skills に書き、msch --prepare で入れる": ["skills"],
   "フィーチャーフラグは OpenFeature だけで扱う": [
     "launchdarkly-*",
     "@launchdarkly/*",

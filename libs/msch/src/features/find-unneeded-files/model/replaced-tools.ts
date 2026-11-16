@@ -50,6 +50,11 @@ const REPLACED: readonly ReplacedTool[] = [
   { pattern: /(?:^|\/)Pulumi(?:\.[\w-]+)?\.ya?ml$/u, tool: "Pulumi", replacement: ALCHEMY },
   { pattern: /\.tf(?:vars)?$/u, tool: "Terraform", replacement: ALCHEMY },
   {
+    pattern: /(?:^|\/)skills-lock\.json$/u,
+    tool: "the skills CLI",
+    replacement: "the `skills` section of vite.config.ts, installed by `msch --prepare`",
+  },
+  {
     pattern: /(?:^|\/)\.claude\/rules\//u,
     tool: ".claude/rules",
     replacement: "the root AGENTS.md and the skills in masseater/skills",
