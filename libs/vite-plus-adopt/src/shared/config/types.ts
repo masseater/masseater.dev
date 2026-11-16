@@ -52,9 +52,14 @@ export interface TextlintPreset {
   readonly rulesConfig: Readonly<Record<string, TextlintRuleOptions>>;
 }
 
+export interface TextlintSource extends TextlintRcConfig {
+  readonly files: readonly string[];
+}
+
 export interface TextlintConfig extends TextlintRcConfig {
   readonly ignores?: readonly string[];
   readonly presets?: Readonly<Record<string, TextlintPreset>>;
+  readonly sources?: readonly TextlintSource[];
 }
 
 export interface MarkdownlintConfig {

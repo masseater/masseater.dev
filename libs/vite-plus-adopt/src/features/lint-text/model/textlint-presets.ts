@@ -39,7 +39,7 @@ export const presetRulesOf = (config: TextlintConfig): TextlintKernelRule[] => {
 
 /** @internal */
 export const rawConfigOf = (config: TextlintConfig): TextlintRcConfig => {
-  const { ignores: _ignores, presets = {}, ...rawConfig } = config;
+  const { ignores: _ignores, presets = {}, sources: _sources, ...rawConfig } = config;
   return {
     ...rawConfig,
     rules: pipe(
