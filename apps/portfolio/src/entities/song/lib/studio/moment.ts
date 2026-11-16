@@ -2,17 +2,15 @@ import { Schema } from "effect";
 
 import type { Grid } from "./timing.ts";
 
-const { Finite } = Schema;
-
 export const AtSchema = Schema.Union([
-  Schema.Struct({ bar: Finite, step: Finite }),
-  Schema.Struct({ seconds: Finite }),
+  Schema.Struct({ bar: Schema.Finite, step: Schema.Finite }),
+  Schema.Struct({ seconds: Schema.Finite }),
 ]);
 
 export const LengthSchema = Schema.Union([
-  Schema.Struct({ sixteenths: Finite }),
-  Schema.Struct({ bars: Finite }),
-  Schema.Struct({ seconds: Finite }),
+  Schema.Struct({ sixteenths: Schema.Finite }),
+  Schema.Struct({ bars: Schema.Finite }),
+  Schema.Struct({ seconds: Schema.Finite }),
 ]);
 
 export type At = typeof AtSchema.Type;
