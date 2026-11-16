@@ -13,8 +13,8 @@ import type {
 } from "#/entities/decision/index.ts";
 
 import type { AppServices } from "./app-context.ts";
-import { cacheFile, isComplete, readCache, writeCache } from "./cache.ts";
-import type { CacheServices } from "./cache.ts";
+import { cachedAnswers, isComplete, missingRequest, readCache, writeCache } from "./cache.ts";
+import type { CacheServices, QuestionCache } from "./cache.ts";
 import { workerServices } from "./services.ts";
 
 /** @internal */
@@ -51,14 +51,49 @@ const ask = Effect.fn("ask")(function* ask(
   return mergeResponses(responses);
 });
 
-const askAndStore = Effect.fn("askAndStore")(function* askAndStore(
+const store = Effect.fn("store")(function* store(
+  entries: readonly QuestionCache[],
+  response: DecisionResponse,
+) {
+  yield* Effect.forEach(
+    entries,
+    ({ id, file }: QuestionCache) =>
+      Option.match(Option.fromUndefinedOr(response.answers[id]), {
+        onNone: () => Effect.void,
+        onSome: (answer) => writeCache(file, { model: response.model, answer }).pipe(Effect.ignore),
+      }),
+    { concurrency: "unbounded", discard: true },
+  );
+});
+
+const servedModel = (entries: readonly QuestionCache[]): Option.Option<string> =>
+  pipe(
+    entries,
+    Arr.findFirst(({ cached }) => cached),
+    Option.map(({ model }) => model),
+  );
+
+const idsOf = (entries: readonly QuestionCache[]): readonly string[] =>
+  pipe(
+    entries,
+    Arr.map(({ id }) => id),
+  );
+
+const askMissing = Effect.fn("askMissing")(function* askMissing(
   transport: Transport,
-  { endpoint, file }: Readonly<{ endpoint: string; file: string }>,
+  { endpoint, entries }: Readonly<{ endpoint: string; entries: readonly QuestionCache[] }>,
   input: DecideInput,
 ) {
-  const response = yield* ask(transport, endpoint, input);
+  const missing = pipe(
+    entries,
+    Arr.filter(({ cached }) => Option.isNone(cached)),
+  );
+  yield* Effect.annotateCurrentSpan({ askedQuestions: missing.length });
+  const request = pipe(input.request, missingRequest(idsOf(missing)));
+  const asked = yield* ask(transport, endpoint, { ...input, request });
+  const response = { model: asked.model, answers: { ...cachedAnswers(entries), ...asked.answers } };
   if (isComplete(response, input.request)) {
-    yield* writeCache(file, response).pipe(Effect.ignore);
+    yield* store(missing, asked);
   }
   return response;
 });
@@ -66,13 +101,17 @@ const askAndStore = Effect.fn("askAndStore")(function* askAndStore(
 const decide = Effect.fn("decide")(function* decide(transport: Transport, input: DecideInput) {
   yield* Effect.annotateCurrentSpan({ model: input.request.model });
   const endpoint = yield* transport.endpoint(input.env);
-  const file = yield* cacheFile(endpoint, input.request);
-  const cached = yield* readCache(file, input.request);
-  yield* Effect.annotateCurrentSpan({ cached: Option.isSome(cached) });
-  if (Option.isSome(cached)) {
-    return { response: cached.value, cached: true };
+  const entries = yield* readCache(endpoint, input.request);
+  const hit = pipe(
+    entries,
+    Arr.every(({ cached }) => Option.isSome(cached)),
+  );
+  yield* Effect.annotateCurrentSpan({ cached: hit });
+  if (hit) {
+    const model = Option.getOrElse(servedModel(entries), () => input.request.model);
+    return { response: { model, answers: cachedAnswers(entries) }, cached: true };
   }
-  return { response: yield* askAndStore(transport, { endpoint, file }, input), cached: false };
+  return { response: yield* askMissing(transport, { endpoint, entries }, input), cached: false };
 });
 
 const reasonOf = (error: unknown): string => {
