@@ -22,8 +22,8 @@ allowBuilds:
 ```
 
 ```ts
+import type {} from "@r_masseater/vite-plus-adopt";
 import fsd from "@r_masseater/vite-plus-adopt/fsd";
-import type {} from "@r_masseater/vite-plus-adopt/vite";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({

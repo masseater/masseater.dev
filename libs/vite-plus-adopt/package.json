@@ -28,7 +28,6 @@
     "vpa": "./dist/cli.mjs"
   },
   "files": [
-    "augment",
     "dist",
     "THIRD-PARTY-NOTICES"
   ],
@@ -49,9 +48,6 @@
     "./attw": {
       "types": "./dist/attw.d.mts",
       "default": "./dist/attw.mjs"
-    },
-    "./vite": {
-      "types": "./augment/vite.d.ts"
     },
     "./package.json": "./package.json"
   },

@@ -95,4 +95,8 @@ export interface ToolSections {
   readonly textlint?: TextlintConfig;
 }
 
+declare module "vite" {
+  interface UserConfig extends ToolSections {}
+}
+
 export type ToolSection = keyof ToolSections;
