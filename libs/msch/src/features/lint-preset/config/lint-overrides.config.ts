@@ -2,6 +2,10 @@ const LOGPUSH = 'Property[key.name="logpush"]:not([value.value=false])';
 const LOGPUSH_MESSAGE =
   "Worker には logpush: true を付ける。付けないと、その Worker のログが Logpush に流れない";
 
+const CPU_LIMIT = 'Property[key.name="limits"]:has(Property[key.name="cpuMs"])';
+const CPU_LIMIT_MESSAGE =
+  "コードを動かす Worker には limits.cpuMs を付け、本番の CPU 時間の最大値をわずかに上回る値にする。付けないと、1 回の暴走が上限の CPU 時間まで請求される";
+
 export const cloudflareResourceSyntax: readonly Readonly<{ selector: string; message: string }>[] =
   [
     {
@@ -11,6 +15,14 @@ export const cloudflareResourceSyntax: readonly Readonly<{ selector: string; mes
     {
       selector: `CallExpression[callee.object.name="Website"] > ObjectExpression.arguments:not(:has(${LOGPUSH}))`,
       message: LOGPUSH_MESSAGE,
+    },
+    {
+      selector: `CallExpression[callee.object.name=/^(Workers|Website)$/] > ObjectExpression.arguments:has(Property[key.name="main"]):not(:has(${CPU_LIMIT}))`,
+      message: CPU_LIMIT_MESSAGE,
+    },
+    {
+      selector: `CallExpression[callee.object.name="Website"]:not([callee.property.name="StaticSite"]) > ObjectExpression.arguments:not(:has(${CPU_LIMIT}))`,
+      message: CPU_LIMIT_MESSAGE,
     },
     {
       selector: 'MemberExpression[object.name="Rum"][property.name="Site"]',

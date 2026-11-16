@@ -50,6 +50,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
     const grants = yield* encodedGrants({ accountId, zoneId });
     const sundries = yield* Workers.Worker.ref("Mcp", SUNDRIES);
     const { url } = yield* Workers.Worker("CredentialBroker", {
+      limits: { cpuMs: 400 },
       name: CREDENTIAL_BROKER_AUDIENCE,
       main: "./src/app/credential-broker.ts",
       logpush: true,

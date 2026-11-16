@@ -22,6 +22,7 @@ const worker = Effect.gen(function* worker() {
     portalServerId: SERVER_NAME,
   });
   return yield* Workers.Worker("Mcp", {
+    limits: { cpuMs: 200 },
     name: `${PREFIX}worker`,
     main: "./src/app/twilog.ts",
     logpush: true,

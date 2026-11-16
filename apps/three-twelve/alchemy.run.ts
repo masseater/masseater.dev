@@ -45,6 +45,7 @@ export default Stack(
       RemovalPolicy.protect(),
     );
     const { url } = yield* Workers.Worker("ThreeTwelve", {
+      limits: { cpuMs: 200 },
       name: `${PREFIX}worker`,
       main: "./src/app/three-twelve.ts",
       logpush: true,
