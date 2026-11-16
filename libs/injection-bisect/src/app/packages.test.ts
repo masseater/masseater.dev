@@ -1,8 +1,7 @@
 import { Effect, Array as Arr, String as Str, pipe } from "effect";
-import { createTar } from "nanotar";
 import { expect, test } from "vite-plus/test";
 
-import { gzipOf, zipOf } from "./archive.test.support.ts";
+import { gzipOf, tarOf, zipOf } from "./archive.test.support.ts";
 import { INJECTION, INJECTION_MARK, foundIn } from "./fake-judge.test.support.ts";
 
 const encoder = new TextEncoder();
@@ -102,10 +101,10 @@ test("reads every file in a zip archive with its own format", () =>
 test("reads every file in a gzipped tar archive", () =>
   Effect.runPromise(
     Effect.gen(function* tarball() {
-      const tar = createTar([
-        { name: "docs/readme.md", data: "# 使い方\n\n設定ファイルを置きます。" },
-        { name: "site/index.html", data: `<p>ようこそ。</p><div hidden>${INJECTION}</div>` },
-      ]);
+      const tar = yield* tarOf({
+        "docs/readme.md": "# 使い方\n\n設定ファイルを置きます。",
+        "site/index.html": `<p>ようこそ。</p><div hidden>${INJECTION}</div>`,
+      });
       const { document, found, cleaned } = yield* foundIn({ bytes: yield* gzipOf(tar) });
       expect(document.text).toContain("## docs/readme.md");
       expect(

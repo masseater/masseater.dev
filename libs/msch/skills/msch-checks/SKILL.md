@@ -7,7 +7,7 @@ description: >
 metadata:
   type: core
   library: "@r_masseater/msch"
-  library_version: 0.28.2
+  library_version: 0.29.0
 sources:
   - bin/msch.ts
   - README.md

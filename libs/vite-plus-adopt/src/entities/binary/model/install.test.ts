@@ -6,9 +6,9 @@ import type { Path, PlatformError } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
-import { sha256Hex, zipArchive } from "#/shared/lib/fixture.test.support.ts";
+import { sha256Hex, tarGzArchive, zipArchive } from "#/shared/lib/fixture.test.support.ts";
 
-import type { Binary, BinaryAsset } from "./binaries.ts";
+import type { Archive, Binary, BinaryAsset } from "./binaries.ts";
 import { installBinary, locateBinary } from "./install.ts";
 import { VendorDirectory } from "./vendor.ts";
 
@@ -28,7 +28,12 @@ const SHA256_HEX_LENGTH = 64;
 
 const WRONG_DIGEST = Str.repeat(SHA256_HEX_LENGTH)("0");
 
-const archive = zipArchive({ fixture: SCRIPT, "fixture.exe": SCRIPT });
+const FILES = { fixture: SCRIPT, "fixture.exe": SCRIPT };
+
+const archives: Readonly<Record<Archive, Effect.Effect<Uint8Array>>> = {
+  zip: zipArchive(FILES),
+  "tar.gz": tarGzArchive(FILES),
+};
 
 const fixtureBinary = (asset: BinaryAsset): Binary => ({
   name: "fixture",
@@ -44,13 +49,14 @@ const fixtureBinary = (asset: BinaryAsset): Binary => ({
 
 const installFixture = (
   digest: (data: Uint8Array) => Effect.Effect<string>,
+  archive: Archive,
 ): Effect.Effect<Installed, never, FixtureServices> =>
   Effect.gen(function* installArchive() {
-    const data = yield* archive;
+    const data = yield* archives[archive];
     const binary = fixtureBinary({
-      url: "https://example.invalid/fixture.zip",
+      url: `https://example.invalid/fixture.${archive}`,
       sha256: yield* digest(data),
-      archive: "zip",
+      archive,
     });
     const before = yield* Effect.exit(locateBinary(binary));
     const body = new Uint8Array(data);
@@ -73,17 +79,23 @@ const output = (
     return yield* spawner.string(ChildProcess.make(file, []));
   });
 
-const placesTheVerifiedBinary = Effect.gen(function* placesTheVerifiedBinary() {
-  const { before, installed, after } = yield* installFixture(sha256Hex);
-  assertTrue(Exit.isFailure(before));
-  assertTrue(Exit.isSuccess(installed));
-  const file = yield* Exit.match(after, { onFailure: Effect.failCause, onSuccess: Effect.succeed });
-  const printed = yield* output(file);
-  strictEqual(printed, "fixture\n");
-});
+const placesTheVerifiedBinary = (
+  archive: Archive,
+): Effect.Effect<void, InstallFailure | PlatformError.PlatformError, FixtureServices> =>
+  Effect.gen(function* placesFrom() {
+    const { before, installed, after } = yield* installFixture(sha256Hex, archive);
+    assertTrue(Exit.isFailure(before));
+    assertTrue(Exit.isSuccess(installed));
+    const file = yield* Exit.match(after, {
+      onFailure: Effect.failCause,
+      onSuccess: Effect.succeed,
+    });
+    const printed = yield* output(file);
+    strictEqual(printed, "fixture\n");
+  });
 
 const refusesAMismatchedDigest = Effect.gen(function* refusesAMismatchedDigest() {
-  const { installed, after } = yield* installFixture(() => Effect.succeed(WRONG_DIGEST));
+  const { installed, after } = yield* installFixture(() => Effect.succeed(WRONG_DIGEST), "zip");
   assertTrue(Exit.isFailure(installed));
   assertTrue(Exit.isFailure(after));
 });
@@ -99,7 +111,10 @@ const inVendorDirectory = <Value, Failure>(
 
 layer(nodeServicesLayer)("binary install", (it) => {
   it.effect("downloads, verifies and places an executable where commands look for it", () =>
-    inVendorDirectory(placesTheVerifiedBinary),
+    inVendorDirectory(placesTheVerifiedBinary("zip")),
+  );
+  it.effect("places an executable from a tar.gz archive", () =>
+    inVendorDirectory(placesTheVerifiedBinary("tar.gz")),
   );
   it.effect("refuses an archive whose SHA-256 differs and places nothing", () =>
     inVendorDirectory(refusesAMismatchedDigest),

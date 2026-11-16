@@ -1,7 +1,7 @@
 import { Array, Effect, Option, Record, Schema, Stream, String, pipe } from "effect";
-import type { ParsedTarEntry } from "modern-tar";
+import type { Tar } from "effect/encoding";
 
-import { bodyOf, referencesIn, scanBody, skip, tarEntries } from "./tar-stream.ts";
+import { referencesIn, scanBody, tarEntries } from "./tar-stream.ts";
 import type { UnityPackageUnreadable } from "./unity-package-unreadable.ts";
 
 const INLINE_ASSET_BYTES = 2_097_152;
@@ -33,15 +33,17 @@ const latin1 = new TextDecoder("latin1");
 const partsOf = (name: string): readonly string[] =>
   pipe(name, String.replace(/^\.\//u, ""), String.split("/"));
 
-const splitName = ({ header }: ParsedTarEntry): Option.Option<readonly [string, string]> => {
-  const [guid = "", file = ""] = partsOf(header.name);
+const splitName = ({
+  header,
+}: Tar.Entry<UnityPackageUnreadable>): Option.Option<readonly [string, string]> => {
+  const [guid = "", file = ""] = partsOf(header.path);
   return Option.liftPredicate(
     [guid, file] as const,
-    ([candidate, rest]) => header.type === "file" && isGuid(candidate) && String.isNonEmpty(rest),
+    ([candidate, rest]) => header.type === "File" && isGuid(candidate) && String.isNonEmpty(rest),
   );
 };
 
-const isInline = (file: string, entry: ParsedTarEntry): boolean =>
+const isInline = (file: string, entry: Tar.Entry<UnityPackageUnreadable>): boolean =>
   file !== "asset" || entry.header.size <= INLINE_ASSET_BYTES;
 
 const referencesOfFile = (file: string, bytes: Uint8Array): readonly string[] =>
@@ -51,19 +53,17 @@ const referencesOfFile = (file: string, bytes: Uint8Array): readonly string[] =>
   );
 
 interface Located {
-  readonly path: string;
-  readonly entry: ParsedTarEntry;
+  readonly entry: Tar.Entry<UnityPackageUnreadable>;
   readonly guid: string;
   readonly file: string;
 }
 
 const readInline = Effect.fn("readInline")(function* readInlineFile({
-  path,
   entry,
   guid,
   file,
 }: Located) {
-  const bytes = yield* bodyOf(path, entry);
+  const bytes = yield* Stream.mkUint8Array(entry.body);
   return {
     guid,
     file,
@@ -72,13 +72,8 @@ const readInline = Effect.fn("readInline")(function* readInlineFile({
   } satisfies RawFile;
 });
 
-const readLarge = Effect.fn("readLarge")(function* readLargeFile({
-  path,
-  entry,
-  guid,
-  file,
-}: Located) {
-  const references = yield* scanBody(path, entry);
+const readLarge = Effect.fn("readLarge")(function* readLargeFile({ entry, guid, file }: Located) {
+  const references = yield* scanBody(entry);
   return { guid, file, data: Option.none(), references } satisfies RawFile;
 });
 
@@ -88,13 +83,13 @@ const readFile = (located: Located): Effect.Effect<RawFile, UnityPackageUnreadab
     { onNone: () => readLarge(located), onSome: readInline },
   );
 
-const readEntry =
-  (path: string) =>
-  (entry: ParsedTarEntry): Effect.Effect<Option.Option<RawFile>, UnityPackageUnreadable> =>
-    Option.match(splitName(entry), {
-      onNone: () => Effect.as(skip(entry), Option.none()),
-      onSome: ([guid, file]) => Effect.asSome(readFile({ path, entry, guid, file })),
-    });
+const readEntry = (
+  entry: Tar.Entry<UnityPackageUnreadable>,
+): Effect.Effect<Option.Option<RawFile>, UnityPackageUnreadable> =>
+  Option.match(splitName(entry), {
+    onNone: () => Effect.succeedNone,
+    onSome: ([guid, file]) => Effect.asSome(readFile({ entry, guid, file })),
+  });
 
 const fileOf =
   (name: string) =>
@@ -158,6 +153,6 @@ const entriesOf = (files: readonly Option.Option<RawFile>[]): readonly PackageEn
 /** @internal */
 export const readPackage = Effect.fn("readPackage")(function* readUnityPackage(path: string) {
   const entries = yield* tarEntries(path);
-  const files = yield* entries.pipe(Stream.mapEffect(readEntry(path)), Stream.runCollect);
+  const files = yield* entries.pipe(Stream.mapEffect(readEntry), Stream.runCollect);
   return entriesOf(files);
 });
