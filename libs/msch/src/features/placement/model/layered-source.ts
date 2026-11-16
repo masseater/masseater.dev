@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Option, Order, Schema, String as Str, pipe } from "effect";
 
-import { MANIFEST_FILE, publicEntriesOf } from "#/entities/package/index.ts";
+import { MANIFEST_FILE, EntryManifestJson, publicEntriesOf } from "#/entities/package/index.ts";
 import type { PublicEntry } from "#/entities/package/index.ts";
 import { workspaceDirectories } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
@@ -33,12 +33,7 @@ const LAYER_MESSAGE = `is not an FSD layer. src/ holds only ${Arr.join(LAYERS, "
 const ENTRY_MESSAGE =
   "is a package entry that points inside a slice. Point exports and bin at bin/<name>.ts, src/app/<entry>.ts or a slice's index.ts.";
 
-const Manifest = Schema.Struct({
-  name: Schema.optional(Schema.String),
-  exports: Schema.optional(Schema.Unknown),
-  bin: Schema.optional(Schema.Unknown),
-});
-const decodeManifest = Schema.decodeUnknownOption(Schema.fromJsonString(Manifest));
+const decodeEntryManifest = Schema.decodeUnknownOption(EntryManifestJson);
 
 interface Owned {
   readonly workspace: string;
@@ -99,7 +94,7 @@ const entryProblems = Effect.fn("entryProblems")(function* entryProblems(
   const join = (target: string): string => files.join(directory, target);
   return pipe(
     text,
-    Option.flatMap(decodeManifest),
+    Option.flatMap(decodeEntryManifest),
     Option.map((manifest) => publicEntriesOf({ manifest, join, packEntries: [] })),
     Option.getOrElse((): readonly PublicEntry[] => []),
     Arr.filter(({ source }) => !PUBLIC_ENTRY.test(files.relative(directory, source))),
