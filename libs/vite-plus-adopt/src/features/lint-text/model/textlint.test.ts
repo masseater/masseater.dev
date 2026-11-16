@@ -84,6 +84,7 @@ const runsGivenPresets = Effect.gen(function* runsGivenPresets() {
   const report = yield* lintTexts(config, root, ["baz.md"]);
   assertFalse(report.valid);
   assertTrue(Str.includes("baz is not allowed")(report.output));
+  assertTrue(Str.includes("  baz/no-baz")(report.output));
 });
 
 const turnsOffPresetRules = Effect.gen(function* turnsOffPresetRules() {
