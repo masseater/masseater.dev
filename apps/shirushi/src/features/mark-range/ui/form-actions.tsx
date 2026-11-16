@@ -17,12 +17,13 @@ export const FormActions = ({ saving }: Readonly<{ saving: boolean }>): ReactNod
     setAnchor(Option.none());
   }, [setRange, setAnchor]);
   const empty = Option.isNone(range);
+  const spanned = Option.exists(range, ({ from, to }) => to > from);
   return (
     <div className="flex justify-end gap-2">
       <Button type="button" variant="ghost" size="sm" disabled={empty} onClick={clear}>
         {CLEAR}
       </Button>
-      <Button type="submit" size="sm" disabled={empty || saving}>
+      <Button type="submit" size="sm" disabled={!spanned || saving}>
         {SAVE}
       </Button>
     </div>
