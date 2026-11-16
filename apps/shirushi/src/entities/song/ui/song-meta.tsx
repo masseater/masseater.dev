@@ -1,8 +1,8 @@
+import type { Site, Song } from "@masseater.dev/shirushi-protocol";
 import { ExternalLink } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { Site, Song } from "#protocol";
-import { clock, pageOf } from "#source";
+import { clock, pageOf } from "#/shared/lib/source";
 
 const SITE_NAMES: Readonly<Record<Site, string>> = {
   youtube: "YouTube",

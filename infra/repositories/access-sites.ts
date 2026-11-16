@@ -4,7 +4,6 @@ export const ACCESS_SITES = [
   "translate.masseater.dev",
   "yohaku.masseater.dev",
   "portal.masseater.dev",
-  "shirushi.masseater.dev",
 ] as const;
 
 export const ACCESS_TEAM_ORIGIN = "https://masseater.cloudflareaccess.com";

@@ -1,9 +1,8 @@
+import type { Mark } from "@masseater.dev/shirushi-protocol";
 import { Button } from "@masseater.dev/ui/button";
 import { X } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
-
-import type { Mark } from "#protocol";
 
 const REMOVE = "消す";
 
