@@ -35,7 +35,7 @@
   },
   "exports": {
     ".": "./src/app/index.ts",
-    "./schema": "./src/app/schema.ts",
+    "./schema": "./src/app/frontmatter.ts",
     "./styles.css": "./src/styles.css",
     "./package.json": "./package.json"
   },

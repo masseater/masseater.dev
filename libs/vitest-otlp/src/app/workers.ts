@@ -3,8 +3,8 @@ import { fileURLToPath } from "node:url";
 import { Array, Effect, Option, Predicate, Schema, pipe } from "effect";
 import { build } from "vite-plus";
 
-import type { ReceiverNotRunning } from "./store.ts";
-import { currentReceiver } from "./store.ts";
+import type { ReceiverNotRunning } from "./current-receiver.ts";
+import { currentReceiver } from "./current-receiver.ts";
 
 const taggedError = Schema.TaggedError;
 

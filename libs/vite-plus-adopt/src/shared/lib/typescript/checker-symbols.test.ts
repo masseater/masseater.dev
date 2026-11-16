@@ -4,12 +4,12 @@ import { Effect, Layer, Option, Array as Arr, pipe } from "effect";
 import { ModuleResolutionKind } from "typescript/sync";
 
 import { toJson } from "#/shared/lib/json.ts";
-import { exportOf } from "#/shared/lib/typescript/binder-symbols.ts";
-import type { BoundSymbol } from "#/shared/lib/typescript/binder-symbols.ts";
-import { bindSourceFile, bindingOf } from "#/shared/lib/typescript/binder.ts";
-import { createCompilerHostWrapperWith } from "#/shared/lib/typescript/compiler-hosts.ts";
+import { Package } from "#attw-upstream/index.js";
 
-import { Package } from "./attw.ts";
+import { exportOf } from "./binder-symbols.ts";
+import type { BoundSymbol } from "./binder-symbols.ts";
+import { bindSourceFile, bindingOf } from "./binder.ts";
+import { createCompilerHostWrapperWith } from "./compiler-hosts.ts";
 
 const ENTRY = "/node_modules/sizes/index.ts";
 

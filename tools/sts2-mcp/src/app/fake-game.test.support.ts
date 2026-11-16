@@ -2,9 +2,10 @@ import type { GameStateType } from "@masseater.dev/sts2-protocol";
 import { Array as Arr, Context, Effect, Option, Ref, pipe } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
-import MAIN_MENU from "#/app/fixtures/main-menu.json" with { type: "json" };
 import { Vm } from "#/shared/api/index.ts";
 import type { Output } from "#/shared/api/index.ts";
+
+import MAIN_MENU from "./main-menu.json" with { type: "json" };
 
 /** @internal */
 export type Sent = Readonly<{ method: string; url: string; body: string }>;

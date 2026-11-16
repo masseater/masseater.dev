@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   pack: {
-    entry: ["src/app/index.ts", "src/app/schema.ts"],
+    entry: { index: "src/app/index.ts", schema: "src/app/frontmatter.ts" },
     platform: "neutral",
     sourcemap: true,
     dts: true,

@@ -11,7 +11,7 @@ import { expect, test } from "vite-plus/test";
 
 import { COMPATIBILITY_DATE } from "#/shared/config/index.ts";
 
-const FIXTURE = fileURLToPath(import.meta.resolve("./fixture/fixture.worker.ts"));
+const FIXTURE = fileURLToPath(import.meta.resolve("./fixture.worker.ts"));
 const TEMPORARY_REDIRECT = 307;
 const NOT_FOUND = 404;
 const WORKER_CONDITIONS = ["workerd", "worker", "browser", "import", "default"];

@@ -1,5 +1,5 @@
 /** @internal */
-export { loadViteConfig } from "#/entities/config/index.ts";
+export { loadViteConfig } from "#/entities/vite-config/index.ts";
 /** @internal */
 export type {
   BetterleaksConfig,

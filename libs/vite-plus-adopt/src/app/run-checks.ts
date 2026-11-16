@@ -8,7 +8,7 @@ import type {
   CheckServices,
   NamedCheck,
 } from "#/entities/check/index.ts";
-import { loadViteConfig } from "#/entities/config/index.ts";
+import { loadViteConfig } from "#/entities/vite-config/index.ts";
 import { checksFailed } from "#/shared/lib/errors.ts";
 import { writeTo } from "#/shared/lib/output.ts";
 import type { Report } from "#/shared/lib/report.ts";

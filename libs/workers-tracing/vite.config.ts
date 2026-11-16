@@ -30,8 +30,8 @@ export default defineConfig({
     entry: {
       alchemy: "src/app/alchemy.ts",
       "browser-spans": "src/app/browser-spans.ts",
-      effect: "src/app/effect.ts",
-      "effect.plain": "src/app/effect.plain.ts",
+      effect: "src/app/effect-tracing.ts",
+      "effect.plain": "src/app/effect-tracing.plain.ts",
       elysia: "src/app/elysia.ts",
       "elysia.plain": "src/app/elysia.plain.ts",
       oxlint: "src/app/oxlint.ts",
@@ -61,7 +61,6 @@ export default defineConfig({
   },
   test: {
     include: ["src/**/*.test.ts"],
-    exclude: ["src/app/fixture/**"],
     testTimeout: 60_000,
   },
 });

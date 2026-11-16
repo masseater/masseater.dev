@@ -12,8 +12,8 @@ import type {
   SignalKey,
 } from "#/entities/telemetry/index.ts";
 
-import type { ReceiverNotRunning } from "./store.ts";
-import { currentReceiver } from "./store.ts";
+import type { ReceiverNotRunning } from "./current-receiver.ts";
+import { currentReceiver } from "./current-receiver.ts";
 
 const taggedError = Schema.TaggedError;
 
@@ -136,7 +136,7 @@ export const clearTelemetry: Effect.Effect<void, ReceiverNotRunning> = currentRe
   Effect.flatMap((receiver) => receiver.clear),
 );
 
-export { ReceiverNotRunning } from "./store.ts";
+export { ReceiverNotRunning } from "./current-receiver.ts";
 export type {
   Attributes,
   InstrumentationScope,

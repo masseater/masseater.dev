@@ -9,7 +9,7 @@ import {
 } from "effect";
 import type { PlatformError } from "effect";
 
-import { loadSection } from "#/entities/config/index.ts";
+import { loadSection } from "#/entities/vite-config/index.ts";
 import { lintCommitMessages } from "#/features/lint-text/index.ts";
 import { scanStagedSecrets } from "#/features/scan-secrets/index.ts";
 import type { CommandEffect } from "#/shared/lib/command.ts";

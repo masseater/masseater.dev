@@ -4,7 +4,7 @@ import { afterAll, inject } from "vite-plus/test";
 import { FORWARD_KEY } from "#/entities/semconv/index.ts";
 import { receiverEnvironment, startReceiver } from "#/features/receive-otlp/index.ts";
 
-import { setReceiver } from "./store.ts";
+import { setReceiver } from "./current-receiver.ts";
 
 const scope = Scope.makeUnsafe();
 const forwardOrigins = Option.getOrElse(Option.fromNullishOr(inject(FORWARD_KEY)), () => []);

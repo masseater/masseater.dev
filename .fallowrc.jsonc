@@ -10,7 +10,7 @@
     "libs/oxlint-typed-rules/src/shared/lib/ts-compat.ts",
     "libs/oxlint-typed-rules/src/shared/lib/typescript-eslint-utils.ts",
     "libs/vite-plus-adopt/src/shared/lib/typescript/compiler-hosts.ts",
-    "libs/vite-plus-adopt/src/shared/lib/typescript/typescript.ts",
+    "libs/vite-plus-adopt/src/shared/lib/typescript/index.ts",
     "libs/vite-plus-adopt/src/app/fsd-typescript.ts",
   ],
   "usedClassMembers": [

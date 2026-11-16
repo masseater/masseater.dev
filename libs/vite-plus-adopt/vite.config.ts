@@ -34,7 +34,7 @@ const isAttwUpstream = (importer: string | undefined): boolean =>
 
 const ATTW_REDIRECTS: readonly (readonly [(id: string) => boolean, string])[] = [
   [(id) => Str.endsWith("/multiCompilerHost.js")(id), VIRTUAL_HOSTS],
-  [(id) => id === "typescript", local("src/shared/lib/typescript/typescript.ts")],
+  [(id) => id === "typescript", local("src/shared/lib/typescript/index.ts")],
 ];
 
 const attwRedirect = (id: string, importer: string | undefined): Option.Option<string> =>
@@ -117,7 +117,7 @@ export default defineConfig({
       ignorePatterns: ["upstream/**"],
       overrides: [
         {
-          files: ["src/{shared/lib/typescript/typescript,app/fsd-typescript}.ts"],
+          files: ["src/{shared/lib/typescript/index,app/fsd-typescript}.ts"],
           rules: { "import/no-default-export": "off" },
         },
       ],

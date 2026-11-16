@@ -48,10 +48,10 @@
     },
     "./package.json": "./package.json",
     "./effect": {
-      "workerd": "./src/app/effect.ts",
-      "browser": "./src/app/effect.plain.ts",
-      "node": "./src/app/effect.plain.ts",
-      "default": "./src/app/effect.ts"
+      "workerd": "./src/app/effect-tracing.ts",
+      "browser": "./src/app/effect-tracing.plain.ts",
+      "node": "./src/app/effect-tracing.plain.ts",
+      "default": "./src/app/effect-tracing.ts"
     },
     "./oxlint": "./src/app/oxlint.ts",
     "./workers-ai": "./src/app/workers-ai.ts",

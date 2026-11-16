@@ -2,25 +2,24 @@ import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
 import { Effect, Layer, Array as Arr, pipe } from "effect";
 
+import { expected, inputs } from "./differential-data.test.support.ts";
+import type {
+  ExpectedPackageNameData,
+  ExpectedPathData,
+} from "./differential-data.test.support.ts";
 import {
   getTypesPackageName,
   mangleScopedPackageName,
   unmangleScopedPackageName,
-} from "#/shared/lib/typescript/package-names.ts";
-import { getRootLength } from "#/shared/lib/typescript/path-roots.ts";
+} from "./package-names.ts";
+import { getRootLength } from "./path-roots.ts";
 import {
   combinePaths,
   getDirectoryPath,
   getNormalizedAbsolutePath,
   getPathComponents,
   normalizePath,
-} from "#/shared/lib/typescript/paths.ts";
-
-import { expected, inputs } from "./differential-data.test.support.ts";
-import type {
-  ExpectedPackageNameData,
-  ExpectedPathData,
-} from "./differential-data.test.support.ts";
+} from "./paths.ts";
 
 const matchesPath = (entry: ExpectedPathData): Effect.Effect<void> =>
   Effect.sync(() => {
