@@ -9,6 +9,7 @@ import { attempt } from "./attempt.ts";
 import { toolFailed } from "./errors.ts";
 import type { VpToolsError } from "./errors.ts";
 import type { Report } from "./report.ts";
+import { presetRulesOf, rawConfigOf } from "./textlint-presets.ts";
 import type { TextlintConfig } from "./types.ts";
 
 const DATA_FIRST_ARITY_3 = 3;
@@ -16,13 +17,14 @@ const DATA_FIRST_ARITY_3 = 3;
 const descriptorOf = (
   loaded: TextlintLoadPackagesFromRawConfigResult,
   root: string,
+  config: TextlintConfig,
 ): Effect.Effect<TextlintKernelDescriptor, VpToolsError> => {
   if (!loaded.ok) {
     return Effect.fail(toolFailed("textlint")(loaded.error.message));
   }
   return Effect.succeed(
     new TextlintKernelDescriptor({
-      rules: loaded.config.rules,
+      rules: [...loaded.config.rules, ...presetRulesOf(config)],
       filterRules: loaded.config.filterRules,
       plugins: [...builtInPlugins, ...loaded.config.plugins],
       configBaseDir: root,
@@ -50,12 +52,14 @@ export const lintTexts: {
   ): Effect.Effect<Report, VpToolsError, Path.Path> =>
     Effect.gen(function* lint() {
       const path = yield* Path.Path;
-      const { ignores: _ignores, ...rawConfig } = config;
       yield* attempt("textlint")(() => import("vite-plus/register"));
       const loaded = yield* attempt("textlint")(() =>
-        loadPackagesFromRawConfig({ rawConfig, node_moduleDir: path.join(root, "node_modules") }),
+        loadPackagesFromRawConfig({
+          rawConfig: rawConfigOf(config),
+          node_moduleDir: path.join(root, "node_modules"),
+        }),
       );
-      const descriptor = yield* descriptorOf(loaded, root);
+      const descriptor = yield* descriptorOf(loaded, root, config);
       const absolute = pipe(
         files,
         Arr.map((file) => path.join(root, file)),

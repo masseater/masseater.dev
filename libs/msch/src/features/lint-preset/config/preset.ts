@@ -69,6 +69,7 @@ const rules = {
     },
   ],
   ...pluginRules,
+  "eslint/capitalized-comments": "off",
   "eslint/sort-imports": "off",
   "eslint/sort-keys": "off",
   "import/no-named-export": "off",

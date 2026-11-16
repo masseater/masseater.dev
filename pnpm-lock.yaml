@@ -587,6 +587,9 @@ catalogs:
     dedent:
       specifier: 1.7.2
       version: 1.7.2
+    dejavu-fonts-ttf:
+      specifier: 2.37.3
+      version: 2.37.3
     discord-api-types:
       specifier: 0.38.59
       version: 0.38.59
@@ -3320,6 +3323,9 @@ importers:
       '@vitest/browser-playwright':
         specifier: 5.1.0
         version: 5.1.0(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(playwright@1.65.0)(vitest@5.1.0)
+      dejavu-fonts-ttf:
+        specifier: 'catalog:'
+        version: 2.37.3
       playwright:
         specifier: 1.65.0
         version: 1.65.0
@@ -12424,6 +12430,9 @@ packages:
 
   defu@6.1.7:
     resolution: {integrity: sha512-7z22QmUWiQ/2d0KkdYmANbRUVABpZ9SNYyH5vx6PZ+nE5bcC0l7uFvEfHlyld/HcGBFTL536ClDt3DEcSlEJAQ==}
+
+  dejavu-fonts-ttf@2.37.3:
+    resolution: {integrity: sha512-f1hd7jJbeQa1VWcw+K2KrTXS50zTMaHpVC4XIKJpNcDeYR5ajMtj/iLlQDYNvLOKamUB3ARVVCf79lNwNVztSQ==}
 
   depd@2.0.0:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
@@ -24171,6 +24180,8 @@ snapshots:
       isobject: 3.0.1
 
   defu@6.1.7: {}
+
+  dejavu-fonts-ttf@2.37.3: {}
 
   depd@2.0.0: {}
 

@@ -248,6 +248,7 @@ catalog:
   "@earendil-works/chord": 1.5.2
   "@types/sshpk": ^1.17.5
   sshpk: ^1.18.0
+  dejavu-fonts-ttf: 2.37.3
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20
