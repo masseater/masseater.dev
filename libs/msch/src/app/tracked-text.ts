@@ -1,8 +1,8 @@
 import { Array as Arr, Effect } from "effect";
 
+import { checkDocker, checkPython } from "#/features/banned-tools/index.ts";
 import { checkComments } from "#/features/comments/index.ts";
 import { checkHiddenUnicode } from "#/features/invisible-characters/index.ts";
-import { checkPython } from "#/features/python/index.ts";
 import { checkNodeVersion } from "#/features/runtime-version/index.ts";
 import { checkSkillEntry, checkSkillFiles } from "#/features/skills/index.ts";
 import {
@@ -19,6 +19,7 @@ export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTra
     [
       checkHiddenUnicode(root),
       checkPython(root),
+      checkDocker(root),
       checkUnneededFiles(root),
       checkReplacedTools(root),
       checkAlchemyPatch(root),
