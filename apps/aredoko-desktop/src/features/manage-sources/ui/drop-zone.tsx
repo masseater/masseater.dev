@@ -1,0 +1,23 @@
+import { useCallback } from "react";
+import type { ReactNode } from "react";
+
+import { subscribeDrops } from "#/features/manage-sources/api/drop-events.ts";
+import { useImportFiles } from "#/features/manage-sources/api/queries.ts";
+import { useSetDragOver } from "#/features/manage-sources/model/drop-state.ts";
+
+import { DropOverlay } from "./drop-overlay.tsx";
+
+export const DropZone = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => {
+  const setDragOver = useSetDragOver();
+  const { mutate: importFiles } = useImportFiles();
+  const listen = useCallback(
+    () => subscribeDrops({ onHover: setDragOver, onDrop: importFiles }),
+    [setDragOver, importFiles],
+  );
+  return (
+    <div ref={listen} className="relative flex min-h-0 flex-1 flex-col">
+      {children}
+      <DropOverlay />
+    </div>
+  );
+};

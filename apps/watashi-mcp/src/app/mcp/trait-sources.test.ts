@@ -2,8 +2,8 @@ import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Number as Num, Option, String as Str, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
-import { writeLife } from "#/features/life-tools/index.test.support.ts";
-import { writeMemory, watashiProfile } from "#/features/memory-tools/index.test.support.ts";
+import { writeMemory, watashiProfile } from "#/features/manage-memory/index.test.support.ts";
+import { writeLife } from "#/features/record-life/index.test.support.ts";
 import { TRAIT_STEP_CHARACTERS } from "#/shared/config/index.ts";
 
 import {

@@ -7,6 +7,10 @@ on:
         description: One entry of the components that the release-components task prints
         required: true
         type: string
+    secrets:
+      TAURI_SIGNING_PRIVATE_KEY:
+        description: The updater signing key; the caller passes it by name so the environment secret of the build job reaches it
+        required: false
 
 permissions: {}
 

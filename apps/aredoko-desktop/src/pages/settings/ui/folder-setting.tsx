@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 
-import { AddKnownFolderButton, AddFolderButton, SourceList } from "#/features/library/index.ts";
+import {
+  AddKnownFolderButton,
+  AddFolderButton,
+  SourceList,
+} from "#/features/manage-sources/index.ts";
 
 const TITLE = "フォルダ";
 

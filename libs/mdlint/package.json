@@ -1,0 +1,62 @@
+{
+  "name": "@r_masseater/mdlint",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A Markdown linter written in Rust that matches markdownlint's built-in rules, configured from vite.config.ts, with TypeScript rules and markdownlint custom-rule support.",
+  "keywords": [
+    "lint",
+    "markdown",
+    "markdownlint",
+    "napi",
+    "vite-plus"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/mdlint#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/mdlint"
+  },
+  "bin": {
+    "mdlint": "./bin/mdlint.ts"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts",
+    "./vite": {
+      "types": "./src/app/vite.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:"
+  },
+  "devDependencies": {
+    "@r_masseater/vitest-otlp": "workspace:*",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "markdownlint": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.1.2",
+    "markdownlint": ">=0.42.0",
+    "vite": "*",
+    "vite-plus": ">=1.5.0"
+  },
+  "peerDependenciesMeta": {
+    "markdownlint": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}
