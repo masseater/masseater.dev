@@ -30,5 +30,5 @@ export {
   tasksOf,
 } from "./model/workspace-tasks.ts";
 export type { WorkspaceTasks } from "./model/workspace-tasks.ts";
-export { namedWorkspaces } from "./model/workspace-names.ts";
+export { namedWorkspaces, patternOf } from "./model/workspace-names.ts";
 export type { NamedWorkspace } from "./model/workspace-names.ts";
