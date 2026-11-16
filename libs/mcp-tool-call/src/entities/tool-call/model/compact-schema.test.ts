@@ -5,12 +5,14 @@ import { compactInput, compactJsonSchema } from "./compact-schema.ts";
 
 const TARGET = { target: "draft-2020-12" } as const;
 
+const MIN_COUNT = 1;
+
 const Change = Schema.StructWithRest(Schema.Struct({ ref: Schema.String }), [
   Schema.Record(Schema.String, Schema.Unknown),
 ]);
 
 const Input = Schema.Struct({
-  count: Schema.Int.check(Schema.isGreaterThanOrEqualTo(1)),
+  count: Schema.Int.check(Schema.isGreaterThanOrEqualTo(MIN_COUNT)),
   change: Change,
   mode: Schema.Literal(true),
   tags: Schema.NonEmptyArray(Schema.String),
