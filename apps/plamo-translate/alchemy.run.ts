@@ -10,6 +10,7 @@ import { HOST, MODEL_IMAGE } from "./config.ts";
 const PlamoImage = Containers.Container(MODEL_IMAGE, {
   schedulingPolicy: "durable_object",
   context: "container",
+  dockerfile: "container/Containerfile",
 });
 
 export default Stack(
