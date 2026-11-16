@@ -41,7 +41,7 @@ const DEFAULTS = {
   ci: "fail",
   timeoutMs: 10_000,
   maxSnippetChars: 4000,
-  model: "cloudflare/@cf/qwen/qwen3.8-27b",
+  model: "cloudflare/@cf/cloudflare/clef-flash",
   env: {},
   explain: false,
 } as const satisfies Required<DecisionOptions>;
@@ -111,23 +111,36 @@ const splitModelId = (id: string): Option.Option<readonly [string, string]> => {
   );
 };
 
+const acceptedModel = (ref: ModelRef): ModelRef => {
+  const { models, name } = ref.provider;
+  if (Predicate.isNotUndefined(models) && !models.test(ref.model)) {
+    throw optionsError(
+      `model "${ref.id}" is not a decision model that the "${name}" provider accepts`,
+    );
+  }
+  return ref;
+};
+
 export const resolveModel: {
   (providers: Readonly<Record<string, DecisionProvider>>): (id: string) => ModelRef;
   (id: string, providers: Readonly<Record<string, DecisionProvider>>): ModelRef;
 } = Fn.dual(
   DATA_FIRST_ARITY,
   (id: string, providers: Readonly<Record<string, DecisionProvider>>): ModelRef =>
-    splitModelId(id).pipe(
-      Option.flatMap(([name, model]) =>
-        Option.map(Option.fromUndefinedOr(providers[name]), (provider) => ({
-          id,
-          provider,
-          model,
-        })),
-      ),
-      Option.getOrThrowWith(() =>
-        optionsError(
-          `model "${id}" must be "<provider>/<model>" with a provider from: ${pipe(Rec.keys(providers), Arr.join(", "))}`,
+    acceptedModel(
+      splitModelId(id).pipe(
+        Option.flatMap(([name, model]) =>
+          Option.map(Option.fromUndefinedOr(providers[name]), (provider) => ({
+            id,
+            provider,
+            model,
+          })),
+        ),
+
+        Option.getOrThrowWith(() =>
+          optionsError(
+            `model "${id}" must be "<provider>/<model>" with a provider from: ${pipe(Rec.keys(providers), Arr.join(", "))}`,
+          ),
         ),
       ),
     ),
