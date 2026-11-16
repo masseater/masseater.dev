@@ -27,7 +27,7 @@ export interface Rule {
   readonly apply: From<Pair, Outcome>;
 }
 
-interface Operands {
+export interface Operands {
   readonly operator: Operator;
   readonly left: Type;
   readonly right: Type;
