@@ -197,7 +197,10 @@ it.effect("記録の呼び出しが無ければ失敗し、源を読んだ印を
     const failure = yield* Effect.flip(
       buildTraits({ conversation: silent.conversation, translator, ai }),
     );
-    expect(failure).toMatchObject({ _tag: "AnalystFailed" });
+    expect(failure).toMatchObject({
+      _tag: "AnalystFailed",
+      message: "no record_observations call (done ): stop=none parts=text",
+    });
     expect(asked.merges).toBe(before + ONCE);
     const summary = yield* buildTraits({ conversation: retried.conversation, translator, ai });
     expect(summary).toStrictEqual(WRITTEN);
