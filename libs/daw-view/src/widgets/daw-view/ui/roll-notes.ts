@@ -6,6 +6,7 @@ import {
   barSeconds,
   noteName,
   eventsBetween,
+  levelOf,
 } from "#/entities/song/index.ts";
 import type { GlidePoint, Note, NoteEvent, Track } from "#/entities/song/index.ts";
 import { clamp } from "#/shared/lib/math.ts";
@@ -47,6 +48,7 @@ export interface Notes extends Roll {
 interface Brush extends Notes {
   readonly track: Track;
   readonly colorOf: (event: NoteEvent) => string;
+  readonly level: number;
 }
 
 interface Box {
@@ -75,10 +77,11 @@ const brushOf =
   (notes: Notes) =>
   (track: Track): Brush => {
     const base = trackColor(notes.pen.theme.tint)(track);
+    const level = levelOf(track);
     if (notes.layout.single) {
-      return { ...notes, track, colorOf: sampleColors(notes, track) };
+      return { ...notes, track, level, colorOf: sampleColors(notes, track) };
     }
-    return { ...notes, track, colorOf: () => base };
+    return { ...notes, track, level, colorOf: () => base };
   };
 
 const boxOf = ({ pen, time }: Brush, event: NoteEvent): Box => {
@@ -93,9 +96,10 @@ const boxOf = ({ pen, time }: Brush, event: NoteEvent): Box => {
 const ink = (brush: Brush, event: NoteEvent, box: Box): void => {
   const { context } = brush.pen;
   context.fillStyle = brush.colorOf(event);
-  context.globalAlpha = GAIN.floor + GAIN.range * Math.sqrt(event.gain / brush.track.loudest);
+  context.globalAlpha =
+    (GAIN.floor + GAIN.range * Math.sqrt(event.gain / brush.track.loudest)) * brush.level;
   if (box.on) {
-    context.globalAlpha = OPAQUE;
+    context.globalAlpha = brush.level;
   }
 };
 
@@ -105,7 +109,7 @@ const hovered = (brush: Brush, event: NoteEvent): boolean =>
 const outline = (brush: Brush, event: NoteEvent, slot: Slot): void => {
   const { context, theme } = brush.pen;
   if (slot.on || hovered(brush, event)) {
-    context.globalAlpha = OPAQUE;
+    context.globalAlpha = brush.level;
     context.strokeStyle = theme.ink;
     context.lineWidth = OUTLINE.trim;
     context.strokeRect(
@@ -119,14 +123,14 @@ const outline = (brush: Brush, event: NoteEvent, slot: Slot): void => {
 
 const roomy = (slot: Slot): boolean => slot.height >= NAME.height && slot.width >= NAME.width;
 
-const write = ({ pen }: Brush, slot: Slot, text: string): boolean => {
+const write = ({ pen, level }: Brush, slot: Slot, text: string): boolean => {
   pen.context.font = fontOf(pen)(
     clamp({ low: NAME.least, high: NAME.most })(slot.height + NAME.grow),
   );
   if (text === "" || pen.context.measureText(text).width > slot.width - NAME.fit) {
     return false;
   }
-  pen.context.globalAlpha = OPAQUE;
+  pen.context.globalAlpha = level;
   pen.context.fillStyle = pen.theme.card;
   pen.context.fillText(text, slot.left + NAME.pad, slot.top + slot.height / TWO + NAME.nudge);
   return true;

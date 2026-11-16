@@ -120,6 +120,30 @@
     color: var(--daw-paper);
   }
 
+  .daw-switch {
+    flex: none;
+    width: 22px;
+    height: 20px;
+    border: 1px solid var(--daw-line);
+    border-radius: 5px;
+    color: var(--daw-dim);
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .daw-switch[aria-pressed="true"] {
+    border-color: var(--daw-ink);
+    background: var(--daw-ink);
+    color: var(--daw-paper);
+  }
+
+  .daw-switch[data-mix="solo"][aria-pressed="true"] {
+    border-color: var(--daw-hot);
+    background: var(--daw-hot);
+    color: white;
+  }
+
   .daw-tool:disabled {
     opacity: 0.35;
     cursor: default;
