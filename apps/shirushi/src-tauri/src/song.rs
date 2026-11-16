@@ -3,13 +3,14 @@ use std::sync::LazyLock;
 use regex::Regex;
 use serde::Deserialize;
 
-use crate::failure::Outcome;
+use crate::failure::{Failure, Outcome};
 use crate::protocol::{Site, Song, Source};
 use crate::source::page_of;
 
 const YOUTUBE_OEMBED: &str = "https://www.youtube.com/oembed";
 const SOUNDCLOUD_OEMBED: &str = "https://soundcloud.com/oembed";
 const NICONICO_INFO: &str = "https://ext.nicovideo.jp/api/getthumbinfo/";
+const NICONICO_FOUND: &str = r#"<nicovideo_thumb_response status="ok">"#;
 
 static NICONICO_TITLE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"<title>([^<]*)</title>").expect("valid title pattern"));
@@ -43,11 +44,14 @@ fn captured(pattern: &Regex, text: &str) -> String {
         .map_or_else(String::new, |found| unescaped(found.as_str()))
 }
 
-fn niconico_credit(text: &str) -> Credit {
-    Credit {
+fn niconico_credit(text: &str) -> Outcome<Credit> {
+    if !text.contains(NICONICO_FOUND) {
+        return Err(Failure::new("niconico has no such video"));
+    }
+    Ok(Credit {
         title: captured(&NICONICO_TITLE, text),
         artist: captured(&NICONICO_ARTIST, text),
-    }
+    })
 }
 
 async fn oembed(client: &reqwest::Client, endpoint: &str, source: &Source) -> Outcome<Credit> {
@@ -73,7 +77,7 @@ async fn niconico(client: &reqwest::Client, source: &Source) -> Outcome<Credit> 
         .error_for_status()?
         .text()
         .await?;
-    Ok(niconico_credit(&text))
+    niconico_credit(&text)
 }
 
 async fn credit(client: &reqwest::Client, source: &Source) -> Outcome<Credit> {
@@ -109,9 +113,15 @@ mod tests {
     #[test]
     fn reads_niconico_credits() {
         let credit = niconico_credit(
-            "<thumb><title>Tom &amp; Jerry&#39;s</title><user_nickname>作者</user_nickname></thumb>",
-        );
+            r#"<nicovideo_thumb_response status="ok"><thumb><title>Tom &amp; Jerry&#39;s</title><user_nickname>作者</user_nickname></thumb>"#,
+        )
+        .expect("credit");
         assert_eq!(credit.title, "Tom & Jerry's");
         assert_eq!(credit.artist, "作者");
+    }
+
+    #[test]
+    fn refuses_pages_that_are_not_thumb_info() {
+        assert!(niconico_credit("<html><title>ニコニコ動画</title></html>").is_err());
     }
 }
