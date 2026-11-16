@@ -121,6 +121,16 @@ export const runGit: {
 export const lines = (...rows: readonly string[]): string => `${Arr.join(rows, "\n")}\n`;
 
 /** @internal */
+export const NO_FOO_RULE = lines(
+  "module.exports = (context) => ({",
+  "  [context.Syntax.Str](node) {",
+  '    if (context.getSource(node).includes("foo")) {',
+  '      context.report(node, new context.RuleError("foo is not allowed"));',
+  "    }",
+  "  },",
+  "});",
+);
+
 export const zipArchive = (files: Readonly<Record<string, string>>): Effect.Effect<Uint8Array> =>
   Effect.callback<Uint8Array>((resume) => {
     const encoder = new TextEncoder();

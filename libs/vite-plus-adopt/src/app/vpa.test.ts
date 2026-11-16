@@ -19,7 +19,13 @@ import type { Scope } from "effect";
 import { VendorDirectory } from "#/entities/binary/index.test.support.ts";
 import { BETTERLEAKS } from "#/entities/binary/index.ts";
 import type { CommandError, CommandServices } from "#/shared/lib/command.ts";
-import { commitEmpty, directoryWith, lines, runGit } from "#/shared/lib/fixture.test.support.ts";
+import {
+  NO_FOO_RULE,
+  commitEmpty,
+  directoryWith,
+  lines,
+  runGit,
+} from "#/shared/lib/fixture.test.support.ts";
 import { toJson } from "#/shared/lib/json.ts";
 
 import { runVpa } from "./vpa.ts";
@@ -150,6 +156,32 @@ const namesTheFailingChecks = Effect.gen(function* namesTheFailingChecks() {
   deepStrictEqual(failed, ["✗ commitlint", "✗ dependencies", "✗ markdownlint"]);
 });
 
+const SOURCE_CONFIG = lines(
+  'export default { textlint: { rules: {}, sources: [{ files: ["notes/**/*.txt"],',
+  '  rules: { "no-foo": true } }] } };',
+);
+
+const lintsTheConfiguredSources = Effect.gen(function* lintsTheConfiguredSources() {
+  const root = yield* repositoryWith(
+    {
+      "vite.config.ts": SOURCE_CONFIG,
+      "node_modules/textlint-rule-no-foo/package.json": toJson({
+        name: "textlint-rule-no-foo",
+        main: "index.js",
+      }),
+      "node_modules/textlint-rule-no-foo/index.js": NO_FOO_RULE,
+      "notes/deep/a.txt": "This line says foo.\n",
+      "docs/foo.md": "# Foo\n\nThis line says foo.\n",
+    },
+    [],
+  );
+  const { exit, output } = yield* run(root, []);
+  assertFalse(Exit.isSuccess(exit));
+  deepStrictEqual(failedChecksOf(output), ["✗ textlint"]);
+  assertTrue(Str.includes("notes/deep/a.txt")(output));
+  assertFalse(Str.includes("docs/foo.md")(output));
+});
+
 const lintsTheCommitMessageFile = Effect.gen(function* lintsTheCommitMessageFile() {
   const root = yield* repositoryWith({ GOOD_MSG: "feat: add\n", BAD_MSG: "no type\n" }, []);
   const results = yield* Effect.forEach(
@@ -254,6 +286,7 @@ layer(fixtureLayer)("vpa", (it) => {
   it.effect("reports each failing check by name", () => namesTheFailingChecks);
   it.effect("lints a commit message file for the commit-msg hook", () => lintsTheCommitMessageFile);
   it.effect("lints a message given on the command line", () => lintsAGivenMessage);
+  it.effect("lints the files of each textlint source", () => lintsTheConfiguredSources);
   it.effect("scans the staged changes for the pre-commit hook", () => scansTheStagedChanges);
   it.effect(
     "scans the committed tree when the clone has no history to diff",
