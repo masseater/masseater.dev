@@ -17,7 +17,7 @@ const SdkPackage = Schema.fromJsonString(Schema.Struct({ version: Schema.String 
 const agentSdkVersion = Effect.gen(function* agentSdkVersion() {
   const fs = yield* FileSystem.FileSystem;
   const json = yield* fs.readFileString(
-    new URL("package.json", import.meta.resolve("@anthropic-ai/claude-agent-sdk")).pathname,
+    new URL("./package.json", import.meta.resolve("@anthropic-ai/claude-agent-sdk")).pathname,
   );
   const { version } = yield* Schema.decodeEffect(SdkPackage)(json);
   return version;
