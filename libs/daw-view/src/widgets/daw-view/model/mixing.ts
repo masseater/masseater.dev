@@ -2,8 +2,7 @@ import { Array as Arr, Option, pipe } from "effect";
 
 import type { Session, Track } from "#/entities/song/index.ts";
 
-const ON = 1;
-const OFF = 0;
+const NONE = 0;
 
 export type Switch = "mute" | "solo";
 
@@ -12,15 +11,45 @@ export interface Change {
   readonly flip: Switch;
 }
 
+export interface Mixer {
+  readonly volumeDecibels: number;
+  readonly pan: number;
+  readonly muted: boolean;
+}
+
+export interface Channel {
+  readonly name: string;
+  readonly mixer: Mixer;
+}
+
 export interface Mixing {
-  readonly tracks: readonly string[];
-  readonly muted: readonly string[];
+  readonly channels: readonly Channel[];
   readonly soloed: readonly string[];
 }
 
-export const UNMIXED: Mixing = { tracks: [], muted: [], soloed: [] };
+export const UNITY: Mixer = { volumeDecibels: 0, pan: 0, muted: false };
 
-export const mixingOf = (tracks: readonly string[]): Mixing => ({ ...UNMIXED, tracks });
+export const UNMIXED: Mixing = { channels: [], soloed: [] };
+
+const channelIn =
+  (mixers: Readonly<Record<string, Mixer>>) =>
+  (name: string): Channel => ({
+    name,
+    mixer: Option.getOrElse(Option.fromUndefinedOr(mixers[name]), () => UNITY),
+  });
+
+export const mixingOf =
+  (mixers: Readonly<Record<string, Mixer>>) =>
+  (tracks: readonly string[]): Mixing => ({
+    ...UNMIXED,
+    channels: pipe(tracks, Arr.map(channelIn(mixers))),
+  });
+
+export const namesOf = ({ channels }: Mixing): readonly string[] =>
+  pipe(
+    channels,
+    Arr.map(({ name }) => name),
+  );
 
 export const switchOf = (value: string | undefined): Switch => {
   if (value === "solo") {
@@ -29,23 +58,25 @@ export const switchOf = (value: string | undefined): Switch => {
   return "mute";
 };
 
+const mutedNames = ({ channels }: Mixing): readonly string[] =>
+  pipe(
+    channels,
+    Arr.filter(({ mixer }) => mixer.muted),
+    Arr.map(({ name }) => name),
+  );
+
 export const audible =
-  ({ tracks, muted, soloed }: Mixing) =>
-  (name: string): boolean =>
-    !tracks.includes(name) ||
-    (!muted.includes(name) && (soloed.length === OFF || soloed.includes(name)));
-
-const gainOf =
   (mixing: Mixing) =>
-  (name: string): number => {
-    if (audible(mixing)(name)) {
-      return ON;
-    }
-    return OFF;
-  };
+  (name: string): boolean =>
+    !namesOf(mixing).includes(name) ||
+    (!mutedNames(mixing).includes(name) &&
+      (mixing.soloed.length === NONE || mixing.soloed.includes(name)));
 
-export const gainsOf = (mixing: Mixing): Float32Array =>
-  Float32Array.from(mixing.tracks, gainOf(mixing));
+export const heardMixers = (mixing: Mixing): readonly Mixer[] =>
+  pipe(
+    mixing.channels,
+    Arr.map(({ name, mixer }) => ({ ...mixer, muted: !audible(mixing)(name) })),
+  );
 
 const flipped = (names: readonly string[], name: string): readonly string[] => {
   if (names.includes(name)) {
@@ -57,14 +88,23 @@ const flipped = (names: readonly string[], name: string): readonly string[] => {
   return [...names, name];
 };
 
+const muteFlipped =
+  (name: string) =>
+  (channel: Channel): Channel => {
+    if (channel.name !== name) {
+      return channel;
+    }
+    return { ...channel, mixer: { ...channel.mixer, muted: !channel.mixer.muted } };
+  };
+
 export const toggled =
   (change: Change) =>
   (mixing: Mixing): Mixing => {
-    if (!mixing.tracks.includes(change.name)) {
+    if (!namesOf(mixing).includes(change.name)) {
       return mixing;
     }
     if (change.flip === "mute") {
-      return { ...mixing, muted: flipped(mixing.muted, change.name) };
+      return { ...mixing, channels: pipe(mixing.channels, Arr.map(muteFlipped(change.name))) };
     }
     return { ...mixing, soloed: flipped(mixing.soloed, change.name) };
   };
@@ -73,7 +113,7 @@ export const pressedIn =
   (flip: Switch) =>
   (mixing: Mixing): readonly string[] => {
     if (flip === "mute") {
-      return mixing.muted;
+      return mutedNames(mixing);
     }
     return mixing.soloed;
   };
