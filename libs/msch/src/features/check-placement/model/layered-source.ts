@@ -65,7 +65,9 @@ const entryProblems = Effect.fn("entryProblems")(function* entryProblems(
     Option.map((manifest) => publicEntriesOf({ manifest, join, packEntries: [] })),
     Option.getOrElse((): readonly PublicEntry[] => []),
     Arr.filter(({ source }) => !PUBLIC_ENTRY.test(files.relative(directory, source))),
-    Arr.map(({ label, source }) => problemAt(source, ENTRY_RULE, `${label} ${ENTRY_MESSAGE}`)),
+    Arr.map(({ label, source }) =>
+      problemAt({ file: source, rule: ENTRY_RULE, message: `${label} ${ENTRY_MESSAGE}` }),
+    ),
   );
 });
 
@@ -83,7 +85,9 @@ export const checkLayeredSource = Effect.fn("checkLayeredSource")(function* chec
     Arr.map(layerProblemOf),
     Arr.getSomes,
     Arr.dedupeWith(([left], [right]) => left === right),
-    Arr.map(([file, message]) => problemAt(files.join(root, file), LAYERED_RULE, message)),
+    Arr.map(([file, message]) =>
+      problemAt({ file: files.join(root, file), rule: LAYERED_RULE, message }),
+    ),
   );
   const entries = yield* Effect.forEach(workspaces, (workspace) => entryProblems(root, workspace), {
     concurrency: 1,

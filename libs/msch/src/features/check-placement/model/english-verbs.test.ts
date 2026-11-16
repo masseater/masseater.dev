@@ -6,7 +6,7 @@ import { expect } from "vite-plus/test";
 const WORDNET_VERBS = new URL(import.meta.resolve("wordnet-db/dict/index.verb"));
 const WORD = /^[a-z]+$/u;
 const FIELD_SEPARATOR = " ";
-const INDENT = 2;
+const INDENT = "  ";
 
 const verbListOf = (index: string): string =>
   pipe(
@@ -16,7 +16,14 @@ const verbListOf = (index: string): string =>
     Arr.filter((lemma) => WORD.test(lemma)),
     Arr.dedupe,
     (verbs) => Arr.sort(verbs, Str.Order),
-    (verbs) => `${JSON.stringify(verbs, null, INDENT)}\n`,
+    (verbs) =>
+      `[\n${Arr.join(
+        pipe(
+          verbs,
+          Arr.map((verb) => `${INDENT}"${verb}"`),
+        ),
+        ",\n",
+      )}\n]\n`,
   );
 
 const matchesWordnet = Effect.gen(function* matchesWordnet() {

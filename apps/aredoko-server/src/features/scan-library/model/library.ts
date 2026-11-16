@@ -38,7 +38,7 @@ export class Library extends Context.Service<
     readonly remember: (project: ProjectGuids) => Effect.Effect<HashSet.HashSet<string>>;
     readonly forget: (projectPath: string) => Effect.Effect<void>;
   }
->()("aredoko-server/features/library/model/library") {}
+>()("aredoko-server/features/scan-library/model/library") {}
 
 const remember =
   ({ projectPath, guids }: ProjectGuids) =>

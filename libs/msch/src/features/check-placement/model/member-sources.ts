@@ -37,7 +37,11 @@ export interface Owned {
 
 const byLength = Order.mapInput(Order.Number, (directory: string) => directory.length);
 
-export const fileProblem = (file: string, rule: RuleName, message: string): Problem => ({
+export const fileProblem = ({
+  file,
+  rule,
+  message,
+}: Readonly<{ file: string; rule: RuleName; message: string }>): Problem => ({
   file,
   line: FIRST,
   column: FIRST,

@@ -49,7 +49,7 @@ export interface BlmLibrary {
 export class Blm extends Context.Service<
   Blm,
   { readonly library: Effect.Effect<Option.Option<BlmLibrary>> }
->()("aredoko-server/features/library/model/blm") {}
+>()("aredoko-server/features/scan-library/model/blm") {}
 
 const isUtf16 = (bytes: Uint8Array): boolean =>
   bytes.length % EVEN === NUL && bytes.length > NUL && bytes.at(HIGH_BYTE) === NUL;

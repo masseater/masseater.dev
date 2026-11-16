@@ -61,7 +61,7 @@ export const checkSourceNames = Effect.fn("checkSourceNames")(function* checkSou
     (found: readonly string[]): readonly Problem[] =>
       pipe(
         Arr.dedupe(found),
-        Arr.map((name) => fileProblem(files.join(root, name), rule, message)),
+        Arr.map((name) => fileProblem({ file: files.join(root, name), rule, message })),
       );
   return [
     ...report(SLICE_RULE, SLICE_MESSAGE)(pipe(owned, Arr.map(misnamedSlice), Arr.getSomes)),
