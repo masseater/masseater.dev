@@ -1,6 +1,6 @@
 import { compile } from "@earendil-works/pi-schema";
 import { afterAll, expect, it } from "@effect/vitest";
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
 import { profileTraits } from "#/entities/trait/index.server.ts";
@@ -11,6 +11,7 @@ import {
 } from "#/features/build-traits/index.test.support.ts";
 import type { Conversation } from "#/features/build-traits/index.test.support.ts";
 import { watashiProfile, writeMemory } from "#/features/memory-tools/index.test.support.ts";
+import { encodeJson } from "#/shared/db/index.server.ts";
 
 import { pastBudget, settle } from "./trait-build.test.support.ts";
 import { closeDatabase, resetDatabase } from "./trait.test.support.ts";
@@ -56,25 +57,71 @@ const translator = {
   translate: (): Promise<Readonly<{ text: string }>> => Promise.resolve({ text: JAPANESE }),
 };
 
-const USER_MD = Arr.join(
-  [
-    "# USER.md",
-    "## Hard limits",
-    "- Never use Python. [1]",
-    "## How to work with me",
-    "- Always use Neovim as the editor. [1]",
-    "## Communication",
-    "- Always write to the owner in Japanese. [1]",
+const FIRST_TRAIT = 1;
+
+const MERGED = {
+  rules: [
+    { section: "limits", repo: "", rule: "Never use Python.", refs: [FIRST_TRAIT] },
+    { section: "work", repo: "", rule: "Always use Neovim as the editor.", refs: [FIRST_TRAIT] },
   ],
-  "\n",
-);
+};
+
+const EDITED = {
+  summary: ["The owner writes code in Neovim."],
+  who: [],
+  now: ["watashi-mcp"],
+  sections: [
+    {
+      section: "limits",
+      repo: "",
+      topics: [{ title: "Tools", items: [{ text: "Never use Python.", ids: ["R1"] }] }],
+    },
+    {
+      section: "work",
+      repo: "",
+      topics: [
+        { title: "Editor", items: [{ text: "Always use Neovim as the editor.", ids: ["R1"] }] },
+      ],
+    },
+    {
+      section: "communication",
+      repo: "",
+      topics: [
+        {
+          title: "Language",
+          items: [{ text: "Always write to the owner in Japanese.", ids: ["R1"] }],
+        },
+      ],
+    },
+  ],
+};
+
+const STEP = Schema.Struct({
+  response_format: Schema.Struct({ json_schema: Schema.Struct({ name: Schema.String }) }),
+});
+
+const asked = { merges: 0 };
+
+const isStep = Schema.is(STEP);
+
+const answerFor = (inputs: unknown): unknown => {
+  if (isStep(inputs) && inputs.response_format.json_schema.name === "merge") {
+    asked.merges += 1;
+    return MERGED;
+  }
+  return EDITED;
+};
 
 const ai = {
-  run: (): Promise<unknown> =>
-    Promise.resolve({
-      choices: [{ message: { content: USER_MD } }],
-      usage: { prompt_tokens: 100, completion_tokens: 40 },
-    }),
+  run: (_model: string, inputs: unknown): Promise<unknown> =>
+    Effect.runPromise(
+      encodeJson(answerFor(inputs)).pipe(
+        Effect.map((content) => ({
+          choices: [{ message: { content } }],
+          usage: { prompt_tokens: 100, completion_tokens: 40 },
+        })),
+      ),
+    ),
 };
 
 const recorded = assistant([{ type: "text", text: "retrying" }, call(created(SOURCE))]);
@@ -137,24 +184,26 @@ it.effect("会話の最後の正しい記録の呼び出しから特性を作る
   }),
 );
 
+const silent = fake(() => [assistant([{ type: "text", text: "done" }])]);
+
+const retried = fake(() => [recorded]);
+
+const WRITTEN = { steps: ONCE, idle: true, translated: ONCE, profile: "written" };
+
 it.effect("記録の呼び出しが無ければ失敗し、源を読んだ印を進めないが、人物像は作る", () =>
   Effect.gen(function* failsWithoutCall() {
     yield* setUp;
-    const silent = fake(() => [assistant([{ type: "text", text: "done" }])]);
+    const before = asked.merges;
     const failure = yield* Effect.flip(
       buildTraits({ conversation: silent.conversation, translator, ai }),
     );
     expect(failure).toMatchObject({ _tag: "AnalystFailed" });
-    const profile = yield* watashiProfile({});
-    expect(profile).toContain("Never use Python.");
-    const retried = fake(() => [recorded]);
+    expect(asked.merges).toBe(before + ONCE);
     const summary = yield* buildTraits({ conversation: retried.conversation, translator, ai });
-    expect(summary).toStrictEqual({
-      steps: ONCE,
-      idle: true,
-      translated: ONCE,
-      profile: "written",
-    });
+    expect(summary).toStrictEqual(WRITTEN);
+    const profile = yield* watashiProfile({});
+    expect(profile).toContain("## How to work with me\n- Always use Neovim as the editor. [1]");
+    expect(profile).toContain("- Never use Python. [1]");
   }),
 );
 
