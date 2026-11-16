@@ -117,7 +117,7 @@ export const buildTraits = ({
     const start = yield* Clock.currentTimeMillis;
     const deadline = start + Duration.toMillis(BUDGET);
     const earlier = yield* translateTraits(deadline);
-    const built = yield* stepsUntil(deadline, NONE_YET);
+    const attempted = yield* Effect.exit(stepsUntil(deadline, NONE_YET));
     const later = yield* translateTraits(deadline);
     const profile = yield* buildProfile.pipe(
       Effect.catch((error) =>
@@ -127,6 +127,7 @@ export const buildTraits = ({
         ),
       ),
     );
+    const built = yield* attempted;
     return { ...built, translated: earlier + later, profile };
   }).pipe(
     Effect.provideService(TraitAnalyst, analystOf(conversation)),

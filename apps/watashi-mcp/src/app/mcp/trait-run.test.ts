@@ -10,7 +10,7 @@ import {
   buildTraits,
 } from "#/features/build-traits/index.test.support.ts";
 import type { Conversation } from "#/features/build-traits/index.test.support.ts";
-import { writeMemory } from "#/features/memory-tools/index.test.support.ts";
+import { watashiProfile, writeMemory } from "#/features/memory-tools/index.test.support.ts";
 
 import { pastBudget, settle } from "./trait-build.test.support.ts";
 import { closeDatabase, resetDatabase } from "./trait.test.support.ts";
@@ -137,7 +137,7 @@ it.effect("会話の最後の正しい記録の呼び出しから特性を作る
   }),
 );
 
-it.effect("記録の呼び出しが無ければ失敗し、源を読んだ印を進めない", () =>
+it.effect("記録の呼び出しが無ければ失敗し、源を読んだ印を進めないが、人物像は作る", () =>
   Effect.gen(function* failsWithoutCall() {
     yield* setUp;
     const silent = fake(() => [assistant([{ type: "text", text: "done" }])]);
@@ -145,6 +145,8 @@ it.effect("記録の呼び出しが無ければ失敗し、源を読んだ印を
       buildTraits({ conversation: silent.conversation, translator, ai }),
     );
     expect(failure).toMatchObject({ _tag: "AnalystFailed" });
+    const profile = yield* watashiProfile({});
+    expect(profile).toContain("Never use Python.");
     const retried = fake(() => [recorded]);
     const summary = yield* buildTraits({ conversation: retried.conversation, translator, ai });
     expect(summary).toStrictEqual({
