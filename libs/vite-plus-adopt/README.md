@@ -74,11 +74,14 @@ export default defineConfig({
       skills: "all",
     },
     "cloudflare/skills": { commit: "…", root: "skills", skills: ["cloudflare"] },
+    "./docs/skills": { skills: "all" },
   },
 });
 ```
 
-取得したスキルは `~/.cache/vpa/skills/`（`XDG_CACHE_HOME`、Windows では `LOCALAPPDATA` の下）に読み取り専用で置き、`.agents/skills/` からはシンボリックリンク（Windows ではジャンクション）で指す。同じコミットはマシンのどのワークツリーでも取り直さない。非公開のリポジトリは `GITHUB_TOKEN` で取る。
+取得したスキルは `~/.cache/vpa/skills/`（`XDG_CACHE_HOME`、Windows では `LOCALAPPDATA` の下）に読み取り専用で置く。`.agents/skills/` からはシンボリックリンク（Windows ではジャンクション）で指す。同じコミットはマシンのどのワークツリーでも取り直さない。非公開のリポジトリは `GITHUB_TOKEN` で取る。
+
+`./` で始まるキーは、このリポジトリのフォルダである。コミットは書かず、`SKILL.md` を持つ直下のフォルダをそのまま指す。
 
 `prepare` には `vpa --prepare` を書く。Renovate がコミットを更新できるように、`renovate.json` で次のプリセットを読む。
 

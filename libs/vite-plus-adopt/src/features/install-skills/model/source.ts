@@ -14,9 +14,10 @@ import type { HttpClient } from "effect/http";
 import type { VpToolsError } from "#/shared/lib/errors.ts";
 import type { TarEntry } from "#/shared/lib/tar-gz.ts";
 
-import { SEPARATOR, downloadEntries, selectSkills, skillsIn } from "./archive.ts";
+import { SEPARATOR, downloadEntries, labelOf, skillsIn } from "./archive.ts";
 import type { Declared, FoundSkill } from "./archive.ts";
 import { INDEX, extractSkill, writeIndex } from "./extract.ts";
+import { selectSkills } from "./select.ts";
 
 /** @internal */
 export interface Resolved {
@@ -25,9 +26,11 @@ export interface Resolved {
   readonly directory: string;
 }
 
-type SourceServices = FileSystem.FileSystem | Path.Path | HttpClient.HttpClient;
+/** @internal */
+export type SourceServices = FileSystem.FileSystem | Path.Path | HttpClient.HttpClient;
 
-type SourceError = VpToolsError | PlatformError.PlatformError;
+/** @internal */
+export type SourceError = VpToolsError | PlatformError.PlatformError;
 
 const Index = Schema.fromJsonString(Schema.Array(Schema.String));
 
@@ -72,7 +75,9 @@ const cachedNames = (
     if (Option.isNone(index)) {
       return Option.none();
     }
-    const names = yield* selectSkills(declared)(index.value);
+    const names = yield* selectSkills({ label: labelOf(declared), skills: declared.source.skills })(
+      index.value,
+    );
     const missing = yield* missingFrom(directory, names);
     return Option.liftPredicate(names, () => Arr.isReadonlyArrayEmpty(missing));
   });
@@ -99,7 +104,10 @@ const fetchNames = (
       found,
       Arr.map(({ name }) => name),
     );
-    const selected = yield* selectSkills(declared)(available);
+    const selected = yield* selectSkills({
+      label: labelOf(declared),
+      skills: declared.source.skills,
+    })(available);
     yield* Effect.forEach(
       pipe(
         found,

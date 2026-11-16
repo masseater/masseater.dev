@@ -12,5 +12,5 @@ export type {
   ToolSection,
   ToolSections,
 } from "./types.ts";
-export { SkillsSectionSchema } from "./skills.ts";
-export type { SkillSource, SkillsSection } from "./skills.ts";
+export { RemoteSkillSourceSchema, SkillsSectionSchema } from "./skills.ts";
+export type { RemoteSkillSource, SkillSelection, SkillsSection } from "./skills.ts";

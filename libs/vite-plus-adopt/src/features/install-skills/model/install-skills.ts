@@ -1,28 +1,46 @@
-import { Array as Arr, Effect, Option, Path, Record as Rec, Schema, pipe } from "effect";
+import {
+  Array as Arr,
+  Effect,
+  Option,
+  Path,
+  Record as Rec,
+  Schema,
+  String as Str,
+  pipe,
+} from "effect";
 import type { FileSystem, PlatformError } from "effect";
 import type { HttpClient } from "effect/http";
 import type { ChildProcessSpawner } from "effect/process";
 
 import { loadViteConfig } from "#/entities/vite-config/index.ts";
-import { SkillsSectionSchema } from "#/shared/config/index.ts";
+import { RemoteSkillSourceSchema, SkillsSectionSchema } from "#/shared/config/index.ts";
 import { checksFailed } from "#/shared/lib/errors.ts";
 import type { VpToolsError } from "#/shared/lib/errors.ts";
 
 import { skillCacheDirectory } from "./cache.ts";
 import { linkSkills } from "./link.ts";
 import type { Link } from "./link.ts";
+import { resolveLocal } from "./local.ts";
 import { resolveSource } from "./source.ts";
 import type { Resolved } from "./source.ts";
 
-type InstallServices =
+/** @internal */
+export type InstallServices =
   | FileSystem.FileSystem
   | Path.Path
   | HttpClient.HttpClient
   | ChildProcessSpawner.ChildProcessSpawner;
 
-type InstallError = VpToolsError | PlatformError.PlatformError;
+/** @internal */
+export type InstallError = VpToolsError | PlatformError.PlatformError;
 
 type Section = typeof SkillsSectionSchema.Type;
+
+type Entry = readonly [string, Section[string]];
+
+const isRemote = Schema.is(RemoteSkillSourceSchema);
+
+const LOCAL_PREFIX = "./";
 
 const SINGLE = 1;
 
@@ -74,6 +92,26 @@ const linksOf = (
     );
   });
 
+const resolveEntry =
+  (root: string, cache: string) =>
+  ([key, source]: Entry): Effect.Effect<Resolved, InstallError, InstallServices> => {
+    const local = Str.startsWith(LOCAL_PREFIX)(key);
+    if (isRemote(source)) {
+      if (local) {
+        return Effect.fail(
+          checksFailed(
+            `vite.config "skills": ${key} is a folder in this repository and takes no commit`,
+          ),
+        );
+      }
+      return resolveSource(cache)({ repository: key, source });
+    }
+    if (!local) {
+      return Effect.fail(checksFailed(`vite.config "skills": ${key} needs a commit`));
+    }
+    return resolveLocal(root)({ directory: key, skills: source.skills });
+  };
+
 /** @internal */
 export const installSkills = (
   root: string,
@@ -86,11 +124,9 @@ export const installSkills = (
     }
     const section = yield* decodeSection(raw.value);
     const cache = yield* skillCacheDirectory;
-    const resolved = yield* Effect.forEach(
-      Rec.toEntries(section),
-      ([repository, source]) => resolveSource(cache)({ repository, source }),
-      { concurrency: "unbounded" },
-    );
+    const resolved = yield* Effect.forEach(Rec.toEntries(section), resolveEntry(root, cache), {
+      concurrency: "unbounded",
+    });
     const links = yield* linksOf(resolved);
     yield* linkSkills(root)(links);
     return Option.some(links.length);

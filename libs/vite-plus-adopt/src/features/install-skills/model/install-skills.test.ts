@@ -65,10 +65,17 @@ interface Run {
   readonly requests: Ref.Ref<number>;
 }
 
-const prepare = (config: string): Effect.Effect<Run, never, FixtureServices> =>
+const prepare = (
+  config: string,
+  files: Readonly<Record<string, string>> = {},
+): Effect.Effect<Run, never, FixtureServices> =>
   Effect.gen(function* prepareRun() {
     const fs = yield* FileSystem.FileSystem;
-    const root = yield* directoryWith({ "vite.config.ts": config, ".agents/skills/.gitkeep": "" });
+    const root = yield* directoryWith({
+      ...files,
+      "vite.config.ts": config,
+      ".agents/skills/.gitkeep": "",
+    });
     const cache = yield* fs
       .makeTempDirectoryScoped({ prefix: "vpa-skill-cache-" })
       .pipe(Effect.orDie);
@@ -171,6 +178,46 @@ const failsOnAnUnknownName = Effect.gen(function* failsOnAnUnknownName() {
   assertTrue(listsAvailable);
 });
 
+const LOCAL_FILES = {
+  "docs/skills/delta/SKILL.md": skill("delta"),
+  "docs/skills/notes.md": "not a skill\n",
+};
+
+const localConfig = (source: string): string =>
+  lines(
+    "export default {",
+    "  skills: {",
+    `    "owner/skills": { commit: "${COMMIT}", root: "skills", skills: ["alpha"] },`,
+    `    "./docs/skills": ${source},`,
+    "  },",
+    "};",
+  );
+
+const linksLocalFolders = Effect.gen(function* linksLocalFolders() {
+  const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const run = yield* prepare(localConfig('{ skills: "all" }'), LOCAL_FILES);
+  const exit = yield* install(run);
+  deepStrictEqual(exit, Exit.succeed(Option.some(TWO)));
+  const names = yield* linkedNames(run.root);
+  deepStrictEqual(names, [".gitkeep", "alpha", "delta"]);
+  const target = yield* fs.readLink(path.join(run.root, ".agents", "skills", "delta"));
+  strictEqual(
+    path.resolve(run.root, ".agents", "skills", target),
+    path.join(run.root, "docs", "skills", "delta"),
+  );
+});
+
+const rejectsACommitOnALocalFolder = Effect.gen(function* rejectsACommitOnALocalFolder() {
+  const run = yield* prepare(localConfig(`{ commit: "${COMMIT}", skills: "all" }`), LOCAL_FILES);
+  const exit = yield* install(run);
+  const saysNoCommit = pipe(
+    Exit.findErrorOption(exit),
+    Option.exists(({ message }) => Str.includes("takes no commit")(message)),
+  );
+  assertTrue(saysNoCommit);
+});
+
 const doesNothingWithoutASection = Effect.gen(function* doesNothingWithoutASection() {
   const run = yield* prepare(lines("export default {};"));
   const exit = yield* install(run);
@@ -193,6 +240,10 @@ layer(fixtureLayer)("installing skills", (it) => {
   );
   it.effect("fails with the available names when a name is missing", () =>
     Effect.scoped(failsOnAnUnknownName),
+  );
+  it.effect("links skills from a folder in the repository", () => Effect.scoped(linksLocalFolders));
+  it.effect("rejects a commit on a folder in the repository", () =>
+    Effect.scoped(rejectsACommitOnALocalFolder),
   );
   it.effect("does nothing without a skills section", () =>
     Effect.scoped(doesNothingWithoutASection),

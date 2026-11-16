@@ -12,9 +12,14 @@ export interface Link {
   readonly target: string;
 }
 
-type LinkServices = FileSystem.FileSystem | Path.Path | ChildProcessSpawner.ChildProcessSpawner;
+/** @internal */
+export type LinkServices =
+  | FileSystem.FileSystem
+  | Path.Path
+  | ChildProcessSpawner.ChildProcessSpawner;
 
-type LinkError = VpToolsError | PlatformError.PlatformError;
+/** @internal */
+export type LinkError = VpToolsError | PlatformError.PlatformError;
 
 const KEEP = ".gitkeep";
 

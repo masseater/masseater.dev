@@ -14,7 +14,7 @@ import { HttpClient, HttpClientRequest } from "effect/http";
 import type { HttpClientError } from "effect/http";
 import { parse } from "yaml";
 
-import type { SkillSource } from "#/shared/config/index.ts";
+import type { RemoteSkillSource } from "#/shared/config/index.ts";
 import { checksFailed, toolFailed } from "#/shared/lib/errors.ts";
 import type { VpToolsError } from "#/shared/lib/errors.ts";
 import { readTarGz } from "#/shared/lib/tar-gz.ts";
@@ -23,7 +23,7 @@ import type { TarEntry } from "#/shared/lib/tar-gz.ts";
 /** @internal */
 export interface Declared {
   readonly repository: string;
-  readonly source: SkillSource;
+  readonly source: RemoteSkillSource;
 }
 
 /** @internal */
@@ -154,26 +154,8 @@ export const skillsIn =
   };
 
 /** @internal */
-export const selectSkills =
-  ({ repository, source }: Declared) =>
-  (available: readonly string[]): Effect.Effect<readonly string[], VpToolsError> => {
-    if (source.skills === "all") {
-      return Effect.succeed(available);
-    }
-    const missing = pipe(
-      source.skills,
-      Arr.filter((name) => !Arr.contains(available, name)),
-    );
-    if (Arr.isReadonlyArrayNonEmpty(missing)) {
-      const commit = Str.slice(START, SHORT_COMMIT)(source.commit);
-      return Effect.fail(
-        checksFailed(
-          `${repository}@${commit} has no skill named ${Arr.join(missing, ", ")}. It has: ${Arr.join(available, ", ")}`,
-        ),
-      );
-    }
-    return Effect.succeed(source.skills);
-  };
+export const labelOf = ({ repository, source }: Declared): string =>
+  `${repository}@${Str.slice(START, SHORT_COMMIT)(source.commit)}`;
 
 const codeload = ({ repository, source }: Declared): HttpClientRequest.HttpClientRequest =>
   HttpClientRequest.get(`https://codeload.github.com/${repository}/tar.gz/${source.commit}`);

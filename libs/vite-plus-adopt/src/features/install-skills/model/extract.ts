@@ -8,9 +8,11 @@ import type { TarEntry } from "#/shared/lib/tar-gz.ts";
 import { SEPARATOR, isUnder, relativeTo } from "./archive.ts";
 import type { FoundSkill } from "./archive.ts";
 
-type FileServices = FileSystem.FileSystem | Path.Path;
+/** @internal */
+export type FileServices = FileSystem.FileSystem | Path.Path;
 
-type ExtractError = VpToolsError | PlatformError.PlatformError;
+/** @internal */
+export type ExtractError = VpToolsError | PlatformError.PlatformError;
 
 /** @internal */
 export const INDEX = ".index.json";
