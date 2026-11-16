@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)vite\\.config\\.ts$/"],
+      "matchStrings": [
+        "\"(?<depName>[\\w.-]+/[\\w.-]+)\": \\{\\s*commit: \"(?<currentDigest>[0-9a-f]{40})\""
+      ],
+      "datasourceTemplate": "git-refs",
+      "packageNameTemplate": "https://github.com/{{{depName}}}"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDatasources": ["git-refs"],
+      "matchFileNames": ["**/vite.config.ts"],
+      "minimumReleaseAge": null,
+      "ignoreTests": false
+    }
+  ]
+}
