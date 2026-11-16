@@ -1,3 +1,4 @@
+import type { TaskId } from "bench-summary/schema";
 import {
   Config,
   Effect,
@@ -14,7 +15,7 @@ import { askThrice, splitOf, tally, writeLabeled } from "#/features/label-items/
 import { runBench } from "#/shared/lib/runtime.ts";
 import { readJsonl, sha256 } from "#/shared/lib/store.ts";
 
-const TASK = "jnli";
+const TASK: TaskId = "jnli";
 const OPUS_SAMPLE = 200;
 const LABEL_CONCURRENCY = 4;
 const FIRST = 0;

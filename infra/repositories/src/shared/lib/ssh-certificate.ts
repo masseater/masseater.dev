@@ -3,7 +3,7 @@ import { Base64 } from "effect/encoding";
 
 const KEY_TYPE = "ssh-ed25519";
 const CERT_TYPE = "ssh-ed25519-cert-v01@openssh.com";
-const ALGORITHM = "Ed25519";
+export const SSH_ALGORITHM = "Ed25519";
 const PUBLIC_KEY_BYTES = 32;
 const NONCE_BYTES = 32;
 const USER_CERT = 1;
@@ -165,7 +165,7 @@ export const signCertificate = (
     const caKey = yield* rawPublicKey(request.ca);
     const signed = toBeSigned(request, { subject, caKey });
     const signature = yield* Effect.tryPromise({
-      try: () => crypto.subtle.sign(ALGORITHM, request.ca.privateKey, new Uint8Array(signed)),
+      try: () => crypto.subtle.sign(SSH_ALGORITHM, request.ca.privateKey, new Uint8Array(signed)),
       catch: failedWith("the certificate could not be signed"),
     });
     const signatureBlob = packed([textString(KEY_TYPE), bytesString(new Uint8Array(signature))]);

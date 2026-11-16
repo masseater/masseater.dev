@@ -1,5 +1,6 @@
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
+import { GOAL_PERIODS } from "#/entities/life-record/model/life-body.ts";
 import type { Aggregate } from "#/entities/life-record/model/life-body.ts";
 
 import { monthOf, weekStartOf, weekdayOf } from "./life-calendar.ts";
@@ -10,7 +11,7 @@ export type Bins = Readonly<{ metric: string; bins: readonly number[] }>;
 
 export type GroupBy = Bins | Readonly<{ by: "weekday" | "kind" }> | Readonly<{ has: string }>;
 
-export const BUCKETS = ["day", "week", "month", "none"] as const;
+export const BUCKETS = [...GOAL_PERIODS, "none"] as const;
 
 export type Bucket = (typeof BUCKETS)[number];
 

@@ -1,3 +1,4 @@
+import type { PackageKind } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, FileSystem, HashMap, Option, Path, Schema, String, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
@@ -11,7 +12,7 @@ import { extractAssets } from "#/shared/unitypackage/index.ts";
 const STAGING = "render";
 const RENDERED = "model";
 const GLB = ".glb";
-const UNITY_PACKAGE = "unitypackage";
+const UNITY_PACKAGE: typeof PackageKind.Type = "unitypackage";
 const EXTRACTED_BLEND = "source.blend";
 
 const ModelRow = Schema.Struct({

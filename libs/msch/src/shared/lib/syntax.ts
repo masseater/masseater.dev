@@ -160,6 +160,14 @@ export const contains =
     outer.getStart() <= inner.getStart() &&
     inner.getEnd() <= outer.getEnd();
 
+export const isInsideAny =
+  (outers: readonly Node[]) =>
+  (node: Node): boolean =>
+    pipe(
+      outers,
+      Arr.some((outer) => contains(outer)(node)),
+    );
+
 export const isTypeDeclaration = (
   declaration: Node,
 ): declaration is TypeAliasDeclaration | InterfaceDeclaration | EnumDeclaration =>

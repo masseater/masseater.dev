@@ -15,7 +15,7 @@ export const LABEL_ID = "label";
 
 export type Sort =
   | Readonly<{ status: "default" }>
-  | Readonly<{ status: "sorted"; column: string; direction: "asc" | "desc" }>;
+  | Readonly<{ status: "sorted"; column: string; direction: Exclude<SortDirection, "none"> }>;
 
 const DEFAULT_SORT: Sort = { status: "default" };
 
