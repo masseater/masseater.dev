@@ -8,7 +8,7 @@ import { SCANNED_PDF, SCANNED_PNG } from "./scans.test.support.ts";
 
 const OCR_TIMEOUT = 120_000;
 
-const LANGUAGE_DATA = new URL("4.0.0_best_int", import.meta.resolve("@tesseract.js-data/eng"))
+const LANGUAGE_DATA = new URL("./4.0.0_best_int", import.meta.resolve("@tesseract.js-data/eng"))
   .pathname;
 
 const readers = readersWith({

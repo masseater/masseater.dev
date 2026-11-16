@@ -1,7 +1,7 @@
 import type { Caller, UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { NO_PROJECT } from "@masseater.dev/mcp-tool-call";
 import type { AccessSite } from "@masseater.dev/repositories/access-sites";
-import type { SiteToken } from "@masseater.dev/repositories/credential-broker.worker";
+import type { SiteToken } from "@masseater.dev/repositories/credential-broker";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { env } from "cloudflare:workers";
 import { Effect, Match, Schema } from "effect";

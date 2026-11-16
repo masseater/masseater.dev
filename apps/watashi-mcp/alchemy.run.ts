@@ -32,7 +32,7 @@ const web = Effect.gen(function* web() {
   });
   yield* Workers.Worker("TraitBuilder", {
     name: `${PREFIX}trait-builder`,
-    main: "./src/features/build-traits/api/trait-builder.worker.ts",
+    main: "./src/features/build-traits/api/trait-builder.ts",
     logpush: true,
     crons: [TRAIT_CRON],
     env: {
@@ -45,7 +45,7 @@ const web = Effect.gen(function* web() {
   });
   yield* Workers.Worker("Portal", {
     name: `${PREFIX}portal`,
-    main: "./src/app/portal/portal.worker.ts",
+    main: "./src/app/portal/portal.ts",
     logpush: true,
     workersDev: false,
     env: { DB, CONVERSATIONS, AI: Workers.AI() },

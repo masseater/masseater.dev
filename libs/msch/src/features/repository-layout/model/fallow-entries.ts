@@ -74,7 +74,7 @@ const problemsIn = Effect.fn("problemsIn")(function* problemsIn(
       file: path,
       ...positionOf(text.value)(start),
       rule: RULE,
-      message: `${pattern} names files one by one. Give fallow a place that every workspace uses the same way, such as bin/*.ts or a tool's config file name, or make fallow find the file through package.json.`,
+      message: `${pattern} names files one by one. Let fallow find the file through what declares it: package.json bin and exports, a tool's config file, or the main of the Alchemy resource that deploys it.`,
     })),
   );
 });

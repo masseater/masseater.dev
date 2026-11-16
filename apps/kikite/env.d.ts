@@ -1,4 +1,4 @@
-import type { Interviewer } from "./src/app/entrypoint/kikite.worker.ts";
+import type { Interviewer } from "./src/app/kikite.ts";
 
 declare module "cloudflare:workers" {
   namespace Cloudflare {
