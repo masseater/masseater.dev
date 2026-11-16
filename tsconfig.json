@@ -27,6 +27,7 @@
     "plugins": [
       {
         "name": "@effect/language-service",
+        "allowedDuplicatedPackages": ["@r_masseater/vite-plus-adopt"],
         "allowedUnstableApis": [
           "@effect/ai-openrouter",
           "@effect/atom-react",

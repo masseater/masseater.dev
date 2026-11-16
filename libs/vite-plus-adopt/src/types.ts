@@ -1,5 +1,6 @@
 import type { UserConfig as CommitlintUserConfig } from "@commitlint/types";
 import type { TextlintRcConfig } from "@textlint/config-loader";
+import type { TextlintKernelRule } from "@textlint/kernel";
 import type {
   Configuration as MarkdownlintConfiguration,
   Rule as MarkdownlintRule,
@@ -44,8 +45,16 @@ export interface BetterleaksConfig {
   readonly ignoredSecrets?: readonly string[];
 }
 
+export type TextlintRuleOptions = NonNullable<TextlintKernelRule["options"]>;
+
+export interface TextlintPreset {
+  readonly rules: Readonly<Record<string, TextlintKernelRule["rule"]>>;
+  readonly rulesConfig: Readonly<Record<string, TextlintRuleOptions>>;
+}
+
 export interface TextlintConfig extends TextlintRcConfig {
   readonly ignores?: readonly string[];
+  readonly presets?: Readonly<Record<string, TextlintPreset>>;
 }
 
 export interface MarkdownlintConfig {
@@ -84,10 +93,6 @@ export interface ToolSections {
   readonly markdownlint?: MarkdownlintConfig;
   readonly steiger?: SteigerSection;
   readonly textlint?: TextlintConfig;
-}
-
-declare module "vite" {
-  interface UserConfig extends ToolSections {}
 }
 
 export type ToolSection = keyof ToolSections;
