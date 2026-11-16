@@ -10,6 +10,7 @@
     "commitlint",
     "feature-sliced",
     "steiger",
+    "tanstack-intent",
     "textlint",
     "vite-plus",
     "zizmor"
@@ -28,8 +29,9 @@
     "vpa": "./dist/cli.mjs"
   },
   "files": [
+    "THIRD-PARTY-NOTICES",
     "dist",
-    "THIRD-PARTY-NOTICES"
+    "skills/configure-checks"
   ],
   "type": "module",
   "imports": {

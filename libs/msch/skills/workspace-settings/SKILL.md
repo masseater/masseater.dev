@@ -21,7 +21,7 @@ Vite+ ignores the `lint` section of a workspace's `vite.config.ts`. A setting th
 
 ## The msch block
 
-```ts no-check
+```ts
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({

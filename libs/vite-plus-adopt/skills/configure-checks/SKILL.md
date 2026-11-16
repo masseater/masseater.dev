@@ -1,0 +1,88 @@
+---
+name: configure-checks
+description: >
+  Use when configuring or running the vpa CLI of @r_masseater/vite-plus-adopt in a Vite+ repository:
+  the betterleaks, commitlint, textlint, markdownlint, steiger, fallow and dependencyRules sections of
+  vite.config.ts, git hooks, the bundled Feature-Sliced Design Steiger plugin and the
+  @arethetypeswrong/core replacement for pack.attw. Also use when a vpa check fails.
+metadata:
+  type: core
+  library: "@r_masseater/vite-plus-adopt"
+  library_version: 0.8.1
+sources:
+  - src/app/**
+  - src/features/**
+  - src/shared/config/types.ts
+  - README.md
+---
+
+# configure-checks
+
+`vpa` runs Betterleaks, actionlint, zizmor, commitlint, textlint, markdownlint, Steiger, fallow and the dependency rules from the sections of `vite.config.ts`. Run without arguments, it runs every configured check in parallel and prints the results together.
+
+## Setup
+
+1. Install it and allow its postinstall, which fetches the tool binaries.
+
+   ```sh
+   vp add -D @r_masseater/vite-plus-adopt
+   ```
+
+   ```yaml
+   allowBuilds:
+     "@r_masseater/vite-plus-adopt": true
+   ```
+
+2. Write the sections. `import type {} from "@r_masseater/vite-plus-adopt"` types them in `defineConfig`.
+
+   ```ts
+   import type {} from "@r_masseater/vite-plus-adopt";
+   import fsd from "@r_masseater/vite-plus-adopt/fsd";
+   import { defineConfig } from "vite-plus";
+
+   export default defineConfig({
+     commitlint: { extends: ["@commitlint/config-conventional"] },
+     dependencyRules: {
+       banned: { "Tests import from vite-plus/test": ["vitest", "@vitest/*"] },
+       peerRanges: "intersect",
+     },
+     betterleaks: { extend: { useDefault: true } },
+     steiger: { paths: ["apps/*/src"], rules: [...fsd.configs.recommended] },
+     textlint: { ignores: ["CHANGELOG.md"], rules: { "preset-ja-technical-writing": true } },
+     markdownlint: { ignores: ["CHANGELOG.md"] },
+     fallow: { production: true, rules: { "unused-files": "error" } },
+     run: { tasks: { vpa: { command: "vpa", cache: false } } },
+   });
+   ```
+
+3. Run `vpa` from git hooks.
+
+   ```sh
+   # .vite-hooks/pre-commit
+   vpa --staged
+   # .vite-hooks/commit-msg
+   vpa --commit-msg "$1"
+   ```
+
+In a repository that uses @r_masseater/msch, `repositoryConfig` writes these sections and `msch` runs them. Change them through msch's options instead.
+
+## Section notes
+
+- `textlint` checks the Markdown that git tracks. To check other files, list a glob (`files`) and its settings in `textlint.sources`.
+- `steiger` checks only the directories matched by `steiger.paths` that hold FSD layer folders (`app`, `pages`, `widgets`, `features`, `entities`, `shared`) directly.
+- `betterleaks.filter` is an expression that accepts a finding, such as a public token pattern. `ignoredSecrets` takes SHA-256 hashes of secrets that are known to be safe.
+- The commitlint check and the git-history checks compare against `VPA_BASE`, which defaults to `origin/main`. Run them with `cache: false`.
+
+## Bundled replacements
+
+- `@r_masseater/vite-plus-adopt/fsd` bundles @feature-sliced/steiger-plugin with the same rules and `configs.recommended`. vpa does not use Steiger's CLI, so `overrides: { "steiger>@feature-sliced/steiger-plugin": "-" }` in `pnpm-workspace.yaml` drops the TypeScript 5 it pulls in.
+- `@r_masseater/vite-plus-adopt/attw` has the API of @arethetypeswrong/core on TypeScript 7.1 alone. Pass it as `pack.attw.module`.
+
+  ```ts
+  import * as attw from "@r_masseater/vite-plus-adopt/attw";
+  import { defineConfig } from "vite-plus";
+
+  export default defineConfig({
+    pack: { attw: { module: attw, profile: "esm-only", level: "error" } },
+  });
+  ```

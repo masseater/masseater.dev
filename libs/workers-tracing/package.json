@@ -8,6 +8,7 @@
     "elysia",
     "observability",
     "opentelemetry",
+    "tanstack-intent",
     "tanstack-start",
     "tracing"
   ],
@@ -25,8 +26,9 @@
     "workers-traces": "./bin/workers-traces.ts"
   },
   "files": [
+    "LICENSE",
     "dist",
-    "LICENSE"
+    "skills/trace-workers"
   ],
   "type": "module",
   "imports": {

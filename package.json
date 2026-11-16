@@ -12,6 +12,7 @@
     "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/intent": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/typescript6": "catalog:",
     "effect": "catalog:stack",
     "fallow": "catalog:stack",
     "skills": "catalog:",

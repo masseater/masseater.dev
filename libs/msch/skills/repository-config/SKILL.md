@@ -24,7 +24,7 @@ The root `vite.config.ts` builds the whole configuration with `repositoryConfig`
 
 1. Read the workspace settings, then spread `repositoryConfig` into `defineConfig`. Write `msch` beside it as a literal.
 
-   ```ts no-check
+   ```ts
    import { repositoryConfig } from "@r_masseater/msch/config";
    import { decisionRules, tracedRules } from "@r_masseater/msch/lint";
    import { workspaceSettings } from "@r_masseater/msch/workspace-settings";

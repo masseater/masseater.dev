@@ -79,6 +79,7 @@ catalog:
   "@vitejs/plugin-rsc": 0.5.39
   skills: 1.8.1
   "@tanstack/intent": 0.5.6
+  "@typescript/typescript6": 6.0.2
   "@mdx-js/rollup": 3.1.1
   "@shikijs/rehype": 4.6.0
   "@tailwindcss/typography": 0.5.20
