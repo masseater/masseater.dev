@@ -5,7 +5,7 @@ import { fail } from "@masseater.dev/github-workflow";
 import { runMainWith } from "@masseater.dev/node-main";
 import { Array as Arr, Console, Effect, Stream } from "effect";
 
-import { OWNER } from "#github-oidc";
+import { OWNER } from "#/entities/credential/index.ts";
 
 import { requestedNames, requestedRepositories } from "./lib/requested-names.ts";
 

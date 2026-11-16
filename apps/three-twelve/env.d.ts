@@ -1,4 +1,4 @@
-import type { Player } from "./src/app/worker/three-twelve.worker.ts";
+import type { Player } from "./src/app/entrypoint/three-twelve.worker.ts";
 
 declare module "cloudflare:workers" {
   namespace Cloudflare {

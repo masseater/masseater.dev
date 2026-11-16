@@ -2,7 +2,7 @@ import { listReposAccessibleToInstallation } from "@distilled.cloud/github/apps"
 import type { GithubOpContext } from "@distilled.cloud/github/Protocol";
 import { Array as Arr, Effect, Option, Stream } from "effect";
 
-import { OWNER } from "#github-oidc";
+import { OWNER } from "#/entities/credential/index.ts";
 
 const PAGE_SIZE = 100;
 
