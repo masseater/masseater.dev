@@ -5,19 +5,19 @@ const MAX_SLIDE_LIMIT = 20;
 const MIN_SLIDE_LIMIT = 1;
 
 const Deck = Schema.NonEmptyString.annotate({
-  description: "デッキ名(例: gisou-ukeoi)。search_slides の結果の deck を使う",
+  description: "Such as gisou-ukeoi, from search_slides",
 });
 
 const LimitRange = Schema.isBetween({ minimum: MIN_SLIDE_LIMIT, maximum: MAX_SLIDE_LIMIT });
 
 const Limit = Schema.Int.check(LimitRange).annotate({
-  description: `返すスライドの枚数。既定は ${DEFAULT_SLIDE_LIMIT}`,
+  description: `Default ${DEFAULT_SLIDE_LIMIT}`,
 });
 
-const DeckFilter = Deck.annotate({ description: "指定するとそのデッキだけを検索する" });
+const DeckFilter = Deck.annotate({ description: "Search only this deck" });
 
 export const SlideSearchInput = Schema.Struct({
-  query: Schema.NonEmptyString.annotate({ description: "探したい内容。日本語の文でよい" }),
+  query: Schema.NonEmptyString,
   limit: Schema.optionalKey(Limit),
   deck: Schema.optionalKey(DeckFilter),
 });

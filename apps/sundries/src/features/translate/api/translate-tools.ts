@@ -10,8 +10,7 @@ import { meteredInput, runTool } from "#/shared/api/index.ts";
 
 const ONE_TEXT = 1;
 
-const DESCRIPTION =
-  "PLaMo 3 Translate（Built with PLaMo）で文を訳す。to は ja・en・zh-hans などの訳す先の言語で、from を省くとモデルが元の言語を見分ける。form は日本語に訳すときだけ plain（だ・である）か polite（です・ます）を選べる。長い文は空行で区切って前の区切りの訳を添えながら訳す。";
+const DESCRIPTION = "Translate text with PLaMo 3 Translate (Built with PLaMo).";
 
 const INPUT_SCHEMA = TranslateRequest.pipe(
   Schema.toStandardSchemaV1,

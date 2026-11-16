@@ -49,6 +49,7 @@ export interface LoggedRun {
   readonly url: string;
   readonly authorization: string;
   readonly gateway: string;
+  readonly metadata: string;
   readonly body: Body;
 }
 
@@ -142,9 +143,10 @@ const handler = (
       Option.getOrElse(Option.fromUndefinedOr(request.headers[name]), () => "");
     const authorization = header("authorization");
     const gateway = header("cf-aig-gateway-id");
+    const metadata = header("cf-aig-metadata");
     yield* Ref.update(state.log, (log) => [
       ...log,
-      { url: request.url, authorization, gateway, body },
+      { url: request.url, authorization, gateway, metadata, body },
     ]);
     const hits = yield* Ref.updateAndGet(state.hits, (count) => Num.sum(count, FIRST_HIT));
     return replyFor(body, Str.replace("Bearer ", "")(authorization), hits);

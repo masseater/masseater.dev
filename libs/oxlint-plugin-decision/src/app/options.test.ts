@@ -6,7 +6,7 @@ import { REPORT_LOC, snippetNodeFor, resolveOptions } from "#/entities/decision/
 import type { AstNode, DecisionRule } from "#/entities/decision/index.ts";
 
 import { cloudflare } from "./cloudflare.ts";
-import { openRouter } from "./openrouter.ts";
+import { typesafe } from "./typesafe.ts";
 
 const SIGNATURE_LINE = 10;
 const SIGNATURE_COLUMN = 7;
@@ -19,9 +19,10 @@ const START = 0;
 const TIMEOUT_MS = 5;
 
 const rule: DecisionRule = { id: "a", target: "call", question: "Is it bad?", cutoff: 0.8 };
-const providers = { cloudflare, openrouter: openRouter };
+const providers = { cloudflare, typesafe };
 
 const noSettings = { options: {} };
+const CHAT_MODEL: object = { model: "cloudflare/@cf/qwen/qwen3.8-27b" };
 
 const resolvesDefaults = Effect.sync(() => {
   const { rules } = resolveOptions(noSettings, [rule], providers);
@@ -50,8 +51,8 @@ const resolvesDefaults = Effect.sync(() => {
 const settingsOverrideCode = Effect.sync(() => {
   const resolved = resolveOptions(
     {
-      options: { model: "openrouter/code", timeoutMs: 5 },
-      settings: { model: "openrouter/config" },
+      options: { model: "typesafe/jev-1.2", timeoutMs: 5 },
+      settings: { model: "typesafe/jev-latest" },
     },
     [rule],
     providers,
@@ -69,7 +70,7 @@ const settingsOverrideCode = Effect.sync(() => {
         ),
       ),
     ],
-    [TIMEOUT_MS, ["config"]],
+    [TIMEOUT_MS, ["jev-latest"]],
   );
 });
 
@@ -81,13 +82,13 @@ const refusesEmpty = Effect.sync(() => {
 
 const refusesChatModels = Effect.sync(() => {
   throws(() => {
-    resolveOptions({ options: { model: "cloudflare/@cf/qwen/qwen3.8-27b" } }, [rule], providers);
+    resolveOptions({ options: { ...CHAT_MODEL } }, [rule], providers);
   });
 });
 
 const dedupesModels = Effect.sync(() => {
   const resolved = resolveOptions(
-    { options: { model: ["openrouter/x", "openrouter/x", "openrouter/y"] } },
+    { options: { model: ["typesafe/jev-latest", "typesafe/jev-latest", "typesafe/jev-1.3"] } },
     [rule],
     providers,
   );
@@ -101,7 +102,7 @@ const dedupesModels = Effect.sync(() => {
         ),
       ),
     ),
-    ["x", "y"],
+    ["jev-latest", "jev-1.3"],
   );
 });
 

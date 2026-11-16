@@ -163,7 +163,7 @@ export const enabled: {
 );
 
 /** @internal */
-export const LIVE_MODEL = "openrouter/respan/span-01-lite";
+export const LIVE_MODEL = "typesafe/jev-latest";
 
 const FORWARDED = [
   "HTTPS_PROXY",

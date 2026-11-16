@@ -19,7 +19,7 @@ type Worker = (inputs: Inputs) => Promise<Results>;
 /** @internal */
 export interface SyncProviderSetup extends Pick<
   DecisionProvider,
-  "name" | "requiredEnv" | "models" | "yesNo"
+  "name" | "requiredEnv" | "models"
 > {
   readonly worker: string;
 }

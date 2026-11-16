@@ -1,6 +1,5 @@
-import { Array as Arr, Effect, FileSystem, Path, pipe, Record as Rec, Stream } from "effect";
+import { Array as Arr, Effect, FileSystem, Path, pipe, Record as Rec } from "effect";
 import type { Option, PlatformError } from "effect";
-import { Tar } from "effect/encoding";
 import { encode as encodeHex } from "effect/encoding/Hex";
 import { HttpClient } from "effect/http";
 import { unzip } from "fflate";
@@ -8,6 +7,7 @@ import { unzip } from "fflate";
 import { attempt } from "#/shared/lib/attempt.ts";
 import { configMissing, toolFailed } from "#/shared/lib/errors.ts";
 import type { VpToolsError } from "#/shared/lib/errors.ts";
+import { readTarGz } from "#/shared/lib/tar-gz.ts";
 
 import { PLATFORMS } from "./binaries.ts";
 import type { Binary, BinaryAsset, Platform } from "./binaries.ts";
@@ -68,28 +68,11 @@ const verify = (fetched: Download): Effect.Effect<Download, VpToolsError> => {
   );
 };
 
-const gunzipped = (data: Uint8Array): Effect.Effect<ArrayBuffer, VpToolsError> => {
-  const compressed = new Blob([new Uint8Array(data)]).stream();
-  return attempt("gunzip")(() =>
-    new Response(compressed.pipeThrough(new DecompressionStream("gzip"))).arrayBuffer(),
-  );
-};
-
-const untarred = (archive: ArrayBuffer): Effect.Effect<Entries, VpToolsError> =>
-  Stream.make(new Uint8Array(archive)).pipe(
-    Stream.pipeThroughChannel(Tar.decode()),
-    Stream.mapEffect(({ header, body }) =>
-      Effect.map(Stream.mkUint8Array(body), (bytes) => [header.path, bytes] as const),
-    ),
-    Stream.runCollect,
-    Effect.mapBoth({
-      onSuccess: (files): Entries => new Map(files),
-      onFailure: toolFailed("untar"),
-    }),
-  );
-
 const tarEntries = (data: Uint8Array): Effect.Effect<Entries, VpToolsError> =>
-  Effect.flatMap(gunzipped(data), untarred);
+  readTarGz(data).pipe(
+    Effect.map(Arr.map(({ header, bytes }) => [header.path, bytes] as const)),
+    Effect.map((entries): Entries => new Map(entries)),
+  );
 
 const zipEntries = (data: Uint8Array): Effect.Effect<Entries, VpToolsError> =>
   Effect.callback<Entries, VpToolsError>((resume) => {
