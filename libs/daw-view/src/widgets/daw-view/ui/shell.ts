@@ -31,16 +31,18 @@ export interface Shell {
   readonly model: Store<Model>;
   readonly transport: Transport;
   readonly loop: Loop;
+  readonly signal: AbortSignal;
 }
 
 export interface Mounting {
   readonly song: Song;
   readonly onLost: () => void;
+  readonly signal: AbortSignal;
 }
 
 export const shellOf =
   (root: HTMLElement) =>
-  ({ song, onLost }: Mounting): Shell => {
+  ({ song, onLost, signal }: Mounting): Shell => {
     const loop = createLoop();
     const parts = partsOf(root)(song);
     return {
@@ -59,5 +61,6 @@ export const shellOf =
         onLost,
       }),
       loop,
+      signal,
     };
   };

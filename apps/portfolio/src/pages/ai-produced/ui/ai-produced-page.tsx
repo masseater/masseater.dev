@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { songs } from "#/pages/ai-produced/model/songs.ts";
+import { songs } from "#/entities/song/index.ts";
 import { sectionMeta } from "#/shared/config/index.ts";
 
 import { SongItem } from "./song-item.tsx";

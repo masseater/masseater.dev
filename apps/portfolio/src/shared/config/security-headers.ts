@@ -17,6 +17,7 @@ export const contentSecurityPolicy = (nonce: string): string =>
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://i.ytimg.com https://upload.wikimedia.org https://thumb.wikimedia.org",
       `connect-src 'self' ${WEB_ANALYTICS_REPORT_ORIGIN}`,
+      "worker-src 'self' blob:",
       "object-src 'none'",
       "base-uri 'none'",
       "form-action 'self'",

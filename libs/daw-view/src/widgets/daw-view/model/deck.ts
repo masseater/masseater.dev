@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, Option } from "effect";
 
 import type { Mixdown } from "./mix.ts";
 
@@ -29,6 +29,15 @@ export const openDeck = (): Deck => {
 export const woken = (deck: Deck): Deck => {
   Effect.runFork(Effect.promise(() => deck.context.resume()));
   return deck;
+};
+
+export const shut = (deck: Option.Option<Deck>): void => {
+  if (Option.isSome(deck)) {
+    const { context } = deck.value;
+    Effect.runFork(
+      Effect.ignore(Effect.tryPromise({ try: () => context.close(), catch: () => context.state })),
+    );
+  }
 };
 
 export const latencyOf = ({ context }: Deck): number =>
