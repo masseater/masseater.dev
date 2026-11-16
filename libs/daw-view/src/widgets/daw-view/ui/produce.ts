@@ -1,4 +1,4 @@
-import { Cause, Effect, Option } from "effect";
+import { Cause, Effect, Option, pipe } from "effect";
 
 import type { Take } from "#/entities/song/index.ts";
 import { sessionOf } from "#/entities/song/index.ts";
@@ -6,6 +6,8 @@ import { loadSamples } from "#/shared/lib/samples.ts";
 import type { Progress, Rendered, Song } from "#/widgets/daw-view/model/contract.ts";
 import { relayout } from "#/widgets/daw-view/model/layout.ts";
 import { peaksOf, shadesOf } from "#/widgets/daw-view/model/mix.ts";
+import { mixingOf } from "#/widgets/daw-view/model/mixing.ts";
+import type { Mixer } from "#/widgets/daw-view/model/mixing.ts";
 import { mixedWith, settled } from "#/widgets/daw-view/model/model.ts";
 
 import { rebuildChrome } from "./controls.ts";
@@ -49,7 +51,13 @@ const finish = (shell: Shell, song: Song, rendered: Rendered): void => {
   const peaks = peaksOf(shell.parts.deck.wave.width)(rendered);
   const seconds = rendered.left.length / song.sampleRate;
   const mixed = shell.transport.load(rendered, Option.fromUndefinedOr(rendered.live));
-  shell.model.step(mixedWith(mixed));
+  const mixers = pipe(
+    Option.fromUndefinedOr(rendered.live),
+    Option.flatMapNullishOr(({ mixers: given }) => given),
+    Option.getOrElse((): Readonly<Record<string, Mixer>> => ({})),
+  );
+  shell.model.step(mixedWith(mixingOf(mixers)(mixed)));
+  shell.transport.mix(shell.model.read().mixing);
   show(shell, rendered.take);
   shell.model.step((model) => ({ ...model, peaks, phase: { status: "ready", seconds } }));
   relayout(shell);

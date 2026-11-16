@@ -10,7 +10,7 @@ import type { Deck, Levels } from "./deck.ts";
 import { HEARD, liveSupported, openLive } from "./live.ts";
 import type { Heard, LiveNode } from "./live.ts";
 import type { Mixdown } from "./mix.ts";
-import { gainsOf } from "./mixing.ts";
+import { heardMixers } from "./mixing.ts";
 import type { Mixing } from "./mixing.ts";
 import { PAUSED, idle, offsetIn, positionOf, waitingIn } from "./playback.ts";
 import type { Output, Playback, Player } from "./playback.ts";
@@ -171,9 +171,9 @@ const opened =
   (live: LiveNode): Effect.Effect<void> =>
     Effect.sync(() => {
       live.connect(deck.analyser);
-      const { gains } = bench.player.read();
-      if (Option.isSome(gains)) {
-        live.send({ gains: gains.value });
+      const { mixers } = bench.player.read();
+      if (Option.isSome(mixers)) {
+        live.send({ mixers: mixers.value });
       }
       bench.player.step((state) => ({ ...state, output: { kind: "live", live } }));
       if (wantedNow(bench.player)) {
@@ -256,10 +256,10 @@ const load = (bench: Bench, mixdown: Mixdown, live: Option.Option<LiveMix>): rea
 
 const mix = (player: Store<Player>, mixing: Mixing): void => {
   const { output } = player.read();
-  const gains = gainsOf(mixing);
-  player.step((state) => ({ ...state, gains: Option.some(gains) }));
+  const mixers = heardMixers(mixing);
+  player.step((state) => ({ ...state, mixers: Option.some(mixers) }));
   if (output.kind === "live") {
-    output.live.send({ gains });
+    output.live.send({ mixers });
   }
 };
 

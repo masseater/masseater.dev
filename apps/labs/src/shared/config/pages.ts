@@ -14,5 +14,5 @@ export const ASSETS_DIR = "labs-assets";
 
 export const PAGE_SCRIPT_SOURCES: Readonly<Record<string, readonly string[]>> = {
   "pod-rattle": ["blob:"],
-  "ai-produced/kuraku-narikake": ["blob:"],
+  "ai-produced": ["blob:"],
 };

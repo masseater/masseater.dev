@@ -3,7 +3,7 @@ import { Array as Arr, Option, pipe } from "effect";
 import { sampleColor, trackColor } from "#/entities/song/index.ts";
 import type { Tint, Lane, Session, Track } from "#/entities/song/index.ts";
 import { make, withAttributes } from "#/shared/lib/dom.ts";
-import { changeOf, pressedIn } from "#/widgets/daw-view/model/mixing.ts";
+import { changeOf, namesOf, pressedIn } from "#/widgets/daw-view/model/mixing.ts";
 import type { Change, Mixing, Switch } from "#/widgets/daw-view/model/mixing.ts";
 
 const span = make("span");
@@ -52,7 +52,7 @@ const sized = <Element extends HTMLElement>(node: Element, height: number): Elem
 };
 
 const switchesOf = (track: Track, mixing: Mixing): readonly HTMLElement[] => {
-  if (!mixing.tracks.includes(track.name)) {
+  if (!namesOf(mixing).includes(track.name)) {
     return [];
   }
   return pipe(
@@ -104,7 +104,7 @@ const signatureOf = ({ session, mixing, tint }: Chrome): string => {
     session.tracks,
     Arr.map((track) => `${track.name}:${track.height}:${track.events.length}`),
     Arr.appendAll(lanes),
-    Arr.appendAll(mixing.tracks),
+    Arr.appendAll(namesOf(mixing)),
     Arr.append(`${tint.lightness}:${tint.ink}`),
     Arr.join("|"),
   );
@@ -124,7 +124,7 @@ export const buildHeads =
     if (stale(heads, signatureOf(chrome))) {
       const corner = Option.toArray(Option.fromNullishOr(heads.firstElementChild));
       const tracks = pipe(chrome.session.tracks, Arr.map(headOf(chrome)));
-      heads.dataset["mixing"] = String(chrome.mixing.tracks.length > NONE);
+      heads.dataset["mixing"] = String(chrome.mixing.channels.length > NONE);
       heads.replaceChildren(...corner, ...tracks, ...pipe(chrome.session.lanes, Arr.map(laneOf)));
     }
   };
