@@ -3,7 +3,7 @@ import { HttpClient, HttpClientResponse } from "effect/http";
 import type { HttpClientRequest } from "effect/http";
 import { expect, test } from "vite-plus/test";
 
-import { memoryStore, randomKey } from "#/shared/api/app-store.test.support.ts";
+import { memoryStore, randomKey } from "#/shared/lib/app-store.test.support.ts";
 
 import { fireRoutine, registerRoutine } from "./claude-routine.ts";
 

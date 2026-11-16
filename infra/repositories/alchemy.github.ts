@@ -11,12 +11,10 @@ import {
   OWNER,
   hasUpToDateWorkflow,
   repositories,
-} from "./src/features/manage-repositories/model/github-repositories.ts";
-import type { ManagedRepository } from "./src/features/manage-repositories/model/github-repositories.ts";
-import {
   settingsOf,
   settingsProvider,
-} from "./src/features/manage-repositories/model/github-repository-settings.ts";
+} from "./src/features/manage-repositories/index.ts";
+import type { ManagedRepository } from "./src/features/manage-repositories/index.ts";
 
 const GITHUB_ACTIONS_APP_ID = 15_368;
 

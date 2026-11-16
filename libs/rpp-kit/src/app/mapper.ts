@@ -5,7 +5,7 @@ runContentMapper({
   diagnosticSource: "rpp",
   transform: ({ fileName, content }, { positionEncoding }) =>
     runPromise(
-      promise(() => import("#/features/map-rpp/model/transform.ts")).pipe(
+      promise(() => import("#/features/map-rpp/index.ts")).pipe(
         flatMap(({ transform }) =>
           promise(() => transform({ fileName, content, positionEncoding })),
         ),

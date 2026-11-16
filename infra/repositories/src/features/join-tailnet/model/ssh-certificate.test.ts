@@ -2,7 +2,7 @@ import { Array as Arr, Effect, Schema, pipe } from "effect";
 import { parseCertificate, parseKey } from "sshpk";
 import { expect, test } from "vite-plus/test";
 
-import { fails, memoryStore } from "#/shared/api/app-store.test.support.ts";
+import { fails, memoryStore } from "#/shared/lib/app-store.test.support.ts";
 import { authorizedKey, signCertificate } from "#/shared/lib/ssh-certificate.ts";
 
 import { SSH_CA, signingKey } from "./signing-keys.ts";

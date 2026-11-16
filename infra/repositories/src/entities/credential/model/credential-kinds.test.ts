@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, Exit, Option, Schema, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { fails, randomKey } from "#/shared/api/app-store.test.support.ts";
+import { fails, randomKey } from "#/shared/lib/app-store.test.support.ts";
 
 import { issueKinds, selectKinds } from "./credential-kinds.ts";
 

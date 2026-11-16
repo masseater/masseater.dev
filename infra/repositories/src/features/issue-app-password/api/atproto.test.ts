@@ -1,9 +1,9 @@
 import { Array as Arr, Effect, Option, String as Str } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { memoryStore, randomKey } from "#/shared/api/app-store.test.support.ts";
-import type { MemoryStore } from "#/shared/api/app-store.test.support.ts";
 import { writeSealed } from "#/shared/api/index.ts";
+import { memoryStore, randomKey } from "#/shared/lib/app-store.test.support.ts";
+import type { MemoryStore } from "#/shared/lib/app-store.test.support.ts";
 
 import { atprotoRoute, issueAppPassword } from "./atproto.ts";
 

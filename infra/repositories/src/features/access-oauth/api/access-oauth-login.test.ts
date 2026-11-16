@@ -1,8 +1,8 @@
 import { Effect, Option } from "effect";
 import { afterEach, expect, test, vi } from "vite-plus/test";
 
-import { memoryStore } from "#/shared/api/app-store.test.support.ts";
-import type { MemoryStore } from "#/shared/api/app-store.test.support.ts";
+import { memoryStore } from "#/shared/lib/app-store.test.support.ts";
+import type { MemoryStore } from "#/shared/lib/app-store.test.support.ts";
 
 import { accessOAuthRoute } from "./access-oauth-login.ts";
 

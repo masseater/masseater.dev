@@ -13,13 +13,13 @@ import {
 import { markerNamed, markersNamed, trackNamed } from "rpp-kit";
 import { beforeAll, describe, expect, expectTypeOf, it } from "vite-plus/test";
 
-import { song } from "#/entities/song/model/song.ts";
+import { song } from "#/entities/song/index.ts";
 
 import { createChecker } from "./checker.ts";
 import type { Checker } from "./checker.ts";
 
 const RPP_KIT = import.meta.glob<string>(
-  ["/node_modules/rpp-kit/package.json", "/node_modules/rpp-kit/src/*.ts", "!**/*.test.ts"],
+  ["/node_modules/rpp-kit/package.json", "/node_modules/rpp-kit/src/**/*.ts", "!**/*.test.ts"],
   { query: "?raw", import: "default", eager: true },
 );
 

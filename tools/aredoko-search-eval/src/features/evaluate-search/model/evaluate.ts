@@ -18,10 +18,9 @@ import {
   pipe,
 } from "effect";
 
-import { guidOf, pathnameOf } from "#/entities/condition/index.ts";
+import { guidOf, pathnameOf, imageOf } from "#/entities/condition/index.ts";
 import type { Condition, LibraryAsset, Placed } from "#/entities/condition/index.ts";
 import type { Query } from "#/entities/fixture/index.ts";
-import { imageOf } from "#/entities/image/index.ts";
 import { score } from "#/entities/score/index.ts";
 import { startServer } from "#/shared/api/index.ts";
 

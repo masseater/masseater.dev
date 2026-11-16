@@ -1,6 +1,6 @@
 import { Array, String, pipe } from "effect";
 
-import type { AssetType } from "#/entities/image/index.ts";
+import type { AssetType } from "./images.ts";
 
 export type Condition = "named" | "anonymous";
 

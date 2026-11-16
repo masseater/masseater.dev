@@ -4,7 +4,7 @@ import { TestClock } from "effect/testing";
 import { expect, test } from "vite-plus/test";
 
 import type { Claims } from "#/entities/credential/index.ts";
-import { memoryStore } from "#/shared/api/app-store.test.support.ts";
+import { memoryStore } from "#/shared/lib/app-store.test.support.ts";
 
 import { notify, remember } from "./exposure-ledger.ts";
 import type { ExposureEnv } from "./exposure-ledger.ts";

@@ -1,8 +1,8 @@
 import { Effect, Option, Schema } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { memoryStore } from "#/shared/api/app-store.test.support.ts";
-import type { MemoryStore } from "#/shared/api/app-store.test.support.ts";
+import { memoryStore } from "#/shared/lib/app-store.test.support.ts";
+import type { MemoryStore } from "#/shared/lib/app-store.test.support.ts";
 
 import { tailnetRoute } from "./tailnet.ts";
 

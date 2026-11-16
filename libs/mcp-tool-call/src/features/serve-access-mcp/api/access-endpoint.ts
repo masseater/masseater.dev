@@ -4,8 +4,8 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { Effect, Logger } from "effect";
 import { createRemoteJWKSet } from "jose";
 
-import { callerOf } from "#/entities/caller/index.ts";
-import type { Caller } from "#/entities/caller/index.ts";
+import { callerOf } from "#/entities/tool-call/index.ts";
+import type { Caller } from "#/entities/tool-call/index.ts";
 import { certsUrl, verifyAccess } from "#/shared/lib/access.ts";
 
 export type AccessMcp = Readonly<{

@@ -6,7 +6,7 @@ import type {
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { Array as Arr, Clock, Effect, Layer, Match, Option, Schema, pipe } from "effect";
 
-import type { Caller } from "#/entities/caller/index.ts";
+import type { Caller } from "./caller.ts";
 
 export type ToolCall<Tool extends string> = Readonly<{
   tool: Tool;

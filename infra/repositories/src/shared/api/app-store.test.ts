@@ -1,7 +1,8 @@
 import { Effect, Option, String as Str } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { fails, memoryStore, randomKey } from "./app-store.test.support.ts";
+import { fails, memoryStore, randomKey } from "#/shared/lib/app-store.test.support.ts";
+
 import { readRow, readSealed, swapRow, writeSealed } from "./app-store.ts";
 
 const NAME = "app";

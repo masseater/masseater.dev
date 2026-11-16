@@ -10,7 +10,7 @@
     ".": "./src/app/index.ts",
     "./server": "./src/app/index.server.ts",
     "./sources.css": "./src/app/sources.css",
-    "./ui": "./src/app/ui.ts"
+    "./ui": "./src/app/consent-screen.ts"
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "catalog:",

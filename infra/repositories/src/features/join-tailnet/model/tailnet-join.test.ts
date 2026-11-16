@@ -2,7 +2,7 @@ import { Effect } from "effect";
 import { jwtVerify } from "jose";
 import { expect, test } from "vite-plus/test";
 
-import { fails, memoryStore } from "#/shared/api/app-store.test.support.ts";
+import { fails, memoryStore } from "#/shared/lib/app-store.test.support.ts";
 
 import { OIDC_SIGNER, signingKey } from "./signing-keys.ts";
 import { joinTailnet } from "./tailnet-join.ts";

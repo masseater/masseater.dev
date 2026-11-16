@@ -1,8 +1,7 @@
 import { Array as Arr, Effect, String as Str, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { fails, randomKey } from "#/shared/api/app-store.test.support.ts";
-
+import { fails, randomKey } from "./app-store.test.support.ts";
 import { seal, unseal } from "./sealed-value.ts";
 
 const SEALED_PREFIX = "v1.";
