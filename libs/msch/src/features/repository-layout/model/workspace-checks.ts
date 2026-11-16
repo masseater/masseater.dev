@@ -7,6 +7,7 @@ import { checkHiddenVerify } from "./hidden-verify.ts";
 import { checkRootWorkspacePaths } from "./root-workspace-paths.ts";
 import { checkSharedUncachedTasks } from "./shared-uncached-tasks.ts";
 import { checkWorkflowPaths } from "./workflow-paths.ts";
+import { checkWorkflowScale } from "./workflow-scale.ts";
 
 /** @internal */
 export const checkWorkspaces = Effect.fn("checkWorkspaces")(function* checkWorkspaces(
@@ -21,6 +22,7 @@ export const checkWorkspaces = Effect.fn("checkWorkspaces")(function* checkWorks
       checkRootWorkspacePaths(root),
       checkSharedUncachedTasks(root),
       checkWorkflowPaths(root),
+      checkWorkflowScale(root),
     ],
     {
       concurrency: "unbounded",
