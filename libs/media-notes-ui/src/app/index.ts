@@ -27,8 +27,7 @@ export { clock, preciseClock } from "#src/shared/lib/clock.ts";
 export type { Player, Position } from "#src/shared/lib/player.ts";
 /** @internal */
 export { runtime } from "#src/shared/lib/runtime.ts";
-export { MediaStage } from "./ui/media-stage.tsx";
-export { useJump } from "./model/use-jump.ts";
+export { MediaStage, useJump } from "#src/widgets/media-stage/index.ts";
 /** @internal */
 export { savedRange } from "./model/save-range.ts";
 /** @internal */
