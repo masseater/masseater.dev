@@ -7,6 +7,8 @@ import { SCOPE_PILL } from "./scope-pill";
 
 const route = getRouteApi("/profile");
 
+const EXACT = { exact: true } as const;
+
 const ALL = "すべて";
 
 const SCOPE = ["scope"] as const;
@@ -17,6 +19,7 @@ export const AllScopesItem = (): ReactNode => {
   return (
     <li>
       <Link
+        activeOptions={EXACT}
         aria-current={!("scope" in search) && "page"}
         className={SCOPE_PILL}
         search={next}
