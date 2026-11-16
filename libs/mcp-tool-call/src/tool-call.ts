@@ -4,7 +4,7 @@ import type {
   StandardSchemaWithJSON,
 } from "@modelcontextprotocol/server";
 import { runner } from "@r_masseater/workers-tracing/effect";
-import { Array as Arr, Clock, Effect, Layer, Match, Option, Schema, pipe } from "effect";
+import { Array as Arr, Clock, Effect, Layer, Match, Option, Predicate, Schema, pipe } from "effect";
 
 import type { Caller } from "./caller.ts";
 
@@ -99,6 +99,12 @@ const validation = <Input, Output>(
 
 const runInput = runner(Layer.empty);
 
+const textOf = (value: unknown): Effect.Effect<string> =>
+  Option.match(Option.liftPredicate(value, Predicate.isString), {
+    onNone: () => encodeJson(value),
+    onSome: Effect.succeed,
+  });
+
 const toOutcome =
   <Failure>(describe: Meter<Failure>["describe"]) =>
   <Value>(count: (value: Value) => number) =>
@@ -108,7 +114,7 @@ const toOutcome =
     Effect.matchEffect(effect, {
       onFailure: (failure) => Effect.succeed({ status: "error" as const, ...describe(failure) }),
       onSuccess: (value) =>
-        encodeJson(value).pipe(
+        textOf(value).pipe(
           Effect.map((text) => ({ status: "ok" as const, resultCount: count(value), text })),
         ),
     });
