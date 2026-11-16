@@ -7,6 +7,7 @@ import { checkNodeVersion } from "#/features/runtime-version/index.ts";
 import { checkSkillEntry, checkSkillFiles } from "#/features/skills/index.ts";
 import {
   checkAlchemyPatch,
+  checkAppliedPackages,
   checkReplacedTools,
   checkUnneededFiles,
 } from "#/features/unneeded-files/index.ts";
@@ -27,6 +28,7 @@ export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTra
       checkSkillFiles(root),
       checkSkillEntry(root),
       checkComments(root),
+      checkAppliedPackages(root),
     ],
     { concurrency: "unbounded" },
   );

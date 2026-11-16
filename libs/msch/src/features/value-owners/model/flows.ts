@@ -28,7 +28,7 @@ import {
   declarationsOf,
   descendantsOf,
   isExternalDeclaration,
-  NODE_MODULES_SEGMENT,
+  packageOf,
   symbolAt,
 } from "#/shared/lib/syntax.ts";
 import { isSubsetOf, vocabularyOf } from "#/shared/lib/values.ts";
@@ -47,26 +47,7 @@ export interface FlowContext {
   readonly sites: readonly ValueSite[];
 }
 
-const SCOPE_PREFIX = "@";
-const SCOPED_SEGMENTS = 2;
-const UNSCOPED_SEGMENTS = 1;
 const MODULE_PREFIX = /^".*?"\./u;
-
-const packageOf = (fileName: string): string => {
-  const afterModules = pipe(
-    fileName,
-    Str.lastIndexOf(NODE_MODULES_SEGMENT),
-    Option.match({
-      onNone: () => fileName,
-      onSome: (index) => Str.slice(index + NODE_MODULES_SEGMENT.length)(fileName),
-    }),
-  );
-  const segments = Str.split("/")(afterModules);
-  if (Str.startsWith(SCOPE_PREFIX)(afterModules)) {
-    return pipe(Arr.take(segments, SCOPED_SEGMENTS), Arr.join("/"));
-  }
-  return pipe(Arr.take(segments, UNSCOPED_SEGMENTS), Arr.join("/"));
-};
 
 const externalDeclarationOf =
   (context: FlowContext) =>
