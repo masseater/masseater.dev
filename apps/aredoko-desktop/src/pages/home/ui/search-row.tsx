@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { PickFilesButton } from "#/features/library/index.ts";
+import { PickFilesButton } from "#/features/manage-sources/index.ts";
 import { SearchForm } from "#/features/search-assets/index.ts";
 
 export const SearchRow = (): ReactNode => (

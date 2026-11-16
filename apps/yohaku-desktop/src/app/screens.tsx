@@ -2,7 +2,7 @@ import { Option } from "effect";
 import type { ReactNode } from "react";
 
 import { useStepPending, useOnboardingDone } from "#/entities/onboarding/index.ts";
-import { UpdateNotice } from "#/features/update/index.ts";
+import { UpdateNotice } from "#/features/install-update/index.ts";
 import { OnboardingPage } from "#/pages/onboarding/index.ts";
 
 import { Pages } from "./pages.tsx";

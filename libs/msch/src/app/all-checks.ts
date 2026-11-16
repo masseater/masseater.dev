@@ -1,9 +1,9 @@
 import { Array as Arr, Effect } from "effect";
 
-import { checkPublishedPackages } from "#/features/install-size/index.ts";
-import { checkOverrides } from "#/features/overrides/index.ts";
-import { checkPlacement } from "#/features/placement/index.ts";
-import { checkWorkspaces } from "#/features/repository-layout/index.ts";
+import { checkOverrides } from "#/features/check-overrides/index.ts";
+import { checkPlacement } from "#/features/check-placement/index.ts";
+import { checkWorkspaces } from "#/features/check-repository-layout/index.ts";
+import { checkPublishedPackages } from "#/features/measure-install-size/index.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
 
 import { checkSources } from "./source-checks.ts";

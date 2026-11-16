@@ -82,7 +82,7 @@ export const tailWorker = ({
     Effect.map(([contents, receiver]) => ({
       name,
       compatibilityDate,
-      modules: [{ type: "ESModule", path: "tail.worker.mjs", contents }],
+      modules: [{ type: "ESModule", path: "tail-to-otlp.mjs", contents }],
       bindings: {
         OTEL_EXPORTER_OTLP_ENDPOINT: receiver.address.httpEndpoint,
         OTEL_SERVICE_NAME: serviceName,

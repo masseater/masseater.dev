@@ -30,7 +30,7 @@ export default defineConfig({
       "tanstack-start": "src/app/tanstack-start.ts",
       "tanstack-start.plain": "src/app/tanstack-start.plain.ts",
       traces: "bin/workers-traces.ts",
-      "trace-sink.worker": "src/app/trace-sink.worker.ts",
+      "trace-sink": "src/app/trace-sink.ts",
       "workers-ai": "src/app/workers-ai.ts",
     },
     platform: "neutral",

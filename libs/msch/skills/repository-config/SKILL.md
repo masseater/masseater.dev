@@ -12,8 +12,8 @@ sources:
   - src/app/repository-config.ts
   - src/app/repository-tasks.ts
   - src/app/repository-text.ts
-  - src/features/lint-preset/index.ts
-  - src/features/workspace-settings/index.ts
+  - src/features/define-lint-preset/index.ts
+  - src/features/build-workspace-settings/index.ts
 ---
 
 # repository-config
