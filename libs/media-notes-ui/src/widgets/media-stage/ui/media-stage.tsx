@@ -11,13 +11,15 @@ import {
   usePlayer,
   usePosition,
 } from "#/features/play-media/index.ts";
+import type { Hint } from "#/features/play-media/index.ts";
 import { Timeline, useRangeKey } from "#/features/select-range/index.ts";
 import type { Span } from "#/features/select-range/index.ts";
 
 export const MediaStage = ({
   media,
   spans,
-}: Readonly<{ media: Media; spans: readonly Span[] }>): ReactNode => {
+  hints,
+}: Readonly<{ media: Media; spans: readonly Span[]; hints: readonly Hint[] }>): ReactNode => {
   const player = usePlayer();
   const position = usePosition();
   useRangeKey(player);
@@ -35,7 +37,7 @@ export const MediaStage = ({
       <MediaMeta media={media} duration={position.duration} />
       <MediaPlayer />
       <Timeline position={position} spans={spans} seek={seek} />
-      <KeyHints />
+      <KeyHints hints={hints} />
     </section>
   );
 };

@@ -1,16 +1,22 @@
+use std::sync::Arc;
+
 use desktop_shell::{Setup, Shell, open_window, screen_port};
 use media_notes::commands::{Setting, media_notes};
 use media_notes::protocol::Site;
 use media_notes::store::Store;
-use tauri::{App, Manager, async_runtime};
+use tauri::{App, Emitter, Manager, async_runtime};
 use tauri_specta::{Builder, ErrorHandlingMode, collect_commands};
 
 mod commands;
 mod mcp;
 pub mod protocol;
+mod taste;
+
+use taste::Taste;
 
 const SITES: &[Site] = &[Site::Youtube, Site::Niconico, Site::Soundcloud];
 const SCREEN_PORT: u16 = 47_231;
+const CHANGED: &str = "shirushi://taste-changed";
 
 fn builder() -> Builder<tauri::Wry> {
     Builder::<tauri::Wry>::new()
@@ -19,6 +25,11 @@ fn builder() -> Builder<tauri::Wry> {
             commands::list_marks,
             commands::save_mark,
             commands::remove_mark,
+            commands::list_pairs,
+            commands::choose_pair,
+            commands::list_statements,
+            commands::judge_statement,
+            commands::list_forecasts,
             media_notes::commands::open_link,
             media_notes::commands::open_file,
             media_notes::commands::choose_file,
@@ -36,15 +47,26 @@ fn setup(app: &App, port: u16) -> Setup {
         port: mcp::PORT,
     })?;
     let store = Store::open(&data, commands::DATABASE, commands::TABLE)?;
-    let serving = (store.clone(), notes.mcp.token.clone());
+    let taste = Taste::open(&data, commands::DATABASE)?;
+    let handle = app.handle().clone();
+    let serving = mcp::Serving {
+        store: store.clone(),
+        taste: taste.clone(),
+        client: notes.client.clone(),
+        sites: SITES,
+        token: notes.mcp.token.clone(),
+        changed: Arc::new(move || {
+            let _ = handle.emit(CHANGED, ());
+        }),
+    };
     async_runtime::spawn(async move {
-        let (store, token) = serving;
-        if let Err(failure) = mcp::serve(store, token).await {
+        if let Err(failure) = mcp::serve(serving).await {
             eprintln!("mcp server stopped: {failure}");
         }
     });
     app.manage(notes);
     app.manage(store);
+    app.manage(taste);
     open_window(app, port)
 }
 

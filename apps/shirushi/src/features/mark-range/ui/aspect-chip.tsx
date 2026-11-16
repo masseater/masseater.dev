@@ -6,8 +6,7 @@ import type { ReactNode } from "react";
 
 import { aspectsAtom } from "#/features/mark-range/model/draft.ts";
 import { ASPECTS, ASPECT_LABELS } from "#/shared/config/index.ts";
-
-import { TOGGLE } from "./toggle.ts";
+import { TOGGLE } from "#/shared/ui/index.ts";
 
 const toggled = (aspects: readonly Aspect[], aspect: Aspect): readonly Aspect[] =>
   pipe(
