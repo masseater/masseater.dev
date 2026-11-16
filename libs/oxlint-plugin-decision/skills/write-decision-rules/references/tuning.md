@@ -15,7 +15,7 @@ oxlint does not pass flags to plugins, so explain mode is an environment variabl
 
 Write one file that must fail and one that must pass, close to each other. For example, use the same body with a different name. Run explain mode on both. If the yes probabilities overlap, the question is ambiguous. Reword it to name exactly what counts and what doesn't. Changing only the cutoff cannot separate overlapping cases. When the two separate, set `cutoff` between them. Then the failing file is reported and the passing file is not.
 
-A changed question, snippet, context, or answer kind re-asks that file. A changed `cutoff` or `id` reuses the cache, so cutoff tuning is free after the first run.
+A changed question, snippet, context, or answer kind re-asks only that question for that snippet. Adding a rule asks only the new rule's questions, and the other answers stay cached. A changed `cutoff` or `id` reuses the cache, so cutoff tuning is free after the first run.
 
 ## Switching or mixing models
 
@@ -25,4 +25,4 @@ You can override one rule's model in `oxlint.config.ts` without touching the plu
 
 ## Cache
 
-Answers are cached under `node_modules/.cache/oxlint-plugin-decision`, keyed by endpoint and request. Unchanged code is not asked again. Persist that directory between CI runs to keep it warm. Malformed answers are never cached.
+Answers are cached under `node_modules/.cache/oxlint-plugin-decision`, one entry per question. The key is the endpoint, the model, the snippet, its context and the question. A request sends only the questions that have no cached answer. Unchanged code is not asked again. Persist that directory between CI runs to keep it warm. Malformed answers are never cached.
