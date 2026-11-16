@@ -1,7 +1,7 @@
-import { Aspect } from "@masseater.dev/shirushi-protocol";
-import type { Verb } from "@masseater.dev/shirushi-protocol";
+import { AspectSchema } from "@masseater.dev/shirushi-protocol";
+import type { Aspect, Verb } from "@masseater.dev/shirushi-protocol";
 
-export const ASPECTS = Aspect.literals;
+export const ASPECTS = AspectSchema.literals;
 
 export const ASPECT_LABELS: Readonly<Record<Aspect, string>> = {
   rhythm: "リズム",

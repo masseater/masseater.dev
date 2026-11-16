@@ -1,5 +1,5 @@
-import { Mark, McpAccess, Song } from "@masseater.dev/shirushi-protocol";
-import type { MarkInput } from "@masseater.dev/shirushi-protocol";
+import { MarkSchema, McpAccessSchema, SongSchema } from "@masseater.dev/shirushi-protocol";
+import type { Mark, MarkInput, McpAccess, Song } from "@masseater.dev/shirushi-protocol";
 import { Effect, Schema } from "effect";
 
 import { commands } from "./generated/bindings.ts";
@@ -29,11 +29,11 @@ const call = <Value>(run: () => Promise<Settled<Value>>): Effect.Effect<Value, A
     }),
   );
 
-const decodeMarks = Schema.decodeUnknownEffect(Schema.Array(Mark));
+const decodeMarks = Schema.decodeUnknownEffect(Schema.Array(MarkSchema));
 
-const decodeSong = Schema.decodeUnknownEffect(Song);
+const decodeSong = Schema.decodeUnknownEffect(SongSchema);
 
-const decodeAccess = Schema.decodeUnknownEffect(McpAccess);
+const decodeAccess = Schema.decodeUnknownEffect(McpAccessSchema);
 
 const malformed = (cause: unknown): Effect.Effect<never, ApiFailed> => Effect.fail(failed(cause));
 

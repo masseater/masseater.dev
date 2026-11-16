@@ -1,16 +1,18 @@
 import { Schema } from "effect";
 
-export const Site = Schema.Literals(["youtube", "niconico", "soundcloud"]).annotate({
+export const SiteSchema = Schema.Literals(["youtube", "niconico", "soundcloud"]).annotate({
   identifier: "Site",
 });
 
-export const Source = Schema.Struct({ site: Site, id: Schema.NonEmptyString }).annotate({
-  identifier: "Source",
-});
+export const SourceSchema = Schema.Struct({ site: SiteSchema, id: Schema.NonEmptyString }).annotate(
+  {
+    identifier: "Source",
+  },
+);
 
-export const Verb = Schema.Literals(["like", "dislike"]).annotate({ identifier: "Verb" });
+export const VerbSchema = Schema.Literals(["like", "dislike"]).annotate({ identifier: "Verb" });
 
-export const Aspect = Schema.Literals([
+export const AspectSchema = Schema.Literals([
   "rhythm",
   "bass",
   "chords",
@@ -21,49 +23,51 @@ export const Aspect = Schema.Literals([
   "mix",
 ]).annotate({ identifier: "Aspect" });
 
-export const Song = Schema.Struct({
-  source: Source,
+export const SongSchema = Schema.Struct({
+  source: SourceSchema,
   title: Schema.String,
   artist: Schema.String,
 }).annotate({ identifier: "Song" });
 
-export const MarkInput = Schema.Struct({
-  song: Song,
+export const MarkInputSchema = Schema.Struct({
+  song: SongSchema,
   from: Schema.Finite,
   to: Schema.Finite,
-  verb: Verb,
-  aspects: Schema.Array(Aspect),
+  verb: VerbSchema,
+  aspects: Schema.Array(AspectSchema),
   words: Schema.String,
 }).annotate({ identifier: "MarkInput" });
 
-export const Mark = Schema.Struct({
+export const MarkSchema = Schema.Struct({
   id: Schema.String,
-  ...MarkInput.fields,
+  ...MarkInputSchema.fields,
   at: Schema.Int,
 }).annotate({ identifier: "Mark" });
 
-export const Saved = Schema.Struct({ id: Schema.String, at: Schema.Int }).annotate({
+export const SavedSchema = Schema.Struct({ id: Schema.String, at: Schema.Int }).annotate({
   identifier: "Saved",
 });
 
-export const McpAccess = Schema.Struct({ url: Schema.String, token: Schema.String }).annotate({
-  identifier: "McpAccess",
-});
+export const McpAccessSchema = Schema.Struct({ url: Schema.String, token: Schema.String }).annotate(
+  {
+    identifier: "McpAccess",
+  },
+);
 
-export type Site = typeof Site.Type;
+export type Site = typeof SiteSchema.Type;
 
-export type Source = typeof Source.Type;
+export type Source = typeof SourceSchema.Type;
 
-export type Verb = typeof Verb.Type;
+export type Verb = typeof VerbSchema.Type;
 
-export type Aspect = typeof Aspect.Type;
+export type Aspect = typeof AspectSchema.Type;
 
-export type Song = typeof Song.Type;
+export type Song = typeof SongSchema.Type;
 
-export type MarkInput = typeof MarkInput.Type;
+export type MarkInput = typeof MarkInputSchema.Type;
 
-export type Mark = typeof Mark.Type;
+export type Mark = typeof MarkSchema.Type;
 
-export type Saved = typeof Saved.Type;
+export type Saved = typeof SavedSchema.Type;
 
-export type McpAccess = typeof McpAccess.Type;
+export type McpAccess = typeof McpAccessSchema.Type;

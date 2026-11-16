@@ -117,6 +117,16 @@ impl Verb {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct MarkInput {
+    pub song: Song,
+    pub from: f64,
+    pub to: f64,
+    pub verb: Verb,
+    pub aspects: Vec<Aspect>,
+    pub words: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
 pub struct Mark {
     pub id: String,
     pub song: Song,
@@ -127,16 +137,6 @@ pub struct Mark {
     pub words: String,
     #[specta(type = specta_typescript::Number)]
     pub at: i64,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
-pub struct MarkInput {
-    pub song: Song,
-    pub from: f64,
-    pub to: f64,
-    pub verb: Verb,
-    pub aspects: Vec<Aspect>,
-    pub words: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
