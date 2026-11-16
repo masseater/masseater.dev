@@ -2,7 +2,13 @@ import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 
 const ProfileLine = Schema.Struct({ text: Schema.String, refs: Schema.Array(Schema.Int) });
 
-const ProfileSection = Schema.Struct({ title: Schema.String, lines: Schema.Array(ProfileLine) });
+const ProfileTopic = Schema.Struct({ title: Schema.String, lines: Schema.Array(ProfileLine) });
+
+const ProfileSection = Schema.Struct({
+  title: Schema.String,
+  lines: Schema.Array(ProfileLine),
+  topics: Schema.optionalKey(Schema.Array(ProfileTopic)),
+});
 
 export const Profile = Schema.Struct({
   builtAt: Schema.String,
@@ -18,6 +24,8 @@ export const ProfileSearch = Schema.Struct({
 export type ProfileValue = typeof Profile.Type;
 
 export type ProfileLineValue = typeof ProfileLine.Type;
+
+export type ProfileTopicValue = typeof ProfileTopic.Type;
 
 export type ProfileSectionValue = typeof ProfileSection.Type;
 
@@ -69,8 +77,24 @@ const lineText = ({ text, refs }: ProfileLineValue): string =>
     onNonEmpty: (some) => `${BULLET}${text} [${refsLabel(some)}]`,
   });
 
-const sectionText = (section: ProfileSectionValue): string =>
-  pipe(section.lines, Arr.map(lineText), Arr.prepend(`## ${section.title}`), Arr.join("\n"));
+const NO_TOPICS: readonly ProfileTopicValue[] = [];
+
+export const topicsOf = (section: ProfileSectionValue): readonly ProfileTopicValue[] =>
+  section.topics ?? NO_TOPICS;
+
+const topicText = (topic: ProfileTopicValue): string =>
+  pipe(topic.lines, Arr.map(lineText), Arr.prepend(`\n### ${topic.title}`), Arr.join("\n"));
+
+const sectionText = (section: ProfileSectionValue): string => {
+  const topics = pipe(topicsOf(section), Arr.map(topicText));
+  return pipe(
+    section.lines,
+    Arr.map(lineText),
+    Arr.appendAll(topics),
+    Arr.prepend(`## ${section.title}`),
+    Arr.join("\n"),
+  );
+};
 
 export const markdownOf = (sections: readonly ProfileSectionValue[]): string =>
   pipe(sections, Arr.map(sectionText), Arr.prepend("# USER.md"), Arr.join("\n\n"));
