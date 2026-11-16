@@ -1,8 +1,8 @@
 import { useAtomValue } from "@effect/atom-react";
+import type { Song } from "@masseater.dev/shirushi-protocol";
 import { Option } from "effect";
 
-import type { Song } from "#/shared/api/index.ts";
-import { pageOf } from "#/shared/lib/source.ts";
+import { pageOf } from "#/shared/lib/source";
 
 import { songAtom } from "./song.ts";
 

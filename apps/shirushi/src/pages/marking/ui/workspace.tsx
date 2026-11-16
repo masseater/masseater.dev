@@ -1,7 +1,7 @@
+import type { Song } from "@masseater.dev/shirushi-protocol";
 import type { ReactNode } from "react";
 
-import { MarkForm } from "#/features/mark-range/index.ts";
-import type { Song } from "#/shared/api/index.ts";
+import { MarkForm } from "#/features/mark-range";
 
 import { SongMarks } from "./song-marks.tsx";
 import { SongStage } from "./song-stage.tsx";

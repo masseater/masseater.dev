@@ -3,8 +3,8 @@ import { MutableRef, Option } from "effect";
 import { constVoid } from "effect/Function";
 import { useCallback, useMemo } from "react";
 
-import { rangeAtom, spanOf } from "#/features/mark-range/model/draft.ts";
-import type { Range } from "#/features/mark-range/model/draft.ts";
+import { rangeAtom, spanOf } from "#/features/mark-range/model/draft";
+import type { Range } from "#/features/mark-range/model/draft";
 
 const DRAG_PIXELS = 4;
 const NONE = 0;

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Position } from "#/shared/lib/player.ts";
+import type { Position } from "#/shared/lib/player";
 
 import { Ruler } from "./ruler.tsx";
 import { Track } from "./track.tsx";

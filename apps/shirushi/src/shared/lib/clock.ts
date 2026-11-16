@@ -1,6 +1,6 @@
 import { String as Str } from "effect";
 
-import { clock } from "#/shared/lib/source.ts";
+import { clock } from "./source.ts";
 
 const TENTHS = 10;
 const START = 0;

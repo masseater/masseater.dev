@@ -1,3 +1,3 @@
 /** @internal */
-export { linkAtom, loadAtom } from "./model/load.ts";
-export { LinkBar } from "./ui/link-bar.tsx";
+export { linkAtom, loadAtom } from "./model/load";
+export { LinkBar } from "./ui/link-bar";

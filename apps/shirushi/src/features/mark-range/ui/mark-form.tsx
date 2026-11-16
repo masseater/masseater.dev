@@ -2,7 +2,7 @@ import { useAtom } from "@effect/atom-react";
 import { useCallback } from "react";
 import type { ReactNode, SubmitEvent } from "react";
 
-import { saveAtom } from "#/features/mark-range/model/save.ts";
+import { saveAtom } from "#/features/mark-range/model/save";
 
 import { AspectChips } from "./aspect-chips.tsx";
 import { FormActions } from "./form-actions.tsx";

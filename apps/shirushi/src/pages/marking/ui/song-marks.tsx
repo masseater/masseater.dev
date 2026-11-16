@@ -1,13 +1,13 @@
 import { useAtomSet } from "@effect/atom-react";
+import type { Mark } from "@masseater.dev/shirushi-protocol";
 import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { MarkList, removeAtom, useMarks } from "#/entities/mark/index.ts";
-import { useSongLink } from "#/entities/song/index.ts";
-import { rangeAtom } from "#/features/mark-range/index.ts";
-import { usePlayer } from "#/features/play-song/index.ts";
-import type { Mark } from "#/shared/api/index.ts";
+import { MarkList, removeAtom, useMarks } from "#/entities/mark";
+import { useSongLink } from "#/entities/song";
+import { rangeAtom } from "#/features/mark-range";
+import { usePlayer } from "#/features/play-song";
 
 export const SongMarks = (): ReactNode => {
   const link = useSongLink();

@@ -69,7 +69,7 @@ fn yohaku(data: &Path, home: Option<&Path>) -> Result<Yohaku, Failure> {
     let claude = Claude::new(home.map(Path::to_path_buf), data.join(WORK_DIRECTORY));
     let understanding = Understanding::new(store.clone(), claude.clone());
     let syncer = Syncer::new(store.clone(), mcp::PORT)?;
-    let mcp_token = mcp::token(data)?;
+    let mcp_token = local_mcp::token(data)?;
     Ok(Yohaku {
         store,
         claude,

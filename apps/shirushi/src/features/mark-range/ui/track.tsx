@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Position } from "#/shared/lib/player.ts";
+import type { Position } from "#/shared/lib/player";
 
 import { HEAD, PLAY_LANE, WHOLE_LANE } from "./lanes.ts";
 import { MarkLayer } from "./mark-layer.tsx";

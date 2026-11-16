@@ -2,8 +2,8 @@ import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 import { useEffect } from "react";
 
-import { anchorAtom, rangeAtom, spanOf } from "#/features/mark-range/model/draft.ts";
-import type { Player } from "#/shared/lib/player.ts";
+import { anchorAtom, rangeAtom, spanOf } from "#/features/mark-range/model/draft";
+import type { Player } from "#/shared/lib/player";
 
 const KEY = "m";
 const FIELD = "input, textarea, select, [contenteditable]";

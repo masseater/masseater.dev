@@ -1,7 +1,7 @@
 import { Match } from "effect";
 import type { Effect, Scope } from "effect";
 
-import type { Mount, Player } from "#/shared/lib/player.ts";
+import type { Mount, Player } from "#/shared/lib/player";
 
 import { mountNiconico } from "./niconico.ts";
 import { mountSoundcloud } from "./soundcloud.ts";

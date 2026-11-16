@@ -5,7 +5,7 @@ import { LoaderCircle } from "lucide-react";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode, SubmitEvent } from "react";
 
-import { linkAtom, loadAtom } from "#/features/load-song/model/load.ts";
+import { linkAtom, loadAtom } from "#/features/load-song/model/load";
 
 const LOAD = "読み込む";
 

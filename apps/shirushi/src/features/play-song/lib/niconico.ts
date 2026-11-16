@@ -2,7 +2,7 @@ import { Effect, MutableRef } from "effect";
 import type { Scope } from "effect";
 import { createNiconicoEngine } from "niconico-embed-player";
 
-import type { Mount, Player } from "#/shared/lib/player.ts";
+import type { Mount, Player } from "#/shared/lib/player";
 
 export const mountNiconico = ({
   stage,

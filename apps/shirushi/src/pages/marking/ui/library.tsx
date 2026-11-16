@@ -1,11 +1,11 @@
 import { useAtomSet } from "@effect/atom-react";
+import type { Mark } from "@masseater.dev/shirushi-protocol";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { MarkList, removeAtom, useMarks } from "#/entities/mark/index.ts";
-import { linkAtom, loadAtom } from "#/features/load-song/index.ts";
-import type { Mark } from "#/shared/api/index.ts";
-import { pageOf } from "#/shared/lib/source.ts";
+import { MarkList, removeAtom, useMarks } from "#/entities/mark";
+import { linkAtom, loadAtom } from "#/features/load-song";
+import { pageOf } from "#/shared/lib/source";
 
 const EVERY_SONG = "";
 

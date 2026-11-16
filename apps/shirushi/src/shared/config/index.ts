@@ -1,2 +1,1 @@
-export { MCP_PATH } from "./shirushi.ts";
-export { SERVER_NAME } from "./shirushi.ts";
+export { ASPECTS, ASPECT_LABELS, VERB_LABELS } from "./labels.ts";

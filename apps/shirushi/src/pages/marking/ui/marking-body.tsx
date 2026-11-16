@@ -2,7 +2,7 @@ import { useAtomValue } from "@effect/atom-react";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { songAtom } from "#/entities/song/index.ts";
+import { songAtom } from "#/entities/song";
 
 import { Library } from "./library.tsx";
 import { Workspace } from "./workspace.tsx";

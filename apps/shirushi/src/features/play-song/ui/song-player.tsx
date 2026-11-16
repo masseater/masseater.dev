@@ -3,8 +3,8 @@ import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { songAtom } from "#/entities/song/index.ts";
-import { stageAtom, usePlayer } from "#/features/play-song/model/player.ts";
+import { songAtom } from "#/entities/song";
+import { stageAtom, usePlayer } from "#/features/play-song/model/player";
 
 const FRAME = "size-full [&>iframe]:size-full [&>iframe]:border-0";
 

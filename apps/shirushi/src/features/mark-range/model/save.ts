@@ -1,11 +1,11 @@
 import { Effect, Option } from "effect";
 import { AtomRegistry } from "effect/reactivity";
 
-import { marksAtom } from "#/entities/mark/index.ts";
-import { songAtom } from "#/entities/song/index.ts";
-import { postMark } from "#/shared/api/index.ts";
-import { runtime } from "#/shared/lib/runtime.ts";
-import { pageOf } from "#/shared/lib/source.ts";
+import { marksAtom } from "#/entities/mark";
+import { songAtom } from "#/entities/song";
+import { postMark } from "#/shared/api";
+import { runtime } from "#/shared/lib/runtime";
+import { pageOf } from "#/shared/lib/source";
 
 import { anchorAtom, aspectsAtom, rangeAtom, verbAtom, wordsAtom } from "./draft.ts";
 

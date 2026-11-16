@@ -1,5 +1,5 @@
 /** @internal */
-export { marksAtom, useMarks } from "./model/marks.ts";
+export { marksAtom, useMarks } from "./model/marks";
 /** @internal */
-export { removeAtom } from "./model/remove.ts";
-export { MarkList } from "./ui/mark-list.tsx";
+export { removeAtom } from "./model/remove";
+export { MarkList } from "./ui/mark-list";

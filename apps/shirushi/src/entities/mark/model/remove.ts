@@ -1,8 +1,8 @@
 import { Effect } from "effect";
 import { AtomRegistry } from "effect/reactivity";
 
-import { deleteMark } from "#/shared/api/index.ts";
-import { runtime } from "#/shared/lib/runtime.ts";
+import { deleteMark } from "#/shared/api";
+import { runtime } from "#/shared/lib/runtime";
 
 import { marksAtom } from "./marks.ts";
 

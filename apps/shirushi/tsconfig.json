@@ -1,9 +1,12 @@
 {
   "$schema": "./node_modules/@effect/tsgo/schema.json",
   "extends": "../../tsconfig.json",
-  "include": ["*.ts", "src"],
+  "include": ["src", "*.ts"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["node", "vite/client", "@cloudflare/workers-types", "youtube"]
+    "types": ["vite/client", "youtube"],
+    "paths": {
+      "#/*": ["./src/*"]
+    }
   }
 }

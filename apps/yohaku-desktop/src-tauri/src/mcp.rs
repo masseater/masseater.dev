@@ -1,13 +1,9 @@
-use std::fmt::Write;
-use std::fs;
-use std::path::Path;
 use std::sync::Arc;
 
 use axum::Router;
-use axum::extract::{RawQuery, Request, State};
+use axum::extract::{RawQuery, State};
 use axum::http::request::Parts;
 use axum::http::{HeaderMap, StatusCode, header};
-use axum::middleware::{self, Next};
 use axum::response::{IntoResponse, Response};
 use axum::routing::get;
 use rmcp::handler::server::router::tool::ToolRouter;
@@ -28,11 +24,6 @@ use crate::store::{Store, manuscripts};
 use crate::sync::{CALLBACK_PATH, Syncer};
 
 pub const PORT: u16 = 47_210;
-const HOST: &str = "127.0.0.1";
-const MCP_PATH: &str = "/mcp";
-const TOKEN_FILE: &str = "mcp-token";
-const TOKEN_BYTES: usize = 32;
-const BEARER: &str = "Bearer ";
 const UNKNOWN_CLIENT: &str = "MCP";
 const SIGNED_IN: &str = "同期をつなぎました。このタブを閉じてください。";
 const NOT_SIGNED_IN: &str = "同期をつなげませんでした。余白に戻ってもう一度つないでください。";
@@ -159,61 +150,10 @@ impl ServerHandler for Tools {
     }
 }
 
-fn hex(bytes: &[u8]) -> String {
-    bytes.iter().fold(String::new(), |mut text, byte| {
-        let _ = write!(text, "{byte:02x}");
-        text
-    })
-}
-
-fn write_private(file: &Path, text: &str) -> std::io::Result<()> {
-    fs::write(file, text)?;
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        fs::set_permissions(file, fs::Permissions::from_mode(0o600))?;
-    }
-    Ok(())
-}
-
-pub fn token(directory: &Path) -> Outcome<String> {
-    let file = directory.join(TOKEN_FILE);
-    let stored = fs::read_to_string(&file).unwrap_or_default();
-    if !stored.trim().is_empty() {
-        return Ok(stored.trim().to_owned());
-    }
-    let mut bytes = [0_u8; TOKEN_BYTES];
-    getrandom::fill(&mut bytes).map_err(|error| crate::failure::Failure::new(error.to_string()))?;
-    let token = hex(&bytes);
-    fs::create_dir_all(directory)?;
-    write_private(&file, &token)?;
-    Ok(token)
-}
-
-pub fn url() -> String {
-    format!("http://{HOST}:{PORT}{MCP_PATH}")
-}
-
-fn presented(headers: &HeaderMap, expected: &str) -> bool {
-    headers
-        .get(header::AUTHORIZATION)
-        .and_then(|value| value.to_str().ok())
-        .and_then(|value| value.strip_prefix(BEARER))
-        .is_some_and(|given| {
-            constant_time_eq::constant_time_eq(given.as_bytes(), expected.as_bytes())
-        })
-}
-
-async fn authorized(State(token): State<Arc<String>>, request: Request, next: Next) -> Response {
-    if presented(request.headers(), &token) {
-        return next.run(request).await;
-    }
-    StatusCode::UNAUTHORIZED.into_response()
-}
-
 async fn signed_in(State(syncer): State<Syncer>, RawQuery(query): RawQuery) -> Response {
     let callback = format!(
-        "http://{HOST}:{PORT}{CALLBACK_PATH}?{}",
+        "http://{}:{PORT}{CALLBACK_PATH}?{}",
+        local_mcp::HOST,
         query.unwrap_or_default()
     );
     match syncer.callback(&callback).await {
@@ -231,16 +171,17 @@ fn router(store: Store, syncer: Syncer, token: String) -> Router {
         Arc::new(LocalSessionManager::default()),
         StreamableHttpServerConfig::default(),
     );
-    let mcp = Router::new()
-        .nest_service(MCP_PATH, tools)
-        .layer(middleware::from_fn_with_state(Arc::new(token), authorized));
+    let mcp = local_mcp::guarded(
+        Router::new().nest_service(local_mcp::MCP_PATH, tools),
+        token,
+    );
     Router::new()
         .route(CALLBACK_PATH, get(signed_in).with_state(syncer))
         .merge(mcp)
 }
 
 pub async fn serve(store: Store, syncer: Syncer, token: String) -> Outcome<()> {
-    let listener = TcpListener::bind((HOST, PORT)).await?;
+    let listener = TcpListener::bind((local_mcp::HOST, PORT)).await?;
     axum::serve(listener, router(store, syncer, token)).await?;
     Ok(())
 }
@@ -249,19 +190,7 @@ pub async fn serve(store: Store, syncer: Syncer, token: String) -> Outcome<()> {
 mod tests {
     use axum::http::{HeaderMap, HeaderValue, header};
 
-    use super::{client_of, presented};
-
-    #[test]
-    fn requires_the_bearer_token() {
-        let mut headers = HeaderMap::new();
-        assert!(!presented(&headers, "secret"));
-        headers.insert(
-            header::AUTHORIZATION,
-            HeaderValue::from_static("Bearer secret"),
-        );
-        assert!(presented(&headers, "secret"));
-        assert!(!presented(&headers, "other"));
-    }
+    use super::client_of;
 
     #[test]
     fn names_the_client_from_its_user_agent() {

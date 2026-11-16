@@ -2,7 +2,7 @@ import { useAtomValue } from "@effect/atom-react";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { rangeAtom } from "#/features/mark-range/model/draft.ts";
+import { rangeAtom } from "#/features/mark-range/model/draft";
 
 import { HEAD, WHOLE_LANE } from "./lanes.ts";
 import { SpanRect } from "./span-rect.tsx";

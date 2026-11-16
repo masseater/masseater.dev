@@ -2,7 +2,7 @@ import { useAtom } from "@effect/atom-react";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 
-import { wordsAtom } from "#/features/mark-range/model/draft.ts";
+import { wordsAtom } from "#/features/mark-range/model/draft";
 
 export const WordsField = (): ReactNode => {
   const [words, setWords] = useAtom(wordsAtom);
