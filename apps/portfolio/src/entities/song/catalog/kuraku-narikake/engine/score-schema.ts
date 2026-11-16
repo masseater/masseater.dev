@@ -2,50 +2,49 @@ import { Schema } from "effect";
 
 import { AtSchema, LengthSchema } from "#/entities/song/lib/studio/moment.ts";
 
-const { Finite } = Schema;
 const Text = Schema.String;
 const maybe = Schema.optionalKey;
-const Times = Schema.Array(Finite);
-const PitchPoint = Schema.Tuple([Finite, Finite]);
-const LoopPart = Schema.Struct({ steps: Finite, count: Finite });
+const Times = Schema.Array(Schema.Finite);
+const PitchPoint = Schema.Tuple([Schema.Finite, Schema.Finite]);
+const LoopPart = Schema.Struct({ steps: Schema.Finite, count: Schema.Finite });
 
 export const ClipSchema = Schema.Struct({
   lane: Text,
   sample: Text,
   at: AtSchema,
   length: maybe(LengthSchema),
-  gain: maybe(Finite),
-  pan: maybe(Finite),
-  rate: maybe(Finite),
-  semitones: maybe(Finite),
-  offset: maybe(Finite),
-  attack: maybe(Finite),
-  release: maybe(Finite),
-  decay: maybe(Finite),
+  gain: maybe(Schema.Finite),
+  pan: maybe(Schema.Finite),
+  rate: maybe(Schema.Finite),
+  semitones: maybe(Schema.Finite),
+  offset: maybe(Schema.Finite),
+  attack: maybe(Schema.Finite),
+  release: maybe(Schema.Finite),
+  decay: maybe(Schema.Finite),
   pitch: maybe(Schema.Array(PitchPoint)),
-  lowPass: maybe(Finite),
-  lowPassEnd: maybe(Finite),
-  highPass: maybe(Finite),
-  resonance: maybe(Finite),
-  drive: maybe(Finite),
+  lowPass: maybe(Schema.Finite),
+  lowPassEnd: maybe(Schema.Finite),
+  highPass: maybe(Schema.Finite),
+  resonance: maybe(Schema.Finite),
+  drive: maybe(Schema.Finite),
   reverse: maybe(Schema.Boolean),
-  reverseFrom: maybe(Finite),
-  midi: maybe(Finite),
+  reverseFrom: maybe(Schema.Finite),
+  midi: maybe(Schema.Finite),
 });
 
 export type Clip = typeof ClipSchema.Type;
 
-const Timed = { at: AtSchema, seconds: Finite };
+const Timed = { at: AtSchema, seconds: Schema.Finite };
 
 const EditSchema = Schema.Union([
   Schema.Struct({ kind: Schema.Literal("mute"), ...Timed }),
   Schema.Struct({ kind: Schema.Literal("reverse"), ...Timed }),
-  Schema.Struct({ kind: Schema.Literal("tapeStop"), ...Timed, endRate: Finite }),
+  Schema.Struct({ kind: Schema.Literal("tapeStop"), ...Timed, endRate: Schema.Finite }),
   Schema.Struct({
     kind: Schema.Literal("repeat"),
     ...Timed,
-    count: Finite,
-    semitones: maybe(Finite),
+    count: Schema.Finite,
+    semitones: maybe(Schema.Finite),
   }),
   Schema.Struct({
     kind: Schema.Literal("loop"),
@@ -66,7 +65,11 @@ export const CuesSchema = Schema.Struct({
   roots: Times,
 });
 
-const PointSchema = Schema.Struct({ at: AtSchema, shift: maybe(Finite), value: Finite });
+const PointSchema = Schema.Struct({
+  at: AtSchema,
+  shift: maybe(Schema.Finite),
+  value: Schema.Finite,
+});
 
 export const AutomationSchema = Schema.Struct({
   drumLowPass: Schema.Array(PointSchema),
@@ -86,25 +89,29 @@ const RoleSchema = Schema.Literals(["main", "plate", "delay", "museum", "direct"
 export type Role = typeof RoleSchema.Type;
 
 const FilterSchema = Schema.Union([
-  Schema.Struct({ svf: Schema.Literals(["low", "high"]), cutoff: Finite, resonance: Finite }),
+  Schema.Struct({
+    svf: Schema.Literals(["low", "high"]),
+    cutoff: Schema.Finite,
+    resonance: Schema.Finite,
+  }),
   Schema.Struct({
     svf: Schema.Literals(["low", "high"]),
     curve: Schema.Literal("breakHighPass"),
-    resonance: Finite,
+    resonance: Schema.Finite,
   }),
   Schema.Struct({
     biquad: Schema.Literals(["peak", "low", "high"]),
-    hertz: Finite,
-    gain: Finite,
-    resonance: Finite,
+    hertz: Schema.Finite,
+    gain: Schema.Finite,
+    resonance: Schema.Finite,
   }),
-  Schema.Struct({ drive: Finite, post: Finite }),
+  Schema.Struct({ drive: Schema.Finite, post: Schema.Finite }),
 ]);
 
 export type Filter = typeof FilterSchema.Type;
 
 const Window = { from: AtSchema, to: AtSchema };
-const Boost = Schema.Struct({ ...Window, gain: Finite });
+const Boost = Schema.Struct({ ...Window, gain: Schema.Finite });
 
 const StepSchema = Schema.Union([
   Schema.Struct({
@@ -123,53 +130,68 @@ const StepSchema = Schema.Union([
   Schema.Struct({
     op: Schema.Literal("compress"),
     bus: RoleSchema,
-    threshold: Finite,
-    ratio: Finite,
-    attack: Finite,
-    release: Finite,
-    makeup: Finite,
+    threshold: Schema.Finite,
+    ratio: Schema.Finite,
+    attack: Schema.Finite,
+    release: Schema.Finite,
+    makeup: Schema.Finite,
   }),
-  Schema.Struct({ op: Schema.Literal("tremolo"), bus: RoleSchema, rate: Finite, depth: Finite }),
+  Schema.Struct({
+    op: Schema.Literal("tremolo"),
+    bus: RoleSchema,
+    rate: Schema.Finite,
+    depth: Schema.Finite,
+  }),
   Schema.Struct({
     op: Schema.Literal("chorus"),
     bus: RoleSchema,
-    depth: Finite,
-    rate: Finite,
-    amount: Finite,
+    depth: Schema.Finite,
+    rate: Schema.Finite,
+    amount: Schema.Finite,
   }),
   Schema.Struct({
     op: Schema.Literal("phaser"),
     bus: RoleSchema,
-    rate: Finite,
-    low: Finite,
-    high: Finite,
-    feedback: Finite,
-    amount: Finite,
+    rate: Schema.Finite,
+    low: Schema.Finite,
+    high: Schema.Finite,
+    feedback: Schema.Finite,
+    amount: Schema.Finite,
     ...Window,
   }),
-  Schema.Struct({ op: Schema.Literal("width"), bus: RoleSchema, width: Finite, monoBelow: Finite }),
+  Schema.Struct({
+    op: Schema.Literal("width"),
+    bus: RoleSchema,
+    width: Schema.Finite,
+    monoBelow: Schema.Finite,
+  }),
   Schema.Struct({
     op: Schema.Literal("widen"),
     bus: RoleSchema,
-    milliseconds: Finite,
-    amount: Finite,
-    highPass: Finite,
+    milliseconds: Schema.Finite,
+    amount: Schema.Finite,
+    highPass: Schema.Finite,
   }),
   Schema.Struct({
     op: Schema.Literal("send"),
     from: RoleSchema,
     into: RoleSchema,
-    gain: Finite,
+    gain: Schema.Finite,
     boost: maybe(Boost),
   }),
   Schema.Struct({
     op: Schema.Literal("duck"),
     bus: RoleSchema,
     by: Schema.Literals(["kicks", "hits"]),
-    depth: Finite,
+    depth: Schema.Finite,
   }),
-  Schema.Struct({ op: Schema.Literal("scale"), bus: RoleSchema, gain: Finite }),
-  Schema.Struct({ op: Schema.Literal("mix"), from: RoleSchema, into: RoleSchema, gain: Finite }),
+  Schema.Struct({ op: Schema.Literal("scale"), bus: RoleSchema, gain: Schema.Finite }),
+  Schema.Struct({
+    op: Schema.Literal("mix"),
+    from: RoleSchema,
+    into: RoleSchema,
+    gain: Schema.Finite,
+  }),
   Schema.Struct({ op: Schema.Literal("stereo"), bus: RoleSchema }),
 ]);
 
@@ -183,7 +205,7 @@ const TrackSchema = Schema.Struct({
 
 export const MixSchema = Schema.Struct({
   order: Schema.Array(Text),
-  returns: Schema.Struct({ delay: Finite, reverb: Finite, museum: Finite }),
+  returns: Schema.Struct({ delay: Schema.Finite, reverb: Schema.Finite, museum: Schema.Finite }),
   tracks: Schema.Array(TrackSchema),
 });
 
@@ -191,7 +213,11 @@ export type Mix = typeof MixSchema.Type;
 
 export type Track = Mix["tracks"][number];
 
-const SpanSchema = Schema.Struct({ from: AtSchema, to: maybe(AtSchema), after: maybe(Finite) });
+const SpanSchema = Schema.Struct({
+  from: AtSchema,
+  to: maybe(AtSchema),
+  after: maybe(Schema.Finite),
+});
 
 const ClosedSchema = Schema.Struct({ from: AtSchema, to: AtSchema });
 

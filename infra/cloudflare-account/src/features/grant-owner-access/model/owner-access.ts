@@ -28,8 +28,6 @@ type OwnerApplication = Readonly<{
   }>;
 }>;
 
-const { Application: defineApplication } = Access;
-
 const SESSION_DURATION = "720h";
 const SITE_TOKEN_LIFETIME = "15m";
 const MCP_TOKEN_LIFETIME = "1h";
@@ -53,7 +51,7 @@ const ownerApplication = Effect.fn("ownerApplication")(function* ownerApplicatio
   const holder = yield* ownerStack;
   const owner = yield* Access.Policy.ref("OwnerPolicy", holder);
   const google = yield* Access.IdentityProvider.ref("Google", holder);
-  return yield* defineApplication(id, {
+  return yield* Access.Application(id, {
     name,
     type: "self_hosted",
     domain: host,
