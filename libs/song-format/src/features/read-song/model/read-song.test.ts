@@ -186,3 +186,41 @@ it.effect("needs meter and tempo on the first bar", () =>
     ]);
   }),
 );
+
+it.effect("reads the mixer settings of a track", () =>
+  Effect.gen(function* mixer() {
+    const song = yield* validSong(twoFiveOne);
+    const settings = pipe(
+      song.tracks,
+      Arr.map(
+        ({ name, mixer }) =>
+          `${name} ${mixer.volumeDecibels}dB ${mixer.pan} ${String(mixer.muted)}`,
+      ),
+    );
+    expect(settings).toStrictEqual([
+      "drums 0dB 0 false",
+      "keys 0dB 0 false",
+      "bass -4.5dB -0.2 true",
+      "loop 0dB 0 false",
+    ]);
+  }),
+);
+
+it.effect("reports automation of a parameter the target does not have", () =>
+  Effect.gen(function* automation() {
+    const volume = yield* messagesOf(
+      withLine("  bass: C2 1/1\n  automate keys.volume -12dB -> 0dB over 2bar"),
+    );
+    expect(volume).toStrictEqual([]);
+    const typo = yield* messagesOf(
+      withLine("  bass: C2 1/1\n  automate keys.gian -12dB -> 0dB over 2bar"),
+    );
+    expect(typo).toStrictEqual([
+      "keys の gian は自動化できません。できるのは volume, pan, chorus です",
+    ]);
+    const unit = yield* messagesOf(
+      withLine("  bass: C2 1/1\n  automate keys.pan -12dB -> 50% over 2bar"),
+    );
+    expect(unit).toStrictEqual(["pan は % で書きます"]);
+  }),
+);
