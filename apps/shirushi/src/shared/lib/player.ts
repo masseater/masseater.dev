@@ -1,4 +1,4 @@
-import type { Source } from "#protocol";
+import type { Source } from "#/shared/api/index.ts";
 
 export type Position = Readonly<{ current: number; duration: number }>;
 

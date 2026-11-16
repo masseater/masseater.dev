@@ -1,10 +1,10 @@
 import { Effect, MutableRef } from "effect";
 import type { Scope } from "effect";
 
+import type { Source } from "#/shared/api/index.ts";
 import { STILL } from "#/shared/lib/player.ts";
 import type { Mount, Player } from "#/shared/lib/player.ts";
-import type { Source } from "#protocol";
-import { pageOf } from "#source";
+import { pageOf } from "#/shared/lib/source.ts";
 
 type Progress = Readonly<{ currentPosition: number }>;
 

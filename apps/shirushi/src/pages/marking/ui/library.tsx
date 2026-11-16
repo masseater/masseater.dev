@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 
 import { MarkList, removeAtom, useMarks } from "#/entities/mark/index.ts";
 import { linkAtom, loadAtom } from "#/features/load-song/index.ts";
-import type { Mark } from "#protocol";
-import { pageOf } from "#source";
+import type { Mark } from "#/shared/api/index.ts";
+import { pageOf } from "#/shared/lib/source.ts";
 
 const EVERY_SONG = "";
 

@@ -4,9 +4,6 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#config": "./shirushi.ts",
-    "#protocol": "./protocol.ts",
-    "#source": "./source.ts",
     "#/*": "./src/*"
   },
   "dependencies": {

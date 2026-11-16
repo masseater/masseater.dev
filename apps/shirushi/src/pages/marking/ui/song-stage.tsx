@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { SongMeta } from "#/entities/song/index.ts";
 import { Timeline, useMarkKey } from "#/features/mark-range/index.ts";
 import { SongPlayer, usePlayer, usePosition } from "#/features/play-song/index.ts";
-import type { Song } from "#protocol";
+import type { Song } from "#/shared/api/index.ts";
 
 import { KeyHint } from "./key-hint.tsx";
 

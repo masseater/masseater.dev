@@ -2,8 +2,14 @@ import { Effect, Schema } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 import type { HttpClientError } from "effect/http";
 
-import { MARKS_PATH, MarkInputSchema, MarksSchema, SONG_PATH, SongSchema } from "#protocol";
-import type { Mark, MarkInput, Song } from "#protocol";
+import {
+  MARKS_PATH,
+  MarkInputSchema,
+  MarksSchema,
+  SONG_PATH,
+  SongSchema,
+} from "#/shared/api/protocol.ts";
+import type { Mark, MarkInput, Song } from "#/shared/api/protocol.ts";
 
 const taggedError = Schema.TaggedError;
 

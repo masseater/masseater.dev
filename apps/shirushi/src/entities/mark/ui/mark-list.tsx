@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Mark } from "#protocol";
+import type { Mark } from "#/shared/api/index.ts";
 
 import { MarkLabel } from "./mark-label.tsx";
 import { MarkRow } from "./mark-row.tsx";

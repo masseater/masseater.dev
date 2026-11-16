@@ -6,8 +6,14 @@ import { RemovalPolicy, Stack } from "alchemy";
 import { Build } from "alchemy/Command";
 import { Effect } from "effect";
 
-import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
-import { HOST, MCP_PATH, MCP_URL, SERVER_NAME, TOOL_CALL_DATASET } from "./shirushi.ts";
+import { APP_NAME, PREFIX, requireAppPrefix } from "./src/shared/config/app-name.ts";
+import {
+  HOST,
+  MCP_PATH,
+  MCP_URL,
+  SERVER_NAME,
+  TOOL_CALL_DATASET,
+} from "./src/shared/config/shirushi.ts";
 
 const worker = Effect.gen(function* worker() {
   const access = yield* ownerMcpAccess({
@@ -27,7 +33,7 @@ const worker = Effect.gen(function* worker() {
   });
   return yield* Workers.Worker("Shirushi", {
     name: `${PREFIX}worker`,
-    main: "./worker/shirushi.worker.ts",
+    main: "./src/app/worker/shirushi.worker.ts",
     logpush: true,
     domain: HOST,
     workersDev: false,

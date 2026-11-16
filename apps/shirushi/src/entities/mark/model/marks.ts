@@ -3,8 +3,8 @@ import { Array as Arr } from "effect";
 import { AsyncResult, Atom } from "effect/reactivity";
 
 import { fetchMarks } from "#/shared/api/index.ts";
+import type { Mark } from "#/shared/api/index.ts";
 import { runtime } from "#/shared/lib/runtime.ts";
-import type { Mark } from "#protocol";
 
 /** @internal */
 export const marksAtom = Atom.family((link: string) => runtime.atom(fetchMarks(link)));

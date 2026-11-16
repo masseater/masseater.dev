@@ -5,7 +5,7 @@ import { marksAtom } from "#/entities/mark/index.ts";
 import { songAtom } from "#/entities/song/index.ts";
 import { postMark } from "#/shared/api/index.ts";
 import { runtime } from "#/shared/lib/runtime.ts";
-import { pageOf } from "#source";
+import { pageOf } from "#/shared/lib/source.ts";
 
 import { anchorAtom, aspectsAtom, rangeAtom, verbAtom, wordsAtom } from "./draft.ts";
 

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { useMarks } from "#/entities/mark/index.ts";
 import { useSongLink } from "#/entities/song/index.ts";
-import type { Verb } from "#protocol";
+import type { Verb } from "#/shared/api/index.ts";
 
 import { MARK_LANE } from "./lanes.ts";
 import { SpanRect } from "./span-rect.tsx";

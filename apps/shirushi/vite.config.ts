@@ -5,7 +5,6 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   run: ownerSiteRun,
-  resolve: { tsconfigPaths: true },
   plugins: [tailwindcss(), viteReact()],
   build: { outDir: "dist/client" },
   test: {

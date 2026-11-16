@@ -2,7 +2,7 @@ import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 
 import { songAtom } from "#/entities/song/index.ts";
-import type { Aspect, Verb } from "#protocol";
+import type { Aspect, Verb } from "#/shared/api/index.ts";
 
 export type Range = Readonly<{ from: number; to: number }>;
 

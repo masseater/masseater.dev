@@ -4,7 +4,7 @@ import { Atom, AtomRegistry } from "effect/reactivity";
 import { songAtom } from "#/entities/song/index.ts";
 import { fetchSong } from "#/shared/api/index.ts";
 import { runtime } from "#/shared/lib/runtime.ts";
-import { pageOf, sourceOf } from "#source";
+import { pageOf, sourceOf } from "#/shared/lib/source.ts";
 
 /** @internal */
 export const linkAtom = Atom.make("").pipe(Atom.keepAlive);

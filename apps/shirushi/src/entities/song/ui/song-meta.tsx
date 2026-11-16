@@ -1,8 +1,8 @@
 import { ExternalLink } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { Site, Song } from "#protocol";
-import { clock, pageOf } from "#source";
+import type { Site, Song } from "#/shared/api/index.ts";
+import { clock, pageOf } from "#/shared/lib/source.ts";
 
 const SITE_NAMES: Readonly<Record<Site, string>> = {
   youtube: "YouTube",

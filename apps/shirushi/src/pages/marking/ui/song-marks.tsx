@@ -7,7 +7,7 @@ import { MarkList, removeAtom, useMarks } from "#/entities/mark/index.ts";
 import { useSongLink } from "#/entities/song/index.ts";
 import { rangeAtom } from "#/features/mark-range/index.ts";
 import { usePlayer } from "#/features/play-song/index.ts";
-import type { Mark } from "#protocol";
+import type { Mark } from "#/shared/api/index.ts";
 
 export const SongMarks = (): ReactNode => {
   const link = useSongLink();

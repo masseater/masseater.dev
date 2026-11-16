@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { Mark } from "#protocol";
+import type { Mark } from "#/shared/api/index.ts";
 
 const REMOVE = "消す";
 
