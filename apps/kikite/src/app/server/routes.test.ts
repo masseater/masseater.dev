@@ -3,7 +3,8 @@ import { Array as Arr, Effect, Layer, Option, Schema, Stream, pipe } from "effec
 import type { Cause } from "effect";
 import { HttpRouter } from "effect/http";
 
-import { GenerationFailed, Generator } from "#/features/generate-interview/index.ts";
+import { GenerationFailed } from "#/features/generate-interview/index.test.support.ts";
+import { Generator } from "#/features/generate-interview/index.ts";
 import {
   CORRECTION_PATH,
   CorrectionRequest,

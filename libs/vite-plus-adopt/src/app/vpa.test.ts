@@ -16,7 +16,8 @@ import {
 } from "effect";
 import type { Scope } from "effect";
 
-import { BETTERLEAKS, VendorDirectory } from "#/entities/binary/index.ts";
+import { VendorDirectory } from "#/entities/binary/index.test.support.ts";
+import { BETTERLEAKS } from "#/entities/binary/index.ts";
 import type { CommandError, CommandServices } from "#/shared/lib/command.ts";
 import { commitEmpty, directoryWith, lines, runGit } from "#/shared/lib/fixture.test.support.ts";
 import { toJson } from "#/shared/lib/json.ts";

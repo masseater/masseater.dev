@@ -15,7 +15,7 @@ import {
 import { HttpRouter, HttpServer, HttpServerRequest, HttpServerResponse } from "effect/http";
 import type { HttpServerError } from "effect/http";
 
-import type { YesNo } from "#/features/serve-decisions/index.ts";
+import type { YesNo } from "#/features/serve-decisions/index.test.support.ts";
 
 import type { TestError } from "./oxlint.test.support.ts";
 

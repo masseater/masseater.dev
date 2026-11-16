@@ -1,7 +1,8 @@
 import { Effect, Option, Record as Rec, Result, String as Str } from "effect";
 import { Hex } from "effect/encoding";
 
-import type { AppStoreEnv, BoundStatement } from "#/shared/api/index.ts";
+import type { BoundStatement } from "#/shared/api/index.test.support.ts";
+import type { AppStoreEnv } from "#/shared/api/index.ts";
 
 const KEY_BYTES = 32;
 

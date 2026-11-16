@@ -3,11 +3,13 @@ import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 import { afterAll, beforeEach, vi } from "vite-plus/test";
 
 import { MarkInputSchema, MarksSchema } from "#/shared/api/index.ts";
-import type { Mark, MarkInput } from "#/shared/api/index.ts";
+import type { Mark } from "#/shared/api/index.ts";
 
 import { briefOf } from "./brief.ts";
 import { closeDatabase, resetDatabase } from "./d1.test.support.ts";
 import { serveMarks } from "./mark-routes.ts";
+
+type MarkInput = typeof MarkInputSchema.Type;
 
 vi.mock("cloudflare:workers", () => import("./d1.test.support.ts"));
 

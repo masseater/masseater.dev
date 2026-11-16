@@ -2,17 +2,11 @@ import { Array as Arr, Option, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
 import { fingerprint, planProbes, privateSurface } from "#/entities/exposure/index.ts";
-import type {
-  Inventory,
-  Probe,
-  ProbeOutcome,
-  ProbePurpose,
-  Surface,
-} from "#/entities/exposure/index.ts";
+import type { Inventory, Probe, ProbeOutcome, Surface } from "#/entities/exposure/index.ts";
 
 import { findExposures } from "./findings.ts";
 
-type Answers = Partial<Record<ProbePurpose, ProbeOutcome>>;
+type Answers = Partial<Record<Probe["purpose"], ProbeOutcome>>;
 
 const NONCE = "nonce";
 const NOTHING: Surface = { hosts: [], workers: [], repositories: [] };

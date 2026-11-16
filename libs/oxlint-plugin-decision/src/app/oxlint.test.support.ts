@@ -21,7 +21,7 @@ import type { ChildProcessSpawner } from "effect/process";
 
 import { toJson } from "#/entities/decision/index.ts";
 import type { DecisionPluginSetup } from "#/entities/decision/index.ts";
-import { CACHE_DIR } from "#/features/serve-decisions/index.ts";
+import { CACHE_DIR } from "#/features/serve-decisions/index.test.support.ts";
 
 import { MockOpenRouter } from "./mock-openrouter.test.support.ts";
 

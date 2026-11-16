@@ -8,7 +8,6 @@ export type { Site } from "./protocol.ts";
 export type { Aspect, Verb } from "./protocol.ts";
 export { ASPECTS } from "./protocol.ts";
 export { MarkInputSchema, MarksSchema } from "./protocol.ts";
-export type { MarkInput } from "./protocol.ts";
 export { MARKS_PATH, SONG_PATH, SongSchema } from "./protocol.ts";
 export { AspectSchema, MarkSchema } from "./protocol.ts";
 export { VerbSchema } from "./protocol.ts";

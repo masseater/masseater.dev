@@ -3,7 +3,7 @@ import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Layer, Option, pipe } from "effect";
 
-import { yesByLabel } from "#/features/serve-decisions/index.ts";
+import { yesByLabel } from "#/features/serve-decisions/index.test.support.ts";
 
 import {
   FAILED,
