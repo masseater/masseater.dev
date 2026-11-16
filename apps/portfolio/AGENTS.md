@@ -16,3 +16,9 @@ Claude との対話は `:::masseater` および `:::claude` ブロック内に�
 ブログ記事を投稿する MCP ツールを追加しないこと。持ち主は公開前にブログ記事を推敲するため、AI が記事を執筆するのは Sloppedia のみである。
 Sloppedia の記事同士は、記事がまだ存在しない場合でも `[語](/sloppedia/<slug>)` でリンクを貼ること。新しい記事には、既存のリンクが既に使用しているスラッグを付けること。
 Sloppedia の記事は百科事典のようなスタイルで記述すること。「題名は、〜である。」で書き始めること。持ち主の意見は「Sloppedia の持ち主の masseater は〜と考えている」と記述すること。
+
+## AI Produced
+
+曲は `src/entities/song/catalog/<slug>/` に 1 曲ずつ置く。一覧とページは、そこにある `work.ts`、`recording.ts`、`thumb.webp` から作る。
+
+`program/*.js` は AI が書いた曲のプログラムで、作品の原本として書き換えない。lint の対象から外し、型は隣の `.d.ts` で与える。音を直すときは曲を作り直す。`recording.ts` などのつなぎのコードは TypeScript で書き、lint を通す。

@@ -1587,9 +1587,6 @@ importers:
       '@masseater.dev/alchemy-app-name':
         specifier: workspace:*
         version: link:../../infra/alchemy-app-name
-      '@masseater.dev/daw-view':
-        specifier: workspace:*
-        version: link:../../libs/daw-view
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -2253,6 +2250,9 @@ importers:
       '@masseater.dev/cloudflare-account':
         specifier: workspace:*
         version: link:../../infra/cloudflare-account
+      '@masseater.dev/daw-view':
+        specifier: workspace:*
+        version: link:../../libs/daw-view
       '@masseater.dev/repositories':
         specifier: workspace:*
         version: link:../../infra/repositories

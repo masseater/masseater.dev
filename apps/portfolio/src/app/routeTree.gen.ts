@@ -9,6 +9,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SloppediaRouteImport } from './routes/sloppedia'
 import { Route as StageIndexRouteImport } from './routes/_stage/index'
 import { Route as StageSiteRouteImport } from './routes/_stage/_site'
+import { Route as AiProducedSlugRouteImport } from './routes/ai-produced/$slug'
 import { Route as SloppediaIndexRouteImport } from './routes/sloppedia/index'
 import { Route as SloppediaSlugRouteImport } from './routes/sloppedia/$slug'
 import { Route as SloppediaCategoriesRouteImport } from './routes/sloppedia/categories'
@@ -47,6 +48,11 @@ const StageIndexRoute = StageIndexRouteImport.update({
 const StageSiteRoute = StageSiteRouteImport.update({
   id: '/_site',
   getParentRoute: () => StageRoute,
+} as any)
+const AiProducedSlugRoute = AiProducedSlugRouteImport.update({
+  id: '/ai-produced/$slug',
+  path: '/ai-produced/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SloppediaIndexRoute = SloppediaIndexRouteImport.update({
   id: '/',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sloppedia': typeof SloppediaRouteWithChildren
+  '/ai-produced/$slug': typeof AiProducedSlugRoute
   '/sloppedia/$slug': typeof SloppediaSlugRoute
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/sloppedia/': typeof SloppediaIndexRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/': typeof StageIndexRoute
+  '/ai-produced/$slug': typeof AiProducedSlugRoute
   '/sloppedia/$slug': typeof SloppediaSlugRoute
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/sloppedia': typeof SloppediaIndexRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sloppedia': typeof SloppediaRouteWithChildren
   '/_stage/_site': typeof StageSiteRouteWithChildren
+  '/ai-produced/$slug': typeof AiProducedSlugRoute
   '/sloppedia/$slug': typeof SloppediaSlugRoute
   '/sloppedia/categories': typeof SloppediaCategoriesRoute
   '/_stage/': typeof StageIndexRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/feed.xml'
     | '/robots.txt'
     | '/sloppedia'
+    | '/ai-produced/$slug'
     | '/sloppedia/$slug'
     | '/sloppedia/categories'
     | '/sloppedia/'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/feed.xml'
     | '/robots.txt'
     | '/'
+    | '/ai-produced/$slug'
     | '/sloppedia/$slug'
     | '/sloppedia/categories'
     | '/sloppedia'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sloppedia'
     | '/_stage/_site'
+    | '/ai-produced/$slug'
     | '/sloppedia/$slug'
     | '/sloppedia/categories'
     | '/_stage/'
@@ -208,6 +220,7 @@ export interface RootRouteChildren {
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SloppediaRoute: typeof SloppediaRouteWithChildren
+  AiProducedSlugRoute: typeof AiProducedSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -253,6 +266,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof StageSiteRouteImport
       parentRoute: typeof StageRoute
+    }
+    '/ai-produced/$slug': {
+      id: '/ai-produced/$slug'
+      path: '/ai-produced/$slug'
+      fullPath: '/ai-produced/$slug'
+      preLoaderRoute: typeof AiProducedSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/sloppedia/': {
       id: '/sloppedia/'
@@ -384,6 +404,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeedDotxmlRoute: FeedDotxmlRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SloppediaRoute: SloppediaRouteWithChildren,
+  AiProducedSlugRoute: AiProducedSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
