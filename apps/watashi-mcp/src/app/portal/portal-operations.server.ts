@@ -2,9 +2,9 @@ import { PORTAL_ACTOR } from "@masseater.dev/portal-protocol";
 import { Effect } from "effect";
 
 import { LifeReadInput } from "#/entities/life-record";
-import { MemoryReadInput, MemoryWriteInput, WatashiProfileInput } from "#/entities/memory";
+import { MemoryReadInput, MemoryWriteInput } from "#/entities/memory";
 import { routeLifeRead } from "#/features/life-tools/index.server";
-import { readMemory, watashiProfile, writeMemory } from "#/features/memory-tools/index.server";
+import { profileDocument, readMemory, writeMemory } from "#/features/memory-tools/index.server";
 import type { ToolFailure } from "#/shared/api";
 
 import { decoded } from "./portal-decode";
@@ -20,5 +20,4 @@ export const memoryRead: (input: unknown) => Effect.Effect<unknown, ToolFailure>
 export const memoryWrite: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
   decoded(MemoryWriteInput)(input).pipe(Effect.flatMap(ownerWrite));
 
-export const profile: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
-  decoded(WatashiProfileInput)(input).pipe(Effect.flatMap(watashiProfile));
+export const profile: Effect.Effect<unknown, ToolFailure> = profileDocument;

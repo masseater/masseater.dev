@@ -74,3 +74,33 @@ describe("the transport of a mounted song", () => {
     }),
   );
 });
+
+const NARROW = { width: 520, height: 1400 } as const;
+const WIDE = { width: 1180, height: 1400 } as const;
+const FRAMES = "200 millis";
+
+const widenedTimeline = Effect.gen(function* widenedTimeline() {
+  yield* Effect.promise(() => page.viewport(NARROW.width, NARROW.height));
+  yield* mount(fixtureOf({}).song);
+  yield* ready;
+  yield* Effect.promise(() => page.getByRole("button", { name: "トラックを横に広げる" }).click());
+  return page.getByRole("group", { name: "トラックのタイムライン" }).element();
+});
+
+describe("the tracks of a mounted song", () => {
+  it.live("stay where the reader scrolled them while paused, with their names in view", () =>
+    Effect.gen(function* test() {
+      const timeline = yield* widenedTimeline;
+      const end = timeline.scrollWidth - timeline.clientWidth;
+      timeline.scrollLeft = end;
+      yield* Effect.sleep(FRAMES);
+      const name = page.getByRole("button", { name: "DRUMS" }).first().element();
+      expect(end + name.getBoundingClientRect().width).toBeGreaterThan(timeline.clientWidth);
+      expect(timeline.scrollLeft).toBe(end);
+      expect(Math.round(name.getBoundingClientRect().left)).toBe(
+        Math.round(timeline.getBoundingClientRect().left),
+      );
+      yield* Effect.promise(() => page.viewport(WIDE.width, WIDE.height));
+    }),
+  );
+});

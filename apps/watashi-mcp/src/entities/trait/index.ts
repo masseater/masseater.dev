@@ -1,5 +1,4 @@
 export { candidatesOf, unionOf } from "./api/trait-vector";
-export type { Vector } from "./api/trait-vector";
 export { AnalystFailed, analystFailed } from "./model/analyst-failed";
 export { TraitAnalyst } from "./api/trait-analyst";
 export { checkObservations, knownTraits } from "./api/trait-check";
