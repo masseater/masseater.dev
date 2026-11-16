@@ -8,6 +8,7 @@ import { checkNestedDocs } from "./nested-docs.ts";
 import { checkRootDocs } from "./root-docs.ts";
 import { checkRootReadme } from "./root-readme.ts";
 import { checkSourceAliases } from "./source-aliases.ts";
+import { checkSourceNames } from "./source-names.ts";
 
 /** @internal */
 export const checkPlacement = Effect.fn("checkPlacement")(function* checkPlacement(root: string) {
@@ -21,6 +22,7 @@ export const checkPlacement = Effect.fn("checkPlacement")(function* checkPlaceme
       checkLayeredSource(root),
       checkDanglingLinks(root),
       checkSourceAliases(root),
+      checkSourceNames(root),
     ],
     { concurrency: "unbounded" },
   );
