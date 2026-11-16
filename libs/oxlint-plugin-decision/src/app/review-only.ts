@@ -1,7 +1,8 @@
 import type { DecisionPlugin } from "@r_masseater/oxlint-plugin-decision";
 
+import { reviewOnly } from "#/features/define-presets/index.ts";
+
 import { presetPlugin } from "./preset-plugin.ts";
-import { reviewOnly } from "#/entities/rule/index.ts";
 
 const plugin: DecisionPlugin = presetPlugin(reviewOnly);
 

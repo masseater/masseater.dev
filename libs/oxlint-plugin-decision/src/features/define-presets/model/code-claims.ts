@@ -1,7 +1,10 @@
-import type { DecisionRule } from "@r_masseater/oxlint-plugin-decision";
-
-import { COMMENT, ENCLOSING_FUNCTION, claimRule } from "#/shared/lib/claim-rule.ts";
-import { hasCatch, isLogCall, namedLike } from "#/shared/lib/claim-select.ts";
+import type { DecisionRule } from "#/entities/decision/index.ts";
+import {
+  COMMENT,
+  ENCLOSING_FUNCTION,
+  claimRule,
+} from "#/features/define-presets/lib/claim-rule.ts";
+import { hasCatch, isLogCall, namedLike } from "#/features/define-presets/lib/claim-select.ts";
 
 export const fnNamePromises = claimRule({
   id: "fn-name-promises",

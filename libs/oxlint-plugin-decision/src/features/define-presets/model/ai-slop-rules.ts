@@ -1,6 +1,5 @@
-import { defineDecisionRule } from "@r_masseater/oxlint-plugin-decision";
-import type { DecisionRule } from "@r_masseater/oxlint-plugin-decision";
-
+import { defineDecisionRule } from "#/entities/decision/index.ts";
+import type { DecisionRule } from "#/entities/decision/index.ts";
 import {
   forwardsOneCall,
   isDeclared,
@@ -8,8 +7,8 @@ import {
   hasCast,
   hasFallback,
   hasGuard,
-} from "#/shared/lib/ai-slop-select.ts";
-import { hasCommentInside, hasSuppression } from "#/shared/lib/comment-select.ts";
+} from "#/features/define-presets/lib/ai-slop-select.ts";
+import { hasCommentInside, hasSuppression } from "#/features/define-presets/lib/comment-select.ts";
 
 interface SlopRule extends Pick<DecisionRule, "id" | "select" | "context"> {
   readonly ask: string;

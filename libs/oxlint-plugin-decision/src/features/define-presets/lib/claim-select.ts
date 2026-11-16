@@ -1,5 +1,6 @@
-import type { SelectedNode } from "@r_masseater/oxlint-plugin-decision";
 import { Array as Arr, Match, Option, Predicate, String as Str, pipe } from "effect";
+
+import type { SelectedNode } from "#/entities/decision/index.ts";
 
 import { containing, dualSelect, identifierOf, ofType } from "./select.ts";
 import type { DualSelect, NodeTest, Select } from "./select.ts";

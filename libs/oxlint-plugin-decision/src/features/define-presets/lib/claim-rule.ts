@@ -1,6 +1,7 @@
-import { defineDecisionRule } from "@r_masseater/oxlint-plugin-decision";
-import type { DecisionRule, RuleContext } from "@r_masseater/oxlint-plugin-decision";
 import { Predicate, Array as Arr, pipe } from "effect";
+
+import { defineDecisionRule } from "#/entities/decision/index.ts";
+import type { DecisionRule, RuleContext } from "#/entities/decision/index.ts";
 
 export interface Judgement {
   readonly ask: string;

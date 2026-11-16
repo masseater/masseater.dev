@@ -1,4 +1,4 @@
-import type { DecisionRule } from "@r_masseater/oxlint-plugin-decision";
+import type { DecisionRule } from "#/entities/decision/index.ts";
 
 import {
   catchHidesFailure,

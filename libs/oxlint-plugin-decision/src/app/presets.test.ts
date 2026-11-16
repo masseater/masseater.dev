@@ -4,6 +4,8 @@ import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/util
 import { Effect, Array as Arr, Option, String as Str, pipe, Order } from "effect";
 import type { PlatformError } from "effect/PlatformError";
 
+import { presets } from "#/features/define-presets/index.ts";
+
 import {
   EXAMPLE_FILES,
   FAILED,
@@ -21,7 +23,6 @@ import {
   toJson,
 } from "./presets-oxlint.test.support.ts";
 import type { Run, Services } from "./presets-oxlint.test.support.ts";
-import { presets } from "#/entities/rule/index.ts";
 
 type PresetName = keyof typeof presets;
 

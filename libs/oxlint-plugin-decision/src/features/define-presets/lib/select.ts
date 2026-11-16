@@ -1,4 +1,3 @@
-import type { DecisionRule, SelectMatch, SelectedNode } from "@r_masseater/oxlint-plugin-decision";
 import {
   Match,
   Option,
@@ -8,6 +7,8 @@ import {
   pipe,
   Function as Fn,
 } from "effect";
+
+import type { DecisionRule, SelectMatch, SelectedNode } from "#/entities/decision/index.ts";
 
 const DATA_FIRST_ARITY = 2;
 
