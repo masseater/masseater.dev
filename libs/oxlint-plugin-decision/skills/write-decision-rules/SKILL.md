@@ -7,7 +7,7 @@ description: >
   enabling the rules in oxlint.config.ts, select, answer kinds, context, per-rule models, settings,
   explain mode, and keeping request cost under control. Also use when someone wants a lint check
   that a pattern-based linter cannot express. Not for choosing or enabling the ready-made rules in
-  @r_masseater/oxlint-plugin-decision-presets.
+  @r_masseater/oxlint-plugin-decision/presets.
 metadata:
   purpose: >
     Teach an agent to author decision rules with @r_masseater/oxlint-plugin-decision, load them into
@@ -24,9 +24,9 @@ sources:
   - src/skill-write-decision-rules.test.ts
 ---
 
-# Write decision rules
+# write-decision-rules
 
-The package ships no rules. You write each rule as a yes/no (or pick-one) question with `defineDecisionRule`. You bundle the rules with `createDecisionPlugin` in a plugin file of your own. Then you load that file through `jsPlugins` in `oxlint.config.ts` and turn each rule on by name. Decision models return probabilities, never text. So a rule cannot produce an explanation or a fix.
+The package root ships no rules; the ready-made ones are under `/presets`. You write each rule as a yes/no (or pick-one) question with `defineDecisionRule`. You bundle the rules with `createDecisionPlugin` in a plugin file of your own. Then you load that file through `jsPlugins` in `oxlint.config.ts` and turn each rule on by name. Decision models return probabilities, never text. So a rule cannot produce an explanation or a fix.
 
 ## Setup
 

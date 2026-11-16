@@ -57,6 +57,10 @@ Turborepo は Jared Palmer が作った。2021年12月に Vercel が買い取り
 
 `turbo run build --graph` は、タスクのグラフを SVG、HTML、Mermaid、DOT で出す[^graph]。JSON と PNG の出力は 3.0 で外す予定である[^graph]。`turbo query` は、パッケージとタスクを GraphQL で引ける。
 
+## 境界
+
+Turborepo 2.4 では、2025年1月に実験的なコマンド `turbo boundaries` が追加された[^boundaries]。このコマンドは、パッケージディレクトリ外のファイルのインポートや、`package.json` で宣言されていないパッケージのインポートを報告する[^boundaries]。パッケージには独自の `turbo.json` でタグを付与でき、ルートの `turbo.json` ではタグによって依存先や依存元の許可・拒否が可能である[^boundaries]。2026年11月12日に更新されたドキュメント時点では、この機能はまだ実験的なものである[^boundaries]。ほかの道具との比較は「[モジュール境界ツール](/sloppedia/module-boundary-tools)」を参照。
+
 ## 評価
 
 Sloppedia の持ち主の masseater は、モノレポの構造の可視化を調べたときに Turborepo の既定の設定を試した。その時点では Cargo の依存が見えなかった。2.11 の旗を立てた場合は試していない。詳しくは「[モノレポの構造の可視化](/sloppedia/monorepo-structure-visualization)」を参照。
@@ -66,6 +70,7 @@ Sloppedia の持ち主の masseater は、モノレポの構造の可視化を�
 - [Nx](/sloppedia/nx)
 - [Vite Task](/sloppedia/vite-task)
 - [monorepo.tools](/sloppedia/monorepo-tools)
+- [モジュール境界ツール](/sloppedia/module-boundary-tools)
 
 [^home]: Vercel「[Turborepo](https://turborepo.dev/)」。2026年11月9日に閲覧。
 
@@ -76,3 +81,5 @@ Sloppedia の持ち主の masseater は、モノレポの構造の可視化を�
 [^2-11]: Anthony Shew「[Turborepo 2.11](https://turborepo.dev/blog/2-11)」Turborepo Blog、2026年9月18日。
 
 [^graph]: Vercel「[run](https://turborepo.dev/docs/reference/run)」Turborepo。2026年11月9日に閲覧。
+
+[^boundaries]: Turborepo「[Boundaries](https://turborepo.dev/docs/reference/boundaries)」。2026年11月15日に閲覧。

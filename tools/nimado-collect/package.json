@@ -4,13 +4,13 @@
   "private": true,
   "type": "module",
   "imports": {
+    "#/*": "./src/*",
     "#package.json": "./package.json"
   },
   "dependencies": {
     "@distilled.cloud/cloudflare": "catalog:stack",
     "@effect/platform-node": "catalog:",
     "@masseater.dev/nimado": "workspace:*",
-    "@masseater.dev/node-main": "workspace:*",
     "effect": "catalog:stack"
   },
   "devDependencies": {

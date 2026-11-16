@@ -19,13 +19,13 @@ jobs:
     steps:
       - id: skills-lock
         if: github.event_name == 'pull_request'
-        uses: masseater/typescript-template/.github/actions/pr-changed@d31880940798de1570171b0bd255ec9e69005d83
+        uses: masseater/typescript-template/.github/actions/pr-changed@5e507cf2bcea2ef759c07e195185632936b70c33
         with:
           file: skills-lock.json
           github-token: ${{ github.token }}
       - id: lockfile
         if: github.event_name == 'pull_request'
-        uses: masseater/typescript-template/.github/actions/pr-changed@d31880940798de1570171b0bd255ec9e69005d83
+        uses: masseater/typescript-template/.github/actions/pr-changed@5e507cf2bcea2ef759c07e195185632936b70c33
         with:
           file: pnpm-lock.yaml
           github-token: ${{ github.token }}
@@ -34,7 +34,7 @@ jobs:
         with:
           persist-credentials: false
       - if: steps.skills-lock.outputs.changed == 'true'
-        uses: masseater/typescript-template/.github/actions/skills-lock@d31880940798de1570171b0bd255ec9e69005d83
+        uses: masseater/typescript-template/.github/actions/skills-lock@5e507cf2bcea2ef759c07e195185632936b70c33
         with:
           branch: ${{ github.head_ref }}
       - if: steps.lockfile.outputs.changed == 'true'
@@ -42,3 +42,15 @@ jobs:
         with:
           native: "false"
           cache: "false"
+
+  wake:
+    needs: [up-to-date]
+    if: failure() && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: gh workflow run update-branches.yml --repo "$GITHUB_REPOSITORY" --ref "$DEFAULT_BRANCH"

@@ -4,7 +4,7 @@ import type { Problem } from "./problem.ts";
 import { RepositoryFiles } from "./repository-files.ts";
 
 const SCANNED_FILE =
-  /(?:\.(?:[cm]?[jt]sx?|jsonc?|toml|ya?ml|sh|bash|zsh|fish|rs|cs|go|mk)|(?:^|\/)(?:Dockerfile[^/]*|Makefile|justfile|\.tool-versions|[^./][^./]*))$/u;
+  /(?:\.(?:[cm]?[jt]sx?|jsonc?|toml|ya?ml|sh|bash|zsh|fish|rs|cs|go|mk)|(?:^|\/)(?:(?:Dockerfile|Containerfile)[^/]*|Makefile|justfile|\.tool-versions|[^./][^./]*))$/u;
 
 const LOCKFILE = /(?:^|\/)(?:[^/]*\.lock|[^/]*-lock\.(?:json|ya?ml))$/u;
 

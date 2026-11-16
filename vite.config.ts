@@ -3,17 +3,16 @@ import {
   INSTRUMENTATION,
   decisionRules,
   decisionTestRules,
-  fsdRules,
   generated,
   lint as preset,
   removalPolicySyntax,
   requiredStack,
   restrictedImports,
+  steigerRules,
 } from "@r_masseater/msch/lint";
+import type { ToolSections } from "@r_masseater/msch/vite";
 import { workspaceSettings } from "@r_masseater/msch/workspace-settings";
 import type { RuleSets } from "@r_masseater/msch/workspace-settings";
-import type { ToolSections } from "@r_masseater/vite-plus-adopt";
-import fsd from "@r_masseater/vite-plus-adopt/fsd";
 import {
   restrictedImports as untracedImports,
   restrictedProperties as untracedProperties,
@@ -117,7 +116,7 @@ const checks: ToolSections = {
   },
   steiger: {
     paths: ["apps/*/src", "libs/*/src"],
-    rules: [...fsd.configs.recommended, { rules: fsdRules }],
+    rules: steigerRules,
   },
   textlint: {
     ignores: MARKDOWN_IGNORES,
@@ -149,13 +148,6 @@ const checks: ToolSections = {
   },
 };
 
-const checkTasks: NonNullable<NonNullable<UserConfig["run"]>["tasks"]> = {
-  vpa: {
-    command: "vpa",
-    cache: false,
-  },
-};
-
 export default defineConfig({
   ...checks,
   msch: {
@@ -179,7 +171,6 @@ export default defineConfig({
   run: {
     cache: true,
     tasks: {
-      ...checkTasks,
       fallow: {
         command: [
           "fallow --skip dupes --fail-on-issues --quiet --format compact",
@@ -226,7 +217,6 @@ export default defineConfig({
           ...workspace.tasks.verify,
           "check",
           "test",
-          "vpa",
           "workflow-rules",
           "db-check-all",
           "fallow",
@@ -243,10 +233,7 @@ export default defineConfig({
       },
       msch: {
         command: "msch",
-        cache: {
-          input: [{ auto: true }, "!node_modules/.cache/**"],
-          untrackedEnv: ["HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy", "SSL_CERT_FILE"],
-        },
+        cache: false,
       },
       "db-check-all": "vp run -r db:check",
       audit: {

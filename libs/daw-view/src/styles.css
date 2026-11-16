@@ -1,0 +1,161 @@
+@import "tailwindcss" source(none);
+
+@source "./";
+
+@theme inline {
+  --color-paper: var(--daw-paper);
+  --color-ink: var(--daw-ink);
+  --color-dim: var(--daw-dim);
+  --color-line: var(--daw-line);
+  --color-card: var(--daw-card);
+  --color-hot: var(--daw-hot);
+  --color-lane: var(--daw-lane);
+  --font-display: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+}
+
+@layer base {
+  .daw-song {
+    --daw-paper: #f3efe6;
+    --daw-ink: #1b1a17;
+    --daw-dim: #6f6a5f;
+    --daw-line: #d5cfc0;
+    --daw-card: #fbf8f1;
+    --daw-hot: #e2462a;
+    --daw-wave: #2a2823;
+    --daw-played: #e2462a;
+    --daw-wall: #9aa3b5;
+    --daw-lane: #f1ecdf;
+    --daw-grid: #e6e0d1;
+    --daw-key-white: #fffdf8;
+    --daw-key-black: #33302a;
+    --daw-track-lightness: 0.57;
+    --daw-track-chroma: 0.15;
+    --daw-font:
+      ui-monospace, "SF Mono", Menlo, Consolas, "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+      monospace;
+
+    margin: 0;
+    background: var(--daw-paper);
+    color: var(--daw-ink);
+    font: 15px/1.6 var(--daw-font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .daw-song {
+      --daw-paper: #0e0f13;
+      --daw-ink: #ece8dd;
+      --daw-dim: #8b8778;
+      --daw-line: #2a2c35;
+      --daw-card: #15171d;
+      --daw-hot: #ff5a36;
+      --daw-wave: #5d6072;
+      --daw-played: #ff5a36;
+      --daw-wall: #3a4666;
+      --daw-lane: #1b1d25;
+      --daw-grid: #20222b;
+      --daw-key-white: #cfcbbf;
+      --daw-key-black: #0b0c10;
+      --daw-track-lightness: 0.76;
+      --daw-track-chroma: 0.13;
+
+      color-scheme: dark;
+    }
+  }
+
+  .daw-song button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .daw-song :focus-visible {
+    outline: 2px solid var(--daw-hot);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .daw-play[data-waiting="true"] {
+    animation: daw-wait 1s ease-in-out infinite alternate;
+  }
+
+  .daw-icon {
+    clip-path: polygon(29.2% 18.75%, 29.2% 81.25%, 83.3% 50%);
+  }
+
+  .daw-play[data-state="playing"] .daw-icon {
+    clip-path: polygon(
+      25% 18.75%,
+      43.75% 18.75%,
+      43.75% 81.25%,
+      25% 81.25%,
+      25% 18.75%,
+      56.25% 18.75%,
+      75% 18.75%,
+      75% 81.25%,
+      56.25% 81.25%,
+      56.25% 18.75%
+    );
+  }
+
+  .daw-tool {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    min-width: 30px;
+    padding: 0 9px;
+    border: 1px solid var(--daw-line);
+    border-radius: 7px;
+    color: var(--daw-ink);
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .daw-tool[aria-pressed="true"] {
+    border-color: var(--daw-ink);
+    background: var(--daw-ink);
+    color: var(--daw-paper);
+  }
+
+  .daw-tool:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .daw-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 0 8px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--daw-line);
+    font-size: 11px;
+    line-height: 1.1;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  @media (width < 40rem) {
+    .daw-head {
+      gap: 5px;
+      padding: 0 6px;
+      font-size: 10px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .daw-play[data-waiting="true"] {
+      animation: none;
+    }
+  }
+}
+
+@keyframes daw-wait {
+  to {
+    opacity: 0.55;
+  }
+}

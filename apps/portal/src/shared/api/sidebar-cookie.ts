@@ -1,25 +1,46 @@
 import { createIsomorphicFn, createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
-import { Schema } from "effect";
+import { Option, Schema, pipe } from "effect";
 
-const SIDEBAR_COOKIE = "sidebar_state";
+import { DEFAULT_SIDEBAR_WIDTH, sidebarWidthOf } from "#/shared/model";
+
+const OPEN_COOKIE = "sidebar_state";
+
+const WIDTH_COOKIE = "sidebar_width";
 
 const CLOSED = "false";
 
 const KEEP_SECONDS = 31_536_000;
 
-export const readSidebarOpen = createIsomorphicFn()
-  .server(() => getCookie(SIDEBAR_COOKIE) !== CLOSED)
-  .client(() => true);
+const COOKIE = {
+  httpOnly: true,
+  maxAge: KEEP_SECONDS,
+  path: "/",
+  sameSite: "lax",
+  secure: true,
+} as const;
+
+export type SidebarLayout = Readonly<{ open: boolean; width: number }>;
+
+export const readSidebarLayout = createIsomorphicFn()
+  .server((): SidebarLayout => ({
+    open: getCookie(OPEN_COOKIE) !== CLOSED,
+    width: pipe(
+      Option.fromUndefinedOr(getCookie(WIDTH_COOKIE)),
+      Option.map(Number),
+      Option.match({ onNone: () => DEFAULT_SIDEBAR_WIDTH, onSome: sidebarWidthOf }),
+    ),
+  }))
+  .client((): SidebarLayout => ({ open: true, width: DEFAULT_SIDEBAR_WIDTH }));
 
 export const saveSidebarOpen = createServerFn({ method: "POST" })
   .validator(Schema.toStandardSchemaV1(Schema.Boolean))
   .handler(({ data }) => {
-    setCookie(SIDEBAR_COOKIE, String(data), {
-      httpOnly: true,
-      maxAge: KEEP_SECONDS,
-      path: "/",
-      sameSite: "lax",
-      secure: true,
-    });
+    setCookie(OPEN_COOKIE, String(data), COOKIE);
+  });
+
+export const saveSidebarWidth = createServerFn({ method: "POST" })
+  .validator(Schema.toStandardSchemaV1(Schema.Finite))
+  .handler(({ data }) => {
+    setCookie(WIDTH_COOKIE, String(sidebarWidthOf(data)), COOKIE);
   });

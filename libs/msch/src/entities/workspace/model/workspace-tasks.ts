@@ -8,6 +8,8 @@ import { settingsInvalid } from "./workspace-config-source.ts";
 
 export const VERIFY_TASK = ["tasks", "verify"] as const;
 
+export const RUN_TASKS = ["run", "tasks"] as const;
+
 export interface WorkspaceTasks {
   readonly verify: readonly string[];
 }

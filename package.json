@@ -12,7 +12,6 @@
     "@effect/tsgo": "catalog:stack",
     "@r_masseater/msch": "workspace:*",
     "@r_masseater/textlint-rule-preset-ja": "workspace:*",
-    "@r_masseater/vite-plus-adopt": "catalog:",
     "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/intent": "catalog:",
     "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",
@@ -48,7 +47,8 @@
       "@tanstack/router-plugin",
       "@tanstack/start-server-core",
       "fallow",
-      "workspace:@masseater.dev/effect2rs"
+      "workspace:@masseater.dev/effect2rs",
+      "workspace:@r_masseater/msch"
     ]
   }
 }

@@ -79,5 +79,8 @@
       "path": "dist/*.js",
       "limit": "4953 B"
     }
-  ]
+  ],
+  "engines": {
+    "node": ">=26"
+  }
 }
