@@ -64,6 +64,7 @@ const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
       ],
       shadcnUi: ["apps/web/src/shared/ui/**"],
       publicEntries: [],
+      deployEntries: [],
     },
     testProjects: ["apps/web"],
     tasks: { verify: [] },

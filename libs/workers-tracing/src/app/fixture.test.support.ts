@@ -153,8 +153,6 @@ const route: Route = (env, request) => {
   );
 };
 
-const worker = {
+export const worker = {
   fetch: (request: Request, env: Env): Promise<Response> => run(route(env, request)),
 };
-
-export default worker;

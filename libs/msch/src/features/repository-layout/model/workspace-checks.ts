@@ -2,6 +2,7 @@ import { Array as Arr, Effect } from "effect";
 
 import { checkCommandEntries } from "./command-entries.ts";
 import { checkCrates } from "./crates.ts";
+import { checkDeployEntryPatterns } from "./deploy-entry-patterns.ts";
 import { checkFallowEntries } from "./fallow-entries.ts";
 import { checkHiddenVerify } from "./hidden-verify.ts";
 import { checkRootWorkspacePaths } from "./root-workspace-paths.ts";
@@ -17,6 +18,7 @@ export const checkWorkspaces = Effect.fn("checkWorkspaces")(function* checkWorks
     [
       checkCommandEntries(root),
       checkCrates(root),
+      checkDeployEntryPatterns(root),
       checkFallowEntries(root),
       checkHiddenVerify(root),
       checkRootWorkspacePaths(root),

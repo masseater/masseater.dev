@@ -10,13 +10,19 @@ const EXCLUDED: readonly string[] = [
   ":(exclude,attr:linguist-documentation)",
 ];
 
-export const memberSources = Effect.fn("memberSources")(function* memberSources(root: string) {
-  const files = yield* RepositoryFiles;
+export const memberWorkspaces = Effect.fn("memberWorkspaces")(function* memberWorkspaces(
+  root: string,
+) {
   const declared = yield* workspaceDirectories(root);
-  const workspaces = pipe(
+  return pipe(
     declared,
     Arr.filter((workspace) => workspace !== ROOT_WORKSPACE),
   );
+});
+
+export const memberSources = Effect.fn("memberSources")(function* memberSources(root: string) {
+  const files = yield* RepositoryFiles;
+  const workspaces = yield* memberWorkspaces(root);
   const listed = yield* files.matchingFiles(root, EXCLUDED);
   return { workspaces, listed };
 });

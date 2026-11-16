@@ -27,7 +27,7 @@ const web = Effect.gen(function* web() {
     ...(production && { domain: { name: DOMAIN, redirects: [`www.${DOMAIN}`] } }),
     command: "vp run build",
     outdir: "dist/client",
-    main: "./src/app/entrypoint/site.worker.ts",
+    main: "./src/app/site.ts",
     logpush: true,
     env: { STARS, VISITOR_SALT, VITE_CF_BEACON_TOKEN: CF_BEACON_TOKEN },
     assets: {
@@ -41,7 +41,7 @@ const web = Effect.gen(function* web() {
 
 const ciTelemetry = Workers.Worker("CiTelemetry", {
   name: CI_TELEMETRY_AUDIENCE,
-  main: "./src/app/entrypoint/ci-telemetry.worker.ts",
+  main: "./src/app/ci-telemetry.ts",
   logpush: true,
 });
 

@@ -11,7 +11,8 @@ import { expect, test } from "vite-plus/test";
 
 import { COMPATIBILITY_DATE } from "#/shared/config/index.ts";
 
-const FIXTURE = fileURLToPath(import.meta.resolve("./fixture.worker.ts"));
+const FIXTURE = fileURLToPath(import.meta.resolve("./fixture.test.support.ts"));
+const FIXTURE_HANDLER = `export { worker as default } from "./fixture.mjs";`;
 const TEMPORARY_REDIRECT = 307;
 const NOT_FOUND = 404;
 const WORKER_CONDITIONS = ["workerd", "worker", "browser", "import", "default"];
@@ -54,7 +55,10 @@ const withMiniflare = Effect.acquireRelease(
           workers: [
             {
               name: "app",
-              modules: [{ type: "ESModule", path: "worker.mjs", contents: script }],
+              modules: [
+                { type: "ESModule", path: "worker.mjs", contents: FIXTURE_HANDLER },
+                { type: "ESModule", path: "fixture.mjs", contents: script },
+              ],
               compatibilityDate: COMPATIBILITY_DATE,
               kvNamespaces: ["CACHE"],
               streamingTails: [tail.name],

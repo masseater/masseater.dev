@@ -57,7 +57,7 @@ const honeypot = Effect.fn("honeypot")(function* honeypot({ appName, domain }: E
   });
   return yield* Workers.Worker("Honeypot", {
     name: `${appName}-honeypot`,
-    main: decodeURIComponent(new URL("honeypot.worker.ts", import.meta.url).pathname),
+    main: decodeURIComponent(new URL("./honeypot.ts", import.meta.url).pathname),
     logpush: true,
     env: { HONEYPOT },
     routes: pipe(

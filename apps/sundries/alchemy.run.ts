@@ -15,7 +15,7 @@ import type {
   ClaudeRoutine,
   SloppediaGitHub,
   Tailnet,
-} from "@masseater.dev/repositories/credential-broker.worker";
+} from "@masseater.dev/repositories/credential-broker";
 import { RemovalPolicy, Stack } from "alchemy";
 import { Effect } from "effect";
 
@@ -68,7 +68,7 @@ const worker = Effect.gen(function* worker() {
   );
   return yield* Workers.Worker("Mcp", {
     name: `${PREFIX}worker`,
-    main: "./src/app/sundries.worker.ts",
+    main: "./src/app/sundries.ts",
     logpush: true,
     domain: SITE_HOST,
     workersDev: false,

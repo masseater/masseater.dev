@@ -23,7 +23,7 @@ const PAGE =
   '<!doctype html><html><head><style>body{margin:0}</style><script type="module" src="/assets/app.js"></script></head><body><p>本文</p><script>window.ready=true</script></body></html>';
 
 const testD1 = makeD1({
-  migrations: new URL("../../../drizzle/", import.meta.url).href,
+  migrations: new URL("../../drizzle/", import.meta.url).href,
   tables: ["star"],
 });
 

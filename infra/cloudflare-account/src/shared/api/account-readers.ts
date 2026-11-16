@@ -21,7 +21,7 @@ export const webAnalyticsReader = Effect.fn("webAnalyticsReader")(function* webA
   });
   return yield* Workers.Worker("WebAnalyticsToken", {
     name: `${appName}-web-analytics-token`,
-    main: decodeURIComponent(new URL("web-analytics-token.worker.ts", import.meta.url).pathname),
+    main: decodeURIComponent(new URL("./web-analytics-token.ts", import.meta.url).pathname),
     logpush: true,
     workersDev: false,
     env: { WEB_ANALYTICS_TOKEN: token.value },

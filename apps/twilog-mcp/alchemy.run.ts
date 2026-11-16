@@ -2,7 +2,7 @@ import { AnalyticsEngine, Workers } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { ownerMcpAccess } from "@masseater.dev/cloudflare-account/owner-access";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
-import type { AccessOAuth } from "@masseater.dev/repositories/credential-broker.worker";
+import type { AccessOAuth } from "@masseater.dev/repositories/credential-broker";
 import { Stack } from "alchemy";
 import { Effect } from "effect";
 
@@ -23,7 +23,7 @@ const worker = Effect.gen(function* worker() {
   });
   return yield* Workers.Worker("Mcp", {
     name: `${PREFIX}worker`,
-    main: "./src/app/twilog.worker.ts",
+    main: "./src/app/twilog.ts",
     logpush: true,
     domain: SITE_HOST,
     workersDev: false,

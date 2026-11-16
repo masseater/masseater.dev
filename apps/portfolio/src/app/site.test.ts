@@ -9,10 +9,10 @@ import {
   resetSite,
   storedVisitors,
   stubRewriter,
-} from "./site.worker.test.support.ts";
-import worker from "./site.worker.ts";
+} from "./site.test.support.ts";
+import worker from "./site.ts";
 
-vi.mock("cloudflare:workers", () => import("./site.worker.test.support.ts"));
+vi.mock("cloudflare:workers", () => import("./site.test.support.ts"));
 
 stubRewriter();
 

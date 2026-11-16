@@ -194,9 +194,9 @@
       "alwaysUsed": ["src/app/routeTree.gen.ts"],
     },
     {
-      "name": "alchemy",
+      "name": "alchemy-stacks",
       "enablers": ["alchemy"],
-      "entryPoints": ["alchemy.*.ts", "src/**/*.worker.ts"],
+      "entryPoints": ["alchemy.*.ts"],
     },
     {
       "name": "vite-plus",

@@ -76,7 +76,7 @@ export default Stack(
       memo: false,
     });
     const { url } = yield* Workers.Worker("Kikite", {
-      main: "./src/app/entrypoint/kikite.worker.ts",
+      main: "./src/app/kikite.ts",
       logpush: true,
       domain: HOST,
       workersDev: false,

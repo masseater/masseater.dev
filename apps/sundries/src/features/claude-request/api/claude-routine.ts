@@ -1,5 +1,5 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import type { ClaudeRoutine } from "@masseater.dev/repositories/credential-broker.worker";
+import type { ClaudeRoutine } from "@masseater.dev/repositories/credential-broker";
 import { env } from "cloudflare:workers";
 import { Effect } from "effect";
 

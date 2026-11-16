@@ -1,4 +1,4 @@
-import type { SiteToken } from "@masseater.dev/repositories/credential-broker.worker";
+import type { SiteToken } from "@masseater.dev/repositories/credential-broker";
 import type { OAuthTargetId } from "@masseater.dev/repositories/oauth-targets";
 import { constVoid } from "effect/Function";
 

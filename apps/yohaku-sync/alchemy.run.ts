@@ -14,7 +14,7 @@ const worker = Effect.gen(function* worker() {
   );
   return yield* Workers.Worker("Sync", {
     name: `${PREFIX}worker`,
-    main: "./src/app/sync.worker.ts",
+    main: "./src/app/sync.ts",
     logpush: true,
     domain: SYNC_HOST,
     workersDev: false,

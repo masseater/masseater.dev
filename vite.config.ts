@@ -34,11 +34,15 @@ const overrides = [
     rules: { "react/jsx-props-no-spreading": "off" },
   },
   {
-    files: [...workspace.lint.publicEntries],
+    files: [...workspace.lint.publicEntries, ...workspace.lint.deployEntries],
     rules: { "import/no-default-export": "off" },
   },
   {
-    files: ["apps/*/src/**/*.{ts,tsx}", "apps/*/worker/**/*.ts"],
+    files: [...workspace.lint.deployEntries],
+    rules: tracedRules,
+  },
+  {
+    files: ["apps/*/src/**/*.{ts,tsx}"],
     excludeFiles: ["**/*.test.ts"],
     rules: {
       "eslint-js/no-restricted-syntax": ["error", removalPolicySyntax, ...unguardedWorkersAi],

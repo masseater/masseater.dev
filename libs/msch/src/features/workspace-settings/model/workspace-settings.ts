@@ -3,6 +3,7 @@ import type { AllowWarnDeny, OxlintOverride } from "vite-plus/lint";
 
 import { readManifest } from "#/entities/package/index.ts";
 import {
+  deployEntries,
   literalSettings,
   merged,
   programOf,
@@ -71,6 +72,7 @@ export interface WorkspaceLint {
   readonly overrides: readonly OxlintOverride[];
   readonly shadcnUi: readonly string[];
   readonly publicEntries: readonly string[];
+  readonly deployEntries: readonly string[];
 }
 
 export interface WorkspaceSettings {
@@ -217,6 +219,7 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
       (directory) => shadcnUiIn(options.root, files.join(directory, SHADCN_FILE)),
       { concurrency: READ_CONCURRENCY },
     );
+    const deployed = yield* deployEntries(options.root);
     return {
       lint: {
         ignorePatterns: pipe(
@@ -232,6 +235,7 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
           found,
           Arr.flatMap(({ publicEntries }) => publicEntries),
         ),
+        deployEntries: deployed,
       },
       testProjects: pipe(
         found,

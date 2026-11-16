@@ -3,8 +3,7 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { Effect, Logger, Schema, String as Str, pipe } from "effect";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
-import { CI_TELEMETRY_AUDIENCE } from "#/app/app-name.ts";
-
+import { CI_TELEMETRY_AUDIENCE } from "./app-name.ts";
 import { UnreadableBody } from "./unreadable-body.ts";
 
 const ISSUER = "https://token.actions.githubusercontent.com";

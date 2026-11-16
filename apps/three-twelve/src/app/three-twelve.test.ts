@@ -3,10 +3,10 @@ import { beforeEach, expect, test, vi } from "vite-plus/test";
 
 import { BASE_PATH } from "#/shared/config/index.ts";
 
-import { KNOWN_TOKEN, recordedCalls, resetCalls } from "./three-twelve.worker.test.support.ts";
-import worker from "./three-twelve.worker.ts";
+import { KNOWN_TOKEN, recordedCalls, resetCalls } from "./three-twelve.test.support.ts";
+import worker from "./three-twelve.ts";
 
-vi.mock("cloudflare:workers", () => import("./three-twelve.worker.test.support.ts"));
+vi.mock("cloudflare:workers", () => import("./three-twelve.test.support.ts"));
 
 beforeEach(resetCalls);
 
