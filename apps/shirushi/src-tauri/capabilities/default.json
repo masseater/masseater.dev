@@ -1,7 +1,15 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Capability for the main window",
+  "description": "Capability for the main window, served from the app or from the bundled localhost server",
   "windows": ["main"],
-  "permissions": ["core:default"]
+  "remote": { "urls": ["http://127.0.0.1:*"] },
+  "permissions": [
+    "core:default",
+    "allow-list-marks",
+    "allow-save-mark",
+    "allow-remove-mark",
+    "allow-song-at",
+    "allow-mcp-access"
+  ]
 }
