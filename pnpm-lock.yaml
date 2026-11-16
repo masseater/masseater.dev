@@ -497,6 +497,9 @@ catalogs:
     '@types/three':
       specifier: 0.187.0
       version: 0.187.0
+    '@types/youtube':
+      specifier: 0.3.0
+      version: 0.3.0
     '@typescript-eslint/parser':
       specifier: 8.72.2
       version: 8.72.2
@@ -710,6 +713,9 @@ catalogs:
     nanotar:
       specifier: ^0.3.0
       version: 0.3.0
+    niconico-embed-player:
+      specifier: 0.1.2
+      version: 0.1.2
     oauth4webapi:
       specifier: ^3.8.8
       version: 3.8.8
@@ -2454,6 +2460,103 @@ importers:
       node-html-parser:
         specifier: 9.0.7
         version: 9.0.7
+      typescript:
+        specifier: catalog:stack
+        version: 7.1.0-beta
+      vite:
+        specifier: 'catalog:'
+        version: '@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  apps/shirushi:
+    dependencies:
+      '@effect/atom-react':
+        specifier: catalog:stack
+        version: 4.1.4(effect@4.1.4)(react@19.3.1)(scheduler@0.28.0)
+      '@masseater.dev/mcp-tool-call':
+        specifier: workspace:*
+        version: link:../../libs/mcp-tool-call
+      '@masseater.dev/ui':
+        specifier: workspace:*
+        version: link:../../libs/ui
+      '@modelcontextprotocol/server':
+        specifier: 'catalog:'
+        version: 2.4.0
+      '@r_masseater/workers-tracing':
+        specifier: workspace:*
+        version: link:../../libs/workers-tracing
+      drizzle-orm:
+        specifier: catalog:stack
+        version: 1.0.0-rc.5-ab785fc(@cloudflare/workers-types@5.20261112.1)(@effect/sql-d1@4.1.4(effect@4.1.4))(@effect/sql-sqlite-node@4.1.4(effect@4.1.4))(@electric-sql/pglite@0.3.15)(@libsql/client@0.17.4)(@opentelemetry/api@1.10.0)(@sinclair/typebox@0.34.52)(effect@4.1.4)(valibot@1.5.0(typescript@7.1.0-beta))(zod@4.6.7)
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.72.0(@types/react@19.3.0)(react@19.3.1)
+      niconico-embed-player:
+        specifier: 'catalog:'
+        version: 0.1.2
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
+      scheduler:
+        specifier: 'catalog:'
+        version: 0.28.0
+      tailwindcss:
+        specifier: catalog:stack
+        version: 4.3.5
+      tw-animate-css:
+        specifier: 'catalog:'
+        version: 1.4.0
+    devDependencies:
+      '@alchemy.run/cloudflare':
+        specifier: catalog:stack
+        version: 2.0.0-beta.87(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(alchemy@2.0.0-beta.87(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(ws@8.22.1))(effect@4.1.4)
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 5.20261112.1
+      '@effect/tsgo':
+        specifier: catalog:stack
+        version: 0.68.1
+      '@effect/vitest':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
+      '@masseater.dev/alchemy-app-name':
+        specifier: workspace:*
+        version: link:../../infra/alchemy-app-name
+      '@masseater.dev/cloudflare-account':
+        specifier: workspace:*
+        version: link:../../infra/cloudflare-account
+      '@masseater.dev/d1-test':
+        specifier: workspace:*
+        version: link:../../libs/d1-test
+      '@tailwindcss/vite':
+        specifier: 'catalog:'
+        version: 4.3.5(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      '@types/youtube':
+        specifier: 'catalog:'
+        version: 0.3.0
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 6.3.0(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
+      alchemy:
+        specifier: catalog:stack
+        version: 2.0.0-beta.87(@effect/platform-node@4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.0)(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(ws@8.22.1)
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -10582,6 +10685,9 @@ packages:
   '@types/ws@8.18.2':
     resolution: {integrity: sha512-67MQl+fpWKVTT1NYdnmo3U4sc/xPo/zQBncVnI74qmQa0z/b+1g6iYqNmGCPbxO+zz2aklb08a0oHfegiVd0/w==}
 
+  '@types/youtube@0.3.0':
+    resolution: {integrity: sha512-a+JnwvmYfCShUv2fPs9JL/rUr9JGx5BPjSn7sp3V5UEyyj2AIVkSCRlVoe4CjFBrkBIv9jMpOPakfitMq7tegA==}
+
   '@typescript-eslint/parser@8.72.2':
     resolution: {integrity: sha512-llP+T1YuJOLlxEciP6OyQGtz5SMxyn+9LA2BvZw5RmToGVa1y4beEDVQL6Gje7T5WFYh19WREjDCN9Ev4gm5AA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -14384,6 +14490,9 @@ packages:
   neotraverse@0.6.18:
     resolution: {integrity: sha512-Z4SmBUweYa09+o6pG+eASabEpP6QkQ70yHj351pQoEXIs8uHbaU2DWVmzBANKgflPa47A50PtB2+NgRpQvr7vA==}
     engines: {node: '>= 10'}
+
+  niconico-embed-player@0.1.2:
+    resolution: {integrity: sha512-C9eKfKN0hYxelMeOSMTLUzO166mScZEZRYqMUSjVC2QxgtlLuqyxyuxHILesJ42odLJnFBWI9tQkGIyR+DG7qA==}
 
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -22289,6 +22398,8 @@ snapshots:
     dependencies:
       '@types/node': 26.6.6
 
+  '@types/youtube@0.3.0': {}
+
   '@typescript-eslint/parser@8.72.2(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
     dependencies:
       '@typescript-eslint/scope-manager': 8.72.2
@@ -26297,6 +26408,8 @@ snapshots:
       content-type: 2.1.0
 
   neotraverse@0.6.18: {}
+
+  niconico-embed-player@0.1.2: {}
 
   node-domexception@1.0.0: {}
 

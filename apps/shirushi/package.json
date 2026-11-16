@@ -1,0 +1,47 @@
+{
+  "name": "shirushi",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#config": "./shirushi.ts",
+    "#protocol": "./protocol.ts",
+    "#source": "./source.ts",
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/mcp-tool-call": "workspace:*",
+    "@masseater.dev/ui": "workspace:*",
+    "@modelcontextprotocol/server": "catalog:",
+    "@r_masseater/workers-tracing": "workspace:*",
+    "drizzle-orm": "catalog:stack",
+    "effect": "catalog:stack",
+    "lucide-react": "catalog:",
+    "niconico-embed-player": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "scheduler": "catalog:",
+    "tailwindcss": "catalog:stack",
+    "tw-animate-css": "catalog:"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/tsgo": "catalog:stack",
+    "@effect/vitest": "catalog:",
+    "@masseater.dev/alchemy-app-name": "workspace:*",
+    "@masseater.dev/cloudflare-account": "workspace:*",
+    "@masseater.dev/d1-test": "workspace:*",
+    "@tailwindcss/vite": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@types/youtube": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "alchemy": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
