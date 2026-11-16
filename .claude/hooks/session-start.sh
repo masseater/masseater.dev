@@ -35,6 +35,13 @@ fi
 echo "export PATH=\"$CLAUDE_PROJECT_DIR/.pnpm/rust/bin:$HOME/.local/bin:$HOME/.local/share/mise/shims:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 VP_RUN_CONCURRENCY_LIMIT=1" >>"$CLAUDE_ENV_FILE"
 vp env on >&2
 vp install --frozen-lockfile >&2
+if [ ! -d node_modules/.vite/task-cache ]; then
+  repository="$(git remote get-url origin | sed -E 's#\.git$##; s#.*[/:]([^/]+/[^/]+)$#\1#')"
+  artifact="$(gh api "repos/$repository/actions/artifacts?name=vite-task-cache.tar&per_page=5" --jq '[.artifacts[] | select(.expired | not)][0].id // empty' 2>/dev/null || true)"
+  if [ -n "$artifact" ]; then
+    gh api "repos/$repository/actions/artifacts/$artifact/zip" | tar -x -C node_modules >&2 || rm -rf node_modules/.vite/task-cache
+  fi
+fi
 if ! claude mcp get sts2 >/dev/null 2>&1; then
   claude mcp add --scope user sts2 -- node "$CLAUDE_PROJECT_DIR/tools/sts2-mcp/bin/sts2-mcp.ts" >&2
 fi

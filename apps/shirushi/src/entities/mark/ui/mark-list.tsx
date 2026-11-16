@@ -1,7 +1,6 @@
+import type { Mark } from "@masseater.dev/shirushi-protocol";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
-
-import type { Mark } from "#protocol";
 
 import { MarkLabel } from "./mark-label.tsx";
 import { MarkRow } from "./mark-row.tsx";

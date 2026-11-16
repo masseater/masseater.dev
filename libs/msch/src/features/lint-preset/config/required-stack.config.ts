@@ -1,17 +1,7 @@
-import { Array as Arr, Record as Rec, String as Str, pipe } from "effect";
-
-const REACT_STATE_HOOKS: readonly string[] = [
-  "useState",
-  "useReducer",
-  "createContext",
-  "useContext",
-];
-const HAND_WRITTEN_SQL = "SQL を手書きせず Drizzle のクエリビルダーを使う";
 const UI_STATE = "UI 状態は effect-atom だけで扱う";
 
 export const INSTRUMENTATION = "計装は Effect のトレーシングだけで扱う";
-export const INFRASTRUCTURE =
-  "インフラは Alchemy の IaC と Cloudflare だけで扱い、wrangler は使わない";
+const INFRASTRUCTURE = "インフラは Alchemy の IaC と Cloudflare だけで扱い、wrangler は使わない";
 
 export const requiredStack: Readonly<Record<string, readonly string[]>> = {
   [UI_STATE]: [
@@ -178,44 +168,4 @@ export const requiredStack: Readonly<Record<string, readonly string[]>> = {
     "@pulumi/*",
     "cdktf",
   ],
-};
-
-const requiredStackEntries = Arr.flatMap(Rec.toEntries(requiredStack), ([message, modules]) =>
-  pipe(
-    modules,
-    Arr.map((module) => ({ message, module })),
-  ),
-);
-
-const requiredStackPaths: readonly Readonly<{ name: string; message: string }>[] = Arr.map(
-  pipe(
-    requiredStackEntries,
-    Arr.filter(({ module }) => !Str.includes("*")(module)),
-  ),
-  ({ message, module }) => ({ name: module, message }),
-);
-
-const requiredStackPatterns: readonly Readonly<{ group: readonly string[]; message: string }>[] =
-  pipe(
-    requiredStackEntries,
-    Arr.map(({ message, module }) => {
-      if (Str.includes("*")(module)) {
-        return { group: [module, `${module}/**`], message };
-      }
-      return { group: [`${module}/**`], message };
-    }),
-  );
-
-export const restrictedImports = {
-  paths: [
-    {
-      name: "react",
-      importNames: [...REACT_STATE_HOOKS],
-      message: UI_STATE,
-    },
-    { name: "drizzle-orm", importNames: ["sql"], message: HAND_WRITTEN_SQL },
-    { name: "drizzle-orm/sql", message: HAND_WRITTEN_SQL },
-    ...requiredStackPaths,
-  ],
-  patterns: [...requiredStackPatterns],
 };

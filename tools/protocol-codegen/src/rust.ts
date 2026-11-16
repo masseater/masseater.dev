@@ -29,7 +29,15 @@ const yohakuRust = Effect.gen(function* yohakuRust() {
   return output;
 });
 
-export const rustOutputs = pipe(
-  yohakuRust,
-  Effect.map((yohaku) => [aredokoRust, yohaku]),
-);
+const shirushiRust = Effect.gen(function* shirushiRust() {
+  const definitions = yield* Effect.promise(() => import("@masseater.dev/shirushi-protocol"));
+  const output: RustOutput = {
+    output: "../../apps/shirushi/src-tauri/src/protocol.rs",
+    header: HEADER,
+    derive: ["specta::Type", "schemars::JsonSchema"],
+    definitions,
+  };
+  return output;
+});
+
+export const rustOutputs = Effect.all([Effect.succeed(aredokoRust), yohakuRust, shirushiRust]);

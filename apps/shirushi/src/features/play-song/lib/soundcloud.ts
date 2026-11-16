@@ -1,10 +1,10 @@
+import type { Source } from "@masseater.dev/shirushi-protocol";
 import { Effect, MutableRef } from "effect";
 import type { Scope } from "effect";
 
 import { STILL } from "#/shared/lib/player";
 import type { Mount, Player } from "#/shared/lib/player";
-import type { Source } from "#protocol";
-import { pageOf } from "#source";
+import { pageOf } from "#/shared/lib/source";
 
 type Progress = Readonly<{ currentPosition: number }>;
 

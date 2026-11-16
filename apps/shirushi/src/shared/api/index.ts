@@ -1,2 +1,2 @@
 /** @internal */
-export { deleteMark, fetchMarks, fetchSong, postMark } from "./marks.ts";
+export { deleteMark, fetchMarks, mcpAccess, fetchSong, postMark } from "./marks.ts";

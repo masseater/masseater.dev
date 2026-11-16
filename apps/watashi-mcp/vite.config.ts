@@ -33,41 +33,7 @@ export default defineConfig(({ mode }) => ({
             "src/entities/ledger/**",
             "src/features/{categorize,import-statements,report}/**",
           ],
-          rules: {
-            "eslint/no-restricted-properties": [
-              "error",
-              {
-                object: "db",
-                property: "insert",
-                message:
-                  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため",
-              },
-              {
-                object: "db",
-                property: "update",
-                message:
-                  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため",
-              },
-              {
-                object: "db",
-                property: "delete",
-                message:
-                  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため",
-              },
-              {
-                object: "db",
-                property: "batch",
-                message:
-                  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため",
-              },
-              {
-                object: "db",
-                property: "run",
-                message:
-                  "watashi-mcp の表は *-writer.server.ts の書き込み部品だけが書く。今の表の更新とリビジョンの追加を同じ batch に入れるため",
-              },
-            ],
-          },
+          rules: { "msch-lint/db-writes-in-writers": "error" },
         },
       ],
     },
