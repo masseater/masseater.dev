@@ -3,8 +3,8 @@ import { Effect } from "effect";
 
 import { LifeReadInput } from "#/entities/life-record/index.ts";
 import { MemoryReadInput, MemoryWriteInput } from "#/entities/memory/index.ts";
-import { routeLifeRead } from "#/features/life-tools/index.server.ts";
-import { profileDocument, readMemory, writeMemory } from "#/features/memory-tools/index.server.ts";
+import { profileDocument, readMemory, writeMemory } from "#/features/manage-memory/index.server.ts";
+import { routeLifeRead } from "#/features/record-life/index.server.ts";
 import type { ToolFailure } from "#/shared/api/index.ts";
 
 import { decoded } from "./portal-decode.ts";

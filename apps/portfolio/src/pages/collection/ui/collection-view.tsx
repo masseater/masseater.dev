@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 
 import { categoryMeta, EntryList } from "#/entities/entry/index.ts";
 import type { Category, Entry } from "#/entities/entry/index.ts";
-import { TagFilter, tagCounts, withTag } from "#/features/tag-filter/index.ts";
-import type { TagSearch } from "#/features/tag-filter/index.ts";
+import { TagFilter, tagCounts, withTag } from "#/features/filter-by-tag/index.ts";
+import type { TagSearch } from "#/features/filter-by-tag/index.ts";
 
 import { IdeaList } from "./idea-list.tsx";
 

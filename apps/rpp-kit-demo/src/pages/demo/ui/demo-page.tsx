@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { Playground } from "#/features/playground/index.ts";
+import { Playground } from "#/features/run-playground/index.ts";
 
 import { Arrangement } from "./arrangement.tsx";
 import { Hero } from "./hero.tsx";

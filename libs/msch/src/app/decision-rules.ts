@@ -1,1 +1,1 @@
-export { decisionPlugin as default } from "#/features/lint-preset/index.ts";
+export { decisionPlugin as default } from "#/features/define-lint-preset/index.ts";

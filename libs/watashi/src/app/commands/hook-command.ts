@@ -2,7 +2,7 @@ import { DateTime, Effect, FileSystem, Option, Path, Schema } from "effect";
 import type { PlatformError, Stdio } from "effect";
 import { Command } from "effect/cli";
 
-import { authorization } from "#/features/authenticate/index.ts";
+import { authorization } from "#/features/authenticate-user/index.ts";
 import type { PushError } from "#/features/push-session/index.ts";
 import { pushSession } from "#/features/push-session/index.ts";
 import { asWatashi } from "#/shared/api/index.ts";
