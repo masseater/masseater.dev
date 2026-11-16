@@ -108,4 +108,7 @@ export const bodyOf = (request: Request): Promise<unknown> =>
   );
 
 export const logTraceRequest = ({ resourceSpans }: typeof TraceRequest.Type): Effect.Effect<void> =>
-  Effect.forEach(pipe(resourceSpans, Arr.flatMap(spansOf)), logSpan, { discard: true });
+  Effect.forEach(pipe(resourceSpans, Arr.flatMap(spansOf)), logSpan, {
+    concurrency: 1,
+    discard: true,
+  });

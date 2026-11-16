@@ -40,30 +40,36 @@ const thumbnailCount = (candidates: typeof CandidatesSchema.Type): number =>
   );
 
 const banPenalties = (count: number): Effect.Effect<readonly number[]> =>
-  Effect.forEach(Array.makeBy(count, Function.identity), () =>
-    Random.next.pipe(Effect.map((draw) => Number(draw < BAN_RATE) * BAN_PENALTY)),
+  Effect.forEach(
+    Array.makeBy(count, Function.identity),
+    () => Random.next.pipe(Effect.map((draw) => Number(draw < BAN_RATE) * BAN_PENALTY)),
+    { concurrency: 1 },
   );
 
 const scoredOptions = (candidates: typeof CandidatesSchema.Type): Effect.Effect<Options> =>
   Effect.flatMap(banPenalties(thumbnailCount(candidates)), (penalties) =>
-    pipe(
+    Effect.forEach(
       candidates,
-      Effect.forEach((options, cell) =>
+      (options, cell) =>
         pipe(
           options,
-          Effect.forEach(([thumbnail, error]) =>
-            pipe(
-              gumbel,
-              Effect.map((noise) => ({
-                cell,
-                thumbnail,
-                score: error + (penalties[thumbnail] ?? NO_PENALTY) - TEMPERATURE * noise,
-              })),
+          (items) =>
+            Effect.forEach(
+              items,
+              ([thumbnail, error]) =>
+                pipe(
+                  gumbel,
+                  Effect.map((noise) => ({
+                    cell,
+                    thumbnail,
+                    score: error + (penalties[thumbnail] ?? NO_PENALTY) - TEMPERATURE * noise,
+                  })),
+                ),
+              { concurrency: 1 },
             ),
-          ),
           Effect.map(byScore),
         ),
-      ),
+      { concurrency: 1 },
     ),
   );
 

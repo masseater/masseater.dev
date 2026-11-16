@@ -59,12 +59,9 @@ const copyServer = Effect.fn("copyServer")(function* copyServer(server: string) 
   yield* Effect.forEach(
     bundled,
     (file) => fileSystem.copyFile(path.join(BUNDLE, file), path.join(server, file)),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
-  const versions = yield* pipe(
-    EXTERNAL,
-    Effect.forEach((name) => versionOf(name)),
-  );
+  const versions = yield* Effect.forEach(EXTERNAL, (name) => versionOf(name), { concurrency: 1 });
   const manifest = yield* Schema.encodeEffect(Schema.fromJsonString(ServerManifest))({
     name: "aredoko-server",
     private: true,
@@ -105,7 +102,7 @@ const dropForeignBinaries = Effect.fn("dropForeignBinaries")(function* dropForei
   yield* Effect.forEach(
     foreign,
     (entry) => fileSystem.remove(path.join(binaries, entry), { recursive: true, force: true }),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 });
 

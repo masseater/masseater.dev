@@ -71,26 +71,29 @@ const seedPeople = Effect.gen(function* seedPeople() {
   return { sourceId, targetId };
 });
 
-const stored = Effect.all({
-  people: Effect.promise(() =>
-    catalogDb.select({ name: person.name }).from(person).orderBy(person.id),
-  ),
-  aliases: Effect.promise(() =>
-    catalogDb
-      .select({ name: person.name, alias: personAlias.alias })
-      .from(personAlias)
-      .innerJoin(person, eq(person.id, personAlias.personId))
-      .orderBy(person.id, personAlias.alias),
-  ),
-  credits: Effect.promise(() =>
-    catalogDb
-      .select({ position: part.position, role: partStaff.role, name: person.name })
-      .from(partStaff)
-      .innerJoin(part, eq(part.id, partStaff.partId))
-      .innerJoin(person, eq(person.id, partStaff.personId))
-      .orderBy(part.position, partStaff.role, person.id),
-  ),
-});
+const stored = Effect.all(
+  {
+    people: Effect.promise(() =>
+      catalogDb.select({ name: person.name }).from(person).orderBy(person.id),
+    ),
+    aliases: Effect.promise(() =>
+      catalogDb
+        .select({ name: person.name, alias: personAlias.alias })
+        .from(personAlias)
+        .innerJoin(person, eq(person.id, personAlias.personId))
+        .orderBy(person.id, personAlias.alias),
+    ),
+    credits: Effect.promise(() =>
+      catalogDb
+        .select({ position: part.position, role: partStaff.role, name: person.name })
+        .from(partStaff)
+        .innerJoin(part, eq(part.id, partStaff.partId))
+        .innerJoin(person, eq(person.id, partStaff.personId))
+        .orderBy(part.position, partStaff.role, person.id),
+    ),
+  },
+  { concurrency: 1 },
+);
 
 const SEEDED = {
   people: [{ name: SOURCE_NAME }, { name: TARGET_NAME }],

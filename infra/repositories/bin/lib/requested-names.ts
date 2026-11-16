@@ -26,7 +26,7 @@ const installedNamesIn = Effect.fn("installedNamesIn")(function* installedNamesI
   variable: string,
 ) {
   const names = yield* namesIn(variable);
-  yield* Effect.forEach(names, mask, { discard: true });
+  yield* Effect.forEach(names, mask, { concurrency: 1, discard: true });
   const repositories = yield* installedRepositories;
   const installed = pipe(
     repositories,

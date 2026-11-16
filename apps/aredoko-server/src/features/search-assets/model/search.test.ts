@@ -110,23 +110,21 @@ const addAsset = Effect.fn("addAsset")(function* addAsset({
     sql`insert into assets(package_id, guid, pathname, kind, text)
       values (${packageId}, ${pathname}, ${pathname}, ${kind}, ${text}) returning id`,
   );
-  yield* pipe(
+  yield* Effect.forEach(
     Option.toArray(textNearness),
-    Effect.forEach(
-      (nearness) =>
-        sql`insert into text_vectors(rowid, embedding)
+    (nearness) =>
+      sql`insert into text_vectors(rowid, embedding)
           values (cast(${id} as integer), ${vectorBytes(vectorOf(nearness))})`,
-    ),
+    { concurrency: 1 },
   );
-  yield* pipe(
-    Option.toArray(imageNearness),
-    Effect.forEach((nearness) => addImageVector(id, nearness)),
-  );
+  yield* Effect.forEach(Option.toArray(imageNearness), (nearness) => addImageVector(id, nearness), {
+    concurrency: 1,
+  });
 });
 
 const addAssets = Effect.fn("addAssets")(function* addAssets(assets: readonly Asset[]) {
   const sql = yield* SqlClient.SqlClient;
-  yield* sql.withTransaction(pipe(assets, Effect.forEach(addAsset)));
+  yield* sql.withTransaction(Effect.forEach(assets, addAsset, { concurrency: 1 }));
 });
 
 const pathnamesOf = (results: readonly { readonly pathname: string }[]): readonly string[] =>
@@ -220,9 +218,10 @@ const mixedAsset =
   });
 
 const seedMixed = Effect.gen(function* seedMixed() {
-  const packageIds = yield* pipe(
+  const packageIds = yield* Effect.forEach(
     Array.makeBy(PACKAGES, (index) => `Package${index.toString()}`),
-    Effect.forEach(addPackage),
+    addPackage,
+    { concurrency: 1 },
   );
   yield* addAssets(Array.makeBy(MIXED, mixedAsset(packageIds)));
 });

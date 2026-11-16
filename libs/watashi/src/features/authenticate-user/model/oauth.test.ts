@@ -76,7 +76,7 @@ const issued = (round: string): Response =>
   });
 
 const exchange = (state: Ref.Ref<AuthState>, form: Form): Effect.Effect<Response> =>
-  Effect.all([challengeOf(field(form, "code_verifier")), Ref.get(state)]).pipe(
+  Effect.all([challengeOf(field(form, "code_verifier")), Ref.get(state)], { concurrency: 1 }).pipe(
     Effect.map(([digest, current]) => {
       if (digest !== current.challenge || field(form, "code") !== "code-1") {
         return new Response("bad", { status: BAD_REQUEST });

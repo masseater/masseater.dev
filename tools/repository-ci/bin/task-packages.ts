@@ -111,9 +111,12 @@ const command = Command.make("task-packages", { task: Argument.String("task") },
       Arr.filter(({ name }) => name === task),
       Arr.map(({ package: directory }) => directory),
     );
-    const found = yield* pipe(
+    const found = yield* Effect.forEach(
       defining,
-      Effect.forEach((directory) => entriesOf({ root: workspaceRoot, tasks }, task, directory)),
+      (directory) => entriesOf({ root: workspaceRoot, tasks }, task, directory),
+      {
+        concurrency: 1,
+      },
     );
     const entries = yield* Schema.encodeEffect(Entries)(Arr.flatten(found));
     yield* writeOutputs({ packages: entries });

@@ -80,7 +80,7 @@ const checkAll = (records: readonly WriteItemValue[]): Effect.Effect<void, Store
   return Effect.forEach(
     records,
     (item, index) => check(item).pipe(locating({ index, written: [] })),
-    { discard: true },
+    { concurrency: 1, discard: true },
   );
 };
 

@@ -196,9 +196,10 @@ export const vocabularyNotices =
           onSome: kindNotices(writer, body),
         }),
       );
-      const metrics = yield* pipe(
+      const metrics = yield* Effect.forEach(
         metricKeysOf(body),
-        Effect.forEach(ensureDefined(writer, "metric_definition")),
+        ensureDefined(writer, "metric_definition"),
+        { concurrency: 1 },
       );
       return [...kinds, ...Arr.getSomes(metrics)];
     });

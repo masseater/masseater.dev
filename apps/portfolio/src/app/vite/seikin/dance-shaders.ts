@@ -154,14 +154,20 @@ const optionalText = (read: Read, path: string): Effect.Effect<Option.Option<str
   );
 
 const loadGpuEffect = (read: Read, path: string): Promise<string> => {
-  const prelude = Effect.all({
-    header: text(read, siblingOf(path, "prelude-webgpu.glsl")).pipe(Effect.map(glslHeader)),
-    body: text(read, siblingOf(path, "prelude.glsl")),
-  });
-  const computes = Effect.all({
-    body: optionalText(read, Str.replace(FRAGMENT, COMPUTE)(path)),
-    prelude: text(read, siblingOf(path, "prelude-compute.wgsl")),
-  }).pipe(
+  const prelude = Effect.all(
+    {
+      header: text(read, siblingOf(path, "prelude-webgpu.glsl")).pipe(Effect.map(glslHeader)),
+      body: text(read, siblingOf(path, "prelude.glsl")),
+    },
+    { concurrency: 1 },
+  );
+  const computes = Effect.all(
+    {
+      body: optionalText(read, Str.replace(FRAGMENT, COMPUTE)(path)),
+      prelude: text(read, siblingOf(path, "prelude-compute.wgsl")),
+    },
+    { concurrency: 1 },
+  ).pipe(
     Effect.map(({ body, prelude: computePrelude }) =>
       pipe(
         Option.toArray(body),
@@ -170,7 +176,7 @@ const loadGpuEffect = (read: Read, path: string): Promise<string> => {
     ),
   );
   return Effect.runPromise(
-    Effect.all({ source: text(read, path), prelude, computes }).pipe(
+    Effect.all({ source: text(read, path), prelude, computes }, { concurrency: 1 }).pipe(
       Effect.map(({ source, prelude: fragmentPrelude, computes: found }): GpuEffect => ({
         passes: gpuPassesOf({ source, prelude: fragmentPrelude }),
         computes: found,

@@ -74,7 +74,7 @@ const pageStyles = ({ fileName, html }: HtmlFile): Option.Option<Effect.Effect<P
       pipe(
         styleBodies(html),
         Arr.dedupe,
-        Effect.forEach(sourceHash),
+        (items) => Effect.forEach(items, sourceHash, { concurrency: 1 }),
         Effect.map((hashes) => ({ page, hashes })),
       ),
     ),
@@ -84,7 +84,7 @@ const bundleHeaders = (files: readonly HtmlFile[]): Effect.Effect<string> =>
   pipe(
     files,
     Arr.flatMap((file) => Option.toArray(pageStyles(file))),
-    (styles) => Effect.all(styles),
+    (styles) => Effect.all(styles, { concurrency: 1 }),
     Effect.map(headersFile),
   );
 

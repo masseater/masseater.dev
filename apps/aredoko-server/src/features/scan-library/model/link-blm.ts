@@ -137,7 +137,7 @@ const linkFromBlm = Effect.fn("linkFromBlm")(function* linkBlmPackages(
       onSome: (library) => pendingIn(library, tried),
     }),
   );
-  yield* pipe(pending, Effect.forEach(linkLogged));
+  yield* Effect.forEach(pending, linkLogged, { concurrency: 1 });
   return pipe(
     pending,
     Array.map(({ packageId }) => packageId),

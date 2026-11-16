@@ -1,5 +1,5 @@
 import type { ConversationKind } from "@masseater.dev/watashi-protocol";
-import { Array as Arr, Effect, pipe } from "effect";
+import { Array as Arr, Effect } from "effect";
 import type { FileSystem, PlatformError, Scope } from "effect";
 import type { ChildProcessSpawner } from "effect/process";
 
@@ -46,15 +46,15 @@ export const pushSession =
         source: current.source,
         remoteSession: current.remoteSession,
       };
-      return yield* pipe(
+      return yield* Effect.forEach(
         files,
-        Effect.forEach((file) =>
+        (file) =>
           pushFile({
             target: { ...target, file: file.file, path: file.path },
             detect,
             home: current.home,
           }),
-        ),
+        { concurrency: 1 },
       );
     }).pipe(Effect.scoped);
 

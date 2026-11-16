@@ -95,16 +95,18 @@ const filesOf = (source: Source, category: Card["category"]): Effect.Effect<read
 const cardsOf = (source: Source): Effect.Effect<readonly Card[]> =>
   pipe(
     categories,
-    Effect.forEach((category) => filesOf(source, category)),
+    (items) => Effect.forEach(items, (category) => filesOf(source, category), { concurrency: 1 }),
     Effect.map(Arr.flatten),
-    Effect.flatMap(Effect.forEach((file) => cardOf(source, file))),
+    Effect.flatMap((items) =>
+      Effect.forEach(items, (file) => cardOf(source, file), { concurrency: 1 }),
+    ),
     Effect.map(Arr.getSomes),
   );
 
 const fontsOf = (source: Source): Effect.Effect<readonly Font[]> =>
-  pipe(
+  Effect.forEach(
     fontFiles,
-    Effect.forEach(({ name, weight, url }) =>
+    ({ name, weight, url }) =>
       Effect.promise(() => source.readFile(decodeURIComponent(new URL(url).pathname))).pipe(
         Effect.map((bytes) => ({
           name,
@@ -113,7 +115,7 @@ const fontsOf = (source: Source): Effect.Effect<readonly Font[]> =>
           style: "normal" as const,
         })),
       ),
-    ),
+    { concurrency: 1 },
   );
 
 const avatarOf = (source: Source): Effect.Effect<string> =>
@@ -126,7 +128,10 @@ type Png = Readonly<{ fileName: string; png: Uint8Array }>;
 const toFileName = Str.replace(LEADING_SLASH, "");
 
 const renderCards = (source: Source): Effect.Effect<readonly Png[]> =>
-  Effect.all({ cards: cardsOf(source), avatar: avatarOf(source), fonts: fontsOf(source) }).pipe(
+  Effect.all(
+    { cards: cardsOf(source), avatar: avatarOf(source), fonts: fontsOf(source) },
+    { concurrency: 1 },
+  ).pipe(
     Effect.flatMap(({ cards, avatar, fonts }) =>
       pipe(
         cards,
@@ -135,15 +140,19 @@ const renderCards = (source: Source): Effect.Effect<readonly Png[]> =>
           fileName: toFileName(entryOgImagePath(card)),
         })),
         Arr.prepend({ element: siteElement(avatar), fileName: toFileName(site.ogImage.path) }),
-        Effect.forEach(({ element, fileName }) =>
-          Effect.promise(() =>
-            satori(element, {
-              width: site.ogImage.width,
-              height: site.ogImage.height,
-              fonts: [...fonts],
-            }),
-          ).pipe(Effect.map((svg) => ({ fileName, png: new Resvg(svg).render().asPng() }))),
-        ),
+        (items) =>
+          Effect.forEach(
+            items,
+            ({ element, fileName }) =>
+              Effect.promise(() =>
+                satori(element, {
+                  width: site.ogImage.width,
+                  height: site.ogImage.height,
+                  fonts: [...fonts],
+                }),
+              ).pipe(Effect.map((svg) => ({ fileName, png: new Resvg(svg).render().asPng() }))),
+            { concurrency: 1 },
+          ),
       ),
     ),
   );

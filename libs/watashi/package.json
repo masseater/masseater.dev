@@ -5,6 +5,7 @@
   "keywords": [
     "betterleaks",
     "claude-code",
+    "tanstack-intent",
     "watashi"
   ],
   "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/watashi#readme",
@@ -21,9 +22,10 @@
     "watashi": "./dist/main.mjs"
   },
   "files": [
-    "dist",
     ".claude-plugin",
-    "hooks"
+    "dist",
+    "hooks",
+    "skills/send-conversations"
   ],
   "type": "module",
   "imports": {

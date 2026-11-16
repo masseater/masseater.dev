@@ -44,14 +44,17 @@ const issueCommand = Command.make(
 const listCommand = Command.make("list", {}, () =>
   withWatashi(listTokens).pipe(
     Effect.map(({ tokens }) => tokens),
-    Effect.flatMap(
-      Effect.forEach((item) =>
-        Console.log(
-          Arr.join(
-            [item.id, item.scope, item.label, item.createdAt, item.revokedAt ?? "active"],
-            "\t",
+    Effect.flatMap((items) =>
+      Effect.forEach(
+        items,
+        (item) =>
+          Console.log(
+            Arr.join(
+              [item.id, item.scope, item.label, item.createdAt, item.revokedAt ?? "active"],
+              "\t",
+            ),
           ),
-        ),
+        { concurrency: 1 },
       ),
     ),
   ),

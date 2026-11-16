@@ -56,37 +56,53 @@ const addPart = (placed: Placed): Effect.Effect<number> =>
     Effect.map((row) => row.id),
   );
 
-const seedSongs = Effect.all({
-  unused: addSong("使われない曲"),
-  once: addSong("ん 一度だけの曲"),
-  twiceLater: addSong("い 二本で使う曲"),
-  twiceEarlier: addSong("あ 二本で使う曲"),
-});
+const seedSongs = Effect.all(
+  {
+    unused: addSong("使われない曲"),
+    once: addSong("ん 一度だけの曲"),
+    twiceLater: addSong("い 二本で使う曲"),
+    twiceEarlier: addSong("あ 二本で使う曲"),
+  },
+  { concurrency: 1 },
+);
 
-const seedVideos = Effect.all({
-  empty: addVideo("パートの無い動画"),
-  short: addVideo("短いメドレー"),
-  longLater: addVideo("ん 長いメドレー"),
-  longEarlier: addVideo("あ 長いメドレー"),
-});
+const seedVideos = Effect.all(
+  {
+    empty: addVideo("パートの無い動画"),
+    short: addVideo("短いメドレー"),
+    longLater: addVideo("ん 長いメドレー"),
+    longEarlier: addVideo("あ 長いメドレー"),
+  },
+  { concurrency: 1 },
+);
 
-const seedPeople = Effect.all({
-  idle: addPerson("担当の無い人"),
-  single: addPerson("一つだけの人"),
-  doubleLater: addPerson("b 二つの人"),
-  doubleEarlier: addPerson("a 二つの人"),
-});
+const seedPeople = Effect.all(
+  {
+    idle: addPerson("担当の無い人"),
+    single: addPerson("一つだけの人"),
+    doubleLater: addPerson("b 二つの人"),
+    doubleEarlier: addPerson("a 二つの人"),
+  },
+  { concurrency: 1 },
+);
 
 const seedParts = (songs: Songs, videos: Videos): Effect.Effect<Parts> =>
-  Effect.all({
-    opening: addPart({ videoId: videos.longLater, position: FIRST, songId: songs.twiceLater }),
-    middle: addPart({ videoId: videos.longLater, position: SECOND, songId: songs.twiceLater }),
-    ending: addPart({ videoId: videos.longLater, position: THIRD, songId: songs.twiceEarlier }),
-    intro: addPart({ videoId: videos.longEarlier, position: FIRST, songId: songs.twiceEarlier }),
-    bridge: addPart({ videoId: videos.longEarlier, position: SECOND, songId: songs.twiceLater }),
-    reprise: addPart({ videoId: videos.longEarlier, position: THIRD, songId: songs.twiceEarlier }),
-    solo: addPart({ videoId: videos.short, position: FIRST, songId: songs.once }),
-  });
+  Effect.all(
+    {
+      opening: addPart({ videoId: videos.longLater, position: FIRST, songId: songs.twiceLater }),
+      middle: addPart({ videoId: videos.longLater, position: SECOND, songId: songs.twiceLater }),
+      ending: addPart({ videoId: videos.longLater, position: THIRD, songId: songs.twiceEarlier }),
+      intro: addPart({ videoId: videos.longEarlier, position: FIRST, songId: songs.twiceEarlier }),
+      bridge: addPart({ videoId: videos.longEarlier, position: SECOND, songId: songs.twiceLater }),
+      reprise: addPart({
+        videoId: videos.longEarlier,
+        position: THIRD,
+        songId: songs.twiceEarlier,
+      }),
+      solo: addPart({ videoId: videos.short, position: FIRST, songId: songs.once }),
+    },
+    { concurrency: 1 },
+  );
 
 const seedStaff = (parts: Parts, people: People): Effect.Effect<unknown> =>
   Effect.promise(() =>

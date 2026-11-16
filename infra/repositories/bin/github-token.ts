@@ -25,7 +25,7 @@ const maskPrivateNames = Effect.fn("maskPrivateNames")(function* maskPrivateName
     repositories,
     Arr.filter((repository) => repository.private && !repository.archived),
   );
-  yield* Effect.forEach(hidden, ({ name }) => mask(name), { discard: true });
+  yield* Effect.forEach(hidden, ({ name }) => mask(name), { concurrency: 1, discard: true });
 });
 
 const brokerGitHubToken = Effect.gen(function* brokerGitHubToken() {

@@ -114,7 +114,7 @@ const fetchNames = (
         Arr.filter(({ name }) => Arr.contains(selected, name)),
       ),
       extractMissing(entries, directory),
-      { discard: true },
+      { concurrency: 1, discard: true },
     );
     yield* writeIndex(directory)(available);
     return selected;

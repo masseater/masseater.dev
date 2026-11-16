@@ -109,11 +109,14 @@ const decodeGrants = (
     Readonly<{ profiles: typeof Profiles.Type; workflows: typeof WorkflowGrants.Type }>,
   Schema.SchemaError
 > =>
-  Effect.all({
-    grants: Schema.decodeEffect(Grants)(env.GRANTS),
-    profiles: Schema.decodeEffect(Profiles)(env.GRANT_PROFILES),
-    workflows: Schema.decodeEffect(WorkflowGrants)(env.WORKFLOW_GRANTS),
-  }).pipe(Effect.map(({ grants, profiles, workflows }) => ({ ...grants, profiles, workflows })));
+  Effect.all(
+    {
+      grants: Schema.decodeEffect(Grants)(env.GRANTS),
+      profiles: Schema.decodeEffect(Profiles)(env.GRANT_PROFILES),
+      workflows: Schema.decodeEffect(WorkflowGrants)(env.WORKFLOW_GRANTS),
+    },
+    { concurrency: 1 },
+  ).pipe(Effect.map(({ grants, profiles, workflows }) => ({ ...grants, profiles, workflows })));
 
 const issueCloudflareToken = (
   env: CredentialBrokerEnv,

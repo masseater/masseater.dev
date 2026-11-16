@@ -247,7 +247,7 @@ it.effect("1 回の D1 の文に入りきらない数の根拠を持つ特性も
   Effect.gen(function* savesManyEvidence() {
     yield* learned;
     yield* settle;
-    yield* Effect.forEach(Arr.range(ONCE, MANY_SOURCES), lintMemo);
+    yield* Effect.forEach(Arr.range(ONCE, MANY_SOURCES), lintMemo, { concurrency: 1 });
     yield* drain(supportsFromAll);
     const detail = yield* traitDetail("owner_trait:2");
     expect(detail).toMatchObject({ supports: SUPPORTED });

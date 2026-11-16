@@ -32,12 +32,17 @@ const writeFiles = (
     const path = yield* Path.Path;
     yield* pipe(
       Rec.toEntries(files),
-      Effect.forEach(([file, source]) => {
-        const target = path.join(root, file);
-        return fs
-          .makeDirectory(path.dirname(target), { recursive: true })
-          .pipe(Effect.andThen(fs.writeFileString(target, source)));
-      }),
+      (items) =>
+        Effect.forEach(
+          items,
+          ([file, source]) => {
+            const target = path.join(root, file);
+            return fs
+              .makeDirectory(path.dirname(target), { recursive: true })
+              .pipe(Effect.andThen(fs.writeFileString(target, source)));
+          },
+          { concurrency: 1 },
+        ),
       Effect.orDie,
     );
   });

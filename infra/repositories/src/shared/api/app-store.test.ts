@@ -95,6 +95,7 @@ test("入れ替えは、読んだときの値のままの行と、まだ無い�
           { expected: Option.some("first"), value: "second" },
         ],
         (change) => swapRow({ ...row, ...change }),
+        { concurrency: 1 },
       );
       const read = yield* readRow(row);
       expect(swapped).toStrictEqual([true, false, false, true]);

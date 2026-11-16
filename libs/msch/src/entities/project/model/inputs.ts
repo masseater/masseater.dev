@@ -42,9 +42,12 @@ const dependenciesOf = Effect.fn("dependenciesOf")(function* dependenciesOf(dire
     onNone: (): readonly string[] => [],
     onSome: workspaceDependencies,
   });
-  return yield* pipe(
+  return yield* Effect.forEach(
     names,
-    Effect.forEach((name) => files.realPath(files.join(directory, NODE_MODULES, name))),
+    (name) => files.realPath(files.join(directory, NODE_MODULES, name)),
+    {
+      concurrency: 1,
+    },
   );
 });
 
@@ -103,7 +106,7 @@ const installedNames = Effect.fn("installedNames")(function* installedNames(modu
   const nested = yield* pipe(
     listed,
     Arr.filter((name) => !Str.startsWith(HIDDEN_PREFIX)(name)),
-    Effect.forEach(scopedNames(modules)),
+    (items) => Effect.forEach(items, scopedNames(modules), { concurrency: 1 }),
   );
   return Arr.flatten(nested);
 });
@@ -115,13 +118,13 @@ const installedPackages = Effect.fn("installedPackages")(function* installedPack
   const files = yield* RepositoryFiles;
   const modules = files.join(directory, NODE_MODULES);
   const names = yield* installedNames(modules);
-  return yield* pipe(
+  return yield* Effect.forEach(
     names,
-    Effect.forEach((name) =>
+    (name) =>
       files
         .realPath(files.join(modules, name))
         .pipe(Effect.map((found) => files.relative(root, found))),
-    ),
+    { concurrency: 1 },
   );
 });
 
@@ -129,9 +132,10 @@ const dependencyVersions = Effect.fn("dependencyVersions")(function* dependencyV
   root: string,
   directories: readonly string[],
 ) {
-  const installed = yield* pipe(
+  const installed = yield* Effect.forEach(
     Arr.dedupe([root, ...directories]),
-    Effect.forEach((directory) => installedPackages(root, directory)),
+    (directory) => installedPackages(root, directory),
+    { concurrency: 1 },
   );
   return Arr.sort(Arr.dedupe(Arr.flatten(installed)), Order.String);
 });

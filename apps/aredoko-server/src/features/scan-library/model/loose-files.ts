@@ -90,10 +90,8 @@ export const bundlesIn = Effect.fn("bundlesIn")(function* listBundles(
   names: readonly string[],
 ) {
   const path = yield* Path.Path;
-  const members = yield* pipe(
-    names,
-    Array.filter(isLoose),
-    Effect.forEach((name) => memberOf(root, name)),
+  const members = yield* pipe(names, Array.filter(isLoose), (items) =>
+    Effect.forEach(items, (name) => memberOf(root, name), { concurrency: 1 }),
   );
   return pipe(
     Array.getSomes(members),

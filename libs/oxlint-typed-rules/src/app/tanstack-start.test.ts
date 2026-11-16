@@ -48,8 +48,10 @@ const FIXTURE_DIRECTORY = new URL("../../.fixtures/", import.meta.url).pathname;
 const writeFixtures = Effect.gen(function* writeFixtures() {
   const fs = yield* FileSystem.FileSystem;
   yield* fs.makeDirectory(FIXTURE_DIRECTORY, { recursive: true });
-  yield* Effect.forEach(Record.toEntries(FIXTURES), ([name, code]) =>
-    fs.writeFileString(`${FIXTURE_DIRECTORY}${name}`, code),
+  yield* Effect.forEach(
+    Record.toEntries(FIXTURES),
+    ([name, code]) => fs.writeFileString(`${FIXTURE_DIRECTORY}${name}`, code),
+    { concurrency: 1 },
   );
 });
 

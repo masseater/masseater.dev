@@ -11,6 +11,6 @@ runMain("pod-rattle-codesign")(
   Effect.gen(function* codesign() {
     const vst3 = yield* bundlesWith(VST3);
     const clap = yield* bundlesWith(CLAP);
-    yield* Effect.forEach(Arr.appendAll(vst3, clap), sign, { discard: true });
+    yield* Effect.forEach(Arr.appendAll(vst3, clap), sign, { concurrency: 1, discard: true });
   }),
 );

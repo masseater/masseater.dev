@@ -28,7 +28,7 @@ const command = Command.make(
           const pair = [`${name}${VST3}`, `${name}${CLAP}`];
           return run({ file: "7z", args: ["a", "-tzip", zip, ...pair], cwd });
         },
-        { discard: true },
+        { concurrency: 1, discard: true },
       );
     }),
 );

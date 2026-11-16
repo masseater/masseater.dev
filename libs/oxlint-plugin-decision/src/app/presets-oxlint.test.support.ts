@@ -99,8 +99,10 @@ export const tempProject = (
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const dir = yield* fs.makeTempDirectoryScoped({ prefix: "decision-presets-" });
-    yield* Effect.forEach(Rec.toEntries(files), ([name, content]) =>
-      fs.writeFileString(path.join(dir, name), content),
+    yield* Effect.forEach(
+      Rec.toEntries(files),
+      ([name, content]) => fs.writeFileString(path.join(dir, name), content),
+      { concurrency: 1 },
     );
     return dir;
   });
@@ -131,6 +133,7 @@ export const exampleFiles: Effect.Effect<Env, PlatformError, Services> = Effect.
           Effect.flatMap(fromRoot("example-presets", name), (file) => fs.readFileString(file)),
         ),
       ),
+      { concurrency: 1 },
     );
     return Rec.fromEntries(Arr.zip(EXAMPLE_FILES, contents));
   },

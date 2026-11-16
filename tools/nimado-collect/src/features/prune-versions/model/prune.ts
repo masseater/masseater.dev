@@ -3,7 +3,7 @@ import {
   listBetaWorkerVersions,
 } from "@distilled.cloud/cloudflare/workers";
 import { DATA_WORKER, YOUTUBE_RETENTION_DAYS } from "@masseater.dev/nimado";
-import { Config, Console, DateTime, Effect, Stream, pipe } from "effect";
+import { Config, Console, DateTime, Effect, Stream } from "effect";
 import { Command } from "effect/cli";
 
 import { expiredVersions } from "./versions.ts";
@@ -16,11 +16,10 @@ const pruneVersions = Effect.fn("data.prune")(function* pruneOld() {
     listBetaWorkerVersions.items({ accountId, workerId: DATA_WORKER }),
   );
   const expired = expiredVersions({ versions, cutoff });
-  yield* pipe(
+  yield* Effect.forEach(
     expired,
-    Effect.forEach(({ id }) =>
-      deleteBetaWorkerVersion({ accountId, workerId: DATA_WORKER, versionId: id }),
-    ),
+    ({ id }) => deleteBetaWorkerVersion({ accountId, workerId: DATA_WORKER, versionId: id }),
+    { concurrency: 1 },
   );
   yield* Console.log(
     `${DATA_WORKER}: ${versions.length.toString()} 版のうち ${expired.length.toString()} 版を消した`,

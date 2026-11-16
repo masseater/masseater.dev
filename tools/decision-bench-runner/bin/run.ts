@@ -124,7 +124,10 @@ const runModel = Effect.fn("runModel")(function* runModel(
   const detailPath = yield* benchPath("results", `${modelSlug(model.id)}.json`);
   const openRouter = yield* makeOpenRouterAdapter(model.id, model.choiceVia);
   const adapter = yield* reusePrior(openRouter, detailPath);
-  const ran = yield* Effect.forEach(tasks, (task) => runTask(adapter, task), { discard: false });
+  const ran = yield* Effect.forEach(tasks, (task) => runTask(adapter, task), {
+    concurrency: 1,
+    discard: false,
+  });
   const results = pipe(
     ran,
     Arr.map(({ result }) => result),
@@ -177,14 +180,20 @@ const loadStats = Effect.fn("loadStats")(function* loadStats(task: (typeof TASKS
 
 runBench(
   Effect.gen(function* runAll() {
-    const tasks = yield* Effect.forEach(TASKS, (task) => loadTask(task), { discard: false });
+    const tasks = yield* Effect.forEach(TASKS, (task) => loadTask(task), {
+      concurrency: 1,
+      discard: false,
+    });
     const now = yield* DateTime.now;
     const summary: Summary = {
       generatedAt: DateTime.formatIso(now),
       models: yield* Effect.forEach(MODELS, (model) => runModel(model, tasks), {
         concurrency: "unbounded",
       }),
-      labeling: yield* Effect.forEach(TASKS, (task) => loadStats(task), { discard: false }),
+      labeling: yield* Effect.forEach(TASKS, (task) => loadStats(task), {
+        concurrency: 1,
+        discard: false,
+      }),
     };
     const summaryPath = yield* benchPath("..", "..", "libs", "bench-summary", "summary.json");
     yield* writeJson(SummarySchema, summaryPath, summary);

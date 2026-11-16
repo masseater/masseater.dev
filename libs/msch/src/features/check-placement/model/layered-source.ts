@@ -85,9 +85,8 @@ export const checkLayeredSource = Effect.fn("checkLayeredSource")(function* chec
     Arr.dedupeWith(([left], [right]) => left === right),
     Arr.map(([file, message]) => problemAt(files.join(root, file), LAYERED_RULE, message)),
   );
-  const entries = yield* pipe(
-    workspaces,
-    Effect.forEach((workspace) => entryProblems(root, workspace)),
-  );
+  const entries = yield* Effect.forEach(workspaces, (workspace) => entryProblems(root, workspace), {
+    concurrency: 1,
+  });
   return [...layered, ...Arr.flatten(entries)];
 });

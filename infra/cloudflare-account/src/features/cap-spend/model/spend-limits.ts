@@ -13,7 +13,7 @@ import type {
 } from "@distilled.cloud/cloudflare/billing";
 import { succeed } from "alchemy/Provider";
 import { Resource } from "alchemy/Resource";
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option } from "effect";
 
 const SPEND_LIMIT = "MasseaterDev.Cloudflare.SpendLimit";
 const BLOCK = "usage_block";
@@ -96,9 +96,8 @@ export const spendLimitProvider = succeed(SpendLimit, {
     ),
 });
 
-export const spendLimits = pipe(
+export const spendLimits = Effect.forEach(
   PRODUCTS,
-  Effect.forEach((product) =>
-    SpendLimit(`SpendLimit-${product}`, { product, thresholdCents: OVERAGE_CENTS }),
-  ),
+  (product) => SpendLimit(`SpendLimit-${product}`, { product, thresholdCents: OVERAGE_CENTS }),
+  { concurrency: 1 },
 );
