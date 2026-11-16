@@ -3,7 +3,7 @@ import { createDefaultModule, createDefaultSharedModule, startLanguageServer } f
 import { NodeFileSystem } from "langium/node";
 import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
 
-import { registerChecks } from "#/features/read-song/index.ts";
+import { FuModule, registerChecks } from "#/features/read-song/index.ts";
 import { FuGeneratedModule, FuGeneratedSharedModule } from "#generated/langium/module.ts";
 
 export const serveLanguage = (): void => {
@@ -12,7 +12,7 @@ export const serveLanguage = (): void => {
     createDefaultSharedModule({ connection, ...NodeFileSystem }),
     FuGeneratedSharedModule,
   );
-  const fu = inject(createDefaultModule({ shared }), FuGeneratedModule);
+  const fu = inject(createDefaultModule({ shared }), FuGeneratedModule, FuModule);
   shared.ServiceRegistry.register(fu);
   registerChecks(fu);
   startLanguageServer(shared);

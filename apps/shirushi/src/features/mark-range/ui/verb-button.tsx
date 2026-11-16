@@ -5,8 +5,7 @@ import type { ReactNode } from "react";
 
 import { verbAtom } from "#/features/mark-range/model/draft.ts";
 import { VERB_LABELS } from "#/shared/config/index.ts";
-
-import { TOGGLE } from "./toggle.ts";
+import { TOGGLE } from "#/shared/ui/index.ts";
 
 export const VerbButton = ({ verb }: Readonly<{ verb: Verb }>): ReactNode => {
   const [chosen, choose] = useAtom(verbAtom);

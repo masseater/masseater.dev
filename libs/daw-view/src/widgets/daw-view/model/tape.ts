@@ -125,7 +125,10 @@ const handle = async (data) => {
     };
     return;
   }
-  if (data.close) await close();
+  if (data.close) {
+    await close();
+    self.close();
+  }
 };
 
 let queue = Promise.resolve();

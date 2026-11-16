@@ -16,6 +16,7 @@ export interface Progress {
 export interface RenderSession {
   readonly samples: Samples;
   readonly report: (progress: Progress) => void;
+  readonly signal: AbortSignal;
 }
 
 export interface MixMessage {

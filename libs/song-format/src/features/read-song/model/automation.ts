@@ -36,12 +36,18 @@ const amountOf: From<AmountNode, Amount> = (node) => {
   );
 };
 
+export const parameterOf: From<AutomationNode, string> = (node) =>
+  pipe(
+    Option.fromNullishOr(node.field),
+    Option.match({ onNone: () => node.parameter, onSome: (field) => `${node.parameter}.${field}` }),
+  );
+
 export const automationOf =
   (where: Pick<Automation, "bar" | "start">): From<AutomationNode, Automation> =>
   (node) => ({
     ...where,
     target: node.target.$refText,
-    parameter: node.parameter,
+    parameter: parameterOf(node),
     from: amountOf(node.from),
     to: amountOf(node.to),
     bars: barsOf(node.span),

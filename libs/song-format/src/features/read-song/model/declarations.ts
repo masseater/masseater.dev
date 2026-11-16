@@ -3,7 +3,7 @@ import type { Predicate } from "effect";
 
 import type { Song, Track } from "#/entities/song/index.ts";
 import { ticksOf } from "#/shared/lib/ticks.ts";
-import { millisecondsOf, pitchOf, shareOf } from "#/shared/lib/units.ts";
+import { millisecondsOf, shareOf } from "#/shared/lib/units.ts";
 import {
   isBus,
   isDelay,
@@ -12,6 +12,7 @@ import {
   isInstrument,
   isKit,
   isMaster,
+  isPlugin,
   isRole,
   isSample,
   isTrack,
@@ -23,60 +24,37 @@ import type {
   FxChain,
   Instrument,
   Kit,
+  Plugin as PluginNode,
   Sample,
-  SingleSample,
-  Song as SongNode,
   Track as TrackNode,
   TrackSource,
-  Zone,
 } from "#generated/langium/ast.ts";
 
+import { instrumentOf } from "./instruments.ts";
 import { mixerOf } from "./mixer.ts";
 import { effectOf, playParamOf, sendOf } from "./params.ts";
+import { pluginsOf } from "./plugins.ts";
 import { problemAt, problemsOf } from "./problem.ts";
 import type { Compiled, From, Problem } from "./problem.ts";
 
 export type Declarations = Pick<
   Song,
-  "groove" | "samples" | "kits" | "instruments" | "buses" | "tracks" | "ducks" | "master"
+  | "groove"
+  | "samples"
+  | "kits"
+  | "instruments"
+  | "buses"
+  | "tracks"
+  | "ducks"
+  | "master"
+  | "plugins"
 >;
-
-const NONE = 0;
 
 const effectsOf: From<FxChain | undefined, Declarations["master"]> = (chain) =>
   pipe(
     Option.fromNullishOr(chain),
     Option.match({ onNone: () => [], onSome: (fx) => pipe(fx.effects, Arr.map(effectOf)) }),
   );
-
-const rootOf: From<Zone | SingleSample, Compiled<number>> = (node) =>
-  Option.match(pitchOf(node.root), {
-    onNone: () => ({
-      value: NONE,
-      problems: [problemAt(node)("root")(`${node.root} は音名として読めません`)],
-    }),
-    onSome: (pitch) => ({ value: pitch.midi, problems: [] }),
-  });
-
-const instrumentOf: From<Instrument, Compiled<Declarations["instruments"][number]>> = (node) => {
-  const zones: readonly (Zone | SingleSample)[] = Match.value(node.source).pipe(
-    Match.discriminatorsExhaustive("$type")({
-      MultiSample: (multi) => multi.zones,
-      SingleSample: (single) => [single],
-    }),
-  );
-  const roots = pipe(zones, Arr.map(rootOf));
-  return {
-    value: {
-      name: node.name,
-      zones: pipe(
-        Arr.zip(zones, roots),
-        Arr.map(([zone, root]) => ({ path: zone.path, root: root.value })),
-      ),
-    },
-    problems: problemsOf(roots),
-  };
-};
 
 const trackSourceOf: From<TrackSource, Track["source"]> = (source) =>
   Match.value(source).pipe(
@@ -125,9 +103,9 @@ const duckOf: From<Duck, Compiled<Declarations["ducks"][number]>> = (node) => {
   };
 };
 
-const grooveOf: From<SongNode, Compiled<Declarations["groove"]>> = (song) =>
+const grooveOf: From<readonly Declaration[], Compiled<Declarations["groove"]>> = (declarations) =>
   pipe(
-    song.declarations,
+    declarations,
     Arr.filter(isGroove),
     Arr.head,
     Option.match({
@@ -153,9 +131,9 @@ const chainsOf: From<Declaration, readonly FxChain[]> = (declaration) => {
   return [];
 };
 
-const delayProblemsOf: From<SongNode, readonly Problem[]> = (song) =>
+const delayProblemsOf: From<readonly Declaration[], readonly Problem[]> = (declarations) =>
   pipe(
-    song.declarations,
+    declarations,
     Arr.flatMap(chainsOf),
     Arr.flatMap((chain) => chain.effects),
     Arr.filter(isDelay),
@@ -169,24 +147,25 @@ const delayProblemsOf: From<SongNode, readonly Problem[]> = (song) =>
     ),
   );
 
-type Named = Sample | Kit | Instrument | Bus | TrackNode;
+export type Named = Sample | Kit | Instrument | Bus | TrackNode | PluginNode;
 
-const namespaceOf: From<Named, string> = (node) => {
+export const namespaceOf: From<Named, string> = (node) => {
   if (isBus(node) || isTrack(node)) {
     return "mixable";
   }
   return node.$type;
 };
 
-const isNamed: Predicate.Refinement<Declaration, Named> = (declaration) =>
+export const isNamed: Predicate.Refinement<Declaration, Named> = (declaration) =>
   isSample(declaration) ||
   isKit(declaration) ||
   isInstrument(declaration) ||
   isBus(declaration) ||
-  isTrack(declaration);
+  isTrack(declaration) ||
+  isPlugin(declaration);
 
-const duplicateProblemsOf: From<SongNode, readonly Problem[]> = (song) => {
-  const named = pipe(song.declarations, Arr.filter(isNamed));
+const duplicateProblemsOf: From<readonly Declaration[], readonly Problem[]> = (declarations) => {
+  const named = pipe(declarations, Arr.filter(isNamed));
   return pipe(
     named,
     Arr.filter((node, index) =>
@@ -221,50 +200,57 @@ const kitOf: From<Kit, Declarations["kits"][number]> = (kit) => ({
   ),
 });
 
-export const declarationsOf: From<SongNode, Compiled<Declarations>> = (song) => {
-  const instruments = pipe(song.declarations, Arr.filter(isInstrument), Arr.map(instrumentOf));
-  const ducks = pipe(song.declarations, Arr.filter(isDuck), Arr.map(duckOf));
-  const groove = grooveOf(song);
+const busOf: From<Bus, Declarations["buses"][number]> = (bus) => ({
+  name: bus.name,
+  mixer: mixerOf(bus),
+  fx: effectsOf(bus.fx),
+  sends: pipe(bus.sends, Arr.map(sendOf)),
+});
+
+export const declarationsOf: From<readonly Declaration[], Compiled<Declarations>> = (
+  declarations,
+) => {
+  const instruments = pipe(declarations, Arr.filter(isInstrument), Arr.map(instrumentOf));
+  const ducks = pipe(declarations, Arr.filter(isDuck), Arr.map(duckOf));
+  const groove = grooveOf(declarations);
+  const plugins = pluginsOf(declarations);
   return {
     value: {
       groove: groove.value,
       samples: pipe(
-        song.declarations,
+        declarations,
         Arr.filter(isSample),
         Arr.map((sample) => ({ name: sample.name, path: sample.path, slices: slicesOf(sample) })),
       ),
-      kits: pipe(song.declarations, Arr.filter(isKit), Arr.map(kitOf)),
+      kits: pipe(declarations, Arr.filter(isKit), Arr.map(kitOf)),
       instruments: pipe(
         instruments,
         Arr.map((instrument) => instrument.value),
       ),
       buses: pipe(
-        song.declarations,
+        declarations,
         Arr.filter(isBus),
-        Arr.map((bus) => ({
-          name: bus.name,
-          mixer: mixerOf(bus),
-          fx: effectsOf(bus.fx),
-          sends: pipe(bus.sends, Arr.map(sendOf)),
-        })),
+        Arr.map((bus) => busOf(bus)),
       ),
-      tracks: pipe(song.declarations, Arr.filter(isTrack), Arr.map(trackOf)),
+      tracks: pipe(declarations, Arr.filter(isTrack), Arr.map(trackOf)),
       ducks: pipe(
         ducks,
         Arr.map((duck) => duck.value),
       ),
       master: pipe(
-        song.declarations,
+        declarations,
         Arr.filter(isMaster),
         Arr.flatMap((master) => effectsOf(master.fx)),
       ),
+      plugins: plugins.value,
     },
     problems: [
       ...groove.problems,
       ...problemsOf(instruments),
       ...problemsOf(ducks),
-      ...delayProblemsOf(song),
-      ...duplicateProblemsOf(song),
+      ...delayProblemsOf(declarations),
+      ...duplicateProblemsOf(declarations),
+      ...plugins.problems,
     ],
   };
 };

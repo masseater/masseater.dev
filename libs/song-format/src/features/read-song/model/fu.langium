@@ -1,12 +1,33 @@
 grammar Fu
 
 entry Song:
-    'song' title=STRING
+    imports+=Import*
+    ('song' title=STRING)?
     declarations+=Declaration*
-    bars+=Bar*;
+    body+=Statement*;
+
+Import:
+    'import' '{' symbols+=ImportedSymbol (',' symbols+=ImportedSymbol)* '}' 'from' path=STRING;
+
+ImportedSymbol:
+    target=[Exportable:Name];
+
+type Exportable = Sample | Kit | Instrument | Bus | Track | Plugin | Fn | Let;
 
 Declaration:
-    Groove | Sample | Kit | Instrument | Bus | Track | Duck | Master;
+    Groove | Sample | Kit | Instrument | Bus | Track | Duck | Master | Plugin;
+
+Plugin:
+    'plugin' name=ID 'from' module=STRING '{' params+=PluginParam* '}';
+
+PluginParam:
+    name=Name ':' type=ScalarType ('=' default=Literal)?;
+
+PluginUse:
+    plugin=[Plugin:ID] arguments+=PluginArgument*;
+
+PluginArgument:
+    name=Name value=Literal;
 
 Groove:
     'groove' 'swing' grid=FRACTION amount=PERCENT;
@@ -24,7 +45,10 @@ Instrument:
     'instrument' name=Name source=InstrumentSource;
 
 InstrumentSource:
-    MultiSample | SingleSample;
+    MultiSample | SingleSample | PluginInstrument;
+
+PluginInstrument:
+    'plugin' use=PluginUse;
 
 MultiSample:
     'multisample' '{' zones+=Zone* '}';
@@ -89,7 +113,10 @@ FxChain:
     '[' effects+=Effect (',' effects+=Effect)* ']';
 
 Effect:
-    Highpass | Lowpass | Reverb | Delay | Comp | Chorus | Width | Limit | Phaser | Tremolo | Drive | Gain;
+    Highpass | Lowpass | Reverb | Delay | Comp | Chorus | Width | Limit | Phaser | Tremolo | Drive | Gain | PluginEffect;
+
+PluginEffect:
+    use=PluginUse;
 
 Reverb: 'reverb' 'ir' left=STRING right=STRING? ('predelay' predelay=MILLISECONDS)? ('mix' mix=PERCENT)?;
 Delay: 'delay' (beats=FRACTION | time=MILLISECONDS) 'feedback' feedback=PERCENT ('lowpass' lowpass=HERTZ)? ('highpass' highpass=HERTZ)? ('pingpong' pingpong=PERCENT)?;
@@ -99,6 +126,98 @@ Width: 'width' amount=PERCENT ('mono-below' monoBelow=HERTZ)?;
 Limit: 'limit' ceiling=DECIBELS ('lookahead' lookahead=MILLISECONDS)? ('release' release=MILLISECONDS)?;
 Phaser: 'phaser' rate=HERTZ 'from' low=HERTZ 'to' high=HERTZ ('feedback' feedback=PERCENT)? ('mix' mix=PERCENT)?;
 Tremolo: 'tremolo' rate=HERTZ depth=PERCENT;
+
+Statement:
+    Bar | Let | Fn | If | For | While | Repeat | Return | Assign | CallStatement;
+
+Let:
+    'let' name=Name (':' type=TypeRef)? '=' value=Expression;
+
+Fn:
+    'fn' name=Name '(' (params+=Param (',' params+=Param)*)? ')' (':' returns=TypeRef)?
+    '{' body+=Statement* '}';
+
+Param:
+    name=Name ':' type=TypeRef;
+
+If:
+    'if' condition=Expression '{' then+=Statement* '}'
+    ('else' (otherwise=If | '{' else+=Statement* '}'))?;
+
+For:
+    'for' name=Name 'in' items=Expression '{' body+=Statement* '}';
+
+While:
+    'while' condition=Expression '{' body+=Statement* '}';
+
+Repeat:
+    'repeat' count=Expression '{' body+=Statement* '}';
+
+Return:
+    {infer Return} 'return' value=Expression?;
+
+Assign:
+    target=[Binding:Name] '=' value=Expression;
+
+CallStatement:
+    callee=[Fn:Name] '(' (args+=Expression (',' args+=Expression)*)? ')';
+
+type Binding = Let | Param | For | Each;
+
+TypeRef:
+    ListType | ScalarType;
+
+ListType:
+    '[' element=TypeRef ']';
+
+ScalarType:
+    name=('number' | 'pitch' | 'duration' | 'decibels' | 'percent' | 'hertz' | 'time' | 'semitones' | 'string' | 'bool');
+
+Expression:
+    Or;
+
+Or infers Expression:
+    And ({infer Binary.left=current} operator='or' right=And)*;
+
+And infers Expression:
+    Comparison ({infer Binary.left=current} operator='and' right=Comparison)*;
+
+Comparison infers Expression:
+    Additive ({infer Binary.left=current} operator=('==' | '!=' | '<' | '<=' | '>' | '>=') right=Additive)?;
+
+Additive infers Expression:
+    Multiplicative ({infer Binary.left=current} operator=('+' | '-') right=Multiplicative)*;
+
+Multiplicative infers Expression:
+    Prefix ({infer Binary.left=current} operator=('*' | '/' | 'mod') right=Prefix)*;
+
+Prefix infers Expression:
+    {infer Unary} operator=('-' | 'not') operand=Prefix | Postfix;
+
+Postfix infers Expression:
+    Primary ({infer Index.list=current} '[' index=Expression ']')*;
+
+Primary infers Expression:
+    Literal | ListLiteral | Builtin | Call | Ref | Group;
+
+Group:
+    '(' inner=Expression ')';
+
+Literal:
+    pitch=PITCH | duration=FRACTION | decibels=DECIBELS | percent=PERCENT | hertz=HERTZ | time=MILLISECONDS
+    | semitones=SEMITONES | text=STRING | number=NUMBER | truth=('true' | 'false');
+
+ListLiteral:
+    {infer ListLiteral} '[' (items+=Expression (',' items+=Expression)*)? ']';
+
+Builtin:
+    name=('range' | 'len' | 'push' | 'floor' | 'random') '(' (args+=Expression (',' args+=Expression)*)? ')';
+
+Call:
+    callee=[Fn:Name] '(' (args+=Expression (',' args+=Expression)*)? ')';
+
+Ref:
+    target=[Binding:Name];
 
 Bar:
     {infer Bar} 'bar'
@@ -121,25 +240,30 @@ VoiceLine:
     (master?='master' | track=[Track:Name]) ':' events+=Event (',' events+=Event)*;
 
 Automation:
-    'automate' target=[Mixable:Name] '.' parameter=Name from=Amount '->' to=Amount 'over' span=BARS ('curve' curve=('linear' | 'exp'))?;
+    'automate' target=[Mixable:Name] '.' parameter=Name ('.' field=Name)? from=Amount '->' to=Amount 'over' span=BARS ('curve' curve=('linear' | 'exp'))?;
 
 Amount:
     value=(HERTZ | DECIBELS | PERCENT | MILLISECONDS | SEMITONES | NUMBER);
 
 Event:
-    Rest | Tuplet | Sounding;
+    Rest | Tuplet | Each | Sounding;
+
+Each:
+    'each' name=Name 'in' items=Expression '{' events+=Event (',' events+=Event)* '}';
 
 Rest:
-    'rest' duration=FRACTION;
+    'rest' (duration=FRACTION | '(' computedDuration=Expression ')');
 
 Tuplet:
     'tuplet' ratio=RATIO '{' events+=Event (',' events+=Event)* '}';
 
 Sounding:
-    head=Head duration=FRACTION attributes+=Attribute*;
+    head=Head (duration=FRACTION | '(' computedDuration=Expression ')') attributes+=Attribute*;
 
 Head:
-    Chord | Note | Slice | Edit | Hit;
+    Chord | Note | Slice | Edit | Hit | Computed;
+
+Computed: '(' value=Expression ')';
 
 Chord: '[' notes+=Note+ ']';
 Note: pitch=PITCH;
@@ -150,7 +274,7 @@ Hit: voice=Name;
 Attribute:
     Velocity | GateLength | Tie | Articulation | Lyric | Bend | Nudge | Fade | Every | PlayParam;
 
-Velocity: 'vel' value=NUMBER;
+Velocity: 'vel' (value=NUMBER | '(' computed=Expression ')');
 GateLength: 'gate' amount=PERCENT;
 Tie: tie?='tie';
 Articulation: kind=('staccato' | 'legato' | 'accent');
@@ -162,7 +286,7 @@ Fade: 'fade' time=MILLISECONDS;
 Every: 'every' slice=FRACTION count=COUNT?;
 
 Name returns string:
-    ID | 'melody' | 'countermelody' | 'bass' | 'harmony' | 'drums' | 'texture' | 'delay' | 'reverb' | 'chorus' | 'comp' | 'limit' | 'width' | 'phaser' | 'tremolo' | 'drive' | 'gain' | 'pan' | 'sample' | 'release' | 'attack' | 'decay' | 'offset' | 'length' | 'mix' | 'base' | 'from' | 'to' | 'q' | 'ir' | 'predelay' | 'feedback' | 'pingpong' | 'lookahead' | 'makeup' | 'semi' | 'highpass' | 'lowpass' | 'slice' | 'slices' | 'onsets' | 'root' | 'hold' | 'depth' | 'by' | 'over' | 'curve' | 'linear' | 'exp' | 'every' | 'fade' | 'nudge' | 'bend' | 'lyric' | 'gate' | 'vel' | 'tie' | 'staccato' | 'legato' | 'accent' | 'reverse' | 'audio' | 'kit' | 'instrument' | 'track' | 'bus' | 'duck' | 'groove' | 'swing' | 'multisample' | 'song' | 'bar' | 'meter' | 'tempo' | 'section' | 'mark' | 'automate' | 'fx' | 'send' | 'role' | 'mono-below' | 'volume';
+    ID | 'melody' | 'countermelody' | 'bass' | 'harmony' | 'drums' | 'texture' | 'delay' | 'reverb' | 'chorus' | 'comp' | 'limit' | 'width' | 'phaser' | 'tremolo' | 'drive' | 'gain' | 'pan' | 'sample' | 'release' | 'attack' | 'decay' | 'offset' | 'length' | 'mix' | 'base' | 'from' | 'to' | 'q' | 'ir' | 'predelay' | 'feedback' | 'pingpong' | 'lookahead' | 'makeup' | 'semi' | 'highpass' | 'lowpass' | 'slice' | 'slices' | 'onsets' | 'root' | 'hold' | 'depth' | 'by' | 'over' | 'curve' | 'linear' | 'exp' | 'every' | 'fade' | 'nudge' | 'bend' | 'lyric' | 'gate' | 'vel' | 'tie' | 'staccato' | 'legato' | 'accent' | 'reverse' | 'audio' | 'kit' | 'instrument' | 'track' | 'bus' | 'duck' | 'groove' | 'swing' | 'multisample' | 'song' | 'bar' | 'meter' | 'tempo' | 'section' | 'mark' | 'automate' | 'fx' | 'send' | 'role' | 'mono-below' | 'volume' | 'plugin' | 'number' | 'pitch' | 'duration' | 'decibels' | 'percent' | 'hertz' | 'time' | 'semitones' | 'string' | 'bool';
 
 hidden terminal WS: /\s+/;
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;

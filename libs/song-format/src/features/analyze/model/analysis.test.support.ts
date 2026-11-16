@@ -61,6 +61,7 @@ export const songOf = (specs: readonly BarSpec[]): Song => {
     samples: [],
     kits: [],
     instruments: [],
+    plugins: [],
     buses: [],
     tracks: pipe(
       [

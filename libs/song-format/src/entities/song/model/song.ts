@@ -2,6 +2,7 @@ import { Schema } from "effect";
 
 import { EditSchema, HitSchema, NoteSchema, SliceSchema } from "./events.ts";
 import { Name, Share, Ticks, kind } from "./fields.ts";
+import { PluginSchema, PluginUseSchema } from "./plugin.ts";
 import { EffectSchema, PlayParamSchema, SendSchema } from "./sound.ts";
 
 const RoleSchema = Schema.Literals([
@@ -33,7 +34,12 @@ const KitSchema = Schema.Struct({ name: Name, voices: Schema.Array(KitVoiceSchem
 
 const ZoneSchema = Schema.Struct({ path: Schema.String, root: Schema.Int });
 
-const InstrumentSchema = Schema.Struct({ name: Name, zones: Schema.Array(ZoneSchema) });
+const SamplesSchema = kind("samples")({ zones: Schema.Array(ZoneSchema) });
+
+const InstrumentSchema = Schema.Struct({
+  name: Name,
+  source: Schema.Union([SamplesSchema, PluginUseSchema]),
+});
 
 const TrackSourceSchema = Schema.Union([
   kind("kit")({ kit: Name }),
@@ -136,6 +142,7 @@ export const SongSchema = Schema.Struct({
   instruments: Schema.Array(InstrumentSchema),
   buses: Schema.Array(BusSchema),
   tracks: Schema.Array(TrackSchema),
+  plugins: Schema.Array(PluginSchema),
   ducks: Schema.Array(DuckSchema),
   master: Schema.Array(EffectSchema),
   bars: Schema.Array(BarSchema),

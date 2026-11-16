@@ -1,4 +1,4 @@
-import { Effect, ManagedRuntime } from "effect";
+import { Effect, Fiber, ManagedRuntime } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientResponse } from "effect/http";
 
 import type { Song } from "#/widgets/daw-view/model/contract.ts";
@@ -10,6 +10,8 @@ import { shellOf } from "./shell.ts";
 import type { Shell } from "./shell.ts";
 import { painterOf } from "./stage.ts";
 
+const SCOPE = "daw-song";
+
 const runtime = ManagedRuntime.make(FetchHttpClient.layer);
 
 const fetched = Effect.fn("song.fetched")(function* fetched(url: string) {
@@ -20,9 +22,12 @@ const fetched = Effect.fn("song.fetched")(function* fetched(url: string) {
 
 export const mountSong =
   (root: HTMLElement) =>
-  (song: Song): void => {
+  (song: Song): (() => void) => {
+    const aborted = new AbortController();
+    root.classList.add(SCOPE);
     const shell: Shell = shellOf(root)({
       song,
+      signal: aborted.signal,
       onLost: () => {
         unmix(shell);
       },
@@ -31,5 +36,13 @@ export const mountSong =
     firstLayout(shell);
     rebuildChrome(shell);
     shell.loop.start(painterOf(shell));
-    runtime.runFork(produce({ shell, song, fetched }));
+    const production = runtime.runFork(produce({ shell, song, fetched }));
+    return () => {
+      aborted.abort();
+      shell.loop.stop();
+      shell.transport.close();
+      runtime.runFork(Fiber.interrupt(production));
+      root.replaceChildren();
+      root.classList.remove(SCOPE);
+    };
   };

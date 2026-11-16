@@ -183,7 +183,7 @@ export interface Fixture {
   readonly heard: () => Samples;
 }
 
-const SONG = {
+export const SONG = {
   ...TIMING,
   title: "test tone",
   facts: ["fixture", "120 BPM", "C minor"],
