@@ -9,6 +9,7 @@
           "effect/http/FetchHttpClient#layer",
           "effect/http/HttpBody#HttpBodyError",
           "effect/http/HttpClient#HttpClient",
+          "effect/http/HttpClient#timeout",
           "effect/http/HttpClient#withScope",
           "effect/http/HttpClientError#HttpClientError",
           "effect/http/HttpClientRequest#HttpClientRequest",

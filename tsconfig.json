@@ -43,6 +43,7 @@
           "effect/cli",
           "effect/crypto",
           "effect/encoding/Csv",
+          "effect/encoding/Tar",
           "effect/http",
           "effect/net",
           "effect/observability",

@@ -55,6 +55,7 @@
       },
       "libs/vite-plus-adopt": {
         "ignoreDependencies": [
+          "@andrewbranch/untar.js",
           "@feature-sliced/filesystem",
           "@loaderkit/resolve",
           "cjs-module-lexer",

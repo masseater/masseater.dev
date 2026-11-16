@@ -1,10 +1,11 @@
 import { NodeServices } from "@effect/platform-node";
 import { expect, layer } from "@effect/vitest";
-import { Array, Effect, FileSystem, Option, Path, pipe } from "effect";
-import { packTar } from "modern-tar";
+import { Array, Effect, FileSystem, Option, Path, Stream, pipe } from "effect";
+import { Tar } from "effect/encoding";
 
 import { readPackage } from "./read-package.ts";
 import type { PackageEntry } from "./read-package.ts";
+import { writeTar } from "./tar-stream.ts";
 
 const encoder = new TextEncoder();
 
@@ -16,24 +17,15 @@ interface FixtureAsset {
   readonly preview: Option.Option<Uint8Array>;
 }
 
-interface FixtureFile {
-  readonly header: { readonly name: string; readonly size: number; readonly type: "file" };
-  readonly body: Uint8Array;
-}
-
-const file =
-  (name: string) =>
-  (body: Uint8Array): FixtureFile => ({
-    header: { name, size: body.byteLength, type: "file" },
-    body,
-  });
-
 const fileIn =
   (guid: string) =>
-  ([name, body]: readonly [string, Option.Option<Uint8Array>]): Option.Option<FixtureFile> =>
-    pipe(body, Option.map(file(`${guid}/${name}`)));
+  ([name, body]: readonly [string, Option.Option<Uint8Array>]): Option.Option<Tar.Entry> =>
+    pipe(
+      body,
+      Option.map((content) => Tar.file(`${guid}/${name}`, content)),
+    );
 
-const filesOf = ({ guid, pathname, asset, meta, preview }: FixtureAsset): readonly FixtureFile[] =>
+const filesOf = ({ guid, pathname, asset, meta, preview }: FixtureAsset): readonly Tar.Entry[] =>
   pipe(
     [
       ["pathname", Option.some(encoder.encode(pathname))],
@@ -51,22 +43,6 @@ const filesOf = ({ guid, pathname, asset, meta, preview }: FixtureAsset): readon
     Array.getSomes,
   );
 
-const gzip = (bytes: Uint8Array): Promise<Uint8Array> =>
-  new Response(
-    new Blob([Uint8Array.from(bytes)]).stream().pipeThrough(new CompressionStream("gzip")),
-  ).bytes();
-
-const writeFixture = Effect.fn("writeFixture")(function* writeFixturePackage(
-  path: string,
-  assets: readonly FixtureAsset[],
-) {
-  const fileSystem = yield* FileSystem.FileSystem;
-  const files = pipe(assets, Array.flatMap(filesOf));
-  const tar = yield* Effect.promise(() => packTar(files));
-  const archive = yield* Effect.promise(() => gzip(tar));
-  yield* fileSystem.writeFile(path, archive);
-});
-
 const TEXTURE = "0123456789abcdef0123456789abcdef";
 const MATERIAL = "fedcba9876543210fedcba9876543210";
 const PREVIEW = encoder.encode("png");
@@ -82,7 +58,8 @@ const readFixture = Effect.fn("readFixture")(function* readFixturePackage(
   const path = yield* Path.Path;
   const directory = yield* fileSystem.makeTempDirectoryScoped();
   const archive = path.join(directory, "fixture.unitypackage");
-  yield* writeFixture(archive, assets);
+  const entries = pipe(assets, Array.flatMap(filesOf));
+  yield* writeTar(archive, Stream.fromIterable(entries));
   return yield* readPackage(archive);
 });
 
