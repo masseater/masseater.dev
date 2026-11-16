@@ -1,6 +1,6 @@
 import { createRegistry, defineExtension, defineTool, section } from "@earendil-works/pi-durable";
 import type { Extension, Registry } from "@earendil-works/pi-durable";
-import { Array as Arr, Number as Num, Option, Schema, pipe } from "effect";
+import { Array as Arr, Number as Num, Option, Result, Schema, pipe } from "effect";
 
 import { AnalysisResult } from "#/entities/trait/index.ts";
 import type { AnalysisResultValue } from "#/entities/trait/index.ts";
@@ -109,3 +109,62 @@ export const readTranscript = (entries: readonly unknown[]): Transcript => {
     outputTokens: tokensOf(turns, "output"),
   };
 };
+
+const Part = Schema.Struct({ type: Schema.String, name: Schema.optional(Schema.String) });
+
+const Said = Schema.Struct({
+  role: Schema.Literal("assistant"),
+  stopReason: Schema.optional(Schema.String),
+  errorMessage: Schema.optional(Schema.String),
+  content: Schema.Array(Schema.Unknown),
+});
+
+const decodePart = Schema.decodeUnknownOption(Part);
+
+const decodeSaid = Schema.decodeUnknownOption(Said);
+
+const checkCall = Schema.decodeUnknownResult(RecordCall);
+
+const labelOf = (part: unknown): string =>
+  pipe(
+    decodePart(part),
+    Option.map((decoded) =>
+      pipe(
+        Option.fromUndefinedOr(decoded.name),
+        Option.match({ onNone: () => decoded.type, onSome: (name) => `${decoded.type}:${name}` }),
+      ),
+    ),
+    Option.getOrElse(() => "unknown"),
+  );
+
+const rejectionOf = (part: unknown): Option.Option<string> =>
+  pipe(
+    decodePart(part),
+    Option.filter((decoded) => decoded.name === RECORD_TOOL),
+    Option.flatMap(() => Result.getFailure(checkCall(part))),
+    Option.map((error) => error.message),
+  );
+
+const describe = (said: typeof Said.Type): string =>
+  Arr.join(
+    [
+      `stop=${Option.getOrElse(Option.fromUndefinedOr(said.stopReason), () => "none")}`,
+      `parts=${pipe(said.content, Arr.map(labelOf), Arr.join(","))}`,
+      ...Option.toArray(Option.fromUndefinedOr(said.errorMessage)),
+      ...pipe(said.content, Arr.map(rejectionOf), Arr.getSomes),
+    ],
+    " ",
+  );
+
+export const lastSaid = (entries: readonly unknown[]): string =>
+  pipe(
+    entries,
+    Arr.flatMap(messagesOf),
+    Arr.map((message) => decodeSaid(message)),
+    Arr.getSomes,
+    Arr.last,
+    Option.match({
+      onNone: () => `no assistant message in ${String(entries.length)} entries`,
+      onSome: describe,
+    }),
+  );
