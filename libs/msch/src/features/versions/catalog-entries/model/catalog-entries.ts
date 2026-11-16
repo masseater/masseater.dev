@@ -1,11 +1,8 @@
-import { readWantedLockfile } from "@pnpm/lockfile.fs";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 
-import { workspaceManifest } from "#/entities/workspace/index.ts";
+import { lockedPackages, workspaceManifest } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
-
-import { LockfileUnreadable } from "./lockfile-unreadable.ts";
 
 const WORKSPACE_FILE = "pnpm-workspace.yaml";
 const MANIFEST = /(?:^|\/)package\.json$/u;
@@ -121,19 +118,7 @@ const resolvedIn =
     );
 
 const lockedKeys = (root: string): Effect.Effect<Option.Option<readonly string[]>> =>
-  Effect.tryPromise({
-    try: () => readWantedLockfile(root, { ignoreIncompatible: false }),
-    catch: (cause) => LockfileUnreadable.make({ root, reason: String(cause) }),
-  }).pipe(
-    Effect.map((lockfile) =>
-      pipe(
-        Option.fromNullishOr(lockfile),
-        Option.flatMap(({ packages }) => Option.fromUndefinedOr(packages)),
-        Option.map(Rec.keys),
-      ),
-    ),
-    Effect.orElseSucceed(() => Option.none()),
-  );
+  lockedPackages(root).pipe(Effect.orElseSucceed(() => Option.none()));
 
 const usedReferences = Effect.fn("usedReferences")(function* usedReferences(
   root: string,

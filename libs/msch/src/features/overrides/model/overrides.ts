@@ -1,4 +1,3 @@
-import { readWantedLockfile } from "@pnpm/lockfile.fs";
 import { updateWorkspaceManifest } from "@pnpm/workspace.workspace-manifest-writer";
 import {
   Array as Arr,
@@ -6,7 +5,6 @@ import {
   FileSystem,
   Option,
   Path,
-  Record as Rec,
   Schema,
   Stream,
   String as Str,
@@ -16,7 +14,7 @@ import type { PlatformError } from "effect";
 import { ChildProcess } from "effect/process";
 import type { ChildProcessSpawner } from "effect/process";
 
-import { workspaceManifest } from "#/entities/workspace/index.ts";
+import { lockedPackages, workspaceManifest } from "#/entities/workspace/index.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
 
 import { overrideProblem } from "./override-findings.ts";
@@ -116,18 +114,11 @@ const depPathsIn = (
   directory: string,
   override: string,
 ): Effect.Effect<readonly string[], OverrideResolutionFailed> =>
-  Effect.tryPromise({
-    try: () => readWantedLockfile(directory, { ignoreIncompatible: false }),
-    catch: (cause) => OverrideResolutionFailed.make({ override, output: String(cause) }),
-  }).pipe(
-    Effect.map((lockfile) =>
-      pipe(
-        Option.fromNullishOr(lockfile),
-        Option.flatMap(({ packages }) => Option.fromUndefinedOr(packages)),
-        Option.map(Rec.keys),
-        Option.getOrElse((): readonly string[] => []),
-      ),
-    ),
+  lockedPackages(directory).pipe(
+    Effect.mapBoth({
+      onSuccess: Option.getOrElse((): readonly string[] => []),
+      onFailure: ({ reason }) => OverrideResolutionFailed.make({ override, output: reason }),
+    }),
   );
 
 const resolutionWith = Effect.fn("resolutionWith")(function* resolutionWith(
