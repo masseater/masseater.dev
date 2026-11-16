@@ -4,7 +4,7 @@ import { Array as Arr, Effect, Option, Order, String as Str, pipe } from "effect
 import { SELF, factStateOf, itemOf, todayJst } from "#/entities/life-record";
 import type { Body, Entry } from "#/entities/life-record";
 import { scanAll } from "#/entities/life-record/index.server";
-import { idOf, isActive, supportsOf } from "#/entities/trait";
+import { GLOBAL, idOf, isActive, supportsOf } from "#/entities/trait";
 import type { TraitState } from "#/entities/trait";
 import { loadTraits } from "#/entities/trait/index.server";
 import { memory, NOT_RETRACTED } from "#/shared/db";
@@ -33,7 +33,7 @@ const traitInput = (trait: TraitState): Option.Option<Body> => {
   return Option.map(idOf(trait), (ref) => ({
     ref,
     kind: trait.kind,
-    scope: trait.scope,
+    limited: trait.scope !== GLOBAL,
     statement: trait.statement,
     supports,
     contradicts: trait.evidence.length - supports,
@@ -54,7 +54,6 @@ const ownerFacts = (today: string): Effect.Effect<readonly Body[], StorageFailed
 const recentMemos: Effect.Effect<readonly Body[], StorageFailed> = query(() =>
   db
     .select({
-      project: memory.project,
       name: memory.name,
       description: memory.description,
       updatedAt: memory.updatedAt,

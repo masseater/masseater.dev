@@ -5,6 +5,8 @@ import type { ReactNode } from "react";
 
 const route = getRouteApi("/profile");
 
+const EXACT = { exact: true } as const;
+
 const TEXT = { english: "English", japanese: "日本語", label: "言語" } as const;
 
 const TAB =
@@ -19,6 +21,7 @@ export const LangTabs = (): ReactNode => {
   return (
     <nav aria-label={TEXT.label} className="flex gap-6">
       <Link
+        activeOptions={EXACT}
         aria-current={search.lang !== "ja" && "page"}
         className={TAB}
         search={english}
@@ -27,6 +30,7 @@ export const LangTabs = (): ReactNode => {
         {TEXT.english}
       </Link>
       <Link
+        activeOptions={EXACT}
         aria-current={search.lang === "ja" && "page"}
         className={TAB}
         search={japanese}
