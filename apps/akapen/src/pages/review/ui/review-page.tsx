@@ -1,7 +1,7 @@
 import { CopyMcpCommand, OpenBar } from "@masseater.dev/media-notes-ui";
 import type { ReactNode } from "react";
 
-import { useFollowing } from "#/entities/comment";
+import { useFollowing } from "#/entities/comment/index.ts";
 
 import { ReviewBody } from "./review-body.tsx";
 

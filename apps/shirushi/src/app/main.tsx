@@ -3,7 +3,7 @@ import { followColorScheme } from "@masseater.dev/ui/color-scheme";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { MarkingPage } from "#/pages/marking";
+import { MarkingPage } from "#/pages/marking/index.ts";
 
 followColorScheme();
 

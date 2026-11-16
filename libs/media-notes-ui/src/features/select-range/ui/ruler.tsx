@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { clock } from "#src/shared/lib/clock.ts";
+import { clock } from "#/shared/lib/clock.ts";
 
 const WHOLE = 100;
 const SHORT_SONG = 600;

@@ -4,7 +4,7 @@ import { FolderOpen } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { chooseFileAtom } from "#src/features/open-media/model/open.ts";
+import { chooseFileAtom } from "#/features/open-media/model/open.ts";
 
 const CHOOSE = "ファイルを開く";
 

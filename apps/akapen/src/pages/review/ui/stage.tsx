@@ -5,7 +5,7 @@ import type { Span } from "@masseater.dev/media-notes-ui";
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useComments } from "#/entities/comment";
+import { useComments } from "#/entities/comment/index.ts";
 
 const spanOf = (comment: Comment): Span => ({
   key: comment.id,

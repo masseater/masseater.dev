@@ -1,7 +1,7 @@
 import { RangeReadout, useSubmit } from "@masseater.dev/media-notes-ui";
 import type { ReactNode } from "react";
 
-import { saveAtom } from "#/features/mark-range/model/save";
+import { saveAtom } from "#/features/mark-range/model/save.ts";
 
 import { AspectChips } from "./aspect-chips.tsx";
 import { FormActions } from "./form-actions.tsx";

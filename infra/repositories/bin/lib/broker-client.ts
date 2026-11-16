@@ -1,7 +1,7 @@
 import { Config, Effect, Option, Redacted, Schedule, Schema } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
-import { CREDENTIAL_BROKER_AUDIENCE } from "#broker-names";
+import { CREDENTIAL_BROKER_AUDIENCE } from "#/shared/config/index.ts";
 
 const BROKER = "https://credentials.masseater.dev/";
 const RETRIES = 3;

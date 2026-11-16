@@ -46,7 +46,7 @@ export default Stack(
     );
     const { url } = yield* Workers.Worker("ThreeTwelve", {
       name: `${PREFIX}worker`,
-      main: "./src/app/worker/three-twelve.worker.ts",
+      main: "./src/app/entrypoint/three-twelve.worker.ts",
       logpush: true,
       crons: [CRON],
       routes: [{ pattern: `${ZONE}${BASE_PATH}/*`, zoneName: ZONE }],

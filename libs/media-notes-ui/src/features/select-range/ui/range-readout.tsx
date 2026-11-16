@@ -2,8 +2,8 @@ import { useAtomValue } from "@effect/atom-react";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { rangeAtom } from "#src/features/select-range/model/range.ts";
-import { preciseClock } from "#src/shared/lib/clock.ts";
+import { rangeAtom } from "#/features/select-range/model/range.ts";
+import { preciseClock } from "#/shared/lib/clock.ts";
 
 const DIGITS = 1;
 const EMPTY = "–";

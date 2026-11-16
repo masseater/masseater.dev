@@ -5,7 +5,7 @@ import type { Mark } from "@masseater.dev/shirushi-protocol";
 import { Array as Arr, Option, pipe } from "effect";
 import { AsyncResult } from "effect/reactivity";
 
-import { fetchMarks } from "#/shared/api";
+import { fetchMarks } from "#/shared/api/index.ts";
 
 /** @internal */
 export const marksAtom = runtime.atom(fetchMarks);

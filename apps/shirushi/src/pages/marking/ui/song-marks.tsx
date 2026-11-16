@@ -4,7 +4,7 @@ import { useJump } from "@masseater.dev/media-notes-ui";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { MarkList, removeAtom, useMarks } from "#/entities/mark";
+import { MarkList, removeAtom, useMarks } from "#/entities/mark/index.ts";
 
 export const SongMarks = ({ media }: Readonly<{ media: Media }>): ReactNode => {
   const marks = useMarks(Option.some(media));

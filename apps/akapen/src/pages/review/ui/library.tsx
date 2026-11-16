@@ -4,9 +4,9 @@ import { Array as Arr, Option, pipe } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useComments } from "#/entities/comment";
-import { shelvesOf } from "#/pages/review/model/shelf";
-import type { Shelf } from "#/pages/review/model/shelf";
+import { useComments } from "#/entities/comment/index.ts";
+import { shelvesOf } from "#/pages/review/model/shelf.ts";
+import type { Shelf } from "#/pages/review/model/shelf.ts";
 
 import { ShelfRow } from "./shelf-row.tsx";
 

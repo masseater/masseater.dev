@@ -1,7 +1,7 @@
 import type { Media } from "@masseater.dev/media-notes-protocol";
 import type { ReactNode } from "react";
 
-import { MarkForm } from "#/features/mark-range";
+import { MarkForm } from "#/features/mark-range/index.ts";
 
 import { SongMarks } from "./song-marks.tsx";
 import { SongStage } from "./song-stage.tsx";

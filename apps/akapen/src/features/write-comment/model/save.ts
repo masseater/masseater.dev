@@ -2,8 +2,8 @@ import { runtime, savedRange } from "@masseater.dev/media-notes-ui";
 import { Effect } from "effect";
 import { AtomRegistry } from "effect/reactivity";
 
-import { commentsAtom } from "#/entities/comment";
-import { postComment } from "#/shared/api";
+import { commentsAtom } from "#/entities/comment/index.ts";
+import { postComment } from "#/shared/api/index.ts";
 
 import { wordsAtom } from "./draft.ts";
 

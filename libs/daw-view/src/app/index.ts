@@ -1,4 +1,12 @@
-export type { Progress, RenderSession, Rendered, Song } from "#/widgets/daw-view/index.ts";
+export type {
+  LiveMix,
+  MixMessage,
+  MixPlayer,
+  Progress,
+  RenderSession,
+  Rendered,
+  Song,
+} from "#/widgets/daw-view/index.ts";
 export type { Mixdown } from "#/widgets/daw-view/index.ts";
 export { mountSong } from "#/widgets/daw-view/index.ts";
 export type { Credit } from "#/widgets/daw-view/index.ts";

@@ -5,7 +5,7 @@ import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { MarkList, removeAtom, useMarks } from "#/entities/mark";
+import { MarkList, removeAtom, useMarks } from "#/entities/mark/index.ts";
 
 export const Library = (): ReactNode => {
   const marks = useMarks(Option.none());

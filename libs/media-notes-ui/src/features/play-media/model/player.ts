@@ -2,10 +2,10 @@ import { useAtomValue } from "@effect/atom-react";
 import { Effect, Option, Schedule, Stream, pipe } from "effect";
 import { AsyncResult, Atom } from "effect/reactivity";
 
-import { openedAtom } from "#src/entities/media/index.ts";
-import { mountPlayer } from "#src/features/play-media/lib/mount.ts";
-import { STILL } from "#src/shared/lib/player.ts";
-import type { Player, Position } from "#src/shared/lib/player.ts";
+import { openedAtom } from "#/entities/media/index.ts";
+import { mountPlayer } from "#/features/play-media/lib/mount.ts";
+import { STILL } from "#/shared/lib/player.ts";
+import type { Player, Position } from "#/shared/lib/player.ts";
 
 const TICK = "200 millis";
 

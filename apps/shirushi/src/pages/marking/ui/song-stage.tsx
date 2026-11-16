@@ -5,7 +5,7 @@ import type { Mark, Verb } from "@masseater.dev/shirushi-protocol";
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useMarks } from "#/entities/mark";
+import { useMarks } from "#/entities/mark/index.ts";
 
 const TONES: Readonly<Record<Verb, Tone>> = { like: "plain", dislike: "warn" };
 

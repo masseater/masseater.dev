@@ -3,9 +3,9 @@ import { Option } from "effect";
 import { ExternalLink } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { pageOf } from "#src/entities/media/model/media.ts";
-import { SITE_NAMES } from "#src/shared/config/index.ts";
-import { clock } from "#src/shared/lib/clock.ts";
+import { pageOf } from "#/entities/media/model/media.ts";
+import { SITE_NAMES } from "#/shared/config/index.ts";
+import { clock } from "#/shared/lib/clock.ts";
 
 const PageLink = ({ media }: Readonly<{ media: Media }>): ReactNode =>
   Option.match(pageOf(media.source), {

@@ -4,7 +4,7 @@ import { useJump } from "@masseater.dev/media-notes-ui";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { CommentList, RemovedNotice, removeAtom, useComments } from "#/entities/comment";
+import { CommentList, RemovedNotice, removeAtom, useComments } from "#/entities/comment/index.ts";
 
 export const MediaComments = ({ media }: Readonly<{ media: Media }>): ReactNode => {
   const comments = useComments(Option.some(media));

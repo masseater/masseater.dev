@@ -31,7 +31,6 @@
   ],
   "type": "module",
   "imports": {
-    "#src/*": "./src/*",
     "#/*": "./src/*"
   },
   "exports": {

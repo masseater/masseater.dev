@@ -3,7 +3,7 @@ import { Option } from "effect";
 import { AsyncResult } from "effect/reactivity";
 import type { ReactNode } from "react";
 
-import { chooseFileAtom, openFileAtom, openLinkAtom } from "#src/features/open-media/model/open.ts";
+import { chooseFileAtom, openFileAtom, openLinkAtom } from "#/features/open-media/model/open.ts";
 
 export const Refusal = (): ReactNode => {
   const link = AsyncResult.error(useAtomValue(openLinkAtom));

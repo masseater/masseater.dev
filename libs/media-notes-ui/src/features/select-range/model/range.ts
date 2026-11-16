@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 
-import { openedAtom } from "#src/entities/media/index.ts";
+import { openedAtom } from "#/entities/media/index.ts";
 
 export type Range = Readonly<{ from: number; to: number }>;
 

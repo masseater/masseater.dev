@@ -5,7 +5,7 @@ import { Option, String as Str } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { wordsAtom } from "#/features/write-comment/model/draft";
+import { wordsAtom } from "#/features/write-comment/model/draft.ts";
 
 const CLEAR = "消す";
 const SAVE = "保存";

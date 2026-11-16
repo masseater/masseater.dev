@@ -1,7 +1,7 @@
 import { Array as Arr } from "effect";
 import type { RuleTester } from "vite-plus/lint/plugins-dev";
 
-import { toJson } from "#src/shared/lib/json.ts";
+import { toJson } from "#/shared/lib/json.ts";
 
 const identity = ({
   code,

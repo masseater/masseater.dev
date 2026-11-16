@@ -3,16 +3,16 @@ import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { MediaMeta } from "#src/entities/media/index.ts";
+import { MediaMeta } from "#/entities/media/index.ts";
 import {
   KeyHints,
   MediaPlayer,
   usePlayKey,
   usePlayer,
   usePosition,
-} from "#src/features/play-media/index.ts";
-import { Timeline, useRangeKey } from "#src/features/select-range/index.ts";
-import type { Span } from "#src/features/select-range/index.ts";
+} from "#/features/play-media/index.ts";
+import { Timeline, useRangeKey } from "#/features/select-range/index.ts";
+import type { Span } from "#/features/select-range/index.ts";
 
 export const MediaStage = ({
   media,

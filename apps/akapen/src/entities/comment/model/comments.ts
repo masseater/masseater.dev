@@ -5,7 +5,7 @@ import { keyOf, runtime } from "@masseater.dev/media-notes-ui";
 import { Array as Arr, Option, pipe } from "effect";
 import { AsyncResult } from "effect/reactivity";
 
-import { fetchComments } from "#/shared/api";
+import { fetchComments } from "#/shared/api/index.ts";
 
 /** @internal */
 export const commentsAtom = runtime.atom(fetchComments);

@@ -3,9 +3,9 @@ import { Effect, Option } from "effect";
 import type { Cause } from "effect";
 import { AtomRegistry } from "effect/reactivity";
 
-import { openedAtom } from "#src/entities/media/index.ts";
-import { anchorAtom, rangeAtom } from "#src/features/select-range/index.ts";
-import type { Range } from "#src/features/select-range/index.ts";
+import { openedAtom } from "#/entities/media/index.ts";
+import { anchorAtom, rangeAtom } from "#/features/select-range/index.ts";
+import type { Range } from "#/features/select-range/index.ts";
 
 export type Post<Failure> = (opened: Opened, range: Range) => Effect.Effect<void, Failure>;
 

@@ -2,7 +2,7 @@ import { SITE_NAMES } from "@masseater.dev/media-notes-ui";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { Shelf } from "#/pages/review/model/shelf";
+import type { Shelf } from "#/pages/review/model/shelf.ts";
 
 const DAY = new Intl.DateTimeFormat("ja-JP", { month: "numeric", day: "numeric" });
 

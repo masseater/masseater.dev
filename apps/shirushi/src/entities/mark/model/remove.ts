@@ -2,7 +2,7 @@ import { runtime } from "@masseater.dev/media-notes-ui";
 import { Effect } from "effect";
 import { AtomRegistry } from "effect/reactivity";
 
-import { deleteMark } from "#/shared/api";
+import { deleteMark } from "#/shared/api/index.ts";
 
 import { marksAtom } from "./marks.ts";
 

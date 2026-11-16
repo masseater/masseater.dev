@@ -5,8 +5,8 @@ import { Undo2 } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { removedAtom, undoAtom } from "#/entities/comment/model/remove";
-import { useUndoKey } from "#/entities/comment/model/use-undo-key";
+import { removedAtom, undoAtom } from "#/entities/comment/model/remove.ts";
+import { useUndoKey } from "#/entities/comment/model/use-undo-key.ts";
 
 import { CommentLabel } from "./comment-label.tsx";
 

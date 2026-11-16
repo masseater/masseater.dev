@@ -3,8 +3,8 @@ import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { keyOf, openedAtom } from "#src/entities/media/index.ts";
-import { stageAtom, usePlayer } from "#src/features/play-media/model/player.ts";
+import { keyOf, openedAtom } from "#/entities/media/index.ts";
+import { stageAtom, usePlayer } from "#/features/play-media/model/player.ts";
 
 const FRAME =
   "size-full [&>iframe]:size-full [&>iframe]:border-0 [&>video]:size-full [&>video]:object-contain";

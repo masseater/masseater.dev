@@ -23,7 +23,7 @@ export default defineConfig({
           },
         },
         {
-          files: ["src/app/worker/**/*.ts", "src/**/*.server.ts"],
+          files: ["src/app/entrypoint/**/*.ts", "src/**/*.server.ts"],
           excludeFiles: ["**/*.test.ts"],
           use: ["traced"],
         },

@@ -7,6 +7,7 @@ import {
   removalPolicySyntax,
   requiredStack,
   steigerRules,
+  textlintPresets,
   tracedRules,
 } from "@r_masseater/msch/lint";
 import type { ToolSections } from "@r_masseater/msch/vite";
@@ -97,6 +98,7 @@ const checks: ToolSections = {
   },
   textlint: {
     ignores: MARKDOWN_IGNORES,
+    presets: textlintPresets,
     rules: {
       "@r_masseater/preset-ja": { "no-taigendome": false },
       "@textlint-ja/preset-ai-writing": true,

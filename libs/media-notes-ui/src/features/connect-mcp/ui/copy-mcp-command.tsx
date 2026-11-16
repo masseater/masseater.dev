@@ -5,7 +5,7 @@ import { Check, Copy } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { copyAtom } from "#src/features/connect-mcp/model/access.ts";
+import { copyAtom } from "#/features/connect-mcp/model/access.ts";
 
 const LABEL = "MCP";
 const HINT = "Claude Code に追加するコマンドをコピー";

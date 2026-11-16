@@ -1,7 +1,7 @@
 import type { Media } from "@masseater.dev/media-notes-protocol";
 import type { ReactNode } from "react";
 
-import { CommentForm } from "#/features/write-comment";
+import { CommentForm } from "#/features/write-comment/index.ts";
 
 import { MediaComments } from "./media-comments.tsx";
 import { Stage } from "./stage.tsx";
