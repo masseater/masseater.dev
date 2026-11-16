@@ -35,19 +35,16 @@ const Text = Schema.NonEmptyString;
 
 const Names = Schema.Array(Text);
 
-const Source = Schema.Literals(SOURCES).pick(["said", "provided", "imported"]).annotate({
-  description:
-    "said: the owner said it in this conversation. provided: a file or screen the owner gave. imported: a linked service. Never write from AI memos, other notes or guesses.",
-});
+const Source = Schema.Literals(SOURCES).pick(["said", "provided", "imported"]);
 
 const RevisionNumber = Schema.Int.check(Schema.isGreaterThanOrEqualTo(MIN_ONE));
 
 const Retract = Schema.Literal(true).annotate({
-  description: "Retract the record. Pass reason too.",
+  description: "Pass reason too",
 });
 
 const RestoreTo = RevisionNumber.annotate({
-  description: "Restore the record to this revision (see life_read with revisions: true)",
+  description: "Revision from life_read with revisions: true",
 });
 
 const ChangeFields = Schema.Struct({
@@ -60,8 +57,7 @@ const ChangeFields = Schema.Struct({
 const Change = Schema.StructWithRest(ChangeFields, [
   Schema.Record(Schema.String, Schema.Unknown),
 ]).annotate({
-  description:
-    "Change an existing record. Other keys replace those fields of the record; null removes a field.",
+  description: "Change a record. Other keys replace its fields; null removes one",
 });
 
 const LifeEventCreate = Schema.Struct({
@@ -153,7 +149,7 @@ export const LifeReadInput = Schema.Struct({
   order: Schema.optionalKey(Schema.Literals(READ_ORDERS)),
   limit: Schema.optionalKey(ReadLimit),
   fields: Schema.optionalKey(
-    Names.annotate({ description: 'Dotted paths to keep, such as ["at.jst", "values.drinks"]' }),
+    Names.annotate({ description: 'Paths to return, such as ["at.jst", "values.drinks"]' }),
   ),
   periods: Schema.optionalKey(
     Periods.annotate({
@@ -189,7 +185,7 @@ const Metrics = Names.check(Schema.isMinLength(MIN_ONE)).annotate({
 });
 
 const CompareTo = Schema.Union([Period, Schema.Literal("previousYear"), Schema.Null]).annotate({
-  description: "Omit for the previous period of the same length. null for none.",
+  description: "Default: the previous period of the same length. null: none",
 });
 
 export const LifeStatsInput = Schema.Struct({

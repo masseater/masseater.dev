@@ -37,7 +37,7 @@ const TOOL = "search_posts";
 const NO_POSTS = 0;
 
 const DESCRIPTION =
-  "Search the owner's X (Twitter) archive on Twilog across all of the owner's linked accounts at once. Each result names its account and carries that account's posts (tweets, likes or bookmarks), page and maxPage. isSelf marks posts the account itself wrote. A result with status login means that account needs the owner to open loginUrl and sign in to Togetter as that account.";
+  "Search the owner's X (Twitter) archive on Twilog across all linked accounts. Each result has an account's posts (tweets, likes or bookmarks), page and maxPage; isSelf marks the account's own posts. When a result's status is login, ask the owner to open loginUrl and sign in to Togetter as that account.";
 
 const INPUT_SCHEMA = SearchInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 

@@ -40,16 +40,16 @@ const PROFILE_SCHEMA = WatashiProfileInput.pipe(
 );
 
 const MEMORY_WRITE_DESCRIPTION =
-  "AI の作業メモを書く。project と name で 1 件を指し、無ければ作り（description と content が要る）、あれば渡した項目だけを置き換える。\nプロジェクトの決まりや経緯、人生の記録を読んだ要約や気づきを残す。人生の記録から作ったメモは evidence に元の ref を入れる。\nretract と reason で取り消し、restoreTo でそのリビジョンの中身に戻す。返り値は {written: ref[], notices}。";
+  "Write an AI work memo, keyed by project and name: project rules and history, or what you learned from life records. Creates it (description and content required) or replaces only the fields you pass. Returns {written, notices}.";
 
 const MEMORY_READ_DESCRIPTION =
-  "AI の作業メモを探して読む。作業を始める前に、題材のプロジェクトや話題の語で呼び、関係する決定や好みを読む。\nproject と name で 1 件を読み、revisions: true も渡すと書き込みの履歴を返す。\n作業メモは AI が書いたもので、持ち主の言葉ではない。作業メモをもとに life_write しない。";
+  "Find and read AI work memos. Call before starting work with words from the project or topic. project and name read one memo. Memos are written by AI, not the owner: never life_write from them.";
 
 const SEARCH_DESCRIPTION =
-  "人生の記録と AI の作業メモをまとめて、自然な言葉で探す。\n返り値は {total, countsByStore: {life, memory}, items}。各 item の store が life なら持ち主の記録、memory なら AI の作業メモで、持ち主の言葉として扱わない。";
+  "Search the owner's life records and AI work memos together in natural words. Returns {total, countsByStore, items}; items with store memory are AI-written, not the owner's words.";
 
 const PROFILE_DESCRIPTION =
-  "エージェント向けの持ち主のプロフィールである USER.md を Markdown 形式で返す。会話の冒頭で呼び出し、それに従うこと。作業しているリポジトリやアプリを scope に渡すと、その「In <scope>」セクションも取得できる。「Who」セクションは持ち主の記録から取得する。その他のセクションは、バックグラウンドプロセスが作業メモ、ライフレコード、会話から取得した特性に基づいて書き出す要約であり、行末の括弧内の数値はそれらの特性の参照番号である。trait に ref を渡すと、その引用された根拠と履歴を取得できる。topic を渡すと、USER.md の代わりに、そのトピックに関連する特性を {traits} として取得できる。";
+  "Return USER.md, the owner's profile for agents, as Markdown. Call it at the start of a conversation and follow it. The bracketed numbers at line ends are trait refs.";
 
 const registerMemoryWrite =
   (caller: Caller) =>

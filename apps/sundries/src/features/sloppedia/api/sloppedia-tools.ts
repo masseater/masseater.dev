@@ -39,7 +39,7 @@ const GraphqlErrors = Schema.Array(Schema.Struct({ message: Schema.String }));
 
 const GraphqlResult = Schema.Struct({ errors: Schema.optionalKey(GraphqlErrors) });
 
-const DESCRIPTION = `masseater.devのSloppedia(${SITE}/sloppedia/)に記事を1件足すか、同じslugの記事を書き換える。Sloppediaは持ち主の趣味嗜好が強く出るWikipedia風の個人の百科事典もどきである。百科事典の体裁で、である調で書く。記事の冒頭では記事名を主語にして題材が何であるかを定義し、記事名を太字にしない。事実には出典を付ける。出典は[^webdev]のような名前のラベルの脚注にし、その定義を本文の末尾に置いて、著者と題名のリンクと媒体を書く。番号のラベルは使わない。持ち主の意見は「Sloppediaの持ち主のmasseaterは〜と考えている」のように誰の意見かを書き、AI自身の意見は書かない。長い記事は##と###の見出しで節に分け、比較は表にする。リンクは[語](URL)の形で埋め込み、URLをむき出しで置かない。ほかのSloppediaの記事へは[語](/sloppedia/<slug>)でつなぐ。独立した記事にすべき語は、まだ記事が無くても同じ形でつなぐ。記事の無いリンクは赤字で表示され、そのslugの記事ができると次のデプロイでリンクに変わる。slugは題材の英語名を小文字とハイフンにしたものにし、新しい記事を書くときは、既存の記事がその題材に張っているリンクのslugに合わせる。PRを作ってauto-mergeを有効にするので、mainのverifyとデプロイが通ると公開される。blogを投稿するツールは意図して用意していない。blogは持ち主が推敲してから出すまとまった文章なので、MCPからAIが書けるのはSloppediaだけである。`;
+const DESCRIPTION = `Add an article to Sloppedia (${SITE}/sloppedia/), the owner's opinionated Wikipedia-like encyclopedia, or rewrite the one with the same slug. It goes live once the auto-merged PR deploys. Write in Japanese, in encyclopedic である style, opening with a sentence that defines the subject with the title as its subject. Cite facts with named footnotes like [^webdev], defined at the end with the author, the linked title and the outlet. Attribute the owner's opinions (Sloppediaの持ち主のmasseaterは〜と考えている) and never give your own. Use ## and ### sections and tables for comparisons. Link other articles as [語](/sloppedia/<slug>), even ones not written yet, reusing the slugs existing articles link to.`;
 
 const INPUT_SCHEMA = ArticleInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 

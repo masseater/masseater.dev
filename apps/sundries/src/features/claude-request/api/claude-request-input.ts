@@ -15,29 +15,27 @@ const After = Schema.Int.check(Schema.isGreaterThanOrEqualTo(BEFORE_FIRST));
 
 export const SendInput = Schema.Struct({
   text: LongText.annotate({
-    description: "Claude にやってほしいことの本文。そのまま依頼として読まれる",
+    description: "Read as the request as is",
   }),
 });
 
 export const TakeInput = Schema.Struct({});
 
 export const ReplyInput = Schema.Struct({
-  id: RequestId.annotate({ description: "take_claude_requests が返した依頼の id" }),
-  reply: LongText.annotate({ description: "依頼した人に返す結果や質問" }),
-  threadUrl: ThreadUrl.annotate({ description: "依頼を受けたスレッドの URL" }),
+  id: RequestId,
+  reply: LongText,
+  threadUrl: ThreadUrl.annotate({ description: "Your thread" }),
 });
 
 export const ListInput = Schema.Struct({
-  after: Schema.optionalKey(
-    After.annotate({ description: "この id より後の依頼だけを返す。省くと新しい順に返す" }),
-  ),
+  after: Schema.optionalKey(After),
 });
 
 export const RoutineInput = Schema.Struct({
   triggerId: Schema.NonEmptyString.annotate({
-    description: "claude.ai の routines で作った、プロジェクト外の中継タスクの trig_ から始まる ID",
+    description: "The routine's trig_ id",
   }),
   token: Schema.NonEmptyString.annotate({
-    description: "その中継タスクの API トリガーで発行した sk-ant-oat01- から始まるトークン",
+    description: "The routine's API trigger token, sk-ant-oat01-",
   }),
 });

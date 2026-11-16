@@ -52,20 +52,16 @@ const MIN_TIMES = 0;
 
 const Text = Schema.NonEmptyString;
 
-export const Time = Schema.NonEmptyString.annotate({
-  description:
-    "ISO 8601 with a time zone (2026-11-08T19:00+09:00 or 2026-11-08T10:00Z), or a date (2026-11-08), month (2024-03) or year (2010). A time without a zone is read as Asia/Tokyo.",
-});
+export const Time = Schema.NonEmptyString;
 
 export const Ref = Schema.String.check(Schema.isPattern(/^[a-z_]+:\d+$/u)).annotate({
-  description: "A record reference such as life_event:12 or memory:3",
+  description: "Such as life_event:12",
 });
 
 const Names = Schema.Array(Text);
 
 const Values = Schema.Record(Schema.String, Schema.Unknown).annotate({
-  description:
-    "Values that follow the kind's valuesSchema. Numeric keys are metric names. Omit when there are no numbers.",
+  description: "Follows the kind's valuesSchema. Numeric keys are metric names",
 });
 
 const MediaIds = Schema.Struct({
@@ -88,12 +84,11 @@ const MediaIds = Schema.Struct({
   konomiKey: Schema.optionalKey(Text),
   url: Schema.optionalKey(Text),
 }).annotate({
-  description:
-    "IDs allowed per mediaType. book/comic: isbn, asin, ndlBibId. anime: annictWorkId, malId. movie/tv: tmdbId, imdbId. game: steamAppId, igdbId, nintendoEshopId. music: musicbrainzId, spotifyId, appleMusicId. video: youtubeVideoId, niconicoVideoId. podcast: applePodcastsId, spotifyId. Any type: konomiKey, url.",
+  description: "Only the ids of the mediaType's services, plus konomiKey and url",
 });
 
 export const LifeEventBody = Schema.Struct({
-  text: Text.annotate({ description: "What happened, close to the owner's own words" }),
+  text: Text.annotate({ description: "Close to the owner's own words" }),
   at: Time,
   until: Schema.optionalKey(Time),
   kind: Schema.optionalKey(Text),
@@ -164,7 +159,7 @@ export const TodoBody = Schema.Struct({
 });
 
 const ValuesSchema = Schema.Record(Schema.String, Schema.Unknown).annotate({
-  description: "JSON Schema for values. Numeric properties should be metric names.",
+  description: "JSON Schema for values. Numeric properties are metric names",
 });
 
 export const EventKindBody = Schema.Struct({

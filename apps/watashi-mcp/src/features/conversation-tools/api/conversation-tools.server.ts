@@ -11,7 +11,7 @@ import { meteredInput, runTool } from "#/shared/api/index.server.ts";
 const READ_SCHEMA = ReadInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
 const DESCRIPTION =
-  '持ち主と AI の会話履歴（今は Claude Code のトランスクリプト）を読む。秘密は送る前に [REDACTED:<規則>] に伏せてある。sessionId を省くと最近の会話の一覧を、渡すとその会話の JSONL を cursor から順に返す。続きは nextCursor で読む。view: "owner" で持ち主の発言だけを返す';
+  "Read the owner's conversations with AI (Claude Code transcripts, secrets redacted). Without sessionId, lists recent sessions; with it, returns the transcript from cursor, continued by nextCursor.";
 
 const listing = (caller: Caller, input: Input): Promise<CallToolResult> =>
   listSessions(listRequestOf(input)).pipe(

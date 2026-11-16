@@ -21,7 +21,7 @@ const DIRECT = "(direct)";
 const FILTER_TYPE = "[RumPageloadEventsAdaptiveGroupsFilter_InputObject!]!";
 
 const DESCRIPTION =
-  "masseater.devのアクセス解析（Cloudflare Web Analytics）を読む。指定した日数のページビューと訪問数を、パス別に返す。pathを渡すと、そのパスの日別・参照元・国別も返す。パス別は Cloudflare のサンプリングで丸められ、パスを絞った表は1件単位で出る。持ち主だけが読める数字なので、公開される場所へ書き写さない。";
+  "Read masseater.dev page views and visits per path for the last days (Cloudflare Web Analytics). With path, also returns that path's daily, referrer and country breakdowns. Per-path totals are sampled. The numbers are private: never copy them anywhere public.";
 
 const INPUT_SCHEMA = AnalyticsInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 

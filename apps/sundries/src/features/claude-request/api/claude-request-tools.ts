@@ -19,16 +19,16 @@ import { registerRoutine, wakeProject } from "./claude-routine.ts";
 export type Register = (caller: Caller) => (server: McpServer) => McpServer;
 
 const SEND_DESCRIPTION =
-  "持ち主の masseater の Claude Code プロジェクト「個人PJ」へ依頼を送る。送るとすぐにプロジェクトのスレッドが立って依頼を実行し、結果を返事として書く。返事は list_claude_replies で読む。返り値の id で返事を見分け、woke が fired でなければスレッドはまだ立っていない（1 時間ごとの見回りで拾われる）。";
+  "Send a request to the owner's Claude Code project, which starts a thread to do it and replies. Read replies with list_claude_replies by the returned id. If woke is not fired, the hourly check picks it up later.";
 
 const TAKE_DESCRIPTION =
-  "Claude Code のプロジェクト「個人PJ」のスレッドが使う。まだ誰も受け取っていない依頼をすべて受け取り済みにして古い順に返す。受け取った依頼は自分で実行し、reply_to_request で返事を書く。";
+  "For threads of the owner's Claude Code project: claim every untaken request, oldest first. Do each one and answer with reply_to_request.";
 
 const REPLY_DESCRIPTION =
-  "Claude Code のスレッドが、take_claude_requests で受け取った依頼に返事を書く。結果、作ったものの URL、依頼した人への質問などを書く。";
+  "Answer a request from take_claude_requests with the result, URLs of what you made, or questions.";
 
 const LIST_DESCRIPTION =
-  "send_to_claude で送った依頼と、その受け取りの時刻・スレッドの URL・返事を返す。after を省くと新しい順に 50 件、after を渡すとその id より後を古い順に 50 件返す。";
+  "Return requests sent with send_to_claude with when they were taken, their thread URL and reply, 50 at a time: newest first, or oldest first after the given id.";
 
 const SEND_SCHEMA = SendInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
@@ -37,7 +37,7 @@ const TAKE_SCHEMA = TakeInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJ
 const REPLY_SCHEMA = ReplyInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
 const ROUTINE_DESCRIPTION =
-  "send_to_claude が依頼を積んだ直後に押す、プロジェクト外の中継タスクを登録する。持ち主が claude.ai の routines で中継タスクを作り直したときだけ使う。トークンは broker が封をして置く。";
+  "Register the claude.ai routine that send_to_claude fires to wake the project. Use only after the owner recreated that routine.";
 
 const ROUTINE_SCHEMA = RoutineInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
