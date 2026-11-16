@@ -5933,6 +5933,10 @@
         return Math.max(1, Math.min(cores - 1, limit));
       };
 
+      const LITE =
+        (navigator.deviceMemory ?? 8) < 4 ||
+        /iPhone|iPod|Android.*Mobile/.test(navigator.userAgent);
+
       const pause = () => new Promise((resolve) => setTimeout(resolve, 0));
 
       const addStem = (sums, stem) => {
@@ -5961,24 +5965,33 @@
         new Promise((resolve, reject) => {
           const names = [...session.cost];
           const total = names.length;
-          const sums = [0, 1].map(() => ({
-            L: new Float32Array(session.N),
-            R: new Float32Array(session.N),
-          }));
+          const stems = new Array(session.tracks.length);
+          const sums = LITE
+            ? [0, 1].map(() => ({
+                L: new Float32Array(session.N),
+                R: new Float32Array(session.N),
+              }))
+            : [];
           let done = 0;
           let settled = false;
           const workers = [];
           let url = null;
 
           const packed = () =>
-            sums.map((sum, index) => {
-              const stem = GEngine.pack(sum.L, sum.R, index === 0 ? "DRUMS" : "MUSIC");
-              stem.drum = index === 0;
-              return stem;
-            });
+            LITE
+              ? sums.map((sum, index) => {
+                  const stem = GEngine.pack(sum.L, sum.R, index === 0 ? "DRUMS" : "MUSIC");
+                  stem.drum = index === 0;
+                  return stem;
+                })
+              : stems;
 
           const take = (name, stem) => {
-            addStem(sums, stem);
+            if (LITE) {
+              addStem(sums, stem);
+            } else {
+              stems[session.tracks.indexOf(name)] = stem;
+            }
             done += 1;
             progress((done / total) * TRACK_SHARE, name.toLowerCase());
           };
@@ -6052,6 +6065,16 @@
           }
         });
 
+      const liveOf = (session, out) => ({
+        tracks: session.tracks,
+        player: `(init, rate) => new ((${mixerModule})().Player)(init, rate)`,
+        init: { N: session.N, SR: GEngine.SR, stems: out.stems, par: out.par, auto: out.auto },
+        transfer: [
+          ...out.stems.flatMap((stem) => [stem.data.buffer, stem.segs.buffer]),
+          ...Object.values(out.auto).map((curve) => curve.buffer),
+        ],
+      });
+
       const render = async ({ samples, report }) => {
         const log = [];
         const view = {};
@@ -6062,7 +6085,11 @@
         progress(0, "tracks");
         const stems = await renderTracks(session, samples, log, progress);
         const out = await session.master(stems, progress);
-        return { left: out.L, right: out.R, take: takeOf(log, view) };
+        const rendered = { left: out.L, right: out.R, take: takeOf(log, view) };
+        if (LITE) {
+          return rendered;
+        }
+        return { ...rendered, live: liveOf(session, out) };
       };
 
       mountSong(document.querySelector("main"))({

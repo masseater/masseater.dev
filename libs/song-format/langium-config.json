@@ -1,0 +1,12 @@
+{
+  "projectName": "Fu",
+  "languages": [
+    {
+      "id": "fu",
+      "grammar": "src/features/read-song/model/fu.langium",
+      "fileExtensions": [".fu"]
+    }
+  ],
+  "out": "generated/langium",
+  "importExtension": ".ts"
+}

@@ -4,6 +4,8 @@ import { EMPTY_TAKE, sessionOf } from "#/entities/song/index.ts";
 import type { NoteEvent, Structure, Session } from "#/entities/song/index.ts";
 
 import type { Shade } from "./mix.ts";
+import { UNMIXED, heardIn, mixingOf, toggled } from "./mixing.ts";
+import type { Change, Mixing } from "./mixing.ts";
 import type { Size } from "./pen.ts";
 import { layoutOf } from "./roll-layout.ts";
 import type { RollLayout } from "./roll-layout.ts";
@@ -28,6 +30,7 @@ export interface Metrics {
 
 export interface Model {
   readonly session: Session;
+  readonly mixing: Mixing;
   readonly layout: RollLayout;
   readonly shades: readonly Shade[];
   readonly selected: Option.Option<string>;
@@ -43,14 +46,24 @@ export interface Model {
   readonly metrics: Metrics;
 }
 
-export const settled = (model: Model): Model => ({
-  ...model,
-  layout: layoutOf({
-    session: model.session,
-    selected: model.selected,
-    height: model.metrics.roll.height,
-  }),
-});
+export const settled = (model: Model): Model => {
+  const session = heardIn(model.mixing)(model.session);
+  return {
+    ...model,
+    session,
+    layout: layoutOf({ session, selected: model.selected, height: model.metrics.roll.height }),
+  };
+};
+
+export const mixedWith =
+  (tracks: readonly string[]) =>
+  (model: Model): Model =>
+    settled({ ...model, mixing: mixingOf(tracks) });
+
+export const flippedBy =
+  (change: Change) =>
+  (model: Model): Model =>
+    settled({ ...model, mixing: toggled(change)(model.mixing) });
 
 const EMPTY: Size = { width: NONE, height: NONE };
 
@@ -60,6 +73,7 @@ export const initialModel =
     const session = sessionOf(structure)(EMPTY_TAKE);
     return {
       session,
+      mixing: UNMIXED,
       layout: layoutOf({ session, selected: Option.none(), height: NONE }),
       shades: [],
       selected: Option.none(),
