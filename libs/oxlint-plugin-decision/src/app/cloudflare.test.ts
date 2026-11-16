@@ -1,7 +1,9 @@
 import { NodeServices } from "@effect/platform-node";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
-import { Array as Arr, Effect, Layer, Option, Record as Rec, pipe } from "effect";
+import { Array as Arr, Effect, FileSystem, Layer, Option, Path, Record as Rec, pipe } from "effect";
+
+import type { DecisionRule } from "#/entities/decision/index.ts";
 
 import {
   FAILED,
@@ -13,7 +15,7 @@ import {
 } from "./fixtures.test.support.ts";
 import { MockCloudflareLayer, cloudflareEnv, loggedRuns } from "./mock-cloudflare.test.support.ts";
 import type { LoggedRun, MockCloudflare } from "./mock-cloudflare.test.support.ts";
-import { decisionLines } from "./oxlint.test.support.ts";
+import { decisionLines, projectFilesFor, runOxlint, writeProject } from "./oxlint.test.support.ts";
 import type { OxlintRun, Services, TestError } from "./oxlint.test.support.ts";
 
 type CloudflareTest<Value = void> = Effect.Effect<Value, TestError, Services | MockCloudflare>;
@@ -107,6 +109,56 @@ const asksEachMatchWithItsSnippet = Effect.gen(function* test() {
   strictEqual((yield* loggedRuns).length, BOTH);
 });
 
+const otherRule = {
+  ...callRule,
+  id: "phone-call",
+  question: "Does this call write a phone number to a log?",
+};
+
+const questionsOf = (runs: readonly LoggedRun[]): readonly string[] =>
+  pipe(
+    runs,
+    Arr.flatMap(({ body }) => Rec.values(body.questions)),
+    Arr.map(({ instructions }) => instructions),
+  );
+
+const CLOUDFLARE_MODEL = `cloudflare/${MODEL}`;
+
+const rewriteConfig = (
+  cwd: string,
+  rules: readonly DecisionRule[],
+): Effect.Effect<void, TestError, Services> =>
+  Effect.gen(function* rewrite() {
+    const fs = yield* FileSystem.FileSystem;
+    const path = yield* Path.Path;
+    const files = yield* projectFilesFor({ model: CLOUDFLARE_MODEL, rules }, {});
+    const write = ([name, content]: readonly [string, string]): Effect.Effect<void, TestError> =>
+      fs.writeFileString(path.join(cwd, name), content);
+    yield* Effect.forEach(Rec.toEntries(files), write);
+  });
+
+const asksOnlyTheAddedRule = Effect.scoped(
+  Effect.gen(function* test() {
+    const env = yield* cloudflareEnv("yes");
+    const cwd = yield* writeProject({ "log.js": SOURCE });
+    const lint = runOxlint({
+      cwd,
+      args: ["--format", "unix", "-c", "oxlint.config.ts", "log.js"],
+      env,
+    });
+    yield* rewriteConfig(cwd, [callRule]).pipe(Effect.andThen(lint));
+    yield* rewriteConfig(cwd, [callRule, otherRule]);
+    const run = yield* lint;
+    strictEqual(decisionLines(run).length, BOTH, outputOf(run));
+    const asked = yield* loggedRuns.pipe(Effect.map(questionsOf));
+    strictEqual(asked.length, BOTH);
+    assertInclude(
+      Option.getOrElse(Arr.last(asked), () => ""),
+      otherRule.question,
+    );
+  }),
+);
+
 layer(NodeServices.layer, { excludeTestServices: true })("the cloudflare provider", (it) => {
   it.effect("reports a yes answer", () => withCloudflare(reportsYes), TIMEOUT);
   it.effect(
@@ -126,4 +178,9 @@ layer(NodeServices.layer, { excludeTestServices: true })("the cloudflare provide
     TIMEOUT,
   );
   it.effect("retries a rate limited request", () => withCloudflare(retriesRateLimits), TIMEOUT);
+  it.effect(
+    "asks only the added rule when the other answers are cached",
+    () => withCloudflare(asksOnlyTheAddedRule),
+    TIMEOUT,
+  );
 });

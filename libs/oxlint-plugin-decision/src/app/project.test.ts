@@ -24,8 +24,6 @@ import { decisionLines, mockEnv } from "./oxlint.test.support.ts";
 import type { Services, TestError } from "./oxlint.test.support.ts";
 
 const ONE = 1;
-const TWO = 2;
-const THREE = 3;
 const ROWS = 30;
 const LOG_LINE = "console.log(user.email, user.phone);\n";
 const AROUND =
@@ -41,11 +39,12 @@ const askedTwins = Effect.gen(function* test() {
   });
   strictEqual(run.status, PASSED, outputOf(run));
   const requests = yield* loggedRequests;
-  const counts = pipe(
+  const sent = pipe(
     requests,
-    Arr.map((request) => questionCount(request)),
+    Arr.map(({ sentState }) => toJson(sentState)),
+    Arr.join("\n"),
   );
-  deepStrictEqual(Arr.sort(counts, Order.Number), [TWO, THREE]);
+  assertInclude(sent, "f<T>(x)");
 });
 
 const uncapped = Effect.gen(function* test() {
@@ -266,7 +265,7 @@ const fromRemote = Effect.gen(function* test() {
 
 layer(NodeServices.layer, { excludeTestServices: true })("linting a project", (it) => {
   it.effect(
-    "asks separately about files with the same text but different parses",
+    "asks about the match that only one parse of the same text has",
     () => withMock(askedTwins),
     TIMEOUT,
   );

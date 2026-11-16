@@ -29,6 +29,7 @@ export {
   locationRefOf,
   parseVerdicts,
   refAt,
+  snippetRefOf,
   truncateSnippet,
 } from "./model/request.ts";
 export {
