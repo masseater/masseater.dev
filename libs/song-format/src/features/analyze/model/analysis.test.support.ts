@@ -62,10 +62,20 @@ export const songOf = (specs: readonly BarSpec[]): Song => {
     kits: [],
     instruments: [],
     buses: [],
-    tracks: [
-      { name: "bass", source: { kind: "audio" }, role: Option.some("bass"), fx: [], sends: [] },
-      { name: "keys", source: { kind: "audio" }, role: Option.some("harmony"), fx: [], sends: [] },
-    ],
+    tracks: pipe(
+      [
+        ["bass", "bass"],
+        ["keys", "harmony"],
+      ] as const,
+      Arr.map(([name, role]) => ({
+        name,
+        source: { kind: "audio" as const },
+        role: Option.some(role),
+        mixer: { volumeDecibels: 0, pan: 0, muted: false },
+        fx: [],
+        sends: [],
+      })),
+    ),
     ducks: [],
     master: [],
     bars,
